@@ -4680,3 +4680,6 @@ Start... early ages
 - bios/kprintf.c: Hide the cursor in panic(). (VRI)
 - bios.linea.S: Cleaned up linea_stub. (VRI)
 - bios.linea.S: Fail with panic on unimplemented Line A function. (VRI)
+
+2013-03-27
+- *: Static cleanup. Contributed by Eero Tamminen. (VRI)

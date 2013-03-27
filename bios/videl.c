@@ -96,7 +96,7 @@ static const LONG videl_dflt_palette[] = {
     0x44210000, 0x44110000, FRGB_WHITE, FRGB_BLACK
 };
 
-GLOBAL LONG falcon_shadow_palette[256];   /* real Falcon does this */
+GLOBAL LONG falcon_shadow_palette[256];   /* real Falcon does this, used by vectors.S */
 static WORD ste_shadow_palette[16];
 
 #define MON_ALL     -1  /* code used in VMODE_ENTRY for match on mode only */
@@ -348,7 +348,7 @@ const VMODE_ENTRY *lookup_videl_mode(WORD mode,WORD monitor)
 /*
  * determine scanline width based on video mode
  */
-WORD determine_width(WORD mode)
+static WORD determine_width(WORD mode)
 {
     WORD linewidth;
 
@@ -364,7 +364,7 @@ WORD determine_width(WORD mode)
 /*
  * determine vctl based on video mode and monitor type
  */
-WORD determine_vctl(WORD mode,WORD monitor)
+static WORD determine_vctl(WORD mode,WORD monitor)
 {
     WORD vctl;
 
@@ -401,7 +401,7 @@ WORD determine_vctl(WORD mode,WORD monitor)
 /*
  * determine regc0 based on video mode & monitor type
  */
-WORD determine_regc0(WORD mode,WORD monitor)
+static WORD determine_regc0(WORD mode,WORD monitor)
 {
     if (mode&VIDEL_VGA)
         return 0x0186;

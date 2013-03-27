@@ -62,7 +62,7 @@ ORECT *get_orect(void)
 }
 
 
-ORECT *mkpiece(WORD tlrb, ORECT *new, ORECT *old)
+static ORECT *mkpiece(WORD tlrb, ORECT *new, ORECT *old)
 {
         register ORECT  *rl;
 
@@ -96,7 +96,7 @@ ORECT *mkpiece(WORD tlrb, ORECT *new, ORECT *old)
 }
 
 
-ORECT *brkrct(ORECT *new, ORECT *r, ORECT *p)
+static ORECT *brkrct(ORECT *new, ORECT *r, ORECT *p)
 {
         register WORD   i;
         WORD            have_piece[4];

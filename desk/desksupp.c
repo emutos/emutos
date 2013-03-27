@@ -142,7 +142,8 @@ void do_wredraw(WORD w_handle, WORD xc, WORD yc, WORD wc, WORD hc)
 /*
 *       Picks ob_x, ob_y, ob_width, ob_height fields out of object list.
 */
-void get_xywh(OBJECT olist[], WORD obj, WORD *px, WORD *py, WORD *pw, WORD *ph)
+static void get_xywh(OBJECT olist[], WORD obj, WORD *px, WORD *py,
+                     WORD *pw, WORD *ph)
 {
         *px = olist[obj].ob_x;
         *py = olist[obj].ob_y;

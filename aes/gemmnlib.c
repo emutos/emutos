@@ -215,7 +215,7 @@ UWORD do_chg(LONG tree, WORD iitem, UWORD chgvalue,
 *       Routine to set and reset values of certain items if they
 *       are not the current item
 */
-WORD menu_set(LONG tree, WORD last_item, WORD cur_item, WORD setit)
+static WORD menu_set(LONG tree, WORD last_item, WORD cur_item, WORD setit)
 {
         if ( (last_item != NIL) &&
              (last_item != cur_item) )
@@ -232,7 +232,7 @@ WORD menu_set(LONG tree, WORD last_item, WORD cur_item, WORD setit)
 *       the data that was underneath the menu before it was pulled
 *       down.
 */
-void menu_sr(WORD saveit, LONG tree, WORD imenu)
+static void menu_sr(WORD saveit, LONG tree, WORD imenu)
 {
         GRECT           t;
                                                 /* do the blit to save  */
@@ -254,7 +254,7 @@ void menu_sr(WORD saveit, LONG tree, WORD imenu)
 *       Routine to pull a menu down.  This involves saving the data
 *       underneath the menu and drawing in the proper menu sub-tree.
 */
-WORD menu_down(WORD ititle)
+static WORD menu_down(WORD ititle)
 {
         LONG            tree;
         register WORD   imenu;

@@ -170,7 +170,8 @@ static WORD far_call(WORD (*fcode)(), LONG fdata)
 *       routine.
 */
 
-WORD ob_user(LONG tree, WORD obj, GRECT *pt, LONG spec, WORD curr_state, WORD new_state)
+static WORD ob_user(LONG tree, WORD obj, GRECT *pt, LONG spec,
+                    WORD curr_state, WORD new_state)
 {
         PARMBLK         pb;
 
@@ -189,7 +190,7 @@ WORD ob_user(LONG tree, WORD obj, GRECT *pt, LONG spec, WORD curr_state, WORD ne
 /*
 *       Routine to draw an object from an object tree.
 */
-void  just_draw(LONG tree, WORD obj, WORD sx, WORD sy)
+static void  just_draw(LONG tree, WORD obj, WORD sx, WORD sy)
 {
         WORD            bcol, tcol, ipat, icol, tmode, th;
         WORD            state, obtype, len, flags;
@@ -422,7 +423,7 @@ void ob_draw(LONG tree, WORD obj, WORD depth)
 *       us.  If we are the first child or we have no parent then
 *       return NIL.
 */
-WORD get_prev(LONG tree, WORD parent, WORD obj)
+static WORD get_prev(LONG tree, WORD parent, WORD obj)
 {
         register WORD   nobj, pobj;
         OBJECT *treeptr = (OBJECT *)tree;

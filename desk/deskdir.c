@@ -135,7 +135,7 @@ static void move_icon(WORD obj, WORD dulx, WORD duly)
 /*
 *       Routine to DRAW a DIALog box centered on the screen
 */
-void draw_dial(LONG tree)
+static void draw_dial(LONG tree)
 {
         WORD            xd, yd, wd, hd;
 

@@ -112,7 +112,7 @@ void sh_curdir(BYTE *ppath)
 
 
 
-BYTE *sh_parse(BYTE *psrc, BYTE *pfcb)
+static BYTE *sh_parse(BYTE *psrc, BYTE *pfcb)
 {
         register BYTE   *ptmp;
         BYTE            *sfcb;
@@ -181,7 +181,7 @@ BYTE *sh_parse(BYTE *psrc, BYTE *pfcb)
 *       Routine to fix up the command tail and parse FCBs for a coming
 *       exec.
 */
-void sh_fixtail(WORD iscpm)
+static void sh_fixtail(WORD iscpm)
 {
         register WORD   i;
         WORD            len;
@@ -463,7 +463,7 @@ void sh_envrn(BYTE **ppath, const BYTE *psrch)
 *       paths to find.
 */
 
-WORD sh_path(WORD whichone, LONG dp, BYTE *pname)
+static WORD sh_path(WORD whichone, LONG dp, BYTE *pname)
 {
         register BYTE   tmp, last;
         BYTE            *lp;
@@ -626,7 +626,7 @@ void sh_wdef(const BYTE *lpcmd, const BYTE *lpdir)
 
 
 
-void sh_chgrf(SHELL *psh)
+static void sh_chgrf(SHELL *psh)
 {
         if ( psh->sh_isgem != gl_shgem )
         {
@@ -643,7 +643,7 @@ void sh_chgrf(SHELL *psh)
 /*
 *
 */
-void sh_chdef(SHELL *psh)
+static void sh_chdef(SHELL *psh)
 {
                                                 /* if we should exec    */
                                                 /*   the default command*/

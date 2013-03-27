@@ -318,7 +318,7 @@ static void xbios_d(WORD interno, LONG vector)
  * xbios_e - (iorec) Returns pointer to a serial device's input buffer record.
  */
 
-LONG iorec(WORD devno)
+static LONG iorec(WORD devno)
 {
     switch(devno) {
     case 0:
@@ -358,7 +358,7 @@ static LONG xbios_e(WORD devno)
  * tsr    - 68901 register
  * scr    - 68901 register
  */
-ULONG rsconf(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
+static ULONG rsconf(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 {
     return (*rsconfptr)(baud, ctrl, ucr, rsr, tsr, scr);
 }
@@ -403,7 +403,7 @@ static LONG xbios_10(UBYTE* unshift, UBYTE* shift, UBYTE* capslock)
 
 static ULONG rseed;
 
-LONG random(void)
+static LONG random(void)
 {
     if(rseed == 0) {
         rseed = hz_200 << 16;
@@ -674,7 +674,7 @@ static void xbios_20(LONG ptr)
  *
  */
 
-LONG kbdvbase(void)
+static LONG kbdvbase(void)
 {
     return (LONG) &kbdvecs;
 }
@@ -734,7 +734,7 @@ static void xbios_25(void)
  * with GEMDOS get/set supervisor mode call.
  */
 
-LONG supexec(LONG codeptr)
+static LONG supexec(LONG codeptr)
 {
     return ((LONG(*)(void))codeptr)();
 }

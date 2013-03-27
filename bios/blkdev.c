@@ -33,7 +33,7 @@
  */
 
 BLKDEV blkdev[BLKDEVNUM];
-int blkdevnum;
+static int blkdevnum;
 UNIT devices[UNITSNUM];
 
 static BYTE diskbuf[2*SECTOR_SIZE];     /* buffer for 2 sectors */
@@ -85,7 +85,7 @@ void blkdev_init(void)
 
 /* currently the only valid information in the PUN_INFO is the max_sect_siz */
 /* which is exactly what FreeMiNT was missing and was complaining about... */
-void pun_info_setup(void)
+static void pun_info_setup(void)
 {
     int i;
     BPB *bpb;

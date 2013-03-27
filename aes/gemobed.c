@@ -130,7 +130,7 @@ static WORD find_pos(BYTE *str, WORD pos)
 
 
 
-void pxl_rect(LONG tree, WORD obj, WORD ch_pos, GRECT *pt)
+static void pxl_rect(LONG tree, WORD obj, WORD ch_pos, GRECT *pt)
 {
         GRECT           o;
 
@@ -147,7 +147,7 @@ void pxl_rect(LONG tree, WORD obj, WORD ch_pos, GRECT *pt)
 /*
 *       Routine to redraw the cursor or the field being editted.
 */
-void curfld(LONG tree, WORD obj, WORD new_pos, WORD dist)
+static void curfld(LONG tree, WORD obj, WORD new_pos, WORD dist)
 {
         GRECT           oc, t;
 
@@ -179,7 +179,7 @@ void curfld(LONG tree, WORD obj, WORD new_pos, WORD dist)
 *       range.  The character ranges are
 *       stored as enumerated characters (xyz) or ranges (x..z)
 */
-WORD instr(BYTE chr, BYTE *str)
+static WORD instr(BYTE chr, BYTE *str)
 {
         register BYTE   test1, test2;
 
@@ -204,7 +204,7 @@ WORD instr(BYTE chr, BYTE *str)
 *       Routine to verify that the character matches the validation
 *       string.  If necessary, upshift it.
 */
-WORD check(BYTE *in_char, BYTE valchar)
+static WORD check(BYTE *in_char, BYTE valchar)
 {
         register WORD   upcase;
         register BYTE   *rstr;
@@ -267,7 +267,7 @@ WORD check(BYTE *in_char, BYTE valchar)
 *       Find STart and FiNish of a raw string relative to the template
 *       string.  The start is determined by the InDeX position given.
 */
-void ob_stfn(WORD idx, WORD *pstart, WORD *pfinish)
+static void ob_stfn(WORD idx, WORD *pstart, WORD *pfinish)
 {
         *pstart = find_pos(&D.g_tmpstr[0], idx);
         *pfinish = find_pos(&D.g_tmpstr[0], strlen(&D.g_rawstr[0]) );
@@ -275,7 +275,7 @@ void ob_stfn(WORD idx, WORD *pstart, WORD *pfinish)
 
 
 
-WORD ob_delit(WORD idx)
+static WORD ob_delit(WORD idx)
 {
         if (D.g_rawstr[idx])
         {

@@ -147,7 +147,7 @@ void w_nilit(WORD num, OBJECT olist[])
 *       is added at the end of the parent's current sibling list.
 *       It is also initialized.
 */
-void w_obadd(OBJECT olist[], WORD parent, WORD child)
+static void w_obadd(OBJECT olist[], WORD parent, WORD child)
 {
         register WORD   lastkid;
 
@@ -167,7 +167,7 @@ void w_obadd(OBJECT olist[], WORD parent, WORD child)
 
 
 
-void w_setup(PD *ppd, WORD w_handle, WORD kind)
+static void w_setup(PD *ppd, WORD w_handle, WORD kind)
 {
         register WINDOW *pwin;
 
@@ -181,7 +181,7 @@ void w_setup(PD *ppd, WORD w_handle, WORD kind)
 
 
 
-GRECT *w_getxptr(WORD which, WORD w_handle)
+static GRECT *w_getxptr(WORD which, WORD w_handle)
 {
         /* FIXME: Probably remove the GRECT typecasts in this function */
 
@@ -216,14 +216,13 @@ void w_getsize(WORD which, WORD w_handle, GRECT *pt)
 
 
 
-void w_setsize(WORD which, WORD w_handle, GRECT *pt)
+static void w_setsize(WORD which, WORD w_handle, GRECT *pt)
 {
         rc_copy(pt, w_getxptr(which, w_handle));
 }
 
 
-
-void w_adjust( WORD parent, WORD obj, WORD x, WORD y,  WORD w, WORD h)
+static void w_adjust( WORD parent, WORD obj, WORD x, WORD y,  WORD w, WORD h)
 {
         W_ACTIVE[obj].ob_x = x;
         W_ACTIVE[obj].ob_y = y;
@@ -235,8 +234,8 @@ void w_adjust( WORD parent, WORD obj, WORD x, WORD y,  WORD w, WORD h)
 }
 
 
-void w_hvassign(WORD isvert, WORD parent, WORD obj, WORD vx, WORD vy,
-                WORD hx, WORD hy, WORD w, WORD h)
+static void w_hvassign(WORD isvert, WORD parent, WORD obj, WORD vx, WORD vy,
+                       WORD hx, WORD hy, WORD w, WORD h)
 {
         if ( isvert )
           w_adjust(parent, obj, vx, vy, gl_wbox, h);
@@ -250,7 +249,7 @@ void w_hvassign(WORD isvert, WORD parent, WORD obj, WORD vx, WORD vy,
 *       this window.
 */
 
-void do_walk(WORD wh, LONG tree, WORD obj, WORD depth, GRECT *pc)
+static void do_walk(WORD wh, LONG tree, WORD obj, WORD depth, GRECT *pc)
 {
         register ORECT  *po;
         GRECT           t;
@@ -316,7 +315,7 @@ void w_drawdesk(GRECT *pc)
 }
 
 
-void w_cpwalk(WORD wh, WORD obj, WORD depth, WORD usetrue)
+static void w_cpwalk(WORD wh, WORD obj, WORD depth, WORD usetrue)
 {
         GRECT           c;
                                                 /* start with window's  */
@@ -363,7 +362,7 @@ static void w_clipdraw(WORD wh, WORD obj, WORD depth, WORD usetrue)
 }
 
 
-void  w_strchg(WORD w_handle, WORD obj, LONG pstring)
+static void  w_strchg(WORD w_handle, WORD obj, LONG pstring)
 {
         if ( obj == W_NAME )
           gl_aname.te_ptext = D.w_win[w_handle].w_pname = pstring;
@@ -374,8 +373,8 @@ void  w_strchg(WORD w_handle, WORD obj, LONG pstring)
 }
 
 
-void w_barcalc(WORD isvert, WORD space, WORD sl_value, WORD sl_size,
-               WORD min_sld, GRECT *ptv, GRECT *pth)
+static void w_barcalc(WORD isvert, WORD space, WORD sl_value, WORD sl_size,
+                      WORD min_sld, GRECT *ptv, GRECT *pth)
 {
         if (sl_size == -1)
           sl_size = min_sld;
@@ -397,8 +396,8 @@ void w_barcalc(WORD isvert, WORD space, WORD sl_value, WORD sl_size,
 }
 
 
-void w_bldbar(UWORD kind, WORD istop, WORD w_bar, WORD sl_value, WORD sl_size,
-              WORD x, WORD y, WORD w, WORD h)
+static void w_bldbar(UWORD kind, WORD istop, WORD w_bar, WORD sl_value,
+                     WORD sl_size, WORD x, WORD y, WORD w, WORD h)
 {
         WORD            isvert, obj;
         UWORD           upcmp, dncmp, slcmp;
@@ -626,7 +625,7 @@ void ap_sendmsg(WORD ap_msg[], WORD type, PD *towhom,
 *       Walk down ORECT list and accumulate the union of all the owner
 *       rectangles.
 */
-WORD w_union(ORECT *po, GRECT *pt)
+static WORD w_union(ORECT *po, GRECT *pt)
 {
         if (!po)
           return(FALSE);
@@ -647,7 +646,7 @@ WORD w_union(ORECT *po, GRECT *pt)
 
 
 
-void w_redraw(WORD w_handle, GRECT *pt)
+static void w_redraw(WORD w_handle, GRECT *pt)
 {
         GRECT           t, d;
         PD              *ppd;
@@ -680,7 +679,7 @@ void w_redraw(WORD w_handle, GRECT *pt)
 *       destination blt.  If the source is at -1, then the source
 *       and destination left fringes need to be realigned.
 */
-WORD w_mvfix(GRECT *ps, GRECT *pd)
+static WORD w_mvfix(GRECT *ps, GRECT *pd)
 {
         register WORD   tmpsx;
 
@@ -702,7 +701,7 @@ WORD w_mvfix(GRECT *ps, GRECT *pd)
 *       else the whole desktop to just updated.  All uncovered portions
 *       of the desktop are redrawn by later by calling w_update.
 */
-WORD w_move(WORD w_handle, WORD *pstop, GRECT *prc)
+static WORD w_move(WORD w_handle, WORD *pstop, GRECT *prc)
 {
         GRECT           s;                      /* source               */
         GRECT           d;                      /* destination          */
@@ -819,7 +818,7 @@ void w_update(WORD bottom, GRECT *pt, WORD top, WORD moved, WORD usetrue)
 }
 
 
-void w_setmen(WORD pid)
+static void w_setmen(WORD pid)
 {
         WORD            npid;
 
@@ -858,7 +857,7 @@ static void w_menufix(void)
 *       the rectangle that needs to be cleaned up.
 */
 
-void draw_change(WORD w_handle, GRECT *pt)
+static void draw_change(WORD w_handle, GRECT *pt)
 {
         GRECT           c, pprev;
         register GRECT  *pw;
@@ -1052,7 +1051,7 @@ void draw_change(WORD w_handle, GRECT *pt)
 *       Walk down ORECT list looking for the next rect that still has
 *       size when clipped with the passed in clip rectangle.
 */
-void w_owns(WORD w_handle, ORECT *po, GRECT *pt, WORD *poutwds)
+static void w_owns(WORD w_handle, ORECT *po, GRECT *pt, WORD *poutwds)
 {
         while (po)
         {
@@ -1170,7 +1169,7 @@ WORD wm_create(WORD kind, GRECT *pt)
 /*
 *       Opens or closes a window.
 */
-void wm_opcl(WORD wh, GRECT *pt, WORD isadd)
+static void wm_opcl(WORD wh, GRECT *pt, WORD isadd)
 {
         GRECT           t;
 
@@ -1311,7 +1310,7 @@ static WORD wm_gsizes(WORD w_field, WORD *psl, WORD *psz)
 /*
 *       Routine to top a window and then make the right redraws happen
 */
-void wm_mktop(WORD w_handle)
+static void wm_mktop(WORD w_handle)
 {
         GRECT           t, p;
 

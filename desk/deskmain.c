@@ -1480,7 +1480,7 @@ void centre_title(LONG tree)
 /*
  * translate and fixup desktop objects
  */
-void desk_xlate_fix(void)
+static void desk_xlate_fix(void)
 {
     OBJECT *tree = desk_rs_trees[ADDINFO];
     OBJECT *objlabel = &tree[DELABEL];

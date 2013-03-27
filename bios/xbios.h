@@ -10,12 +10,7 @@
 #ifndef XBIOS_H
 #define XBIOS_H
 
-/* misc XBIOS functions */
-LONG iorec(WORD devno);
-LONG random(void);
-LONG kbdvbase(void);
-LONG supexec(LONG codeptr);
-
+/* used by vectors.S */
 LONG xbios_do_unimpl(WORD number);
 
 #endif /* XBIOS_H */
