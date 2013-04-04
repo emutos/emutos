@@ -4683,3 +4683,8 @@ Start... early ages
 
 2013-03-27
 - *: Static cleanup. Contributed by Eero Tamminen. (VRI)
+
+2013-04-04
+- cli/cmd.h cli/cmdasm.S cli/cmdedit.c cli/cmdexec.c cli/cmdint.c
+  cli/cmdmain.c cli/cmdparse.c cli/cmdutil.c cli/Makefile: Added new
+  (standalone) version of EmuCON. (RFB)
