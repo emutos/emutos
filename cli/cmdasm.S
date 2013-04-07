@@ -17,7 +17,7 @@
 
         .globl  _coma_start
         .globl  _getwh
-        .globl  _cmdmain
+        .extern _cmdmain
 
         .text
 _coma_start:
@@ -36,11 +36,15 @@ _coma_start:
 
         jsr     _cmdmain
 
-        clr.l   -(sp)                   // Pterm0()
+        clr.w   -(sp)                   // Pterm0()
         trap    #1
 
 _getwh:
+#ifdef __mcoldfire__
+        .dc.w   0xa920                  // lineA init
+#else
         .dc.w   0xa000                  // lineA init
+#endif
         move.l  -44(a0),d0              // v_cel_mx/v_cel_my
         rts
 

@@ -4688,3 +4688,6 @@ Start... early ages
 - cli/cmd.h cli/cmdasm.S cli/cmdedit.c cli/cmdexec.c cli/cmdint.c
   cli/cmdmain.c cli/cmdparse.c cli/cmdutil.c cli/Makefile: Added new
   (standalone) version of EmuCON. (RFB)
+
+2013-04-07
+- cli/cmdasm.S: Minor code cleanup. Thanks to Vincent Riviere. (RFB)
