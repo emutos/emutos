@@ -20,7 +20,9 @@ static UWORD old_stdout;
 PRIVATE void add_to_path(char *path,char *name);
 PRIVATE WORD build_cmdline(char *cmdline,WORD argc,char **argv);
 PRIVATE WORD check_user_path(char *path,char *name);
+PRIVATE WORD find_executable(char *fullname,char *name);
 PRIVATE WORD is_graphical(char *name);
+PRIVATE char *program_extension(char *name);
 PRIVATE LONG redirect_stdout(char *redir);
 PRIVATE void restore_stdout(char *redir);
 
@@ -37,8 +39,8 @@ LONG rc;
     if (build_cmdline(cmdline,argc,argv) < 0)
         return CMDLINE_LENGTH;
 
-    if (Fsfirst(argv[0],0x07) == 0)
-        strcpy(path,argv[0]);
+    if (find_executable(path,argv[0]) == 0)
+        ;
     else if (check_user_path(path,argv[0]) < 0)
         return EFILNF;
 
@@ -46,7 +48,7 @@ LONG rc;
     if (rc < 0L)
         return rc;
 
-    if (is_graphical(argv[0]))
+    if (is_graphical(path))
         (void)Cursconf(0,0);
     rc = Pexec(0,path,cmdline,NULL);
     (void)Cursconf(1,0);
@@ -109,14 +111,58 @@ WORD i, len;
  */
 PRIVATE WORD check_user_path(char *path,char *name)
 {
-char *p;
+char temp[MAXPATHLEN], *p;
 
     for (p = user_path; *p; ) {
-        if (get_path_component(&p,path) == 0)
+        if (get_path_component(&p,temp) == 0)
             return -1;
-        add_to_path(path,name);
-        if (Fsfirst(path,0x07) == 0)
+        add_to_path(temp,name);
+        if (find_executable(path,temp) == 0)
             return 0;
+    }
+
+    return -1;
+}
+
+/*
+ *  find executable, adding extension if necessary
+ */
+PRIVATE WORD find_executable(char *fullname,char *name)
+{
+char *p, *q, *dot;
+LONG rc;
+
+    /*
+     *  copy name, adding wildcard if no extension
+     */
+    for (p = fullname, q = name, dot = NULL; *q; ) {
+        switch(*q) {
+        case '.':
+            dot = p;
+            break;
+        case '\\':
+        case ':':
+            dot = NULL;
+            break;
+        }
+        *p++ = *q++;
+    }
+    if (!dot) {
+        dot = p;
+        *p++ = '.';
+        *p++ = '*';
+    }
+    *p = '\0';
+
+    /*
+     *  look for matching executable
+     */
+    for (rc = Fsfirst(fullname,0x07); rc == 0; rc = Fsnext()) {
+        p = program_extension(dta->d_fname);
+        if (p) {
+            strcpy(dot+1,p);
+            return 0;
+        }
     }
 
     return -1;
@@ -127,19 +173,41 @@ char *p;
  */
 PRIVATE WORD is_graphical(char *name)
 {
-char *p, *dot;
+char *p;
 
-    for (p = name, dot = NULL; *p; p++)
-        if (*p == '.')
-            dot = p;
+    for (p = name; *p; p++)
+        ;
+    p -= 4;         /* back up to putative period */
 
-    if (!dot)
+    if (p < name)
         return 0;
 
-    if (strequal(dot+1,"app") || strequal(dot+1,"gtp") || strequal(dot+1,"prg"))
+    if (*p++ != '.')
+        return 0;
+
+    if (strequal(p,"app") || strequal(p,"gtp") || strequal(p,"prg"))
         return 1;
 
     return 0;
+}
+
+/*
+ *  return pointer to file extension iff a program
+ *  input is assumed to be name or name.ext
+ */
+PRIVATE char *program_extension(char *name)
+{
+char *p;
+
+    for (p = name; *p; ) {
+        if (*p++ == '.') {
+            if (strequal(p,"app") || strequal(p,"gtp") || strequal(p,"prg")
+             || strequal(p,"tos") || strequal(p,"ttp"))
+                return p;
+        }
+    }
+
+    return NULL;        
 }
 
 /*
