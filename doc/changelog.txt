@@ -4693,3 +4693,6 @@ Start... early ages
 - cli/cmdasm.S: Minor code cleanup. Thanks to Vincent Riviere. (RFB)
 - cli/cmdexec.c: Formatting: change tabs to spaces, add GPL. (RFB)
 - cli/cmdexec.c: Execute programs even if file extension is omitted. (RFB)
+
+2013-04-13
+- cli/cmdexec.c: Fix line endings. (RFB)
