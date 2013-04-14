@@ -22,19 +22,22 @@ LOCAL char *history_line[HISTORY_SIZE];
  *  function prototypes
  */
 PRIVATE void delete_char(char *line,WORD pos,WORD len,WORD backspace);
-PRIVATE WORD edit_line(char *line,WORD *pos,WORD *len,UWORD scancode);
+PRIVATE WORD edit_line(char *line,WORD *pos,WORD *len,WORD scancode,WORD prevcode);
 PRIVATE void erase_line(char *start,WORD len);
+PRIVATE LONG getfirstnondot(char *buffer);
 PRIVATE WORD next_history(char *line);
 PRIVATE WORD next_word_count(char *line,WORD pos,WORD len);
 PRIVATE WORD previous_history(char *line);
 PRIVATE WORD previous_word_count(char *line,WORD pos);
 PRIVATE WORD replace_line(char *line,WORD num);
+PRIVATE char *start_of_current_word(char *line,WORD pos);
 
 void read_line(char *line)
 {
 LONG charcode;
 char c;
-UWORD save_history_num, scancode;
+UWORD save_history_num;
+WORD scancode, prevcode = 0;
 WORD pos = 0, len = 0;
 char prompt[] = "X:>";
 
@@ -47,7 +50,8 @@ char prompt[] = "X:>";
         scancode = ((charcode >> 8) | charcode) & 0xffff;
 
         /* check for line-editing key & handle if so */
-        if (edit_line(line,&pos,&len,scancode) == 0)
+        prevcode = edit_line(line,&pos,&len,scancode,prevcode);
+        if (prevcode >= 0)
             continue;
 
         /* if any other non-ASCII key, ignore */
@@ -77,69 +81,6 @@ char prompt[] = "X:>";
     }
 
     history_num = save_history_num;
-}
-
-/*
- *  top level line editing routine
- */
-PRIVATE WORD edit_line(char *line,WORD *pos,WORD *len,UWORD scancode)
-{
-WORD n, shift = 0;
-
-    switch(scancode) {
-    case UPARROW:
-        if (history_num >= 0) {
-            erase_line(line,*len);
-            *pos = *len = previous_history(line);
-        }
-        break;
-    case DNARROW:
-        if (history_num >= 0) {
-            erase_line(line,*len);
-            *pos = *len = next_history(line);
-        }
-        break;
-    case LTARROW_SHFT:
-        shift = 1;
-    case LTARROW:
-        if (*pos > 0) {
-            n = shift ? previous_word_count(line,*pos) : 1;
-            while (n-- > 0) {
-                (*pos)--;
-                cursor_left();
-            }
-        }
-        break;
-    case RTARROW_SHFT:
-        shift = 1;
-    case RTARROW:
-        if (*pos < *len) {
-            n = shift ? next_word_count(line,*pos,*len) : 1;
-            while (n-- > 0) {
-                (*pos)++;
-                cursor_right();
-            }
-        }
-        break;
-    case BKSP:          /* delete char to left of cursor */
-        if (*pos > 0) {
-            delete_char(line,*pos,*len,1);
-            (*pos)--;
-            (*len)--;
-        }
-        break;
-    case DEL:           /* delete char at cursor */
-        if (*pos < *len) {
-            delete_char(line,*pos,*len,0);
-            (*len)--;
-        }
-        break;
-    default:
-        return -1;      /* we didn't process this key */
-        break;
-    }
-
-    return 0;           /* we processed this key */
 }
 
 /*
@@ -199,6 +140,102 @@ void save_history(char *line)
 
     if (++history_num >= HISTORY_SIZE)
         history_num = 0;
+}
+
+/*
+ *  top level line editing routine
+ */
+PRIVATE WORD edit_line(char *line,WORD *pos,WORD *len,WORD scancode,WORD prevcode)
+{
+char buffer[MAXPATHLEN];
+char *start, *p, *q;
+LONG rc;
+WORD n, shift = 0;
+
+    switch(scancode) {
+    case UPARROW:
+        if (history_num >= 0) {
+            erase_line(line,*len);
+            *pos = *len = previous_history(line);
+        }
+        break;
+    case DNARROW:
+        if (history_num >= 0) {
+            erase_line(line,*len);
+            *pos = *len = next_history(line);
+        }
+        break;
+    case LTARROW_SHFT:
+        shift = 1;
+    case LTARROW:
+        if (*pos > 0) {
+            n = shift ? previous_word_count(line,*pos) : 1;
+            while (n-- > 0) {
+                (*pos)--;
+                cursor_left();
+            }
+        }
+        break;
+    case RTARROW_SHFT:
+        shift = 1;
+    case RTARROW:
+        if (*pos < *len) {
+            n = shift ? next_word_count(line,*pos,*len) : 1;
+            while (n-- > 0) {
+                (*pos)++;
+                cursor_right();
+            }
+        }
+        break;
+    case BKSP:          /* delete char to left of cursor */
+        if (*pos > 0) {
+            delete_char(line,*pos,*len,1);
+            (*pos)--;
+            (*len)--;
+        }
+        break;
+    case DEL:           /* delete char at cursor */
+        if (*pos < *len) {
+            delete_char(line,*pos,*len,0);
+            (*len)--;
+        }
+        break;
+    case TAB:           /* tab completion */
+        start = start_of_current_word(line,*pos);
+        if (start+sizeof(dta->d_fname)-line >= linesize)
+            break;
+        if (prevcode == TAB) {
+            rc = Fsnext();
+            if (rc < 0L) {              /* assume no more files */
+                erase_line(line,*len);  /* blank out line */
+                *pos = *len = 0;
+                scancode = 0;
+            }
+        } else {
+            for (p = start, q = buffer; p < line+*pos; )
+                *q++ = *p++;
+            *q++ = '*';
+            *q++ = '.';
+            *q++ = '*';
+            *q = '\0';
+            rc = getfirstnondot(buffer);
+        }
+        if (rc == 0L) {
+            erase_line(start,*pos-(start-line));
+            for (q = start, p = dta->d_fname; *p; ) {
+                conout(*p);
+                *q++ = *p++;
+            }
+            *q = '\0';
+            *pos = *len = q - line;
+        }
+        break;
+    default:
+        return -1;      /* we didn't process this key */
+        break;
+    }
+
+    return scancode;    /* we processed this key */
 }
 
 /*
@@ -308,6 +345,22 @@ char *p, *q;
 }
 
 /*
+ *  return pointer to start of the current word
+ */
+PRIVATE char *start_of_current_word(char *line,WORD pos)
+{
+char *p;
+
+    for (p = line+pos; p > line; p--) {
+        if (*p == ' ')
+            return p + 1;
+    }
+
+    /* no spaces found, so start of line */
+    return line;
+}
+
+/*
  *  return the number of characters to the start of the
  *  next word
  */
@@ -345,4 +398,20 @@ WORD gotword = 0;
 
     /* no spaces found, so count to start of line */
     return pos;
+}
+
+/*
+ *  get first file/folder in dir that doesn't start with .
+ */
+PRIVATE LONG getfirstnondot(char *buffer)
+{
+LONG rc;
+
+    for (rc = Fsfirst(buffer,0x17); !rc; rc=Fsnext()) {
+        if (rc < 0L)
+            break;
+        if (dta->d_fname[0] != '.')
+            break;
+    }
+    return rc;
 }

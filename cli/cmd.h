@@ -87,6 +87,7 @@ typedef struct {
 #define DISK_FULL       -102
 #define CMDLINE_LENGTH  -103
 
+#define TAB             0x0f09
 #define BKSP            0x0e08
 #define DEL             0x537f
 #define UPARROW         0x4800

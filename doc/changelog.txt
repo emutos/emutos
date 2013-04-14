@@ -4696,3 +4696,4 @@ Start... early ages
 
 2013-04-13
 - cli/cmdexec.c: Fix line endings. (RFB)
+- cli/cmd.h cli/cmdedit.c: Add command completion. (RFB)
