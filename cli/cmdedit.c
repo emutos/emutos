@@ -207,9 +207,7 @@ WORD n, shift = 0;
         if (prevcode == TAB) {
             rc = Fsnext();
             if (rc < 0L) {              /* assume no more files */
-                erase_line(line,*len);  /* blank out line */
-                *pos = *len = 0;
-                scancode = 0;
+                rc = getfirstnondot(buffer);/* go round again */
             }
         } else {
             for (p = start, q = buffer; p < line+*pos; )
