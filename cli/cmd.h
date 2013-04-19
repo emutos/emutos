@@ -156,6 +156,7 @@ void messagenl(char *msg);
 void output(char *s);
 void outputnl(char *s);
 LONG outputbuf(char *s,LONG len);
+char *program_extension(DTA *dta);
 WORD strequal(char *s1,char *s2);
 char *strlower(char *str);
 char *strupper(char *str);

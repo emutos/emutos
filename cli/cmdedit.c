@@ -24,7 +24,8 @@ LOCAL char *history_line[HISTORY_SIZE];
 PRIVATE void delete_char(char *line,WORD pos,WORD len,WORD backspace);
 PRIVATE WORD edit_line(char *line,WORD *pos,WORD *len,WORD scancode,WORD prevcode);
 PRIVATE void erase_line(char *start,WORD len);
-PRIVATE LONG getfirstnondot(char *buffer);
+PRIVATE LONG getfirstnondot(char *buffer,WORD executable_only);
+PRIVATE LONG getnextfile(WORD executable_only);
 PRIVATE WORD next_history(char *line);
 PRIVATE WORD next_word_count(char *line,WORD pos,WORD len);
 PRIVATE WORD previous_history(char *line);
@@ -205,9 +206,9 @@ WORD n, shift = 0;
         if (start+sizeof(dta->d_fname)-line >= linesize)
             break;
         if (prevcode == TAB) {
-            rc = Fsnext();
+            rc = getnextfile(start==line);
             if (rc < 0L) {              /* assume no more files */
-                rc = getfirstnondot(buffer);/* go round again */
+                rc = getfirstnondot(buffer,start==line);
             }
         } else {
             for (p = start, q = buffer; p < line+*pos; )
@@ -216,7 +217,7 @@ WORD n, shift = 0;
             *q++ = '.';
             *q++ = '*';
             *q = '\0';
-            rc = getfirstnondot(buffer);
+            rc = getfirstnondot(buffer,start==line);
         }
         if (rc == 0L) {
             erase_line(start,*pos-(start-line));
@@ -401,15 +402,39 @@ WORD gotword = 0;
 /*
  *  get first file/folder in dir that doesn't start with .
  */
-PRIVATE LONG getfirstnondot(char *buffer)
+PRIVATE LONG getfirstnondot(char *buffer,WORD executable_only)
 {
 LONG rc;
 
     for (rc = Fsfirst(buffer,0x17); !rc; rc=Fsnext()) {
         if (rc < 0L)
             break;
-        if (dta->d_fname[0] != '.')
+        if (dta->d_fname[0] == '.') /* ignore . & .. */
+            continue;
+        if (!executable_only)
+            break;
+        /* got filename, need to check for executable */
+        if (program_extension(dta))
             break;
     }
+    return rc;
+}
+
+/*
+ *  get next file
+ */
+PRIVATE LONG getnextfile(WORD executable_only)
+{
+LONG rc;
+
+    while(1) {
+        rc = Fsnext();
+        if ((rc < 0L) || !executable_only)
+            break;
+        /* got filename, need to check for executable */
+        if (program_extension(dta))
+            break;
+    }
+
     return rc;
 }

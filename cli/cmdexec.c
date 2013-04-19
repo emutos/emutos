@@ -22,7 +22,6 @@ PRIVATE WORD build_cmdline(char *cmdline,WORD argc,char **argv);
 PRIVATE WORD check_user_path(char *path,char *name);
 PRIVATE WORD find_executable(char *fullname,char *name);
 PRIVATE WORD is_graphical(char *name);
-PRIVATE char *program_extension(char *name);
 PRIVATE LONG redirect_stdout(char *redir);
 PRIVATE void restore_stdout(char *redir);
 
@@ -158,7 +157,7 @@ LONG rc;
      *  look for matching executable
      */
     for (rc = Fsfirst(fullname,0x07); rc == 0; rc = Fsnext()) {
-        p = program_extension(dta->d_fname);
+        p = program_extension(dta);
         if (p) {
             strcpy(dot+1,p);
             return 0;
@@ -189,25 +188,6 @@ char *p;
         return 1;
 
     return 0;
-}
-
-/*
- *  return pointer to file extension iff a program
- *  input is assumed to be name or name.ext
- */
-PRIVATE char *program_extension(char *name)
-{
-char *p;
-
-    for (p = name; *p; ) {
-        if (*p++ == '.') {
-            if (strequal(p,"app") || strequal(p,"gtp") || strequal(p,"prg")
-             || strequal(p,"tos") || strequal(p,"ttp"))
-                return p;
-        }
-    }
-
-    return NULL;        
 }
 
 /*

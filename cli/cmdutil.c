@@ -393,6 +393,27 @@ char *p;
 }
 
 /*
+ *  return pointer to file extension iff a program
+ */
+char *program_extension(DTA *dta)
+{
+char *p;
+
+    if (dta->d_attrib & 0x10)   /* a folder */
+        return NULL;
+
+    for (p = dta->d_fname; *p; ) {
+        if (*p++ == '.') {
+            if (strequal(p,"app") || strequal(p,"gtp") || strequal(p,"prg")
+             || strequal(p,"tos") || strequal(p,"ttp"))
+                return p;
+        }
+    }
+
+    return NULL;        
+}
+
+/*
  *  compare strings for equality, ignoring case
  *
  *  returns 1 iff strings equal

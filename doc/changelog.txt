@@ -4700,3 +4700,8 @@ Start... early ages
 
 2013-04-14
 - cli/cmdedit.c: Improve command completion. (RFB)
+
+2013-04-18
+- cli/cmd.h cli/cmdedit.c cli/cmdexec.c cli/cmdutil.c: Command
+  completion for first word in line only includes executable
+  programs. (RFB)
