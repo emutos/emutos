@@ -17,6 +17,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+/*#define ENABLE_KDEBUG*/
 
 #include "config.h"
 #include "portab.h"
@@ -61,7 +62,7 @@
 
 /*==== Defines ============================================================*/
 
-#define DBGBIOS 0               /* If you want debugging output */
+#define DBGBIOS 0               /* If you want to enable debug wrappers */
 #define DBGAUTOBOOT 0           /* If you want to see AUTO folder loading */
 
 /*==== External declarations ==============================================*/
@@ -174,9 +175,7 @@ static void bios_init(void)
     amiga_uaelib_init();
 #endif
 
-#if DBGBIOS
-    kprintf("beginning of BIOS init\n");
-#endif
+    KDEBUG(("beginning of BIOS init\n"));
 
     /* Initialize the processor */
     processor_init();   /* Set CPU type, longframe and FPU type */
@@ -297,9 +296,7 @@ static void bios_init(void)
     /* Enable VBL processing */
     vblsem = 1;
 
-#if DBGBIOS
-    kprintf("BIOS: Last test point reached ...\n");
-#endif
+    KDEBUG(("BIOS: Last test point reached ...\n"));
 
 #if CONF_WITH_CARTRIDGE
     {
@@ -411,11 +408,11 @@ static void autoexec(void)
         strcat(path, dta.name);
 
 #if DBGAUTOBOOT
-        kprintf("Loading %s ...\n", path);
+        KDEBUG(("Loading %s ...\n", path));
 #endif
         trap1_pexec(0, path, "", null_env);   /* Pexec */
 #if DBGAUTOBOOT
-        kprintf("[OK]\n");
+        KDEBUG(("[OK]\n"));
 #endif
 
         /* Setdta. BetaDOS corrupted the AUTO load if the Setdta
@@ -716,11 +713,11 @@ LONG lrwabs(WORD r_w, LONG adr, WORD numb, WORD first, WORD drive, LONG lfirst)
 static LONG bios_4(WORD r_w, LONG adr, WORD numb, WORD first, WORD drive, LONG lfirst)
 {
     LONG ret;
-    kprintf("BIOS rwabs(rw = %d, addr = 0x%08lx, count = 0x%04x, "
+    KDEBUG(("BIOS rwabs(rw = %d, addr = 0x%08lx, count = 0x%04x, "
             "sect = 0x%04x, dev = 0x%04x, lsect = 0x%08lx)",
-            r_w, adr, numb, first, drive, lfirst);
+            r_w, adr, numb, first, drive, lfirst));
     ret = lrwabs(r_w, adr, numb, first, drive, lfirst);
-    kprintf(" = 0x%08lx\n", ret);
+    KDEBUG((" = 0x%08lx\n", ret));
     return ret;
 }
 #endif
@@ -748,7 +745,7 @@ LONG setexec(WORD num, LONG vector)
 static LONG bios_5(WORD num, LONG vector)
 {
     LONG ret = setexec(num, vector);
-    kprintf("Bios 5: Setexec(num = 0x%x, vector = 0x%08lx)\n", num, vector);
+    KDEBUG(("Bios 5: Setexec(num = 0x%x, vector = 0x%08lx)\n", num, vector));
     return ret;
 }
 #endif
@@ -912,9 +909,7 @@ static LONG bios_b(WORD flag)
 
 LONG bios_do_unimpl(WORD number)
 {
-#if DBGBIOS
-    kprintf("unimplemented BIOS function 0x%02x\n", number);
-#endif
+    KINFO(("unimplemented BIOS function 0x%02x\n", number));
     return number;
 }
 
