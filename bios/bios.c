@@ -165,43 +165,56 @@ static void vecs_init(void)
 
 static void bios_init(void)
 {
+    KDEBUG(("bios_init()\n"));
+
     /* initialize Native Features, if available
      * do it as soon as possible so that kprintf can make use of them
      */
 #if DETECT_NATIVE_FEATURES
+    KDEBUG(("natfeat_init()\n"));
     natfeat_init();
 #endif
 #if CONF_WITH_UAE
+    KDEBUG(("amiga_uaelib_init()\n"));
     amiga_uaelib_init();
 #endif
 
-    KDEBUG(("beginning of BIOS init\n"));
-
     /* Initialize the processor */
+    KDEBUG(("processor_init()\n"));
     processor_init();   /* Set CPU type, longframe and FPU type */
+    KDEBUG(("vecs_init()\n"));
     vecs_init();        /* setup all exception vectors (above) */
+    KDEBUG(("init_delay()\n"));
     init_delay();       /* set 'reasonable' default values for delay */
 
     /* Detect optional hardware (video, sound, etc.) */
+    KDEBUG(("machine_detect()\n"));
     machine_detect();   /* detect hardware */
+    KDEBUG(("machine_init()\n"));
     machine_init();     /* initialise machine-specific stuff */
 
     /* Initialize the screen */
+    KDEBUG(("screen_init()\n"));
     screen_init();      /* detect monitor type, ... */
 
     /* Initialize the BIOS memory management */
+    KDEBUG(("bmem_init()\n"));
     bmem_init();        /* this must be done after screen_init() */
 
+    KDEBUG(("cookie_init()\n"));
     cookie_init();      /* sets a cookie jar */
+    KDEBUG(("fill_cookie_jar()\n"));
     fill_cookie_jar();  /* detect hardware features and fill the cookie jar */
 
     /* Set up the BIOS console output */
+    KDEBUG(("linea_init()\n"));
     linea_init();       /* initialize screen related line-a variables */
     font_init();        /* initialize font ring (requires cookie_akp) */
     font_set_default(); /* set default font */
     vt52_init();        /* initialize the vt52 console */
 
     /* Now kcprintf() will also send debug info to the screen */
+    KDEBUG(("after vt52_init()\n"));
 
     /* misc. variables */
     dumpflg = -1;
@@ -222,15 +235,19 @@ static void bios_init(void)
     }
 
 #if CONF_WITH_MFP
+    KDEBUG(("mfp_init()\n"));
     mfp_init();
 #endif
 
     /* Initialize the system 200 Hz timer */
+    KDEBUG(("init_system_timer()\n"));
     init_system_timer();
 
     /* Initialize the RS-232 port(s) */
+    KDEBUG(("chardev_init()\n"));
     chardev_init();     /* Initialize low-memory bios vectors */
     boot_status |= CHARDEV_AVAILABLE;   /* track progress */
+    KDEBUG(("init_serport()\n"));
     init_serport();
     boot_status |= RS232_AVAILABLE;     /* track progress */
 #if CONF_WITH_SCC
@@ -242,17 +259,23 @@ static void bios_init(void)
      * because of dosound stuff in the timer C interrupt routine.
      */
 #if CONF_WITH_DMASOUND
+    KDEBUG(("dmasound_init()\n"));
     dmasound_init();
 #endif
+    KDEBUG(("snd_init()\n"));
     snd_init();         /* Reset Soundchip, deselect floppies */
 
     /* Init the two ACIA devices (MIDI and KBD). The three actions below can
      * be done in any order provided they happen before allowing MFP
      * interrupts.
      */
+    KDEBUG(("kbd_init()\n"));
     kbd_init();         /* init keyboard, disable mouse and joystick */
+    KDEBUG(("midi_init()\n"));
     midi_init();        /* init MIDI acia so that kbd acia irq works */
+    KDEBUG(("init_acia_vecs()\n"));
     init_acia_vecs();   /* Init the ACIA interrupt vector and related stuff */
+    KDEBUG(("after init_acia_vecs()\n"));
     boot_status |= MIDI_AVAILABLE;  /* track progress */
 
     /* Now we can enable the interrupts.
@@ -266,17 +289,24 @@ static void bios_init(void)
     set_sr(0x2000);
 #endif
 
+    KDEBUG(("calibrate_delay()\n"));
     calibrate_delay();  /* determine values for delay() function */
                         /*  - requires interrupts to be enabled  */
+    KDEBUG(("blkdev_init()\n"));
     blkdev_init();      /* floppy and harddisk initialisation */
+    KDEBUG(("after blkdev_init()\n"));
 
     /* initialize BIOS components */
 
+    KDEBUG(("parport_init()\n"));
     parport_init();     /* parallel port */
     //mouse_init();     /* init mouse driver */
+    KDEBUG(("clock_init()\n"));
     clock_init();       /* init clock */
+    KDEBUG(("after clock_init()\n"));
 
 #if CONF_WITH_NLS
+    KDEBUG(("nls_init()\n"));
     nls_init();         /* init native language support */
     nls_set_lang(get_lang_name());
 #endif
@@ -290,13 +320,13 @@ static void bios_init(void)
     exec_os = NULL;
 #endif
 
+    KDEBUG(("osinit()\n"));
     osinit();                   /* initialize BDOS */
+    KDEBUG(("after osinit()\n"));
     boot_status |= DOS_AVAILABLE;   /* track progress */
 
     /* Enable VBL processing */
     vblsem = 1;
-
-    KDEBUG(("BIOS: Last test point reached ...\n"));
 
 #if CONF_WITH_CARTRIDGE
     {
@@ -307,7 +337,9 @@ static void bios_init(void)
      * for GEMDOS drive emulation. It will hack drvbits and hook Pexec().
      * It will also hack Line A variables to enable extended VDI video modes.
      */
+    KDEBUG(("run_cartridge_applications(3)\n"));
     run_cartridge_applications(3); /* Type "Execute prior to bootdisk" */
+    KDEBUG(("after run_cartridge_applications()\n"));
 
     if ((v_hz_rez != save_hz) || (v_vt_rez != save_vt) || (v_planes != save_pl))
         set_rez_hacked();
@@ -319,14 +351,20 @@ static void bios_init(void)
 #if CONF_WITH_FASTRAM
     /* add TT-RAM that was detected in memory.S */
     if (ramtop > 0x1000000)
+    {
+        KDEBUG(("xmaddalt()\n"));
         xmaddalt( 0x1000000, ramtop - 0x1000000);
+    }
 #endif
 
 #ifdef MACHINE_AMIGA
+    KDEBUG(("amiga_add_alt_ram()\n"));
     amiga_add_alt_ram();
 #endif
 
 #endif /* CONF_WITH_ALT_RAM */
+
+    KDEBUG(("bios_init() end\n"));
 }
 
 
