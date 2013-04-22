@@ -4705,3 +4705,6 @@ Start... early ages
 - cli/cmd.h cli/cmdedit.c cli/cmdexec.c cli/cmdutil.c: Command
   completion for first word in line only includes executable
   programs. (RFB)
+
+2013-04-22
+- include/config.h include/kprint.h: Added KDEBUG(()) and KINFO(()). (VRI)

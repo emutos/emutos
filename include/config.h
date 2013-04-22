@@ -872,6 +872,13 @@
 #define MIDI_DEBUG_PRINT 0
 #endif
 
+/* Determine if kprintf() is available */
+#if CONF_WITH_UAE || DETECT_NATIVE_FEATURES || STONX_NATIVE_PRINT || DETECT_NATIVE_PRINT || MIDI_DEBUG_PRINT || RS232_DEBUG_PRINT || SCC_DEBUG_PRINT
+#define HAS_KPRINTF 1
+#else
+#define HAS_KPRINTF 0
+#endif
+
 /*
  * Miscellaneous definitions that apply to more than one EmuTOS subsystem
  */

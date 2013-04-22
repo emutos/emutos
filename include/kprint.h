@@ -52,6 +52,20 @@ extern void doassert(const char *, long, const char *, const char *);
 #define assert(a) do { } while (0)
 #endif
 
+/* INFO(()) outputs to the debugger, if kprintf() is available */
+#if HAS_KPRINTF
+#define KINFO(args) kprintf args
+#else
+#define KINFO(args)
+#endif
+
+/* KDEBUG(()) may call KINFO(()) when locally enabled */
+#ifdef ENABLE_KDEBUG
+#define KDEBUG(args) KINFO(args)
+#else
+#define KDEBUG(args)
+#endif
+
 /* functions below implemented in panicasm.S */
 
 /* print a panic message both via kprintf and cprintf, then halt */
