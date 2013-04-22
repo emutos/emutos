@@ -4708,3 +4708,4 @@ Start... early ages
 
 2013-04-22
 - include/config.h include/kprint.h: Added KDEBUG(()) and KINFO(()). (VRI)
+- bios/disk.c: Always display partition information with KINFO(()). (VRI)
