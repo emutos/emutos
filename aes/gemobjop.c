@@ -22,7 +22,7 @@
 #include "compat.h"
 #include "obdefs.h"
 #include "kprint.h"
-
+#include "gemobjop.h"
 
 
 BYTE ob_sst(LONG tree, WORD obj, LONG *pspec, WORD *pstate, WORD *ptype,

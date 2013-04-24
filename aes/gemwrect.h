@@ -14,8 +14,8 @@ extern ORECT    *rul;
 extern ORECT    gl_mkrect;
 
 
-void or_start();
-ORECT *get_orect();
+void or_start(void);
+ORECT *get_orect(void);
 void mkrect(LONG tree, WORD wh);
 void newrect(LONG tree, WORD wh);
 

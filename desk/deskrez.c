@@ -27,6 +27,7 @@
 #include "deskbind.h"
 #include "deskglob.h"
 #include "deskinf.h"
+#include "deskrez.h"
 
 #include "xbiosbind.h"
 #include "machine.h"    /* for has_videl etc */

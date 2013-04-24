@@ -27,6 +27,7 @@
 #include "gemrslib.h"
 #include "rectfunc.h"
 #include "optimopt.h"
+#include "optimize.h"
 
 #include "string.h"
 #include "xbiosbind.h"

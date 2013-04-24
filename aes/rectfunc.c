@@ -8,6 +8,8 @@
 #include "config.h"
 #include "portab.h"
 #include "obdefs.h"
+#include "rectfunc.h"
+
 
 /*--------------------------------------*/
 /*      inside                          */

@@ -26,7 +26,7 @@
 #include "blkdev.h"
 #include "string.h"
 #include "kprint.h"
-#include "xbiosbind.h"  /* random() */
+#include "xbiosbind.h"  /* Random() */
 #include "delay.h"
 #include "processor.h"
 #ifdef MACHINE_AMIGA

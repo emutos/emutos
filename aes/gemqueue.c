@@ -26,11 +26,11 @@
 
 #include "optimize.h"
 #include "gemasync.h"
+#include "gemqueue.h"
 
 
 
-
-void doq(WORD donq, PD *p, QPB *m)
+static void doq(WORD donq, PD *p, QPB *m)
 {
         register WORD   n, index;
         register WORD   *om, *nm;

@@ -43,6 +43,7 @@
 #include "icons.h"
 #include "desk1.h"
 #include "intmath.h"
+#include "deskins.h"
 
 #if HAVE_APPL_IBLKS
 static ICONBLK  gl_aib;

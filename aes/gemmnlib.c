@@ -36,6 +36,7 @@
 #include "gemctrl.h"
 #include "gempd.h"
 #include "rectfunc.h"
+#include "gemmnlib.h"
 
 #include "string.h"
 

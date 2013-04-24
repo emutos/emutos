@@ -40,6 +40,7 @@
 #include "deskfun.h"
 #include "deskrsrc.h"
 #include "deskmain.h"
+#include "deskdir.h"
 
 
 #define S_FILL_STYLE            23              /* used in blank_it()   */

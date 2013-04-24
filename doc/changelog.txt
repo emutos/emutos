@@ -4710,3 +4710,8 @@ Start... early ages
 - include/config.h include/kprint.h: Added KDEBUG(()) and KINFO(()). (VRI)
 - bios/disk.c: Always display partition information with KINFO(()). (VRI)
 - bios/bios.c: Added many KDEBUG(()) to track bios_init() progress. (VRI)
+
+2013-04-24
+- aes/*.c desk/*.c bios/delay.c bios/floppy.c: Make sure that each *.c file
+  includes its own *.h to get proper prototype checking. Patch contributed
+  by Eero Tamminen. (THH)

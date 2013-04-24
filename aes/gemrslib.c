@@ -29,6 +29,7 @@
 #include "gemshlib.h"
 #include "gemgraf.h"
 #include "geminit.h"
+#include "gemrslib.h"
 
 #include "string.h"
 #include "nls.h"

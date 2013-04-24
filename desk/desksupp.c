@@ -42,7 +42,7 @@
 #include "deskglob.h"
 #include "deskgraf.h"
 #include "desk1.h"
-
+#include "desksupp.h"
 
 
 /*

@@ -30,6 +30,7 @@
 #include "aesbind.h"
 #include "deskgraf.h"
 #include "deskglob.h"
+#include "deskobj.h"
 
 
 static const OBJECT gl_sampob[2] =

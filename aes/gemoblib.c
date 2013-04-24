@@ -31,6 +31,7 @@
 #include "gemgraf.h"
 #include "optimopt.h"
 #include "rectfunc.h"
+#include "gemoblib.h"
 
 #include "string.h"
 #include "kprint.h"

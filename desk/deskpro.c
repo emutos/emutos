@@ -33,7 +33,7 @@
 #include "aesbind.h"
 #include "deskglob.h"
 #include "desksupp.h"
-
+#include "deskpro.h"
 
 
 WORD pro_chdir(WORD drv, BYTE *ppath)

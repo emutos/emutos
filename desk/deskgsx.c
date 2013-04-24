@@ -42,7 +42,7 @@
 #include "obdefs.h"
 #include "deskgraf.h"
 #include "gsx2.h"
-
+#include "deskgsx.h"
 
 
 void gsx_ncode(WORD code, WORD n, WORD m)

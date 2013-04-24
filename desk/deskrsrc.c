@@ -21,7 +21,7 @@
 #include "portab.h"
 
 #include "aesbind.h"
-
+#include "deskrsrc.h"
 
 #define R_STRING 5
 

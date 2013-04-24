@@ -32,6 +32,7 @@
 #include "gemdos.h"
 #include "geminit.h"
 #include "gemshlib.h"
+#include "gemsclib.h"
 
 #include "string.h"
 

@@ -28,6 +28,7 @@
 #include "deskgsx.h"
 #include "gembind.h"
 #include "aesbind.h"
+#include "deskgraf.h"
 
 
 #define ORGADDR 0x0L

@@ -37,6 +37,7 @@
 #include "deskglob.h"
 #include "desksupp.h"
 #include "deskdir.h"
+#include "deskfun.h"
 
 #include "string.h"
 

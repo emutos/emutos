@@ -19,6 +19,7 @@
 #include "portab.h"
 #include "compat.h"
 #include "asm.h"
+#include "gemdos.h"
 
 
 GLOBAL UWORD    DOS_AX; /* really a "DOS_RET"   */

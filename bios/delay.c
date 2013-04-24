@@ -17,6 +17,7 @@
 #include "mfp.h"
 #include "serport.h"
 #include "processor.h"
+#include "delay.h"
 
 /*
  * initial 1 millisecond delay loop values

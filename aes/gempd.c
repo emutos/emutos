@@ -29,6 +29,7 @@
 #include "gemasm.h"
 #include "optimize.h"
 #include "optimopt.h"
+#include "gempd.h"
 
 #include "string.h"
 

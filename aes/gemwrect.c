@@ -26,6 +26,7 @@
 #include "geminit.h"
 #include "optimize.h"
 #include "rectfunc.h"
+#include "gemwrect.h"
 
 
 #define TOP 0

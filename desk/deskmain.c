@@ -57,6 +57,7 @@
 #include "desk1.h"
 #include "deskrez.h"
 #include "kprint.h"
+#include "deskmain.h"
 
 #define abs(x) ( (x) < 0 ? -(x) : (x) )
 #define menu_text(tree,inum,ptext) (((OBJECT *)(tree)+(inum))->ob_spec = ptext)

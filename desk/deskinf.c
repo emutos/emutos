@@ -37,7 +37,7 @@
 #include "deskgraf.h"
 #include "deskdir.h"
 #include "deskrsrc.h"
-
+#include "deskinf.h"
 
 
 /*

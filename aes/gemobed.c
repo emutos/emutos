@@ -32,6 +32,7 @@
 #include "optimize.h"
 #include "optimopt.h"
 #include "rectfunc.h"
+#include "gemobed.h"
 
 #include "string.h"
 
