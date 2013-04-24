@@ -159,13 +159,6 @@ OBJCOPY = $(TOOLCHAIN_PREFIX)objcopy
 # the native C compiler, for tools
 NATIVECC = gcc -ansi -pedantic $(WARNFLAGS) -W -O
 
-# test target to build all tools
-tools: bug compr erd mkflop mkrom tos-lang-change tounix uncompr
-
-# user tool, not needed in EmuTOS building
-tos-lang-change$(EXE): tools/tos-lang-change.c
-	$(NATIVECC) -o $@ $<
-
 #
 # source code in bios/
 # Note: tosvars.o must be the first object linked.
@@ -675,6 +668,17 @@ TOCLEAN += mkrom$(EXE)
 
 NODEP += mkrom$(EXE)
 mkrom$(EXE): tools/mkrom.c
+	$(NATIVECC) -o $@ $<
+
+# test target to build all tools
+.PHONY: tools
+NODEP += tools
+tools: bug$(EXE) compr$(EXE) erd$(EXE) mkflop$(EXE) mkrom$(EXE) tos-lang-change$(EXE) tounix$(EXE) uncompr$(EXE)
+
+# user tool, not needed in EmuTOS building
+TOCLEAN += tos-lang-change$(EXE)
+NODEP += tos-lang-change$(EXE)
+tos-lang-change$(EXE): tools/tos-lang-change.c
 	$(NATIVECC) -o $@ $<
 
 #

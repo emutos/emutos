@@ -4715,3 +4715,4 @@ Start... early ages
 - aes/*.c desk/*.c bios/delay.c bios/floppy.c: Make sure that each *.c file
   includes its own *.h to get proper prototype checking. Patch contributed
   by Eero Tamminen. (THH)
+- Makefile: Keep "all" as first target. (VRI)
