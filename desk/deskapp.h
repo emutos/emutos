@@ -124,7 +124,6 @@ WSAVE
         WORD    y_save;
         WORD    w_save;
         WORD    h_save;
-        WORD    hsl_save;
         WORD    vsl_save;
         WORD    obid_save;
         BYTE    pth_save[LEN_ZPATH];

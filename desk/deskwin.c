@@ -91,8 +91,6 @@ void win_view(WORD vtype, WORD isort)
         }
         G.g_iwspc = G.g_iwext + G.g_iwint;
         G.g_ihspc = G.g_ihext + G.g_ihint;
-        G.g_incol = (G.g_wfull - gl_wchar) / G.g_iwspc;
-        if( G.g_incol<1 )  G.g_incol = 1;
 }
 
 
@@ -161,11 +159,9 @@ WNODE *win_alloc(void)
           pw->w_obid = 0;
 #endif
           pw->w_root = wob;
-          pw->w_cvcol = 0x0;
           pw->w_cvrow = 0x0;
           pw->w_pncol = (pt->g_w  - gl_wchar) / G.g_iwspc;
           pw->w_pnrow = (pt->g_h - gl_hchar) / G.g_ihspc;
-          pw->w_vncol = 0x0;
           pw->w_vnrow = 0x0;
 #ifdef DESK1
           pw->w_id = wind_create(WINDOW_STYLE, G.g_xdesk, G.g_ydesk,
@@ -261,12 +257,19 @@ WNODE *win_ith(WORD level)
 
 /*
 *       Calculate a bunch of parameters related to how many file objects
-*       will fit in a full-screen window.
+*       will fit in a window.
 */
 static void win_ocalc(WNODE *pwin, WORD wfit, WORD hfit, FNODE **ppstart)
 {
         FNODE           *pf;
         WORD            start, cnt, w_space;
+
+        if (wfit < 1) {     /* this happens when displaying as text */
+          wfit = 1;
+        }
+        if (hfit < 1) {
+          hfit = 1;
+        }
                                                 /* zero out obid ptrs   */
                                                 /*   in flist and count */
                                                 /*   up # of files in   */
@@ -280,24 +283,13 @@ static void win_ocalc(WNODE *pwin, WORD wfit, WORD hfit, FNODE **ppstart)
                                                 /* set windows virtual  */
                                                 /*   number of rows and */
                                                 /*   columns            */
-        pwin->w_vncol = (cnt < G.g_incol) ? cnt : G.g_incol;
-        pwin->w_vnrow = cnt / G.g_incol;
-        if (cnt % G.g_incol)
-          pwin->w_vnrow += 1;
-        if (!pwin->w_vnrow)
-          pwin->w_vnrow++;
-        if (!pwin->w_vncol)
-          pwin->w_vncol++;
+        pwin->w_vnrow = (cnt + wfit - 1) / wfit;
+        if (pwin->w_vnrow < 1)
+          pwin->w_vnrow = 1;
                                                 /* backup cvrow & cvcol */
                                                 /*   to account for     */
                                                 /*   more space in wind.*/
-        if (!wfit)
-          wfit++;
-        w_space = pwin->w_pncol = min(wfit, pwin->w_vncol);
-        while( (pwin->w_vncol - pwin->w_cvcol) < w_space )
-          pwin->w_cvcol--;
-        if (!hfit)
-          hfit++;
+        pwin->w_pncol = wfit;
         w_space = pwin->w_pnrow = min(hfit, pwin->w_vnrow);
         while( (pwin->w_vnrow - pwin->w_cvrow) < w_space )
           pwin->w_cvrow--;
@@ -307,7 +299,7 @@ static void win_ocalc(WNODE *pwin, WORD wfit, WORD hfit, FNODE **ppstart)
                                                 /*   column calculate   */
                                                 /*   the start and stop */
                                                 /*   files              */
-        start = (pwin->w_cvrow * G.g_incol) + pwin->w_cvcol;
+        start = pwin->w_cvrow * pwin->w_pncol;
         pf = pwin->w_path->p_flist;
         while ( (start--) && pf)
           pf = pf->f_next;
@@ -337,14 +329,13 @@ static void win_icalc(FNODE *pfnode)
 
 /*
 *       Build an object tree of the list of files that are currently
-*       viewable in a full-screen virtual window.  Next adjust root of
-*       tree to take into account the current view of the full-screen
-*       through a window on the physical display.
+*       viewable in a window.  Next adjust root of tree to take into
+*       account the current view of the window.
 */
 void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
 {
         FNODE           *pstart;
-        WORD            obid, skipcnt;
+        WORD            obid;
         WORD            r_cnt, c_cnt;
         WORD            o_wfit, o_hfit;         /* object grid          */
         WORD            i_index;
@@ -356,7 +347,7 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
                                                 /*   1st file in current*/
                                                 /*   view               */
         win_ocalc(pwin, w/G.g_iwspc, h/G.g_ihspc, &pstart);
-        o_wfit = min(pwin->w_pncol + 1, pwin->w_vncol - pwin->w_cvcol);
+        o_wfit = pwin->w_pncol;
         o_hfit = min(pwin->w_pnrow + 1, pwin->w_vnrow - pwin->w_cvrow);
         r_cnt = c_cnt = 0;
         while ( (c_cnt < o_wfit) &&
@@ -408,10 +399,6 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
                                                 /*   grid               */
             r_cnt++;
             c_cnt = 0;
-            skipcnt = pwin->w_vncol - o_wfit;
-            while( (skipcnt--) &&
-                   (pstart) )
-              pstart = pstart->f_next;
           }
         }
                                                 /* set slider size &    */
@@ -419,15 +406,7 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
         wh = pwin->w_id;
 /* BugFix       */
 #ifdef DESK1
-        sl_size = mul_div(pwin->w_pncol, 1000, pwin->w_vncol);
-        wind_set(wh, WF_HSLSIZ, sl_size, 0, 0, 0);
-        //wind_get(wh, WF_HSLSIZ, &sl_size, &i, &i, &i);
-        if ( pwin->w_vncol > pwin->w_pncol )
-          sl_value = mul_div(pwin->w_cvcol, 1000,
-                                pwin->w_vncol - pwin->w_pncol);
-        else
-          sl_value = 0;
-        wind_set(wh, WF_HSLIDE, sl_value, 0, 0, 0);
+        wind_set(wh, WF_HSLSIZ, 1000, 0, 0, 0);
 #endif
 /* */
         sl_size = mul_div(pwin->w_pnrow, 1000, pwin->w_vnrow);
@@ -444,37 +423,19 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
 
 /*
 *       Routine to blt the contents of a window based on a new
-*       current row or column
+*       current row
 */
-#ifdef DESK1
-static void win_blt(WNODE *pw, BOOL vertical, WORD newcv)
-#else
 static void win_blt(WNODE *pw, WORD newcv)
-#endif
 {
         WORD            delcv, pn;
         WORD            sx, sy, dx, dy, wblt, hblt, revblt, tmp;
         GRECT           c, t;
-        newcv = max(0, newcv);
 
-#ifdef DESK1
-        if (vertical)
-        {
-#endif
-            newcv = min(pw->w_vnrow - pw->w_pnrow, newcv);
-            pn = pw->w_pnrow;
-            delcv = newcv - pw->w_cvrow;
-            pw->w_cvrow += delcv;
-#ifdef DESK1
-        }
-        else
-        {
-                newcv = min(pw->w_vncol - pw->w_pncol, newcv);
-                pn =pw->w_pncol;
-                delcv = newcv - pw->w_cvcol;
-                pw->w_cvcol += delcv;
-        }
-#endif
+        newcv = max(0, newcv);
+        newcv = min(pw->w_vnrow - pw->w_pnrow, newcv);
+        pn = pw->w_pnrow;
+        delcv = newcv - pw->w_cvrow;
+        pw->w_cvrow += delcv;
         if (!delcv)
           return;
         wind_get(pw->w_id, WF_WXYWH, &c.g_x, &c.g_y, &c.g_w, &c.g_h);
@@ -493,26 +454,11 @@ static void win_blt(WNODE *pw, WORD newcv)
           {
                                                 /* see how much there is*/
                                                 /* pretend blt up       */
-#ifdef DESK1
-            if (vertical)       /* DESKTOP v1.2 handle horizontal scrolling */
-            {
-#endif
             sx = dx = 0;
             sy = delcv * G.g_ihspc;
             dy = 0;
             wblt = c.g_w;
             hblt = c.g_h - sy;
-#ifdef DESK1
-            }
-            else
-            {
-                sy = dy = 0;
-                sx = delcv * G.g_iwspc;
-                dx = 0;
-                wblt = c.g_w - sx;
-                hblt = c.g_h;
-            }
-#endif
             if (revblt)
             {
               tmp = sx;
@@ -525,21 +471,10 @@ static void win_blt(WNODE *pw, WORD newcv)
             gsx_sclip(&c);
             bb_screen(S_ONLY, sx+c.g_x, sy+c.g_y, dx+c.g_x, dy+c.g_y,
                         wblt, hblt);
-#ifdef DESK1
-            if (vertical)       /* DESKTOP v1.2 bidirectional */
-            {
-#endif
+
             if (!revblt)
               c.g_y += hblt;
             c.g_h -= hblt;
-#ifdef DESK1
-            }
-            else
-            {
-                if (!revblt)  c.g_x += wblt;
-                c.g_w -= wblt;
-            }
-#endif
           }
         }
         do_wredraw(pw->w_id, c.g_x, c.g_y, c.g_w, c.g_h);
@@ -547,35 +482,9 @@ static void win_blt(WNODE *pw, WORD newcv)
 
 
 /*
-*       Routine to change the current virtual row or column being viewed
+*       Routine to change the current virtual row being viewed
 *       in the upper left corner based on a new slide amount.
 */
-#ifdef DESK1
-void win_slide(WORD wh, WORD sl_value, WORD vertical)
-{
-        WNODE           *pw;
-        WORD            newcv;
-        WORD            vn, pn, i, sls, sl_size;
-
-        pw = win_find(wh);
-
-        if (vertical)
-        {
-                vn = pw->w_vnrow;
-                pn = pw->w_pnrow;
-                sls = WF_VSLSIZ;
-        }
-        else
-        {
-                vn = pw->w_vncol;
-                pn = pw->w_pncol;
-                sls = WF_HSLSIZ;
-        }
-        wind_get(wh, sls, &sl_size, &i, &i, &i);
-        newcv = mul_div(sl_value, vn - pn, 1000);
-        win_blt(pw, vertical, newcv);
-}
-#else
 void win_slide(WORD wh, WORD sl_value)
 {
         WNODE           *pw;
@@ -591,20 +500,16 @@ void win_slide(WORD wh, WORD sl_value)
         newcv = mul_div(sl_value, vn - pn, 1000);
         win_blt(pw, newcv);
 }
-#endif
 
 
 /*
-*       Routine to change the current virtual row or column being viewed
+*       Routine to change the current virtual row being viewed
 *       in the upper left corner based on a new slide amount.
 */
 void win_arrow(WORD wh, WORD arrow_type)
 {
         WNODE           *pw;
         WORD            newcv;
-#ifdef DESK1
-        BOOL            vertical = TRUE;
-#endif
 
         newcv = 0;
         pw = win_find(wh);
@@ -623,30 +528,8 @@ void win_arrow(WORD wh, WORD arrow_type)
           case WA_DNLINE:
                 newcv = pw->w_cvrow + 1;
                 break;
-#ifdef DESK1
-          case WA_LFPAGE:
-            newcv = pw->w_cvcol - pw->w_pncol;
-            vertical = FALSE;
-            break;
-          case WA_RTPAGE:
-            newcv = pw->w_cvcol + pw->w_pncol;
-            vertical = FALSE;
-            break;
-          case WA_LFLINE:
-            newcv = pw->w_cvcol - 1;
-            vertical = FALSE;
-            break;
-          case WA_RTLINE:
-            newcv = pw->w_cvcol + 1;
-            vertical = FALSE;
-            break;
-#endif
         }
-#ifdef DESK1
-        win_blt(pw, vertical, newcv);
-#else
         win_blt(pw, newcv);
-#endif
 }
 
 

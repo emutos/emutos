@@ -4716,3 +4716,6 @@ Start... early ages
   includes its own *.h to get proper prototype checking. Patch contributed
   by Eero Tamminen. (THH)
 - Makefile: Keep "all" as first target. (VRI)
+- desk/deskapp.c desk/deskapp.h desk/deskbind.h desk/deskmain.c
+  desk/deskwin.c desk/deskwin.h: The number of columns of icons in desktop
+  windows is now dynamically adjusted according to window width. (RFB)

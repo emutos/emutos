@@ -31,11 +31,9 @@ WNODE
         WORD            w_root;                 /* pseudo root ob. in   */
                                                 /*   gl_screen for this */
                                                 /*   windows objects    */
-        WORD            w_cvcol;                /* current virt. col    */
         WORD            w_cvrow;                /* current virt. row    */
         WORD            w_pncol;                /* physical # of cols   */
         WORD            w_pnrow;                /* physical # of rows   */
-        WORD            w_vncol;                /* virtual # of cols    */
         WORD            w_vnrow;                /* virtual # of rows    */
         PNODE           *w_path;
         BYTE            w_name[LEN_ZPATH];
@@ -60,11 +58,7 @@ void win_top(WNODE *thewin);
 WNODE *win_ontop(void);
 WNODE *win_ith(WORD level);
 void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h);
-#ifdef DESK1
-void win_slide(WORD wh, WORD sl_value, WORD vertical);
-#else
 void win_slide(WORD wh, WORD sl_value);
-#endif
 void win_arrow(WORD wh, WORD arrow_type);
 void win_srtall(void);
 void win_bdall(void);

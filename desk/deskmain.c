@@ -1010,6 +1010,7 @@ WORD hndl_msg(void)
         WORD            change, menu;
 #ifdef DESK1
         WORD            x,y,w,h;
+        WORD            cols, redraw;
 #endif
 
         done = change = menu = FALSE;
@@ -1083,17 +1084,10 @@ WORD hndl_msg(void)
           case WM_ARROWED:
                 win_arrow(G.g_rmsg[3], G.g_rmsg[4]);
                 break;
-#ifndef DESK1
           case WM_VSLID:
                 win_slide(G.g_rmsg[3], G.g_rmsg[4]);
                 break;
-#else
-          case WM_VSLID:
-                win_slide(G.g_rmsg[3], G.g_rmsg[4], TRUE);
-                break;
-          case WM_HSLID:
-                win_slide(G.g_rmsg[3], G.g_rmsg[4], FALSE);
-                break;
+#ifdef DESK1
           case WM_MOVED:
           case WM_SIZED:
                 x = G.g_rmsg[4];
@@ -1102,7 +1096,22 @@ WORD hndl_msg(void)
                 wind_set(G.g_rmsg[3], WF_CXYWH, x, y, G.g_rmsg[6], G.g_rmsg[7]);
                 if (G.g_rmsg[0] == WM_SIZED)
                 {
-                        desk_verify(G.g_rmsg[3], TRUE);
+                    /*
+                     * if our window has shrunk AND we're displaying a
+                     * different number of columns, we need to send a
+                     * redraw message because the AES won't
+                     */
+                    redraw = FALSE;
+                    wind_get(G.g_rmsg[3], WF_PXYWH, &x, &y, &w, &h);
+                    if ((G.g_rmsg[6] <= w) && (G.g_rmsg[7] <= h))
+                        redraw = TRUE;
+                    pw = win_find(G.g_rmsg[3]); /* get ptr to WNODE */
+                    cols = pw->w_pncol;         /* old # cols displayed */
+                    desk_verify(G.g_rmsg[3], TRUE);
+                    if (redraw && (pw->w_pncol != cols)) {
+                        wind_get(G.g_rmsg[3], WF_WXYWH, &x, &y, &w, &h);
+                        fun_msg(WM_REDRAW, G.g_rmsg[3], x, y, w, h);
+                    }
                 }
                 else
                 {
@@ -1152,7 +1161,6 @@ static void cnx_put(void)
                 wind_get(pw->w_id, WF_CXYWH, &pws->x_save, &pws->y_save,
                    &pws->w_save, &pws->h_save);
                 do_xyfix(&pws->x_save, &pws->y_save);
-                pws->hsl_save  = pw->w_cvcol;
                 pws->vsl_save  = pw->w_cvrow;
                 pws->obid_save = pw->w_obid;
                 strcpy(pws->pth_save, pw->w_path->p_spec);
@@ -1171,7 +1179,6 @@ static void cnx_put(void)
           wind_get(pw->w_id, WF_CXYWH, &pws->x_save, &pws->y_save,
                    &pws->w_save, &pws->h_save);
           do_xyfix(&pws->x_save, &pws->y_save);
-          pws->hsl_save = pw->w_cvcol;
           pws->vsl_save = pw->w_cvrow;
           pws->obid_save = 0;
           strcpy(&pws->pth_save[0], pw->w_path->p_spec);
@@ -1198,7 +1205,6 @@ static void cnx_open(WORD idx)
         {
           if (idx == gl_idsiztop)               /* if a window is fulled*/
             gl_whsiztop = pw->w_id;             /*  save the wh         */
-          pw->w_cvcol = pws->hsl_save;
           pw->w_cvrow = pws->vsl_save;
           fpd_parse(&pws->pth_save[0], &drv, &G.g_tmppth[0],
                     &pname[0], &pext[0]);
@@ -1274,7 +1280,6 @@ static void cnx_get(void)
                 {
                         if ((pw = win_alloc(pws->obid_save)))
                         {
-                                pw->w_cvcol = pws->hsl_save;
                                 pw->w_cvrow = pws->vsl_save;
                                 fpd_parse(pws->pth_save, &drv, G.g_tmppth, fname, fext);
                                 do_xyfix(&pws->x_save, &pws->y_save);

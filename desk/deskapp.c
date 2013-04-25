@@ -462,7 +462,7 @@ void app_start(void)
         ANODE           *pa;
         WSAVE           *pws;
         BYTE            *pcurr, *ptmp;
-        WORD            envr, xcnt, ycnt, xcent, wincnt;
+        WORD            envr, xcnt, ycnt, xcent, wincnt, dummy;
 
                                                 /* remember start drive */
         gl_stdrv = dos_gdrv();
@@ -592,7 +592,7 @@ void app_start(void)
                         if ( wincnt < NUM_WNODES )
                         {
                           pws = &G.g_cnxsave.win_save[wincnt];
-                          pcurr = scan_2(pcurr, &pws->hsl_save);
+                          pcurr = scan_2(pcurr, &dummy);
                           pcurr = scan_2(pcurr, &pws->vsl_save);
 /* BugFix       */
 #ifdef DESK1
@@ -737,7 +737,7 @@ void app_save(WORD todisk)
           pws = &G.g_cnxsave.win_save[i];
           ptmp = pws->pth_save;
           pcurr += sprintf(pcurr,"#W %02X %02X %02X %02X %02X %02X %02X",
-                    pws->hsl_save,pws->vsl_save,pws->x_save/gl_wchar,
+                    0,pws->vsl_save,pws->x_save/gl_wchar,
                     pws->y_save/gl_hchar,pws->w_save/gl_wchar,
                     pws->h_save/gl_hchar,pws->obid_save);
           pcurr += sprintf(pcurr," %s@\r\n",(*ptmp!='@')?ptmp:"");

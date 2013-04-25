@@ -63,8 +63,6 @@ GLOBES
 /*GLOBAL*/ WORD         g_ihint;                /*   between item       */
 /*GLOBAL*/ WORD         g_iwspc;                /* w,h of extent of a   */
 /*GLOBAL*/ WORD         g_ihspc;                /*   single iten        */
-/*GLOBAL*/ WORD         g_incol;                /* # of cols in full    */
-                                                /*   window             */
 /*GLOBAL*/ WORD         g_isort;                /* current sort type    */
 
                                                 /* stack of fcb's to use*/
