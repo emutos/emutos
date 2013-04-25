@@ -61,6 +61,8 @@
 #include <string.h>
 #include <limits.h>
 
+#define DEBUG 0
+
 static void fatal(int with_errno, const char *fmt, ...)
 {
   int err = errno;
