@@ -228,9 +228,11 @@ static int atari_partition(int xhdidev)
             }
             else {
                 add_partition(xhdidev, pid, start, size);
-                KINFO((" $%02x\n", type));
+                KINFO((" $%02x", type));
             }
         }
+
+        KINFO(("\n"));
 
         return 1;
     }
