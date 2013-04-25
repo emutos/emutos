@@ -24,6 +24,7 @@
 #include "processor.h"
 #include "chardev.h"
 #include "serport.h"
+#include "coldfire.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif
@@ -172,6 +173,16 @@ static void kprintf_outc_stonx(int c)
 }
 #endif
 
+#if COLDFIRE_DEBUG_PRINT
+static void kprintf_outc_coldfire_rs232(int c)
+{
+    /* Raw terminals usually require CRLF */
+    if ( c == '\n')
+        coldfire_rs232_write_byte('\r');
+
+    coldfire_rs232_write_byte((char)c);
+}
+#endif
 
 static int vkprintf(const char *fmt, va_list ap)
 {
@@ -235,6 +246,10 @@ static int vkprintf(const char *fmt, va_list ap)
             SuperToUser(stacksave);     /* switch back.    */
         return rc;
     }
+#endif
+
+#if COLDFIRE_DEBUG_PRINT
+    return doprintf(kprintf_outc_coldfire_rs232, fmt, ap);
 #endif
 
     /* let us hope nobody is doing 'pretty-print' with kprintf by

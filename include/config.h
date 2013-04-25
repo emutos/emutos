@@ -849,7 +849,7 @@
  * without any native debug print capabilities or real hardware.
  */
 #ifndef RS232_DEBUG_PRINT
-# if CONF_SERIAL_CONSOLE
+# if CONF_SERIAL_CONSOLE && !CONF_WITH_COLDFIRE_RS232
 #  define RS232_DEBUG_PRINT 1
 # else
 #  define RS232_DEBUG_PRINT 0
@@ -872,8 +872,18 @@
 #define MIDI_DEBUG_PRINT 0
 #endif
 
+/* set this to 1 to redirect debug prints on the ColdFire serial port.
+ */
+#ifndef COLDFIRE_DEBUG_PRINT
+# if CONF_SERIAL_CONSOLE && CONF_WITH_COLDFIRE_RS232
+#  define COLDFIRE_DEBUG_PRINT 1
+# else
+#  define COLDFIRE_DEBUG_PRINT 0
+# endif
+#endif
+
 /* Determine if kprintf() is available */
-#if CONF_WITH_UAE || DETECT_NATIVE_FEATURES || STONX_NATIVE_PRINT || DETECT_NATIVE_PRINT || MIDI_DEBUG_PRINT || RS232_DEBUG_PRINT || SCC_DEBUG_PRINT
+#if CONF_WITH_UAE || DETECT_NATIVE_FEATURES || STONX_NATIVE_PRINT || DETECT_NATIVE_PRINT || MIDI_DEBUG_PRINT || RS232_DEBUG_PRINT || SCC_DEBUG_PRINT || COLDFIRE_DEBUG_PRINT
 #define HAS_KPRINTF 1
 #else
 #define HAS_KPRINTF 0
@@ -962,6 +972,12 @@
 # endif
 #endif
 
+#if !CONF_WITH_COLDFIRE_RS232
+# if COLDFIRE_DEBUG_PRINT
+#  error "COLDFIRE_DEBUG_PRINT requires CONF_WITH_COLDFIRE_RS232."
+# endif
+#endif
+
 #if !CONF_SERIAL_CONSOLE
 # if CONF_SERIAL_CONSOLE_ANSI
 #  error "CONF_SERIAL_CONSOLE_ANSI requires CONF_SERIAL_CONSOLE."
@@ -975,6 +991,10 @@
 # if CONF_WITH_AROS
 #  error "CONF_WITH_AROS requires MACHINE_AMIGA."
 # endif
+#endif
+
+#if (MIDI_DEBUG_PRINT + RS232_DEBUG_PRINT + SCC_DEBUG_PRINT + COLDFIRE_DEBUG_PRINT) > 1
+# error "Only one of MIDI_DEBUG_PRINT, RS232_DEBUG_PRINT, SCC_DEBUG_PRINT or COLDFIRE_DEBUG_PRINT must be set to 1."
 #endif
 
 #endif /* CONFIG_H */

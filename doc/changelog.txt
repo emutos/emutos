@@ -4719,3 +4719,6 @@ Start... early ages
 - desk/deskapp.c desk/deskapp.h desk/deskbind.h desk/deskmain.c
   desk/deskwin.c desk/deskwin.h: The number of columns of icons in desktop
   windows is now dynamically adjusted according to window width. (RFB)
+
+2013-04-25
+- bios/kprint.c include/config.h: Added COLDFIRE_DEBUG_PRINT. (VRI)
