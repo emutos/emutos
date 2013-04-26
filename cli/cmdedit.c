@@ -230,7 +230,15 @@ WORD n, shift = 0;
         }
         break;
     default:
-        return -1;      /* we didn't process this key */
+        /* we handle ASCII keys separately because scancodes can vary */
+        switch(scancode & 0xff) {
+        case CTL_C:
+            erase_line(line,*len);
+            *pos = *len = 0;
+            break;
+        default:
+            return -1;  /* we didn't process this key */
+        }
         break;
     }
 

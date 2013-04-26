@@ -4722,3 +4722,5 @@ Start... early ages
 
 2013-04-25
 - bios/kprint.c include/config.h: Added COLDFIRE_DEBUG_PRINT. (VRI)
+- cli/cmdedit.c: In line edit, ctl-C may now be used to cancel the
+  current line. (RFB)
