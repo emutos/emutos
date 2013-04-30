@@ -268,7 +268,8 @@ WORD decode_date_time(char *s,UWORD date,UWORD time)
 {
 WORD year, month, day, hour, minute, second;
 char *p = s;
-char date_sep, ampm;
+char ampm;
+unsigned char date_sep;
 
     date_sep = idt_value & 0xff;            /* date separator */
     if ((date_sep < 0x20) || (date_sep > 0x7f))

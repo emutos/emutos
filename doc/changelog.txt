@@ -4724,3 +4724,7 @@ Start... early ages
 - bios/kprint.c include/config.h: Added COLDFIRE_DEBUG_PRINT. (VRI)
 - cli/cmdedit.c: In line edit, ctl-C may now be used to cancel the
   current line. (RFB)
+
+2013-04-30
+- cli/cmdutil.c: Fix comparison of date_sep. Based on a contribution by
+  Eero Tamminen. (RFB)
