@@ -12,6 +12,7 @@
 #include "config.h"
 #include "portab.h"
 #include "vdi_defs.h"
+#include "lineavars.h"
 #include "asm.h"
 
 
@@ -38,19 +39,19 @@ static void escfn0(Vwk * vwk)
 
 
 /*
- * escfn1 - returns the maximum addressable character cell row and column.
+ * escfn1 - returns the current number of columns and rows
  *
  * outputs:
  *   CONTRL[4] = 2 (# of integers returned)
- *   INTOUT[0] = maximum character cell row
- *   INTOUT[1] = maximum character cell column
+ *   INTOUT[0] = number of rows
+ *   INTOUT[1] = number of columns
  */
 
 static void escfn1(Vwk * vwk)
 {
     CONTRL[4] = 2;              // 2 integers are returned
-    INTOUT[0] = 25;             // write max row number to array
-    INTOUT[1] = 80;             // write max column number to array
+    INTOUT[0] = v_cel_my + 1;
+    INTOUT[1] = v_cel_mx + 1;
 }
 
 
