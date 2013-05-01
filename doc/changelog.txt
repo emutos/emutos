@@ -4731,3 +4731,5 @@ Start... early ages
 - bios/lineavars.h vdi/vdi_esc.c: Fix bug: vq_chcells() returned fixed
   values for rows/cols. (RFB)
   
+2013-05-01
+- doc/status.txt: Updated status of a couple of VDI functions. (RFB)

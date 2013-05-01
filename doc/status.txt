@@ -392,7 +392,7 @@ GEMDOS v0.19 (TOS v2):
  -      vq_cellarray        (not supported by any current VDI driver)
  X      vqin_mode
  X      vqt_fontinfo
- >      vq_chcells
+ T      vq_chcells
  T      v_exit_cur
  X      v_enter_cur
  X      v_curup
@@ -407,7 +407,7 @@ GEMDOS v0.19 (TOS v2):
  X      v_rvon
  X      v_rvoff
  -      vq_curaddress
- >      vq_tabstatus
+ T      vq_tabstatus
  -      v_hardcopy
  X      v_dspcur
  X      v_rmcur
