@@ -13,6 +13,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+/*#define ENABLE_KDEBUG*/
+
 #include "config.h"
 #include "machine.h"
 #include "screen.h"
@@ -29,8 +31,6 @@
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif
-
-#define DBG_SCREEN 0
 
 static ULONG initial_vram_size(void);
 static ULONG vram_size(void);
@@ -454,9 +454,7 @@ void screen_init(void)
  * resolution / video mode appropriately
  */
     monitor_type = get_monitor_type();
-#if DBG_SCREEN
-    kprintf("monitor_type = %d\n", monitor_type);
-#endif
+    KDEBUG(("monitor_type = %d\n", monitor_type));
 
 #if CONF_WITH_VIDEL
     if (has_videl) {
@@ -479,30 +477,22 @@ void screen_init(void)
         /* get boot resolution from NVRAM */
         ret = nvmaccess(0, 14, 2, (PTR)&boot_resolution);
         if (ret != 0) {
-#if DBG_SCREEN
-            kprintf("Invalid NVRAM, defaulting to boot video mode 0x%04x\n", boot_resolution);
-#endif
+            KDEBUG(("Invalid NVRAM, defaulting to boot video mode 0x%04x\n", boot_resolution));
         }
         else {
-#if DBG_SCREEN
-            kprintf("NVRAM boot video mode is 0x%04x\n", boot_resolution);
-#endif
+            KDEBUG(("NVRAM boot video mode is 0x%04x\n", boot_resolution));
         }
 #endif // CONF_WITH_NVRAM
 
         if (!lookup_videl_mode(boot_resolution,monitor_type)) { /* mode isn't in table */
-#if DBG_SCREEN
-            kprintf("Invalid video mode 0x%04x changed to 0x%04x\n",
-                    boot_resolution,FALCON_DEFAULT_BOOT);
-#endif
+            KDEBUG(("Invalid video mode 0x%04x changed to 0x%04x\n",
+                    boot_resolution,FALCON_DEFAULT_BOOT));
             boot_resolution = FALCON_DEFAULT_BOOT;  /* so pick one that is */
         }
 
         if (!VALID_VDI_BPP(boot_resolution)) {      /* mustn't confuse VDI */
-#if DBG_SCREEN
-            kprintf("VDI doesn't support video mode 0x%04x, changed to 0x%04x\n",
-                    boot_resolution,FALCON_DEFAULT_BOOT);
-#endif
+            KDEBUG(("VDI doesn't support video mode 0x%04x, changed to 0x%04x\n",
+                    boot_resolution,FALCON_DEFAULT_BOOT));
             boot_resolution = FALCON_DEFAULT_BOOT;  /* so use default */
         }
 
@@ -511,9 +501,7 @@ void screen_init(void)
 
         /* fix the video mode according to the actual monitor */
         boot_resolution = vfixmode(boot_resolution);
-#if DBG_SCREEN
-        kprintf("Fixed boot video mode is 0x%04x\n", boot_resolution);
-#endif
+        KDEBUG(("Fixed boot video mode is 0x%04x\n", boot_resolution));
         vsetmode(boot_resolution);
         rez = FALCON_REZ;   /* fake value indicates Falcon/Videl */
     }
@@ -697,9 +685,7 @@ static void shifter_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *v
     WORD vmode;                         /* video mode */
 
     vmode = (sshiftmod & 7);            /* Get video mode from copy of hardware */
-#if DBG_SCREEN
-    kprintf("vmode: %d\n", vmode);
-#endif
+    KDEBUG(("vmode: %d\n", vmode));
 
     *planes = video_mode[vmode].planes;
     *hz_rez = video_mode[vmode].hz_rez;
@@ -896,16 +882,16 @@ void setscreen(LONG logLoc, LONG physLoc, WORD rez, WORD videlmode)
 
 void setpalette(LONG palettePtr)
 {
-#if DBG_SCREEN
+#ifdef ENABLE_KDEBUG
     int i, max;
     WORD *p = (WORD *)palettePtr;
     max = getrez() == 0 ? 15 : getrez() == 1 ? 3 : 1;
-    kprintf("Setpalette(");
+    KDEBUG(("Setpalette("));
     for(i = 0 ; i <= max ; i++) {
-        kprintf("%03x", p[i]);
-        if(i < 15) kprintf(" ");
+        KDEBUG(("%03x", p[i]));
+        if(i < 15) KDEBUG((" "));
     }
-    kprintf(")\n");
+    KDEBUG((")\n"));
 #endif
     /* next VBL will do this */
     colorptr = (WORD *) palettePtr;
@@ -921,9 +907,7 @@ WORD setcolor(WORD colorNum, WORD color)
     volatile WORD *ttpalette = (WORD *) TT_PALETTE_REGS;
 #endif
 
-#if DBG_SCREEN
-    kprintf("Setcolor(0x%04x, 0x%04x)\n", colorNum, color);
-#endif
+    KDEBUG(("Setcolor(0x%04x, 0x%04x)\n", colorNum, color));
 
     colorNum &= 0x000f;         /* just like real TOS */
 
