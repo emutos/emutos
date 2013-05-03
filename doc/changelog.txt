@@ -4734,3 +4734,7 @@ Start... early ages
 2013-05-01
 - doc/status.txt: Updated status of a couple of VDI functions. (RFB)
 - bios/screen.c: Replaced DBG_SCREEN with KDEBUG(()). (RFB)
+
+2013-05-03
+- bios/lineainit.c bios/lineavars.h: Expand shift_offset[] to handle
+  8 planes. (RFB)
