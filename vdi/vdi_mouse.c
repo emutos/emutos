@@ -3,7 +3,8 @@
  *
  * Copyright 1982 by Digital Research Inc.  All rights reserved.
  * Copyright 1999 by Caldera, Inc. and Authors:
- * Copyright 2002-2008 by The EmuTOS development team
+ *
+ * Copyright 2002-2013 by The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -31,7 +32,6 @@ extern void     (*user_mot)(void);      // user motion vector
 /* call the vectors from C */
 extern void call_user_but(WORD status);
 extern void call_user_wheel(WORD wheel_number, WORD wheel_amount);
-
 
 
 typedef struct Mcdb_ Mcdb;
@@ -67,15 +67,6 @@ extern UWORD mask_form;     // (cdb+10) Storage for mouse mask and cursor
 extern WORD HIDE_CNT;
 extern WORD MOUSE_BT;
 extern WORD GCURX, GCURY;
-
-/* mouse cursor save area stuff */
-extern UWORD * save_addr;        /* points to destination */
-extern union {
-    UWORD w; /* Valid if !(save_stat & 2) */
-    ULONG l; /* Valid if   save_stat & 2  */
-} save_area;                    /* memory where saved data resides */
-extern BYTE save_stat;          /* status and format of save buffer */
-extern WORD save_len;           /* number of lines to be returned */
 
 
 /* FIXME: should go to linea variables */
@@ -717,11 +708,12 @@ static void cur_display (WORD x, WORD y)
     UWORD shft, cdb_fg, cdb_bg;
     UWORD * save_w;
     ULONG * save_l;
+    MCS *mcs = mcs_ptr;
 
     x -= m_pos_hx;              /* d0 <- left side of destination block */
     y -= m_pos_hy;              /* d1 <- hi y : destination block */
 
-    save_stat = 0x00;           /* reset status of save buffer */
+    mcs->stat = 0x00;           /* reset status of save buffer */
     op = 0;
     /* clip x axis */
     if ( x < 0 ) {
@@ -736,7 +728,7 @@ static void cur_display (WORD x, WORD y)
             op = 2;             /* index to right clip routine addresses */
         }
         else {
-            save_stat |= 0x02;  /* indicate longword save */
+            mcs->stat |= 0x02;  /* indicate longword save */
         }
     }
 
@@ -774,13 +766,12 @@ static void cur_display (WORD x, WORD y)
     dst_inc = v_lin_wr >> 1;    /* calculate number of words in a scan line */
 
     /* these are stored for later bringing back the cursors background */
-    //save_addr = mask_start;   /* save area: origin of material */
-    save_addr = addr;           /* save area: origin of material */
-    save_len = row_count;       /* number of cursor rows */
-    save_stat |= 1;             /* flag the buffer as being loaded */
+    mcs->len = row_count;       /* number of cursor rows */
+    mcs->addr = addr;           /* save area: origin of material */
+    mcs->stat |= 1;             /* flag the buffer as being loaded */
 
-    save_w = &save_area.w;      /* a2 -> save area buffer */
-    save_l = &save_area.l;      /* a2 -> save area buffer */
+    save_w = (UWORD *)mcs->area;/* for word stores */
+    save_l = mcs->area;         /* for long stores */
 
     cdb_bg = m_cdb_bg;          /* get mouse background color bits */
     cdb_fg = m_cdb_fg;          /* get mouse foreground color bits */
@@ -885,11 +876,8 @@ static void cur_display (WORD x, WORD y)
 /*
  * cur_replace - replace cursor with data in save area.
  *
- * in:
- *     save_area       memory where saved data resides
- *     save_addr       points to destination
- *     save_len        number of lines to be returned
- *     save_stat       status and format of save buffer
+ * input:
+ *     mcs_ptr         ptr to mouse cursor save area
  *     _v_planes       number of planes in destination
  *     _v_line_wr      line wrap (byte width of form)
  */
@@ -898,18 +886,19 @@ static void cur_replace (void)
 {
     int inc, dst_inc, plane;
     UWORD * addr;
+    MCS *mcs = mcs_ptr;
 
-    if (!(save_stat & 1) )      /* does save area contain valid data ? */
+    if (!(mcs->stat & 1) )      /* does save area contain valid data ? */
         return;
 
-    addr = save_addr;
+    addr = mcs->addr;
     inc = v_planes;
     dst_inc = v_lin_wr >> 1;    /* calculate LONGs in a scan line */
 
     /* word or longword ? */
-    if (save_stat & 2 ) {
+    if (mcs->stat & 2) {
         /* longword ? */
-        ULONG * src = &save_area.l;     /* a2 -> save area buffer */
+        ULONG * src = mcs->area;
 
         /* plane controller, draw cursor in each graphic plane */
         for (plane = v_planes - 1; plane >= 0; plane--) {
@@ -917,7 +906,7 @@ static void cur_replace (void)
             UWORD * dst = addr++;       /* current destination address */
 
             /* loop through rows */
-            for (row = save_len - 1; row >= 0; row--) {
+            for (row = mcs->len - 1; row >= 0; row--) {
                 ULONG bits = *src++;       /* get the save bits */
                 *(dst + inc) = (UWORD)bits;
                 *dst = (UWORD)(bits >> 16);
@@ -927,7 +916,7 @@ static void cur_replace (void)
     }
     else {
         /* word */
-        UWORD * src = &save_area.w;     /* a2 -> save area buffer */
+        UWORD * src = (UWORD *)mcs->area;
 
         /* plane controller, draw cursor in each graphic plane */
         for (plane = v_planes - 1; plane >= 0; plane--) {
@@ -935,7 +924,7 @@ static void cur_replace (void)
             UWORD * dst = addr++;       /* current destination address */
 
             /* loop through rows */
-            for (row = save_len - 1; row >= 0; row--) {
+            for (row = mcs->len - 1; row >= 0; row--) {
                 *dst = *src++;
                 dst += dst_inc;         /* a1 -> next row of screen */
             }

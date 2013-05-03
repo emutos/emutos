@@ -40,10 +40,7 @@
                 .globl  _sav_cur_x
                 .globl  _sav_cur_y
 
-                .globl  _save_addr
-                .globl  _save_area
-                .globl  _save_len
-                .globl  _save_stat
+                .globl  _mouse_cursor_save
 
                 .globl  _tim_addr
                 .globl  _tim_chain
@@ -165,13 +162,13 @@ _sav_cur_x:     .ds.w   1       // -338 save area for cursor cell coords.
 _sav_cur_y:     .ds.w   1       // -336 save area for cursor cell coords.
 retsav:         .ds.l   1       // -334 I'm not sure if this is right here
 
-_save_len:      .ds.w   1       // -330
-_save_addr:     .ds.l   1       // -328 return address GEMDOS call
-_save_stat:     .ds.w   1       // -324
-
-/* Sprite save buffer */
-
-_save_area:      .ds.l   0x40   // -322
+_mouse_cursor_save:             // covers the following five items; note that
+                                // this area is only used when v_planes <= 4
+_save_len:      .ds.w   1       // -330 height of saved form
+_save_addr:     .ds.l   1       // -328 screen addr of saved form
+_save_stat:     .ds.b   1       // -324 save status
+                .ds.b   1
+_save_area:     .ds.l   64      // -322 form save area
 
 /* Timer vectors */
 

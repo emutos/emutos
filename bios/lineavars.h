@@ -19,10 +19,26 @@
 
 #include "portab.h"
 
-
 /* Screen related variables */
 
+/*
+ * mouse cursor save area
+ *
+ * NOTE: the lineA version of this only has the first 64 ULONGs,
+ * to handle a maximum of 4 video planes.  Writing into area[64]
+ * and above when referencing the lineA version will overwrite
+ * other lineA variables with unpredictable results.
+ */
+typedef struct {
+        WORD    len;            /* height of saved form */
+        UWORD   *addr;          /* screen address of saved form */
+        BYTE    stat;           /* save status */
+        BYTE    reserved;
+        ULONG   area[8*16];     /* handle up to 8 video planes */
+} MCS;
+
 extern const BYTE shift_offset[9];  /* pixel to address helper */
+extern MCS *mcs_ptr;            /* ptr to mouse cursor save area in use */
 
 extern UWORD v_planes;          /* count of color planes */
 extern UWORD v_lin_wr;          /* line wrap : bytes per line */

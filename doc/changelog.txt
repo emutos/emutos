@@ -4738,3 +4738,5 @@ Start... early ages
 2013-05-03
 - bios/lineainit.c bios/lineavars.h: Expand shift_offset[] to handle
   8 planes. (RFB)
+- bios/lineainit.c bios/lineavars.h bios/lineavars.S vdi/vdi_mouse.c:
+  Allow mouse cursor in 8 planes. (RFB)

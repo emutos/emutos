@@ -26,6 +26,14 @@
 const BYTE shift_offset[9] = {0, 3, 2, 0, 1, 0, 0, 0, 0};
 
 /*
+ * mouse cursor save areas
+ */
+extern MCS mouse_cursor_save;       /* in linea variable area */
+static MCS ext_mouse_cursor_save;   /* use for v_planes > 4 */
+
+MCS *mcs_ptr;   /* ptr to current mouse cursor save area , based on v_planes */
+
+/*
  * linea_init - init linea variables
  */
 
@@ -36,6 +44,8 @@ void linea_init(void)
 
     v_lin_wr = v_hz_rez / 8 * v_planes;     /* bytes per line */
     v_bytes_lin = v_lin_wr;       /* I think v_bytes_lin = v_lin_wr (PES) */
+
+    mcs_ptr = (v_planes <= 4) ? &mouse_cursor_save : &ext_mouse_cursor_save;
 
 #if DBG_LINEA
     kprintf("planes: %d\n", v_planes);
