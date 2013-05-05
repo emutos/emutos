@@ -4744,3 +4744,4 @@ Start... early ages
 2013-05-04
 - vdi/vdi_tblit.S  vdi/vdi_tblit_cf.S: Support text blitting for
   8 planes. (RFB)
+- vdi/vdi_raster.c: Support 8 planes for vro_cpyfm(), vrt_cpyfm(). (RFB)

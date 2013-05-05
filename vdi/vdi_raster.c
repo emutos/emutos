@@ -873,8 +873,8 @@ setup_info (Vwk * vwk, struct blit_frame * info)
     info->s_nxpl = 2;           /* next plane offset (source) */
     info->d_nxpl = 2;           /* next plane offset (destination) */
 
-    /* only 4,2, and 1 planes are valid (destination) */
-    return info->plane_ct & ~0x0007;
+    /* only 8, 4, 2 and 1 planes are valid (destination) */
+    return info->plane_ct & ~0x000f;
 }
 
 /*
