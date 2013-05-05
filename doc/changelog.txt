@@ -4740,3 +4740,7 @@ Start... early ages
   8 planes. (RFB)
 - bios/lineainit.c bios/lineavars.h bios/lineavars.S vdi/vdi_mouse.c:
   Allow mouse cursor in 8 planes. (RFB)
+
+2013-05-04
+- vdi/vdi_tblit.S  vdi/vdi_tblit_cf.S: Support text blitting for
+  8 planes. (RFB)

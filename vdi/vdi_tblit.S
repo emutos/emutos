@@ -914,12 +914,6 @@ mx_clipx:
         sub.w   d0,DELX(a6)
 
         bra     scrn_blt
-//
-//  Offset to next word in same plane
-//
-nxtword:
-        .dc.b   2,4,0,8
-//
 
 
 
@@ -934,7 +928,7 @@ scrn_blt:
         move.w  buffc(a6),ambient(a6)   //
         move.w  _v_planes,d0            // copy # of planes
         move.w  d0,nbrplane(a6)         // save in local
-        move.b  nxtword-1(pc,d0.w),d0   // fetch offset from table (assumed:hi byte=0)
+        add.w   d0,d0                   // *2 = offset to next word in same plane
         move.w  d0,nextwrd(a6)          // save in local
 //
         move.w  _SOURCEX,d0
