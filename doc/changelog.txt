@@ -4745,3 +4745,7 @@ Start... early ages
 - vdi/vdi_tblit.S  vdi/vdi_tblit_cf.S: Support text blitting for
   8 planes. (RFB)
 - vdi/vdi_raster.c: Support 8 planes for vro_cpyfm(), vrt_cpyfm(). (RFB)
+
+2013-05-05
+- bios/videl.h desk/deskrez.c desk/desktop.def desk/desktop.rsc:
+  Allow 256 colours for desktop. (RFB)

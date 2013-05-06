@@ -173,13 +173,13 @@ WORD oldmode, oldbase, oldoptions;
             rsrc_gaddr(R_STRING,STREZ1+i,&obj->ob_spec);
     }
 
-    /* FIXME: change the next 2 lines when we have 256-colour support in VDI */
-    obj = (OBJECT *)tree+FREZTEXT;  /* this hides the "256  TC" header text */
+    /* FIXME: change the next 2 lines when we have TrueColor support in VDI */
+    obj = (OBJECT *)tree+FREZTEXT;  /* this hides the "TC" header text */
     obj->ob_flags |= HIDETREE;
 
     for (i = 0, obj = (OBJECT *)tree+FREZLIST; i < NUM_FALCON_BUTTONS; i++, obj++) {
-        /* FIXME: change the next 2 lines when we have 256-colour support in VDI */
-        if ((falconmode_from_button[i]&VIDEL_BPPMASK) > VIDEL_4BPP)
+        /* FIXME: change the next 2 lines when we have TrueColor support in VDI */
+        if ((falconmode_from_button[i]&VIDEL_BPPMASK) > VIDEL_8BPP)
             obj->ob_flags |= HIDETREE;
         if (i == selected)
             obj->ob_state |= SELECTED;
