@@ -4755,3 +4755,4 @@ Start... early ages
   David Gálvez. (VRI)
 - Makefile: Fixed "Unknown ColdFire Machine" non-fatal error when doing
   "make coldfire-sources". (VRI)
+- po/de.po: Updated German translation. (THH)
