@@ -187,7 +187,7 @@ static long XHEject(UWORD major, UWORD minor, UWORD do_eject, UWORD key)
 static long XHInqDriver(UWORD dev, char *name, char *version, char *company, UWORD *ahdi_version, UWORD *max_IPL)
 {
     if (next_handler) {
-        long ret = next_handler(XHSTOP, dev, name, version, company, ahdi_version, max_IPL);
+        long ret = next_handler(XHINQDRIVER, dev, name, version, company, ahdi_version, max_IPL);
         if (ret != EINVFN && ret != EUNDEV && ret != EDRIVE)
             return ret;
     }

@@ -4749,3 +4749,7 @@ Start... early ages
 2013-05-05
 - bios/videl.h desk/deskrez.c desk/desktop.def desk/desktop.rsc:
   Allow 256 colours for desktop. (RFB)
+
+2013-05-06
+- bios/xhdi.c: Fixed XHInqDriver(). Reported by Markus Fröschle, fixed by
+  David Gálvez. (VRI)
