@@ -1042,17 +1042,21 @@ distclean: clean
 PORTASM = pacf
 PORTASMFLAGS = -blanks on -core v4 -hardware_divide -hardware_mac -a gnu -out_syntax standard -nowarning 402,502,900,1111,1150 -noerrfile
 
+GENERATE_COLDFIRE_TARGETS = generate-vdi_tblit_cf.S
+
 TOCLEAN += vdi/*_preprocessed.*
 
 .PHONY: coldfire-sources
 NODEP += coldfire-sources
 coldfire-sources:
-	$(MAKE) COLDFIRE=1 generate-vdi_tblit_cf.S
+	$(MAKE) COLDFIRE=1 $(GENERATE_COLDFIRE_TARGETS)
 
 vdi/%_preprocessed.s: vdi/%.S
 	$(CPP) $(CFILE_FLAGS) $< -o $@
 
 # The following is actually a phony target (% not supported in .PHONY)
+# We could use $(GENERATE_COLDFIRE_TARGETS) in .PHONY, but that would override the % target below
+NODEP += $(GENERATE_COLDFIRE_TARGETS)
 generate-%_cf.S: vdi/%_preprocessed.s
 	cd $(<D) && $(PORTASM) $(PORTASMFLAGS) -o $(patsubst generate-%,%,$@) $(<F)
 	sed -i $(<D)/$(patsubst generate-%,%,$@) \

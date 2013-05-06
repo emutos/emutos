@@ -4753,3 +4753,5 @@ Start... early ages
 2013-05-06
 - bios/xhdi.c: Fixed XHInqDriver(). Reported by Markus Fröschle, fixed by
   David Gálvez. (VRI)
+- Makefile: Fixed "Unknown ColdFire Machine" non-fatal error when doing
+  "make coldfire-sources". (VRI)
