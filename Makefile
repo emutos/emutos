@@ -1042,24 +1042,23 @@ distclean: clean
 PORTASM = pacf
 PORTASMFLAGS = -blanks on -core v4 -hardware_divide -hardware_mac -a gnu -out_syntax standard -nowarning 402,502,900,1111,1150 -noerrfile
 
-GENERATE_COLDFIRE_TARGETS = generate-vdi_tblit_cf.S
-
-TOCLEAN += vdi/*_preprocessed.*
+GENERATED_COLDFIRE_SOURCES = vdi/vdi_tblit_cf.S
 
 .PHONY: coldfire-sources
 NODEP += coldfire-sources
 coldfire-sources:
-	$(MAKE) COLDFIRE=1 $(GENERATE_COLDFIRE_TARGETS)
+	rm -f $(GENERATED_COLDFIRE_SOURCES)
+	$(MAKE) COLDFIRE=1 $(GENERATED_COLDFIRE_SOURCES)
 
+# Intermediate target (intermediate files are automatically removed)
+TOCLEAN += vdi/*_preprocessed.*
 vdi/%_preprocessed.s: vdi/%.S
 	$(CPP) $(CFILE_FLAGS) $< -o $@
 
-# The following is actually a phony target (% not supported in .PHONY)
-# We could use $(GENERATE_COLDFIRE_TARGETS) in .PHONY, but that would override the % target below
-NODEP += $(GENERATE_COLDFIRE_TARGETS)
-generate-%_cf.S: vdi/%_preprocessed.s
-	cd $(<D) && $(PORTASM) $(PORTASMFLAGS) -o $(patsubst generate-%,%,$@) $(<F)
-	sed -i $(<D)/$(patsubst generate-%,%,$@) \
+NODEP += $(GENERATED_COLDFIRE_SOURCES)
+vdi/%_cf.S: vdi/%_preprocessed.s
+	cd $(<D) && $(PORTASM) $(PORTASMFLAGS) -o $(@F) $(<F)
+	sed -i $@ \
 		-e "s:\.section\t.bss,.*:.bss:g" \
 		-e "s:\( \|\t\)bsr\(  \|\..\):\1jbsr :g" \
 		-e "s:\( \|\t\)bra\(  \|\..\):\1jbra :g" \
@@ -1071,8 +1070,7 @@ generate-%_cf.S: vdi/%_preprocessed.s
 		-e "s:\( \|\t\)ble\(  \|\..\):\1jble :g" \
 		-e "s:\( \|\t\)bcc\(  \|\..\):\1jbcc :g" \
 		-e "s:\( \|\t\)bcs\(  \|\..\):\1jbcs :g" \
-		-e "s:\( \|,\)0(%:\1(%:g" \
-		|| (rm -f $(<D)/$(patsubst generate-%,%,$@) ; false)
+		-e "s:\( \|,\)0(%:\1(%:g"
 
 #
 # The targets for building a release are in a separate file
