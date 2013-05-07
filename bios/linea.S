@@ -57,7 +57,7 @@ _int_linea:
 #else
         and.w   #0xFFF,d0       /* Keep only the function number */
 #endif
-        cmp.w   #(linea_ents-linea_vecs)/4,d0
+        cmp.w   #nb_linea,d0
         bhs.s   wrong_linea
 
 #if DBG_LINEA
@@ -227,6 +227,8 @@ linea_vecs:
         .dc.l   _linea_e        /* _COPY_RFM */
         .dc.l   _linea_f        /* _d_contourfill?? */
 linea_ents:
+        /* Number of implemented Line A routines */
+        .equ    nb_linea,(linea_ents-linea_vecs)/4
 
 // ===========================================================================
 // ==== End ==================================================================
