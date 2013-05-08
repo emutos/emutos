@@ -668,24 +668,18 @@ void gr_crack(UWORD color, WORD *pbc, WORD *ptc, WORD *pip, WORD *pic, WORD *pmd
 {
                                                 /* 4 bit encoded border */
                                                 /*   color              */
-        *pbc = (LHIBT(color) >> 4) & 0x0f;
+        *pbc = (color >> 12) & 0x000f;
                                                 /* 4 bit encoded text   */
                                                 /*   color              */
-        *ptc = LHIBT(color) & 0x0f;
-                                                /* 3 bit encoded pattern*/
-        *pip = (LLOBT(color) >> 4) & 0x0f;
-                                                /* 4th bit used to set  */
+        *ptc = (color >> 8) & 0x000f;
+                                                /* 1 bit used to set    */
                                                 /*   text writing mode  */
-        if (*pip & 0x08)
-        {
-          *pip &= 0x07;
-          *pmd = MD_REPLACE;
-        }
-        else
-          *pmd = MD_TRANS;
+        *pmd = (color & 0x80) ? MD_REPLACE : MD_TRANS;
+                                                /* 3 bit encoded pattern*/
+        *pip = (color >> 4) & 0x0007;
                                                 /* 4 bit encoded inside */
                                                 /*   color              */
-        *pic = LLOBT(color) & 0x0f;
+        *pic = color & 0x000f;
 }
 
 

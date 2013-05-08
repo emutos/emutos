@@ -63,12 +63,6 @@ extern WORD LBWMOV(WORD *pdst, BYTE *psrc);
                                                 /*   a long value       */
 #define LHIWD(x) ((UWORD)(x >> 16))
 
-                                                /* return low byte of   */
-                                                /*   a word value       */
-#define LLOBT(x) ((BYTE)(x & 0x00ff))
-                                                /* return high byte of  */
-                                                /*   a word value       */
-#define LHIBT(x) ((BYTE)( (x >> 8) & 0x00ff))
 
 
 /************************************************************************/
