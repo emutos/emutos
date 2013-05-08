@@ -157,7 +157,7 @@ static void get_xywh(OBJECT olist[], WORD obj, WORD *px, WORD *py,
 */
 ICONBLK  *get_spec(OBJECT olist[], WORD obj)
 {
-        return( (ICONBLK *)LPOINTER(olist[obj].ob_spec) );
+        return (ICONBLK *)olist[obj].ob_spec;
 }
 
 

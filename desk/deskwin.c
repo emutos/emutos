@@ -645,8 +645,8 @@ BYTE *win_iname(WORD curr)
 
         assert(G.g_screen[curr].ob_type == G_ICON);
 
-        pib = (ICONBLK *) LPOINTER(G.g_screen[curr].ob_spec);
-        ptext = (BYTE *) LPOINTER(pib->ib_ptext);
+        pib = (ICONBLK *)G.g_screen[curr].ob_spec;
+        ptext = (BYTE *)pib->ib_ptext;
         return( ptext );
 }
 #endif

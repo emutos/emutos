@@ -85,7 +85,7 @@ static void gr_accobs(LONG tree, WORD root, WORD *pnum, WORD *pxypts)
         OBJECT          *olist;
         WORD            obj;
 
-        olist = (OBJECT *) LPOINTER(tree);
+        olist = (OBJECT *)tree;
 
         i = 0;
         for(obj = olist[root].ob_head; obj > root; obj = olist[obj].ob_next)
@@ -477,7 +477,7 @@ static WORD act_chkobj(LONG tree, WORD root, WORD obj, WORD mx, WORD my, WORD w,
         WORD            view, ox, oy, icon;
         GRECT           t, m;
 
-        olist = (OBJECT *) LPOINTER(tree);
+        olist = (OBJECT *)tree;
 
         ox = olist[root].ob_x + olist[obj].ob_x;
         oy = olist[root].ob_y + olist[obj].ob_y;
@@ -533,7 +533,7 @@ WORD act_chg(WORD wh, LONG tree, WORD root, WORD obj, GRECT *pc, UWORD chgvalue,
         OBJECT          *olist;
         GRECT           t;
 
-        olist = (OBJECT *) LPOINTER(tree);
+        olist = (OBJECT *)tree;
         old_state = curr_state = olist[obj].ob_state;
         if ( (chkdisabled) &&
              (curr_state & DISABLED) )
@@ -581,7 +581,7 @@ void act_allchg(WORD wh, LONG tree, WORD root, WORD ex_obj, GRECT *pt, GRECT *pc
         WORD            offx, offy;
         GRECT           o, a, w;
 
-        olist = (OBJECT *) LPOINTER(tree);
+        olist = (OBJECT *)tree;
         offx = olist[root].ob_x;
         offy = olist[root].ob_y;
                                                 /* accumulate extent of */
@@ -657,7 +657,7 @@ void act_bsclick(WORD wh, LONG tree, WORD root, WORD mx, WORD my, WORD keystate,
         }
         else
         {
-          olist = (OBJECT *) LPOINTER(tree);
+          olist = (OBJECT *)tree;
           state = olist[obj].ob_state;
           if ( !shifted )
           {
@@ -713,7 +713,7 @@ WORD act_bdown(WORD wh, LONG tree, WORD root, WORD *in_mx, WORD *in_my,
         } /* if */
         else
         {                                       /* drag icon(s)         */
-          olist = (OBJECT *) LPOINTER(tree);
+          olist = (OBJECT *)tree;
           if (olist[sobj].ob_state & SELECTED)
           {
             gr_accobs(tree, root, &numobs, &G.g_xyobpts[0]);

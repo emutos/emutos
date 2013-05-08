@@ -4761,3 +4761,5 @@ Start... early ages
 - bios/linea.S: Fixed compilation with binutils 2.9.1. (VRI)
 - aes/gemgraf.c include/compat.h: Code cleanup: eliminate LHIBT() &
   LLOBT() macros. (RFB)
+- desk/deskact.c desk/desksupp.c desk/deskwin.c include/compat.h:
+  Code cleanup: eliminate LPOINTER macro. (RFB)
