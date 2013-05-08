@@ -4763,3 +4763,6 @@ Start... early ages
   LLOBT() macros. (RFB)
 - desk/deskact.c desk/desksupp.c desk/deskwin.c include/compat.h:
   Code cleanup: eliminate LPOINTER macro. (RFB)
+
+2013-05-08
+- po/fr.po: Updated. (VRI)
