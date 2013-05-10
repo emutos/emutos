@@ -367,7 +367,8 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
           nmidx++;
 
         /*
-         * for folders, count the contents
+         * for folders, count the contents & insert the values in the
+         * dialog; for files, blank out the corresponding dialog fields
          */
         if (pf->f_attr & F_SUBDIR)
         {
@@ -378,6 +379,11 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
           graf_mouse(ARROW, 0x0L);
           if (!more)
             return FALSE;
+        }
+        else
+        {
+          inf_sset(tree,FFNUMFIL,"");
+          inf_sset(tree,FFNUMFOL,"");
         }
 
         fmt_str(pf->f_name, poname);
