@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EMUTOS beta\n"
 "POT-Creation-Date: 2004-01-27 14:37+0100\n"
-"PO-Revision-Date: 2013-05-10 15:23+0200\n"
+"PO-Revision-Date: 2013-05-10 22:39+0200\n"
 "Last-Translator: Vincent Riviere <vincent.riviere@freesbee.fr>\n"
 "Language-Team: French <fr@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -287,6 +287,14 @@ msgstr "[3]["
 msgid "ITEM SELECTOR"
 msgstr "SELECTEUR DE FICHIER"
 
+#: desk/desk_rsc.c:18
+msgid "Number of folders: _____"
+msgstr "Nombre de dossiers: _____"
+
+#: desk/desk_rsc.c:19
+msgid "Number of files: _____"
+msgstr "Nombre de fichiers: _____"
+
 #: desk/desk_rsc.c:22
 msgid "Install"
 msgstr "Installer"
@@ -303,9 +311,41 @@ msgstr "Oui"
 msgid "No"
 msgstr "Non"
 
-#: desk/desk_rsc.c:187
-msgid "Name:  ________.___"
-msgstr "Nom:  ________.___"
+#: desk/desk_rsc.c:37
+msgid "Size: __________"
+msgstr "Taille: __________"
+
+#: desk/desk_rsc.c:42
+msgid "Date: __/__/__"
+msgstr "Date: __/__/__"
+
+#: desk/desk_rsc.c:47
+msgid "Time: __:__ __"
+msgstr "Heure: __:__ __"
+
+#: desk/desk_rsc.c:62
+msgid "Name:"
+msgstr "Nom:"
+
+#: desk/desk_rsc.c:67
+msgid "Drive identifier: _:"
+msgstr "Lettre de lecteur: _:"
+
+#: desk/desk_rsc.c:72
+msgid "Disk label: ___________"
+msgstr "Nom du disque: ___________"
+
+#: desk/desk_rsc.c:87
+msgid "Bytes used: __________"
+msgstr "Octets utilisés: __________"
+
+#: desk/desk_rsc.c:92
+msgid "Bytes available: __________"
+msgstr "Octets libres: __________"
+
+#: desk/desk_rsc.c:97
+msgid "Name: ________.___"
+msgstr "Nom: ________.___"
 
 #: desk/desk_rsc.c:107
 msgid "Drive identifier:  _"
@@ -326,6 +366,10 @@ msgstr "Nom actuel:  ________.___"
 #: desk/desk_rsc.c:182
 msgid "Copy's name:  ________.___"
 msgstr "Nom de la copie: ________.___"
+
+#: desk/desk_rsc.c:187
+msgid "Name:  ________.___"
+msgstr "Nom:  ________.___"
 
 #: desk/desk_rsc.c:245
 msgid " Desk "
@@ -431,6 +475,10 @@ msgstr "  Trier par taille"
 msgid "  Sort by date   \007T"
 msgstr "  Trier par date"
 
+#: desk/desk_rsc.c:542
+msgid "Attribute:"
+msgstr "Attribut:"
+
 #: desk/desk_rsc.c:554
 msgid "Read/Write"
 msgstr "Lire/écrire"
@@ -442,10 +490,6 @@ msgstr "Lecture seule"
 #: desk/desk_rsc.c:593
 msgid "DISK INFORMATION"
 msgstr "INFORMATIONS DISQUE"
-
-#: desk/desk_rsc.c:1680
-msgid "FOLDER INFORMATION"
-msgstr "INFORMATIONS DOSSIER"
 
 #: desk/desk_rsc.c:668
 msgid "Version"
@@ -474,6 +518,10 @@ msgstr "(plus de détails dans doc\\licence.txt)"
 #: desk/desk_rsc.c:755
 msgid "OPEN APPLICATION"
 msgstr "OUVRIR UNE APPLICATION"
+
+#: desk/desk_rsc.c:767
+msgid "Parameters:"
+msgstr "Paramètres:"
 
 #: desk/desk_rsc.c:800
 msgid "INSTALL DISK DRIVE"
@@ -658,6 +706,22 @@ msgstr "Nouv Dossier"
 #: desk/desk_rsc.c:1678
 msgid "Disk Drives:"
 msgstr "Lecteurs:"
+
+#: desk/desk_rsc.c:1679
+msgid "FILE INFORMATION"
+msgstr "INFORMATIONS FICHIER"
+
+#: desk/desk_rsc.c:1680
+msgid "FOLDER INFORMATION"
+msgstr "INFORMATIONS DOSSIER"
+
+#: desk/desk_rsc.c:1681
+msgid "COPY FILE(S)"
+msgstr "COPIE DE FICHIER(S)"
+
+#: desk/desk_rsc.c:1682
+msgid "DELETE FILE(S)"
+msgstr "SUPPRESSION DE FICHIER(S)"
 
 #: desk/desk_rsc.c:1689
 msgid "DISK"
@@ -957,68 +1021,4 @@ msgstr " Scan "
 #: desk/icons.c:1057
 msgid " Mail "
 msgstr " Messagerie "
-
-#: desk/desk_rsc.c:37
-msgid "Size: __________"
-msgstr "Taille: __________"
-
-#: desk/desk_rsc.c:42
-msgid "Date: __/__/__"
-msgstr "Date: __/__/__"
-
-#: desk/desk_rsc.c:47
-msgid "Time: __:__ __"
-msgstr "Heure: __:__ __"
-
-#: desk/desk_rsc.c:18
-msgid "Number of folders: _____"
-msgstr "Nombre de dossiers: _____"
-
-#: desk/desk_rsc.c:19
-msgid "Number of files: _____"
-msgstr "Nombre de fichiers: _____"
-
-#: desk/desk_rsc.c:62
-msgid "Name:"
-msgstr "Nom:"
-
-#: desk/desk_rsc.c:97
-msgid "Name: ________.___"
-msgstr "Nom: ________.___"
-
-#: desk/desk_rsc.c:542
-msgid "Attribute:"
-msgstr "Attribut:"
-
-#: desk/desk_rsc.c:767
-msgid "Parameters:"
-msgstr "Paramètres:"
-
-#: desk/desk_rsc.c:1679
-msgid "FILE INFORMATION"
-msgstr "INFORMATIONS FICHIER"
-
-#: desk/desk_rsc.c:1681
-msgid "COPY FILE(S)"
-msgstr "COPIE DE FICHIER(S)"
-
-#: desk/desk_rsc.c:1682
-msgid "DELETE FILE(S)"
-msgstr "SUPPRESSION DE FICHIER(S)"
-
-#: desk/desk_rsc.c:67
-msgid "Drive identifier: _:"
-msgstr "Lettre de lecteur: _:"
-
-#: desk/desk_rsc.c:72
-msgid "Disk label: ___________"
-msgstr "Nom du disque: ___________"
-
-#: desk/desk_rsc.c:87
-msgid "Bytes used: __________"
-msgstr "Octets utilisés: __________"
-
-#: desk/desk_rsc.c:92
-msgid "Bytes available: __________"
-msgstr "Octets libres: __________"
 
