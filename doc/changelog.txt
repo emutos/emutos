@@ -4770,3 +4770,5 @@ Start... early ages
   number of files/folders. (RFB)
 - desk/deskinf.c: Grey out number of files/folders when displaying file
   info. (RFB)
+- desk/desktop.def desk/desktop.rsc tools/erd.c: Use common strings for
+  number of files/folders. (RFB)

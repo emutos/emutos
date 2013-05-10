@@ -457,7 +457,9 @@ LOCAL SHARED_ENTRY shared[] = {
     { "Install", SHRT_MAX },
     { "Remove", SHRT_MAX },
     { "Yes", SHRT_MAX },
-    { "No", SHRT_MAX }
+    { "No", SHRT_MAX },
+    { "Number of files: _____", SHRT_MAX },
+    { "Number of folders: _____", SHRT_MAX }
 };
 LOCAL int num_shared = sizeof(shared) / sizeof(SHARED_ENTRY);
 
@@ -473,7 +475,7 @@ LOCAL NOTRANS_ENTRY notrans[] = {
     { 0, "am" },
     { 0, "pm" },
     { 0, "(c)" },
-    { 0, "256  TC" },
+    { 0, "TC" },
     { 0, "640 x " },
     { 0, "320 x " }
 };
