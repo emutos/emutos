@@ -31,6 +31,7 @@
 
 /*--- Global variables ---*/
 
+/* XHDI_HANDLER is the type where an XHDI cookie points to */
 typedef long (*XHDI_HANDLER)(UWORD opcode, ...);
 static XHDI_HANDLER next_handler; /* Next handler installed by XHNewCookie() */
 
@@ -418,6 +419,10 @@ long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
 
 #if CONF_WITH_XHDI
 
+/* EmuTOS' XHDI cookie points to _xhdi_vec implemented in bios/natfeat.S.
+ * It backups all the registers according to the XHDI specification,
+ * then calls the xhdi_handler() C implementation below.
+ */
 long xhdi_handler(UWORD *stack)
 {
     UWORD opcode = *stack;

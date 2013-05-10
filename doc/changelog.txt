@@ -4772,3 +4772,6 @@ Start... early ages
   info. (RFB)
 - desk/desktop.def desk/desktop.rsc tools/erd.c: Use common strings for
   number of files/folders. (RFB)
+
+2013-05-10
+- bios/natfeat.S bios/xhdi.c: Added comments about the XHDI handler. (VRI)

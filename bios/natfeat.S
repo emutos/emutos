@@ -95,6 +95,7 @@ nfCall:
 
         .dc.l   0x27011992              // XHDI magic constant
 _xhdi_vec:
+        // Important: The XHDI specification requires to backup all the registers
 #ifdef __mcoldfire__
         lea     -12(sp),sp
         movem.l d1/a0-a1,(sp)
