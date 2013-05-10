@@ -305,6 +305,7 @@ static WORD inf_fifo(LONG tree, WORD dl_fi, WORD dl_fo, BYTE *ppath)
 {
         WORD            junk, more;
         BYTE            str[8];
+        OBJECT          *obj;
 
         G.g_nfiles = 0x0L;
         G.g_ndirs = 0x0L;
@@ -316,9 +317,13 @@ static WORD inf_fifo(LONG tree, WORD dl_fi, WORD dl_fo, BYTE *ppath)
           return(FALSE);
         G.g_ndirs--;
 
+        obj = (OBJECT *)tree + dl_fi;
+        obj->ob_state &= ~DISABLED;
         sprintf(str, "%ld", G.g_nfiles);
         inf_sset(tree, dl_fi, str);
 
+        obj = (OBJECT *)tree + dl_fo;
+        obj->ob_state &= ~DISABLED;
         sprintf(str, "%ld", G.g_ndirs);
         inf_sset(tree, dl_fo, str);
         return(TRUE);
@@ -382,7 +387,11 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
         }
         else
         {
+          obj = (OBJECT *)tree + FFNUMFIL;
+          obj->ob_state |= DISABLED;
           inf_sset(tree,FFNUMFIL,"");
+          obj = (OBJECT *)tree + FFNUMFOL;
+          obj->ob_state |= DISABLED;
           inf_sset(tree,FFNUMFOL,"");
         }
 

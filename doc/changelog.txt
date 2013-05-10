@@ -4768,3 +4768,5 @@ Start... early ages
 - po/fr.po: Updated. (VRI)
 - desk/deskinf.c: Fix bug: file info dialog showed residual values for
   number of files/folders. (RFB)
+- desk/deskinf.c: Grey out number of files/folders when displaying file
+  info. (RFB)
