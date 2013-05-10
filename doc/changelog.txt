@@ -4775,3 +4775,4 @@ Start... early ages
 
 2013-05-10
 - bios/natfeat.S bios/xhdi.c: Added comments about the XHDI handler. (VRI)
+- po/fr.po: Updated. (VRI)
