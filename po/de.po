@@ -286,6 +286,14 @@ msgstr "[3]["
 msgid "ITEM SELECTOR"
 msgstr "AUSWAHL"
 
+#: desk/desk_rsc.c:18
+msgid "Number of folders: _____"
+msgstr "Anzahl Ordner: _____"
+
+#: desk/desk_rsc.c:19
+msgid "Number of files: _____"
+msgstr "Anzahl Dateien: _____"
+
 #: desk/desk_rsc.c:22
 msgid "Install"
 msgstr "Installieren"
@@ -313,14 +321,6 @@ msgstr "Datum: __/__/__"
 #: desk/desk_rsc.c:47
 msgid "Time: __:__ __"
 msgstr "Uhrzeit: __:__ __"
-
-#: desk/desk_rsc.c:18
-msgid "Number of folders: _____"
-msgstr "Anzahl Ordner: _____"
-
-#: desk/desk_rsc.c:19
-msgid "Number of files: _____"
-msgstr "Anzahl Dateien: _____"
 
 #: desk/desk_rsc.c:62
 msgid "Name:"
@@ -362,13 +362,13 @@ msgstr "Anwendungsname:  ________.___"
 msgid "Current name:  ________.___"
 msgstr "Aktueller Name:  ________.___"
 
-#: desk/desk_rsc.c:187
-msgid "Name:  ________.___"
-msgstr "Name:  ________.___"
-
 #: desk/desk_rsc.c:182
 msgid "Copy's name:  ________.___"
 msgstr "Name der Kopie:  ________.___"
+
+#: desk/desk_rsc.c:187
+msgid "Name:  ________.___"
+msgstr "Name:  ________.___"
 
 #: desk/desk_rsc.c:245
 msgid " Desk "
@@ -489,10 +489,6 @@ msgstr "Nur Lesen"
 #: desk/desk_rsc.c:593
 msgid "DISK INFORMATION"
 msgstr "LAUFWERKS-INFORMATION"
-
-#: desk/desk_rsc.c:1680
-msgid "FOLDER INFORMATION"
-msgstr "ORDNER-INFORMATION"
 
 #: desk/desk_rsc.c:668
 msgid "Version"
@@ -713,6 +709,10 @@ msgstr "Laufwerke:"
 #: desk/desk_rsc.c:1679
 msgid "FILE INFORMATION"
 msgstr "DATEI INFORMATION"
+
+#: desk/desk_rsc.c:1680
+msgid "FOLDER INFORMATION"
+msgstr "ORDNER-INFORMATION"
 
 #: desk/desk_rsc.c:1681
 msgid "COPY FILE(S)"
@@ -1018,3 +1018,4 @@ msgstr " Scannen "
 #: desk/icons.c:1057
 msgid " Mail "
 msgstr " Post "
+
