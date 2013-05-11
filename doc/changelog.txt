@@ -4777,3 +4777,6 @@ Start... early ages
 - bios/natfeat.S bios/xhdi.c: Added comments about the XHDI handler. (VRI)
 - po/fr.po: Updated. (VRI)
 - po/de.po: Updated. (THH)
+
+2013-05-11
+- cli/cmdedit.c: Handle input characters < 0x20 correctly. (RFB)

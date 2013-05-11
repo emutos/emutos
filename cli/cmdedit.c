@@ -68,6 +68,10 @@ char prompt[] = "X:>";
             break;
         }
 
+        /* ignore other non-printable characters */
+        if ((unsigned char)c < 0x20)
+            continue;
+
         /* if other ASCII key but line is full, ignore */
         if (len >= linesize-2)
             continue;
