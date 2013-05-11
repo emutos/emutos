@@ -25,8 +25,65 @@
  #define MAXPATHLEN      256
 #endif
 
-#include <osbind.h>
 
+/*
+ * system calls
+ */
+extern LONG jmp_gemdos(WORD, ...);
+extern LONG jmp_bios(WORD, ...);
+extern LONG jmp_xbios(WORD, ...);
+
+#define jmp_gemdos_v(a)         jmp_gemdos((WORD)(a))
+#define jmp_gemdos_w(a,b)       jmp_gemdos((WORD)(a),(WORD)(b))
+#define jmp_gemdos_l(a,b)       jmp_gemdos((WORD)(a),(LONG)(b))
+#define jmp_gemdos_p(a,b)       jmp_gemdos((WORD)(a),(void*)(b))
+#define jmp_gemdos_ww(a,b,c)    jmp_gemdos((WORD)(a),(WORD)(b),(WORD)(c))
+#define jmp_gemdos_pw(a,b,c)    jmp_gemdos((WORD)(a),(void *)(b),(WORD)(c))
+#define jmp_gemdos_wlp(a,b,c,d) jmp_gemdos((WORD)(a),(WORD)(b),(LONG)(c),(void *)(d))
+#define jmp_gemdos_wpp(a,b,c,d) jmp_gemdos((WORD)(a),(WORD)(b),(void *)(c),(void *)(d))
+#define jmp_gemdos_pww(a,b,c,d) jmp_gemdos((WORD)(a),(void *)(b),(WORD)(c),(WORD)(d))
+#define jmp_gemdos_wppp(a,b,c,d,e)  jmp_gemdos((WORD)(a),(WORD)(b),(void *)(c),(void *)(d),(void *)(e))
+#define jmp_bios_w(a,b)         jmp_bios((WORD)(a),(WORD)(b))
+#define jmp_bios_ww(a,b,c)      jmp_bios((WORD)(a),(WORD)(b),(WORD)(c))
+#define jmp_xbios_l(a,b)        jmp_xbios((WORD)(a),(LONG)(b))
+#define jmp_xbios_ww(a,b,c)     jmp_xbios((WORD)(a),(WORD)(b),(WORD)(c))
+
+#define Dsetdrv(a)          jmp_gemdos_w(0x0e,a)
+#define Dgetdrv()           jmp_gemdos_v(0x19)
+#define Fgetdta()           jmp_gemdos_v(0x2f)
+#define Sversion()          jmp_gemdos_v(0x30)
+#define Dfree(a,b)          jmp_gemdos_pw(0x36,a,b)
+#define Dcreate(a)          jmp_gemdos_p(0x39,a)
+#define Ddelete(a)          jmp_gemdos_p(0x3a,a)
+#define Dsetpath(a)         jmp_gemdos_p(0x3b,a)
+#define Fcreate(a,b)        jmp_gemdos_pw(0x3c,a,b)
+#define Fopen(a,b)          jmp_gemdos_pw(0x3d,a,b)
+#define Fclose(a)           jmp_gemdos_w(0x3e,a)
+#define Fread(a,b,c)        jmp_gemdos_wlp(0x3f,a,b,c)
+#define Fwrite(a,b,c)       jmp_gemdos_wlp(0x40,a,b,c)
+#define Fdelete(a)          jmp_gemdos_p(0x41,a)
+#define Fattrib(a,b,c)      jmp_gemdos_pww(0x43,a,b,c)
+#define Fdup(a)             jmp_gemdos_w(0x45,a)
+#define Fforce(a,b)         jmp_gemdos_ww(0x46,a,b)
+#define Dgetpath(a,b)       jmp_gemdos_pw(0x47,a,b)
+#define Malloc(a)           jmp_gemdos_l(0x48,a)
+#define Mfree(a)            jmp_gemdos_p(0x49,a)
+#define Pexec(a,b,c,d)      jmp_gemdos_wppp(0x4b,a,b,c,d)
+#define Fsfirst(a,b)        jmp_gemdos_pw(0x4e,a,b)
+#define Fsnext()            jmp_gemdos_v(0x4f)
+#define Frename(a,b,c)      jmp_gemdos_wpp(0x56,a,b,c)
+
+#define Bconstat(a)         jmp_bios_w(0x01,a)
+#define Bconin(a)           jmp_bios_w(0x02,a)
+#define Bconout(a,b)        jmp_bios_ww(0x03,a,b)
+
+#define Cursconf(a,b)       jmp_xbios_ww(0x15,a,b)
+#define Supexec(a)          jmp_xbios_l(0x26,a)
+
+
+/*
+ * program parameters
+ */
 #define CMDLINELEN      128     /* allow for length char etc */
 #define MAXCMDLINE      125     /* the most amount of real data allowed */
 

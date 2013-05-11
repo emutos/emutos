@@ -4780,3 +4780,4 @@ Start... early ages
 
 2013-05-11
 - cli/cmdedit.c: Handle input characters < 0x20 correctly. (RFB)
+- cli/Makefile cli/cmd.h cli/cmdasm.S: Eliminate usage of osbind.h. (RFB)

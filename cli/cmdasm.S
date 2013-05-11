@@ -17,6 +17,7 @@
 
         .globl  _coma_start
         .globl  _getwh
+        .globl  _jmp_gemdos,_jmp_bios,_jmp_xbios
         .extern _cmdmain
 
         .text
@@ -48,7 +49,31 @@ _getwh:
         move.l  -44(a0),d0              // v_cel_mx/v_cel_my
         rts
 
+/*
+ * system call interface
+ */
+_jmp_gemdos:
+        move.l  (sp)+,ret_addr          // so parameters are in the right place
+        trap    #1
+        move.l  ret_addr,-(sp)
+        rts
+
+_jmp_bios:
+        move.l  (sp)+,ret_addr
+        trap    #13
+        move.l  ret_addr,-(sp)
+        rts
+
+_jmp_xbios:
+        move.l  (sp)+,ret_addr
+        trap    #14
+        move.l  ret_addr,-(sp)
+        rts
+
+
         .bss
+ret_addr:
+        .ds.l   1
 
         .ds.l   1024
 stack:
