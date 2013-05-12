@@ -284,6 +284,14 @@ msgstr "[3]["
 msgid "ITEM SELECTOR"
 msgstr "TIEDOSTON VALINTA"
 
+#: desk/desk_rsc.c:18
+msgid "Number of folders: _____"
+msgstr "Kansioita: _____"
+
+#: desk/desk_rsc.c:19
+msgid "Number of files: _____"
+msgstr "Tiedostoja: _____"
+
 #: desk/desk_rsc.c:22
 msgid "Install"
 msgstr "Asenna"
@@ -300,9 +308,41 @@ msgstr "Kyllä"
 msgid "No"
 msgstr "Ei"
 
-#: desk/desk_rsc.c:187
-msgid "Name:  ________.___"
-msgstr "Nimi:  ________.___"
+#: desk/desk_rsc.c:37
+msgid "Size: __________"
+msgstr "Koko: __________"
+
+#: desk/desk_rsc.c:42
+msgid "Date: __/__/__"
+msgstr "Pvm: __.__.__"
+
+#: desk/desk_rsc.c:47
+msgid "Time: __:__ __"
+msgstr "Aika: __:__ __"
+
+#: desk/desk_rsc.c:62
+msgid "Name:"
+msgstr "Nimi:"
+
+#: desk/desk_rsc.c:67
+msgid "Drive identifier: _:"
+msgstr "Aseman tunnus: _:"
+
+#: desk/desk_rsc.c:72
+msgid "Disk label: ___________"
+msgstr "Levyn nimi: ___________"
+
+#: desk/desk_rsc.c:87
+msgid "Bytes used: __________"
+msgstr "Tavuja käytetty: __________"
+
+#: desk/desk_rsc.c:92
+msgid "Bytes available: __________"
+msgstr "Tavuja vapaana: __________"
+
+#: desk/desk_rsc.c:97
+msgid "Name: ________.___"
+msgstr "Nimi: ________.___"
 
 #: desk/desk_rsc.c:107
 msgid "Drive identifier:  _"
@@ -323,6 +363,10 @@ msgstr "Nykyinen nimi:  ________.___"
 #: desk/desk_rsc.c:182
 msgid "Copy's name:  ________.___"
 msgstr "Kopion nimi:  ________.___"
+
+#: desk/desk_rsc.c:187
+msgid "Name:  ________.___"
+msgstr "Nimi:  ________.___"
 
 #: desk/desk_rsc.c:245
 msgid " Desk "
@@ -428,6 +472,10 @@ msgstr "  Koko           \007Z"
 msgid "  Sort by date   \007T"
 msgstr "  Päiväys        \007T"
 
+#: desk/desk_rsc.c:542
+msgid "Attribute:"
+msgstr "Ominaisuus:"
+
 #: desk/desk_rsc.c:554
 msgid "Read/Write"
 msgstr "Lue/Kirj."
@@ -439,10 +487,6 @@ msgstr "Vain luku"
 #: desk/desk_rsc.c:593
 msgid "DISK INFORMATION"
 msgstr "LEVYN TIEDOT"
-
-#: desk/desk_rsc.c:1680
-msgid "FOLDER INFORMATION"
-msgstr "KANSION TIEDOT"
 
 #: desk/desk_rsc.c:668
 msgid "Version"
@@ -471,6 +515,10 @@ msgstr "    katso doc\\license.txt."
 #: desk/desk_rsc.c:755
 msgid "OPEN APPLICATION"
 msgstr "AVAA SOVELLUS"
+
+#: desk/desk_rsc.c:767
+msgid "Parameters:"
+msgstr "Parametrit:"
 
 #: desk/desk_rsc.c:800
 msgid "INSTALL DISK DRIVE"
@@ -655,6 +703,22 @@ msgstr "Uusi kansio"
 #: desk/desk_rsc.c:1678
 msgid "Disk Drives:"
 msgstr "Levyasemat:"
+
+#: desk/desk_rsc.c:1679
+msgid "FILE INFORMATION"
+msgstr "TIEDOSTON TIEDOT"
+
+#: desk/desk_rsc.c:1680
+msgid "FOLDER INFORMATION"
+msgstr "KANSION TIEDOT"
+
+#: desk/desk_rsc.c:1681
+msgid "COPY FILE(S)"
+msgstr "KOPIOI TIEDOSTO(JA)"
+
+#: desk/desk_rsc.c:1682
+msgid "DELETE FILE(S)"
+msgstr "POISTA TIEDOSTO(JA)"
 
 #: desk/desk_rsc.c:1689
 msgid "DISK"
@@ -944,66 +1008,3 @@ msgstr " Skanneri "
 msgid " Mail "
 msgstr " Posti "
 
-#: desk/desk_rsc.c:18
-msgid "Number of folders: _____"
-msgstr "Kansioita: _____"
-
-#: desk/desk_rsc.c:19
-msgid "Number of files: _____"
-msgstr "Tiedostoja: _____"
-
-#: desk/desk_rsc.c:37
-msgid "Size: __________"
-msgstr "Koko: __________"
-
-#: desk/desk_rsc.c:42
-msgid "Date: __/__/__"
-msgstr "Pvm: __.__.__"
-
-#: desk/desk_rsc.c:47
-msgid "Time: __:__ __"
-msgstr "Aika: __:__ __"
-
-#: desk/desk_rsc.c:62
-msgid "Name:"
-msgstr "Nimi:"
-
-#: desk/desk_rsc.c:67
-msgid "Drive identifier: _:"
-msgstr "Aseman tunnus: _:"
-
-#: desk/desk_rsc.c:72
-msgid "Disk label: ___________"
-msgstr "Levyn nimi: ___________"
-
-#: desk/desk_rsc.c:87
-msgid "Bytes used: __________"
-msgstr "Tavuja käytetty: __________"
-
-#: desk/desk_rsc.c:92
-msgid "Bytes available: __________"
-msgstr "Tavuja vapaana: __________"
-
-#: desk/desk_rsc.c:97
-msgid "Name: ________.___"
-msgstr "Nimi: ________.___"
-
-#: desk/desk_rsc.c:542
-msgid "Attribute:"
-msgstr "Ominaisuus:"
-
-#: desk/desk_rsc.c:767
-msgid "Parameters:"
-msgstr "Parametrit:"
-
-#: desk/desk_rsc.c:1679
-msgid "FILE INFORMATION"
-msgstr "TIEDOSTON TIEDOT"
-
-#: desk/desk_rsc.c:1681
-msgid "COPY FILE(S)"
-msgstr "KOPIOI TIEDOSTO(JA)"
-
-#: desk/desk_rsc.c:1682
-msgid "DELETE FILE(S)"
-msgstr "POISTA TIEDOSTO(JA)"
