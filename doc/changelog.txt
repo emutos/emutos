@@ -4785,3 +4785,6 @@ Start... early ages
 2013-05-12
 - po/ru.po: Updated. Contributed by Dima Sobolev. (VRI)
 - po/fi.po: Updated. Contributed by Eero Tamminen. (VRI)
+- cli/Makefile cli/cmd.h cli/cmdedit.c cli/cmdexec.c cli/cmdint.c
+  cli/cmdmain.c cli/cmdparse.c cli/cmdutil.c: Added constness, prepare
+  for integration into EmuTOS. (RFB)

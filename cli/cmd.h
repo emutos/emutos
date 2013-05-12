@@ -183,7 +183,6 @@ extern char user_path[MAXPATHLEN];     /* from PATH command */
  */
 /* cmdmain.c */
 void outlong(ULONG n,WORD width,char filler);
-void output(char *s);
 
 /* cmdedit.c */
 WORD init_cmdedit(void);
@@ -208,10 +207,10 @@ void escape(char c);
 WORD getcookie(LONG cookie,LONG *pvalue);
 WORD get_path_component(char **pp,char *dest);
 WORD has_wildcard(char *name);
-void message(char *msg);
-void messagenl(char *msg);
-void output(char *s);
-void outputnl(char *s);
+void message(const char *msg);
+void messagenl(const char *msg);
+void output(const char *s);
+void outputnl(const char *s);
 LONG outputbuf(char *s,LONG len);
 char *program_extension(DTA *dta);
 WORD strequal(char *s1,char *s2);

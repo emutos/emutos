@@ -9,8 +9,8 @@
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  */
-#include "string.h"
 #include "cmd.h"
+#include <string.h>
 
 typedef struct {
     long cookie;
@@ -30,9 +30,9 @@ void escape(char c)
 /*
  *  output a message to the console
  */
-void message(char *msg)
+void message(const char *msg)
 {
-char *p;
+const char *p;
 
     for (p = msg; *p; p++) {
         if (*p == '\n')
@@ -44,7 +44,7 @@ char *p;
 /*
  *  output a message terminated by a newline to the console
  */
-void messagenl(char *msg)
+void messagenl(const char *msg)
 {
     message(msg);
     message("\n");
@@ -55,7 +55,8 @@ void messagenl(char *msg)
  */
 void errmsg(LONG rc)
 {
-char buf[20], *p;
+char buf[20];
+const char *p;
 
     switch(rc) {
     case 0:                 /* no errors */
@@ -108,7 +109,7 @@ char buf[20], *p;
 /*
  *  output a redirectable string
  */
-void output(char *s)
+void output(const char *s)
 {
     if (redir_handle < 0L)
         message(s);
@@ -118,7 +119,7 @@ void output(char *s)
 /*
  *  output a redirectable string with a newline
  */
-void outputnl(char *s)
+void outputnl(const char *s)
 {
     output(s);
     output("\n");

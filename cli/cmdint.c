@@ -9,8 +9,8 @@
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  */
-#include <string.h>
 #include "cmd.h"
+#include <string.h>
 
 typedef struct {
     char *name;
@@ -36,7 +36,7 @@ PRIVATE WORD help_pause(void);
 PRIVATE WORD help_wanted(COMMAND *p,char *cmd);
 PRIVATE void padname(char *buf,char *name);
 PRIVATE LONG pathout(void);
-PRIVATE void show_line(char *title,ULONG n);
+PRIVATE void show_line(const char *title,ULONG n);
 
 PRIVATE LONG run_cat(WORD argc,char **argv);
 PRIVATE LONG run_cd(WORD argc,char **argv);
@@ -385,7 +385,7 @@ LONG rc = 0L;
     if (argc == 1) {
         p = user_path;
         if (!*p)
-            p = _("(empty)");
+            p = (char *)_("(empty)");
         message(" ");
         messagenl(p);
         return 0L;
@@ -857,7 +857,7 @@ char c;
     return c;
 }
 
-PRIVATE void show_line(char *title,ULONG n)
+PRIVATE void show_line(const char *title,ULONG n)
 {
 char buf[20];
 

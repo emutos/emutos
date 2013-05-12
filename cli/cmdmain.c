@@ -128,7 +128,7 @@ LONG rc;
     else redir_handle = rc;
 }
 
-PRIVATE void close_redir()
+PRIVATE void close_redir(void)
 {
     if (redir_handle >= 0)
         Fclose((WORD)redir_handle);
