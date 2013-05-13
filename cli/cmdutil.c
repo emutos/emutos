@@ -122,7 +122,7 @@ void output(const char *s)
 void outputnl(const char *s)
 {
     output(s);
-    output("\n");
+    output("\r\n");
 }
 
 /*

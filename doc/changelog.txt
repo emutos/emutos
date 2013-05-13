@@ -4789,3 +4789,5 @@ Start... early ages
   cli/cmdmain.c cli/cmdparse.c cli/cmdutil.c: Added constness, prepare
   for integration into EmuTOS. (RFB)
 - cli/cmdutil.c: Fix strcpy() bug in standalone version. (RFB)
+- cli/cmdutil.c: Make redirected text lines from internal commands
+  end in cr/lf. (RFB)
