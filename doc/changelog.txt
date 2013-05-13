@@ -4796,3 +4796,4 @@ Start... early ages
 
 2013-05-13
 - po/it.po: Updated. Contributed by Lodovico Zanier. (VRI)
+- po/es.po: Updated. Contributed by David Gálvez. (VRI)
