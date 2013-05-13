@@ -4792,3 +4792,4 @@ Start... early ages
 - cli/cmdutil.c: Make redirected text lines from internal commands
   end in cr/lf. (RFB)
 - cli/cmdutil.c: Fix cr/lf problem in internal ls command. (RFB)
+- Makefile: Integrate new console into EmuTOS. (RFB)

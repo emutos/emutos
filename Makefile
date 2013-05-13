@@ -237,8 +237,8 @@ desk_ssrc = deskstart.S
 # source code in cli/ for EmuTOS console EmuCON
 #
 
-cli_csrc = command.c
-cli_ssrc = coma.S
+cli_csrc = cmdedit.c cmdexec.c cmdint.c cmdmain.c cmdparse.c cmdutil.c
+cli_ssrc = cmdasm.S
 
 #
 # specific CC -c options for specific directories
@@ -247,7 +247,7 @@ cli_ssrc = coma.S
 bios_copts =
 bdos_copts =
 util_copts = -Ibios
-cli_copts  = -Ibios
+cli_copts  =
 vdi_copts  = -Ibios
 aes_copts  = -Ibios
 desk_copts = -Ibios -Iaes
