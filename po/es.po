@@ -478,7 +478,7 @@ msgstr "Atributos:"
 
 #: desk/desk_rsc.c:554
 msgid "Read/Write"
-msgstr "Lectura/Escritura"
+msgstr "Lect./Escr."
 
 #: desk/desk_rsc.c:560
 msgid "Read-Only"
