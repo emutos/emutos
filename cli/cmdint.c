@@ -353,13 +353,13 @@ WORD detail = 0;
             padname(buf,dta->d_fname);
             output(buf);
             if (++n >= names_per_line) {
-                output("\n");
+                outputnl("");
                 n = 0;
             }
         }
     }
     if (n)
-        output("\n");
+        outputnl("");
 
     if (rc == ENMFIL)
         rc = 0L;
