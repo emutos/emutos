@@ -4793,3 +4793,6 @@ Start... early ages
   end in cr/lf. (RFB)
 - cli/cmdutil.c: Fix cr/lf problem in internal ls command. (RFB)
 - Makefile: Integrate new console into EmuTOS. (RFB)
+
+2013-05-13
+- po/it.po: Updated. Contributed by Lodovico Zanier. (VRI)
