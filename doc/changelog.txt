@@ -4788,3 +4788,4 @@ Start... early ages
 - cli/Makefile cli/cmd.h cli/cmdedit.c cli/cmdexec.c cli/cmdint.c
   cli/cmdmain.c cli/cmdparse.c cli/cmdutil.c: Added constness, prepare
   for integration into EmuTOS. (RFB)
+- cli/cmdutil.c: Fix strcpy() bug in standalone version. (RFB)

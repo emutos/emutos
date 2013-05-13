@@ -481,6 +481,7 @@ char *p = dest;
 
     for (p = dest; *src; )
         *p++ = *src++;
+    *p = '\0';
 
     return dest;
 }
