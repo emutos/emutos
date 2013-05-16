@@ -163,6 +163,7 @@ typedef struct {
 #define clear_screen()  escape('E')
 #define cursor_left()   escape('D')
 #define cursor_right()  escape('C')
+#define enable_cursor() escape('e')
 #define conin()         Bconin(2)
 #define constat()       Bconstat(2)
 #define conout(c)       Bconout(2,c)

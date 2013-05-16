@@ -55,6 +55,7 @@ WORD argc, rc;
 ULONG n;
 
     clear_screen();
+    enable_cursor();
     messagenl(_("Welcome to EmuCON2: type HELP for builtin commands"));
 
     /*
