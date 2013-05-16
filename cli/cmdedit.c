@@ -33,7 +33,7 @@ PRIVATE WORD previous_word_count(char *line,WORD pos);
 PRIVATE WORD replace_line(char *line,WORD num);
 PRIVATE char *start_of_current_word(char *line,WORD pos);
 
-void read_line(char *line)
+WORD read_line(char *line)
 {
 LONG charcode;
 char c;
@@ -68,6 +68,13 @@ char prompt[] = "X:>";
             break;
         }
 
+        /* handle line cancel */
+        if (c == CTL_C) {
+            messagenl("^C");    /* tell user what happened */
+            line[len] = '\0';   /* nul-terminate line */
+            return -1;
+        }
+
         /* ignore other non-printable characters */
         if ((unsigned char)c < 0x20)
             continue;
@@ -86,6 +93,8 @@ char prompt[] = "X:>";
     }
 
     history_num = save_history_num;
+
+    return 0;
 }
 
 /*
@@ -234,16 +243,7 @@ WORD n, shift = 0;
         }
         break;
     default:
-        /* we handle ASCII keys separately because scancodes can vary */
-        switch(scancode & 0xff) {
-        case CTL_C:
-            erase_line(line,*len);
-            *pos = *len = 0;
-            break;
-        default:
-            return -1;  /* we didn't process this key */
-        }
-        break;
+        return -1;      /* we didn't process this key */
     }
 
     return scancode;    /* we processed this key */

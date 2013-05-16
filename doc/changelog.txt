@@ -4797,3 +4797,7 @@ Start... early ages
 2013-05-13
 - po/it.po: Updated. Contributed by Lodovico Zanier. (VRI)
 - po/es.po: Updated. Contributed by David Gálvez. (VRI)
+
+2013-05-15
+- cli/cmd.h cli/cmdedit.c cli/cmdmain.c: Make console ctl-C behaviour
+  like other shells. (RFB)

@@ -187,7 +187,7 @@ void outlong(ULONG n,WORD width,char filler);
 /* cmdedit.c */
 WORD init_cmdedit(void);
 void insert_char(char *line,WORD pos,WORD len,char c);
-void read_line(char *line);
+WORD read_line(char *line);
 void save_history(char *line);
 
 /* cmdexec.c */

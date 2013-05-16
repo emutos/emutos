@@ -51,7 +51,7 @@ PRIVATE void strip_quotes(int argc,char **argv);
 
 int cmdmain(void)
 {
-WORD argc;
+WORD argc, rc;
 ULONG n;
 
     clear_screen();
@@ -76,8 +76,10 @@ ULONG n;
         messagenl(_("warning: no history buffers"));
 
     while(1) {
-        read_line(input_line);
+        rc = read_line(input_line);
         save_history(input_line);
+        if (rc < 0)         /* user cancelled line */
+            continue;
         argc = parse_line(input_line,argv,redir_name);
         if (argc < 0)       /* parse error */
             continue;
