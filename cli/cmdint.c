@@ -604,7 +604,6 @@ LONG bufsize, n, rc;
         message(inname);
         message(_(" to "));
         message(outname);
-        message(" ...");
 
         rc = Fopen(inname,0);
         if (rc < 0L)
@@ -630,14 +629,14 @@ LONG bufsize, n, rc;
         } while(rc > 0L);
         Fclose(in);
         Fclose(out);
-#if 0
+
         if (delete && (rc == 0L)) { /* don't delete unless copy successful */
             message(_(" ... deleting "));
             message(inptr);
             rc = Fdelete(inname);
         }
-#endif
-        messagenl(_(" done"));
+
+        messagenl(_(" ... done"));
         if (rc < 0L)
             break;
     }
