@@ -434,6 +434,9 @@ char *p, *q, c;
             return 0;
     }
 
+    if (*p != *q)
+        return 0;
+
     return 1;
 }
 

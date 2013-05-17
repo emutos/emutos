@@ -4801,3 +4801,6 @@ Start... early ages
 2013-05-15
 - cli/cmd.h cli/cmdedit.c cli/cmdmain.c: Make console ctl-C behaviour
   like other shells. (RFB)
+
+2013-05-17
+- cli/cmdint.c cli/cmdutil.c: Fix bugs in console copy command. (RFB)

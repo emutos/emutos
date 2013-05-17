@@ -72,8 +72,10 @@ LOCAL char *help_chmod[] = { "<mode> <filename>",
     N_("1: read-only  2: hidden  4: system"), NULL };
 LOCAL char *help_cls[] = { "",
     N_("Clear screen"), NULL };
-LOCAL char *help_cp[] = { "<filespec> <dir>",
-    N_("Copy files matching <filespec> to <dir>"), NULL };
+LOCAL char *help_cp[] = { "<filespec> <dest>",
+    N_("Copy files matching <filespec> to <dest>"),
+    N_("If <filespec> matches multiple files,"),
+    N_("<dest> must be a directory"), NULL };
 LOCAL char *help_echo[] = { "<string> ...",
     N_("Copy <string> ... to standard output"),
     N_("Strings may be surrounded by \"\""), NULL };
@@ -549,37 +551,55 @@ PRIVATE LONG run_wrap(WORD argc,char **argv)
  */
 
 /*
- *  copy_move: if no destination, use current directory
+ *  copy_move
  */
 PRIVATE LONG copy_move(WORD argc,char **argv,WORD delete)
 {
 char inname[MAXPATHLEN], outname[MAXPATHLEN];
 char *inptr, *outptr;
-WORD in, out;
-char *p, *iobuf;
+WORD in, out, output_is_dir = 0;
+char *iobuf;
 LONG bufsize, n, rc;
 
-    if (argc == 3) {
-        p = argv[2];
-    } else {
-        n = Dgetdrv();
-        rc = Dgetpath(inname,n+1);  /* we use inname[] as a temp here */
-        if (rc < 0L)
-            return rc;
-        p = inname;
+    inptr = extract_path(inname,argv[1]);
+    outptr = extract_path(outname,argv[2]);
+
+    /* count files to be copied */
+    for (rc = Fsfirst(inname,0x07), n = 0; rc == 0; rc = Fsnext())
+        n++;
+
+    if (Fsfirst(outname,0x10) == 0L) {
+        if (dta->d_attrib & 0x10) {     /* target is directory */
+            output_is_dir = 1;
+            outptr += strlen(outptr);
+            *outptr++ = '\\';
+            *outptr = '\0';
+        }
     }
-    outptr = extract_path(outname,p);
+
+    if ((n > 1) && !output_is_dir) {
+        message(outname);
+        messagenl(_(" is not a directory"));
+        return 0;           /* because we already issued a message */
+    }
 
     bufsize = IOBUFSIZE;
     iobuf = (char *)Malloc(bufsize);
     if (!iobuf)
         return ENSMEM;
 
-    inptr = extract_path(inname,argv[1]);
-
-    for (rc = Fsfirst(argv[1],0x07); rc == 0; rc = Fsnext()) {
+    for (rc = Fsfirst(inname,0x07); rc == 0; rc = Fsnext()) {
         strcpy(inptr,dta->d_fname);     /* add name to paths */
-        strcpy(outptr,dta->d_fname);
+        if (output_is_dir)
+            strcpy(outptr,dta->d_fname);
+        if (strequal(inname,outname)) {
+            message(inname);
+            message(_(" and "));
+            message(outname);
+            messagenl(" are the same file");
+            continue;
+        }
+
         message(_("Copying "));
         message(inname);
         message(_(" to "));
