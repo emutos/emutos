@@ -4808,3 +4808,4 @@ Start... early ages
 
 2013-05-19
 - cli/cmdint.c: Fix crash in wrap command. (RFB)
+- cli/cmdutil.c: Fix strequal() to properly ignore case. (RFB)

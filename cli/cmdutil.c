@@ -422,19 +422,19 @@ char *p;
  */
 WORD strequal(char *s1,char *s2)
 {
-char *p, *q, c;
+char *p, *q, c1, c2;
 
-    for (p = s1, q = s2; *p; p++, q++) {
-        if (*p == *q)
-            continue;
-        c = *p;
-        if ((c >= 'A') && (c <= 'Z'))
-            c |= 0x20;
-        if (c != *q)
+    for (p = s1, q = s2; *p; ) {
+        c1 = *p++;
+        if ((c1 >= 'A') && (c1 <= 'Z'))
+            c1 |= 0x20;
+        c2 = *q++;
+        if ((c2 >= 'A') && (c2 <= 'Z'))
+            c2 |= 0x20;
+        if (c1 != c2)
             return 0;
     }
-
-    if (*p != *q)
+    if (*q)
         return 0;
 
     return 1;
