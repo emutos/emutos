@@ -4805,3 +4805,6 @@ Start... early ages
 2013-05-17
 - cli/cmdint.c cli/cmdutil.c: Fix bugs in console copy command. (RFB)
 - cli/cmdint.c: Fix bug: move command copied instead of moving. (RFB)
+
+2013-05-19
+- cli/cmdint.c: Fix crash in wrap command. (RFB)

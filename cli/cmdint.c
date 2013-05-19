@@ -533,6 +533,7 @@ PRIVATE LONG run_wrap(WORD argc,char **argv)
         if (linewrap)
             messagenl("ON");
         else messagenl("OFF");
+        return 0L;
     }
 
     if (strequal(argv[1],"ON")) {
