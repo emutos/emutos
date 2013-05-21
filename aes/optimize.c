@@ -119,27 +119,41 @@ BYTE *strscn(BYTE *ps, BYTE *pd, BYTE stop)
 
 /*
  *      Convert 'normal' filename to a value suitable for formatting
- *      with a TEDINFO FFFFFFFF.FFF text string.  For example,
- *      'SAMPLE.PRG' is converted to 'SAMPLE  PRG'.
+ *      with a TEDINFO FFFFFFFF.FFF text string.  For example:
+ *      . 'SAMPLE.PRG' is converted to 'SAMPLE  PRG'
+ *      . 'TESTPROG.C' is converted to 'TESTPROGC'
+ *      . 'TEST' is converted to 'TEST'
+ *
+ *      This code also handles input filenames that are not in 8.3
+ *      format that may be provided by e.g. Hatari GEMDOS drive
+ *      emulation.  For example:
+ *      . 'TESTWINDOW.C' is converted to 'TESTWINDC' 
+ *      . 'TEST.A.B.C' is converted to 'TEST    A.B' 
+ *      . 'TESTTESTTEST' is converted to 'TESTTEST'
  */
-void fmt_str(BYTE *instr, BYTE *outstr)
+void fmt_str(BYTE *instr,BYTE *outstr)
 {
-        WORD            count;
-        BYTE            *pstr;
+        BYTE *p, *q;
 
-        pstr = instr;
-        while( (*pstr) && (*pstr != '.') )
-          *outstr++ = *pstr++;
-        if (*pstr)
-        {
-          count = 8 - (pstr - instr);
-          while ( count-- )
-            *outstr++ = ' ';
-          pstr++;
-          while (*pstr)
-            *outstr++ = *pstr++;
+        /* copy up to 8 bytes before the (first) dot (we eat excess bytes) */
+        for (p = instr, q = outstr; *p; p++) {
+          if (*p == '.') {
+            p++;
+            break;
+          }
+          if (q-outstr < 8)
+            *q++ = *p;
         }
-        *outstr = NULL;
+
+        /* if any extension present, fill out with spaces, then copy extension */
+        if (*p) {
+          while(q-outstr < 8)
+            *q++ = ' ';
+          while((q-outstr < 11) && *p)
+            *q++ = *p++;
+        }
+
+        *q = '\0';  /* always nul-terminate */
 }
 
 

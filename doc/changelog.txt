@@ -4809,3 +4809,6 @@ Start... early ages
 2013-05-19
 - cli/cmdint.c: Fix crash in wrap command. (RFB)
 - cli/cmdutil.c: Fix strequal() to properly ignore case. (RFB)
+
+2013-05-21
+- aes/optimize.c: Fix crash with non-standard filenames from Hatari. (RFB)
