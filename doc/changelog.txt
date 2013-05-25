@@ -4812,3 +4812,6 @@ Start... early ages
 
 2013-05-21
 - aes/optimize.c: Fix crash with non-standard filenames from Hatari. (RFB)
+
+2013-05-25
+- po/gr.po: Updated Greek translation. Contributed by Christos Tziotzis. (VRI)
