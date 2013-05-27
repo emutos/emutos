@@ -4815,3 +4815,6 @@ Start... early ages
 
 2013-05-25
 - po/gr.po: Updated Greek translation. Contributed by Christos Tziotzis. (VRI)
+
+2013-05-27
+- tools/bug.c: Fixed warning about unused variable line_start. (VRI)

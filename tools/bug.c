@@ -69,6 +69,7 @@
 #define LANGS_C  "util/langs.c"
 
 #define HERE fprintf(stderr, "%s:%d\n", __FUNCTION__, __LINE__);
+#define UNUSED(x) (void)(x) /* Unused variable */
 
 /*
  * typedefs
@@ -1370,9 +1371,9 @@ static void parse_oipl_file(char *fname, da *d)
  * if they're too long or there are too many lines of
  * text.  For buttons the lines parameter is zero.
  */
-#if ALERT_TEXT_WARNINGS
 static void alert_check(const char *start, const char *end, int lines)
 {
+#if ALERT_TEXT_WARNINGS
   int len = end - start - 1;
   const char *errstr;
   char *tmpstr;
@@ -1398,10 +1399,12 @@ static void alert_check(const char *start, const char *end, int lines)
   tmpstr[len] = '\0';
   warn(errstr, tmpstr);
   free(tmpstr);
-}
 #else /* !ALERT_TEXT_WARNINGS */
-#define alert_check(a,b,c)
+  UNUSED(start);
+  UNUSED(end);
+  UNUSED(lines);
 #endif
+}
 
 /*
  * print string in canonical format
