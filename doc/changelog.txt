@@ -4822,3 +4822,4 @@ Start... early ages
 2013-05-28
 - cli/cmd.h cli/cmdedit.c cli/cmdexec.c cli/cmdint.c cli/cmdmain.c
   cli/cmdutil.c: Added more const keywords. (VRI)
+- tools/mkrom.c: Fixed for 64-bit systems. Suggested by Radoslaw Kujawa. (VRI)

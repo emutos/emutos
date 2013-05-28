@@ -167,3 +167,6 @@ Michaël Gibs on English Amiga Board
 
 Amiman99 on English Amiga Board
 - Tests on Amiga 1000
+
+Radoslaw Kujawa
+- Compilation fix on 64-bit build systems

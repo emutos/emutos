@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <stdint.h>
 
 #define SIZE_ERROR ((size_t)-1)
 #define MIN(a, b) ((a)<=(b) ? (a) : (b))
@@ -38,31 +39,31 @@ typedef enum
 
 /* Global variables */
 static const char* g_argv0; /* Program name */
-static unsigned char g_buffer[BUFFER_SIZE]; /* Global buffer to minimize stack usage */
+static uint8_t g_buffer[BUFFER_SIZE]; /* Global buffer to minimize stack usage */
 
 /* Read a big endian long */
-static unsigned long read_big_endian_long(const unsigned long* p)
+static uint32_t read_big_endian_long(const uint32_t* p)
 {
     union
     {
-        unsigned long l;
-        unsigned char b[4];
+        uint32_t l;
+        uint8_t b[4];
     } u;
 
     u.l = *p;
 
-    return ((unsigned long)u.b[0]) << 24
-         | ((unsigned long)u.b[1]) << 16
-         | ((unsigned long)u.b[2]) << 8
-         |  (unsigned long)u.b[3];
+    return ((uint32_t)u.b[0]) << 24
+         | ((uint32_t)u.b[1]) << 16
+         | ((uint32_t)u.b[2]) << 8
+         |  (uint32_t)u.b[3];
 }
 
 /* Write a big endian long */
-static void write_big_endian_long(unsigned long* p, unsigned long value)
+static void write_big_endian_long(uint32_t* p, uint32_t value)
 {
     union
     {
-        unsigned long l;
+        uint32_t l;
         char b[4];
     } u;
 
@@ -75,12 +76,12 @@ static void write_big_endian_long(unsigned long* p, unsigned long value)
 }
 
 /* Write a big endian short */
-static void write_big_endian_short(unsigned short* p, unsigned short value)
+static void write_big_endian_short(uint16_t* p, uint16_t value)
 {
     union
     {
-        unsigned short s;
-        unsigned char b[4];
+        uint16_t s;
+        uint8_t b[4];
     } u;
 
     u.b[0] = (value >> 8);
@@ -90,9 +91,9 @@ static void write_big_endian_short(unsigned short* p, unsigned short value)
 }
 
 /* Add two longs, and the carry, if any */
-static unsigned long add_with_carry(unsigned long a, unsigned long b)
+static uint32_t add_with_carry(uint32_t a, uint32_t b)
 {
-    unsigned long sum = a + b;
+    uint32_t sum = a + b;
 
     if (sum < a) /* Overflow */
         sum++; /* Add carry */
@@ -170,7 +171,7 @@ static size_t get_file_size(FILE* file, const char* filename)
 }
 
 /* Write a block of same bytes to a file */
-static int write_byte_block(FILE* outfile, const char* outfilename, unsigned char value, size_t count)
+static int write_byte_block(FILE* outfile, const char* outfilename, uint8_t value, size_t count)
 {
     size_t towrite; /* Number of bytes to write this time */
     size_t written; /* Number of bytes written this time */
@@ -321,17 +322,17 @@ static int cmd_stc(FILE* infile, const char* infilename,
 /* Structure at the end of an Amiga ROM */
 struct amiga_rom_footer
 {
-    unsigned long checksum_fixup; /* Fixup to get checksum == 0xffffffff */
-    unsigned long romsize; /* Size of the ROM, in bytes */
-    unsigned short vectors[8]; /* Autovectors exception numbers */
+    uint32_t checksum_fixup; /* Fixup to get checksum == 0xffffffff */
+    uint32_t romsize; /* Size of the ROM, in bytes */
+    uint16_t vectors[8]; /* Autovectors exception numbers */
 };
 
 /* Compute the checksum of an Amiga ROM */
-static int compute_amiga_checksum(FILE* file, const char* filename, size_t filesize, unsigned long* pchecksum)
+static int compute_amiga_checksum(FILE* file, const char* filename, size_t filesize, uint32_t* pchecksum)
 {
-    unsigned long big_endian_val;
-    unsigned long value;
-    unsigned long checksum = 0;
+    uint32_t big_endian_val;
+    uint32_t value;
+    uint32_t checksum = 0;
     size_t nread;
     int err; /* Seek error */
     size_t total_read = 0;
@@ -384,7 +385,7 @@ static int cmd_amiga(FILE* infile, const char* infilename,
     size_t free_size;
     int ret; /* boolean return value: 0 == error, 1 == OK */
     int err; /* Seek error */
-    unsigned long checksum;
+    uint32_t checksum;
 
     printf("# Padding %s to %ld kB Amiga ROM image into %s\n", infilename, ((long)target_size) / 1024, outfilename);
 
@@ -431,7 +432,7 @@ static int cmd_amiga(FILE* infile, const char* infilename,
     if (!ret)
         return ret;
 #if DBG_MKROM
-    printf("# checksum before fixup = 0x%08lx\n", checksum);
+    printf("# checksum before fixup = 0x%08lx\n", (unsigned long)checksum);
 #endif
     write_big_endian_long(&footer.checksum_fixup, 0xffffffff - checksum);
 
@@ -455,7 +456,7 @@ static int cmd_amiga(FILE* infile, const char* infilename,
     ret = compute_amiga_checksum(outfile, outfilename, target_size, &checksum);
     if (!ret)
         return ret;
-    printf("# checksum  after fixup = 0x%08lx\n", checksum);
+    printf("# checksum  after fixup = 0x%08lx\n", (unsigned long)checksum);
 #endif
 
     printf("# %s done (%lu bytes free)\n", outfilename, (unsigned long)free_size);
