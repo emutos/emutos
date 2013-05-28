@@ -45,7 +45,7 @@ LOCAL char redir_name[MAXPATHLEN];
  *  function prototypes
  */
 PRIVATE void close_redir(void);
-PRIVATE void create_redir(char *name);
+PRIVATE void create_redir(const char *name);
 PRIVATE WORD execute(WORD argc,char **argv,char *redir);
 PRIVATE void strip_quotes(int argc,char **argv);
 
@@ -116,7 +116,7 @@ LONG rc;
     return 0;
 }
 
-PRIVATE void create_redir(char *name)
+PRIVATE void create_redir(const char *name)
 {
 LONG rc;
 

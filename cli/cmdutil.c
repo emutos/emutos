@@ -166,7 +166,7 @@ char c;
 /*
  *  output a redirectable fixed-length buffer
  */
-LONG outputbuf(char *s,LONG len)
+LONG outputbuf(const char *s,LONG len)
 {
 LONG n, rc;
 
@@ -383,9 +383,9 @@ char *p, *q = dest;
     return 1;
 }
 
-WORD has_wildcard(char *name)
+WORD has_wildcard(const char *name)
 {
-char *p;
+const char *p;
 
     for (p = name; *p; p++)
         if ((*p == '?') || (*p == '*'))
@@ -397,9 +397,9 @@ char *p;
 /*
  *  return pointer to file extension iff a program
  */
-char *program_extension(DTA *dta)
+const char *program_extension(const DTA *dta)
 {
-char *p;
+const char *p;
 
     if (dta->d_attrib & 0x10)   /* a folder */
         return NULL;
@@ -420,9 +420,10 @@ char *p;
  *
  *  returns 1 iff strings equal
  */
-WORD strequal(char *s1,char *s2)
+WORD strequal(const char *s1,const char *s2)
 {
-char *p, *q, c1, c2;
+const char *p, *q;
+char c1, c2;
 
     for (p = s1, q = s2; *p; ) {
         c1 = *p++;

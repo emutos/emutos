@@ -17,11 +17,11 @@ static UWORD old_stdout;
 /*
  *  function prototypes
  */
-PRIVATE void add_to_path(char *path,char *name);
+PRIVATE void add_to_path(char *path,const char *name);
 PRIVATE WORD build_cmdline(char *cmdline,WORD argc,char **argv);
-PRIVATE WORD check_user_path(char *path,char *name);
-PRIVATE WORD find_executable(char *fullname,char *name);
-PRIVATE WORD is_graphical(char *name);
+PRIVATE WORD check_user_path(char *path,const char *name);
+PRIVATE WORD find_executable(char *fullname,const char *name);
+PRIVATE WORD is_graphical(const char *name);
 PRIVATE LONG redirect_stdout(char *redir);
 PRIVATE void restore_stdout(char *redir);
 
@@ -60,9 +60,10 @@ LONG rc;
 /*
  *  add filename to path
  */
-PRIVATE void add_to_path(char *path,char *name)
+PRIVATE void add_to_path(char *path,const char *name)
 {
-char *p, *q;
+char *p;
+const char *q;
 
     for (p = path; *p; p++)
         ;
@@ -108,7 +109,7 @@ WORD i, len;
  *
  *  if match found, 'path' contains full path, rc = 0
  */
-PRIVATE WORD check_user_path(char *path,char *name)
+PRIVATE WORD check_user_path(char *path,const char *name)
 {
 char temp[MAXPATHLEN], *p;
 
@@ -126,9 +127,10 @@ char temp[MAXPATHLEN], *p;
 /*
  *  find executable, adding extension if necessary
  */
-PRIVATE WORD find_executable(char *fullname,char *name)
+PRIVATE WORD find_executable(char *fullname,const char *name)
 {
-char *p, *q, *dot;
+char *p, *dot;
+const char *q;
 LONG rc;
 
     /*
@@ -157,9 +159,9 @@ LONG rc;
      *  look for matching executable
      */
     for (rc = Fsfirst(fullname,0x07); rc == 0; rc = Fsnext()) {
-        p = program_extension(dta);
-        if (p) {
-            strcpy(dot+1,p);
+        q = program_extension(dta);
+        if (q) {
+            strcpy(dot+1,q);
             return 0;
         }
     }
@@ -170,9 +172,9 @@ LONG rc;
 /*
  *  test type of executed program
  */
-PRIVATE WORD is_graphical(char *name)
+PRIVATE WORD is_graphical(const char *name)
 {
-char *p;
+const char *p;
 
     for (p = name; *p; p++)
         ;

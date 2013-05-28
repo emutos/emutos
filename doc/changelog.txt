@@ -4818,3 +4818,7 @@ Start... early ages
 
 2013-05-27
 - tools/bug.c: Fixed warning about unused variable line_start. (VRI)
+
+2013-05-28
+- cli/cmd.h cli/cmdedit.c cli/cmdexec.c cli/cmdint.c cli/cmdmain.c
+  cli/cmdutil.c: Added more const keywords. (VRI)

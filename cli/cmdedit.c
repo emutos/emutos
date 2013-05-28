@@ -24,12 +24,12 @@ LOCAL char *history_line[HISTORY_SIZE];
 PRIVATE void delete_char(char *line,WORD pos,WORD len,WORD backspace);
 PRIVATE WORD edit_line(char *line,WORD *pos,WORD *len,WORD scancode,WORD prevcode);
 PRIVATE void erase_line(char *start,WORD len);
-PRIVATE LONG getfirstnondot(char *buffer,WORD executable_only);
+PRIVATE LONG getfirstnondot(const char *buffer,WORD executable_only);
 PRIVATE LONG getnextfile(WORD executable_only);
 PRIVATE WORD next_history(char *line);
-PRIVATE WORD next_word_count(char *line,WORD pos,WORD len);
+PRIVATE WORD next_word_count(const char *line,WORD pos,WORD len);
 PRIVATE WORD previous_history(char *line);
-PRIVATE WORD previous_word_count(char *line,WORD pos);
+PRIVATE WORD previous_word_count(const char *line,WORD pos);
 PRIVATE WORD replace_line(char *line,WORD num);
 PRIVATE char *start_of_current_word(char *line,WORD pos);
 
@@ -145,12 +145,12 @@ WORD i;
 /*
  *  save a line in the history
  */
-void save_history(char *line)
+void save_history(const char *line)
 {
     if (history_num < 0)
         return;
 
-    strcpy((char *)(history_line[history_num]),(char *)line);
+    strcpy(history_line[history_num],line);
 
     if (++history_num >= HISTORY_SIZE)
         history_num = 0;
@@ -375,9 +375,9 @@ char *p;
  *  return the number of characters to the start of the
  *  next word
  */
-PRIVATE WORD next_word_count(char *line,WORD pos,WORD len)
+PRIVATE WORD next_word_count(const char *line,WORD pos,WORD len)
 {
-char *p;
+const char *p;
 WORD gotspace = 0;
 
     for (p = line+pos; p < line+len; p++) {
@@ -395,9 +395,9 @@ WORD gotspace = 0;
  *  return the number of characters to the start of the
  *  previous word
  */
-PRIVATE WORD previous_word_count(char *line,WORD pos)
+PRIVATE WORD previous_word_count(const char *line,WORD pos)
 {
-char *p;
+const char *p;
 WORD gotword = 0;
 
     for (p = line+pos-1; p > line; p--) {
@@ -414,7 +414,7 @@ WORD gotword = 0;
 /*
  *  get first file/folder in dir that doesn't start with .
  */
-PRIVATE LONG getfirstnondot(char *buffer,WORD executable_only)
+PRIVATE LONG getfirstnondot(const char *buffer,WORD executable_only)
 {
 LONG rc;
 

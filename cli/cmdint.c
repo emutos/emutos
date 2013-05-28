@@ -13,12 +13,12 @@
 #include <string.h>
 
 typedef struct {
-    char *name;
-    char *synonym;
+    const char *name;
+    const char *synonym;
     WORD minargs;
     WORD maxargs;
     LONG (*func)(WORD argc,char **argv);
-    char **help;
+    const char * const *help;
 } COMMAND;
 
 /*
@@ -26,15 +26,15 @@ typedef struct {
  */
 PRIVATE LONG check_path_component(char *component);
 PRIVATE LONG copy_move(WORD argc,char **argv,WORD delete);
-PRIVATE void display_detail(DTA *dta);
-PRIVATE char *extract_path(char *dest,char *src);
+PRIVATE void display_detail(const DTA *dta);
+PRIVATE char *extract_path(char *dest,const char *src);
 PRIVATE void fixup_filespec(char *filespec);
 PRIVATE char getyn(void);
-PRIVATE void help_display(COMMAND *p);
-PRIVATE WORD help_lines(COMMAND *p);
+PRIVATE void help_display(const COMMAND *p);
+PRIVATE WORD help_lines(const COMMAND *p);
 PRIVATE WORD help_pause(void);
-PRIVATE WORD help_wanted(COMMAND *p,char *cmd);
-PRIVATE void padname(char *buf,char *name);
+PRIVATE WORD help_wanted(const COMMAND *p,char *cmd);
+PRIVATE void padname(char *buf,const char *name);
 PRIVATE LONG pathout(void);
 PRIVATE void show_line(const char *title,ULONG n);
 
@@ -61,59 +61,59 @@ PRIVATE LONG run_wrap(WORD argc,char **argv);
 /*
  *  help strings
  */
-LOCAL char *help_cat[] = { "<filespec> ...",
+LOCAL const char * const help_cat[] = { "<filespec> ...",
     N_("Copy <filespec> ... to standard output"), NULL };
-LOCAL char *help_cd[] = { "[<dir>]",
+LOCAL const char * const help_cd[] = { "[<dir>]",
     N_("Change current directory to <dir>"),
     N_("or display current directory"), NULL };
-LOCAL char *help_chmod[] = { "<mode> <filename>",
+LOCAL const char * const help_chmod[] = { "<mode> <filename>",
     N_("Change attributes for <filename>"),
     N_("<mode> is the following ORed together:"),
     N_("1: read-only  2: hidden  4: system"), NULL };
-LOCAL char *help_cls[] = { "",
+LOCAL const char * const help_cls[] = { "",
     N_("Clear screen"), NULL };
-LOCAL char *help_cp[] = { "<filespec> <dest>",
+LOCAL const char * const help_cp[] = { "<filespec> <dest>",
     N_("Copy files matching <filespec> to <dest>"),
     N_("If <filespec> matches multiple files,"),
     N_("<dest> must be a directory"), NULL };
-LOCAL char *help_echo[] = { "<string> ...",
+LOCAL const char * const help_echo[] = { "<string> ...",
     N_("Copy <string> ... to standard output"),
     N_("Strings may be surrounded by \"\""), NULL };
-LOCAL char *help_exit[] = { "",
+LOCAL const char * const help_exit[] = { "",
     N_("Exit EmuCON2"), NULL };
-LOCAL char *help_help[] = { "[<cmd>]",
+LOCAL const char * const help_help[] = { "[<cmd>]",
     N_("Get help about <cmd> or list available commands"),
     N_("Use HELP ALL for help on all commands"),
     N_("Use HELP EDIT for help on line editing"), NULL };
-LOCAL char *help_ls[] = { "[-l] <path>",
+LOCAL const char * const help_ls[] = { "[-l] <path>",
     N_("List files (default terse, horizontal)"),
     N_("Specify -l for detailed list"), NULL };
-LOCAL char *help_mkdir[] = { "<dir>",
+LOCAL const char * const help_mkdir[] = { "<dir>",
     N_("Create directory <dir>"), NULL };
-LOCAL char *help_mv[] = { "<filespec> <dir>",
+LOCAL const char * const help_mv[] = { "<filespec> <dir>",
     N_("Copy files matching <filespec> to <dir>,"),
     N_("then delete input files"), NULL };
-LOCAL char *help_path[] = { "[<searchpath>]",
+LOCAL const char * const help_path[] = { "[<searchpath>]",
     N_("Set search path for external programs"),
     N_("or display current search path"), NULL };
-LOCAL char *help_pwd[] = { "",
+LOCAL const char * const help_pwd[] = { "",
     N_("Display current drive and directory"), NULL };
-LOCAL char *help_ren[] = { "<oldname> <newname>",
+LOCAL const char * const help_ren[] = { "<oldname> <newname>",
     N_("Rename <oldname> to <newname>"), NULL };
-LOCAL char *help_rm[] = { " [-q] <filespec>",
+LOCAL const char * const help_rm[] = { " [-q] <filespec>",
     N_("Delete files matching <filespec>"),
     N_("Specify -q to be prompted each time"), NULL };
-LOCAL char *help_rmdir[] = { "<dir>",
+LOCAL const char * const help_rmdir[] = { "<dir>",
     N_("Delete directory <dir>"), NULL };
-LOCAL char *help_show[] = { "[<drive>]",
+LOCAL const char * const help_show[] = { "[<drive>]",
     N_("Show info for <drive> or current drive"), NULL };
-LOCAL char *help_version[] = { "",
+LOCAL const char * const help_version[] = { "",
     N_("Display GEMDOS version"), NULL };
-LOCAL char *help_wrap[] = { "[on|off]",
+LOCAL const char * const help_wrap[] = { "[on|off]",
     N_("Set line wrap or show current status"), NULL };
 
 
-LOCAL char *help_edit[] = {
+LOCAL const char * const help_edit[] = {
  N_("up/down arrow = previous/next line in history"),
  N_("left/right arrow = previous/next character"),
  N_("shift-left/right arrow = previous/next word"), NULL };
@@ -122,7 +122,7 @@ LOCAL char *help_edit[] = {
 /*
  *  command table
  */
-LOCAL COMMAND cmdtable[] = {
+LOCAL const COMMAND cmdtable[] = {
     { "cat", "type", 1, 255, run_cat, help_cat },
     { "cd", NULL, 0, 1, run_cd, help_cd },
     { "chmod", NULL, 2, 2, run_chmod, help_chmod },
@@ -147,7 +147,7 @@ LOCAL COMMAND cmdtable[] = {
 
 LONG (*lookup_builtin(WORD argc,char **argv))(WORD,char **)
 {
-COMMAND *p;
+const COMMAND *p;
 
     /*
      *  handle drive change
@@ -281,9 +281,9 @@ WORD i;
 
 PRIVATE LONG run_help(WORD argc,char **argv)
 {
-COMMAND *p;
+const COMMAND *p;
 WORD lines;
-char **s;
+const char * const *s;
 
     if (argc == 1) {
         outputnl(_("Builtin commands:"));
@@ -674,9 +674,10 @@ char buf[MAXPATHLEN];
  *
  *  returns pointer to insertion point for name
  */
-PRIVATE char *extract_path(char *dest,char *src)
+PRIVATE char *extract_path(char *dest,const char *src)
 {
-char *p, *q, *sep = NULL;
+const char *p;
+char *q, *sep = NULL;
 UWORD colon = 0;
 
     for (p = src, q = dest; *p; ) {
@@ -700,9 +701,9 @@ UWORD colon = 0;
     return sep;
 }
 
-PRIVATE void help_display(COMMAND *p)
+PRIVATE void help_display(const COMMAND *p)
 {
-char **s;
+const char * const *s;
 
     output(p->name);
     if (p->synonym) {
@@ -718,9 +719,9 @@ char **s;
     }
 }
 
-PRIVATE WORD help_lines(COMMAND *p)
+PRIVATE WORD help_lines(const COMMAND *p)
 {
-char **s;
+const char * const *s;
 WORD lines;
 
     for (s = &p->help[0], lines = 0; *s; s++, lines++)
@@ -745,7 +746,7 @@ char c;
     return 0;
 }
 
-PRIVATE WORD help_wanted(COMMAND *p,char *cmd)
+PRIVATE WORD help_wanted(const COMMAND *p,char *cmd)
 {
     if (strequal(cmd,"all"))
         return 1;
@@ -795,7 +796,7 @@ WORD drive;
     strcpy(p,"\\*.*");
 }
 
-PRIVATE void padname(char *buf,char *name)
+PRIVATE void padname(char *buf,const char *name)
 {
 WORD i;
 
@@ -808,7 +809,7 @@ WORD i;
     *buf = '\0';
 }
 
-PRIVATE void display_detail(DTA *dta)
+PRIVATE void display_detail(const DTA *dta)
 {
 char buf[30], *p;
 UWORD i;

@@ -189,7 +189,7 @@ void outlong(ULONG n,WORD width,char filler);
 WORD init_cmdedit(void);
 void insert_char(char *line,WORD pos,WORD len,char c);
 WORD read_line(char *line);
-void save_history(char *line);
+void save_history(const char *line);
 
 /* cmdexec.c */
 LONG exec_program(WORD argc,char **argv,char *redir_name);
@@ -207,14 +207,14 @@ void errmsg(LONG rc);
 void escape(char c);
 WORD getcookie(LONG cookie,LONG *pvalue);
 WORD get_path_component(char **pp,char *dest);
-WORD has_wildcard(char *name);
+WORD has_wildcard(const char *name);
 void message(const char *msg);
 void messagenl(const char *msg);
 void output(const char *s);
 void outputnl(const char *s);
-LONG outputbuf(char *s,LONG len);
-char *program_extension(DTA *dta);
-WORD strequal(char *s1,char *s2);
+LONG outputbuf(const char *s,LONG len);
+const char *program_extension(const DTA *dta);
+WORD strequal(const char *s1,const char *s2);
 char *strlower(char *str);
 char *strupper(char *str);
 
