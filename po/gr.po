@@ -489,11 +489,11 @@ msgstr "ˆ› æ«ž«œª:"
 
 #: desk/desk_rsc.c:554
 msgid "Read/Write"
-msgstr "ƒ á™˜©£˜/‚¨á¯ £¦"
+msgstr "Read/Write"
 
 #: desk/desk_rsc.c:560
 msgid "Read-Only"
-msgstr "‹æ¤¦ š ˜ ƒ á™˜©£˜"
+msgstr "Read-Only"
 
 #: desk/desk_rsc.c:593
 msgid "DISK INFORMATION"
