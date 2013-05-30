@@ -75,7 +75,7 @@ extern void run_cartridge_applications(WORD typebit); /* found in startup.S */
 extern void ui_start(void) NORETURN;    /* found in aes/gemstart.S */
                               /* it is the start addr. of the user interface */
 #if WITH_CLI
-extern void coma_start(void) NORETURN;  /* found in cli/coma.S */
+extern void coma_start(void) NORETURN;  /* found in cli/cmdasm.S */
 #endif
 
 #if CONF_WITH_ALT_RAM

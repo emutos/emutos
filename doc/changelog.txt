@@ -4824,3 +4824,7 @@ Start... early ages
   cli/cmdutil.c: Added more const keywords. (VRI)
 - tools/mkrom.c: Fixed for 64-bit systems. Suggested by Radoslaw Kujawa. (VRI)
 - po/gr.po: Fixed long strings. Contributed by Christos Tziotzis. (VRI)
+
+2013-05-30
+- aes/gemshlib.c bios/bios.c cli/coma.S cli/command.c: Removed source
+  files and code references for old console. (RFB)
