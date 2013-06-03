@@ -19,7 +19,7 @@ Tips on using a resource editor with the current EmuTOS resources
    characters per line in an alert; however, EmuTOS supports up to 40
    characters/line.  If you need to edit an alert with lines longer
    than the standard, you may need to make your resource editor treat
-   them as strings to avoid mangling due to line truncation.
+   the alert as a string to avoid mangling due to line truncation.
 2. Some resource editors (such as Interface) have an option to optimize
    spaces in menu items.  You may need to disable this to avoid the
    "Sort by" menu items from being altered.
@@ -53,9 +53,9 @@ EmuTOS-specific features
    to identify this as a string to be translated.
    Additionally, strings consisting of all dashes (which are used to
    separate menu items in the desktop) are also enclosed in N_().
-   Although the string itself does not need to be translated, its
-   length may need to change to correspond to changes in menu item
-   lengths, and enclosing the string in the N_() macro makes the string
+   Although such strings do not themselves need to be translated, their
+   lengths may need to change to correspond to changes in menu item
+   lengths, and enclosing the strings in the N_() macro makes them
    visible to the translation process.
    These actions may cause some strings to be unnecessarily marked as
    to-be-translated; therefore, before enclosing a string with N_(),
@@ -130,8 +130,8 @@ Notes:
       .DEF/.RSD original, upper case names up to 8 bytes
       .DFN      slightly simplified version of .DEF/.RSD, with flag
                 values in a different sequence
-    ERD attempts to open the files in the above order, stopping when
-    one is opened successfully.
+    The decompilers attempt to open the files in the above order,
+    stopping when one is opened successfully.
  2. The prefix
     The -p option specifies a prefix to be applied to the names of all
     the arrays in the .c file.  If no prefix is supplied, but the input

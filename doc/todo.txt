@@ -1,13 +1,13 @@
 BIOS/XBIOS
 - implement missing XBIOS calls
-  (e.g. the Blitter, Falcon sound matrix and DSP functions)
+  (e.g. the Blitter, Falcon DSP functions)
 - reduce the number of 'extern' in .c files
 - check that RAM disks work
 - misc. TODOs in floppy.c
 - check that VEC_CRITICALERR (0x101) is called when the BIOS encounters errors
 - improve Mediach()
 - implement full XHDI 1.30
-- make EmuTOS MMU aware and let it set up correct MMU tree on 68040
+- let EmuTOS set up correct MMU tree on 68040 (?)
 
 BDOS (GEMDOS)
 - should hitting control-c terminate the current process? if so, how?
@@ -22,15 +22,9 @@ VDI
 - vs_color and vq_color don't work with TT shifter.
 
 AES
-- Check if all strings in desk_rsc.c and gem_rsc.c are fully ROM save (the
-  TEDINFO strings etc).
 
 DESK
 - Add a dialog for configuring the NVRAM (keyboard, languages, ...)
 - Support for loading DESKTOP.INF (needs remapping of the icon indexes)
 
 CLI
-- use extended argv specification in EmuCON
-- EmuCON should allow 'exit' in .BAT scripts?
-- Input/Output redirection does not work well (problems with spaces after
-  the ">" for example).

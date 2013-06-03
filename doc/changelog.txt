@@ -4829,3 +4829,7 @@ Start... early ages
 - aes/gemshlib.c bios/bios.c cli/coma.S cli/command.c: Removed source
   files and code references for old console. (RFB)
 - cli/cmdmain.c: Display blank line after welcome message. (RFB)
+
+2013-06-03
+- doc/resource.txt doc/todo.txt: Minor documentation updates and
+  corrections. (RFB)
