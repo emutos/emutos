@@ -3,7 +3,8 @@ Dear Atari Community!
 
 We are happy to announce a new public release of EmuTOS:
 
-EmuTOS 0.9.0 -- February 28th, 2013
+EmuTOS 0.9.1 -- June ??th, 2013
+
 
 
 INTRODUCTION
@@ -19,48 +20,42 @@ License (GPL).
 
 CHANGES SINCE LAST RELEASE
 
-- Added support for real Falcon 030 hardware with EmuTOS-RAM.
-- Added support for Amiga hardware (including WinUAE and Blizzard 1260).
-- Enabled internal IDE support for all machines, including Falcon.
-- Added support for hard disks with Atari or PC partition tables (or none).
-- Fixed floppy support for DD and HD drives.
-- Improved media change detection.
-- Added support for Falcon and TT SCC serial port.
-- Many file selector improvements, including drive buttons.
-- Fixed support for Hatari extended VDI screens.
-- Use the default boot video mode if the NVRAM value is unsupported.
-- Center the welcome screen vertically.
-- Fixed the welcome screen key repeat bug when booting FreeMiNT.
-- Changed GEM alerts to conform to standard TOS alert line length.
-- Always center dialogs, even with high resolutions.
-- Implemented fsel_exinput(), now appl_init() returns AES version as 1.40.
-- Fixed vq_color() & vs_color() for systems with VIDEL.
-- Fixed v_contourfill() with negative index.
-- Fixed crash with BIOS/XBIOS functions numbers >32767.
-- Fixed Mediach() return value when there is no floppy.
-- Fixed the return value of VIDEL XBIOS functions when there is no VIDEL.
-- Fixed latent bug in blkdev_rwabs() when transferring >32767 sectors.
-- Added Bconmap() support.
-- Fixed Rsconf() return value.
-- Fixed Setscreen() to clear the screen on video mode change.
-- Protobt(): added new disk types and fix checksum & serial number.
-- Flopfmt(): added support for the skew array introduced in TOS 1.04.
-- Fixed swapping of Bcostat() for IKBD and MIDI.
-- Fixed Falcon palette initialisation.
-- Enabled again Mega ST clock support in 192 kB ROMs.
-- Enabled the STOP instruction usage to free the host CPU in 192 kB ROMs, too.
-- Enabled instruction cache, data cache and MMU on 68030.
-- Fixed _SWI cookie to set high order bytes to zeros.
-- Added FOLDRxxx.PRG message when internal OS memory is exhausted.
-- Consistent cold/warm reset behaviour.
-- Fixed EmuCON MV command to move rather than copy.
-- Changed Greece country code from 18 to 31 to match the FreeMiNT standard.
-- Added internal gem.rsc and icon.rsc files, with resource decompilers.
-- Many internal bugfixes and cleanups.
-- Added compilation support for the m68k-elf toolchain.
-- Added debug symbols for Hatari in etos512.sym.
+Major changes:
+- Added the XBIOS DMA sound functions.
+- Added support for the ColdFire Evaluation boards.
+- Changed the default desktop for 192K ROMs to DESK1.
+- Rewrote EmuCON.
+- Added 256 colour support for VIDEL systems.
+- Changed Frename() to allow renaming folders.
 
-Have a look at the changelog.txt for more detailed information.
+Other changes:
+- Improved filesystem performance.
+- Converted remaining K&R code to ANSI-C.
+- Added new firebee-ram target.
+- Improved desktop file copy performance.
+- Improved boot speed on machines with Fast RAM.
+- Increased STACK_SIZE to allow running XaAES with GEM=ROM.
+- Fixed endless loop if zero divide on ColdFire.
+- Added safe set_sr() for ColdFire.
+- Replaced dc.b by .dc.b and so on for m68k-elf toolchain support.
+- Added XHMiNTInfo to the XHDI handler.
+- Added support to rename folders from the desktop.
+- Combined file and folder information dialogs.
+- Combined copy and delete desktop dialogs.
+- Added support for redirecting console I/O to the serial port.
+- Automatically centre desktop dialog titles.
+- Fixed most compiler warnings with -pedantic specified.
+- Reduced ROM space usage by rewriting or eliminating many routines.
+- Added KDEBUG(()) and KINFO(()) for simpler debugging.
+- Changed icon display in desktop windows to eliminate horizontal scrolling.
+- Fixed vq_chcells().
+- Added support for 256 colours on desktop.
+- Fixed XHInqDriver().
+- Fixed mkrom.c for 64-bit systems.
+- Many internal code fixes and cleanups.
+
+Have a look at changelog.txt for more detailed information.
+
 
 
 DESCRIPTION
@@ -69,8 +64,8 @@ EmuTOS is basically made up of six subsystems:
 
 - The BIOS, which is the basic input output system
 - The XBIOS, which provides the interface to the hardware
-- The BDOS, which are the high level OS routines, what you know as GEMDOS
-- The VDI, the virtual device interface - means the screen driver
+- The BDOS, which are the high level OS routines, often known as GEMDOS
+- The VDI, the virtual device interface, i.e. the screen driver
 - The AES, the application environment services or window manager
 - The desktop, which is the graphical shell to the user
 
@@ -83,12 +78,13 @@ made available under GPL license in 1999 by Caldera.
 
 The graphical parts like VDI and AES are now more or less fully
 implemented up to TOS v1.04 level. They work in all the graphics modes
-of the original Atari ST. On some emulators EmuTOS can be patched to
-work with much bigger screen resolutions.
+of the original Atari ST, with some extensions. For example, systems with
+VIDEL support 256 colours and 640x480 screen resolution. Some emulators
+can patch EmuTOS to work with much bigger screen resolutions.
 
-The desktop is not as nice as the original one, but is pretty usable
-now for a start. You are free to use a more advanced desktop
-replacement like TeraDesk.
+The desktop is somewhat better than the original one, but not as nice as
+the one in TOS3 or TOS4. It is still quite usable, and of course you are
+always free to use a more advanced desktop replacement like TeraDesk.
 
 Since EmuTOS just implements TOS functionality, you might want to use
 MiNT on top of it in order to run more modern software. EmuTOS is not
@@ -103,24 +99,24 @@ EmuTOS and MiNT cooperate well. Both can utilize Native Features
     http://wiki.aranym.org/natfeats/proposal
 
 EmuTOS uses this new standard interface for all the relevant native
-functions supported by an emulator on which it's running. This
-interface proxies the calls to underlying host OS so that these
-features don't need to be emulated. This is both faster and can
-provide features that would be infeasible on real a machine. It
-may allow using modern graphics cards, provide fast native filesystem
-access and enable you to use networking with all bells and whistles -
-and many other things you might not have even dreamed of.
+functions supported by an emulator on which it's running. This interface
+proxies the calls to the underlying host OS so that these features don't
+need to be emulated. This is both faster and can provide features that
+would be infeasible on a real machine. It may allow using modern graphics
+cards, provide fast native filesystem access and enable you to use
+networking with all bells and whistles - and many other things you might
+not have even dreamed of.
 
-ARAnyM emulator has most extensive support for NatFeats.
-Hatari emulator supports the basic NatFeats facilities.
+The ARAnyM emulator has the most extensive support for NatFeats.
+The Hatari emulator supports the basic NatFeats facilities.
 
 
 
 HARDWARE
 
-Making EmuTOS running natively on a new hardware platform is more or less
-just a question of driver support for EmuTOS. The same for MiNT, if you'd
-like to have it running on top of EmuTOS.
+Making EmuTOS run natively on a new hardware platform is more or less just
+a question of driver support for EmuTOS. The same for MiNT, if you'd like
+to have it running on top of EmuTOS.
 
 This is the currently supported Atari hardware:
 
@@ -146,10 +142,15 @@ This is the currently supported Atari hardware:
 - ACSI
 - The Native Features interface to some degree
 
-Support for DMA sound, Falcon sound matrix and DSP HW are missing.
+Currently unsupported hardware features:
+- DSP
+- MFP #2
+- TT 256-colour palette
 
 EmuTOS is also available on some non-Atari hardware:
 - Amiga (WinUAE, Amiga 1000, Amiga 1200 with Blizzard 1260)
+
+
 
 AVAILABILITY
 

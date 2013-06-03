@@ -4833,3 +4833,4 @@ Start... early ages
 2013-06-03
 - doc/resource.txt doc/todo.txt: Minor documentation updates and
   corrections. (RFB)
+- doc/announce.txt: Updated for release 0.9.1. (RFB)
