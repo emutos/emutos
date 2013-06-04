@@ -4834,3 +4834,6 @@ Start... early ages
 - doc/resource.txt doc/todo.txt: Minor documentation updates and
   corrections. (RFB)
 - doc/announce.txt: Updated for release 0.9.1. (RFB)
+
+2013-06-04
+- po/cs.po: Updated Czech translation. Contributed by Pavel Salač. (VRI)

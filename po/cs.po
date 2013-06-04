@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EmuTOS 0.2a\n"
 "POT-Creation-Date: 2012-06-15 18:05+0200\n"
-"PO-Revision-Date: 2013-02-10 21:26+0100\n"
+"PO-Revision-Date: 2013-06-05 00:06+0200\n"
 "Last-Translator: Pavel Salac <salac.pavel@gmail.com>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -14,11 +14,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: KBabel 0.9.5\n"
 
-#: bios/bios.c:471
+#: bios/bios.c:516
 msgid "Please eject the floppy and hit RETURN"
 msgstr "Vysuòte prosím disketu a stisknìte RETURN"
 
-#: bios/bios.c:531
+#: bios/bios.c:576
 msgid ""
 "System halted!\n"
 msgstr ""
@@ -86,23 +86,23 @@ msgstr ""
 "Uvolnìte její èást s FOLDR100.PRG\n"
 "Systém zastaven!\n"
 
-#: aes/gem_rsc.c:32
+#: aes/gem_rsc.c:35
 msgid "Selection:  ________.___"
 msgstr "Výbìr:  ________.___"
 
-#: aes/gem_rsc.c:37
+#: aes/gem_rsc.c:40
 msgid "Drives:"
 msgstr "Disky:"
 
-#: aes/gem_rsc.c:583 desk/desk_rsc.c:18
+#: aes/gem_rsc.c:586 desk/desk_rsc.c:20
 msgid "OK"
 msgstr "OK"
 
-#: aes/gem_rsc.c:589 desk/desk_rsc.c:19
+#: aes/gem_rsc.c:592 desk/desk_rsc.c:21
 msgid "Cancel"
 msgstr "Zru¹it"
 
-#: aes/gem_rsc.c:687
+#: aes/gem_rsc.c:690
 msgid "[2]["
 "You cannot write to the disk|"
 "in drive %c: because it is|"
@@ -111,7 +111,7 @@ msgstr "[2]["
 "Nelze zapisovat na disk %c:,|"
 "proto¾e je uzamèen proti zápisu.][Cancel|Retry]"
 
-#: aes/gem_rsc.c:692
+#: aes/gem_rsc.c:695
 msgid "[2]["
 "Drive %c: is not responding.|"
 "Ensure that the disk is loaded|"
@@ -125,7 +125,7 @@ msgstr "[2]["
 "hard disk, zkontrolujte, zda je|"
 "správnì zapojen.][Cancel|Retry]"
 
-#: aes/gem_rsc.c:701
+#: aes/gem_rsc.c:704
 msgid "[2]["
 "Data on the disk in drive %c:|"
 "may be damaged.  Ensure that|"
@@ -139,7 +139,7 @@ msgstr "[2]["
 "a ¾e mechanika je bezchybnì|"
 "pøipojena.][Cancel|Retry]"
 
-#: aes/gem_rsc.c:710
+#: aes/gem_rsc.c:713
 msgid "[2]["
 "Cannot read data on the disk|"
 "in drive %c:.  Ensure that|"
@@ -154,7 +154,7 @@ msgstr "[2]["
 "[Cancel|"
 "Retry]"
 
-#: aes/gem_rsc.c:719
+#: aes/gem_rsc.c:722
 msgid "[2]["
 "Your output device is not|"
 "receiving data.  Before you|"
@@ -168,7 +168,7 @@ msgstr "[2]["
 "napájeno, je on-line, a je|"
 "pøipraveno.][Cancel|Retry]"
 
-#: aes/gem_rsc.c:728
+#: aes/gem_rsc.c:731
 msgid "[3]["
 "An error has occurred in GEM.|"
 "Please contact the EmuTOS|"
@@ -180,7 +180,7 @@ msgstr "[3]["
 "team EmuTOS a za¹lete nám|"
 "hlá¹ení o chybì.][Cancel]"
 
-#: aes/gem_rsc.c:735
+#: aes/gem_rsc.c:738
 msgid "[1]["
 "The application cannot find|"
 "the folder or document you|"
@@ -192,7 +192,7 @@ msgstr "[1]["
 "otevøít. Prosím zkontrolujte|"
 "zadávané údaje.][  OK  ]"
 
-#: aes/gem_rsc.c:742
+#: aes/gem_rsc.c:745
 msgid "[3]["
 "Your system doesn't have|"
 "enough memory to run EmuDesk.][Cancel]"
@@ -200,7 +200,7 @@ msgstr "[3]["
 "Vá¹ poèítaè nemá dostatek pamìti|"
 "ke spu¹tìní EmuDesk-u.][Cancel]"
 
-#: aes/gem_rsc.c:745
+#: aes/gem_rsc.c:748
 msgid "[1]["
 "The application doesn't have|"
 "enough room to open another|"
@@ -212,7 +212,7 @@ msgstr "[1]["
 "K uvolnìní místa zavøete jeden|"
 "z ji¾ otevøených dokumentù.][  OK  ]"
 
-#: aes/gem_rsc.c:752
+#: aes/gem_rsc.c:755
 msgid "[1]["
 "An item with this name already|"
 "exists in the folder, or the|"
@@ -226,7 +226,7 @@ msgstr "[1]["
 "Pou¾ijte pøíkaz \"Info/Pøejmenuj\"|"
 "ke zmìnì jejích parametrù.][  OK  ]"
 
-#: aes/gem_rsc.c:761
+#: aes/gem_rsc.c:764
 msgid "[1]["
 "The specified disk drive does|"
 "not exist.  Check the drive|"
@@ -236,7 +236,7 @@ msgstr "[1]["
 "nexistuje. Zkontrolujte jméno|"
 "jednotky, které jste zadal.][  OK  ]"
 
-#: aes/gem_rsc.c:766
+#: aes/gem_rsc.c:769
 msgid "[1]["
 "You cannot delete the folder|"
 "in which you are currently|"
@@ -245,7 +245,7 @@ msgstr "[1]["
 "Nelze smazat slo¾ku, ve které|"
 "aktuálnì pracujete.][  OK  ]"
 
-#: aes/gem_rsc.c:771
+#: aes/gem_rsc.c:774
 msgid "[1]["
 "Cannot run the application|"
 "you have selected.  It may|"
@@ -256,19 +256,19 @@ msgstr "[1]["
 "Mù¾e být po¹kozený, nebo vá¹|"
 "poèítaè nemá dostatek pamìti.][  OK  ]"
 
-#: aes/gem_rsc.c:778
+#: aes/gem_rsc.c:781
 msgid "[3]["
 "DOS error #%d.][Cancel]"
 msgstr "[3]["
 "DOS chyba #%d.][Zru¹it]"
 
-#: aes/gem_rsc.c:779
+#: aes/gem_rsc.c:782
 msgid "[3]["
 "Unsupported AES function #%d.][Cancel]"
 msgstr "[3]["
 "Nepodporovaná AES funkce #%d.][Cancel]"
 
-#: aes/gem_rsc.c:780
+#: aes/gem_rsc.c:783
 msgid "[3]["
 "An unexpected error has|"
 "occurred.  Please report|"
@@ -279,509 +279,461 @@ msgstr "[3]["
 "Prosím ode¹letehlá¹ení o této|"
 "chybì vývojovému teamu EmuTOS][Cancel]"
 
-#: aes/gem_rsc.c:787
+#: aes/gem_rsc.c:790
 msgid "ITEM SELECTOR"
 msgstr "VÝBÌR POLO®EK"
 
-#: desk/desk_rsc.c:20
+#: desk/desk_rsc.c:18
+msgid "Number of folders: _____"
+msgstr "Poèet adresáøù: _____"
+
+#: desk/desk_rsc.c:19
+msgid "Number of files: _____"
+msgstr "Poèet souborù _____"
+
+#: desk/desk_rsc.c:22
 msgid "Install"
 msgstr "Instalovat"
 
-#: desk/desk_rsc.c:21
+#: desk/desk_rsc.c:23
 msgid "Remove"
 msgstr "Odstranit"
 
-#: desk/desk_rsc.c:22
+#: desk/desk_rsc.c:24
 msgid "Yes"
 msgstr "Ano"
 
-#: desk/desk_rsc.c:23
+#: desk/desk_rsc.c:25
 msgid "No"
 msgstr "Ne"
 
-#: desk/desk_rsc.c:30 desk/desk_rsc.c:110 desk/desk_rsc.c:210
-msgid "Name:  ________.___"
-msgstr "Jméno:  ________.___"
+#: desk/desk_rsc.c:37
+msgid "Size: __________"
+msgstr "Velikost: __________"
 
-#: desk/desk_rsc.c:35
-msgid "Size in bytes:  __________"
-msgstr "Velikost bytù:  __________"
+#: desk/desk_rsc.c:42
+msgid "Date: __/__/__"
+msgstr "Datum: __.__.__"
 
-#: desk/desk_rsc.c:40
-msgid "Last modified:  __/__/__"
-msgstr "Poslední zmìna:  __/__/__"
+#: desk/desk_rsc.c:47
+msgid "Time: __:__ __"
+msgstr "Èas: __:__ __"
 
-#: desk/desk_rsc.c:50
-msgid "Drive identifier:  _:"
-msgstr "Oznaèení disku:  _:"
+#: desk/desk_rsc.c:62
+msgid "Name:"
+msgstr "Jméno:"
 
-#: desk/desk_rsc.c:55
-msgid "Disk label:  ___________"
-msgstr "Jmenovka:  ___________"
+#: desk/desk_rsc.c:67
+msgid "Drive identifier: _:"
+msgstr "Oznaèení disku: _:"
 
-#: desk/desk_rsc.c:60 desk/desk_rsc.c:95
-msgid "Number of folders:     _____"
-msgstr "Poèet adresáøù:     _____"
+#: desk/desk_rsc.c:72
+msgid "Disk label: ___________"
+msgstr "Jmenovka disku: ___________"
 
-#: desk/desk_rsc.c:65 desk/desk_rsc.c:100
-msgid "Number of items:     _____"
-msgstr "Poèet polo¾ek:     _____"
+#: desk/desk_rsc.c:87
+msgid "Bytes used: __________"
+msgstr "Obsazeno: __________ B"
 
-#: desk/desk_rsc.c:70 desk/desk_rsc.c:105
-msgid "Bytes used:  __________"
-msgstr "Pou¾ito bytù:  __________"
+#: desk/desk_rsc.c:92
+msgid "Bytes available: __________"
+msgstr "Volných: __________ B"
 
-#: desk/desk_rsc.c:75
-msgid "Bytes available:  __________"
-msgstr "Volných bytù:  __________"
+#: desk/desk_rsc.c:97
+msgid "Name: ________.___"
+msgstr "Jméno: ________.___"
 
-#: desk/desk_rsc.c:80
-msgid "Folder name:  ________.___"
-msgstr "Jméno adresáøe:  ________.___"
-
-#: desk/desk_rsc.c:85
-msgid "Created:  __-__-__  "
-msgstr "Vytvoøeno:  __-__-__  "
-
-#: desk/desk_rsc.c:115
-msgid "Parameters:  ____________________________________________________"
-msgstr "Parametry:  ____________________________________________________"
-
-#: desk/desk_rsc.c:120
+#: desk/desk_rsc.c:107
 msgid "Drive identifier:  _"
 msgstr "Oznaèení disku:  _"
 
-#: desk/desk_rsc.c:125
+#: desk/desk_rsc.c:112
 msgid "Icon label:  ____________"
 msgstr "Jméno ikony:  ____________"
 
-#: desk/desk_rsc.c:130
+#: desk/desk_rsc.c:117
 msgid "Application name:  ________.___"
 msgstr "Jméno aplikace:  ________.___"
 
-#: desk/desk_rsc.c:180
-msgid "Folders to copy:  ____"
-msgstr "Kopírované adresáøe:  ____"
-
-#: desk/desk_rsc.c:185
-msgid "Items to copy:  ____"
-msgstr "Kopírované polo¾ky:  ____"
-
-#: desk/desk_rsc.c:190
-msgid "Folders to delete:  ____"
-msgstr "Adresáøe ke smazání:  ____"
-
-#: desk/desk_rsc.c:195
-msgid "Items to delete:  ____"
-msgstr "Polo¾ky ke smazání:  ____"
-
-#: desk/desk_rsc.c:200
+#: desk/desk_rsc.c:177
 msgid "Current name:  ________.___"
 msgstr "Aktuální jméno:  ________.___"
 
-#: desk/desk_rsc.c:205
+#: desk/desk_rsc.c:182
 msgid "Copy's name:  ________.___"
 msgstr "Jméno kopie:  ________.___"
 
-#: desk/desk_rsc.c:268
+#: desk/desk_rsc.c:187
+msgid "Name:  ________.___"
+msgstr "Jméno:  ________.___"
+
+#: desk/desk_rsc.c:245
 msgid " Desk "
 msgstr " Desk "
 
-#: desk/desk_rsc.c:274
+#: desk/desk_rsc.c:251
 msgid " File "
 msgstr " Soubor "
 
-#: desk/desk_rsc.c:280
+#: desk/desk_rsc.c:257
 msgid " Options "
 msgstr " Volby "
 
-#: desk/desk_rsc.c:286
+#: desk/desk_rsc.c:263
 msgid " Arrange "
 msgstr " Uspoøádání "
 
-#: desk/desk_rsc.c:304
+#: desk/desk_rsc.c:281
 msgid "  Desktop info..."
 msgstr "  Info o desktopu..."
 
-#: desk/desk_rsc.c:310 desk/desk_rsc.c:484
+#: desk/desk_rsc.c:287 desk/desk_rsc.c:461
 msgid "--------------------"
 msgstr "--------------------"
 
-#: desk/desk_rsc.c:358
+#: desk/desk_rsc.c:335
 msgid "  Open"
 msgstr "  Otevøít"
 
-#: desk/desk_rsc.c:364
+#: desk/desk_rsc.c:341
 msgid "  Info/Rename...  \007I"
 msgstr "  Info/Jméno...   \007I"
 
-#: desk/desk_rsc.c:370 desk/desk_rsc.c:394 desk/desk_rsc.c:412
+#: desk/desk_rsc.c:347 desk/desk_rsc.c:371 desk/desk_rsc.c:389
 msgid "---------------------"
 msgstr "---------------------"
 
-#: desk/desk_rsc.c:376
+#: desk/desk_rsc.c:353
 msgid "  New Folder..."
 msgstr "  Nový adresáø..."
 
-#: desk/desk_rsc.c:382
+#: desk/desk_rsc.c:359
 msgid "  Close"
 msgstr "  Zavøít"
 
-#: desk/desk_rsc.c:388
+#: desk/desk_rsc.c:365
 msgid "  Close window"
 msgstr "  Zavøít okno"
 
-#: desk/desk_rsc.c:400
+#: desk/desk_rsc.c:377
 msgid "  Delete...       \007D"
 msgstr "  Smazat...       \007D"
 
-#: desk/desk_rsc.c:406
+#: desk/desk_rsc.c:383
 msgid "  Format..."
 msgstr "  Formátovat..."
 
-#: desk/desk_rsc.c:418
+#: desk/desk_rsc.c:395
 msgid "  Execute EmuCON  ^Z"
 msgstr "  Spustit EmuCON  ^Z"
 
-#: desk/desk_rsc.c:424
+#: desk/desk_rsc.c:401
 msgid "  Shutdown        ^Q"
 msgstr "  Vypnout         ^Q"
 
-#: desk/desk_rsc.c:436
+#: desk/desk_rsc.c:413
 msgid "  Install disk drive..."
 msgstr "  Pøihlásit disk..."
 
-#: desk/desk_rsc.c:442
+#: desk/desk_rsc.c:419
 msgid "  Configure application...  \007A"
 msgstr "  Instalovat aplikaci...    \007A"
 
-#: desk/desk_rsc.c:448
+#: desk/desk_rsc.c:425
 msgid "-------------------------------"
 msgstr "-------------------------------"
 
-#: desk/desk_rsc.c:454
+#: desk/desk_rsc.c:431
 msgid "  Set preferences..."
 msgstr "  Nastavení..."
 
-#: desk/desk_rsc.c:460
+#: desk/desk_rsc.c:437
 msgid "  Save desktop              \007V"
 msgstr "  Ulo¾it nastavení          \007V"
 
-#: desk/desk_rsc.c:466
+#: desk/desk_rsc.c:443
 msgid "  Change resolution         \007C"
 msgstr "  Zmìna rozli¹ení           \007C"
 
-#: desk/desk_rsc.c:490
+#: desk/desk_rsc.c:467
 msgid "  Sort by name   \007N"
 msgstr "  Podle jména    \007N"
 
-#: desk/desk_rsc.c:496
+#: desk/desk_rsc.c:473
 msgid "  Sort by type   \007P"
 msgstr "  Podle typu     \007P"
 
-#: desk/desk_rsc.c:502
+#: desk/desk_rsc.c:479
 msgid "  Sort by size   \007Z"
 msgstr "  Podle bytù     \007Z"
 
-#: desk/desk_rsc.c:508
+#: desk/desk_rsc.c:485
 msgid "  Sort by date   \007T"
 msgstr "  Podle data     \007T"
 
-#: desk/desk_rsc.c:523
-msgid "ITEM INFORMATION / RENAME"
-msgstr "INFORMACE / PØEJMENOVÁNÍ"
-
-#: desk/desk_rsc.c:553
-msgid "Attributes:"
+#: desk/desk_rsc.c:542
+msgid "Attribute:"
 msgstr "Atributy:"
 
-#: desk/desk_rsc.c:565
+#: desk/desk_rsc.c:554
 msgid "Read/Write"
 msgstr "Ètení/zápis"
 
-#: desk/desk_rsc.c:571
+#: desk/desk_rsc.c:560
 msgid "Read-Only"
 msgstr "Jen ètení"
 
-#: desk/desk_rsc.c:598
+#: desk/desk_rsc.c:593
 msgid "DISK INFORMATION"
 msgstr "INFORMACE O DISKU"
 
-#: desk/desk_rsc.c:655
-msgid "FOLDER INFORMATION"
-msgstr "INFORMACE O ODRESÁØI"
-
-#: desk/desk_rsc.c:730
+#: desk/desk_rsc.c:668
 msgid "Version"
 msgstr "Verze"
 
-#: desk/desk_rsc.c:742
+#: desk/desk_rsc.c:680
 msgid "Copyright (c) by"
 msgstr "Copyright (c)"
 
-#: desk/desk_rsc.c:748
+#: desk/desk_rsc.c:686
 msgid "The EmuTOS development team"
 msgstr "Vývojový tým EmuTOSu"
 
-#: desk/desk_rsc.c:760
+#: desk/desk_rsc.c:698
 msgid "Based on 'GPLed' sources"
 msgstr "Zalo¾eno na 'GPL' zdrojích"
 
-#: desk/desk_rsc.c:790
+#: desk/desk_rsc.c:728
 msgid "EmuTOS is distributed under the GPL"
 msgstr "EmuTOS je ¹íøen pod licencí GPL"
 
-#: desk/desk_rsc.c:802
+#: desk/desk_rsc.c:740
 msgid "See doc\\license.txt for details"
 msgstr "Detaily viz doc\\license.txt"
 
-#: desk/desk_rsc.c:817
-msgid "NEW FOLDER INFORMATION"
-msgstr "INFORMACE O NOVÉM ADRESÁØI"
-
-#: desk/desk_rsc.c:823
-msgid "To create a new folder within the cur-"
-msgstr "K vytvoøení nového adresáøe v aktu-"
-
-#: desk/desk_rsc.c:829
-msgid "rent window, double-click on the New"
-msgstr "álním oknì dvakrát kliknìte na ikonu"
-
-#: desk/desk_rsc.c:835
-msgid "Folder icon and complete the dialogue"
-msgstr "Nový adresáø a do dialogu, který se"
-
-#: desk/desk_rsc.c:841
-msgid "that appears by entering the name of"
-msgstr "objeví, zadejte jméno adresáøe, který"
-
-#: desk/desk_rsc.c:847
-msgid "the folder you want to create."
-msgstr "se chystáte vytvoøit."
-
-#: desk/desk_rsc.c:868
+#: desk/desk_rsc.c:755
 msgid "OPEN APPLICATION"
 msgstr "SPUSTIT APLIKACI"
 
-#: desk/desk_rsc.c:898
-msgid "Enter the name of the document you want"
-msgstr "Zadejte jméno dokumentu, který má být"
+#: desk/desk_rsc.c:767
+msgid "Parameters:"
+msgstr "Parametry:"
 
-#: desk/desk_rsc.c:904
-msgid "to load, or enter parameter values that"
-msgstr "naèten k zadání parametrù pøijatelných"
-
-#: desk/desk_rsc.c:910
-msgid "are acceptable to this application."
-msgstr "pro tuto aplikaci."
-
-#: desk/desk_rsc.c:925
+#: desk/desk_rsc.c:800
 msgid "INSTALL DISK DRIVE"
 msgstr "PØIHLÁSIT DISK"
 
-#: desk/desk_rsc.c:943
+#: desk/desk_rsc.c:818
 msgid "Disk type:"
 msgstr "Typ disku:"
 
-#: desk/desk_rsc.c:955
+#: desk/desk_rsc.c:830
 msgid "Floppy"
 msgstr "Disketa"
 
-#: desk/desk_rsc.c:961
+#: desk/desk_rsc.c:836
 msgid "Hard"
 msgstr "Harddisk"
 
-#: desk/desk_rsc.c:994
+#: desk/desk_rsc.c:869
 msgid "CONFIGURE APPLICATION"
 msgstr "NASTAVENÍ APLIKACE"
 
-#: desk/desk_rsc.c:1006
+#: desk/desk_rsc.c:881
 msgid "Document types:"
 msgstr "Typy dokumentù:"
 
-#: desk/desk_rsc.c:1060
+#: desk/desk_rsc.c:935
 msgid "Application type:"
 msgstr "Typ aplikace:"
 
-#: desk/desk_rsc.c:1090
+#: desk/desk_rsc.c:965
 msgid "Icon type:"
 msgstr "Typ ikony:"
 
-#: desk/desk_rsc.c:1177
-msgid "COPY FOLDERS / ITEMS"
-msgstr "KOPÍROVÁNÍ ADRESÁØÙ / POLO®EK"
-
-#: desk/desk_rsc.c:1216
-msgid "DELETE FOLDERS / ITEMS"
-msgstr "MAZÁNÍ ADRESÁØÙ / POLO®EK"
-
-#: desk/desk_rsc.c:1255
+#: desk/desk_rsc.c:1091
 msgid "NAME CONFLICT DURING COPY"
 msgstr "KONFLIKT JMEN BÌHEM KOPÍROVÁNÍ"
 
-#: desk/desk_rsc.c:1285
+#: desk/desk_rsc.c:1121
 msgid "Stop"
 msgstr "Zastavit"
 
-#: desk/desk_rsc.c:1300
+#: desk/desk_rsc.c:1136
 msgid "NEW FOLDER"
 msgstr "NOVÝ ADRESÁØ"
 
-#: desk/desk_rsc.c:1333
+#: desk/desk_rsc.c:1169
 msgid "SET PREFERENCES"
 msgstr "NASTAVENÍ"
 
-#: desk/desk_rsc.c:1339
+#: desk/desk_rsc.c:1175
 msgid "Confirm deletes?"
 msgstr "Potvrdit mazání?"
 
-#: desk/desk_rsc.c:1363
+#: desk/desk_rsc.c:1199
 msgid "Confirm copies?"
 msgstr "Potvrdit kopírování?"
 
-#: desk/desk_rsc.c:1387
+#: desk/desk_rsc.c:1223
 msgid "Confirm overwrites?"
 msgstr "Potvrdit pøepis?"
 
-#: desk/desk_rsc.c:1411
+#: desk/desk_rsc.c:1247
 msgid "Double-click speed:"
 msgstr "Rychlost dvojkliku:"
 
-#: desk/desk_rsc.c:1459
+#: desk/desk_rsc.c:1295
 msgid "Click"
 msgstr "Kliknutí"
 
-#: desk/desk_rsc.c:1465
+#: desk/desk_rsc.c:1301
 msgid "No click"
 msgstr "Bez kliknutí"
 
-#: desk/desk_rsc.c:1471
+#: desk/desk_rsc.c:1307
 msgid "To drop down menus:"
 msgstr "Do padacího menu:"
 
-#: desk/desk_rsc.c:1477
+#: desk/desk_rsc.c:1313
 msgid "Sound effects:"
 msgstr "Zvukové efekty:"
 
-#: desk/desk_rsc.c:1489
+#: desk/desk_rsc.c:1325
 msgid "On"
 msgstr "Ano"
 
-#: desk/desk_rsc.c:1495
+#: desk/desk_rsc.c:1331
 msgid "Off"
 msgstr "Ne"
 
-#: desk/desk_rsc.c:1501
+#: desk/desk_rsc.c:1337
 msgid "Time format:"
 msgstr "Formát èasu:"
 
-#: desk/desk_rsc.c:1513
+#: desk/desk_rsc.c:1349
 msgid "12 Hour"
 msgstr "12 hodin"
 
-#: desk/desk_rsc.c:1519
+#: desk/desk_rsc.c:1355
 msgid "24 Hour"
 msgstr "24 hodin"
 
-#: desk/desk_rsc.c:1525
+#: desk/desk_rsc.c:1361
 msgid "Date format:"
 msgstr "Formát data:"
 
-#: desk/desk_rsc.c:1537
+#: desk/desk_rsc.c:1373
 msgid "MM-DD-YY"
 msgstr "MM-DD-RR"
 
-#: desk/desk_rsc.c:1543
+#: desk/desk_rsc.c:1379
 msgid "DD-MM-YY"
 msgstr "DD-MM-RR"
 
-#: desk/desk_rsc.c:1571 desk/desk_rsc.c:1634
+#: desk/desk_rsc.c:1407 desk/desk_rsc.c:1470
 msgid "SET SCREEN RESOLUTION"
 msgstr "ROZLI©ENÍ OBRAZOVKY"
 
-#: desk/desk_rsc.c:1583
+#: desk/desk_rsc.c:1419
 msgid "ST Low"
 msgstr "ST nízké"
 
-#: desk/desk_rsc.c:1589
+#: desk/desk_rsc.c:1425
 msgid "ST Medium"
 msgstr "ST støední"
 
-#: desk/desk_rsc.c:1595
+#: desk/desk_rsc.c:1431
 msgid "ST High"
 msgstr "ST vysoké"
 
-#: desk/desk_rsc.c:1601
+#: desk/desk_rsc.c:1437
 msgid "TT Low"
 msgstr "TT nízké"
 
-#: desk/desk_rsc.c:1607
+#: desk/desk_rsc.c:1443
 msgid "TT Medium"
 msgstr "TT støední"
 
-#: desk/desk_rsc.c:1754
+#: desk/desk_rsc.c:1590
 msgid "High"
 msgstr "Vysoké"
 
-#: desk/desk_rsc.c:1760
+#: desk/desk_rsc.c:1596
 msgid "Medium"
 msgstr "Støední"
 
-#: desk/desk_rsc.c:1766
+#: desk/desk_rsc.c:1602
 msgid "Low"
 msgstr "Nízké"
 
-#: desk/desk_rsc.c:1796
+#: desk/desk_rsc.c:1632
 msgid "ST Compatible"
 msgstr "ST kompatibilní"
 
-#: desk/desk_rsc.c:1838
+#: desk/desk_rsc.c:1671
 msgid "%ld bytes used in %d items."
 msgstr "%ld bytù v %d polo¾kách."
 
-#: desk/desk_rsc.c:1839
+#: desk/desk_rsc.c:1672
 msgid "  Show as icons  \007S"
 msgstr "  Jako ikony     \007S"
 
-#: desk/desk_rsc.c:1840
+#: desk/desk_rsc.c:1673
 msgid "  Show as text   \007S"
 msgstr "  Jako text      \007S"
 
-#: desk/desk_rsc.c:1841
+#: desk/desk_rsc.c:1674
 msgid "Not available"
 msgstr "Není k dispozici"
 
-#: desk/desk_rsc.c:1842
+#: desk/desk_rsc.c:1675
 msgid "application"
 msgstr "aplikace"
 
-#: desk/desk_rsc.c:1843
+#: desk/desk_rsc.c:1676
 msgid "documents"
 msgstr "dokumenty"
 
-#: desk/desk_rsc.c:1844
+#: desk/desk_rsc.c:1677
 msgid "New Folder"
 msgstr "Nový adresáø"
 
-#: desk/desk_rsc.c:1845
+#: desk/desk_rsc.c:1678
 msgid "Disk Drives:"
 msgstr "Jednotky:"
 
-#: desk/desk_rsc.c:1852
+#: desk/desk_rsc.c:1679
+msgid "FILE INFORMATION"
+msgstr "INFORMACE O SOUBORU"
+
+#: desk/desk_rsc.c:1680
+msgid "FOLDER INFORMATION"
+msgstr "INFORMACE O ODRESÁØI"
+
+#: desk/desk_rsc.c:1681
+msgid "COPY FILE(S)"
+msgstr "KOPÍROVAT SOUBOR(Y)"
+
+#: desk/desk_rsc.c:1682
+msgid "DELETE FILE(S)"
+msgstr "SMAZAT SOUBOR(Y)"
+
+#: desk/desk_rsc.c:1689
 msgid "DISK"
 msgstr "DISK"
 
-#: desk/desk_rsc.c:1853
+#: desk/desk_rsc.c:1690
 msgid "TRASH"
 msgstr "KO©"
 
-#: desk/desk_rsc.c:1854
+#: desk/desk_rsc.c:1691
 msgid "[2]["
 "Switch resolution?][Yes|No]"
 msgstr "[2]["
 "Zmìnit rozli¹ení?][Ano|Ne]"
 
-#: desk/desk_rsc.c:1855
+#: desk/desk_rsc.c:1692
 msgid "[1]["
 "The selected document type is|"
 "not configured to work with|"
@@ -795,7 +747,7 @@ msgstr "[1]["
 "spojte tento typ dokumentu|"
 "s nìjakou aplikací.][  OK  ]"
 
-#: desk/desk_rsc.c:1864
+#: desk/desk_rsc.c:1701
 msgid "[1]["
 "The GEM Desktop has no more|"
 "available windows. Before you|"
@@ -807,7 +759,7 @@ msgstr "[1]["
 "zavøete nìkteré okno, které|"
 "právì nepou¾íváte.][  OK  ]"
 
-#: desk/desk_rsc.c:1871
+#: desk/desk_rsc.c:1708
 msgid "[3]["
 "Cannot find FORMAT.PRG|"
 "or FORMAT.TTP.][  OK  ]"
@@ -815,7 +767,7 @@ msgstr "[3]["
 "Nenalezen FORMAT.PRG|"
 "ani FORMAT.TTP.][  OK  ]"
 
-#: desk/desk_rsc.c:1874
+#: desk/desk_rsc.c:1711
 msgid "[3]["
 "Formatting will ERASE all|"
 "information on the disk in|"
@@ -829,7 +781,7 @@ msgstr "[3]["
 "vám nevadí ztráta v¹ech dat|"
 "na tomto disku.][  OK  |Zru¹it]"
 
-#: desk/desk_rsc.c:1883
+#: desk/desk_rsc.c:1720
 msgid "[3]["
 "You cannot copy a parent folder|"
 "into one of its child folders.][  OK  ]"
@@ -837,7 +789,7 @@ msgstr "[3]["
 "Není mo¾né zkopírovat nadøazený|"
 "adresáø do jeho podadresáøe.][  OK  ]"
 
-#: desk/desk_rsc.c:1886
+#: desk/desk_rsc.c:1723
 msgid "[3]["
 "If you are sure you want to|"
 "delete ALL the information on|"
@@ -850,7 +802,7 @@ msgstr "[3]["
 "v jednotce %c:, kliknìte na OK.|"
 "Jinak kliknìte na Zru¹it.][  OK  |Zru¹it]"
 
-#: desk/desk_rsc.c:1895
+#: desk/desk_rsc.c:1732
 msgid "[1]["
 "There is not enough space|"
 "available to configure this|"
@@ -864,7 +816,7 @@ msgstr "[1]["
 "jednu z døíve nastavených|"
 "aplikací.][  OK  ]"
 
-#: desk/desk_rsc.c:1904
+#: desk/desk_rsc.c:1741
 msgid "[2]["
 "The folder already exists, or|"
 "your disk is full.  Retry with|"
@@ -876,7 +828,7 @@ msgstr "[2]["
 "jméno nebo kliknìte na Zru¹it|"
 "a provìøte volné místo na disku.][ Zru¹it | Znovu ]"
 
-#: desk/desk_rsc.c:1911
+#: desk/desk_rsc.c:1748
 msgid "[1]["
 "This disk does not have enough|"
 "room for the information you|"
@@ -890,7 +842,7 @@ msgstr "[1]["
 "polo¾ky mohly ji¾ být na disk|"
 "zkopírovány.][  OK  ]"
 
-#: desk/desk_rsc.c:1920
+#: desk/desk_rsc.c:1757
 msgid "[3]["
 "Cannot create EMUDESK.INF.|"
 "Make sure that a disk is in|"
@@ -904,7 +856,7 @@ msgstr "[3]["
 "kliknìte OK, nebo zvolte Zru¹it|"
 "pokud nechcete ulo¾it desktop.][  OK  |Zru¹it]"
 
-#: desk/desk_rsc.c:1929
+#: desk/desk_rsc.c:1766
 msgid "[3]["
 "You cannot create or|"
 "access a folder this far|"
@@ -914,7 +866,7 @@ msgstr "[3]["
 "k adresáøùm takto hluboko|"
 "v adresáøové cestì.][  OK  ]"
 
-#: desk/desk_rsc.c:1934
+#: desk/desk_rsc.c:1771
 msgid "[3]["
 "You cannot create or access|"
 "a file or folder with that|"
@@ -926,7 +878,7 @@ msgstr "[3]["
 "jménem, proto¾e cesta souboru|"
 "je pøíli¹ dlouhá.][  OK  ]"
 
-#: desk/desk_rsc.c:1942
+#: desk/desk_rsc.c:1779
 msgid "[1]["
 "You cannot open the trash can|"
 "icon. To delete a disk, folder,|"
@@ -938,7 +890,7 @@ msgstr "[1]["
 "adresáø, dokument nebo aplikaci,|"
 "pøetáhnìte ji do ko¹e.][  OK  ]"
 
-#: desk/desk_rsc.c:1949
+#: desk/desk_rsc.c:1786
 msgid "[1]["
 "The trash can is where you drag|"
 "the disks, folders, documents,|"
@@ -950,7 +902,7 @@ msgstr "[1]["
 "aplikace, které chcete smazat|"
 "TRVALE!][  OK  ]"
 
-#: desk/desk_rsc.c:1956
+#: desk/desk_rsc.c:1793
 msgid "[1]["
 "You cannot drag folders,|"
 "documents or applications onto|"
@@ -964,7 +916,7 @@ msgstr "[1]["
 "kopírovat na disky nebo je|"
 "pøetahovat do ko¹e.][  OK  ]"
 
-#: desk/desk_rsc.c:1965
+#: desk/desk_rsc.c:1802
 msgid "[1]["
 "You cannot drag the trash can|"
 "into a window.][  OK  ]"
@@ -972,7 +924,7 @@ msgstr "[1]["
 "Nemù¾e¹ pøesunout odpadkový|"
 "ko¹ do okna.][  OK  ]"
 
-#: desk/desk_rsc.c:1968
+#: desk/desk_rsc.c:1805
 msgid "[1]["
 "You can drag the trash can to|"
 "another location on the GEM|"
@@ -983,79 +935,79 @@ msgstr "[1]["
 "místo na plo¹e, ale nemù¾ete|"
 "ho umístit na jinou ikonu.][  OK  ]"
 
-#: desk/icons.c:1026
+#: desk/icons.c:1039
 msgid " Generic "
 msgstr " Obecný "
 
-#: desk/icons.c:1027
+#: desk/icons.c:1040
 msgid " Spreadsheet "
 msgstr " Tabulkový procesor "
 
-#: desk/icons.c:1028
+#: desk/icons.c:1041
 msgid " Word Processor "
 msgstr " Textový editor "
 
-#: desk/icons.c:1029
+#: desk/icons.c:1042
 msgid " Database "
 msgstr " Databáze "
 
-#: desk/icons.c:1030
+#: desk/icons.c:1043
 msgid " Draw "
 msgstr " Kreslení "
 
-#: desk/icons.c:1031
+#: desk/icons.c:1044
 msgid " Paint "
 msgstr " Malování "
 
-#: desk/icons.c:1032
+#: desk/icons.c:1045
 msgid " Project "
 msgstr " Projekt "
 
-#: desk/icons.c:1033
+#: desk/icons.c:1046
 msgid " Graph "
 msgstr " Graf "
 
-#: desk/icons.c:1034
+#: desk/icons.c:1047
 msgid " Outline "
 msgstr " Outline "
 
-#: desk/icons.c:1035
+#: desk/icons.c:1048
 msgid " Accounting "
 msgstr " Úèetní "
 
-#: desk/icons.c:1036
+#: desk/icons.c:1049
 msgid " Multi-Function "
 msgstr " Multifunkèní "
 
-#: desk/icons.c:1037
+#: desk/icons.c:1050
 msgid " Education "
 msgstr " Výukový "
 
-#: desk/icons.c:1038
+#: desk/icons.c:1051
 msgid " Communications "
 msgstr " Komunikace "
 
-#: desk/icons.c:1039
+#: desk/icons.c:1052
 msgid " Programmer's Tool "
 msgstr " Nástroje programátora "
 
-#: desk/icons.c:1040
+#: desk/icons.c:1053
 msgid " Game "
 msgstr " Hra "
 
-#: desk/icons.c:1041
+#: desk/icons.c:1054
 msgid " Output "
 msgstr " Výstup "
 
-#: desk/icons.c:1042
+#: desk/icons.c:1055
 msgid " Desktop Publisher "
 msgstr " Desktop Publisher "
 
-#: desk/icons.c:1043
+#: desk/icons.c:1056
 msgid " Scan "
 msgstr " Scan "
 
-#: desk/icons.c:1044
+#: desk/icons.c:1057
 msgid " Mail "
 msgstr " Po¹ta "
 
