@@ -59,7 +59,7 @@ T tested and working on an emulator or real hardware
  t NVRAM (including RTC)
  - Blitter
  T Microwire
- - DMA sound
+ t DMA sound
  - DSP
  T SCC
  T IDE

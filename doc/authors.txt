@@ -36,6 +36,7 @@ Vincent Rivière (VRI) <vincent.riviere at freesbee.fr>
 - ColdFire CPU and FireBee support
 - IDE driver
 - Amiga support
+- ColdFire Evaluation Boards support
 - French translation update
 - Various bug fixes
 
@@ -44,12 +45,14 @@ Roger Burrows (RFB) <rfburrows at ymail.com>
 - Full support for Falcon and TT video hardware
 - Real Falcon 030 support (cache, MMU, SCC, HD floppy)
 - Desktop and file selector improvements
+- EmuCON2
 - erd tool: the EmuTOS Resource Decompiler
 - Various bugfixes and cleanups
 
 Thomas Huth (THH) <huth at users.berlios.de>
 - Lots of bugfixes all over the place
 - Integration and maintenance of the AES and GEM-Desktop
+- XBIOS DMA sound functions
 - German translation update
 
 Petr Stehlik (PES) <pstehlik at sophics.cz>

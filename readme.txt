@@ -1,7 +1,7 @@
-This release has been built using GCC 4.6.3 on Cygwin.
+This release has been built using GCC 4.6.4 on Cygwin.
 
 The source package, as well as other binary packages are available at:
-http://sourceforge.net/projects/emutos/files/emutos/0.9.0/
+http://sourceforge.net/projects/emutos/files/emutos/0.9.1/
 
 If you want to read more about EmuTOS, please look into those files:
 

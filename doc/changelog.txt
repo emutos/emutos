@@ -4837,3 +4837,6 @@ Start... early ages
 
 2013-06-04
 - po/cs.po: Updated Czech translation. Contributed by Pavel Salač. (VRI)
+
+2013-06-05
+- doc/*: Updated. (VRI)

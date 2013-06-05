@@ -25,7 +25,7 @@ etos192uk.img - English (PAL)
 
 Due to size limitations, the 192 kB ROMs contains:
 - no EmuCON
-- a minimal desktop using 2 fixed windows
+- *NEW* full desktop like in other variants
 
 These ROM images have been built using:
 make all192

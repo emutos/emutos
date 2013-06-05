@@ -52,8 +52,10 @@ EmuTOS binaries
 512     etos512k.img, EmuTOS ROM padded to size 512 kB (starting at 0x00e00000)
 aranym  emutos-aranym.img, suitable for ARAnyM
 firebee emutosfb.s19, to be flashed on the FireBee
+firebee-ram ramtos.img + boot.prg, a RAM tos for the FireBee
 amiga   emutos-amiga.rom, EmuTOS ROM for Amiga hardware
 amigakd emutos-kickdisk.adf, EmuTOS as Amiga 1000 Kickstart disk
+m548x   emutos-m548x.s19, EmuTOS-RAM for ColdFire Evaluation Boards
 ram     ramtos.img + boot.prg, a RAM tos
 flop    emutos.st, a bootable floppy with RAM tos
 cart    etoscart.img, EmuTOS as a diagnostic cartridge
