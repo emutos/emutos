@@ -4840,3 +4840,6 @@ Start... early ages
 
 2013-06-05
 - doc/*: Updated. (VRI)
+
+2013-06-08
+- bios/vt52.c: Fixed compilation when !CONF_SERIAL_CONSOLE_ANSI. (VRI)

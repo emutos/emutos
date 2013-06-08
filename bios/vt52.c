@@ -155,7 +155,7 @@ cputc(WORD ch)
      * When ANSI translation is required, output will be done in the
      * appropriate subroutines.
      */
-    bconout(1, b);
+    bconout(1, ch);
 #endif
 
     if (!con_state) {
