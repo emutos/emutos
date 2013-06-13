@@ -551,10 +551,12 @@ void kbd_init(void)
     ikbd_writeb(0x80);            /* Reset */
     ikbd_writeb(0x01);
 
-    /* On Hatari, it is *mandatory* to wait for the IKBD Reset to complete
-     * before sending the next command bytes. Otherwise, on cold boot
-     * no further data will be received.
-     * This is why we read the IKBD version byte below.
+    /* The IKBD answers to Reset command with a version byte.
+     * It is *mandatory* to wait for that byte before sending further commands,
+     * otherwise the IKBD will enter an undefined state. Concretely, it will
+     * stop working.
+     * This is particularly important on real hardware, and with Hatari which
+     * has very accurate IKBD emulation.
      */
     ikbd_version = ikbd_readb(); /* Usually 0xf1, or 0xf0 for antique STs */
 #if DBG_KBD
