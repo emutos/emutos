@@ -4849,3 +4849,5 @@ Start... early ages
 
 2013-06-16
 - doc/announce.txt: Updated. Contributed by Eero Tamminen. (VRI)
+- bios/linea.S: On unimplemented Line-A function, display a debug trace instead
+  of calling panic(). Suggested by David Savinkoff. (VRI)
