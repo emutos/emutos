@@ -52,7 +52,7 @@ extern void doassert(const char *, long, const char *, const char *);
 #define assert(a) do { } while (0)
 #endif
 
-/* INFO(()) outputs to the debugger, if kprintf() is available */
+/* KINFO(()) outputs to the debugger, if kprintf() is available */
 #if HAS_KPRINTF
 #define KINFO(args) kprintf args
 #else
