@@ -24,8 +24,8 @@ CHANGES SINCE LAST RELEASE
 Major changes:
 - Added support for the ColdFire Evaluation Boards.
 - Added 256 colour support for VIDEL systems.
-- Added new EmuCON2, rewritten from scratch.
-- Added support for renaming renaming folders.
+- Added new EmuCON2, with TAB completion.
+- Added support for renaming folders.
 - Added the XBIOS DMA sound functions.
 - Included the full-featured desktop in 192K ROMs.
 
@@ -80,7 +80,7 @@ VIDEL support 256 colours and 640x480 screen resolution. Some emulators
 can patch EmuTOS to work with much bigger screen resolutions.
 
 The desktop is somewhat better than the original one, but not as nice as
-the one in TOS3 or TOS4. It is still quite usable, and of course you are
+the one in TOS 2 or higher. It is still quite usable, and of course you are
 always free to use a more advanced desktop replacement like TeraDesk.
 
 EmuCON2 is a basic but useful command-line interpreter, written from scratch

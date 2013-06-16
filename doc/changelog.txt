@@ -4846,3 +4846,6 @@ Start... early ages
 
 2013-06-13
 - bios/ikbd.c: More accurate comment about IKBD reset. (VRI)
+
+2013-06-16
+- doc/announce.txt: Updated. Contributed by Eero Tamminen. (VRI)
