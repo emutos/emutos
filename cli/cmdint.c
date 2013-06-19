@@ -270,11 +270,12 @@ PRIVATE LONG run_echo(WORD argc,char **argv)
 {
 WORD i;
 
-    for (i = 1, ++argv; i < argc-1; i++, argv++) {
-        output(*argv);
-        output(" ");
+    for (i = argc-1; i > 0; i--) {
+        output(*++argv);
+        if (i > 1)
+            output(" ");
     }
-    outputnl(*argv);
+    outputnl("");
 
     return 0L;
 }

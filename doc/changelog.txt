@@ -4851,3 +4851,6 @@ Start... early ages
 - doc/announce.txt: Updated. Contributed by Eero Tamminen. (VRI)
 - bios/linea.S: On unimplemented Line-A function, display a debug trace instead
   of calling panic(). Suggested by David Savinkoff. (VRI)
+
+2013-06-19
+- cli/cmdint.c: Fix panic when 'echo'ing control character. (RFB)
