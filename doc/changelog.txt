@@ -4854,3 +4854,4 @@ Start... early ages
 
 2013-06-19
 - cli/cmdint.c: Fix panic when 'echo'ing control character. (RFB)
+- cli/cmdint.c: Remove the internal command 'rem'. (RFB)

@@ -128,7 +128,7 @@ LOCAL const COMMAND cmdtable[] = {
     { "chmod", NULL, 2, 2, run_chmod, help_chmod },
     { "cls", "clear", 0, 0, run_cls, help_cls },
     { "cp", "copy", 2, 2, run_cp, help_cp },
-    { "echo", "rem", 0, 255, run_echo, help_echo },
+    { "echo", NULL, 0, 255, run_echo, help_echo },
     { "exit", NULL, 0, 0, (void *)-1L, help_exit },
     { "help", NULL, 0, 1, run_help, help_help },
     { "ls", "dir", 0, 2, run_ls, help_ls },
