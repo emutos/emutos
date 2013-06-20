@@ -168,8 +168,8 @@ static int atari_partition(int xhdidev)
      * because other media do not suffer of that problem.
      */
     if (IS_IDE_DEVICE(xhdidev) && sect[510] == 0xaa && sect[511] == 0x55) {
+        KINFO(("DOS MBR byteswapped checksum detected: enabling byteswap.\n"));
         devices[xbiosdev].byteswap = 1; /* byteswap required for whole disk */
-        KINFO(("DOS MBR byteswapped checksum detected: byteswap required!\n"));
         /* swap bytes in the loaded boot sector */
         byteswap(sect,SECTOR_SIZE);
     }

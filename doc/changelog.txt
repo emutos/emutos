@@ -4860,3 +4860,6 @@ Start... early ages
   make them private functions. (RFB)
 - cli/cmdint.c: Allow interruption and flow control for output of 'ls'
   and 'copy/move'. (RFB)
+
+2013-06-20
+- bios/disk.c: Changed byteswap message. (VRI)
