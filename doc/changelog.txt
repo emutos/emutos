@@ -4856,3 +4856,5 @@ Start... early ages
 - cli/cmdint.c: Fix panic when 'echo'ing control character. (RFB)
 - cli/cmdint.c: Remove the internal command 'rem'. (RFB)
 - cli/cmdint.c cli/cmdutil.c: Small optimisation for eol handling. (RFB)
+- cli/cmd.h cli/cmdint.c cli/cmdutil.c: Moved output() and friends to
+  make them private functions. (RFB)

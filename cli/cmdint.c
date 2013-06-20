@@ -34,9 +34,14 @@ PRIVATE void help_display(const COMMAND *p);
 PRIVATE WORD help_lines(const COMMAND *p);
 PRIVATE WORD help_pause(void);
 PRIVATE WORD help_wanted(const COMMAND *p,char *cmd);
+PRIVATE void output(const char *s);
+PRIVATE void outputnl(const char *s);
+PRIVATE LONG outputbuf(const char *s,LONG len);
 PRIVATE void padname(char *buf,const char *name);
 PRIVATE LONG pathout(void);
 PRIVATE void show_line(const char *title,ULONG n);
+PRIVATE WORD user_break(void);
+PRIVATE WORD user_input(void);
 
 PRIVATE LONG run_cat(WORD argc,char **argv);
 PRIVATE LONG run_cd(WORD argc,char **argv);
@@ -888,3 +893,90 @@ char buf[20];
     outputnl(buf);
 }
 
+/*
+ *  output() and friends
+ */
+/*
+ *  output a redirectable string
+ */
+PRIVATE void output(const char *s)
+{
+    if (redir_handle < 0L)
+        message(s);
+    else Fwrite((WORD)redir_handle,strlen(s),s);
+}
+
+/*
+ *  output a redirectable string with a newline
+ */
+PRIVATE void outputnl(const char *s)
+{
+    output(s);
+    output("\r\n");
+}
+
+/*
+ *  output a redirectable fixed-length buffer
+ */
+PRIVATE LONG outputbuf(const char *s,LONG len)
+{
+LONG n, rc;
+
+    if (redir_handle < 0L) {
+        n = len;
+        while(n-- > 0) {
+            if (constat())
+                if (user_input())
+                    return USER_BREAK;
+            conout(*s++);
+        }
+        return len;
+    }
+
+    rc = Fwrite((WORD)redir_handle,len,s);
+    if (rc >= 0) {
+        if (constat())
+            if (user_break())
+                return USER_BREAK;
+    }
+
+    return rc;
+}
+
+/*
+ *  handle control-C
+ */
+PRIVATE WORD user_break(void)
+{
+char c;
+
+    c = conin() & 0xff;
+    if (c == CTL_C)         /* user wants to interrupt */
+        return -1;
+
+    return 0;
+}
+
+/*
+ *  check for flow control or control-C
+ */
+PRIVATE WORD user_input(void)
+{
+char c;
+
+    c = conin() & 0xff;
+    if (c == CTL_C)         /* user wants to interrupt */
+        return -1;
+
+    if (c == CTL_S) {       /* user wants to pause */
+        while(1) {
+            c = conin() & 0xff;
+            if (c == CTL_C)
+                return -1;
+            if (c == CTL_Q)
+                break;
+        }
+    }
+
+    return 0;
+}
