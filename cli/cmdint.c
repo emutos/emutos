@@ -874,7 +874,7 @@ char c;
 
     message(" (y/N)?");
     c = (conin() & 0xff) | 0x20;
-    message("\n");
+    message("\r\n");
 
     return c;
 }

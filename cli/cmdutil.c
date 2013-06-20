@@ -34,11 +34,8 @@ void message(const char *msg)
 {
 const char *p;
 
-    for (p = msg; *p; p++) {
-        if (*p == '\n')
-            conout('\r');
+    for (p = msg; *p; p++)
         conout(*p);
-    }
 }
 
 /*
@@ -47,7 +44,7 @@ const char *p;
 void messagenl(const char *msg)
 {
     message(msg);
-    message("\n");
+    message("\r\n");
 }
 
 /*
