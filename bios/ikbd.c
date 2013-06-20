@@ -120,13 +120,20 @@ LONG bconin2(void)
 #if CONF_SERIAL_CONSOLE
     value = bconin(1);
 
-    /* We need to emulate these scancodes if we want to launch EmuCon
+    /* We need to emulate these scancodes if we want to launch EmuCON2
      * from EmuDesk by using the keyboard shortcuts.
+     * And a few other ones to get minimal command-line editing.
      */
     if (value == 0x11) /* ^Q */
         value |= 0x100000; /* Scancode of Q */
-    if (value == 0x1a) /* ^Z */
+    else if (value == 0x1a) /* ^Z */
         value |= 0x2c0000; /* Scancode of Z */
+    else if (value == 0x08) /* Backspace */
+        value |= 0x0e0000; /* Scancode of Backspace */
+    else if (value == 0x09) /* TAB */
+        value |= 0x0f0000; /* Scancode of TAB */
+    else if (value == 0x7f) /* Delete */
+        value |= 0x053000; /* Scancode of Delete */
 
     return value;
 #endif

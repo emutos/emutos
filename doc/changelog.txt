@@ -4863,3 +4863,4 @@ Start... early ages
 
 2013-06-20
 - bios/disk.c: Changed byteswap message. (VRI)
+- bios/ikbd.c: Added scancode emulation for EmuCON2 on serial console. (VRI)
