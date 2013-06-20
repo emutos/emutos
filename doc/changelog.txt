@@ -4858,3 +4858,5 @@ Start... early ages
 - cli/cmdint.c cli/cmdutil.c: Small optimisation for eol handling. (RFB)
 - cli/cmd.h cli/cmdint.c cli/cmdutil.c: Moved output() and friends to
   make them private functions. (RFB)
+- cli/cmdint.c: Allow interruption and flow control for output of 'ls'
+  and 'copy/move'. (RFB)

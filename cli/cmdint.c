@@ -355,6 +355,9 @@ WORD detail = 0;
         outputnl(filespec);
     }
     for (rc = Fsfirst(filespec,0x17), n = 0; rc == 0; rc = Fsnext()) {
+        if (constat())
+            if (user_input())
+                return USER_BREAK;
         if (detail) {
             display_detail(dta);
         } else if (dta->d_fname[0] != '.') {
@@ -596,6 +599,12 @@ LONG bufsize, n, rc;
         return ENSMEM;
 
     for (rc = Fsfirst(inname,0x07); rc == 0; rc = Fsnext()) {
+        if (constat()) {
+            if (user_input()) {
+                rc = USER_BREAK;
+                break;
+            }
+        }
         strcpy(inptr,dta->d_fname);     /* add name to paths */
         if (output_is_dir)
             strcpy(outptr,dta->d_fname);
