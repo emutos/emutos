@@ -43,7 +43,8 @@ extern long end_stram;
 void *xmgetblk(int i);
 
 /*  MGET - wrapper around xmgetblk */
-#define MGET(x) ((x *) xmgetblk((sizeof(x) + 15)>>4))
+#define MCELLSIZE(x)    ((sizeof(x)+15)>>4)
+#define MGET(x)         ((x *)xmgetblk(MCELLSIZE(x)))
 
 /*  xmfreblk - free up memory allocated through mgetblk */
 void xmfreblk(void *m);

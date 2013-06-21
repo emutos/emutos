@@ -36,6 +36,8 @@
 #include "config.h"
 #include "portab.h"
 #include "nls.h"
+#include "fs.h"
+#include "mem.h"
 #include "kprint.h"
 
 /*
@@ -89,8 +91,8 @@ static int *getosm(int n)
     if( n > osmlen )
     {
       /*  not enough room  */
-        kcprintf(_("\033EOut of internal memory.\nUse FOLDR100.PRG to get more.\nSystem halted!\n"));
-        halt();                 /*  will not return             */
+        dbggtosm++ ;
+        return 0;
     }
 
     m = &osmem[osmptr];         /*  start at base               */
@@ -142,6 +144,17 @@ void    *xmgetblk(int i)
     {   /*  nothing on list, try pool  */
         if ( (m = getosm(w+1)) )        /*  add size of control word    */
             *m++ = i;   /*  put size in control word    */
+    }
+
+    /*
+     *  if no memory is available, and the request
+     *  is for an OFD or DND, halt with an error
+     */
+    if (m == 0) {
+        if ((i == MCELLSIZE(DND)) || (i == MCELLSIZE(OFD))) {
+            kcprintf(_("\033EOut of internal memory.\nUse FOLDR100.PRG to get more.\nSystem halted!\n"));
+            halt();                 /*  will not return             */
+        }
     }
 
     /*

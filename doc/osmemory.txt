@@ -29,7 +29,9 @@ PD    256/16/128    pd.h           bdosmain.c
   is for the block size prefix WORD).
 
 As can be seen, although there are free chains for blocks of size 1-19
-paragraphs, the only ones used are 1, 3, 4, and 16.
+paragraphs, the only ones used are 1, 3, 4, and 16.  Also, note that only
+one PD (corresponding to the root process, I believe) is ever obtained by
+this method.
 
 This method of allocation is the same as used in TOS, and the program
 FOLDRnnn.PRG can be used to extend the amount of memory available for
@@ -38,11 +40,8 @@ DNDs and OFDs.  It does this by adding blocks to the free chain for
 first, this provides additional space that is reserved for these blocks
 only.  By doing so, it also relieves pressure on the rest of the pool.
 
-If pool memory becomes exhausted, EmuTOS operation is compromised, since
-memory cannot be allocated via Malloc(), processes cannot be created,
-and files/folders may not be able to be accessed.  When EmuTOS runs out
-of internal memory, it halts with a message; this is the same behaviour
-as TOS.
+When EmuTOS requires memory for a DND or OFD, and pool memory is exhausted,
+it halts with a message; this is the same behaviour as TOS.
 
 Roger Burrows
-19 January 2013
+21 June 2013
