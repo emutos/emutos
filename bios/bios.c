@@ -573,6 +573,9 @@ void biosmain(void)
     amiga_shutdown();
 #endif
 
+    /* hide cursor */
+    cprintf("\033f");
+
     kcprintf(_("System halted!\n"));
     halt();
 }
