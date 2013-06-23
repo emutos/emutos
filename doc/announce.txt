@@ -30,6 +30,7 @@ Major changes:
 - Included the full-featured desktop in 192K ROMs.
 
 Other changes:
+- Fixed regression: FOLDR100 message on Malloc() memory exhausted.
 - Improved filesystem performance.
 - Added new firebee-ram target.
 - Improved desktop file copy performance.
