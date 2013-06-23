@@ -4868,4 +4868,6 @@ Start... early ages
 2013-06-21
 - bdos/mem.h bdos/osmem.c doc/osmemory.txt: Fix regression: Malloc()
   should not cause a halt() due to lack of internal memory. (RFB)
- 
+
+2013-06-23
+- Makefile: Added support for "make ramdos.dsm". (VRI)
