@@ -16,9 +16,9 @@ if possible add a line telling in which version it did run.
   STeem v2.0.6        |  yes  | LVL | 30 Sep 2002 |
   TOSBox 1.10a        |   no  |  ?  |  < Sep 2002 |
   WinSTon V0.1r2      |   no  |  ?  |  < Sep 2002 |
-  FireBee             |  yes  | VRI |    Oct 2011 |
-  Falcon 030          |  yes  | RFB |    Feb 2013 | only RAMTOS tested
-  WinUAE 2.5.1        |  yes  | VRI |    Feb 2013 |
+  FireBee             |  yes  | VRI | 21 Jun 2013 |
+  Falcon 030          |  yes  | RFB | 08 Jun 2013 | only RAMTOS tested
+  WinUAE 2.6.1        |  yes  | VRI | 23 Jun 2013 |
   Amiga Blizzard 1260 |  yes  | (3) |    Aug 2012 | tested with BlizKick
   Amiga 1000          |  yes  | (4) |    Jul 2012 |
 
