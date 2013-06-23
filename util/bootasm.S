@@ -65,11 +65,20 @@ copy:
         dbra    d0,copy
 #endif
 
+        /* When the TOS is copied to its final destination,
+         * it may override the current stack.
+         * We could setup a safe stack here.
+         * Instead, we just avoid using the stack.
+         */
+
         /* jump into boot routine */
 
-        bsr.s   _invalidate_icache
-        jmp     (a4)
+        bra.s   _invalidate_icache
+        // it will return to a4
 
+/* The boot routine has been copied to another location.
+ * As a result, it must use only PC-relative code.
+ */
 boot:
         /* copy the TOS to destination */
 
@@ -89,8 +98,8 @@ bcopy:
 
         /* jump into it */
 
-        bsr.s   _invalidate_icache
-        jmp     (a4)
+        // fall into _invalidate_icache
+        // it will return to a4
 
 _invalidate_icache:
 #ifdef __mcoldfire__
@@ -136,6 +145,6 @@ setloop:
         MOVEC_D0_CACR
 not68030:
 #endif
-        rts
+        jmp     (a4)            // return without using the stack
 
 bootend:
