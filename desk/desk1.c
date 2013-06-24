@@ -3,7 +3,7 @@
 /*
 *       Copyright 1999 Caldera Thin Clients, Inc. / Lineo Inc.
 *                 2001 John Elliott
-*                 2003 The EmuTOS development team
+*                 2003-2013 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.

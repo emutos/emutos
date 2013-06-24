@@ -1,7 +1,7 @@
 /*
  * gemasm.S - assembler part of GEM
  *
- * Copyright 2002, The EmuTOS development team
+ * Copyright 2002-2013, The EmuTOS development team
  *           1999, Caldera Thin Clients, Inc.
  *           1987, Digital Research Inc.
  *

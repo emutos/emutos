@@ -1,7 +1,7 @@
 /*
  * boot.c - standalone boot.prg to load EmuTOS in RAM
  *
- * Copyright (c) 2001 by following authors
+ * Copyright (c) 2001-2013 The EmuTOS development team
  *
  * Authors:
  *  LVL     Laurent Vogel

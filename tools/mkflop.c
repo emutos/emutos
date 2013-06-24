@@ -1,7 +1,7 @@
 /*
  * mkflop.c - create an auto-booting EmuTOS floppy.
  *
- * Copyright (c) 2001 The EmuTOS development team
+ * Copyright (c) 2001-2013 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel

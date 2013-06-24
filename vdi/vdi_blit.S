@@ -2,7 +2,7 @@
  * vdi_blit.S - Assembler implementation of blitting
  *
  * Copyright (c) 1999 Caldera, Inc.
- *               2002 The EmuTOS development team
+ *               2002-2013 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.

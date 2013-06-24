@@ -2,6 +2,7 @@
  * memmove.S - a fast memmove / memcpy in 68000.
  *
  * Copyright (c) 2001 by Authors:
+ * Copyright (c) 2013 by The EmuTOS development team.
  *
  * Authors:
  *  LVL  Laurent Vogel

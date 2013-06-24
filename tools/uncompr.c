@@ -1,7 +1,7 @@
 /*
  * uncompr.c - the test uncompressor for compr.c
  *
- * Copyright (C) 2002 The EmuTOS development team
+ * Copyright (C) 2002-2013 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel

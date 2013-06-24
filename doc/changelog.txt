@@ -4873,3 +4873,6 @@ Start... early ages
 - Makefile: Added support for "make ramdos.dsm". (VRI)
 - util/bootasm.S: Fixed memory corruption due to bad stack in boot.prg. (VRI)
 - bios/bios.c: Hide the cursor after system halted. (VRI)
+
+2013-06-23
+- *: Updated copyright year for files modified since last release. (VRI)
