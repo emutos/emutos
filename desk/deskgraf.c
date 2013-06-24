@@ -242,8 +242,8 @@ void gsx_fix(FDB *pfd, LONG theaddr, WORD wb, WORD h)
 */
         void
 gsx_blt(LONG saddr, UWORD sx, UWORD sy, UWORD swb,
-	LONG daddr, UWORD dx, UWORD dy, UWORD dwb,
-	UWORD w, UWORD h, UWORD rule, WORD fgcolor, WORD bgcolor)
+        LONG daddr, UWORD dx, UWORD dy, UWORD dwb,
+        UWORD w, UWORD h, UWORD rule, WORD fgcolor, WORD bgcolor)
 {
         gsx_fix(&gl_src, saddr, swb, h);
         gsx_fix(&gl_dst, daddr, dwb, h);
