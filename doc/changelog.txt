@@ -4874,5 +4874,5 @@ Start... early ages
 - util/bootasm.S: Fixed memory corruption due to bad stack in boot.prg. (VRI)
 - bios/bios.c: Hide the cursor after system halted. (VRI)
 
-2013-06-23
+2013-06-24
 - *: Updated copyright year for files modified since last release. (VRI)
