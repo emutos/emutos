@@ -1,4 +1,4 @@
-EmuTOS - M5448x version
+EmuTOS - M548x version
 
 This EmuTOS version runs on ColdFire V4e Evaluation Boards.
 No graphical output, only text mode ColdFire TOS programs through RS-232.
