@@ -324,7 +324,7 @@ const char *p;
         }
     }
 
-    return NULL;        
+    return NULL;
 }
 
 /*

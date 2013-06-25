@@ -97,7 +97,7 @@ WORD i, len;
     *p = '\0';
 
     if (len > MAXCMDLINE)
-        return -1;  
+        return -1;
 
     cmdline[0] = (char) len;
 

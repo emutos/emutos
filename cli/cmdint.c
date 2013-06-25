@@ -239,7 +239,7 @@ PRIVATE LONG run_cd(WORD argc,char **argv)
 {
     if (argc == 1)
         return pathout();
-    
+
     return Dsetpath(argv[1]);
 }
 

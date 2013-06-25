@@ -79,7 +79,7 @@ _coldfire_int_61:
         moveq   #8,d0                   // MCF_GPT_GSR_TEXP
         move.l  d0,__MBAR+0x81c         // MCF_GPT_GSR1
         nop                             // Avoid spurious interrupts ???
-        
+
         movem.l (sp),d0-d1/a0-a1
         lea     16(sp),sp
         rte

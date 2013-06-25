@@ -127,8 +127,8 @@ BYTE *strscn(BYTE *ps, BYTE *pd, BYTE stop)
  *      This code also handles input filenames that are not in 8.3
  *      format that may be provided by e.g. Hatari GEMDOS drive
  *      emulation.  For example:
- *      . 'TESTWINDOW.C' is converted to 'TESTWINDC' 
- *      . 'TEST.A.B.C' is converted to 'TEST    A.B' 
+ *      . 'TESTWINDOW.C' is converted to 'TESTWINDC'
+ *      . 'TEST.A.B.C' is converted to 'TEST    A.B'
  *      . 'TESTTESTTEST' is converted to 'TESTTEST'
  */
 void fmt_str(BYTE *instr,BYTE *outstr)

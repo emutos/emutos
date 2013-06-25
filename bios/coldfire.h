@@ -14,7 +14,7 @@
 #define COLDFIRE_H
 
 #ifdef __mcoldfire__
- 
+
 #if CONF_WITH_COLDFIRE_RS232
 BOOL coldfire_rs232_can_write(void);
 void coldfire_rs232_write_byte(UBYTE b);

@@ -119,7 +119,7 @@ _invalidate_icache:
         // The following changes have been made to the original code:
         // - flush both caches with "cpushl bc" instead of "cpushl dc"
         // - flush the 512 Sets (original code forgot the last one)
-        
+
         nop                     // synchronize-flush store buffer
         moveq.l #0,d0           // initialize way counter
         moveq.l #0,d1           // initialize set counter

@@ -19,7 +19,7 @@
  * - no fuzzy or printf-format parameters
  * - some weird messages
  * - trigraphs are not handled (this is a feature actually !)
- * 
+ *
  * NOTE: to get warning messages about generation of illegal alert
  * strings, you must #define ALERT_TEXT_WARNINGS.  The generated
  * messages can include Atari versions of non-Latin characters, so

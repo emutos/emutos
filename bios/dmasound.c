@@ -567,7 +567,7 @@ static LONG devconnect_ste(WORD source, WORD dest, WORD clk,
      case 0:             /* Set STE compatible mode -> we can abort here */
         return 0;
      case 1:
-        modectrl |= 3;         /* 50 kHz */ 
+        modectrl |= 3;         /* 50 kHz */
         break;
      case 2: case 3: case 4:
         modectrl |= 2;         /* 25 kHz */
