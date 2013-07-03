@@ -4878,3 +4878,8 @@ Start... early ages
 
 2013-06-25
 - *: Stripped trailing spaces. (VRI)
+
+2013-07-03
+- doc/announce.txt: Updated release date. (VRI)
+
+* Release: 0.9.1
