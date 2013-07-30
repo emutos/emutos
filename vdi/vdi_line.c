@@ -183,7 +183,7 @@ void habline(Vwk * vwk) {
  *                     3 => not mode.
  */
 
-void horzline(const Vwk * vwk, Line * line)
+static void horzline(const Vwk * vwk, Line * line)
 {
     /* a horizontal line is a rectangle with one pixel height */
     arb_line(line);

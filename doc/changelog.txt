@@ -4886,3 +4886,4 @@ Start... early ages
 
 2013-07-29
 - vdi/vdi_line.c: Speed up rectangle draw by eliminating locals. (RFB)
+- vdi/vdi_defs.h vdi/vdi_fill.c vdi/vdi_line.c: Static cleanup. (RFB)

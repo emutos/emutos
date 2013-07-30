@@ -260,7 +260,6 @@ void d_justified(Vwk *);
 void abline (Vwk * vwk, Line * line, WORD color);
 void draw_pline(Vwk * vwk);
 void arrow(Vwk * vwk, Point * point, int count);
-void horzline(const Vwk * vwk, Line * line);
 void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor);
 void polygon(Vwk * vwk, Point * point, int count);
 void polyline(Vwk * vwk, Point * point, int count, WORD color);

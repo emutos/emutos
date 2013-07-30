@@ -886,7 +886,7 @@ end_pts(Vwk * vwk, WORD x, WORD y, WORD *xleftout, WORD *xrightout,
 }
 
 /* Prototypes local to this module */
-WORD
+static WORD
 get_seed(Vwk * vwk, WORD xin, WORD yin, WORD *xleftout, WORD *xrightout,
              BOOL seed_type);
 
@@ -1022,7 +1022,7 @@ crunch_queue(void)
 /*
  * get_seed - put seeds into Q, if (xin,yin) is not of search_color
  */
-WORD
+static WORD
 get_seed(Vwk * vwk, WORD xin, WORD yin, WORD *xleftout, WORD *xrightout,
          BOOL seed_type)
 {
