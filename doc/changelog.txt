@@ -4883,3 +4883,6 @@ Start... early ages
 - doc/announce.txt: Updated release date. (VRI)
 
 * Release: 0.9.1
+
+2013-07-29
+- vdi/vdi_line.c: Speed up rectangle draw by eliminating locals. (RFB)

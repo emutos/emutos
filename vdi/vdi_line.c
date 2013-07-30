@@ -220,9 +220,7 @@ void draw_rect(const Vwk *vwk,const Rect *rect,const UWORD fillcolor)
     UWORD leftmask, rightmask, *addr;
     UWORD patmsk = vwk->patmsk;
     int centre, y;
-    int numplanes = v_planes;
-    int yinc = (v_lin_wr>>1) - numplanes;
-    int patadd = (vwk->multifill) ? 16 : 0;     /* multi-plane pattern offset */
+    int yinc = (v_lin_wr>>1) - v_planes;
 
     leftmask = 0xffff >> (rect->x1 & 0x0f);
     rightmask = 0xffff << (15 - (rect->x2 & 0x0f));
@@ -243,33 +241,33 @@ void draw_rect(const Vwk *vwk,const Rect *rect,const UWORD fillcolor)
             int plane;
             UWORD color;
 
-            for (plane = 0, color = fillcolor; plane < numplanes; plane++, color>>=1, addr++) {
+            for (plane = 0, color = fillcolor; plane < v_planes; plane++, color>>=1, addr++) {
                 UWORD *work = addr;
                 UWORD pattern = ~vwk->patptr[patind];
                 int n;
 
                 if (color & 0x0001) {
                     *work |= pattern & leftmask;    /* left section */
-                    work += numplanes;
+                    work += v_planes;
                     for (n = 0; n < centre; n++) {  /* centre section */
                         *work |= pattern;
-                        work += numplanes;
+                        work += v_planes;
                     }
                     if (rightmask) {                /* right section */
                         *work |= pattern & rightmask;
                     }
                 } else {
                     *work &= ~(pattern & leftmask); /* left section */
-                    work += numplanes;
+                    work += v_planes;
                     for (n = 0; n < centre; n++) {  /* centre section */
                         *work &= ~pattern;
-                        work += numplanes;
+                        work += v_planes;
                     }
                     if (rightmask) {                /* right section */
                         *work &= ~(pattern & rightmask);
                     }
                 }
-                patind += patadd;       /* maybe advance pattern data */
+                patind += (vwk->multifill) ? 16 : 0;/* maybe advance pattern data */
             }
         }
         break;
@@ -279,21 +277,21 @@ void draw_rect(const Vwk *vwk,const Rect *rect,const UWORD fillcolor)
             int plane;
             UWORD color;
 
-            for (plane = 0, color = fillcolor; plane < numplanes; plane++, color>>=1, addr++) {
+            for (plane = 0, color = fillcolor; plane < v_planes; plane++, color>>=1, addr++) {
                 UWORD *work = addr;
                 UWORD pattern = vwk->patptr[patind];
                 int n;
 
                 *work ^= pattern & leftmask;        /* left section */
-                work += numplanes;
+                work += v_planes;
                 for (n = 0; n < centre; n++) {      /* centre section */
                     *work ^= pattern;
-                    work += numplanes;
+                    work += v_planes;
                 }
                 if (rightmask) {                    /* right section */
                     *work ^= pattern & rightmask;
                 }
-                patind += patadd;       /* maybe advance pattern data */
+                patind += (vwk->multifill) ? 16 : 0;/* maybe advance pattern data */
             }
         }
         break;
@@ -303,33 +301,33 @@ void draw_rect(const Vwk *vwk,const Rect *rect,const UWORD fillcolor)
             int plane;
             UWORD color;
 
-            for (plane = 0, color = fillcolor; plane < numplanes; plane++, color>>=1, addr++) {
+            for (plane = 0, color = fillcolor; plane < v_planes; plane++, color>>=1, addr++) {
                 UWORD *work = addr;
                 UWORD pattern = vwk->patptr[patind];
                 int n;
 
                 if (color & 0x0001) {
                     *work |= pattern & leftmask;    /* left section */
-                    work += numplanes;
+                    work += v_planes;
                     for (n = 0; n < centre; n++) {  /* centre section */
                         *work |= pattern;
-                        work += numplanes;
+                        work += v_planes;
                     }
                     if (rightmask) {                /* right section */
                         *work |= pattern & rightmask;
                     }
                 } else {
                     *work &= ~(pattern & leftmask); /* left section */
-                    work += numplanes;
+                    work += v_planes;
                     for (n = 0; n < centre; n++) {  /* centre section */
                         *work &= ~pattern;
-                        work += numplanes;
+                        work += v_planes;
                     }
                     if (rightmask) {                /* right section */
                         *work &= ~(pattern & rightmask);
                     }
                 }
-                patind += patadd;       /* maybe advance pattern data */
+                patind += (vwk->multifill) ? 16 : 0;/* maybe advance pattern data */
             }
         }
         break;
@@ -339,7 +337,7 @@ void draw_rect(const Vwk *vwk,const Rect *rect,const UWORD fillcolor)
             int plane;
             UWORD color;
 
-            for (plane = 0, color = fillcolor; plane < numplanes; plane++, color>>=1, addr++) {
+            for (plane = 0, color = fillcolor; plane < v_planes; plane++, color>>=1, addr++) {
                 UWORD data, *work = addr;
                 UWORD pattern = (color & 0x0001) ? vwk->patptr[patind] : 0x0000;
                 int n;
@@ -347,17 +345,17 @@ void draw_rect(const Vwk *vwk,const Rect *rect,const UWORD fillcolor)
                 data = *work & ~leftmask;           /* left section */
                 data |= pattern & leftmask;
                 *work = data;
-                work += numplanes;
+                work += v_planes;
                 for (n = 0; n < centre; n++) {      /* centre section */
                     *work = pattern;
-                    work += numplanes;
+                    work += v_planes;
                 }
                 if (rightmask) {                    /* right section */
                     data = *work & ~rightmask;
                     data |= pattern & rightmask;
                     *work = data;
                 }
-                patind += patadd;       /* maybe advance pattern data */
+                patind += (vwk->multifill) ? 16 : 0;/* maybe advance pattern data */
             }
         }
         break;
