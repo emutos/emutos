@@ -241,7 +241,7 @@ static LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG
     int unit = dev;
     LONG lcount = cnt;
     LONG retval;
-    ULONG pssize;
+    WORD psshift;
     void *bufstart = (void *)buf;
 
 #if DBG_BLKDEV
@@ -257,7 +257,7 @@ static LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG
             return EUNDEV;  /* unknown device */
 
         /* convert logical sectors to physical ones */
-        sectors = blkdev[dev].bpb.recsiz / devices[blkdev[dev].unit].pssize;
+        sectors = blkdev[dev].bpb.recsiz >> devices[blkdev[dev].unit].psshift;
         lcount *= sectors;
         lrecnr *= sectors;
 
@@ -298,7 +298,7 @@ static LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG
         }
     }
 
-    pssize = devices[unit].pssize;
+    psshift = devices[unit].psshift;
 
     do {
         /* split the transfer to 15-bit count blocks (lowlevel functions take WORD count) */
@@ -316,16 +316,34 @@ static LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG
         } while((retval < 0) && (--retries > 0));
         if (retval < 0)     /* error, retries exhausted */
             break;
-        buf += scount * pssize;
+        buf += scount << psshift;
         lrecnr += scount;
         lcount -= scount;
     } while(lcount > 0);
 
     /* TOS invalidates the i-cache here, so be compatible */
     if ((rw&RW_RW) == RW_READ)
-        instruction_cache_kludge(bufstart,cnt*pssize);
+        instruction_cache_kludge(bufstart,cnt<<psshift);
 
     return retval;
+}
+
+
+/*
+ * get_shift - get #bits to shift left to convert from blocksize to bytes
+ *
+ * returns -1 iff blocksize is not a power of 2
+ */
+WORD get_shift(ULONG blocksize)
+{
+    WORD i;
+    ULONG n;
+
+    for (i = 0, n = 1UL; i < 32; i++, n <<= 1)
+        if (n == blocksize)
+            return i;
+
+    return -1;
 }
 
 

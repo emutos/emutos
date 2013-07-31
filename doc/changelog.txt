@@ -4887,3 +4887,7 @@ Start... early ages
 2013-07-29
 - vdi/vdi_line.c: Speed up rectangle draw by eliminating locals. (RFB)
 - vdi/vdi_defs.h vdi/vdi_fill.c vdi/vdi_line.c: Static cleanup. (RFB)
+
+2013-07-30
+- bios/acsi.c bios/blkdev.c bios/blkdev.h bios/disk.c bios/floppy.c:
+  Use shift for logical/physical sector number conversion. (RFB)

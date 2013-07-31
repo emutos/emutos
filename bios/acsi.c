@@ -125,7 +125,7 @@ static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, LONG buf, WORD dev)
      */
     int opcode;
     int status;
-    LONG buflen = (LONG)cnt * SECTOR_SIZE;  //FIXME: size should be devices[].pssize
+    LONG buflen = (LONG)cnt * SECTOR_SIZE;
 
     /* flush data cache here so that memory is current */
     if (rw == RW_WRITE)

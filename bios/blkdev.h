@@ -151,6 +151,7 @@ LONG blkdev_hdv_boot(void);
 LONG blkdev_getbpb(WORD dev);
 LONG blkdev_drvmap(void);
 LONG blkdev_avail(WORD dev);
+WORD get_shift(ULONG blocksize);
 
 int add_partition(int dev, char id[], ULONG start, ULONG size);
 
@@ -190,7 +191,7 @@ struct _unit
     BYTE    valid;          /* unit valid */
     BYTE    byteswap;       /* unit is byteswapped */
     ULONG   size;           /* number of physical sectors */
-    ULONG   pssize;         /* physical sector size */
+    WORD    psshift;        /* shift left amount to convert sectors to bytes */
     LONG    last_access;/* used in mediach only */
 };
 typedef struct _unit UNIT;

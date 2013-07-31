@@ -49,10 +49,13 @@ void disk_init(void)
         int minor = 0;
         int xbiosdev = major + NUMFLOPPIES;
 
+        devices[xbiosdev].valid = 0;
         if (! XHInqTarget(major, minor, &blocksize, NULL, NULL)) {
+            devices[xbiosdev].psshift = get_shift(blocksize);
+            if (devices[xbiosdev].psshift < 0)  /* blksize not a power of 2 ... */
+                continue;                       /* ... so ignore                */
             devices[xbiosdev].valid = 1;
             devices[xbiosdev].byteswap = 0;
-            devices[xbiosdev].pssize = blocksize;
 
             if (! XHGetCapacity(major, minor, &blocks, NULL))
                 devices[xbiosdev].size = blocks;
@@ -62,8 +65,6 @@ void disk_init(void)
             /* scan for ATARI partitions on this harddrive */
             atari_partition(major);
         }
-        else
-            devices[xbiosdev].valid = 0;
     }
 }
 
@@ -344,7 +345,7 @@ LONG rc;
     rc = XHReadWrite(dev, 0, 0, sector, count, (void *)buf);
 
     /* TOS invalidates the i-cache here, so be compatible */
-    instruction_cache_kludge((void *)buf,count*devices[dev+NUMFLOPPIES].pssize);
+    instruction_cache_kludge((void *)buf,count<<devices[dev+NUMFLOPPIES].psshift);
 
     return rc;
 }
