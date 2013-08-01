@@ -24,4 +24,24 @@ WORD ev_multi(WORD flags, MOBLK *pmo1, MOBLK *pmo2, LONG tmcount,
               LONG buparm, LONG mebuff, WORD prets[]);
 WORD ev_dclick(WORD rate, WORD setit);
 
+/*
+ * combine clicks/mask/state into LONG
+ */
+static inline LONG combine_cms(WORD clicks,WORD mask,WORD state)
+{
+    union {
+        LONG result;
+        struct {
+            WORD c;
+            BYTE m;
+            BYTE s;
+        } combined;
+    } u;
+
+    u.combined.c = clicks;
+    u.combined.m = mask;
+    u.combined.s = state;
+
+    return u.result;
+}
 #endif

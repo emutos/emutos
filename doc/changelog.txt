@@ -4897,3 +4897,7 @@ Start... early ages
   include/compat.h: Eliminate LLOWD() compatibility macro. (RFB)
 - aes/geminput.c include/compat.h: Eliminate LHIWD() compatibility
   macro. (RFB)
+
+2013-08-01
+- aes/gemevlib.c aes/gemevlib.h aes/gemsuper.c: Replace some macro usage
+  with inline function. (RFB)

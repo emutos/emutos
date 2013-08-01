@@ -92,7 +92,7 @@ UWORD ev_button(WORD bflgclks, UWORD bmask, UWORD bstate, WORD rets[])
         WORD            ret;
         LONG            parm;
 
-        parm = HW(bflgclks) | LW((bmask << 8) | bstate);
+        parm = combine_cms(bflgclks,bmask,bstate);
         ret = ev_block(MU_BUTTON, parm);
         ev_rets(&rets[0]);
         return(ret);

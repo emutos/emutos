@@ -165,7 +165,7 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD control[], WORD int_in[], 
 #endif
                 if (MU_FLAGS & MU_TIMER)
                   maddr = HW(MT_HICOUNT) + LW(MT_LOCOUNT);
-                buparm = HW(MB_CLICKS) | LW((MB_MASK << 8) | MB_STATE);
+                buparm = combine_cms(MB_CLICKS,MB_MASK,MB_STATE);
                 ret = ev_multi(MU_FLAGS, (MOBLK *)&MMO1_FLAGS, (MOBLK *)&MMO2_FLAGS,
                         maddr, buparm, MME_PBUFF, &EV_MX);
                 break;
