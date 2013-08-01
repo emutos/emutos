@@ -324,7 +324,7 @@ void evremove(EVB *e, UWORD ret)
 void kchange(LONG fdata)
 {
         UWORD ch = LHIWD(fdata);
-        WORD kstat = LLOWD(fdata);
+        WORD kstat = (UWORD)fdata;
 
         kstate = kstat;
         if (ch)
@@ -367,7 +367,7 @@ static void chkown(void)
 void bchange(LONG fdata)
 {
         WORD new = LHIWD(fdata);
-        WORD clicks = LLOWD(fdata);
+        WORD clicks = (UWORD)fdata;
                                                 /* see if this button   */
                                                 /*   event causes an    */
                                                 /*   ownership change   */
@@ -402,7 +402,7 @@ WORD downorup(WORD new, LONG buparm)
 void mchange(LONG fdata)
 {
         WORD rx = LHIWD(fdata);
-        WORD ry = LLOWD(fdata);
+        WORD ry = (UWORD)fdata;
                                                 /* zero out button wait */
                                                 /*   if mouse moves more*/
                                                 /*   then a little      */
@@ -474,9 +474,9 @@ static WORD inorout(EVB *e, WORD rx, WORD ry)
                                                 /*   specified rectangle*/
         mo.m_out = ((e->e_flag & EVMOUT) != 0x0);
         mo.m_x = LHIWD(e->e_parm);
-        mo.m_y = LLOWD(e->e_parm);
+        mo.m_y = (UWORD)e->e_parm;
         mo.m_w = LHIWD(e->e_return);
-        mo.m_h = LLOWD(e->e_return);
+        mo.m_h = (UWORD)e->e_return;
         /* FIXME: The following GRECT*-typecast is not very nice */
         return( mo.m_out != inside(rx, ry, (GRECT *)&mo.m_x) );
 }

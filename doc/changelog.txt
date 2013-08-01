@@ -4891,3 +4891,7 @@ Start... early ages
 2013-07-30
 - bios/acsi.c bios/blkdev.c bios/blkdev.h bios/disk.c bios/floppy.c:
   Use shift for logical/physical sector number conversion. (RFB)
+
+2013-07-31
+- aes/gemasync.c aes/gemdisp.c aes/geminput.c aes/gemoblib.c
+  include/compat.h: Eliminate LLOWD() compatibility macro. (RFB)

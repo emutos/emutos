@@ -56,9 +56,6 @@ extern WORD LBWMOV(WORD *pdst, BYTE *psrc);
                                                 /*   high word  of long */
 #define HW(x) ((LONG)((UWORD)(x)) << 16)
 
-                                                /* return low word of   */
-                                                /*   a long value       */
-#define LLOWD(x) ((UWORD)(x))
                                                 /* return high word of  */
                                                 /*   a long value       */
 #define LHIWD(x) ((UWORD)(x >> 16))

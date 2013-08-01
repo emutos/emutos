@@ -253,7 +253,7 @@ static void  just_draw(LONG tree, WORD obj, WORD sx, WORD sy)
             case G_BOX:
             case G_BOXCHAR:
             case G_IBOX:
-                gr_crack(LLOWD(spec), &bcol, &tcol, &ipat, &icol, &tmode);
+                gr_crack((UWORD)spec, &bcol, &tcol, &ipat, &icol, &tmode);
             case G_BUTTON:
                 if (obtype == G_BUTTON)
                 {

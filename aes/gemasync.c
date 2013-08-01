@@ -184,7 +184,7 @@ UWORD apret(EVSPEC mask)
         rlr->p_evwait &= ~mask;
         rlr->p_evflg &= ~mask;
 
-        erret = LLOWD(p->e_return);
+        erret = (UWORD)p->e_return;
 
         p->e_nextp = eul;
         eul = p;

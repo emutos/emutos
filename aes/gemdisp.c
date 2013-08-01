@@ -124,7 +124,7 @@ void forker(void)
           if (gl_recd)
           {
                                                   /* check for stop key */
-            if (g.f_code == kchange && LLOWD(g.f_data) == KEYSTOP)
+            if ((g.f_code == kchange) && ((UWORD)g.f_data == KEYSTOP))
               gl_recd = FALSE;
                                                 /* if still recording   */
                                                 /*   then handle event  */
