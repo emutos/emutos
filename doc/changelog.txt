@@ -4901,3 +4901,4 @@ Start... early ages
 2013-08-01
 - aes/gemevlib.c aes/gemevlib.h aes/gemsuper.c: Replace some macro usage
   with inline function. (RFB)
+- aes/gemsuper.c: Replace some compatibility macro usage. (RFB)
