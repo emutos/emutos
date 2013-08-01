@@ -323,7 +323,7 @@ void evremove(EVB *e, UWORD ret)
 
 void kchange(LONG fdata)
 {
-        UWORD ch = LHIWD(fdata);
+        UWORD ch = (UWORD)(fdata>>16);
         WORD kstat = (UWORD)fdata;
 
         kstate = kstat;
@@ -366,7 +366,7 @@ static void chkown(void)
 
 void bchange(LONG fdata)
 {
-        WORD new = LHIWD(fdata);
+        WORD new = (UWORD)(fdata>>16);
         WORD clicks = (UWORD)fdata;
                                                 /* see if this button   */
                                                 /*   event causes an    */
@@ -401,7 +401,7 @@ WORD downorup(WORD new, LONG buparm)
 
 void mchange(LONG fdata)
 {
-        WORD rx = LHIWD(fdata);
+        WORD rx = (UWORD)(fdata>>16);
         WORD ry = (UWORD)fdata;
                                                 /* zero out button wait */
                                                 /*   if mouse moves more*/
@@ -473,9 +473,9 @@ static WORD inorout(EVB *e, WORD rx, WORD ry)
                                                 /* in or out of         */
                                                 /*   specified rectangle*/
         mo.m_out = ((e->e_flag & EVMOUT) != 0x0);
-        mo.m_x = LHIWD(e->e_parm);
+        mo.m_x = (UWORD)(e->e_parm>>16);
         mo.m_y = (UWORD)e->e_parm;
-        mo.m_w = LHIWD(e->e_return);
+        mo.m_w = (UWORD)(e->e_return>>16);
         mo.m_h = (UWORD)e->e_return;
         /* FIXME: The following GRECT*-typecast is not very nice */
         return( mo.m_out != inside(rx, ry, (GRECT *)&mo.m_x) );
@@ -508,7 +508,7 @@ void post_mb(WORD ismouse, EVB *elist, WORD parm1, WORD parm2)
                                                 /*   click guys was     */
                                                 /*   satisfied          */
 
-              clicks = LHIWD(e->e_parm) & 0x00ff;
+              clicks = (UWORD)(e->e_parm>>16) & 0x00ff;
               if (clicks > 1)
                 gl_bpend--;
               evremove(e, (parm2 > clicks) ? clicks : parm2);
@@ -598,7 +598,7 @@ void abutton(EVB *e, LONG p)
                                                 /*   semaphore to show  */
                                                 /*   someone cares about*/
                                                 /*   multiple clicks    */
-          bclicks = LHIWD(p) & 0x00ff;
+          bclicks = (UWORD)(p>>16) & 0x00ff;
           if (bclicks > 1)
             gl_bpend++;
           e->e_parm = p;
