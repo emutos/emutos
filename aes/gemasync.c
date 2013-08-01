@@ -65,8 +65,8 @@ void azombie(EVB *e, UWORD ret)
 {
                                                 /* must be called with  */
                                                 /*   dispatching off    */
-        e->e_return = HW(button) | LW(ret);
-        e->e_parm = HW(xrat) | LW(yrat);
+        e->e_return = ((LONG)button<<16) | ret;
+        e->e_parm = ((LONG)xrat<<16) | (UWORD)yrat;
 
         e->e_link = zlr;
         if ( zlr )

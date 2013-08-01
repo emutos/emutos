@@ -52,10 +52,6 @@ extern WORD LBWMOV(WORD *pdst, BYTE *psrc);
                                                 /* coerce short ptr to  */
                                                 /*   low word  of long  */
 #define LW(x) ( (LONG)((UWORD)(x)) )
-                                                /* coerce short ptr to  */
-                                                /*   high word  of long */
-#define HW(x) ((LONG)((UWORD)(x)) << 16)
-
 
 
 /************************************************************************/
