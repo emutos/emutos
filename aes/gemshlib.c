@@ -104,9 +104,9 @@ void sh_curdir(BYTE *ppath)
                                                 /* remember current     */
                                                 /*  directory           */
         drive = dos_gdrv();
-        LBSET(ppath++, (drive + 'A') );
-        LBSET(ppath++, ':');
-        LBSET(ppath++, '\\');
+        *ppath++ = drive + 'A';
+        *ppath++ = ':';
+        *ppath++ = '\\';
         dos_gdir( drive+1, ppath );
 }
 
@@ -462,7 +462,7 @@ void sh_envrn(BYTE **ppath, const BYTE *psrch)
 *       paths to find.
 */
 
-static WORD sh_path(WORD whichone, LONG dp, BYTE *pname)
+static WORD sh_path(WORD whichone, BYTE *dp, BYTE *pname)
 {
         register BYTE   tmp, last;
         BYTE            *lp;
@@ -498,7 +498,7 @@ static WORD sh_path(WORD whichone, LONG dp, BYTE *pname)
         {
           if ( tmp != ';' )
           {
-            LBSET(dp++, tmp);
+            *dp++ = tmp;
             last = tmp;
             lp++;
           }
@@ -509,9 +509,9 @@ static WORD sh_path(WORD whichone, LONG dp, BYTE *pname)
                                                 /*   is needed          */
         if ( (last != '\\') &&
              (last != ':') )
-          LBSET(dp++, '\\');
+          *dp++ = '\\';
                                                 /* append file name     */
-        strcpy((char *) dp, pname);
+        strcpy(dp, pname);
                                                 /* make whichone refer  */
                                                 /*   to next path       */
         return(whichone+1);
@@ -570,7 +570,7 @@ WORD sh_find(BYTE *pspec)
                   (DOS_AX == E_PATHNOTFND) ||
                   (DOS_AX == E_FILENOTFND))) )
           {
-            path = sh_path(path, (LONG)D.g_dir, pname);
+            path = sh_path(path, D.g_dir, pname);
             DOS_ERR = TRUE;
           }
           else

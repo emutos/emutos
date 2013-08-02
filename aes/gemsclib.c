@@ -71,7 +71,7 @@ WORD sc_write(const BYTE *pscrap)
 
     len = strlencpy(D.g_scrap, pscrap);     /* new scrap directory  */
     if (D.g_scrap[--len] == '\\')           /* remove backslash     */
-      LBSET(D.g_scrap + len, '\0');
+      D.g_scrap[len] = '\0';
     dos_sdta((LONG)D.g_dta);                /* use our dta          */
     return(dos_sfirst(D.g_scrap, F_SUBDIR)); /* make sure path ok    */
 }
@@ -114,7 +114,7 @@ WORD sc_clear(void)
         found = dos_snext();
     }
 
-    LBSET(ptmp, 0);                         /* keep just path name */
+    *ptmp = '\0';                           /* keep just path name */
 
     return(TRUE);
 }

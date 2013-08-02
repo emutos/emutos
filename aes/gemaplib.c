@@ -67,7 +67,7 @@ WORD ap_init(void)
 
         strcpy(scdir, SCRAP_DIR_NAME);
 
-        LBSET(scdir, gl_logdrv);                /* set drive letter     */
+        scdir[0] = gl_logdrv;                   /* set drive letter     */
         sc_write(scdir);
 
         return( pid );
