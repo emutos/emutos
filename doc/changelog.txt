@@ -4904,3 +4904,5 @@ Start... early ages
 - aes/gemsuper.c: Replace some compatibility macro usage. (RFB)
 - aes/gemasync.c aes/geminput.c include/compat.h: Eliminate HW()
   compatibility macro. (RFB)
+- aes/gemsclib.c aes/gemshlib.c desk/deskfun.c include/compat.h:
+  Eliminate LBGET() compatibility macro. (RFB)

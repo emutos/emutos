@@ -412,11 +412,17 @@ static WORD fun_disk(WORD src_ob, WNODE *pdw, WORD datype, FNODE *pdf, WORD dulx
         ICONBLK         *spib;
         PNODE           *pspath;
         BYTE            chr;
+        union {
+          LONG parm;
+          BYTE *ptr;
+        } u;
 
         ret = FALSE;                            /* just initialize */
 
-        if (G.g_iview == V_TEXT)
-          chr = LBGET(G.g_udefs[src_ob].ub_parm); /* get drive from user obj */
+        if (G.g_iview == V_TEXT) {
+          u.parm = G.g_udefs[src_ob].ub_parm;   /* get ptr to user obj */
+          chr = *u.ptr;                         /* get drive from user obj */
+        }
         else
         {
           spib = get_spec(G.g_screen, src_ob);

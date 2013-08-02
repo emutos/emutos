@@ -70,7 +70,7 @@ WORD sc_write(const BYTE *pscrap)
     WORD    len;
 
     len = strlencpy(D.g_scrap, pscrap);     /* new scrap directory  */
-    if (LBGET(D.g_scrap + --len) == '\\')   /* remove backslash     */
+    if (D.g_scrap[--len] == '\\')           /* remove backslash     */
       LBSET(D.g_scrap + len, '\0');
     dos_sdta((LONG)D.g_dta);                /* use our dta          */
     return(dos_sfirst(D.g_scrap, F_SUBDIR)); /* make sure path ok    */
@@ -92,11 +92,13 @@ WORD sc_clear(void)
     WORD    found;
     static const char *scrapmask = "\\SCRAP.*";
 
-    if(D.g_scrap == NULL || LBGET(D.g_scrap) == 0)
+    if(D.g_scrap == NULL)
+      return FALSE;
+    if(*D.g_scrap == 0)
       return FALSE;
 
     ptmp = D.g_scrap;
-    while(LBGET(ptmp))                      /* find null */
+    while(*ptmp)                            /* find null */
       ptmp++;
 
     strcpy(ptmp, scrapmask);                /* Add mask */

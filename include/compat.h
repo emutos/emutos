@@ -62,10 +62,10 @@ extern WORD LBWMOV(WORD *pdst, BYTE *psrc);
 #define ADDR(x) ((LONG) (x))
 
 
-                                                /* return a single byte */
-                                                /*   pointed at by long */
-                                                /*   ptr                */
-#define LBGET(x) ( (UBYTE) *((BYTE_ALIAS * )(x)) )
+//                                                /* return a single byte */
+//                                                /*   pointed at by long */
+//                                                /*   ptr                */
+//#define LBGET(x) ( (UBYTE) *((BYTE_ALIAS * )(x)) )
                                                 /* set a single byte    */
                                                 /*   pointed at by long */
                                                 /*   ptr, LBSET(lp, bt) */

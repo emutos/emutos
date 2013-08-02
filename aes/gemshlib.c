@@ -425,8 +425,7 @@ void sh_envrn(BYTE **ppath, const BYTE *psrch)
         do
         {
           last = tmp;
-          tmp = LBGET(lp);
-          lp++;
+          tmp = *lp++;
           if ( (findend) &&
                (tmp == NULL) )
           {
@@ -484,7 +483,7 @@ static WORD sh_path(WORD whichone, LONG dp, BYTE *pname)
         tmp = ';';
         while (i)
         {
-          while (( tmp = LBGET(lp)) != 0 )
+          while (( tmp = *lp) != 0 )
           {
             lp++;
             if (tmp == ';')
@@ -495,7 +494,7 @@ static WORD sh_path(WORD whichone, LONG dp, BYTE *pname)
         if (!tmp)
           return(0);
                                                 /* copy over path       */
-        while ( ( tmp = LBGET(lp) ) != 0)
+        while ( ( tmp = *lp) != 0)
         {
           if ( tmp != ';' )
           {
