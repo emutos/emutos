@@ -24,6 +24,7 @@
 #include "crysbind.h"
 #include "gem_rsc.h"
 
+#include "gemsuper.h"
 #include "gempd.h"
 #include "gemaplib.h"
 #include "geminit.h"
@@ -52,14 +53,6 @@
 #else
 #define DBG_GEMSUPER 0
 #endif
-
-
-#define CONTROL LLGET(pcrys_blk)
-#define GGLOBAL LLGET(pcrys_blk+4)
-#define INT_IN LLGET(pcrys_blk+8)
-#define INT_OUT LLGET(pcrys_blk+12)
-#define ADDR_IN LLGET(pcrys_blk+16)
-#define ADDR_OUT LLGET(pcrys_blk+20)
 
 
 GLOBAL WORD     gl_mnclick;
@@ -474,26 +467,26 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD control[], WORD int_in[], 
 *       routine.
 */
 
-static void xif(LONG pcrys_blk)
+static void xif(AESPB *pcrys_blk)
 {
         WORD            control[C_SIZE];
         WORD            int_in[I_SIZE];
         WORD            int_out[O_SIZE];
         LONG            addr_in[AI_SIZE];
 
-        memcpy(control, (void *)CONTROL, C_SIZE*sizeof(WORD));
+        memcpy(control, pcrys_blk->control, C_SIZE*sizeof(WORD));
         if (IN_LEN)
-          memcpy(int_in, (void *)INT_IN, min(IN_LEN,I_SIZE)*sizeof(WORD));
+          memcpy(int_in, pcrys_blk->intin, min(IN_LEN,I_SIZE)*sizeof(WORD));
         if (AIN_LEN)
-          memcpy(addr_in, (void *)ADDR_IN, min(AIN_LEN,AI_SIZE)*sizeof(LONG));
+          memcpy(addr_in, pcrys_blk->addrin, min(AIN_LEN,AI_SIZE)*sizeof(LONG));
 
-        int_out[0] = crysbind(OP_CODE, GGLOBAL, &control[0], &int_in[0], &int_out[0],
+        int_out[0] = crysbind(OP_CODE, (LONG)pcrys_blk->global, &control[0], &int_in[0], &int_out[0],
                                 &addr_in[0]);
 
         if (OUT_LEN)
-          memcpy((void *)INT_OUT, int_out, OUT_LEN*sizeof(WORD));
+          memcpy(pcrys_blk->intout, int_out, OUT_LEN*sizeof(WORD));
         if (OP_CODE == RSRC_GADDR)
-          LLSET(ADDR_OUT, ad_rso);
+          pcrys_blk->addrout[0] = ad_rso;
 }
 
 
@@ -501,7 +494,7 @@ static void xif(LONG pcrys_blk)
 *       Supervisor entry point.  Stack frame must be exactly like
 *       this if supret is to work.
 */
-WORD super(WORD cx, LONG pcrys_blk)
+WORD super(WORD cx, AESPB *pcrys_blk)
 {
         if (cx == 200)
           xif(pcrys_blk);

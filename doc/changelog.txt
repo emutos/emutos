@@ -4912,3 +4912,5 @@ Start... early ages
 2013-08-03
 - aes/gemshlib.c: Fix bug in shel_find(): the AES path wasn't
   searched. (RFB)
+- aes/gemsuper.c aes/gemsuper.h: Code cleanup: replace #defines, casts
+  with structure definition. (RFB)
