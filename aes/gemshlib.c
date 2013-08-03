@@ -477,6 +477,9 @@ static WORD sh_path(WORD whichone, BYTE *dp, BYTE *pname)
         if (!lp)
                 return(0);
 
+        if (!*lp)                               /* skip nul after PATH= */
+                lp++;
+
                                                 /* if found count in to */
                                                 /*   appropriate path   */
         i = whichone;

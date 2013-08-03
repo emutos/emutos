@@ -4908,3 +4908,7 @@ Start... early ages
   Eliminate LBGET() compatibility macro. (RFB)
 - aes/gemaplib.c aes/gemsclib.c aes/gemshlib.c include/compat.h:
   Eliminate LBSET() compatibility macro. (RFB)
+
+2013-08-03
+- aes/gemshlib.c: Fix bug in shel_find(): the AES path wasn't
+  searched. (RFB)
