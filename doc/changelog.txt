@@ -4914,3 +4914,5 @@ Start... early ages
   searched. (RFB)
 - aes/gemsuper.c aes/gemsuper.h: Code cleanup: replace #defines, casts
   with structure definition. (RFB)
+- aes/gemrslib.c aes/gemrslib.h aes/gemsuper.c: Code cleanup: replace
+  #defines, casts with structure definition. (RFB)

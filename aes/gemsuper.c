@@ -77,7 +77,7 @@ static void aestrace(const char* message)
 }
 #endif
 
-static UWORD crysbind(WORD opcode, LONG pglobal, WORD control[], WORD int_in[], WORD int_out[], LONG addr_in[])
+static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_in[], WORD int_out[], LONG addr_in[])
 {
         LONG    maddr, buparm;
         OBJECT  *tree;
@@ -94,14 +94,12 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD control[], WORD int_in[], 
 #if DBG_GEMSUPER
                 aestrace("appl_init()");
 #endif
-                LWSET(pglobal, AES_VERSION);    /* version number       */
-                LWSET(pglobal+2, 0x0001);       /* num of concurrent procs*/
-/*              LLSET(pglobal, 0x00010200L);
-*/
-                LWSET(pglobal+4, rlr->p_pid);
-                sh_deskf(0, pglobal+6);
-                LWSET(pglobal+20, gl_nplanes);
-                LLSET(pglobal+22, ADDR(&D));
+                pglobal->ap_version = AES_VERSION;  /* version number     */
+                pglobal->ap_count = 1;              /* # concurrent procs */
+                pglobal->ap_id = rlr->p_pid;
+                sh_deskf(0, (LONG)&pglobal->ap_private);
+                pglobal->ap_2resv[1] = gl_nplanes;
+                pglobal->ap_3resv = ADDR(&D);
                                                 /* reset dispatcher     */
                                                 /*  count to let the app*/
                                                 /*  run a while.        */
@@ -480,7 +478,7 @@ static void xif(AESPB *pcrys_blk)
         if (AIN_LEN)
           memcpy(addr_in, pcrys_blk->addrin, min(AIN_LEN,AI_SIZE)*sizeof(LONG));
 
-        int_out[0] = crysbind(OP_CODE, (LONG)pcrys_blk->global, &control[0], &int_in[0], &int_out[0],
+        int_out[0] = crysbind(OP_CODE, (AESGLOBAL *)pcrys_blk->global, &control[0], &int_in[0], &int_out[0],
                                 &addr_in[0]);
 
         if (OUT_LEN)

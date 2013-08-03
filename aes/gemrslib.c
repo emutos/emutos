@@ -60,16 +60,12 @@
 #define RBI_PDATA (psubstruct + 0)      /* Long pointer in BITBLK       */
 #define RBI_WB (psubstruct + 4)
 #define RBI_HL (psubstruct + 6)
-                                        /* in global array              */
-#define APP_LOPNAME (rs_global + 10)
-#define APP_LO1RESV (rs_global + 14)
-#define APP_LO2RESV (rs_global + 18)
 
 
 
 /*******  LOCALS  **********************/
 static LONG    rs_hdr;
-static LONG    rs_global;
+static AESGLOBAL *rs_global;
 static char    tmprsfname[128];
 static UWORD   hdr_buff[HDR_LENGTH/2];
 static char    free_str[256];   /* must be long enough for longest freestring in gem.rsc */
@@ -159,7 +155,7 @@ static LONG get_addr(UWORD rstype, UWORD rsindex)
         switch(rstype)
         {
           case R_TREE:
-                junk=LLGET(APP_LOPNAME) + LW(rsindex*4);   /*!!!*/
+                junk = rs_global->ap_ptree + LW(rsindex*4);   /*!!!*/
                 return( LLGET( junk ) );
           case R_OBJECT:
                 rt = RT_OB;
@@ -243,7 +239,7 @@ static void fix_trindex(void)
         OBJECT *root;
 
         ptreebase = get_sub(0, RT_TRINDEX, sizeof(LONG) );
-        LLSET(APP_LOPNAME, ptreebase );
+        rs_global->ap_ptree = ptreebase;
 
         for (ii = NUM_TREE-1; ii >= 0; ii--)
         {
@@ -329,21 +325,21 @@ static void fix_tedinfo(void)
 *       Set global addresses that are used by the resource library sub-
 *       routines
 */
-static void rs_sglobe(LONG pglobal)
+static void rs_sglobe(AESGLOBAL *pglobal)
 {
         rs_global = pglobal;
-        rs_hdr = LLGET(APP_LO1RESV);
+        rs_hdr = rs_global->ap_1resv;
 }
 
 
 /*
 *       Free the memory associated with a particular resource load.
 */
-WORD rs_free(LONG pglobal)
+WORD rs_free(AESGLOBAL *pglobal)
 {
         rs_global = pglobal;
 
-        dos_free(LLGET(APP_LO1RESV));
+        dos_free(rs_global->ap_1resv);
         return(!DOS_ERR);
 }/* rs_free() */
 
@@ -352,7 +348,7 @@ WORD rs_free(LONG pglobal)
 *       Get a particular ADDRess out of a resource file that has been
 *       loaded into memory.
 */
-WORD rs_gaddr(LONG pglobal, UWORD rtype, UWORD rindex, LONG *rsaddr)
+WORD rs_gaddr(AESGLOBAL *pglobal, UWORD rtype, UWORD rindex, LONG *rsaddr)
 {
         rs_sglobe(pglobal);
 
@@ -365,7 +361,7 @@ WORD rs_gaddr(LONG pglobal, UWORD rtype, UWORD rindex, LONG *rsaddr)
 *       Set a particular ADDRess in a resource file that has been
 *       loaded into memory.
 */
-WORD rs_saddr(LONG pglobal, UWORD rtype, UWORD rindex, LONG rsaddr)
+WORD rs_saddr(AESGLOBAL *pglobal, UWORD rtype, UWORD rindex, LONG rsaddr)
 {
         register LONG   psubstruct;
 
@@ -388,7 +384,7 @@ WORD rs_saddr(LONG pglobal, UWORD rtype, UWORD rindex, LONG rsaddr)
 *       case of the GEM resource file this workstation will not have
 *       been loaded into memory yet.
 */
-static WORD rs_readit(LONG pglobal, LONG rsfname)
+static WORD rs_readit(AESGLOBAL *pglobal, LONG rsfname)
 {
         WORD    ibcnt;
         UWORD   rslsize, fd, ret;
@@ -421,8 +417,8 @@ static WORD rs_readit(LONG pglobal, LONG rsfname)
             dos_read(fd, rslsize, rs_hdr);
             if ( !DOS_ERR)
             {
-              LLSET(APP_LO1RESV, rs_hdr );
-              LWSET(APP_LO2RESV, rslsize);
+              rs_global->ap_1resv = rs_hdr;
+              rs_global->ap_2resv[0] = rslsize;
                                         /* xfer RT_TRINDEX to global    */
                                         /*   and turn all offsets from  */
                                         /*   base of file into pointers */
@@ -450,7 +446,7 @@ static WORD rs_readit(LONG pglobal, LONG rsfname)
 *       do an open workstation, then once we know the character sizes we
 *       can fix up the objects accordingly.
 */
-void rs_fixit(LONG pglobal)
+void rs_fixit(AESGLOBAL *pglobal)
 {
         rs_sglobe(pglobal);
         fix_objects();
@@ -460,7 +456,7 @@ void rs_fixit(LONG pglobal)
 /*
 *       RS_LOAD         mega resource load
 */
-WORD rs_load(LONG pglobal, LONG rsfname)
+WORD rs_load(AESGLOBAL *pglobal, LONG rsfname)
 {
         register WORD   ret;
 
