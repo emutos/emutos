@@ -130,10 +130,10 @@ static LONG get_sub(WORD rsindex, WORD rtype, WORD rsize)
 {
         UWORD           offset;
 
-        offset = LWGET( rs_hdr + LW(rtype*2) );
+        offset = LWGET( rs_hdr + rtype*2 );
                                                 /* get base of objects  */
                                                 /*   and then index in  */
-        return( rs_hdr + LW(offset) + LW(rsize * rsindex) );
+        return( rs_hdr + offset + rsize * rsindex );
 }
 
 
@@ -155,7 +155,7 @@ static LONG get_addr(UWORD rstype, UWORD rsindex)
         switch(rstype)
         {
           case R_TREE:
-                junk = rs_global->ap_ptree + LW(rsindex*4);   /*!!!*/
+                junk = rs_global->ap_ptree + rsindex * 4;   /*!!!*/
                 return( LLGET( junk ) );
           case R_OBJECT:
                 rt = RT_OB;
@@ -243,7 +243,7 @@ static void fix_trindex(void)
 
         for (ii = NUM_TREE-1; ii >= 0; ii--)
         {
-          root = (OBJECT *)fix_long(ptreebase + LW(ii*4));
+          root = (OBJECT *)fix_long(ptreebase + ii * 4);
           if ( (root->ob_state == OUTLINED) &&
                (root->ob_type == G_BOX) )
             root->ob_state = SHADOWED;
@@ -409,7 +409,7 @@ static WORD rs_readit(AESGLOBAL *pglobal, LONG rsfname)
                                                 /* get size of resource */
           rslsize = hdr_buff[RS_SIZE];
                                                 /* allocate memory      */
-          rs_hdr = dos_alloc( LW(rslsize) );
+          rs_hdr = dos_alloc( rslsize );
           if ( !DOS_ERR )
           {
                                                 /* read it all in       */
