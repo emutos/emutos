@@ -35,14 +35,6 @@
 #include "nls.h"
 
 
-#define NUM_OBS LWGET(rs_hdr + 2*R_NOBS)
-#define NUM_TREE LWGET(rs_hdr + 2*R_NTREE)
-#define NUM_TI LWGET(rs_hdr + 2*R_NTED)
-#define NUM_IB LWGET(rs_hdr + 2*R_NICON)
-#define NUM_BB LWGET(rs_hdr + 2*R_NBITBLK)
-#define NUM_FRSTR LWGET(rs_hdr + 2*R_NSTRING)
-#define NUM_FRIMG LWGET(rs_hdr + 2*R_IMAGES)
-
 #define ROB_TYPE (psubstruct + 6)       /* Long pointer in OBJECT       */
 #define ROB_STATE (psubstruct + 10)     /* Long pointer in OBJECT       */
 #define ROB_SPEC (psubstruct + 12)      /* Long pointer in OBJECT       */
@@ -64,7 +56,10 @@
 
 
 /*******  LOCALS  **********************/
-static LONG    rs_hdr;
+static union {
+    LONG    base;
+    WORD    *wordptr;
+} rs_hdr;
 static AESGLOBAL *rs_global;
 static char    tmprsfname[128];
 static UWORD   hdr_buff[HDR_LENGTH/2];
@@ -130,10 +125,10 @@ static LONG get_sub(WORD rsindex, WORD rtype, WORD rsize)
 {
         UWORD           offset;
 
-        offset = LWGET( rs_hdr + rtype*2 );
+        offset = rs_hdr.wordptr[rtype];
                                                 /* get base of objects  */
                                                 /*   and then index in  */
-        return( rs_hdr + offset + rsize * rsindex );
+        return( rs_hdr.base + offset + rsize * rsindex );
 }
 
 
@@ -223,7 +218,7 @@ static LONG fix_long(LONG plong)
         lngval = LLGET(plong);
         if (lngval != -1L)
         {
-          lngval += rs_hdr;
+          lngval += rs_hdr.base;
           LLSET(plong, lngval);
           return( lngval );
         }
@@ -241,7 +236,7 @@ static void fix_trindex(void)
         ptreebase = get_sub(0, RT_TRINDEX, sizeof(LONG) );
         rs_global->ap_ptree = ptreebase;
 
-        for (ii = NUM_TREE-1; ii >= 0; ii--)
+        for (ii = rs_hdr.wordptr[R_NTREE]-1; ii >= 0; ii--)
         {
           root = (OBJECT *)fix_long(ptreebase + ii * 4);
           if ( (root->ob_state == OUTLINED) &&
@@ -257,7 +252,7 @@ static void fix_objects(void)
         register WORD   obtype;
         LONG            psubstruct;
 
-        for (ii = NUM_OBS-1; ii >= 0; ii--)
+        for (ii = rs_hdr.wordptr[R_NOBS]-1; ii >= 0; ii--)
         {
           psubstruct = get_addr(R_OBJECT, ii);
           rs_obfix(psubstruct, 0);
@@ -294,7 +289,7 @@ static void fix_tedinfo(void)
         LONG            tl[2], ls[2];
 
 
-        for (ii = NUM_TI-1; ii >= 0; ii--)
+        for (ii = rs_hdr.wordptr[R_NTED]-1; ii >= 0; ii--)
         {
           psubstruct = get_addr(R_TEDINFO, ii);
           tl[0] = tl[1] = 0x0L;
@@ -328,7 +323,7 @@ static void fix_tedinfo(void)
 static void rs_sglobe(AESGLOBAL *pglobal)
 {
         rs_global = pglobal;
-        rs_hdr = rs_global->ap_1resv;
+        rs_hdr.base = rs_global->ap_1resv;
 }
 
 
@@ -409,28 +404,28 @@ static WORD rs_readit(AESGLOBAL *pglobal, LONG rsfname)
                                                 /* get size of resource */
           rslsize = hdr_buff[RS_SIZE];
                                                 /* allocate memory      */
-          rs_hdr = dos_alloc( rslsize );
+          rs_hdr.base = dos_alloc( rslsize );
           if ( !DOS_ERR )
           {
                                                 /* read it all in       */
             dos_lseek(fd, SMODE, 0x0L);
-            dos_read(fd, rslsize, rs_hdr);
+            dos_read(fd, rslsize, rs_hdr.base);
             if ( !DOS_ERR)
             {
-              rs_global->ap_1resv = rs_hdr;
+              rs_global->ap_1resv = rs_hdr.base;
               rs_global->ap_2resv[0] = rslsize;
                                         /* xfer RT_TRINDEX to global    */
                                         /*   and turn all offsets from  */
                                         /*   base of file into pointers */
               fix_trindex();
               fix_tedinfo();
-              ibcnt = NUM_IB-1;
+              ibcnt = rs_hdr.wordptr[R_NICON]-1;
               fix_nptrs(ibcnt, R_IBPMASK);
               fix_nptrs(ibcnt, R_IBPDATA);
               fix_nptrs(ibcnt, R_IBPTEXT);
-              fix_nptrs(NUM_BB-1, R_BIPDATA);
-              fix_nptrs(NUM_FRSTR-1, R_FRSTR);
-              fix_nptrs(NUM_FRIMG-1, R_FRIMG);
+              fix_nptrs(rs_hdr.wordptr[R_NBITBLK]-1, R_BIPDATA);
+              fix_nptrs(rs_hdr.wordptr[R_NSTRING]-1, R_FRSTR);
+              fix_nptrs(rs_hdr.wordptr[R_IMAGES]-1, R_FRIMG);
             }
           }
         }

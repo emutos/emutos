@@ -4917,3 +4917,4 @@ Start... early ages
 - aes/gemrslib.c aes/gemrslib.h aes/gemsuper.c: Code cleanup: replace
   #defines, casts with structure definition. (RFB)
 - aes/gemrslib.c include/compat.h: Eliminate LW() compatibility macro. (RFB)
+- aes/gemrslib.c: Code cleanup: replace #defines with union. (RFB)
