@@ -45,8 +45,6 @@
                                 /* mn_register() call)                */
 
 
-#define LSTRLEN(p) strlen((char *)p)
-
 extern WORD LBWMOV(WORD *pdst, BYTE *psrc);
 
 
