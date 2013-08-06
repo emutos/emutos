@@ -12,7 +12,7 @@
 #include "gsxdefs.h"
 
 #define PATH_ENV    "PATH="     /* PATH environment variable */
-#define DEF_PATH    "C:\\GEMAPPS\\GEMSYS;C:\\GEMAPPS;C:\\"  /* default value */
+#define DEF_PATH    "C:\\"      /* default value */
 
 #define DEF_DESKTOP "EMUDESK"   /* default desktop */
 
