@@ -353,7 +353,7 @@ static void app_rdicon(void)
          *  referenced by act_chkobj() in deskact.c
          */
         for (i = 0; i < NUM_IBLKS; i++)
-            G.g_origmask[i] = icon_rs_iconblk[i].ib_pmask;
+            G.g_origmask[i] = (UWORD *)icon_rs_iconblk[i].ib_pmask;
 
         /*
          * Determine the number of mask and data icons actually used

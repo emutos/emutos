@@ -4922,3 +4922,5 @@ Start... early ages
 2013-08-05
 - aes/gemrslib.c include/compat.h: Code cleanup: replace #defines, casts
   with structures, unions. (RFB)
+- desk/deskact.c desk/deskapp.c desk/deskbind.h include/compat.h:
+  Eliminate LWGET() compatibility macro. (RFB)

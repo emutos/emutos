@@ -451,13 +451,13 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD *pdulx, WORD *pdu
 /*
 *       See if the bit at x,y in a rater form is on or off
 */
-static WORD bit_on(WORD x, WORD y, LONG praster, WORD bwidth)
+static WORD bit_on(WORD x, WORD y, UWORD *raster, WORD bwidth)
 {
         WORD            windex;
         UWORD           tmpw;
 
         windex = (bwidth * y / 2) + (x / 16);
-        tmpw = LWGET(praster + (windex * 2));
+        tmpw = raster[windex];
         tmpw = (tmpw >> (15 - (x % 16)) ) & 0x0001;
         return(tmpw);
 } /* bit_on */
