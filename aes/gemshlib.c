@@ -761,7 +761,8 @@ static void sh_ldapp(void)
               /* Run a normal application: */
               sh_show(D.s_cmd);
               p_nameit(rlr, sh_name(&D.s_cmd[0]));
-              p_setappdir(rlr, D.s_cmd);
+              strcpy(rlr->p_appdir,sh_apdir);
+              strcat(rlr->p_appdir,"\\");
               if (psh->sh_fullstep == 0)
               {
                 dos_exec(0, D.s_cmd, ad_stail, ad_envrn);   /* Run the APP */

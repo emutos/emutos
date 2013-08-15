@@ -4928,3 +4928,5 @@ Start... early ages
 
 2013-08-15
 - aes/gempd.c: Code cleanup: simplify, reduce size, fix minor error. (RFB)
+- aes/gemshlib.c: Fix bug in sh_ldapp(): application directory was not
+  set correctly. (RFB)
