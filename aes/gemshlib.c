@@ -522,22 +522,38 @@ static WORD sh_path(WORD whichone, BYTE *dp, BYTE *pname)
 
 
 /*
-*       Routine to verify that a file is present.  It first looks in the
-*       current directory and then looks down the search path.
+*       Routine to verify that a file is present.  Note that this routine
+*       tolerates the presence of wildcards in the filespec.
+*
+*       The directory search order is the same as that in TOS3/TOS4, as
+*       deduced from tests on those systems:
+*       (1) isolate the filename portion of pspec, and search the
+*           application directory; if found, return the fully-qualified
+*           name, else continue.
+*       (2) if pspec contains a path specification, search for that
+*           path/filename; if found, return with pspec unchanged; if not
+*           found, return with error.
+*       (3) search for pspec in the current directory; if found, return
+*           with pspec unchanged, else continue.
+*       (4) search for pspec in the root directory of the current drive;
+*           if found, return pspec with '\' prefixed, else continue.
+*       (5) search for pspec in each path of the AES path string; if found,
+*           return the fully-qualified name.
+*       (6) if still not found, return with error.
 */
 
 WORD sh_find(BYTE *pspec)
 {
         WORD            path;
-        BYTE            gotdir, *pname;
+        BYTE            *pname;
 
+        Dprintf(("sh_find(): input pspec='%s'\n",pspec));
         pname = sh_name(pspec);                 /* get ptr to name      */
-        gotdir = (pname != pspec);
 
         dos_sdta((LONG)D.g_dta);
 
-        /* first, search in the application directory */
-        if (!gotdir && rlr->p_appdir[0] != '\0')
+        /* (1) search in the application directory */
+        if (rlr->p_appdir[0] != '\0')
         {
           strcpy(D.g_dir, rlr->p_appdir);
           strcat(D.g_dir, pname);
@@ -545,55 +561,62 @@ WORD sh_find(BYTE *pspec)
           if (!DOS_ERR)
           {
             strcpy(pspec, D.g_dir);
+            Dprintf(("sh_find(1): returning pspec='%s'\n",pspec));
             return 1;
           }
         }
 
-        /* second, search in the current directory */
-        strcpy(D.g_dir, pspec);                 /* copy to local buffer */
-        if (!gotdir)
+        /* (2) if filename includes path, search that path */
+        if (pname != pspec)
         {
-          sh_curdir(D.g_dir);                   /* get current drive/dir*/
-          if (D.g_dir[3] != NULL)               /* if not at root       */
-            strcat(&D.g_dir[0], "\\");          /*  add foreslash       */
-          strcat(&D.g_dir[0], pname);           /* append name to drive */
-                                                /* and directory.       */
-          /* the actual search will be performed in the loop below */
+          strcpy(D.g_dir, pspec);
+          dos_sfirst(D.g_dir, F_RDONLY | F_SYSTEM);
+          Dprintf(("sh_find(2): rc=%d, returning pspec='%s'\n",!DOS_ERR,pspec));
+          return !DOS_ERR;
         }
 
-        /* third, search in the AES path */
-        path = 0;
-        do
-        {
-          dos_sfirst(D.g_dir, F_RDONLY | F_SYSTEM);
-
-          if ( (DOS_AX == E_PATHNOTFND) ||
-                ((DOS_ERR) &&
-                 ((DOS_AX == E_NOFILES) ||
-                  (DOS_AX == E_PATHNOTFND) ||
-                  (DOS_AX == E_FILENOTFND))) )
-          {
-            path = sh_path(path, D.g_dir, pname);
-            DOS_ERR = TRUE;
-          }
-          else
-            path = 0;
-        } while ( !gotdir && DOS_ERR && path );
-
-        /* fourth, search in the current drive root directory */
-        if (DOS_ERR && !gotdir)
-        {
-          strcpy(D.g_dir, "\\");
-          strcat(D.g_dir, pname);
-          dos_sfirst(D.g_dir, F_RDONLY | F_SYSTEM);
-        }
-
+        /* (3) search in the current directory */
+        sh_curdir(D.g_dir);                 /* get current drive/dir*/
+        if (D.g_dir[3] != NULL)             /* if not at root       */
+          strcat(D.g_dir, "\\");            /*  add backslash       */
+        strcat(D.g_dir, pname);             /* append name          */
+        dos_sfirst(D.g_dir, F_RDONLY | F_SYSTEM);
         if (!DOS_ERR)
+        {
+          Dprintf(("sh_find(3): returning pspec='%s'\n",pspec));
+          return 1;
+        }
+
+        /* (4) search in the root directory of the current drive */
+        D.g_dir[0] = '\\';
+        strcpy(D.g_dir+1, pname);
+        dos_sfirst(D.g_dir, F_RDONLY | F_SYSTEM);
+        if (!DOS_ERR)
+        {
           strcpy(pspec, D.g_dir);
+          Dprintf(("sh_find(4): returning pspec='%s'\n",pspec));
+          return 1;
+        }
 
-        return(!DOS_ERR);
+        /* (5) search in the AES path */
+        path = 0;
+        while(1)
+        {
+          path = sh_path(path, D.g_dir, pname);
+          if (!path)    /* end of PATH= */
+            break;
+          dos_sfirst(D.g_dir, F_RDONLY | F_SYSTEM);
+          if (!DOS_ERR)
+          {
+            strcpy(pspec, D.g_dir);
+            Dprintf(("sh_find(5): returning pspec='%s'\n",pspec));
+            return 1;
+          }
+        }
+
+        Dprintf(("sh_find(): '%s' not found\n",pspec));
+        return 0;
 }
-
 
 
 #if CONF_WITH_PCGEM

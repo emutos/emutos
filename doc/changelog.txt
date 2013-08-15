@@ -4930,3 +4930,5 @@ Start... early ages
 - aes/gempd.c: Code cleanup: simplify, reduce size, fix minor error. (RFB)
 - aes/gemshlib.c: Fix bug in sh_ldapp(): application directory was not
   set correctly. (RFB)
+- aes/gemshlib.c: Make search order for shel_find()/rsrc_load() the same
+  as TOS3/TOS4. (RFB)
