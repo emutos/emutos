@@ -97,27 +97,15 @@ void p_setappdir(PD *pd, BYTE *pfilespec)
         BYTE *plast;
         BYTE *pdest;
 
-        /* find the position of the last backslash */
-        plast = NULL;
-        for (p = pfilespec; *p; ++p);
-        for (; p >= pfilespec; --p)
+        /* find the position *after* the last backslash */
+        for (p = plast = pfilespec; *p; )   /* assume no backslash */
         {
-          if (*p == '\\')
-          {
-            plast = p;
-            break;
-          }
+          if (*p++ == '\\')
+            plast = p;          /* after backslash ... */
         }
 
-        /* no backslash means no directory */
-        if (!plast)
-        {
-           rlr->p_appdir[0] = '\0';
-           return;
-        }
-
-        /* copy the directory including the final backslash */
-        for (pdest = pd->p_appdir, p = pfilespec; p <= plast;)
+        /* copy the directory name including the final backslash */
+        for (pdest = pd->p_appdir, p = pfilespec; p < plast; )
           *pdest++ = *p++;
         *pdest = '\0';
 }

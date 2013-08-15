@@ -4925,3 +4925,6 @@ Start... early ages
 - desk/deskact.c desk/deskapp.c desk/deskbind.h include/compat.h:
   Eliminate LWGET() compatibility macro. (RFB)
 - aes/geminit.h: Make AES PATH= environment string the same as TOS. (RFB)
+
+2013-08-15
+- aes/gempd.c: Code cleanup: simplify, reduce size, fix minor error. (RFB)
