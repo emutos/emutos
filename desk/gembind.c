@@ -164,12 +164,12 @@ static const BYTE ctrl_cnts[] =
 
 typedef struct gemblkstr
 {
-        LONG            gb_pcontrol;
-        LONG            gb_pglobal;
-        LONG            gb_pintin;
-        LONG            gb_pintout;
-        LONG            gb_padrin;
-        LONG            gb_padrout;
+        UWORD           *gb_pcontrol;
+        UWORD           *gb_pglobal;
+        UWORD           *gb_pintin;
+        UWORD           *gb_pintout;
+        LONG            *gb_padrin;
+        LONG            *gb_padrout;
 } GEMBLK;
 
 
@@ -211,12 +211,12 @@ static WORD gem_if(WORD opcode)
 
 WORD appl_init(void)
 {
-        gb.gb_pcontrol = ADDR((BYTE *) &control[0]);
-        gb.gb_pglobal = ADDR((BYTE *) &global[0]);
-        gb.gb_pintin = ADDR((BYTE *) &int_in[0]);
-        gb.gb_pintout = ADDR((BYTE *) &int_out[0]);
-        gb.gb_padrin = ADDR((BYTE *) &addr_in[0]);
-        gb.gb_padrout = ADDR((BYTE *) &addr_out[0]);
+        gb.gb_pcontrol = control;
+        gb.gb_pglobal = global;
+        gb.gb_pintin = int_in;
+        gb.gb_pintout = int_out;
+        gb.gb_padrin = addr_in;
+        gb.gb_padrout = addr_out;
 
         ad_g = ADDR((BYTE *) &gb);
         gem_if(APPL_INIT);

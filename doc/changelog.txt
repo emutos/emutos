@@ -4945,3 +4945,4 @@ Start... early ages
 - aes/gemshlib.c desk/deskdir.c desk/deskinf.c: Code cleanup: remove
   unneeded ADDR() macros. (RFB)
 - desk/deskgraf.c: Remove reference to ad_intin from uncompiled code. (RFB)
+- desk/gembind.c: Code cleanup: remove a few more ADDR() macros. (RFB)
