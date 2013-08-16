@@ -76,8 +76,6 @@ GLOBAL WORD     ptsin[20];
 GLOBAL WORD     intout[10];
 GLOBAL WORD     ptsout[10];
 
-GLOBAL LONG     ad_intin;
-
 GLOBAL WORD     gl_mode;
 GLOBAL WORD     gl_tcolor;
 GLOBAL WORD     gl_lcolor;

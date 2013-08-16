@@ -368,7 +368,7 @@ void gsx_mfset(LONG pmfnew)
     gsx_moff();
     if (!gl_ctmown)
         memcpy(&gl_mouse, (void *)pmfnew, sizeof(MFORM));
-    memcpy((void *)ad_intin, (void *)pmfnew, sizeof(MFORM));
+    memcpy(intin, (void *)pmfnew, sizeof(MFORM));
     gsx_ncode(ST_CUR_FORM, 0, sizeof(MFORM)/sizeof(WORD));
     gsx_mon();
 }

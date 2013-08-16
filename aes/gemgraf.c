@@ -75,8 +75,6 @@ GLOBAL WORD     contrl[12];
 GLOBAL WORD     intin[128];
 GLOBAL WORD     ptsin[20];
 
-GLOBAL LONG     ad_intin;
-
 GLOBAL WORD     gl_mode;
 GLOBAL WORD     gl_tcolor;
 GLOBAL WORD     gl_lcolor;
@@ -449,7 +447,6 @@ void gsx_start(void)
         r_set(&gl_rcenter, (gl_width-gl_wbox)/2, (gl_height-(2*gl_hbox))/2,
                         gl_wbox, gl_hbox);
         r_set(&gl_rmenu, 0, 0, gl_width, gl_hbox);
-        ad_intin = (LONG) ADDR(&intin[0]);
 }
 
 /*
@@ -511,7 +508,7 @@ static void gsx_tcalc(WORD font, LONG ptext, WORD *ptextw, WORD *ptexth,
                                                 /*   width of the text  */
                                                 /*   string in pixels   */
 
-        *pnumchs = LBWMOV((WORD *)ad_intin, (BYTE *)ptext);
+        *pnumchs = LBWMOV(intin, (BYTE *)ptext);
         *ptextw = min(*ptextw, *pnumchs * wc );
                                                 /* figure out the height*/
                                                 /*   of the text        */

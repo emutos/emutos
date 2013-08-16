@@ -333,7 +333,7 @@ static void  just_draw(LONG tree, WORD obj, WORD sx, WORD sy)
              (obtype == G_TITLE) ||
              (obtype == G_BUTTON) )
         {
-          len = LBWMOV((WORD *)ad_intin, (BYTE *)spec);
+          len = LBWMOV(intin, (BYTE *)spec);
           if (len)
           {
             gsx_attr(TRUE, MD_TRANS, BLACK);

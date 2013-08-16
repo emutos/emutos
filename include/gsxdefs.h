@@ -121,8 +121,6 @@ extern WORD     contrl[12];
 extern WORD     intin[128];
 extern WORD     ptsin[20];
 
-extern LONG     ad_intin;
-
 extern WORD     gl_mode;
 extern WORD     gl_tcolor;
 extern WORD     gl_lcolor;

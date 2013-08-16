@@ -4940,3 +4940,5 @@ Start... early ages
   conflict with the BDOS PD. (RFB)
 - aes/gemgraf.h desk/deskgraf.c desk/deskgraf.h include/gsxdefs.h: Code
   cleanup: move common definitions to gsxdefs.h. (RFB)
+- aes/gemgraf.c aes/gemgsxif.c aes/gemoblib.c desk/deskgraf.c
+  desk/deskinf.c include/gsxdefs.h: Eliminate ad_intin global. (RFB)
