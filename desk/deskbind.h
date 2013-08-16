@@ -36,8 +36,6 @@ GLOBES
 /*GLOBAL*/ PNODE        *g_pavail;
 /*GLOBAL*/ PNODE        *g_phead;
 
-/*GLOBAL*/ BYTE         g_wspec[LEN_ZPATH];
-/*GLOBAL*/ LONG         a_wspec;
 /*GLOBAL*/ BYTE         g_wdta[128];
 /*GLOBAL*/ LONG         a_wdta;
 

@@ -4951,4 +4951,5 @@ Start... early ages
 - desk/aesbind.h desk/deskact.c desk/deskbind.h desk/deskmain.c
   desk/deskpro.c desk/deskpro.h desk/desksupp.c desk/gembind.c:
   Code cleanup: eliminate some desktop globals. (RFB)
-
+- desk/deskbind.h desk/deskfpd.c: Code cleanup: eliminate never-referenced
+  desktop globals. (RFB)

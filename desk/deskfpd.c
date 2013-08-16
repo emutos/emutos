@@ -74,7 +74,6 @@ static void pn_init(void)
 void fpd_start(void)
 {
         G.a_wdta = ADDR(&G.g_wdta[0]);
-        G.a_wspec = ADDR(&G.g_wspec[0]);
         fn_init();
         pn_init();
 }
