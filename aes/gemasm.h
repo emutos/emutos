@@ -14,10 +14,10 @@
  * in a 68000-only RTE stack frame, "in preparation for an RTE that
  * will start this process executing".
  */
-extern void psetup(PD *p, PFVOID codevalue);
+extern void psetup(AESPD *p, PFVOID codevalue);
 
 /* launches the top of rlr list, as if called from within function
- * back(PD *top_of_rlr)
+ * back(AESPD *top_of_rlr)
  */
 extern void gotopgm(void) /*NORETURN*/ ;
 

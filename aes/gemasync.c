@@ -3,7 +3,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002 The EmuTOS development team
+*                 2002-2013 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -36,7 +36,7 @@
 
 static void signal(EVB *e)
 {
-        register PD     *p, *p1, **pp1;
+        register AESPD  *p, *p1, **pp1;
         p = e->e_pd;
         p->p_evflg |= e->e_mask;
                                                 /* off the not-ready    */

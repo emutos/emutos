@@ -10,23 +10,23 @@
 #ifndef GEMPD_H
 #define GEMPD_H
 
-/* returns the PD for the given index [NOT the pid] */
-extern PD *pd_index(WORD i);
+/* returns the AESPD for the given index [NOT the pid] */
+extern AESPD *pd_index(WORD i);
 
-/* returns the PD for the given name, or if pname is NULL, the given pid) */
-extern PD *fpdnm(BYTE *pname, UWORD pid);
+/* returns the AESPD for the given name, or if pname is NULL, the given pid) */
+extern AESPD *fpdnm(BYTE *pname, UWORD pid);
 
-/* name a PD from the 8 first chars of the given string, stopping at the
+/* name an AESPD from the 8 first chars of the given string, stopping at the
  * first '.' (remove the file extension)
  */
-extern void p_nameit(PD *p, BYTE *pname);
+extern void p_nameit(AESPD *p, BYTE *pname);
 
-/* set the application directory of a PD */
-extern void p_setappdir(PD *p, BYTE *pfilespec);
+/* set the application directory of an AESPD */
+extern void p_setappdir(AESPD *p, BYTE *pfilespec);
 
-extern PD *pstart(PFVOID pcode, BYTE *pfilespec, LONG ldaddr);
+extern AESPD *pstart(PFVOID pcode, BYTE *pfilespec, LONG ldaddr);
 
 /* insert the process pi at the end of the process list pointed to by root */
-extern void insert_process(PD *pi, PD **root);
+extern void insert_process(AESPD *pi, AESPD **root);
 
 #endif

@@ -1,7 +1,7 @@
 /*
  * EmuTOS aes
  *
- * Copyright (c) 2002, 2010 The EmuTOS development team
+ * Copyright (c) 2002-2013 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -32,7 +32,7 @@ void w_drawdesk(GRECT *pc);
 void w_setactive(void);
 void w_bldactive(WORD w_handle);
 
-void ap_sendmsg(WORD ap_msg[], WORD type, PD *towhom,
+void ap_sendmsg(WORD ap_msg[], WORD type, AESPD *towhom,
                 WORD w3, WORD w4, WORD w5, WORD w6, WORD w7);
 void w_update(WORD bottom, GRECT *pt, WORD top, WORD moved, WORD usetrue);
 

@@ -93,7 +93,7 @@ GLOBAL BYTE     gl_dir[130];
 GLOBAL MFORM    gl_mouse;
 GLOBAL BYTE     gl_logdrv;
 
-GLOBAL PD       *rlr, *drl, *nrl;
+GLOBAL AESPD    *rlr, *drl, *nrl;
 GLOBAL EVB      *eul, *dlr, *zlr;
 
 GLOBAL LONG     elinkoff;
@@ -221,7 +221,7 @@ static void ev_init(EVB evblist[], WORD cnt)
 *       Also do all the initialization that is required.
 * TODO - get rid of this.
 */
-static PD *iprocess(BYTE *pname, PFVOID routine)
+static AESPD *iprocess(BYTE *pname, PFVOID routine)
 {
         register ULONG  ldaddr;
 

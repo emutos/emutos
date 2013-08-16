@@ -16,9 +16,9 @@
 extern WORD     button, xrat, yrat, kstate, mclick, mtrans;
 extern WORD     pr_button, pr_xrat, pr_yrat, pr_mclick;
 
-extern PD       *gl_mowner;
-extern PD       *gl_cowner;
-extern PD       *ctl_pd;
+extern AESPD    *gl_mowner;
+extern AESPD    *gl_cowner;
+extern AESPD    *ctl_pd;
 extern GRECT    ctrl;
 
 extern WORD     gl_bclick;
@@ -31,8 +31,8 @@ extern WORD     gl_bdely;
 UWORD in_mrect(MOBLK *pmo);
 void set_ctrl(GRECT *pt);
 void get_ctrl(GRECT *pt);
-void get_mown(PD **pmown);
-void set_mown(PD *mp);
+void get_mown(AESPD **pmown);
+void set_mown(AESPD *mp);
 UWORD dq(CQUEUE *qptr);
 void fq(void);
 void evremove(EVB *e, UWORD ret);

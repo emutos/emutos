@@ -70,7 +70,7 @@ void forkq(FCODE fcode, LONG fdata)
 }
 
 
-static void disp_act(PD *p)
+static void disp_act(AESPD *p)
 {
                                                 /* process is ready,    */
                                                 /*   so put him on RLR  */
@@ -79,7 +79,7 @@ static void disp_act(PD *p)
 }
 
 
-static void mwait_act(PD *p)
+static void mwait_act(AESPD *p)
 {
                                                 /* sleep on nrl if      */
                                                 /*   event flags are    */
@@ -101,12 +101,12 @@ static void mwait_act(PD *p)
 void forker(void)
 {
         register FPD    *f;
-        register PD     *oldrl;
+        register AESPD  *oldrl;
         register LONG   amt;
         FPD             g;
 
         oldrl = rlr;
-        rlr = (PD *) -1;
+        rlr = (AESPD *) -1;
         while(fpcnt)
         {
 /* critical area        */
@@ -184,7 +184,7 @@ void chkkbd(void)
 
 static void schedule(void)
 {
-        register PD     *p;
+        register AESPD  *p;
 
                                                 /* run through lists    */
                                                 /*   until someone is   */
@@ -224,7 +224,7 @@ static void schedule(void)
 
 void disp(void)
 {
-        register PD     *p;
+        register AESPD  *p;
 
                                                 /* take the process p   */
                                                 /*   off the ready list */

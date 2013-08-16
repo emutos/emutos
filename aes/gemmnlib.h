@@ -1,7 +1,7 @@
 /*
  * EmuTOS aes
  *
- * Copyright (c) 2002, 2010 The EmuTOS development team
+ * Copyright (c) 2002-2013 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -12,7 +12,7 @@
 
 
 extern LONG     gl_mntree;
-extern PD       *gl_mnppd;
+extern AESPD    *gl_mnppd;
 
 extern LONG     desk_acc[];
 extern LONG     menu_tree[];
@@ -32,7 +32,7 @@ void mn_bar(LONG tree, WORD showit, WORD pid);
 void mn_clsda(void);
 WORD mn_register(WORD pid, LONG pstr);
 void mn_unregister(WORD da_id);
-void mn_getownid(PD **owner,WORD *id,WORD item);
+void mn_getownid(AESPD **owner,WORD *id,WORD item);
 
 
 #endif

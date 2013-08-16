@@ -83,7 +83,7 @@ static WORD             gl_tmpmoff;
 /*
  * Send message and wait for the mouse button to come up
  */
-static void ct_msgup(WORD message, PD *owner, WORD wh, WORD m1, WORD m2, WORD m3, WORD m4)
+static void ct_msgup(WORD message, AESPD *owner, WORD wh, WORD m1, WORD m2, WORD m3, WORD m4)
 {
         if (message == NULL)
           return;
@@ -245,7 +245,7 @@ static void hctl_rect(void)
 {
         WORD            title, item;
         register WORD   mesag;
-        PD     *owner;
+        AESPD           *owner;
 
         if ( gl_mntree != 0x0L )
         {
@@ -290,7 +290,7 @@ static void hctl_rect(void)
 *       Control change of ownership to this rectangle and this process.
 *       Doing the control rectangle first is important.
 */
-void ct_chgown(PD *mpd, GRECT *pr)
+void ct_chgown(AESPD *mpd, GRECT *pr)
 {
         set_ctrl(pr);
         if (!gl_ctmown)

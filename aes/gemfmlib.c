@@ -66,7 +66,7 @@ WORD     ml_ocnt;    /* Needs to be 0 initially! */
 /* Local variables: */
 static LONG     ml_mnhold;
 static GRECT    ml_ctrl;
-static PD       *ml_pmown;
+static AESPD    *ml_pmown;
 static BYTE     alert_str[256]; /* must be long enough for longest alert in gem.rsc */
 
 static WORD     ml_alrt[] =

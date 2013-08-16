@@ -30,7 +30,7 @@
 
 
 
-static void doq(WORD donq, PD *p, QPB *m)
+static void doq(WORD donq, AESPD *p, QPB *m)
 {
         register WORD   n, index;
         register WORD   *om, *nm;
@@ -95,7 +95,7 @@ static void doq(WORD donq, PD *p, QPB *m)
 
 void aqueue(WORD isqwrite, EVB *e, LONG lm)
 {
-        register PD     *p;
+        register AESPD  *p;
         register QPB    *m;
         EVB             **ppe;
         WORD            qready;

@@ -4932,3 +4932,9 @@ Start... early ages
   set correctly. (RFB)
 - aes/gemshlib.c: Make search order for shel_find()/rsrc_load() the same
   as TOS3/TOS4. (RFB)
+- aes/basepage.h aes/gemaplib.c aes/gemaplib.h aes/gemasm.h aes/gemasync.c
+  aes/gemctrl.c aes/gemctrl.h aes/gemdisp.c aes/gemfmlib.c aes/geminit.c
+  aes/geminput.c aes/geminput.h aes/gemlib.h aes/gemmnlib.c aes/gemmnlib.h
+  aes/gempd.c aes/gempd.h aes/gemqueue.c aes/gemwmlib.c aes/gemwmlib.h
+  aes/struct.h: Code cleanup: rename AES's PD structure to AESPD to avoid
+  conflict with the BDOS PD. (RFB)

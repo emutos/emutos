@@ -3,7 +3,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002 The EmuTOS development team
+*                 2002-2013 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -45,11 +45,11 @@
 GLOBAL WORD     button, xrat, yrat, kstate, mclick, mtrans;
 GLOBAL WORD     pr_button, pr_xrat, pr_yrat, pr_mclick;
 
-GLOBAL PD       *gl_mowner;                     /* current mouse/keybd  */
+GLOBAL AESPD    *gl_mowner;                     /* current mouse/keybd  */
                                                 /*   owner              */
-GLOBAL PD       *gl_cowner;                     /* current control rect.*/
+GLOBAL AESPD    *gl_cowner;                     /* current control rect.*/
                                                 /*   owner              */
-GLOBAL PD       *ctl_pd;                        /* screen manager proces*/
+GLOBAL AESPD    *ctl_pd;                        /* screen manager proces*/
                                                 /*   that controls the  */
                                                 /*   mouse when its     */
                                                 /*   outside the control*/
@@ -240,7 +240,7 @@ void get_ctrl(GRECT *pt)
 *       owners.
 */
 
-void get_mown(PD **pmown)
+void get_mown(AESPD **pmown)
 {
         *pmown = gl_mowner;
 }
@@ -252,7 +252,7 @@ void get_mown(PD **pmown)
 *       buttons in an up state.
 */
 
-void set_mown(PD *mp)
+void set_mown(AESPD *mp)
 {
         if (!button)
         {
@@ -458,7 +458,7 @@ void wheel_change(WORD wheel_number, WORD wheel_amount)
      * Uncomment the following code when some solution has been found.
      */
 /*
-    assert(rlr != (PD *)-1);
+    assert(rlr != (AESPD *)-1);
     wh = wm_find(xrat, yrat);
     ap_sendmsg(appl_msg, WM_ARROWED, D.w_win[wh].w_owner, wh, type, 0, 0, 0);
 */

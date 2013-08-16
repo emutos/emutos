@@ -19,7 +19,7 @@
 #define GEMSTRUCT_H
 
 
-#define PD      struct pd               /* process descriptor           */
+typedef struct aespd   AESPD;           /* process descriptor           */
 #define UDA     struct uda              /* user stack data area         */
 #define CDA     struct cdastr           /* console data area structure  */
 #define QPB     struct qpb              /* queue parameter block        */
@@ -115,7 +115,7 @@ EVB             /* event block structure */
         EVB     *e_nextp;       /* link to next event on PD event list */
         EVB     *e_link;        /* link to next block on event chain */
         EVB     *e_pred;        /* link to prev block on event chain */
-        PD      *e_pd;          /* owner PD (data for fork) */
+        AESPD   *e_pd;          /* owner PD (data for fork) */
         LONG    e_parm;         /* parm for request -> event comm */
         WORD    e_flag;
         EVSPEC  e_mask;         /* mask for event notification */
@@ -127,10 +127,10 @@ EVB             /* event block structure */
 #define         WAITIN          0x0001
 #define         SWITCHIN        0x8000
 
-PD
+struct aespd                    /* process descriptor           */
 {
-        PD      *p_link;        /*  0 */
-        PD      *p_thread;      /*  4 */
+        AESPD   *p_link;        /*  0 */
+        AESPD   *p_thread;      /*  4 */
         UDA     *p_uda;         /*  8 */
 
         BYTE    p_name[8];      /*  C */
@@ -151,13 +151,13 @@ PD
         WORD    p_qindex;       /* 38 */
         BYTE    p_queue[QUEUE_SIZE];   /* 3A */
         BYTE    p_appdir[130];  /* directory containing the executable */
-} ;
+};
 
 
 
 QPB
 {
-        PD      *qpb_ppd;
+        AESPD   *qpb_ppd;
         WORD    qpb_cnt;
         LONG    qpb_buf;
 } ;
@@ -165,7 +165,7 @@ QPB
 SPB
 {
         WORD    sy_tas;
-        PD      *sy_owner;
+        AESPD   *sy_owner;
         EVB     *sy_wait;
 } ;
 

@@ -224,7 +224,7 @@ typedef struct rshdr
 typedef struct window
 {
         WORD            w_flags;
-        PD              *w_owner;
+        AESPD           *w_owner;
         WORD            w_kind;
         LONG            w_pname;
         LONG            w_pinfo;
@@ -378,7 +378,7 @@ typedef struct sh_struct
 THEGLO
 {
  UDA        g_intuda[2];                    /* must be 1st  */
- PD         g_intpd[2];
+ AESPD      g_intpd[2];
  CDA        g_intcda[2];
  EVB        g_intevb[NUM_IEVBS];
 
@@ -404,7 +404,7 @@ THEGLO
                                                 /*   may not be used    */
  EVB        g_extevb[NUM_EEVBS];
  UDA        g_extuda[NUM_PDS-2];
- PD         g_extpd[NUM_PDS-2];
+ AESPD      g_extpd[NUM_PDS-2];
  CDA        g_extcda[NUM_PDS-2];
 };
 

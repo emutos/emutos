@@ -42,10 +42,10 @@
 
 
 GLOBAL LONG     gl_mntree;
-GLOBAL PD       *gl_mnppd;
+GLOBAL AESPD    *gl_mnppd;
 
 GLOBAL LONG     desk_acc[NUM_DESKACC];
-static PD       *desk_ppd[NUM_DESKACC];
+static AESPD    *desk_ppd[NUM_DESKACC];
 static WORD     acc_display[NUM_DESKACC];
 GLOBAL LONG     menu_tree[NUM_PDS];
 
@@ -87,7 +87,7 @@ static WORD menu_sub(LONG *ptree, WORD ititle)
 *       Routine to find a desk accessory id number given a process descriptor.
 */
 #if 0  /* unused */
-WORD mn_getda(PD *ppd)
+WORD mn_getda(AESPD *ppd)
 {
         register WORD   i;
 
@@ -458,7 +458,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
 */
 void mn_bar(LONG tree, WORD showit, WORD pid)
 {
-        PD              *p;
+        AESPD           *p;
         OBJECT          *obj;
 
         p = fpdnm(NULLPTR, pid);
@@ -566,7 +566,7 @@ void mn_unregister(WORD da_id)
             if (desk_acc[da_id])
             {
                 gl_dacnt--;
-                desk_ppd[da_id] = (PD *)0x0;
+                desk_ppd[da_id] = (AESPD *)0x0;
                 desk_acc[da_id] = 0x0L;
                 build_menuid_lookup();
             }
@@ -579,7 +579,7 @@ void mn_unregister(WORD da_id)
 *       Routine to get the owner and menu id of the DA corresponding
 *       to the desktop display item number
 */
-void mn_getownid(PD **owner,WORD *id,WORD item)
+void mn_getownid(AESPD **owner,WORD *id,WORD item)
 {
         WORD n;
 

@@ -167,7 +167,7 @@ static void w_obadd(OBJECT olist[], WORD parent, WORD child)
 
 
 
-static void w_setup(PD *ppd, WORD w_handle, WORD kind)
+static void w_setup(AESPD *ppd, WORD w_handle, WORD kind)
 {
         register WINDOW *pwin;
 
@@ -477,7 +477,7 @@ void w_setactive(void)
 {
         GRECT           d;
         register WORD   wh;
-        PD              *ppd;
+        AESPD           *ppd;
 
         wh = w_top();
         w_getsize(WS_WORK, wh, &d);
@@ -605,7 +605,7 @@ void w_bldactive(WORD w_handle)
 }
 
 
-void ap_sendmsg(WORD ap_msg[], WORD type, PD *towhom,
+void ap_sendmsg(WORD ap_msg[], WORD type, AESPD *towhom,
                 WORD w3, WORD w4, WORD w5, WORD w6, WORD w7)
 {
         ap_msg[0] = type;
@@ -649,7 +649,7 @@ static WORD w_union(ORECT *po, GRECT *pt)
 static void w_redraw(WORD w_handle, GRECT *pt)
 {
         GRECT           t, d;
-        PD              *ppd;
+        AESPD           *ppd;
 
         ppd = D.w_win[w_handle].w_owner;
                                                 /* make sure work rect  */
@@ -1079,7 +1079,7 @@ void wm_start(void)
         register WORD   i;
         register ORECT  *po;
         register OBJECT *tree;
-        PD              *ppd;
+        AESPD           *ppd;
 
 #if 0
                                                 /* init default owner   */

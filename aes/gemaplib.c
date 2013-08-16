@@ -77,7 +77,7 @@ WORD ap_init(void)
 /*
 *       APplication READ or WRITE
 */
-void ap_rdwr(WORD code, PD *p, WORD length, LONG pbuff)
+void ap_rdwr(WORD code, AESPD *p, WORD length, LONG pbuff)
 {
         QPB             m;
                                                 /* do quick version if  */
@@ -107,7 +107,7 @@ void ap_rdwr(WORD code, PD *p, WORD length, LONG pbuff)
 */
 WORD ap_find(LONG pname)
 {
-        register PD     *p;
+        register AESPD  *p;
         BYTE            temp[9];
 
         strcpy(temp, (char *)pname);

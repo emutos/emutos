@@ -33,18 +33,18 @@
 
 #include "string.h"
 
-/* returns the PD for the given index */
-PD *pd_index(WORD i)
+/* returns the AESPD for the given index */
+AESPD *pd_index(WORD i)
 {
         return( (i<2) ? &D.g_intpd[i] : &D.g_extpd[i-2] );
 }
 
-/* returns the PD for the given name, or if pname is NULL for the given pid */
-PD *fpdnm(BYTE *pname, UWORD pid)
+/* returns the AESPD for the given name, or if pname is NULL for the given pid */
+AESPD *fpdnm(BYTE *pname, UWORD pid)
 {
         WORD            i;
         BYTE            temp[9];
-        PD              *p;
+        AESPD           *p;
 
         temp[8] = 0;
         for(i=0; i<totpds; i++)
@@ -65,9 +65,9 @@ PD *fpdnm(BYTE *pname, UWORD pid)
 }
 
 
-static PD *getpd(void)
+static AESPD *getpd(void)
 {
-        register PD     *p;
+        register AESPD  *p;
 
         /* we got all our memory so link it  */
         p = pd_index(curpid);
@@ -81,17 +81,17 @@ static PD *getpd(void)
 }
 
 
-/* name a PD from the 8 first chars of the given string, stopping at the first
+/* name an AESPD from the 8 first chars of the given string, stopping at the first
  * '.' (remove the file extension)
  */
-void p_nameit(PD *p, BYTE *pname)
+void p_nameit(AESPD *p, BYTE *pname)
 {
         memset(p->p_name, ' ', 8);
         strscn(pname, p->p_name, '.');
 }
 
-/* set the application directory of a PD */
-void p_setappdir(PD *pd, BYTE *pfilespec)
+/* set the application directory of an AESPD */
+void p_setappdir(AESPD *pd, BYTE *pfilespec)
 {
         BYTE *p;
         BYTE *plast;
@@ -110,9 +110,9 @@ void p_setappdir(PD *pd, BYTE *pfilespec)
         *pdest = '\0';
 }
 
-PD *pstart(PFVOID pcode, BYTE *pfilespec, LONG ldaddr)
+AESPD *pstart(PFVOID pcode, BYTE *pfilespec, LONG ldaddr)
 {
-        register PD     *px;
+        register AESPD  *px;
 
         /* create process to execute it */
         px = getpd();
@@ -134,11 +134,11 @@ PD *pstart(PFVOID pcode, BYTE *pfilespec, LONG ldaddr)
 
                                                 /* put pd pi into list  */
                                                 /*   *root at the end   */
-void insert_process(PD *pi, PD **root)
+void insert_process(AESPD *pi, AESPD **root)
 {
-        register PD     *p, *q;
+        register AESPD  *p, *q;
                                                 /* find the end         */
-        for ( p = (q = (PD *) root) -> p_link ; p ; p = (q = p) -> p_link);
+        for ( p = (q = (AESPD *) root) -> p_link ; p ; p = (q = p) -> p_link);
                                                 /* link him in          */
         pi->p_link = p;
         q->p_link = pi;

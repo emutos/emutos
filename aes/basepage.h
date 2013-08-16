@@ -2,6 +2,8 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
+*                 2013 The EmuTOS development team
+*
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
 *
@@ -15,12 +17,12 @@
 
 
 
-/* Ready List Root - a list of PDs linked by the p_link field, terminated
+/* Ready List Root - a list of AESPDs linked by the p_link field, terminated
  * by zero [see gempd.c function insert_process]
  */
-extern PD       *rlr;
+extern AESPD    *rlr;
 
-extern PD       *drl, *nrl;
+extern AESPD    *drl, *nrl;
 extern EVB      *eul, *dlr, *zlr;
 
 extern LONG     elinkoff;
