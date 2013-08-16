@@ -37,7 +37,6 @@ GLOBES
 /*GLOBAL*/ PNODE        *g_phead;
 
 /*GLOBAL*/ BYTE         g_wdta[128];
-/*GLOBAL*/ LONG         a_wdta;
 
 /*GLOBAL*/ WNODE        g_wlist[NUM_WNODES];
 /*GLOBAL*/ WORD         g_wcnt;

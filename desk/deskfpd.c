@@ -73,7 +73,6 @@ static void pn_init(void)
 */
 void fpd_start(void)
 {
-        G.a_wdta = ADDR(&G.g_wdta[0]);
         fn_init();
         pn_init();
 }
@@ -502,7 +501,7 @@ static WORD pn_folder(PNODE *thepath)
         strcpy(&thefile->f_name[0], ini_str(STNEWFOL));
                                                 /* init for while loop  */
         G.g_wdta[30] = NULL;
-        dos_sdta(G.a_wdta);
+        dos_sdta((LONG)G.g_wdta);
         ret = firstime = TRUE;
         while ( ret )
         {
@@ -633,7 +632,7 @@ WORD pn_active(PNODE *thepath)
         thefile = (FNODE *) NULLPTR;
         prevfile = (FNODE *) &thepath->p_flist;
 
-        dos_sdta(G.a_wdta);
+        dos_sdta((LONG)G.g_wdta);
 
         ret = dos_sfirst(thepath->p_spec, thepath->p_attr);
         while ( ret )
