@@ -330,7 +330,6 @@ void gsx_start(void)
         r_set(&gl_rcenter, (gl_width-gl_wbox)/2, (gl_height-(2*gl_hbox))/2,
                         gl_wbox, gl_hbox);
         r_set(&gl_rmenu, 0, 0, gl_width, gl_hbox);
-        ad_intin = ADDR(&intin[0]);
 }
 
 

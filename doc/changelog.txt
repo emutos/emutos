@@ -4944,3 +4944,4 @@ Start... early ages
   desk/deskinf.c include/gsxdefs.h: Eliminate ad_intin global. (RFB)
 - aes/gemshlib.c desk/deskdir.c desk/deskinf.c: Code cleanup: remove
   unneeded ADDR() macros. (RFB)
+- desk/deskgraf.c: Remove reference to ad_intin from uncompiled code. (RFB)
