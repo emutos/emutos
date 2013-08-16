@@ -682,7 +682,7 @@ static void sh_chdef(SHELL *psh)
           psh->sh_fullstep = 0;
           if(psh->sh_cdir[1] == ':')
             dos_sdrv(psh->sh_cdir[0] - 'A');
-          dos_chdir((BYTE *)ADDR(&psh->sh_cdir[0]));
+          dos_chdir(psh->sh_cdir);
           strcpy(&D.s_cmd[0], &psh->sh_desk[0]);
         }
         else

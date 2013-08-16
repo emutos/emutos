@@ -244,7 +244,7 @@ static WORD dr_fnode(UWORD last_state, UWORD curr_state, WORD x, WORD y,
         {
           len = ob_sfcb(psfcb, &G.g_tmppth[0]);
           gsx_attr(TRUE, MD_REPLACE, BLACK);
-          LBWMOV(intin, (BYTE *)ADDR(&G.g_tmppth[0]));
+          LBWMOV(intin, G.g_tmppth);
           gsx_tblt(IBM, x, y, len);
           gsx_attr(FALSE, MD_XOR, BLACK);
         }

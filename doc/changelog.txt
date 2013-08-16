@@ -4942,3 +4942,5 @@ Start... early ages
   cleanup: move common definitions to gsxdefs.h. (RFB)
 - aes/gemgraf.c aes/gemgsxif.c aes/gemoblib.c desk/deskgraf.c
   desk/deskinf.c include/gsxdefs.h: Eliminate ad_intin global. (RFB)
+- aes/gemshlib.c desk/deskdir.c desk/deskinf.c: Code cleanup: remove
+  unneeded ADDR() macros. (RFB)

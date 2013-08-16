@@ -372,7 +372,7 @@ WORD d_errmsg(void)
 */
 static WORD d_dofdel(BYTE *ppath)
 {
-        dos_delete((BYTE *)ADDR(ppath));
+        dos_delete(ppath);
         return( d_errmsg() );
 } /* d_dofdel */
 
@@ -389,7 +389,7 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
 
         copy = TRUE;
                                                 /* open the source file */
-        srcfh = dos_open((BYTE *)ADDR(psrc_file), 0);
+        srcfh = dos_open(psrc_file, 0);
         more = d_errmsg();
         if (!more)
           return(more);
@@ -399,7 +399,7 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
         {
           copy = FALSE;
           more = TRUE;
-          dstfh = dos_open((BYTE *)ADDR(pdst_file), 0);
+          dstfh = dos_open(pdst_file, 0);
                                                 /* handle dos error     */
           if (DOS_ERR)
           {
@@ -478,7 +478,7 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
         } /* while cont */
 
         if ( copy && more )
-          dstfh = dos_create((BYTE *)ADDR(pdst_file), attr);
+          dstfh = dos_create(pdst_file, attr);
 
         amntrd = copy;
         while( amntrd && more )
@@ -505,7 +505,7 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
                     more = FALSE;
                     dos_close(srcfh);
                     dos_close(dstfh);
-                    dos_delete((BYTE *)ADDR(pdst_file));
+                    dos_delete(pdst_file);
                   } /* if */
                 } /* if more */
               } /* if amntrd */
@@ -566,7 +566,7 @@ WORD d_doop(WORD op, LONG tree, WORD obj, BYTE *psrc_path, BYTE *pdst_path,
                             ptmp++;
                           ptmp--;
                           *ptmp = NULL;
-                          dos_rmdir((BYTE *)ADDR(psrc_path));
+                          dos_rmdir(psrc_path);
                         }
                         more = d_errmsg();
                         strcat(psrc_path, "\\*.*");
@@ -608,7 +608,7 @@ WORD d_doop(WORD op, LONG tree, WORD obj, BYTE *psrc_path, BYTE *pdst_path,
                 if (op == OP_COPY)
                 {
                   add_fname(pdst_path, &G.g_fcbstk[level].fcb_name[0]);
-                  dos_mkdir((BYTE *)ADDR(pdst_path));
+                  dos_mkdir(pdst_path);
                   if ( (DOS_ERR) && (DOS_AX != E_NOACCESS) )
                     more = d_errmsg();
                   strcat(pdst_path, "\\*.*");
@@ -865,7 +865,7 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
               if (op == OP_COPY)
               {
                 like_parent(pgldst, &pf->f_name[0]);
-                dos_mkdir((BYTE *)ADDR(pgldst));
+                dos_mkdir(pgldst);
                 while (DOS_ERR && more)
                 {
                                                 /* see if dest folder   */
@@ -899,7 +899,7 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
                         if (ml_fstr[0] != NULL)
                         {
                           add_fname(pgldst, &ml_fstr[0]);
-                          dos_mkdir((BYTE *)ADDR(pgldst));
+                          dos_mkdir(pgldst);
                         } /* if */
                         else
                           more = FALSE;
