@@ -23,7 +23,6 @@
 #include "compat.h"
 #include "obdefs.h"
 #include "dos.h"
-#include "infodef.h"
 #include "deskapp.h"
 #include "deskfpd.h"
 #include "deskwin.h"

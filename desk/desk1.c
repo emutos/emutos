@@ -24,7 +24,6 @@
 #include "gembind.h"
 #include "obdefs.h"
 #include "deskwin.h"
-#include "infodef.h"
 #include "deskbind.h"
 #include "deskglob.h"
 #include "aesbind.h"

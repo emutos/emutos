@@ -22,7 +22,6 @@
 #include "deskapp.h"
 #include "deskfpd.h"
 #include "deskwin.h"
-#include "infodef.h"
 #include "deskbind.h"
 
 /* BugFix       */

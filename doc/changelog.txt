@@ -4955,3 +4955,7 @@ Start... early ages
   desktop globals. (RFB)
 - desk/deskbind.h desk/deskfpd.c: Code cleanup: eliminate another desktop
   global. (RFB)
+- desk/desk1.c desk/deskact.c desk/deskapp.c desk/deskbind.h desk/deskdir.c
+  desk/deskfpd.c desk/deskfun.c desk/deskglob.c desk/deskinf.c
+  desk/deskmain.c desk/deskobj.c desk/deskpro.c desk/deskrez.c
+  desk/desksupp.c desk/deskwin.c: Merge infodef.h into deskbind.h. (RFB)

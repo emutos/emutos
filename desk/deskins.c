@@ -25,7 +25,6 @@
 #include "deskapp.h"
 #include "deskfpd.h"
 #include "deskwin.h"
-#include "infodef.h"
 #include "gembind.h"
 #include "gemoblib.h"
 #include "deskbind.h"

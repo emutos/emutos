@@ -22,7 +22,6 @@
 #include "desk_rsc.h"
 #include "deskapp.h"
 #include "deskfpd.h"
-#include "infodef.h"
 #include "deskwin.h"
 #include "deskbind.h"
 #include "deskglob.h"

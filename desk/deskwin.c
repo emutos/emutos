@@ -25,7 +25,6 @@
 #include "deskfpd.h"
 #include "deskwin.h"
 #include "dos.h"
-#include "infodef.h"
 #include "gembind.h"
 #include "deskbind.h"
 

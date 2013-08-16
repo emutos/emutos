@@ -22,7 +22,6 @@
 #include "compat.h"
 #include "obdefs.h"
 #include "dos.h"
-#include "infodef.h"
 #include "gembind.h"
 #include "deskapp.h"
 #include "deskfpd.h"

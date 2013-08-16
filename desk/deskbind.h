@@ -19,11 +19,20 @@
 #include "deskconf.h"
 #include "desk_rsc.h"           /* for RS_NTREE */
 
+#define FCB struct fcb
+FCB
+{
+        BYTE            fcb_reserved[21];
+        BYTE            fcb_attr;
+        WORD            fcb_time;
+        WORD            fcb_date;
+        LONG            fcb_size;
+        BYTE            fcb_name[13];
+};
 
-#ifndef ARROW
-#define ARROW 0x0
-#endif
-#define HRGLASS 0x2
+#define ARROW   0
+#define HGLASS  2
+#define HRGLASS 2
 
 
 #define GLOBES struct glnode
