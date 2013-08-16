@@ -345,7 +345,7 @@ WORD evnt_timer(UWORD locnt, UWORD hicnt)
 WORD evnt_multi(UWORD flags, UWORD bclk, UWORD bmsk, UWORD bst,
                 UWORD m1flags, UWORD m1x, UWORD m1y, UWORD m1w, UWORD m1h,
                 UWORD m2flags, UWORD m2x, UWORD m2y, UWORD m2w, UWORD m2h,
-                LONG mepbuff, UWORD tlc, UWORD thc, UWORD *pmx, UWORD *pmy,
+                BYTE *mepbuff, UWORD tlc, UWORD thc, UWORD *pmx, UWORD *pmy,
                 UWORD *pmb, UWORD *pks, UWORD *pkr, UWORD *pbr )
 {
         MU_FLAGS = flags;
@@ -366,7 +366,7 @@ WORD evnt_multi(UWORD flags, UWORD bclk, UWORD bmsk, UWORD bst,
         MMO2_WIDTH = m2w;
         MMO2_HEIGHT = m2h;
 
-        MME_PBUFF = mepbuff;
+        MME_PBUFF = ADDR(mepbuff);
 
         MT_LOCOUNT = tlc;
         MT_HICOUNT = thc;
@@ -1067,13 +1067,13 @@ WORD shel_read(LONG pcmd, LONG ptail)
 }
 
 
-WORD shel_write(WORD doex, WORD isgr, WORD iscr, LONG pcmd, LONG ptail)
+WORD shel_write(WORD doex, WORD isgr, WORD iscr, BYTE *pcmd, BYTE *ptail)
 {
         SH_DOEX = doex;
         SH_ISGR = isgr;
         SH_ISCR = iscr;
-        SH_PCMD = pcmd;
-        SH_PTAIL = ptail;
+        SH_PCMD = ADDR(pcmd);
+        SH_PTAIL = ADDR(ptail);
         return( gem_if( SHEL_WRITE ) );
 }
 
@@ -1095,9 +1095,9 @@ WORD shel_put(LONG pdata, WORD len)
 
 
 
-WORD shel_find(LONG ppath)
+WORD shel_find(BYTE *ppath)
 {
-        SH_PATH = ppath;
+        SH_PATH = ADDR(ppath);
         return( gem_if( SHEL_FIND ) );
 }
 

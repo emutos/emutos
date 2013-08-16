@@ -706,12 +706,12 @@ int do_format(WORD curr)
           {
             strcpy(&G.g_cmd[0], "FORMAT.PRG");
             isgraf = TRUE;
-            foundit = shel_find(G.a_cmd);
+            foundit = shel_find(G.g_cmd);
             if (!foundit)
             {
               strcpy(&G.g_cmd[0], "FORMAT.TTP");
               isgraf = FALSE;
-              foundit = shel_find(G.a_cmd);
+              foundit = shel_find(G.g_cmd);
             }
 
             if (foundit)

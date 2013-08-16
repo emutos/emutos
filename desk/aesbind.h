@@ -1,7 +1,7 @@
 /*
  * EmuTOS desktop
  *
- * Copyright (c) 2002, 2010 The EmuTOS development team
+ * Copyright (c) 2002-2013 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -28,7 +28,7 @@ WORD evnt_timer(UWORD locnt, UWORD hicnt);
 WORD evnt_multi(UWORD flags, UWORD bclk, UWORD bmsk, UWORD bst,
                 UWORD m1flags, UWORD m1x, UWORD m1y, UWORD m1w, UWORD m1h,
                 UWORD m2flags, UWORD m2x, UWORD m2y, UWORD m2w, UWORD m2h,
-                LONG mepbuff, UWORD tlc, UWORD thc, UWORD *pmx, UWORD *pmy,
+                WORD *mepbuff, UWORD tlc, UWORD thc, UWORD *pmx, UWORD *pmy,
                 UWORD *pmb, UWORD *pks, UWORD *pkr, UWORD *pbr );
 WORD evnt_dclick(WORD rate, WORD setit);
 
@@ -94,10 +94,10 @@ WORD rsrc_gaddr(WORD rstype, WORD rsid, LONG *paddr);
 WORD rsrc_obfix(LONG tree, WORD obj);
 
 WORD shel_read(LONG pcmd, LONG ptail);
-WORD shel_write(WORD doex, WORD isgr, WORD iscr, LONG pcmd, LONG ptail);
+WORD shel_write(WORD doex, WORD isgr, WORD iscr, BYTE *pcmd, BYTE *ptail);
 WORD shel_get(LONG pbuffer, WORD len);
 WORD shel_put(LONG pdata, WORD len);
-WORD shel_find(LONG ppath);
+WORD shel_find(BYTE *ppath);
 WORD shel_envrn(LONG ppath, LONG psrch);
 
 #endif

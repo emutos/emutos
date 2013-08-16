@@ -60,7 +60,7 @@ WORD pro_chdir(WORD drv, BYTE *ppath)
 } /* pro_chdir */
 
 
-static WORD pro_exec(WORD isgraf, WORD isover, LONG pcmd, LONG ptail)
+static WORD pro_exec(WORD isgraf, WORD isover, BYTE *pcmd, BYTE *ptail)
 {
         WORD            ret;
 
@@ -79,7 +79,7 @@ WORD pro_run(WORD isgraf, WORD isover, WORD wh, WORD curr)
 
         G.g_tail[0] = len = strlen(&G.g_tail[1]);
         G.g_tail[len+1] = 0x0D;
-        ret = pro_exec(isgraf, isover, G.a_cmd, G.a_tail);
+        ret = pro_exec(isgraf, isover, G.g_cmd, G.g_tail);
         if (isover == -1)
           ret = FALSE;
         else
@@ -93,7 +93,7 @@ WORD pro_run(WORD isgraf, WORD isover, WORD wh, WORD curr)
 
 
 
-WORD pro_exit(LONG pcmd, LONG ptail)
+WORD pro_exit(BYTE *pcmd, BYTE *ptail)
 {
         WORD            ret;
 

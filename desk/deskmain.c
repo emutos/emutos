@@ -547,7 +547,7 @@ static WORD do_filemenu(WORD item)
 
           case QUITITEM:
                 display_free_stack();
-                pro_exit(G.a_cmd, G.a_tail);
+                pro_exit(G.g_cmd, G.g_tail);
                 done = TRUE;
                 break;
 #if DEBUG
@@ -1588,11 +1588,6 @@ WORD deskmain(void)
         gl_normwin.g_w = G.g_wfull;
         gl_normwin.g_h = (G.g_hfull - (gl_hbox / 2)) / 2;
 #endif
-                                                /* init long addrs that */
-                                                /*   will be used alot  */
-        G.a_cmd = ADDR(&G.g_cmd[0]);
-        G.a_tail = ADDR(&G.g_tail[0]);
-        G.a_rmsg = ADDR(&G.g_rmsg[0]);
                                                 /* initialize mouse     */
         wind_update(BEG_UPDATE);
         desk_wait(TRUE);
@@ -1718,7 +1713,7 @@ WORD deskmain(void)
                                                 /* block for input      */
           ev_which = evnt_multi(flags, 0x02, 0x01, 0x01,
                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                G.a_rmsg, 0, 0,
+                                G.g_rmsg, 0, 0,
                                 &mx, &my, &button, &kstate, &kret, &bret);
                                                 /* grab the screen      */
           wind_update(BEG_UPDATE);
@@ -1740,7 +1735,7 @@ WORD deskmain(void)
               break;
             ev_which = evnt_multi(MU_MESAG | MU_TIMER, 0x02, 0x01, 0x01,
                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                G.a_rmsg, 0, 0,
+                                G.g_rmsg, 0, 0,
                                 &mx, &my, &button, &kstate, &kret, &bret);
           }
 

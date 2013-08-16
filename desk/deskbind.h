@@ -78,10 +78,7 @@ GLOBES
 
 /*GLOBAL*/ WORD         g_xyobpts[MAX_OBS * 2];
 
-
 /*GLOBAL*/ WORD         g_rmsg[8];
-/*GLOBAL*/ LONG         a_rmsg;
-
 
 /*GLOBAL*/ WORD         g_xdesk;
 /*GLOBAL*/ WORD         g_ydesk;
@@ -94,10 +91,7 @@ GLOBES
 /*GLOBAL*/ WORD         g_hfull;
 
 /*GLOBAL*/ BYTE         g_cmd[128];
-/*GLOBAL*/ LONG         a_cmd;
-
 /*GLOBAL*/ BYTE         g_tail[128];
-/*GLOBAL*/ LONG         a_tail;
 
 /*GLOBAL*/ LONG         a_alert;
 

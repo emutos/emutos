@@ -71,7 +71,7 @@ static WORD gr_isdown(WORD out, WORD x, WORD y, WORD w, WORD h,
 
         flags = MU_BUTTON | MU_M1;
         ev_which = evnt_multi(flags, 0x01, 0xff, 0x00, out, x, y, w, h,
-                              0, 0, 0, 0, 0, 0x0L, 0x0, 0x0,
+                              0, 0, 0, 0, 0, NULL, 0x0, 0x0,
                               pmx, pmy, pbutton, pkstate, &kret, &bret);
         if ( ev_which & MU_BUTTON )
           return(FALSE);

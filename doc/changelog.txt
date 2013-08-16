@@ -4946,3 +4946,9 @@ Start... early ages
   unneeded ADDR() macros. (RFB)
 - desk/deskgraf.c: Remove reference to ad_intin from uncompiled code. (RFB)
 - desk/gembind.c: Code cleanup: remove a few more ADDR() macros. (RFB)
+
+2013-08-06
+- desk/aesbind.h desk/deskact.c desk/deskbind.h desk/deskmain.c
+  desk/deskpro.c desk/deskpro.h desk/desksupp.c desk/gembind.c:
+  Code cleanup: eliminate some desktop globals. (RFB)
+
