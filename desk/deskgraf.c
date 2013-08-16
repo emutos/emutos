@@ -99,7 +99,7 @@ GLOBAL GRECT    gl_rmenu;
 *       is 0, then no clip should be set.  Ohterwise, set the
 *       appropriate clip.
 */
-WORD gsx_sclip(GRECT *pt)
+void gsx_sclip(GRECT *pt)
 {
         r_get(pt, &gl_xclip, &gl_yclip, &gl_wclip, &gl_hclip);
 
@@ -113,7 +113,6 @@ WORD gsx_sclip(GRECT *pt)
         }
         else
           vst_clip( FALSE, &ptsin[0]);
-        return( TRUE );
 }
 
 
