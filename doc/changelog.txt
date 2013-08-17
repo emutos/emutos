@@ -4966,3 +4966,6 @@ Start... early ages
 2013-08-17
 - desk/desk1.c desk/deskbind.h desk/deskdir.c: Code cleanup: use HGLASS
   instead of HRGLASS. (RFB)
+- desk/deskact.c desk/deskbind.h desk/deskmain.c desk/deskobj.c
+  desk/desksupp.c desk/deskwin.c: Code cleanup: eliminate another desktop
+  global. (RFB)

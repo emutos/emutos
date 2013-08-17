@@ -736,12 +736,12 @@ static WORD hndl_button(WORD clicks, WORD mx, WORD my, WORD button, WORD keystat
 
         if (clicks == 1)
         {
-          act_bsclick(G.g_cwin, G.a_screen, G.g_croot, mx, my,
+          act_bsclick(G.g_cwin, ADDR(G.g_screen), G.g_croot, mx, my,
                       keystate, &c, FALSE);
           graf_mkstate(&junk, &junk, &button, &junk);
           if (button & 0x0001)
           {
-            dest_wh = act_bdown(G.g_cwin, G.a_screen, G.g_croot, &mx, &my,
+            dest_wh = act_bdown(G.g_cwin, ADDR(G.g_screen), G.g_croot, &mx, &my,
                                 keystate, &c, &dobj);
 #ifdef DESK1
             if (dest_wh != NIL)
@@ -769,7 +769,7 @@ static WORD hndl_button(WORD clicks, WORD mx, WORD my, WORD button, WORD keystat
         } /* if clicks */
         else
         {
-          act_bsclick(G.g_cwin, G.a_screen, G.g_croot, mx, my, keystate, &c, TRUE);
+          act_bsclick(G.g_cwin, ADDR(G.g_screen), G.g_croot, mx, my, keystate, &c, TRUE);
           done = do_filemenu(OPENITEM);
         } /* else */
         men_update(G.a_trees[ADMENU]);
@@ -1669,7 +1669,7 @@ WORD deskmain(void)
         do_wredraw(0, G.g_xdesk, G.g_ydesk, G.g_wdesk, G.g_hdesk);
 
         /* Take over the desktop */
-        wind_set(0, WF_NEWDESK, (LONG)G.a_screen, TRUE, FALSE);
+        wind_set(0, WF_NEWDESK, ADDR(G.g_screen), TRUE, FALSE);
 #else
                                                 /* fix up subwindows    */
         for (ii = 0; ii < NUM_WNODES; ii++)

@@ -60,7 +60,7 @@ void desk_clear(WORD wh)
         if (pw)
         {
                                                 /* clear all selections */
-          act_allchg(wh, G.a_screen, pw->w_root, 0, &gl_rfull, &c,
+          act_allchg(wh, ADDR(G.g_screen), pw->w_root, 0, &gl_rfull, &c,
                  SELECTED, FALSE, TRUE);
         }
 }
@@ -107,7 +107,7 @@ void do_wredraw(WORD w_handle, WORD xc, WORD yc, WORD wc, WORD hc)
         LONG    tree;
         WORD    root;
 
-        tree = G.a_screen;
+        tree = ADDR(G.g_screen);
 
         clip_r.g_x = xc;
         clip_r.g_y = yc;
@@ -193,7 +193,7 @@ void do_wopen(WORD new_win, WORD wh, WORD curr, WORD x, WORD y, WORD w, WORD h)
         graf_growbox(d.g_x, d.g_y, d.g_w, d.g_h, x, y, w, h);
 #endif
 
-        act_chg(G.g_cwin, G.a_screen, G.g_croot, curr, &c, SELECTED,
+        act_chg(G.g_cwin, ADDR(G.g_screen), G.g_croot, curr, &c, SELECTED,
                 FALSE, TRUE, TRUE);
         if (new_win)
           wind_open(wh, x, y, w, h);

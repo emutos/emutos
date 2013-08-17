@@ -49,7 +49,7 @@ void obj_init(void)
         WORD            ii;
         LONG            tree;
 
-        tree = G.a_screen = ADDR(&G.g_screen[0]);
+        tree = ADDR(G.g_screen);
         for (ii = 0; ii < NUM_SOBS; ii++)
         {
           G.g_screen[ii].ob_head = NIL;
@@ -124,7 +124,7 @@ WORD obj_ialloc(WORD wparent, WORD x, WORD y, WORD w, WORD h)
         if (ii < NUM_SOBS)
         {
           G.g_screen[ii].ob_head = G.g_screen[ii].ob_tail = NIL;
-          objc_add(G.a_screen, wparent, ii);
+          objc_add(ADDR(G.g_screen), wparent, ii);
           r_set((GRECT *)&G.g_screen[ii].ob_x, x, y, w, h);
           return(ii);
         }

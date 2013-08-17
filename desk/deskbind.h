@@ -137,9 +137,7 @@ GLOBES
 /*GLOBAL*/ UWORD        *g_origmask[NUM_IBLKS]; /* ptrs to untransformed icon mask */
 /*GLOBAL*/ ICONBLK      g_iblist[NUM_IBLKS];
 
-
 /*GLOBAL*/ CSAVE        g_cnxsave;
 
-/*GLOBAL*/ LONG         a_screen;
 /*GLOBAL*/ OBJECT       g_screen[NUM_SOBS];             /* NUM_SOBS     */
 };

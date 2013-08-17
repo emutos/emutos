@@ -123,7 +123,7 @@ void win_free(WNODE *thewin)
 
         G.g_wcnt--;
         thewin->w_id = 0;
-        objc_order(G.a_screen, thewin->w_root, 1);
+        objc_order(ADDR(G.g_screen), thewin->w_root, 1);
         obj_wfree( thewin->w_root, 0, 0, 0, 0 );
 }
 
@@ -204,7 +204,7 @@ WNODE *win_find(WORD wh)
 */
 void win_top(WNODE *thewin)
 {
-        objc_order(G.a_screen, thewin->w_root, NIL);
+        objc_order(ADDR(G.g_screen), thewin->w_root, NIL);
 }
 
 

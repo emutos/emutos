@@ -281,14 +281,14 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD numpts,
 
           graf_mkstate(&l_mx, &l_my, &button, &keystate);
           dst_wh = wind_find(l_mx, l_my);
-          tree = G.a_screen;
+          tree = ADDR(G.g_screen);
           root = DROOT;
           if (dst_wh)
           {
                 pw = win_find(dst_wh);
                 if (pw)
                 {
-                        tree = G.a_screen;
+                        tree = ADDR(G.g_screen);
                         root = pw->w_root;
                 }
                 else dst_wh = 0;
@@ -392,12 +392,12 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD *pdulx, WORD *pdu
                                 &ret[0], &ret[1], &ret[2], &ret[3]);
           graf_mkstate(&l_mx, &l_my, &button, &keystate);
           dst_wh = wind_find(l_mx, l_my);
-          tree = G.a_screen;
+          tree = ADDR(G.g_screen);
           root = DROOT;
           pw = win_find(dst_wh);
           if (pw)
           {
-            tree = G.a_screen;
+            tree = ADDR(G.g_screen);
             root = pw->w_root;
           }
           else
