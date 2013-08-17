@@ -19,7 +19,6 @@ extern LONG     menu_tree[];
 
 extern WORD     gl_dacnt;
 extern WORD     gl_dabox;
-extern LONG     gl_datree;
 
 extern OBJECT   M_DESK[];
 

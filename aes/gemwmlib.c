@@ -127,9 +127,9 @@ GLOBAL const TEDINFO gl_asamp =
 GLOBAL WORD     wind_msg[8];
 
 GLOBAL WORD     gl_wtop;
-GLOBAL LONG     gl_wtree;
 GLOBAL LONG     gl_awind;
 
+static LONG     gl_wtree;
 
 
 

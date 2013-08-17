@@ -51,10 +51,10 @@ GLOBAL LONG     menu_tree[NUM_PDS];
 
 GLOBAL WORD     gl_dacnt;
 GLOBAL WORD     gl_dabox;
-GLOBAL LONG     gl_datree;
 
 GLOBAL OBJECT   M_DESK[3+NUM_DESKACC];
 
+static LONG     gl_datree;
 
 static WORD menu_sub(LONG *ptree, WORD ititle)
 {
