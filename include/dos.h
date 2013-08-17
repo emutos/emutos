@@ -42,18 +42,3 @@
 
 #define F_GETMOD 0x0
 #define F_SETMOD 0x1
-
-typedef struct exec_blk
-{
-        WORD            eb_segenv;
-        LONG            eb_pcmdln;
-        LONG            eb_pfcb1;
-        LONG            eb_pfcb2;
-} EXEC_BLK;
-
-
-typedef struct over_blk
-{
-        WORD            ob_seglod;
-        WORD            ob_relfac;
-} OVER_BLK;

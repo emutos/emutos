@@ -4974,3 +4974,4 @@ Start... early ages
   Code cleanup: set type of first arg to objc_xxx() as OBJECT *. (RFB)
 - aes/gemmnlib.c aes/gemmnlib.h aes/gemwmlib.c aes/gemwmlib.h:
   Code cleanup: change scope of gl_datree, gl_wtree to local. (RFB)
+- include/dos.h: Code cleanup: remove unused structure definitions. (RFB)
