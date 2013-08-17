@@ -4962,3 +4962,7 @@ Start... early ages
 - desk/infodef.h: Removed, no longer required. (RFB)
 - desk/deskbind.h desk/deskdir.c: Code cleanup: rename the desktop's 'FCB'
   structure to 'DTA' to reduce confusion. (RFB)
+
+2013-08-17
+- desk/desk1.c desk/deskbind.h desk/deskdir.c: Code cleanup: use HGLASS
+  instead of HRGLASS. (RFB)

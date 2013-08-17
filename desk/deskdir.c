@@ -169,7 +169,7 @@ static void do_namecon(void)
         form_do(G.a_trees[ADCPALER], 0);
         if (ml_dlpr)
           draw_dial(G.a_trees[ADCPYDEL]);
-        graf_mouse(HRGLASS, 0x0L);
+        graf_mouse(HGLASS, NULL);
 } /* do_namecon */
 
 
@@ -500,7 +500,7 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
                                                 /* disk full            */
                     graf_mouse(ARROW, 0x0L);
                     fun_alert(1, STDISKFU, NULLPTR);
-                    graf_mouse(HRGLASS, 0x0L);
+                    graf_mouse(HGLASS, NULL);
                     more = FALSE;
                     dos_close(srcfh);
                     dos_close(dstfh);

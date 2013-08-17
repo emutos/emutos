@@ -93,7 +93,7 @@ WORD fun_close(WNODE *pw, WORD trueclose)
                 form_alert(1,(LONG)"[1][Invalid WNODE passed|to fun_close()][OK]");
                 return 0;
         }
-        graf_mouse(HRGLASS, NULL);
+        graf_mouse(HGLASS, NULL);
         fpd_parse(pw->w_path->p_spec, &drv, &path[0], &name[0], &ext[0]);
         if (trueclose) path[0] = 0;
         if (!path[0])

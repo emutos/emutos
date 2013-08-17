@@ -31,7 +31,6 @@ typedef struct
 
 #define ARROW   0
 #define HGLASS  2
-#define HRGLASS 2
 
 
 #define GLOBES struct glnode
