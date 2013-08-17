@@ -4960,3 +4960,5 @@ Start... early ages
   desk/deskmain.c desk/deskobj.c desk/deskpro.c desk/deskrez.c
   desk/desksupp.c desk/deskwin.c: Merge infodef.h into deskbind.h. (RFB)
 - desk/infodef.h: Removed, no longer required. (RFB)
+- desk/deskbind.h desk/deskdir.c: Code cleanup: rename the desktop's 'FCB'
+  structure to 'DTA' to reduce confusion. (RFB)

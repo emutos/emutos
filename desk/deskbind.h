@@ -19,16 +19,15 @@
 #include "deskconf.h"
 #include "desk_rsc.h"           /* for RS_NTREE */
 
-#define FCB struct fcb
-FCB
+typedef struct
 {
-        BYTE            fcb_reserved[21];
-        BYTE            fcb_attr;
-        WORD            fcb_time;
-        WORD            fcb_date;
-        LONG            fcb_size;
-        BYTE            fcb_name[13];
-};
+        BYTE            d_reserved[21];
+        BYTE            d_attr;
+        WORD            d_time;
+        WORD            d_date;
+        LONG            d_size;
+        BYTE            d_name[14];
+} DTA;
 
 #define ARROW   0
 #define HGLASS  2
@@ -75,7 +74,7 @@ GLOBES
                                                 /*   for non-recursive  */
                                                 /*   directory tree     */
                                                 /*   traversal          */
-/*GLOBAL*/ FCB          g_fcbstk[MAX_LEVEL];
+/*GLOBAL*/ DTA          g_dtastk[MAX_LEVEL];
 /*GLOBAL*/ LONG         g_nfiles;
 /*GLOBAL*/ LONG         g_ndirs;
 /*GLOBAL*/ LONG         g_size;

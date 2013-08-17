@@ -535,7 +535,7 @@ WORD d_doop(WORD op, LONG tree, WORD obj, BYTE *psrc_path, BYTE *pdst_path,
                                                 /*   level 0            */
         level = 0;
                                                 /* set up initial DTA   */
-        dos_sdta(ADDR(&G.g_fcbstk[level]));
+        dos_sdta(ADDR(&G.g_dtastk[level]));
         dos_sfirst(psrc_path, 0x16);
 
         cont = more = TRUE;
@@ -589,7 +589,7 @@ WORD d_doop(WORD op, LONG tree, WORD obj, BYTE *psrc_path, BYTE *pdst_path,
                 sub_path(psrc_path);
                 if (op == OP_COPY)
                   sub_path(pdst_path);
-                dos_sdta(ADDR(&G.g_fcbstk[level]));
+                dos_sdta(ADDR(&G.g_dtastk[level]));
               }
             } /* if no more files */
             else
@@ -597,23 +597,23 @@ WORD d_doop(WORD op, LONG tree, WORD obj, BYTE *psrc_path, BYTE *pdst_path,
           }
           if ( !skip && more )
           {
-            if ( G.g_fcbstk[level].fcb_attr & F_SUBDIR )
+            if ( G.g_dtastk[level].d_attr & F_SUBDIR )
             {                                   /* step down 1 level    */
-              if ( (G.g_fcbstk[level].fcb_name[0] != '.') &&
+              if ( (G.g_dtastk[level].d_name[0] != '.') &&
                    (level < (MAX_LEVEL-1)) )
               {
                                                 /* change path name     */
-                add_path(psrc_path, &G.g_fcbstk[level].fcb_name[0]);
+                add_path(psrc_path, &G.g_dtastk[level].d_name[0]);
                 if (op == OP_COPY)
                 {
-                  add_fname(pdst_path, &G.g_fcbstk[level].fcb_name[0]);
+                  add_fname(pdst_path, &G.g_dtastk[level].d_name[0]);
                   dos_mkdir(pdst_path);
                   if ( (DOS_ERR) && (DOS_AX != E_NOACCESS) )
                     more = d_errmsg();
                   strcat(pdst_path, "\\*.*");
                 }
                 level++;
-                dos_sdta(ADDR(&G.g_fcbstk[level]));
+                dos_sdta(ADDR(&G.g_dtastk[level]));
                 if (more)
                   dos_sfirst(psrc_path, 0x16);
               } /* if not a dir */
@@ -621,22 +621,22 @@ WORD d_doop(WORD op, LONG tree, WORD obj, BYTE *psrc_path, BYTE *pdst_path,
             else
             {
               if (op)
-                add_fname(psrc_path, &G.g_fcbstk[level].fcb_name[0]);
+                add_fname(psrc_path, &G.g_dtastk[level].d_name[0]);
               switch(op)
               {
                 case OP_COUNT:
                         G.g_nfiles++;
-                        G.g_size += G.g_fcbstk[level].fcb_size;
+                        G.g_size += G.g_dtastk[level].d_size;
                         break;
                 case OP_DELETE:
                         more = d_dofdel(psrc_path);
                         break;
                 case OP_COPY:
-                        add_fname(pdst_path, &G.g_fcbstk[level].fcb_name[0]);
+                        add_fname(pdst_path, &G.g_dtastk[level].d_name[0]);
                         more = d_dofcopy(psrc_path, pdst_path,
-                                G.g_fcbstk[level].fcb_time,
-                                G.g_fcbstk[level].fcb_date,
-                                G.g_fcbstk[level].fcb_attr);
+                                G.g_dtastk[level].d_time,
+                                G.g_dtastk[level].d_date,
+                                G.g_dtastk[level].d_attr);
                         del_fname(pdst_path);
                         break;
               }
