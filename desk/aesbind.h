@@ -9,6 +9,7 @@
 
 #ifndef AESBIND_H
 #define AESBIND_H
+#include "obdefs.h"
 
 /* AES prototypes: */
 
@@ -39,14 +40,14 @@ WORD menu_tnormal(LONG tree, WORD titlenum, WORD normalit);
 /* WORD menu_text(LONG tree, WORD inum, LONG ptext); */
 WORD menu_click(WORD click, WORD setit);
 
-WORD objc_add(LONG tree, WORD parent, WORD child);
-/*WORD objc_delete(LONG tree, WORD delob);*/
-WORD objc_draw(LONG tree, WORD drawob, WORD depth, WORD xc, WORD yc,
+WORD objc_add(OBJECT *tree, WORD parent, WORD child);
+/*WORD objc_delete(OBJECT *tree, WORD delob);*/
+WORD objc_draw(OBJECT *tree, WORD drawob, WORD depth, WORD xc, WORD yc,
                WORD wc, WORD hc);
-WORD objc_find(LONG tree, WORD startob, WORD depth, WORD mx, WORD my);
-WORD objc_order(LONG tree, WORD mov_obj, WORD newpos);
-WORD objc_offset(LONG tree, WORD obj, WORD *poffx, WORD *poffy);
-WORD objc_change(LONG tree, WORD drawob, WORD depth, WORD xc, WORD yc,
+WORD objc_find(OBJECT *tree, WORD startob, WORD depth, WORD mx, WORD my);
+WORD objc_order(OBJECT *tree, WORD mov_obj, WORD newpos);
+WORD objc_offset(OBJECT *tree, WORD obj, WORD *poffx, WORD *poffy);
+WORD objc_change(OBJECT *tree, WORD drawob, WORD depth, WORD xc, WORD yc,
                  WORD wc, WORD hc, WORD newstate, WORD redraw);
 
 WORD form_do(LONG form, WORD start);

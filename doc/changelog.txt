@@ -4969,3 +4969,6 @@ Start... early ages
 - desk/deskact.c desk/deskbind.h desk/deskmain.c desk/deskobj.c
   desk/desksupp.c desk/deskwin.c: Code cleanup: eliminate another desktop
   global. (RFB)
+- desk/aesbind.h desk/deskact.c desk/deskdir.c desk/deskinf.c desk/deskobj.c
+  desk/desksupp.c desk/deskwin.c desk/gembind.c include/obdefs.h:
+  Code cleanup: set type of first arg to objc_xxx() as OBJECT *. (RFB)

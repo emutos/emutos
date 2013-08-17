@@ -47,9 +47,7 @@ static const OBJECT gl_sampob[2] =
 void obj_init(void)
 {
         WORD            ii;
-        LONG            tree;
 
-        tree = ADDR(G.g_screen);
         for (ii = 0; ii < NUM_SOBS; ii++)
         {
           G.g_screen[ii].ob_head = NIL;
@@ -61,7 +59,7 @@ void obj_init(void)
         for (ii = 0; ii < (NUM_WNODES+1); ii++)
         {
           memcpy(&G.g_screen[DROOT+ii], &gl_sampob[1], sizeof(OBJECT));
-          objc_add(tree, ROOT, DROOT+ii);
+          objc_add(G.g_screen, ROOT, DROOT+ii);
         } /* for */
 } /* obj_init */
 
@@ -124,7 +122,7 @@ WORD obj_ialloc(WORD wparent, WORD x, WORD y, WORD w, WORD h)
         if (ii < NUM_SOBS)
         {
           G.g_screen[ii].ob_head = G.g_screen[ii].ob_tail = NIL;
-          objc_add(ADDR(G.g_screen), wparent, ii);
+          objc_add(G.g_screen, wparent, ii);
           r_set((GRECT *)&G.g_screen[ii].ob_x, x, y, w, h);
           return(ii);
         }

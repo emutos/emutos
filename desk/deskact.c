@@ -47,8 +47,9 @@ static WORD act_chkobj(LONG tree, WORD root, WORD obj, WORD mx, WORD my, WORD w,
 static WORD gr_obfind(LONG tree, WORD root, WORD mx, WORD my)
 {
         WORD            sobj;
+        OBJECT          *obtree = (OBJECT *)tree;
 
-        sobj = objc_find(tree, root, 2, mx, my);
+        sobj = objc_find(obtree, root, 2, mx, my);
         if ( (sobj != root) &&
              (sobj != NIL) )
           sobj = act_chkobj(tree, root, sobj, mx, my, 1, 1);
@@ -552,7 +553,7 @@ WORD act_chg(WORD wh, LONG tree, WORD root, WORD obj, GRECT *pc, UWORD chgvalue,
         {
                                                 /* change it without    */
                                                 /*   drawing            */
-          objc_change(tree, obj, 0, pc->g_x, pc->g_y, pc->g_w, pc->g_h,
+          objc_change(olist, obj, 0, pc->g_x, pc->g_y, pc->g_w, pc->g_h,
                          curr_state, FALSE);
                                                 /* clip to uncovered    */
                                                 /*   portion desktop or */

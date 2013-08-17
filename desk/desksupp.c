@@ -104,10 +104,7 @@ void do_wredraw(WORD w_handle, WORD xc, WORD yc, WORD wc, WORD hc)
 {
         GRECT   clip_r, t;
         WNODE   *pw;
-        LONG    tree;
         WORD    root;
-
-        tree = ADDR(G.g_screen);
 
         clip_r.g_x = xc;
         clip_r.g_y = yc;
@@ -131,7 +128,7 @@ void do_wredraw(WORD w_handle, WORD xc, WORD yc, WORD wc, WORD hc)
         while ( t.g_w && t.g_h )
         {
           if ( rc_intersect(&clip_r, &t) )
-            objc_draw(tree, root, MAX_DEPTH, t.g_x, t.g_y, t.g_w, t.g_h);
+            objc_draw(G.g_screen, root, MAX_DEPTH, t.g_x, t.g_y, t.g_w, t.g_h);
           wind_get(w_handle, WF_NEXTXYWH, &t.g_x, &t.g_y, &t.g_w, &t.g_h);
         }
         graf_mouse(M_ON, 0x0L);

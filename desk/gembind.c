@@ -21,6 +21,7 @@
 #include "config.h"
 #include "portab.h"
 #include "compat.h"
+#include "obdefs.h"
 #include "gembind.h"
 
 
@@ -471,9 +472,9 @@ WORD menu_click(WORD click, WORD setit)
 
 
                                         /* Object Manager               */
-WORD objc_add(LONG tree, WORD parent, WORD child)
+WORD objc_add(OBJECT *tree, WORD parent, WORD child)
 {
-        OB_TREE = tree;
+        OB_TREE = (LONG)tree;
         OB_PARENT = parent;
         OB_CHILD = child;
         return( gem_if( OBJC_ADD ) );
@@ -490,10 +491,10 @@ WORD objc_delete(LONG tree, WORD delob)
 */
 
 
-WORD objc_draw(LONG tree, WORD drawob, WORD depth, WORD xc, WORD yc,
+WORD objc_draw(OBJECT *tree, WORD drawob, WORD depth, WORD xc, WORD yc,
                WORD wc, WORD hc)
 {
-        OB_TREE = tree;
+        OB_TREE = (LONG)tree;
         OB_DRAWOB = drawob;
         OB_DEPTH = depth;
         OB_XCLIP = xc;
@@ -504,9 +505,9 @@ WORD objc_draw(LONG tree, WORD drawob, WORD depth, WORD xc, WORD yc,
 }
 
 
-WORD objc_find(LONG tree, WORD startob, WORD depth, WORD mx, WORD my)
+WORD objc_find(OBJECT *tree, WORD startob, WORD depth, WORD mx, WORD my)
 {
-        OB_TREE = tree;
+        OB_TREE = (LONG)tree;
         OB_STARTOB = startob;
         OB_DEPTH = depth;
         OB_MX = mx;
@@ -515,18 +516,18 @@ WORD objc_find(LONG tree, WORD startob, WORD depth, WORD mx, WORD my)
 }
 
 
-WORD objc_order(LONG tree, WORD mov_obj, WORD newpos)
+WORD objc_order(OBJECT *tree, WORD mov_obj, WORD newpos)
 {
-        OB_TREE = tree;
+        OB_TREE = (LONG)tree;
         OB_OBJ = mov_obj;
         OB_NEWPOS = newpos;
         return( gem_if( OBJC_ORDER ) );
 }
 
 
-WORD objc_offset(LONG tree, WORD obj, WORD *poffx, WORD *poffy)
+WORD objc_offset(OBJECT *tree, WORD obj, WORD *poffx, WORD *poffy)
 {
-        OB_TREE = tree;
+        OB_TREE = (LONG)tree;
         OB_OBJ = obj;
         gem_if(OBJC_OFFSET);
         *poffx = OB_XOFF;
@@ -550,10 +551,10 @@ WORD objc_edit(LONG tree, WORD obj, WORD inchar, WORD *idx, WORD kind)
 */
 
 
-WORD objc_change(LONG tree, WORD drawob, WORD depth, WORD xc, WORD yc,
+WORD objc_change(OBJECT *tree, WORD drawob, WORD depth, WORD xc, WORD yc,
                  WORD wc, WORD hc, WORD newstate, WORD redraw)
 {
-        OB_TREE = tree;
+        OB_TREE = (LONG)tree;
         OB_DRAWOB = drawob;
         OB_DEPTH = depth;
         OB_XCLIP = xc;

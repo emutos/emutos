@@ -2,6 +2,8 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
+*                 2013 The EmuTOS development team
+*
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
 *
@@ -12,6 +14,8 @@
 *       Copyright (C) 1986                      Digital Research Inc.
 *       -------------------------------------------------------------
 */
+#ifndef _OBDEFS_H
+#define _OBDEFS_H
 
 #define ROOT 0
 #define NIL -1
@@ -241,3 +245,5 @@ PARMBLK
 #define TE_LEFT 0
 #define TE_RIGHT 1
 #define TE_CNTR 2
+
+#endif  /* _OBDEFS_H */

@@ -76,7 +76,7 @@ static void blank_it(WORD obid)
         wind_get(G.g_wlastsel, WF_WXYWH, &clipr.g_x, &clipr.g_y,
                  &clipr.g_w, &clipr.g_h);
         gsx_sclip(&clipr);
-        objc_offset(ADDR(&G.g_screen[0]), obid, &blt_x, &blt_y);
+        objc_offset(G.g_screen, obid, &blt_x, &blt_y);
         if (G.g_iview == V_ICON)
         {
           piblk = get_spec(G.g_screen, obid);
@@ -115,7 +115,7 @@ static void move_icon(WORD obj, WORD dulx, WORD duly)
 /* animate an icon moving from its place on the desktop to dulx,duly    */
         WORD            sulx, suly, w, h;
 
-        objc_offset(ADDR(&G.g_screen[0]), obj, &sulx, &suly);
+        objc_offset(G.g_screen, obj, &sulx, &suly);
         if (G.g_iview == V_ICON)
         {
           w = G.g_wicon;
@@ -138,20 +138,22 @@ static void move_icon(WORD obj, WORD dulx, WORD duly)
 static void draw_dial(LONG tree)
 {
         WORD            xd, yd, wd, hd;
+        OBJECT          *obtree = (OBJECT *)tree;
 
         form_center(tree, &xd, &yd, &wd, &hd);
-        objc_draw(tree, ROOT, MAX_DEPTH, xd, yd, wd, hd);
+        objc_draw(obtree, ROOT, MAX_DEPTH, xd, yd, wd, hd);
 } /* draw_dial */
 
 
 void show_hide(WORD fmd, LONG tree)
 {
         WORD            xd, yd, wd, hd;
+        OBJECT          *obtree = (OBJECT *)tree;
 
         form_center(tree, &xd, &yd, &wd, &hd);
         form_dial(fmd, 0, 0, 0, 0, xd, yd, wd, hd);
         if (fmd == FMD_START)
-          objc_draw(tree, ROOT, MAX_DEPTH, xd, yd, wd, hd);
+          objc_draw(obtree, ROOT, MAX_DEPTH, xd, yd, wd, hd);
 }
 
 
@@ -179,11 +181,12 @@ static void do_namecon(void)
 void draw_fld(LONG tree, WORD obj)
 {
         GRECT           t;
-        OBJECT *objptr = (OBJECT *)tree + obj;
+        OBJECT *obtree = (OBJECT *)tree;
+        OBJECT *objptr = obtree + obj;
 
         memcpy(&t,&objptr->ob_x,sizeof(GRECT));
-        objc_offset(tree, obj, &t.g_x, &t.g_y);
-        objc_draw(tree, obj, MAX_DEPTH, t.g_x, t.g_y, t.g_w, t.g_h);
+        objc_offset(obtree, obj, &t.g_x, &t.g_y);
+        objc_draw(obtree, obj, MAX_DEPTH, t.g_x, t.g_y, t.g_w, t.g_h);
 } /* draw_fld */
 
 
