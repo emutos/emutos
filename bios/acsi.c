@@ -10,7 +10,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#define DBG_ACSI 0
+/* #define ENABLE_KDEBUG */
 
 #include "config.h"
 #include "acsi.h"
@@ -23,6 +23,9 @@
 #include "gemerror.h"
 #include "blkdev.h"
 #include "processor.h"
+#include "asm.h"
+#include "cookie.h"
+#include "delay.h"
 
 #if CONF_WITH_ACSI
 
@@ -30,22 +33,65 @@
  * private prototypes
  */
 
-static void hdc_start_dma_read(int count);
-static void hdc_start_dma_write(int count);
-static void dma_send_byte(UBYTE data, UBYTE control);
-static int send_command(WORD opcode, WORD dev, LONG sector, WORD cnt);
+static void hdc_start_dma(UWORD control);
+static void dma_send_byte(UBYTE data, UWORD control);
+static void build_command(UBYTE *cdb,WORD rw,WORD dev,LONG sector,WORD cnt);
+static int send_command(UBYTE *cdb,WORD rw,WORD cnt);
 static int do_acsi_rw(WORD rw, LONG sect, WORD cnt, LONG buf, WORD dev);
+
+
+/* the following exist to allow the data and control registers to
+ * be written together as well as separately.  this avoids the
+ * "DMA chip anomaly" (see "Atari ACSI/DMA Integration Guide" p.14).
+ */
+#define ACSIDMA ((union acsidma *) 0xFFFF8604)
+
+union acsidma {
+    volatile ULONG datacontrol;
+    struct {
+        volatile UWORD data;
+        volatile UWORD control;
+    } s;
+};
+
 
 /*
  * defines
  */
-
 #define SMALL_TIMEOUT 100   /* ms between cmd bytes */
-#define LARGE_TIMEOUT 1000  /* ms for the command itself */
+#define LARGE_TIMEOUT 1000  /* ms for the data xfer itself */
+
+/*
+ * there should be a minimum of 5msec between ACSI I/Os.  because
+ * of the granularity of the system clock, we need 2 ticks ...
+ */
+#define INTER_IO_TIME 2     /* ticks between I/Os */
+
+/* delay for dma out toggle */
+#define delay() delay_loop(loopcount_delay)
+
+
+/*
+ * local variables
+ */
+static ULONG loopcount_delay;   /* used by delay() macro */
+static ULONG next_acsi_time;    /* earliest time we can start the next i/o */
+
 
 /*
  * High-level ACSI stuff.
  */
+void acsi_init(void)
+{
+    /* the following delay is used between toggling dma out.  in Atari
+     * TOSes, the delay is provided by an instruction sequence which
+     * takes about 15usec on an ST, 5usec on a TT or Falcon.  we always
+     * use 15usec.
+     */
+    loopcount_delay = 15 * loopcount_1_msec / 1000;
+
+    next_acsi_time = hz_200;    /* immediate :-) */
+}
 
 LONG acsi_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
 {
@@ -71,9 +117,7 @@ LONG acsi_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
 #if CONF_WITH_FRB
         if (buf > 0x1000000L) {
             if (cookie_frb == 0) {
-#if DBG_ACSI
-                kprintf("missing FRB buffer");
-#endif
+                KDEBUG(("acsi.c: FRB is missing\n"));
                 return -1L;
             } else {
                 /* proper FRB lock (TODO) */
@@ -100,9 +144,8 @@ LONG acsi_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
             /* proper FRB unlock (TODO) */
         }
         if(err) {
-#if DBG_ACSI
-            kprintf("ACSI -> %d\n", err);
-#endif
+            KDEBUG(("acsi.c: %s error %d\n",rw?"write":"read",err));
+            KDEBUG(("        dev=%d,sector=%ld,cnt=%d\n",dev,sector,cnt));
             return err;
         }
 
@@ -120,16 +163,17 @@ LONG acsi_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
 
 static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, LONG buf, WORD dev)
 {
-    /* ACSI uses the top 3 bits of the command code to
-     * specify the device number
-     */
-    int opcode;
+    UBYTE cdb[6];
     int status;
+    UWORD control;
     LONG buflen = (LONG)cnt * SECTOR_SIZE;
 
     /* flush data cache here so that memory is current */
     if (rw == RW_WRITE)
         flush_data_cache((void *)buf,buflen);
+
+    while(hz_200 < next_acsi_time)  /* wait until safe */
+        ;
 
     /* set flock */
     flock = -1;
@@ -137,26 +181,26 @@ static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, LONG buf, WORD dev)
     /* load DMA base address */
     set_dma_addr((ULONG) buf);
 
-    if(rw) {
-        hdc_start_dma_write(cnt);
-        opcode = 0x0a;      /* write */
-    } else {
-        hdc_start_dma_read(cnt);
-        opcode = 0x08;      /* read */
-    }
-
     /* emit command */
-    status = send_command(opcode,dev,sector,cnt);
+    build_command(cdb,rw,dev,sector,cnt);
+    status = send_command(cdb,rw,cnt);
 
     if (status == 0) {      /* no timeout */
         /* read status */
-        DMA->control = DMA_FDC | DMA_HDC | DMA_A0;
-        status = DMA->data;
+        control = DMA_FDC | DMA_HDC | DMA_A0;
+        if (rw == RW_WRITE)
+            control |= DMA_WRBIT;
+        ACSIDMA->s.control = control;
+        status = ACSIDMA->s.data & 0x00ff;
     }
+    if (status)
+        KDEBUG(("cdb=%02x%02x%02x%02x%02x%02x\n",cdb[0],cdb[1],cdb[2],cdb[3],cdb[4],cdb[5]));
 
     /* put back to floppy and free flock */
-    DMA->control = DMA_FDC;
+    ACSIDMA->s.control = DMA_FDC;
     flock = 0;
+
+    next_acsi_time = hz_200 + INTER_IO_TIME;
 
     /* invalidate data cache if we've read into memory */
     if (rw == RW_READ)
@@ -166,64 +210,94 @@ static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, LONG buf, WORD dev)
 }
 
 /*
+ * build ACSI command
+ */
+static void build_command(UBYTE *cdb,WORD rw,WORD dev,LONG sector,WORD cnt)
+{
+    if (rw == RW_WRITE) {
+        cdb[0] = 0x0a;          /* ACSI/SCSI write */
+    } else {
+        cdb[0] = 0x08;          /* ACSI/SCSI read */
+    }
+
+    /* ACSI uses the top 3 bits of the command code to
+     * specify the device number
+     */
+    cdb[0] |= (dev<<5);
+
+    /*
+     * FIXME:
+     * we silently zero byte 1 bits 7-5 in case we are accessing
+     * a SCSI disk via a converter (these bits are the SCSI LUN in
+     * the SCSI read and write commands).
+     * this means that the maximum sector number is 0x1fffff; so,
+     * for disks greater than 1GB, accessing a sector past the 1GB
+     * mark will read/write the wrong sector :-(.  this isn't a
+     * problem for real ACSI disks (which never got that big),
+     * but is for >1GB SCSI disks accessed via a converter.
+     */
+    cdb[1] = (sector >> 16) & 0x1f;
+    cdb[2] = sector >> 8;
+    cdb[3] = sector;
+    cdb[4] = cnt;
+    cdb[5] = 0x00;
+}
+
+/*
  * send an ACSI command; return -1 if timeout
  */
-static int send_command(WORD opcode,WORD dev,LONG sector,WORD cnt)
+static int send_command(UBYTE *cdb,WORD rw,WORD cnt)
 {
-    dma_send_byte( opcode | (dev<<5), DMA_FDC | DMA_HDC);
-    if (timeout_gpip(SMALL_TIMEOUT))
-        return -1;
+    UWORD control;
+    UBYTE *p;
+    int i;
 
-    dma_send_byte( ((sector >> 16) & 0x1F), DMA_FDC | DMA_HDC | DMA_A0);
-    if (timeout_gpip(SMALL_TIMEOUT))
-        return -1;
+    if (rw == RW_WRITE) {
+        control = DMA_WRBIT | DMA_FDC | DMA_HDC;
+    } else {
+        control = DMA_FDC | DMA_HDC;
+    }
+    hdc_start_dma(control);
+    ACSIDMA->s.data = cnt;
 
-    dma_send_byte( sector >> 8, DMA_FDC | DMA_HDC | DMA_A0);
-    if (timeout_gpip(SMALL_TIMEOUT))
-        return -1;
+    ACSIDMA->s.control = control;   /* assert command signal */
+    control |= DMA_A0;              /* set up for remaining bytes */
 
-    dma_send_byte( sector,  DMA_FDC | DMA_HDC | DMA_A0);
-    if (timeout_gpip(SMALL_TIMEOUT))
-        return -1;
+    for (i = 0, p = cdb; i < 5; i++) {
+        dma_send_byte(*p++,control);
+        if (timeout_gpip(SMALL_TIMEOUT))
+            return -1;
+    }
 
-    dma_send_byte( cnt, DMA_FDC | DMA_HDC | DMA_A0);
-    if (timeout_gpip(SMALL_TIMEOUT))
-        return -1;
-
-    dma_send_byte( 0, DMA_HDC | DMA_A0);
+    /* send the last byte & wait for completion of DMA */
+    control &= 0xff00;
+    dma_send_byte(*p,control);
     if (timeout_gpip(LARGE_TIMEOUT))
         return -1;
 
     return 0;
 }
 
-static void dma_send_byte(UBYTE data, UBYTE control)
-{
-    DMA->control = control;
-    DMA->data = data;
-}
-
-
-/* the hdc_start_dma_*() functions toggle the DMA write bit, to
- * signal the DMA to clear its internal buffers (16 bytes in input,
- * 32 bytes in output). This is done just before issuing the
- * command to the DMA.
+/*
+ * send current byte plus the control for the _next_ byte
  */
-
-static void hdc_start_dma_read(int count)
+static void dma_send_byte(UBYTE data, UWORD control)
 {
-    DMA->control = DMA_SCREG | DMA_FDC | DMA_HDC;
-    DMA->control = DMA_SCREG | DMA_FDC | DMA_HDC | DMA_WRBIT;
-    DMA->control = DMA_SCREG | DMA_FDC | DMA_HDC;
-    DMA->data = count;
+    ACSIDMA->datacontrol = (((ULONG)data) << 16) | control;
 }
 
-static void hdc_start_dma_write(int count)
+
+/* the hdc_start_dma() function sets 'control' to access the sector
+ * count register and then toggles the DMA write bit.  this signals
+ * the DMA to clear its internal buffers.
+ */
+static void hdc_start_dma(UWORD control)
 {
-    DMA->control = DMA_SCREG | DMA_FDC | DMA_HDC | DMA_WRBIT;
-    DMA->control = DMA_SCREG | DMA_FDC | DMA_HDC;
-    DMA->control = DMA_SCREG | DMA_FDC | DMA_HDC | DMA_WRBIT;
-    DMA->data = count;
+    control |= DMA_SCREG;
+    ACSIDMA->s.control = control ^ DMA_WRBIT;
+    delay();
+    ACSIDMA->s.control = control;
+    delay();
 }
 
 #endif /* CONF_WITH_ACSI */

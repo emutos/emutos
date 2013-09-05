@@ -4975,3 +4975,8 @@ Start... early ages
 - aes/gemmnlib.c aes/gemmnlib.h aes/gemwmlib.c aes/gemwmlib.h:
   Code cleanup: change scope of gl_datree, gl_wtree to local. (RFB)
 - include/dos.h: Code cleanup: remove unused structure definitions. (RFB)
+
+2013-09-04
+- bios/acsi.c bios/acsi.h bios/blkdev.c: Fix ACSI to work on real disks,
+  both ACSI & SCSI via converter.  Enhanced version of patch provided by
+  Hampa Hug. (RFB)

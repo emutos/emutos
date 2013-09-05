@@ -27,6 +27,7 @@
 #include "blkdev.h"
 #include "xhdi.h"
 #include "processor.h"
+#include "acsi.h"
 
 /*
  * Global variables
@@ -137,6 +138,11 @@ static void blkdev_hdv_init(void)
 
     /* Detect and initialize floppy drives */
     flop_hdv_init();
+
+#if CONF_WITH_ACSI
+    /* perform any ACSI initialization required */
+    acsi_init();
+#endif
 
     blkdevnum = 2; /* Start hard disk partitions at C: */
     disk_init(); /* Detect hard disk partitions */
