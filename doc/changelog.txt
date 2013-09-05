@@ -4980,3 +4980,7 @@ Start... early ages
 - bios/acsi.c bios/acsi.h bios/blkdev.c: Fix ACSI to work on real disks,
   both ACSI & SCSI via converter.  Enhanced version of patch provided by
   Hampa Hug. (RFB)
+
+2013-09-05
+- bios/acsi.c: Code cleanup: remove meaningless #if/#endif. (RFB)
+

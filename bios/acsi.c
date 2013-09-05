@@ -101,10 +101,6 @@ LONG acsi_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
     int err = 0;
     LONG tmp_buf;
 
-#if CONF_WITH_ACSI==0
-    return EUNDEV;
-#endif
-
     /* read by chunks of at most 0x80 sectors.
      * (0x80 * 512 bytes will fit in the 64 kB buffer _FRB, and cnt
      * must fit in a byte anyway.)
