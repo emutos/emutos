@@ -1103,16 +1103,12 @@ _v_get_pixel(Vwk * vwk)
  * output:
  *     pixel value
  */
-#if 0
 WORD
 get_pix(void)
 {
-    const WORD x = PTSIN[0];
-    const WORD y = PTSIN[1];
-
-    return pixelread(x,y);      /* return the composed color value */
+    /* return the composed color value */
+    return pixelread(PTSIN[0], PTSIN[1]);
 }
-#endif
 
 /*
  * put_pix - plot a pixel (just for linea!)
@@ -1122,23 +1118,27 @@ get_pix(void)
  *     PTSIN(0) = x coordinate.
  *     PTSIN(1) = y coordinate.
  */
-#if 0
-static void
+void
 put_pix(void)
 {
     UWORD *addr;
-    WORD x,y;
     UWORD color;
     UWORD mask;
     int plane;
 
-    x = PTSIN[0];       /* fetch x coord. */
-    y = PTSIN[1];       /* fetch y coord. */
-    color = INTIN[0];   /* device dependent encoded color bits */
+    const WORD x = PTSIN[0];
+    const WORD y = PTSIN[1];
 
-    /* convert x,y to start adress and bit mask */
+    /* convert x,y to start adress */
     addr = get_start_addr(x, y);
-    mask = 0x8000 >> (x&0xf);            /* initial bit position in WORD */
+    /* co-ordinates can wrap, but cannot write outside screen,
+     * alternatively this could check against v_bas_ad+vram_size()
+     */
+    if (addr < (UWORD*)v_bas_ad || addr >= get_start_addr(v_hz_rez, v_vt_rez)) {
+	    return;
+    }
+    color = INTIN[0];           /* device dependent encoded color bits */
+    mask = 0x8000 >> (x&0xf);   /* initial bit position in WORD */
 
     for (plane = v_planes-1; plane >= 0; plane-- ) {
         color = color >> 1| color << 15;        /* rotate color bits */
@@ -1148,4 +1148,3 @@ put_pix(void)
             *addr++ &= ~mask;
     }
 }
-#endif

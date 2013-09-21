@@ -234,10 +234,16 @@ extern BYTE     mouse_flag;     /* non-zero, if mouse ints disabled */
 extern BYTE     cur_ms_stat;    /* current mouse status */
 
 
+/* shared VDI functions & VDI line-A wrapper functions */
+void xfm_crfm(Vwk * vwk);	/* Vwk is unused */
+void undraw_sprite(void);
+void draw_sprite(void);
+WORD get_pix(void);
+void put_pix(void);
 
-/* Assembly Language Support Routines NEWLY ADDED */
+
+/* Assembly Language Support Routines, ignore workstation arg */
 void text_blt(Vwk * vwk);
-void xfm_crfm(Vwk * vwk);
 void rectfill (Vwk * vwk, Rect * rect);
 
 

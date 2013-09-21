@@ -32,7 +32,7 @@ extern void     (*user_mot)(void);      // user motion vector
 extern void call_user_but(WORD status);
 extern void call_user_wheel(WORD wheel_number, WORD wheel_amount);
 
-
+/* Mouse / sprite structure */
 typedef struct Mcdb_ Mcdb;
 struct Mcdb_ {
         WORD    xhot;
@@ -45,7 +45,7 @@ struct Mcdb_ {
 };
 
 /* prototypes */
-static void cur_display(WORD x, WORD y);
+static void cur_display(Mcdb *sprite, WORD x, WORD y);
 static void cur_replace(void);
 static void vb_draw(void);             /* user button vector */
 
@@ -53,15 +53,8 @@ extern void mouse_int(void);    /* mouse interrupt routine */
 extern void wheel_int(void);    /* wheel interrupt routine */
 extern void mov_cur(void);      /* user button vector */
 
-
-/* global storage area for mouse form definition */
-/* as long, as we use parts in assembler, we need these */
-extern WORD m_pos_hx;       // (cdb+0) Mouse hot spot - x coord
-extern WORD m_pos_hy;       // (cdb+2) Mouse hot spot - y coord
-extern WORD m_planes;       // (cdb+4) unused - Plane count for mouse pointer
-extern WORD m_cdb_bg;       // (cdb+6) Mouse background color as pel value
-extern WORD m_cdb_fg;       // (cdb+8) Mouse foreground color as pel value
-extern UWORD mask_form;     // (cdb+10) Storage for mouse mask and cursor
+/* global line-A storage area for mouse form definition */
+extern Mcdb mouse_cdb;
 
 extern WORD HIDE_CNT;
 extern WORD MOUSE_BT;
@@ -146,7 +139,7 @@ static void dis_cur(void)
     mouse_flag += 1;            // disable mouse redrawing
     HIDE_CNT -= 1;              // decrement hide operations counter
     if (HIDE_CNT == 0) {
-        cur_display(GCURX, GCURY);          // display the cursor
+        cur_display(&mouse_cdb, GCURX, GCURY);          // display the cursor
         draw_flag = 0;          // disable vbl drawing routine
     }
     else if (HIDE_CNT < 0) {
@@ -423,32 +416,38 @@ void _vex_wheelv(Vwk * vwk)
 
 
 
-static void set_mouse_form (Vwk * vwk, Mcdb * mcdb)
+/* copies src mouse form to dst, constrains hotspot
+ * position & colors and maps colors
+ */
+static void set_mouse_form (const Mcdb *src, Mcdb * dst)
 {
     int i;
+    WORD col;
     UWORD * gmdt;                /* global mouse definition table */
-    UWORD * mask;
-    UWORD * data;
+    const UWORD * mask;
+    const UWORD * data;
 
     mouse_flag += 1;            /* disable updates while redefining cursor */
 
     /* save x-offset of mouse hot spot */
-    m_pos_hx = mcdb->xhot & 0x000f;
+    dst->xhot = src->xhot & 0x000f;
 
     /* save y-offset of mouse hot spot */
-    m_pos_hy = mcdb->yhot & 0x000f;
+    dst->yhot = src->yhot & 0x000f;
 
     /* is background color index too high? */
-    if (mcdb->bg_col >= DEV_TAB[13]) {
-        mcdb->bg_col = 1;               /* yes - default to 1 */
+    col = src->bg_col;
+    if (col >= DEV_TAB[13]) {
+        col = 1;               /* yes - default to 1 */
     }
-    m_cdb_bg = MAP_COL[mcdb->bg_col];
+    dst->bg_col = MAP_COL[col];
 
     /* is forground color index too high? */
-    if (mcdb->fg_col >= DEV_TAB[13]) {
-        mcdb->fg_col = 1;               /* yes - default to 1 */
+    col = src->fg_col;
+    if (col >= DEV_TAB[13]) {
+        col = 1;               /* yes - default to 1 */
     }
-    m_cdb_fg = MAP_COL[mcdb->fg_col];
+    dst->fg_col = MAP_COL[col];
 
     /*
      * Move the new mouse defintion into the global mouse cursor definition
@@ -459,9 +458,9 @@ static void set_mouse_form (Vwk * vwk, Mcdb * mcdb)
      */
 
     /* copy the data to the global mouse definition table */
-    gmdt = &mask_form;
-    mask = mcdb->mask;
-    data = mcdb->data;
+    gmdt = dst->mask;
+    mask = src->mask;
+    data = src->data;
     for (i = 15; i >= 0; i--) {
         *gmdt++ = *mask++;              /* get next word of mask */
         *gmdt++ = *data++;              /* get next word of data */
@@ -491,9 +490,8 @@ static void set_mouse_form (Vwk * vwk, Mcdb * mcdb)
  */
 void xfm_crfm (Vwk * vwk)
 {
-    set_mouse_form(vwk, (Mcdb *)INTIN);
+    set_mouse_form((const Mcdb *)INTIN, &mouse_cdb);
 }
-
 
 
 /*
@@ -566,7 +564,7 @@ void vdimouse_init(Vwk * vwk)
     user_wheel = do_nothing;
 
     /* Move in the default mouse form (presently the arrow) */
-    set_mouse_form(vwk, (Mcdb *)&arrow_cdb);    /* transform mouse */
+    set_mouse_form(&arrow_cdb, &mouse_cdb);
 
     MOUSE_BT = 0;               // clear the mouse button state
     cur_ms_stat = 0;            // clear the mouse status
@@ -644,7 +642,7 @@ static void vb_draw(void)
         set_sr(old_sr);
         if (!mouse_flag) {
             cur_replace();              // remove the old cursor from the screen
-            cur_display(newx, newy);    // display the cursor
+            cur_display(&mouse_cdb, newx, newy);    // display the cursor
         }
     } else
         set_sr(old_sr);
@@ -700,7 +698,7 @@ static void vb_draw(void)
  *      d6.w    shift count
  */
 
-static void cur_display (WORD x, WORD y)
+static void cur_display (Mcdb *sprite, WORD x, WORD y)
 {
     int row_count, plane, inc, op, dst_inc;
     UWORD * addr, * mask_start;
@@ -709,8 +707,8 @@ static void cur_display (WORD x, WORD y)
     ULONG * save_l;
     MCS *mcs = mcs_ptr;
 
-    x -= m_pos_hx;              /* d0 <- left side of destination block */
-    y -= m_pos_hy;              /* d1 <- hi y : destination block */
+    x -= sprite->xhot;          /* d0 <- left side of destination block */
+    y -= sprite->yhot;          /* d1 <- hi y : destination block */
 
     mcs->stat = 0x00;           /* reset status of save buffer */
     op = 0;
@@ -732,7 +730,7 @@ static void cur_display (WORD x, WORD y)
     }
 
     /* clip y axis */
-    mask_start = &mask_form;            /* a3 -> MASK/FORM for cursor */
+    mask_start = sprite->mask;  /* a3 -> MASK/FORM for cursor */
     if ( y < 0 ) {
         /* clip up */
         row_count = y + 16;             /* calculate row count */
@@ -772,8 +770,8 @@ static void cur_display (WORD x, WORD y)
     save_w = (UWORD *)mcs->area;/* for word stores */
     save_l = mcs->area;         /* for long stores */
 
-    cdb_bg = m_cdb_bg;          /* get mouse background color bits */
-    cdb_fg = m_cdb_fg;          /* get mouse foreground color bits */
+    cdb_bg = sprite->bg_col;    /* get mouse background color bits */
+    cdb_fg = sprite->fg_col;    /* get mouse foreground color bits */
 
     /* plane controller, draw cursor in each graphic plane */
     for (plane = v_planes - 1; plane >= 0; plane--) {
@@ -929,4 +927,24 @@ static void cur_replace (void)
             }
         }
     }
+}
+
+
+/* line-A support */
+
+/* set by linea.S */
+WORD sprite_x, sprite_y;
+Mcdb *sprite_def;
+MCS *sprite_sav;
+
+void draw_sprite(void)
+{
+	mcs_ptr = sprite_sav;
+	cur_display(sprite_def, sprite_x, sprite_y);
+}
+
+void undraw_sprite(void)
+{
+	mcs_ptr = sprite_sav;
+	cur_replace();
 }

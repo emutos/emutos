@@ -25,6 +25,11 @@
         .extern __v_show_c
         .extern __v_hide_c
 
+        .extern _sprite_x
+        .extern _sprite_y
+        .extern _sprite_def
+        .extern _sprite_sav
+
 
 // ==== Global Declarations ================================================
 
@@ -33,6 +38,11 @@
 
 // ==== Line-A handler ===============================
 _int_linea:
+       /* save regs as they are needed if this is sprite un/draw */
+       move.w d0,_sprite_x
+       move.w d1,_sprite_y
+       move.l a0,_sprite_def
+       move.l a2,_sprite_sav
 #ifdef __mcoldfire__
         move.l  4(sp),a0        /* Get the opcode address */
 #else
@@ -239,23 +249,52 @@ linea_stub_msg:
 
 
 
-/* These routines are now different, and no longer usable from assembler */
+/* Some of these routines are now different, and no longer usable from
+ * assembler.  Only functions used by games are enabled.
+ *
+ * Some VDI C-functions can still be used directly as:
+ * - they don't use the passed VDI workstation pointer
+ * - parameters for line-A go in same Intin/Ptsin/Control arrays
+ * These functions are show, hide and transform (mouse) cursor.
+ *
+ * Couple of functions have line-A specific C-implementations,
+ * such are put_pix, get_pix, draw_sprite, undraw_sprite.
+ * Their arguments are in global variables/arrays.
+ *
+ * Some functions can call directly the (line-A derived) ASM
+ * iplementation shared by VDI, which use line-A variables
+ * (VDI function sets line-A variables before calling asm).
+ * "text_blt" is such function.
+ *
+ * Only interesting functions are:
+ * - show/hide cursor
+ * - draw/undraw sprite
+ * - put/get pixel
+ * - line/hline draw
+ * - filled rectangle
+ * - bitblit
+ * First are used by GFA, others by games, rest can be left unimplemented.
+ *
+ * It's safe to run line-A using programs only in (1-4 plane)
+ * ST/e modes.  Such programs can e.g. leave too little space
+ * for sprite backup buffer in higher resolutions).
+ */
 linea_vecs:
         .dc.l   _linea_0
-        .dc.l   _linea_1        /* _put_pix */
-        .dc.l   _linea_2        /* _get_pix */
+        .dc.l   _put_pix        /* $1 - put pixel */
+        .dc.l   _get_pix        /* $2 - get_pixel */
         .dc.l   _linea_3        /* _abline  */
         .dc.l   _linea_4        /* _habline */
         .dc.l   _linea_5        /* _rectfill */
         .dc.l   _linea_6        /* _clc_flit */
         .dc.l   _linea_7        /* _bit_blt */
         .dc.l   _linea_8        /* _text_blt */
-        .dc.l   __v_show_c       /* $9 - _dis_cur */
-        .dc.l   __v_hide_c       /* $A - _hide_cur */
-        .dc.l   _linea_b        /* _xfm_crfm */
-        .dc.l   _linea_c        /* cur_replace??? */
-        .dc.l   _linea_d        /* cur_display??? */
-        .dc.l   _linea_e        /* _COPY_RFM */
+        .dc.l   __v_show_c      /* $9 - show mouse */
+        .dc.l   __v_hide_c      /* $A - hide cursor */
+        .dc.l   _xfm_crfm       /* $B - transform mouse */
+        .dc.l   _undraw_sprite  /* $C - undraw sprite */
+        .dc.l   _draw_sprite    /* $D - draw sprite */
+        .dc.l   _linea_e        /* _vr_cpyfm? */
         .dc.l   _linea_f        /* _d_contourfill?? */
 linea_ents:
         /* Number of implemented Line A routines */
