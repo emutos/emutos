@@ -4987,3 +4987,5 @@ Start... early ages
 2013-09-21
 - bios/linea.S vdi/vdi_defs.h vdi/vdi_fill.c vdi/vdi_mouse.c: Added Line-A pixel
   set/get & sprite draw/undraw support. Contributed by Eero Tamminen. (VRI)
+- vdi/vdi_mouse.c: Avoid side effects between mouse and sprite save area.
+  Contributed by Eero Tamminen. (VRI)

@@ -45,8 +45,8 @@ struct Mcdb_ {
 };
 
 /* prototypes */
-static void cur_display(Mcdb *sprite, WORD x, WORD y);
-static void cur_replace(void);
+static void cur_display(Mcdb *sprite, MCS *savebuf, WORD x, WORD y);
+static void cur_replace(MCS *savebuf);
 static void vb_draw(void);             /* user button vector */
 
 extern void mouse_int(void);    /* mouse interrupt routine */
@@ -139,7 +139,7 @@ static void dis_cur(void)
     mouse_flag += 1;            // disable mouse redrawing
     HIDE_CNT -= 1;              // decrement hide operations counter
     if (HIDE_CNT == 0) {
-        cur_display(&mouse_cdb, GCURX, GCURY);          // display the cursor
+        cur_display(&mouse_cdb, mcs_ptr, GCURX, GCURY);  // display the cursor
         draw_flag = 0;          // disable vbl drawing routine
     }
     else if (HIDE_CNT < 0) {
@@ -174,7 +174,7 @@ static void hide_cur(void)
      */
     HIDE_CNT += 1;              // increment it
     if (HIDE_CNT == 1) {        // if cursor was not hidden...
-        cur_replace();          // remove the cursor from screen
+        cur_replace(mcs_ptr);   // remove the cursor from screen
         draw_flag = 0;          // disable vbl drawing routine
     }
 
@@ -641,8 +641,8 @@ static void vb_draw(void)
         draw_flag = FALSE;
         set_sr(old_sr);
         if (!mouse_flag) {
-            cur_replace();              // remove the old cursor from the screen
-            cur_display(&mouse_cdb, newx, newy);    // display the cursor
+            cur_replace(mcs_ptr);      // remove the old cursor from the screen
+            cur_display(&mouse_cdb, mcs_ptr, newx, newy);  // display the cursor
         }
     } else
         set_sr(old_sr);
@@ -698,14 +698,13 @@ static void vb_draw(void)
  *      d6.w    shift count
  */
 
-static void cur_display (Mcdb *sprite, WORD x, WORD y)
+static void cur_display (Mcdb *sprite, MCS *mcs, WORD x, WORD y)
 {
     int row_count, plane, inc, op, dst_inc;
     UWORD * addr, * mask_start;
     UWORD shft, cdb_fg, cdb_bg;
     UWORD * save_w;
     ULONG * save_l;
-    MCS *mcs = mcs_ptr;
 
     x -= sprite->xhot;          /* d0 <- left side of destination block */
     y -= sprite->yhot;          /* d1 <- hi y : destination block */
@@ -879,11 +878,10 @@ static void cur_display (Mcdb *sprite, WORD x, WORD y)
  *     _v_line_wr      line wrap (byte width of form)
  */
 
-static void cur_replace (void)
+static void cur_replace (MCS *mcs)
 {
     int inc, dst_inc, plane;
     UWORD * addr;
-    MCS *mcs = mcs_ptr;
 
     if (!(mcs->stat & 1) )      /* does save area contain valid data ? */
         return;
@@ -939,12 +937,10 @@ MCS *sprite_sav;
 
 void draw_sprite(void)
 {
-	mcs_ptr = sprite_sav;
-	cur_display(sprite_def, sprite_x, sprite_y);
+	cur_display(sprite_def, sprite_sav, sprite_x, sprite_y);
 }
 
 void undraw_sprite(void)
 {
-	mcs_ptr = sprite_sav;
-	cur_replace();
+	cur_replace(sprite_sav);
 }
