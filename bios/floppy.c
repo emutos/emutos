@@ -118,7 +118,7 @@ static WORD set_track(WORD track);
  * this must be longer than the longest command.
  * seeking to the end with spin-up sequence may take more than 2 seconds.
  */
-#define TIMEOUT 3000L /* in milliseconds */
+#define TIMEOUT (3*CLOCKS_PER_SEC)  /* in ticks */
 
 /* access to dma and fdc registers */
 static WORD get_dma_status(void);

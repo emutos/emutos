@@ -58,8 +58,8 @@ union acsidma {
 /*
  * defines
  */
-#define SMALL_TIMEOUT 100   /* ms between cmd bytes */
-#define LARGE_TIMEOUT 1000  /* ms for the data xfer itself */
+#define SMALL_TIMEOUT (CLOCKS_PER_SEC/10)   /* 100ms between cmd bytes */
+#define LARGE_TIMEOUT (CLOCKS_PER_SEC)      /* 1000ms for the data xfer itself */
 
 /*
  * there should be a minimum of 5msec between ACSI I/Os.  because

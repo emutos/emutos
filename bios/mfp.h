@@ -61,11 +61,7 @@
 #define IRQ_SCCA_RX          (IRQ_MACHSPEC | 52)
 #define IRQ_SCCA_SPCOND      (IRQ_MACHSPEC | 54)
 
-
-#define INT_CLK   24576     /* CLK while int_clk =2.456MHz and divide = 100 */
-#define INT_TICKS 246       /* to make sched_time = 99.902... HZ */
-
-
+#define CLOCKS_PER_SEC  200UL
 
 /*=========================================================================*/
 typedef struct
@@ -138,7 +134,7 @@ void mfp_init(void);
 void setup_timer(WORD timer, WORD control, WORD data);
 
 /* function which returns 1 if the timeout elapsed before the gpip changed */
-int timeout_gpip(LONG delay);   /* delay in milliseconds */
+int timeout_gpip(LONG delay);   /* delay in ticks */
 
 /*==== Xbios functions ====================================================*/
 

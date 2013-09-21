@@ -4990,3 +4990,5 @@ Start... early ages
 - vdi/vdi_mouse.c: Avoid side effects between mouse and sprite save area.
   Contributed by Eero Tamminen. (VRI)
 - bios/dma.c bios/dma.h bios/mfp.c bios/mfp.h: Minor code tidy up. (RFB)
+- bios/acsi.c bios/floppy.c bios/mfp.c bios/mfp.h: Eliminate divide in
+  timeout_gpip() by passing timeout in ticks. (RFB)

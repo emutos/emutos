@@ -148,11 +148,11 @@ void xbtimer(WORD timer, WORD control, WORD data, LONG vector)
     mfpint(timer_num[timer], vector);
 }
 
-/* returns 1 if the timeout (milliseconds) elapsed before gpip went low */
+/* returns 1 if the timeout (in clock ticks) elapsed before gpip went low */
 int timeout_gpip(LONG delay)
 {
     MFP *mfp = MFP_BASE;
-    LONG next = hz_200 + delay/5;
+    LONG next = hz_200 + delay;
 
     while(hz_200 < next) {
         if((mfp->gpip & 0x20) == 0) {
