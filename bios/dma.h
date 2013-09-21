@@ -53,11 +53,4 @@ struct dma {
 
 void set_dma_addr(ULONG addr);
 
-#if CONF_WITH_MFP
-
-/* function which returns 1 if the timeout elapsed before the gpip changed */
-int timeout_gpip(LONG delay);  /* delay in milliseconds */
-
-#endif /* CONF_WITH_MFP */
-
 #endif /* DMA_H */

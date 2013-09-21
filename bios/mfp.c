@@ -1,8 +1,8 @@
 /*
  * mfp.c - handling of the Atari ST Multi-Function Peripheral MFP 68901
  *
- * Copyright (c) 2001-2013 The EmuTOS development team
  * Copyright (c) 2001 Martin Doering
+ * Copyright (c) 2001-2013 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -146,6 +146,20 @@ void xbtimer(WORD timer, WORD control, WORD data, LONG vector)
     if(timer < 0 || timer > 3) return;
     setup_timer(timer, control, data);
     mfpint(timer_num[timer], vector);
+}
+
+/* returns 1 if the timeout (milliseconds) elapsed before gpip went low */
+int timeout_gpip(LONG delay)
+{
+    MFP *mfp = MFP_BASE;
+    LONG next = hz_200 + delay/5;
+
+    while(hz_200 < next) {
+        if((mfp->gpip & 0x20) == 0) {
+            return 0;
+        }
+    }
+    return 1;
 }
 
 #endif /* CONF_WITH_MFP */

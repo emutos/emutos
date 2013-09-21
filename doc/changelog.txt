@@ -4989,3 +4989,4 @@ Start... early ages
   set/get & sprite draw/undraw support. Contributed by Eero Tamminen. (VRI)
 - vdi/vdi_mouse.c: Avoid side effects between mouse and sprite save area.
   Contributed by Eero Tamminen. (VRI)
+- bios/dma.c bios/dma.h bios/mfp.c bios/mfp.h: Minor code tidy up. (RFB)

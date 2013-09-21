@@ -1,7 +1,8 @@
 /*
  *  mfp.h - header file for MFP defines
  *
- * Copyright (c) 2001-2013 Martin Doering
+ * Copyright (c) 2001 Martin Doering
+ * Copyright (c) 2001-2013 The EmuTOS development team
  *
  * Authors:
  *  MAD     Martin Doering
@@ -136,11 +137,14 @@ void jenabint(WORD num);
 void mfp_init(void);
 void setup_timer(WORD timer, WORD control, WORD data);
 
-#endif /* CONF_WITH_MFP */
+/* function which returns 1 if the timeout elapsed before the gpip changed */
+int timeout_gpip(LONG delay);   /* delay in milliseconds */
 
 /*==== Xbios functions ====================================================*/
 
 void xbtimer(WORD timer, WORD control, WORD data, LONG vector);
+
+#endif /* CONF_WITH_MFP */
 
 /*==== internal functions =================================================*/
 
