@@ -12,6 +12,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+/*#define ENABLE_KDEBUG*/
+
 #include "config.h"
 #include "stdarg.h"
 #include "kprint.h"
@@ -25,7 +27,6 @@
 
 #include "xhdi.h"
 
-#define DBG_XHDI        0
 
 #if CONF_WITH_XHDI
 
@@ -85,11 +86,9 @@ static long XHInqDev2(UWORD drv, UWORD *major, UWORD *minor, ULONG *start,
     int mediachange = 0;
     BPB *myBPB;
 
-#if DBG_XHDI
-    kprintf("XHInqDev2(%c:) start=%ld, size=%ld, ID=%c%c%c\n",
+    KDEBUG(("XHInqDev2(%c:) start=%ld, size=%ld, ID=%c%c%c\n",
             'A' + drv, pstart, blkdev[drv].size,
-            blkdev[drv].id[0], blkdev[drv].id[1], blkdev[drv].id[2]);
-#endif
+            blkdev[drv].id[0], blkdev[drv].id[1], blkdev[drv].id[2]));
 
     if (next_handler) {
         long ret = next_handler(XHINQDEV2, drv, major, minor, start, bpb, blocks, partid);
@@ -269,9 +268,7 @@ static long XHReaccess(UWORD major, UWORD minor)
 static long XHInqTarget2(UWORD major, UWORD minor, ULONG *blocksize,
                          ULONG *deviceflags, char *productname, UWORD stringlen)
 {
-#if DBG_XHDI
-    kprintf("XHInqTarget2(%d.%d)\n", major, minor);
-#endif
+    KDEBUG(("XHInqTarget2(%d.%d)\n", major, minor));
 
 #if CONF_WITH_XHDI
     if (next_handler) {
@@ -323,9 +320,7 @@ long XHInqTarget(UWORD major, UWORD minor, ULONG *blocksize,
 
 long XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
 {
-#if DBG_XHDI
-    kprintf("XHGetCapacity(%d.%d)\n", major, minor);
-#endif
+    KDEBUG(("XHGetCapacity(%d.%d)\n", major, minor));
 
 #if CONF_WITH_XHDI
     if (next_handler) {
@@ -355,10 +350,8 @@ long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
     WORD dev = major, bus, reldev;
     MAYBE_UNUSED(reldev);
 
-#if DBG_XHDI
-    kprintf("XH%s(device=%d.%d, sector=%ld, count=%d, buf=%p)\n",
-            rw ? "Write" : "Read", major, minor, sector, count, buf);
-#endif
+    KDEBUG(("XH%s(device=%d.%d, sector=%ld, count=%d, buf=%p)\n",
+            rw ? "Write" : "Read", major, minor, sector, count, buf));
 
 #if CONF_WITH_XHDI
     if (next_handler) {
@@ -388,9 +381,7 @@ long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
 #if CONF_WITH_ACSI
     case ACSI_BUS:
         ret = acsi_rw(rw, sector, count, (LONG)buf, reldev);
-#if DBG_XHDI
-        kprintf("acsi_rw() returned %ld\n", ret);
-#endif
+        KDEBUG(("acsi_rw() returned %ld\n", ret));
         break;
 #endif /* CONF_WITH_ACSI */
     case SCSI_BUS:
@@ -402,9 +393,7 @@ long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
         UWORD xbiosdev = 2 + dev;
         BOOL need_byteswap = devices[xbiosdev].byteswap;
         ret = ide_rw(rw, sector, count, (LONG)buf, reldev, need_byteswap);
-#if DBG_XHDI
-        kprintf("ide_rw() returned %ld\n", ret);
-#endif
+        KDEBUG(("ide_rw() returned %ld\n", ret));
         break;
     }
 #endif /* CONF_WITH_IDE */
