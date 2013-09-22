@@ -32,7 +32,8 @@
 /*
  * private prototypes
  */
-
+static void acsi_begin(void);
+static void acsi_end(void);
 static void hdc_start_dma(UWORD control);
 static void dma_send_byte(UBYTE data, UWORD control);
 static void build_command(UBYTE *cdb,WORD rw,WORD dev,LONG sector,WORD cnt);
@@ -152,6 +153,42 @@ LONG acsi_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
     return 0;
 }
 
+LONG acsi_testunit(WORD dev)
+{
+    UBYTE cdb[6];
+    int status;
+
+    acsi_begin();
+
+    /* set up Test Unit Ready cdb */
+    cdb[0] = dev << 5;
+    memset(cdb+1,0x00,5);
+    status = send_command(cdb,RW_READ,0); 
+   
+    acsi_end();
+
+    return status;
+}
+
+/* must call this before manipulating any ACSI-related hardware */
+static void acsi_begin(void)
+{
+    while(hz_200 < next_acsi_time)  /* wait until safe */
+        ;
+
+    flock = -1;     /* don't let floppy interfere */
+}
+
+/* must call this when finished with ACSI-related hardware */
+static void acsi_end(void)
+{
+    /* put DMA back to floppy and allow floppy i/o */
+    ACSIDMA->s.control = DMA_FDC;
+    flock = 0;
+
+    next_acsi_time = hz_200 + INTER_IO_TIME;    /* next safe time */
+}
+
 /*
  * Internal implementation -
  * cnt <= 0xFF, no retry done, returns -1 if timeout, or the DMA status.
@@ -168,11 +205,7 @@ static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, LONG buf, WORD dev)
     if (rw == RW_WRITE)
         flush_data_cache((void *)buf,buflen);
 
-    while(hz_200 < next_acsi_time)  /* wait until safe */
-        ;
-
-    /* set flock */
-    flock = -1;
+    acsi_begin();
 
     /* load DMA base address */
     set_dma_addr((ULONG) buf);
@@ -192,11 +225,7 @@ static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, LONG buf, WORD dev)
     if (status)
         KDEBUG(("cdb=%02x%02x%02x%02x%02x%02x\n",cdb[0],cdb[1],cdb[2],cdb[3],cdb[4],cdb[5]));
 
-    /* put back to floppy and free flock */
-    ACSIDMA->s.control = DMA_FDC;
-    flock = 0;
-
-    next_acsi_time = hz_200 + INTER_IO_TIME;
+    acsi_end();
 
     /* invalidate data cache if we've read into memory */
     if (rw == RW_READ)

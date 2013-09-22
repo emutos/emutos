@@ -268,6 +268,10 @@ static long XHReaccess(UWORD major, UWORD minor)
 static long XHInqTarget2(UWORD major, UWORD minor, ULONG *blocksize,
                          ULONG *deviceflags, char *productname, UWORD stringlen)
 {
+    LONG ret;
+    WORD dev = major, bus, reldev;
+    MAYBE_UNUSED(reldev);
+
     KDEBUG(("XHInqTarget2(%d.%d)\n", major, minor));
 
 #if CONF_WITH_XHDI
@@ -287,6 +291,42 @@ static long XHInqTarget2(UWORD major, UWORD minor, ULONG *blocksize,
     }
 #endif
 
+    if (minor != 0)
+        return EUNDEV;
+
+    bus = GET_BUS(dev);
+    reldev = dev - bus * DEVICES_PER_BUS;
+
+    /* hardware access to device */
+    switch(bus) {
+#if CONF_WITH_ACSI
+    case ACSI_BUS:
+        /* according to the "Atari ACSI/DMA Integration Guide" p.32,
+         * all ACSI devices must support Test Unit Ready.  so if we
+         * get a timeout, we assume the device does not exist.
+         */
+        ret = acsi_testunit(reldev);
+        KDEBUG(("acsi_testunit(%d) returned %ld\n", reldev, ret));
+        if (ret < 0)
+            return EUNDEV;
+        if (productname)
+            strcpy(productname, "ACSI Disk");
+        break;
+#endif /* CONF_WITH_ACSI */
+    case SCSI_BUS:
+        return EUNDEV;
+        break;
+#if CONF_WITH_IDE
+    case IDE_BUS:
+        /* we should test existence & get productname via Inquiry */
+        if (productname)
+            strcpy(productname, "IDE Disk");
+        break;
+#endif /* CONF_WITH_IDE */
+    default:
+        return EUNDEV;
+    }
+
     if (blocksize) {
         /* TODO could add some heuristic here:
          * 1) create two buffers and fill first with zeros and second with $ff
@@ -298,8 +338,6 @@ static long XHInqTarget2(UWORD major, UWORD minor, ULONG *blocksize,
     }
     if (deviceflags)
         *deviceflags = 0;  /* not implemented yet */
-    if (productname)
-        strcpy(productname, "EmuTOS Disk");
 
     return 0;
 }

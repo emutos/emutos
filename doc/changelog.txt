@@ -4993,3 +4993,5 @@ Start... early ages
 - bios/acsi.c bios/floppy.c bios/mfp.c bios/mfp.h: Eliminate divide in
   timeout_gpip() by passing timeout in ticks. (RFB)
 - bios/xhdi.c: Code cleanup: use KDEBUG() for debugging statements. (RFB)
+- bios/acsi.c bios/acsi.h bios/xhdi.c: XHInqTarget()/XHInqTarget2() now
+  report error if selected ACSI drive is not present. (RFB)
