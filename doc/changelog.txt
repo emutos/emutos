@@ -4995,3 +4995,6 @@ Start... early ages
 - bios/xhdi.c: Code cleanup: use KDEBUG() for debugging statements. (RFB)
 - bios/acsi.c bios/acsi.h bios/xhdi.c: XHInqTarget()/XHInqTarget2() now
   report error if selected ACSI drive is not present. (RFB)
+
+2013-09-23
+- bios/acsi.c: Support drives >1GB on ACSI interface. (RFB)

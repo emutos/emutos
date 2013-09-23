@@ -36,8 +36,8 @@ static void acsi_begin(void);
 static void acsi_end(void);
 static void hdc_start_dma(UWORD control);
 static void dma_send_byte(UBYTE data, UWORD control);
-static void build_command(UBYTE *cdb,WORD rw,WORD dev,LONG sector,WORD cnt);
-static int send_command(UBYTE *cdb,WORD rw,WORD cnt);
+static int build_rw_command(UBYTE *cdb,WORD rw,WORD dev,LONG sector,WORD cnt);
+static int send_command(UBYTE *cdb,WORD cdblen,WORD rw,WORD dev,WORD cnt);
 static int do_acsi_rw(WORD rw, LONG sect, WORD cnt, LONG buf, WORD dev);
 
 
@@ -160,11 +160,9 @@ LONG acsi_testunit(WORD dev)
 
     acsi_begin();
 
-    /* set up Test Unit Ready cdb */
-    cdb[0] = dev << 5;
-    memset(cdb+1,0x00,5);
-    status = send_command(cdb,RW_READ,0); 
-   
+    memset(cdb,0x00,6);     /* set up Test Unit Ready cdb */
+    status = send_command(cdb,6,RW_READ,dev,0);
+
     acsi_end();
 
     return status;
@@ -196,8 +194,8 @@ static void acsi_end(void)
 
 static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, LONG buf, WORD dev)
 {
-    UBYTE cdb[6];
-    int status;
+    UBYTE cdb[10];  /* allow for 10-byte read/write commands */
+    int status, cdblen;
     UWORD control;
     LONG buflen = (LONG)cnt * SECTOR_SIZE;
 
@@ -211,8 +209,8 @@ static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, LONG buf, WORD dev)
     set_dma_addr((ULONG) buf);
 
     /* emit command */
-    build_command(cdb,rw,dev,sector,cnt);
-    status = send_command(cdb,rw,cnt);
+    cdblen = build_rw_command(cdb,rw,dev,sector,cnt);
+    status = send_command(cdb,cdblen,rw,dev,cnt);
 
     if (status == 0) {      /* no timeout */
         /* read status */
@@ -235,47 +233,64 @@ static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, LONG buf, WORD dev)
 }
 
 /*
- * build ACSI command
+ * build ACSI read/write command
+ * returns length of command built
  */
-static void build_command(UBYTE *cdb,WORD rw,WORD dev,LONG sector,WORD cnt)
+static int build_rw_command(UBYTE *cdb,WORD rw,WORD dev,LONG sector,WORD cnt)
 {
-    if (rw == RW_WRITE) {
-        cdb[0] = 0x0a;          /* ACSI/SCSI write */
-    } else {
-        cdb[0] = 0x08;          /* ACSI/SCSI read */
+    /*
+     * when we talk to a device on the ACSI bus, it is almost always a
+     * SCSI device accessed via a converter.  so, we make our commands
+     * compatible with both ACSI and SCSI.  the maximum sector number
+     * for a 6-byte SCSI read/write command is 0x1fffff, corresponding
+     * to a 1GB disk. for disks greater than this, we must use the
+     * SCSI-only 10-byte read/write commands (this is not a problem
+     * since no ACSI disk was as large as 1GB).
+     */
+    if (sector <= 0x1fffffL) {  /* we can use 6-byte CDBs */
+        cdb[0] = (rw==RW_WRITE) ? 0x0a : 0x08;
+        cdb[1] = (sector >> 16) & 0x1f;
+        cdb[2] = sector >> 8;
+        cdb[3] = sector;
+        cdb[4] = cnt;
+        cdb[5] = 0x00;
+        return 6;
     }
 
-    /* ACSI uses the top 3 bits of the command code to
-     * specify the device number
-     */
-    cdb[0] |= (dev<<5);
-
-    /*
-     * FIXME:
-     * we silently zero byte 1 bits 7-5 in case we are accessing
-     * a SCSI disk via a converter (these bits are the SCSI LUN in
-     * the SCSI read and write commands).
-     * this means that the maximum sector number is 0x1fffff; so,
-     * for disks greater than 1GB, accessing a sector past the 1GB
-     * mark will read/write the wrong sector :-(.  this isn't a
-     * problem for real ACSI disks (which never got that big),
-     * but is for >1GB SCSI disks accessed via a converter.
-     */
-    cdb[1] = (sector >> 16) & 0x1f;
-    cdb[2] = sector >> 8;
-    cdb[3] = sector;
-    cdb[4] = cnt;
-    cdb[5] = 0x00;
+    cdb[0] = (rw==RW_WRITE) ? 0x2a : 0x28;
+    cdb[1] = 0x00;
+    cdb[2] = sector >> 24;
+    cdb[3] = sector >> 16;
+    cdb[4] = sector >> 8;
+    cdb[5] = sector;
+    cdb[6] = 0x00;
+    cdb[7] = cnt >> 8;
+    cdb[8] = cnt;
+    cdb[9] = 0x00;
+    return 10;
 }
 
 /*
  * send an ACSI command; return -1 if timeout
  */
-static int send_command(UBYTE *cdb,WORD rw,WORD cnt)
+static int send_command(UBYTE *inputcdb,WORD cdblen,WORD rw,WORD dev,WORD cnt)
 {
     UWORD control;
+    UBYTE cdb[13];      /* allow for 12-byte input commands */
     UBYTE *p;
     int i;
+
+    /*
+     * see if we need to use ICD trickery
+     */
+    if (*inputcdb > 0x1e) {
+        p = cdb;
+        *p = 0x1f;      /* ICD extended command method */
+        memcpy(p+1,inputcdb,cdblen);
+        cdblen++;
+    } else p = inputcdb;
+
+    *p |= (dev << 5);   /* insert device number */
 
     if (rw == RW_WRITE) {
         control = DMA_WRBIT | DMA_FDC | DMA_HDC;
@@ -288,7 +303,7 @@ static int send_command(UBYTE *cdb,WORD rw,WORD cnt)
     ACSIDMA->s.control = control;   /* assert command signal */
     control |= DMA_A0;              /* set up for remaining bytes */
 
-    for (i = 0, p = cdb; i < 5; i++) {
+    for (i = 0; i < cdblen-1; i++) {
         dma_send_byte(*p++,control);
         if (timeout_gpip(SMALL_TIMEOUT))
             return -1;
