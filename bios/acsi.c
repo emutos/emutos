@@ -196,7 +196,6 @@ static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, LONG buf, WORD dev)
 {
     UBYTE cdb[10];  /* allow for 10-byte read/write commands */
     int status, cdblen;
-    UWORD control;
     LONG buflen = (LONG)cnt * SECTOR_SIZE;
 
     /* flush data cache here so that memory is current */
@@ -211,17 +210,6 @@ static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, LONG buf, WORD dev)
     /* emit command */
     cdblen = build_rw_command(cdb,rw,dev,sector,cnt);
     status = send_command(cdb,cdblen,rw,dev,cnt);
-
-    if (status == 0) {      /* no timeout */
-        /* read status */
-        control = DMA_FDC | DMA_HDC | DMA_A0;
-        if (rw == RW_WRITE)
-            control |= DMA_WRBIT;
-        ACSIDMA->s.control = control;
-        status = ACSIDMA->s.data & 0x00ff;
-    }
-    if (status)
-        KDEBUG(("cdb=%02x%02x%02x%02x%02x%02x\n",cdb[0],cdb[1],cdb[2],cdb[3],cdb[4],cdb[5]));
 
     acsi_end();
 
@@ -315,7 +303,13 @@ static int send_command(UBYTE *inputcdb,WORD cdblen,WORD rw,WORD dev,WORD cnt)
     if (timeout_gpip(LARGE_TIMEOUT))
         return -1;
 
-    return 0;
+    /* read status & return it */
+    control = DMA_FDC | DMA_HDC | DMA_A0;
+    if (rw == RW_WRITE)
+        control |= DMA_WRBIT;
+    ACSIDMA->s.control = control;
+
+    return ACSIDMA->s.data & 0x00ff;
 }
 
 /*
