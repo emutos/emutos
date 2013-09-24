@@ -271,12 +271,13 @@ static long XHInqTarget2(UWORD major, UWORD minor, ULONG *blocksize,
     LONG ret;
     WORD dev = major, bus, reldev;
     MAYBE_UNUSED(reldev);
+    MAYBE_UNUSED(ret);
 
     KDEBUG(("XHInqTarget2(%d.%d)\n", major, minor));
 
 #if CONF_WITH_XHDI
     if (next_handler) {
-        long ret = next_handler(XHINQTARGET2, major, minor, blocksize, deviceflags, productname, stringlen);
+        ret = next_handler(XHINQTARGET2, major, minor, blocksize, deviceflags, productname, stringlen);
         if (ret != EINVFN && ret != EUNDEV)
             return ret;
     }
@@ -285,7 +286,7 @@ static long XHInqTarget2(UWORD major, UWORD minor, ULONG *blocksize,
 #if DETECT_NATIVE_FEATURES
     /* direct access to device */
     if (get_xhdi_nfid()) {
-        long ret = NFCall(get_xhdi_nfid() + XHINQTARGET2, (long)major, (long)minor, (long)blocksize, (long)deviceflags, (long)productname, (long)stringlen);
+        ret = NFCall(get_xhdi_nfid() + XHINQTARGET2, (long)major, (long)minor, (long)blocksize, (long)deviceflags, (long)productname, (long)stringlen);
         if (ret != EINVFN && ret != EUNDEV)
             return ret;
     }
@@ -362,12 +363,13 @@ long XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
     ULONG capacity = 0UL, secsize = 512UL;
     WORD dev = major, bus, reldev;
     MAYBE_UNUSED(reldev);
+    MAYBE_UNUSED(ret);
 
     KDEBUG(("XHGetCapacity(%d.%d)\n", major, minor));
 
 #if CONF_WITH_XHDI
     if (next_handler) {
-        long ret = next_handler(XHGETCAPACITY, major, minor, blocks, blocksize);
+        ret = next_handler(XHGETCAPACITY, major, minor, blocks, blocksize);
         if (ret != EINVFN && ret != EUNDEV)
             return ret;
     }
@@ -375,7 +377,7 @@ long XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
 
 #if DETECT_NATIVE_FEATURES
     if (get_xhdi_nfid()) {
-        long ret = NFCall(get_xhdi_nfid() + XHGETCAPACITY, (long)major, (long)minor, (long)blocks, (long)blocksize);
+        ret = NFCall(get_xhdi_nfid() + XHGETCAPACITY, (long)major, (long)minor, (long)blocks, (long)blocksize);
         if (ret != EINVFN && ret != EUNDEV)
             return ret;
     }
