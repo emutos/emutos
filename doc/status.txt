@@ -9,7 +9,7 @@ if possible add a line telling in which version it did run.
   ARAnyM              |  yes  | LVL |    Feb 2003 |
   Hatari              |  yes  | THH | 14 Nov 2008 |
   Mega STe            |  yes  | (1) | 26 Jun 2004 | only RAMTOS tested
-  STe                 |  yes  | (2) | 06 Jun 2010 |
+  STe                 |  yes  | (2) | 22 Sep 2013 |
   Pacifist v0.48      |  yes  | LVL | winter 2001 |
   STonX 0.6.7.6       |  yes  | THH | 14 Nov 2008 |
   STonC v0.8.1        |  yes  | LVL | 9  Feb 2003 |
