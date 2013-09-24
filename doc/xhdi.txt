@@ -14,7 +14,7 @@ XHREADWRITE     10      ALL                     YES
 XHINQTARGET2    11      >= 1.01                 YES
 XHINQDEV2       12      >= 1.10                 YES
 XHDRIVERSPECIAL 13      OPTIONAL                NO
-XHGETCAPACITY   14      OPTIONAL                ONLY WITH NATIVE FEAT.
+XHGETCAPACITY   14      OPTIONAL                YES
 XHMEDIUMCHANGED 15      OPTIONAL                NO
 XHMINTINFO      16      OPTIONAL                NO
 XHDOSLIMITS     17      OPTIONAL                NO

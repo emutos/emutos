@@ -37,7 +37,7 @@ static void acsi_end(void);
 static void hdc_start_dma(UWORD control);
 static void dma_send_byte(UBYTE data, UWORD control);
 static int build_rw_command(UBYTE *cdb,WORD rw,WORD dev,LONG sector,WORD cnt);
-static int send_command(UBYTE *cdb,WORD cdblen,WORD rw,WORD dev,WORD cnt);
+static int send_command(UBYTE *cdb,WORD cdblen,WORD rw,WORD dev,WORD cnt,WORD repeat);
 static int do_acsi_rw(WORD rw, LONG sect, WORD cnt, LONG buf, WORD dev);
 
 
@@ -153,6 +153,31 @@ LONG acsi_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
     return 0;
 }
 
+LONG acsi_capacity(WORD dev, ULONG *blocks, ULONG *blocksize)
+{
+    UBYTE cdb[10];
+    ULONG data[4];          /* data returned by Read Capacity */
+    int status;
+
+    acsi_begin();
+
+    /* load DMA base address */
+    set_dma_addr((ULONG) data);
+
+    cdb[0] = 0x25;          /* set up Read Capacity cdb */
+    memset(cdb+1,0x00,9);
+    status = send_command(cdb,10,RW_READ,dev,1,1);
+
+    acsi_end();
+
+    if (status == 0) {
+        *blocks = data[0] + 1;  /* data[0] is number of last sector */
+        *blocksize = data[1];
+    }
+
+    return status;
+}
+
 LONG acsi_testunit(WORD dev)
 {
     UBYTE cdb[6];
@@ -161,7 +186,7 @@ LONG acsi_testunit(WORD dev)
     acsi_begin();
 
     memset(cdb,0x00,6);     /* set up Test Unit Ready cdb */
-    status = send_command(cdb,6,RW_READ,dev,0);
+    status = send_command(cdb,6,RW_READ,dev,0,0);
 
     acsi_end();
 
@@ -209,7 +234,7 @@ static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, LONG buf, WORD dev)
 
     /* emit command */
     cdblen = build_rw_command(cdb,rw,dev,sector,cnt);
-    status = send_command(cdb,cdblen,rw,dev,cnt);
+    status = send_command(cdb,cdblen,rw,dev,cnt,0);
 
     acsi_end();
 
@@ -260,25 +285,35 @@ static int build_rw_command(UBYTE *cdb,WORD rw,WORD dev,LONG sector,WORD cnt)
 
 /*
  * send an ACSI command; return -1 if timeout
+ *
+ * note: if 'repeat' is non-zero, we actually send the command repeat+1 times.
+ * this is to handle situations where the length of data returned from a single
+ * command is not a multiple of 16.  without this trick, some returned data
+ * would be stuck in the DMA FIFO.
+ *
+ * the following values for 'repeat' are suggested:
+ *   1. length returned is a multiple of 16: set repeat = 0; otherwise
+ *   2. length returned is greater than 16: set 'repeat' to 1; otherwise
+ *   3. set 'repeat' to ceil(16/length returned).
  */
-static int send_command(UBYTE *inputcdb,WORD cdblen,WORD rw,WORD dev,WORD cnt)
+static int send_command(UBYTE *inputcdb,WORD cdblen,WORD rw,WORD dev,WORD cnt,WORD repeat)
 {
     UWORD control;
     UBYTE cdb[13];      /* allow for 12-byte input commands */
-    UBYTE *p;
-    int i;
+    UBYTE *cdbptr, *p;
+    int i, j, status;
 
     /*
      * see if we need to use ICD trickery
      */
     if (*inputcdb > 0x1e) {
-        p = cdb;
-        *p = 0x1f;      /* ICD extended command method */
-        memcpy(p+1,inputcdb,cdblen);
+        cdbptr = cdb;
+        *cdbptr = 0x1f;     /* ICD extended command method */
+        memcpy(cdbptr+1,inputcdb,cdblen);
         cdblen++;
-    } else p = inputcdb;
+    } else cdbptr = inputcdb;
 
-    *p |= (dev << 5);   /* insert device number */
+    *cdbptr |= (dev << 5);  /* insert device number */
 
     if (rw == RW_WRITE) {
         control = DMA_WRBIT | DMA_FDC | DMA_HDC;
@@ -288,28 +323,38 @@ static int send_command(UBYTE *inputcdb,WORD cdblen,WORD rw,WORD dev,WORD cnt)
     hdc_start_dma(control);
     ACSIDMA->s.data = cnt;
 
-    ACSIDMA->s.control = control;   /* assert command signal */
-    control |= DMA_A0;              /* set up for remaining bytes */
+    /*
+     * handle 'repeat' function
+     */
+    for (i = 0; i <= repeat; i++) {
+        while(hz_200 < next_acsi_time)  /* wait until safe */
+            ;
 
-    for (i = 0; i < cdblen-1; i++) {
-        dma_send_byte(*p++,control);
-        if (timeout_gpip(SMALL_TIMEOUT))
+        ACSIDMA->s.control = control;   /* assert command signal */
+        control |= DMA_A0;              /* set up for remaining cmd bytes */
+
+        for (j = 0, p = cdbptr; j < cdblen-1; j++) {
+            dma_send_byte(*p++,control);
+            if (timeout_gpip(SMALL_TIMEOUT))
+                return -1;
+        }
+
+        /* send the last byte & wait for completion of DMA */
+        dma_send_byte(*p,control&0xff00);
+        status = timeout_gpip(LARGE_TIMEOUT);
+        next_acsi_time = hz_200 + INTER_IO_TIME;    /* next safe time */
+        if (status)
             return -1;
+
+        /* read status & return it */
+        ACSIDMA->s.control = control & ~DMA_WRBIT;
+        status = ACSIDMA->s.data & 0x00ff;
+        if (status)
+            break;
+        control &= ~DMA_A0; /* assert command signal for next time */
     }
 
-    /* send the last byte & wait for completion of DMA */
-    control &= 0xff00;
-    dma_send_byte(*p,control);
-    if (timeout_gpip(LARGE_TIMEOUT))
-        return -1;
-
-    /* read status & return it */
-    control = DMA_FDC | DMA_HDC | DMA_A0;
-    if (rw == RW_WRITE)
-        control |= DMA_WRBIT;
-    ACSIDMA->s.control = control;
-
-    return ACSIDMA->s.data & 0x00ff;
+    return status;
 }
 
 /*

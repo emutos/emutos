@@ -358,6 +358,11 @@ long XHInqTarget(UWORD major, UWORD minor, ULONG *blocksize,
 
 long XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
 {
+    LONG ret;
+    ULONG capacity = 0UL, secsize = 512UL;
+    WORD dev = major, bus, reldev;
+    MAYBE_UNUSED(reldev);
+
     KDEBUG(("XHGetCapacity(%d.%d)\n", major, minor));
 
 #if CONF_WITH_XHDI
@@ -376,7 +381,40 @@ long XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
     }
 #endif
 
-    return EINVFN;
+    if (minor != 0)
+        return EUNDEV;
+
+    bus = GET_BUS(dev);
+    reldev = dev - bus * DEVICES_PER_BUS;
+
+    /* hardware access to device */
+    switch(bus) {
+#if CONF_WITH_ACSI
+    case ACSI_BUS:
+        ret = acsi_capacity(reldev,&capacity,&secsize);
+        KDEBUG(("acsi_capacity(%d) returned %ld\n", reldev, ret));
+        if (ret < 0)
+            return EUNDEV;
+        break;
+#endif /* CONF_WITH_ACSI */
+    case SCSI_BUS:
+        return EUNDEV;
+        break;
+#if CONF_WITH_IDE
+    case IDE_BUS:
+        /* we should call a routine for ide capacity */
+        break;
+#endif /* CONF_WITH_IDE */
+    default:
+        return EUNDEV;
+    }
+
+    if (blocks)
+        *blocks = capacity;
+    if (blocksize)
+        *blocksize = secsize;
+
+    return 0;
 }
 
 /*=========================================================================*/

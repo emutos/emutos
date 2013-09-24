@@ -4999,3 +4999,5 @@ Start... early ages
 2013-09-23
 - bios/acsi.c: Support drives >1GB on ACSI interface. (RFB)
 - bios/acsi.c: Retrieve status properly for all ACSI commands. (RFB)
+- bios/acsi.c bios/acsi.h bios/xhdi.c doc/xhdi.txt: XHGetCapacity() is
+  now supported for ACSI devices. (RFB)
