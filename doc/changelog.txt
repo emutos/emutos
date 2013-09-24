@@ -5008,3 +5008,5 @@ Start... early ages
 - bios/linea.S vdi/vdi_bezier.c vdi/vdi_defs.h vdi/vdi_fill.c vdi/vdi_line.c
   vdi/vdi_text.c: Added support for Line-A hline/line/fillrect. Contributed
   by Eero Tamminen. (VRI)
+- vdi/vdi_line.c: Improved linea_color() performance. Contributed by David
+  Savinkoff. (VRI)

@@ -373,7 +373,21 @@ extern WORD multifill;
  */
 static UWORD linea_color(void)
 {
-    return ((FG_BP_4&1) << 3) | ((FG_BP_3&1) << 2) | ((FG_BP_2&1) << 1) | (FG_BP_1&1);
+    UWORD color = 0;
+
+    if (FG_BP_1 != 0)
+        color |= 1;
+
+    if (FG_BP_2 != 0)
+        color |= 2;
+
+    if (FG_BP_3 != 0)
+        color |= 4;
+
+    if (FG_BP_4 != 0)
+        color |= 8;
+
+    return color;
 }
 
 static void lineA2Attrib(VwkAttrib *attr)
