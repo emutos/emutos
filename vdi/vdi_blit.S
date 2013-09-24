@@ -17,7 +17,7 @@
 
         .globl  _bit_blt
 
-        .extern _info
+        .extern _blit_info
         .extern _PTSIN
 
 // The following defines are offsets inside fringe code fragments
@@ -58,7 +58,9 @@
 #define P_NXPL     -28  // +48 offset to next plane in pattern (in bytes)
 #define P_MASK     -26  // +50 pattern index mask
 
-/* these frame parameters are internally set */
+/* these additional frame parameters are internally used by bit_btl(),
+ * its caller must set the *MAX parameters before call.
+ */
 
 #define P_INDX     -24  // +52 initial pattern index
 
@@ -908,7 +910,7 @@ _bit_blt:
         // A wrapper, so save and set up registers
         movem.l d2-d7/a2-a6,-(sp)
 
-        lea     _info, a6               // get info structure
+        movea.l _blit_info, a6          // get info structure addr
 
         add.l   #FRAME_LEN, a6          // emulate link opcode
 

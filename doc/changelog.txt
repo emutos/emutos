@@ -5001,3 +5001,7 @@ Start... early ages
 - bios/acsi.c: Retrieve status properly for all ACSI commands. (RFB)
 - bios/acsi.c bios/acsi.h bios/xhdi.c doc/xhdi.txt: XHGetCapacity() is
   now supported for ACSI devices. (RFB)
+
+2013-09-24
+- bios/linea.S vdi/vdi_blit.S vdi/vdi_raster.c: Added Line-A bitblit & textblit
+  support. Contributed by Eero Tamminen. (VRI)

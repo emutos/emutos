@@ -25,10 +25,17 @@
         .extern __v_show_c
         .extern __v_hide_c
 
+        .extern _get_pix
+        .extern _set_pix
+        .extern _xfm_crfm
+        .extern _linea_blit
+
         .extern _sprite_x
         .extern _sprite_y
         .extern _sprite_def
         .extern _sprite_sav
+        .extern _draw_sprite
+        .extern _undraw_sprite
 
 
 // ==== Global Declarations ================================================
@@ -248,6 +255,13 @@ linea_stub_msg:
 #endif
 
 
+linea_blit:
+        move.l  a6,-(sp)                // blit frame structure addr
+        jsr     _linea_blit
+        addq.l  #4,sp
+        rts
+
+
 
 /* Some of these routines are now different, and no longer usable from
  * assembler.  Only functions used by games are enabled.
@@ -287,8 +301,8 @@ linea_vecs:
         .dc.l   _linea_4        /* _habline */
         .dc.l   _linea_5        /* _rectfill */
         .dc.l   _linea_6        /* _clc_flit */
-        .dc.l   _linea_7        /* _bit_blt */
-        .dc.l   _linea_8        /* _text_blt */
+        .dc.l   linea_blit      /* $7 - area blit */
+        .dc.l   _text_blt       /* $8 - text blitting */
         .dc.l   __v_show_c      /* $9 - show mouse */
         .dc.l   __v_hide_c      /* $A - hide cursor */
         .dc.l   _xfm_crfm       /* $B - transform mouse */

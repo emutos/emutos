@@ -18,21 +18,17 @@
 //#include "mouse.h"
 
 
-
-
 #define DBG_BLIT 0      // see, what happens (a bit)
 
 #ifdef __mcoldfire__
 #define ASM_BLIT 0      // the assembler routine does not support ColdFire.
 #else
-#define ASM_BLIT 1      // use bit_blt routine in assembler
+#define ASM_BLIT 1      // use m68k assembler bit_blt routine.
 #endif
 
 #if DBG_BLIT
 #include "kprint.h"
 #endif
-
-extern void bit_blt(void);
 
 /* bitblt modes */
 #define BM_ALL_WHITE   0
@@ -67,7 +63,7 @@ extern void bit_blt(void);
 #define YMAX_D  7       // y of lower right of destination rectangle
 
 
-/* passes parameters to bitblt */
+/* 76-byte line-A BITBLT struct passing parameters to bitblt */
 struct blit_frame {
     WORD b_wd;          // +00 width of block in pixels
     WORD b_ht;          // +02 height of block in pixels
@@ -120,12 +116,12 @@ typedef struct {
 
 
 
-/*
- * This struct has a global scope. It should just be put on a stack frame by the
- * cpyfm function and then passed to the bit_blt routine, but I did not manage
- * to get it that way going. Maybe, the optimizer plays a role?!?
- */
-struct blit_frame info;     /* holds some internal info for bit_blt */
+/* holds VDI internal info for bit_blt() */
+static struct blit_frame vdi_info;
+
+/* which blit information to use, should be set before calling bit_blt() */
+struct blit_frame *blit_info;
+
 
 /*
  * _vr_trnfm - Convert bitmaps
@@ -236,7 +232,11 @@ _vr_trnfm(Vwk * vwk)
 }
 
 
-#if !ASM_BLIT
+#if ASM_BLIT
+
+extern void bit_blt(void);
+
+#else
 
 #define FXSR    0x80
 #define NFSR    0x40
@@ -498,7 +498,7 @@ do_blit(blit * blt)
 #define HEIGHT   30 // Height of blt rectangle .w:
 #define PLANES   32 // Number of planes to blt .w:
 
-void
+static void
 bit_blt (void)
 {
     WORD plane;
@@ -712,7 +712,7 @@ setup_pattern (Vwk * vwk, struct blit_frame * info)
 
 
 /*
- * do_clip - clip, if dest is screen and cipping is wanted
+ * do_clip - clip, if dest is screen and clipping is wanted
  *
  * return TRUE, if clipping took away everything
  */
@@ -794,7 +794,7 @@ do_clip (Vwk * vwk, struct blit_frame * info)
 
 
 /*
- * dont_clip - clip, if dest is screen and cipping is wanted
+ * dont_clip - clip, if dest is screen and clipping is wanted
  */
 static void
 dont_clip (struct blit_frame * info)
@@ -897,25 +897,26 @@ vdi_vro_cpyfm(Vwk * vwk)
         return;                         /* mode is invalid */
 
     /* check the pattern flag (bit 5) and revert to log op # */
-    info.p_addr = NULL;                 /* clear pattern pointer */
+    vdi_info.p_addr = NULL;             /* clear pattern pointer */
     if ( mode & PAT_FLAG ) {
         mode &= ~PAT_FLAG;              /* set bit to 0! */
-        setup_pattern(vwk, &info);      /* fill in pattern related stuff */
+        setup_pattern(vwk, &vdi_info);  /* fill in pattern related stuff */
     }
 
     /* if true, the plane count is invalid or clipping took all! */
-    if ( setup_info(vwk, &info) )
+    if ( setup_info(vwk, &vdi_info) )
         return;
 
     /* planes of source and destination must be equal in number */
-    if ( info.s_nxwd != info.d_nxwd )
+    if ( vdi_info.s_nxwd != vdi_info.d_nxwd )
         return;
 
-    info.op_tab[0] = mode;          /* fg:0 bg:0 */
-    info.bg_col = 0;                /* bg:0 & fg:0 => only first OP_TAB */
-    info.fg_col = 0;                /* entry will be referenced */
+    vdi_info.op_tab[0] = mode;          /* fg:0 bg:0 */
+    vdi_info.bg_col = 0;                /* bg:0 & fg:0 => only first OP_TAB */
+    vdi_info.fg_col = 0;                /* entry will be referenced */
 
     /* call assembly blit routine or C-implementation */
+    blit_info = &vdi_info;
     bit_blt();
 }
 
@@ -945,14 +946,14 @@ vdi_vrt_cpyfm(Vwk * vwk)
         return;                 /* mode is invalid */
 
     /* check the pattern flag (bit 5) and revert to log op # */
-    info.p_addr = NULL;         /* get pattern pointer*/
+    vdi_info.p_addr = NULL;     /* get pattern pointer*/
     if ( mode & PAT_FLAG ) {
         mode &= ~PAT_FLAG;      /* set bit to 0! */
-        setup_pattern(vwk, &info);   /* fill in pattern related stuff */
+        setup_pattern(vwk, &vdi_info);   /* fill in pattern related stuff */
     }
 
     /* if true, the plane count is invalid or clipping took all! */
-    if ( setup_info(vwk, &info) )
+    if ( setup_info(vwk, &vdi_info) )
         return;
 
     /*
@@ -962,10 +963,10 @@ vdi_vrt_cpyfm(Vwk * vwk)
      */
 
     /* is source area one plane? */
-    if ( info.s_nxwd != 2 )
+    if ( vdi_info.s_nxwd != 2 )
         return;    /* source must be mono plane */
 
-    info.s_nxpl = 0;            /* use only one plane of source */
+    vdi_info.s_nxpl = 0;            /* use only one plane of source */
 
     /* d6 <- background color */
     fg_col = INTIN[1];
@@ -982,33 +983,33 @@ vdi_vrt_cpyfm(Vwk * vwk)
     /* mode == d2 */
     switch(mode) {
     case MD_TRANS:
-        info.op_tab[0] = 04;    /* fg:0 bg:0  D' <- [not S] and D */
-        info.op_tab[2] = 07;    /* fg:1 bg:0  D' <- S or D */
-        info.fg_col = fg_col;           /* were only interested in one color */
-        info.bg_col = 0;                /* save the color of interest */
+        vdi_info.op_tab[0] = 04;    /* fg:0 bg:0  D' <- [not S] and D */
+        vdi_info.op_tab[2] = 07;    /* fg:1 bg:0  D' <- S or D */
+        vdi_info.fg_col = fg_col;   /* were only interested in one color */
+        vdi_info.bg_col = 0;        /* save the color of interest */
         break;
 
     case MD_REPLACE:
         /* CHECK: bug, that colors are reversed? */
-        info.op_tab[0] = 00;    /* fg:0 bg:0  D' <- 0 */
-        info.op_tab[1] = 12;    /* fg:0 bg:1  D' <- not S */
-        info.op_tab[2] = 03;    /* fg:1 bg:0  D' <- S */
-        info.op_tab[3] = 15;    /* fg:1 bg:1  D' <- 1 */
-        info.bg_col = bg_col;           /* save fore and background colors */
-        info.fg_col = fg_col;
+        vdi_info.op_tab[0] = 00;    /* fg:0 bg:0  D' <- 0 */
+        vdi_info.op_tab[1] = 12;    /* fg:0 bg:1  D' <- not S */
+        vdi_info.op_tab[2] = 03;    /* fg:1 bg:0  D' <- S */
+        vdi_info.op_tab[3] = 15;    /* fg:1 bg:1  D' <- 1 */
+        vdi_info.bg_col = bg_col;   /* save fore and background colors */
+        vdi_info.fg_col = fg_col;
         break;
 
     case MD_XOR:
-        info.op_tab[0] = 06;    /* fg:0 bg:0  D' <- S xor D */
-        info.bg_col = 0;
-        info.fg_col = 0;
+        vdi_info.op_tab[0] = 06;    /* fg:0 bg:0  D' <- S xor D */
+        vdi_info.bg_col = 0;
+        vdi_info.fg_col = 0;
         break;
 
     case MD_ERASE:
-        info.op_tab[0] = 01;    /* fg:0 bg:0  D' <- S and D */
-        info.op_tab[1] = 13;    /* fg:0 bg:1  D' <- [not S] or D */
-        info.fg_col = 0;                /* were only interested in one color */
-        info.bg_col = bg_col;           /* save the color of interest */
+        vdi_info.op_tab[0] = 01;    /* fg:0 bg:0  D' <- S and D */
+        vdi_info.op_tab[1] = 13;    /* fg:0 bg:1  D' <- [not S] or D */
+        vdi_info.fg_col = 0;        /* were only interested in one color */
+        vdi_info.bg_col = bg_col;   /* save the color of interest */
         break;
 
     default:
@@ -1016,5 +1017,21 @@ vdi_vrt_cpyfm(Vwk * vwk)
     }
 
     /* call assembly blit routine or C-implementation */
+    blit_info = &vdi_info;
+    bit_blt();
+}
+
+
+/* line-A wrapper for blitting */
+void linea_blit(struct blit_frame *info)
+{
+    /* with line-A, need to calculate these for bit_blt()
+     * (whereas VDI needs to calculate wd & ht)
+     */
+    info->s_xmax = info->s_xmin + info->b_wd - 1;
+    info->s_ymax = info->s_ymin + info->b_ht - 1;
+    info->d_xmax = info->d_xmin + info->b_wd - 1;
+    info->d_ymax = info->d_ymin + info->b_ht - 1;
+    blit_info = info;
     bit_blt();
 }
