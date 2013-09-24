@@ -5005,3 +5005,6 @@ Start... early ages
 2013-09-24
 - bios/linea.S vdi/vdi_blit.S vdi/vdi_raster.c: Added Line-A bitblit & textblit
   support. Contributed by Eero Tamminen. (VRI)
+- bios/linea.S vdi/vdi_bezier.c vdi/vdi_defs.h vdi/vdi_fill.c vdi/vdi_line.c
+  vdi/vdi_text.c: Added support for Line-A hline/line/fillrect. Contributed
+  by Eero Tamminen. (VRI)

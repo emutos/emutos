@@ -108,6 +108,31 @@ struct Fonthead_ {              /* descibes a font */
 };
 
 
+/*
+ * Small subset of Vwk data, used by draw_rect_common to hide VDI/Line-A
+ * specific details from rectangle & polygon drawing.
+ */
+typedef struct {
+    WORD clip;       /* polygon clipping on/off */
+    WORD multifill;  /* Multi-plane fill flag   */
+    UWORD patmsk;    /* Current pattern mask    */
+    UWORD *patptr;   /* Current pattern pointer */
+    WORD wrt_mode;   /* Current writing mode    */
+    UWORD color;     /* fill color */
+} VwkAttrib;
+
+
+/* type that can be cast from clipping part of Wvk */
+typedef struct {
+    WORD xmn_clip;              /* Low x point of clipping rectangle    */
+    WORD xmx_clip;              /* High x point of clipping rectangle   */
+    WORD ymn_clip;              /* Low y point of clipping rectangle    */
+    WORD ymx_clip;              /* High y point of clipping rectangle   */
+} VwkClip;
+
+#define VDI_CLIP(wvk) ((VwkClip*)(&(wvk->xmn_clip)))
+
+
 /* Structure to hold data for a virtual workstation */
 typedef struct Vwk_ Vwk;
 struct Vwk_ {
@@ -156,22 +181,6 @@ struct Vwk_ {
     /* newly added */
     WORD bez_qual;              /* actual quality for bezier curves */
 };
-
-
-typedef struct Hzline_ Hzline;
-struct Hzline_
-{
-    UWORD *addr;
-    int dx;
-    int leftpart;
-    int rightpart;
-    WORD patind;
-    int patadd;
-    UWORD color;
-    UWORD rightmask;
-    UWORD leftmask;
-};
-
 
 
 typedef struct Rect_ Rect;
@@ -263,13 +272,18 @@ void st_fl_ptr(Vwk *);
 void d_justified(Vwk *);
 
 /* drawing primitives */
-void abline (Vwk * vwk, Line * line, WORD color);
 void draw_pline(Vwk * vwk);
 void arrow(Vwk * vwk, Point * point, int count);
-void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor);
+void draw_rect(const Vwk * vwk, Rect * rect, const UWORD fillcolor);
 void polygon(Vwk * vwk, Point * point, int count);
 void polyline(Vwk * vwk, Point * point, int count, WORD color);
 void wideline(Vwk * vwk, Point * point, int count);
+
+/* common drawing function */
+void Vwk2Attrib(const Vwk *vwk, VwkAttrib *attr, const UWORD color);
+void draw_rect_common(const VwkAttrib *attr, const Rect *rect);
+void clc_flit (const VwkAttrib * attr, const VwkClip * clipper, const Point * point, WORD y, int vectors);
+void abline (const Line * line, const WORD wrt_mode, UWORD color);
 
 /* initialization of subsystems */
 void text_init(Vwk *);

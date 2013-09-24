@@ -260,8 +260,7 @@ dr_recfl(Vwk * vwk)
         if (!clipbox(vwk, rect))
             return;
 
-    /* Perform arbitrary corner fix-ups and invoke rectangle fill routine */
-    arb_corner(rect);
+    /* do the real work... */
     draw_rect(vwk, rect, vwk->fill_color);
 }
 
@@ -412,8 +411,8 @@ bub_sort (WORD * buf, WORD count)
 #define MAX_INTERSECTIONS   256
 static WORD fill_buffer[MAX_INTERSECTIONS];
 
-static void
-clc_flit (Vwk * vwk, Point * point, WORD y, int vectors)
+void
+clc_flit (const VwkAttrib * attr, const VwkClip * clipper, const Point * point, WORD y, int vectors)
 {
 //    WORD fill_buffer[256];      /* must be 256 words or it will fail */
     WORD * bufptr;              /* point to array of x-values. */
@@ -481,7 +480,7 @@ clc_flit (Vwk * vwk, Point * point, WORD y, int vectors)
     if ( intersections > 1 )
         bub_sort(fill_buffer, intersections);
 
-    if (vwk->clip) {
+    if (attr->clip) {
         /* Clipping is in force.  Once the endpoints of the line segment have */
         /* been adjusted for the border, clip them to the left and right sides */
         /* of the clipping rectangle. */
@@ -503,26 +502,24 @@ clc_flit (Vwk * vwk, Point * point, WORD y, int vectors)
             if ( x1 > x2 )
                 continue;
 
-            if ( x1 < vwk->xmn_clip ) {
-                if ( x2 < vwk->xmn_clip )
+            if ( x1 < clipper->xmn_clip ) {
+                if ( x2 < clipper->xmn_clip )
                     continue;           /* entire segment clipped left */
-                x1 = vwk->xmn_clip;             /* clip left end of line */
+                x1 = clipper->xmn_clip; /* clip left end of line */
             }
 
-            if ( x2 > vwk->xmx_clip ) {
-                if ( x1 > vwk->xmx_clip )
+            if ( x2 > clipper->xmx_clip ) {
+                if ( x1 > clipper->xmx_clip )
                     continue;           /* entire segment clippped */
-                x2 = vwk->xmx_clip;             /* clip right end of line */
+                x2 = clipper->xmx_clip; /* clip right end of line */
             }
             rect.x1 = x1;
             rect.y1 = y;
             rect.x2 = x2;
             rect.y2 = y;
 
-            /* Fix corners and invoke rectangle fill routine */
-            arb_corner(&rect);
-            draw_rect(vwk, &rect, vwk->fill_color);
-            //horzline(vwk, &line);
+            /* rectangle fill routine draws horizontal line */
+            draw_rect_common(attr, &rect);
         }
     }
     else {
@@ -551,18 +548,16 @@ clc_flit (Vwk * vwk, Point * point, WORD y, int vectors)
                 rect.x2 = x2;
                 rect.y2 = y;
 
-                /* Fix corners and invoke rectangle fill routine */
-                arb_corner(&rect);
-                draw_rect(vwk, &rect, vwk->fill_color);
+                /* rectangle fill routine draws horizontal line */
+                draw_rect_common(attr, &rect);
             }
         }
     }
 }
 
 
-
 /*
- * plygn - draw a filled polygone
+ * polygon - draw a filled polygon
  */
 
 void
@@ -571,6 +566,8 @@ polygon(Vwk * vwk, Point * ptsin, int count)
     WORD i, k, y;
     WORD fill_maxy, fill_miny;
     Point * point, * ptsget, * ptsput;
+    VwkClip *clipper;
+    VwkAttrib attr;
 
     LSTLIN = FALSE;
 
@@ -591,18 +588,18 @@ polygon(Vwk * vwk, Point * ptsin, int count)
     if (vwk->clip) {
         if (fill_miny < vwk->ymn_clip) {
             if (fill_maxy >= vwk->ymn_clip) {
-                /* plygon starts before clip */
-                fill_miny = vwk->ymn_clip - 1;       /* plygon partial overlap */
+                /* polygon starts before clip */
+                fill_miny = vwk->ymn_clip - 1;       /* polygon partial overlap */
                 if (fill_miny < 1)
                     fill_miny = 1;
             } else
-                return;         /* plygon entirely before clip */
+                return;         /* polygon entirely before clip */
         }
         if (fill_maxy > vwk->ymx_clip) {
-            if (fill_miny <= vwk->ymx_clip)  /* plygon ends after clip */
-                fill_maxy = vwk->ymx_clip;   /* plygon partial overlap */
+            if (fill_miny <= vwk->ymx_clip)  /* polygon ends after clip */
+                fill_maxy = vwk->ymx_clip;   /* polygon partial overlap */
             else
-                return;         /* plygon entirely after clip */
+                return;         /* polygon entirely after clip */
         }
     }
 
@@ -612,9 +609,14 @@ polygon(Vwk * vwk, Point * ptsin, int count)
     ptsput->x = ptsget->x;
     ptsput->y = ptsget->y;
 
+    /* cast structure needed by clc_flit */
+    clipper = VDI_CLIP(vwk);
+    /* copy data needed by clc_flit -> draw_rect_common */
+    Vwk2Attrib(vwk, &attr, vwk->fill_color);
+
     /* really draw it */
     for (y = fill_maxy; y > fill_miny; y--) {
-        clc_flit(vwk, ptsin, y, count);
+        clc_flit(&attr, clipper, ptsin, y, count);
     }
     if (vwk->fill_per == TRUE) {
         LN_MASK = 0xffff;
@@ -706,44 +708,6 @@ clipbox(Vwk * vwk, Rect * rect)
     }
     return (TRUE);
 }
-
-
-
-#if 0
-/*
- * rectfill - fills a rectangular area of the screen with a pattern
- *            using a "bitblt" algorithm similar to "_HABLINE"'s.
- *
- * input:
- *     X1       = x coord of upper left corner.
- *     Y1       = y coord of upper left corner.
- *     X2       = x coord of lower right corner.
- *     Y2       = y coord of lower right corner.
- *     vwk->clip = clipping flag. (0 => no clipping.)
- *     vwk->xmn_clip = x clipping minimum.
- *     vwk->xmx_clip = x clipping maximum.
- *     vwk->ymn_clip = y clipping minimum.
- *     vwk->ymx_clip = y clipping maximum.
- *
- * output:
- *     X1 = x coord of upper left corner.
- *     Y1 = y coord of upper left corner.
- *     X2 = x coord of lower right corner.
- *     Y2 = y coord of lower right corner.
- */
-
-void
-rectfill (Vwk * vwk, Rect * rect)
-{
-    if (vwk->clip)
-        if (!clipbox(vwk, rect))
-            return;
-
-    /* do the real work... */
-    arb_corner(rect);
-    draw_rect(vwk, rect, vwk->fill_color);
-}
-#endif
 
 
 /*
@@ -1000,8 +964,7 @@ d_contourfill(Vwk * vwk)
             rect.x2 = oldxright;
             rect.y2 = ABS(oldy);
 
-            /* Fix corners and invoke rectangle fill routine */
-            arb_corner(&rect);
+            /* rectangle fill routine draws horizontal line */
             draw_rect(vwk, &rect, vwk->fill_color);
         }
     }
@@ -1042,8 +1005,7 @@ get_seed(Vwk * vwk, WORD xin, WORD yin, WORD *xleftout, WORD *xrightout,
                 rect.x2 = *xrightout;
                 rect.y2 = ABS(yin);
 
-                /* Fix corners and invoke rectangle fill routine */
-                arb_corner(&rect);
+                /* rectangle fill routine draws horizontal line */
                 draw_rect(vwk, &rect, vwk->fill_color);
 
                 queue[qtmp] = EMPTY;

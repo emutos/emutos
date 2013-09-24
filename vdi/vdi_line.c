@@ -148,49 +148,6 @@ void vql_attr(Vwk * vwk)
 }
 
 
-
-/*
- * habline - draw a horizontal line (just for linea needed)
- *
- * This routine is just a wrapper for horzline.
- */
-#if 0
-void habline(Vwk * vwk) {
-    Line * line = (Line*)PTSIN;
-
-    horzline(vwk, line);
-}
-#endif
-
-
-/*
- * horzline - draw a horizontal line
- *
- * This routine draws a line between (x1,y) and (x2,y) using a left fringe,
- * inner loop, right fringe bitblt algorithm.  The line is modified by the
- * pattern and WRT_MODE variables.
- * This routine handles all 3 interleaved bitplanes video resolutions.
- *
- * input:
- *     x1, x2, y = coordinates.
- *     v_planes  = number of video planes. (resolution)
- *     patmsk    = index into pattern.
- *     patptr    = ptr to pattern.
- *     WRT_MODE  = writing mode:
- *                     0 => replace mode.
- *                     1 => or mode.
- *                     2 => xor mode.
- *                     3 => not mode.
- */
-
-static void horzline(const Vwk * vwk, Line * line)
-{
-    /* a horizontal line is a rectangle with one pixel height */
-    arb_line(line);
-    draw_rect(vwk, (Rect*)line, vwk->line_color);
-}
-
-
 /*
  * draw_rect - draw one or more horizontal lines
  *
@@ -215,12 +172,12 @@ static void horzline(const Vwk * vwk, Line * line)
  * 8MHz ST or 16MHz Falcon.  You are strongly advised not to change this
  * without a lot of careful thought & performance testing!
  */
-void draw_rect(const Vwk *vwk,const Rect *rect,const UWORD fillcolor)
+void draw_rect_common(const VwkAttrib *attr, const Rect *rect)
 {
     UWORD leftmask, rightmask, *addr;
-    UWORD patmsk = vwk->patmsk;
+    const UWORD patmsk = attr->patmsk;
+    const int yinc = (v_lin_wr>>1) - v_planes;
     int centre, y;
-    int yinc = (v_lin_wr>>1) - v_planes;
 
     leftmask = 0xffff >> (rect->x1 & 0x0f);
     rightmask = 0xffff << (15 - (rect->x2 & 0x0f));
@@ -234,16 +191,16 @@ void draw_rect(const Vwk *vwk,const Rect *rect,const UWORD fillcolor)
 
     addr = get_start_addr(rect->x1,rect->y1);   /* init address counter */
 
-    switch(vwk->wrt_mode) {
+    switch(attr->wrt_mode) {
     case 3:                 /* erase (reverse transparent) mode */
         for (y = rect->y1; y <= rect->y2; y++, addr += yinc) {
             int patind = patmsk & y;   /* starting pattern */
             int plane;
             UWORD color;
 
-            for (plane = 0, color = fillcolor; plane < v_planes; plane++, color>>=1, addr++) {
+            for (plane = 0, color = attr->color; plane < v_planes; plane++, color>>=1, addr++) {
                 UWORD *work = addr;
-                UWORD pattern = ~vwk->patptr[patind];
+                UWORD pattern = ~attr->patptr[patind];
                 int n;
 
                 if (color & 0x0001) {
@@ -267,7 +224,7 @@ void draw_rect(const Vwk *vwk,const Rect *rect,const UWORD fillcolor)
                         *work &= ~(pattern & rightmask);
                     }
                 }
-                patind += (vwk->multifill) ? 16 : 0;/* maybe advance pattern data */
+                patind += (attr->multifill) ? 16 : 0;/* maybe advance pattern data */
             }
         }
         break;
@@ -277,9 +234,9 @@ void draw_rect(const Vwk *vwk,const Rect *rect,const UWORD fillcolor)
             int plane;
             UWORD color;
 
-            for (plane = 0, color = fillcolor; plane < v_planes; plane++, color>>=1, addr++) {
+            for (plane = 0, color = attr->color; plane < v_planes; plane++, color>>=1, addr++) {
                 UWORD *work = addr;
-                UWORD pattern = vwk->patptr[patind];
+                UWORD pattern = attr->patptr[patind];
                 int n;
 
                 *work ^= pattern & leftmask;        /* left section */
@@ -291,7 +248,7 @@ void draw_rect(const Vwk *vwk,const Rect *rect,const UWORD fillcolor)
                 if (rightmask) {                    /* right section */
                     *work ^= pattern & rightmask;
                 }
-                patind += (vwk->multifill) ? 16 : 0;/* maybe advance pattern data */
+                patind += (attr->multifill) ? 16 : 0;/* maybe advance pattern data */
             }
         }
         break;
@@ -301,9 +258,9 @@ void draw_rect(const Vwk *vwk,const Rect *rect,const UWORD fillcolor)
             int plane;
             UWORD color;
 
-            for (plane = 0, color = fillcolor; plane < v_planes; plane++, color>>=1, addr++) {
+            for (plane = 0, color = attr->color; plane < v_planes; plane++, color>>=1, addr++) {
                 UWORD *work = addr;
-                UWORD pattern = vwk->patptr[patind];
+                UWORD pattern = attr->patptr[patind];
                 int n;
 
                 if (color & 0x0001) {
@@ -327,7 +284,7 @@ void draw_rect(const Vwk *vwk,const Rect *rect,const UWORD fillcolor)
                         *work &= ~(pattern & rightmask);
                     }
                 }
-                patind += (vwk->multifill) ? 16 : 0;/* maybe advance pattern data */
+                patind += (attr->multifill) ? 16 : 0;/* maybe advance pattern data */
             }
         }
         break;
@@ -337,9 +294,9 @@ void draw_rect(const Vwk *vwk,const Rect *rect,const UWORD fillcolor)
             int plane;
             UWORD color;
 
-            for (plane = 0, color = fillcolor; plane < v_planes; plane++, color>>=1, addr++) {
+            for (plane = 0, color = attr->color; plane < v_planes; plane++, color>>=1, addr++) {
                 UWORD data, *work = addr;
-                UWORD pattern = (color & 0x0001) ? vwk->patptr[patind] : 0x0000;
+                UWORD pattern = (color & 0x0001) ? attr->patptr[patind] : 0x0000;
                 int n;
 
                 data = *work & ~leftmask;           /* left section */
@@ -355,11 +312,141 @@ void draw_rect(const Vwk *vwk,const Rect *rect,const UWORD fillcolor)
                     data |= pattern & rightmask;
                     *work = data;
                 }
-                patind += (vwk->multifill) ? 16 : 0;/* maybe advance pattern data */
+                patind += (attr->multifill) ? 16 : 0;/* maybe advance pattern data */
             }
         }
         break;
     }
+}
+
+
+/*
+ * helper to copy relevant Vwk members to VwkAttrib struct which is
+ * used to pass requred Wvk info from VDI/Line-A polygon drawing to
+ * draw_rect().
+ */
+void Vwk2Attrib(const Vwk *vwk, VwkAttrib *attr, const UWORD color)
+{
+    /* in same order as they're in Wvk, so that gcc
+     * could use longs for copying words
+     */
+    attr->clip = vwk->clip;
+    attr->multifill = vwk->multifill;
+    attr->patmsk = vwk->patmsk;
+    attr->patptr = vwk->patptr;
+    attr->wrt_mode = vwk->wrt_mode;
+    attr->color = color;
+}
+
+/*
+ * VDI wrapper for draw_rect_common
+ */
+void draw_rect(const Vwk * vwk, Rect * rect, const UWORD fillcolor)
+{
+    VwkAttrib attr;
+    arb_corner(rect);
+    Vwk2Attrib(vwk, &attr, fillcolor);
+    draw_rect_common(&attr, rect);
+}
+
+/*
+ * VDI helper/wrapper for horizontal line drawing
+ */
+static inline void horzline(const Vwk * vwk, Line * line)
+{
+    /* a horizontal line is a rectangle with one pixel height */
+    draw_rect(vwk, (Rect*)line, vwk->line_color);
+}
+
+
+/*
+ * global Line-A variables from lineavars.S
+ */
+extern WORD X1, Y1, X2, Y2, WRT_MODE;
+extern WORD FG_BP_1, FG_BP_2, FG_BP_3, FG_BP_4;
+extern WORD CLIP, XMN_CLIP, XMX_CLIP, YMN_CLIP, YMX_CLIP;
+extern UWORD *patptr, patmsk;
+extern WORD multifill;
+
+/*
+ * compose color for draw_rect_common & abline from line-A variables
+ */
+static UWORD linea_color(void)
+{
+    return ((FG_BP_4&1) << 3) | ((FG_BP_3&1) << 2) | ((FG_BP_2&1) << 1) | (FG_BP_1&1);
+}
+
+static void lineA2Attrib(VwkAttrib *attr)
+{
+    attr->clip = CLIP;  /* only used by polygon drawing */
+    attr->multifill = multifill;
+    attr->patmsk = patmsk;
+    attr->patptr = patptr;
+    attr->wrt_mode = WRT_MODE;
+    attr->color = linea_color();
+}
+
+/*
+ * Line-A wrapper for draw_rect_common
+ */
+void linea_rect(void)
+{
+    VwkAttrib attr;
+    Rect line;
+
+    lineA2Attrib(&attr);
+
+    line.x1 = X1;
+    line.x2 = X2;
+    line.y1 = Y1;
+    line.y2 = Y2;
+    /* order rectangle corner co-ordinates */
+    arb_corner(&line);
+
+    if (CLIP) {
+        if (line.x1 < XMN_CLIP) line.x1 = XMN_CLIP;
+        if (line.x2 > XMX_CLIP) line.x2 = XMX_CLIP;
+        if (line.y1 < YMN_CLIP) line.y1 = YMN_CLIP;
+        if (line.y2 > YMX_CLIP) line.y2 = YMX_CLIP;
+    }
+    /* Line-A line should wrap in all directions, but draw_rect()
+     * doesn't explicity support wrapping, so clip y to avoid
+     * worst writes outside screen area.
+     */
+    if (line.y1 < 0) line.y1 = 0;
+    if (line.y2 > yres) line.x2 = yres;
+    
+    draw_rect_common(&attr, &line);
+}
+
+/*
+ * Line-A wrapper for horizontal line
+ */
+void linea_hline(void)
+{
+    WORD clip = CLIP, y2 = Y2;
+    CLIP = 0; Y2 = Y1;
+    linea_rect();
+    CLIP = clip; Y2 = y2;
+}
+
+/*
+ * Line-A wrapper for clc_flit
+ */
+void linea_polygon(void)
+{
+    VwkClip *clipper, noclip = { 0, xres, 0, yres };
+    Point *points = (Point*) PTSIN;
+    int count = CONTRL[1];
+    VwkAttrib attr;
+
+    lineA2Attrib(&attr);
+    if (CLIP) {
+        clipper = (VwkClip*) &XMN_CLIP;
+    } else {
+        clipper = &noclip;
+    }
+    clc_flit(&attr, clipper, points, Y1, count);
 }
 
 
@@ -474,7 +561,7 @@ void polyline(Vwk * vwk, Point * point, int count, WORD color)
         line.y2 = point->y;
 
         if (!vwk->clip || clip_line(vwk, &line))
-            abline(vwk, &line, color);
+            abline(&line, vwk->wrt_mode, color);
     }
 }
 
@@ -983,22 +1070,22 @@ void arrow(Vwk * vwk, Point * point, int count)
  *     LN_MASK rotated to proper alignment with (X2,Y2).
  */
 
-void abline (Vwk * vwk, Line * line, WORD color)
+void abline (const Line * line, WORD wrt_mode, UWORD color)
 {
     UWORD *adr;
     UWORD x1,y1,x2,y2;          /* the coordinates */
     WORD dx;                    /* width of rectangle around line */
     WORD dy;                    /* height of rectangle around line */
-    WORD xinc;                  /* positive increase for each x step */
     WORD yinc;                  /* in/decrease for each y step */
+    const WORD xinc = v_planes; /* positive increase for each x step, planes WORDS */
     UWORD msk;
     int plane;
     UWORD linemask;             /* linestyle bits */
 
 #if 0
     if (line->y1 == line->y2) {
-        kprintf("Y = %d, MODE = %d.\n", line->y1, vwk->wrt_mode);
-        horzline(X1, line);
+        kprintf("Y = %d, MODE = %d.\n", line->y1, wrt_mode);
+        horzline(vwk, wrt_mode);  /* broken */
         return;
     }
 #endif
@@ -1028,7 +1115,6 @@ void abline (Vwk * vwk, Line * line, WORD color)
     } else {
         yinc = (LONG) v_lin_wr / 2;     /* add one line of words */
     }
-    xinc = v_planes;                    /* add v_planes WORDS */
 
     adr = get_start_addr(x1, y1);       /* init adress counter */
     msk = 0x8000 >> (x1&0xf);           /* initial bit position in WORD */
@@ -1052,7 +1138,7 @@ void abline (Vwk * vwk, Line * line, WORD color)
             eps = -dx;
             e2 = 2*dx;
 
-            switch (vwk->wrt_mode) {
+            switch (wrt_mode) {
             case 3:              /* reverse transparent  */
                 if (color & 0x0001) {
                     for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
@@ -1168,7 +1254,7 @@ void abline (Vwk * vwk, Line * line, WORD color)
             eps = -dy;
             e2 = 2*dy;
 
-            switch (vwk->wrt_mode) {
+            switch (wrt_mode) {
             case 3:              /* reverse transparent */
                 if (color & 0x0001) {
                     for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
@@ -1285,6 +1371,24 @@ void abline (Vwk * vwk, Line * line, WORD color)
     }
     LN_MASK = linemask;
 }
+
+
+/*
+ * Line-A wrapper for line drawing with abline
+ */
+void linea_line(void)
+{
+    Line line;
+    
+    line.x1 = X1;
+    line.y1 = Y1;
+    line.x2 = X2;
+    line.y2 = Y2;
+
+    /* Line-A LN_MASK is already set by caller */
+    abline(&line, WRT_MODE, linea_color());
+}
+
 
 /*
  * set LN_MASK from virtual workstation values

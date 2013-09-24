@@ -22,12 +22,19 @@
         .extern line_a_vars
         .extern _sysfonts
         .extern _kprintf
+
         .extern __v_show_c
         .extern __v_hide_c
+        .extern _xfm_crfm
 
         .extern _get_pix
         .extern _set_pix
-        .extern _xfm_crfm
+
+        .extern _linea_line
+        .extern _linea_rect
+        .extern _linea_hline
+        .extern _linea_polygon
+
         .extern _linea_blit
 
         .extern _sprite_x
@@ -263,44 +270,41 @@ linea_blit:
 
 
 
-/* Some of these routines are now different, and no longer usable from
- * assembler.  Only functions used by games are enabled.
- *
- * Some VDI C-functions can still be used directly as:
+/* Some VDI C-functions can be used directly as-is because:
  * - they don't use the passed VDI workstation pointer
  * - parameters for line-A go in same Intin/Ptsin/Control arrays
  * These functions are show, hide and transform (mouse) cursor.
  *
- * Couple of functions have line-A specific C-implementations,
- * such are put_pix, get_pix, draw_sprite, undraw_sprite.
- * Their arguments are in global variables/arrays.
+ * Couple of functions have line-A specific C-implementations.
+ * They are put_pix, get_pix.
+ * 
+ * Several functions need C-wrapper around utility functions shared
+ * with VDI.  They are draw_sprite, undraw_sprite, linea_line,
+ * linea_hline, linea_rect, linea_polygon.  Their arguments are
+ * in global variables/arrays.
  *
- * Some functions can call directly the (line-A derived) ASM
- * iplementation shared by VDI, which use line-A variables
- * (VDI function sets line-A variables before calling asm).
- * "text_blt" is such function.
+ * Bitblt has both small C-wrapper and an ASM -wrapper, latter
+ * as pointer to its argument array is given in register.
  *
- * Only interesting functions are:
- * - show/hide cursor
- * - draw/undraw sprite
- * - put/get pixel
- * - line/hline draw
- * - filled rectangle
- * - bitblit
- * First are used by GFA, others by games, rest can be left unimplemented.
+ * Assembly "text_blt" routine can be called directly because
+ * it uses line-A variables which VDI just sets up before
+ * calling it.
  *
- * It's safe to run line-A using programs only in (1-4 plane)
- * ST/e modes.  Such programs can e.g. leave too little space
- * for sprite backup buffer in higher resolutions).
+ * Neochrome Master and old GFA programs can use all of them,
+ * and many (even new) freeware games can still use bitblt.
+ *
+ * It's probably safe to run line-A using programs only in (1-4 plane)
+ * ST/e modes.  Such programs can e.g. leave too little space for
+ * sprite backup buffer in higher resolutions.
  */
 linea_vecs:
         .dc.l   _linea_0
         .dc.l   _put_pix        /* $1 - put pixel */
-        .dc.l   _get_pix        /* $2 - get_pixel */
-        .dc.l   _linea_3        /* _abline  */
-        .dc.l   _linea_4        /* _habline */
-        .dc.l   _linea_5        /* _rectfill */
-        .dc.l   _linea_6        /* _clc_flit */
+        .dc.l   _get_pix        /* $2 - get pixel */
+        .dc.l   _linea_line     /* $3 - draw line */
+        .dc.l   _linea_hline    /* $4 - horizontal line */
+        .dc.l   _linea_rect     /* $5 - filled rectangle */
+        .dc.l   _linea_polygon  /* $6 - draw 1 line of polygon */
         .dc.l   linea_blit      /* $7 - area blit */
         .dc.l   _text_blt       /* $8 - text blitting */
         .dc.l   __v_show_c      /* $9 - show mouse */
