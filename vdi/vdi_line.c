@@ -375,17 +375,21 @@ static UWORD linea_color(void)
 {
     UWORD color = 0;
 
+    /* Below we use += instead of |= because GCC produces better code
+     * especially addq.w instead og ori.w
+     */
+
     if (FG_BP_1 != 0)
-        color |= 1;
+        color += 1;
 
     if (FG_BP_2 != 0)
-        color |= 2;
+        color += 2;
 
     if (FG_BP_3 != 0)
-        color |= 4;
+        color += 4;
 
     if (FG_BP_4 != 0)
-        color |= 8;
+        color += 8;
 
     return color;
 }
