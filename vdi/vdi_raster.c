@@ -551,10 +551,10 @@ bit_blt (void)
     };
 
     /* Calculate Xmax coordinates from Xmin coordinates and width */
-    s_xmin = info.s_xmin;               /* d0<- src Xmin */
-    s_xmax = s_xmin + info.b_wd - 1;    /* d1<- src Xmax=src Xmin+width-1 */
-    d_xmin = info.d_xmin;               /* d2<- dst Xmin */
-    d_xmax = d_xmin + info.b_wd - 1;    /* d3<- dst Xmax=dstXmin+width-1 */
+    s_xmin = blit_info->s_xmin;               /* d0<- src Xmin */
+    s_xmax = s_xmin + blit_info->b_wd - 1;    /* d1<- src Xmax=src Xmin+width-1 */
+    d_xmin = blit_info->d_xmin;               /* d2<- dst Xmin */
+    d_xmax = d_xmin + blit_info->b_wd - 1;    /* d3<- dst Xmax=dstXmin+width-1 */
 
     /* Skew value is (destination Xmin mod 16 - source Xmin mod 16) */
     /* && 0x000F.  Three discriminators are used to determine the */
@@ -607,30 +607,30 @@ bit_blt (void)
     }
 
     /* Calculate starting addresses */
-    s_addr = (ULONG)info.s_form
-        + (ULONG)info.s_ymin * (ULONG)info.s_nxln
-        + (ULONG)s_xmin_off * (ULONG)info.s_nxwd;
-    d_addr = (ULONG)info.d_form
-        + (ULONG)info.d_ymin * (ULONG)info.d_nxln
-        + (ULONG)d_xmin_off * (ULONG)info.d_nxwd;
+    s_addr = (ULONG)blit_info->s_form
+        + (ULONG)blit_info->s_ymin * (ULONG)blit_info->s_nxln
+        + (ULONG)s_xmin_off * (ULONG)blit_info->s_nxwd;
+    d_addr = (ULONG)blit_info->d_form
+        + (ULONG)blit_info->d_ymin * (ULONG)blit_info->d_nxln
+        + (ULONG)d_xmin_off * (ULONG)blit_info->d_nxwd;
 
     //if (just_screen && (s_addr < d_addr)) {
     if (s_addr < d_addr) {
         /* start from lower right corner, so add width+length */
-        s_addr = (ULONG)info.s_form
-            + (ULONG)info.s_ymax * (ULONG)info.s_nxln
-            + (ULONG)s_xmax_off * (ULONG)info.s_nxwd;
-        d_addr = (ULONG)info.d_form
-            + (ULONG)info.d_ymax * (ULONG)info.d_nxln
-            + (ULONG)d_xmax_off * (ULONG)info.d_nxwd;
+        s_addr = (ULONG)blit_info->s_form
+            + (ULONG)blit_info->s_ymax * (ULONG)blit_info->s_nxln
+            + (ULONG)s_xmax_off * (ULONG)blit_info->s_nxwd;
+        d_addr = (ULONG)blit_info->d_form
+            + (ULONG)blit_info->d_ymax * (ULONG)blit_info->d_nxln
+            + (ULONG)d_xmax_off * (ULONG)blit_info->d_nxwd;
 
         /* offset between consecutive words in planes */
-        blt->src_x_inc = -info.s_nxwd;
-        blt->dst_x_inc = -info.d_nxwd;
+        blt->src_x_inc = -blit_info->s_nxwd;
+        blt->dst_x_inc = -blit_info->d_nxwd;
 
         /* offset from last word of a line to first word of next one */
-        blt->src_y_inc = -(info.s_nxln - info.s_nxwd * s_span);
-        blt->dst_y_inc = -(info.d_nxln - info.d_nxwd * d_span);
+        blt->src_y_inc = -(blit_info->s_nxln - blit_info->s_nxwd * s_span);
+        blt->dst_y_inc = -(blit_info->d_nxln - blit_info->d_nxwd * d_span);
 
         blt->end_1 = rendmask;          /* left end mask */
         blt->end_2 = 0xFFFF;            /* center end mask */
@@ -643,12 +643,12 @@ bit_blt (void)
     }
     else {
         /* offset between consecutive words in planes */
-        blt->src_x_inc = info.s_nxwd;
-        blt->dst_x_inc = info.d_nxwd;
+        blt->src_x_inc = blit_info->s_nxwd;
+        blt->dst_x_inc = blit_info->d_nxwd;
 
         /* offset from last word of a line to first word of next one */
-        blt->src_y_inc = info.s_nxln - info.s_nxwd * s_span;
-        blt->dst_y_inc = info.d_nxln - info.d_nxwd * d_span;
+        blt->src_y_inc = blit_info->s_nxln - blit_info->s_nxwd * s_span;
+        blt->dst_y_inc = blit_info->d_nxln - blit_info->d_nxwd * d_span;
 
         blt->end_1 = lendmask;          /* left end mask */
         blt->end_2 = 0xFFFF;            /* center end mask */
@@ -672,22 +672,22 @@ bit_blt (void)
 #define mHOP_Halftone 0x01
     blt->hop = mHOP_Source;   /* word */    /* set HOP to source only */
 
-    for (plane = info.plane_ct-1; plane >= 0; plane--) {
+    for (plane = blit_info->plane_ct-1; plane >= 0; plane--) {
         int op_tabidx;
 
         blt->src_addr = s_addr;         /* load Source pointer to this plane */
         blt->dst_addr = d_addr;         /* load Dest ptr to this plane   */
-        blt->y_cnt = info.b_ht;         /* load the line count   */
+        blt->y_cnt = blit_info->b_ht;   /* load the line count   */
 
         /* calculate operation for actual plane */
-        op_tabidx = ((info.fg_col>>plane) & 0x0001 ) <<1;
-        op_tabidx |= (info.bg_col>>plane) & 0x0001;
-        blt->op = info.op_tab[op_tabidx] & 0x000f;
+        op_tabidx = ((blit_info->fg_col>>plane) & 0x0001 ) <<1;
+        op_tabidx |= (blit_info->bg_col>>plane) & 0x0001;
+        blt->op = blit_info->op_tab[op_tabidx] & 0x000f;
 
         do_blit(blt);
 
-        s_addr += info.s_nxpl;          /* a0-> start of next src plane   */
-        d_addr += info.d_nxpl;          /* a1-> start of next dst plane   */
+        s_addr += blit_info->s_nxpl;          /* a0-> start of next src plane   */
+        d_addr += blit_info->d_nxpl;          /* a1-> start of next dst plane   */
     }
 }
 #endif   //ASM_BLIT

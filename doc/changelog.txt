@@ -5010,3 +5010,6 @@ Start... early ages
   by Eero Tamminen. (VRI)
 - vdi/vdi_line.c: Improved linea_color() performance. Contributed by David
   Savinkoff. (VRI)
+
+2013-09-25
+- vdi/vdi_raster.c: Fixed "make firebee". Contributed by Eero Tamminen. (VRI)
