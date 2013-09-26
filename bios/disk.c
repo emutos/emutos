@@ -257,6 +257,23 @@ static int atari_partition(int xhdidev)
         return 0;
     }
 
+    /*
+     * circumvent bug in Hatari v1.7 & earlier: the ACSI Read Capacity
+     * command, which we have just used by calling XHGetCapacity() in
+     * disk_init() above, returns a value approximately 512 times too
+     * small for the capacity.  this makes the value in devices[].size
+     * too small.
+     *
+     * if the value in devices[].size is less than the disk size stored
+     * in the partition table, we assume that we've encountered the bug.
+     * we fix it by replacing devices[].size with the partition table
+     * value.
+     */
+    if (devices[xbiosdev].size < hd_size) {
+        KINFO(("Setting disk capacity from partition table value\n"));
+        devices[xbiosdev].size = hd_size;
+    }
+
     pi = &rs->part[0];
     for (; pi < &rs->part[4]; pi++) {
         struct rootsector *xrs = &physsect2.rs;

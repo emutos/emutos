@@ -5016,3 +5016,4 @@ Start... early ages
 - vdi/vdi_line.c: Improved linea_color() performance again. Contributed by David
   Savinkoff. (VRI)
 - bios/disk.c: Improved determination of disk capacity & blocksize. (RFB)
+- bios/disk.c: Circumvent Hatari bug in handling Read Capacity command. (RFB)
