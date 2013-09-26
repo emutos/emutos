@@ -5015,3 +5015,4 @@ Start... early ages
 - vdi/vdi_raster.c: Fixed "make firebee". Contributed by Eero Tamminen. (VRI)
 - vdi/vdi_line.c: Improved linea_color() performance again. Contributed by David
   Savinkoff. (VRI)
+- bios/disk.c: Improved determination of disk capacity & blocksize. (RFB)

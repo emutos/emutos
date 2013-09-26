@@ -45,22 +45,25 @@ void disk_init(void)
     for(i = 0; i < (sizeof(targets) / sizeof(targets[0])); i++) {
         ULONG blocksize;
         ULONG blocks;
+        WORD shift;
         int major = targets[i];
         int minor = 0;
         int xbiosdev = major + NUMFLOPPIES;
 
         devices[xbiosdev].valid = 0;
-        if (! XHInqTarget(major, minor, &blocksize, NULL, NULL)) {
-            devices[xbiosdev].psshift = get_shift(blocksize);
-            if (devices[xbiosdev].psshift < 0)  /* blksize not a power of 2 ... */
-                continue;                       /* ... so ignore                */
+        if (! XHInqTarget(major, minor, NULL, NULL, NULL)) {
+            blocks = 0;
+            blocksize = SECTOR_SIZE;
+            /* try to update with real capacity & blocksize */
+            XHGetCapacity(major, minor, &blocks, &blocksize);
+            shift = get_shift(blocksize);
+            if (shift < 0)      /* if blksize not a power of 2, ignore */
+                continue;
+
             devices[xbiosdev].valid = 1;
             devices[xbiosdev].byteswap = 0;
-
-            if (! XHGetCapacity(major, minor, &blocks, NULL))
-                devices[xbiosdev].size = blocks;
-            else
-                devices[xbiosdev].size = 0;
+            devices[xbiosdev].size = blocks;
+            devices[xbiosdev].psshift = shift;
 
             /* scan for ATARI partitions on this harddrive */
             atari_partition(major);
