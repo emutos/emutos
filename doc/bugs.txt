@@ -32,10 +32,6 @@
   "LaserChess", "Diamond miner" and "Minigolf" games.  In vditext
   tester their line height is also too low:
   http://sourceforge.net/mailarchive/message.php?msg_id=29276993
-- Text input in GFA programs like "Minigolf" (which dont' use GEM)
-  always goes to the top left corner of screen, not to the position
-  where it goes with normal TOS.  This makes many such games
-  unplayable.
 - Game result text in "Sherlock" is positioned wrong (overlaps).
 - Thick arcs going partly outside of screen have incorrectly
   drawn pixels at top of screen in vditext tester.
@@ -76,8 +72,6 @@ Links to programs listed above:
   http://www.umich.edu/~archive/atari/Games/Arcade/invaders.lzh
 - Mind sweeper:
   http://www.umich.edu/~archive/atari/Games/Puzzle/minds_11.zip
-- Minigolf:
-  http://koti.mbnet.fi/tammat/hatari/sources/minigolf.zip
 - Pacman:
   http://gem.win.co.nz/mb/atarisw/pacman.html
 - Patience (older version):
@@ -96,4 +90,5 @@ Links to programs listed above:
   http://www.umich.edu/~archive/atari/Games/Cards/yukone1.lzh
   http://www.haun-online.de/Atari/e_index.html
 
-(Links missing to: yams, mathmaze, laserchess, diamondminer.)
+(Links missing to: yams, mathmaze, laserchess, diamondminer,
+Glücksrad.)
