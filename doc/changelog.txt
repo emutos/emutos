@@ -5021,3 +5021,6 @@ Start... early ages
 2013-10-04
 - bios/blkdev.c bios/ide.c bios/ide.h bios/mfp.h: Updated IDE code to
   follow official PIO data transfer diagrams. (RFB)
+
+2013-10-08
+- bios/amiga.h bios/ide.c: Fixed Amiga compilation. (VRI)

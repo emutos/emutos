@@ -57,6 +57,8 @@ struct IDE
 
 #define ide_interface ((volatile struct IDE *)(COMPACTFLASH_BASE + 0x1800))
 
+/* On M548X, the IDE registers must be read and written as a single word. */
+
 #define IDE_WRITE_REGISTER_PAIR(r,a,b) \
     *(volatile UWORD *)&ide_interface->r = MAKE_UWORD(a,b)
 
@@ -123,6 +125,12 @@ struct IDE
 
 #define ide_interface           ((volatile struct IDE *)0xfff00000)
 
+#endif /* CONF_ATARI_HARDWARE */
+
+#ifndef MACHINE_M548X
+
+/* On standard hardware, the IDE registers can be accessed as single bytes. */
+
 #define IDE_WRITE_SECTOR_NUMBER_SECTOR_COUNT(a,b) \
     { interface->sector_number = a; interface->sector_count = b; }
 #define IDE_WRITE_CYLINDER_HIGH_CYLINDER_LOW(a) \
@@ -139,7 +147,7 @@ struct IDE
 #define IDE_READ_CYLINDER_HIGH_CYLINDER_LOW() \
     ((interface->cylinder_high<<8) | interface->cylinder_low)
 
-#endif /* CONF_ATARI_HARDWARE */
+#endif /* !defined(MACHINE_M548X) */
 
 /* IDE defines */
 

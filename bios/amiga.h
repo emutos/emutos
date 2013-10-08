@@ -39,7 +39,7 @@ struct IDE
     UWORD data;
 };
 
-#define ide_interface (*(volatile struct IDE*)0x00da0000)
+#define ide_interface ((volatile struct IDE*)0x00da0000)
 
 extern const UBYTE scancode_atari_from_amiga[128];
 extern void *amiga_screenbase;
