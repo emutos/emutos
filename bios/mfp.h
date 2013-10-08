@@ -17,6 +17,8 @@
 
 #include "portab.h"
 
+#define CLOCKS_PER_SEC  200UL
+
 #if CONF_WITH_MFP
 
 #define IRQ_SPURIOUS      (IRQ_MACHSPEC | 0)
@@ -61,7 +63,6 @@
 #define IRQ_SCCA_RX          (IRQ_MACHSPEC | 52)
 #define IRQ_SCCA_SPCOND      (IRQ_MACHSPEC | 54)
 
-#define CLOCKS_PER_SEC  200UL
 
 /*=========================================================================*/
 typedef struct

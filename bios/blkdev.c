@@ -28,6 +28,7 @@
 #include "xhdi.h"
 #include "processor.h"
 #include "acsi.h"
+#include "ide.h"
 
 /*
  * Global variables
@@ -47,6 +48,7 @@ static PUN_INFO pun_info;
 static void blkdev_hdv_init(void);
 static LONG blkdev_mediach(WORD dev);
 static LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr);
+static void bus_init(void);
 
 /* get intel words */
 static UWORD getiword(UBYTE *addr)
@@ -139,10 +141,10 @@ static void blkdev_hdv_init(void)
     /* Detect and initialize floppy drives */
     flop_hdv_init();
 
-#if CONF_WITH_ACSI
-    /* perform any ACSI initialization required */
-    acsi_init();
-#endif
+    /*
+     * do bus initialisation, such as setting delay values
+     */
+    bus_init();
 
     blkdevnum = 2; /* Start hard disk partitions at C: */
     disk_init(); /* Detect hard disk partitions */
@@ -150,6 +152,19 @@ static void blkdev_hdv_init(void)
     pun_info_setup();
 }
 
+/*
+ * call bus initialisation routines
+ */
+static void bus_init(void)
+{
+#if CONF_WITH_ACSI
+    acsi_init();
+#endif
+
+#if CONF_WITH_IDE
+    ide_init();
+#endif
+}
 
 /*
  * blkdev_hdv_boot - BIOS boot vector
