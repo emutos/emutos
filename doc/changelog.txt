@@ -5024,3 +5024,7 @@ Start... early ages
 
 2013-10-08
 - bios/amiga.h bios/ide.c: Fixed Amiga compilation. (VRI)
+
+2013-10-10
+- bios/ide.c include/asm.h: Use 32-bit IDE transfer width for non-548x
+  hardware. (RFB)

@@ -74,6 +74,7 @@ extern void stop_until_interrupt(void);
 /*
  * WORD swpl(LONG val);
  *   swap endianess of val, 32 bits only.
+ *   e.g. ABCD => DCBA
  */
 
 #ifdef __mcoldfire__
@@ -98,6 +99,42 @@ extern void stop_until_interrupt(void);
   ("ror   #8,%0\n\t"                      \
    "swap  %0\n\t"                         \
    "ror   #8,%0"                          \
+  : "=d"(a)          /* outputs */        \
+  : "0"(a)           /* inputs  */        \
+  : "cc"             /* clobbered */      \
+  )
+#endif
+
+
+/*
+ * WORD swpw2(ULONG val);
+ *   swap endianness of val, treated as two 16-bit words.
+ *   e.g. ABCD => BADC
+ */
+
+#ifdef __mcoldfire__
+#define swpw2(a)                          \
+  __extension__                           \
+  ({unsigned long _tmp;                   \
+    __asm__ __volatile__                  \
+    ("move.b  (%1),%0\n\t"                \
+     "move.b  1(%1),(%1)\n\t"             \
+     "move.b  %0,1(%1)\n\t"               \
+     "move.b  2(%1),%0\n\t"               \
+     "move.b  3(%1),2(%1)\n\t"            \
+     "move.b  %0,3(%1)"                   \
+    : "=d"(_tmp)     /* outputs */        \
+    : "a"(&a)        /* inputs  */        \
+    : "cc", "memory" /* clobbered */      \
+    );                                    \
+  })
+#else
+#define swpw2(a)                          \
+  __asm__ __volatile__                    \
+  ("ror   #8,%0\n\t"                      \
+   "swap  %0\n\t"                         \
+   "ror   #8,%0\n\t"                      \
+   "swap  %0"                             \
   : "=d"(a)          /* outputs */        \
   : "0"(a)           /* inputs  */        \
   : "cc"             /* clobbered */      \

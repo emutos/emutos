@@ -40,6 +40,8 @@
 
 #include "coldpriv.h"
 
+#define IDE_32BIT_XFER  0    /* not supported on M548x */
+
 struct IDE
 {
     UBYTE filler00[2];
@@ -97,14 +99,48 @@ struct IDE
 #define IDE_READ_ALT_STATUS() \
     IDE_READ_REGISTER_PAIR(dummy)
 
+#else
+
+/* set the following to 0 to use 16-bit transfer */
+#define IDE_32BIT_XFER  1   /* use 32-bit data transfer */
+
+/* On standard hardware, the IDE registers can be accessed as single bytes. */
+
+#define IDE_WRITE_SECTOR_NUMBER_SECTOR_COUNT(a,b) \
+    { interface->sector_number = a; interface->sector_count = b; }
+#define IDE_WRITE_CYLINDER_HIGH_CYLINDER_LOW(a) \
+    { interface->cylinder_high = (a)>>8; interface->cylinder_low = (a)&0xff; }
+#define IDE_WRITE_COMMAND_HEAD(a,b) \
+    { interface->head = b; interface->command = a; }
+#define IDE_WRITE_CONTROL(a)    interface->control = a
+#define IDE_WRITE_HEAD(a)       interface->head = a
+
+#define IDE_READ_STATUS()       interface->command
+#define IDE_READ_ALT_STATUS()   interface->control
+#define IDE_READ_SECTOR_NUMBER_SECTOR_COUNT() \
+    ((interface->sector_number<<8) | interface->sector_count)
+#define IDE_READ_CYLINDER_HIGH_CYLINDER_LOW() \
+    ((interface->cylinder_high<<8) | interface->cylinder_low)
+
 #endif /* MACHINE_M548X */
+
+#if IDE_32BIT_XFER
+#define XFERWIDTH   ULONG
+#define xferswap(a) swpw2(a)
+#else
+#define XFERWIDTH   UWORD
+#define xferswap(a) swpw(a)
+#endif
 
 #if CONF_ATARI_HARDWARE
 
 struct IDE
 {
-    UWORD data;
-    UBYTE filler02[3];
+    XFERWIDTH data;
+#if !IDE_32BIT_XFER
+    UBYTE filler02[2];
+#endif
+    UBYTE filler04;
     UBYTE features; /* Read: error */
     UBYTE filler06[3];
     UBYTE sector_count;
@@ -127,27 +163,6 @@ struct IDE
 
 #endif /* CONF_ATARI_HARDWARE */
 
-#ifndef MACHINE_M548X
-
-/* On standard hardware, the IDE registers can be accessed as single bytes. */
-
-#define IDE_WRITE_SECTOR_NUMBER_SECTOR_COUNT(a,b) \
-    { interface->sector_number = a; interface->sector_count = b; }
-#define IDE_WRITE_CYLINDER_HIGH_CYLINDER_LOW(a) \
-    { interface->cylinder_high = (a)>>8; interface->cylinder_low = (a)&0xff; }
-#define IDE_WRITE_COMMAND_HEAD(a,b) \
-    { interface->head = b; interface->command = a; }
-#define IDE_WRITE_CONTROL(a)    interface->control = a
-#define IDE_WRITE_HEAD(a)       interface->head = a
-
-#define IDE_READ_STATUS()       interface->command
-#define IDE_READ_ALT_STATUS()   interface->control
-#define IDE_READ_SECTOR_NUMBER_SECTOR_COUNT() \
-    ((interface->sector_number<<8) | interface->sector_count)
-#define IDE_READ_CYLINDER_HIGH_CYLINDER_LOW() \
-    ((interface->cylinder_high<<8) | interface->cylinder_low)
-
-#endif /* !defined(MACHINE_M548X) */
 
 /* IDE defines */
 
@@ -414,8 +429,8 @@ static void ide_rw_start(volatile struct IDE *interface,UWORD dev,ULONG sector,U
  */
 static void ide_get_data(volatile struct IDE *interface,UBYTE *buffer,int need_byteswap)
 {
-    UWORD *p = (UWORD *)buffer;
-    UWORD *end = (UWORD *)(buffer + SECTOR_SIZE);
+    XFERWIDTH *p = (XFERWIDTH *)buffer;
+    XFERWIDTH *end = (XFERWIDTH *)(buffer + SECTOR_SIZE);
 
     while (p < end)
         *p++ = interface->data;
@@ -463,14 +478,14 @@ static LONG ide_read_sector(UWORD bus,UWORD dev,ULONG sector,UBYTE *buffer,BOOL 
  */
 static void ide_put_data(volatile struct IDE *interface,UBYTE *buffer,int need_byteswap)
 {
-    UWORD *p = (UWORD *)buffer;
-    UWORD *end = (UWORD *)(buffer + SECTOR_SIZE);
+    XFERWIDTH *p = (XFERWIDTH *)buffer;
+    XFERWIDTH *end = (XFERWIDTH *)(buffer + SECTOR_SIZE);
 
     if (need_byteswap) {
         while (p < end) {
-            UWORD temp;
+            XFERWIDTH temp;
             temp = *p++;
-            swpw(temp);
+            xferswap(temp);
             interface->data = temp;
         }
     } else {
