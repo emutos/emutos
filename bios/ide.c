@@ -190,9 +190,9 @@ struct IDE
 #define IDE_STATUS_DRDY (1 << 6)
 #define IDE_STATUS_BSY  (1 << 7)
 
-/* bus/device info */
+/* interface/device info */
 
-struct BUSINFO {
+struct IFINFO {
     struct {
         UBYTE type;
         UBYTE features;
@@ -215,13 +215,13 @@ struct BUSINFO {
 #define LONG_TIMEOUT    (31*CLOCKS_PER_SEC) /* 31 seconds for reset (!)*/
 
 static int has_ide;
-static struct BUSINFO businfo[NUM_IDE_INTERFACES];
+static struct IFINFO ifinfo[NUM_IDE_INTERFACES];
 static ULONG delay400ns;
 static ULONG delay5us;
 
 
 /* prototypes */
-static void ide_detect_devices(UWORD bus);
+static void ide_detect_devices(UWORD ifnum);
 static int wait_for_not_BSY(volatile struct IDE *interface,WORD timeout);
 
 
@@ -277,10 +277,10 @@ static int wait_for_signature(volatile struct IDE *interface,WORD timeout)
     return 1;
 }
 
-static void ide_reset(UWORD bus)
+static void ide_reset(UWORD ifnum)
 {
-    volatile struct IDE *interface = ide_interface + bus;
-    struct BUSINFO *info = businfo + bus;
+    volatile struct IDE *interface = ide_interface + ifnum;
+    struct IFINFO *info = ifinfo + ifnum;
     int err;
 
     /* set, then reset, the soft reset bit */
@@ -293,7 +293,7 @@ static void ide_reset(UWORD bus)
     if (info->dev[0].type != DEVTYPE_NONE) {
         if (wait_for_not_BSY(interface,LONG_TIMEOUT)) {
             info->dev[0].type = DEVTYPE_NONE;
-            KDEBUG(("IDE bus %d device 0 timeout after soft reset\n",bus));
+            KDEBUG(("IDE i/f %d device 0 timeout after soft reset\n",ifnum));
         }
     }
 
@@ -306,7 +306,7 @@ static void ide_reset(UWORD bus)
             err = 1;
         if (err) {
             info->dev[1].type = DEVTYPE_NONE;
-            KDEBUG(("IDE bus %d device 1 timeout after soft reset\n",bus));
+            KDEBUG(("IDE i/f %d device 1 timeout after soft reset\n",ifnum));
         }
     }
 }
@@ -329,10 +329,10 @@ static UBYTE ide_decode_type(UBYTE status,UWORD signature)
     return DEVTYPE_UNKNOWN;
 }
 
-static void ide_detect_devices(UWORD bus)
+static void ide_detect_devices(UWORD ifnum)
 {
-    volatile struct IDE *interface = ide_interface + bus;
-    struct BUSINFO *info = businfo + bus;
+    volatile struct IDE *interface = ide_interface + ifnum;
+    struct IFINFO *info = ifinfo + ifnum;
     UBYTE status;
     UWORD signature;
     int i;
@@ -358,7 +358,7 @@ static void ide_detect_devices(UWORD bus)
     /* recheck after soft reset, also detect ata/atapi */
     IDE_WRITE_HEAD(IDE_DEVICE(0));
     DELAY_400NS;
-    ide_reset(bus);
+    ide_reset(ifnum);
 
     for (i = 0; i < 2; i++) {
         IDE_WRITE_HEAD(IDE_DEVICE(i));
@@ -371,7 +371,7 @@ static void ide_detect_devices(UWORD bus)
     }
 
     for (i = 0; i < 2; i++)
-        KDEBUG(("IDE bus %d device %d is type %d\n",bus,i,info->dev[i].type));
+        KDEBUG(("IDE i/f %d device %d is type %d\n",ifnum,i,info->dev[i].type));
 }
 
 /*
@@ -456,9 +456,9 @@ static void ide_get_data(volatile struct IDE *interface,UBYTE *buffer,int need_b
 /*
  * read sector
  */
-static LONG ide_read_sector(UWORD bus,UWORD dev,ULONG sector,UBYTE *buffer,BOOL need_byteswap)
+static LONG ide_read_sector(UWORD ifnum,UWORD dev,ULONG sector,UBYTE *buffer,BOOL need_byteswap)
 {
-    volatile struct IDE *interface = ide_interface + bus;
+    volatile struct IDE *interface = ide_interface + ifnum;
     UBYTE status1, status2;
     LONG rc;
 
@@ -511,9 +511,9 @@ static void ide_put_data(volatile struct IDE *interface,UBYTE *buffer,int need_b
 /*
  * write sector
  */
-static LONG ide_write_sector(UWORD bus,UWORD dev,ULONG sector,UBYTE *buffer,BOOL need_byteswap)
+static LONG ide_write_sector(UWORD ifnum,UWORD dev,ULONG sector,UBYTE *buffer,BOOL need_byteswap)
 {
-    volatile struct IDE *interface = ide_interface + bus;
+    volatile struct IDE *interface = ide_interface + ifnum;
     UBYTE status1, status2;
     LONG rc;
 
@@ -545,24 +545,24 @@ static LONG ide_write_sector(UWORD bus,UWORD dev,ULONG sector,UBYTE *buffer,BOOL
 LONG ide_rw(WORD rw,LONG sector,WORD count,LONG buf,WORD dev,BOOL need_byteswap)
 {
     UBYTE *p = (UBYTE *)buf;
-    UWORD bus;
+    UWORD ifnum;
     LONG ret;
 
-    bus = dev / 2;  /* i.e. primary IDE, secondary IDE, ... */
+    ifnum = dev / 2;/* i.e. primary IDE, secondary IDE, ... */
     dev &= 1;       /* 0 or 1 */
 
-    if (!(has_ide & (1<<bus)))  /* interface does not exist */
+    if (!(has_ide & (1<<ifnum)))    /* interface does not exist */
         return EUNDEV;
 
-    if (businfo[bus].dev[dev].type != DEVTYPE_ATA)
+    if (ifinfo[ifnum].dev[dev].type != DEVTYPE_ATA)
         return EUNDEV;
 
     while (count > 0)
     {
-        ret = rw ? ide_write_sector(bus,dev,sector,p,need_byteswap)
-                : ide_read_sector(bus,dev,sector,p,need_byteswap);
+        ret = rw ? ide_write_sector(ifnum,dev,sector,p,need_byteswap)
+                : ide_read_sector(ifnum,dev,sector,p,need_byteswap);
         if (ret < 0) {
-            KDEBUG(("ide_rw(%d,%d,%ld,%p,%d) rc=%ld\n",bus,dev,sector,p,need_byteswap,ret));
+            KDEBUG(("ide_rw(%d,%d,%ld,%p,%d) rc=%ld\n",ifnum,dev,sector,p,need_byteswap,ret));
             return ret;
         }
 

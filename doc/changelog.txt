@@ -5031,3 +5031,5 @@ Start... early ages
 
 2013-10-23
 - bios/ide.c: Support up to 4 IDE interfaces. (RFB)
+- bios/ide.c: Code cleanup: use 'interface' instead of 'bus' within IDE
+  code to avoid confusion. (RFB)
