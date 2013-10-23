@@ -5028,3 +5028,6 @@ Start... early ages
 2013-10-10
 - bios/ide.c include/asm.h: Use 32-bit IDE transfer width for non-548x
   hardware. (RFB)
+
+2013-10-23
+- bios/ide.c: Support up to 4 IDE interfaces. (RFB)

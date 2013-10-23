@@ -134,6 +134,8 @@ struct IDE
 
 #if CONF_ATARI_HARDWARE
 
+#define NUM_IDE_INTERFACES  4   /* with e.g. ST Doubler */
+
 struct IDE
 {
     XFERWIDTH data;
@@ -160,6 +162,10 @@ struct IDE
 };
 
 #define ide_interface           ((volatile struct IDE *)0xfff00000)
+
+#else
+
+#define NUM_IDE_INTERFACES  1
 
 #endif /* CONF_ATARI_HARDWARE */
 
@@ -209,7 +215,7 @@ struct BUSINFO {
 #define LONG_TIMEOUT    (31*CLOCKS_PER_SEC) /* 31 seconds for reset (!)*/
 
 static int has_ide;
-static struct BUSINFO businfo[1];
+static struct BUSINFO businfo[NUM_IDE_INTERFACES];
 static ULONG delay400ns;
 static ULONG delay5us;
 
@@ -222,11 +228,15 @@ static int wait_for_not_BSY(volatile struct IDE *interface,WORD timeout);
 void detect_ide(void)
 {
 #ifdef MACHINE_AMIGA
-    has_ide = has_gayle;
+    has_ide = has_gayle ? 1 : 0;
 #elif defined(MACHINE_M548X)
-    has_ide = TRUE;
+    has_ide = 1;
 #else
-    has_ide = check_read_byte((long)&ide_interface[0].command);
+    int i, bitmask;
+
+    for (i = 0, bitmask = 1; i < NUM_IDE_INTERFACES; i++, bitmask <<= 1)
+        if (check_read_byte((long)&ide_interface[i].command))
+            has_ide |= bitmask;
 #endif
 
     KDEBUG(("has_ide = %d\n",has_ide));
@@ -237,10 +247,14 @@ void detect_ide(void)
  */
 void ide_init(void)
 {
+    int i, bitmask;
+
     delay400ns = loopcount_1_msec / 2500;
     delay5us = loopcount_1_msec / 200;
-    if (has_ide)
-        ide_detect_devices(0);
+
+    for (i = 0, bitmask = 1; i < NUM_IDE_INTERFACES; i++, bitmask <<= 1)
+        if (has_ide&bitmask)
+            ide_detect_devices(i);
 }
 
 /*
@@ -534,14 +548,11 @@ LONG ide_rw(WORD rw,LONG sector,WORD count,LONG buf,WORD dev,BOOL need_byteswap)
     UWORD bus;
     LONG ret;
 
-    if (!has_ide)
-        return EUNDEV;
-
-    if (dev >= 2) /* Only Master and Slave device supported */
-        return EUNDEV;
-
     bus = dev / 2;  /* i.e. primary IDE, secondary IDE, ... */
     dev &= 1;       /* 0 or 1 */
+
+    if (!(has_ide & (1<<bus)))  /* interface does not exist */
+        return EUNDEV;
 
     if (businfo[bus].dev[dev].type != DEVTYPE_ATA)
         return EUNDEV;
