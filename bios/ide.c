@@ -16,7 +16,6 @@
  */
 
 /* #define ENABLE_KDEBUG */
-#define ENABLE_KDEBUG
 
 #include "config.h"
 #include "portab.h"
@@ -539,9 +538,9 @@ static void ide_put_data(volatile struct IDE *interface,UBYTE *buffer,int need_b
 }
 
 /*
- * write sector
+ * write to the IDE device
  */
-static LONG ide_write_sector(UWORD ifnum,UWORD dev,ULONG sector,UBYTE *buffer,BOOL need_byteswap)
+static LONG ide_write(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UBYTE *buffer,BOOL need_byteswap)
 {
     volatile struct IDE *interface = ide_interface + ifnum;
     UBYTE status1, status2;
@@ -550,7 +549,7 @@ static LONG ide_write_sector(UWORD ifnum,UWORD dev,ULONG sector,UBYTE *buffer,BO
     if (ide_select_device(interface,dev) < 0)
         return EWRITF;
 
-    ide_rw_start(interface,dev,sector,IDE_CMD_WRITE_SECTOR);
+    ide_rw_start(interface,dev,sector,cmd);
     if (wait_for_not_BSY(interface,SHORT_TIMEOUT))
         return EWRITF;
 
@@ -586,7 +585,7 @@ LONG ide_rw(WORD rw,LONG sector,WORD count,LONG buf,WORD dev,BOOL need_byteswap)
 
     while (count > 0)
     {
-        ret = rw ? ide_write_sector(ifnum,dev,sector,p,need_byteswap)
+        ret = rw ? ide_write(IDE_CMD_WRITE_SECTOR,ifnum,dev,sector,p,need_byteswap)
                 : ide_read(IDE_CMD_READ_SECTOR,ifnum,dev,sector,p,need_byteswap);
         if (ret < 0) {
             KDEBUG(("ide_rw(%d,%d,%ld,%p,%d) rc=%ld\n",ifnum,dev,sector,p,need_byteswap,ret));

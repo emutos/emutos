@@ -5037,3 +5037,5 @@ Start... early ages
 2013-10-24
 - bios/ide.c bios/ide.h bios/xhdi.c: Disk capacity is now obtained from
   IDE devices. (RFB)
+- bios/ide.c: Code cleanup: remove residual ENABLE_KDEBUG; use the same
+  pattern of args for read & write routines.
