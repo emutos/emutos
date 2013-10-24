@@ -404,7 +404,10 @@ long XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
         break;
 #if CONF_WITH_IDE
     case IDE_BUS:
-        /* we should call a routine for ide capacity */
+        ret = ide_capacity(reldev,&capacity,&secsize);
+        KDEBUG(("ide_capacity(%d) returned %ld\n", reldev, ret));
+        if (ret < 0)
+            return EUNDEV;
         break;
 #endif /* CONF_WITH_IDE */
     default:

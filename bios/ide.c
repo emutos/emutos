@@ -16,6 +16,7 @@
  */
 
 /* #define ENABLE_KDEBUG */
+#define ENABLE_KDEBUG
 
 #include "config.h"
 #include "portab.h"
@@ -218,6 +219,19 @@ static int has_ide;
 static struct IFINFO ifinfo[NUM_IDE_INTERFACES];
 static ULONG delay400ns;
 static ULONG delay5us;
+static struct {
+    UWORD filler00[27];
+    UBYTE model_number[40];
+    UWORD filler2f[2];
+    UWORD capabilities;
+    UWORD filler32[10];
+    UWORD numsecs_lba28[2]; /* number of sectors for LBA28 cmds */
+    UWORD filler3e[20];
+    UWORD cmds_supported[3];
+    UWORD filler55[15];
+    UWORD maxsec_lba48[4];  /* max sector number for LBA48 cmds */
+    UWORD filler68[152];
+} identify;
 
 
 /* prototypes */
@@ -234,7 +248,7 @@ void detect_ide(void)
 #else
     int i, bitmask;
 
-    for (i = 0, bitmask = 1; i < NUM_IDE_INTERFACES; i++, bitmask <<= 1)
+    for (i = 0, bitmask = 1, has_ide = 0; i < NUM_IDE_INTERFACES; i++, bitmask <<= 1)
         if (check_read_byte((long)&ide_interface[i].command))
             has_ide |= bitmask;
 #endif
@@ -255,6 +269,22 @@ void ide_init(void)
     for (i = 0, bitmask = 1; i < NUM_IDE_INTERFACES; i++, bitmask <<= 1)
         if (has_ide&bitmask)
             ide_detect_devices(i);
+}
+
+static int ide_device_exists(WORD dev)
+{
+    WORD ifnum;
+
+    ifnum = dev / 2;/* i.e. primary IDE, secondary IDE, ... */
+    dev &= 1;       /* 0 or 1 */
+
+    if (!(has_ide & (1<<ifnum)))    /* interface does not exist */
+        return 0;
+
+    if (ifinfo[ifnum].dev[dev].type != DEVTYPE_ATA)
+        return 0;
+
+    return 1;
 }
 
 /*
@@ -454,9 +484,9 @@ static void ide_get_data(volatile struct IDE *interface,UBYTE *buffer,int need_b
 }
 
 /*
- * read sector
+ * read from the IDE device
  */
-static LONG ide_read_sector(UWORD ifnum,UWORD dev,ULONG sector,UBYTE *buffer,BOOL need_byteswap)
+static LONG ide_read(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UBYTE *buffer,BOOL need_byteswap)
 {
     volatile struct IDE *interface = ide_interface + ifnum;
     UBYTE status1, status2;
@@ -465,7 +495,7 @@ static LONG ide_read_sector(UWORD ifnum,UWORD dev,ULONG sector,UBYTE *buffer,BOO
     if (ide_select_device(interface,dev) < 0)
         return EREADF;
 
-    ide_rw_start(interface,dev,sector,IDE_CMD_READ_SECTOR);
+    ide_rw_start(interface,dev,sector,cmd);
     if (wait_for_not_BSY(interface,XFER_TIMEOUT))
         return EREADF;
 
@@ -548,19 +578,16 @@ LONG ide_rw(WORD rw,LONG sector,WORD count,LONG buf,WORD dev,BOOL need_byteswap)
     UWORD ifnum;
     LONG ret;
 
+    if (!ide_device_exists(dev))
+        return EUNDEV;
+
     ifnum = dev / 2;/* i.e. primary IDE, secondary IDE, ... */
     dev &= 1;       /* 0 or 1 */
-
-    if (!(has_ide & (1<<ifnum)))    /* interface does not exist */
-        return EUNDEV;
-
-    if (ifinfo[ifnum].dev[dev].type != DEVTYPE_ATA)
-        return EUNDEV;
 
     while (count > 0)
     {
         ret = rw ? ide_write_sector(ifnum,dev,sector,p,need_byteswap)
-                : ide_read_sector(ifnum,dev,sector,p,need_byteswap);
+                : ide_read(IDE_CMD_READ_SECTOR,ifnum,dev,sector,p,need_byteswap);
         if (ret < 0) {
             KDEBUG(("ide_rw(%d,%d,%ld,%p,%d) rc=%ld\n",ifnum,dev,sector,p,need_byteswap,ret));
             return ret;
@@ -572,6 +599,31 @@ LONG ide_rw(WORD rw,LONG sector,WORD count,LONG buf,WORD dev,BOOL need_byteswap)
     }
 
     return E_OK;
+}
+
+LONG ide_capacity(WORD dev, ULONG *blocks, ULONG *blocksize)
+{
+    LONG ret;
+    UWORD ifnum;
+
+    if (!ide_device_exists(dev))
+        return EUNDEV;
+
+    ifnum = dev / 2;/* i.e. primary IDE, secondary IDE, ... */
+    dev &= 1;       /* 0 or 1 */
+
+    ret = ide_read(IDE_CMD_IDENTIFY_DEVICE,ifnum,dev,0L,(UBYTE *)&identify,0);
+    if (ret < 0) {
+        KDEBUG(("ide_capacity(%d,%d) rc=%ld\n",ifnum,dev,ret));
+        return ret;
+    }
+
+    /* here we decode the data */
+    *blocks = (((ULONG)identify.numsecs_lba28[1]) << 16)
+                + identify.numsecs_lba28[0];
+    *blocksize = SECTOR_SIZE;   /* note: could be different under ATAPI 7 */
+
+    return 0L;
 }
 
 #endif /* CONF_WITH_IDE */

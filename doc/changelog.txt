@@ -5033,3 +5033,7 @@ Start... early ages
 - bios/ide.c: Support up to 4 IDE interfaces. (RFB)
 - bios/ide.c: Code cleanup: use 'interface' instead of 'bus' within IDE
   code to avoid confusion. (RFB)
+
+2013-10-24
+- bios/ide.c bios/ide.h bios/xhdi.c: Disk capacity is now obtained from
+  IDE devices. (RFB)
