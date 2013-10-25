@@ -319,9 +319,12 @@ static long XHInqTarget2(UWORD major, UWORD minor, ULONG *blocksize,
         break;
 #if CONF_WITH_IDE
     case IDE_BUS:
-        /* we should test existence & get productname via Inquiry */
-        if (productname)
-            strcpy(productname, "IDE Disk");
+        if (productname) {
+            const char *p = ide_name(reldev);
+            if (p)
+                strlcpy(productname,p,stringlen);
+            else *productname = '\0';
+        }
         break;
 #endif /* CONF_WITH_IDE */
     default:

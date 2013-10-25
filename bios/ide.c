@@ -220,7 +220,7 @@ static ULONG delay400ns;
 static ULONG delay5us;
 static struct {
     UWORD filler00[27];
-    UBYTE model_number[40];
+    BYTE model_number[40];
     UWORD filler2f[2];
     UWORD capabilities;
     UWORD filler32[10];
@@ -600,22 +600,30 @@ LONG ide_rw(WORD rw,LONG sector,WORD count,LONG buf,WORD dev,BOOL need_byteswap)
     return E_OK;
 }
 
-LONG ide_capacity(WORD dev, ULONG *blocks, ULONG *blocksize)
+static LONG ide_identify(WORD dev)
 {
     LONG ret;
     UWORD ifnum;
 
-    if (!ide_device_exists(dev))
-        return EUNDEV;
+    if (ide_device_exists(dev)) {
+        ifnum = dev / 2;/* i.e. primary IDE, secondary IDE, ... */
+        dev &= 1;       /* 0 or 1 */
+        ret = ide_read(IDE_CMD_IDENTIFY_DEVICE,ifnum,dev,0L,(UBYTE *)&identify,0);
+    } else ret = EUNDEV;
 
-    ifnum = dev / 2;/* i.e. primary IDE, secondary IDE, ... */
-    dev &= 1;       /* 0 or 1 */
+    if (ret < 0)
+        KDEBUG(("ide_identify(%d,%d) rc=%ld\n",ifnum,dev,ret));
 
-    ret = ide_read(IDE_CMD_IDENTIFY_DEVICE,ifnum,dev,0L,(UBYTE *)&identify,0);
-    if (ret < 0) {
-        KDEBUG(("ide_capacity(%d,%d) rc=%ld\n",ifnum,dev,ret));
+    return ret;
+}
+
+LONG ide_capacity(WORD dev,ULONG *blocks,ULONG *blocksize)
+{
+    LONG ret;
+
+    ret = ide_identify(dev);    /* reads into identify structure */
+    if (ret < 0)
         return ret;
-    }
 
     /* here we decode the data */
     *blocks = (((ULONG)identify.numsecs_lba28[1]) << 16)
@@ -623,6 +631,19 @@ LONG ide_capacity(WORD dev, ULONG *blocks, ULONG *blocksize)
     *blocksize = SECTOR_SIZE;   /* note: could be different under ATAPI 7 */
 
     return 0L;
+}
+
+BYTE *ide_name(WORD dev)
+{
+    LONG ret;
+
+    ret = ide_identify(dev);        /* read into 'identify' structure */
+    if (ret < 0)
+        return NULL;
+
+    identify.model_number[39] = 0;  /* null terminate string */
+
+    return identify.model_number;
 }
 
 #endif /* CONF_WITH_IDE */

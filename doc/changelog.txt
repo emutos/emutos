@@ -5038,4 +5038,8 @@ Start... early ages
 - bios/ide.c bios/ide.h bios/xhdi.c: Disk capacity is now obtained from
   IDE devices. (RFB)
 - bios/ide.c: Code cleanup: remove residual ENABLE_KDEBUG; use the same
-  pattern of args for read & write routines.
+  pattern of args for read & write routines. (RFB)
+
+2013-10-25
+- bios/ide.c bios/ide.h bios/xhdi.c: For IDE, XHInqTarget/XHInqTarget2
+  now return actual product name. (RFB)
