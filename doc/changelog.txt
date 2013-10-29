@@ -5047,3 +5047,4 @@ Start... early ages
 2013-10-28
 - bios/ide.c: Use Read/Write Multiple instead of Read/Write Sector
   commands, where possible. (RFB)
+- bios/ide.c: Fix uninitialized variables when debug is enabled. (RFB)

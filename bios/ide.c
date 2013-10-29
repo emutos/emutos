@@ -742,9 +742,10 @@ static LONG ide_identify(WORD dev)
     LONG ret;
     UWORD ifnum;
 
+    ifnum = dev / 2;    /* i.e. primary IDE, secondary IDE, ... */
+    dev &= 1;           /* 0 or 1 */
+
     if (ide_device_exists(dev)) {
-        ifnum = dev / 2;/* i.e. primary IDE, secondary IDE, ... */
-        dev &= 1;       /* 0 or 1 */
         ret = ide_read(IDE_CMD_IDENTIFY_DEVICE,ifnum,dev,0L,1,(UBYTE *)&identify,0);
     } else ret = EUNDEV;
 
