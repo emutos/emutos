@@ -13,6 +13,8 @@
 
 /*
  * Warning: This is beta IDE support.
+ *
+ * Note: this driver does not support CHS addressing.
  */
 
 /* #define ENABLE_KDEBUG */
@@ -176,6 +178,9 @@ struct IDE
 #define IDE_CMD_NOP             0x00
 #define IDE_CMD_READ_SECTOR     0x20
 #define IDE_CMD_WRITE_SECTOR    0x30
+#define IDE_CMD_READ_MULTIPLE       0xc4
+#define IDE_CMD_WRITE_MULTIPLE      0xc5
+#define IDE_CMD_SET_MULTIPLE_MODE   0xc6
 
 #define IDE_MODE_CHS    (0 << 6)
 #define IDE_MODE_LBA    (1 << 6)
@@ -190,19 +195,31 @@ struct IDE
 #define IDE_STATUS_DRDY (1 << 6)
 #define IDE_STATUS_BSY  (1 << 7)
 
+/*
+ * maximum number of sectors per physical i/o.  this MUST not exceed 256,
+ * at least for LBA28-style commands.  the best performance is obtained
+ * if this is a multiple of the sectors-per-interrupt value supported by
+ * the drive(s) in multiple mode.
+ */
+#define MAXSECS_PER_IO  32
+
+
 /* interface/device info */
 
 struct IFINFO {
     struct {
         UBYTE type;
-        UBYTE features;
+        UBYTE options;
+        UBYTE spi;          /* # sectors transferred between interrupts */
     } dev[2];
 };
 
-#define DEVTYPE_NONE    0
+#define DEVTYPE_NONE    0               /* for 'type' */
 #define DEVTYPE_UNKNOWN 1
 #define DEVTYPE_ATA     2
 #define DEVTYPE_ATAPI   3
+
+#define MULTIPLE_MODE_ACTIVE    0x01    /* for 'options' */
 
 
 /* timing stuff */
@@ -221,7 +238,8 @@ static ULONG delay5us;
 static struct {
     UWORD filler00[27];
     BYTE model_number[40];
-    UWORD filler2f[2];
+    UWORD multiple_io_info;
+    UWORD filler2f;
     UWORD capabilities;
     UWORD filler32[10];
     UWORD numsecs_lba28[2]; /* number of sectors for LBA28 cmds */
@@ -235,6 +253,8 @@ static struct {
 
 /* prototypes */
 static void ide_detect_devices(UWORD ifnum);
+static LONG ide_identify(WORD dev);
+static void set_multiple_mode(WORD dev,UWORD multi_io);
 static int wait_for_not_BSY(volatile struct IDE *interface,WORD timeout);
 
 
@@ -265,9 +285,15 @@ void ide_init(void)
     delay400ns = loopcount_1_msec / 2500;
     delay5us = loopcount_1_msec / 200;
 
+    /* detect devices */
     for (i = 0, bitmask = 1; i < NUM_IDE_INTERFACES; i++, bitmask <<= 1)
         if (has_ide&bitmask)
             ide_detect_devices(i);
+
+    /* set multiple mode for all devices that we have info for */
+    for (i = 0; i < DEVICES_PER_BUS; i++)
+        if (ide_identify(i) == 0)
+            set_multiple_mode(i,identify.multiple_io_info);
 }
 
 static int ide_device_exists(WORD dev)
@@ -381,7 +407,8 @@ static void ide_detect_devices(UWORD ifnum)
             info->dev[i].type = DEVTYPE_UNKNOWN;
         else 
             info->dev[i].type = DEVTYPE_NONE;
-        info->dev[i].features = 0;
+        info->dev[i].options = 0;
+        info->dev[i].spi = 0;   /* changed if using READ/WRITE MULTIPLE */
     }
 
     /* recheck after soft reset, also detect ata/atapi */
@@ -460,52 +487,107 @@ static int ide_select_device(volatile struct IDE *interface,UWORD dev)
 /*
  * set device / command / sector start / count / LBA mode in IDE registers
  */ 
-static void ide_rw_start(volatile struct IDE *interface,UWORD dev,ULONG sector,UBYTE cmd)
+static void ide_rw_start(volatile struct IDE *interface,UWORD dev,ULONG sector,UWORD count,UBYTE cmd)
 {
-    IDE_WRITE_SECTOR_NUMBER_SECTOR_COUNT((sector & 0xff), 1);
+    IDE_WRITE_SECTOR_NUMBER_SECTOR_COUNT((sector & 0xff), (count & 0xff));
     IDE_WRITE_CYLINDER_HIGH_CYLINDER_LOW((UWORD)((sector & 0xffff00) >> 8));
     IDE_WRITE_COMMAND_HEAD(cmd,IDE_MODE_LBA|IDE_DEVICE(dev)|(UBYTE)((sector>>24)&0x0f));
 }
 
 /*
+ * perform a non-data-transfer command
+ */
+static LONG ide_nodata(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UWORD count)
+{
+    volatile struct IDE *interface = ide_interface + ifnum;
+    UBYTE status;
+
+    if (ide_select_device(interface,dev) < 0)
+        return EGENRL;
+
+    ide_rw_start(interface,dev,sector,count,cmd);
+
+    if (wait_for_not_BSY(interface,SHORT_TIMEOUT))  /* should vary depending on command? */
+        return EGENRL;
+
+    status = IDE_READ_STATUS();     /* status, clear pending interrupt */
+    if (status & (IDE_STATUS_BSY|IDE_STATUS_DF|IDE_STATUS_DRQ|IDE_STATUS_ERR))
+        return EGENRL;
+
+    return E_OK;
+}
+
+/*
  * get data from IDE device
  */
-static void ide_get_data(volatile struct IDE *interface,UBYTE *buffer,int need_byteswap)
+static void ide_get_data(volatile struct IDE *interface,UBYTE *buffer,ULONG bufferlen,int need_byteswap)
 {
     XFERWIDTH *p = (XFERWIDTH *)buffer;
-    XFERWIDTH *end = (XFERWIDTH *)(buffer + SECTOR_SIZE);
+    XFERWIDTH *end = (XFERWIDTH *)(buffer + bufferlen);
 
     while (p < end)
         *p++ = interface->data;
 
     if (need_byteswap)
-        byteswap(buffer,SECTOR_SIZE);
+        byteswap(buffer,bufferlen);
 }
 
 /*
  * read from the IDE device
  */
-static LONG ide_read(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UBYTE *buffer,BOOL need_byteswap)
+static LONG ide_read(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UWORD count,UBYTE *buffer,BOOL need_byteswap)
 {
     volatile struct IDE *interface = ide_interface + ifnum;
+    struct IFINFO *info = ifinfo + ifnum;
+    UWORD spi;
     UBYTE status1, status2;
-    LONG rc;
+    LONG rc = 0L;
 
     if (ide_select_device(interface,dev) < 0)
         return EREADF;
 
-    ide_rw_start(interface,dev,sector,cmd);
-    if (wait_for_not_BSY(interface,XFER_TIMEOUT))
-        return EREADF;
+    /*
+     * if READ SECTOR and MULTIPLE MODE, set cmd & spi accordingly
+     */
+    spi = 1;
+    if ((cmd == IDE_CMD_READ_SECTOR)
+     && (info->dev[dev].options & MULTIPLE_MODE_ACTIVE)) {
+        cmd = IDE_CMD_READ_MULTIPLE;
+        spi = info->dev[dev].spi;
+    }
 
-    status1 = IDE_READ_ALT_STATUS();    /* alternate status, ignore */
-    status1 = IDE_READ_STATUS();        /* status, clear pending interrupt */
+    ide_rw_start(interface,dev,sector,count,cmd);
 
-    rc = E_OK;
-    if (status1 & IDE_STATUS_DRQ)
-        ide_get_data(interface,buffer,need_byteswap);
-    if (status1 & (IDE_STATUS_DF | IDE_STATUS_ERR))
-        rc = EREADF;
+    /*
+     * each iteration of this loop handles one DRQ block
+     */
+    while (count > 0)
+    {
+        UWORD numsecs;
+        ULONG xferlen;
+
+        if (wait_for_not_BSY(interface,XFER_TIMEOUT))
+            return EREADF;
+
+        status1 = IDE_READ_ALT_STATUS();/* alternate status, ignore */
+        status1 = IDE_READ_STATUS();    /* status, clear pending interrupt */
+
+        numsecs = (count>spi) ? spi : count;
+        xferlen = (ULONG)numsecs * SECTOR_SIZE;
+
+        rc = E_OK;
+        if (status1 & IDE_STATUS_DRQ)
+            ide_get_data(interface,buffer,xferlen,need_byteswap);
+        else rc = EREADF;
+        if (status1 & (IDE_STATUS_DF | IDE_STATUS_ERR))
+            rc = EREADF;
+
+        if (rc)
+            break;
+
+        buffer += xferlen;
+        count -= numsecs;
+    }
 
     status2 = IDE_READ_ALT_STATUS();    /* alternate status, ignore */
     status2 = IDE_READ_STATUS();        /* status, clear pending interrupt */
@@ -519,10 +601,10 @@ static LONG ide_read(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UBYTE *buffer,
 /*
  * send data to IDE device
  */
-static void ide_put_data(volatile struct IDE *interface,UBYTE *buffer,int need_byteswap)
+static void ide_put_data(volatile struct IDE *interface,UBYTE *buffer,ULONG bufferlen,int need_byteswap)
 {
     XFERWIDTH *p = (XFERWIDTH *)buffer;
-    XFERWIDTH *end = (XFERWIDTH *)(buffer + SECTOR_SIZE);
+    XFERWIDTH *end = (XFERWIDTH *)(buffer + bufferlen);
 
     if (need_byteswap) {
         while (p < end) {
@@ -540,33 +622,65 @@ static void ide_put_data(volatile struct IDE *interface,UBYTE *buffer,int need_b
 /*
  * write to the IDE device
  */
-static LONG ide_write(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UBYTE *buffer,BOOL need_byteswap)
+static LONG ide_write(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UWORD count,UBYTE *buffer,BOOL need_byteswap)
 {
     volatile struct IDE *interface = ide_interface + ifnum;
+    struct IFINFO *info = ifinfo + ifnum;
+    UWORD spi;
     UBYTE status1, status2;
-    LONG rc;
+    LONG rc = 0L;
 
     if (ide_select_device(interface,dev) < 0)
         return EWRITF;
 
-    ide_rw_start(interface,dev,sector,cmd);
+    /*
+     * if WRITE SECTOR and MULTIPLE MODE, set cmd & spi accordingly
+     */
+    spi = 1;
+    if ((cmd == IDE_CMD_WRITE_SECTOR)
+     && (info->dev[dev].options & MULTIPLE_MODE_ACTIVE)) {
+        cmd = IDE_CMD_WRITE_MULTIPLE;
+        spi = info->dev[dev].spi;
+    }
+
+    ide_rw_start(interface,dev,sector,count,cmd);
+
     if (wait_for_not_BSY(interface,SHORT_TIMEOUT))
         return EWRITF;
 
-    rc = E_OK;
-    status1 = IDE_READ_STATUS();        /* status, clear pending interrupt */
-    if (status1 & IDE_STATUS_DRQ)
-        ide_put_data(interface,buffer,need_byteswap);
-    if (status1 & (IDE_STATUS_DF|IDE_STATUS_ERR))
-         rc = EWRITF;
+    /*
+     * each iteration of this loop handles one DRQ block
+     */
+    while (count > 0)
+    {
+        UWORD numsecs;
+        ULONG xferlen;
 
-    if (wait_for_not_BSY(interface,XFER_TIMEOUT))   /* while device processes data */
-        return EWRITF;
+        numsecs = (count>spi) ? spi : count;
+        xferlen = (ULONG)numsecs * SECTOR_SIZE;
+
+        rc = E_OK;
+        status1 = IDE_READ_STATUS();    /* status, clear pending interrupt */
+        if (status1 & IDE_STATUS_DRQ)
+            ide_put_data(interface,buffer,xferlen,need_byteswap);
+        else rc = EWRITF;
+        if (status1 & (IDE_STATUS_DF|IDE_STATUS_ERR))
+            rc = EWRITF;
+
+        if (wait_for_not_BSY(interface,XFER_TIMEOUT))   /* while device processes data */
+            return EWRITF;
+
+        if (rc)
+            break;
+
+        buffer += xferlen;
+        count -= numsecs;
+    }
 
     status2 = IDE_READ_ALT_STATUS();    /* alternate status (ignore) */
     status2 = IDE_READ_STATUS();        /* status, clear pending interrupt */
     if (status2 & (IDE_STATUS_BSY|IDE_STATUS_DF|IDE_STATUS_DRQ|IDE_STATUS_ERR))
-         rc = EWRITF;
+        rc = EWRITF;
 
     return rc;
 }
@@ -585,19 +699,42 @@ LONG ide_rw(WORD rw,LONG sector,WORD count,LONG buf,WORD dev,BOOL need_byteswap)
 
     while (count > 0)
     {
-        ret = rw ? ide_write(IDE_CMD_WRITE_SECTOR,ifnum,dev,sector,p,need_byteswap)
-                : ide_read(IDE_CMD_READ_SECTOR,ifnum,dev,sector,p,need_byteswap);
+        UWORD numsecs;
+
+        numsecs = (count>MAXSECS_PER_IO) ? MAXSECS_PER_IO : count;
+        ret = rw ? ide_write(IDE_CMD_WRITE_SECTOR,ifnum,dev,sector,numsecs,p,need_byteswap)
+                : ide_read(IDE_CMD_READ_SECTOR,ifnum,dev,sector,numsecs,p,need_byteswap);
         if (ret < 0) {
-            KDEBUG(("ide_rw(%d,%d,%ld,%p,%d) rc=%ld\n",ifnum,dev,sector,p,need_byteswap,ret));
+            KDEBUG(("ide_io(%d,%d,%d,%ld,%u,%p,%d) rc=%ld\n",
+                    rw,ifnum,dev,sector,numsecs,p,need_byteswap,ret));
             return ret;
         }
 
-        p += SECTOR_SIZE;
-        ++sector;
-        --count;
+        p += (ULONG)numsecs*SECTOR_SIZE;
+        sector += numsecs;
+        count -= numsecs;
     }
 
     return E_OK;
+}
+
+static void set_multiple_mode(WORD dev,UWORD multi_io)
+{
+    UWORD ifnum;
+    UBYTE spi;
+
+    if (!(multi_io & 0x8000))
+        return;
+
+    ifnum = dev / 2;    /* i.e. primary IDE, secondary IDE, ... */
+    dev &= 1;           /* 0 or 1 */
+
+    spi = multi_io & 0xff;
+    if (ide_nodata(IDE_CMD_SET_MULTIPLE_MODE,ifnum,dev,0L,spi))
+        return;         /* command failed */
+
+    ifinfo[ifnum].dev[dev].options |= MULTIPLE_MODE_ACTIVE;
+    ifinfo[ifnum].dev[dev].spi = spi;
 }
 
 static LONG ide_identify(WORD dev)
@@ -608,7 +745,7 @@ static LONG ide_identify(WORD dev)
     if (ide_device_exists(dev)) {
         ifnum = dev / 2;/* i.e. primary IDE, secondary IDE, ... */
         dev &= 1;       /* 0 or 1 */
-        ret = ide_read(IDE_CMD_IDENTIFY_DEVICE,ifnum,dev,0L,(UBYTE *)&identify,0);
+        ret = ide_read(IDE_CMD_IDENTIFY_DEVICE,ifnum,dev,0L,1,(UBYTE *)&identify,0);
     } else ret = EUNDEV;
 
     if (ret < 0)
