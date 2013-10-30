@@ -5051,3 +5051,5 @@ Start... early ages
 
 2013-10-30
 - bios/ide.c: Fix crash during startup caused by previous update. (RFB)
+- desk/desktop.def desk/desktop.rsc: Change FBOXTEXT objects to FTEXT
+  for faster dialog display. Suggested by Eero Tamminen. (RFB)
