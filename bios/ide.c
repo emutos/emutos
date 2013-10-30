@@ -740,17 +740,17 @@ static void set_multiple_mode(WORD dev,UWORD multi_io)
 static LONG ide_identify(WORD dev)
 {
     LONG ret;
-    UWORD ifnum;
+    UWORD ifnum, ifdev;
 
     ifnum = dev / 2;    /* i.e. primary IDE, secondary IDE, ... */
-    dev &= 1;           /* 0 or 1 */
+    ifdev = dev & 1;    /* 0 or 1 */
 
     if (ide_device_exists(dev)) {
-        ret = ide_read(IDE_CMD_IDENTIFY_DEVICE,ifnum,dev,0L,1,(UBYTE *)&identify,0);
+        ret = ide_read(IDE_CMD_IDENTIFY_DEVICE,ifnum,ifdev,0L,1,(UBYTE *)&identify,0);
     } else ret = EUNDEV;
 
     if (ret < 0)
-        KDEBUG(("ide_identify(%d,%d) rc=%ld\n",ifnum,dev,ret));
+        KDEBUG(("ide_identify(%d,%d) rc=%ld\n",ifnum,ifdev,ret));
 
     return ret;
 }
