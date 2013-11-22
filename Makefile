@@ -174,7 +174,7 @@ bios_ssrc = tosvars.S startup.S aciavecs.S vectors.S lineavars.S \
             natfeat.S amiga2.S aros2.S delayasm.S 68040_pmmu.S
 
 ifeq (1,$(COLDFIRE))
-  bios_csrc += coldfire.c
+  bios_csrc += coldfire.c sd.c spi.c
   bios_ssrc += coldfire2.S
 endif
 

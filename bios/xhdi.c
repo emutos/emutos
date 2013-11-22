@@ -24,6 +24,7 @@
 #include "cookie.h"
 #include "natfeat.h"
 #include "ide.h"
+#include "sd.h"
 
 #include "xhdi.h"
 
@@ -327,6 +328,17 @@ static long XHInqTarget2(UWORD major, UWORD minor, ULONG *blocksize,
         }
         break;
 #endif /* CONF_WITH_IDE */
+#if CONF_WITH_SDMMC
+    case SDMMC_BUS:
+        if (productname) {
+            BYTE name[40];
+            ret = sd_ioctl(reldev,GET_DISKNAME,name);
+            if (ret)
+                return ret;
+            strlcpy(productname,name,stringlen);
+        }
+        break;
+#endif /* CONF_WITH_SDMMC */
     default:
         return EUNDEV;
     }
@@ -363,7 +375,7 @@ long XHInqTarget(UWORD major, UWORD minor, ULONG *blocksize,
 long XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
 {
     LONG ret;
-    ULONG capacity = 0UL, secsize = 512UL;
+    ULONG info[2] = { 0UL, 512UL }; /* #sectors, sectorsize */
     WORD dev = major, bus, reldev;
     MAYBE_UNUSED(reldev);
     MAYBE_UNUSED(ret);
@@ -396,7 +408,7 @@ long XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
     switch(bus) {
 #if CONF_WITH_ACSI
     case ACSI_BUS:
-        ret = acsi_capacity(reldev,&capacity,&secsize);
+        ret = acsi_capacity(reldev,&info[0],&info[1]);
         KDEBUG(("acsi_capacity(%d) returned %ld\n", reldev, ret));
         if (ret < 0)
             return EUNDEV;
@@ -407,20 +419,28 @@ long XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
         break;
 #if CONF_WITH_IDE
     case IDE_BUS:
-        ret = ide_capacity(reldev,&capacity,&secsize);
+        ret = ide_capacity(reldev,&info[0],&info[1]);
         KDEBUG(("ide_capacity(%d) returned %ld\n", reldev, ret));
         if (ret < 0)
             return EUNDEV;
         break;
 #endif /* CONF_WITH_IDE */
+#if CONF_WITH_SDMMC
+    case SDMMC_BUS:
+        ret = sd_ioctl(reldev,GET_DISKINFO,info);
+        KDEBUG(("sd_ioctl(%d) returned %ld\n", reldev, ret));
+        if (ret)
+            return ret;
+        break;
+#endif /* CONF_WITH_SDMMC */
     default:
         return EUNDEV;
     }
 
     if (blocks)
-        *blocks = capacity;
+        *blocks = info[0];
     if (blocksize)
-        *blocksize = secsize;
+        *blocksize = info[1];
 
     return 0;
 }
@@ -481,6 +501,12 @@ long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
         break;
     }
 #endif /* CONF_WITH_IDE */
+#if CONF_WITH_SDMMC
+    case SDMMC_BUS:
+        ret = sd_rw(rw, sector, count, (LONG)buf, reldev);
+        KDEBUG(("sd_rw() returned %ld\n", ret));
+        break;
+#endif /* CONF_WITH_SDMMC */
     default:
         ret = EUNDEV;
     }

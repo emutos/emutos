@@ -26,16 +26,33 @@
 #define RWABS_RETRIES   1   /* on real machine might want to increase this */
 
 #define NUMFLOPPIES     2   /* max number of floppies supported */
-#define UNITSNUM       (NUMFLOPPIES+24) /* 2xFDC + 8xACSI + 8xSCSI + 8xIDE */
 
 #define ACSI_BUS            0
 #define SCSI_BUS            1
 #define IDE_BUS             2
+#define SDMMC_BUS           3
+
+#define MAX_BUS             SDMMC_BUS
 #define DEVICES_PER_BUS     8
+#define UNITSNUM            (NUMFLOPPIES+(DEVICES_PER_BUS*(MAX_BUS+1)))
+
 #define GET_BUS(n)          ((n)/DEVICES_PER_BUS)
 #define IS_ACSI_DEVICE(n)   (GET_BUS(n) == ACSI_BUS)
 #define IS_SCSI_DEVICE(n)   (GET_BUS(n) == SCSI_BUS)
 #define IS_IDE_DEVICE(n)    (GET_BUS(n) == IDE_BUS)
+#define IS_SDMMC_DEVICE(n)  (GET_BUS(n) == SDMMC_BUS)
+
+
+/*
+ * commands used for internal xxx_ioctl() calls
+ */
+#define GET_DISKINFO        20  /* get disk info for specified drive: */
+                                /* arg -> array of two ULONGS:        */
+                                /*   [0] capacity (in sectors)        */
+                                /*   [1] sector size (in bytes)       */
+#define GET_DISKNAME        21  /* get name of specified drive:       */
+                                /* arg -> return data (max 40 chars)  */
+
 
 /* Original FAT12 bootsector */
 struct bs {

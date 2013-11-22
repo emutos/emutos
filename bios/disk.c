@@ -38,7 +38,8 @@ void disk_init(void)
     static const int targets[] =
         {16, 18, 17, 19, 20, 22, 21, 23,    /* IDE primary/secondary */
          8, 9, 10, 11, 12, 13, 14, 15,      /* SCSI */
-         0, 1, 2, 3, 4, 5, 6, 7};           /* ACSI */
+         0, 1, 2, 3, 4, 5, 6, 7,            /* ACSI */
+         24, 25, 26, 27, 28, 29, 30, 31};   /* SD/MMC */
     int i;
 
     /* scan for attached harddrives and their partitions */
@@ -165,7 +166,7 @@ static int atari_partition(int xhdidev)
     if (DMAread(0, 1, (long)&physsect, xhdidev))
         return -1;
 
-    KINFO(("%cd%c:","ash"[xhdidev>>3],'a'+(xhdidev&0x07)));
+    KINFO(("%cd%c:","ashf????"[xhdidev>>3],'a'+(xhdidev&0x07)));
 
     /* check for DOS byteswapped master boot record.
      * this is enabled on IDE devices only,

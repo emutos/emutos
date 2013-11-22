@@ -29,6 +29,7 @@
 #include "processor.h"
 #include "acsi.h"
 #include "ide.h"
+#include "sd.h"
 
 /*
  * Global variables
@@ -163,6 +164,10 @@ static void bus_init(void)
 
 #if CONF_WITH_IDE
     ide_init();
+#endif
+
+#if CONF_WITH_SDMMC
+    sd_init();
 #endif
 }
 
