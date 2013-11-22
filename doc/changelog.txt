@@ -5053,3 +5053,9 @@ Start... early ages
 - bios/ide.c: Fix crash during startup caused by previous update. (RFB)
 - desk/desktop.def desk/desktop.rsc: Change FBOXTEXT objects to FTEXT
   for faster dialog display. Suggested by Eero Tamminen. (RFB)
+
+2013-11-21
+- Makefile bios/blkdev.c bios/blkdev.h bios/coldpriv.h bios/disk.c
+  bios/sd.c bios/sd.h bios/spi.c bios/spi.h bios/xhdi.c: Add support
+  for SD/MMC cards on Firebee. (RFB)
+
