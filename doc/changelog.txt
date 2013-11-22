@@ -5060,4 +5060,6 @@ Start... early ages
   for SD/MMC cards on Firebee. (RFB)
 - bios/ide.c bios/ide.h bios/xhdi.c: Code cleanup: use ioctl model
   for miscellaneous IDE routines. (RFB)
+- desk/desktop.def desk/desktop.rsc: Reverted previous FBOXTEXT change
+  which caused display problems. (RFB)
 
