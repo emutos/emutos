@@ -19,8 +19,7 @@
 
 void detect_ide(void);
 void ide_init(void);
-LONG ide_capacity(WORD dev, ULONG *blocks, ULONG *blocksize);
-BYTE *ide_name(WORD dev);
+LONG ide_ioctl(WORD dev, UWORD ctrl, void *arg);
 LONG ide_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev, BOOL need_byteswap);
 
 #endif /* CONF_WITH_IDE */

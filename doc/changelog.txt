@@ -5058,4 +5058,6 @@ Start... early ages
 - Makefile bios/blkdev.c bios/blkdev.h bios/coldpriv.h bios/disk.c
   bios/sd.c bios/sd.h bios/spi.c bios/spi.h bios/xhdi.c: Add support
   for SD/MMC cards on Firebee. (RFB)
+- bios/ide.c bios/ide.h bios/xhdi.c: Code cleanup: use ioctl model
+  for miscellaneous IDE routines. (RFB)
 

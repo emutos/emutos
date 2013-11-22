@@ -321,10 +321,11 @@ static long XHInqTarget2(UWORD major, UWORD minor, ULONG *blocksize,
 #if CONF_WITH_IDE
     case IDE_BUS:
         if (productname) {
-            const char *p = ide_name(reldev);
-            if (p)
-                strlcpy(productname,p,stringlen);
-            else *productname = '\0';
+            BYTE name[40];
+            ret = ide_ioctl(reldev,GET_DISKNAME,name);
+            if (ret)
+                return ret;
+            strlcpy(productname,name,stringlen);
         }
         break;
 #endif /* CONF_WITH_IDE */
@@ -419,10 +420,10 @@ long XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
         break;
 #if CONF_WITH_IDE
     case IDE_BUS:
-        ret = ide_capacity(reldev,&info[0],&info[1]);
-        KDEBUG(("ide_capacity(%d) returned %ld\n", reldev, ret));
+        ret = ide_ioctl(reldev,GET_DISKINFO,info);
+        KDEBUG(("ide_ioctl(%d) returned %ld\n", reldev, ret));
         if (ret < 0)
-            return EUNDEV;
+            return ret;
         break;
 #endif /* CONF_WITH_IDE */
 #if CONF_WITH_SDMMC
