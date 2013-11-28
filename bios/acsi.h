@@ -18,9 +18,8 @@
 #if CONF_WITH_ACSI
 
 void acsi_init(void);
-LONG acsi_capacity(WORD dev, ULONG *blocks, ULONG *blocksize);
+LONG acsi_ioctl(UWORD drv, UWORD ctrl, void *arg);
 LONG acsi_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev);
-LONG acsi_testunit(WORD dev);
 
 #endif /* CONF_WITH_ACSI */
 

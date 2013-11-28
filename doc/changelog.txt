@@ -5063,3 +5063,6 @@ Start... early ages
 - desk/desktop.def desk/desktop.rsc: Reverted previous FBOXTEXT change
   which caused display problems. (RFB)
 
+2013-11-28
+- bios/acsi.c bios/acsi.h bios/xhdi.c: Code cleanup: use ioctl model
+  for miscellaneous ACSI routines. (RFB)

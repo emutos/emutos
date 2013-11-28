@@ -39,6 +39,8 @@ static void dma_send_byte(UBYTE data, UWORD control);
 static int build_rw_command(UBYTE *cdb,WORD rw,WORD dev,LONG sector,WORD cnt);
 static int send_command(UBYTE *cdb,WORD cdblen,WORD rw,WORD dev,WORD cnt,WORD repeat);
 static int do_acsi_rw(WORD rw, LONG sect, WORD cnt, LONG buf, WORD dev);
+static LONG acsi_capacity(WORD dev, ULONG *info);
+static LONG acsi_testunit(WORD dev);
 
 
 /* the following exist to allow the data and control registers to
@@ -153,7 +155,35 @@ LONG acsi_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
     return 0;
 }
 
-LONG acsi_capacity(WORD dev, ULONG *blocks, ULONG *blocksize)
+/*
+ *  perform miscellaneous non-data-transfer functions
+ */
+LONG acsi_ioctl(UWORD dev, UWORD ctrl, void *arg)
+{
+    LONG rc = ERR;
+    ULONG *info = arg;
+
+    switch(ctrl) {
+    case GET_DISKINFO:
+        rc = acsi_capacity(dev,info);
+        break;
+    case GET_DISKNAME:
+        /* according to the "Atari ACSI/DMA Integration Guide" p.32,
+         * all ACSI devices must support Test Unit Ready.  so if we
+         * get a timeout, we assume the device does not exist.
+         */
+        rc = acsi_testunit(dev);
+        if (rc < 0)
+            return EUNDEV;
+        /* TODO: here we could attempt an INQUIRY & return the name from that */
+        strcpy(arg, "ACSI Disk");
+        break;
+    }
+
+    return rc;
+}
+
+static LONG acsi_capacity(WORD dev, ULONG *info)
 {
     UBYTE cdb[10];
     ULONG data[4];          /* data returned by Read Capacity */
@@ -171,14 +201,14 @@ LONG acsi_capacity(WORD dev, ULONG *blocks, ULONG *blocksize)
     acsi_end();
 
     if (status == 0) {
-        *blocks = data[0] + 1;  /* data[0] is number of last sector */
-        *blocksize = data[1];
+        info[0] = data[0] + 1;  /* data[0] is number of last sector */
+        info[1] = data[1];
     }
 
     return status;
 }
 
-LONG acsi_testunit(WORD dev)
+static LONG acsi_testunit(WORD dev)
 {
     UBYTE cdb[6];
     int status;

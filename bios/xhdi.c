@@ -303,16 +303,13 @@ static long XHInqTarget2(UWORD major, UWORD minor, ULONG *blocksize,
     switch(bus) {
 #if CONF_WITH_ACSI
     case ACSI_BUS:
-        /* according to the "Atari ACSI/DMA Integration Guide" p.32,
-         * all ACSI devices must support Test Unit Ready.  so if we
-         * get a timeout, we assume the device does not exist.
-         */
-        ret = acsi_testunit(reldev);
-        KDEBUG(("acsi_testunit(%d) returned %ld\n", reldev, ret));
-        if (ret < 0)
-            return EUNDEV;
-        if (productname)
-            strcpy(productname, "ACSI Disk");
+        if (productname) {
+            BYTE name[40];
+            ret = acsi_ioctl(reldev,GET_DISKNAME,name);
+            if (ret)
+                return ret;
+            strlcpy(productname,name,stringlen);
+        }
         break;
 #endif /* CONF_WITH_ACSI */
     case SCSI_BUS:
@@ -409,8 +406,8 @@ long XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
     switch(bus) {
 #if CONF_WITH_ACSI
     case ACSI_BUS:
-        ret = acsi_capacity(reldev,&info[0],&info[1]);
-        KDEBUG(("acsi_capacity(%d) returned %ld\n", reldev, ret));
+        ret = acsi_ioctl(reldev,GET_DISKINFO,info);
+        KDEBUG(("acsi_ioctl(%d) returned %ld\n", reldev, ret));
         if (ret < 0)
             return EUNDEV;
         break;
