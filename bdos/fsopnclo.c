@@ -646,10 +646,10 @@ long ixdel(DND *dn, FCB *f, long pos)
         n = f->f_clust;
         swpw(n);
 
-        while (n && (n != -1))
+        while (n && !endofchain(n))
         {
                 n2 = getrealcl(n,dm);
-                clfix(n,0,dm);
+                clfix(n,FREECLUSTER,dm);
                 n = n2;
         }
 

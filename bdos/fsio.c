@@ -149,7 +149,7 @@ long    ixlseek(register OFD *p, long n)
 
     for (i=1; i < clnum; i++) {                 /*** M00.01.01b ***/
         clx = getclnum(clx,p);
-        if (clx == 0xffff)
+        if (endofchain(clx))
             return(-1);
     }
 

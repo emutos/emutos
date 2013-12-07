@@ -5066,3 +5066,8 @@ Start... early ages
 2013-11-28
 - bios/acsi.c bios/acsi.h bios/xhdi.c: Code cleanup: use ioctl model
   for miscellaneous ACSI routines. (RFB)
+
+2013-12-07
+- bdos/fs.h bdos/fsfat.c bdos/fsio.c bdos/fsopnclo.c: Handle all valid
+  DOS FAT end-of-chain markers (in case file/folder was written on
+  another system). (RFB)

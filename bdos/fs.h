@@ -459,6 +459,13 @@ OFD  *makofd(register DND *p);
 OFD  *getofd(int h);
 
 
+/*
+ * FAT chain defines
+ */
+#define FREECLUSTER     0x0000
+#define ENDOFCHAIN      0xffff                  /* our end-of-chain marker */
+#define endofchain(a)   (((a)&0xfff8)==0xfff8)  /* in case file was created by someone else */
+
 
 /* Misc. defines */
                     /* the following are used for the second arg to ixclose() */

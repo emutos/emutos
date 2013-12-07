@@ -105,9 +105,10 @@ void clfix(CLNO cl, CLNO link, DMD *dm)
 **  getrealcl -
 **      get the contents of the fat entry indexed by 'cl'.
 **
-**  returns
-**      0xffff if entry contains the end of file marker
-**      otherwise, the contents of the entry (16 bit value always returned).
+**  returns 16-bit value
+**      for FAT12: 0xffff if entry contains the end of file marker
+**                 otherwise, the contents of the entry
+**      for FAT16: the contents of the entry
 **
 **      M01.0.1.03
 */
@@ -149,8 +150,8 @@ CLNO getrealcl(CLNO cl, DMD *dm)
         else
                 cl = f & 0x0fff;
 
-        if (cl == 0x0fff)
-                cl = 0xffff;
+        if ((cl&0x0ff8) == 0x0ff8)  /* handle end of chain */
+                cl = ENDOFCHAIN;
 
         return cl;
 }
@@ -201,7 +202,7 @@ int nextcl(OFD *p, int wrtflg)
         dm = p->o_dmd;
 
         if (cl == 0) {              /* initial value */
-            cl2 = (p->o_strtcl ? p->o_strtcl : 0xffff );
+            cl2 = (p->o_strtcl ? p->o_strtcl : ENDOFCHAIN );
         } else if (!p->o_dnode) {   /* if no dir node, must be FAT/root */
             cl2 = cl + 1;
             goto retcl;             /* will be able to omit this when we get rid of negative clusters ... */
@@ -209,7 +210,7 @@ int nextcl(OFD *p, int wrtflg)
             cl2 = getrealcl(cl,dm);
         }
 
-        if (wrtflg && (cl2 == 0xffff ))
+        if (wrtflg && endofchain(cl2))
         { /* end of file, allocate new clusters */
                 /* the following code carefully avoids allowing overflow in CLNO variables */
                 rover = (cl < 2) ? 2 : cl;  /* start search at first or current cluster */
@@ -224,7 +225,7 @@ int nextcl(OFD *p, int wrtflg)
 
                 if (i < dm->m_numcl)
                 {
-                        clfix(cl2,0xffff,dm);
+                        clfix(cl2,ENDOFCHAIN,dm);
                         if (cl)
                                 clfix(cl,cl2,dm);
                         else
@@ -234,11 +235,11 @@ int nextcl(OFD *p, int wrtflg)
                         }
                 }
                 else
-                        return(0xffff);
+                        return -1;
         }
 
-        if (cl2 == 0xffff)
-                return(0xffff);
+        if (endofchain(cl2))
+                return -1;
 
 retcl:  p->o_curcl = cl2;
         p->o_currec = cl2rec(cl2,dm);
