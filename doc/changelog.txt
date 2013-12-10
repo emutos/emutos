@@ -5071,3 +5071,7 @@ Start... early ages
 - bdos/fs.h bdos/fsfat.c bdos/fsio.c bdos/fsopnclo.c: Handle all valid
   DOS FAT end-of-chain markers (in case file/folder was written on
   another system). (RFB)
+
+2013-12-10
+- bdos/fsio.c: Code cleanup: rewrote ixlseek() for greater simplicity and
+  added many explanatory comments. (RFB)

@@ -97,73 +97,76 @@ long    xlseek(long n, int h, int flg)
  * n: number of bytes to seek
  */
 
-long    ixlseek(register OFD *p, long n)
+long ixlseek(OFD *p,long n)
 {
-    CLNO clnum,clx,curnum,i;    /*  M01.01.03   */
-    int curflg ;                /****  M00.01.01b  ****/
-    register DMD *dm;
+    CLNO clnum, clx, curnum, i;
+    DMD *dm = p->o_dmd;
 
-    if (n > p->o_fileln)
-        return(ERANGE);
+    if ((n < 0) || (n > p->o_fileln))
+        return ERANGE;
 
-    if (n < 0)
-        return(ERANGE);
-
-    dm = p->o_dmd;
-    if (!n)
+    if (n == 0)
     {
-        clx = 0;
-        p->o_curbyt = 0;
-        goto fillin;
+        p->o_curcl = p->o_currec = p->o_bytnum = p->o_curbyt = 0;
+        return 0;
     }
 
-    /* do we need to start from the beginning ? */
-
-    /***  M00.01.01b ***/
-    if( ((!p->o_curbyt) || (p->o_curbyt == dm->m_clsizb)) && p->o_bytnum )
-        curflg = 1 ;
-    else
-        curflg = 0 ;
-    /***  end  ***/
-
+    /*
+     * calculate the desired position in units of 1 cluster
+     */
     clnum = n >> dm->m_clblog;
-    p->o_curbyt = n & dm->m_clbm;
 
-    if (p->o_curcl && (n >= p->o_bytnum))
+    /*
+     * if that's beyond where we are, we can chain forward;
+     * otherwise, we need to start from the beginning
+     */
+    if (p->o_curcl && (n >= p->o_bytnum))   /* OK, we can chain forward */
     {
+        /*
+         * calculate the current position in units of 1 cluster
+         */
         curnum = p->o_bytnum >> dm->m_clblog;
+
+        /*
+         * if we're currently at the end of a cluster, we haven't yet read
+         * in the cluster that really corresponds to our position, so we
+         * need to allow for that.  See the comments further below for why
+         * we also do this when we're at the beginning of a cluster ...
+         */
+        if (((p->o_curbyt == 0) || (p->o_curbyt == dm->m_clsizb)) && p->o_bytnum)
+            curnum--;
+
         clnum -= curnum;
-        clnum += curflg ;               /***   M00.01.01b       ***/
-
-        /*****
-         M00.01.01 - original code (fix to Jason's  attempt to fix)
-         clnum +=
-         ((!p->o_curbyt) || (p->o_curbyt == dm->m_clsizb))&&p->o_bytnum;
-         *****/
-
         clx = p->o_curcl;
-
     }
-    else
+    else            /* we have to start at the beginning */
         clx = p->o_strtcl;
 
-    for (i=1; i < clnum; i++) {                 /*** M00.01.01b ***/
+    /*
+     * note: if we're seeking to a position which is at a cluster boundary,
+     * we actually point to the cluster before that.  this unobvious action
+     * is because, when the read point is at the start of a cluster, xrw()
+     * starts its processing by handling whole clusters.  this occurs in
+     * either the middle or tail section processing, but in both cases,
+     * xrw() always chains to the next cluster before doing the actual read.
+     *
+     * see the code in xrw() if you need to know more ...
+     */
+    if ((n&dm->m_clbm) == 0)    /* go one less if on cluster boundary */
+        clnum--;
+
+    for (i = 0; i < clnum; i++) {
         clx = getclnum(clx,p);
         if (endofchain(clx))
-            return(-1);
+            return EINTRN;		/* FAT chain is shorter than filesize says ... */
     }
 
-    /* go one more except on cluster boundary */
-
-    if (p->o_curbyt && clnum)                   /*** M00.01.01b ***/
-        clx = getclnum(clx,p);
-
-fillin:
     p->o_curcl = clx;
     p->o_currec = cl2rec(clx,dm);
     p->o_bytnum = n;
+    p->o_curbyt = n & dm->m_clbm;
 
-    return(n);
+    return n;
 }
 
 
