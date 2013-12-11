@@ -55,8 +55,10 @@ struct IDE
     UBYTE command;  /* Read: status */
     UBYTE head;
     UWORD data;
-    UBYTE filler0a[4];
-    UBYTE dummy;
+    UBYTE filler0a[2];
+    UBYTE features; /* Read: error */
+    UBYTE filler0d;
+    UBYTE filler0e;
     UBYTE control;  /* Read: Alternate status */
 };
 
@@ -77,7 +79,7 @@ struct IDE
     IDE_WRITE_REGISTER_PAIR(command,a,b)
 
 #define IDE_WRITE_CONTROL(a) \
-    IDE_WRITE_REGISTER_PAIR(dummy,0,a)
+    IDE_WRITE_REGISTER_PAIR(filler0e,0,a)
 
 /*
  * this macro uses the NOP command, which is specifically provided
@@ -100,7 +102,7 @@ struct IDE
 #define IDE_READ_STATUS()   ide_interface->command
 
 #define IDE_READ_ALT_STATUS() \
-    IDE_READ_REGISTER_PAIR(dummy)
+    IDE_READ_REGISTER_PAIR(filler0e)
 
 #else
 
