@@ -5075,3 +5075,6 @@ Start... early ages
 2013-12-10
 - bdos/fsio.c: Code cleanup: rewrote ixlseek() for greater simplicity and
   added many explanatory comments. (RFB)
+- bdos/bdosmain.c bdos/fsbuf.c bdos/fsdir.c bdos/fsdrive.c bdos/fsio.c
+  bdos/iumem.c bdos/kpgmld.c bdos/proc.c bdos/umem.c: Code cleanup: use
+  KDEBUG() for debugging statements. (RFB)

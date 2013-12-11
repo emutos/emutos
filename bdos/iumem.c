@@ -2,6 +2,7 @@
  * iumem.c - internal user memory management routines
  *
  * Copyright (c) 2001 Lineo, Inc.
+ *               2013 The EmuTOS development team
  *
  * Authors:
  *  xxx <xxx@xxx>
@@ -12,7 +13,7 @@
 
 
 
-#define DBG_IUMEM  0
+/* #define ENABLE_KDEBUG */
 
 
 
@@ -49,17 +50,17 @@ MD *ffit(long amount, MPB *mp)
     BOOL maxflg;
     long maxval;
 
-#if     DBG_IUMEM
+#ifdef ENABLE_KDEBUG
     if (mp == &pmd)
-        kprintf("BDOS: ffit - mp = &pmd\n");
+        KDEBUG(("BDOS ffit: mp=&pmd\n"));
 #if CONF_WITH_ALT_RAM
     else if (mp == &pmdalt)
-        kprintf("BDOS: ffit - mp = &pmdalt\n");
+        KDEBUG(("BDOS ffit: mp=&pmdalt\n"));
 #endif /* CONF_WITH_ALT_RAM */
     else
-        kprintf("BDOS: ffit - mp = 0x%08lx\n", (LONG)mp);
-    kprintf("BDOS: ffit - requested amount = %ld\n", amount);
+        KDEBUG(("BDOS ffit: mp=%p\n",mp));
 #endif
+    KDEBUG(("BDOS ffit: requested=%ld\n",amount));
 
 #if     STATIUMEM
     ++ccffit ;
@@ -67,9 +68,7 @@ MD *ffit(long amount, MPB *mp)
 
     if( (q = mp->mp_rover) == 0  )      /*  get rotating pointer        */
     {
-#if     DBG_IUMEM
-        kprintf("BDOS: ffit - null rover\n") ;
-#endif
+        KDEBUG(("BDOS ffit: null rover\n"));
         return( 0 ) ;
     }
 
@@ -110,9 +109,7 @@ MD *ffit(long amount, MPB *mp)
                  **************************/
                 if( (p1=MGET(MD)) == 0 )
                 {
-#if     DBG_IUMEM
-                    kprintf("ffit: Null Mget\n") ;
-#endif
+                    KDEBUG(("BDOS ffit: null MGET\n"));
                     return(0);
                 }
 
@@ -139,10 +136,7 @@ MD *ffit(long amount, MPB *mp)
             mp->mp_rover =
                 (q == (MD *) &mp->mp_mfl ? q->m_link : q);
 
-#if     DBG_IUMEM
-    kprintf("BDOS: ffit - start = 0x%08lx\n", (LONG)p->m_start);
-    kprintf("BDOS: ffit - length = %ld\n", p->m_length);
-#endif
+            KDEBUG(("BDOS ffit: start=0x%08lx, length=%ld\n",p->m_start,p->m_length));
 
             return(p);  /* got some */
         }
@@ -155,11 +149,11 @@ MD *ffit(long amount, MPB *mp)
 
     /*  return either the max, or 0 (error)  */
 
-#if     DBG_IUMEM
+#ifdef ENABLE_KDEBUG
     if( maxflg )
-        kprintf("BDOS: ffit - maxval = %ld\n", maxval);
+        KDEBUG(("BDOS ffit: maxval=%ld\n",maxval));
     else
-        kprintf("BDOS: ffit - Not Enough Contiguous Memory\n") ;
+        KDEBUG(("BDOS ffit: Not enough contiguous memory\n"));
 #endif
     return( maxflg ? (MD *) maxval : 0 ) ;
 }
@@ -183,18 +177,17 @@ void freeit(MD *m, MPB *mp)
         if (m->m_start <= p->m_start)
             break;
 
-#if     DBG_IUMEM
+#ifdef ENABLE_KDEBUG
     if (mp == &pmd)
-        kprintf("BDOS: freeit - mp = &pmd\n");
+        KDEBUG(("BDOS freeit: mp=&pmd\n"));
 #if CONF_WITH_ALT_RAM
     else if (mp == &pmdalt)
-        kprintf("BDOS: freeit - mp = &pmdalt\n");
+        KDEBUG(("BDOS freeit: mp=&pmdalt\n"));
 #endif /* CONF_WITH_ALT_RAM */
     else
-        kprintf("BDOS: freeit - mp = %08lx\n", (LONG)mp);
-    kprintf("BDOS: freeit - start = %08lx\n", (LONG)m->m_start);
-    kprintf("BDOS: freeit - length = %08lx\n", m->m_length);
+        KDEBUG(("BDOS freeit: mp=%p\n",mp));
 #endif
+    KDEBUG(("BDOS freeit: start=0x%08lx, length=%ld\n",m->m_start,m->m_length));
 
     m->m_link = p;
 

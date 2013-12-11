@@ -2,7 +2,7 @@
  * fsbuf.c - buffer mgmt for file system
  *
  * Copyright (c) 2001 Lineo, Inc.
- *               2002 - 2010 The EmuTOS development team
+ *               2002 - 2013 The EmuTOS development team
  *
  * Authors:
  *  SCC   Steve C. Cavender
@@ -11,13 +11,14 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#define DBGFSBUF 0
+/* #define ENABLE_KDEBUG */
 
 #include "config.h"
 #include "portab.h"
 #include "fs.h"
 #include "gemerror.h"
 #include "biosbind.h"
+#include "kprint.h"
 
 
 
@@ -109,9 +110,7 @@ char *getrec(RECNO recn, OFD *of, int wrtflg)
     BCB *p,*mtbuf,**q,**phdr;
     int n,err;
 
-#if DBGFSBUF
-    kprintf("getrec 0x%lx, %p, 0x%x\n", (long)recn, dm, wrtflg);
-#endif
+    KDEBUG(("getrec 0x%lx, %p, 0x%x\n",recn,dm,wrtflg));
 
     /* put bcb management here */
     if (of->o_dmd->m_fatofd == of)  /* is this the OFD for the 'FAT file'? */
@@ -120,9 +119,7 @@ char *getrec(RECNO recn, OFD *of, int wrtflg)
         n = BT_ROOT;                /* no, must be root                    */
     else n = BT_DATA;               /* yes, must be normal dir/file        */
 
-#if DBGFSBUF
-    kprintf("n=%i , dm->m_recoff[n] = 0x%lx\n", n, dm->m_recoff[n]);
-#endif
+    KDEBUG(("n=%i, dm->m_recoff[n]=0x%lx\n",n,dm->m_recoff[n]));
 
     mtbuf = 0;
     phdr = &bufl[n==BT_FAT ? BI_FAT : BI_DATA];

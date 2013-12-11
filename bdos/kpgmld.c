@@ -2,6 +2,7 @@
  * kpgmld.c - program load
  *
  * Copyright (c) 2001 Lineo, Inc.
+ *               2013 The EmuTOS development team
  *
  * Authors:
  *  SCC  Steven C. Cavender
@@ -11,7 +12,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
+/* #define ENABLE_KDEBUG */
 
 #include "config.h"
 #include "portab.h"
@@ -23,7 +24,6 @@
 #include "kprint.h"
 
 
-#define DBGKPGMLD 0
 
 /*
  * private macros
@@ -67,9 +67,7 @@ LONG kpgmhdrld(char *s, PGMHDR01 *hd, FH *h)
 
     /* alternate executable formats will not be handled */
     if( magic != 0x601a ) {
-#if DBGKPGMLD
-        kprintf("BDOS xpgmld: Unknown executable format!\n") ;
-#endif
+        KDEBUG(("BDOS xpgmld: Unknown executable format!\n"));
         return EPLFMT;
     }
     /* read in the program header */
@@ -100,9 +98,9 @@ LONG   kpgmld(PD *p, FH h, PGMHDR01 *hd )
     LONG r;
 
     r = pgmld01(h, p, hd);
-#if DBGKPGMLD
-    kprintf("BDOS pgmld01: Return code: 0x%lx\n", r);
-#endif
+
+    KDEBUG(("BDOS pgmld01: return code=0x%lx\n",r));
+
     xclose(h);
     return r;
 }
@@ -189,18 +187,17 @@ static LONG     pgmld01( FH h , PD *pdptr, PGMHDR01 *hd)
     if( !hd->h01_abs )
     {
         /**********  should change hard coded 0x1c  ******************/
-#if DBGKPGMLD
-        kprintf("BDOS pgmld01: flen:    0x%lx\n", flen) ;
-        kprintf("BDOS pgmld01: pi_slen: 0x%lx\n", pi->pi_slen) ;
-#endif
+
+        KDEBUG(("BDOS pgmld01: flen=0x%lx, pi_slen=0x%lx\n",flen,pi->pi_slen));
+
         r = xlseek(flen+pi->pi_slen+0x1c,h,0);
         if( r < 0L  )
             return( r ) ;
 
         r = xread( h , (long)sizeof(relst) , &relst );
-#if DBGKPGMLD
-        kprintf("BDOS pgmld01: relst: 0x%lx\n", relst) ;
-#endif
+
+        KDEBUG(("BDOS pgmld01: relst=0x%lx\n",relst));
+
         if( r <  0L  )
             return( r ) ;
     }
@@ -315,9 +312,7 @@ LONG kpgm_relocate( PD *p, long length)
     PGMHDR01  *hd;
     UWORD     abs_flag;
 
-#if DBGKPGMLD
-    kprintf("BDOS kpgm_relocate: lotpa: 0x%lx hitpa: 0x%lx len: 0x%lx \n", p->p_lowtpa, p->p_hitpa, length) ;
-#endif
+    KDEBUG(("BDOS kpgm_relocate: lotpa=0x%lx hitpa=0x%lx len=0x%lx\n",p->p_lowtpa,p->p_hitpa,length));
 
     hd = (PGMHDR01*)( ((char*)(p+1)) + 2 );
     pi = &pinfo;
@@ -337,25 +332,21 @@ LONG kpgm_relocate( PD *p, long length)
     /* move the code to the right position (after the PD - basepage) */
     memmove( p+1, (char*)(p+1) +2+sizeof(PGMHDR01), flen);
 
-#if DBGKPGMLD
-    kprintf("BDOS kpgm_relocate: tlen, dlen, slen: 0x%lx 0x%lx 0x%lx\n", pi->pi_tlen, pi->pi_dlen, pi->pi_slen) ;
-    kprintf("BDOS kpgm_relocate: flen: 0x%lx 0x%lx\n", flen, pi->pi_tpalen) ;
-#endif
+    KDEBUG(("BDOS kpgm_relocate: tlen=0x%lx, dlen=0x%lx, slen=0x%lx\n",
+            pi->pi_tlen,pi->pi_dlen,pi->pi_slen));
+    KDEBUG(("BDOS kpgm_relocate: flen=0x%lx, tpalen=0x%lx\n",flen,pi->pi_tpalen));
+
     /*
      * see if there is enough room to load in the file, then see if
      * the requested bss space is larger than the space we have to offer
      */
 
     if( flen > pi->pi_tpalen  ||  pi->pi_tpalen-flen < pi->pi_blen ) {
-#if DBGKPGMLD
-        kprintf("BDOS kpgm_relocate: ENSMEM\n") ;
-#endif
+        KDEBUG(("BDOS kpgm_relocate: ENSMEM\n"));
         return( ENSMEM ) ;
     }
 
-#if DBGKPGMLD
-    kprintf("BDOS kpgm_relocate: abs:    0x%x\n", abs_flag) ;
-#endif
+    KDEBUG(("BDOS kpgm_relocate: abs=0x%x\n",abs_flag));
 
     /* initialize PD fields */
 

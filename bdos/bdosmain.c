@@ -18,9 +18,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
-#define DBGOSIF 0
-
+/* #define ENABLE_KDEBUG */
 
 #include "config.h"
 #include "portab.h"
@@ -235,9 +233,6 @@ static const FND funcs[0x58] =
 static long    xgetver(void)
 {
         return(0x2000L);                /*  minor.major */
-#if DBGOSIF
-        kprintf("BDOS: xgetver - Get version  successful ...\n");
-#endif
 }
 
 
@@ -271,9 +266,8 @@ void    osinit(void)
     time_init();
 
     run = MGET(PD);
-#if DBGOSIF
-    kprintf("BDOS: Address of basepage = %08lx\n", (LONG)&run);
-#endif
+
+    KDEBUG(("BDOS: address of basepage = %08lx\n", (LONG)&run));
 
     /* set up system initial standard handles */
 
@@ -285,9 +279,7 @@ void    osinit(void)
 
     add[0] = remove[0] = add[1] = remove[1] = add[2] = remove[2] = 0 ;
 
-#if DBGOSIF
-    kprintf("BDOS: cinit - osinit successful ...\n");
-#endif
+    KDEBUG(("BDOS: cinit - osinit successful ...\n"));
 }
 
 
@@ -404,17 +396,14 @@ restrt:
     if (fn > 0x57)
         return(EINVFN);
 
-#if DBGOSIF
-    kprintf("bdos(fn = 0x%04x)\n", fn);
-#endif
+    KDEBUG(("BDOS (fn=0x%04x)\n",fn));
 
     if ( setjmp(errbuf) )
     {
         rc = errcode;
         /* hard error processing */
-#if DBGOSIF
-        kprintf("Error code gotten from some longjmp(), back in osif(): %ld\n", rc);
-#endif
+        KDEBUG(("Error code gotten from some longjmp(), back in osif(): %ld\n",rc));
+
         /* is this a media change ? */
         if (rc == E_CHNG) {
             /* first, out with the old stuff */
@@ -650,9 +639,7 @@ restrt:
         }
     }
 
-#if DBGOSIF
-    kprintf("bdos returns: 0x%08lx\n", rc);
-#endif
+    KDEBUG(("BDOS returns: 0x%08lx\n",rc));
 
     return(rc);
 }

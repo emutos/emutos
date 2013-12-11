@@ -120,7 +120,7 @@
 **      scan)..
 */
 
-#define DBGFSDIR 0
+/* #define ENABLE_KDEBUG */
 
 #include        "config.h"
 #include        "portab.h"
@@ -488,9 +488,8 @@ long ixsfirst(char *name, register WORD att, register DTAINFO *addr)
         return(EFILNF);
 #endif
 
-#if DBGFSDIR
-    kprintf("\nixfirst(%s, DND=%08lx, DTA=%08lx)", s, (long)dn, (long)addr);
-#endif
+    KDEBUG(("\nixfirst(%s, DND=%p, DTA=%p)",s,dn,addr));
+
     if (addr)
     {
         memcpy(&addr->dt_name[0], s, 12);
@@ -525,9 +524,8 @@ long xsfirst(char *name, int att)
         /* set an indication of 'uninitialized DTA' */
         dt->dt_dnd = (DND*)NULLPTR;                                     /* M01.01.1209.01 */
 
-#if DBGFSDIR
-        kprintf("\nxsfirst(%s, DTA=%08lx)", name, (long)dt);
-#endif
+        KDEBUG(("\nxsfirst(%s, DTA=%p)",name,dt));
+
         result = ixsfirst(name , att , dt);                   /* M01.01.1209.01 */
 
                 /* check whether the name is a search mask or a pure filename */
@@ -546,9 +544,8 @@ long xsfirst(char *name, int att)
                                 n_char++;
                         }
 
-#if DBGFSDIR
-                        kprintf("\nxsfirst(DTA->dt_name %s DND=%08lx)", dt->dt_name, (long)dt->dt_dnd);
-#endif
+                        KDEBUG(("\nxsfirst(DTA->dt_name %s DND=%p)",dt->dt_name,dt->dt_dnd));
+
                         /* no lock is needed on error or in case of the filename */
                         if ( result < 0 || is_mask == 0 )
                                 return result;
@@ -574,9 +571,7 @@ long xsfirst(char *name, int att)
                         diruse[i]++;
                         dirtbl[i] = dt->dt_dnd;
 
-#if DBGFSDIR
-                        kprintf("\nxsfirst(DND=%08lx lock %d [at %d])", (long)dt->dt_dnd, diruse[i], i);
-#endif
+                        KDEBUG(("\nxsfirst(DND=%p lock %d [at %d])",dt->dt_dnd,diruse[i],i));
                 }
 
                 return result;
@@ -601,9 +596,8 @@ long xsnext(void)
         if ( dt->dt_dnd == (DND*)NULLPTR )                              /* M01.01.1209.01 */
                 return( ENMFIL );                               /* M01.01.1209.01 */
 
-#if DBGFSDIR
-                kprintf("\n xsnext(pos=%ld DTA=%08lx DND=%08lx)", dt->dt_pos, (long)dt, (long)dt->dt_dnd);
-#endif
+        KDEBUG(("\n xsnext(pos=%ld DTA=%p DND=%p)",dt->dt_pos,dt,dt->dt_dnd));
+
         f = scan( dt->dt_dnd, &dt->dt_name[0], dt->dt_attr, &dt->dt_pos ) ;
 
         if( f == (FCB*)NULLPTR ) {
@@ -616,9 +610,7 @@ long xsnext(void)
                                 --diruse[i];
                                 if ( !diruse[i] )
                                         dirtbl[i] = (DND*)NULLPTR;
-#if DBGFSDIR
-                                kprintf("\n xsnext(DND=%08lx unlock %d [at %d])", (long)dt->dt_dnd, diruse[i], i);
-#endif
+                                KDEBUG(("\n xsnext(DND=%p unlock %d [at %d])",dt->dt_dnd,diruse[i],i));
                         }
 
                         return( ENMFIL ) ;
@@ -1066,9 +1058,7 @@ FCB     *dirinit(DND *dn)
 
         for (i2 = 1; i2 < dm->m_clsiz; i2++)
         {
-#if DBGFSDIR
-                kprintf("dirinit i2 = %li\n", i2);
-#endif
+                KDEBUG(("dirinit i2 = %li\n",i2));
                 s1 = getrec(fd->o_currec+i2,fd,1);
                 bzero( s1 , num ) ;
         }
@@ -1142,9 +1132,8 @@ DND     *findit(char *name, const char **sp, int dflag)
     /* crack directory and drive */
 
     n = name;
-#if DBGFSDIR
-        kprintf("findit(%s)\n", n);
-#endif
+    KDEBUG(("findit(%s)\n",n));
+
     if ((long)(p = dcrack(&n)) < 0)                     /* M01.01.1214.01 */
         return( p );
 
@@ -1269,9 +1258,7 @@ FCB     *scan(register DND *dnd, const char *n, WORD att, LONG *posp)
         DND     *dnd1;
         BOOL    m;              /*  T: found a matching FCB             */
 
-#if DBGFSDIR
-        kprintf("scan(%p, '%s', 0x%x, %p)\n", dnd, n, att, posp);
-#endif
+        KDEBUG(("scan(%p,'%s',0x%x,%p)\n",dnd,n,att,posp));
 
         m = 0;                  /*  have_match = false                  */
         builds(n,name);         /*  format name into dir format         */
@@ -1328,10 +1315,9 @@ FCB     *scan(register DND *dnd, const char *n, WORD att, LONG *posp)
                                         break;
         }
 
-#if DBGFSDIR
-        kprintf("\n   scan(pos=%ld DND=%08lx DNDfoundFile=%08lx name=%s name1=%s, %d)",
-                (long)fd->o_bytnum, (long)dnd, (long)dnd1, fcb->f_name, name, m);
-#endif
+        KDEBUG(("\n   scan(pos=%ld DND=%p DNDfoundFile=%p name=%s name=%s, %d)",
+                (long)fd->o_bytnum,dnd,dnd1,fcb->f_name,name,m));
+
         /* restore directory scanning pointer */
 
         if( *posp != -1L )
@@ -1395,9 +1381,8 @@ static DND *makdnd(DND *p, FCB *b)
                                     break;
                                 }
 
-#if DBGFSDIR
-                        kprintf("\n makdnd check dirtbl (%d)", in_use);
-#endif
+                        KDEBUG(("\n makdnd check dirtbl (%d)",in_use));
+
                         if( !in_use && p1->d_files == NULLPTR )
                         {       /*  M01.01.KTB.SCC.02  */
                                 /* clean out this DND for reuse */
@@ -1418,9 +1403,8 @@ static DND *makdnd(DND *p, FCB *b)
 
         if (!p1)
         {
-#if DBGFSDIR
-                kprintf("\n makdnd new");
-#endif
+                KDEBUG(("\n makdnd new"));
+
                 if (!(p1 = MGET(DND)))
                         return ( (DND *) 0 );   /* ran out of system memory */
 
@@ -1442,9 +1426,8 @@ static DND *makdnd(DND *p, FCB *b)
         p1->d_date = b->f_date;
         memcpy(p1->d_name, b->f_name, 11);
 
-#if DBGFSDIR
-        kprintf("\n makdnd(%08lx)", (long)p1);
-#endif
+        KDEBUG(("\n makdnd(%p)",p1));
+
         return(p1);
 }
 
@@ -1468,9 +1451,7 @@ static DND *dcrack(const char **np)
     register int d;
     LONG l;                                             /* M01.01.1212.01 */
 
-#if DBGFSDIR
-    kprintf("\n dcrack(%p -> '%s')", np, *np);
-#endif
+    KDEBUG(("\n dcrack(%p -> '%s')",np,*np));
 
     /*
      **  get drive spec (or default) and make sure drive is logged in

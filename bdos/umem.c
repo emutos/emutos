@@ -14,7 +14,7 @@
  */
 
 
-#define DBGUMEM 0
+/* define ENABLE_KDEBUG */
 
 
 
@@ -49,7 +49,7 @@ long end_stram;
  * static functions
  */
 
-#if DBGUMEM
+#ifdef ENABLE_KDEBUG
 static void dump_mem_map(void)
 {
     MD *m;
@@ -81,6 +81,8 @@ static void dump_mem_map(void)
     kprintf("| mp_rover = 0x%08lx\n",  (long)(pmd.mp_rover));
     kprintf("===/mem_dump==========================\n");
 }
+#else
+#define dump_mem_map()
 #endif
 
 
@@ -112,9 +114,8 @@ long    xmfree(long addr)
     MD *p,**q;
     MPB *mpb;
 
-#if DBGUMEM
-    kprintf("BDOS: Mfree(0x%08lx)\n", (long) addr);
-#endif
+    KDEBUG(("BDOS: Mfree(0x%08lx)\n",(long)addr));
+
     if(addr >= start_stram && addr <= end_stram) {
         mpb = &pmd;
 #if CONF_WITH_ALT_RAM
@@ -152,20 +153,16 @@ long    xsetblk(int n, void *blk, long len)
     MD *m,*p;
     MPB *mpb;
 
-#if DBGUMEM
-    kprintf("BDOS: Mshrink(0x%08lx, %ld)\n", (long) blk, len);
-#endif
+    KDEBUG(("BDOS: Mshrink(0x%08lx,%ld)\n",(long)blk,len));
+
     if(((long)blk) >= start_stram && ((long)blk) <= end_stram) {
         mpb = &pmd;
-#if DBGUMEM
-        kprintf("BDOS: xsetblk - mpb = &pmd\n");
-#endif
+        KDEBUG(("BDOS xsetblk: mpb=&pmd\n"));
+
 #if CONF_WITH_ALT_RAM
     } else if(has_alt_ram) {
         mpb = &pmdalt;
-#if DBGUMEM
-        kprintf("BDOS: xsetblk - mpb = &pmdalt\n");
-#endif
+        KDEBUG(("BDOS xsetblk: mpb=&pmdalt\n"));
 #endif /* CONF_WITH_ALT_RAM */
     } else {
         return EIMBA;
@@ -192,9 +189,8 @@ long    xsetblk(int n, void *blk, long len)
      */
 
     len = (len + 3) & ~3;
-#if DBGUMEM
-    kprintf("BDOS: xsetblk - new length = %ld\n", len);
-#endif
+
+    KDEBUG(("BDOS xsetblk: new length=%ld\n",len));
 
     /*
      * If the caller is not shrinking the block size, then abort.
@@ -209,7 +205,7 @@ long    xsetblk(int n, void *blk, long len)
 
     m = MGET(MD);
 
-#if     DBGUMEM
+#ifdef ENABLE_KDEBUG
     /* what if 0? */
     if( m == 0 )
         panic("umem.c/xsetblk: Null Return From MGET\n") ;
@@ -239,9 +235,7 @@ long    xmxalloc(long amount, int mode)
     MD *m;
     long ret_value;
 
-#if DBGUMEM
-    kprintf("BDOS: xmxalloc(%ld, %d)\n", amount, mode);
-#endif
+    KDEBUG(("BDOS: xmxalloc(%ld,%d)\n",amount,mode));
 
     /*
      * if amount == -1L, return the size of the biggest block
@@ -332,10 +326,8 @@ long    xmxalloc(long amount, int mode)
     }
 
 ret:
-#if DBGUMEM
-    kprintf("BDOS: xmxalloc returns 0x%08lx\n", ret_value);
+    KDEBUG(("BDOS xmxalloc: returns 0x%08lx\n",ret_value));
     dump_mem_map();
-#endif
 
     return(ret_value);
 }

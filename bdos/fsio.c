@@ -8,6 +8,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+/* #define ENABLE_KDEBUG */
+
 #include "config.h"
 #include "portab.h"
 #include "fs.h"
@@ -15,7 +17,6 @@
 #include "biosbind.h"
 #include "kprint.h"
 
-#define DBGFSIO 0
 
 /*
  * forward prototypes
@@ -191,9 +192,9 @@ long    xread(int h, long len, void *ubufr)
         ret = ixread(p,len,ubufr);
     else
         ret = EIHNDL;
-#if DBGFSIO
-    kprintf("xread(%d, %ld) => %ld\n", h, len, ret);
-#endif
+
+    KDEBUG(("xread(%d,%ld) => %ld\n",h,len,ret));
+
     return ret;
 }
 
@@ -204,15 +205,6 @@ long    xread(int h, long len, void *ubufr)
 long    ixread(OFD *p, long len, void *ubufr)
 {
     long maxlen;
-
-#if DBGFSIO  // bug to fix ?
-    // kprintf("ixread(%p, %li, %p)\n", p, len, ubufr);
-    if(p->o_dmd == NULL)
-    {
-        kprintf("xread() dm NULL ofd: 0x%p\n", p);
-        // return(EIHNDL);
-    }
-#endif
 
     /* Make sure file not opened as write only */
     if ((p->o_mod&MODE_FAC) == WO_MODE)
@@ -254,9 +246,9 @@ long    xwrite(int h, long len, void *ubufr)
     } else {
         ret = EIHNDL;
     }
-#if DBGFSIO
-    kprintf("xwrite(%d, %ld) => %ld\n", h, len, ret);
-#endif
+
+    KDEBUG(("xwrite(%d,%ld) => %ld\n",h,len,ret));
+
     return ret;
 }
 

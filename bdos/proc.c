@@ -13,7 +13,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
+/* #define ENABLE_KDEBUG */
 
 #include "config.h"
 #include "portab.h"
@@ -27,13 +27,6 @@
 #include "../bios/processor.h"
 #include "asm.h"
 
-#define DBGPROC 0
-
-#if DBGPROC
-#define D(a) kprintf a
-#else
-#define D(a)
-#endif
 
 /*
  * forward prototypes
@@ -217,7 +210,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
     long max, needed;
     FH fh;
 
-    D(("BDOS: xexec - flag or mode = %d\n", flag));
+    KDEBUG(("BDOS xexec: flag or mode = %d\n",flag));
 
     /* first branch - actions that do not require loading files */
     switch(flag) {
@@ -225,7 +218,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
         p = (PD *) tail;
         rc = kpgm_relocate(p, (long)path);
         if(rc) {
-            D(("BDOS: xexec - kpgm_relloc returned %ld (0x%lx)\n", rc, rc));
+            KDEBUG(("BDOS xexec: kpgm_reloc returned %ld (0x%lx)\n",rc,rc));
             return(rc);
         }
 
@@ -240,7 +233,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
         /* just create a basepage */
         env_md = alloc_env(env);
         if(env_md == NULL) {
-            D(("xexec: Not Enough Memory!\n"));
+            KDEBUG(("BDOS xexec: not enough memory!\n"));
             return(ENSMEM);
         }
         max = (long) ffit(-1L, &pmd);
@@ -250,7 +243,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
         } else {
             /* not even enough memory for basepage */
             freeit(env_md, &pmd);
-            D(("xexec: No memory for TPA\n"));
+            KDEBUG(("BDOS xexec: No memory for TPA\n"));
             return(ENSMEM);
         }
         /* memory ownership */
@@ -280,9 +273,9 @@ long xexec(WORD flag, char *path, char *tail, char *env)
     }
 
     /* we now need to load a file */
-    D(("BDOS: xexec - trying to find the command ...\n"));
+    KDEBUG(("BDOS xexec: trying to find the command ...\n"));
     if (ixsfirst(path,0,0L)) {
-        D(("BDOS: Command %s not found!!!\n", path));
+        KDEBUG(("BDOS xexec: command %s not found!!!\n",path));
         return(EFILNF);     /*  file not found      */
     }
 
@@ -292,14 +285,14 @@ long xexec(WORD flag, char *path, char *tail, char *env)
      */
     rc = kpgmhdrld(path, &hdr, &fh);
     if(rc) {
-        D(("BDOS: xexec - kpgmhdrld returned %ld (0x%lx)\n", rc, rc));
+        KDEBUG(("BDOS xexec: kpgmhdrld returned %ld (0x%lx)\n",rc,rc));
         return(rc);
     }
 
     /* allocate the environment first, always in ST RAM */
     env_md = alloc_env(env);
     if ( env_md == NULL ) {
-        D(("xexec: Not Enough Memory!\n"));
+        KDEBUG(("BDOS xexec: not enough memory!\n"));
         return(ENSMEM);
     }
 
@@ -330,7 +323,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
     }
     /* still failed? free env_md and return */
     if(p == NULL) {
-        D(("xexec: No memory for TPA\n"));
+        KDEBUG(("BDOS xexec: no memory for TPA\n"));
         freeit(env_md, &pmd);
         return(ENSMEM);
     }
@@ -360,7 +353,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
     memcpy(bakbuf, errbuf, sizeof(errbuf));
     if ( setjmp(errbuf) ) {
 
-        D(("Error and longjmp in xexec()!\n"));
+        KDEBUG(("Error and longjmp in xexec()!\n"));
 
         /* free any memory allocated yet */
         freeit(cur_env_md, &pmd);
@@ -375,7 +368,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
     /* now, load the rest of the program and perform relocation */
     rc = kpgmld(cur_p, fh, &hdr);
     if ( rc ) {
-        D(("BDOS: xexec - kpgmld returned %ld (0x%lx)\n", rc, rc));
+        KDEBUG(("BDOS xexec: kpgmld returned %ld (0x%lx)\n",rc,rc));
         /* free any memory allocated yet */
         freeit(cur_env_md, &pmd);
         freeit(cur_m, find_mpb((void *)cur_m->m_start));
@@ -504,7 +497,7 @@ static void proc_go(PD *p)
 {
     struct gouser_stack *sp;
 
-    D(("BDOS: xexec - trying to load (and execute) a process on 0x%lx...\n", p->p_tbase));
+    KDEBUG(("BDOS xexec: trying to load (and execute) a process on 0x%lx...\n",p->p_tbase));
     p->p_parent = run;
 
     /* create a stack at the end of the TPA */

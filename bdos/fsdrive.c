@@ -28,7 +28,7 @@
  **
  */
 
-#define DBGFSDRIVE 0
+/* #define ENABLE_KDEBUG */
 
 #include "config.h"
 #include "portab.h"
@@ -83,9 +83,7 @@ long    ckdrv(int d)
     LONG mask;
     BPB *b;
 
-#if DBGFSDRIVE
-    kprintf("ckdrv(%i)\n", d);
-#endif
+    KDEBUG(("ckdrv(%i)\n",d));
 
     mask = 1L << d;
 
@@ -133,9 +131,7 @@ static DMD *getdmd(int drv)
 {
         DMD *dm;
 
-#if DBGFSDRIVE
-        kprintf("getdmd(%i)\n", drv);
-#endif
+        KDEBUG(("getdmd(%i)\n",drv));
 
         if (!(drvtbl[drv] = dm = MGET(DMD)))
                 return ( (DMD *) 0 );
@@ -197,16 +193,11 @@ long    log_media(BPB *b, int drv)
         n = b->rdlen;
         fs = b->fsiz;
 
-#if DBGFSDRIVE
-        kprintf("log_media(%p, %i)\n", b, drv);
-        kprintf("rsiz = 0x%lx, cs = 0x%lx, n = 0x%lx, fs = 0x%lx\n",
-                rsiz, cs, n, fs);
-#endif
+        KDEBUG(("log_media(%p,%i) rsiz=0x%lx, cs=0x%lx, n=0x%lx, fs=0x%lx\n",
+                b,drv,rsiz,cs,n,fs));
 
         if (fs == 0) {
-#if DBGFSDRIVE
-            kprintf("Warning: Trying to access a FAT32 partition?\n");
-#endif
+            KDEBUG(("Warning: Trying to access a FAT32 partition?\n"));
             return EDRIVE;
         }
 
@@ -225,7 +216,6 @@ long    log_media(BPB *b, int drv)
         dm->m_16 = b->b_flags & B_16;   /*      set 12 or 16 bit fat flag   */
         dm->m_clsiz = cs;                   /*  set cluster size in sectors */
         dm->m_clsizb = b->clsizb;           /*    and in bytes              */
-        // kprintf("dm->m_clsizb = 0x%lx\n", (long)dm->m_clsizb);
         dm->m_recsiz = rsiz;        /*  set record (sector) size    */
         dm->m_numcl = b->numcl;     /*  set cluster size in records */
         dm->m_clrlog = log2(cs);            /*    and log of it             */
@@ -242,15 +232,12 @@ long    log_media(BPB *b, int drv)
         fo->o_strtcl = 2;                   /*  FAT start pseudo-cluster    */
         fo->o_dmd = dm;             /*  link with DMD               */
 
-        // kprintf("b->fatrec = 0x%x, fo->o_strtcl = 0x%x\n", b->fatrec, fo->o_strtcl);
-        // kprintf("d->d_strtcl = 0x%x, b->datrec = 0x%x\n", d->d_strtcl, b->datrec);
-
         dm->m_recoff[BT_FAT] = (RECNO)b->fatrec;
-        // kprintf("dm->m_recoff[0] = 0x%lx\n", dm->m_recoff[0]);
         dm->m_recoff[BT_ROOT] = (RECNO)b->fatrec + fs;
-        // kprintf("dm->m_recoff[1] = 0x%lx\n", dm->m_recoff[1]);
         dm->m_recoff[BT_DATA] = (RECNO)b->datrec;
-        // kprintf("dm->m_recoff[2] = 0x%lx\n", dm->m_recoff[2]);
+
+        KDEBUG(("log_media(%i) dm->m_recoff[0-2] = 0x%lx/0x%lx/0x%lx\n",
+                drv, dm->m_recoff[0],dm->m_recoff[1],dm->m_recoff[2]));
 
         fo->o_fileln = fs * rsiz;
 
