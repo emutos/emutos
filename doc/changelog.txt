@@ -5081,3 +5081,5 @@ Start... early ages
 
 2013-12-11
 - bios/ide.c: Added missing IDE features/error register on M548x. (VRI)
+- bios/ide.c: Fix potential bug: use LONG instead of WORD for timeout
+  values. (RFB)

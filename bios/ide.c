@@ -101,6 +101,8 @@ struct IDE
 
 #define IDE_READ_STATUS()   ide_interface->command
 
+#define IDE_READ_ERROR()    ide_interface->features
+
 #define IDE_READ_ALT_STATUS() \
     IDE_READ_REGISTER_PAIR(filler0e)
 
@@ -122,6 +124,7 @@ struct IDE
 
 #define IDE_READ_STATUS()       interface->command
 #define IDE_READ_ALT_STATUS()   interface->control
+#define IDE_READ_ERROR()        interface->features
 #define IDE_READ_SECTOR_NUMBER_SECTOR_COUNT() \
     ((interface->sector_number<<8) | interface->sector_count)
 #define IDE_READ_CYLINDER_HIGH_CYLINDER_LOW() \
@@ -258,7 +261,7 @@ static struct {
 static void ide_detect_devices(UWORD ifnum);
 static LONG ide_identify(WORD dev);
 static void set_multiple_mode(WORD dev,UWORD multi_io);
-static int wait_for_not_BSY(volatile struct IDE *interface,WORD timeout);
+static int wait_for_not_BSY(volatile struct IDE *interface,LONG timeout);
 
 
 void detect_ide(void)
@@ -319,7 +322,7 @@ static int ide_device_exists(WORD dev)
  * the following routines for device type detection are adapted
  * from Hale Landis's public domain ATA driver, MINDRVR.
  */
-static int wait_for_signature(volatile struct IDE *interface,WORD timeout)
+static int wait_for_signature(volatile struct IDE *interface,LONG timeout)
 {
     LONG next = hz_200 + timeout;
     UWORD n;
@@ -331,7 +334,7 @@ static int wait_for_signature(volatile struct IDE *interface,WORD timeout)
             return 0;
     }
 
-    KDEBUG(("Timeout in wait_for_signature(%p,%d)\n",interface,timeout));
+    KDEBUG(("Timeout in wait_for_signature(%p,%ld)\n",interface,timeout));
     return 1;
 }
 
@@ -406,9 +409,10 @@ static void ide_detect_devices(UWORD ifnum)
         IDE_WRITE_SECTOR_NUMBER_SECTOR_COUNT(0xaa,0x55);
         IDE_WRITE_SECTOR_NUMBER_SECTOR_COUNT(0x55,0xaa);
         IDE_WRITE_SECTOR_NUMBER_SECTOR_COUNT(0xaa,0x55);
-        if (IDE_READ_SECTOR_NUMBER_SECTOR_COUNT() == 0xaa55)
+        if (IDE_READ_SECTOR_NUMBER_SECTOR_COUNT() == 0xaa55) {
             info->dev[i].type = DEVTYPE_UNKNOWN;
-        else 
+            KDEBUG(("IDE i/f %d device %d detected\n",ifnum,i));
+        } else
             info->dev[i].type = DEVTYPE_NONE;
         info->dev[i].options = 0;
         info->dev[i].spi = 0;   /* changed if using READ/WRITE MULTIPLE */
@@ -443,7 +447,7 @@ static void ide_detect_devices(UWORD ifnum)
 /*
  * wait for access to IDE registers
  */
-static int wait_for_not_BSY(volatile struct IDE *interface,WORD timeout)
+static int wait_for_not_BSY(volatile struct IDE *interface,LONG timeout)
 {
     LONG next = hz_200 + timeout;
 
@@ -453,11 +457,11 @@ static int wait_for_not_BSY(volatile struct IDE *interface,WORD timeout)
             return 0;
     }
 
-    KDEBUG(("Timeout in wait_for_not_BSY(%p,%d)\n",interface,timeout));
+    KDEBUG(("Timeout in wait_for_not_BSY(%p,%ld)\n",interface,timeout));
     return 1;
 }
 
-static int wait_for_not_BSY_not_DRQ(volatile struct IDE *interface,WORD timeout)
+static int wait_for_not_BSY_not_DRQ(volatile struct IDE *interface,LONG timeout)
 {
     LONG next = hz_200 + timeout;
 
@@ -467,7 +471,7 @@ static int wait_for_not_BSY_not_DRQ(volatile struct IDE *interface,WORD timeout)
             return 0;
     }
 
-    KDEBUG(("timeout in wait_for_not_BSY_not_DRQ(%p,%d)\n",interface,timeout));
+    KDEBUG(("timeout in wait_for_not_BSY_not_DRQ(%p,%ld)\n",interface,timeout));
     return 1;
 }
 
