@@ -569,7 +569,10 @@ void biosmain(void)
 #if DETECT_NATIVE_FEATURES
     nf_shutdown();
 #endif
-#ifdef MACHINE_AMIGA
+
+#ifdef MACHINE_FIREBEE
+    firebee_shutdown();
+#elif defined(MACHINE_AMIGA)
     amiga_shutdown();
 #endif
 

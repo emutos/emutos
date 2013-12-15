@@ -34,6 +34,12 @@ void m548x_init_cpld(void);
 # endif
 #endif /* MACHINE_M548X */
 
+#ifdef MACHINE_FIREBEE
+BOOL firebee_pic_can_write(void);
+void firebee_pic_write_byte(UBYTE b);
+void firebee_shutdown(void);
+#endif /* MACHINE_FIREBEE */
+
 #endif /* __mcoldfire__ */
 
 #endif /* COLDFIRE_H */

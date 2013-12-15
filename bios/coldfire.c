@@ -143,3 +143,32 @@ void m548x_init_cpld(void)
 #endif /* CONF_WITH_IDE */
 
 #endif /* MACHINE_M548X */
+
+#ifdef MACHINE_FIREBEE
+
+BOOL firebee_pic_can_write(void)
+{
+    /* Check if space is available in the FIFO */
+    return MCF_UART_USR3 & MCF_UART_USR_TXRDY;
+}
+
+void firebee_pic_write_byte(UBYTE b)
+{
+    while (!firebee_pic_can_write())
+    {
+        /* Wait */
+    }
+
+    /* Send the byte */
+    MCF_UART_UTB3 = b;
+}
+
+void firebee_shutdown(void)
+{
+    firebee_pic_write_byte(0x0c);
+    firebee_pic_write_byte('O');
+    firebee_pic_write_byte('F');
+    firebee_pic_write_byte('F');
+}
+
+#endif /* MACHINE_FIREBEE */

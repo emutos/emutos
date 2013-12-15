@@ -5083,3 +5083,7 @@ Start... early ages
 - bios/ide.c: Added missing IDE features/error register on M548x. (VRI)
 - bios/ide.c: Fix potential bug: use LONG instead of WORD for timeout
   values. (RFB)
+
+2013-12-15
+- bios/bios.c bios/coldfire.c bios/coldfire.h: Added poweroff support on the
+  FireBee. (VRI)
