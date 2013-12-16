@@ -142,7 +142,11 @@ struct IDE
 
 #if CONF_ATARI_HARDWARE
 
+#ifdef MACHINE_FIREBEE
+#define NUM_IDE_INTERFACES  2
+#else
 #define NUM_IDE_INTERFACES  4   /* with e.g. ST Doubler */
+#endif
 
 struct IDE
 {

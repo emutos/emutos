@@ -5057,7 +5057,7 @@ Start... early ages
 2013-11-21
 - Makefile bios/blkdev.c bios/blkdev.h bios/coldpriv.h bios/disk.c
   bios/sd.c bios/sd.h bios/spi.c bios/spi.h bios/xhdi.c: Add support
-  for SD/MMC cards on Firebee. (RFB)
+  for SD/MMC cards on FireBee. (RFB)
 - bios/ide.c bios/ide.h bios/xhdi.c: Code cleanup: use ioctl model
   for miscellaneous IDE routines. (RFB)
 - desk/desktop.def desk/desktop.rsc: Reverted previous FBOXTEXT change
@@ -5087,3 +5087,4 @@ Start... early ages
 2013-12-15
 - bios/bios.c bios/coldfire.c bios/coldfire.h: Added poweroff support on the
   FireBee. (VRI)
+- bios/ide.c: Set a maximum of two IDE interfaces for FireBee. (RFB)
