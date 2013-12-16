@@ -5088,3 +5088,4 @@ Start... early ages
 - bios/bios.c bios/coldfire.c bios/coldfire.h: Added poweroff support on the
   FireBee. (VRI)
 - bios/ide.c: Set a maximum of two IDE interfaces for FireBee. (RFB)
+- bios/bios.c: Fixed implicit declaration of firebee_shutdown(). (RFB)

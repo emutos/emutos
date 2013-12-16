@@ -57,6 +57,9 @@
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif
+#ifdef MACHINE_FIREBEE
+#include "coldfire.h"
+#endif
 
 
 
