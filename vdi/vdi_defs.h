@@ -226,8 +226,9 @@ extern WORD *CONTRL, *INTIN, *PTSIN, *INTOUT, *PTSOUT;
 extern WORD LN_MASK, LSTLIN;
 extern WORD TERM_CH;
 
-/* Bit-Blt variables */
+/* Line-A Bit-Blt / Copy raster form variables */
 extern WORD COPYTRAN;
+extern WORD multifill;
 
 /* Mouse specific externals */
 extern WORD GCURX;              /* mouse X position */
@@ -356,9 +357,9 @@ void _v_get_pixel(Vwk *);     /* 105 - fd1906 */
 void dst_style(Vwk *);        /* 106 - fce278 */
 void dst_point(Vwk *);        /* 107 - fce132 */
 void _vsl_ends(Vwk *);        /* 108 - fcabca */
+void vdi_vro_cpyfm(Vwk *);    /* 109 - fd0770 */
 void _vr_trnfm(Vwk *);        /* 110 - fd1960 */
 
-void vdi_vro_cpyfm(Vwk *);    /* 111 - fd0770 */
 void dsf_udpat(Vwk *);        /* 112 - fcd5c0 */
 void _vsl_udsty(Vwk *);       /* 113 - fcb34c */
 void dr_recfl(Vwk *);         /* 114 - fcb4be */

@@ -366,7 +366,6 @@ extern WORD X1, Y1, X2, Y2, WRT_MODE;
 extern WORD FG_BP_1, FG_BP_2, FG_BP_3, FG_BP_4;
 extern WORD CLIP, XMN_CLIP, XMX_CLIP, YMN_CLIP, YMX_CLIP;
 extern UWORD *patptr, patmsk;
-extern WORD multifill;
 
 /*
  * compose color for draw_rect_common & abline from line-A variables

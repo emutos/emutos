@@ -280,11 +280,11 @@ linea_blit:
  * 
  * Several functions need C-wrapper around utility functions shared
  * with VDI.  They are draw_sprite, undraw_sprite, linea_line,
- * linea_hline, linea_rect, linea_polygon.  Their arguments are
- * in global variables/arrays.
+ * linea_hline, linea_rect, linea_polygon, linea_raster.  Their
+ * arguments are in global variables/arrays.
  *
- * Bitblt has both small C-wrapper and an ASM -wrapper, latter
- * as pointer to its argument array is given in register.
+ * Bitblt has both small C-wrapper and an ASM -wrapper, as
+ * pointer to its argument array is given in register.
  *
  * Assembly "text_blt" routine can be called directly because
  * it uses line-A variables which VDI just sets up before
@@ -312,7 +312,7 @@ linea_vecs:
         .dc.l   _xfm_crfm       /* $B - transform mouse */
         .dc.l   _undraw_sprite  /* $C - undraw sprite */
         .dc.l   _draw_sprite    /* $D - draw sprite */
-        .dc.l   _linea_e        /* _vr_cpyfm? */
+        .dc.l   _linea_raster   /* $E - copy raster form */
         .dc.l   _linea_f        /* _d_contourfill?? */
 linea_ents:
         /* Number of implemented Line A routines */

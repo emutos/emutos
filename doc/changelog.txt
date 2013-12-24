@@ -5089,3 +5089,7 @@ Start... early ages
   FireBee. (VRI)
 - bios/ide.c: Set a maximum of two IDE interfaces for FireBee. (RFB)
 - bios/bios.c: Fixed implicit declaration of firebee_shutdown(). (RFB)
+
+2013-12-24
+- bios/linea.S bios/lineavars.S vdi/vdi_defs.h vdi/vdi_line.c vdi/vdi_raster.c:
+  Added support for "Copy raster form". Contributed by Eero Tamminen. (VRI)

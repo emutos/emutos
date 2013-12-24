@@ -30,7 +30,7 @@
 #include "kprint.h"
 #endif
 
-/* bitblt modes */
+/* bitblt modes (defines not used) */
 #define BM_ALL_WHITE   0
 #define BM_S_AND_D     1
 #define BM_S_AND_NOTD  2
@@ -693,23 +693,30 @@ bit_blt (void)
 #endif   //ASM_BLIT
 
 
+/* common settings needed both by VDI and line-A raster
+ * operations, but being given through different means.
+ */
+struct raster_t {
+    VwkClip *clipper;
+    int clip;
+    int multifill;
+    int transparent;
+};
+
 /*
  * setup_pattern - if bit 5 of mode is set, use pattern with blit
  */
 static void
-setup_pattern (Vwk * vwk, struct blit_frame * info)
+setup_pattern (struct raster_t *raster, struct blit_frame *info)
 {
     /* multi-plane pattern? */
     info->p_nxpl = 0;           /* next plane pattern offset default. */
-    if ( vwk->multifill ) {
+    if (raster->multifill) {
         info->p_nxpl = 32;      /* yes, next plane pat offset = 32. */
     }
-    info->p_addr = vwk->patptr; /* get pattern pointer */
     info->p_nxln = 2;        /* offset to next line in pattern */
     info->p_mask = 0xf;      /* pattern index mask */
 }
-
-
 
 /*
  * do_clip - clip, if dest is screen and clipping is wanted
@@ -718,7 +725,7 @@ setup_pattern (Vwk * vwk, struct blit_frame * info)
  */
 /* not fully optimized yet*/
 static BOOL
-do_clip (Vwk * vwk, struct blit_frame * info)
+do_clip (VwkClip *clipper, struct blit_frame *info)
 {
     WORD s_xmin, s_ymin;
     WORD d_xmin, d_ymin;
@@ -728,7 +735,7 @@ do_clip (Vwk * vwk, struct blit_frame * info)
     /* clip Xmin source and destination to window */
     s_xmin = PTSIN[XMIN_S];
     d_xmin = PTSIN[XMIN_D];
-    clip = vwk->xmn_clip;
+    clip = clipper->xmn_clip;
 
     /* Xmin dest < Xmin clip */
     if ( d_xmin < clip ) {    /* Xmin dest > Xmin clip => branch */
@@ -740,7 +747,7 @@ do_clip (Vwk * vwk, struct blit_frame * info)
 
     /* clip Xmax destination to window */
     d_xmax = PTSIN[XMAX_S] - s_xmin + d_xmin;
-    clip = vwk->xmx_clip;
+    clip = clipper->xmx_clip;
 
     /* Xmax dest > Xmax clip */
     if ( d_xmax > clip )
@@ -754,13 +761,10 @@ do_clip (Vwk * vwk, struct blit_frame * info)
     info->b_wd = deltax + 1;
     info->s_xmax = s_xmin + deltax;     /* d4 <- Xmax Source */
 
-
-
-
     /* clip Ymin source and destination to window */
     s_ymin = PTSIN[YMIN_S];
     d_ymin = PTSIN[YMIN_D];
-    clip = vwk->ymn_clip;
+    clip = clipper->ymn_clip;
 
     /* Ymin dest < Ymin clip => clip Ymin */
     if ( d_ymin < clip ) {
@@ -772,7 +776,7 @@ do_clip (Vwk * vwk, struct blit_frame * info)
 
     /* clip Ymax destination to window */
     d_ymax = PTSIN[YMAX_S] - s_ymin + d_ymin;
-    clip = vwk->ymx_clip;
+    clip = clipper->ymx_clip;
 
     /* if Ymax dest > Ymax clip */
     if ( d_ymax > clip ) {
@@ -790,8 +794,6 @@ do_clip (Vwk * vwk, struct blit_frame * info)
 
     return FALSE;
 }
-
-
 
 /*
  * dont_clip - clip, if dest is screen and clipping is wanted
@@ -820,7 +822,7 @@ dont_clip (struct blit_frame * info)
  * setup_info - fill the info structure with MFDB values
  */
 static BOOL
-setup_info (Vwk * vwk, struct blit_frame * info)
+setup_info (struct raster_t *raster, struct blit_frame * info)
 {
     MFDB *src,*dst;
     BOOL use_clip = FALSE;
@@ -859,12 +861,12 @@ setup_info (Vwk * vwk, struct blit_frame * info)
         info->d_nxln = v_lin_wr;
 
         /* check if clipping is enabled, when destination is screen */
-        if (vwk->clip)
+        if (raster->clip)
             use_clip = TRUE;
     }
 
     if (use_clip) {
-        if (do_clip(vwk, info))
+        if (do_clip(raster->clipper, info))
             return TRUE;        /* clipping took away everything */
     }
     else
@@ -877,6 +879,111 @@ setup_info (Vwk * vwk, struct blit_frame * info)
     return info->plane_ct & ~0x000f;
 }
 
+/* common functionality for vdi_vro_cpyfm, vdi_vrt_cpyfm, linea_raster */
+static void
+cpy_raster(struct raster_t *raster, struct blit_frame *info)
+{
+    WORD mode;
+    WORD fg_col, bg_col;
+
+    arb_corner((Rect*)PTSIN);
+    arb_corner((Rect*)PTSIN + 4);
+    mode = INTIN[0];
+
+    /* if mode is made up of more than the first 5 bits */
+    if (mode & ~0x001f)
+        return;                 /* mode is invalid */
+
+    /* check the pattern flag (bit 5) and revert to log op # */
+    info->p_addr = NULL;        /* get pattern pointer */
+    if (mode & PAT_FLAG) {
+        mode &= ~PAT_FLAG;      /* set bit to 0! */
+        setup_pattern(raster, info);   /* fill in pattern related stuff */
+    }
+
+    /* if true, the plane count is invalid or clipping took all! */
+    if (setup_info(raster, info))
+        return;
+
+    if (!raster->transparent) {
+
+        /* COPY RASTER OPAQUE */
+
+        /* planes of source and destination equal in number? */
+        if (info->s_nxwd != info->d_nxwd)
+            return;
+
+        info->op_tab[0] = mode; /* fg:0 bg:0 */
+        info->bg_col = 0;       /* bg:0 & fg:0 => only first OP_TAB */
+        info->fg_col = 0;       /* entry will be referenced */
+
+    } else {
+
+        /*
+         * COPY RASTER TRANSPARENT - copies a monochrome raster area
+         * from source form to a color area. A writing mode and color
+         * indices for both 0's and 1's are specified in the INTIN array.
+         */
+
+        /* is source area one plane? */
+        if (info->s_nxwd != 2)
+                return;         /* source must be mono plane */
+
+        info->s_nxpl = 0;       /* use only one plane of source */
+
+        /* d6 <- background color */
+        fg_col = INTIN[1];
+        if ((fg_col >= DEV_TAB[13]) || (fg_col < 0))
+            fg_col = 1;
+        fg_col = MAP_COL[fg_col];
+
+        /* d7 <- foreground color */
+        bg_col = INTIN[2];
+        if ((bg_col >= DEV_TAB[13]) || (bg_col < 0))
+            bg_col = 1;
+        bg_col = MAP_COL[bg_col];
+
+        switch(mode) {
+        case MD_TRANS:
+            info->op_tab[0] = 04;    /* fg:0 bg:0  D' <- [not S] and D */
+            info->op_tab[2] = 07;    /* fg:1 bg:0  D' <- S or D */
+            info->fg_col = fg_col;   /* were only interested in one color */
+            info->bg_col = 0;        /* save the color of interest */
+            break;
+
+        case MD_REPLACE:
+            /* CHECK: bug, that colors are reversed? */
+            info->op_tab[0] = 00;    /* fg:0 bg:0  D' <- 0 */
+            info->op_tab[1] = 12;    /* fg:0 bg:1  D' <- not S */
+            info->op_tab[2] = 03;    /* fg:1 bg:0  D' <- S */
+            info->op_tab[3] = 15;    /* fg:1 bg:1  D' <- 1 */
+            info->bg_col = bg_col;   /* save fore and background colors */
+            info->fg_col = fg_col;
+            break;
+
+        case MD_XOR:
+            info->op_tab[0] = 06;    /* fg:0 bg:0  D' <- S xor D */
+            info->bg_col = 0;
+            info->fg_col = 0;
+            break;
+
+        case MD_ERASE:
+            info->op_tab[0] = 01;    /* fg:0 bg:0  D' <- S and D */
+            info->op_tab[1] = 13;    /* fg:0 bg:1  D' <- [not S] or D */
+            info->fg_col = 0;        /* were only interested in one color */
+            info->bg_col = bg_col;   /* save the color of interest */
+            break;
+
+        default:
+            return;                     /* unsupported mode */
+        }
+    }
+
+    /* call assembly blit routine or C-implementation */
+    blit_info = info;
+    bit_blt();
+}
+
 /*
  * vdi_vro_cpyfm - copy raster opaque
  *
@@ -886,41 +993,17 @@ setup_info (Vwk * vwk, struct blit_frame * info)
 void
 vdi_vro_cpyfm(Vwk * vwk)
 {
-    WORD mode;
+    struct raster_t raster;
 
-    arb_corner((Rect*)PTSIN);
-    arb_corner((Rect*)PTSIN + 4);
-    mode = INTIN[0];
+    vdi_info.p_addr = vwk->patptr;
 
-    /* if mode is made up of more than the first 5 bits */
-    if ( mode & ~0x001f )
-        return;                         /* mode is invalid */
+    raster.clipper = VDI_CLIP(vwk);
+    raster.clip = vwk->clip;
+    raster.multifill = vwk->multifill;
+    raster.transparent = 0;
 
-    /* check the pattern flag (bit 5) and revert to log op # */
-    vdi_info.p_addr = NULL;             /* clear pattern pointer */
-    if ( mode & PAT_FLAG ) {
-        mode &= ~PAT_FLAG;              /* set bit to 0! */
-        setup_pattern(vwk, &vdi_info);  /* fill in pattern related stuff */
-    }
-
-    /* if true, the plane count is invalid or clipping took all! */
-    if ( setup_info(vwk, &vdi_info) )
-        return;
-
-    /* planes of source and destination must be equal in number */
-    if ( vdi_info.s_nxwd != vdi_info.d_nxwd )
-        return;
-
-    vdi_info.op_tab[0] = mode;          /* fg:0 bg:0 */
-    vdi_info.bg_col = 0;                /* bg:0 & fg:0 => only first OP_TAB */
-    vdi_info.fg_col = 0;                /* entry will be referenced */
-
-    /* call assembly blit routine or C-implementation */
-    blit_info = &vdi_info;
-    bit_blt();
+    cpy_raster(&raster, &vdi_info);
 }
-
-
 
 /*
  * vdi_vrt_cpyfm - copy raster transparent
@@ -929,98 +1012,33 @@ vdi_vro_cpyfm(Vwk * vwk)
  * color area. A writing mode and color indices for both 0's and 1's
  * are specified in the INTIN array.
  */
-
 void
 vdi_vrt_cpyfm(Vwk * vwk)
 {
-    WORD mode;
-    WORD fg_col, bg_col;
+    struct raster_t raster;
 
-    /* transparent blit */
-    arb_corner((Rect*)PTSIN);
-    arb_corner((Rect*)PTSIN + 4);
-    mode = INTIN[0];
+    vdi_info.p_addr = vwk->patptr;
 
-    /* if mode is made up of more than the first 5 bits */
-    if ( mode & ~0x001f )
-        return;                 /* mode is invalid */
+    raster.clipper = VDI_CLIP(vwk);
+    raster.clip = vwk->clip;
+    raster.multifill = vwk->multifill;
+    raster.transparent = 1;
 
-    /* check the pattern flag (bit 5) and revert to log op # */
-    vdi_info.p_addr = NULL;     /* get pattern pointer*/
-    if ( mode & PAT_FLAG ) {
-        mode &= ~PAT_FLAG;      /* set bit to 0! */
-        setup_pattern(vwk, &vdi_info);   /* fill in pattern related stuff */
-    }
-
-    /* if true, the plane count is invalid or clipping took all! */
-    if ( setup_info(vwk, &vdi_info) )
-        return;
-
-    /*
-     * COPY RASTER TRANSPARENT - copies a monochrome raster area
-     * from source form to a color area. A writing mode and color
-     * indices for both 0's and 1's are specified in the INTIN array.
-     */
-
-    /* is source area one plane? */
-    if ( vdi_info.s_nxwd != 2 )
-        return;    /* source must be mono plane */
-
-    vdi_info.s_nxpl = 0;            /* use only one plane of source */
-
-    /* d6 <- background color */
-    fg_col = INTIN[1];
-    if ((fg_col >= DEV_TAB[13]) || (fg_col < 0))
-        fg_col = 1;
-    fg_col = MAP_COL[fg_col];
-
-    /* d7 <- foreground color */
-    bg_col = INTIN[2];
-    if ((bg_col >= DEV_TAB[13]) || (bg_col < 0))
-        bg_col = 1;
-    bg_col = MAP_COL[bg_col];
-
-    /* mode == d2 */
-    switch(mode) {
-    case MD_TRANS:
-        vdi_info.op_tab[0] = 04;    /* fg:0 bg:0  D' <- [not S] and D */
-        vdi_info.op_tab[2] = 07;    /* fg:1 bg:0  D' <- S or D */
-        vdi_info.fg_col = fg_col;   /* were only interested in one color */
-        vdi_info.bg_col = 0;        /* save the color of interest */
-        break;
-
-    case MD_REPLACE:
-        /* CHECK: bug, that colors are reversed? */
-        vdi_info.op_tab[0] = 00;    /* fg:0 bg:0  D' <- 0 */
-        vdi_info.op_tab[1] = 12;    /* fg:0 bg:1  D' <- not S */
-        vdi_info.op_tab[2] = 03;    /* fg:1 bg:0  D' <- S */
-        vdi_info.op_tab[3] = 15;    /* fg:1 bg:1  D' <- 1 */
-        vdi_info.bg_col = bg_col;   /* save fore and background colors */
-        vdi_info.fg_col = fg_col;
-        break;
-
-    case MD_XOR:
-        vdi_info.op_tab[0] = 06;    /* fg:0 bg:0  D' <- S xor D */
-        vdi_info.bg_col = 0;
-        vdi_info.fg_col = 0;
-        break;
-
-    case MD_ERASE:
-        vdi_info.op_tab[0] = 01;    /* fg:0 bg:0  D' <- S and D */
-        vdi_info.op_tab[1] = 13;    /* fg:0 bg:1  D' <- [not S] or D */
-        vdi_info.fg_col = 0;        /* were only interested in one color */
-        vdi_info.bg_col = bg_col;   /* save the color of interest */
-        break;
-
-    default:
-        return;                     /* unsupported mode */
-    }
-
-    /* call assembly blit routine or C-implementation */
-    blit_info = &vdi_info;
-    bit_blt();
+    cpy_raster(&raster, &vdi_info);
 }
 
+/* line-A wrapper for Copy raster form */
+void linea_raster(struct blit_frame *info)
+{
+    struct raster_t raster;
+
+    raster.clipper = NULL;
+    raster.clip = 0;
+    raster.multifill = multifill;
+    raster.transparent = COPYTRAN;
+
+    cpy_raster(&raster, info);
+}
 
 /* line-A wrapper for blitting */
 void linea_blit(struct blit_frame *info)

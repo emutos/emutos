@@ -268,7 +268,7 @@ _v_bytes_lin:   .ds.w   1       // -2   byte per screen line
                 .globl  _TEXT_FG
                 .globl  _scrtchp
                 .globl  _scrpt2
-
+                .globl  _COPYTRAN
 
 // ==== Global GSX Variables =================================================
 
@@ -337,11 +337,6 @@ _CHUP:          .ds.w   1               // character rotation vector
 _TEXT_FG:       .ds.w   1               // text foreground color
 _scrtchp:       .ds.l   1               // pointer to base of scratch buffer
 _scrpt2:        .ds.w   1               // large buffer base offset
-
-
-// ==== Additional Atari specific things =====================================
-// (unused in our VDI, but we have to keep the variables just in case that
-//  a program tries to write values there...)
 _TEXT_BG:       .ds.w   1               // text background color
 _COPYTRAN:      .ds.w   1               // Flag for Copy-raster-form (<>0 = Transparent)
 _FILL_ABORT:    .ds.l   1               // Adress of Routine for Test of break of contour fill function
