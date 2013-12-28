@@ -56,9 +56,9 @@ void Initmous(WORD type, struct param *param, PFVOID newvec)
     case 1:
         /* Parameters for relative mouse movement */
         if (param != NULL) {
-            ikbd_writeb(0x08);          /* set relative  mouse mode */
+            ikbd_writeb(0x08);          /* set relative mouse mode */
 
-            ikbd_writeb(0x0b);          /* set relative treshhold */
+            ikbd_writeb(0x0b);          /* set relative threshold */
             ikbd_writeb(p->xparam);
             ikbd_writeb(p->yparam);
         }
