@@ -18,6 +18,7 @@
  */
 
 /* #define ENABLE_KDEBUG */
+/* #define ENABLE_MULTIPLE_MODE */
 
 #include "config.h"
 #include "portab.h"
@@ -744,8 +745,10 @@ static void set_multiple_mode(WORD dev,UWORD multi_io)
     if (ide_nodata(IDE_CMD_SET_MULTIPLE_MODE,ifnum,dev,0L,spi))
         return;         /* command failed */
 
+#ifdef ENABLE_MULTIPLE_MODE     /* temporarily disabled */
     ifinfo[ifnum].dev[dev].options |= MULTIPLE_MODE_ACTIVE;
     ifinfo[ifnum].dev[dev].spi = spi;
+#endif
 }
 
 static LONG ide_identify(WORD dev)
