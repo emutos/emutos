@@ -219,8 +219,8 @@ aes_csrc = gemaplib.c gemasync.c gemctrl.c gemdisp.c gemevlib.c \
            gemgrlib.c gemgsxif.c geminit.c geminput.c gemmnlib.c gemobed.c \
            gemobjop.c gemoblib.c gempd.c gemqueue.c gemrslib.c gemsclib.c \
            gemshlib.c gemsuper.c gemwmlib.c gemwrect.c optimize.c \
-           rectfunc.c gemdos.c gem_rsc.c
-aes_ssrc = gemstart.S gemdosif.S gemasm.S gsx2.S large.S optimopt.S
+           rectfunc.c gemdos.c gem_rsc.c gsx2.c
+aes_ssrc = gemstart.S gemdosif.S gemasm.S large.S optimopt.S
 
 #
 # source code in desk/

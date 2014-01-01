@@ -450,14 +450,14 @@ static void g_v_opnwk(WORD *pwork_in, WORD *phandle, WS *pwork_out )
     ptsptr = ((WORD *)pwork_out) + 45;
     i_ptsout( ptsptr );     /* set ptsout to work_out array */
     i_intin( pwork_in );    /* set intin to point to callers data  */
-    i_intout( pwork_out );  /* set intout to point to callers data */
+    i_intout( (WORD *)pwork_out ); /* set intout to point to callers data */
     gsx_ncode(OPEN_WORKSTATION, 0, 11);
 
     *phandle = contrl[6];
-    i_intin( &intin );
-    i_intout( &intout );
-    i_ptsin( &ptsin );
-    i_ptsout( &ptsout );
+    i_intin( intin );
+    i_intout( intout );
+    i_ptsin( ptsin );
+    i_ptsout( ptsout );
 }
 
 
@@ -468,7 +468,7 @@ void g_v_pline(WORD  count, WORD *pxyarray )
 {
     i_ptsin( pxyarray );
     gsx_ncode(POLYLINE, count, 0);
-    i_ptsin( &ptsin );
+    i_ptsin( ptsin );
 }
 
 
@@ -481,7 +481,7 @@ void vst_clip(WORD clip_flag, WORD *pxyarray )
     i_ptsin( pxyarray );
     intin[0] = clip_flag;
     gsx_ncode(TEXT_CLIP, value, 1);
-    i_ptsin(&ptsin);
+    i_ptsin(ptsin);
 }
 
 
@@ -504,7 +504,7 @@ void vr_recfl(WORD *pxyarray, FDB *pdesMFDB)
     i_ptr( pdesMFDB );
     i_ptsin( pxyarray );
     gsx_ncode(FILL_RECTANGLE, 2, 1);
-    i_ptsin( &ptsin );
+    i_ptsin( ptsin );
 }
 
 
@@ -516,7 +516,7 @@ void vro_cpyfm(WORD wr_mode, WORD *pxyarray, FDB *psrcMFDB, FDB *pdesMFDB )
     i_ptr2( pdesMFDB );
     i_ptsin( pxyarray );
     gsx_ncode(COPY_RASTER_FORM, 4, 1);
-    i_ptsin( &ptsin );
+    i_ptsin( ptsin );
 }
 
 
@@ -531,7 +531,7 @@ void vrt_cpyfm(WORD wr_mode, WORD *pxyarray, FDB *psrcMFDB, FDB *pdesMFDB,
     i_ptr2( pdesMFDB );
     i_ptsin( pxyarray );
     gsx_ncode(121, 4, 3);
-    i_ptsin( &ptsin );
+    i_ptsin( ptsin );
 }
 
 

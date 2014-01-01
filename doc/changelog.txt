@@ -5097,3 +5097,8 @@ Start... early ages
 2013-12-31
 - bios/ide.c: Disable IDE multi-sector i/o (causes problems with some
   CF cards). (RFB)
+
+2014-01-01
+- aes/gemgsxif.c aes/gsx2.c aes/gsx2.h Makefile: Converted gsx2.S to C, and
+  added d2/a2 to the VDI trap clobber list. This makes EmuTOS compatible
+  with fVDI's v_hide_c() and v_show_c() which clobbers d2. (VRI)
