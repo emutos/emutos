@@ -5102,3 +5102,5 @@ Start... early ages
 - aes/gemgsxif.c aes/gsx2.c aes/gsx2.h Makefile: Converted gsx2.S to C, and
   added d2/a2 to the VDI trap clobber list. This makes EmuTOS compatible
   with fVDI's v_hide_c() and v_show_c() which clobbers d2. (VRI)
+- *: Replaced asm by __asm__, inline by __inline__ and __volatile__ to volatile
+  to be more compliant with the standards. (VRI)

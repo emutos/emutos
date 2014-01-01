@@ -148,7 +148,7 @@ static void write_microwire(UWORD data)
     {
         /* Wait for previous data transfer to finish */
         oldmask = DMASOUND->microwire_mask;
-        asm volatile (" nop " ::: "memory");
+        __asm__ volatile (" nop " ::: "memory");
     }
     while (oldmask != DMASOUND->microwire_mask);
 

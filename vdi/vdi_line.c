@@ -352,7 +352,7 @@ void draw_rect(const Vwk * vwk, Rect * rect, const UWORD fillcolor)
 /*
  * VDI helper/wrapper for horizontal line drawing
  */
-static inline void horzline(const Vwk * vwk, Line * line)
+static __inline__ void horzline(const Vwk * vwk, Line * line)
 {
     /* a horizontal line is a rectangle with one pixel height */
     draw_rect(vwk, (Rect*)line, vwk->line_color);

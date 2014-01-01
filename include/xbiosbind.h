@@ -64,9 +64,9 @@
  *
  */
 
-static inline void xbios_v_v(int op)
+static __inline__ void xbios_v_v(int op)
 {
-    __asm__ __volatile__ (
+    __asm__ volatile (
         "move.w  %0,-(sp)\n\t"
         "trap    #14\n\t"
         "addq.l  #2,sp"
@@ -76,9 +76,9 @@ static inline void xbios_v_v(int op)
         );
 }
 
-static inline void xbios_v_w(int op, short a)
+static __inline__ void xbios_v_w(int op, short a)
 {
-    __asm__ __volatile__ (
+    __asm__ volatile (
         "move.w  %1,-(sp)\n\t"
         "move.w  %0,-(sp)\n\t"
         "trap    #14\n\t"
@@ -89,9 +89,9 @@ static inline void xbios_v_w(int op, short a)
         );
 }
 
-static inline void xbios_v_wl(int op, short a, long b)
+static __inline__ void xbios_v_wl(int op, short a, long b)
 {
-    __asm__ __volatile__ (
+    __asm__ volatile (
         "move.l  %2,-(sp)\n\t"
         "move.w  %1,-(sp)\n\t"
         "move.w  %0,-(sp)\n\t"
@@ -103,9 +103,9 @@ static inline void xbios_v_wl(int op, short a, long b)
         );
 }
 
-static inline void xbios_v_wll(int op, short a, long b, long c)
+static __inline__ void xbios_v_wll(int op, short a, long b, long c)
 {
-    __asm__ __volatile__ (
+    __asm__ volatile (
         "move.l  %3,-(sp)\n\t"
         "move.l  %2,-(sp)\n\t"
         "move.w  %1,-(sp)\n\t"
@@ -118,10 +118,10 @@ static inline void xbios_v_wll(int op, short a, long b, long c)
         );
 }
 
-static inline void
+static __inline__ void
 xbios_v_wwl(int op, short a, short b, long c)
 {
-    __asm__ __volatile__ (
+    __asm__ volatile (
         "move.l  %3,-(sp)\n\t"
         "move.w  %2,-(sp)\n\t"
         "move.w  %1,-(sp)\n\t"
@@ -134,10 +134,10 @@ xbios_v_wwl(int op, short a, short b, long c)
         );
 }
 
-static inline void
+static __inline__ void
 xbios_v_wwwl(int op, short a, short b, short c, long d)
 {
-    __asm__ __volatile__ (
+    __asm__ volatile (
         "move.l  %4,-(sp)\n\t"
         "move.w  %3,-(sp)\n\t"
         "move.w  %2,-(sp)\n\t"
@@ -151,10 +151,10 @@ xbios_v_wwwl(int op, short a, short b, short c, long d)
         );
 }
 
-static inline void
+static __inline__ void
 xbios_v_wwwwww(int op, short a, short b, short c, short d, short e, short f)
 {
-    __asm__ __volatile__ (
+    __asm__ volatile (
         "move.w  %6,-(sp)\n\t"
         "move.w  %5,-(sp)\n\t"
         "move.w  %4,-(sp)\n\t"
@@ -170,9 +170,9 @@ xbios_v_wwwwww(int op, short a, short b, short c, short d, short e, short f)
         );
 }
 
-static inline void xbios_v_l(int op, long a)
+static __inline__ void xbios_v_l(int op, long a)
 {
-    __asm__ __volatile__ (
+    __asm__ volatile (
         "move.l  %1,-(sp)\n\t"
         "move.w  %0,-(sp)\n\t"
         "trap    #14\n\t"
@@ -183,9 +183,9 @@ static inline void xbios_v_l(int op, long a)
         );
 }
 
-static inline void xbios_v_llw(int op, long a, long b, short c)
+static __inline__ void xbios_v_llw(int op, long a, long b, short c)
 {
-    __asm__ __volatile__ (
+    __asm__ volatile (
         "move.w  %3,-(sp)\n\t"
         "move.l  %2,-(sp)\n\t"
         "move.l  %1,-(sp)\n\t"
@@ -198,10 +198,10 @@ static inline void xbios_v_llw(int op, long a, long b, short c)
         );
 }
 
-static inline void
+static __inline__ void
 xbios_v_llww(int op, long a, long b, short c, short d)
 {
-    __asm__ __volatile__ (
+    __asm__ volatile (
         "move.w  %4,-(sp)\n\t"
         "move.w  %3,-(sp)\n\t"
         "move.l  %2,-(sp)\n\t"
@@ -215,11 +215,11 @@ xbios_v_llww(int op, long a, long b, short c, short d)
         );
 }
 
-static inline short xbios_w_v(int op)
+static __inline__ short xbios_w_v(int op)
 {
     register long retval __asm__("d0");
 
-    __asm__ __volatile__ (
+    __asm__ volatile (
         "move.w  %1,-(sp)\n\t"
         "trap    #14\n\t"
         "addq.l  #2,sp"
@@ -230,11 +230,11 @@ static inline short xbios_w_v(int op)
     return retval;
 }
 
-static inline short xbios_w_w(int op, short a)
+static __inline__ short xbios_w_w(int op, short a)
 {
     register long retval __asm__("d0");
 
-    __asm__ __volatile__ (
+    __asm__ volatile (
         "move.w  %2,-(sp)\n\t"
         "move.w  %1,-(sp)\n\t"
         "trap    #14\n\t"
@@ -246,11 +246,11 @@ static inline short xbios_w_w(int op, short a)
     return retval;
 }
 
-static inline short xbios_w_ww(int op, short a, short b)
+static __inline__ short xbios_w_ww(int op, short a, short b)
 {
     register long retval __asm__("d0");
 
-    __asm__ __volatile__ (
+    __asm__ volatile (
         "move.w  %3,-(sp)\n\t"
         "move.w  %2,-(sp)\n\t"
         "move.w  %1,-(sp)\n\t"
@@ -263,12 +263,12 @@ static inline short xbios_w_ww(int op, short a, short b)
     return retval;
 }
 
-static inline short xbios_w_llwwwww(int op,
+static __inline__ short xbios_w_llwwwww(int op,
     long a, long b, short c, short d, short e, short f, short g)
 {
     register long retval __asm__("d0");
 
-    __asm__ __volatile__ (
+    __asm__ volatile (
         "move.w  %7,-(sp)\n\t"
         "move.w  %6,-(sp)\n\t"
         "move.w  %5,-(sp)\n\t"
@@ -287,11 +287,11 @@ static inline short xbios_w_llwwwww(int op,
     return retval;
 }
 
-static inline long xbios_l_v(int op)
+static __inline__ long xbios_l_v(int op)
 {
     register long retval __asm__("d0");
 
-    __asm__ __volatile__ (
+    __asm__ volatile (
         "move.w  %1,-(sp)\n\t"
         "trap    #14\n\t"
         "addq.l  #2,sp"
@@ -302,11 +302,11 @@ static inline long xbios_l_v(int op)
     return retval;
 }
 
-static inline long xbios_l_w(int op, short a)
+static __inline__ long xbios_l_w(int op, short a)
 {
     register long retval __asm__("d0");
 
-    __asm__ __volatile__ (
+    __asm__ volatile (
         "move.w  %2,-(sp)\n\t"
         "move.w  %1,-(sp)\n\t"
         "trap    #14\n\t"
@@ -318,11 +318,11 @@ static inline long xbios_l_w(int op, short a)
     return retval;
 }
 
-static inline long xbios_l_lll(int op, long a, long b, long c)
+static __inline__ long xbios_l_lll(int op, long a, long b, long c)
 {
     register long retval __asm__("d0");
 
-    __asm__ __volatile__ (
+    __asm__ volatile (
         "move.l  %4,-(sp)\n\t"
         "move.l  %3,-(sp)\n\t"
         "move.l  %2,-(sp)\n\t"

@@ -41,7 +41,7 @@ int sprintf(char *str, const char *fmt, ...);
 
 /* Inline string routines: */
 #if USE_STATIC_INLINES
-static inline char *strcpy(char *dest, const char *src)
+static __inline__ char *strcpy(char *dest, const char *src)
 {
     register char *tmp = dest;
 

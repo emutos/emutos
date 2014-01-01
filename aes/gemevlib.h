@@ -27,7 +27,7 @@ WORD ev_dclick(WORD rate, WORD setit);
 /*
  * combine clicks/mask/state into LONG
  */
-static inline LONG combine_cms(WORD clicks,WORD mask,WORD state)
+static __inline__ LONG combine_cms(WORD clicks,WORD mask,WORD state)
 {
     union {
         LONG result;

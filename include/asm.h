@@ -50,7 +50,7 @@ extern void stop_until_interrupt(void);
 #define swpw(a)                           \
   __extension__                           \
   ({long _tmp;                            \
-    __asm__ __volatile__                  \
+    __asm__ volatile                      \
     ("move.w  %0,%1\n\t"                  \
      "lsl.l   #8,%0\n\t"                  \
      "lsr.l   #8,%1\n\t"                  \
@@ -62,7 +62,7 @@ extern void stop_until_interrupt(void);
   })
 #else
 #define swpw(a)                           \
-  __asm__ __volatile__                    \
+  __asm__ volatile                        \
   ("ror   #8,%0"                          \
   : "=d"(a)          /* outputs */        \
   : "0"(a)           /* inputs  */        \
@@ -81,7 +81,7 @@ extern void stop_until_interrupt(void);
 #define swpl(a)                           \
   __extension__                           \
   ({long _tmp;                            \
-    __asm__ __volatile__                  \
+    __asm__ volatile                      \
     ("move.b  (%1),%0\n\t"                \
      "move.b  3(%1),(%1)\n\t"             \
      "move.b  %0,3(%1)\n\t"               \
@@ -95,7 +95,7 @@ extern void stop_until_interrupt(void);
   })
 #else
 #define swpl(a)                           \
-  __asm__ __volatile__                    \
+  __asm__ volatile                        \
   ("ror   #8,%0\n\t"                      \
    "swap  %0\n\t"                         \
    "ror   #8,%0"                          \
@@ -116,7 +116,7 @@ extern void stop_until_interrupt(void);
 #define swpw2(a)                          \
   __extension__                           \
   ({unsigned long _tmp;                   \
-    __asm__ __volatile__                  \
+    __asm__ volatile                      \
     ("move.b  (%1),%0\n\t"                \
      "move.b  1(%1),(%1)\n\t"             \
      "move.b  %0,1(%1)\n\t"               \
@@ -130,7 +130,7 @@ extern void stop_until_interrupt(void);
   })
 #else
 #define swpw2(a)                          \
-  __asm__ __volatile__                    \
+  __asm__ volatile                        \
   ("ror   #8,%0\n\t"                      \
    "swap  %0\n\t"                         \
    "ror   #8,%0\n\t"                      \
@@ -159,7 +159,7 @@ extern void stop_until_interrupt(void);
 #define set_sr(a)                         \
 __extension__                             \
 ({short _r, _a = (a);                     \
-  __asm__ __volatile__                    \
+  __asm__ volatile                        \
   ("move.w sr,%0\n\t"                     \
    "move.w %1,sr"                         \
   : "=&d"(_r)       /* outputs */        \
@@ -221,7 +221,7 @@ __extension__                                      \
 #define delay_loop(count)                   \
   __extension__                             \
   ({ULONG _count = (count);                 \
-    __asm__ __volatile__                    \
+    __asm__ volatile                        \
     ("0:\n\t"                               \
      "subq.l #1,%0\n\t"                     \
      "bpl.b  0b"                            \

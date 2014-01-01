@@ -33,9 +33,9 @@
 
 
 
-static inline void bios_v_l(int op, long a)
+static __inline__ void bios_v_l(int op, long a)
 {
-    __asm__ __volatile__ (
+    __asm__ volatile (
         "move.l  %1,-(sp)\n\t"
         "move.w  %0,-(sp)\n\t"
         "trap    #13\n\t"
@@ -46,9 +46,9 @@ static inline void bios_v_l(int op, long a)
         );
 }
 
-static inline void bios_v_ww(int op, short a, short b)
+static __inline__ void bios_v_ww(int op, short a, short b)
 {
-    __asm__ __volatile__ (
+    __asm__ volatile (
         "move.w  %2,-(sp)\n\t"
         "move.w  %1,-(sp)\n\t"
         "move.w  %0,-(sp)\n\t"
@@ -62,11 +62,11 @@ static inline void bios_v_ww(int op, short a, short b)
 
 
 
-static inline short bios_w_w(int op, short a)
+static __inline__ short bios_w_w(int op, short a)
 {
     register long retval __asm__("d0");
 
-    __asm__ __volatile__ (
+    __asm__ volatile (
         "move.w  %2,-(sp)\n\t"
         "move.w  %1,-(sp)\n\t"
         "trap    #13\n\t"
@@ -78,11 +78,11 @@ static inline short bios_w_w(int op, short a)
     return retval;
 }
 
-static inline long bios_l_v(int op)
+static __inline__ long bios_l_v(int op)
 {
     register long retval __asm__("d0");
 
-    __asm__ __volatile__ (
+    __asm__ volatile (
         "move.w  %1,-(sp)\n\t"
         "trap    #13\n\t"
         "addq.l  #2,sp"
@@ -93,11 +93,11 @@ static inline long bios_l_v(int op)
     return retval;
 }
 
-static inline long bios_l_w(int op, short a)
+static __inline__ long bios_l_w(int op, short a)
 {
     register long retval __asm__("d0");
 
-    __asm__ __volatile__ (
+    __asm__ volatile (
         "move.w  %2,-(sp)\n\t"
         "move.w  %1,-(sp)\n\t"
         "trap    #13\n\t"
@@ -109,11 +109,11 @@ static inline long bios_l_w(int op, short a)
     return retval;
 }
 
-static inline long bios_l_ww(int op, short a, short b)
+static __inline__ long bios_l_ww(int op, short a, short b)
 {
     register long retval __asm__("d0");
 
-    __asm__ __volatile__ (
+    __asm__ volatile (
         "move.w  %3,-(sp)\n\t"
         "move.w  %2,-(sp)\n\t"
         "move.w  %1,-(sp)\n\t"
@@ -126,11 +126,11 @@ static inline long bios_l_ww(int op, short a, short b)
     return retval;
 }
 
-static inline long bios_l_wl(int op, short a, long b)
+static __inline__ long bios_l_wl(int op, short a, long b)
 {
     register long retval __asm__("d0");
 
-    __asm__ __volatile__ (
+    __asm__ volatile (
         "move.l  %3,-(sp)\n\t"
         "move.w  %2,-(sp)\n\t"
         "move.w  %1,-(sp)\n\t"
@@ -143,12 +143,12 @@ static inline long bios_l_wl(int op, short a, long b)
     return retval;
 }
 
-static inline long
+static __inline__ long
 bios_l_wlwwwl(int op, short a, long b, short c, short d, short e, long f)
 {
     register long retval __asm__("d0");
 
-    __asm__ __volatile__ (
+    __asm__ volatile (
         "move.l  %7,-(sp)\n\t"
         "move.w  %6,-(sp)\n\t"
         "move.w  %5,-(sp)\n\t"

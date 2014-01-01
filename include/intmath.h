@@ -26,7 +26,7 @@ ULONG Isqrt(ULONG x);
  * return ( m1 * m2 ) / d1
  * While the operands are WORD, the intermediate result is LONG.
  */
-static inline WORD mul_div(WORD m1, WORD m2, WORD d1)
+static __inline__ WORD mul_div(WORD m1, WORD m2, WORD d1)
 {
     __asm__ (
       "muls %1,%0\n\t"
