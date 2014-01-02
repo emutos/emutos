@@ -90,9 +90,6 @@ typedef struct mform
 extern WORD     gl_width;
 extern WORD     gl_height;
 
-extern WORD     gl_nrows;
-extern WORD     gl_ncols;
-
 extern WORD     gl_wchar;
 extern WORD     gl_hchar;
 

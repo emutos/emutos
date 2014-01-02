@@ -47,9 +47,6 @@
 GLOBAL WORD     gl_width;
 GLOBAL WORD     gl_height;
 
-GLOBAL WORD     gl_nrows;
-GLOBAL WORD     gl_ncols;
-
 GLOBAL WORD     gl_wchar;
 GLOBAL WORD     gl_hchar;
 
@@ -432,8 +429,6 @@ void gsx_start(void)
           char_height = gl_ws.ws_chmaxh;
         vst_height( char_height, &gl_wptschar, &gl_hptschar,
                                 &gl_wchar, &gl_hchar );
-        gl_ncols = gl_width / gl_wchar;
-        gl_nrows = gl_height / gl_hchar;
         gl_hbox = gl_hchar + 3;
         gl_wbox = (gl_hbox * gl_ws.ws_hpixel) / gl_ws.ws_wpixel;
         if (gl_wbox < gl_wchar + 4) gl_wbox = gl_wchar + 4;

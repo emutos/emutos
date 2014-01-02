@@ -5108,3 +5108,5 @@ Start... early ages
 2014-01-02
 - aes/gemgraf.c aes/gemgsxif.c aes/gemgsxif.h: Get the correct number of planes
   from the VDI workstation. This fixes the menu with fVDI 32-bit modes. (VRI)
+- aes/gemgraf.c desk/deskgraf.c include/gsxdefs.h: Removed unused gl_nrows and
+  gl_ncols variables. (VRI)
