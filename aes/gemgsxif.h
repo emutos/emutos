@@ -44,6 +44,7 @@ WORD gsx_kstate(void);
 void gsx_mon(void);
 void gsx_moff(void);
 WORD gsx_char(void);
+WORD gsx_nplanes(void);
 
 void g_v_pline(WORD  count, WORD *pxyarray );
 void vst_clip(WORD clip_flag, WORD *pxyarray );

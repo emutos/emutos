@@ -17,6 +17,8 @@
 *       -------------------------------------------------------------
 */
 
+/* #define ENABLE_KDEBUG */
+
 #include "config.h"
 #include "portab.h"
 #include "compat.h"
@@ -30,6 +32,7 @@
 #include "optimopt.h"
 #include "gsx2.h"
 #include "rectfunc.h"
+#include "kprint.h"
 
 #define ORGADDR 0x0L
 
@@ -410,20 +413,16 @@ void gsx_trans(LONG saddr, UWORD swb, LONG daddr, UWORD dwb, UWORD h)
 */
 void gsx_start(void)
 {
-        WORD            char_height, nc;
+        WORD            char_height;
 
         gl_xclip = 0;
         gl_yclip = 0;
         gl_width = gl_wclip = gl_ws.ws_xres + 1;
         gl_height = gl_hclip = gl_ws.ws_yres + 1;
+        gl_nplanes = gsx_nplanes();
 
-        nc = gl_ws.ws_ncolors;
-        gl_nplanes = 0;
-        while (nc != 1)
-        {
-          nc >>= 1;
-          gl_nplanes++;
-        }
+        KINFO(("VDI video mode = %dx%d %d-bit\n", gl_width, gl_height, gl_nplanes));
+
         char_height = gl_ws.ws_chminh;
         vst_height( char_height, &gl_wsptschar, &gl_hsptschar,
                                 &gl_wschar, &gl_hschar );

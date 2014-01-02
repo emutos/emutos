@@ -12,7 +12,7 @@
 /*      GEMGSXIF.C      05/06/84 - 06/13/85     Lee Lorenzen            */
 /*      merge High C vers. w. 2.2               8/21/87         mdf     */
 
-#define DBG_GEMGSXIF 0
+/* #define ENABLE_KDEBUG */
 
 #include "config.h"
 #include "portab.h"
@@ -308,11 +308,10 @@ static void bb_set(WORD sx, WORD sy, WORD sw, WORD sh, WORD *pts1, WORD *pts2,
     if (size > gl_mlen) {       /* buffer too small */
         /* adjust height to fit buffer: this will leave droppings! */
         sh = gl_mlen * sh / size;
-#if DBG_GEMGSXIF
+
         /* issue warning message for backup only, not for subsequent restore */
         if (pdst == &gl_tmp)
-            kprintf("Menu/alert buffer too small: need at least %ld bytes\n",size);
-#endif
+            KINFO(("Menu/alert buffer too small: need at least %ld bytes\n",size));
     }
 
     gl_tmp.fd_stand = TRUE;
@@ -439,7 +438,12 @@ static ULONG gsx_gbufflen(void)
     return(LLGET(ADDR(&intout[26])));
 }
 
-
+/* Get the number of planes (or bit depth) of the current screen */
+WORD gsx_nplanes(void)
+{
+    gsx_1code(EXTENDED_INQUIRE, 1);
+    return intout[4];
+}
 
 /* This function was formerly just called v_opnwk, but there was a
    conflict with the VDI then, so I renamed it to g_v_opnwk  - Thomas */

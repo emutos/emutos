@@ -5104,3 +5104,7 @@ Start... early ages
   with fVDI's v_hide_c() and v_show_c() which clobbers d2. (VRI)
 - *: Replaced asm by __asm__, inline by __inline__ and __volatile__ to volatile
   to be more compliant with the standards. (VRI)
+
+2014-01-02
+- aes/gemgraf.c aes/gemgsxif.c aes/gemgsxif.h: Get the correct number of planes
+  from the VDI workstation. This fixes the menu with fVDI 32-bit modes. (VRI)
