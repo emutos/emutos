@@ -476,7 +476,7 @@ static int wait_for_not_BSY_not_DRQ(volatile struct IDE *interface,LONG timeout)
             return 0;
     }
 
-    KDEBUG(("timeout in wait_for_not_BSY_not_DRQ(%p,%ld)\n",interface,timeout));
+    KDEBUG(("Timeout in wait_for_not_BSY_not_DRQ(%p,%ld)\n",interface,timeout));
     return 1;
 }
 
@@ -717,7 +717,7 @@ LONG ide_rw(WORD rw,LONG sector,WORD count,LONG buf,WORD dev,BOOL need_byteswap)
         ret = rw ? ide_write(IDE_CMD_WRITE_SECTOR,ifnum,dev,sector,numsecs,p,need_byteswap)
                 : ide_read(IDE_CMD_READ_SECTOR,ifnum,dev,sector,numsecs,p,need_byteswap);
         if (ret < 0) {
-            KDEBUG(("ide_io(%d,%d,%d,%ld,%u,%p,%d) rc=%ld\n",
+            KDEBUG(("ide_rw(%d,%d,%d,%ld,%u,%p,%d) rc=%ld\n",
                     rw,ifnum,dev,sector,numsecs,p,need_byteswap,ret));
             return ret;
         }

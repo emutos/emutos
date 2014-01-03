@@ -5110,3 +5110,6 @@ Start... early ages
   from the VDI workstation. This fixes the menu with fVDI 32-bit modes. (VRI)
 - aes/gemgraf.c desk/deskgraf.c include/gsxdefs.h: Removed unused gl_nrows and
   gl_ncols variables. (VRI)
+
+2014-01-03
+- bios/ide.c: Fix some debugging messages. (RFB)
