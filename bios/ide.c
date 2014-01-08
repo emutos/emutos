@@ -44,8 +44,6 @@
 
 #include "coldpriv.h"
 
-#define IDE_32BIT_XFER  0    /* not supported on M548x */
-
 struct IDE
 {
     UBYTE filler00[2];
@@ -109,9 +107,6 @@ struct IDE
 
 #else
 
-/* set the following to 0 to use 16-bit transfer */
-#define IDE_32BIT_XFER  1   /* use 32-bit data transfer */
-
 /* On standard hardware, the IDE registers can be accessed as single bytes. */
 
 #define IDE_WRITE_SECTOR_NUMBER_SECTOR_COUNT(a,b) \
@@ -132,6 +127,13 @@ struct IDE
     ((interface->cylinder_high<<8) | interface->cylinder_low)
 
 #endif /* MACHINE_M548X */
+
+/* set the following to 1 to use 32-bit data transfer */
+#if CONF_ATARI_HARDWARE
+#define IDE_32BIT_XFER 1
+#else
+#define IDE_32BIT_XFER 0
+#endif
 
 #if IDE_32BIT_XFER
 #define XFERWIDTH   ULONG
