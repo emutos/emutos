@@ -5113,3 +5113,6 @@ Start... early ages
 
 2014-01-03
 - bios/ide.c: Fix some debugging messages. (RFB)
+
+2014-01-07
+- bios/ide.c: Fix obscure bug detected by code inspection. (RFB)

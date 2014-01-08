@@ -738,10 +738,13 @@ static void set_multiple_mode(WORD dev,UWORD multi_io)
     if (!(multi_io & 0x8000))
         return;
 
+    spi = multi_io & 0xff;
+    if (!spi)           /* multiple mode not supported */
+        return;         /* (ATA 2 and earlier)         */
+
     ifnum = dev / 2;    /* i.e. primary IDE, secondary IDE, ... */
     dev &= 1;           /* 0 or 1 */
 
-    spi = multi_io & 0xff;
     if (ide_nodata(IDE_CMD_SET_MULTIPLE_MODE,ifnum,dev,0L,spi))
         return;         /* command failed */
 
