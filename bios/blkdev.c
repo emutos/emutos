@@ -11,9 +11,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
-
-#define DBG_BLKDEV 0
+/* #define ENABLE_KDEBUG */
 
 #include "config.h"
 #include "portab.h"
@@ -71,9 +69,7 @@ void blkdev_init(void)
 {
     /* set the block buffer pointer to reserved memory */
     dskbufp = &diskbuf;
-#if DBG_BLKDEV
-    kprintf("diskbuf = %08lx\n", (long)dskbufp);
-#endif
+    KDEBUG(("diskbuf = %08lx\n",(long)dskbufp));
 
     /* setup booting related vectors */
     hdv_boot    = blkdev_hdv_boot;
@@ -124,9 +120,7 @@ static void pun_info_setup(void)
 
     pun_ptr = (LONG)&pun_info;
 
-#if DBG_BLKDEV
-    kprintf("PUN INFO: max sector size = %d\n", pun_info.max_sect_siz);
-#endif
+    KDEBUG(("PUN INFO: max sector size = %d\n",pun_info.max_sect_siz));
 }
 
 /*
@@ -180,9 +174,8 @@ LONG blkdev_hdv_boot(void)
 {
     LONG mode = kbshift(-1);
 
-#if DBG_BLKDEV
-    kprintf("drvbits = %08lx\n", drvbits);
-#endif
+    KDEBUG(("drvbits = %08lx\n",drvbits));
+
     /* boot eventually from a block device (floppy or harddisk) */
 
     /* the actual boot device or better the order of several boot devices
@@ -222,15 +215,11 @@ int add_partition(int dev, char id[], ULONG start, ULONG size)
     int unit = dev + NUMFLOPPIES;
 
     if (blkdevnum == BLKDEVNUM) {
-#if DBG_BLKDEV
-        kprintf("Maximum number of partitions reached!\n");
-#endif
+        KDEBUG(("Maximum number of partitions reached!\n"));
         return -1;
     }
-#if DBG_BLKDEV
-    kprintf(" %c=%c%c%c, start=%ld, size=%ld\n", 'A'+blkdevnum, id[0],
-                                                id[1], id[2], start, size);
-#endif
+    KDEBUG((" %c=%c%c%c, start=%ld, size=%ld\n",
+            'A'+blkdevnum,id[0],id[1],id[2],start,size));
 
     blkdev[blkdevnum].id[0] = id[0];
     blkdev[blkdevnum].id[1] = id[1];
@@ -271,9 +260,8 @@ static LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG
     WORD psshift;
     void *bufstart = (void *)buf;
 
-#if DBG_BLKDEV
-    kprintf("rwabs(rw=%d, buf=%ld, count=%ld, recnr=%u, dev=%d, lrecnr=%ld)\n", rw, buf, lcount, recnr, dev, lrecnr);
-#endif
+    KDEBUG(("rwabs(rw=%d, buf=%ld, count=%ld, recnr=%u, dev=%d, lrecnr=%ld)\n",
+            rw,buf,lcount,recnr,dev,lrecnr));
 
     if (recnr != -1)            /* if long offset not used */
         lrecnr = (UWORD)recnr;  /* recnr as unsigned to enable 16-bit recn */
@@ -299,9 +287,7 @@ static LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG
         /* convert logical drive to physical unit */
         unit = blkdev[dev].unit;
 
-#if DBG_BLKDEV
-        kprintf("rwabs translated: sector=%ld, count=%ld\n", lrecnr, lcount);
-#endif
+        KDEBUG(("rwabs translated: sector=%ld, count=%ld\n",lrecnr,lcount));
     }
     else {
         if (unit < 0 || unit >= UNITSNUM || !devices[unit].valid)
@@ -318,9 +304,7 @@ static LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG
 
     if (! (rw & RW_NOMEDIACH)) {
         if (blkdev_mediach(dev) != MEDIANOCHANGE) {
-#if DBG_BLKDEV
-            kprintf("media change detected\n");
-#endif
+            KDEBUG(("blkdev_rwabs(): media change detected\n"));
             return E_CHNG;
         }
     }
@@ -390,9 +374,7 @@ LONG blkdev_getbpb(WORD dev)
     ULONG tmp;
     WORD err;
 
-#if DBG_BLKDEV
-    kprintf("getbpb(%d)\n", dev);
-#endif
+    KDEBUG(("blkdev_getbpb(%d)\n",dev));
 
     if ((dev < 0 ) || (dev >= BLKDEVNUM) || !blkdev[dev].valid)
         return 0;  /* unknown device */
@@ -406,12 +388,9 @@ LONG blkdev_getbpb(WORD dev)
 
     b = (struct bs *)dskbufp;
     b16 = (struct fat16_bs *)dskbufp;
-#if DBG_BLKDEV
-    kprintf("bootsector[dev = %d] = {\n  ...\n", dev);
-    kprintf("  res = %d;\n", getiword(b->res));
-    kprintf("  hid = %d;\n", getiword(b->hid));
-    kprintf("}\n");
-#endif
+
+    KDEBUG(("bootsector[dev=%d] = {\n  ...\n  res = %d;\n  hid = %d;\n}\n",
+            dev,getiword(b->res),getiword(b->hid)));
 
     /* TODO
      * check if the parameters are sane and set reasonable defaults if not
@@ -475,19 +454,13 @@ LONG blkdev_getbpb(WORD dev)
     memcpy(blkdev[dev].serial,b->serial,3);
     memcpy(blkdev[dev].serial2,b16->serial2,4);
 
-#if DBG_BLKDEV
-    kprintf("bpb[dev = %d] = {\n", dev);
-    kprintf("  recsiz = %d;\n", blkdev[dev].bpb.recsiz);
-    kprintf("  clsiz  = %d;\n", blkdev[dev].bpb.clsiz);
-    kprintf("  clsizb = %d;\n", blkdev[dev].bpb.clsizb);
-    kprintf("  rdlen  = %d;\n", blkdev[dev].bpb.rdlen);
-    kprintf("  fsiz   = %d;\n", blkdev[dev].bpb.fsiz);
-    kprintf("  fatrec = %d;\n", blkdev[dev].bpb.fatrec);
-    kprintf("  datrec = %d;\n", blkdev[dev].bpb.datrec);
-    kprintf("  numcl  = %d;\n", blkdev[dev].bpb.numcl);
-    kprintf("  bflags = %d;\n", blkdev[dev].bpb.b_flags);
-    kprintf("}\n");
-#endif
+    KDEBUG(("bpb[dev=%d] = {\n  recsiz = %d;\n  clsiz  = %d;\n",
+            dev,blkdev[dev].bpb.recsiz,blkdev[dev].bpb.clsiz));
+    KDEBUG(("  clsizb = %u;\n  rdlen  = %d;\n  fsiz   = %d;\n",
+            blkdev[dev].bpb.clsizb,blkdev[dev].bpb.rdlen,blkdev[dev].bpb.fsiz));
+    KDEBUG(("  fatrec = %d;\n  datrec = %d;\n  numcl  = %u;\n",
+            blkdev[dev].bpb.fatrec,blkdev[dev].bpb.datrec,blkdev[dev].bpb.numcl));
+    KDEBUG(("  bflags = %d;\n}\n",blkdev[dev].bpb.b_flags));
 
     return (LONG) &blkdev[dev].bpb;
 }
@@ -531,7 +504,7 @@ static LONG nonflop_mediach(WORD logical)
         ret = EUNDEV;
     }
 
-    KDEBUG(("nonflop_mediach(%d) returned %ld\n", logical, ret));
+    KDEBUG(("nonflop_mediach(%d) returned %ld\n",logical,ret));
     return ret;
 }
 

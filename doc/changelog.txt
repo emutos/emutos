@@ -5127,3 +5127,6 @@ Start... early ages
 2014-01-09
 - bios/blkdev.c bios/blkdev.h bios/ide.c bios/sd.c: Refactor media change
   code to simplify future updates. (RFB)
+
+2014-01-09
+- bios/blkdev.c: Replaced DBG_BLKDEV with KDEBUG. (RFB)
