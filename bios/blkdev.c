@@ -1,7 +1,7 @@
 /*
  * blkdev.c - BIOS block device functions
  *
- * Copyright (c) 2002-2013 The EmuTOS development team
+ * Copyright (c) 2002-2014 The EmuTOS development team
  *
  * Authors:
  *  MAD     Martin Doering
@@ -21,6 +21,7 @@
 #include "gemerror.h"
 #include "kprint.h"
 #include "tosvars.h"
+#include "mfp.h"
 #include "floppy.h"
 #include "disk.h"
 #include "ikbd.h"
@@ -351,6 +352,9 @@ static LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG
     if ((rw&RW_RW) == RW_READ)
         instruction_cache_kludge(bufstart,cnt<<psshift);
 
+    if (retval == 0)
+        devices[unit].last_access = hz_200;
+
     return retval;
 }
 
@@ -496,15 +500,21 @@ LONG blkdev_getbpb(WORD dev)
 static LONG blkdev_mediach(WORD dev)
 {
     BLKDEV *b = &blkdev[dev];
+    LONG ret;
 
     if ((dev < 0 ) || (dev >= BLKDEVNUM) || !b->valid)
         return EUNDEV;  /* unknown device */
 
-    if (dev >= 2)
-        return MEDIANOCHANGE;   /* for harddrives return "not changed" for now */
+    if (b->mediachange == MEDIANOCHANGE) {
+        /* if less than half a second since last access, assume no mediachange */
+        if (hz_200 < devices[b->unit].last_access + CLOCKS_PER_SEC/2)
+            return MEDIANOCHANGE;
 
-    if (b->mediachange == MEDIANOCHANGE)
-        b->mediachange = flop_mediach(dev);
+        ret = (dev<NUMFLOPPIES) ? flop_mediach(dev) : MEDIANOCHANGE;
+        if (ret < 0)
+            return ret;
+        b->mediachange = ret;
+    }
 
     return b->mediachange;
 }

@@ -5119,3 +5119,7 @@ Start... early ages
 
 2014-01-08
 - bios/ide.c: Fixed IDE regression on Amiga. 32-bit access is unsupported. (VRI)
+
+2014-01-09
+- bios/blkdev.c bios/disk.c bios/floppy.c: Small refactoring of media
+  change detection. (RFB)

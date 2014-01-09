@@ -1,7 +1,7 @@
 /*
  * floppy.c - floppy routines
  *
- * Copyright (c) 2001-2013 The EmuTOS development team
+ * Copyright (c) 2001-2014 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -324,17 +324,11 @@ static void flop_detect_drive(WORD dev)
  */
 LONG flop_mediach(WORD dev)
 {
-    int unit;
     WORD err;
     struct fat16_bs *bootsec = (struct fat16_bs *) dskbufp;
 #if DBG_FLOP
     kprintf("flop_mediach(%d)\n",dev);
 #endif
-
-    /* if less than half a second since last access, assume no mediachange */
-    unit = blkdev[dev].unit;
-    if (hz_200 < devices[unit].last_access + 100)
-        return MEDIANOCHANGE;
 
     /* TODO, monitor write-protect status in flopvbl... */
 

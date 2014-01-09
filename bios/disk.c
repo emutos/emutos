@@ -1,7 +1,7 @@
 /*
  * disk.c - disk routines
  *
- * Copyright (c) 2001-2013 The EmuTOS development team
+ * Copyright (c) 2001-2014 The EmuTOS development team
  *
  * Authors:
  *  PES   Petr Stehlik
@@ -65,6 +65,7 @@ void disk_init(void)
             devices[xbiosdev].byteswap = 0;
             devices[xbiosdev].size = blocks;
             devices[xbiosdev].psshift = shift;
+            devices[xbiosdev].last_access = 0;
 
             /* scan for ATARI partitions on this harddrive */
             atari_partition(major);
