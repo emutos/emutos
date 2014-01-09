@@ -1,7 +1,7 @@
 /*
  * sd.c - SD/MMC card routines
  *
- * Copyright (c) 2013 The EmuTOS development team
+ * Copyright (c) 2013-2014 The EmuTOS development team
  *
  * Authors:
  *  RFB   Roger Burrows
@@ -180,25 +180,30 @@ UBYTE cardreg[16];
     if (drv)
         return EUNDEV;
 
-    if (card.type == CARDTYPE_UNKNOWN)
-        return EDRVNR;
-
     spi_cs_assert();
 
     switch(ctrl) {
     case GET_DISKINFO:
-        if (sd_command(CMD9,0L,0,R1,response) == 0)
-            if (sd_receive_data(cardreg,16,1) == 0)
-                rc = 0L;
+        if (card.type == CARDTYPE_UNKNOWN) {
+            rc = EDRVNR;
+        } else {
+            if (sd_command(CMD9,0L,0,R1,response) == 0)
+                if (sd_receive_data(cardreg,16,1) == 0)
+                    rc = 0L;
+        }
         if (rc)
             break;
         info[0] = sd_calc_capacity(cardreg);
         info[1] = SECTOR_SIZE;
         break;
     case GET_DISKNAME:
-        if (sd_command(CMD10,0L,0,R1,response) == 0)
-            if (sd_receive_data(cardreg,16,0) == 0)
-                rc = 0L;
+        if (card.type == CARDTYPE_UNKNOWN) {
+            rc = EDRVNR;
+        } else {
+            if (sd_command(CMD10,0L,0,R1,response) == 0)
+                if (sd_receive_data(cardreg,16,0) == 0)
+                    rc = 0L;
+        }
         if (rc)
             break;
         if (card.type == CARDTYPE_SD) {
@@ -209,6 +214,8 @@ UBYTE cardreg[16];
             strcpy(arg,(const char *)cardreg+3);
         }
         break;
+    case GET_MEDIACHANGE:
+        rc = MEDIANOCHANGE;
     }
 
     spi_cs_unassert();

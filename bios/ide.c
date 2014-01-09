@@ -1,7 +1,7 @@
 /*
  * ide.c - Falcon IDE functions
  *
- * Copyright (c) 2011-2013 The EmuTOS development team
+ * Copyright (c) 2011-2014 The EmuTOS development team
  *
  * Authors:
  *  VRI   Vincent Rivière
@@ -782,21 +782,26 @@ LONG ide_ioctl(WORD dev,UWORD ctrl,void *arg)
     LONG ret = ERR;
     ULONG *info = arg;
 
-    ret = ide_identify(dev);    /* reads into identify structure */
-    if (ret < 0)
-        return ret;
-
     switch(ctrl) {
     case GET_DISKINFO:
-        info[0] = (((ULONG)identify.numsecs_lba28[1]) << 16)
-                    + identify.numsecs_lba28[0];
-        info[1] = SECTOR_SIZE;  /* note: could be different under ATAPI 7 */
-        ret = E_OK;
+        ret = ide_identify(dev);    /* reads into identify structure */
+        if (ret >= 0) {
+            info[0] = (((ULONG)identify.numsecs_lba28[1]) << 16)
+                        + identify.numsecs_lba28[0];
+            info[1] = SECTOR_SIZE;  /* note: could be different under ATAPI 7 */
+            ret = E_OK;
+        }
         break;
     case GET_DISKNAME:
-        identify.model_number[39] = 0;  /* null terminate string */
-        strcpy(arg,identify.model_number);
-        ret = E_OK;
+        ret = ide_identify(dev);    /* reads into identify structure */
+        if (ret >= 0) {
+            identify.model_number[39] = 0;  /* null terminate string */
+            strcpy(arg,identify.model_number);
+            ret = E_OK;
+        }
+        break;
+    case GET_MEDIACHANGE:
+        ret = MEDIANOCHANGE;
         break;
     }
 

@@ -492,6 +492,48 @@ LONG blkdev_getbpb(WORD dev)
     return (LONG) &blkdev[dev].bpb;
 }
 
+/*
+ * media change detection for non-floppies
+ */
+static LONG nonflop_mediach(WORD logical)
+{
+    LONG ret;
+    WORD dev, bus, reldev;
+
+    /* convert logical drive */
+    dev = blkdev[logical].unit - NUMFLOPPIES;
+
+    /* get bus and relative device */
+    bus = GET_BUS(dev);
+    reldev = dev - bus * DEVICES_PER_BUS;
+
+    /* hardware access to device */
+    switch(bus) {
+#if CONF_WITH_ACSI
+    case ACSI_BUS:
+        ret = acsi_ioctl(reldev,GET_MEDIACHANGE,NULL);
+        break;
+#endif /* CONF_WITH_ACSI */
+    case SCSI_BUS:
+        ret = EUNDEV;   /* call scsi_ioctl(GET_MEDIACHANGE) here when implemented */
+        break;
+#if CONF_WITH_IDE
+    case IDE_BUS:
+        ret = ide_ioctl(reldev,GET_MEDIACHANGE,NULL);
+        break;
+#endif /* CONF_WITH_IDE */
+#if CONF_WITH_SDMMC
+    case SDMMC_BUS:
+        ret = sd_ioctl(reldev,GET_MEDIACHANGE,NULL);
+        break;
+#endif /* CONF_WITH_SDMMC */
+    default:
+        ret = EUNDEV;
+    }
+
+    KDEBUG(("nonflop_mediach(%d) returned %ld\n", logical, ret));
+    return ret;
+}
 
 /*
  * blkdev_mediach - BIOS media change vector
@@ -510,7 +552,7 @@ static LONG blkdev_mediach(WORD dev)
         if (hz_200 < devices[b->unit].last_access + CLOCKS_PER_SEC/2)
             return MEDIANOCHANGE;
 
-        ret = (dev<NUMFLOPPIES) ? flop_mediach(dev) : MEDIANOCHANGE;
+        ret = (dev<NUMFLOPPIES) ? flop_mediach(dev) : nonflop_mediach(dev);
         if (ret < 0)
             return ret;
         b->mediachange = ret;

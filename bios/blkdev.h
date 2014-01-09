@@ -1,7 +1,7 @@
 /*
  * blkdev.h - bios block devices
  *
- * Copyright (c) 2001-2013 The EmuTOS development team
+ * Copyright (c) 2001-2014 The EmuTOS development team
  *
  * Authors:
  *  MAD   Martin Doering
@@ -52,6 +52,8 @@
                                 /*   [1] sector size (in bytes)       */
 #define GET_DISKNAME        21  /* get name of specified drive:       */
                                 /* arg -> return data (max 40 chars)  */
+#define GET_MEDIACHANGE     30  /* return status as per Mediach() call*/
+                                /* arg is NULL                        */
 
 
 /* Original FAT12 bootsector */
@@ -198,7 +200,8 @@ struct _blkdev
     GEOMETRY    geometry;       /* this should probably belong to devices */
     UBYTE       serial[3];      /* the serial number taken from the bootsector */
     UBYTE       serial2[4];     /* serial number 2 (MSDOS) from the bootsector */
-    int         unit;           /* 0,1 = floppies, 2-9 = ACSI, 10-17 = SCSI, 18-25 = IDE */
+    int         unit;           /* 0,1 = floppies, 2-9 = ACSI, 10-17 = SCSI, */
+                                /*  18-25 = IDE, 26-33 = SD/MMC              */
 };
 typedef struct _blkdev  BLKDEV;
 
