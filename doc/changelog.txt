@@ -5130,3 +5130,6 @@ Start... early ages
 
 2014-01-09
 - bios/blkdev.c: Replaced DBG_BLKDEV with KDEBUG. (RFB)
+
+2014-01-13
+- bios/floppy.c: Replaced DBG_FLOP with KDEBUG. (RFB)

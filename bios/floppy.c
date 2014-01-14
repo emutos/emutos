@@ -10,7 +10,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#define DBG_FLOP 0
+#define ENABLE_KDEBUG
 
 #include "config.h"
 #include "portab.h"
@@ -279,9 +279,7 @@ static void flop_detect_drive(WORD dev)
     MAYBE_UNUSED(status);
     MAYBE_UNUSED(flop_add_drive);
 
-#if DBG_FLOP
-    kprintf("flop_detect_drive(%d)\n", dev);
-#endif
+    KDEBUG(("flop_detect_drive(%d)\n",dev));
 
 #ifdef MACHINE_AMIGA
     if (amiga_flop_detect_drive(dev)) {
@@ -297,21 +295,16 @@ static void flop_detect_drive(WORD dev)
     set_fdc_reg(FDC_CS, FDC_RESTORE | finfo[dev].actual_rate);
     if(timeout_gpip(TIMEOUT)) {
         /* timeout */
-#if DBG_FLOP
-        kprintf("flop_detect_drive(%d) timeout\n", dev);
-#endif
+        KDEBUG(("flop_detect_drive(%d) timeout\n",dev));
         flopunlk();
         return;
     }
+
     status = get_fdc_reg(FDC_CS);
-#if DBG_FLOP
-    kprintf("status = 0x%02x\n", status);
-#endif
+    KDEBUG(("status = 0x%02x\n",status));
     if(status & FDC_TRACK0) {
         /* got track0 signal, this means that a drive is connected */
-#if DBG_FLOP
-        kprintf("track0 signal got\n" );
-#endif
+        KDEBUG(("track0 signal got\n"));
         flop_add_drive(dev);
     }
     flopunlk();
@@ -326,33 +319,29 @@ LONG flop_mediach(WORD dev)
 {
     WORD err;
     struct fat16_bs *bootsec = (struct fat16_bs *) dskbufp;
-#if DBG_FLOP
-    kprintf("flop_mediach(%d)\n",dev);
-#endif
+
+    KDEBUG(("flop_mediach(%d)\n",dev));
 
     /* TODO, monitor write-protect status in flopvbl... */
 
-#if DBG_FLOP
-    kprintf("flop_mediach() read bootsec\n");
-#endif
+    KDEBUG(("flop_mediach() read bootsec\n"));
+
     /* for now, assume it is unsure and look at the serial number */
     /* read bootsector at track 0, side 0, sector 1 */
     err = floprw((LONG)bootsec,RW_READ,dev,1,0,0,1);
     if (err)        /* can't even read the bootsector */
         return MEDIACHANGE;
 
-#if DBG_FLOP
-    kprintf("flop_mediach() got bootsec, serial=0x%02x%02x%02x, serial2=0x%02x%02x%02x%02x\n",
+    KDEBUG(("flop_mediach() got bootsec, serial=0x%02x%02x%02x, serial2=0x%02x%02x%02x%02x\n",
             bootsec->serial[0],bootsec->serial[1],bootsec->serial[2],
-            bootsec->serial2[0],bootsec->serial2[1],bootsec->serial2[2],bootsec->serial2[3]);
-#endif
+            bootsec->serial2[0],bootsec->serial2[1],bootsec->serial2[2],bootsec->serial2[3]));
+
     if (memcmp(bootsec->serial,blkdev[dev].serial,3)
      || memcmp(bootsec->serial2,blkdev[dev].serial2,4))
         return MEDIACHANGE;
 
-#if DBG_FLOP
-    kprintf("flop_mediach() serial is unchanged\n");
-#endif
+    KDEBUG(("flop_mediach() serial is unchanged\n"));
+
     return MEDIANOCHANGE;
 }
 
@@ -362,9 +351,8 @@ LONG flop_hdv_boot(void)
     LONG err;
 
     err = flop_bootcheck();
-#if DBG_FLOP
-    kprintf("flop_bootcheck returns %ld\n", err);
-#endif
+    KDEBUG(("flop_bootcheck returns %ld\n",err));
+
     if(err == 0) {
         /* if bootable, jump in it */
         invalidate_instruction_cache(dskbufp, SECTOR_SIZE);
@@ -408,10 +396,8 @@ LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
     WORD err;
     WORD bootsec = 0;
 
-#if DBG_FLOP
-    kprintf("floppy_rw(rw %d, buf 0x%lx, cnt %d, ", rw, buf, cnt);
-    kprintf("recnr %ld, spt %d, sides %d, dev %d)\n", recnr, spt, sides, dev);
-#endif
+    KDEBUG(("floppy_rw(rw %d, buf 0x%lx, cnt %d, recnr %ld, spt %d, sides %d, dev %d)\n",
+            rw,buf,cnt,recnr,spt,sides,dev));
 
     if (!IS_VALID_FLOPPY_DEVICE(dev)) return EUNDEV;  /* unknown device */
 
@@ -474,9 +460,8 @@ LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
              * first sector of the diskette, this doesn't matter.
              */
             f = &finfo[dev];
-#if DBG_FLOP
-            kprintf("switching density (current=%d)\n",f->cur_density);
-#endif
+            KDEBUG(("switching density (current=%d)\n",f->cur_density));
+
             if (f->cur_density == DENSITY_DD)   /* retry with changed density */
                 f->cur_density = DENSITY_HD;
             else f->cur_density = DENSITY_DD;
