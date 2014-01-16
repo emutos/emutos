@@ -5133,3 +5133,7 @@ Start... early ages
 
 2014-01-13
 - bios/floppy.c: Replaced DBG_FLOP with KDEBUG. (RFB)
+
+2014-01-16
+- bios/blkdev.c bios/blkdev.h bios/disk.c bios/disk.h: Refactor partition
+  detection for future media change update. (RFB)

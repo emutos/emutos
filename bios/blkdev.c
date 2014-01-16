@@ -35,7 +35,6 @@
  */
 
 BLKDEV blkdev[BLKDEVNUM];
-static int blkdevnum;
 UNIT devices[UNITSNUM];
 
 static BYTE diskbuf[2*SECTOR_SIZE];     /* buffer for 2 sectors */
@@ -92,7 +91,7 @@ static void pun_info_setup(void)
     BPB *bpb;
 
     /* set PUN_INFO */
-    pun_info.puns = blkdevnum;
+    pun_info.puns = BLKDEVNUM;
     pun_info.max_sect_siz = SECTOR_SIZE;
 
     /* floppy A: */
@@ -142,8 +141,7 @@ static void blkdev_hdv_init(void)
      */
     bus_init();
 
-    blkdevnum = 2; /* Start hard disk partitions at C: */
-    disk_init(); /* Detect hard disk partitions */
+    disk_init_all();    /* Detect hard disk partitions */
 
     pun_info_setup();
 }
@@ -208,38 +206,60 @@ LONG blkdev_hdv_boot(void)
 }
 
 /*
+ * return next available device number in bitmap
+ */
+static int next_logical(LONG *devices_available)
+{
+    int logical;
+
+    for (logical = 0; logical < BLKDEVNUM; logical++)
+        if (*devices_available & (1L<<logical))
+            return logical;
+
+    return -1;
+}
+
+/*
  * Add a partition's details to the device's partition description.
  */
-int add_partition(int dev, char id[], ULONG start, ULONG size)
+int add_partition(int dev, LONG *devices_available, char id[], ULONG start, ULONG size)
 {
     int unit = dev + NUMFLOPPIES;
+    int logical;
+    BLKDEV *b;
 
-    if (blkdevnum == BLKDEVNUM) {
-        KDEBUG(("Maximum number of partitions reached!\n"));
+    logical = next_logical(devices_available);
+    if (logical < 0) {
+        KDEBUG(("add_partition(): maximum number of partitions reached!\n"));
         return -1;
     }
-    KDEBUG((" %c=%c%c%c, start=%ld, size=%ld\n",
-            'A'+blkdevnum,id[0],id[1],id[2],start,size));
+    b = blkdev + logical;
 
-    blkdev[blkdevnum].id[0] = id[0];
-    blkdev[blkdevnum].id[1] = id[1];
-    blkdev[blkdevnum].id[2] = id[2];
-    blkdev[blkdevnum].id[3] = '\0';
-    blkdev[blkdevnum].start = start;
-    blkdev[blkdevnum].size  = size;
+    if (id[0])
+        KDEBUG((" %c=%c%c%c",'A'+logical,id[0],id[1],id[2]));
+    else
+        KDEBUG((" %c=$%02x",'A'+logical,id[2]));
+    KDEBUG((",start=%ld,size=%ld\n",start,size));
 
-    blkdev[blkdevnum].valid = 1;
-    blkdev[blkdevnum].mediachange = MEDIANOCHANGE;
-    blkdev[blkdevnum].unit  = unit;
+    b->id[0] = id[0];
+    b->id[1] = id[1];
+    b->id[2] = id[2];
+    b->id[3] = '\0';
+    b->start = start;
+    b->size  = size;
+
+    b->valid = 1;
+    b->mediachange = MEDIANOCHANGE;
+    b->unit  = unit;
 
     /* make just GEM/BGM partitions visible to applications */
 /*
-    if (strcmp(blkdev[blkdevnum].id, "GEM") == 0
-        || strcmp(blkdev[blkdevnum].id, "BGM") == 0)
+    if (strcmp(b->id, "GEM") == 0
+        || strcmp(b->id, "BGM") == 0)
 */
-        drvbits |= (1L << blkdevnum);
+        drvbits |= (1L << logical);
 
-    blkdevnum++;
+    *devices_available &= ~(1L << logical); /* mark device as used */
 
     return 0;
 }

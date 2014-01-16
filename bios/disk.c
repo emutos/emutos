@@ -23,16 +23,16 @@
 #include "processor.h"
 
 /*==== Internal declarations ==============================================*/
-static int atari_partition(int xhdidev);
+static int atari_partition(int xhdidev,LONG *devices_available);
 
 /*
- * disk_init
+ * disk_init_all
  *
  * Rescans all interfaces and adds all found partitions to blkdev and drvbits
  *
  */
 
-void disk_init(void)
+void disk_init_all(void)
 {
     /* scan disk targets in the following order */
     static const int targets[] =
@@ -41,36 +41,62 @@ void disk_init(void)
          0, 1, 2, 3, 4, 5, 6, 7,            /* ACSI */
          24, 25, 26, 27, 28, 29, 30, 31};   /* SD/MMC */
     int i;
+    LONG devices_available = 0L;
+    LONG bitmask;
+
+    /*
+     * initialise bitmap of available devices
+     * (A and B are already assigned to floppy disks)
+     */
+    for (i = 2, bitmask = 0x04L; i < BLKDEVNUM; i++, bitmask <<= 1)
+        devices_available |= bitmask;
 
     /* scan for attached harddrives and their partitions */
     for(i = 0; i < (sizeof(targets) / sizeof(targets[0])); i++) {
-        ULONG blocksize;
-        ULONG blocks;
-        WORD shift;
-        int major = targets[i];
-        int minor = 0;
-        int xbiosdev = major + NUMFLOPPIES;
-
-        devices[xbiosdev].valid = 0;
-        if (! XHInqTarget(major, minor, NULL, NULL, NULL)) {
-            blocks = 0;
-            blocksize = SECTOR_SIZE;
-            /* try to update with real capacity & blocksize */
-            XHGetCapacity(major, minor, &blocks, &blocksize);
-            shift = get_shift(blocksize);
-            if (shift < 0)      /* if blksize not a power of 2, ignore */
-                continue;
-
-            devices[xbiosdev].valid = 1;
-            devices[xbiosdev].byteswap = 0;
-            devices[xbiosdev].size = blocks;
-            devices[xbiosdev].psshift = shift;
-            devices[xbiosdev].last_access = 0;
-
-            /* scan for ATARI partitions on this harddrive */
-            atari_partition(major);
+        disk_init_one(targets[i],&devices_available);
+        if (!devices_available) {
+            KDEBUG(("disk_init_all(): maximum number of partitions reached!\n"));
+            break;
         }
     }
+}
+
+void disk_init_one(int major,LONG *devices_available)
+{
+    LONG rc;
+    ULONG blocksize;
+    ULONG blocks;
+    WORD shift;
+    int xbiosdev = major + NUMFLOPPIES;
+    int minor = 0;
+
+    devices[xbiosdev].valid = 0;
+
+    rc = XHInqTarget(major, minor, NULL, NULL, NULL);
+    if (rc) {
+        KDEBUG(("disk_init_one(): XHInqTarget(%d) returned %ld\n",major,rc));
+        return;
+    }
+
+    blocks = 0;
+    blocksize = SECTOR_SIZE;
+
+    /* try to update with real capacity & blocksize */
+    XHGetCapacity(major, minor, &blocks, &blocksize);
+    shift = get_shift(blocksize);
+    if (shift < 0) {    /* if blksize not a power of 2, ignore */
+        KDEBUG(("disk_init_one(): invalid blocksize (%lu)\n",blocksize));
+        return;
+    }
+
+    devices[xbiosdev].valid = 1;
+    devices[xbiosdev].byteswap = 0;
+    devices[xbiosdev].size = blocks;
+    devices[xbiosdev].psshift = shift;
+    devices[xbiosdev].last_access = 0;
+
+    /* scan for ATARI partitions on this harddrive */
+    atari_partition(major,devices_available);
 }
 
 /*
@@ -149,7 +175,7 @@ union
  * scans for Atari partitions on 'xhdidev' and adds them to blkdev array
  *
  */
-static int atari_partition(int xhdidev)
+static int atari_partition(int xhdidev,LONG *devices_available)
 {
     u8* sect = physsect.sect;
     struct rootsector *rs = &physsect.rs;
@@ -184,7 +210,8 @@ static int atari_partition(int xhdidev)
     if (sect[510] == 0x55 && sect[511] == 0xaa) {
         ULONG size = check_for_no_partitions(sect);
         if (size) {
-            add_partition(xhdidev,"BGM",0UL,size);
+            if (add_partition(xhdidev,devices_available,"BGM",0UL,size) < 0)
+                return -1;
             KINFO((" fake BGM\n"));
             return 1;
         }
@@ -233,7 +260,8 @@ static int atari_partition(int xhdidev)
                 KDEBUG((" extended partitions not yet supported\n"));
             }
             else {
-                add_partition(xhdidev, pid, start, size);
+                if (add_partition(xhdidev,devices_available,pid,start,size) < 0)
+                    return -1;
                 KINFO((" $%02x", type));
             }
         }
@@ -262,7 +290,7 @@ static int atari_partition(int xhdidev)
     /*
      * circumvent bug in Hatari v1.7 & earlier: the ACSI Read Capacity
      * command, which we have just used by calling XHGetCapacity() in
-     * disk_init() above, returns a value approximately 512 times too
+     * disk_init_all() above, returns a value approximately 512 times too
      * small for the capacity.  this makes the value in devices[].size
      * too small.
      *
@@ -286,7 +314,7 @@ static int atari_partition(int xhdidev)
         /* active partition */
         if (memcmp (pi->id, "XGM", 3) != 0) {
             /* we don't care about other id's */
-            if (add_partition(xhdidev, pi->id, pi->st, pi->siz))
+            if (add_partition(xhdidev,devices_available,pi->id,pi->st,pi->siz) < 0)
                 break;  /* max number of partitions reached */
 
             KINFO((" %c%c%c", pi->id[0], pi->id[1], pi->id[2]));
@@ -313,9 +341,8 @@ static int atari_partition(int xhdidev)
                 break;
             }
 
-            if (add_partition(xhdidev, xrs->part[0].id,
-                              partsect + xrs->part[0].st,
-                              xrs->part[0].siz))
+            if (add_partition(xhdidev,devices_available,xrs->part[0].id,
+                              partsect+xrs->part[0].st,xrs->part[0].siz) < 0)
                 break;  /* max number of partitions reached */
 
             KINFO((" %c%c%c", xrs->part[0].id[0], xrs->part[0].id[1], xrs->part[0].id[2]));
@@ -343,7 +370,7 @@ static int atari_partition(int xhdidev)
                 if (!((pi->flg & 1) && OK_id(pi->id)))
                     continue;
                 part_fmt = 2;
-                if (add_partition(xhdidev, pi->id, pi->st, pi->siz))
+                if (add_partition(xhdidev,devices_available,pi->id,pi->st,pi->siz) < 0)
                     break;  /* max number of partitions reached */
                 KINFO((" %c%c%c", pi->id[0], pi->id[1], pi->id[2]));
             }

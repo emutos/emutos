@@ -1,7 +1,7 @@
 /*
  * disk.h - disk routines
  *
- * Copyright (c) 2001-2013 The EmuTOS development team
+ * Copyright (c) 2001-2014 The EmuTOS development team
  *
  * Authors:
  *  PES   Petr Stehlik
@@ -22,7 +22,8 @@ extern LONG DMAwrite(LONG sector, WORD count, LONG buf, WORD dev);
 
 /* partition detection */
 
-void disk_init(void);
+void disk_init_all(void);
+void disk_init_one(int major, LONG *devices_available);
 void byteswap(UBYTE *buffer, ULONG size);
 
 #endif /* DISK_H */
