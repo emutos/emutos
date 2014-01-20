@@ -22,6 +22,21 @@
 #include "xhdi.h"
 #include "processor.h"
 
+/*==== Structures =========================================================*/
+typedef struct {
+    UBYTE fill0[4];
+    UBYTE type;
+    UBYTE fill5[3];
+    ULONG start;        /* little-endian */
+    ULONG size;         /* little-endian */
+} PARTENTRY;
+
+typedef struct {
+    UBYTE filler[446];
+    PARTENTRY entry[4];
+    UWORD bootsig;
+} MBR;
+
 /*==== Internal declarations ==============================================*/
 static int atari_partition(int xhdidev,LONG *devices_available);
 
@@ -168,6 +183,7 @@ union
 {
     u8 sect[MAXPHYSSECTSIZE];
     struct rootsector rs;
+    MBR mbr;
 } physsect, physsect2;
 
 
@@ -180,6 +196,7 @@ static int atari_partition(int xhdidev,LONG *devices_available)
     u8* sect = physsect.sect;
     struct rootsector *rs = &physsect.rs;
     struct partition_info *pi;
+    MBR *mbr = &physsect.mbr;
     u32 extensect;
     u32 hd_size;
     int xbiosdev = xhdidev + NUMFLOPPIES;
@@ -193,21 +210,21 @@ static int atari_partition(int xhdidev,LONG *devices_available)
     if (DMAread(0, 1, (long)&physsect, xhdidev))
         return -1;
 
-    KINFO(("%cd%c:","ashf????"[xhdidev>>3],'a'+(xhdidev&0x07)));
+    KINFO(("%cd%c: ","ashf????"[xhdidev>>3],'a'+(xhdidev&0x07)));
 
     /* check for DOS byteswapped master boot record.
      * this is enabled on IDE devices only,
      * because other media do not suffer of that problem.
      */
-    if (IS_IDE_DEVICE(xhdidev) && sect[510] == 0xaa && sect[511] == 0x55) {
-        KINFO(("DOS MBR byteswapped checksum detected: enabling byteswap.\n"));
+    if (IS_IDE_DEVICE(xhdidev) && mbr->bootsig == 0xaa55) {
+        KINFO(("DOS MBR byteswapped signature detected: enabling byteswap\n"));
         devices[xbiosdev].byteswap = 1; /* byteswap required for whole disk */
         /* swap bytes in the loaded boot sector */
         byteswap(sect,SECTOR_SIZE);
     }
 
     /* check for DOS disk without partitions */
-    if (sect[510] == 0x55 && sect[511] == 0xaa) {
+    if (mbr->bootsig == 0x55aa) {
         ULONG size = check_for_no_partitions(sect);
         if (size) {
             if (add_partition(xhdidev,devices_available,"BGM",0UL,size) < 0)
@@ -218,42 +235,38 @@ static int atari_partition(int xhdidev,LONG *devices_available)
     }
 
     /* check for DOS master boot record */
-    if (sect[510] == 0x55 && sect[511] == 0xaa) {
+    if (mbr->bootsig == 0x55aa) {
         /* follow DOS PTBL */
         int i;
-        int offset = 446;
 
         KINFO((" MBR"));
 
-        for(i=0; i<4; i++, offset+=16) {
+        for (i = 0; i < 4; i++) {
             u32 start, size;
-            u8 type = sect[offset+4];
+            u8 type = mbr->entry[i].type;
             char pid[3];
+
+            if (type == 0) {
+                KDEBUG((" empty partition entry ignored\n"));
+                continue;
+            }
 
             pid[0] = 0;
             pid[1] = 'D';
             pid[2] = type;
 
-            start = sect[offset+11];
-            start <<= 8;
-            start |= sect[offset+10];
-            start <<= 8;
-            start |= sect[offset+9];
-            start <<= 8;
-            start |= sect[offset+8];
+            start = mbr->entry[i].start;    /* little-endian */
+            swpl(start);
 
-            size = sect[offset+15];
-            size <<= 8;
-            size |= sect[offset+14];
-            size <<= 8;
-            size |= sect[offset+13];
-            size <<= 8;
-            size |= sect[offset+12];
+            size = mbr->entry[i].size;      /* little-endian */
+            swpl(size);
 
-            if (type == 0 || size == 0)
+            if (size == 0) {
+                KDEBUG((" entry for zero-length partition ignored\n"));
                 continue;
+            }
 
-            KDEBUG(("DOS partition detected: start=%ld, size=%ld, type=$%02x\n",
+            KDEBUG(("DOS partition detected: start=%lu, size=%lu, type=$%02x\n",
                     start, size, type));
 
             if (type == 0x05 || type == 0x0f || type == 0x85) {

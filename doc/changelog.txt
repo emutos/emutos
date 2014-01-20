@@ -5137,3 +5137,7 @@ Start... early ages
 2014-01-16
 - bios/blkdev.c bios/blkdev.h bios/disk.c bios/disk.h: Refactor partition
   detection for future media change update. (RFB)
+
+2014-01-20
+- bios/disk.c: Code cleanup: use MBR definition rather than hardcoded
+  offsets. (RFB)
