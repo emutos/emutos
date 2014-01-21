@@ -5141,3 +5141,5 @@ Start... early ages
 2014-01-20
 - bios/disk.c: Code cleanup: use MBR definition rather than hardcoded
   offsets. (RFB)
+- bios/blkdev.c bios/blkdev.h bios/disk.c: Improve detection of FAT12 /
+  FAT16 / FAT32 partitions. (RFB)

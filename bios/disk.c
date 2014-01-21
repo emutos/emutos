@@ -261,7 +261,7 @@ static int atari_partition(int xhdidev,LONG *devices_available)
             size = mbr->entry[i].size;      /* little-endian */
             swpl(size);
 
-            if (size == 0) {
+            if (size == 0UL) {
                 KDEBUG((" entry for zero-length partition ignored\n"));
                 continue;
             }
@@ -269,13 +269,30 @@ static int atari_partition(int xhdidev,LONG *devices_available)
             KDEBUG(("DOS partition detected: start=%lu, size=%lu, type=$%02x\n",
                     start, size, type));
 
-            if (type == 0x05 || type == 0x0f || type == 0x85) {
-                KDEBUG((" extended partitions not yet supported\n"));
-            }
-            else {
+            switch(type) {
+            case 0x05:
+            case 0x0f:
+                KDEBUG((" extended partition: ignored, not yet supported\n"));
+                break;
+            case 0x0b:
+            case 0x0c:
+                /*
+                 * note that FAT32 partitions occupy drive letters,
+                 * but are not (yet) accessible (see blkdev.c)
+                 */
+                KDEBUG((" FAT32 partition: not yet supported\n"));
+                /* drop through */
+            case 0x01:
+            case 0x04:
+            case 0x06:
+            case 0x0e:
                 if (add_partition(xhdidev,devices_available,pid,start,size) < 0)
                     return -1;
                 KINFO((" $%02x", type));
+                break;
+            default:
+                KDEBUG((" unrecognised partition type: ignored\n"));
+                break;
             }
         }
 

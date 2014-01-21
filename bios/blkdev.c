@@ -392,29 +392,27 @@ LONG blkdev_getbpb(WORD dev)
     struct bs *b;
     struct fat16_bs *b16;
     ULONG tmp;
-    WORD err;
 
     KDEBUG(("blkdev_getbpb(%d)\n",dev));
 
     if ((dev < 0 ) || (dev >= BLKDEVNUM) || !blkdev[dev].valid)
-        return 0;  /* unknown device */
+        return 0L;  /* unknown device */
 
     blkdev[dev].mediachange = MEDIANOCHANGE;    /* reset now */
 
     /* read bootsector using the physical mode */
-    err = blkdev_rwabs(RW_READ | RW_NOMEDIACH | RW_NOTRANSLATE,
-                      (LONG)dskbufp, 1, -1, blkdev[dev].unit, blkdev[dev].start);
-    if (err) return 0;
+    if (blkdev_rwabs(RW_READ | RW_NOMEDIACH | RW_NOTRANSLATE,
+                     (LONG)dskbufp, 1, -1, blkdev[dev].unit, blkdev[dev].start))
+        return 0L;  /* error */
 
     b = (struct bs *)dskbufp;
     b16 = (struct fat16_bs *)dskbufp;
 
+    if (b->spc == 0)
+        return 0L;
+
     KDEBUG(("bootsector[dev=%d] = {\n  ...\n  res = %d;\n  hid = %d;\n}\n",
             dev,getiword(b->res),getiword(b->hid)));
-
-    /* TODO
-     * check if the parameters are sane and set reasonable defaults if not
-     */
 
     blkdev[dev].bpb.recsiz = getiword(b->bps);
     blkdev[dev].bpb.clsiz = b->spc;
@@ -437,36 +435,29 @@ LONG blkdev_getbpb(WORD dev)
     blkdev[dev].bpb.fatrec = getiword(b->res) + blkdev[dev].bpb.fsiz;
     blkdev[dev].bpb.datrec = blkdev[dev].bpb.fatrec + blkdev[dev].bpb.fsiz
                            + blkdev[dev].bpb.rdlen;
-    if (b->spc != 0) {
-        tmp = getiword(b->sec);
-        /* handle DOS-style disks (512-byte logical sectors) >= 32MB */
-        if (tmp == 0)
-            tmp = ((ULONG)getiword(b16->sec2+2)<<16) + getiword(b16->sec2);
-        blkdev[dev].bpb.numcl = (tmp - blkdev[dev].bpb.datrec) / b->spc;
-    }
-    else
-        blkdev[dev].bpb.numcl = 0;
 
-    /* Check for FAT12 or FAT16 */
-    if (b16->ext == 0x29 && !memcmp(b16->fstype, "FAT12   ", 8)) {
-        /* Explicit FAT12 */
-        blkdev[dev].bpb.b_flags = 0;
-    }
-    else if (b16->ext == 0x29 && !memcmp(b16->fstype, "FAT16   ", 8)) {
-        /* Explicit FAT16 */
-        blkdev[dev].bpb.b_flags = B_16;
-    }
-    else {
-        /* We have to guess the filesystem type */
-        if (b->media == 0xf8) {
-            /* Assume that hard disks use FAT16 */
-            blkdev[dev].bpb.b_flags = B_16;
-        }
-        else {
-            /* This is probably a floppy using FAT12 */
-            blkdev[dev].bpb.b_flags = 0;
-        }
-    }
+    /*
+     * determine number of clusters
+     */
+    tmp = getiword(b->sec);
+    /* handle DOS-style disks (512-byte logical sectors) >= 32MB */
+    if (tmp == 0L)
+        tmp = ((ULONG)getiword(b16->sec2+2)<<16) + getiword(b16->sec2);
+    tmp = (tmp - blkdev[dev].bpb.datrec) / b->spc;
+    if (tmp > MAX_FAT16_CLUSTERS)           /* FAT32 - unsupported */
+        return 0L;
+    blkdev[dev].bpb.numcl = tmp;
+
+    /*
+     * check for FAT12 or FAT16
+     */
+    if (b16->ext == 0x29 && !memcmp(b16->fstype, "FAT12   ", 8))
+        blkdev[dev].bpb.b_flags = 0;        /* explicit FAT12 */
+    else if (b16->ext == 0x29 && !memcmp(b16->fstype, "FAT16   ", 8))
+        blkdev[dev].bpb.b_flags = B_16;     /* explicit FAT16 */
+    else if (blkdev[dev].bpb.numcl > MAX_FAT12_CLUSTERS)
+        blkdev[dev].bpb.b_flags = B_16;     /* implicit FAT16 */
+    else blkdev[dev].bpb.b_flags = 0;       /* implicit FAT12 */
 
     /* additional geometry info */
     blkdev[dev].geometry.sides = getiword(b->sides);
