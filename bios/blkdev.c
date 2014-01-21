@@ -389,20 +389,21 @@ WORD get_shift(ULONG blocksize)
 
 LONG blkdev_getbpb(WORD dev)
 {
+    BLKDEV *bdev = blkdev + dev;
     struct bs *b;
     struct fat16_bs *b16;
     ULONG tmp;
 
     KDEBUG(("blkdev_getbpb(%d)\n",dev));
 
-    if ((dev < 0 ) || (dev >= BLKDEVNUM) || !blkdev[dev].valid)
+    if ((dev < 0 ) || (dev >= BLKDEVNUM) || !bdev->valid)
         return 0L;  /* unknown device */
 
-    blkdev[dev].mediachange = MEDIANOCHANGE;    /* reset now */
+    bdev->mediachange = MEDIANOCHANGE;      /* reset now */
 
     /* read bootsector using the physical mode */
     if (blkdev_rwabs(RW_READ | RW_NOMEDIACH | RW_NOTRANSLATE,
-                     (LONG)dskbufp, 1, -1, blkdev[dev].unit, blkdev[dev].start))
+                     (LONG)dskbufp, 1, -1, bdev->unit, bdev->start))
         return 0L;  /* error */
 
     b = (struct bs *)dskbufp;
@@ -414,15 +415,15 @@ LONG blkdev_getbpb(WORD dev)
     KDEBUG(("bootsector[dev=%d] = {\n  ...\n  res = %d;\n  hid = %d;\n}\n",
             dev,getiword(b->res),getiword(b->hid)));
 
-    blkdev[dev].bpb.recsiz = getiword(b->bps);
-    blkdev[dev].bpb.clsiz = b->spc;
-    blkdev[dev].bpb.clsizb = blkdev[dev].bpb.clsiz * blkdev[dev].bpb.recsiz;
+    bdev->bpb.recsiz = getiword(b->bps);
+    bdev->bpb.clsiz = b->spc;
+    bdev->bpb.clsizb = bdev->bpb.clsiz * bdev->bpb.recsiz;
     tmp = getiword(b->dir);
-    if (blkdev[dev].bpb.recsiz != 0)
-        blkdev[dev].bpb.rdlen = (tmp * 32) / blkdev[dev].bpb.recsiz;
+    if (bdev->bpb.recsiz != 0)
+        bdev->bpb.rdlen = (tmp * 32) / bdev->bpb.recsiz;
     else
-        blkdev[dev].bpb.rdlen = 0;
-    blkdev[dev].bpb.fsiz = getiword(b->spf);
+        bdev->bpb.rdlen = 0;
+    bdev->bpb.fsiz = getiword(b->spf);
 
     /* the structure of the logical disk is assumed to be:
      * - bootsector
@@ -432,9 +433,8 @@ LONG blkdev_getbpb(WORD dev)
      * - data clusters
      */
 
-    blkdev[dev].bpb.fatrec = getiword(b->res) + blkdev[dev].bpb.fsiz;
-    blkdev[dev].bpb.datrec = blkdev[dev].bpb.fatrec + blkdev[dev].bpb.fsiz
-                           + blkdev[dev].bpb.rdlen;
+    bdev->bpb.fatrec = getiword(b->res) + bdev->bpb.fsiz;
+    bdev->bpb.datrec = bdev->bpb.fatrec + bdev->bpb.fsiz + bdev->bpb.rdlen;
 
     /*
      * determine number of clusters
@@ -443,37 +443,37 @@ LONG blkdev_getbpb(WORD dev)
     /* handle DOS-style disks (512-byte logical sectors) >= 32MB */
     if (tmp == 0L)
         tmp = ((ULONG)getiword(b16->sec2+2)<<16) + getiword(b16->sec2);
-    tmp = (tmp - blkdev[dev].bpb.datrec) / b->spc;
+    tmp = (tmp - bdev->bpb.datrec) / b->spc;
     if (tmp > MAX_FAT16_CLUSTERS)           /* FAT32 - unsupported */
         return 0L;
-    blkdev[dev].bpb.numcl = tmp;
+    bdev->bpb.numcl = tmp;
 
     /*
      * check for FAT12 or FAT16
      */
     if (b16->ext == 0x29 && !memcmp(b16->fstype, "FAT12   ", 8))
-        blkdev[dev].bpb.b_flags = 0;        /* explicit FAT12 */
+        bdev->bpb.b_flags = 0;          /* explicit FAT12 */
     else if (b16->ext == 0x29 && !memcmp(b16->fstype, "FAT16   ", 8))
-        blkdev[dev].bpb.b_flags = B_16;     /* explicit FAT16 */
-    else if (blkdev[dev].bpb.numcl > MAX_FAT12_CLUSTERS)
-        blkdev[dev].bpb.b_flags = B_16;     /* implicit FAT16 */
-    else blkdev[dev].bpb.b_flags = 0;       /* implicit FAT12 */
+        bdev->bpb.b_flags = B_16;       /* explicit FAT16 */
+    else if (bdev->bpb.numcl > MAX_FAT12_CLUSTERS)
+        bdev->bpb.b_flags = B_16;       /* implicit FAT16 */
+    else bdev->bpb.b_flags = 0;         /* implicit FAT12 */
 
     /* additional geometry info */
-    blkdev[dev].geometry.sides = getiword(b->sides);
-    blkdev[dev].geometry.spt = getiword(b->spt);
-    memcpy(blkdev[dev].serial,b->serial,3);
-    memcpy(blkdev[dev].serial2,b16->serial2,4);
+    bdev->geometry.sides = getiword(b->sides);
+    bdev->geometry.spt = getiword(b->spt);
+    memcpy(bdev->serial,b->serial,3);
+    memcpy(bdev->serial2,b16->serial2,4);
 
     KDEBUG(("bpb[dev=%d] = {\n  recsiz = %d;\n  clsiz  = %d;\n",
-            dev,blkdev[dev].bpb.recsiz,blkdev[dev].bpb.clsiz));
+            dev,bdev->bpb.recsiz,bdev->bpb.clsiz));
     KDEBUG(("  clsizb = %u;\n  rdlen  = %d;\n  fsiz   = %d;\n",
-            blkdev[dev].bpb.clsizb,blkdev[dev].bpb.rdlen,blkdev[dev].bpb.fsiz));
+            bdev->bpb.clsizb,bdev->bpb.rdlen,bdev->bpb.fsiz));
     KDEBUG(("  fatrec = %d;\n  datrec = %d;\n  numcl  = %u;\n",
-            blkdev[dev].bpb.fatrec,blkdev[dev].bpb.datrec,blkdev[dev].bpb.numcl));
-    KDEBUG(("  bflags = %d;\n}\n",blkdev[dev].bpb.b_flags));
+            bdev->bpb.fatrec,bdev->bpb.datrec,bdev->bpb.numcl));
+    KDEBUG(("  bflags = %d;\n}\n",bdev->bpb.b_flags));
 
-    return (LONG) &blkdev[dev].bpb;
+    return (LONG) &bdev->bpb;
 }
 
 /*

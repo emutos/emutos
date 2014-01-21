@@ -5143,3 +5143,4 @@ Start... early ages
   offsets. (RFB)
 - bios/blkdev.c bios/blkdev.h bios/disk.c: Improve detection of FAT12 /
   FAT16 / FAT32 partitions. (RFB)
+- bios/blkdev.c: Code cleanup: use ptr instead of index. (RFB)
