@@ -1,7 +1,7 @@
 /*
  * acsi.c - Atari Computer System Interface (ACSI) support
  *
- * Copyright (c) 2002-2013 The EmuTOS development team
+ * Copyright (c) 2002-2014 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -177,6 +177,9 @@ LONG acsi_ioctl(UWORD dev, UWORD ctrl, void *arg)
             return EUNDEV;
         /* TODO: here we could attempt an INQUIRY & return the name from that */
         strcpy(arg, "ACSI Disk");
+        break;
+    case GET_MEDIACHANGE:
+        rc = MEDIANOCHANGE;
         break;
     }
 
