@@ -711,6 +711,8 @@ LONG ide_rw(WORD rw,LONG sector,WORD count,LONG buf,WORD dev,BOOL need_byteswap)
     ifnum = dev / 2;/* i.e. primary IDE, secondary IDE, ... */
     dev &= 1;       /* 0 or 1 */
 
+    rw &= RW_RW;    /* we just care about read or write for now */
+
     while (count > 0)
     {
         UWORD numsecs;

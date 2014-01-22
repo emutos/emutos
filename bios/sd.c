@@ -160,6 +160,8 @@ LONG sd_rw(WORD rw,LONG sector,WORD count,LONG buf,WORD dev)
 LONG ret;
 UBYTE *p = (UBYTE *)buf;
 
+    rw &= RW_RW;    /* we just care about read or write for now */
+
     ret = rw ? sd_write(dev,sector,count,p) : sd_read(dev,sector,count,p);
 
     if (ret < 0)

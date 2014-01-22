@@ -341,7 +341,7 @@ static LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG
                                    blkdev[unit].geometry.sides, unit);
             }
             else {
-                retval = XHReadWrite(unit-NUMFLOPPIES,0,(rw&RW_RW)?1:0,
+                retval = XHReadWrite(unit-NUMFLOPPIES,0,(rw & ~RW_NOTRANSLATE),
                                      lrecnr,scount,(void *)buf);
             }
         } while((retval < 0) && (--retries > 0));

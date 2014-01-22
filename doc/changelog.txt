@@ -5145,3 +5145,7 @@ Start... early ages
   FAT16 / FAT32 partitions. (RFB)
 - bios/blkdev.c: Code cleanup: use ptr instead of index. (RFB)
 - bios/acsi.c: Handle GET_MEDIACHANGE in acsi_ioctl(). (RFB)
+
+2014-01-21
+- bios/acsi.c bios/blkdev.c bios/ide.c bios/sd.c bios/xhdi.c: Propagate
+  Rwabs() read/write flags to low-level drivers. (RFB)

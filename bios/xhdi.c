@@ -1,7 +1,7 @@
 /*
  * xhdi.c - XHDI handler
  *
- * Copyright (c) 2001-2013 The EmuTOS development team
+ * Copyright (c) 2001-2014 The EmuTOS development team
  *
  * Authors:
  *  PES   Petr Stehlik
@@ -452,8 +452,8 @@ long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
     WORD dev = major, bus, reldev;
     MAYBE_UNUSED(reldev);
 
-    KDEBUG(("XH%s(device=%d.%d, sector=%ld, count=%d, buf=%p)\n",
-            rw ? "Write" : "Read", major, minor, sector, count, buf));
+    KDEBUG(("XHReadWrite(device=%u.%u, rw=%u, sector=%lu, count=%u, buf=%p)\n",
+            major, minor, rw, sector, count, buf));
 
 #if CONF_WITH_XHDI
     if (next_handler) {

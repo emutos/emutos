@@ -104,6 +104,8 @@ LONG acsi_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
     int err = 0;
     LONG tmp_buf;
 
+    rw &= RW_RW;    /* we just care about read or write for now */
+
     /* read by chunks of at most 0x80 sectors.
      * (0x80 * 512 bytes will fit in the 64 kB buffer _FRB, and cnt
      * must fit in a byte anyway.)
