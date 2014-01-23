@@ -5149,3 +5149,7 @@ Start... early ages
 2014-01-21
 - bios/acsi.c bios/blkdev.c bios/ide.c bios/sd.c bios/xhdi.c: Propagate
   Rwabs() read/write flags to low-level drivers. (RFB)
+
+2014-01-22
+- bios/blkdev.c bios/blkdev.h bios/disk.c bios/disk.h bios/sd.c
+  bios/xhdi.c bios/xhdi.h: Add media change support for SD/MMC. (RFB)

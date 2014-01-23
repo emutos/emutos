@@ -214,7 +214,12 @@ struct _unit
     BYTE    byteswap;       /* unit is byteswapped */
     ULONG   size;           /* number of physical sectors */
     WORD    psshift;        /* shift left amount to convert sectors to bytes */
-    LONG    last_access;/* used in mediach only */
+    LONG    last_access;    /* used in mediach only */
+    LONG    drivemap;       /* bitmap of logical devices on this physical device */
+    UBYTE   features;       /* see below */
+#define UNIT_REMOVABLE  0x80    /* device uses removable media */
+    UBYTE   status;         /* see below */
+#define UNIT_CHANGED    0x01    /* 0 => physical media has not changed */
 };
 typedef struct _unit UNIT;
 

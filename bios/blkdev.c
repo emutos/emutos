@@ -48,6 +48,7 @@ static void blkdev_hdv_init(void);
 static LONG blkdev_mediach(WORD dev);
 static LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr);
 static void bus_init(void);
+static LONG nonflop_mediach(WORD logical);
 
 /* get intel words */
 static UWORD getiword(UBYTE *addr)
@@ -286,7 +287,13 @@ static LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG
     if (recnr != -1)            /* if long offset not used */
         lrecnr = (UWORD)recnr;  /* recnr as unsigned to enable 16-bit recn */
 
-    if (! (rw & RW_NOTRANSLATE)) {
+    if (rw & RW_NORETRIES)
+        retries = 1;
+
+    /*
+     * are we accessing a physical device or a logical device?
+     */
+    if (! (rw & RW_NOTRANSLATE)) {      /* logical */
         int sectors;
         if ((dev < 0 ) || (dev >= BLKDEVNUM) || !blkdev[dev].valid)
             return EUNDEV;  /* unknown device */
@@ -308,8 +315,15 @@ static LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG
         unit = blkdev[dev].unit;
 
         KDEBUG(("rwabs translated: sector=%ld, count=%ld\n",lrecnr,lcount));
+
+        if (! (rw & RW_NOMEDIACH)) {
+            if (blkdev_mediach(dev) != MEDIANOCHANGE) {
+                KDEBUG(("blkdev_rwabs(): media change detected\n"));
+                return E_CHNG;
+            }
+        }
     }
-    else {
+    else {                              /* physical */
         if (unit < 0 || unit >= UNITSNUM || !devices[unit].valid)
             return EUNDEV;  /* unknown device */
 
@@ -317,15 +331,18 @@ static LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG
         if ((lrecnr < 0) || (devices[unit].size > 0
                              && (lrecnr + lcount) >= devices[unit].size))
             return ESECNF;  /* sector not found */
-    }
 
-    if (rw & RW_NORETRIES)
-        retries = 1;
-
-    if (! (rw & RW_NOMEDIACH)) {
-        if (blkdev_mediach(dev) != MEDIANOCHANGE) {
-            KDEBUG(("blkdev_rwabs(): media change detected\n"));
-            return E_CHNG;
+        /*
+         * the following is how I think this *ought* to work when a
+         * physical device is specified.  TOS may do it differently:
+         * I haven't checked (RFB)
+         */
+        if (! (rw & RW_NOMEDIACH)) {
+            if (devices[unit].status&UNIT_CHANGED) {
+                KDEBUG(("blkdev_rwabs(): media change detected\n"));
+                devices[unit].status &= ~UNIT_CHANGED;
+                return E_CHNG;
+            }
         }
     }
 
@@ -344,6 +361,8 @@ static LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG
                 retval = XHReadWrite(unit-NUMFLOPPIES,0,(rw & ~RW_NOTRANSLATE),
                                      lrecnr,scount,(void *)buf);
             }
+            if (retval == E_CHNG)   /* no retry on media change */
+                break;
         } while((retval < 0) && (--retries > 0));
         if (retval < 0)     /* error, retries exhausted */
             break;
@@ -358,6 +377,10 @@ static LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG
 
     if (retval == 0)
         devices[unit].last_access = hz_200;
+
+    if (retval == E_CHNG)
+        if (unit >= NUMFLOPPIES)
+            disk_rescan(unit-NUMFLOPPIES);
 
     return retval;
 }
@@ -393,6 +416,7 @@ LONG blkdev_getbpb(WORD dev)
     struct bs *b;
     struct fat16_bs *b16;
     ULONG tmp;
+    int unit;
 
     KDEBUG(("blkdev_getbpb(%d)\n",dev));
 
@@ -401,9 +425,18 @@ LONG blkdev_getbpb(WORD dev)
 
     bdev->mediachange = MEDIANOCHANGE;      /* reset now */
 
-    /* read bootsector using the physical mode */
+    /*
+     * before we can build the BPB, we need to locate the bootsector.
+     * if we're on a removable non-floppy device, this may have moved
+     * since last time, so we handle this first.
+     */
+    unit = bdev->unit;
+    if ((unit >= NUMFLOPPIES) && (devices[unit].features & UNIT_REMOVABLE))
+        nonflop_mediach(dev);   /* check for change & rescan partitions if so */
+
+    /* now we can read the bootsector using the physical mode */
     if (blkdev_rwabs(RW_READ | RW_NOMEDIACH | RW_NOTRANSLATE,
-                     (LONG)dskbufp, 1, -1, bdev->unit, bdev->start))
+                     (LONG)dskbufp, 1, -1, unit, bdev->start))
         return 0L;  /* error */
 
     b = (struct bs *)dskbufp;
@@ -498,9 +531,6 @@ static LONG nonflop_mediach(WORD logical)
         ret = acsi_ioctl(reldev,GET_MEDIACHANGE,NULL);
         break;
 #endif /* CONF_WITH_ACSI */
-    case SCSI_BUS:
-        ret = EUNDEV;   /* call scsi_ioctl(GET_MEDIACHANGE) here when implemented */
-        break;
 #if CONF_WITH_IDE
     case IDE_BUS:
         ret = ide_ioctl(reldev,GET_MEDIACHANGE,NULL);
@@ -514,6 +544,9 @@ static LONG nonflop_mediach(WORD logical)
     default:
         ret = EUNDEV;
     }
+
+    if (ret == MEDIACHANGE)
+        disk_rescan(dev);
 
     KDEBUG(("nonflop_mediach(%d) returned %ld\n",logical,ret));
     return ret;
@@ -539,6 +572,8 @@ static LONG blkdev_mediach(WORD dev)
         ret = (dev<NUMFLOPPIES) ? flop_mediach(dev) : nonflop_mediach(dev);
         if (ret < 0)
             return ret;
+        if (ret == MEDIACHANGE)     /* if mediachange, mark physical device */
+            devices[b->unit].status |= UNIT_CHANGED;
         b->mediachange = ret;
     }
 

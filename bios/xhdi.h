@@ -1,7 +1,7 @@
 /*
  * EmuTOS bios
  *
- * Copyright (c) 2002, 2010 The EmuTOS development team
+ * Copyright (c) 2002-2014 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -30,6 +30,9 @@
 #define XHDOSLIMITS     17
 #define XHLASTACCESS    18
 #define XHREACCESS      19
+
+/* values in device_flags for XHInqTarget(), XHInqTarget2() */
+#define XH_TARGET_REMOVABLE 0x02L
 
 void create_XHDI_cookie(void);
 

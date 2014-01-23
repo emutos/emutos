@@ -271,6 +271,7 @@ static long XHInqTarget2(UWORD major, UWORD minor, ULONG *blocksize,
 {
     LONG ret;
     WORD dev = major, bus, reldev;
+    BYTE name[40];
     MAYBE_UNUSED(reldev);
     MAYBE_UNUSED(ret);
 
@@ -299,17 +300,22 @@ static long XHInqTarget2(UWORD major, UWORD minor, ULONG *blocksize,
     bus = GET_BUS(dev);
     reldev = dev - bus * DEVICES_PER_BUS;
 
-    /* hardware access to device */
+    /*
+     * hardware access to device
+     * 
+     * note: we expect the xxx_ioctl() functions to physically access the
+     * device, since XHInqTarget2() may be used to determine its presence
+     */
     switch(bus) {
 #if CONF_WITH_ACSI
     case ACSI_BUS:
-        if (productname) {
-            BYTE name[40];
-            ret = acsi_ioctl(reldev,GET_DISKNAME,name);
-            if (ret)
-                return ret;
+        ret = acsi_ioctl(reldev,GET_DISKNAME,name);
+        if (ret < 0)
+            return ret;
+        if (productname)
             strlcpy(productname,name,stringlen);
-        }
+        if (deviceflags)
+            *deviceflags = 0L;
         break;
 #endif /* CONF_WITH_ACSI */
     case SCSI_BUS:
@@ -317,24 +323,24 @@ static long XHInqTarget2(UWORD major, UWORD minor, ULONG *blocksize,
         break;
 #if CONF_WITH_IDE
     case IDE_BUS:
-        if (productname) {
-            BYTE name[40];
-            ret = ide_ioctl(reldev,GET_DISKNAME,name);
-            if (ret)
-                return ret;
+        ret = ide_ioctl(reldev,GET_DISKNAME,name);
+        if (ret < 0)
+            return ret;
+        if (productname)
             strlcpy(productname,name,stringlen);
-        }
+        if (deviceflags)
+            *deviceflags = 0L;
         break;
 #endif /* CONF_WITH_IDE */
 #if CONF_WITH_SDMMC
     case SDMMC_BUS:
-        if (productname) {
-            BYTE name[40];
-            ret = sd_ioctl(reldev,GET_DISKNAME,name);
-            if (ret)
-                return ret;
+        ret = sd_ioctl(reldev,GET_DISKNAME,name);
+        if (ret < 0)
+            return ret;
+        if (productname)
             strlcpy(productname,name,stringlen);
-        }
+        if (deviceflags)
+            *deviceflags = XH_TARGET_REMOVABLE; /* medium is removable */
         break;
 #endif /* CONF_WITH_SDMMC */
     default:
@@ -350,8 +356,6 @@ static long XHInqTarget2(UWORD major, UWORD minor, ULONG *blocksize,
          */
         *blocksize = SECTOR_SIZE;   /* standard physical sector size on HDD */
     }
-    if (deviceflags)
-        *deviceflags = 0;  /* not implemented yet */
 
     return 0;
 }
@@ -427,7 +431,7 @@ long XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
     case SDMMC_BUS:
         ret = sd_ioctl(reldev,GET_DISKINFO,info);
         KDEBUG(("sd_ioctl(%d) returned %ld\n", reldev, ret));
-        if (ret)
+        if (ret < 0)
             return ret;
         break;
 #endif /* CONF_WITH_SDMMC */

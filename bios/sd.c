@@ -14,6 +14,8 @@
 #error This file must only be compiled on ColdFire targets
 #endif
 
+/* #define ENABLE_KDEBUG */
+
 #include "config.h"
 #include "portab.h"
 
@@ -28,8 +30,6 @@
 #include "tosvars.h"
 
 #include "kprint.h"
-
-/* #define ENABLE_KDEBUG */
 
 /*
  *  SD card commands
@@ -138,6 +138,7 @@ static int sd_mbtest(void);
 static LONG sd_read(UWORD drv,ULONG sector,UWORD count,UBYTE *buf);
 static int sd_receive_data(UBYTE *buf,UWORD len,UWORD special);
 static int sd_send_data(UBYTE *buf,UWORD len,UBYTE token);
+static int sd_special_read(UBYTE cmd,UBYTE *data);
 static int sd_wait_for_not_busy(LONG timeout);
 static int sd_wait_for_not_idle(UBYTE cmd,ULONG arg);
 static int sd_wait_for_ready(LONG timeout);
@@ -159,10 +160,51 @@ LONG sd_rw(WORD rw,LONG sector,WORD count,LONG buf,WORD dev)
 {
 LONG ret;
 UBYTE *p = (UBYTE *)buf;
+int i;
 
-    rw &= RW_RW;    /* we just care about read or write for now */
+    if (dev)
+        return EUNDEV;
 
-    ret = rw ? sd_write(dev,sector,count,p) : sd_read(dev,sector,count,p);
+    if (count == 0)
+        return 0;
+
+    /*
+     * retry at most once (to handle reinitialisation)
+     */
+    for (i = 0; i < 2; i++) {
+        /* see if we need to (re)initialise the card after a previous error */
+        if (card.type == CARDTYPE_UNKNOWN) {
+            if (sd_check(dev)) {
+                ret = EDRVNR;
+                break;
+            }
+            if (!(rw & RW_NOMEDIACH)) {
+                ret = E_CHNG;
+                break;
+            }
+        }
+
+        ret = (rw&RW_RW) ? sd_write(dev,sector,count,p) : sd_read(dev,sector,count,p);
+
+        if (ret == 0L)
+            break;
+
+        if (ret > 0L) {         /* error but not timeout */
+            ret = (rw&RW_RW) ? EWRITF : EREADF;
+            break;
+        }
+
+        /* at this point, it must be a timeout.  we set the return
+         * code in case the retry has failed
+         */
+        ret = (rw & RW_NOMEDIACH) ? EDRVNR : E_CHNG;
+
+        /* for timeouts, card.type should already be set to
+         * CARDTYPE_UNKNOWN, but we'll set it here anyway
+         * (this is what forces the reinitialisation on retry)
+         */
+        card.type = CARDTYPE_UNKNOWN;
+    }
 
     if (ret < 0)
         KDEBUG(("sd_rw(%d,%ld,%d,%p,%d) rc=%ld\n",rw,sector,count,p,dev,ret));
@@ -175,39 +217,35 @@ UBYTE *p = (UBYTE *)buf;
  */
 LONG sd_ioctl(UWORD drv,UWORD ctrl,void *arg)
 {
-LONG rc = ERR;
+LONG rc = 0;
 ULONG *info = arg;
 UBYTE cardreg[16];
 
     if (drv)
         return EUNDEV;
 
-    spi_cs_assert();
-
     switch(ctrl) {
     case GET_DISKINFO:
-        if (card.type == CARDTYPE_UNKNOWN) {
-            rc = EDRVNR;
-        } else {
-            if (sd_command(CMD9,0L,0,R1,response) == 0)
-                if (sd_receive_data(cardreg,16,1) == 0)
-                    rc = 0L;
+        if (sd_special_read(CMD9,cardreg)) {    /* medium could have changed */
+            sd_check(drv);                      /* so try to reset & retry */
+            if (sd_special_read(CMD9,cardreg)) {
+                card.type = CARDTYPE_UNKNOWN;
+                rc = E_CHNG;
+                break;
+            }
         }
-        if (rc)
-            break;
         info[0] = sd_calc_capacity(cardreg);
         info[1] = SECTOR_SIZE;
         break;
     case GET_DISKNAME:
-        if (card.type == CARDTYPE_UNKNOWN) {
-            rc = EDRVNR;
-        } else {
-            if (sd_command(CMD10,0L,0,R1,response) == 0)
-                if (sd_receive_data(cardreg,16,0) == 0)
-                    rc = 0L;
+        if (sd_special_read(CMD10,cardreg)) {   /* medium could have changed */
+            sd_check(drv);                      /* so try to reset & retry */
+            if (sd_special_read(CMD10,cardreg)) {
+                card.type = CARDTYPE_UNKNOWN;
+                rc = E_CHNG;
+                break;
+            }
         }
-        if (rc)
-            break;
         if (card.type == CARDTYPE_SD) {
             cardreg[8] = '\0';
             strcpy(arg,(const char *)cardreg+1);
@@ -217,8 +255,34 @@ UBYTE cardreg[16];
         }
         break;
     case GET_MEDIACHANGE:
-        rc = MEDIANOCHANGE;
+        if (sd_special_read(CMD9,cardreg) == 0)
+            rc = MEDIANOCHANGE;
+        else {
+            if (sd_check(drv))  /*  attempt to reset device  */
+                card.type = CARDTYPE_UNKNOWN;
+            rc = MEDIACHANGE;
+        }
+        break;
+    default:
+        rc = ERR;
     }
+
+    return rc;
+}
+
+/*
+ *  perform special read commands for ioctl
+ */
+static int sd_special_read(UBYTE cmd,UBYTE *data)
+{
+UWORD special = (cmd==CMD9) ? 1 : 0;
+int rc = ERR;
+
+    spi_cs_assert();
+
+    if (sd_command(cmd,0L,0,R1,response) == 0)
+        if (sd_receive_data(data,16,special) == 0)
+            rc = 0;
 
     spi_cs_unassert();
 
@@ -301,23 +365,6 @@ static LONG sd_read(UWORD drv,ULONG sector,UWORD count,UBYTE *buf)
 LONG i, rc, rc2;
 LONG posn, incr;
 
-    if (drv)
-        return EUNDEV;
-
-    /*
-     *  see if we need to (re)initialise the card
-     */
-    if (card.type == CARDTYPE_UNKNOWN) {
-        rc = sd_check(drv);
-        if (rc) {
-            card.type = CARDTYPE_UNKNOWN;
-            return EDRVNR;
-        }
-    }
-
-    if (count == 0)             /* nothing to do: */
-        return 0L;              /*  we did it     */
-
     spi_cs_assert();
 
     /*
@@ -330,7 +377,6 @@ LONG posn, incr;
         posn = sector * SECTOR_SIZE;
         incr = SECTOR_SIZE;
     }
-
 
     rc = 0L;
 
@@ -359,12 +405,6 @@ LONG posn, incr;
         }
     }
 
-    if (rc < 0) {               /* timeout */
-        card.type = CARDTYPE_UNKNOWN;   /* next read will re-initialise */
-        rc = EDRVNR;
-    } else if (rc > 0)          /* some other error */
-        rc = EREADF;
-
     spi_cs_unassert();
 
     return rc;
@@ -380,23 +420,6 @@ static LONG sd_write(UWORD drv,ULONG sector,UWORD count,UBYTE *buf)
 {
 LONG i, rc, rc2;
 LONG posn, incr;
-
-    if (drv)
-        return EUNDEV;
-
-    /*
-     *  see if we need to (re)initialise the card
-     */
-    if (card.type == CARDTYPE_UNKNOWN) {
-        rc = sd_check(drv);
-        if (rc) {
-            card.type = CARDTYPE_UNKNOWN;
-            return EDRVNR;
-        }
-    }
-
-    if (count == 0)             /* nothing to do: */
-        return 0L;              /*  we did it     */
 
     spi_cs_assert();
 
@@ -437,12 +460,6 @@ LONG posn, incr;
                 break;
         }
     }
-
-    if (rc < 0) {               /* timeout */
-        card.type = CARDTYPE_UNKNOWN;   /* next read will re-initialise */
-        rc = EDRVNR;
-    } else if (rc > 0)          /* some other error */
-        rc = EWRITF;
 
     spi_cs_unassert();
 

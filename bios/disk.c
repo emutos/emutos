@@ -22,6 +22,10 @@
 #include "xhdi.h"
 #include "processor.h"
 
+/*==== Defines ============================================================*/
+
+#define REMOVABLE_PARTITIONS    2   /* minimum # partitions for removable device */
+
 /*==== Structures =========================================================*/
 typedef struct {
     UBYTE fill0[4];
@@ -41,12 +45,66 @@ typedef struct {
 static int atari_partition(int xhdidev,LONG *devices_available);
 
 /*
+ * scans one device and adds all found partitions
+ */
+static void disk_init_one(int major,LONG *devices_available)
+{
+    LONG bitmask, devs, rc;
+    ULONG blocksize = SECTOR_SIZE;
+    ULONG blocks = 0;
+    ULONG device_flags;
+    WORD shift;
+    int xbiosdev = major + NUMFLOPPIES;
+    int i, n, minor = 0;
+
+    devices[xbiosdev].valid = 0;
+
+    rc = XHInqTarget(major, minor, NULL, &device_flags, NULL);
+    if (rc) {
+        KDEBUG(("disk_init_one(): XHInqTarget(%d) returned %ld\n",major,rc));
+        return;
+    }
+
+    /* try to update with real capacity & blocksize */
+    XHGetCapacity(major, minor, &blocks, &blocksize);
+    shift = get_shift(blocksize);
+    if (shift < 0) {    /* if blksize not a power of 2, ignore */
+        KDEBUG(("disk_init_one(): invalid blocksize (%lu)\n",blocksize));
+        return;
+    }
+
+    devices[xbiosdev].valid = 1;
+    devices[xbiosdev].byteswap = 0;
+    devices[xbiosdev].size = blocks;
+    devices[xbiosdev].psshift = shift;
+    devices[xbiosdev].last_access = 0;
+    devices[xbiosdev].features = (device_flags&XH_TARGET_REMOVABLE) ? UNIT_REMOVABLE : 0;
+    devices[xbiosdev].status = 0;
+
+    /* scan for ATARI partitions on this harddrive */
+    devs = *devices_available;  /* remember initial set */
+    atari_partition(major,devices_available);
+    devs ^= *devices_available; /* which ones were allocated this time */
+
+    /*
+     * now ensure that we have a minimum number of logical devices
+     * for a removable physical device
+     */
+    if (device_flags&XH_TARGET_REMOVABLE) {
+        for (i = n = 0, bitmask = 1L; i < BLKDEVNUM; i++, bitmask <<= 1)
+            if (devs & bitmask)
+                n++;    /* count allocated devices */
+        for ( ; n < REMOVABLE_PARTITIONS; n++)
+            add_partition(major,devices_available,"BGM",0L,0L);
+    }
+}
+
+/*
  * disk_init_all
  *
- * Rescans all interfaces and adds all found partitions to blkdev and drvbits
+ * scans all interfaces and adds all found partitions to blkdev and drvbits
  *
  */
-
 void disk_init_all(void)
 {
     /* scan disk targets in the following order */
@@ -74,44 +132,53 @@ void disk_init_all(void)
             break;
         }
     }
+
+    /* save bitmaps of drives associated with each physical device.
+     * these maps are not changed after booting.
+     */
+    for (i = 0; i < UNITSNUM; i++)  /* initialise */
+        devices[i].drivemap = 0L;
+    for (i = 0; i < BLKDEVNUM; i++) /* update */
+        if (blkdev[i].valid)
+            devices[blkdev[i].unit].drivemap |= 1L << i;
+
+#ifdef ENABLE_KDEBUG
+    for (i = 0; i < UNITSNUM; i++) {
+        int j;
+        if (devices[i].valid) {
+            KDEBUG(("Phys drive %d => logical drive(s)",i));
+            for (j = 0; j < BLKDEVNUM; j++)
+                if (devices[i].drivemap & (1L<<j))
+                    KDEBUG((" %c",'A'+j));
+            KDEBUG(("\n"));
+        }
+    }
+#endif
 }
 
-void disk_init_one(int major,LONG *devices_available)
+/*
+ * rescan partitions on specified drive
+ * this is used to handle media change on removable drives
+ */
+void disk_rescan(int major)
 {
-    LONG rc;
-    ULONG blocksize;
-    ULONG blocks;
-    WORD shift;
+    int i;
     int xbiosdev = major + NUMFLOPPIES;
-    int minor = 0;
+    LONG devices_available, bitmask;
 
-    devices[xbiosdev].valid = 0;
+    /* determine available devices for rescan */
+	devices_available = devices[xbiosdev].drivemap;
 
-    rc = XHInqTarget(major, minor, NULL, NULL, NULL);
-    if (rc) {
-        KDEBUG(("disk_init_one(): XHInqTarget(%d) returned %ld\n",major,rc));
-        return;
-    }
+    KDEBUG(("disk_rescan(%d):drivemap=0x%08lx\n",major,devices_available));
 
-    blocks = 0;
-    blocksize = SECTOR_SIZE;
+    /* rescan (this clobbers 'devices_available') */
+	disk_init_one(major,&devices_available);
 
-    /* try to update with real capacity & blocksize */
-    XHGetCapacity(major, minor, &blocks, &blocksize);
-    shift = get_shift(blocksize);
-    if (shift < 0) {    /* if blksize not a power of 2, ignore */
-        KDEBUG(("disk_init_one(): invalid blocksize (%lu)\n",blocksize));
-        return;
-    }
-
-    devices[xbiosdev].valid = 1;
-    devices[xbiosdev].byteswap = 0;
-    devices[xbiosdev].size = blocks;
-    devices[xbiosdev].psshift = shift;
-    devices[xbiosdev].last_access = 0;
-
-    /* scan for ATARI partitions on this harddrive */
-    atari_partition(major,devices_available);
+    /* now set the mediachange byte for the relevant devices */
+	devices_available = devices[xbiosdev].drivemap;
+    for (i = 0, bitmask = 1L; i < BLKDEVNUM; i++, bitmask <<= 1)
+        if (devices_available & bitmask)
+            blkdev[i].mediachange = MEDIACHANGE;
 }
 
 /*
