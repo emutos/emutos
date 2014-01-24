@@ -5156,3 +5156,4 @@ Start... early ages
 
 2014-01-23
 - bios/xhdi.c: Code cleanup: remove unnecessary case statements. (RFB)
+- bios/floppy.c: Detect floppy drives when no disks are inserted. (RFB)
