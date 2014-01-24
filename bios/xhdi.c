@@ -271,7 +271,8 @@ static long XHInqTarget2(UWORD major, UWORD minor, ULONG *blocksize,
 {
     LONG ret;
     WORD dev = major, bus, reldev;
-    BYTE name[40];
+    BYTE name[40] = "Disk";
+    ULONG flags = 0UL;
     MAYBE_UNUSED(reldev);
     MAYBE_UNUSED(ret);
 
@@ -310,49 +311,34 @@ static long XHInqTarget2(UWORD major, UWORD minor, ULONG *blocksize,
 #if CONF_WITH_ACSI
     case ACSI_BUS:
         ret = acsi_ioctl(reldev,GET_DISKNAME,name);
-        if (ret < 0)
-            return ret;
-        if (productname)
-            strlcpy(productname,name,stringlen);
-        if (deviceflags)
-            *deviceflags = 0L;
         break;
 #endif /* CONF_WITH_ACSI */
 #if CONF_WITH_IDE
     case IDE_BUS:
         ret = ide_ioctl(reldev,GET_DISKNAME,name);
-        if (ret < 0)
-            return ret;
-        if (productname)
-            strlcpy(productname,name,stringlen);
-        if (deviceflags)
-            *deviceflags = 0L;
         break;
 #endif /* CONF_WITH_IDE */
 #if CONF_WITH_SDMMC
     case SDMMC_BUS:
         ret = sd_ioctl(reldev,GET_DISKNAME,name);
-        if (ret < 0)
-            return ret;
-        if (productname)
-            strlcpy(productname,name,stringlen);
-        if (deviceflags)
-            *deviceflags = XH_TARGET_REMOVABLE; /* medium is removable */
+        flags = XH_TARGET_REMOVABLE;    /* medium is removable */
         break;
 #endif /* CONF_WITH_SDMMC */
     default:
-        return EUNDEV;
+        ret = EUNDEV;
     }
 
-    if (blocksize) {
-        /* TODO could add some heuristic here:
-         * 1) create two buffers and fill first with zeros and second with $ff
-         * 2) read first sector to both buffers
-         * 3) find last common byte
-         * 4) blocksize = index_of_last_common_byte + 1
-         */
+    /* if device doesn't exist, we're done */
+    if (ret == EUNDEV)
+        return ret;
+
+    /* return values as requested */
+    if (blocksize)
         *blocksize = SECTOR_SIZE;   /* standard physical sector size on HDD */
-    }
+    if (deviceflags)
+        *deviceflags = flags;
+    if (productname)
+        strlcpy(productname,name,stringlen);
 
     return 0;
 }

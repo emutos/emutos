@@ -5157,3 +5157,7 @@ Start... early ages
 2014-01-23
 - bios/xhdi.c: Code cleanup: remove unnecessary case statements. (RFB)
 - bios/floppy.c: Detect floppy drives when no disks are inserted. (RFB)
+
+2014-01-24
+- bios/disk.c bios/xhdi.c: Always assign at least 1 logical device to
+  the SD/MMC slot. (RFB)

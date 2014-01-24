@@ -24,7 +24,7 @@
 
 /*==== Defines ============================================================*/
 
-#define REMOVABLE_PARTITIONS    2   /* minimum # partitions for removable device */
+#define REMOVABLE_PARTITIONS    1   /* minimum # partitions for removable device */
 
 /*==== Structures =========================================================*/
 typedef struct {
