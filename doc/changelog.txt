@@ -5153,3 +5153,6 @@ Start... early ages
 2014-01-22
 - bios/blkdev.c bios/blkdev.h bios/disk.c bios/disk.h bios/sd.c
   bios/xhdi.c bios/xhdi.h: Add media change support for SD/MMC. (RFB)
+
+2014-01-23
+- bios/xhdi.c: Code cleanup: remove unnecessary case statements. (RFB)

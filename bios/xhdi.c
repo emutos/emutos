@@ -318,9 +318,6 @@ static long XHInqTarget2(UWORD major, UWORD minor, ULONG *blocksize,
             *deviceflags = 0L;
         break;
 #endif /* CONF_WITH_ACSI */
-    case SCSI_BUS:
-        return EUNDEV;
-        break;
 #if CONF_WITH_IDE
     case IDE_BUS:
         ret = ide_ioctl(reldev,GET_DISKNAME,name);
@@ -416,9 +413,6 @@ long XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
             return EUNDEV;
         break;
 #endif /* CONF_WITH_ACSI */
-    case SCSI_BUS:
-        return EUNDEV;
-        break;
 #if CONF_WITH_IDE
     case IDE_BUS:
         ret = ide_ioctl(reldev,GET_DISKINFO,info);
@@ -490,9 +484,6 @@ long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
         KDEBUG(("acsi_rw() returned %ld\n", ret));
         break;
 #endif /* CONF_WITH_ACSI */
-    case SCSI_BUS:
-        ret = EUNDEV;   /* call scsi_rw() here when implemented */
-        break;
 #if CONF_WITH_IDE
     case IDE_BUS:
     {
