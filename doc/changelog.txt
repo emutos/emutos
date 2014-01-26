@@ -5161,3 +5161,7 @@ Start... early ages
 2014-01-24
 - bios/disk.c bios/xhdi.c: Always assign at least 1 logical device to
   the SD/MMC slot. (RFB)
+
+2014-01-26
+- bios/ide.c: Bypass firmware bug on certain CF cards which caused
+  multi-sector i/o to fail. (RFB)

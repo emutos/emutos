@@ -18,7 +18,6 @@
  */
 
 /* #define ENABLE_KDEBUG */
-/* #define ENABLE_MULTIPLE_MODE */
 
 #include "config.h"
 #include "portab.h"
@@ -208,6 +207,8 @@ struct IDE
 #define IDE_STATUS_DRDY (1 << 6)
 #define IDE_STATUS_BSY  (1 << 7)
 
+#define IDE_ERROR_ABRT  (1 << 2)
+
 /*
  * maximum number of sectors per physical i/o.  this MUST not exceed 256,
  * at least for LBA28-style commands.  the best performance is obtained
@@ -265,6 +266,7 @@ static struct {
 
 
 /* prototypes */
+static WORD clear_multiple_mode(UWORD ifnum,UWORD dev);
 static void ide_detect_devices(UWORD ifnum);
 static LONG ide_identify(WORD dev);
 static void set_multiple_mode(WORD dev,UWORD multi_io);
@@ -723,6 +725,8 @@ LONG ide_rw(WORD rw,LONG sector,WORD count,LONG buf,WORD dev,BOOL need_byteswap)
         if (ret < 0) {
             KDEBUG(("ide_rw(%d,%d,%d,%ld,%u,%p,%d) rc=%ld\n",
                     rw,ifnum,dev,sector,numsecs,p,need_byteswap,ret));
+            if (clear_multiple_mode(ifnum,dev)) /* retry after multiple mode reset ? */
+                continue;                       /* yes, do so                        */
             return ret;
         }
 
@@ -732,6 +736,28 @@ LONG ide_rw(WORD rw,LONG sector,WORD count,LONG buf,WORD dev,BOOL need_byteswap)
     }
 
     return E_OK;
+}
+
+/*
+ * if multiple mode is set, and ABRT is set in the error register,
+ * clear multiple mode and return TRUE to request a retry.
+ * otherwise, return FALSE
+ */
+static WORD clear_multiple_mode(UWORD ifnum,UWORD dev)
+{
+    volatile struct IDE *interface = ide_interface + ifnum;
+    struct IFINFO *info = ifinfo + ifnum;
+
+    if ((info->dev[dev].options&MULTIPLE_MODE_ACTIVE) == 0)
+        return 0;
+
+    if ((IDE_READ_ERROR()&IDE_ERROR_ABRT) == 0)
+        return 0;
+
+    KDEBUG(("Clearing multiple sector mode for ifnum %d dev %d\n",ifnum,dev));
+
+    info->dev[dev].options &= ~MULTIPLE_MODE_ACTIVE;
+    return 1;
 }
 
 static void set_multiple_mode(WORD dev,UWORD multi_io)
@@ -752,10 +778,8 @@ static void set_multiple_mode(WORD dev,UWORD multi_io)
     if (ide_nodata(IDE_CMD_SET_MULTIPLE_MODE,ifnum,dev,0L,spi))
         return;         /* command failed */
 
-#ifdef ENABLE_MULTIPLE_MODE     /* temporarily disabled */
     ifinfo[ifnum].dev[dev].options |= MULTIPLE_MODE_ACTIVE;
     ifinfo[ifnum].dev[dev].spi = spi;
-#endif
 }
 
 static LONG ide_identify(WORD dev)
