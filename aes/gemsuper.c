@@ -1,6 +1,6 @@
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2013 The EmuTOS development team
+*                 2002-2014 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -115,10 +115,10 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
                 ret = ap_find( AP_PNAME );
                 break;
           case APPL_TPLAY:
-                ap_tplay(AP_TBUFFER, AP_TLENGTH, AP_TSCALE);
+                ap_tplay((FPD *)AP_TBUFFER, AP_TLENGTH, AP_TSCALE);
                 break;
           case APPL_TRECORD:
-                ret = ap_trecd(AP_TBUFFER, AP_TLENGTH);
+                ret = ap_trecd((FPD *)AP_TBUFFER, AP_TLENGTH);
                 break;
 #if CONF_WITH_PCGEM
           case APPL_YIELD:

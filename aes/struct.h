@@ -2,7 +2,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2013 The EmuTOS development team
+*                 2002-2014 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -26,7 +26,7 @@ typedef struct aespd   AESPD;           /* process descriptor           */
 #define EVB     struct evb              /* event block                  */
 #define CQUEUE  struct cqueue           /* console kbd queue            */
 #define SPB     struct spb              /* sync parameter block         */
-#define FPD     struct fpd              /* fork process descriptor      */
+typedef struct fpd     FPD;             /* fork process descriptor      */
 
 typedef UWORD   EVSPEC;
 
@@ -169,7 +169,7 @@ SPB
         EVB     *sy_wait;
 } ;
 
-FPD
+struct fpd
 {
         void    (*f_code)();
         LONG    f_data;

@@ -6,7 +6,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2013 The EmuTOS development team
+*                 2002-2014 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -730,7 +730,8 @@ void gem_main(void)
     /* init event recorder  */
     gl_recd = FALSE;
     gl_rlen = 0;
-    gl_rbuf = 0x0L;
+    gl_rbuf = NULL;
+
     /* initialize pointers to heads of event list and thread list */
     elinkoff = (BYTE *) &(D.g_intevb[0].e_link) - (BYTE *) &(D.g_intevb[0]);
 

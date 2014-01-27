@@ -4,7 +4,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2013 The EmuTOS development team
+*                 2002-2014 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -102,7 +102,6 @@ void forker(void)
 {
         register FPD    *f;
         register AESPD  *oldrl;
-        register LONG   amt;
         FPD             g;
 
         oldrl = rlr;
@@ -136,16 +135,14 @@ void forker(void)
                                                 /*   then coalesce them */
                                                 /*   else record the    */
                                                 /*   event              */
-              if (g.f_code == tchange &&
-                   (LLGET(gl_rbuf - sizeof(FPD)) == (LONG)tchange) )
+              if ((g.f_code == tchange) && ((gl_rbuf-1)->f_code == tchange))
               {
-                amt = g.f_data + LLGET(gl_rbuf-sizeof(LONG));
-                LLSET(gl_rbuf - sizeof(LONG), amt);
+                (gl_rbuf-1)->f_data += g.f_data;
               }
               else
               {
-                memcpy((void *)gl_rbuf, f, sizeof(FPD));
-                gl_rbuf += sizeof(FPD);
+                memcpy(gl_rbuf, f, sizeof(FPD));
+                gl_rbuf++;
                 gl_rlen--;
                 gl_recd = gl_rlen;
               }

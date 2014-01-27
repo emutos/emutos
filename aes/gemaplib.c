@@ -3,7 +3,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2013 The EmuTOS development team
+*                 2002-2014 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -52,7 +52,7 @@
 WORD     gl_play;
 WORD     gl_recd;
 WORD     gl_rlen;
-LONG     gl_rbuf;
+FPD      *gl_rbuf;
 
 
 /*
@@ -118,101 +118,96 @@ WORD ap_find(LONG pname)
 
 
 /*
-*       APplication Tape PLAYer
-*/
-void ap_tplay(LONG pbuff, WORD length, WORD scale)
+ *  APplication Tape PLAYer
+ */
+void ap_tplay(FPD *pbuff,WORD length,WORD scale)
 {
-        register WORD   i;
-        FPD             f;
+    WORD   i;
+    FPD    f;
 
-        gl_play = TRUE;
-        for(i=0; i<length; i++)
-        {
-                                                /* get an event to play */
-          memcpy(&f, (FPD *)pbuff, sizeof(FPD));
-          pbuff += sizeof(FPD);
-                                                /* convert it to machine*/
-                                                /*   specific form      */
-          switch( ((LONG)(f.f_code)) )
-          {
-            case TCHNG:
-                ev_timer( (f.f_data*100L) / scale );
-                f.f_code = 0;
-                break;
-            case MCHNG:
-                f.f_code = mchange;
-                break;
-            case BCHNG:
-                f.f_code = bchange;
-                break;
-            case KCHNG:
-                f.f_code = kchange;
-                break;
-          }
-                                                /* play it              */
-          if (f.f_code)
-            forkq(f.f_code, f.f_data);
-                                                /* let someone else     */
-                                                /*   hear it and respond*/
-          dsptch();
+    gl_play = TRUE;
+
+    for (i = 0; i < length; i++) {
+        /* get an event to play */
+        memcpy(&f,pbuff,sizeof(FPD));
+        pbuff++;
+
+        /* convert to form suitable for forkq */
+        switch((LONG)f.f_code) {
+        case TCHNG:
+            ev_timer((f.f_data*100L)/scale);
+            f.f_code = NULL;
+            break;
+        case BCHNG:
+            f.f_code = bchange;
+            break;
+        case MCHNG:
+            f.f_code = mchange;
+            break;
+        case KCHNG:
+            f.f_code = kchange;
+            break;
+        default:
+            f.f_code = NULL;
         }
-        gl_play = FALSE;
-} /* ap_tplay */
 
+        if (f.f_code)   /* if valid, add to queue */
+            forkq(f.f_code,f.f_data);
+
+        dsptch();       /* let someone run */
+    }
+
+    gl_play = FALSE;
+}
 
 /*
-*       APplication Tape RECorDer
-*/
-WORD ap_trecd(LONG pbuff, WORD length)
+ *  APplication Tape RECorDer
+ */
+WORD ap_trecd(FPD *pbuff,WORD length)
 {
-        register WORD   i;
-        register WORD   code;
-        FCODE           proutine;
+    WORD   i;
+    LONG   code;
+    FCODE  proutine;
 
-        code = -1;
-                                                /* start recording in   */
-                                                /*   forker()           */
-        cli();
-        gl_recd = TRUE;
-        gl_rlen = length;
-        gl_rbuf = pbuff;
-        sti();
-                                                /* 1/10 of a second     */
-                                                /*   sample rate        */
-        while( gl_recd )
-          ev_timer( 100L );
-                                                /* done recording so    */
-                                                /*   figure out length  */
-        cli();
-        gl_recd = FALSE;
-        gl_rlen = 0;
-        length = ((WORD)(gl_rbuf - pbuff)) / sizeof(FPD);
-        gl_rbuf = 0x0L;
-        sti();
-                                                /* convert to machine   */
-                                                /*   independent        */
-                                                /*   recording          */
-        for(i=0; i<length; i++)
-        {
-          proutine = (FCODE)LLGET(pbuff);
-          if(proutine == tchange)
-          {
+    /* start recording in forker() [gemdisp.c] */
+    cli();
+    gl_recd = TRUE;
+    gl_rlen = length;
+    gl_rbuf = pbuff;
+    sti();
+
+    /* check every 0.1 seconds if recording is done */
+    while(gl_recd)
+        ev_timer(100L);
+
+    /*
+     * recording complete:
+     * figure out actual length & reset globals for next time
+     */
+    cli();
+    length = (WORD)(gl_rbuf - pbuff);
+    gl_rlen = 0;
+    gl_rbuf = NULL;
+    sti();
+
+    /* convert to standard format */
+    for (i = 0; i < length; i++) {
+        proutine = (FCODE)pbuff->f_code;
+        if (proutine == tchange)
             code = TCHNG;
-            LLSET(pbuff+sizeof(WORD *), LLGET(pbuff+sizeof(WORD *)) *
-                        gl_ticktime);
-          }
-          if(proutine == mchange)
-            code = MCHNG;
-          if(proutine == kchange)
-            code = KCHNG;
-          if(proutine == bchange)
+        else if (proutine == bchange)
             code = BCHNG;
-          LWSET(pbuff, code);
-          pbuff += sizeof(FPD);
-        }
-        return(length);
-} /* ap_trecd */
+        else if (proutine == mchange)
+            code = MCHNG;
+        else if (proutine == kchange)
+            code = KCHNG;
+        else code = -1;
+        pbuff->f_code = (FCODE)code;
+        pbuff++;
+    }
 
+    return length;
+}
 
 void ap_exit(void)
 {
