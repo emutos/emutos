@@ -5168,3 +5168,6 @@ Start... early ages
 - desk/deskmain.c desk/desksupp.c: Avoid opening window for a disk that
   no longer exists. (RFB)
 - bios/disk.c: Code cleanup: use pointer instead of index. (RFB)
+- aes/gemaplib.c aes/gemevlib.c aes/gemgsxif.c aes/gemoblib.c
+  aes/gemrslib.c aes/gemsuper.c aes/gemwmlib.c: Code cleanup: eliminate
+  ADDR() macro in AES routines. (RFB)

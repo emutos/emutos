@@ -106,7 +106,7 @@ UWORD ev_mouse(MOBLK *pmo, WORD rets[])
 {
         WORD            ret;
 
-        ret = ev_block(MU_M1, ADDR(pmo));
+        ret = ev_block(MU_M1, (LONG)pmo);
         ev_rets(&rets[0]);
         return(ret);
 }
@@ -212,17 +212,17 @@ WORD ev_multi(WORD flags, MOBLK *pmo1, MOBLK *pmo2, LONG tmcount,
             iasync( MU_BUTTON, buparm );
                                                 /* wait for mouse rect. */
           if (flags & MU_M1)
-            iasync( MU_M1, ADDR(pmo1) );
+            iasync( MU_M1, (LONG)pmo1 );
                                                 /* wait for mouse rect. */
           if (flags & MU_M2)
-            iasync( MU_M2, ADDR(pmo2) );
+            iasync( MU_M2, (LONG)pmo2 );
                                                 /* wait for message     */
           if (flags & MU_MESAG)
           {
             m.qpb_ppd = rlr;
             m.qpb_cnt = 16;
             m.qpb_buf = mebuff;
-            iasync( MU_MESAG, ADDR(&m) );
+            iasync( MU_MESAG, (LONG)&m );
           }
                                                 /* wait for timer       */
           if (flags & MU_TIMER)

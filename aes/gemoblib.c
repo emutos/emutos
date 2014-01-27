@@ -183,7 +183,7 @@ static WORD ob_user(LONG tree, WORD obj, GRECT *pt, LONG spec,
         rc_copy(pt, (GRECT *)&pb.pb_x);  /* FIXME: Ugly typecasting */
         gsx_gclip((GRECT *)&pb.pb_xc);   /* FIXME: dito */
         pb.pb_parm = LLGET(spec+4);
-        return(  far_call( (WORD(*)())LLGET(spec), ADDR(&pb)) );
+        return(  far_call( (WORD(*)())LLGET(spec), (LONG)&pb) );
 }
 
 

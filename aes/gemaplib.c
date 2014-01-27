@@ -97,7 +97,7 @@ void ap_rdwr(WORD code, AESPD *p, WORD length, LONG pbuff)
           m.qpb_ppd = p;
           m.qpb_cnt = length;
           m.qpb_buf = pbuff;
-          ev_block(code, ADDR(&m));
+          ev_block(code, (LONG)&m);
           }
 }
 

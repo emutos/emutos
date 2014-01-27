@@ -99,7 +99,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
                 pglobal->ap_id = rlr->p_pid;
                 sh_deskf(0, (LONG)&pglobal->ap_private);
                 pglobal->ap_2resv[1] = gl_nplanes;
-                pglobal->ap_3resv = ADDR(&D);
+                pglobal->ap_3resv = (LONG)&D;
                                                 /* reset dispatcher     */
                                                 /*  count to let the app*/
                                                 /*  run a while.        */

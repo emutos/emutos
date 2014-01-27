@@ -369,7 +369,7 @@ static WORD rs_readit(AESGLOBAL *pglobal, LONG rsfname)
         fd = dos_open((BYTE *)tmprsfname, RMODE_RD);
 
         if ( !DOS_ERR )
-          dos_read(fd, HDR_LENGTH, ADDR(&hdr_buff[0]));
+          dos_read(fd, HDR_LENGTH, (LONG)&hdr_buff[0]);
                                                 /* read in resource and */
                                                 /*   interpret it       */
         if ( !DOS_ERR )

@@ -435,7 +435,7 @@ WORD gsx_char(void)
 static ULONG gsx_gbufflen(void)
 {
     gsx_1code(EXTENDED_INQUIRE, 1);
-    return(LLGET(ADDR(&intout[26])));
+    return(LLGET((LONG)&intout[26]));
 }
 
 /* Get the number of planes (or bit depth) of the current screen */
@@ -567,5 +567,5 @@ void vex_wheelv(PFVOID new, PFVOID *old)
 {
     i_ptr( (void*)new );
     gsx_ncode(WHEEL_VECX, 0, 0);
-    *old = (PFVOID)LLGET(ADDR(&contrl[9]));
+    *old = (PFVOID)LLGET((LONG)&contrl[9]);
 }

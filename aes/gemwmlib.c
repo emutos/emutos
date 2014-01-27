@@ -616,7 +616,7 @@ void ap_sendmsg(WORD ap_msg[], WORD type, AESPD *towhom,
         ap_msg[5] = w5;
         ap_msg[6] = w6;
         ap_msg[7] = w7;
-        ap_rdwr(MU_SDMSG, towhom, 16, ADDR(&ap_msg[0]));
+        ap_rdwr(MU_SDMSG, towhom, 16, (LONG)&ap_msg[0]);
 }
 
 
@@ -1129,8 +1129,8 @@ void wm_start(void)
         w_setsize(WS_WORK, DESKWH, &gl_rfull);
                                                 /* init global vars     */
         gl_wtop = NIL;
-        gl_wtree = ADDR(&W_TREE[ROOT]);
-        gl_awind = ADDR(&W_ACTIVE[0]);
+        gl_wtree = (LONG)&W_TREE[ROOT];
+        gl_awind = (LONG)&W_ACTIVE[0];
         gl_newdesk = 0x0L;
                                                 /* init tedinfo parts   */
                                                 /*   of title and info  */
@@ -1138,8 +1138,8 @@ void wm_start(void)
         memcpy(&gl_aname, &gl_asamp, sizeof(TEDINFO));
         memcpy(&gl_ainfo, &gl_asamp, sizeof(TEDINFO));
         gl_aname.te_just = TE_CNTR;
-        W_ACTIVE[W_NAME].ob_spec = ADDR(&gl_aname);
-        W_ACTIVE[W_INFO].ob_spec = ADDR(&gl_ainfo);
+        W_ACTIVE[W_NAME].ob_spec = (LONG)&gl_aname;
+        W_ACTIVE[W_INFO].ob_spec = (LONG)&gl_ainfo;
 }
 
 
