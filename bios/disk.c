@@ -54,10 +54,10 @@ static void disk_init_one(int major,LONG *devices_available)
     ULONG blocks = 0;
     ULONG device_flags;
     WORD shift;
-    int xbiosdev = major + NUMFLOPPIES;
+    UNIT *device = devices + major + NUMFLOPPIES;
     int i, n, minor = 0;
 
-    devices[xbiosdev].valid = 0;
+    device->valid = 0;
 
     rc = XHInqTarget(major, minor, NULL, &device_flags, NULL);
     if (rc) {
@@ -73,13 +73,13 @@ static void disk_init_one(int major,LONG *devices_available)
         return;
     }
 
-    devices[xbiosdev].valid = 1;
-    devices[xbiosdev].byteswap = 0;
-    devices[xbiosdev].size = blocks;
-    devices[xbiosdev].psshift = shift;
-    devices[xbiosdev].last_access = 0;
-    devices[xbiosdev].features = (device_flags&XH_TARGET_REMOVABLE) ? UNIT_REMOVABLE : 0;
-    devices[xbiosdev].status = 0;
+    device->valid = 1;
+    device->byteswap = 0;
+    device->size = blocks;
+    device->psshift = shift;
+    device->last_access = 0;
+    device->features = (device_flags&XH_TARGET_REMOVABLE) ? UNIT_REMOVABLE : 0;
+    device->status = 0;
 
     /* scan for ATARI partitions on this harddrive */
     devs = *devices_available;  /* remember initial set */

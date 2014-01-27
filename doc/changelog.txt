@@ -5167,3 +5167,4 @@ Start... early ages
   multi-sector i/o to fail. (RFB)
 - desk/deskmain.c desk/desksupp.c: Avoid opening window for a disk that
   no longer exists. (RFB)
+- bios/disk.c: Code cleanup: use pointer instead of index. (RFB)
