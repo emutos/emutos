@@ -5165,3 +5165,5 @@ Start... early ages
 2014-01-26
 - bios/ide.c: Bypass firmware bug on certain CF cards which caused
   multi-sector i/o to fail. (RFB)
+- desk/deskmain.c desk/desksupp.c: Avoid opening window for a disk that
+  no longer exists. (RFB)

@@ -284,9 +284,11 @@ WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon, WORD drv,
                                                 /*   search and sort    */
                                                 /*   of directory       */
         ret = pn_active(pw->w_path);
-        if ( ret != E_NOFILES )
-        {
-                                                /* some error condition */
+        if ( ret != E_NOFILES )         /* this happens with e.g. removable media */
+        {                               /* when a logical drive no longer exists: */
+          pn_close(pw->w_path);         /* avoid opening an empty window          */
+          graf_mouse(ARROW, 0x0L);
+          return FALSE;
         }
                                                 /* set new name and info*/
                                                 /*   lines for window   */
@@ -422,10 +424,8 @@ static WORD do_dopen(WORD curr)
         {
           drv = (0x00ff & pib->ib_char);
           pro_chdir(drv, "");
-          if (!DOS_ERR)
-            do_diropen(pw, TRUE, curr, drv, "", "*", "*",
-                        (GRECT *)&G.g_screen[pw->w_root].ob_x, TRUE);
-          else
+          if (DOS_ERR || !do_diropen(pw, TRUE, curr, drv, "", "*", "*",
+                            (GRECT *)&G.g_screen[pw->w_root].ob_x, TRUE))
             win_free(pw);
         }
         else
