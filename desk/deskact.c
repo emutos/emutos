@@ -3,7 +3,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2013 The EmuTOS development team
+*                 2002-2014 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -39,17 +39,16 @@
 
 
 /* Prototypes: */
-static WORD act_chkobj(LONG tree, WORD root, WORD obj, WORD mx, WORD my, WORD w, WORD h);
+static WORD act_chkobj(OBJECT *tree, WORD root, WORD obj, WORD mx, WORD my, WORD w, WORD h);
 
 
 
 
-static WORD gr_obfind(LONG tree, WORD root, WORD mx, WORD my)
+static WORD gr_obfind(OBJECT *tree, WORD root, WORD mx, WORD my)
 {
         WORD            sobj;
-        OBJECT          *obtree = (OBJECT *)tree;
 
-        sobj = objc_find(obtree, root, 2, mx, my);
+        sobj = objc_find(tree, root, 2, mx, my);
         if ( (sobj != root) &&
              (sobj != NIL) )
           sobj = act_chkobj(tree, root, sobj, mx, my, 1, 1);
@@ -79,21 +78,18 @@ static WORD gr_isdown(WORD out, WORD x, WORD y, WORD w, WORD h,
 } /* gr_isdown */
 
 
-static void gr_accobs(LONG tree, WORD root, WORD *pnum, WORD *pxypts)
+static void gr_accobs(OBJECT *tree, WORD root, WORD *pnum, WORD *pxypts)
 {
         WORD            i;
-        OBJECT          *olist;
         WORD            obj;
 
-        olist = (OBJECT *)tree;
-
         i = 0;
-        for(obj = olist[root].ob_head; obj > root; obj = olist[obj].ob_next)
+        for(obj = tree[root].ob_head; obj > root; obj = tree[obj].ob_next)
         {
-          if (olist[obj].ob_state & SELECTED)
+          if (tree[obj].ob_state & SELECTED)
           {
-            pxypts[i*2] = olist[root].ob_x + olist[obj].ob_x;
-            pxypts[(i*2)+1] = olist[root].ob_y + olist[obj].ob_y;
+            pxypts[i*2] = tree[root].ob_x + tree[obj].ob_x;
+            pxypts[(i*2)+1] = tree[root].ob_y + tree[obj].ob_y;
             i++;
             if (i >= MAX_OBS)
               break;
@@ -106,37 +102,35 @@ static void gr_accobs(LONG tree, WORD root, WORD *pnum, WORD *pxypts)
 
 #ifdef DESK1
 
-static void move_drvicon(LONG tree, WORD root, WORD x, WORD y, WORD *pts)
+static void move_drvicon(OBJECT *tree, WORD root, WORD x, WORD y, WORD *pts)
 {
         ANODE *an_disk;
         WORD objcnt;
-        OBJECT *tr;
         WORD obj;
         WORD oldx;
         WORD oldy;
 
         objcnt = 0;
-        tr = (OBJECT *)tree;
-        for (obj = tr[root].ob_head; obj > root; obj = tr[obj].ob_next)
+        for (obj = tree[root].ob_head; obj > root; obj = tree[obj].ob_next)
         {
-                if (tr[obj].ob_state & SELECTED)
+                if (tree[obj].ob_state & SELECTED)
                 {
-                        oldx = tr[obj].ob_x;
-                        oldy = tr[obj].ob_y;
+                        oldx = tree[obj].ob_x;
+                        oldy = tree[obj].ob_y;
 
                         snap_disk(x + pts[2 * objcnt], y + pts[2 * objcnt + 1],
-                                                &tr[obj].ob_x, &tr[obj].ob_y);
+                                                &tree[obj].ob_x, &tree[obj].ob_y);
 
                         for (an_disk = G.g_ahead; an_disk; an_disk = an_disk->a_next)
                         {
                                 if (an_disk->a_obid == obj)
                                 {
-                                        an_disk->a_xspot = tr[obj].ob_x;
-                                        an_disk->a_yspot = tr[obj].ob_y;
+                                        an_disk->a_xspot = tree[obj].ob_x;
+                                        an_disk->a_yspot = tree[obj].ob_y;
                                 }
                         }
                         do_wredraw(0, oldx, oldy, G.g_wicon, G.g_hicon);
-                        do_wredraw(0, tr[obj].ob_x, tr[obj].ob_y, G.g_wicon, G.g_hicon);
+                        do_wredraw(0, tree[obj].ob_x, tree[obj].ob_y, G.g_wicon, G.g_hicon);
                         ++objcnt;
                 }
         }
@@ -237,7 +231,7 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD numpts,
                    WORD *xylnpts, WORD numobs, WORD *xyobpts,
                    WORD *pdulx, WORD *pduly, WORD *pdwh, WORD *pdobj)
 {
-        LONG    tree, curr_tree;
+        OBJECT  *tree, *curr_tree;
         WNODE   *pw;
         WORD    root, curr_wh, curr_root, curr_sel, dst_wh;
         WORD    /* overwhite,*/ l_mx, l_my;
@@ -268,7 +262,7 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD numpts,
         offy = l_my - o.g_y;
 
         curr_wh = 0x0;
-        curr_tree = 0x0L;
+        curr_tree = NULL;
         curr_root = 0;
         curr_sel = 0;
 
@@ -282,14 +276,14 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD numpts,
 
           graf_mkstate(&l_mx, &l_my, &button, &keystate);
           dst_wh = wind_find(l_mx, l_my);
-          tree = ADDR(G.g_screen);
+          tree = G.g_screen;
           root = DROOT;
           if (dst_wh)
           {
                 pw = win_find(dst_wh);
                 if (pw)
                 {
-                        tree = ADDR(G.g_screen);
+                        tree = G.g_screen;
                         root = pw->w_root;
                 }
                 else dst_wh = 0;
@@ -305,10 +299,10 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD numpts,
           {
             if (curr_sel)
             {
-              act_chg(curr_wh, curr_tree, curr_root, curr_sel, pc,
+              act_chg(curr_wh, (LONG)curr_tree, curr_root, curr_sel, pc,
                         SELECTED, FALSE, TRUE, TRUE);
               curr_wh = 0x0;
-              curr_tree = 0x0L;
+              curr_tree = NULL;
               curr_root = 0x0;
               curr_sel = 0;
                   continue;
@@ -319,15 +313,15 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD numpts,
           {
             if (curr_sel)
             {
-              act_chg(curr_wh, curr_tree, curr_root, curr_sel, pc,
+              act_chg(curr_wh, (LONG)curr_tree, curr_root, curr_sel, pc,
                         SELECTED, FALSE, TRUE, TRUE);
               curr_wh = 0x0;
-              curr_tree = 0x0L;
+              curr_tree = NULL;
               curr_root = 0x0;
               curr_sel = 0;
             }
           }
-          obj = (OBJECT *)tree + *pdobj;
+          obj = tree + *pdobj;
           if ( !(obj->ob_state & SELECTED) )
           {
                 pa = i_find(dst_wh, *pdobj, &pf, &junk);
@@ -339,13 +333,13 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD numpts,
                   curr_tree = tree;
                   curr_root = root;
                   curr_sel = *pdobj;
-                  act_chg(curr_wh, curr_tree, curr_root, curr_sel, pc,
+                  act_chg(curr_wh, (LONG)curr_tree, curr_root, curr_sel, pc,
                           SELECTED, TRUE, TRUE, TRUE);
                 } /* if */
               } /* if !SELECTED */
         } while (down);
         if (curr_sel)
-            act_chg(curr_wh, curr_tree, curr_root, curr_sel, pc,
+            act_chg(curr_wh, (LONG)curr_tree, curr_root, curr_sel, pc,
                         SELECTED, FALSE, TRUE, TRUE);
         *pdulx = l_mx;                          /* pass back dest. x,y  */
         *pduly = l_my;
@@ -366,7 +360,7 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD numpts,
 static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD *pdulx, WORD *pduly,
                 WORD *pdwh, WORD *pdobj)
 {
-        LONG    tree, curr_tree;
+        OBJECT  *tree, *curr_tree;
         WNODE   *pw;
         WORD    root, curr_wh, curr_root, curr_sel, dst_wh;
         WORD    overwhite, l_mx, l_my;
@@ -383,7 +377,7 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD *pdulx, WORD *pdu
         l_my = in_my;
 
         curr_wh = 0x0;
-        curr_tree = 0x0L;
+        curr_tree = NULL;
         curr_root = 0;
         curr_sel = 0;
 
@@ -393,12 +387,12 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD *pdulx, WORD *pdu
                                 &ret[0], &ret[1], &ret[2], &ret[3]);
           graf_mkstate(&l_mx, &l_my, &button, &keystate);
           dst_wh = wind_find(l_mx, l_my);
-          tree = ADDR(G.g_screen);
+          tree = G.g_screen;
           root = DROOT;
           pw = win_find(dst_wh);
           if (pw)
           {
-            tree = ADDR(G.g_screen);
+            tree = G.g_screen;
             root = pw->w_root;
           }
           else
@@ -409,16 +403,16 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD *pdulx, WORD *pdu
           {
             if (curr_sel)
             {
-              act_chg(curr_wh, curr_tree, curr_root, curr_sel, pc,
+              act_chg(curr_wh, (LONG)curr_tree, curr_root, curr_sel, pc,
                         SELECTED, FALSE, TRUE, TRUE);
               curr_wh = 0x0;
-              curr_tree = 0x0L;
+              curr_tree = NULL;
               curr_root = 0x0;
               curr_sel = 0;
             }
             if (!overwhite)
             {
-              obj = (OBJECT *)tree + *pdobj;
+              obj = tree + *pdobj;
               if ( !(obj->ob_state & SELECTED) )
               {
                 pa = i_find(dst_wh, *pdobj, &pf, &junk);
@@ -430,7 +424,7 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD *pdulx, WORD *pdu
                   curr_tree = tree;
                   curr_root = root;
                   curr_sel = *pdobj;
-                  act_chg(curr_wh, curr_tree, curr_root, curr_sel, pc,
+                  act_chg(curr_wh, (LONG)curr_tree, curr_root, curr_sel, pc,
                          SELECTED, TRUE, TRUE, TRUE);
                 } /* if */
               } /* if !SELECTED */
@@ -438,7 +432,7 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD *pdulx, WORD *pdu
           } /* if */
         } while (down);
         if (curr_sel)
-            act_chg(curr_wh, curr_tree, curr_root, curr_sel, pc,
+            act_chg(curr_wh, (LONG)curr_tree, curr_root, curr_sel, pc,
                         SELECTED, FALSE, TRUE, TRUE);
         *pdulx = l_mx;                          /* pass back dest. x,y  */
         *pduly = l_my;
@@ -470,17 +464,14 @@ static WORD bit_on(WORD x, WORD y, UWORD *raster, WORD bwidth)
 *       If the current view is by text strings then use the name
 *       portion of the text string.
 */
-static WORD act_chkobj(LONG tree, WORD root, WORD obj, WORD mx, WORD my, WORD w, WORD h)
+static WORD act_chkobj(OBJECT *tree, WORD root, WORD obj, WORD mx, WORD my, WORD w, WORD h)
 {
-        OBJECT          *olist;
         ICONBLK         *ib;
         WORD            view, ox, oy, icon;
         GRECT           t, m;
 
-        olist = (OBJECT *)tree;
-
-        ox = olist[root].ob_x + olist[obj].ob_x;
-        oy = olist[root].ob_y + olist[obj].ob_y;
+        ox = tree[root].ob_x + tree[obj].ob_x;
+        oy = tree[root].ob_y + tree[obj].ob_y;
 
         view = (root == DROOT) ? V_ICON : G.g_iview;
         switch( view )
@@ -605,7 +596,7 @@ void act_allchg(WORD wh, LONG tree, WORD root, WORD ex_obj, GRECT *pt, GRECT *pc
             o.g_h -= 1;
             if ( ( rc_intersect(&w, &o) ) &&
 /* */
-                 ( root != act_chkobj(tree,root,obj,o.g_x,o.g_y,o.g_w,o.g_h)))
+                 ( root != act_chkobj((OBJECT *)tree,root,obj,o.g_x,o.g_y,o.g_w,o.g_h)))
             {
                                                 /* make change          */
               newstate = olist[obj].ob_state;
@@ -647,7 +638,7 @@ void act_bsclick(WORD wh, LONG tree, WORD root, WORD mx, WORD my, WORD keystate,
         OBJECT          *olist;
 
         shifted = (keystate & K_LSHIFT) || (keystate & K_RSHIFT);
-        obj = gr_obfind(tree, root, mx, my);
+        obj = gr_obfind((OBJECT *)tree, root, mx, my);
 
         if ( (obj == root) ||
              (obj == NIL)  )
@@ -703,7 +694,7 @@ WORD act_bdown(WORD wh, LONG tree, WORD root, WORD *in_mx, WORD *in_my,
         *pdobj = root;
         l_mx = *in_mx;
         l_my = *in_my;
-        sobj = gr_obfind(tree, root, l_mx, l_my);
+        sobj = gr_obfind((OBJECT *)tree, root, l_mx, l_my);
                         /* rubber box to enclose a group of icons       */
         if ( (sobj == root) || (sobj == NIL) )
         {
@@ -716,7 +707,7 @@ WORD act_bdown(WORD wh, LONG tree, WORD root, WORD *in_mx, WORD *in_my,
           olist = (OBJECT *)tree;
           if (olist[sobj].ob_state & SELECTED)
           {
-            gr_accobs(tree, root, &numobs, &G.g_xyobpts[0]);
+            gr_accobs((OBJECT *)tree, root, &numobs, &G.g_xyobpts[0]);
             if (numobs)
             {
 #ifdef DESK1
@@ -749,7 +740,7 @@ WORD act_bdown(WORD wh, LONG tree, WORD root, WORD *in_mx, WORD *in_my,
 #ifdef DESK1
                 if (wh == 0 && (*pdobj == root)) // Dragging from desktop
                 {
-                  move_drvicon(tree, root, dulx, duly, G.g_xyobpts);
+                  move_drvicon((OBJECT *)tree, root, dulx, duly, G.g_xyobpts);
                   dst_wh = NIL;
                 }
 #else

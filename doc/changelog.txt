@@ -5177,3 +5177,4 @@ Start... early ages
   aes/gemsuper.c aes/struct.h: Fix appl_trecord() & appl_tplay(). (RFB)
 - include/compat.h: Remove #define for LWSET(), no longer used. (RFB)
 - desk/gembind.c: Code cleanup: remove unnecessary global. (RFB)
+- desk/deskact.c: Code cleanup: remove a few more ADDR() macros. (RFB)
