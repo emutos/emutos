@@ -174,11 +174,10 @@ typedef struct gemblkstr
 } GEMBLK;
 
 
-extern WORD             gem(LONG);              /* in STARTUP.S */
+extern WORD             gem(GEMBLK *gb);    /* in deskstart.S */
 
 
 static GEMBLK           gb;
-static LONG             ad_g;
 
 static UWORD            control[C_SIZE];
 GLOBAL UWORD            global[G_SIZE];
@@ -202,7 +201,7 @@ static WORD gem_if(WORD opcode)
         for(i=1; i<=CTRL_CNT; i++)
           control[i] = *pctrl++;
 
-        gem(ad_g);
+        gem(&gb);
 
         return((WORD) RET_CODE );
 }
@@ -219,7 +218,6 @@ WORD appl_init(void)
         gb.gb_padrin = addr_in;
         gb.gb_padrout = addr_out;
 
-        ad_g = ADDR((BYTE *) &gb);
         gem_if(APPL_INIT);
         return((WORD) RET_CODE );
 }

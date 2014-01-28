@@ -5176,3 +5176,4 @@ Start... early ages
 - aes/gemaplib.c aes/gemaplib.h aes/gedisp.c aes/geminit.c
   aes/gemsuper.c aes/struct.h: Fix appl_trecord() & appl_tplay(). (RFB)
 - include/compat.h: Remove #define for LWSET(), no longer used. (RFB)
+- desk/gembind.c: Code cleanup: remove unnecessary global. (RFB)
