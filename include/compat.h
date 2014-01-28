@@ -13,7 +13,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2013 The EmuTOS development team
+*                 2002-2014 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -54,11 +54,6 @@ extern WORD LBWMOV(WORD *pdst, BYTE *psrc);
                                                 /* return a long address*/
                                                 /*   of a short pointer */
 #define ADDR(x) ((LONG) (x))
-
-                                                /* set a single word    */
-                                                /*   pointed at by long */
-                                                /*   ptr, LWSET(lp, bt) */
-#define LWSET(x, y)  ( *((WORD_ALIAS *)(x)) = y)
 
                                                 /* return a single long */
                                                 /*   pointed at by long */
