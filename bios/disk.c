@@ -343,11 +343,14 @@ static int atari_partition(int xhdidev,LONG *devices_available)
                 break;
             case 0x0b:
             case 0x0c:
+            case 0x83:      /* any Linux partition, including ext2 */
                 /*
-                 * note that FAT32 partitions occupy drive letters,
+                 * note that FAT32 & Linux partitions occupy drive letters,
                  * but are not (yet) accessible (see blkdev.c)
                  */
-                KDEBUG((" FAT32 partition: not yet supported\n"));
+                KDEBUG((" %s partition: not yet supported\n",(type==0x83)?"Linux":"FAT32"));
+                start = 0UL;    /* indicate this is a dummy entry */
+                size = 0UL;
                 /* drop through */
             case 0x01:
             case 0x04:

@@ -5173,8 +5173,12 @@ Start... early ages
   ADDR() macro in AES routines. (RFB)
 
 2014-01-27
-- aes/gemaplib.c aes/gemaplib.h aes/gedisp.c aes/geminit.c
+- aes/gemaplib.c aes/gemaplib.h aes/gemdisp.c aes/geminit.c
   aes/gemsuper.c aes/struct.h: Fix appl_trecord() & appl_tplay(). (RFB)
 - include/compat.h: Remove #define for LWSET(), no longer used. (RFB)
 - desk/gembind.c: Code cleanup: remove unnecessary global. (RFB)
 - desk/deskact.c: Code cleanup: remove a few more ADDR() macros. (RFB)
+
+2014-01-29
+- bios/disk.c: Fix regression: ext2 partitions were not assigned
+  (inaccessible) logical drives. (RFB)
