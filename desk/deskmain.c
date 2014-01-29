@@ -1283,12 +1283,13 @@ static void cnx_get(void)
                                 fpd_parse(pws->pth_save, &drv, G.g_tmppth, fname, fext);
                                 do_xyfix(&pws->x_save, &pws->y_save);
                                 pro_chdir(drv, G.g_tmppth);
-                                if (DOS_ERR || !do_diropen(pw, TRUE, pws->obid_save, drv,
-                                                G.g_tmppth, fname, fext, (GRECT *)pws, TRUE))
+                                if (DOS_ERR)
                                 {
                                         win_free(pw);
                                         continue;
                                 }
+                                do_diropen(pw, TRUE, pws->obid_save, drv, G.g_tmppth,
+                                           fname, fext, (GRECT *)pws, TRUE);
                         }
 
                 }

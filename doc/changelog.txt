@@ -5182,3 +5182,5 @@ Start... early ages
 2014-01-29
 - bios/disk.c: Fix regression: ext2 partitions were not assigned
   (inaccessible) logical drives. (RFB)
+- desk/deskmain.c desk/desksupp.c: Revert previous update which caused
+  various problems with removable disks. (RFB)
