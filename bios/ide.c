@@ -769,11 +769,13 @@ static void set_multiple_mode(WORD dev,UWORD multi_io)
         return;
 
     spi = multi_io & 0xff;
-    if (!spi)           /* multiple mode not supported */
-        return;         /* (ATA 2 and earlier)         */
+    if (spi < 2)        /* 0 => not supported (ATA 2 & earlier) */
+        return;         /* 1 => no benefit in using it          */
 
     ifnum = dev / 2;    /* i.e. primary IDE, secondary IDE, ... */
     dev &= 1;           /* 0 or 1 */
+
+    KDEBUG(("Setting spi=%d for ifnum %d dev %d\n",spi,ifnum,dev));
 
     if (ide_nodata(IDE_CMD_SET_MULTIPLE_MODE,ifnum,dev,0L,spi))
         return;         /* command failed */

@@ -5184,3 +5184,6 @@ Start... early ages
   (inaccessible) logical drives. (RFB)
 - desk/deskmain.c desk/desksupp.c: Revert previous update which caused
   various problems with removable disks. (RFB)
+
+2014-01-30
+- bios/ide.c: Avoid using multi-sector i/o unless it's beneficial. (RFB)
