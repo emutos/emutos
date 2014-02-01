@@ -5187,3 +5187,6 @@ Start... early ages
 
 2014-01-30
 - bios/ide.c: Avoid using multi-sector i/o unless it's beneficial. (RFB)
+
+2014-02-01
+- aes/gemgsxif.c aes/gsx2.h: Eliminate redundant macro i_lptr1(). (RFB)

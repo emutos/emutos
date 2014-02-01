@@ -222,16 +222,16 @@ void ratexit(void)
 
 static void gsx_setmb(PFVOID boff, PFVOID moff, LONG *pdrwaddr)
 {
-    i_lptr1( (void*)boff );
+    i_ptr( (void*)boff );
     gsx_ncode(BUT_VECX, 0, 0);
     m_lptr2( &old_bcode );
 
-    i_lptr1( (void*)moff );
+    i_ptr( (void*)moff );
     gsx_ncode(MOT_VECX, 0, 0);
     m_lptr2( &old_mcode );
 
 /* not used in Atari GEM:
-    i_lptr1( justretf );
+    i_ptr( justretf );
     gsx_ncode(CUR_VECX, 0, 0);
     m_lptr2( pdrwaddr );
 */
@@ -241,14 +241,14 @@ static void gsx_setmb(PFVOID boff, PFVOID moff, LONG *pdrwaddr)
 
 static void gsx_resetmb(void)
 {
-    i_lptr1( (void*)old_bcode );
+    i_ptr( (void*)old_bcode );
     gsx_ncode(BUT_VECX, 0, 0);
 
-    i_lptr1( (void*)old_mcode );
+    i_ptr( (void*)old_mcode );
     gsx_ncode(MOT_VECX, 0, 0);
 
 /* not used in Atari GEM:
-    i_lptr1( (void*)drwaddr );
+    i_ptr( (void*)drwaddr );
     gsx_ncode(CUR_VECX, 0, 0);
 */
 }
@@ -354,7 +354,7 @@ void bb_restore(GRECT *pr)
 
 WORD gsx_tick(void *tcode, void *ptsave)
 {
-    i_lptr1( tcode );
+    i_ptr( tcode );
     gsx_ncode(TIM_VECX, 0, 0);
     m_lptr2( ptsave );
     return(intout[0]);
