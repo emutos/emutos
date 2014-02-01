@@ -4,7 +4,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2013 The EmuTOS development team
+*                 2002-2014 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -367,7 +367,7 @@ static void sh_draw(const BYTE *lcmd, WORD start, WORD depth)
         {
           tree = ad_stdesk;
           gsx_sclip(&gl_rscreen);
-          LLSET(ad_pfile, (LONG)lcmd);
+          *(LONG *)ad_pfile = (LONG)lcmd;
           ob_draw(tree, start, depth);
         }
 }

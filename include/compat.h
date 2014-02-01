@@ -59,9 +59,5 @@ extern WORD LBWMOV(WORD *pdst, BYTE *psrc);
                                                 /*   pointed at by long */
                                                 /*   ptr                */
 #define LLGET(x) ( *((LONG_ALIAS *)(x)))
-                                                /* set a single long    */
-                                                /*   pointed at by long */
-                                                /*   ptr, LLSET(lp, bt) */
-#define LLSET(x, y) ( *((LONG_ALIAS *)(x)) = y)
 
 #endif  /* _COMPAT_H */

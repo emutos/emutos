@@ -32,9 +32,9 @@ extern VDIPB vdipb;
 #define i_ptsin(p) (vdipb.ptsin = (p))
 #define i_intout(p) (vdipb.intout = (p))
 #define i_ptsout(p) (vdipb.ptsout = (p))
-#define i_ptr(p) LLSET(contrl + 7, (LONG)(p))
-#define i_ptr2(p) LLSET(contrl + 9, (LONG)(p))
-#define m_lptr2(pp) LLSET(pp, LLGET(contrl + 9))
+#define i_ptr(p)   (*(LONG *)(contrl+7) = (LONG)(p))
+#define i_ptr2(p)  (*(LONG *)(contrl+9) = (LONG)(p))
+#define m_lptr2(p) (*(LONG *)(p) = *(LONG *)(contrl+9))
 
 void gsx2(void);
 

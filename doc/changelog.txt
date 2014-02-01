@@ -5190,3 +5190,5 @@ Start... early ages
 
 2014-02-01
 - aes/gemgsxif.c aes/gsx2.h: Eliminate redundant macro i_lptr1(). (RFB)
+- aes/gemshlib.c aes/gsx2.h include/compat.h: Code cleanup: eliminate
+  LLSET() compatibility macro. (RFB)
