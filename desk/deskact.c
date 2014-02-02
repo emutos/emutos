@@ -299,7 +299,7 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD numpts,
           {
             if (curr_sel)
             {
-              act_chg(curr_wh, (LONG)curr_tree, curr_root, curr_sel, pc,
+              act_chg(curr_wh, curr_tree, curr_root, curr_sel, pc,
                         SELECTED, FALSE, TRUE, TRUE);
               curr_wh = 0x0;
               curr_tree = NULL;
@@ -313,7 +313,7 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD numpts,
           {
             if (curr_sel)
             {
-              act_chg(curr_wh, (LONG)curr_tree, curr_root, curr_sel, pc,
+              act_chg(curr_wh, curr_tree, curr_root, curr_sel, pc,
                         SELECTED, FALSE, TRUE, TRUE);
               curr_wh = 0x0;
               curr_tree = NULL;
@@ -333,13 +333,13 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD numpts,
                   curr_tree = tree;
                   curr_root = root;
                   curr_sel = *pdobj;
-                  act_chg(curr_wh, (LONG)curr_tree, curr_root, curr_sel, pc,
+                  act_chg(curr_wh, curr_tree, curr_root, curr_sel, pc,
                           SELECTED, TRUE, TRUE, TRUE);
                 } /* if */
               } /* if !SELECTED */
         } while (down);
         if (curr_sel)
-            act_chg(curr_wh, (LONG)curr_tree, curr_root, curr_sel, pc,
+            act_chg(curr_wh, curr_tree, curr_root, curr_sel, pc,
                         SELECTED, FALSE, TRUE, TRUE);
         *pdulx = l_mx;                          /* pass back dest. x,y  */
         *pduly = l_my;
@@ -403,7 +403,7 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD *pdulx, WORD *pdu
           {
             if (curr_sel)
             {
-              act_chg(curr_wh, (LONG)curr_tree, curr_root, curr_sel, pc,
+              act_chg(curr_wh, curr_tree, curr_root, curr_sel, pc,
                         SELECTED, FALSE, TRUE, TRUE);
               curr_wh = 0x0;
               curr_tree = NULL;
@@ -424,7 +424,7 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD *pdulx, WORD *pdu
                   curr_tree = tree;
                   curr_root = root;
                   curr_sel = *pdobj;
-                  act_chg(curr_wh, (LONG)curr_tree, curr_root, curr_sel, pc,
+                  act_chg(curr_wh, curr_tree, curr_root, curr_sel, pc,
                          SELECTED, TRUE, TRUE, TRUE);
                 } /* if */
               } /* if !SELECTED */
@@ -432,7 +432,7 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD *pdulx, WORD *pdu
           } /* if */
         } while (down);
         if (curr_sel)
-            act_chg(curr_wh, (LONG)curr_tree, curr_root, curr_sel, pc,
+            act_chg(curr_wh, curr_tree, curr_root, curr_sel, pc,
                         SELECTED, FALSE, TRUE, TRUE);
         *pdulx = l_mx;                          /* pass back dest. x,y  */
         *pduly = l_my;
@@ -509,14 +509,14 @@ static WORD act_chkobj(OBJECT *tree, WORD root, WORD obj, WORD mx, WORD my, WORD
 /*
 *       Change a single objects state.
 *
-*       LONG            tree            * tree that holds item
+*       OBJECT         *tree            * tree that holds item
 *       WORD            obj             * object to affect
 *       UWORD           chgvalue        * bit value to change
 *       WORD            dochg           * set or reset value
 *       WORD            dodraw          * draw resulting chang
 *       WORD            chkdisabled     * only if item enabled
 */
-WORD act_chg(WORD wh, LONG tree, WORD root, WORD obj, GRECT *pc, UWORD chgvalue,
+WORD act_chg(WORD wh, OBJECT *tree, WORD root, WORD obj, GRECT *pc, UWORD chgvalue,
              WORD dochg, WORD dodraw, WORD chkdisabled)
 {
         UWORD           curr_state;
@@ -668,7 +668,7 @@ void act_bsclick(WORD wh, LONG tree, WORD root, WORD mx, WORD my, WORD keystate,
             else
               state |= SELECTED;
           }
-          act_chg(wh, tree, root, obj, pc, SELECTED,
+          act_chg(wh, olist, root, obj, pc, SELECTED,
                         state & SELECTED, TRUE, TRUE);
         }
 }

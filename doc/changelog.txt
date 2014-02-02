@@ -5208,3 +5208,5 @@ Start... early ages
   arg1 of shel_get()/shel_put() from LONG to void *. (RFB)
 - desk/deskfun.c desk/deskmain.c desk/desksupp.c: Code cleanup: remove
   unnecessary typecasts for wind_set() parameters. (RFB)
+- desk/deskact.c desk/deskact.h desk/desksupp.c: Code cleanup: change
+  arg2 of act_chg() from LONG to OBJECT *. (RFB)

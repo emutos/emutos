@@ -190,7 +190,7 @@ void do_wopen(WORD new_win, WORD wh, WORD curr, WORD x, WORD y, WORD w, WORD h)
         graf_growbox(d.g_x, d.g_y, d.g_w, d.g_h, x, y, w, h);
 #endif
 
-        act_chg(G.g_cwin, ADDR(G.g_screen), G.g_croot, curr, &c, SELECTED,
+        act_chg(G.g_cwin, G.g_screen, G.g_croot, curr, &c, SELECTED,
                 FALSE, TRUE, TRUE);
         if (new_win)
           wind_open(wh, x, y, w, h);
