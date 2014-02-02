@@ -3,7 +3,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2013 The EmuTOS development team
+*                 2002-2014 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -175,6 +175,7 @@ static WORD ob_user(LONG tree, WORD obj, GRECT *pt, LONG spec,
                     WORD curr_state, WORD new_state)
 {
         PARMBLK         pb;
+        USERBLK         *ub = (USERBLK *)spec;
 
         pb.pb_tree = tree;
         pb.pb_obj = obj;
@@ -182,8 +183,8 @@ static WORD ob_user(LONG tree, WORD obj, GRECT *pt, LONG spec,
         pb.pb_currstate = new_state;
         rc_copy(pt, (GRECT *)&pb.pb_x);  /* FIXME: Ugly typecasting */
         gsx_gclip((GRECT *)&pb.pb_xc);   /* FIXME: dito */
-        pb.pb_parm = LLGET(spec+4);
-        return(  far_call( (WORD(*)())LLGET(spec), (LONG)&pb) );
+        pb.pb_parm = ub->ub_parm;
+        return(  far_call( (WORD(*)())ub->ub_code, (LONG)&pb) );
 }
 
 

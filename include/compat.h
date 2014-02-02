@@ -55,9 +55,4 @@ extern WORD LBWMOV(WORD *pdst, BYTE *psrc);
                                                 /*   of a short pointer */
 #define ADDR(x) ((LONG) (x))
 
-                                                /* return a single long */
-                                                /*   pointed at by long */
-                                                /*   ptr                */
-#define LLGET(x) ( *((LONG_ALIAS *)(x)))
-
 #endif  /* _COMPAT_H */

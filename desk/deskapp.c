@@ -4,7 +4,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*       Copyright (c) 2002-2013 The EmuTOS development team
+*       Copyright (c) 2002-2014 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -830,7 +830,7 @@ BYTE app_blddesk(void)
                                                 /*   kids and set size  */
         obj_wfree(DROOT, 0, 0, gl_width, gl_height);
         ptr = (LONG *)&global[3];
-        G.g_screen[DROOT].ob_spec = LLGET(ptr);
+        G.g_screen[DROOT].ob_spec = *ptr;
         bvdisk = bvhard = 0x0;
 
         for(pa = G.g_ahead; pa; pa = pa->a_next)
