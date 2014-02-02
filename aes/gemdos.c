@@ -2,7 +2,7 @@
 /*      GEMDOSIF.C      5/15/85 - 6/4/85        MDF                     */
 
 /*
-*       Copyright (C) 2002-2013 The EmuTOS development team
+*       Copyright (C) 2002-2014 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -153,12 +153,12 @@ WORD dos_close(WORD handle)
 }
 
 
-LONG dos_read(WORD handle, LONG cnt, LONG pbuffer)
+LONG dos_read(WORD handle, LONG cnt, void *pbuffer)
 {
         return(gemdos(X_READ,handle,cnt,pbuffer));
 }
 
-LONG dos_write(WORD handle, LONG cnt, LONG pbuffer)
+LONG dos_write(WORD handle, LONG cnt, void *pbuffer)
 {
         return(gemdos(X_WRITE,handle,cnt,pbuffer));
 }

@@ -5,7 +5,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2013 The EmuTOS development team
+*                 2002-2014 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -488,13 +488,13 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
           more = d_errmsg();
           if (more)
           {
-            amntrd = dos_read(srcfh, copylen, (LONG)copybuf);
+            amntrd = dos_read(srcfh, copylen, copybuf);
             more = d_errmsg();
             if (more)
             {
               if (amntrd)
               {
-                amntwr = dos_write(dstfh, amntrd, (LONG)copybuf);
+                amntwr = dos_write(dstfh, amntrd, copybuf);
                 more = d_errmsg();
                 if (more)
                 {

@@ -497,7 +497,7 @@ void app_start(void)
           fh = dos_open(inf_file_name, 0x0);
           if( !DOS_ERR )
           {
-            G.g_afsize = dos_read(fh, SIZE_AFILE, ADDR(&gl_afile[0]));
+            G.g_afsize = dos_read(fh, SIZE_AFILE, gl_afile);
             dos_close(fh);
             gl_afile[G.g_afsize] = NULL;
           }
@@ -803,7 +803,7 @@ void app_save(WORD todisk)
                 return;
             }
           }
-          G.g_afsize = dos_write(fh, G.g_afsize, ADDR(&gl_afile[0]));
+          G.g_afsize = dos_write(fh, G.g_afsize, gl_afile);
           dos_close(fh);
 
           /* now update any open windows for the directory containing the saved file */

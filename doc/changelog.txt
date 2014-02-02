@@ -5194,3 +5194,8 @@ Start... early ages
   LLSET() compatibility macro. (RFB)
 - aes/gemgsxif.c aes/gemoblib.c desk/deskapp.c include/compat.h: Code
   cleanup: eliminate LLGET() compatibility macro. (RFB)
+
+2014-02-02
+- aes/gemdos.c aes/gemdos.h aes/geminit.c aes/gemrslib.c desk/deskapp.c
+  desk/deskdir.c: Change arg3 of dos_read()/dos_write() from LONG to
+  void *. (RFB)

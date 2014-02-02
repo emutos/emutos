@@ -565,7 +565,7 @@ static void sh_rdinf(void)
                                                 /* NOTA BENE all required info */
                                                 /*  MUST be within INF_SIZE    */
                                                 /*  bytes from beg of file     */
-        size = dos_read(fh, INF_SIZE, (LONG)infbuf);
+        size = dos_read(fh, INF_SIZE, infbuf);
         dos_close(fh);
         if (DOS_ERR)
           return;
