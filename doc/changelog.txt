@@ -5199,3 +5199,5 @@ Start... early ages
 - aes/gemdos.c aes/gemdos.h aes/geminit.c aes/gemrslib.c desk/deskapp.c
   desk/deskdir.c: Change arg3 of dos_read()/dos_write() from LONG to
   void *. (RFB)
+- bios/blkdev.c: Fix regression of 2014-01-09: mediachange was not set
+  properly for SCSI bus (affects Aranym). (RFB)

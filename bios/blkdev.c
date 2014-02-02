@@ -536,6 +536,9 @@ static LONG nonflop_mediach(WORD logical)
         ret = ide_ioctl(reldev,GET_MEDIACHANGE,NULL);
         break;
 #endif /* CONF_WITH_IDE */
+    case SCSI_BUS:
+        ret = MEDIANOCHANGE;    /* for Aranym compatibility */
+        break;
 #if CONF_WITH_SDMMC
     case SDMMC_BUS:
         ret = sd_ioctl(reldev,GET_MEDIACHANGE,NULL);
