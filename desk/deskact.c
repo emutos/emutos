@@ -677,7 +677,7 @@ void act_bsclick(WORD wh, OBJECT *tree, WORD root, WORD mx, WORD my, WORD keysta
 /*
 *       Button stayed down over the specified tree of objects.
 */
-WORD act_bdown(WORD wh, LONG tree, WORD root, WORD *in_mx, WORD *in_my,
+WORD act_bdown(WORD wh, OBJECT *tree, WORD root, WORD *in_mx, WORD *in_my,
                WORD keystate, GRECT *pc, WORD *pdobj)
 {
         WORD            sobj;
@@ -694,20 +694,20 @@ WORD act_bdown(WORD wh, LONG tree, WORD root, WORD *in_mx, WORD *in_my,
         *pdobj = root;
         l_mx = *in_mx;
         l_my = *in_my;
-        sobj = gr_obfind((OBJECT *)tree, root, l_mx, l_my);
+        sobj = gr_obfind(tree, root, l_mx, l_my);
                         /* rubber box to enclose a group of icons       */
         if ( (sobj == root) || (sobj == NIL) )
         {
           r_set(&m, l_mx, l_my, 6, 6);
           graf_rubbox(m.g_x, m.g_y, 6, 6, &m.g_w, &m.g_h);
-          act_allchg(wh, (OBJECT *)tree, root, sobj, &m, pc, SELECTED, TRUE, TRUE);
+          act_allchg(wh, tree, root, sobj, &m, pc, SELECTED, TRUE, TRUE);
         } /* if */
         else
         {                                       /* drag icon(s)         */
           olist = (OBJECT *)tree;
           if (olist[sobj].ob_state & SELECTED)
           {
-            gr_accobs((OBJECT *)tree, root, &numobs, &G.g_xyobpts[0]);
+            gr_accobs(tree, root, &numobs, &G.g_xyobpts[0]);
             if (numobs)
             {
 #ifdef DESK1
@@ -740,7 +740,7 @@ WORD act_bdown(WORD wh, LONG tree, WORD root, WORD *in_mx, WORD *in_my,
 #ifdef DESK1
                 if (wh == 0 && (*pdobj == root)) // Dragging from desktop
                 {
-                  move_drvicon((OBJECT *)tree, root, dulx, duly, G.g_xyobpts);
+                  move_drvicon(tree, root, dulx, duly, G.g_xyobpts);
                   dst_wh = NIL;
                 }
 #else

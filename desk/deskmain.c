@@ -741,7 +741,7 @@ static WORD hndl_button(WORD clicks, WORD mx, WORD my, WORD button, WORD keystat
           graf_mkstate(&junk, &junk, &button, &junk);
           if (button & 0x0001)
           {
-            dest_wh = act_bdown(G.g_cwin, ADDR(G.g_screen), G.g_croot, &mx, &my,
+            dest_wh = act_bdown(G.g_cwin, G.g_screen, G.g_croot, &mx, &my,
                                 keystate, &c, &dobj);
 #ifdef DESK1
             if (dest_wh != NIL)
