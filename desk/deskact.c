@@ -564,7 +564,7 @@ WORD act_chg(WORD wh, OBJECT *tree, WORD root, WORD obj, GRECT *pc, UWORD chgval
 *       Change state of all objects partially intersecting the given rectangle
 *       but allow one object to be excluded.
 */
-void act_allchg(WORD wh, LONG tree, WORD root, WORD ex_obj, GRECT *pt, GRECT *pc,
+void act_allchg(WORD wh, OBJECT *tree, WORD root, WORD ex_obj, GRECT *pt, GRECT *pc,
                 WORD chgvalue, WORD dochg, WORD dodraw)
 {
         WORD            obj, newstate;
@@ -596,7 +596,7 @@ void act_allchg(WORD wh, LONG tree, WORD root, WORD ex_obj, GRECT *pt, GRECT *pc
             o.g_h -= 1;
             if ( ( rc_intersect(&w, &o) ) &&
 /* */
-                 ( root != act_chkobj((OBJECT *)tree,root,obj,o.g_x,o.g_y,o.g_w,o.g_h)))
+                 ( root != act_chkobj(tree,root,obj,o.g_x,o.g_y,o.g_w,o.g_h)))
             {
                                                 /* make change          */
               newstate = olist[obj].ob_state;
@@ -643,7 +643,7 @@ void act_bsclick(WORD wh, LONG tree, WORD root, WORD mx, WORD my, WORD keystate,
         if ( (obj == root) ||
              (obj == NIL)  )
         {
-          act_allchg(wh, tree, root, obj, &gl_rfull, pc,
+          act_allchg(wh, (OBJECT *)tree, root, obj, &gl_rfull, pc,
                         SELECTED, FALSE, TRUE);
         }
         else
@@ -655,7 +655,7 @@ void act_bsclick(WORD wh, LONG tree, WORD root, WORD mx, WORD my, WORD keystate,
 /* BugFix       */
             if ( dclick || !(state & SELECTED) )
             {
-              act_allchg(wh, tree, root, obj, &gl_rfull, pc,
+              act_allchg(wh, (OBJECT *)tree, root, obj, &gl_rfull, pc,
                          SELECTED, FALSE, TRUE);
               state |= SELECTED;
             }
@@ -700,7 +700,7 @@ WORD act_bdown(WORD wh, LONG tree, WORD root, WORD *in_mx, WORD *in_my,
         {
           r_set(&m, l_mx, l_my, 6, 6);
           graf_rubbox(m.g_x, m.g_y, 6, 6, &m.g_w, &m.g_h);
-          act_allchg(wh, tree, root, sobj, &m, pc, SELECTED, TRUE, TRUE);
+          act_allchg(wh, (OBJECT *)tree, root, sobj, &m, pc, SELECTED, TRUE, TRUE);
         } /* if */
         else
         {                                       /* drag icon(s)         */

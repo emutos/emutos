@@ -60,7 +60,7 @@ void desk_clear(WORD wh)
         if (pw)
         {
                                                 /* clear all selections */
-          act_allchg(wh, ADDR(G.g_screen), pw->w_root, 0, &gl_rfull, &c,
+          act_allchg(wh, G.g_screen, pw->w_root, 0, &gl_rfull, &c,
                  SELECTED, FALSE, TRUE);
         }
 }
