@@ -5216,3 +5216,5 @@ Start... early ages
   arg2 of act_bsclick() from LONG to OBJECT *. (RFB)
 - desk/deskact.c desk/deskact.h desk/deskmain.c: Code cleanup: change
   arg2 of act_bdown() from LONG to OBJECT *. (RFB)
+- desk/deskact.c: Code cleanup: remove no-longer-required temporary
+  variables. (RFB)

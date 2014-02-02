@@ -521,18 +521,16 @@ WORD act_chg(WORD wh, OBJECT *tree, WORD root, WORD obj, GRECT *pc, UWORD chgval
 {
         UWORD           curr_state;
         UWORD           old_state;
-        OBJECT          *olist;
         GRECT           t;
 
-        olist = (OBJECT *)tree;
-        old_state = curr_state = olist[obj].ob_state;
+        old_state = curr_state = tree[obj].ob_state;
         if ( (chkdisabled) &&
              (curr_state & DISABLED) )
           return(FALSE);
                                                 /* get object's extent  */
-        rc_copy((GRECT *)&olist[obj].ob_x, &t);
-        t.g_x += olist[root].ob_x;
-        t.g_y += olist[root].ob_y;
+        rc_copy((GRECT *)&tree[obj].ob_x, &t);
+        t.g_x += tree[root].ob_x;
+        t.g_y += tree[root].ob_y;
                                                 /* make change          */
         if ( dochg )
           curr_state |= chgvalue;
@@ -544,7 +542,7 @@ WORD act_chg(WORD wh, OBJECT *tree, WORD root, WORD obj, GRECT *pc, UWORD chgval
         {
                                                 /* change it without    */
                                                 /*   drawing            */
-          objc_change(olist, obj, 0, pc->g_x, pc->g_y, pc->g_w, pc->g_h,
+          objc_change(tree, obj, 0, pc->g_x, pc->g_y, pc->g_w, pc->g_h,
                          curr_state, FALSE);
                                                 /* clip to uncovered    */
                                                 /*   portion desktop or */
@@ -568,13 +566,11 @@ void act_allchg(WORD wh, OBJECT *tree, WORD root, WORD ex_obj, GRECT *pt, GRECT 
                 WORD chgvalue, WORD dochg, WORD dodraw)
 {
         WORD            obj, newstate;
-        OBJECT          *olist;
         WORD            offx, offy;
         GRECT           o, a, w;
 
-        olist = (OBJECT *)tree;
-        offx = olist[root].ob_x;
-        offy = olist[root].ob_y;
+        offx = tree[root].ob_x;
+        offy = tree[root].ob_y;
                                                 /* accumulate extent of */
                                                 /*   change in this     */
                                                 /*   rectangle          */
@@ -585,11 +581,11 @@ void act_allchg(WORD wh, OBJECT *tree, WORD root, WORD ex_obj, GRECT *pt, GRECT 
                                                 /*    work area of window*/
 /* */
 
-        for(obj = olist[root].ob_head; obj > root; obj = olist[obj].ob_next)
+        for(obj = tree[root].ob_head; obj > root; obj = tree[obj].ob_next)
         {
           if (obj != ex_obj)
           {
-            rc_copy((GRECT *)&olist[obj].ob_x, &o);
+            rc_copy((GRECT *)&tree[obj].ob_x, &o);
             o.g_x += offx;
 /* BUGFIX 7/14/86 LKW   */
             o.g_y = o.g_y + offy + 1;
@@ -599,15 +595,15 @@ void act_allchg(WORD wh, OBJECT *tree, WORD root, WORD ex_obj, GRECT *pt, GRECT 
                  ( root != act_chkobj(tree,root,obj,o.g_x,o.g_y,o.g_w,o.g_h)))
             {
                                                 /* make change          */
-              newstate = olist[obj].ob_state;
+              newstate = tree[obj].ob_state;
               if ( dochg )
                 newstate |= chgvalue;
               else
                 newstate &= ~chgvalue;
-              if (newstate != olist[obj].ob_state)
+              if (newstate != tree[obj].ob_state)
               {
-                olist[obj].ob_state= newstate;
-                rc_copy((GRECT *)&olist[obj].ob_x, &o);
+                tree[obj].ob_state= newstate;
+                rc_copy((GRECT *)&tree[obj].ob_x, &o);
                 o.g_x += offx;
                 o.g_y += offy;
                 if (a.g_w)
@@ -635,7 +631,6 @@ void act_bsclick(WORD wh, OBJECT *tree, WORD root, WORD mx, WORD my, WORD keysta
         WORD            obj;
         WORD            shifted;
         WORD            state;
-        OBJECT          *olist;
 
         shifted = (keystate & K_LSHIFT) || (keystate & K_RSHIFT);
         obj = gr_obfind(tree, root, mx, my);
@@ -648,8 +643,7 @@ void act_bsclick(WORD wh, OBJECT *tree, WORD root, WORD mx, WORD my, WORD keysta
         }
         else
         {
-          olist = (OBJECT *)tree;
-          state = olist[obj].ob_state;
+          state = tree[obj].ob_state;
           if ( !shifted )
           {
 /* BugFix       */
@@ -668,7 +662,7 @@ void act_bsclick(WORD wh, OBJECT *tree, WORD root, WORD mx, WORD my, WORD keysta
             else
               state |= SELECTED;
           }
-          act_chg(wh, olist, root, obj, pc, SELECTED,
+          act_chg(wh, tree, root, obj, pc, SELECTED,
                         state & SELECTED, TRUE, TRUE);
         }
 }
@@ -682,7 +676,6 @@ WORD act_bdown(WORD wh, OBJECT *tree, WORD root, WORD *in_mx, WORD *in_my,
 {
         WORD            sobj;
         WORD            numobs, button;
-        OBJECT          *olist;
         WORD            dst_wh;
         WORD            l_mx, l_my, dulx = -1, duly = -1;
 #ifdef DESK1
@@ -704,8 +697,7 @@ WORD act_bdown(WORD wh, OBJECT *tree, WORD root, WORD *in_mx, WORD *in_my,
         } /* if */
         else
         {                                       /* drag icon(s)         */
-          olist = (OBJECT *)tree;
-          if (olist[sobj].ob_state & SELECTED)
+          if (tree[sobj].ob_state & SELECTED)
           {
             gr_accobs(tree, root, &numobs, &G.g_xyobpts[0]);
             if (numobs)
