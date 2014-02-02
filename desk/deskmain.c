@@ -3,7 +3,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2013 The EmuTOS development team
+*                 2002-2014 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -973,7 +973,7 @@ static void hot_close(WORD wh)
             *pend = NULL;
             strcat(ppath, "*.*");               /* put '*.*' back on    */
           } /* else */
-          wind_set(pw->w_id, WF_NAME, ADDR(&pw->w_name[0]), 0, 0);
+          wind_set(pw->w_id, WF_NAME, pw->w_name, 0, 0);
 /*        wind_update(END_UPDATE);*/
           graf_mkstate(&mx, &my, &button, &kstate);
           if (button == 0x0)
@@ -1669,7 +1669,7 @@ WORD deskmain(void)
         do_wredraw(0, G.g_xdesk, G.g_ydesk, G.g_wdesk, G.g_hdesk);
 
         /* Take over the desktop */
-        wind_set(0, WF_NEWDESK, ADDR(G.g_screen), TRUE, FALSE);
+        wind_set(0, WF_NEWDESK, G.g_screen, TRUE, FALSE);
 #else
                                                 /* fix up subwindows    */
         for (ii = 0; ii < NUM_WNODES; ii++)

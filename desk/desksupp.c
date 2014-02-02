@@ -4,7 +4,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2013 The EmuTOS development team
+*                 2002-2014 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -294,9 +294,9 @@ WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon, WORD drv,
 #ifdef DESK1
         win_sinfo(pw);
 #endif
-        wind_set(pw->w_id, WF_NAME, ADDR(&pw->w_name[0]), 0, 0);
+        wind_set(pw->w_id, WF_NAME, pw->w_name, 0, 0);
 #ifdef DESK1
-        wind_set(pw->w_id, WF_INFO, ADDR(&pw->w_info[0]), 0, 0);
+        wind_set(pw->w_id, WF_INFO, pw->w_info, 0, 0);
 #endif
 
                                                 /* do actual wind_open  */

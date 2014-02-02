@@ -5206,3 +5206,5 @@ Start... early ages
   dos_sdta() arg from LONG to void *. (RFB)
 - desk/aesbind.h desk/deskapp.h desk/gembind.c: Code cleanup: change
   arg1 of shel_get()/shel_put() from LONG to void *. (RFB)
+- desk/deskfun.c desk/deskmain.c desk/desksupp.c: Code cleanup: remove
+  unnecessary typecasts for wind_set() parameters. (RFB)

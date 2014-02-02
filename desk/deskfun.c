@@ -5,7 +5,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2013 The EmuTOS development team
+*                 2002-2014 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -99,7 +99,7 @@ void fun_rebld(WNODE *pwin)
             desk_verify(pwin->w_id, TRUE);
 #ifdef DESK1
             win_sinfo(pwin);
-            wind_set(pwin->w_id, WF_INFO, ADDR(&pwin->w_info[0]), 0, 0);
+            wind_set(pwin->w_id, WF_INFO, pwin->w_info, 0, 0);
 #endif
             wind_get(pwin->w_id, WF_WXYWH, &x, &y, &w, &h);
             fun_msg(WM_REDRAW, pwin->w_id, x, y, w, h);
