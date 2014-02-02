@@ -5204,3 +5204,5 @@ Start... early ages
 - aes/gemdos.c aes/gemdos.h aes/gemfslib.c aes/geminit.c aes/gemsclib.c
   aes/gemshlib.c desk/deskdir.c desk/deskfpd.c: Code cleanup: change
   dos_sdta() arg from LONG to void *. (RFB)
+- desk/aesbind.h desk/deskapp.h desk/gembind.c: Code cleanup: change
+  arg1 of shel_get()/shel_put() from LONG to void *. (RFB)

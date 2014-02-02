@@ -487,7 +487,7 @@ void app_start(void)
         ycnt = ((gl_height-gl_hbox) / G.g_ich);
         G.g_ich += ((gl_height-gl_hbox) % G.g_ich) / ycnt;
 
-        shel_get(ADDR(&gl_afile[0]), SIZE_AFILE);
+        shel_get(gl_afile, SIZE_AFILE);
         if (gl_afile[0] != '#')                 /* invalid signature    */
         {                                       /*   so read from disk  */
           WORD fh;
@@ -784,7 +784,7 @@ void app_save(WORD todisk)
                                                 /* calculate size       */
         G.g_afsize = pcurr - &gl_afile[0];
                                                 /* save in memory       */
-        shel_put(ADDR(&gl_afile[0]), G.g_afsize);
+        shel_put(gl_afile, G.g_afsize);
                                                 /* save to disk         */
         if (todisk)
         {

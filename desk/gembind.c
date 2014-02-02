@@ -5,7 +5,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2013 The EmuTOS development team
+*                 2002-2014 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -1077,17 +1077,17 @@ WORD shel_write(WORD doex, WORD isgr, WORD iscr, BYTE *pcmd, BYTE *ptail)
 }
 
 
-WORD shel_get(LONG pbuffer, WORD len)
+WORD shel_get(void *pbuffer, WORD len)
 {
-        SH_PBUFFER = pbuffer;
+        SH_PBUFFER = (LONG)pbuffer;
         SH_LEN = len;
         return( gem_if( SHEL_GET ) );
 }
 
 
-WORD shel_put(LONG pdata, WORD len)
+WORD shel_put(void *pdata, WORD len)
 {
-        SH_PDATA = pdata;
+        SH_PDATA = (LONG)pdata;
         SH_LEN = len;
         return( gem_if( SHEL_PUT ) );
 }
