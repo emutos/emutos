@@ -629,7 +629,7 @@ void act_allchg(WORD wh, OBJECT *tree, WORD root, WORD ex_obj, GRECT *pt, GRECT 
 /*
 *       Single click action on the specified tree of objects.
 */
-void act_bsclick(WORD wh, LONG tree, WORD root, WORD mx, WORD my, WORD keystate,
+void act_bsclick(WORD wh, OBJECT *tree, WORD root, WORD mx, WORD my, WORD keystate,
                  GRECT *pc, WORD dclick)
 {
         WORD            obj;
@@ -638,12 +638,12 @@ void act_bsclick(WORD wh, LONG tree, WORD root, WORD mx, WORD my, WORD keystate,
         OBJECT          *olist;
 
         shifted = (keystate & K_LSHIFT) || (keystate & K_RSHIFT);
-        obj = gr_obfind((OBJECT *)tree, root, mx, my);
+        obj = gr_obfind(tree, root, mx, my);
 
         if ( (obj == root) ||
              (obj == NIL)  )
         {
-          act_allchg(wh, (OBJECT *)tree, root, obj, &gl_rfull, pc,
+          act_allchg(wh, tree, root, obj, &gl_rfull, pc,
                         SELECTED, FALSE, TRUE);
         }
         else
@@ -655,7 +655,7 @@ void act_bsclick(WORD wh, LONG tree, WORD root, WORD mx, WORD my, WORD keystate,
 /* BugFix       */
             if ( dclick || !(state & SELECTED) )
             {
-              act_allchg(wh, (OBJECT *)tree, root, obj, &gl_rfull, pc,
+              act_allchg(wh, tree, root, obj, &gl_rfull, pc,
                          SELECTED, FALSE, TRUE);
               state |= SELECTED;
             }

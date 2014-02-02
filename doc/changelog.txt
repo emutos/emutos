@@ -5212,3 +5212,5 @@ Start... early ages
   arg2 of act_chg() from LONG to OBJECT *. (RFB)
 - desk/deskact.c desk/deskact.h desk/desksupp.c: Code cleanup: change
   arg2 of act_allchg() from LONG to OBJECT *. (RFB)
+- desk/deskact.c desk/deskact.h desk/deskmain.c: Code cleanup: change
+  arg2 of act_bsclick() from LONG to OBJECT *. (RFB)

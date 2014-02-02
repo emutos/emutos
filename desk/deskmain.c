@@ -736,7 +736,7 @@ static WORD hndl_button(WORD clicks, WORD mx, WORD my, WORD button, WORD keystat
 
         if (clicks == 1)
         {
-          act_bsclick(G.g_cwin, ADDR(G.g_screen), G.g_croot, mx, my,
+          act_bsclick(G.g_cwin, G.g_screen, G.g_croot, mx, my,
                       keystate, &c, FALSE);
           graf_mkstate(&junk, &junk, &button, &junk);
           if (button & 0x0001)
@@ -769,7 +769,7 @@ static WORD hndl_button(WORD clicks, WORD mx, WORD my, WORD button, WORD keystat
         } /* if clicks */
         else
         {
-          act_bsclick(G.g_cwin, ADDR(G.g_screen), G.g_croot, mx, my, keystate, &c, TRUE);
+          act_bsclick(G.g_cwin, G.g_screen, G.g_croot, mx, my, keystate, &c, TRUE);
           done = do_filemenu(OPENITEM);
         } /* else */
         men_update(G.a_trees[ADMENU]);
