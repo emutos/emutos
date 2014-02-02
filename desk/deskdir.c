@@ -538,7 +538,7 @@ WORD d_doop(WORD op, LONG tree, WORD obj, BYTE *psrc_path, BYTE *pdst_path,
                                                 /*   level 0            */
         level = 0;
                                                 /* set up initial DTA   */
-        dos_sdta(ADDR(&G.g_dtastk[level]));
+        dos_sdta(&G.g_dtastk[level]);
         dos_sfirst(psrc_path, 0x16);
 
         cont = more = TRUE;
@@ -592,7 +592,7 @@ WORD d_doop(WORD op, LONG tree, WORD obj, BYTE *psrc_path, BYTE *pdst_path,
                 sub_path(psrc_path);
                 if (op == OP_COPY)
                   sub_path(pdst_path);
-                dos_sdta(ADDR(&G.g_dtastk[level]));
+                dos_sdta(&G.g_dtastk[level]);
               }
             } /* if no more files */
             else
@@ -616,7 +616,7 @@ WORD d_doop(WORD op, LONG tree, WORD obj, BYTE *psrc_path, BYTE *pdst_path,
                   strcat(pdst_path, "\\*.*");
                 }
                 level++;
-                dos_sdta(ADDR(&G.g_dtastk[level]));
+                dos_sdta(&G.g_dtastk[level]);
                 if (more)
                   dos_sfirst(psrc_path, 0x16);
               } /* if not a dir */

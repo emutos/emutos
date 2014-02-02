@@ -5201,3 +5201,6 @@ Start... early ages
   void *. (RFB)
 - bios/blkdev.c: Fix regression of 2014-01-09: mediachange was not set
   properly for SCSI bus (affects Aranym). (RFB)
+- aes/gemdos.c aes/gemdos.h aes/gemfslib.c aes/geminit.c aes/gemsclib.c
+  aes/gemshlib.c desk/deskdir.c desk/deskfpd.c: Code cleanup: change
+  dos_sdta() arg from LONG to void *. (RFB)

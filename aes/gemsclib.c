@@ -4,7 +4,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2013 The EmuTOS development team
+*                 2002-2014 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -72,7 +72,7 @@ WORD sc_write(const BYTE *pscrap)
     len = strlencpy(D.g_scrap, pscrap);     /* new scrap directory  */
     if (D.g_scrap[--len] == '\\')           /* remove backslash     */
       D.g_scrap[len] = '\0';
-    dos_sdta((LONG)D.g_dta);                /* use our dta          */
+    dos_sdta(D.g_dta);                      /* use our dta          */
     return(dos_sfirst(D.g_scrap, F_SUBDIR)); /* make sure path ok    */
 }
 
@@ -103,7 +103,7 @@ WORD sc_clear(void)
 
     strcpy(ptmp, scrapmask);                /* Add mask */
 
-    dos_sdta((LONG)D.g_dta);                /* make sure dta ok */
+    dos_sdta(D.g_dta);                      /* make sure dta ok */
 
     found = dos_sfirst(D.g_scrap, F_SUBDIR);
     while(found)

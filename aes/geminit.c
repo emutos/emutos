@@ -291,7 +291,7 @@ static void ldaccs(void)
         WORD            ret;
 
         strcpy(&D.g_dir[0], "*.ACC");
-        dos_sdta((LONG)D.g_dta);
+        dos_sdta(D.g_dta);
 
         /* if Control is held down then skip loading of accs */
         if ((kbshift(-1) & MODE_CTRL))

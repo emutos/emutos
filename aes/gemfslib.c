@@ -2,7 +2,7 @@
  * gemfslib.c -
  *
  * Copyright 1999, Caldera Thin Clients, Inc.
- *           2002-2013 The EmuTOS development team
+ *           2002-2014 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -158,7 +158,7 @@ static WORD fs_active(BYTE *ppath, BYTE *pspec, WORD *pcount)
         fname = fs_back(allpath,NULL);
         strcpy(fname+1,"*.*");
 
-        dos_sdta((LONG)D.g_dta);
+        dos_sdta(D.g_dta);
         ret = dos_sfirst(allpath, F_SUBDIR);
         while ( ret )
         {

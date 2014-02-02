@@ -17,7 +17,7 @@ extern UWORD    DOS_ERR;
 WORD pgmld(WORD handle, BYTE *pname, LONG **ldaddr);
 
 WORD dos_gdrv(void);
-void dos_sdta(LONG ldta);
+void dos_sdta(void *ldta);
 WORD dos_sfirst(BYTE *pspec, WORD attr);
 WORD dos_snext(void);
 WORD dos_open(BYTE *pname, WORD access);

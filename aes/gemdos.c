@@ -118,7 +118,7 @@ WORD dos_gdrv(void)
 }
 
 
-void dos_sdta(LONG ldta)
+void dos_sdta(void *ldta)
 {
         gemdos(X_SETDTA,ldta);
 }

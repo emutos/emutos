@@ -4,7 +4,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2013 The EmuTOS development team
+*                 2002-2014 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -500,7 +500,7 @@ static WORD pn_folder(PNODE *thepath)
         strcpy(&thefile->f_name[0], ini_str(STNEWFOL));
                                                 /* init for while loop  */
         G.g_wdta[30] = NULL;
-        dos_sdta((LONG)G.g_wdta);
+        dos_sdta(G.g_wdta);
         ret = firstime = TRUE;
         while ( ret )
         {
@@ -631,7 +631,7 @@ WORD pn_active(PNODE *thepath)
         thefile = (FNODE *) NULLPTR;
         prevfile = (FNODE *) &thepath->p_flist;
 
-        dos_sdta((LONG)G.g_wdta);
+        dos_sdta(G.g_wdta);
 
         ret = dos_sfirst(thepath->p_spec, thepath->p_attr);
         while ( ret )
