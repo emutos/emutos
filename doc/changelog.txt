@@ -5218,3 +5218,7 @@ Start... early ages
   arg2 of act_bdown() from LONG to OBJECT *. (RFB)
 - desk/deskact.c: Code cleanup: remove no-longer-required temporary
   variables. (RFB)
+
+2014-02-03
+- bios/disk.c bios/blkdev.c: Fix regression: FAT32/ext2 partitions were
+  not available via XHDI. (RFB)

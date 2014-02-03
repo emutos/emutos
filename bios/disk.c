@@ -346,11 +346,10 @@ static int atari_partition(int xhdidev,LONG *devices_available)
             case 0x83:      /* any Linux partition, including ext2 */
                 /*
                  * note that FAT32 & Linux partitions occupy drive letters,
-                 * but are not (yet) accessible (see blkdev.c)
+                 * but are not yet accessible to EmuTOS.  however, we allow
+                 * access via XHDI for MiNT's benefit.
                  */
                 KDEBUG((" %s partition: not yet supported\n",(type==0x83)?"Linux":"FAT32"));
-                start = 0UL;    /* indicate this is a dummy entry */
-                size = 0UL;
                 /* drop through */
             case 0x01:
             case 0x04:

@@ -298,6 +298,9 @@ static LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG
         if ((dev < 0 ) || (dev >= BLKDEVNUM) || !blkdev[dev].valid)
             return EUNDEV;  /* unknown device */
 
+        if (blkdev[dev].bpb.recsiz == 0)/* invalid BPB, e.g. FAT32 or ext2 */
+            return ESECNF;              /* (this is an XHDI convention)    */
+
         /* convert logical sectors to physical ones */
         sectors = blkdev[dev].bpb.recsiz >> devices[blkdev[dev].unit].psshift;
         lcount *= sectors;
@@ -424,6 +427,7 @@ LONG blkdev_getbpb(WORD dev)
         return 0L;  /* unknown device */
 
     bdev->mediachange = MEDIANOCHANGE;      /* reset now */
+    bdev->bpb.recsiz = 0;                   /* default to invalid BPB */
 
     /*
      * before we can build the BPB, we need to locate the bootsector.
