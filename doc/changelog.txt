@@ -5222,3 +5222,7 @@ Start... early ages
 2014-02-03
 - bios/disk.c bios/blkdev.c: Fix regression: FAT32/ext2 partitions were
   not available via XHDI. (RFB)
+
+2014-02-04
+- bdos/fsdrive.c bios/disk.c bios/floppy.c: When media change is detected,
+  close windows displaying the contents of no-longer-available media. (RFB)

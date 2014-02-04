@@ -257,6 +257,7 @@ static void flop_add_drive(WORD dev)
     devices[dev].psshift = get_shift(SECTOR_SIZE);
     devices[dev].size = 0;          /* unknown size */
     devices[dev].last_access = 0;   /* never accessed */
+    devices[dev].features = UNIT_REMOVABLE;
 
     /* Logical block device */
     blkdev[dev].valid = 1;

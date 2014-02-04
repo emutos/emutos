@@ -2,7 +2,7 @@
  * fsdrive.c - physical drive routines for file system
  *
  * Copyright (c) 2001 Lineo, Inc.
- *               2002 - 2013 The EmuTOS development team
+ *               2002-2014 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -57,10 +57,12 @@ DND     *dirtbl[NCURDIR] ;
 /*
  **     diruse - use count
  **     drvsel - mask of drives selected since power up
+ **     drvrem - mask of drives with removable media
  */
 
 char    diruse[NCURDIR] ;
 LONG    drvsel ;
+LONG    drvrem;
 
 
 /*
@@ -101,6 +103,16 @@ long    ckdrv(int d)
             return (ENSMEM);
 
         drvsel |= mask;
+    }
+    else if (mask & drvrem)     /* handle removable media */
+    {
+        if (Mediach(d))
+        {
+            errdrv = d;
+            rwerr = E_CHNG;         /* signal media change */
+            errcode = rwerr;
+            longjmp(errbuf,1);
+        }
     }
 
     if ((!run->p_curdir[d]) || (!dirtbl[(int)(run->p_curdir[d])]))

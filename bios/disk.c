@@ -26,6 +26,8 @@
 
 #define REMOVABLE_PARTITIONS    1   /* minimum # partitions for removable device */
 
+extern LONG drvrem;                 /* bitmap of removable media drives */
+
 /*==== Structures =========================================================*/
 typedef struct {
     UBYTE fill0[4];
@@ -116,6 +118,7 @@ void disk_init_all(void)
     int i;
     LONG devices_available = 0L;
     LONG bitmask;
+    BLKDEV *b;
 
     /*
      * initialise bitmap of available devices
@@ -135,12 +138,21 @@ void disk_init_all(void)
 
     /* save bitmaps of drives associated with each physical device.
      * these maps are not changed after booting.
+     *
+     * also save bitmap of removable drives
      */
     for (i = 0; i < UNITSNUM; i++)  /* initialise */
         devices[i].drivemap = 0L;
-    for (i = 0; i < BLKDEVNUM; i++) /* update */
-        if (blkdev[i].valid)
-            devices[blkdev[i].unit].drivemap |= 1L << i;
+    drvrem = 0UL;
+
+    /* update bitmaps */
+    for (i = 0, bitmask = 1L, b = blkdev; i < BLKDEVNUM; i++, bitmask <<= 1, b++) {
+        if (b->valid) {
+            devices[b->unit].drivemap |= bitmask;
+            if (devices[b->unit].features&UNIT_REMOVABLE)
+                drvrem |= bitmask;
+        }
+    }
 
 #ifdef ENABLE_KDEBUG
     for (i = 0; i < UNITSNUM; i++) {
@@ -153,6 +165,11 @@ void disk_init_all(void)
             KDEBUG(("\n"));
         }
     }
+    KDEBUG(("Removable logical drives:"));
+    for (i = 0, bitmask = 1L; i < BLKDEVNUM; i++, bitmask <<= 1)
+        if (drvrem & bitmask)
+            KDEBUG((" %c",'A'+i));
+    KDEBUG(("\n"));
 #endif
 }
 
