@@ -3,7 +3,7 @@
 /*      merge source    5/27/87  - 5/28/87              mdf             */
 
 /*
-*       Copyright 2002-2013 The EmuTOS development team
+*       Copyright 2002-2014 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -249,7 +249,7 @@ static void insa_icon(LONG tree, WORD obj, WORD nicon, ICONBLK *pic, BYTE *ptext
         OBJECT *objptr = (OBJECT *)tree + obj;
 
         memcpy(pic, &G.g_iblist[nicon], sizeof(ICONBLK));
-        pic->ib_ptext = ADDR( ptext );
+        pic->ib_ptext = ptext;
         objptr->ob_type = G_ICON;
         objptr->ob_spec = (LONG)pic;
 }

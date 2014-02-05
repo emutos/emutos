@@ -2,7 +2,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2013 The EmuTOS development team
+*                 2011-2014 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -188,9 +188,9 @@ TEDINFO
 
 ICONBLK
 {
-        LONG    ib_pmask;
-        LONG    ib_pdata;
-        LONG    ib_ptext;
+        WORD    *ib_pmask;
+        WORD    *ib_pdata;
+        BYTE    *ib_ptext;
         WORD    ib_char;
         WORD    ib_xchar;
         WORD    ib_ychar;

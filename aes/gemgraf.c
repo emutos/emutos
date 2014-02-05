@@ -4,7 +4,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2013 The EmuTOS development team
+*                 2002-2014 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -674,9 +674,9 @@ void gr_crack(UWORD color, WORD *pbc, WORD *ptc, WORD *pip, WORD *pic, WORD *pmd
 }
 
 
-static void gr_gblt(LONG pimage, GRECT *pi, WORD col1, WORD col2)
+static void gr_gblt(WORD *pimage, GRECT *pi, WORD col1, WORD col2)
 {
-        gsx_blt(pimage, 0, 0, pi->g_w/8, 0x0L, pi->g_x, pi->g_y,
+        gsx_blt((LONG)pimage, 0, 0, pi->g_w/8, 0x0L, pi->g_x, pi->g_y,
                         gl_width/8, pi->g_w, pi->g_h, MD_TRANS,
                         col1, col2);
 }
@@ -686,7 +686,7 @@ static void gr_gblt(LONG pimage, GRECT *pi, WORD col1, WORD col2)
 *       Routine to draw an icon, which is a graphic image with a text
 *       string underneath it.
 */
-void gr_gicon(WORD state, LONG pmask, LONG pdata, LONG ptext, WORD ch,
+void gr_gicon(WORD state, WORD *pmask, WORD *pdata, BYTE *ptext, WORD ch,
               WORD chx, WORD chy, GRECT *pi, GRECT *pt)
 {
         WORD            ifgcol, ibgcol;
@@ -743,7 +743,7 @@ void gr_gicon(WORD state, LONG pmask, LONG pdata, LONG ptext, WORD ch,
         }
                                                 /* draw the label       */
         gsx_attr(TRUE, MD_TRANS, tfgcol);
-        gr_gtext(TE_CNTR, SMALL, ptext, pt);
+        gr_gtext(TE_CNTR, SMALL, (LONG)ptext, pt);
 }
 
 

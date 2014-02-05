@@ -38,6 +38,8 @@
 typedef union {
     LONG    base;
     LONG    *lptr;
+    WORD    **wpp;
+    BYTE    **bpp;
     OBJECT  *obj;
     TEDINFO *ted;
     ICONBLK *iblk;

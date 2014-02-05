@@ -5226,3 +5226,6 @@ Start... early ages
 2014-02-04
 - bdos/fsdrive.c bios/disk.c bios/floppy.c: When media change is detected,
   close windows displaying the contents of no-longer-available media. (RFB)
+- aes/gemgraf.c aes/gemgraf.h aes/gemrslib.c desk/deskapp.c desk/deskins.c
+  desk/deskwin.c include/obdefs.h tools/erd.c: Code cleanup: fixup types of
+  some ICONBLK fields. (RFB)

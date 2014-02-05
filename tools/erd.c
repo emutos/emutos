@@ -153,6 +153,10 @@
  *  v4.2    roger burrows, march/2013
  *          . generate additional #ifdefs when creating icon resource,
  *            to support DESK1 in 192K ROMs
+ *
+ *  v4.3    roger burrows, february/2014
+ *          . use real types for ib_pmask, ib_pdata, ib_ptext when
+ *            generating code for iconblks
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -1676,7 +1680,7 @@ char *base = (char *)rschdr;
             fprintf(fp,"\n%s\n",other_cond.string);
         iconchar = get_short(&iconblk->ib_char);
         copyfix(temp,base+get_offset(&iconblk->ib_ptext),MAX_STRLEN-1);
-        fprintf(fp,"    { (LONG) rs_iconmask%d, (LONG) rs_icondata%d, (LONG) \"%s\", %s,\n",
+        fprintf(fp,"    { (WORD *)rs_iconmask%d, (WORD *)rs_icondata%d, \"%s\", %s,\n",
                 (mmap[i]==-1)?i:mmap[i],(dmap[i]==-1)?i:dmap[i],
                 temp,decode_ib_char(iconchar));
         fprintf(fp,"      %d, %d, %d, %d, %d, %d, %d, %d, %d, %d },\n",

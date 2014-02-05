@@ -4,7 +4,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2013 The EmuTOS development team
+*                 2002-2014 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -385,7 +385,7 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
                 G.g_index[obid] = i_index;
                 G.g_screen[obid].ob_spec = ADDR( &gl_icons[obid] );
                 memcpy(&gl_icons[obid], &G.g_iblist[i_index], sizeof(ICONBLK));
-                gl_icons[obid].ib_ptext = ADDR(&pstart->f_name[0]);
+                gl_icons[obid].ib_ptext = pstart->f_name;
                 gl_icons[obid].ib_char |= (0x00ff & pstart->f_pa->a_letter);
                 break;
           }
@@ -645,7 +645,7 @@ BYTE *win_iname(WORD curr)
         assert(G.g_screen[curr].ob_type == G_ICON);
 
         pib = (ICONBLK *)G.g_screen[curr].ob_spec;
-        ptext = (BYTE *)pib->ib_ptext;
+        ptext = pib->ib_ptext;
         return( ptext );
 }
 #endif

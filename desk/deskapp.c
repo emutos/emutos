@@ -334,7 +334,8 @@ static void app_rdicon(void)
         WORD            mask[NUM_IBLKS], data[NUM_IBLKS];
         char            copied[NUM_IBLKS];
         char            *p;
-        LONG            addr, temp;
+        WORD            *addr;
+        LONG            temp;
         WORD            i, j, n, iwb, ih;
         WORD            num_mask, num_data, num_wds, num_bytes;
 
@@ -407,7 +408,7 @@ static void app_rdicon(void)
         for (i = 0, p = datastart; i < NUM_IBLKS; i++) {
             n = data[i];
             if (!copied[n]) {   /* only copy data once */
-                memcpy(p+n*num_bytes, (char *)icon_rs_iconblk[i].ib_pdata, num_bytes);
+                memcpy(p+n*num_bytes, icon_rs_iconblk[i].ib_pdata, num_bytes);
                 copied[n] = 1;
             }
         }
@@ -424,9 +425,9 @@ static void app_rdicon(void)
          */
         for (i = 0; i < NUM_IBLKS; i++) {
             temp = mask[i] * num_bytes;
-            G.g_iblist[i].ib_pmask = (LONG)maskstart + temp;
+            G.g_iblist[i].ib_pmask = (WORD *)(maskstart + temp);
             temp = data[i] * num_bytes;
-            G.g_iblist[i].ib_pdata = (LONG)datastart + temp;
+            G.g_iblist[i].ib_pdata = (WORD *)(datastart + temp);
             G.g_iblist[i].ib_ytext = icon_rs_iconblk[0].ib_hicon;
             G.g_iblist[i].ib_wtext = 12 * gl_wschar;
             G.g_iblist[i].ib_htext = gl_hschar + 2;
@@ -862,7 +863,7 @@ BYTE app_blddesk(void)
             pob->ob_spec = ADDR( pic = &gl_icons[obid] );
             memcpy(pic, &G.g_iblist[pa->a_aicon], sizeof(ICONBLK));
             pic->ib_xicon = ((G.g_wicon - pic->ib_wicon) / 2);
-            pic->ib_ptext = ADDR(pa->a_pappl);
+            pic->ib_ptext = pa->a_pappl;
             pic->ib_char |= (0x00ff & pa->a_letter);
           } /* if */
         } /* for */
