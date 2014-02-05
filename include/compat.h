@@ -45,6 +45,4 @@
                                 /* mn_register() call)                */
 
 
-extern WORD LBWMOV(WORD *pdst, BYTE *psrc);
-
 #endif  /* _COMPAT_H */

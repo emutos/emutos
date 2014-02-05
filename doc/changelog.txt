@@ -5232,3 +5232,5 @@ Start... early ages
 - desk/deskapp.c desk/deskfun.c desk/deskmain.c desk/deskwin.c
   desk/gembind.c include/compat.h: Code cleanup: eliminate usage of ADDR()
   compatibility macro. (RFB)
+- aes/optimopt.h desk/deskinf.c include/compat.h: Code cleanup: move
+  function prototype to appropriate header. (RFB)
