@@ -365,7 +365,7 @@ WORD evnt_multi(UWORD flags, UWORD bclk, UWORD bmsk, UWORD bst,
         MMO2_WIDTH = m2w;
         MMO2_HEIGHT = m2h;
 
-        MME_PBUFF = ADDR(mepbuff);
+        MME_PBUFF = (LONG)mepbuff;
 
         MT_LOCOUNT = tlc;
         MT_HICOUNT = thc;
@@ -1071,8 +1071,8 @@ WORD shel_write(WORD doex, WORD isgr, WORD iscr, BYTE *pcmd, BYTE *ptail)
         SH_DOEX = doex;
         SH_ISGR = isgr;
         SH_ISCR = iscr;
-        SH_PCMD = ADDR(pcmd);
-        SH_PTAIL = ADDR(ptail);
+        SH_PCMD = (LONG)pcmd;
+        SH_PTAIL = (LONG)ptail;
         return( gem_if( SHEL_WRITE ) );
 }
 
@@ -1096,7 +1096,7 @@ WORD shel_put(void *pdata, WORD len)
 
 WORD shel_find(BYTE *ppath)
 {
-        SH_PATH = ADDR(ppath);
+        SH_PATH = (LONG)ppath;
         return( gem_if( SHEL_FIND ) );
 }
 

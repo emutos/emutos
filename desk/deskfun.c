@@ -54,7 +54,7 @@ WORD fun_alert(WORD defbut, WORD stnum, WORD *pwtemp)
         {
           strcpy(&G.g_2text[0], (char *)G.a_alert);
           sprintf(&G.g_1text[0], &G.g_2text[0], *pwtemp);
-          G.a_alert = ADDR(&G.g_1text[0]);
+          G.a_alert = (LONG)&G.g_1text[0];
         }
         return( form_alert(defbut, G.a_alert) );
 }

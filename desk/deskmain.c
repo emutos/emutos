@@ -1596,9 +1596,9 @@ WORD deskmain(void)
         detect_features();
                                                 /* initialize resources */
 #if 0
-        if( !rsrc_load(ADDR("DESKTOP.RSC")) )
+        if( !rsrc_load((LONG)"DESKTOP.RSC") )
         {
-          form_alert(1,ADDR("[3][ Can not load | the DESKTOP.RSC ][Cancel]"));
+          form_alert(1,(LONG)"[3][ Can not load | the DESKTOP.RSC ][Cancel]");
           appl_exit();
           return(FALSE);
         }

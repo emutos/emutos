@@ -372,9 +372,9 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
           {
             case V_TEXT:
                 G.g_screen[obid].ob_type = G_USERDEF;
-                G.g_screen[obid].ob_spec = ADDR( &G.g_udefs[obid] );
+                G.g_screen[obid].ob_spec = (LONG)&G.g_udefs[obid];
                 G.g_udefs[obid].ub_code = drawaddr;
-                G.g_udefs[obid].ub_parm = ADDR( &pstart->f_junk );
+                G.g_udefs[obid].ub_parm = (LONG)&pstart->f_junk;
                 win_icalc(pstart);
                 break;
             case V_ICON:
@@ -383,7 +383,7 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
                 i_index = (pstart->f_isap) ? pstart->f_pa->a_aicon :
                                              pstart->f_pa->a_dicon;
                 G.g_index[obid] = i_index;
-                G.g_screen[obid].ob_spec = ADDR( &gl_icons[obid] );
+                G.g_screen[obid].ob_spec = (LONG)&gl_icons[obid];
                 memcpy(&gl_icons[obid], &G.g_iblist[i_index], sizeof(ICONBLK));
                 gl_icons[obid].ib_ptext = pstart->f_name;
                 gl_icons[obid].ib_char |= (0x00ff & pstart->f_pa->a_letter);

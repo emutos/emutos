@@ -47,12 +47,4 @@
 
 extern WORD LBWMOV(WORD *pdst, BYTE *psrc);
 
-
-/************************************************************************/
-
-
-                                                /* return a long address*/
-                                                /*   of a short pointer */
-#define ADDR(x) ((LONG) (x))
-
 #endif  /* _COMPAT_H */

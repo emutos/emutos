@@ -5229,3 +5229,6 @@ Start... early ages
 - aes/gemgraf.c aes/gemgraf.h aes/gemrslib.c desk/deskapp.c desk/deskins.c
   desk/deskwin.c include/obdefs.h tools/erd.c: Code cleanup: fixup types of
   some ICONBLK fields. (RFB)
+- desk/deskapp.c desk/deskfun.c desk/deskmain.c desk/deskwin.c
+  desk/gembind.c include/compat.h: Code cleanup: eliminate usage of ADDR()
+  compatibility macro. (RFB)
