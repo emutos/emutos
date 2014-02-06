@@ -37,7 +37,7 @@ static void acsi_end(void);
 static void hdc_start_dma(UWORD control);
 static void dma_send_byte(UBYTE data, UWORD control);
 static int build_rw_command(UBYTE *cdb,WORD rw,WORD dev,LONG sector,WORD cnt);
-static int send_command(UBYTE *cdb,WORD cdblen,WORD rw,WORD dev,WORD cnt,WORD repeat);
+static int send_command(UBYTE *cdb,WORD cdblen,WORD rw,WORD dev,WORD cnt,UWORD repeat);
 static int do_acsi_rw(WORD rw, LONG sect, WORD cnt, LONG buf, WORD dev);
 static LONG acsi_capacity(WORD dev, ULONG *info);
 static LONG acsi_testunit(WORD dev);
@@ -321,22 +321,22 @@ static int build_rw_command(UBYTE *cdb,WORD rw,WORD dev,LONG sector,WORD cnt)
 /*
  * send an ACSI command; return -1 if timeout
  *
- * note: if 'repeat' is non-zero, we actually send the command repeat+1 times.
- * this is to handle situations where the length of data returned from a single
- * command is not a multiple of 16.  without this trick, some returned data
- * would be stuck in the DMA FIFO.
+ * note: we actually send the command repeat+1 times.  this is to handle
+ * situations where the length of data returned from a single command is
+ * not a multiple of 16.  without this trick, some returned data would be
+ * stuck in the DMA FIFO.
  *
  * the following values for 'repeat' are suggested:
  *   1. length returned is a multiple of 16: set repeat = 0; otherwise
  *   2. length returned is greater than 16: set 'repeat' to 1; otherwise
  *   3. set 'repeat' to ceil(16/length returned).
  */
-static int send_command(UBYTE *inputcdb,WORD cdblen,WORD rw,WORD dev,WORD cnt,WORD repeat)
+static int send_command(UBYTE *inputcdb,WORD cdblen,WORD rw,WORD dev,WORD cnt,UWORD repeat)
 {
     UWORD control;
     UBYTE cdb[13];      /* allow for 12-byte input commands */
     UBYTE *cdbptr, *p;
-    int i, j, status;
+    int j, status;
 
     /*
      * see if we need to use ICD trickery
@@ -361,7 +361,7 @@ static int send_command(UBYTE *inputcdb,WORD cdblen,WORD rw,WORD dev,WORD cnt,WO
     /*
      * handle 'repeat' function
      */
-    for (i = 0; i <= repeat; i++) {
+    do {
         while(hz_200 < next_acsi_time)  /* wait until safe */
             ;
 
@@ -387,7 +387,7 @@ static int send_command(UBYTE *inputcdb,WORD cdblen,WORD rw,WORD dev,WORD cnt,WO
         if (status)
             break;
         control &= ~DMA_A0; /* assert command signal for next time */
-    }
+    } while(repeat--);
 
     return status;
 }

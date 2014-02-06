@@ -5234,3 +5234,6 @@ Start... early ages
   compatibility macro. (RFB)
 - aes/optimopt.h desk/deskinf.c include/compat.h: Code cleanup: move
   function prototype to appropriate header. (RFB)
+
+2014-02-06
+- bios/acsi.c: Improve send_command(). Contributed by David Savinkoff. (RFB)
