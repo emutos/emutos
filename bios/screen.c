@@ -443,11 +443,12 @@ void screen_init(void)
     WORD monitor_type, sync_mode;
     WORD rez = 0;   /* avoid 'may be uninitialized' warning */
 
-    /* Initialize the interrupt handlers.
+    /* Initialize the interrupt handlers & the VBL semaphore.
      * It is important to do this first because the initialization code below
      * may call vsync(), which temporarily enables the interrupts. */
     VEC_HBL = int_hbl;
     VEC_VBL = int_vbl;
+    vblsem = 0;
 
 /*
  * first, see what we're connected to, and set the

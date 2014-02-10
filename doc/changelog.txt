@@ -5237,3 +5237,7 @@ Start... early ages
 
 2014-02-06
 - bios/acsi.c: Improve send_command(). Contributed by David Savinkoff. (RFB)
+
+2014-02-10
+- bios/screen.c: Initialise vblsem: fixes intermittent problems booting
+  EmuTOS RAM on ST(e). (RFB)
