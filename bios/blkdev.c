@@ -527,6 +527,7 @@ static LONG nonflop_mediach(WORD logical)
     /* get bus and relative device */
     bus = GET_BUS(dev);
     reldev = dev - bus * DEVICES_PER_BUS;
+    MAYBE_UNUSED(reldev);
 
     /* hardware access to device */
     switch(bus) {
