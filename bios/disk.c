@@ -184,15 +184,15 @@ void disk_rescan(int major)
     LONG devices_available, bitmask;
 
     /* determine available devices for rescan */
-	devices_available = devices[xbiosdev].drivemap;
+    devices_available = devices[xbiosdev].drivemap;
 
     KDEBUG(("disk_rescan(%d):drivemap=0x%08lx\n",major,devices_available));
 
     /* rescan (this clobbers 'devices_available') */
-	disk_init_one(major,&devices_available);
+    disk_init_one(major,&devices_available);
 
     /* now set the mediachange byte for the relevant devices */
-	devices_available = devices[xbiosdev].drivemap;
+    devices_available = devices[xbiosdev].drivemap;
     for (i = 0, bitmask = 1L; i < BLKDEVNUM; i++, bitmask <<= 1)
         if (devices_available & bitmask)
             blkdev[i].mediachange = MEDIACHANGE;

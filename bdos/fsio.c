@@ -159,7 +159,7 @@ long ixlseek(OFD *p,long n)
     for (i = 0; i < clnum; i++) {
         clx = getclnum(clx,p);
         if (endofchain(clx))
-            return EINTRN;		/* FAT chain is shorter than filesize says ... */
+            return EINTRN;      /* FAT chain is shorter than filesize says ... */
     }
 
     p->o_curcl = clx;

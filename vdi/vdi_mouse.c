@@ -937,10 +937,10 @@ MCS *sprite_sav;
 
 void draw_sprite(void)
 {
-	cur_display(sprite_def, sprite_sav, sprite_x, sprite_y);
+    cur_display(sprite_def, sprite_sav, sprite_x, sprite_y);
 }
 
 void undraw_sprite(void)
 {
-	cur_replace(sprite_sav);
+    cur_replace(sprite_sav);
 }

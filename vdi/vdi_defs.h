@@ -245,7 +245,7 @@ extern BYTE     cur_ms_stat;    /* current mouse status */
 
 
 /* shared VDI functions & VDI line-A wrapper functions */
-void xfm_crfm(Vwk * vwk);	/* Vwk is unused */
+void xfm_crfm(Vwk * vwk);       /* Vwk is unused */
 void undraw_sprite(void);
 void draw_sprite(void);
 WORD get_pix(void);

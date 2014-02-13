@@ -5244,3 +5244,4 @@ Start... early ages
 
 2014-02-12
 - readme.txt doc/*.txt: Updated documentation. (VRI)
+- *: make expand

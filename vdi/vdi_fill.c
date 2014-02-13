@@ -1097,7 +1097,7 @@ put_pix(void)
      * alternatively this could check against v_bas_ad+vram_size()
      */
     if (addr < (UWORD*)v_bas_ad || addr >= get_start_addr(v_hz_rez, v_vt_rez)) {
-	    return;
+        return;
     }
     color = INTIN[0];           /* device dependent encoded color bits */
     mask = 0x8000 >> (x&0xf);   /* initial bit position in WORD */
