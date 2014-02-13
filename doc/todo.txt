@@ -5,7 +5,6 @@ BIOS/XBIOS
 - check that RAM disks work
 - misc. TODOs in floppy.c
 - check that VEC_CRITICALERR (0x101) is called when the BIOS encounters errors
-- improve Mediach()
 - implement full XHDI 1.30
 - let EmuTOS set up correct MMU tree on 68040 (?)
 

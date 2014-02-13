@@ -34,13 +34,15 @@ Vincent Rivière (VRI) <vincent.riviere at freesbee.fr>
 - Current project admin
 - Patches for compiling with GCC 4.x
 - ColdFire CPU and FireBee support
-- IDE driver
+- Initial IDE driver
 - Amiga support
 - ColdFire Evaluation Boards support
 - French translation update
 - Various bug fixes
 
 Roger Burrows (RFB) <rfburrows at ymail.com>
+- Support for SD/MMC Cards on the FireBee
+- Improvements on IDE, CompactFlash, ACSI, and other mass-storage support
 - FAT16 partitions up to 2 GB (inspired from Didier Méquignon's BDOS fork)
 - Full support for Falcon and TT video hardware
 - Real Falcon 030 support (cache, MMU, SCC, HD floppy)
@@ -111,6 +113,7 @@ Eero Tamminen
 - Hatari debug symbols
 - Finnish translation and keyboard mapping
 - Static source analysis and cleanup
+- Line-A implementation
 
 Gerhard Stoll
 - Improved our nvmaccess() function
@@ -173,3 +176,9 @@ Amiman99 on English Amiga Board
 
 Radoslaw Kujawa
 - Compilation fix on 64-bit build systems
+
+Hampa Hug
+- Fixed ACSI bugs
+
+Markus Fröschle
+- Tests on the FireBee and BaS_gcc support

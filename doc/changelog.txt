@@ -5241,3 +5241,6 @@ Start... early ages
 2014-02-10
 - bios/screen.c: Initialise vblsem: fixes intermittent problems booting
   EmuTOS RAM on ST(e). (RFB)
+
+2014-02-12
+- readme.txt doc/*.txt: Updated documentation. (VRI)

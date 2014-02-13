@@ -29,6 +29,7 @@ This tool runs on MS Windows and requires additional hardware.
 http://didierm.pagesperso-orange.fr/firebee.htm
 Get it from the tos060.lzh archive, in the tos060/flash.too folder.
 On your FireBee, start FireTOS, run FLASH060.PRG and flash emutosfb.s19.
+You can also use FLASH_CF.PRG from EmuTOS itself.
 
 In both cases, the correct EmuTOS flash parameters are prefilled,
 you don't need to change anything.
