@@ -1002,7 +1002,7 @@ crlf: tounix$(EXE)
 NODEP += charset
 charset:
 	@echo "# All the files below should use charset=utf-8"
-	find . -type f '!' -path '*/CVS/*' '!' -name '*.def' '!' -name '*.rsc' '!' -name '*.icn' '!' -name '*.po' -print0 | xargs -0 file -i |grep -v us-ascii
+	find . -type f '!' -path '*/CVS/*' '!' -path './obj/*' '!' -path './*.img' '!' -path './?rd*' '!' -path './bug*' '!' -path './mkrom*' '!' -name '*.def' '!' -name '*.rsc' '!' -name '*.icn' '!' -name '*.po' -print0 | xargs -0 file -i |grep -v us-ascii
 
 .PHONY: cvsready
 NODEP += cvsready
