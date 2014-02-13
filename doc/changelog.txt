@@ -5246,3 +5246,4 @@ Start... early ages
 - readme.txt doc/*.txt: Updated documentation. (VRI)
 - *: make expand. (VRI)
 - Makefile: Fixed "make charset" for dirty source tree. (VRI)
+- doc/status.txt: Updated documentation. (RFB)

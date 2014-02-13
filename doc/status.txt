@@ -28,13 +28,17 @@ if possible add a line telling in which version it did run.
   (4) reported by amiman99
 
 Now lets talk about the different subsystems, and if they are implemented.
+NOTE: the information in the following table is somewhat dated.  For example,
+despite the indicator, most GEMDOS/BIOS/XBIOS functions are known to work
+without problems.
+
 
 This is, what the first field of the following table means:
 
-- Not yet implemented
-X Fully implemented
-> Partially implemented
 ? status unknown
+- Not yet implemented
+> Partially implemented
+X Fully implemented and untested
 t Fully implemented and partially tested
 T tested and working on an emulator or real hardware
 
@@ -63,7 +67,9 @@ T tested and working on an emulator or real hardware
  - DSP
  T SCC
  T IDE
- > ACSI
+ X ACSI
+ - SCSI
+ T SD/MMC
  T NatFeats (a framework for native features on emulators)
 
 
@@ -72,12 +78,12 @@ T tested and working on an emulator or real hardware
 
  T configure memory
  X execute reset routine
- X detect monitor type
+ T detect monitor type
  T detect graphics resolution
  t detect processor type, FPU type and hardware features
- X setup a cookie jar with system cookies
+ T setup a cookie jar with system cookies
    ...
- X init floppy drives
+ T init floppy drives
  T boot floppy
  - boot DMA
  - execute reset-resident prgs
@@ -94,10 +100,10 @@ T tested and working on an emulator or real hardware
  > 1 AUX: default serial port
  T 2 CON: console (screen)
  X 3 MIDI
- X 4 IKBD
+ T 4 IKBD
  T 5 raw screen
- > 6 ST-compatible serial port
- > 7 SCC channel B
+ T 6 ST-compatible serial port
+ T 7 SCC channel B
  - 8 TT-MFP serial port
  > 9 SCC channel A
 
@@ -126,8 +132,8 @@ T tested and working on an emulator or real hardware
  T 0x06 tickcal
  T 0x07 getbpb
  T 0x08 bcostat
- > 0x09 mediach         (crude, floppy write-protect mode not monitored)
- X 0x0a drvmap
+ t 0x09 mediach         (floppy write-protect line not monitored in VBL)
+ T 0x0a drvmap
  X 0x0b kbshift
 
 
@@ -183,7 +189,7 @@ TOS v1.02:
 TOS v2.0:
  X 0x2a DMAread
  X 0x2b DMAwrite
- X 0x2c Bconmap
+ t 0x2c Bconmap
 
 TOS v3.00:
  X 0x2e NVMaccess
