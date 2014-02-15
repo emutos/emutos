@@ -303,7 +303,7 @@ static long XHInqTarget2(UWORD major, UWORD minor, ULONG *blocksize,
 
     /*
      * hardware access to device
-     * 
+     *
      * note: we expect the xxx_ioctl() functions to physically access the
      * device, since XHInqTarget2() may be used to determine its presence
      */

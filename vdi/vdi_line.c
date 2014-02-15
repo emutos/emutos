@@ -432,7 +432,7 @@ void linea_rect(void)
      */
     if (line.y1 < 0) line.y1 = 0;
     if (line.y2 > yres) line.x2 = yres;
-    
+
     draw_rect_common(&attr, &line);
 }
 
@@ -1396,7 +1396,7 @@ void abline (const Line * line, WORD wrt_mode, UWORD color)
 void linea_line(void)
 {
     Line line;
-    
+
     line.x1 = X1;
     line.y1 = Y1;
     line.x2 = X2;

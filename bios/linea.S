@@ -278,7 +278,7 @@ linea_blit:
  *
  * Couple of functions have line-A specific C-implementations.
  * They are put_pix, get_pix.
- * 
+ *
  * Several functions need C-wrapper around utility functions shared
  * with VDI.  They are draw_sprite, undraw_sprite, linea_line,
  * linea_hline, linea_rect, linea_polygon, linea_raster.  Their

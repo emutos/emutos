@@ -23,7 +23,7 @@
  */
 #define SECTOR_SIZE     512 /* standard for floppy, hard disk */
 #define MAX_FAT12_CLUSTERS  4078    /* architectural constants */
-#define MAX_FAT16_CLUSTERS  65518 
+#define MAX_FAT16_CLUSTERS  65518
 
 #define RWABS_RETRIES   1   /* on real machine might want to increase this */
 

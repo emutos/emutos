@@ -42,7 +42,7 @@
  *      <= 25MHz    for SD operation        DCTAR0
  *      <= 20MHz    for MMC operation       DCTAR1
  *      <= 400kHz   identification mode     DCTAR2
- *  
+ *
  *  the actual clock speeds available are limited by the Coldfire bus clock
  *  and the baud rate prescaler/scaler combination.  we also need to set
  *  other timings correspondingly.

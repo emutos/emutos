@@ -502,7 +502,7 @@ static int ide_select_device(volatile struct IDE *interface,UWORD dev)
 
 /*
  * set device / command / sector start / count / LBA mode in IDE registers
- */ 
+ */
 static void ide_rw_start(volatile struct IDE *interface,UWORD dev,ULONG sector,UWORD count,UBYTE cmd)
 {
     IDE_WRITE_SECTOR_NUMBER_SECTOR_COUNT((sector & 0xff), (count & 0xff));
