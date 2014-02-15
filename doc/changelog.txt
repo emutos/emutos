@@ -5250,3 +5250,4 @@ Start... early ages
 
 2014-02-15
 - *: Updated copyright year. (VRI)
+- aes/gsx2.h: Fixed potential strict-aliasing issue. (VRI)
