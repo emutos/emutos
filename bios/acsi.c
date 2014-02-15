@@ -43,7 +43,7 @@ static LONG acsi_capacity(WORD dev, ULONG *info);
 static LONG acsi_testunit(WORD dev);
 
 
-/* the following exist to allow the data and control registers to
+/* the following exists to allow the data and control registers to
  * be written together as well as separately.  this avoids the
  * "DMA chip anomaly" (see "Atari ACSI/DMA Integration Guide" p.14).
  */
