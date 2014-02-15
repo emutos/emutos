@@ -2,7 +2,7 @@
  *  mfp.h - header file for MFP defines
  *
  * Copyright (c) 2001 Martin Doering
- * Copyright (c) 2001-2013 The EmuTOS development team
+ * Copyright (c) 2001-2014 The EmuTOS development team
  *
  * Authors:
  *  MAD     Martin Doering

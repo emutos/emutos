@@ -1,7 +1,7 @@
 /*
  * config.h - default settings
  *
- * Copyright (c) 2001-2013 The EmuTOS development team
+ * Copyright (c) 2001-2014 The EmuTOS development team
  *
  * Authors:
  *  MAD     Martin Doering

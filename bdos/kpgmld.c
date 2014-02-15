@@ -2,7 +2,7 @@
  * kpgmld.c - program load
  *
  * Copyright (c) 2001 Lineo, Inc.
- *               2013 The EmuTOS development team
+ *               2013-2014 The EmuTOS development team
  *
  * Authors:
  *  SCC  Steven C. Cavender

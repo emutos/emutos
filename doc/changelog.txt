@@ -5247,3 +5247,6 @@ Start... early ages
 - *: make expand. (VRI)
 - Makefile: Fixed "make charset" for dirty source tree. (VRI)
 - doc/status.txt: Updated documentation. (RFB)
+
+2014-02-15
+- *: Updated copyright year. (VRI)

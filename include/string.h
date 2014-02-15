@@ -1,7 +1,7 @@
 /*
  * string.h - EmuTOS own copy of an ANSI standard header
  *
- * Copyright (c) 2001-2013 The EmuTOS development team
+ * Copyright (c) 2001-2014 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
