@@ -5251,3 +5251,5 @@ Start... early ages
 2014-02-15
 - *: Updated copyright year. (VRI)
 - aes/gsx2.h: Fixed potential strict-aliasing issue. (VRI)
+- Makefile bios/sd.c bios/sd.h bios/spi.c bios/spi.h include/config.h: Do not
+  restrict SD/MMC support to ColdFire targets (even if SPI is). (VRI)

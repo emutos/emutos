@@ -10,10 +10,6 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef __mcoldfire__
-#error This file must only be compiled on ColdFire targets
-#endif
-
 /* #define ENABLE_KDEBUG */
 
 #include "config.h"
@@ -30,6 +26,8 @@
 #include "tosvars.h"
 
 #include "kprint.h"
+
+#if CONF_WITH_SDMMC
 
 /*
  *  SD card commands
@@ -885,3 +883,5 @@ UBYTE c;
 
     return -1;
 }
+
+#endif /* CONF_WITH_SDMMC */

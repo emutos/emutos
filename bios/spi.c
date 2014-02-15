@@ -11,7 +11,7 @@
  */
 
 #ifndef __mcoldfire__
-#error This file must only be compiled on ColdFire targets
+#error This SPI implementation is only suitable for ColdFire targets
 #endif
 
 #include "config.h"

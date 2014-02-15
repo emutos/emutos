@@ -78,9 +78,9 @@
 # ifndef CONF_WITH_68040_PMMU
 #  define CONF_WITH_68040_PMMU 0
 # endif
-#ifndef CONF_WITH_SDMMC
-# define CONF_WITH_SDMMC 1
-#endif
+# ifndef CONF_WITH_SDMMC
+#  define CONF_WITH_SDMMC 1
+# endif
 # ifndef CONF_WITH_PSEUDO_COLD_BOOT
 #  define CONF_WITH_PSEUDO_COLD_BOOT 1
 # endif
@@ -515,7 +515,7 @@
 #endif
 
 /*
- * Set CONF_WITH_SDMMC to 1 to activate Firebee SD/MMC bus support
+ * Set CONF_WITH_SDMMC to 1 to activate SD/MMC bus support
  */
 #ifndef CONF_WITH_SDMMC
 # define CONF_WITH_SDMMC 0

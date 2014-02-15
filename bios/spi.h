@@ -12,8 +12,6 @@
 #ifndef _SPI_H
 #define _SPI_H
 
-#ifdef __mcoldfire__
-
 #include <portab.h>
 
 void spi_clock_ident(void);
@@ -24,7 +22,5 @@ void spi_cs_unassert(void);
 void spi_initialise(void);
 UBYTE spi_recv_byte(void);
 void spi_send_byte(UBYTE input);
-
-#endif /* __mcoldfire__ */
 
 #endif /* _SPI_H */
