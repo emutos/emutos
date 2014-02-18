@@ -231,8 +231,11 @@ static LONG acsi_testunit(WORD dev)
 /* must call this before manipulating any ACSI-related hardware */
 static void acsi_begin(void)
 {
-    while(hz_200 < next_acsi_time)  /* wait until safe */
-        ;
+    while(hz_200 < next_acsi_time) {    /* wait until safe */
+#if USE_STOP_INSN_TO_FREE_HOST_CPU
+        stop_until_interrupt();
+#endif
+    }
 
     flock = -1;     /* don't let floppy interfere */
 }
@@ -362,8 +365,11 @@ static int send_command(UBYTE *inputcdb,WORD cdblen,WORD rw,WORD dev,WORD cnt,UW
      * handle 'repeat' function
      */
     do {
-        while(hz_200 < next_acsi_time)  /* wait until safe */
-            ;
+        while(hz_200 < next_acsi_time) {    /* wait until safe */
+#if USE_STOP_INSN_TO_FREE_HOST_CPU
+            stop_until_interrupt();
+#endif
+        }
 
         ACSIDMA->s.control = control;   /* assert command signal */
         control |= DMA_A0;              /* set up for remaining cmd bytes */

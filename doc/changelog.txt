@@ -5253,3 +5253,6 @@ Start... early ages
 - aes/gsx2.h: Fixed potential strict-aliasing issue. (VRI)
 - Makefile bios/sd.c bios/sd.h bios/spi.c bios/spi.h include/config.h: Do not
   restrict SD/MMC support to ColdFire targets (even if SPI is). (VRI)
+
+2014-02-18
+- bios/acsi.c: Add stop_until_interrupt() while waiting for hz_200. (RFB)
