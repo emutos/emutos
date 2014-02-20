@@ -5256,3 +5256,6 @@ Start... early ages
 
 2014-02-18
 - bios/acsi.c: Add stop_until_interrupt() while waiting for hz_200. (RFB)
+
+2014-02-20
+- doc/announce.txt: Updated. (VRI)

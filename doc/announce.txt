@@ -31,6 +31,7 @@ Major changes:
 - Fixed compatibility with fVDI (including aranym.sys).
 
 Other changes:
+- Fixed intermittent problems booting emutos-ram.
 - Improved determination of disk capacity & blocksize.
 - Improved detection of FAT12 / FAT16 / FAT32 partitions.
 - Improved media change detection.
