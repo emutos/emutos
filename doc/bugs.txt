@@ -26,6 +26,7 @@
 - 6x6 font is missing characters 1->31, 194->223 and 255.
   The character 158 is wrong.  As a result small arrows don't
   show up in "Clac" RSC.
+- Text output by Gfa basic 2.x runner goes to screen top left
 - Text in the log window of ImCon GEM image converter is double
   the correct size on ST low and med resolutions.
 - The right side of outline characters are clipped, e.g. in
@@ -33,6 +34,8 @@
   tester their line height is also too low:
   http://sourceforge.net/mailarchive/message.php?msg_id=29276993
 - Game result text in "Sherlock" is positioned wrong (overlaps).
+- Space Harrier game is missing colors from top of the screen
+  and vertical colored lines from ground
 - Thick arcs going partly outside of screen have incorrectly
   drawn pixels at top of screen in vditext tester.
 - In Mario Becroft's GEM Pacman, "game over" melt effect happens

@@ -5263,6 +5263,7 @@ Start... early ages
 2014-02-21
 - doc/status.txt: Added Line-A. (VRI)
 - doc/status.txt: Updated supported emulators/hardware. (VRI)
+- doc/bugs.txt: Updated. Contributed by Eero Tamminen. (VRI)
 - doc/announce.txt: Updated release date. (VRI)
 
 * Release: 0.9.2
