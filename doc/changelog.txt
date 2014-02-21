@@ -5262,3 +5262,4 @@ Start... early ages
 
 2014-02-21
 - doc/status.txt: Added Line-A. (VRI)
+- doc/status.txt: Updated supported emulators/hardware. (VRI)

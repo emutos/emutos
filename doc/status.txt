@@ -6,21 +6,23 @@ if possible add a line telling in which version it did run.
 
   emulator/machine    |  ok?  | who |   date      |  details
   --------------------+-------+-----+-------------+----------------
-  ARAnyM              |  yes  | LVL |    Feb 2003 |
-  Hatari              |  yes  | THH | 14 Nov 2008 |
+  ARAnyM              |  yes  | VRI | 21 Feb 2014 |
+  Hatari v1.7.0       |  yes  | VRI | 21 Feb 2014 |
+  ST                  |  yes  | RFB | 20 Feb 2014 | only RAMTOS tested
   Mega STe            |  yes  | (1) | 26 Jun 2004 | only RAMTOS tested
   STe                 |  yes  | (2) | 22 Sep 2013 |
   Pacifist v0.48      |  yes  | LVL | winter 2001 |
   STonX 0.6.7.6       |  yes  | THH | 14 Nov 2008 |
   STonC v0.8.1        |  yes  | LVL | 9  Feb 2003 |
-  STeem v2.0.6        |  yes  | LVL | 30 Sep 2002 |
+  STeem v3.2          |  yes  | VRI | 21 Feb 2014 | hard drive issues
   TOSBox 1.10a        |   no  |  ?  |  < Sep 2002 |
   WinSTon V0.1r2      |   no  |  ?  |  < Sep 2002 |
-  FireBee             |  yes  | VRI | 21 Jun 2013 |
-  Falcon 030          |  yes  | RFB | 08 Jun 2013 | only RAMTOS tested
-  WinUAE 2.6.1        |  yes  | VRI | 23 Jun 2013 |
+  FireBee             |  yes  | VRI | 21 Feb 2014 |
+  Falcon 030          |  yes  | RFB | 21 Feb 2014 | only RAMTOS tested
+  WinUAE 2.7.0        |  yes  | VRI | 21 Feb 2014 |
   Amiga Blizzard 1260 |  yes  | (3) |    Aug 2012 | tested with BlizKick
   Amiga 1000          |  yes  | (4) |    Jul 2012 |
+  M5484LITE           |  yes  | VRI | 21 Feb 2014 |
 
   (1) reported to LVL by Frédéric Pécourt
   (2) reported by Jean-François Del Nero
