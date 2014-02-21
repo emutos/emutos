@@ -311,6 +311,26 @@ GEMDOS v0.19 (TOS v2):
  (and Pexec mode 6)
 
 
+ Line-A functions
+ ----------------------------------------------------------------------------
+ T $0 - Initialization
+ > $1 - Put pixel
+ > $2 - Get pixel
+ > $3 - Arbitrary line
+ > $4 - Horizontal line
+ > $5 - Filled rectangle
+ > $6 - Filled polygon
+ > $7 - Bit block transfer
+ > $8 - Text block transfer
+ T $9 - Show mouse
+ T $A - Hide mouse
+ > $B - Transform mouse
+ > $C - Undraw sprite
+ > $D - Draw sprite
+ > $E - Copy raster form
+ - $F - Seedfill
+ 
+ 
  VDI functions
  ----------------------------------------------------------------------------
 

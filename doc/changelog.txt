@@ -5259,3 +5259,6 @@ Start... early ages
 
 2014-02-20
 - doc/announce.txt: Updated. (VRI)
+
+2014-02-21
+- doc/status.txt: Added Line-A. (VRI)
