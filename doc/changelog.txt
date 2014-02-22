@@ -5273,3 +5273,4 @@ Start... early ages
 - Makefile: Compile with -O2 by default, or -Os only when short of space. (VRI)
 - aes/gemdisp.c aes/gemfmalt.c aes/geminit.c aes/gemshlib.c
   aes/gemsuper.c: Replaced DBG_xxx with KDEBUG(). (RFB)
+- bdos/osmem.c: Replaced DBG_xxx with KDEBUG(). (RFB)

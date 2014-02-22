@@ -2,7 +2,7 @@
  * osmem.c - allocate/release os memory
  *
  * Copyright (c) 2001 Lineo, Inc.
- *               2002-2013 The EmuTOS development team
+ *               2002-2014 The EmuTOS development team
  *
  * Authors:
  *  KTB   Karl T. Braun (kral)
@@ -12,18 +12,6 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
-
-#ifndef DBGFREMEM
-#define DBGFREMEM       0
-#endif
-
-#ifndef DBGOSMEM
-#define DBGOSMEM        0
-#endif
-
-
-
 /*
  *  mods
  *
@@ -32,6 +20,8 @@
  *  M01.01a.0708 08 Jul 86 ktb  xmgetblk wasn't checking root index
  *
  */
+
+/* #define ENABLE_KDEBUG */
 
 #include "config.h"
 #include "portab.h"
@@ -180,10 +170,10 @@ void    xmfreblk(void *m)
     if( i < 0 || i >= MAXQUICK )
     {
         /*  bad index  */
-#if     DBGOSMEM
-        kprintf("xmfreblk: bad index (0x%x)\n") ;
-        kprintf("stack at %08lx\n",&m) ;
-        while(1) ;
+        KDEBUG(("xmfreblk: bad index (0x%x), stack at 0x%p\n",i,&m));
+#ifdef ENABLE_KDEBUG
+        while(1)
+            ;
 #endif
         dbgfreblk++ ;
     }
@@ -192,14 +182,8 @@ void    xmfreblk(void *m)
         /*  ok to free up  */
         *((int **) m) = root[i];
         root[i] = m;
-#if     DBGFREMEM
         if(  *((int **)m) == m )
-        {
-            kprintf("xmfreblk: Circular link in root[%x]\n",i) ;
-            kprintf("\tat %lx\n",m) ;
-        }
-#endif
-
+            KDEBUG(("xmfreblk: Circular link in root[0x%x] at 0x%p\n",i,m));
     }
 }
 
