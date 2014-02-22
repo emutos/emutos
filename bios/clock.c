@@ -1,7 +1,7 @@
 /*
  * clock.c - BIOS time and date routines
  *
- * Copyright (c) 2001-2013 The EmuTOS development team
+ * Copyright (c) 2001-2014 The EmuTOS development team
  *
  * Authors:
  *  MAD   Martin Doering
@@ -12,6 +12,8 @@
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  */
+
+/* #define ENABLE_KDEBUG */
 
 #include "config.h"
 #include "portab.h"
@@ -27,8 +29,6 @@
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif
-
-#define DBG_CLOCK 0
 
 /* Date/Time to use when the hardware clock is not set.
  * We use the OS creation date at 00:00:00
@@ -183,12 +183,8 @@ static void mdosettime(UWORD time)
   clkregs1.hour_l = ((time >> 11) & 0x1F) % 10;
   clkregs1.hour_h = ((time >> 11) & 0x1F) / 10;
 
-#if DBG_CLOCK
-  kprintf("mdosettime() %x%x:%x%x:%x%x\n",
-    clkregs1.hour_h, clkregs1.hour_l,
-    clkregs1.min_h, clkregs1.min_l,
-    clkregs1.sec_h, clkregs1.sec_l);
-#endif
+  KDEBUG(("mdosettime() %x%x:%x%x:%x%x\n", clkregs1.hour_h, clkregs1.hour_l,
+    clkregs1.min_h, clkregs1.min_l, clkregs1.sec_h, clkregs1.sec_l));
 }
 
 
@@ -196,12 +192,8 @@ static UWORD mdogettime(void)
 {
   UWORD time;
 
-#if DBG_CLOCK
-  kprintf("mdogettime() %x%x:%x%x:%x%x\n",
-    clkregs1.hour_h, clkregs1.hour_l,
-    clkregs1.min_h, clkregs1.min_l,
-    clkregs1.sec_h, clkregs1.sec_l);
-#endif
+  KDEBUG(("mdogettime() %x%x:%x%x:%x%x\n", clkregs1.hour_h, clkregs1.hour_l,
+    clkregs1.min_h, clkregs1.min_l, clkregs1.sec_h, clkregs1.sec_l));
 
   time = (((clkregs1.sec_l & 0xf) + 10 * (clkregs1.sec_h & 0xF)) >> 1)
     |  (((clkregs1.min_l & 0xf) + 10 * (clkregs1.min_h & 0xf)) << 5)
@@ -220,24 +212,16 @@ static void mdosetdate(UWORD date)
   clkregs1.year_l = (date >> 9) % 10;
   clkregs1.year_h = (date >> 9) / 10;
 
-#if DBG_CLOCK
-  kprintf("mdosetdate() %x%x/%x%x/%x%x\n",
-    clkregs1.year_h, clkregs1.year_l,
-    clkregs1.mon_h, clkregs1.mon_l,
-    clkregs1.day_h, clkregs1.day_l);
-#endif
+  KDEBUG(("mdosetdate() %x%x/%x%x/%x%x\n", clkregs1.year_h, clkregs1.year_l,
+    clkregs1.mon_h, clkregs1.mon_l, clkregs1.day_h, clkregs1.day_l));
 }
 
 static UWORD mdogetdate(void)
 {
   UWORD date;
 
-#if DBG_CLOCK
-  kprintf("mdogetdate() %x%x/%x%x/%x%x\n",
-    clkregs1.year_h, clkregs1.year_l,
-    clkregs1.mon_h, clkregs1.mon_l,
-    clkregs1.day_h, clkregs1.day_l);
-#endif
+  KDEBUG(("mdogetdate() %x%x/%x%x/%x%x\n", clkregs1.year_h, clkregs1.year_l,
+    clkregs1.mon_h, clkregs1.mon_l, clkregs1.day_h, clkregs1.day_l));
 
   /* The MegaRTC stores the year as the offset from 1980.
      Fortunately, this is exactly the same as in the BIOS format. */
@@ -306,9 +290,7 @@ static void ndosettime(UWORD time)
   int minutes = (time >> 5) & 0x3F;
   int hours = (time >> 11) & 0x1F;
 
-#if DBG_CLOCK
-  kprintf("ndosettime() %02d:%02d:%02d\n", hours, minutes, seconds);
-#endif
+  KDEBUG(("ndosettime() %02d:%02d:%02d\n", hours, minutes, seconds));
 
   set_nvram_rtc(NVRAM_RTC_SECONDS, seconds);
   set_nvram_rtc(NVRAM_RTC_MINUTES, minutes);
@@ -322,9 +304,7 @@ static UWORD ndogettime(void)
   UWORD hours = get_nvram_rtc(NVRAM_RTC_HOURS);
   UWORD time;
 
-#if DBG_CLOCK
-  kprintf("ndogettime() %02d:%02d:%02d\n", hours, minutes, seconds);
-#endif
+  KDEBUG(("ndogettime() %02d:%02d:%02d\n", hours, minutes, seconds));
 
   time = (seconds >> 1)
        | (minutes << 5)
@@ -339,9 +319,7 @@ static void ndosetdate(UWORD date)
   int months = (date >> 5) & 0xF;
   int years = (date >> 9) - nvram_rtc_year_offset;
 
-#if DBG_CLOCK
-  kprintf("ndosetdate() %02d/%02d/%02d\n", years, months, days);
-#endif
+  KDEBUG(("ndosetdate() %02d/%02d/%02d\n", years, months, days));
 
   set_nvram_rtc(NVRAM_RTC_DAYS, days);
   set_nvram_rtc(NVRAM_RTC_MONTHS, months);
@@ -355,9 +333,7 @@ static UWORD ndogetdate(void)
   UWORD years = get_nvram_rtc(NVRAM_RTC_YEARS);
   UWORD date;
 
-#if DBG_CLOCK
-  kprintf("ndogetdate() %02d/%02d/%02d\n", years, months, days);
-#endif
+  KDEBUG(("ndogetdate() %02d/%02d/%02d\n", years, months, days));
 
   date = (days & 0x1F)
        | ((months & 0xF) << 5)
@@ -457,9 +433,8 @@ static UWORD idogetdate(void)
   UWORD year;
   UWORD date;
 
-#if DBG_CLOCK
-  kprintf("idogetdate() %02x/%02x/%02x\n", iclkbuf.year, iclkbuf.month, iclkbuf.day);
-#endif
+  KDEBUG(("idogetdate() %02x/%02x/%02x\n", iclkbuf.year, iclkbuf.month, iclkbuf.day));
+
   /* guess the real year from IKBD data */
   year = bcd2int(iclkbuf.year);
   if (year < 80)
@@ -477,9 +452,8 @@ static UWORD idogettime(void)
 {
   UWORD time;
 
-#if DBG_CLOCK
-  kprintf("idogettime() %02x:%02x:%02x\n", iclkbuf.hour, iclkbuf.min, iclkbuf.sec);
-#endif
+  KDEBUG(("idogettime() %02x:%02x:%02x\n", iclkbuf.hour, iclkbuf.min, iclkbuf.sec));
+
   time = ( bcd2int(iclkbuf.sec) >> 1 )
     | ( bcd2int(iclkbuf.min) << 5 ) | ( bcd2int(iclkbuf.hour) << 11 ) ;
 
@@ -491,9 +465,8 @@ static void idosettime(UWORD time)
   iclkbuf.sec = int2bcd( (time << 1) & 0x3f );
   iclkbuf.min = int2bcd( (time >> 5) & 0x3f );
   iclkbuf.hour = int2bcd( (time >> 11) & 0x1f );
-#if DBG_CLOCK
-  kprintf("idosettime() %02x:%02x:%02x\n", iclkbuf.hour, iclkbuf.min, iclkbuf.sec);
-#endif
+
+  KDEBUG(("idosettime() %02x:%02x:%02x\n", iclkbuf.hour, iclkbuf.min, iclkbuf.sec));
 }
 
 static void idosetdate(UWORD date)
@@ -503,9 +476,8 @@ static void idosetdate(UWORD date)
   iclkbuf.year = int2bcd( year % 100 );
   iclkbuf.month = int2bcd( (date >> 5) & 0xf );
   iclkbuf.day = int2bcd( date & 0x1f );
-#if DBG_CLOCK
-  kprintf("idosetdate() %02x/%02x/%02x\n", iclkbuf.year, iclkbuf.month, iclkbuf.day);
-#endif
+
+  KDEBUG(("idosetdate() %02x/%02x/%02x\n", iclkbuf.year, iclkbuf.month, iclkbuf.day));
 }
 
 

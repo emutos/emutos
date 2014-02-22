@@ -1,7 +1,7 @@
 /*
  * ikbd.c - Intelligent keyboard routines
  *
- * Copyright (c) 2001-2013 The EmuTOS development team
+ * Copyright (c) 2001-2014 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -24,6 +24,8 @@
  * - CLRHOME and INSERT in kbshift.
  */
 
+/* #define ENABLE_KDEBUG */
+
 #include "config.h"
 #include "country.h"
 #include "portab.h"
@@ -38,8 +40,6 @@
 #include "sound.h"              /* for keyclick */
 #include "delay.h"
 #include "bios.h"
-
-#define DBG_KBD 0
 
 
 
@@ -288,13 +288,8 @@ void kbd_int(UBYTE scancode)
     UBYTE ascii = 0;
     UBYTE scancode_only = scancode & ~KEY_RELEASED;  /* get rid of release bits */
 
-
-#if DBG_KBD
-    kprintf("================\n ");
-    kprintf("Key-scancode: 0x%02x\n", scancode);
-
-    kprintf("Key-shift bits: 0x%02x\n", shifty);
-#endif
+    KDEBUG(("================\n"));
+    KDEBUG(("Key-scancode: 0x%02x, key-shift bits: 0x%02x\n", scancode, shifty));
 
     /* keyboard warm/cold reset */
     if ((scancode == 0x53)  /* Del key and shifty is Alt+Ctrl but not LShift */
@@ -442,9 +437,8 @@ void kbd_int(UBYTE scancode)
     if (conterm & 0x8) {
         value += ((LONG) shifty) << 24;
     }
-#if DBG_KBD
-    kprintf("KBD iorec: Pushing value 0x%08lx\n", value);
-#endif
+    KDEBUG(("KBD iorec: Pushing value 0x%08lx\n", value));
+
     push_ikbdiorec(value);
 
     /* set initial delay for key repeat */
@@ -493,9 +487,7 @@ void ikbdws(WORD cnt, PTR ptr)
 /* send a byte to the IKBD - for general use */
 void ikbd_writeb(UBYTE b)
 {
-#if DBG_KBD
-    kprintf("ikbd_writeb(0x%02x)\n", (UBYTE)b);
-#endif
+    KDEBUG(("ikbd_writeb(0x%02x)\n", (UBYTE)b));
 
     while (!bcostat4());
 #if CONF_WITH_IKBD_ACIA
@@ -566,9 +558,7 @@ void kbd_init(void)
      * has very accurate IKBD emulation.
      */
     ikbd_version = ikbd_readb(); /* Usually 0xf1, or 0xf0 for antique STs */
-#if DBG_KBD
-    kprintf("ikbd_version = 0x%02x\n", ikbd_version);
-#endif
+    KDEBUG(("ikbd_version = 0x%02x\n", ikbd_version));
     UNUSED(ikbd_version);
 
     ikbd_writeb(0x1A);            /* disable joystick */

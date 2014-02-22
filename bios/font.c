@@ -1,7 +1,7 @@
 /*
- * font.c - bios part of font oading and initialization
+ * font.c - bios part of font loading and initialization
  *
- * Copyright (c) 2004 by Authors:
+ * Copyright (c) 2004-2014 by Authors:
  *
  * Authors:
  *  MAD  Martin Doering
@@ -10,9 +10,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
-
-#define DBG_FONT 0
+/* #define ENABLE_KDEBUG */
 
 #include "config.h"
 #include "font.h"

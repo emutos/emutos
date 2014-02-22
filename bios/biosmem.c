@@ -1,7 +1,7 @@
 /*
  *  biosmem.h - dumb bios-level memory management
  *
- * Copyright (c) 2002 The EmuTOS development team
+ * Copyright (c) 2002-2014 The EmuTOS development team
  *
  * Authors:
  *  LVL    Laurent Vogel
@@ -10,13 +10,13 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+/* #define ENABLE_KDEBUG */
+
 #include "config.h"
 #include "portab.h"
 #include "biosmem.h"
 #include "kprint.h"
 #include "tosvars.h"
-
-#define DBG_MEM 0
 
 
 extern MD themd;            /* BIOS memory descriptor (from tosvars.S) */
@@ -57,11 +57,9 @@ static int bmem_allowed;
  */
 void bmem_init(void)
 {
-#if DBG_MEM
-    kprintf("_etext = 0x%08lx\n", (LONG)_etext);
-    kprintf("_edata = 0x%08lx\n", (LONG)_edata);
-    kprintf("end    = 0x%08lx\n", (LONG)end);
-#endif
+    KDEBUG(("_etext = 0x%08lx\n", (LONG)_etext));
+    KDEBUG(("_edata = 0x%08lx\n", (LONG)_edata));
+    KDEBUG(("end    = 0x%08lx\n", (LONG)end));
 
     /* initialise some memory variables */
     membot = end_os = os_end;
@@ -109,10 +107,9 @@ void * balloc(LONG size)
     themd.m_length -= size;
     themd.m_start += size;
 
-#if DBG_MEM
-    kprintf("BIOS: getmpb m_start  = %08lx\n", (LONG) themd.m_start);
-    kprintf("BIOS: getmpb m_length = %08lx\n", (LONG) themd.m_length);
-#endif
+    KDEBUG(("BIOS: getmpb m_start = 0x%08lx, m_length = 0x%08lx\n",
+             (LONG) themd.m_start, themd.m_length));
+
     return ret;
 }
 

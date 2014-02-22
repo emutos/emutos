@@ -1,7 +1,7 @@
 /*
  * videl.c - Falcon VIDEL support
  *
- * Copyright (c) 2013 The EmuTOS development team
+ * Copyright (c) 2013-2014 The EmuTOS development team
  *
  * Authors:
  *  PES   Petr Stehlik
@@ -11,7 +11,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#define DBG_VIDEL 0
+/* #define ENABLE_KDEBUG */
 
 #include "config.h"
 #include "machine.h"
@@ -517,9 +517,7 @@ WORD vsetmode(WORD mode)
     if (mode == -1)
         return current_video_mode;
 
-#if DBG_VIDEL
-    kprintf("vsetmode(0x%04x)\n", mode);
-#endif
+    KDEBUG(("vsetmode(0x%04x)\n", mode));
 
     if (set_videl_vga(mode) < 0)    /* invalid mode */
         return current_video_mode;

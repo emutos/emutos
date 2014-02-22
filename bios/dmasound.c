@@ -11,7 +11,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#define DBG_DMASOUND 0
+/* #define ENABLE_KDEBUG */
 
 #include "config.h"
 #include "portab.h"
@@ -120,6 +120,7 @@ void detect_dmasound(void)
 {
     /* First, detect basic STe/TT DMA sound */
     has_dmasound = check_read_byte((long)&DMASOUND->control);
+    KDEBUG(("has_dmasound = %d\n", has_dmasound));
 
     /* Then detect advanced Falcon DMA sound */
     if (has_dmasound)
@@ -128,16 +129,12 @@ void detect_dmasound(void)
          * but they don't cause a bus error. */
         has_falcon_dmasound = check_read_byte((long)&DMASOUND->gpx_data_port);
     }
+    KDEBUG(("has_falcon_dmasound = %d\n", has_falcon_dmasound));
 
     /* The Falcon has no microwire interface.
      * This is not detectable through a bus error. */
     has_microwire = has_dmasound && !has_falcon_dmasound;
-
-#if DBG_DMASOUND
-    kprintf("has_dmasound = %d\n", has_dmasound);
-    kprintf("has_microwire = %d\n", has_microwire);
-    kprintf("has_falcon_dmasound = %d\n", has_falcon_dmasound);
-#endif
+    KDEBUG(("has_microwire = %d\n", has_microwire));
 }
 
 static void write_microwire(UWORD data)

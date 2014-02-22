@@ -15,7 +15,7 @@
  * Some code I got from Linux m68k, thanks to the authors! (MAD)
  */
 
-
+/* #define ENABLE_KDEBUG */
 
 #include "config.h"
 #include "portab.h"
@@ -26,9 +26,6 @@
 #include "ikbd.h"
 #include "mouse.h"
 #include "vectors.h"
-
-
-#define DBG_MOUSE 0
 
 
 

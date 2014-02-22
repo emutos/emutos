@@ -1,7 +1,7 @@
 /*
  * machine.c - detection of machine type
  *
- * Copyright (c) 2001-2013 The EmuTOS development team
+ * Copyright (c) 2001-2014 The EmuTOS development team
  *
  * Authors:
  *  LVL     Laurent Vogel
@@ -10,7 +10,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#define DBG_MACHINE 0
+/* #define ENABLE_KDEBUG */
 
 #include "config.h"
 #include "portab.h"
@@ -98,9 +98,7 @@ static void detect_video(void)
     }
   }
 
-#if DBG_MACHINE
-  kprintf("has_ste_shifter = %d\n", has_ste_shifter);
-#endif
+  KDEBUG(("has_ste_shifter = %d\n", has_ste_shifter));
 #endif
 
 #if CONF_WITH_TT_SHIFTER
@@ -109,9 +107,7 @@ static void detect_video(void)
   if (check_read_byte(TT_PALETTE_REGS))
     has_tt_shifter = 1;
 
-#if DBG_MACHINE
-  kprintf("has_tt_shifter = %d\n", has_tt_shifter);
-#endif
+  KDEBUG(("has_tt_shifter = %d\n", has_tt_shifter));
 #endif
 
 #if CONF_WITH_VIDEL
@@ -120,9 +116,7 @@ static void detect_video(void)
   if (check_read_byte(FALCON_HHT))
     has_videl = 1;
 
-#if DBG_MACHINE
-  kprintf("has_videl = %d\n", has_videl);
-#endif
+  KDEBUG(("has_videl = %d\n", has_videl));
 #endif
 }
 
@@ -135,18 +129,16 @@ static void detect_serial_ports(void)
   has_tt_mfp = 0;
   if (check_read_byte(TT_MFP_BASE+1))
     has_tt_mfp = 1;
-#if DBG_MACHINE
-  kprintf("has_tt_mfp = %d\n", has_tt_mfp);
-#endif
+
+  KDEBUG(("has_tt_mfp = %d\n", has_tt_mfp));
 #endif
 
 #if CONF_WITH_SCC
   has_scc = 0;
   if (check_read_byte(SCC_BASE))
     has_scc = 1;
-#if DBG_MACHINE
-  kprintf("has_scc = %d\n", has_scc);
-#endif
+
+  KDEBUG(("has_scc = %d\n", has_scc));
 #endif
 }
 
@@ -169,9 +161,7 @@ static void detect_vme(void)
     has_vme = 0;
   }
 
-#if DBG_MACHINE
-  kprintf("has_vme = %d\n", has_vme);
-#endif
+  KDEBUG(("has_vme = %d\n", has_vme));
 }
 
 #endif /* CONF_WITH_VME */
@@ -190,9 +180,7 @@ static void detect_blitter(void)
   if (check_read_byte(BLITTER_CONFIG1))
     has_blitter = 1;
 
-#if DBG_MACHINE
-  kprintf("has_blitter = %d\n",has_blitter);
-#endif
+  KDEBUG(("has_blitter = %d\n", has_blitter));
 }
 
 #endif /* CONF_WITH_BLITTER */
@@ -215,9 +203,7 @@ static void setvalue_swi(void)
     cookie_swi = (*(volatile UWORD *)DIP_SWITCHES)>>8;
   }
 
-#if DBG_MACHINE
-  kprintf("cookie_swi = 0x%08lx\n", cookie_swi);
-#endif
+  KDEBUG(("cookie_swi = 0x%08lx\n", cookie_swi));
 }
 
 #endif /* CONF_WITH_DIP_SWITCHES */
@@ -248,9 +234,7 @@ static void setvalue_vdo(void)
     cookie_vdo = 0x00000000L;
   }
 
-#if DBG_MACHINE
-  kprintf("cookie_vdo = 0x%08lx\n", cookie_vdo);
-#endif
+  KDEBUG(("cookie_vdo = 0x%08lx\n", cookie_vdo));
 }
 
 #if CONF_ATARI_HARDWARE
@@ -299,9 +283,7 @@ static void setvalue_mch(void)
   cookie_mch = MCH_NOHARD;
 #endif /* CONF_ATARI_HARDWARE */
 
-#if DBG_MACHINE
-  kprintf("cookie_mch = 0x%08lx\n", cookie_mch);
-#endif
+  KDEBUG(("cookie_mch = 0x%08lx\n", cookie_mch));
 }
 
 /* SND */
@@ -324,9 +306,7 @@ static void setvalue_snd(void)
   }
 #endif
 
-#if DBG_MACHINE
-  kprintf("cookie_snd = 0x%08lx\n", cookie_snd);
-#endif
+  KDEBUG(("cookie_snd = 0x%08lx\n", cookie_snd));
 }
 
 #if CONF_WITH_FRB
@@ -348,9 +328,7 @@ static void setvalue_frb(void)
     cookie_frb = (long)balloc(64 * 1024UL);
   }
 
-#if DBG_MACHINE
-  kprintf("cookie_frb = 0x%08lx\n", cookie_frb);
-#endif
+  KDEBUG(("cookie_frb = 0x%08lx\n", cookie_frb));
 }
 
 #endif /* CONF_WITH_FRB */
@@ -370,9 +348,7 @@ static void setvalue_fdc(void)
     cookie_fdc = FDC_0ATC;
   }
 
-#if DBG_MACHINE
-  kprintf("cookie_fdc = 0x%08lx\n", cookie_fdc);
-#endif
+  KDEBUG(("cookie_fdc = 0x%08lx\n", cookie_fdc));
 }
 
 #endif /* CONF_WITH_FDC */
@@ -389,9 +365,7 @@ void machine_detect(void)
 #endif
 #if CONF_WITH_MEGARTC
   detect_megartc();
-#if DBG_MACHINE
-  kprintf("has_megartc = %d\n", has_megartc);
-#endif /* DBG_MACHINE */
+  KDEBUG(("has_megartc = %d\n", has_megartc));
 #endif /* CONF_WITH_MEGARTC */
 #if CONF_WITH_NVRAM
   detect_nvram();
@@ -551,15 +525,11 @@ void fill_cookie_jar(void)
    */
 
   detect_akp();
-#if DBG_MACHINE
-  kprintf("cookie_akp = 0x%08lx\n", cookie_akp);
-#endif
+  KDEBUG(("cookie_akp = 0x%08lx\n", cookie_akp));
   cookie_add(COOKIE_AKP, cookie_akp);
 
   detect_idt();
-#if DBG_MACHINE
-  kprintf("cookie_idt = 0x%08lx\n", cookie_idt);
-#endif
+  KDEBUG(("cookie_idt = 0x%08lx\n", cookie_idt));
   cookie_add(COOKIE_IDT, cookie_idt);
 
 #if CONF_WITH_FDC

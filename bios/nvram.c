@@ -1,7 +1,7 @@
 /*
  * nvram.c - Non-Volatile RAM access
  *
- * Copyright (c) 2001-2013 The EmuTOS development team
+ * Copyright (c) 2001-2014 The EmuTOS development team
  *
  * Authors:
  *  LVL     Laurent Vogel
@@ -10,7 +10,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#define DBG_NVRAM 0
+/* #define ENABLE_KDEBUG */
 
 #include "config.h"
 #include "portab.h"
@@ -154,9 +154,7 @@ WORD nvmaccess(WORD type, WORD start, WORD count, PTR buffer)
         UWORD expected = compute_sum();
         UWORD actual = get_sum();
         if(expected != actual) {
-#if DBG_NVRAM
-            kprintf("wrong nvram: expected=0x%04x actual=0x%04x\n", expected, actual);
-#endif
+            KDEBUG(("wrong nvram: expected=0x%04x actual=0x%04x\n", expected, actual));
             /* wrong checksum, return error code */
             return -12;
         }
