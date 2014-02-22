@@ -13,6 +13,8 @@
 *       -------------------------------------------------------------
 */
 
+/* #define ENABLE_KDEBUG */
+
 #include "config.h"
 #include "portab.h"
 #include "kprint.h"
@@ -49,9 +51,7 @@
 #include "string.h"
 
 #if CONF_SERIAL_CONSOLE
-#define DBG_GEMSUPER 1
-#else
-#define DBG_GEMSUPER 0
+#define ENABLE_KDEBUG
 #endif
 
 
@@ -62,7 +62,7 @@ static LONG     ad_rso;
 
 
 
-#if DBG_GEMSUPER
+#ifdef ENABLE_KDEBUG
 static void aestrace(const char* message)
 {
         char appname[9];
@@ -75,6 +75,8 @@ static void aestrace(const char* message)
 
         kprintf("AES: %s: %s\n", appname, message);
 }
+#else
+#define aestrace(a)
 #endif
 
 static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_in[], WORD int_out[], LONG addr_in[])
@@ -91,9 +93,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         {
                                 /* Application Manager                  */
           case APPL_INIT:
-#if DBG_GEMSUPER
                 aestrace("appl_init()");
-#endif
                 pglobal->ap_version = AES_VERSION;  /* version number     */
                 pglobal->ap_count = 1;              /* # concurrent procs */
                 pglobal->ap_id = rlr->p_pid;
@@ -126,9 +126,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
                 break;
 #endif
           case APPL_EXIT:
-#if DBG_GEMSUPER
                 aestrace("appl_exit()");
-#endif
                 ap_exit();
                 break;
                                 /* Event Manager                        */
@@ -142,18 +140,14 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
                 ret = ev_mouse((MOBLK *)&MO_FLAGS, &EV_MX);
                 break;
           case EVNT_MESAG:
-#if DBG_GEMSUPER
                 aestrace("evnt_mesag()");
-#endif
                 ap_rdwr(MU_MESAG, rlr, 16, ME_PBUFF);
                 break;
           case EVNT_TIMER:
                 ev_timer( ((LONG)T_HICOUNT<<16) | (UWORD)T_LOCOUNT );
                 break;
           case EVNT_MULTI:
-#if DBG_GEMSUPER
                 aestrace("evnt_multi()");
-#endif
                 if (MU_FLAGS & MU_TIMER)
                   maddr = ((LONG)MT_HICOUNT<<16) | (UWORD)MT_LOCOUNT;
                 buparm = combine_cms(MB_CLICKS,MB_MASK,MB_STATE);
@@ -447,9 +441,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         }
 
         if (unsupported) {
-#if DBG_GEMSUPER
-            kprintf("Bad AES function %d\n", opcode);
-#endif
+            KDEBUG(("Bad AES function %d\n", opcode));
             if (opcode != 0)    /* Ignore the 0 since some PRGs are this call */
                 fm_show(ALNOFUNC, &opcode, 1);
             ret = -1;

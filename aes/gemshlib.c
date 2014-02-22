@@ -17,6 +17,8 @@
 *       -------------------------------------------------------------
 */
 
+/* #define ENABLE_KDEBUG */
+
 #include "config.h"
 #include "portab.h"
 #include "compat.h"
@@ -48,13 +50,6 @@
 
 #include "gemshlib.h"
 
-#define DBGSHLIB 0
-
-#if DBGSHLIB
-#define Dprintf(a) kprintf a
-#else
-#define Dprintf(a)
-#endif
 
 GLOBAL SHELL    sh[NUM_PDS];
 
@@ -547,7 +542,7 @@ WORD sh_find(BYTE *pspec)
         WORD            path;
         BYTE            *pname;
 
-        Dprintf(("sh_find(): input pspec='%s'\n",pspec));
+        KDEBUG(("sh_find(): input pspec='%s'\n",pspec));
         pname = sh_name(pspec);                 /* get ptr to name      */
 
         dos_sdta(D.g_dta);
@@ -561,7 +556,7 @@ WORD sh_find(BYTE *pspec)
           if (!DOS_ERR)
           {
             strcpy(pspec, D.g_dir);
-            Dprintf(("sh_find(1): returning pspec='%s'\n",pspec));
+            KDEBUG(("sh_find(1): returning pspec='%s'\n",pspec));
             return 1;
           }
         }
@@ -571,7 +566,7 @@ WORD sh_find(BYTE *pspec)
         {
           strcpy(D.g_dir, pspec);
           dos_sfirst(D.g_dir, F_RDONLY | F_SYSTEM);
-          Dprintf(("sh_find(2): rc=%d, returning pspec='%s'\n",!DOS_ERR,pspec));
+          KDEBUG(("sh_find(2): rc=%d, returning pspec='%s'\n",!DOS_ERR,pspec));
           return !DOS_ERR;
         }
 
@@ -583,7 +578,7 @@ WORD sh_find(BYTE *pspec)
         dos_sfirst(D.g_dir, F_RDONLY | F_SYSTEM);
         if (!DOS_ERR)
         {
-          Dprintf(("sh_find(3): returning pspec='%s'\n",pspec));
+          KDEBUG(("sh_find(3): returning pspec='%s'\n",pspec));
           return 1;
         }
 
@@ -594,7 +589,7 @@ WORD sh_find(BYTE *pspec)
         if (!DOS_ERR)
         {
           strcpy(pspec, D.g_dir);
-          Dprintf(("sh_find(4): returning pspec='%s'\n",pspec));
+          KDEBUG(("sh_find(4): returning pspec='%s'\n",pspec));
           return 1;
         }
 
@@ -609,12 +604,12 @@ WORD sh_find(BYTE *pspec)
           if (!DOS_ERR)
           {
             strcpy(pspec, D.g_dir);
-            Dprintf(("sh_find(5): returning pspec='%s'\n",pspec));
+            KDEBUG(("sh_find(5): returning pspec='%s'\n",pspec));
             return 1;
           }
         }
 
-        Dprintf(("sh_find(): '%s' not found\n",pspec));
+        KDEBUG(("sh_find(): '%s' not found\n",pspec));
         return 0;
 }
 
@@ -763,7 +758,7 @@ static void sh_ldapp(void)
           {
             retry = FALSE;
 
-            Dprintf(("sh_ldapp: Starting %s\n", D.s_cmd));
+            KDEBUG(("sh_ldapp: Starting %s\n",D.s_cmd));
             if(psh->sh_isdef && strcmp(D.s_cmd, DEF_DESKTOP) == 0)
             {
               /* Start the ROM desktop: */
@@ -794,7 +789,7 @@ static void sh_ldapp(void)
                    return now to the default desktop: (experimental) */
                 if(psh->sh_isdef && psh->sh_dodef)
                 {
-                  Dprintf(("sh_ldapp: Returning to ROM desktop!\n"));
+                  KDEBUG(("sh_ldapp: Returning to ROM desktop!\n"));
                   strcpy(&psh->sh_desk[0], DEF_DESKTOP);
                   strcpy(&psh->sh_cdir[0], &D.s_cdir[0]);
                 }

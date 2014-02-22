@@ -3,7 +3,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2013 The EmuTOS development team
+*                 2002-2014 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -15,6 +15,8 @@
 *       Copyright (C) 1987                      Digital Research Inc.
 *       -------------------------------------------------------------
 */
+
+/* #define ENABLE_KDEBUG */
 
 #include "config.h"
 #include "portab.h"
@@ -39,8 +41,6 @@
 #include "rectfunc.h"
 #include "gemfmalt.h"
 #include "kprint.h"
-
-#define DBG_ALERT   0
 
 /* TOS standard form_alert() maximum values */
 #define TOS_MAX_LINELEN 32
@@ -94,9 +94,7 @@ static char *fm_strbrk(OBJECT *start,WORD maxnum,WORD maxlen,char *alert,
             *plen = len;
 
         if (!endsubstring(*alert)) {/* substring was too long */
-#if DBG_ALERT
-            kprintf("form_alert(): substring > %d bytes long\n",maxlen);
-#endif
+            KDEBUG(("form_alert(): substring > %d bytes long\n",maxlen));
             while(1) {              /* eat rest of substring */
                 if (endsubstring(*alert))
                     break;
@@ -106,10 +104,8 @@ static char *fm_strbrk(OBJECT *start,WORD maxnum,WORD maxlen,char *alert,
         if (endstring(*alert))      /* end of all substrings */
             break;
     }
-#if DBG_ALERT
     if (i >= maxnum)                /* too many substrings */
-        kprintf("form_alert(): more than %d substrings\n",maxnum);
-#endif
+        KDEBUG(("form_alert(): more than %d substrings\n",maxnum));
 
     while(1) {                      /* eat any remaining characters */
         if (endstring(*alert))
@@ -156,18 +152,12 @@ static void fm_parse(LONG tree, LONG palstr, WORD *picnum, WORD *pnummsg,
     *picnum = alert[1] - '0';
 
     alert = fm_strbrk(obj+MSGOFF,MAX_LINENUM,MAX_LINELEN,alert+3,pnummsg,plenmsg);
-
-#if DBG_ALERT
     if (*plenmsg > TOS_MAX_LINELEN)
-        kprintf("form_alert(): warning: alert line(s) exceed TOS standard length\n");
-#endif
+        KDEBUG(("form_alert(): warning: alert line(s) exceed TOS standard length\n"));
 
     fm_strbrk(obj+BUTOFF,MAX_BUTNUM,MAX_BUTLEN,alert,pnumbut,plenbut);
-
-#if DBG_ALERT
     if (*plenbut > TOS_MAX_BUTLEN)
-        kprintf("form_alert(): warning: alert button(s) exceed TOS standard length\n");
-#endif
+        KDEBUG(("form_alert(): warning: alert button(s) exceed TOS standard length\n"));
 
     *plenbut += 1;  /* allow 1/2 character space inside each end of button */
 }

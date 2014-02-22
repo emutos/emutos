@@ -19,6 +19,8 @@
 *       -------------------------------------------------------------
 */
 
+/* #define ENABLE_KDEBUG */
+
 #include "config.h"
 #include "portab.h"
 #include "compat.h"
@@ -62,7 +64,6 @@
 #include "ikbd.h"
 #include "kprint.h"
 
-#define DBG_GEMINIT 0
 
 #define ROPEN 0
 
@@ -225,9 +226,8 @@ static AESPD *iprocess(BYTE *pname, PFVOID routine)
 {
         register ULONG  ldaddr;
 
-#if DBG_GEMINIT
-        kprintf("iprocess(\"%s\")\n", (const char*)pname);
-#endif
+        KDEBUG(("iprocess(\"%s\")\n", (const char*)pname));
+
         /* figure out load addr */
 
         ldaddr = (ULONG) routine;
@@ -262,9 +262,8 @@ static void sndcli(BYTE *pfilespec)
         WORD            err_ret;
         LONG            ldaddr;
 
-#if DBG_GEMINIT
-        kprintf("sndcli(\"%s\")\n", (const char*)pfilespec);
-#endif
+        KDEBUG(("sndcli(\"%s\")\n", (const char*)pfilespec));
+
         strcpy(&D.s_cmd[0], pfilespec);
 
         handle = dos_open(D.s_cmd, ROPEN);
@@ -333,9 +332,7 @@ static void sh_addpath(void)
         nplen = strlen(np);
 
         if (oelen+nplen+pplen+1 > ENV_SIZE) {
-#if DBG_GEMINIT
-            kprintf("sh_addpath(): cannot add path, environment buffer too small\n");
-#endif
+            KDEBUG(("sh_addpath(): cannot add path, environment buffer too small\n"));
             return;
         }
                                                 /* fix up drive letters */
@@ -660,10 +657,7 @@ static void process_inf2(void)
             *pcurr = 0;
             tmpptr2 = sh_name(tmpptr1);
             *(tmpptr2-1) = 0;
-#if DBG_GEMINIT
-            kprintf("Found #Z entry in EMUDESK.INF with path=%s and prg=%s\n",
-                    tmpptr1, tmpptr2);
-#endif
+            KDEBUG(("Found #Z entry in EMUDESK.INF: path=%s, prg=%s\n",tmpptr1,tmpptr2));
             sh_wdef(tmpptr2, tmpptr1);
             ++pcurr;
           }

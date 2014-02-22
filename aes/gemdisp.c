@@ -17,6 +17,8 @@
 *       -------------------------------------------------------------
 */
 
+/* #define ENABLE_KDEBUG */
+
 #include "config.h"
 
 #include "portab.h"
@@ -39,8 +41,6 @@
 #include "kprint.h"
 
 #include "asm.h"
-
-#define DBG_GEMDISP 0
 
 #define KEYSTOP 0x00002b1cL                     /* control backslash    */
 
@@ -228,9 +228,8 @@ void disp(void)
                                                 /*   root               */
         p = rlr;
         rlr = p->p_link;
-#if DBG_GEMDISP
-        kprintf("disp() to \"%8s\"\n", rlr->p_name);
-#endif
+        KDEBUG(("disp() to \"%8s\"\n", rlr->p_name));
+
                                                 /* based on the state   */
                                                 /*   of the process p   */
                                                 /*   do something       */
