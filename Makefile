@@ -133,8 +133,8 @@ CPUFLAGS = -m68000
 endif
 MULTILIBFLAGS = $(CPUFLAGS) -mshort
 INC = -Iinclude
-OPTFLAGS = -Os -fomit-frame-pointer
-OTHERFLAGS = -ffreestanding
+OPTFLAGS = -O2
+OTHERFLAGS = -ffreestanding -fomit-frame-pointer
 
 WARNFLAGS = -Wall -Wundef #-fno-common -Wshadow -Wmissing-prototypes -Wstrict-prototypes #-Werror
 GCCVERSION := $(shell $(CC) -dumpversion | cut -d. -f1)
@@ -363,7 +363,7 @@ ROM_192 = etos192$(UNIQUE).img
 NODEP += 192
 192: UNIQUE = $(COUNTRY)
 192:
-	$(MAKE) DEF='-DTARGET_192' WITH_CLI=0 UNIQUE=$(UNIQUE) ROM_192=$(ROM_192) $(ROM_192)
+	$(MAKE) DEF='-DTARGET_192' OPTFLAGS=-Os WITH_CLI=0 UNIQUE=$(UNIQUE) ROM_192=$(ROM_192) $(ROM_192)
 
 $(ROM_192): ROMSIZE = 192
 $(ROM_192): emutos1.img mkrom$(EXE)
@@ -379,7 +379,7 @@ ROM_256 = etos256$(UNIQUE).img
 NODEP += 256
 256: UNIQUE = $(COUNTRY)
 256:
-	$(MAKE) DEF='-DTARGET_256' UNIQUE=$(UNIQUE) ROM_256=$(ROM_256) $(ROM_256)
+	$(MAKE) DEF='-DTARGET_256' OPTFLAGS=-Os UNIQUE=$(UNIQUE) ROM_256=$(ROM_256) $(ROM_256)
 
 $(ROM_256): ROMSIZE = 256
 $(ROM_256): emutos2.img mkrom$(EXE)
@@ -426,7 +426,7 @@ ROM_CARTRIDGE = etoscart.img
 NODEP += cart
 cart:
 	@echo "# Building Diagnostic Cartridge EmuTOS into $(ROM_CARTRIDGE)"
-	$(MAKE) DEF='-DDIAGNOSTIC_CARTRIDGE=1' UNIQUE=$(COUNTRY) WITH_AES=0 VMA=0x00fa0000 ROM_128=$(ROM_CARTRIDGE) $(ROM_CARTRIDGE)
+	$(MAKE) OPTFLAGS=-Os DEF='-DDIAGNOSTIC_CARTRIDGE=1' UNIQUE=$(COUNTRY) WITH_AES=0 VMA=0x00fa0000 ROM_128=$(ROM_CARTRIDGE) $(ROM_CARTRIDGE)
 	./mkrom$(EXE) stc emutos2.img emutos.stc
 
 #

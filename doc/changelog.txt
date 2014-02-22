@@ -5270,3 +5270,4 @@ Start... early ages
 
 2014-02-22
 - doc/readme-firebee.txt: Updated with missing release information. (VRI)
+- Makefile: Compile with -O2 by default, or -Os only when short of space. (VRI)
