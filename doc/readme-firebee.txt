@@ -44,10 +44,11 @@ This will run EmuTOS over FreeRTOS and enable extra features, such as support
 for USB keyboard and mouse.
 
 The FireBee ROM features:
-- NVRAM boot resolution is currently ignored, 640x480x16 is always used
-- IDE support is enabled for the internal CompactFlash slot only
-- Longer welcome screen delay to allow monitors to revover from sleep modes
 - Pure ColdFire OS: ColdFire TOS programs only, 680x0 programs unsupported
+- IDE support for both internal CompactFlash and external IDE connector
+- MMC/SD-Card support, including hot swap
+- Longer welcome screen delay to allow monitors to revover from sleep modes
+- NVRAM boot resolution is currently ignored, 640x480x16 is always used
 
 This ROM image has been built using:
 make firebee
