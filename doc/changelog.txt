@@ -5277,3 +5277,6 @@ Start... early ages
 - bios/biosmem.c bios/clock.c bios/dmasound.c bios/font.c bios/ikbd.c
   bios/machine.c bios/mouse.c bios/nvram.c bios/videl.c:  Replaced
   DBG_xxx with KDEBUG(). (RFB)
+
+2014-02-24
+- include/config.h: Fix regression in emutos-aranym handling of IDE. (RFB)

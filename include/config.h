@@ -39,9 +39,6 @@
 # ifndef CONF_WITH_ACSI
 #  define CONF_WITH_ACSI 0
 # endif
-# ifndef CONF_WITH_IDE
-#  define CONF_WITH_IDE 0 /* Because NatFeats are better */
-# endif
 # ifndef CONF_WITH_TT_MFP
 #  define CONF_WITH_TT_MFP 0
 # endif
