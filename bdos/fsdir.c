@@ -587,38 +587,37 @@ long xsfirst(char *name, int att)
 
 long xsnext(void)
 {
-        register FCB    *f;
-        register DTAINFO        *dt ;
+        register FCB        *f;
+        register DTAINFO    *dt;
 
         dt = (DTAINFO *)run->p_xdta;                            /* M01.01.1209.01 */
 
         /* has the DTA been initialized? */
-        if ( dt->dt_dnd == (DND*)NULLPTR )                              /* M01.01.1209.01 */
-                return( ENMFIL );                               /* M01.01.1209.01 */
+        if (dt->dt_dnd == (DND*)NULLPTR)                        /* M01.01.1209.01 */
+                return ENMFIL;                                  /* M01.01.1209.01 */
 
         KDEBUG(("\n xsnext(pos=%ld DTA=%p DND=%p)",dt->dt_pos,dt,dt->dt_dnd));
 
-        f = scan( dt->dt_dnd, &dt->dt_name[0], dt->dt_attr, &dt->dt_pos ) ;
+        f = scan(dt->dt_dnd,&dt->dt_name[0],dt->dt_attr,&dt->dt_pos);
 
-        if( f == (FCB*)NULLPTR ) {
-                        /* unlock the DND entry in case it was locked */
-                        register int i;
+        if (f == (FCB*)NULLPTR) {
+                /* unlock the DND entry in case it was locked */
+                register int i;
                 for (i = 1; i < NCURDIR; i++)
-                                if (diruse[i] && dirtbl[i] == dt->dt_dnd)
-                                        break;
+                        if (diruse[i] && dirtbl[i] == dt->dt_dnd)
+                                break;
                 if (i != NCURDIR) {
-                                --diruse[i];
-                                if ( !diruse[i] )
-                                        dirtbl[i] = (DND*)NULLPTR;
-                                KDEBUG(("\n xsnext(DND=%p unlock %d [at %d])",dt->dt_dnd,diruse[i],i));
-                        }
-
-                        return( ENMFIL ) ;
+                        --diruse[i];
+                        if (!diruse[i])
+                                dirtbl[i] = (DND*)NULLPTR;
+                        KDEBUG(("\n xsnext(DND=%p unlock %d [at %d])",dt->dt_dnd,diruse[i],i));
                 }
 
-        makbuf(f,(DTAINFO *)run->p_xdta);
-        return(E_OK);
+                return ENMFIL;
+        }
 
+        makbuf(f,(DTAINFO *)run->p_xdta);
+        return E_OK;
 }
 
 

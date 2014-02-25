@@ -5280,3 +5280,6 @@ Start... early ages
 
 2014-02-24
 - include/config.h: Fix regression in emutos-aranym handling of IDE. (RFB)
+
+2014-02-25
+- bdos/fsdir.c: Fix formatting within xsnext() function. (RFB)
