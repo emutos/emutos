@@ -27,8 +27,9 @@
   The character 158 is wrong.  As a result small arrows don't
   show up in "Clac" RSC.
 - Text output by Gfa basic 2.x runner goes to screen top left
-- Text in the log window of ImCon GEM image converter is double
-  the correct size on ST low and med resolutions.
+- Text is double the correct size in following GEM programs:
+  - the log window of ImCon image converter, on ST low and med rez
+  - STart disk magazine start.prg, on ST med rez
 - The right side of outline characters are clipped, e.g. in
   "LaserChess", "Diamond miner" and "Minigolf" games.  In vditext
   tester their line height is also too low:

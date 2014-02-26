@@ -5283,3 +5283,6 @@ Start... early ages
 
 2014-02-25
 - bdos/fsdir.c: Fix formatting within xsnext() function. (RFB)
+
+2014-02-25
+- doc/bugs.txt: Updated. Contributed by Eero Tamminen. (VRI)
