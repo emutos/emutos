@@ -5286,3 +5286,4 @@ Start... early ages
 
 2014-02-25
 - doc/bugs.txt: Updated. Contributed by Eero Tamminen. (VRI)
+- Makefile: Reverted compilation with -O2 for the bugfix release. (VRI)
