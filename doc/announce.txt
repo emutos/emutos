@@ -3,7 +3,7 @@ Dear Atari Community!
 
 We are happy to announce a new public release of EmuTOS:
 
-EmuTOS 0.9.2 -- February 21, 2014
+EmuTOS 0.9.3 -- February 26, 2014
 
 
 
@@ -19,7 +19,12 @@ License (GPL).
 
 
 
-CHANGES SINCE LAST RELEASE
+SPECIAL NOTES FOR RELEASE 0.9.3
+
+This release is almost identical to the 0.9.2 one.
+Only emutos-aranym has been updated to fix a regression with IDE disk images.
+
+CHANGES SINCE RELEASE 0.9.1
 
 Major changes:
 - Added most Line-A functions.
