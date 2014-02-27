@@ -5284,9 +5284,12 @@ Start... early ages
 2014-02-25
 - bdos/fsdir.c: Fix formatting within xsnext() function. (RFB)
 
-2014-02-25
+2014-02-26
 - doc/bugs.txt: Updated. Contributed by Eero Tamminen. (VRI)
 - Makefile: Reverted compilation with -O2 for the bugfix release. (VRI)
 - readme.txt doc/announce.txt: Updated. (VRI)
 
 * Release: 0.9.3
+
+2014-02-27
+- Makefile: Compile with -O2 by default, or -Os only when short of space. (VRI)
