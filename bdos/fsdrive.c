@@ -81,7 +81,7 @@ LONG    drvrem;
 
 long    ckdrv(int d)
 {
-    int i;
+    int curdir;
     LONG mask;
     BPB *b;
 
@@ -115,19 +115,20 @@ long    ckdrv(int d)
         }
     }
 
-    if ((!run->p_curdir[d]) || (!dirtbl[(int)(run->p_curdir[d])]))
-    {       /* need to allocate current dir on this drv */
-
-        for (i = 1; i < NCURDIR; i++)   /*      find unused slot    */
-            if (!diruse[i])
-                break;
-
-        if (i == NCURDIR)                   /*  no slot available   */
-            return( EINTRN ) ;      /*  M01.01.20           */
-
-        diruse[i]++;                /*  mark as used        */
-        dirtbl[i] = drvtbl[d]->m_dtl;   /*      link to DND         */
-        run->p_curdir[d] = i;       /*  link to process     */
+    /*
+     * ensure that current process has a valid default directory
+     * on this drive
+     */
+    curdir = run->p_curdir[d];
+    if (curdir >= NCURDIR)      /* validate */
+        curdir = 0;             /* if invalid, say none */
+    if (!curdir                 /* no current dir for this drive */
+     || !dirtbl[curdir])        /* or current dir is invalid  */
+    {
+        curdir = incr_curdir_usage(drvtbl[d]->m_dtl);   /* add root DND */
+        if (curdir < 0)
+            return ENSMEM;
+        run->p_curdir[d] = curdir;  /* link to process  */
     }
 
     return(d);

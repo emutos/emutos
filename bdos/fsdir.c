@@ -551,25 +551,9 @@ long xsfirst(char *name, int att)
                                 return result;
 
                         /* lock the directory if success */
-
-                        /* search whether it is locked or not */
-                        for (i = 1; i < NCURDIR; i++)
-                                if (diruse[i] && dirtbl[i] == dt->dt_dnd)
-                                        break;
-
-                        /* if not search for free entry */
-                        if (i == NCURDIR) {
-                                for (i = 1; i < NCURDIR; i++)
-                                        if (!diruse[i])
-                                                break;
-                        }
-
-                        /* no empty entry found nor locked - no system memory */
-                        if (i == NCURDIR)
-                                return (ENSMEM);
-
-                        diruse[i]++;
-                        dirtbl[i] = dt->dt_dnd;
+                        i = incr_curdir_usage(dt->dt_dnd);
+                        if (i < 0)
+                                return ENSMEM;
 
                         KDEBUG(("\nxsfirst(DND=%p lock %d [at %d])",dt->dt_dnd,diruse[i],i));
                 }
@@ -607,9 +591,7 @@ long xsnext(void)
                         if (diruse[i] && dirtbl[i] == dt->dt_dnd)
                                 break;
                 if (i != NCURDIR) {
-                        --diruse[i];
-                        if (!diruse[i])
-                                dirtbl[i] = (DND*)NULLPTR;
+                        decr_curdir_usage(i);
                         KDEBUG(("\n xsnext(DND=%p unlock %d [at %d])",dt->dt_dnd,diruse[i],i));
                 }
 
@@ -954,9 +936,9 @@ long xrename(int n, char *p1, char *p2)
 
 long xchdir(char *p)
 {
-        register int dr, i ;
-        long    l;
-        int     dlog;
+        DND     *dnd;
+        long    rc;
+        int     olddir, newdir, dlog;
         const char *s;
 
         if (p[1] == ':')
@@ -964,40 +946,89 @@ long xchdir(char *p)
         else
                 dlog = run->p_curdrv;
 
-        if ((l=ckdrv(dlog)) < 0)        /* log in drive if not previously */
-                return(l);              /* accessed by bdos               */
+        /*
+         * remember old current directory pointer
+         */
+        olddir = run->p_curdir[dlog];
 
-        /* find space in dirtbl */
-        if ( (dr = run->p_curdir[dlog]) )
-        {
-                --diruse[dr]; /* someone is still using it */
-                if( diruse[dr] < 0 )            /*  M01.01.0721.02  */
-                        diruse[dr] = 0 ;
-        }
+        /*
+         * get the DND for the new directory
+         */
+        rc = (long)(dnd = findit(p,&s,1));
+        if (rc < 0L)
+                return rc;
+        if (!dnd)
+                return EPTHNF;
 
-        for (i = 0; i < NCURDIR; i++, dr++)
-        {
-                if (dr == NCURDIR)
-                        dr = 0;
-                if (!diruse[dr])
-                        break;
-        }
+        /*
+         * search dirtbl[]: if entry matches, update usage count;
+         * otherwise, create new entry
+         */
+        newdir = incr_curdir_usage(dnd);
+        if (newdir < 0)                 /* no space in dirtbl[] */
+                return EPTHNF;
+        run->p_curdir[dlog] = newdir;   /* link to process  */
 
-        if (i == NCURDIR)
-                return(EPTHNF);
+        /*
+         * fixup old current directory
+         */
+        if (olddir)
+                decr_curdir_usage(olddir);
 
-        diruse[dr]++;
+        return E_OK;
+}
 
-        if ((l = (long) findit(p,&s,1)) < 0)                    /* M01.01.1212.01 */
-                return( l );
-        if (!l)                                                 /* M01.01.1214.01 */
-                return( EPTHNF );
+/*
+ * search dirtbl[]: if entry matches, update usage count;
+ * otherwise, create new entry & update usage count.
+ *
+ * returns error if no space for new entry,
+ * otherwise returns index of entry found
+ */
+int incr_curdir_usage(DND *dnd)
+{
+    int i;
 
-        dirtbl[dr] = (DND *) l;
+    if (!dnd)               /* precautionary paranoia */
+        return EINTRN;
 
-        run->p_curdir[dlog] = dr;
+    for (i = 1; i < NCURDIR; i++)   /* look for matching DND */
+        if (dirtbl[i] == dnd)
+            break;
 
-        return(E_OK);
+    if (i >= NCURDIR)       /* not found, so look for free slot */
+        for (i = 1; i < NCURDIR; i++)
+            if (!diruse[i])
+                break;
+
+    if (i >= NCURDIR)       /* no slot available */
+        return EINTRN;
+
+    diruse[i]++;            /* update use count */
+    dirtbl[i] = dnd;        /* link to DND      */
+
+    return i;
+}
+
+/*
+ * decrements usage count of dirtbl[], ensuring it never goes negative
+ */
+void decr_curdir_usage(int n)
+{
+    if ((n <= 0) || (n >= NCURDIR))
+    {
+        KDEBUG(("Decrement for invalid slot %d has been ignored\n",n));
+        return;
+    }
+
+    if (--diruse[n] < 0)
+    {
+        diruse[n] = 0;
+        KDEBUG(("Negative usage count for slot %d has been fixed\n",n));
+    }
+
+    if (diruse[n] == 0)     /* clean out empty slots */
+        dirtbl[n] = NULL;
 }
 
 /*

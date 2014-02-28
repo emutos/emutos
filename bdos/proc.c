@@ -150,7 +150,7 @@ static void     ixterm( PD *r )
     for( i = 0 ; i < NUMCURDIR ; i++ )
     {
         if( (h = r->p_curdir[i]) != 0 )
-            diruse[h]-- ;
+            decr_curdir_usage(h);
     }
 
     /* free each item in the allocated list, that is owned by 'r' */

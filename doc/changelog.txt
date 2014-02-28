@@ -5293,3 +5293,7 @@ Start... early ages
 
 2014-02-27
 - Makefile: Compile with -O2 by default, or -Os only when short of space. (VRI)
+
+2014-02-28
+- bdos/fs.h bdos/fsdir.c bdos/fsdrive.c bdos/proc.c: Avoid creating
+  duplicate entries in table of current directories. (RFB)

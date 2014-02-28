@@ -445,6 +445,8 @@ long xgetdir(char *buf, int drv);
 FCB *dirinit(DND *dn);
 DND *findit(char *name, const char **sp, int dflag);
 FCB *scan(register DND *dnd, const char *n, WORD att, LONG *posp);
+int incr_curdir_usage(DND *dnd);
+void decr_curdir_usage(int index);
 
 /*
  * in fsmain.c
