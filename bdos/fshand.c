@@ -2,6 +2,7 @@
  * fshand.c - file handle routines for the file system
  *
  * Copyright (c) 2001 Lineo, Inc.
+ *               2014 The EmuTOS development team
  *
  * Authors:
  *  SCC   Steve C. Cavender
@@ -96,23 +97,6 @@ int syshnd(int h)
         return(h-NUMSTD);
 
     return(h);
-}
-
-
-
-/*
- * ixdirdup -
- *
- * Arguments:
- *
- *  h  - file handle
- *  dn - directory number
- */
-
-void ixdirdup(int h, int dn, PD *p)
-{
-    p->p_curdir[h] = dn;
-    diruse[dn]++;
 }
 
 

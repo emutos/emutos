@@ -361,9 +361,6 @@ long ixforce(int std, int h, PD *p);
 /* ??? */
 int syshnd(int h);
 
-/* ??? */
-void ixdirdup(int h, int dn, PD *p);
-
 /* duplicate a file handle. */
 long dup(long h);
 

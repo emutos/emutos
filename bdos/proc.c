@@ -431,8 +431,12 @@ static void init_pd_files(PD *p)
     }
 
     /* and current directory set */
-    for (i = 0; i < NUMCURDIR; i++)
-        ixdirdup(i,run->p_curdir[i],p);
+    for (i = 0; i < NUMCURDIR; i++) {
+        UWORD dn = run->p_curdir[i];
+        p->p_curdir[i] = dn;
+        if (dn)
+            diruse[dn]++;
+    }
 
     /* and current drive */
     p->p_curdrv = run->p_curdrv;

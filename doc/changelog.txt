@@ -5301,3 +5301,5 @@ Start... early ages
 2014-03-01
 - bdos/bdosmain.c bdos/fsdir.c: Fix boundary checking for 'current
   directory' array. (RFB)
+- bdos/fs.h bdos/fshand.c bdos/proc.c: When creating new process, don't
+  increment 'current directory' usage count for dummy entry 0. (RFB)
