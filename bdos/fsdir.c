@@ -336,7 +336,7 @@ long xrmdir(char *p)
         if( ! d->d_parent )                     /*  Can't delete root  */
                 return( EACCDN ) ;
 
-        for( i = 1 ; i <= NCURDIR ; i++ )       /*  Can't delete in use  */
+        for (i = 1; i < NCURDIR; i++)           /*  Can't delete in use  */
                 if( diruse[i] && dirtbl[i] == d )
                     return( EACCDN ) ;
 

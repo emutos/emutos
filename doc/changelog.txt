@@ -5297,3 +5297,7 @@ Start... early ages
 2014-02-28
 - bdos/fs.h bdos/fsdir.c bdos/fsdrive.c bdos/proc.c: Avoid creating
   duplicate entries in table of current directories. (RFB)
+
+2014-03-01
+- bdos/bdosmain.c bdos/fsdir.c: Fix boundary checking for 'current
+  directory' array. (RFB)

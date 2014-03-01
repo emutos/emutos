@@ -313,7 +313,7 @@ static void freetree(DND *d)
     {
         xmfreblk(d->d_ofd);
     }
-    for (i = 0; i < NCURDIR; i++)
+    for (i = 1; i < NCURDIR; i++)
     {
         if (dirtbl[i] == d)
         {
