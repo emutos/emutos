@@ -21,7 +21,6 @@
 
 #include "config.h"
 #include "portab.h"
-#include "compat.h"
 #include "obdefs.h"
 #include "gsxdefs.h"
 #include "funcdef.h"

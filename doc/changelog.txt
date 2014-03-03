@@ -5312,3 +5312,4 @@ Start... early ages
 - include/compat.h include/config.h: Move configuration #defines to
   config.h. (RFB)
 - include/compat.h desk/deskmain.c: Code cleanup: remove unused #define. (RFB)
+- aes/* desk/*: Code cleanup: eliminate use of compat.h. (RFB)

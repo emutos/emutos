@@ -17,7 +17,7 @@
 
 #include "config.h"
 #include "portab.h"
-#include "compat.h"
+#include "string.h"
 #include "asm.h"
 #include "gemdos.h"
 

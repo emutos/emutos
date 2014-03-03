@@ -18,7 +18,6 @@
 
 #include "config.h"
 #include "portab.h"
-#include "compat.h"
 #include "struct.h"
 #include "basepage.h"
 #include "obdefs.h"

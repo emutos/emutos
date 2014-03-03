@@ -12,7 +12,6 @@
 
 #include "config.h"
 #include "portab.h"
-#include "compat.h"
 #include "struct.h"
 #include "obdefs.h"
 #include "dos.h"

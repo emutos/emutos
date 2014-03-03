@@ -14,7 +14,6 @@
 #define GSX2_H
 
 #include "portab.h"
-#include "compat.h"
 
 /* VDI parameter block */
 typedef struct

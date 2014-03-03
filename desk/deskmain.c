@@ -21,7 +21,6 @@
 
 #include "xbiosbind.h"
 #include "portab.h"
-#include "compat.h"
 #include "obdefs.h"
 #include "dos.h"
 #include "gembind.h"

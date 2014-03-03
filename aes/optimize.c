@@ -19,7 +19,6 @@
 
 #include "config.h"
 #include "portab.h"
-#include "compat.h"
 #include "obdefs.h"
 #include "struct.h"
 #include "gemlib.h"

@@ -23,7 +23,7 @@
 
 #include "portab.h"
 #include "gemdisp.h"
-#include "compat.h"
+#include "string.h"
 #include "struct.h"
 #include "basepage.h"
 #include "obdefs.h"

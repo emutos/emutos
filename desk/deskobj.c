@@ -18,7 +18,7 @@
 
 #include "config.h"
 #include "portab.h"
-#include "compat.h"
+#include "string.h"
 #include "obdefs.h"
 #include "deskapp.h"
 #include "deskfpd.h"

@@ -16,7 +16,7 @@
 
 #include "config.h"
 #include "portab.h"
-#include "compat.h"
+#include "string.h"
 #include "dos.h"
 #include "obdefs.h"
 #include "gsxdefs.h"
