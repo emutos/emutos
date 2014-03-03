@@ -5311,3 +5311,4 @@ Start... early ages
 2014-03-03
 - include/compat.h include/config.h: Move configuration #defines to
   config.h. (RFB)
+- include/compat.h desk/deskmain.c: Code cleanup: remove unused #define. (RFB)

@@ -31,10 +31,4 @@
 #include <string.h>
 
 
-#define DEBUG 0
-
-
-
-
-
 #endif  /* _COMPAT_H */

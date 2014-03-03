@@ -549,11 +549,6 @@ static WORD do_filemenu(WORD item)
                 pro_exit(G.g_cmd, G.g_tail);
                 done = TRUE;
                 break;
-#if DEBUG
-          case DBUGITEM:
-                debug_run();
-                break;
-#endif
         }
         return(done);
 } /* do_filemenu */
