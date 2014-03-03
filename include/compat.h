@@ -35,14 +35,6 @@
 
 
 
-#define NUM_WIN 8               /* 8 for main app and desk accs       */
-
-#define NUM_ACCS 6              /* maximum number of desk accessory   */
-                                /* _files_ (.ACC) that will be loaded */
-
-#define NUM_DESKACC 6           /* maximum number of desk accessory   */
-                                /* _slots_ available (one slot per    */
-                                /* mn_register() call)                */
 
 
 #endif  /* _COMPAT_H */

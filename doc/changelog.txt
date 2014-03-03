@@ -5306,4 +5306,8 @@ Start... early ages
 
 2014-03-02
 - bios/blkdev.c: Atari TOS compatibility: force reserved sector count to
-  be at least 1. (RFB)
+  be at least 1. Suggested by Eero Tamminen. (RFB)
+
+2014-03-03
+- include/compat.h include/config.h: Move configuration #defines to
+  config.h. (RFB)
