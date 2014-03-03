@@ -419,6 +419,7 @@ LONG blkdev_getbpb(WORD dev)
     struct bs *b;
     struct fat16_bs *b16;
     ULONG tmp;
+    UWORD reserved;
     int unit;
 
     KDEBUG(("blkdev_getbpb(%d)\n",dev));
@@ -469,8 +470,10 @@ LONG blkdev_getbpb(WORD dev)
      * - dir
      * - data clusters
      */
-
-    bdev->bpb.fatrec = getiword(b->res) + bdev->bpb.fsiz;
+    reserved = getiword(b->res);
+    if (reserved == 0)      /* should not happen */
+        reserved = 1;       /* but if it does, Atari TOS assumes this */
+    bdev->bpb.fatrec = reserved + bdev->bpb.fsiz;
     bdev->bpb.datrec = bdev->bpb.fatrec + bdev->bpb.fsiz + bdev->bpb.rdlen;
 
     /*

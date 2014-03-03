@@ -5303,3 +5303,7 @@ Start... early ages
   directory' array. (RFB)
 - bdos/fs.h bdos/fshand.c bdos/proc.c: When creating new process, don't
   increment 'current directory' usage count for dummy entry 0. (RFB)
+
+2014-03-02
+- bios/blkdev.c: Atari TOS compatibility: force reserved sector count to
+  be at least 1. (RFB)
