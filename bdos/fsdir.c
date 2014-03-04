@@ -325,7 +325,6 @@ long xrmdir(char *p)
         OFD     *fd,*f2;                /* M01.01.03 */
         long    pos;
         const char *s;
-        register int i;
 
         if ((long)(d = findit(p,&s,1)) < 0)             /* M01.01.1212.01 */
                 return( (long)d );
@@ -335,11 +334,6 @@ long xrmdir(char *p)
         /*  M01.01.SCC.FS.09  */
         if( ! d->d_parent )                     /*  Can't delete root  */
                 return( EACCDN ) ;
-
-        for (i = 1; i < NCURDIR; i++)           /*  Can't delete in use  */
-                if( diruse[i] && dirtbl[i] == d )
-                    return( EACCDN ) ;
-
         /*  end M01.01.SCC.FS.09  */
 
         if (!(fd = d->d_ofd))
@@ -528,37 +522,7 @@ long xsfirst(char *name, int att)
 
         result = ixsfirst(name , att , dt);                   /* M01.01.1209.01 */
 
-                /* check whether the name is a search mask or a pure filename */
-                {
-                        int     is_mask;
-                        char    *n_char;
-                        register int i;
-
-                        is_mask = 0;
-                        n_char = &dt->dt_name[0];
-                        for (i=0; i < 11 ; i++) {
-                                if ( *n_char == '*' || *n_char == '?' ) {
-                                        is_mask = 1;
-                                        break;
-                                }
-                                n_char++;
-                        }
-
-                        KDEBUG(("\nxsfirst(DTA->dt_name %s DND=%p)",dt->dt_name,dt->dt_dnd));
-
-                        /* no lock is needed on error or in case of the filename */
-                        if ( result < 0 || is_mask == 0 )
-                                return result;
-
-                        /* lock the directory if success */
-                        i = incr_curdir_usage(dt->dt_dnd);
-                        if (i < 0)
-                                return ENSMEM;
-
-                        KDEBUG(("\nxsfirst(DND=%p lock %d [at %d])",dt->dt_dnd,diruse[i],i));
-                }
-
-                return result;
+        return result;
 }
 
 /*
@@ -584,19 +548,8 @@ long xsnext(void)
 
         f = scan(dt->dt_dnd,&dt->dt_name[0],dt->dt_attr,&dt->dt_pos);
 
-        if (f == (FCB*)NULLPTR) {
-                /* unlock the DND entry in case it was locked */
-                register int i;
-                for (i = 1; i < NCURDIR; i++)
-                        if (diruse[i] && dirtbl[i] == dt->dt_dnd)
-                                break;
-                if (i != NCURDIR) {
-                        decr_curdir_usage(i);
-                        KDEBUG(("\n xsnext(DND=%p unlock %d [at %d])",dt->dt_dnd,diruse[i],i));
-                }
-
+        if (f == (FCB*)NULLPTR)
                 return ENMFIL;
-        }
 
         makbuf(f,(DTAINFO *)run->p_xdta);
         return E_OK;

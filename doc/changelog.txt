@@ -5313,3 +5313,5 @@ Start... early ages
   config.h. (RFB)
 - include/compat.h desk/deskmain.c: Code cleanup: remove unused #define. (RFB)
 - aes/* desk/*: Code cleanup: eliminate use of compat.h. (RFB)
+- bdos/fsdir.c: Do not attempt to track in-use directories (fixes
+  bugtracker #13). (RFB)
