@@ -5315,3 +5315,7 @@ Start... early ages
 - aes/* desk/*: Code cleanup: eliminate use of compat.h. (RFB)
 - bdos/fsdir.c: Do not attempt to track in-use directories (fixes
   bugtracker #13). (RFB)
+
+2014-03-04
+- bdos/bdosmain.c bdos/fs.h bdos/fsdir.c bdos/fsdrive.c bdos/proc.c:
+  Code cleanup: combine diruse[], dirtbl[] into array of struct. (RFB)

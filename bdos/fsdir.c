@@ -940,25 +940,26 @@ long xchdir(char *p)
  */
 int incr_curdir_usage(DND *dnd)
 {
+    DIRTBL_ENTRY *p;
     int i;
 
     if (!dnd)               /* precautionary paranoia */
         return EINTRN;
 
-    for (i = 1; i < NCURDIR; i++)   /* look for matching DND */
-        if (dirtbl[i] == dnd)
+    for (i = 1, p = dirtbl+1; i < NCURDIR; i++, p++)    /* look for matching DND */
+        if (p->dnd == dnd)
             break;
 
     if (i >= NCURDIR)       /* not found, so look for free slot */
-        for (i = 1; i < NCURDIR; i++)
-            if (!diruse[i])
+        for (i = 1, p = dirtbl+1; i < NCURDIR; i++, p++)
+            if (!p->use)
                 break;
 
     if (i >= NCURDIR)       /* no slot available */
         return EINTRN;
 
-    diruse[i]++;            /* update use count */
-    dirtbl[i] = dnd;        /* link to DND      */
+    p->use++;               /* update use count */
+    p->dnd = dnd;           /* link to DND      */
 
     return i;
 }
@@ -968,20 +969,25 @@ int incr_curdir_usage(DND *dnd)
  */
 void decr_curdir_usage(int n)
 {
+    DIRTBL_ENTRY *p;
+
     if ((n <= 0) || (n >= NCURDIR))
     {
         KDEBUG(("Decrement for invalid slot %d has been ignored\n",n));
         return;
     }
 
-    if (--diruse[n] < 0)
+    p = &dirtbl[n];
+
+    p->use--;
+    if (p->use < 0)
     {
-        diruse[n] = 0;
+        p->use = 0;
         KDEBUG(("Negative usage count for slot %d has been fixed\n",n));
     }
 
-    if (diruse[n] == 0)     /* clean out empty slots */
-        dirtbl[n] = NULL;
+    if (p->use == 0)        /* clean out empty slots */
+        p->dnd = NULL;
 }
 
 /*
@@ -997,6 +1003,7 @@ void decr_curdir_usage(int n)
 long    xgetdir(char *buf, int drv)
 {
         DND     *p;
+        int     n;
         int     len;                                            /* M01.01.1024.02 */
 
         drv = (drv == 0) ? run->p_curdrv : drv-1 ;
@@ -1007,7 +1014,8 @@ long    xgetdir(char *buf, int drv)
                 return(EDRIVE);
         }
 
-        p = dirtbl[(int)(run->p_curdir[drv])];
+        n = run->p_curdir[drv];
+        p = dirtbl[n].dnd;
         len = LEN_ZPATH - 3;                                    /* M01.01.1024.02 */
         buf = dopath(p,buf,&len);                               /* M01.01.1024.02 */
         *--buf = 0;     /* null as last char, not slash */
@@ -1339,11 +1347,11 @@ FCB     *scan(register DND *dnd, const char *n, WORD att, LONG *posp)
 
 static DND *makdnd(DND *p, FCB *b)
 {
+        DIRTBL_ENTRY *dt;
         register DND *p1;
         register DND **prev;
         OFD     *fd;
         register int i;
-        int     in_use;
 
         fd = p->d_ofd;
 
@@ -1356,17 +1364,13 @@ static DND *makdnd(DND *p, FCB *b)
                 if (!p1->d_left)
                 {
                         /* check dirtbl[] to see if anyone is using this guy */
+                        for (i = 1, dt = dirtbl+1; i < NCURDIR; i++, dt++)
+                                if (dt->use && (dt->dnd == p1))
+                                        break;
 
-                        in_use = 0;
-                        for (i = 1; i < NCURDIR; i++)
-                                if (diruse[i] && dirtbl[i] == p1) {
-                                    in_use = 1;
-                                    break;
-                                }
+                        KDEBUG(("\n makdnd check dirtbl (%d)",i));
 
-                        KDEBUG(("\n makdnd check dirtbl (%d)",in_use));
-
-                        if( !in_use && p1->d_files == NULLPTR )
+                        if ((i >= NCURDIR) && (p1->d_files == NULLPTR))
                         {       /*  M01.01.KTB.SCC.02  */
                                 /* clean out this DND for reuse */
 
@@ -1465,7 +1469,10 @@ static DND *dcrack(const char **np)
         n++;                    /*  skip over slash             */
     }
     else
-        p = dirtbl[(int)(run->p_curdir[d])];    /*  else use curr dir   */
+    {
+        int curdir = run->p_curdir[d];
+        p = dirtbl[curdir].dnd; /*  else use curr dir   */
+    }
 
     /* whew ! */ /*  <= thankyou, Jason, for that wonderful comment */
 

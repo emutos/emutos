@@ -52,15 +52,13 @@
  **         means 'none set yet'.
  */
 
-DND     *dirtbl[NCURDIR] ;
+DIRTBL_ENTRY dirtbl[NCURDIR];
 
 /*
- **     diruse - use count
  **     drvsel - mask of drives selected since power up
  **     drvrem - mask of drives with removable media
  */
 
-char    diruse[NCURDIR] ;
 LONG    drvsel ;
 LONG    drvrem;
 
@@ -123,7 +121,7 @@ long    ckdrv(int d)
     if (curdir >= NCURDIR)      /* validate */
         curdir = 0;             /* if invalid, say none */
     if (!curdir                 /* no current dir for this drive */
-     || !dirtbl[curdir])        /* or current dir is invalid  */
+     || !dirtbl[curdir].dnd)    /* or current dir is invalid  */
     {
         curdir = incr_curdir_usage(drvtbl[d]->m_dtl);   /* add root DND */
         if (curdir < 0)

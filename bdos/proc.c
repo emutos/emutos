@@ -432,10 +432,10 @@ static void init_pd_files(PD *p)
 
     /* and current directory set */
     for (i = 0; i < NUMCURDIR; i++) {
-        UWORD dn = run->p_curdir[i];
+        int dn = run->p_curdir[i];
         p->p_curdir[i] = dn;
         if (dn)
-            diruse[dn]++;
+            dirtbl[dn].use++;
     }
 
     /* and current drive */

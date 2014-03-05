@@ -305,6 +305,7 @@ static int ncmps(int n, char *s, char *d)
 
 static void freetree(DND *d)
 {
+    DIRTBL_ENTRY *p;
     int i;
 
     if (d->d_left) freetree(d->d_left);
@@ -313,12 +314,12 @@ static void freetree(DND *d)
     {
         xmfreblk(d->d_ofd);
     }
-    for (i = 1; i < NCURDIR; i++)
+    for (i = 1, p = dirtbl+1; i < NCURDIR; i++, p++)
     {
-        if (dirtbl[i] == d)
+        if (p->dnd == d)
         {
-            dirtbl[i] = 0;
-            diruse[i] = 0 ;     /*  M01.01.06           */
+            p->dnd = NULL;
+            p->use = 0;
         }
     }
     xmfreblk(d);

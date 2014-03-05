@@ -320,14 +320,17 @@ DTAINFO
     char  dt_fname[14];         /*  file name from fcb          30-43   */
 } ;                             /*    includes null terminator          */
 
-
+/* the following structure is used to track current directories */
+typedef struct {
+    DND   *dnd;                 /* DND for directory */
+    WORD  use;                  /* use count */
+} DIRTBL_ENTRY;
 
 
 /* External Declarations */
 
-extern  DND     *dirtbl[];
+extern  DIRTBL_ENTRY dirtbl[];
 extern  DMD     *drvtbl[];
-extern  char    diruse[];
 extern  LONG    drvsel;
 extern  PD      *run;
 extern  int     logmsk[];
