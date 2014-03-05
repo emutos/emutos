@@ -5327,3 +5327,4 @@ Start... early ages
 - bios/disk.c: Renamed xhdidev to major. (VRI)
 - bios/blkdev.c bios/blkdev.h bios/disk.c bios/disk.h bios/xbios.c: Always use
   'major' for XHDI device numbers (0 = first physical hard drive, etc.). (VRI)
+- bios/disk.c bios/xhdi.c: Renamed xbiosdev to unit. (VRI)

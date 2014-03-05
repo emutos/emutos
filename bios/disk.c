@@ -180,11 +180,11 @@ void disk_init_all(void)
 void disk_rescan(int major)
 {
     int i;
-    int xbiosdev = major + NUMFLOPPIES;
+    int unit = major + NUMFLOPPIES;
     LONG devices_available, bitmask;
 
     /* determine available devices for rescan */
-    devices_available = units[xbiosdev].drivemap;
+    devices_available = units[unit].drivemap;
 
     KDEBUG(("disk_rescan(%d):drivemap=0x%08lx\n",major,devices_available));
 
@@ -192,7 +192,7 @@ void disk_rescan(int major)
     disk_init_one(major,&devices_available);
 
     /* now set the mediachange byte for the relevant devices */
-    devices_available = units[xbiosdev].drivemap;
+    devices_available = units[unit].drivemap;
     for (i = 0, bitmask = 1L; i < BLKDEVNUM; i++, bitmask <<= 1)
         if (devices_available & bitmask)
             blkdev[i].mediachange = MEDIACHANGE;
@@ -283,7 +283,7 @@ static int atari_partition(int major,LONG *devices_available)
     MBR *mbr = &physsect.mbr;
     u32 extensect;
     u32 hd_size;
-    int xbiosdev = major + NUMFLOPPIES;
+    int unit = major + NUMFLOPPIES;
 #ifdef ICD_PARTS
     int part_fmt = 0; /* 0:unknown, 1:AHDI, 2:ICD/Supra */
 #endif
@@ -302,7 +302,7 @@ static int atari_partition(int major,LONG *devices_available)
      */
     if (IS_IDE_DEVICE(major) && mbr->bootsig == 0xaa55) {
         KINFO(("DOS MBR byteswapped signature detected: enabling byteswap\n"));
-        units[xbiosdev].byteswap = 1; /* byteswap required for whole disk */
+        units[unit].byteswap = 1; /* byteswap required for whole disk */
         /* swap bytes in the loaded boot sector */
         byteswap(sect,SECTOR_SIZE);
     }
@@ -415,9 +415,9 @@ static int atari_partition(int major,LONG *devices_available)
      * we fix it by replacing units[].size with the partition table
      * value.
      */
-    if (units[xbiosdev].size < hd_size) {
+    if (units[unit].size < hd_size) {
         KINFO(("Setting disk capacity from partition table value\n"));
-        units[xbiosdev].size = hd_size;
+        units[unit].size = hd_size;
     }
 
     pi = &rs->part[0];
