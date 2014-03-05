@@ -44,7 +44,7 @@ typedef struct {
 } MBR;
 
 /*==== Internal declarations ==============================================*/
-static int atari_partition(int xhdidev,LONG *devices_available);
+static int atari_partition(int major,LONG *devices_available);
 
 /*
  * scans one unit and adds all found partitions
@@ -272,10 +272,10 @@ union
 
 
 /*
- * scans for Atari partitions on 'xhdidev' and adds them to blkdev array
+ * scans for Atari partitions on 'major' and adds them to blkdev array
  *
  */
-static int atari_partition(int xhdidev,LONG *devices_available)
+static int atari_partition(int major,LONG *devices_available)
 {
     u8* sect = physsect.sect;
     struct rootsector *rs = &physsect.rs;
@@ -283,7 +283,7 @@ static int atari_partition(int xhdidev,LONG *devices_available)
     MBR *mbr = &physsect.mbr;
     u32 extensect;
     u32 hd_size;
-    int xbiosdev = xhdidev + NUMFLOPPIES;
+    int xbiosdev = major + NUMFLOPPIES;
 #ifdef ICD_PARTS
     int part_fmt = 0; /* 0:unknown, 1:AHDI, 2:ICD/Supra */
 #endif
@@ -291,16 +291,16 @@ static int atari_partition(int xhdidev,LONG *devices_available)
     /* reset the sector buffer content */
     bzero(&physsect, sizeof(physsect));
 
-    if (DMAread(0, 1, (long)&physsect, xhdidev))
+    if (DMAread(0, 1, (long)&physsect, major))
         return -1;
 
-    KINFO(("%cd%c: ","ashf????"[xhdidev>>3],'a'+(xhdidev&0x07)));
+    KINFO(("%cd%c: ","ashf????"[major>>3],'a'+(major&0x07)));
 
     /* check for DOS byteswapped master boot record.
      * this is enabled on IDE units only,
      * because other media do not suffer of that problem.
      */
-    if (IS_IDE_DEVICE(xhdidev) && mbr->bootsig == 0xaa55) {
+    if (IS_IDE_DEVICE(major) && mbr->bootsig == 0xaa55) {
         KINFO(("DOS MBR byteswapped signature detected: enabling byteswap\n"));
         units[xbiosdev].byteswap = 1; /* byteswap required for whole disk */
         /* swap bytes in the loaded boot sector */
@@ -311,7 +311,7 @@ static int atari_partition(int xhdidev,LONG *devices_available)
     if (mbr->bootsig == 0x55aa) {
         ULONG size = check_for_no_partitions(sect);
         if (size) {
-            if (add_partition(xhdidev,devices_available,"BGM",0UL,size) < 0)
+            if (add_partition(major,devices_available,"BGM",0UL,size) < 0)
                 return -1;
             KINFO((" fake BGM\n"));
             return 1;
@@ -372,7 +372,7 @@ static int atari_partition(int xhdidev,LONG *devices_available)
             case 0x04:
             case 0x06:
             case 0x0e:
-                if (add_partition(xhdidev,devices_available,pid,start,size) < 0)
+                if (add_partition(major,devices_available,pid,start,size) < 0)
                     return -1;
                 KINFO((" $%02x", type));
                 break;
@@ -430,7 +430,7 @@ static int atari_partition(int xhdidev,LONG *devices_available)
         /* active partition */
         if (memcmp (pi->id, "XGM", 3) != 0) {
             /* we don't care about other id's */
-            if (add_partition(xhdidev,devices_available,pi->id,pi->st,pi->siz) < 0)
+            if (add_partition(major,devices_available,pi->id,pi->st,pi->siz) < 0)
                 break;  /* max number of partitions reached */
 
             KINFO((" %c%c%c", pi->id[0], pi->id[1], pi->id[2]));
@@ -446,7 +446,7 @@ static int atari_partition(int xhdidev,LONG *devices_available)
             /* reset the sector buffer content */
             bzero(&physsect2, sizeof(physsect2));
 
-            if (DMAread(partsect, 1, (long)&physsect2, xhdidev)) {
+            if (DMAread(partsect, 1, (long)&physsect2, major)) {
                 KINFO((" block %ld read failed\n", partsect));
                 return 0;
             }
@@ -457,7 +457,7 @@ static int atari_partition(int xhdidev,LONG *devices_available)
                 break;
             }
 
-            if (add_partition(xhdidev,devices_available,xrs->part[0].id,
+            if (add_partition(major,devices_available,xrs->part[0].id,
                               partsect+xrs->part[0].st,xrs->part[0].siz) < 0)
                 break;  /* max number of partitions reached */
 
@@ -486,7 +486,7 @@ static int atari_partition(int xhdidev,LONG *devices_available)
                 if (!((pi->flg & 1) && OK_id(pi->id)))
                     continue;
                 part_fmt = 2;
-                if (add_partition(xhdidev,devices_available,pi->id,pi->st,pi->siz) < 0)
+                if (add_partition(major,devices_available,pi->id,pi->st,pi->siz) < 0)
                     break;  /* max number of partitions reached */
                 KINFO((" %c%c%c", pi->id[0], pi->id[1], pi->id[2]));
             }
