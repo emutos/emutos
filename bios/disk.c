@@ -503,21 +503,21 @@ static int atari_partition(int major,LONG *devices_available)
 
 /*=========================================================================*/
 
-LONG DMAread(LONG sector, WORD count, LONG buf, WORD dev)
+LONG DMAread(LONG sector, WORD count, LONG buf, WORD major)
 {
 LONG rc;
 
-    rc = XHReadWrite(dev, 0, 0, sector, count, (void *)buf);
+    rc = XHReadWrite(major, 0, 0, sector, count, (void *)buf);
 
     /* TOS invalidates the i-cache here, so be compatible */
-    instruction_cache_kludge((void *)buf,count<<units[dev+NUMFLOPPIES].psshift);
+    instruction_cache_kludge((void *)buf,count<<units[major+NUMFLOPPIES].psshift);
 
     return rc;
 }
 
-LONG DMAwrite(LONG sector, WORD count, LONG buf, WORD dev)
+LONG DMAwrite(LONG sector, WORD count, LONG buf, WORD major)
 {
-    return XHReadWrite(dev, 0, 1, sector, count, (void *)buf);
+    return XHReadWrite(major, 0, 1, sector, count, (void *)buf);
 }
 
 void byteswap(UBYTE *buffer, ULONG size)

@@ -17,8 +17,8 @@
 
 /* xbios functions */
 
-extern LONG DMAread(LONG sector, WORD count, LONG buf, WORD dev);
-extern LONG DMAwrite(LONG sector, WORD count, LONG buf, WORD dev);
+extern LONG DMAread(LONG sector, WORD count, LONG buf, WORD major);
+extern LONG DMAwrite(LONG sector, WORD count, LONG buf, WORD major);
 
 /* partition detection */
 

@@ -5325,3 +5325,5 @@ Start... early ages
 - bios/blkdev.c bios/blkdev.h bios/disk.c bios/floppy.c bios/xhdi.c: Renamed
   devices[] to units[] for physical units descriptors. (VRI)
 - bios/disk.c: Renamed xhdidev to major. (VRI)
+- bios/blkdev.c bios/blkdev.h bios/disk.c bios/disk.h bios/xbios.c: Always use
+  'major' for XHDI device numbers (0 = first physical hard drive, etc.). (VRI)

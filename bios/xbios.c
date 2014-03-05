@@ -776,10 +776,10 @@ static LONG xbios_29(WORD dev, WORD rate)
  */
 
 #if DBG_XBIOS
-static LONG xbios_2a(LONG sector, WORD count, PTR buf, WORD dev)
+static LONG xbios_2a(LONG sector, WORD count, PTR buf, WORD major)
 {
     kprintf("XBIOS: DMAread\n");
-    return DMAread(sector, count, buf, dev);
+    return DMAread(sector, count, buf, major);
 }
 #endif
 
@@ -788,10 +788,10 @@ static LONG xbios_2a(LONG sector, WORD count, PTR buf, WORD dev)
  */
 
 #if DBG_XBIOS
-static LONG xbios_2b(LONG sector, WORD count, PTR buf, WORD dev)
+static LONG xbios_2b(LONG sector, WORD count, PTR buf, WORD major)
 {
     kprintf("XBIOS: DMAwrite\n");
-    return DMAwrite(sector, count, buf, dev);
+    return DMAwrite(sector, count, buf, major);
 }
 #endif
 

@@ -223,9 +223,9 @@ static int next_logical(LONG *devices_available)
 /*
  * Add a partition's details to the device's partition description.
  */
-int add_partition(int dev, LONG *devices_available, char id[], ULONG start, ULONG size)
+int add_partition(int major, LONG *devices_available, char id[], ULONG start, ULONG size)
 {
-    int unit = dev + NUMFLOPPIES;
+    int unit = major + NUMFLOPPIES;
     int logical;
     BLKDEV *b;
 

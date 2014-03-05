@@ -174,7 +174,7 @@ LONG blkdev_drvmap(void);
 LONG blkdev_avail(WORD dev);
 WORD get_shift(ULONG blocksize);
 
-int add_partition(int dev, LONG *devices_available, char id[], ULONG start, ULONG size);
+int add_partition(int major, LONG *devices_available, char id[], ULONG start, ULONG size);
 
 
 /*
