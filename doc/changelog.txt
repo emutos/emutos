@@ -5319,3 +5319,4 @@ Start... early ages
 2014-03-04
 - bdos/bdosmain.c bdos/fs.h bdos/fsdir.c bdos/fsdrive.c bdos/proc.c:
   Code cleanup: combine diruse[], dirtbl[] into array of struct. (RFB)
+- include/compat.h: Remove, no longer used. (RFB)
