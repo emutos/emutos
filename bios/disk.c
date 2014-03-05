@@ -527,7 +527,3 @@ void byteswap(UBYTE *buffer, ULONG size)
     for (p = (UWORD *)buffer; p < (UWORD *)(buffer+size); p++)
         swpw(*p);
 }
-
-/*
-vim:et:ts=4:sw=4:
-*/

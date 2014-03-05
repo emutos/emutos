@@ -618,8 +618,3 @@ LONG blkdev_avail(WORD dev)
 {
     return((1L << dev) & drvbits);
 }
-
-
-/*
-vim:et:ts=4:sw=4:
-*/

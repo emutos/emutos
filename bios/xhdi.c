@@ -776,7 +776,3 @@ long xhdi_handler(UWORD *stack)
 }
 
 #endif /* CONF_WITH_XHDI */
-
-/*
-vim:et:ts=4:sw=4:
-*/
