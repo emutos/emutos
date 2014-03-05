@@ -199,7 +199,7 @@ struct _blkdev
     UBYTE       valid;          /* device valid */
     UBYTE       mediachange;    /* current mediachange status */
     BPB         bpb;
-    GEOMETRY    geometry;       /* this should probably belong to devices */
+    GEOMETRY    geometry;       /* this should probably belong to units */
     UBYTE       serial[3];      /* the serial number taken from the bootsector */
     UBYTE       serial2[4];     /* serial number 2 (MSDOS) from the bootsector */
     int         unit;           /* 0,1 = floppies, 2-9 = ACSI, 10-17 = SCSI, */
@@ -215,9 +215,9 @@ struct _unit
     ULONG   size;           /* number of physical sectors */
     WORD    psshift;        /* shift left amount to convert sectors to bytes */
     LONG    last_access;    /* used in mediach only */
-    LONG    drivemap;       /* bitmap of logical devices on this physical device */
+    LONG    drivemap;       /* bitmap of logical devices on this physical unit */
     UBYTE   features;       /* see below */
-#define UNIT_REMOVABLE  0x80    /* device uses removable media */
+#define UNIT_REMOVABLE  0x80    /* unit uses removable media */
     UBYTE   status;         /* see below */
 #define UNIT_CHANGED    0x01    /* 0 => physical media has not changed */
 };
@@ -228,7 +228,7 @@ typedef struct _unit UNIT;
  */
 
 extern BLKDEV blkdev[];
-extern UNIT devices[];
+extern UNIT units[];
 
 
 #endif /* BLKDEV_H */

@@ -24,7 +24,7 @@
 
 /*==== Defines ============================================================*/
 
-#define REMOVABLE_PARTITIONS    1   /* minimum # partitions for removable device */
+#define REMOVABLE_PARTITIONS    1   /* minimum # partitions for removable unit */
 
 extern LONG drvrem;                 /* bitmap of removable media drives */
 
@@ -47,7 +47,7 @@ typedef struct {
 static int atari_partition(int xhdidev,LONG *devices_available);
 
 /*
- * scans one device and adds all found partitions
+ * scans one unit and adds all found partitions
  */
 static void disk_init_one(int major,LONG *devices_available)
 {
@@ -56,10 +56,10 @@ static void disk_init_one(int major,LONG *devices_available)
     ULONG blocks = 0;
     ULONG device_flags;
     WORD shift;
-    UNIT *device = devices + major + NUMFLOPPIES;
+    UNIT *unit = units + major + NUMFLOPPIES;
     int i, n, minor = 0;
 
-    device->valid = 0;
+    unit->valid = 0;
 
     rc = XHInqTarget(major, minor, NULL, &device_flags, NULL);
     if (rc) {
@@ -75,13 +75,13 @@ static void disk_init_one(int major,LONG *devices_available)
         return;
     }
 
-    device->valid = 1;
-    device->byteswap = 0;
-    device->size = blocks;
-    device->psshift = shift;
-    device->last_access = 0;
-    device->features = (device_flags&XH_TARGET_REMOVABLE) ? UNIT_REMOVABLE : 0;
-    device->status = 0;
+    unit->valid = 1;
+    unit->byteswap = 0;
+    unit->size = blocks;
+    unit->psshift = shift;
+    unit->last_access = 0;
+    unit->features = (device_flags&XH_TARGET_REMOVABLE) ? UNIT_REMOVABLE : 0;
+    unit->status = 0;
 
     /* scan for ATARI partitions on this harddrive */
     devs = *devices_available;  /* remember initial set */
@@ -90,7 +90,7 @@ static void disk_init_one(int major,LONG *devices_available)
 
     /*
      * now ensure that we have a minimum number of logical devices
-     * for a removable physical device
+     * for a removable physical unit
      */
     if (device_flags&XH_TARGET_REMOVABLE) {
         for (i = n = 0, bitmask = 1L; i < BLKDEVNUM; i++, bitmask <<= 1)
@@ -136,20 +136,20 @@ void disk_init_all(void)
         }
     }
 
-    /* save bitmaps of drives associated with each physical device.
+    /* save bitmaps of drives associated with each physical unit.
      * these maps are not changed after booting.
      *
      * also save bitmap of removable drives
      */
     for (i = 0; i < UNITSNUM; i++)  /* initialise */
-        devices[i].drivemap = 0L;
+        units[i].drivemap = 0L;
     drvrem = 0UL;
 
     /* update bitmaps */
     for (i = 0, bitmask = 1L, b = blkdev; i < BLKDEVNUM; i++, bitmask <<= 1, b++) {
         if (b->valid) {
-            devices[b->unit].drivemap |= bitmask;
-            if (devices[b->unit].features&UNIT_REMOVABLE)
+            units[b->unit].drivemap |= bitmask;
+            if (units[b->unit].features&UNIT_REMOVABLE)
                 drvrem |= bitmask;
         }
     }
@@ -157,10 +157,10 @@ void disk_init_all(void)
 #ifdef ENABLE_KDEBUG
     for (i = 0; i < UNITSNUM; i++) {
         int j;
-        if (devices[i].valid) {
+        if (units[i].valid) {
             KDEBUG(("Phys drive %d => logical drive(s)",i));
             for (j = 0; j < BLKDEVNUM; j++)
-                if (devices[i].drivemap & (1L<<j))
+                if (units[i].drivemap & (1L<<j))
                     KDEBUG((" %c",'A'+j));
             KDEBUG(("\n"));
         }
@@ -184,7 +184,7 @@ void disk_rescan(int major)
     LONG devices_available, bitmask;
 
     /* determine available devices for rescan */
-    devices_available = devices[xbiosdev].drivemap;
+    devices_available = units[xbiosdev].drivemap;
 
     KDEBUG(("disk_rescan(%d):drivemap=0x%08lx\n",major,devices_available));
 
@@ -192,7 +192,7 @@ void disk_rescan(int major)
     disk_init_one(major,&devices_available);
 
     /* now set the mediachange byte for the relevant devices */
-    devices_available = devices[xbiosdev].drivemap;
+    devices_available = units[xbiosdev].drivemap;
     for (i = 0, bitmask = 1L; i < BLKDEVNUM; i++, bitmask <<= 1)
         if (devices_available & bitmask)
             blkdev[i].mediachange = MEDIACHANGE;
@@ -297,12 +297,12 @@ static int atari_partition(int xhdidev,LONG *devices_available)
     KINFO(("%cd%c: ","ashf????"[xhdidev>>3],'a'+(xhdidev&0x07)));
 
     /* check for DOS byteswapped master boot record.
-     * this is enabled on IDE devices only,
+     * this is enabled on IDE units only,
      * because other media do not suffer of that problem.
      */
     if (IS_IDE_DEVICE(xhdidev) && mbr->bootsig == 0xaa55) {
         KINFO(("DOS MBR byteswapped signature detected: enabling byteswap\n"));
-        devices[xbiosdev].byteswap = 1; /* byteswap required for whole disk */
+        units[xbiosdev].byteswap = 1; /* byteswap required for whole disk */
         /* swap bytes in the loaded boot sector */
         byteswap(sect,SECTOR_SIZE);
     }
@@ -407,17 +407,17 @@ static int atari_partition(int xhdidev,LONG *devices_available)
      * circumvent bug in Hatari v1.7 & earlier: the ACSI Read Capacity
      * command, which we have just used by calling XHGetCapacity() in
      * disk_init_all() above, returns a value approximately 512 times too
-     * small for the capacity.  this makes the value in devices[].size
+     * small for the capacity.  this makes the value in units[].size
      * too small.
      *
-     * if the value in devices[].size is less than the disk size stored
+     * if the value in units[].size is less than the disk size stored
      * in the partition table, we assume that we've encountered the bug.
-     * we fix it by replacing devices[].size with the partition table
+     * we fix it by replacing units[].size with the partition table
      * value.
      */
-    if (devices[xbiosdev].size < hd_size) {
+    if (units[xbiosdev].size < hd_size) {
         KINFO(("Setting disk capacity from partition table value\n"));
-        devices[xbiosdev].size = hd_size;
+        units[xbiosdev].size = hd_size;
     }
 
     pi = &rs->part[0];
@@ -510,7 +510,7 @@ LONG rc;
     rc = XHReadWrite(dev, 0, 0, sector, count, (void *)buf);
 
     /* TOS invalidates the i-cache here, so be compatible */
-    instruction_cache_kludge((void *)buf,count<<devices[dev+NUMFLOPPIES].psshift);
+    instruction_cache_kludge((void *)buf,count<<units[dev+NUMFLOPPIES].psshift);
 
     return rc;
 }

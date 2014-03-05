@@ -5320,3 +5320,7 @@ Start... early ages
 - bdos/bdosmain.c bdos/fs.h bdos/fsdir.c bdos/fsdrive.c bdos/proc.c:
   Code cleanup: combine diruse[], dirtbl[] into array of struct. (RFB)
 - include/compat.h: Remove, no longer used. (RFB)
+
+2014-03-05
+- bios/blkdev.c bios/blkdev.h bios/disk.c bios/floppy.c bios/xhdi.c: Renamed
+  devices[] to units[] for physical units descriptors. (VRI)

@@ -35,7 +35,7 @@
  */
 
 BLKDEV blkdev[BLKDEVNUM];
-UNIT devices[UNITSNUM];
+UNIT units[UNITSNUM];
 
 static BYTE diskbuf[2*SECTOR_SIZE];     /* buffer for 2 sectors */
 
@@ -291,7 +291,7 @@ static LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG
         retries = 1;
 
     /*
-     * are we accessing a physical device or a logical device?
+     * are we accessing a physical unit or a logical device?
      */
     if (! (rw & RW_NOTRANSLATE)) {      /* logical */
         int sectors;
@@ -302,7 +302,7 @@ static LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG
             return ESECNF;              /* (this is an XHDI convention)    */
 
         /* convert logical sectors to physical ones */
-        sectors = blkdev[dev].bpb.recsiz >> devices[blkdev[dev].unit].psshift;
+        sectors = blkdev[dev].bpb.recsiz >> units[blkdev[dev].unit].psshift;
         lcount *= sectors;
         lrecnr *= sectors;
 
@@ -327,29 +327,29 @@ static LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG
         }
     }
     else {                              /* physical */
-        if (unit < 0 || unit >= UNITSNUM || !devices[unit].valid)
+        if (unit < 0 || unit >= UNITSNUM || !units[unit].valid)
             return EUNDEV;  /* unknown device */
 
-        /* check if the start & count values are valid for this device */
-        if ((lrecnr < 0) || (devices[unit].size > 0
-                             && (lrecnr + lcount) >= devices[unit].size))
+        /* check if the start & count values are valid for this unit */
+        if ((lrecnr < 0) || (units[unit].size > 0
+                             && (lrecnr + lcount) >= units[unit].size))
             return ESECNF;  /* sector not found */
 
         /*
          * the following is how I think this *ought* to work when a
-         * physical device is specified.  TOS may do it differently:
+         * physical unit is specified.  TOS may do it differently:
          * I haven't checked (RFB)
          */
         if (! (rw & RW_NOMEDIACH)) {
-            if (devices[unit].status&UNIT_CHANGED) {
+            if (units[unit].status&UNIT_CHANGED) {
                 KDEBUG(("blkdev_rwabs(): media change detected\n"));
-                devices[unit].status &= ~UNIT_CHANGED;
+                units[unit].status &= ~UNIT_CHANGED;
                 return E_CHNG;
             }
         }
     }
 
-    psshift = devices[unit].psshift;
+    psshift = units[unit].psshift;
 
     do {
         /* split the transfer to 15-bit count blocks (lowlevel functions take WORD count) */
@@ -379,7 +379,7 @@ static LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG
         instruction_cache_kludge(bufstart,cnt<<psshift);
 
     if (retval == 0)
-        devices[unit].last_access = hz_200;
+        units[unit].last_access = hz_200;
 
     if (retval == E_CHNG)
         if (unit >= NUMFLOPPIES)
@@ -432,11 +432,11 @@ LONG blkdev_getbpb(WORD dev)
 
     /*
      * before we can build the BPB, we need to locate the bootsector.
-     * if we're on a removable non-floppy device, this may have moved
+     * if we're on a removable non-floppy unit, this may have moved
      * since last time, so we handle this first.
      */
     unit = bdev->unit;
-    if ((unit >= NUMFLOPPIES) && (devices[unit].features & UNIT_REMOVABLE))
+    if ((unit >= NUMFLOPPIES) && (units[unit].features & UNIT_REMOVABLE))
         nonflop_mediach(dev);   /* check for change & rescan partitions if so */
 
     /* now we can read the bootsector using the physical mode */
@@ -577,14 +577,14 @@ static LONG blkdev_mediach(WORD dev)
 
     if (b->mediachange == MEDIANOCHANGE) {
         /* if less than half a second since last access, assume no mediachange */
-        if (hz_200 < devices[b->unit].last_access + CLOCKS_PER_SEC/2)
+        if (hz_200 < units[b->unit].last_access + CLOCKS_PER_SEC/2)
             return MEDIANOCHANGE;
 
         ret = (dev<NUMFLOPPIES) ? flop_mediach(dev) : nonflop_mediach(dev);
         if (ret < 0)
             return ret;
-        if (ret == MEDIACHANGE)     /* if mediachange, mark physical device */
-            devices[b->unit].status |= UNIT_CHANGED;
+        if (ret == MEDIACHANGE)     /* if mediachange, mark physical unit */
+            units[b->unit].status |= UNIT_CHANGED;
         b->mediachange = ret;
     }
 

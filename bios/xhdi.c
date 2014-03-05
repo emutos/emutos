@@ -474,7 +474,7 @@ long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
     case IDE_BUS:
     {
         UWORD xbiosdev = 2 + dev;
-        BOOL need_byteswap = devices[xbiosdev].byteswap;
+        BOOL need_byteswap = units[xbiosdev].byteswap;
         ret = ide_rw(rw, sector, count, (LONG)buf, reldev, need_byteswap);
         KDEBUG(("ide_rw() returned %ld\n", ret));
         break;

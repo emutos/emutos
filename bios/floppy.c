@@ -205,7 +205,7 @@ static struct flop_info {
 #endif
 } finfo[NUMFLOPPIES];
 
-#define IS_VALID_FLOPPY_DEVICE(dev) ((UWORD)(dev) < NUMFLOPPIES && devices[dev].valid)
+#define IS_VALID_FLOPPY_DEVICE(dev) ((UWORD)(dev) < NUMFLOPPIES && units[dev].valid)
 
 /*==== hdv_init and hdv_boot ==============================================*/
 
@@ -252,12 +252,12 @@ static void flop_add_drive(WORD dev)
 #endif
 
     /* Physical block device */
-    devices[dev].valid = 1;
-    devices[dev].byteswap = 0;      /* floppies are never byteswapped */
-    devices[dev].psshift = get_shift(SECTOR_SIZE);
-    devices[dev].size = 0;          /* unknown size */
-    devices[dev].last_access = 0;   /* never accessed */
-    devices[dev].features = UNIT_REMOVABLE;
+    units[dev].valid = 1;
+    units[dev].byteswap = 0;        /* floppies are never byteswapped */
+    units[dev].psshift = get_shift(SECTOR_SIZE);
+    units[dev].size = 0;            /* unknown size */
+    units[dev].last_access = 0;     /* never accessed */
+    units[dev].features = UNIT_REMOVABLE;
 
     /* Logical block device */
     blkdev[dev].valid = 1;
@@ -285,7 +285,7 @@ static void flop_detect_drive(WORD dev)
 #ifdef MACHINE_AMIGA
     if (amiga_flop_detect_drive(dev)) {
         flop_add_drive(dev);
-        devices[dev].last_access = hz_200;
+        units[dev].last_access = hz_200;
     }
     return;
 #endif
@@ -774,7 +774,7 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
 
 #ifdef MACHINE_AMIGA
     err = amiga_floprw(buf, rw, dev, sect, track, side, count);
-    devices[dev].last_access = hz_200;
+    units[dev].last_access = hz_200;
 #elif CONF_WITH_FDC
     /* flush data cache here so that memory is current */
     if (rw == RW_WRITE)
@@ -941,7 +941,7 @@ struct flop_info *f = &finfo[dev];
 
 static void flopunlk(void)
 {
-    devices[cur_dev].last_access = hz_200;
+    units[cur_dev].last_access = hz_200;
 
     /* the VBL will deselect the drive when the motor is off */
     flock = 0;
