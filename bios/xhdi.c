@@ -185,10 +185,10 @@ static long XHEject(UWORD major, UWORD minor, UWORD do_eject, UWORD key)
     return EINVFN;
 }
 
-static long XHInqDriver(UWORD dev, char *name, char *version, char *company, UWORD *ahdi_version, UWORD *max_IPL)
+static long XHInqDriver(UWORD bios_device, char *name, char *version, char *company, UWORD *ahdi_version, UWORD *max_IPL)
 {
     if (next_handler) {
-        long ret = next_handler(XHINQDRIVER, dev, name, version, company, ahdi_version, max_IPL);
+        long ret = next_handler(XHINQDRIVER, bios_device, name, version, company, ahdi_version, max_IPL);
         if (ret != EINVFN && ret != EUNDEV && ret != EDRIVE)
             return ret;
     }
@@ -608,7 +608,7 @@ long xhdi_handler(UWORD *stack)
             struct XHINQDRIVER_args
             {
                 UWORD opcode;
-                UWORD dev;
+                UWORD bios_device;
                 char *name;
                 char *version;
                 char *company;
@@ -616,7 +616,7 @@ long xhdi_handler(UWORD *stack)
                 UWORD *maxIPL;
             } *args = (struct XHINQDRIVER_args *)stack;
 
-            return XHInqDriver(args->dev, args->name, args->version, args->company, args->ahdi_version, args->maxIPL);
+            return XHInqDriver(args->bios_device, args->name, args->version, args->company, args->ahdi_version, args->maxIPL);
         }
 
         case XHNEWCOOKIE:
