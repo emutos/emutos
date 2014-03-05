@@ -270,7 +270,7 @@ static long XHInqTarget2(UWORD major, UWORD minor, ULONG *blocksize,
                          ULONG *deviceflags, char *productname, UWORD stringlen)
 {
     LONG ret;
-    WORD dev = major, bus, reldev;
+    WORD bus, reldev;
     BYTE name[40] = "Disk";
     ULONG flags = 0UL;
     MAYBE_UNUSED(reldev);
@@ -298,8 +298,8 @@ static long XHInqTarget2(UWORD major, UWORD minor, ULONG *blocksize,
     if (minor != 0)
         return EUNDEV;
 
-    bus = GET_BUS(dev);
-    reldev = dev - bus * DEVICES_PER_BUS;
+    bus = GET_BUS(major);
+    reldev = major - bus * DEVICES_PER_BUS;
 
     /*
      * hardware access to device
@@ -361,7 +361,7 @@ long XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
 {
     LONG ret;
     ULONG info[2] = { 0UL, 512UL }; /* #sectors, sectorsize */
-    WORD dev = major, bus, reldev;
+    WORD bus, reldev;
     MAYBE_UNUSED(reldev);
     MAYBE_UNUSED(ret);
 
@@ -386,8 +386,8 @@ long XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
     if (minor != 0)
         return EUNDEV;
 
-    bus = GET_BUS(dev);
-    reldev = dev - bus * DEVICES_PER_BUS;
+    bus = GET_BUS(major);
+    reldev = major - bus * DEVICES_PER_BUS;
 
     /* hardware access to device */
     switch(bus) {
@@ -433,7 +433,7 @@ long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
                  UWORD count, void *buf)
 {
     LONG ret;
-    WORD dev = major, bus, reldev;
+    WORD bus, reldev;
     MAYBE_UNUSED(reldev);
 
     KDEBUG(("XHReadWrite(device=%u.%u, rw=%u, sector=%lu, count=%u, buf=%p)\n",
@@ -450,7 +450,7 @@ long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
 #if DETECT_NATIVE_FEATURES
     /* direct access to device */
     if (get_xhdi_nfid()) {
-        ret = NFCall(get_xhdi_nfid() + XHREADWRITE, (long)dev, (long)0, (long)rw, (long)sector, (long)count, buf);
+        ret = NFCall(get_xhdi_nfid() + XHREADWRITE, (long)major, (long)0, (long)rw, (long)sector, (long)count, buf);
         if (ret != EINVFN && ret != EUNDEV)
             return ret;
     }
@@ -459,8 +459,8 @@ long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
     if (minor != 0)
         return EUNDEV;
 
-    bus = GET_BUS(dev);
-    reldev = dev - bus * DEVICES_PER_BUS;
+    bus = GET_BUS(major);
+    reldev = major - bus * DEVICES_PER_BUS;
 
     /* hardware access to device */
     switch(bus) {
@@ -473,7 +473,7 @@ long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
 #if CONF_WITH_IDE
     case IDE_BUS:
     {
-        UWORD xbiosdev = 2 + dev;
+        UWORD xbiosdev = 2 + major;
         BOOL need_byteswap = units[xbiosdev].byteswap;
         ret = ide_rw(rw, sector, count, (LONG)buf, reldev, need_byteswap);
         KDEBUG(("ide_rw() returned %ld\n", ret));

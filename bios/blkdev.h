@@ -38,11 +38,11 @@
 #define DEVICES_PER_BUS     8
 #define UNITSNUM            (NUMFLOPPIES+(DEVICES_PER_BUS*(MAX_BUS+1)))
 
-#define GET_BUS(n)          ((n)/DEVICES_PER_BUS)
-#define IS_ACSI_DEVICE(n)   (GET_BUS(n) == ACSI_BUS)
-#define IS_SCSI_DEVICE(n)   (GET_BUS(n) == SCSI_BUS)
-#define IS_IDE_DEVICE(n)    (GET_BUS(n) == IDE_BUS)
-#define IS_SDMMC_DEVICE(n)  (GET_BUS(n) == SDMMC_BUS)
+#define GET_BUS(major)          ((major)/DEVICES_PER_BUS)
+#define IS_ACSI_DEVICE(major)   (GET_BUS(major) == ACSI_BUS)
+#define IS_SCSI_DEVICE(major)   (GET_BUS(major) == SCSI_BUS)
+#define IS_IDE_DEVICE(major)    (GET_BUS(major) == IDE_BUS)
+#define IS_SDMMC_DEVICE(major)  (GET_BUS(major) == SDMMC_BUS)
 
 
 /*

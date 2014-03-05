@@ -522,14 +522,14 @@ LONG blkdev_getbpb(WORD dev)
 static LONG nonflop_mediach(WORD logical)
 {
     LONG ret;
-    WORD dev, bus, reldev;
+    WORD major, bus, reldev;
 
     /* convert logical drive */
-    dev = blkdev[logical].unit - NUMFLOPPIES;
+    major = blkdev[logical].unit - NUMFLOPPIES;
 
     /* get bus and relative device */
-    bus = GET_BUS(dev);
-    reldev = dev - bus * DEVICES_PER_BUS;
+    bus = GET_BUS(major);
+    reldev = major - bus * DEVICES_PER_BUS;
     MAYBE_UNUSED(reldev);
 
     /* hardware access to device */
@@ -557,7 +557,7 @@ static LONG nonflop_mediach(WORD logical)
     }
 
     if (ret == MEDIACHANGE)
-        disk_rescan(dev);
+        disk_rescan(major);
 
     KDEBUG(("nonflop_mediach(%d) returned %ld\n",logical,ret));
     return ret;

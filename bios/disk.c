@@ -109,8 +109,8 @@ static void disk_init_one(int major,LONG *devices_available)
  */
 void disk_init_all(void)
 {
-    /* scan disk targets in the following order */
-    static const int targets[] =
+    /* scan disk majors in the following order */
+    static const int majors[] =
         {16, 18, 17, 19, 20, 22, 21, 23,    /* IDE primary/secondary */
          8, 9, 10, 11, 12, 13, 14, 15,      /* SCSI */
          0, 1, 2, 3, 4, 5, 6, 7,            /* ACSI */
@@ -128,8 +128,8 @@ void disk_init_all(void)
         devices_available |= bitmask;
 
     /* scan for attached harddrives and their partitions */
-    for(i = 0; i < (sizeof(targets) / sizeof(targets[0])); i++) {
-        disk_init_one(targets[i],&devices_available);
+    for(i = 0; i < (sizeof(majors) / sizeof(majors[0])); i++) {
+        disk_init_one(majors[i],&devices_available);
         if (!devices_available) {
             KDEBUG(("disk_init_all(): maximum number of partitions reached!\n"));
             break;
