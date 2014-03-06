@@ -5344,3 +5344,4 @@ Start... early ages
   implementation to disk_inquire(). (VRI)
 - bios/blkdev.c bios/disk.c bios/disk.h: Moved nonflop_mediach() to
   disk_mediach(). (VRI)
+- bdos/fsdir.c: Fix occasional internal memory leak (OFD) in xrmdir(). (RFB)

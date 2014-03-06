@@ -327,7 +327,7 @@ long xrmdir(char *p)
         /*  end M01.01.SCC.FS.09  */
 
         if (!(fd = d->d_ofd))
-                fd = makofd(d);     /* makofd() only returns if it succeeds */
+                d->d_ofd = (fd = makofd(d));    /* makofd() only returns if it succeeds */
 
         ixlseek(fd,0x40L);
         do
