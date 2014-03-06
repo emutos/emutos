@@ -61,13 +61,13 @@ static void disk_init_one(int major,LONG *devices_available)
     WORD shift;
     UWORD unit = NUMFLOPPIES + major;
     UNIT *punit = &units[unit];
-    int i, n, minor = 0;
+    int i, n;
 
     punit->valid = 0;
 
-    rc = XHInqTarget(major, minor, NULL, &device_flags, NULL);
+    rc = disk_inquire(unit, NULL, &device_flags, NULL, 0);
     if (rc) {
-        KDEBUG(("disk_init_one(): XHInqTarget(%d) returned %ld\n",major,rc));
+        KDEBUG(("disk_init_one(): disk_inquire(%d) returned %ld\n",unit,rc));
         return;
     }
 
@@ -506,6 +506,70 @@ static int atari_partition(int major,LONG *devices_available)
 
 
 /*=========================================================================*/
+
+LONG disk_inquire(UWORD unit, ULONG *blocksize, ULONG *deviceflags, char *productname, UWORD stringlen)
+{
+    UWORD major = unit - NUMFLOPPIES;
+    LONG ret;
+    WORD bus, reldev;
+    BYTE name[40] = "Disk";
+    ULONG flags = 0UL;
+    MAYBE_UNUSED(reldev);
+    MAYBE_UNUSED(ret);
+
+#if DETECT_NATIVE_FEATURES
+    /* direct access to device */
+    if (get_xhdi_nfid()) {
+        ret = NFCall(get_xhdi_nfid() + XHINQTARGET2, (long)major, (long)0, (long)blocksize, (long)deviceflags, (long)productname, (long)stringlen);
+        if (ret != EINVFN && ret != EUNDEV)
+            return ret;
+    }
+#endif
+
+    bus = GET_BUS(major);
+    reldev = major - bus * DEVICES_PER_BUS;
+
+    /*
+     * hardware access to device
+     *
+     * note: we expect the xxx_ioctl() functions to physically access the
+     * device, since XHInqTarget2() may be used to determine its presence
+     */
+    switch(bus) {
+#if CONF_WITH_ACSI
+    case ACSI_BUS:
+        ret = acsi_ioctl(reldev,GET_DISKNAME,name);
+        break;
+#endif /* CONF_WITH_ACSI */
+#if CONF_WITH_IDE
+    case IDE_BUS:
+        ret = ide_ioctl(reldev,GET_DISKNAME,name);
+        break;
+#endif /* CONF_WITH_IDE */
+#if CONF_WITH_SDMMC
+    case SDMMC_BUS:
+        ret = sd_ioctl(reldev,GET_DISKNAME,name);
+        flags = XH_TARGET_REMOVABLE;    /* medium is removable */
+        break;
+#endif /* CONF_WITH_SDMMC */
+    default:
+        ret = EUNDEV;
+    }
+
+    /* if device doesn't exist, we're done */
+    if (ret == EUNDEV)
+        return ret;
+
+    /* return values as requested */
+    if (blocksize)
+        *blocksize = SECTOR_SIZE;   /* standard physical sector size on HDD */
+    if (deviceflags)
+        *deviceflags = flags;
+    if (productname)
+        strlcpy(productname,name,stringlen);
+
+    return 0;
+}
 
 LONG disk_get_capacity(UWORD unit, ULONG *blocks, ULONG *blocksize)
 {

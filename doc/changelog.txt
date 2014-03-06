@@ -5340,3 +5340,5 @@ Start... early ages
   implementation to disk_rw(). (VRI)
 - bios/disk.c bios/disk.h bios/xhdi.c: Moved XHGetCapacity() implementation
   to disk_get_capacity(). (VRI)
+- bios/disk.c bios/disk.h bios/xhdi.c: Moved XHInqTarget() and XHInqTarget2()
+  implementation to disk_inquire(). (VRI)

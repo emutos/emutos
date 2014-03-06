@@ -262,102 +262,49 @@ static long XHReaccess(UWORD major, UWORD minor)
     return EINVFN;
 }
 
-#endif  /* CONF_WITH_XHDI */
-
 /*=========================================================================*/
 
 static long XHInqTarget2(UWORD major, UWORD minor, ULONG *blocksize,
                          ULONG *deviceflags, char *productname, UWORD stringlen)
 {
-    LONG ret;
-    WORD bus, reldev;
-    BYTE name[40] = "Disk";
-    ULONG flags = 0UL;
-    MAYBE_UNUSED(reldev);
-    MAYBE_UNUSED(ret);
+    UWORD unit;
 
     KDEBUG(("XHInqTarget2(%d.%d)\n", major, minor));
 
-#if CONF_WITH_XHDI
     if (next_handler) {
-        ret = next_handler(XHINQTARGET2, major, minor, blocksize, deviceflags, productname, stringlen);
+        long ret = next_handler(XHINQTARGET2, major, minor, blocksize, deviceflags, productname, stringlen);
         if (ret != EINVFN && ret != EUNDEV)
             return ret;
     }
-#endif
-
-#if DETECT_NATIVE_FEATURES
-    /* direct access to device */
-    if (get_xhdi_nfid()) {
-        ret = NFCall(get_xhdi_nfid() + XHINQTARGET2, (long)major, (long)minor, (long)blocksize, (long)deviceflags, (long)productname, (long)stringlen);
-        if (ret != EINVFN && ret != EUNDEV)
-            return ret;
-    }
-#endif
 
     if (minor != 0)
         return EUNDEV;
 
-    bus = GET_BUS(major);
-    reldev = major - bus * DEVICES_PER_BUS;
+    unit = NUMFLOPPIES + major;
 
-    /*
-     * hardware access to device
-     *
-     * note: we expect the xxx_ioctl() functions to physically access the
-     * device, since XHInqTarget2() may be used to determine its presence
-     */
-    switch(bus) {
-#if CONF_WITH_ACSI
-    case ACSI_BUS:
-        ret = acsi_ioctl(reldev,GET_DISKNAME,name);
-        break;
-#endif /* CONF_WITH_ACSI */
-#if CONF_WITH_IDE
-    case IDE_BUS:
-        ret = ide_ioctl(reldev,GET_DISKNAME,name);
-        break;
-#endif /* CONF_WITH_IDE */
-#if CONF_WITH_SDMMC
-    case SDMMC_BUS:
-        ret = sd_ioctl(reldev,GET_DISKNAME,name);
-        flags = XH_TARGET_REMOVABLE;    /* medium is removable */
-        break;
-#endif /* CONF_WITH_SDMMC */
-    default:
-        ret = EUNDEV;
-    }
-
-    /* if device doesn't exist, we're done */
-    if (ret == EUNDEV)
-        return ret;
-
-    /* return values as requested */
-    if (blocksize)
-        *blocksize = SECTOR_SIZE;   /* standard physical sector size on HDD */
-    if (deviceflags)
-        *deviceflags = flags;
-    if (productname)
-        strlcpy(productname,name,stringlen);
-
-    return 0;
+    return disk_inquire(unit, blocksize, deviceflags, productname, stringlen);
 }
 
 long XHInqTarget(UWORD major, UWORD minor, ULONG *blocksize,
                  ULONG *deviceflags, char *productname)
 {
-#if CONF_WITH_XHDI
+    UWORD unit;
+
+    KDEBUG(("XHInqTarget(%d.%d)\n", major, minor));
+
     if (next_handler) {
         long ret = next_handler(XHINQTARGET, major, minor, blocksize, deviceflags, productname);
         if (ret != EINVFN && ret != EUNDEV)
             return ret;
     }
-#endif
 
-    return XHInqTarget2(major, minor, blocksize, deviceflags, productname, 33);
+    if (minor != 0)
+        return EUNDEV;
+
+    unit = NUMFLOPPIES + major;
+
+    return disk_inquire(unit, blocksize, deviceflags, productname, 33);
 }
-
-#if CONF_WITH_XHDI
 
 long XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
 {
