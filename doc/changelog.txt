@@ -5328,3 +5328,7 @@ Start... early ages
 - bios/blkdev.c bios/blkdev.h bios/disk.c bios/disk.h bios/xbios.c: Always use
   'major' for XHDI device numbers (0 = first physical hard drive, etc.). (VRI)
 - bios/disk.c bios/xhdi.c: Renamed xbiosdev to unit. (VRI)
+
+2014-03-06
+- bdos/fsdir.c bdos/fsdrive.c: Don't test return value from MGET(DND), it
+  only returns if it succeeds. (RFB)

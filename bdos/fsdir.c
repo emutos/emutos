@@ -238,11 +238,7 @@ long xmkdir(char *s)
                 return ( EACCDN );
         }
 
-        if( (dn = makdnd(f->o_dnode,b)) == NULLPTR )
-        {
-                ixdel( f->o_dnode, b, f->o_dirbyt );    /* M01.01.1103.01 */
-                return (ENSMEM);
-        }
+        dn = makdnd(f->o_dnode,b);  /* makdnd() only returns if it succeeds */
 
         if( (dn->d_ofd = f0 = makofd(dn)) == (OFD*)NULLPTR )
         {
@@ -1298,8 +1294,7 @@ FCB     *scan(register DND *dnd, const char *n, WORD att, LONG *posp)
                 {       /*  see if we already have it  */
                         dnd1 = getdnd( &fcb->f_name[0] , dnd ) ;
                         if (!dnd1)
-                                if (!(dnd1 = makdnd(dnd,fcb)))
-                                        return( NULLPTR ) ;
+                                dnd1 = makdnd(dnd,fcb);   /* always succeeds */
                 }
 
                 if ( (m = match( name , fcb->f_name )) )
@@ -1392,8 +1387,7 @@ static DND *makdnd(DND *p, FCB *b)
         {
                 KDEBUG(("\n makdnd new"));
 
-                if (!(p1 = MGET(DND)))
-                        return ( (DND *) 0 );   /* ran out of system memory */
+                p1 = MGET(DND); /* MGET(DND) only returns if it succeeds */
 
                 /* do this init only on a newly allocated DND */
                 p1->d_right = p->d_left;
