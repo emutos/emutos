@@ -5332,3 +5332,5 @@ Start... early ages
 2014-03-06
 - bdos/fsdir.c bdos/fsdrive.c: Don't test return value from MGET(DND), it
   only returns if it succeeds. (RFB)
+- bdos/fsdrive.c bdos/fsmain.c bdos/fsopnclo.c: Don't test return value
+  from MGET(OFD), it only returns if it succeeds. (RFB)

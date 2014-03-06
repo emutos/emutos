@@ -283,8 +283,7 @@ static long makopn(FCB *f, DND *dn, int h, int mod)
 
         dm = dn->d_drv;
 
-        if (!(p = MGET(OFD)))
-                return(ENSMEM);
+        p = MGET(OFD);                  /* MGET(OFD) only returns if it succeeds */
 
         p->o_mod = mod;                 /*  set mode                    */
         p->o_dmd = dm;                  /*  link OFD to media           */

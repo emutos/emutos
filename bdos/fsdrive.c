@@ -147,21 +147,15 @@ static DMD *getdmd(int drv)
         if (!(drvtbl[drv] = dm = MGET(DMD)))
                 return ( (DMD *) 0 );
 
-        dm->m_dtl = MGET(DND);  /* MGET(DND) only retiurns if it succeeds */
-
-        if (!(dm->m_dtl->d_ofd = MGET(OFD)))
-                goto fredtl;
-
-        if (!(dm->m_fatofd = MGET(OFD)))
-                goto freofd;
+        /*
+         * no need to check the following, since MGET(DND)
+         * and MGET(OFD) only return if they succeed
+         */
+        dm->m_dtl = MGET(DND);
+        dm->m_dtl->d_ofd = MGET(OFD);
+        dm->m_fatofd = MGET(OFD);
 
         return(dm);
-
-freofd: xmfreblk (dm->m_dtl->d_ofd);
-fredtl: xmfreblk (dm->m_dtl);
-        xmfreblk (dm);
-
-        return ( (DMD *) 0 );
 }
 
 

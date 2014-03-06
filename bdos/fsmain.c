@@ -468,8 +468,7 @@ OFD     *makofd(register DND *p)
 {
     register OFD *f;
 
-    if (!(f = MGET(OFD)))
-        return ( (OFD *) 0 );
+    f = MGET(OFD);      /* MGET(OFD) only returns if it succeeds */
 
     f->o_strtcl = p->d_strtcl;
     f->o_fileln = 0x7fffffffL;
