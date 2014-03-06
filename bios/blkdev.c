@@ -34,7 +34,6 @@
  */
 
 BLKDEV blkdev[BLKDEVNUM];
-UNIT units[UNITSNUM];
 
 static BYTE diskbuf[2*SECTOR_SIZE];     /* buffer for 2 sectors */
 

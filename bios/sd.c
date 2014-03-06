@@ -15,6 +15,7 @@
 #include "config.h"
 #include "portab.h"
 
+#include "disk.h"
 #include "asm.h"
 #include "blkdev.h"
 #include "delay.h"

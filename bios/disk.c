@@ -24,6 +24,7 @@
 #include "natfeat.h"
 #include "ide.h"
 #include "acsi.h"
+#include "sd.h"
 
 /*==== Defines ============================================================*/
 
@@ -45,6 +46,10 @@ typedef struct {
     PARTENTRY entry[4];
     UWORD bootsig;
 } MBR;
+
+/*==== Global variables ===================================================*/
+
+UNIT units[UNITSNUM];
 
 /*==== Internal declarations ==============================================*/
 static int atari_partition(int major,LONG *devices_available);

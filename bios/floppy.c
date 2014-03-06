@@ -16,6 +16,7 @@
 #include "portab.h"
 #include "gemerror.h"
 #include "floppy.h"
+#include "disk.h"
 #include "dma.h"
 #include "fdc.h"
 #include "psg.h"

@@ -5345,3 +5345,5 @@ Start... early ages
 - bios/blkdev.c bios/disk.c bios/disk.h: Moved nonflop_mediach() to
   disk_mediach(). (VRI)
 - bdos/fsdir.c: Fix occasional internal memory leak (OFD) in xrmdir(). (RFB)
+- bios/blkdev.c bios/blkdev.h bios/disk.c bios/disk.h: Moved most unit and bus
+  stuff to disk.c. (VRI)

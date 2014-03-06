@@ -14,6 +14,7 @@
 
 #include "config.h"
 #include "acsi.h"
+#include "disk.h"
 #include "dma.h"
 #include "kprint.h"
 #include "string.h"
