@@ -21,6 +21,9 @@
 #include "kprint.h"
 #include "xhdi.h"
 #include "processor.h"
+#include "natfeat.h"
+#include "ide.h"
+#include "acsi.h"
 
 /*==== Defines ============================================================*/
 
@@ -503,21 +506,75 @@ static int atari_partition(int major,LONG *devices_available)
 
 /*=========================================================================*/
 
+LONG disk_rw(UWORD unit, UWORD rw, ULONG sector, UWORD count, void *buf)
+{
+    UWORD major = unit - NUMFLOPPIES;
+    LONG ret;
+    WORD bus, reldev;
+    MAYBE_UNUSED(reldev);
+
+#if DETECT_NATIVE_FEATURES
+    /* direct access to device */
+    if (get_xhdi_nfid()) {
+        ret = NFCall(get_xhdi_nfid() + XHREADWRITE, (long)major, (long)0, (long)rw, (long)sector, (long)count, buf);
+        if (ret != EINVFN && ret != EUNDEV)
+            return ret;
+    }
+#endif
+
+    bus = GET_BUS(major);
+    reldev = major - bus * DEVICES_PER_BUS;
+
+    /* hardware access to device */
+    switch(bus) {
+#if CONF_WITH_ACSI
+    case ACSI_BUS:
+        ret = acsi_rw(rw, sector, count, (LONG)buf, reldev);
+        KDEBUG(("acsi_rw() returned %ld\n", ret));
+        break;
+#endif /* CONF_WITH_ACSI */
+#if CONF_WITH_IDE
+    case IDE_BUS:
+    {
+        BOOL need_byteswap = units[unit].byteswap;
+        ret = ide_rw(rw, sector, count, (LONG)buf, reldev, need_byteswap);
+        KDEBUG(("ide_rw() returned %ld\n", ret));
+        break;
+    }
+#endif /* CONF_WITH_IDE */
+#if CONF_WITH_SDMMC
+    case SDMMC_BUS:
+        ret = sd_rw(rw, sector, count, (LONG)buf, reldev);
+        KDEBUG(("sd_rw() returned %ld\n", ret));
+        break;
+#endif /* CONF_WITH_SDMMC */
+    default:
+        ret = EUNDEV;
+    }
+
+    return ret;
+}
+
+/*=========================================================================*/
+
 LONG DMAread(LONG sector, WORD count, LONG buf, WORD major)
 {
-LONG rc;
+    UWORD unit = NUMFLOPPIES + major;
+    LONG rc;
 
-    rc = XHReadWrite(major, 0, 0, sector, count, (void *)buf);
+    rc = disk_rw(unit, RW_READ, sector, count, (void *)buf);
 
     /* TOS invalidates the i-cache here, so be compatible */
-    instruction_cache_kludge((void *)buf,count<<units[major+NUMFLOPPIES].psshift);
+    instruction_cache_kludge((void *)buf,count<<units[unit].psshift);
 
     return rc;
 }
 
 LONG DMAwrite(LONG sector, WORD count, LONG buf, WORD major)
 {
-    return XHReadWrite(major, 0, 1, sector, count, (void *)buf);
+    UWORD unit = NUMFLOPPIES + major;
+
+    return disk_rw(unit, RW_WRITE, sector, count, (void *)buf);
 }
 
 void byteswap(UBYTE *buffer, ULONG size)

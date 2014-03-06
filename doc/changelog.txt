@@ -5336,3 +5336,5 @@ Start... early ages
   from MGET(OFD), it only returns if it succeeds. (RFB)
 - bdos/fsdir.c bdos/fsopnclo.c: Don't test return value from makofd(), it
   only returns if it succeeds. (RFB)
+- bios/blkdev.c bios/disk.c bios/disk.h bios/xhdi.c: Moved XHReadWrite()
+  implementation to disk_rw(). (VRI)

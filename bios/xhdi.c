@@ -25,7 +25,7 @@
 #include "natfeat.h"
 #include "ide.h"
 #include "sd.h"
-
+#include "disk.h"
 #include "xhdi.h"
 
 
@@ -429,73 +429,31 @@ long XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
 
 /*=========================================================================*/
 
+#if CONF_WITH_XHDI
+
 long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
                  UWORD count, void *buf)
 {
-    LONG ret;
-    WORD bus, reldev;
-    MAYBE_UNUSED(reldev);
+    UWORD unit;
 
     KDEBUG(("XHReadWrite(device=%u.%u, rw=%u, sector=%lu, count=%u, buf=%p)\n",
             major, minor, rw, sector, count, buf));
 
-#if CONF_WITH_XHDI
     if (next_handler) {
-        ret = next_handler(XHREADWRITE, major, minor, rw, sector, count, buf);
+        long ret = next_handler(XHREADWRITE, major, minor, rw, sector, count, buf);
         if (ret != EINVFN && ret != EUNDEV)
             return ret;
     }
-#endif
-
-#if DETECT_NATIVE_FEATURES
-    /* direct access to device */
-    if (get_xhdi_nfid()) {
-        ret = NFCall(get_xhdi_nfid() + XHREADWRITE, (long)major, (long)0, (long)rw, (long)sector, (long)count, buf);
-        if (ret != EINVFN && ret != EUNDEV)
-            return ret;
-    }
-#endif
 
     if (minor != 0)
         return EUNDEV;
 
-    bus = GET_BUS(major);
-    reldev = major - bus * DEVICES_PER_BUS;
+    unit = NUMFLOPPIES + major;
 
-    /* hardware access to device */
-    switch(bus) {
-#if CONF_WITH_ACSI
-    case ACSI_BUS:
-        ret = acsi_rw(rw, sector, count, (LONG)buf, reldev);
-        KDEBUG(("acsi_rw() returned %ld\n", ret));
-        break;
-#endif /* CONF_WITH_ACSI */
-#if CONF_WITH_IDE
-    case IDE_BUS:
-    {
-        UWORD unit = NUMFLOPPIES + major;
-        BOOL need_byteswap = units[unit].byteswap;
-        ret = ide_rw(rw, sector, count, (LONG)buf, reldev, need_byteswap);
-        KDEBUG(("ide_rw() returned %ld\n", ret));
-        break;
-    }
-#endif /* CONF_WITH_IDE */
-#if CONF_WITH_SDMMC
-    case SDMMC_BUS:
-        ret = sd_rw(rw, sector, count, (LONG)buf, reldev);
-        KDEBUG(("sd_rw() returned %ld\n", ret));
-        break;
-#endif /* CONF_WITH_SDMMC */
-    default:
-        ret = EUNDEV;
-    }
-
-    return ret;
+    return disk_rw(unit, rw, sector, count, buf);
 }
 
 /*=========================================================================*/
-
-#if CONF_WITH_XHDI
 
 /* EmuTOS' XHDI cookie points to _xhdi_vec implemented in bios/natfeat.S.
  * It backups all the registers according to the XHDI specification,

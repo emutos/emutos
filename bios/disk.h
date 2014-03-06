@@ -15,6 +15,10 @@
 
 #include "portab.h"
 
+/* physical disk functions */
+
+LONG disk_rw(UWORD unit, UWORD rw, ULONG sector, UWORD count, void *buf);
+
 /* xbios functions */
 
 extern LONG DMAread(LONG sector, WORD count, LONG buf, WORD major);
