@@ -47,7 +47,6 @@ static void blkdev_hdv_init(void);
 static LONG blkdev_mediach(WORD dev);
 static LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr);
 static void bus_init(void);
-static LONG nonflop_mediach(WORD logical);
 
 /* get intel words */
 static UWORD getiword(UBYTE *addr)
@@ -435,7 +434,7 @@ LONG blkdev_getbpb(WORD dev)
      */
     unit = bdev->unit;
     if ((unit >= NUMFLOPPIES) && (units[unit].features & UNIT_REMOVABLE))
-        nonflop_mediach(dev);   /* check for change & rescan partitions if so */
+        disk_mediach(unit);     /* check for change & rescan partitions if so */
 
     /* now we can read the bootsector using the physical mode */
     if (blkdev_rwabs(RW_READ | RW_NOMEDIACH | RW_NOTRANSLATE,
@@ -515,59 +514,13 @@ LONG blkdev_getbpb(WORD dev)
 }
 
 /*
- * media change detection for non-floppies
- */
-static LONG nonflop_mediach(WORD logical)
-{
-    LONG ret;
-    WORD major, bus, reldev;
-
-    /* convert logical drive */
-    major = blkdev[logical].unit - NUMFLOPPIES;
-
-    /* get bus and relative device */
-    bus = GET_BUS(major);
-    reldev = major - bus * DEVICES_PER_BUS;
-    MAYBE_UNUSED(reldev);
-
-    /* hardware access to device */
-    switch(bus) {
-#if CONF_WITH_ACSI
-    case ACSI_BUS:
-        ret = acsi_ioctl(reldev,GET_MEDIACHANGE,NULL);
-        break;
-#endif /* CONF_WITH_ACSI */
-#if CONF_WITH_IDE
-    case IDE_BUS:
-        ret = ide_ioctl(reldev,GET_MEDIACHANGE,NULL);
-        break;
-#endif /* CONF_WITH_IDE */
-    case SCSI_BUS:
-        ret = MEDIANOCHANGE;    /* for Aranym compatibility */
-        break;
-#if CONF_WITH_SDMMC
-    case SDMMC_BUS:
-        ret = sd_ioctl(reldev,GET_MEDIACHANGE,NULL);
-        break;
-#endif /* CONF_WITH_SDMMC */
-    default:
-        ret = EUNDEV;
-    }
-
-    if (ret == MEDIACHANGE)
-        disk_rescan(major);
-
-    KDEBUG(("nonflop_mediach(%d) returned %ld\n",logical,ret));
-    return ret;
-}
-
-/*
  * blkdev_mediach - BIOS media change vector
  */
 
 static LONG blkdev_mediach(WORD dev)
 {
     BLKDEV *b = &blkdev[dev];
+    UWORD unit = b->unit;
     LONG ret;
 
     if ((dev < 0 ) || (dev >= BLKDEVNUM) || !b->valid)
@@ -575,14 +528,14 @@ static LONG blkdev_mediach(WORD dev)
 
     if (b->mediachange == MEDIANOCHANGE) {
         /* if less than half a second since last access, assume no mediachange */
-        if (hz_200 < units[b->unit].last_access + CLOCKS_PER_SEC/2)
+        if (hz_200 < units[unit].last_access + CLOCKS_PER_SEC/2)
             return MEDIANOCHANGE;
 
-        ret = (dev<NUMFLOPPIES) ? flop_mediach(dev) : nonflop_mediach(dev);
+        ret = (dev<NUMFLOPPIES) ? flop_mediach(dev) : disk_mediach(unit);
         if (ret < 0)
             return ret;
         if (ret == MEDIACHANGE)     /* if mediachange, mark physical unit */
-            units[b->unit].status |= UNIT_CHANGED;
+            units[unit].status |= UNIT_CHANGED;
         b->mediachange = ret;
     }
 

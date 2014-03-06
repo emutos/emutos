@@ -29,6 +29,7 @@ extern LONG DMAwrite(LONG sector, WORD count, LONG buf, WORD major);
 /* partition detection */
 
 void disk_init_all(void);
+LONG disk_mediach(UWORD unit);
 void disk_rescan(int major);
 void byteswap(UBYTE *buffer, ULONG size);
 

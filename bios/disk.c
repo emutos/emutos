@@ -178,6 +178,51 @@ void disk_init_all(void)
 }
 
 /*
+ * media change detection
+ */
+LONG disk_mediach(UWORD unit)
+{
+    UWORD major = unit - NUMFLOPPIES;
+    LONG ret;
+    WORD bus, reldev;
+
+    /* get bus and relative device */
+    bus = GET_BUS(major);
+    reldev = major - bus * DEVICES_PER_BUS;
+    MAYBE_UNUSED(reldev);
+
+    /* hardware access to device */
+    switch(bus) {
+#if CONF_WITH_ACSI
+    case ACSI_BUS:
+        ret = acsi_ioctl(reldev,GET_MEDIACHANGE,NULL);
+        break;
+#endif /* CONF_WITH_ACSI */
+#if CONF_WITH_IDE
+    case IDE_BUS:
+        ret = ide_ioctl(reldev,GET_MEDIACHANGE,NULL);
+        break;
+#endif /* CONF_WITH_IDE */
+    case SCSI_BUS:
+        ret = MEDIANOCHANGE;    /* for Aranym compatibility */
+        break;
+#if CONF_WITH_SDMMC
+    case SDMMC_BUS:
+        ret = sd_ioctl(reldev,GET_MEDIACHANGE,NULL);
+        break;
+#endif /* CONF_WITH_SDMMC */
+    default:
+        ret = EUNDEV;
+    }
+
+    if (ret == MEDIACHANGE)
+        disk_rescan(major);
+
+    KDEBUG(("disk_mediach(%d) returned %ld\n",unit,ret));
+    return ret;
+}
+
+/*
  * rescan partitions on specified drive
  * this is used to handle media change on removable drives
  */

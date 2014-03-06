@@ -5342,3 +5342,5 @@ Start... early ages
   to disk_get_capacity(). (VRI)
 - bios/disk.c bios/disk.h bios/xhdi.c: Moved XHInqTarget() and XHInqTarget2()
   implementation to disk_inquire(). (VRI)
+- bios/blkdev.c bios/disk.c bios/disk.h: Moved nonflop_mediach() to
+  disk_mediach(). (VRI)
