@@ -34,15 +34,15 @@
 /* values in device_flags for XHInqTarget(), XHInqTarget2() */
 #define XH_TARGET_REMOVABLE 0x02L
 
-void create_XHDI_cookie(void);
+#if CONF_WITH_XHDI
 
+#include "portab.h"
+
+extern long xhdi_vec(UWORD opcode, ...); /* In bios/natfeat.S */
+
+void create_XHDI_cookie(void);
 long xhdi_handler(UWORD *stack);
 
-long XHInqTarget(UWORD major, UWORD minor, ULONG *blocksize,
-                 ULONG *deviceflags, char *productname);
+#endif /* CONF_WITH_XHDI */
 
-long XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize);
-
-long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
-                 UWORD count, void *buf);
 #endif /* _XHDI_H */

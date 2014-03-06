@@ -15,18 +15,13 @@
 /*#define ENABLE_KDEBUG*/
 
 #include "config.h"
-#include "stdarg.h"
+#include "xhdi.h"
 #include "kprint.h"
 #include "blkdev.h"
 #include "gemerror.h"
-#include "acsi.h"
 #include "string.h"
 #include "cookie.h"
-#include "natfeat.h"
-#include "ide.h"
-#include "sd.h"
 #include "disk.h"
-#include "xhdi.h"
 
 
 #if CONF_WITH_XHDI
@@ -84,7 +79,6 @@ static long XHInqDev2(UWORD drv, UWORD *major, UWORD *minor, ULONG *start,
                       BPB *bpb, ULONG *blocks, char *partid)
 {
     long pstart = blkdev[drv].start;
-    int mediachange = 0;
     BPB *myBPB;
 
     KDEBUG(("XHInqDev2(%c:) start=%ld, size=%ld, ID=%c%c%c\n",
@@ -122,9 +116,6 @@ static long XHInqDev2(UWORD drv, UWORD *major, UWORD *minor, ULONG *start,
         partid[1] = blkdev[drv].id[1];
         partid[2] = blkdev[drv].id[2];
     }
-
-    if (mediachange)
-        return EDRVNR;
 
    return E_OK;
 }
@@ -285,7 +276,7 @@ static long XHInqTarget2(UWORD major, UWORD minor, ULONG *blocksize,
     return disk_inquire(unit, blocksize, deviceflags, productname, stringlen);
 }
 
-long XHInqTarget(UWORD major, UWORD minor, ULONG *blocksize,
+static long XHInqTarget(UWORD major, UWORD minor, ULONG *blocksize,
                  ULONG *deviceflags, char *productname)
 {
     UWORD unit;
@@ -306,7 +297,7 @@ long XHInqTarget(UWORD major, UWORD minor, ULONG *blocksize,
     return disk_inquire(unit, blocksize, deviceflags, productname, 33);
 }
 
-long XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
+static long XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
 {
     UWORD unit;
 
@@ -326,9 +317,7 @@ long XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
     return disk_get_capacity(unit, blocks, blocksize);
 }
 
-/*=========================================================================*/
-
-long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
+static long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
                  UWORD count, void *buf)
 {
     UWORD unit;

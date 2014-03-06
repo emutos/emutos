@@ -409,7 +409,7 @@ static int atari_partition(int major,LONG *devices_available)
 
     /*
      * circumvent bug in Hatari v1.7 & earlier: the ACSI Read Capacity
-     * command, which we have just used by calling XHGetCapacity() in
+     * command, which we have just used by calling disk_get_capacity() in
      * disk_init_all() above, returns a value approximately 512 times too
      * small for the capacity.  this makes the value in units[].size
      * too small.
@@ -533,7 +533,7 @@ LONG disk_inquire(UWORD unit, ULONG *blocksize, ULONG *deviceflags, char *produc
      * hardware access to device
      *
      * note: we expect the xxx_ioctl() functions to physically access the
-     * device, since XHInqTarget2() may be used to determine its presence
+     * device, since disk_inquire() may be used to determine its presence
      */
     switch(bus) {
 #if CONF_WITH_ACSI

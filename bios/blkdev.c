@@ -24,7 +24,6 @@
 #include "disk.h"
 #include "ikbd.h"
 #include "blkdev.h"
-#include "xhdi.h"
 #include "processor.h"
 #include "acsi.h"
 #include "ide.h"
