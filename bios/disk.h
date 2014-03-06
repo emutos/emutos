@@ -100,7 +100,7 @@ extern LONG DMAwrite(LONG sector, WORD count, LONG buf, WORD major);
 
 void disk_init_all(void);
 LONG disk_mediach(UWORD unit);
-void disk_rescan(int major);
+void disk_rescan(UWORD unit);
 void byteswap(UBYTE *buffer, ULONG size);
 
 #endif /* DISK_H */

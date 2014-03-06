@@ -52,19 +52,18 @@ typedef struct {
 UNIT units[UNITSNUM];
 
 /*==== Internal declarations ==============================================*/
-static int atari_partition(int major,LONG *devices_available);
+static int atari_partition(UWORD unit,LONG *devices_available);
 
 /*
  * scans one unit and adds all found partitions
  */
-static void disk_init_one(int major,LONG *devices_available)
+static void disk_init_one(UWORD unit,LONG *devices_available)
 {
     LONG bitmask, devs, rc;
     ULONG blocksize = SECTOR_SIZE;
     ULONG blocks = 0;
     ULONG device_flags;
     WORD shift;
-    UWORD unit = NUMFLOPPIES + major;
     UNIT *punit = &units[unit];
     int i, n;
 
@@ -94,7 +93,7 @@ static void disk_init_one(int major,LONG *devices_available)
 
     /* scan for ATARI partitions on this harddrive */
     devs = *devices_available;  /* remember initial set */
-    atari_partition(major,devices_available);
+    atari_partition(unit,devices_available);
     devs ^= *devices_available; /* which ones were allocated this time */
 
     /*
@@ -106,7 +105,7 @@ static void disk_init_one(int major,LONG *devices_available)
             if (devs & bitmask)
                 n++;    /* count allocated devices */
         for ( ; n < REMOVABLE_PARTITIONS; n++)
-            add_partition(major,devices_available,"BGM",0L,0L);
+            add_partition(unit,devices_available,"BGM",0L,0L);
     }
 }
 
@@ -138,7 +137,8 @@ void disk_init_all(void)
 
     /* scan for attached harddrives and their partitions */
     for(i = 0; i < (sizeof(majors) / sizeof(majors[0])); i++) {
-        disk_init_one(majors[i],&devices_available);
+        UWORD unit = NUMFLOPPIES + majors[i];
+        disk_init_one(unit,&devices_available);
         if (!devices_available) {
             KDEBUG(("disk_init_all(): maximum number of partitions reached!\n"));
             break;
@@ -221,7 +221,7 @@ LONG disk_mediach(UWORD unit)
     }
 
     if (ret == MEDIACHANGE)
-        disk_rescan(major);
+        disk_rescan(unit);
 
     KDEBUG(("disk_mediach(%d) returned %ld\n",unit,ret));
     return ret;
@@ -231,19 +231,18 @@ LONG disk_mediach(UWORD unit)
  * rescan partitions on specified drive
  * this is used to handle media change on removable drives
  */
-void disk_rescan(int major)
+void disk_rescan(UWORD unit)
 {
     int i;
-    int unit = major + NUMFLOPPIES;
     LONG devices_available, bitmask;
 
     /* determine available devices for rescan */
     devices_available = units[unit].drivemap;
 
-    KDEBUG(("disk_rescan(%d):drivemap=0x%08lx\n",major,devices_available));
+    KDEBUG(("disk_rescan(%d):drivemap=0x%08lx\n",unit,devices_available));
 
     /* rescan (this clobbers 'devices_available') */
-    disk_init_one(major,&devices_available);
+    disk_init_one(unit,&devices_available);
 
     /* now set the mediachange byte for the relevant devices */
     devices_available = units[unit].drivemap;
@@ -329,7 +328,7 @@ union
  * scans for Atari partitions on 'major' and adds them to blkdev array
  *
  */
-static int atari_partition(int major,LONG *devices_available)
+static int atari_partition(UWORD unit,LONG *devices_available)
 {
     u8* sect = physsect.sect;
     struct rootsector *rs = &physsect.rs;
@@ -337,7 +336,7 @@ static int atari_partition(int major,LONG *devices_available)
     MBR *mbr = &physsect.mbr;
     u32 extensect;
     u32 hd_size;
-    int unit = major + NUMFLOPPIES;
+    int major = unit - NUMFLOPPIES;
 #ifdef ICD_PARTS
     int part_fmt = 0; /* 0:unknown, 1:AHDI, 2:ICD/Supra */
 #endif
@@ -365,7 +364,7 @@ static int atari_partition(int major,LONG *devices_available)
     if (mbr->bootsig == 0x55aa) {
         ULONG size = check_for_no_partitions(sect);
         if (size) {
-            if (add_partition(major,devices_available,"BGM",0UL,size) < 0)
+            if (add_partition(unit,devices_available,"BGM",0UL,size) < 0)
                 return -1;
             KINFO((" fake BGM\n"));
             return 1;
@@ -426,7 +425,7 @@ static int atari_partition(int major,LONG *devices_available)
             case 0x04:
             case 0x06:
             case 0x0e:
-                if (add_partition(major,devices_available,pid,start,size) < 0)
+                if (add_partition(unit,devices_available,pid,start,size) < 0)
                     return -1;
                 KINFO((" $%02x", type));
                 break;
@@ -484,7 +483,7 @@ static int atari_partition(int major,LONG *devices_available)
         /* active partition */
         if (memcmp (pi->id, "XGM", 3) != 0) {
             /* we don't care about other id's */
-            if (add_partition(major,devices_available,pi->id,pi->st,pi->siz) < 0)
+            if (add_partition(unit,devices_available,pi->id,pi->st,pi->siz) < 0)
                 break;  /* max number of partitions reached */
 
             KINFO((" %c%c%c", pi->id[0], pi->id[1], pi->id[2]));
@@ -511,7 +510,7 @@ static int atari_partition(int major,LONG *devices_available)
                 break;
             }
 
-            if (add_partition(major,devices_available,xrs->part[0].id,
+            if (add_partition(unit,devices_available,xrs->part[0].id,
                               partsect+xrs->part[0].st,xrs->part[0].siz) < 0)
                 break;  /* max number of partitions reached */
 
@@ -540,7 +539,7 @@ static int atari_partition(int major,LONG *devices_available)
                 if (!((pi->flg & 1) && OK_id(pi->id)))
                     continue;
                 part_fmt = 2;
-                if (add_partition(major,devices_available,pi->id,pi->st,pi->siz) < 0)
+                if (add_partition(unit,devices_available,pi->id,pi->st,pi->siz) < 0)
                     break;  /* max number of partitions reached */
                 KINFO((" %c%c%c", pi->id[0], pi->id[1], pi->id[2]));
             }

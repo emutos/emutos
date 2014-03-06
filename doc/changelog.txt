@@ -5347,3 +5347,5 @@ Start... early ages
 - bdos/fsdir.c: Fix occasional internal memory leak (OFD) in xrmdir(). (RFB)
 - bios/blkdev.c bios/blkdev.h bios/disk.c bios/disk.h: Moved most unit and bus
   stuff to disk.c. (VRI)
+- bios/blkdev.c bios/blkdev.h bios/disk.c bios/disk.h: Physical disk functions
+  now takes a unit number as argument. (VRI)

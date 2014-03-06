@@ -220,9 +220,8 @@ static int next_logical(LONG *devices_available)
 /*
  * Add a partition's details to the device's partition description.
  */
-int add_partition(int major, LONG *devices_available, char id[], ULONG start, ULONG size)
+int add_partition(UWORD unit, LONG *devices_available, char id[], ULONG start, ULONG size)
 {
-    int unit = major + NUMFLOPPIES;
     int logical;
     BLKDEV *b;
 
@@ -379,7 +378,7 @@ static LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG
 
     if (retval == E_CHNG)
         if (unit >= NUMFLOPPIES)
-            disk_rescan(unit-NUMFLOPPIES);
+            disk_rescan(unit);
 
     return retval;
 }
