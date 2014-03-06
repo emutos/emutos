@@ -357,79 +357,29 @@ long XHInqTarget(UWORD major, UWORD minor, ULONG *blocksize,
     return XHInqTarget2(major, minor, blocksize, deviceflags, productname, 33);
 }
 
+#if CONF_WITH_XHDI
+
 long XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
 {
-    LONG ret;
-    ULONG info[2] = { 0UL, 512UL }; /* #sectors, sectorsize */
-    WORD bus, reldev;
-    MAYBE_UNUSED(reldev);
-    MAYBE_UNUSED(ret);
+    UWORD unit;
 
     KDEBUG(("XHGetCapacity(%d.%d)\n", major, minor));
 
-#if CONF_WITH_XHDI
     if (next_handler) {
-        ret = next_handler(XHGETCAPACITY, major, minor, blocks, blocksize);
+        long ret = next_handler(XHGETCAPACITY, major, minor, blocks, blocksize);
         if (ret != EINVFN && ret != EUNDEV)
             return ret;
     }
-#endif
-
-#if DETECT_NATIVE_FEATURES
-    if (get_xhdi_nfid()) {
-        ret = NFCall(get_xhdi_nfid() + XHGETCAPACITY, (long)major, (long)minor, (long)blocks, (long)blocksize);
-        if (ret != EINVFN && ret != EUNDEV)
-            return ret;
-    }
-#endif
 
     if (minor != 0)
         return EUNDEV;
 
-    bus = GET_BUS(major);
-    reldev = major - bus * DEVICES_PER_BUS;
+    unit = NUMFLOPPIES + major;
 
-    /* hardware access to device */
-    switch(bus) {
-#if CONF_WITH_ACSI
-    case ACSI_BUS:
-        ret = acsi_ioctl(reldev,GET_DISKINFO,info);
-        KDEBUG(("acsi_ioctl(%d) returned %ld\n", reldev, ret));
-        if (ret < 0)
-            return EUNDEV;
-        break;
-#endif /* CONF_WITH_ACSI */
-#if CONF_WITH_IDE
-    case IDE_BUS:
-        ret = ide_ioctl(reldev,GET_DISKINFO,info);
-        KDEBUG(("ide_ioctl(%d) returned %ld\n", reldev, ret));
-        if (ret < 0)
-            return ret;
-        break;
-#endif /* CONF_WITH_IDE */
-#if CONF_WITH_SDMMC
-    case SDMMC_BUS:
-        ret = sd_ioctl(reldev,GET_DISKINFO,info);
-        KDEBUG(("sd_ioctl(%d) returned %ld\n", reldev, ret));
-        if (ret < 0)
-            return ret;
-        break;
-#endif /* CONF_WITH_SDMMC */
-    default:
-        return EUNDEV;
-    }
-
-    if (blocks)
-        *blocks = info[0];
-    if (blocksize)
-        *blocksize = info[1];
-
-    return 0;
+    return disk_get_capacity(unit, blocks, blocksize);
 }
 
 /*=========================================================================*/
-
-#if CONF_WITH_XHDI
 
 long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
                  UWORD count, void *buf)

@@ -59,10 +59,11 @@ static void disk_init_one(int major,LONG *devices_available)
     ULONG blocks = 0;
     ULONG device_flags;
     WORD shift;
-    UNIT *unit = units + major + NUMFLOPPIES;
+    UWORD unit = NUMFLOPPIES + major;
+    UNIT *punit = &units[unit];
     int i, n, minor = 0;
 
-    unit->valid = 0;
+    punit->valid = 0;
 
     rc = XHInqTarget(major, minor, NULL, &device_flags, NULL);
     if (rc) {
@@ -71,20 +72,20 @@ static void disk_init_one(int major,LONG *devices_available)
     }
 
     /* try to update with real capacity & blocksize */
-    XHGetCapacity(major, minor, &blocks, &blocksize);
+    disk_get_capacity(unit, &blocks, &blocksize);
     shift = get_shift(blocksize);
     if (shift < 0) {    /* if blksize not a power of 2, ignore */
         KDEBUG(("disk_init_one(): invalid blocksize (%lu)\n",blocksize));
         return;
     }
 
-    unit->valid = 1;
-    unit->byteswap = 0;
-    unit->size = blocks;
-    unit->psshift = shift;
-    unit->last_access = 0;
-    unit->features = (device_flags&XH_TARGET_REMOVABLE) ? UNIT_REMOVABLE : 0;
-    unit->status = 0;
+    punit->valid = 1;
+    punit->byteswap = 0;
+    punit->size = blocks;
+    punit->psshift = shift;
+    punit->last_access = 0;
+    punit->features = (device_flags&XH_TARGET_REMOVABLE) ? UNIT_REMOVABLE : 0;
+    punit->status = 0;
 
     /* scan for ATARI partitions on this harddrive */
     devs = *devices_available;  /* remember initial set */
@@ -505,6 +506,64 @@ static int atari_partition(int major,LONG *devices_available)
 
 
 /*=========================================================================*/
+
+LONG disk_get_capacity(UWORD unit, ULONG *blocks, ULONG *blocksize)
+{
+    UWORD major = unit - NUMFLOPPIES;
+    LONG ret;
+    ULONG info[2] = { 0UL, 512UL }; /* #sectors, sectorsize */
+    WORD bus, reldev;
+    MAYBE_UNUSED(reldev);
+    MAYBE_UNUSED(ret);
+
+#if DETECT_NATIVE_FEATURES
+    if (get_xhdi_nfid()) {
+        ret = NFCall(get_xhdi_nfid() + XHGETCAPACITY, (long)major, (long)0, (long)blocks, (long)blocksize);
+        if (ret != EINVFN && ret != EUNDEV)
+            return ret;
+    }
+#endif
+
+    bus = GET_BUS(major);
+    reldev = major - bus * DEVICES_PER_BUS;
+
+    /* hardware access to device */
+    switch(bus) {
+#if CONF_WITH_ACSI
+    case ACSI_BUS:
+        ret = acsi_ioctl(reldev,GET_DISKINFO,info);
+        KDEBUG(("acsi_ioctl(%d) returned %ld\n", reldev, ret));
+        if (ret < 0)
+            return EUNDEV;
+        break;
+#endif /* CONF_WITH_ACSI */
+#if CONF_WITH_IDE
+    case IDE_BUS:
+        ret = ide_ioctl(reldev,GET_DISKINFO,info);
+        KDEBUG(("ide_ioctl(%d) returned %ld\n", reldev, ret));
+        if (ret < 0)
+            return ret;
+        break;
+#endif /* CONF_WITH_IDE */
+#if CONF_WITH_SDMMC
+    case SDMMC_BUS:
+        ret = sd_ioctl(reldev,GET_DISKINFO,info);
+        KDEBUG(("sd_ioctl(%d) returned %ld\n", reldev, ret));
+        if (ret < 0)
+            return ret;
+        break;
+#endif /* CONF_WITH_SDMMC */
+    default:
+        return EUNDEV;
+    }
+
+    if (blocks)
+        *blocks = info[0];
+    if (blocksize)
+        *blocksize = info[1];
+
+    return 0;
+}
 
 LONG disk_rw(UWORD unit, UWORD rw, ULONG sector, UWORD count, void *buf)
 {

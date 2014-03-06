@@ -17,6 +17,7 @@
 
 /* physical disk functions */
 
+LONG disk_get_capacity(UWORD unit, ULONG *blocks, ULONG *blocksize);
 LONG disk_rw(UWORD unit, UWORD rw, ULONG sector, UWORD count, void *buf);
 
 /* xbios functions */

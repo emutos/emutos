@@ -5338,3 +5338,5 @@ Start... early ages
   only returns if it succeeds. (RFB)
 - bios/blkdev.c bios/disk.c bios/disk.h bios/xhdi.c: Moved XHReadWrite()
   implementation to disk_rw(). (VRI)
+- bios/disk.c bios/disk.h bios/xhdi.c: Moved XHGetCapacity() implementation
+  to disk_get_capacity(). (VRI)
