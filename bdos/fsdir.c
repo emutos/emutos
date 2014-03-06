@@ -240,13 +240,7 @@ long xmkdir(char *s)
 
         dn = makdnd(f->o_dnode,b);  /* makdnd() only returns if it succeeds */
 
-        if( (dn->d_ofd = f0 = makofd(dn)) == (OFD*)NULLPTR )
-        {
-                ixdel( f->o_dnode, b, f->o_dirbyt );    /* M01.01.1103.01 */
-                f->o_dnode->d_left = NULLPTR;            /* M01.01.1103.01 */
-                xmfreblk((char *)dn);
-                return (ENSMEM);
-        }
+        dn->d_ofd = f0 = makofd(dn);/* makofd() only returns if it succeeds */
 
         /* initialize dir cluster */
 
@@ -333,8 +327,7 @@ long xrmdir(char *p)
         /*  end M01.01.SCC.FS.09  */
 
         if (!(fd = d->d_ofd))
-                if (!(fd = makofd(d)))
-                        return (ENSMEM);
+                fd = makofd(d);     /* makofd() only returns if it succeeds */
 
         ixlseek(fd,0x40L);
         do
@@ -1258,12 +1251,7 @@ FCB     *scan(register DND *dnd, const char *n, WORD att, LONG *posp)
         */
 
         if (!(fd = dnd->d_ofd))
-        {
-                if (!(dnd->d_ofd = (fd = makofd(dnd))))
-                {
-                        return ( (FCB *) 0 );
-                }
-        }
+                dnd->d_ofd = (fd = makofd(dnd));/* makofd() only returns if it succeeds */
 
         /*
         **  seek to desired starting position.  If posp == -1, then start at

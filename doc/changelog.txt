@@ -5334,3 +5334,5 @@ Start... early ages
   only returns if it succeeds. (RFB)
 - bdos/fsdrive.c bdos/fsmain.c bdos/fsopnclo.c: Don't test return value
   from MGET(OFD), it only returns if it succeeds. (RFB)
+- bdos/fsdir.c bdos/fsopnclo.c: Don't test return value from makofd(), it
+  only returns if it succeeds. (RFB)

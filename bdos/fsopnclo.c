@@ -146,9 +146,7 @@ long ixcreat(char *name, char attr)
                 return( EACCDN ) ;
 
         if (!(fd = dn->d_ofd))
-                if (!(dn->d_ofd = (fd = makofd(dn))))
-                        /*  no ofd for dir file, no space for one       */
-                        return (ENSMEM);
+                dn->d_ofd = (fd = makofd(dn));/* makofd() only returns if it succeeds */
 
         /* is it already there ? */
 
