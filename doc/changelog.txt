@@ -5348,4 +5348,4 @@ Start... early ages
 - bios/blkdev.c bios/blkdev.h bios/disk.c bios/disk.h: Moved most unit and bus
   stuff to disk.c. (VRI)
 - bios/blkdev.c bios/blkdev.h bios/disk.c bios/disk.h: Physical disk functions
-  now takes a unit number as argument. (VRI)
+  now take a unit number as argument. (VRI)
