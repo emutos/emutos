@@ -146,7 +146,7 @@ long ixcreat(char *name, char attr)
                 return( EACCDN ) ;
 
         if (!(fd = dn->d_ofd))
-                dn->d_ofd = (fd = makofd(dn));/* makofd() only returns if it succeeds */
+                fd = makofd(dn);        /* makofd() also updates dn->d_ofd */
 
         /* is it already there ? */
 

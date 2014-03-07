@@ -5353,4 +5353,6 @@ Start... early ages
 2014-03-07
 - bdos/fs.h bdos/fsdir.c bdos/fsmain.c: Move makofd() in preparation for
   future updates. (RFB)
+- bdos/fsdir.c bdos/fsopnclo.c: Code cleanup: makofd() now updates the
+  OFD pointer in the DND. (RFB)
 

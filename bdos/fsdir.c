@@ -238,9 +238,9 @@ long xmkdir(char *s)
                 return ( EACCDN );
         }
 
-        dn = makdnd(f->o_dnode,b);  /* makdnd() only returns if it succeeds */
-
-        dn->d_ofd = f0 = makofd(dn);/* makofd() only returns if it succeeds */
+        /* note: makdnd() and makofd() only return if they succeed */
+        dn = makdnd(f->o_dnode,b);
+        f0 = makofd(dn);            /* makofd() also updates dn->d_ofd */
 
         /* initialize dir cluster */
 
@@ -327,7 +327,7 @@ long xrmdir(char *p)
         /*  end M01.01.SCC.FS.09  */
 
         if (!(fd = d->d_ofd))
-                d->d_ofd = (fd = makofd(d));    /* makofd() only returns if it succeeds */
+                fd = makofd(d);         /* makofd() also updates d->d_ofd */
 
         ixlseek(fd,0x40L);
         do
@@ -1251,7 +1251,7 @@ FCB     *scan(register DND *dnd, const char *n, WORD att, LONG *posp)
         */
 
         if (!(fd = dnd->d_ofd))
-                dnd->d_ofd = (fd = makofd(dnd));/* makofd() only returns if it succeeds */
+                fd = makofd(dnd);    /* makofd() also updates dnd->d_ofd */
 
         /*
         **  seek to desired starting position.  If posp == -1, then start at
@@ -1655,13 +1655,18 @@ static void freednd(DND *dn)                    /* M01.01.1031.02 */
 }
 
 /*
- *  makofd - create an OFD for a directory 
+ *  makofd - create an OFD for a directory
+ *
+ *  also: updates the DND with the pointer to the OFD
+ *        returns the pointer to the OFD
  */
 OFD *makofd(DND *p)
 {
     OFD *f;
 
     f = MGET(OFD);      /* MGET(OFD) only returns if it succeeds */
+
+    p->d_ofd = f;       /* update pointer in DND */
 
     f->o_strtcl = p->d_strtcl;
     f->o_fileln = 0x7fffffffL;
