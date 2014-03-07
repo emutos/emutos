@@ -5349,3 +5349,8 @@ Start... early ages
   stuff to disk.c. (VRI)
 - bios/blkdev.c bios/blkdev.h bios/disk.c bios/disk.h: Physical disk functions
   now take a unit number as argument. (VRI)
+
+2014-03-07
+- bdos/fs.h bdos/fsdir.c bdos/fsmain.c: Move makofd() in preparation for
+  future updates. (RFB)
+

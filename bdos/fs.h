@@ -447,6 +447,7 @@ DND *findit(char *name, const char **sp, int dflag);
 FCB *scan(register DND *dnd, const char *n, WORD att, LONG *posp);
 int incr_curdir_usage(DND *dnd);
 void decr_curdir_usage(int index);
+OFD *makofd(DND *p);
 
 /*
  * in fsmain.c
@@ -457,7 +458,6 @@ char *xgetdta(void);
 void xsetdta(char *addr);
 long xsetdrv(int drv);
 long xgetdrv(void);
-OFD  *makofd(register DND *p);
 OFD  *getofd(int h);
 
 

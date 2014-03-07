@@ -1653,3 +1653,24 @@ static void freednd(DND *dn)                    /* M01.01.1031.02 */
     }
     xmfreblk( (char *)dn );           /* finally free this DND */
 }
+
+/*
+ *  makofd - create an OFD for a directory 
+ */
+OFD *makofd(DND *p)
+{
+    OFD *f;
+
+    f = MGET(OFD);      /* MGET(OFD) only returns if it succeeds */
+
+    f->o_strtcl = p->d_strtcl;
+    f->o_fileln = 0x7fffffffL;
+    f->o_dirfil = p->d_dirfil;
+    f->o_dnode = p->d_parent;
+    f->o_dirbyt = p->d_dirpos;
+    f->o_date = p->d_date;
+    f->o_time = p->d_time;
+    f->o_dmd = p->d_drv;
+
+    return f;
+}

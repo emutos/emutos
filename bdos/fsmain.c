@@ -2,7 +2,7 @@
  * fsmain.c - GEMDOS file system notes and misc routines
  *
  * Copyright (c) 2001 Lineo, Inc.
- *               2002-2013 The EmuTOS development team
+ *               2002-2014 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -457,31 +457,6 @@ long    xgetdrv(void)
 {
     return(run->p_curdrv);
 }
-
-
-
-/*
- *  makofd - create an OFD for a directory
- */
-
-OFD     *makofd(register DND *p)
-{
-    register OFD *f;
-
-    f = MGET(OFD);      /* MGET(OFD) only returns if it succeeds */
-
-    f->o_strtcl = p->d_strtcl;
-    f->o_fileln = 0x7fffffffL;
-    f->o_dirfil = p->d_dirfil;
-    f->o_dnode = p->d_parent;
-    f->o_dirbyt = p->d_dirpos;
-    f->o_date = p->d_date;
-    f->o_time = p->d_time;
-    f->o_dmd = p->d_drv;
-
-    return(f);
-}
-
 
 
 /*
