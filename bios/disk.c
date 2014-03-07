@@ -344,7 +344,7 @@ static int atari_partition(UWORD unit,LONG *devices_available)
     /* reset the sector buffer content */
     bzero(&physsect, sizeof(physsect));
 
-    if (DMAread(0, 1, (long)&physsect, major))
+    if (disk_rw(unit, RW_READ, 0, 1, &physsect))
         return -1;
 
     KINFO(("%cd%c: ","ashf????"[major>>3],'a'+(major&0x07)));
@@ -499,7 +499,7 @@ static int atari_partition(UWORD unit,LONG *devices_available)
             /* reset the sector buffer content */
             bzero(&physsect2, sizeof(physsect2));
 
-            if (DMAread(partsect, 1, (long)&physsect2, major)) {
+            if (disk_rw(unit, RW_READ, partsect, 1, &physsect2)) {
                 KINFO((" block %ld read failed\n", partsect));
                 return 0;
             }

@@ -5357,4 +5357,4 @@ Start... early ages
   OFD pointer in the DND. (RFB)
 - bdos/fs.h bdos/fsdir.c bdos/osmem.c: Fix the '40-folder problem' inherited
   from early Atari TOS. (RFB)
-
+- bios/disk.c: Use disk_rw() internally instead of DMAread(). (VRI)
