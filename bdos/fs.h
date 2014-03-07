@@ -219,10 +219,6 @@ DND /* directory node descriptor */
 #define DND_LOCKED  0x8000  /* DND may not be scavenged (see     */
                             /* free_available_dnds() in fsdir.c) */
 
-/* flags:       */
-#define B_16    1                               /* device has 16-bit FATs       */
-#define B_FIX   2                               /* device has fixed media       */
-
 
 
 /*
