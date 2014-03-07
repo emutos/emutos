@@ -101,7 +101,10 @@ static int *getosm(int n)
  * list of i paragraphs sized blocks.  These lists are singly linked
  * and are deleted/removed in LIFO order from the root.  If there is
  * no free blocks on the desired list, we call getosm to get a block
- * from the os memory pool
+ * from the os memory pool.
+ *
+ * Note the special handling when we are unable to obtain memory for
+ * a DND or OFD.
  *
  * Arguments:
  *  i - list of i paragraphs sized blocks
@@ -124,26 +127,41 @@ void    *xmgetblk(int i)
         return( NULL ) ;
     }
 
-    if(  *(r = &root[i])  )
-    {
-        /*  there is an item on the list  */
-        m = *r;                 /*  get 1st item on list        */
-        *r = *((int **) m);     /*  root pts to next item       */
-    }
-    else
-    {   /*  nothing on list, try pool  */
-        if ( (m = getosm(w+1)) )        /*  add size of control word    */
-            *m++ = i;   /*  put size in control word    */
-    }
-
     /*
-     *  if no memory is available, and the request
-     *  is for an OFD or DND, halt with an error
+     * we should execute the following loop a maximum of twice: the second
+     * time only if we're allocating a DND or OFD & no memory is available
      */
-    if (m == 0) {
-        if ((i == MCELLSIZE(DND)) || (i == MCELLSIZE(OFD))) {
+    for (j = 0; ; j++)
+    {
+        if ( *(r = &root[i]) )      /* there is an item on the free list */
+        {
+            m = *r;                 /* get first item on list   */
+            *r = *((int **) m);     /* root points to next item */
+            break;
+        }
+
+        /* nothing on free list, try pool */
+        if ( (m = getosm(w+1)) )    /* include size of control word */
+        {
+            *m++ = i;               /* put size in control word */
+            break;
+        }
+
+        /* no memory available & not DND/OFD, that's (sort of) OK */
+        if ((i != MCELLSIZE(DND)) && (i != MCELLSIZE(OFD)))
+            break;
+
+        /*
+         * no memory for DND/OFD, try to get some
+         *
+         * note defensive programming: if free_available_dnds() said it
+         * worked, but we're here again, then it lied and we should quit
+         * to avoid an infinite loop
+         */
+        if ((j >= 2) || (free_available_dnds() == 0))
+        {
             kcprintf(_("\033EOut of internal memory.\nUse FOLDR100.PRG to get more.\nSystem halted!\n"));
-            halt();                 /*  will not return             */
+            halt();                         /*  halt system                  */
         }
     }
 

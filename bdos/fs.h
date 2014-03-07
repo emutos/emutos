@@ -213,6 +213,12 @@ DND /* directory node descriptor */
     OFD  *d_files;      /* open files on this node              */
 } ;
 
+/*
+ * bit usage in d_flag
+ */
+#define DND_LOCKED  0x8000  /* DND may not be scavenged (see     */
+                            /* free_available_dnds() in fsdir.c) */
+
 /* flags:       */
 #define B_16    1                               /* device has 16-bit FATs       */
 #define B_FIX   2                               /* device has fixed media       */
@@ -448,6 +454,8 @@ FCB *scan(register DND *dnd, const char *n, WORD att, LONG *posp);
 int incr_curdir_usage(DND *dnd);
 void decr_curdir_usage(int index);
 OFD *makofd(DND *p);
+WORD free_available_dnds(void);
+
 
 /*
  * in fsmain.c

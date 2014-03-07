@@ -5355,4 +5355,6 @@ Start... early ages
   future updates. (RFB)
 - bdos/fsdir.c bdos/fsopnclo.c: Code cleanup: makofd() now updates the
   OFD pointer in the DND. (RFB)
+- bdos/fs.h bdos/fsdir.c bdos/osmem.c: Fix the '40-folder problem' inherited
+  from early Atari TOS. (RFB)
 
