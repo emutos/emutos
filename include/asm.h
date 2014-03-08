@@ -70,6 +70,15 @@ extern void stop_until_interrupt(void);
   )
 #endif
 
+/* Copy and swap an UWORD from *src to *dest */
+static __inline__ void swpcopyw(const UWORD* src, UWORD* dest)
+{
+    const UBYTE_ALIAS* s = (const UBYTE_ALIAS*)src;
+    UBYTE_ALIAS* d = (UBYTE_ALIAS*)dest;
+
+    d[0] = s[1];
+    d[1] = s[0];
+}
 
 /*
  * WORD swpl(LONG val);

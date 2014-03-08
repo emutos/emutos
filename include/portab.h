@@ -112,6 +112,7 @@ typedef void (*PFVOID)(void);
 # define MAY_ALIAS
 #endif
 
+typedef UBYTE UBYTE_ALIAS MAY_ALIAS;
 typedef BYTE BYTE_ALIAS MAY_ALIAS;
 typedef WORD WORD_ALIAS MAY_ALIAS;
 typedef LONG LONG_ALIAS MAY_ALIAS;

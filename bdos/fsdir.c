@@ -558,31 +558,21 @@ long xsnext(void)
 
 long xgsdtof(int *buf, int h, int wrt)
 {
-        register OFD *f ;
-        register int *b ;
+    OFD *f = getofd(h);
 
-        b = buf ;
-        f = getofd(h) ;
+    if (wrt)
+    {
+        swpcopyw((const UWORD*)&buf[0], (UWORD*)&f->o_time);
+        swpcopyw((const UWORD*)&buf[1], (UWORD*)&f->o_date);
+        f->o_flag |= O_DIRTY;           /* M01.01.0918.01 */
+    }
+    else
+    {
+        swpcopyw((const UWORD*)&f->o_time, (UWORD*)&buf[0]);
+        swpcopyw((const UWORD*)&f->o_date, (UWORD*)&buf[1]);
+    }
 
-        if ( !wrt )
-        {
-                b[0] = f->o_time ;
-                b[1] = f->o_date ;
-        }
-
-        swpw(b[0]);
-        swpw(b[1]);
-
-        if ( wrt )
-        {
-                f->o_time = b[0] ;
-                f->o_date = b[1] ;
-                f->o_flag |= O_DIRTY;           /* M01.01.0918.01 */
-                swpw(b[0]);                    /* M01.01.0918.01 */
-                swpw(b[1]);                    /* M01.01.0918.01 */
-        }
-
-        return E_OK;
+    return E_OK;
 }
 
 

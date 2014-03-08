@@ -5359,3 +5359,7 @@ Start... early ages
   from early Atari TOS. (RFB)
 - bios/disk.c: Use disk_rw() internally instead of DMAread(). (VRI)
 - bdos/fs.h: Code cleanup: remove unused #defines. (RFB)
+
+2014-03-08
+- bdos/fsdir.c include/asm.h include/portab.h: Added new swpcopyw() function
+  and improved xgsdtof() a.k.a. Fdatime(). (VRI)
