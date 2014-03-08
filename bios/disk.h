@@ -78,6 +78,7 @@ struct _unit
     LONG    drivemap;       /* bitmap of logical devices on this physical unit */
     UBYTE   features;       /* see below */
 #define UNIT_REMOVABLE  0x80    /* unit uses removable media */
+#define UNIT_NATFEATS   0x40    /* unit is managed by NatFeats */
     UBYTE   status;         /* see below */
 #define UNIT_CHANGED    0x01    /* 0 => physical media has not changed */
 };

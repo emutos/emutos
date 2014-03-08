@@ -53,6 +53,10 @@ UNIT units[UNITSNUM];
 
 /*==== Internal declarations ==============================================*/
 static int atari_partition(UWORD unit,LONG *devices_available);
+#if DETECT_NATIVE_FEATURES
+static LONG natfeats_inquire(UWORD unit, ULONG *blocksize, ULONG *deviceflags, char *productname, UWORD stringlen);
+#endif
+static LONG internal_inquire(UWORD unit, ULONG *blocksize, ULONG *deviceflags, char *productname, UWORD stringlen);
 
 /*
  * scans one unit and adds all found partitions
@@ -66,13 +70,30 @@ static void disk_init_one(UWORD unit,LONG *devices_available)
     WORD shift;
     UNIT *punit = &units[unit];
     int i, n;
+    char productname[40];
 
     punit->valid = 0;
+    punit->features = 0;
 
-    rc = disk_inquire(unit, NULL, &device_flags, NULL, 0);
-    if (rc) {
-        KDEBUG(("disk_init_one(): disk_inquire(%d) returned %ld\n",unit,rc));
-        return;
+#if DETECT_NATIVE_FEATURES
+    /* First, determine if this unit is supported by NatFeats. */
+    rc = natfeats_inquire(unit, NULL, &device_flags, productname, sizeof productname);
+    if (rc == E_OK)
+    {
+        /* Our internal drivers will never be used for this unit */
+        punit->features |= UNIT_NATFEATS;
+        KINFO(("unit %d is managed by NatFeats: %s\n", unit, productname));
+    }
+    else
+#endif
+    {
+        /* Try our internal drivers */
+        rc = internal_inquire(unit, NULL, &device_flags, productname, sizeof productname);
+        if (rc) {
+            KDEBUG(("disk_init_one(): internal_inquire(%d) returned %ld\n",unit,rc));
+            return;
+        }
+        KINFO(("unit %d is managed by EmuTOS internal drivers: %s\n", unit, productname));
     }
 
     /* try to update with real capacity & blocksize */
@@ -88,8 +109,10 @@ static void disk_init_one(UWORD unit,LONG *devices_available)
     punit->size = blocks;
     punit->psshift = shift;
     punit->last_access = 0;
-    punit->features = (device_flags&XH_TARGET_REMOVABLE) ? UNIT_REMOVABLE : 0;
     punit->status = 0;
+
+    if (device_flags & XH_TARGET_REMOVABLE)
+        punit->features |= UNIT_REMOVABLE;
 
     /* scan for ATARI partitions on this harddrive */
     devs = *devices_available;  /* remember initial set */
@@ -191,6 +214,13 @@ LONG disk_mediach(UWORD unit)
     LONG ret;
     WORD bus, reldev;
 
+#if DETECT_NATIVE_FEATURES
+    if (units[unit].features & UNIT_NATFEATS) {
+        /* The NatFeats have no media change mechanism */
+        return MEDIANOCHANGE;
+    }
+#endif
+
     /* get bus and relative device */
     bus = GET_BUS(major);
     reldev = major - bus * DEVICES_PER_BUS;
@@ -208,9 +238,6 @@ LONG disk_mediach(UWORD unit)
         ret = ide_ioctl(reldev,GET_MEDIACHANGE,NULL);
         break;
 #endif /* CONF_WITH_IDE */
-    case SCSI_BUS:
-        ret = MEDIANOCHANGE;    /* for Aranym compatibility */
-        break;
 #if CONF_WITH_SDMMC
     case SDMMC_BUS:
         ret = sd_ioctl(reldev,GET_MEDIACHANGE,NULL);
@@ -556,7 +583,23 @@ static int atari_partition(UWORD unit,LONG *devices_available)
 
 /*=========================================================================*/
 
-LONG disk_inquire(UWORD unit, ULONG *blocksize, ULONG *deviceflags, char *productname, UWORD stringlen)
+#if DETECT_NATIVE_FEATURES
+
+/* Get unit information, using NatFeats only. */
+static LONG natfeats_inquire(UWORD unit, ULONG *blocksize, ULONG *deviceflags, char *productname, UWORD stringlen)
+{
+    UWORD major = unit - NUMFLOPPIES;
+
+    if (!get_xhdi_nfid())
+        return EUNDEV;
+
+    return NFCall(get_xhdi_nfid() + XHINQTARGET2, (long)major, (long)0, (long)blocksize, (long)deviceflags, (long)productname, (long)stringlen);
+}
+
+#endif /* DETECT_NATIVE_FEATURES */
+
+/* Get unit information, using our internal drivers only. */
+static LONG internal_inquire(UWORD unit, ULONG *blocksize, ULONG *deviceflags, char *productname, UWORD stringlen)
 {
     UWORD major = unit - NUMFLOPPIES;
     LONG ret;
@@ -566,15 +609,6 @@ LONG disk_inquire(UWORD unit, ULONG *blocksize, ULONG *deviceflags, char *produc
     MAYBE_UNUSED(reldev);
     MAYBE_UNUSED(ret);
 
-#if DETECT_NATIVE_FEATURES
-    /* direct access to device */
-    if (get_xhdi_nfid()) {
-        ret = NFCall(get_xhdi_nfid() + XHINQTARGET2, (long)major, (long)0, (long)blocksize, (long)deviceflags, (long)productname, (long)stringlen);
-        if (ret != EINVFN && ret != EUNDEV)
-            return ret;
-    }
-#endif
-
     bus = GET_BUS(major);
     reldev = major - bus * DEVICES_PER_BUS;
 
@@ -582,7 +616,7 @@ LONG disk_inquire(UWORD unit, ULONG *blocksize, ULONG *deviceflags, char *produc
      * hardware access to device
      *
      * note: we expect the xxx_ioctl() functions to physically access the
-     * device, since disk_inquire() may be used to determine its presence
+     * device, since internal_inquire() may be used to determine its presence
      */
     switch(bus) {
 #if CONF_WITH_ACSI
@@ -620,6 +654,19 @@ LONG disk_inquire(UWORD unit, ULONG *blocksize, ULONG *deviceflags, char *produc
     return 0;
 }
 
+/* Get unit information, whatever low-level driver is used. */
+LONG disk_inquire(UWORD unit, ULONG *blocksize, ULONG *deviceflags, char *productname, UWORD stringlen)
+{
+#if DETECT_NATIVE_FEATURES
+    if (units[unit].features & UNIT_NATFEATS) {
+        return natfeats_inquire(unit, blocksize, deviceflags, productname, stringlen);
+    }
+#endif
+
+    return internal_inquire(unit, blocksize, deviceflags, productname, stringlen);
+}
+
+/* Get unit capacity */
 LONG disk_get_capacity(UWORD unit, ULONG *blocks, ULONG *blocksize)
 {
     UWORD major = unit - NUMFLOPPIES;
@@ -630,10 +677,8 @@ LONG disk_get_capacity(UWORD unit, ULONG *blocks, ULONG *blocksize)
     MAYBE_UNUSED(ret);
 
 #if DETECT_NATIVE_FEATURES
-    if (get_xhdi_nfid()) {
-        ret = NFCall(get_xhdi_nfid() + XHGETCAPACITY, (long)major, (long)0, (long)blocks, (long)blocksize);
-        if (ret != EINVFN && ret != EUNDEV)
-            return ret;
+    if (units[unit].features & UNIT_NATFEATS) {
+        return NFCall(get_xhdi_nfid() + XHGETCAPACITY, (long)major, (long)0, (long)blocks, (long)blocksize);
     }
 #endif
 
@@ -678,6 +723,7 @@ LONG disk_get_capacity(UWORD unit, ULONG *blocks, ULONG *blocksize)
     return 0;
 }
 
+/* Unit read/write */
 LONG disk_rw(UWORD unit, UWORD rw, ULONG sector, UWORD count, void *buf)
 {
     UWORD major = unit - NUMFLOPPIES;
@@ -686,11 +732,8 @@ LONG disk_rw(UWORD unit, UWORD rw, ULONG sector, UWORD count, void *buf)
     MAYBE_UNUSED(reldev);
 
 #if DETECT_NATIVE_FEATURES
-    /* direct access to device */
-    if (get_xhdi_nfid()) {
-        ret = NFCall(get_xhdi_nfid() + XHREADWRITE, (long)major, (long)0, (long)rw, (long)sector, (long)count, buf);
-        if (ret != EINVFN && ret != EUNDEV)
-            return ret;
+    if (units[unit].features & UNIT_NATFEATS) {
+        return NFCall(get_xhdi_nfid() + XHREADWRITE, (long)major, (long)0, (long)rw, (long)sector, (long)count, buf);
     }
 #endif
 
@@ -727,7 +770,7 @@ LONG disk_rw(UWORD unit, UWORD rw, ULONG sector, UWORD count, void *buf)
     return ret;
 }
 
-/*=========================================================================*/
+/*==== XBIOS functions ====================================================*/
 
 LONG DMAread(LONG sector, WORD count, LONG buf, WORD major)
 {

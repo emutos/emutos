@@ -5363,3 +5363,5 @@ Start... early ages
 2014-03-08
 - bdos/fsdir.c include/asm.h include/portab.h: Added new swpcopyw() function
   and improved xgsdtof() a.k.a. Fdatime(). (VRI)
+- bios/disk.c bios/disk.h: New flag UNIT_NATFEATS for units managed by NatFeats.
+  Our internal drivers are never used for those ones. (VRI)
