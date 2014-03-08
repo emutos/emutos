@@ -131,7 +131,6 @@ OFD
  * note: bits 4-7 are only used if GEMDOS file-sharing/record-locking
  *       is implemented
  */
-#define RO_WRITE_OK 0x8000  /* ok to write a R/O file (we're creating it) */
 #define INH_MODE    0x80    /* bit 7 is inheritance flag (not yet implemented) */
 #define MODE_FSM    0x70    /* bits 4-6 are file sharing mode (not yet implemented) */
 #define MODE_FAC    0x07    /* bits 0-2 are file access code: */

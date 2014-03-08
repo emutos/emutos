@@ -5365,3 +5365,5 @@ Start... early ages
   and improved xgsdtof() a.k.a. Fdatime(). (VRI)
 - bios/disk.c bios/disk.h: New flag UNIT_NATFEATS for units managed by NatFeats.
   Our internal drivers are never used for those ones. (VRI)
+- bdos/fs.h bdos/fsio.c bdos/fsopnclo.c: Do not check Fopen() mode (R,W,RW)
+  in Fread()/Fwrite() - just like Atari TOS. (RFB)

@@ -197,7 +197,7 @@ long ixcreat(char *name, char attr)
         ixclose(fd,CL_DIR);     /* partial close to flush */
         ixlseek(fd,pos);
         s = (char*) ixread(fd,32L,NULLPTR);
-        f2 = rc = opnfil((FCB*)s,dn,(f->f_attrib&FA_RO)?(RO_WRITE_OK|RO_MODE):RW_MODE);
+        f2 = rc = opnfil((FCB*)s,dn,(f->f_attrib&FA_RO)?RO_MODE:RW_MODE);
 
         if (rc < 0)
                 return(rc);

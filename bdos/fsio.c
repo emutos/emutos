@@ -206,9 +206,10 @@ long    ixread(OFD *p, long len, void *ubufr)
 {
     long maxlen;
 
-    /* Make sure file not opened as write only */
-    if ((p->o_mod&MODE_FAC) == WO_MODE)
-        return (EACCDN);
+    /*
+     * we used to disallow reads from a file opened as write-only,
+     * but this is not compatible with Atari TOS ...
+     */
 
     if (len > (maxlen = p->o_fileln - p->o_bytnum))
         len = maxlen;
@@ -237,12 +238,14 @@ long    xwrite(int h, long len, void *ubufr)
     long ret;
 
     p = getofd(h);
+
+    /*
+     * we used to disallow writes to an existing file opened as read-only,
+     * but this is not compatible with Atari TOS ...
+     */
+
     if ( p ) {
-        /* Make sure not read only.*/
-        if (((p->o_mod&MODE_FAC) == RO_MODE) && !(p->o_mod&RO_WRITE_OK))
-            ret = EACCDN;
-        else
-            ret = ixwrite(p,len,ubufr);
+        ret = ixwrite(p,len,ubufr);
     } else {
         ret = EIHNDL;
     }
