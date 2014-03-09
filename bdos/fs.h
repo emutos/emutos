@@ -92,8 +92,8 @@ extern  long    errcode;
 #define DMD     struct  _dmd
 #define FH      unsigned int    /*  file handle    */
 
-# define CLNO    unsigned int   /*  cluster number */
-# define RECNO   unsigned long  /*  record number  */
+typedef UWORD CLNO;             /*  cluster number */
+typedef ULONG RECNO;            /*  record number  */
 
 
 /*
