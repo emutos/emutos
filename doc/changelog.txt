@@ -5367,3 +5367,6 @@ Start... early ages
   Our internal drivers are never used for those ones. (VRI)
 - bdos/fs.h bdos/fsio.c bdos/fsopnclo.c: Do not check Fopen() mode (R,W,RW)
   in Fread()/Fwrite() - just like Atari TOS. (RFB)
+
+2014-03-09
+- bdos/fs.h: Code cleanup: change int to WORD or UWORD as appropriate.  (RFB)

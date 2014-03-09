@@ -98,12 +98,15 @@ extern  long    errcode;
 
 /*
  *  OFD - open file descriptor
+ *
+ *  architectural restriction: for compatibility with FOLDRnnn.PRG,
+ *  this structure must not exceed 64 bytes in length
  */
 
 OFD
 {
     OFD   *o_link;      /*  link to next OFD                    */
-    int   o_flag;
+    UWORD o_flag;
     int   o_time;       /*  the next 4 items must be as in FCB  */
     int   o_date;       /*  time, date of creation              */
     CLNO  o_strtcl;     /*  starting cluster number             */
@@ -117,10 +120,10 @@ OFD
     long  o_bytnum;     /* byte pointer within file             */
     CLNO  o_curcl;      /* current cluster number for file      */
     RECNO o_currec;     /* current record number for file       */
-    unsigned int o_curbyt; /* byte pointer within current cluster */
-    int   o_usecnt;     /* use count for inherited files        */
+    UWORD o_curbyt;     /* byte pointer within current cluster  */
+    WORD  o_usecnt;     /* use count for inherited files        */
     OFD   *o_thread;    /* mulitple open thread list            */
-    int   o_mod;        /* mode file opened in (see below)      */
+    UWORD o_mod;        /* mode file opened in (see below)      */
 } ;
 
 /*
@@ -188,13 +191,16 @@ FCB
 
 /*
  *  DND - Directory Node Descriptor
+ *
+ *  architectural restriction: for compatibility with FOLDRnnn.PRG,
+ *  this structure must not exceed 64 bytes in length
  */
 
 DND /* directory node descriptor */
 {
     char d_name[11];    /*  directory name                      */
     char d_fill;        /*  attributes?                         */
-    int  d_flag;
+    UWORD d_flag;
     CLNO d_strtcl;      /*  starting cluster number of dir      */
 
     int  d_time;        /*  last mod ?                          */
@@ -246,7 +252,7 @@ DMD /* drive media block */
 
     OFD    *m_ofl;      /*  list of open files                  */
     DND    *m_dtl;      /* root of directory tree list          */
-    int    m_16;        /* 16 bit fat ?                         */
+    UWORD  m_16;        /* 16 bit fat ?                         */
 } ;
 
 
