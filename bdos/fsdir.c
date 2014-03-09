@@ -1573,10 +1573,10 @@ static BOOL match(char *s1, char *s2)
 static void makbuf(FCB *f, DTAINFO *dt)
 {                                       /*  M01.01.03   */
     dt->dt_fattr = f->f_attrib ;
-    dt->dt_time = f->f_time ;
-    swpw(dt->dt_time) ;
-    dt->dt_date = f->f_date ;
-    swpw(dt->dt_date) ;
+    dt->dt_td.time = f->f_time ;
+    swpw(dt->dt_td.time) ;
+    dt->dt_td.date = f->f_date ;
+    swpw(dt->dt_td.date) ;
     dt->dt_fileln = f->f_fileln ;
     swpl( dt->dt_fileln ) ;
 
