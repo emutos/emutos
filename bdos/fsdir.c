@@ -562,14 +562,14 @@ long xgsdtof(DOSTIME *buf, int h, int wrt)
 
     if (wrt)
     {
-        swpcopyw((const UWORD*)&buf->time, &f->o_td.time);
-        swpcopyw((const UWORD*)&buf->date, &f->o_td.date);
+        swpcopyw(&buf->time, &f->o_td.time);
+        swpcopyw(&buf->date, &f->o_td.date);
         f->o_flag |= O_DIRTY;           /* M01.01.0918.01 */
     }
     else
     {
-        swpcopyw((const UWORD*)&f->o_td.time, &buf->time);
-        swpcopyw((const UWORD*)&f->o_td.date, &buf->date);
+        swpcopyw(&f->o_td.time, &buf->time);
+        swpcopyw(&f->o_td.date, &buf->date);
     }
 
     return E_OK;

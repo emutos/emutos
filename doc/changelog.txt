@@ -5375,3 +5375,4 @@ Start... early ages
 - bdos/fsglob.c bdos/time.c bdos/time.h: Code cleanup: move time, date to
   time.c & make them UWORDs. (RFB)
 - bdos/fs.h bdos/fsdir.c: Code cleanup: use DOSTIME struct in DTAINFO. (RFB)
+- bdos/fsdir.c: Removed ugly casts in xgsdtof(). (VRI)
