@@ -97,6 +97,17 @@ extern  long    errcode;
 
 
 /*
+ *  DOSTIME - the standard layout of time & date
+ */
+typedef struct
+{
+    UWORD time;         /* Time like Tgettime() */
+    UWORD date;         /* Date like Tgetdate() */
+} DOSTIME;
+
+
+
+/*
  *  OFD - open file descriptor
  *
  *  architectural restriction: for compatibility with FOLDRnnn.PRG,
@@ -107,8 +118,8 @@ OFD
 {
     OFD   *o_link;      /*  link to next OFD                    */
     UWORD o_flag;
-    int   o_time;       /*  the next 4 items must be as in FCB  */
-    int   o_date;       /*  time, date of creation              */
+                    /* the following 3 items must be as in FCB: */
+    DOSTIME o_td;       /*  time, date of creation              */
     CLNO  o_strtcl;     /*  starting cluster number             */
     long  o_fileln;     /*  length of file in bytes             */
 
@@ -203,8 +214,7 @@ DND /* directory node descriptor */
     UWORD d_flag;
     CLNO d_strtcl;      /*  starting cluster number of dir      */
 
-    int  d_time;        /*  last mod ?                          */
-    int  d_date;        /*  ""   ""                             */
+    DOSTIME d_td;       /*  last mod ?                          */
     OFD  *d_ofd;        /*  open file descr for this dir        */
     DND  *d_parent;     /*  parent dir (..)                     */
     DND  *d_left;       /*  1st child                           */
@@ -444,7 +454,7 @@ long xchmod(char *p, int wrt, char mod);
 long ixsfirst(char *name, register WORD att, register DTAINFO *addr);
 long xsfirst(char *name, int att);
 long xsnext(void);
-long xgsdtof(int *buf, int h, int wrt);
+long xgsdtof(DOSTIME *buf, int h, int wrt);
 void builds(const char *s1 , char *s2 );
 long xrename(int n, char *p1, char *p2);
 long xchdir(char *p);

@@ -302,7 +302,7 @@ static long makopn(FCB *f, DND *dn, int h, int mod)
 
         if (p2)
         {       /* steal time,date,startcl,fileln */
-                memcpy(&p->o_time, &p2->o_time, 12);
+                memcpy(&p->o_td,&p2->o_td,12);  /* FIXME: length should be 10 */
                 /* not used yet... TBA *********/
                 p2->o_thread = p;
         }
@@ -312,8 +312,8 @@ static long makopn(FCB *f, DND *dn, int h, int mod)
                 swpw(p->o_strtcl);
                 p->o_fileln = f->f_fileln;      /*  init length of file */
                 swpl(p->o_fileln);
-                p->o_date = f->f_date;
-                p->o_time = f->f_time;
+                p->o_td.date = f->f_date;
+                p->o_td.time = f->f_time;
         }
 
         return(h);
@@ -506,11 +506,11 @@ long    ixclose(OFD *fd, int part)
                 {
                         tmp = fd->o_fileln;             /* [1] */
                         fd->o_fileln = 0;
-                        ixwrite(fd->o_dirfil,10L,(char *)&fd->o_time);
+                        ixwrite(fd->o_dirfil,10L,(char *)&fd->o_td);
                         fd->o_fileln = tmp;
                 }
                 else
-                        ixwrite(fd->o_dirfil,10L,(char *)&fd->o_time);
+                        ixwrite(fd->o_dirfil,10L,(char *)&fd->o_td);
 
                 swpw(fd->o_strtcl);
                 swpl(fd->o_fileln);

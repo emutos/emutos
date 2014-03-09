@@ -551,25 +551,25 @@ long xsnext(void)
 
 
 /*
-**  xgsdtof - get/set date/time of file into of from buffer
+**  xgsdtof - get/set date/time of file into or from buffer
 **
 **      Function 0x57   f_datime
 */
 
-long xgsdtof(int *buf, int h, int wrt)
+long xgsdtof(DOSTIME *buf, int h, int wrt)
 {
     OFD *f = getofd(h);
 
     if (wrt)
     {
-        swpcopyw((const UWORD*)&buf[0], (UWORD*)&f->o_time);
-        swpcopyw((const UWORD*)&buf[1], (UWORD*)&f->o_date);
+        swpcopyw((const UWORD*)&buf->time, &f->o_td.time);
+        swpcopyw((const UWORD*)&buf->date, &f->o_td.date);
         f->o_flag |= O_DIRTY;           /* M01.01.0918.01 */
     }
     else
     {
-        swpcopyw((const UWORD*)&f->o_time, (UWORD*)&buf[0]);
-        swpcopyw((const UWORD*)&f->o_date, (UWORD*)&buf[1]);
+        swpcopyw((const UWORD*)&f->o_td.time, &buf->time);
+        swpcopyw((const UWORD*)&f->o_td.date, &buf->date);
     }
 
     return E_OK;
@@ -818,8 +818,8 @@ long xrename(int n, char *p1, char *p2)
                 fd2 = getofd(hnew); /* fd2 is the OFD for the new file/folder */
 
                 /* copy the time/date/cluster/length to the OFD */
-                fd2->o_time = time;
-                fd2->o_date = date;
+                fd2->o_td.time = time;
+                fd2->o_td.date = date;
                 fd2->o_strtcl = clust;
                 fd2->o_fileln = fileln;
 
@@ -1386,8 +1386,8 @@ static DND *makdnd(DND *p, FCB *b)
         p1->d_drv = p->d_drv;
         p1->d_dirfil = fd;
         p1->d_dirpos = fd->o_bytnum - 32;
-        p1->d_time = b->f_time;
-        p1->d_date = b->f_date;
+        p1->d_td.time = b->f_time;
+        p1->d_td.date = b->f_date;
         memcpy(p1->d_name, b->f_name, 11);
 
         KDEBUG(("\n makdnd(%p)",p1));
@@ -1676,8 +1676,8 @@ OFD *makofd(DND *p)
     f->o_dirfil = p->d_dirfil;
     f->o_dnode = p->d_parent;
     f->o_dirbyt = p->d_dirpos;
-    f->o_date = p->d_date;
-    f->o_time = p->d_time;
+    f->o_td.date = p->d_td.date;
+    f->o_td.time = p->d_td.time;
     f->o_dmd = p->d_drv;
 
     return f;
