@@ -2,7 +2,7 @@
  * time.c - GEMDOS time and date functions
  *
  * Copyright (c) 2001 Lineo, Inc.
- *               2002-2013 The EmuTOS development team
+ *               2002-2014 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -44,7 +44,10 @@ NAMES
 #include "gemerror.h"
 #include "xbiosbind.h"
 
-
+/*
+ * globals: current time and date
+ */
+UWORD time, date;
 
 /*
  * BIOS interface

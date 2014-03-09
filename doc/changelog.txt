@@ -5372,3 +5372,5 @@ Start... early ages
 - bdos/fs.h: Code cleanup: change int to WORD or UWORD as appropriate.  (RFB)
 - bdos/fs.h bdos/fsdir.c bdos/fsopnclo.c: Code cleanup: use DOSTIME struct
   in DND, OFD, and xgsdtof(). (RFB)
+- bdos/fsglob.c bdos/time.c bdos/time.h: Code cleanup: move time, date to
+  time.c & make them UWORDs. (RFB)
