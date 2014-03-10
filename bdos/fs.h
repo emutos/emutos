@@ -175,6 +175,9 @@ OFD
 
 /*
  *  FCB - File Control Block
+ *
+ *  architectural restriction: this is the structure of the
+ *  directory entry on disk, compatible with MSDOS etc
  */
 
 FCB
@@ -182,8 +185,7 @@ FCB
     char f_name[11];
     char f_attrib;
     char f_fill[10];
-    int  f_time;
-    int  f_date;
+    DOSTIME f_td;           /* time, date */
     CLNO f_clust;
     long f_fileln;
 } ;

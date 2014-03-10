@@ -5378,3 +5378,5 @@ Start... early ages
 - bdos/fsdir.c: Removed ugly casts in xgsdtof(). (VRI)
 - bdos/fs.h: Change types of CLNO/RECNO to UWORD/ULONG & make them
   typedefs. (RFB)
+- bdos/fs.h bdos/fsdir.c bdos/fsopnclo.c: Code cleanup: use DOSTIME
+  struct in FCB. (RFB)

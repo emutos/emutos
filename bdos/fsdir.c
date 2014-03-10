@@ -263,10 +263,10 @@ long xmkdir(char *s)
 
         memcpy(f2, dots, 22);
         f2->f_attrib = FA_SUBDIR;
-        f2->f_time = time;
-        swpw( f2->f_time ) ;           /*  M01.01.SCC.FS.04  */
-        f2->f_date = date;
-        swpw( f2->f_date ) ;           /*  M01.01.SCC.FS.04  */
+        f2->f_td.time = time;
+        swpw( f2->f_td.time ) ;        /*  M01.01.SCC.FS.04  */
+        f2->f_td.date = date;
+        swpw( f2->f_td.date ) ;        /*  M01.01.SCC.FS.04  */
         cl = f0->o_strtcl;
         swpw(cl);
         f2->f_clust = cl;
@@ -278,10 +278,10 @@ long xmkdir(char *s)
         memcpy(f2, dots, 22);
         f2->f_name[1] = '.';           /* This is .. */
         f2->f_attrib = FA_SUBDIR;
-        f2->f_time = time;
-        swpw( f2->f_time ) ;           /*  M01.01.SCC.FS.06  */
-        f2->f_date = date;
-        swpw( f2->f_date ) ;           /*  M01.01.SCC.FS.06  */
+        f2->f_td.time = time;
+        swpw( f2->f_td.time ) ;        /*  M01.01.SCC.FS.06  */
+        f2->f_td.date = date;
+        swpw( f2->f_td.date ) ;        /*  M01.01.SCC.FS.06  */
         cl = f->o_dirfil->o_strtcl;
 
         if (!fd->o_dnode)              /* if creating a folder in the root, the */
@@ -775,9 +775,9 @@ long xrename(int n, char *p1, char *p2)
 
         /* get old attribute & time/date/cluster/length */
         att = f->f_attrib;
-        time = f->f_time;
+        time = f->f_td.time;
         swpw(time);                 /* convert from little-endian format */
-        date = f->f_date;
+        date = f->f_td.date;
         swpw(date);
         clust = f->f_clust;
         swpw(clust);
@@ -1386,8 +1386,8 @@ static DND *makdnd(DND *p, FCB *b)
         p1->d_drv = p->d_drv;
         p1->d_dirfil = fd;
         p1->d_dirpos = fd->o_bytnum - 32;
-        p1->d_td.time = b->f_time;
-        p1->d_td.date = b->f_date;
+        p1->d_td.time = b->f_td.time;
+        p1->d_td.date = b->f_td.date;
         memcpy(p1->d_name, b->f_name, 11);
 
         KDEBUG(("\n makdnd(%p)",p1));
@@ -1573,9 +1573,9 @@ static BOOL match(char *s1, char *s2)
 static void makbuf(FCB *f, DTAINFO *dt)
 {                                       /*  M01.01.03   */
     dt->dt_fattr = f->f_attrib ;
-    dt->dt_td.time = f->f_time ;
+    dt->dt_td.time = f->f_td.time ;
     swpw(dt->dt_td.time) ;
-    dt->dt_td.date = f->f_date ;
+    dt->dt_td.date = f->f_td.date ;
     swpw(dt->dt_td.date) ;
     dt->dt_fileln = f->f_fileln ;
     swpl( dt->dt_fileln ) ;

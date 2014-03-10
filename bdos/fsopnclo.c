@@ -186,10 +186,10 @@ long ixcreat(char *name, char attr)
         f->f_attrib = attr;
         for (i=0; i<10; i++)
                 f->f_fill[i] = 0;
-        f->f_time = time;
-        swpw(f->f_time);
-        f->f_date = date;
-        swpw(f->f_date);
+        f->f_td.time = time;
+        swpw(f->f_td.time);
+        f->f_td.date = date;
+        swpw(f->f_td.date);
         f->f_clust = 0;
         f->f_fileln = 0;
         ixlseek(fd,pos);
@@ -312,8 +312,8 @@ static long makopn(FCB *f, DND *dn, int h, int mod)
                 swpw(p->o_strtcl);
                 p->o_fileln = f->f_fileln;      /*  init length of file */
                 swpl(p->o_fileln);
-                p->o_td.date = f->f_date;
-                p->o_td.time = f->f_time;
+                p->o_td.date = f->f_td.date;
+                p->o_td.time = f->f_td.time;
         }
 
         return(h);
