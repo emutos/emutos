@@ -119,7 +119,7 @@ OFD
     OFD   *o_link;      /*  link to next OFD                    */
     UWORD o_flag;
                     /* the following 3 items must be as in FCB: */
-    DOSTIME o_td;       /*  time, date of creation              */
+    DOSTIME o_td;       /*  creation time/date: little-endian!  */
     CLNO  o_strtcl;     /*  starting cluster number             */
     long  o_fileln;     /*  length of file in bytes             */
 
@@ -216,7 +216,7 @@ DND /* directory node descriptor */
     UWORD d_flag;
     CLNO d_strtcl;      /*  starting cluster number of dir      */
 
-    DOSTIME d_td;       /*  last mod ?                          */
+    DOSTIME d_td;       /*  time/date: little-endian!           */
     OFD  *d_ofd;        /*  open file descr for this dir        */
     DND  *d_parent;     /*  parent dir (..)                     */
     DND  *d_left;       /*  1st child                           */

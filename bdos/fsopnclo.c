@@ -312,8 +312,8 @@ static long makopn(FCB *f, DND *dn, int h, int mod)
                 swpw(p->o_strtcl);
                 p->o_fileln = f->f_fileln;      /*  init length of file */
                 swpl(p->o_fileln);
-                p->o_td.date = f->f_td.date;
-                p->o_td.time = f->f_td.time;
+                p->o_td.date = f->f_td.date;    /* note: OFD time/date are  */
+                p->o_td.time = f->f_td.time;    /*  actually little-endian! */
         }
 
         return(h);

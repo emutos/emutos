@@ -5380,3 +5380,7 @@ Start... early ages
   typedefs. (RFB)
 - bdos/fs.h bdos/fsdir.c bdos/fsopnclo.c: Code cleanup: use DOSTIME
   struct in FCB. (RFB)
+
+2014-03-10
+- bdos/fs.h bdos/fsdir.c bdos/fsopnclo.c: Fix bug: a cross-directory rename
+  inadvertently changed the file date/time. (RFB)

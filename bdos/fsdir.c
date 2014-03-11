@@ -818,8 +818,8 @@ long xrename(int n, char *p1, char *p2)
                 fd2 = getofd(hnew); /* fd2 is the OFD for the new file/folder */
 
                 /* copy the time/date/cluster/length to the OFD */
-                fd2->o_td.time = time;
-                fd2->o_td.date = date;
+                swpcopyw(&time,&fd2->o_td.time);   /* must be little-endian! */
+                swpcopyw(&date,&fd2->o_td.date);
                 fd2->o_strtcl = clust;
                 fd2->o_fileln = fileln;
 
@@ -1386,8 +1386,8 @@ static DND *makdnd(DND *p, FCB *b)
         p1->d_drv = p->d_drv;
         p1->d_dirfil = fd;
         p1->d_dirpos = fd->o_bytnum - 32;
-        p1->d_td.time = b->f_td.time;
-        p1->d_td.date = b->f_td.date;
+        p1->d_td.time = b->f_td.time;   /* note: DND time/date are  */
+        p1->d_td.date = b->f_td.date;   /*  actually little-endian! */
         memcpy(p1->d_name, b->f_name, 11);
 
         KDEBUG(("\n makdnd(%p)",p1));
