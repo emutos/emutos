@@ -253,6 +253,23 @@ aes_copts  = -Ibios
 desk_copts = -Ibios -Iaes
 
 #
+# Makefile functions
+#
+
+# Shell command to get the address of a symbol
+FUNCTION_SHELL_GET_SYMBOL_ADDRESS = grep $(1) $(2) |awk '{print $$1}'
+
+# membot (LONG at 0x432) is the bottom of the free RAM
+FUNCTION_SHELL_GET_MEMBOT = $(call FUNCTION_SHELL_GET_SYMBOL_ADDRESS,__end,$(1))
+FUNCTION_SHELL_GET_MEMBOT_RAM = $(call FUNCTION_SHELL_GET_SYMBOL_ADDRESS,__edata,$(1))
+MEMBOT_TOS102 = 0x0000ca00
+MEMBOT_TOS104 = 0x0000a84e
+MEMBOT_TOS162 = 0x0000a832
+MEMBOT_TOS206 = 0x0000ccb2
+MEMBOT_TOS305 = 0x0000e6fc
+MEMBOT_TOS404 = 0x0000f99c
+
+#
 # Directory selection depending on the features
 #
 
@@ -364,6 +381,8 @@ NODEP += 192
 192: UNIQUE = $(COUNTRY)
 192:
 	$(MAKE) DEF='-DTARGET_192' OPTFLAGS=-Os WITH_CLI=0 UNIQUE=$(UNIQUE) ROM_192=$(ROM_192) $(ROM_192)
+	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT,emutos1.map));\
+      echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS102))) bytes more than TOS 1.2)"
 
 $(ROM_192): ROMSIZE = 192
 $(ROM_192): emutos1.img mkrom$(EXE)
@@ -380,6 +399,8 @@ NODEP += 256
 256: UNIQUE = $(COUNTRY)
 256:
 	$(MAKE) DEF='-DTARGET_256' OPTFLAGS=-Os UNIQUE=$(UNIQUE) ROM_256=$(ROM_256) $(ROM_256)
+	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT,emutos2.map));\
+      echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS162))) bytes more than TOS 1.62)"
 
 $(ROM_256): ROMSIZE = 256
 $(ROM_256): emutos2.img mkrom$(EXE)
@@ -395,6 +416,8 @@ SYMFILE = $(addsuffix .sym,$(basename $(ROM_512)))
 .PHONY: 512
 512: DEF = -DTARGET_512
 512: $(ROM_512) $(SYMFILE)
+	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT,emutos2.map));\
+      echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 
 $(ROM_512): ROMSIZE = 512
 $(ROM_512): emutos2.img mkrom$(EXE)
@@ -414,6 +437,8 @@ NODEP += aranym
 aranym:
 	@echo "# Building ARAnyM EmuTOS into $(ROM_ARANYM)"
 	$(MAKE) CPUFLAGS='-m68040' DEF='-DMACHINE_ARANYM' ROM_512=$(ROM_ARANYM) $(ROM_ARANYM)
+	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT,emutos2.map));\
+      echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 
 #
 # Diagnostic Cartridge Image
@@ -428,6 +453,8 @@ cart:
 	@echo "# Building Diagnostic Cartridge EmuTOS into $(ROM_CARTRIDGE)"
 	$(MAKE) OPTFLAGS=-Os DEF='-DDIAGNOSTIC_CARTRIDGE=1' UNIQUE=$(COUNTRY) WITH_AES=0 VMA=0x00fa0000 ROM_128=$(ROM_CARTRIDGE) $(ROM_CARTRIDGE)
 	./mkrom$(EXE) stc emutos2.img emutos.stc
+	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT,emutos2.map));\
+      echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS102))) bytes more than TOS 1.2)"
 
 #
 # Amiga Image
@@ -450,6 +477,8 @@ amiga: UNIQUE = $(COUNTRY)
 amiga:
 	@echo "# Building Amiga EmuTOS into $(ROM_AMIGA)"
 	$(MAKE) DEF='$(AMIGA_DEFS)' UNIQUE=$(UNIQUE) VMA=0x00fc0000 $(ROM_AMIGA)
+	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT,emutos2.map));\
+      echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS162))) bytes more than TOS 1.62)"
 
 $(ROM_AMIGA): emutos2.img mkrom$(EXE)
 	./mkrom$(EXE) amiga $< $(ROM_AMIGA)
@@ -485,6 +514,8 @@ NODEP += firebee
 firebee:
 	@echo "# Building FireBee EmuTOS into $(SREC_FIREBEE)"
 	$(MAKE) COLDFIRE=1 CPUFLAGS='-mcpu=5474' DEF='-DMACHINE_FIREBEE' LMA=0xe0600000 SRECFILE=$(SREC_FIREBEE) $(SREC_FIREBEE)
+	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT,emutos2.map));\
+      echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 
 .PHONY: firebee-ram
 NODEP += firebee-ram
@@ -499,6 +530,8 @@ m548x: UNIQUE = $(COUNTRY)
 m548x:
 	@echo "# Building M548x EmuTOS in $(SREC_M548X)"
 	$(MAKE) COLDFIRE=1 DEF='-DMACHINE_M548X' UNIQUE=$(UNIQUE) SRECFILE=$(SREC_M548X) $(SREC_M548X)
+	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT,emutos2.map));\
+      echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 
 #
 # ram - In two stages. first link emutos2.img to know the top address of bss,
@@ -509,6 +542,8 @@ TOCLEAN += boot.prg
 
 .PHONY: ram
 ram: ramtos.img boot.prg
+	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT_RAM,ramtos.map));\
+      echo "# RAM used: $$(($$MEMBOT)) bytes"
 
 .PHONY: emutos2-ram
 emutos2-ram:
@@ -584,6 +619,8 @@ NODEP += flop
 flop: UNIQUE = $(COUNTRY)
 flop:
 	$(MAKE) UNIQUE=$(UNIQUE) emutos.st
+	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT_RAM,ramtos.map));\
+      echo "# RAM used: $$(($$MEMBOT)) bytes"
 
 .PHONY: fd0
 NODEP += fd0

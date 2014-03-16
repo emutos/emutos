@@ -5384,3 +5384,6 @@ Start... early ages
 2014-03-10
 - bdos/fs.h bdos/fsdir.c bdos/fsopnclo.c: Fix bug: a cross-directory rename
   inadvertently changed the file date/time. (RFB)
+
+2014-03-16
+- Makefile: Show the target RAM usage at the end of build. (VRI)
