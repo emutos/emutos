@@ -257,11 +257,11 @@ desk_copts = -Ibios -Iaes
 #
 
 # Shell command to get the address of a symbol
-FUNCTION_SHELL_GET_SYMBOL_ADDRESS = grep $(1) $(2) |awk '{print $$1}'
+FUNCTION_SHELL_GET_SYMBOL_ADDRESS = grep -E ' $(1)( |$$)' $(2) |awk '{print $$1}'
 
 # membot (LONG at 0x432) is the bottom of the free RAM
-FUNCTION_SHELL_GET_MEMBOT = $(call FUNCTION_SHELL_GET_SYMBOL_ADDRESS,__end,$(1))
-FUNCTION_SHELL_GET_MEMBOT_RAM = $(call FUNCTION_SHELL_GET_SYMBOL_ADDRESS,__edata,$(1))
+FUNCTION_SHELL_GET_MEMBOT = $(call FUNCTION_SHELL_GET_SYMBOL_ADDRESS,_end,$(1))
+FUNCTION_SHELL_GET_MEMBOT_RAM = $(call FUNCTION_SHELL_GET_SYMBOL_ADDRESS,_edata,$(1))
 MEMBOT_TOS102 = 0x0000ca00
 MEMBOT_TOS104 = 0x0000a84e
 MEMBOT_TOS162 = 0x0000a832
