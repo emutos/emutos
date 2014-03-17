@@ -1,7 +1,7 @@
 /*
  * EmuCON2 builtin commands
  *
- * Copyright (c) 2013 The EmuTOS development team
+ * Copyright (c) 2014 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows
@@ -34,6 +34,7 @@ PRIVATE void help_display(const COMMAND *p);
 PRIVATE WORD help_lines(const COMMAND *p);
 PRIVATE WORD help_pause(void);
 PRIVATE WORD help_wanted(const COMMAND *p,char *cmd);
+PRIVATE LONG is_valid_drive(char drive_letter);
 PRIVATE void output(const char *s);
 PRIVATE void outputnl(const char *s);
 PRIVATE LONG outputbuf(const char *s,LONG len);
@@ -578,19 +579,26 @@ LONG bufsize, n, rc;
     for (rc = Fsfirst(inname,0x07), n = 0; rc == 0; rc = Fsnext())
         n++;
 
-    if (Fsfirst(outname,0x10) == 0L) {
-        if (dta->d_attrib & 0x10) {     /* target is directory */
-            output_is_dir = 1;
-            outptr += strlen(outptr);
-            *outptr++ = '\\';
-            *outptr = '\0';
-        }
-    }
+    /*
+     * determine if target is a valid directory
+     */
+    if (check_path_component(outname) == 0L)
+        output_is_dir = 1;
 
+    /*
+     * multiple input files are only allowed if output is a directory
+     */
     if ((n > 1) && !output_is_dir) {
         message(outname);
         messagenl(_(" is not a directory"));
         return 0;           /* because we already issued a message */
+    }
+
+    if (output_is_dir) {
+        outptr += strlen(outptr);
+        if ((*(outptr-1) != '\\') && (*(outptr-1) != ':'))
+            *outptr++ = '\\';
+        *outptr = '\0';
     }
 
     bufsize = IOBUFSIZE;
@@ -692,26 +700,14 @@ char buf[MAXPATHLEN];
 PRIVATE char *extract_path(char *dest,const char *src)
 {
 const char *p;
-char *q, *sep = NULL;
-UWORD colon = 0;
+char *q, *sep = dest;
 
     for (p = src, q = dest; *p; ) {
-        if (*p == '\\')
+        if ((*p == '\\') || (*p == ':'))
             sep = q + 1;
-        else if (*p == ':')
-            colon = 1;
         *q++ = *p++;
     }
-    *q = '\0';          /* neatness only */
-
-    if (!sep) {         /* no backslash */
-        if (!colon)     /* no drive separator */
-            sep = dest;
-        else {          /* drive separator found: */
-            sep = q;    /* add backslash */
-            *sep++ = '\\';
-        }
-    }
+    *q = '\0';
 
     return sep;
 }
@@ -846,12 +842,36 @@ UWORD i;
     outputnl(buf);
 }
 
+PRIVATE LONG is_valid_drive(char drive_letter)
+{
+ULONG drvbits;
+WORD drive_number;
+
+    drvbits = Dsetdrv(Dgetdrv());
+    drive_number = (drive_letter | 0x20) - 'a';
+
+    return drvbits & (1 << drive_number);
+}
+
 PRIVATE LONG check_path_component(char *component)
 {
 char *p;
-char temp[MAXPATHLEN];
-WORD drive, fixup;
+WORD fixup;
 LONG rc;
+
+    /*
+     * if drive specified, validate it and check
+     * for "X:" and "X:\" directory specifications
+     */
+    if (component[1] == ':') {
+        if (!is_valid_drive(*component))
+            return INVALID_PATH;
+        p = component + 2;
+        if (*p == '\\')
+            p++;
+        if (!*p)              /* X: and X:\ are valid directories */
+            return 0L;
+    }
 
     for (p = component; *p; p++) {      /* scan thru string */
         if ((*p == '?') || (*p == '*'))
@@ -865,17 +885,12 @@ LONG rc;
     if (fixup)
         *--p = '\0';
 
-    if ((p-component == 2) && (*(p-1) == ':')) {    /* X: */
-        drive = (*component | 0x20) - 'a' + 1;
-        rc = Dgetpath(temp,drive);      /* cheap way to check for valid drive */
-    } else {
-        rc = Fsfirst(component,0x17);
-        if (rc == 0L)
-            if ((dta->d_attrib&0x10) != 0x10)
-                rc = INVALID_PATH;
-        if (rc < 0L)
-            rc = INVALID_PATH;
-    }
+    rc = Fsfirst(component,0x17);
+    if (rc < 0L)
+        rc = INVALID_PATH;
+    else if ((rc == 0L) && ((dta->d_attrib&0x10) != 0x10))
+        rc = INVALID_PATH;
+
     if (fixup)
         *p = '\\';
 

@@ -5387,3 +5387,6 @@ Start... early ages
 
 2014-03-16
 - Makefile: Show the target RAM usage at the end of build. (VRI)
+
+2014-03-17
+- cli/cmdint.c: Fix bugs in EmuCON cp/mv when target is directory. (RFB)
