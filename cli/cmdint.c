@@ -607,6 +607,7 @@ LONG bufsize, n, rc;
         return ENSMEM;
 
     for (rc = Fsfirst(inname,0x07); rc == 0; rc = Fsnext()) {
+        /* allow user to interrupt or pause before every file copy/move */
         if (constat()) {
             if (user_input()) {
                 rc = USER_BREAK;
@@ -642,6 +643,13 @@ LONG bufsize, n, rc;
         out = (WORD) (rc & 0xffff);
 
         do {
+            /* allow user to interrupt during file copy/move */
+            if (constat()) {
+                if (user_break()) {
+                    rc = USER_BREAK;
+                    break;
+                }
+            }
             n = rc = Fread(in,bufsize,iobuf);
             if (rc < 0L)
                 break;
@@ -660,9 +668,12 @@ LONG bufsize, n, rc;
             rc = Fdelete(inname);
         }
 
-        messagenl(_(" ... done"));
-        if (rc < 0L)
+        if (rc < 0L) {
+            message(" ... ");
             break;
+        }
+
+        messagenl(_(" ... done"));
     }
     if (rc == ENMFIL)   /* not really an error */
         rc = 0L;
