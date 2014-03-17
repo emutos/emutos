@@ -136,15 +136,8 @@
 #ifndef M0101052901
 #define M0101052901     TRUE
 #endif
-#ifndef M0101052705
-#define M0101052705     TRUE
-#endif
 #ifndef M0101071401
 #define M0101071401     TRUE
-#endif
-
-#ifndef M0101073101
-#define M0101073101     TRUE
 #endif
 
 /*

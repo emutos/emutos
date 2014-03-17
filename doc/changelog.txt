@@ -5396,3 +5396,4 @@ Start... early ages
 - cli/cmdint.c: Fix is_valid_drive() for drives > 'P'. (RFB)
 - cli/cmdint.c: Improve EmuCON cp/mv error msgs for invalid drive. (RFB)
 - cli/cmdint.c: Fix copyright date. (RFB)
+- bdos/fsdir.c: Remove some useless #ifdefs. (RFB)
