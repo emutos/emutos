@@ -5394,3 +5394,5 @@ Start... early ages
 - cli/cmdint.c: Allow user to interrupt EmuCON cp/mv. (RFB)
 - bdos/fsdrive.c: Return EDRIVE from ckdrv() for invalid drive. (RFB)
 - cli/cmdint.c: Fix is_valid_drive() for drives > 'P'. (RFB)
+- cli/cmdint.c: Improve EmuCON cp/mv error msgs for invalid drive. (RFB)
+ 

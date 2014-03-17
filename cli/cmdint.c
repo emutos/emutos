@@ -582,13 +582,16 @@ LONG bufsize, n, rc;
     /*
      * determine if target is a valid directory
      */
-    if (check_path_component(outname) == 0L)
+    rc = check_path_component(outname);
+    if (rc == 0L)
         output_is_dir = 1;
 
     /*
-     * multiple input files are only allowed if output is a directory
+     * if invalid drive OR (multiple input files and output isn't a directory),
+     * it's an error
      */
-    if ((n > 1) && !output_is_dir) {
+    if ((rc == EDRIVE)
+     || ((n > 1) && !output_is_dir)) {
         message(outname);
         messagenl(_(" is not a directory"));
         return 0;           /* because we already issued a message */
@@ -878,7 +881,7 @@ LONG rc;
      */
     if (component[1] == ':') {
         if (!is_valid_drive(*component))
-            return INVALID_PATH;
+            return EDRIVE;
         p = component + 2;
         if (*p == '\\')
             p++;
