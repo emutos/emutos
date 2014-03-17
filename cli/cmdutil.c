@@ -136,18 +136,20 @@ char *p;
  */
 void convulong(char *buf,ULONG n,WORD width,char filler)
 {
-WORD i;
 ULONG quot;
-char *p;
+char *p = buf + width;
 
-    buf[width] = '\0';
-    for (i = 0, p = buf+width-1; (i < width) && n; i++, p--, n = quot) {
+    *p-- = '\0';
+    while(p >= buf) {
         quot = n / 10;
-        *p = (n - quot*10) + '0';
+        *p-- = (n - quot*10) + '0';
+        n = quot;
+        if (!n)
+            break;
     }
 
-    for ( ; i < width; i++, p--)
-        *p = filler;
+    while(p >= buf)
+        *p-- = filler;
 }
 
 PRIVATE char *conv2(char *p,WORD n)

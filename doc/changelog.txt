@@ -5390,3 +5390,4 @@ Start... early ages
 
 2014-03-17
 - cli/cmdint.c: Fix bugs in EmuCON cp/mv when target is directory. (RFB)
+- cli/cmdutil.c: Fix bug: SHOW displayed blank line for zero value. (RFB)
