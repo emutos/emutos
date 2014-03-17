@@ -92,7 +92,7 @@ long    ckdrv(int d)
         b = (BPB *) Getbpb(d);
 
         if ( !(long)b )             /* M01.01.1007.01 */
-            return(ERR);
+            return EDRIVE;
 
         if ( (long)b < 0 ) /* M01.01.0915.02 */ /* M01.01.1007.01 */
             return( (long)b );
