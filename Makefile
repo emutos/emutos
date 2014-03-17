@@ -382,7 +382,7 @@ NODEP += 192
 192:
 	$(MAKE) DEF='-DTARGET_192' OPTFLAGS=-Os WITH_CLI=0 UNIQUE=$(UNIQUE) ROM_192=$(ROM_192) $(ROM_192)
 	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT,emutos1.map));\
-      echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS102))) bytes more than TOS 1.2)"
+      echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS102))) bytes more than TOS 1.02)"
 
 $(ROM_192): ROMSIZE = 192
 $(ROM_192): emutos1.img mkrom$(EXE)
@@ -454,7 +454,7 @@ cart:
 	$(MAKE) OPTFLAGS=-Os DEF='-DDIAGNOSTIC_CARTRIDGE=1' UNIQUE=$(COUNTRY) WITH_AES=0 VMA=0x00fa0000 ROM_128=$(ROM_CARTRIDGE) $(ROM_CARTRIDGE)
 	./mkrom$(EXE) stc emutos2.img emutos.stc
 	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT,emutos2.map));\
-      echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS102))) bytes more than TOS 1.2)"
+      echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS102))) bytes more than TOS 1.02)"
 
 #
 # Amiga Image
