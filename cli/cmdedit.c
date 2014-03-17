@@ -1,7 +1,7 @@
 /*
  * EmuCON2 command history handling
  *
- * Copyright (c) 2013 The EmuTOS development team
+ * Copyright (c) 2013-2014 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows
@@ -169,13 +169,13 @@ WORD n, shift = 0;
     switch(scancode) {
     case UPARROW:
         if (history_num >= 0) {
-            erase_line(line,*len);
+            erase_line(line,*pos);
             *pos = *len = previous_history(line);
         }
         break;
     case DNARROW:
         if (history_num >= 0) {
-            erase_line(line,*len);
+            erase_line(line,*pos);
             *pos = *len = next_history(line);
         }
         break;
@@ -277,31 +277,6 @@ char *p;
     for ( ; p >= line+pos; p--)
         cursor_left();
 }
-
-#if 0
-/*
- *  erase single character to left of cursor
- */
-PRIVATE void erase_char(void)
-{
-    cursor_left();
-    conout(' ');
-    cursor_left();
-}
-
-/*
- *  erase to end of line (old method, assumed slower)
- */
-PRIVATE void erase_line(char *start,WORD len)
-{
-WORD n;
-
-    for (n = len; n > 0; n--)
-        erase_char();
-
-    *start = '\0';
-}
-#endif
 
 /*
  *  erase to end of line

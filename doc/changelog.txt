@@ -5397,3 +5397,5 @@ Start... early ages
 - cli/cmdint.c: Improve EmuCON cp/mv error msgs for invalid drive. (RFB)
 - cli/cmdint.c: Fix copyright date. (RFB)
 - bdos/fsdir.c: Remove some useless #ifdefs. (RFB)
+- cli/cmdedit.c: Fix bug: command prompt was overwritten if line was
+  recalled after editing with left arrow key. (RFB)
