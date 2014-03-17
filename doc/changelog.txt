@@ -5393,3 +5393,4 @@ Start... early ages
 - cli/cmdutil.c: Fix bug: SHOW displayed blank line for zero value. (RFB)
 - cli/cmdint.c: Allow user to interrupt EmuCON cp/mv. (RFB)
 - bdos/fsdrive.c: Return EDRIVE from ckdrv() for invalid drive. (RFB)
+- cli/cmdint.c: Fix is_valid_drive() for drives > 'P'. (RFB)

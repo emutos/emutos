@@ -860,8 +860,10 @@ WORD drive_number;
 
     drvbits = Dsetdrv(Dgetdrv());
     drive_number = (drive_letter | 0x20) - 'a';
+    if ((drive_number < 0) || (drive_number >= BLKDEVNUM))
+        return 0;
 
-    return drvbits & (1 << drive_number);
+    return (drvbits & (1L << drive_number)) ? 1 : 0;
 }
 
 PRIVATE LONG check_path_component(char *component)
