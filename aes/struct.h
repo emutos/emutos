@@ -150,7 +150,8 @@ struct aespd                    /* process descriptor           */
         LONG    p_qaddr;        /* 34 */
         WORD    p_qindex;       /* 38 */
         BYTE    p_queue[QUEUE_SIZE];   /* 3A */
-        BYTE    p_appdir[130];  /* directory containing the executable */
+        BYTE    p_appdir[LEN_ZPATH+2];  /* directory containing the executable */
+                                        /* (includes trailing path separator)  */
 };
 
 
