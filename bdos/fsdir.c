@@ -133,13 +133,6 @@
 #include        "string.h"
 #include        "kprint.h"
 
-#ifndef M0101052901
-#define M0101052901     TRUE
-#endif
-#ifndef M0101071401
-#define M0101071401     TRUE
-#endif
-
 /*
  * forward prototypes
  */
@@ -439,35 +432,18 @@ long ixsfirst(char *name, register WORD att, register DTAINFO *addr)
         att |= (FA_ARCHIVE|FA_RO);
 
 
-#if     M0101071401
-    if ( (long)(dn = findit(name,&s,0))  < 0 )          /* M01.01.1212.01 */
-        return( (long)dn );
+    if ((long)(dn = findit(name,&s,0)) < 0)         /* M01.01.1212.01 */
+        return (long)dn;
 
-    if ( dn == (DND*)NULLPTR )                                  /* M01.01.1214.01 */
-        return( EFILNF );
-#else
-    if ((long)(dn = findit(name,&s,0)) < 0)             /* M01.01.1212.01 */
-        return( dn );
-    if (!dn)                                            /* M01.01.1214.01 */
-        return( EFILNF );
-#endif
+    if (dn == (DND*)NULLPTR)                        /* M01.01.1214.01 */
+        return EFILNF;
 
     /* now scan for filename from start of directory */
 
     pos = 0;
 
-#if     M0101071401
-    if(  (f = scan(dn,s,att,&pos))      ==  (FCB*)NULLPTR  )
-        return(EFILNF);
-#else
-    if (dn)
-    {
-        if (!(f = scan(dn,s,att,&pos)))
-            return(EFILNF);
-    }
-    else
-        return(EFILNF);
-#endif
+    if ((f = scan(dn,s,att,&pos)) == (FCB*)NULLPTR)
+        return EFILNF;
 
     KDEBUG(("\nixfirst(%s, DND=%p, DTA=%p)",s,dn,addr));
 
@@ -1110,11 +1086,6 @@ DND     *findit(char *name, const char **sp, int dflag)
      *  since we have gone to a scheme of keeping fewer DNDs in memory.
      */
 
-#if     ! M0101052901
-    if (p->d_ofd)
-        p->d_ofd->o_flag &= ~O_COMPLETE;
-#endif
-
     do
     {
         if (!(i = getpath(n,s,dflag)))
@@ -1164,16 +1135,7 @@ DND     *findit(char *name, const char **sp, int dflag)
                 p = 0;
                 if (pp)
                 {
-#if     M0101052901
                     p = dirscan(pp,n);
-
-#else
-                    if (!(pp->d_ofd->o_flag & O_COMPLETE))
-                    {   /*  M01.01.KTB.SCC.01  [1]  */
-                        pp->d_scan = 0L ;    /*start*/
-                        p = dirscan(pp,n);   /*over */
-                    }
-#endif
                 }
             }
             else
@@ -1256,14 +1218,11 @@ FCB     *scan(register DND *dnd, const char *n, WORD att, LONG *posp)
         {
                 /*
                 **  Add New DND.
-                **  ( iff after scan ptr && complete flag not set && not a .
+                **  ( iff after scan ptr && not a .
                 **  or .. && subdirectory && not deleted ) M01.01.0512.01
                 */
 
                 if( (fcb->f_attrib & FA_SUBDIR)         &&
-#if     ! M0101052901
-                    (!(fd->o_flag & O_COMPLETE))        &&
-#endif
                     (fcb->f_name[0] != '.')             &&
                     (fcb->f_name[0] != (char)0xe5)
                 )
@@ -1295,9 +1254,6 @@ FCB     *scan(register DND *dnd, const char *n, WORD att, LONG *posp)
         {       /*  assumes that (*n != 0xe5) (if posp == -1)  */
                 if( fcb && (*n == (char)0xe5) )
                         return(fcb) ;
-#if     ! M0101052901
-                fd->o_flag |= O_COMPLETE;
-#endif
                 return( (FCB *) 0 );
         }
 

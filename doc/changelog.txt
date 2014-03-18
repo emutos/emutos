@@ -5399,3 +5399,5 @@ Start... early ages
 - bdos/fsdir.c: Remove some useless #ifdefs. (RFB)
 - cli/cmdedit.c: Fix bug: command prompt was overwritten if line was
   recalled after editing with left arrow key. (RFB)
+- bdos/fs.h bdos/fsdir.c: Code cleanup: remove code permanently excluded
+  by #defines. (RFB)

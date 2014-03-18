@@ -158,18 +158,7 @@ OFD
  *
  * T: OFD is dirty, because of chg to startcl, length, time, etc.
  */
-
 #define O_DIRTY         1
-
-#if     ! M0101052901
-/*
- * O_COMPLETE -
- *
- * 1: traversal of directory file (to bld dir tree) has completed
- */
-
-#define O_COMPLETE      2
-#endif
 
 
 
