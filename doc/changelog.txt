@@ -5406,3 +5406,8 @@ Start... early ages
 2014-03-19
 - bdos/bdosmain.c bdos/fs.h bdos/fsdir.c bdios/fsmain.c: Eliminate
   uc(), replaced by toupper(). (RFB)
+
+2014-03-20
+- bdos/bdosmain.c: Make test for special names for Fopen(), Fcreate()
+  the same as Atari TOS. (RFB)
+ 

@@ -286,21 +286,6 @@ void    osinit(void)
 
 
 /*
- *  ncmps -  compare two text strings, ingoreing case.
- */
-
-static int ncmps(int n, char *s, char *d)
-{
-    while (n--)
-        if (toupper(*s++) != toupper(*d++))
-            return(0);
-
-    return(1);
-}
-
-
-
-/*
  *  freetree -  free the directory node tree
  */
 
@@ -592,15 +577,21 @@ restrt:
         }
     }
 
+    
+    /*
+     * for Fopen(), Fcreate() we check for special names
+     * 
+     * special names can be upper or lower case, but NOT mixed
+     */
     rc = 0;
     if ((fn == 0x3d) || (fn == 0x3c))  /* open, create */
     {
         p = *((char **) &pw[1]);
-        if (ncmps(5,p,"CON:"))
+        if ((strcmp(p,"CON:") == 0) || (strcmp(p,"con:") == 0))
             rc = 0xFFFFL;
-        else if (ncmps(5,p,"AUX:"))
+        else if ((strcmp(p,"AUX:") == 0) || (strcmp(p,"aux:") == 0))
             rc = 0xFFFEL;
-        else if (ncmps(5,p,"PRN:"))
+        else if ((strcmp(p,"PRN:") == 0) || (strcmp(p,"prn:") == 0))
             rc = 0xFFFDL;
     }
 
