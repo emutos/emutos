@@ -144,7 +144,6 @@ static DND *dcrack(const char **np);
 static int getpath(const char *p, char *d, int dirspec);
 static BOOL match(char *s1, char *s2);
 static void makbuf(FCB *f, DTAINFO *dt);
-static int xcmps(char *s, char *d);
 static DND *getdnd(char *n, DND *d);
 static void freednd(DND *dn);
 
@@ -1126,7 +1125,7 @@ DND     *findit(char *name, const char **sp, int dflag)
          **     are all logged in.
          */
 
-        while( p && (xcmps(s,p->d_name) == FALSE) )
+        while( p && (strncasecmp(s,p->d_name,11) != 0) )
         {
             newp = p->d_right ; /*  next sibling        */
 
@@ -1540,23 +1539,6 @@ static void makbuf(FCB *f, DTAINFO *dt)
 
 
 /*
-**  xcmps - utility routine to compare two 11-character strings
-**
-**      Last modified   19 Jul 85       SCC
-*/
-
-static int xcmps(char *s, char *d)
-{
-        register int i;
-
-        for (i = 0; i < 11; i++)
-                if (toupper(*s++) != toupper(*d++))
-                        return(0);
-        return(1);
-}
-
-
-/*
 **  getdnd - find a dnd with matching name
 */
 
@@ -1566,7 +1548,7 @@ static DND *getdnd(char *n, DND *d)
 
         for( dnd = d->d_left ; dnd ; dnd = dnd->d_right )
         {
-                if( xcmps( n , &dnd->d_name[0] ) )
+                if (strncasecmp(n,dnd->d_name,11) == 0)
                         return( dnd ) ;
         }
         return( (DND*)NULLPTR ) ;
