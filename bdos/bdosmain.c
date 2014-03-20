@@ -30,6 +30,7 @@
 #include "time.h"
 #include "gemerror.h"
 #include "biosbind.h"
+#include "string.h"
 #include "kprint.h"
 
 
@@ -291,7 +292,7 @@ void    osinit(void)
 static int ncmps(int n, char *s, char *d)
 {
     while (n--)
-        if (uc(*s++) != uc(*d++))
+        if (toupper(*s++) != toupper(*d++))
             return(0);
 
     return(1);

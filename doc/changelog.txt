@@ -5402,3 +5402,7 @@ Start... early ages
 - bdos/fs.h bdos/fsdir.c: Code cleanup: remove code permanently excluded
   by #defines. (RFB)
 - aes/struct.h: Code cleanup: use #define value instead of magic number. (RFB)
+
+2014-03-19
+- bdos/bdosmain.c bdos/fs.h bdos/fsdir.c bdios/fsmain.c: Eliminate
+  uc(), replaced by toupper(). (RFB)

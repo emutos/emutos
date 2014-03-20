@@ -461,8 +461,6 @@ WORD free_available_dnds(void);
 /*
  * in fsmain.c
  */
-
-char uc(register char c);
 char *xgetdta(void);
 void xsetdta(char *addr);
 long xsetdrv(int drv);

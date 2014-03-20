@@ -586,7 +586,7 @@ void builds(char *s1, char *s2)
         */
 
         for( i = 0 ; (i < MAXFNCHARS) && isnotdelim(*s1) ; i++ )
-                *s2++ = uc(*s1++) ;
+                *s2++ = toupper(*s1++) ;
 
         /*
         **  if we have reached the max number of characters for the filename
@@ -625,7 +625,7 @@ void builds(char *s1, char *s2)
         */
 
         for( i = 0 ; i < 3 && isnotdelim(*s1) ; i++ )
-                *s2++ = uc(*s1++);
+                *s2++ = toupper(*s1++);
 
         /*
         **  if the current character is a wildcard character, set the padding
@@ -658,7 +658,7 @@ void builds(const char *s1, char *s2)
 
         for (i=0; (i<8) && (*s1) && (*s1 != '*') && (*s1 != SLASH) &&
             (*s1 != '.') && (*s1 != ' '); i++)
-                *s2++ = uc(*s1++);
+                *s2++ = toupper(*s1++);
 
         if (i == 8)
                 while (*s1 && (*s1 != '.') && (*s1 != SLASH))
@@ -677,7 +677,7 @@ void builds(const char *s1, char *s2)
 
         for (i=0;(i<3) && (*s1) && (*s1 != '*') && (*s1 != SLASH) &&
             (*s1 != '.') && (*s1 != ' '); i++)
-                *s2++ = uc(*s1++);
+                *s2++ = toupper(*s1++);
 
         c = ((*s1 == '*') ? '?' : ' ');
 
@@ -848,7 +848,7 @@ long xchdir(char *p)
         const char *s;
 
         if (p[1] == ':')
-                dlog = uc(p[0]) - 'A';
+                dlog = toupper(p[0]) - 'A';
         else
                 dlog = run->p_curdrv;
 
@@ -1373,7 +1373,7 @@ static DND *dcrack(const char **np)
     n = *np;                    /*  get ptr to name             */
     if (n[1] == ':')            /*  if we start with drive spec */
     {
-        d = uc(n[0]) - 'A';     /*    compute drive number      */
+        d = toupper(n[0]) - 'A';/*    compute drive number      */
         n += 2;                 /*    bump past drive number    */
     }
     else                                /*  otherwise                   */
@@ -1499,7 +1499,7 @@ static BOOL match(char *s1, char *s2)
 
     for (i=0; i < 11 ; i++, s1++, s2++)
         if (*s1 != '?')
-            if (uc(*s1) != uc(*s2))
+            if (toupper(*s1) != toupper(*s2))
                 return( FALSE );
 
     /*
@@ -1550,7 +1550,7 @@ static int xcmps(char *s, char *d)
         register int i;
 
         for (i = 0; i < 11; i++)
-                if (uc(*s++) != uc(*d++))
+                if (toupper(*s++) != toupper(*d++))
                         return(0);
         return(1);
 }

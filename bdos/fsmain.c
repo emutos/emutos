@@ -386,18 +386,6 @@
 */
 
 
-
-/*
- *  uc - utility routine to return the upper-case of character passed in
- */
-
-char    uc(char c)
-{
-    return((c >= 'a') && (c <= 'z') ? c & 0x5F : c);
-}
-
-
-
 /*
  *  xgetdta - Function 0x2F     f_getdta
  */
