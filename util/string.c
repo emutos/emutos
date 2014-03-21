@@ -121,43 +121,49 @@ int memcmp(const void * aa, const void * bb, unsigned long int n)
 {
     const unsigned char * a = aa;
     const unsigned char * b = bb;
+    unsigned char s1, s2;
 
-    while(n && *a == *b) {
-        n--;
-        a++;
-        b++;
+    while(n-- > 0) {
+        s1 = *a++;
+        s2 = *b++;
+        if (s1 != s2)
+            return s1 - s2;
     }
-    if(n == 0) return 0;
-    if(*a < *b) return -1;
-    return 1;
+
+    return 0;
 }
 
 int strncmp(const char *a, const char *b, unsigned long int n)
 {
-    while(n && *a && *a == *b) {
-        n--;
-        a++;
-        b++;
+    unsigned char s1, s2;
+	
+    while(n-- > 0) {
+        s1 = (unsigned char)*a++;
+        s2 = (unsigned char)*b++;
+        if (s1 != s2)
+            return s1 - s2;
+        if (s1 == '\0')
+            break;
     }
-    if(n == 0) return 0;
-    if(*a == *b) return 0;
-    if(*a < *b) return -1;
-    return 1;
+
+    return 0;
 }
 
 int strncasecmp(const char *a, const char *b, unsigned long int n)
 {
-    while(n && *a && toupper(*a) == toupper(*b)) {
-        n--;
-        a++;
-        b++;
+    unsigned char s1, s2;
+	
+    while(n-- > 0) {
+        s1 = toupper((unsigned char)*a++);
+        s2 = toupper((unsigned char)*b++);
+        if (s1 != s2)
+            return s1 - s2;
+        if (s1 == '\0')
+            break;
     }
-    if(n == 0) return 0;
-    if(toupper(*a) == toupper(*b)) return 0;
-    if(toupper(*a) < toupper(*b)) return -1;
-    return 1;
-}
 
+    return 0;
+}
 
 int toupper(int c)
 {

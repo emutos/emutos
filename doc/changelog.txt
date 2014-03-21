@@ -5416,3 +5416,5 @@ Start... early ages
 2014-03-21
 - util/string.c: Make strcmp() use unsigned chars in comparison
   (standard-C compliant). (RFB)
+- util/string.c: Make memcmp()/strncmp()/strncasecmp() use unsigned
+  chars in comparison (standard-C compliant). (RFB)
