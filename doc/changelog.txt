@@ -5412,3 +5412,7 @@ Start... early ages
   the same as Atari TOS. (RFB)
 - bdos/fsdir.c: Eliminate xcmps(), replaced by strncasecmp(). (RFB)
 - desk/deskfpd.c util/string.c: Slight improvement to strcmp(). (RFB)
+
+2014-03-21
+- util/string.c: Make strcmp() use unsigned chars in comparison
+  (standard-C compliant). (RFB)

@@ -103,12 +103,18 @@ char *strcat(char *dest, const char *src)
 
 int strcmp(const char *a, const char *b)
 {
-    while(*a && *a == *b) {
-        a++;
-        b++;
+    unsigned char s1, s2;
+
+    while(1) {
+        s1 = (unsigned char)*a++;
+        s2 = (unsigned char)*b++;
+        if (s1 != s2)
+            return s1 - s2;
+        if (s1 == '\0')
+            break;
     }
 
-    return *a - *b;
+    return 0;
 }
 
 int memcmp(const void * aa, const void * bb, unsigned long int n)
