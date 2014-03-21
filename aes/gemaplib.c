@@ -213,7 +213,7 @@ void ap_exit(void)
         wm_update(TRUE);
         mn_clsda();
         if (rlr->p_qindex)
-          ap_rdwr(MU_MESAG, rlr, rlr->p_qindex, ad_valstr);
+          ap_rdwr(MU_MESAG, rlr, rlr->p_qindex, (LONG)D.g_valstr);
         gsx_mfset(ad_armice);
         wm_update(FALSE);
         all_run();

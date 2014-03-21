@@ -16,8 +16,6 @@
 
 #define DEF_DESKTOP "EMUDESK"   /* default desktop */
 
-extern LONG     ad_valstr;
-
 extern LONG     ad_sysglo;
 extern LONG     ad_armice;
 extern LONG     ad_hgmice;

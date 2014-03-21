@@ -304,7 +304,7 @@ WORD ob_edit(LONG tree, WORD obj, WORD in_char, WORD *idx, WORD kind)
                                                 /*   to local strs      */
         strcpy((char *) ad_tmpstr, (char *) edblk.te_ptmplt);
         strcpy((char *) ad_rawstr, (char *) edblk.te_ptext);
-        len = ii = strlencpy((char *) ad_valstr, (char *) edblk.te_pvalid);
+        len = ii = strlencpy(D.g_valstr, (char *) edblk.te_pvalid);
                                                 /* expand out valid str */
         while ( (ii > 0) &&
                 (len < edblk.te_tmplen) )

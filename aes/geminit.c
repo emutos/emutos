@@ -81,8 +81,6 @@ static BYTE     envbuf[ENV_SIZE];       /* for initial desktop environment */
 
 GLOBAL WORD     totpds;
 
-GLOBAL LONG     ad_valstr;
-
 GLOBAL LONG     ad_sysglo;
 GLOBAL LONG     ad_armice;
 GLOBAL LONG     ad_hgmice;
@@ -167,7 +165,6 @@ static void ini_dlongs(void)
         ad_ssave = (LONG)&start;
         ad_sysglo = (LONG)&D.g_sysglo[0];
                                                 /* gemoblib             */
-        ad_valstr = (LONG)&D.g_valstr[0];
         ad_fmtstr = (LONG)&D.g_fmtstr[0];
         ad_rawstr = (LONG)&D.g_rawstr[0];
         ad_tmpstr = (LONG)&D.g_tmpstr[0];
