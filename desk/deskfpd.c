@@ -343,6 +343,8 @@ PNODE *pn_open(WORD  drive, BYTE *path, BYTE *name, BYTE *ext, WORD attr)
 /*
 *       Compare file nodes pf1 & pf2, using a field
 *       determined by which
+*
+*       Returns -ve if pf1<pf2, 0 if pf1==pf2, +ve if pf1>pf2
 */
 static WORD pn_fcomp(FNODE *pf1, FNODE *pf2, WORD which)
 {
@@ -396,8 +398,8 @@ static WORD pn_fcomp(FNODE *pf1, FNODE *pf2, WORD which)
 /*
 *       Routine to compare two fnodes to see which one is greater.
 *       Folders always sort out first, and then it is based on
-*       the G.g_isort parameter.  Return (-1) if pf1 < pf2, (0) if
-*       pf1 == pf2, and (1) if pf1 > pf2.
+*       the G.g_isort parameter.  Return -ve if pf1 < pf2, 0 if
+*       pf1 == pf2, and +ve if pf1 > pf2.
 */
 static WORD pn_comp(FNODE *pf1, FNODE *pf2)
 {

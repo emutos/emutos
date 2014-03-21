@@ -107,9 +107,8 @@ int strcmp(const char *a, const char *b)
         a++;
         b++;
     }
-    if(*a == *b) return 0;
-    if(*a < *b) return -1;
-    return 1;
+
+    return *a - *b;
 }
 
 int memcmp(const void * aa, const void * bb, unsigned long int n)
