@@ -362,7 +362,7 @@ WORD gsx_tick(void *tcode, void *ptsave)
 
 
 
-void gsx_mfset(LONG pmfnew)
+void gsx_mfset(const MFORM *pmfnew)
 {
     gsx_moff();
     if (!gl_ctmown)

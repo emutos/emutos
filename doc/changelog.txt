@@ -5420,3 +5420,8 @@ Start... early ages
   chars in comparison (standard-C compliant). (RFB)
 - aes/gemaplib.c aes/geminit.c aes/geminit.h aes/gemobed.c: Eliminate
   unnecessary global variable ad_valstr. (RFB)
+
+2014-03-23
+- aes/gemctrl.c aes/gemgsxif.c aes/gemgsxif.h aes/geminit.c
+  aes/geminit.h aes/gemsuper.c: Code cleanup: arg to gsx_mfset() is
+  now MFORM *. (RFB)

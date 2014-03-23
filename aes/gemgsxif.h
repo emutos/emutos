@@ -37,7 +37,7 @@ void bb_save(GRECT *ps);
 void bb_restore(GRECT *pr);
 
 WORD gsx_tick(void *tcode, void *ptsave);
-void gsx_mfset(LONG pmfnew);
+void gsx_mfset(const MFORM *pmfnew);
 
 void gsx_mxmy(WORD *pmx, WORD *pmy);
 WORD gsx_kstate(void);

@@ -329,11 +329,11 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
                         mouse = MICE00;
                         break;
                     }
-                    maddr = *(LONG *) &rs_bitblk[mouse];
+                    maddr = rs_bitblk[mouse].bi_pdata;
                   }
                   else
                     maddr = GR_MADDR;
-                  gsx_mfset(maddr);
+                  gsx_mfset((MFORM *)maddr);
                 }
                 break;
           case GRAF_MKSTATE:

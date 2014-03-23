@@ -82,8 +82,8 @@ static BYTE     envbuf[ENV_SIZE];       /* for initial desktop environment */
 GLOBAL WORD     totpds;
 
 GLOBAL LONG     ad_sysglo;
-GLOBAL LONG     ad_armice;
-GLOBAL LONG     ad_hgmice;
+GLOBAL MFORM    *ad_armice;
+GLOBAL MFORM    *ad_hgmice;
 GLOBAL BYTE     *ad_envrn;              /* initialized in GEMSTART      */
 GLOBAL LONG     ad_stdesk;
 
@@ -789,8 +789,8 @@ void gem_main(void)
     gem_rsc_init();
     {
         /* get mice forms       */
-        ad_armice = *(LONG *)&rs_bitblk[MICE00];
-        ad_hgmice = *(LONG *)&rs_bitblk[MICE02];
+        ad_armice = (MFORM *)rs_bitblk[MICE00].bi_pdata;
+        ad_hgmice = (MFORM *)rs_bitblk[MICE02].bi_pdata;
 
         /* init button stuff    */
         gl_btrue = 0x0;
