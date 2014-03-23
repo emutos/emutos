@@ -38,6 +38,7 @@
 #include "gemgsxif.h"
 #include "gemobjop.h"
 #include "gemctrl.h"
+#include "gem_rsc.h"
 #include "gsx2.h"
 #include "rectfunc.h"
 #include "optimopt.h"
@@ -1102,7 +1103,7 @@ void wm_start(void)
           W_TREE[i].ob_type = G_IBOX;
         }
         W_TREE[ROOT].ob_type = G_BOX;
-        tree = (OBJECT *)ad_stdesk;
+        tree = rs_trees[DESKTOP];
         W_TREE[ROOT].ob_spec = tree->ob_spec;
                                                 /* init window element  */
                                                 /*   objects            */

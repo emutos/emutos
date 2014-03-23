@@ -5425,3 +5425,5 @@ Start... early ages
 - aes/gemctrl.c aes/gemgsxif.c aes/gemgsxif.h aes/geminit.c
   aes/geminit.h aes/gemsuper.c: Code cleanup: arg to gsx_mfset() is
   now MFORM *. (RFB)
+- aes/geminit.c aes/geminit.h aes/gemshlib.c aes/gemwmlib.c: Eliminate
+  unnecessary global variable ad_stdesk. (RFB)

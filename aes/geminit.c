@@ -85,7 +85,6 @@ GLOBAL LONG     ad_sysglo;
 GLOBAL MFORM    *ad_armice;
 GLOBAL MFORM    *ad_hgmice;
 GLOBAL BYTE     *ad_envrn;              /* initialized in GEMSTART      */
-GLOBAL LONG     ad_stdesk;
 
 GLOBAL BYTE     gl_dir[130];
 GLOBAL MFORM    gl_mouse;
@@ -383,7 +382,7 @@ void sh_deskf(WORD obj, LONG plong)
 {
         register OBJECT *tree;
 
-        tree = (OBJECT *)ad_stdesk;
+        tree = rs_trees[DESKTOP];
         *(LONG *)plong = tree[obj].ob_spec;
 }
 
@@ -830,9 +829,6 @@ void gem_main(void)
 
         /* fix up the GEM rsc. file now that we have an open WS */
         gem_rsc_fixit();
-
-        /* get st_desk ptr */
-        ad_stdesk = (LONG) rs_trees[DESKTOP];
 
         /* init. window vars. */
         wm_start();

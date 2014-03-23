@@ -359,7 +359,7 @@ static void sh_draw(const BYTE *lcmd, WORD start, WORD depth)
 
         if (gl_shgem)
         {
-          tree = ad_stdesk;
+          tree = (LONG)rs_trees[DESKTOP];
           gsx_sclip(&gl_rscreen);
           *(LONG *)ad_pfile = (LONG)lcmd;
           ob_draw(tree, start, depth);
