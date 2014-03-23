@@ -161,10 +161,6 @@ static void ini_dlongs(void)
                                                 /*   which is used by   */
                                                 /*   resource calls     */
         ad_ssave = (LONG)&start;
-                                                /* gemoblib             */
-        ad_fmtstr = (LONG)&D.g_fmtstr[0];
-        ad_rawstr = (LONG)&D.g_rawstr[0];
-        ad_tmpstr = (LONG)&D.g_tmpstr[0];
 
         D.s_cmd = &cmd[0];
         D.g_scrap = &scrap_dir[0];

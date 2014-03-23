@@ -5429,3 +5429,5 @@ Start... early ages
   unnecessary global variable ad_stdesk. (RFB)
 - aes/geminit.c aes/geminit.h aes/gemlib.h: Eliminate unused variables
   ad_sysglo and D.g_sysglo. (RFB)
+- aes/geminit.c aes/gemobed.c aes/gemoblib.c aes/gemoblib.h: Eliminate
+  unnecessary global variables ad_fmtstr, ad_rawstr, ad_tmpstr. (RFB)

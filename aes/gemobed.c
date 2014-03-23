@@ -3,7 +3,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2013 The EmuTOS development team
+*                 2002-2014 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -302,8 +302,8 @@ WORD ob_edit(LONG tree, WORD obj, WORD in_char, WORD *idx, WORD kind)
         ob_getsp(tree, obj, &edblk);
                                                 /* copy passed in strs  */
                                                 /*   to local strs      */
-        strcpy((char *) ad_tmpstr, (char *) edblk.te_ptmplt);
-        strcpy((char *) ad_rawstr, (char *) edblk.te_ptext);
+        strcpy(D.g_tmpstr, (char *) edblk.te_ptmplt);
+        strcpy(D.g_rawstr, (char *) edblk.te_ptext);
         len = ii = strlencpy(D.g_valstr, (char *) edblk.te_pvalid);
                                                 /* expand out valid str */
         while ( (ii > 0) &&
@@ -401,7 +401,7 @@ WORD ob_edit(LONG tree, WORD obj, WORD in_char, WORD *idx, WORD kind)
                         break;
                 }
 
-                strcpy((char *) edblk.te_ptext, (char *) ad_rawstr);
+                strcpy((char *) edblk.te_ptext,D.g_rawstr);
 
                 if (!no_redraw)
                 {

@@ -39,10 +39,6 @@
 #define g_vsf_color( x )          gsx_1code(S_FILL_COLOR, x)
 
 
-GLOBAL LONG     ad_tmpstr;
-GLOBAL LONG     ad_rawstr;
-GLOBAL LONG     ad_fmtstr;
-
 GLOBAL TEDINFO  edblk;
 GLOBAL BITBLK   bi;
 GLOBAL ICONBLK  ib;
@@ -291,7 +287,7 @@ static void  just_draw(LONG tree, WORD obj, WORD sx, WORD sy)
                         &D.g_fmtstr[0]);
                                                 /* fall thru to gr_gtext*/
             case G_BOXCHAR:
-                edblk.te_ptext = ad_fmtstr;
+                edblk.te_ptext = (LONG)D.g_fmtstr;
                 if (obtype == G_BOXCHAR)
                 {
                   D.g_fmtstr[0] = ch;
