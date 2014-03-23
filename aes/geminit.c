@@ -66,14 +66,11 @@
 
 #define ROPEN 0
 
-#define SIZE_AFILE 2048                 /* size of AES shell buffer: must   */
-                                        /*  agree with #define in deskapp.h */
 #define INF_SIZE   300                  /* size of buffer used by sh_rdinf() */
                                         /*  for start of EMUDESK.INF file    */
 #define ENV_SIZE   200                  /* size of initial desktop environment */
 
 
-static BYTE     start[SIZE_AFILE];      /* AES shell buffer */
 static BYTE     infbuf[INF_SIZE+1];     /* used to read part of EMUDESK.INF */
 static BYTE     envbuf[ENV_SIZE];       /* for initial desktop environment */
 
@@ -156,12 +153,6 @@ BYTE *scan_2(BYTE *pcurr, WORD *pwd)
  */
 static void ini_dlongs(void)
 {
-                                                /* init. long pointer   */
-                                                /*   to global array    */
-                                                /*   which is used by   */
-                                                /*   resource calls     */
-        ad_ssave = (LONG)&start;
-
         D.s_cmd = &cmd[0];
         D.g_scrap = &scrap_dir[0];
         D.s_cdir = &cur_dir[0];

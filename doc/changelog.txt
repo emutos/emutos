@@ -5431,3 +5431,5 @@ Start... early ages
   ad_sysglo and D.g_sysglo. (RFB)
 - aes/geminit.c aes/gemobed.c aes/gemoblib.c aes/gemoblib.h: Eliminate
   unnecessary global variables ad_fmtstr, ad_rawstr, ad_tmpstr. (RFB)
+- aes/geminit.c aes/gemshlib.c aes/gemshlib.h: Move shell buffer and
+  eliminate unnecessary global ad_ssave. (RFB)

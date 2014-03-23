@@ -49,6 +49,10 @@
 
 #include "gemshlib.h"
 
+#define SIZE_AFILE 2048                 /* size of AES shell buffer: must   */
+                                        /*  agree with #define in deskapp.h */
+
+static BYTE shelbuf[SIZE_AFILE];        /* AES shell buffer */
 
 GLOBAL SHELL    sh[NUM_PDS];
 
@@ -59,7 +63,6 @@ static BYTE sh_apdir[LEN_ZPATH];                /* holds directory of   */
                                                 /*   to parent's on ret */
                                                 /*   from exec.         */
 GLOBAL BYTE     *ad_stail;
-GLOBAL LONG     ad_ssave;
 
 GLOBAL LONG     ad_pfile;
 
@@ -282,22 +285,22 @@ WORD sh_write(WORD doex, WORD isgem, WORD isover, const BYTE *pcmd, const BYTE *
 
 
 /*
-*       Used by the DESKTOP to recall 1024 bytes worth of previously
+*       Used by the DESKTOP to recall SIZE_AFILE bytes worth of previously
 *       'put' desktop-context information.
 */
 void sh_get(void *pbuffer, WORD len)
 {
-        memcpy(pbuffer, (BYTE *)ad_ssave, len);
+        memcpy(pbuffer,shelbuf,len);
 }
 
 
 /*
-*       Used by the DESKTOP to save away 1024 bytes worth of desktop-
+*       Used by the DESKTOP to save away SIZE_AFILE bytes worth of desktop-
 *       context information.
 */
 void sh_put(const void *pdata, WORD len)
 {
-        memcpy((BYTE *)ad_ssave, pdata, len);
+        memcpy(shelbuf,pdata,len);
 }
 
 
