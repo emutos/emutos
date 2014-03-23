@@ -5427,3 +5427,5 @@ Start... early ages
   now MFORM *. (RFB)
 - aes/geminit.c aes/geminit.h aes/gemshlib.c aes/gemwmlib.c: Eliminate
   unnecessary global variable ad_stdesk. (RFB)
+- aes/geminit.c aes/geminit.h aes/gemlib.h: Eliminate unused variables
+  ad_sysglo and D.g_sysglo. (RFB)

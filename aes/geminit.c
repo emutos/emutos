@@ -81,7 +81,6 @@ static BYTE     envbuf[ENV_SIZE];       /* for initial desktop environment */
 
 GLOBAL WORD     totpds;
 
-GLOBAL LONG     ad_sysglo;
 GLOBAL MFORM    *ad_armice;
 GLOBAL MFORM    *ad_hgmice;
 GLOBAL BYTE     *ad_envrn;              /* initialized in GEMSTART      */
@@ -162,7 +161,6 @@ static void ini_dlongs(void)
                                                 /*   which is used by   */
                                                 /*   resource calls     */
         ad_ssave = (LONG)&start;
-        ad_sysglo = (LONG)&D.g_sysglo[0];
                                                 /* gemoblib             */
         ad_fmtstr = (LONG)&D.g_fmtstr[0];
         ad_rawstr = (LONG)&D.g_rawstr[0];

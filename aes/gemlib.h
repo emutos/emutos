@@ -335,8 +335,6 @@ typedef struct window
 #define WA_LFLINE 6
 #define WA_RTLINE 7
 
-#define G_SIZE 15
-
 #define SH_INPLACE 0
 #define SH_ABOVE 1
 #define SH_FSTEP 2
@@ -395,8 +393,6 @@ THEGLO
  BYTE       g_tmpstr[MAX_LEN];
  BYTE       g_valstr[MAX_LEN];
  BYTE       g_fmtstr[MAX_LEN];
-
- UWORD      g_sysglo[G_SIZE];
 
  WINDOW     w_win[NUM_WIN];
                                                 /* all but 1st 2 pds,   */
