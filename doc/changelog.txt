@@ -5433,3 +5433,5 @@ Start... early ages
   unnecessary global variables ad_fmtstr, ad_rawstr, ad_tmpstr. (RFB)
 - aes/geminit.c aes/gemshlib.c aes/gemshlib.h: Move shell buffer and
   eliminate unnecessary global ad_ssave. (RFB)
+- aes/geminit.c aes/gemsclib.c aes/gemsclib.h: Move scrap directory
+  string to THEGLO. (RFB)

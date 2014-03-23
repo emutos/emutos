@@ -91,9 +91,7 @@ WORD sc_clear(void)
     WORD    found;
     static const char *scrapmask = "\\SCRAP.*";
 
-    if(D.g_scrap == NULL)
-      return FALSE;
-    if(*D.g_scrap == 0)
+    if (D.g_scrap[0] == '\0')
       return FALSE;
 
     ptmp = D.g_scrap;

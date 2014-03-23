@@ -380,7 +380,7 @@ THEGLO
  CDA        g_intcda[2];
  EVB        g_intevb[NUM_IEVBS];
 
- BYTE       *g_scrap;
+ BYTE       g_scrap[LEN_ZPATH];         /* current scrap directory */
  BYTE       *g_dir;
  BYTE       *g_dta;
  BYTE       *s_cdir;
