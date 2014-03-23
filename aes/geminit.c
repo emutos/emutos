@@ -100,7 +100,6 @@ GLOBAL WORD     curpid;
 
 GLOBAL THEGLO   D;
 
-static BYTE     gl_dta[128];
 static BYTE     cur_dir[LEN_ZPATH];
 static BYTE     cmd[LEN_ZPATH];
 
@@ -155,7 +154,6 @@ static void ini_dlongs(void)
         D.s_cmd = &cmd[0];
         D.s_cdir = &cur_dir[0];
         D.g_dir = &gl_dir[0];
-        D.g_dta = &gl_dta[0];
 }
 
 
@@ -280,7 +278,7 @@ static void ldaccs(void)
 
           ret = (i==0) ? dos_sfirst(D.g_dir, F_RDONLY) : dos_snext();
           if (ret)
-            sndcli(&gl_dta[30]);
+            sndcli(&D.g_dta[30]);
         }
 }
 

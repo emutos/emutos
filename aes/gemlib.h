@@ -382,7 +382,7 @@ THEGLO
 
  BYTE       g_scrap[LEN_ZPATH];         /* current scrap directory */
  BYTE       *g_dir;
- BYTE       *g_dta;
+ BYTE       g_dta[44];                  /* AES's DTA */
  BYTE       *s_cdir;
  BYTE       *s_cmd;
 
