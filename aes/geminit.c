@@ -140,17 +140,6 @@ BYTE *scan_2(BYTE *pcurr, WORD *pwd)
         return( pcurr );
 }
 
-/*
- * in the following code, there are many initialisations of global ad_xxx
- * variables to point to members of D (which is also global).  Most or all
- * of the ad_xxx variables & their initialisations could be removed with
- * appropriate changes to the modules that use them.
- */
-static void ini_dlongs(void)
-{
-        D.g_dir = &gl_dir[0];
-}
-
 
 LONG size_theglo(void)
 {
@@ -688,7 +677,6 @@ void gem_main(void)
 
     gl_changerez = FALSE;
 
-    ini_dlongs();               /* init longs */
     cli();
     takecpm();                  /* take the 0efh int. */
 
