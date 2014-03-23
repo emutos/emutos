@@ -100,7 +100,6 @@ GLOBAL WORD     curpid;
 
 GLOBAL THEGLO   D;
 
-static BYTE     cur_dir[LEN_ZPATH];
 static BYTE     cmd[LEN_ZPATH];
 
 
@@ -152,7 +151,6 @@ BYTE *scan_2(BYTE *pcurr, WORD *pwd)
 static void ini_dlongs(void)
 {
         D.s_cmd = &cmd[0];
-        D.s_cdir = &cur_dir[0];
         D.g_dir = &gl_dir[0];
 }
 

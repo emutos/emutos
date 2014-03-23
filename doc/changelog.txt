@@ -5436,3 +5436,4 @@ Start... early ages
 - aes/geminit.c aes/gemsclib.c aes/gemsclib.h: Move scrap directory
   string to THEGLO. (RFB)
 - aes/geminit.c aes/gemlib.h: Move DTA to THEGLO. (RFB)
+- aes/geminit.c aes/gemlib.h: Move desktop directory to THEGLO. (RFB)

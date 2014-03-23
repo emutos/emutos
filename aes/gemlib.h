@@ -383,7 +383,7 @@ THEGLO
  BYTE       g_scrap[LEN_ZPATH];         /* current scrap directory */
  BYTE       *g_dir;
  BYTE       g_dta[44];                  /* AES's DTA */
- BYTE       *s_cdir;
+ BYTE       s_cdir[LEN_ZPATH];          /* current desktop directory */
  BYTE       *s_cmd;
 
  FPD        g_fpdx[NFORKS];
