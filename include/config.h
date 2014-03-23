@@ -921,6 +921,7 @@
 #define LEN_ZFNAME 13                   /* max fname length, incl '\' separator */
 #define LEN_ZNODE 8                     /* max node length */
 #define LEN_ZEXT 3                      /* max extension length */
+#define MAXPATHLEN (LEN_ZPATH+LEN_ZFNAME+1) /* convenient shorthand */
 
 /*
  * Sanity checks

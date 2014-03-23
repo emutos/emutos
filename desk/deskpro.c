@@ -36,7 +36,7 @@
 
 WORD pro_chdir(WORD drv, BYTE *ppath)
 {
-        BYTE            path[LEN_ZPATH+LEN_ZFNAME+1];
+        BYTE            path[MAXPATHLEN];
                                                 /* change to directory  */
                                                 /*   that application   */
                                                 /*   is in              */

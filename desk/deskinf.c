@@ -355,8 +355,8 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
         LONG            tree, size;
         WORD            more, nmidx, title;
         BYTE            attr;
-        BYTE            srcpth[LEN_ZPATH+LEN_ZFNAME+1];
-        BYTE            dstpth[LEN_ZPATH+LEN_ZFNAME+1];
+        BYTE            srcpth[MAXPATHLEN];
+        BYTE            dstpth[MAXPATHLEN];
         BYTE            poname[LEN_ZFNAME], pnname[LEN_ZFNAME];
         OBJECT          *obj;
 
@@ -478,7 +478,7 @@ WORD inf_disk(BYTE dr_id)
         LONG    tree;
         LONG    total, avail;
         WORD    more;
-        BYTE    srcpth[LEN_ZPATH+LEN_ZFNAME+1];
+        BYTE    srcpth[MAXPATHLEN];
         BYTE    str[12];
         BYTE    drive[2];
 

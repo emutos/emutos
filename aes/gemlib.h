@@ -382,8 +382,8 @@ THEGLO
 
  BYTE       g_scrap[LEN_ZPATH];         /* current scrap directory */
  BYTE       s_cdir[LEN_ZPATH];          /* current desktop directory */
- BYTE       s_cmd[LEN_ZPATH+LEN_ZFNAME+1];  /* fully-qualified program name */
- BYTE       g_dir[LEN_ZPATH+LEN_ZFNAME+1];  /* sh_find() work area */
+ BYTE       s_cmd[MAXPATHLEN];          /* fully-qualified program name */
+ BYTE       g_dir[MAXPATHLEN];          /* sh_find() work area */
  BYTE       g_dta[44];                  /* AES's DTA */
  
  FPD        g_fpdx[NFORKS];

@@ -698,8 +698,8 @@ WORD par_chk(BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path)
         REG BYTE        *tsrc, *tdst;
         WORD    same;
         REG FNODE       *pf;
-        BYTE            srcpth[LEN_ZPATH+LEN_ZFNAME+1];
-        BYTE            dstpth[LEN_ZPATH+LEN_ZFNAME+1];
+        BYTE            srcpth[MAXPATHLEN];
+        BYTE            dstpth[MAXPATHLEN];
 
         if (psrc_path[0] != pdst_path[0])               /* check drives */
           return(TRUE);
@@ -768,8 +768,8 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
         WORD            ret, more, ob;
         BYTE            *pglsrc, *pgldst;
         LONG            lavail;
-        BYTE            srcpth[LEN_ZPATH+LEN_ZFNAME+1];
-        BYTE            dstpth[LEN_ZPATH+LEN_ZFNAME+1];
+        BYTE            srcpth[MAXPATHLEN];
+        BYTE            dstpth[MAXPATHLEN];
         OBJECT          *obj;
 
 /* BugFix       */

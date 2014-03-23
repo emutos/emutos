@@ -1,7 +1,7 @@
 /*
  * EmuCON2 header
  *
- * Copyright (c) 2013 The EmuTOS development team
+ * Copyright (c) 2013-2014 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows
@@ -13,7 +13,6 @@
  #include "config.h"
  #include <nls.h>
  #include <portab.h>
- #define MAXPATHLEN      (LEN_ZPATH+LEN_ZFNAME+1)
 #else
  #define _(a) a
  #define N_(a) a

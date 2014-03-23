@@ -117,7 +117,7 @@ WORD fun_mkdir(WNODE *pw_node)
         LONG            tree;
         WORD            more, cont, i;
         BYTE            fnew_name[LEN_ZFNAME], unew_name[LEN_ZFNAME], *ptmp;
-        BYTE            path[LEN_ZPATH+LEN_ZFNAME+1];
+        BYTE            path[MAXPATHLEN];
 
         tree = G.a_trees[ADMKDBOX];
         pp_node = pw_node->w_path;
@@ -223,7 +223,7 @@ void fun_drag(WORD src_wh, WORD dst_wh, WORD dst_ob, WORD dulx, WORD duly)
         WNODE           *psw, *pdw;
         ANODE           *pda;
         FNODE           *pdf;
-        BYTE            destpath[LEN_ZPATH+LEN_ZFNAME+1];
+        BYTE            destpath[MAXPATHLEN];
 
         psw = win_find(src_wh);
         pdw = win_find(dst_wh);
