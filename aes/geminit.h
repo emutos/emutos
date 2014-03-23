@@ -20,9 +20,6 @@ extern MFORM    *ad_armice;
 extern MFORM    *ad_hgmice;
 extern BYTE     *ad_envrn;
 
-extern BYTE     gl_dir[130];
-extern BYTE     gl_1loc[256];
-extern BYTE     gl_2loc[256];
 extern MFORM    gl_mouse;
 extern BYTE     gl_logdrv;
 

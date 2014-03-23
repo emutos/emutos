@@ -82,7 +82,6 @@ GLOBAL MFORM    *ad_armice;
 GLOBAL MFORM    *ad_hgmice;
 GLOBAL BYTE     *ad_envrn;              /* initialized in GEMSTART      */
 
-GLOBAL BYTE     gl_dir[130];
 GLOBAL MFORM    gl_mouse;
 GLOBAL BYTE     gl_logdrv;
 

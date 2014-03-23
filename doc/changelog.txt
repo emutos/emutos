@@ -5441,3 +5441,5 @@ Start... early ages
 - aes/geminit.c aes/gemlib.h: Move sh_find() work area to THEGLO. (RFB)
 - aes/gemlib.h cli/cmd.h desk/deskdir.c desk/deskfun.c desk/deskinf.c
   desk/deskpro.c include/config.h: Add new #define for MAXPATHLEN. (RFB)
+- aes/geminit.c aes/geminit.h: Code cleanup: remove no-longer-used
+  variables and externs. (RFB)
