@@ -100,8 +100,6 @@ GLOBAL WORD     curpid;
 
 GLOBAL THEGLO   D;
 
-static BYTE     cmd[LEN_ZPATH];
-
 
 /*
 *       Convert a single hex ASCII digit to a number
@@ -150,7 +148,6 @@ BYTE *scan_2(BYTE *pcurr, WORD *pwd)
  */
 static void ini_dlongs(void)
 {
-        D.s_cmd = &cmd[0];
         D.g_dir = &gl_dir[0];
 }
 
