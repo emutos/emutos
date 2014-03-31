@@ -140,9 +140,14 @@ BYTE *scan_2(BYTE *pcurr, WORD *pwd)
 }
 
 
+
+/*
+ * return size of global area
+ * called from gemstart.S
+ */
 LONG size_theglo(void)
 {
-    return( sizeof(THEGLO)/2 );
+    return sizeof(THEGLO);
 }
 
 

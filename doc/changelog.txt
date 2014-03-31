@@ -5443,3 +5443,6 @@ Start... early ages
   desk/deskpro.c include/config.h: Add new #define for MAXPATHLEN. (RFB)
 - aes/geminit.c aes/geminit.h: Code cleanup: remove no-longer-used
   variables and externs. (RFB)
+
+2014-03-30
+- aes/geminit.c aes/gemstart.S: Use bzero() to clear global area. (RFB)

@@ -71,6 +71,10 @@ _ui_start:
 #endif
 
 aes_restart:
+        // set our temporary user stack again, so we can call bzero()
+        // after an AES restart
+        movea.l #gemusp,sp
+
         // restore original environment pointer
 #ifdef __mcoldfire__
         move.l  save_ad_envrn,d0
@@ -82,21 +86,11 @@ aes_restart:
         // clear the 'global memory' zone whose size is determined by
         // routine size_theglo :-)
         jsr     _size_theglo
+        move.l  d0,-(sp)        // size in bytes
         movea.l #_D,a0
-        clr.l   d1
-        bra     clrglotest
-clrgloloop:
-        move.w  d1,(a0)+
-clrglotest:
-#ifdef __mcoldfire__
-        tst.l   d0
-        beq.s   clrglotestend
-        subq.l  #1,d0
-        bra.s   clrgloloop
-clrglotestend:
-#else
-        dbmi    d0,clrgloloop
-#endif
+        move.l  a0,-(sp)        // address
+        jsr     _bzero          // clear it
+        addq.l  #8,sp
 
         // _drwaddr ??? set to just_rts
         lea     _justretf,a0
