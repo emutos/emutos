@@ -5446,3 +5446,7 @@ Start... early ages
 
 2014-03-30
 - aes/geminit.c aes/gemstart.S: Use bzero() to clear global area. (RFB)
+
+2014-04-02
+- aes/geminit.c aes/gemlib.h aes/gempd.c aes/struct.h: Reorganise AES
+  process-related structures. (RFB)

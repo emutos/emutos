@@ -35,7 +35,7 @@
 /* returns the AESPD for the given index */
 AESPD *pd_index(WORD i)
 {
-        return( (i<2) ? &D.g_intpd[i] : &D.g_extpd[i-2] );
+        return (i<2) ? &D.g_int[i].a_pd : &D.g_acc[i-2].a_pd;
 }
 
 /* returns the AESPD for the given name, or if pname is NULL for the given pid */

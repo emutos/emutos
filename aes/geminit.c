@@ -160,7 +160,7 @@ LONG size_theglo(void)
 */
 LONG init_p0_stkptr(void)
 {
-    UDA *u = &D.g_intuda[0];
+    UDA *u = &D.g_int[0].a_uda;
 
     u->u_spsuper = &u->u_supstk + 1;
 
@@ -689,14 +689,14 @@ void gem_main(void)
     gl_rlen = 0;
     gl_rbuf = NULL;
 
-    /* initialize pointers to heads of event list and thread list */
-    elinkoff = (BYTE *) &(D.g_intevb[0].e_link) - (BYTE *) &(D.g_intevb[0]);
+    elinkoff = (BYTE *) &(D.g_int[0].a_evb[0].e_link) - (BYTE *) &(D.g_int[0].a_evb[0]);
 
     /* link up all the evb's to the event unused list */
     eul = NULLPTR;
-    ev_init(&D.g_intevb[0], NUM_IEVBS);
-    if (totpds > 2)
-        ev_init(&D.g_extevb[0], NUM_EEVBS);
+    for (i = 0; i < 2; i++)
+        ev_init(&D.g_int[i].a_evb[0],EVBS_PER_PD);
+    for (i = 0; i < NUM_ACCS; i++)
+        ev_init(&D.g_acc[i].a_evb[0],EVBS_PER_PD);
 
     /* initialize sync blocks */
     wind_spb.sy_tas = 0;
@@ -718,13 +718,13 @@ void gem_main(void)
         rlr = pd_index(i);
         if (i < 2)
         {
-            rlr->p_uda = &D.g_intuda[i];
-            rlr->p_cda = &D.g_intcda[i];
+            rlr->p_uda = &D.g_int[i].a_uda;
+            rlr->p_cda = &D.g_int[i].a_cda;
         }
         else
         {
-            rlr->p_uda = &D.g_extuda[i-2];
-            rlr->p_cda = &D.g_extcda[i-2];
+            rlr->p_uda = &D.g_acc[i-2].a_uda;
+            rlr->p_cda = &D.g_acc[i-2].a_cda;
         }
         rlr->p_qaddr = (LONG)(&rlr->p_queue[0]);
         rlr->p_qindex = 0;

@@ -372,13 +372,21 @@ typedef struct sh_struct
 } SHELL;
 
 
+/*
+ * (most of) the set of structures required to manage one AES process
+ */
+typedef struct {
+ UDA        a_uda;
+ AESPD      a_pd;
+ CDA        a_cda;
+ EVB        a_evb[EVBS_PER_PD];
+} AESPROCESS;
+
+
 #define THEGLO struct glstr
 THEGLO
 {
- UDA        g_intuda[2];                    /* must be 1st  */
- AESPD      g_intpd[2];
- CDA        g_intcda[2];
- EVB        g_intevb[NUM_IEVBS];
+ AESPROCESS g_int[2];                   /* for AES internal processes, must be 1st */
 
  BYTE       g_scrap[LEN_ZPATH];         /* current scrap directory */
  BYTE       s_cdir[LEN_ZPATH];          /* current desktop directory */
@@ -395,14 +403,8 @@ THEGLO
  BYTE       g_fmtstr[MAX_LEN];
 
  WINDOW     w_win[NUM_WIN];
-                                                /* all but 1st 2 pds,   */
-                                                /*   cdas, and udas     */
-                                                /*   may not be used    */
- EVB        g_extevb[NUM_EEVBS];
- UDA        g_extuda[NUM_PDS-2];
- AESPD      g_extpd[NUM_PDS-2];
- CDA        g_extcda[NUM_PDS-2];
-};
 
+ AESPROCESS g_acc[NUM_ACCS];            /* for desk accessories */
+};
 
 #endif /* GEMLIB_H */

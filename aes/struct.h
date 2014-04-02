@@ -31,8 +31,7 @@ typedef struct fpd     FPD;             /* fork process descriptor      */
 typedef UWORD   EVSPEC;
 
 #define NUM_PDS (NUM_ACCS + 2)          /* acc's + ctrlpd + dos appl.   */
-#define NUM_IEVBS (2 * 5)               /* 5 * the number of internalPDs*/
-#define NUM_EEVBS (NUM_ACCS * 5)        /* 5 * the number of externalPDs*/
+#define EVBS_PER_PD     5               /* EVBs per AES process */
 #define KBD_SIZE 8
 #define QUEUE_SIZE 128
 #define NFORKS 32
