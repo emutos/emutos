@@ -382,7 +382,7 @@ static void sh_init(void)
                                                 /*   that was stored in */
                                                 /*   geminit            */
         psrc = s_tail = D.g_work;
-        memcpy(s_tail,ad_stail,128);
+        memcpy(s_tail,ad_stail,CMDTAILSIZE);
         cnt = *psrc++;
 
         if (cnt)
@@ -498,7 +498,7 @@ static void sh_init(void)
             psh->sh_doexec = (toupper(*(psrc+1)) == 'D');
           }
         }
-        memcpy(ad_stail, s_tail, 128);
+        memcpy(ad_stail, s_tail, CMDTAILSIZE);
 }
 
 

@@ -5454,3 +5454,6 @@ Start... early ages
 2014-04-03
 - aes/geminit.c aes/gemlib.h aes/gemshlib.c: Rename g_dir[] to g_work[]
   and increase length (fixes regression from 2014-03-23). (RFB)
+- aes/geminit.c aes/gemshlib.c: Code cleanup: replace magic number 128
+  by CMDTAILSIZE where appropriate. (RFB)
+  

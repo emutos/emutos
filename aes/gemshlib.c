@@ -90,7 +90,7 @@ static void sh_toalpha(void);
 void sh_read(BYTE *pcmd, BYTE *ptail)
 {
         strcpy(pcmd, D.s_cmd);
-        memcpy(ptail, (BYTE *)ad_stail, 128);
+        memcpy(ptail, (BYTE *)ad_stail, CMDTAILSIZE);
 }
 
 
@@ -198,7 +198,7 @@ static void sh_fixtail(WORD iscpm)
             s_tail[i++] = *ptmp++;
         }
 
-        memcpy(s_tail+i, (BYTE *)ad_stail, 128 - i);
+        memcpy(s_tail+i, (BYTE *)ad_stail, CMDTAILSIZE - i);
 
         if (iscpm)
         {
@@ -227,7 +227,7 @@ static void sh_fixtail(WORD iscpm)
           }
         }
                                                 /* copy into true tail  */
-        memcpy((BYTE *)ad_stail, s_tail, 128);
+        memcpy((BYTE *)ad_stail, s_tail, CMDTAILSIZE);
 }
 
 
@@ -255,7 +255,7 @@ WORD sh_write(WORD doex, WORD isgem, WORD isover, const BYTE *pcmd, const BYTE *
         }
 
         strcpy(D.s_cmd, pcmd);
-        memcpy((BYTE *)ad_stail, ptail, 128);
+        memcpy((BYTE *)ad_stail, ptail, CMDTAILSIZE);
 
         if (isover > 0)
         {
