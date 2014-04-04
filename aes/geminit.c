@@ -253,7 +253,7 @@ static void ldaccs(void)
         register WORD   i;
         WORD            ret;
 
-        strcpy(&D.g_dir[0], "*.ACC");
+        strcpy(D.g_work, "*.ACC");
         dos_sdta(D.g_dta);
 
         /* if Control is held down then skip loading of accs */
@@ -264,7 +264,7 @@ static void ldaccs(void)
         for(i=0; (i<NUM_ACCS) && (ret); i++)
         {
 
-          ret = (i==0) ? dos_sfirst(D.g_dir, F_RDONLY) : dos_snext();
+          ret = (i==0) ? dos_sfirst(D.g_work, F_RDONLY) : dos_snext();
           if (ret)
             sndcli(&D.g_dta[30]);
         }
@@ -381,7 +381,7 @@ static void sh_init(void)
                                                 /* parse command tail   */
                                                 /*   that was stored in */
                                                 /*   geminit            */
-        psrc = s_tail = &D.g_dir[0];            /* reuse part of globals*/
+        psrc = s_tail = D.g_work;
         memcpy(s_tail,ad_stail,128);
         cnt = *psrc++;
 

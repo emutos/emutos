@@ -185,8 +185,8 @@ static void sh_fixtail(WORD iscpm)
         BYTE            *s_tail;
         BYTE            *ptmp;
         BYTE            s_fcbs[32];
-                                                /* reuse part of globals*/
-        s_tail = &D.g_dir[0];
+
+        s_tail = D.g_work;
         i = 0;
 
         if (iscpm)
@@ -552,12 +552,12 @@ WORD sh_find(BYTE *pspec)
         /* (1) search in the application directory */
         if (rlr->p_appdir[0] != '\0')
         {
-          strcpy(D.g_dir, rlr->p_appdir);
-          strcat(D.g_dir, pname);
-          dos_sfirst(D.g_dir, F_RDONLY | F_SYSTEM);
+          strcpy(D.g_work, rlr->p_appdir);
+          strcat(D.g_work, pname);
+          dos_sfirst(D.g_work, F_RDONLY | F_SYSTEM);
           if (!DOS_ERR)
           {
-            strcpy(pspec, D.g_dir);
+            strcpy(pspec, D.g_work);
             KDEBUG(("sh_find(1): returning pspec='%s'\n",pspec));
             return 1;
           }
@@ -566,18 +566,18 @@ WORD sh_find(BYTE *pspec)
         /* (2) if filename includes path, search that path */
         if (pname != pspec)
         {
-          strcpy(D.g_dir, pspec);
-          dos_sfirst(D.g_dir, F_RDONLY | F_SYSTEM);
+          strcpy(D.g_work, pspec);
+          dos_sfirst(D.g_work, F_RDONLY | F_SYSTEM);
           KDEBUG(("sh_find(2): rc=%d, returning pspec='%s'\n",!DOS_ERR,pspec));
           return !DOS_ERR;
         }
 
         /* (3) search in the current directory */
-        sh_curdir(D.g_dir);                 /* get current drive/dir*/
-        if (D.g_dir[3] != NULL)             /* if not at root       */
-          strcat(D.g_dir, "\\");            /*  add backslash       */
-        strcat(D.g_dir, pname);             /* append name          */
-        dos_sfirst(D.g_dir, F_RDONLY | F_SYSTEM);
+        sh_curdir(D.g_work);                /* get current drive/dir*/
+        if (D.g_work[3] != NULL)            /* if not at root       */
+          strcat(D.g_work, "\\");           /*  add backslash       */
+        strcat(D.g_work, pname);            /* append name          */
+        dos_sfirst(D.g_work, F_RDONLY | F_SYSTEM);
         if (!DOS_ERR)
         {
           KDEBUG(("sh_find(3): returning pspec='%s'\n",pspec));
@@ -585,12 +585,12 @@ WORD sh_find(BYTE *pspec)
         }
 
         /* (4) search in the root directory of the current drive */
-        D.g_dir[0] = '\\';
-        strcpy(D.g_dir+1, pname);
-        dos_sfirst(D.g_dir, F_RDONLY | F_SYSTEM);
+        D.g_work[0] = '\\';
+        strcpy(D.g_work+1, pname);
+        dos_sfirst(D.g_work, F_RDONLY | F_SYSTEM);
         if (!DOS_ERR)
         {
-          strcpy(pspec, D.g_dir);
+          strcpy(pspec, D.g_work);
           KDEBUG(("sh_find(4): returning pspec='%s'\n",pspec));
           return 1;
         }
@@ -599,13 +599,13 @@ WORD sh_find(BYTE *pspec)
         path = 0;
         while(1)
         {
-          path = sh_path(path, D.g_dir, pname);
+          path = sh_path(path, D.g_work, pname);
           if (!path)    /* end of PATH= */
             break;
-          dos_sfirst(D.g_dir, F_RDONLY | F_SYSTEM);
+          dos_sfirst(D.g_work, F_RDONLY | F_SYSTEM);
           if (!DOS_ERR)
           {
-            strcpy(pspec, D.g_dir);
+            strcpy(pspec, D.g_work);
             KDEBUG(("sh_find(5): returning pspec='%s'\n",pspec));
             return 1;
           }
