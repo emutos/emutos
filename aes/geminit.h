@@ -24,6 +24,7 @@ extern MFORM    gl_mouse;
 extern BYTE     gl_logdrv;
 
 extern WORD     totpds;
+extern WORD     num_accs;
 
 extern THEGLO   D;
 

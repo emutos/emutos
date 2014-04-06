@@ -73,10 +73,12 @@
 
 static BYTE     infbuf[INF_SIZE+1];     /* used to read part of EMUDESK.INF */
 static BYTE     envbuf[ENV_SIZE];       /* for initial desktop environment */
+static BYTE     acc_name[NUM_ACCS][LEN_ZFNAME]; /* used by count_accs()/ldaccs() */
 
 /* Some global variables: */
 
 GLOBAL WORD     totpds;
+GLOBAL WORD     num_accs;
 
 GLOBAL MFORM    *ad_armice;
 GLOBAL MFORM    *ad_hgmice;
@@ -245,29 +247,42 @@ static void sndcli(BYTE *pfilespec)
 
 
 /*
-*       Routine to load in desk accessories.  Files by the name of *.ACC
-*       will be loaded.
-*/
-static void ldaccs(void)
+ *      Count up to a maximum of NUM_ACCS desk accessories, saving
+ *      their names in acc_name[].
+ */
+static WORD count_accs(void)
 {
-        register WORD   i;
-        WORD            ret;
+        WORD i, rc;
 
-        strcpy(D.g_work, "*.ACC");
+        /* if Control is held down, skip loading of accessories */
+        if ((kbshift(-1) & MODE_CTRL))
+          return 0;
+
+        strcpy(D.g_work,"*.ACC");
         dos_sdta(D.g_dta);
 
-        /* if Control is held down then skip loading of accs */
-        if ((kbshift(-1) & MODE_CTRL))
-          return;
-
-        ret = TRUE;
-        for(i=0; (i<NUM_ACCS) && (ret); i++)
+        for (i = 0; i < NUM_ACCS; i++)
         {
-
-          ret = (i==0) ? dos_sfirst(D.g_work, F_RDONLY) : dos_snext();
-          if (ret)
-            sndcli(&D.g_dta[30]);
+          rc = (i==0) ? dos_sfirst(D.g_work,F_RDONLY) : dos_snext();
+          if (rc == 0)
+            break;
+          strlcpy(acc_name[i],D.g_dta+30,LEN_ZFNAME);
         }
+
+        return i;
+}
+
+
+
+/*
+ *      Load in the desk accessories specified by acc_name[]
+ */
+static void load_accs(WORD n)
+{
+        WORD i;
+
+        for (i = 0; i < n; i++)
+            sndcli(acc_name[i]);
 }
 
 
@@ -638,7 +653,7 @@ void all_run(void)
     WORD  i;
 
     /* let all the acc's run*/
-    for(i=0; i<NUM_ACCS; i++)
+    for(i=0; i<num_accs; i++)
     {
         dsptch();
     }
@@ -676,10 +691,16 @@ void gem_main(void)
         gsx_wsclear();              /* avoid artefacts that may show briefly */
     }
 
-    totpds = NUM_PDS;
     ml_ocnt = 0;
 
     gl_changerez = FALSE;
+
+    num_accs = count_accs();        /* puts ACC names in acc_name[] */
+    D.g_acc = (AESPROCESS *)dos_alloc((long)num_accs*sizeof(AESPROCESS));
+    if (!D.g_acc)                   /* not enough memory (or num_accs==0) */
+        num_accs = 0;
+
+    totpds = num_accs + 2;
 
     disable_interrupts();
     set_aestrap();                  /* set trap#2 -> aestrap */
@@ -695,7 +716,7 @@ void gem_main(void)
     eul = NULLPTR;
     for (i = 0; i < 2; i++)
         ev_init(&D.g_int[i].a_evb[0],EVBS_PER_PD);
-    for (i = 0; i < NUM_ACCS; i++)
+    for (i = 0; i < num_accs; i++)
         ev_init(&D.g_acc[i].a_evb[0],EVBS_PER_PD);
 
     /* initialize sync blocks */
@@ -768,9 +789,8 @@ void gem_main(void)
         gl_logdrv = dos_gdrv() + 'A';   /* boot directory       */
         gsx_init();                     /* do gsx open work station */
 
-        /* load all desk acc's  */
-        if (totpds > 2)
-            ldaccs();
+        /* load up to NUM_ACCS desk accessories */
+        load_accs(num_accs);
 
         /* fix up icons         */
         for(i=0; i<3; i++) {

@@ -5463,3 +5463,5 @@ Start... early ages
 - aes/gemaplib.c aes/gemdisp.c aes/gemdosif.h aes/gemdosif.S aes/gemflag.c
   aes/geminit.c aes/gemshlib.c aes/gemstart.S: Code cleanup: use meaningful
   names for interrupt disable/enable routines. (RFB)
+- aes/gemctrl.c aes/geminit.c aes/geminit.h aes/gemlib.h: Dynamically
+  allocate process structures for desk accessories. (RFB)
