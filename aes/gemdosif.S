@@ -1,7 +1,7 @@
 /*
  * gemdosif.S - Assembler part of the GEMDOS interface
  *
- * Copyright 2002-2013, The EmuTOS development team
+ * Copyright 2002-2014, The EmuTOS development team
  *           1999, Caldera Thin Clients, Inc.
  *           1987, Digital Research Inc.
  *
@@ -18,8 +18,8 @@
 .globl _takeerr
 .globl _retake
 .globl _justretf
-.globl _givecpm
-.globl _takecpm
+.globl _unset_aestrap
+.globl _set_aestrap
 .globl _back
 .globl _far_mcha
 .globl _aes_wheel
@@ -222,7 +222,7 @@ supret:                                 // return from gementry
 
 
 
-_givecpm:
+_unset_aestrap:
 #ifdef __mcoldfire__
         lea     0x88,a0
         move.l  savetrap2,(a0)
@@ -230,7 +230,7 @@ _givecpm:
         move.l  savetrap2,0x88
 #endif
         rts
-_takecpm:
+_set_aestrap:
 #ifdef __mcoldfire__
         lea     0x88,a0
         move.l  (a0),savetrap2

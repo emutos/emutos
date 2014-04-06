@@ -1,7 +1,7 @@
 /*
  * EmuTOS aes
  *
- * Copyright (c) 2002, 2010 The EmuTOS development team
+ * Copyright (c) 2002-2014 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -35,8 +35,8 @@ extern void far_mcha(void);
 extern void aes_wheel(void);
 extern void justretf(void);
 
-extern void givecpm(void);
-extern void takecpm(void);
+extern void unset_aestrap(void);
+extern void set_aestrap(void);
 
 extern void takeerr(void);
 extern void giveerr(void);

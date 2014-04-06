@@ -682,7 +682,7 @@ void gem_main(void)
     gl_changerez = FALSE;
 
     cli();
-    takecpm();                  /* take the 0efh int. */
+    set_aestrap();                  /* set trap#2 -> aestrap */
 
     /* init event recorder  */
     gl_recd = FALSE;
@@ -837,8 +837,8 @@ void gem_main(void)
         gsx_wsclose();
     }
 
-    /* return GEM's 0xEF int*/
+    /* restore previous trap#2 address */
     cli();
-    givecpm();
+    unset_aestrap();
     sti();
 }

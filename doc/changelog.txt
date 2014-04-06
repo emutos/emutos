@@ -5457,3 +5457,6 @@ Start... early ages
 - aes/geminit.c aes/gemshlib.c: Code cleanup: replace magic number 128
   by CMDTAILSIZE where appropriate. (RFB)
   
+2014-04-06
+- aes/gemdosif.S aes/gemdosif.h aes/geminit.c: Code cleanup: use meaningful
+  names for trap#2 interception functions. (RFB)
