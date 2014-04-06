@@ -62,7 +62,7 @@ GLOBAL WORD     gl_newroot;                     /* current object w/in  */
 GLOBAL LONG     desk_tree[NUM_PDS];             /* list of object trees */
                                                 /* for the desktop back-*/
                                                 /* ground pattern.      */
-GLOBAL WORD     desk_root[NUM_PDS];             /* starting object to   */
+static WORD     desk_root[NUM_PDS];             /* starting object to   */
                                                 /* draw within desk_tree.*/
 
 GLOBAL OBJECT   W_TREE[NUM_MWIN];

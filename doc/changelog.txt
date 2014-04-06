@@ -5465,3 +5465,4 @@ Start... early ages
   names for interrupt disable/enable routines. (RFB)
 - aes/gemctrl.c aes/geminit.c aes/geminit.h aes/gemlib.h: Dynamically
   allocate process structures for desk accessories. (RFB)
+- aes/gemwmlib.c aes/gemwmlib.h: Code cleanup: make desk_root[] local. (RFB)

@@ -13,7 +13,6 @@
 extern LONG     gl_newdesk;
 extern WORD     gl_newroot;
 extern LONG     desk_tree[];
-extern WORD     desk_root[];
 extern OBJECT   W_TREE[];
 extern OBJECT   W_ACTIVE[];
 extern const WORD gl_watype[];
