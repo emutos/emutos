@@ -169,11 +169,11 @@ WORD ap_trecd(FPD *pbuff,WORD length)
     FCODE  proutine;
 
     /* start recording in forker() [gemdisp.c] */
-    cli();
+    disable_interrupts();
     gl_recd = TRUE;
     gl_rlen = length;
     gl_rbuf = pbuff;
-    sti();
+    enable_interrupts();
 
     /* check every 0.1 seconds if recording is done */
     while(gl_recd)
@@ -183,11 +183,11 @@ WORD ap_trecd(FPD *pbuff,WORD length)
      * recording complete:
      * figure out actual length & reset globals for next time
      */
-    cli();
+    disable_interrupts();
     length = (WORD)(gl_rbuf - pbuff);
     gl_rlen = 0;
     gl_rbuf = NULL;
-    sti();
+    enable_interrupts();
 
     /* convert to standard format */
     for (i = 0; i < length; i++) {

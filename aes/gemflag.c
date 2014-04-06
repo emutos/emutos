@@ -3,7 +3,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002 The EmuTOS development team
+*                 2002-2014 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -61,10 +61,10 @@ void tchange(LONG c)            /* c=number of ticks that have gone by  */
                                                 /*   time to the amount */
                                                 /*   the first guy is   */
                                                 /*   waiting            */
-            cli();
+            disable_interrupts();
             CMP_TICK = d->e_parm;
             NUM_TICK = 0x0L;
-            sti();
+            enable_interrupts();
             break;
           }
         }

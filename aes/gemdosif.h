@@ -27,8 +27,8 @@ extern LONG     CMP_TICK;                       /* indicates to tick    */
                                                 /*   tchange            */
 
 
-extern void cli(void);
-extern void sti(void);
+extern void disable_interrupts(void);
+extern void enable_interrupts(void);
 
 extern void far_bcha(void);
 extern void far_mcha(void);

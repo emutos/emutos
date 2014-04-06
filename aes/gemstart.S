@@ -2,7 +2,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2013 The EmuTOS development team
+*                 2002-2014 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -217,14 +217,14 @@ _dos_exec:
         // If some additional data is pushed on the stack before
         // the stack switch, you must add the equivalent room here.
 
-        jsr     _cli
+        jsr     _disable_interrupts
         movea.l _rlr,a0
         movea.l PD_UDA(a0),a0
         move.l  UDA_SPSUPER(a0),-(sp)   // Save rlr->p_uda->u_spsuper
         movea.l sp,a1
         suba.l  #0x50,a1                // Adjust the stack (see above)
         move.l  a1,UDA_SPSUPER(a0)
-        jsr     _sti
+        jsr     _enable_interrupts
 
         movea.l d1,a1
         move.l  14(a1),-(sp)            // Push parameters on the stack again...
@@ -235,11 +235,11 @@ _dos_exec:
         trap    #1                      // ... and execute the Pexec call!
         lea     16(sp),sp
 
-        jsr     _cli
+        jsr     _disable_interrupts
         movea.l _rlr,a0
         movea.l PD_UDA(a0),a0
         move.l  (sp)+,UDA_SPSUPER(a0)   // Restore rlr->p_uda->u_spsuper
-        jsr     _sti
+        jsr     _enable_interrupts
 
 #ifdef __mcoldfire__
         move.l  (sp)+,d2

@@ -109,7 +109,7 @@ void forker(void)
         while(fpcnt)
         {
 /* critical area        */
-          cli();
+          disable_interrupts();
           fpcnt--;
           f = &D.g_fpdx[fph++];
                                         /* copy FPD so an interrupt     */
@@ -117,7 +117,7 @@ void forker(void)
           memcpy(&g, f, sizeof(FPD));
           if (fph == NFORKS)
             fph = 0;
-          sti();
+          enable_interrupts();
 /* */
                                                 /* see if recording     */
           if (gl_recd)
@@ -170,9 +170,9 @@ void chkkbd(void)
           if ( (achar) ||
              (kstat != kstate) )
           {
-            cli();
+            disable_interrupts();
             forkq(kchange, MAKE_ULONG(achar, kstat));
-            sti();
+            enable_interrupts();
           }
         }
 }

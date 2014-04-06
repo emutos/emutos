@@ -681,7 +681,7 @@ void gem_main(void)
 
     gl_changerez = FALSE;
 
-    cli();
+    disable_interrupts();
     set_aestrap();                  /* set trap#2 -> aestrap */
 
     /* init event recorder  */
@@ -743,7 +743,7 @@ void gem_main(void)
     /* end of process init */
 
     /* restart the tick     */
-    sti();
+    enable_interrupts();
 
     /*
      * screen manager process init. this process starts out owning the mouse
@@ -780,17 +780,17 @@ void gem_main(void)
         }
 
         /* take the critical err handler int. */
-        cli();
+        disable_interrupts();
         takeerr();
-        sti();
+        enable_interrupts();
 
         /* go into graphic mode */
         sh_tographic();
 
         /* take the tick int.   */
-        cli();
+        disable_interrupts();
         gl_ticktime = gsx_tick(tikaddr, &tiksav);
-        sti();
+        enable_interrupts();
 
         /* set init. click rate: must do this after setting gl_ticktime */
         ev_dclick(3, TRUE);
@@ -829,16 +829,16 @@ void gem_main(void)
         sh_main();
 
         /* give back the tick   */
-        cli();
+        disable_interrupts();
         gl_ticktime = gsx_tick(tiksav, &tiksav);
-        sti();
+        enable_interrupts();
 
         /* close workstation    */
         gsx_wsclose();
     }
 
     /* restore previous trap#2 address */
-    cli();
+    disable_interrupts();
     unset_aestrap();
-    sti();
+    enable_interrupts();
 }

@@ -12,8 +12,8 @@
 #include "asmdefs.h"
 #include "asmstruct.h"
 
-.globl _cli
-.globl _sti
+.globl _disable_interrupts
+.globl _enable_interrupts
 .globl _giveerr
 .globl _takeerr
 .globl _retake
@@ -37,7 +37,7 @@
 
 
 /* disable interrupts */
-_cli:
+_disable_interrupts:
 #ifdef __mcoldfire__
         move.l  d0,-(sp)
         move.w  sr,d0
@@ -52,7 +52,7 @@ _cli:
         rts
 
 /* restore interrupt mask as it was before cli() */
-_sti:
+_enable_interrupts:
 #ifdef __mcoldfire__
         move.l  d0,-(sp)
         move.w  savesr,d0
@@ -169,7 +169,7 @@ trapaes:
         lea     16(sp),sp
 #endif
 
-        bsr     _cli                    // mask out interrupts
+        bsr     _disable_interrupts     // mask out interrupts
         move.l  usp,a0
 #ifdef __mcoldfire__
         lea     -56(a0),a0
@@ -185,7 +185,7 @@ trapaes:
         move.l  a0,UDA_SPUSER(a6)
         move.l  sp,UDA_OLDSPSUPER(a6)
         movea.l UDA_SPSUPER(a6),sp
-        bsr     _sti                    // restore interrupt mask
+        bsr     _enable_interrupts      // restore interrupt mask
 
         move.l  d1,-(sp)                // addr of parameter
         move.w  d0,-(sp)                // 200 or 201
@@ -193,7 +193,7 @@ trapaes:
         addq.l  #6,sp                   // restore stack pointer
 
 supret:                                 // return from gementry
-        bsr     _cli                    // mask out interrupts
+        bsr     _disable_interrupts     // mask out interrupts
 
         movea.l _rlr,a0
         movea.l PD_UDA(a0),a0
@@ -209,7 +209,7 @@ supret:                                 // return from gementry
         movem.l (a0)+,d1-d7/a0-a6
 #endif
         move.l  a0,usp
-        bsr     _sti                    // restore interrupt mask
+        bsr     _enable_interrupts      // restore interrupt mask
 
 #if CONF_DEBUG_AES_STACK
         lea     -16(sp),sp

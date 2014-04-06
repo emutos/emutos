@@ -537,7 +537,7 @@ void adelay(EVB *e, LONG c)
         if (c == 0x0L)
           c = 0x1L;
 
-        cli();
+        disable_interrupts();
         if (CMP_TICK)
         {
                                                 /* if already counting  */
@@ -579,7 +579,7 @@ void adelay(EVB *e, LONG c)
           p->e_pred = e;
           p->e_parm = (LONG) c;
         }
-        sti();
+        enable_interrupts();
 }
 
 

@@ -315,9 +315,9 @@ void sh_tographic(void)
                                                 /*   on by char. appl.  */
                                                 /*   including err.     */
                                                 /*   handler and gem.int*/
-        cli();
+        disable_interrupts();
         retake();
-        sti();
+        enable_interrupts();
                                                 /* convert to graphic   */
         gsx_graphic(TRUE);
                                                 /* set initial clip rect*/
@@ -342,9 +342,9 @@ static void sh_toalpha(void)
                                                 /* give back the error  */
                                                 /*   handler since ours */
                                                 /*   is graphic         */
-        cli();
+        disable_interrupts();
         giveerr();
-        sti();
+        enable_interrupts();
                                                 /* turn off the mouse   */
         ratexit();
                                                 /* return screen space  */

@@ -5460,3 +5460,6 @@ Start... early ages
 2014-04-06
 - aes/gemdosif.S aes/gemdosif.h aes/geminit.c: Code cleanup: use meaningful
   names for trap#2 interception functions. (RFB)
+- aes/gemaplib.c aes/gemdisp.c aes/gemdosif.h aes/gemdosif.S aes/gemflag.c
+  aes/geminit.c aes/gemshlib.c aes/gemstart.S: Code cleanup: use meaningful
+  names for interrupt disable/enable routines. (RFB)
