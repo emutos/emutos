@@ -1028,7 +1028,7 @@ vdi_vrt_cpyfm(Vwk * vwk)
 }
 
 /* line-A wrapper for Copy raster form */
-void linea_raster(struct blit_frame *info)
+void linea_raster(void)
 {
     struct raster_t raster;
 
@@ -1037,7 +1037,7 @@ void linea_raster(struct blit_frame *info)
     raster.multifill = multifill;
     raster.transparent = COPYTRAN;
 
-    cpy_raster(&raster, info);
+    cpy_raster(&raster, &vdi_info);
 }
 
 /* line-A wrapper for blitting */

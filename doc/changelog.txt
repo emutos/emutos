@@ -5470,3 +5470,4 @@ Start... early ages
   on resolution change. (RFB)
 - aes/gemctrl.c aes/geminit.c aes/gemlib.h: Revert DA dynamic memory
   allocation due to problems with resolution change. (RFB)
+- vdi/vdi_raster.c: Fix crash in lineA Copy Raster Form ($a00e). (RFB)
