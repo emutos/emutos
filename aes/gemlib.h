@@ -412,7 +412,7 @@ THEGLO
 
  WINDOW     w_win[NUM_WIN];
 
- AESPROCESS *g_acc;                     /* for up to NUM_ACCS desk accessories */
+ AESPROCESS g_acc[NUM_ACCS];            /* for up to NUM_ACCS desk accessories */
 };
 
 #endif /* GEMLIB_H */

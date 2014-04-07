@@ -227,7 +227,7 @@ doelev:         message = (cpt == W_HELEV) ? WM_HSLID : WM_VSLID;
         {
           ct_msgup(WM_UNTOPPED, D.w_win[gl_wtop].w_owner, gl_wtop,
                         x, y, w, h);
-          for(ii=0; ii<num_accs; ii++)
+          for(ii=0; ii<NUM_ACCS; ii++)
             dsptch();
                                                 /* went down on inactive*/
                                                 /*   window so tell ap. */
@@ -267,7 +267,7 @@ static void hctl_rect(void)
                   WORD  ii;
                   ct_msgup(WM_UNTOPPED, D.w_win[gl_wtop].w_owner, gl_wtop,
                           0, 0, 0, 0);
-                  for (ii=0; ii<num_accs; ii++)
+                  for (ii=0; ii<NUM_ACCS; ii++)
                     dsptch();
                 }
 

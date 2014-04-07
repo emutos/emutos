@@ -5468,3 +5468,5 @@ Start... early ages
 - aes/gemwmlib.c aes/gemwmlib.h: Code cleanup: make desk_root[] local. (RFB)
 - aes/geminit.c: Bug fix: free memory allocated for DA process structures
   on resolution change. (RFB)
+- aes/gemctrl.c aes/geminit.c aes/gemlib.h: Revert DA dynamic memory
+  allocation due to problems with resolution change. (RFB)
