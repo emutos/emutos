@@ -5466,3 +5466,5 @@ Start... early ages
 - aes/gemctrl.c aes/geminit.c aes/geminit.h aes/gemlib.h: Dynamically
   allocate process structures for desk accessories. (RFB)
 - aes/gemwmlib.c aes/gemwmlib.h: Code cleanup: make desk_root[] local. (RFB)
+- aes/geminit.c: Bug fix: free memory allocated for DA process structures
+  on resolution change. (RFB)

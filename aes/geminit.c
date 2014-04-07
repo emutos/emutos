@@ -861,4 +861,10 @@ void gem_main(void)
     disable_interrupts();
     unset_aestrap();
     enable_interrupts();
+
+    /* free up dynamically-allocated process structures */
+    if (D.g_acc) {
+        dos_free((long)D.g_acc);
+        D.g_acc = NULL;
+    }
 }
