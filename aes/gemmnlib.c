@@ -43,15 +43,15 @@
 GLOBAL LONG     gl_mntree;
 GLOBAL AESPD    *gl_mnppd;
 
-GLOBAL LONG     desk_acc[NUM_DESKACC];
-static AESPD    *desk_ppd[NUM_DESKACC];
-static WORD     acc_display[NUM_DESKACC];
+GLOBAL LONG     desk_acc[NUM_ACCS];
+static AESPD    *desk_ppd[NUM_ACCS];
+static WORD     acc_display[NUM_ACCS];
 GLOBAL LONG     menu_tree[NUM_PDS];
 
 GLOBAL WORD     gl_dacnt;
 GLOBAL WORD     gl_dabox;
 
-GLOBAL OBJECT   M_DESK[3+NUM_DESKACC];
+GLOBAL OBJECT   M_DESK[3+NUM_ACCS];
 
 static LONG     gl_datree;
 
@@ -90,7 +90,7 @@ WORD mn_getda(AESPD *ppd)
 {
         register WORD   i;
 
-        for (i=0; i<NUM_DESKACC; i++)
+        for (i=0; i<NUM_ACCS; i++)
         {
           if (ppd == desk_ppd[i])
             return(i);
@@ -110,7 +110,7 @@ static void menu_fixup(BYTE *pname)
         if ( (tree = gl_mntree) == 0x0L )
           return;
 
-        w_nilit(3 + NUM_DESKACC, &M_DESK[0]);
+        w_nilit(3 + NUM_ACCS, &M_DESK[0]);
 
         obj = ((OBJECT *)tree) + THESCREEN;
         themenus = obj->ob_tail;
@@ -494,7 +494,7 @@ void mn_clsda(void)
 {
         register WORD   i;
 
-        for (i=0; i<NUM_DESKACC; i++)
+        for (i=0; i<NUM_ACCS; i++)
         {
           if (desk_ppd[i])
             ap_sendmsg(appl_msg, AC_CLOSE, desk_ppd[i], i, 0, 0, 0, 0);
@@ -511,7 +511,7 @@ static void build_menuid_lookup(void)
 {
         WORD i, slot;
 
-        for (i = 0, slot = 0; i < NUM_DESKACC; i++)
+        for (i = 0, slot = 0; i < NUM_ACCS; i++)
         {
           if (desk_acc[i])
           {
@@ -519,7 +519,7 @@ static void build_menuid_lookup(void)
           }
         }
 
-        for ( ; slot < NUM_DESKACC; slot++)
+        for ( ; slot < NUM_ACCS; slot++)
         {
           acc_display[slot++] = -1;
         }
@@ -537,7 +537,7 @@ WORD mn_register(WORD pid, LONG pstr)
 
                                                 /* add desk acc. if room*/
         if ( (pid >= 0) &&
-             (gl_dacnt < NUM_DESKACC) )
+             (gl_dacnt < NUM_ACCS) )
         {
           gl_dacnt++;
           openda = 0;
@@ -560,7 +560,7 @@ WORD mn_register(WORD pid, LONG pstr)
 */
 void mn_unregister(WORD da_id)
 {
-        if ((gl_dacnt > 0) && (da_id >= 0) && (da_id < NUM_DESKACC))
+        if ((gl_dacnt > 0) && (da_id >= 0) && (da_id < NUM_ACCS))
         {
             if (desk_acc[da_id])
             {
@@ -583,7 +583,7 @@ void mn_getownid(AESPD **owner,WORD *id,WORD item)
         WORD n;
 
         n = acc_display[item];              /* get menu_id */
-        if ((n >= 0) && (n < NUM_DESKACC))  /* paranoia */
+        if ((n >= 0) && (n < NUM_ACCS))     /* paranoia */
         {
           *id = n;
           *owner = desk_ppd[n];

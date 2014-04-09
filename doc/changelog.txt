@@ -5471,3 +5471,7 @@ Start... early ages
 - aes/gemctrl.c aes/geminit.c aes/gemlib.h: Revert DA dynamic memory
   allocation due to problems with resolution change. (RFB)
 - vdi/vdi_raster.c: Fix crash in lineA Copy Raster Form ($a00e). (RFB)
+
+2014-04-09
+- aes/gemmnlib.c include/config.h: Replace NUM_DESKACC with NUM_ACCS for
+  compatibility with TOS and future changes. (RFB)

@@ -905,11 +905,10 @@
                                 /* desktop itself counts as 1 window) */
 
 #define NUM_ACCS 6              /* maximum number of desk accessory   */
-                                /* _files_ (.ACC) that will be loaded */
-
-#define NUM_DESKACC 6           /* maximum number of desk accessory   */
-                                /* _slots_ available (one slot per    */
-                                /* mn_register() call)                */
+                                /* files (.ACC) that will be loaded   */
+                                /* AND the maximum number of desk     */ 
+                                /* accessory slots available (one     */
+                                /* slot per mn_register() call)       */
 
 #define BLKDEVNUM 26                    /* number of block devices supported: A: ... Z: */
 #define INF_FILE_NAME "A:\\EMUDESK.INF" /* path to saved desktop file */
