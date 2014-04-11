@@ -766,7 +766,6 @@ void gem_main(void)
      * screen manager process init. this process starts out owning the mouse
      * and the keyboard. it has a pid == 1
      */
-    gl_dacnt = 0;
     gl_mowner = ctl_pd = iprocess("SCRENMGR", ctlmgr);
 
     /* load gem resource and fix it up before we go */

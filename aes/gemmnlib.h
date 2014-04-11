@@ -14,10 +14,8 @@
 extern LONG     gl_mntree;
 extern AESPD    *gl_mnppd;
 
-extern LONG     desk_acc[];
 extern LONG     menu_tree[];
 
-extern WORD     gl_dacnt;
 extern WORD     gl_dabox;
 
 extern OBJECT   M_DESK[];

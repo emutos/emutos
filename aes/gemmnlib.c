@@ -17,6 +17,8 @@
 *       -------------------------------------------------------------
 */
 
+/* #define ENABLE_KDEBUG */
+
 #include "config.h"
 #include "portab.h"
 #include "struct.h"
@@ -36,6 +38,8 @@
 #include "gempd.h"
 #include "rectfunc.h"
 #include "gemmnlib.h"
+#include "geminit.h"
+#include "kprint.h"
 
 #include "string.h"
 
@@ -43,12 +47,10 @@
 GLOBAL LONG     gl_mntree;
 GLOBAL AESPD    *gl_mnppd;
 
-GLOBAL LONG     desk_acc[NUM_ACCS];
 static AESPD    *desk_ppd[NUM_ACCS];
 static WORD     acc_display[NUM_ACCS];
 GLOBAL LONG     menu_tree[NUM_PDS];
 
-GLOBAL WORD     gl_dacnt;
 GLOBAL WORD     gl_dabox;
 
 GLOBAL OBJECT   M_DESK[3+NUM_ACCS];
@@ -125,7 +127,7 @@ static void menu_fixup(BYTE *pname)
         pob->ob_spec = 0x00FF1100L;
         ob_actxywh(tree, gl_dabox, (GRECT *)&pob->ob_x);
 
-        cnt = (gl_dacnt) ? (2 + gl_dacnt) : 1;
+        cnt = (D.g_accreg) ? (2 + D.g_accreg) : 1;
                                                 /* fix up links         */
         pob->ob_head = 1;
         pob->ob_tail = cnt;
@@ -142,9 +144,16 @@ static void menu_fixup(BYTE *pname)
           pob->ob_state = pob->ob_flags = 0x0;
           if (i > 2)
           {
-            while( !desk_acc[st] )
-              st++;
-            pob->ob_spec = desk_acc[st++];
+            for ( ; st < NUM_ACCS; st++)
+              if (D.g_acctitle[st])
+                break;
+            if (st >= NUM_ACCS)     /* should not happen */
+            {
+              KDEBUG(("unexpected free slots in g_acctitle[]!\n"));
+              pob->ob_spec = obj->ob_spec;      /* this fixup is not tested ... */
+            }
+            else
+              pob->ob_spec = (LONG)D.g_acctitle[st++];
           }
           else
             pob->ob_spec = obj->ob_spec;
@@ -513,7 +522,7 @@ static void build_menuid_lookup(void)
 
         for (i = 0, slot = 0; i < NUM_ACCS; i++)
         {
-          if (desk_acc[i])
+          if (D.g_acctitle[i])
           {
             acc_display[slot++] = i;
           }
@@ -536,15 +545,21 @@ WORD mn_register(WORD pid, LONG pstr)
         WORD            openda;
 
                                                 /* add desk acc. if room*/
-        if ( (pid >= 0) &&
-             (gl_dacnt < NUM_ACCS) )
+        if ( (pid >= 0) && (D.g_accreg < NUM_ACCS) )
         {
-          gl_dacnt++;
-          openda = 0;
-          while( desk_acc[openda] )
-            openda++;
+          D.g_accreg++;
+          for (openda = 0; openda < NUM_ACCS; openda++)
+          {
+              if (!D.g_acctitle[openda])
+                  break;
+          }
+          if (openda >= NUM_ACCS)       /* shouldn't happen */
+          {
+            KDEBUG(("g_acctitle[] has no free slots!\n"));
+            openda = NUM_ACCS - 1;      /* kludge - fixup, it might survive */
+          }
           desk_ppd[openda] = rlr;
-          desk_acc[openda] = pstr;  /* save pointer, like Atari TOS */
+          D.g_acctitle[openda] = (BYTE *)pstr;  /* save pointer, like Atari TOS */
 
           menu_fixup(&rlr->p_name[0]);
           build_menuid_lookup();
@@ -560,13 +575,13 @@ WORD mn_register(WORD pid, LONG pstr)
 */
 void mn_unregister(WORD da_id)
 {
-        if ((gl_dacnt > 0) && (da_id >= 0) && (da_id < NUM_ACCS))
+        if ((D.g_accreg > 0) && (da_id >= 0) && (da_id < NUM_ACCS))
         {
-            if (desk_acc[da_id])
+            if (D.g_acctitle[da_id])
             {
-                gl_dacnt--;
+                D.g_accreg--;
                 desk_ppd[da_id] = (AESPD *)0x0;
-                desk_acc[da_id] = 0x0L;
+                D.g_acctitle[da_id] = NULL;
                 build_menuid_lookup();
             }
         }

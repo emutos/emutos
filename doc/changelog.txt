@@ -5475,3 +5475,7 @@ Start... early ages
 2014-04-09
 - aes/gemmnlib.c include/config.h: Replace NUM_DESKACC with NUM_ACCS for
   compatibility with TOS and future changes. (RFB)
+
+2014-04-10
+- aes/geminit.c aes/gemlib.h aes/gemmnlib.c aes/gemmnlib.h: Fix bug that
+  caused accessories to stop responding after a few resolution changes. (RFB)
