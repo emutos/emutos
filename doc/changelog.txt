@@ -5483,3 +5483,6 @@ Start... early ages
 2014-04-19
 - aes/gemshlib.c: Code cleanup: use PD struct instead of ptr to LONGs, and
   eliminate unnecessary zeroing. (RFB)
+- aes/gemshlib.c bdos/proc.c bios/bios.c include/asm.h: Code cleanup: use
+  #defines instead of hardcoded numbers for Pexec() mode. (RFB)
+

@@ -1,7 +1,7 @@
 /*
  * proc.h - processes defines
  *
- * Copyright (c) 2001 The EmuTOS development team.
+ * Copyright (c) 2001-2014 The EmuTOS development team.
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -20,17 +20,6 @@
  */
 
 extern  PD      *run;
-
-/*
- * values of Pexec flg
- */
-
-#define PE_LOADGO     0
-#define PE_LOAD       3
-#define PE_GO         4
-#define PE_BASEPAGE   5
-#define PE_GOTHENFREE 6
-#define PE_RELOCATE   50
 
 /*
  * in proc.c

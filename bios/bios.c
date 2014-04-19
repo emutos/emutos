@@ -384,7 +384,7 @@ static void bootstrap(void)
     nf_getbootstrap_args(args, sizeof(args));
 
     /* allocate space */
-    pd = (PD *) trap1_pexec(5, "mint.prg", args, null_env);
+    pd = (PD *) trap1_pexec(PE_BASEPAGE, "mint.prg", args, null_env);
 
     /* get the TOS executable from the emulator */
     length = nf_bootstrap( (char*)pd->p_lowtpa + sizeof(PD), (long)pd->p_hitpa - pd->p_lowtpa);
@@ -394,7 +394,7 @@ static void bootstrap(void)
         goto err;
 
     /* relocate the loaded executable */
-    r = trap1_pexec(50, (char*)length, pd, "");
+    r = trap1_pexec(PE_RELOCATE, (char*)length, pd, "");
     if ( r != (LONG)pd )
         goto err;
 
@@ -402,7 +402,7 @@ static void bootstrap(void)
     bootdev = nf_getbootdrive();
 
     /* execute the relocated process */
-    trap1_pexec(4, "", pd, "");
+    trap1_pexec(PE_GO, "", pd, "");
 
 err:
     trap1(0x49, (long)pd->p_env); /* Mfree() the environment */
@@ -451,7 +451,7 @@ static void autoexec(void)
 #if DBGAUTOBOOT
         KDEBUG(("Loading %s ...\n", path));
 #endif
-        trap1_pexec(0, path, "", null_env);   /* Pexec */
+        trap1_pexec(PE_LOADGO, path, "", null_env);   /* Pexec */
 #if DBGAUTOBOOT
         KDEBUG(("[OK]\n"));
 #endif
@@ -543,10 +543,10 @@ void biosmain(void)
 
 #if WITH_CLI
     if (early_cli) {            /* run an early console */
-        PD *pd = (PD *) trap1_pexec(5, "", "", null_env);
+        PD *pd = (PD *) trap1_pexec(PE_BASEPAGE, "", "", null_env);
         pd->p_tbase = (LONG) coma_start;
         pd->p_tlen = pd->p_dlen = pd->p_blen = 0;
-        trap1_pexec(6, "", pd, "");
+        trap1_pexec(PE_GOTHENFREE, "", pd, "");
     }
 #endif
 
@@ -558,14 +558,14 @@ void biosmain(void)
 
     if(cmdload != 0) {
         /* Pexec a program called COMMAND.PRG */
-        trap1_pexec(0, "COMMAND.PRG", "", null_env);
+        trap1_pexec(PE_LOADGO, "COMMAND.PRG", "", null_env);
     } else if (exec_os) {
         /* start the default (ROM) shell */
         PD *pd;
-        pd = (PD *) trap1_pexec(5, "", "", null_env);
+        pd = (PD *) trap1_pexec(PE_BASEPAGE, "", "", null_env);
         pd->p_tbase = (LONG) exec_os;
         pd->p_tlen = pd->p_dlen = pd->p_blen = 0;
-        trap1_pexec(4, "", pd, "");
+        trap1_pexec(PE_GO, "", pd, "");
     }
 
     /* try to shutdown the machine if available */

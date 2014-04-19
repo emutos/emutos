@@ -698,11 +698,11 @@ static void aes_run_rom_program(PRG_ENTRY *entry)
         PD *pd;     /* this is the BDOS PD structure, not the AESPD */
 
         /* Create a basepage with the standard Pexec() */
-        pd = (PD *) trap1_pexec(5, NULL, "", NULL);
+        pd = (PD *) trap1_pexec(PE_BASEPAGE, NULL, "", NULL);
         pd->p_tbase = (LONG) entry;
 
         /* Run the program with dos_exec() to for AES reentrency issues */
-        dos_exec(6, NULL, (const BYTE *)pd, NULL);
+        dos_exec(PE_GOTHENFREE, NULL, (const BYTE *)pd, NULL);
 }
 
 static void sh_ldapp(void)
@@ -785,7 +785,7 @@ static void sh_ldapp(void)
               strcat(rlr->p_appdir,"\\");
               if (psh->sh_fullstep == 0)
               {
-                dos_exec(0, D.s_cmd, ad_stail, ad_envrn);   /* Run the APP */
+                dos_exec(PE_LOADGO, D.s_cmd, ad_stail, ad_envrn);   /* Run the APP */
 
                 /* If the user ran an alternative desktop and quitted it,
                    return now to the default desktop: (experimental) */
@@ -798,7 +798,7 @@ static void sh_ldapp(void)
               }
               else if (psh->sh_fullstep == 1)
               {
-                dos_exec(0, D.s_cmd, ad_stail, ad_envrn);
+                dos_exec(PE_LOADGO, D.s_cmd, ad_stail, ad_envrn);
                 DOS_ERR = psh->sh_doexec = FALSE;
               }
               if (DOS_ERR)
