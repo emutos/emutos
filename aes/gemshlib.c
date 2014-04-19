@@ -26,6 +26,7 @@
 #include "obdefs.h"
 #include "struct.h"
 #include "basepage.h"
+#include "pd.h"
 #include "dos.h"
 #include "gemlib.h"
 #include "gem_rsc.h"
@@ -694,12 +695,11 @@ typedef void PRG_ENTRY(void); /* Program entry point type */
 
 static void aes_run_rom_program(PRG_ENTRY *entry)
 {
-        LONG *pd; /* FIXME: Use BDOS PD struct after fixing AES PD conflict */
+        PD *pd;     /* this is the BDOS PD structure, not the AESPD */
 
         /* Create a basepage with the standard Pexec() */
-        pd = (LONG *) trap1_pexec(5, NULL, "", NULL);
-        pd[2] = (LONG) entry;
-        pd[3] = pd[5] = pd[7] = 0;
+        pd = (PD *) trap1_pexec(5, NULL, "", NULL);
+        pd->p_tbase = (LONG) entry;
 
         /* Run the program with dos_exec() to for AES reentrency issues */
         dos_exec(6, NULL, (const BYTE *)pd, NULL);

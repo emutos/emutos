@@ -5479,3 +5479,7 @@ Start... early ages
 2014-04-10
 - aes/geminit.c aes/gemlib.h aes/gemmnlib.c aes/gemmnlib.h: Fix bug that
   caused accessories to stop responding after a few resolution changes. (RFB)
+
+2014-04-19
+- aes/gemshlib.c: Code cleanup: use PD struct instead of ptr to LONGs, and
+  eliminate unnecessary zeroing. (RFB)
