@@ -20,6 +20,7 @@
 #include "string.h"
 #include "asm.h"
 #include "gemdos.h"
+#include "dta.h"
 
 
 GLOBAL UWORD    DOS_AX; /* really a "DOS_RET"   */
@@ -224,18 +225,15 @@ WORD dos_setdt(UWORD h, UWORD time, UWORD date)
 
 WORD dos_label(BYTE drive, BYTE *plabel)
 {
-        BYTE    buf[50];                /* 44 bytes used        */
+        DTA     dta;
         BYTE    path[8];
-        register WORD i;
 
-        for (i=0;i<50;)
-          buf[i++] = 0;
-        gemdos(X_SETDTA,&buf[0]);
+        gemdos(X_SETDTA,&dta);
         strcpy(path, " :\\*.*");
         path[0] = (drive + 'A') - 1;
         if (!gemdos(X_SFIRST,path,0x08))
         {
-          strcpy(plabel, &buf[30]);
+          strcpy(plabel,dta.d_fname);
           return(TRUE);
         }
         else

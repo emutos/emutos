@@ -5493,3 +5493,4 @@ Start... early ages
   regression causing crashes on 68000). (RFB)
 - bdos/fs.h bdos/fsmain.c bdos/proc.c include/pd.h: Code cleanup: use
   DTA* rather than char* in PD definition. (RFB)
+- aes/gemdos.c: Code cleanup: use DTA instead of char[] in dos_label(). (RFB)
