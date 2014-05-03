@@ -561,9 +561,6 @@ void kbd_init(void)
     KDEBUG(("ikbd_version = 0x%02x\n", ikbd_version));
     UNUSED(ikbd_version);
 
-    ikbd_writeb(0x1A);            /* disable joystick */
-    ikbd_writeb(0x12);            /* disable mouse */
-
     /* initialize the key repeat stuff */
     kb_ticks = 0;
     kb_initial = 25;

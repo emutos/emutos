@@ -5486,3 +5486,5 @@ Start... early ages
 - aes/gemshlib.c bdos/proc.c bios/bios.c include/asm.h: Code cleanup: use
   #defines instead of hardcoded numbers for Pexec() mode. (RFB)
 
+2014-05-03
+- bios/ikbd.c: Do not disable IKBD mouse and joystick on startup. (VRI)
