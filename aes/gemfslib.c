@@ -128,8 +128,9 @@ static LONG fs_add(WORD thefile, LONG fs_index)
 {
         WORD            len;
 
-        len = strlencpy(ad_fsnames + fs_index, &D.g_dta[29]);
         g_fslist[thefile] = fs_index;
+        ad_fsnames[fs_index++] = (D.g_dta.d_attrib & F_SUBDIR) ? 0x07 : ' ';
+        len = strlencpy(ad_fsnames+fs_index,D.g_dta.d_fname);
         fs_index += len + 1;
         return(fs_index);
 }
@@ -157,7 +158,7 @@ static WORD fs_active(BYTE *ppath, BYTE *pspec, WORD *pcount)
         fname = fs_back(allpath,NULL);
         strcpy(fname+1,"*.*");
 
-        dos_sdta(D.g_dta);
+        dos_sdta(&D.g_dta);
         ret = dos_sfirst(allpath, F_SUBDIR);
         while ( ret )
         {
@@ -166,11 +167,10 @@ static WORD fs_active(BYTE *ppath, BYTE *pspec, WORD *pcount)
                                                 /*   save it and set    */
                                                 /*   first byte to tell */
                                                 /*   which              */
-          if (D.g_dta[30] != '.')
+          if (D.g_dta.d_fname[0] != '.')
           {
-            D.g_dta[29] = (D.g_dta[21] & F_SUBDIR) ? 0x07 : ' ';
-            if ( (D.g_dta[29] == 0x07) ||
-                 (wildcmp(pspec, &D.g_dta[30])) )
+            if ( (D.g_dta.d_attrib & F_SUBDIR) ||
+                 (wildcmp(pspec, D.g_dta.d_fname)) )
             {
               fs_index = fs_add(thefile, fs_index);
               thefile++;

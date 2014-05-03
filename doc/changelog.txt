@@ -5488,3 +5488,6 @@ Start... early ages
 
 2014-05-03
 - bios/ikbd.c: Do not disable IKBD mouse and joystick on startup. (VRI)
+- aes/gemfslib.c aes/geminit.c aes/gemlib.h aes/gemsclib.h aes/gemshlib.h
+  include/dta.h: Define DTA as structure to force alignment (fixes
+  regression causing crashes on 68000). (RFB)

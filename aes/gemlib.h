@@ -20,6 +20,7 @@
 #ifndef GEMLIB_H
 #define GEMLIB_H
 
+#include "dta.h"
                                                 /* mu_flags             */
 #define MU_KEYBD 0x0001
 #define MU_BUTTON 0x0002
@@ -400,7 +401,7 @@ THEGLO
  BYTE       s_cdir[LEN_ZPATH];          /* current desktop directory */
  BYTE       s_cmd[MAXPATHLEN];          /* fully-qualified program name */
  BYTE       g_work[WORKAREASIZE];       /* general work area */
- BYTE       g_dta[44];                  /* AES's DTA */
+ DTA        g_dta;                      /* AES's DTA */
  
  FPD        g_fpdx[NFORKS];
  ORECT      g_olist[NUM_ORECT];

@@ -258,14 +258,14 @@ static WORD count_accs(void)
           return 0;
 
         strcpy(D.g_work,"*.ACC");
-        dos_sdta(D.g_dta);
+        dos_sdta(&D.g_dta);
 
         for (i = 0; i < NUM_ACCS; i++)
         {
           rc = (i==0) ? dos_sfirst(D.g_work,F_RDONLY) : dos_snext();
           if (rc == 0)
             break;
-          strlcpy(acc_name[i],D.g_dta+30,LEN_ZFNAME);
+          strlcpy(acc_name[i],D.g_dta.d_fname,LEN_ZFNAME);
         }
 
         return i;

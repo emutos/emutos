@@ -548,7 +548,7 @@ WORD sh_find(BYTE *pspec)
         KDEBUG(("sh_find(): input pspec='%s'\n",pspec));
         pname = sh_name(pspec);                 /* get ptr to name      */
 
-        dos_sdta(D.g_dta);
+        dos_sdta(&D.g_dta);
 
         /* (1) search in the application directory */
         if (rlr->p_appdir[0] != '\0')
