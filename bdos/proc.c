@@ -405,7 +405,7 @@ static void init_pd_fields(PD *p, char *tail, long max, MD *env_md)
     /* memory values */
     p->p_lowtpa = (long) p;                /*  M01.01.06   */
     p->p_hitpa  = (long) p  +  max;        /*  M01.01.06   */
-    p->p_xdta = &p->p_cmdlin[0];   /* default p_xdta is p_cmdlin */
+    p->p_xdta = (DTA *) p->p_cmdlin;       /* default p_xdta is p_cmdlin */
     p->p_env = (char *) env_md->m_start;
 
     /* copy tail */

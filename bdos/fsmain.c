@@ -390,7 +390,7 @@
  *  xgetdta - Function 0x2F     f_getdta
  */
 
-char    *xgetdta(void)      /* return address of dta */
+DTAINFO *xgetdta(void)          /* return address of dta */
 {
     return(run->p_xdta);
 }
@@ -400,7 +400,7 @@ char    *xgetdta(void)      /* return address of dta */
  *  xsetdta - Function 0x1A     f_setdta
  */
 
-void    xsetdta(char *addr)     /* set transfer address to addr */
+void xsetdta(DTAINFO *addr)     /* set transfer address to addr */
 {
     run->p_xdta = addr;
 }

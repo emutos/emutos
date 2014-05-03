@@ -4,7 +4,7 @@
  * This file exists to centralise the definition of the process descriptor,
  * which was previously defined in several different places.
  *
- * Copyright (c) 2011 The EmuTOS development team
+ * Copyright (c) 2011-2014 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows
@@ -17,6 +17,7 @@
 #define PD_H
 
 #include "portab.h"
+#include "dta.h"
 
 #define NUMSTD      6       /* number of standard files */
 
@@ -41,7 +42,7 @@ struct _pd
     LONG    p_bbase;        /* pointer to base of bss segment */
     LONG    p_blen;         /* length of bss segment */
 /* 0x20 */
-    BYTE    *p_xdta;
+    DTA     *p_xdta;
     PD      *p_parent;      /* parent PD */
     WORD    p_flags;
     WORD    p_0fill[1];

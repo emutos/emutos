@@ -5491,3 +5491,5 @@ Start... early ages
 - aes/gemfslib.c aes/geminit.c aes/gemlib.h aes/gemsclib.h aes/gemshlib.h
   include/dta.h: Define DTA as structure to force alignment (fixes
   regression causing crashes on 68000). (RFB)
+- bdos/fs.h bdos/fsmain.c bdos/proc.c include/pd.h: Code cleanup: use
+  DTA* rather than char* in PD definition. (RFB)
