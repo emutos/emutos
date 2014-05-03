@@ -392,7 +392,7 @@
 
 DTAINFO *xgetdta(void)          /* return address of dta */
 {
-    return(run->p_xdta);
+    return((DTAINFO *)run->p_xdta);
 }
 
 
@@ -402,7 +402,7 @@ DTAINFO *xgetdta(void)          /* return address of dta */
 
 void xsetdta(DTAINFO *addr)     /* set transfer address to addr */
 {
-    run->p_xdta = addr;
+    run->p_xdta = (DTA *)addr;
 }
 
 
