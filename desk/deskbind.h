@@ -18,16 +18,7 @@
 
 #include "deskconf.h"
 #include "desk_rsc.h"           /* for RS_NTREE */
-
-typedef struct
-{
-        BYTE            d_reserved[21];
-        BYTE            d_attr;
-        WORD            d_time;
-        WORD            d_date;
-        LONG            d_size;
-        BYTE            d_name[14];
-} DTA;
+#include "dta.h"
 
 #define ARROW   0
 #define HGLASS  2
@@ -43,7 +34,7 @@ GLOBES
 /*GLOBAL*/ PNODE        *g_pavail;
 /*GLOBAL*/ PNODE        *g_phead;
 
-/*GLOBAL*/ BYTE         g_wdta[128];
+/*GLOBAL*/ DTA          g_wdta;
 
 /*GLOBAL*/ WNODE        g_wlist[NUM_WNODES];
 /*GLOBAL*/ WORD         g_wcnt;

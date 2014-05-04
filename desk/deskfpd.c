@@ -500,8 +500,8 @@ static WORD pn_folder(PNODE *thepath)
         thefile->f_size = 0x0L;
         strcpy(&thefile->f_name[0], ini_str(STNEWFOL));
                                                 /* init for while loop  */
-        G.g_wdta[30] = NULL;
-        dos_sdta(G.g_wdta);
+        G.g_wdta.d_fname[0] = '\0';
+        dos_sdta(&G.g_wdta);
         ret = firstime = TRUE;
         while ( ret )
         {
@@ -519,14 +519,14 @@ static WORD pn_folder(PNODE *thepath)
                                                 /* make so each dir.    */
                                                 /*   has a available new*/
                                                 /*   folder             */
-            if ( G.g_wdta[30] != '.' )
+            if ( G.g_wdta.d_fname[0] != '.' )
             {
                                                 /* if it is a real file */
                                                 /*   or directory then  */
                                                 /*   save it            */
               if (!firstime)
               {
-                memcpy(&thefile->f_junk, &G.g_wdta[20], 23);
+                memcpy(&thefile->f_junk, &G.g_wdta.d_reserved[20], 23);
                 thefile->f_attr &= ~(F_DESKTOP | F_FAKE);
               }
               thepath->p_size += thefile->f_size;
@@ -632,7 +632,7 @@ WORD pn_active(PNODE *thepath)
         thefile = (FNODE *) NULLPTR;
         prevfile = (FNODE *) &thepath->p_flist;
 
-        dos_sdta(G.g_wdta);
+        dos_sdta(&G.g_wdta);
 
         ret = dos_sfirst(thepath->p_spec, thepath->p_attr);
         while ( ret )
@@ -648,12 +648,12 @@ WORD pn_active(PNODE *thepath)
           }
           else
           {
-            if ( G.g_wdta[30] != '.' )  // skip "." and ".." entries
+            if ( G.g_wdta.d_fname[0] != '.' )   // skip "." and ".." entries
             {
                                                 // if it is a real file //
                                                 //   or directory then  //
                                                 //   save it            //
-              memcpy(&thefile->f_junk, &G.g_wdta[20], 23);
+              memcpy(&thefile->f_junk, &G.g_wdta.d_reserved[20], 23);
               thepath->p_size += thefile->f_size;
               prevfile->f_next = ml_pfndx[thepath->p_count++] = thefile;
               prevfile = thefile;
