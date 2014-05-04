@@ -691,9 +691,7 @@ static void sh_chdef(SHELL *psh)
         }
 }
 
-typedef void PRG_ENTRY(void); /* Program entry point type */
-
-static void aes_run_rom_program(PRG_ENTRY *entry)
+void aes_run_rom_program(PRG_ENTRY *entry)
 {
         PD *pd;     /* this is the BDOS PD structure, not the AESPD */
 

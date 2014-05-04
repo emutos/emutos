@@ -78,6 +78,7 @@ static BYTE     acc_name[NUM_ACCS][LEN_ZFNAME]; /* used by count_accs()/ldaccs()
 /* Some global variables: */
 
 GLOBAL WORD     totpds;
+GLOBAL WORD     num_accs;
 
 GLOBAL MFORM    *ad_armice;
 GLOBAL MFORM    *ad_hgmice;
@@ -100,6 +101,8 @@ GLOBAL WORD     curpid;
 
 GLOBAL THEGLO   D;
 
+/* Prototypes: */
+extern void accdesk_start(void) NORETURN;   /* see gemstart.S */
 
 /*
 *       Convert a single hex ASCII digit to a number
@@ -662,11 +665,84 @@ void all_run(void)
 }
 
 
+/*
+ * this function is called from accdesk_start (in gemstart.S) which
+ * is itself called from gem_main() below
+ *
+ * it runs under a separate process which terminates on shutdown or
+ * resolution change (see accdesk_start).  this ensures that all
+ * memory allocated to or by desk accessories is automatically freed
+ * on resolution change.
+ */
+void run_accs_and_desktop(void)
+{
+    WORD i;
+
+    /* load gem resource and fix it up before we go */
+    gem_rsc_init();
+
+    /* get mice forms */
+    ad_armice = (MFORM *)rs_bitblk[MICE00].bi_pdata;
+    ad_hgmice = (MFORM *)rs_bitblk[MICE02].bi_pdata;
+
+    /* init button stuff */
+    gl_btrue = 0x0;
+    gl_bdesired = 0x0;
+    gl_bdely = 0x0;
+    gl_bclick = 0x0;
+
+    gl_logdrv = dos_gdrv() + 'A';   /* boot directory       */
+    gsx_init();                     /* do gsx open work station */
+
+    load_accs(num_accs);            /* load up to 'num_accs' desk accessories */
+
+    /* fix up icons */
+    for (i = 0; i < 3; i++) {
+        memcpy(&bi, &rs_bitblk[NOTEBB+i], sizeof(BITBLK));
+        gsx_trans(bi.bi_pdata, bi.bi_wb, bi.bi_pdata, bi.bi_wb, bi.bi_hl);
+    }
+
+    /* take the critical err handler int. */
+    disable_interrupts();
+    takeerr();
+    enable_interrupts();
+
+    sh_tographic();                 /* go into graphic mode */
+
+    /* take the tick interrupt */
+    disable_interrupts();
+    gl_ticktime = gsx_tick(tikaddr, &tiksav);
+    enable_interrupts();
+
+    /* set initial click rate: must do this after setting gl_ticktime */
+    ev_dclick(3, TRUE);
+
+    /* fix up the GEM rsc file now that we have an open WS */
+    gem_rsc_fixit();
+
+    wm_start();                     /* initialise window vars */
+    fs_start();                     /* startup gem libs */
+    sh_curdir(D.s_cdir);            /* remember current desktop directory */
+    process_inf2();                 /* process emudesk.inf part 2 */
+
+    dsptch();                       /* off we go !!! */
+    all_run();                      /* let them run  */
+
+    sh_init();                      /* init for shell loop */
+    sh_main();                      /* main shell loop */
+
+    /* give back the tick   */
+    disable_interrupts();
+    gl_ticktime = gsx_tick(tiksav, &tiksav);
+    enable_interrupts();
+
+    /* close workstation    */
+    gsx_wsclose();
+}
 
 void gem_main(void)
 {
-    WORD    i, num_accs;
-    const BITBLK *tmpadbi;
+    WORD    i;
 
     sh_rdinf();                 /* get start of emudesk.inf */
     if (!gl_changerez)          /* can't be here because of rez change,       */
@@ -768,89 +844,11 @@ void gem_main(void)
      */
     gl_mowner = ctl_pd = iprocess("SCRENMGR", ctlmgr);
 
-    /* load gem resource and fix it up before we go */
-    gem_rsc_init();
-    {
-        /* get mice forms       */
-        ad_armice = (MFORM *)rs_bitblk[MICE00].bi_pdata;
-        ad_hgmice = (MFORM *)rs_bitblk[MICE02].bi_pdata;
-
-        /* init button stuff    */
-        gl_btrue = 0x0;
-        gl_bdesired = 0x0;
-        gl_bdely = 0x0;
-        gl_bclick = 0x0;
-
-        gl_logdrv = dos_gdrv() + 'A';   /* boot directory       */
-        gsx_init();                     /* do gsx open work station */
-
-        /* load up to NUM_ACCS desk accessories */
-        load_accs(num_accs);
-
-        /* fix up icons         */
-        for(i=0; i<3; i++) {
-            tmpadbi = &rs_bitblk[NOTEBB+i];
-            memcpy(&bi, tmpadbi, sizeof(BITBLK));
-            gsx_trans(bi.bi_pdata, bi.bi_wb, bi.bi_pdata, bi.bi_wb, bi.bi_hl);
-        }
-
-        /* take the critical err handler int. */
-        disable_interrupts();
-        takeerr();
-        enable_interrupts();
-
-        /* go into graphic mode */
-        sh_tographic();
-
-        /* take the tick int.   */
-        disable_interrupts();
-        gl_ticktime = gsx_tick(tikaddr, &tiksav);
-        enable_interrupts();
-
-        /* set init. click rate: must do this after setting gl_ticktime */
-        ev_dclick(3, TRUE);
-
-        /* fix up the GEM rsc. file now that we have an open WS */
-        gem_rsc_fixit();
-
-        /* init. window vars. */
-        wm_start();
-
-        /* startup gem libs */
-        fs_start();
-
-        /* remember current desktop directory */
-        sh_curdir(D.s_cdir);
-
-        /* process emudesk.inf part 2 */
-        process_inf2();
-
-        /* off we go !!!        */
-        dsptch();
-
-        /* let them run         */
-        all_run();
-
-        /*
-         * init for shell loop up thru here it is okay for system to
-         * overlay this initialization code
-         */
-        sh_init();
-
-        /*
-         * main shell loop. From here on down data should not overlay
-         * this code
-         */
-        sh_main();
-
-        /* give back the tick   */
-        disable_interrupts();
-        gl_ticktime = gsx_tick(tiksav, &tiksav);
-        enable_interrupts();
-
-        /* close workstation    */
-        gsx_wsclose();
-    }
+    /*
+     * run the accessories and the desktop until termination
+     * (for shutdown or resolution change)
+     */
+    aes_run_rom_program(accdesk_start);
 
     /* restore previous trap#2 address */
     disable_interrupts();

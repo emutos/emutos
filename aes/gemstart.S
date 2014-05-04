@@ -18,7 +18,11 @@
 #include "asmdefs.h"
 #include "asmstruct.h"
 
+// Size of the stack used by _accdesk_start, in bytes:
+#define ADS_STACK_SIZE   2360
+
 .globl _ui_start
+.globl _accdesk_start,_ads_stackbot,_ads_stacktop
 .globl _pgmld
 .globl _gemdos
 .globl _dos_exec
@@ -124,6 +128,34 @@ aes_restart:
         move.l  #0,-(sp)
         trap    #1
 
+
+//////////////////////////////////////////////////////////////////////////////
+// Run accessories and desktop
+//////////////////////////////////////////////////////////////////////////////
+_accdesk_start:
+        move.l  4(sp),a5                // a5 -> basepage
+        lea     _ads_stacktop,sp
+        move.l  12(a5),d0               // calc memory required
+        add.l   20(a5),d0
+        add.l   28(a5),d0
+        addi.l  #256,d0
+        move.l  d0,-(sp)                // Mshrink()
+        move.l  a5,-(sp)
+        move.w  #0,-(sp)
+        move.w  #0x4a,-(sp)
+        trap    #1
+        lea     12(sp),sp
+
+        // switch to supervisor mode
+        clr.l  -(sp)
+        move.w  #0x20,-(sp)
+        trap    #1
+        addq.l  #6,sp
+
+        jsr     _run_accs_and_desktop
+
+        clr.w   -(sp)                   // Pterm0()
+        trap    #1
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -284,6 +316,10 @@ saveretaddr:
         .ds.b   256
 gemusp:
 
+// Space for the stack used by _accdesk_start:
+_ads_stackbot:
+        .ds.l   ADS_STACK_SIZE/4
+_ads_stacktop:
 
 saveregs:
         .ds.l   2

@@ -5499,3 +5499,6 @@ Start... early ages
 2014-05-04
 - desk/deskbind.h desk/deskdir.c desk/deskfpd.c: Code cleanup: use DTA
   definition from dta.h. (RFB)
+- aes/geminit.c aes/gemshlib.c aes/gemshlib.h aes/gemstart.S: Fix big
+  memory leak: the memory occupied by DAs was not freed on resolution
+  change. (RFB)

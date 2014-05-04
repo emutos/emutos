@@ -38,4 +38,6 @@ void sh_wdef(const BYTE *lpcmd, const BYTE *lpdir);
 
 void sh_main(void);
 
+typedef void PRG_ENTRY(void);   /* Program entry point type */
+void aes_run_rom_program(PRG_ENTRY *entry);
 #endif
