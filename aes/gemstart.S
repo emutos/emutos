@@ -18,9 +18,6 @@
 #include "asmdefs.h"
 #include "asmstruct.h"
 
-// Size of the stack used by _accdesk_start, in bytes:
-#define ADS_STACK_SIZE   2360
-
 .globl _ui_start
 .globl _accdesk_start,_ads_stackbot,_ads_stacktop
 .globl _pgmld
@@ -134,7 +131,8 @@ aes_restart:
 //////////////////////////////////////////////////////////////////////////////
 _accdesk_start:
         move.l  4(sp),a5                // a5 -> basepage
-        lea     _ads_stacktop,sp
+        movea.l #_D,a0
+        move.l  UDA_SPSUPER(a0),sp      // use AES process 0 stack
         move.l  12(a5),d0               // calc memory required
         add.l   20(a5),d0
         add.l   28(a5),d0
@@ -316,10 +314,6 @@ saveretaddr:
         .ds.b   256
 gemusp:
 
-// Space for the stack used by _accdesk_start:
-_ads_stackbot:
-        .ds.l   ADS_STACK_SIZE/4
-_ads_stacktop:
 
 saveregs:
         .ds.l   2

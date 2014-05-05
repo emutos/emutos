@@ -5502,3 +5502,7 @@ Start... early ages
 - aes/geminit.c aes/gemshlib.c aes/gemshlib.h aes/gemstart.S: Fix big
   memory leak: the memory occupied by DAs was not freed on resolution
   change. (RFB)
+
+2014-05-05
+- aes/gemstart.S: Use AES process 0 supervisor stack when loading DAs &
+  desktop instead of separate stack. (RFB)
