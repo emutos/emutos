@@ -342,7 +342,7 @@ static ULONG check_for_no_partitions(UBYTE *sect)
 }
 
 
-#define MAXPHYSSECTSIZE 2048
+#define MAXPHYSSECTSIZE 512
 union
 {
     u8 sect[MAXPHYSSECTSIZE];
