@@ -5507,3 +5507,7 @@ Start... early ages
 - aes/gemstart.S: Use AES process 0 supervisor stack when loading DAs &
   desktop instead of separate stack. (RFB)
 - bios/disk.c: Reduce MAXPHYSSECTSIZE to 512 to save 3K of RAM space. (RFB)
+
+2014-05-06
+- aes/gemctrl.c aes/geminit.c aes/gemlib.h: Dynamically allocate process
+  structures for DAs (saves RAM). (RFB)

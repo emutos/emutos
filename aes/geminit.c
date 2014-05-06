@@ -655,7 +655,7 @@ void all_run(void)
     WORD  i;
 
     /* let all the acc's run*/
-    for (i = 0; i < NUM_ACCS; i++)
+    for (i = 0; i < num_accs; i++)
     {
         dsptch();
     }
@@ -772,7 +772,14 @@ void gem_main(void)
 
     num_accs = count_accs();        /* puts ACC names in acc_name[] */
 
-    totpds = NUM_ACCS + 2;
+    D.g_acc = NULL;
+    if (num_accs)
+        D.g_acc = (AESPROCESS *)dos_alloc(num_accs*sizeof(AESPROCESS));
+    if (D.g_acc)
+        memset(D.g_acc,0x00,num_accs*sizeof(AESPROCESS));
+    else num_accs = 0;
+
+    totpds = num_accs + 2;
 
     disable_interrupts();
     set_aestrap();                  /* set trap#2 -> aestrap */
@@ -788,7 +795,7 @@ void gem_main(void)
     eul = NULLPTR;
     for (i = 0; i < 2; i++)
         ev_init(&D.g_int[i].a_evb[0],EVBS_PER_PD);
-    for (i = 0; i < NUM_ACCS; i++)
+    for (i = 0; i < num_accs; i++)
         ev_init(&D.g_acc[i].a_evb[0],EVBS_PER_PD);
 
     /* initialize sync blocks */
@@ -854,4 +861,7 @@ void gem_main(void)
     disable_interrupts();
     unset_aestrap();
     enable_interrupts();
+
+    if (D.g_acc)
+        dos_free((LONG)D.g_acc);
 }

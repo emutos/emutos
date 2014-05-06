@@ -414,9 +414,11 @@ THEGLO
  WINDOW     w_win[NUM_WIN];
 
  WORD       g_accreg;                   /* number of entries used in g_acctitle[] */
- BYTE       *g_acctitle[NUM_ACCS];      /* used by menu_register() */
+ BYTE       *g_acctitle[NUM_ACCS];      /* used by menu_register(). must always   */
+                                        /*  be NUM_ACCS since one DA can issue    */
+                                        /*   more than one menu_register()!       */
 
- AESPROCESS g_acc[NUM_ACCS];            /* for up to NUM_ACCS desk accessories */
+ AESPROCESS *g_acc;                     /* for up to NUM_ACCS desk accessories */
 };
 
 #endif /* GEMLIB_H */
