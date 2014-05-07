@@ -89,8 +89,6 @@ extern LONG ramvalid;     /* indicates if fastram is present */
 
 extern LONG os_magic;     /* if == 0x87654321, means that GEM is present */
 
-extern LONG pun_ptr;
-
 extern LONG savptr;
 
 extern void (*prt_stat)(void);

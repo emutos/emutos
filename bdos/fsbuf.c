@@ -18,44 +18,53 @@
 #include "fs.h"
 #include "gemerror.h"
 #include "biosbind.h"
+#include "ahdi.h"
+#include "mem.h"
+#include "string.h"
 #include "kprint.h"
 
+extern BCB *bufl[];     /* buffer lists - two lists:  FAT and dir/data */
 
+#define NUMBUFS 2       /* buffers per list */
 
- /* sector buffers: 16kB is TOS 4.0x limit */
-static BYTE secbuf[4][16384];
+/* creates a chain of BCBs and corresponding buffers */
+static void *create_chain(char *p,LONG n)
+{
+    BCB *bcbptr;
+    WORD i;
 
-static BCB bcbx[4];    /* buffer control block array for each buffer */
-extern BCB *bufl[];    /* buffer lists - two lists:  fat,dir / data */
+    for (i = 0; i < NUMBUFS; i++, p += n) {
+        bcbptr = (BCB *)p;
+        memset(bcbptr,0x00,sizeof(BCB));
+        if (i < NUMBUFS-1)                  /* chain to next */
+            bcbptr->b_link = (BCB *)(p + n);
+        bcbptr->b_bufdrv = -1;              /* mark as invalid */
+        bcbptr->b_bufr = p + sizeof(BCB);
+    }
+
+    return p;
+}
 
 /*
  * bufl_init - BDOS buffer list initialization
  */
 void bufl_init(void)
 {
-    /* set up sector buffers */
+    char *p;
+    LONG n;
 
-    bcbx[0].b_link = &bcbx[1];
-    bcbx[2].b_link = &bcbx[3];
+    n = sizeof(BCB) + pun_ptr->max_sect_siz;
+    p = (char *)xmalloc(2L*NUMBUFS*n);
+    if (!p)
+        panic("bufl_init(%ld): no memory\n",2L*NUMBUFS*n);
 
-    /* make BCBs invalid */
+    /* set up FAT chain */
+    bufl[BI_FAT] = (BCB *)p;
+    p = create_chain(p,n);
 
-    bcbx[0].b_bufdrv = -1;
-    bcbx[1].b_bufdrv = -1;
-    bcbx[2].b_bufdrv = -1;
-    bcbx[3].b_bufdrv = -1;
-
-    /* initialize buffer pointers in BCBs */
-
-    bcbx[0].b_bufr = &secbuf[0][0];
-    bcbx[1].b_bufr = &secbuf[1][0];
-    bcbx[2].b_bufr = &secbuf[2][0];
-    bcbx[3].b_bufr = &secbuf[3][0];
-
-    /* initialize the buffer list pointers */
-
-    bufl[BI_FAT] = &bcbx[0];                    /* fat buffers */
-    bufl[BI_DATA] = &bcbx[2];                   /* dir/data buffers */
+    /* set up dir/data chain */
+    bufl[BI_DATA] = (BCB *)p;
+    create_chain(p,n);
 }
 
 

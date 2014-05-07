@@ -261,9 +261,11 @@ void    osinit(void)
      */
     old_trap2 = (void(*)(void)) Setexc(0x22, (long)bdos_trap2);
 
-    bufl_init();                /* initialize BDOS buffer list */
     osmem_init();
     umem_init();
+
+    bufl_init();    /* initialize BDOS buffer list, now Malloc is available */
+
     time_init();
 
     run = MGET(PD);

@@ -19,6 +19,7 @@
 #include "gemerror.h"
 #include "kprint.h"
 #include "tosvars.h"
+#include "ahdi.h"
 #include "mfp.h"
 #include "floppy.h"
 #include "disk.h"
@@ -115,7 +116,7 @@ static void pun_info_setup(void)
     pun_info.cookie_ptr = &pun_info.cookie;
     pun_info.version_num = 0x300;      /* AHDI v3.00 */
 
-    pun_ptr = (LONG)&pun_info;
+    pun_ptr = &pun_info;
 
     KDEBUG(("PUN INFO: max sector size = %d\n",pun_info.max_sect_siz));
 }

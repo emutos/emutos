@@ -5511,3 +5511,7 @@ Start... early ages
 2014-05-06
 - aes/gemctrl.c aes/geminit.c aes/gemlib.h: Dynamically allocate process
   structures for DAs (saves RAM). (RFB)
+
+2014-05-07
+- bdos/bdosmain.c bdos/fsbuf.c bios/blkdev.c bios/blkdev.h bios/tosvars.h
+  include/ahdi.h: Dynamically allocate sector buffers (saves RAM). (RFB)
