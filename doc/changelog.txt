@@ -5515,3 +5515,7 @@ Start... early ages
 2014-05-07
 - bdos/bdosmain.c bdos/fsbuf.c bios/blkdev.c bios/blkdev.h bios/tosvars.h
   include/ahdi.h: Dynamically allocate sector buffers (saves RAM). (RFB)
+
+2014-05-08
+- aes/gemflag.c doc/bugs.txt: Prevent window semaphore from going negative
+  (fixes 7up exit bug). (RFB)

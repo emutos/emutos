@@ -111,6 +111,12 @@ void unsync(SPB *sy)
                                                 /* internal unsync must */
                                                 /*   be in dispatcher   */
                                                 /*   context or NODISP  */
+
+        if (sy->sy_tas <= 0)                    /* e.g. more wind_update(FALSE) */
+        {                                       /*  than wind_update(TRUE)      */
+          sy->sy_tas = 0;
+          return;
+        }
                                                 /* count down           */
         sy->sy_tas--;
                                                 /* if it went to 0 then */

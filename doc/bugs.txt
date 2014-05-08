@@ -48,12 +48,9 @@
 - Box drawing in Glücksrad leaves garbage on top of screen
   and player name input text isn't shown.
 - In "MathMaze", game win dialog leaves some lines on screen.
-- 7UP hangs on exit.
 
 
 Links to programs listed above:
-- 7UP 2.09e
-  ftp://gem.win.co.nz/hall/tos_206/7up_209e.zip
 - Abalone:
   http://www.umich.edu/~archive/atari/Games/Board/abalone.zoo
 - Anduril:
