@@ -5524,3 +5524,5 @@ Start... early ages
 - aes/gemgraf.c aes/gemgraf.h aes/gemoblib.c aes/gemwmlib.c desk/deskmain.c
   include/obdefs.h tools/erd.c: Code cleanup: fixup types of some TEDINFO
   fields. (RFB)
+- aes/gemlib.h aes/gemwmlib.c: Initialise window name & info fields to
+  empty strings. (RFB)

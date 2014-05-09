@@ -227,8 +227,8 @@ typedef struct window
         WORD            w_flags;
         AESPD           *w_owner;
         WORD            w_kind;
-        LONG            w_pname;
-        LONG            w_pinfo;
+        BYTE            *w_pname;
+        BYTE            *w_pinfo;
         WORD            w_xfull;
         WORD            w_yfull;
         WORD            w_wfull;

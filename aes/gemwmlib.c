@@ -175,6 +175,8 @@ static void w_setup(AESPD *ppd, WORD w_handle, WORD kind)
         pwin->w_owner = ppd;
         pwin->w_flags = VF_INUSE;
         pwin->w_kind = kind;
+        pwin->w_pname = "";
+        pwin->w_pinfo = "";
         pwin->w_hslide = pwin->w_vslide = 0;    /* slider at left/top   */
         pwin->w_hslsiz = pwin->w_vslsiz = -1;   /* use default size     */
 }
@@ -365,15 +367,9 @@ static void w_clipdraw(WORD wh, WORD obj, WORD depth, WORD usetrue)
 static void  w_strchg(WORD w_handle, WORD obj, BYTE *pstring)
 {
         if ( obj == W_NAME )
-        {
-          D.w_win[w_handle].w_pname = (LONG) pstring;
-          gl_aname.te_ptext = pstring;
-        }
+          gl_aname.te_ptext = D.w_win[w_handle].w_pname = pstring;
         else
-        {
-          D.w_win[w_handle].w_pinfo = (LONG) pstring;
-          gl_ainfo.te_ptext = pstring;
-        }
+          gl_ainfo.te_ptext = D.w_win[w_handle].w_pinfo = pstring;
 
         w_clipdraw(w_handle, obj, MAX_DEPTH, 1);
 }
@@ -517,8 +513,8 @@ void w_bldactive(WORD w_handle)
         w_nilit(NUM_ELEM, &W_ACTIVE[0]);
                                                 /* start adding pieces  */
                                                 /*   & adjusting sizes  */
-        gl_aname.te_ptext = (BYTE *)pw->w_pname;
-        gl_ainfo.te_ptext = (BYTE *)pw->w_pinfo;
+        gl_aname.te_ptext = pw->w_pname;
+        gl_ainfo.te_ptext = pw->w_pinfo;
         gl_aname.te_just = TE_CNTR;
         issub = ( (pw->w_flags & VF_SUBWIN) &&
                   (D.w_win[gl_wtop].w_flags & VF_SUBWIN) );
