@@ -287,7 +287,7 @@ static void  just_draw(LONG tree, WORD obj, WORD sx, WORD sy)
                         &D.g_fmtstr[0]);
                                                 /* fall thru to gr_gtext*/
             case G_BOXCHAR:
-                edblk.te_ptext = (LONG)D.g_fmtstr;
+                edblk.te_ptext = D.g_fmtstr;
                 if (obtype == G_BOXCHAR)
                 {
                   D.g_fmtstr[0] = ch;

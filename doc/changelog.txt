@@ -5519,3 +5519,8 @@ Start... early ages
 2014-05-08
 - aes/gemflag.c doc/bugs.txt: Prevent window semaphore from going negative
   (fixes 7up exit bug). (RFB)
+
+2014-05-09
+- aes/gemgraf.c aes/gemgraf.h aes/gemoblib.c aes/gemwmlib.c desk/deskmain.c
+  include/obdefs.h tools/erd.c: Code cleanup: fixup types of some TEDINFO
+  fields. (RFB)

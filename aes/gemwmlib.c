@@ -362,12 +362,18 @@ static void w_clipdraw(WORD wh, WORD obj, WORD depth, WORD usetrue)
 }
 
 
-static void  w_strchg(WORD w_handle, WORD obj, LONG pstring)
+static void  w_strchg(WORD w_handle, WORD obj, BYTE *pstring)
 {
         if ( obj == W_NAME )
-          gl_aname.te_ptext = D.w_win[w_handle].w_pname = pstring;
+        {
+          D.w_win[w_handle].w_pname = (LONG) pstring;
+          gl_aname.te_ptext = pstring;
+        }
         else
-          gl_ainfo.te_ptext = D.w_win[w_handle].w_pinfo = pstring;
+        {
+          D.w_win[w_handle].w_pinfo = (LONG) pstring;
+          gl_ainfo.te_ptext = pstring;
+        }
 
         w_clipdraw(w_handle, obj, MAX_DEPTH, 1);
 }
@@ -511,8 +517,8 @@ void w_bldactive(WORD w_handle)
         w_nilit(NUM_ELEM, &W_ACTIVE[0]);
                                                 /* start adding pieces  */
                                                 /*   & adjusting sizes  */
-        gl_aname.te_ptext = pw->w_pname;
-        gl_ainfo.te_ptext = pw->w_pinfo;
+        gl_aname.te_ptext = (BYTE *)pw->w_pname;
+        gl_ainfo.te_ptext = (BYTE *)pw->w_pinfo;
         gl_aname.te_just = TE_CNTR;
         issub = ( (pw->w_flags & VF_SUBWIN) &&
                   (D.w_win[gl_wtop].w_flags & VF_SUBWIN) );
@@ -1423,7 +1429,7 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
           }
         }
         if (which != -1)
-          w_strchg(w_handle, which, *(LONG *)pinwds);
+          w_strchg(w_handle, which, *(BYTE **)pinwds);
                                                 /* give up the sync     */
         wm_update(FALSE);
 }

@@ -490,7 +490,7 @@ static UWORD ch_height(WORD fn)
 }
 
 
-static void gsx_tcalc(WORD font, LONG ptext, WORD *ptextw, WORD *ptexth,
+static void gsx_tcalc(WORD font, BYTE *ptext, WORD *ptextw, WORD *ptexth,
                       WORD *pnumchs)
 {
         WORD  wc, hc;
@@ -501,7 +501,7 @@ static void gsx_tcalc(WORD font, LONG ptext, WORD *ptextw, WORD *ptexth,
                                                 /*   width of the text  */
                                                 /*   string in pixels   */
 
-        *pnumchs = LBWMOV(intin, (BYTE *)ptext);
+        *pnumchs = LBWMOV(intin, ptext);
         *ptextw = min(*ptextw, *pnumchs * wc );
                                                 /* figure out the height*/
                                                 /*   of the text        */
@@ -590,7 +590,7 @@ void gr_rect(UWORD icolor, UWORD ipattern, GRECT *pt)
 *       to account for its justification.  The number of characters
 *       in the string is also returned.
 */
-WORD gr_just(WORD just, WORD font, LONG ptext, WORD w, WORD h, GRECT *pt)
+WORD gr_just(WORD just, WORD font, BYTE *ptext, WORD w, WORD h, GRECT *pt)
 {
         WORD            numchs, diff;
                                                 /* figure out the       */
@@ -635,7 +635,7 @@ WORD gr_just(WORD just, WORD font, LONG ptext, WORD w, WORD h, GRECT *pt)
 /*
 *       Routine to draw a string of graphic text.
 */
-void gr_gtext(WORD just, WORD font, LONG ptext, GRECT *pt)
+void gr_gtext(WORD just, WORD font, BYTE *ptext, GRECT *pt)
 {
         WORD            numchs;
         GRECT           t;
@@ -742,7 +742,7 @@ void gr_gicon(WORD state, WORD *pmask, WORD *pdata, BYTE *ptext, WORD ch,
         }
                                                 /* draw the label       */
         gsx_attr(TRUE, MD_TRANS, tfgcol);
-        gr_gtext(TE_CNTR, SMALL, (LONG)ptext, pt);
+        gr_gtext(TE_CNTR, SMALL, ptext, pt);
 }
 
 

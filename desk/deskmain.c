@@ -1344,8 +1344,8 @@ void xlate_obj_array(OBJECT *obj_array, int nobj)
         case G_FTEXT:
         case G_FBOXTEXT:
             {
-                LONG *str = & ((TEDINFO *)obj->ob_spec)->te_ptmplt;
-                *str = (LONG) gettext((char *) *str);
+                BYTE **str = & ((TEDINFO *)obj->ob_spec)->te_ptmplt;
+                *str = (BYTE *)gettext(*str);
             }
             break;
         case G_STRING:
@@ -1370,7 +1370,7 @@ void xlate_fix_tedinfo(TEDINFO *tedinfo, int nted)
     /* translate strings in TEDINFO */
     for (i = 0; i < nted; i++) {
         TEDINFO *ted = &tedinfo[i];
-        ted->te_ptmplt = (LONG) gettext( (char *) ted->te_ptmplt);
+        ted->te_ptmplt = (BYTE *)gettext(ted->te_ptmplt);
     }
 
     /* Fix TEDINFO strings: */
@@ -1386,7 +1386,7 @@ void xlate_fix_tedinfo(TEDINFO *tedinfo, int nted)
     tedinfptr = (char *) dos_alloc(len);        /* Get memory */
     for (i = 0; i < nted; i++) {
         if (tedinfo[i].te_ptext == 0) {
-            tedinfo[i].te_ptext = (LONG) tedinfptr;
+            tedinfo[i].te_ptext = tedinfptr;
             *tedinfptr++ = '@'; /* First character of uninitialized string */
             len = count_chars((char *) tedinfo[i].te_ptmplt, '_');
             for (j = 0; j < len; j++) {

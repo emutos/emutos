@@ -157,6 +157,10 @@
  *  v4.3    roger burrows, february/2014
  *          . use real types for ib_pmask, ib_pdata, ib_ptext when
  *            generating code for iconblks
+ *
+ *  v4.4    roger burrows, may/2014
+ *          . use real types for te_ptext, te_ptmplt, te_pvalid when
+ *            generating code for tedinfos
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -1507,7 +1511,7 @@ char temp[MAX_STRLEN];
             first_time = 0;
         }
         fixshared(temp,e->string);  /* replace any non-alphanumeric char with underscore */
-        fprintf(fp,"static const char rs_str_%s[] = ",temp);
+        fprintf(fp,"static char rs_str_%s[] = ",temp);
         if (copycheck(temp,e->string,MAX_STRLEN-1) == 0)
             fprintf(fp,"\"%s\";\n",temp);
         else fprintf(fp,"%s\"%s\");\n",NLS,temp);
@@ -1559,16 +1563,16 @@ char *base = (char *)rschdr, *p;
         p = base + get_offset(&ted->te_ptmplt);
         if (isshared(p)) {
             fixshared(temp,p);
-            fprintf(fp,"     (LONG) rs_str_%s,\n",temp);
+            fprintf(fp,"     rs_str_%s,\n",temp);
         } else if (copycheck(temp,p,get_short(&ted->te_tmplen)) == 0)
-            fprintf(fp,"     (LONG) \"%s\",\n",temp);
-        else fprintf(fp,"     (LONG) %s\"%s\"),\n",NLS,temp);
+            fprintf(fp,"     \"%s\",\n",temp);
+        else fprintf(fp,"     %s\"%s\"),\n",NLS,temp);
         p = base + get_offset(&ted->te_pvalid);
         shrink_valid(temp,p);
         if (isshared(temp)) {
             fixshared(temp2,temp);
-            fprintf(fp,"     (LONG) rs_str_%s,\n",temp2);
-        } else fprintf(fp,"     (LONG) \"%s\",\n",temp);
+            fprintf(fp,"     rs_str_%s,\n",temp2);
+        } else fprintf(fp,"     \"%s\",\n",temp);
         sprintf(temp,"     %s, %d, %s, %d, %d, %d, %d, %d}%s",
                 decode_font(get_short(&ted->te_font)),get_short(&ted->te_fontid),
                 decode_just(get_short(&ted->te_just)),get_short(&ted->te_color),

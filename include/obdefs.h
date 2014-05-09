@@ -170,9 +170,9 @@ GRECT
 
 TEDINFO
 {
-        LONG            te_ptext;       /* ptr to text (must be 1st)    */
-        LONG            te_ptmplt;      /* ptr to template              */
-        LONG            te_pvalid;      /* ptr to validation chrs.      */
+        BYTE            *te_ptext;      /* ptr to text (must be 1st)    */
+        BYTE            *te_ptmplt;     /* ptr to template              */
+        BYTE            *te_pvalid;     /* ptr to validation chrs.      */
         WORD            te_font;        /* font                         */
         WORD            te_junk1;       /* junk word                    */
         WORD            te_just;        /* justification- left, right...*/

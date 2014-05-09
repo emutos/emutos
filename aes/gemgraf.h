@@ -22,8 +22,8 @@ void gsx_blt(LONG saddr, UWORD sx, UWORD sy, UWORD swb,
 
 void gr_inside(GRECT *pt, WORD th);
 void gr_rect(UWORD icolor, UWORD ipattern, GRECT *pt);
-WORD gr_just(WORD just, WORD font, LONG ptext, WORD w, WORD h, GRECT *pt);
-void gr_gtext(WORD just, WORD font, LONG ptext, GRECT *pt);
+WORD gr_just(WORD just, WORD font, BYTE *ptext, WORD w, WORD h, GRECT *pt);
+void gr_gtext(WORD just, WORD font, BYTE *ptext, GRECT *pt);
 void gr_crack(UWORD color, WORD *pbc, WORD *ptc, WORD *pip, WORD *pic, WORD *pmd);
 void gr_gicon(WORD state, WORD *pmask, WORD *pdata, BYTE *ptext, WORD ch,
               WORD chx, WORD chy, GRECT *pi, GRECT *pt);
