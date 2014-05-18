@@ -24,6 +24,8 @@
 #define MAX_FAT12_CLUSTERS  4078    /* architectural constants */
 #define MAX_FAT16_CLUSTERS  65518
 
+#define MAX_LOGSEC_SIZE     16384L
+
 #define RWABS_RETRIES   1   /* on real machine might want to increase this */
 
 /* Original FAT12 bootsector */

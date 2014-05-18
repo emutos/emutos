@@ -88,10 +88,11 @@ static void pun_info_setup(void)
 {
     int i;
     BPB *bpb;
+    LONG max_size;
 
     /* set PUN_INFO */
     pun_info.puns = BLKDEVNUM;
-    pun_info.max_sect_siz = SECTOR_SIZE;
+    pun_info.max_sect_siz = MAX_LOGSEC_SIZE;    /* temporarily, for blkdev_getbpb() */
 
     /* floppy A: */
     pun_info.pun[0] = 0;    /* FIXME */
@@ -102,19 +103,22 @@ static void pun_info_setup(void)
     pun_info.partition_start[1] = 0;
 
     /* disks C: - P: */
-    for(i = 2; i < 16; i++) {
+    for(i = 2, max_size = SECTOR_SIZE; i < 16; i++) {
         pun_info.pun[i] = 0;    /* FIXME */
         pun_info.partition_start[i] = 0;    /* FIXME */
 
         bpb = (BPB *)blkdev_getbpb(i);
-        if (bpb != NULL && bpb->recsiz > (int)pun_info.max_sect_siz) {
-            pun_info.max_sect_siz = bpb->recsiz;
+        if (!bpb)
+            continue;
+        if (bpb->recsiz > max_size) {
+            max_size = bpb->recsiz;
         }
     }
 
     pun_info.cookie = 0x41484449L; /* AHDI */
     pun_info.cookie_ptr = &pun_info.cookie;
     pun_info.version_num = 0x300;      /* AHDI v3.00 */
+    pun_info.max_sect_siz = max_size;
 
     pun_ptr = &pun_info;
 
@@ -415,7 +419,7 @@ LONG blkdev_getbpb(WORD dev)
     struct bs *b;
     struct fat16_bs *b16;
     ULONG tmp;
-    UWORD reserved;
+    UWORD reserved, recsiz;
     int unit;
 
     KDEBUG(("blkdev_getbpb(%d)\n",dev));
@@ -446,10 +450,15 @@ LONG blkdev_getbpb(WORD dev)
     if (b->spc == 0)
         return 0L;
 
+    /* don't login a disk if the logical sector size is too large */
+    recsiz = getiword(b->bps);
+    if (recsiz > pun_info.max_sect_siz)
+        return 0L;
+
     KDEBUG(("bootsector[dev=%d] = {\n  ...\n  res = %d;\n  hid = %d;\n}\n",
             dev,getiword(b->res),getiword(b->hid)));
 
-    bdev->bpb.recsiz = getiword(b->bps);
+    bdev->bpb.recsiz = recsiz;
     bdev->bpb.clsiz = b->spc;
     bdev->bpb.clsizb = bdev->bpb.clsiz * bdev->bpb.recsiz;
     tmp = getiword(b->dir);

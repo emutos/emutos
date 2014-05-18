@@ -5526,3 +5526,7 @@ Start... early ages
   fields. (RFB)
 - aes/gemlib.h aes/gemwmlib.c: Initialise window name & info fields to
   empty strings. (RFB)
+
+2014-05-18
+- bios/blkdev.c bios/blkdev.h: Don't login a drive with a logical sector
+  size too large for the buffers in the BCB chain. (RFB)
