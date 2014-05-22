@@ -5530,3 +5530,6 @@ Start... early ages
 2014-05-18
 - bios/blkdev.c bios/blkdev.h: Don't login a drive with a logical sector
   size too large for the buffers in the BCB chain. (RFB)
+
+2014-05-21
+- bdos/fsio.c: Code cleanup: use memcpy() instead of custom code. (RFB)

@@ -15,6 +15,7 @@
 #include "fs.h"
 #include "gemerror.h"
 #include "biosbind.h"
+#include "string.h"
 #include "kprint.h"
 
 
@@ -22,35 +23,9 @@
  * forward prototypes
  */
 
-static void xfr2usr(int n, char *s, char *d);
-static void usr2xfr(int n, char *d, char *s);
 static void addit(OFD *p, long siz, int flg);
-static long xrw(int wrtflg, OFD *p, long len, char *ubufr,
-                void (*bufxfr)(int, char *, char *));
+static long xrw(int wrtflg, OFD *p, long len, char *ubufr);
 static void usrio(int rwflg, int num, long strt, char *ubuf, DMD *dm);
-
-
-/*
- *  xfr2usr -
- */
-
-static void xfr2usr(int n, char *s, char *d)
-{
-    while (n--)
-        *d++ = *s++;
-}
-
-
-
-/*
- *  usr2xfr -
- */
-
-static void usr2xfr(int n, char *d, char *s)
-{
-    while (n--)
-        *d++ = *s++;
-}
 
 
 /*
@@ -215,7 +190,7 @@ long    ixread(OFD *p, long len, void *ubufr)
         len = maxlen;
 
     if (len > 0)
-        return(xrw(0,p,len,ubufr,xfr2usr));
+        return(xrw(0,p,len,ubufr));
 
     return(0L); /* zero bytes read for zero requested */
 }
@@ -261,7 +236,7 @@ long    xwrite(int h, long len, void *ubufr)
 
 long    ixwrite(OFD *p, long len, void *ubufr)
 {
-    return(xrw(1,p,len,ubufr,usr2xfr));
+    return(xrw(1,p,len,ubufr));
 }
 
 /*
@@ -315,8 +290,7 @@ static void addit(OFD *p, long siz, int flg)
  *      2. pointer (see above)
  */
 
-static long xrw(int wrtflg, OFD *p, long len, char *ubufr,
-                void (*bufxfr)(int, char *, char *))
+static long xrw(int wrtflg, OFD *p, long len, char *ubufr)
 {
     register DMD *dm;
     char *bufp;
@@ -361,7 +335,10 @@ static long xrw(int wrtflg, OFD *p, long len, char *ubufr,
         if (!ubufr)
             return (long) (bufp+bytn);
 
-        (*bufxfr)(lenxfr,bufp+bytn,ubufr);
+        if (wrtflg)
+            memcpy(bufp+bytn,ubufr,lenxfr);
+        else memcpy(ubufr,bufp+bytn,lenxfr);
+
         ubufr += lenxfr;
     }
 
@@ -474,7 +451,9 @@ mulio:
         if (!ubufr)
             return (long) bufp;
 
-        (*bufxfr)(lentail,bufp,ubufr);
+        if (wrtflg)
+             memcpy(bufp,ubufr,lentail);
+        else memcpy(ubufr,bufp,lentail);
     } /*  end tail bytes  */
 
 eof:
