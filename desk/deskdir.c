@@ -54,7 +54,6 @@
 static UBYTE    *copybuf;   /* for copy operations */
 static LONG     copylen;    /* size of above buffer */
 
-static BYTE     ml_files[4], ml_dirs[4];
 static WORD     ml_dlpr, ml_havebox;
 static BYTE     ml_fsrc[LEN_ZFNAME], ml_fdst[LEN_ZFNAME], ml_fstr[LEN_ZFNAME], ml_ftmp[LEN_ZFNAME];
 
@@ -579,8 +578,7 @@ WORD d_doop(WORD op, LONG tree, WORD obj, BYTE *psrc_path, BYTE *pdst_path,
               if (tree)
               {
                 *pdcnt -= 1;
-                sprintf(&ml_dirs[0], "%d", *pdcnt);
-                inf_sset(tree, CDFOLDS, &ml_dirs[0]);
+                inf_numset(tree, CDFOLDS, *pdcnt);
                 draw_fld(tree, CDFOLDS);
               }
               skip = TRUE;
@@ -648,8 +646,7 @@ WORD d_doop(WORD op, LONG tree, WORD obj, BYTE *psrc_path, BYTE *pdst_path,
               if (tree)
               {
                 *pfcnt -= 1;
-                sprintf(&ml_files[0], "%d", *pfcnt);
-                inf_sset(tree, CDFILES, &ml_files[0]);
+                inf_numset(tree, CDFILES, *pfcnt);
                 draw_fld(tree, CDFILES);
               }
             }
@@ -825,10 +822,8 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
         if (tree)
         {
           centre_title(tree);
-          sprintf(&ml_files[0], "%d", *pfcnt);
-          inf_sset(tree, CDFILES, &ml_files[0]);
-          sprintf(&ml_dirs[0], "%d", *pdcnt);
-          inf_sset(tree, CDFOLDS, &ml_dirs[0]);
+          inf_numset(tree, CDFILES, *pfcnt);
+          inf_numset(tree, CDFOLDS, *pdcnt);
           ml_havebox = TRUE;
           show_hide(FMD_START, tree);
           graf_mouse(ARROW, 0x0L);
@@ -946,8 +941,7 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
               if (tree)
               {
                 *pfcnt -= 1;
-                sprintf(&ml_files[0], "%d", *pfcnt);
-                inf_sset(tree, CDFILES, &ml_files[0]);
+                inf_numset(tree, CDFILES, *pfcnt);
                 draw_fld(tree, CDFILES);
               } /* if tree */
             } /* else */

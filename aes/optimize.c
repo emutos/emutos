@@ -4,7 +4,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2013 The EmuTOS development team
+*                 2002-2014 The EmuTOS development team
 
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -178,6 +178,19 @@ void unfmt_str(BYTE *instr, BYTE *outstr)
             *outstr++ = *pstr++;
         }
         *outstr = NULL;
+}
+
+
+/*
+ *      Insert an unsigned long value into the te_ptext field of the TEDINFO
+ *      structure for the specified object, truncating if necessary
+ */
+void inf_numset(LONG tree, WORD obj, ULONG value)
+{
+        BYTE            str[12];
+
+        sprintf(str,"%lu",value);
+        inf_sset(tree,obj,str);
 }
 
 

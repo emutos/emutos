@@ -305,7 +305,6 @@ static void inf_finish(LONG tree, WORD dl_ok)
 static WORD inf_fifo(LONG tree, WORD dl_fi, WORD dl_fo, BYTE *ppath)
 {
         WORD            junk, more;
-        BYTE            str[8];
         OBJECT          *obj;
 
         G.g_nfiles = 0x0L;
@@ -320,13 +319,11 @@ static WORD inf_fifo(LONG tree, WORD dl_fi, WORD dl_fo, BYTE *ppath)
 
         obj = (OBJECT *)tree + dl_fi;
         obj->ob_state &= ~DISABLED;
-        sprintf(str, "%ld", G.g_nfiles);
-        inf_sset(tree, dl_fi, str);
+        inf_numset(tree, dl_fi, G.g_nfiles);
 
         obj = (OBJECT *)tree + dl_fo;
         obj->ob_state &= ~DISABLED;
-        sprintf(str, "%ld", G.g_ndirs);
-        inf_sset(tree, dl_fo, str);
+        inf_numset(tree, dl_fo, G.g_ndirs);
         return(TRUE);
 }
 
@@ -342,8 +339,7 @@ static void inf_dttmsz(LONG tree, FNODE *pf, WORD dl_dt, WORD dl_tm,
         fmt_time(pf->f_time, str);
         inf_sset(tree, dl_tm, str);
 
-        sprintf(str, "%lu", size);
-        inf_sset(tree, dl_sz, str);
+        inf_numset(tree, dl_sz, size);
 }
 
 
@@ -502,11 +498,8 @@ WORD inf_disk(BYTE dr_id)
           inf_sset(tree, DIDRIVE, drive);
           inf_sset(tree, DIVOLUME, str);
 
-          sprintf(str, "%lu", G.g_size);
-          inf_sset(tree, DIUSED, str);
-
-          sprintf(str, "%lu", avail);
-          inf_sset(tree, DIAVAIL, str);
+          inf_numset(tree, DIUSED, G.g_size);
+          inf_numset(tree, DIAVAIL, avail);
 
           inf_finish(tree, DIOK);
         }
