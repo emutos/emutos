@@ -311,7 +311,7 @@ static WORD inf_fifo(LONG tree, WORD dl_fi, WORD dl_fo, BYTE *ppath)
         G.g_ndirs = 0x0L;
         G.g_size = 0x0L;
 
-        more = d_doop(OP_COUNT, NULL, 0, ppath, ppath, &junk, &junk, 0);
+        more = d_doop(OP_COUNT, NULL, ppath, ppath, &junk, &junk);
 
         if (!more)
           return(FALSE);

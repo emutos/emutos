@@ -1,7 +1,7 @@
 /*
  * EmuTOS desktop
  *
- * Copyright (c) 2002-2013 The EmuTOS development team
+ * Copyright (c) 2002-2014 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -15,8 +15,8 @@ void del_fname(BYTE *pstr);
 void add_path(BYTE *path, BYTE *new_name);
 WNODE *fold_wind(BYTE *path);
 WORD d_errmsg(void);
-WORD d_doop(WORD op, LONG tree, WORD obj, BYTE *psrc_path, BYTE *pdst_path,
-            WORD *pfcnt, WORD *pdcnt, WORD flag);
+WORD d_doop(WORD op, LONG tree, BYTE *psrc_path, BYTE *pdst_path,
+            WORD *pfcnt, WORD *pdcnt);
 WORD par_chk(BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path);
 WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
             WORD *pfcnt, WORD *pdcnt, LONG *psize,

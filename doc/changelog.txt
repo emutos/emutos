@@ -5537,3 +5537,7 @@ Start... early ages
 2014-05-22
 - aes/optimize.c aes/optimize.h desk/deskdir.c desk/deskinf.c: Code
   cleanup: use new function inf_numset() to simplify code. (RFB)
+
+2014-05-24
+- desk/deskdir.c desk/deskdir.h desk/deskinf.c: Code cleanup: simplify
+  args to d_doop(). (RFB)

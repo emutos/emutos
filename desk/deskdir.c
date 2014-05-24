@@ -528,8 +528,8 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
 /*
 *       Directory routine to DO an operation on an entire sub-directory.
 */
-WORD d_doop(WORD op, LONG tree, WORD obj, BYTE *psrc_path, BYTE *pdst_path,
-            WORD *pfcnt, WORD *pdcnt, WORD flag)
+WORD d_doop(WORD op, LONG tree, BYTE *psrc_path, BYTE *pdst_path,
+            WORD *pfcnt, WORD *pdcnt)
 {
         BYTE            *ptmp;
         WORD            cont, skip, more, level;
@@ -654,8 +654,7 @@ WORD d_doop(WORD op, LONG tree, WORD obj, BYTE *psrc_path, BYTE *pdst_path,
           if (cont)
             dos_snext();
         }
-        if (op == OP_DELETE && !flag)
-          blank_it(obj);
+
         return(more);
 } /* d_doop */
 
@@ -911,8 +910,11 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
                 strcat(pgldst, "\\*.*");
               } /* if */
               if (more)
-                more = d_doop(op, tree, pf->f_obid, pglsrc, pgldst,
-                              pfcnt, pdcnt, ml_dlpr);
+              {
+                more = d_doop(op, tree, pglsrc, pgldst, pfcnt, pdcnt);
+                if ((op == OP_DELETE) && !ml_dlpr)
+                  blank_it(pf->f_obid);
+              }
             } /* if SUBDIR */
             else
             {
