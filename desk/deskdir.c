@@ -621,7 +621,7 @@ WORD d_doop(WORD op, LONG tree, BYTE *psrc_path, BYTE *pdst_path,
             } /* if */
             else
             {
-              if (op)
+              if (op != OP_COUNT)
                 add_fname(psrc_path, G.g_dtastk[level].d_fname);
               switch(op)
               {
@@ -641,7 +641,7 @@ WORD d_doop(WORD op, LONG tree, BYTE *psrc_path, BYTE *pdst_path,
                         del_fname(pdst_path);
                         break;
               }
-              if (op)
+              if (op != OP_COUNT)
                 del_fname(psrc_path);
               if (tree)
               {
@@ -918,7 +918,7 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
             } /* if SUBDIR */
             else
             {
-              if (op)
+              if (op != OP_COUNT)
                 add_fname(pglsrc, &pf->f_name[0]);
               switch(op)
               {
@@ -938,7 +938,7 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
                         del_fname(pgldst);
                         break;
               }
-              if (op)
+              if (op != OP_COUNT)
                 del_fname(psrc_path);
               if (tree)
               {

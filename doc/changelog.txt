@@ -5544,3 +5544,4 @@ Start... early ages
 
 2014-05-25
 - desk/deskinf.c: Code cleanup: refactor inf_fifo(). (RFB)
+- desk/deskdir.c: Code cleanup: don't assume OP_COUNT is zero. (RFB)
