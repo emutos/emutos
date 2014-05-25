@@ -5541,3 +5541,6 @@ Start... early ages
 2014-05-24
 - desk/deskdir.c desk/deskdir.h desk/deskinf.c: Code cleanup: simplify
   args to d_doop(). (RFB)
+
+2014-05-25
+- desk/deskinf.c: Code cleanup: refactor inf_fifo(). (RFB)

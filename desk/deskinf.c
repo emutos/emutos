@@ -299,23 +299,14 @@ static void inf_finish(LONG tree, WORD dl_ok)
 
 
 /*
-*       Routine to get number of files and folders and stuff them in
+*       Routine to put number of files and folders into
 *       a dialog box.
 */
-static WORD inf_fifo(LONG tree, WORD dl_fi, WORD dl_fo, BYTE *ppath)
+static void inf_fifo(LONG tree, WORD dl_fi, WORD dl_fo)
 {
-        WORD            junk, more;
         OBJECT          *obj;
 
-        G.g_nfiles = 0x0L;
-        G.g_ndirs = 0x0L;
-        G.g_size = 0x0L;
-
-        more = d_doop(OP_COUNT, NULL, ppath, ppath, &junk, &junk);
-
-        if (!more)
-          return(FALSE);
-        G.g_ndirs--;
+        G.g_ndirs--;    /* reproduce TOS's folder count in this situation */
 
         obj = (OBJECT *)tree + dl_fi;
         obj->ob_state &= ~DISABLED;
@@ -324,7 +315,6 @@ static WORD inf_fifo(LONG tree, WORD dl_fi, WORD dl_fo, BYTE *ppath)
         obj = (OBJECT *)tree + dl_fo;
         obj->ob_state &= ~DISABLED;
         inf_numset(tree, dl_fo, G.g_ndirs);
-        return(TRUE);
 }
 
 
@@ -377,10 +367,16 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
           graf_mouse(HGLASS, 0x0L);
           strcpy(srcpth+nmidx, pf->f_name);
           strcat(srcpth, "\\*.*");
-          more = inf_fifo(tree, FFNUMFIL, FFNUMFOL, srcpth);
+
+          G.g_nfiles = 0x0L;
+          G.g_ndirs = 0x0L;
+          G.g_size = 0x0L;
+          more = d_doop(OP_COUNT, NULL, srcpth, srcpth, NULL, NULL);
           graf_mouse(ARROW, 0x0L);
           if (!more)
             return FALSE;
+
+          inf_fifo(tree, FFNUMFIL, FFNUMFOL);
         }
         else
         {
@@ -487,22 +483,26 @@ WORD inf_disk(BYTE dr_id)
         srcpth[1] = ':';
         strcpy(srcpth+2, "\\*.*");
 
-        more = inf_fifo(tree, DINFILES, DINFOLDS, srcpth);
-
+        G.g_nfiles = 0x0L;
+        G.g_ndirs = 0x0L;
+        G.g_size = 0x0L;
+        more = d_doop(OP_COUNT, NULL, srcpth, srcpth, NULL, NULL);
         graf_mouse(ARROW, 0x0L);
-        if (more)
-        {
-          dos_space(dr_id - 'A' + 1, &total, &avail);
-          dos_label(dr_id - 'A' + 1, str);
+        if (!more)
+          return(FALSE);
 
-          inf_sset(tree, DIDRIVE, drive);
-          inf_sset(tree, DIVOLUME, str);
+        dos_space(dr_id - 'A' + 1, &total, &avail);
+        dos_label(dr_id - 'A' + 1, str);
 
-          inf_numset(tree, DIUSED, G.g_size);
-          inf_numset(tree, DIAVAIL, avail);
+        inf_sset(tree, DIDRIVE, drive);
+        inf_sset(tree, DIVOLUME, str);
 
-          inf_finish(tree, DIOK);
-        }
+        inf_fifo(tree, DINFILES, DINFOLDS);
+        inf_numset(tree, DIUSED, G.g_size);
+        inf_numset(tree, DIAVAIL, avail);
+
+        inf_finish(tree, DIOK);
+
         return TRUE;
 } /* inf_disk */
 
