@@ -299,10 +299,10 @@ static void inf_finish(LONG tree, WORD dl_ok)
 
 
 /*
-*       Routine to put number of files and folders into
+*       Routine to put number of files, folders and size into
 *       a dialog box.
 */
-static void inf_fifo(LONG tree, WORD dl_fi, WORD dl_fo)
+static void inf_fifosz(LONG tree, WORD dl_fi, WORD dl_fo, WORD dl_sz)
 {
         OBJECT          *obj;
 
@@ -315,11 +315,14 @@ static void inf_fifo(LONG tree, WORD dl_fi, WORD dl_fo)
         obj = (OBJECT *)tree + dl_fo;
         obj->ob_state &= ~DISABLED;
         inf_numset(tree, dl_fo, G.g_ndirs);
+
+        obj = (OBJECT *)tree + dl_sz;
+        obj->ob_state &= ~DISABLED;
+        inf_numset(tree, dl_sz, G.g_size);
 }
 
 
-static void inf_dttmsz(LONG tree, FNODE *pf, WORD dl_dt, WORD dl_tm,
-                       WORD dl_sz, ULONG size)
+static void inf_dttm(LONG tree, FNODE *pf, WORD dl_dt, WORD dl_tm)
 {
         BYTE    str[11];
 
@@ -328,8 +331,17 @@ static void inf_dttmsz(LONG tree, FNODE *pf, WORD dl_dt, WORD dl_tm,
 
         fmt_time(pf->f_time, str);
         inf_sset(tree, dl_tm, str);
+}
 
-        inf_numset(tree, dl_sz, size);
+
+/*
+ *      Count files, folders, and total filesize in a given path
+ *      Values are stored in G.g_nfiles & friends
+ */
+static WORD count_ffs(BYTE *path)
+{
+        G.g_nfiles = G.g_ndirs = G.g_size = 0L;
+        return d_doop(OP_COUNT, NULL, path, path, NULL, NULL);
 }
 
 
@@ -367,16 +379,13 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
           graf_mouse(HGLASS, 0x0L);
           strcpy(srcpth+nmidx, pf->f_name);
           strcat(srcpth, "\\*.*");
-
-          G.g_nfiles = 0x0L;
-          G.g_ndirs = 0x0L;
-          G.g_size = 0x0L;
-          more = d_doop(OP_COUNT, NULL, srcpth, srcpth, NULL, NULL);
+          more = count_ffs(srcpth);
           graf_mouse(ARROW, 0x0L);
+
           if (!more)
             return FALSE;
 
-          inf_fifo(tree, FFNUMFIL, FFNUMFOL);
+          inf_fifosz(tree, FFNUMFIL, FFNUMFOL, FFSIZE);
         }
         else
         {
@@ -386,12 +395,12 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
           obj = (OBJECT *)tree + FFNUMFOL;
           obj->ob_state |= DISABLED;
           inf_sset(tree,FFNUMFOL,"");
+          inf_numset(tree,FFSIZE,pf->f_size);
         }
 
         fmt_str(pf->f_name, poname);
         inf_sset(tree, FFNAME, poname);
-        size = (pf->f_attr & F_SUBDIR) ? G.g_size : pf->f_size;
-        inf_dttmsz(tree, pf, FFDATE, FFTIME, FFSIZE, size);
+        inf_dttm(tree, pf, FFDATE, FFTIME);
 
         /*
          * initialise the attributes display
@@ -482,12 +491,9 @@ WORD inf_disk(BYTE dr_id)
         srcpth[0] = dr_id;
         srcpth[1] = ':';
         strcpy(srcpth+2, "\\*.*");
-
-        G.g_nfiles = 0x0L;
-        G.g_ndirs = 0x0L;
-        G.g_size = 0x0L;
-        more = d_doop(OP_COUNT, NULL, srcpth, srcpth, NULL, NULL);
+        more = count_ffs(srcpth);
         graf_mouse(ARROW, 0x0L);
+
         if (!more)
           return(FALSE);
 
@@ -497,8 +503,7 @@ WORD inf_disk(BYTE dr_id)
         inf_sset(tree, DIDRIVE, drive);
         inf_sset(tree, DIVOLUME, str);
 
-        inf_fifo(tree, DINFILES, DINFOLDS);
-        inf_numset(tree, DIUSED, G.g_size);
+        inf_fifosz(tree, DINFILES, DINFOLDS, DIUSED);
         inf_numset(tree, DIAVAIL, avail);
 
         inf_finish(tree, DIOK);

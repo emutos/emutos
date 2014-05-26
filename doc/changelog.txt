@@ -5549,3 +5549,6 @@ Start... early ages
   unnecessary scans of pathname. (RFB)
 - desk/deskdir.c desk/deskdir.h desk/deskfun.c desk/desksupp.c: Create
   last_separator() function to scan for last backslash in pathname. (RFB)
+
+2014-05-26
+- desk/deskinf.c: Small refactoring for tidyness & reduced code size. (RFB)
