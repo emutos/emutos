@@ -280,7 +280,7 @@ static WORD cmp_names(BYTE *psrc, BYTE *pdst)
         WORD            ret;
         BYTE            *lastslsh, *ptmp;
                                                 /* scan to lastslsh     */
-        lastslsh = scan_slsh(psrc);
+        lastslsh = last_separator(psrc);
                                                 /* null it              */
         *lastslsh = NULL;
                                                 /* find trailing slash  */

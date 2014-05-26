@@ -41,6 +41,7 @@
 #include "deskglob.h"
 #include "deskgraf.h"
 #include "desk1.h"
+#include "deskdir.h"
 #include "desksupp.h"
 
 
@@ -491,11 +492,7 @@ void do_fopen(WNODE *pw, WORD curr, WORD drv, BYTE *ppath, BYTE *pname,
               {
                 fun_alert(1, STDEEPPA, NULLPTR);
                                                 /* back up one level    */
-                pp = ppath;
-                while (*pp)
-                  pp++;
-                while(*pp != '\\')
-                  pp--;
+                pp = last_separator(ppath);
                 *pp = NULL;
                 pname = "*";
                 pext  = "*";
@@ -519,11 +516,7 @@ void do_fopen(WNODE *pw, WORD curr, WORD drv, BYTE *ppath, BYTE *pname,
         {
           fun_alert(1, STDEEPPA, NULLPTR);
                                                 /* back up one level    */
-          pp = pnew;
-          while (*pp)
-            pp++;
-          while(*pp != '\\')
-            pp--;
+          pp = last_separator(pnew);
           *pp = NULL;
           pro_chdir(drv,pnew);                  /* fixup current dir */
           do_diropen(pw, FALSE, curr, drv, pnew, pname, pext, &t, redraw);
@@ -536,11 +529,7 @@ void do_fopen(WNODE *pw, WORD curr, WORD drv, BYTE *ppath, BYTE *pname,
           {
             fun_alert(1, STDEEPPA, NULLPTR);
                                                 /* back up one level    */
-            pp = ppath;
-            while (*pp)
-              pp++;
-            while(*pp != '\\')
-              pp--;
+            pp = last_separator(ppath);
             *pp = NULL;
             do_diropen(pw, FALSE, curr, drv, pnew, pname, pext, &t, redraw);
           }

@@ -9,7 +9,7 @@
 
 void show_hide(WORD fmd, LONG tree);
 void draw_fld(LONG tree, WORD obj);
-BYTE *scan_slsh(BYTE *path);
+BYTE *last_separator(BYTE *path);
 BYTE *add_fname(BYTE *path, BYTE *new_name);
 void restore_path(BYTE *target);
 void del_fname(BYTE *pstr);

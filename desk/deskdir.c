@@ -189,15 +189,20 @@ void draw_fld(LONG tree, WORD obj)
 } /* draw_fld */
 
 
-BYTE *scan_slsh(BYTE *path)
+/*
+ *      Scans the specified path string & returns pointer to last
+ *      path separator (i.e. backslash).
+ *      If a separator isn't found, returns pointer to end of string.
+ */
+BYTE *last_separator(BYTE *path)
 {
-                                                /* scan to first '*'    */
-        while (*path != '*')
-          path++;
-                                                /* back up to last slash*/
-        while (*path != '\\')
-          path--;
-        return(path);
+        BYTE *last = NULL;
+
+        for ( ; *path; path++)
+          if (*path == '\\')
+            last = path;
+
+        return last ? last : path;
 }
 
 
@@ -221,7 +226,7 @@ void add_path(BYTE *path, BYTE *new_name)
 static void sub_path(BYTE *path)
 {
                                                 /* scan to last slash   */
-        path = scan_slsh(path);
+        path = last_separator(path);
                                                 /* now skip to previous */
                                                 /*   directroy in path  */
         path--;
@@ -292,7 +297,7 @@ static void like_parent(BYTE *path, BYTE *new_name)
                                                 /* remember start of path*/
         pstart = path;
                                                 /* scan to lastslsh     */
-        lastslsh = path = scan_slsh(path);
+        lastslsh = path = last_separator(path);
                                                 /* back up to next to   */
                                                 /*   last slash if it   */
                                                 /*   exists             */
@@ -327,7 +332,7 @@ static WORD same_fold(BYTE *psrc, BYTE *pdst)
         WORD            ret;
         BYTE            *lastslsh;
                                                 /* scan to lastslsh     */
-        lastslsh = scan_slsh(psrc);
+        lastslsh = last_separator(psrc);
                                                 /* null it              */
         *lastslsh = NULL;
                                                 /* see if they match    */
@@ -346,12 +351,8 @@ static WORD same_fold(BYTE *psrc, BYTE *pdst)
 */
 void del_fname(BYTE *pstr)
 {
-        while (*pstr)
-          pstr++;
-        while (*pstr != '\\')
-          pstr--;
-        strcpy(pstr, "\\*.*");
-} /* sub_path */
+        strcpy(last_separator(pstr), "\\*.*");
+} /* del_fname */
 
 
 /*
@@ -360,12 +361,7 @@ void del_fname(BYTE *pstr)
 */
 static void get_fname(BYTE *pstr, BYTE *newstr)
 {
-        while (*pstr)
-          pstr++;
-        while(*pstr != '\\')
-          pstr--;
-        pstr++;
-        strcpy(&ml_ftmp[0], pstr);
+        strcpy(&ml_ftmp[0], last_separator(pstr)+1);
         fmt_str(&ml_ftmp[0], newstr);
 } /* get_fname */
 
@@ -575,15 +571,12 @@ WORD d_doop(WORD op, LONG tree, BYTE *psrc_path, BYTE *pdst_path,
                         }
                         else
                         {
-                          ptmp = psrc_path;
-                          while(*ptmp != '*')
-                            ptmp++;
-                          ptmp--;
+                          ptmp = last_separator(psrc_path);
                           *ptmp = NULL;
                           dos_rmdir(psrc_path);
+                          strcpy(ptmp, "\\*.*");
                         }
                         more = d_errmsg();
-                        strcat(psrc_path, "\\*.*");
                         break;
                 case OP_COPY:
                         break;
