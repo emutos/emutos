@@ -148,7 +148,7 @@ WORD fun_mkdir(WNODE *pw_node)
             unfmt_str(&fnew_name[0], &unew_name[0]);
             if ( unew_name[0] != NULL )
             {
-              add_fname(path, unew_name);
+              ptmp = add_fname(path, unew_name);
               dos_mkdir(path);
               if (DOS_ERR)
               {
@@ -156,7 +156,7 @@ WORD fun_mkdir(WNODE *pw_node)
                   fun_alert(1,STDEEPPA,NULLPTR);
                 else
                   cont = fun_alert(2,STFOEXIS,NULLPTR) - 1;
-                del_fname(path);
+                restore_path(ptmp); /* restore original path */
               }
               else
               {

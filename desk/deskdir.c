@@ -233,15 +233,28 @@ static void sub_path(BYTE *path)
 
 
 /*
-*       Add a file name to the end of an existing path.
-*/
-void add_fname(BYTE *path, BYTE *new_name)
+ *      Add a file name to the end of an existing path, assuming that
+ *      the existing path ends in "*...".
+ *      Returns pointer to the start of the added name within the path.
+ */
+BYTE *add_fname(BYTE *path, BYTE *new_name)
 {
         while (*path != '*')
           path++;
 
-        strcpy(path, new_name);
+        return strcpy(path, new_name);
 } /* add_fname */
+
+
+
+/*
+ *      Restores "*.*" to the position in a path that was
+ *      overwritten by add_fname() above
+ */
+void restore_path(BYTE *target)
+{
+        strcpy(target,"*.*");
+}
 
 
 
@@ -531,7 +544,7 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
 WORD d_doop(WORD op, LONG tree, BYTE *psrc_path, BYTE *pdst_path,
             WORD *pfcnt, WORD *pdcnt)
 {
-        BYTE            *ptmp;
+        BYTE            *ptmp, *ptmpdst;
         WORD            cont, skip, more, level;
                                                 /* start recursion at   */
                                                 /*   level 0            */
@@ -622,7 +635,7 @@ WORD d_doop(WORD op, LONG tree, BYTE *psrc_path, BYTE *pdst_path,
             else
             {
               if (op != OP_COUNT)
-                add_fname(psrc_path, G.g_dtastk[level].d_fname);
+                ptmp = add_fname(psrc_path, G.g_dtastk[level].d_fname);
               switch(op)
               {
                 case OP_COUNT:
@@ -633,16 +646,16 @@ WORD d_doop(WORD op, LONG tree, BYTE *psrc_path, BYTE *pdst_path,
                         more = d_dofdel(psrc_path);
                         break;
                 case OP_COPY:
-                        add_fname(pdst_path, G.g_dtastk[level].d_fname);
+                        ptmpdst = add_fname(pdst_path, G.g_dtastk[level].d_fname);
                         more = d_dofcopy(psrc_path, pdst_path,
                                 G.g_dtastk[level].d_time,
                                 G.g_dtastk[level].d_date,
                                 G.g_dtastk[level].d_attrib);
-                        del_fname(pdst_path);
+                        restore_path(ptmpdst);  /* restore original dest path */
                         break;
               }
               if (op != OP_COUNT)
-                del_fname(psrc_path);
+                restore_path(ptmp); /* restore original source path */
               if (tree)
               {
                 *pfcnt -= 1;
@@ -762,7 +775,7 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
         LONG            tree;
         FNODE           *pf;
         WORD            ret, more, ob;
-        BYTE            *pglsrc, *pgldst;
+        BYTE            *pglsrc, *pgldst, *ptmpsrc, *ptmpdst;
         LONG            lavail;
         BYTE            srcpth[MAXPATHLEN];
         BYTE            dstpth[MAXPATHLEN];
@@ -919,7 +932,7 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
             else
             {
               if (op != OP_COUNT)
-                add_fname(pglsrc, &pf->f_name[0]);
+                ptmpsrc = add_fname(pglsrc, pf->f_name);
               switch(op)
               {
                     case OP_COUNT:
@@ -932,14 +945,14 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
                           blank_it(pf->f_obid);
                         break;
                     case OP_COPY:
-                        add_fname(pgldst, &pf->f_name[0]);
+                        ptmpdst = add_fname(pgldst, pf->f_name);
                         more = d_dofcopy(pglsrc, pgldst, pf->f_time,
                                          pf->f_date, pf->f_attr);
-                        del_fname(pgldst);
+                        restore_path(ptmpdst);  /* restore original dest path */
                         break;
               }
               if (op != OP_COUNT)
-                del_fname(psrc_path);
+                restore_path(ptmpsrc);  /* restore original source path */
               if (tree)
               {
                 *pfcnt -= 1;

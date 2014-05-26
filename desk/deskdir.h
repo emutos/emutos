@@ -10,7 +10,8 @@
 void show_hide(WORD fmd, LONG tree);
 void draw_fld(LONG tree, WORD obj);
 BYTE *scan_slsh(BYTE *path);
-void add_fname(BYTE *path, BYTE *new_name);
+BYTE *add_fname(BYTE *path, BYTE *new_name);
+void restore_path(BYTE *target);
 void del_fname(BYTE *pstr);
 void add_path(BYTE *path, BYTE *new_name);
 WNODE *fold_wind(BYTE *path);
