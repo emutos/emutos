@@ -350,7 +350,7 @@ static WORD count_ffs(BYTE *path)
 /************************************************************************/
 WORD inf_file_folder(BYTE *ppath, FNODE *pf)
 {
-        LONG            tree, size;
+        LONG            tree;
         WORD            more, nmidx, title;
         BYTE            attr;
         BYTE            srcpth[MAXPATHLEN];
