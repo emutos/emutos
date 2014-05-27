@@ -341,7 +341,7 @@ static void inf_dttm(LONG tree, FNODE *pf, WORD dl_dt, WORD dl_tm)
 static WORD count_ffs(BYTE *path)
 {
         G.g_nfiles = G.g_ndirs = G.g_size = 0L;
-        return d_doop(OP_COUNT, NULL, path, path, NULL, NULL);
+        return d_doop(0, OP_COUNT, path, path, NULL, NULL, NULL);
 }
 
 

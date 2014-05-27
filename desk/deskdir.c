@@ -51,6 +51,8 @@
 
 #define MAX_CLUS_SIZE   (32*1024L)  /* maximum cluster size */
 
+#define ALLFILES    (F_SUBDIR|F_SYSTEM|F_HIDDEN)
+
 static UBYTE    *copybuf;   /* for copy operations */
 static LONG     copylen;    /* size of above buffer */
 
@@ -537,132 +539,124 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
 /*
 *       Directory routine to DO an operation on an entire sub-directory.
 */
-WORD d_doop(WORD op, LONG tree, BYTE *psrc_path, BYTE *pdst_path,
-            WORD *pfcnt, WORD *pdcnt)
+WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
+            LONG tree, WORD *pfcnt, WORD *pdcnt)
 {
-        BYTE            *ptmp, *ptmpdst;
-        WORD            cont, skip, more, level;
-                                                /* start recursion at   */
-                                                /*   level 0            */
-        level = 0;
-                                                /* set up initial DTA   */
-        dos_sdta(&G.g_dtastk[level]);
-        dos_sfirst(psrc_path, 0x16);
+    BYTE    *ptmp, *ptmpdst;
+    DTA     *dta = &G.g_dtastk[level];
+    WORD    more;
 
-        cont = more = TRUE;
-        while (cont && more)
+    dos_sdta(dta);
+
+    for (dos_sfirst(psrc_path, ALLFILES); ; dos_snext())
+    {
+        more = TRUE;
+        /*
+         * handle end of folder
+         */
+        if (DOS_ERR && ((DOS_AX == E_NOFILES) || (DOS_AX == E_FILENOTFND)))
         {
-          skip = FALSE;
-          if (DOS_ERR)
-          {
-                                                /* no more files error  */
-            if ( (DOS_AX == E_NOFILES) || (DOS_AX == E_FILENOTFND) )
+            switch(op)
             {
-              switch(op)
-              {
-                case OP_COUNT:
-                        G.g_ndirs++;
-                        break;
-                case OP_DELETE:
-                        if (fold_wind(psrc_path))
-                        {
-                          DOS_ERR = TRUE;       /* trying to delete     */
-                          DOS_AX = 16;          /* active directory     */
-                        }
-                        else
-                        {
-                          ptmp = last_separator(psrc_path);
-                          *ptmp = NULL;
-                          dos_rmdir(psrc_path);
-                          strcpy(ptmp, "\\*.*");
-                        }
-                        more = d_errmsg();
-                        break;
-                case OP_COPY:
-                        break;
-              }
-              if (tree)
-              {
-                *pdcnt -= 1;
-                inf_numset(tree, CDFOLDS, *pdcnt);
-                draw_fld(tree, CDFOLDS);
-              }
-              skip = TRUE;
-              level--;
-              if (level < 0)
-                cont = FALSE;
-              else
-              {
-                sub_path(psrc_path);
-                if (op == OP_COPY)
-                  sub_path(pdst_path);
-                dos_sdta(&G.g_dtastk[level]);
-              }
-            } /* if no more files */
-            else
-              more = d_errmsg();
-          }
-          if ( !skip && more )
-          {
-            if ( G.g_dtastk[level].d_attrib & F_SUBDIR )
-            {                                   /* step down 1 level    */
-              if ( (G.g_dtastk[level].d_fname[0] != '.') &&
-                   (level < (MAX_LEVEL-1)) )
-              {
-                                                /* change path name     */
-                add_path(psrc_path, G.g_dtastk[level].d_fname);
-                if (op == OP_COPY)
+            case OP_COUNT:
+                G.g_ndirs++;
+                break;
+            case OP_DELETE:
+                if (fold_wind(psrc_path))
                 {
-                  add_fname(pdst_path, G.g_dtastk[level].d_fname);
-                  dos_mkdir(pdst_path);
-                  if ( (DOS_ERR) && (DOS_AX != E_NOACCESS) )
-                    more = d_errmsg();
-                  strcat(pdst_path, "\\*.*");
+                    DOS_ERR = TRUE;       /* trying to delete  */
+                    DOS_AX = E_NODELDIR;  /*  active directory */
                 }
-                level++;
-                dos_sdta(&G.g_dtastk[level]);
-                if (more)
-                  dos_sfirst(psrc_path, 0x16);
-              } /* if not a dir */
-            } /* if */
-            else
-            {
-              if (op != OP_COUNT)
-                ptmp = add_fname(psrc_path, G.g_dtastk[level].d_fname);
-              switch(op)
-              {
-                case OP_COUNT:
-                        G.g_nfiles++;
-                        G.g_size += G.g_dtastk[level].d_length;
-                        break;
-                case OP_DELETE:
-                        more = d_dofdel(psrc_path);
-                        break;
-                case OP_COPY:
-                        ptmpdst = add_fname(pdst_path, G.g_dtastk[level].d_fname);
-                        more = d_dofcopy(psrc_path, pdst_path,
-                                G.g_dtastk[level].d_time,
-                                G.g_dtastk[level].d_date,
-                                G.g_dtastk[level].d_attrib);
-                        restore_path(ptmpdst);  /* restore original dest path */
-                        break;
-              }
-              if (op != OP_COUNT)
-                restore_path(ptmp); /* restore original source path */
-              if (tree)
-              {
-                *pfcnt -= 1;
-                inf_numset(tree, CDFILES, *pfcnt);
-                draw_fld(tree, CDFILES);
-              }
+                else
+                {
+                    ptmp = last_separator(psrc_path);
+                    *ptmp = NULL;
+                    dos_rmdir(psrc_path);
+                    strcpy(ptmp, "\\*.*");
+                }
+                more = d_errmsg();
+                break;
+            default:
+                break;
             }
-          }
-          if (cont)
-            dos_snext();
+            if (tree)
+            {
+                inf_numset(tree, CDFOLDS, --*pdcnt);
+                draw_fld(tree, CDFOLDS);
+            }
+            return more;
         }
 
-        return(more);
-} /* d_doop */
+        /*
+         * return if real error
+         */
+        if (DOS_ERR)
+            return d_errmsg();
+
+        /*
+         * handle folder
+         */
+        if (dta->d_attrib & F_SUBDIR)
+        {
+            if ((dta->d_fname[0] != '.') && (level < (MAX_LEVEL-1)))
+            {
+                add_path(psrc_path, dta->d_fname);
+                if (op == OP_COPY)
+                {
+                    add_fname(pdst_path, dta->d_fname);
+                    dos_mkdir(pdst_path);
+                    if (DOS_ERR && (DOS_AX != E_NOACCESS))
+                        more = d_errmsg();
+                    strcat(pdst_path, "\\*.*");
+                }
+                if (more)
+                {
+                    more = d_doop(level+1,op,psrc_path,pdst_path,tree,pfcnt,pdcnt);
+                    dos_sdta(dta);      /* must restore DTA address! */
+                }
+                sub_path(psrc_path);    /* restore the old paths */
+                if (op == OP_COPY)
+                    sub_path(pdst_path);
+            }
+            if (!more)
+                break;
+            continue;
+        }
+
+        /*
+         * handle file
+         */
+        if (op != OP_COUNT)
+            ptmp = add_fname(psrc_path, dta->d_fname);
+        switch(op)
+        {
+        case OP_COUNT:
+            G.g_nfiles++;
+            G.g_size += dta->d_length;
+            break;
+        case OP_DELETE:
+            more = d_dofdel(psrc_path);
+            break;
+        case OP_COPY:
+            ptmpdst = add_fname(pdst_path, dta->d_fname);
+            more = d_dofcopy(psrc_path, pdst_path, dta->d_time,
+                            dta->d_date, dta->d_attrib);
+            restore_path(ptmpdst);  /* restore original dest path */
+            break;
+        }
+        if (op != OP_COUNT)
+            restore_path(ptmp);     /* restore original source path */
+        if (tree)
+        {
+            inf_numset(tree, CDFILES, --*pfcnt);
+            draw_fld(tree, CDFILES);
+        }
+        if (!more)
+            break;
+    }
+
+    return more;
+}
 
 
 /*
@@ -917,7 +911,7 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
               } /* if */
               if (more)
               {
-                more = d_doop(op, tree, pglsrc, pgldst, pfcnt, pdcnt);
+                more = d_doop(0, op, pglsrc, pgldst, tree, pfcnt, pdcnt);
                 if ((op == OP_DELETE) && !ml_dlpr)
                   blank_it(pf->f_obid);
               }

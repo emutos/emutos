@@ -16,8 +16,8 @@ void del_fname(BYTE *pstr);
 void add_path(BYTE *path, BYTE *new_name);
 WNODE *fold_wind(BYTE *path);
 WORD d_errmsg(void);
-WORD d_doop(WORD op, LONG tree, BYTE *psrc_path, BYTE *pdst_path,
-            WORD *pfcnt, WORD *pdcnt);
+WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
+            LONG tree, WORD *pfcnt, WORD *pdcnt);
 WORD par_chk(BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path);
 WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
             WORD *pfcnt, WORD *pdcnt, LONG *psize,

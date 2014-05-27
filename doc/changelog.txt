@@ -5553,3 +5553,5 @@ Start... early ages
 2014-05-26
 - desk/deskinf.c: Small refactoring for tidyness & reduced code size. (RFB)
 - desk/deskinf.c: Fix compiler warning. (RFB)
+- desk/deskdir.c desk/deskdir.h desk/deskinf.c: Simplify d_doop() by
+  using true recursion. (RFB)
