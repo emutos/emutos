@@ -5555,3 +5555,6 @@ Start... early ages
 - desk/deskinf.c: Fix compiler warning. (RFB)
 - desk/deskdir.c desk/deskdir.h desk/deskinf.c: Simplify d_doop() by
   using true recursion. (RFB)
+
+2014-05-28
+- desk/deskdir.c: Simplify d_dofcopy() for maintainability. (RFB)

@@ -390,150 +390,149 @@ static WORD d_dofdel(BYTE *ppath)
 
 
 /*
-*       Directory routine to DO File COPYing.
-*/
+ *      Determines output filename as required by d_dofcopy()
+ *      Returns:
+ *          1   filename is OK
+ *          0   error, stop copying
+ *          -1  error, but allow more copying
+ */
+WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
+{
+    WORD fh, ob, samefile;
+    LONG tree;
+
+    while(1)
+    {
+        fh = dos_open(pdst_file, 0);
+        if (DOS_ERR)
+        {
+            if (DOS_AX == E_FILENOTFND)
+                break;
+            return d_errmsg();
+        }
+        dos_close(fh);
+
+        /*
+         * file exists: this is OK as long as
+         *     a) user doesn't want to be notified about overwrites
+         *     b) i/p and o/p filenames are different (prevent overwriting ourselves)
+         */
+        samefile = !strcmp(psrc_file, pdst_file);
+        if (!G.g_covwrpref && !samefile)
+            break;
+
+        /*
+         * need to talk to user: get i/p & o/p filenames and prefill dialog
+         */
+        get_fname(psrc_file, ml_fsrc);  /* get input filename */
+        if (samefile)                   /* don't prefill o/p if same file */
+            ml_fdst[0] = '\0';
+        else
+            get_fname(pdst_file, ml_fdst);
+        inf_sset(G.a_trees[ADCPALER], CACURRNA, ml_fsrc);
+        inf_sset(G.a_trees[ADCPALER], CACOPYNA, ml_fdst);
+
+        /*
+         * display dialog & get input
+         */
+        do_namecon();
+
+        tree = G.a_trees[ADCPALER];
+        ob = inf_gindex(G.a_trees[ADCPALER], CAOK, 3) + CAOK;
+        ((OBJECT *)tree+ob)->ob_state = NORMAL;
+        if (ob == CASTOP)
+            return 0;
+        else if (ob == CACNCL)
+            return -1;
+
+        /*
+         * user says ok, so decode filename & try again
+         */
+        inf_sget(G.a_trees[ADCPALER], CACOPYNA, ml_fdst);
+        unfmt_str(ml_fdst, ml_fstr);
+        if (ml_fstr[0] != '\0')
+        {
+            del_fname(pdst_file);
+            add_fname(pdst_file, ml_fstr);
+        }
+    }
+
+    return 1;
+}
+
+
+/*
+ *      Directory routine to DO File COPYing
+ *      Returns FALSE iff failure
+ */
 static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WORD attr)
 {
-        LONG            tree;
-        WORD            srcfh, dstfh;
-        LONG            amntrd, amntwr;
-        WORD            copy, cont, more, samedir, ob;
+    WORD srcfh, dstfh, rc;
+    LONG readlen, writelen;
 
-        copy = TRUE;
-                                                /* open the source file */
-        srcfh = dos_open(psrc_file, 0);
-        more = d_errmsg();
-        if (!more)
-          return(more);
-                                                /* open the dest file   */
-        cont = TRUE;
-        while (cont)
+    srcfh = dos_open(psrc_file, 0);
+    if (DOS_ERR)
+        return d_errmsg();
+
+    rc = output_fname(psrc_file, pdst_file);
+    if (rc <= 0)        /* not allowed to copy file */
+    {
+        dos_close(srcfh);
+        if (rc == 0)    /* unexpected error opening dest, or user said stop */
+            return FALSE;
+        return TRUE;    /* user just said cancel, so allow continuation */
+    }
+
+    /*
+     * we have the (possibly-modified) filename in pdst_file
+     */
+    dstfh = dos_create(pdst_file, attr);
+    if (DOS_ERR)
+        return d_errmsg();
+
+    /*
+     * perform copy
+     */
+    while(1)
+    {
+        readlen = dos_read(srcfh, copylen, copybuf);
+        if (DOS_ERR)
+            break;
+        if (readlen == 0)   /* end of file */
+            break;
+        writelen = dos_write(dstfh, readlen, copybuf);
+        if (DOS_ERR)
+            break;
+        if (writelen != readlen)    /* disk full? */
         {
-          copy = FALSE;
-          more = TRUE;
-          dstfh = dos_open(pdst_file, 0);
-                                                /* handle dos error     */
-          if (DOS_ERR)
-          {
-            if (DOS_AX == E_FILENOTFND)
-              copy = TRUE;
-            else
-              more = d_errmsg();
-            cont = FALSE;
-          }
-          else
-          {
-                                                /* dest file already    */
-                                                /*   exists             */
-            dos_close(dstfh);
-                                                /* get the filenames    */
-                                                /*   from the pathnames */
-            get_fname(psrc_file, &ml_fsrc[0]);
-                                                /* if same dir, then    */
-                                                /*   don't prefill the  */
-                                                /*   new name string    */
-            samedir = !strcmp(psrc_file, pdst_file);
-            if (samedir)
-              ml_fdst[0] = NULL;
-            else
-              get_fname(pdst_file, &ml_fdst[0]);
-                                                /* put in filenames     */
-                                                /*   in dialog          */
-            inf_sset(G.a_trees[ADCPALER], 2, &ml_fsrc[0]);
-            inf_sset(G.a_trees[ADCPALER], 3, &ml_fdst[0]);
-                                                /* show dialog          */
-            if ((G.g_covwrpref) || (samedir))
-            {
-              do_namecon();
-                                                /* if okay then if its  */
-                                                /*   the same name then */
-                                                /*   overwrite else get */
-                                                /*   new name and go    */
-                                                /*   around to check it */
-
-
-              tree = G.a_trees[ADCPALER];
-              ob = inf_gindex(G.a_trees[ADCPALER], CAOK, 3) + CAOK;
-              ((OBJECT *)tree+ob)->ob_state = NORMAL;
-              if (ob == CASTOP)
-                copy = more = FALSE;
-              else if (ob == CACNCL)
-                copy = FALSE;
-              else
-                copy = TRUE;
-            }
-            else
-              copy = TRUE;
-/* */
-            if (copy)
-            {
-              cont = FALSE;
-              inf_sget(G.a_trees[ADCPALER], 3, &ml_fdst[0]);
-              unfmt_str(&ml_fdst[0], &ml_fstr[0]);
-              if ( ml_fstr[0] == NULL )
-              {
-                copy = FALSE;
-                dos_close(srcfh);
-              }
-              else
-              {
-                del_fname(pdst_file);
-                add_fname(pdst_file, &ml_fstr[0]);
-              }
-            }
-            else
-            {
-              dos_close(srcfh);
-              cont = copy = FALSE;
-            }
-          } /* else */
-        } /* while cont */
-
-        if ( copy && more )
-          dstfh = dos_create(pdst_file, attr);
-
-        amntrd = copy;
-        while( amntrd && more )
-        {
-          more = d_errmsg();
-          if (more)
-          {
-            amntrd = dos_read(srcfh, copylen, copybuf);
-            more = d_errmsg();
-            if (more)
-            {
-              if (amntrd)
-              {
-                amntwr = dos_write(dstfh, amntrd, copybuf);
-                more = d_errmsg();
-                if (more)
-                {
-                  if (amntrd != amntwr)
-                  {
-                                                /* disk full            */
-                    graf_mouse(ARROW, 0x0L);
-                    fun_alert(1, STDISKFU, NULLPTR);
-                    graf_mouse(HGLASS, NULL);
-                    more = FALSE;
-                    dos_close(srcfh);
-                    dos_close(dstfh);
-                    dos_delete(pdst_file);
-                  } /* if */
-                } /* if more */
-              } /* if amntrd */
-            } /* if more */
-          } /* if more */
-        } /* while */
-        if (copy && more)
-        {
-          dos_setdt(dstfh, time, date);
-          more = d_errmsg();
-          dos_close(srcfh);
-          dos_close(dstfh);
+            graf_mouse(ARROW, NULL);
+            fun_alert(1, STDISKFU, NULL);
+            graf_mouse(HGLASS, NULL);
+            rc = -1;        /* indicate disk full error */
+            break;
         }
-/*      graf_mouse(ARROW, 0x0L);*/
-        return(more);
-} /* d_dofcopy */
+    }
+
+    if (DOS_ERR)
+        rc = d_errmsg();    /* report read or write error */
+
+    if (rc > 0)
+    {
+        dos_setdt(dstfh, time, date);
+        rc = d_errmsg();
+    }
+
+    dos_close(srcfh);       /* close files */
+    dos_close(dstfh);
+
+    if (rc < 0)             /* disk full? */
+    {
+        dos_delete(pdst_file);
+        rc = FALSE;
+    }
+
+    return rc;
+}
 
 
 /*
