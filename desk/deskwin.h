@@ -2,7 +2,7 @@
 /*      changed NUM_WOBS from 128 to 300        11/19/87        mdf     */
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2013 The EmuTOS development team
+*                 2002-2014 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -37,9 +37,7 @@ WNODE
         WORD            w_vnrow;                /* virtual # of rows    */
         PNODE           *w_path;
         BYTE            w_name[LEN_ZPATH];
-#ifdef DESK1
         BYTE            w_info[81];             /* NOT USED v2.1 */
-#endif
 };
 
 
@@ -48,11 +46,7 @@ WNODE
 void win_view(WORD vtype, WORD isort);
 void win_start(void);
 void win_free(WNODE *thewin);
-#ifdef DESK1
 WNODE *win_alloc(WORD obid);
-#else
-WNODE *win_alloc(void);
-#endif
 WNODE *win_find(WORD wh);
 void win_top(WNODE *thewin);
 WNODE *win_ontop(void);
@@ -66,8 +60,6 @@ void win_shwall(void);
 WORD win_isel(OBJECT olist[], WORD root, WORD curr);
 BYTE *win_iname(WORD curr);
 void win_sname(WNODE *pw);
-#ifdef DESK1
 void win_sinfo(WNODE *pwin);
-#endif
 
 #endif  /* _DESKWIN_H */

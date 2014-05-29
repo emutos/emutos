@@ -99,8 +99,6 @@ static void gr_accobs(OBJECT *tree, WORD root, WORD *pnum, WORD *pxypts)
 
 
 
-#ifdef DESK1
-
 static void move_drvicon(OBJECT *tree, WORD root, WORD x, WORD y, WORD *pts)
 {
         ANODE *an_disk;
@@ -218,11 +216,8 @@ static void gr_obalign(WORD numobs, WORD x, WORD y, WORD *xyobpts)
         }
 }
 
-#endif
 
 
-
-#ifdef DESK1
 /*
 *       This routine is used to drag a list of polylines.
 */
@@ -345,100 +340,6 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD numpts,
         *pdwh = dst_wh;
         graf_mouse(ARROW, 0x0L);
 } /* gr_drgplns */
-
-#else /* DESK1 */
-
-/*
-*       This routine was formerly used to drag a list of polylines.
-*       It has been heavily modified since the Copying metaphor has
-*       changed: icon outlines are not dragged anymore. Instead, this
-*       routine returns the x,y where the mouse button came up, indicating
-*       the destination of the copy. numpts, xylnpts, numobs, & xyobpts
-*       are no longer used.
-*/
-static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD *pdulx, WORD *pduly,
-                WORD *pdwh, WORD *pdobj)
-{
-        OBJECT  *tree, *curr_tree;
-        WNODE   *pw;
-        WORD    root, curr_wh, curr_root, curr_sel, dst_wh;
-        WORD    overwhite, l_mx, l_my;
-        WORD    down, button, keystate, junk;
-        UWORD   ret[4];
-        FNODE   *pf;
-        ANODE   *pa;
-        OBJECT *obj;
-
-        gsx_sclip(&gl_rscreen);
-        graf_mouse(4, 0x0L);                    /* flat hand            */
-
-        l_mx = in_mx;
-        l_my = in_my;
-
-        curr_wh = 0x0;
-        curr_tree = NULL;
-        curr_root = 0;
-        curr_sel = 0;
-
-        do
-        {
-          down = gr_isdown(TRUE, l_mx, l_my, 2, 2,
-                                &ret[0], &ret[1], &ret[2], &ret[3]);
-          graf_mkstate(&l_mx, &l_my, &button, &keystate);
-          dst_wh = wind_find(l_mx, l_my);
-          tree = G.g_screen;
-          root = DROOT;
-          pw = win_find(dst_wh);
-          if (pw)
-          {
-            tree = G.g_screen;
-            root = pw->w_root;
-          }
-          else
-            dst_wh = 0;
-          *pdobj = gr_obfind(tree, root, l_mx, l_my);
-          overwhite = (*pdobj == root) || (*pdobj == NIL);
-          if ( (overwhite) || ((!overwhite) && (*pdobj != curr_sel)) )
-          {
-            if (curr_sel)
-            {
-              act_chg(curr_wh, curr_tree, curr_root, curr_sel, pc,
-                        SELECTED, FALSE, TRUE, TRUE);
-              curr_wh = 0x0;
-              curr_tree = NULL;
-              curr_root = 0x0;
-              curr_sel = 0;
-            }
-            if (!overwhite)
-            {
-              obj = tree + *pdobj;
-              if ( !(obj->ob_state & SELECTED) )
-              {
-                pa = i_find(dst_wh, *pdobj, &pf, &junk);
-                if (pa && (((pa->a_type == AT_ISFOLD) ||
-                           (pa->a_type == AT_ISDISK)) &&
-                          !(pf->f_attr & F_FAKE) ))
-                {
-                  curr_wh = dst_wh;
-                  curr_tree = tree;
-                  curr_root = root;
-                  curr_sel = *pdobj;
-                  act_chg(curr_wh, curr_tree, curr_root, curr_sel, pc,
-                         SELECTED, TRUE, TRUE, TRUE);
-                } /* if */
-              } /* if !SELECTED */
-            } /* if !overwhite */
-          } /* if */
-        } while (down);
-        if (curr_sel)
-            act_chg(curr_wh, curr_tree, curr_root, curr_sel, pc,
-                        SELECTED, FALSE, TRUE, TRUE);
-        *pdulx = l_mx;                          /* pass back dest. x,y  */
-        *pduly = l_my;
-        *pdwh = dst_wh;
-        graf_mouse(ARROW, 0x0L);
-} /* gr_drgplns */
-#endif
 
 
 /*
@@ -677,9 +578,7 @@ WORD act_bdown(WORD wh, OBJECT *tree, WORD root, WORD *in_mx, WORD *in_my,
         WORD            numobs, button;
         WORD            dst_wh;
         WORD            l_mx, l_my, dulx = -1, duly = -1;
-#ifdef DESK1
         WORD            numpts, *pxypts, view;
-#endif
         GRECT           m;
 
         dst_wh = NIL;
@@ -701,7 +600,6 @@ WORD act_bdown(WORD wh, OBJECT *tree, WORD root, WORD *in_mx, WORD *in_my,
             gr_accobs(tree, root, &numobs, &G.g_xyobpts[0]);
             if (numobs)
             {
-#ifdef DESK1
               view = (root == DROOT) ? V_ICON : G.g_iview;
               if (view == V_ICON)
               {
@@ -715,9 +613,7 @@ WORD act_bdown(WORD wh, OBJECT *tree, WORD root, WORD *in_mx, WORD *in_my,
               }
               gr_drgplns(l_mx, l_my, &gl_rfull, numpts, pxypts, numobs,
                          G.g_xyobpts, &dulx, &duly, &dst_wh, pdobj);
-#else
-              gr_drgplns(l_mx, l_my, &gl_rfull, &dulx, &duly, &dst_wh, pdobj);
-#endif
+
               if (dst_wh)
               {
                                                 /* cancel drag if it    */
@@ -728,15 +624,11 @@ WORD act_bdown(WORD wh, OBJECT *tree, WORD root, WORD *in_mx, WORD *in_my,
               } /* if (dst_wh */
               else
               {
-#ifdef DESK1
                 if (wh == 0 && (*pdobj == root)) // Dragging from desktop
                 {
                   move_drvicon(tree, root, dulx, duly, G.g_xyobpts);
                   dst_wh = NIL;
                 }
-#else
-                dst_wh = NIL;
-#endif
               }
             } /* if numobs */
           } /* if SELECTED */

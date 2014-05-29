@@ -48,15 +48,9 @@
 
 #define HOTCLOSE 0x1000
 
-#ifndef DESK1
-/* Cut-down DESKTOP 2.x+ style */
-#define WINDOW_STYLE (HOTCLOSE|VSLIDE|UPARROW|DNARROW|NAME|CLOSER|FULLER)
-#define START_VIEW   V_TEXT
-#else
 #define WINDOW_STYLE (NAME | CLOSER | MOVER | FULLER | INFO | SIZER | \
                       UPARROW | DNARROW | VSLIDE | LFARROW | RTARROW | HSLIDE)
 #define START_VIEW   V_ICON
-#endif
 
 
 LONG    drawaddr;
@@ -131,11 +125,7 @@ void win_free(WNODE *thewin)
 /*
 *       Allocate a window for use as a folder window
 */
-#ifdef DESK1
 WNODE *win_alloc(WORD obid)
-#else
-WNODE *win_alloc(void)
-#endif
 {
         WNODE           *pw;
         WORD            wob;
@@ -152,28 +142,16 @@ WNODE *win_alloc(void)
         {
           pw = &G.g_wlist[wob-2];
           pw->w_flags = 0x0;
-#ifdef DESK1
           pw->w_obid = obid;    /* DESKTOP v1.2 */
-#else
-          pw->w_obid = 0;
-#endif
           pw->w_root = wob;
           pw->w_cvrow = 0x0;
           pw->w_pncol = (pt->g_w  - gl_wchar) / G.g_iwspc;
           pw->w_pnrow = (pt->g_h - gl_hchar) / G.g_ihspc;
           pw->w_vnrow = 0x0;
-#ifdef DESK1
           pw->w_id = wind_create(WINDOW_STYLE, G.g_xdesk, G.g_ydesk,
                                  G.g_wdesk, G.g_hdesk);
-#else
-          pw->w_id = wind_create(WINDOW_STYLE, G.g_xfull, G.g_yfull,
-                                 G.g_wfull, G.g_hfull);
-#endif
           if (pw->w_id != -1)
           {
-#ifndef DESK1
-            wind_set(pw->w_id, WF_TATTRB, WA_SUBWIN, 0, 0, 0);
-#endif
             return(pw);
           }
           else
@@ -213,7 +191,6 @@ void win_top(WNODE *thewin)
 *       is the currently active window.  If not, then no window is on
 *       top and return 0.
 */
-#ifdef DESK1
 WNODE *win_ontop(void)
 {
         WORD            wob;
@@ -224,7 +201,6 @@ WNODE *win_ontop(void)
         else
           return(0);
 }
-#endif
 
 
 /*
@@ -312,11 +288,6 @@ static void win_ocalc(WNODE *pwin, WORD wfit, WORD hfit, FNODE **ppstart)
 */
 static void win_icalc(FNODE *pfnode)
 {
-#ifndef DESK1
-        if (pfnode->f_attr & F_DESKTOP)
-          return;
-#endif
-
         if (pfnode->f_attr & F_SUBDIR)
           pfnode->f_pa = app_afind(FALSE, AT_ISFOLD, -1,
                                 &pfnode->f_name[0], &pfnode->f_isap);
@@ -404,9 +375,7 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
                                                 /*   position           */
         wh = pwin->w_id;
 /* BugFix       */
-#ifdef DESK1
         wind_set(wh, WF_HSLSIZ, 1000, 0, 0, 0);
-#endif
 /* */
         sl_size = mul_div(pwin->w_pnrow, 1000, pwin->w_vnrow);
         wind_set(wh, WF_VSLSIZ, sl_size, 0, 0, 0);
@@ -636,7 +605,6 @@ WORD win_isel(OBJECT olist[], WORD root, WORD curr)
 *       Return pointer to this icons name.  It will always be an icon that
 *       is on the desktop.
 */
-#ifdef DESK1
 BYTE *win_iname(WORD curr)
 {
         ICONBLK         *pib;
@@ -648,7 +616,6 @@ BYTE *win_iname(WORD curr)
         ptext = pib->ib_ptext;
         return( ptext );
 }
-#endif
 
 
 /*
@@ -667,14 +634,9 @@ void win_sname(WNODE *pw)
             *pdst++ = *psrc++;
           *pdst = NULL;
         }
-#ifndef DESK1
-        else
-          strcpy(pdst, ini_str(STDSKDRV));
-#endif
 } /* win_sname */
 
 
-#ifdef DESK1
 /* Added for DESKTOP v1.2 */
 void win_sinfo(WNODE *pwin)
 {
@@ -686,4 +648,3 @@ void win_sinfo(WNODE *pwin)
 
         sprintf(pwin->w_info, G.g_1text, pn->p_size, pn->p_count);
 }
-#endif

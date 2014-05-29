@@ -104,12 +104,7 @@ static void    cnx_put(void);
 /* BugFix       */
 static WORD     ig_close;
 
-#ifndef DESK1
-static const BYTE     ILL_ITEM[] = {L1ITEM, L2ITEM, L3ITEM, L4ITEM, L5ITEM, NFOLITEM, CLSWITEM, 0};
-#else
 static const BYTE     ILL_ITEM[] = {L1ITEM, L2ITEM, L3ITEM, L4ITEM, L5ITEM, 0};
-#endif
-
 static const BYTE     ILL_FILE[] = {FORMITEM,IDSKITEM,0};
 static const BYTE     ILL_DOCU[] = {FORMITEM,IDSKITEM,IAPPITEM,0};
 static const BYTE     ILL_FOLD[] = {FORMITEM,IDSKITEM,IAPPITEM,0};
@@ -118,13 +113,10 @@ static const BYTE     ILL_HDSK[] = {FORMITEM,DELTITEM,IAPPITEM,0};
 static const BYTE     ILL_NOSEL[] = {OPENITEM,SHOWITEM,FORMITEM,DELTITEM,
                                 IDSKITEM,IAPPITEM,0};
 static const BYTE     ILL_YSEL[] = {OPENITEM, IDSKITEM, FORMITEM, SHOWITEM, 0};
-
-#ifdef DESK1
 static const BYTE     ILL_TRASH[] = {OPENITEM,FORMITEM,DELTITEM,IDSKITEM,IAPPITEM,0};
 static const BYTE     ILL_NOTOP[] = {NFOLITEM,CLOSITEM,CLSWITEM,0};
 static const BYTE     ILL_DESKTOP[] = {NFOLITEM,CLOSITEM,CLSWITEM,ICONITEM,
                                 NAMEITEM,DATEITEM,SIZEITEM,TYPEITEM,0};
-#endif
 
 #if CONF_WITH_EASTER_EGG
 /* easter egg */
@@ -145,11 +137,6 @@ static const WORD  dura[]=
 static LONG     ad_ptext;
 static LONG     ad_picon;
 
-#ifndef DESK1
-GLOBAL GRECT    gl_savewin[NUM_WNODES]; /* preserve window x,y,w,h      */
-GLOBAL GRECT    gl_normwin;             /* normal (small) window size   */
-static WORD     gl_open1st;             /* index of window to open 1st  */
-#endif
 static BYTE     gl_defdrv;              /* letter of lowest drive       */
 
 static WORD     can_iapp;               /* TRUE if INSAPP enabled       */
@@ -158,14 +145,6 @@ static WORD     can_del;                /* TRUE if DELITEM enabled      */
 
 GLOBAL WORD     gl_whsiztop;            /* wh of window fulled          */
 static WORD     gl_idsiztop;            /* id of window fulled          */
-
-
-
-
-/* Function prototypes: */
-#ifndef DESK1
-static void hot_close(WORD wh);
-#endif
 
 
 static int can_change_resolution;
@@ -192,69 +171,6 @@ static void display_free_stack(void)
 }
 #else
 #define display_free_stack()
-#endif
-
-
-#ifndef DESK1
-static void fix_wins(void)
-{
-/* this routine is supposed to keep track of the windows between        */
-/* runs of the Desktop. it assumes pws has already been set up;         */
-/* gl_savewin is set up by app_start.                                   */
-        WSAVE           *pws0, *pws1;
-
-        gl_open1st = 0;                         /* default case         */
-        pws0 = &G.g_cnxsave.win_save[0];
-        pws1 = &G.g_cnxsave.win_save[1];
-                                                /* upper window is full */
-        if ( (gl_savewin[0].g_y != gl_savewin[1].g_y) &&
-             (gl_savewin[0].g_h != gl_savewin[1].g_h) )
-        {
-                                        /* which window is upper/lower? */
-          if (gl_savewin[0].g_h > gl_savewin[1].g_h)
-          {                             /* [0] is (full) upper window   */
-            gl_open1st = 1;
-            gl_idsiztop = 0;
-            pws0->y_save = G.g_yfull;
-            pws0->h_save = G.g_hfull;
-            pws1->y_save = gl_normwin.g_y + gl_normwin.g_h + (gl_hbox / 2);
-            pws1->h_save = gl_normwin.g_h;
-          }
-          else
-          {                             /* [1] is (full) upper window   */
-            gl_open1st = 0;
-            gl_idsiztop = 1;
-            pws1->y_save = G.g_yfull;
-            pws1->h_save = G.g_hfull;
-            pws0->y_save = gl_normwin.g_y + gl_normwin.g_h + (gl_hbox / 2);
-            pws0->h_save = gl_normwin.g_h;
-          } /* else */
-        } /* if */
-                                        /* case 3: lower window is full */
-        else if ( (gl_savewin[0].g_y == gl_savewin[1].g_y) &&
-                  (gl_savewin[0].g_h != gl_savewin[1].g_h) )
-        {
-                                        /* which window is upper/lower? */
-          if (gl_savewin[0].g_h > gl_savewin[1].g_h)
-          {                             /* [0] is (full) lower window   */
-            gl_open1st = 1;
-            gl_idsiztop = 0;
-            pws0->y_save = G.g_yfull;
-            pws0->h_save = G.g_hfull;
-            pws1->y_save = gl_normwin.g_y;
-            pws1->h_save = gl_normwin.g_h;
-          }
-          else
-          {                             /* [1] is (full) lower window   */
-            gl_open1st = 0;
-            gl_idsiztop = 1;
-            pws1->y_save = G.g_yfull;
-            pws1->h_save = G.g_hfull;
-            pws0->y_save = gl_normwin.g_y;
-            pws0->h_save = gl_normwin.g_h;
-          } /* else */
-        } /* if */
-} /* fix_wins */
 #endif
 
 
@@ -295,7 +211,6 @@ ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp)
         pa = (ANODE *) NULL;
         pf = (FNODE *) NULL;
 
-#ifdef DESK1
         if (!wh)        /* On desktop? */
         {
             if (G.g_screen[item].ob_type == G_ICON)
@@ -306,33 +221,22 @@ ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp)
         }
         else
         {
-#endif
-        pw = win_find(wh);
-        pf = fpd_ofind(pw->w_path->p_flist, item);
-        if (pf)
-        {
-          pname = &pf->f_name[0];
-#ifdef DESK1
-          if (pf->f_attr & F_SUBDIR)
-          {
-                pa = app_afind(FALSE, 1, -1, pname, pisapp);
-          }
-          else
-          {
-                pa = app_afind(FALSE, 0, -1, pname, pisapp);
-          }
-#else
-          pa = pf->f_pa;
-          if ( (pf->f_attr & F_DESKTOP) ||
-               (pf->f_attr & F_SUBDIR) )
-            *pisapp = FALSE;
-          else
-            *pisapp = wildcmp(pa->a_pappl, pname);
-#endif
+            pw = win_find(wh);
+            pf = fpd_ofind(pw->w_path->p_flist, item);
+            if (pf)
+            {
+                pname = &pf->f_name[0];
+                if (pf->f_attr & F_SUBDIR)
+                {
+                    pa = app_afind(FALSE, 1, -1, pname, pisapp);
+                }
+                else
+                {
+                    pa = app_afind(FALSE, 0, -1, pname, pisapp);
+                }
+            }
         }
-#ifdef DESK1
-        }
-#endif
+
         *ppf = pf;
         return (pa);
 }
@@ -394,17 +298,14 @@ static void men_update(LONG tree)
                 can_iapp = FALSE;
                 can_del = FALSE;
                 break;
-#ifdef DESK1
             case AT_ISTRSH:                    /* Trash */
                 pvalue = ILL_TRASH;
                 can_del = FALSE;
                 break;
-#endif
           } /* switch */
           men_list(tree, pvalue, FALSE);       /* disable certain items */
         } /* for */
 
-#ifdef DESK1
         if (win_ontop())
           pvalue = ILL_DESKTOP;
         else
@@ -413,7 +314,6 @@ static void men_update(LONG tree)
           men_list(tree, pvalue, TRUE);
         else
           men_list(tree, pvalue, FALSE);
-#endif
 
         if ( nsel != 1 )
         {
@@ -493,11 +393,8 @@ static WORD do_filemenu(WORD item)
 */
 
         done = FALSE;
-#ifdef DESK1
         pw = win_ontop();
-#else
-        pw = win_find(G.g_cwin);
-#endif
+
         curr = win_isel(G.g_screen, G.g_croot, 0);
         switch( item )
         {
@@ -509,7 +406,6 @@ static WORD do_filemenu(WORD item)
                 if (curr)
                   do_info(curr);
                 break;
-#ifdef DESK1
           case NFOLITEM:
                 if (pw)
                   fun_mkdir(pw);
@@ -522,12 +418,6 @@ static WORD do_filemenu(WORD item)
                 if (pw)
                   fun_close(pw, 1);
                 break;
-#else
-          case CLOSITEM:
-          case CLSWITEM:
-                hot_close(G.g_cwin);
-                break;
-#endif
           case DELTITEM:
                 if (curr)
                   fun_del(pw);
@@ -563,11 +453,7 @@ static WORD do_viewmenu(WORD item)
         switch( item )
         {
           case ICONITEM:
-#if CONF_WITH_DESK1
                 newview = (G.g_iview == V_ICON) ? V_TEXT : V_ICON;
-#else
-                newview = V_TEXT;
-#endif
                 break;
           case NAMEITEM:
                 newsort = S_NAME;
@@ -613,9 +499,7 @@ static WORD do_optnmenu(WORD item)
         WORD            isapp = FALSE;
         WORD            newres, newmode;
         BYTE            *pstr;
-#ifdef DESK1
         GRECT           rect;
-#endif
 
         pa = 0;
         pstr = 0;
@@ -634,14 +518,9 @@ static WORD do_optnmenu(WORD item)
                   rebld = ins_disk(pa);
                 if (rebld)
                 {
-#ifdef DESK1
                   app_blddesk();
                   wind_get(0, WF_WXYWH, &rect.g_x, &rect.g_y, &rect.g_w, &rect.g_h);
                   do_wredraw(0, rect.g_x, rect.g_y, rect.g_w, rect.g_h);
-#else
-                  gl_defdrv = app_blddesk();
-                  do_chkall(TRUE);
-#endif
                 }
                 break;
           case IAPPITEM:
@@ -699,10 +578,8 @@ static WORD hndl_button(WORD clicks, WORD mx, WORD my, WORD button, WORD keystat
         WORD            done, junk;
         GRECT           c;
         WORD            wh, dobj, dest_wh;
-#ifdef DESK1
         WORD            root;
         WNODE           *wn;
-#endif
 
         done = FALSE;
 
@@ -711,19 +588,6 @@ static WORD hndl_button(WORD clicks, WORD mx, WORD my, WORD button, WORD keystat
         if (wh != G.g_cwin)
           desk_clear(G.g_cwin);
 
-/* BUGFIX       */
-#ifndef DESK1
-        if (wh == 0)                            /* if click outside win's*/
-        {
-          men_update(G.a_trees[ADMENU]);
-          wind_update(BEG_UPDATE);
-          while(button & 0x0001)
-            graf_mkstate(&junk, &junk, &button, &junk);
-          wind_update(END_UPDATE);
-          return(done);
-        }
-#endif
-/* */
         desk_verify(wh, FALSE);
 
         wind_get(wh, WF_WXYWH, &c.g_x, &c.g_y, &c.g_w, &c.g_h);
@@ -737,7 +601,7 @@ static WORD hndl_button(WORD clicks, WORD mx, WORD my, WORD button, WORD keystat
           {
             dest_wh = act_bdown(G.g_cwin, G.g_screen, G.g_croot, &mx, &my,
                                 keystate, &c, &dobj);
-#ifdef DESK1
+
             if (dest_wh != NIL)
             {
                 if (dest_wh == 0)
@@ -752,13 +616,6 @@ static WORD hndl_button(WORD clicks, WORD mx, WORD my, WORD button, WORD keystat
                 desk1_drag(wh, dest_wh, root, dobj, mx, my);
                 desk_clear(wh);
             } /* if !NIL */
-#else
-            if ( (dest_wh != NIL ) && (dest_wh != 0) )
-            {
-              fun_drag(wh, dest_wh, dobj, mx, my);
-              desk_clear(wh);
-            } /* if !NIL */
-#endif
           } /* if button */
         } /* if clicks */
         else
@@ -915,96 +772,13 @@ static WORD hndl_kbd(WORD thechar)
 } /* hndl_kbd */
 
 
-
-#ifndef DESK1
-static void hot_close(WORD wh)
-{
-/* "close" the path but don't set a new dir. & don't redraw the window  */
-/* until the button is up or there are no more CLOSED messages          */
-        WORD            drv, done, at_drvs, cnt;
-        WORD            mx, my, button, kstate;
-        BYTE            path[LEN_ZPATH+1], name[LEN_ZNODE+1], ext[LEN_ZEXT+1];
-        BYTE            *pend, *pname, *ppath;
-        WNODE           *pw;
-
-        pw = win_find(wh);
-        at_drvs = FALSE;
-        done = FALSE;
-        cnt = 0;
-/*      wind_update(BEG_UPDATE);*/
-        do
-        {
-          cnt++;
-          ppath = &pw->w_path->p_spec[0];
-          pname = &pw->w_name[0];
-          fpd_parse(ppath, &drv, &path[0], &name[0], &ext[0]);
-          if (path[0] == NULL)  /* No more path; show disk icons */
-          {
-            strcpy(pname, ini_str(STDSKDRV));
-            ppath[3] = '*';
-            ppath[4] = '.';
-            ppath[5] = '*';
-            ppath[6] = NULL;
-            at_drvs = TRUE;
-          }
-          else
-          {                     /* Some path left; scan off last dir.   */
-            pend = pname;
-            pend += (strlen(pname) - 3);        /* skip trailing '\ '   */
-                                                /* Remove last name     */
-            while ( (pend != pname) && (*pend != '\\') )
-              pend--;
-            pend++;                             /* save trailing '\'    */
-/*          *pend++ = SPACE;*/
-            *pend = NULL;
-                                                /* now fix path         */
-            pend = ppath;
-            pend += (strlen(ppath) - 5);        /* skip trailing '\*.*' */
-                                                /* Remove last name     */
-            while ( (pend != ppath) && (*pend != '\\') )
-              pend--;
-            pend++;                             /* save trailing '\'    */
-            *pend = NULL;
-            strcat(ppath, "*.*");               /* put '*.*' back on    */
-          } /* else */
-          wind_set(pw->w_id, WF_NAME, pw->w_name, 0, 0);
-/*        wind_update(END_UPDATE);*/
-          graf_mkstate(&mx, &my, &button, &kstate);
-          if (button == 0x0)
-            done = TRUE;
-          else
-          {
-            evnt_timer(750, 0);
-                                                /* grab the screen      */
-/*          wind_update(BEG_UPDATE);*/
-            graf_mkstate(&mx, &my, &button, &kstate);
-            if (button == 0x0)
-              done = TRUE;
-          } /* else */
-        } while ( !done );
-/*      wind_update(END_UPDATE);*/
-        if (cnt > 1)
-          ig_close = TRUE;
-/*      desk_verify(G.g_rmsg[3], FALSE);*/
-        fpd_parse(ppath, &drv, &path[0], &name[0], &ext[0]);
-        if (at_drvs)
-          drv = '@';
-        pw->w_cvrow = 0;                        /* reset slider         */
-        do_fopen(pw, 0, drv, path, name, ext, FALSE, TRUE);
-        cnx_put();
-} /* hot_close */
-#endif
-
-
 WORD hndl_msg(void)
 {
         WORD            done;
         WNODE           *pw;
         WORD            change, menu;
-#ifdef DESK1
         WORD            x,y,w,h;
         WORD            cols, redraw;
-#endif
 
         done = change = menu = FALSE;
         if ( G.g_rmsg[0] == WM_CLOSED && ig_close )
@@ -1019,11 +793,9 @@ WORD hndl_msg(void)
           case WM_FULLED:
           case WM_ARROWED:
           case WM_VSLID:
-#ifdef DESK1
           case WM_HSLID:
           case WM_SIZED:
           case WM_MOVED:
-#endif
                 desk_clear(G.g_cwin);
                 break;
         }
@@ -1043,9 +815,8 @@ WORD hndl_msg(void)
                 break;
           case WM_TOPPED:
                 wind_set(G.g_rmsg[3], WF_TOP, 0, 0, 0, 0);
-#ifdef DESK1
                 wind_get(G.g_rmsg[3], WF_WXYWH, &x, &y, &w, &h);
-#endif
+
                 pw = win_find(G.g_rmsg[3]);
                 if (pw)
                 {
@@ -1053,16 +824,10 @@ WORD hndl_msg(void)
                   desk_verify(pw->w_id, FALSE);
                 }
                 change = TRUE;
-#ifdef DESK1
                 G.g_wlastsel = pw->w_id;
-#endif
                 break;
           case WM_CLOSED:
-#ifdef DESK1
                 do_filemenu(CLOSITEM);
-#else
-                hot_close(G.g_rmsg[3]);
-#endif
                 break;
           case WM_FULLED:
                 pw = win_find(G.g_rmsg[3]);
@@ -1080,7 +845,6 @@ WORD hndl_msg(void)
           case WM_VSLID:
                 win_slide(G.g_rmsg[3], G.g_rmsg[4]);
                 break;
-#ifdef DESK1
           case WM_MOVED:
           case WM_SIZED:
                 x = G.g_rmsg[4];
@@ -1114,7 +878,6 @@ WORD hndl_msg(void)
                 }
                 change = TRUE;
                 break;
-#endif
         }
         if (change)
           cnx_put();
@@ -1130,9 +893,7 @@ static void cnx_put(void)
         WORD            iwin;
         WSAVE           *pws;
         WNODE           *pw;
-#ifdef DESK1
         WORD            iwsave;
-#endif
 
         G.g_cnxsave.vitem_save = (G.g_iview == V_ICON) ? 0 : 1;
         G.g_cnxsave.sitem_save = G.g_csortitem - NAMEITEM;
@@ -1144,7 +905,6 @@ static void cnx_put(void)
         G.g_cnxsave.ctmfm_save = G.g_ctimeform;
         G.g_cnxsave.cdtfm_save = G.g_cdateform;
 
-#ifdef DESK1
         for (iwsave=0, iwin = 0; iwin < NUM_WNODES; iwin++)
         {
                 pw = win_ith(iwin + 1);
@@ -1164,62 +924,9 @@ static void cnx_put(void)
                 pws->obid_save = 0;
                 pws->pth_save[0] = 0;
         }
-#else
-        for (iwin = 0; iwin < NUM_WNODES; iwin++)
-        {
-          pw = win_find(G.g_wlist[iwin].w_id);
-          pws = &G.g_cnxsave.win_save[iwin];
-          wind_get(pw->w_id, WF_CXYWH, &pws->x_save, &pws->y_save,
-                   &pws->w_save, &pws->h_save);
-          do_xyfix(&pws->x_save, &pws->y_save);
-          pws->vsl_save = pw->w_cvrow;
-          pws->obid_save = 0;
-          strcpy(&pws->pth_save[0], pw->w_path->p_spec);
-        } /* for */
-#endif
 } /* cnx_put */
 
 
-/************************************************************************/
-/* c n x _ o p e n                                                      */
-/************************************************************************/
-#ifndef DESK1
-static void cnx_open(WORD idx)
-{
-        WSAVE           *pws;
-        WNODE           *pw;
-        WORD            drv;
-        BYTE            pname[9];
-        BYTE            pext[4];
-
-        pws = &G.g_cnxsave.win_save[idx];
-        pw = win_alloc();
-        if (pw)
-        {
-          if (idx == gl_idsiztop)               /* if a window is fulled*/
-            gl_whsiztop = pw->w_id;             /*  save the wh         */
-          pw->w_cvrow = pws->vsl_save;
-          fpd_parse(&pws->pth_save[0], &drv, &G.g_tmppth[0],
-                    &pname[0], &pext[0]);
-          if (pname[0] == NULL)
-            drv = NULL;
-          do_xyfix(&pws->x_save, &pws->y_save);
-          pro_chdir(drv, &G.g_tmppth[0]);
-          if (DOS_ERR)
-          {
-            drv = '@';
-            G.g_tmppth[0] = NULL;
-            pname[0] = pext[0] = '*';
-            pname[1] = pext[1] = NULL;
-          } /* if */
-          do_diropen(pw, TRUE, pws->obid_save, drv, &G.g_tmppth[0],
-                     &pname[0], &pext[0], (GRECT *)&pws->x_save, TRUE);
-        } /* if pw */
-} /* cnx_open */
-#endif
-
-
-#ifdef DESK1
 static void cnx_get(void)
 {
         /* DESKTOP v1.2: This function is a lot more involved */
@@ -1290,28 +997,6 @@ static void cnx_get(void)
         }
         cnx_put();
 } /* cnx_get */
-#else
-static void cnx_get(void)
-{
-        G.g_iview = (G.g_cnxsave.vitem_save == 0) ? V_TEXT : V_ICON;
-        do_viewmenu(ICONITEM);
-        do_viewmenu(NAMEITEM + G.g_cnxsave.sitem_save);
-        G.g_ccopypref = G.g_cnxsave.ccopy_save;
-        G.g_cdelepref = G.g_cnxsave.cdele_save;
-        G.g_covwrpref = G.g_cnxsave.covwr_save;
-        G.g_cdclkpref = G.g_cnxsave.cdclk_save;
-        G.g_cmclkpref = G.g_cnxsave.cmclk_save;
-        G.g_ctimeform = G.g_cnxsave.ctmfm_save;
-        G.g_cdateform = G.g_cnxsave.cdtfm_save;
-        G.g_cdclkpref = evnt_dclick(G.g_cdclkpref, TRUE);
-        G.g_cmclkpref = menu_click(G.g_cmclkpref, TRUE);
-
-        cnx_open(gl_open1st);
-        cnx_open( abs(1 - gl_open1st) );
-        cnx_put();
-} /* cnx_get */
-#endif
-
 
 
 /* Counts the occurrences of c in str */
@@ -1508,11 +1193,6 @@ static void desk_xlate_fix(void)
 
     /* translate and fix TEDINFO strings */
     xlate_fix_tedinfo(desk_rs_tedinfo, RS_NTED);
-
-#if !CONF_WITH_DESK1
-    /* Disable menu entry that toggles icon/text mode */
-    menu_ienable((LONG)desk_rs_trees[ADMENU],ICONITEM,FALSE);
-#endif
 }
 
 /* Fake a rsrc_gaddr for the ROM desktop: */
@@ -1542,9 +1222,6 @@ WORD deskmain(void)
 {
         WORD            ii, done, flags;
         UWORD           ev_which, mx, my, button, kstate, kret, bret;
-#ifndef DESK1
-        WSAVE           *pws;
-#endif
 
         /* initialize libraries */
         gl_apid = appl_init();
@@ -1565,22 +1242,9 @@ WORD deskmain(void)
                                                 /* set clip to working  */
                                                 /*   desk and calc full */
         wind_get(0, WF_WXYWH, &G.g_xdesk, &G.g_ydesk, &G.g_wdesk, &G.g_hdesk);
-#ifdef DESK1
         wind_calc(1, -1, G.g_xdesk,  G.g_ydesk,  G.g_wdesk,  G.g_hdesk,
                                         &G.g_xfull, &G.g_yfull, &G.g_wfull, &G.g_hfull);
-#else
-        wind_get(0, WF_WXYWH, &G.g_xfull, &G.g_yfull, &G.g_wfull, &G.g_hfull);
-        G.g_xfull += min(16, gl_wbox);
-        G.g_yfull += gl_hbox;
-        do_xyfix(&G.g_xfull, &G.g_yfull);
-        G.g_wfull -= (2 * G.g_xfull);
-        G.g_hfull -= (2 * gl_hbox);
-                                        /* set up small window size     */
-        gl_normwin.g_x = G.g_xfull;
-        gl_normwin.g_y = G.g_yfull;
-        gl_normwin.g_w = G.g_wfull;
-        gl_normwin.g_h = (G.g_hfull - (gl_hbox / 2)) / 2;
-#endif
+
                                                 /* initialize mouse     */
         wind_update(BEG_UPDATE);
         desk_wait(TRUE);
@@ -1649,9 +1313,7 @@ WORD deskmain(void)
 
                                                 /* set up initial prefs */
         G.g_ccopypref = TRUE;
-#ifdef DESK1
         G.g_cdelepref = TRUE;
-#endif
         G.g_ctimeform = TRUE;
         G.g_cdateform = TRUE;
         G.g_cdclkpref = 3;
@@ -1659,25 +1321,10 @@ WORD deskmain(void)
                                                 /*   and its objects    */
         gl_defdrv = app_blddesk();
 
-#ifdef DESK1
         do_wredraw(0, G.g_xdesk, G.g_ydesk, G.g_wdesk, G.g_hdesk);
 
         /* Take over the desktop */
         wind_set(0, WF_NEWDESK, G.g_screen, TRUE, FALSE);
-#else
-                                                /* fix up subwindows    */
-        for (ii = 0; ii < NUM_WNODES; ii++)
-        {
-          pws = &G.g_cnxsave.win_save[ii];
-          rc_copy(&gl_normwin, (GRECT *)&pws->x_save); /* copy in normal size */
-          if (pws->pth_save[0])
-            do_xyfix(&pws->x_save, &pws->y_save);
-        } /* for */
-                                /* fix up y loc. of lower window        */
-        pws->y_save += pws->h_save + (gl_hbox / 2);
-
-        fix_wins();             /* update with latest window x,y,w,h    */
-#endif
 
                                                 /* set up current parms */
         desk_verify(0, FALSE);
@@ -1693,9 +1340,6 @@ WORD deskmain(void)
                                                 /*   loop               */
         flags = MU_BUTTON | MU_MESAG | MU_KEYBD;
         done = FALSE;
-#ifndef DESK1
-        ig_close = FALSE;
-#endif
                                                 /* turn mouse on        */
         desk_wait(FALSE);
 

@@ -3,7 +3,7 @@
  *
  * This file provides a place to centralise the desktop configuration.
  *
- * Copyright (c) 2011 The EmuTOS development team
+ * Copyright (c) 2011-2014 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows
@@ -15,13 +15,8 @@
 #ifndef _DESKCONF_H
 #define _DESKCONF_H
 
-#ifdef DESK1
 #define NUM_WNODES  7               /* maximum number of desktop windows */
 #define NUM_WOBS    128             /* maximum number of desktop objects */
-#else
-#define NUM_WNODES  2
-#define NUM_WOBS    300
-#endif
 
 #define NUM_SOBS    (NUM_WOBS + NUM_WNODES + 1)
 

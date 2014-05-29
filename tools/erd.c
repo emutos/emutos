@@ -161,12 +161,19 @@
  *  v4.4    roger burrows, may/2014
  *          . use real types for te_ptext, te_ptmplt, te_pvalid when
  *            generating code for tedinfos
+ *
+ *  v4.5    roger burrows, may/2014
+ *          . since the DESK1 desktop is now used for all images, we no
+ *            longer wrap certain free strings with #ifdef DESK1/#endif.
+ *            as a result, frstr_cond is no longer used for any resource,
+ *            and could be dropped along with its associated code.
  */
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <limits.h>
 #include <string.h>
+#include <time.h>
 #ifdef ATARI                        /* i.e. running under TOS */
 #define DIRSEP  '\\'
 #else
@@ -369,7 +376,7 @@ typedef struct {
   #define PROGRAM_NAME  "ird"
 #endif
 
-#define VERSION         "v4.2"
+#define VERSION         "v4.5"
 #define MAX_STRLEN      300         /* max size for internal string areas */
 #define NLS             "N_("       /* the macro used in EmuTOS for NLS support*/
 
@@ -453,7 +460,7 @@ typedef struct {
 /*
  *  conditional wrapping control
  */
-LOCAL const CONDITIONAL frstr_cond = { "STNOOPEN", "#if CONF_WITH_DESK1" };
+LOCAL const CONDITIONAL frstr_cond = { "?", "#error \"Code generation error\"" };  /* no match, error if it does ... */
 LOCAL const CONDITIONAL other_cond = { "ADTTREZ", "#ifndef TARGET_192" };
 
 /*
@@ -547,7 +554,7 @@ LOCAL int num_notrans = 0;
 /*
  *  other globals
  */
-LOCAL const char *copyright = PROGRAM_NAME " " VERSION " copyright (c) 2012-2013 by Roger Burrows\n"
+LOCAL const char *copyright = PROGRAM_NAME " " VERSION " copyright (c) 2012-2014 by Roger Burrows\n"
 "This program is licensed under the GNU General Public License.\n"
 "Please see LICENSE.TXT for details.\n";
 
@@ -1298,6 +1305,7 @@ char *basename;
 PRIVATE int write_general_prologue(FILE *fp,char *name,char *ext)
 {
 char *basersc;
+time_t now;
 
     /* strip path from resource/definition */
     basersc = strrchr(rsc_root,DIRSEP);
@@ -1305,12 +1313,14 @@ char *basersc;
         basersc = rsc_root;
     else basersc++;
 
+    now = time(NULL);
+
     fprintf(fp,"/*\n");
     fprintf(fp," * %s.%s\n",name,ext);
     fprintf(fp," *\n");
     fprintf(fp," * Generated from %s.rsc and %s.%s by %s %s\n",basersc,basersc,defext,PROGRAM_NAME,VERSION);
     fprintf(fp," *\n");
-    fprintf(fp," * Copyright 2013 The EmuTOS development team\n");
+    fprintf(fp," * Copyright 2013-%4.4s The EmuTOS development team\n",asctime(gmtime(&now))+20);
     fprintf(fp," *\n");
     fprintf(fp," * This software is licenced under the GNU General Public License.\n");
     fprintf(fp," * Please see LICENSE.TXT for further information.\n");
@@ -1641,10 +1651,6 @@ char *base = (char *)rschdr;
         }
     }
 
-#ifdef ICON_RSC
-    fprintf(fp,"#if CONF_WITH_DESK1 || CONF_WITH_DESKTOP_ICONS\n\n");
-#endif
-
     /*
      * then we create the actual icon mask/data arrays
      */
@@ -1666,13 +1672,6 @@ char *base = (char *)rschdr;
     }
     if (conditional_iconblk_start < nib)
         fprintf(fp,"#endif\n");
-
-#ifdef ICON_RSC
-    fprintf(fp,"#endif /* CONF_WITH_DESK1 || CONF_WITH_DESKTOP_ICONS */\n\n\n");
-    fprintf(fp,"#if CONF_WITH_DESK1 || CONF_WITH_DESKTOP_ICONS\n\n");
-#else
-    fprintf(fp,"\n");
-#endif
 
     /*
      * finally we create the array of ICONBLKs with pointers to mask/data
@@ -1697,10 +1696,6 @@ char *base = (char *)rschdr;
     if (conditional_iconblk_start < nib)
         fprintf(fp,"#endif\n");
     fprintf(fp,"};\n");
-
-#ifdef ICON_RSC
-    fprintf(fp,"\n#endif /* CONF_WITH_DESK1 || CONF_WITH_DESKTOP_ICONS */\n");
-#endif
 
     fprintf(fp,"\n\n");
 

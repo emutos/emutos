@@ -143,9 +143,6 @@
 # ifndef CONF_WITH_ASSERT
 #  define CONF_WITH_ASSERT 0
 # endif
-# ifndef CONF_WITH_DESK1
-#  define CONF_WITH_DESK1 1
-# endif
 # ifndef CONF_WITH_DESKTOP_ICONS
 #  define CONF_WITH_DESKTOP_ICONS 0
 # endif
@@ -685,18 +682,6 @@
 #endif
 
 /*
- * Define CONF_WITH_DESK1 to 1 to use the modern PC-GEM v1.0 style desktop.
- * Define it to 0 to use the old desktop with 2 fixed windows.
- */
-#ifndef CONF_WITH_DESK1
-# define CONF_WITH_DESK1 1
-#endif
-#if CONF_WITH_DESK1
-  /* The current EmuDesk sources test the presence of this define */
-# define DESK1
-#endif
-
-/*
  * Set CONF_WITH_DESKTOP_ICONS to 1 to include all the desktop icons.
  */
 #ifndef CONF_WITH_DESKTOP_ICONS
@@ -977,12 +962,6 @@
 #if USE_STOP_INSN_TO_FREE_HOST_CPU
 # if !CONF_ATARI_HARDWARE
 #  error "USE_STOP_INSN_TO_FREE_HOST_CPU currently requires CONF_ATARI_HARDWARE."
-# endif
-#endif
-
-#if CONF_WITH_DESKTOP_ICONS
-# if !CONF_WITH_DESK1
-#  error "CONF_WITH_DESKTOP_ICONS requires CONF_WITH_DESK1."
 # endif
 #endif
 

@@ -81,7 +81,6 @@ static WORD lastdisk(void)
 *       Routine to place disk icon between the current disk icon and
 *       the trash can
 */
-#ifdef DESK1
 static void ins_posdisk(WORD dx, WORD dy, WORD *pdx, WORD *pdy)
 {
         WORD            tx, ty;
@@ -120,7 +119,6 @@ static void ins_posdisk(WORD dx, WORD dy, WORD *pdx, WORD *pdy)
           *pdy = dy;
         }
 }
-#endif
 
 
 /*
@@ -194,13 +192,11 @@ WORD ins_disk(ANODE *pa)
                 newpa->a_aicon = pa->a_aicon;
                 newpa->a_dicon = NIL;
                 newpa->a_letter = nletter[0];
-#ifdef DESK1
                 ins_posdisk(pa->a_xspot, pa->a_yspot, &newpa->a_xspot,
                                         &newpa->a_yspot);
 
                 snap_disk(newpa->a_xspot, newpa->a_yspot,
                                         &newpa->a_xspot, &newpa->a_yspot);
-#endif
               } /* if newpa */
               else
                 fun_alert(1, STAPGONE, NULLPTR);

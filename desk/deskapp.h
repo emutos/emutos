@@ -3,7 +3,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2013 The EmuTOS development team
+*                 2002-2014 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -88,10 +88,8 @@
 
 #if CONF_WITH_DESKTOP_ICONS
 #define NUM_IBLKS 72
-#elif CONF_WITH_DESK1
-#define NUM_IBLKS 8
 #else
-#define NUM_IBLKS 0
+#define NUM_IBLKS 8
 #endif
 
 #if (NUM_IBLKS > NUM_GEM_IBLKS)

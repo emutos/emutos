@@ -5558,3 +5558,7 @@ Start... early ages
 
 2014-05-28
 - desk/deskdir.c: Simplify d_dofcopy() for maintainability. (RFB)
+
+2014-05-29
+- include/config.h desk/* tools/erd.c: Code cleanup: remove conditionally
+  compiled code for crippled desktop, since it is no longer used. (RFB)

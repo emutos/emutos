@@ -731,9 +731,6 @@ WORD par_chk(BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path)
                 if ( (pf->f_obid != NIL) &&
                      (G.g_screen[pf->f_obid].ob_state & SELECTED) &&
                      (pf->f_attr & F_SUBDIR) &&
-#ifndef DESK1
-                     !(pf->f_attr & F_FAKE) &&
-#endif
                      (!strcmp(&pf->f_name[0], tdst)) )
                 {
                                                 /* INVALID      */
@@ -761,7 +758,7 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
         LONG            tree;
         FNODE           *pf;
         WORD            ret, more, ob;
-        BYTE            *pglsrc, *pgldst, *ptmpsrc, *ptmpdst;
+        BYTE            *ptmpsrc, *ptmpdst;
         LONG            lavail;
         BYTE            srcpth[MAXPATHLEN];
         BYTE            dstpth[MAXPATHLEN];
@@ -769,8 +766,6 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
 
 /* BugFix       */
         graf_mouse(HGLASS, 0x0L);
-        pglsrc = srcpth;
-        pgldst = dstpth;
         tree = 0x0L;
         ml_havebox = FALSE;
         switch(op)
@@ -836,15 +831,12 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
         for (pf = pflist; pf && more; pf = pf->f_next)
         {
           if ( (pf->f_obid != NIL) &&
-#ifndef DESK1
-               !(pf->f_attr & F_FAKE) &&
-#endif
                (G.g_screen[pf->f_obid].ob_state & SELECTED))
           {
-            strcpy(pglsrc, psrc_path);
+            strcpy(srcpth, psrc_path);
             if (op == OP_COPY)
             {
-              strcpy(pgldst, pdst_path);
+              strcpy(dstpth, pdst_path);
               if (!ml_dlpr)             /* show the moving icon!        */
               {
                 if (from_disk)
@@ -856,18 +848,18 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
             } /* if OP_COPY */
             if (pf->f_attr & F_SUBDIR)
             {
-              add_path(pglsrc, &pf->f_name[0]);
+              add_path(srcpth, &pf->f_name[0]);
               if (op == OP_COPY)
               {
-                like_parent(pgldst, &pf->f_name[0]);
-                dos_mkdir(pgldst);
+                like_parent(dstpth, &pf->f_name[0]);
+                dos_mkdir(dstpth);
                 while (DOS_ERR && more)
                 {
                                                 /* see if dest folder   */
                                                 /*   already exists     */
                   if (DOS_AX == E_NOACCESS)
                   {
-                    if ( same_fold(pglsrc, pgldst) )
+                    if ( same_fold(srcpth, dstpth) )
                     {
                                                 /* get the folder name  */
                                                 /*   from the pathnames */
@@ -890,11 +882,11 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
                       {
                         inf_sget(G.a_trees[ADCPALER], 3, &ml_fdst[0]);
                         unfmt_str(&ml_fdst[0], &ml_fstr[0]);
-                        del_fname(pgldst);
+                        del_fname(dstpth);
                         if (ml_fstr[0] != NULL)
                         {
-                          add_fname(pgldst, &ml_fstr[0]);
-                          dos_mkdir(pgldst);
+                          add_fname(dstpth, &ml_fstr[0]);
+                          dos_mkdir(dstpth);
                         } /* if */
                         else
                           more = FALSE;
@@ -906,11 +898,11 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
                   else
                     more = FALSE;
                 } /* while */
-                strcat(pgldst, "\\*.*");
+                strcat(dstpth, "\\*.*");
               } /* if */
               if (more)
               {
-                more = d_doop(0, op, pglsrc, pgldst, tree, pfcnt, pdcnt);
+                more = d_doop(0, op, srcpth, dstpth, tree, pfcnt, pdcnt);
                 if ((op == OP_DELETE) && !ml_dlpr)
                   blank_it(pf->f_obid);
               }
@@ -918,7 +910,7 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
             else
             {
               if (op != OP_COUNT)
-                ptmpsrc = add_fname(pglsrc, pf->f_name);
+                ptmpsrc = add_fname(srcpth, pf->f_name);
               switch(op)
               {
                     case OP_COUNT:
@@ -926,13 +918,13 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
                         G.g_size += pf->f_size;
                         break;
                     case OP_DELETE:
-                        more = d_dofdel(pglsrc);
+                        more = d_dofdel(srcpth);
                         if (!ml_dlpr)
                           blank_it(pf->f_obid);
                         break;
                     case OP_COPY:
-                        ptmpdst = add_fname(pgldst, pf->f_name);
-                        more = d_dofcopy(pglsrc, pgldst, pf->f_time,
+                        ptmpdst = add_fname(dstpth, pf->f_name);
+                        more = d_dofcopy(srcpth, dstpth, pf->f_time,
                                          pf->f_date, pf->f_attr);
                         restore_path(ptmpdst);  /* restore original dest path */
                         break;

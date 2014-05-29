@@ -75,25 +75,21 @@ void desk_verify(WORD wh, WORD changed)
         WNODE   *pw;
         WORD    xc, yc, wc, hc;
 
-#ifdef DESK1
         if (wh)
         {
-#endif
                                                 /* get current size     */
-        pw = win_find(wh);
-        if (pw)
-        {
-          if (changed)
+          pw = win_find(wh);
+          if (pw)
           {
-            wind_get(wh, WF_WXYWH, &xc, &yc, &wc, &hc);
-            win_bldview(pw, xc, yc, wc, hc);
+            if (changed)
+            {
+              wind_get(wh, WF_WXYWH, &xc, &yc, &wc, &hc);
+              win_bldview(pw, xc, yc, wc, hc);
+            }
+            G.g_croot = pw->w_root;
           }
-          G.g_croot = pw->w_root;
-        }
-#ifdef DESK1
         }
         else G.g_croot = 1;                     /* DESK v1.2: The Desktop */
-#endif
 
         G.g_cwin = wh;
         G.g_wlastsel = wh;
@@ -117,11 +113,7 @@ void do_wredraw(WORD w_handle, WORD xc, WORD yc, WORD wc, WORD hc)
           root = pw->w_root;
         }
         else
-#ifdef DESK1
           root = 1;
-#else
-          return;
-#endif
 
         graf_mouse(M_OFF, 0x0L);
 
@@ -176,20 +168,16 @@ void do_xyfix(WORD *px, WORD *py)
 void do_wopen(WORD new_win, WORD wh, WORD curr, WORD x, WORD y, WORD w, WORD h)
 {
         GRECT   c;
-#ifdef DESK1
         GRECT   d;
-#endif
 
         do_xyfix(&x, &y);
         get_xywh(G.g_screen, G.g_croot, &c.g_x, &c.g_y, &c.g_w, &c.g_h);
 
-#ifdef DESK1
         /* Zooming box effect */
         get_xywh(G.g_screen, curr, &d.g_x, &d.g_y, &d.g_w, &d.g_h);
         d.g_x += c.g_x;
         d.g_y += c.g_y;
         graf_growbox(d.g_x, d.g_y, d.g_w, d.g_h, x, y, w, h);
-#endif
 
         act_chg(G.g_cwin, G.g_screen, G.g_croot, curr, &c, SELECTED,
                 FALSE, TRUE, TRUE);
@@ -202,10 +190,6 @@ void do_wopen(WORD new_win, WORD wh, WORD curr, WORD x, WORD y, WORD w, WORD h)
 
 void do_wfull(WORD wh)
 {
-#ifndef DESK1
-        WORD     tmp_wh, y;
-        GRECT    temp;
-#endif
         GRECT    curr, prev, full;
 
         gl_whsiztop = NIL;
@@ -213,7 +197,6 @@ void do_wfull(WORD wh)
         wind_get(wh, WF_PXYWH, &prev.g_x, &prev.g_y, &prev.g_w, &prev.g_h);
         wind_get(wh, WF_FXYWH, &full.g_x, &full.g_y, &full.g_w, &full.g_h);
 
-#ifdef DESK1
         if (rc_equal(&curr, &full))
         {
                 wind_set(wh, WF_CXYWH, prev.g_x, prev.g_y, prev.g_w, prev.g_h);
@@ -226,37 +209,6 @@ void do_wfull(WORD wh)
                              full.g_x, full.g_y, full.g_w, full.g_h);
                 wind_set(wh, WF_CXYWH, full.g_x, full.g_y, full.g_w, full.g_h);
         }
-#else /* DESK1 */
-                        /* have to check for shrinking a window that    */
-                        /* was full when Desktop was first started.     */
-        if ( (rc_equal(&curr, &prev)) && (curr.g_h > gl_normwin.g_h) )
-        {                               /* shrink full window           */
-                /* find the other window (assuming only 2 windows)      */
-          if ( G.g_wlist[0].w_id == wh)
-            tmp_wh = G.g_wlist[1].w_id;
-          else
-            tmp_wh = G.g_wlist[0].w_id;
-                                /* decide which window we're shrinking  */
-          wind_get(tmp_wh, WF_CXYWH, &temp.g_x, &temp.g_y,
-                   &temp.g_w, &temp.g_h);
-          if (temp.g_y > gl_normwin.g_y)
-            y = gl_normwin.g_y;         /* shrinking upper window       */
-          else                          /* shrinking lower window       */
-            y = gl_normwin.g_y + gl_normwin.g_h + (gl_hbox / 2);
-          wind_set(wh, WF_CXYWH, gl_normwin.g_x, y,
-                   gl_normwin.g_w, gl_normwin.g_h);
-        } /* if */
-                                        /* already full, so change      */
-                                        /* back to previous             */
-        else if ( rc_equal(&curr, &full) )
-          wind_set(wh, WF_CXYWH, prev.g_x, prev.g_y, prev.g_w, prev.g_h);
-                                        /* make it full                 */
-        else
-        {
-          gl_whsiztop = wh;
-          wind_set(wh, WF_SIZTOP, full.g_x, full.g_y, full.g_w, full.g_h);
-        }
-#endif /* DESK1 */
 } /* do_wfull */
 
 
@@ -292,16 +244,11 @@ WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon, WORD drv,
                                                 /* set new name and info*/
                                                 /*   lines for window   */
         win_sname(pw);
-#ifdef DESK1
         win_sinfo(pw);
-#endif
         wind_set(pw->w_id, WF_NAME, pw->w_name, 0, 0);
-#ifdef DESK1
         wind_set(pw->w_id, WF_INFO, pw->w_info, 0, 0);
-#endif
 
                                                 /* do actual wind_open  */
-#ifdef DESK1
         if (curr_icon)
         {
                 do_wopen(new_win, pw->w_id, curr_icon,
@@ -309,12 +256,6 @@ WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon, WORD drv,
                 if (new_win)
                         win_top(pw);
         }
-#else
-        do_wopen(new_win, pw->w_id, curr_icon,
-                                pt->g_x, pt->g_y, pt->g_w, pt->g_h);
-        if (new_win)
-            win_top(pw);
-#endif
                                                 /* verify contents of   */
                                                 /*   windows object list*/
                                                 /*   by building view   */
@@ -410,7 +351,6 @@ static WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, WORD drv,
 /*
 *       Open a disk
 */
-#ifdef DESK1
 static WORD do_dopen(WORD curr)
 {
         WORD    drv;
@@ -436,7 +376,6 @@ static WORD do_dopen(WORD curr)
         }
         return( FALSE );
 }
-#endif
 
 
 /*
@@ -457,55 +396,14 @@ void do_fopen(WNODE *pw, WORD curr, WORD drv, BYTE *ppath, BYTE *pname,
         pro_chdir(drv, "");
         if (DOS_ERR)
         {
-#ifdef DESK1
           true_closewnd(pw);
           return;
-#else /*DESK1*/
-          if ( DOS_AX == E_PATHNOTFND )
-          {
-            if (!chkall)
-              fun_alert(1, STDEEPPA, NULLPTR);
-            else
-            {
-              pro_chdir(drv, "");
-              pnew = "";
-            }
-          } /* if */
-          else
-            return;                     /* error opening disk drive     */
-#endif  /*DESK1 */
         } /* if DOS_ERR */
         else
         {
           pro_chdir(drv, ppath);
-#ifndef DESK1
-          if (DOS_ERR)
-          {
-            if ( DOS_AX == E_PATHNOTFND )
-            {                           /* DOS path is too long?        */
-              if (chkall)
-              {
-                pro_chdir(drv, "");
-                pnew = "";
-              }
-              else
-              {
-                fun_alert(1, STDEEPPA, NULLPTR);
-                                                /* back up one level    */
-                pp = last_separator(ppath);
-                *pp = NULL;
-                pname = "*";
-                pext  = "*";
-                return;
-              } /* else */
-            } /* if DOS_AX */
-            else
-              return;                   /* error opening disk drive     */
-          } /* if DOS_ERR */
-#endif
         } /* else */
         pn_close(pw->w_path);
-#ifdef DESK1
         if (!DOS_ERR)
         {
                 pname = "*";
@@ -521,20 +419,6 @@ void do_fopen(WNODE *pw, WORD curr, WORD drv, BYTE *ppath, BYTE *pname,
           pro_chdir(drv,pnew);                  /* fixup current dir */
           do_diropen(pw, FALSE, curr, drv, pnew, pname, pext, &t, redraw);
         }
-#else /* DESK1 */
-        if (ok)
-        {
-          ok = do_diropen(pw, FALSE, curr, drv, pnew, pname, pext, &t, redraw);
-          if ( !ok )
-          {
-            fun_alert(1, STDEEPPA, NULLPTR);
-                                                /* back up one level    */
-            pp = last_separator(ppath);
-            *pp = NULL;
-            do_diropen(pw, FALSE, curr, drv, pnew, pname, pext, &t, redraw);
-          }
-        }
-#endif /* DESK1 */
 } /* do_fopen */
 
 
@@ -565,42 +449,24 @@ WORD do_open(WORD curr)
                 done = do_aopen(pa,isapp,curr,drv,&path[0],&pf->f_name[0]);
                 break;
             case AT_ISFOLD:
-#ifndef DESK1
-                if ( (pf->f_attr & F_FAKE) && pw )
-                  fun_mkdir(pw);
+                if (path[0] != NULL)
+                  strcat(&path[0], "\\");
+                if ( (strlen(path) + strlen(pf->f_name)) >= (LEN_ZPATH-3) )
+                  fun_alert(1, STDEEPPA, NULLPTR);
                 else
-#endif
                 {
-                  if (path[0] != NULL)
-                    strcat(&path[0], "\\");
-                  if ( (strlen(path) + strlen(pf->f_name)) >= (LEN_ZPATH-3) )
-                    fun_alert(1, STDEEPPA, NULLPTR);
-                  else
-                  {
-                    strcat(&path[0], &pf->f_name[0]);
-                    pw->w_cvrow = 0;            /* reset slider         */
-                    do_fopen(pw, curr, drv, &path[0], &name[0],
-                             &ext[0], FALSE, TRUE);
-                  }
+                  strcat(&path[0], &pf->f_name[0]);
+                  pw->w_cvrow = 0;            /* reset slider         */
+                  do_fopen(pw, curr, drv, &path[0], &name[0],
+                           &ext[0], FALSE, TRUE);
                 }
                 break;
             case AT_ISDISK:
-#ifdef DESK1
                 do_dopen(curr);
-#else
-                drv = (0x00ff & pa->a_letter);
-                path[0] = NULL;
-                name[0] = ext[0] = '*';
-                name[1] = ext[1] = NULL;
-                do_fopen(pw, curr, drv, &path[0], &name[0], &ext[0],
-                                         FALSE, TRUE);
-#endif
                 break;
-#ifdef DESK1
             case AT_ISTRSH:
                 form_alert(1, (LONG)ini_str(STNOOPEN));
                 break;
-#endif
           }
         }
 
@@ -627,10 +493,6 @@ WORD do_info(WORD curr)
           switch( pa->a_type )
           {
             case AT_ISFOLD:
-#ifndef DESK1
-                if (pf->f_attr & F_FAKE)
-                  break;
-#endif
                 /* drop thru */
             case AT_ISFILE:
                 ret = inf_file_folder(&pw->w_path->p_spec[0], pf);
@@ -638,18 +500,12 @@ WORD do_info(WORD curr)
                   fun_rebld(pw);
                 break;
             case AT_ISDISK:
-#ifdef DESK1
                 junk = (get_spec(G.g_screen, curr)->ib_char) & 0xFF;
                 inf_disk(junk);
-#else
-                inf_disk( pf->f_junk );
-#endif
                 break;
-#ifdef DESK1
             case AT_ISTRSH:
                 fun_alert(1, STTRINFO, NULLPTR);
                 break;
-#endif
           }
         }
         return( FALSE );
@@ -676,11 +532,7 @@ int do_format(WORD curr)
 
         if ( (pa) && (pa->a_type == AT_ISDISK) )
         {
-#ifdef DESK1
           drive_letter = (get_spec(G.g_screen, curr)->ib_char) & 0xFF;
-#else
-          drive_letter = pf->f_junk;
-#endif
           ret = fun_alert(2, STFORMAT, &drive_letter);
 
           msg[0] = drive_letter;

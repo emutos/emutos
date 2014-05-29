@@ -163,26 +163,15 @@ static WORD ob_sfcb(LONG psfcb, BYTE *pfmt)
         *pdst++ = ' ';
         *pdst++ = (sf.sfcb_attr & F_SUBDIR) ? 0x07 : ' ';
         *pdst++ = ' ';
-#ifndef DESK1
-        if (sf.sfcb_attr & F_DESKTOP)
-        {
-          *pdst++ = sf.sfcb_junk;
-          *pdst++ = ':';
+        while( (*psrc) &&
+               (*psrc != '.') )
+          *pdst++ = *psrc++;
+        while( (pdst - pfmt) < 12 )
           *pdst++ = ' ';
-        }
-        else
-#endif
-        {
-          while( (*psrc) &&
-                 (*psrc != '.') )
-            *pdst++ = *psrc++;
-          while( (pdst - pfmt) < 12 )
-            *pdst++ = ' ';
-          if (*psrc)
-            psrc++;
-          while (*psrc)
-            *pdst++ = *psrc++;
-        }
+        if (*psrc)
+          psrc++;
+        while (*psrc)
+          *pdst++ = *psrc++;
         while( (pdst - pfmt) < 16 )
           *pdst++ = ' ';
         psrc = &psize_str[0];

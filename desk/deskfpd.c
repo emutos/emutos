@@ -403,14 +403,6 @@ static WORD pn_fcomp(FNODE *pf1, FNODE *pf2, WORD which)
 */
 static WORD pn_comp(FNODE *pf1, FNODE *pf2)
 {
-#ifndef DESK1
-        if (pf1->f_attr & F_FAKE)
-          return( -1 );
-
-        if (pf2->f_attr & F_FAKE)
-          return( 1 );
-#endif
-
         if ( (pf1->f_attr ^ pf2->f_attr) & F_SUBDIR)
           return ((pf1->f_attr & F_SUBDIR)? -1: 1);
         else
@@ -473,153 +465,6 @@ FNODE *pn_sort(WORD lstcnt, FNODE *pflist)
 
 
 
-#ifndef DESK1
-
-/*
-*       Make a particular path the active path.  This involves
-*       reading its directory, initializing a file list, and filling
-*       out the information in the path node.
-*/
-static WORD pn_folder(PNODE *thepath)
-{
-        WORD            ret, firstime;
-        FNODE           *thefile, *prevfile;
-
-        thepath->p_count = 0;
-        thepath->p_size = 0x0L;
-        fl_free(thepath->p_flist);
-        thefile = (FNODE *) NULLPTR;
-        prevfile = (FNODE *) &thepath->p_flist;
-                                                /* set of fake new      */
-                                                /*   folder entry       */
-        thefile = fn_alloc();
-        thefile->f_junk = 0x0;
-        thefile->f_attr = F_FAKE | F_SUBDIR;
-        thefile->f_time = 0x0;
-        thefile->f_date = 0x0;
-        thefile->f_size = 0x0L;
-        strcpy(&thefile->f_name[0], ini_str(STNEWFOL));
-                                                /* init for while loop  */
-        G.g_wdta.d_fname[0] = '\0';
-        dos_sdta(&G.g_wdta);
-        ret = firstime = TRUE;
-        while ( ret )
-        {
-          if ( !thefile )
-          {
-            thefile = fn_alloc();
-            if ( !thefile )
-            {
-              ret = FALSE;
-              DOS_AX = E_NOFNODES;
-            }
-          }
-          else
-          {
-                                                /* make so each dir.    */
-                                                /*   has a available new*/
-                                                /*   folder             */
-            if ( G.g_wdta.d_fname[0] != '.' )
-            {
-                                                /* if it is a real file */
-                                                /*   or directory then  */
-                                                /*   save it            */
-              if (!firstime)
-              {
-                memcpy(&thefile->f_junk, &G.g_wdta.d_reserved[20], 23);
-                thefile->f_attr &= ~(F_DESKTOP | F_FAKE);
-              }
-              thepath->p_size += thefile->f_size;
-              prevfile->f_next = ml_pfndx[thepath->p_count++] = thefile;
-              prevfile = thefile;
-              thefile = (FNODE *) NULL;
-            }
-            if (firstime)
-            {
-              ret = dos_sfirst(thepath->p_spec, thepath->p_attr);
-              firstime = FALSE;
-            }
-            else
-              ret = dos_snext();
-          }
-        }
-        prevfile->f_next = (FNODE *) NULLPTR;
-        if ( thefile )
-          fn_free(thefile);
-        thepath->p_flist = pn_sort(thepath->p_count, thepath->p_flist);
-        return(DOS_AX);
-}
-
-/*
-*       Make a particular path the active path.  This involves
-*       reading its directory, initializing a file list, and filling
-*       out the information in the path node.
-*/
-static WORD pn_desktop(PNODE *thepath)
-{
-        FNODE           *thefile, *prevfile;
-        ANODE           *pa;
-        WORD            sortsave;
-
-        thepath->p_count = 0;
-        thepath->p_size = 0x0L;
-        fl_free(thepath->p_flist);
-        thefile = (FNODE *) NULLPTR;
-        prevfile = (FNODE *) &thepath->p_flist;
-        pa = G.g_ahead;
-        while ( pa )
-        {
-          if ( !thefile )
-          {
-            thefile = fn_alloc();
-            if ( !thefile )
-            {
-              pa = 0;
-              DOS_AX = E_NOFNODES;
-            }
-          }
-          else
-          {
-            if (pa->a_flags & AF_ISDESK)
-            {
-              thefile->f_junk = (0x00ff & pa->a_letter);
-              thefile->f_attr = F_DESKTOP | F_SUBDIR;
-              thefile->f_time = 0x0;
-              thefile->f_date = 0x0;
-              thefile->f_size = 0x0L;
-              thefile->f_isap = TRUE;
-              strcpy(&thefile->f_name[0], pa->a_pappl);
-              thefile->f_obid = pa->a_obid;
-              thefile->f_pa = pa;
-              thepath->p_size += thefile->f_size;
-              prevfile->f_next = ml_pfndx[thepath->p_count++] = thefile;
-              prevfile = thefile;
-              thefile = (FNODE *) NULL;
-            }
-            pa = pa->a_next;
-          }
-        }
-        prevfile->f_next = (FNODE *) NULLPTR;
-        if ( thefile )
-          fn_free(thefile);
-        sortsave = G.g_isort;
-        G.g_isort = S_DISK;                     /* sort by drive letter */
-        thepath->p_flist = pn_sort(thepath->p_count, thepath->p_flist);
-        G.g_isort = sortsave;
-        return(0);
-}
-
-
-WORD pn_active(PNODE *thepath)
-{
-        if (thepath->p_spec[0] == '@')
-          return( pn_desktop(thepath) );
-        else
-          return( pn_folder(thepath) );
-}
-
-#else /* DESK1 */
-
 WORD pn_active(PNODE *thepath)
 {
         FNODE *thefile, *prevfile;
@@ -668,5 +513,3 @@ WORD pn_active(PNODE *thepath)
         return(DOS_AX);
 
 }
-
-#endif /* DESK1 */
