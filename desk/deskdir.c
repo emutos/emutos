@@ -42,11 +42,6 @@
 #include "deskdir.h"
 
 
-#define S_FILL_STYLE            23              /* used in blank_it()   */
-#define S_FILL_INDEX            24
-#define S_FILL_COLOR            25
-#define SET_WRITING_MODE        32
-#define abs(x) ( (x) < 0 ? -(x) : (x) )
 #define MAX_TWIDTH 45                           /* used in blank_it()   */
 
 #define MAX_CLUS_SIZE   (32*1024L)  /* maximum cluster size */
@@ -58,54 +53,6 @@ static LONG     copylen;    /* size of above buffer */
 
 static WORD     ml_dlpr, ml_havebox;
 static BYTE     ml_fsrc[LEN_ZFNAME], ml_fdst[LEN_ZFNAME], ml_fstr[LEN_ZFNAME], ml_ftmp[LEN_ZFNAME];
-
-
-
-
-/************************************************************************/
-/* b l a n k _ i t                                                      */
-/************************************************************************/
-static void blank_it(WORD obid)
-{
-/* blit white over just-deleted icon                                    */
-        WORD            blt_x, blt_y, blt_w, blt_h, pxy[4];
-        GRECT           clipr;
-        ICONBLK         *piblk;
-        FDB             dst;
-
-        graf_mouse(M_OFF, 0x0L);
-        wind_get(G.g_wlastsel, WF_WXYWH, &clipr.g_x, &clipr.g_y,
-                 &clipr.g_w, &clipr.g_h);
-        gsx_sclip(&clipr);
-        objc_offset(G.g_screen, obid, &blt_x, &blt_y);
-        if (G.g_iview == V_ICON)
-        {
-          piblk = get_spec(G.g_screen, obid);
-          blt_x += piblk->ib_xtext;
-          blt_y += piblk->ib_yicon;
-          blt_w = piblk->ib_wtext;
-          blt_h = piblk->ib_hicon + piblk->ib_htext;
-        } /* if V_ICON */
-        else                                    /* view is V_TEXT       */
-        {
-          blt_w = gl_wchar * MAX_TWIDTH;
-          blt_h = gl_hchar + 1;
-        } /* else */
-        gsx_1code(SET_WRITING_MODE, MD_REPLACE);
-        gsx_1code(S_FILL_STYLE, FIS_SOLID);
-        gsx_1code(S_FILL_INDEX, IP_SOLID);
-        gsx_1code(S_FILL_COLOR, WHITE);
-        gsx_fix(&dst, 0x0L, 0, 0);
-        pxy[0] = blt_x;
-        pxy[1] = blt_y;
-        pxy[2] = blt_x + blt_w - 1;
-        pxy[3] = blt_y + blt_h - 1;
-        vr_recfl( &pxy[0], &dst );
-        gsx_1code(S_FILL_COLOR, BLACK);
-        gsx_1code(SET_WRITING_MODE, MD_XOR);
-        gsx_attr(FALSE, MD_XOR, BLACK);
-        graf_mouse(M_ON, 0x0L);
-} /* blank_it */
 
 
 /************************************************************************/
@@ -903,8 +850,6 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
               if (more)
               {
                 more = d_doop(0, op, srcpth, dstpth, tree, pfcnt, pdcnt);
-                if ((op == OP_DELETE) && !ml_dlpr)
-                  blank_it(pf->f_obid);
               }
             } /* if SUBDIR */
             else
@@ -919,8 +864,6 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
                         break;
                     case OP_DELETE:
                         more = d_dofdel(srcpth);
-                        if (!ml_dlpr)
-                          blank_it(pf->f_obid);
                         break;
                     case OP_COPY:
                         ptmpdst = add_fname(dstpth, pf->f_name);
