@@ -51,33 +51,8 @@
 static UBYTE    *copybuf;   /* for copy operations */
 static LONG     copylen;    /* size of above buffer */
 
-static WORD     ml_dlpr, ml_havebox;
+static WORD     ml_havebox;
 static BYTE     ml_fsrc[LEN_ZFNAME], ml_fdst[LEN_ZFNAME], ml_fstr[LEN_ZFNAME], ml_ftmp[LEN_ZFNAME];
-
-
-/************************************************************************/
-/* m o v e _ i c o n                                                    */
-/************************************************************************/
-static void move_icon(WORD obj, WORD dulx, WORD duly)
-{
-/* animate an icon moving from its place on the desktop to dulx,duly    */
-        WORD            sulx, suly, w, h;
-
-        objc_offset(G.g_screen, obj, &sulx, &suly);
-        if (G.g_iview == V_ICON)
-        {
-          w = G.g_wicon;
-          h = G.g_hicon;
-        } /* if V_ICON */
-        else                                    /* view must be V_TEXT  */
-        {
-          w = gl_wchar * MAX_TWIDTH;
-          h = gl_hchar;
-        } /* else */
-        graf_mbox(w, h, sulx, suly, dulx, duly);
-} /* move_icon */
-
-
 
 
 /*
@@ -117,8 +92,7 @@ static void do_namecon(void)
           ml_havebox = TRUE;
         }
         form_do(G.a_trees[ADCPALER], 0);
-        if (ml_dlpr)
-          draw_dial(G.a_trees[ADCPYDEL]);
+        draw_dial(G.a_trees[ADCPYDEL]);
         graf_mouse(HGLASS, NULL);
 } /* do_namecon */
 
@@ -704,7 +678,7 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
 {
         LONG            tree;
         FNODE           *pf;
-        WORD            ret, more, ob;
+        WORD            ret, more, confirm;
         BYTE            *ptmpsrc, *ptmpdst;
         LONG            lavail;
         BYTE            srcpth[MAXPATHLEN];
@@ -713,8 +687,17 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
 
 /* BugFix       */
         graf_mouse(HGLASS, 0x0L);
-        tree = 0x0L;
+
+        if (op == OP_COUNT)
+            tree = NULL;
+        else
+        {
+            tree = G.a_trees[ADCPYDEL];
+            obj = (OBJECT *)tree + CDTITLE;
+        }
+
         ml_havebox = FALSE;
+        confirm = 0;
         switch(op)
         {
           case OP_COUNT:
@@ -723,13 +706,8 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
                 G.g_size = 0x0L;
                 break;
           case OP_DELETE:
-                ml_dlpr = G.g_cdelepref;
-                if (ml_dlpr)
-                {
-                  tree = G.a_trees[ADCPYDEL];
-                  obj = (OBJECT *)tree + CDTITLE;
-                  obj->ob_spec = (LONG) ini_str(STDELETE);
-                }
+                confirm = G.g_cdelepref;
+                obj->ob_spec = (LONG) ini_str(STDELETE);
                 break;
           case OP_COPY:
                 lavail = dos_avail() - 0x400;   /* allow safety margin */
@@ -749,15 +727,12 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
                 else copylen = lavail;
                 copybuf = (UBYTE *)dos_alloc(copylen);
 
-                ml_dlpr = G.g_ccopypref;
-                if (ml_dlpr)
-                {
-                  tree = G.a_trees[ADCPYDEL];
-                  obj = (OBJECT *)tree + CDTITLE;
-                  obj->ob_spec = (LONG) ini_str(STCOPY);
-                }
+                confirm = G.g_ccopypref;
+                obj->ob_spec = (LONG) ini_str(STCOPY);
                 break;
         } /* switch */
+
+        ret = TRUE;
 
         if (tree)
         {
@@ -766,13 +741,14 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
           inf_numset(tree, CDFOLDS, *pdcnt);
           ml_havebox = TRUE;
           show_hide(FMD_START, tree);
-          graf_mouse(ARROW, 0x0L);
-          form_do(tree, 0);
-          graf_mouse(HGLASS, 0x0L);
-          ret = inf_what(tree, CDOK, CDCNCL);
+          if (confirm)
+          {
+            graf_mouse(ARROW, NULL);
+            form_do(tree, 0);
+            graf_mouse(HGLASS, NULL);
+            ret = inf_what(tree, CDOK, CDCNCL);
+          }
         }
-        else
-          ret = TRUE;
 
         more = ret;
         for (pf = pflist; pf && more; pf = pf->f_next)
@@ -784,14 +760,6 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
             if (op == OP_COPY)
             {
               strcpy(dstpth, pdst_path);
-              if (!ml_dlpr)             /* show the moving icon!        */
-              {
-                if (from_disk)
-                  ob = src_ob;
-                else
-                  ob = pf->f_obid;
-                move_icon(ob, dulx, duly);
-              } /* if */
             } /* if OP_COPY */
             if (pf->f_attr & F_SUBDIR)
             {

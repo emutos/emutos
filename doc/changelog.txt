@@ -5563,3 +5563,7 @@ Start... early ages
 - include/config.h desk/* tools/erd.c: Code cleanup: remove conditionally
   compiled code for crippled desktop, since it is no longer used. (RFB)
 - desk/deskdir.c: Eliminate blank_it(): it performs no useful function. (RFB)
+
+2014-05-30
+- desk/deskdir.c: TOS compatibility: always display file/folder countdown
+  when copying/deleting. (RFB)
