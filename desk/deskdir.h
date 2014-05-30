@@ -20,5 +20,4 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
             LONG tree, WORD *pfcnt, WORD *pdcnt);
 WORD par_chk(BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path);
 WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
-            WORD *pfcnt, WORD *pdcnt, LONG *psize,
-            WORD dulx, WORD duly, WORD from_disk, WORD src_ob);
+            WORD *pfcnt, WORD *pdcnt, LONG *psize);

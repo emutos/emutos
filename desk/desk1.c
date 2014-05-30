@@ -172,8 +172,7 @@ static WORD fun_file2desk(PNODE *pn_src, ANODE *an_dest, WORD dobj)
                                 break;
                 }
         }
-        return fun_op(operation, pn_src, G.g_tmppth,
-                      0, 0, 0, 0);    /* GEM/1 doesn't *have* the last 5 arguments! */
+        return fun_op(operation, pn_src, G.g_tmppth);
 }
 
 
@@ -198,8 +197,7 @@ static WORD fun_file2win(PNODE *pn_src, BYTE  *spec, ANODE *an_dest, FNODE *fn_d
         {
             strcat(p, "*.*");
         }
-        return fun_op(OP_COPY, pn_src, G.g_tmppth,
-                      0, 0, 0, 0);    /* GEM/1 doesn't *have* the last 5 arguments! */
+        return fun_op(OP_COPY, pn_src, G.g_tmppth);
 }
 
 static void fun_win2desk(WORD wh, WORD obj)

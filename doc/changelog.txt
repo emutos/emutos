@@ -5567,3 +5567,5 @@ Start... early ages
 2014-05-30
 - desk/deskdir.c: TOS compatibility: always display file/folder countdown
   when copying/deleting. (RFB)
+- desk/desk1.c desk/deskdir.c desk/deskdir.h desk/deskfun.c desk/deskfun.h:
+  Code cleanup: remove no-longer-used args from dir_op(), fun_op(). (RFB)

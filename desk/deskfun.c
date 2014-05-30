@@ -171,8 +171,7 @@ WORD fun_mkdir(WNODE *pw_node)
 
 
 
-WORD fun_op(WORD op, PNODE *pspath, BYTE *pdest, WORD dulx, WORD duly,
-            WORD from_disk, WORD src_ob)
+WORD fun_op(WORD op, PNODE *pspath, BYTE *pdest)
 {
         WORD            fcnt, dcnt;
         LONG            size;
@@ -188,12 +187,12 @@ WORD fun_op(WORD op, PNODE *pspath, BYTE *pdest, WORD dulx, WORD duly,
                                                 /* get count of source  */
                                                 /*   files              */
           dir_op(OP_COUNT, &pspath->p_spec[0], pspath->p_flist, pdest,
-                 &fcnt, &dcnt, &size, dulx, duly, from_disk, src_ob);
+                 &fcnt, &dcnt, &size);
                                                 /* do the operation     */
           if ( fcnt || dcnt )
           {
             dir_op(op, &pspath->p_spec[0], pspath->p_flist, pdest,
-                   &fcnt, &dcnt, &size, dulx, duly, from_disk, src_ob);
+                   &fcnt, &dcnt, &size);
             return(TRUE);
           } /* if */
         } /* if */
@@ -235,7 +234,7 @@ void fun_drag(WORD src_wh, WORD dst_wh, WORD dst_ob, WORD dulx, WORD duly)
         if (datype == AT_ISFOLD)
           add_path(destpath, pdf->f_name);
 
-        ret = fun_op(OP_COPY, psw->w_path, destpath, dulx, duly, FALSE, 0);
+        ret = fun_op(OP_COPY, psw->w_path, destpath);
 
         if (ret)
         {
@@ -261,7 +260,7 @@ void fun_del(WNODE *pdw)
 {
         WORD        ret;
 
-        ret = fun_op(OP_DELETE, pdw->w_path, NULL, 0, 0, 0, 0);
+        ret = fun_op(OP_DELETE, pdw->w_path, NULL);
         if (ret)
 /*        fun_rebld(pdw);*/
           do_chkall(TRUE);

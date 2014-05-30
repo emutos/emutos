@@ -673,8 +673,7 @@ WORD par_chk(BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path)
 *       marked in the source file list.
 */
 WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
-            WORD *pfcnt, WORD *pdcnt, LONG *psize,
-            WORD dulx, WORD duly, WORD from_disk, WORD src_ob)
+            WORD *pfcnt, WORD *pdcnt, LONG *psize)
 {
         LONG            tree;
         FNODE           *pf;
