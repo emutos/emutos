@@ -81,15 +81,17 @@ void show_hide(WORD fmd, LONG tree)
 static void do_namecon(void)
 {
 /* BugFix       */
+        LONG tree = G.a_trees[ADCPALER];
+
         graf_mouse(ARROW, 0x0L);
         if (ml_havebox)
-          draw_dial(G.a_trees[ADCPALER]);
+          draw_dial(tree);
         else
         {
-          show_hide(FMD_START, G.a_trees[ADCPALER]);
+          show_hide(FMD_START, tree);
           ml_havebox = TRUE;
         }
-        form_do(G.a_trees[ADCPALER], 0);
+        form_do(tree, 0);
         draw_dial(G.a_trees[ADCPYDEL]);
         graf_mouse(HGLASS, NULL);
 } /* do_namecon */
@@ -318,7 +320,7 @@ static WORD d_dofdel(BYTE *ppath)
 WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
 {
     WORD fh, ob, samefile;
-    LONG tree;
+    LONG tree = G.a_trees[ADCPALER];
 
     while(1)
     {
@@ -348,16 +350,15 @@ WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
             ml_fdst[0] = '\0';
         else
             get_fname(pdst_file, ml_fdst);
-        inf_sset(G.a_trees[ADCPALER], CACURRNA, ml_fsrc);
-        inf_sset(G.a_trees[ADCPALER], CACOPYNA, ml_fdst);
+        inf_sset(tree, CACURRNA, ml_fsrc);
+        inf_sset(tree, CACOPYNA, ml_fdst);
 
         /*
          * display dialog & get input
          */
         do_namecon();
 
-        tree = G.a_trees[ADCPALER];
-        ob = inf_gindex(G.a_trees[ADCPALER], CAOK, 3) + CAOK;
+        ob = inf_gindex(tree, CAOK, 3) + CAOK;
         ((OBJECT *)tree+ob)->ob_state = NORMAL;
         if (ob == CASTOP)
             return 0;
@@ -367,7 +368,7 @@ WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
         /*
          * user says ok, so decode filename & try again
          */
-        inf_sget(G.a_trees[ADCPALER], CACOPYNA, ml_fdst);
+        inf_sget(tree, CACOPYNA, ml_fdst);
         unfmt_str(ml_fdst, ml_fstr);
         if (ml_fstr[0] != '\0')
         {

@@ -5573,3 +5573,5 @@ Start... early ages
 2014-05-31
 - desk/deskdir.c: Rewrite dir_op() to fix some obscure bugs & improve
   maintainability. (RFB)
+- desk/deskdir.c: Code cleanup: use local variable for tree pointer to
+  save code space. (RFB)
