@@ -5578,4 +5578,6 @@ Start... early ages
 - desk/deskdir.c: Code cleanup: fold button detection into do_namecon(). (RFB)
 - desk/deskdir.c: Display error message if insufficient memory for
   desktop copy. (RFB)
-
+- aes/gemdos.c aes/gemdos.h desk/deskdir.c desk/desktop.def
+  desk/desktop.rsc: Improve message issued by desktop copy when directory
+  is full. (RFB)

@@ -216,7 +216,26 @@ WNODE *fold_wind(BYTE *path)
 }
 
 
+/*
+ * test if specified folder exists
+ */
+static WORD folder_exists(BYTE *path)
+{
+    BYTE *p;
+    DTA *dta;
+    WORD rc;
 
+    dta = dos_gdta();
+    dos_sdta(&G.g_wdta);
+    p = path + strlen(path);        /* point to end of path */
+    strcpy(p, "\\*.*");
+    dos_sfirst(path, ALLFILES);     /* check if folder exists */
+    rc = DOS_ERR ? FALSE : TRUE;
+    *p = '\0';
+    dos_sdta(dta);
+
+    return rc;
+}
 
 
 /*
@@ -306,6 +325,13 @@ WORD d_errmsg(void)
           return(FALSE);
         }
         return(TRUE);
+}
+
+
+WORD invalid_copy_msg(void)
+{
+    fun_alert(1, STINVCPY, NULLPTR);
+    return FALSE;
 }
 
 
@@ -414,7 +440,7 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
      */
     dstfh = dos_create(pdst_file, attr);
     if (DOS_ERR)
-        return d_errmsg();
+        return invalid_copy_msg();
 
     /*
      * perform copy
@@ -530,8 +556,13 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
                 {
                     add_fname(pdst_path, dta->d_fname);
                     dos_mkdir(pdst_path);
-                    if (DOS_ERR && (DOS_AX != E_NOACCESS))
-                        more = d_errmsg();
+                    if (DOS_ERR)
+                    {
+                        if (DOS_AX != E_NOACCESS)
+                            more = d_errmsg();
+                        else if (!folder_exists(pdst_path))
+                            more = invalid_copy_msg();
+                    }
                     strcat(pdst_path, "\\*.*");
                 }
                 if (more)
@@ -688,7 +719,14 @@ WORD output_path(BYTE *srcpth, BYTE *dstpth)
         if (!DOS_ERR)               /* ok, we created the new folder */
 			break;
         if (DOS_AX != E_NOACCESS)   /* some strange problem */
-            return 0;
+            return d_errmsg();
+
+        /*
+         * we cannot create the folder: either it already exists
+         * or there is insufficient space (e.g. in root dir)
+         */
+        if (!folder_exists(dstpth))
+            return invalid_copy_msg();
 
         /*
          * the destination folder already exists ... this is OK
