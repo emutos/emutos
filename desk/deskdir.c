@@ -766,7 +766,11 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
     case OP_COPY:
         lavail = dos_avail() - 0x400;   /* allow safety margin */
         if (lavail < 0L)
-            return FALSE;       /* TODO: alert for insufficient memory */
+        {
+            form_error(E_NOMEMORY);     /* let user know */
+            graf_mouse(ARROW, NULL);
+            return FALSE;
+        }
         /*
          * for efficiency, the copy length should be a multiple of
          * cluster size.  it's a lot of work to figure out the actual
