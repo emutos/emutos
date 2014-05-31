@@ -78,10 +78,14 @@ void show_hide(WORD fmd, LONG tree)
 }
 
 
-static void do_namecon(void)
+/*
+ * display copy alert dialog & wait for selection, then (re)display copying dialog
+ * returns selected object number
+ */
+static WORD do_namecon(void)
 {
-/* BugFix       */
         LONG tree = G.a_trees[ADCPALER];
+        WORD ob;
 
         graf_mouse(ARROW, 0x0L);
         if (ml_havebox)
@@ -94,7 +98,12 @@ static void do_namecon(void)
         form_do(tree, 0);
         draw_dial(G.a_trees[ADCPYDEL]);
         graf_mouse(HGLASS, NULL);
-} /* do_namecon */
+
+        ob = inf_gindex(tree, CAOK, 3) + CAOK;
+        ((OBJECT *)tree+ob)->ob_state = NORMAL;
+
+        return ob;
+}
 
 
 /*
@@ -356,10 +365,7 @@ WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
         /*
          * display dialog & get input
          */
-        do_namecon();
-
-        ob = inf_gindex(tree, CAOK, 3) + CAOK;
-        ((OBJECT *)tree+ob)->ob_state = NORMAL;
+        ob = do_namecon();
         if (ob == CASTOP)
             return 0;
         else if (ob == CACNCL)
@@ -675,7 +681,6 @@ WORD par_chk(BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path)
 WORD output_path(BYTE *srcpth, BYTE *dstpth)
 {
     LONG tree = G.a_trees[ADCPALER];
-    WORD ob;
 
     while(1)
     {
@@ -701,11 +706,7 @@ WORD output_path(BYTE *srcpth, BYTE *dstpth)
         inf_sset(tree, CACURRNA, ml_fsrc);  /* and put both in dialog */
         inf_sset(tree, CACOPYNA, ml_fdst);
 
-        do_namecon();                   /* show dialog          */
-        ob = inf_gindex(tree, CAOK, 3) + CAOK;
-        ((OBJECT *)tree+ob)->ob_state = NORMAL;
-
-        if (ob != CAOK)
+        if (do_namecon() != CAOK)       /* show dialog */
             return 0;
 
         inf_sget(tree, CACOPYNA, ml_fdst);

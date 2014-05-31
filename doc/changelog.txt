@@ -5575,3 +5575,5 @@ Start... early ages
   maintainability. (RFB)
 - desk/deskdir.c: Code cleanup: use local variable for tree pointer to
   save code space. (RFB)
+- desk/deskdir.c: Code cleanup: fold button detection into do_namecon(). (RFB)
+
