@@ -5569,3 +5569,7 @@ Start... early ages
   when copying/deleting. (RFB)
 - desk/desk1.c desk/deskdir.c desk/deskdir.h desk/deskfun.c desk/deskfun.h:
   Code cleanup: remove no-longer-used args from dir_op(), fun_op(). (RFB)
+
+2014-05-31
+- desk/deskdir.c: Rewrite dir_op() to fix some obscure bugs & improve
+  maintainability. (RFB)

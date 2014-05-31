@@ -42,8 +42,6 @@
 #include "deskdir.h"
 
 
-#define MAX_TWIDTH 45                           /* used in blank_it()   */
-
 #define MAX_CLUS_SIZE   (32*1024L)  /* maximum cluster size */
 
 #define ALLFILES    (F_SUBDIR|F_SYSTEM|F_HIDDEN)
@@ -668,204 +666,218 @@ WORD par_chk(BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path)
 
 
 /*
-*       DIRectory routine that does an OPeration on all the selected files and
-*       folders in the source path.  The selected files and folders are
-*       marked in the source file list.
-*/
+ *      Determines output path as required by d_doop()
+ *      Returns:
+ *          1   path is OK (folder has been created if necessary)
+ *          0   error, stop copying
+ */
+WORD output_path(BYTE *srcpth, BYTE *dstpth)
+{
+    LONG tree = G.a_trees[ADCPALER];
+    WORD ob;
+
+    while(1)
+    {
+        dos_mkdir(dstpth);
+        if (!DOS_ERR)               /* ok, we created the new folder */
+			break;
+        if (DOS_AX != E_NOACCESS)   /* some strange problem */
+            return 0;
+
+        /*
+         * the destination folder already exists ... this is OK
+         * as long as it's not exactly the same as the source!
+         */
+        if (!same_fold(srcpth, dstpth))
+            break;
+
+        /*
+         * we're trying to copy to ourselves, which is not allowed:
+         * we must get a new destination folder
+         */
+        get_fname(dstpth, ml_fsrc);         /* extract current folder name */
+        ml_fdst[0] = NULL;                  /* pre-fill new folder name */
+        inf_sset(tree, CACURRNA, ml_fsrc);  /* and put both in dialog */
+        inf_sset(tree, CACOPYNA, ml_fdst);
+
+        do_namecon();                   /* show dialog          */
+        ob = inf_gindex(tree, CAOK, 3) + CAOK;
+        ((OBJECT *)tree+ob)->ob_state = NORMAL;
+
+        if (ob != CAOK)
+            return 0;
+
+        inf_sget(tree, CACOPYNA, ml_fdst);
+        unfmt_str(ml_fdst, ml_fstr);    /* get new dest folder in ml_fstr */
+        if (ml_fstr[0] != '\0')         /* if it changed, update path */
+        {
+            del_fname(dstpth);
+            add_fname(dstpth, ml_fstr);
+        }
+    }
+
+    strcat(dstpth, "\\*.*");        /* complete path */
+
+    return 1;
+}
+
+
+/*
+ *      DIRectory routine that does an OPeration on all the selected files and
+ *      folders in the source path.  The selected files and folders are
+ *      marked in the source file list.
+ */
 WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
             WORD *pfcnt, WORD *pdcnt, LONG *psize)
 {
-        LONG            tree;
-        FNODE           *pf;
-        WORD            ret, more, confirm;
-        BYTE            *ptmpsrc, *ptmpdst;
-        LONG            lavail;
-        BYTE            srcpth[MAXPATHLEN];
-        BYTE            dstpth[MAXPATHLEN];
-        OBJECT          *obj;
+    LONG    tree;
+    FNODE   *pf;
+    WORD    more, confirm;
+    BYTE    *ptmpsrc, *ptmpdst;
+    LONG    lavail;
+    BYTE    srcpth[MAXPATHLEN], dstpth[MAXPATHLEN];
+    OBJECT  *obj;
 
-/* BugFix       */
-        graf_mouse(HGLASS, 0x0L);
+    graf_mouse(HGLASS, NULL);
 
-        if (op == OP_COUNT)
-            tree = NULL;
-        else
+    ml_havebox = FALSE;
+    confirm = 0;
+
+    tree = NULL;
+    if (op != OP_COUNT)
+    {
+        tree = G.a_trees[ADCPYDEL];
+        obj = (OBJECT *)tree + CDTITLE;
+    }
+
+    switch(op)
+    {
+    case OP_COUNT:
+        G.g_nfiles = 0L;
+        G.g_ndirs = 0L;
+        G.g_size = 0L;
+        break;
+    case OP_DELETE:
+        confirm = G.g_cdelepref;
+        obj->ob_spec = (LONG) ini_str(STDELETE);
+        break;
+    case OP_COPY:
+        lavail = dos_avail() - 0x400;   /* allow safety margin */
+        if (lavail < 0L)
+            return FALSE;       /* TODO: alert for insufficient memory */
+        /*
+         * for efficiency, the copy length should be a multiple of
+         * cluster size.  it's a lot of work to figure out the actual
+         * cluster sizes for the source and destination, but in most
+         * cases, available memory will be >=32K, the maximum possible
+         * cluster size.  in this case, we set 'copylen' to the largest
+         * multiple that fits in available memory.  if we have less
+         * than 32K available, we just set it as large as possible.
+         */
+        if (lavail >= MAX_CLUS_SIZE)
+            copylen = lavail & ~(MAX_CLUS_SIZE-1);
+        else copylen = lavail;
+        copybuf = (UBYTE *)dos_alloc(copylen);
+
+        confirm = G.g_ccopypref;
+        obj->ob_spec = (LONG) ini_str(STCOPY);
+        break;
+    }
+
+    more = TRUE;
+
+    if (tree)
+    {
+        centre_title(tree);
+        inf_numset(tree, CDFILES, *pfcnt);
+        inf_numset(tree, CDFOLDS, *pdcnt);
+        show_hide(FMD_START, tree);
+        ml_havebox = TRUE;
+        if (confirm)
         {
-            tree = G.a_trees[ADCPYDEL];
-            obj = (OBJECT *)tree + CDTITLE;
-        }
-
-        ml_havebox = FALSE;
-        confirm = 0;
-        switch(op)
-        {
-          case OP_COUNT:
-                G.g_nfiles = 0x0L;
-                G.g_ndirs = 0x0L;
-                G.g_size = 0x0L;
-                break;
-          case OP_DELETE:
-                confirm = G.g_cdelepref;
-                obj->ob_spec = (LONG) ini_str(STDELETE);
-                break;
-          case OP_COPY:
-                lavail = dos_avail() - 0x400;   /* allow safety margin */
-                if (lavail < 0L)
-                    return FALSE;       /* TODO: alert for insufficient memory */
-                /*
-                 * for efficiency, the copy length should be a multiple of
-                 * cluster size.  it's a lot of work to figure out the actual
-                 * cluster sizes for the source and destination, but in most
-                 * cases, available memory will be >=32K, the maximum possible
-                 * cluster size.  in this case, we set 'copylen' to the largest
-                 * multiple that fits in available memory.  if we have less
-                 * than 32K available, we just set it as large as possible.
-                 */
-                if (lavail >= MAX_CLUS_SIZE)
-                    copylen = lavail & ~(MAX_CLUS_SIZE-1);
-                else copylen = lavail;
-                copybuf = (UBYTE *)dos_alloc(copylen);
-
-                confirm = G.g_ccopypref;
-                obj->ob_spec = (LONG) ini_str(STCOPY);
-                break;
-        } /* switch */
-
-        ret = TRUE;
-
-        if (tree)
-        {
-          centre_title(tree);
-          inf_numset(tree, CDFILES, *pfcnt);
-          inf_numset(tree, CDFOLDS, *pdcnt);
-          ml_havebox = TRUE;
-          show_hide(FMD_START, tree);
-          if (confirm)
-          {
             graf_mouse(ARROW, NULL);
             form_do(tree, 0);
             graf_mouse(HGLASS, NULL);
-            ret = inf_what(tree, CDOK, CDCNCL);
-          }
+            more = inf_what(tree, CDOK, CDCNCL);
         }
+    }
 
-        more = ret;
-        for (pf = pflist; pf && more; pf = pf->f_next)
+    for (pf = pflist; pf && more; pf = pf->f_next)
+    {
+        if (pf->f_obid == NIL)
+            continue;
+        if (!(G.g_screen[pf->f_obid].ob_state & SELECTED))
+            continue;
+
+        strcpy(srcpth, psrc_path);
+        if (op == OP_COPY)
+            strcpy(dstpth, pdst_path);
+
+        /*
+         * handle folder
+         */
+        if (pf->f_attr & F_SUBDIR)
         {
-          if ( (pf->f_obid != NIL) &&
-               (G.g_screen[pf->f_obid].ob_state & SELECTED))
-          {
-            strcpy(srcpth, psrc_path);
+            add_path(srcpth, pf->f_name);
             if (op == OP_COPY)
             {
-              strcpy(dstpth, pdst_path);
-            } /* if OP_COPY */
-            if (pf->f_attr & F_SUBDIR)
-            {
-              add_path(srcpth, &pf->f_name[0]);
-              if (op == OP_COPY)
-              {
-                like_parent(dstpth, &pf->f_name[0]);
-                dos_mkdir(dstpth);
-                while (DOS_ERR && more)
-                {
-                                                /* see if dest folder   */
-                                                /*   already exists     */
-                  if (DOS_AX == E_NOACCESS)
-                  {
-                    if ( same_fold(srcpth, dstpth) )
-                    {
-                                                /* get the folder name  */
-                                                /*   from the pathnames */
-                      fmt_str(&pf->f_name[0], &ml_fsrc[0]);
-                      ml_fdst[0] = NULL;
-                                                /* put in folder name   */
-                                                /*   in dialog          */
-                      inf_sset(G.a_trees[ADCPALER], 2, &ml_fsrc[0]);
-                      inf_sset(G.a_trees[ADCPALER], 3, &ml_fdst[0]);
-                                                /* show dialog          */
-                      do_namecon();
-                                                /* if okay then make    */
-                                                /*   dir or try again   */
-                                                /*   until we succeed or*/
-                                                /*   cancel is hit      */
-                      more = inf_what(G.a_trees[ADCPALER],
-                                        CAOK, CACNCL);
+                like_parent(dstpth, pf->f_name);
+                more = output_path(srcpth,dstpth);
+            }
 
-                      if (more)
-                      {
-                        inf_sget(G.a_trees[ADCPALER], 3, &ml_fdst[0]);
-                        unfmt_str(&ml_fdst[0], &ml_fstr[0]);
-                        del_fname(dstpth);
-                        if (ml_fstr[0] != NULL)
-                        {
-                          add_fname(dstpth, &ml_fstr[0]);
-                          dos_mkdir(dstpth);
-                        } /* if */
-                        else
-                          more = FALSE;
-                      } /* if more */
-                    } /* if */
-                    else
-                      DOS_ERR = FALSE;
-                  } /* if NOACCESS */
-                  else
-                    more = FALSE;
-                } /* while */
-                strcat(dstpth, "\\*.*");
-              } /* if */
-              if (more)
-              {
+            if (more)
                 more = d_doop(0, op, srcpth, dstpth, tree, pfcnt, pdcnt);
-              }
-            } /* if SUBDIR */
-            else
-            {
-              if (op != OP_COUNT)
-                ptmpsrc = add_fname(srcpth, pf->f_name);
-              switch(op)
-              {
-                    case OP_COUNT:
-                        G.g_nfiles++;
-                        G.g_size += pf->f_size;
-                        break;
-                    case OP_DELETE:
-                        more = d_dofdel(srcpth);
-                        break;
-                    case OP_COPY:
-                        ptmpdst = add_fname(dstpth, pf->f_name);
-                        more = d_dofcopy(srcpth, dstpth, pf->f_time,
-                                         pf->f_date, pf->f_attr);
-                        restore_path(ptmpdst);  /* restore original dest path */
-                        break;
-              }
-              if (op != OP_COUNT)
-                restore_path(ptmpsrc);  /* restore original source path */
-              if (tree)
-              {
-                *pfcnt -= 1;
-                inf_numset(tree, CDFILES, *pfcnt);
-                draw_fld(tree, CDFILES);
-              } /* if tree */
-            } /* else */
-          } /* if */
-        } /* for */
+            continue;
+        }
 
+        /*
+         * handle file
+         */
+        if (op != OP_COUNT)
+            ptmpsrc = add_fname(srcpth, pf->f_name);
         switch(op)
         {
-          case OP_COUNT:
-                *pfcnt = G.g_nfiles;
-                *pdcnt = G.g_ndirs;
-                *psize = G.g_size;
-                break;
-          case OP_DELETE:
-                break;
-          case OP_COPY:
-                dos_free((LONG)copybuf);
-                break;
-        } /* switch */
-        if (ml_havebox)
-          show_hide(FMD_FINISH, G.a_trees[ADCPALER]);
-        graf_mouse(ARROW, 0x0L);
-        return(TRUE);
-} /* dir_op */
+        case OP_COUNT:
+            G.g_nfiles++;
+            G.g_size += pf->f_size;
+            break;
+        case OP_DELETE:
+            more = d_dofdel(srcpth);
+            break;
+        case OP_COPY:
+            ptmpdst = add_fname(dstpth, pf->f_name);
+            more = d_dofcopy(srcpth, dstpth, pf->f_time, pf->f_date, pf->f_attr);
+            restore_path(ptmpdst);  /* restore original dest path */
+            break;
+        }
+        if (op != OP_COUNT)
+            restore_path(ptmpsrc);  /* restore original source path */
+
+        if (tree)
+        {
+            *pfcnt -= 1;
+            inf_numset(tree, CDFILES, *pfcnt);
+            draw_fld(tree, CDFILES);
+        }
+    }
+
+    switch(op)
+    {
+    case OP_COUNT:
+        *pfcnt = G.g_nfiles;
+        *pdcnt = G.g_ndirs;
+        *psize = G.g_size;
+        break;
+    case OP_DELETE:
+        break;
+    case OP_COPY:
+        dos_free((LONG)copybuf);
+        break;
+    }
+
+    if (tree)
+        show_hide(FMD_FINISH, tree);
+    graf_mouse(ARROW, NULL);
+
+    return TRUE;
+}
