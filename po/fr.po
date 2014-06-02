@@ -6,18 +6,18 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EMUTOS beta\n"
 "POT-Creation-Date: 2004-01-27 14:37+0100\n"
-"PO-Revision-Date: 2013-05-10 22:39+0200\n"
+"PO-Revision-Date: 2014-06-03 00:37+0200\n"
 "Last-Translator: Vincent Riviere <vincent.riviere@freesbee.fr>\n"
 "Language-Team: French <fr@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: bios/bios.c:516
+#: bios/bios.c:519
 msgid "Please eject the floppy and hit RETURN"
 msgstr "Veuillez éjecter la disquette et taper ENTREE"
 
-#: bios/bios.c:576
+#: bios/bios.c:585
 msgid ""
 "System halted!\n"
 msgstr ""
@@ -75,7 +75,7 @@ msgstr "Taper 'C' pour lancer la console"
 msgid " Hold <Shift> to pause this screen "
 msgstr " <Shift> pour maintenir cet écran "
 
-#: bdos/osmem.c:92
+#: bdos/osmem.c:163
 msgid ""
 "\033EOut of internal memory.\n"
 "Use FOLDR100.PRG to get more.\n"
@@ -796,6 +796,12 @@ msgstr "[3]["
 
 #: desk/desk_rsc.c:1723
 msgid "[3]["
+"Invalid copy operation.][  OK  ]"
+msgstr "[3]["
+"Opération de copie invalide.][  OK  ]"
+
+#: desk/desk_rsc.c:1724
+msgid "[3]["
 "If you are sure you want to|"
 "delete ALL the information on|"
 "the disk in drive %c:, click|"
@@ -807,7 +813,7 @@ msgstr "[3]["
 "du disque %c:, cliquez sur OK.|"
 "Sinon, cliquez sur Annuler.][  OK  |Annuler]"
 
-#: desk/desk_rsc.c:1732
+#: desk/desk_rsc.c:1733
 msgid "[1]["
 "There is not enough space|"
 "available to configure this|"
@@ -821,7 +827,7 @@ msgstr "[1]["
 "Vous devez retirer une|"
 "application déjà configurée.][  OK  ]"
 
-#: desk/desk_rsc.c:1741
+#: desk/desk_rsc.c:1742
 msgid "[2]["
 "The folder already exists, or|"
 "your disk is full.  Retry with|"
@@ -834,7 +840,7 @@ msgstr "[2]["
 "et vérifiez l'espace disque|"
 "disponible.][Annuler|Encore]"
 
-#: desk/desk_rsc.c:1748
+#: desk/desk_rsc.c:1749
 msgid "[1]["
 "This disk does not have enough|"
 "room for the information you|"
@@ -848,7 +854,7 @@ msgstr "[1]["
 "se peut que certains éléments|"
 "aient déjà été copiés.][  OK  ]"
 
-#: desk/desk_rsc.c:1757
+#: desk/desk_rsc.c:1758
 msgid "[3]["
 "Cannot create EMUDESK.INF.|"
 "Make sure that a disk is in|"
@@ -862,7 +868,7 @@ msgstr "[3]["
 "lecteur de démarrage, puis|"
 "cliquez sur OK ou Annuler.][  OK  |Annuler]"
 
-#: desk/desk_rsc.c:1766
+#: desk/desk_rsc.c:1767
 msgid "[3]["
 "You cannot create or|"
 "access a folder this far|"
@@ -873,7 +879,7 @@ msgstr "[3]["
 "profondément dans l'arborescence|"
 "des répertoires.][  OK  ]"
 
-#: desk/desk_rsc.c:1771
+#: desk/desk_rsc.c:1772
 msgid "[3]["
 "You cannot create or access|"
 "a file or folder with that|"
@@ -946,79 +952,79 @@ msgstr "[1]["
 "le bureau, mais pas sur une|"
 "autre icône.][  OK  ]"
 
-#: desk/icons.c:1039
+#: desk/icons.c:1030
 msgid " Generic "
 msgstr " Générique "
 
-#: desk/icons.c:1040
+#: desk/icons.c:1031
 msgid " Spreadsheet "
 msgstr " Tableur "
 
-#: desk/icons.c:1041
+#: desk/icons.c:1032
 msgid " Word Processor "
 msgstr " Traitement de texte "
 
-#: desk/icons.c:1042
+#: desk/icons.c:1033
 msgid " Database "
 msgstr " Base de données "
 
-#: desk/icons.c:1043
+#: desk/icons.c:1034
 msgid " Draw "
 msgstr " Dessin technique "
 
-#: desk/icons.c:1044
+#: desk/icons.c:1035
 msgid " Paint "
 msgstr " Dessin d'art "
 
-#: desk/icons.c:1045
+#: desk/icons.c:1036
 msgid " Project "
 msgstr " Gestion de projet "
 
-#: desk/icons.c:1046
+#: desk/icons.c:1037
 msgid " Graph "
 msgstr " Graphique "
 
-#: desk/icons.c:1047
+#: desk/icons.c:1038
 msgid " Outline "
 msgstr " Organisation d'idées "
 
-#: desk/icons.c:1048
+#: desk/icons.c:1039
 msgid " Accounting "
 msgstr " Comptabilité "
 
-#: desk/icons.c:1049
+#: desk/icons.c:1040
 msgid " Multi-Function "
 msgstr " Multi-fonction "
 
-#: desk/icons.c:1050
+#: desk/icons.c:1041
 msgid " Education "
 msgstr " Education "
 
-#: desk/icons.c:1051
+#: desk/icons.c:1042
 msgid " Communications "
 msgstr " Communication "
 
-#: desk/icons.c:1052
+#: desk/icons.c:1043
 msgid " Programmer's Tool "
 msgstr " Outil de programmeur "
 
-#: desk/icons.c:1053
+#: desk/icons.c:1044
 msgid " Game "
 msgstr " Jeu "
 
-#: desk/icons.c:1054
+#: desk/icons.c:1045
 msgid " Output "
 msgstr " Impression "
 
-#: desk/icons.c:1055
+#: desk/icons.c:1046
 msgid " Desktop Publisher "
 msgstr " Publication "
 
-#: desk/icons.c:1056
+#: desk/icons.c:1047
 msgid " Scan "
 msgstr " Scan "
 
-#: desk/icons.c:1057
+#: desk/icons.c:1048
 msgid " Mail "
 msgstr " Messagerie "
 

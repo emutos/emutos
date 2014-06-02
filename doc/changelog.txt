@@ -5591,3 +5591,6 @@ Start... early ages
 - desk/deskfpd.c desk/deskfpd.h desk/deskpro.c desk/deskwin.c: Remove
   remnants of crippled desktop. (RFB)
 - desk/deskfpd.c: Code cleanup: minor improvements to pn_fcomp(). (RFB)
+
+2014-06-02
+- po/fr.po: Updated. (VRI)
