@@ -521,8 +521,7 @@ void win_srtall(void)
             G.g_wlist[ii].w_cvrow = 0;          /* reset slider         */
             if (G.g_wlist[ii].w_path->p_spec[0] == '@') /* disk icon    */
               G.g_isort = S_DISK;               /* sort by drive letter */
-            G.g_wlist[ii].w_path->p_flist = pn_sort(-1,
-                                        G.g_wlist[ii].w_path->p_flist);
+            G.g_wlist[ii].w_path->p_flist = pn_sort(G.g_wlist[ii].w_path);
             G.g_isort = sortsave;
           }
         }

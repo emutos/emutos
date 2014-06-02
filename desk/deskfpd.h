@@ -44,13 +44,11 @@ FNODE
 {
         FNODE           *f_next;
         BYTE            f_junk;         /* to align on even boundaries  */
-        BYTE            f_attr;
-/* BugFix       */
-        UWORD           f_time;
-        UWORD           f_date;
-/* */
-        LONG            f_size;
-        BYTE            f_name[LEN_ZFNAME];
+        BYTE            f_attr;             /* NOTE: f_attr thru f_name[]  */
+        UWORD           f_time;             /*  MUST be the same size & in */
+        UWORD           f_date;             /*   the same sequence as the  */
+        LONG            f_size;             /*    corresponding items in   */
+        BYTE            f_name[LEN_ZFNAME]; /*     the DTA structure!      */
         WORD            f_obid;
         ANODE           *f_pa;
         WORD            f_isap;
@@ -62,11 +60,12 @@ PNODE
 {
         PNODE           *p_next;
         WORD            p_flags;
-        WORD            p_attr;
+        WORD            p_attr;     /* attribs used in Fsfirst() */
         BYTE            p_spec[LEN_ZPATH];
-        FNODE           *p_flist;
-        WORD            p_count;
-        LONG            p_size;
+        FNODE           *p_fbase;   /* start of malloc'd fnodes */
+        FNODE           *p_flist;   /* linked list of fnodes */
+        WORD            p_count;    /* number of items (fnodes) */
+        LONG            p_size;     /* total size of items */
 };
 
 
@@ -76,7 +75,7 @@ void fpd_parse(BYTE *pspec, WORD *pdrv, BYTE *ppath, BYTE *pname, BYTE *pext);
 FNODE *fpd_ofind(FNODE *pf, WORD obj);
 void pn_close(PNODE *thepath);
 PNODE *pn_open(WORD  drive, BYTE *path, BYTE *name, BYTE *ext, WORD attr);
-FNODE *pn_sort(WORD lstcnt, FNODE *pflist);
+FNODE *pn_sort(PNODE *pn);
 WORD pn_active(PNODE *thepath);
 
 #endif  /* _DESKFPD_H */

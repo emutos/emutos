@@ -304,3 +304,9 @@ WORD dos_free(LONG maddr)
 {
         return( gemdos(X_MFREE,maddr) );
 }
+
+
+WORD dos_shrink(void *maddr, LONG length)
+{
+        return gemdos(X_SETBLOCK, 0, maddr, length);
+}

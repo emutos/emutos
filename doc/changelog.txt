@@ -5581,3 +5581,8 @@ Start... early ages
 - aes/gemdos.c aes/gemdos.h desk/deskdir.c desk/desktop.def
   desk/desktop.rsc: Improve message issued by desktop copy when directory
   is full. (RFB)
+
+2014-06-01
+- aes/gemdos.c aes/gemdos.h desk/deskbind.h desk/deskconf.h desk/deskfpd.c
+  desk/deskfpd.c desk/deskwin.c: Fix problem: the total number of items in
+  all open windows is no longer limited to 400. (RFB)

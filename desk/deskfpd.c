@@ -33,23 +33,6 @@
 
 #include "string.h"
 
-static FNODE    *ml_pfndx[NUM_FNODES];
-
-
-
-/*
-*       Initialize the list of fnodes
-*/
-static void fn_init(void)
-{
-        WORD            i;
-
-        for(i=NUM_FNODES - 2; i >= 0; i--)
-          G.g_flist[i].f_next = &G.g_flist[i + 1];
-        G.g_favail = &G.g_flist[0];
-        G.g_flist[NUM_FNODES - 1].f_next = (FNODE *) NULL;
-}
-
 
 /*
 *       Initialize the list of pnodes
@@ -71,7 +54,6 @@ static void pn_init(void)
 */
 void fpd_start(void)
 {
-        fn_init();
         pn_init();
 }
 
@@ -200,56 +182,16 @@ FNODE *fpd_ofind(FNODE *pf, WORD obj)
 
 
 /*
-*       Find the list item that is after start and points to stop item.
-*/
-static BYTE *fpd_elist(FNODE *pfpd, FNODE *pstop)
+ *      Free the file nodes for a specified pathnode
+ */
+static void fl_free(PNODE *pn)
 {
-        while( pfpd->f_next != pstop )
-          pfpd = pfpd->f_next;
-        return( (BYTE *) pfpd);
-}
+        if (pn->p_fbase)
+            dos_free((LONG)pn->p_fbase);
 
-
-/*
-*       Free a single file node
-*/
-static void fn_free(FNODE *thefile)
-{
-        thefile->f_next = G.g_favail;
-        G.g_favail = thefile;
-}
-
-
-/*
-*       Free a list of file nodes.
-*/
-static void fl_free(FNODE *pflist)
-{
-        FNODE           *thelast;
-
-        if (pflist)
-        {
-          thelast = (FNODE *) fpd_elist(pflist, NULLPTR);
-          thelast->f_next = G.g_favail;
-          G.g_favail = pflist;
-        }
-}
-
-
-/*
-*       Allocate a file node.
-*/
-static FNODE *fn_alloc(void)
-{
-        FNODE           *thefile;
-
-        if ( G.g_favail )
-        {
-          thefile = G.g_favail;
-          G.g_favail = G.g_favail->f_next;
-          return(thefile);
-        }
-        return(NULLPTR);
+        pn->p_fbase = pn->p_flist = NULL;
+        pn->p_count = 0;
+        pn->p_size = 0L;
 }
 
 
@@ -287,7 +229,7 @@ static void pn_free(PNODE *thepath)
         PNODE           *pp;
 
                                                 /* free our file list   */
-        fl_free(thepath->p_flist);
+        fl_free(thepath);
                                                 /* if first in list     */
                                                 /*   unlink by changing */
                                                 /*   phead else by      */
@@ -411,34 +353,36 @@ static WORD pn_comp(FNODE *pf1, FNODE *pf2)
 
 
 /*
-*
-*
-*/
-FNODE *pn_sort(WORD lstcnt, FNODE *pflist)
+ *      Sort the fnodes in the list chained from the specified pathnode
+ *
+ */
+FNODE *pn_sort(PNODE *pn)
 {
         FNODE           *pf, *pftemp;
         FNODE           *newlist;
-        WORD            gap, i, j;
-                                                /* build index array    */
-                                                /*   if necessary       */
-        if (lstcnt == -1)
-        {
-          lstcnt = 0;
-          for(pf=pflist; pf; pf=pf->f_next)
-            ml_pfndx[lstcnt++] = pf;
-        }
+        FNODE           **ml_pfndx;
 
-        if (lstcnt < 2)
-        {
-          /* the list is already sorted */
-          return pflist;
-        }
+        WORD            count, gap, i, j;
+
+        if (pn->p_count < 2)        /* the list is already sorted */
+            return pn->p_flist;
+
+        /*
+         * malloc & build index array
+         */
+        ml_pfndx = (FNODE **)dos_alloc(pn->p_count*sizeof(FNODE *));
+        if (!ml_pfndx)              /* no space, can't sort */
+            return pn->p_flist;
+
+        for (count = 0, pf = pn->p_flist; pf; pf = pf->f_next)
+            ml_pfndx[count++] = pf;
+
                                                 /* sort files using shell*/
                                                 /*   sort on page 108 of */
                                                 /*   K&R C Prog. Lang.  */
-        for(gap = lstcnt/2; gap > 0; gap /= 2)
+        for(gap = count/2; gap > 0; gap /= 2)
         {
-          for(i = gap; i < lstcnt; i++)
+          for(i = gap; i < count; i++)
           {
             for (j = i-gap; j >= 0; j -= gap)
             {
@@ -454,62 +398,67 @@ FNODE *pn_sort(WORD lstcnt, FNODE *pflist)
                                                 /*   order              */
         newlist = ml_pfndx[0];
         pf = ml_pfndx[0];
-        for(i=1; i<lstcnt; i++)
+        for(i=1; i<count; i++)
         {
           pf->f_next = ml_pfndx[i];
           pf = ml_pfndx[i];
         }
         pf->f_next = (FNODE *) NULL;
+
+        dos_free((LONG)ml_pfndx);
+
         return(newlist);
 }
 
 
-
-WORD pn_active(PNODE *thepath)
+/*
+ *      Build the filenode list for the specified pathnode
+ */
+WORD pn_active(PNODE *pn)
 {
-        FNODE *thefile, *prevfile;
-        WORD ret;
+        FNODE *fn, *prev;
+        LONG maxmem, maxcount, size = 0L;
+        WORD count;
 
-        thepath->p_count = 0;
-        thepath->p_size = 0x0L;
-        fl_free(thepath->p_flist);
+        fl_free(pn);                    /* free any existing filenodes */
 
-        thefile = (FNODE *) NULLPTR;
-        prevfile = (FNODE *) &thepath->p_flist;
+        maxmem = dos_avail();           /* allocate max possible memory */
+        if (maxmem < sizeof(FNODE))
+            return E_NOMEMORY;
+
+        pn->p_fbase = (FNODE *)dos_alloc(maxmem);
+        maxcount = maxmem / sizeof(FNODE);
+
+        fn = pn->p_fbase;
+        prev = (FNODE *)&pn->p_flist;   /* assumes fnode link is at start of fnode */
 
         dos_sdta(&G.g_wdta);
 
-        ret = dos_sfirst(thepath->p_spec, thepath->p_attr);
-        while ( ret )
+        for (dos_sfirst(pn->p_spec,pn->p_attr), count = 0; count < maxcount; dos_snext())
         {
-          if ( !thefile )
-          {
-            thefile = fn_alloc();
-            if ( !thefile )
-            {
-              ret = FALSE;
-              DOS_AX = E_NOFNODES;
-            }
-          }
-          else
-          {
-            if ( G.g_wdta.d_fname[0] != '.' )   // skip "." and ".." entries
-            {
-                                                // if it is a real file //
-                                                //   or directory then  //
-                                                //   save it            //
-              memcpy(&thefile->f_junk, &G.g_wdta.d_reserved[20], 23);
-              thepath->p_size += thefile->f_size;
-              prevfile->f_next = ml_pfndx[thepath->p_count++] = thefile;
-              prevfile = thefile;
-              thefile = (FNODE *) NULL;
-            }
-            ret = dos_snext();
-          }
+            if (DOS_ERR)
+                break;
+            if (G.g_wdta.d_fname[0] == '.') /* skip "." & ".." entries */
+                continue;
+            memcpy(&fn->f_junk, &G.g_wdta.d_reserved[20], 23);
+            count++;
+            size += fn->f_size;
+            prev->f_next = fn;      /* link fnodes */
+            prev = fn++;
         }
-        prevfile->f_next = (FNODE *) NULLPTR;
-        if ( thefile ) fn_free(thefile);
-        thepath->p_flist = pn_sort(thepath->p_count, thepath->p_flist);
-        return(DOS_AX);
+        prev->f_next = NULL;        /* terminate chain */
+        pn->p_count = count;        /* & update pathnode */
+        pn->p_size = size;
 
+        if (count == 0)
+        {
+            dos_free((LONG)pn->p_fbase);
+            pn->p_fbase = NULL;
+            return 0;
+        }
+        dos_shrink(pn->p_fbase,count*sizeof(FNODE));
+
+        pn->p_flist = pn_sort(pn);
+
+        return 0;   /* TODO: return error if error occurred? */
 }

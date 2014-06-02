@@ -27,9 +27,6 @@
 #define GLOBES struct glnode
 GLOBES
 {
-/*GLOBAL*/ FNODE        g_flist[NUM_FNODES];
-/*GLOBAL*/ FNODE        *g_favail;
-
 /*GLOBAL*/ PNODE        g_plist[NUM_PNODES];
 /*GLOBAL*/ PNODE        *g_pavail;
 /*GLOBAL*/ PNODE        *g_phead;

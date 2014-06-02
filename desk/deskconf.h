@@ -20,7 +20,6 @@
 
 #define NUM_SOBS    (NUM_WOBS + NUM_WNODES + 1)
 
-#define NUM_FNODES  400
 #define NUM_PNODES  (NUM_WNODES+1)  /* one more than windows for unopen disk copy */
 
 #define MAX_OBS     60              /* max number of objects that can be dragged */
