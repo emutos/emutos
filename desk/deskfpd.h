@@ -59,7 +59,6 @@ FNODE
 PNODE
 {
         PNODE           *p_next;
-        WORD            p_flags;
         WORD            p_attr;     /* attribs used in Fsfirst() */
         BYTE            p_spec[LEN_ZPATH];
         FNODE           *p_fbase;   /* start of malloc'd fnodes */

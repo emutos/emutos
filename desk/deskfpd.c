@@ -213,7 +213,6 @@ static PNODE *pn_alloc(void)
           thepath->p_next = G.g_phead;
           G.g_phead = thepath;
                                                 /* init. and return     */
-          thepath->p_flags = 0x0;
           thepath->p_flist = (FNODE *) NULL;
           return(thepath);
         }
