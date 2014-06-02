@@ -43,17 +43,13 @@ WORD pro_chdir(WORD drv, BYTE *ppath)
         if (!drv)
           return( (DOS_ERR = TRUE) );
 
-        if ( drv != '@' )
-        {
-          dos_sdrv(drv - 'A');
-          path[0] = drv;
-          path[1] = ':';
-          path[2] = '\\';
-          strcpy(path+3, ppath);
-          dos_chdir(path);
-        }
-        else
-          dos_sdrv(gl_stdrv);           /* don't leave closed drive hot */
+        dos_sdrv(drv - 'A');
+        path[0] = drv;
+        path[1] = ':';
+        path[2] = '\\';
+        strcpy(path+3, ppath);
+        dos_chdir(path);
+
         return(TRUE);
 } /* pro_chdir */
 

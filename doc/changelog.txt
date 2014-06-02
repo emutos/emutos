@@ -5588,3 +5588,5 @@ Start... early ages
   all open windows is no longer limited to 400. (RFB)
 - desk/deskfpd.c desk/deskfpd.h: Code cleanup: eliminate unused variable
   in PNODE structure. (RFB)
+- desk/deskfpd.c desk/deskfpd.h desk/deskpro.c desk/deskwin.c: Remove
+  remnants of crippled desktop. (RFB)

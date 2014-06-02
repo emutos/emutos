@@ -326,8 +326,6 @@ static WORD pn_fcomp(FNODE *pf1, FNODE *pf2, WORD which)
                   if (chk)
                     return(chk);
                   return ( (pf2->f_time & 0x001F) - (pf1->f_time & 0x001F) );
-          case S_DISK:
-                  return(pf1->f_junk - pf2->f_junk);
                 } /* else */
 /* */
         } /* of switch */

@@ -31,7 +31,6 @@
 #define S_DATE 1
 #define S_SIZE 2
 #define S_TYPE 3
-#define S_DISK 4
 
 #define E_NOERROR 0
 #define E_NOFNODES 100

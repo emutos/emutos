@@ -507,22 +507,13 @@ void win_arrow(WORD wh, WORD arrow_type)
 void win_srtall(void)
 {
         WORD            ii;
-        WORD            sortsave;
-
-
-
-
 
         for(ii=0; ii<NUM_WNODES; ii++)
         {
           if ( G.g_wlist[ii].w_id != 0 )
           {
-            sortsave = G.g_isort;
             G.g_wlist[ii].w_cvrow = 0;          /* reset slider         */
-            if (G.g_wlist[ii].w_path->p_spec[0] == '@') /* disk icon    */
-              G.g_isort = S_DISK;               /* sort by drive letter */
             G.g_wlist[ii].w_path->p_flist = pn_sort(G.g_wlist[ii].w_path);
-            G.g_isort = sortsave;
           }
         }
 } /* win_srtall */
@@ -627,12 +618,9 @@ void win_sname(WNODE *pw)
 
         psrc = &pw->w_path->p_spec[0];
         pdst = &pw->w_name[0];
-        if (*psrc != '@')
-        {
-          while ( (*psrc) && (*psrc != '*') )
-            *pdst++ = *psrc++;
-          *pdst = NULL;
-        }
+        while ( (*psrc) && (*psrc != '*') )
+          *pdst++ = *psrc++;
+        *pdst = NULL;
 } /* win_sname */
 
 
