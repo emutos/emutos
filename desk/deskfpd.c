@@ -282,55 +282,44 @@ PNODE *pn_open(WORD  drive, BYTE *path, BYTE *name, BYTE *ext, WORD attr)
 
 
 /*
-*       Compare file nodes pf1 & pf2, using a field
-*       determined by which
-*
-*       Returns -ve if pf1<pf2, 0 if pf1==pf2, +ve if pf1>pf2
-*/
+ *      Compare file nodes pf1 & pf2, using:
+ *          (1) a field determined by 'which'
+ *          (2) the full name, if (1) compares equal
+ *
+ *      Returns -ve if pf1<pf2, 0 if pf1==pf2, +ve if pf1>pf2
+ */
 static WORD pn_fcomp(FNODE *pf1, FNODE *pf2, WORD which)
 {
         WORD            chk;
         BYTE            *ps1, *ps2;
 
-        ps1 = &pf1->f_name[0];
-        ps2 = &pf2->f_name[0];
+        ps1 = pf1->f_name;
+        ps2 = pf2->f_name;
 
-        switch (which)
+        switch(which)
         {
-          case S_SIZE:
-                if (pf2->f_size > pf1->f_size)
-                  return(1);
-                if (pf2->f_size < pf1->f_size)
-                  return(-1);
-                return( strcmp(ps1, ps2) );
-          case S_TYPE:
-                chk = strcmp(scasb(ps1, '.'), scasb(ps2, '.'));
-                if (chk)
-                  return(chk);
-                                                        /* == falls thru*/
-          case S_NAME:
-                return( strcmp(ps1, ps2) );
-          case S_DATE:
-                chk = pf2->f_date - pf1->f_date;
-                if (chk)
-                  return(chk);
-                else
-                {
-/* BugFix       */
-/*                return((pf2->f_time >> 5) - (pf1->f_time >> 5));*/
-                  chk = (pf2->f_time >> 11) - (pf1->f_time >> 11);
-                  if (chk)
-                    return(chk);
-                  chk = ((pf2->f_time >> 5) & 0x003F) -
-                        ((pf1->f_time >> 5) & 0x003F);
-                  if (chk)
-                    return(chk);
-                  return ( (pf2->f_time & 0x001F) - (pf1->f_time & 0x001F) );
-                } /* else */
-/* */
-        } /* of switch */
+        case S_DATE:
+            chk = pf2->f_date - pf1->f_date;
+            if (chk)
+                return chk;
+            chk = pf2->f_time - pf1->f_time;
+            if (chk)
+                return chk;
+            break;
+        case S_SIZE:
+            if (pf2->f_size > pf1->f_size)
+                return 1;
+            if (pf2->f_size < pf1->f_size)
+                return -1;
+            break;
+        case S_TYPE:
+            chk = strcmp(scasb(ps1,'.'),scasb(ps2,'.'));
+            if (chk)
+                return chk;
+            break;
+        }
 
-        return 0;
+        return strcmp(ps1,ps2); /* always the last test (the only test if S_NAME) */
 }
 
 

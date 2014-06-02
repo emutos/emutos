@@ -5590,3 +5590,4 @@ Start... early ages
   in PNODE structure. (RFB)
 - desk/deskfpd.c desk/deskfpd.h desk/deskpro.c desk/deskwin.c: Remove
   remnants of crippled desktop. (RFB)
+- desk/deskfpd.c: Code cleanup: minor improvements to pn_fcomp(). (RFB)
