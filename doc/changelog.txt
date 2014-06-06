@@ -5594,3 +5594,8 @@ Start... early ages
 
 2014-06-02
 - po/fr.po: Updated. (VRI)
+
+2014-06-06
+- aes/gemdos.c aes/gemdos.h desk/deskdir.c desk/desktop.def
+  desk/desktop.rsc: Allow desktop copy/delete operations to be interrupted
+  by UNDO key. (RFB)

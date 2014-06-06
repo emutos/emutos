@@ -52,6 +52,26 @@ static LONG     copylen;    /* size of above buffer */
 static WORD     ml_havebox;
 static BYTE     ml_fsrc[LEN_ZFNAME], ml_fdst[LEN_ZFNAME], ml_fstr[LEN_ZFNAME], ml_ftmp[LEN_ZFNAME];
 
+/*
+ * check for UNDO key pressed: if so, ask user if she wants to abort and,
+ * if so, return TRUE.  otherwise return FALSE.
+ */
+static WORD user_abort(void)
+{
+        LONG            rawin;
+        WORD            rc = 0;
+
+        if (dos_conis() == -1)          /* character waiting */
+        {
+            rawin = dos_rawcin() & 0x00ff00ffL;
+            if (rawin == 0x00610000L)   /* the Atari UNDO key */
+                rc = fun_alert(1, STABORT, NULL);
+        }
+
+        DOS_ERR = 0;
+        return (rc==1) ? 1 : 0;
+}
+
 
 /*
 *       Routine to DRAW a DIALog box centered on the screen
@@ -544,6 +564,13 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
         if (DOS_ERR)
             return d_errmsg();
 
+        if (op != OP_COUNT)
+            if (user_abort())
+            {
+                more = FALSE;
+                break;
+            }
+
         /*
          * handle folder
          */
@@ -852,6 +879,9 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
             continue;
         if (!(G.g_screen[pf->f_obid].ob_state & SELECTED))
             continue;
+        if (op != OP_COUNT)
+            if (user_abort())
+                break;
 
         strcpy(srcpth, psrc_path);
         if (op == OP_COPY)
