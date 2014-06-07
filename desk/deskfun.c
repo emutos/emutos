@@ -181,7 +181,7 @@ WORD fun_op(WORD op, PNODE *pspath, BYTE *pdest)
           if (op == OP_COPY)
           {
             if ( !par_chk(&pspath->p_spec[0], pspath->p_flist,
-                                &G.g_tmppth[0]) )
+                                pdest) )
               return(FALSE);
           }
                                                 /* get count of source  */

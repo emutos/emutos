@@ -5599,3 +5599,7 @@ Start... early ages
 - aes/gemdos.c aes/gemdos.h desk/deskdir.c desk/desktop.def
   desk/desktop.rsc: Allow desktop copy/delete operations to be interrupted
   by UNDO key. (RFB)
+
+2014-06-07
+- desk/deskfun.c: Fix regression introduced on 2013-03-18: the args to
+  par_chk() were incorrect, so alert STBADCOP was never issued. (RFB)
