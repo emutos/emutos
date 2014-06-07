@@ -669,10 +669,10 @@ static BYTE *ret_path(BYTE *pcurr)
 
 /*
 *       Check to see if source is a parent of the destination.
-*       Return TRUE if all ok else FALSE.
+*       If it is, issue alert & return TRUE; otherwise just return FALSE.
 *       Must assume that src and dst paths both end with "\*.*".
 */
-WORD par_chk(BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path)
+WORD source_is_parent(BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path)
 {
         REG BYTE        *tsrc, *tdst;
         WORD    same;
@@ -681,7 +681,7 @@ WORD par_chk(BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path)
         BYTE            dstpth[MAXPATHLEN];
 
         if (psrc_path[0] != pdst_path[0])               /* check drives */
-          return(TRUE);
+          return FALSE;
 
         tsrc = srcpth;
         tdst = dstpth;
@@ -719,15 +719,15 @@ WORD par_chk(BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path)
                 {
                                                 /* INVALID      */
                   fun_alert(1, STBADCOP, NULLPTR);
-                  return(FALSE);
+                  return TRUE;
                 }
               }
               same = FALSE;                     /* ALL OK               */
             }
           }
         } while(same);
-        return(TRUE);
-} /* par_chk */
+        return FALSE;
+}
 
 
 /*

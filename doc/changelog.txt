@@ -5603,3 +5603,5 @@ Start... early ages
 2014-06-07
 - desk/deskfun.c: Fix regression introduced on 2013-03-18: the args to
   par_chk() were incorrect, so alert STBADCOP was never issued. (RFB)
+- desk/deskdir.c desk/deskdir.h desk/deskfun.c: Code cleanup: make the
+  function of par_chk() much more obvious. (RFB)

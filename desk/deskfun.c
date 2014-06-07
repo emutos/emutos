@@ -180,8 +180,7 @@ WORD fun_op(WORD op, PNODE *pspath, BYTE *pdest)
         {
           if (op == OP_COPY)
           {
-            if ( !par_chk(&pspath->p_spec[0], pspath->p_flist,
-                                pdest) )
+            if (source_is_parent(pspath->p_spec, pspath->p_flist, pdest))
               return(FALSE);
           }
                                                 /* get count of source  */
