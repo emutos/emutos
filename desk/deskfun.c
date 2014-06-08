@@ -36,6 +36,7 @@
 #include "desksupp.h"
 #include "deskdir.h"
 #include "deskfun.h"
+#include "ikbd.h"
 
 #include "string.h"
 
@@ -170,33 +171,35 @@ WORD fun_mkdir(WNODE *pw_node)
 } /* fun_mkdir */
 
 
-
+/*
+ *      Perform the operation 'op' on all the files & folders in the
+ *      path associated with 'pspath'.  'op' can be OP_DELETE, OP_COPY,
+ *      OP_MOVE or -1 (see fun_file2desk() for the latter).
+ */
 WORD fun_op(WORD op, PNODE *pspath, BYTE *pdest)
 {
         WORD            fcnt, dcnt;
         LONG            size;
-                                                /* do the operation     */
-        if (op != -1)
+
+        switch(op)
         {
-          if (op == OP_COPY)
-          {
+          case OP_COPY:
+          case OP_MOVE:
             if (source_is_parent(pspath->p_spec, pspath->p_flist, pdest))
-              return(FALSE);
-          }
-                                                /* get count of source  */
-                                                /*   files              */
-          dir_op(OP_COUNT, &pspath->p_spec[0], pspath->p_flist, pdest,
-                 &fcnt, &dcnt, &size);
-                                                /* do the operation     */
-          if ( fcnt || dcnt )
-          {
-            dir_op(op, &pspath->p_spec[0], pspath->p_flist, pdest,
-                   &fcnt, &dcnt, &size);
-            return(TRUE);
-          } /* if */
-        } /* if */
-        graf_mouse(ARROW, 0x0L);
-        return(FALSE);
+              return FALSE;
+          /* drop thru */
+          case OP_DELETE:
+            dir_op(OP_COUNT, pspath->p_spec, pspath->p_flist, pdest,
+                   &fcnt, &dcnt, &size);        /* get count of source files */
+            if ((fcnt+dcnt) == 0)
+              break;
+            dir_op(op, pspath->p_spec, pspath->p_flist, pdest,
+                   &fcnt, &dcnt, &size);        /* do the operation     */
+            return TRUE;
+        }
+
+        graf_mouse(ARROW, NULL);
+        return FALSE;
 } /* fun_op */
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -212,14 +215,15 @@ WORD fun_op(WORD op, PNODE *pspath, BYTE *pdest)
  *      or destination is the desktop.  Therefore 'datype' can ONLY be
  *      AT_ISFILE or AT_ISFOLD.
  */
-void fun_drag(WORD src_wh, WORD dst_wh, WORD dst_ob, WORD dulx, WORD duly)
+void fun_drag(WORD src_wh, WORD dst_wh, WORD dst_ob, WORD dulx, WORD duly, WORD keystate)
 {
-        WORD            ret, junk, datype;
+        WORD            ret, junk, datype, op;
         WNODE           *psw, *pdw;
         ANODE           *pda;
         FNODE           *pdf;
         BYTE            destpath[MAXPATHLEN];
 
+        op = (keystate&MODE_CTRL) ? OP_MOVE : OP_COPY;
         psw = win_find(src_wh);
         pdw = win_find(dst_wh);
 
@@ -233,12 +237,14 @@ void fun_drag(WORD src_wh, WORD dst_wh, WORD dst_ob, WORD dulx, WORD duly)
         if (datype == AT_ISFOLD)
           add_path(destpath, pdf->f_name);
 
-        ret = fun_op(OP_COPY, psw->w_path, destpath);
+        ret = fun_op(op, psw->w_path, destpath);
 
         if (ret)
         {
           if (src_wh != dst_wh)
             desk_clear(src_wh);
+          if (op == OP_MOVE)
+            fun_rebld(psw);
           fun_rebld(pdw);
           /*
            * if we copied into a folder, we must check to see if it's

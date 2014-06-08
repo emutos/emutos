@@ -21,6 +21,7 @@
 #define OP_COUNT 0
 #define OP_DELETE 1
 #define OP_COPY 2
+#define OP_MOVE 3
 
 #define D_PERM 0x0001
 

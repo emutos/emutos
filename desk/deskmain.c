@@ -600,7 +600,7 @@ static WORD hndl_button(WORD clicks, WORD mx, WORD my, WORD button, WORD keystat
           if (button & 0x0001)
           {
             dest_wh = act_bdown(G.g_cwin, G.g_screen, G.g_croot, &mx, &my,
-                                keystate, &c, &dobj);
+                                &keystate, &c, &dobj);
 
             if (dest_wh != NIL)
             {
@@ -613,7 +613,7 @@ static WORD hndl_button(WORD clicks, WORD mx, WORD my, WORD button, WORD keystat
                   wn = win_find(dest_wh);
                   root = wn->w_root;
                 }
-                desk1_drag(wh, dest_wh, root, dobj, mx, my);
+                desk1_drag(wh, dest_wh, root, dobj, mx, my, keystate);
                 desk_clear(wh);
             } /* if !NIL */
           } /* if button */

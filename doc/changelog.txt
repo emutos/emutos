@@ -5605,3 +5605,7 @@ Start... early ages
   par_chk() were incorrect, so alert STBADCOP was never issued. (RFB)
 - desk/deskdir.c desk/deskdir.h desk/deskfun.c: Code cleanup: make the
   function of par_chk() much more obvious. (RFB)
+- desk/desk1.c desk/desk1.h desk/deskact.c desk/deskact.h desk/deskdir.c
+  desk/deskfpd.h desk/deskfun.c desk/deskfun.h desk/deskmain.c
+  desk/desktop.def desk/desktop.rsc: Support desktop 'move files/folders'
+  (i.e. copy then delete) like Atari TOS. (RFB)

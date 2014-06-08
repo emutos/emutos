@@ -314,13 +314,13 @@ static void fun_desk2desk(WORD dobj)
 
 
 
-WORD desk1_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my)
+WORD desk1_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my, WORD keystate)
 {
         WORD done = 0;
 
         if (wh) /* Dragging something from window */
         {
-                if (dest_wh) fun_drag(wh, dest_wh, dobj, mx, my);
+                if (dest_wh) fun_drag(wh, dest_wh, dobj, mx, my, keystate);
                 else
                 {
                         if (sobj == dobj)

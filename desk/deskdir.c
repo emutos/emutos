@@ -533,6 +533,7 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
                 G.g_ndirs++;
                 break;
             case OP_DELETE:
+            case OP_MOVE:
                 if (fold_wind(psrc_path))
                 {
                     DOS_ERR = TRUE;       /* trying to delete  */
@@ -579,7 +580,7 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
             if ((dta->d_fname[0] != '.') && (level < (MAX_LEVEL-1)))
             {
                 add_path(psrc_path, dta->d_fname);
-                if (op == OP_COPY)
+                if ((op == OP_COPY) || (op == OP_MOVE))
                 {
                     add_fname(pdst_path, dta->d_fname);
                     dos_mkdir(pdst_path);
@@ -598,7 +599,7 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
                     dos_sdta(dta);      /* must restore DTA address! */
                 }
                 sub_path(psrc_path);    /* restore the old paths */
-                if (op == OP_COPY)
+                if ((op == OP_COPY) || (op == OP_MOVE))
                     sub_path(pdst_path);
             }
             if (!more)
@@ -621,10 +622,13 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
             more = d_dofdel(psrc_path);
             break;
         case OP_COPY:
+        case OP_MOVE:
             ptmpdst = add_fname(pdst_path, dta->d_fname);
             more = d_dofcopy(psrc_path, pdst_path, dta->d_time,
                             dta->d_date, dta->d_attrib);
             restore_path(ptmpdst);  /* restore original dest path */
+            if ((op == OP_MOVE) && more)
+                more = d_dofdel(psrc_path);
             break;
         }
         if (op != OP_COUNT)
@@ -829,6 +833,7 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
         obj->ob_spec = (LONG) ini_str(STDELETE);
         break;
     case OP_COPY:
+    case OP_MOVE:
         lavail = dos_avail() - 0x400;   /* allow safety margin */
         if (lavail < 0L)
         {
@@ -852,6 +857,11 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
 
         confirm = G.g_ccopypref;
         obj->ob_spec = (LONG) ini_str(STCOPY);
+        if (op == OP_MOVE)
+        {
+            confirm |= G.g_cdelepref;
+            obj->ob_spec = (LONG) ini_str(STMOVE);
+        }
         break;
     }
 
@@ -884,7 +894,7 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
                 break;
 
         strcpy(srcpth, psrc_path);
-        if (op == OP_COPY)
+        if ((op == OP_COPY) || (op == OP_MOVE))
             strcpy(dstpth, pdst_path);
 
         /*
@@ -893,7 +903,7 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
         if (pf->f_attr & F_SUBDIR)
         {
             add_path(srcpth, pf->f_name);
-            if (op == OP_COPY)
+            if ((op == OP_COPY) || (op == OP_MOVE))
             {
                 like_parent(dstpth, pf->f_name);
                 more = output_path(srcpth,dstpth);
@@ -919,9 +929,12 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
             more = d_dofdel(srcpth);
             break;
         case OP_COPY:
+        case OP_MOVE:
             ptmpdst = add_fname(dstpth, pf->f_name);
             more = d_dofcopy(srcpth, dstpth, pf->f_time, pf->f_date, pf->f_attr);
             restore_path(ptmpdst);  /* restore original dest path */
+            if ((op == OP_MOVE) && more)
+                more = d_dofdel(srcpth);
             break;
         }
         if (op != OP_COUNT)
@@ -945,6 +958,7 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
     case OP_DELETE:
         break;
     case OP_COPY:
+    case OP_MOVE:
         dos_free((LONG)copybuf);
         break;
     }

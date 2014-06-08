@@ -572,7 +572,7 @@ void act_bsclick(WORD wh, OBJECT *tree, WORD root, WORD mx, WORD my, WORD keysta
 *       Button stayed down over the specified tree of objects.
 */
 WORD act_bdown(WORD wh, OBJECT *tree, WORD root, WORD *in_mx, WORD *in_my,
-               WORD keystate, GRECT *pc, WORD *pdobj)
+               WORD *keystate, GRECT *pc, WORD *pdobj)
 {
         WORD            sobj;
         WORD            numobs, button;
@@ -633,7 +633,8 @@ WORD act_bdown(WORD wh, OBJECT *tree, WORD root, WORD *in_mx, WORD *in_my,
             } /* if numobs */
           } /* if SELECTED */
         } /* else */
-        evnt_button(0x01, 0x01, 0x00, &l_mx, &l_my, &button, &keystate);
+        evnt_button(0x01, 0x01, 0x00, &l_mx, &l_my, &button, keystate);
+                                        /* return keystate to caller */
         *in_mx = dulx;                  /* pass back the dest. x,y      */
         *in_my = duly;
         return(dst_wh);
