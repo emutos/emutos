@@ -5609,3 +5609,7 @@ Start... early ages
   desk/deskfpd.h desk/deskfun.c desk/deskfun.h desk/deskmain.c
   desk/desktop.def desk/desktop.rsc: Support desktop 'move files/folders'
   (i.e. copy then delete) like Atari TOS. (RFB)
+
+2014-06-09
+- desk/deskfun.c desk/desktop.def desk/desktop.rsc: Issue same error msg
+  as Atari TOS when folder creation fails. Suggested by Eero Tamminen. (RFB)

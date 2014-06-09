@@ -151,11 +151,14 @@ WORD fun_mkdir(WNODE *pw_node)
               dos_mkdir(path);
               if (DOS_ERR)
               {
+                restore_path(ptmp); /* restore original path */
                 if (strlen(path) >= LEN_ZPATH-3)
                   fun_alert(1,STDEEPPA,NULLPTR);
                 else
-                  cont = fun_alert(2,STFOEXIS,NULLPTR) - 1;
-                restore_path(ptmp); /* restore original path */
+                {
+                  if (fun_alert(1,STFOFAIL,NULLPTR) == 1)
+                    cont = TRUE;
+                }
               }
               else
               {
