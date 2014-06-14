@@ -771,11 +771,6 @@ long xrename(int n, char *p1, char *p2)
          */
         if (strtcl1 != strtcl2)
         {
-                /* erase (0xe5) old file */
-                buf[0] = (char)0xe5;
-                ixlseek(fd,posp);
-                ixwrite(fd,1L,buf);
-
                 /* create new directory entry with old info.  even if
                  * we're renaming a folder, we call xcreat() to create
                  * a normal file.  we'll fix it up later.
@@ -784,6 +779,11 @@ long xrename(int n, char *p1, char *p2)
                 if (hnew < 0)
                         return EPTHNF;
                 fd2 = getofd(hnew); /* fd2 is the OFD for the new file/folder */
+
+                /* now we can erase (0xe5) the old file */
+                buf[0] = (char)0xe5;
+                ixlseek(fd,posp);
+                ixwrite(fd,1L,buf);
 
                 /* copy the time/date/cluster/length to the OFD */
                 swpcopyw(&time,&fd2->o_td.time);   /* must be little-endian! */

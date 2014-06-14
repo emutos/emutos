@@ -5613,3 +5613,7 @@ Start... early ages
 2014-06-09
 - desk/deskfun.c desk/desktop.def desk/desktop.rsc: Issue same error msg
   as Atari TOS when folder creation fails. Suggested by Eero Tamminen. (RFB)
+
+2014-06-14
+- bdos/fsdir.c: Fix bug: a cross-directory rename into a full directory
+  deleted the entry for the old directory name, resulting in lost clusters. (RFB)
