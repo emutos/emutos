@@ -327,7 +327,7 @@ long xrmdir(char *p)
         {
                 if (!(f = (FCB *) ixread(fd,32L,NULLPTR)))
                         break;
-        } while ((f->f_name[0] == (char)0xe5) || (f->f_attrib == FA_LFN));
+        } while ((f->f_name[0] == (char)ERASE_MARKER) || (f->f_attrib == FA_LFN));
 
         if ((f != (FCB *)NULLPTR) && (f->f_name[0] != 0x00))
                 return EACCDN;
@@ -802,7 +802,7 @@ long xrename(int n, char *p1, char *p2)
                 fd2 = getofd(hnew); /* fd2 is the OFD for the new file/folder */
 
                 /* now we can erase (0xe5) the old file */
-                buf[0] = (char)0xe5;
+                buf[0] = (char)ERASE_MARKER;
                 ixlseek(fd,posp);
                 ixwrite(fd,1L,buf);
 
@@ -1244,7 +1244,7 @@ FCB     *scan(register DND *dnd, const char *n, WORD att, LONG *posp)
 
                 if( (fcb->f_attrib & FA_SUBDIR)         &&
                     (fcb->f_name[0] != '.')             &&
-                    (fcb->f_name[0] != (char)0xe5)
+                    (fcb->f_name[0] != (char)ERASE_MARKER)
                 )
                 {       /*  see if we already have it  */
                         dnd1 = getdnd( &fcb->f_name[0] , dnd ) ;
@@ -1272,7 +1272,7 @@ FCB     *scan(register DND *dnd, const char *n, WORD att, LONG *posp)
 
         if (!m)
         {       /*  assumes that (*n != 0xe5) (if posp == -1)  */
-                if( fcb && (*n == (char)0xe5) )
+                if( fcb && (*n == (char)ERASE_MARKER) )
                         return(fcb) ;
                 return( (FCB *) 0 );
         }
@@ -1505,11 +1505,11 @@ static BOOL match(char *s1, char *s2)
      **  only specific requests for deleted entries do.
      */
 
-    if (*s2 == (char)0xe5)
+    if (*s2 == (char)ERASE_MARKER)
     {
         if (*s1 == '?')
             return( FALSE );
-        else if (*s1 == (char)0xe5)
+        else if (*s1 == (char)ERASE_MARKER)
             return( TRUE );
     }
 

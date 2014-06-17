@@ -5621,3 +5621,5 @@ Start... early ages
 2014-06-17
 - bdos/fsdir.c: Tidy up xrmdir(): fix formatting and add comments. (RFB)
 - bdos/fsdir.c: Code cleanup: remove useless test in xrmdir(). (RFB)
+- bdos/fs.h bdos/fsdir.c bdos/fsopnclo.c: Code cleanup: replace 0xe5
+  with #define. (RFB)

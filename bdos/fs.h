@@ -179,6 +179,8 @@ FCB
     long f_fileln;
 } ;
 
+#define ERASE_MARKER    0xe5    /* in f_name[0], indicates erased file */
+
 #define FA_RO           0x01
 #define FA_HIDDEN       0x02
 #define FA_SYSTEM       0x04
