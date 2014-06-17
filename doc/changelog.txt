@@ -5617,3 +5617,6 @@ Start... early ages
 2014-06-14
 - bdos/fsdir.c: Fix bug: a cross-directory rename into a full directory
   deleted the entry for the old directory name, resulting in lost clusters. (RFB)
+
+2014-06-17
+- bdos/fsdir.c: Tidy up xrmdir(): fix formatting and add comments. (RFB)

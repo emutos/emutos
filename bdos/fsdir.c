@@ -307,57 +307,81 @@ long xrmdir(char *p)
         const char *s;
 
         if ((long)(d = findit(p,&s,1)) < 0)             /* M01.01.1212.01 */
-                return( (long)d );
+                return (long)d;
         if (!d)                                                 /* M01.01.1214.01 */
-                return( EPTHNF );
+                return EPTHNF;
 
         /*  M01.01.SCC.FS.09  */
-        if( ! d->d_parent )                     /*  Can't delete root  */
-                return( EACCDN ) ;
+        if (!d->d_parent)               /*  Can't delete root  */
+                return EACCDN;
         /*  end M01.01.SCC.FS.09  */
 
+        /*
+         * scan actual directory to make sure it's empty
+         */
         if (!(fd = d->d_ofd))
                 fd = makofd(d);         /* makofd() also updates d->d_ofd */
 
-        ixlseek(fd,0x40L);
+        ixlseek(fd,0x40L);              /* skip over . and .. */
         do
         {
                 if (!(f = (FCB *) ixread(fd,32L,NULLPTR)))
                         break;
-        } while (f->f_name[0] == (char)0x0e5 || f->f_attrib == FA_LFN);
+        } while ((f->f_name[0] == (char)0xe5) || (f->f_attrib == FA_LFN));
 
+        if ((f != (FCB *)NULLPTR) && (f->f_name[0] != 0x00))
+                return EACCDN;
 
-        if( f != (FCB*)NULLPTR  &&  f->f_name[0] != 0 )
-                return(EACCDN);
+        /*
+         * now we have to remove ourselves from the chain of sibling DNDs,
+         * by making the previous child's sibling pointer point to the
+         * child after us.
+         *
+         * we start with the first child of our parent, and scan until we
+         * find our DND.  whilst scanning, we use 'q' to remember where
+         * the previous pointer in the chain was.
+         */
+        for (d1 = *(q = &d->d_parent->d_left); d1 != d; d1 = *(q = &d1->d_right))
+                ;
 
-        for(d1 = *(q = &d->d_parent->d_left); d1 != d; d1 = *(q = &d1->d_right))
-                ; /* follow sib-links */
+        if (d1 != d)
+                return EINTRN;          /* internal error */
 
-        if( d1 != d )
-                return(EINTRN);         /* internal error */
-
+        /*
+         * the DND for the (empty) directory should not have open files
+         */
         if (d->d_files)
-                return(EINTRN);         /* open files ? - internal error */
+                return EINTRN;          /* open files ? - internal error */
 
+        /*
+         * the DND for the (empty) directory should not have child directories
+         */
         if (d->d_left)
-                return(EINTRN);         /* subdir - internal error */
+                return EINTRN;          /* subdir - internal error */
 
-
-        /* take him out ! */
-
+        /*
+         * now we have the pointer to the previous pointer in the chain,
+         * we update that pointer with the pointer to the next sibling.
+         * all this works equally well when there are no siblings ...
+         */
         *q = d->d_right;
 
+        /*
+         * next, we free up the OFD (if it exists) and our DND
+         */
         if (d->d_ofd)
-        {
-                xmfreblk((char *)d->d_ofd);
-        }
+                xmfreblk(d->d_ofd);
 
         d1 = d->d_parent;
-        xmfreblk((char *)d);
-        ixlseek((f2 = fd->o_dirfil),(pos = fd->o_dirbyt));
-        f = (FCB *) ixread(f2,32L,NULLPTR);
+        xmfreblk(d);
 
-        return(ixdel(d1,f,pos));
+        /*
+         * finally, we delete the entry from the parent directory
+         */
+        ixlseek((f2 = fd->o_dirfil),(pos = fd->o_dirbyt));
+        f = (FCB *)ixread(f2,32L,NULLPTR);
+
+        return ixdel(d1,f,pos);
 }
 
 /*
