@@ -344,9 +344,6 @@ long xrmdir(char *p)
         for (d1 = *(q = &d->d_parent->d_left); d1 != d; d1 = *(q = &d1->d_right))
                 ;
 
-        if (d1 != d)
-                return EINTRN;          /* internal error */
-
         /*
          * the DND for the (empty) directory should not have open files
          */
