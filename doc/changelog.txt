@@ -5623,3 +5623,6 @@ Start... early ages
 - bdos/fsdir.c: Code cleanup: remove useless test in xrmdir(). (RFB)
 - bdos/fs.h bdos/fsdir.c bdos/fsopnclo.c: Code cleanup: replace 0xe5
   with #define. (RFB)
+
+2014-06-18
+- printbss.sh: New script. Display the BSS usage of each subdirectory. (VRI)
