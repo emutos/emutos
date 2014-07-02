@@ -408,8 +408,6 @@ void bufl_init(void);
 void flush(BCB *b);
 /* return the ptr to the buffer containing the desired record */
 char *getrec(RECNO recn, OFD *of, int wrtflg);
-/* pack into user buffer */
-char *packit(register char *s, register char *d);
 
 /*
  * in fsfat.c

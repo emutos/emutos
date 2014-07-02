@@ -5626,3 +5626,7 @@ Start... early ages
 
 2014-06-18
 - printbss.sh: New script. Display the BSS usage of each subdirectory. (VRI)
+
+2014-07-01
+- bdos/fs.h bdos/fsbuf.c bdos/fsdir.c: Code cleanup: move packit() and
+  make it local. (RFB)

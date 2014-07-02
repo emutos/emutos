@@ -138,6 +138,7 @@
  */
 
 static int namlen(char *s11);
+static char *packit(char *s, char *d);
 static char *dopath(DND *p, char *buf, int *len);
 static DND *makdnd(DND *p, FCB *b);
 static DND *dcrack(const char **np);
@@ -1036,6 +1037,45 @@ FCB     *dirinit(DND *dn)
         bzero( s1 , num ) ;
         return(f1);
 }
+
+
+
+/*
+ * packit - pack into user buffer
+ * more especially, convert a filename of the form
+ *   NAME    EXT
+ * into:
+ *   NAME.EXT
+ */
+static char *packit(char *s, char *d)
+{
+    char *s0;
+    int i;
+
+    if (*s)
+    {
+        s0 = s;
+        for (i = 0; (i < 8) && (*s) && (*s != ' '); i++)
+            *d++ = *s++;
+
+        if (*s0 != '.') /* not a special directory entry */
+        {
+            s = s0 + 8; /* ext */
+
+            if (*s != ' ')
+            {
+                *d++ = '.';
+                for (i = 0; (i < 3) && (*s) && (*s != ' '); i++)
+                    *d++ = *s++;
+            }
+        }
+    }
+
+    *d = '\0';
+
+    return d;
+}
+
 
 
 /*
