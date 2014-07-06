@@ -5630,3 +5630,7 @@ Start... early ages
 2014-07-01
 - bdos/fs.h bdos/fsbuf.c bdos/fsdir.c: Code cleanup: move packit() and
   make it local. (RFB)
+
+2014-07-06
+- bdos/fsdir.c: Fix bug: do not allow folder to be renamed to the same name
+  as an existing folder. (RFB)

@@ -739,7 +739,7 @@ long xrename(int n, char *p1, char *p2)
         CLNO    clust;
         LONG    fileln;
 
-        if (!ixsfirst(p2,0,(DTAINFO *)0L))  /* check if new path exists */
+        if (!ixsfirst(p2,FA_SUBDIR,(DTAINFO *)0L))       /* check if new path exists */
                 return(EACCDN);
 
         if ((long)(dn1 = findit(p1,&s1,0)) < 0)          /* M01.01.1212.01 */
