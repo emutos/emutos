@@ -726,7 +726,7 @@ void builds(const char *s1, char *s2)
 /*ARGSUSED*/
 long xrename(int n, char *p1, char *p2)
 {
-        OFD     *fd, *fd2;
+        OFD     *fd;
         FCB     *f;
         DND     *dn1, *dn2;
         DMD     *dmd1, *dmd2;
@@ -793,6 +793,8 @@ long xrename(int n, char *p1, char *p2)
          */
         if (strtcl1 != strtcl2)
         {
+                OFD *fd2, *fdparent;
+
                 /* create new directory entry with old info.  even if
                  * we're renaming a folder, we call xcreat() to create
                  * a normal file.  we'll fix it up later.
@@ -818,18 +820,19 @@ long xrename(int n, char *p1, char *p2)
                  * this folder, and fix up the attribute of the folder
                  * in the parent directory.
                  */
+                fdparent = fd2->o_dirfil;               /* parent's OFD */
                 if (att&FA_SUBDIR) {
                         fd2->o_fileln = 0x7fffffffL;    /* fake size for dirs */
 
                         /* set .. entry to point to new parent */
-                        temp = fd2->o_dirfil->o_strtcl; /* parent's start cluster */
+                        temp = fdparent->o_strtcl;      /* parent's start cluster */
                         swpw(temp);                     /* convert to disk format */
                         ixlseek(fd2,32+26);             /* seek to cluster field  */
                         ixwrite(fd2,2l,&temp);          /*  & write it            */
 
                         /* set attribute for this file in parent directory */
-                        ixlseek(fd2->o_dirfil,fd2->o_dirbyt+11);
-                        ixwrite(fd2->o_dirfil,1L,&att);
+                        ixlseek(fdparent,fd2->o_dirbyt+11);
+                        ixwrite(fdparent,1L,&att);
                 }
                 fd2->o_flag |= O_DIRTY;
                 if (att&FA_SUBDIR) {
@@ -838,7 +841,7 @@ long xrename(int n, char *p1, char *p2)
                         sft[hnew-NUMSTD].f_own = 0;     /* free handle */
                         sft[hnew-NUMSTD].f_ofd = 0;
                 } else xclose(hnew);
-                ixclose(fd2->o_dirfil,CL_DIR);
+                ixclose(fdparent,CL_DIR);
         }
         else
         {

@@ -5634,3 +5634,6 @@ Start... early ages
 2014-07-06
 - bdos/fsdir.c: Fix bug: do not allow folder to be renamed to the same name
   as an existing folder. (RFB)
+
+2014-07-07
+- bdos/fsdir.c: Fix bug: do not reference OFD after it has been freed. (RFB)
