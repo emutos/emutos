@@ -5640,3 +5640,4 @@ Start... early ages
 - bdos/fsdir.c: Fix bug: for cross-directory rename, the cluster number in
   the .. entry of the renamed folder was incorrect when the target was the
   root directory. (RFB)
+- bdos/fsdir.c: Fix bug: update the DND when a directory is renamed. (RFB)

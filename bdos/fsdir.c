@@ -139,6 +139,7 @@
 
 static int namlen(char *s11);
 static char *packit(char *s, char *d);
+static void unpackit(const char *src, char *dst);
 static char *dopath(DND *p, char *buf, int *len);
 static DND *makdnd(DND *p, FCB *b);
 static DND *dcrack(const char **np);
@@ -146,6 +147,7 @@ static int getpath(const char *p, char *d, int dirspec);
 static BOOL match(char *s1, char *s2);
 static void makbuf(FCB *f, DTAINFO *dt);
 static DND *getdnd(char *n, DND *d);
+static void snipdnd(DND *dnd);
 static void freednd(DND *dn);
 
 /*
@@ -854,6 +856,31 @@ long xrename(int n, char *p1, char *p2)
                 ixwrite(fd,11L,buf);
         }
 
+        /*
+         * if we're renaming a directory with an existing DND, make
+         * sure that:
+         *  1. if it's a cross-directory rename, we move the DND
+         *  2. we always update the name field in the DND
+         */
+        if (att&FA_SUBDIR) {
+                DND *dnd;
+                char s[LEN_ZFNAME];
+
+                unpackit(s1,s);         /* s[] = old name for getdnd() lookup */
+                dnd = getdnd(s,dn1);
+                if (dnd) {
+                        unpackit(s2,s); /* s[] = new name for DND update */
+                        if (strtcl1 != strtcl2) {   /* cross-directory */
+                                snipdnd(dnd);   /* snip DND out of the old chain */
+                                dnd->d_right = dn2->d_left; /* insert in the new */
+                                dn2->d_left = dnd;
+                        }
+                        KDEBUG(("xrename() DND name '%s\\%s' => '%s\\%s'\n",
+                                dn1->d_name,dnd->d_name,dn2->d_name,s));
+                        memcpy(dnd->d_name,s,11);
+                }
+        }
+
         return(ixclose(fd,CL_DIR));
 }
 
@@ -1081,6 +1108,40 @@ static char *packit(char *s, char *d)
     *d = '\0';
 
     return d;
+}
+
+
+
+/*
+ * unpackit - more-or-less the reverse of packit()
+ * converts a filename of the form
+ *   "NAME.EXT"
+ * into:
+ *   "NAME    EXT"
+ */
+static void unpackit(const char *src, char *dst)
+{
+    const char *s;
+    char *d;
+    int i;
+
+    /* initialise destination */
+    memset(dst,' ',11);
+
+    /* process NAME */
+    for (i = 0, s = src, d = dst; (i < 8) && *s && (*s != '.'); i++)
+        *d++ = *s++;
+
+    /* find start of EXT (just in case NAME is >8 chars long) */
+    while(*s)
+        if (*s++ == '.')
+            break;
+
+    /* process EXT */
+    for (i = 0, d = dst+8; (i < 3) && *s; i++)
+        *d++ = *s++;
+
+    *(dst+11) = '\0';
 }
 
 
@@ -1625,22 +1686,30 @@ static DND *getdnd(char *n, DND *d)
 
 
 /*
+ *  snipdnd - snip a DND out of a chain
+ */
+static void snipdnd(DND *dnd)
+{
+    DND **prev;
+
+    for (prev = &(dnd->d_parent->d_left); *prev != dnd; prev = &((*prev)->d_right))
+        ;                           /* find the pointer to this DND */
+    *prev = dnd->d_right;           /* make it point to the one after us */
+}
+
+
+/*
 **  freednd - free an allocated and linked-in DND
 **
 */
 
 static void freednd(DND *dn)                    /* M01.01.1031.02 */
 {
-    DND **prev;
-
     if ( dn->d_ofd ) {                /* free associated OFD if it's linked */
         xmfreblk( (char *)(dn->d_ofd) );
     }
-    for ( prev = &(dn->d_parent->d_left);
-          *prev != dn;
-          prev = &((*prev)->d_right) )
-        ;                             /* find the predecessor to this DND */
-    *prev = dn->d_right;              /* then cut this DND out of the list */
+
+    snipdnd(dn);                      /* cut this DND out of the chain */
 
     while ( dn->d_left ) {            /* is this step really necessary? */
         freednd( dn->d_left );
