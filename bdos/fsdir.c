@@ -122,21 +122,20 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include        "config.h"
-#include        "portab.h"
-#include        "asm.h"
-#include        "fs.h"
-#include        "time.h"
-#include        "mem.h"
-#include        "gemerror.h"
-#include        "biosbind.h"
-#include        "string.h"
-#include        "kprint.h"
+#include "config.h"
+#include "portab.h"
+#include "asm.h"
+#include "fs.h"
+#include "time.h"
+#include "mem.h"
+#include "gemerror.h"
+#include "biosbind.h"
+#include "string.h"
+#include "kprint.h"
 
 /*
  * forward prototypes
  */
-
 static int namlen(char *s11);
 static char *packit(char *s, char *d);
 static void unpackit(const char *src, char *dst);
@@ -153,281 +152,266 @@ static void freednd(DND *dn);
 /*
  *  local macros
  */
-
 #define dirscan(a,c) ((DND *) scan(a,c,FA_SUBDIR,(LONG*)&negone))
 
 
 /*
-**  dots
-*/
-
+ *  dots
+ */
 static const char dots[22] = ".          ";
 
 /*
- * counter used by free_available_dnds()
+ *  counter used by free_available_dnds()
  */
 static LONG freed_dnds, freed_ofds; /* count of DNDs & OFDs made available */
 
 
 /*
- * namlen - parameter points to a character string of 11 bytes max
+ *  namlen - parameter points to a character string of 11 bytes max
  */
-
 static int namlen(char *s11)                            /* M01.01.1107.01 */
 {
     int i, len;
 
-    for ( i = len = 1; i <= 11; i++, s11++ )
+    for (i = len = 1; i <= 11; i++, s11++)
     {
-        if ( *s11 && (*s11 != ' ') )
+        if (*s11 && (*s11 != ' '))
         {
             len++;
-            if ( i==9 )
+            if (i == 9)
                 len++;
         }
     }
-    return ( len );
+
+    return len;
 }
 
 
-
 /*
-**  xmkdir - make a directory, given path 's'
-**
-**      Function 0x39   d_create
-**
-*/
-
+ *  xmkdir - make a directory, given path 's'
+ *
+ *  Function 0x39   d_create
+ */
 long xmkdir(char *s)
 {
-        register OFD *f;
-        register FCB *f2;
-        OFD     *fd,*f0;
-        FCB     *b;
-        DND     *dn;
-        int     h,cl,plen;
-        long    rc;
+    register OFD *f;
+    register FCB *f2;
+    OFD *fd,*f0;
+    FCB *b;
+    DND *dn;
+    int h,cl,plen;
+    long rc;
 
-        if ((h = rc = ixcreat(s,FA_SUBDIR)) < 0)
-                return(rc);
+    if ((h = rc = ixcreat(s,FA_SUBDIR)) < 0)
+        return rc;
 
-        f = getofd(h);
+    f = getofd(h);
 
-        /* build a DND in the tree */
+    /* build a DND in the tree */
+    fd = f->o_dirfil;
 
-        fd = f->o_dirfil;
+    ixlseek(fd,f->o_dirbyt);
+    b = (FCB *) ixread(fd,32L,NULLPTR);
 
-        ixlseek(fd,f->o_dirbyt);
-        b = (FCB *) ixread(fd,32L,NULLPTR);
+    /* is the total path length too long? */    /* M01.01.1107.01 */
+    plen = namlen( b->f_name );
+    for (dn = f->o_dnode; dn; dn = dn->d_parent)
+        plen += namlen(dn->d_name);
+    if (plen >= (LEN_ZPATH-3))
+    {
+        ixdel(f->o_dnode, b, f->o_dirbyt);
+        return EACCDN;
+    }
 
-        /* is the total path length too long? */     /* M01.01.1107.01 */
+    /* note: makdnd() and makofd() only return if they succeed */
+    dn = makdnd(f->o_dnode,b);
+    f0 = makofd(dn);            /* makofd() also updates dn->d_ofd */
 
-        plen = namlen( b->f_name );
-        for ( dn = f->o_dnode; dn; dn = dn->d_parent )
-                plen += namlen( dn->d_name );
-        if ( plen >= (LEN_ZPATH-3) )
-        {
-                ixdel( f->o_dnode, b, f->o_dirbyt );
-                return ( EACCDN );
-        }
+    /* initialize dir cluster */
+    if (nextcl(f0,1))
+    {
+        ixdel(f->o_dnode, b, f->o_dirbyt);      /* M01.01.1103.01 */
+        f->o_dnode->d_left = NULLPTR;           /* M01.01.1103.01 */
+        freednd(dn);                            /* M01.01.1031.02 */
+        return EACCDN;
+    }
 
-        /* note: makdnd() and makofd() only return if they succeed */
-        dn = makdnd(f->o_dnode,b);
-        f0 = makofd(dn);            /* makofd() also updates dn->d_ofd */
+    f2 = dirinit(dn);                   /* pointer to dirty dir block */
 
-        /* initialize dir cluster */
+    /* write identifier */
+    memcpy(f2, dots, 22);
+    f2->f_attrib = FA_SUBDIR;
+    f2->f_td.time = time;
+    swpw(f2->f_td.time);                /*  M01.01.SCC.FS.04  */
+    f2->f_td.date = date;
+    swpw(f2->f_td.date);                /*  M01.01.SCC.FS.04  */
+    cl = f0->o_strtcl;
+    swpw(cl);
+    f2->f_clust = cl;
+    f2->f_fileln = 0;
+    f2++;
 
-        if (nextcl(f0,1))
-        {
-                ixdel( f->o_dnode, b, f->o_dirbyt );    /* M01.01.1103.01 */
-                f->o_dnode->d_left = NULLPTR;            /* M01.01.1103.01 */
-                freednd(dn);                    /* M01.01.1031.02 */
-                return(EACCDN);
-        }
+    /* write parent entry .. */
+    memcpy(f2, dots, 22);
+    f2->f_name[1] = '.';           /* This is .. */
+    f2->f_attrib = FA_SUBDIR;
+    f2->f_td.time = time;
+    swpw(f2->f_td.time);           /*  M01.01.SCC.FS.06  */
+    f2->f_td.date = date;
+    swpw(f2->f_td.date);           /*  M01.01.SCC.FS.06  */
+    cl = f->o_dirfil->o_strtcl;
 
-        f2 = dirinit(dn);                       /* pointer to dirty dir block */
+    if (!fd->o_dnode)              /* if creating a folder in the root, the */
+        cl = 0;                    /*  cluster# of the .. entry must be 0   */
 
-        /* write identifier */
-
-        memcpy(f2, dots, 22);
-        f2->f_attrib = FA_SUBDIR;
-        f2->f_td.time = time;
-        swpw( f2->f_td.time ) ;        /*  M01.01.SCC.FS.04  */
-        f2->f_td.date = date;
-        swpw( f2->f_td.date ) ;        /*  M01.01.SCC.FS.04  */
-        cl = f0->o_strtcl;
-        swpw(cl);
-        f2->f_clust = cl;
-        f2->f_fileln = 0;
-        f2++;
-
-        /* write parent entry .. */
-
-        memcpy(f2, dots, 22);
-        f2->f_name[1] = '.';           /* This is .. */
-        f2->f_attrib = FA_SUBDIR;
-        f2->f_td.time = time;
-        swpw( f2->f_td.time ) ;        /*  M01.01.SCC.FS.06  */
-        f2->f_td.date = date;
-        swpw( f2->f_td.date ) ;        /*  M01.01.SCC.FS.06  */
-        cl = f->o_dirfil->o_strtcl;
-
-        if (!fd->o_dnode)              /* if creating a folder in the root, the */
-                cl = 0;                /*  cluster# of the .. entry must be 0   */
-
-        swpw(cl);
-        f2->f_clust = cl;
-        f2->f_fileln = 0;
-        memcpy(f, f0, sizeof(OFD));
-        f->o_flag |= O_DIRTY;
-        ixclose(f,CL_DIR | CL_FULL);    /* force flush and write */
-        xmfreblk((char*)f);
-        sft[h-NUMSTD].f_own = 0;
-        sft[h-NUMSTD].f_ofd = 0;
-        return(E_OK);
+    swpw(cl);
+    f2->f_clust = cl;
+    f2->f_fileln = 0;
+    memcpy(f, f0, sizeof(OFD));
+    f->o_flag |= O_DIRTY;
+    ixclose(f,CL_DIR | CL_FULL);    /* force flush and write */
+    xmfreblk(f);
+    sft[h-NUMSTD].f_own = 0;
+    sft[h-NUMSTD].f_ofd = 0;
+    return E_OK;
 }
 
 
 /*
-**  xrmdir - remove (delete) a directory
-**
-**      Function 0x3A   d_delete
-**
-**      Error returns
-**              EPTHNF
-**              EACCDN
-**              EINTRN
-**
-*/
-
+ *  xrmdir - remove (delete) a directory
+ *
+ *  Function 0x3A   d_delete
+ *
+ *  Error returns:
+ *                  EPTHNF
+ *                  EACCDN
+ *                  EINTRN
+ */
 long xrmdir(char *p)
 {
-        register DND *d;
-        DND     *d1,**q;
-        FCB     *f;
-        OFD     *fd,*f2;                /* M01.01.03 */
-        long    pos;
-        const char *s;
+    register DND *d;
+    DND *d1,**q;
+    FCB *f;
+    OFD *fd,*f2;                    /* M01.01.03 */
+    long pos;
+    const char *s;
 
-        if ((long)(d = findit(p,&s,1)) < 0)             /* M01.01.1212.01 */
-                return (long)d;
-        if (!d)                                                 /* M01.01.1214.01 */
-                return EPTHNF;
+    if ((long)(d = findit(p,&s,1)) < 0)     /* M01.01.1212.01 */
+        return (long)d;
+    if (!d)                                 /* M01.01.1214.01 */
+        return EPTHNF;
 
-        /*  M01.01.SCC.FS.09  */
-        if (!d->d_parent)               /*  Can't delete root  */
-                return EACCDN;
-        /*  end M01.01.SCC.FS.09  */
+    /*  M01.01.SCC.FS.09  */
+    if (!d->d_parent)                       /* Can't delete root */
+        return EACCDN;
+    /*  end M01.01.SCC.FS.09  */
 
-        /*
-         * scan actual directory to make sure it's empty
-         */
-        if (!(fd = d->d_ofd))
-                fd = makofd(d);         /* makofd() also updates d->d_ofd */
+    /*
+     * scan actual directory to make sure it's empty
+     */
+    if (!(fd = d->d_ofd))
+        fd = makofd(d);             /* makofd() also updates d->d_ofd */
 
-        ixlseek(fd,0x40L);              /* skip over . and .. */
-        do
-        {
-                if (!(f = (FCB *) ixread(fd,32L,NULLPTR)))
-                        break;
-        } while ((f->f_name[0] == (char)ERASE_MARKER) || (f->f_attrib == FA_LFN));
+    ixlseek(fd,0x40L);              /* skip over . and .. */
+    do
+    {
+        if (!(f = (FCB *) ixread(fd,32L,NULLPTR)))
+            break;
+    } while ((f->f_name[0] == (char)ERASE_MARKER) || (f->f_attrib == FA_LFN));
 
-        if ((f != (FCB *)NULLPTR) && (f->f_name[0] != 0x00))
-                return EACCDN;
+    if ((f != (FCB *)NULLPTR) && (f->f_name[0] != 0x00))
+        return EACCDN;
 
-        /*
-         * now we have to remove ourselves from the chain of sibling DNDs,
-         * by making the previous child's sibling pointer point to the
-         * child after us.
-         *
-         * we start with the first child of our parent, and scan until we
-         * find our DND.  whilst scanning, we use 'q' to remember where
-         * the previous pointer in the chain was.
-         */
-        for (d1 = *(q = &d->d_parent->d_left); d1 != d; d1 = *(q = &d1->d_right))
-                ;
+    /*
+     * now we have to remove ourselves from the chain of sibling DNDs,
+     * by making the previous child's sibling pointer point to the
+     * child after us.
+     *
+     * we start with the first child of our parent, and scan until we
+     * find our DND.  whilst scanning, we use 'q' to remember where
+     * the previous pointer in the chain was.
+     */
+    for (d1 = *(q = &d->d_parent->d_left); d1 != d; d1 = *(q = &d1->d_right))
+        ;
 
-        /*
-         * the DND for the (empty) directory should not have open files
-         */
-        if (d->d_files)
-                return EINTRN;          /* open files ? - internal error */
+    /*
+     * the DND for the (empty) directory should not have open files
+     */
+    if (d->d_files)
+        return EINTRN;              /* open files ? - internal error */
 
-        /*
-         * the DND for the (empty) directory should not have child directories
-         */
-        if (d->d_left)
-                return EINTRN;          /* subdir - internal error */
+    /*
+     * the DND for the (empty) directory should not have child directories
+     */
+    if (d->d_left)
+        return EINTRN;              /* subdir - internal error */
 
-        /*
-         * now we have the pointer to the previous pointer in the chain,
-         * we update that pointer with the pointer to the next sibling.
-         * all this works equally well when there are no siblings ...
-         */
-        *q = d->d_right;
+    /*
+     * now we have the pointer to the previous pointer in the chain,
+     * we update that pointer with the pointer to the next sibling.
+     * all this works equally well when there are no siblings ...
+     */
+    *q = d->d_right;
 
-        /*
-         * next, we free up the OFD (if it exists) and our DND
-         */
-        if (d->d_ofd)
-                xmfreblk(d->d_ofd);
+    /*
+     * next, we free up the OFD (if it exists) and our DND
+     */
+    if (d->d_ofd)
+        xmfreblk(d->d_ofd);
 
-        d1 = d->d_parent;
-        xmfreblk(d);
+    d1 = d->d_parent;
+    xmfreblk(d);
 
-        /*
-         * finally, we delete the entry from the parent directory
-         */
-        ixlseek((f2 = fd->o_dirfil),(pos = fd->o_dirbyt));
-        f = (FCB *)ixread(f2,32L,NULLPTR);
+    /*
+     * finally, we delete the entry from the parent directory
+     */
+    ixlseek((f2 = fd->o_dirfil),(pos = fd->o_dirbyt));
+    f = (FCB *)ixread(f2,32L,NULLPTR);
 
-        return ixdel(d1,f,pos);
+    return ixdel(d1,f,pos);
 }
+
 
 /*
-**  xchmod - change/get attrib of path p
-**              if wrt = 1, set; else get
-**
-**      Function 0x43   f_attrib
-**
-**      Error returns
-**              EPTHNF
-**              EFILNF
-**
-*/
-
+ *  xchmod - change/get attrib of path p
+ *           if wrt = 1, set; else get
+ *
+ *  Function 0x43   f_attrib
+ *
+ *  Error returns:
+ *                  EPTHNF
+ *                  EFILNF
+ */
 long xchmod(char *p, int wrt, char mod)
 {
-        OFD *fd;
-        DND *dn;                                        /*  M01.01.03   */
-        const char *s;
-        long pos;
+    OFD *fd;
+    DND *dn;                                /*  M01.01.03   */
+    const char *s;
+    long pos;
 
-        if ((long)(dn = findit(p,&s,0)) < 0)            /* M01.01.1212.01 */
-                return( (long)dn );
-        if (!(long)dn)                                  /* M01.01.1214.01 */
-                return( EPTHNF );
+    if ((long)(dn = findit(p,&s,0)) < 0)    /* M01.01.1212.01 */
+        return (long)dn;
+    if (!(long)dn)                          /* M01.01.1214.01 */
+        return EPTHNF;
 
-        pos = 0;
+    pos = 0;
 
+    if (!scan(dn, s, FA_NORM, &pos))        /*  M01.01.03   */
+        return EFILNF;
 
-        if( ! scan( dn , s , FA_NORM , &pos )  )        /*  M01.01.03   */
-                return( EFILNF ) ;
+    pos -= 21;                              /* point at attribute in file */
+    fd = dn->d_ofd;
+    ixlseek(fd,pos);
+    if (!wrt)
+        ixread(fd,1L,&mod);
+    else
+    {
+        ixwrite(fd,1L,&mod);
+        ixclose(fd,CL_DIR);                 /* for flush */
+    }
 
-
-        pos -= 21;                           /* point at attribute in file */
-        fd = dn->d_ofd;
-        ixlseek(fd,pos);
-        if (!wrt)
-                ixread(fd,1L,&mod);
-        else
-        {
-                ixwrite(fd,1L,&mod);
-                ixclose(fd,CL_DIR); /* for flush */
-        }
-        return(mod);
+    return mod;
 }
-
 
 
 /*
@@ -435,15 +419,14 @@ long xchmod(char *p, int wrt, char mod)
  *      search first for matching name, into specified address.  if
  *      address = 0L, caller wants search only, no buffer info
  *
- * Arguments:
- *   *name - name of file to match
- *   att   - attribute of file
- *   *addr - ptr to dta info
+ *  Arguments:
+ *      *name - name of file to match
+ *      att   - attribute of file
+ *      *addr - ptr to dta info
  *
  *  returns:
  *      error code.
  */
-
 long ixsfirst(char *name, register WORD att, register DTAINFO *addr)
 {
     const char *s;              /*  M01.01.03                   */
@@ -454,11 +437,10 @@ long ixsfirst(char *name, register WORD att, register DTAINFO *addr)
     if (att != FA_VOL)
         att |= (FA_ARCHIVE|FA_RO);
 
-
-    if ((long)(dn = findit(name,&s,0)) < 0)         /* M01.01.1212.01 */
+    if ((long)(dn = findit(name,&s,0)) < 0) /* M01.01.1212.01 */
         return (long)dn;
 
-    if (dn == (DND*)NULLPTR)                        /* M01.01.1214.01 */
+    if (dn == (DND*)NULLPTR)                /* M01.01.1214.01 */
         return EFILNF;
 
     /* now scan for filename from start of directory */
@@ -473,81 +455,78 @@ long ixsfirst(char *name, register WORD att, register DTAINFO *addr)
     if (addr)
     {
         memcpy(&addr->dt_name[0], s, 12);
-        addr->dt_attr = att ;
-        addr->dt_pos = pos ;
-        addr->dt_dnd = dn ;
+        addr->dt_attr = att;
+        addr->dt_pos = pos;
+        addr->dt_dnd = dn;
 
-        makbuf( f , addr ) ;
-
+        makbuf(f, addr);
     }
 
-    return(E_OK);
+    return E_OK;
 }
-
 
 
 /*
  *  xsfirst - search first for matching name, into dta
  *
- *      Function 0x4E   f_sfirst
+ *  Function 0x4E   f_sfirst
  *
- *      Error returns EFILNF
+ *  Error returns:  EFILNF
  */
-
 long xsfirst(char *name, int att)
 {
-        long    result;
-        DTAINFO *dt;                                            /* M01.01.1209.01 */
+    long result;
+    DTAINFO *dt;                            /* M01.01.1209.01 */
 
-        dt = (DTAINFO *)(run->p_xdta);                          /* M01.01.1209.01 */
+    dt = (DTAINFO *)(run->p_xdta);          /* M01.01.1209.01 */
 
-        /* set an indication of 'uninitialized DTA' */
-        dt->dt_dnd = (DND*)NULLPTR;                                     /* M01.01.1209.01 */
+    /* set an indication of 'uninitialized DTA' */
+    dt->dt_dnd = (DND*)NULLPTR;             /* M01.01.1209.01 */
 
-        KDEBUG(("\nxsfirst(%s, DTA=%p)",name,dt));
+    KDEBUG(("\nxsfirst(%s, DTA=%p)",name,dt));
 
-        result = ixsfirst(name , att , dt);                   /* M01.01.1209.01 */
+    result = ixsfirst(name, att, dt);       /* M01.01.1209.01 */
 
-        return result;
+    return result;
 }
+
 
 /*
  *  xsnext - search next, return into dta
  *
- *      Function 0x4F   f_snext
+ *  Function 0x4F   f_snext
  *
- *      Error returns ENMFIL
+ *  Error returns:  ENMFIL
  */
-
 long xsnext(void)
 {
-        register FCB        *f;
-        register DTAINFO    *dt;
+    register FCB *f;
+    register DTAINFO *dt;
 
-        dt = (DTAINFO *)run->p_xdta;                            /* M01.01.1209.01 */
+    dt = (DTAINFO *)run->p_xdta;            /* M01.01.1209.01 */
 
-        /* has the DTA been initialized? */
-        if (dt->dt_dnd == (DND*)NULLPTR)                        /* M01.01.1209.01 */
-                return ENMFIL;                                  /* M01.01.1209.01 */
+    /* has the DTA been initialized? */
+    if (dt->dt_dnd == (DND*)NULLPTR)        /* M01.01.1209.01 */
+        return ENMFIL;                      /* M01.01.1209.01 */
 
-        KDEBUG(("\n xsnext(pos=%ld DTA=%p DND=%p)",dt->dt_pos,dt,dt->dt_dnd));
+    KDEBUG(("\n xsnext(pos=%ld DTA=%p DND=%p)",dt->dt_pos,dt,dt->dt_dnd));
 
-        f = scan(dt->dt_dnd,&dt->dt_name[0],dt->dt_attr,&dt->dt_pos);
+    f = scan(dt->dt_dnd,&dt->dt_name[0],dt->dt_attr,&dt->dt_pos);
 
-        if (f == (FCB*)NULLPTR)
-                return ENMFIL;
+    if (f == (FCB*)NULLPTR)
+        return ENMFIL;
 
-        makbuf(f,(DTAINFO *)run->p_xdta);
-        return E_OK;
+    makbuf(f,(DTAINFO *)run->p_xdta);
+
+    return E_OK;
 }
 
 
 /*
-**  xgsdtof - get/set date/time of file into or from buffer
-**
-**      Function 0x57   f_datime
-*/
-
+ *  xgsdtof - get/set date/time of file into or from buffer
+ *
+ *  Function 0x57   f_datime
+ */
 long xgsdtof(DOSTIME *buf, int h, int wrt)
 {
     OFD *f = getofd(h);
@@ -577,374 +556,367 @@ long xgsdtof(DOSTIME *buf, int h, int wrt)
 
 
 /*
-**  builds - build a directory style file spec from a portion of a path name
-**      the string at 's1' is expected to be a path spec in the form of
-**      (xxx/yyy/zzz).  *builds* will take the string and crack it
-**      into the form 'ffffffffeee' where 'ffffffff' is a non-terminated
-**      string of characters, padded on the right, specifying the filename
-**      portion of the file spec.  (The file spec terminates with the first
-**      occurrence of a SLASH or NULL, the filename portion of the file spec
-**      terminates with SLASH, NULL, PERIOD or WILDCARD-CHAR).  'eee' is the
-**      file extension portion of the file spec, and is terminated with
-**      any of the above.  The file extension portion is left justified into
-**      the last three characters of the destination (11 char) buffer, but is
-**      padded on the right.  The padding character depends on whether or not
-**      the filename or file extension was terminated with a separator
-**      (NULL, SLASH, PERIOD) or a WILDCARD-CHAR.
-**
-*/
+ *  builds - build a directory style file spec from a portion of a path name
+ *
+ *      the string at 's1' is expected to be a path spec in the form of
+ *      (xxx/yyy/zzz).  *builds* will take the string and crack it
+ *      into the form 'ffffffffeee' where 'ffffffff' is a non-terminated
+ *      string of characters, padded on the right, specifying the filename
+ *      portion of the file spec.  (The file spec terminates with the first
+ *      occurrence of a SLASH or NULL, the filename portion of the file spec
+ *      terminates with SLASH, NULL, PERIOD or WILDCARD-CHAR).  'eee' is the
+ *      file extension portion of the file spec, and is terminated with
+ *      any of the above.  The file extension portion is left justified into
+ *      the last three characters of the destination (11 char) buffer, but is
+ *      padded on the right.  The padding character depends on whether or not
+ *      the filename or file extension was terminated with a separator
+ *      (NULL, SLASH, PERIOD) or a WILDCARD-CHAR.
+ *
+ */
 
 /* s1 source
  * s2 dest
  */
-
 void builds(char *s1, char *s2)
 {
-        register int i;
-        char    c;
+    register int i;
+    char c;
 
-        /*
-        ** copy filename part of pathname to destination buffer until a
-        **      delimiter is found
-        */
+    /*
+     *  copy filename part of pathname to destination buffer until a
+     *  delimiter is found
+     */
 
-        for( i = 0 ; (i < MAXFNCHARS) && isnotdelim(*s1) ; i++ )
-                *s2++ = toupper(*s1++) ;
+    for (i = 0; (i < MAXFNCHARS) && isnotdelim(*s1); i++)
+        *s2++ = toupper(*s1++);
 
-        /*
-        **  if we have reached the max number of characters for the filename
-        **      part, skip the rest until we reach a delimiter
-        */
+    /*
+     *  if we have reached the max number of characters for the filename
+     *   part, skip the rest until we reach a delimiter
+     */
 
-        if( i == MAXFNCHARS )
-                while (*s1 && (*s1 != '.') && (*s1 != SLASH))
-                        s1++;
+    if (i == MAXFNCHARS)
+        while (*s1 && (*s1 != '.') && (*s1 != SLASH))
+            s1++;
 
-        /*
-        **  if the current character is a wildcard character, set the padding
-        **      char with a "?" (wildcard), otherwise replace it with a space
-        */
+    /*
+     *  if the current character is a wildcard character, set the padding
+     *  char with a "?" (wildcard), otherwise replace it with a space
+     */
+    c =  (*s1 == '*') ? '?' : ' ';
 
-        c =    (*s1 == '*')  ?  '?'  :  ' '   ;
+    if (*s1 == '*')                 /*  skip over wildcard char     */
+        s1++;
 
+    if (*s1 == '.')                 /*  skip over extension delim   */
+        s1++;
 
-        if (*s1 == '*')                 /*  skip over wildcard char     */
-                s1++;
+    /*
+     *  now that we've parsed out the filename part, pad out the
+     *  destination with "?" wildcard chars
+     */
+    for ( ; i < MAXFNCHARS; i++)
+        *s2++ = c;
 
-        if (*s1 == '.')                 /*  skip over extension delim   */
-                s1++;
+    /*
+     *  copy extension part of file spec up to max number of characters
+     *  or until we find a delimiter
+     */
+    for (i = 0; i < 3 && isnotdelim(*s1); i++)
+        *s2++ = toupper(*s1++);
 
-        /*
-        **  now that we've parsed out the filename part, pad out the
-        **      destination with "?" wildcard chars
-        */
+    /*
+     *  if the current character is a wildcard character, set the padding
+     *  char with a "?" (wildcard), otherwise replace it with a space
+     */
+    c = (*s1 == '*') ? '?' : ' ';
 
-        for( ; i < MAXFNCHARS ; i++ )
-                *s2++ = c;
-
-        /*
-        **  copy extension part of file spec up to max number of characters
-        **      or until we find a delimiter
-        */
-
-        for( i = 0 ; i < 3 && isnotdelim(*s1) ; i++ )
-                *s2++ = toupper(*s1++);
-
-        /*
-        **  if the current character is a wildcard character, set the padding
-        **      char with a "?" (wildcard), otherwise replace it with a space
-        */
-
-        c = ((*s1 == '*') ? '?' : ' ');
-
-        /*
-        **  pad out the file extension
-        */
-
-        for( ; i < 3 ; i++ )
-                *s2++ = c;
+    /*
+     *  pad out the file extension
+     */
+    for ( ; i < 3; i++)
+        *s2++ = c;
 }
 
 #else
 
 /*
-**  builds -
-**
-**      Last modified   LTG     23 Jul 85
-*/
+ *  builds -
+ *
+ *  Last modified   LTG     23 Jul 85
+ */
 
 /* s1 is source, s2 dest */
 void builds(const char *s1, char *s2)
 {
-        int i;
-        char c;
+    int i;
+    char c;
 
-        for (i=0; (i<8) && (*s1) && (*s1 != '*') && (*s1 != SLASH) &&
+    for (i = 0; (i < 8) && (*s1) && (*s1 != '*') && (*s1 != SLASH) &&
             (*s1 != '.') && (*s1 != ' '); i++)
-                *s2++ = toupper(*s1++);
+        *s2++ = toupper(*s1++);
 
-        if (i == 8)
-                while (*s1 && (*s1 != '.') && (*s1 != SLASH))
-                        s1++;
+    if (i == 8)
+        while (*s1 && (*s1 != '.') && (*s1 != SLASH))
+            s1++;
 
-        c = ((*s1 == '*') ? '?' : ' ');
+    c = (*s1 == '*') ? '?' : ' ';
 
-        if (*s1 == '*')
-                s1++;
+    if (*s1 == '*')
+        s1++;
 
-        if (*s1 == '.')
-                s1++;
+    if (*s1 == '.')
+        s1++;
 
-        for (; i < 8; i++)
-                *s2++ = c;
+    for ( ; i < 8; i++)
+        *s2++ = c;
 
-        for (i=0;(i<3) && (*s1) && (*s1 != '*') && (*s1 != SLASH) &&
+    for (i = 0; (i < 3) && (*s1) && (*s1 != '*') && (*s1 != SLASH) &&
             (*s1 != '.') && (*s1 != ' '); i++)
-                *s2++ = toupper(*s1++);
+        *s2++ = toupper(*s1++);
 
-        c = ((*s1 == '*') ? '?' : ' ');
+    c = (*s1 == '*') ? '?' : ' ';
 
-        for (; i < 3; i++)
-                *s2++ = c;
+    for ( ; i < 3; i++)
+        *s2++ = c;
 }
 
 #endif
 
 
-
 /*
-**  xrename - rename a file,
-**      oldpath p1, new path p2
-**
-**      Function 0x56   f_rename
-**
-**      Error returns
-**              EPTHNF
-**              EACCDN
-**              ENSAME
-**
-*/
+ *  xrename - rename a file,
+ *      oldpath p1, new path p2
+ *
+ *  Function 0x56   f_rename
+ *
+ *  Error returns:
+ *                  EPTHNF
+ *                  EACCDN
+ *                  ENSAME
+ */
 /* rename file, n unused, old path p1, new path p2 */
 /*ARGSUSED*/
 long xrename(int n, char *p1, char *p2)
 {
-        OFD     *fd;
-        FCB     *f;
-        DND     *dn1, *dn2;
-        DMD     *dmd1, *dmd2;
-        CLNO    strtcl1, strtcl2, temp;
-        const char *s1, *s2;
-        char    buf[11], att;
-        int     hnew;
-        long    posp;
-        UWORD   time, date;
-        CLNO    clust;
-        LONG    fileln;
+    OFD *fd;
+    FCB *f;
+    DND *dn1, *dn2;
+    DMD *dmd1, *dmd2;
+    CLNO strtcl1, strtcl2, temp;
+    const char *s1, *s2;
+    char buf[11], att;
+    int hnew;
+    long posp;
+    UWORD time, date;
+    CLNO clust;
+    LONG fileln;
 
-        if (!ixsfirst(p2,FA_SUBDIR,(DTAINFO *)0L))       /* check if new path exists */
-                return(EACCDN);
+    if (!ixsfirst(p2,FA_SUBDIR,(DTAINFO *)0L))       /* check if new path exists */
+        return EACCDN;
 
-        if ((long)(dn1 = findit(p1,&s1,0)) < 0)          /* M01.01.1212.01 */
-                return( (long)dn1 );
-        if (!dn1)                                        /* M01.01.1214.01 */
-                return( EPTHNF );
-        dmd1 = dn1->d_drv;          /* remember the drive and */
-        strtcl1 = dn1->d_strtcl;    /* starting cluster for old path */
+    if ((long)(dn1 = findit(p1,&s1,0)) < 0)          /* M01.01.1212.01 */
+        return (long)dn1;
+    if (!dn1)                                        /* M01.01.1214.01 */
+        return EPTHNF;
 
-        /* scan DND for matching name */
-        posp = 0L;
-        f = scan(dn1,s1,0xff,&posp);
-        if (!f)                     /* old path doesn't exist */
-                return EPTHNF;
+    dmd1 = dn1->d_drv;          /* remember the drive and */
+    strtcl1 = dn1->d_strtcl;    /* starting cluster for old path */
 
-        /* at this point:
-         *   f -> FCB for old path
-         *   dn1->d_ofd -> OFD for the directory containing the old path
-         *   posp = offset of FCB from start of directory in bytes, plus 32
+    /* scan DND for matching name */
+    posp = 0L;
+    f = scan(dn1,s1,0xff,&posp);
+    if (!f)                     /* old path doesn't exist */
+        return EPTHNF;
+
+    /* at this point:
+     *   f -> FCB for old path
+     *   dn1->d_ofd -> OFD for the directory containing the old path
+     *   posp = offset of FCB from start of directory in bytes, plus 32
+     */
+    fd = dn1->d_ofd;
+    posp -= 32;                 /* adjust to start of FCB */
+
+    /* get old attribute & time/date/cluster/length */
+    att = f->f_attrib;
+    time = f->f_td.time;
+    swpw(time);                 /* convert from little-endian format */
+    date = f->f_td.date;
+    swpw(date);
+    clust = f->f_clust;
+    swpw(clust);
+    fileln = f->f_fileln;
+    swpl(fileln);
+
+    if ((long)(dn2 = findit(p2,&s2,0)) < 0)          /* M01.01.1212.01 */
+        return (long)dn2;
+    if (!dn2)                                        /* M01.01.1214.01 */
+        return EPTHNF;
+    dmd2 = dn2->d_drv;          /* remember the drive and */
+    strtcl2 = dn2->d_strtcl;    /* starting cluster for new path */
+
+    if (contains_illegal_characters(s2))
+        return EACCDN;
+
+    /* disallow cross-device rename */
+    if (dmd1 != dmd2)
+        return ENSAME;
+
+    /*
+     * check for cross-directory rename
+     */
+    if (strtcl1 != strtcl2)
+    {
+        OFD *fd2, *fdparent;
+
+        /* create new directory entry with old info.  even if
+         * we're renaming a folder, we call xcreat() to create
+         * a normal file.  we'll fix it up later.
          */
-        fd = dn1->d_ofd;
-        posp -= 32;                 /* adjust to start of FCB */
+        hnew = xcreat(p2,att);
+        if (hnew < 0)
+            return EPTHNF;
+        fd2 = getofd(hnew); /* fd2 is the OFD for the new file/folder */
 
-        /* get old attribute & time/date/cluster/length */
-        att = f->f_attrib;
-        time = f->f_td.time;
-        swpw(time);                 /* convert from little-endian format */
-        date = f->f_td.date;
-        swpw(date);
-        clust = f->f_clust;
-        swpw(clust);
-        fileln = f->f_fileln;
-        swpl(fileln);
+        /* now we can erase (0xe5) the old file */
+        buf[0] = (char)ERASE_MARKER;
+        ixlseek(fd,posp);
+        ixwrite(fd,1L,buf);
 
-        if ((long)(dn2 = findit(p2,&s2,0)) < 0)          /* M01.01.1212.01 */
-                return( (long)dn2 );
-        if (!dn2)                                        /* M01.01.1214.01 */
-                return( EPTHNF );
-        dmd2 = dn2->d_drv;          /* remember the drive and */
-        strtcl2 = dn2->d_strtcl;    /* starting cluster for new path */
+        /* copy the time/date/cluster/length to the OFD */
+        swpcopyw(&time,&fd2->o_td.time);   /* must be little-endian! */
+        swpcopyw(&date,&fd2->o_td.date);
+        fd2->o_strtcl = clust;
+        fd2->o_fileln = fileln;
 
-        if (contains_illegal_characters(s2))
-                return( EACCDN ) ;
-
-        /* disallow cross-device rename */
-        if (dmd1 != dmd2)
-                return ENSAME;
-
-        /*
-         * check for cross-directory rename
+        /* if this is really a folder we're moving, we need to
+         * do two things: fix up the parent directory pointer in
+         * this folder, and fix up the attribute of the folder
+         * in the parent directory.
          */
-        if (strtcl1 != strtcl2)
-        {
-                OFD *fd2, *fdparent;
-
-                /* create new directory entry with old info.  even if
-                 * we're renaming a folder, we call xcreat() to create
-                 * a normal file.  we'll fix it up later.
-                 */
-                hnew = xcreat(p2,att);
-                if (hnew < 0)
-                        return EPTHNF;
-                fd2 = getofd(hnew); /* fd2 is the OFD for the new file/folder */
-
-                /* now we can erase (0xe5) the old file */
-                buf[0] = (char)ERASE_MARKER;
-                ixlseek(fd,posp);
-                ixwrite(fd,1L,buf);
-
-                /* copy the time/date/cluster/length to the OFD */
-                swpcopyw(&time,&fd2->o_td.time);   /* must be little-endian! */
-                swpcopyw(&date,&fd2->o_td.date);
-                fd2->o_strtcl = clust;
-                fd2->o_fileln = fileln;
-
-                /* if this is really a folder we're moving, we need to
-                 * do two things: fix up the parent directory pointer in
-                 * this folder, and fix up the attribute of the folder
-                 * in the parent directory.
-                 */
-                fdparent = fd2->o_dirfil;               /* parent's OFD */
-                if (att&FA_SUBDIR) {
-                        fd2->o_fileln = 0x7fffffffL;    /* fake size for dirs */
-
-                        /* set .. entry to point to new parent.
-                         * note that the root dir has a cluster# of zero.
-                         */
-                        if (!fd2->o_dnode->d_name[0])   /* empty name means root */
-                                temp = 0;
-                        else temp = fdparent->o_strtcl; /* else real start cluster */
-                        swpw(temp);                     /* convert to disk format */
-                        ixlseek(fd2,32+26);             /* seek to cluster field  */
-                        ixwrite(fd2,2l,&temp);          /*  & write it            */
-
-                        /* set attribute for this file in parent directory */
-                        ixlseek(fdparent,fd2->o_dirbyt+11);
-                        ixwrite(fdparent,1L,&att);
-                }
-                fd2->o_flag |= O_DIRTY;
-                if (att&FA_SUBDIR) {
-                        ixclose(fd2,CL_DIR|CL_FULL);    /* force flush & write */
-                        xmfreblk((char *)fd2);          /* free OFD */
-                        sft[hnew-NUMSTD].f_own = 0;     /* free handle */
-                        sft[hnew-NUMSTD].f_ofd = 0;
-                } else xclose(hnew);
-                ixclose(fdparent,CL_DIR);
-        }
-        else
-        {
-                builds(s2,buf);             /* build disk version of name */
-                ixlseek(fd,posp);           /* and just overwrite the FCB */
-                ixwrite(fd,11L,buf);
-        }
-
-        /*
-         * if we're renaming a directory with an existing DND, make
-         * sure that:
-         *  1. if it's a cross-directory rename, we move the DND
-         *  2. we always update the name field in the DND
-         */
+        fdparent = fd2->o_dirfil;           /* parent's OFD */
         if (att&FA_SUBDIR) {
-                DND *dnd;
-                char s[LEN_ZFNAME];
+            fd2->o_fileln = 0x7fffffffL;    /* fake size for dirs */
 
-                unpackit(s1,s);         /* s[] = old name for getdnd() lookup */
-                dnd = getdnd(s,dn1);
-                if (dnd) {
-                        unpackit(s2,s); /* s[] = new name for DND update */
-                        if (strtcl1 != strtcl2) {   /* cross-directory */
-                                snipdnd(dnd);   /* snip DND out of the old chain */
-                                dnd->d_right = dn2->d_left; /* insert in the new */
-                                dn2->d_left = dnd;
-                        }
-                        KDEBUG(("xrename() DND name '%s\\%s' => '%s\\%s'\n",
-                                dn1->d_name,dnd->d_name,dn2->d_name,s));
-                        memcpy(dnd->d_name,s,11);
-                }
+            /* set .. entry to point to new parent.
+             * note that the root dir has a cluster# of zero.
+             */
+            if (!fd2->o_dnode->d_name[0])   /* empty name means root */
+                temp = 0;
+            else temp = fdparent->o_strtcl; /* else real start cluster */
+            swpw(temp);                     /* convert to disk format */
+            ixlseek(fd2,32+26);             /* seek to cluster field  */
+            ixwrite(fd2,2l,&temp);          /*  & write it            */
+
+            /* set attribute for this file in parent directory */
+            ixlseek(fdparent,fd2->o_dirbyt+11);
+            ixwrite(fdparent,1L,&att);
         }
+        fd2->o_flag |= O_DIRTY;
+        if (att&FA_SUBDIR) {
+            ixclose(fd2,CL_DIR|CL_FULL);    /* force flush & write */
+            xmfreblk(fd2);                  /* free OFD */
+            sft[hnew-NUMSTD].f_own = 0;     /* free handle */
+            sft[hnew-NUMSTD].f_ofd = 0;
+        } else xclose(hnew);
+        ixclose(fdparent,CL_DIR);
+    }
+    else
+    {
+        builds(s2,buf);             /* build disk version of name */
+        ixlseek(fd,posp);           /* and just overwrite the FCB */
+        ixwrite(fd,11L,buf);
+    }
 
-        return(ixclose(fd,CL_DIR));
+    /*
+     * if we're renaming a directory with an existing DND, make
+     * sure that:
+     *  1. if it's a cross-directory rename, we move the DND
+     *  2. we always update the name field in the DND
+     */
+    if (att&FA_SUBDIR) {
+        DND *dnd;
+        char s[LEN_ZFNAME];
+
+        unpackit(s1,s);         /* s[] = old name for getdnd() lookup */
+        dnd = getdnd(s,dn1);
+        if (dnd) {
+            unpackit(s2,s);     /* s[] = new name for DND update */
+            if (strtcl1 != strtcl2) {   /* cross-directory */
+                snipdnd(dnd);   /* snip DND out of the old chain */
+                dnd->d_right = dn2->d_left; /* insert in the new */
+                dn2->d_left = dnd;
+            }
+            KDEBUG(("xrename() DND name '%s\\%s' => '%s\\%s'\n",
+                    dn1->d_name,dnd->d_name,dn2->d_name,s));
+            memcpy(dnd->d_name,s,11);
+        }
+    }
+
+    return ixclose(fd,CL_DIR);
 }
 
-/*
-**  xchdir - change current dir to path p
-**
-**      Function 0x3B   d_setpath
-**
-**      Error returns
-**              EPTHNF
-**              ckdrv()
-**
-*/
 
+/*
+ *  xchdir - change current dir to path p
+ *
+ *  Function 0x3B   d_setpath
+ *
+ *  Error returns:
+ *              EPTHNF
+ *              ckdrv()
+ */
 long xchdir(char *p)
 {
-        DND     *dnd;
-        long    rc;
-        int     olddir, newdir, dlog;
-        const char *s;
+    DND *dnd;
+    long rc;
+    int olddir, newdir, dlog;
+    const char *s;
 
-        if (p[1] == ':')
-                dlog = toupper(p[0]) - 'A';
-        else
-                dlog = run->p_curdrv;
+    if (p[1] == ':')
+        dlog = toupper(p[0]) - 'A';
+    else
+        dlog = run->p_curdrv;
 
-        /*
-         * remember old current directory pointer
-         */
-        olddir = run->p_curdir[dlog];
+    /*
+     * remember old current directory pointer
+     */
+    olddir = run->p_curdir[dlog];
 
-        /*
-         * get the DND for the new directory
-         */
-        rc = (long)(dnd = findit(p,&s,1));
-        if (rc < 0L)
-                return rc;
-        if (!dnd)
-                return EPTHNF;
+    /*
+     * get the DND for the new directory
+     */
+    rc = (long)(dnd = findit(p,&s,1));
+    if (rc < 0L)
+        return rc;
+    if (!dnd)
+        return EPTHNF;
 
-        /*
-         * search dirtbl[]: if entry matches, update usage count;
-         * otherwise, create new entry
-         */
-        newdir = incr_curdir_usage(dnd);
-        if (newdir < 0)                 /* no space in dirtbl[] */
-                return EPTHNF;
-        run->p_curdir[dlog] = newdir;   /* link to process  */
+    /*
+     * search dirtbl[]: if entry matches, update usage count;
+     * otherwise, create new entry
+     */
+    newdir = incr_curdir_usage(dnd);
+    if (newdir < 0)                 /* no space in dirtbl[] */
+        return EPTHNF;
+    run->p_curdir[dlog] = newdir;   /* link to process  */
 
-        /*
-         * fixup old current directory
-         */
-        if (olddir)
-                decr_curdir_usage(olddir);
+    /*
+     * fixup old current directory
+     */
+    if (olddir)
+        decr_curdir_usage(olddir);
 
-        return E_OK;
+    return E_OK;
 }
 
+
 /*
- * search dirtbl[]: if entry matches, update usage count;
- * otherwise, create new entry & update usage count.
+ *  search dirtbl[]: if entry matches, update usage count;
+ *  otherwise, create new entry & update usage count.
  *
- * returns error if no space for new entry,
- * otherwise returns index of entry found
+ *  returns error if no space for new entry,
+ *  otherwise returns index of entry found
  */
 int incr_curdir_usage(DND *dnd)
 {
@@ -972,6 +944,7 @@ int incr_curdir_usage(DND *dnd)
     return i;
 }
 
+
 /*
  * decrements usage count of dirtbl[], ensuring it never goes negative
  */
@@ -998,80 +971,74 @@ void decr_curdir_usage(int n)
         p->dnd = NULL;
 }
 
+
 /*
-**  xgetdir -
-**
-**      Function 0x47   d_getpath
-**
-**      Error returns
-**              EDRIVE
-*/
-
-/* return text of current dir into specified buffer */
-long    xgetdir(char *buf, int drv)
+ *  xgetdir - return path spec of current dir into specified buffer
+ *
+ *  Function 0x47   d_getpath
+ *
+ *  Error returns:
+ *                  EDRIVE
+ */
+long xgetdir(char *buf, int drv)
 {
-        DND     *p;
-        int     n;
-        int     len;                                            /* M01.01.1024.02 */
+    DND *p;
+    int n;
+    int len;                                            /* M01.01.1024.02 */
 
-        drv = (drv == 0) ? run->p_curdrv : drv-1 ;
+    drv = (drv == 0) ? run->p_curdrv : drv-1;
 
-        if( !(Drvmap() & (1<<drv)) || (ckdrv(drv) < 0) )     /* M01.01.1031.01 */
-        {
-                *buf = 0;
-                return(EDRIVE);
-        }
+    if (!(Drvmap() & (1<<drv)) || (ckdrv(drv) < 0))     /* M01.01.1031.01 */
+    {
+        *buf = 0;
+        return EDRIVE;
+    }
 
-        n = run->p_curdir[drv];
-        p = dirtbl[n].dnd;
-        len = LEN_ZPATH - 3;                                    /* M01.01.1024.02 */
-        buf = dopath(p,buf,&len);                               /* M01.01.1024.02 */
-        *--buf = 0;     /* null as last char, not slash */
+    n = run->p_curdir[drv];
+    p = dirtbl[n].dnd;
+    len = LEN_ZPATH - 3;                                /* M01.01.1024.02 */
+    buf = dopath(p,buf,&len);                           /* M01.01.1024.02 */
+    *--buf = 0;     /* null as last char, not slash */
 
-        return(E_OK);
+    return E_OK;
 }
-
 
 
 /*
  *  dirinit -
  */
-
 /* dn: dir descr for dir */
-FCB     *dirinit(DND *dn)
+FCB *dirinit(DND *dn)
 {
-        OFD     *fd;            /*  ofd for this dir                    */
-        int     num;
-        RECNO   i2;
-        char    *s1;
-        DMD     *dm;
-        FCB     *f1;
+    OFD *fd;            /*  ofd for this dir  */
+    int num;
+    RECNO i2;
+    char *s1;
+    DMD *dm;
+    FCB *f1;
 
-        fd = dn->d_ofd;                                 /*  OFD for dir */
-        num = (dm = fd->o_dmd)->m_recsiz;               /*  bytes/rec   */
+    fd = dn->d_ofd;                                 /*  OFD for dir */
+    num = (dm = fd->o_dmd)->m_recsiz;               /*  bytes/rec   */
 
-        /*
-        **  for each record in the current cluster, besides the first record,
-        **      get the record and zero it out
-        */
+    /*
+     *  for each record in the current cluster, besides the first record,
+     *  get the record and zero it out
+     */
+    for (i2 = 1; i2 < dm->m_clsiz; i2++)
+    {
+        KDEBUG(("dirinit i2 = %li\n",i2));
+        s1 = getrec(fd->o_currec+i2,fd,1);
+        bzero(s1, num);
+    }
 
-        for (i2 = 1; i2 < dm->m_clsiz; i2++)
-        {
-                KDEBUG(("dirinit i2 = %li\n",i2));
-                s1 = getrec(fd->o_currec+i2,fd,1);
-                bzero( s1 , num ) ;
-        }
+    /*
+     *  now zero out the first record and return a pointer to it
+     */
+    f1 = (FCB *) (s1 = getrec(fd->o_currec,fd,1));
 
-        /*
-        **  now zero out the first record and return a pointer to it
-        */
-
-        f1 = (FCB *) (s1 = getrec(fd->o_currec,fd,1));
-
-        bzero( s1 , num ) ;
-        return(f1);
+    bzero(s1, num);
+    return f1;
 }
-
 
 
 /*
@@ -1111,7 +1078,6 @@ static char *packit(char *s, char *d)
 }
 
 
-
 /*
  * unpackit - more-or-less the reverse of packit()
  * converts a filename of the form
@@ -1145,45 +1111,42 @@ static void unpackit(const char *src, char *dst)
 }
 
 
-
 /*
-**  dopath -
-**
-**      M01.01.1024.02
-*/
-
+ *  dopath -
+ *
+ *      M01.01.1024.02
+ */
 static char *dopath(DND *p, char *buf, int *len)
 {
-        char    temp[LEN_ZFNAME];
-        char    *tp;
-        long    tlen;
+    char temp[LEN_ZFNAME];
+    char *tp;
+    long tlen;
 
-        if ( p->d_parent )
-                buf = dopath(p->d_parent,buf,len);
+    if (p->d_parent)
+        buf = dopath(p->d_parent,buf,len);
 
-        tlen = (long)packit(p->d_name,temp) - (long)temp;
-        tp = temp;
-        while ( *len )
+    tlen = (long)packit(p->d_name,temp) - (long)temp;
+    tp = temp;
+    while (*len)
+    {
+        (*len)--;                           /* len must never go < 0 */
+        if (tlen--)
+            *buf++ = *tp++;
+        else
         {
-                (*len)--;                               /* len must never go < 0 */
-                if ( tlen-- )
-                        *buf++ = *tp++;
-                else
-                {
-                        *buf++ = SLASH;
-                        break;
-                }
+            *buf++ = SLASH;
+            break;
         }
-        return(buf);
-}
+    }
 
+    return buf;
+}
 
 
 /*
  *  negone - for use as parameter
  */
-
-static const long negone = { -1L } ;
+static const long negone = { -1L };
 
 
 /*
@@ -1193,13 +1156,13 @@ static const long negone = { -1L } ;
 /*  name: name of file/dir
  * dflag: T: name is for a directory
  */
-DND     *findit(char *name, const char **sp, int dflag)
+DND *findit(char *name, const char **sp, int dflag)
 {
     register DND *p;
     const char *n;
-    DND *pp,*newp;
+    DND *pp, *newp;
     int i;
-    char        s[11];
+    char s[11];
 
     /* crack directory and drive */
 
@@ -1207,13 +1170,12 @@ DND     *findit(char *name, const char **sp, int dflag)
     KDEBUG(("findit(%s)\n",n));
 
     if ((long)(p = dcrack(&n)) < 0)                     /* M01.01.1214.01 */
-        return( p );
+        return p;
 
     /*
      *  Force scan() to read from the beginning of the directory again,
      *  since we have gone to a scheme of keeping fewer DNDs in memory.
      */
-
     do
     {
         if (!(i = getpath(n,s,dflag)))
@@ -1230,17 +1192,16 @@ DND     *findit(char *name, const char **sp, int dflag)
         }
 
         /*
-         **  go down a level in the path...
-         **     save a pointer to the current DND, which will
-         **     become the parent, and get the node on the left,
-         **     which is the first child.
+         *  go down a level in the path...
+         *     save a pointer to the current DND, which will
+         *     become the parent, and get the node on the left,
+         *     which is the first child.
          */
-
         pp = p;                 /*  save ptr to parent dnd      */
 
         if (!(newp = p->d_left))
-        {                               /*  [1]                 */
-            /*  make sure children      */
+        {                               /*  [1] [see below]     */
+                                        /*  make sure children  */
             newp = dirscan(p,n);        /*  are logged in       */
         }
 
@@ -1248,29 +1209,27 @@ DND     *findit(char *name, const char **sp, int dflag)
             break;
 
         /*
-         **  check all subdirectories at this level.  if we run out
-         **     of siblings in the DND list (p->d_right == NULLPTR), then
-         **     we should rescan the whole directory and make sure they
-         **     are all logged in.
+         *  check all subdirectories at this level.  if we run out
+         *     of siblings in the DND list (p->d_right == NULLPTR), then
+         *     we should rescan the whole directory and make sure they
+         *     are all logged in.
          */
-
-        while( p && (strncasecmp(s,p->d_name,11) != 0) )
+        while(p && (strncasecmp(s,p->d_name,11) != 0))
         {
-            newp = p->d_right ; /*  next sibling        */
+            newp = p->d_right;          /*  next sibling        */
 
-            if(newp == NULLPTR)  /* if no more siblings  */
+            if (newp == NULLPTR)        /* if no more siblings  */
             {
                 p = 0;
                 if (pp)
-                {
                     p = dirscan(pp,n);
-                }
             }
             else
                 p = newp;
         }
 
-    scanxt:     if (*(n = n + i))
+    scanxt:
+    if (*(n = n + i))
         n++;
     else
         break;
@@ -1282,22 +1241,21 @@ DND     *findit(char *name, const char **sp, int dflag)
 
     *sp = n;
 
-    return(p);
+    return p;
 }
 /*
-** [1]  The first call to dirscan is if there are no children logged in.
-**      However, we need to call dirscan if children are logged in and we still
-**      didn't find the desired node, as the desired child may've been flushed.
-**      This is a terrible thing to have happen to a child.  However, we can't
-**      afford to have all these kids around here, so when new ones come in, we
-**      see which we can flush out (see makdnd()).  This is a hack -- no doubt
-**      about that; the cached DND scheme needs to be redesigned all around.
-**      Anyway, the second call to dirscan backs up to the parent (note that n
-**      has not yet been bumped, so is still pointing to the current subdir's
-**      name -- in effect, starting us at this level all over again.
-**                      -- ktb
-*/
-
+ * [1]  The first call to dirscan is if there are no children logged in.
+ *      However, we need to call dirscan if children are logged in and we still
+ *      didn't find the desired node, as the desired child may've been flushed.
+ *      This is a terrible thing to have happen to a child.  However, we can't
+ *      afford to have all these kids around here, so when new ones come in, we
+ *      see which we can flush out (see makdnd()).  This is a hack -- no doubt
+ *      about that; the cached DND scheme needs to be redesigned all around.
+ *      Anyway, the second call to dirscan backs up to the parent (note that n
+ *      has not yet been bumped, so is still pointing to the current subdir's
+ *      name -- in effect, starting us at this level all over again.
+ *                      -- ktb
+ */
 
 
 /*
@@ -1307,171 +1265,160 @@ DND     *findit(char *name, const char **sp, int dflag)
  *      searching.  A posp of -1 means to use the scan pointer in the dnd, and
  *      return the pointer to the DND, not the FCB.
  */
-
-FCB     *scan(register DND *dnd, const char *n, WORD att, LONG *posp)
+FCB *scan(register DND *dnd, const char *n, WORD att, LONG *posp)
 {
-        char    name[12];
-        register FCB *fcb;
-        OFD     *fd;
-        DND     *dnd1;
-        BOOL    m;              /*  T: found a matching FCB             */
+    char name[12];
+    register FCB *fcb;
+    OFD *fd;
+    DND *dnd1;
+    BOOL m;                 /*  T: found a matching FCB             */
 
-        KDEBUG(("scan(%p,'%s',0x%x,%p)\n",dnd,n,att,posp));
+    KDEBUG(("scan(%p,'%s',0x%x,%p)\n",dnd,n,att,posp));
 
-        m = 0;                  /*  have_match = false                  */
-        builds(n,name);         /*  format name into dir format         */
-        name[11] = att;
+    m = 0;                  /*  have_match = false                  */
+    builds(n,name);         /*  format name into dir format         */
+    name[11] = att;
 
-        dnd1 = 0; /* dummy to avoid warning */
+    dnd1 = 0; /* dummy to avoid warning */
 
+    /*
+     *  if there is no open file descr for this directory, make one
+     */
+
+    if (!(fd = dnd->d_ofd))
+        fd = makofd(dnd);   /* makofd() also updates dnd->d_ofd */
+
+    /*
+     *  seek to desired starting position.  If posp == -1, then start at
+     *  the beginning.
+     */
+    ixlseek(fd, (*posp == -1) ? 0L : *posp);
+
+    /*
+     *  scan thru the directory file, looking for a match
+     */
+    while ((fcb = (FCB *) ixread(fd,32L,NULLPTR)) && (fcb->f_name[0]))
+    {
         /*
-        **  if there is no open file descr for this directory, make one
-        */
-
-        if (!(fd = dnd->d_ofd))
-                fd = makofd(dnd);    /* makofd() also updates dnd->d_ofd */
-
-        /*
-        **  seek to desired starting position.  If posp == -1, then start at
-        **      the beginning.
-        */
-
-        ixlseek( fd , (*posp == -1) ? 0L : *posp ) ;
-
-        /*
-        **  scan thru the directory file, looking for a match
-        */
-
-        while ((fcb = (FCB *) ixread(fd,32L,NULLPTR)) && (fcb->f_name[0]))
-        {
-                /*
-                **  Add New DND.
-                **  ( iff after scan ptr && not a .
-                **  or .. && subdirectory && not deleted ) M01.01.0512.01
-                */
-
-                if( (fcb->f_attrib & FA_SUBDIR)         &&
-                    (fcb->f_name[0] != '.')             &&
-                    (fcb->f_name[0] != (char)ERASE_MARKER)
-                )
-                {       /*  see if we already have it  */
-                        dnd1 = getdnd( &fcb->f_name[0] , dnd ) ;
-                        if (!dnd1)
-                                dnd1 = makdnd(dnd,fcb);   /* always succeeds */
-                }
-
-                if ( (m = match( name , fcb->f_name )) )
-                                        break;
+         *  Add New DND.
+         *  ( iff after scan ptr && not a .
+         *  or .. && subdirectory && not deleted ) M01.01.0512.01
+         */
+        if ((fcb->f_attrib & FA_SUBDIR)         &&
+            (fcb->f_name[0] != '.')             &&
+            (fcb->f_name[0] != (char)ERASE_MARKER))
+        {       /*  see if we already have it  */
+            dnd1 = getdnd(&fcb->f_name[0], dnd);
+            if (!dnd1)
+                dnd1 = makdnd(dnd,fcb);   /* always succeeds */
         }
 
-        KDEBUG(("\n   scan(pos=%ld DND=%p DNDfoundFile=%p name=%s name=%s, %d)",
-                (long)fd->o_bytnum,dnd,dnd1,fcb->f_name,name,m));
+        if ((m = match(name, fcb->f_name)))
+             break;
+    }
 
-        /* restore directory scanning pointer */
+    KDEBUG(("\n   scan(pos=%ld DND=%p DNDfoundFile=%p name=%s name=%s, %d)",
+            (long)fd->o_bytnum,dnd,dnd1,fcb->f_name,name,m));
 
-        if( *posp != -1L )
-                *posp = fd->o_bytnum ;
+    /* restore directory scanning pointer */
+    if (*posp != -1L)
+        *posp = fd->o_bytnum;
 
-        /*
-        **  if there was no match, but we were looking for a deleted entry,
-        **  then return a pointer to a deleted fcb.  Otherwise, if there was
-        **  no match, return a null pointer
-        */
+    /*
+     *  if there was no match, but we were looking for a deleted entry,
+     *  then return a pointer to a deleted fcb.  Otherwise, if there was
+     *  no match, return a null pointer
+     */
+    if (!m)
+    {       /*  assumes that (*n != 0xe5) (if posp == -1)  */
+        if (fcb && (*n == (char)ERASE_MARKER))
+            return fcb;
+        return (FCB *)NULL;
+    }
 
-        if (!m)
-        {       /*  assumes that (*n != 0xe5) (if posp == -1)  */
-                if( fcb && (*n == (char)ERASE_MARKER) )
-                        return(fcb) ;
-                return( (FCB *) 0 );
-        }
+    if (*posp == -1)
+    {       /*  seek to position of found entry  */
+        ixlseek(fd,fd->o_bytnum - 32);
+        return (FCB *)dnd1;
+    }
 
-        if (*posp == -1)
-        {       /*  seek to position of found entry  */
-                ixlseek(fd,fd->o_bytnum - 32);
-                return(((FCB *) dnd1));
-        }
-
-        return(fcb);
+    return fcb;
 }
 
 
 /*
-**  makdnd - make a child subdirectory of directory p
-**              M01.01.SCC.FS.07
-*/
-
+ *  makdnd - make a child subdirectory of directory p
+ *              M01.01.SCC.FS.07
+ */
 static DND *makdnd(DND *p, FCB *b)
 {
-        DIRTBL_ENTRY *dt;
-        register DND *p1;
-        register DND **prev;
-        OFD     *fd;
-        register int i;
+    DIRTBL_ENTRY *dt;
+    register DND *p1;
+    register DND **prev;
+    OFD *fd;
+    register int i;
 
-        fd = p->d_ofd;
+    fd = p->d_ofd;
 
-        /*
-        **  scavenge a DND at this level if we can find one that has not
-        **  d_left
-        */
-        for (prev = &p->d_left; (p1 = *prev) ; prev = &p1->d_right)
+    /*
+     *  scavenge a DND at this level if we can find one that has not
+     *  d_left
+     */
+    for (prev = &p->d_left; (p1 = *prev); prev = &p1->d_right)
+    {
+        if (!p1->d_left)
         {
-                if (!p1->d_left)
-                {
-                        /* check dirtbl[] to see if anyone is using this guy */
-                        for (i = 1, dt = dirtbl+1; i < NCURDIR; i++, dt++)
-                                if (dt->use && (dt->dnd == p1))
-                                        break;
+            /* check dirtbl[] to see if anyone is using this guy */
+            for (i = 1, dt = dirtbl+1; i < NCURDIR; i++, dt++)
+                if (dt->use && (dt->dnd == p1))
+                    break;
 
-                        KDEBUG(("\n makdnd check dirtbl (%d)",i));
+            KDEBUG(("\n makdnd check dirtbl (%d)",i));
 
-                        if ((i >= NCURDIR) && (p1->d_files == NULLPTR))
-                        {       /*  M01.01.KTB.SCC.02  */
-                                /* clean out this DND for reuse */
+            if ((i >= NCURDIR) && (p1->d_files == NULLPTR))
+            {       /*  M01.01.KTB.SCC.02  */
+                /* clean out this DND for reuse */
 
-                                p1->d_flag = 0;
-                                p1->d_scan = 0L;
-                                p1->d_files = (OFD *) 0;
-                                if (p1->d_ofd)
-                                {
-                                        xmfreblk((char *)p1->d_ofd);
-                                }
-                                break;
-                        }
-                }
+                p1->d_flag = 0;
+                p1->d_scan = 0L;
+                p1->d_files = (OFD *) 0;
+                if (p1->d_ofd)
+                    xmfreblk(p1->d_ofd);
+                break;
+            }
         }
+    }
 
-        /* we didn't find one that qualifies, so allocate a new one */
+    /* we didn't find one that qualifies, so allocate a new one */
 
-        if (!p1)
-        {
-                KDEBUG(("\n makdnd new"));
+    if (!p1)
+    {
+        KDEBUG(("\n makdnd new"));
 
-                p1 = MGET(DND); /* MGET(DND) only returns if it succeeds */
+        p1 = MGET(DND); /* MGET(DND) only returns if it succeeds */
 
-                /* do this init only on a newly allocated DND */
-                p1->d_right = p->d_left;
-                p->d_left = p1;
-                p1->d_parent = p;
-        }
+        /* do this init only on a newly allocated DND */
+        p1->d_right = p->d_left;
+        p->d_left = p1;
+        p1->d_parent = p;
+    }
 
-        /* complete the initialization */
+    /* complete the initialization */
 
-        p1->d_ofd = (OFD *) 0;
-        p1->d_strtcl = b->f_clust;
-        swpw(p1->d_strtcl);
-        p1->d_drv = p->d_drv;
-        p1->d_dirfil = fd;
-        p1->d_dirpos = fd->o_bytnum - 32;
-        p1->d_td.time = b->f_td.time;   /* note: DND time/date are  */
-        p1->d_td.date = b->f_td.date;   /*  actually little-endian! */
-        memcpy(p1->d_name, b->f_name, 11);
+    p1->d_ofd = (OFD *) 0;
+    p1->d_strtcl = b->f_clust;
+    swpw(p1->d_strtcl);
+    p1->d_drv = p->d_drv;
+    p1->d_dirfil = fd;
+    p1->d_dirpos = fd->o_bytnum - 32;
+    p1->d_td.time = b->f_td.time;   /* note: DND time/date are  */
+    p1->d_td.date = b->f_td.date;   /*  actually little-endian! */
+    memcpy(p1->d_name, b->f_name, 11);
 
-        KDEBUG(("\n makdnd(%p)",p1));
+    KDEBUG(("\n makdnd(%p)",p1));
 
-        return(p1);
+    return p1;
 }
-
 
 
 /*
@@ -1484,7 +1431,6 @@ static DND *makdnd(DND *p, FCB *b)
  *  returns
  *      ptr to DND for 1st element in path, or error
  */
-
 static DND *dcrack(const char **np)
 {
     register const char *n;
@@ -1504,18 +1450,18 @@ static DND *dcrack(const char **np)
         d = toupper(n[0]) - 'A';/*    compute drive number      */
         n += 2;                 /*    bump past drive number    */
     }
-    else                                /*  otherwise                   */
+    else                        /*  otherwise                   */
         d = run->p_curdrv;      /*    assume default            */
 
     /* M01.01.1212.01 */
     if ((l = ckdrv(d)) < 0)     /*  check for valid drive & log */
-        return((DND*) l );              /*    in.  abort if error       */
+        return (DND *)l;        /*    in.  abort if error       */
 
     /*
-     **  if the pathspec begins with SLASH, then the first element is
-     **  the root.  Otherwise, it is the current default directory.     Get
-     **  the proper DND for this element
-     */
+     *  if the pathspec begins with SLASH, then the first element is
+     *  the root.  Otherwise, it is the current default directory.  Get
+     *  the proper DND for this element
+    */
 
     if (*n == SLASH)
     {   /* [D:]\path */
@@ -1531,25 +1477,24 @@ static DND *dcrack(const char **np)
     /* whew ! */ /*  <= thankyou, Jason, for that wonderful comment */
 
     *np = n;
-    return( (DND*)p );
+    return (DND *)p;
 }
 
 
-
 /*
-**  getpath - get a path element
-**      The buffer pointed to by 'd' must be at least the size of the file
-**      spec buffer in a directory entry (including file type), and will
-**      be filled with the directory style format of the path element if
-**      no error has occurred.
-**
-**  returns
-**      -1 if '.'
-**      -2 if '..'
-**       0 if p => name of a file (no trailing SLASH or !dirspec)
-**      >0 (nbr of chars in path element (up to SLASH)) && buffer 'd' filled.
-**
-*/
+ *  getpath - get a path element
+ *      The buffer pointed to by 'd' must be at least the size of the file
+ *      spec buffer in a directory entry (including file type), and will
+ *      be filled with the directory style format of the path element if
+ *      no error has occurred.
+ *
+ *  returns
+ *      -1 if '.'
+ *      -2 if '..'
+ *       0 if p => name of a file (no trailing SLASH or !dirspec)
+ *      >0 (nbr of chars in path element (up to SLASH)) && buffer 'd' filled.
+ *
+ */
 
 /* p: start of path element to crack
  * d: ptr to destination buffer
@@ -1557,46 +1502,45 @@ static DND *dcrack(const char **np)
  */
 static int getpath(const char *p, char *d, int dirspec)
 {
-        register int    i, i2 ;
-        register const char *p1 ;
+    register int i, i2;
+    register const char *p1;
 
-        for( i = 0 , p1 = p ; *p1 && (*p1 != SLASH) ; p1++ , i++ )
-                ;
+    for (i = 0, p1 = p; *p1 && (*p1 != SLASH); p1++, i++)
+        ;
 
-        /*
-        **  If the string we have just scanned over is a directory name, it
-        **      will either be terminated by a SLASH, or 'dirspec' will be set
-        **      indicating that we are dealing with a directory path only
-        **      (no file name at the end).
-        */
+    /*
+     *  If the string we have just scanned over is a directory name, it
+     *  will either be terminated by a SLASH, or 'dirspec' will be set
+     *  indicating that we are dealing with a directory path only
+     *  (no file name at the end).
+     */
 
-        if( *p1 != '\0'  ||  dirspec )
-        {       /*  directory name  */
-                i2 = 0 ;
-                if (p[0] == '.')                /*  dots in name        */
-                {
-                        i2--;                   /*  -1 for dot          */
-                        if (p[1] == '.')
-                                i2--;           /*  -2 for dotdot       */
-                        return(i2);
-                }
-
-                if( i )                         /*  if not null path el */
-                        builds(p,d);            /*  d => dir style fn   */
-
-                return(i);                      /*  return nbr chars    */
+    if (*p1 != '\0' || dirspec)
+    {       /*  directory name  */
+        i2 = 0;
+        if (p[0] == '.')            /*  dots in name        */
+        {
+            i2--;                   /*  -1 for dot          */
+            if (p[1] == '.')
+                i2--;               /*  -2 for dotdot       */
+            return i2;
         }
 
-        return(0);              /*  if string is a file name            */
+        if (i)                      /*  if not null path el */
+            builds(p,d);            /*  d => dir style fn   */
+
+        return i;                   /*  return nbr chars    */
+    }
+
+    return 0;               /*  if string is a file name    */
 }
 
 
 /*
-**  match - utility routine to compare file names
-*/
+ *  match - utility routine to compare file names
+ */
 /* char *s1  -   name we are checking */
 /* char *s2  -   name in fcb */
-
 static BOOL match(char *s1, char *s2)
 {
     register int i;
@@ -1606,60 +1550,59 @@ static BOOL match(char *s1, char *s2)
      */
 
     if (s2[11] == FA_LFN)
-        return( FALSE );
+        return FALSE;
 
     /*
-     **  check for deleted entry.  wild cards don't match deleted entries,
-     **  only specific requests for deleted entries do.
+     *  check for deleted entry.  wild cards don't match deleted entries,
+     *  only specific requests for deleted entries do.
      */
 
     if (*s2 == (char)ERASE_MARKER)
     {
         if (*s1 == '?')
-            return( FALSE );
+            return FALSE;
         else if (*s1 == (char)ERASE_MARKER)
-            return( TRUE );
+            return TRUE;
     }
 
     /*
      **  compare names
      */
 
-    for (i=0; i < 11 ; i++, s1++, s2++)
+    for (i = 0; i < 11; i++, s1++, s2++)
         if (*s1 != '?')
             if (toupper(*s1) != toupper(*s2))
-                return( FALSE );
+                return FALSE;
 
     /*
-     **  check attribute match   M01.01.SCC.FS.08
-     ** volume labels and subdirs must be specifically asked for
+     *  check attribute match   M01.01.SCC.FS.08
+     *  volume labels and subdirs must be specifically asked for
      */
 
-    if(  (*s1 != FA_VOL)  &&  (*s1 != FA_SUBDIR)  )
+    if ((*s1 != FA_VOL) && (*s1 != FA_SUBDIR))
         if (!(*s2))
-            return( TRUE );
+            return TRUE;
 
-    return( *s1 & *s2 ? TRUE : FALSE ) ;
+    return (*s1 & *s2) ? TRUE : FALSE;
 }
 
 
 /*                              M01.01.0527.02
-**  makbuf - copy info from FCB into DTA info area
-*/
-
+ *  makbuf - copy info from FCB into DTA info area
+ */
 static void makbuf(FCB *f, DTAINFO *dt)
 {                                       /*  M01.01.03   */
-    dt->dt_fattr = f->f_attrib ;
-    dt->dt_td.time = f->f_td.time ;
-    swpw(dt->dt_td.time) ;
-    dt->dt_td.date = f->f_td.date ;
-    swpw(dt->dt_td.date) ;
-    dt->dt_fileln = f->f_fileln ;
-    swpl( dt->dt_fileln ) ;
+    dt->dt_fattr = f->f_attrib;
+    dt->dt_td.time = f->f_td.time;
+    swpw(dt->dt_td.time);
+    dt->dt_td.date = f->f_td.date;
+    swpw(dt->dt_td.date);
+    dt->dt_fileln = f->f_fileln;
+    swpl(dt->dt_fileln);
 
-    if( f->f_attrib & FA_VOL ) {
+    if (f->f_attrib & FA_VOL) {
         memcpy(&dt->dt_fname[0], &f->f_name[0], 11);
-        dt->dt_fname[11] = '\0' ;
+        dt->dt_fname[11] = '\0';
     } else {
         packit(&f->f_name[0],&dt->dt_fname[0]);
     }
@@ -1668,20 +1611,19 @@ static void makbuf(FCB *f, DTAINFO *dt)
 
 
 /*
-**  getdnd - find a dnd with matching name
-*/
-
+ *  getdnd - find a dnd with matching name
+ */
 static DND *getdnd(char *n, DND *d)
 {
-        register DND *dnd ;
+    register DND *dnd;
 
-        for( dnd = d->d_left ; dnd ; dnd = dnd->d_right )
-        {
-                if (strncasecmp(n,dnd->d_name,11) == 0)
-                        return( dnd ) ;
-        }
-        return( (DND*)NULLPTR ) ;
+    for (dnd = d->d_left; dnd; dnd = dnd->d_right)
+    {
+        if (strncasecmp(n,dnd->d_name,11) == 0)
+            return dnd;
+    }
 
+    return (DND *)NULLPTR;
 }
 
 
@@ -1699,23 +1641,22 @@ static void snipdnd(DND *dnd)
 
 
 /*
-**  freednd - free an allocated and linked-in DND
-**
-*/
-
+ *  freednd - free an allocated and linked-in DND
+ *
+ */
 static void freednd(DND *dn)                    /* M01.01.1031.02 */
 {
-    if ( dn->d_ofd ) {                /* free associated OFD if it's linked */
-        xmfreblk( (char *)(dn->d_ofd) );
-    }
+    if (dn->d_ofd)                  /* free associated OFD if it's linked */
+        xmfreblk(dn->d_ofd);
 
-    snipdnd(dn);                      /* cut this DND out of the chain */
+    snipdnd(dn);                    /* cut this DND out of the chain */
 
-    while ( dn->d_left ) {            /* is this step really necessary? */
-        freednd( dn->d_left );
+    while (dn->d_left) {            /* is this step really necessary? */
+        freednd(dn->d_left);
     }
-    xmfreblk( (char *)dn );           /* finally free this DND */
+    xmfreblk(dn);                   /* finally free this DND */
 }
+
 
 /*
  *  makofd - create an OFD for a directory
@@ -1750,6 +1691,7 @@ OFD *makofd(DND *p)
 
     return f;
 }
+
 
 /*
  * function used by free_available_dnds()
@@ -1842,6 +1784,7 @@ static void process_dnd_tree(DND *dndstart)
         freed_dnds++;
     }
 }
+
 
 /*
  * the following routine is called (by xmgetblk() in osmem.c) when we
