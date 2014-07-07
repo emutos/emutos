@@ -5637,3 +5637,6 @@ Start... early ages
 
 2014-07-07
 - bdos/fsdir.c: Fix bug: do not reference OFD after it has been freed. (RFB)
+- bdos/fsdir.c: Fix bug: for cross-directory rename, the cluster number in
+  the .. entry of the renamed folder was incorrect when the target was the
+  root directory. (RFB)

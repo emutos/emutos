@@ -824,8 +824,12 @@ long xrename(int n, char *p1, char *p2)
                 if (att&FA_SUBDIR) {
                         fd2->o_fileln = 0x7fffffffL;    /* fake size for dirs */
 
-                        /* set .. entry to point to new parent */
-                        temp = fdparent->o_strtcl;      /* parent's start cluster */
+                        /* set .. entry to point to new parent.
+                         * note that the root dir has a cluster# of zero.
+                         */
+                        if (!fd2->o_dnode->d_name[0])   /* empty name means root */
+                                temp = 0;
+                        else temp = fdparent->o_strtcl; /* else real start cluster */
                         swpw(temp);                     /* convert to disk format */
                         ixlseek(fd2,32+26);             /* seek to cluster field  */
                         ixwrite(fd2,2l,&temp);          /*  & write it            */
