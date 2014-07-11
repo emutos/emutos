@@ -148,6 +148,7 @@ static void makbuf(FCB *f, DTAINFO *dt);
 static DND *getdnd(char *n, DND *d);
 static void snipdnd(DND *dnd);
 static void freednd(DND *dn);
+static BOOL is_subdir(const char *s1,DND *dn1, DND *dn2);
 
 /*
  *  local macros
@@ -685,6 +686,28 @@ void builds(const char *s1, char *s2)
 
 
 /*
+ *  is_subdir: check if directory 2 is an immediate subdirectory of directory 1
+ *
+ *  s1      name of directory 1
+ *  dn1     DND of directory containing directory 1
+ *  dn2     DND of directory containing directory 2
+ *
+ *  returns TRUE or FALSE
+ */
+static BOOL is_subdir(const char *s1,DND *dn1, DND *dn2)
+{
+    char s2[LEN_ZFNAME];
+
+    if (dn2->d_parent != dn1)
+        return FALSE;
+
+    packit(dn2->d_name,s2);
+
+    return strncasecmp(s1,s2,LEN_ZFNAME) ? FALSE : TRUE;
+}
+
+
+/*
  *  xrename - rename a file,
  *      oldpath p1, new path p2
  *
@@ -768,6 +791,12 @@ long xrename(int n, char *p1, char *p2)
     if (strtcl1 != strtcl2)
     {
         OFD *fd2, *fdparent;
+
+        /*
+         * prevent invalid renames such as 0 -> 0\2 or a\b -> a\b\c
+         */
+        if (is_subdir(s1,dn1,dn2))
+            return EACCDN;
 
         /* create new directory entry with old info.  even if
          * we're renaming a folder, we call xcreat() to create

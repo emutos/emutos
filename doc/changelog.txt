@@ -5643,3 +5643,7 @@ Start... early ages
 - bdos/fsdir.c: Fix bug: update the DND when a directory is renamed. (RFB)
 - bdos/fsdir.c: Code cleanup: format entire module in one style, with
   consistent indenting and whitespace usage. (RFB)
+
+2014-07-11
+- bdos/fsdir.c: Fix bug: do not allow folder to be renamed to a folder
+  within itself. (RFB)
