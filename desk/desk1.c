@@ -34,6 +34,7 @@
 #include "rectfunc.h"
 #include "dos.h"
 #include "desk1.h"
+#include "ikbd.h"
 
 
 static void zoom_closed(WORD close, WORD w_id, WORD xicon, WORD yicon)
@@ -151,7 +152,7 @@ void snap_disk(WORD x, WORD y, WORD *px, WORD *py)
 
 
 
-static WORD fun_file2desk(PNODE *pn_src, ANODE *an_dest, WORD dobj)
+static WORD fun_file2desk(PNODE *pn_src, ANODE *an_dest, WORD dobj, WORD keystate)
 {
         ICONBLK *dicon;
         WORD operation;
@@ -165,7 +166,7 @@ static WORD fun_file2desk(PNODE *pn_src, ANODE *an_dest, WORD dobj)
                                 dicon = (ICONBLK *)G.g_screen[dobj].ob_spec;
                                 G.g_tmppth[0] = dicon->ib_char & 0xFF;
                                 strcpy(G.g_tmppth + 1, ":\\*.*");
-                                operation = OP_COPY;
+                                operation = (keystate&MODE_CTRL) ? OP_MOVE : OP_COPY;
                                 break;
                         case AT_ISTRSH:
                                 operation = OP_DELETE;
@@ -200,14 +201,14 @@ static WORD fun_file2win(PNODE *pn_src, BYTE  *spec, ANODE *an_dest, FNODE *fn_d
         return fun_op(OP_COPY, pn_src, G.g_tmppth);
 }
 
-static void fun_win2desk(WORD wh, WORD obj)
+static void fun_win2desk(WORD wh, WORD obj, WORD keystate)
 {
         WNODE *wn_src;
         ANODE *an_dest;
 
         an_dest = app_afind(TRUE, AT_ISFILE, obj, NULL, NULL);
         wn_src = win_find(wh);
-        if (fun_file2desk(wn_src->w_path, an_dest, obj))
+        if (fun_file2desk(wn_src->w_path, an_dest, obj, keystate))
         {
                 fun_rebld(wn_src);
         }
@@ -215,7 +216,7 @@ static void fun_win2desk(WORD wh, WORD obj)
 
 
 static WORD fun_file2any(WORD sobj, WNODE *wn_dest, ANODE *an_dest, FNODE *fn_dest,
-                  WORD dobj)
+                  WORD dobj, WORD keystate)
 {
         WORD okay = 0;
         FNODE *bp8;
@@ -241,7 +242,7 @@ static WORD fun_file2any(WORD sobj, WNODE *wn_dest, ANODE *an_dest, FNODE *fn_de
                         }
                         else
                         {
-                                okay = fun_file2desk(pn_src, an_dest, dobj);
+                                okay = fun_file2desk(pn_src, an_dest, dobj, keystate);
                         }
                         G.g_screen->ob_state = 0;
                 }
@@ -252,7 +253,7 @@ static WORD fun_file2any(WORD sobj, WNODE *wn_dest, ANODE *an_dest, FNODE *fn_de
 }
 
 
-static void fun_desk2win(WORD wh, WORD dobj)
+static void fun_desk2win(WORD wh, WORD dobj, WORD keystate)
 {
         WNODE *wn_dest;
         FNODE *fn_dest;
@@ -271,13 +272,13 @@ static void fun_desk2win(WORD wh, WORD dobj)
                         fun_alert(1, STNODRA2, NULLPTR);
                         continue;
                 }
-                copied = fun_file2any(sobj, wn_dest, an_dest, fn_dest, dobj);
+                copied = fun_file2any(sobj, wn_dest, an_dest, fn_dest, dobj, keystate);
                 if (copied) fun_rebld(wn_dest);
         }
 }
 
 
-static void fun_desk2desk(WORD dobj)
+static void fun_desk2desk(WORD dobj, WORD keystate)
 {
         WORD sobj,  isapp;
         FNODE *fn;
@@ -308,7 +309,7 @@ static void fun_desk2desk(WORD dobj)
                         cont = fun_alert(2, STDELDIS, &drive_letter);
                 }
                 if (cont != 1) continue;
-                fun_file2any(sobj, NULL, target, NULL, dobj);
+                fun_file2any(sobj, NULL, target, NULL, dobj, keystate);
         }
 }
 
@@ -329,7 +330,7 @@ WORD desk1_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my, W
                         }
                         else
                         {
-                                fun_win2desk(wh, dobj);
+                                fun_win2desk(wh, dobj, keystate);
                         }
                 }
         }
@@ -337,11 +338,11 @@ WORD desk1_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my, W
         {
                 if (dest_wh)
                 {
-                        fun_desk2win(dest_wh, dobj);
+                        fun_desk2win(dest_wh, dobj, keystate);
                 }
                 else    /* Dragging from desk to desk */
                 {
-                        if (sobj != dobj) fun_desk2desk(dobj);
+                        if (sobj != dobj) fun_desk2desk(dobj, keystate);
                 }
         }
         return done;

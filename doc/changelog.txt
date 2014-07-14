@@ -5647,3 +5647,7 @@ Start... early ages
 2014-07-11
 - bdos/fsdir.c: Fix bug: do not allow folder to be renamed to a folder
   within itself. (RFB)
+
+2014-07-13
+- desk/desk1.c: Support desktop 'move files/folders' when target is disk
+  icon. (RFB)
