@@ -24,6 +24,7 @@
 #include "gembind.h"
 #include "obdefs.h"
 #include "deskwin.h"
+#include "deskdir.h"
 #include "deskbind.h"
 #include "deskglob.h"
 #include "aesbind.h"
@@ -155,7 +156,8 @@ void snap_disk(WORD x, WORD y, WORD *px, WORD *py)
 static WORD fun_file2desk(PNODE *pn_src, ANODE *an_dest, WORD dobj, WORD keystate)
 {
         ICONBLK *dicon;
-        WORD operation;
+        WNODE *wn;
+        WORD operation, ret;
 
         operation = -1;
         if (an_dest)
@@ -173,7 +175,21 @@ static WORD fun_file2desk(PNODE *pn_src, ANODE *an_dest, WORD dobj, WORD keystat
                                 break;
                 }
         }
-        return fun_op(operation, pn_src, G.g_tmppth);
+
+        ret = fun_op(operation, pn_src, G.g_tmppth);
+        if (ret == 0)
+                return ret;         /* operation failed */
+        if ((operation != OP_MOVE) && (operation != OP_COPY))
+                return ret;         /* nothing more to do */
+
+        /*
+         * rebuild any corresponding open windows
+         */
+        wn = fold_wind(G.g_tmppth);
+        if (wn)
+                fun_rebld(wn);
+
+        return ret;
 }
 
 

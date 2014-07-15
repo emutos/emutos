@@ -5651,3 +5651,7 @@ Start... early ages
 2014-07-13
 - desk/desk1.c: Support desktop 'move files/folders' when target is disk
   icon. (RFB)
+
+2014-07-14
+- desk/desk1.c: After moving/copying to a disk icon, update any matching
+  open windows. (RFB)
