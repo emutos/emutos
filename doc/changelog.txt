@@ -5655,3 +5655,6 @@ Start... early ages
 2014-07-14
 - desk/desk1.c: After moving/copying to a disk icon, update any matching
   open windows. (RFB)
+
+2014-07-24
+- include/config.h: Use USE_STOP_INSN_TO_FREE_HOST_CPU on Amiga. (VRI)

@@ -164,6 +164,9 @@
 # ifndef CONF_ATARI_HARDWARE
 #  define CONF_ATARI_HARDWARE 0
 # endif
+# ifndef USE_STOP_INSN_TO_FREE_HOST_CPU
+#  define USE_STOP_INSN_TO_FREE_HOST_CPU 1
+# endif
 # ifndef CONF_WITH_IDE
 #  define CONF_WITH_IDE 1
 # endif
@@ -956,12 +959,6 @@
 # endif
 # if CONF_WITH_VIDEL
 #  error "CONF_WITH_VIDEL requires CONF_WITH_SHIFTER."
-# endif
-#endif
-
-#if USE_STOP_INSN_TO_FREE_HOST_CPU
-# if !CONF_ATARI_HARDWARE
-#  error "USE_STOP_INSN_TO_FREE_HOST_CPU currently requires CONF_ATARI_HARDWARE."
 # endif
 #endif
 
