@@ -328,6 +328,7 @@ help:
 	@echo "amiga   $(ROM_AMIGA), EmuTOS ROM for Amiga hardware"
 	@echo "amigakd $(AMIGA_KICKDISK), EmuTOS as Amiga 1000 Kickstart disk"
 	@echo "m548x   $(SREC_M548X), EmuTOS-RAM for ColdFire Evaluation Boards"
+	@echo "m548x-bas_gcc $(SREC_M548X_BAS_GCC), EmuTOS for BaS_gcc on ColdFire Evaluation Boards"
 	@echo "all192  all 192 kB images"
 	@echo "all256  all 256 kB images"
 	@echo "allbin  all 192 kB, 256 kB and 512 kB images"
@@ -530,6 +531,16 @@ m548x: UNIQUE = $(COUNTRY)
 m548x:
 	@echo "# Building M548x EmuTOS in $(SREC_M548X)"
 	$(MAKE) COLDFIRE=1 DEF='-DMACHINE_M548X' UNIQUE=$(UNIQUE) SRECFILE=$(SREC_M548X) $(SREC_M548X)
+	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT,emutos2.map));\
+      echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
+
+SREC_M548X_BAS_GCC = emutos-m548x-bas_gcc.s19
+.PHONY: m548x-bas_gcc
+NODEP += m548x-bas_gcc
+m548x-bas_gcc: UNIQUE = $(COUNTRY)
+m548x-bas_gcc:
+	@echo "# Building m548x-bas_gcc EmuTOS in $(SREC_M548X_BAS_GCC)"
+	$(MAKE) COLDFIRE=1 DEF='-DMACHINE_M548X -DCONF_WITH_BAS_MEMORY_MAP=1 -DCONF_WITH_PSEUDO_COLD_BOOT=1' LMA=0xe0100000 UNIQUE=$(UNIQUE) SRECFILE=$(SREC_M548X_BAS_GCC) $(SREC_M548X_BAS_GCC)
 	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT,emutos2.map));\
       echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 

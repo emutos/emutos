@@ -22,7 +22,7 @@
 
 void coldfire_early_init(void)
 {
-#if defined(MACHINE_M548X) && CONF_WITH_IDE
+#if defined(MACHINE_M548X) && CONF_WITH_IDE && !CONF_WITH_BAS_MEMORY_MAP
     m548x_init_cpld();
 #endif
 }
@@ -125,7 +125,7 @@ const char* m548x_machine_name(void)
     }
 }
 
-#if CONF_WITH_IDE
+#if CONF_WITH_IDE && !CONF_WITH_BAS_MEMORY_MAP
 
 void m548x_init_cpld(void)
 {
@@ -140,7 +140,7 @@ void m548x_init_cpld(void)
     *(volatile UWORD*)(FIRE_ENGINE_CS5_BASE + 0x1000000) |= 0x8000;
 }
 
-#endif /* CONF_WITH_IDE */
+#endif /* CONF_WITH_IDE && !CONF_WITH_BAS_MEMORY_MAP */
 
 #endif /* MACHINE_M548X */
 

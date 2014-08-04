@@ -29,7 +29,7 @@ void coldfire_int_61(void); /* In coldfire2.S */
 
 #ifdef MACHINE_M548X
 const char* m548x_machine_name(void);
-# if CONF_WITH_IDE
+# if CONF_WITH_IDE && !CONF_WITH_BAS_MEMORY_MAP
 void m548x_init_cpld(void);
 # endif
 #endif /* MACHINE_M548X */

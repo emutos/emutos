@@ -16,14 +16,15 @@
 
 #include "asmdefs.h"
 
-#ifdef MACHINE_M548X
-# define __MBAR    0x10000000
-# define __RAMBAR0 0x20000000
-# define __RAMBAR1 0x20001000
-#elif defined(MACHINE_FIREBEE)
+#if defined(MACHINE_FIREBEE) || CONF_WITH_BAS_MEMORY_MAP
+/* Either FireBee or M548X with BaS_gcc */
 # define __MBAR    0xff000000
 # define __RAMBAR0 0xff100000
 # define __RAMBAR1 0xff101000
+#elif defined(MACHINE_M548X)
+# define __MBAR    0x10000000
+# define __RAMBAR0 0x20000000
+# define __RAMBAR1 0x20001000
 #else
 # error Unknown ColdFire Machine
 #endif
@@ -32,7 +33,7 @@
 coldfire_startup:
         lea     __RAMBAR1+0x00001000,sp
 
-#ifdef MACHINE_M548X
+#if defined(MACHINE_M548X) && !CONF_WITH_BAS_MEMORY_MAP
         // ACR0: Read-only cache data accesses to 2 MB memory region at address 0x00e00000
         move.l  #0x00e1c424,d0
         movec   d0,ACR0

@@ -18,13 +18,14 @@ typedef volatile unsigned char vuint8;
 typedef volatile unsigned short vuint16;
 typedef volatile unsigned long vuint32;
 
-#ifdef MACHINE_M548X
-# define __MBAR ((vuint8*)0x10000000)
-# define __VBR ((vuint8*)0x00000000)
-#elif defined (MACHINE_FIREBEE)
+#if defined (MACHINE_FIREBEE) || CONF_WITH_BAS_MEMORY_MAP
+/* Either FireBee or M548X with BaS_gcc */
 # define __MBAR ((vuint8*)0xff000000)
 # define __RAMBAR0 ((vuint8*)0xff100000)
 # define __VBR __RAMBAR0
+#elif defined(MACHINE_M548X)
+# define __MBAR ((vuint8*)0x10000000)
+# define __VBR ((vuint8*)0x00000000)
 #else
 # error Unknown ColdFire Machine
 #endif
@@ -2229,12 +2230,18 @@ typedef volatile unsigned long vuint32;
 
 #ifdef MACHINE_M548X
 
+#if CONF_WITH_BAS_MEMORY_MAP
+#define FIRE_ENGINE_CS4_BASE 0x00000000L
+#define FIRE_ENGINE_CS5_BASE 0x60000000L
+#else
 #define FIRE_ENGINE_CS4_BASE 0xC0000000L
+#define FIRE_ENGINE_CS5_BASE 0xE0000000L
+#endif /* CONF_WITH_BAS_MEMORY_MAP */
+
 #define FIRE_ENGINE_CS4_SIZE 0x10000000L
 #define FIRE_ENGINE_CS4_ACCESS \
         (MCF_FBCS_CSCR_ASET(1) + MCF_FBCS_CSCR_WS(25) + MCF_FBCS_CSCR_AA + MCF_FBCS_CSCR_PS_16) // 0x106580
 
-#define FIRE_ENGINE_CS5_BASE 0xE0000000L
 #define FIRE_ENGINE_CS5_SIZE 0x10000000L
 #define FIRE_ENGINE_CS5_ACCESS \
         (MCF_FBCS_CSCR_ASET(1) + MCF_FBCS_CSCR_WS(10) + MCF_FBCS_CSCR_AA + MCF_FBCS_CSCR_PS_16) // 0x102980

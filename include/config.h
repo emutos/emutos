@@ -814,6 +814,18 @@
 # endif
 #endif
 
+/*
+ * Set CONF_WITH_BAS_MEMORY_MAP to 1 if EmuTOS is intended to run
+ * over the BaS (either on the FireBee or on the M548x with BaS_gcc).
+ */
+#ifndef CONF_WITH_BAS_MEMORY_MAP
+# ifdef MACHINE_FIREBEE
+#  define CONF_WITH_BAS_MEMORY_MAP 1
+# else
+#  define CONF_WITH_BAS_MEMORY_MAP 0
+# endif
+#endif
+
 /* set this to 1 if your emulator provides an STonX-like
  * native_print() function, i.e. if the code:
  *   .dc.w 0xa0ff
@@ -977,6 +989,12 @@
 #if !CONF_SERIAL_CONSOLE
 # if CONF_SERIAL_CONSOLE_ANSI
 #  error "CONF_SERIAL_CONSOLE_ANSI requires CONF_SERIAL_CONSOLE."
+# endif
+#endif
+
+#if !defined(__mcoldfire__)
+# if CONF_WITH_BAS_MEMORY_MAP
+#  error "CONF_WITH_BAS_MEMORY_MAP requires a ColdFire CPU."
 # endif
 #endif
 

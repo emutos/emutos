@@ -5658,3 +5658,8 @@ Start... early ages
 
 2014-07-24
 - include/config.h: Use USE_STOP_INSN_TO_FREE_HOST_CPU on Amiga. (VRI)
+
+2014-08-04
+- Makefile bios/coldfire.c bios/coldfire.h bios/coldfire2.S bios/coldpriv.h
+  include/config.h: New target: "make m548x-bas_gcc". This allows to flash
+  EmuTOS on M548x and run it from BaS_gcc. Contributed by Markus Fröschle. (VRI)
