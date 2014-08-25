@@ -410,8 +410,18 @@ LONG setinterrupt(UWORD mode, WORD cause)
 {
     UBYTE irqreg;
 
-    if (mode > 1 || !has_falcon_dmasound)
+    if (mode > 1)
         return EBADRQ;
+
+    if (!has_falcon_dmasound)
+    {
+        /* On STE and TT, interrupts are always enabled, so just return success
+         * when "enabling" them for playback, or an error code otherwise */ 
+        if (cause == 1)
+            return 0;
+        else
+            return EBADRQ;
+    }
 
     irqreg = DMASOUND->interrupt;
     cause &= 0x3;

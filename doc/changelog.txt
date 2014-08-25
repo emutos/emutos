@@ -5663,3 +5663,6 @@ Start... early ages
 - Makefile bios/coldfire.c bios/coldfire.h bios/coldfire2.S bios/coldpriv.h
   include/config.h: New target: "make m548x-bas_gcc". This allows to flash
   EmuTOS on M548x and run it from BaS_gcc. Contributed by Markus Fröschle. (VRI)
+
+2014-08-25
+- bios/dmasound.c: Improved return values for setinterrupt() on STE/TT. (THH)
