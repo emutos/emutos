@@ -146,7 +146,7 @@ const struct font_head fnt_gr_6x6 = {
     1,  /* ul_size */
     0x5555, /* lighten */
     0x5555, /* skew */
-    F_STDFORM | F_MONOSPACE | F_DEFAULT,  /* flags */
+    F_STDFORM | F_MONOSPACE,  /* flags */
     0,                  /*   UBYTE *hor_table   */
     off_table,          /*   UWORD *off_table   */
     dat_table,          /*   UWORD *dat_table   */

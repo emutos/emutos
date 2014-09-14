@@ -5670,3 +5670,6 @@ Start... early ages
 2014-09-14
 - vdi/vdi_text.c: Select among default fonts, according to vertical
   screen resolution. (RFB)
+- doc/country.txt bios/fnt_gr_6x6.c bios/fnt_l2_6x6.c bios/fnt_l9_6x6.c
+  bios/fnt_ru_6x6.c: Code cleanup: remove misleading F_DEFAULT flag from
+  non-English 6x6 fonts and fix documentation. (RFB)

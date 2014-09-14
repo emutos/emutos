@@ -100,7 +100,8 @@ New country check list
     => IMPORTANT NOTICE: the GEM will crash if the values in the
     => font header are not as follow:
     =>    font_id = 1
-    =>    flags = F_STDFORM | F_DEFAULT | F_MONOSPACE
+    =>    flags = F_STDFORM | F_MONOSPACE             (for the 6x6 font)
+    =>    flags = F_STDFORM | F_MONOSPACE | F_DEFAULT (for the 8x8 & 8x16 fonts)
   - update the font table in country.mk
   - check if this charset is known by GNU recode and if not
     - send mail to the GNU recode maintainer (!)
