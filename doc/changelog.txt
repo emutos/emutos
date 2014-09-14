@@ -5666,3 +5666,7 @@ Start... early ages
 
 2014-08-25
 - bios/dmasound.c: Improved return values for setinterrupt() on STE/TT. (THH)
+
+2014-09-14
+- vdi/vdi_text.c: Select among default fonts, according to vertical
+  screen resolution. (RFB)

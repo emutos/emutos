@@ -15,6 +15,7 @@
 #include "portab.h"
 #include "string.h"
 #include "vdi_defs.h"
+#include "lineavars.h"
 
 
 extern Fonthead *def_font;      /* Default font of open workstation */
@@ -386,7 +387,7 @@ void text_init2(Vwk * vwk)
 void text_init(Vwk * vwk)
 {
     WORD i, j;
-    WORD id_save;
+    WORD id_save, cell_height;
     Fonthead *fnt_ptr, **chain_ptr;
 
     SIZ_TAB[0] = 32767;         // minimal char width
@@ -402,13 +403,20 @@ void text_init(Vwk * vwk)
 
     id_save = fon6x6.font_id;
 
+    def_font = NULL;
+    cell_height = (v_vt_rez >= 400) ? 16 : 8;   /* to select among default fonts */
+
     chain_ptr = font_ring;
     i = 0;
     j = 0;
     while ((fnt_ptr = *chain_ptr++)) {
         do {
-            if (fnt_ptr->flags & F_DEFAULT)     /* If default save pointer */
-                def_font = fnt_ptr;
+            if (fnt_ptr->flags & F_DEFAULT) {   /* If default, save font pointer */
+                if (!def_font)                  /* ... for sure if we don't have one yet */
+                    def_font = fnt_ptr;
+                else if (def_font->form_height != cell_height)
+                    def_font = fnt_ptr;         /* ... also if previously-saved has wrong height */
+            }
 
             if (fnt_ptr->font_id != id_save) {  /* If new font count */
                 j++;
