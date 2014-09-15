@@ -5673,3 +5673,8 @@ Start... early ages
 - doc/country.txt bios/fnt_gr_6x6.c bios/fnt_l2_6x6.c bios/fnt_l9_6x6.c
   bios/fnt_ru_6x6.c: Code cleanup: remove misleading F_DEFAULT flag from
   non-English 6x6 fonts and fix documentation. (RFB)
+
+2014-09-15
+- bios/screen.c bios/screen.h vdi/vdi_control.c: Fix aspect ratio values
+  returned by v_opnwk() (fixes v_arc()/v_pieslice()/v_circle() display in
+  medium res). (RFB)

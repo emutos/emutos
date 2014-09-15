@@ -386,6 +386,9 @@ void _v_opnwk(Vwk * vwk)
     DEV_TAB[1] = v_vt_rez-1;
     INQ_TAB[4] = v_planes;
 
+    /* get pixel sizes for use by routines in vdi_gdp.c & vdi_line.c */
+    get_pixel_size(&xsize,&ysize);
+
     /* Indicate whether LUT is supported */
     if ((INQ_TAB[4] == 16) || (get_monitor_type() == MON_MONO))
         INQ_TAB[5] = 0;

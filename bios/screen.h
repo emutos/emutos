@@ -42,6 +42,7 @@
 
 /* misc routines */
 WORD check_moderez(WORD moderez);
+void get_pixel_size(WORD *width,WORD *height);
 void initialise_palette_registers(WORD rez,WORD mode);
 
 /* hardware dependant xbios routines */
