@@ -5678,3 +5678,7 @@ Start... early ages
 - bios/screen.c bios/screen.h vdi/vdi_control.c: Fix aspect ratio values
   returned by v_opnwk() (fixes v_arc()/v_pieslice()/v_circle() display in
   medium res). (RFB)
+
+2014-09-16
+- vdi/vdi_tblit.S vdi/vdi_tblit_cf.S: Fix crash due to text blit outside
+  screen area. (RFB)

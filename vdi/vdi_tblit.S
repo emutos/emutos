@@ -957,8 +957,10 @@ scrn_blt:
         move.w  DESTY(a6),d1
         add.w   DELY(a6),d1
         subq.w  #1,d1                   // we draw from bottom up
+        bmi.b   upda_dst                // don't draw if outside screen area!
 //
         move.w  DESTX(a6),d0
+        bmi.b   upda_dst                // don't draw if outside screen area!
 //
         jsr     concat                  // get memory address & dot address
 //
