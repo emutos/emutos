@@ -5682,3 +5682,6 @@ Start... early ages
 2014-09-16
 - vdi/vdi_tblit.S vdi/vdi_tblit_cf.S: Fix crash due to text blit outside
   screen area. (RFB)
+
+2014-09-17
+- printbss.sh: Rewritten using the "size" tool. Much simpler. (VRI).
