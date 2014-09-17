@@ -5685,3 +5685,5 @@ Start... early ages
 
 2014-09-17
 - printbss.sh: Rewritten using the "size" tool. Much simpler. (VRI).
+- doc/bugs.txt: Updated to reflect recent bug fixes.  Contributed by Eero
+  Tamminen. (RFB)

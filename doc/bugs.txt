@@ -1,6 +1,5 @@
 - Changing the VDI color palette is not possible on the TT.
   - Colors are wrong in GEM Nethack on TT (and it panics EmuTOS on exit).
-- PROCALC.ACC doesn't open after changing the resolution.
 - Desktop doesn't use the _IDT date separator.
 - Drag-and-drop does not work in the freeware GEM games "Abalone"
   "Hotshot checkers", "Risky", "Yukon" and in the shareware solitair
@@ -26,28 +25,29 @@
 - 6x6 font is missing characters 1->31, 194->223 and 255.
   The character 158 is wrong.  As a result small arrows don't
   show up in "Clac" RSC.
-- Text output by Gfa basic 2.x runner goes to screen top left
-- Text is double the correct size in following GEM programs:
-  - the log window of ImCon image converter, on ST low and med rez
-  - STart disk magazine start.prg, on ST med rez
-- The right side of outline characters are clipped, e.g. in
-  "LaserChess", "Diamond miner" and "Minigolf" games.  In vditext
-  tester their line height is also too low:
+- Text output is located correctly, but input text goes to
+  top left of screen in Gfa basic 2.x runner.
+- Smaller pie slices aren't drawn at all in STatistician.
+- Because EmuTOS doesn't take outline into account in text extents
+  calculation, the right side of outline characters are clipped
+  e.g. in "LaserChess", "Diamond miner" & "Minigolf" games,
+  and in vditext tester:
   http://sourceforge.net/mailarchive/message.php?msg_id=29276993
-- Game result text in "Sherlock" is positioned wrong (overlaps).
+- Game result texts in "Sherlock" game are positioned wrong,
+  they overlap vertically.
 - Space Harrier game is missing colors from top of the screen
-  and vertical colored lines from ground
+  and vertical color stripes on ground aren't of even width.
 - Thick arcs going partly outside of screen have incorrectly
-  drawn pixels at top of screen in vditext tester.
+  drawn pixels at top of screen in vdiline tester.
 - In Mario Becroft's GEM Pacman, "game over" melt effect happens
   for the whole screen, not just for the game window.
 - '-' key for moving left in VDI "Invaders" and 'h' & 'j' keys
   for moving character left & right in "Anduril" don't work, only
   special key (Alt/Shift) input works:
   http://sourceforge.net/mailarchive/message.php?msg_id=29277643
-- Box drawing in Glücksrad leaves garbage on top of screen
-  and player name input text isn't shown.
 - In "MathMaze", game win dialog leaves some lines on screen.
+- In "Japlish", all drawing for ship, enemies and lines on ground
+  are missing.  Assumed to be issue with line-A polygon line.
 
 
 Links to programs listed above:
@@ -71,6 +71,8 @@ Links to programs listed above:
   ftp://ftp.funet.fi/pub/atari/graphics/imcon11.lzh
 - Invaders:
   http://www.umich.edu/~archive/atari/Games/Arcade/invaders.lzh
+- Japlish:
+  http://www.ntrautanen.fi/marko/arkisto.atari.org/sivut/menu_pelit.htm
 - Mind sweeper:
   http://www.umich.edu/~archive/atari/Games/Puzzle/minds_11.zip
 - Pacman:
@@ -85,11 +87,12 @@ Links to programs listed above:
   http://www.umich.edu/~archive/atari/Games/Adventure/sherlock.arc
 - Speed of Light:
   http://www.umich.edu/~archive/atari/Graphics/spoflt38.zip
+- Statistician:
+  http://www.umich.edu/~archive/atari/Utilities/Benchmark/stats.lzh
 - Sysinfo 5.02:
   http://gfa.atari-users.net/ftp/download.php?fn=sinf502e.zip
 - Yukon:
   http://www.umich.edu/~archive/atari/Games/Cards/yukone1.lzh
   http://www.haun-online.de/Atari/e_index.html
 
-(Links missing to: yams, mathmaze, laserchess, diamondminer,
-Glücksrad.)
+(Links missing to: yams, mathmaze, laserchess, diamondminer.)
