@@ -141,7 +141,7 @@ const struct font_head fnt_gr_6x6 = {
     5,  /* max_char_width */
     6,  /* max_cell_width */
     0,  /* left_offset */
-    2,  /* right_offset */
+    3,  /* right_offset */
     1,  /* thicken */
     1,  /* ul_size */
     0x5555, /* lighten */

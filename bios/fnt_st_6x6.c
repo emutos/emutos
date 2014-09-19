@@ -138,7 +138,7 @@ const struct font_head fnt_st_6x6 = {
     5,                  /*   UWORD max_char_width*/
     6,                  /*   UWORD max_cell_width*/
     0,                  /*   UWORD left_offset  */
-    2,                  /*   UWORD right_offset */
+    3,                  /*   UWORD right_offset */
     1,                  /*   UWORD thicken      */
     1,                  /*   UWORD ul_size      */
     0x5555,             /*   UWORD lighten      */

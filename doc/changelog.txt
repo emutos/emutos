@@ -5687,3 +5687,7 @@ Start... early ages
 - printbss.sh: Rewritten using the "size" tool. Much simpler. (VRI).
 - doc/bugs.txt: Updated to reflect recent bug fixes.  Contributed by Eero
   Tamminen. (RFB)
+
+2014-09-19
+- bios/fnt_gr_6x6.c bios/fnt_st_6x6.c: Make 'right offset' in font header
+  the same as TOS. (RFB)
