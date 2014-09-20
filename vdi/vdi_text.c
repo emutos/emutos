@@ -777,7 +777,7 @@ void dst_color(Vwk * vwk)
 
 void dqt_attributes(Vwk * vwk)
 {
-    WORD *pointer, temp;
+    WORD *pointer;
     Fonthead *fnt_ptr;
 
     pointer = INTOUT;
@@ -792,9 +792,9 @@ void dqt_attributes(Vwk * vwk)
 
     pointer = PTSOUT;
     *pointer++ = fnt_ptr->max_char_width;
-    *pointer++ = temp = fnt_ptr->top;
+    *pointer++ = fnt_ptr->top;
     *pointer++ = fnt_ptr->max_cell_width;
-    *pointer = temp + fnt_ptr->bottom + 1;
+    *pointer = fnt_ptr->form_height;
 
     CONTRL[2] = 2;
     CONTRL[4] = 6;
@@ -835,7 +835,7 @@ void dqt_extent(Vwk * vwk)
     if (vwk->style & F_SKEW)
         width += fnt_ptr->left_offset + fnt_ptr->right_offset;
 
-    height = fnt_ptr->top + fnt_ptr->bottom + 1;
+    height = fnt_ptr->form_height;
 
     CONTRL[2] = 4;
 

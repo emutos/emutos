@@ -5691,3 +5691,6 @@ Start... early ages
 2014-09-19
 - bios/fnt_gr_6x6.c bios/fnt_st_6x6.c: Make 'right offset' in font header
   the same as TOS. (RFB)
+
+2014-09-20
+- vdi/vdi_text.c: Small code optimisation. (RFB)
