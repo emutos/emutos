@@ -837,6 +837,11 @@ void dqt_extent(Vwk * vwk)
 
     height = fnt_ptr->form_height;
 
+    if (vwk->style & F_OUTLINE) {
+        width += cnt * 2;       /* outlining adds 2 pixels all around */
+        height += 2;
+    }
+
     CONTRL[2] = 4;
 
     pointer = PTSOUT;

@@ -5694,3 +5694,5 @@ Start... early ages
 
 2014-09-20
 - vdi/vdi_text.c: Small code optimisation. (RFB)
+- vdi/vdi_text.c: Fix values returned by vqt_extent() for outlined text. (RFB)
+ 
