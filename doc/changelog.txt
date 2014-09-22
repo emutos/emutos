@@ -5695,4 +5695,7 @@ Start... early ages
 2014-09-20
 - vdi/vdi_text.c: Small code optimisation. (RFB)
 - vdi/vdi_text.c: Fix values returned by vqt_extent() for outlined text. (RFB)
- 
+
+2014-09-22
+- vdi/vdi_gdp.c: Fix bug: v_pieslice() & v_ellpie() did not draw small
+  slices. (RFB)

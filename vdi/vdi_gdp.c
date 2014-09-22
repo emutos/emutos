@@ -3,7 +3,7 @@
  *
  * Copyright 1982 by Digital Research Inc.  All rights reserved.
  * Copyright 1999 by Caldera, Inc. and Authors:
- * Copyright 2002-2013 by The EmuTOS development team
+ * Copyright 2002-2014 by The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -389,7 +389,7 @@ static void gdp_arc(Vwk * vwk)
     steps = clc_nsteps(/*vwk*/);
     steps = mul_div(del_ang, steps, 3600);
     if (steps == 0)
-        return;
+        steps = 1;      /* always draw something! */
     xc = *pointer++;
     yc = *pointer;
     clc_arc(vwk, steps);
@@ -448,7 +448,7 @@ static void gdp_ell(Vwk * vwk)
     steps = clc_nsteps(/*vwk*/);
     steps = mul_div(del_ang, steps, 3600);
     if (steps == 0)
-        return;
+        steps = 1;      /* always draw something! */
     clc_arc(vwk, steps);
     return;
 }
