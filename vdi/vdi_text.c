@@ -474,8 +474,6 @@ void dst_height(Vwk * vwk)
 
     single_font = test_font;
     test_height = PTSIN[1];
-    if (vwk->xfm_mode == 0)     /* If NDC transformation, swap y coordinate */
-        test_height = DEV_TAB[1] + 1 - test_height;
 
     /* Traverse the chains and find the font closest to the size requested. */
     do {

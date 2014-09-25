@@ -5699,3 +5699,7 @@ Start... early ages
 2014-09-22
 - vdi/vdi_gdp.c: Fix bug: v_pieslice() & v_ellpie() did not draw small
   slices. (RFB)
+
+2014-09-25
+- vdi/vdi_text.c: Remove unnecessary (and wrong) NDC handling in
+  vst_height(). (RFB)
