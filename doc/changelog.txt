@@ -5703,3 +5703,5 @@ Start... early ages
 2014-09-25
 - vdi/vdi_text.c: Remove unnecessary (and wrong) NDC handling in
   vst_height(). (RFB)
+- vdi/vdi_text.c: Revert 'small code optimisation' of 2014-09-20: does
+  not work for scaled fonts. (RFB)

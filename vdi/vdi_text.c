@@ -792,7 +792,7 @@ void dqt_attributes(Vwk * vwk)
     *pointer++ = fnt_ptr->max_char_width;
     *pointer++ = fnt_ptr->top;
     *pointer++ = fnt_ptr->max_cell_width;
-    *pointer = fnt_ptr->form_height;
+    *pointer = fnt_ptr->top + fnt_ptr->bottom + 1;  /* handles scaled fonts */
 
     CONTRL[2] = 2;
     CONTRL[4] = 6;
@@ -833,7 +833,7 @@ void dqt_extent(Vwk * vwk)
     if (vwk->style & F_SKEW)
         width += fnt_ptr->left_offset + fnt_ptr->right_offset;
 
-    height = fnt_ptr->form_height;
+    height = fnt_ptr->top + fnt_ptr->bottom + 1;    /* handles scaled fonts */
 
     if (vwk->style & F_OUTLINE) {
         width += cnt * 2;       /* outlining adds 2 pixels all around */
