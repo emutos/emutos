@@ -876,13 +876,13 @@ void dqt_extent(Vwk * vwk)
         break;
     case 2700:
         *pointer++ = 0;
-        *pointer++ = height;
-        *pointer++ = 0;
-        *pointer++ = 0;
-        *pointer++ = height;
-        *pointer++ = 0;
         *pointer++ = width;
-        *pointer = height;
+        *pointer++ = 0;
+        *pointer++ = 0;
+        *pointer++ = height;
+        *pointer++ = 0;
+        *pointer++ = height;
+        *pointer = width;
         break;
     }
     flip_y = 1;
