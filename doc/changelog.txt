@@ -5707,3 +5707,4 @@ Start... early ages
   not work for scaled fonts. (RFB)
 - vdi/vdi_text.c: Fix bug: vqt_extent() output for 270 rotation was
   incorrect. (RFB)
+- vdi/vdi_text.c: Reduce code size in vqt_extent(). (RFB)

@@ -842,47 +842,31 @@ void dqt_extent(Vwk * vwk)
 
     CONTRL[2] = 4;
 
-    pointer = PTSOUT;
+    memset(PTSOUT,0,8*sizeof(WORD));
     switch (vwk->chup) {
     case 0:
-        *pointer++ = 0;
-        *pointer++ = 0;
-        *pointer++ = width;
-        *pointer++ = 0;
-        *pointer++ = width;
-        *pointer++ = height;
-        *pointer++ = 0;
-        *pointer = height;
+        PTSOUT[2] = width;
+        PTSOUT[4] = width;
+        PTSOUT[5] = height;
+        PTSOUT[7] = height;
         break;
     case 900:
-        *pointer++ = height;
-        *pointer++ = 0;
-        *pointer++ = height;
-        *pointer++ = width;
-        *pointer++ = 0;
-        *pointer++ = width;
-        *pointer++ = 0;
-        *pointer = 0;
+        PTSOUT[0] = height;
+        PTSOUT[2] = height;
+        PTSOUT[3] = width;
+        PTSOUT[5] = width;
         break;
     case 1800:
-        *pointer++ = width;
-        *pointer++ = height;
-        *pointer++ = 0;
-        *pointer++ = height;
-        *pointer++ = 0;
-        *pointer++ = 0;
-        *pointer++ = width;
-        *pointer = 0;
+        PTSOUT[0] = width;
+        PTSOUT[1] = height;
+        PTSOUT[3] = height;
+        PTSOUT[6] = width;
         break;
     case 2700:
-        *pointer++ = 0;
-        *pointer++ = width;
-        *pointer++ = 0;
-        *pointer++ = 0;
-        *pointer++ = height;
-        *pointer++ = 0;
-        *pointer++ = height;
-        *pointer = width;
+        PTSOUT[1] = width;
+        PTSOUT[4] = height;
+        PTSOUT[6] = height;
+        PTSOUT[7] = width;
         break;
     }
     flip_y = 1;
