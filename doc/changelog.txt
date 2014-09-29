@@ -5708,3 +5708,7 @@ Start... early ages
 - vdi/vdi_text.c: Fix bug: vqt_extent() output for 270 rotation was
   incorrect. (RFB)
 - vdi/vdi_text.c: Reduce code size in vqt_extent(). (RFB)
+
+2014-09-29
+- vdi/vdi_text.c: Fix vst_rotation(): it now behaves like TOS3/TOS4,
+  rather than buggy TOS1. (RFB)

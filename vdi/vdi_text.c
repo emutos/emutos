@@ -703,9 +703,37 @@ void dst_alignment(Vwk * vwk)
 }
 
 
+/*
+ * the following implementation mimics TOS3/TOS4 behaviour
+ *
+ * the rotation angle in tenths of a degree may be supplied as any
+ * positive or negative WORD value, but it is first normalised to
+ * a value between 0 & 3599 by adding or subtracting multiples of
+ * 3600, and then rounded to the nearest multiple of 900 between
+ * 0 and 3600 inclusive before storing.
+ * 
+ * trivia: a value of 3600 is handled by other VDI code in the same
+ * way as a value of 0, but if you really want to store a value of
+ * 3600 rather than 0, you can pass a value between 3150 and 3599
+ * inclusive ...
+ *
+ * TOS1 difference: TOS1 does not normalise before rounding, so
+ * stored values range from -32400 to +32400; values outside the
+ * range of 0 to 3600 inclusive cause dqt_extent() to not return
+ * values ...
+ */
 void dst_rotation(Vwk * vwk)
 {
-    INTOUT[0] = vwk->chup = ((INTIN[0] + 450) / 900) * 900;
+    WORD angle = INTIN[0];
+
+    while(angle < 0)        /* ensure positive angle */
+        angle += 3600;
+
+    while(angle >= 3600)    /* between 0 and 3599 inclusive */
+        angle -= 3600;
+
+    /* this sets a value of 0, 900, 1800, 2700 or 3600, just like TOS3/TOS4 */
+    INTOUT[0] = vwk->chup = ((angle + 450) / 900) * 900;
     CONTRL[4] = 1;
 }
 
@@ -844,7 +872,7 @@ void dqt_extent(Vwk * vwk)
 
     memset(PTSOUT,0,8*sizeof(WORD));
     switch (vwk->chup) {
-    case 0:
+    default:                    /* 0 or 3600 ... see dst_rotation() */
         PTSOUT[2] = width;
         PTSOUT[4] = width;
         PTSOUT[5] = height;
