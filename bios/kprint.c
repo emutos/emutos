@@ -24,6 +24,7 @@
 #include "processor.h"
 #include "chardev.h"
 #include "serport.h"
+#include "pd.h"
 #include "coldfire.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
@@ -325,6 +326,8 @@ static const char *exc_messages[] = {
 
 void dopanic(const char *fmt, ...)
 {
+    LONG pc = 0;
+
     /* hide cursor, wrap line, new line */
     cprintf("\033f\033v\r\n");
     /* TODO use sane screen settings (color, address) */
@@ -354,6 +357,8 @@ void dopanic(const char *fmt, ...)
             LONG pc;
         } *s = (void *)proc_stk;
 
+        pc = s->pc;
+
         if (proc_enum >= 2 && proc_enum < numberof(exc_messages)) {
             kcprintf("Panic: %s.\n",
                      exc_messages[proc_enum]);
@@ -380,6 +385,8 @@ void dopanic(const char *fmt, ...)
             LONG pc;
         } *s = (void *)proc_stk;
 
+        pc = s->pc;
+
         kcprintf("Panic: %s.\n",
                  exc_messages[proc_enum]);
         kcprintf("misc = %04x, address = %08lx, opcode = %04x, sr = %04x, pc = %08lx\n",
@@ -400,6 +407,8 @@ void dopanic(const char *fmt, ...)
             WORD instruction_input_buffer;
             /* ... 29 words in the stack frame, but only 16 ones backuped */
         } *s = (void *)proc_stk;
+
+        pc = s->pc;
 
         kcprintf("Panic: %s.\n",
                  exc_messages[proc_enum]);
@@ -423,6 +432,8 @@ void dopanic(const char *fmt, ...)
             WORD internal_register_4;
         } *s = (void *)proc_stk;
 
+        pc = s->pc;
+
         kcprintf("Panic: %s.\n",
                  exc_messages[proc_enum]);
         kcprintf("sr = %04x, pc = %08lx, fw = %04x, ir = %04x, ssr = %04x, address = %08lx\n",
@@ -440,6 +451,8 @@ void dopanic(const char *fmt, ...)
             /* ... 30 words in the stack frame, but only 16 ones backuped */
         } *s = (void *)proc_stk;
 
+        pc = s->pc;
+
         kcprintf("Panic: %s.\n",
                  exc_messages[proc_enum]);
         kcprintf("sr = %04x, pc = %08lx, fw = %04x, ea = %08lx, ssw = %04x, fa = %08lx\n",
@@ -454,6 +467,8 @@ void dopanic(const char *fmt, ...)
             LONG address;
         } *s = (void *)proc_stk;
 
+        pc = s->pc;
+
         kcprintf("Panic: %s.\n",
                  exc_messages[proc_enum]);
         kcprintf("sr = %04x, pc = %08lx, fw = %04x, address = %08lx\n",
@@ -464,6 +479,8 @@ void dopanic(const char *fmt, ...)
             LONG pc;
         } *s = (void *)proc_stk;
 
+        pc = s->pc;
+
         kcprintf("Panic: %s.\n",
                  exc_messages[proc_enum]);
         kcprintf("sr = %04x, pc = %08lx\n",
@@ -473,6 +490,8 @@ void dopanic(const char *fmt, ...)
             WORD sr;
             LONG pc;
         } *s = (void *)proc_stk;
+
+        pc = s->pc;
 
         kcprintf("Panic: Exception number %d.\n",
                  (int) proc_enum);
@@ -486,8 +505,12 @@ void dopanic(const char *fmt, ...)
     kcprintf("Aregs: %08lx %08lx %08lx %08lx  %08lx %08lx %08lx %08lx\n",
              proc_aregs[0], proc_aregs[1], proc_aregs[2], proc_aregs[3],
              proc_aregs[4], proc_aregs[5], proc_aregs[6], proc_aregs[7]);
-    kcprintf("                                                                 usp = %08lx\n",
-             proc_usp);
+    kcprintf("basepage=%08lx text=%08lx data=%08lx bss=%08lx         usp=%08lx\n",
+             (ULONG)run, run->p_tbase, run->p_dbase, run->p_bbase, proc_usp);
+
+    if (pc >= run->p_tbase && pc < run->p_tbase + run->p_tlen)
+        kcprintf("Crash at text offset %08lx\n", pc - run->p_tbase);
+
     kcprintf("Processor halted.\n");
     halt();
 }

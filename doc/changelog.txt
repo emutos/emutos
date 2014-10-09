@@ -5715,3 +5715,5 @@ Start... early ages
 
 2014-10-09
 - bdos/fs.h bdos/proc.h include/pd.h: Moved declaration of run to pd.h. (VRI)
+- bios/kprint.c: Added basepage information in dopanic(). Contributed by Markus
+  Fröschle. (VRI)
