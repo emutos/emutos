@@ -19,8 +19,6 @@
  *  process management
  */
 
-extern  PD      *run;
-
 /*
  * in proc.c
  */

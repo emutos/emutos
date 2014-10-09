@@ -5712,3 +5712,6 @@ Start... early ages
 2014-09-29
 - vdi/vdi_text.c: Fix vst_rotation(): it now behaves like TOS3/TOS4,
   rather than buggy TOS1. (RFB)
+
+2014-10-09
+- bdos/fs.h bdos/proc.h include/pd.h: Moved declaration of run to pd.h. (VRI)
