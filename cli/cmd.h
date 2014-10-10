@@ -142,6 +142,7 @@ typedef struct {
 #define INVALID_PATH    -101        /* invalid component for PATH command */
 #define DISK_FULL       -102
 #define CMDLINE_LENGTH  -103
+#define DIR_NOT_EMPTY   -104        /* translated from EACCDN for folders */
 
 #define TAB             0x0f09
 #define BKSP            0x0e08

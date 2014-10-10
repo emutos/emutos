@@ -479,7 +479,11 @@ LONG rc;
 
 PRIVATE LONG run_rmdir(WORD argc,char **argv)
 {
-    return Ddelete(argv[1]);
+LONG rc;
+
+    rc = Ddelete(argv[1]);
+
+    return (rc==EACCDN) ? DIR_NOT_EMPTY : rc;
 }
 
 PRIVATE LONG run_setdrv(WORD argc,char **argv)

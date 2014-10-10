@@ -1,7 +1,7 @@
 /*
  * EmuCON2 utility routines
  *
- * Copyright (c) 2013 The EmuTOS development team
+ * Copyright (c) 2013-2014 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows
@@ -88,6 +88,9 @@ const char *p;
         break;
     case CMDLINE_LENGTH:
         p = _("cmdline too long");
+        break;
+    case DIR_NOT_EMPTY:
+        p = _("directory not empty");
         break;
     default:
         message(_("error code "));
