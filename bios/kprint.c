@@ -505,11 +505,19 @@ void dopanic(const char *fmt, ...)
     kcprintf("Aregs: %08lx %08lx %08lx %08lx  %08lx %08lx %08lx %08lx\n",
              proc_aregs[0], proc_aregs[1], proc_aregs[2], proc_aregs[3],
              proc_aregs[4], proc_aregs[5], proc_aregs[6], proc_aregs[7]);
-    kcprintf("basepage=%08lx text=%08lx data=%08lx bss=%08lx         usp=%08lx\n",
-             (ULONG)run, run->p_tbase, run->p_dbase, run->p_bbase, proc_usp);
 
-    if (pc >= run->p_tbase && pc < run->p_tbase + run->p_tlen)
-        kcprintf("Crash at text offset %08lx\n", pc - run->p_tbase);
+    if (run)
+    {
+        kcprintf("basepage=%08lx text=%08lx data=%08lx bss=%08lx         usp=%08lx\n",
+                 (ULONG)run, run->p_tbase, run->p_dbase, run->p_bbase, proc_usp);
+
+        if (pc && pc >= run->p_tbase && pc < run->p_tbase + run->p_tlen)
+            kcprintf("Crash at text offset %08lx\n", pc - run->p_tbase);
+    }
+    else
+    {
+        kcprintf("%67susp=%08lx\n", "", proc_usp);
+    }
 
     kcprintf("Processor halted.\n");
     halt();

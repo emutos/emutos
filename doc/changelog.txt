@@ -5721,3 +5721,6 @@ Start... early ages
 2014-10-10
 - cli/cmd.h cli/cmdint.c cli/cmdutil.c: Fix message displayed when deleting
   a non-empty directory in EmuCON. (RFB)
+
+2014-10-11
+- bios/kprint.c: Safer dopanic() when there is no basepage. (VRI)
