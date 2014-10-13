@@ -37,12 +37,13 @@ PRIVATE WORD help_wanted(const COMMAND *p,char *cmd);
 PRIVATE LONG is_valid_drive(char drive_letter);
 PRIVATE void output(const char *s);
 PRIVATE void outputnl(const char *s);
-PRIVATE LONG outputbuf(const char *s,LONG len);
+PRIVATE LONG outputbuf(const char *s,LONG len,WORD paging);
+PRIVATE LONG output_files(WORD argc,char **argv,WORD paging);
 PRIVATE void padname(char *buf,const char *name);
 PRIVATE LONG pathout(void);
 PRIVATE void show_line(const char *title,ULONG n);
 PRIVATE WORD user_break(void);
-PRIVATE WORD user_input(void);
+PRIVATE WORD user_input(WORD c);
 
 PRIVATE LONG run_cat(WORD argc,char **argv);
 PRIVATE LONG run_cd(WORD argc,char **argv);
@@ -53,6 +54,7 @@ PRIVATE LONG run_echo(WORD argc,char **argv);
 PRIVATE LONG run_help(WORD argc,char **argv);
 PRIVATE LONG run_ls(WORD argc,char **argv);
 PRIVATE LONG run_mkdir(WORD argc,char **argv);
+PRIVATE LONG run_more(WORD argc,char **argv);
 PRIVATE LONG run_path(WORD argc,char **argv);
 PRIVATE LONG run_pwd(WORD argc,char **argv);
 PRIVATE LONG run_mv(WORD argc,char **argv);
@@ -96,6 +98,9 @@ LOCAL const char * const help_ls[] = { "[-l] <path>",
     N_("Specify -l for detailed list"), NULL };
 LOCAL const char * const help_mkdir[] = { "<dir>",
     N_("Create directory <dir>"), NULL };
+LOCAL const char * const help_more[] = { "<filespec>",
+    N_("Copy <filespec> to standard output,"),
+    N_("pausing every screenful"), NULL };
 LOCAL const char * const help_mv[] = { "<filespec> <dir>",
     N_("Copy files matching <filespec> to <dir>,"),
     N_("then delete input files"), NULL };
@@ -139,6 +144,7 @@ LOCAL const COMMAND cmdtable[] = {
     { "help", NULL, 0, 1, run_help, help_help },
     { "ls", "dir", 0, 2, run_ls, help_ls },
     { "mkdir", "md", 1, 1, run_mkdir, help_mkdir },
+    { "more", NULL, 1, 1, run_more, help_more },
     { "mv", "move", 2, 2, run_mv, help_mv },
     { "path", NULL, 0, 1, run_path, help_path },
     { "pwd", NULL, 0, 0, run_pwd, help_pwd },
@@ -192,48 +198,7 @@ const COMMAND *p;
 
 PRIVATE LONG run_cat(WORD argc,char **argv)
 {
-LONG bufsize, n, rc = 0L;
-WORD handle, i;
-char name[MAXPATHLEN];
-char *iobuf, *p;
-
-    bufsize = IOBUFSIZE;
-    iobuf = (char *)Malloc(bufsize);
-    if (!iobuf)
-        return ENSMEM;
-
-    for (i = 1; i < argc; i++, argv++) {
-        p = extract_path(name,argv[i]);
-        for (rc = Fsfirst(argv[i],0x07), n = 0; rc == 0; rc = Fsnext()) {
-            strcpy(p,dta->d_fname);     /* add name to path */
-            rc = Fopen(name,0);
-            if (rc < 0L)
-                break;
-            handle = (WORD) (rc & 0xffff);
-
-            do {
-                n = rc = Fread(handle,bufsize,iobuf);
-                if (rc < 0L)
-                    break;
-                rc = outputbuf(iobuf,n);
-                if (rc < 0L)
-                    break;
-                if (rc != n)
-                    rc = DISK_FULL;
-            } while(rc > 0L);
-            Fclose(handle);
-            if (rc < 0L)
-                break;
-        }
-        if (rc == ENMFIL)   /* not really an error */
-            rc = 0L;
-        if (rc < 0L)
-            break;
-    }
-
-    Mfree(iobuf);
-
-    return rc;
+    return output_files(argc,argv,0);
 }
 
 PRIVATE LONG run_cd(WORD argc,char **argv)
@@ -357,7 +322,7 @@ WORD detail = 0;
     }
     for (rc = Fsfirst(filespec,0x17), n = 0; rc == 0; rc = Fsnext()) {
         if (constat())
-            if (user_input())
+            if (user_input(-1))
                 return USER_BREAK;
         if (detail) {
             display_detail(dta);
@@ -382,6 +347,11 @@ WORD detail = 0;
 PRIVATE LONG run_mkdir(WORD argc,char **argv)
 {
     return Dcreate(argv[1]);
+}
+
+PRIVATE LONG run_more(WORD argc,char **argv)
+{
+    return output_files(argc,argv,1);
 }
 
 PRIVATE LONG run_mv(WORD argc,char **argv)
@@ -566,6 +536,56 @@ PRIVATE LONG run_wrap(WORD argc,char **argv)
  */
 
 /*
+ *  output file(s), with optional screen paging
+ */
+PRIVATE LONG output_files(WORD argc,char **argv,WORD paging)
+{
+LONG bufsize, n, rc = 0L;
+WORD handle, i;
+char name[MAXPATHLEN];
+char *iobuf, *p;
+
+    bufsize = IOBUFSIZE;
+    iobuf = (char *)Malloc(bufsize);
+    if (!iobuf)
+        return ENSMEM;
+
+    for (i = 1; i < argc; i++, argv++) {
+        p = extract_path(name,argv[i]);
+        for (rc = Fsfirst(argv[i],0x07), n = 0; rc == 0; rc = Fsnext()) {
+            strcpy(p,dta->d_fname);     /* add name to path */
+            rc = Fopen(name,0);
+            if (rc < 0L)
+                break;
+            handle = (WORD) (rc & 0xffff);
+
+            do {
+                n = rc = Fread(handle,bufsize,iobuf);
+                if (rc < 0L)
+                    break;
+                rc = outputbuf(iobuf,n,paging);
+                if (rc < 0L)
+                    break;
+                if (rc != n)
+                    rc = DISK_FULL;
+            } while(rc > 0L);
+            Fclose(handle);
+            if (rc < 0L)
+                break;
+        }
+        if (rc == ENMFIL)   /* not really an error */
+            rc = 0L;
+        if (rc < 0L)
+            break;
+    }
+
+    Mfree(iobuf);
+
+    return rc;
+}
+
+
+/*
  *  copy_move
  */
 PRIVATE LONG copy_move(WORD argc,char **argv,WORD delete)
@@ -616,7 +636,7 @@ LONG bufsize, n, rc;
     for (rc = Fsfirst(inname,0x07); rc == 0; rc = Fsnext()) {
         /* allow user to interrupt or pause before every file copy/move */
         if (constat()) {
-            if (user_input()) {
+            if (user_input(-1)) {
                 rc = USER_BREAK;
                 break;
             }
@@ -961,23 +981,43 @@ PRIVATE void outputnl(const char *s)
 
 /*
  *  output a redirectable fixed-length buffer
+ *  with screen paging if requested
  */
-PRIVATE LONG outputbuf(const char *s,LONG len)
+PRIVATE LONG outputbuf(const char *s,LONG len,WORD paging)
 {
-LONG n, rc;
-char c, cprev = 0;
+LONG n, rc, line = 0L;
+char c, cprev = 0, response;
 
     if (redir_handle < 0L) {
         n = len;
         while(n-- > 0) {
             if (constat())
-                if (user_input())
+                if (user_input(-1))
                     return USER_BREAK;
             c = *s++;
             /* convert Un*x-style text to TOS-style */
             if ((c == '\n') && (cprev != '\r'))
                 conout('\r');
             conout(c);
+            if (paging && (c == '\n')) {
+                if (++line >= screen_rows-1) {
+                    message(_("-More-"));
+                    while(1) {
+                        response = conin() & 0xff;
+                        if (response == '\r')   /* CR displays the next line */
+                            break;
+                        if (response == ' ') {  /* space displays the next page */
+                            line = 0L;
+                            break;
+                        }
+                        if (user_input(response)) {
+                            conout('\r');
+                            return USER_BREAK;
+                        }
+                    }
+                    conout('\r');               /* overwrite the pause msg */
+                }
+            }
             cprev = c;
         }
         return len;
@@ -1008,14 +1048,17 @@ char c;
 }
 
 /*
- *  check for flow control or control-C
+ *  check for flow control or quit (ctl-C/Q/q)
+ *
+ *  a +ve argument is the character to check
+ *  a -ve argument means get the character from conin
  */
-PRIVATE WORD user_input(void)
+PRIVATE WORD user_input(WORD c)
 {
-char c;
+    if (c < 0)
+        c = conin() & 0xff;
 
-    c = conin() & 0xff;
-    if (c == CTL_C)         /* user wants to interrupt */
+    if ((c == CTL_C) || (c == 'Q') || (c == 'q'))   /* wants to quit */
         return -1;
 
     if (c == CTL_S) {       /* user wants to pause */
