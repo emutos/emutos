@@ -965,6 +965,7 @@ PRIVATE void outputnl(const char *s)
 PRIVATE LONG outputbuf(const char *s,LONG len)
 {
 LONG n, rc;
+char c, cprev = 0;
 
     if (redir_handle < 0L) {
         n = len;
@@ -972,7 +973,12 @@ LONG n, rc;
             if (constat())
                 if (user_input())
                     return USER_BREAK;
-            conout(*s++);
+            c = *s++;
+            /* convert Un*x-style text to TOS-style */
+            if ((c == '\n') && (cprev != '\r'))
+                conout('\r');
+            conout(c);
+            cprev = c;
         }
         return len;
     }

@@ -5724,3 +5724,7 @@ Start... early ages
 
 2014-10-11
 - bios/kprint.c: Safer dopanic() when there is no basepage. (VRI)
+
+2014-10-12
+- cli/cmdint.c: The EmuCON type/cat command now handles both MSDOS- and
+  Unix-style line endings. Suggested by Eero Tamminen. (RFB)
