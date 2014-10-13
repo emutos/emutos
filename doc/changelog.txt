@@ -5737,3 +5737,5 @@ Start... early ages
   instead of custom blank line routine. (RFB)
 - cli/cmdint.c: Fix EmuCON bug: '-More-' msg was not blanked out during
   'more' display. (RFB)
+- cli/cmd.h cli/cmdint.c cli/cmdmain.c cli/cmdutil.c: Fix bug: EmuCON issued
+  a bogus error msg if a builtin cmd was passed the wrong number of arguments. (RFB)

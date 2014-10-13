@@ -92,6 +92,9 @@ const char *p;
     case DIR_NOT_EMPTY:
         p = _("directory not empty");
         break;
+    case WRONG_NUM_ARGS:
+        p = _("wrong number of arguments");
+        break;
     default:
         message(_("error code "));
         if (rc < 0) {

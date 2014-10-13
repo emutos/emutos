@@ -143,6 +143,7 @@ typedef struct {
 #define DISK_FULL       -102
 #define CMDLINE_LENGTH  -103
 #define DIR_NOT_EMPTY   -104        /* translated from EACCDN for folders */
+#define WRONG_NUM_ARGS  -105        /* for builtin commands */
 
 #define TAB             0x0f09
 #define BKSP            0x0e08
@@ -168,6 +169,9 @@ typedef struct {
 #define conin()         Bconin(2)
 #define constat()       Bconstat(2)
 #define conout(c)       Bconout(2,c)
+
+#define LOOKUP_EXIT     (void *)-1L     /* special return values from lookup_builtin() */
+#define LOOKUP_ARGS     (void *)-2L
 
 /*
  *  global variables

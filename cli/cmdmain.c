@@ -101,10 +101,12 @@ LONG rc;
         return 0;
 
     func = lookup_builtin(argc,argv);
-    if ((LONG)func == -1L)          /* exit/quit */
+    if (func == LOOKUP_EXIT)    /* exit/quit */
         return -1;
 
-    if (func) {
+    if (func == LOOKUP_ARGS)
+        rc = WRONG_NUM_ARGS;
+    else if (func) {
         create_redir(redir);
         strip_quotes(argc,argv);
         rc = func(argc,argv);

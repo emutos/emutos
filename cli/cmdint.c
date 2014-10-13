@@ -140,7 +140,7 @@ LOCAL const COMMAND cmdtable[] = {
     { "cls", "clear", 0, 0, run_cls, help_cls },
     { "cp", "copy", 2, 2, run_cp, help_cp },
     { "echo", NULL, 0, 255, run_echo, help_echo },
-    { "exit", NULL, 0, 0, (void *)-1L, help_exit },
+    { "exit", NULL, 0, 0, LOOKUP_EXIT, help_exit },
     { "help", NULL, 0, 1, run_help, help_help },
     { "ls", "dir", 0, 2, run_ls, help_ls },
     { "mkdir", "md", 1, 1, run_mkdir, help_mkdir },
@@ -188,10 +188,8 @@ const COMMAND *p;
     }
 
     argc--;
-    if ((argc < p->minargs) || (argc > p->maxargs)) {
-        messagenl(_("wrong number of arguments"));
-        return NULL;
-    }
+    if ((argc < p->minargs) || (argc > p->maxargs))
+        return LOOKUP_ARGS;
 
     return p->func;
 }
