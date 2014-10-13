@@ -5733,3 +5733,5 @@ Start... early ages
 2014-10-13
 - cli/cmd.h cli/cmdint.c cli/cmdutil.c: Cosmetic improvements to EmuCON's
   help display. (RFB)
+- cli/cmd.h cli/cmdutil.c: Code optimisation: use VT52 escape sequence
+  instead of custom blank line routine. (RFB)
