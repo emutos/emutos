@@ -5735,3 +5735,5 @@ Start... early ages
   help display. (RFB)
 - cli/cmd.h cli/cmdutil.c: Code optimisation: use VT52 escape sequence
   instead of custom blank line routine. (RFB)
+- cli/cmdint.c: Fix EmuCON bug: '-More-' msg was not blanked out during
+  'more' display. (RFB)

@@ -1024,7 +1024,7 @@ char c, cprev = 0, response;
                             return USER_BREAK;
                         }
                     }
-                    conout('\r');               /* overwrite the pause msg */
+                    blank_line();               /* overwrite the pause msg */
                 }
             }
             cprev = c;
