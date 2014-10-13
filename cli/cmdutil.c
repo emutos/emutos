@@ -19,6 +19,19 @@ typedef struct {
 
 
 /*
+ *  output a blanking line to the console
+ */
+void blank_line(void)
+{
+WORD n;
+
+    conout('\r');
+    for (n = 0; n < screen_cols; n++)
+        conout(' ');
+    conout('\r');
+}
+
+/*
  *  output a 2-byte escape sequence to console
  */
 void escape(char c)

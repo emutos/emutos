@@ -5729,3 +5729,7 @@ Start... early ages
 - cli/cmdint.c: The EmuCON type/cat command now handles both MSDOS- and
   Unix-style line endings. Suggested by Eero Tamminen. (RFB)
 - cli/cmdint.c: Added 'more' command to EmuCON. Suggested by Eero Tamminen. (RFB)
+
+2014-10-13
+- cli/cmd.h cli/cmdint.c cli/cmdutil.c: Cosmetic improvements to EmuCON's
+  help display. (RFB)

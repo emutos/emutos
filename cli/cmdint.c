@@ -280,11 +280,13 @@ const char * const *s;
 
     for (p = cmdtable, lines = 0; p->func; p++) {
         if (help_wanted(p,argv[1])) {
-            lines += help_lines(p);     /* see if this help will fit on screen */
-            if (lines >= screen_rows) {
-                if (help_pause() < 0)
-                    break;
-                lines = 0;
+            if (redir_handle < 0L) {    /* not redirecting output: */
+                lines += help_lines(p); /*  see if this help will fit on screen */
+                if (lines >= screen_rows) {
+                    if (help_pause() < 0)
+                        break;
+                    lines = 0;
+                }
             }
             help_display(p);
         }
@@ -781,18 +783,25 @@ WORD lines;
 
 PRIVATE WORD help_pause(void)
 {
+WORD rc;
 char c;
 
-    output(_("CR to continue ..."));
+    message(_("CR to continue ..."));
     while(1) {
         c = conin() & 0xff;
-        if (c == '\r')
+        if (c == '\r') {
+            rc = 0;
             break;
-        if (c == CTL_C)
-            return -1;
+        }
+        if (c == CTL_C) {
+            rc = -1;
+            break;
+        }
     }
 
-    return 0;
+    blank_line();   /* blank out the pause msg for neatness */
+
+    return rc;
 }
 
 PRIVATE WORD help_wanted(const COMMAND *p,char *cmd)
