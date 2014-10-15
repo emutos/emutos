@@ -157,6 +157,8 @@ LOCAL const COMMAND cmdtable[] = {
     { "", NULL, 0, 255, NULL, NULL }                    /* end marker */
 };
 
+static LONG linecount;  /* used by 'more' command */
+
 LONG (*lookup_builtin(WORD argc,char **argv))(WORD,char **)
 {
 const COMMAND *p;
@@ -558,7 +560,7 @@ char *iobuf, *p;
             if (rc < 0L)
                 break;
             handle = (WORD) (rc & 0xffff);
-
+            linecount = 0L;
             do {
                 n = rc = Fread(handle,bufsize,iobuf);
                 if (rc < 0L)
@@ -992,7 +994,7 @@ PRIVATE void outputnl(const char *s)
  */
 PRIVATE LONG outputbuf(const char *s,LONG len,WORD paging)
 {
-LONG n, rc, line = 0L;
+LONG n, rc;
 char c, cprev = 0, response;
 
     if (redir_handle < 0L) {
@@ -1007,14 +1009,14 @@ char c, cprev = 0, response;
                 conout('\r');
             conout(c);
             if (paging && (c == '\n')) {
-                if (++line >= screen_rows-1) {
+                if (++linecount >= screen_rows-1) {
                     message(_("-More-"));
                     while(1) {
                         response = conin() & 0xff;
                         if (response == '\r')   /* CR displays the next line */
                             break;
                         if (response == ' ') {  /* space displays the next page */
-                            line = 0L;
+                            linecount = 0L;
                             break;
                         }
                         if (user_input(response)) {

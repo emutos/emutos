@@ -5739,3 +5739,8 @@ Start... early ages
   'more' display. (RFB)
 - cli/cmd.h cli/cmdint.c cli/cmdmain.c cli/cmdutil.c: Fix bug: EmuCON issued
   a bogus error msg if a builtin cmd was passed the wrong number of arguments. (RFB)
+
+2014-10-14
+- cli/cmdint.c: Fix bug: 'more' command did not pause at the correct place
+  for files larger than its i/o buffer. (RFB)
+
