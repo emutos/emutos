@@ -5743,4 +5743,6 @@ Start... early ages
 2014-10-14
 - cli/cmdint.c: Fix bug: 'more' command did not pause at the correct place
   for files larger than its i/o buffer. (RFB)
+- cli/cmdint.c: Do not display 'interrupted' message when 'more' command
+  output is interrupted. (RFB)
 

@@ -583,6 +583,9 @@ char *iobuf, *p;
 
     Mfree(iobuf);
 
+    if (paging && (rc == USER_BREAK))   /* avoid 'interrupted' msg */
+        rc = 0L;
+
     return rc;
 }
 
@@ -1020,7 +1023,7 @@ char c, cprev = 0, response;
                             break;
                         }
                         if (user_input(response)) {
-                            conout('\r');
+                            blank_line();
                             return USER_BREAK;
                         }
                     }
