@@ -3,7 +3,7 @@
  *
  * Copyright (c) 1987 Digital Research Inc.
  *               2001 Lineo, Inc.
- *               2002-2013 The EmuTOS development team
+ *               2002-2014 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -16,6 +16,7 @@
 .globl  _deskstart
 .globl  _gemdos
 .globl  _gem
+.globl  _get_deskwh
 
 #if CONF_DEBUG_DESK_STACK
 .globl  _deskstackbottom
@@ -104,6 +105,19 @@ _gem:
         trap    #2
         rts
 
+
+#if CONF_WITH_SHOW_FILE
+_get_deskwh:
+        move.l  a2,-(sp)                // not scratch for gcc
+#ifdef __mcoldfire__
+        .dc.w   0xa920                  // lineA init
+#else
+        .dc.w   0xa000                  // lineA init
+#endif
+        move.l  -44(a0),d0              // v_cel_mx/v_cel_my
+        movea.l (sp)+,a2
+        rts
+#endif
 
 
 .bss

@@ -5746,3 +5746,8 @@ Start... early ages
 - cli/cmdint.c: Do not display 'interrupted' message when 'more' command
   output is interrupted. (RFB)
 
+2014-10-20
+- aes/gemdos.c aes/gemdos.h desk/aesbind.h desk/deskstart.S desk/desksupp.c
+  desk/desksupp.h desk/desktop.def desk/desktop.rsc include/config.h:
+  Double-clicking on a file not associated with an application now gets
+  a 'Show file?' prompt (if enabled via CONF_WITH_SHOW_FILE). (RFB)

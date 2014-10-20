@@ -36,6 +36,7 @@ extern LONG gemdos();
 #define X_PRTOUT 0x05
 #define X_RAWCON 0x06
 #define X_RAWCIN 0x07
+#define X_CONWS  0x09
 #define X_CONIS  0x0B
 #define X_SETDRV 0x0E
 #define X_GETDRV 0x19
@@ -116,6 +117,12 @@ void dos_func(UWORD function, LONG parm)
 */
 
 
+void dos_conout(WORD ch)
+{
+        gemdos(X_TABOUT,ch);
+}
+
+
 LONG dos_rawcin(void)
 {
         return gemdos(X_RAWCIN);
@@ -125,6 +132,12 @@ LONG dos_rawcin(void)
 WORD dos_conis(void)
 {
         return gemdos(X_CONIS);
+}
+
+
+void dos_conws(const char *str)
+{
+        gemdos(X_CONWS,str);
 }
 
 

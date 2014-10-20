@@ -11,6 +11,11 @@
 #define AESBIND_H
 #include "obdefs.h"
 
+#define END_UPDATE 0        /* for wind_update() */
+#define BEG_UPDATE 1
+#define END_MCTRL  2
+#define BEG_MCTRL  3
+
 /* AES prototypes: */
 
 WORD appl_init(void);

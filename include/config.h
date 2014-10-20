@@ -149,6 +149,9 @@
 # ifndef CONF_WITH_PCGEM
 #  define CONF_WITH_PCGEM 0
 # endif
+# ifndef CONF_WITH_SHOW_FILE
+#  define CONF_WITH_SHOW_FILE 0
+# endif
 # ifndef CONF_WITH_68030_PMMU
 #  define CONF_WITH_68030_PMMU 0
 # endif
@@ -712,6 +715,13 @@
  */
 #ifndef CONF_WITH_PCGEM
  # define CONF_WITH_PCGEM 1
+#endif
+
+/*
+ * Set CONF_WITH_SHOW_FILE to 1 to support 
+ */
+#ifndef CONF_WITH_SHOW_FILE
+ # define CONF_WITH_SHOW_FILE 1
 #endif
 
 /*

@@ -43,6 +43,17 @@
 #include "desk1.h"
 #include "deskdir.h"
 #include "desksupp.h"
+#include "nls.h"
+
+#if CONF_WITH_SHOW_FILE
+/*
+ *      declarations used by the show_file() code
+ */
+#define IOBUFSIZE   16384L
+LONG get_deskwh(void);
+static LONG linecount;
+static WORD pagesize;
+#endif
 
 
 /*
@@ -270,6 +281,168 @@ WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon, WORD drv,
 } /* do_diropen */
 
 
+#if CONF_WITH_SHOW_FILE
+/*
+ *      helper functions for displaying a file
+ */
+
+/*
+ *      check for flow control or quit (ctl-C/Q/q)
+ *
+ *      a +ve argument is the character to check
+ *      a -ve argument means get the character from the console
+ */
+static WORD user_input(WORD c)
+{
+        if (c < 0)
+          c = dos_rawcin() & 0xff;
+
+        if ((c == CTL_C) || (c == 'Q') || (c == 'q'))   /* wants to quit */
+          return -1;
+
+        if (c == CTL_S) {       /* user wants to pause */
+          while(1)
+          {
+            c = dos_rawcin() & 0xff;
+            if (c == CTL_C)
+              return -1;
+            if (c == CTL_Q)
+              break;
+          }
+        }
+
+        return 0;
+}
+
+/*
+ *      blank out line via VT52 escape sequence
+ */
+static void blank_line(void)
+{
+        dos_conout('\x1b');
+        dos_conout('l');
+}
+
+/*
+ *      clear screen via VT52 escape sequence
+ */
+static void clear_screen(void)
+{
+        dos_conout('\x1b');
+        dos_conout('E');
+}
+
+/*
+ *      display a fixed-length buffer with screen paging
+ */
+static WORD show_buf(const char *s,LONG len)
+{
+        LONG n;
+        BYTE c, cprev = 0, response;
+
+        n = len;
+        while(n-- > 0)
+        {
+          if (dos_conis())
+            if (user_input(-1))
+              return -1;
+
+          c = *s++;
+          /* convert Un*x-style text to TOS-style */
+          if ((c == '\n') && (cprev != '\r'))
+            dos_conout('\r');
+          dos_conout(c);
+          if (c == '\n')
+          {
+            if (++linecount >= pagesize)
+            {
+              dos_conws(_("-More-"));
+              while(1)
+              {
+                response = dos_rawcin() & 0xff;
+                if (response == '\r')   /* CR displays the next line */
+                  break;
+                if (response == ' ')    /* space displays the next page */
+                {
+                  linecount = 0L;
+                  break;
+                }
+                if (user_input(response))
+                {
+                  dos_conout('\r');
+                  return -1;
+                }
+              }
+              blank_line();             /* overwrite the pause msg */
+            }
+          }
+          cprev = c;
+        }
+
+        return 0;
+}
+
+/*
+ *     show a text file with pause at end of page & EOF
+ */
+static void show_file(char *name,LONG bufsize,char *iobuf)
+{
+        LONG rc, n;
+        WORD handle, scr_width, scr_height;
+
+        rc = dos_open(name,0);
+        if (DOS_ERR)
+          return;
+
+        handle = (WORD) (rc & 0xffff);
+
+        scr_width = G.g_wdesk;
+        scr_height = G.g_ydesk + G.g_hdesk;
+
+        /*
+         * set up for text output
+         */
+        graf_mouse(M_OFF,NULL);
+        menu_bar(G.a_trees[ADMENU],0);
+        wind_update(BEG_UPDATE);
+        form_dial(FMD_START, 0,0,0,0, 0,0,scr_width,scr_height);
+        clear_screen();
+
+        pagesize = get_deskwh() & 0xffff;
+        linecount = 0L;
+
+        while(1)
+        {
+          n = rc = dos_read(handle,bufsize,iobuf);
+          if (DOS_ERR)
+            rc = -1L;
+          if (rc <= 0L)
+            break;
+          rc = show_buf(iobuf,n);
+          if (rc < 0L)
+            break;
+        }
+
+        dos_close(handle);
+
+        if (rc == 0L)
+        {
+          dos_conws(_("-End of file-"));
+          dos_rawcin();
+        }
+
+        /*
+         * switch back to normal desktop
+         */
+        clear_screen();     /* neatness */
+        form_dial(FMD_FINISH, 0,0,0,0, 0,0,scr_width,scr_height);
+        wind_update(END_UPDATE);
+        menu_bar(G.a_trees[ADMENU],1);
+        graf_mouse(M_ON,NULL);
+}
+#endif
+
+
 /*
 *       Open an application
 */
@@ -323,10 +496,21 @@ static WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, WORD drv,
               pcmd = pname;
           } /* if isapp */
           else
-          {
-                                                /* DOS-based document   */
-                                                /*   has been selected  */
+          {                         /* user double-clicked document */
+#if CONF_WITH_SHOW_FILE
+            ret = fun_alert(1, STSHOW, NULL);
+            if (ret == 1)
+            {
+              char *iobuf = (char *)dos_alloc(IOBUFSIZE);
+              if (iobuf)
+              {
+                show_file(pname, IOBUFSIZE, iobuf);
+                dos_free((LONG)iobuf);
+              }
+            }
+#else
             fun_alert(1, STNOAPPL, NULLPTR);
+#endif
             ret = FALSE;
           } /* else */
         } /* else */
