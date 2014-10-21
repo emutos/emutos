@@ -41,12 +41,14 @@ _coma_start:
         trap    #1
 
 _getwh:
+        move.l  a2,-(sp)                // not a scratch reg for gcc
 #ifdef __mcoldfire__
         .dc.w   0xa920                  // lineA init
 #else
         .dc.w   0xa000                  // lineA init
 #endif
         move.l  -44(a0),d0              // v_cel_mx/v_cel_my
+        movea.l (sp)+,a2
         rts
 
 /*

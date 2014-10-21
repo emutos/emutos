@@ -5751,3 +5751,4 @@ Start... early ages
   desk/desksupp.h desk/desktop.def desk/desktop.rsc include/config.h:
   Double-clicking on a file not associated with an application now gets
   a 'Show file?' prompt (if enabled via CONF_WITH_SHOW_FILE). (RFB)
+- cli/cmdasm.S: Fix latent bug: a2 was not saved in assembler function. (RFB)
