@@ -5752,3 +5752,7 @@ Start... early ages
   Double-clicking on a file not associated with an application now gets
   a 'Show file?' prompt (if enabled via CONF_WITH_SHOW_FILE). (RFB)
 - cli/cmdasm.S: Fix latent bug: a2 was not saved in assembler function. (RFB)
+
+2014-10-22
+- aes/gemfmalt.c: Fix bug: alert buttons can overlap icon in resolutions
+  with 8-pixel character heights. (RFB)

@@ -162,41 +162,79 @@ static void fm_parse(LONG tree, LONG palstr, WORD *picnum, WORD *pnummsg,
 }
 
 
+/*
+ *      Routine to build the alert
+ * 
+ *      Inputs are:
+ *          tree            the alert dialog
+ *          haveicon        boolean, 1 if icon specified
+ *          nummsg          number of message lines
+ *          mlenmsg         length of longest line
+ *          numbut          number of buttons
+ *          mlenbut         length of biggest button
+ */
 static void fm_build(LONG tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
                      WORD numbut, WORD mlenbut)
 {
-        register WORD   i;
+        WORD            i, hicon;
         GRECT           al, ic, bt, ms;
         OBJECT          *obj;
 
+        /*
+         * we use the GRECTs as workareas for building the object character coordinates:
+         *  'al'    the entire alert
+         *  'ms'    the first message line
+         *  'bt'    the first button
+         *  'ic'    the icon
+         */
         r_set(&al, 0, 0, 1+INTER_WSPACE, 1+INTER_HSPACE);
-        r_set(&ms, 1 + INTER_WSPACE, 1 + INTER_HSPACE, mlenmsg, 1);
+        r_set(&ms, 1+INTER_WSPACE, 1+INTER_HSPACE, mlenmsg, 1);
+        r_set(&bt, 1+INTER_WSPACE, 2+INTER_HSPACE+nummsg, mlenbut, 1);
+        r_set(&ic, 0, 0, 0, 0);
 
+        /*
+         * if we have an icon, we must initialise 'ic' and adjust:
+         *  the width of the alert
+         *  the horizontal position of the first message line.
+         * since the alert at this stage is sized in characters, we must
+         * convert the icon height from pixels to characters, based on
+         * the current character height.
+         */
         if (haveicon)
         {
-          r_set(&ic, 1+INTER_WSPACE, 1+INTER_HSPACE, 4, 4);
-          al.g_w += ic.g_w + INTER_WSPACE + 1;
-          al.g_h += ic.g_h + INTER_HSPACE + 1;
-          ms.g_x = ic.g_x + ic.g_w + INTER_WSPACE + 1;
+          hicon = (rs_bitblk[NOTEBB].bi_hl+gl_hchar-1) / gl_hchar;
+          r_set(&ic, 1+INTER_WSPACE, 1+INTER_HSPACE, 4, hicon);
+          al.g_w += ic.g_w + 1 + INTER_WSPACE;
+          ms.g_x = ic.g_x + ic.g_w + 1 + INTER_WSPACE;
         }
 
-        r_set(&bt, 1+INTER_WSPACE, 2+INTER_HSPACE+max(nummsg, 1), mlenbut, 1);
-        if (haveicon && nummsg < 2)
+        /*
+         * final adjustments(1): alert width / button horizontal position
+         *  if the message lines need more space than the buttons, set the
+         *  alert width from the message length, and adjust the horizontal
+         *  position of the first button for a symmetrical effect.
+         *  otherwise, set the alert width from the button sizes and leave
+         *  the message lines left justified.
+         */
+        if (mlenmsg + al.g_w > numbut * mlenbut + (numbut-1) + 1 + INTER_WSPACE)
         {
-            bt.g_y += 1;
-        }
-
-        if (mlenmsg + al.g_w > numbut * mlenbut + (numbut-1) + 1+INTER_WSPACE)
-        {
-          al.g_w += mlenmsg + INTER_WSPACE + 1;
+          al.g_w += mlenmsg + 1 + INTER_WSPACE;
           bt.g_x = (al.g_w - numbut * mlenbut - (numbut-1)) / 2;
         }
         else
         {
           al.g_w = numbut * mlenbut + (numbut-1) + 2 * (1+INTER_WSPACE);
+          bt.g_x = 1 + INTER_WSPACE;
         }
 
-        al.g_h = max(al.g_h, 2 + (2 * INTER_HSPACE) + nummsg + 2);
+        /*
+         * final adjustments(2): button vertical position / alert height
+         *  ensure no overlap by putting the buttons below the icon,
+         *  subject to leaving at least a 1-line gap between the messages
+         *  and the buttons.
+         */
+        bt.g_y = max(ic.g_y+ic.g_h,nummsg+1) + 1 + INTER_HSPACE;
+        al.g_h = max(bt.g_y+bt.g_h,ic.g_y+ic.g_h) + 1 + INTER_HSPACE;
 
                                                 /* init. root object    */
         ob_setxywh(tree, ROOT, &al);
