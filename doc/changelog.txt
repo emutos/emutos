@@ -5756,3 +5756,4 @@ Start... early ages
 2014-10-22
 - aes/gemfmalt.c: Fix bug: alert buttons can overlap icon in resolutions
   with 8-pixel character heights. (RFB)
+- aes/gemfmalt.c: Make source formatting consistent within module. (RFB)

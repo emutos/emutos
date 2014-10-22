@@ -53,17 +53,17 @@
 
 
 /*
-*       Routine to break a string into smaller strings.  Breaks occur
-*       whenever an | or a ] is encountered.
-*
-*       Input:  start       starting object
-*               maxnum      maximum number of substrings
-*               maxlen      maximum length of substring
-*               alert       starting point in alert string
-*       Output: pnum        number of substrings found
-*               plen        maximum length of substring found
-*       Returns:            pointer to next character to process
-*/
+ *  Routine to break a string into smaller strings.  Breaks occur
+ *  whenever an | or a ] is encountered.
+ *
+ *  Input:  start       starting object
+ *          maxnum      maximum number of substrings
+ *          maxlen      maximum length of substring
+ *          alert       starting point in alert string
+ *  Output: pnum        number of substrings found
+ *          plen        maximum length of substring found
+ *  Returns:            pointer to next character to process
+ */
 #define endstring(a)    ( ((a)==']') || ((a)=='\0') )
 #define endsubstring(a) ( ((a)=='|') || ((a)==']') || ((a)=='\0') )
 
@@ -122,26 +122,25 @@ static char *fm_strbrk(OBJECT *start,WORD maxnum,WORD maxlen,char *alert,
 
 
 /*
-*       Routine to parse a string into an icon #, multiple message
-*       strings, and multiple button strings.  For example,
-*
-*               [0][This is some text|for the screen.][Ok|Cancel]
-*               0123456
-*
-*       becomes:
-*               icon# = 0;
-*               1st msg line = This is some text
-*               2nd msg line = for the screen.
-*               1st button = Ok
-*               2nd button = Cancel
-*
-*       Input:  tree        address of tree
-*               palstr      pointer to alert string
-*       Output: pnummsg     number of message lines
-*               plenmsg     length of biggest line
-*               pnumbut     number of buttons
-*               plenbut     length of biggest button
-*/
+ *  Routine to parse a string into an icon #, multiple message
+ *  strings, and multiple button strings.  For example,
+ *
+ *      [0][This is some text|for the screen.][Ok|Cancel]
+ *
+ *  becomes:
+ *      icon# = 0;
+ *      1st msg line = This is some text
+ *      2nd msg line = for the screen.
+ *      1st button = Ok
+ *      2nd button = Cancel
+ *
+ *  Input:  tree        address of tree
+ *          palstr      pointer to alert string
+ *  Output: pnummsg     number of message lines
+ *          plenmsg     length of biggest line
+ *          pnumbut     number of buttons
+ *          plenbut     length of biggest button
+ */
 static void fm_parse(LONG tree, LONG palstr, WORD *picnum, WORD *pnummsg,
                          WORD *plenmsg, WORD *pnumbut, WORD *plenbut)
 {
@@ -163,179 +162,192 @@ static void fm_parse(LONG tree, LONG palstr, WORD *picnum, WORD *pnummsg,
 
 
 /*
- *      Routine to build the alert
+ *  Routine to build the alert
  * 
- *      Inputs are:
- *          tree            the alert dialog
- *          haveicon        boolean, 1 if icon specified
- *          nummsg          number of message lines
- *          mlenmsg         length of longest line
- *          numbut          number of buttons
- *          mlenbut         length of biggest button
+ *  Inputs are:
+ *      tree            the alert dialog
+ *      haveicon        boolean, 1 if icon specified
+ *      nummsg          number of message lines
+ *      mlenmsg         length of longest line
+ *      numbut          number of buttons
+ *      mlenbut         length of biggest button
  */
 static void fm_build(LONG tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
                      WORD numbut, WORD mlenbut)
 {
-        WORD            i, hicon;
-        GRECT           al, ic, bt, ms;
-        OBJECT          *obj;
+    WORD i, hicon;
+    GRECT al, ic, bt, ms;
+    OBJECT *obj;
 
-        /*
-         * we use the GRECTs as workareas for building the object character coordinates:
-         *  'al'    the entire alert
-         *  'ms'    the first message line
-         *  'bt'    the first button
-         *  'ic'    the icon
-         */
-        r_set(&al, 0, 0, 1+INTER_WSPACE, 1+INTER_HSPACE);
-        r_set(&ms, 1+INTER_WSPACE, 1+INTER_HSPACE, mlenmsg, 1);
-        r_set(&bt, 1+INTER_WSPACE, 2+INTER_HSPACE+nummsg, mlenbut, 1);
-        r_set(&ic, 0, 0, 0, 0);
+    /*
+     * we use the GRECTs as workareas for building the object character coordinates:
+     *  'al'    the entire alert
+     *  'ms'    the first message line
+     *  'bt'    the first button
+     *  'ic'    the icon
+     */
+    r_set(&al, 0, 0, 1+INTER_WSPACE, 1+INTER_HSPACE);
+    r_set(&ms, 1+INTER_WSPACE, 1+INTER_HSPACE, mlenmsg, 1);
+    r_set(&bt, 1+INTER_WSPACE, 2+INTER_HSPACE+nummsg, mlenbut, 1);
+    r_set(&ic, 0, 0, 0, 0);
 
-        /*
-         * if we have an icon, we must initialise 'ic' and adjust:
-         *  the width of the alert
-         *  the horizontal position of the first message line.
-         * since the alert at this stage is sized in characters, we must
-         * convert the icon height from pixels to characters, based on
-         * the current character height.
-         */
-        if (haveicon)
-        {
-          hicon = (rs_bitblk[NOTEBB].bi_hl+gl_hchar-1) / gl_hchar;
-          r_set(&ic, 1+INTER_WSPACE, 1+INTER_HSPACE, 4, hicon);
-          al.g_w += ic.g_w + 1 + INTER_WSPACE;
-          ms.g_x = ic.g_x + ic.g_w + 1 + INTER_WSPACE;
-        }
+    /*
+     * if we have an icon, we must initialise 'ic' and adjust:
+     *  the width of the alert
+     *  the horizontal position of the first message line.
+     * since the alert at this stage is sized in characters, we must
+     * convert the icon height from pixels to characters, based on
+     * the current character height.
+     */
+    if (haveicon)
+    {
+        hicon = (rs_bitblk[NOTEBB].bi_hl+gl_hchar-1) / gl_hchar;
+        r_set(&ic, 1+INTER_WSPACE, 1+INTER_HSPACE, 4, hicon);
+        al.g_w += ic.g_w + 1 + INTER_WSPACE;
+        ms.g_x = ic.g_x + ic.g_w + 1 + INTER_WSPACE;
+    }
 
-        /*
-         * final adjustments(1): alert width / button horizontal position
-         *  if the message lines need more space than the buttons, set the
-         *  alert width from the message length, and adjust the horizontal
-         *  position of the first button for a symmetrical effect.
-         *  otherwise, set the alert width from the button sizes and leave
-         *  the message lines left justified.
-         */
-        if (mlenmsg + al.g_w > numbut * mlenbut + (numbut-1) + 1 + INTER_WSPACE)
-        {
-          al.g_w += mlenmsg + 1 + INTER_WSPACE;
-          bt.g_x = (al.g_w - numbut * mlenbut - (numbut-1)) / 2;
-        }
-        else
-        {
-          al.g_w = numbut * mlenbut + (numbut-1) + 2 * (1+INTER_WSPACE);
-          bt.g_x = 1 + INTER_WSPACE;
-        }
+    /*
+     * final adjustments(1): alert width / button horizontal position
+     *  if the message lines need more space than the buttons, set the
+     *  alert width from the message length, and adjust the horizontal
+     *  position of the first button for a symmetrical effect.
+     *  otherwise, set the alert width from the button sizes and leave
+     *  the message lines left justified.
+     */
+    if (mlenmsg + al.g_w > numbut * mlenbut + (numbut-1) + 1 + INTER_WSPACE)
+    {
+        al.g_w += mlenmsg + 1 + INTER_WSPACE;
+        bt.g_x = (al.g_w - numbut * mlenbut - (numbut-1)) / 2;
+    }
+    else
+    {
+        al.g_w = numbut * mlenbut + (numbut-1) + 2 * (1+INTER_WSPACE);
+        bt.g_x = 1 + INTER_WSPACE;
+    }
 
-        /*
-         * final adjustments(2): button vertical position / alert height
-         *  ensure no overlap by putting the buttons below the icon,
-         *  subject to leaving at least a 1-line gap between the messages
-         *  and the buttons.
-         */
-        bt.g_y = max(ic.g_y+ic.g_h,nummsg+1) + 1 + INTER_HSPACE;
-        al.g_h = max(bt.g_y+bt.g_h,ic.g_y+ic.g_h) + 1 + INTER_HSPACE;
+    /*
+     * final adjustments(2): button vertical position / alert height
+     *  ensure no overlap by putting the buttons below the icon,
+     *  subject to leaving at least a 1-line gap between the messages
+     *  and the buttons.
+     */
+    bt.g_y = max(ic.g_y+ic.g_h,nummsg+1) + 1 + INTER_HSPACE;
+    al.g_h = max(bt.g_y+bt.g_h,ic.g_y+ic.g_h) + 1 + INTER_HSPACE;
 
-                                                /* init. root object    */
-        ob_setxywh(tree, ROOT, &al);
-        for(i=0, obj=(OBJECT *)tree; i<NUM_ALOBJS; i++, obj++)
+    /* init. root object    */
+    ob_setxywh(tree, ROOT, &al);
+    for (i = 0, obj = (OBJECT *)tree; i < NUM_ALOBJS; i++, obj++)
           obj->ob_next = obj->ob_head = obj->ob_tail = -1;
-                                                /* add icon object      */
-        if (haveicon)
-        {
-          ob_setxywh(tree, 1, &ic);
-          ob_add(tree, ROOT, 1);
-        }
-                                                /* add msg objects      */
-        for(i=0; i<nummsg; i++)
-        {
-          ob_setxywh(tree, MSGOFF+i, &ms);
-          ms.g_y++;
-          ob_add(tree, ROOT, MSGOFF+i);
-        }
-                                                /* add button objects   */
-        for(i=0, obj=((OBJECT *)tree)+BUTOFF; i<numbut; i++, obj++)
-        {
-          obj->ob_flags = SELECTABLE | EXIT;
-          obj->ob_state = NORMAL;
-          ob_setxywh(tree, BUTOFF+i, &bt);
-          bt.g_x += mlenbut + 1;
-          ob_add(tree, ROOT, BUTOFF+i);
-        }
-                                                /* set last object flag */
-        (--obj)->ob_flags |= LASTOB;
+
+    /* add icon object      */
+    if (haveicon)
+    {
+        ob_setxywh(tree, 1, &ic);
+        ob_add(tree, ROOT, 1);
+    }
+
+    /* add msg objects      */
+    for (i = 0; i < nummsg; i++)
+    {
+        ob_setxywh(tree, MSGOFF+i, &ms);
+        ms.g_y++;
+        ob_add(tree, ROOT, MSGOFF+i);
+    }
+
+    /* add button objects   */
+    for (i = 0, obj = ((OBJECT *)tree)+BUTOFF; i < numbut; i++, obj++)
+    {
+        obj->ob_flags = SELECTABLE | EXIT;
+        obj->ob_state = NORMAL;
+        ob_setxywh(tree, BUTOFF+i, &bt);
+        bt.g_x += mlenbut + 1;
+        ob_add(tree, ROOT, BUTOFF+i);
+    }
+
+    /* set last object flag */
+    (--obj)->ob_flags |= LASTOB;
 }
 
 
 WORD fm_alert(WORD defbut, LONG palstr)
 {
-        register WORD   i;
-        WORD            inm, nummsg, mlenmsg, numbut, mlenbut, image;
-        LONG            tree;
-        GRECT           d, t;
-        OBJECT          *obj;
+    register WORD i;
+    WORD inm, nummsg, mlenmsg, numbut, mlenbut, image;
+    LONG tree;
+    GRECT d, t;
+    OBJECT *obj;
 
-                                                /* init tree pointer    */
-        tree = (LONG) rs_trees[DIALERT];
+    /* init tree pointer    */
+    tree = (LONG) rs_trees[DIALERT];
 
-        gsx_mfset(ad_armice);
+    gsx_mfset(ad_armice);
 
-        fm_parse(tree, palstr, &inm, &nummsg, &mlenmsg, &numbut, &mlenbut);
-        fm_build(tree, (inm != 0), nummsg, mlenmsg, numbut, mlenbut);
+    fm_parse(tree, palstr, &inm, &nummsg, &mlenmsg, &numbut, &mlenbut);
+    fm_build(tree, (inm != 0), nummsg, mlenmsg, numbut, mlenbut);
 
-        if (defbut)
-        {
-          obj = ((OBJECT *)tree) + BUTOFF + defbut - 1;
-          obj->ob_flags |= DEFAULT;
+    if (defbut)
+    {
+        obj = ((OBJECT *)tree) + BUTOFF + defbut - 1;
+        obj->ob_flags |= DEFAULT;
+    }
+
+    obj = ((OBJECT *)tree) + 1;
+
+    if (inm != 0)
+    {
+        switch(inm) {
+        case 1:
+            image = NOTEBB;
+            break;
+        case 2:
+            image = QUESTBB;
+            break;
+        default:
+            image = STOPBB;
+            break;
         }
+        obj->ob_spec = (LONG) &rs_bitblk[image];
+    }
 
-        obj = ((OBJECT *)tree) + 1;
+    /* convert to pixels    */
+    for (i = 0; i < NUM_ALOBJS; i++)
+        rs_obfix(tree, i);
 
-        if (inm != 0)
-        {
-          switch(inm) {
-            case 1:
-              image = NOTEBB;
-              break;
-            case 2:
-              image = QUESTBB;
-              break;
-            default:
-              image = STOPBB;
-              break;
-          }
-          obj->ob_spec = (LONG) &rs_bitblk[image];
-        }
-                                                /* convert to pixels    */
-        for(i=0; i<NUM_ALOBJS; i++)
-          rs_obfix(tree, i);
-                                                /* fix up icon, 32x32   */
-        obj->ob_type = G_IMAGE;
-        obj->ob_width = obj->ob_height = 32;
-                                                /* center tree on screen*/
-        ob_center(tree, &d);
+    /* fix up icon, 32x32   */
+    obj->ob_type = G_IMAGE;
+    obj->ob_width = obj->ob_height = 32;
 
-        /* Fix 2003-09-25: Limit drawing to the screen! */
-        rc_intersect(&gl_rscreen, &d);
-                                                /* save screen under-   */
-                                                /*   neath the alert    */
-        wm_update(TRUE);
-        gsx_gclip(&t);
-        bb_save(&d);
-                                                /* draw the alert       */
-        gsx_sclip(&d);
-        ob_draw(tree, ROOT, MAX_DEPTH);
-                                                /* turn on the mouse    */
-        ct_mouse(TRUE);
-                                                /* let user pick button */
-        i = fm_do(tree, 0);
-                                                /* turn off mouse if necessary */
-        ct_mouse(FALSE);
-                                                /* restore saved screen */
-        gsx_sclip(&d);
-        bb_restore(&d);
-        gsx_sclip(&t);
-        wm_update(FALSE);
-                                                /* return selection     */
-        return( i - BUTOFF + 1 );
+    /* center tree on screen*/
+    ob_center(tree, &d);
+
+    /* Fix 2003-09-25: Limit drawing to the screen! */
+    rc_intersect(&gl_rscreen, &d);
+
+    /* save screen underneath the alert    */
+    wm_update(TRUE);
+    gsx_gclip(&t);
+    bb_save(&d);
+
+    /* draw the alert       */
+    gsx_sclip(&d);
+    ob_draw(tree, ROOT, MAX_DEPTH);
+
+    /* turn on the mouse    */
+    ct_mouse(TRUE);
+
+    /* let user pick button */
+    i = fm_do(tree, 0);
+
+    /* turn off mouse if necessary */
+    ct_mouse(FALSE);
+
+    /* restore saved screen */
+    gsx_sclip(&d);
+    bb_restore(&d);
+    gsx_sclip(&t);
+    wm_update(FALSE);
+
+    /* return selection     */
+    return i - BUTOFF + 1;
 }
