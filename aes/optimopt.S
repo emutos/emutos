@@ -14,7 +14,6 @@
 
 
 .globl _r_get
-.globl _r_set
 .globl _scasb
 
 
@@ -36,19 +35,6 @@ _r_get:
         move.l  (a0),a2
         move.w  (a1),(a2)
         move.l  d0,a2
-        rts
-
-
-/*
- * void r_set(WORD *pxywh, WORD x, WORD y, WORD w, WORD h)
- * fills the rectangle with passed parameters
- */
-
-_r_set:
-        lea     4(sp),a0
-        move.l  (a0)+,a1
-        move.l  (a0)+,(a1)+
-        move.l  (a0),(a1)
         rts
 
 

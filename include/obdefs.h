@@ -236,6 +236,8 @@ PARMBLK
         LONG    pb_parm;
 };
 
+/* macro to fill GRECT */
+#define r_set(ptr,x,y,w,h) (ptr)->g_x=x,(ptr)->g_y=y,(ptr)->g_w=w,(ptr)->g_h=h
 
 #define EDSTART 0
 #define EDINIT 1

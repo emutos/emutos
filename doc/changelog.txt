@@ -5758,3 +5758,5 @@ Start... early ages
   with 8-pixel character heights. (RFB)
 - aes/gemfmalt.c: Make source formatting consistent within module. (RFB)
 - aes/optimopt.S: Code cleanup: remove unused code. (RFB)
+- aes/optimopt.h aes/optimopt.S include/obdefs.h: Code optimisation: make
+  r_set() a macro, saves time and space. (RFB)
