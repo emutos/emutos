@@ -82,14 +82,6 @@
 #define ARROW_RIGHT 0x4d00
 
 
-#define BEG_UPDATE 1
-#define END_UPDATE 0
-
-
-/* */
-#define SPACE 0x20
-
-
 /*
  * flags for communication between do_viewmenu(), desk_all()
  */

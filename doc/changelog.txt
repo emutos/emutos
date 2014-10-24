@@ -5764,3 +5764,4 @@ Start... early ages
 2014-10-23
 - desk/deskmain.c: Code optimisation: don't re-sort window contents when
   sort order doesn't change. (RFB)
+- desk/deskmain.c: Code cleanup: eliminate duplicate/unused #defines. (RFB)
