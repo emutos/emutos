@@ -5760,3 +5760,7 @@ Start... early ages
 - aes/optimopt.S: Code cleanup: remove unused code. (RFB)
 - aes/optimopt.h aes/optimopt.S include/obdefs.h: Code optimisation: make
   r_set() a macro, saves time and space. (RFB)
+
+2014-10-23
+- desk/deskmain.c: Code optimisation: don't re-sort window contents when
+  sort order doesn't change. (RFB)

@@ -90,6 +90,12 @@
 #define SPACE 0x20
 
 
+/*
+ * flags for communication between do_viewmenu(), desk_all()
+ */
+#define VIEW_HAS_CHANGED    0x0001
+#define SORT_HAS_CHANGED    0x0002
+
 
 GLOBAL BYTE     gl_amstr[4];
 GLOBAL BYTE     gl_pmstr[4];
@@ -187,12 +193,13 @@ static void desk_wait(WORD turnon)
 /*
 *       Routine to update all of the desktop windows
 */
-static void desk_all(WORD sort)
+static void desk_all(WORD flags)
 {
         desk_wait(TRUE);
-        if (sort)
+        if (flags & SORT_HAS_CHANGED)
           win_srtall();
-        win_bdall();
+        if (flags)      /* either sort or view has changed */
+          win_bdall();
         win_shwall();
         desk_wait(FALSE);
 }
@@ -445,7 +452,7 @@ static WORD do_filemenu(WORD item)
 
 static WORD do_viewmenu(WORD item)
 {
-        WORD            newview, newsort;
+        WORD            newview, newsort, rc = 0;
         LONG            ptext;
 
         newview = G.g_iview;
@@ -468,25 +475,26 @@ static WORD do_viewmenu(WORD item)
                 newsort = S_TYPE;
                 break;
         }
-        if ( (newview != G.g_iview) ||
-             (newsort != G.g_isort) )
+
+        if (newview != G.g_iview)
         {
-          if (newview != G.g_iview)
-          {
-            G.g_iview = newview;
-            ptext = (newview == V_TEXT) ? ad_picon : ad_ptext;
-            menu_text(G.a_trees[ADMENU], ICONITEM, ptext);
-          }
-          if (newsort != G.g_isort)
-          {
-            menu_icheck(G.a_trees[ADMENU], G.g_csortitem, FALSE);
-            G.g_csortitem = item;
-            menu_icheck(G.a_trees[ADMENU], item, TRUE);
-          }
-          win_view(newview, newsort);
-          return(TRUE);                 /* need to rebuild      */
+          G.g_iview = newview;
+          ptext = (newview == V_TEXT) ? ad_picon : ad_ptext;
+          menu_text(G.a_trees[ADMENU], ICONITEM, ptext);
+          rc |= VIEW_HAS_CHANGED;
         }
-        return( FALSE );
+        if (newsort != G.g_isort)
+        {
+          menu_icheck(G.a_trees[ADMENU], G.g_csortitem, FALSE);
+          G.g_csortitem = item;
+          menu_icheck(G.a_trees[ADMENU], item, TRUE);
+          rc |= SORT_HAS_CHANGED;
+        }
+
+        if (rc)
+          win_view(newview, newsort);
+
+        return rc;
 }
 
 
@@ -631,7 +639,7 @@ static WORD hndl_button(WORD clicks, WORD mx, WORD my, WORD button, WORD keystat
 
 static WORD hndl_menu(WORD title, WORD item)
 {
-        WORD            done;
+        WORD            done, rc;
 
         done = FALSE;
         switch( title )
@@ -644,11 +652,9 @@ static WORD hndl_menu(WORD title, WORD item)
                 break;
           case VIEWMENU:
                 done = FALSE;
-                                                /* for every window     */
-                                                /*   go sort again and  */
-                                                /*   rebuild views      */
-                if (do_viewmenu(item))
-                desk_all(TRUE);
+                rc = do_viewmenu(item);
+                if (rc)             /* if sort and/or view has changed,  */
+                    desk_all(rc);   /* rebuild all windows appropriately */
                 break;
           case OPTNMENU:
                 done = do_optnmenu(item);
