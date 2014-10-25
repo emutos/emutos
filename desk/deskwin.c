@@ -537,25 +537,15 @@ void win_bdall(void)
 void win_shwall(void)
 {
         WORD            xc, yc, wc, hc;
-        WORD            justtop, wh;
+        WORD            wh;
         WNODE           *pw;
 
-        justtop = FALSE;
         for (pw = G.g_wfirst; pw; pw = pw->w_next)
         {
           if ((wh=pw->w_id) != 0)               /* yes, assignment!     */
           {
-            if (gl_whsiztop != NIL)             /* if some wh is fulled */
-            {
-              if (gl_whsiztop == wh)            /*  and its this one    */
-                justtop = TRUE;                 /*  just to this wh     */
-              else                              /*  else test next wh   */
-                continue;
-            }
             wind_get(wh, WF_WXYWH, &xc, &yc, &wc, &hc);
             fun_msg(WM_REDRAW, wh, xc, yc, wc, hc);
-            if (justtop)
-              return;
           } /* if */
         } /* for */
 } /* win_shwall */

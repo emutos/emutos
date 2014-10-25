@@ -5770,3 +5770,5 @@ Start... early ages
 - desk/deskbind.h desk/deskdir.c desk/deskfun.c desk/deskmain.c desk/desksupp.c
   desk/deskwin.c desk/deskwin.h: Fix bug: a topped window did not always stay
   topped when the view type or sort sequence changed. (RFB)
+- desk/deskmain.c desk/deskmain.h desk/desksupp.c desk/deskwin.c: Code
+  cleanup: remove useless global variable 'gl_whsiztop'. (RFB)

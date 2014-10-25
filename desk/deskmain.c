@@ -141,7 +141,6 @@ static WORD     can_iapp;               /* TRUE if INSAPP enabled       */
 static WORD     can_show;               /* TRUE if SHOWITEM enabled     */
 static WORD     can_del;                /* TRUE if DELITEM enabled      */
 
-GLOBAL WORD     gl_whsiztop;            /* wh of window fulled          */
 static WORD     gl_idsiztop;            /* id of window fulled          */
 
 
@@ -1252,7 +1251,6 @@ WORD deskmain(void)
                                                 /*   variables          */
         gsx_start();
 #endif
-        gl_whsiztop = NIL;
         gl_idsiztop = NIL;
                                                 /* set clip to working  */
                                                 /*   desk and calc full */

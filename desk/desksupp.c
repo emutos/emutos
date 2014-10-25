@@ -203,7 +203,6 @@ void do_wfull(WORD wh)
 {
         GRECT    curr, prev, full;
 
-        gl_whsiztop = NIL;
         wind_get(wh, WF_CXYWH, &curr.g_x, &curr.g_y, &curr.g_w, &curr.g_h);
         wind_get(wh, WF_PXYWH, &prev.g_x, &prev.g_y, &prev.g_w, &prev.g_h);
         wind_get(wh, WF_FXYWH, &full.g_x, &full.g_y, &full.g_w, &full.g_h);
