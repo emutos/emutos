@@ -236,9 +236,6 @@ PARMBLK
         LONG    pb_parm;
 };
 
-/* macro to fill GRECT */
-#define r_set(ptr,x,y,w,h) (ptr)->g_x=x,(ptr)->g_y=y,(ptr)->g_w=w,(ptr)->g_h=h
-
 #define EDSTART 0
 #define EDINIT 1
 #define EDCHAR 2
@@ -255,6 +252,15 @@ static __inline__ void r_get(GRECT *pxywh, WORD *px, WORD *py, WORD *pw, WORD *p
     *py = pxywh->g_y;
     *pw = pxywh->g_w;
     *ph = pxywh->g_h;
+}
+
+/* insert xywh values in GRECT */
+static __inline__ void r_set(GRECT *pxywh, WORD x, WORD y, WORD w, WORD h)
+{
+    pxywh->g_x = x;
+    pxywh->g_y = y;
+    pxywh->g_w = w;
+    pxywh->g_h = h;
 }
 
 #endif  /* _OBDEFS_H */
