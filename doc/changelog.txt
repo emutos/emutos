@@ -5772,3 +5772,5 @@ Start... early ages
   topped when the view type or sort sequence changed. (RFB)
 - desk/deskmain.c desk/deskmain.h desk/desksupp.c desk/deskwin.c: Code
   cleanup: remove useless global variable 'gl_whsiztop'. (RFB)
+- desk/deskmain.c: Code cleanup: remove unused local variables 'gl_defdrv'
+  and 'gl_idsiztop'. (RFB)

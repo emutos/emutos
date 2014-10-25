@@ -135,13 +135,9 @@ static const WORD  dura[]=
 static LONG     ad_ptext;
 static LONG     ad_picon;
 
-static BYTE     gl_defdrv;              /* letter of lowest drive       */
-
 static WORD     can_iapp;               /* TRUE if INSAPP enabled       */
 static WORD     can_show;               /* TRUE if SHOWITEM enabled     */
 static WORD     can_del;                /* TRUE if DELITEM enabled      */
-
-static WORD     gl_idsiztop;            /* id of window fulled          */
 
 
 static int can_change_resolution;
@@ -1251,7 +1247,6 @@ WORD deskmain(void)
                                                 /*   variables          */
         gsx_start();
 #endif
-        gl_idsiztop = NIL;
                                                 /* set clip to working  */
                                                 /*   desk and calc full */
         wind_get(0, WF_WXYWH, &G.g_xdesk, &G.g_ydesk, &G.g_wdesk, &G.g_hdesk);
@@ -1332,7 +1327,7 @@ WORD deskmain(void)
         G.g_cdclkpref = 3;
                                                 /* initialize desktop   */
                                                 /*   and its objects    */
-        gl_defdrv = app_blddesk();
+        app_blddesk();
 
         do_wredraw(0, G.g_xdesk, G.g_ydesk, G.g_wdesk, G.g_hdesk);
 
