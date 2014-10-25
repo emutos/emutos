@@ -223,10 +223,9 @@ void restore_path(BYTE *target)
 */
 WNODE *fold_wind(BYTE *path)
 {
-        WORD            i;
         WNODE           *pwin;
 
-        for (i = 0, pwin = G.g_wlist; i < NUM_WNODES; i++, pwin++)
+        for (pwin = G.g_wfirst; pwin; pwin = pwin->w_next)
         {
           if (pwin->w_id)
             if (strcmp(pwin->w_path->p_spec, path) == 0)

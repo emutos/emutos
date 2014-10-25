@@ -98,11 +98,12 @@ void win_start(void)
         obj_init();
         win_view(START_VIEW, S_NAME);
 
-        for(i=0; i<NUM_WNODES; i++)
+        for (i = 0, G.g_wfirst = pw = G.g_wlist; i < NUM_WNODES; i++, pw++)
         {
-          pw = &G.g_wlist[i];
+          pw->w_next = pw + 1;
           pw->w_id = 0;
         }
+        (pw-1)->w_next = NULL;
         G.g_wcnt = 0x0;
 }
 
@@ -166,12 +167,12 @@ WNODE *win_alloc(WORD obid)
 */
 WNODE *win_find(WORD wh)
 {
-        WORD            ii;
+        WNODE           *pw;
 
-        for(ii = 0; ii < NUM_WNODES; ii++)
+        for (pw = G.g_wfirst; pw; pw = pw->w_next)
         {
-          if ( G.g_wlist[ii].w_id == wh )
-            return(&G.g_wlist[ii]);
+          if (pw->w_id == wh)
+            return pw;
         }
         return(0);
 }
@@ -182,7 +183,26 @@ WNODE *win_find(WORD wh)
 */
 void win_top(WNODE *thewin)
 {
+        WNODE           *p, *prev, *next;
+
         objc_order(G.g_screen, thewin->w_root, NIL);
+
+        /*
+         * find the node that points to this one
+         */
+        for (prev = NULL, p = G.g_wfirst; p; prev = p, p = p->w_next)
+            if (p == thewin)
+                break;
+        if (!prev)                      /* already at front of chain */
+            return;
+        next = thewin->w_next;          /* remember old next ptr */
+
+        /*
+         * move it to the front
+         */
+        thewin->w_next = G.g_wfirst;    /* old first is now next */
+        G.g_wfirst = thewin;            /* this node is now first */
+        prev->w_next = next;            /* close up chain */
 }
 
 
@@ -200,33 +220,6 @@ WNODE *win_ontop(void)
           return(&G.g_wlist[wob-2]);
         else
           return(0);
-}
-
-
-/*
-*       Find the window node that is the ith from the bottom.  Where
-*       0 is the bottom (desktop surface) and 1-4 are windows.
-*/
-static WORD win_cnt(WORD level)
-{
-        WORD            wob;
-                                                /* skip over desktop    */
-                                                /*   surface and count  */
-                                                /*   windows            */
-        wob = G.g_screen[ROOT].ob_head;
-        while(level--)
-          wob = G.g_screen[wob].ob_next;
-        return(wob-2);
-}
-
-
-/*
-*       Find the window node that is the ith from the bottom.  Where
-*       0 is the bottom (desktop surface) and 1-4 are windows.
-*/
-WNODE *win_ith(WORD level)
-{
-        return(&G.g_wlist[win_cnt(level)]);
 }
 
 
@@ -506,14 +499,14 @@ void win_arrow(WORD wh, WORD arrow_type)
 */
 void win_srtall(void)
 {
-        WORD            ii;
+        WNODE           *pw;
 
-        for(ii=0; ii<NUM_WNODES; ii++)
+        for (pw = G.g_wfirst; pw; pw = pw->w_next)
         {
-          if ( G.g_wlist[ii].w_id != 0 )
+          if (pw->w_id != 0)
           {
-            G.g_wlist[ii].w_cvrow = 0;          /* reset slider         */
-            G.g_wlist[ii].w_path->p_flist = pn_sort(G.g_wlist[ii].w_path);
+            pw->w_cvrow = 0;        /* reset slider         */
+            pw->w_path->p_flist = pn_sort(pw->w_path);
           }
         }
 } /* win_srtall */
@@ -524,16 +517,15 @@ void win_srtall(void)
 */
 void win_bdall(void)
 {
-        WORD            ii;
-        WORD            wh, xc, yc, wc, hc;
+        WORD            xc, yc, wc, hc;
+        WNODE           *pw;
 
-        for (ii = 0; ii < NUM_WNODES; ii++)
+        for (pw = G.g_wfirst; pw; pw = pw->w_next)
         {
-          wh = G.g_wlist[ii].w_id;
-          if ( wh )
+          if (pw->w_id != 0)
           {
-            wind_get(wh, WF_WXYWH, &xc, &yc, &wc, &hc);
-            win_bldview(&G.g_wlist[ii], xc, yc, wc, hc);
+            wind_get(pw->w_id, WF_WXYWH, &xc, &yc, &wc, &hc);
+            win_bldview(pw, xc, yc, wc, hc);
           }
         }
 }
@@ -544,15 +536,14 @@ void win_bdall(void)
 */
 void win_shwall(void)
 {
-        WORD            ii;
         WORD            xc, yc, wc, hc;
-
         WORD            justtop, wh;
+        WNODE           *pw;
 
         justtop = FALSE;
-        for(ii = 0; ii < NUM_WNODES; ii++)
+        for (pw = G.g_wfirst; pw; pw = pw->w_next)
         {
-          if (( wh = G.g_wlist[ii].w_id ) != 0) /* yes, assignment!     */
+          if ((wh=pw->w_id) != 0)               /* yes, assignment!     */
           {
             if (gl_whsiztop != NIL)             /* if some wh is fulled */
             {
@@ -562,7 +553,6 @@ void win_shwall(void)
                 continue;
             }
             wind_get(wh, WF_WXYWH, &xc, &yc, &wc, &hc);
-            fun_msg(WM_TOPPED, wh, xc, yc, wc, hc);
             fun_msg(WM_REDRAW, wh, xc, yc, wc, hc);
             if (justtop)
               return;

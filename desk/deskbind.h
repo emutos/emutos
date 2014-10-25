@@ -33,6 +33,7 @@ GLOBES
 
 /*GLOBAL*/ DTA          g_wdta;
 
+/*GLOBAL*/ WNODE        *g_wfirst;
 /*GLOBAL*/ WNODE        g_wlist[NUM_WNODES];
 /*GLOBAL*/ WORD         g_wcnt;
 

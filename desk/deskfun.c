@@ -80,7 +80,7 @@ void fun_msg(WORD type, WORD w3, WORD w4, WORD w5, WORD w6, WORD w7)
 */
 void fun_rebld(WNODE *pwin)
 {
-        WORD            i, x, y, w, h;
+        WORD            x, y, w, h;
         BYTE            *ptst;
 
         graf_mouse(HGLASS, 0x0L);
@@ -88,9 +88,8 @@ void fun_rebld(WNODE *pwin)
                                                 /*   against all windows*/
         ptst = &pwin->w_path->p_spec[0];
                                                 /* check all wnodes     */
-        for(i = NUM_WNODES; i; i--)
+        for (pwin = G.g_wfirst; pwin; pwin = pwin->w_next)
         {
-          pwin = win_ith(i);
                                                 /* if opened and same   */
                                                 /*   path then rebuild  */
           if ( (pwin->w_id) && (strcmp(&pwin->w_path->p_spec[0], ptst)==0) )

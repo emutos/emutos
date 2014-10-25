@@ -886,12 +886,18 @@ WORD hndl_msg(void)
 } /* hndl_msg */
 
 
+/*
+ *  cnx_put(): in-memory save of desktop preferences and window information
+ *
+ *  we save info for the open windows; slot 0 corresponds to the bottom-most
+ *  window, slot 1 to the next and so on.  if not all windows are open, the
+ *  remaining slots are unused and initialised appropriately.
+ */
 static void cnx_put(void)
 {
-        WORD            iwin;
+        WORD            i, unused;
         WSAVE           *pws;
         WNODE           *pw;
-        WORD            iwsave;
 
         G.g_cnxsave.vitem_save = (G.g_iview == V_ICON) ? 0 : 1;
         G.g_cnxsave.sitem_save = G.g_csortitem - NAMEITEM;
@@ -903,24 +909,35 @@ static void cnx_put(void)
         G.g_cnxsave.ctmfm_save = G.g_ctimeform;
         G.g_cnxsave.cdtfm_save = G.g_cdateform;
 
-        for (iwsave=0, iwin = 0; iwin < NUM_WNODES; iwin++)
+        /*
+         * first, count the unused slots & initialise them
+         */
+        for (pw = G.g_wfirst, unused = NUM_WNODES; pw; pw = pw->w_next)
         {
-                pw = win_ith(iwin + 1);
-                if (!pw->w_id) continue;
-
-                pws = &G.g_cnxsave.win_save[iwsave++];
-                wind_get(pw->w_id, WF_CXYWH, &pws->x_save, &pws->y_save,
-                   &pws->w_save, &pws->h_save);
-                do_xyfix(&pws->x_save, &pws->y_save);
-                pws->vsl_save  = pw->w_cvrow;
-                pws->obid_save = pw->w_obid;
-                strcpy(pws->pth_save, pw->w_path->p_spec);
+            if (pw->w_id)
+                unused--;
         }
-        while (iwsave < NUM_WNODES)
+
+        for (i = 0, pws = &G.g_cnxsave.win_save[NUM_WNODES-1]; i < unused; i++, pws--)
         {
-                pws = &G.g_cnxsave.win_save[iwsave++];
-                pws->obid_save = 0;
-                pws->pth_save[0] = 0;
+            pws->obid_save = 0;
+            pws->pth_save[0] = 0;
+        }
+
+        /*
+         * next, save the info for the open windows
+         * (pws already points to the correct slot)
+         */
+        for (pw = G.g_wfirst; pw; pw = pw->w_next)
+        {
+            if (!pw->w_id)
+                continue;
+            wind_get(pw->w_id,WF_CXYWH,&pws->x_save,&pws->y_save,&pws->w_save,&pws->h_save);
+            do_xyfix(&pws->x_save,&pws->y_save);
+            pws->vsl_save  = pw->w_cvrow;
+            pws->obid_save = pw->w_obid;
+            strcpy(pws->pth_save,pw->w_path->p_spec);
+            pws--;
         }
 } /* cnx_put */
 

@@ -24,7 +24,7 @@
 
 WNODE
 {
-        WNODE           *w_next;
+        WNODE           *w_next;            /* -> next 'highest' window */
         WORD            w_flags;
         WORD            w_id;                   /* window handle id #   */
         WORD            w_obid;                 /* desktop object id    */
@@ -50,7 +50,6 @@ WNODE *win_alloc(WORD obid);
 WNODE *win_find(WORD wh);
 void win_top(WNODE *thewin);
 WNODE *win_ontop(void);
-WNODE *win_ith(WORD level);
 void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h);
 void win_slide(WORD wh, WORD sl_value);
 void win_arrow(WORD wh, WORD arrow_type);

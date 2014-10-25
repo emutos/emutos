@@ -758,14 +758,12 @@ int do_format(WORD curr)
 */
 void do_chkall(WORD redraw)
 {
-        WORD    ii;
         WORD    drv;
         BYTE    path[LEN_ZPATH+1], name[LEN_ZNODE+1], ext[LEN_ZEXT+1];
         WNODE   *pw;
 
-        for(ii = 0; ii < NUM_WNODES; ii++)
+        for (pw = G.g_wfirst; pw; pw = pw->w_next)
         {
-          pw = &G.g_wlist[ii];
           if (pw->w_id)
           {
             fpd_parse(&pw->w_path->p_spec[0], &drv, &path[0],
