@@ -248,4 +248,13 @@ PARMBLK
 #define TE_RIGHT 1
 #define TE_CNTR 2
 
+/* extract xywh values from GRECT */
+static __inline__ void r_get(GRECT *pxywh, WORD *px, WORD *py, WORD *pw, WORD *ph)
+{
+    *px = pxywh->g_x;
+    *py = pxywh->g_y;
+    *pw = pxywh->g_w;
+    *ph = pxywh->g_h;
+}
+
 #endif  /* _OBDEFS_H */

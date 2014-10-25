@@ -13,29 +13,7 @@
 #include "asmdefs.h"
 
 
-.globl _r_get
 .globl _scasb
-
-
-/*
- * void r_get(WORD *pxywh, WORD *x, WORD *y, WORD *w, WORD *h)
- * extract components from the rectangle
- */
-
-_r_get:
-        lea     4(sp),a0
-        move.l  a2,d0
-        move.l  (a0)+,a1
-        move.l  (a0)+,a2
-        move.w  (a1)+,(a2)
-        move.l  (a0)+,a2
-        move.w  (a1)+,(a2)
-        move.l  (a0)+,a2
-        move.w  (a1)+,(a2)
-        move.l  (a0),a2
-        move.w  (a1),(a2)
-        move.l  d0,a2
-        rts
 
 
 /*

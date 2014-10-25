@@ -5774,3 +5774,7 @@ Start... early ages
   cleanup: remove useless global variable 'gl_whsiztop'. (RFB)
 - desk/deskmain.c: Code cleanup: remove unused local variables 'gl_defdrv'
   and 'gl_idsiztop'. (RFB)
+
+2014-10-25
+- aes/optimopt.h aes/optimopt.S include/obdefs.h: Code optimisation: make
+  r_get() static inline C code, saves time and space. (RFB)
