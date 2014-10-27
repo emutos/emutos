@@ -501,7 +501,7 @@ static void gsx_tcalc(WORD font, BYTE *ptext, WORD *ptextw, WORD *ptexth,
                                                 /*   width of the text  */
                                                 /*   string in pixels   */
 
-        *pnumchs = LBWMOV(intin, ptext);
+        *pnumchs = expand_string(intin, ptext);
         *ptextw = min(*ptextw, *pnumchs * wc );
                                                 /* figure out the height*/
                                                 /*   of the text        */

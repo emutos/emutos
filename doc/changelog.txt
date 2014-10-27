@@ -5780,3 +5780,7 @@ Start... early ages
   r_get() static inline C code, saves time and space. (RFB)
 - include/obdefs.h: Replace r_set() macro with static inline function
   (safer). (RFB)
+
+2014-10-26
+- aes/gemgraf.c aes/gemoblib.c aes/optimopt.h aes/optimopt.S desk/deskgraf.c:
+  Code optimisation: replace LBWMOV() with expand_string(). (RFB)
