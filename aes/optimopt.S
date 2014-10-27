@@ -58,5 +58,5 @@ copy_loop:
         bne.b   copy_loop       // 10 cycles when taken
         sub.l   d0,a0
         move.l  a0,d0
-        subq.w  #1,d0           // d0.w = length
+        subq.l  #1,d0           // d0.l = length
         rts

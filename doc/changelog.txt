@@ -5785,3 +5785,6 @@ Start... early ages
 - aes/gemgraf.c aes/gemoblib.c aes/optimopt.h aes/optimopt.S desk/deskgraf.c:
   Code optimisation: replace LBWMOV() with expand_string(). (RFB)
 - Makefile aes/large.S aes/optimopt.h: Removed LBWMOV(), no longer used. (RFB)
+
+2014-10-27
+- optimopt.S: Fix error when assembling for Coldfire. (RFB)
