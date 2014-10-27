@@ -1,7 +1,7 @@
 #
 # Makefile - the EmuTOS overbloated Makefile
 #
-# Copyright (c) 2001-2013 The EmuTOS development team.
+# Copyright (c) 2001-2014 The EmuTOS development team.
 #
 # This file is distributed under the GPL, version 2 or at your
 # option any later version.  See doc/license.txt for details.
@@ -220,7 +220,7 @@ aes_csrc = gemaplib.c gemasync.c gemctrl.c gemdisp.c gemevlib.c \
            gemobjop.c gemoblib.c gempd.c gemqueue.c gemrslib.c gemsclib.c \
            gemshlib.c gemsuper.c gemwmlib.c gemwrect.c optimize.c \
            rectfunc.c gemdos.c gem_rsc.c gsx2.c
-aes_ssrc = gemstart.S gemdosif.S gemasm.S large.S optimopt.S
+aes_ssrc = gemstart.S gemdosif.S gemasm.S optimopt.S
 
 #
 # source code in desk/
