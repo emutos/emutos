@@ -5788,3 +5788,7 @@ Start... early ages
 
 2014-10-27
 - optimopt.S: Fix error when assembling for Coldfire. (RFB)
+
+2014-10-31
+- vdi/vdi_tblit.S vdi/vdi_tblit_cf.S: Scaled text now looks exactly like
+  that produced by TOS 1.04. (RFB)

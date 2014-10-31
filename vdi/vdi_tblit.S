@@ -2327,6 +2327,7 @@ y_no_rep:
         dbra    d5,rep_ylop
 y_rep_don:
         move.w  DELX(a6),d2
+        subq.w  #1,d2                   //adjust for dbra
         move.w  _XACC_DDA,d1
         move.w  _DDA_INC,d0
         moveq.l #0,d3
