@@ -5792,3 +5792,6 @@ Start... early ages
 2014-10-31
 - vdi/vdi_tblit.S vdi/vdi_tblit_cf.S: Scaled text now looks exactly like
   that produced by TOS 1.04. (RFB)
+
+2014-11-02
+- vdi/vdi_text.c: Code optimisation: make act_siz() smaller & faster. (RFB)

@@ -511,11 +511,11 @@ void dst_height(Vwk * vwk)
  * act_siz - Actual sizer routine
  *
  * entry:
- *   top     - size to scale (DELY)
+ *   top     - size to scale (DELY etc)
  *
  * used variables:
- *   DDA_INC - (UWORD) DDA increment passed externally
- *   T_SCLST - (WORD) 0 if scale down, 1 if enlarge
+ *   vwk->dda_inc (UWORD) - DDA increment passed externally
+ *   vwk->t_sclsts (WORD) - 0 if scale down, 1 if enlarge
  *
  * exit:
  *   actual size
@@ -531,31 +531,18 @@ UWORD act_siz(Vwk * vwk, UWORD top)
         return (top<<1);
     }
     accu = 0x7fff;
-    retval = 0;
+    retval = vwk->t_sclsts ? top : 0;
 
-    if (vwk->t_sclsts) {
-        /* enlarge */
-        for (i = 0; i < top; i++) {
-            accu += vwk->dda_inc;
-            if (accu < vwk->dda_inc) {
-                // Not sz_sm_1 stuff here
-                retval++;
-            }
+    for (i = 0; i < top; i++) {
+        accu += vwk->dda_inc;
+        if (accu < vwk->dda_inc)
             retval++;
-        }
-    } else {
-        /* scale down */
-        for (i = 0; i < top; i++) {
-            accu += vwk->dda_inc;
-            if (accu < vwk->dda_inc) {
-                // Not sz_sm_1 stuff here
-                retval++;
-            }
-        }
-        /* Make return value at least 1 */
-        if (!retval)
-            retval = 1;
     }
+
+    /* if input is non-zero, make return value at least 1 */
+    if (top && !retval)
+        retval = 1;
+
     return retval;
 }
 
