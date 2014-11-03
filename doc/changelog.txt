@@ -5795,3 +5795,4 @@ Start... early ages
 
 2014-11-02
 - vdi/vdi_text.c: Code optimisation: make act_siz() smaller & faster. (RFB)
+- vdi/vdi_text.c: Fix latent bugs in trnsfont() function [unused in practice]. (RFB)

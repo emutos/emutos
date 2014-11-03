@@ -13,6 +13,7 @@
 
 #include "config.h"
 #include "portab.h"
+#include "asm.h"
 #include "string.h"
 #include "vdi_defs.h"
 #include "lineavars.h"
@@ -354,13 +355,9 @@ static void trnsfont(void)
     WORD cnt, i;
     UWORD *addr;
 
-    addr = FBASE;
-    cnt = (FWIDTH * DELY) << 1;
-
-    //for (i = 1; i < cnt; i++) {
-    for (i = cnt - 1; i >= 0; i--) {             /* dbra optimized loop */
-        *addr=((*addr) << 8 | (*addr) >> 8);    /* swap bytes */
-    }
+    cnt = (FWIDTH * DELY) / sizeof(*addr);
+    for (i = 0, addr = FBASE; i < cnt; i++, addr++)
+        swpw(*addr);
 }
 
 
