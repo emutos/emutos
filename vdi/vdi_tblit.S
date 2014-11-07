@@ -168,6 +168,7 @@
 //  Global variables referenced.                       //
 /////////////////////////////////////////////////////////
 
+        .extern _DEV_TAB
         .extern _SOURCEX,_SOURCEY
         .extern _DESTX,_DESTY
         .extern _DELX,_DELY
@@ -858,8 +859,13 @@ do_cl_nt:
         move.w  d0,smear(a6)
 no_thik:
         tst.w   CLIP(a6)                // clip requested?
-        beq     scrn_blt                // br to skip clip if not
+        bne.b   clip_adjust             // yes
+        clr.w   XMN_CLI(a6)             // otherwise we set up to clip to screen
+        clr.w   YMN_CLI(a6)
+        move.w  _DEV_TAB,XMX_CLI(a6)
+        move.w  _DEV_TAB+2,YMX_CLI(a6)
 //
+clip_adjust:
         move.w  DESTY(a6),d0
         cmp.w   YMN_CLI(a6),d0
         bge.b   ymn_fine
