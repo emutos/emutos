@@ -5800,3 +5800,7 @@ Start... early ages
 2014-11-06
 - vdi/vdi_tblit.S vdi/vdi_tblit_cf.S: Fix bug: VDI/LineA text blit was not
   clipped to screen. (RFB)
+
+2014-11-10
+- bios/fnt_st_6x6.c: Restored original English 6x6 system font: all standard
+  ST glyphs are now available. (RFB)
