@@ -5804,3 +5804,7 @@ Start... early ages
 2014-11-10
 - bios/fnt_st_6x6.c: Restored original English 6x6 system font: all standard
   ST glyphs are now available. (RFB)
+
+2014-11-11
+- desk/deskwin.c: Increase horizontal spacing for window icons in low,
+  medium, & double-line resolutions. (RFB)
