@@ -199,7 +199,10 @@ void do_wopen(WORD new_win, WORD wh, WORD curr, WORD x, WORD y, WORD w, WORD h)
 }
 
 
-void do_wfull(WORD wh)
+/*
+ * returns TRUE iff window has grown
+ */
+WORD do_wfull(WORD wh)
 {
         GRECT    curr, prev, full;
 
@@ -207,18 +210,18 @@ void do_wfull(WORD wh)
         wind_get(wh, WF_PXYWH, &prev.g_x, &prev.g_y, &prev.g_w, &prev.g_h);
         wind_get(wh, WF_FXYWH, &full.g_x, &full.g_y, &full.g_w, &full.g_h);
 
-        if (rc_equal(&curr, &full))
+        if (rc_equal(&curr, &full)) /* currently full, so shrink */
         {
                 wind_set(wh, WF_CXYWH, prev.g_x, prev.g_y, prev.g_w, prev.g_h);
                 graf_shrinkbox(prev.g_x, prev.g_y, prev.g_w, prev.g_h,
                                full.g_x, full.g_y, full.g_w, full.g_h);
+                return 0;
         }
-        else
-        {
-                graf_growbox(curr.g_x, curr.g_y, curr.g_w, curr.g_h,
-                             full.g_x, full.g_y, full.g_w, full.g_h);
-                wind_set(wh, WF_CXYWH, full.g_x, full.g_y, full.g_w, full.g_h);
-        }
+
+        graf_growbox(curr.g_x, curr.g_y, curr.g_w, curr.g_h,
+                    full.g_x, full.g_y, full.g_w, full.g_h);
+        wind_set(wh, WF_CXYWH, full.g_x, full.g_y, full.g_w, full.g_h);
+        return 1;
 } /* do_wfull */
 
 

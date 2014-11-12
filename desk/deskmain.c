@@ -771,9 +771,10 @@ WORD hndl_msg(void)
         WNODE           *pw;
         WORD            change, menu;
         WORD            x,y,w,h;
-        WORD            cols, redraw;
+        WORD            cols, shrunk;
 
-        done = change = menu = FALSE;
+        done = change = menu = shrunk = FALSE;
+
         if ( G.g_rmsg[0] == WM_CLOSED && ig_close )
         {
           ig_close = FALSE;
@@ -826,9 +827,11 @@ WORD hndl_msg(void)
                 pw = win_find(G.g_rmsg[3]);
                 if (pw)
                 {
+                  cols = pw->w_pncol;
                   win_top(pw);
-                  do_wfull(G.g_rmsg[3]);
-                  desk_verify(G.g_rmsg[3], TRUE);
+                  if (!do_wfull(G.g_rmsg[3]))
+                      shrunk = TRUE;
+                  desk_verify(G.g_rmsg[3], TRUE);   /* build window, update w_pncol */
                 }
                 change = TRUE;
                 break;
@@ -840,38 +843,38 @@ WORD hndl_msg(void)
                 break;
           case WM_MOVED:
           case WM_SIZED:
+                pw = win_find(G.g_rmsg[3]);
                 x = G.g_rmsg[4];
                 y = G.g_rmsg[5];
                 do_xyfix(&x, &y);
                 wind_set(G.g_rmsg[3], WF_CXYWH, x, y, G.g_rmsg[6], G.g_rmsg[7]);
                 if (G.g_rmsg[0] == WM_SIZED)
                 {
-                    /*
-                     * if our window has shrunk AND we're displaying a
-                     * different number of columns, we need to send a
-                     * redraw message because the AES won't
-                     */
-                    redraw = FALSE;
-                    wind_get(G.g_rmsg[3], WF_PXYWH, &x, &y, &w, &h);
-                    if ((G.g_rmsg[6] <= w) && (G.g_rmsg[7] <= h))
-                        redraw = TRUE;
-                    pw = win_find(G.g_rmsg[3]); /* get ptr to WNODE */
-                    cols = pw->w_pncol;         /* old # cols displayed */
-                    desk_verify(G.g_rmsg[3], TRUE);
-                    if (redraw && (pw->w_pncol != cols)) {
-                        wind_get(G.g_rmsg[3], WF_WXYWH, &x, &y, &w, &h);
-                        fun_msg(WM_REDRAW, G.g_rmsg[3], x, y, w, h);
-                    }
+                  cols = pw->w_pncol;
+                  wind_get(G.g_rmsg[3], WF_PXYWH, &x, &y, &w, &h);
+                  if ((G.g_rmsg[6] <= w) && (G.g_rmsg[7] <= h))
+                      shrunk = TRUE;
+                  desk_verify(G.g_rmsg[3], TRUE);   /* build window, update w_pncol */
                 }
-                else
+                else    /* WM_MOVED */
                 {
-                        wind_get(G.g_rmsg[3],WF_WXYWH, &x, &y, &w, &h);
-                        pw = win_find(G.g_rmsg[3]);
-                        r_set((GRECT *)(&G.g_screen[pw->w_root].ob_x), x, y, w, h);
+                  wind_get(G.g_rmsg[3],WF_WXYWH, &x, &y, &w, &h);
+                  r_set((GRECT *)(&G.g_screen[pw->w_root].ob_x), x, y, w, h);
                 }
                 change = TRUE;
                 break;
         }
+
+        /*
+         * if our window has shrunk AND we're displaying a different number
+         * of columns, we need to send a redraw message because the AES won't
+         */
+        if (shrunk && (pw->w_pncol != cols))
+        {
+          wind_get(G.g_rmsg[3], WF_WXYWH, &x, &y, &w, &h);
+          fun_msg(WM_REDRAW, G.g_rmsg[3], x, y, w, h);
+        }
+
         if (change)
           cnx_put();
         G.g_rmsg[0] = 0;

@@ -5811,3 +5811,6 @@ Start... early ages
 - desk/deskapp.c desk/deskbind.h desk/deskwin.c: Use common definitions
   for both window & desktop icon spacing. (RFB)
 - desk/deskapp.c: Simplify calculation of desktop icon spacing. (RFB)
+- desk/deskmain.c desk/desksupp.c desk/desksupp.h: Fix bug: window was not
+  redrawn if displaying icons AND it was shrunk by the fuller gadget AND
+  the number of columns to display changed. (RFB)
