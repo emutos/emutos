@@ -42,13 +42,6 @@
 #include "kprint.h"
 
 
-/*
- * spacing between window icons
- */
-#define MIN_WINT 4      /* horizontal, for ST low/medium, Falcon double-line */
-#define MAX_WINT 8      /* horizontal, for ST high, Falcon not-double-line */
-#define MIN_HINT 2      /* vertical */
-
 #define SPACE 0x20
 
 #define HOTCLOSE 0x1000
@@ -81,7 +74,7 @@ void win_view(WORD vtype, WORD isort)
           case V_ICON:
                 G.g_iwext = G.g_wicon;
                 G.g_ihext = G.g_hicon;
-                G.g_iwint = (gl_height <= 300) ? MIN_WINT : MAX_WINT;
+                G.g_iwint = MIN_WINT;
                 G.g_ihint = MIN_HINT;
                 G.g_num = G.g_nmicon;
                 G.g_pxy = &G.g_xyicon[0];

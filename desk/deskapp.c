@@ -47,10 +47,6 @@
 #include "country.h"
 
 
-#define MIN_WINT 4
-#define MIN_HINT 2
-
-
 GLOBAL WORD     gl_numics;
 GLOBAL WORD     gl_stdrv;
 
@@ -469,7 +465,7 @@ void app_start(void)
         G.g_wicon = (12 * gl_wschar) + (2 * G.g_iblist[0].ib_xtext);
         G.g_hicon = G.g_iblist[0].ib_hicon + gl_hschar + 2;
 
-        G.g_icw = (gl_height <= 300) ? 0 : 8;
+        G.g_icw = MIN_WINT;
         G.g_icw += G.g_wicon;
         xcnt = (gl_width/G.g_icw);
         G.g_icw += (gl_width % G.g_icw) / xcnt;

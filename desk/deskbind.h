@@ -24,6 +24,19 @@
 #define HGLASS  2
 
 
+/*
+ * the following defines determine the minimum spacing between icons,
+ * both in a desktop window and on the desktop.  because the desktop
+ * (between resolution changes) is a fixed size, the actual spacing
+ * between desktop icons is adjusted for symmetrical spacing (both
+ * horizontal & vertical).
+ */
+#define SMALL_HSPC      4      /* horizontal, for ST low/medium, Falcon double-line */
+#define LARGE_HSPC      8      /* horizontal, for ST high, Falcon not-double-line */
+#define MIN_WINT        ((gl_height<=300)?SMALL_HSPC:LARGE_HSPC)
+#define MIN_HINT        2      /* vertical */
+
+
 #define GLOBES struct glnode
 GLOBES
 {
