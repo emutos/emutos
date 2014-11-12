@@ -5810,3 +5810,4 @@ Start... early ages
   medium, & double-line resolutions. (RFB)
 - desk/deskapp.c desk/deskbind.h desk/deskwin.c: Use common definitions
   for both window & desktop icon spacing. (RFB)
+- desk/deskapp.c: Simplify calculation of desktop icon spacing. (RFB)
