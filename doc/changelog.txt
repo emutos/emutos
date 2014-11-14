@@ -5814,3 +5814,6 @@ Start... early ages
 - desk/deskmain.c desk/desksupp.c desk/desksupp.h: Fix bug: window was not
   redrawn if displaying icons AND it was shrunk by the fuller gadget AND
   the number of columns to display changed. (RFB)
+
+2014-11-14
+- printbss.sh: Align numbers on right. (VRI)

@@ -15,8 +15,8 @@ do
 
   ((total += $dirsize))
 
-  echo -e "$dir \\t $dirsize"
+  printf "%-5s %7d\n" $dir $dirsize
 done
 
-echo -e "----------------"
-echo -e "Total: \\t $total"
+echo -e "-------------"
+printf "Total %7d" $total
