@@ -5822,3 +5822,4 @@ Start... early ages
 - bios/screen.c bios/screen.h: Fixed warning on non-shifter targets. (VRI)
 - bios/ide.c: Fixed warning on m548x. (VRI)
 - Makefile: Renamed "m548x-bas_gcc" to "m548xbas". (VRI)
+- release.mk doc/readme-m548xbas.txt: Added m548xbas to official binaries. (VRI)
