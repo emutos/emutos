@@ -5817,3 +5817,6 @@ Start... early ages
 
 2014-11-14
 - printbss.sh: Align numbers on right. (VRI)
+
+2014-11-17
+- bios/screen.c bios/screen.h: Fixed warning on non-shifter targets. (VRI)

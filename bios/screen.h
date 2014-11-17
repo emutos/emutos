@@ -42,7 +42,6 @@
 
 /* misc routines */
 WORD check_moderez(WORD moderez);
-void get_pixel_size(WORD *width,WORD *height);
 void initialise_palette_registers(WORD rez,WORD mode);
 
 /* hardware dependant xbios routines */
@@ -116,6 +115,7 @@ void set_rez_hacked(void);
 int rez_changeable(void);
 WORD get_monitor_type(void);
 void screen_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *vt_rez);
+void get_pixel_size(WORD *width,WORD *height);
 
 /* hardware independant xbios routines */
 
