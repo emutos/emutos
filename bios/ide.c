@@ -748,6 +748,8 @@ static WORD clear_multiple_mode(UWORD ifnum,UWORD dev)
     volatile struct IDE *interface = ide_interface + ifnum;
     struct IFINFO *info = ifinfo + ifnum;
 
+    MAYBE_UNUSED(interface);
+
     if ((info->dev[dev].options&MULTIPLE_MODE_ACTIVE) == 0)
         return 0;
 

@@ -5820,3 +5820,4 @@ Start... early ages
 
 2014-11-17
 - bios/screen.c bios/screen.h: Fixed warning on non-shifter targets. (VRI)
+- bios/ide.c: Fixed warning on m548x. (VRI)
