@@ -5825,4 +5825,6 @@ Start... early ages
 - release.mk doc/readme-m548xbas.txt: Added m548xbas to official binaries. (VRI)
 
 2014-11-19
-- desk.deskdir.c: Code cleanup: made some functions static. (RFB)
+- desk/deskdir.c: Code cleanup: made some functions static. (RFB)
+- desk/deskdir.c desk/deskdir.h desk/deskfun.c: Code cleanup: moved two
+  functions & made them static. (RFB)
