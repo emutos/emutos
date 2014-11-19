@@ -347,7 +347,7 @@ WORD d_errmsg(void)
 }
 
 
-WORD invalid_copy_msg(void)
+static WORD invalid_copy_msg(void)
 {
     fun_alert(1, STINVCPY, NULLPTR);
     return FALSE;
@@ -371,7 +371,7 @@ static WORD d_dofdel(BYTE *ppath)
  *          0   error, stop copying
  *          -1  error, but allow more copying
  */
-WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
+static WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
 {
     WORD fh, ob, samefile;
     LONG tree = G.a_trees[ADCPALER];
@@ -739,7 +739,7 @@ WORD source_is_parent(BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path)
  *          1   path is OK (folder has been created if necessary)
  *          0   error, stop copying
  */
-WORD output_path(BYTE *srcpth, BYTE *dstpth)
+static WORD output_path(BYTE *srcpth, BYTE *dstpth)
 {
     LONG tree = G.a_trees[ADCPALER];
 
