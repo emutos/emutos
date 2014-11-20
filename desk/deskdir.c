@@ -434,7 +434,10 @@ static WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
 
 /*
  *      Directory routine to DO File COPYing
- *      Returns FALSE iff failure
+ *      Returns:
+ *          1/TRUE  ok
+ *          0/FALSE if error opening destination, or user said stop
+ *          -1      user cancelled (this) copy
  */
 static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WORD attr)
 {
@@ -451,7 +454,7 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
         dos_close(srcfh);
         if (rc == 0)    /* unexpected error opening dest, or user said stop */
             return FALSE;
-        return TRUE;    /* user just said cancel, so allow continuation */
+        return -1;      /* user said cancel, notify caller */
     }
 
     /*
@@ -626,7 +629,8 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
             more = d_dofcopy(psrc_path, pdst_path, dta->d_time,
                             dta->d_date, dta->d_attrib);
             restore_path(ptmpdst);  /* restore original dest path */
-            if ((op == OP_MOVE) && more)
+            /* if moving, delete original only if copy was ok */
+            if ((op == OP_MOVE) && (more > 0))
                 more = d_dofdel(psrc_path);
             break;
         }
@@ -844,7 +848,8 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
             ptmpdst = add_fname(dstpth, pf->f_name);
             more = d_dofcopy(srcpth, dstpth, pf->f_time, pf->f_date, pf->f_attr);
             restore_path(ptmpdst);  /* restore original dest path */
-            if ((op == OP_MOVE) && more)
+            /* if moving, delete original only if copy was ok */
+            if ((op == OP_MOVE) && (more > 0))
                 more = d_dofdel(srcpth);
             break;
         }

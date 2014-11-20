@@ -5828,3 +5828,5 @@ Start... early ages
 - desk/deskdir.c: Code cleanup: made some functions static. (RFB)
 - desk/deskdir.c desk/deskdir.h desk/deskfun.c: Code cleanup: moved two
   functions & made them static. (RFB)
+- desk/deskdir.c: Fix bug: if a filename conflict occurred when moving a file,
+  and the user cancelled the move, the original was still deleted. (RFB)
