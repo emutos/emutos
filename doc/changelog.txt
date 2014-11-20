@@ -5830,3 +5830,6 @@ Start... early ages
   functions & made them static. (RFB)
 - desk/deskdir.c: Fix bug: if a filename conflict occurred when moving a file,
   and the user cancelled the move, the original was still deleted. (RFB)
+
+2014-11-20
+- po/de.po: Updated German translations. (THH)
