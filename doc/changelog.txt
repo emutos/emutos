@@ -5833,3 +5833,6 @@ Start... early ages
 
 2014-11-20
 - po/de.po: Updated German translations. (THH)
+
+2014-11-22
+- tools/erd.c: Added missing const. (VRI)
