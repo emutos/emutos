@@ -121,6 +121,9 @@ static WORD set_track(WORD track);
  */
 #define TIMEOUT (3*CLOCKS_PER_SEC)  /* in ticks */
 
+/* deselection timeout (see "handling of drive deselection" below) */
+#define DESELECT_TIMEOUT (2*CLOCKS_PER_SEC)
+
 /* access to dma and fdc registers */
 static WORD get_dma_status(void);
 static WORD get_fdc_reg(WORD reg);
@@ -170,14 +173,22 @@ static void fdc_start_dma_write(WORD count);
  *   clear it at the end.
  * - flopvbl will do nothing when flock is set.
  *
- * deselected is not null when no drives are selected in PSG port A.
- * it is cleared in select() and set back in flopvbl() when the drives
- * are automatically deselected when the motor on bit is cleared in the
- * FDC status reg.
+ * handling of drive deselection
+ * -----------------------------
+ * when there is a diskette in the currently-selected drive, the FDC will
+ * automatically turn off the motor after 10 revolutions if the device
+ * remains idle.  this clears the FDC_MOTORON status bit, which is then
+ * detected in flopvbl() which deselects the drive.  however, this method
+ * does not work when no diskette is present, since there are no diskette
+ * revolutions to be detected.
+ * to handle this situation, the local variable deselect_time stores the
+ * earliest time (in ticks) to deselect the currently-selected drive.  a
+ * special value of zero indicates that no drive is currently selected.
+ * deselect_time is set in select() and checked in flopvbl().
  */
 
 static WORD cur_dev;
-static UBYTE deselected;
+static ULONG deselect_time;
 static ULONG loopcount_3_usec;
 
 /*
@@ -235,9 +246,7 @@ void flop_hdv_init(void)
     cur_dev = -1;
     drivetype = (cookie_fdc >> 24) ? HD_DRIVE : DD_DRIVE;
     loopcount_3_usec = 3 * loopcount_1_msec / 1000;
-
-    /* I'm unsure, so let flopvbl() do the work of figuring out. */
-    deselected = 1;
+    deselect_time = 0UL;
 #endif
 
     /* autodetect floppy drives */
@@ -951,8 +960,6 @@ static void flopunlk(void)
 void flopvbl(void)
 {
     WORD status;
-    BYTE b;
-    WORD old_sr;
 
     /* don't do anything if the DMA circuitry is being used */
     if(flock) return;
@@ -964,28 +971,26 @@ void flopvbl(void)
      */
 
     /* if no drives are selected, no need to deselect them */
-    if(deselected) return;
+    if (deselect_time == 0UL)
+        return;
     /* read FDC status register */
     status = get_fdc_reg(FDC_CS);
 
-    /* if the bit motor on is not set, deselect both drives */
-    if((status & FDC_MOTORON) == 0) {
-        old_sr = set_sr(0x2700);
-
-        PSG->control = PSG_PORT_A;
-        b = PSG->control;
-        b |= 6;
-        PSG->data = b;
-
-        deselected = 1;
-        set_sr(old_sr);
-    }
-
+    /* if the motor on bit is not set, or if the deselect_time
+     * has been reached, deselect both drives
+     */
+    if (((status & FDC_MOTORON) == 0) || (deselect_time < hz_200))
+        select(-1,0);  
 }
 
 /*==== low level register access ==========================================*/
 
 
+/*
+ * select floppy drive and side
+ *
+ * note: a drive of (e.g.) -1 will leave both floppies deselected
+ */
 static void select(WORD dev, WORD side)
 {
     WORD old_sr;
@@ -994,17 +999,23 @@ static void select(WORD dev, WORD side)
     old_sr = set_sr(0x2700);
     PSG->control = PSG_PORT_A;
     a = PSG->control;
-    a &= 0xf8;
-    if(dev == 0) {
-        a |= 4;
-    } else {
-        a |= 2;
+
+    a |= 0x07;      /* deselect both floppies, set side = 0 */
+    deselect_time = 0UL;
+    switch(dev) {
+    case 0:
+        a &= ~2;    /* select floppy 0 */
+        deselect_time = hz_200 + DESELECT_TIMEOUT;
+        break;
+    case 1:
+        a &= ~4;    /* select floppy 1 */
+        deselect_time = hz_200 + DESELECT_TIMEOUT;
+        break;
     }
-    if(side == 0) {
-        a |= 1;
-    }
+    if (side != 0)
+        a &= ~1;    /* set side = 1 */
+
     PSG->data = a;
-    deselected = 0;
     set_sr(old_sr);
 }
 

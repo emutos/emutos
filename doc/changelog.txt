@@ -5836,3 +5836,7 @@ Start... early ages
 
 2014-11-22
 - tools/erd.c: Added missing const. (VRI)
+
+2014-11-24
+- bios/floppy.c: Fix bug: if there was no diskette in a floppy drive,
+  selecting it would cause the drive motor to remain on. (RFB)
