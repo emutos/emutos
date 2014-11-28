@@ -5840,3 +5840,8 @@ Start... early ages
 2014-11-24
 - bios/floppy.c: Fix bug: if there was no diskette in a floppy drive,
   selecting it would cause the drive motor to remain on. (RFB)
+
+2014-11-28
+- bdos/fs.h bdos/fsdir.c bdos/proc.c: Fix regression caused by fsdir.c
+  update of 2014-03-03: a DND pointed to by the DTA could be reused while
+  still in use. (RFB)

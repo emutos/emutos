@@ -307,6 +307,9 @@ long xrmdir(char *p)
         return EACCDN;
     /*  end M01.01.SCC.FS.09  */
 
+    if (d->d_usecount > 0)          /* in-use for Fsfirst/Fsnext */
+        return EACCDN;
+
     /*
      * scan actual directory to make sure it's empty
      */
@@ -468,6 +471,20 @@ long ixsfirst(char *name, register WORD att, register DTAINFO *addr)
 
 
 /*
+ *  contains_wildcard_characters - check for wildcard chars in specified string
+ */
+BOOL contains_wildcard_characters(const char *test)
+{
+    const char *t;
+
+    for (t = test; *t; t++)
+        if ((*t == '?') || (*t == '*'))
+            return TRUE;
+
+    return FALSE;
+}
+
+/*
  *  xsfirst - search first for matching name, into dta
  *
  *  Function 0x4E   f_sfirst
@@ -488,7 +505,15 @@ long xsfirst(char *name, int att)
 
     result = ixsfirst(name, att, dt);       /* M01.01.1209.01 */
 
-    return result;
+    if ((result < 0) || !contains_wildcard_characters(name))
+        return result;
+
+    /*
+     * an Fsnext() is likely, so we must mark the DND as in-use
+     */
+    dt->dt_dnd->d_usecount++;
+
+    return E_OK;
 }
 
 
@@ -503,19 +528,26 @@ long xsnext(void)
 {
     register FCB *f;
     register DTAINFO *dt;
+    DND *dn;
 
     dt = (DTAINFO *)run->p_xdta;            /* M01.01.1209.01 */
+    dn = dt->dt_dnd;
 
     /* has the DTA been initialized? */
-    if (dt->dt_dnd == (DND*)NULLPTR)        /* M01.01.1209.01 */
+    if (dn == (DND *)NULLPTR)               /* M01.01.1209.01 */
         return ENMFIL;                      /* M01.01.1209.01 */
 
-    KDEBUG(("\n xsnext(pos=%ld DTA=%p DND=%p)",dt->dt_pos,dt,dt->dt_dnd));
+    KDEBUG(("\n xsnext(pos=%ld DTA=%p DND=%p)",dt->dt_pos,dt,dn));
 
-    f = scan(dt->dt_dnd,&dt->dt_name[0],dt->dt_attr,&dt->dt_pos);
+    f = scan(dn,dt->dt_name,dt->dt_attr,&dt->dt_pos);
 
-    if (f == (FCB*)NULLPTR)
+    if (f == (FCB *)NULLPTR)    /* end of directory, no longer in-use */
+    {
+        dn->d_usecount--;
+        if (dn->d_usecount < 0)             /* shouldn't happen */
+            dn->d_usecount = 0;
         return ENMFIL;
+    }
 
     makbuf(f,(DTAINFO *)run->p_xdta);
 
@@ -1397,6 +1429,10 @@ static DND *makdnd(DND *p, FCB *b)
     {
         if (!p1->d_left)
         {
+            /* check if this DND is in use for Fsfirst/Fsnext */
+            if (p1->d_usecount > 0)
+                continue;
+
             /* check dirtbl[] to see if anyone is using this guy */
             for (i = 1, dt = dirtbl+1; i < NCURDIR; i++, dt++)
                 if (dt->use && (dt->dnd == p1))
@@ -1772,7 +1808,16 @@ static void process_dnd_tree(DND *dndstart)
         }
 
         /*
-         * not current - but are we at the root?
+         * not current - but is this in-use (for Fsfirst/Fsnext) ?
+         */
+        if (dnd->d_usecount > 0) {
+            KDEBUG(("DND at %p is in-use\n",dnd));
+            prev = dnd;
+            continue;
+        }
+
+        /*
+         * not in-use - but are we at the root?
          */
         if (!dnd->d_parent) {
             KDEBUG(("DND at %p is a root directory\n",dnd));

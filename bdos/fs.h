@@ -219,6 +219,7 @@ DND /* directory node descriptor */
 
     long d_scan;        /*  current posn in dir for DND tree    */
     OFD  *d_files;      /* open files on this node              */
+    WORD d_usecount;    /*  Fsfirst/Fsnext's in progress        */
 } ;
 
 /*

@@ -145,13 +145,19 @@ static void     ixterm( PD *r )
             xclose(i+NUMSTD);
 
 
-    /* check directory usage  M01.01.07 */
+    /* decrement usage counts for current directories */
 
     for( i = 0 ; i < NUMCURDIR ; i++ )
     {
         if( (h = r->p_curdir[i]) != 0 )
             decr_curdir_usage(h);
     }
+
+    /*
+     * this would also be the right place to decrement d_usecount in
+     * the relevant DNDs.  unfortunately there is no way of knowing
+     * which DNDs relate to Fsfirst/Fsnext processing by this process
+     */
 
     /* free each item in the allocated list, that is owned by 'r' */
 
