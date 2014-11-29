@@ -103,13 +103,8 @@ static BYTE *fs_pspec(BYTE *pstr, BYTE *pend)
         pend = fs_back(pstr, pend);
         if (*pend == '\\')
           pend++;
-        else
-        {
-          strcpy(pstr, "A:\\*.*");
-          pstr[0] += (BYTE) dos_gdrv();
-          pend = pstr + 3;
-        }
-        return(pend);
+
+        return pend;
 }
 
 /*
@@ -155,9 +150,8 @@ static WORD fs_active(BYTE *ppath, BYTE *pspec, WORD *pcount)
         fs_index = 0L;
 
         strcpy(allpath, ppath);               /* 'allpath' gets all files */
-        fname = fs_back(allpath,NULL);
-        strcpy(fname+1,"*.*");
-
+        fname = fs_pspec(allpath,NULL);
+        strcpy(fname,"*.*");
         dos_sdta(&D.g_dta);
         ret = dos_sfirst(allpath, F_SUBDIR);
         while ( ret )
@@ -401,8 +395,8 @@ static void set_mask(BYTE *mask,BYTE *path)
 {
         BYTE            *pend;
 
-        pend = fs_back(path, NULL);
-        if (!*++pend)
+        pend = fs_pspec(path, NULL);
+        if (!*pend)                 /* if there's no mask, add one */
           strcpy(pend, "*.*");
         pend[LEN_ZFNAME] = '\0';    /* avoid possibility of overflow on strcpy() */
         strcpy(mask, pend);
@@ -457,6 +451,25 @@ static WORD path_changed(char *path)
           return 1;
 
         return 0;
+}
+
+
+
+/*
+ *      get drive number from specified path (if possible) or default
+ */
+static WORD get_drive(char *path)
+{
+        char c;
+
+        if (path[1] == ':')     /* drive letter is present */
+        {
+          c = toupper(path[0]);
+          if ((c >= 'A') && (c <= 'Z'))
+            return c - 'A';
+        }
+
+        return dos_gdrv();
 }
 
 
@@ -541,7 +554,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
           else
             obj->ob_state |= DISABLED;
         }
-        select_drive(tree,locstr[0]-'A',0);
+        select_drive(tree,get_drive(locstr),0);
                                                 /* set clip and start   */
                                                 /*   form fill-in by    */
                                                 /*   drawing the form   */
@@ -652,21 +665,19 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
                 break;
             case FCLSBOX:
                 pstr = fs_back(locstr, NULL);
-                if (*pstr-- != '\\')    /* ignore strange path string */
-                  break;
-                if (*pstr != ':')       /* not at root of drive, so back up */
-                {
-                  pstr = fs_back(locstr, pstr);
-                  if (*pstr == '\\')    /* we must have at least X:\ */
-                    strcpy(pstr+1, mask);
-                }
+                if (pstr == locstr)     /* we have a locstr like '*.*', */
+                  break;                /* so do nothing, just like TOS */
+                if (*--pstr == ':')     /* at root of drive, */
+                  break;                /* so nothing to do  */
+                pstr = fs_pspec(locstr, pstr);  /* back up past folder */
+                strcpy(pstr, mask);
                 newlist = TRUE;
                 break;
             default:
                 drive = touchob - DRIVE_OFFSET;
                 if ((drive < 0) || (drive >= NM_DRIVES))/* not for us */
                   break;
-                if (drive == locstr[0] - 'A')           /* no change */
+                if (drive == get_drive(locstr))         /* no change */
                   break;
                 obj = ((OBJECT *)tree) + touchob;
                 if (obj->ob_state & DISABLED)           /* non-existent drive */
@@ -679,7 +690,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
           if (!newlist && !newdrive
            && path_changed(locstr))                     /* path changed manually */
           {
-            if (ad_fpath[0] != locstr[0])               /* drive has changed */
+            if (get_drive(ad_fpath) != get_drive(locstr))   /* drive has changed */
               newdrive = TRUE;
             else
               newlist = TRUE;

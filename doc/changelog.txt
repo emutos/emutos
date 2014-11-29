@@ -5845,3 +5845,7 @@ Start... early ages
 - bdos/fs.h bdos/fsdir.c bdos/proc.c: Fix regression caused by fsdir.c
   update of 2014-03-03: a DND pointed to by the DTA could be reused while
   still in use. (RFB)
+
+2014-11-29
+- aes/gemfslib.c: Fix loop in file selector when initial path did not start
+  with drive or backslash. (RFB)
