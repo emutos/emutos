@@ -682,8 +682,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
                 obj = ((OBJECT *)tree) + touchob;
                 if (obj->ob_state & DISABLED)           /* non-existent drive */
                   break;
-                strcpy(locstr, "A:\\*.*");
-                locstr[0] += drive;
+                sprintf(locstr,"%c:\\%s",'A'+drive,mask);
                 newdrive = TRUE;
                 break;
           }
