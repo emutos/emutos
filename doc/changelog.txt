@@ -5854,3 +5854,5 @@ Start... early ages
 2014-12-01
 - aes/gem.def aes/gem.rsc aes/gemfslib.c: Several cosmetic improvements to
   the file selector. Suggested by Eero Tamminen. (RFB)
+- aes/gemfslib.c: EmuTOS's file selector now behaves like Atari TOS's when
+  the file mask is updated manually. Suggested by Eero Tamminen. (RFB)

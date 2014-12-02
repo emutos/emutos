@@ -590,6 +590,11 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
           switch( (touchob &= 0x7fff) )
           {
             case FSOK:
+                if (path_changed(locstr))   /* just like TOS, if user has edited */
+                {                           /*  the mask, 'OK' does not exit     */
+                  ob_change(tree,FSOK,NORMAL,TRUE);  /* (so deselect the button) */
+                  break;
+                }
             case FSCANCEL:
                 cont = FALSE;
                 break;
@@ -677,6 +682,8 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
                   break;
                 if (drive == get_drive(locstr))         /* no change */
                   break;
+                if (path_changed(locstr))       /* like TOS, if user edited mask, */
+                  break;                        /*  ignore drive change           */
                 obj = ((OBJECT *)tree) + touchob;
                 if (obj->ob_state & DISABLED)           /* non-existent drive */
                   break;
