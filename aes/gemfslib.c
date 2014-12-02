@@ -62,6 +62,19 @@ static LONG     nm_files;       /* total number of slots in g_fslist[] */
 
 
 /*
+ *      centre specified G_STRING in the root object
+ */
+static void centre_title(LONG tree,WORD objnum)
+{
+    OBJECT *root = (OBJECT *)tree;
+    OBJECT *str = root+objnum;
+
+    str->ob_x = (root->ob_width - strlen((BYTE *)str->ob_spec)*gl_wchar) / 2;
+}
+
+
+
+/*
 *       Routine to back off the end of a path string, stopping at the
 *       first backslash or colon encountered.  The second argument
 *       specifies the end of the string; if NULL, the end is determined
@@ -350,10 +363,8 @@ static WORD fs_newdir(BYTE *fpath,
                       WORD *pcount)
 {
         const BYTE      *ptmp;
-        BYTE            *ftitle;
         OBJECT          *obj;
         TEDINFO         *tedinfo;
-        WORD            len, len_ftitle, i, fill;
 
                                         /* load the filenames matching pspec, */
                                         /* sort them, and insert the names in */
@@ -361,24 +372,10 @@ static WORD fs_newdir(BYTE *fpath,
         ob_draw(tree, FSDIRECT, MAX_DEPTH);
         fs_active(fpath, pspec, pcount);
         fs_format(tree, 0, *pcount);
-                                        /* ensure that mask fits within */
-                                        /* FTITLE, surround it with     */
-                                        /* spaces, and centre it        */
-        obj = ((OBJECT *)tree) + FTITLE;
+
+        obj = ((OBJECT *)tree) + FTITLE;    /* update FTITLE with ptr to mask */
         tedinfo = (TEDINFO *)obj->ob_spec;
-        ftitle = (BYTE *)tedinfo->te_ptext;
-        len_ftitle = tedinfo->te_txtlen - 1;
-        len = strlen(pspec);
-        if (len > len_ftitle)
-          len = len_ftitle;
-        fill = len_ftitle - len;
-        for (i = 0; i < fill/2; i++)
-          *ftitle++ = ' ';
-        memcpy(ftitle, pspec, len);
-        ftitle += len;
-        for ( ; i < fill; i++)
-          *ftitle++ = ' ';
-        *ftitle = '\0';
+        tedinfo->te_ptext = pspec;
 
         ptmp = &gl_fsobj[0];    /* redraw file selector objects */
         while(*ptmp)
@@ -544,6 +541,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
 
         obj = ((OBJECT *)tree) + FSTITLE;
         obj->ob_spec = pilabel ? (LONG)pilabel : (LONG)rs_str(ITEMSLCT);
+        centre_title(tree,FSTITLE);
 
                                                 /* set drive buttons */
         obj = ((OBJECT *)tree) + DRIVE_OFFSET;

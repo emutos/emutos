@@ -5850,3 +5850,7 @@ Start... early ages
 - aes/gemfslib.c: Fix loop in file selector when initial path did not start
   with drive or backslash. (RFB)
 - aes/gemfslib.c: Preserve filemask in file selector when changing drives. (RFB)
+
+2014-12-01
+- aes/gem.def aes/gem.rsc aes/gemfslib.c: Several cosmetic improvements to
+  the file selector. Suggested by Eero Tamminen. (RFB)
