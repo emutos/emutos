@@ -28,7 +28,6 @@
 #include "deskwin.h"
 #include "deskbind.h"
 
-#include "optimize.h"
 #include "rectfunc.h"
 #include "gemdos.h"
 #include "aesbind.h"

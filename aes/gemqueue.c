@@ -24,7 +24,7 @@
 #include "obdefs.h"
 #include "gemlib.h"
 
-#include "optimize.h"
+#include "rectfunc.h"
 #include "gemasync.h"
 #include "gemqueue.h"
 

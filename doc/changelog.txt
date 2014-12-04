@@ -5863,3 +5863,6 @@ Start... early ages
 2014-12-04
 - aes/gempd.c aes/optimize.c aes/optimize.h: Eliminate unnecessary global
   function. (RFB)
+- aes/gemfmalt.c aes/gemgrlib.c aes/gemqueue.c aes/gemwmlib.c aes/optimize.c
+  aes/optimize.h aes/rectfunc.c aes/rectfunc.h desk/deskact.c desk/desksupp.c:
+  Code cleanup: Collect rc_xxx() functions in one module. (RFB)

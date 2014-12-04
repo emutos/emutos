@@ -63,50 +63,6 @@ WORD sound(WORD isfreq, WORD freq, WORD dura)
 }
 
 
-void rc_constrain(GRECT *pc, GRECT *pt)
-{
-          if (pt->g_x < pc->g_x)
-            pt->g_x = pc->g_x;
-          if (pt->g_y < pc->g_y)
-            pt->g_y = pc->g_y;
-          if ((pt->g_x + pt->g_w) > (pc->g_x + pc->g_w))
-            pt->g_x = (pc->g_x + pc->g_w) - pt->g_w;
-          if ((pt->g_y + pt->g_h) > (pc->g_y + pc->g_h))
-            pt->g_y = (pc->g_y + pc->g_h) - pt->g_h;
-}
-
-
-void rc_union(GRECT *p1, GRECT *p2)
-{
-        WORD            tx, ty, tw, th;
-
-        tw = max(p1->g_x + p1->g_w, p2->g_x + p2->g_w);
-        th = max(p1->g_y + p1->g_h, p2->g_y + p2->g_h);
-        tx = min(p1->g_x, p2->g_x);
-        ty = min(p1->g_y, p2->g_y);
-        p2->g_x = tx;
-        p2->g_y = ty;
-        p2->g_w = tw - tx;
-        p2->g_h = th - ty;
-}
-
-
-WORD rc_intersect(GRECT *p1, GRECT *p2)
-{
-        WORD            tx, ty, tw, th;
-
-        tw = min(p2->g_x + p2->g_w, p1->g_x + p1->g_w);
-        th = min(p2->g_y + p2->g_h, p1->g_y + p1->g_h);
-        tx = max(p2->g_x, p1->g_x);
-        ty = max(p2->g_y, p1->g_y);
-        p2->g_x = tx;
-        p2->g_y = ty;
-        p2->g_w = tw - tx;
-        p2->g_h = th - ty;
-        return( (tw > tx) && (th > ty) );
-}
-
-
 /*
  *      Convert 'normal' filename to a value suitable for formatting
  *      with a TEDINFO FFFFFFFF.FFF text string.  For example:

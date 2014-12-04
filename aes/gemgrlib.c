@@ -34,7 +34,6 @@
 #include "gsx2.h"
 #include "optimopt.h"
 #include "rectfunc.h"
-#include "optimize.h"
 
 #include "intmath.h"
 

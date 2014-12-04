@@ -42,7 +42,6 @@
 #include "gsx2.h"
 #include "rectfunc.h"
 #include "optimopt.h"
-#include "optimize.h"
 #include "gemwmlib.h"
 #include "kprint.h"
 

@@ -25,7 +25,6 @@
 #include "deskwin.h"
 #include "deskbind.h"
 
-#include "optimize.h"
 #include "optimopt.h"
 #include "rectfunc.h"
 #include "aesbind.h"

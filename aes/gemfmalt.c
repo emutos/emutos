@@ -35,7 +35,6 @@
 #include "gemgraf.h"
 #include "gemfmlib.h"
 #include "gemwmlib.h"
-#include "optimize.h"
 #include "optimopt.h"
 #include "rectfunc.h"
 #include "gemfmalt.h"

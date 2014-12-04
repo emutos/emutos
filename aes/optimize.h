@@ -11,9 +11,6 @@
 #define OPTIMIZE_H
 
 WORD sound(WORD isfreq, WORD freq, WORD dura);
-void rc_constrain(GRECT *pc, GRECT *pt);
-void rc_union(GRECT *p1, GRECT *p2);
-WORD rc_intersect(GRECT *p1, GRECT *p2);
 void fmt_str(BYTE *instr, BYTE *outstr);
 void unfmt_str(BYTE *instr, BYTE *outstr);
 void inf_sset(LONG tree, WORD obj, BYTE *pstr);
