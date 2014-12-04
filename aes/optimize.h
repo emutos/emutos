@@ -14,7 +14,6 @@ WORD sound(WORD isfreq, WORD freq, WORD dura);
 void rc_constrain(GRECT *pc, GRECT *pt);
 void rc_union(GRECT *p1, GRECT *p2);
 WORD rc_intersect(GRECT *p1, GRECT *p2);
-BYTE *strscn(BYTE *ps, BYTE *pd, BYTE stop);
 void fmt_str(BYTE *instr, BYTE *outstr);
 void unfmt_str(BYTE *instr, BYTE *outstr);
 void inf_sset(LONG tree, WORD obj, BYTE *pstr);

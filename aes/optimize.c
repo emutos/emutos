@@ -107,15 +107,6 @@ WORD rc_intersect(GRECT *p1, GRECT *p2)
 }
 
 
-BYTE *strscn(BYTE *ps, BYTE *pd, BYTE stop)
-{
-        while ( (*ps) &&
-                (*ps != stop) )
-          *pd++ = *ps++;
-        return(pd);
-}
-
-
 /*
  *      Convert 'normal' filename to a value suitable for formatting
  *      with a TEDINFO FFFFFFFF.FFF text string.  For example:

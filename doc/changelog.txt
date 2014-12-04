@@ -5859,3 +5859,7 @@ Start... early ages
 
 2014-12-03
 - bdos/fsopnclo.c: Fix potential bug: memcpy() length was wrong. (RFB)
+
+2014-12-04
+- aes/gempd.c aes/optimize.c aes/optimize.h: Eliminate unnecessary global
+  function. (RFB)

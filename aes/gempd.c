@@ -85,8 +85,13 @@ static AESPD *getpd(void)
  */
 void p_nameit(AESPD *p, BYTE *pname)
 {
-        memset(p->p_name, ' ', 8);
-        strscn(pname, p->p_name, '.');
+        char *s, *d;
+        int i;
+
+        for (i = 0, s = pname, d = p->p_name; (i < 8) && *s && (*s != '.'); i++)
+          *d++ = *s++;
+        for ( ; i < 8; i++)
+          *d++ = ' ';
 }
 
 /* set the application directory of an AESPD */
