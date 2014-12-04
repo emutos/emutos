@@ -5856,3 +5856,6 @@ Start... early ages
   the file selector. Suggested by Eero Tamminen. (RFB)
 - aes/gemfslib.c: EmuTOS's file selector now behaves like Atari TOS's when
   the file mask is updated manually. Suggested by Eero Tamminen. (RFB)
+
+2014-12-03
+- bdos/fsopnclo.c: Fix potential bug: memcpy() length was wrong. (RFB)

@@ -301,8 +301,8 @@ static long makopn(FCB *f, DND *dn, int h, int mod)
         dn->d_files = p;
 
         if (p2)
-        {       /* steal time,date,startcl,fileln */
-                memcpy(&p->o_td,&p2->o_td,12);  /* FIXME: length should be 10 */
+        {       /* steal time/date,startcl,fileln (a bit clumsily) */
+                memcpy(&p->o_td,&p2->o_td,sizeof(DOSTIME)+sizeof(CLNO)+sizeof(long));
                 /* not used yet... TBA *********/
                 p2->o_thread = p;
         }
