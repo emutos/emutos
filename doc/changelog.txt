@@ -5866,3 +5866,7 @@ Start... early ages
 - aes/gemfmalt.c aes/gemgrlib.c aes/gemqueue.c aes/gemwmlib.c aes/optimize.c
   aes/optimize.h aes/rectfunc.c aes/rectfunc.h desk/deskact.c desk/desksupp.c:
   Code cleanup: Collect rc_xxx() functions in one module. (RFB)
+
+2014-12-06
+- aes/machine.c: The _FDC cookie on machines without DIP switches was
+  initialised incorrectly. (RFB)

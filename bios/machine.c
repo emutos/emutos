@@ -467,9 +467,9 @@ void fill_cookie_jar(void)
    * generally used to indicate the presence of additional hardware which
    * will be represented by other cookies.
    */
+  setvalue_swi();
   if (cookie_mch == MCH_MSTE || cookie_mch == MCH_TT
       || cookie_mch == MCH_FALCON) {
-    setvalue_swi();
     cookie_add(COOKIE_SWI, cookie_swi);
   }
 #endif
