@@ -5870,3 +5870,7 @@ Start... early ages
 2014-12-06
 - aes/machine.c: The _FDC cookie on machines without DIP switches was
   initialised incorrectly. (RFB)
+
+2012-12-11
+- bios/floppy.c: Increase delay for FDC register access to comply with
+  real hardware. (RFB)

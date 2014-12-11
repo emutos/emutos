@@ -131,8 +131,16 @@ static void set_fdc_reg(WORD reg, WORD value);
 static void fdc_start_dma_read(WORD count);
 static void fdc_start_dma_write(WORD count);
 
-/* delay for fdc register access */
-#define delay() delay_loop(loopcount_3_usec)
+/*
+ * fdc_delay() is for worst-case 1772 access (in MFM mode)
+ *
+ * the maximum delay required is 32 usec; this is between a write to the
+ * command register and a read of status bits 1-7 (see the WD177X-00
+ * Floppy Disk Formatter/Controller manual, p1-16).  Atari TOS uses a
+ * value of 52-78 usec for this (because of timer resolution issues).
+ * EmuTOS uses 50 usec (see flop_hdv_init()).
+ */
+#define fdc_delay() delay_loop(loopcount_fdc)
 
 /*==== Internal floppy status =============================================*/
 
@@ -189,7 +197,7 @@ static void fdc_start_dma_write(WORD count);
 
 static WORD cur_dev;
 static ULONG deselect_time;
-static ULONG loopcount_3_usec;
+static ULONG loopcount_fdc;
 
 /*
  * the following array maps the stepping rate as requested by Floprate()
@@ -245,7 +253,7 @@ void flop_hdv_init(void)
 #if CONF_WITH_FDC
     cur_dev = -1;
     drivetype = (cookie_fdc >> 24) ? HD_DRIVE : DD_DRIVE;
-    loopcount_3_usec = 3 * loopcount_1_msec / 1000;
+    loopcount_fdc = loopcount_1_msec / 20;  /* 50 usec */
     deselect_time = 0UL;
 #endif
 
@@ -1051,18 +1059,18 @@ static WORD get_fdc_reg(WORD reg)
 {
     WORD ret;
     DMA->control = reg;
-    delay();
+    fdc_delay();
     ret = DMA->data;
-    delay();
+    fdc_delay();
     return ret;
 }
 
 static void set_fdc_reg(WORD reg, WORD value)
 {
     DMA->control = reg;
-    delay();
+    fdc_delay();
     DMA->data = value;
-    delay();
+    fdc_delay();
 }
 
 /* the fdc_start_dma_*() functions toggle the dma write bit, to
