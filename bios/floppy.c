@@ -109,8 +109,9 @@ static void flop_detect_drive(WORD dev);
 static void floplock(WORD dev);
 static void flopunlk(void);
 
-/* select drive and side in the PSG port A */
+/* select/deselect drive and side in the PSG port A */
 static void select(WORD dev, WORD side);
+static void deselect(void);
 
 /* sets the track on the current drive, returns 0 or error */
 static WORD set_track(WORD track);
@@ -122,7 +123,7 @@ static WORD set_track(WORD track);
 #define TIMEOUT (3*CLOCKS_PER_SEC)  /* in ticks */
 
 /* deselection timeout (see "handling of drive deselection" below) */
-#define DESELECT_TIMEOUT (2*CLOCKS_PER_SEC)
+#define DESELECT_TIMEOUT (3*CLOCKS_PER_SEC) /* in ticks */
 
 /* access to dma and fdc registers */
 static WORD get_dma_status(void);
@@ -180,19 +181,24 @@ static void fdc_start_dma_write(WORD count);
  * - acsi.c will set it before accessing to the DMA bus, and
  *   clear it at the end.
  * - flopvbl will do nothing when flock is set.
- *
- * handling of drive deselection
- * -----------------------------
- * when there is a diskette in the currently-selected drive, the FDC will
+ */
+
+/*==== Handling of drive deselection ======================================*/
+
+/* when there is a diskette in the currently-selected drive, the FDC will
  * automatically turn off the motor after 10 revolutions if the device
  * remains idle.  this clears the FDC_MOTORON status bit, which is then
  * detected in flopvbl() which deselects the drive.  however, this method
  * does not work when no diskette is present, since there are no diskette
  * revolutions to be detected.
+ *
  * to handle this situation, the local variable deselect_time stores the
- * earliest time (in ticks) to deselect the currently-selected drive.  a
- * special value of zero indicates that no drive is currently selected.
- * deselect_time is set in select() and checked in flopvbl().
+ * earliest time (in ticks) to deselect the currently-selected drive.  when
+ * this time is reached, flopvbl() deselects all drives.  a special value
+ * of zero in deselect_time indicates that no drive is currently selected.
+ *
+ * deselect_time is set in flopunlk(), cleared in deselect(), and checked
+ * in flopvbl().
  */
 
 static WORD cur_dev;
@@ -959,16 +965,17 @@ struct flop_info *f = &finfo[dev];
 
 static void flopunlk(void)
 {
-    units[cur_dev].last_access = hz_200;
+    LONG now = hz_200;  /* only fetch it once */
 
-    /* the VBL will deselect the drive when the motor is off */
+    units[cur_dev].last_access = now;
+    deselect_time = now + DESELECT_TIMEOUT;
+
+    /* the VBL will deselect the drive subsequently */
     flock = 0;
 }
 
 void flopvbl(void)
 {
-    WORD status;
-
     /* don't do anything if the DMA circuitry is being used */
     if(flock) return;
     /* only do something every 8th VBL */
@@ -981,23 +988,41 @@ void flopvbl(void)
     /* if no drives are selected, no need to deselect them */
     if (deselect_time == 0UL)
         return;
-    /* read FDC status register */
-    status = get_fdc_reg(FDC_CS);
 
-    /* if the motor on bit is not set, or if the deselect_time
-     * has been reached, deselect both drives
+    /*
+     * if it's a while since any drive has been accessed, we deselect
+     * both drives.  this handles the case of an empty drive that has
+     * been accessed, leaving the motor on (the FDC never times out,
+     * because it never sees any indexes)
      */
-    if (((status & FDC_MOTORON) == 0) || (deselect_time < hz_200))
-        select(-1,0);  
+    if (hz_200 > deselect_time) {
+        deselect();
+        return;
+    }
+
+    /*
+     * if the motor is off (due to the FDC timing out after 10
+     * revolutions), we also make sure both drives are deselected
+     */
+    if ((get_fdc_reg(FDC_CS) & FDC_MOTORON) == 0)
+        deselect();
 }
 
 /*==== low level register access ==========================================*/
 
+/*
+ * deselect floppies
+ */
+static void deselect(void)
+{
+    select(-1,0);
+    deselect_time = 0UL;
+}
 
 /*
  * select floppy drive and side
  *
- * note: a drive of (e.g.) -1 will leave both floppies deselected
+ * note: an invalid drive (e.g. -1) will leave both floppies deselected
  */
 static void select(WORD dev, WORD side)
 {
@@ -1009,15 +1034,12 @@ static void select(WORD dev, WORD side)
     a = PSG->control;
 
     a |= 0x07;      /* deselect both floppies, set side = 0 */
-    deselect_time = 0UL;
     switch(dev) {
     case 0:
         a &= ~2;    /* select floppy 0 */
-        deselect_time = hz_200 + DESELECT_TIMEOUT;
         break;
     case 1:
         a &= ~4;    /* select floppy 1 */
-        deselect_time = hz_200 + DESELECT_TIMEOUT;
         break;
     }
     if (side != 0)
