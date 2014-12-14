@@ -617,38 +617,66 @@ LONG flopwr(LONG buf, LONG filler, WORD dev,
 
 /*==== xbios flopver ======================================================*/
 
-/* TODO, in the case where both one sector cannot be read and another is
- * read wrong, what is the error return code?
+/*
+ * Flopver() is clearly not used very much, since both the Compendium
+ * and Compute's "Complete TOS Reference" describe it incorrectly.
+ * Atari's "Hitchhiker's Guide to the BIOS" has the most accurate
+ * description, but it still leaves some things to the imagination.
+ *
+ * Unfortunately the actual behaviour of TOS does not help us much,
+ * since the implementation of Flopver() in all versions of TOS has
+ * several problems:
+ *      the drive number is not checked
+ *      a count of 0 or less causes an unending loop
+ *      the bad sector list isn't terminated when an "unexpected" error occurs
+ *
+ * Also there is a somewhat theoretical hole in the design: a Flopver()
+ * that includes sector 0 on a normal track should report an error, but
+ * there is no way for the caller to distinguish between an entry of zero
+ * in the bad sector list and the end of the list.  So, for example, if
+ * you choose a starting sector of 0 and a count of 20 for a disk with
+ * sectors 1-9 on that track, you will apparently have no bad sectors ...
+ *
+ * The following implementation follows the Hitchhiker's Guide with
+ * additional interpretations:
+ *      invalid disk number:
+ *          return EUNDEV
+ *      zero or negative count:
+ *          return OK (no sectors to verify)
+ *      error return code from floppy read:
+ *          add sector to table of bad sectors; if sector zero was
+ *          bad, we record it as -1
+ *
+ * Error return codes from floppy read are divided into two types:
+ *      expected errors: EREADF or ESECNF
+ *      unexpected errors: all others
+ * If no unexpected errors occur, the return code from Flopver() is zero;
+ * otherwise it's the return code from the last unexpected error.
  */
 
 LONG flopver(LONG buf, LONG filler, WORD dev,
              WORD sect, WORD track, WORD side, WORD count)
 {
-    WORD i;
-    WORD err;
-    WORD outerr = 0;
-    WORD *bad = (WORD *) buf;
-
-    if (count <= 0)
-        return 0;
+    WORD i, err;
+    LONG rc = 0L;
+    WORD *bad = (WORD *)buf;
 
     if (!IS_VALID_FLOPPY_DEVICE(dev))
         return EUNDEV;  /* unknown disk */
 
-    for (i = 0; i < count; i++) {
-        err = floprw((LONG) dskbufp, RW_READ, dev, sect, track, side, 1);
+    for (i = 0; i < count; i++, sect++) {
+        err = floprw((LONG)dskbufp, RW_READ, dev, sect, track, side, 1);
         if (err) {
-            *bad++ = sect;
-            outerr = err;
-            continue;
+            *bad++ = sect ? sect : -1;
+            if ((err != EREADF) && (err != ESECNF))
+                rc = err;
         }
-        sect++;
     }
 
-    if (outerr)
-        *bad = 0;
+    /* we always terminate the list of bad sectors! */
+    *bad = 0;
 
-    return outerr;
+    return rc;
 }
 
 
