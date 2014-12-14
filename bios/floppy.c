@@ -62,10 +62,6 @@
  * - on error, the geometry info should be reset to a sane state
  * - on error, should jump to critical error vector
  * - no 'virtual' disk B: mapped to disk A: when only one drive
- * - reserved or hidden sectors are not guaranteed to be handled correctly
- * - ... (search for 'TODO' in the rest of this file)
- * - the unique FDC track register is probably not handled correctly
- *   when using two drives
  */
 
 /*==== Internal defines ===================================================*/
@@ -155,25 +151,24 @@ static void fdc_start_dma_write(WORD count);
  * _FDC cookie.  note that TOS appears to assume that if you have two drives,
  * they are both of the same type.  so EmuTOS does the same.
  *
- * finfo[].cur_track contains a copy of the fdc track register for the current
- * drive, or -1 to indicate that the drive does not exist.
- *
- * finfo[].cur_density is the density (either DD or HD) being used to access
- * the current diskette.
- *
- * finfo[].last_access is set to the value of the 200 Hz counter at the end of
- * last fdc command. last_access can be used by mediach, a short time
- * elapsed indicating that the floppy was not ejected.
- *
- * finfo[].wp is set according to the corresponding bit in the fdc
- * controller status reg. As soon as this value is different for
- * the drive, this means that the floppy has changed.
- *
+ * finfo[] is an array of structures, one entry per floppy drive.  structure
+ * members are as follows:
+ * 
  * finfo[].rate is the stepping rate set by Floprate() (or by 'seekrate' if
  * Floprate() has never been called).
  *
  * finfo[].actual_rate is the value to send to the 1772 chip to get the stepping
  * rate implied by finfo[].rate.  it differs from finfo[].rate for HD diskettes.
+ *
+ * finfo[].cur_density is the density (either DD or HD) being used to access
+ * the current diskette.
+ *
+ * finfo[].cur_track contains a copy of the fdc track register for the current
+ * drive, or -1 to indicate that the drive does not exist.
+ *
+ * finfo[].wp is set according to the corresponding bit in the fdc controller
+ * status reg. As soon as this value is different for the drive, this means
+ * that the floppy has changed.  YET TO BE IMPLEMENTED
  *
  * the flock variable in tosvars.s is used as following :
  * - floppy.c will set it before accessing to the DMA/FDC, and
@@ -318,7 +313,7 @@ static void flop_detect_drive(WORD dev)
     floplock(dev);
     select(dev, 0);
     set_fdc_reg(FDC_CS, FDC_RESTORE | FDC_HBIT | finfo[dev].actual_rate);
-    if(timeout_gpip(TIMEOUT)) {
+    if (timeout_gpip(TIMEOUT)) {
         /* timeout */
         KDEBUG(("flop_detect_drive(%d) timeout\n",dev));
         flopunlk();
@@ -327,7 +322,7 @@ static void flop_detect_drive(WORD dev)
 
     status = get_fdc_reg(FDC_CS);
     KDEBUG(("status = 0x%02x\n",status));
-    if(status & FDC_TRACK0) {
+    if (status & FDC_TRACK0) {
         /* got track0 signal, this means that a drive is connected */
         KDEBUG(("track0 signal got\n"));
         flop_add_drive(dev);
@@ -378,11 +373,12 @@ LONG flop_hdv_boot(void)
     err = flop_bootcheck();
     KDEBUG(("flop_bootcheck returns %ld\n",err));
 
-    if(err == 0) {
+    if (err == 0) {
         /* if bootable, jump in it */
         invalidate_instruction_cache(dskbufp, SECTOR_SIZE);
         regsafe_call(dskbufp);
     }
+
     return err;         /* may never be reached, if booting */
 }
 
@@ -393,23 +389,21 @@ static LONG flop_bootcheck(void)
     WORD err;
     WORD cksum;
 
-    if(nflops ==0) {
+    if (nflops == 0)
         return 2;    /* no drive */
-    }
-    if(bootdev >= nflops) {
+
+    if (bootdev >= nflops)
         return 2;    /* couldn't load */
-    }
 
     err = floprw((LONG)b, RW_READ, bootdev, 1, 0, 0, 1);
-    if(err) {
+    if (err)
         return 3;    /* unreadable */
-    }
+
     cksum = compute_cksum(b);
-    if(cksum == 0x1234) {
+    if (cksum == 0x1234)
         return 0;    /* bootable */
-    } else {
+    else
         return 4;    /* not valid boot sector */
-    }
 }
 
 LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
@@ -424,7 +418,8 @@ LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
     KDEBUG(("floppy_rw(rw %d, buf 0x%lx, cnt %d, recnr %ld, spt %d, sides %d, dev %d)\n",
             rw,buf,cnt,recnr,spt,sides,dev));
 
-    if (!IS_VALID_FLOPPY_DEVICE(dev)) return EUNDEV;  /* unknown device */
+    if (!IS_VALID_FLOPPY_DEVICE(dev))
+        return EUNDEV;  /* unknown device */
 
     /* set flag if reading boot sector */
     if ((cnt == 1) && (recnr == blkdev[dev].start)
@@ -453,7 +448,6 @@ LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
              * We must use the intermediate _FRB buffer.
              */
             if (cookie_frb) {
-                /* do we really need proper FRB lock? (TODO) */
                 if(rw & 1) {
                     /* writing */
                     memcpy((void *)cookie_frb, (void *)buf, SECTOR_SIZE);
@@ -463,7 +457,6 @@ LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
                     err = floprw(cookie_frb, rw, dev, sect, track, side, 1);
                     memcpy((void *)buf, (void *)cookie_frb, SECTOR_SIZE);
                 }
-                /* proper FRB unlock (TODO) */
             } else {
                 err = -1;   /* problem: can't DMA to FastRAM */
             }
@@ -473,7 +466,7 @@ LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
             /* The buffer is in the ST-RAM, we can call floprw() directly */
             err = floprw(buf, rw, dev, sect, track, side, 1);
         }
-        if(err) {
+        if (err) {
             struct flop_info *f;
             if (drivetype == DD_DRIVE)          /* DD only, so no retry */
                 return err;
@@ -494,7 +487,7 @@ LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
             continue;
         }
         buf += SECTOR_SIZE;
-        recnr ++;
+        recnr++;
         cnt--;
     }
 
@@ -547,7 +540,7 @@ void protobt(LONG buf, LONG serial, WORD type, WORD exec)
         b->serial[2] = serial>>16;
     }
 
-    if(type >= 0 && type < NUM_PROTOBT_ENTRIES) {
+    if (type >= 0 && type < NUM_PROTOBT_ENTRIES) {
         const struct _protobt *bt = &protobt_data[type];
 
         setiword(b->bps, bt->bps);
@@ -636,21 +629,25 @@ LONG flopver(LONG buf, LONG filler, WORD dev,
     WORD outerr = 0;
     WORD *bad = (WORD *) buf;
 
-    if(count <= 0) return 0;
-    if(!IS_VALID_FLOPPY_DEVICE(dev)) return EUNDEV;  /* unknown disk */
-    for(i = 0 ; i < count ; i++) {
+    if (count <= 0)
+        return 0;
+
+    if (!IS_VALID_FLOPPY_DEVICE(dev))
+        return EUNDEV;  /* unknown disk */
+
+    for (i = 0; i < count; i++) {
         err = floprw((LONG) dskbufp, RW_READ, dev, sect, track, side, 1);
-        if(err) {
+        if (err) {
             *bad++ = sect;
             outerr = err;
             continue;
         }
-        sect ++;
+        sect++;
     }
 
-    if(outerr) {
+    if (outerr)
         *bad = 0;
-    }
+
     return outerr;
 }
 
@@ -669,8 +666,11 @@ LONG flopfmt(LONG buf, WORD *skew, WORD dev, WORD spt,
 
 #define APPEND(b, count) do { memset(s, b, count); s += count; } while(0)
 
-    if(magic != 0x87654321UL) return 0;
-    if(!IS_VALID_FLOPPY_DEVICE(dev)) return EUNDEV;  /* unknown disk */
+    if (magic != 0x87654321UL)
+        return 0;
+
+    if (!IS_VALID_FLOPPY_DEVICE(dev))
+        return EUNDEV;  /* unknown disk */
 
     if ((spt >= 1) && (spt <= 10)) {
         track_size = TRACK_SIZE_DD;
@@ -702,7 +702,7 @@ LONG flopfmt(LONG buf, WORD *skew, WORD dev, WORD spt,
     /* GAP1 + GAP2(part1) : 60/120 bytes 0x4E */
     APPEND(0x4E, leader);
 
-    for(i = 0, offset = -interleave, used = 0L; i < spt ; i++) {
+    for (i = 0, offset = -interleave, used = 0L; i < spt ; i++) {
         /* GAP2 (part2) */
         APPEND(0x00, 12);
 
@@ -728,7 +728,7 @@ LONG flopfmt(LONG buf, WORD *skew, WORD dev, WORD spt,
         /* data */
         APPEND(0xF5, 3);
         *s++ = 0xfb;            /* data address mark */
-        for(j = 0; j < SECTOR_SIZE; j += 2) {
+        for (j = 0; j < SECTOR_SIZE; j += 2) {
             *s++ = b1; *s++ = b2;
         }
         *s++ = 0xf7;            /* generate 2 crc bytes */
@@ -744,11 +744,13 @@ LONG flopfmt(LONG buf, WORD *skew, WORD dev, WORD spt,
 
     /* write the buffer to track */
     err = flopwtrack(buf, dev, track, side, track_size);
-    if(err) return err;
+    if (err)
+        return err;
 
     /* verify sectors and store bad sector numbers in buf */
     err = flopver(buf, 0L, dev, 1, track, side, spt);
-    if(err) return EBADSF;
+    if (err)
+        return EBADSF;
 
     return 0;
 }
@@ -767,12 +769,15 @@ LONG floprate(WORD dev, WORD rate)
 {
     WORD old;
 
-    if(!IS_VALID_FLOPPY_DEVICE(dev)) return EUNDEV;  /* unknown disk */
+    if (!IS_VALID_FLOPPY_DEVICE(dev))
+        return EUNDEV;  /* unknown disk */
+
     old = finfo[dev].rate;
-    if(rate >= 0 && rate <= 3) {
+    if (rate >= 0 && rate <= 3) {
         finfo[dev].rate = rate;
         finfo[dev].actual_rate = rate;
     }
+
     return old;
 }
 
@@ -788,11 +793,12 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
     LONG buflen = (LONG)count * SECTOR_SIZE;
 #endif
 
-    if(!IS_VALID_FLOPPY_DEVICE(dev)) return EUNDEV;  /* unknown disk */
+    if (!IS_VALID_FLOPPY_DEVICE(dev))
+        return EUNDEV;  /* unknown disk */
 
     rw &= RW_RW;    /* remove any extraneous bits */
 
-    if((rw == RW_WRITE) && (track == 0) && (sect == 1) && (side == 0)) {
+    if ((rw == RW_WRITE) && (track == 0) && (sect == 1) && (side == 0)) {
         /* TODO, maybe media changed ? */
     }
 
@@ -808,42 +814,42 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
 
     select(dev, side);
     err = set_track(track);
-    if(err) {
+    if (err) {
         flopunlk();
         return err;
     }
 
-    while (count--) {
-      for(retry = 0; retry < 2 ; retry ++) {
+    while(count--) {
+      for (retry = 0; retry < 2; retry++) {
         set_fdc_reg(FDC_SR, sect);
         set_dma_addr((ULONG) buf);
-        if(rw == RW_READ) {
+        if (rw == RW_READ) {
             fdc_start_dma_read(1);
             set_fdc_reg(FDC_CS, FDC_READ);
         } else {
             fdc_start_dma_write(1);
             set_fdc_reg(FDC_CS | DMA_WRBIT, FDC_WRITE);
         }
-        if(timeout_gpip(TIMEOUT)) {
+        if (timeout_gpip(TIMEOUT)) {
             /* timeout */
             err = EDRVNR;  /* drive not ready */
             break;         /* no retry */
         }
         status = get_dma_status();
-        if(! (status & DMA_OK)) {
+        if (!(status & DMA_OK)) {
             /* DMA error, retry */
             err = EGENRL;  /* general error */
         } else {
             status = get_fdc_reg(FDC_CS);
-            if((rw == RW_WRITE) && (status & FDC_WRI_PRO)) {
+            if ((rw == RW_WRITE) && (status & FDC_WRI_PRO)) {
                 err = EWRPRO;  /* write protect */
                 /* no need to retry */
                 break;
-            } else if(status & FDC_RNF) {
+            } else if (status & FDC_RNF) {
                 err = ESECNF;  /* sector not found */
-            } else if(status & FDC_CRCERR) {
+            } else if (status & FDC_CRCERR) {
                 err = E_CRC;   /* CRC error */
-            } else if(status & FDC_LOSTDAT) {
+            } else if (status & FDC_LOSTDAT) {
                 err = EDRVNR;  /* drive not ready */
             } else {
                 err = 0;
@@ -880,7 +886,7 @@ static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side, WORD track_siz
     WORD err;
     WORD status;
 
-    if((track == 0) && (side == 0)) {
+    if ((track == 0) && (side == 0)) {
         /* TODO, maybe media changed ? */
     }
 
@@ -891,33 +897,33 @@ static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side, WORD track_siz
 
     select(dev, side);
     err = set_track(track);
-    if(err) {
+    if (err) {
         flopunlk();
         return err;
     }
 
-    for(retry = 0; retry < 2 ; retry ++) {
+    for (retry = 0; retry < 2; retry++) {
         set_dma_addr((ULONG) buf);
         fdc_start_dma_write((track_size + SECTOR_SIZE-1) / SECTOR_SIZE);
         set_fdc_reg(FDC_CS | DMA_WRBIT, FDC_WRITETR);
 
-        if(timeout_gpip(TIMEOUT)) {
+        if (timeout_gpip(TIMEOUT)) {
             /* timeout */
             err = EDRVNR;  /* drive not ready */
             flopunlk();
             return err;
         }
         status = get_dma_status();
-        if(! (status & DMA_OK)) {
+        if (!(status & DMA_OK)) {
             /* DMA error, retry */
             err = EGENRL;  /* general error */
         } else {
             status = get_fdc_reg(FDC_CS);
-            if(status & FDC_WRI_PRO) {
+            if (status & FDC_WRI_PRO) {
                 err = EWRPRO;  /* write protect */
                 /* no need to retry */
                 break;
-            } else if(status & FDC_LOSTDAT) {
+            } else if (status & FDC_LOSTDAT) {
                 err = EDRVNR;  /* drive not ready */
             } else {
                 err = 0;
@@ -926,6 +932,7 @@ static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side, WORD track_siz
         }
     }
     flopunlk();
+
     return err;
 #else
     return EUNDEV;
@@ -977,9 +984,12 @@ static void flopunlk(void)
 void flopvbl(void)
 {
     /* don't do anything if the DMA circuitry is being used */
-    if(flock) return;
+    if (flock)
+        return;
+
     /* only do something every 8th VBL */
-    if(frclock & 7) return;
+    if (frclock & 7)
+        return;
 
     /* TODO - read the write-protect bit in the status register for
      * both drives
@@ -1051,15 +1061,16 @@ static void select(WORD dev, WORD side)
 
 static WORD set_track(WORD track)
 {
-    if(track == finfo[cur_dev].cur_track) return 0;
+    if (track == finfo[cur_dev].cur_track)
+        return 0;
 
-    if(track == 0) {
+    if (track == 0) {
         set_fdc_reg(FDC_CS, FDC_RESTORE | finfo[cur_dev].actual_rate);
     } else {
         set_fdc_reg(FDC_DR, track);
         set_fdc_reg(FDC_CS, FDC_SEEK | finfo[cur_dev].actual_rate);
     }
-    if(timeout_gpip(TIMEOUT)) {
+    if (timeout_gpip(TIMEOUT)) {
         /* cur_track is certainly wrong now */
         /* FIXME it shoud be reset using a Restore command */
         return E_SEEK;  /* seek error */
@@ -1072,18 +1083,22 @@ static WORD set_track(WORD track)
 static WORD get_dma_status(void)
 {
     WORD ret;
+
     DMA->control = 0x90;
     ret = DMA->control;
+
     return ret;
 }
 
 static WORD get_fdc_reg(WORD reg)
 {
     WORD ret;
+
     DMA->control = reg;
     fdc_delay();
     ret = DMA->data;
     fdc_delay();
+
     return ret;
 }
 

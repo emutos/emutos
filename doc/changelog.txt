@@ -5878,3 +5878,4 @@ Start... early ages
 2012-12-13
 - bios/floppy.c: Rewrote the floppy drive motor turn-off code and increased
   the timeout slightly. (RFB)
+- bios/floppy.c: Clean up whitespace, including comments. (RFB)
