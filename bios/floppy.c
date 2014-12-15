@@ -870,37 +870,33 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
             falcon_delay(); /* a kludge - see comments at start of module */
             set_fdc_reg(FDC_CS | DMA_WRBIT, FDC_WRITE);
         }
-        if (timeout_gpip(TIMEOUT)) {
-            /* timeout */
-            err = EDRVNR;  /* drive not ready */
-            break;         /* no retry */
+        if (timeout_gpip(TIMEOUT)) {/* timeout */
+            err = EDRVNR;           /* drive not ready */
+            break;                  /* no retry */
         }
         status = get_dma_status();
-        if (!(status & DMA_OK)) {
-            /* DMA error, retry */
-            err = EGENRL;  /* general error */
+        if (!(status & DMA_OK)) {   /* DMA error, retry */
+            err = EGENRL;           /* general error */
         } else {
             status = get_fdc_reg(FDC_CS);
             if ((rw == RW_WRITE) && (status & FDC_WRI_PRO)) {
-                err = EWRPRO;  /* write protect */
-                /* no need to retry */
-                break;
+                err = EWRPRO;       /* write protect */
+                break;              /* no retry */
             } else if (status & FDC_RNF) {
-                err = ESECNF;  /* sector not found */
+                err = ESECNF;       /* sector not found */
             } else if (status & FDC_CRCERR) {
-                err = E_CRC;   /* CRC error */
+                err = E_CRC;        /* CRC error */
             } else if (status & FDC_LOSTDAT) {
-                err = EDRVNR;  /* drive not ready */
+                err = EDRVNR;       /* drive not ready */
             } else {
                 err = 0;
                 break;
             }
         }
       }
-      //-- If there was an error, dont read any more sectors
-      if (err) {
+      //-- If there was an error, don't read any more sectors
+      if (err)
           break;
-      }
       //-- Otherwise carry on sequentially
       buf += SECTOR_SIZE;
       sect++;
@@ -948,24 +944,20 @@ static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side, WORD track_siz
         falcon_delay(); /* a kludge - see comments at start of module */
         set_fdc_reg(FDC_CS | DMA_WRBIT, FDC_WRITETR);
 
-        if (timeout_gpip(TIMEOUT)) {
-            /* timeout */
-            err = EDRVNR;  /* drive not ready */
-            flopunlk();
-            return err;
+        if (timeout_gpip(TIMEOUT)) {    /* timeout */
+            err = EDRVNR;               /* drive not ready */
+            break;
         }
         status = get_dma_status();
-        if (!(status & DMA_OK)) {
-            /* DMA error, retry */
-            err = EGENRL;  /* general error */
+        if (!(status & DMA_OK)) {       /* DMA error, retry */
+            err = EGENRL;               /* general error */
         } else {
             status = get_fdc_reg(FDC_CS);
             if (status & FDC_WRI_PRO) {
-                err = EWRPRO;  /* write protect */
-                /* no need to retry */
-                break;
+                err = EWRPRO;           /* write protect */
+                break;                  /* no retry */
             } else if (status & FDC_LOSTDAT) {
-                err = EDRVNR;  /* drive not ready */
+                err = EDRVNR;           /* drive not ready */
             } else {
                 err = 0;
                 break;
