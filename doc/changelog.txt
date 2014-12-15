@@ -5884,3 +5884,4 @@ Start... early ages
 - bios/floppy.c: Fix minor issues in Flopver(). (RFB)
 - bios/floppy.c: Fix bug in Flopfmt() on Falcon that was triggered by
   compiling with optimisation level -O2. (RFB)
+- bios/floppy.c: General tidy up of Flopfmt() code. (RFB)

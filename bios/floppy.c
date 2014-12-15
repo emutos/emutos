@@ -705,11 +705,11 @@ LONG flopfmt(LONG buf, WORD *skew, WORD dev, WORD spt,
 
 #define APPEND(b, count) do { memset(s, b, count); s += count; } while(0)
 
-    if (magic != 0x87654321UL)
-        return 0;
-
     if (!IS_VALID_FLOPPY_DEVICE(dev))
-        return EUNDEV;  /* unknown disk */
+        return EUNDEV;          /* unknown disk */
+
+    if (magic != 0x87654321UL)
+        return EBADSF;          /* just like TOS4 */
 
     if ((spt >= 1) && (spt <= 10)) {
         track_size = TRACK_SIZE_DD;
@@ -717,7 +717,7 @@ LONG flopfmt(LONG buf, WORD *skew, WORD dev, WORD spt,
     } else if ((drivetype == HD_DRIVE) && (spt >= 13) && (spt <= 20)) {
         track_size = TRACK_SIZE_HD;
         leader = LEADER_HD;
-    } else return EGENRL;     /* general error */
+    } else return EBADSF;       /* consistent, at least :-) */
 
     /*
      * fixup interleave if not using skew table
@@ -757,7 +757,7 @@ LONG flopfmt(LONG buf, WORD *skew, WORD dev, WORD spt,
             *s++ = offset + 1;  /* sector number from 'interleave' */
             used |= (1L<<offset);
         } else *s++ = *skew++;  /* sector number from skew array */
-        *s++ = 2; /* means sector of 512 bytes */
+        *s++ = 2;               /* means sector of 512 bytes */
         *s++ = 0xf7;            /* generate 2 crc bytes */
 
         /* GAP3 */
@@ -788,7 +788,7 @@ LONG flopfmt(LONG buf, WORD *skew, WORD dev, WORD spt,
 
     /* verify sectors and store bad sector numbers in buf */
     err = flopver(buf, 0L, dev, 1, track, side, spt);
-    if (err)
+    if (err || (*(WORD *)buf != 0))
         return EBADSF;
 
     return 0;
