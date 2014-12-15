@@ -139,6 +139,15 @@ static void fdc_start_dma_write(WORD count);
  */
 #define fdc_delay() delay_loop(loopcount_fdc)
 
+/*
+ * during write sector and write track sequences, just before sending
+ * the fdc command, Falcon TOS (TOS4) loops waiting for a bit in a
+ * Falcon-only register (at $860f) to become zero before sending the
+ * write command.  for simplicity and in order to maintain the same
+ * code across all systems, we introduce an extra delay instead.
+ */
+#define falcon_delay() delay_loop(loopcount_falcon)
+
 /*==== Internal floppy status =============================================*/
 
 /* cur_dev is the current drive, or -1 if none is current.
@@ -199,6 +208,7 @@ static void fdc_start_dma_write(WORD count);
 static WORD cur_dev;
 static ULONG deselect_time;
 static ULONG loopcount_fdc;
+static ULONG loopcount_falcon;
 
 /*
  * the following array maps the stepping rate as requested by Floprate()
@@ -255,6 +265,7 @@ void flop_hdv_init(void)
     cur_dev = -1;
     drivetype = (cookie_fdc >> 24) ? HD_DRIVE : DD_DRIVE;
     loopcount_fdc = loopcount_1_msec / 20;  /* 50 usec */
+    loopcount_falcon = loopcount_1_msec / 100;  /* 10 usec - seems to be safe */
     deselect_time = 0UL;
 #endif
 
@@ -856,6 +867,7 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
             set_fdc_reg(FDC_CS, FDC_READ);
         } else {
             fdc_start_dma_write(1);
+            falcon_delay(); /* a kludge - see comments at start of module */
             set_fdc_reg(FDC_CS | DMA_WRBIT, FDC_WRITE);
         }
         if (timeout_gpip(TIMEOUT)) {
@@ -933,6 +945,7 @@ static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side, WORD track_siz
     for (retry = 0; retry < 2; retry++) {
         set_dma_addr((ULONG) buf);
         fdc_start_dma_write((track_size + SECTOR_SIZE-1) / SECTOR_SIZE);
+        falcon_delay(); /* a kludge - see comments at start of module */
         set_fdc_reg(FDC_CS | DMA_WRBIT, FDC_WRITETR);
 
         if (timeout_gpip(TIMEOUT)) {

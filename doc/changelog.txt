@@ -5871,14 +5871,16 @@ Start... early ages
 - aes/machine.c: The _FDC cookie on machines without DIP switches was
   initialised incorrectly. (RFB)
 
-2012-12-11
+2014-12-11
 - bios/floppy.c: Increase delay for FDC register access to comply with
   real hardware. (RFB)
 
-2012-12-13
+2014-12-13
 - bios/floppy.c: Rewrote the floppy drive motor turn-off code and increased
   the timeout slightly. (RFB)
 - bios/floppy.c: Clean up whitespace, including comments. (RFB)
 
-2012-12-14
+2014-12-14
 - bios/floppy.c: Fix minor issues in Flopver(). (RFB)
+- bios/floppy.c: Fix bug in Flopfmt() on Falcon that was triggered by
+  compiling with optimisation level -O2. (RFB)
