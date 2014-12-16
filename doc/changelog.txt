@@ -5889,3 +5889,4 @@ Start... early ages
 
 2014-12-15
 - bios/floppy.c: Small refactoring for future changes (smaller code too). (RFB)
+- bios/floppy.c: General tidy up of remainder of module. (RFB)

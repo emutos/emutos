@@ -325,20 +325,20 @@ static void flop_detect_drive(WORD dev)
 
 #if CONF_WITH_FDC
     floplock(dev);
+
     select(dev, 0);
     if (flopcmd(FDC_RESTORE | FDC_HBIT | finfo[dev].actual_rate) < 0) {
         KDEBUG(("flop_detect_drive(%d) timeout\n",dev));
-        flopunlk();
-        return;
+    } else {
+        status = get_fdc_reg(FDC_CS);
+        KDEBUG(("status = 0x%02x\n",status));
+        if (status & FDC_TRACK0) {
+            /* got track0 signal, this means that a drive is connected */
+            KDEBUG(("track0 signal got\n"));
+            flop_add_drive(dev);
+        }
     }
 
-    status = get_fdc_reg(FDC_CS);
-    KDEBUG(("status = 0x%02x\n",status));
-    if (status & FDC_TRACK0) {
-        /* got track0 signal, this means that a drive is connected */
-        KDEBUG(("track0 signal got\n"));
-        flop_add_drive(dev);
-    }
     flopunlk();
 #endif
 }
@@ -383,7 +383,7 @@ LONG flop_hdv_boot(void)
     LONG err;
 
     err = flop_bootcheck();
-    KDEBUG(("flop_bootcheck returns %ld\n",err));
+    KDEBUG(("flop_bootcheck() returns %ld\n",err));
 
     if (err == 0) {
         /* if bootable, jump in it */
@@ -398,24 +398,20 @@ LONG flop_hdv_boot(void)
 static LONG flop_bootcheck(void)
 {
     struct bs *b = (struct bs *) dskbufp;
-    WORD err;
-    WORD cksum;
 
     if (nflops == 0)
-        return 2;    /* no drive */
+        return 2;   /* no drive */
 
     if (bootdev >= nflops)
-        return 2;    /* couldn't load */
+        return 2;   /* couldn't load */
 
-    err = floprw((LONG)b, RW_READ, bootdev, 1, 0, 0, 1);
-    if (err)
-        return 3;    /* unreadable */
+    if (floprw((LONG)b, RW_READ, bootdev, 1, 0, 0, 1) != 0)
+        return 3;   /* unreadable */
 
-    cksum = compute_cksum(b);
-    if (cksum == 0x1234)
-        return 0;    /* bootable */
-    else
-        return 4;    /* not valid boot sector */
+    if (compute_cksum(b) != 0x1234)
+        return 4;   /* not valid boot sector */
+
+    return 0;       /* bootable */
 }
 
 LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
@@ -460,15 +456,11 @@ LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
              * We must use the intermediate _FRB buffer.
              */
             if (cookie_frb) {
-                if(rw & 1) {
-                    /* writing */
+                if ((rw & RW_RW) == RW_WRITE)
                     memcpy((void *)cookie_frb, (void *)buf, SECTOR_SIZE);
-                    err = floprw(cookie_frb, rw, dev, sect, track, side, 1);
-                } else {
-                    /* reading */
-                    err = floprw(cookie_frb, rw, dev, sect, track, side, 1);
+                err = floprw(cookie_frb, rw, dev, sect, track, side, 1);
+                if ((rw & RW_RW) == RW_READ)
                     memcpy((void *)buf, (void *)cookie_frb, SECTOR_SIZE);
-                }
             } else {
                 err = -1;   /* problem: can't DMA to FastRAM */
             }
