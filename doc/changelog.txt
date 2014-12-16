@@ -5892,3 +5892,7 @@ Start... early ages
 - bios/floppy.c: General tidy up of remainder of module. (RFB)
 - bios/startup.S: Fix bug: application cartridge initialisation address
   was not being made 24-bit clean. This affected Hatari in 32-bit mode. (RFB)
+
+2014-12-16
+- bios/screen.c: Fix bug: gl_wbox was too big in videl display mode, causing
+  window margins to be too wide. (RFB)

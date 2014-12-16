@@ -712,7 +712,14 @@ static inline void get_std_pixel_size(WORD *width,WORD *height)
     *height = (v_vt_rez < 400) ? 556 : 278; /*  by TOS 3 & TOS 4     */
 }
 
-/* used by _v_opnwk() */
+/*
+ * used by _v_opnwk()
+ *
+ * pixel sizes returned here affect (at least) how the following
+ * are displayed:
+ *  - the output from v_arc()/v_circle()/vie_pslice()
+ *  - the size of gl_wbox in pixels
+ */
 void get_pixel_size(WORD *width,WORD *height)
 {
 #if CONF_WITH_VIDEL
@@ -725,14 +732,15 @@ void get_pixel_size(WORD *width,WORD *height)
         get_std_pixel_size(width,height);
     else
 #endif
-    /* ST TOS has its own set of magic numbers */
-    if (v_vt_rez == 400)        /* ST high */
-        *width = 372;
-    else if (v_hz_rez == 640)   /* ST medium */
-        *width = 169;
-    else *width = 338;          /* ST low */
-
-    *height = 372;
+    {
+        /* ST TOS has its own set of magic numbers */
+        if (v_vt_rez == 400)        /* ST high */
+            *width = 372;
+        else if (v_hz_rez == 640)   /* ST medium */
+            *width = 169;
+        else *width = 338;          /* ST low */
+        *height = 372;
+    }
 }
 
 /* hardware independant xbios routines */
