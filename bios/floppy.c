@@ -105,6 +105,9 @@ static void flop_detect_drive(WORD dev);
 static void floplock(WORD dev);
 static void flopunlk(void);
 
+/* issue command to current drive */
+static WORD flopcmd(WORD cmd);
+
 /* select/deselect drive and side in the PSG port A */
 static void select(WORD dev, WORD side);
 static void deselect(void);
@@ -323,9 +326,7 @@ static void flop_detect_drive(WORD dev)
 #if CONF_WITH_FDC
     floplock(dev);
     select(dev, 0);
-    set_fdc_reg(FDC_CS, FDC_RESTORE | FDC_HBIT | finfo[dev].actual_rate);
-    if (timeout_gpip(TIMEOUT)) {
-        /* timeout */
+    if (flopcmd(FDC_RESTORE | FDC_HBIT | finfo[dev].actual_rate) < 0) {
         KDEBUG(("flop_detect_drive(%d) timeout\n",dev));
         flopunlk();
         return;
@@ -829,6 +830,7 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
 #if CONF_WITH_FDC
     WORD retry;
     WORD status;
+    WORD cmd;
     LONG buflen = (LONG)count * SECTOR_SIZE;
 #endif
 
@@ -864,13 +866,13 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
         set_dma_addr((ULONG) buf);
         if (rw == RW_READ) {
             fdc_start_dma_read(1);
-            set_fdc_reg(FDC_CS, FDC_READ);
+            cmd = FDC_READ;
         } else {
             fdc_start_dma_write(1);
             falcon_delay(); /* a kludge - see comments at start of module */
-            set_fdc_reg(FDC_CS | DMA_WRBIT, FDC_WRITE);
+            cmd = FDC_WRITE;
         }
-        if (timeout_gpip(TIMEOUT)) {/* timeout */
+        if (flopcmd(cmd) < 0) {     /* timeout */
             err = EDRVNR;           /* drive not ready */
             break;                  /* no retry */
         }
@@ -942,9 +944,7 @@ static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side, WORD track_siz
         set_dma_addr((ULONG) buf);
         fdc_start_dma_write((track_size + SECTOR_SIZE-1) / SECTOR_SIZE);
         falcon_delay(); /* a kludge - see comments at start of module */
-        set_fdc_reg(FDC_CS | DMA_WRBIT, FDC_WRITETR);
-
-        if (timeout_gpip(TIMEOUT)) {    /* timeout */
+        if (flopcmd(FDC_WRITETR) < 0) { /* timeout */
             err = EDRVNR;               /* drive not ready */
             break;
         }
@@ -1094,23 +1094,57 @@ static void select(WORD dev, WORD side)
 
 static WORD set_track(WORD track)
 {
-    if (track == finfo[cur_dev].cur_track)
+    struct flop_info *fi = &finfo[cur_dev];
+    WORD cmd;
+
+    if (track == fi->cur_track)
         return 0;
 
     if (track == 0) {
-        set_fdc_reg(FDC_CS, FDC_RESTORE | finfo[cur_dev].actual_rate);
+        cmd = FDC_RESTORE;
     } else {
         set_fdc_reg(FDC_DR, track);
-        set_fdc_reg(FDC_CS, FDC_SEEK | finfo[cur_dev].actual_rate);
+        cmd = FDC_SEEK;
     }
-    if (timeout_gpip(TIMEOUT)) {
-        /* cur_track is certainly wrong now */
-        /* FIXME it shoud be reset using a Restore command */
+
+    if (flopcmd(cmd | fi->actual_rate) < 0) {
+        /* FIXME: when flopcmd() is fixed to do a Force Interrupt,
+         * we should do a Restore & reset cur_track to 0
+         */
         return E_SEEK;  /* seek error */
-    } else {
-        finfo[cur_dev].cur_track = track;
-        return 0;
     }
+
+    fi->cur_track = track;
+    return 0;
+}
+
+/*
+ * send command to fdc
+ *
+ * returns   0  ok
+ *          -1  timeout
+ */
+static WORD flopcmd(WORD cmd)
+{
+    WORD reg;
+
+    switch(cmd&0xf0) {
+    case 0xa0:      /* Write Sector */
+    case 0xb0:      /* Write Multiple Sector */
+    case 0xf0:      /* Write Track */
+        reg = FDC_CS | DMA_WRBIT;
+        break;
+    default:
+        reg = FDC_CS;
+    }
+    set_fdc_reg(reg, cmd);
+
+    if (timeout_gpip(TIMEOUT)) {
+        /* FIXME we should do a Force Interrupt here */
+        return -1;
+    }
+
+    return 0;
 }
 
 static WORD get_dma_status(void)

@@ -5886,3 +5886,6 @@ Start... early ages
   compiling with optimisation level -O2. (RFB)
 - bios/floppy.c: General tidy up of Flopfmt() code. (RFB)
 - bios/floppy.c: General tidy up of floprw(), flopwtrack(). (RFB)
+
+2014-12-15
+- bios/floppy.c: Small refactoring for future changes (smaller code too). (RFB)
