@@ -5890,3 +5890,5 @@ Start... early ages
 2014-12-15
 - bios/floppy.c: Small refactoring for future changes (smaller code too). (RFB)
 - bios/floppy.c: General tidy up of remainder of module. (RFB)
+- bios/startup.S: Fix bug: application cartridge initialisation address
+  was not being made 24-bit clean. This affected Hatari in 32-bit mode. (RFB)

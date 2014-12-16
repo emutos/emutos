@@ -1,7 +1,7 @@
 /*
  * startup.S - EmuTOS startup module
  *
- * Copyright (c) 2001-2013 by the EmuTOS development team
+ * Copyright (c) 2001-2014 by the EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -303,7 +303,7 @@ memdone:
 /*
  * void run_cartridge_applications(WORD typebit);
  *
- * Run all cartridge applications of the speficied type.
+ * Run all cartridge applications of the specified type.
  *
  * typebit: application type bit number which must be set to 1 to match
  */
@@ -327,7 +327,9 @@ testtype:
 #else
         movem.l d0-d7/a0-a6, -(sp)      // save registers
 #endif
-        move.l  4(a0), a0
+        move.l  4(a0),d0                // d0 = address of cartridge init
+        andi.l  #0x00ffffff,d0          // make it 24-bit clean
+        movea.l d0,a0
         jsr     (a0)                    // execute app in cartridge
 #ifdef __mcoldfire__
         movem.l (sp), d0-d7/a0-a6       // restore registers
