@@ -58,7 +58,6 @@
 
 /*
  * TODO and not implemented:
- * - mediach does not check the write-protect status
  * - on error, the geometry info should be reset to a sane state
  * - on error, should jump to critical error vector
  * - no 'virtual' disk B: mapped to disk A: when only one drive
@@ -109,11 +108,16 @@ static void flopunlk(void);
 static WORD flopcmd(WORD cmd);
 
 /* select/deselect drive and side in the PSG port A */
+static UBYTE set_psg_porta(UBYTE n);
+static UBYTE convert_drive_and_side(WORD dev, WORD side);
 static void select(WORD dev, WORD side);
 static void deselect(void);
 
 /* sets the track on the current drive, returns 0 or error */
 static WORD set_track(WORD track);
+
+/* called by flopunlk() to make FDC status available */
+static void dummy_seek(void);
 
 /* time to wait before aborting any FDC command.
  * this must be longer than the longest command.
@@ -178,9 +182,10 @@ static void fdc_start_dma_write(WORD count);
  * finfo[].cur_track contains a copy of the fdc track register for the current
  * drive, or -1 to indicate that the drive does not exist.
  *
- * finfo[].wp is set according to the corresponding bit in the fdc controller
- * status reg. As soon as this value is different for the drive, this means
- * that the floppy has changed.  YET TO BE IMPLEMENTED
+ * finfo[].wpstatus and finfo[].wplatch are used by flopvbl() to help in
+ * detecting a diskette change.  finfo[].wpstatus contains the most recent
+ * state of the write-protect status bit.  finfo[].wplatch is a latched copy
+ * of wpstatus.  see "handling of media change" below for more details.
  *
  * the flock variable in tosvars.s is used as following :
  * - floppy.c will set it before accessing to the DMA/FDC, and
@@ -223,6 +228,24 @@ static const WORD hd_steprate[] =
 
 #endif /* CONF_WITH_FDC */
 
+/*==== Handling of media change ===========================================*/
+
+/* when Write Protect is set in the FDC status register, it indicates one
+ * of two things: either there is no diskette inserted, or the inserted
+ * diskette is write-protected.
+ * 
+ * thus if we insert or eject a non-write-protected diskette, we can
+ * detect it by the transition from non-WP to WP.  however, if we insert
+ * or eject a write-protected diskette, WP is set before & after, so
+ * there is no transition.  there is no temporary glitch in the WP line
+ * during the insert or eject, contrary to some documentation.
+ *
+ * so we can use the status of the WP line only as a partial clue to media
+ * change.  if WP changes, then there is a media change; but if it is set
+ * and does not change, the media may have changed (this is presumably why
+ * that status exists as a possible return from Mediach()).
+ */
+
 static UBYTE drivetype;
 #define DD_DRIVE    0x00
 #define HD_DRIVE    0x01
@@ -235,7 +258,8 @@ static struct flop_info {
 #define DENSITY_HD  0x03
 #if CONF_WITH_FDC
   WORD cur_track;
-  BYTE wp;           /* != 0 means write protected */
+  UBYTE wpstatus;       /* current write protect status */
+  UBYTE wplatch;        /* latched copy of wpstatus */
 #endif
 } finfo[NUMFLOPPIES];
 
@@ -248,8 +272,10 @@ static void flop_init(WORD dev)
     finfo[dev].rate = seekrate;
 #if CONF_WITH_FDC
     finfo[dev].actual_rate = finfo[dev].rate;
-    finfo[dev].cur_track = -1;
     finfo[dev].cur_density = DENSITY_DD;
+    finfo[dev].cur_track = -1;
+    finfo[dev].wpstatus = 0;
+    finfo[dev].wplatch = 0;
 #endif
 }
 
@@ -349,32 +375,67 @@ static void flop_detect_drive(WORD dev)
  */
 LONG flop_mediach(WORD dev)
 {
-    WORD err;
+    struct flop_info *fi = &finfo[dev];
     struct fat16_bs *bootsec = (struct fat16_bs *) dskbufp;
 
     KDEBUG(("flop_mediach(%d)\n",dev));
 
-    /* TODO, monitor write-protect status in flopvbl... */
+    /*
+     * if the latch has not been set since we reset it last time, status
+     * can never have been set, so there has been no diskette eject (and
+     * the current diskette is not write-protected, fwiw)
+     */
+    if (!fi->wplatch) {
+        KDEBUG(("flop_mediach(): no media change detected by flopvbl()\n"));
+        return MEDIANOCHANGE;
+    }
 
-    KDEBUG(("flop_mediach() read bootsec\n"));
+    /*
+     * the latch has been set, so we have a possible or definite diskette
+     * change.  we clear the latch & will report a change of some kind.
+     */
+    fi->wplatch = FALSE;
 
-    /* for now, assume it is unsure and look at the serial number */
-    /* read bootsector at track 0, side 0, sector 1 */
-    err = floprw((LONG)bootsec,RW_READ,dev,1,0,0,1);
-    if (err)        /* can't even read the bootsector */
+    /*
+     * if the current status is clear, then we must have gone from a WP
+     * diskette or empty drive to a non-WP diskette at some time since the
+     * last call to flop_mediach(), so there must have been a diskette
+     * load.  we report a definite mediachange.
+     */
+    if (!fi->wpstatus) {
+        KDEBUG(("flop_mediach(): media change detected by flopvbl()\n"));
         return MEDIACHANGE;
+    }
+
+    /*
+     * the current status was set, as was the latch.  we might have
+     * inserted a WP diskette in an empty drive, or removed a WP diskette
+     * from a drive, or even replaced one WP diskette by another.  we
+     * attempt to read the boot sector to check the diskette serial number
+     */
+    if (floprw((LONG)bootsec,RW_READ,dev,1,0,0,1) != 0) {
+        KDEBUG(("flop_mediach(): can't read boot sector => media change\n"));
+        return MEDIACHANGE;
+    }
 
     KDEBUG(("flop_mediach() got bootsec, serial=0x%02x%02x%02x, serial2=0x%02x%02x%02x%02x\n",
             bootsec->serial[0],bootsec->serial[1],bootsec->serial[2],
             bootsec->serial2[0],bootsec->serial2[1],bootsec->serial2[2],bootsec->serial2[3]));
 
     if (memcmp(bootsec->serial,blkdev[dev].serial,3)
-     || memcmp(bootsec->serial2,blkdev[dev].serial2,4))
+     || memcmp(bootsec->serial2,blkdev[dev].serial2,4)) {
+        KDEBUG(("flop_mediach(): serial number change => media change\n"));
         return MEDIACHANGE;
+    }
 
-    KDEBUG(("flop_mediach() serial is unchanged\n"));
+    /*
+     * the serial number has not changed, but there could be two diskettes
+     * with the same serial number, or the diskette could have been ejected,
+     * modified on another system, and replaced.  so we have to say "maybe".
+     */
+    KDEBUG(("flop_mediach(): serial number unchanged => maybe media change\n"));
 
-    return MEDIANOCHANGE;
+    return MEDIAMAYCHANGE;
 }
 
 
@@ -997,8 +1058,17 @@ struct flop_info *f = &finfo[dev];
 
 static void flopunlk(void)
 {
-    LONG now = hz_200;  /* only fetch it once */
+    LONG now;
 
+    /*
+     * issue a seek to the current track.  because a seek is
+     * a type I floppy command, this ensures that the status
+     * subsequently fetched by flopvbl() is valid, allowing
+     * flopvbl() to handle media change properly.
+     */
+    dummy_seek();
+
+    now = hz_200;       /* only fetch it once */
     units[cur_dev].last_access = now;
     deselect_time = now + DESELECT_TIMEOUT;
 
@@ -1006,8 +1076,16 @@ static void flopunlk(void)
     flock = 0;
 }
 
+/*
+ * flopvbl() performs two functions:
+ *  . detects a change of diskette
+ *  . turns off the drive motor when it times out
+ */
 void flopvbl(void)
 {
+    WORD n, status;
+    UBYTE a, old_a, wp;
+
     /* don't do anything if the DMA circuitry is being used */
     if (flock)
         return;
@@ -1016,34 +1094,92 @@ void flopvbl(void)
     if (frclock & 7)
         return;
 
-    /* TODO - read the write-protect bit in the status register for
-     * both drives
+    /*
+     * handle diskette change 
+     * we check one floppy every 8 VBLs, like Atari TOS
      */
+    if ((nflops == 2)           /* if there are 2 floppies and */
+     && (frclock & 0x0008))     /* it's an odd multiple of 8,  */
+        n = 1;                  /* check floppy 1              */
+    else n = 0;
+
+    /*
+     * we read the write-protect bit in the status register for the
+     * appropriate floppy drive, to help in detecting media change.
+     * for more info, see the comments at the beginning of this module.
+     */
+    a = convert_drive_and_side(n,0);
+    old_a = set_psg_porta(a);   /* remember previous drive/side bits */
+
+    status = get_fdc_reg(FDC_CS);
+
+    wp = status & FDC_WRI_PRO;
+    finfo[n].wpstatus = wp;
+    finfo[n].wplatch |= wp;
+
+    set_psg_porta(old_a);       /* reselect previous drive/side */
 
     /* if no drives are selected, no need to deselect them */
     if (deselect_time == 0UL)
         return;
 
     /*
-     * if it's a while since any drive has been accessed, we deselect
-     * both drives.  this handles the case of an empty drive that has
-     * been accessed, leaving the motor on (the FDC never times out,
-     * because it never sees any indexes)
+     * we deselect the drives for two reasons:
+     * 1. it's been a while since any drive has been accessed.  this
+     *    handles the case of an empty drive that has been accessed,
+     *    leaving the motor on (the FDC never times out, because it
+     *    never sees any indexes)
+     * 2. the motor is off (due to the FDC timing out after 10
+     *    revolutions)
      */
-    if (hz_200 > deselect_time) {
-        deselect();
-        return;
-    }
-
-    /*
-     * if the motor is off (due to the FDC timing out after 10
-     * revolutions), we also make sure both drives are deselected
-     */
-    if ((get_fdc_reg(FDC_CS) & FDC_MOTORON) == 0)
+    if ((hz_200 > deselect_time) || ((status & FDC_MOTORON) == 0))
         deselect();
 }
 
 /*==== low level register access ==========================================*/
+
+ /*
+ * sets the floppy-drive related bits of PSG port A
+ * returns the previous value of those bits
+ */
+static UBYTE set_psg_porta(UBYTE n)
+{
+    WORD old_sr;
+    UBYTE a, old_a;
+
+    old_sr = set_sr(0x2700);
+    PSG->control = PSG_PORT_A;
+    old_a = PSG->control;
+
+    a = (old_a & 0xf8) | (n & 0x07);/* remove old drive & side bits, insert new */
+
+    PSG->data = a;
+    set_sr(old_sr);
+
+    return old_a & 0x07;
+}
+
+ /*
+ * convert floppy drive/side to PSG port A bits
+ */
+static UBYTE convert_drive_and_side(WORD dev, WORD side)
+{
+    UBYTE n;
+
+    n = 0x07;       /* default is deselect both floppies, set side = 0 */
+    switch(dev) {
+    case 0:
+        n &= ~2;        /* select floppy 0 */
+        break;
+    case 1:
+        n &= ~4;        /* select floppy 1 */
+        break;
+    }
+    if (side != 0)
+        n &= ~1;        /* set side = 1 */
+
+    return n;
+}
 
 /*
  * deselect floppies
@@ -1061,29 +1197,27 @@ static void deselect(void)
  */
 static void select(WORD dev, WORD side)
 {
-    WORD old_sr;
-    BYTE a;
+    UBYTE n;
 
-    old_sr = set_sr(0x2700);
-    PSG->control = PSG_PORT_A;
-    a = PSG->control;
-
-    a |= 0x07;      /* deselect both floppies, set side = 0 */
-    switch(dev) {
-    case 0:
-        a &= ~2;    /* select floppy 0 */
-        break;
-    case 1:
-        a &= ~4;    /* select floppy 1 */
-        break;
-    }
-    if (side != 0)
-        a &= ~1;    /* set side = 1 */
-
-    PSG->data = a;
-    set_sr(old_sr);
+    n = convert_drive_and_side(dev,side);
+    set_psg_porta(n);
 }
 
+/*
+ * seek to the current track on the current device
+ */
+static void dummy_seek(void)
+{
+    struct flop_info *fi = &finfo[cur_dev];
+
+    set_fdc_reg(FDC_DR, fi->cur_track);
+    flopcmd(FDC_SEEK | fi->actual_rate);    /* ignore any errors here */
+}
+
+/*
+ * seek to the specified track on the current device
+ * (does nothing if already at that track)
+ */
 static WORD set_track(WORD track)
 {
     struct flop_info *fi = &finfo[cur_dev];
@@ -1120,10 +1254,12 @@ static WORD flopcmd(WORD cmd)
 {
     WORD reg;
 
+//FIXME: set timeout based on motor-on status
+
     switch(cmd&0xf0) {
-    case 0xa0:      /* Write Sector */
-    case 0xb0:      /* Write Multiple Sector */
-    case 0xf0:      /* Write Track */
+    case FDC_WRITE:             /* Write Sector */
+    case (FDC_WRITE|FDC_MBIT):  /* Write Multiple Sector */
+    case FDC_WRITETR:           /* Write Track */
         reg = FDC_CS | DMA_WRBIT;
         break;
     default:

@@ -5896,3 +5896,7 @@ Start... early ages
 2014-12-16
 - bios/screen.c: Fix bug: gl_wbox was too big in videl display mode, causing
   window margins to be too wide. (RFB)
+
+2014-12-17
+- bios/blkdev.c bios/floppy.c: Add media change detection to floppy VBL
+  handler. (RFB)
