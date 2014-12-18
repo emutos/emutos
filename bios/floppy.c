@@ -119,11 +119,13 @@ static WORD set_track(WORD track);
 /* called by flopunlk() to make FDC status available */
 static void dummy_seek(void);
 
-/* time to wait before aborting any FDC command.
- * this must be longer than the longest command.
- * seeking to the end with spin-up sequence may take more than 2 seconds.
+/* time (in ticks) to wait before aborting any FDC command; this
+ * must be longer than the time required for the longest command.
+ * the time is greater if the motor is off and therefore spinup
+ * is required.
  */
-#define TIMEOUT (3*CLOCKS_PER_SEC)  /* in ticks */
+#define MOTORON_TIMEOUT  (3*CLOCKS_PER_SEC/2)   /* 1.5 seconds */
+#define MOTOROFF_TIMEOUT (3*CLOCKS_PER_SEC)     /* 3.0 seconds */
 
 /* deselection timeout (see "handling of drive deselection" below) */
 #define DESELECT_TIMEOUT (3*CLOCKS_PER_SEC) /* in ticks */
@@ -1252,9 +1254,11 @@ static WORD set_track(WORD track)
  */
 static WORD flopcmd(WORD cmd)
 {
+    LONG timeout;
     WORD reg;
 
-//FIXME: set timeout based on motor-on status
+    /* set timeout based on motor-on status */
+    timeout = (get_fdc_reg(FDC_CS) & FDC_MOTORON) ? MOTORON_TIMEOUT : MOTOROFF_TIMEOUT;
 
     switch(cmd&0xf0) {
     case FDC_WRITE:             /* Write Sector */
@@ -1267,7 +1271,7 @@ static WORD flopcmd(WORD cmd)
     }
     set_fdc_reg(reg, cmd);
 
-    if (timeout_gpip(TIMEOUT)) {
+    if (timeout_gpip(timeout)) {
         /* FIXME we should do a Force Interrupt here */
         return -1;
     }

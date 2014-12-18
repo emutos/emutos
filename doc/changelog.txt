@@ -5903,3 +5903,4 @@ Start... early ages
 - desk/deskwin.c desk/deskwin.h: Add space before & after pathname in
   desktop window title. (RFB)
 - desk/deskwin.h: Reduce desktop RAM usage slightly. (RFB)
+- bios/floppy.c: Reduce floppy timeout if spinup is not required. (RFB)
