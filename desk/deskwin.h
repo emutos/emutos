@@ -42,7 +42,7 @@ WNODE
  * output of the longest translated version of the STINFOST resource item.
  * as of december 2014, this is 51 bytes for the Greek-language version.
  */
-        BYTE            w_info[60];             /*
+        BYTE            w_info[60];
 };
 
 
