@@ -594,10 +594,13 @@ void win_sname(WNODE *pw)
         BYTE            *psrc;
         BYTE            *pdst;
 
-        psrc = &pw->w_path->p_spec[0];
-        pdst = &pw->w_name[0];
+        psrc = pw->w_path->p_spec;
+        pdst = pw->w_name;
+
+        *pdst++ = ' ';
         while ( (*psrc) && (*psrc != '*') )
           *pdst++ = *psrc++;
+        *pdst++ = ' ';
         *pdst = NULL;
 } /* win_sname */
 

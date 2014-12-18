@@ -36,7 +36,7 @@ WNODE
         WORD            w_pnrow;                /* physical # of rows   */
         WORD            w_vnrow;                /* virtual # of rows    */
         PNODE           *w_path;
-        BYTE            w_name[LEN_ZPATH];
+        BYTE            w_name[LEN_ZPATH+2];    /* allow for leading & trailing spaces */
         BYTE            w_info[81];             /* NOT USED v2.1 */
 };
 

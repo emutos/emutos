@@ -5900,3 +5900,5 @@ Start... early ages
 2014-12-17
 - bios/blkdev.c bios/floppy.c: Add media change detection to floppy VBL
   handler. (RFB)
+- desk/deskwin.c desk/deskwin.h: Add space before & after pathname in
+  desktop window title. (RFB)
