@@ -5902,3 +5902,4 @@ Start... early ages
   handler. (RFB)
 - desk/deskwin.c desk/deskwin.h: Add space before & after pathname in
   desktop window title. (RFB)
+- desk/deskwin.h: Reduce desktop RAM usage slightly. (RFB)

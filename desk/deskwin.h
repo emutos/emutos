@@ -37,7 +37,12 @@ WNODE
         WORD            w_vnrow;                /* virtual # of rows    */
         PNODE           *w_path;
         BYTE            w_name[LEN_ZPATH+2];    /* allow for leading & trailing spaces */
-        BYTE            w_info[81];             /* NOT USED v2.1 */
+/*
+ * the following array must be large enough to hold the sprintf-formatted
+ * output of the longest translated version of the STINFOST resource item.
+ * as of december 2014, this is 51 bytes for the Greek-language version.
+ */
+        BYTE            w_info[60];             /*
 };
 
 
