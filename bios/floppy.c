@@ -1235,10 +1235,10 @@ static WORD set_track(WORD track)
         cmd = FDC_SEEK;
     }
 
-    if (flopcmd(cmd | fi->actual_rate) < 0) {
-        /* FIXME: when flopcmd() is fixed to do a Force Interrupt,
-         * we should do a Restore & reset cur_track to 0
-         */
+    if (flopcmd(cmd | fi->actual_rate) < 0) {   /* timeout */
+        if (cmd == FDC_SEEK)
+            flopcmd(FDC_RESTORE | fi->actual_rate); /* attempt to restore */
+        fi->cur_track = 0;                          /* assume we did */
         return E_SEEK;  /* seek error */
     }
 
@@ -1272,7 +1272,8 @@ static WORD flopcmd(WORD cmd)
     set_fdc_reg(reg, cmd);
 
     if (timeout_gpip(timeout)) {
-        /* FIXME we should do a Force Interrupt here */
+        set_fdc_reg(FDC_CS,FDC_IRUPT);  /* Force Interrupt */
+        fdc_delay();                    /* allow it to complete */
         return -1;
     }
 
