@@ -5916,3 +5916,6 @@ Start... early ages
 - aes/gemfslib.c: Code cleanup: use strlcpy() instead of strcpy(). (RFB)
 - bdos/fsdir.c desk/deskdir.c util/string.c: Code cleanup: eliminate tabs
   from source code. (RFB)
+- aes/gemfmalt.c aes/gemgsxif.c aes/gemlib.h bdos/bdosmain.c
+  bios/dmasound.c bios/floppy.c include/config.h: Code cleanup: remove
+  trailing spaces from source code. (RFB)

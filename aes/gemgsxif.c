@@ -64,7 +64,7 @@
  */
 #define memsize(wdwidth,h,nplanes)  ((LONG)(wdwidth)*(h)*(nplanes)*2)
 
-/* 
+/*
  * the minimum menu/alert buffer size
  *
  * in the documentation for older versions of Atari TOS, it's said to be

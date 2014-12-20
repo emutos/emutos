@@ -718,7 +718,7 @@
 #endif
 
 /*
- * Set CONF_WITH_SHOW_FILE to 1 to support 
+ * Set CONF_WITH_SHOW_FILE to 1 to support
  */
 #ifndef CONF_WITH_SHOW_FILE
  # define CONF_WITH_SHOW_FILE 1
@@ -916,7 +916,7 @@
 
 #define NUM_ACCS 6              /* maximum number of desk accessory   */
                                 /* files (.ACC) that will be loaded   */
-                                /* AND the maximum number of desk     */ 
+                                /* AND the maximum number of desk     */
                                 /* accessory slots available (one     */
                                 /* slot per mn_register() call)       */
 

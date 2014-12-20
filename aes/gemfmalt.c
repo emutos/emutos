@@ -162,7 +162,7 @@ static void fm_parse(LONG tree, LONG palstr, WORD *picnum, WORD *pnummsg,
 
 /*
  *  Routine to build the alert
- * 
+ *
  *  Inputs are:
  *      tree            the alert dialog
  *      haveicon        boolean, 1 if icon specified

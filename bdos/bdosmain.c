@@ -579,10 +579,10 @@ restrt:
         }
     }
 
-    
+
     /*
      * for Fopen(), Fcreate() we check for special names
-     * 
+     *
      * special names can be upper or lower case, but NOT mixed
      */
     rc = 0;

@@ -416,7 +416,7 @@ LONG setinterrupt(UWORD mode, WORD cause)
     if (!has_falcon_dmasound)
     {
         /* On STE and TT, interrupts are always enabled, so just return success
-         * when "enabling" them for playback, or an error code otherwise */ 
+         * when "enabling" them for playback, or an error code otherwise */
         if (cause == 1)
             return 0;
         else

@@ -402,7 +402,7 @@ THEGLO
  BYTE       s_cmd[MAXPATHLEN];          /* fully-qualified program name */
  BYTE       g_work[WORKAREASIZE];       /* general work area */
  DTA        g_dta;                      /* AES's DTA */
- 
+
  FPD        g_fpdx[NFORKS];
  ORECT      g_olist[NUM_ORECT];
 

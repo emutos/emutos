@@ -171,7 +171,7 @@ static void fdc_start_dma_write(WORD count);
  *
  * finfo[] is an array of structures, one entry per floppy drive.  structure
  * members are as follows:
- * 
+ *
  * finfo[].rate is the stepping rate set by Floprate() (or by 'seekrate' if
  * Floprate() has never been called).
  *
@@ -235,7 +235,7 @@ static const WORD hd_steprate[] =
 /* when Write Protect is set in the FDC status register, it indicates one
  * of two things: either there is no diskette inserted, or the inserted
  * diskette is write-protected.
- * 
+ *
  * thus if we insert or eject a non-write-protected diskette, we can
  * detect it by the transition from non-WP to WP.  however, if we insert
  * or eject a write-protected diskette, WP is set before & after, so
@@ -1097,7 +1097,7 @@ void flopvbl(void)
         return;
 
     /*
-     * handle diskette change 
+     * handle diskette change
      * we check one floppy every 8 VBLs, like Atari TOS
      */
     if ((nflops == 2)           /* if there are 2 floppies and */
