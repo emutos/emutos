@@ -1881,8 +1881,8 @@ WORD free_available_dnds(void)
         dmd = drvtbl[i];
         if (!dmd)
             continue;
-		if (dmd->m_dtl)
-			process_dnd_tree(dmd->m_dtl);
+        if (dmd->m_dtl)
+            process_dnd_tree(dmd->m_dtl);
     }
 
     KDEBUG(("freed %ld DNDs, %ld OFDs\n",freed_dnds,freed_ofds));

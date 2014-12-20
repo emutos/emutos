@@ -5914,3 +5914,5 @@ Start... early ages
 - aes/optimize.c: Code cleanup: use strlcpy() for greater clarity, reduced
   code size. (RFB)
 - aes/gemfslib.c: Code cleanup: use strlcpy() instead of strcpy(). (RFB)
+- bdos/fsdir.c desk/deskdir.c util/string.c: Code cleanup: eliminate tabs
+  from source code. (RFB)

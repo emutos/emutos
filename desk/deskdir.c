@@ -663,7 +663,7 @@ static WORD output_path(BYTE *srcpth, BYTE *dstpth)
     {
         dos_mkdir(dstpth);
         if (!DOS_ERR)               /* ok, we created the new folder */
-			break;
+            break;
         if (DOS_AX != E_NOACCESS)   /* some strange problem */
             return d_errmsg();
 
