@@ -5907,3 +5907,7 @@ Start... early ages
 
 2014-12-19
 - bios/floppy.c: Issue Force Interrupt if floppy command times out. (RFB)
+
+2014-12-20
+- aes/gemgsxif.c: Tweak menu buffer size to fix menu droppings from QED
+  in medium res. (RFB)
