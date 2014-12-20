@@ -395,8 +395,7 @@ static void set_mask(BYTE *mask,BYTE *path)
         pend = fs_pspec(path, NULL);
         if (!*pend)                 /* if there's no mask, add one */
           strcpy(pend, "*.*");
-        pend[LEN_ZFNAME] = '\0';    /* avoid possibility of overflow on strcpy() */
-        strcpy(mask, pend);
+        strlcpy(mask, pend, LEN_ZFNAME);
 }
 
 

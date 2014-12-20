@@ -5913,3 +5913,4 @@ Start... early ages
   in medium res. (RFB)
 - aes/optimize.c: Code cleanup: use strlcpy() for greater clarity, reduced
   code size. (RFB)
+- aes/gemfslib.c: Code cleanup: use strlcpy() instead of strcpy(). (RFB)
