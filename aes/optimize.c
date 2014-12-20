@@ -30,7 +30,7 @@
 
 #include "string.h"
 #include "xbiosbind.h"
-
+//#include "kprint.h"
 
 
 WORD sound(WORD isfreq, WORD freq, WORD dura)
@@ -148,17 +148,12 @@ void inf_numset(LONG tree, WORD obj, ULONG value)
 void inf_sset(LONG tree, WORD obj, BYTE *pstr)
 {
         BYTE            *text;
-        WORD            txtlen, len;
         TEDINFO         *ted;
         OBJECT          *objptr = ((OBJECT *)tree) + obj;
 
         ted = (TEDINFO *)objptr->ob_spec;
         text = (BYTE *)ted->te_ptext;
-        txtlen = ted->te_txtlen;
-        len = strlen(pstr);
-        len = min(len, txtlen - 1);             /* allow for nul */
-        memcpy(text, pstr, len);
-        text[len] = '\0';                       /* add nul */
+        strlcpy(text,pstr,ted->te_txtlen);
 }
 
 
