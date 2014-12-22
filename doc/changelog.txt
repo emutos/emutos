@@ -5919,3 +5919,7 @@ Start... early ages
 - aes/gemfmalt.c aes/gemgsxif.c aes/gemlib.h bdos/bdosmain.c
   bios/dmasound.c bios/floppy.c include/config.h: Code cleanup: remove
   trailing spaces from source code. (RFB)
+
+2014-12-22
+- aes/gemgsxif.c: Remove residual (PC-GEM?) code for add-on graphics-only
+  memory. (RFB)

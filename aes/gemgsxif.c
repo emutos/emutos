@@ -56,8 +56,6 @@
  * v_opnvwk( pwork_in, phandle, pwork_out )
  */
 
-#define GRAFMEM         0xFFFFFFFFl
-
 /*
  * calculate memory size to buffer a display area, given its
  * width (in words), height (in pixels), and the number of planes
@@ -99,7 +97,6 @@ static WORD  gl_graphic;
 
 /* Some local Prototypes: */
 static void  g_v_opnwk(WORD *pwork_in, WORD *phandle, WS *pwork_out );
-static ULONG  gsx_gbufflen(void);
 
 
 static LONG form_alert_bufsize(void)
@@ -124,11 +121,7 @@ static ULONG gsx_mcalc(void)
     LONG mem;
 
     gsx_fix(&gl_tmp, 0x0L, 0, 0);           /* store screen info    */
-    gl_mlen = gsx_gbufflen();
-    if (gl_mlen != 0x0l)
-        gl_tmp.fd_addr = GRAFMEM;             /* buffer not in sys mem */
-    else
-        gl_mlen = memsize(gl_tmp.fd_wdwidth,gl_tmp.fd_h,gl_tmp.fd_nplanes) / 4;
+    gl_mlen = memsize(gl_tmp.fd_wdwidth,gl_tmp.fd_h,gl_tmp.fd_nplanes) / 4;
 
     if (gl_mlen < MIN_MENU_BUFFER_SIZE)
         gl_mlen = MIN_MENU_BUFFER_SIZE;
@@ -147,8 +140,7 @@ void gsx_malloc(void)
     ULONG   mlen;
 
     mlen = gsx_mcalc();                     /* need side effects now     */
-    if (gl_tmp.fd_addr != GRAFMEM)          /* buffer on graphics board? */
-        gl_tmp.fd_addr = dos_alloc(mlen);     /*  no -- get from sys mem   */
+    gl_tmp.fd_addr = dos_alloc(mlen);
 }
 
 
@@ -162,16 +154,8 @@ void gsx_mfree(void)
 
 void gsx_mret(LONG *pmaddr, LONG *pmlen)
 {
-    if (gl_tmp.fd_addr == GRAFMEM)
-    {
-        *pmaddr = 0x0l;
-        *pmlen = 0x0l;
-    }
-    else
-    {
-        *pmaddr = gl_tmp.fd_addr;
-        *pmlen = gl_mlen;
-    }
+     *pmaddr = gl_tmp.fd_addr;
+     *pmlen = gl_mlen;
 }
 
 
@@ -440,18 +424,6 @@ WORD gsx_char(void)
 }
 
 
-
-/* this function seems bogus: EXTENDED_INQUIRE causes vq_extnd() to be
- * called, which copies INQ_TAB[] to intout[].  I have not been able to
- * find anywhere in EmuTOS where INQ_TAB[26] is set to a non-zero value,
- * so it seems that intout[26] will always contain zeros, and therefore
- * that this function will always return zero - Roger
- */
-static ULONG gsx_gbufflen(void)
-{
-    gsx_1code(EXTENDED_INQUIRE, 1);
-    return *(LONG *)(&intout[26]);
-}
 
 /* Get the number of planes (or bit depth) of the current screen */
 WORD gsx_nplanes(void)
