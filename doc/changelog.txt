@@ -5925,4 +5925,5 @@ Start... early ages
   memory. (RFB)
 
 2015-01-02
-- POTFILES.in: Added desksupp.c to translated sources. (VRI)
+- po/POTFILES.in: Added desksupp.c to translated sources. (VRI)
+- po/fr.po: Updated. (VRI)
