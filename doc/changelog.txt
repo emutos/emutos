@@ -5923,3 +5923,6 @@ Start... early ages
 2014-12-22
 - aes/gemgsxif.c: Remove residual (PC-GEM?) code for add-on graphics-only
   memory. (RFB)
+
+2015-01-02
+- POTFILES.in: Added desksupp.c to translated sources. (VRI)
