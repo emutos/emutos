@@ -5927,3 +5927,7 @@ Start... early ages
 2015-01-02
 - po/POTFILES.in: Added desksupp.c to translated sources. (VRI)
 - po/fr.po: Updated. (VRI)
+
+2015-01-02
+- desk/desktop.def desk/desktop.rsc: Small corrections to some alert
+  texts. (RFB)
