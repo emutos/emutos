@@ -4,7 +4,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2014 The EmuTOS development team
+*                 2002-2015 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -340,6 +340,7 @@ static WORD show_buf(const char *s,LONG len)
 {
         LONG n;
         BYTE c, cprev = 0, response;
+        BYTE *msg;
 
         n = len;
         while(n-- > 0)
@@ -357,7 +358,8 @@ static WORD show_buf(const char *s,LONG len)
           {
             if (++linecount >= pagesize)
             {
-              dos_conws(_("-More-"));
+              rsrc_gaddr(R_STRING,STMORE,(LONG *)&msg);
+              dos_conws(msg);          /* "-More-" */
               while(1)
               {
                 response = dos_rawcin() & 0xff;
@@ -390,6 +392,7 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
 {
         LONG rc, n;
         WORD handle, scr_width, scr_height;
+        BYTE *msg;
 
         rc = dos_open(name,0);
         if (DOS_ERR)
@@ -428,7 +431,8 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
 
         if (rc == 0L)
         {
-          dos_conws(_("-End of file-"));
+          rsrc_gaddr(R_STRING,STEOF,(LONG *)&msg);
+          dos_conws(msg);   /* "-End of file-" */
           dos_rawcin();
         }
 

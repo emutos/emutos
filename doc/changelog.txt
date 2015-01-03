@@ -5932,3 +5932,5 @@ Start... early ages
 - desk/desktop.def desk/desktop.rsc: Small corrections to some alert
   texts. (RFB)
 - aes/gem.rsc: Update file selector to allow room for translated text. (RFB)
+- desk/desktop.def desk/desktop.rsc desk/desksupp.c: Moved localised text
+  strings to resource for consistency. (RFB)
