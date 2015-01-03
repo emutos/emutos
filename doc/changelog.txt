@@ -5934,3 +5934,5 @@ Start... early ages
 - aes/gem.rsc: Update file selector to allow room for translated text. (RFB)
 - desk/desktop.def desk/desktop.rsc desk/desksupp.c: Moved localised text
   strings to resource for consistency. (RFB)
+- desk/desktop.def desk/desktop.rsc desk/deskfun.c: Switch Cancel|Retry
+  buttons in alert for consistency with AES alerts. (RFB)

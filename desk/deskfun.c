@@ -155,7 +155,7 @@ WORD fun_mkdir(WNODE *pw_node)
                   fun_alert(1,STDEEPPA,NULLPTR);
                 else
                 {
-                  if (fun_alert(1,STFOFAIL,NULLPTR) == 1)
+                  if (fun_alert(2,STFOFAIL,NULLPTR) == 2)
                     cont = TRUE;
                 }
               }
