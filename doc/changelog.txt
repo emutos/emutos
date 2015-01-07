@@ -5936,3 +5936,6 @@ Start... early ages
   strings to resource for consistency. (RFB)
 - desk/desktop.def desk/desktop.rsc desk/deskfun.c: Switch Cancel|Retry
   buttons in alert for consistency with AES alerts. (RFB)
+
+2015-01-07
+- po/fr.po: Updated. (VRI)

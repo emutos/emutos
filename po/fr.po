@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EMUTOS beta\n"
 "POT-Creation-Date: 2004-01-27 14:37+0100\n"
-"PO-Revision-Date: 2015-01-02 20:27+0100\n"
+"PO-Revision-Date: 2015-01-08 00:26+0100\n"
 "Last-Translator: Vincent Riviere <vincent.riviere@freesbee.fr>\n"
 "Language-Team: French <fr@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -444,24 +444,24 @@ msgid "  Install disk drive..."
 msgstr "  Installer un lecteur..."
 
 #: desk/desk_rsc.c:419
-msgid "  Configure application...  \007A"
-msgstr "  Configurer une application..."
+msgid "  Configure application... \007A"
+msgstr "  Configurer une application... \007A"
 
 #: desk/desk_rsc.c:425
-msgid "-------------------------------"
-msgstr "-------------------------------"
+msgid "------------------------------"
+msgstr "-----------------------------------"
 
 #: desk/desk_rsc.c:431
 msgid "  Set preferences..."
 msgstr "  Préférences..."
 
 #: desk/desk_rsc.c:437
-msgid "  Save desktop              \007V"
-msgstr "  Sauver le bureau"
+msgid "  Save desktop             \007V"
+msgstr "  Sauver le bureau              \007V"
 
 #: desk/desk_rsc.c:443
-msgid "  Change resolution         \007C"
-msgstr "  Changer la résolution     \007C"
+msgid "  Change resolution...     \007C"
+msgstr "  Changer la résolution...      \007C"
 
 #: desk/desk_rsc.c:467
 msgid "  Sort by name   \007N"
@@ -740,18 +740,26 @@ msgid "TRASH"
 msgstr "CORBEILLE"
 
 #: desk/desk_rsc.c:1692
+msgid "-More-"
+msgstr "-Plus-"
+
+#: desk/desk_rsc.c:1693
+msgid "-End of file-"
+msgstr "-Fin de fichier-"
+
+#: desk/desk_rsc.c:1694
 msgid "[2]["
 "Switch resolution?][Yes|No]"
 msgstr "[2]["
 "Changer de résolution ?][Oui|Non]"
 
-#: desk/desk_rsc.c:1693
+#: desk/desk_rsc.c:1695
 msgid "[2]["
-"Show this document?  ][Show|Cancel]"
+"Show this document?][Show|Cancel]"
 msgstr "[2]["
-"Afficher ce document ?  ][Afficher|Annuler]"
+"Afficher ce document ?][Afficher|Annuler]"
 
-#: desk/desk_rsc.c:1694
+#: desk/desk_rsc.c:1696
 msgid "[1]["
 "This document type has no|"
 "associated application.][  OK  ]"
@@ -759,7 +767,7 @@ msgstr "[1]["
 "Ce type de document n'est|"
 "associé à aucune application.][  OK  ]"
 
-#: desk/desk_rsc.c:1697
+#: desk/desk_rsc.c:1699
 msgid "[1]["
 "The GEM Desktop has no more|"
 "available windows. Before you|"
@@ -771,7 +779,7 @@ msgstr "[1]["
 "fermer une fenêtre inutilisée|"
 "avant d'ouvrir un disque.][  OK  ]"
 
-#: desk/desk_rsc.c:1704
+#: desk/desk_rsc.c:1706
 msgid "[3]["
 "Cannot find FORMAT.PRG|"
 "or FORMAT.TTP.][  OK  ]"
@@ -779,7 +787,7 @@ msgstr "[3]["
 "Impossible de trouver|"
 "FORMAT.PRG ou FORMAT.TTP.][  OK  ]"
 
-#: desk/desk_rsc.c:1707
+#: desk/desk_rsc.c:1709
 msgid "[3]["
 "Formatting will ERASE all|"
 "information on the disk in|"
@@ -793,7 +801,7 @@ msgstr "[3]["
 "cela ne vous dérange pas de|"
 "les perdre.][  OK  |Annuler]"
 
-#: desk/desk_rsc.c:1716
+#: desk/desk_rsc.c:1718
 msgid "[3]["
 "You cannot copy a parent folder|"
 "into one of its child folders.][  OK  ]"
@@ -802,19 +810,19 @@ msgstr "[3]["
 "dossier parent dans l'un de|"
 "ses dossiers enfants.][  OK  ]"
 
-#: desk/desk_rsc.c:1719
+#: desk/desk_rsc.c:1721
 msgid "[3]["
 "Invalid copy operation.][  OK  ]"
 msgstr "[3]["
 "Opération de copie invalide.][  OK  ]"
 
-#: desk/desk_rsc.c:1720
+#: desk/desk_rsc.c:1722
 msgid "[2]["
 "Abort this operation?][  Yes  |  No  ]"
 msgstr "[2]["
 "Annuler cette opération ?][  Oui  |  Non  ]"
 
-#: desk/desk_rsc.c:1721
+#: desk/desk_rsc.c:1723
 msgid "[3]["
 "If you are sure you want to|"
 "delete ALL the information on|"
@@ -827,7 +835,7 @@ msgstr "[3]["
 "du disque %c:, cliquez sur OK.|"
 "Sinon, cliquez sur Annuler.][  OK  |Annuler]"
 
-#: desk/desk_rsc.c:1730
+#: desk/desk_rsc.c:1732
 msgid "[1]["
 "There is not enough space|"
 "available to configure this|"
@@ -841,17 +849,16 @@ msgstr "[1]["
 "Vous devez retirer une|"
 "application déjà configurée.][  OK  ]"
 
-#: desk/desk_rsc.c:1739
+#: desk/desk_rsc.c:1741
 msgid "[2]["
 "You cannot create a folder|"
 "with that name. Please retry|"
-"and supply a new name, or|"
-"cancel the New Folder request.][ Retry | Cancel ]"
+"with a new name, or cancel.][Cancel|Retry]"
 msgstr "[2]["
 "Vous ne pouvez pas créer un|"
 "dossier avec ce nom. Veuillez|"
-"réessayer en fournissant un|"
-"nouveau nom, ou annuler.][Réessayer|Annuler]"
+"réessayer avec un nouveau nom,|"
+"ou annuler.][Annuler|Réessayer]"
 
 #: desk/desk_rsc.c:1746
 msgid "[1]["
@@ -964,14 +971,6 @@ msgstr "[1]["
 "de la corbeille ailleurs sur|"
 "le bureau, mais pas sur une|"
 "autre icône.][  OK  ]"
-
-#: desk/desksupp.c:360
-msgid "-More-"
-msgstr "-Plus-"
-
-#: desk/desksupp.c:431
-msgid "-End of file-"
-msgstr "-Fin de fichier-"
 
 #: desk/icons.c:1030
 msgid " Generic "
