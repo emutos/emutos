@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: EMUTOS beta\n"
-"POT-Creation-Date: 2014-11-20 21:29+0100\n"
-"PO-Revision-Date: 2014-11-20 21:30+0100\n"
+"POT-Creation-Date: 2015-01-08 23:24+0100\n"
+"PO-Revision-Date: 2015-01-08 23:49+0100\n"
 "Last-Translator: Thomas Huth <huth at tuxfamily.org>\n"
 "Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -86,22 +86,26 @@ msgstr ""
 "System angehalten!\n"
 
 #: aes/gem_rsc.c:35
-msgid "Selection:  ________.___"
-msgstr "Auswahl:    ________.___"
+msgid "Drive:"
+msgstr "Laufwerk:"
 
 #: aes/gem_rsc.c:40
-msgid "Drives:"
-msgstr "Laufwerke:"
+msgid "Selection: ________.___"
+msgstr "Auswahl:   ________.___"
 
-#: aes/gem_rsc.c:586 desk/desk_rsc.c:20
+#: aes/gem_rsc.c:298
+msgid "Directory:"
+msgstr "Verzeichnis:"
+
+#: aes/gem_rsc.c:592 desk/desk_rsc.c:20
 msgid "OK"
 msgstr "OK"
 
-#: aes/gem_rsc.c:592 desk/desk_rsc.c:21
+#: aes/gem_rsc.c:598 desk/desk_rsc.c:21
 msgid "Cancel"
 msgstr "Abbruch"
 
-#: aes/gem_rsc.c:690
+#: aes/gem_rsc.c:696
 msgid "[2]["
 "You cannot write to the disk|"
 "in drive %c: because it is|"
@@ -111,7 +115,7 @@ msgstr "[2]["
 "Schreibschutz nicht be-|"
 "schreibbar.][Abbruch|Nochmal]"
 
-#: aes/gem_rsc.c:695
+#: aes/gem_rsc.c:701
 msgid "[2]["
 "Drive %c: is not responding.|"
 "Ensure that the disk is loaded|"
@@ -124,7 +128,7 @@ msgstr "[2]["
 "bei einer Festplatten die Kabel|"
 "prüfen.][Abbruch|Nochmal]"
 
-#: aes/gem_rsc.c:704
+#: aes/gem_rsc.c:710
 msgid "[2]["
 "Data on the disk in drive %c:|"
 "may be damaged.  Ensure that|"
@@ -138,7 +142,7 @@ msgstr "[2]["
 "bzw. die Festplatte richtig|"
 "angeschlossen ist.][Abbruch|Nochmal]"
 
-#: aes/gem_rsc.c:713
+#: aes/gem_rsc.c:719
 msgid "[2]["
 "Cannot read data on the disk|"
 "in drive %c:.  Ensure that|"
@@ -152,7 +156,7 @@ msgstr "[2]["
 "und das Laufwerk angeschaltet|"
 "und angeschlossen ist.][Abbruch|Nochmal]"
 
-#: aes/gem_rsc.c:722
+#: aes/gem_rsc.c:728
 msgid "[2]["
 "Your output device is not|"
 "receiving data.  Before you|"
@@ -166,7 +170,7 @@ msgstr "[2]["
 "dass es Strom hat, angeschal-|"
 "tet ist und Papier hat.][Abbruch|Nochmal]"
 
-#: aes/gem_rsc.c:731
+#: aes/gem_rsc.c:737
 msgid "[3]["
 "An error has occurred in GEM.|"
 "Please contact the EmuTOS|"
@@ -178,7 +182,7 @@ msgstr "[3]["
 "bericht an das EmuTOS-Team|"
 "schicken.][Abbruch]"
 
-#: aes/gem_rsc.c:738
+#: aes/gem_rsc.c:744
 msgid "[1]["
 "The application cannot find|"
 "the folder or document you|"
@@ -190,7 +194,7 @@ msgstr "[1]["
 "Ordner nicht finden. Bitte|"
 "den Namen überprüfen.][  OK  ]"
 
-#: aes/gem_rsc.c:745
+#: aes/gem_rsc.c:751
 msgid "[3]["
 "Your system doesn't have|"
 "enough memory to run EmuDesk.][Cancel]"
@@ -198,7 +202,7 @@ msgstr "[3]["
 "Nicht genug freier Speicher|"
 "um EmuDesk zu starten.][Abbruch]"
 
-#: aes/gem_rsc.c:748
+#: aes/gem_rsc.c:754
 msgid "[1]["
 "The application doesn't have|"
 "enough room to open another|"
@@ -211,7 +215,7 @@ msgstr "[1]["
 "mente schließen, um Platz zu|"
 "schaffen.][  OK  ]"
 
-#: aes/gem_rsc.c:755
+#: aes/gem_rsc.c:761
 msgid "[1]["
 "An item with this name already|"
 "exists in the folder, or the|"
@@ -225,7 +229,7 @@ msgstr "[1]["
 "schützt. Über \"Info/Umbenennen\"|"
 "kann der Status geändert werden.][  OK  ]"
 
-#: aes/gem_rsc.c:764
+#: aes/gem_rsc.c:770
 msgid "[1]["
 "The specified disk drive does|"
 "not exist.  Check the drive|"
@@ -235,7 +239,7 @@ msgstr "[1]["
 "nicht. Bitte den Laufwerksbuch-|"
 "staben nochmal überprüfen.][  OK  ]"
 
-#: aes/gem_rsc.c:769
+#: aes/gem_rsc.c:775
 msgid "[1]["
 "You cannot delete the folder|"
 "in which you are currently|"
@@ -245,7 +249,7 @@ msgstr "[1]["
 "gearbeitet wird, kann nicht|"
 "gelöscht werden.][  OK  ]"
 
-#: aes/gem_rsc.c:774
+#: aes/gem_rsc.c:780
 msgid "[1]["
 "Cannot run the application|"
 "you have selected.  It may|"
@@ -257,20 +261,20 @@ msgstr "[1]["
 "die Datei beschädigt oder der|"
 "freie Speicher zu knapp.][  OK  ]"
 
-#: aes/gem_rsc.c:781
+#: aes/gem_rsc.c:787
 msgid "[3]["
 "DOS error #%d.][Cancel]"
 msgstr "[3]["
 "DOS-Fehler #%d.][Abbruch]"
 
-#: aes/gem_rsc.c:782
+#: aes/gem_rsc.c:788
 msgid "[3]["
 "Unsupported AES function #%d.][Cancel]"
 msgstr "[3]["
 "Nicht unterstützte AES-Funktion|"
 "Nummer #%d.][Abbruch]"
 
-#: aes/gem_rsc.c:783
+#: aes/gem_rsc.c:789
 msgid "[3]["
 "An unexpected error has|"
 "occurred.  Please report|"
@@ -282,7 +286,7 @@ msgstr "[3]["
 "Fehler an das EmuTOS-Entwickler-|"
 "team melden.][Abbruch]"
 
-#: aes/gem_rsc.c:790
+#: aes/gem_rsc.c:796
 msgid "ITEM SELECTOR"
 msgstr "AUSWAHL"
 
@@ -439,24 +443,24 @@ msgid "  Install disk drive..."
 msgstr "  Installiere Laufwerk..."
 
 #: desk/desk_rsc.c:419
-msgid "  Configure application...  \007A"
-msgstr "  Konfiguriere Anwendung... \007A"
-
-#: desk/desk_rsc.c:425
-msgid "-------------------------------"
-msgstr "-------------------------------"
+msgid "  Configure application... \007A"
+msgstr "  Anwendung einrichten...  \007A"
 
 #: desk/desk_rsc.c:431
 msgid "  Set preferences..."
 msgstr "  Voreinstellungen..."
 
+#: desk/desk_rsc.c:425
+msgid "------------------------------"
+msgstr "------------------------------"
+
 #: desk/desk_rsc.c:437
-msgid "  Save desktop              \007V"
-msgstr "  Sichere Desktop           \007V"
+msgid "  Save desktop             \007V"
+msgstr "  Sichere Desktop          \007V"
 
 #: desk/desk_rsc.c:443
-msgid "  Change resolution         \007C"
-msgstr "  Auflösung ändern          \007C"
+msgid "  Change resolution...     \007C"
+msgstr "  Auflösung ändern...      \007C"
 
 #: desk/desk_rsc.c:467
 msgid "  Sort by name   \007N"
@@ -735,18 +739,26 @@ msgid "TRASH"
 msgstr "PAPIERKORB"
 
 #: desk/desk_rsc.c:1692
+msgid "-More-"
+msgstr "-Mehr-"
+
+#: desk/desk_rsc.c:1693
+msgid "-End of file-"
+msgstr "-Ende der Datei-"
+
+#: desk/desk_rsc.c:1694
 msgid "[2]["
 "Switch resolution?][Yes|No]"
 msgstr "[2]["
 "Auflösung wechseln?][Ja|Nein]"
 
-#: desk/desk_rsc.c:1693
+#: desk/desk_rsc.c:1695
 msgid "[2]["
-"Show this document?  ][Show|Cancel]"
+"Show this document?][Show|Cancel]"
 msgstr "[2]["
-"Dokument anzeigen?  ][Anzeigen|Abbruch]"
+"Dokument anzeigen?][Anzeigen|Abbruch]"
 
-#: desk/desk_rsc.c:1694
+#: desk/desk_rsc.c:1696
 msgid "[1]["
 "This document type has no|"
 "associated application.][  OK  ]"
@@ -754,7 +766,7 @@ msgstr "[1]["
 "Das Dokument ist keiner|"
 "Anwendung zugeordnet.][  OK  ]"
 
-#: desk/desk_rsc.c:1697
+#: desk/desk_rsc.c:1699
 msgid "[1]["
 "The GEM Desktop has no more|"
 "available windows. Before you|"
@@ -767,7 +779,7 @@ msgstr "[1]["
 "werden kann, muss ein offenes|"
 "Fenster geschlossen werden.][  OK  ]"
 
-#: desk/desk_rsc.c:1704
+#: desk/desk_rsc.c:1706
 msgid "[3]["
 "Cannot find FORMAT.PRG|"
 "or FORMAT.TTP.][  OK  ]"
@@ -775,7 +787,7 @@ msgstr "[3]["
 "Kann FORMAT.PRG bzw.|"
 "FORMAT.TTP nicht finden.][  OK  ]"
 
-#: desk/desk_rsc.c:1707
+#: desk/desk_rsc.c:1709
 msgid "[3]["
 "Formatting will ERASE all|"
 "information on the disk in|"
@@ -789,7 +801,7 @@ msgstr "[3]["
 "wenn alles auf diesem Medium|"
 "gelöscht werden darf.][  OK  |Abbruch]"
 
-#: desk/desk_rsc.c:1716
+#: desk/desk_rsc.c:1718
 msgid "[3]["
 "You cannot copy a parent folder|"
 "into one of its child folders.][  OK  ]"
@@ -798,19 +810,19 @@ msgstr "[3]["
 "Ordner in einen seiner untergeordneten|"
 "Ordner kopieren.][  OK  ]"
 
-#: desk/desk_rsc.c:1719
+#: desk/desk_rsc.c:1721
 msgid "[3]["
 "Invalid copy operation.][  OK  ]"
 msgstr "[3]["
 "Ungültiger Kopiervorgang.][  OK  ]"
 
-#: desk/desk_rsc.c:1720
+#: desk/desk_rsc.c:1722
 msgid "[2]["
 "Abort this operation?][  Yes  |  No  ]"
 msgstr "[2]["
 "Vorgang abbrechen?][  Ja  |  Nein  ]"
 
-#: desk/desk_rsc.c:1721
+#: desk/desk_rsc.c:1723
 msgid "[3]["
 "If you are sure you want to|"
 "delete ALL the information on|"
@@ -823,7 +835,7 @@ msgstr "[3]["
 "%c: gelöscht. Sonst bitte auf|"
 "Abbruch drücken.][  OK  |Abbruch]"
 
-#: desk/desk_rsc.c:1730
+#: desk/desk_rsc.c:1732
 msgid "[1]["
 "There is not enough space|"
 "available to configure this|"
@@ -837,17 +849,16 @@ msgstr "[1]["
 "konfigurierte Anwendung muss|"
 "vorher entfernt werden.][  OK  ]"
 
-#: desk/desk_rsc.c:1739
+#: desk/desk_rsc.c:1741
 msgid "[2]["
 "You cannot create a folder|"
 "with that name. Please retry|"
-"and supply a new name, or|"
-"cancel the New Folder request.][ Retry | Cancel ]"
+"with a new name, or cancel.][Cancel|Retry]"
 msgstr "[2]["
 "Ein Ordner mit diesem Namen|"
 "kann nicht angelegt werden.|"
 "Bitte anderen Namen wählen|"
-"oder Vorgang abbrechen.][ Wiederholen | Abbrechen ]"
+"oder Vorgang abbrechen.][Wiederholen|Abbrechen]"
 
 #: desk/desk_rsc.c:1746
 msgid "[1]["
