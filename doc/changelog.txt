@@ -5939,3 +5939,4 @@ Start... early ages
 
 2015-01-07
 - po/fr.po: Updated. (VRI)
+- po/POTFILES.in: Removed desksupp.c from translated sources. (VRI)
