@@ -5943,3 +5943,6 @@ Start... early ages
 
 2015-01-08
 - po/de.po: Updated german translations. (THH)
+
+2015-01-09
+- po/de.po: Fixed inverted buttons in "cannot create folder" dialog. (VRI)

@@ -858,7 +858,7 @@ msgstr "[2]["
 "Ein Ordner mit diesem Namen|"
 "kann nicht angelegt werden.|"
 "Bitte anderen Namen wählen|"
-"oder Vorgang abbrechen.][Wiederholen|Abbrechen]"
+"oder Vorgang abbrechen.][Abbrechen|Wiederholen]"
 
 #: desk/desk_rsc.c:1746
 msgid "[1]["
@@ -1044,3 +1044,4 @@ msgstr " Scannen "
 #: desk/icons.c:1048
 msgid " Mail "
 msgstr " Post "
+
