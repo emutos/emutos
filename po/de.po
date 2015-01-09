@@ -446,13 +446,13 @@ msgstr "  Installiere Laufwerk..."
 msgid "  Configure application... \007A"
 msgstr "  Anwendung einrichten...  \007A"
 
-#: desk/desk_rsc.c:431
-msgid "  Set preferences..."
-msgstr "  Voreinstellungen..."
-
 #: desk/desk_rsc.c:425
 msgid "------------------------------"
 msgstr "------------------------------"
+
+#: desk/desk_rsc.c:431
+msgid "  Set preferences..."
+msgstr "  Voreinstellungen..."
 
 #: desk/desk_rsc.c:437
 msgid "  Save desktop             \007V"
