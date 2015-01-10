@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EMUTOS beta\n"
 "POT-Creation-Date: 2004-01-27 14:37+0100\n"
-"PO-Revision-Date: 2015-01-08 00:26+0100\n"
+"PO-Revision-Date: 2015-01-10 12:26+0100\n"
 "Last-Translator: Vincent Riviere <vincent.riviere@freesbee.fr>\n"
 "Language-Team: French <fr@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -289,7 +289,7 @@ msgstr "[3]["
 
 #: aes/gem_rsc.c:796
 msgid "ITEM SELECTOR"
-msgstr "SELECTEUR DE FICHIER"
+msgstr "SÉLECTEUR DE FICHIER"
 
 #: desk/desk_rsc.c:18
 msgid "Number of folders: _____"
@@ -433,7 +433,7 @@ msgstr "  Formater..."
 
 #: desk/desk_rsc.c:395
 msgid "  Execute EmuCON  ^Z"
-msgstr "  Console         ^Z"
+msgstr "  Exécuter EmuCON ^Z"
 
 #: desk/desk_rsc.c:401
 msgid "  Shutdown        ^Q"
@@ -569,27 +569,27 @@ msgstr "Stop"
 
 #: desk/desk_rsc.c:1136
 msgid "NEW FOLDER"
-msgstr "NOUV DOSSIER"
+msgstr "NOUVEAU DOSSIER"
 
 #: desk/desk_rsc.c:1169
 msgid "SET PREFERENCES"
-msgstr "PREFERENCES"
+msgstr "PRÉFÉRENCES"
 
 #: desk/desk_rsc.c:1175
 msgid "Confirm deletes?"
-msgstr "Confirmer effacement?"
+msgstr "Confirmer effacement ?"
 
 #: desk/desk_rsc.c:1199
 msgid "Confirm copies?"
-msgstr "Confirmer la copie?"
+msgstr "Confirmer copie ?"
 
 #: desk/desk_rsc.c:1223
 msgid "Confirm overwrites?"
-msgstr "Confirmer écrasement?"
+msgstr "Confirmer écrasement ?"
 
 #: desk/desk_rsc.c:1247
 msgid "Double-click speed:"
-msgstr "Vitesse double-clic:"
+msgstr "Vitesse double-clic :"
 
 #: desk/desk_rsc.c:1295
 msgid "Click"
@@ -605,7 +605,7 @@ msgstr "Ouverture des menus:"
 
 #: desk/desk_rsc.c:1313
 msgid "Sound effects:"
-msgstr "Effets sonores:"
+msgstr "Effets sonores :"
 
 #: desk/desk_rsc.c:1325
 msgid "On"
@@ -617,7 +617,7 @@ msgstr "Off"
 
 #: desk/desk_rsc.c:1337
 msgid "Time format:"
-msgstr "Format heure:"
+msgstr "Format heure :"
 
 #: desk/desk_rsc.c:1349
 msgid "12 Hour"
@@ -629,7 +629,7 @@ msgstr "24 heures"
 
 #: desk/desk_rsc.c:1361
 msgid "Date format:"
-msgstr "Format date:"
+msgstr "Format date :"
 
 #: desk/desk_rsc.c:1373
 msgid "MM-DD-YY"

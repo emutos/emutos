@@ -5946,4 +5946,7 @@ Start... early ages
 
 2015-01-09
 - po/de.po: Fixed inverted buttons in "cannot create folder" dialog. (VRI)
+
+2015-01-10
 - po/ru.po: Updated. Contributed by Dima Sobolev. (VRI)
+- po/fr.po: Improved a few strings. (VRI)
