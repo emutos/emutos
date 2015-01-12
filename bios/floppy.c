@@ -377,10 +377,13 @@ static void flop_detect_drive(WORD dev)
  */
 LONG flop_mediach(WORD dev)
 {
-    struct flop_info *fi = &finfo[dev];
     struct fat16_bs *bootsec = (struct fat16_bs *) dskbufp;
 
     KDEBUG(("flop_mediach(%d)\n",dev));
+
+#if CONF_WITH_FDC
+    {
+    struct flop_info *fi = &finfo[dev];
 
     /*
      * if the latch has not been set since we reset it last time, status
@@ -408,6 +411,9 @@ LONG flop_mediach(WORD dev)
         KDEBUG(("flop_mediach(): media change detected by flopvbl()\n"));
         return MEDIACHANGE;
     }
+
+    }
+#endif
 
     /*
      * the current status was set, as was the latch.  we might have

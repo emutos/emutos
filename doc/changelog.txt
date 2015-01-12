@@ -5952,3 +5952,6 @@ Start... early ages
 - po/fr.po: Improved a few strings. (VRI)
 - desk/desktop.def desk/desktop.rsc: Fix width of File Information dialog
   for correct low-res display. (RFB)
+
+2015-01-12
+- bios/floppy.c: Fix compilation errors for m548x and amiga targets. (RFB)
