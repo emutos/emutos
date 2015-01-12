@@ -5957,3 +5957,5 @@ Start... early ages
 - bios/floppy.c: Fix compilation errors for m548x and amiga targets. (RFB)
 - desk/desktop.def desk/desktop.rsc: Restored width of Read-only button in
   File Information dialog to accommodate translated text. (RFB)
+- desk/desktop.def desk/desktop.rsc: For all dialogs except About, make
+  inner border 1-pixel wide (like Atari TOS). (RFB)
