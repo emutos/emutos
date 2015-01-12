@@ -19,4 +19,4 @@ do
 done
 
 echo -e "-------------"
-printf "Total %7d" $total
+printf "Total %7d\n" $total
