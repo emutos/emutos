@@ -188,6 +188,19 @@ static void detect_blitter(void)
 
 #if CONF_WITH_DIP_SWITCHES
 
+int has_dip_switches;
+
+static void detect_dip_switches(void)
+{
+  has_dip_switches = 0;
+
+  /* The auto-detection currently crashes ARAnyM-JIT. */
+  if (cookie_mch != MCH_ARANYM && check_read_byte(DIP_SWITCHES+1))
+    has_dip_switches = 1;
+
+  KDEBUG(("has_dip_switches = %d\n", has_dip_switches));
+}
+
 /* DIP switch usage is as follows (according to the "ATARI FALCON030
  * Service Guide", dated October 1, 1992):
  * bit 7: off => no DMA sound hardware
@@ -198,11 +211,7 @@ static void detect_blitter(void)
 
 static void setvalue_swi(void)
 {
-  cookie_swi = 0x000000FF;
-  if (check_read_byte(DIP_SWITCHES+1)) {
-    cookie_swi = (*(volatile UWORD *)DIP_SWITCHES)>>8;
-  }
-
+  cookie_swi = (*(volatile UWORD *)DIP_SWITCHES)>>8;
   KDEBUG(("cookie_swi = 0x%08lx\n", cookie_swi));
 }
 
@@ -340,7 +349,8 @@ static void setvalue_frb(void)
 static void setvalue_fdc(void)
 {
 #if CONF_WITH_DIP_SWITCHES
-  if (!(cookie_swi & 0x40)) {   /* switch *off* means AJAX controller is installed */
+  if (has_dip_switches && !(cookie_swi & 0x40)) {
+    /* switch *off* means AJAX controller is installed */
     cookie_fdc = FDC_1ATC;
   } else
 #endif
@@ -467,9 +477,9 @@ void fill_cookie_jar(void)
    * generally used to indicate the presence of additional hardware which
    * will be represented by other cookies.
    */
-  setvalue_swi();
-  if (cookie_mch == MCH_MSTE || cookie_mch == MCH_TT
-      || cookie_mch == MCH_FALCON) {
+  detect_dip_switches(); /* Must be called *after* setvalue_mch() */
+  if (has_dip_switches) {
+    setvalue_swi();
     cookie_add(COOKIE_SWI, cookie_swi);
   }
 #endif

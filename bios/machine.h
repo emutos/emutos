@@ -82,6 +82,9 @@ extern int has_dmasound;  /* in dmasound.c */
 extern int has_microwire; /* in dmasound.c */
 extern int has_falcon_dmasound; /* in dmasound.c */
 #endif
+#if CONF_WITH_DIP_SWITCHES
+extern int has_dip_switches;
+#endif
 
 /*
  * functions

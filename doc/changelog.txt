@@ -5959,3 +5959,7 @@ Start... early ages
   File Information dialog to accommodate translated text. (RFB)
 - desk/desktop.def desk/desktop.rsc: For all dialogs except About, make
   inner border 1-pixel wide (like Atari TOS). (RFB)
+
+2015-01-13
+- bios/machine.c bios/machine.h: Properly detect DIP switches, with special
+  case to avoid crashing with ARAnyM-JIT. (VRI)
