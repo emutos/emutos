@@ -5963,3 +5963,6 @@ Start... early ages
 2015-01-13
 - bios/machine.c bios/machine.h: Properly detect DIP switches, with special
   case to avoid crashing with ARAnyM-JIT. (VRI)
+
+2015-01-14
+- po/gr.po: Updated Greek translation. Contributed by Christos Tziotzis. (VRI)
