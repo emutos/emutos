@@ -5966,3 +5966,6 @@ Start... early ages
 
 2015-01-14
 - po/gr.po: Updated Greek translation. Contributed by Christos Tziotzis. (VRI)
+
+2015-01-15
+- po/fi.po: Updated Finnish translation. Contributed by Eero Tamminen. (VRI)
