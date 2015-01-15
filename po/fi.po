@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fi\n"
 "POT-Creation-Date: 2012-05-19 21:14+0300\n"
-"PO-Revision-Date: 2015-01-15 11:53+0100\n"
+"PO-Revision-Date: 2015-01-15 21:25+0100\n"
 "Last-Translator: Eero Tamminen <eerott@gmail>\n"
 "Language-Team: Suomi\n"
 "MIME-Version: 1.0\n"
@@ -170,7 +170,7 @@ msgstr "[2]["
 "ota tietoja.  Varmista,|"
 "että laitteella on virtaa,|"
 "se on kiinni ja valmiina|"
-"vastaanottamaan.][Cancel|Retry]"
+"vastaanottamaan.][Kumoa|Uudestaan]"
 
 #: aes/gem_rsc.c:737
 msgid "[3]["
@@ -202,7 +202,7 @@ msgid "[3]["
 msgstr "[3]["
 "Järjestelmässäsi ei ole|"
 "riittävasti muistia EmuTOS:n|"
-"ajamiseen.][Sulje]"
+"ajamiseen.][Kumoa]"
 
 #: aes/gem_rsc.c:754
 msgid "[1]["
@@ -271,7 +271,7 @@ msgstr "[3]["
 msgid "[3]["
 "Unsupported AES function #%d.][Cancel]"
 msgstr "[3]["
-"Tuntematon AES funktio #%d.][Kumoa]"
+"Tuntematon AES-funktio #%d.][Kumoa]"
 
 #: aes/gem_rsc.c:789
 msgid "[3]["
@@ -754,7 +754,7 @@ msgstr "[2]["
 msgid "[2]["
 "Show this document?][Show|Cancel]"
 msgstr "[2]["
-"Näytä tiedosto?][Näytä|Peru]"
+"Näytä tämä tiedosto?][ Näytä | Kumoa ]"
 
 #: desk/desk_rsc.c:1696
 msgid "[1]["
@@ -773,7 +773,7 @@ msgid "[1]["
 msgstr "[1]["
 "GEM työpöydälle ei voi aukaista|"
 "useampia ikkunoita.  Ennen levyn|"
-"aikaisua, sulje jokin ikkuna,|"
+"aukaisua, sulje jokin ikkuna,|"
 "jota et käytä.][  OK  ]"
 
 #: desk/desk_rsc.c:1706
@@ -851,7 +851,7 @@ msgid "[2]["
 msgstr "[2]["
 "Antamasi nimistä hakemistoa|"
 "ei voi luoda. Kokeile muuta|"
-"nimeä.][Peru|Toista]"
+"nimeä.][Kumoa|Uudestaan]"
 
 #: desk/desk_rsc.c:1746
 msgid "[1]["
@@ -878,8 +878,8 @@ msgstr "[2]["
 "EMUDESK.INF tiedoston luonti|"
 "epäonnistui. Varmista, että|"
 "käynnistysasemassa on levyke|"
-"ja klikkaa OK, tai peru|"
-"työpöydän talletus.][  OK  ][ Peru ]"
+"ja klikkaa OK, tai kumoa|"
+"työpöydän talletus.][  OK  ][Kumoa]"
 
 #: desk/desk_rsc.c:1764
 msgid "[3]["
@@ -920,7 +920,7 @@ msgid "[1]["
 "or applications that you want|"
 "to delete PERMANENTLY!][  OK  ]"
 msgstr "[1]["
-"Veda roskakoriin levykkeet,|"
+"Vedä roskakoriin levykkeet,|"
 "kansiot, tiedostot ja|"
 "sovellukset, jotka haluat|"
 "poistaa PYSYVÄSTI!][  OK  ]"
@@ -933,18 +933,18 @@ msgid "[1]["
 "can copy them to disks or drag|"
 "them to the trash.][  OK  ]"
 msgstr "[1]["
-"Et voi vetää kansioita,|"
+"Et voi siirtää kansioita,|"
 "tiedostoja tai sovelluksia|"
 "työpöydälle. Voit kuitenkin|"
-"kopioida niitä levyille|"
-"tai vetää ne roskakoriin.][  OK  ]"
+"siirtää/kopioida niitä|"
+"levyille tai roskakoriin.][  OK  ]"
 
 #: desk/desk_rsc.c:1799
 msgid "[1]["
 "You cannot drag the trash can|"
 "into a window.][  OK  ]"
 msgstr "[1]["
-"Et voi vetää roskakoria|"
+"Et voi siirtää roskakoria|"
 "ikkunaan.][  OK  ]"
 
 #: desk/desk_rsc.c:1802
@@ -955,7 +955,7 @@ msgid "[1]["
 "it on top of another icon.][  OK  ]"
 msgstr "[1]["
 "Voit siirtää roskakorin muualle|"
-"työpöydällä, muttet toisen|"
+"työpöydällä, mutta et toisen|"
 "ikonin päälle.][  OK  ]"
 
 #: desk/icons.c:1030
@@ -992,7 +992,7 @@ msgstr " Kaavio "
 
 #: desk/icons.c:1038
 msgid " Outline "
-msgstr " Ulkoviiva "
+msgstr " Hahmotus "
 
 #: desk/icons.c:1039
 msgid " Accounting "
@@ -1000,7 +1000,7 @@ msgstr " Kirjanpito "
 
 #: desk/icons.c:1040
 msgid " Multi-Function "
-msgstr " Monitoiminen "
+msgstr " Monitoimi "
 
 #: desk/icons.c:1041
 msgid " Education "

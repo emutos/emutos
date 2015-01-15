@@ -5969,3 +5969,4 @@ Start... early ages
 
 2015-01-15
 - po/fi.po: Updated Finnish translation. Contributed by Eero Tamminen. (VRI)
+- po/fr.po: Improved a few strings. Contributed by Eero Tamminen. (VRI)
