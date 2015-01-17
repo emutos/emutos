@@ -32,6 +32,8 @@
 #include "tosvars.h"
 #include "vectors.h"
 #include "kprint.h"
+#include "machine.h"
+#include "cookie.h"
 #include "coldfire.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
@@ -283,8 +285,17 @@ void detect_ide(void)
     int i, bitmask;
 
     for (i = 0, bitmask = 1, has_ide = 0; i < NUM_IDE_INTERFACES; i++, bitmask <<= 1)
+    {
+#if CONF_WITH_ARANYM
+        if (is_aranym && i > 0)
+        {
+            /* ARAnyM-JIT crashes when detecting extra IDE interfaces */
+            continue;
+        }
+#endif
         if (check_read_byte((long)&ide_interface[i].command))
             has_ide |= bitmask;
+    }
 #endif
 
     KDEBUG(("has_ide = %d\n",has_ide));

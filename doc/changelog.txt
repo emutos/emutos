@@ -5974,3 +5974,5 @@ Start... early ages
 2015-01-17
 - include/config.h bios/machine.c bios/machine.h: Early detection of ARAnyM
   with new CONF_WITH_ARANYM define and is_aranym flag. (VRI)
+- bios/ide.c: Do not detect additional IDE interfaces on ARAnyM due to crashes
+  with some versions of ARAnyM-JIT. (VRI)
