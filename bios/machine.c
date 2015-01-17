@@ -246,22 +246,18 @@ static void setvalue_vdo(void)
   KDEBUG(("cookie_vdo = 0x%08lx\n", cookie_vdo));
 }
 
-#if CONF_ATARI_HARDWARE
-/* detect ARAnyM */
-#define ARANYM_NAME     "aranym"
-static int is_it_aranym(void)
-{
-  return (strncasecmp(machine_name(), ARANYM_NAME, strlen(ARANYM_NAME)) == 0);
-}
-#endif /* CONF_ATARI_HARDWARE */
-
 /* machine type */
 static void setvalue_mch(void)
 {
 #if CONF_ATARI_HARDWARE
-  if (is_it_aranym()) {
+  if (FALSE) {
+    /* Dummy case for conditional compilation */
+  }
+#if CONF_WITH_ARANYM
+  else if (is_aranym) {
     cookie_mch = MCH_ARANYM;
   }
+#endif
 #if CONF_WITH_VIDEL
   else if(has_videl) {
     cookie_mch = MCH_FALCON;
@@ -363,8 +359,21 @@ static void setvalue_fdc(void)
 
 #endif /* CONF_WITH_FDC */
 
+#if CONF_WITH_ARANYM
+int is_aranym;
+
+static void aranym_machine_detect(void)
+{
+  #define ARANYM_NAME "aranym"
+  is_aranym = !strncasecmp(machine_name(), ARANYM_NAME, strlen(ARANYM_NAME));
+}
+#endif /* CONF_WITH_ARANYM */
+
 void machine_detect(void)
 {
+#if CONF_WITH_ARANYM
+  aranym_machine_detect();
+#endif
 #ifdef MACHINE_AMIGA
   amiga_machine_detect();
 #endif

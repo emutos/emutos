@@ -5970,3 +5970,7 @@ Start... early ages
 2015-01-15
 - po/fi.po: Updated Finnish translation. Contributed by Eero Tamminen. (VRI)
 - po/fr.po: Improved a few strings. Contributed by Eero Tamminen. (VRI)
+
+2015-01-17
+- include/config.h bios/machine.c bios/machine.h: Early detection of ARAnyM
+  with new CONF_WITH_ARANYM define and is_aranym flag. (VRI)

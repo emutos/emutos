@@ -50,6 +50,9 @@ extern long cookie_frb;
  * these are != 0 if the feature is present
  */
 
+#if CONF_WITH_ARANYM
+extern int is_aranym;
+#endif
 #if CONF_WITH_STE_SHIFTER
 extern int has_ste_shifter;
 #endif
