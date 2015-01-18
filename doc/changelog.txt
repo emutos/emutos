@@ -5976,3 +5976,6 @@ Start... early ages
   with new CONF_WITH_ARANYM define and is_aranym flag. (VRI)
 - bios/ide.c: Do not detect additional IDE interfaces on ARAnyM due to crashes
   with some versions of ARAnyM-JIT. (VRI)
+
+2015-01-18
+- bios/machine.c: Use new flag is_aranym in DIP switch detection. (VRI)

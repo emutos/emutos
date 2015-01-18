@@ -192,11 +192,17 @@ int has_dip_switches;
 
 static void detect_dip_switches(void)
 {
-  has_dip_switches = 0;
-
-  /* The auto-detection currently crashes ARAnyM-JIT. */
-  if (cookie_mch != MCH_ARANYM && check_read_byte(DIP_SWITCHES+1))
-    has_dip_switches = 1;
+#if CONF_WITH_ARANYM
+  if (is_aranym)
+  {
+    /* The auto-detection currently crashes ARAnyM-JIT. */
+    has_dip_switches = 0;
+  }
+  else
+#endif
+  {
+    has_dip_switches = check_read_byte(DIP_SWITCHES+1);
+  }
 
   KDEBUG(("has_dip_switches = %d\n", has_dip_switches));
 }
@@ -366,6 +372,8 @@ static void aranym_machine_detect(void)
 {
   #define ARANYM_NAME "aranym"
   is_aranym = !strncasecmp(machine_name(), ARANYM_NAME, strlen(ARANYM_NAME));
+
+  KDEBUG(("is_aranym = %d\n", is_aranym));
 }
 #endif /* CONF_WITH_ARANYM */
 
@@ -391,6 +399,9 @@ void machine_detect(void)
 #endif
 #if CONF_WITH_DMASOUND
   detect_dmasound();
+#endif
+#if CONF_WITH_DIP_SWITCHES
+  detect_dip_switches();
 #endif
 #if CONF_WITH_BLITTER
   detect_blitter();
@@ -486,7 +497,6 @@ void fill_cookie_jar(void)
    * generally used to indicate the presence of additional hardware which
    * will be represented by other cookies.
    */
-  detect_dip_switches(); /* Must be called *after* setvalue_mch() */
   if (has_dip_switches) {
     setvalue_swi();
     cookie_add(COOKIE_SWI, cookie_swi);
