@@ -286,15 +286,16 @@ void detect_ide(void)
 
     for (i = 0, bitmask = 1, has_ide = 0; i < NUM_IDE_INTERFACES; i++, bitmask <<= 1)
     {
-#if CONF_WITH_ARANYM
-        if (is_aranym && i > 0)
-        {
-            /* ARAnyM-JIT crashes when detecting extra IDE interfaces */
-            continue;
-        }
-#endif
         if (check_read_byte((long)&ide_interface[i].command))
             has_ide |= bitmask;
+
+#if CONF_WITH_ARANYM
+        if (is_aranym)
+        {
+            /* ARAnyM-JIT crashes when detecting extra IDE interfaces */
+            break;
+        }
+#endif /* CONF_WITH_ARANYM */
     }
 #endif
 
