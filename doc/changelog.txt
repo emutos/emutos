@@ -5979,3 +5979,4 @@ Start... early ages
 
 2015-01-18
 - bios/machine.c: Use new flag is_aranym in DIP switch detection. (VRI)
+- po/it.po: Updated. Contributed by Lodovico Zanier. (VRI)
