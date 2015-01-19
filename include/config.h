@@ -98,9 +98,6 @@
 # ifndef DETECT_NATIVE_FEATURES
 #  define DETECT_NATIVE_FEATURES 0
 # endif
-# ifndef CONF_WITH_ARANYM
-#  define CONF_WITH_ARANYM 0
-# endif
 # ifndef CONF_WITH_FALCON_MMU
 #  define CONF_WITH_FALCON_MMU 0
 # endif
@@ -216,9 +213,6 @@
 #if !CONF_ATARI_HARDWARE
 # ifndef DETECT_NATIVE_FEATURES
 #  define DETECT_NATIVE_FEATURES 0
-# endif
-# ifndef CONF_WITH_ARANYM
-#  define CONF_WITH_ARANYM 0
 # endif
 # ifndef CONF_WITH_ST_MMU
 #  define CONF_WITH_ST_MMU 0
@@ -873,7 +867,11 @@
 /* Set this to 1 to enable ARAnyM specific features and workarounds
  */
 #ifndef CONF_WITH_ARANYM
-# define CONF_WITH_ARANYM 1
+# if DETECT_NATIVE_FEATURES
+#  define CONF_WITH_ARANYM 1
+# else
+#  define CONF_WITH_ARANYM 0
+# endif
 #endif
 
 /* set this to 1 to redirect debug prints on MFP RS232 out, for emulator
