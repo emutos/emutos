@@ -552,7 +552,7 @@ void g_vsl_width(WORD width)
 
 void vex_wheelv(PFVOID new, PFVOID *old)
 {
-    i_ptr( (void*)new );
+    i_ptr(new);
     gsx_ncode(WHEEL_VECX, 0, 0);
-    *old = (PFVOID)(*(LONG *)&contrl[9]);
+    m_lptr2(old);
 }

@@ -5982,3 +5982,6 @@ Start... early ages
 - po/it.po: Updated. Contributed by Lodovico Zanier. (VRI)
 - po/es.po: Updated. Contributed by David Gálvez. (VRI)
 - include/config.h: Set CONF_WITH_ARANYM only if DETECT_NATIVE_FEATURES. (VRI)
+
+2015-01-31
+- aes/gemgsxif.c: Fixed warning with GCC 4.7.1. (VRI)
