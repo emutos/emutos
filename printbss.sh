@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Determine the BSS usage of each subdirectory
 # Written by Vincent Rivière, 2014.
 # License: Public domain
@@ -13,10 +13,10 @@ do
   # Get the total size of the .bss and COMMON sections
   dirsize=$(m68k-atari-mint-size -t --common $objects 2>/dev/null |grep '(TOTALS)' |awk '{print $3}')
 
-  ((total += $dirsize))
+  total=$(expr $total + $dirsize)
 
   printf "%-5s %7d\n" $dir $dirsize
 done
 
-echo -e "-------------"
+echo -------------
 printf "Total %7d\n" $total
