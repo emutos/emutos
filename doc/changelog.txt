@@ -5988,3 +5988,6 @@ Start... early ages
 
 2015-02-11
 - printbss.sh: Make it compatible with Debian /bin/sh. (VRI)
+
+2015-02-14
+- po/cs.po: Updated Czech translation. Contributed by Jan Krupka. (VRI)
