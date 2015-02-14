@@ -442,11 +442,11 @@ msgstr "  Instalar unidad de disco..."
 
 #: desk/desk_rsc.c:419
 msgid "  Configure application... \007A"
-msgstr "  Configurar aplicación... \007A"
+msgstr "  Configurar aplicación...    \007A"
 
 #: desk/desk_rsc.c:425
 msgid "------------------------------"
-msgstr "------------------------------"
+msgstr "---------------------------------"
 
 #: desk/desk_rsc.c:431
 msgid "  Set preferences..."
@@ -454,27 +454,27 @@ msgstr "  Establecer preferencias..."
 
 #: desk/desk_rsc.c:437
 msgid "  Save desktop             \007V"
-msgstr "  Guardar escritorio       \007V"
+msgstr "  Guardar escritorio          \007V"
 
 #: desk/desk_rsc.c:443
 msgid "  Change resolution...     \007C"
-msgstr "  Cambiar resolución...    \007C"
+msgstr "  Cambiar resolución...       \007C"
 
 #: desk/desk_rsc.c:467
 msgid "  Sort by name   \007N"
-msgstr "  Ordenar por nombre  \007N"
+msgstr "  Ordenar por nombre      \007N"
 
 #: desk/desk_rsc.c:473
 msgid "  Sort by type   \007P"
-msgstr "  Ordenar por tipo    \007P"
+msgstr "  Ordenar por tipo        \007P"
 
 #: desk/desk_rsc.c:479
 msgid "  Sort by size   \007Z"
-msgstr "  Ordenar por tamaño  \007Z"
+msgstr "  Ordenar por tamaño      \007Z"
 
 #: desk/desk_rsc.c:485
 msgid "  Sort by date   \007T"
-msgstr "  Ordenar por fecha   \007T"
+msgstr "  Ordenar por fecha       \007T"
 
 #: desk/desk_rsc.c:542
 msgid "Attribute:"
@@ -682,11 +682,11 @@ msgstr "%ld Bytes en %d elementos."
 
 #: desk/desk_rsc.c:1672
 msgid "  Show as icons  \007S"
-msgstr "  Mostrar como iconos \007S"
+msgstr "  Mostrar como iconos     \007S"
 
 #: desk/desk_rsc.c:1673
 msgid "  Show as text   \007S"
-msgstr "  Mostrar como texto  \007S"
+msgstr "  Mostrar como texto      \007S"
 
 #: desk/desk_rsc.c:1674
 msgid "Not available"

@@ -5991,3 +5991,4 @@ Start... early ages
 
 2015-02-14
 - po/cs.po: Updated Czech translation. Contributed by Jan Krupka. (VRI)
+- po/es.po: Fixed the width of menu items. (VRI)
