@@ -402,13 +402,13 @@ msgstr "------------------"
 msgid "  Open"
 msgstr "  Öffnen"
 
-#: desk/desk_rsc.c:347 desk/desk_rsc.c:371 desk/desk_rsc.c:389
-msgid "--------------------"
-msgstr "----------------------"
-
 #: desk/desk_rsc.c:341
 msgid "  Info/Rename... \007I"
 msgstr "  Info/Ändern...   \007I"
+
+#: desk/desk_rsc.c:347 desk/desk_rsc.c:371 desk/desk_rsc.c:389
+msgid "--------------------"
+msgstr "----------------------"
 
 #: desk/desk_rsc.c:353
 msgid "  New Folder..."
