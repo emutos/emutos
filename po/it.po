@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: 2011-07-26 23:52+0200\n"
-"PO-Revision-Date: 2015-01-18 23:50+0100\n"
+"PO-Revision-Date: 2015-02-15 22:32+0100\n"
 "Last-Translator: Lodovico Zanier <lvc958@libero.it>\n"
 "Language-Team: Italian\n"
 "MIME-Version: 1.0\n"
@@ -393,10 +393,10 @@ msgstr " Visione "
 
 #: desk/desk_rsc.c:281
 msgid "  Desktop info..."
-msgstr "  Info scrivania...  "
+msgstr "  Info scrivania..."
 
-#: desk/desk_rsc.c:287 desk/desk_rsc.c:461
-msgid "--------------------"
+#: desk/desk_rsc.c:287
+msgid "------------------"
 msgstr "--------------------"
 
 #: desk/desk_rsc.c:335
@@ -404,12 +404,12 @@ msgid "  Open"
 msgstr "  Apri"
 
 #: desk/desk_rsc.c:341
-msgid "  Info/Rename...  \007I"
-msgstr "  Info/Rinomina.. \007I"
+msgid "  Info/Rename... \007I"
+msgstr "  Info/Rinomina...  \007I"
 
 #: desk/desk_rsc.c:347 desk/desk_rsc.c:371 desk/desk_rsc.c:389
-msgid "---------------------"
-msgstr "---------------------"
+msgid "--------------------"
+msgstr "----------------------"
 
 #: desk/desk_rsc.c:353
 msgid "  New Folder..."
@@ -424,20 +424,20 @@ msgid "  Close window"
 msgstr "  Chiudi finestra"
 
 #: desk/desk_rsc.c:377
-msgid "  Delete...       \007D"
-msgstr "  Cancella...     \007D"
+msgid "  Delete...      \007D"
+msgstr "  Cancella...       \007D"
 
 #: desk/desk_rsc.c:383
 msgid "  Format..."
 msgstr "  Formatta..."
 
 #: desk/desk_rsc.c:395
-msgid "  Execute EmuCON  ^Z"
-msgstr "  Esegui EmuCON   ^Z"
+msgid "  Execute EmuCON ^Z"
+msgstr "  Esegui EmuCON     ^Z"
 
 #: desk/desk_rsc.c:401
-msgid "  Shutdown        ^Q"
-msgstr "  Arresta sistema ^Q"
+msgid "  Shutdown       ^Q"
+msgstr "  Arresta sistema   ^Q"
 
 #: desk/desk_rsc.c:413
 msgid "  Install disk drive..."
@@ -445,11 +445,11 @@ msgstr "  Installa unità disco..."
 
 #: desk/desk_rsc.c:419
 msgid "  Configure application... \007A"
-msgstr "  Configura applicazione.. \007A"
+msgstr "  Configura applicazione... \007A"
 
 #: desk/desk_rsc.c:425
 msgid "------------------------------"
-msgstr "------------------------------"
+msgstr "-------------------------------"
 
 #: desk/desk_rsc.c:431
 msgid "  Set preferences..."
@@ -457,26 +457,30 @@ msgstr "  Imposta preferenze..."
 
 #: desk/desk_rsc.c:437
 msgid "  Save desktop             \007V"
-msgstr "  Salva scrivania          \007V"
+msgstr "  Salva scrivania           \007V"
 
 #: desk/desk_rsc.c:443
 msgid "  Change resolution...     \007C"
-msgstr "  Cambia risoluzione...    \007C"
+msgstr "  Cambia risoluzione...     \007C"
+
+#: desk/desk_rsc.c:461
+msgid "-------------------"
+msgstr "-------------------"
 
 #: desk/desk_rsc.c:467
-msgid "  Sort by name   \007N"
+msgid "  Sort by name  \007N"
 msgstr "  Per nome       \007N"
 
 #: desk/desk_rsc.c:473
-msgid "  Sort by type   \007P"
+msgid "  Sort by type  \007P"
 msgstr "  Per tipo       \007P"
 
 #: desk/desk_rsc.c:479
-msgid "  Sort by size   \007Z"
+msgid "  Sort by size  \007Z"
 msgstr "  Per dimensioni \007Z"
 
 #: desk/desk_rsc.c:485
-msgid "  Sort by date   \007T"
+msgid "  Sort by date  \007T"
 msgstr "  Per data       \007T"
 
 #: desk/desk_rsc.c:542
@@ -684,11 +688,11 @@ msgid "%ld bytes used in %d items."
 msgstr "%ld byte usati in %d oggetti."
 
 #: desk/desk_rsc.c:1672
-msgid "  Show as icons  \007S"
+msgid "  Show as icons \007S"
 msgstr "  Formato icona  \007S"
 
 #: desk/desk_rsc.c:1673
-msgid "  Show as text   \007S"
+msgid "  Show as text  \007S"
 msgstr "  Formato testo  \007S"
 
 #: desk/desk_rsc.c:1674

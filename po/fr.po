@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EMUTOS beta\n"
 "POT-Creation-Date: 2004-01-27 14:37+0100\n"
-"PO-Revision-Date: 2015-01-10 12:26+0100\n"
+"PO-Revision-Date: 2015-02-14 17:00+0100\n"
 "Last-Translator: Vincent Riviere <vincent.riviere@freesbee.fr>\n"
 "Language-Team: French <fr@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -395,21 +395,21 @@ msgstr " Rangement "
 msgid "  Desktop info..."
 msgstr "  Infos bureau..."
 
-#: desk/desk_rsc.c:287 desk/desk_rsc.c:461
-msgid "--------------------"
-msgstr "--------------------"
+#: desk/desk_rsc.c:287
+msgid "------------------"
+msgstr "------------------"
 
 #: desk/desk_rsc.c:335
 msgid "  Open"
 msgstr "  Ouvrir"
 
 #: desk/desk_rsc.c:341
-msgid "  Info/Rename...  \007I"
-msgstr "  Info/Renommer..."
+msgid "  Info/Rename... \007I"
+msgstr "  Info/Renommer...   \007I"
 
 #: desk/desk_rsc.c:347 desk/desk_rsc.c:371 desk/desk_rsc.c:389
-msgid "---------------------"
-msgstr "---------------------"
+msgid "--------------------"
+msgstr "------------------------"
 
 #: desk/desk_rsc.c:353
 msgid "  New Folder..."
@@ -424,20 +424,20 @@ msgid "  Close window"
 msgstr "  Fermer la fenêtre"
 
 #: desk/desk_rsc.c:377
-msgid "  Delete...       \007D"
-msgstr "  Supprimer..."
+msgid "  Delete...      \007D"
+msgstr "  Supprimer...       \007D"
 
 #: desk/desk_rsc.c:383
 msgid "  Format..."
 msgstr "  Formater..."
 
 #: desk/desk_rsc.c:395
-msgid "  Execute EmuCON  ^Z"
-msgstr "  Exécuter EmuCON ^Z"
+msgid "  Execute EmuCON ^Z"
+msgstr "  Exécuter EmuCON    ^Z"
 
 #: desk/desk_rsc.c:401
-msgid "  Shutdown        ^Q"
-msgstr "  Arrêter         ^Q"
+msgid "  Shutdown       ^Q"
+msgstr "  Arrêter            ^Q"
 
 #: desk/desk_rsc.c:413
 msgid "  Install disk drive..."
@@ -463,21 +463,25 @@ msgstr "  Sauver le bureau              \007V"
 msgid "  Change resolution...     \007C"
 msgstr "  Changer la résolution...      \007C"
 
+#: desk/desk_rsc.c:461
+msgid "-------------------"
+msgstr "-----------------------"
+
 #: desk/desk_rsc.c:467
-msgid "  Sort by name   \007N"
-msgstr "  Trier par nom"
+msgid "  Sort by name  \007N"
+msgstr "  Trier par nom     \007N"
 
 #: desk/desk_rsc.c:473
-msgid "  Sort by type   \007P"
-msgstr "  Trier par type"
+msgid "  Sort by type  \007P"
+msgstr "  Trier par type    \007P"
 
 #: desk/desk_rsc.c:479
-msgid "  Sort by size   \007Z"
-msgstr "  Trier par taille"
+msgid "  Sort by size  \007Z"
+msgstr "  Trier par taille  \007Z"
 
 #: desk/desk_rsc.c:485
-msgid "  Sort by date   \007T"
-msgstr "  Trier par date"
+msgid "  Sort by date  \007T"
+msgstr "  Trier par date    \007T"
 
 #: desk/desk_rsc.c:542
 msgid "Attribute:"
@@ -684,12 +688,12 @@ msgid "%ld bytes used in %d items."
 msgstr "%ld octets utilisés par %d éléments."
 
 #: desk/desk_rsc.c:1672
-msgid "  Show as icons  \007S"
-msgstr "  Voir comme icônes"
+msgid "  Show as icons \007S"
+msgstr "  Voir comme icônes \007S"
 
 #: desk/desk_rsc.c:1673
-msgid "  Show as text   \007S"
-msgstr "  Voir comme texte"
+msgid "  Show as text  \007S"
+msgstr "  Voir comme texte  \007S"
 
 #: desk/desk_rsc.c:1674
 msgid "Not available"

@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EMUTOS beta\n"
 "POT-Creation-Date: 2011-09-09 01:11+0400\n"
-"PO-Revision-Date: 2015-01-10 11:54+0100\n"
+"PO-Revision-Date: 2015-02-15 23:01+0100\n"
 "Last-Translator: Dima Sobolev <avtandil33@gmail.com>\n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -393,22 +393,22 @@ msgstr " Показать "
 
 #: desk/desk_rsc.c:281
 msgid "  Desktop info..."
-msgstr "  Информация о десктопе...  "
+msgstr "  Информация о десктопе..."
 
-#: desk/desk_rsc.c:287 desk/desk_rsc.c:461
-msgid "--------------------"
-msgstr "----------------------------"
+#: desk/desk_rsc.c:287
+msgid "------------------"
+msgstr "---------------------------"
 
 #: desk/desk_rsc.c:335
 msgid "  Open"
 msgstr "  Открыть"
 
 #: desk/desk_rsc.c:341
-msgid "  Info/Rename...  \007I"
+msgid "  Info/Rename... \007I"
 msgstr "  Инфо/Переименовать... \007I"
 
 #: desk/desk_rsc.c:347 desk/desk_rsc.c:371 desk/desk_rsc.c:389
-msgid "---------------------"
+msgid "--------------------"
 msgstr "---------------------------"
 
 #: desk/desk_rsc.c:353
@@ -424,7 +424,7 @@ msgid "  Close window"
 msgstr "  Закрыть окно"
 
 #: desk/desk_rsc.c:377
-msgid "  Delete...       \007D"
+msgid "  Delete...      \007D"
 msgstr "  Удалить...            \007D"
 
 #: desk/desk_rsc.c:383
@@ -432,11 +432,11 @@ msgid "  Format..."
 msgstr "  Форматировать..."
 
 #: desk/desk_rsc.c:395
-msgid "  Execute EmuCON  ^Z"
+msgid "  Execute EmuCON ^Z"
 msgstr "  Запустить EmuCON      ^Z"
 
 #: desk/desk_rsc.c:401
-msgid "  Shutdown        ^Q"
+msgid "  Shutdown       ^Q"
 msgstr "  Выключить             ^Q"
 
 #: desk/desk_rsc.c:413
@@ -463,20 +463,24 @@ msgstr "  Сохранить десктоп      \007V"
 msgid "  Change resolution...     \007C"
 msgstr "  Изменить разрешение... \007C"
 
+#: desk/desk_rsc.c:461
+msgid "-------------------"
+msgstr "----------------------------"
+
 #: desk/desk_rsc.c:467
-msgid "  Sort by name   \007N"
+msgid "  Sort by name  \007N"
 msgstr "  Сортировать по имени   \007N"
 
 #: desk/desk_rsc.c:473
-msgid "  Sort by type   \007P"
+msgid "  Sort by type  \007P"
 msgstr "  Сортировать по типу    \007P"
 
 #: desk/desk_rsc.c:479
-msgid "  Sort by size   \007Z"
+msgid "  Sort by size  \007Z"
 msgstr "  Сортировать по размеру \007Z"
 
 #: desk/desk_rsc.c:485
-msgid "  Sort by date   \007T"
+msgid "  Sort by date  \007T"
 msgstr "  Сортировать по дате    \007T"
 
 #: desk/desk_rsc.c:542
@@ -684,11 +688,11 @@ msgid "%ld bytes used in %d items."
 msgstr "%ld байт используется в %d объектах."
 
 #: desk/desk_rsc.c:1672
-msgid "  Show as icons  \007S"
+msgid "  Show as icons \007S"
 msgstr "  Показать как иконки    \007S"
 
 #: desk/desk_rsc.c:1673
-msgid "  Show as text   \007S"
+msgid "  Show as text  \007S"
 msgstr "  Показать как текст     \007S"
 
 #: desk/desk_rsc.c:1674

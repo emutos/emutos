@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EMUTOS beta\n"
 "POT-Creation-Date: 2005-04-11 17:18+0200\n"
-"PO-Revision-Date: 2015-01-19 00:08+0100\n"
+"PO-Revision-Date: 2015-02-15 22:43+0100\n"
 "Last-Translator: David Gálvez <dgalvez75@gmail.com>\n"
 "Language-Team: Español <dr.worst@terra.es>\n"
 "MIME-Version: 1.0\n"
@@ -390,10 +390,10 @@ msgstr " Orden "
 
 #: desk/desk_rsc.c:281
 msgid "  Desktop info..."
-msgstr "  Información del Desktop... "
+msgstr "  Información del Desktop..."
 
-#: desk/desk_rsc.c:287 desk/desk_rsc.c:461
-msgid "--------------------"
+#: desk/desk_rsc.c:287
+msgid "------------------"
 msgstr "-----------------------------"
 
 #: desk/desk_rsc.c:335
@@ -401,11 +401,11 @@ msgid "  Open"
 msgstr "  Abrir"
 
 #: desk/desk_rsc.c:341
-msgid "  Info/Rename...  \007I"
+msgid "  Info/Rename... \007I"
 msgstr "  Info/Renombrar... \007I"
 
 #: desk/desk_rsc.c:347 desk/desk_rsc.c:371 desk/desk_rsc.c:389
-msgid "---------------------"
+msgid "--------------------"
 msgstr "-----------------------"
 
 #: desk/desk_rsc.c:353
@@ -421,7 +421,7 @@ msgid "  Close window"
 msgstr "  Cerrar ventana"
 
 #: desk/desk_rsc.c:377
-msgid "  Delete...       \007D"
+msgid "  Delete...      \007D"
 msgstr "  Borrar...         \007D"
 
 #: desk/desk_rsc.c:383
@@ -429,11 +429,11 @@ msgid "  Format..."
 msgstr "  Formatear..."
 
 #: desk/desk_rsc.c:395
-msgid "  Execute EmuCON  ^Z"
+msgid "  Execute EmuCON ^Z"
 msgstr "  Ejecutar EmuCON   ^Z"
 
 #: desk/desk_rsc.c:401
-msgid "  Shutdown        ^Q"
+msgid "  Shutdown       ^Q"
 msgstr "  Cerrar sistema    ^Q"
 
 #: desk/desk_rsc.c:413
@@ -460,21 +460,25 @@ msgstr "  Guardar escritorio          \007V"
 msgid "  Change resolution...     \007C"
 msgstr "  Cambiar resolución...       \007C"
 
+#: desk/desk_rsc.c:461
+msgid "-------------------"
+msgstr "-------------------------"
+
 #: desk/desk_rsc.c:467
-msgid "  Sort by name   \007N"
-msgstr "  Ordenar por nombre      \007N"
+msgid "  Sort by name  \007N"
+msgstr "  Ordenar por nombre  \007N"
 
 #: desk/desk_rsc.c:473
-msgid "  Sort by type   \007P"
-msgstr "  Ordenar por tipo        \007P"
+msgid "  Sort by type  \007P"
+msgstr "  Ordenar por tipo    \007P"
 
 #: desk/desk_rsc.c:479
-msgid "  Sort by size   \007Z"
-msgstr "  Ordenar por tamaño      \007Z"
+msgid "  Sort by size  \007Z"
+msgstr "  Ordenar por tamaño  \007Z"
 
 #: desk/desk_rsc.c:485
-msgid "  Sort by date   \007T"
-msgstr "  Ordenar por fecha       \007T"
+msgid "  Sort by date  \007T"
+msgstr "  Ordenar por fecha   \007T"
 
 #: desk/desk_rsc.c:542
 msgid "Attribute:"
@@ -681,12 +685,12 @@ msgid "%ld bytes used in %d items."
 msgstr "%ld Bytes en %d elementos."
 
 #: desk/desk_rsc.c:1672
-msgid "  Show as icons  \007S"
-msgstr "  Mostrar como iconos     \007S"
+msgid "  Show as icons \007S"
+msgstr "  Mostrar como iconos \007S"
 
 #: desk/desk_rsc.c:1673
-msgid "  Show as text   \007S"
-msgstr "  Mostrar como texto      \007S"
+msgid "  Show as text  \007S"
+msgstr "  Mostrar como texto  \007S"
 
 #: desk/desk_rsc.c:1674
 msgid "Not available"

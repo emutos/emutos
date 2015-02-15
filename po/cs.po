@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EMUTOS beta\n"
 "POT-Creation-Date: 2012-06-15 18:05+0200\n"
-"PO-Revision-Date: 2015-02-14 09:31+0100\n"
+"PO-Revision-Date: 2015-02-15 22:37+0100\n"
 "Last-Translator: Jan Krupka <krupkaj@centrum.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -390,20 +390,20 @@ msgstr " Uspoøádání "
 msgid "  Desktop info..."
 msgstr "  Info o desktopu..."
 
-#: desk/desk_rsc.c:287 desk/desk_rsc.c:461
-msgid "--------------------"
-msgstr "--------------------"
+#: desk/desk_rsc.c:287
+msgid "------------------"
+msgstr "---------------------"
 
 #: desk/desk_rsc.c:335
 msgid "  Open"
 msgstr "  Otevøít"
 
 #: desk/desk_rsc.c:341
-msgid "  Info/Rename...  \007I"
+msgid "  Info/Rename... \007I"
 msgstr "  Info/Jméno...   \007I"
 
 #: desk/desk_rsc.c:347 desk/desk_rsc.c:371 desk/desk_rsc.c:389
-msgid "---------------------"
+msgid "--------------------"
 msgstr "---------------------"
 
 #: desk/desk_rsc.c:353
@@ -419,7 +419,7 @@ msgid "  Close window"
 msgstr "  Zavøít okno"
 
 #: desk/desk_rsc.c:377
-msgid "  Delete...       \007D"
+msgid "  Delete...      \007D"
 msgstr "  Smazat...       \007D"
 
 #: desk/desk_rsc.c:383
@@ -427,11 +427,11 @@ msgid "  Format..."
 msgstr "  Formátovat..."
 
 #: desk/desk_rsc.c:395
-msgid "  Execute EmuCON  ^Z"
+msgid "  Execute EmuCON ^Z"
 msgstr "  Spustit EmuCON  ^Z"
 
 #: desk/desk_rsc.c:401
-msgid "  Shutdown        ^Q"
+msgid "  Shutdown       ^Q"
 msgstr "  Vypnout         ^Q"
 
 #: desk/desk_rsc.c:413
@@ -458,21 +458,25 @@ msgstr "  Ulo¾it desktop       \007V"
 msgid "  Change resolution...     \007C"
 msgstr "  Zmìnit rozli¹ení...  \007C"
 
+#: desk/desk_rsc.c:461
+msgid "-------------------"
+msgstr "-----------------"
+
 #: desk/desk_rsc.c:467
-msgid "  Sort by name   \007N"
-msgstr "  Podle jména    \007N"
+msgid "  Sort by name  \007N"
+msgstr "  Podle jména \007N"
 
 #: desk/desk_rsc.c:473
-msgid "  Sort by type   \007P"
-msgstr "  Podle typu     \007P"
+msgid "  Sort by type  \007P"
+msgstr "  Podle typu  \007P"
 
 #: desk/desk_rsc.c:479
-msgid "  Sort by size   \007Z"
-msgstr "  Podle bytù     \007Z"
+msgid "  Sort by size  \007Z"
+msgstr "  Podle bytù  \007Z"
 
 #: desk/desk_rsc.c:485
-msgid "  Sort by date   \007T"
-msgstr "  Podle data     \007T"
+msgid "  Sort by date  \007T"
+msgstr "  Podle data  \007T"
 
 #: desk/desk_rsc.c:542
 msgid "Attribute:"
@@ -679,12 +683,12 @@ msgid "%ld bytes used in %d items."
 msgstr "%ld bytù v %d polo¾kách."
 
 #: desk/desk_rsc.c:1672
-msgid "  Show as icons  \007S"
-msgstr "  Jako ikony     \007S"
+msgid "  Show as icons \007S"
+msgstr "  Jako ikony  \007S"
 
 #: desk/desk_rsc.c:1673
-msgid "  Show as text   \007S"
-msgstr "  Jako text      \007S"
+msgid "  Show as text  \007S"
+msgstr "  Jako text   \007S"
 
 #: desk/desk_rsc.c:1674
 msgid "Not available"

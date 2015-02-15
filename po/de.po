@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EMUTOS beta\n"
 "POT-Creation-Date: 2015-01-08 23:24+0100\n"
-"PO-Revision-Date: 2015-01-08 23:49+0100\n"
+"PO-Revision-Date: 2015-02-14 17:40+0100\n"
 "Last-Translator: Thomas Huth <huth at tuxfamily.org>\n"
 "Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -392,23 +392,23 @@ msgstr " Anzeige "
 
 #: desk/desk_rsc.c:281
 msgid "  Desktop info..."
-msgstr "  Desktop-Info...   "
+msgstr "  Desktop-Info..."
 
-#: desk/desk_rsc.c:287 desk/desk_rsc.c:461
-msgid "--------------------"
-msgstr "--------------------"
+#: desk/desk_rsc.c:287
+msgid "------------------"
+msgstr "------------------"
 
 #: desk/desk_rsc.c:335
 msgid "  Open"
 msgstr "  Öffnen"
 
-#: desk/desk_rsc.c:341
-msgid "  Info/Rename...  \007I"
-msgstr "  Info/Ändern...  \007I"
-
 #: desk/desk_rsc.c:347 desk/desk_rsc.c:371 desk/desk_rsc.c:389
-msgid "---------------------"
-msgstr "---------------------"
+msgid "--------------------"
+msgstr "----------------------"
+
+#: desk/desk_rsc.c:341
+msgid "  Info/Rename... \007I"
+msgstr "  Info/Ändern...   \007I"
 
 #: desk/desk_rsc.c:353
 msgid "  New Folder..."
@@ -423,20 +423,20 @@ msgid "  Close window"
 msgstr "  Schließe Fenster"
 
 #: desk/desk_rsc.c:377
-msgid "  Delete...       \007D"
-msgstr "  Löschen...      \007D"
+msgid "  Delete...      \007D"
+msgstr "  Löschen...       \007D"
 
 #: desk/desk_rsc.c:383
 msgid "  Format..."
 msgstr "  Formatieren..."
 
 #: desk/desk_rsc.c:395
-msgid "  Execute EmuCON  ^Z"
-msgstr "  Starte EmuCON   ^Z"
+msgid "  Execute EmuCON ^Z"
+msgstr "  Starte EmuCON    ^Z"
 
 #: desk/desk_rsc.c:401
-msgid "  Shutdown        ^Q"
-msgstr "  Stoppe System   ^Q"
+msgid "  Shutdown       ^Q"
+msgstr "  Stoppe System    ^Q"
 
 #: desk/desk_rsc.c:413
 msgid "  Install disk drive..."
@@ -444,11 +444,11 @@ msgstr "  Installiere Laufwerk..."
 
 #: desk/desk_rsc.c:419
 msgid "  Configure application... \007A"
-msgstr "  Anwendung einrichten...  \007A"
+msgstr "  Anwendung einrichten... \007A"
 
 #: desk/desk_rsc.c:425
 msgid "------------------------------"
-msgstr "------------------------------"
+msgstr "-----------------------------"
 
 #: desk/desk_rsc.c:431
 msgid "  Set preferences..."
@@ -456,27 +456,31 @@ msgstr "  Voreinstellungen..."
 
 #: desk/desk_rsc.c:437
 msgid "  Save desktop             \007V"
-msgstr "  Sichere Desktop          \007V"
+msgstr "  Sichere Desktop         \007V"
 
 #: desk/desk_rsc.c:443
 msgid "  Change resolution...     \007C"
-msgstr "  Auflösung ändern...      \007C"
+msgstr "  Auflösung ändern...     \007C"
+
+#: desk/desk_rsc.c:461
+msgid "-------------------"
+msgstr "----------------"
 
 #: desk/desk_rsc.c:467
-msgid "  Sort by name   \007N"
-msgstr "  nach Namen     \007N"
+msgid "  Sort by name  \007N"
+msgstr "  nach Namen \007N"
 
 #: desk/desk_rsc.c:473
-msgid "  Sort by type   \007P"
-msgstr "  nach Typ       \007P"
+msgid "  Sort by type  \007P"
+msgstr "  nach Typ   \007P"
 
 #: desk/desk_rsc.c:479
-msgid "  Sort by size   \007Z"
-msgstr "  nach Größe     \007Z"
+msgid "  Sort by size  \007Z"
+msgstr "  nach Größe \007Z"
 
 #: desk/desk_rsc.c:485
-msgid "  Sort by date   \007T"
-msgstr "  nach Datum     \007T"
+msgid "  Sort by date  \007T"
+msgstr "  nach Datum \007T"
 
 #: desk/desk_rsc.c:542
 msgid "Attribute:"
@@ -683,12 +687,12 @@ msgid "%ld bytes used in %d items."
 msgstr "%ld Bytes in %d Dateien."
 
 #: desk/desk_rsc.c:1672
-msgid "  Show as icons  \007S"
-msgstr "  Als Icons      \007S"
+msgid "  Show as icons \007S"
+msgstr "  Als Icons  \007S"
 
 #: desk/desk_rsc.c:1673
-msgid "  Show as text   \007S"
-msgstr "  Als Text       \007S"
+msgid "  Show as text  \007S"
+msgstr "  Als Text   \007S"
 
 #: desk/desk_rsc.c:1674
 msgid "Not available"

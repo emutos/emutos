@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: 2003-07-29 21:42+0200\n"
-"PO-Revision-Date: 2015-01-14 10:34+0100\n"
+"PO-Revision-Date: 2015-02-15 22:52+0100\n"
 "Last-Translator: Christos Tziotzis <ctziotzis@gmail.com>\n"
 "Language-Team: None\n"
 "MIME-Version: 1.0\n"
@@ -401,22 +401,22 @@ msgstr " ƒ œ¬Ÿâ«© "
 
 #: desk/desk_rsc.c:281
 msgid "  Desktop info..."
-msgstr "  ¢¨¦­¦¨åœª Dektop...   "
+msgstr "  ¢¨¦­¦¨åœª Dektop..."
 
-#: desk/desk_rsc.c:287 desk/desk_rsc.c:461
-msgid "--------------------"
-msgstr "--------------------------------"
+#: desk/desk_rsc.c:287
+msgid "------------------"
+msgstr "------------------------"
 
 #: desk/desk_rsc.c:335
 msgid "  Open"
 msgstr "  ê¤¦ š£˜"
 
 #: desk/desk_rsc.c:341
-msgid "  Info/Rename...  \007I"
+msgid "  Info/Rename... \007I"
 msgstr "  ¢¨¦­¦¨åœª/‹œ«¦¤¦£˜©å˜ \007I"
 
 #: desk/desk_rsc.c:347 desk/desk_rsc.c:371 desk/desk_rsc.c:389
-msgid "---------------------"
+msgid "--------------------"
 msgstr "-----------------------------"
 
 #: desk/desk_rsc.c:353
@@ -432,7 +432,7 @@ msgid "  Close window"
 msgstr "  ‰¢œå© £¦ §˜¨˜Ÿç¨¦¬"
 
 #: desk/desk_rsc.c:377
-msgid "  Delete...       \007D"
+msgid "  Delete...      \007D"
 msgstr "  ‘™ã© £¦...              \007D"
 
 #: desk/desk_rsc.c:383
@@ -440,11 +440,11 @@ msgid "  Format..."
 msgstr "  Format..."
 
 #: desk/desk_rsc.c:395
-msgid "  Execute EmuCON  ^Z"
+msgid "  Execute EmuCON ^Z"
 msgstr "  „¡«â¢œ© EmuCON         ^Z"
 
 #: desk/desk_rsc.c:401
-msgid "  Shutdown        ^Q"
+msgid "  Shutdown       ^Q"
 msgstr "  Shutdown                ^Q"
 
 #: desk/desk_rsc.c:413
@@ -453,11 +453,11 @@ msgstr "  „š¡˜«á©«˜© disk drive..."
 
 #: desk/desk_rsc.c:419
 msgid "  Configure application... \007A"
-msgstr "  ƒ ˜£æ¨­à© œ­˜¨£¦šãª...  \007A"
+msgstr "  ƒ ˜£æ¨­à© œ­˜¨£¦šãª...   \007A"
 
 #: desk/desk_rsc.c:425
 msgid "------------------------------"
-msgstr "------------------------------"
+msgstr "-------------------------------"
 
 #: desk/desk_rsc.c:431
 msgid "  Set preferences..."
@@ -465,26 +465,30 @@ msgstr "  ¨¦« £ã©œ ª..."
 
 #: desk/desk_rsc.c:437
 msgid "  Save desktop             \007V"
-msgstr "  €§¦Ÿã¡œ¬© desktop       \007V"
+msgstr "  €§¦Ÿã¡œ¬© desktop        \007V"
 
 #: desk/desk_rsc.c:443
 msgid "  Change resolution...     \007C"
-msgstr "  €¢¢˜šã ˜¤á¢¬©ª...       \007C"
+msgstr "  €¢¢˜šã ˜¤á¢¬©ª...        \007C"
+
+#: desk/desk_rsc.c:461
+msgid "-------------------"
+msgstr "--------------------------------"
 
 #: desk/desk_rsc.c:467
-msgid "  Sort by name   \007N"
+msgid "  Sort by name  \007N"
 msgstr "  ’˜¥ ¤æ£© ¡˜«á æ¤¦£˜      \007N"
 
 #: desk/desk_rsc.c:473
-msgid "  Sort by type   \007P"
+msgid "  Sort by type  \007P"
 msgstr "  ’˜¥ ¤æ£© ¡˜«á «ç§¦       \007P"
 
 #: desk/desk_rsc.c:479
-msgid "  Sort by size   \007Z"
+msgid "  Sort by size  \007Z"
 msgstr "  ’˜¥ ¤æ£© ¡˜«á £âšœŸ¦ª    \007Z"
 
 #: desk/desk_rsc.c:485
-msgid "  Sort by date   \007T"
+msgid "  Sort by date  \007T"
 msgstr "  ’˜¥ ¤æ£© ¡˜«á £œ¨¦£¤å˜ \007T"
 
 #: desk/desk_rsc.c:542
@@ -692,11 +696,11 @@ msgid "%ld bytes used in %d items."
 msgstr "%ld bytes ®¨© £¦§¦ ¦ç¤«˜  ©œ %d ˜¨®œå˜."
 
 #: desk/desk_rsc.c:1672
-msgid "  Show as icons  \007S"
+msgid "  Show as icons \007S"
 msgstr "  „£­á¤ © àª œ ¡¦¤å› ˜      \007S"
 
 #: desk/desk_rsc.c:1673
-msgid "  Show as text   \007S"
+msgid "  Show as text  \007S"
 msgstr "  „£­á¤ © àª ¡œå£œ¤¦        \007S"
 
 #: desk/desk_rsc.c:1674
