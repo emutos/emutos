@@ -401,11 +401,11 @@ msgstr " ƒ œ¬Ÿâ«© "
 
 #: desk/desk_rsc.c:281
 msgid "  Desktop info..."
-msgstr "  ¢¨¦­¦¨åœª Dektop..."
+msgstr "  ¢¨¦­¦¨åœª Desktop..."
 
 #: desk/desk_rsc.c:287
 msgid "------------------"
-msgstr "------------------------"
+msgstr "-------------------------"
 
 #: desk/desk_rsc.c:335
 msgid "  Open"
