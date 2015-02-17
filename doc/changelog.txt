@@ -5995,3 +5995,7 @@ Start... early ages
 
 2015-02-15
 - desk/desktop.rsc po/*.po: Fixed the width of all the EmuDesk menus. (VRI)
+
+2015-02-17
+- desk/desktop.rsc po/*.po: Set the width of the Desk menu to 20 characters
+  like TOS to make room for accessory menu items. (VRI)

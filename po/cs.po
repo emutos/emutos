@@ -391,7 +391,7 @@ msgid "  Desktop info..."
 msgstr "  Info o desktopu..."
 
 #: desk/desk_rsc.c:287
-msgid "------------------"
+msgid "--------------------"
 msgstr "---------------------"
 
 #: desk/desk_rsc.c:335
@@ -399,11 +399,11 @@ msgid "  Open"
 msgstr "  Otevøít"
 
 #: desk/desk_rsc.c:341
-msgid "  Info/Rename... \007I"
+msgid "  Info/Rename...  \007I"
 msgstr "  Info/Jméno...   \007I"
 
 #: desk/desk_rsc.c:347 desk/desk_rsc.c:371 desk/desk_rsc.c:389
-msgid "--------------------"
+msgid "---------------------"
 msgstr "---------------------"
 
 #: desk/desk_rsc.c:353
@@ -419,7 +419,7 @@ msgid "  Close window"
 msgstr "  Zavøít okno"
 
 #: desk/desk_rsc.c:377
-msgid "  Delete...      \007D"
+msgid "  Delete...       \007D"
 msgstr "  Smazat...       \007D"
 
 #: desk/desk_rsc.c:383
@@ -427,11 +427,11 @@ msgid "  Format..."
 msgstr "  Formátovat..."
 
 #: desk/desk_rsc.c:395
-msgid "  Execute EmuCON ^Z"
+msgid "  Execute EmuCON  ^Z"
 msgstr "  Spustit EmuCON  ^Z"
 
 #: desk/desk_rsc.c:401
-msgid "  Shutdown       ^Q"
+msgid "  Shutdown        ^Q"
 msgstr "  Vypnout         ^Q"
 
 #: desk/desk_rsc.c:413
