@@ -409,7 +409,7 @@ msgstr "  Info/Rinomina...  \007I"
 
 #: desk/desk_rsc.c:347 desk/desk_rsc.c:371 desk/desk_rsc.c:389
 msgid "---------------------"
-msgstr "----------------------"
+msgstr "-----------------------"
 
 #: desk/desk_rsc.c:353
 msgid "  New Folder..."
@@ -465,7 +465,7 @@ msgstr "  Cambia risoluzione...     \007C"
 
 #: desk/desk_rsc.c:461
 msgid "-------------------"
-msgstr "-------------------"
+msgstr "--------------------"
 
 #: desk/desk_rsc.c:467
 msgid "  Sort by name  \007N"
