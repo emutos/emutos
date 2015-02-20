@@ -5999,3 +5999,8 @@ Start... early ages
 2015-02-17
 - desk/desktop.rsc po/*.po: Set the width of the Desk menu to 20 characters
   like TOS to make room for accessory menu items. (VRI)
+
+2015-02-19
+- bios/ide.c: Limit IDE interfaces to 1 for non-Firebee hardware, to avoid
+  detecting non-existent interfaces due to incomplete hardware address
+  decoding.

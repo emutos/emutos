@@ -1,7 +1,7 @@
 /*
  * ide.c - Falcon IDE functions
  *
- * Copyright (c) 2011-2014 The EmuTOS development team
+ * Copyright (c) 2011-2015 The EmuTOS development team
  *
  * Authors:
  *  VRI   Vincent Rivière
@@ -149,7 +149,12 @@ struct IDE
 #ifdef MACHINE_FIREBEE
 #define NUM_IDE_INTERFACES  2
 #else
-#define NUM_IDE_INTERFACES  4   /* with e.g. ST Doubler */
+/*
+ * temporarily changed from 4 (ST Doubler support) to avoid incorrect
+ * detection of multiple interfaces due to incomplete address decoding
+ * in some 3rd-party add-on hardware.
+ */
+#define NUM_IDE_INTERFACES  1
 #endif
 
 struct IDE
