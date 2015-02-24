@@ -1,7 +1,7 @@
 /*
  * coldfire2.S - ColdFire specific assembler functions
  *
- * Copyright (c) 2013 The EmuTOS development team
+ * Copyright (c) 2013-2015 The EmuTOS development team
  *
  * Authors:
  *  VRI   Vincent Rivière

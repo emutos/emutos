@@ -1,7 +1,7 @@
 /*
  * ikbd.c - Intelligent keyboard routines
  *
- * Copyright (c) 2001-2014 The EmuTOS development team
+ * Copyright (c) 2001-2015 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel

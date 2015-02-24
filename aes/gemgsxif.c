@@ -1,7 +1,7 @@
 /*
  * gemgsxif.c - AES's interface to VDI (gsx)
  *
- * Copyright 2002-2014 The EmuTOS development team
+ * Copyright 2002-2015 The EmuTOS development team
  *           1999, Caldera Thin Clients, Inc.
  *           1987, Digital Research Inc.
  *

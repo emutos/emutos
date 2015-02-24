@@ -6004,3 +6004,6 @@ Start... early ages
 - bios/ide.c: Limit IDE interfaces to 1 for non-Firebee hardware, to avoid
   detecting non-existent interfaces due to incomplete hardware address
   decoding.
+
+2015-02-25
+- *: Updated copyright year for files modified since last release. (VRI)

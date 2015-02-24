@@ -1,6 +1,6 @@
 #!/bin/sh
 # Determine the BSS usage of each subdirectory
-# Written by Vincent Rivière, 2014.
+# Written by Vincent Rivière, 2014-2015.
 # License: Public domain
 
 total=0

@@ -1,7 +1,7 @@
 /*
  * fnt_st_6x6.c - 6x6 font for Atari ST encoding
  *
- * Copyright (C) 2001-2014 The EmuTOS development team
+ * Copyright (C) 2001-2015 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.

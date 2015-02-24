@@ -4,7 +4,7 @@
  * This file exists to allow AHDI stuff to be referenced by both
  * the BDOS and the BIOS.
  *
- * Copyright (c) 2014 The EmuTOS development team
+ * Copyright (c) 2014-2015 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows

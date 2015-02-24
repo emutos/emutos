@@ -1,7 +1,7 @@
 /*
  *  erd: the EmuTOS Resource Decompiler
  *
- *  Copyright 2012-2014 Roger Burrows
+ *  Copyright 2012-2015 Roger Burrows
  *
  *  This program is licensed under the GNU General Public License.
  *  Please see LICENSE.TXT for details.
@@ -554,7 +554,7 @@ LOCAL int num_notrans = 0;
 /*
  *  other globals
  */
-LOCAL const char *copyright = PROGRAM_NAME " " VERSION " copyright (c) 2012-2014 by Roger Burrows\n"
+LOCAL const char *copyright = PROGRAM_NAME " " VERSION " copyright (c) 2012-2015 by Roger Burrows\n"
 "This program is licensed under the GNU General Public License.\n"
 "Please see LICENSE.TXT for details.\n";
 

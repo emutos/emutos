@@ -3,7 +3,7 @@
 /*      merge source    5/27/87  - 5/28/87              mdf             */
 
 /*
-*       Copyright 2002-2014 The EmuTOS development team
+*       Copyright 2002-2015 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
