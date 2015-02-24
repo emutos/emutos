@@ -6007,3 +6007,4 @@ Start... early ages
 
 2015-02-25
 - *: Updated copyright year for files modified since last release. (VRI)
+- aes/optimize.c: Removed commented out include. (VRI)

@@ -30,7 +30,7 @@
 
 #include "string.h"
 #include "xbiosbind.h"
-//#include "kprint.h"
+
 
 
 WORD sound(WORD isfreq, WORD freq, WORD dura)
