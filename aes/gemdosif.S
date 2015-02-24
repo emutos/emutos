@@ -12,29 +12,37 @@
 #include "asmdefs.h"
 #include "asmstruct.h"
 
-.globl _disable_interrupts
-.globl _enable_interrupts
-.globl _giveerr
-.globl _takeerr
-.globl _retake
-.globl _justretf
-.globl _unset_aestrap
-.globl _set_aestrap
-.globl _back
-.globl _far_mcha
-.globl _aes_wheel
-.globl _far_bcha
-.globl _drawrat
+        .globl  _disable_interrupts
+        .globl  _enable_interrupts
+        .globl  _giveerr
+        .globl  _takeerr
+        .globl  _retake
+        .globl  _justretf
+        .globl  _unset_aestrap
+        .globl  _set_aestrap
+        .globl  _back
+        .globl  _far_mcha
+        .globl  _aes_wheel
+        .globl  _far_bcha
+        .globl  _drawrat
 
-.globl _tikaddr
-.globl _tiksav
-.globl _CMP_TICK
-.globl _NUM_TICK
-.globl _drwaddr
-.globl savesr
-.globl _tikcod
+        .globl  _tikaddr
+        .globl  _tiksav
+        .globl  _CMP_TICK
+        .globl  _NUM_TICK
+        .globl  _drwaddr
+        .globl  savesr
+        .globl  _tikcod
 
-
+        .extern _eralert
+        .extern _rlr
+        .extern _super
+        .extern _b_click
+        .extern _mchange
+        .extern _forkq
+        .extern _wheel_change
+        .extern _tchange
+        .extern _b_delay
 
 /* disable interrupts */
 _disable_interrupts:

@@ -13,9 +13,8 @@
 
 #include "asmdefs.h"
 
-
-.globl _scasb
-.globl _expand_string
+        .globl  _scasb
+        .globl  _expand_string
 
 /*
  * char *scasb(char *str, char c)

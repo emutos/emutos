@@ -18,15 +18,31 @@
 #include "asmdefs.h"
 #include "asmstruct.h"
 
-.globl _ui_start
-.globl _accdesk_start,_ads_stackbot,_ads_stacktop
-.globl _pgmld
-.globl _gemdos
-.globl _dos_exec
-.globl _ui_mupb
+        .globl  _ui_start
+        .globl  _accdesk_start
+        .globl  _gemdos
+        .globl  _dos_exec
+        .globl  _ui_mupb
 
+        .extern _ad_stail
+        .extern _ad_envrn
+        .extern _size_theglo
+        .extern _D
+        .extern _bzero
+        .extern _justretf
+        .extern _drwaddr
+        .extern _tikcod
+        .extern _tikaddr
+        .extern _init_p0_stkptr
+        .extern _gem_main
+        .extern _gl_changerez
+        .extern _run_accs_and_desktop
+        .extern _DOS_ERR
+        .extern _DOS_AX
+        .extern _disable_interrupts
+        .extern _rlr
+        .extern _enable_interrupts
 
-.extern _ad_stail
         .text
 
 //////////////////////////////////////////////////////////////////////////////

@@ -1,7 +1,7 @@
 /*
  * stringasm.S - simple implementation of <string.h>-like routines
  *
- * Copyright (C) 2002 The EmuTOS development team
+ * Copyright (C) 2002-2015 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -12,8 +12,8 @@
 
 #include "asmdefs.h"
 
-.globl  _strlencpy
-.globl  _strchr
+        .globl  _strlencpy
+        .globl  _strchr
 
 /*
  * WORD strlencpy(char *dest, const char *src)

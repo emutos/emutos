@@ -6005,6 +6005,8 @@ Start... early ages
   detecting non-existent interfaces due to incomplete hardware address
   decoding.
 
-2015-02-25
+2015-02-24
 - *: Updated copyright year for files modified since last release. (VRI)
 - aes/optimize.c: Removed commented out include. (VRI)
+- aes/gemdosif.S aes/gemstart.S aes/optimopt.S desk/deskstart.S
+  util/stringasm.S: Tidied globals and externs. (VRI)

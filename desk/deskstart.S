@@ -13,14 +13,19 @@
 
 #define DESKSTACKSIZE   2048    /* in bytes: must be multiple of 4 */
 
-.globl  _deskstart
-.globl  _gemdos
-.globl  _gem
-.globl  _get_deskwh
-
-#if CONF_DEBUG_DESK_STACK
-.globl  _deskstackbottom
+        .globl  _deskstart
+        .globl  _gem
+        .globl  _get_deskwh
+#ifdef NO_ROM
+        .globl  _gemdos
 #endif
+#if CONF_DEBUG_DESK_STACK
+        .globl  _deskstackbottom
+#endif
+
+        .extern _drawaddr
+        .extern _deskmain
+        .extern _dr_code
 
         .text
 
