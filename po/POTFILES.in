@@ -8,9 +8,9 @@ bios/initinfo.c
 
 bdos/osmem.c
 
-# cli/command.c
-
 aes/gem_rsc.c
 
 desk/desk_rsc.c
 desk/icons.c
+
+# cli subdir is currently not translated
