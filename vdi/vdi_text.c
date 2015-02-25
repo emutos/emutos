@@ -695,7 +695,7 @@ void dst_alignment(Vwk * vwk)
  * a value between 0 & 3599 by adding or subtracting multiples of
  * 3600, and then rounded to the nearest multiple of 900 between
  * 0 and 3600 inclusive before storing.
- * 
+ *
  * trivia: a value of 3600 is handled by other VDI code in the same
  * way as a value of 0, but if you really want to store a value of
  * 3600 rather than 0, you can pass a value between 3150 and 3599

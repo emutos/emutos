@@ -331,8 +331,8 @@ GEMDOS v0.19 (TOS v2):
  > $D - Draw sprite
  > $E - Copy raster form
  - $F - Seedfill
- 
- 
+
+
  VDI functions
  ----------------------------------------------------------------------------
 
