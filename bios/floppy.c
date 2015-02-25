@@ -116,7 +116,7 @@ static void deselect(void);
 /* sets the track on the current drive, returns 0 or error */
 static WORD set_track(WORD track);
 
-/* called by flopunlk() to make FDC status available */
+/* called by flopunlk() to make FDC status available to flopvbl() */
 static void dummy_seek(void);
 
 /* time (in ticks) to wait before aborting any FDC command; this
@@ -1069,15 +1069,17 @@ static void flopunlk(void)
     LONG now;
 
     /*
-     * issue a seek to the current track.  because a seek is
-     * a type I floppy command, this ensures that the status
-     * subsequently fetched by flopvbl() is valid, allowing
+     * issue a seek to the current track on the current device.
+     *
+     * because a seek is a type I floppy command, this ensures that
+     * the status subsequently fetched by flopvbl() is valid, allowing
      * flopvbl() to handle media change properly.
      */
     dummy_seek();
 
     now = hz_200;       /* only fetch it once */
-    units[cur_dev].last_access = now;
+    if (cur_dev >= 0)
+        units[cur_dev].last_access = now;
     deselect_time = now + DESELECT_TIMEOUT;
 
     /* the VBL will deselect the drive subsequently */
@@ -1216,9 +1218,21 @@ static void select(WORD dev, WORD side)
  */
 static void dummy_seek(void)
 {
-    struct flop_info *fi = &finfo[cur_dev];
+    struct flop_info *fi;
+    WORD track;
 
-    set_fdc_reg(FDC_DR, fi->cur_track);
+    /* if there's no current device, do nothing */
+    if (cur_dev < 0)
+        return;
+
+    fi = &finfo[cur_dev];
+    track = fi->cur_track;
+
+    /* if there's no current track, do nothing */
+    if (track < 0)
+        return;
+
+    set_fdc_reg(FDC_DR,track);
     flopcmd(FDC_SEEK | fi->actual_rate);    /* ignore any errors here */
 }
 

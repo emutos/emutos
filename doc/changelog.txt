@@ -6003,7 +6003,7 @@ Start... early ages
 2015-02-19
 - bios/ide.c: Limit IDE interfaces to 1 for non-Firebee hardware, to avoid
   detecting non-existent interfaces due to incomplete hardware address
-  decoding.
+  decoding. (RFB)
 
 2015-02-24
 - *: Updated copyright year for files modified since last release. (VRI)
@@ -6011,3 +6011,5 @@ Start... early ages
 - aes/gemdosif.S aes/gemstart.S aes/optimopt.S desk/deskstart.S
   util/stringasm.S: Tidied globals and externs. (VRI)
 - Makefile: Fixed tabs. (VRI)
+- bios/floppy.c: Fix regression that prevented floppy access on real hardware
+  (introduced by floppy VBL changes of 2014-12-17). (RFB)
