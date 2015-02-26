@@ -4,7 +4,7 @@ You will need a (cross-)GCC toolchain for TOS/MiNT.
 Currently, the only supported one is Vincent Rivière's m68k-atari-mint tools:
 http://vincent.riviere.free.fr/soft/m68k-atari-mint/
 Other toolchains, such as the old one from SpareMiNT, may also work, too.
-You will also need GNU make (tested with make 4.0).
+You will also need GNU make (tested with make 4.1).
 
 Building EmuTOS
 ===============
@@ -19,7 +19,7 @@ To build the standard etos512k.img, do
 
     make 512
 
-To build EmuTOS for a different country (changes the language and the
+To build EmuTOS for a different default country (changes the language and the
 keyboard), do
 
     make 512 COUNTRY=en

@@ -6013,3 +6013,6 @@ Start... early ages
 - Makefile: Fixed tabs. (VRI)
 - bios/floppy.c: Fix regression that prevented floppy access on real hardware
   (introduced by floppy VBL changes of 2014-12-17). (RFB)
+
+2015-02-26
+- doc/*: Updated. (VRI)

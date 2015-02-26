@@ -182,3 +182,6 @@ Hampa Hug
 
 Markus Fröschle
 - Tests on the FireBee and BaS_gcc support
+
+Jan Krupka <krupkaj at centrum.cz>
+- Czech translation update

@@ -3,7 +3,7 @@ Dear Atari Community!
 
 We are happy to announce a new public release of EmuTOS:
 
-EmuTOS 0.9.3 -- February 26, 2014
+EmuTOS 0.9.4 -- March XX, 2015
 
 
 
@@ -19,34 +19,48 @@ License (GPL).
 
 
 
-SPECIAL NOTES FOR RELEASE 0.9.3
-
-This release is almost identical to the 0.9.2 one.
-Only emutos-aranym has been updated to fix a regression with IDE disk images.
-
-CHANGES SINCE RELEASE 0.9.1
+CHANGES SINCE RELEASE 0.9.4
 
 Major changes:
-- Added most Line-A functions.
-- Added support for poweroff on the FireBee.
-- Added support for SD/MMC Cards on FireBee, including hot swap.
-- Improved IDE and CompactFlash support.
-- Added support for the FireBee external 2"1/2 IDE connector.
-- Improved ACSI support (including SCSI via converter).
-- Fixed compatibility with fVDI (including aranym.sys).
+- Compile with -O2 by default for best optimization.
+- New emutos-m548xbas variant to support BaS_gcc on ColdFire Evaluation Boards.
+- Less RAM usage: 94 kB saved from previous release.
+- EmuDesk: Added feature to display text files.
+- EmuDesk: Added feature to move files/folders with Control key.
 
 Other changes:
-- Fixed intermittent problems booting emutos-ram.
-- Improved determination of disk capacity & blocksize.
-- Improved detection of FAT12 / FAT16 / FAT32 partitions.
-- Improved media change detection.
-- Improved XHDI support.
-- Handle all valid DOS FAT end-of-chain markers.
-- Speed up a few VDI functions.
-- Fixed AES PATH environment variable and shel_find().
-- Fixed AES shel_find()/rsrc_load() search order, like TOS3/TOS4.
-- Fixed AES sh_ldapp() application directory.
-- Fixed AES appl_trecord() & appl_tplay().
+- BIOS: Fixed floppy drive motor remaining on if there was no floppy.
+- BIOS: Do not disable IKBD mouse and joystick on startup.
+- BIOS: Added basepage information in panic messages.
+- BIOS: Added missing standard ST glyphs from the 6x6 system font.
+- BIOS: Fixed _FDC cookie initialization.
+- BIOS: Improved floppy routines and media change detection.
+- BIOS: Fixed application cartridge initialization address on 32-bit address bus.
+- BIOS: Limit IDE interfaces to 1 for non-Firebee hardware.
+- BDOS: Check for special device names in Fopen() and Fcreate().
+- BDOS: Do not check Fopen() mode (R,W,RW) in Fread()/Fwrite() - just like Atari TOS.
+- BDOS: Fixed file date/time incorrectly changed by a cross-directory rename.
+- VDI: Select right default fonts, according to vertical screen resolution.
+- VDI: Fixed aspect ratio values returned by v_opnwk().
+- VDI: Fixed crash due to text blit outside screen area.
+- VDI: Fixed v_pieslice() & v_ellpie() which did not draw small slices.
+- VDI: Fixed vqt_extent() output for 270° rotation.
+- VDI: Fixed vst_rotation() to behave like TOS3/TOS4.
+- AES: Improved File Selector.
+- AES: Make most dialogs inner border 1-pixel wide.
+- AES: Fixed bug that caused accessories to stop responding after a few resolution changes.
+- AES: Fixed alert buttons which could overlap icons.
+- AES: Fixed 7up hang on exit.
+- EmuDesk: Always display file/folder countdown when copying/deleting.
+- EmuDesk: Improved error messages.
+- EmuDesk: The total number of items in all open windows is no longer limited to 400.
+- EmuDesk: Allow desktop copy/delete operations to be interrupted by UNDO key.
+- EmuDesk: Increase horizontal spacing for window icons in some resolutions.
+- EmuDesk: Fixed the width of the menu items in all languages.
+- EmuCON: 'type/cat' can now display correctly files with UNIX line endings.
+- EmuCON: Added 'more' command.
+- EmuCON: Allow the user to interrupt 'cp/mv' commands.
+- Lots of various improvements and bugfixes.
 
 Have a look at changelog.txt for more detailed information.
 
@@ -61,7 +75,7 @@ EmuTOS is basically made up of the following:
 - The BDOS, which are the high level OS routines, often known as GEMDOS
 - The VDI, the virtual device interface, i.e. the screen driver
 - The AES, the application environment services or window manager
-- The desktop, which is the graphical shell to the user
+- The EmuDesk desktop, which is the graphical shell to the user
 - EmuCON2, the command-line interpreter
 
 The BIOS and XBIOS code is our own development. It is written from
