@@ -828,6 +828,7 @@ LONG ide_ioctl(WORD dev,UWORD ctrl,void *arg)
 {
     LONG ret = ERR;
     ULONG *info = arg;
+    int i;
 
     switch(ctrl) {
     case GET_DISKINFO:
@@ -843,6 +844,11 @@ LONG ide_ioctl(WORD dev,UWORD ctrl,void *arg)
         ret = ide_identify(dev);    /* reads into identify structure */
         if (ret >= 0) {
             identify.model_number[39] = 0;  /* null terminate string */
+
+            /* remove right padding with spaces */
+            for (i = 38; i >= 0 && identify.model_number[i] == ' '; i--)
+                identify.model_number[i] = 0;
+
             strcpy(arg,identify.model_number);
             ret = E_OK;
         }

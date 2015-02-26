@@ -6016,3 +6016,4 @@ Start... early ages
 
 2015-02-26
 - doc/*: Updated. (VRI)
+- bios/ide.c: Remove space padding in IDE disk names. (VRI)
