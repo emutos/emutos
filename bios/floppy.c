@@ -220,6 +220,11 @@ static ULONG deselect_time;
 static ULONG loopcount_fdc;
 static ULONG loopcount_falcon;
 
+/* the following is updated by flopvbl(), and used by flopcmd().  it is
+ * non-zero iff the motor on bit is set in the floppy status byte.
+ */
+static WORD motor_on;
+
 /*
  * the following array maps the stepping rate as requested by Floprate()
  * to the (closest possible) value to send to the 1772 chip when an HD
@@ -1122,6 +1127,7 @@ void flopvbl(void)
     old_a = set_psg_porta(a);   /* remember previous drive/side bits */
 
     status = get_fdc_reg(FDC_CS);
+    motor_on = status & FDC_MOTORON;    /* remember for flopcmd()'s use */
 
     wp = status & FDC_WRI_PRO;
     finfo[n].wpstatus = wp;
@@ -1142,8 +1148,10 @@ void flopvbl(void)
      * 2. the motor is off (due to the FDC timing out after 10
      *    revolutions)
      */
-    if ((hz_200 > deselect_time) || ((status & FDC_MOTORON) == 0))
+    if ((hz_200 > deselect_time) || ((status & FDC_MOTORON) == 0)) {
         deselect();
+        motor_on = 0;
+    }
 }
 
 /*==== low level register access ==========================================*/
@@ -1277,8 +1285,8 @@ static WORD flopcmd(WORD cmd)
     LONG timeout;
     WORD reg;
 
-    /* set timeout based on motor-on status */
-    timeout = (get_fdc_reg(FDC_CS) & FDC_MOTORON) ? MOTORON_TIMEOUT : MOTOROFF_TIMEOUT;
+    /* set timeout based on motor-on status from flopvbl() */
+    timeout = motor_on ? MOTORON_TIMEOUT : MOTOROFF_TIMEOUT;
 
     switch(cmd&0xf0) {
     case FDC_WRITE:             /* Write Sector */

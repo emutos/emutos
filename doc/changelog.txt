@@ -6017,3 +6017,7 @@ Start... early ages
 2015-02-26
 - doc/*: Updated. (VRI)
 - bios/ide.c: Remove space padding in IDE disk names. (VRI)
+
+2015-02-27
+- bios/floppy.c: Fix regression that caused floppy writes to trash floppy
+  (introduced by timeout change of 2014-12-17). (RFB)
