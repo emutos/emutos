@@ -29,6 +29,7 @@ Major changes:
 - EmuDesk: Added feature to move files/folders with Control key.
 
 Other changes:
+- Renamed the emutos-m548x variant to emutos-m548x-dbug to avoid confusion.
 - BIOS: Fixed floppy drive motor remaining on if there was no floppy.
 - BIOS: Do not disable IKBD mouse and joystick on startup.
 - BIOS: Added basepage information in panic messages.

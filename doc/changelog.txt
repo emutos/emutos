@@ -6023,5 +6023,7 @@ Start... early ages
   (introduced by timeout change of 2014-12-17). (RFB)
 
 2015-03-01
-- Makefile release.mk doc/announce.txt doc/changelog.txt
-  doc/readme-m548x-bas.txt: Renamed m548xbas to m548x-bas. (VRI)
+- Makefile release.mk doc/announce.txt doc/readme-m548x-bas.txt: Renamed
+  m548xbas to m548x-bas. (VRI)
+- Makefile release.mk doc/announce.txt doc/readme-m548x-dbug.txt: Renamed
+  m548x to m548x-dbug. (VRI)

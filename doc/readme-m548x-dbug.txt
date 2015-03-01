@@ -1,9 +1,9 @@
-EmuTOS - M548x version
+EmuTOS - M548x dBUG version
 
 This EmuTOS version runs on ColdFire V4e Evaluation Boards.
 No graphical output, only text mode ColdFire TOS programs through RS-232.
 
-emutos-m548x.s19 - RAM executable (English)
+emutos-m548x-dbug.s19 - RAM executable (English)
 
 Supported hardware:
 
@@ -32,10 +32,10 @@ see the dBUG prompt.
 
 2) Ensure that your TCP/IP connection is properly configured.
 
-3) Put emutos-m548x.s19 on your TFTP server.
+3) Put emutos-m548x-dbug.s19 on your TFTP server.
 
 4) In the terminal, type the following command to download the binary:
-dn emutos-m548x.s19
+dn emutos-m548x-dbug.s19
 
 5) Then type the following command to run EmuTOS:
 go
@@ -59,5 +59,5 @@ Only text I/O through an RS/232 terminal.
 the ones trying direct access to the Atari hardware will not work.
 
 This ROM image has been built using:
-make m548x
+make m548x-dbug
 

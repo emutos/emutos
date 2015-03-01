@@ -327,8 +327,8 @@ help:
 	@echo "firebee-ram ramtos.img + boot.prg, a RAM tos for the FireBee"
 	@echo "amiga   $(ROM_AMIGA), EmuTOS ROM for Amiga hardware"
 	@echo "amigakd $(AMIGA_KICKDISK), EmuTOS as Amiga 1000 Kickstart disk"
-	@echo "m548x   $(SREC_M548X), EmuTOS-RAM for ColdFire Evaluation Boards"
-	@echo "m548x-bas $(SREC_M548X_BAS), EmuTOS for BaS_gcc on ColdFire Evaluation Boards"
+	@echo "m548x-dbug $(SREC_M548X_DBUG), EmuTOS-RAM for dBUG on ColdFire Evaluation Boards"
+	@echo "m548x-bas  $(SREC_M548X_BAS), EmuTOS for BaS_gcc on ColdFire Evaluation Boards"
 	@echo "all192  all 192 kB images"
 	@echo "all256  all 256 kB images"
 	@echo "allbin  all 192 kB, 256 kB and 512 kB images"
@@ -524,13 +524,13 @@ firebee-ram:
 	@echo "# Building FireBee EmuTOS for RAM"
 	$(MAKE) COLDFIRE=1 CPUFLAGS='-mcpu=5474' DEF='-DMACHINE_FIREBEE' ram
 
-SREC_M548X = emutos-m548x.s19
-.PHONY: m548x
-NODEP += m548x
-m548x: UNIQUE = $(COUNTRY)
-m548x:
-	@echo "# Building M548x EmuTOS in $(SREC_M548X)"
-	$(MAKE) COLDFIRE=1 DEF='-DMACHINE_M548X' UNIQUE=$(UNIQUE) SRECFILE=$(SREC_M548X) $(SREC_M548X)
+SREC_M548X_DBUG = emutos-m548x-dbug.s19
+.PHONY: m548x-dbug
+NODEP += m548x-dbug
+m548x-dbug: UNIQUE = $(COUNTRY)
+m548x-dbug:
+	@echo "# Building M548x dBUG EmuTOS in $(SREC_M548X_DBUG)"
+	$(MAKE) COLDFIRE=1 DEF='-DMACHINE_M548X' UNIQUE=$(UNIQUE) SRECFILE=$(SREC_M548X_DBUG) $(SREC_M548X_DBUG)
 	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT,emutos2.map));\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 
@@ -539,7 +539,7 @@ SREC_M548X_BAS = emutos-m548x-bas.s19
 NODEP += m548x-bas
 m548x-bas: UNIQUE = $(COUNTRY)
 m548x-bas:
-	@echo "# Building m548x-bas EmuTOS in $(SREC_M548X_BAS)"
+	@echo "# Building M548x BaS_gcc EmuTOS in $(SREC_M548X_BAS)"
 	$(MAKE) COLDFIRE=1 DEF='-DMACHINE_M548X -DCONF_WITH_BAS_MEMORY_MAP=1 -DCONF_WITH_PSEUDO_COLD_BOOT=1' LMA=0xe0100000 UNIQUE=$(UNIQUE) SRECFILE=$(SREC_M548X_BAS) $(SREC_M548X_BAS)
 	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT,emutos2.map));\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"

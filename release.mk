@@ -166,20 +166,20 @@ release-amiga:
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_AMIGA).zip $(RELEASE_AMIGA)
 	rm -r $(RELEASE_DIR)/$(RELEASE_AMIGA)
 
-.PHONY: release-m548x
-NODEP += release-m548x
-RELEASE_M548X = emutos-m548x-$(VERSION)
-release-m548x:
+.PHONY: release-m548x-dbug
+NODEP += release-m548x-dbug
+RELEASE_M548X_DBUG = emutos-m548x-dbug-$(VERSION)
+release-m548x-dbug:
 	$(MAKE) clean
-	$(MAKE) m548x
-	mkdir $(RELEASE_DIR)/$(RELEASE_M548X)
-	cp $(SREC_M548X) $(RELEASE_DIR)/$(RELEASE_M548X)
-	cat doc/readme-m548x.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_M548X)/readme.txt
-	mkdir $(RELEASE_DIR)/$(RELEASE_M548X)/doc
-	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_M548X)/doc
-	find $(RELEASE_DIR)/$(RELEASE_M548X) -name '*.txt' -exec unix2dos '{}' ';'
-	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_M548X).zip $(RELEASE_M548X)
-	rm -r $(RELEASE_DIR)/$(RELEASE_M548X)
+	$(MAKE) m548x-dbug
+	mkdir $(RELEASE_DIR)/$(RELEASE_M548X_DBUG)
+	cp $(SREC_M548X_DBUG) $(RELEASE_DIR)/$(RELEASE_M548X_DBUG)
+	cat doc/readme-m548x-dbug.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_M548X_DBUG)/readme.txt
+	mkdir $(RELEASE_DIR)/$(RELEASE_M548X_DBUG)/doc
+	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_M548X_DBUG)/doc
+	find $(RELEASE_DIR)/$(RELEASE_M548X_DBUG) -name '*.txt' -exec unix2dos '{}' ';'
+	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_M548X_DBUG).zip $(RELEASE_M548X_DBUG)
+	rm -r $(RELEASE_DIR)/$(RELEASE_M548X_DBUG)
 
 .PHONY: release-m548x-bas
 NODEP += release-m548x-bas
@@ -231,7 +231,7 @@ release-floppy:
 NODEP += release
 release: distclean release-clean release-mkdir \
   release-src release-512k release-256k release-192k release-cartridge \
-  release-aranym release-firebee release-amiga release-m548x release-m548x-bas \
-  release-ram release-floppy
+  release-aranym release-firebee release-amiga release-m548x-dbug \
+  release-m548x-bas release-ram release-floppy
 	$(MAKE) clean
 	@echo '# Packages successfully generated inside $(RELEASE_DIR)'
