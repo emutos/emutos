@@ -19,11 +19,11 @@ License (GPL).
 
 
 
-CHANGES SINCE RELEASE 0.9.4
+CHANGES SINCE RELEASE 0.9.3
 
 Major changes:
 - Compile with -O2 by default for best optimization.
-- New emutos-m548xbas variant to support BaS_gcc on ColdFire Evaluation Boards.
+- New emutos-m548x-bas variant to support BaS_gcc on ColdFire Evaluation Boards.
 - Less RAM usage: 94 kB saved from previous release.
 - EmuDesk: Added feature to display text files.
 - EmuDesk: Added feature to move files/folders with Control key.

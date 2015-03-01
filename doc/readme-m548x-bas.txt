@@ -1,0 +1,52 @@
+EmuTOS - M548x BaS_gcc version
+
+This EmuTOS version runs on ColdFire V4e Evaluation Boards.
+No graphical output, only text mode ColdFire TOS programs through RS-232.
+
+emutos-m548x-bas.s19 - RAM executable (English)
+
+Supported hardware:
+
+- M5485EVB (a.k.a. Zoom ColdFire EVB)
+http://www.logicpd.com/products/legacy/zoom-coldfire-evb/
+
+- M5484LITE (a.k.a. Zoom ColdFire LITEKIT)
+http://www.logicpd.com/products/legacy/zoom-coldfire-litekit/
+
+Requirements:
+- An RS-232 connection between the EVB and another computer.
+- On the computer, an ANSI terminal emulator connected to the RS-232 port.
+- An Ethernet connection between the EVB and your network.
+- A TFTP server running somewhere on your network (can be the same computer).
+- Optional: a CompactFlash card with a FAT16 partition.
+
+To use the CompactFlash card, you need to have programmed the CPLD
+(programmable component) on your board. You need to contact Logic PD
+(the board manufacturer) to get the software package.
+http://www.logicpd.com/support/
+
+How to run EmuTOS:
+
+FIXME: Add Bas_gcc documentation here
+
+6) You will see the EmuTOS welcome screen.
+Press C to enter the early console.
+
+7) If you wait too much, the desktop will run in the background.
+Press Control+Z to return to EmuCON.
+
+8) Then you can run EmuCON commands, and external text mode programs.
+
+Restrictions:
+
+- No graphical display, no keyboard, no mouse.
+Only text I/O through an RS/232 terminal.
+
+- Support for ColdFire TOS programs only. 680x0 programs will not work.
+
+- No Atari hardware emulated. Clean programs using only the OS will work,
+the ones trying direct access to the Atari hardware will not work.
+
+This ROM image has been built using:
+make m548x-bas
+
