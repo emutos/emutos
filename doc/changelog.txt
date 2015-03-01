@@ -6021,3 +6021,7 @@ Start... early ages
 2015-02-27
 - bios/floppy.c: Fix regression that caused floppy writes to trash floppy
   (introduced by timeout change of 2014-12-17). (RFB)
+
+2015-03-01
+- Makefile release.mk doc/announce.txt doc/changelog.txt
+  doc/readme-m548x-bas.txt: Renamed m548xbas to m548x-bas. (VRI)
