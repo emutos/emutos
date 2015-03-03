@@ -373,31 +373,45 @@ static WORD d_dofdel(BYTE *ppath)
  */
 static WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
 {
-    WORD fh, ob, samefile;
+    WORD fh, ob = 0, samefile;
     LONG tree = G.a_trees[ADCPALER];
+    BYTE old_dst[LEN_ZFNAME];
 
     while(1)
     {
-        fh = dos_open(pdst_file, 0);
-        if (DOS_ERR)
-        {
-            if (DOS_AX == E_FILENOTFND)
-                break;
-            return d_errmsg();
-        }
-        dos_close(fh);
-
         /*
-         * file exists: this is OK as long as
-         *     a) user doesn't want to be notified about overwrites
-         *     b) i/p and o/p filenames are different (prevent overwriting ourselves)
+         * set flag if user is trying to overwrite a file with itself
          */
         samefile = !strcmp(psrc_file, pdst_file);
-        if (!G.g_covwrpref && !samefile)
-            break;
 
         /*
-         * need to talk to user: get i/p & o/p filenames and prefill dialog
+         * if the files are different:
+         *  . if the user said OK in response to the do_namecon() dialog
+         *    in a previous iteration, OR
+         *  . if the user doesn't want to be warned about overwrites, OR
+         *  . if the output file doesn't exist,
+         *      exit this loop, the copy/move can proceed
+         */
+        if (!samefile)
+        {
+            if (ob == CAOK)
+                break;
+            if (!G.g_covwrpref)
+                break;
+            fh = dos_open(pdst_file, 0);
+            if (DOS_ERR)
+            {
+                if (DOS_AX == E_FILENOTFND)
+                    break;
+                return d_errmsg();
+            }
+            dos_close(fh);
+        }
+
+        /*
+         * either the files are the same, or the output file exists and
+         * the user wants to be notified about overwrites, so we need
+         * to tell the user: get i/p & o/p filenames and prefill dialog
          */
         get_fname(psrc_file, ml_fsrc);  /* get input filename */
         if (samefile)                   /* don't prefill o/p if same file */
@@ -410,6 +424,7 @@ static WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
         /*
          * display dialog & get input
          */
+        strcpy(old_dst,ml_fdst);        /* remember old destination */
         ob = do_namecon();
         if (ob == CASTOP)
             return 0;
@@ -417,7 +432,7 @@ static WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
             return -1;
 
         /*
-         * user says ok, so decode filename & try again
+         * user says ok, so update destination filename
          */
         inf_sget(tree, CACOPYNA, ml_fdst);
         unfmt_str(ml_fdst, ml_fstr);
@@ -426,6 +441,13 @@ static WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
             del_fname(pdst_file);
             add_fname(pdst_file, ml_fstr);
         }
+
+        /*
+         * if destination has changed, pretend there was no OK, so
+         * the next iteration of this loop can check everything again
+         */
+        if (strcmp(old_dst,ml_fdst))
+            ob = 0;
     }
 
     return 1;

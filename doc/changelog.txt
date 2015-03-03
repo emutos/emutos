@@ -6028,3 +6028,8 @@ Start... early ages
 - Makefile release.mk doc/announce.txt doc/readme-m548x-dbug.txt: Renamed
   m548x to m548x-dbug. (VRI)
 - readme-m548x-dbug.txt readme-m548x-bas.txt: Updated. (VRI)
+
+2015-03-03
+- desk/deskdir.c: Fix regression that always disallowed a file copy/move
+  when there was a filename conflict and the user preferences were set
+  to prompt on overwrites. (RFB)
