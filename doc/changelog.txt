@@ -6033,3 +6033,7 @@ Start... early ages
 - desk/deskdir.c: Fix regression that always disallowed a file copy/move
   when there was a filename conflict and the user preferences were set
   to prompt on overwrites. (RFB)
+
+2015-03-04
+- desk/deskdir.c: Fix regression: attempting to delete a read-only file
+  made the containing folder non-deletable until after a reboot. (RFB)
