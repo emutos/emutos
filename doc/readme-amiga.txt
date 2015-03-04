@@ -7,7 +7,7 @@ emutos-kickdisk.adf - English Amiga 1000 Kickstart disk
 
 This is a Kickstart ROM replacement.
 EmuTOS runs on Amiga hardware, and behaves just like on Atari computers.
-This is not an Atari emulator. It is a simple an clean
+This is not an Atari emulator. It is a simple and clean
 operating system, which allows running clean Atari programs.
 No Atari hardware is emulated, and the full Amiga hardware is available.
 The Atari OS calls have been implemented using the Amiga hardware.
@@ -56,7 +56,7 @@ This ROM image has been built using:
 make amiga
 
 (*) This additional hardware support is provided by sources imported
-from the AROS project. Unfortunately, due to AROS and GPL license
+from the AROS project. Unfortunately, due to AROS and GPL licenses
 incompatibility, this support is disabled in the official EmuTOS
 binaries.
 
