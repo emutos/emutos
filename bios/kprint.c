@@ -150,6 +150,10 @@ static void kprintf_outc_rs232(int c)
 #if SCC_DEBUG_PRINT
 static void kprintf_outc_sccB(int c)
 {
+    /* Raw terminals usually require CRLF */
+    if (c == '\n')
+        bconoutB(1,'\r');
+
     bconoutB(1,c);
 }
 #endif
