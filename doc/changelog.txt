@@ -6043,3 +6043,6 @@ Start... early ages
 2015-03-08
 - desk/deskdir.c: Code cleanup: eliminate some static variables. (RFB)
 - bios/kprint.c: Added CRLF translation in kprintf_outc_sccB(). (RFB)
+
+2015-03-09
+- po/gr.po: Updated Greek translation. Contributed by Christos Tziotzis. (VRI)
