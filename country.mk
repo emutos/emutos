@@ -36,7 +36,7 @@ i18n_cz_cset = L2
 i18n_cz_idt  = IDT_24H | IDT_DDMMYY | '/'
 
 i18n_gr_lang = gr
-i18n_gr_keyb = GR
+i18n_gr_keyb = US
 i18n_gr_cset = GR
 i18n_gr_idt  = IDT_24H | IDT_DDMMYY | '/'
 

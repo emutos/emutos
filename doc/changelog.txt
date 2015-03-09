@@ -6046,3 +6046,5 @@ Start... early ages
 
 2015-03-09
 - po/gr.po: Updated Greek translation. Contributed by Christos Tziotzis. (VRI)
+- country.mk: Set default Greek keyboard layout to US. Contributed by Christos
+  Tziotzis. (VRI)
