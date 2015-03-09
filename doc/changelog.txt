@@ -6039,3 +6039,6 @@ Start... early ages
   made the containing folder non-deletable until after a reboot. (RFB)
 
 * Release: 0.9.4
+
+2015-03-08
+- desk/deskdir.c: Code cleanup: eliminate some static variables. (RFB)

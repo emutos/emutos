@@ -50,7 +50,6 @@ static UBYTE    *copybuf;   /* for copy operations */
 static LONG     copylen;    /* size of above buffer */
 
 static WORD     ml_havebox;
-static BYTE     ml_fsrc[LEN_ZFNAME], ml_fdst[LEN_ZFNAME], ml_fstr[LEN_ZFNAME], ml_ftmp[LEN_ZFNAME];
 
 /*
  * check for UNDO key pressed: if so, ask user if she wants to abort and,
@@ -328,11 +327,16 @@ void del_fname(BYTE *pstr)
 /*
 *       Parse to find the filename part of a path and return a copy of it
 *       in a form ready to be placed in a dialog box.
+*
+*       input:  pstr, the full pathname
+*       output: newstr, the formatted filename
 */
 static void get_fname(BYTE *pstr, BYTE *newstr)
 {
-        strcpy(&ml_ftmp[0], last_separator(pstr)+1);
-        fmt_str(&ml_ftmp[0], newstr);
+        BYTE ml_ftmp[LEN_ZFNAME];
+
+        strcpy(ml_ftmp, last_separator(pstr)+1);
+        fmt_str(ml_ftmp, newstr);
 } /* get_fname */
 
 
@@ -375,6 +379,7 @@ static WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
 {
     WORD fh, ob = 0, samefile;
     LONG tree = G.a_trees[ADCPALER];
+    BYTE ml_fsrc[LEN_ZFNAME], ml_fdst[LEN_ZFNAME], ml_fstr[LEN_ZFNAME];
     BYTE old_dst[LEN_ZFNAME];
 
     while(1)
@@ -696,6 +701,8 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
  */
 static WORD output_path(BYTE *srcpth, BYTE *dstpth)
 {
+    BYTE ml_fsrc[LEN_ZFNAME], ml_fdst[LEN_ZFNAME], ml_fstr[LEN_ZFNAME];
+
     LONG tree = G.a_trees[ADCPALER];
 
     while(1)
