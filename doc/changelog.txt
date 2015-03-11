@@ -6053,3 +6053,5 @@ Start... early ages
 - cli/cmd.h cli/cmdmain.c cli/cmdparse.c: Replace '"' with #define so that
   modules can be processed by the bug tool. (RFB)
 - po/POTFILES.in: Add appropriate files in cli/ to translation list. (RFB)
+- desk/desktop.def desk/desktop.rsc: Increase width of 'New folder' text
+  object to allow for Greek/Spanish translations. (RFB)
