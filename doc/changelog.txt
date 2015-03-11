@@ -6056,3 +6056,4 @@ Start... early ages
 - desk/desktop.def desk/desktop.rsc: Increase width of 'New folder' text
   object to allow for Greek/Spanish translations. (RFB)
 - aes/gemlib.h aes/gemrslib.c: Eliminate some #defines to simplify code. (RFB)
+- po/fr.po: Added EmuCON2 translation. (VRI)

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EMUTOS beta\n"
 "POT-Creation-Date: 2004-01-27 14:37+0100\n"
-"PO-Revision-Date: 2015-02-14 17:00+0100\n"
+"PO-Revision-Date: 2015-03-11 22:54+0100\n"
 "Last-Translator: Vincent Riviere <vincent.riviere@freesbee.fr>\n"
 "Language-Team: French <fr@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -743,7 +743,7 @@ msgstr "DISQUE"
 msgid "TRASH"
 msgstr "CORBEILLE"
 
-#: desk/desk_rsc.c:1692
+#: desk/desk_rsc.c:1692 cli/cmdint.c:1016
 msgid "-More-"
 msgstr "-Plus-"
 
@@ -1051,4 +1051,312 @@ msgstr " Scan "
 #: desk/icons.c:1048
 msgid " Mail "
 msgstr " Messagerie "
+
+#: cli/cmdint.c:73
+msgid "Copy <filespec> ... to standard output"
+msgstr "Copier <filespec> ... vers la sortie standard"
+
+#: cli/cmdint.c:75
+msgid "Change current directory to <dir>"
+msgstr "Changer le répertoire courant vers <dir>"
+
+#: cli/cmdint.c:76
+msgid "or display current directory"
+msgstr "ou afficher le répertoire courant"
+
+#: cli/cmdint.c:78
+msgid "Change attributes for <filename>"
+msgstr "Changer les attributs de <filename>"
+
+#: cli/cmdint.c:79
+msgid "<mode> is the following ORed together:"
+msgstr "<mode> peut prendre les valeurs suivantes combinées avec OU :"
+
+#: cli/cmdint.c:80
+msgid "1: read-only  2: hidden  4: system"
+msgstr "1: lecture seule  2: caché  4: système"
+
+#: cli/cmdint.c:82
+msgid "Clear screen"
+msgstr "Effacer l'écran"
+
+#: cli/cmdint.c:84
+msgid "Copy files matching <filespec> to <dest>"
+msgstr "Copier les fichiers correspondant à <filespec> vers <dest>"
+
+#: cli/cmdint.c:85
+msgid "If <filespec> matches multiple files,"
+msgstr "Si <filespec> correspond à plusieurs fichiers,"
+
+#: cli/cmdint.c:86
+msgid "<dest> must be a directory"
+msgstr "<dest> doit être un répertoire"
+
+#: cli/cmdint.c:88
+msgid "Copy <string> ... to standard output"
+msgstr "Copier <string> ... vers la sortie standard"
+
+#: cli/cmdint.c:89
+msgid "Strings may be surrounded by \"\""
+msgstr "Les chaines peuvent être mises entre \"\""
+
+#: cli/cmdint.c:91
+msgid "Exit EmuCON2"
+msgstr "Quitter EmuCON2"
+
+#: cli/cmdint.c:93
+msgid "Get help about <cmd> or list available commands"
+msgstr "Obtenir de l'aide à propos de <cmd> ou lister les commandes disponibles"
+
+#: cli/cmdint.c:94
+msgid "Use HELP ALL for help on all commands"
+msgstr "Utiliser HELP ALL pour afficher l'aide de toutes les commandes"
+
+#: cli/cmdint.c:95
+msgid "Use HELP EDIT for help on line editing"
+msgstr "Utiliser HELP EDIT pour l'aide sur la ligne de commandes"
+
+#: cli/cmdint.c:97
+msgid "List files (default terse, horizontal)"
+msgstr "Lister les fichiers (par défaut : succinct, horizontal)"
+
+#: cli/cmdint.c:98
+msgid "Specify -l for detailed list"
+msgstr "Spécifier -l pour une liste détaillée"
+
+#: cli/cmdint.c:100
+msgid "Create directory <dir>"
+msgstr "Créer le répertoire <dir>"
+
+#: cli/cmdint.c:102
+msgid "Copy <filespec> to standard output,"
+msgstr "Copier <filespec> vers la sortie standard,"
+
+#: cli/cmdint.c:103
+msgid "pausing every screenful"
+msgstr "en marquant une pause à chaque page"
+
+#: cli/cmdint.c:105
+msgid "Copy files matching <filespec> to <dir>,"
+msgstr "Copier les fichiers correspondant à <filespec> vers <dir>,"
+
+#: cli/cmdint.c:106
+msgid "then delete input files"
+msgstr "puis supprimer les fichiers sources"
+
+#: cli/cmdint.c:108
+msgid "Set search path for external programs"
+msgstr "Définir le chemin de recherche des programmes externes"
+
+#: cli/cmdint.c:109
+msgid "or display current search path"
+msgstr "ou afficher le chemin de recherche actuel"
+
+#: cli/cmdint.c:111
+msgid "Display current drive and directory"
+msgstr "Afficher le lecteur et le répertoire courants"
+
+#: cli/cmdint.c:113
+msgid "Rename <oldname> to <newname>"
+msgstr "Renommer <oldname> en <newname>"
+
+#: cli/cmdint.c:115
+msgid "Delete files matching <filespec>"
+msgstr "Supprimer les fichiers correspondant à <filespec>"
+
+#: cli/cmdint.c:116
+msgid "Specify -q to be prompted each time"
+msgstr "Spécifier -q pour demander une confirmation à chaque fois"
+
+#: cli/cmdint.c:118
+msgid "Delete directory <dir>"
+msgstr "Supprimer le répetoire <dir>"
+
+#: cli/cmdint.c:120
+msgid "Show info for <drive> or current drive"
+msgstr "Afficher les informations pour <drive> ou le lecteur courant"
+
+#: cli/cmdint.c:122
+msgid "Display GEMDOS version"
+msgstr "Afficher la version du GEMDOS"
+
+#: cli/cmdint.c:124
+msgid "Set line wrap or show current status"
+msgstr "Activer le retour à la ligne ou affiche l'état actuel"
+
+#: cli/cmdint.c:128
+msgid "up/down arrow = previous/next line in history"
+msgstr "flèche haut/bas = ligne précédente/suivante dans l'historique"
+
+#: cli/cmdint.c:129
+msgid "left/right arrow = previous/next character"
+msgstr "flèche gauche/droit = caractère précédent/suivant"
+
+#: cli/cmdint.c:130
+msgid "shift-left/right arrow = previous/next word"
+msgstr "shift-flèche gauche/droit = mot précédent/suivant"
+
+#: cli/cmdint.c:219
+msgid "invalid mode argument"
+msgstr "argument mode invalide"
+
+#: cli/cmdint.c:261
+msgid "Builtin commands:"
+msgstr "Commandes internes :"
+
+#: cli/cmdint.c:322
+msgid "Listing of "
+msgstr "Contenu de "
+
+#: cli/cmdint.c:372
+msgid "(empty)"
+msgstr "(vide)"
+
+#: cli/cmdint.c:429
+msgid "Delete ALL matching files"
+msgstr "Supprimer TOUS les fichiers correspondants"
+
+#: cli/cmdint.c:436
+msgid "Delete file "
+msgstr "Supprimer le fichier "
+
+#: cli/cmdint.c:488
+msgid "Allocation info for drive "
+msgstr "Utilisation du lecteur "
+
+#: cli/cmdint.c:491
+msgid "  Size (bytes):   "
+msgstr "  Taille (octets) :    "
+
+#: cli/cmdint.c:492
+msgid "  Bytes used:     "
+msgstr "  Octets utilisés :    "
+
+#: cli/cmdint.c:493
+msgid "  Bytes free:     "
+msgstr "  Octets libres :      "
+
+#: cli/cmdint.c:494
+msgid "  Total clusters: "
+msgstr "  Total des clusters : "
+
+#: cli/cmdint.c:495
+msgid "  Free clusters:  "
+msgstr "  Clusters libres :    "
+
+#: cli/cmdint.c:496
+msgid "  Sectors/cluster:"
+msgstr "  Secteurs/cluster :   "
+
+#: cli/cmdint.c:497
+msgid "  Bytes/sector:   "
+msgstr "  Octets/secteur :     "
+
+#: cli/cmdint.c:625
+msgid " is not a directory"
+msgstr " n'est pas un répertoire"
+
+#: cli/cmdint.c:654
+msgid " and "
+msgstr " et "
+
+#: cli/cmdint.c:660
+msgid "Copying "
+msgstr "Copie de "
+
+#: cli/cmdint.c:662
+msgid " to "
+msgstr " vers "
+
+#: cli/cmdint.c:698
+msgid " ... deleting "
+msgstr " ... suppression "
+
+#: cli/cmdint.c:708
+msgid " ... done"
+msgstr " ... fait"
+
+#: cli/cmdint.c:764
+msgid " or "
+msgstr " ou "
+
+#: cli/cmdint.c:792
+msgid "CR to continue ..."
+msgstr "Entrée pour continuer..."
+
+#: cli/cmdmain.c:59
+msgid "Welcome to EmuCON2: type HELP for builtin commands"
+msgstr "Bienvenue dans EmuCON2 : tapez HELP pour les commandes internes"
+
+#: cli/cmdmain.c:78
+msgid "warning: no history buffers"
+msgstr "avertissement : aucun buffer d'historique"
+
+#: cli/cmdparse.c:29
+msgid "more than one redirection"
+msgstr "plus d'une redirection"
+
+#: cli/cmdparse.c:47
+msgid "no filename for redirection"
+msgstr "pas de nom de fichier pour la redirection"
+
+#: cli/cmdparse.c:53
+msgid "error in quoted field"
+msgstr "erreur dans un champ entre guillemets"
+
+#: cli/cmdparse.c:57
+msgid "error parsing line"
+msgstr "erreur en analysant la ligne"
+
+#: cli/cmdutil.c:63
+msgid "file not found"
+msgstr "fichier non trouvé"
+
+#: cli/cmdutil.c:66
+msgid "path not found"
+msgstr "chemin non trouvé"
+
+#: cli/cmdutil.c:69
+msgid "no more file handles"
+msgstr "plus de handles de fichier"
+
+#: cli/cmdutil.c:72
+msgid "can't create file"
+msgstr "impossible de créer le fichier"
+
+#: cli/cmdutil.c:75
+msgid "not enough memory"
+msgstr "pas assez de mémoire"
+
+#: cli/cmdutil.c:78
+msgid "invalid drive"
+msgstr "lecteur invalide"
+
+#: cli/cmdutil.c:81
+msgid "interrupted"
+msgstr "interrompu"
+
+#: cli/cmdutil.c:84
+msgid "invalid path"
+msgstr "chemin invalide"
+
+#: cli/cmdutil.c:87
+msgid "can't write to disk (full?)"
+msgstr "impossible d'écrire sur le disque (plein ?)"
+
+#: cli/cmdutil.c:90
+msgid "cmdline too long"
+msgstr "ligne de commandes trop longue"
+
+#: cli/cmdutil.c:93
+msgid "directory not empty"
+msgstr "répertoire non vide"
+
+#: cli/cmdutil.c:96
+msgid "wrong number of arguments"
+msgstr "mauvais nombre d'arguments"
+
+#: cli/cmdutil.c:99
+msgid "error code "
+msgstr "code d'erreur "
 
