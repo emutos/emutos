@@ -6048,3 +6048,7 @@ Start... early ages
 - po/gr.po: Updated Greek translation. Contributed by Christos Tziotzis. (VRI)
 - country.mk: Set default Greek keyboard layout to US. Contributed by Christos
   Tziotzis. (VRI)
+
+2015-03-11
+- cli/cmd.h cli/cmdmain.c cli/cmdparse.c: Replace '"' with #define so that
+  modules can be processed by the bug tool. (RFB)

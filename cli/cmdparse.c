@@ -76,7 +76,7 @@ char *p;
 WORD n, inquotes;
 
     for (p = line, n = 0, inquotes = 0; *p; p++) {
-        if (*p == '"')
+        if (*p == DBLQUOTE)
             inquotes ^= 1;
         if (!inquotes) {
             if (*p == '>') {
@@ -117,13 +117,13 @@ WORD inquotes = 0;
     }
 
     *arg = p;
-    if (*p == '"') {
+    if (*p == DBLQUOTE) {
         inquotes = 1;
         p++;
     }
 
     for ( ; *p; p++) {
-        if (*p == '"') {
+        if (*p == DBLQUOTE) {
             if (!inquotes)
                 return QUOTING_ERROR;
             inquotes = 0;

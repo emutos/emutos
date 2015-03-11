@@ -156,6 +156,7 @@ typedef struct {
 #define RTARROW_SHFT    0x4d36
 
 #define ESC             0x1b
+#define DBLQUOTE        0x22
 
 #define CTL_C           ('C'-0x40)
 #define CTL_Q           ('Q'-0x40)

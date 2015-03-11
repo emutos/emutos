@@ -152,7 +152,7 @@ char *p;
 int i;
 
     for (i = 0; i < argc; i++, argv++) {
-        if (**argv == '"') {
+        if (**argv == DBLQUOTE) {
             (*argv)++;
             for (p = *argv; *p; p++)
                 ;
