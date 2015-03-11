@@ -53,7 +53,7 @@ static union {
 } rs_hdr;
 static AESGLOBAL *rs_global;
 static char    tmprsfname[128];
-static UWORD   hdr_buff[HDR_LENGTH/2];
+static RSHDR   hdr_buff;
 static char    free_str[256];   /* must be long enough for longest freestring in gem.rsc */
 
 
@@ -370,13 +370,13 @@ static WORD rs_readit(AESGLOBAL *pglobal, LONG rsfname)
         fd = dos_open((BYTE *)tmprsfname, RMODE_RD);
 
         if ( !DOS_ERR )
-          dos_read(fd, HDR_LENGTH, hdr_buff);
+          dos_read(fd, sizeof(hdr_buff), &hdr_buff);
                                                 /* read in resource and */
                                                 /*   interpret it       */
         if ( !DOS_ERR )
         {
                                                 /* get size of resource */
-          rslsize = hdr_buff[RS_SIZE];
+          rslsize = hdr_buff.rsh_rssize;
                                                 /* allocate memory      */
           rs_hdr.base = dos_alloc( rslsize );
           if ( !DOS_ERR )

@@ -151,9 +151,6 @@ typedef struct rstree
 #define RT_IMAGEDATA 7
 #define RT_FREEIMG 8
 #define RT_TRINDEX 9
-
-#define NUM_RTYPES 10
-
 #define R_NOBS 10
 #define R_NTREE 11
 #define R_NTED 12
@@ -161,13 +158,6 @@ typedef struct rstree
 #define R_NBITBLK 14
 #define R_NSTRING 15
 #define R_IMAGES 16
-
-#define NUM_RN 7
-
-#define RS_SIZE 17                              /* NUM_RTYPES + NUM_RN  */
-
-#define HDR_LENGTH ((RS_SIZE+1)*2)              /* in bytes     */
-
 
 typedef struct rshdr
 {

@@ -6055,3 +6055,4 @@ Start... early ages
 - po/POTFILES.in: Add appropriate files in cli/ to translation list. (RFB)
 - desk/desktop.def desk/desktop.rsc: Increase width of 'New folder' text
   object to allow for Greek/Spanish translations. (RFB)
+- aes/gemlib.h aes/gemrslib.c: Eliminate some #defines to simplify code. (RFB)
