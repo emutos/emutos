@@ -6058,3 +6058,5 @@ Start... early ages
 - aes/gemlib.h aes/gemrslib.c: Eliminate some #defines to simplify code. (RFB)
 - po/fr.po: Added EmuCON2 translation. (VRI)
 - cli/.cvsignore: Added *.tr.c. (VRI)
+- aes/gemrslib.c: Simplify code to save space and fix potential bug
+  (issuing dos_close() when dos_open() failed). (RFB)

@@ -353,60 +353,44 @@ WORD rs_saddr(AESGLOBAL *pglobal, UWORD rtype, UWORD rindex, LONG rsaddr)
 *       case of the GEM resource file this workstation will not have
 *       been loaded into memory yet.
 */
-static WORD rs_readit(AESGLOBAL *pglobal, LONG rsfname)
+static WORD rs_readit(AESGLOBAL *pglobal,UWORD fd)
 {
         WORD    ibcnt;
-        UWORD   rslsize, fd, ret;
-                                                /* make sure its there  */
-        strcpy(tmprsfname, (char *) rsfname);
-        if ( !sh_find(tmprsfname) )
-        {
-          return(FALSE);
-        }
+        UWORD   rslsize;
+                                                /* read the header      */
+        dos_read(fd, sizeof(hdr_buff), &hdr_buff);
+        if (DOS_ERR)
+          return FALSE;
+                                                /* get size of resource */
+        rslsize = hdr_buff.rsh_rssize;
+                                                /* allocate memory      */
+        rs_hdr.base = dos_alloc(rslsize);
+        if (DOS_ERR)
+          return FALSE;
+                                                /* read it all in       */
+        dos_lseek(fd, SMODE, 0x0L);
+        dos_read(fd, rslsize, (void *)rs_hdr.base);
+        if (DOS_ERR)
+          return FALSE;
                                                 /* init global          */
         rs_global = pglobal;
-                                                /* open then file and   */
-                                                /*   read the header    */
-        fd = dos_open((BYTE *)tmprsfname, RMODE_RD);
 
-        if ( !DOS_ERR )
-          dos_read(fd, sizeof(hdr_buff), &hdr_buff);
-                                                /* read in resource and */
-                                                /*   interpret it       */
-        if ( !DOS_ERR )
-        {
-                                                /* get size of resource */
-          rslsize = hdr_buff.rsh_rssize;
-                                                /* allocate memory      */
-          rs_hdr.base = dos_alloc( rslsize );
-          if ( !DOS_ERR )
-          {
-                                                /* read it all in       */
-            dos_lseek(fd, SMODE, 0x0L);
-            dos_read(fd, rslsize, (void *)rs_hdr.base);
-            if ( !DOS_ERR)
-            {
-              rs_global->ap_1resv = rs_hdr.base;
-              rs_global->ap_2resv[0] = rslsize;
+        rs_global->ap_1resv = rs_hdr.base;
+        rs_global->ap_2resv[0] = rslsize;
                                         /* xfer RT_TRINDEX to global    */
                                         /*   and turn all offsets from  */
                                         /*   base of file into pointers */
-              fix_trindex();
-              fix_tedinfo();
-              ibcnt = rs_hdr.wordptr[R_NICON]-1;
-              fix_nptrs(ibcnt, R_IBPMASK);
-              fix_nptrs(ibcnt, R_IBPDATA);
-              fix_nptrs(ibcnt, R_IBPTEXT);
-              fix_nptrs(rs_hdr.wordptr[R_NBITBLK]-1, R_BIPDATA);
-              fix_nptrs(rs_hdr.wordptr[R_NSTRING]-1, R_FRSTR);
-              fix_nptrs(rs_hdr.wordptr[R_IMAGES]-1, R_FRIMG);
-            }
-          }
-        }
-                                                /* close file and return*/
-        ret = !DOS_ERR;
-        dos_close(fd);
-        return(ret);
+        fix_trindex();
+        fix_tedinfo();
+        ibcnt = rs_hdr.wordptr[R_NICON]-1;
+        fix_nptrs(ibcnt, R_IBPMASK);
+        fix_nptrs(ibcnt, R_IBPDATA);
+        fix_nptrs(ibcnt, R_IBPTEXT);
+        fix_nptrs(rs_hdr.wordptr[R_NBITBLK]-1, R_BIPDATA);
+        fix_nptrs(rs_hdr.wordptr[R_NSTRING]-1, R_FRSTR);
+        fix_nptrs(rs_hdr.wordptr[R_IMAGES]-1, R_FRIMG);
+
+        return TRUE;
 }
 
 
@@ -427,11 +411,25 @@ void rs_fixit(AESGLOBAL *pglobal)
 */
 WORD rs_load(AESGLOBAL *pglobal, LONG rsfname)
 {
-        register WORD   ret;
+        WORD  ret;
+        UWORD fd;
 
-        ret = rs_readit(pglobal, rsfname);
+        /*
+         * use shel_find() to get resource location
+         */
+        strcpy(tmprsfname,(char *)rsfname);
+        if (!sh_find(tmprsfname))
+          return FALSE;
+
+        fd = dos_open((BYTE *)tmprsfname,RMODE_RD);
+        if (DOS_ERR)
+          return FALSE;
+
+        ret = rs_readit(pglobal,fd);
         if (ret)
           rs_fixit(pglobal);
+        dos_close(fd);
+
         return ret;
 }
 
