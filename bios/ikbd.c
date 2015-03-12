@@ -40,6 +40,7 @@
 #include "sound.h"              /* for keyclick */
 #include "delay.h"
 #include "bios.h"
+#include "coldfire.h"
 
 
 
@@ -101,10 +102,6 @@ LONG kbshift(WORD flag)
 
 LONG bconstat2(void)
 {
-#if CONF_SERIAL_CONSOLE
-    return bconstat(1);
-#endif
-
     if (ikbdiorec.head == ikbdiorec.tail) {
         return 0;               /* iorec empty */
     } else {
@@ -116,27 +113,6 @@ LONG bconin2(void)
 {
     WORD old_sr;
     LONG value;
-
-#if CONF_SERIAL_CONSOLE
-    value = bconin(1);
-
-    /* We need to emulate these scancodes if we want to launch EmuCON2
-     * from EmuDesk by using the keyboard shortcuts.
-     * And a few other ones to get minimal command-line editing.
-     */
-    if (value == 0x11) /* ^Q */
-        value |= 0x100000; /* Scancode of Q */
-    else if (value == 0x1a) /* ^Z */
-        value |= 0x2c0000; /* Scancode of Z */
-    else if (value == 0x08) /* Backspace */
-        value |= 0x0e0000; /* Scancode of Backspace */
-    else if (value == 0x09) /* TAB */
-        value |= 0x0f0000; /* Scancode of TAB */
-    else if (value == 0x7f) /* Delete */
-        value |= 0x053000; /* Scancode of Delete */
-
-    return value;
-#endif
 
     while (!bconstat2()) {
 #if USE_STOP_INSN_TO_FREE_HOST_CPU
@@ -159,6 +135,8 @@ LONG bconin2(void)
 
 static void push_ikbdiorec(LONG value)
 {
+    KDEBUG(("KBD iorec: Pushing value 0x%08lx\n", value));
+
     ikbdiorec.tail += 4;
     if (ikbdiorec.tail >= ikbdiorec.size) {
         ikbdiorec.tail = 0;
@@ -169,6 +147,59 @@ static void push_ikbdiorec(LONG value)
     }
     *(LONG *) (ikbdiorec.buf + ikbdiorec.tail) = value;
 }
+
+#if CONF_SERIAL_CONSOLE
+
+/* Find a scancode in a keyboard table */
+static UBYTE scancode_from_ascii(UBYTE ascii, const UBYTE *table)
+{
+    int i;
+
+    for (i = 0; i < 128; i++)
+    {
+        if (table[i] == ascii)
+            return i;
+    }
+
+    return 0;
+}
+
+/* Emulate a key press from an ASCII character */
+void push_ascii_ikbdiorec(UBYTE ascii)
+{
+    UBYTE scancode = 0;
+    UBYTE mode = 0;
+    ULONG value;
+
+    /* We have to look in the keyboard tables to find a matching scancode.
+     * First, look in Normal table. */
+    scancode = scancode_from_ascii(ascii, current_keytbl.norm);
+
+    /* If not found, look in Shift table. */
+    if (scancode == 0)
+    {
+        scancode = scancode_from_ascii(ascii, current_keytbl.shft);
+        if (scancode != 0)
+            mode = MODE_LSHIFT;
+    }
+
+    /* Then check for Control codes from ^A to ^Z. */
+    if (scancode == 0 && (ascii >= ('a'-'`') && ascii <= ('z'-'`')))
+    {
+        scancode = scancode_from_ascii('`'+ascii, current_keytbl.norm);
+        if (scancode != 0)
+            mode = MODE_CTRL;
+    }
+
+    value = ((ULONG)scancode << 16) | ascii;
+
+    if (conterm & 0x8)
+        value |= (ULONG)mode << 24;
+
+    push_ikbdiorec(value);
+}
+
+#endif /* CONF_SERIAL_CONSOLE */
 
 /*=== kbrate (xbios) =====================================================*/
 
@@ -437,7 +468,6 @@ void kbd_int(UBYTE scancode)
     if (conterm & 0x8) {
         value += ((LONG) shifty) << 24;
     }
-    KDEBUG(("KBD iorec: Pushing value 0x%08lx\n", value));
 
     push_ikbdiorec(value);
 
@@ -535,6 +565,14 @@ static UBYTE ikbd_readb(void)
 void kbd_init(void)
 {
     UBYTE ikbd_version;
+
+#if CONF_SERIAL_CONSOLE
+# ifdef __mcoldfire__
+    coldfire_rs232_enable_interrupt();
+# else
+    /* FIXME: Enable interrupts on other hardware. */
+# endif
+#endif /* CONF_SERIAL_CONSOLE */
 
 #if CONF_WITH_IKBD_ACIA
     /* initialize ikbd ACIA */

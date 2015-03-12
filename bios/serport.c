@@ -121,7 +121,11 @@ static const MAPTAB maptable_mfp_tt =
  */
 LONG bconstat1(void)
 {
-#if CONF_WITH_COLDFIRE_RS232
+#if CONF_SERIAL_CONSOLE
+    /* Input from the serial port will be read on interrupt,
+     * so we can't directly read the data. */
+    return 0;
+#elif CONF_WITH_COLDFIRE_RS232
     return coldfire_rs232_can_read() ? -1 : 0;
 #elif CONF_WITH_MFP_RS232
     /* Character available in the serial input buffer? */
@@ -137,7 +141,11 @@ LONG bconstat1(void)
 
 LONG bconin1(void)
 {
-#if CONF_WITH_COLDFIRE_RS232
+#if CONF_SERIAL_CONSOLE
+    /* Input from the serial port will be read on interrupt,
+     * so we can't directly read the data. */
+    return 0;
+#elif CONF_WITH_COLDFIRE_RS232
     return coldfire_rs232_read_byte();
 #elif CONF_WITH_MFP_RS232
     /* Wait for character at the serial line */

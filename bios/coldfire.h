@@ -40,6 +40,11 @@ void firebee_pic_write_byte(UBYTE b);
 void firebee_shutdown(void);
 #endif /* MACHINE_FIREBEE */
 
+#if CONF_SERIAL_CONSOLE
+void coldfire_rs232_enable_interrupt(void);
+void coldfire_int_35(void); /* In coldfire2.S */
+#endif /* CONF_SERIAL_CONSOLE */
+
 #endif /* __mcoldfire__ */
 
 #endif /* COLDFIRE_H */

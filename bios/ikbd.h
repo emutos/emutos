@@ -84,4 +84,8 @@ extern void ikbdws(WORD cnt, LONG ptr);
 extern void ikbd_writeb(UBYTE b);
 extern void ikbd_writew(WORD w);
 
+#if CONF_SERIAL_CONSOLE
+extern void push_ascii_ikbdiorec(UBYTE ascii);
+#endif
+
 #endif /* IKBD_H */

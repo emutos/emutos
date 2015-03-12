@@ -6062,3 +6062,7 @@ Start... early ages
   (issuing dos_close() when dos_open() failed). (RFB)
 - aes/gemlib.h aes/gemrslib.c: Return error if program attempts to load
   a 'new-format' resource file. (RFB)
+
+2015-03-12
+- bios/coldfire.c bios/coldfire.h bios/coldfire2.S bios/ikbd.c bios/ikbd.h
+  bios/serport.c: Use interrupts for serial console instead of polling. (VRI)

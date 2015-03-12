@@ -85,3 +85,17 @@ _coldfire_int_61:
         lea     16(sp),sp
         rte
 #endif
+
+#if CONF_SERIAL_CONSOLE
+/* PSC0 interrupt (ColdFire RS-232 port) */
+        .globl _coldfire_int_35
+_coldfire_int_35:
+        lea     -16(sp),sp
+        movem.l d0-d1/a0-a1,(sp)
+
+        jbsr    _coldfire_rs232_interrupt_handler
+
+        movem.l (sp),d0-d1/a0-a1
+        lea     16(sp),sp
+        rte
+#endif

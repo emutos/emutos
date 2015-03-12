@@ -19,6 +19,7 @@
 #include "coldfire.h"
 #include "coldpriv.h"
 #include "tosvars.h"
+#include "ikbd.h"
 
 void coldfire_early_init(void)
 {
@@ -78,7 +79,9 @@ void coldfire_init_system_timer(void)
     /* Set the interrupt handler */
     INTERRUPT_VECTOR(61) = coldfire_int_61;
 
-    /* Interrupt priority */
+    /* Interrupt priority.
+     * Never assign the same Level and Priority to several interrupts,
+     * otherwise an exception 127 will occur on RTE! */
     MCF_INTC_ICR61 = MCF_INTC_ICR_IL(0x6UL) | /* Level */
                      MCF_INTC_ICR_IP(0x0UL);  /* Priority within the level */
 
@@ -172,3 +175,45 @@ void firebee_shutdown(void)
 }
 
 #endif /* MACHINE_FIREBEE */
+
+#if CONF_SERIAL_CONSOLE
+
+void coldfire_rs232_enable_interrupt(void)
+{
+    /* We assume that the RS-232 port has already been configured.
+     * Here, we just enable the interrupt on data reception. */
+#if RS232_UART_PORT != 0
+# error We only support RS232_UART_PORT == 0
+#endif
+    INTERRUPT_VECTOR(35) = coldfire_int_35;
+
+    /* Interrupt priority.
+     * Never assign the same Level and Priority to several interrupts,
+     * otherwise an exception 127 will occur on RTE! */
+    MCF_INTC_ICR35 = MCF_INTC_ICR_IL(0x6UL) | /* Level */
+                     MCF_INTC_ICR_IP(0x1UL);  /* Priority within the level */
+
+    /* Enable the interrupt when data is available */
+    MCF_PSC0_PSCIMR = MCF_PSC_PSCIMR_RXRDY_FU;
+
+    /* Allow the reception of the interrupt */
+    MCF_INTC_IMRH &= ~MCF_INTC_IMRH_INT_MASK35;
+}
+
+/* Called from assembler routine coldfire_int_35 */
+void coldfire_rs232_interrupt_handler(void)
+{
+    UBYTE ascii;
+
+    /* While there are pending bytes */
+    while (MCF_UART_USR(RS232_UART_PORT) & MCF_UART_USR_RXRDY)
+    {
+        /* Read the ASCII character */
+        ascii = MCF_UART_URB(RS232_UART_PORT);
+
+        /* And append a new IOREC value into the IKBD buffer */
+        push_ascii_ikbdiorec(ascii);
+    }
+}
+
+#endif /* CONF_SERIAL_CONSOLE */
