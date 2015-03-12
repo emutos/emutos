@@ -181,6 +181,9 @@ typedef struct rshdr
         WORD            rsh_rssize;     /* total bytes in resource      */
 }RSHDR;
 
+/* definitions for rsh_vrsn */
+#define NEW_FORMAT_RSC  0x0004          /* this bit set indicates a new-format */
+                                        /* resource file (not yet supported)   */
 
 /* type definitions for use by an application when calling      */
 /*  rsrc_gaddr and rsrc_saddr                                   */

@@ -361,6 +361,8 @@ static WORD rs_readit(AESGLOBAL *pglobal,UWORD fd)
         dos_read(fd, sizeof(hdr_buff), &hdr_buff);
         if (DOS_ERR)
           return FALSE;
+        if (hdr_buff.rsh_vrsn & NEW_FORMAT_RSC)
+          return FALSE;
                                                 /* get size of resource */
         rslsize = hdr_buff.rsh_rssize;
                                                 /* allocate memory      */

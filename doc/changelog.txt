@@ -6060,3 +6060,5 @@ Start... early ages
 - cli/.cvsignore: Added *.tr.c. (VRI)
 - aes/gemrslib.c: Simplify code to save space and fix potential bug
   (issuing dos_close() when dos_open() failed). (RFB)
+- aes/gemlib.h aes/gemrslib.c: Return error if program attempts to load
+  a 'new-format' resource file. (RFB)
