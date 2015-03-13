@@ -141,21 +141,18 @@ LONG bconstat1(void)
 
 LONG bconin1(void)
 {
-#if CONF_SERIAL_CONSOLE
-    /* Input from the serial port will be read on interrupt,
-     * so we can't directly read the data. */
-    return 0;
-#elif CONF_WITH_COLDFIRE_RS232
-    return coldfire_rs232_read_byte();
-#elif CONF_WITH_MFP_RS232
     /* Wait for character at the serial line */
     while(!bconstat1())
         ;
 
+#if CONF_WITH_COLDFIRE_RS232
+    return coldfire_rs232_read_byte();
+#elif CONF_WITH_MFP_RS232
     /* Return character...
      * FIXME: We ought to use Iorec() for this... */
     return MFP_BASE->udr;
 #else
+    /* The above loop will never return */
     return 0;
 #endif
 }
@@ -176,18 +173,19 @@ LONG bcostat1(void)
 
 LONG bconout1(WORD dev, WORD b)
 {
-#if CONF_WITH_COLDFIRE_RS232
-    coldfire_rs232_write_byte(b);
-    return 1;
-#elif CONF_WITH_MFP_RS232
     /* Wait for transmit buffer to become empty */
     while(!bcostat1())
         ;
 
+#if CONF_WITH_COLDFIRE_RS232
+    coldfire_rs232_write_byte(b);
+    return 1;
+#elif CONF_WITH_MFP_RS232
     /* Output to RS232 interface */
     MFP_BASE->udr = (char)b;
     return 1L;
 #else
+    /* The above loop will never return */
     return 0L;
 #endif
 }
