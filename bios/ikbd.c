@@ -112,7 +112,7 @@ LONG bconstat2(void)
 LONG bconin2(void)
 {
     WORD old_sr;
-    LONG value;
+    ULONG value;
 
     while (!bconstat2()) {
 #if USE_STOP_INSN_TO_FREE_HOST_CPU
@@ -126,14 +126,14 @@ LONG bconin2(void)
     if (ikbdiorec.head >= ikbdiorec.size) {
         ikbdiorec.head = 0;
     }
-    value = *(LONG *) (ikbdiorec.buf + ikbdiorec.head);
+    value = *(ULONG *) (ikbdiorec.buf + ikbdiorec.head);
 
     /* restore interrupts */
     set_sr(old_sr);
     return value;
 }
 
-static void push_ikbdiorec(LONG value)
+static void push_ikbdiorec(ULONG value)
 {
     KDEBUG(("KBD iorec: Pushing value 0x%08lx\n", value));
 
@@ -145,7 +145,7 @@ static void push_ikbdiorec(LONG value)
         /* iorec full */
         return;
     }
-    *(LONG *) (ikbdiorec.buf + ikbdiorec.tail) = value;
+    *(ULONG *) (ikbdiorec.buf + ikbdiorec.tail) = value;
 }
 
 #if CONF_SERIAL_CONSOLE
@@ -225,7 +225,7 @@ void push_ascii_ikbdiorec(UBYTE ascii)
 static WORD kb_initial;
 static WORD kb_repeat;
 static WORD kb_ticks;
-static LONG kb_last_key;
+static ULONG kb_last_key;
 static PFVOID kb_last_ikbdsys; /* ikbdsys when kb_last_key was set */
 
 WORD kbrate(WORD initial, WORD repeat)
@@ -315,7 +315,7 @@ static int kb_altnum;
 
 void kbd_int(UBYTE scancode)
 {
-    LONG value;                 /* the value to push into iorec */
+    ULONG value;                /* the value to push into iorec */
     UBYTE ascii = 0;
     UBYTE scancode_only = scancode & ~KEY_RELEASED;  /* get rid of release bits */
 
@@ -463,10 +463,10 @@ void kbd_int(UBYTE scancode)
   push_value:
     if (conterm & 1)
         keyclick(scancode);
-    value = ((LONG) scancode) << 16;
+    value = ((ULONG) scancode) << 16;
     value += ascii;
     if (conterm & 0x8) {
-        value += ((LONG) shifty) << 24;
+        value += ((ULONG) shifty) << 24;
     }
 
     push_ikbdiorec(value);

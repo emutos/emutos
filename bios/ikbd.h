@@ -30,7 +30,7 @@
 #define MODE_SHIFT  (MODE_RSHIFT|MODE_LSHIFT)   /* shifted */
 #define MODE_SCA    (MODE_RSHIFT|MODE_LSHIFT|MODE_CTRL|MODE_ALT)
 
-extern BYTE shifty;
+extern UBYTE shifty;
 
 /*
  * dead key support: i.e. hitting ^ then a yields â.

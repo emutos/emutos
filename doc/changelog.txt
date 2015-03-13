@@ -6067,3 +6067,4 @@ Start... early ages
 - bios/coldfire.c bios/coldfire.h bios/coldfire2.S bios/ikbd.c bios/ikbd.h
   bios/serport.c: Use interrupts for serial console instead of polling. (VRI)
 - bios/serport.c: Always wait ready state before serial I/O. (VRI)
+- bios/ikbd.c bios/ikbd.h: Make IKBD records and shifty unsigned. (VRI)
