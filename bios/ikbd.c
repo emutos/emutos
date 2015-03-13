@@ -126,7 +126,7 @@ LONG bconin2(void)
     if (ikbdiorec.head >= ikbdiorec.size) {
         ikbdiorec.head = 0;
     }
-    value = *(ULONG *) (ikbdiorec.buf + ikbdiorec.head);
+    value = *(ULONG_ALIAS *) (ikbdiorec.buf + ikbdiorec.head);
 
     /* restore interrupts */
     set_sr(old_sr);
@@ -145,7 +145,7 @@ static void push_ikbdiorec(ULONG value)
         /* iorec full */
         return;
     }
-    *(ULONG *) (ikbdiorec.buf + ikbdiorec.tail) = value;
+    *(ULONG_ALIAS *) (ikbdiorec.buf + ikbdiorec.tail) = value;
 }
 
 #if CONF_SERIAL_CONSOLE

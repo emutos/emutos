@@ -6068,3 +6068,4 @@ Start... early ages
   bios/serport.c: Use interrupts for serial console instead of polling. (VRI)
 - bios/serport.c: Always wait ready state before serial I/O. (VRI)
 - bios/ikbd.c bios/ikbd.h: Make IKBD records and shifty unsigned. (VRI)
+- bios/ikbd.c include/portab.h: Fixed potential strict aliasing issue. (VRI)
