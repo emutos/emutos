@@ -2,7 +2,7 @@
  * vdidef.h - Definitions for virtual workstations
  *
  * Copyright 1999 by Caldera, Inc.
- * Copyright 2005-2014 The EmuTOS development team.
+ * Copyright 2005-2015 The EmuTOS development team.
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -134,6 +134,14 @@ typedef struct {
 
 
 /* Structure to hold data for a virtual workstation */
+
+/* NOTE 1: for backwards compatibility with all versions of TOS, the
+ * field 'fill_color' must remain at offset 0x1e, because the line-A
+ * flood fill function uses the fill colour from the currently-open
+ * virtual workstation, and it is documented that users can provide
+ * a fake virtual workstation by pointing CUR_WORK to a 16-element
+ * WORD array whose last element contains the fill colour.
+ */
 typedef struct Vwk_ Vwk;
 struct Vwk_ {
     WORD chup;                  /* Character Up vector */
@@ -148,7 +156,7 @@ struct Vwk_ {
     WORD scrpt2;                /* Offset to large text buffer */
     WORD style;                 /* Current text style */
     WORD t_sclsts;              /* TRUE if scaling up */
-    WORD fill_color;            /* Current fill color (PEL value) */
+    WORD fill_color;            /* Current fill color (PEL value): see NOTE 1 above */
     WORD fill_index;            /* Current fill index */
     WORD fill_per;              /* TRUE if fill area outlined */
     WORD fill_style;            /* Current fill style */
@@ -229,6 +237,9 @@ extern WORD TERM_CH;
 /* Line-A Bit-Blt / Copy raster form variables */
 extern WORD COPYTRAN;
 extern WORD multifill;
+
+/* referenced by Line-A flood fill */
+extern Vwk *CUR_WORK;           /* pointer to currently-open virtual workstation */
 
 /* Mouse specific externals */
 extern WORD GCURX;              /* mouse X position */

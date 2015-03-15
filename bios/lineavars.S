@@ -1,7 +1,7 @@
 /*
  * lineavars.S - Graphics related system variables
  *
- * Copyright (c) 2001-2014 by Authors:
+ * Copyright (c) 2001-2015 by Authors:
  *
  * Authors:
  *  THH  Thomas Huth
@@ -76,7 +76,7 @@
                 .globl  _SIZ_TAB
                 .globl  _TERM_CH
                 .globl  _chc_mode
-                .globl  _cur_work
+                .globl  _CUR_WORK
                 .globl  _def_font
                 .globl  _font_ring
                 .globl  _font_count
@@ -138,7 +138,7 @@ _SIZ_TAB:       .ds.w   15      // -498 size table
 
 _TERM_CH:       .ds.w   1       // -468 pressed key, aciii + scancode
 _chc_mode:      .ds.w   1       // -466 input mode choice
-_cur_work:      .ds.l   1       // -464 parameter block of current workst.
+_CUR_WORK:      .ds.l   1       // -464 parameter block of current workst.
 _def_font:      .ds.l   1       // -460 default font
 _font_ring:     .ds.l   4       // -456 three pointers to sysfonts and NULL
 _font_count:    .ds.w   1       // -440 total numbers of fonts in font_ring

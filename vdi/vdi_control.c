@@ -345,6 +345,7 @@ void d_opnvwk(Vwk * vwk)
 
     vwk->handle = CONTRL[6] = handle;
     init_wk(vwk);
+    CUR_WORK = vwk;
 }
 
 void d_clsvwk(Vwk * vwk)
@@ -361,6 +362,7 @@ void d_clsvwk(Vwk * vwk)
          work_ptr = work_ptr->next_work);
 
     work_ptr->next_work = vwk->next_work;
+    CUR_WORK = work_ptr;
     trap1(X_MFREE, vwk);
 }
 

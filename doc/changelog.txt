@@ -6069,3 +6069,7 @@ Start... early ages
 - bios/serport.c: Always wait ready state before serial I/O. (VRI)
 - bios/ikbd.c bios/ikbd.h: Make IKBD records and shifty unsigned. (VRI)
 - bios/ikbd.c include/portab.h: Fixed potential strict aliasing issue. (VRI)
+
+2015-03-15
+- bios/lineavars.S vdi/vdi_control.c vdi/vdi_defs.h: Make lineA variable
+  CUR_WORK point to virtual workstation structure (TOS compatibility). (RFB)
