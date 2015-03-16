@@ -6073,3 +6073,5 @@ Start... early ages
 2015-03-15
 - bios/lineavars.S vdi/vdi_control.c vdi/vdi_defs.h: Make lineA variable
   CUR_WORK point to virtual workstation structure (TOS compatibility). (RFB)
+- vdi/vdi_text.c: Code cleanup: create routine to setup common values
+  returned by vst_height()/vst_point(). (RFB)

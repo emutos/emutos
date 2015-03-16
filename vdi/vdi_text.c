@@ -448,11 +448,29 @@ void text_init(Vwk * vwk)
     font_count = DEV_TAB[10] = ++j;     /* number of faces */
 }
 
+/*
+ * set up width/height values returned by vst_height()/vst_point()
+ */
+static void setup_width_height(Fonthead *font)
+{
+    WORD *p;
+    UWORD top;
+
+    CONTRL[2] = 2;      /* # points in PTSOUT */
+
+    p = PTSOUT;
+    *p++ = font->max_char_width;
+    *p++ = top = font->top;
+    *p++ = font->max_cell_width;
+    *p = top + font->bottom + 1;
+    flip_y = 1;
+}
+
 void dst_height(Vwk * vwk)
 {
     Fonthead **chain_ptr;
     Fonthead *test_font, *single_font;
-    WORD *pointer, font_id;
+    WORD font_id;
     UWORD test_height;
     BYTE found;
 
@@ -492,14 +510,7 @@ void dst_height(Vwk * vwk)
         single_font = vwk->cur_font;
     }
 
-    CONTRL[2] = 2;
-
-    pointer = PTSOUT;
-    *pointer++ = single_font->max_char_width;
-    *pointer++ = test_height = single_font->top;
-    *pointer++ = single_font->max_cell_width;
-    *pointer++ = test_height + single_font->bottom + 1;
-    flip_y = 1;
+    setup_width_height(single_font);    /* set up return values */
 }
 
 
@@ -598,7 +609,7 @@ void dst_point(Vwk * vwk)
     WORD font_id;
     Fonthead **chain_ptr, *double_font;
     Fonthead *test_font, *single_font;
-    WORD *pointer, test_height, height;
+    WORD test_height, height;
     BYTE found;
 
     font_id = vwk->cur_font->font_id;
@@ -646,17 +657,10 @@ void dst_point(Vwk * vwk)
         }
     }
 
-    CONTRL[4] = 1;
-    CONTRL[2] = 2;
+    setup_width_height(single_font);    /* set up return values */
 
+    CONTRL[4] = 1;          /* also return point size actually set */
     INTOUT[0] = single_font->point;
-
-    pointer = PTSOUT;
-    *pointer++ = single_font->max_char_width;
-    *pointer++ = test_height = single_font->top;
-    *pointer++ = single_font->max_cell_width;
-    *pointer++ = test_height + single_font->bottom + 1;
-    flip_y = 1;
 }
 
 
