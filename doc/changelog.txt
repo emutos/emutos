@@ -6075,3 +6075,5 @@ Start... early ages
   CUR_WORK point to virtual workstation structure (TOS compatibility). (RFB)
 - vdi/vdi_text.c: Code cleanup: create routine to setup common values
   returned by vst_height()/vst_point(). (RFB)
+- desk/desktop.def desk/desktop.rsc: Change text of button in the move/copy
+  name conflict dialog from 'Cancel' to more accurate 'Skip'. (RFB)
