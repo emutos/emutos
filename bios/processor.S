@@ -193,9 +193,9 @@ no60:   FNOP
         cmpi.w  #40,d1
         beq.s   fexit
         moveq   #0x06,d0        // if neither, maybe a 68882 (0x00060000)
-        move.b  (sp)+,d1
-        cmpi.b  #0x1f,d1
-        beq.s   fexit
+        move.b  1(sp),d1        // get offset to last long of IDLE frame
+        cmpi.b  #0x38,d1        // is it a 68882?
+        beq.s   fexit           // yes, branch
         moveq   #0x04,d0        // must be 68881
 
 #if CONF_WITH_SFP004
