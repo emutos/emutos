@@ -6077,3 +6077,7 @@ Start... early ages
   returned by vst_height()/vst_point(). (RFB)
 - desk/desktop.def desk/desktop.rsc: Change text of button in the move/copy
   name conflict dialog from 'Cancel' to more accurate 'Skip'. (RFB)
+
+2015-03-19
+- bios/processor.S include/asmdefs.h: Code cleanup: convert assembler
+  instructions-defined-as-constants to macros. (RFB)
