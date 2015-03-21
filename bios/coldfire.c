@@ -89,13 +89,8 @@ void coldfire_init_system_timer(void)
     MCF_INTC_IMRH &= ~MCF_INTC_IMRH_INT_MASK61;
 
     /* Set the frequency to 200 Hz (SDCLK / PRE / CNT) */
-#ifdef MACHINE_FIREBEE
-    /* SDCLK = 132.00 MHz */
-    MCF_GPT1_GCIR = MCF_GPT_GCIR_PRE(132UL) |
-                    MCF_GPT_GCIR_CNT(5000UL);
-#elif defined (MACHINE_M548X)
-    /* SDCLK = 100.00 MHz */
-    MCF_GPT1_GCIR = MCF_GPT_GCIR_PRE(100UL) |
+#ifdef SDCLK_FREQUENCY_MHZ
+    MCF_GPT1_GCIR = MCF_GPT_GCIR_PRE(SDCLK_FREQUENCY_MHZ) |
                     MCF_GPT_GCIR_CNT(5000UL);
 #else
 # error Unknown SDCLK for this machine

@@ -4,7 +4,7 @@
  * note that the timings are quite imprecise (but conservative) unless
  * you are running on at least a 32MHz 68030 processor
  *
- * Copyright (c) 2013 The EmuTOS development team
+ * Copyright (c) 2013-2015 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows
@@ -22,7 +22,6 @@
 /*
  * initial 1 millisecond delay loop values
  */
-#define LOOPS_FIREBEE       131000
 #define LOOPS_68060         110000  /* 68060 timing assumes 110MHz for safety */
 #define LOOPS_68030         3800    /* 68030 timing assumes 32MHz */
 #define LOOPS_68000         760     /* 68000 timing assumes 16MHz */
@@ -52,8 +51,8 @@ void calibration_timer(void);
  */
 void init_delay(void)
 {
-#ifdef __mcoldfire__
-    loopcount_1_msec = LOOPS_FIREBEE;
+#if defined (MACHINE_FIREBEE) || defined (MACHINE_M548X)
+    loopcount_1_msec = SDCLK_FREQUENCY_MHZ * 1000;
 #else
     switch((int)mcpu) {
     case 60:
@@ -75,6 +74,8 @@ void init_delay(void)
  * NOTE1: we use TimerD so we restore the RS232 stuff
  * NOTE2: some systems (e.g. ARAnyM) do not implement TimerD; we leave
  *        the default delay values as-is in this case
+ * NOTE3: ColdFire systems are not calibrated, since there is no
+ *        independent clock that can be used to measure time
  */
 void calibrate_delay(void)
 {

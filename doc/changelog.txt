@@ -6085,3 +6085,7 @@ Start... early ages
 2015-03-20
 - bios/processor.S: Fix FPU detection: 68881/68882 are now differentiated
   correctly. (RFB)
+
+2015-03-21
+- bios/coldfire.c bios/delay.c include/config.h: Fix delay_loop() timing
+  for M548X machines. (RFB)
