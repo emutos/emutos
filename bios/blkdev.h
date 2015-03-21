@@ -28,6 +28,8 @@
 
 #define RWABS_RETRIES   1   /* on real machine might want to increase this */
 
+#define DEFAULT_BOOTDEV 2   /* i.e. C: */
+
 /* Original FAT12 bootsector */
 struct bs {
   /*   0 */  UBYTE bra[2];

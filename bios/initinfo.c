@@ -1,7 +1,7 @@
 /*
  *  initinfo.c - Info screen at startup
  *
- * Copyright (c) 2001-2013 by Authors:
+ * Copyright (c) 2001-2015 by Authors:
  *
  * Authors:
  *  MAD     Martin Doering
@@ -23,6 +23,7 @@
 #include "nls.h"
 #include "ikbd.h"
 #include "asm.h"
+#include "string.h"
 #include "blkdev.h"     /* for BLKDEVNUM */
 //#include "lineavars.h"
 #include "font.h"
@@ -149,17 +150,44 @@ static void cprint_asctime(void)
 }
 
 /*
- * initinfo - Show initial configuration at startup
+ * display the available devices, with the 'dev' device highlighted
  */
+static void cprint_devices(WORD dev)
+{
+    int i;
+    LONG mask;
 
-void initinfo(void)
+    cprintf("\033k\033j");  /* restore, then resave, current cursor posn */
+
+    pair_start(_("GEMDOS drives"));
+
+    for (i = 0, mask = 1L; i < BLKDEVNUM; i++, mask <<= 1) {
+        if (drvbits & mask) {
+            if (i == dev)
+                cprintf("\033p");
+            cprintf("%c",'A'+i);
+            if (i == dev)
+                cprintf("\033q");
+        }
+    }
+
+    pair_end();
+}
+
+/*
+ * initinfo - Show initial configuration at startup
+ * 
+ * returns the selected boot device
+ */
+WORD initinfo(void)
 {
 #if CONF_WITH_AROS
-    int initinfo_height = 24;
+    int initinfo_height = 25;
 #else
     int initinfo_height = 22;
 #endif
     int i;
+    WORD olddev = -1, dev = bootdev;
 
     /* Center the initinfo screen vertically */
     for (i = 0; i < (v_cel_my - initinfo_height) / 2; i++)
@@ -203,20 +231,10 @@ void initinfo(void)
 
     pair_start(_("Screen start")); cprintf("%p", v_bas_ad);
     pair_end();
-    pair_start(_("GEMDOS drives"));
-    {
-        int i;
-        LONG mask;
-        for(i=0, mask=1L; i<BLKDEVNUM; i++, mask <<=1) {
-            if (drvbits & mask)
-                cprintf("%c", 'A'+i);
-        }
-    }
-    pair_end();
-    /* boot drive is unknown at this moment since blkdev_hdv_boot is now
-       executed after the initinfo is printed:
-    pair_start(_("Boot drive")); cprintf("%c:", bootdev+65); pair_end();
-    */
+
+    cprintf("\033j");       /* save current cursor position */
+    cprint_devices(dev);
+
     pair_start(_("Boot time")); cprint_asctime(); pair_end();
 
     /* Just a separator */
@@ -227,26 +245,36 @@ void initinfo(void)
     cprintf("\r\n");
     set_margin(); cprintf(_("Hold <Alternate> to skip HDD boot"));
     cprintf("\r\n");
+    set_margin(); cprintf(_("Press key 'X' to boot from X:"));
+    cprintf("\r\n");
 #if WITH_CLI
-    set_margin(); cprintf(_("Press 'C' to run an early console"));
+    set_margin(); cprintf(_("Press <Esc> to run an early console"));
     cprintf("\r\n");
 #endif
     cprintf("\r\n");
 #if CONF_WITH_AROS
     set_margin(); cprintf("\033pThis binary mixes GPL and AROS APL\033q\r\n");
     set_margin(); cprintf("\033pcode, redistribution is forbidden.\033q\r\n");
-#endif
     cprintf("\r\n");
+#endif
     set_margin();
     cprintf("\033p");
     cprintf(_(" Hold <Shift> to pause this screen "));
     cprintf("\033q");
 
-    /* pause for a short while (or longer if a Shift key is held down) */
+    /*
+     * pause for a short while, or longer if:
+     *  . a Shift key is held down, or
+     *  . the user selects an alternate boot drive
+     */
+    while (1)
     {
         /* Wait until timeout or keypress */
         long end = hz_200 + INITINFO_DURATION * 200UL;
         LONG shiftbits;
+
+        olddev = dev;
+
         do
         {
             shiftbits = kbshift(-1);
@@ -269,26 +297,44 @@ void initinfo(void)
 #endif
             shiftbits = kbshift(-1);
         }
-    }
-    if (bconstat2()) {  /* examine the keypress */
-        int c = 0xFF & bconin2();
-        MAYBE_UNUSED(c);
+
+        /* if a non-modifier key was pressed, examine it */
+        if (bconstat2()) {
+            int c = 0xFF & bconin2();
+ 
+            c = toupper(c);
 #if WITH_CLI
-        if (c == 'c' || c == 'C') {
-            early_cli = 1;
-        }
+            if (c == 0x1b) {
+                early_cli = 1;
+            } else
 #endif
+            {
+                c -= 'A';
+                if ((c >= 0) && (c < BLKDEVNUM))
+                    if (blkdev_avail(c))
+                        dev = c;
+            }
+        }
+        if (dev == olddev)
+            break;
+        /*
+         * user has changed boot device, so we display it and go round again
+         */
+        cprint_devices(dev);
     }
-    cprintf("\r\033K"); /* remove the "Hold Shift" message */
+
+    return dev;
 }
 
 
 #else    /* FULL_INITINFO */
 
 
-void initinfo(void)
+WORD initinfo(void)
 {
     cprintf("EmuTOS Version %s\r\n", version);
+
+    return bootdev;
 }
 
 

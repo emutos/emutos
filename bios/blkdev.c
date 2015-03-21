@@ -177,31 +177,25 @@ LONG blkdev_hdv_boot(void)
 
     KDEBUG(("drvbits = %08lx\n",drvbits));
 
-    /* boot eventually from a block device (floppy or harddisk) */
+    /*
+     * if the user is leaning on the <Alt> key, we set the
+     * boot device to floppy A:
+     */
+    if (mode & MODE_ALT)
+        bootdev = 0;
 
-    /* the actual boot device or better the order of several boot devices
-       should be configurable like for example in PC CMOS SETUP:
-       e.g. first CD-ROM, then IDE primary, then SCSI and floppy at last.
-       As we don't have such configuration yet there's a hardcoded order
-       for now: if C: exists use it as the boot device, otherwise boot from A:
-    */
+    /*
+     * if the boot device is a hard disk partition, we don't actually
+     * boot from it ATM, because we have our own internal hard disk
+     * driver (this presumes that the only bootable code on a hard disk
+     * is going to be a hard disk driver ...)
+     */
+    if (bootdev >= NUMFLOPPIES)
+        return 0;
 
-    /* boot hard drive only if user does not hold the Alternate key down */
-    if (!(mode & MODE_ALT)) {
-        if (blkdev_avail(2)) {  /* if drive C: is available */
-            bootdev = 2;        /* make it the boot drive */
-            return 0;           /* don't actually boot from the boot device
-                                   as there is most probably a harddisk driver
-                                   installed and that would require complete
-                                   lowlevel IDE/ACSI/SCSI emulation. Luckily
-                                   EmuTOS got its own internal hdd driver,
-                                   so we don't need to execute the boot sector
-                                   code and boot the drive at all! :-) */
-        }
-    }
-
-    /* otherwise boot device is floppy A: */
-    bootdev = 0;
+    /*
+     * otherwise, we boot from the selected floppy
+     */
     if (!(mode & MODE_CTRL))    /* if Control is NOT held down, */
         return(flop_hdv_boot());/*  try to boot from the floppy */
 

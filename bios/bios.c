@@ -523,13 +523,15 @@ void biosmain(void)
     }
 #endif
 
+    bootdev = DEFAULT_BOOTDEV;
+
 #if INITINFO_DURATION > 0
 #if ALWAYS_SHOW_INITINFO
     /* No condition */ {
 #else
     if (coldboot) {
 #endif
-        initinfo();             /* show initial config information */
+        bootdev = initinfo();   /* show initial config information */
     }
 #endif
 

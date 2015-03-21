@@ -1,7 +1,7 @@
 /*
  *  initinfo.c - Info screen at startup
  *
- * Copyright (c) 2001-2013 by Authors:
+ * Copyright (c) 2001-2015 by Authors:
  *
  * Authors:
  *  MAD     Martin Doering
@@ -20,6 +20,6 @@ extern int early_cli;
 
 /*==== Prototypes =========================================================*/
 
-void initinfo(void);
+WORD initinfo(void);
 
 #endif /* INITINFO_H */

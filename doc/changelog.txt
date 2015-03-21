@@ -6089,3 +6089,5 @@ Start... early ages
 2015-03-21
 - bios/coldfire.c bios/delay.c include/config.h: Fix delay_loop() timing
   for M548X machines. (RFB)
+- bios/bios.c bios/blkdev.c bios/blkdev.h bios/initinfo.c bios/initinfo.h:
+  Allow user to specify boot partition at startup. (RFB)
