@@ -243,8 +243,10 @@ WORD initinfo(void)
 
     set_margin(); cprintf(_("Hold <Control> to skip AUTO/ACC"));
     cprintf("\r\n");
-    set_margin(); cprintf(_("Hold <Alternate> to skip HDD boot"));
-    cprintf("\r\n");
+    if (blkdev_avail(HARDDISK_BOOTDEV)) {
+        set_margin(); cprintf(_("Hold <Alternate> to skip HDD boot"));
+        cprintf("\r\n");
+    }
     set_margin(); cprintf(_("Press key 'X' to boot from X:"));
     cprintf("\r\n");
 #if WITH_CLI

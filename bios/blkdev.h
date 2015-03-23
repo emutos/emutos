@@ -28,7 +28,9 @@
 
 #define RWABS_RETRIES   1   /* on real machine might want to increase this */
 
-#define DEFAULT_BOOTDEV 2   /* i.e. C: */
+#define FLOPPY_BOOTDEV      0   /* i.e. A: */
+#define HARDDISK_BOOTDEV    2   /* i.e. C: */
+#define DEFAULT_BOOTDEV     HARDDISK_BOOTDEV
 
 /* Original FAT12 bootsector */
 struct bs {
