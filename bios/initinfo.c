@@ -325,6 +325,12 @@ WORD initinfo(void)
         cprint_devices(dev);
     }
 
+    /*
+     * on exit, restore (pop) cursor position (neatness), then
+     * clear screen so that subsequent text displays are clean
+     */
+    cprintf("\033k\033E");
+
     return dev;
 }
 

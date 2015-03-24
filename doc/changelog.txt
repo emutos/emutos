@@ -6095,3 +6095,4 @@ Start... early ages
 2015-03-23
 - bios/blkdev.h bios/initinfo.c: Don't display hard disk bypass message if
   no hard disk. (RFB)
+- bios/initinfo.c: Clear screen after initinfo() display. (RFB)
