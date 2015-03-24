@@ -523,7 +523,7 @@ void biosmain(void)
     }
 #endif
 
-    bootdev = DEFAULT_BOOTDEV;
+    bootdev = blkdev_avail(DEFAULT_BOOTDEV) ? DEFAULT_BOOTDEV : FLOPPY_BOOTDEV;
 
 #if INITINFO_DURATION > 0
 #if ALWAYS_SHOW_INITINFO

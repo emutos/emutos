@@ -6096,3 +6096,7 @@ Start... early ages
 - bios/blkdev.h bios/initinfo.c: Don't display hard disk bypass message if
   no hard disk. (RFB)
 - bios/initinfo.c: Clear screen after initinfo() display. (RFB)
+
+2015-03-24
+- bios/bios.c: Fix regression: AUTO-folder programs & ACCs were not run
+  on a floppy-only system. (RFB)
