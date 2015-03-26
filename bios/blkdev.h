@@ -96,10 +96,11 @@ typedef struct _geometry GEOMETRY;
 void blkdev_init(void);
 
 /* general block device functions */
-LONG blkdev_hdv_boot(void);
+LONG blkdev_boot(void);
 LONG blkdev_getbpb(WORD dev);
 LONG blkdev_drvmap(void);
 LONG blkdev_avail(WORD dev);
+UWORD compute_cksum(struct bs *buf);
 WORD get_shift(ULONG blocksize);
 
 int add_partition(UWORD unit, LONG *devices_available, char id[], ULONG start, ULONG size);

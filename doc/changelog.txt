@@ -6100,3 +6100,7 @@ Start... early ages
 2015-03-24
 - bios/bios.c: Fix regression: AUTO-folder programs & ACCs were not run
   on a floppy-only system. (RFB)
+
+2015-03-26
+- bios/bios.c bios/blkdev.c bios/blkdev.h bios/floppy.c bios/floppy.h:
+  Run hard disk boot sector code (disabled by default). (RFB)

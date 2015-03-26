@@ -1,7 +1,7 @@
 /*
  * floppy.h - floppy routines
  *
- * Copyright (c) 2001-2013 The EmuTOS development team
+ * Copyright (c) 2001-2015 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -17,13 +17,13 @@
 
 /* bios functions */
 
-/* Functions hdv_boot, hdv_init, rwabs, getbpb and mediach are
+/* Functions hdv_init, rwabs, getbpb and mediach are
  * called using variable pointers. The flop_* functions
  * are the implementation of these provided by floppy.c.
  */
 
-extern LONG flop_hdv_boot(void);
 extern void flop_hdv_init(void);
+extern WORD flop_boot_read(void);
 extern LONG flop_mediach(WORD dev);
 
 /* xbios functions */

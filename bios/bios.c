@@ -536,7 +536,7 @@ void biosmain(void)
 #endif
 
     /* boot eventually from a block device (floppy or harddisk) */
-    blkdev_hdv_boot();
+    blkdev_boot();
 
     defdrv = bootdev;
     trap1( 0x0e , defdrv );    /* Set boot drive: Dsetdrv(defdrv) */

@@ -47,7 +47,7 @@
  * - internal floppy status info
  * - disk initializations: hdv_init, hdv_boot
  * - boot-sector: protobt
- * - boot-sector utilities: compute_cksum, intel format words
+ * - boot-sector utilities: intel format words
  * - xbios floprd, flopwr, flopver
  * - xbios flopfmt
  * - internal floprw, fropwtrack
@@ -82,11 +82,8 @@
 
 /*==== Internal prototypes ==============================================*/
 
-/* set/get intel words */
-static UWORD compute_cksum(struct bs *buf);
+/* set intel words */
 static void setiword(UBYTE *addr, UWORD value);
-
-static LONG flop_bootcheck(void);
 
 /* floppy read/write */
 static WORD floprw(LONG buf, WORD rw, WORD dev,
@@ -310,6 +307,14 @@ void flop_hdv_init(void)
     flop_detect_drive(1);
 }
 
+/*
+ * read boot sector from 'bootdev' into 'dskbufp'
+ */
+WORD flop_boot_read(void)
+{
+    return floprw((LONG)dskbufp,RW_READ,bootdev,1,0,0,1);
+}
+
 static void flop_add_drive(WORD dev)
 {
 #if CONF_WITH_FDC
@@ -451,42 +456,6 @@ LONG flop_mediach(WORD dev)
     return MEDIAMAYCHANGE;
 }
 
-
-LONG flop_hdv_boot(void)
-{
-    LONG err;
-
-    err = flop_bootcheck();
-    KDEBUG(("flop_bootcheck() returns %ld\n",err));
-
-    if (err == 0) {
-        /* if bootable, jump in it */
-        invalidate_instruction_cache(dskbufp, SECTOR_SIZE);
-        regsafe_call(dskbufp);
-    }
-
-    return err;         /* may never be reached, if booting */
-}
-
-
-static LONG flop_bootcheck(void)
-{
-    struct bs *b = (struct bs *) dskbufp;
-
-    if (nflops == 0)
-        return 2;   /* no drive */
-
-    if (bootdev >= nflops)
-        return 2;   /* couldn't load */
-
-    if (floprw((LONG)b, RW_READ, bootdev, 1, 0, 0, 1) != 0)
-        return 3;   /* unreadable */
-
-    if (compute_cksum(b) != 0x1234)
-        return 4;   /* not valid boot sector */
-
-    return 0;       /* bootable */
-}
 
 LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
                WORD sides, WORD dev)
@@ -659,17 +628,6 @@ void protobt(LONG buf, LONG serial, WORD type, WORD exec)
 
 
 /*==== boot-sector utilities ==============================================*/
-
-static UWORD compute_cksum(struct bs *buf)
-{
-    int i;
-    UWORD sum, *w;
-
-    for (i = 0, sum = 0, w = (UWORD *)buf; i < SECTOR_SIZE/sizeof(UWORD); i++, w++)
-        sum += *w;
-
-    return sum;
-}
 
 static void setiword(UBYTE *addr, UWORD value)
 {

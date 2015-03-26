@@ -18,6 +18,7 @@
 #include "string.h"
 #include "gemerror.h"
 #include "kprint.h"
+#include "asm.h"
 #include "tosvars.h"
 #include "ahdi.h"
 #include "mfp.h"
@@ -29,6 +30,13 @@
 #include "acsi.h"
 #include "ide.h"
 #include "sd.h"
+
+/*
+ * undefine the following to enable booting from hard disk.
+ * note that this is experimental and, as of march 2015,
+ * will cause a crash if used with hard disk drivers ...
+ */
+#define DISABLE_HD_BOOT
 
 /*
  * Global variables
@@ -43,10 +51,13 @@ static PUN_INFO pun_info;
 /*
  * Function prototypes
  */
+static LONG blkdev_hdv_boot(void);
 static void blkdev_hdv_init(void);
 static LONG blkdev_mediach(WORD dev);
 static LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr);
+static LONG bootcheck(void);
 static void bus_init(void);
+static WORD hd_boot_read(void);
 
 /* get intel words */
 static UWORD getiword(UBYTE *addr)
@@ -54,6 +65,20 @@ static UWORD getiword(UBYTE *addr)
     UWORD value;
     value = (((UWORD)addr[1])<<8) + addr[0];
     return value;
+}
+
+/*
+ * compute (bootsector) checksum
+ */
+UWORD compute_cksum(struct bs *buf)
+{
+    int i;
+    UWORD sum, *w;
+
+    for (i = 0, sum = 0, w = (UWORD *)buf; i < SECTOR_SIZE/sizeof(UWORD); i++, w++)
+        sum += *w;
+
+    return sum;
 }
 
 /*
@@ -168,10 +193,9 @@ static void bus_init(void)
 }
 
 /*
- * blkdev_hdv_boot - BIOS boot vector
+ * blkdev_boot - boot from device in 'bootdev'
  */
-
-LONG blkdev_hdv_boot(void)
+LONG blkdev_boot(void)
 {
     LONG mode = kbshift(-1);
 
@@ -182,24 +206,73 @@ LONG blkdev_hdv_boot(void)
      * boot device to floppy A:
      */
     if (mode & MODE_ALT)
-        bootdev = 0;
+        bootdev = FLOPPY_BOOTDEV;
 
     /*
-     * if the boot device is a hard disk partition, we don't actually
-     * boot from it ATM, because we have our own internal hard disk
-     * driver (this presumes that the only bootable code on a hard disk
-     * is going to be a hard disk driver ...)
+     * if the user is leaning on the <Control> key, we don't
+     * attempt to execute the bootsector
      */
-    if (bootdev >= NUMFLOPPIES)
+    if (mode & MODE_CTRL)
         return 0;
 
-    /*
-     * otherwise, we boot from the selected floppy
-     */
-    if (!(mode & MODE_CTRL))    /* if Control is NOT held down, */
-        return(flop_hdv_boot());/*  try to boot from the floppy */
+#ifdef DISABLE_HD_BOOT
+    if (bootdev >= NUMFLOPPIES) /* don't attempt to boot from hard disk */
+        return 0;
+#endif
 
-    return 0;
+    /*
+     * execute the bootsector code (if present)
+     */
+    return blkdev_hdv_boot();
+}
+
+/*
+ * blkdev_hdv_boot - BIOS boot vector
+ */
+static LONG blkdev_hdv_boot(void)
+{
+    LONG err;
+
+    err = bootcheck();
+    KDEBUG(("bootcheck() returns %ld\n",err));
+
+    if (err == 0) {     /* if bootable, jump into it */
+        invalidate_instruction_cache(dskbufp,SECTOR_SIZE);
+        regsafe_call(dskbufp);
+    }
+
+    return err;         /* may never be reached, if booting */
+}
+
+static LONG bootcheck(void)
+{
+    struct bs *b = (struct bs *) dskbufp;
+    WORD err;
+
+    if ((bootdev < 0) || (bootdev >= BLKDEVNUM))
+        return 2;   /* couldn't load */
+
+    err = (bootdev < NUMFLOPPIES) ? flop_boot_read() : hd_boot_read();
+    if (err)
+        return 3;   /* unreadable */
+
+    if (compute_cksum(b) != 0x1234)
+        return 4;   /* not valid boot sector */
+
+    return 0;       /* bootable */
+}
+
+/*
+ * read boot sector from 'bootdev' into 'dskbufp'
+ *
+ * since the 'dskbufp' buffer is only 2 physical sectors in size, we
+ * can't use blkdev_rwabs(), so we use disk_rw()
+ */
+static WORD hd_boot_read(void)
+{
+    BLKDEV *b = &blkdev[bootdev];
+
+    return (WORD)disk_rw(b->unit,RW_READ,b->start,1,dskbufp);
 }
 
 /*
