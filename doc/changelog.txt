@@ -6107,3 +6107,6 @@ Start... early ages
 - doc/bugs.txt: Updated to reflect recent bug fixes.  Contributed by Eero
   Tamminen. (RFB)
 - bios/lineavars.S: Updated comments.  Contributed by Eero Tamminen. (RFB)
+- vdi/vdi_line.c: Ignore lineA variable 'multifill' for linea_rect() and
+  linea_polygon().  Contributed by Eero Tamminen. (RFB)
+  

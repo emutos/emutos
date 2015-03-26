@@ -395,8 +395,8 @@ static UWORD linea_color(void)
 
 static void lineA2Attrib(VwkAttrib *attr)
 {
-    attr->clip = CLIP;  /* only used by polygon drawing */
-    attr->multifill = multifill;
+    attr->clip = CLIP;      /* only used by polygon drawing */
+    attr->multifill = 0;    /* only raster copy supports multi-plane patterns */
     attr->patmsk = patmsk;
     attr->patptr = patptr;
     attr->wrt_mode = WRT_MODE;
