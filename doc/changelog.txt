@@ -6104,3 +6104,5 @@ Start... early ages
 2015-03-26
 - bios/bios.c bios/blkdev.c bios/blkdev.h bios/floppy.c bios/floppy.h:
   Run hard disk boot sector code (disabled by default). (RFB)
+- doc/bugs.txt: Updated to reflect recent bug fixes.  Contributed by Eero
+  Tamminen. (RFB)

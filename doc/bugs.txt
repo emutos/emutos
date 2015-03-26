@@ -1,8 +1,7 @@
-- Changing the VDI color palette is not possible on the TT.
-  - Colors are wrong in GEM Nethack on TT (and it panics EmuTOS on exit).
+Common AES/VDI/Line-A bugs:
 - Desktop doesn't use the _IDT date separator.
 - Drag-and-drop does not work in the freeware GEM games "Abalone"
-  "Hotshot checkers", "Risky", "Yukon" and in the shareware solitair
+  "Hotshot checkers", "Risky", "Yukon" and in the shareware solitaire
   game "Patience".
 - Mouse buttons don't work properly in several GEM programs:
   - In "Sysinfo" (v5.02) dialog buttons and window scrollbar buttons
@@ -22,12 +21,8 @@
   - Clicks don't work at all in "Yams" (mine sweeper) game.
   - In "Bombs" & "Mind Sweeper" (mine sweeper) games, it's pretty
     random whether mouse clicks go through, mostly they don't.
-- 6x6 font is missing characters 1->31, 194->223 and 255.
-  The character 158 is wrong.  As a result small arrows don't
-  show up in "Clac" RSC.
 - Text output is located correctly, but input text goes to
   top left of screen in Gfa basic 2.x runner.
-- Smaller pie slices aren't drawn at all in STatistician.
 - Because EmuTOS doesn't take outline into account in text extents
   calculation, the right side of outline characters are clipped
   e.g. in "LaserChess", "Diamond miner" & "Minigolf" games,
@@ -49,6 +44,24 @@
 - In "Japlish", all drawing for ship, enemies and lines on ground
   are missing.  Assumed to be issue with line-A polygon line.
 
+Atari TT / TOS v3 compatibility bugs:
+- Changing the VDI color palette is not possible on the TT.
+- Colors are wrong in GEM Nethack on TT (and it panics EmuTOS on exit).
+
+Atari Falcon / TOS v4 compatibility bugs:
+- EmuTOS doesn't update mouse clip rect or limits when Falcon program
+  changes resolution with VsetScreen(). If one doesn't start Chainz,
+  Jewelz or Sweety Things games from large enough (640x480 VGA)
+  resolution, mouse is constrained in them to upper left corner of
+  screen.
+- Escape Paint icons don't show in image operations window, their place
+  in toolbar window is inverted on mouse-over, image names show in
+  image list window only on highlight and some UI elements flicker.
+- Falcon FalcAMP button icons aren't visible as EmuTOS doesn't support
+  new style RSC files with CICONs.
+- Sound is missing from Zodiax Falcon game because EmuTOS doesn't
+  initialize Falcon sound matrix at boot: set default Sound mode
+  (connect DMA to DAC) and set Codec input & Gain.
 
 Links to programs listed above:
 - Abalone:
@@ -61,14 +74,16 @@ Links to programs listed above:
   http://www.eckhardkruse.net/en/atari_st/baller.html
 - Bombs:
   http://www.umich.edu/~archive/atari/Games/Puzzle/bombs.arc
-- Clac:
-  http://koti.mbnet.fi/tammat/hatari/programs.shtml#clac
+- Chainz, Jewelz, Sweety Things:
+  http://paradize.final-memory.org/games.shtml
+- Escape Paint:
+  http://www.pouet.net/prod.php?which=25328
+- FalcAMP:
+  http://deunstg.free.fr/sct1/falcamp/
 - GEM Nethack:
   http://www.nethack.org/v343/ports/download-atari.html
 - Hotshot checkers:
   http://www.umich.edu/~archive/atari/Games/Board/hotshot.arc
-- ImCon:
-  ftp://ftp.funet.fi/pub/atari/graphics/imcon11.lzh
 - Invaders:
   http://www.umich.edu/~archive/atari/Games/Arcade/invaders.lzh
 - Japlish:
@@ -85,14 +100,12 @@ Links to programs listed above:
   http://www.umich.edu/~archive/atari/Games/Board/risk_eng.lzh
 - Sherlock:
   http://www.umich.edu/~archive/atari/Games/Adventure/sherlock.arc
-- Speed of Light:
-  http://www.umich.edu/~archive/atari/Graphics/spoflt38.zip
-- Statistician:
-  http://www.umich.edu/~archive/atari/Utilities/Benchmark/stats.lzh
 - Sysinfo 5.02:
   http://gfa.atari-users.net/ftp/download.php?fn=sinf502e.zip
 - Yukon:
   http://www.umich.edu/~archive/atari/Games/Cards/yukone1.lzh
   http://www.haun-online.de/Atari/e_index.html
+- Zodiax:
+  http://christophe.bray.free.fr/informatique/falcon/falcon_jeux3.htm#Zodiax
 
 (Links missing to: yams, mathmaze, laserchess, diamondminer.)
