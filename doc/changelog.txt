@@ -6106,3 +6106,4 @@ Start... early ages
   Run hard disk boot sector code (disabled by default). (RFB)
 - doc/bugs.txt: Updated to reflect recent bug fixes.  Contributed by Eero
   Tamminen. (RFB)
+- bios/lineavars.S: Updated comments.  Contributed by Eero Tamminen. (RFB)

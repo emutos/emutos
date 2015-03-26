@@ -304,8 +304,8 @@ _X1:            .ds.w   1               // _X1 coordinate for squares
 _Y1:            .ds.w   1               // _Y1 coordinate for squares
 _X2:            .ds.w   1               // _X2 coordinate for squares
 _Y2:            .ds.w   1               // _Y2 coordinate for squares
-_patptr:        .ds.l   1               // unused by linea now
-_patmsk:        .ds.w   1               // unused by linea now
+_patptr:        .ds.l   1               // fill pattern pointer
+_patmsk:        .ds.w   1               // fill pattern "mask" (line count)
 _multifill:     .ds.w   1               // multi-plane fill flag. (0 => 1 plane)
 
 _CLIP:          .ds.w   1               // clipping flag.
