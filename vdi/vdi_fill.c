@@ -1,9 +1,9 @@
 /*
- *
+ * vdi_fill.c - filled polygons
  *
  * Copyright 1982 by Digital Research Inc.  All rights reserved.
  * Copyright 1999 by Caldera, Inc. and Authors:
- * Copyright 2002-2014 The EmuTOS development team
+ * Copyright 2002-2015 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -30,7 +30,7 @@
 
 /* prototypes */
 static void crunch_queue(void);
-static BOOL clipbox(Vwk * vwk, Rect * rect);
+static BOOL clipbox(const VwkClip * clip, Rect * rect);
 
 
 
@@ -257,7 +257,7 @@ dr_recfl(Vwk * vwk)
     Rect * rect = (Rect*)PTSIN;
 
     if (vwk->clip)
-        if (!clipbox(vwk, rect))
+        if (!clipbox(VDI_CLIP(vwk), rect))
             return;
 
     /* do the real work... */
@@ -566,7 +566,7 @@ polygon(Vwk * vwk, Point * ptsin, int count)
     WORD i, k, y;
     WORD fill_maxy, fill_miny;
     Point * point, * ptsget, * ptsput;
-    VwkClip *clipper;
+    const VwkClip *clipper;
     VwkAttrib attr;
 
     LSTLIN = FALSE;
@@ -585,19 +585,21 @@ polygon(Vwk * vwk, Point * ptsin, int count)
                 fill_maxy = k;
     }
 
+    /* cast structure needed by clc_flit */
+    clipper = VDI_CLIP(vwk);
     if (vwk->clip) {
-        if (fill_miny < vwk->ymn_clip) {
-            if (fill_maxy >= vwk->ymn_clip) {
+        if (fill_miny < clipper->ymn_clip) {
+            if (fill_maxy >= clipper->ymn_clip) {
                 /* polygon starts before clip */
-                fill_miny = vwk->ymn_clip - 1;       /* polygon partial overlap */
+                fill_miny = clipper->ymn_clip - 1;       /* polygon partial overlap */
                 if (fill_miny < 1)
                     fill_miny = 1;
             } else
                 return;         /* polygon entirely before clip */
         }
-        if (fill_maxy > vwk->ymx_clip) {
-            if (fill_miny <= vwk->ymx_clip)  /* polygon ends after clip */
-                fill_maxy = vwk->ymx_clip;   /* polygon partial overlap */
+        if (fill_maxy > clipper->ymx_clip) {
+            if (fill_miny <= clipper->ymx_clip)  /* polygon ends after clip */
+                fill_maxy = clipper->ymx_clip;   /* polygon partial overlap */
             else
                 return;         /* polygon entirely after clip */
         }
@@ -609,8 +611,6 @@ polygon(Vwk * vwk, Point * ptsin, int count)
     ptsput->x = ptsget->x;
     ptsput->y = ptsget->y;
 
-    /* cast structure needed by clc_flit */
-    clipper = VDI_CLIP(vwk);
     /* copy data needed by clc_flit -> draw_rect_common */
     Vwk2Attrib(vwk, &attr, vwk->fill_color);
 
@@ -653,25 +653,25 @@ _v_fillarea(Vwk * vwk)
  * clipbox - Just clips and copies the inputs for use by "rectfill"
  *
  * input:
- *     X1        = x coord of upper left corner.
- *     Y1        = y coord of upper left corner.
- *     X2        = x coord of lower right corner.
- *     Y2        = y coord of lower right corner.
- *     vwk->clip = clipping flag. (0 => no clipping.)
- *     vwk->xmn_clip = x clipping minimum.
- *     vwk->xmx_clip = x clipping maximum.
- *     vwk->ymn_clip = y clipping minimum.
- *     vwk->ymx_clip = y clipping maximum.
+ *     clip->xmn_clip = x clipping minimum.
+ *         ->xmx_clip = x clipping maximum.
+ *         ->ymn_clip = y clipping minimum.
+ *         ->ymx_clip = y clipping maximum.
+ *     rect->x1       = x coord of upper left corner.
+ *         ->y1       = y coord of upper left corner.
+ *         ->x2       = x coord of lower right corner.
+ *         ->y2       = y coord of lower right corner.
  *
  * output:
- *     X1 = x coord of upper left corner.
- *     Y1 = y coord of upper left corner.
- *     X2 = x coord of lower right corner.
- *     Y2 = y coord of lower right corner.
+ *     FALSE -> everything clipped
+ *     rect->x1 = x coord of upper left corner.
+ *         ->y1 = y coord of upper left corner.
+ *         ->x2 = x coord of lower right corner.
+ *         ->y2 = y coord of lower right corner.
  */
 
 static BOOL
-clipbox(Vwk * vwk, Rect * rect)
+clipbox(const VwkClip * clip, Rect * rect)
 {
     WORD x1, y1, x2, y2;
 
@@ -681,32 +681,30 @@ clipbox(Vwk * vwk, Rect * rect)
     y2 = rect->y2;
 
     /* clip x coordinates */
-    if ( x1 < vwk->xmn_clip) {
-        if (x2 < vwk->xmn_clip) {
-            return(FALSE);             /* clipped box is null */
-        }
-        rect->x1 = vwk->xmn_clip;
+    if (x1 < clip->xmn_clip) {
+        if (x2 < clip->xmn_clip)
+            return FALSE;           /* clipped box is null */
+        rect->x1 = clip->xmn_clip;
     }
-    if ( x2 > vwk->xmx_clip) {
-        if (x1 > vwk->xmx_clip) {
-            return(FALSE);             /* clipped box is null */
-        }
-        rect->x2 = vwk->xmx_clip;
+    if (x2 > clip->xmx_clip) {
+        if (x1 > clip->xmx_clip)
+            return FALSE;           /* clipped box is null */
+        rect->x2 = clip->xmx_clip;
     }
+
     /* clip y coordinates */
-    if ( y1 < vwk->ymn_clip) {
-        if (y2 < vwk->ymn_clip) {
-            return(FALSE);             /* clipped box is null */
-        }
-        rect->y1 = vwk->ymn_clip;
+    if (y1 < clip->ymn_clip) {
+        if (y2 < clip->ymn_clip)
+            return FALSE;           /* clipped box is null */
+        rect->y1 = clip->ymn_clip;
     }
-    if ( y2 > vwk->ymx_clip) {
-        if (y1 > vwk->ymx_clip) {
-            return(FALSE);             /* clipped box is null */
-        }
-        rect->y2 = vwk->ymx_clip;
+    if (y2 > clip->ymx_clip) {
+        if (y1 > clip->ymx_clip)
+            return FALSE;           /* clipped box is null */
+        rect->y2 = clip->ymx_clip;
     }
-    return (TRUE);
+
+    return TRUE;
 }
 
 
