@@ -6113,3 +6113,7 @@ Start... early ages
 2015-03-27
 - vdi/vdi_fill.c: Code cleanup, better comments.  Contributed by Eero
   Tamminen. (RFB)
+
+2015-03-28
+- aes/gemrslib.c: Reverted recent update, since it prevented a valid action
+  (loading new-format RSC file but not subsequently accessing CICONs). (RFB)
