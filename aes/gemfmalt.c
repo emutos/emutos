@@ -174,7 +174,7 @@ static void fm_parse(LONG tree, LONG palstr, WORD *picnum, WORD *pnummsg,
 static void fm_build(LONG tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
                      WORD numbut, WORD mlenbut)
 {
-    WORD i, hicon;
+    WORD i, hicon, allbut;
     GRECT al, ic, bt, ms;
     OBJECT *obj;
 
@@ -214,14 +214,15 @@ static void fm_build(LONG tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
      *  otherwise, set the alert width from the button sizes and leave
      *  the message lines left justified.
      */
-    if (mlenmsg + al.g_w > numbut * mlenbut + (numbut-1) + 1 + INTER_WSPACE)
+    allbut = numbut * mlenbut + 2*(numbut-1);
+    if (mlenmsg + al.g_w > allbut + 1 + INTER_WSPACE)
     {
         al.g_w += mlenmsg + 1 + INTER_WSPACE;
-        bt.g_x = (al.g_w - numbut * mlenbut - (numbut-1)) / 2;
+        bt.g_x = (al.g_w - allbut) / 2;
     }
     else
     {
-        al.g_w = numbut * mlenbut + (numbut-1) + 2 * (1+INTER_WSPACE);
+        al.g_w = allbut + 2 * (1+INTER_WSPACE);
         bt.g_x = 1 + INTER_WSPACE;
     }
 
@@ -254,13 +255,13 @@ static void fm_build(LONG tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
         ob_add(tree, ROOT, MSGOFF+i);
     }
 
-    /* add button objects   */
+    /* add button objects with 1 space between them  */
     for (i = 0, obj = ((OBJECT *)tree)+BUTOFF; i < numbut; i++, obj++)
     {
         obj->ob_flags = SELECTABLE | EXIT;
         obj->ob_state = NORMAL;
         ob_setxywh(tree, BUTOFF+i, &bt);
-        bt.g_x += mlenbut + 1;
+        bt.g_x += mlenbut + 2;
         ob_add(tree, ROOT, BUTOFF+i);
     }
 
