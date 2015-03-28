@@ -6119,3 +6119,4 @@ Start... early ages
   (loading new-format RSC file but not subsequently accessing CICONs). (RFB)
 - aes/gemfmalt.c: Cosmetic improvement: increased button spacing in alerts.
   Contributed by Eero Tamminen. (RFB)
+- vdi/vdi_main.c: Remove unused array (saves 0.5K RAM). (RFB)

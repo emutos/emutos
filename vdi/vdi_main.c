@@ -1,8 +1,8 @@
 /*
- * vdimain.c - Many nongraphicle VDI functions
+ * vdimain.c - the VDI screen driver dispatcher
  *
  * Copyright (c) 1999 Caldera, Inc.
- *               2002-2013 The EmuTOS development team
+ *               2002-2015 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -19,10 +19,6 @@
 void screen(void);
 
 
-#define ptsin_size 256          // max. # of elements allowed for PTSIN array
-#define ptsin_max  ptsin_size/2 // max. # of coordinate pairs for PTSIN array
-
-WORD lcl_ptsin[ptsin_size];
 WORD flip_y;                    /* True if magnitudes being returned */
 
 
