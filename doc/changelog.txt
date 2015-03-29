@@ -6120,3 +6120,7 @@ Start... early ages
 - aes/gemfmalt.c: Cosmetic improvement: increased button spacing in alerts.
   Contributed by Eero Tamminen. (RFB)
 - vdi/vdi_main.c: Remove unused array (saves 0.5K RAM). (RFB)
+
+2015-03-29
+- bios/aciavecs.S bios/vectors.S util/memset.S util/minicrt.S util/nlsasm.S
+  util/setjmp.S: Use moveq instead of move.l when possible. (VRI)

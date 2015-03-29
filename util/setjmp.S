@@ -26,14 +26,14 @@ _setjmp:
         move.l  4(sp),a0
         move.l  (sp),(a0)+
         movem.l d2-d7/a2-a7,(a0)
-        move.l  #0,d0
+        moveq   #0,d0
         rts
 
 _longjmp:
         move.l  4(sp),a0
         move.w  8(sp),d0
         beq     nonzero
-        move.l  #1,d0
+        moveq   #1,d0
 nonzero:
         move.l  (a0)+,d1
         movem.l (a0),d2-d7/a2-a7

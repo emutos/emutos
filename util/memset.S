@@ -31,7 +31,7 @@ _bzero:
         move.l   4(sp),a0
         move.l   8(sp),d0
         move.l   d7,-(sp)
-        move.l   #0,d7
+        moveq    #0,d7
         bra      memset
 //
 // void *memset(void *address, short c, unsigned long size)

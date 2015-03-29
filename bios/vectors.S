@@ -689,7 +689,7 @@ bx_nolongframe:
         bne     bx_sp_ok        // yes, the sp already points to the arguments
         move.l  usp,sp          // no, the arguments were on the user stack
 bx_sp_ok:
-        move.l  #0,d0           // clear d0 (use d0 like the original TOS)
+        moveq   #0,d0           // clear d0 (use d0 like the original TOS)
         move.w  (sp)+,d0        // remove the function number from stack
         cmp.w   d1,d0           // Higher, than highest number?
         bhs.s   bx_ret_exc

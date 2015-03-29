@@ -308,7 +308,7 @@ _midivec:
 #endif
         cmp.w   midiibufsz,d1
         blt     1f
-        move.l  #0,d1
+        moveq   #0,d1
 1:      cmp.w   midiibufhd,d1
         beq     1f
         lea     midiibufbuf,a0
@@ -369,7 +369,7 @@ just_rts:
         .equ    ikbd_acia_data, 0xfffffc02
 
 _ikbdsys:
-        move.l  #0,d0
+        moveq   #0,d0
         move.b  ikbd_acia_stat,d1
         move.b  d1,d0
         bpl     just_rts                // not interrupting

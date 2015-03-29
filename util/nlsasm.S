@@ -93,7 +93,7 @@ rh_not_found:
 #endif  /* USE_RAM_HASH */
 
         move.l  4(sp),a0
-        move.l  #0,d0
+        moveq   #0,d0
 #ifdef __mcoldfire__
         move.l  d0,d1
 #else

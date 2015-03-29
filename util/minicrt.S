@@ -55,7 +55,7 @@ _start:
 
 // empty argc and argv
 
-        move.l  #0,d0
+        moveq   #0,d0
         move.l  d0,-(sp)         // empty env
         move.l  d0,-(sp)         // empty argv
         move.w  d0,-(sp)         // argc = 0
