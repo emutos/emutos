@@ -455,13 +455,12 @@ static WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, WORD drv,
                      BYTE *ppath, BYTE *pname)
 {
         WORD    ret, done;
-        WORD    isgraf, isover, isparm, uninstalled;
+        WORD    isgraf, isparm, uninstalled;
         BYTE    *pcmd, *ptail;
 
         done = FALSE;
                                                 /* set flags            */
         isgraf = pa->a_flags & AF_ISGRAF;
-        isover = 1;
         isparm = pa->a_flags & AF_ISPARM;
         uninstalled = ( (*pa->a_pappl == '*') ||
                         (*pa->a_pappl == '?') ||
@@ -529,7 +528,7 @@ static WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, WORD drv,
           if ( (ptail != &G.g_tail[1])  &&
                (ptail != NULLPTR) )
             strcpy(&G.g_tail[1], ptail);
-          done = pro_run(isgraf, isover, G.g_cwin, curr);
+          done = pro_run(isgraf, 1, G.g_cwin, curr);
         } /* if ret */
 
         return(done);
@@ -743,7 +742,7 @@ int do_format(WORD curr)
             if (foundit)
             {
               strcpy(&G.g_tail[1], &msg[0]);
-              pro_run(isgraf, TRUE, G.g_cwin, curr);
+              pro_run(isgraf, 1, G.g_cwin, curr);
               done = 1;
             } /* if */
             else

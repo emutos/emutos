@@ -424,7 +424,7 @@ static WORD do_filemenu(WORD item)
           case CLIITEM:                         /* Start EmuCON */
                 G.g_tail[0] = G.g_tail[1] = 0;
                 strcpy(G.g_cmd, "EMUCON");
-                done = pro_run(FALSE, TRUE, -1, -1);
+                done = pro_run(FALSE, 1, -1, -1);
                 break;
 
           case QUITITEM:
