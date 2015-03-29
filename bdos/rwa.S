@@ -237,7 +237,7 @@ systk:
         move.l  #fstrt,sp
 callos: move.l  a0,-(sp)        // push parm pointer
         jsr     _osif
-        add.l   #4,sp
+        addq.l  #4,sp
 
 //...fall into gouser....
 

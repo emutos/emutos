@@ -6124,3 +6124,4 @@ Start... early ages
 2015-03-29
 - bios/aciavecs.S bios/vectors.S util/memset.S util/minicrt.S util/nlsasm.S
   util/setjmp.S: Use moveq instead of move.l when possible. (VRI)
+- bdos/rwa.S: Use addq.l instead of add.l. (VRI)
