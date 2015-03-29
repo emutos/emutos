@@ -6125,3 +6125,4 @@ Start... early ages
 - bios/aciavecs.S bios/vectors.S util/memset.S util/minicrt.S util/nlsasm.S
   util/setjmp.S: Use moveq instead of move.l when possible. (VRI)
 - bdos/rwa.S: Use addq.l instead of add.l. (VRI)
+- bios/aciavecs.S: Enable IKBD protocol even without ACIA hardware. (VRI)

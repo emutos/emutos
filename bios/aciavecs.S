@@ -198,13 +198,11 @@ _init_acia_vecs:
         jsr     _memmove
         lea     12(sp),sp
 
-#if CONF_WITH_IKBD_ACIA
         // initialize IKBD-related variables
         moveq.l #0,d0
         move.b  d0,ikbdstate
         move.b  d0,joybuf+1
         move.b  d0,joybuf+2
-#endif /* CONF_WITH_IKBD_ACIA */
 
 #if CONF_WITH_IKBD_ACIA || CONF_WITH_MIDI_ACIA
         // finally, setup the interrupt vector
@@ -320,8 +318,6 @@ _midivec:
         move.w  d1,midiibuftl
 1:      rts
 
-#if CONF_WITH_IKBD_ACIA
-
 // ==== IKBD stuff ================
 //
 // Packets received from the IKBD are accumulated into the kbdbuf buffer.
@@ -352,8 +348,6 @@ kbdindex:
 kbdbuf: .ds.b   8   // buffer where packets are being reconstructed
 joybuf: .ds.b   3
 
-#endif /* CONF_WITH_IKBD_ACIA */
-
         .text
 
 _kbdvec:
@@ -375,7 +369,14 @@ _ikbdsys:
         bpl     just_rts                // not interrupting
         // TODO (?): check errors (buffer full ?)
         move.b  ikbd_acia_data,d0
+        // Fall into ikbdraw
+#endif /* CONF_WITH_IKBD_ACIA */
 
+// Process a raw byte received from IKBD protocol.
+// This routine is hardware independant.
+// The byte to process is in d0.l
+        .globl  ikbdraw
+ikbdraw:
         tst.b   ikbdstate       // inside a multi-byte packet?
         bne     in_packet       // ikbdstate != 0 => go and add to the packet
         cmp.w   #0xf6,d0        // is byte a packet header?
@@ -501,5 +502,3 @@ kbd_jump_vec:
         addq.l  #4,sp
         clr.b   ikbdstate
         rts
-
-#endif /* CONF_WITH_IKBD_ACIA */
