@@ -374,7 +374,7 @@ long ixforce(int std, int h, PD *p);
 int syshnd(int h);
 
 /* duplicate a file handle. */
-long dup(long h);
+long dup(int h);
 
 /*
  * in fsopnclo.c

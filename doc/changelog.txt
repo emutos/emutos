@@ -6133,3 +6133,8 @@ Start... early ages
   comments. (RFB)
 - aes/geminit.c aes/gemlib.h aes/gemshlib.c: Remove more PC-GEM-only
   stuff related to shel_write(). (RFB)
+
+2015-03-30
+- bdos/bdosmain.c bdos/fs.h bdos/fshand.h: Changed wrong Fdup() parameter from
+  long to int. This fixes file not found issues with Steem hard disk emulation.
+  Reported by Dima Sobolev. (VRI)

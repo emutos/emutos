@@ -114,7 +114,7 @@ int syshnd(int h)
  *
  */
 
-long dup(long h)
+long dup(int h)
 {
     register int i;
 
@@ -133,7 +133,7 @@ long dup(long h)
     if ((h = run->p_uft[h]) > 0)
         sft[i].f_ofd = sft[h-NUMSTD].f_ofd;
     else
-        sft[i].f_ofd = (OFD *) h;
+        sft[i].f_ofd = (OFD *)(long)h;
 
     sft[i].f_use = 1;
 
