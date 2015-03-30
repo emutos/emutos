@@ -329,10 +329,6 @@ typedef struct window
 #define WA_LFLINE 6
 #define WA_RTLINE 7
 
-#define SH_INPLACE 0
-#define SH_ABOVE 1
-#define SH_FSTEP 2
-#define SH_ACC 3
 
 typedef struct sh_struct
 {
@@ -353,10 +349,6 @@ typedef struct sh_struct
                                                 /*   DESKTOP, else use  */
                                                 /*   the command that   */
                                                 /*   the app. supplied  */
-        WORD    sh_fullstep;                    /* if TRUE then make    */
-                                                /*   AES step-aside     */
-                                                /*   otherwise just the */
-                                                /*   DESKTOP            */
         WORD    sh_isgem;                       /* used to signal if    */
                                                 /*   the currently      */
                                                 /*   running appl.      */

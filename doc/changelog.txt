@@ -6131,3 +6131,5 @@ Start... early ages
   supported). (RFB)
 - aes/gemshlib.c: Remove PC-GEM-only stuff from shel_write(), improve
   comments. (RFB)
+- aes/geminit.c aes/gemlib.h aes/gemshlib.c: Remove more PC-GEM-only
+  stuff related to shel_write(). (RFB)

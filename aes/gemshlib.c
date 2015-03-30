@@ -276,7 +276,6 @@ WORD sh_write(WORD doex, WORD isgem, WORD isover, const BYTE *pcmd, const BYTE *
         psh->sh_isgem = (isgem != FALSE);
         psh->sh_doexec = doex;
         psh->sh_dodef = FALSE;
-        psh->sh_fullstep = 0;
         sh_curdir(sh_apdir);    /* save apps. current directory */
 
         return TRUE;
@@ -675,7 +674,6 @@ static void sh_chdef(SHELL *psh)
         if ( psh->sh_dodef )
         {
           psh->sh_isdef = psh->sh_isgem = TRUE;
-          psh->sh_fullstep = 0;
           if(psh->sh_cdir[1] == ':')
             dos_sdrv(psh->sh_cdir[0] - 'A');
           dos_chdir(psh->sh_cdir);
@@ -736,7 +734,7 @@ static void sh_ldapp(void)
             ratinit();
           }
                                                 /* fix up/parse cmd tail*/
-          sh_fixtail(psh->sh_fullstep == 2);
+          sh_fixtail(FALSE);
           sh_draw(D.s_cmd, 0, 0);               /* redraw the desktop   */
 
                                                 /* clear his desk field */
@@ -779,23 +777,15 @@ static void sh_ldapp(void)
               p_nameit(rlr, sh_name(&D.s_cmd[0]));
               strcpy(rlr->p_appdir,sh_apdir);
               strcat(rlr->p_appdir,"\\");
-              if (psh->sh_fullstep == 0)
-              {
-                dos_exec(PE_LOADGO, D.s_cmd, ad_stail, ad_envrn);   /* Run the APP */
+              dos_exec(PE_LOADGO, D.s_cmd, ad_stail, ad_envrn);   /* Run the APP */
 
-                /* If the user ran an alternative desktop and quitted it,
-                   return now to the default desktop: (experimental) */
-                if(psh->sh_isdef && psh->sh_dodef)
-                {
-                  KDEBUG(("sh_ldapp: Returning to ROM desktop!\n"));
-                  strcpy(&psh->sh_desk[0], DEF_DESKTOP);
-                  strcpy(&psh->sh_cdir[0], &D.s_cdir[0]);
-                }
-              }
-              else if (psh->sh_fullstep == 1)
+              /* If the user ran an alternative desktop and quitted it,
+                 return now to the default desktop: (experimental) */
+              if (psh->sh_isdef && psh->sh_dodef)
               {
-                dos_exec(PE_LOADGO, D.s_cmd, ad_stail, ad_envrn);
-                DOS_ERR = psh->sh_doexec = FALSE;
+                KDEBUG(("sh_ldapp: Returning to ROM desktop!\n"));
+                strcpy(&psh->sh_desk[0], DEF_DESKTOP);
+                strcpy(&psh->sh_cdir[0], &D.s_cdir[0]);
               }
               if (DOS_ERR)
                 badtry = (psh->sh_isdef) ? ALNOFIT : AL08ERR;

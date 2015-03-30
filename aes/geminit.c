@@ -393,7 +393,6 @@ static void sh_init(void)
                                                 /* set defaults         */
         psh->sh_doexec = psh->sh_dodef = gl_shgem
                  = psh->sh_isgem = TRUE;
-        psh->sh_fullstep = FALSE;
 
                                                 /* parse command tail   */
                                                 /*   that was stored in */
