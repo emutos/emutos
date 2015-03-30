@@ -6139,3 +6139,4 @@ Start... early ages
   long to int. This fixes file not found issues with Steem hard disk emulation.
   Reported by Dima Sobolev. (VRI)
 - aes/gemshlib.c: Remove sh_fixtail(), sh_parse(), no longer required. (RFB)
+- aes/geminit.c: Remove residual PC-GEM-only code from sh_init(). (RFB)

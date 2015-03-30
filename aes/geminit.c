@@ -376,11 +376,7 @@ void sh_deskf(WORD obj, LONG plong)
 
 static void sh_init(void)
 {
-        WORD    cnt, need_ext;
-        BYTE    *psrc, *pdst, *pend;
-        BYTE    *s_tail;
         SHELL   *psh;
-        BYTE    savch;
 
         psh = &sh[0];
 
@@ -388,133 +384,10 @@ static void sh_init(void)
                                                 /* add in internal      */
                                                 /*   search paths with  */
                                                 /*   right drive letter */
-
         sh_addpath();
                                                 /* set defaults         */
         psh->sh_doexec = psh->sh_dodef = gl_shgem
                  = psh->sh_isgem = TRUE;
-
-                                                /* parse command tail   */
-                                                /*   that was stored in */
-                                                /*   geminit            */
-        psrc = s_tail = D.g_work;
-        memcpy(s_tail,ad_stail,CMDTAILSIZE);
-        cnt = *psrc++;
-
-        if (cnt)
-        {
-                                                /* null-terminate it    */
-          pend = psrc + cnt;
-          *pend = NULL;
-                                                /* scan off leading     */
-                                                /*   spaces             */
-          while( (*psrc) &&
-                 (*psrc == ' ') )
-            psrc++;
-                                                /* if only white space  */
-                                                /*   get out don't      */
-                                                /*   bother parsing     */
-          if (*psrc)
-          {
-            pdst = psrc;
-            while ( (*pdst) && (*pdst != ' ') )
-              pdst++;                           /* find end of app name */
-
-                                                /* save command to do   */
-                                                /*   instead of desktop */
-            savch = *pdst;
-            *pdst = '\0';                       /* mark for sh_name()   */
-            pend = sh_name(psrc);               /* see if path also     */
-            *pdst = savch;                      /* either blank or null */
-            pdst = &D.s_cmd[0];
-            if (pend != psrc)
-            {
-              if (*(psrc+1) != ':')             /* need drive           */
-              {
-                *pdst++ = gl_logdrv;            /* current drive        */
-                *pdst++ = ':';
-                if (*psrc != '\\')
-                  *pdst++ = '\\';
-              }
-              while (psrc < pend)               /* copy rest of path    */
-                *pdst++ = *psrc++;
-              if (*(pdst-1) == '\\')            /* back up one char     */
-                pdst--;
-              *pdst = '\0';
-              pend = &D.s_cmd[0];
-              while (*pend)                     /* upcase the path      */
-              {
-                *pend = toupper(*pend);
-                pend++;
-              }
-              dos_sdrv(D.s_cmd[0] -'A');
-              dos_chdir(D.s_cmd);
-              *pdst++ = '\\';
-            }
-            need_ext = TRUE;
-            while ( (*psrc) &&
-                    (*psrc != ' ') )
-            {
-              if (*psrc == '.')
-                need_ext = FALSE;
-              *pdst++ = *psrc++;
-            }
-                                                /* append .APP if no    */
-                                                /*   extension given    */
-            if (need_ext)
-              strcpy(pdst, ".APP");
-            else
-              *pdst = NULL;
-            pdst = &D.s_cmd[0];
-            while (*pdst)                       /* upcase the command   */
-            {
-              *pdst = toupper(*pdst);
-              pdst++;
-            }
-
-            psh->sh_dodef = FALSE;
-                                                /* save the remainder   */
-                                                /*   into command tail  */
-                                                /*   for the application*/
-            pdst = &s_tail[1];
-/*          if ( (*psrc) &&                     * if tail then take     *
-               (*psrc != 0x0D) &&               *  out first space      *
-               (*psrc == ' ') )
-                  psrc++;
-*/
-            if (*psrc == ' ')
-              psrc++;
-                                              /* the batch file allows  */
-                                              /*  three arguments       */
-                                              /*  one for a gem app     */
-                                              /*  and 2 for arguments   */
-                                              /*  to the gem app.       */
-                                              /*  if there are < three  */
-                                              /*  there will be a space */
-                                              /*  at the end of the last*/
-                                              /*  arg followed by a 0D  */
-            while ( (*psrc) &&
-                    (*psrc != 0x0D) &&
-                    (*psrc != 0x09) &&          /* what is this??       */
-                    !((*psrc == '/') && (toupper(*(psrc+1)) == 'D')) )
-            {
-              if ( (*psrc == ' ') &&
-                   ( (*(psrc+1) == 0x0D) ||
-                     (*(psrc+1) == NULL)) )
-                psrc++;
-              else
-                *pdst++ = toupper(*psrc++);
-            }
-            *pdst = NULL;
-            s_tail[0] = strlen(&s_tail[1]);
-                                                /* don't do the desktop */
-                                                /*   after this command */
-                                                /*   unless a /d was    */
-                                                /*   encounterd         */
-            psh->sh_doexec = (toupper(*(psrc+1)) == 'D');
-          }
-        }
-        memcpy(ad_stail, s_tail, CMDTAILSIZE);
 }
 
 
