@@ -91,7 +91,7 @@ static void sh_toalpha(void);
 void sh_read(BYTE *pcmd, BYTE *ptail)
 {
         strcpy(pcmd, D.s_cmd);
-        memcpy(ptail, (BYTE *)ad_stail, CMDTAILSIZE);
+        memcpy(ptail, ad_stail, CMDTAILSIZE);
 }
 
 
@@ -106,129 +106,6 @@ void sh_curdir(BYTE *ppath)
         *ppath++ = ':';
         *ppath++ = '\\';
         dos_gdir( drive+1, ppath );
-}
-
-
-
-static BYTE *sh_parse(BYTE *psrc, BYTE *pfcb)
-{
-        register BYTE   *ptmp;
-        BYTE            *sfcb;
-        BYTE            drv;
-
-        sfcb = pfcb;
-                                                /* scan off white space */
-        while ( (*psrc) &&
-                (*psrc == ' ') )
-          psrc++;
-        if (*psrc == NULL)
-          return(psrc);
-                                                /* remember the start   */
-        ptmp = psrc;
-                                                /* look for a colon     */
-        while ( (*psrc) &&
-                (*psrc != ' ') &&
-                (*psrc != ':') )
-          psrc++;
-                                                /* pick off drive letter*/
-        drv = 0;
-        if ( *psrc == ':' )
-        {
-          drv = toupper(*(psrc - 1)) - 'A' + 1;
-          psrc++;
-        }
-        else
-          psrc = ptmp;
-        *pfcb++ = drv;
-        if (*psrc == NULL)
-          return(psrc);
-                                                /* scan off filename    */
-        while ( (*psrc) &&
-                (*psrc != ' ') &&
-                (*psrc != '*') &&
-                (*psrc != '.') &&
-                (pfcb <= &sfcb[8]) )
-          *pfcb++ = toupper(*psrc++);
-                                                /* pad out with blanks  */
-        while ( pfcb <= &sfcb[8] )
-          *pfcb++ = (*psrc == '*') ? ('?') : (' ');
-        if (*psrc == '*')
-          psrc++;
-                                                /* scan off file ext.   */
-        if ( *psrc == '.')
-        {
-          psrc++;
-          while ( (*psrc) &&
-                  (*psrc != ' ') &&
-                  (*psrc != '*') &&
-                  (pfcb <= &sfcb[11]) )
-            *pfcb++ = toupper(*psrc++);
-        }
-        while ( pfcb <= &sfcb[11] )
-          *pfcb++ = (*psrc == '*') ? ('?') : (' ');
-        if (*psrc == '*')
-          psrc++;
-                                                /* return pointer to    */
-                                                /*   remainder of line  */
-        return(psrc);
-}
-
-
-
-/*
-*       Routine to fix up the command tail and parse FCBs for a coming
-*       exec.
-*/
-static void sh_fixtail(WORD iscpm)
-{
-        register WORD   i;
-        WORD            len;
-        BYTE            *s_tail;
-        BYTE            *ptmp;
-        BYTE            s_fcbs[32];
-
-        s_tail = D.g_work;
-        i = 0;
-
-        if (iscpm)
-        {
-          s_tail[i++] = NULL;
-          ptmp = &D.s_cmd[0];
-          while ( (*ptmp) &&
-                  (*ptmp != '.') )
-            s_tail[i++] = *ptmp++;
-        }
-
-        memcpy(s_tail+i, (BYTE *)ad_stail, CMDTAILSIZE - i);
-
-        if (iscpm)
-        {
-                                                /* pick up the length   */
-          len = s_tail[i];
-                                                /* null over carriage ret*/
-          s_tail[i + len + 1] = NULL;
-                                                /* copy down space,tail */
-          strcpy(&s_tail[i], &s_tail[i+1]);
-        }
-        else
-        {
-                                                /* zero the fcbs        */
-          memset(s_fcbs, 0, 32);
-          memset(&s_fcbs[1], ' ', 11);
-          memset(&s_fcbs[17], ' ', 11);
-
-                                      /* parse the fcbs       */
-          if ( s_tail[0] )
-          {
-            s_tail[ 1 + s_tail[0] ] = NULL;
-            ptmp = sh_parse(&s_tail[1], &s_fcbs[0]);
-            if (*ptmp != NULL)
-              sh_parse(ptmp, &s_fcbs[16]);
-            s_tail[ 1 + s_tail[0] ] = 0x0d;
-          }
-        }
-                                                /* copy into true tail  */
-        memcpy((BYTE *)ad_stail, s_tail, CMDTAILSIZE);
 }
 
 
@@ -270,7 +147,7 @@ WORD sh_write(WORD doex, WORD isgem, WORD isover, const BYTE *pcmd, const BYTE *
         }
 
         strcpy(D.s_cmd, pcmd);
-        memcpy((BYTE *)ad_stail, ptail, CMDTAILSIZE);
+        memcpy(ad_stail, ptail, CMDTAILSIZE);
 
         psh = &sh[rlr->p_pid];
         psh->sh_isgem = (isgem != FALSE);
@@ -733,8 +610,7 @@ static void sh_ldapp(void)
             wm_start();
             ratinit();
           }
-                                                /* fix up/parse cmd tail*/
-          sh_fixtail(FALSE);
+
           sh_draw(D.s_cmd, 0, 0);               /* redraw the desktop   */
 
                                                 /* clear his desk field */
