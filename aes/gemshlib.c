@@ -234,14 +234,28 @@ static void sh_fixtail(WORD iscpm)
 
 
 /*
-*       Routine to set the next application to run
-*
-*               isgem = 0   then run in character mode
-*               isgem = 1   them run in graphic mode
-*
-*               isover = 0  then run above DESKTOP
-*               isover = 1  then run over DESKTOP
-*/
+ *      shel_write: multi-purpose function
+ *
+ *      performs the following functions:
+ *      (1) doex = 5
+ *          . selects next video resolution
+ *              (a) isover = 0
+ *                  . indicates ST/TT-style video
+ *                      isgem = 2 + value used by Getrez()/Setscreen()
+ *              (b) isover = 1
+ *                  . indicates Falcon-style video)
+ *                      isgem = value used by Setscreen() for video mode
+ *
+ *      (2) doex = 1
+ *          . set the next application to run after the current one terminates
+ *              isover      ignored, should currently always be 1
+ *              isgem = 0   run in character mode (TOS/TTP)
+ *              isgem = 1   run in graphic mode (APP/PRG)
+ *              
+ *      (3) doex = 0
+ *          . set no application to run after the current one terminates
+ *              note that this is used by the desktop shutdown code
+ */
 WORD sh_write(WORD doex, WORD isgem, WORD isover, const BYTE *pcmd, const BYTE *ptail)
 {
         SHELL           *psh;
@@ -258,30 +272,14 @@ WORD sh_write(WORD doex, WORD isgem, WORD isover, const BYTE *pcmd, const BYTE *
         strcpy(D.s_cmd, pcmd);
         memcpy((BYTE *)ad_stail, ptail, CMDTAILSIZE);
 
-        if (isover > 0)
-        {
-                                                /* stepaside to run     */
-          psh = &sh[rlr->p_pid];
-          psh->sh_isgem = (isgem != FALSE);
-          psh->sh_doexec = doex;
-          psh->sh_dodef = FALSE;
-          psh->sh_fullstep = isover - 1;
-          sh_curdir(sh_apdir);                  /* save apps. current   */
-                                                /* directory            */
-        }
-        else
-        {
-          sh_fixtail(FALSE);
-                                                /* run it above us      */
-          if ( sh_find(D.s_cmd) )
-          {
-            /* Normal Atari-GEM's shel_write does not support running PRGs directly! */
-            /*dos_exec(0, D.s_cmd, ad_stail, ad_envrn);*/
-          }
-          else
-            return(FALSE);
-        }
-        return(TRUE);                           /* for the future       */
+        psh = &sh[rlr->p_pid];
+        psh->sh_isgem = (isgem != FALSE);
+        psh->sh_doexec = doex;
+        psh->sh_dodef = FALSE;
+        psh->sh_fullstep = 0;
+        sh_curdir(sh_apdir);    /* save apps. current directory */
+
+        return TRUE;
 }
 
 
