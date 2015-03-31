@@ -6140,3 +6140,5 @@ Start... early ages
   Reported by Dima Sobolev. (VRI)
 - aes/gemshlib.c: Remove sh_fixtail(), sh_parse(), no longer required. (RFB)
 - aes/geminit.c: Remove residual PC-GEM-only code from sh_init(). (RFB)
+- aes/gem.def aes/gem.rsc aes/gemshlib.c: Give the same error for a not-found
+  autorun application as TOS does. (RFB)

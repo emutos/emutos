@@ -576,9 +576,15 @@ void aes_run_rom_program(PRG_ENTRY *entry)
         dos_exec(PE_GOTHENFREE, NULL, (const BYTE *)pd, NULL);
 }
 
+static void set_default_desktop(SHELL *psh)
+{
+        strcpy(psh->sh_desk, DEF_DESKTOP);
+        strcpy(psh->sh_cdir, D.s_cdir);
+}
+
 static void sh_ldapp(void)
 {
-        WORD    ret, badtry, retry;
+        WORD    badtry, retry;
         SHELL   *psh;
 
 
@@ -587,10 +593,9 @@ static void sh_ldapp(void)
         badtry = 0;
 
         /* Set default DESKTOP if there isn't any yet: */
-        if(psh->sh_desk[0] == 0)
+        if (psh->sh_desk[0] == '\0')
         {
-          strcpy(&psh->sh_desk[0], DEF_DESKTOP);
-          strcpy(&psh->sh_cdir[0], &D.s_cdir[0]);
+          set_default_desktop(psh);
         }
 
         do
@@ -619,7 +624,7 @@ static void sh_ldapp(void)
                                                 /* handle bad try msg   */
           if (badtry)
           {
-            ret = fm_show(badtry, NULLPTR, 1);
+            fm_show(badtry, NULLPTR, 1);
             if (badtry == ALNOFIT)
               break;
             badtry = 0;
@@ -655,13 +660,12 @@ static void sh_ldapp(void)
               strcat(rlr->p_appdir,"\\");
               dos_exec(PE_LOADGO, D.s_cmd, ad_stail, ad_envrn);   /* Run the APP */
 
-              /* If the user ran an alternative desktop and quitted it,
-                 return now to the default desktop: (experimental) */
+              /* If the user ran an "autorun" application and quitted it,
+                 return now to the default desktop: */
               if (psh->sh_isdef && psh->sh_dodef)
               {
                 KDEBUG(("sh_ldapp: Returning to ROM desktop!\n"));
-                strcpy(&psh->sh_desk[0], DEF_DESKTOP);
-                strcpy(&psh->sh_cdir[0], &D.s_cdir[0]);
+                set_default_desktop(psh);
               }
               if (DOS_ERR)
                 badtry = (psh->sh_isdef) ? ALNOFIT : AL08ERR;
@@ -672,17 +676,8 @@ static void sh_ldapp(void)
             }
             else
             {
-              if ( (gl_shgem) &&
-                   (psh->sh_isdef) )
-              {
-                ret = fm_show(ALOKDESK, NULLPTR, 1);
-                if (ret == 1)
-                  retry = TRUE;
-                else
-                  retry = psh->sh_doexec = FALSE;
-              }
-              else
-                badtry = AL18ERR;
+              badtry = AL18ERR;
+              set_default_desktop(psh);
             }
           } while (retry && !badtry);
 
