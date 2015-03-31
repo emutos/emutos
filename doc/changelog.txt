@@ -6142,3 +6142,5 @@ Start... early ages
 - aes/geminit.c: Remove residual PC-GEM-only code from sh_init(). (RFB)
 - aes/gem.def aes/gem.rsc aes/gemshlib.c: Give the same error for a not-found
   autorun application as TOS does. (RFB)
+- aes/gem.def aes/gem.rsc aes/gemshlib.c: Code cleanup: refactor sh_main()
+  & sh_ldapp() for greater clarity. (RFB)

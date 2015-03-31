@@ -582,120 +582,95 @@ static void set_default_desktop(SHELL *psh)
         strcpy(psh->sh_cdir, D.s_cdir);
 }
 
-static void sh_ldapp(void)
+static WORD sh_ldapp(SHELL *psh)
 {
-        WORD    badtry, retry;
-        SHELL   *psh;
+        KDEBUG(("sh_ldapp: Starting %s\n",D.s_cmd));
+        if (psh->sh_isdef && strcmp(D.s_cmd, DEF_DESKTOP) == 0)
+        {
+          /* Start the ROM desktop: */
+          sh_show(D.s_cmd);
+          p_nameit(rlr, sh_name(&D.s_cmd[0]));
+          p_setappdir(rlr, D.s_cmd);
+          aes_run_rom_program(deskstart);
+          return 0;
+        }
 
+#if WITH_CLI != 0
+        if (strcmp(D.s_cmd, "EMUCON") == 0)
+        {
+          /* start the EmuCON shell: */
+          aes_run_rom_program(coma_start);
+          return 0;
+        }
+#endif
+
+        if (sh_find(D.s_cmd))
+        {
+          /* Run a normal application: */
+          sh_show(D.s_cmd);
+          p_nameit(rlr, sh_name(&D.s_cmd[0]));
+          strcpy(rlr->p_appdir,sh_apdir);
+          strcat(rlr->p_appdir,"\\");
+          dos_exec(PE_LOADGO, D.s_cmd, ad_stail, ad_envrn);   /* Run the APP */
+
+          /* If the user ran an "autorun" application and quitted it,
+             return now to the default desktop: */
+          if (psh->sh_isdef && psh->sh_dodef)
+          {
+            KDEBUG(("sh_ldapp: Returning to ROM desktop!\n"));
+            set_default_desktop(psh);
+          }
+
+          if (wind_spb.sy_owner == rlr)     /* if he still owns screen*/
+            unsync(&wind_spb);              /*   then take him off. */
+
+          return DOS_ERR ? AL08ERR : 0;
+        }
+
+        set_default_desktop(psh);   /* ensure something valid will run */
+        return AL18ERR;
+}
+
+
+void sh_main(void)
+{
+        WORD    rc = 0;
+        SHELL   *psh;
 
         psh = &sh[rlr->p_pid];
         strcpy(sh_apdir, D.s_cdir);             /* initialize sh_apdir  */
-        badtry = 0;
 
-        /* Set default DESKTOP if there isn't any yet: */
+        /* Set default DESKTOP if there isn't any yet */
         if (psh->sh_desk[0] == '\0')
-        {
           set_default_desktop(psh);
-        }
 
+        /*
+         * Loop until a resolution change or a shutdown
+         */
         do
         {
           sh_chdef(psh);
-                                                /* set up so that we    */
-                                                /*   will exec the      */
-                                                /*   default next time  */
-                                                /*   unless the         */
-                                                /*   application does   */
-                                                /*   a set command      */
-          psh->sh_dodef = TRUE;
-                                                /* init graph/char mode */
-          sh_chgrf(psh);
+          psh->sh_dodef = TRUE;         /* set up to run the desktop next */
+          sh_chgrf(psh);                /* set alpha/graphics mode */
+
           if (gl_shgem)
           {
             wm_start();
             ratinit();
           }
 
-          sh_draw(D.s_cmd, 0, 0);               /* redraw the desktop   */
+          sh_draw(D.s_cmd, 0, 0);       /* redraw the desktop   */
+          desk_tree[rlr->p_pid] = 0x0L; /* clear his desk field */
 
-                                                /* clear his desk field */
-          desk_tree[rlr->p_pid] = 0x0L;
-                                                /* exec it              */
-                                                /* handle bad try msg   */
-          if (badtry)
-          {
-            fm_show(badtry, NULLPTR, 1);
-            if (badtry == ALNOFIT)
-              break;
-            badtry = 0;
-          }
+          if (rc)                       /* display alert for most recent error */
+            fm_show(rc, NULLPTR, 1);
 
+          rc = sh_ldapp(psh);           /* run the desktop/console/app */
 
-          do
-          {
-            retry = FALSE;
-
-            KDEBUG(("sh_ldapp: Starting %s\n",D.s_cmd));
-            if(psh->sh_isdef && strcmp(D.s_cmd, DEF_DESKTOP) == 0)
-            {
-              /* Start the ROM desktop: */
-              sh_show(D.s_cmd);
-              p_nameit(rlr, sh_name(&D.s_cmd[0]));
-              p_setappdir(rlr, D.s_cmd);
-              aes_run_rom_program(deskstart);
-            }
-#if WITH_CLI != 0
-            else if(strcmp(D.s_cmd, "EMUCON") == 0)
-            {
-              /* start the EmuCON shell: */
-              aes_run_rom_program(coma_start);
-            }
-#endif
-            else if ( sh_find(D.s_cmd) )
-            {
-              /* Run a normal application: */
-              sh_show(D.s_cmd);
-              p_nameit(rlr, sh_name(&D.s_cmd[0]));
-              strcpy(rlr->p_appdir,sh_apdir);
-              strcat(rlr->p_appdir,"\\");
-              dos_exec(PE_LOADGO, D.s_cmd, ad_stail, ad_envrn);   /* Run the APP */
-
-              /* If the user ran an "autorun" application and quitted it,
-                 return now to the default desktop: */
-              if (psh->sh_isdef && psh->sh_dodef)
-              {
-                KDEBUG(("sh_ldapp: Returning to ROM desktop!\n"));
-                set_default_desktop(psh);
-              }
-              if (DOS_ERR)
-                badtry = (psh->sh_isdef) ? ALNOFIT : AL08ERR;
-/*  02/11/86 LKW begin  */
-              if (wind_spb.sy_owner == rlr)     /* if he still owns screen*/
-                  unsync(&wind_spb);            /*   then take him off. */
-/*  02/11/86 LKW end    */
-            }
-            else
-            {
-              badtry = AL18ERR;
-              set_default_desktop(psh);
-            }
-          } while (retry && !badtry);
-
-          desk_tree[rlr->p_pid] = 0x0L;         /* clear his desk field */
+          desk_tree[rlr->p_pid] = 0x0L; /* clear his desk field */
 
         } while(psh->sh_doexec && !gl_changerez);
 
-}
-
-
-
-void sh_main(void)
-{
-                                                /* do the exec          */
-        sh_ldapp();
-
-                                                /* get back to alpha    */
-                                                /*   mode if necessary  */
-        if (gl_shgem)
-          sh_toalpha();
+        if (gl_shgem)                   /* if graphics mode,     */
+          sh_toalpha();                 /*  switch back to alpha */
 }
