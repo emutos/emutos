@@ -6144,3 +6144,6 @@ Start... early ages
   autorun application as TOS does. (RFB)
 - aes/gem.def aes/gem.rsc aes/gemshlib.c: Code cleanup: refactor sh_main()
   & sh_ldapp() for greater clarity. (RFB)
+
+2015-04-01
+- bdos/bdosmain.c: Code cleanup: replace magic numbers with #defines. (RFB)

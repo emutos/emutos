@@ -57,6 +57,14 @@ static long ni(void);
 static long xgetver(void);
 
 
+/*
+ *  defines for some standard GEMDOS calls
+ */
+#define GEMDOS_FCREATE  0x3c
+#define GEMDOS_FOPEN    0x3d
+#define GEMDOS_FREAD    0x3f
+#define GEMDOS_FWRITE   0x40
+
 
 /*
  * FND - Function Descriptor
@@ -83,7 +91,7 @@ FND
  * as the address for functions not implemented.
  */
 
-static const FND funcs[0x58] =
+static const FND funcs[] =
 {
 
      { (long(*)()) x0term, 0, 0 }, /* 0x00 */
@@ -222,7 +230,7 @@ static const FND funcs[0x58] =
     { xrename,  0, 5 },    /* 0x56 */
     { xgsdtof,  0, 4 }       /* 0x57 */
 };
-
+#define MAX_FNCALL  ((int)((sizeof(funcs)/sizeof(FND))-1))
 
 
 
@@ -382,7 +390,7 @@ long    osif2(int *pw)
 
 restrt:
     fn = pw[0];
-    if (fn > 0x57)
+    if (fn > MAX_FNCALL)
         return(EINVFN);
 
     KDEBUG(("BDOS (fn=0x%04x)\n",fn));
@@ -477,7 +485,7 @@ restrt:
                 {
                     if (xread(h,1L,p) == 1)
                     {
-                        oscall(0x40,1,1L,p);
+                        oscall(GEMDOS_FWRITE,1,1L,p);
                         if (*p == 0x0d)
                         {       /* eat the lf */
                             xread(h,1L,&ctmp);
@@ -539,7 +547,7 @@ restrt:
 
             /* only do things on read and write */
 
-            if (fn == 0x3f) /* read */
+            if (fn == GEMDOS_FREAD)     /* read */
             {
                 if (pw[2])      /* disallow HUGE reads      */
                     return(0);
@@ -553,7 +561,7 @@ restrt:
                 return(cgets(HXFORM(num),pw[3],*pb));
             }
 
-            if (fn == 0x40) /* write */
+            if (fn == GEMDOS_FWRITE)    /* write */
             {
                 if (pw[2])      /* disallow HUGE writes     */
                     return(0);
@@ -586,7 +594,7 @@ restrt:
      * special names can be upper or lower case, but NOT mixed
      */
     rc = 0;
-    if ((fn == 0x3d) || (fn == 0x3c))  /* open, create */
+    if ((fn == GEMDOS_FOPEN) || (fn == GEMDOS_FCREATE)) /* open, create */
     {
         p = *((char **) &pw[1]);
         if ((strcmp(p,"CON:") == 0) || (strcmp(p,"con:") == 0))
