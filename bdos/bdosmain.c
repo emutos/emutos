@@ -239,9 +239,9 @@ static const FND funcs[] =
  *      return current version number
  */
 
-static long    xgetver(void)
+static long xgetver(void)
 {
-        return(0x2000L);                /*  minor.major */
+        return (long)GEMDOS_VERSION;
 }
 
 

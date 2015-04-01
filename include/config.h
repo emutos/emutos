@@ -330,6 +330,24 @@
 #endif
 
 /*
+ * Define the GEMDOS version here: this number is returned by the GEMDOS
+ * Sversion() function call. The value contains the minor version number
+ * in the high-order byte, and the major version number in the low-order
+ * byte.  Valid values include:
+ *      0x1300      used by TOS v1.0 & v1.02
+ *      0x1500      used by TOS v1.04 & v1.06
+ *      0x1700      used by TOS v1.62
+ *      0x1900      used by TOS v2.01, v2.05, v3.01, v3.05
+ *      0x2000      used by TOS v2.06 & v3.06
+ *      0x3000      used by TOS v4.0x
+ * This does not have a well-defined purpose, although it could be checked
+ * by programs to determine presence or absence of certain GEMDOS functions.
+ */
+#ifndef GEMDOS_VERSION
+# define GEMDOS_VERSION 0x2000
+#endif
+
+/*
  * Define the AES version here. Valid values include:
  *      0x0120      AES 1.20, used by TOS v1.02
  *      0x0140      AES 1.40, used by TOS v1.04 & v1.62
