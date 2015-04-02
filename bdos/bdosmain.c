@@ -154,7 +154,7 @@ static const FND funcs[] =
     { xgetdrv,  0, 0 },      /* 0x19 */
     { (long(*)()) xsetdta, 0, 2 }, /* 0x1A */
 
-    { xsuper,   0, 2 },      /* 0x20 - switch to supervisor mode */
+    { ni,       0, 0 },
     { ni,       0, 0 },
     { ni,       0, 0 },
     { ni,       0, 0 },

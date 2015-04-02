@@ -6148,3 +6148,5 @@ Start... early ages
 2015-04-01
 - bdos/bdosmain.c: Code cleanup: replace magic numbers with #defines. (RFB)
 - bdos/bdosmain.c include/config.h: Make GEMDOS_VERSION a #define. (RFB)
+- bdos/bdosmain.c: Remove bogus entry (function 0x1b) from GEMDOS function
+  table. (RFB)
