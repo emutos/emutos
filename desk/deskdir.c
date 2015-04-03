@@ -39,6 +39,7 @@
 #include "deskfun.h"
 #include "deskrsrc.h"
 #include "deskmain.h"
+#include "desk1.h"
 #include "deskdir.h"
 
 
@@ -50,7 +51,7 @@ static UBYTE    *copybuf;   /* for copy operations */
 static LONG     copylen;    /* size of above buffer */
 
 static WORD     ml_havebox;
-
+static WORD     deleted_folders;
 /*
  * check for UNDO key pressed: if so, ask user if she wants to abort and,
  * if so, return TRUE.  otherwise return FALSE.
@@ -537,6 +538,25 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
 
 
 /*
+ *      Routine to update any windows that were displaying
+ *      a subfolder of a folder that has been deleted/moved.
+ *      Such windows are updated to display the root directory
+ *      of the drive concerned.
+ */
+static void update_modified_windows(BYTE *path,WORD length)
+{
+    WNODE   *pwin;
+
+    for (pwin = G.g_wfirst; pwin; pwin = pwin->w_next)
+    {
+       if (pwin->w_id)
+            if (strncmp(pwin->w_path->p_spec,path,length) == 0)
+                fun_close(pwin,CLOSE_TO_ROOT);
+    }
+}
+
+
+/*
 *       Directory routine to DO an operation on an entire sub-directory.
 */
 WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
@@ -545,6 +565,9 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
     BYTE    *ptmp, *ptmpdst;
     DTA     *dta = &G.g_dtastk[level];
     WORD    more;
+
+    if (level == 0)
+        deleted_folders = 0L;
 
     dos_sdta(dta);
 
@@ -563,19 +586,20 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
                 break;
             case OP_DELETE:
             case OP_MOVE:
-                if (fold_wind(psrc_path))
-                {
-                    DOS_ERR = TRUE;       /* trying to delete  */
-                    DOS_AX = E_NODELDIR;  /*  active directory */
-                }
-                else
-                {
-                    ptmp = last_separator(psrc_path);
-                    *ptmp = NULL;
-                    dos_rmdir(psrc_path);
-                    strcpy(ptmp, "\\*.*");
-                }
+                ptmp = last_separator(psrc_path);
+                *ptmp = NULL;
+                dos_rmdir(psrc_path);
+                strcpy(ptmp, "\\*.*");
                 more = d_errmsg();
+                if (more)
+                    deleted_folders++;
+                /*
+                 * if we're finishing up, and we deleted one or more folders,
+                 * update any window that was displaying the contents of
+                 * that folder or a subfolder of it
+                 */
+                if ((level == 0) && deleted_folders)
+                    update_modified_windows(psrc_path,ptmp-psrc_path+1);
                 break;
             default:
                 break;

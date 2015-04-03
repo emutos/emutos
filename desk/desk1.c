@@ -65,6 +65,28 @@ static WORD w_setpath(WNODE *pw, WORD drv, BYTE *path, BYTE *name, BYTE *ext)
 }
 
 
+
+/*
+ *      Removes the lowest level of folder from a path string, assumed
+ *      to be of the form:
+ *          X\Y\Z
+ *      If there is at least one path separator character, replaces the
+ *      last one with a nul; otherwise, replaces the first character
+ *      with a nul.  Somewhat similar to last_separator() [deskdir.c].
+ */
+static void remove_one_level(BYTE *path)
+{
+        BYTE *last;
+
+        for (last = path; *path; path++)
+          if (*path == '\\')
+            last = path;
+
+        *last = '\0';
+}
+
+
+
 WORD true_closewnd(WNODE *pw)
 {
         GRECT rc;
@@ -79,41 +101,46 @@ WORD true_closewnd(WNODE *pw)
         return res;
 }
 
-
-WORD fun_close(WNODE *pw, WORD trueclose)
+/*
+ * full or partial close of desktop window
+ */
+WORD fun_close(WNODE *pw, WORD closetype)
 {
-        BYTE *ppath, *pend;
         BYTE ext[LEN_ZEXT+1];
         BYTE name[LEN_ZNODE+1];
         BYTE path[LEN_ZPATH+1];
-        WORD drv;
-        WORD rv;
+        WORD drv, rc;
 
         if (!pw->w_path)
         {
-                form_alert(1,(LONG)"[1][Invalid WNODE passed|to fun_close()][OK]");
-                return 0;
+            form_alert(1,(LONG)"[1][Invalid WNODE passed|to fun_close()][OK]");
+            return 0;
         }
+
         graf_mouse(HGLASS, NULL);
-        fpd_parse(pw->w_path->p_spec, &drv, &path[0], &name[0], &ext[0]);
-        if (trueclose) path[0] = 0;
-        if (!path[0])
+
+        /*
+         * handle CLOSE_FOLDER and CLOSE_TO_ROOT
+         *
+         * if already in the root, change CLOSE_FOLDER to CLOSE_WINDOW
+         * (but don't change CLOSE_TO_ROOT!)
+         */
+        if (closetype != CLOSE_WINDOW)
         {
-                rv = true_closewnd(pw);
+            fpd_parse(pw->w_path->p_spec,&drv,path,name,ext);
+            if (closetype == CLOSE_TO_ROOT)
+                path[0] = '\0';
+            else if (path[0] == '\0')
+                closetype = CLOSE_WINDOW;
+            else    /* we need to go up one level */
+                remove_one_level(path);
         }
-        else
-        {
-                ppath = pend = path;
-                pend += strlen(path)-1;
-                while (pend != ppath && (*pend != '\\'))
-                {
-                        --pend;
-                }
-                *pend = 0;
-                rv = w_setpath(pw, drv, path, name, ext);
-        }
+
+        rc = (closetype==CLOSE_WINDOW) ? true_closewnd(pw) : w_setpath(pw,drv,path,name,ext);
+
         graf_mouse(ARROW, NULL);
-        return rv;
+
+        return rc;
 }
 
 

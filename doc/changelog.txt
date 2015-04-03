@@ -6150,3 +6150,8 @@ Start... early ages
 - bdos/bdosmain.c include/config.h: Make GEMDOS_VERSION a #define. (RFB)
 - bdos/bdosmain.c: Remove bogus entry (function 0x1b) from GEMDOS function
   table. (RFB)
+
+2015-04-03
+- desk/desk1.c desk/desk1.h desk/deskdir.c desk/deskmain.c: Allow folders
+  being displayed in an open window to be moved/deleted, just like Atari
+  TOS. (RFB)

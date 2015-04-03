@@ -406,11 +406,11 @@ static WORD do_filemenu(WORD item)
                 break;
           case CLOSITEM:
                 if (pw)
-                  fun_close(pw, 0);
+                  fun_close(pw, CLOSE_FOLDER);
                 break;
           case CLSWITEM:
                 if (pw)
-                  fun_close(pw, 1);
+                  fun_close(pw, CLOSE_WINDOW);
                 break;
           case DELTITEM:
                 if (curr)
