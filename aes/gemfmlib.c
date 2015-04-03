@@ -448,9 +448,6 @@ WORD fm_error(WORD n)             /* n = dos error number */
           case 15:
                 string = AL15ERR;
                 break;
-          case 16:
-                string = AL16ERR;
-                break;
           case 8:
           case 10:
           case 11:

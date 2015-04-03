@@ -6155,3 +6155,4 @@ Start... early ages
 - desk/desk1.c desk/desk1.h desk/deskdir.c desk/deskmain.c: Allow folders
   being displayed in an open window to be moved/deleted, just like Atari
   TOS. (RFB)
+- aes/gemfmlib.c aes/gem.def aes/gem.rsc: Remove now-unused alert. (RFB)
