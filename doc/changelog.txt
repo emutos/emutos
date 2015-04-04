@@ -6160,3 +6160,4 @@ Start... early ages
 2015-04-04
 - doc/status.txt: Update to show recent (and not-so-recent) changes in
   function support. (RFB)
+- doc/status.txt: Small changes for consistency, better English. (RFB)

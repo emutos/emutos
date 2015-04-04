@@ -1,4 +1,4 @@
-This file documents the status of the single parts of EmuTOS
+This file documents the status of the individual parts of EmuTOS.
 
 Here is a quick list of supported emulators/hardware:
 This table should be updated regularly. When indicating failure,
@@ -29,13 +29,13 @@ if possible add a line telling in which version it did run.
   (3) reported by Michaël Gibs
   (4) reported by amiman99
 
-Now lets talk about the different subsystems, and if they are implemented.
-NOTE: the information in the following table is somewhat dated.  For example,
-despite the indicator, most GEMDOS/BIOS/XBIOS functions are known to work
-without problems.
+Now let's talk about the different subsystems, and what is implemented.
+NOTE: the information in the following table may be somewhat dated.  For
+example, most GEMDOS/BIOS/XBIOS functions are known to work without
+problems.
 
 
-This is, what the first field of the following table means:
+This is what the first field of the following table means:
 
 ? status unknown
 - Not yet implemented
@@ -125,67 +125,67 @@ T tested and working on an emulator or real hardware
  BIOS Functions
  ----------------------------------------------------------------------------
 
- T 0x00 getmpb
- T 0x01 bconstat
- T 0x02 bconin
- T 0x03 bconout
- T 0x04 rwabs
- T 0x05 setexc
- T 0x06 tickcal
- T 0x07 getbpb
- T 0x08 bcostat
- T 0x09 mediach
- T 0x0a drvmap
- T 0x0b kbshift
+ T 0x00 Getmpb
+ T 0x01 Bconstat
+ T 0x02 Bconin
+ T 0x03 Bconout
+ T 0x04 Rwabs
+ T 0x05 Setexc
+ T 0x06 Tickcal
+ T 0x07 Getbpb
+ T 0x08 Bcostat
+ T 0x09 Mediach
+ T 0x0a Drvmap
+ T 0x0b Kbshift
 
 
  XBIOS Functions
  ----------------------------------------------------------------------------
 
 All XBIOS versions:
- X 0x00 initmous
- - 0x01 ssbrk           (useless - will not be implemented)
- X 0x02 physBase
- X 0x03 logBase
- X 0x04 getRez
- X 0x05 setscreen
- X 0x06 setPallete
- X 0x07 setColor
- X 0x08 floprd
- X 0x09 flopwr
- X 0x0a flopfmt
- - 0x0b used-by-BIOS    (useless - will not be implemented)
- X 0x0c midiws
- X 0x0d mfpint
- X 0x0e iorec
- X 0x0f rsconf
- X 0x10 keytbl
- X 0x11 random
- X 0x12 protobt
- X 0x13 flopver
- - 0x14 scrdmp
- T 0x15 cursconf
- X 0x16 settime
- X 0x17 gettime
- X 0x18 bioskeys
- X 0x19 ikbdws
- X 0x1a jdisint
- X 0x1b jenabint
- X 0x1c giaccess
- X 0x1d offgibit
- X 0x1e ongibit
- X 0x1f xbtimer
- X 0x20 dosound
- - 0x21 setprt          (useless - will not be implemented)
- X 0x22 kbdvbase
- X 0x23 kbrate
- - 0x24 prtblk          (useless - will not be implemented)
- X 0x25 vsync
- X 0x26 supexec
- - 0x27 puntaes         (useless - will not be implemented)
+ X 0x00 Initmous
+ - 0x01 Ssbrk           (useless - will not be implemented)
+ X 0x02 Physbase
+ X 0x03 Logbase
+ X 0x04 Getrez
+ X 0x05 Setscreen
+ X 0x06 SetpaleTte
+ X 0x07 Setcolor
+ X 0x08 Floprd
+ X 0x09 Flopwr
+ X 0x0a Flopfmt
+ - 0x0b Dbmsg           (useless - will not be implemented)
+ X 0x0c Midiws
+ X 0x0d Mfpint
+ X 0x0e Iorec
+ X 0x0f Rsconf
+ X 0x10 Keytbl
+ X 0x11 Random
+ X 0x12 Protobt
+ X 0x13 Flopver
+ - 0x14 Scrdmp
+ T 0x15 Cursconf
+ X 0x16 Settime
+ X 0x17 Gettime
+ X 0x18 Bioskeys
+ X 0x19 Ikbdws
+ X 0x1a Jdisint
+ X 0x1b Jenabint
+ X 0x1c Giaccess
+ X 0x1d Offgibit
+ X 0x1e Ongibit
+ X 0x1f Xbtimer
+ X 0x20 Dosound
+ - 0x21 Setprt          (useless - will not be implemented)
+ X 0x22 Kbdvbase
+ X 0x23 Kbrate
+ - 0x24 Prtblk          (useless - will not be implemented)
+ X 0x25 Vsync
+ X 0x26 Supexec
+ - 0x27 Puntaes         (useless - will not be implemented)
 
 TOS v1.02:
- X 0x29 floprate
+ X 0x29 Floprate
  t 0x40 Blitmode
 
 TOS v2.0:
@@ -237,7 +237,7 @@ TOS v4.00:
  X 0x89 Dsptristate
 
 5th bit in _SND is set:
- - 0x61-0x7e, 32 Dsp_* functions
+ - 0x60-0x7F, 32 Dsp_* functions
 
 
  GEMDOS Functions
