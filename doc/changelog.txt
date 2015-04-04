@@ -6156,3 +6156,7 @@ Start... early ages
   being displayed in an open window to be moved/deleted, just like Atari
   TOS. (RFB)
 - aes/gemfmlib.c aes/gem.def aes/gem.rsc: Remove now-unused alert. (RFB)
+
+2015-04-04
+- doc/status.txt: Update to show recent (and not-so-recent) changes in
+  function support. (RFB)

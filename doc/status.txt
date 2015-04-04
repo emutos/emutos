@@ -14,7 +14,7 @@ if possible add a line telling in which version it did run.
   Pacifist v0.48      |  yes  | LVL | winter 2001 |
   STonX 0.6.7.6       |  yes  | THH | 14 Nov 2008 |
   STonC v0.8.1        |  yes  | LVL |  9 Feb 2003 |
-  STeem v3.2          |  yes  | VRI |  4 Mar 2015 | hard drive issues
+  STeem v3.2          |  yes  | VRI |  4 Mar 2015 |
   TOSBox 1.10a        |   no  |  ?  |  < Sep 2002 |
   WinSTon V0.1r2      |   no  |  ?  |  < Sep 2002 |
   FireBee             |  yes  | VRI |  4 Mar 2015 |
@@ -54,7 +54,7 @@ T tested and working on an emulator or real hardware
  T 68030 MMU and cache initialization
  T Memory controller (both ST and Falcon)
  T DMA controller
- t WD 1772 / AJAX Floppy disk controller (write track not tested)
+ T WD 1772 / AJAX Floppy disk controller
  T MFP
  T PSG
  T ST shifter
@@ -69,7 +69,7 @@ T tested and working on an emulator or real hardware
  - DSP
  T SCC
  T IDE
- X ACSI
+ T ACSI
  - SCSI
  T SD/MMC
  T NatFeats (a framework for native features on emulators)
@@ -87,7 +87,7 @@ T tested and working on an emulator or real hardware
    ...
  T init floppy drives
  T boot floppy
- - boot DMA
+ t boot DMA (note it does not work with e.g. AHDI)
  - execute reset-resident prgs
  T run AUTO prgs
  T run 'command.prg'
@@ -110,16 +110,16 @@ T tested and working on an emulator or real hardware
  > 9 SCC channel A
 
 
- ACIA interrupt routines
+ ACIA interrupt handlers
  ----------------------------------------------------------------------------
 
  - midierr
  - ikbderr
  X midi input
  T ikbd key events
- t IKBD clock           (set clock not tested)
- - mouse                (will be done as part of VDI)
- - joysticks            (is done by games - TOS does not have one)
+ T IKBD clock
+ T mouse
+ - joysticks            (done by games - TOS does not handle joysticks)
 
 
  BIOS Functions
@@ -134,9 +134,9 @@ T tested and working on an emulator or real hardware
  T 0x06 tickcal
  T 0x07 getbpb
  T 0x08 bcostat
- t 0x09 mediach         (floppy write-protect line not monitored in VBL)
+ T 0x09 mediach
  T 0x0a drvmap
- X 0x0b kbshift
+ T 0x0b kbshift
 
 
  XBIOS Functions
@@ -178,7 +178,7 @@ All XBIOS versions:
  X 0x20 dosound
  - 0x21 setprt          (useless - will not be implemented)
  X 0x22 kbdvbase
- - 0x23 kbrate
+ X 0x23 kbrate
  - 0x24 prtblk          (useless - will not be implemented)
  X 0x25 vsync
  X 0x26 supexec
