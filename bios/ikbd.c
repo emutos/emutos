@@ -18,7 +18,6 @@
 
 /*
  * not supported:
- * - mouse move using alt-arrowkeys
  * - alt-help screen hardcopy
  * - KEYTBL.TBL config with _AKP cookie (tos 5.00 and later)
  * - CLRHOME and INSERT in kbshift.
@@ -53,6 +52,23 @@
 #define KEY_ALT     0x38
 #define KEY_CAPS    0x3a
 
+/*
+ * support for mouse emulation:
+ *  alt-insert, alt-home => mouse buttons
+ *  alt-arrowkeys: mouse movement
+ */
+#define KEY_INSERT  0X52
+#define KEY_HOME    0X47
+#define KEY_UPARROW 0x48
+#define KEY_LTARROW 0x4b
+#define KEY_RTARROW 0x4d
+#define KEY_DNARROW 0x50
+
+#define MOUSE_REL_POS_REPORT    0xf8    /* values for mouse_packet[0] */
+#define RIGHT_BUTTON_DOWN       0x01
+#define LEFT_BUTTON_DOWN        0x02
+
+BYTE mouse_packet[3];                   /* passed to mousevec() */
 
 /*=== Keymaps handling (xbios) =======================================*/
 
@@ -201,6 +217,107 @@ void push_ascii_ikbdiorec(UBYTE ascii)
 
 #endif /* CONF_SERIAL_CONSOLE */
 
+/*
+ * emulated mouse support (alt-arrowkey support)
+ */
+
+/*
+ * is the key related to mouse emulation?
+ */
+static BOOL is_mouse_key(WORD key)
+{
+    switch(key) {
+    case KEY_INSERT:
+    case KEY_HOME:
+    case KEY_UPARROW:
+    case KEY_DNARROW:
+    case KEY_LTARROW:
+    case KEY_RTARROW:
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+/*
+ * initialise mouse packet
+ */
+static void init_mouse_packet(BYTE *packet)
+{
+    packet[0] = MOUSE_REL_POS_REPORT;
+    packet[1] = packet[2] = 0;
+}
+
+/*
+ * check if we should switch into or out of mouse emulation mode
+ * if so, send the relevant mouse packet
+ */
+static void handle_mouse_mode(WORD newkey)
+{
+    BYTE distance;
+
+    /*
+     * if we shouldn't be in emulation mode, but we are, send an
+     * appropriate mouse packet and exit
+     */
+    if (!(shifty&MODE_ALT) || !is_mouse_key(newkey)) {
+        if (!mouse_packet[0])   /* not emulating, nothing to do */
+            return;
+        init_mouse_packet(mouse_packet);
+        call_mousevec(mouse_packet);
+        mouse_packet[0] = '\0';
+        KDEBUG(("Exiting mouse emulation mode\n"));
+        return;
+    }
+
+    /*
+     * we should be, so ensure that mouse_packet is valid
+     */
+    if (!mouse_packet[0]) {
+        KDEBUG(("Entering mouse emulation mode\n"));
+        init_mouse_packet(mouse_packet);
+    }
+
+    distance = (shifty&MODE_SHIFT) ? 1 : 8;
+
+    switch(newkey) {
+    case KEY_INSERT:
+        mouse_packet[0] |= LEFT_BUTTON_DOWN;
+        break;
+    case KEY_HOME:
+        mouse_packet[0] |= RIGHT_BUTTON_DOWN;
+        break;
+    case KEY_UPARROW:
+        distance = -distance;
+        /* drop through */
+    case KEY_DNARROW:
+        mouse_packet[1] = 0;        /* Atari TOS only allows one direction at a time */
+        mouse_packet[2] = distance;
+        break;
+    case KEY_LTARROW:
+        distance = -distance;
+        /* drop through */
+    case KEY_RTARROW:
+        mouse_packet[1] = distance;
+        mouse_packet[2] = 0;        /* Atari TOS only allows one direction at a time */
+        break;
+    }
+
+    KDEBUG(("Sending mouse packet %02x%02x%02x\n",(UBYTE)mouse_packet[0],(UBYTE)mouse_packet[1],(UBYTE)mouse_packet[2]));
+    call_mousevec(mouse_packet);
+}
+
+/*
+ * send key
+ */
+static void push_key(ULONG value)
+{
+    if (mouse_packet[0]) {
+        KDEBUG(("Repeating mouse packet %02x%02x%02x\n",(UBYTE)mouse_packet[0],(UBYTE)mouse_packet[1],(UBYTE)mouse_packet[2]));
+        call_mousevec(mouse_packet);
+    } else push_ikbdiorec(value);
+}
+
 /*=== kbrate (xbios) =====================================================*/
 
 /*
@@ -220,6 +337,15 @@ void push_ascii_ikbdiorec(UBYTE ascii)
  * - the interrupt routines (ACIA and timer C) cannot happen at the same
  *   time (they both have IPL level 6);
  * - interrupt routines do not modify kb_initial and kb_repeat.
+ * 
+ * NOTE: At the moment, modifier keys (alt, ctrl etc) are evaluated only
+ * during initial key processing.  Also, the release of any key stops
+ * the repeat process.
+ * This is not the same as Atari TOS, which evaluates modifier keys during
+ * key repeat as well.  It also does not stop repeat when a modifier key
+ * is released.
+ * The difference can be easily seen by holding down (e.g.) the 'a' key
+ * and pressing/releasing the shift key.
  */
 
 static WORD kb_initial;
@@ -285,8 +411,8 @@ static void do_key_repeat(void)
     if (conterm & 1)
         keyclick((UBYTE)((kb_last_key & 0x00ff0000) >> 16));
 
-    /* Simulate a key press */
-    push_ikbdiorec(kb_last_key);
+    /* Simulate a key press or a mouse action */
+    push_key(kb_last_key);
 
     /* The key will repeat again until some key up */
     kb_ticks = kb_repeat;
@@ -372,40 +498,45 @@ void kbd_int(UBYTE scancode)
             }
             break;
         }
-        /* The TOS does not return when ALT is set, to emulate
-         * mouse movement using alt keys. This feature is not
-         * currently supported by EmuTOS.
-         */
-#if 0
-        if (!(shifty & KEY_ALT))
-#endif
+        handle_mouse_mode(kb_last_key);
+        return;
+    }
+    else
+    {                               /* key pressed */
+        BOOL modifier = TRUE;
+        switch (scancode) {
+        case KEY_RSHIFT:
+            shifty |= MODE_RSHIFT;  /* set bit */
             return;
-    }
-
-    switch (scancode) {
-    case KEY_RSHIFT:
-        shifty |= MODE_RSHIFT;  /* set bit */
-        return;
-    case KEY_LSHIFT:
-        shifty |= MODE_LSHIFT;  /* set bit */
-        return;
-    case KEY_CTRL:
-        shifty |= MODE_CTRL;    /* set bit */
-        return;
-    case KEY_ALT:
-        shifty |= MODE_ALT;     /* set bit */
-        return;
-    case KEY_CAPS:
-        if (conterm & 1) {
-            keyclick(KEY_CAPS);
+        case KEY_LSHIFT:
+            shifty |= MODE_LSHIFT;  /* set bit */
+            return;
+        case KEY_CTRL:
+            shifty |= MODE_CTRL;    /* set bit */
+            return;
+        case KEY_ALT:
+            shifty |= MODE_ALT;     /* set bit */
+            return;
+        case KEY_CAPS:
+            if (conterm & 1) {
+                keyclick(KEY_CAPS);
+            }
+            shifty ^= MODE_CAPS;    /* toggle bit */
+            return;
+        default:
+            modifier = FALSE;
+            break;
         }
-        shifty ^= MODE_CAPS;    /* toggle bit */
-        return;
+        if (modifier) {
+            handle_mouse_mode(kb_last_key);
+            return;
+        }
     }
-
 
     if (shifty & MODE_ALT) {
         const UBYTE *a;
+
+        handle_mouse_mode(scancode);
 
         /* ALT-keypad means that char number */
         if (scancode >= 103 && scancode <= 112) {
@@ -469,7 +600,7 @@ void kbd_int(UBYTE scancode)
         value += ((ULONG) shifty) << 24;
     }
 
-    push_ikbdiorec(value);
+    push_key(value);
 
     /* set initial delay for key repeat */
     kb_last_key = value;
@@ -609,6 +740,8 @@ void kbd_init(void)
 
     conterm = 7;       /* keyclick and autorepeat on by default */
     conterm |= 0x8;    /* add Kbshift state to Bconin value */
+
+    mouse_packet[0] = 0;    /* not doing mouse emulation */
 
     bioskeys();
 }

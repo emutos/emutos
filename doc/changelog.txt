@@ -6161,3 +6161,7 @@ Start... early ages
 - doc/status.txt: Update to show recent (and not-so-recent) changes in
   function support. (RFB)
 - doc/status.txt: Small changes for consistency, better English. (RFB)
+
+2015-04-06
+- bios/aciavecs.S bios/amiga.c bios/amiga.h bios/amiga2.S bios/ikbd.c
+  bios/ikbd.h: Add alt-arrow support (mouse actions via keyboard). (RFB)

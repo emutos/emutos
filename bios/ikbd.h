@@ -1,7 +1,7 @@
 /*
  * ikbd.h - Intelligent keyboard routines
  *
- * Copyright (c) 2001-2013 The EmuTOS development team
+ * Copyright (c) 2001-2015 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -87,5 +87,8 @@ extern void ikbd_writew(WORD w);
 #if CONF_SERIAL_CONSOLE
 extern void push_ascii_ikbdiorec(UBYTE ascii);
 #endif
+
+/* the following is in aciavecs.S */
+extern void call_mousevec(BYTE *packet);
 
 #endif /* IKBD_H */

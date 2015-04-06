@@ -91,6 +91,8 @@
         .globl  _ikbdiorec
         .globl  _midiiorec
 
+        .globl  _call_mousevec
+
 
         .bss
 
@@ -501,4 +503,16 @@ kbd_jump_vec:
         jsr     (a1)
         addq.l  #4,sp
         clr.b   ikbdstate
+        rts
+
+/******************************************************************************/
+/* Call mousevec from C                                                       */
+/******************************************************************************/
+
+_call_mousevec:
+        move.l  4(sp),a0
+        move.l  _kbdvecs+16,a1          // mousevec
+        movem.l d2-d7/a2-a6,-(sp)
+        jsr     (a1)
+        movem.l (sp)+,d2-d7/a2-a6
         rts

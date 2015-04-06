@@ -1,7 +1,7 @@
 /*
  * amiga2.S - Amiga specific assembler functions
  *
- * Copyright (c) 2013 The EmuTOS development team
+ * Copyright (c) 2013-2015 The EmuTOS development team
  *
  * Authors:
  *  VRI   Vincent Rivière
@@ -232,18 +232,5 @@ vl1:
 amivblend:
         movem.l (sp)+,d0-d1/a0-a1
         rte
-
-/******************************************************************************/
-/* Call mousevec from C                                                       */
-/******************************************************************************/
-
-        .globl  _call_mousevec
-_call_mousevec:
-        move.l  4(sp),a0
-        move.l  _kbdvecs+16,a1          // mousevec
-        movem.l d2-d7/a2-a6,-(sp)
-        jsr     (a1)
-        movem.l (sp)+,d2-d7/a2-a6
-        rts
 
 #endif /* MACHINE_AMIGA */

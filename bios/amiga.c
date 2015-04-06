@@ -1,7 +1,7 @@
 /*
  * amiga.c - Amiga specific functions
  *
- * Copyright (c) 2013 The EmuTOS development team
+ * Copyright (c) 2013-2015 The EmuTOS development team
  *
  * Authors:
  *  VRI   Vincent Rivière
@@ -19,6 +19,7 @@
 #include "tosvars.h"
 #include "processor.h"
 #include "gemerror.h"
+#include "ikbd.h"               /* for call_mousevec() */
 
 #if CONF_WITH_AROS
 #include "aros.h"

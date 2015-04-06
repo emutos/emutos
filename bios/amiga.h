@@ -68,7 +68,6 @@ WORD amiga_floprw(LONG buf, WORD rw, WORD dev, WORD sect, WORD track, WORD side,
 
 void amiga_init_keyboard_interrupt(void);
 void amiga_vbl(void);
-void call_mousevec(BYTE* buf);
 
 #endif /* MACHINE_AMIGA */
 
