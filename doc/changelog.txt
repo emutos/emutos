@@ -6165,3 +6165,6 @@ Start... early ages
 2015-04-06
 - bios/aciavecs.S bios/amiga.c bios/amiga.h bios/amiga2.S bios/ikbd.c
   bios/ikbd.h: Add alt-arrow support (mouse actions via keyboard). (RFB)
+
+2015-04-07
+- bios/ikbd.c: Fix a number of deficiencies in alt-arrow support. (RFB)

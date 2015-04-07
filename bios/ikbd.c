@@ -65,9 +65,14 @@
 #define KEY_DNARROW 0x50
 
 #define MOUSE_REL_POS_REPORT    0xf8    /* values for mouse_packet[0] */
-#define RIGHT_BUTTON_DOWN       0x01
+#define RIGHT_BUTTON_DOWN       0x01    /* these values are OR'ed in */
 #define LEFT_BUTTON_DOWN        0x02
 
+/*
+ * the following stores the packet that is passed to mousevec();
+ * a non-zero value in mouse_packet[0] indicates we are currently
+ * in mouse emulation mode.
+ */
 BYTE mouse_packet[3];                   /* passed to mousevec() */
 
 /*=== Keymaps handling (xbios) =======================================*/
@@ -307,17 +312,6 @@ static void handle_mouse_mode(WORD newkey)
     call_mousevec(mouse_packet);
 }
 
-/*
- * send key
- */
-static void push_key(ULONG value)
-{
-    if (mouse_packet[0]) {
-        KDEBUG(("Repeating mouse packet %02x%02x%02x\n",(UBYTE)mouse_packet[0],(UBYTE)mouse_packet[1],(UBYTE)mouse_packet[2]));
-        call_mousevec(mouse_packet);
-    } else push_ikbdiorec(value);
-}
-
 /*=== kbrate (xbios) =====================================================*/
 
 /*
@@ -412,7 +406,10 @@ static void do_key_repeat(void)
         keyclick((UBYTE)((kb_last_key & 0x00ff0000) >> 16));
 
     /* Simulate a key press or a mouse action */
-    push_key(kb_last_key);
+    if (mouse_packet[0]) {
+        KDEBUG(("Repeating mouse packet %02x%02x%02x\n",(UBYTE)mouse_packet[0],(UBYTE)mouse_packet[1],(UBYTE)mouse_packet[2]));
+        call_mousevec(mouse_packet);
+    } else push_ikbdiorec(kb_last_key);
 
     /* The key will repeat again until some key up */
     kb_ticks = kb_repeat;
@@ -498,7 +495,7 @@ void kbd_int(UBYTE scancode)
             }
             break;
         }
-        handle_mouse_mode(kb_last_key);
+        handle_mouse_mode(kb_last_key); /* exit mouse mode if appropriate */
         return;
     }
     else
@@ -507,27 +504,31 @@ void kbd_int(UBYTE scancode)
         switch (scancode) {
         case KEY_RSHIFT:
             shifty |= MODE_RSHIFT;  /* set bit */
-            return;
+            break;
         case KEY_LSHIFT:
             shifty |= MODE_LSHIFT;  /* set bit */
-            return;
+            break;
         case KEY_CTRL:
             shifty |= MODE_CTRL;    /* set bit */
-            return;
+            break;
         case KEY_ALT:
             shifty |= MODE_ALT;     /* set bit */
-            return;
+            break;
         case KEY_CAPS:
             if (conterm & 1) {
                 keyclick(KEY_CAPS);
             }
             shifty ^= MODE_CAPS;    /* toggle bit */
-            return;
+            break;
         default:
             modifier = FALSE;
             break;
         }
         if (modifier) {
+            /*
+             * the user has pressed a modifier key: check if an arrow key was
+             * already down and, if so, send the appropriate mouse packet
+             */
             handle_mouse_mode(kb_last_key);
             return;
         }
@@ -536,6 +537,10 @@ void kbd_int(UBYTE scancode)
     if (shifty & MODE_ALT) {
         const UBYTE *a;
 
+        /*
+         * the alt key is down: check if the user has pressed an arrow key
+         * and, if so, send the appropriate mouse packet
+         */
         handle_mouse_mode(scancode);
 
         /* ALT-keypad means that char number */
@@ -600,7 +605,11 @@ void kbd_int(UBYTE scancode)
         value += ((ULONG) shifty) << 24;
     }
 
-    push_key(value);
+    /*
+     * if we're not sending mouse packets, send a real key
+     */
+    if (!mouse_packet[0])
+        push_ikbdiorec(value);
 
     /* set initial delay for key repeat */
     kb_last_key = value;
