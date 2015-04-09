@@ -1,7 +1,7 @@
 /*
- * country.c - _AKP, _IDT and country-dependant configuration
+ * country.c - _AKP, _IDT and country-dependent configuration
  *
- * Copyright (c) 2001 The EmuTOS development team
+ * Copyright (c) 2001-2015 The EmuTOS development team
  *
  * Authors:
  *  LVL     Laurent Vogel
@@ -85,9 +85,9 @@ static const struct country_record *get_country_record(int country_code)
     return &countries[default_country_index];
 }
 
-static int get_kbd_number(void)
+static int get_kbd_number(int country_code)
 {
-    const struct country_record *cr = get_country_record(cookie_akp & 0xff);
+    const struct country_record *cr = get_country_record(country_code);
     return cr->keyboard;
 }
 
@@ -107,24 +107,24 @@ static int get_charset(void)
 
 void detect_akp(void)
 {
-    /* By default, use the ROM default country */
-    int country = os_conf >> 1;
-    int keyboard = country;
+    UBYTE country = os_conf >> 1;   /* ROM default country */
+    BOOL nvram_ok = FALSE;
+    UWORD akp_contents;             /* country || keyboard */
 
 #if CONF_WITH_NVRAM && !CONF_UNIQUE_COUNTRY
-    char buf[2];
-    int err;
-
-    err = nvmaccess(0, 6, 2, (PTR) buf);
-    if (err == 0)
-    {
-        /* Override with the NVRAM settings */
-        country = buf[0];
-        keyboard = buf[1];
-    }
+    if (nvmaccess(0, 6, sizeof(akp_contents), (PTR)&akp_contents) == 0)
+        nvram_ok = TRUE;
 #endif
 
-    cookie_akp = (country << 8) | keyboard;
+    /*
+     * if we didn't get the country/keyboard from NVRAM,
+     * use the defaults: country from ROM, keyboard
+     * from country record
+     */
+    if (!nvram_ok)
+        akp_contents = (country << 8) | get_kbd_number(country);
+
+    cookie_akp = akp_contents;
 }
 
 void detect_idt(void)
@@ -161,7 +161,7 @@ void get_keytbl(const struct keytbl **tbl)
     int j;
 #if ! CONF_UNIQUE_COUNTRY
     int i;
-    int goal = get_kbd_number();
+    int goal = cookie_akp & 0xff;
 
     for (i = j = 0 ; i < sizeof(avail_kbd) / sizeof(*avail_kbd) ; i++) {
         if (avail_kbd[i].number == goal) {

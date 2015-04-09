@@ -6172,3 +6172,7 @@ Start... early ages
 2015-04-08
 - bios/ikbd.c: Fix 12-year-old bug: entering values via alt-keypad caused
   key repeat with no keys pressed. (RFB)
+
+2015-04-09
+- bios/country.c doc/country.txt: Fix bug: keyboard table lookup was wrong
+  for multi-country EmuTOS. (RFB)
