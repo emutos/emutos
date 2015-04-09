@@ -6168,3 +6168,7 @@ Start... early ages
 
 2015-04-07
 - bios/ikbd.c: Fix a number of deficiencies in alt-arrow support. (RFB)
+
+2015-04-08
+- bios/ikbd.c: Fix 12-year-old bug: entering values via alt-keypad caused
+  key repeat with no keys pressed. (RFB)

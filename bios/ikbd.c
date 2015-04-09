@@ -570,6 +570,7 @@ void kbd_int(UBYTE scancode)
         /* Fonction keys F1 to F10 */
         if (scancode >= 0x3B && scancode <= 0x44) {
             scancode += 0x19;
+            kb_ticks = kb_initial;  /* allow repeats */
             goto push_value;
         }
         ascii = current_keytbl.shft[scancode];
@@ -596,6 +597,8 @@ void kbd_int(UBYTE scancode)
         return;
     }
 
+    kb_ticks = kb_initial;
+
   push_value:
     if (conterm & 1)
         keyclick(scancode);
@@ -611,10 +614,8 @@ void kbd_int(UBYTE scancode)
     if (!mouse_packet[0])
         push_ikbdiorec(value);
 
-    /* set initial delay for key repeat */
     kb_last_key = value;
     kb_last_ikbdsys = kbdvecs.ikbdsys;
-    kb_ticks = kb_initial;
 }
 
 
