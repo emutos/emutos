@@ -64,6 +64,7 @@ long cookie_idt;
 long cookie_akp;
 
 #if !CONF_UNIQUE_COUNTRY
+
 static const struct country_record *get_country_record(int country_code)
 {
     int default_country = os_conf >> 1; /* From the ROM header */
@@ -84,9 +85,9 @@ static const struct country_record *get_country_record(int country_code)
     return &countries[default_country_index];
 }
 
-static int get_kbd_number(int country_code)
+static int get_kbd_number(void)
 {
-    const struct country_record *cr = get_country_record(country_code);
+    const struct country_record *cr = get_country_record(cookie_akp & 0xff);
     return cr->keyboard;
 }
 
@@ -101,52 +102,29 @@ static int get_charset(void)
     const struct country_record *cr = get_country_record((cookie_akp >> 8) & 0xFF);
     return cr->charset;
 }
-#else
 
-/*
- * the following mapping is essentially that in ctables.h
- *
- * note that almost all defined keyboard layouts get associated with
- * the corresponding country, except that the Greek keyboard layout
- * is not associated with Greece (Greece gets the US one) ...
- */
-static char country_to_keybd[] =
-    { COUNTRY_DE, KEYB_DE,   COUNTRY_FR, KEYB_FR,   COUNTRY_CZ, KEYB_CZ,
-      COUNTRY_FI, KEYB_SE,   COUNTRY_SG, KEYB_SG,   COUNTRY_RU, KEYB_RU,
-      COUNTRY_IT, KEYB_IT,   COUNTRY_UK, KEYB_UK,   0, KEYB_US };
-
-static int get_kbd_number(int country_code)
-{
-    char *p;
-
-    for (p = country_to_keybd; *p; p += 2)
-        if (*p == country_code)
-            break;
-
-    return *(p+1);
-}
 #endif
 
 void detect_akp(void)
 {
-    UBYTE country = os_conf >> 1;   /* ROM default country */
-    BOOL nvram_ok = FALSE;
-    UWORD akp_contents;             /* country || keyboard */
+    /* By default, use the ROM default country */
+    int country = os_conf >> 1;
+    int keyboard = country;
 
-#if CONF_WITH_NVRAM
-    if (nvmaccess(0, 6, sizeof(akp_contents), (PTR)&akp_contents) == 0)
-        nvram_ok = TRUE;
+#if CONF_WITH_NVRAM && !CONF_UNIQUE_COUNTRY
+    char buf[2];
+    int err;
+
+    err = nvmaccess(0, 6, 2, (PTR) buf);
+    if (err == 0)
+    {
+        /* Override with the NVRAM settings */
+        country = buf[0];
+        keyboard = buf[1];
+    }
 #endif
 
-    /*
-     * if we didn't get the country/keyboard from NVRAM,
-     * use the defaults: country from ROM, keyboard
-     * from country record or country_to_keybd[]
-     */
-    if (!nvram_ok)
-        akp_contents = (country << 8) | get_kbd_number(country);
-
-    cookie_akp = akp_contents;
+    cookie_akp = (country << 8) | keyboard;
 }
 
 void detect_idt(void)
@@ -183,7 +161,7 @@ void get_keytbl(const struct keytbl **tbl)
     int j;
 #if ! CONF_UNIQUE_COUNTRY
     int i;
-    int goal = cookie_akp & 0xff;
+    int goal = get_kbd_number();
 
     for (i = j = 0 ; i < sizeof(avail_kbd) / sizeof(*avail_kbd) ; i++) {
         if (avail_kbd[i].number == goal) {

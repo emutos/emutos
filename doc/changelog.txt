@@ -6177,3 +6177,6 @@ Start... early ages
 - bios/country.c doc/country.txt: Fix bug: keyboard table lookup was wrong
   for multi-country EmuTOS. (RFB)
 - bios/country.c: Fix conditional compilation problem with previous patch. (RFB)
+
+2015-04-10
+- bios/country.c: Revert yesterdays's change (original code was correct). (RFB)
