@@ -512,7 +512,17 @@ kbd_jump_vec:
 _call_mousevec:
         move.l  4(sp),a0
         move.l  _kbdvecs+16,a1          // mousevec
+#ifdef __mcoldfire__
+        lea     -44(sp),sp
+        movem.l d2-d7/a2-a6,(sp)
+#else
         movem.l d2-d7/a2-a6,-(sp)
+#endif
         jsr     (a1)
+#ifdef __mcoldfire__
+        movem.l (sp),d2-d7/a2-a6
+        lea     44(sp),sp
+#else
         movem.l (sp)+,d2-d7/a2-a6
+#endif
         rts

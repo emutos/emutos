@@ -6180,3 +6180,6 @@ Start... early ages
 
 2015-04-10
 - bios/country.c: Revert yesterdays's change (original code was correct). (RFB)
+
+2015-04-11
+- bios/aciavecs.S: Fix compilation for ColdFire. (VRI)
