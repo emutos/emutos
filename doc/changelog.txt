@@ -6183,3 +6183,7 @@ Start... early ages
 
 2015-04-11
 - bios/aciavecs.S: Fix compilation for ColdFire. (VRI)
+
+2015-04-13
+- bios/ikbd.c: Do not interrupt key repeat when a modifier key is pressed
+  or released (just like Atari TOS). (RFB)

@@ -42,15 +42,24 @@
 #include "coldfire.h"
 
 
+/* forward declarations */
+static ULONG combine_scancode_ascii(UBYTE scancode,WORD ascii);
+static WORD convert_scancode(UBYTE *scancodeptr);
 
 /* scancode definitions */
 #define KEY_RELEASED 0x80       /* This bit set, when key-release scancode */
 
-#define KEY_LSHIFT  0x2a
+#define KEY_LSHIFT  0x2a        /* modifiers */
 #define KEY_RSHIFT  0x36
 #define KEY_CTRL    0x1d
 #define KEY_ALT     0x38
 #define KEY_CAPS    0x3a
+
+#define KEY_F1      0x3b        /* function keys F1 - F10 */
+#define KEY_F10     0x44
+
+#define KEYPAD_START 0x67       /* numeric keypad: 7 8 9 4 5 6 1 2 3 0 */
+#define KEYPAD_END  0x70
 
 /*
  * support for mouse emulation:
@@ -256,8 +265,10 @@ static void init_mouse_packet(BYTE *packet)
 /*
  * check if we should switch into or out of mouse emulation mode
  * if so, send the relevant mouse packet
+ *
+ * returns TRUE iff we're in mouse mode on exit
  */
-static void handle_mouse_mode(WORD newkey)
+static BOOL handle_mouse_mode(WORD newkey)
 {
     BYTE distance;
 
@@ -266,13 +277,13 @@ static void handle_mouse_mode(WORD newkey)
      * appropriate mouse packet and exit
      */
     if (!(shifty&MODE_ALT) || !is_mouse_key(newkey)) {
-        if (!mouse_packet[0])   /* not emulating, nothing to do */
-            return;
-        init_mouse_packet(mouse_packet);
-        call_mousevec(mouse_packet);
-        mouse_packet[0] = '\0';
-        KDEBUG(("Exiting mouse emulation mode\n"));
-        return;
+        if (mouse_packet[0]) {  /* emulating, need to clean up */
+            init_mouse_packet(mouse_packet);
+            call_mousevec(mouse_packet);
+            mouse_packet[0] = '\0';
+            KDEBUG(("Exiting mouse emulation mode\n"));
+        }
+        return FALSE;
     }
 
     /*
@@ -310,6 +321,8 @@ static void handle_mouse_mode(WORD newkey)
 
     KDEBUG(("Sending mouse packet %02x%02x%02x\n",(UBYTE)mouse_packet[0],(UBYTE)mouse_packet[1],(UBYTE)mouse_packet[2]));
     call_mousevec(mouse_packet);
+
+    return TRUE;
 }
 
 /*=== kbrate (xbios) =====================================================*/
@@ -317,34 +330,38 @@ static void handle_mouse_mode(WORD newkey)
 /*
  * key repeat is handled as follows:
  * As a key is hit and enters the buffer, it is recorded as kb_last_key;
- * at the same time a downward counter kb_ticks is set to the first delay,
- * kb_initial.
+ * the scancode and state of 'shifty' are also saved in kb_last_scancode
+ * and kb_last_shifty.  At the same time a downward counter kb_ticks is
+ * set to the first delay, kb_initial.
+ *
  * Every fourth timer C interrupt (50 Hz ticks), kb_tick is decremented if
- * not null (kb_tick null means no more key repeat for this key). If kb_tick
- * reaches zero, the key is re-emited and kb_tick is now set to the second
- * delay kb_repeat.
- * Finally, any kind of key depress IKBD event stops the repeat handling
- * by setting kb_tick back to zero.
+ * not zero (zero means no more key repeat for this key).  If kb_tick
+ * reaches zero, the value of 'shifty' is compared to the saved value.  If
+ * they are the same, kb_last_key is re-emitted; otherwise:
+ *  . the scancode is re-evaluated using the new value of 'shifty'
+ *  . a (probably new) key is emitted
+ *  . kb_last_key and kb_last_shifty are updated
+ * In either case, kb_tick is now set to the second delay kb_repeat.
+ *
+ * Any release of a *non-modifier* key stops the repeat handling by
+ * setting kb_tick back to zero.  It's also set back to zero by the release
+ * of the alt key during alt-numpad processing.  Allowing the repeat to
+ * continue when e.g. the state of the shift key changes provides the
+ * same functionality as Atari TOS.
+ *
  * There is no need to disable interrupts when modifying kb_tick, kb_initial
  * and kb_repeat since:
  * - each routine not in interrupt routines only accesses kb_tick once;
  * - the interrupt routines (ACIA and timer C) cannot happen at the same
  *   time (they both have IPL level 6);
  * - interrupt routines do not modify kb_initial and kb_repeat.
- * 
- * NOTE: At the moment, modifier keys (alt, ctrl etc) are evaluated only
- * during initial key processing.  Also, the release of any key stops
- * the repeat process.
- * This is not the same as Atari TOS, which evaluates modifier keys during
- * key repeat as well.  It also does not stop repeat when a modifier key
- * is released.
- * The difference can be easily seen by holding down (e.g.) the 'a' key
- * and pressing/releasing the shift key.
  */
 
 static WORD kb_initial;
 static WORD kb_repeat;
 static WORD kb_ticks;
+static UBYTE kb_last_shifty;
+static UBYTE kb_last_scancode;
 static ULONG kb_last_key;
 static PFVOID kb_last_ikbdsys; /* ikbdsys when kb_last_key was set */
 
@@ -403,7 +420,21 @@ static void do_key_repeat(void)
 
     /* Play the key click sound */
     if (conterm & 1)
-        keyclick((UBYTE)((kb_last_key & 0x00ff0000) >> 16));
+        keyclick(kb_last_scancode);
+
+    /*
+     * changing the modifier keys no longer stops key repeat, so when
+     * they change, we must do the scancode conversion again
+     */
+    if (shifty != kb_last_shifty) {
+        UBYTE scancode;
+        WORD ascii;
+
+        scancode = kb_last_scancode;            /* make a copy so we don't change  */
+        ascii = convert_scancode(&scancode);    /* kb_last_scancode inadvertently! */
+        kb_last_key = combine_scancode_ascii(kb_last_scancode,ascii);
+        kb_last_shifty = shifty;
+    }
 
     /* Simulate a key press or a mouse action */
     if (mouse_packet[0]) {
@@ -433,14 +464,104 @@ static int kb_dead;
 static int kb_altnum;
 
 /*
+ * convert a scancode to an ascii character
+ *
+ * for shifted function keys, we also update the scancode
+ */
+static WORD convert_scancode(UBYTE *scancodeptr)
+{
+    UBYTE scancode = *scancodeptr;
+    WORD ascii = 0;
+    const UBYTE *a;
+
+    if (shifty & MODE_ALT) {
+        /*
+         * the alt key is down: check if the user has pressed an arrow key
+         * and, if so, send the appropriate mouse packet
+         */
+        if (handle_mouse_mode(scancode))    /* we sent a packet, */
+            return 0;                       /* so we're done     */
+
+        /* ALT-keypad means that char number */
+        if ((scancode >= KEYPAD_START) && (scancode <= KEYPAD_END)) {
+            if (kb_altnum < 0)
+                kb_altnum = 0;
+            else kb_altnum *= 10;
+            kb_altnum += "\7\10\11\4\5\6\1\2\3\0" [scancode-KEYPAD_START];
+            return -1;
+        }
+
+        if (shifty & MODE_SHIFT) {
+            a = current_keytbl.altshft;
+        } else if (shifty & MODE_CAPS) {
+            a = current_keytbl.altcaps;
+        } else {
+            a = current_keytbl.altnorm;
+        }
+        while (*a && (*a != scancode)) {
+            a += 2;
+        }
+        if (*a++) {
+            ascii = *a;
+        }
+    } else if (shifty & MODE_SHIFT) {
+        /* function keys F1 to F10 => F11 to F20 */
+        if ((scancode >= KEY_F1) && (scancode <= KEY_F10)) {
+            *scancodeptr += 0x19;
+            return 0;
+        }
+        ascii = current_keytbl.shft[scancode];
+    } else if (shifty & MODE_CAPS) {
+        ascii = current_keytbl.caps[scancode];
+    } else {
+        ascii = current_keytbl.norm[scancode];
+    }
+
+    if (shifty & MODE_CTRL) {
+        /* More complicated in TOS, but is it really necessary ? */
+        ascii &= 0x1F;
+    } else if (kb_dead >= 0) {
+        a = current_keytbl.dead[kb_dead];
+        while (*a && *a != ascii) {
+            a += 2;
+        }
+        if (*a++) {
+            ascii = *a;
+        }
+        kb_dead = -1;
+    } else if ((ascii >= DEADMIN) && (ascii <= DEADMAX)) {
+        kb_dead = ascii - DEADMIN;
+        return -1;
+    }
+
+    return ascii;
+}
+
+/*
+ * combine the scancode and the ascii equivalent in a ULONG
+ */
+static ULONG combine_scancode_ascii(UBYTE scancode,WORD ascii)
+{
+    ULONG value;
+
+    value = ((ULONG) scancode) << 16;
+    value += ascii;
+    if (conterm & 0x8)
+        value += ((ULONG) shifty) << 24;
+
+    return value;
+}
+
+/*
  * kbd_int : called by the interrupt routine for key events.
  */
 
 void kbd_int(UBYTE scancode)
 {
     ULONG value;                /* the value to push into iorec */
-    UBYTE ascii = 0;
+    WORD ascii = 0;
     UBYTE scancode_only = scancode & ~KEY_RELEASED;  /* get rid of release bits */
+    BOOL modifier;
 
     KDEBUG(("================\n"));
     KDEBUG(("Key-scancode: 0x%02x, key-shift bits: 0x%02x\n", scancode, shifty));
@@ -472,9 +593,6 @@ void kbd_int(UBYTE scancode)
     }
 
     if (scancode & KEY_RELEASED) {
-        /* stop key repeat */
-        kb_ticks = 0;
-
         scancode = scancode_only;
         switch (scancode) {
         case KEY_RSHIFT:
@@ -488,125 +606,70 @@ void kbd_int(UBYTE scancode)
             break;
         case KEY_ALT:
             shifty &= ~MODE_ALT;        /* clear bit */
-            if(kb_altnum >= 0) {
+            if (kb_altnum >= 0) {
                 ascii = kb_altnum & 0xFF;
                 kb_altnum = -1;
+                kb_ticks = 0;           /* stop key repeat */
                 goto push_value;
             }
             break;
+        default:                    /* non-modifier keys: */
+            kb_ticks = 0;               /*  stop key repeat */
         }
         handle_mouse_mode(kb_last_key); /* exit mouse mode if appropriate */
         return;
     }
-    else
-    {                               /* key pressed */
-        BOOL modifier = TRUE;
-        switch (scancode) {
-        case KEY_RSHIFT:
-            shifty |= MODE_RSHIFT;  /* set bit */
-            break;
-        case KEY_LSHIFT:
-            shifty |= MODE_LSHIFT;  /* set bit */
-            break;
-        case KEY_CTRL:
-            shifty |= MODE_CTRL;    /* set bit */
-            break;
-        case KEY_ALT:
-            shifty |= MODE_ALT;     /* set bit */
-            break;
-        case KEY_CAPS:
-            if (conterm & 1) {
-                keyclick(KEY_CAPS);
-            }
-            shifty ^= MODE_CAPS;    /* toggle bit */
-            break;
-        default:
-            modifier = FALSE;
-            break;
+
+    /*
+     * a key has been pressed
+     */
+    modifier = TRUE;
+    switch (scancode) {
+    case KEY_RSHIFT:
+        shifty |= MODE_RSHIFT;  /* set bit */
+        break;
+    case KEY_LSHIFT:
+        shifty |= MODE_LSHIFT;  /* set bit */
+        break;
+    case KEY_CTRL:
+        shifty |= MODE_CTRL;    /* set bit */
+        break;
+    case KEY_ALT:
+        shifty |= MODE_ALT;     /* set bit */
+        break;
+    case KEY_CAPS:
+        if (conterm & 1) {
+            keyclick(KEY_CAPS);
         }
-        if (modifier) {
-            /*
-             * the user has pressed a modifier key: check if an arrow key was
-             * already down and, if so, send the appropriate mouse packet
-             */
-            handle_mouse_mode(kb_last_key);
-            return;
-        }
+        shifty ^= MODE_CAPS;    /* toggle bit */
+        break;
+    default:
+        modifier = FALSE;
+        break;
     }
-
-    if (shifty & MODE_ALT) {
-        const UBYTE *a;
-
+    if (modifier) {
         /*
-         * the alt key is down: check if the user has pressed an arrow key
-         * and, if so, send the appropriate mouse packet
+         * the user has pressed a modifier key: check if an arrow key was
+         * already down and, if so, send the appropriate mouse packet
          */
-        handle_mouse_mode(scancode);
-
-        /* ALT-keypad means that char number */
-        if (scancode >= 103 && scancode <= 112) {
-            if (kb_altnum < 0) {
-                kb_altnum = 0;
-            }
-            kb_altnum *= 10;
-            kb_altnum += "\7\10\11\4\5\6\1\2\3\0" [scancode - 103];
-            return;
-        }
-
-        if (shifty & MODE_SHIFT) {
-            a = current_keytbl.altshft;
-        } else if (shifty & MODE_CAPS) {
-            a = current_keytbl.altcaps;
-        } else {
-            a = current_keytbl.altnorm;
-        }
-        while (*a && *a != scancode) {
-            a += 2;
-        }
-        if (*a++) {
-            ascii = *a;
-        }
-    } else if (shifty & MODE_SHIFT) {
-        /* Fonction keys F1 to F10 */
-        if (scancode >= 0x3B && scancode <= 0x44) {
-            scancode += 0x19;
-            kb_ticks = kb_initial;  /* allow repeats */
-            goto push_value;
-        }
-        ascii = current_keytbl.shft[scancode];
-    } else if (shifty & MODE_CAPS) {
-        ascii = current_keytbl.caps[scancode];
-    } else {
-        ascii = current_keytbl.norm[scancode];
-    }
-
-    if (shifty & MODE_CTRL) {
-        /* More complicated in TOS, but is it really necessary ? */
-        ascii &= 0x1F;
-    } else if(kb_dead >= 0) {
-        const UBYTE *a = current_keytbl.dead[kb_dead];
-        while (*a && *a != ascii) {
-            a += 2;
-        }
-        if (*a++) {
-            ascii = *a;
-        }
-        kb_dead = -1;
-    } else if(ascii <= DEADMAX && ascii >= DEADMIN) {
-        kb_dead = ascii - DEADMIN;
+        handle_mouse_mode(kb_last_key);
         return;
     }
+
+    /*
+     * a non-modifier key has been pressed
+     */
+    ascii = convert_scancode(&scancode);
+    if (ascii < 0)      /* dead key (including alt-keypad) processing */
+        return;
 
     kb_ticks = kb_initial;
 
   push_value:
     if (conterm & 1)
         keyclick(scancode);
-    value = ((ULONG) scancode) << 16;
-    value += ascii;
-    if (conterm & 0x8) {
-        value += ((ULONG) shifty) << 24;
-    }
+
+    value = combine_scancode_ascii(scancode,ascii);
 
     /*
      * if we're not sending mouse packets, send a real key
@@ -614,6 +677,8 @@ void kbd_int(UBYTE scancode)
     if (!mouse_packet[0])
         push_ikbdiorec(value);
 
+    kb_last_scancode = scancode;    /* save for do_key_repeat() */
+    kb_last_shifty = shifty;
     kb_last_key = value;
     kb_last_ikbdsys = kbdvecs.ikbdsys;
 }
