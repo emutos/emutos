@@ -6191,3 +6191,4 @@ Start... early ages
 2015-04-14
 - bios/dmasound.c: Mask bits when gpio mode 0 is called, just like original
   TOS is doing it. (THH)
+- po/de.po: Updated German translations. (THH)

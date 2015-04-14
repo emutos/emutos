@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: EMUTOS beta\n"
-"POT-Creation-Date: 2015-01-08 23:24+0100\n"
-"PO-Revision-Date: 2015-02-14 17:40+0100\n"
+"POT-Creation-Date: 2015-04-14 22:07+0200\n"
+"PO-Revision-Date: 2015-04-14 22:59+0200\n"
 "Last-Translator: Thomas Huth <huth at tuxfamily.org>\n"
 "Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -17,61 +17,65 @@ msgstr ""
 msgid "Please eject the floppy and hit RETURN"
 msgstr "Bitte Floppy entnehmen, dann RETURN drücken"
 
-#: bios/bios.c:585
+#: bios/bios.c:587
 msgid ""
 "System halted!\n"
 msgstr ""
 "System angehalten!\n"
 
-#: bios/initinfo.c:179
-msgid "EmuTOS Version"
-msgstr "EmuTOS Version"
-
-#: bios/initinfo.c:181
-msgid "CPU type"
-msgstr "CPU-Typ"
-
-#: bios/initinfo.c:189
-msgid "Machine"
-msgstr "Rechner"
-
-#: bios/initinfo.c:191
-msgid "Free ST-RAM"
-msgstr "Freies ST-RAM"
-
-#: bios/initinfo.c:192 bios/initinfo.c:199
-msgid "%ld kB"
-msgstr "%ld kB"
-
-#: bios/initinfo.c:198
-msgid "Free FastRAM"
-msgstr "Freies FastRAM"
-
-#: bios/initinfo.c:204
-msgid "Screen start"
-msgstr "Bildschirm ab"
-
-#: bios/initinfo.c:206
+#: bios/initinfo.c:162
 msgid "GEMDOS drives"
 msgstr "GEMDOS-Laufwerke"
 
-#: bios/initinfo.c:220
+#: bios/initinfo.c:207
+msgid "EmuTOS Version"
+msgstr "EmuTOS Version"
+
+#: bios/initinfo.c:209
+msgid "CPU type"
+msgstr "CPU-Typ"
+
+#: bios/initinfo.c:217
+msgid "Machine"
+msgstr "Rechner"
+
+#: bios/initinfo.c:219
+msgid "Free ST-RAM"
+msgstr "Freies ST-RAM"
+
+#: bios/initinfo.c:220 bios/initinfo.c:227
+msgid "%ld kB"
+msgstr "%ld kB"
+
+#: bios/initinfo.c:226
+msgid "Free FastRAM"
+msgstr "Freies FastRAM"
+
+#: bios/initinfo.c:232
+msgid "Screen start"
+msgstr "Bildschirm ab"
+
+#: bios/initinfo.c:238
 msgid "Boot time"
 msgstr "Boot-Zeit"
 
-#: bios/initinfo.c:226
+#: bios/initinfo.c:244
 msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "Halte <Strg> = ohne AUTO/ACC"
 
-#: bios/initinfo.c:228
+#: bios/initinfo.c:247
 msgid "Hold <Alternate> to skip HDD boot"
 msgstr "Halte <Alt> = keine Harddisk"
 
-#: bios/initinfo.c:231
-msgid "Press 'C' to run an early console"
-msgstr "Drücke 'C' für die Konsole"
+#: bios/initinfo.c:250
+msgid "Press key 'X' to boot from X:"
+msgstr "Drücke 'X' um von Laufwerk X: zu booten"
 
-#: bios/initinfo.c:242
+#: bios/initinfo.c:253
+msgid "Press <Esc> to run an early console"
+msgstr "Drücke <Esc> für die Textkonsole"
+
+#: bios/initinfo.c:264
 msgid " Hold <Shift> to pause this screen "
 msgstr " Für Pause <Shift> gedrückt halten "
 
@@ -195,14 +199,6 @@ msgstr "[1]["
 "den Namen überprüfen.][  OK  ]"
 
 #: aes/gem_rsc.c:751
-msgid "[3]["
-"Your system doesn't have|"
-"enough memory to run EmuDesk.][Cancel]"
-msgstr "[3]["
-"Nicht genug freier Speicher|"
-"um EmuDesk zu starten.][Abbruch]"
-
-#: aes/gem_rsc.c:754
 msgid "[1]["
 "The application doesn't have|"
 "enough room to open another|"
@@ -215,7 +211,7 @@ msgstr "[1]["
 "mente schließen, um Platz zu|"
 "schaffen.][  OK  ]"
 
-#: aes/gem_rsc.c:761
+#: aes/gem_rsc.c:758
 msgid "[1]["
 "An item with this name already|"
 "exists in the folder, or the|"
@@ -229,7 +225,7 @@ msgstr "[1]["
 "schützt. Über \"Info/Umbenennen\"|"
 "kann der Status geändert werden.][  OK  ]"
 
-#: aes/gem_rsc.c:770
+#: aes/gem_rsc.c:767
 msgid "[1]["
 "The specified disk drive does|"
 "not exist.  Check the drive|"
@@ -239,17 +235,7 @@ msgstr "[1]["
 "nicht. Bitte den Laufwerksbuch-|"
 "staben nochmal überprüfen.][  OK  ]"
 
-#: aes/gem_rsc.c:775
-msgid "[1]["
-"You cannot delete the folder|"
-"in which you are currently|"
-"working.][  OK  ]"
-msgstr "[1]["
-"Der Ordner, in welchem gerade|"
-"gearbeitet wird, kann nicht|"
-"gelöscht werden.][  OK  ]"
-
-#: aes/gem_rsc.c:780
+#: aes/gem_rsc.c:772
 msgid "[1]["
 "Cannot run the application|"
 "you have selected.  It may|"
@@ -261,32 +247,20 @@ msgstr "[1]["
 "die Datei beschädigt oder der|"
 "freie Speicher zu knapp.][  OK  ]"
 
-#: aes/gem_rsc.c:787
+#: aes/gem_rsc.c:779
 msgid "[3]["
 "DOS error #%d.][Cancel]"
 msgstr "[3]["
 "DOS-Fehler #%d.][Abbruch]"
 
-#: aes/gem_rsc.c:788
+#: aes/gem_rsc.c:780
 msgid "[3]["
 "Unsupported AES function #%d.][Cancel]"
 msgstr "[3]["
 "Nicht unterstützte AES-Funktion|"
 "Nummer #%d.][Abbruch]"
 
-#: aes/gem_rsc.c:789
-msgid "[3]["
-"An unexpected error has|"
-"occurred.  Please report|"
-"this message to the EmuTOS|"
-"Development team.][Cancel]"
-msgstr "[3]["
-"Ein unerwarteter Fehler ist|"
-"aufgetreten. Bitte diesen|"
-"Fehler an das EmuTOS-Entwickler-|"
-"team melden.][Abbruch]"
-
-#: aes/gem_rsc.c:796
+#: aes/gem_rsc.c:781
 msgid "ITEM SELECTOR"
 msgstr "AUSWAHL"
 
@@ -566,6 +540,10 @@ msgstr "Icon-Typ:"
 msgid "NAME CONFLICT DURING COPY"
 msgstr "NAMENSKONFLIKT BEIM KOPIEREN"
 
+#: desk/desk_rsc.c:1115
+msgid "Skip"
+msgstr "Überspringen"
+
 #: desk/desk_rsc.c:1121
 msgid "Stop"
 msgstr "Stop"
@@ -742,7 +720,7 @@ msgstr "LAUFWERK"
 msgid "TRASH"
 msgstr "PAPIERKORB"
 
-#: desk/desk_rsc.c:1692
+#: desk/desk_rsc.c:1692 cli/cmdint.c:1016
 msgid "-More-"
 msgstr "-Mehr-"
 
@@ -1048,4 +1026,312 @@ msgstr " Scannen "
 #: desk/icons.c:1048
 msgid " Mail "
 msgstr " Post "
+
+#: cli/cmdint.c:73
+msgid "Copy <filespec> ... to standard output"
+msgstr "Gib <filespec> ... auf der Standard-Ausgabe aus"
+
+#: cli/cmdint.c:75
+msgid "Change current directory to <dir>"
+msgstr "Ändere das aktuelle Verzeichnis zu <dir>"
+
+#: cli/cmdint.c:76
+msgid "or display current directory"
+msgstr "oder gib das aktuelle Verzeichnis aus"
+
+#: cli/cmdint.c:78
+msgid "Change attributes for <filename>"
+msgstr "Ändere Attribute von <filename>"
+
+#: cli/cmdint.c:79
+msgid "<mode> is the following ORed together:"
+msgstr "<mode> besteht aus folgenden veroderten Werten:"
+
+#: cli/cmdint.c:80
+msgid "1: read-only  2: hidden  4: system"
+msgstr "1: nur-lesen  2: versteckt  4: System"
+
+#: cli/cmdint.c:82
+msgid "Clear screen"
+msgstr "Bildschirm löschen"
+
+#: cli/cmdint.c:84
+msgid "Copy files matching <filespec> to <dest>"
+msgstr "Kopiere Dateien die auf <filespec> passen nach <dest>"
+
+#: cli/cmdint.c:85
+msgid "If <filespec> matches multiple files,"
+msgstr "Falls <filespec> mehrere Dateien beschreibt,"
+
+#: cli/cmdint.c:86
+msgid "<dest> must be a directory"
+msgstr "dann muss <dest> ein Verzeichnis sein."
+
+#: cli/cmdint.c:88
+msgid "Copy <string> ... to standard output"
+msgstr "Gib <string> ... auf der Standard-Ausgabe aus"
+
+#: cli/cmdint.c:89
+msgid "Strings may be surrounded by \"\""
+msgstr "Zeichenketten müssen von \"\" umgeben werden"
+
+#: cli/cmdint.c:91
+msgid "Exit EmuCON2"
+msgstr "EmuCON2 verlassen"
+
+#: cli/cmdint.c:93
+msgid "Get help about <cmd> or list available commands"
+msgstr "Hilfe über <cmd> oder verfügbare Kommandos anzeigen"
+
+#: cli/cmdint.c:94
+msgid "Use HELP ALL for help on all commands"
+msgstr "Benutze HELP ALL um Hilfe zu allen Kommandos zu bekommen"
+
+#: cli/cmdint.c:95
+msgid "Use HELP EDIT for help on line editing"
+msgstr "Benutze HELP EDIT um Hilfe zur Zeileneingabe zu bekommen"
+
+#: cli/cmdint.c:97
+msgid "List files (default terse, horizontal)"
+msgstr "Dateien auflisten (standardmäßig kompakt, horizontal)"
+
+#: cli/cmdint.c:98
+msgid "Specify -l for detailed list"
+msgstr "Option -l für ausführliche Auflistung"
+
+#: cli/cmdint.c:100
+msgid "Create directory <dir>"
+msgstr "Verzeichnis <dir> erstellen"
+
+#: cli/cmdint.c:102
+msgid "Copy <filespec> to standard output,"
+msgstr "Gibt <filespec> auf Standardausgabe aus,"
+
+#: cli/cmdint.c:103
+msgid "pausing every screenful"
+msgstr "mit Pause nach einem Bildschirm"
+
+#: cli/cmdint.c:105
+msgid "Copy files matching <filespec> to <dir>,"
+msgstr "Kopiert Dateien mit Muster <filespec> nach <dir>"
+
+#: cli/cmdint.c:106
+msgid "then delete input files"
+msgstr "und löscht danach die Orginaldateien"
+
+#: cli/cmdint.c:108
+msgid "Set search path for external programs"
+msgstr "Setzt den Suchpfad für externe Programme"
+
+#: cli/cmdint.c:109
+msgid "or display current search path"
+msgstr "oder zeigt den aktuellen Suchpfad an"
+
+#: cli/cmdint.c:111
+msgid "Display current drive and directory"
+msgstr "Aktuelles Laufwerk und Verzeichnis anzeigen"
+
+#: cli/cmdint.c:113
+msgid "Rename <oldname> to <newname>"
+msgstr "Ändert Namen von <oldname> in <newname>"
+
+#: cli/cmdint.c:115
+msgid "Delete files matching <filespec>"
+msgstr "Löscht Dateien mit Muster <filespec>"
+
+#: cli/cmdint.c:116
+msgid "Specify -q to be prompted each time"
+msgstr "Option -q für Einzelbestätigungen angeben"
+
+#: cli/cmdint.c:118
+msgid "Delete directory <dir>"
+msgstr "Löscht Verzeichnis <dir>"
+
+#: cli/cmdint.c:120
+msgid "Show info for <drive> or current drive"
+msgstr "Zeigt Infos über <drive> oder das aktuelle Laufwerk"
+
+#: cli/cmdint.c:122
+msgid "Display GEMDOS version"
+msgstr "Zeigt GEMDOS-Version an"
+
+#: cli/cmdint.c:124
+msgid "Set line wrap or show current status"
+msgstr "Setzt Zeilenumbruch oder zeigt aktuellen Status an"
+
+#: cli/cmdint.c:128
+msgid "up/down arrow = previous/next line in history"
+msgstr "Pfeil hoch/runter = vorhergehende/nachfolgende Zeile im Verlauf"
+
+#: cli/cmdint.c:129
+msgid "left/right arrow = previous/next character"
+msgstr "Pfeil links/rechts = vorhergehendes/nächstes Zeichen"
+
+#: cli/cmdint.c:130
+msgid "shift-left/right arrow = previous/next word"
+msgstr "Umschalt-Pfeil links/rechts = vorhergehendes/nächstes Wort"
+
+#: cli/cmdint.c:219
+msgid "invalid mode argument"
+msgstr "ungültiger Modusparameter"
+
+#: cli/cmdint.c:261
+msgid "Builtin commands:"
+msgstr "Eingebaute Kommandos:"
+
+#: cli/cmdint.c:322
+msgid "Listing of "
+msgstr "Auflistung von "
+
+#: cli/cmdint.c:372
+msgid "(empty)"
+msgstr "(leer)"
+
+#: cli/cmdint.c:429
+msgid "Delete ALL matching files"
+msgstr "Lösche ALLE passenden Dateien"
+
+#: cli/cmdint.c:436
+msgid "Delete file "
+msgstr "Lösche Datei "
+
+#: cli/cmdint.c:488
+msgid "Allocation info for drive "
+msgstr "Belegungsinformation für Laufwerk "
+
+#: cli/cmdint.c:491
+msgid "  Size (bytes):   "
+msgstr "  Größe (bytes):  "
+
+#: cli/cmdint.c:492
+msgid "  Bytes used:     "
+msgstr "  Benutzte Bytes: "
+
+#: cli/cmdint.c:493
+msgid "  Bytes free:     "
+msgstr "  Freie Bytes:    "
+
+#: cli/cmdint.c:494
+msgid "  Total clusters: "
+msgstr "  Gesamt-Cluster: "
+
+#: cli/cmdint.c:495
+msgid "  Free clusters:  "
+msgstr "  Freie Cluster:  "
+
+#: cli/cmdint.c:496
+msgid "  Sectors/cluster:"
+msgstr " Sektoren/Cluster:"
+
+#: cli/cmdint.c:497
+msgid "  Bytes/sector:   "
+msgstr "  Bytes/Sektor:   "
+
+#: cli/cmdint.c:625
+msgid " is not a directory"
+msgstr " ist kein Verzeichnis"
+
+#: cli/cmdint.c:654
+msgid " and "
+msgstr " und "
+
+#: cli/cmdint.c:660
+msgid "Copying "
+msgstr "Kopiere "
+
+#: cli/cmdint.c:662
+msgid " to "
+msgstr " nach "
+
+#: cli/cmdint.c:698
+msgid " ... deleting "
+msgstr " ... lösche "
+
+#: cli/cmdint.c:708
+msgid " ... done"
+msgstr " ... fertig"
+
+#: cli/cmdint.c:764
+msgid " or "
+msgstr " oder "
+
+#: cli/cmdint.c:792
+msgid "CR to continue ..."
+msgstr "EINGABE um weiter zu machen ..."
+
+#: cli/cmdmain.c:59
+msgid "Welcome to EmuCON2: type HELP for builtin commands"
+msgstr "Wilkommen bei EmuCON2: HELP für Hilfe zu eingebauten Kommandos eingeben"
+
+#: cli/cmdmain.c:78
+msgid "warning: no history buffers"
+msgstr "Warnung: Keine Verlaufsspeicher"
+
+#: cli/cmdparse.c:29
+msgid "more than one redirection"
+msgstr "mehr als eine Umleitung"
+
+#: cli/cmdparse.c:47
+msgid "no filename for redirection"
+msgstr "kein Dateiname für Umleitung"
+
+#: cli/cmdparse.c:53
+msgid "error in quoted field"
+msgstr "Fehler im Feld mit Anführungszeichen"
+
+#: cli/cmdparse.c:57
+msgid "error parsing line"
+msgstr "Fehler beim analysieren der Zeile"
+
+#: cli/cmdutil.c:63
+msgid "file not found"
+msgstr "Datei nicht gefunden"
+
+#: cli/cmdutil.c:66
+msgid "path not found"
+msgstr "Pfad nicht gefunden"
+
+#: cli/cmdutil.c:69
+msgid "no more file handles"
+msgstr "keine weiteren Datei-Handles"
+
+#: cli/cmdutil.c:72
+msgid "can't create file"
+msgstr "kann Datei nicht anlegen"
+
+#: cli/cmdutil.c:75
+msgid "not enough memory"
+msgstr "nicht genug Speicher"
+
+#: cli/cmdutil.c:78
+msgid "invalid drive"
+msgstr "ungültiges Laufwerk"
+
+#: cli/cmdutil.c:81
+msgid "interrupted"
+msgstr "unterbrochen"
+
+#: cli/cmdutil.c:84
+msgid "invalid path"
+msgstr "ungültiger Pfad"
+
+#: cli/cmdutil.c:87
+msgid "can't write to disk (full?)"
+msgstr "kann nicht auf Disk schreiben (voll?)"
+
+#: cli/cmdutil.c:90
+msgid "cmdline too long"
+msgstr "Kommandozeile zu lang"
+
+#: cli/cmdutil.c:93
+msgid "directory not empty"
+msgstr "Verzeichnis nicht leer"
+
+#: cli/cmdutil.c:96
+msgid "wrong number of arguments"
+msgstr "Falsche Zahl von Parametern"
+
+#: cli/cmdutil.c:99
+msgid "error code "
+msgstr "Fehlercode "
 
