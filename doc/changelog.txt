@@ -6187,3 +6187,7 @@ Start... early ages
 2015-04-13
 - bios/ikbd.c: Do not interrupt key repeat when a modifier key is pressed
   or released (just like Atari TOS). (RFB)
+
+2015-04-14
+- bios/dmasound.c: Mask bits when gpio mode 0 is called, just like original
+  TOS is doing it. (THH)

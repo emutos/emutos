@@ -490,7 +490,7 @@ LONG gpio(UWORD mode, UWORD data)
     switch (mode)
     {
      case 0:             /* Set direction */
-        DMASOUND->gpx_data_direction = data;
+        DMASOUND->gpx_data_direction = data & 0x07;
         break;
      case 1:             /* Read the pins */
         return DMASOUND->gpx_data_port & 0x07;
