@@ -313,7 +313,7 @@ void app_tran(WORD bi_num)
 /* a p p _ r d i c o n                                                  */
 /************************************************************************/
 /* Note: this file originally loaded the icon data from a file (deskhi.icn
-   or desklo.icn). But due to endianess problems and for ROM-ing the desktop,
+   or desklo.icn). But due to endianness problems and for ROM-ing the desktop,
    I changed this behaviour so that the icons are included in the program
    file now. Hope there aren't too much faults in this new version of this
    function. See icons.c, too.  - THH

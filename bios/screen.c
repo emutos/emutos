@@ -743,7 +743,7 @@ void get_pixel_size(WORD *width,WORD *height)
     }
 }
 
-/* hardware independant xbios routines */
+/* hardware independent xbios routines */
 
 LONG physbase(void)
 {

@@ -445,7 +445,7 @@ move_cursor(int x, int y)
  *
  * This routine negates the contents of an arbitrarily tall byte wide cell
  * composed of an arbitrary number of (atari styled) bit-planes.
- * Cursor display can be acomplished via this procedure. since a second
+ * Cursor display can be accomplished via this procedure. since a second
  * negation restores the original cell condition, there is no need to save
  * the contents beneath the cursor block.
  *

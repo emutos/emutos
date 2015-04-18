@@ -172,7 +172,7 @@ static void     ixterm( PD *r )
 /*
  * envsize - determine size of env area
  *
- * counts bytes starting at 'env' upto and including the terminating
+ * counts bytes starting at 'env' up to and including the terminating
  * double null.
  */
 

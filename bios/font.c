@@ -64,7 +64,7 @@ void font_init(void)
 /*
  * font_set_default - choose default font depending on screen height
  *
- * set linea variables according to choosen font configuration
+ * set linea variables according to chosen font configuration
  */
 
 void font_set_default(void)

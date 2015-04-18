@@ -481,7 +481,7 @@ long xclose(int h)
 **
 **      Last modified   SCC     10 Apr 85
 **
-**      NOTE:   I'm not sure that returning immediatly upon an error from
+**      NOTE:   I'm not sure that returning immediately upon an error from
 **              ixlseek() is the right thing to do.  Some data structures may
 **              not be updated correctly.  Watch out for this!
 **              Also, I'm not sure that the EINTRN return is ok.
@@ -608,7 +608,7 @@ long xunlink(char *name)
 **
 **  NOTE:       both 'for' loops scan for the entire length of their
 **              respective data structures, and do not drop out of the loop on
-**              the first occurence of a match.
+**              the first occurrence of a match.
 **      Used by
 **              ixcreat()
 **              xunlink()

@@ -103,7 +103,7 @@ long xprtostat(void)
 }
 
 /*
- * xauxistat - Function 0x12 - Auxillary input status
+ * xauxistat - Function 0x12 - Auxiliary input status
  */
 long xauxistat(void)
 {
@@ -111,7 +111,7 @@ long xauxistat(void)
 }
 
 /*
- * xauxostat - Function 0x13 - Auxillary output status
+ * xauxostat - Function 0x13 - Auxiliary output status
  */
 long xauxostat(void)
 {
@@ -239,7 +239,7 @@ static void cookdout(int h, int ch)
 }
 
 /*
- * xauxout - Function 0x04 - auxillary output
+ * xauxout - Function 0x04 - auxiliary output
  */
 long xauxout(int ch)
 {
@@ -346,7 +346,7 @@ long x8in(void)
 }
 
 /*
- * xauxin - Function 0x03 - Auxillary input
+ * xauxin - Function 0x03 - Auxiliary input
  */
 long xauxin(void)
 {

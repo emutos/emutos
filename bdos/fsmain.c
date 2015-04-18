@@ -321,7 +321,7 @@
 **
 **      31 Jul 85       LTG     Modified ixlseek(). Now chks to see if at front of
 **                              file before bumping cluster num when on cluster
-**                              boundry.
+**                              boundary.
 **
 **       6 Aug 85       LTG     Modified xchdir().  No longer removes drive
 **                              specification from path name before sending it
@@ -350,7 +350,7 @@
 **                              boundaries.  We aren't sure why it works, but
 **                              it does.
 **
-**  M01.01.01   ktb 15 Oct 85   accomodate split of fs.h into fs.h and bios.h
+**  M01.01.01   ktb 15 Oct 85   accommodate split of fs.h into fs.h and bios.h
 **
 ** --------------------------------------------------------------------------
 **      fs.c has now been broken up into separate modules.
