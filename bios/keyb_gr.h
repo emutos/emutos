@@ -1,7 +1,7 @@
 /*
  * keyb_gr.h - Greek keyboard layout definition
  *
- * Copyright (c) 2002 The EmuTOS development team
+ * Copyright (c) 2002-2015 The EmuTOS development team
  *
  * Authors:
  *  GGN   ggn@atari.org
@@ -15,122 +15,148 @@
  * Note: this file was not automatically generated, although I took this
  * header from an automatically generated header, just for the looks!
  *
+ * Rewritten by RFB to allow for DUAL_KEYBOARD support: the 'normal'
+ * tables are copies of the US ones, the 'alternate' tables remain
+ * essentially the same (with a number of fixes), and dead key tables
+ * have been added to support accented characters.
+ *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  */
 
-static const UBYTE keytbl_gr_altnorm[] = {
-        0, 0x1B, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36,
-     0x37, 0x38, 0x39, 0x30, 0x2D, 0x3D, 0x08, 0x09,
-     0xF1, 0xAA, 0x9C, 0xA8, 0xAB, 0xAC, 0x9F, 0xA0,
-     0xA6, 0xA7, 0x5B, 0x5D, 0x0D,    0, 0x98, 0xA9,
-     0x9B, 0xAD, 0x9A, 0x9E, 0xA5, 0xA1, 0xA2, 0x3B,
-     0x27, 0x60,    0, 0x23, 0x9D, 0xAE, 0xAF, 0xE0,
-     0x99, 0xA4, 0xA3, 0x2C, 0x2E, 0x2F,    0,    0,
-        0, 0x20,    0,    0,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,    0,    0,
-        0,    0, 0x2D,    0,    0,    0, 0x2B,    0,
-        0,    0,    0, 0x7F,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,    0,    0,
-     0x5C,    0,    0, 0x28, 0x29, 0x2F, 0x2A, 0x37,
-     0x38, 0x39, 0x34, 0x35, 0x36, 0x31, 0x32, 0x33,
-     0x30, 0x2E, 0x0D,    0,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,    0,    0,
-};
-
-static const UBYTE keytbl_gr_altshft[] = {
-        0, 0x1B, 0x21, 0x22, 0xF9, 0x24, 0x25, 0x5E,
-     0x26, 0x2A, 0x28, 0x29, 0x5F, 0x2B, 0x08, 0x09,
-     0xF2, 0xAA, 0x84, 0x90, 0x92, 0x93, 0x87, 0x88,
-     0x8E, 0x8F, 0x7B, 0x7D, 0x0D,    0, 0x80, 0x91,
-     0x83, 0x94, 0x82, 0x86, 0x8D, 0x89, 0x8A, 0x3A,
-     0x40, 0xFF,    0, 0x7E, 0x85, 0x95, 0x96, 0x97,
-     0x81, 0x8C, 0x8B, 0x3C, 0x3E, 0x3F,    0,    0,
-        0, 0x20,    0,    0,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,    0,    0,
-        0,    0, 0x2D,    0,    0,    0, 0x2B,    0,
-        0,    0,    0, 0x7F,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,    0,    0,
-     0x7C,    0,    0, 0x28, 0x29, 0x2F, 0x2A, 0x37,
-     0x38, 0x39, 0x34, 0x35, 0x36, 0x31, 0x32, 0x33,
-     0x30, 0x2E, 0x0D,    0,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,    0,    0,
-};
-
-static const UBYTE keytbl_gr_altcaps[] = {
-        0, 0x1B, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36,
-     0x37, 0x38, 0x39, 0x30, 0x2D, 0x3D, 0x08, 0x09,
-     0xF1, 0xFB, 0x84, 0x90, 0x92, 0x93, 0x87, 0x88,
-     0x8E, 0x8F, 0x5B, 0x5D, 0x0D,    0, 0x80, 0x91,
-     0x83, 0x94, 0x82, 0x86, 0x8D, 0x89, 0x8A, 0x3B,
-     0x27, 0x60,    0, 0x23, 0x85, 0x95, 0x96, 0x97,
-     0x81, 0x8C, 0x8B, 0x2C, 0x2E, 0x2F,    0,    0,
-        0, 0x20,    0,    0,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,    0,    0,
-        0,    0, 0x2D,    0,    0,    0, 0x2B,    0,
-        0,    0,    0, 0x7F,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,    0,    0,
-     0x5C,    0,    0, 0x28, 0x29, 0x2F, 0x2A, 0x37,
-     0x38, 0x39, 0x34, 0x35, 0x36, 0x31, 0x32, 0x33,
-     0x30, 0x2E, 0x0D,    0,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,    0,    0,
-};
-
 static const UBYTE keytbl_gr_norm[] = {
-        0, 0x1B, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36,
-     0x37, 0x38, 0x39, 0x30, 0x2D, 0x3D, 0x08, 0x09,
-     0xE8, 0xE4, 0xE2, 0xA8, 0xAB, 0xE7, 0x9F, 0xE5,
-     0xE6, 0xA7, 0x5B, 0x5D, 0x0D,    0, 0xE1, 0xA9,
-     0x9B, 0xAD, 0x9A, 0xE3, 0xA5, 0xA1, 0xA2, 0x3B,
-     0x27, 0x60,    0, 0x23, 0x9D, 0xAE, 0xAF, 0xE9,
-     0x99, 0xA4, 0xA3, 0x2C, 0x2E, 0x2F,    0,    0,
-        0, 0x20,    0,    0,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,    0,    0,
-        0,    0, 0x2D,    0,    0,    0, 0x2B,    0,
-        0,    0,    0, 0x7F,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,    0,    0,
-     0x5C,    0,    0, 0x28, 0x29, 0x2F, 0x2A, 0x37,
-     0x38, 0x39, 0x34, 0x35, 0x36, 0x31, 0x32, 0x33,
-     0x30, 0x2E, 0x0D,    0,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,    0,    0,
+       0, 0x1b,  '1',  '2',  '3',  '4',  '5',  '6',
+     '7',  '8',  '9',  '0',  '-',  '=',    8, 0x09,
+     'q',  'w',  'e',  'r',  't',  'y',  'u',  'i',
+     'o',  'p',  '[',  ']', 0x0d,    0,  'a',  's',
+     'd',  'f',  'g',  'h',  'j',  'k',  'l',  ';',
+    '\'',  '`',    0, '\\',  'z',  'x',  'c',  'v',
+     'b',  'n',  'm',  ',',  '.',  '/',    0,    0,
+       0,  ' ',    0,    0,    0,    0,    0,    0,
+       0,    0,    0,    0,    0,    0,    0,    0,
+       0,    0,  '-',    0,    0,    0,  '+',    0,
+       0,    0,    0, 0x7f,    0,    0,    0,    0,
+       0,    0,    0,    0,    0,    0,    0,    0,
+       0,    0,    0,  '(',  ')',  '/',  '*',  '7',
+     '8',  '9',  '4',  '5',  '6',  '1',  '2',  '3',
+     '0',  '.', 0x0d,    0,    0,    0,    0,    0,
+       0,    0,    0,    0,    0,    0,    0,    0,
 };
 
 static const UBYTE keytbl_gr_shft[] = {
-        0, 0x1B, 0x21, 0x22, 0xF9, 0x24, 0x25, 0x5E,
-     0x26, 0x2A, 0x28, 0x29, 0x5F, 0x2B, 0x08, 0x09,
-     0xF2, 0xAA, 0xEB, 0x90, 0x92, 0xEF, 0x87, 0xED,
-     0xEE, 0x8F, 0x7B, 0x7D, 0x0D,    0, 0xEA, 0x91,
-     0x83, 0x94, 0x82, 0xEC, 0x8D, 0x89, 0x8A, 0x3A,
-     0x40, 0xFF,    0, 0x7E, 0x85, 0x95, 0x96, 0xF0,
-     0x81, 0x8C, 0x8B, 0x3C, 0x3E, 0x3F,    0,    0,
-        0, 0x20,    0,    0,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,    0,    0,
-        0,    0, 0x2D,    0,    0,    0, 0x2B,    0,
-        0,    0,    0, 0x7F,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,    0,    0,
-     0x7C,    0,    0, 0x28, 0x29, 0x2F, 0x2A, 0x37,
-     0x38, 0x39, 0x34, 0x35, 0x36, 0x31, 0x32, 0x33,
-     0x30, 0x2E, 0x0D,    0,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,    0,    0,
+       0, 0x1b,  '!',  '@',  '#',  '$',  '%',  '^',
+     '&',  '*',  '(',  ')',  '_',  '+',    8, 0x09,
+     'Q',  'W',  'E',  'R',  'T',  'Y',  'U',  'I',
+     'O',  'P',  '{',  '}', 0x0d,    0,  'A',  'S',
+     'D',  'F',  'G',  'H',  'J',  'K',  'L',  ':',
+    '\"',  '~',    0,  '|',  'Z',  'X',  'C',  'V',
+     'B',  'N',  'M',  '<',  '>',  '?',    0,    0,
+       0,  ' ',    0,    0,    0,    0,    0,    0,
+       0,    0,    0,    0,    0,    0,    0,  '7',
+     '8',    0,  '-',  '4',    0,  '6',  '+',    0,
+     '2',    0,  '0', 0x7f,    0,    0,    0,    0,
+       0,    0,    0,    0,    0,    0,    0,    0,
+       0,    0,    0,  '(',  ')',  '/',  '*',  '7',
+     '8',  '9',  '4',  '5',  '6',  '1',  '2',  '3',
+     '0',  '.', 0x0d,    0,    0,    0,    0,    0,
+       0,    0,    0,    0,    0,    0,    0,    0,
 };
 
 static const UBYTE keytbl_gr_caps[] = {
-        0, 0x1B, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36,
-     0x37, 0x38, 0x39, 0x30, 0x2D, 0x3D, 0x08, 0x09,
-     0xF1, 0xFB, 0xEB, 0x90, 0x92, 0xEF, 0x87, 0xED,
-     0xEE, 0x8F, 0x5B, 0x5D, 0x0D,    0, 0xEA, 0x91,
-     0x83, 0x94, 0x82, 0xEC, 0x8D, 0x89, 0x8A, 0x3B,
-     0x27, 0x60,    0, 0x23, 0x85, 0x95, 0x96, 0xF0,
-     0x81, 0x8C, 0x8B, 0x2C, 0x2E, 0x2F,    0,    0,
-        0, 0x20,    0,    0,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,    0,    0,
-        0,    0, 0x2D,    0,    0,    0, 0x2B,    0,
-        0,    0,    0, 0x7F,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,    0,    0,
-     0x5C,    0,    0, 0x28, 0x29, 0x2F, 0x2A, 0x37,
-     0x38, 0x39, 0x34, 0x35, 0x36, 0x31, 0x32, 0x33,
-     0x30, 0x2E, 0x0D,    0,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,    0,    0,
+       0, 0x1b,  '1',  '2',  '3',  '4',  '5',  '6',
+     '7',  '8',  '9',  '0',  '-',  '=',    8, 0x09,
+     'Q',  'W',  'E',  'R',  'T',  'Y',  'U',  'I',
+     'O',  'P',  '[',  ']', 0x0d,    0,  'A',  'S',
+     'D',  'F',  'G',  'H',  'J',  'K',  'L',  ';',
+    '\'',  '`',    0, '\\',  'Z',  'X',  'C',  'V',
+     'B',  'N',  'M',  ',',  '.',  '/',    0,    0,
+       0,  ' ',    0,    0,    0,    0,    0,    0,
+       0,    0,    0,    0,    0,    0,    0,    0,
+       0,    0,  '-',    0,    0,    0,  '+',    0,
+       0,    0,    0, 0x7f,    0,    0,    0,    0,
+       0,    0,    0,    0,    0,    0,    0,    0,
+       0,    0,    0,  '(',  ')',  '/',  '*',  '7',
+     '8',  '9',  '4',  '5',  '6',  '1',  '2',  '3',
+     '0',  '.', 0x0d,    0,    0,    0,    0,    0,
+       0,    0,    0,    0,    0,    0,    0,    0,
+};
+
+static const UBYTE keytbl_gr_altnorm[] = {
+       0, 0x1b,  '1',  '2',  '3',  '4',  '5',  '6',
+     '7',  '8',  '9',  '0',  '-',  '=',    8, 0x09,
+ DEAD(0), 0xaa, 0x9c, 0xa8, 0xab, 0xac, 0x9f, 0xa0,
+    0xa6, 0xa7,  '[',  ']', 0x0d,    0, 0x98, 0xa9,
+    0x9b, 0xad, 0x9a, 0x9e, 0xa5, 0xa1, 0xa2,  ';',
+    '\'',  '`',    0, '\\', 0x9d, 0xae, 0xaf, 0xe0,
+    0x99, 0xa4, 0xa3,  ',',  '.',  '/',    0,    0,
+       0,  ' ',    0,    0,    0,    0,    0,    0,
+       0,    0,    0,    0,    0,    0,    0,    0,
+       0,    0,  '-',    0,    0,    0,  '+',    0,
+       0,    0,    0, 0x7f,    0,    0,    0,    0,
+       0,    0,    0,    0,    0,    0,    0,    0,
+       0,    0,    0,  '(',  ')',  '/',  '*',  '7',
+     '8',  '9',  '4',  '5',  '6',  '1',  '2',  '3',
+     '0',  '.', 0x0d,    0,    0,    0,    0,    0,
+       0,    0,    0,    0,    0,    0,    0,    0,
+};
+
+static const UBYTE keytbl_gr_altshft[] = {
+       0, 0x1b,  '!',  '@',  '#',  '$',  '%',  '^',
+     '&',  '*',  '(',  ')',  '_',  '+',    8, 0x09,
+ DEAD(1), 0xaa, 0x84, 0x90, 0x92, 0x93, 0x87, 0x88,
+    0x8e, 0x8f,  '{',  '}', 0x0d,    0, 0x80, 0x91,
+    0x83, 0x94, 0x82, 0x86, 0x8d, 0x89, 0x8a,  ':',
+    '\"',  '~',    0,  '|', 0x85, 0x95, 0x96, 0x97,
+    0x81, 0x8c, 0x8b,  '<',  '>',  '?',    0,    0,
+       0,  ' ',    0,    0,    0,    0,    0,    0,
+       0,    0,    0,    0,    0,    0,    0,  '7',
+     '8',    0,  '-',  '4',    0,  '6',  '+',    0,
+     '2',    0,  '0', 0x7f,    0,    0,    0,    0,
+       0,    0,    0,    0,    0,    0,    0,    0,
+       0,    0,    0,  '(',  ')',  '/',  '*',  '7',
+     '8',  '9',  '4',  '5',  '6',  '1',  '2',  '3',
+     '0',  '.', 0x0d,    0,    0,    0,    0,    0,
+       0,    0,    0,    0,    0,    0,    0,    0,
+};
+
+static const UBYTE keytbl_gr_altcaps[] = {
+       0, 0x1b,  '1',  '2',  '3',  '4',  '5',  '6',
+     '7',  '8',  '9',  '0',  '-',  '=',    8, 0x09,
+ DEAD(0), 0xaa, 0x84, 0x90, 0x92, 0x93, 0x87, 0x88,
+    0x8e, 0x8f,  '[',  ']', 0x0d,    0, 0x80, 0x91,
+    0x83, 0x94, 0x82, 0x86, 0x8d, 0x89, 0x8a,  ';',
+    '\'',  '`',    0, '\\', 0x85, 0x95, 0x96, 0x97,
+    0x81, 0x8c, 0x8b,  ',',  '.',  '/',    0,    0,
+       0,  ' ',    0,    0,    0,    0,    0,    0,
+       0,    0,    0,    0,    0,    0,    0,    0,
+       0,    0,  '-',    0,    0,    0,  '+',    0,
+       0,    0,    0, 0x7f,    0,    0,    0,    0,
+       0,    0,    0,    0,    0,    0,    0,    0,
+       0,    0,    0,  '(',  ')',  '/',  '*',  '7',
+     '8',  '9',  '4',  '5',  '6',  '1',  '2',  '3',
+     '0',  '.', 0x0d,    0,    0,    0,    0,    0,
+       0,    0,    0,    0,    0,    0,    0,    0,
+};
+
+static const UBYTE keytbl_gr_dead0[] = {
+    /* maps the greek keyboard equivalents of a,e,h,i,o,y,v to their ' accented versions */
+    0x98, 0xe1,  0x9c, 0xe2,  0x9e, 0xe3,  0xa0, 0xe5,  0xa6, 0xe6,  0xac, 0xe7,  0xe0, 0xe9,
+    /* and the same for uppercase */
+    0x80, 0xea,  0x84, 0xeb,  0x86, 0xec,  0x88, 0xed,  0x8e, 0xee,  0x93, 0xef,  0x97, 0xf0,
+    DEAD(0), ';', 0
+};
+
+static const UBYTE keytbl_gr_dead1[] = {
+    /* maps the greek keyboard equivalents of i,y to their .. accented versions */
+    0xa0, 0xe4,  0xac, 0xe8,
+    /* and the same for uppercase */
+    0x88, 0xf4,  0x93, 0xf5,
+    DEAD(1), ':', 0
+};
+
+static const UBYTE * const keytbl_gr_dead[] = {
+    keytbl_gr_dead0,
+    keytbl_gr_dead1,
 };
 
 static const struct keytbl keytbl_gr = {
@@ -140,5 +166,6 @@ static const struct keytbl keytbl_gr = {
     keytbl_gr_altnorm,
     keytbl_gr_altshft,
     keytbl_gr_altcaps,
-    NULL
+    keytbl_gr_dead,
+    DUAL_KEYBOARD
 };

@@ -1,7 +1,7 @@
 /*
  * keyb_uk.h - a keyboard layout definition
  *
- * Copyright (c) 2012 David Savinkoff
+ * Copyright (c) 2012-2015 David Savinkoff
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -87,5 +87,6 @@ static const struct keytbl keytbl_uk = {
     keytbl_uk_altnorm,
     keytbl_uk_altshft,
     keytbl_uk_altcaps,
-    NULL
+    NULL,
+    0
 };

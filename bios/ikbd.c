@@ -463,6 +463,10 @@ static int kb_dead;
 /* the decimal number collected in an alt_keypad sequence, or -1 */
 static int kb_altnum;
 
+/* a boolean value, non-zero iff the scancode lookup table has been switched */
+/* (this can only happen for keyboards with the DUAL_KEYBOARD feature)       */
+static UBYTE kb_switched;
+
 /*
  * convert a scancode to an ascii character
  *
@@ -474,6 +478,10 @@ static WORD convert_scancode(UBYTE *scancodeptr)
     WORD ascii = 0;
     const UBYTE *a;
 
+    /*
+     * do special processing for alt-arrow, alt-keypad, shift-function
+     * keys, then return
+     */
     if (shifty & MODE_ALT) {
         /*
          * the alt key is down: check if the user has pressed an arrow key
@@ -490,31 +498,67 @@ static WORD convert_scancode(UBYTE *scancodeptr)
             kb_altnum += "\7\10\11\4\5\6\1\2\3\0" [scancode-KEYPAD_START];
             return -1;
         }
-
-        if (shifty & MODE_SHIFT) {
-            a = current_keytbl.altshft;
-        } else if (shifty & MODE_CAPS) {
-            a = current_keytbl.altcaps;
-        } else {
-            a = current_keytbl.altnorm;
-        }
-        while (*a && (*a != scancode)) {
-            a += 2;
-        }
-        if (*a++) {
-            ascii = *a;
-        }
     } else if (shifty & MODE_SHIFT) {
         /* function keys F1 to F10 => F11 to F20 */
         if ((scancode >= KEY_F1) && (scancode <= KEY_F10)) {
             *scancodeptr += 0x19;
             return 0;
         }
-        ascii = current_keytbl.shft[scancode];
-    } else if (shifty & MODE_CAPS) {
-        ascii = current_keytbl.caps[scancode];
+    }
+
+    /*
+     * which keyboard table to use, and how to handle it, depends on
+     * the presence or absence of the DUAL_KEYBOARD feature
+     *
+     * if the DUAL_KEYBOARD feature is present, Alt-X always uses the
+     * 'main' keyboard tables; otherwise, the status of 'kb_switched'
+     * determines whether to use the main or alternate.  in either case,
+     * the tables are 128-byte direct scancode lookup tables
+     *
+     * if the DUAL_KEYBOARD feature is not present, Alt-X uses the
+     * 'alternate' keyboard tables, which are set up as (scancode,ascii)
+     * pairs; otherwise the main keyboard tables are used (these are
+     * 128-byte direct scancode lookup tables)
+     */
+    if (current_keytbl.features & DUAL_KEYBOARD) {
+        if (shifty & MODE_ALT) {
+            if (shifty & MODE_SHIFT) {
+                a = current_keytbl.shft;
+            } else if (shifty & MODE_CAPS) {
+                a = current_keytbl.caps;
+            } else {
+                a = current_keytbl.norm;
+            }
+        } else if (shifty & MODE_SHIFT) {
+            a = kb_switched ? current_keytbl.altshft : current_keytbl.shft;
+        } else if (shifty & MODE_CAPS) {
+            a = kb_switched ? current_keytbl.altcaps : current_keytbl.caps;
+        } else {
+            a = kb_switched ? current_keytbl.altnorm : current_keytbl.norm;
+        }
+        ascii = a[scancode];
     } else {
-        ascii = current_keytbl.norm[scancode];
+        if (shifty & MODE_ALT) {
+            if (shifty & MODE_SHIFT) {
+                a = current_keytbl.altshft;
+            } else if (shifty & MODE_CAPS) {
+                a = current_keytbl.altcaps;
+            } else {
+                a = current_keytbl.altnorm;
+            }
+            while (*a && (*a != scancode)) {
+                a += 2;
+            }
+            if (*a++) {
+                ascii = *a;
+            }
+        } else if (shifty & MODE_SHIFT) {
+            ascii = current_keytbl.shft[scancode];
+        } else if (shifty & MODE_CAPS) {
+            ascii = current_keytbl.caps[scancode];
+        } else {
+            ascii = current_keytbl.norm[scancode];
+        }
     }
 
     if (shifty & MODE_CTRL) {
@@ -647,10 +691,15 @@ void kbd_int(UBYTE scancode)
         modifier = FALSE;
         break;
     }
-    if (modifier) {
+    if (modifier) {     /* the user has pressed a modifier key */
         /*
-         * the user has pressed a modifier key: check if an arrow key was
-         * already down and, if so, send the appropriate mouse packet
+         * first, check for keyboard hot switch and if so, do the switch
+         */
+        if (current_keytbl.features&DUAL_KEYBOARD)
+            if ((shifty&MODE_SCA) == HOTSWITCH_MODE)
+                kb_switched ^= 0x01;
+        /*
+         * check if an arrow key was already down and, if so, send the appropriate mouse packet
          */
         handle_mouse_mode(kb_last_key);
         return;
@@ -812,6 +861,7 @@ void kbd_init(void)
 
     kb_dead = -1;      /* not in a dead key sequence */
     kb_altnum = -1;    /* not in an alt-numeric sequence */
+    kb_switched = 0;   /* not switched initially */
 
     conterm = 7;       /* keyclick and autorepeat on by default */
     conterm |= 0x8;    /* add Kbshift state to Bconin value */

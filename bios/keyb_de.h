@@ -1,7 +1,7 @@
 /*
  * keyb_de.h - a keyboard layout definition
  *
- * Copyright (c) 2001 The EmuTOS development team
+ * Copyright (c) 2001-2015 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -100,5 +100,6 @@ static const struct keytbl keytbl_de = {
     keytbl_de_altnorm,
     keytbl_de_altshft,
     keytbl_de_altcaps,
-    NULL
+    NULL,
+    0
 };

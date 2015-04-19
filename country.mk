@@ -1,7 +1,7 @@
 #
 # country.mk - the country tables
 #
-# Copyright (c) 2002-2005 The EmuTOS development team
+# Copyright (c) 2002-2015 The EmuTOS development team
 #
 # This file is distributed under the GPL, version 2 or at your
 # option any later version.  See doc/license.txt for details.
@@ -36,7 +36,7 @@ i18n_cz_cset = L2
 i18n_cz_idt  = IDT_24H | IDT_DDMMYY | '/'
 
 i18n_gr_lang = gr
-i18n_gr_keyb = US
+i18n_gr_keyb = GR
 i18n_gr_cset = GR
 i18n_gr_idt  = IDT_24H | IDT_DDMMYY | '/'
 

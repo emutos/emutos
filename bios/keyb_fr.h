@@ -1,7 +1,7 @@
 /*
  * keyb_fr.h - a keyboard layout definition
  *
- * Copyright (c) 2001 The EmuTOS development team
+ * Copyright (c) 2001-2015 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -113,5 +113,6 @@ static const struct keytbl keytbl_fr = {
     keytbl_fr_altnorm,
     keytbl_fr_altshft,
     keytbl_fr_altcaps,
-    keytbl_fr_dead
+    keytbl_fr_dead,
+    0
 };

@@ -30,6 +30,8 @@
 #define MODE_SHIFT  (MODE_RSHIFT|MODE_LSHIFT)   /* shifted */
 #define MODE_SCA    (MODE_RSHIFT|MODE_LSHIFT|MODE_CTRL|MODE_ALT)
 
+#define HOTSWITCH_MODE (MODE_LSHIFT|MODE_ALT)
+
 extern UBYTE shifty;
 
 /*
@@ -46,17 +48,46 @@ extern UBYTE shifty;
 #define DEADMAX 7
 #define DEAD(i) (i + DEADMIN)
 
+/*
+ * bit flags in 'features' in struct keytbl:
+ *  DUAL_KEYBOARD indicates that:
+ *      a) the "altXXXX" pointers point to arrays of full scancode->ascii
+ *         mappings
+ *      b) HOTSWITCH_MODE in shifty will toggle between the "XXXX" and
+ *         "altXXXX" arrays for scancode decoding
+ *
+ */
+#define DUAL_KEYBOARD   0x0001
+
 struct keytbl {
-  /* 128-sized array giving char codes for each scan code */
+  /*
+   * pointers to arrays with 128 entries each.
+   * entry[n] contains the ascii code for scancode n
+   */
   const UBYTE *norm;
   const UBYTE *shft;
   const UBYTE *caps;
-  /* couples of (scan code, char code), ended by byte zero */
+  /*
+   * the following arrays are of two types, depending on the setting
+   * of the DUAL_KEYBOARD bit in 'features':
+   * 1) DUAL_KEYBOARD is not set (backwards compatibility)
+   *    arrays consist of (scan code, char code) pairs, terminated by
+   *    a zero byte.  see the French keyboard table as an example.
+   * 2) DUAL_KEYBOARD is set (new, for Greek/Russian language support)
+   *    arrays contain 128 entries, just like the arrays above
+   */
   const UBYTE *altnorm;
   const UBYTE *altshft;
   const UBYTE *altcaps;
-  /* table of at most eight dead key translation tables */
+  /*
+   * pointer to a variable-length array of 1-7 entries, for dead key support.
+   * each entry is a pointer to a dead key translation table, consisting
+   * of (scan code, char code) pairs, terminated by a zero byte.  see
+   * the French keyboard table for a good example.
+   */
   const UBYTE * const *dead;
+  /* features supported for this keyboard (see above for #defines) */
+  WORD features;
 };
 
 /* initialise the ikbd */

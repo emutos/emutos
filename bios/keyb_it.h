@@ -1,7 +1,7 @@
 /*
  * keyb_it.h - keyboard layout definition
  *
- * Copyright (c) 2011 The EmuTOS development team
+ * Copyright (c) 2011-2015 The EmuTOS development team
  *
  * Authors:
  *  L. Zanier
@@ -97,5 +97,6 @@ static const struct keytbl keytbl_it = {
     keytbl_it_altnorm,
     keytbl_it_altshft,
     keytbl_it_altcaps,
-    NULL
+    NULL,
+    0
 };

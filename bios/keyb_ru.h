@@ -1,7 +1,7 @@
 /*
  * keyb_ru.h - a keyboard layout definition
  *
- * Copyright (c) 2010 The EmuTOS development team
+ * Copyright (c) 2010-2015 The EmuTOS development team
  *
  * Authors:
  *  Dima Sobolev
@@ -131,5 +131,6 @@ static const struct keytbl keytbl_ru = {
     keytbl_ru_altnorm,
     keytbl_ru_altshft,
     keytbl_ru_altcaps,
-    NULL
+    NULL,
+    DUAL_KEYBOARD
 };

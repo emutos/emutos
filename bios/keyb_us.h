@@ -1,7 +1,7 @@
 /*
  * keyb_us.h - a keyboard layout definition
  *
- * Copyright (c) 2001 The EmuTOS development team
+ * Copyright (c) 2001-2015 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -86,5 +86,6 @@ static const struct keytbl keytbl_us = {
     keytbl_us_altnorm,
     keytbl_us_altshft,
     keytbl_us_altcaps,
-    NULL
+    NULL,
+    0
 };

@@ -1,7 +1,7 @@
 /*
  * keyb_cz.h - Czech keyboard layout definition
  *
- * Copyright (c) 2002 The EmuTOS development team
+ * Copyright (c) 2002-2015 The EmuTOS development team
  *
  * Authors:
  *  xxx   xxx
@@ -89,5 +89,6 @@ static const struct keytbl keytbl_cz = {
     keytbl_cz_altnorm,
     keytbl_cz_altshft,
     keytbl_cz_altcaps,
-    NULL
+    NULL,
+    0
 };
