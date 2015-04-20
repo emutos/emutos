@@ -15,11 +15,8 @@
 # It is included from the main Makefile.
 #
 
-# The version used in the archives names is deducted from changelog.txt
-EXTRACT_VERSION = sed -f tools/version.sed doc/changelog.txt \
-  |grep version \
-  |sed 's/[^"]*"(CVS \([0-9]*\)-\([0-9]*\)-\([0-9]*\).*/CVS-\1\2\3/' \
-  |sed 's/[^"]*"\([^"]*\).*/\1/'
+# Determine the version to be used in archives names
+EXTRACT_VERSION = date +Git-%Y%m%d
 VERSION = $(shell $(EXTRACT_VERSION))
 
 # Check the current release version. For test purposes.
@@ -50,8 +47,7 @@ NODEP += release-src
 RELEASE_SRC = emutos-src-$(VERSION)
 release-src:
 	mkdir $(RELEASE_DIR)/$(RELEASE_SRC)
-	cp -R $(filter-out . .. $(RELEASE_DIR), $(shell echo * .*)) $(RELEASE_DIR)/$(RELEASE_SRC)
-	find $(RELEASE_DIR)/$(RELEASE_SRC) -type d -name CVS |xargs rm -r
+	cp -R $(filter-out . .. .git $(RELEASE_DIR), $(shell echo * .*)) $(RELEASE_DIR)/$(RELEASE_SRC)
 	find $(RELEASE_DIR)/$(RELEASE_SRC) -type d -exec chmod 755 '{}' ';'
 	find $(RELEASE_DIR)/$(RELEASE_SRC) -type f -exec chmod 644 '{}' ';'
 	find $(RELEASE_DIR)/$(RELEASE_SRC) -type f -name '*.sh' -exec chmod 755 '{}' ';'
