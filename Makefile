@@ -339,7 +339,7 @@ help:
 	@echo "expand  expand tabs to spaces"
 	@echo "crlf    convert all end of lines to LF"
 	@echo "charset check the charset of all the source files"
-	@echo "cvsready same as $(MAKE) expand crlf"
+	@echo "gitready same as $(MAKE) expand crlf"
 	@echo "depend  creates dependancy file (makefile.dep)"
 	@echo "dsm     dsm.txt, an edited disassembly of emutos.img"
 	@echo "fdsm    fal_dsm.txt, like above, but for $(VMA_T2) ROMs"
@@ -1010,7 +1010,7 @@ indent:
 
 
 #
-# cvsready
+# gitready
 #
 
 TOCLEAN += tounix$(EXE)
@@ -1038,7 +1038,7 @@ tounix$(EXE): tools/tounix.c
 #
 # HERE = $(shell pwd)
 # crlf:	tounix$(EXE)
-#     find . -name CVS -prune -or -not -name '*~' | xargs $(HERE)/tounix$(EXE)
+#     find . -name .git -prune -or -not -name '*~' | xargs $(HERE)/tounix$(EXE)
 
 .PHONY: crlf
 NODEP += crlf
@@ -1050,11 +1050,11 @@ crlf: tounix$(EXE)
 NODEP += charset
 charset:
 	@echo "# All the files below should use charset=utf-8"
-	find . -type f '!' -path '*/CVS/*' '!' -path './obj/*' '!' -path './*.img' '!' -path './?rd*' '!' -path './bug*' '!' -path './mkrom*' '!' -name '*.def' '!' -name '*.rsc' '!' -name '*.icn' '!' -name '*.po' -print0 | xargs -0 file -i |grep -v us-ascii
+	find . -type f '!' -path '*/.git/*' '!' -path './obj/*' '!' -path './*.img' '!' -path './?rd*' '!' -path './bug*' '!' -path './mkrom*' '!' -name '*.def' '!' -name '*.rsc' '!' -name '*.icn' '!' -name '*.po' -print0 | xargs -0 file -i |grep -v us-ascii
 
-.PHONY: cvsready
-NODEP += cvsready
-cvsready: expand crlf
+.PHONY: gitready
+NODEP += gitready
+gitready: expand crlf
 
 #
 # local Makefile

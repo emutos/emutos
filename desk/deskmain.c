@@ -1190,7 +1190,7 @@ static void desk_xlate_fix(void)
     /* insert the version number */
     objversion->ob_spec = (LONG) version;
 
-    /* slightly adjust the about box for a CVS build */
+    /* slightly adjust the about box for a Git build */
     if (version[0] == '(') {
         objlabel->ob_spec = (LONG) "";  /* remove the word "Version" */
         objversion->ob_x -= 10;         /* and move the start of the string */

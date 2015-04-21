@@ -19,7 +19,7 @@
 /*
  * File localconf.h will be included if reported present by the Makefile.
  * Use it to put your local configuration. File localconf.h will not be
- * imported into cvs.
+ * imported into Git.
  */
 
 #ifdef LOCALCONF

@@ -184,7 +184,7 @@ Development snapshots allow you to test the current development progress:
 
     http://sourceforge.net/projects/emutos/files/snapshots/
 
-The latest sources are always available from our CVS server at:
+The latest sources are always available from our Git server at:
 
     http://sourceforge.net/p/emutos/code/
 

@@ -82,13 +82,13 @@ dsm     dsm.txt, an edited disassembly of emutos.img
 fdsm    fal_dsm.txt, like above, but for 0x00e00000 ROMs
 *.dsm   disassembly of any .c or almost any .img file
 
-CVS-related targets
+Git-related targets
 -------------------
 
 depend       generates dependencies
 clean        cleans all generated files
 distclean    as clean + deletes also some temporary editor files
-cvsready     ensure the files have a proper, canonic, format for CVS
+gitready     ensure the files have a proper, canonic, format for Git
 checkindent  try 'indent' without altering the files
 indent       indent all files - never done yet :-(
 

@@ -31,7 +31,7 @@
 }
 /^[0-9]/{
   s/ *$//
-  s/.*/(CVS &)/
+  s/.*/(Git &)/
   b good
 }
 #if on the last line, print the last saved good line

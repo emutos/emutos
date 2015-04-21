@@ -4,14 +4,14 @@ styles. It is far from being complete (my most loved sentence!):
 Rules for the format of source files
 ====================================
 
-In order to avoid trouble with CVS when using several text editors,
-please do 'make cvsready' before committing files. This will ensure that:
+In order to avoid trouble with Git when using several text editors,
+please do 'make gitready' before committing files. This will ensure that:
 
 - all non-binary files are in Unix Line ending convention
 
 - no hard TABs are present in source files (.c, .h and .S)
 
-However, for 'make cvsready' to work correctly, please make sure that:
+However, for 'make gitready' to work correctly, please make sure that:
 
 - if you use TABs in your editor, set them to 8 spaces.
 

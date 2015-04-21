@@ -86,11 +86,11 @@ by the Makefile, because the Makefile has no easy way to know
 when this is needed.
 
 
-Makefile and CVS usage
+Makefile and Git usage
 ======================
 
                   |   created  |  deleted by  |  committed
-file              |   by make  |  make clean  |  into cvs
+file              |   by make  |  make clean  |  into Git
 ------------------+------------+--------------+-------------
 po/POTFILES.in    |      no    |      no      |    yes
 po/LINGUAS        |      no    |      no      |    yes
