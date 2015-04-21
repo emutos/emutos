@@ -241,14 +241,16 @@ long xexec(WORD flag, char *path, char *tail, char *env)
         invalidate_instruction_cache( p+1, p->p_tlen);
 
         return (long) p;
-    case PE_BASEPAGE:
-        /* just create a basepage */
+    case PE_BASEPAGE:           /* just create a basepage */
+        path = (char *) 0L;     /* (same as basepage+flags with flags set to zero) */
+        /* drop thru */
+    case PE_BASEPAGEFLAGS:      /* create a basepage, respecting the flags */
         env_md = alloc_env(env);
         if(env_md == NULL) {
             KDEBUG(("BDOS xexec: not enough memory!\n"));
             return(ENSMEM);
         }
-        m = alloc_tpa(0UL,sizeof(PD),&max);
+        m = alloc_tpa((ULONG)path,sizeof(PD),&max);
 
         if (m == NULL) {    /* not even enough memory for basepage */
             freeit(env_md, &pmd);

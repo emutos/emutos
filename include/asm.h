@@ -42,6 +42,7 @@
 #define PE_GO         4
 #define PE_BASEPAGE   5
 #define PE_GOTHENFREE 6
+#define PE_BASEPAGEFLAGS 7
 #define PE_RELOCATE   50    /* EmuTOS only, not in Atari TOS */
 
 /* OS entry points implemented in util/miscasm.S */
