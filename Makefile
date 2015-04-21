@@ -1043,7 +1043,7 @@ tounix$(EXE): tools/tounix.c
 .PHONY: crlf
 NODEP += crlf
 crlf: tounix$(EXE)
-	./$< * bios/* bdos/* doc/* util/* tools/* po/* include/* aes/* desk/*
+	./$< * bios/* bdos/* cli/* doc/* util/* tools/* po/* include/* aes/* desk/* vdi/*
 
 # Check the sources charset (no automatic fix)
 .PHONY: charset
