@@ -29,6 +29,11 @@
 
 
 /*
+ * defines
+ */
+#define TPASIZE_QUANTUM (128*1024L)     /* see alloc_tpa() */
+
+/*
  * forward prototypes
  */
 
@@ -37,6 +42,7 @@ static WORD envsize( char *env );
 static void init_pd_fields(PD *p, char *tail, long max, MD *env_md);
 static void init_pd_files(PD *p);
 static MD *alloc_env(char *v);
+static MD *alloc_tpa(ULONG flags,LONG needed,LONG *avail);
 static void proc_go(PD *p);
 
 /*
@@ -242,16 +248,16 @@ long xexec(WORD flag, char *path, char *tail, char *env)
             KDEBUG(("BDOS xexec: not enough memory!\n"));
             return(ENSMEM);
         }
-        max = (long) ffit(-1L, &pmd);
-        if(max >= sizeof(PD)) {
-            m = ffit(max, &pmd);
-            p = (PD *) m->m_start;
-        } else {
-            /* not even enough memory for basepage */
+        m = alloc_tpa(0UL,sizeof(PD),&max);
+
+        if (m == NULL) {    /* not even enough memory for basepage */
             freeit(env_md, &pmd);
-            KDEBUG(("BDOS xexec: No memory for TPA\n"));
+            KDEBUG(("BDOS xexec: No memory for basepage\n"));
             return(ENSMEM);
         }
+
+        p = (PD *) m->m_start;
+
         /* memory ownership */
         m->m_own = env_md->m_own = run;
 
@@ -304,36 +310,16 @@ long xexec(WORD flag, char *path, char *tail, char *env)
 
     /* allocate the basepage depending on memory policy */
     needed = hdr.h01_tlen + hdr.h01_dlen + hdr.h01_blen + sizeof(PD);
-    max = 0;
+    m = alloc_tpa(hdr.h01_flags,needed,&max);
 
-    /* first try */
-    p = NULL;
-    m = NULL;
-#if CONF_WITH_ALT_RAM
-    if(has_alt_ram && (hdr.h01_flags & PF_TTRAMLOAD)) {
-        /* use alternate ram preferably */
-        max = (long) ffit(-1L, &pmdalt);
-        if(max >= needed) {
-            m = ffit(max, &pmdalt);
-            p = (PD *) m->m_start;
-        }
-    }
-#endif
-    /* second try */
-    if(p == NULL) {
-        max = (long) ffit(-1L, &pmd);
-        if(max >= needed) {
-            m = ffit(max, &pmd);
-            p = (PD *) m->m_start;
-        }
-    }
-    /* still failed? free env_md and return */
-    if(p == NULL) {
+    /* if failed, free env_md and return */
+    if (m == NULL) {
         KDEBUG(("BDOS xexec: no memory for TPA\n"));
         freeit(env_md, &pmd);
         return(ENSMEM);
     }
-    assert(m != NULL);
+
+    p = (PD *) m->m_start;
 
     /* memory ownership - the owner is either the new process being created,
      * or the parent
@@ -469,6 +455,74 @@ static MD *alloc_env(char *env)
     memcpy((void *)(env_md->m_start), env, size);
 
     return env_md;
+}
+
+/*
+ * allocate the TPA
+ *
+ * we first determine if ST RAM and/or alternate RAM is available for
+ * allocation, based on the flags, the amount of RAM required and
+ * the presence or absence of TT RAM.
+ *
+ * if no types are available (the requested amount is too large), we
+ * return NULL.
+ *
+ * if only one type of RAM is available, we allocate it & return a
+ * pointer to it.
+ *
+ * if both types are available, we normally allocate in alternate RAM
+ * *except* if the amount of ST RAM is greater than the amount of
+ * alternate RAM.  In this case, we use a tiebreaker: bits 31-27
+ * of the flags field plus 1 is taken as a 4-bit number, which is
+ * multiplied by 128K and added to the base amount needed to get a
+ * "would like to have" amount.  If this amount is larger than the
+ * amount of alternate RAM, then we allocate in ST RAM.
+ *
+ * Reference: TT030 TOS Release Notes, Third Edition, 6 September 1991,
+ * pages 29-30.
+ *
+ * returns: ptr to MD of allocated memory (NULL => failed)
+ *          updates 'avail' with the size of allocated memory
+ */
+static MD *alloc_tpa(ULONG flags,LONG needed,LONG *avail)
+{
+    LONG st_ram_size;
+    BOOL st_ram_available = FALSE;
+
+    st_ram_size = (LONG) ffit(-1L, &pmd);
+    if (st_ram_size >= needed)
+        st_ram_available = TRUE;
+
+#if CONF_WITH_ALT_RAM
+    {
+    LONG alt_ram_size = 0L, tpasize;
+    BOOL alt_ram_available = FALSE;
+
+    if (has_alt_ram && (flags & PF_TTRAMLOAD)) {
+        alt_ram_size = (LONG) ffit(-1L, &pmdalt);
+        if (alt_ram_size >= needed)
+            alt_ram_available = TRUE;
+    }
+
+    if (st_ram_available && alt_ram_available && (st_ram_size > alt_ram_size)) {
+        tpasize = (((flags >> 28) & 0x0f) + 1) * TPASIZE_QUANTUM;
+        if (needed+tpasize > alt_ram_size)
+            alt_ram_available = FALSE;  /* force allocation in ST RAM */
+    }
+
+    if (alt_ram_available) {
+        *avail = alt_ram_size;
+        return ffit(alt_ram_size, &pmdalt);
+    }
+    }
+#endif
+
+    if (st_ram_available) {
+        *avail = st_ram_size;
+        return ffit(st_ram_size, &pmd);
+    }
+
+    return NULL;
 }
 
 /* proc_go launches the new process by creating the right data

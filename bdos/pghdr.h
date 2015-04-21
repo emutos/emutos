@@ -22,7 +22,7 @@ PGMHDR01
         LONG    h01_blen ;      /*  length of bss  segment              */
         LONG    h01_slen ;      /*  length of symbol table              */
         LONG    h01_res1 ;      /*  reserved - always zero              */
-        LONG    h01_flags ;     /*  flags                               */
+        ULONG   h01_flags ;     /*  flags                               */
         WORD    h01_abs ;       /*  not zero if no relocation           */
 } ;
 
