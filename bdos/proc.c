@@ -226,7 +226,8 @@ long xexec(WORD flag, char *path, char *tail, char *env)
 
     /* first branch - actions that do not require loading files */
     switch(flag) {
-    case PE_RELOCATE:
+#if DETECT_NATIVE_FEATURES
+    case PE_RELOCATE:   /* internal use only, see bootstrap() in bios/bios.c */
         p = (PD *) tail;
         rc = kpgm_relocate(p, (long)path);
         if(rc) {
@@ -241,6 +242,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
         invalidate_instruction_cache( p+1, p->p_tlen);
 
         return (long) p;
+#endif
     case PE_BASEPAGE:           /* just create a basepage */
         path = (char *) 0L;     /* (same as basepage+flags with flags set to zero) */
         /* drop thru */

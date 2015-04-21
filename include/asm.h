@@ -43,7 +43,7 @@
 #define PE_BASEPAGE   5
 #define PE_GOTHENFREE 6
 #define PE_BASEPAGEFLAGS 7
-#define PE_RELOCATE   50    /* EmuTOS only, not in Atari TOS */
+#define PE_RELOCATE   50    /* required for NatFeats support only, not in Atari TOS */
 
 /* OS entry points implemented in util/miscasm.S */
 extern long trap1(int, ...);
