@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EMUTOS beta\n"
 "POT-Creation-Date: 2004-01-27 14:37+0100\n"
-"PO-Revision-Date: 2015-03-11 22:54+0100\n"
+"PO-Revision-Date: 2015-04-23 21:50+0200\n"
 "Last-Translator: Vincent Riviere <vincent.riviere@freesbee.fr>\n"
 "Language-Team: French <fr@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -17,61 +17,65 @@ msgstr ""
 msgid "Please eject the floppy and hit RETURN"
 msgstr "Veuillez éjecter la disquette et taper ENTREE"
 
-#: bios/bios.c:585
+#: bios/bios.c:587
 msgid ""
 "System halted!\n"
 msgstr ""
 "Système stoppé !\n"
 
-#: bios/initinfo.c:179
-msgid "EmuTOS Version"
-msgstr "EmuTOS Version"
-
-#: bios/initinfo.c:181
-msgid "CPU type"
-msgstr "Type de CPU"
-
-#: bios/initinfo.c:189
-msgid "Machine"
-msgstr "Machine"
-
-#: bios/initinfo.c:191
-msgid "Free ST-RAM"
-msgstr "ST-RAM libre"
-
-#: bios/initinfo.c:192 bios/initinfo.c:199
-msgid "%ld kB"
-msgstr "%ld ko"
-
-#: bios/initinfo.c:198
-msgid "Free FastRAM"
-msgstr "FastRAM libre"
-
-#: bios/initinfo.c:204
-msgid "Screen start"
-msgstr "Début écran"
-
-#: bios/initinfo.c:206
+#: bios/initinfo.c:162
 msgid "GEMDOS drives"
 msgstr "Lecteurs GEMDOS"
 
-#: bios/initinfo.c:220
+#: bios/initinfo.c:207
+msgid "EmuTOS Version"
+msgstr "EmuTOS Version"
+
+#: bios/initinfo.c:209
+msgid "CPU type"
+msgstr "Type de CPU"
+
+#: bios/initinfo.c:217
+msgid "Machine"
+msgstr "Machine"
+
+#: bios/initinfo.c:219
+msgid "Free ST-RAM"
+msgstr "ST-RAM libre"
+
+#: bios/initinfo.c:220 bios/initinfo.c:227
+msgid "%ld kB"
+msgstr "%ld ko"
+
+#: bios/initinfo.c:226
+msgid "Free FastRAM"
+msgstr "FastRAM libre"
+
+#: bios/initinfo.c:232
+msgid "Screen start"
+msgstr "Début écran"
+
+#: bios/initinfo.c:238
 msgid "Boot time"
 msgstr "Heure de démarrage"
 
-#: bios/initinfo.c:226
+#: bios/initinfo.c:244
 msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "Touche CTRL => pas d'AUTO/ACC"
 
-#: bios/initinfo.c:228
+#: bios/initinfo.c:247
 msgid "Hold <Alternate> to skip HDD boot"
 msgstr "Touche ALT => pas de disque dur"
 
-#: bios/initinfo.c:231
-msgid "Press 'C' to run an early console"
-msgstr "Taper 'C' pour lancer la console"
+#: bios/initinfo.c:250
+msgid "Press key 'X' to boot from X:"
+msgstr "Tapez 'X' pour démarrer depuis X:"
 
-#: bios/initinfo.c:242
+#: bios/initinfo.c:253
+msgid "Press <Esc> to run an early console"
+msgstr "Tapez <Esc> pour lancer la console"
+
+#: bios/initinfo.c:264
 msgid " Hold <Shift> to pause this screen "
 msgstr " <Shift> pour maintenir cet écran "
 
@@ -196,14 +200,6 @@ msgstr "[1]["
 "le nom que vous avez entré.][  OK  ]"
 
 #: aes/gem_rsc.c:751
-msgid "[3]["
-"Your system doesn't have|"
-"enough memory to run EmuDesk.][Cancel]"
-msgstr "[3]["
-"Votre système n'a pas assez de|"
-"mémoire pour exécuter EmuDesk.][Annuler]"
-
-#: aes/gem_rsc.c:754
 msgid "[1]["
 "The application doesn't have|"
 "enough room to open another|"
@@ -216,7 +212,7 @@ msgstr "[1]["
 "place, veuillez fermer tous les|"
 "documents inutilisés.][  OK  ]"
 
-#: aes/gem_rsc.c:761
+#: aes/gem_rsc.c:758
 msgid "[1]["
 "An item with this name already|"
 "exists in the folder, or the|"
@@ -230,7 +226,7 @@ msgstr "[1]["
 "utiliser \"Info/Renommer\" pour|"
 "changer l'état de cet objet.][  OK  ]"
 
-#: aes/gem_rsc.c:770
+#: aes/gem_rsc.c:767
 msgid "[1]["
 "The specified disk drive does|"
 "not exist.  Check the drive|"
@@ -240,17 +236,7 @@ msgstr "[1]["
 "Vérifiez la lettre de lecteur que|"
 "vous avez saisie.][  OK  ]"
 
-#: aes/gem_rsc.c:775
-msgid "[1]["
-"You cannot delete the folder|"
-"in which you are currently|"
-"working.][  OK  ]"
-msgstr "[1]["
-"Vous ne pouvez pas supprimer|"
-"le dossier dans lequel vous|"
-"êtes en train de travailler.][  OK  ]"
-
-#: aes/gem_rsc.c:780
+#: aes/gem_rsc.c:772
 msgid "[1]["
 "Cannot run the application|"
 "you have selected.  It may|"
@@ -262,32 +248,20 @@ msgstr "[1]["
 "endommagée, ou votre système|"
 "manque de mémoire.][  OK  ]"
 
-#: aes/gem_rsc.c:787
+#: aes/gem_rsc.c:779
 msgid "[3]["
 "DOS error #%d.][Cancel]"
 msgstr "[3]["
 "Erreur DOS #%d.][Annuler]"
 
-#: aes/gem_rsc.c:788
+#: aes/gem_rsc.c:780
 msgid "[3]["
 "Unsupported AES function #%d.][Cancel]"
 msgstr "[3]["
 "La fonction AES #%d|"
 "n'est pas supportée.][Annuler]"
 
-#: aes/gem_rsc.c:789
-msgid "[3]["
-"An unexpected error has|"
-"occurred.  Please report|"
-"this message to the EmuTOS|"
-"Development team.][Cancel]"
-msgstr "[3]["
-"Une erreur inattendue s'est|"
-"produite. Merci de rapporter ce|"
-"message à l'équipe de|"
-"développement d'EmuTOS.][Annuler]"
-
-#: aes/gem_rsc.c:796
+#: aes/gem_rsc.c:781
 msgid "ITEM SELECTOR"
 msgstr "SÉLECTEUR DE FICHIER"
 
@@ -566,6 +540,10 @@ msgstr "Icône:"
 #: desk/desk_rsc.c:1091
 msgid "NAME CONFLICT DURING COPY"
 msgstr "CONFLIT DE NOM LORS DE LA COPIE"
+
+#: desk/desk_rsc.c:1115
+msgid "Skip"
+msgstr "Sauter"
 
 #: desk/desk_rsc.c:1121
 msgid "Stop"
