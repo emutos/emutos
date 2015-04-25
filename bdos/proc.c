@@ -267,6 +267,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
 
         /* initialize the PD */
         init_pd_fields(p, tail, max, env_md);
+        p->p_flags = (ULONG)path;   /* set the flags */
         init_pd_files(p);
 
         return (long) p;
