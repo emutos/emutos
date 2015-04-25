@@ -181,6 +181,7 @@ static void cprint_devices(WORD dev)
  */
 WORD initinfo(void)
 {
+    int screen_height = v_cel_my + 1;
 #if CONF_WITH_AROS
     int initinfo_height = 25;
 #else
@@ -190,7 +191,7 @@ WORD initinfo(void)
     WORD olddev = -1, dev = bootdev;
 
     /* Center the initinfo screen vertically */
-    for (i = 0; i < (v_cel_my - initinfo_height) / 2; i++)
+    for (i = 0; i < (screen_height - initinfo_height) / 2; i++)
         cprintf("\r\n");
 
     /* Now print the EmuTOS Logo */
