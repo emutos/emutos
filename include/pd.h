@@ -44,8 +44,7 @@ struct _pd
 /* 0x20 */
     DTA     *p_xdta;
     PD      *p_parent;      /* parent PD */
-    WORD    p_flags;
-    WORD    p_0fill[1];
+    ULONG   p_flags;        /* see below */
     BYTE    *p_env;         /* pointer to environment string */
 /* 0x30 */
     BYTE    p_uft[NUMSTD];  /* index into sys file table for std files */
