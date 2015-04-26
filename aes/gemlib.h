@@ -377,8 +377,7 @@ typedef struct {
 } AESPROCESS;
 
 
-#define THEGLO struct glstr
-THEGLO
+typedef struct
 {
  AESPROCESS g_int[2];                   /* for AES internal processes, must be 1st */
 
@@ -404,6 +403,6 @@ THEGLO
                                         /*   more than one menu_register()!       */
 
  AESPROCESS *g_acc;                     /* for up to NUM_ACCS desk accessories */
-};
+} THEGLO;
 
 #endif /* GEMLIB_H */
