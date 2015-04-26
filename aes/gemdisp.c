@@ -210,7 +210,7 @@ static void schedule(void)
 
 /************************************************************************/
 /*                                                                      */
-/*   This dispatcher is called frop dsptch().                           */
+/*   This dispatcher is called from dsptch().                           */
 /*   Its job is to determine the next task to be run.                   */
 /*   This function must end by calling switchto() and will never return.*/
 /*   rlr -> p_stat determines the action to perform on the process that */
