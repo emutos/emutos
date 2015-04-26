@@ -63,6 +63,10 @@
 #include "ikbd.h"
 #include "kprint.h"
 
+extern LONG size_theglo(void); /* called only from gemstart.S */
+extern LONG init_p0_stkptr(void); /* called only from gemstart.S */
+extern void run_accs_and_desktop(void); /* called only from gemstart.S */
+extern void gem_main(void); /* called only from gemstart.S */
 
 #define ROPEN 0
 

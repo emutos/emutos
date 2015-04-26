@@ -39,6 +39,11 @@
 #include "kprint.h"
 
 
+extern void wheel_change(WORD wheel_number, WORD wheel_amount); /* called only from aes/gemdosif.S */
+extern void b_click(WORD state); /* called only from aes/gemdosif.S */
+extern void b_delay(WORD amnt);  /* called only from aes/gemdosif.S */
+
+
 #define MB_DOWN 0x01
 
 

@@ -143,6 +143,8 @@ static const struct pmmutable mmutable_rom =
     }
 };
 
+extern void setup_68030_pmmu(void); /* called only from processor.S */
+
 void setup_68030_pmmu(void)
 {
     memcpy(&mmutable_ram, &mmutable_rom, sizeof mmutable_rom);

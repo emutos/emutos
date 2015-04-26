@@ -115,6 +115,9 @@ typedef struct {
 } MFDB;
 
 
+extern void linea_blit(struct blit_frame *info); /* called only from linea.S */
+extern void linea_raster(void); /* called only from linea.S */
+
 
 /* holds VDI internal info for bit_blt() */
 static struct blit_frame vdi_info;

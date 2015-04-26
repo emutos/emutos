@@ -514,6 +514,7 @@ void dst_height(Vwk * vwk)
 }
 
 
+extern UWORD act_siz(Vwk * vwk, UWORD top); /* called also from vdi_tblit.S */
 
 /*
  * act_siz - Actual sizer routine

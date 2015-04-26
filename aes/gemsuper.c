@@ -479,6 +479,8 @@ static void xif(AESPB *pcrys_blk)
 }
 
 
+extern WORD super(WORD cx, AESPB *pcrys_blk); /* only called from gemdosif.S & gemstart.S */
+
 /*
 *       Supervisor entry point.  Stack frame must be exactly like
 *       this if supret is to work.

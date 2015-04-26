@@ -219,6 +219,8 @@ static void schedule(void)
 /*                                                                      */
 /************************************************************************/
 
+extern void disp(void); /* called only from aes/gemasm.S */
+
 void disp(void)
 {
         register AESPD  *p;
