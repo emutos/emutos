@@ -1379,7 +1379,7 @@ FCB *scan(register DND *dnd, const char *n, WORD att, LONG *posp)
     }
 
     KDEBUG(("\n   scan(pos=%ld DND=%p DNDfoundFile=%p name=%s name=%s, %d)",
-            (long)fd->o_bytnum,dnd,dnd1,fcb->f_name,name,m));
+            (long)fd->o_bytnum,dnd,dnd1,fcb?fcb->f_name:"(null)",name,m));
 
     /* restore directory scanning pointer */
     if (*posp != -1L)
