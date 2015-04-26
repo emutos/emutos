@@ -126,9 +126,7 @@
 #define LYELLOW 14
 #define LMAGENTA 15
 
-#define OBJECT struct object
-
-OBJECT
+typedef struct
 {
         WORD            ob_next;        /* -> object's next sibling     */
         WORD            ob_head;        /* -> head of object's children */
@@ -141,34 +139,26 @@ OBJECT
         WORD            ob_y;           /* upper left corner of object  */
         WORD            ob_width;       /* width of obj                 */
         WORD            ob_height;      /* height of obj                */
-};
+} OBJECT;
 
-#define ORECT   struct orect
-
-ORECT
+typedef struct _ORECT
 {
-        ORECT   *o_link;
+        struct _ORECT *o_link;
         WORD    o_x;
         WORD    o_y;
         WORD    o_w;
         WORD    o_h;
-} ;
+} ORECT;
 
-
-#define GRECT struct grect
-
-GRECT
+typedef struct
 {
         WORD    g_x;
         WORD    g_y;
         WORD    g_w;
         WORD    g_h;
-} ;
+} GRECT;
 
-
-#define TEDINFO struct text_edinfo
-
-TEDINFO
+typedef struct
 {
         BYTE            *te_ptext;      /* ptr to text (must be 1st)    */
         BYTE            *te_ptmplt;     /* ptr to template              */
@@ -181,12 +171,9 @@ TEDINFO
         WORD            te_thickness;   /* border thickness             */
         WORD            te_txtlen;      /* length of text string        */
         WORD            te_tmplen;      /* length of template string    */
-};
+} TEDINFO;
 
-
-#define ICONBLK struct icon_block
-
-ICONBLK
+typedef struct
 {
         WORD    *ib_pmask;
         WORD    *ib_pdata;
@@ -202,11 +189,9 @@ ICONBLK
         WORD    ib_ytext;
         WORD    ib_wtext;
         WORD    ib_htext;
-};
+} ICONBLK;
 
-#define BITBLK struct bit_block
-
-BITBLK
+typedef struct
 {
         LONG    bi_pdata;               /* ptr to bit forms data        */
         WORD    bi_wb;                  /* width of form in bytes       */
@@ -214,18 +199,15 @@ BITBLK
         WORD    bi_x;                   /* source x in bit form         */
         WORD    bi_y;                   /* source y in bit form         */
         WORD    bi_color;               /* fg color of blt              */
-};
+} BITBLK;
 
-
-#define USERBLK struct user_blk
-USERBLK
+typedef struct
 {
         LONG    ub_code;
         LONG    ub_parm;
-};
+} USERBLK;
 
-#define PARMBLK struct parm_blk
-PARMBLK
+typedef struct
 {
         LONG    pb_tree;
         WORD    pb_obj;
@@ -234,7 +216,7 @@ PARMBLK
         WORD    pb_x, pb_y, pb_w, pb_h;
         WORD    pb_xc, pb_yc, pb_wc, pb_hc;
         LONG    pb_parm;
-};
+} PARMBLK;
 
 #define EDSTART 0
 #define EDINIT 1
