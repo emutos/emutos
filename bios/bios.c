@@ -22,6 +22,7 @@
 #include "config.h"
 #include "portab.h"
 #include "bios.h"
+#include "dos.h"
 #include "pd.h"
 #include "gemerror.h"
 #include "kprint.h"
@@ -70,7 +71,6 @@
 
 /*==== External declarations ==============================================*/
 
-extern LONG osinit(void);       /* found in bdosmain.c */
 #if CONF_WITH_CARTRIDGE
 extern void run_cartridge_applications(WORD typebit); /* found in startup.S */
 #endif

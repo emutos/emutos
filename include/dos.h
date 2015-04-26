@@ -42,3 +42,8 @@
 
 #define F_GETMOD 0x0
 #define F_SETMOD 0x1
+
+
+/* in bdos/bdosmain.c */
+extern void osinit(void);
+extern long osif(int *pw);
