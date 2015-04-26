@@ -201,13 +201,15 @@ typedef struct
         WORD    bi_color;               /* fg color of blt              */
 } BITBLK;
 
+struct _PARMBLK;
+
 typedef struct
 {
-        LONG    ub_code;
+        WORD    (*ub_code)(struct _PARMBLK *parmblock);
         LONG    ub_parm;
 } USERBLK;
 
-typedef struct
+typedef struct _PARMBLK
 {
         LONG    pb_tree;
         WORD    pb_obj;

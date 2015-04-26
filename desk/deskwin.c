@@ -51,7 +51,7 @@
 #define START_VIEW   V_ICON
 
 
-LONG    drawaddr;
+WORD (*drawaddr)(PARMBLK *parmblock);
 
 
 

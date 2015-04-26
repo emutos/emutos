@@ -241,13 +241,13 @@ static WORD dr_fnode(UWORD last_state, UWORD curr_state, WORD x, WORD y,
 }
 
 
-WORD dr_code(LONG pparms)
+WORD dr_code(PARMBLK *pparms)
 {
         PARMBLK         pb;
         GRECT           oc;
         WORD            state;
 
-        memcpy(&pb, (PARMBLK *)pparms, sizeof(PARMBLK));
+        memcpy(&pb, pparms, sizeof(PARMBLK));
         gsx_gclip(&oc);
         gsx_sclip((GRECT *)&pb.pb_xc);
         state = dr_fnode(pb.pb_prevstate, pb.pb_currstate,

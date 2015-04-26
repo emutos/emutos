@@ -155,12 +155,6 @@ void ob_format(WORD just, BYTE *raw_str, BYTE *tmpl_str, BYTE *fmt_str)
 
 
 
-static WORD far_call(WORD (*fcode)(), LONG fdata)
-{
-        return (*fcode)(fdata);
-}
-
-
 /*
 *       Routine to load up and call a user defined object draw or change
 *       routine.
@@ -179,7 +173,7 @@ static WORD ob_user(LONG tree, WORD obj, GRECT *pt, LONG spec,
         rc_copy(pt, (GRECT *)&pb.pb_x);  /* FIXME: Ugly typecasting */
         gsx_gclip((GRECT *)&pb.pb_xc);   /* FIXME: dito */
         pb.pb_parm = ub->ub_parm;
-        return(  far_call( (WORD(*)())ub->ub_code, (LONG)&pb) );
+        return ub->ub_code(&pb);
 }
 
 
