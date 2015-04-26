@@ -11,6 +11,9 @@
 #define _DESKINF_H
 
 WORD dr_code(PARMBLK *pparms);
+/* far_draw() calls dr_code() on a local stack */
+extern WORD far_draw(PARMBLK *pparms); /* in deskstart.S */
+
 WORD inf_show(LONG tree, WORD start);
 WORD inf_file_folder(BYTE *ppath, FNODE *pf);
 WORD inf_disk(BYTE dr_id);

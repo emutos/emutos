@@ -23,7 +23,6 @@
         .globl  _deskstackbottom
 #endif
 
-        .extern _drawaddr
         .extern _deskmain
         .extern _dr_code
 
@@ -56,9 +55,6 @@ fill:
         bge.b   fill
 #endif
 
-        move.l  #far_draw,d0
-        move.l  d0,_drawaddr
-
         jsr     _deskmain               // Run the desktop
 
         clr.w   -(sp)
@@ -66,7 +62,8 @@ fill:
 
 
 
-far_draw:
+        .globl  _far_draw
+_far_draw:
         move.l  4(a7),d0
         move.l  a7,LD5EA
         movea.l #LD9EE,a7

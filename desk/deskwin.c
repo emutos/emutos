@@ -38,6 +38,7 @@
 #include "deskrsrc.h"
 #include "deskmain.h"
 #include "deskglob.h"
+#include "deskinf.h"
 
 #include "kprint.h"
 
@@ -49,11 +50,6 @@
 #define WINDOW_STYLE (NAME | CLOSER | MOVER | FULLER | INFO | SIZER | \
                       UPARROW | DNARROW | VSLIDE | LFARROW | RTARROW | HSLIDE)
 #define START_VIEW   V_ICON
-
-
-WORD (*drawaddr)(PARMBLK *parmblock);
-
-
 
 
 void win_view(WORD vtype, WORD isort)
@@ -335,7 +331,7 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
             case V_TEXT:
                 G.g_screen[obid].ob_type = G_USERDEF;
                 G.g_screen[obid].ob_spec = (LONG)&G.g_udefs[obid];
-                G.g_udefs[obid].ub_code = drawaddr;
+                G.g_udefs[obid].ub_code = &far_draw;
                 G.g_udefs[obid].ub_parm = (LONG)&pstart->f_junk;
                 win_icalc(pstart);
                 break;
