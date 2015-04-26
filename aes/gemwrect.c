@@ -202,7 +202,7 @@ void newrect(LONG tree, WORD wh)
                                                 /* break other window's */
                                                 /*   rects with our     */
                                                 /*   current rect       */
-        everyobj(tree, ROOT, wh, (void(*)())mkrect, 0, 0, MAX_DEPTH);
+        everyobj(tree, ROOT, wh, (EVERYOBJ_CALLBACK)mkrect, 0, 0, MAX_DEPTH);
                                                 /* get an orect in this */
                                                 /*   windows list       */
         new = get_orect();

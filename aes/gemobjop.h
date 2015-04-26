@@ -10,9 +10,11 @@
 #ifndef GEMOBJOP_H
 #define GEMOBJOP_H
 
+typedef void (*EVERYOBJ_CALLBACK)(LONG tree, WORD obj, WORD sx, WORD sy);
+
 BYTE ob_sst(LONG tree, WORD obj, LONG *pspec, WORD *pstate, WORD *ptype,
             WORD *pflags, GRECT *pt, WORD *pth);
-void everyobj(LONG tree, WORD this, WORD last, void (*routine)(),
+void everyobj(LONG tree, WORD this, WORD last, EVERYOBJ_CALLBACK routine,
               WORD startx, WORD starty, WORD maxdep);
 WORD get_par(LONG tree, WORD obj, WORD *pnobj);
 

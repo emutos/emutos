@@ -406,7 +406,7 @@ void ob_draw(LONG tree, WORD obj, WORD depth)
           sx = sy = 0;
 
         gsx_moff();
-        everyobj(tree, obj, last, (void(*)())just_draw, sx, sy, depth);
+        everyobj(tree, obj, last, just_draw, sx, sy, depth);
         gsx_mon();
 }
 
