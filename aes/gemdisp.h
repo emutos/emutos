@@ -10,7 +10,8 @@
 #ifndef GEMDISP_H
 #define GEMDISP_H
 
-typedef void (*FCODE)(LONG fdata);
+#include "struct.h"
+
 void forkq(FCODE fcode, LONG fdata);
 void forker(void);
 void chkkbd(void);

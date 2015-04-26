@@ -191,7 +191,7 @@ WORD ap_trecd(FPD *pbuff,WORD length)
 
     /* convert to standard format */
     for (i = 0; i < length; i++) {
-        proutine = (FCODE)pbuff->f_code;
+        proutine = pbuff->f_code;
         if (proutine == tchange)
             code = TCHNG;
         else if (proutine == bchange)

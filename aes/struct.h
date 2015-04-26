@@ -169,9 +169,11 @@ SPB
         EVB     *sy_wait;
 } ;
 
+typedef void (*FCODE)(LONG fdata);      /* pointer to fonction used by forkq() */
+
 struct fpd
 {
-        void    (*f_code)();
+        FCODE   f_code;
         LONG    f_data;
 } ;
 
