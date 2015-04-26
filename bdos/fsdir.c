@@ -473,7 +473,7 @@ long ixsfirst(char *name, register WORD att, register DTAINFO *addr)
 /*
  *  contains_wildcard_characters - check for wildcard chars in specified string
  */
-BOOL contains_wildcard_characters(const char *test)
+static BOOL contains_wildcard_characters(const char *test)
 {
     const char *t;
 

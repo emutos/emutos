@@ -136,7 +136,7 @@ static ORECT *brkrct(ORECT *new, ORECT *r, ORECT *p)
 
 
 /* tree = place holder for everyobj */
-void mkrect(LONG tree, WORD wh)
+static void mkrect(LONG tree, WORD wh)
 {
         register WINDOW *pwin;
         ORECT           *new;
