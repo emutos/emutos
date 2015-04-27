@@ -34,6 +34,15 @@
 /* values in device_flags for XHInqTarget(), XHInqTarget2() */
 #define XH_TARGET_REMOVABLE 0x02L
 
+/* Information for XHInqDriver() */
+#define DRIVER_NAME                 "EmuTOS"
+#define DRIVER_NAME_MAXLENGTH       17
+#define DRIVER_COMPANY              "EmuTOS Team"
+#define DRIVER_COMPANY_MAXLENGTH    17
+#define DRIVER_VERSION              "1"
+#define DRIVER_VERSION_MAXLENGTH    7
+#define MAX_IPL                     5 /* 5 for drivers which use _hz_200 for timing loops */
+
 #if CONF_WITH_XHDI
 
 #include "portab.h"

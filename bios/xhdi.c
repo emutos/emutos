@@ -22,6 +22,7 @@
 #include "string.h"
 #include "cookie.h"
 #include "disk.h"
+#include "ahdi.h"
 
 
 #if CONF_WITH_XHDI
@@ -184,7 +185,18 @@ static long XHInqDriver(UWORD bios_device, char *name, char *version, char *comp
             return ret;
     }
 
-    return EINVFN;
+    if(name)
+        strlcpy(name, DRIVER_NAME, DRIVER_NAME_MAXLENGTH);
+    if(version)
+        strlcpy(version, DRIVER_VERSION, DRIVER_VERSION_MAXLENGTH);
+    if(company)
+        strlcpy(company, DRIVER_COMPANY, DRIVER_COMPANY_MAXLENGTH);
+    if(ahdi_version)
+        *ahdi_version = pun_ptr->version_num;
+    if(max_IPL)
+        *max_IPL = MAX_IPL;
+
+    return E_OK;
 }
 
 static long XHDriverSpecial(ULONG key1, ULONG key2, UWORD subopcode, void *data)
