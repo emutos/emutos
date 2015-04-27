@@ -243,15 +243,13 @@ static WORD dr_fnode(UWORD last_state, UWORD curr_state, WORD x, WORD y,
 
 WORD dr_code(PARMBLK *pparms)
 {
-        PARMBLK         pb;
         GRECT           oc;
         WORD            state;
 
-        memcpy(&pb, pparms, sizeof(PARMBLK));
         gsx_gclip(&oc);
-        gsx_sclip((GRECT *)&pb.pb_xc);
-        state = dr_fnode(pb.pb_prevstate, pb.pb_currstate,
-                         pb.pb_x, pb.pb_y, pb.pb_w, pb.pb_h, pb.pb_parm);
+        gsx_sclip((GRECT *)&pparms->pb_xc);
+        state = dr_fnode(pparms->pb_prevstate, pparms->pb_currstate,
+                         pparms->pb_x, pparms->pb_y, pparms->pb_w, pparms->pb_h, pparms->pb_parm);
         gsx_sclip(&oc);
         return(state);
 }
