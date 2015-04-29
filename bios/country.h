@@ -19,14 +19,6 @@
 /* a list of country codes */
 #include "ctrycodes.h"
 
-/* charset codes - names in [brackets] are understood by GNU recode */
-#define CHARSET_ALL -1
-#define CHARSET_ST 0   /* original [atarist] */
-#define CHARSET_L2 1   /* [ISO-Latin-2] charset */
-#define CHARSET_L9 2   /* [ISO-8859-15] (latin-9) charset */
-#define CHARSET_GR 3   /* Greek charset */
-#define CHARSET_RU 4   /* Russian charset */
-
 /* IDT flag 24 hour: 0 = 12am/pm or 1 = 24 hour */
 #define IDT_12H   0x0000
 #define IDT_24H   0x1000

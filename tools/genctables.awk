@@ -70,6 +70,15 @@ END {
     }
     print ""
 
+    print "/* Indexes of font sets inside font_sets[] */"
+    print "#define CHARSET_ALL -1"
+    i = 0
+    for(cset in needcsets) {
+        print "#define CHARSET_" cset " " i
+        i++
+    }
+    print ""
+
     print "#if ! CONF_UNIQUE_COUNTRY"
     print "static const struct country_record countries[] = {"
     for(i = 1 ; i <= ncountries ; i++) {
