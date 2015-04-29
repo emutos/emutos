@@ -44,15 +44,6 @@ extern WORD WEIGHT;             /* special effects          */
 extern WORD R_OFF, L_OFF;       /* skew above and below baseline    */
 extern WORD TEXT_FG;
 
-
-/* font-header definitions */
-
-/* fh_flags   */
-#define F_DEFAULT 1             /* this is the default font (face and size) */
-#define F_HORZ_OFF  2           /* there are left and right offset tables */
-#define F_STDFORM  4            /* is the font in standard format */
-#define F_MONOSPACE 8           /* is the font monospaced */
-
 /* style bits */
 #define F_THICKEN 1
 #define F_LIGHT 2
@@ -142,7 +133,7 @@ void d_gtext(Vwk * vwk)
             R_OFF = 0;
         }
 
-        FBASE = fnt_ptr->dat_table;
+        FBASE = (UWORD *)fnt_ptr->dat_table;
         FWIDTH = fnt_ptr->form_width;
 
         switch (vwk->h_align) {
@@ -436,7 +427,7 @@ void text_init(Vwk * vwk)
             }
             /* end if system font */
             if (!(fnt_ptr->flags & F_STDFORM)) {
-                FBASE = fnt_ptr->dat_table;
+                FBASE = (UWORD *)fnt_ptr->dat_table;
                 FWIDTH = fnt_ptr->form_width;
                 DELY = fnt_ptr->form_height;
                 trnsfont();

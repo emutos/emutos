@@ -14,7 +14,7 @@
 #define VDIDEFS_H
 
 #include "portab.h"
-
+#include "fonthdr.h"
 
 #define HAVE_BEZIER 0           /* switch on bezier capability */
 
@@ -72,40 +72,6 @@
 #define MD_TRANS    2
 #define MD_XOR      3
 #define MD_ERASE    4
-
-#define FONT_NAME_LEN 32
-
-typedef struct Fonthead_ Fonthead;
-struct Fonthead_ {              /* descibes a font */
-    WORD font_id;
-    WORD point;
-    BYTE name[FONT_NAME_LEN];
-    UWORD first_ade;
-    UWORD last_ade;
-    UWORD top;
-    UWORD ascent;
-    UWORD half;
-    UWORD descent;
-    UWORD bottom;
-    UWORD max_char_width;
-    UWORD max_cell_width;
-    UWORD left_offset;          /* amount character slants left when skewed */
-    UWORD right_offset;         /* amount character slants right */
-    UWORD thicken;              /* number of pixels to smear */
-    UWORD ul_size;              /* size of the underline */
-    UWORD lighten;              /* mask to and with to lighten  */
-    UWORD skew;                 /* mask for skewing */
-    UWORD flags;
-
-    UBYTE *hor_table;           /* horizontal offsets */
-    UWORD *off_table;           /* character offsets  */
-    UWORD *dat_table;           /* character definitions */
-    UWORD form_width;
-    UWORD form_height;
-
-    Fonthead *next_font;        /* pointer to next font */
-    UWORD font_seg;
-};
 
 
 /*

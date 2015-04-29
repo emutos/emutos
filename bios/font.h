@@ -15,13 +15,7 @@
 #define FONT_H
 
 #include "portab.h"
-
-/* font header flags */
-
-#define F_DEFAULT 1     /* this is the default font (face and size) */
-#define F_HORZ_OFF  2   /* there are left and right offset tables */
-#define F_STDFORM  4    /* is the font in standard format */
-#define F_MONOSPACE 8   /* is the font monospaced */
+#include "fonthdr.h"
 
 /* font style bits */
 
@@ -54,41 +48,6 @@ extern UWORD    v_cel_wr;       /* needed by MiNT: length (in bytes) of a line o
 
 extern struct font_head *font_ring[4];  /* Ring of available fonts */
 extern WORD font_count;                 /* all three fonts and NULL */
-
-/* the font header descibes a font */
-
-struct font_head {
-    WORD font_id;
-    WORD point;
-    BYTE name[32];
-    UWORD first_ade;
-    UWORD last_ade;
-    UWORD top;
-    UWORD ascent;
-    UWORD half;
-    UWORD descent;
-    UWORD bottom;
-    UWORD max_char_width;
-    UWORD max_cell_width;
-    UWORD left_offset;          /* amount character slants left when skewed */
-    UWORD right_offset;         /* amount character slants right */
-    UWORD thicken;              /* number of pixels to smear */
-    UWORD ul_size;              /* size of the underline */
-    UWORD lighten;              /* mask to and with to lighten  */
-    UWORD skew;                 /* mask for skewing */
-    UWORD flags;
-
-    const UBYTE *hor_table;     /* horizontal offsets */
-    const UWORD *off_table;     /* character offsets  */
-    const UWORD *dat_table;     /* character definitions */
-    UWORD form_width;
-    UWORD form_height;
-
-    struct font_head *next_font;/* pointer to next font */
-    UWORD font_seg;
-};
-
-
 
 /* prototypes */
 
