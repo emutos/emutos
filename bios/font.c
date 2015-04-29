@@ -20,10 +20,10 @@
 #include "kprint.h"
 
 /* RAM-copies of the ROM-fontheaders */
-struct font_head *sysfonts[4];  // all three fonts and NULL
-struct font_head fon8x16;
-struct font_head fon8x8;
-struct font_head fon6x6;
+Fonthead *sysfonts[4];  /* all three fonts and NULL */
+Fonthead fon8x16;
+Fonthead fon8x8;
+Fonthead fon6x6;
 
 
 
@@ -33,7 +33,7 @@ struct font_head fon6x6;
 
 void font_init(void)
 {
-    const struct font_head *f6x6, *f8x8, *f8x16;
+    const Fonthead *f6x6, *f8x8, *f8x16;
 
     /* ask country.c for the right fonts */
 
@@ -69,7 +69,7 @@ void font_init(void)
 
 void font_set_default(void)
 {
-    struct font_head *font;
+    Fonthead *font;
 
     if (v_vt_rez < 400)
         font = &fon8x8;

@@ -124,7 +124,7 @@ static const UWORD dat_table[576] =
     0x1CC0, 0x8000, 0x0000, 0x0033, 0x0000, 0x0000, 0x0800, 0x0000
 };
 
-const struct font_head fnt_st_6x6 = {
+const Fonthead fnt_st_6x6 = {
     1,                  /*   WORD font_id       */
     8,                  /*   WORD point         */
     "6x6 system font",  /*   BYTE name[32]      */

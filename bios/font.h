@@ -46,7 +46,7 @@ extern UWORD    v_cel_wr;       /* needed by MiNT: length (in bytes) of a line o
  * a list of font headers linked together to form a string.
  */
 
-extern struct font_head *font_ring[4];  /* Ring of available fonts */
+extern Fonthead *font_ring[4];  /* Ring of available fonts */
 extern WORD font_count;                 /* all three fonts and NULL */
 
 /* prototypes */

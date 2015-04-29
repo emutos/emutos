@@ -180,7 +180,7 @@ static const UWORD dat_table[] =
     0x0000, 0x0000, 0x1800, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
 };
 
-const struct font_head fnt_st_8x8 = {
+const Fonthead fnt_st_8x8 = {
     1,  /* WORD font_id */
     9,  /* WORD point */
     "8x8 system font",  /*   BYTE name[32]      */

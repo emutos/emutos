@@ -42,9 +42,9 @@ struct kbd_record {
 
 struct charset_fonts {
     int charset;
-    const struct font_head *f6x6;
-    const struct font_head *f8x8;
-    const struct font_head *f8x16;
+    const Fonthead *f6x6;
+    const Fonthead *f8x8;
+    const Fonthead *f8x16;
 };
 
 /*
@@ -180,9 +180,9 @@ void get_keytbl(const struct keytbl **tbl)
  * get_fonts - initialize country dependant font tables
  */
 
-void get_fonts(const struct font_head **f6x6,
-               const struct font_head **f8x8,
-               const struct font_head **f8x16)
+void get_fonts(const Fonthead **f6x6,
+               const Fonthead **f8x8,
+               const Fonthead **f8x16)
 {
     int j = 0;
 

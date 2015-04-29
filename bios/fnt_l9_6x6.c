@@ -121,7 +121,7 @@ static const UWORD dat_table[] =
     0x1c71, 0xc71c, 0x3227, 0x1c71, 0xc700, 0x41e7, 0x9e79, 0xc41c,
 };
 
-const struct font_head fnt_l9_6x6 =
+const Fonthead fnt_l9_6x6 =
 {
     1,  /* font_id */
     8,  /* point */

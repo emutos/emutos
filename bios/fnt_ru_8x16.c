@@ -305,7 +305,7 @@ static const UWORD dat_table[] =
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
 };
 
-const struct font_head fnt_ru_8x16  = {
+const Fonthead fnt_ru_8x16  = {
     1,  /* font_id */
     10,  /* point */
     "8x16 Russian font",  /*   BYTE name[32]    */

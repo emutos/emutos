@@ -84,9 +84,9 @@ END {
 
     for(cset in needcsets) {
         lcset = tolower(cset)
-        print "extern const struct font_head fnt_" lcset "_6x6;"
-        print "extern const struct font_head fnt_" lcset "_8x8;"
-        print "extern const struct font_head fnt_" lcset "_8x16;"
+        print "extern const Fonthead fnt_" lcset "_6x6;"
+        print "extern const Fonthead fnt_" lcset "_8x8;"
+        print "extern const Fonthead fnt_" lcset "_8x16;"
     }
     print "\nstatic const struct charset_fonts font_sets[] = {"
     for(cset in needcsets) {
