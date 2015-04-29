@@ -36,7 +36,6 @@ struct country_record {
 };
 
 struct kbd_record {
-    int number;
     const struct keytbl *keytbl;
 };
 
@@ -85,7 +84,7 @@ static const struct country_record *get_country_record(int country_code)
     return &countries[default_country_index];
 }
 
-static int get_kbd_number(void)
+static int get_kbd_index(void)
 {
     const struct country_record *cr = get_country_record(cookie_akp & 0xff);
     return cr->keyboard;
@@ -160,15 +159,7 @@ void get_keytbl(const struct keytbl **tbl)
 {
     int j;
 #if ! CONF_UNIQUE_COUNTRY
-    int i;
-    int goal = get_kbd_number();
-
-    for (i = j = 0 ; i < sizeof(avail_kbd) / sizeof(*avail_kbd) ; i++) {
-        if (avail_kbd[i].number == goal) {
-            j = i;
-            break;
-        }
-    }
+    j = get_kbd_index();
 #else
     /* use the unique keyboard anyway */
     j = 0;

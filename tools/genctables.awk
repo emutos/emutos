@@ -89,7 +89,7 @@ END {
     print "\nstatic const struct kbd_record avail_kbd[] = {"
     for(keyb in needkeybs) {
         print "#if (CONF_KEYB == KEYB_ALL || CONF_KEYB == KEYB_" keyb ")"
-        print "    { KEYB_" keyb ", &keytbl_" tolower(keyb) " },"
+        print "    { &keytbl_" tolower(keyb) " },"
         print "#endif"
     }
     print "};\n\n"
