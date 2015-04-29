@@ -55,6 +55,21 @@ BEGIN {
 }
 
 END {
+    for(i = 1 ; i <= ncountries ; i++) {
+        country = countries[i]
+        needkeybs[keybs[country]] = 1
+        needcsets[csets[country]] = 1
+    }
+
+    print "/* Indexes of keyboard layouts inside avail_kbd[] */"
+    print "#define KEYB_ALL -1"
+    i = 0
+    for(keyb in needkeybs) {
+        print "#define KEYB_" keyb " " i
+        i++
+    }
+    print ""
+
     print "#if ! CONF_UNIQUE_COUNTRY"
     print "static const struct country_record countries[] = {"
     for(i = 1 ; i <= ncountries ; i++) {
@@ -62,9 +77,6 @@ END {
         print "    { COUNTRY_" country ", \"" langs[country] "\", " \
             "KEYB_" keybs[country] ", CHARSET_" csets[country] ", " \
             idts[country] "},"
-
-        needkeybs[keybs[country]] = 1
-        needcsets[csets[country]] = 1
     }
     print "};"
     print "#endif\n\n"

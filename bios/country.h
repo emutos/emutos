@@ -19,19 +19,6 @@
 /* a list of country codes */
 #include "ctrycodes.h"
 
-/* a list of keyboard layout codes */
-#define KEYB_ALL -1
-#define KEYB_US 0
-#define KEYB_DE 1
-#define KEYB_FR 2
-#define KEYB_CZ 3
-#define KEYB_GR 4
-#define KEYB_SE 5
-#define KEYB_SG 6
-#define KEYB_RU 7
-#define KEYB_IT 8
-#define KEYB_UK 9
-
 /* charset codes - names in [brackets] are understood by GNU recode */
 #define CHARSET_ALL -1
 #define CHARSET_ST 0   /* original [atarist] */
