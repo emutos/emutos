@@ -330,29 +330,6 @@ void d_gtext(Vwk * vwk)
 
 
 
-/*
- * trnsfont - converts a font to standard form
- *
- * The routine does just byte swapping.
- *
- * input:
- *     FWIDTH = width of font data in bytes.
- *     DELY   = number of scan lines in font.
- *     FBASE  = starting address of the font data.
- */
-
-static void trnsfont(void)
-{
-    WORD cnt, i;
-    UWORD *addr;
-
-    cnt = (FWIDTH * DELY) / sizeof(*addr);
-    for (i = 0, addr = (UWORD *)FBASE; i < cnt; i++, addr++)
-        swpw(*addr);
-}
-
-
-
 void text_init2(Vwk * vwk)
 {
     vwk->cur_font = def_font;
@@ -426,13 +403,6 @@ void text_init(Vwk * vwk)
                 i++;            /* Increment count of heights */
             }
             /* end if system font */
-            if (!(fnt_ptr->flags & F_STDFORM)) {
-                FBASE = fnt_ptr->dat_table;
-                FWIDTH = fnt_ptr->form_width;
-                DELY = fnt_ptr->form_height;
-                trnsfont();
-            }
-
         } while ((fnt_ptr = fnt_ptr->next_font));
     }
     DEV_TAB[5] = i;                     /* number of sizes */
