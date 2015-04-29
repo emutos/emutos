@@ -205,6 +205,5 @@ const Fonthead fnt_st_8x8 = {
     dat_table,           /*   UWORD *dat_table   */
     256,  /* UWORD form_width */
     8,  /* UWORD form_height */
-    0,  /* struct font * next_font */
-    0   /* UWORD next_seg */
+    0   /* Fonthead * next_font */
 };

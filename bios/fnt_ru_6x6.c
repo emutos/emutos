@@ -146,6 +146,5 @@ const Fonthead fnt_ru_6x6 = {
     dat_table,          /*   UWORD *dat_table   */
     192,  /* form_width */
     6,  /* form_height */
-    0,  /* struct font * next_font */
-    0   /* UWORD next_seg */
+    0   /* Fonthead * next_font */
 };

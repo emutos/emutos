@@ -151,6 +151,5 @@ const Fonthead fnt_st_6x6 = {
     192,                /*   UWORD form_width   */
     6,                  /*   UWORD form_height  */
 
-    0,              /*   UWORD next_font    */
-    0                   /*   UWORD next_seg     */
+    0                   /*   Fonthead * next_font    */
 };

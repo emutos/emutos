@@ -331,6 +331,5 @@ const Fonthead fnt_l9_8x16 =
     dat_table,  /* dat_table */
     256,  /* form_width */
     16,  /* form_height */
-    0,  /* struct font * next_font */
-    0   /* UWORD next_seg */
+    0    /* Fonthead * next_font */
 };
