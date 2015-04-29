@@ -147,10 +147,10 @@ void detect_idt(void)
 }
 
 /*
- * get_keytbl - initialize country dependant keyboard layouts
+ * get_keytbl - get current country keyboard layout
  */
 
-void get_keytbl(const struct keytbl **tbl)
+const struct keytbl *get_keytbl(void)
 {
     int j;
 #if ! CONF_UNIQUE_COUNTRY
@@ -159,7 +159,7 @@ void get_keytbl(const struct keytbl **tbl)
     /* use the unique keyboard anyway */
     j = 0;
 #endif
-    *tbl = keytables[j];
+    return keytables[j];
 }
 
 /*

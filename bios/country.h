@@ -45,7 +45,7 @@ void detect_akp(void);
 void detect_idt(void);
 
 /* used by ikbd.c */
-void get_keytbl(const struct keytbl **tbl);
+const struct keytbl *get_keytbl(void);
 
 /* used by nls.c */
 const char *get_lang_name(void);

@@ -104,12 +104,8 @@ LONG keytbl(UBYTE* norm, UBYTE* shft, UBYTE* caps)
 
 void bioskeys(void)
 {
-    const struct keytbl *tbl;
-
-    /* ask country.c for the key table */
-    get_keytbl(&tbl);
-    /* set it as the current table */
-    current_keytbl = *tbl;
+    /* ask country.c for the default key table of the current country */
+    current_keytbl = *get_keytbl();
 }
 
 
