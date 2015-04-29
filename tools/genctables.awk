@@ -61,7 +61,7 @@ END {
         needcsets[csets[country]] = 1
     }
 
-    print "/* Indexes of keyboard layouts inside avail_kbd[] */"
+    print "/* Indexes of keyboard layouts inside keytables[] */"
     print "#define KEYB_ALL -1"
     i = 0
     for(keyb in needkeybs) {
@@ -86,10 +86,10 @@ END {
         print "#include \"keyb_" tolower(keyb) ".h\""
         print "#endif"
     }
-    print "\nstatic const struct kbd_record avail_kbd[] = {"
+    print "\nstatic const struct keytbl *keytables[] = {"
     for(keyb in needkeybs) {
         print "#if (CONF_KEYB == KEYB_ALL || CONF_KEYB == KEYB_" keyb ")"
-        print "    { &keytbl_" tolower(keyb) " },"
+        print "    &keytbl_" tolower(keyb) ","
         print "#endif"
     }
     print "};\n\n"

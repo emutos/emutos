@@ -35,10 +35,6 @@ struct country_record {
     int idt;                /* international date and time */
 };
 
-struct kbd_record {
-    const struct keytbl *keytbl;
-};
-
 struct charset_fonts {
     int charset;
     const Fonthead *f6x6;
@@ -49,7 +45,7 @@ struct charset_fonts {
 /*
  * ctables.h contains the following tables:
  * static const struct country_record countries[];
- * static const struct kbd_record avail_kbd[];
+ * static const struct keytbl *keytables[];
  * static const struct charset_fonts font_sets[];
  */
 
@@ -164,7 +160,7 @@ void get_keytbl(const struct keytbl **tbl)
     /* use the unique keyboard anyway */
     j = 0;
 #endif
-    *tbl = avail_kbd[j].keytbl;
+    *tbl = keytables[j];
 }
 
 /*
