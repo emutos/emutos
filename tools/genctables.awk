@@ -114,7 +114,7 @@ END {
         lcset = tolower(cset)
         print "#if (CONF_CHARSET == CHARSET_ALL || CONF_CHARSET == CHARSET_" \
             cset ")"
-        print "    { CHARSET_" cset ", &fnt_" lcset "_6x6, &fnt_" lcset \
+        print "    { &fnt_" lcset "_6x6, &fnt_" lcset \
             "_8x8, &fnt_" lcset "_8x16 },"
         print "#endif"
     }

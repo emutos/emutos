@@ -36,7 +36,6 @@ struct country_record {
 };
 
 struct charset_fonts {
-    int charset;
     const Fonthead *f6x6;
     const Fonthead *f8x8;
     const Fonthead *f8x16;
@@ -92,7 +91,7 @@ const char *get_lang_name(void)
     return cr->lang_name;
 }
 
-static int get_charset(void)
+static int get_charset_index(void)
 {
     const struct country_record *cr = get_country_record((cookie_akp >> 8) & 0xFF);
     return cr->charset;
@@ -171,21 +170,13 @@ void get_fonts(const Fonthead **f6x6,
                const Fonthead **f8x8,
                const Fonthead **f8x16)
 {
-    int j = 0;
-
+    int j;
 #if ! CONF_UNIQUE_COUNTRY
-    int i;
-    int charset = get_charset();
-
-    /* find the index of the required charset in our font table */
-    for(i = 0; i < sizeof(font_sets)/sizeof(*font_sets) ; i++) {
-        if( font_sets[i].charset == charset ) {
-            j = i;
-            break;
-        }
-    }
+    j = get_charset_index();
+#else
+    /* use the unique charset anyway */
+    j = 0;
 #endif
-
     *f6x6 = font_sets[j].f6x6;
     *f8x8 = font_sets[j].f8x8;
     *f8x16 = font_sets[j].f8x16;
