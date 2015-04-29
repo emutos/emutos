@@ -79,21 +79,36 @@ static const struct country_record *get_country_record(int country_code)
     return &countries[default_country_index];
 }
 
+/* Get the country code used for display: fonts and language */
+static int get_current_country_display(void)
+{
+    return (cookie_akp >> 8) & 0xff;
+}
+
+/* Get the country code used for input: keyboard layout */
+static int get_current_country_input(void)
+{
+    return cookie_akp & 0xff;
+}
+
 static int get_kbd_index(void)
 {
-    const struct country_record *cr = get_country_record(cookie_akp & 0xff);
+    int country_code = get_current_country_input();
+    const struct country_record *cr = get_country_record(country_code);
     return cr->keyboard;
 }
 
 const char *get_lang_name(void)
 {
-    const struct country_record *cr = get_country_record((cookie_akp >> 8) & 0xFF);
+    int country_code = get_current_country_display();
+    const struct country_record *cr = get_country_record(country_code);
     return cr->lang_name;
 }
 
 static int get_charset_index(void)
 {
-    const struct country_record *cr = get_country_record((cookie_akp >> 8) & 0xFF);
+    int country_code = get_current_country_display();
+    const struct country_record *cr = get_country_record(country_code);
     return cr->charset;
 }
 
@@ -140,7 +155,8 @@ void detect_idt(void)
 #if CONF_UNIQUE_COUNTRY
         cookie_idt = CONF_IDT;
 #else
-        const struct country_record *cr = get_country_record((cookie_akp >> 8) & 0xff);
+        int country_code = get_current_country_display();
+        const struct country_record *cr = get_country_record(country_code);
         cookie_idt = cr->idt;
 #endif
     }
