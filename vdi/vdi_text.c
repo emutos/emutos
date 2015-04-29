@@ -1141,79 +1141,14 @@ void d_justified(Vwk * vwk)
 
 void dt_loadfont(Vwk * vwk)
 {
-#if CONF_WITH_GDOS
-    WORD id, count, *control;
-
-    const Fonthead *first_font;
-
-    /* Init some common variables */
-    control = CONTRL;
-    *(control + 4) = 1;
-
-    /* You only get one chance to load fonts.  If fonts are linked in, exit  */
-    if (vwk->loaded_fonts) {
-        INTOUT[0] = 0;
-        return;
-    }
-
-    /* The inputs to this routine are :         */
-    /* CONTRL[7-8]   = Pointer to scratch buffer    */
-    /* CONTRL[9]     = Offset to buffer 2       */
-    /* CONTRL[10-11] = Pointer to first font    */
-
-    /* Init the global structures           */
-    vwk->scrpt2 = *(control + 9);
-    vwk->scrtchp = (WORD *) *((LONG *) (control + 7));
-
-    first_font = (const Fonthead *) *((LONG *) (control + 10));
-    vwk->loaded_fonts = first_font;
-
-    /* Find out how many distinct font id numbers have just been linked in. */
-    id = -1;
-    count = 0;
-
-    do {
-        /* Update the count of font id numbers, if necessary. */
-        if (first_font->font_id != id) {
-            id = first_font->font_id;
-            count++;
-        }
-
-        /* Make sure the font is in device specific format. */
-        if (!(first_font->flags & F_STDFORM)) {
-            FBASE = first_font->dat_table;
-            FWIDTH = first_font->form_width;
-            DELY = first_font->form_height;
-            trnsfont();
-            ((Fonthead *)first_font)->flags ^= F_STDFORM;
-        }
-        first_font = first_font->next_font;
-    } while (first_font);
-
-    font_ring[2] = vwk->loaded_fonts;
-
-    /* Update the device table count of faces. */
-    vwk->num_fonts += count;
-    DEV_TAB[10] = vwk->num_fonts;
-    INTOUT[0] = count;
-#else
     CONTRL[4] = 1;
     INTOUT[0] = 0;      /* we loaded no new fonts */
-#endif
 }
 
 
 void dt_unloadfont(Vwk * vwk)
 {
-#if CONF_WITH_GDOS
-    /* Since we always unload all fonts, this is easy. */
-    vwk->loaded_fonts = NULLPTR;   /* No fonts installed */
-    font_ring[2] = vwk->loaded_fonts;
-    vwk->scrpt2 = scrtsiz; /* Reset pointers to default buffers */
-    vwk->scrtchp = deftxbuf;
-    vwk->num_fonts = font_count;   /* Reset font count to default */
-    DEV_TAB[10] = vwk->num_fonts;
-#endif
+    /* nothing to do */
 }
 
 

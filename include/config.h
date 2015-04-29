@@ -726,15 +726,6 @@
 #endif
 
 /*
- * Set CONF_WITH_GDOS to 1 to generate code within vst_load_fonts() and
- * vst_unload_fonts() that will support GDOS.  This is *only* useful if
- * you have an EmuTOS-compatible GDOS program ...
- */
-#ifndef CONF_WITH_GDOS
-# define CONF_WITH_GDOS 0
-#endif
-
-/*
  * Set CONF_WITH_PCGEM to 1 to support various PC-GEM-compatible AES functions
  */
 #ifndef CONF_WITH_PCGEM
