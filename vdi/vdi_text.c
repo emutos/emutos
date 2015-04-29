@@ -19,8 +19,8 @@
 #include "lineavars.h"
 
 
-extern Fonthead *def_font;      /* Default font of open workstation */
-extern Fonthead *font_ring[];   /* Ring of available fonts */
+extern const Fonthead *def_font;    /* Default font of open workstation */
+extern const Fonthead *font_ring[]; /* Ring of available fonts */
 
 
 /* linea-variables used for text_blt in assembler */
@@ -37,7 +37,7 @@ extern WORD XACC_DDA;           /* accumulator for x DDA        */
 extern WORD SOURCEX, SOURCEY;   /* upper left of character in font file */
 extern WORD DESTX, DESTY;       /* upper left of destination on screen  */
 extern UWORD DELX, DELY;        /* width and height of character    */
-extern UWORD *FBASE;            /* pointer to font data         */
+extern const UWORD *FBASE;      /* pointer to font data         */
 extern WORD FWIDTH;             /* offset,segment and form with of font */
 extern WORD LITEMASK, SKEWMASK; /* special effects          */
 extern WORD WEIGHT;             /* special effects          */
@@ -91,7 +91,7 @@ void d_gtext(Vwk * vwk)
     WORD justified;
 
     WORD temp;
-    Fonthead *fnt_ptr = NULL;
+    const Fonthead *fnt_ptr = NULL;
     Point * point = NULL;
 
     /* some data copying for the assembler part */
@@ -133,7 +133,7 @@ void d_gtext(Vwk * vwk)
             R_OFF = 0;
         }
 
-        FBASE = (UWORD *)fnt_ptr->dat_table;
+        FBASE = fnt_ptr->dat_table;
         FWIDTH = fnt_ptr->form_width;
 
         switch (vwk->h_align) {
@@ -347,7 +347,7 @@ static void trnsfont(void)
     UWORD *addr;
 
     cnt = (FWIDTH * DELY) / sizeof(*addr);
-    for (i = 0, addr = FBASE; i < cnt; i++, addr++)
+    for (i = 0, addr = (UWORD *)FBASE; i < cnt; i++, addr++)
         swpw(*addr);
 }
 
@@ -376,7 +376,7 @@ void text_init(Vwk * vwk)
 {
     WORD i, j;
     WORD id_save, cell_height;
-    Fonthead *fnt_ptr, **chain_ptr;
+    const Fonthead *fnt_ptr, **chain_ptr;
 
     SIZ_TAB[0] = 32767;         // minimal char width
     SIZ_TAB[1] = 32767;         // minimal char height
@@ -427,7 +427,7 @@ void text_init(Vwk * vwk)
             }
             /* end if system font */
             if (!(fnt_ptr->flags & F_STDFORM)) {
-                FBASE = (UWORD *)fnt_ptr->dat_table;
+                FBASE = fnt_ptr->dat_table;
                 FWIDTH = fnt_ptr->form_width;
                 DELY = fnt_ptr->form_height;
                 trnsfont();
@@ -442,7 +442,7 @@ void text_init(Vwk * vwk)
 /*
  * set up width/height values returned by vst_height()/vst_point()
  */
-static void setup_width_height(Fonthead *font)
+static void setup_width_height(const Fonthead *font)
 {
     WORD *p;
     UWORD top;
@@ -459,8 +459,8 @@ static void setup_width_height(Fonthead *font)
 
 void dst_height(Vwk * vwk)
 {
-    Fonthead **chain_ptr;
-    Fonthead *test_font, *single_font;
+    const Fonthead **chain_ptr;
+    const Fonthead *test_font, *single_font;
     WORD font_id;
     UWORD test_height;
     BYTE found;
@@ -549,7 +549,8 @@ UWORD act_siz(Vwk * vwk, UWORD top)
 
 static void make_header(Vwk * vwk)
 {
-    Fonthead *source_font, *dest_font;
+    const Fonthead *source_font;
+    Fonthead *dest_font;
 
     source_font = vwk->cur_font;
     dest_font = &vwk->scratch_head;
@@ -599,8 +600,8 @@ static void make_header(Vwk * vwk)
 void dst_point(Vwk * vwk)
 {
     WORD font_id;
-    Fonthead **chain_ptr, *double_font;
-    Fonthead *test_font, *single_font;
+    const Fonthead **chain_ptr, *double_font;
+    const Fonthead *test_font, *single_font;
     WORD test_height, height;
     BYTE found;
 
@@ -722,7 +723,7 @@ void dst_font(Vwk * vwk)
 {
     WORD *old_intin, point, *old_ptsout, dummy[4], *old_ptsin;
     WORD face;
-    Fonthead *test_font, **chain_ptr;
+    const Fonthead *test_font, **chain_ptr;
     BYTE found;
 
     test_font = vwk->cur_font;
@@ -784,7 +785,7 @@ void dst_color(Vwk * vwk)
 void dqt_attributes(Vwk * vwk)
 {
     WORD *pointer;
-    Fonthead *fnt_ptr;
+    const Fonthead *fnt_ptr;
 
     pointer = INTOUT;
     fnt_ptr = vwk->cur_font;
@@ -812,7 +813,7 @@ void dqt_extent(Vwk * vwk)
 {
     WORD i, chr, table_start;
     WORD *pointer;
-    Fonthead *fnt_ptr;
+    const Fonthead *fnt_ptr;
 
     WORD cnt;
 
@@ -885,7 +886,7 @@ void dqt_width(Vwk * vwk)
 {
     WORD k;
     WORD *pointer;
-    Fonthead *fnt_ptr;
+    const Fonthead *fnt_ptr;
 
     fnt_ptr = vwk->cur_font;
     pointer = PTSOUT;
@@ -924,12 +925,12 @@ void dqt_width(Vwk * vwk)
 void dqt_name(Vwk * vwk)
 {
     WORD i, element;
-    BYTE *name;
+    const BYTE *name;
     WORD *int_out;
-    Fonthead *tmp_font;
+    const Fonthead *tmp_font;
     BYTE found;
 
-    Fonthead **chain_ptr;
+    const Fonthead **chain_ptr;
 
     element = INTIN[0];
     chain_ptr = font_ring;
@@ -962,7 +963,7 @@ void dqt_name(Vwk * vwk)
 void dqt_fontinfo(Vwk * vwk)
 {
     WORD *pointer;
-    Fonthead *fnt_ptr;
+    const Fonthead *fnt_ptr;
 
     fnt_ptr = vwk->cur_font;
 
@@ -1143,7 +1144,7 @@ void dt_loadfont(Vwk * vwk)
 #if CONF_WITH_GDOS
     WORD id, count, *control;
 
-    Fonthead *first_font;
+    const Fonthead *first_font;
 
     /* Init some common variables */
     control = CONTRL;
@@ -1164,7 +1165,7 @@ void dt_loadfont(Vwk * vwk)
     vwk->scrpt2 = *(control + 9);
     vwk->scrtchp = (WORD *) *((LONG *) (control + 7));
 
-    first_font = (Fonthead *) *((LONG *) (control + 10));
+    first_font = (const Fonthead *) *((LONG *) (control + 10));
     vwk->loaded_fonts = first_font;
 
     /* Find out how many distinct font id numbers have just been linked in. */
@@ -1184,7 +1185,7 @@ void dt_loadfont(Vwk * vwk)
             FWIDTH = first_font->form_width;
             DELY = first_font->form_height;
             trnsfont();
-            first_font->flags ^= F_STDFORM;
+            ((Fonthead *)first_font)->flags ^= F_STDFORM;
         }
         first_font = first_font->next_font;
     } while (first_font);

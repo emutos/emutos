@@ -112,7 +112,7 @@ typedef struct Vwk_ Vwk;
 struct Vwk_ {
     WORD chup;                  /* Character Up vector */
     WORD clip;                  /* Clipping Flag */
-    Fonthead *cur_font;         /* Pointer to current font */
+    const Fonthead *cur_font;   /* Pointer to current font */
     UWORD dda_inc;              /* Fraction to be added to the DDA */
     WORD multifill;             /* Multi-plane fill flag */
     UWORD patmsk;               /* Current pattern mask */
@@ -133,7 +133,7 @@ struct Vwk_ {
     WORD line_end;              /* Ending line endstyle */
     WORD line_index;            /* Current line style */
     WORD line_width;            /* Current line width */
-    Fonthead *loaded_fonts;     /* Pointer to first loaded font     */
+    const Fonthead *loaded_fonts; /* Pointer to first loaded font */
     WORD mark_color;            /* Current marker color (PEL value)     */
     WORD mark_height;           /* Current marker height        */
     WORD mark_index;            /* Current marker style         */
