@@ -844,7 +844,7 @@ ifneq (,$(UNIQUE))
 include/i18nconf.h: obj/country
 	@echo '# Generating $@ with CONF_LANG="$(ETOSLANG)" CONF_KEYB=KEYB_$(ETOSKEYB) CONF_CHARSET=CHARSET_$(ETOSCSET)'
 	@rm -f $@; touch $@
-	@echo '#define CONF_UNIQUE_COUNTRY 1' >> $@
+	@echo '#define CONF_MULTILANG 0' >> $@
 	@echo '#define CONF_WITH_NLS 0' >> $@
 	@echo '#define CONF_LANG "$(ETOSLANG)"' >> $@
 	@echo '#define CONF_KEYB KEYB_$(ETOSKEYB)' >> $@
@@ -854,7 +854,7 @@ else
 include/i18nconf.h: obj/country
 	@echo '# Generating $@ with CONF_KEYB=KEYB_ALL CONF_CHARSET=CHARSET_ALL'
 	@rm -f $@; touch $@
-	@echo '#define CONF_UNIQUE_COUNTRY 0' >> $@
+	@echo '#define CONF_MULTILANG 1' >> $@
 	@echo '#define CONF_WITH_NLS 1' >> $@
 	@echo '#define CONF_KEYB KEYB_ALL' >> $@
 	@echo '#define CONF_CHARSET CHARSET_ALL' >> $@

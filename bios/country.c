@@ -27,6 +27,8 @@
  * actual tables. The code reading these tables is below.
  */
 
+#if CONF_MULTILANG
+
 struct country_record {
     int country;            /* country code */
     const char *lang_name;  /* name used to retrieve translations */
@@ -34,6 +36,8 @@ struct country_record {
     int charset;            /* charset code */
     int idt;                /* international date and time */
 };
+
+#endif
 
 struct charset_fonts {
     const Fonthead *f6x6;
@@ -57,7 +61,7 @@ struct charset_fonts {
 long cookie_idt;
 long cookie_akp;
 
-#if !CONF_UNIQUE_COUNTRY
+#if CONF_MULTILANG
 
 static const struct country_record *get_country_record(int country_code)
 {
@@ -120,7 +124,7 @@ void detect_akp(void)
     int country = os_conf >> 1;
     int keyboard = country;
 
-#if CONF_WITH_NVRAM && !CONF_UNIQUE_COUNTRY
+#if CONF_WITH_NVRAM && CONF_MULTILANG
     char buf[2];
     int err;
 
@@ -152,12 +156,12 @@ void detect_idt(void)
     {
         /* either no NVRAM, or the NVRAM is corrupt (low battery,
          * bad cksum), get the value from the current country. */
-#if CONF_UNIQUE_COUNTRY
-        cookie_idt = CONF_IDT;
-#else
+#if CONF_MULTILANG
         int country_code = get_current_country_display();
         const struct country_record *cr = get_country_record(country_code);
         cookie_idt = cr->idt;
+#else
+        cookie_idt = CONF_IDT;
 #endif
     }
 }
@@ -169,7 +173,7 @@ void detect_idt(void)
 const struct keytbl *get_keytbl(void)
 {
     int j;
-#if ! CONF_UNIQUE_COUNTRY
+#if CONF_MULTILANG
     j = get_kbd_index();
 #else
     /* use the unique keyboard anyway */
@@ -187,7 +191,7 @@ void get_fonts(const Fonthead **f6x6,
                const Fonthead **f8x16)
 {
     int j;
-#if ! CONF_UNIQUE_COUNTRY
+#if CONF_MULTILANG
     j = get_charset_index();
 #else
     /* use the unique charset anyway */

@@ -79,7 +79,7 @@ END {
     }
     print ""
 
-    print "#if ! CONF_UNIQUE_COUNTRY"
+    print "#if CONF_MULTILANG"
     print "static const struct country_record countries[] = {"
     for(i = 1 ; i <= ncountries ; i++) {
         country = countries[i]
