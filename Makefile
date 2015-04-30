@@ -852,12 +852,10 @@ include/i18nconf.h: obj/country
 	@echo "#define CONF_IDT ($(ETOSIDT))" >> $@
 else
 include/i18nconf.h: obj/country
-	@echo '# Generating $@ with CONF_KEYB=KEYB_ALL CONF_CHARSET=CHARSET_ALL'
+	@echo '# Generating $@ with CONF_MULTILANG=1'
 	@rm -f $@; touch $@
 	@echo '#define CONF_MULTILANG 1' >> $@
 	@echo '#define CONF_WITH_NLS 1' >> $@
-	@echo '#define CONF_KEYB KEYB_ALL' >> $@
-	@echo '#define CONF_CHARSET CHARSET_ALL' >> $@
 endif
 
 #

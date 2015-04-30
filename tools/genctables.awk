@@ -62,7 +62,6 @@ END {
     }
 
     print "/* Indexes of keyboard layouts inside keytables[] */"
-    print "#define KEYB_ALL -1"
     i = 0
     for(keyb in needkeybs) {
         print "#define KEYB_" keyb " " i
@@ -71,7 +70,6 @@ END {
     print ""
 
     print "/* Indexes of font sets inside font_sets[] */"
-    print "#define CHARSET_ALL -1"
     i = 0
     for(cset in needcsets) {
         print "#define CHARSET_" cset " " i
@@ -91,13 +89,13 @@ END {
     print "#endif\n\n"
 
     for(keyb in needkeybs) {
-        print "#if (CONF_KEYB == KEYB_ALL || CONF_KEYB == KEYB_" keyb ")"
+        print "#if CONF_MULTILANG || CONF_KEYB == KEYB_" keyb
         print "#include \"keyb_" tolower(keyb) ".h\""
         print "#endif"
     }
     print "\nstatic const struct keytbl *keytables[] = {"
     for(keyb in needkeybs) {
-        print "#if (CONF_KEYB == KEYB_ALL || CONF_KEYB == KEYB_" keyb ")"
+        print "#if CONF_MULTILANG || CONF_KEYB == KEYB_" keyb
         print "    &keytbl_" tolower(keyb) ","
         print "#endif"
     }
@@ -112,8 +110,7 @@ END {
     print "\nstatic const struct charset_fonts font_sets[] = {"
     for(cset in needcsets) {
         lcset = tolower(cset)
-        print "#if (CONF_CHARSET == CHARSET_ALL || CONF_CHARSET == CHARSET_" \
-            cset ")"
+        print "#if CONF_MULTILANG || CONF_CHARSET == CHARSET_" cset
         print "    { &fnt_" lcset "_6x6, &fnt_" lcset \
             "_8x8, &fnt_" lcset "_8x16 },"
         print "#endif"
