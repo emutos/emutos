@@ -506,35 +506,21 @@ static WORD convert_scancode(UBYTE *scancodeptr)
      * which keyboard table to use, and how to handle it, depends on
      * the presence or absence of the DUAL_KEYBOARD feature
      *
-     * if the DUAL_KEYBOARD feature is present, Alt-X always uses the
-     * 'main' keyboard tables; otherwise, the status of 'kb_switched'
-     * determines whether to use the main or alternate.  in either case,
-     * the tables are 128-byte direct scancode lookup tables
+     * Alt-X handling:
+     * if the DUAL_KEYBOARD feature is present, Alt-X always generates
+     * an ascii value of zero; otherwise, Alt-X performs an ascii
+     * lookup using the 'alternate' keyboard tables, which are set up
+     * as (scancode,ascii) pairs.
      *
-     * if the DUAL_KEYBOARD feature is not present, Alt-X uses the
-     * 'alternate' keyboard tables, which are set up as (scancode,ascii)
-     * pairs; otherwise the main keyboard tables are used (these are
-     * 128-byte direct scancode lookup tables)
+     * All other key handling:
+     * if 'kb_switched' is set (only set if a keyboard table has the
+     * DUAL_KEYBOARD feature AND the tables have been switched via the
+     * hotswitch key), the alternate keyboard tables are used; otherwise
+     * the main keyboard tables are used (these are all 128-byte direct
+     * scancode lookup tables).
      */
-    if (current_keytbl.features & DUAL_KEYBOARD) {
-        if (shifty & MODE_ALT) {
-            if (shifty & MODE_SHIFT) {
-                a = current_keytbl.shft;
-            } else if (shifty & MODE_CAPS) {
-                a = current_keytbl.caps;
-            } else {
-                a = current_keytbl.norm;
-            }
-        } else if (shifty & MODE_SHIFT) {
-            a = kb_switched ? current_keytbl.altshft : current_keytbl.shft;
-        } else if (shifty & MODE_CAPS) {
-            a = kb_switched ? current_keytbl.altcaps : current_keytbl.caps;
-        } else {
-            a = kb_switched ? current_keytbl.altnorm : current_keytbl.norm;
-        }
-        ascii = a[scancode];
-    } else {
-        if (shifty & MODE_ALT) {
+    if (shifty & MODE_ALT) {
+        if ((current_keytbl.features & DUAL_KEYBOARD) == 0) {
             if (shifty & MODE_SHIFT) {
                 a = current_keytbl.altshft;
             } else if (shifty & MODE_CAPS) {
@@ -548,13 +534,16 @@ static WORD convert_scancode(UBYTE *scancodeptr)
             if (*a++) {
                 ascii = *a;
             }
-        } else if (shifty & MODE_SHIFT) {
-            ascii = current_keytbl.shft[scancode];
-        } else if (shifty & MODE_CAPS) {
-            ascii = current_keytbl.caps[scancode];
-        } else {
-            ascii = current_keytbl.norm[scancode];
         }
+    } else {
+        if (shifty & MODE_SHIFT) {
+            a = kb_switched ? current_keytbl.altshft : current_keytbl.shft;
+        } else if (shifty & MODE_CAPS) {
+            a = kb_switched ? current_keytbl.altcaps : current_keytbl.caps;
+        } else {
+            a = kb_switched ? current_keytbl.altnorm : current_keytbl.norm;
+        }
+        ascii = a[scancode];
     }
 
     if (shifty & MODE_CTRL) {
