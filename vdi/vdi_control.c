@@ -179,10 +179,10 @@ void s_clip(Vwk * vwk)
         vwk->ymn_clip = (rtemp < 0) ? 0 : rtemp;
 
         rtemp = rect->x2;
-        vwk->xmx_clip = (rtemp > DEV_TAB[0]) ? DEV_TAB[0] : rtemp;
+        vwk->xmx_clip = (rtemp > xres) ? xres : rtemp;
 
         rtemp = rect->y2;
-        vwk->ymx_clip = (rtemp > DEV_TAB[1]) ? DEV_TAB[1] : rtemp;
+        vwk->ymx_clip = (rtemp > yres) ? yres : rtemp;
     } else {
         vwk->xmn_clip = 0;
         vwk->ymn_clip = 0;
@@ -452,7 +452,7 @@ void _v_clrwk(Vwk * vwk)
     ULONG size;
 
     /* Calculate screen size */
-    size = (ULONG)v_lin_wr * (DEV_TAB[1] + 1);
+    size = (ULONG)v_lin_wr * v_vt_rez;
 
     /* clear the screen */
     memset(v_bas_ad, 0, size);
