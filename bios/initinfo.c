@@ -185,19 +185,20 @@ static void cprint_devices(WORD dev)
 WORD initinfo(void)
 {
     int screen_height = v_cel_my + 1;
-#if CONF_WITH_AROS
-    int initinfo_height = 25;
-#else
-    int initinfo_height = 22;
-#endif
-    int top_margin = (screen_height - initinfo_height) / 2;
+    int initinfo_height = 23; /* Define ENABLE_KDEBUG to guess correct value */
+    int top_margin;
 #ifdef ENABLE_KDEBUG
     int actual_initinfo_height;
 #endif
     int i;
     WORD olddev = -1, dev = bootdev;
 
+#if CONF_WITH_AROS
+    initinfo_height += 2;
+#endif
+
     /* Center the initinfo screen vertically */
+    top_margin = (screen_height - initinfo_height) / 2;
     KDEBUG(("screen_height = %d, initinfo_height = %d, top_margin = %d\n",
         screen_height, initinfo_height, top_margin));
     for (i = 0; i < top_margin; i++)
@@ -263,12 +264,11 @@ WORD initinfo(void)
     set_margin(); cprintf(_("Press <Esc> to run an early console"));
     cprintf("\r\n");
 #endif
-    cprintf("\r\n");
 #if CONF_WITH_AROS
     set_margin(); cprintf("\033pThis binary mixes GPL and AROS APL\033q\r\n");
     set_margin(); cprintf("\033pcode, redistribution is forbidden.\033q\r\n");
-    cprintf("\r\n");
 #endif
+    cprintf("\r\n");
     set_margin();
     cprintf("\033p");
     cprintf(_(" Hold <Shift> to pause this screen "));
