@@ -17,6 +17,8 @@
  * Well, this can be made nicer later, if we have much time... :-)
  */
 
+/* #define ENABLE_KDEBUG */
+
 #include "config.h"
 #include "portab.h"
 #include "kprint.h"
@@ -34,6 +36,7 @@
 #include "version.h"
 
 #include "initinfo.h"
+#include "conout.h"
 
 int early_cli;
 
@@ -187,11 +190,17 @@ WORD initinfo(void)
 #else
     int initinfo_height = 22;
 #endif
+    int top_margin = (screen_height - initinfo_height) / 2;
+#ifdef ENABLE_KDEBUG
+    int actual_initinfo_height;
+#endif
     int i;
     WORD olddev = -1, dev = bootdev;
 
     /* Center the initinfo screen vertically */
-    for (i = 0; i < (screen_height - initinfo_height) / 2; i++)
+    KDEBUG(("screen_height = %d, initinfo_height = %d, top_margin = %d\n",
+        screen_height, initinfo_height, top_margin));
+    for (i = 0; i < top_margin; i++)
         cprintf("\r\n");
 
     /* Now print the EmuTOS Logo */
@@ -264,6 +273,15 @@ WORD initinfo(void)
     cprintf("\033p");
     cprintf(_(" Hold <Shift> to pause this screen "));
     cprintf("\033q");
+#ifdef ENABLE_KDEBUG
+    /* We need +1 because the previous line is not ended with CRLF */
+    actual_initinfo_height = v_cur_cy + 1 - top_margin;
+    if (actual_initinfo_height == initinfo_height)
+        KDEBUG(("initinfo_height is correct\n"));
+    else
+        KDEBUG(("Warning: initinfo_height = %d, should be %d.\n",
+            initinfo_height, actual_initinfo_height));
+#endif
 
     /*
      * pause for a short while, or longer if:
