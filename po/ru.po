@@ -521,7 +521,7 @@ msgstr "  Распространяется по правилам GPL"
 
 #: desk/desk_rsc.c:740
 msgid "See doc\\license.txt for details"
-msgstr "Смотри doc\\license.txt для деталей"
+msgstr " Смотри doc\\license.txt для деталей"
 
 #: desk/desk_rsc.c:755
 msgid "OPEN APPLICATION"
