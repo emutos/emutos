@@ -36,6 +36,9 @@
 #include "desk1.h"
 
 
+/* defines */
+#define SHRT_MIN    (-32767)    /* (would be in limits.h if it existed) */
+
 /* Prototypes: */
 static WORD act_chkobj(OBJECT *tree, WORD root, WORD obj, WORD mx, WORD my, WORD w, WORD h);
 
@@ -576,7 +579,7 @@ WORD act_bdown(WORD wh, OBJECT *tree, WORD root, WORD *in_mx, WORD *in_my,
         WORD            sobj;
         WORD            numobs, button;
         WORD            dst_wh;
-        WORD            l_mx, l_my, dulx = -1, duly = -1;
+        WORD            l_mx, l_my, l_mw, l_mh, dulx = -1, duly = -1;
         WORD            numpts, *pxypts, view;
         GRECT           m;
 
@@ -588,8 +591,18 @@ WORD act_bdown(WORD wh, OBJECT *tree, WORD root, WORD *in_mx, WORD *in_my,
                         /* rubber box to enclose a group of icons       */
         if ( (sobj == root) || (sobj == NIL) )
         {
-          r_set(&m, l_mx, l_my, 6, 6);
-          graf_rubbox(m.g_x, m.g_y, 6, 6, &m.g_w, &m.g_h);
+          graf_rubbox(l_mx, l_my, SHRT_MIN, SHRT_MIN, &l_mw, &l_mh);
+          if (l_mw < 0)     /* mouse moved leftwards */
+          {
+            l_mx += l_mw;   /* adjust origin and width */
+            l_mw = -l_mw;
+          }
+          if (l_mh < 0)     /* mouse moved upwards */
+          {
+            l_my += l_mh;   /* adjust origin and height */
+            l_mh = -l_mh;
+          }
+          r_set(&m, l_mx, l_my, l_mw, l_mh);
           act_allchg(wh, tree, root, sobj, &m, pc, SELECTED, TRUE, TRUE);
         } /* if */
         else
