@@ -276,7 +276,7 @@ static long XHInqTarget2(UWORD major, UWORD minor, ULONG *blocksize,
 
     if (next_handler) {
         long ret = next_handler(XHINQTARGET2, major, minor, blocksize, deviceflags, productname, stringlen);
-        if (ret != EINVFN && ret != EUNDEV)
+        if (ret != EINVFN && ret != EUNDEV && ret != EDRIVE)
             return ret;
     }
 
@@ -297,7 +297,7 @@ static long XHInqTarget(UWORD major, UWORD minor, ULONG *blocksize,
 
     if (next_handler) {
         long ret = next_handler(XHINQTARGET, major, minor, blocksize, deviceflags, productname);
-        if (ret != EINVFN && ret != EUNDEV)
+        if (ret != EINVFN && ret != EUNDEV && ret != EDRIVE)
             return ret;
     }
 
@@ -317,7 +317,7 @@ static long XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocks
 
     if (next_handler) {
         long ret = next_handler(XHGETCAPACITY, major, minor, blocks, blocksize);
-        if (ret != EINVFN && ret != EUNDEV)
+        if (ret != EINVFN && ret != EUNDEV && ret != EDRIVE)
             return ret;
     }
 
@@ -339,7 +339,7 @@ static long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
 
     if (next_handler) {
         long ret = next_handler(XHREADWRITE, major, minor, rw, sector, count, buf);
-        if (ret != EINVFN && ret != EUNDEV)
+        if (ret != EINVFN && ret != EUNDEV && ret != EDRIVE)
             return ret;
     }
 
