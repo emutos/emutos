@@ -15,10 +15,6 @@
 # It is included from the main Makefile.
 #
 
-# Determine the version to be used in archives names
-EXTRACT_VERSION = date +Git-%Y%m%d
-VERSION = $(shell $(EXTRACT_VERSION))
-
 # Check the current release version. For test purposes.
 .PHONY: release-version
 NODEP += release-version

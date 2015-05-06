@@ -27,6 +27,13 @@
 MAKEFLAGS = --no-print-directory
 
 #
+# EmuTOS version
+#
+
+VERSION = $(shell date +%Y%m%d)
+#VERSION = 0.9.4
+
+#
 # the country. should be a lowercase two-letter code as found in
 # the table in tools/mkheader.c and bios/country.c
 #
@@ -907,8 +914,18 @@ obj/%.o : %.S
 
 TOCLEAN += obj/*.c
 
-obj/version.c: doc/changelog.txt tools/version.sed
-	sed -f tools/version.sed doc/changelog.txt > $@
+# This temporary file is always generated
+obj/version2.c:
+	@echo '/* Generated from Makefile */' > $@
+	@echo 'const char version[] = "$(VERSION)";' >> $@
+
+# If the official version file is different than the temporary one, update it
+obj/version.c: obj/version2.c
+	@if ! cmp -s $@ $< ; then \
+	  echo '# Updating $@ with VERSION=$(VERSION)' ; \
+	  cp $< $@ ; \
+	fi ; \
+	rm $<
 
 obj/version.o: obj/version.c
 	$(CC) $(CFILE_FLAGS) -c $< -o $@
