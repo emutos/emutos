@@ -185,6 +185,12 @@ static long XHInqDriver(UWORD bios_device, char *name, char *version, char *comp
             return ret;
     }
 
+    if (bios_device >= BLKDEVNUM || !blkdev[bios_device].valid)
+        return EDRIVE;
+
+    if (disk_inquire(blkdev[bios_device].unit, NULL, NULL, NULL, 0) == EUNDEV)
+        return EDRIVE;
+
     if(name)
         strlcpy(name, DRIVER_NAME, DRIVER_NAME_MAXLENGTH);
     if(version)
