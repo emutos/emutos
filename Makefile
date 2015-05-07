@@ -326,6 +326,7 @@ help:
 	@echo "target  meaning"
 	@echo "------  -------"
 	@echo "help    this help message"
+	@echo "version display the EmuTOS version"
 	@echo "192     $(ROM_192), EmuTOS ROM padded to size 192 kB (starting at $(VMA_T1))"
 	@echo "256     $(ROM_256), EmuTOS ROM padded to size 256 kB (starting at $(VMA_T2))"
 	@echo "512     $(ROM_512), EmuTOS ROM padded to size 512 kB (starting at $(VMA_T2))"
@@ -352,6 +353,12 @@ help:
 	@echo "fdsm    fal_dsm.txt, like above, but for $(VMA_T2) ROMs"
 	@echo "*.dsm   disassembly of any .c or almost any .img file"
 	@echo "release build the release archives into $(RELEASE_DIR)"
+
+# Display the EmuTOS version
+.PHONY: version
+NODEP += version
+version:
+	@echo '$(VERSION)'
 
 #
 # the maps must be built at the same time as the images, to enable

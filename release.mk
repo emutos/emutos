@@ -15,12 +15,6 @@
 # It is included from the main Makefile.
 #
 
-# Check the current release version. For test purposes.
-.PHONY: release-version
-NODEP += release-version
-release-version:
-	@echo '$(VERSION)'
-
 # This subset of the doc directory will be included in all the binary archives
 DOCFILES = doc/announce.txt doc/authors.txt doc/bugs.txt doc/changelog.txt \
   doc/license.txt doc/status.txt doc/todo.txt doc/xhdi.txt
