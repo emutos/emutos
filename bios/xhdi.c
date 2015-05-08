@@ -92,6 +92,9 @@ static long XHInqDev2(UWORD drv, UWORD *major, UWORD *minor, ULONG *start,
             return ret;
     }
 
+    if (drv >= BLKDEVNUM || !blkdev[drv].valid)
+        return EDRIVE;
+
     if (major)
         *major = blkdev[drv].unit - NUMFLOPPIES;
     if (minor)
