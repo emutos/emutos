@@ -132,8 +132,8 @@ extern GRECT    gl_rcenter;
 extern GRECT    gl_rmenu;
 
 void gsx_gclip(GRECT *pt);
-void gsx_sclip(GRECT *pt);
-void gsx_pline(WORD offx, WORD offy, WORD cnt, WORD *pts);
+void gsx_sclip(const GRECT *pt);
+void gsx_pline(WORD offx, WORD offy, WORD cnt, const WORD *pts);
 void gsx_attr(UWORD text, UWORD mode, UWORD color);
 void gsx_fix(FDB *pfd, LONG theaddr, WORD wb, WORD h);
 void bb_screen(WORD scrule, WORD scsx, WORD scsy, WORD scdx, WORD scdy, WORD scw, WORD sch);

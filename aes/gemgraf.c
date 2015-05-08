@@ -96,7 +96,7 @@ static WORD     gl_hsptschar;
 *       is 0, then no clip should be set.  Ohterwise, set the
 *       appropriate clip.
 */
-void gsx_sclip(GRECT *pt)
+void gsx_sclip(const GRECT *pt)
 {
         r_get(pt, &gl_xclip, &gl_yclip, &gl_wclip, &gl_hclip);
 
@@ -174,7 +174,7 @@ static void gsx_xline(WORD ptscount, WORD *ppoints)
 *       Routine to draw a certain number of points in a polyline
 *       relative to a given x,y offset.
 */
-void gsx_pline(WORD offx, WORD offy, WORD cnt, WORD *pts)
+void gsx_pline(WORD offx, WORD offy, WORD cnt, const WORD *pts)
 {
         WORD            i, j;
 

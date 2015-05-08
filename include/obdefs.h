@@ -230,7 +230,7 @@ typedef struct _PARMBLK
 #define TE_CNTR 2
 
 /* extract xywh values from GRECT */
-static __inline__ void r_get(GRECT *pxywh, WORD *px, WORD *py, WORD *pw, WORD *ph)
+static __inline__ void r_get(const GRECT *pxywh, WORD *px, WORD *py, WORD *pw, WORD *ph)
 {
     *px = pxywh->g_x;
     *py = pxywh->g_y;
