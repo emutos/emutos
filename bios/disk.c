@@ -352,7 +352,7 @@ union
 
 
 /*
- * scans for Atari partitions on 'major' and adds them to blkdev array
+ * scans for Atari partitions on unit and adds them to blkdev array
  *
  */
 static int atari_partition(UWORD unit,LONG *devices_available)
