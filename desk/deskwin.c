@@ -331,7 +331,7 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
             case V_TEXT:
                 G.g_screen[obid].ob_type = G_USERDEF;
                 G.g_screen[obid].ob_spec = (LONG)&G.g_udefs[obid];
-                G.g_udefs[obid].ub_code = &far_draw;
+                G.g_udefs[obid].ub_code = &dr_code;
                 G.g_udefs[obid].ub_parm = (LONG)&pstart->f_junk;
                 win_icalc(pstart);
                 break;

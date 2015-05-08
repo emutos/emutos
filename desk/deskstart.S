@@ -24,7 +24,6 @@
 #endif
 
         .extern _deskmain
-        .extern _dr_code
 
         .text
 
@@ -59,18 +58,6 @@ fill:
 
         clr.w   -(sp)
         trap    #1                      // Pterm
-
-
-
-        .globl  _far_draw
-_far_draw:
-        move.l  4(a7),d0
-        move.l  a7,LD5EA
-        movea.l #LD9EE,a7
-        move.l  d0,-(a7)
-        jsr     _dr_code
-        movea.l LD5EA,a7
-        rts
 
 
 
@@ -130,12 +117,6 @@ _get_deskwh:
 _deskstackbottom:
         .ds.b   DESKSTACKSIZE
 deskustack:
-
-LD5EA:  .ds.l   1
-
-        .ds.b   0x400
-LD9EE:
-
 
 
 #ifdef NO_ROM
