@@ -1102,15 +1102,7 @@ void abline (const Line * line, WORD wrt_mode, UWORD color)
     const WORD xinc = v_planes; /* positive increase for each x step, planes WORDS */
     UWORD msk;
     int plane;
-    UWORD linemask;             /* linestyle bits */
-
-#if 0
-    if (line->y1 == line->y2) {
-        kprintf("Y = %d, MODE = %d.\n", line->y1, wrt_mode);
-        horzline(vwk, wrt_mode);  /* broken */
-        return;
-    }
-#endif
+    UWORD linemask = LN_MASK;   /* linestyle bits */
 
     /* Make x axis always goind up */
     if (line->x2 < line->x1) {
@@ -1127,6 +1119,26 @@ void abline (const Line * line, WORD wrt_mode, UWORD color)
         y2 = line->y2;
     }
 
+    /*
+     * optimize drawing of horizontal lines
+     */
+    if (y1 == y2) {
+        VwkAttrib attr;
+        Rect rect;
+        attr.clip = 0;
+        attr.multifill = 0;
+        attr.patmsk = 0;
+        attr.patptr = &linemask;
+        attr.wrt_mode = wrt_mode;
+        attr.color = color;
+        rect.x1 = x1;
+        rect.y1 = y1;
+        rect.x2 = x2;
+        rect.y2 = y2;
+        draw_rect_common(&attr,&rect);
+        return;
+    }
+
     dx = x2 - x1;
     dy = y2 - y1;
 
@@ -1140,7 +1152,6 @@ void abline (const Line * line, WORD wrt_mode, UWORD color)
 
     adr = get_start_addr(x1, y1);       /* init adress counter */
     msk = 0x8000 >> (x1&0xf);           /* initial bit position in WORD */
-    linemask = LN_MASK;                 /* to avoid compiler warning */
 
     for (plane = v_planes-1; plane >= 0; plane-- ) {
         UWORD *addr;
