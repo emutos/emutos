@@ -416,28 +416,18 @@ void linea_rect(void)
     VwkAttrib attr;
     Rect line;
 
-    lineA2Attrib(&attr);
-
+    if (CLIP) {
+        if (X1 < XMN_CLIP) X1 = XMN_CLIP;
+        if (X2 > XMX_CLIP) X2 = XMX_CLIP;
+        if (Y1 < YMN_CLIP) Y1 = YMN_CLIP;
+        if (Y2 > YMX_CLIP) Y2 = YMX_CLIP;
+    }
     line.x1 = X1;
     line.x2 = X2;
     line.y1 = Y1;
     line.y2 = Y2;
-    /* order rectangle corner co-ordinates */
-    arb_corner(&line);
 
-    if (CLIP) {
-        if (line.x1 < XMN_CLIP) line.x1 = XMN_CLIP;
-        if (line.x2 > XMX_CLIP) line.x2 = XMX_CLIP;
-        if (line.y1 < YMN_CLIP) line.y1 = YMN_CLIP;
-        if (line.y2 > YMX_CLIP) line.y2 = YMX_CLIP;
-    }
-    /* Line-A line should wrap in all directions, but draw_rect()
-     * doesn't explicity support wrapping, so clip y to avoid
-     * worst writes outside screen area.
-     */
-    if (line.y1 < 0) line.y1 = 0;
-    if (line.y2 > yres) line.x2 = yres;
-
+    lineA2Attrib(&attr);
     draw_rect_common(&attr, &line);
 }
 
