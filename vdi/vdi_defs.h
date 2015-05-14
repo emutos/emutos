@@ -82,7 +82,7 @@ typedef struct {
     WORD clip;       /* polygon clipping on/off */
     WORD multifill;  /* Multi-plane fill flag   */
     UWORD patmsk;    /* Current pattern mask    */
-    UWORD *patptr;   /* Current pattern pointer */
+    const UWORD *patptr;/* Current pattern pointer */
     WORD wrt_mode;   /* Current writing mode    */
     UWORD color;     /* fill color */
 } VwkAttrib;

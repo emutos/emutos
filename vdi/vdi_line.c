@@ -402,8 +402,14 @@ static void lineA2Attrib(VwkAttrib *attr)
 {
     attr->clip = CLIP;      /* only used by polygon drawing */
     attr->multifill = 0;    /* only raster copy supports multi-plane patterns */
-    attr->patmsk = patmsk;
-    attr->patptr = patptr;
+    if (patptr) {
+        attr->patmsk = patmsk;
+        attr->patptr = patptr;
+    } else {
+        /* pattern is always needed for draw_rect_common, default to solid */
+        attr->patmsk = 0;
+        attr->patptr = &SOLID;
+    }
     attr->wrt_mode = WRT_MODE;
     attr->color = linea_color();
 }
