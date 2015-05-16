@@ -229,7 +229,8 @@ void draw_rect_common(const VwkAttrib *attr, const Rect *rect)
                         *work &= ~(pattern & rightmask);
                     }
                 }
-                patind += (attr->multifill) ? 16 : 0;/* maybe advance pattern data */
+                if (attr->multifill)
+                    patind += 16;                   /* advance pattern data */
             }
         }
         break;
@@ -253,7 +254,8 @@ void draw_rect_common(const VwkAttrib *attr, const Rect *rect)
                 if (rightmask) {                    /* right section */
                     *work ^= pattern & rightmask;
                 }
-                patind += (attr->multifill) ? 16 : 0;/* maybe advance pattern data */
+                if (attr->multifill)
+                    patind += 16;                   /* advance pattern data */
             }
         }
         break;
@@ -289,7 +291,8 @@ void draw_rect_common(const VwkAttrib *attr, const Rect *rect)
                         *work &= ~(pattern & rightmask);
                     }
                 }
-                patind += (attr->multifill) ? 16 : 0;/* maybe advance pattern data */
+                if (attr->multifill)
+                    patind += 16;                   /* advance pattern data */
             }
         }
         break;
@@ -317,7 +320,8 @@ void draw_rect_common(const VwkAttrib *attr, const Rect *rect)
                     data |= pattern & rightmask;
                     *work = data;
                 }
-                patind += (attr->multifill) ? 16 : 0;/* maybe advance pattern data */
+                if (attr->multifill)
+                    patind += 16;                   /* advance pattern data */
             }
         }
         break;
