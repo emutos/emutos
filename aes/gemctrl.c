@@ -101,16 +101,34 @@ static void ct_msgup(WORD message, AESPD *owner, WORD wh, WORD m1, WORD m2, WORD
 }
 
 
+/*
+ * perform window untopping: send WM_UNTOPPED message to window owner,
+ * wait for button up, then dispatch any waiting gem processes
+ */
+static void perform_untop(WORD wh)
+{
+    WORD i;
+
+    /* send msg, wait for button up */
+    ct_msgup(WM_UNTOPPED, D.w_win[wh].w_owner, wh, 0, 0, 0, 0);
+    
+    for (i = 0; i < num_accs; i++)
+        dsptch();
+}
+
+
 static void hctl_window(WORD w_handle, WORD mx, WORD my)
 {
         GRECT           t, f, pt;
-        WORD            x, y, w, h, ii;
+        WORD            x, y, w, h;
         WORD            kind;
         register WORD   cpt, message;
         LONG            tree;
         OBJECT          *obj;
 
         message = 0;
+        x = y = w = h = 0;
+
         if ( (w_handle == gl_wtop) ||
              ( (D.w_win[w_handle].w_flags & VF_SUBWIN) &&
                (D.w_win[gl_wtop].w_flags & VF_SUBWIN) )  )
@@ -225,10 +243,7 @@ doelev:         message = (cpt == W_HELEV) ? WM_HSLID : WM_VSLID;
         }
         else
         {
-          ct_msgup(WM_UNTOPPED, D.w_win[gl_wtop].w_owner, gl_wtop,
-                        0, 0, 0, 0);
-          for(ii=0; ii<num_accs; ii++)
-            dsptch();
+          perform_untop(gl_wtop);
                                                 /* went down on inactive*/
                                                 /*   window so tell ap. */
                                                 /*   to bring it to top */
@@ -262,14 +277,8 @@ static void hctl_rect(void)
                 mn_getownid(&owner,&item,item); /* get accessory owner & menu id */
                 do_chg(gl_mntree, title, SELECTED, FALSE, TRUE, TRUE);
 
-                if (gl_wtop >= 0 )
-                {
-                  WORD  ii;
-                  ct_msgup(WM_UNTOPPED, D.w_win[gl_wtop].w_owner, gl_wtop,
-                          0, 0, 0, 0);
-                  for (ii=0; ii<num_accs; ii++)
-                    dsptch();
-                }
+                if (gl_wtop >= 0)
+                  perform_untop(gl_wtop);
 
                 mesag = AC_OPEN;
               }
