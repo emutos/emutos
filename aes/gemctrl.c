@@ -226,7 +226,7 @@ doelev:         message = (cpt == W_HELEV) ? WM_HSLID : WM_VSLID;
         else
         {
           ct_msgup(WM_UNTOPPED, D.w_win[gl_wtop].w_owner, gl_wtop,
-                        x, y, w, h);
+                        0, 0, 0, 0);
           for(ii=0; ii<num_accs; ii++)
             dsptch();
                                                 /* went down on inactive*/
