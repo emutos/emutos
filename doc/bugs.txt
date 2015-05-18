@@ -30,8 +30,6 @@ Common AES/VDI/Line-A bugs:
   http://sourceforge.net/mailarchive/message.php?msg_id=29276993
 - Game result texts in "Sherlock" game are positioned wrong,
   they overlap vertically.
-- Space Harrier game is missing colors from top of the screen
-  and vertical color stripes on ground aren't of even width.
 - Thick arcs going partly outside of screen have incorrectly
   drawn pixels at top of screen in vdiline tester.
 - In Mario Becroft's GEM Pacman, "game over" melt effect happens
@@ -41,8 +39,9 @@ Common AES/VDI/Line-A bugs:
   special key (Alt/Shift) input works:
   http://sourceforge.net/mailarchive/message.php?msg_id=29277643
 - In "MathMaze", game win dialog leaves some lines on screen.
-- In "Japlish", all drawing for ship, enemies and lines on ground
-  are missing.  Assumed to be issue with line-A polygon line.
+- Line-A polygons are one pixel short at both sides.  This is
+  because clc_flit() function does it for VDI (where perimeter
+  is drawn separately).  It is visible e.g. in "Japlish" game.
 
 Atari TT / TOS v3 compatibility bugs:
 - Changing the VDI color palette is not possible on the TT.
