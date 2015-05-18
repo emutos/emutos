@@ -457,18 +457,22 @@ void linea_hline(void)
  */
 void linea_polygon(void)
 {
-    VwkClip *clipper, noclip = { 0, xres, 0, yres };
+    VwkClip clipper;
     Point *points = (Point*) PTSIN;
     int count = CONTRL[1];
     VwkAttrib attr;
 
     lineA2Attrib(&attr);
     if (CLIP) {
-        clipper = (VwkClip*) &XMN_CLIP;
+        /* clc_flit does only X-clipping */
+        clipper.xmn_clip = XMN_CLIP;
+        clipper.xmx_clip = XMX_CLIP;
     } else {
-        clipper = &noclip;
+        clipper.xmn_clip = 0;
+        clipper.xmx_clip = xres;
     }
-    clc_flit(&attr, clipper, points, Y1, count);
+    /* compared to real line-A, clc_flit explicitly skips outline */
+    clc_flit(&attr, &clipper, points, Y1, count);
 }
 
 
