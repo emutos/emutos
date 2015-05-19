@@ -53,9 +53,14 @@ WORD    gl_ctmown;
 WORD    appl_msg[8];
 
 /*
+ * Local variables
+ */
+static WORD gl_tmpmoff;
+
+/*
  * array used to convert from window object # to window message code
  */
-const WORD gl_wa[] =
+static const WORD gl_wa[] =
 {
         WA_UPLINE,
         WA_DNLINE,
@@ -67,12 +72,6 @@ const WORD gl_wa[] =
         WA_LFPAGE,
         WA_RTPAGE
 };
-
-
-/*
- * Local variables
- */
-static WORD gl_tmpmoff;
 
 
 /*
