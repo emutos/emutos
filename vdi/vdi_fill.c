@@ -452,8 +452,9 @@ clc_flit (const VwkAttrib * attr, const VwkClip * clipper, const Point * point, 
              */
             if ((dy1 < 0) != (dy2 < 0)) {
                 int dx = (x2 - x1) << 1;    /* so we can round by adding 1 below */
-                if (++intersections > MAX_INTERSECTIONS)
+                if (intersections >= MAX_INTERSECTIONS)
                     break;
+                intersections++;
                 /* fill edge buffer with x-values */
                 if ( dx < 0 ) {
                     *bufptr++ = ((dy2 * dx / dy + 1) >> 1) + x2;
