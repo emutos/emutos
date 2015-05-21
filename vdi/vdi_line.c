@@ -849,6 +849,7 @@ void wideline(Vwk * vwk, Point * point, int count)
 {
     WORD i, k;
     WORD wx1, wy1, wx2, wy2, vx, vy;
+    BOOL closed = FALSE;
     Point *ptr, box[5];      /* box too high, to close polygon */
 
     /* Don't attempt wide lining on a degenerate polyline */
@@ -869,10 +870,17 @@ void wideline(Vwk * vwk, Point * point, int count)
     wx1 = point->x;
     wy1 = point->y;
 
-    /* If the end style for the first point is not squared, output a circle. */
-    if (s_begsty != SQUARED) {
+    /* Determine if the line is a closed polyline */
+    ptr = point + count - 1;    /* point to last vertex */
+    if ((ptr->x == wx1) && (ptr->y == wy1))
+        closed = TRUE;
+
+    /*
+     * If the end style for the first point is not squared,
+     * or the polyline is closed, output a circle
+     */
+    if ((s_begsty != SQUARED) || closed)
         do_circ(vwk, wx1, wy1);
-    }
 
     /* Loop over the number of points passed in. */
     for (i = 1; i < count; i++) {
@@ -929,9 +937,12 @@ void wideline(Vwk * vwk, Point * point, int count)
 
         polygon(vwk, box, 4);
 
-        /* If the terminal point of the line segment is an internal joint, */
-        /* output a filled circle.                                         */
-        if ((i < count - 1) || (s_endsty != SQUARED))
+        /*
+         * If the terminal point of the line segment is an internal joint,
+         * or the end style for the last point is not squared,
+         * or the polyline is closed, output a filled circle
+         */
+        if ((i < count - 1) || (s_endsty != SQUARED) || closed)
             do_circ(vwk, wx2, wy2);
 
         /* end point becomes the starting point for the next line segment. */
