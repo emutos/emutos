@@ -1270,7 +1270,7 @@ static WORD get_dma_status(void)
 {
     WORD ret;
 
-    DMA->control = 0x90;
+    DMA->control = DMA_SCREG | DMA_FDC;
     ret = DMA->control;
 
     return ret;
