@@ -78,8 +78,9 @@ void _vsl_width(Vwk * vwk)
     else if (w > SIZ_TAB[6])
         w = SIZ_TAB[6];
 
-    /* Make the line width an odd number (one less, if even). */
-    w = ((w - 1) / 2) * 2 + 1;
+    /* If the line width is even, make it odd by decreasing it by one */
+    if ((w & 0x0001) == 0)
+        w--;
 
     /* Set the line width internals and return parameters */
     CONTRL[2] = 1;
