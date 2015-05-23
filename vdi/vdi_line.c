@@ -8,9 +8,6 @@
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  */
-
-
-
 #include "config.h"
 #include "portab.h"
 #include "intmath.h"
@@ -31,13 +28,27 @@ extern void linea_line(void);     /* called only from linea.S */
 
 /* the six predefined line styles */
 const UWORD LINE_STYLE[6] = { 0xFFFF, 0xFFF0, 0xC0C0, 0xFF18, 0xFF00, 0xF191 };
+
+/*
+ * The following array holds values that allow wideline() to draw a
+ * rasterized circle.  The values are actually those required for a
+ * quarter of the circle, specifically quadrant 1.  [Quadrants are
+ * numbered 1-4, beginning with the "south-east" quadrant, and
+ * travelling clockwise].
+ *
+ * q_circle[n] contains the offset of the edge of the circle (from a
+ * vertical line through the centre of the circle), for the nth line
+ * (counting from a horizontal line through the centre of the circle).
+ */
 static WORD q_circle[MX_LN_WIDTH];     /* Holds the circle DDA */
 
 /* Wide line attribute save areas */
 static WORD s_begsty, s_endsty, s_fil_col, s_fill_per;
 
 
-/* ST_UD_LINE_STYLE: */
+/*
+ * _vsl_udsty - set user-defined line style
+ */
 void _vsl_udsty(Vwk * vwk)
 {
     vwk->ud_ls = *INTIN;
@@ -47,7 +58,6 @@ void _vsl_udsty(Vwk * vwk)
 /*
  * _vsl_type - Set line style for line-drawing functions
  */
-
 void _vsl_type(Vwk * vwk)
 {
     WORD li;
@@ -62,11 +72,9 @@ void _vsl_type(Vwk * vwk)
 }
 
 
-
 /*
  * _vsl_width - Set line width
  */
-
 void _vsl_width(Vwk * vwk)
 {
     WORD w, *pts_out;
@@ -90,11 +98,9 @@ void _vsl_width(Vwk * vwk)
 }
 
 
-
 /*
  * _vsl_ends - sets the style of end point for line starting and ending points
  */
-
 void _vsl_ends(Vwk * vwk)
 {
     WORD lb, le;
@@ -117,11 +123,9 @@ void _vsl_ends(Vwk * vwk)
 }
 
 
-
 /*
  * _vsl_color - sets the color for line-drawing
  */
-
 void _vsl_color(Vwk * vwk)
 {
     WORD lc;
@@ -135,11 +139,9 @@ void _vsl_color(Vwk * vwk)
 }
 
 
-
 /*
  * vql_attr - Inquire current polyline attributes
  */
-
 void vql_attr(Vwk * vwk)
 {
     INTOUT[0] = vwk->line_index + 1;
@@ -155,7 +157,7 @@ void vql_attr(Vwk * vwk)
 
 
 /*
- * draw_rect - draw one or more horizontal lines
+ * draw_rect_common - draw one or more horizontal lines
  *
  * This code does the following:
  *  1. Figures out the sizes of the left, centre, and right sections.  If
@@ -337,7 +339,7 @@ void draw_rect_common(const VwkAttrib *attr, const Rect *rect)
  */
 void Vwk2Attrib(const Vwk *vwk, VwkAttrib *attr, const UWORD color)
 {
-    /* in same order as they're in Wvk, so that gcc
+    /* in same order as they're in Vwk, so that gcc
      * could use longs for copying words
      */
     attr->clip = vwk->clip;
@@ -347,6 +349,7 @@ void Vwk2Attrib(const Vwk *vwk, VwkAttrib *attr, const UWORD color)
     attr->wrt_mode = vwk->wrt_mode;
     attr->color = color;
 }
+
 
 /*
  * VDI wrapper for draw_rect_common
@@ -358,6 +361,7 @@ void draw_rect(const Vwk * vwk, Rect * rect, const UWORD fillcolor)
     Vwk2Attrib(vwk, &attr, fillcolor);
     draw_rect_common(&attr, rect);
 }
+
 
 /*
  * VDI helper/wrapper for horizontal line drawing
@@ -376,6 +380,7 @@ extern WORD X1, Y1, X2, Y2, WRT_MODE;
 extern WORD FG_BP_1, FG_BP_2, FG_BP_3, FG_BP_4;
 extern WORD CLIP, XMN_CLIP, XMX_CLIP, YMN_CLIP, YMX_CLIP;
 extern UWORD *patptr, patmsk;
+
 
 /*
  * compose color for draw_rect_common & abline from line-A variables
@@ -403,6 +408,10 @@ static UWORD linea_color(void)
     return color;
 }
 
+
+/*
+ * lineA2Attrib - sets VwkAttrib fields from line-A variables
+ */
 static void lineA2Attrib(VwkAttrib *attr)
 {
     attr->clip = CLIP;      /* only used by polygon drawing */
@@ -418,6 +427,7 @@ static void lineA2Attrib(VwkAttrib *attr)
     attr->wrt_mode = WRT_MODE;
     attr->color = linea_color();
 }
+
 
 /*
  * Line-A wrapper for draw_rect_common
@@ -442,6 +452,7 @@ void linea_rect(void)
     draw_rect_common(&attr, &line);
 }
 
+
 /*
  * Line-A wrapper for horizontal line
  */
@@ -452,6 +463,7 @@ void linea_hline(void)
     linea_rect();
     CLIP = clip; Y2 = y2;
 }
+
 
 /*
  * Line-A wrapper for clc_flit
@@ -478,9 +490,8 @@ void linea_polygon(void)
 
 
 /*
- * _v_pline - the wrapper
+ * _v_pline - wrapper for polyline/wideline
  */
-
 void _v_pline(Vwk * vwk)
 {
     Point * point = (Point*)PTSIN;
@@ -505,9 +516,15 @@ void _v_pline(Vwk * vwk)
 }
 
 
-
 /*
- * clip_code - helper function
+ * clip_code - helper function, used by clip_line()
+ *
+ * returns a bit mask indicating where x and y are, relative
+ * to the clipping rectangle:
+ *  1   x is left
+ *  2   x is right
+ *  4   y is above
+ *  8   y is below
  */
 static WORD clip_code(Vwk * vwk, WORD x, WORD y)
 {
@@ -527,9 +544,11 @@ static WORD clip_code(Vwk * vwk, WORD x, WORD y)
 
 
 /*
- * clip_line - helper function
+ * clip_line - clip line if necessary
+ *
+ * returns FALSE iff the line lies outside the clipping rectangle
+ * otherwise, updates the contents of the Line structure & returns TRUE
  */
-
 BOOL clip_line(Vwk * vwk, Line * line)
 {
     WORD deltax, deltay, x1y1_clip_flag, x2y2_clip_flag, line_clip_flag;
@@ -569,12 +588,11 @@ BOOL clip_line(Vwk * vwk, Line * line)
 
 
 /*
- * pline - draw a poly-line
+ * polyline - draw a poly-line
  *
  * note: we pass the colour, since this routine is also used for
  * perimeters, which are drawn in the fill colour ...
  */
-
 void polyline(Vwk * vwk, Point * point, int count, WORD color)
 {
     int i;
@@ -593,9 +611,14 @@ void polyline(Vwk * vwk, Point * point, int count, WORD color)
 }
 
 
-
 /*
- * quad_xform - Transform according to the quadrant.
+ * quad_xform - helper function for perp_off()
+ *
+ * Converts input (x,y) to output (x,y) according to the value in 'quad':
+ *  1 ("south-east" quadrant):  x -> x,  y -> y
+ *  2 ("south-west" quadrant):  x -> -x, y -> y
+ *  3 ("north-west" quadrant):  x -> -x, y -> -y
+ *  4 ("north-east" quadrant):  x -> x,  y -> -y
  */
 static void quad_xform(WORD quad, WORD x, WORD y, WORD *tx, WORD *ty)
 {
@@ -625,11 +648,14 @@ static void quad_xform(WORD quad, WORD x, WORD y, WORD *tx, WORD *ty)
 }
 
 
-
 /*
- * perp_off -
+ * perp_off - calculate the perpendicular offsets 
+ *
+ * Given a vector (vx,vy) which specifies the length and direction of
+ * a line segment, this function returns x & y offsets to add/subtract
+ * to the endpoints of the line segment.  The four points thereby
+ * specified form a box which is the wideline segment.
  */
-
 static void perp_off(WORD * px, WORD * py)
 {
     WORD *vx, *vy, *pcircle, u, v;
@@ -694,11 +720,12 @@ static void perp_off(WORD * px, WORD * py)
 }
 
 
-
 /*
- * cir_dda - Used in wideline()
+ * cir_dda - populate q_circle[] array
+ * 
+ * This is called by wideline() when the current wideline width (line_cw)
+ * changes, in order to reinitialise q_circle[]
  */
-
 static void cir_dda(Vwk * vwk)
 {
     WORD i, j;
@@ -755,11 +782,13 @@ static void cir_dda(Vwk * vwk)
 }
 
 
-
 /*
  * do_circ - draw a circle
+ *
+ * This is used by wideline():
+ *  a) to round the ends of the line if not SQUARED
+ *  b) to make a smooth join between line segments of a polyline
  */
-
 static void do_circ(Vwk * vwk, WORD cx, WORD cy)
 {
     WORD k;
@@ -803,11 +832,9 @@ static void do_circ(Vwk * vwk, WORD cx, WORD cy)
 }
 
 
-
 /*
  * s_fa_attr - Save the fill area attribute
  */
-
 static void s_fa_attr(Vwk * vwk)
 {
     /* Set up the fill area attribute environment. */
@@ -826,11 +853,9 @@ static void s_fa_attr(Vwk * vwk)
 }                               /* End "s_fa_attr". */
 
 
-
 /*
  * r_fa_attr - Restore the fill area attribute
  */
-
 static void r_fa_attr(Vwk * vwk)
 {
     /* Restore the fill area attribute environment. */
@@ -841,11 +866,9 @@ static void r_fa_attr(Vwk * vwk)
 }                               /* End "r_fa_attr". */
 
 
-
 /*
  * wideline - draw a line with width >1
  */
-
 void wideline(Vwk * vwk, Point * point, int count)
 {
     WORD i, k;
@@ -957,9 +980,10 @@ void wideline(Vwk * vwk, Point * point, int count)
 
 
 /*
- * arrow - Draw an arrow
+ * draw_arrow - helper function for arrow()
+ *
+ * performs the actual drawing
  */
-
 static void draw_arrow(Vwk * vwk, Point * point, int count, int inc)
 {
     LONG line_len2;
@@ -1049,13 +1073,11 @@ static void draw_arrow(Vwk * vwk, Point * point, int count, int inc)
 }
 
 
-
 /*
  * arrow - draw arrow(s) at the end(s) of the line
  *
  * Will alter the end of the line segment.
  */
-
 void arrow(Vwk * vwk, Point * point, int count)
 {
     /* Set up the attribute environment. */
@@ -1074,8 +1096,7 @@ void arrow(Vwk * vwk, Point * point, int count)
 
     /* Restore the attribute environment. */
     r_fa_attr(vwk);
-}                               /* End "do_arrow". */
-
+}
 
 
 /*
@@ -1107,7 +1128,6 @@ void arrow(Vwk * vwk, Point * point, int count)
  * output:
  *     LN_MASK rotated to proper alignment with (X2,Y2).
  */
-
 void abline (const Line * line, WORD wrt_mode, UWORD color)
 {
     UWORD *adr;
