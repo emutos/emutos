@@ -801,17 +801,14 @@ static void do_circ(Vwk * vwk, WORD cx, WORD cy)
             horzline(vwk, &line);
 
         /* Do the upper and lower semi-circles. */
-        for (k = 1; k < num_qc_lines; k++) {
+        for (k = 1, ++pointer; k < num_qc_lines; k++, pointer++) {
             /* Upper semi-circle. */
-            pointer = &q_circle[k];
             line.x1 = cx - *pointer;
             line.x2 = cx + *pointer;
             line.y1 = cy - k;
             line.y2 = cy - k;
-            if (clip_line(vwk, &line)) {
+            if (clip_line(vwk, &line))
                 horzline(vwk, &line);
-                pointer = &q_circle[k];
-            }
 
             /* Lower semi-circle. */
             line.x1 = cx - *pointer;
