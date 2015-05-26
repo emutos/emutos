@@ -25,6 +25,9 @@ extern void linea_line(void);     /* called only from linea.S */
 #define ABS(x) ((x) >= 0 ? (x) : -(x))
 
 
+#define MAX_PIXEL_ASPECT_RATIO  2   /* max expected value of xsize/ysize */
+#define MAX_QC_LINES    ((MX_LN_WIDTH*MAX_PIXEL_ASPECT_RATIO)/2 + 1)
+
 
 /* the six predefined line styles */
 const UWORD LINE_STYLE[6] = { 0xFFFF, 0xFFF0, 0xC0C0, 0xFF18, 0xFF00, 0xF191 };
@@ -40,7 +43,7 @@ const UWORD LINE_STYLE[6] = { 0xFFFF, 0xFFF0, 0xC0C0, 0xFF18, 0xFF00, 0xF191 };
  * vertical line through the centre of the circle), for the nth line
  * (counting from a horizontal line through the centre of the circle).
  */
-static WORD q_circle[MX_LN_WIDTH];     /* Holds the circle DDA */
+static WORD q_circle[MAX_QC_LINES]; /* Holds the circle DDA */
 
 /* Wide line attribute save areas */
 static WORD s_begsty, s_endsty, s_fil_col, s_fill_per;
@@ -732,7 +735,9 @@ static void circle_dda(WORD line_width)
     WORD x, y, decision;
 
     /* calculate number of scan lines to write */
-    num_qc_lines = (line_width * xsize / ysize ) / 2 + 1;
+    num_qc_lines = (line_width * xsize / ysize) / 2 + 1;
+    if (num_qc_lines > MAX_QC_LINES)
+        num_qc_lines = MAX_QC_LINES;    /* circles will be flattened */
 
     x = 0;
     y = line_width / 2;     /* radius */
