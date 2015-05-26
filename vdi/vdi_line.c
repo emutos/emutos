@@ -721,64 +721,57 @@ static void perp_off(WORD * px, WORD * py)
 
 
 /*
- * cir_dda - populate q_circle[] array
+ * circle_dda - populate q_circle[] array
  * 
  * This is called by wideline() when the current wideline width (line_cw)
- * changes, in order to reinitialise q_circle[]
+ * changes, in order to reinitialise q_circle[].  It uses the midpoint
+ * circle algorithm, as found in Wikipedia (and many other places).
  */
-static void cir_dda(Vwk * vwk)
+static void circle_dda(WORD line_width)
 {
-    WORD i, j;
-    WORD *xptr, *yptr, x, y, d;
+    WORD x, y, decision;
 
-    /* Calculate the number of vertical pixels required. */
-    d = vwk->line_width;
-    num_qc_lines = (d * xsize / ysize) / 2 + 1;
+    /* calculate number of scan lines to write */
+    num_qc_lines = (line_width * xsize / ysize ) / 2 + 1;
 
-    /* Initialize the circle DDA.  "y" is set to the radius. */
-    line_cw = d;
-    y = (d + 1) / 2;
     x = 0;
-    d = 3 - 2 * y;
+    y = line_width / 2;     /* radius */
+    decision = 1 - y;
 
-    xptr = &q_circle[x];
-    yptr = &q_circle[y];
+    while(x <= y) {
+        q_circle[x] = y;
+        q_circle[y] = x;
 
-    /* Do an octant, starting at north.  The values for the next octant */
-    /* (clockwise) will be filled by transposing x and y.               */
-    while (x < y) {
-        *yptr = x;
-        *xptr = y;
-
-        if (d < 0)
-            d = d + 4 * x + 6;
-        else {
-            d = d + 4 * (x - y) + 10;
-            yptr--;
-            y--;
-        }
-        xptr++;
         x++;
+        if (decision <= 0)
+            decision += 2 * x + 1;
+        else {
+            y--;
+            decision += 2 * (x-y) + 1;
+        }
     }
 
-    if (x == y)
-        q_circle[x] = x;
-
     /* Fake a pixel averaging when converting to non-1:1 aspect ratio. */
-    x = 0;
+    /* note that this is bogus if xsize > ysize (e.g. Falcon 320x480)  */
+    if (xsize != ysize) {
+        WORD *xptr, *yptr;
+        WORD i, j, d;
 
-    yptr = q_circle;
-    for (i = 0; i < num_qc_lines; i++) {
-        y = ((2 * i + 1) * ysize / xsize) / 2;
-        d = 0;
+        x = 0;
 
-        xptr = &q_circle[x];
-        for (j = x; j <= y; j++)
-            d += *xptr++;
+        yptr = q_circle;
+        for (i = 0; i < num_qc_lines; i++) {
+            y = ((2 * i + 1) * ysize / xsize) / 2;
+            d = 0;
 
-        *yptr++ = d / (y - x + 1);
-        x = y + 1;
-    }                           /* End for loop. */
+            xptr = &q_circle[x];
+            for (j = x; j <= y; j++)
+                d += *xptr++;
+
+            *yptr++ = d / (y - x + 1);
+            x = y + 1;
+        }
+    }
 }
 
 
@@ -880,8 +873,10 @@ void wideline(Vwk * vwk, Point * point, int count)
     if (count < 2)
         return;
 
+    /* See if we need to rebuild q_circle[] */
     if (vwk->line_width != line_cw) {
-        cir_dda(vwk);
+        line_cw = vwk->line_width;
+        circle_dda(line_cw);
     }
 
     /* If the ends are arrowed, output them. */
