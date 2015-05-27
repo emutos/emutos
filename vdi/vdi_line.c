@@ -724,44 +724,45 @@ static void perp_off(WORD * px, WORD * py)
 
 
 /*
- * circle_dda - populate q_circle[] array
+ * cir_dda - populate q_circle[] array
  * 
  * This is called by wideline() when the current wideline width (line_cw)
- * changes, in order to reinitialise q_circle[].  It uses the midpoint
- * circle algorithm, as found in Wikipedia (and many other places).
+ * changes, in order to reinitialise q_circle[].  It uses Bresenham's
+ * circle algorithm.
  */
-static void circle_dda(WORD line_width)
+static void cir_dda(WORD line_width)
 {
-    WORD x, y, decision;
+    WORD i, j;
+    WORD *xptr, *yptr, x, y, d;
 
-    /* calculate number of scan lines to write */
+    /* Calculate the number of vertical pixels required. */
     num_qc_lines = (line_width * xsize / ysize) / 2 + 1;
     if (num_qc_lines > MAX_QC_LINES)
         num_qc_lines = MAX_QC_LINES;    /* circles will be flattened */
 
+    /* Initialize the circle DDA.  "y" is set to the radius. */
     x = 0;
-    y = line_width / 2;     /* radius */
-    decision = 1 - y;
+    y = (line_width + 1) / 2;
+    d = 3 - 2 * y;
 
-    while(x <= y) {
-        q_circle[x] = y;
+    /* Do an octant, starting at north.  The values for the next octant */
+    /* (clockwise) will be filled by transposing x and y.               */
+    while (x <= y) {
         q_circle[y] = x;
+        q_circle[x] = y;
 
-        x++;
-        if (decision <= 0)
-            decision += 2 * x + 1;
+        if (d < 0)
+            d += 4 * x + 6;
         else {
+            d += 4 * (x - y) + 10;
             y--;
-            decision += 2 * (x-y) + 1;
         }
+        x++;
     }
 
     /* Fake a pixel averaging when converting to non-1:1 aspect ratio. */
     /* note that this is bogus if xsize > ysize (e.g. Falcon 320x480)  */
     if (xsize != ysize) {
-        WORD *xptr, *yptr;
-        WORD i, j, d;
-
         x = 0;
 
         yptr = q_circle;
@@ -878,7 +879,7 @@ void wideline(Vwk * vwk, Point * point, int count)
     /* See if we need to rebuild q_circle[] */
     if (vwk->line_width != line_cw) {
         line_cw = vwk->line_width;
-        circle_dda(line_cw);
+        cir_dda(line_cw);
     }
 
     /* If the ends are arrowed, output them. */
