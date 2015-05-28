@@ -732,7 +732,7 @@ static void perp_off(WORD * px, WORD * py)
  */
 static void cir_dda(WORD line_width)
 {
-    WORD i, j;
+    WORD i, j, m, n;
     WORD *xptr, *yptr, x, y, d;
 
     /* Calculate the number of vertical pixels required. */
@@ -760,9 +760,11 @@ static void cir_dda(WORD line_width)
         x++;
     }
 
-    /* Fake a pixel averaging when converting to non-1:1 aspect ratio. */
-    /* note that this is bogus if xsize > ysize (e.g. Falcon 320x480)  */
-    if (xsize != ysize) {
+    if (xsize == ysize)     /* square pixels, e.g. ST high, ST low */
+        return;
+
+    if (xsize < ysize) {    /* tall pixels, e.g. ST medium, Falcon 640x240 */
+        /* Fake pixel averaging */
         x = 0;
 
         yptr = q_circle;
@@ -777,6 +779,22 @@ static void cir_dda(WORD line_width)
             *yptr++ = d / (y - x + 1);
             x = y + 1;
         }
+        return;
+    }
+
+    /*
+     * handle xsize > ysize (wide pixels, e.g. Falcon 320x480)
+     *
+     * we interpolate from the previously-generated table.  for now we
+     * greatly simplify things by assuming that xsize = 2 * ysize (true
+     * for the Falcon).  the following code sets:
+     *  q_circle[i] = q_circle[i/2]                         (for even i)
+     *  q_circle[i] = (q_circle[i/2] + q_circle[i/2+1])/2   (for odd i)
+     */
+    for (i = num_qc_lines-1, n = 0; i > 0; i--) {
+        m = q_circle[i/2];
+        q_circle[i] = (m + n) / 2;
+        n = m;
     }
 }
 
