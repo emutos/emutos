@@ -24,7 +24,6 @@ extern void init_user_vec(void);
 
 extern void init_acia_vecs(void);
 
-
 /* some exception vectors */
 
 #if CONF_WITH_SHIFTER
@@ -43,13 +42,6 @@ extern void just_rts(void);
 
 long check_read_byte(long);
 
-/* are these useful ? */
-extern void print_stat(void);
-extern void print_vec(void);
-extern void serial_stat(void);
-extern void serial_vec(void);
-extern void dump_scr(void);
-extern void print_vec(void);
 
 /* */
 extern void criter1(void);
