@@ -17,6 +17,7 @@
 
         .globl  _panic
         .globl  _halt
+        .globl  _kill_program
         .globl  _warm_reset
         .globl  _cold_reset
 
@@ -77,6 +78,16 @@ haltloop:
         // only an NMI could theroretically wake up the CPU here
 #endif
         bra.s   haltloop
+
+/* void kill_program(void)
+ * try to terminate via Pterm(); if Pterm() returns here (!),
+ * we do a warm reset
+ */
+_kill_program:
+        move.w  #-1,-(sp)               // error code for program killed by OS
+        move.w  #0x4C,-(sp)             // Pterm
+        trap    #1
+        // drop thru into warm reset
 
 /* void warm_reset(void)
  * Restart this OS

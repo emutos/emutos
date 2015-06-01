@@ -224,7 +224,9 @@ any_vec:
         move.l  #0x12345678, _proc_lives
 #endif
         // restore a sane stack
-        lea     _stktop,sp
+        // this stack must be large enough for dopanic(); as of
+        // may 2015, this is about 460 bytes
+        lea     panic_stack,sp
         jmp     _dopanic
 
 
@@ -943,6 +945,9 @@ _keyclick:
 
         .bss
         .even
+
+        .ds.w    256            // this stack is only used by dopanic()
+panic_stack:
 
 /* save area for trap13/14. */
 save_beg:       .ds.w   24*3    // d3-d7/a3-a7, sr, pc, vo = 24 words,

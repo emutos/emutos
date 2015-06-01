@@ -26,6 +26,8 @@
 #include "serport.h"
 #include "pd.h"
 #include "coldfire.h"
+#include "asm.h"
+#include "vectors.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif
@@ -332,8 +334,8 @@ void dopanic(const char *fmt, ...)
 {
     LONG pc = 0;
 
-    /* hide cursor, wrap line, new line */
-    cprintf("\033f\033v\r\n");
+    /* hide cursor, new line, new line */
+    cprintf("\033f\033v\n\n");
     /* TODO use sane screen settings (color, address) */
 
     if (proc_lives != 0x12345678) {
@@ -523,6 +525,18 @@ void dopanic(const char *fmt, ...)
         kcprintf("%67susp=%08lx\n", "", proc_usp);
     }
 
-    kcprintf("Processor halted.\n");
-    halt();
+    set_sr(0x2300);         /* allow interrupts so we get keypresses */
+    while(bconstat2())      /* eat any pending ones */
+        bconin2();
+    cprintf("\n*** Press any key to continue ***");
+    bconin2();
+
+    savptr = (LONG) trap_save_area; /* in case running program has altered it */
+
+    /*
+     * we are still running with the PD of the failing program,
+     * so calling Pterm() now should clean up and return control
+     * to the caller
+     */
+    kill_program();         /* never returns */
 }

@@ -74,6 +74,9 @@ extern void panic(const char *fmt, ...) PRINTF_STYLE NORETURN;
 /* halt the machine */
 extern void halt(void) NORETURN;
 
+/* kill current program */
+void kill_program(void) NORETURN;
+
 /* Restart this OS */
 void warm_reset(void) NORETURN;
 
