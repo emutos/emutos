@@ -69,6 +69,20 @@ static GRECT    ml_ctrl;
 static AESPD    *ml_pmown;
 static BYTE     alert_str[256]; /* must be long enough for longest alert in gem.rsc */
 
+/*
+ * The following arrays are used by eralert() to generate values to
+ * pass to fm_show().  eralert() is passed an alert number N which is
+ * used to index into these arrays:
+ *  ml_alrt[N]  contains the object number of the alert string within
+ *              the resource
+ *  ml_pwlv[N]  contains a 2-byte value PPLL where:
+ *              LL is the alert level (0-3 currently supported)
+ *              PP is a drive letter indicator; if non-zero, a pointer
+ *              to the drive letter corresponding to drive number D is
+ *              passed to fm_show(); otherwise a null pointer is passed
+ *
+ * These arrays must be synchronized with "err_tbl" in gemdosif.S.
+ */
 static WORD     ml_alrt[] =
                 {AL00CRT,AL01CRT,AL02CRT,AL03CRT,AL04CRT,AL05CRT};
 static WORD     ml_pwlv[] =
@@ -392,6 +406,9 @@ WORD fm_dial(WORD fmd_type, GRECT *pt)
 }
 
 
+/*
+ * issue form_alert(), with optional drive letter
+ */
 WORD fm_show(WORD string, WORD *pwd, WORD level)
 {
         BYTE    *ad_alert;
@@ -406,9 +423,19 @@ WORD fm_show(WORD string, WORD *pwd, WORD level)
 }
 
 
-                                /* TRO 9/20/84  - entered from dosif    */
-                                /* when a DOS error occurs              */
-WORD eralert(WORD n, WORD d)    /* n = alert #, 0-5  ;  d = drive code  */
+/*
+ * eralert() is called by the graphics critical alert handler
+ * in gemdosif.S when a DOS error occurs.  it issues an alert
+ * selected by the lookup tables ml_alrt[] & ml_pwlv[].
+ *
+ * input:   n   alert number (0-5), not checked
+ *          d   drive number
+ * returns: FALSE   user selected button 1 of the alert
+ *                  (assumed to be Cancel)
+ *          TRUE    user selected button 2 or 3 of the alert
+ *                  (assumed to be Retry)
+ */
+WORD eralert(WORD n, WORD d)
 {
         WORD            ret, level;
         WORD            drive_let;

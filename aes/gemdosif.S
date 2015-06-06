@@ -73,8 +73,12 @@ _enable_interrupts:
 
 
 /*
- DOS error trapping code.
-*/
+ * DOS error trapping code: restores aestrap & critical error vector
+ *
+ * called when entering graphics mode to run a graphics application
+ * after a character mode application (which may have stepped on the
+ * aes trap and/or the critical error vector)
+ */
 _retake:
 #ifdef __mcoldfire__
         lea     0x88,a0
@@ -82,29 +86,43 @@ _retake:
 #else
         move.l  #_aestrap,0x88
 #endif
-        move.l  #_err_tra,d0
+        move.l  #criterr_handler,d0
 call_err:
         move.l  d0,-(sp)
-        move.w  #0x0101,-(sp)
-        move.w  #0x05,-(sp)
+        move.w  #0x0101,-(sp)       // critical error vector
+        move.w  #5,-(sp)            // Setexc
         trap    #13
         addq.l  #8,sp
         rts
 
+/*
+ * restore the previous critical error handler
+ *
+ * called when leaving graphics mode, either to run a character-based
+ * application, or during desktop shutdown
+ */
 _giveerr:
-        move.l  _crit_er,d0
+        move.l  save_criterr,d0
         bra     call_err
 
+/*
+ * install the GEM critical error handler
+ *
+ * called during desktop startup, just before entering graphics mode
+ */
 _takeerr:
         moveq   #-1,d0
-        bsr     call_err
-        move.l  d0,_crit_er
-        move.l  #_err_tra,d0
+        bsr     call_err            // get current error vector
+        move.l  d0,save_criterr     //  & save it locally
+        move.l  #criterr_handler,d0 // set new vector
         bra     call_err
 
-_err_tra:
-        move.w  0x04(sp),d0
-        move.w  0x06(sp),d1
+/*
+ * default critical error handler in graphics mode
+ */
+criterr_handler:
+        move.w  4(sp),d0            // d0 = error code
+        move.w  6(sp),d1            // d1 = drive number
 #ifdef __mcoldfire__
         lea     -36(sp),sp
         movem.l d3-d7/a3-a6,(sp)
@@ -112,34 +130,34 @@ _err_tra:
         movem.l d3-d7/a3-a6,-(sp)
 #endif
         movea.l #err_tbl,a1
-        move.w  d0,-(sp)
-        bne     L1F62
-        movea.w #0x00,a0
-        bra     L1F70
+        move.w  d0,-(sp)            // save original error code on stack
+        bne     check_max           // non-zero, go check if within range
+        movea.w #0,a0               // zero, just do lookup
+        bra     alert_lookup
 
-L1F62:
+check_max:
 #ifdef __mcoldfire__
-        not.l   d0
+        not.l   d0                  // ones complement
 #else
-        not.w   d0
+        not.w   d0                  // ones complement
 #endif
-        movea.w d0,a0
-        cmp.w   #0x11,d0
-        ble     L1F70
-        movea.w #0x00,a0
-L1F70:
-        move.b  0x00(a0,a1.l),d0
-        move.w  d1,-(sp)
-        move.w  d0,-(sp)
-        jsr     _eralert
+        movea.w d0,a0               // a0 = d0 = +ve error code
+        cmp.w   #err_tbl_last,d0    // within table?
+        ble     alert_lookup        // yes, go lookup
+        movea.w #0,a0               // else force to zeroth entry
+alert_lookup:
+        move.b  0(a0,a1.l),d0       // convert error code to alert number
+        move.w  d1,-(sp)            // put drive on stack
+        move.w  d0,-(sp)            // and alert number
+        jsr     _eralert            // issue alert
         addq.l  #4,sp
-        move.w  (sp)+,d1
+        move.w  (sp)+,d1            // recover original error code
         ext.l   d1
-        cmp.w   #0x00,d0
-        beq     L1F90
-        move.l  #0x010000,d1
-L1F90:
-        move.l  d1,d0
+        tst.w   d0                  // did user say Cancel?
+        beq     no_retry
+        move.l  #0x010000,d1        // else set special retry request value
+no_retry:
+        move.l  d1,d0               // set return code
 #ifdef __mcoldfire__
         movem.l (sp),d3-d7/a3-a6
         lea     36(sp),sp
@@ -363,19 +381,30 @@ L2234:
 
 SECTION_RODATA
 
+/*
+ * This table converts an error number to an (internal-only) alert
+ * number: entry[n-1] contains the alert number to use for error -n.
+ *
+ * The alert number is used by eralert() in gemfmlib.c to index into
+ * arrays in that module.  Thus this table must be synchronized with
+ * gemfmlib.c.
+ */
 err_tbl:
-        .dc.b   4,1,1,2,1,1,2,2
-        .dc.b   4,2,2,2,0,3,4,2
-        .dc.b   6,0
+        .dc.b   4,1,1,2,1,1,2,2     // errors -1 to -8
+        .dc.b   4,2,2,2,0,3,4,2     // errors -9 to -16
+        .dc.b   5                   // error -17 (EOTHER, currently not implemented)
+err_tbl_end:
+        .dc.b   0                   // dummy, not needed
 
+        .equ    err_tbl_last,(err_tbl_end-err_tbl)
 
 .bss
 
 savesr:
         .ds.w    1
 
-_crit_er:
-        .ds.l    1
+save_criterr:
+        .ds.l    1      // save area for character-mode critical error vector
 savetrap2:
         .ds.l    1
 
