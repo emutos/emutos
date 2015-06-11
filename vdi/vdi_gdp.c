@@ -36,9 +36,9 @@ static void clc_arc(Vwk * vwk, int steps);
 
 
 
-/* Sines of angles 1 - 90 degrees normalized between 0-32767. */
+/* Sines of angles 0 - 90 degrees normalized between 0-32767. */
 static const WORD sin_tbl[92] = {
-        0,   572, 1144,   1716,  2286,  2856,  3425,  3993,
+        0,   572,  1144,  1715,  2286,  2856,  3425,  3993,
      4560,  5126,  5690,  6252,  6813,  7371,  7927,  8481,
      9032,  9580, 10126, 10668, 11207, 11743, 12275, 12803,
     13328, 13848, 14364, 14876, 15383, 15886, 16383, 16876,
@@ -58,17 +58,18 @@ static const WORD sin_tbl[92] = {
  * ISin - Returns integer sin between -32767 - 32767.
  *
  * Uses integer lookup table sintable^[]. Expects angle in tenths of
- * degree 0 - 3600. Assumes positive angles only.
+ * degree 0 - 32767; angles >3599 will be normalised to 0-3599.
+ * Assumes positive angles only.
  */
 static WORD Isin(WORD angle)
 {
     WORD index, remainder, tmpsin;      /* holder for sin. */
     WORD quadrant;              /* 0-3 = 1st, 2nd, 3rd, 4th.        */
 
-    while (angle > TWOPI)
+    while (angle >= TWOPI)      /* normalise angle to 0-3599 inclusive */
         angle -= TWOPI;
     quadrant = angle / HALFPI;
-    switch (quadrant) {
+    switch(quadrant) {          /* quadrant MUST be 0-3 */
     case 0:
         break;
 
@@ -83,11 +84,7 @@ static WORD Isin(WORD angle)
     case 3:
         angle = TWOPI - angle;
         break;
-
-    case 4:
-        angle -= TWOPI;
-        break;
-    };
+    }
     index = angle / 10;
     remainder = angle % 10;
     tmpsin = sin_tbl[index];
