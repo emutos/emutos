@@ -105,10 +105,11 @@ static WORD Isin(WORD angle)
  */
 static WORD Icos(WORD angle)
 {
+    if (angle >= TWOPI)         /* partial normalisation to prevent */
+        angle -= TWOPI;         /*  possible arithmetic overflow    */
     angle = angle + HALFPI;
-    if (angle > TWOPI)
-        angle -= TWOPI;
-    return (Isin(angle));
+
+    return Isin(angle);         /* Isin() will fully normalise */
 }
 
 
