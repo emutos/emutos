@@ -224,7 +224,7 @@ static void bios_init(void)
     sysbase = (LONG) os_entry;
     savptr = (LONG) trap_save_area;
     etv_timer = (void(*)(int)) just_rts;
-    etv_critic = criter1;
+    etv_critic = default_etv_critic;
     etv_term = just_rts;
 
     /* setup VBL queue */

@@ -44,7 +44,7 @@ long check_read_byte(long);
 
 
 /* */
-extern void criter1(void);
+extern LONG default_etv_critic(WORD err,WORD dev);
 extern void int_illegal(void);
 extern void int_priv(void);
 

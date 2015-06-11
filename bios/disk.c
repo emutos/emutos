@@ -733,7 +733,10 @@ LONG disk_rw(UWORD unit, UWORD rw, ULONG sector, UWORD count, void *buf)
 
 #if DETECT_NATIVE_FEATURES
     if (units[unit].features & UNIT_NATFEATS) {
-        return NFCall(get_xhdi_nfid() + XHREADWRITE, (long)major, (long)0, (long)rw, (long)sector, (long)count, buf);
+        ret = NFCall(get_xhdi_nfid() + XHREADWRITE, (long)major, (long)0, (long)rw, (long)sector, (long)count, buf);
+        if (ret == EACCDN)      /* circumvent quirk in Aranym 1.0.2 and earlier */
+            ret = EWRPRO;
+        return ret;
     }
 #endif
 

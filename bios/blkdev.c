@@ -348,6 +348,7 @@ static LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG
     LONG retval;
     WORD psshift;
     void *bufstart = (void *)buf;
+    GEOMETRY *geo;
 
     KDEBUG(("rwabs(rw=%d, buf=%ld, count=%ld, recnr=%u, dev=%d, lrecnr=%ld)\n",
             rw,buf,lcount,recnr,dev,lrecnr));
@@ -418,22 +419,21 @@ static LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG
     }
 
     psshift = units[unit].psshift;
+    geo = &blkdev[unit].geometry;
 
     do {
         /* split the transfer to 15-bit count blocks (lowlevel functions take WORD count) */
         WORD scount = (lcount > CNTMAX) ? CNTMAX : lcount;
-        do {
-            if (unit < NUMFLOPPIES) {
-                retval = floppy_rw(rw, buf, scount, lrecnr,
-                                   blkdev[unit].geometry.spt,
-                                   blkdev[unit].geometry.sides, unit);
-            }
-            else {
-                retval = disk_rw(unit, (rw & ~RW_NOTRANSLATE), lrecnr, scount, (void *)buf);
-            }
-            if (retval == E_CHNG)   /* no retry on media change */
-                break;
-        } while((retval < 0) && (--retries > 0));
+        do {        /* outer loop retries if critical event handler says we should */
+            do {    /* inner loop automatically retries */
+                retval = (unit<NUMFLOPPIES) ? floppy_rw(rw, buf, scount, lrecnr, geo->spt, geo->sides, unit)
+                                            : disk_rw(unit, (rw & ~RW_NOTRANSLATE), lrecnr, scount, (void *)buf);
+                if (retval == E_CHNG)       /* no automatic retry on media change */
+                    break;
+            } while((retval < 0) && (--retries > 0));
+            if ((retval < 0L) && !(rw & RW_NOTRANSLATE))    /* only call etv_critic for logical requests */
+                retval = call_etv_critic((WORD)retval,dev);
+        } while(retval == CRITIC_RETRY_REQUEST);
         if (retval < 0)     /* error, retries exhausted */
             break;
         buf += scount << psshift;
@@ -486,6 +486,7 @@ LONG blkdev_getbpb(WORD dev)
     struct bs *b;
     struct fat16_bs *b16;
     ULONG tmp;
+    LONG ret;
     UWORD reserved, recsiz;
     int unit;
 
@@ -507,8 +508,14 @@ LONG blkdev_getbpb(WORD dev)
         disk_mediach(unit);     /* check for change & rescan partitions if so */
 
     /* now we can read the bootsector using the physical mode */
-    if (blkdev_rwabs(RW_READ | RW_NOMEDIACH | RW_NOTRANSLATE,
-                     (LONG)dskbufp, 1, -1, unit, bdev->start))
+    do {
+        ret = blkdev_rwabs(RW_READ | RW_NOMEDIACH | RW_NOTRANSLATE,
+                     (LONG)dskbufp, 1, -1, unit, bdev->start);
+        if (ret < 0L)
+            ret = call_etv_critic((WORD)ret,dev);
+    } while(ret == CRITIC_RETRY_REQUEST);
+
+    if (ret < 0L)
         return 0L;  /* error */
 
     b = (struct bs *)dskbufp;
@@ -608,8 +615,12 @@ static LONG blkdev_mediach(WORD dev)
             break;                  /* will return no change */
         /* drop through */
     case MEDIAMAYCHANGE:
-        ret = (dev<NUMFLOPPIES) ? flop_mediach(dev) : disk_mediach(unit);
-        if (ret < 0)
+        do {
+            ret = (dev<NUMFLOPPIES) ? flop_mediach(dev) : disk_mediach(unit);
+            if (ret < 0L)
+                ret = call_etv_critic((WORD)ret,dev);
+        } while(ret == CRITIC_RETRY_REQUEST);
+        if (ret < 0L)
             return ret;
         if (ret != MEDIANOCHANGE) { /* if media (may have) changed, mark physical unit */
             units[unit].status |= UNIT_CHANGED;

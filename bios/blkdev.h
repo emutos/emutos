@@ -28,6 +28,8 @@
 
 #define RWABS_RETRIES   1   /* on real machine might want to increase this */
 
+#define CRITIC_RETRY_REQUEST 0x00010000L    /* special value returned by etv_critic */
+
 #define FLOPPY_BOOTDEV      0   /* i.e. A: */
 #define HARDDISK_BOOTDEV    2   /* i.e. C: */
 #define DEFAULT_BOOTDEV     HARDDISK_BOOTDEV
@@ -104,6 +106,9 @@ UWORD compute_cksum(struct bs *buf);
 WORD get_shift(ULONG blocksize);
 
 int add_partition(UWORD unit, LONG *devices_available, char id[], ULONG start, ULONG size);
+
+/* critical error handling */
+LONG call_etv_critic(WORD error,WORD device);   /* in vectors.S */
 
 
 /*

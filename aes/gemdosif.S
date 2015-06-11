@@ -102,7 +102,7 @@ call_err:
  * application, or during desktop shutdown
  */
 _giveerr:
-        move.l  save_criterr,d0
+        move.l  save_etv_critic,d0
         bra     call_err
 
 /*
@@ -113,38 +113,58 @@ _giveerr:
 _takeerr:
         moveq   #-1,d0
         bsr     call_err            // get current error vector
-        move.l  d0,save_criterr     //  & save it locally
+        move.l  d0,save_etv_critic  //  & save it locally
         move.l  #criterr_handler,d0 // set new vector
         bra     call_err
 
 /*
  * default critical error handler in graphics mode
+ *
+ * NOTE: we call form_alert() from eralert(), without going through
+ * the AES trap.  form_alert() may do a context switch, during which
+ * the current stack pointer is saved in UDA_SPSUPER.  Although this
+ * is restored later when the context is switched back to us, it will
+ * remain pointing to the wrong stack (AES routines expect that it
+ * always points within the AES stack for the process).  If we are not
+ * careful, the next call to an AES routine will crash the system.  So
+ * we do the following:
+ *  . save UDA_SPSUPER before calling eralert(), and restore it after
+ *  . save the current stack pointer, and restore it after
+ *  . use our own private stack during critical error processing
  */
 criterr_handler:
         move.w  4(sp),d0            // d0 = error code
         move.w  6(sp),d1            // d1 = drive number
+        movea.l _rlr,a0
+        movea.l PD_UDA(a0),a0       // a0 -> UDA
+#ifdef __mcoldfire__
+        lea     UDA_SPSUPER(a0),a0
+        move.l  (a0),save_spsuper
+#else
+        move.l  UDA_SPSUPER(a0),save_spsuper
+#endif
+        jsr     _disable_interrupts // stack switch must be atomic
+        move.l  sp,save_spcriterr
+        lea     criterr_stack,sp
+        jsr     _enable_interrupts
 #ifdef __mcoldfire__
         lea     -36(sp),sp
-        movem.l d3-d7/a3-a6,(sp)
+        movem.l d3-d7/a3-a6,(sp)    // save regs on temp stack
 #else
-        movem.l d3-d7/a3-a6,-(sp)
+        movem.l d3-d7/a3-a6,-(sp)   // save regs on temp stack
 #endif
         movea.l #err_tbl,a1
+        suba.l  a0,a0               // assume zeroth entry (error -1)
         move.w  d0,-(sp)            // save original error code on stack
-        bne     check_max           // non-zero, go check if within range
-        movea.w #0,a0               // zero, just do lookup
-        bra     alert_lookup
-
-check_max:
+        beq     alert_lookup        // zero, go do lookup
 #ifdef __mcoldfire__
-        not.l   d0                  // ones complement
+        not.l   d0                  // ones complement error code
 #else
-        not.w   d0                  // ones complement
+        not.w   d0                  // ones complement error code
 #endif
-        movea.w d0,a0               // a0 = d0 = +ve error code
-        cmp.w   #err_tbl_last,d0    // within table?
-        ble     alert_lookup        // yes, go lookup
-        movea.w #0,a0               // else force to zeroth entry
+        cmpi.w  #err_tbl_last,d0    // outside table?
+        bgt     alert_lookup        // yes, assume zeroth entry
+        movea.w d0,a0               // else a0 = lookup table index
 alert_lookup:
         move.b  0(a0,a1.l),d0       // convert error code to alert number
         move.w  d1,-(sp)            // put drive on stack
@@ -154,15 +174,24 @@ alert_lookup:
         move.w  (sp)+,d1            // recover original error code
         ext.l   d1
         tst.w   d0                  // did user say Cancel?
-        beq     no_retry
-        move.l  #0x010000,d1        // else set special retry request value
+        beq     no_retry            // yes, branch
+        move.l  #0x00010000,d1      // else set special retry request value
 no_retry:
         move.l  d1,d0               // set return code
 #ifdef __mcoldfire__
-        movem.l (sp),d3-d7/a3-a6
+        movem.l (sp),d3-d7/a3-a6    // restore regs from temp stack
         lea     36(sp),sp
 #else
-        movem.l (sp)+,d3-d7/a3-a6
+        movem.l (sp)+,d3-d7/a3-a6   // restore regs from temp stack
+#endif
+        movea.l save_spcriterr,sp   // recover old stack pointer
+        movea.l _rlr,a0
+        movea.l PD_UDA(a0),a0       // a0 -> UDA
+#ifdef __mcoldfire__
+        lea     UDA_SPSUPER(a0),a0
+        move.l  save_spsuper,(a0)
+#else
+        move.l  save_spsuper,UDA_SPSUPER(a0)
 #endif
         rts
 
@@ -403,8 +432,9 @@ err_tbl_end:
 savesr:
         .ds.w    1
 
-save_criterr:
+save_etv_critic:
         .ds.l    1      // save area for character-mode critical error vector
+
 savetrap2:
         .ds.l    1
 
@@ -426,6 +456,20 @@ _NUM_TICK:
 _CMP_TICK:
         .ds.l    1
 
+/*
+ *  data areas used by the critical error handler
+ */
+save_spsuper:
+        .ds.l    1              // save area for contents of UDA_SPSUPER
+save_spcriterr:
+        .ds.l    1              // save area for stack ptr on entry
+
+        .ds.w   512             // private stack, has about 50 words spare
+criterr_stack:          
+
+/*
+ * miscellaneous stacks
+ */
         .ds.b    0x80
 gstack:                         // gsx stack for mouse
 

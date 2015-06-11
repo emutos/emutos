@@ -114,7 +114,7 @@ extern void (*bell_hook)(void);
 extern void (*kcl_hook)(void);
 
 extern void (*etv_timer)(int);
-extern void (*etv_critic)(void);
+extern LONG (*etv_critic)(WORD err,WORD dev);
 extern void (*etv_term)(void);
 extern void (*etv_xtra)(void);
 

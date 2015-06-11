@@ -36,6 +36,8 @@
         .globl  _keyclick
         .globl  _trap_save_area
 
+        .globl  _call_etv_critic
+        .globl  _default_etv_critic
 
 // ==== tosvars.s - TOS System variables =====================================
 
@@ -547,15 +549,41 @@ timerc_end:
 #endif
 
 
-// ==== Critical error handler ===============================================
-// Just sets D0 (return code) to -1, end ends the subroutine
-        .globl  _criter
-        .globl  _criter1
-_criter:
-        move.l  _criter, -(sp)  // etv_critic on stack
-_criter1:
-        moveq.l #-1, d0         // Default error
-        rts                     // jump back to routine
+// ==== Critical error handler functions =====================================
+
+/*
+ * (1) Call the critical error handler from C
+ *     The handler is allowed to modify D0-D2/A0-A2, but GCC-compiled
+ *     code expects D2/A2 to be unchanged, so we must save/restore them.
+ */
+_call_etv_critic:
+        move.l  4(sp),d0            // d0 is error code || device
+#ifdef __mcoldfire__
+        move.l  a2,-(sp)            // save regs
+        move.l  d2,-(sp)
+#else
+        movem.l d2/a2,-(sp)         // save regs
+#endif
+        move.l  d0,-(sp)            // error code || device to stack
+        moveq.l #-1,d0              // set default return code like TOS does
+        movea.l _etv_critic,a0
+        jsr     (a0)                // call handler
+        addq.l  #4,sp               // fixup stack
+#ifdef __mcoldfire__
+        move.l  (sp)+,d2            // restore regs
+        move.l  (sp)+,a2
+#else
+        movem.l (sp)+,d2/a2         // restore regs
+#endif
+        rts
+/*
+ * (2) The default character-mode critical error handler
+ *     Just returns the error code from the stack
+ */
+_default_etv_critic:
+        move.w  4(sp),d0            // get error code
+        ext.l   d0
+        rts
 
 
 #ifndef __mcoldfire__
