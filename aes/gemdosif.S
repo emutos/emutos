@@ -31,7 +31,6 @@
         .globl  _CMP_TICK
         .globl  _NUM_TICK
         .globl  _drwaddr
-        .globl  savesr
         .globl  _tikcod
 
         .extern _eralert
