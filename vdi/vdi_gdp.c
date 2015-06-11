@@ -65,8 +65,8 @@ static WORD Isin(WORD angle)
     WORD index, remainder, tmpsin;      /* holder for sin. */
     WORD quadrant;              /* 0-3 = 1st, 2nd, 3rd, 4th.        */
 
-    while (angle > 3600)
-        angle -= 3600;
+    while (angle > TWOPI)
+        angle -= TWOPI;
     quadrant = angle / HALFPI;
     switch (quadrant) {
     case 0:
@@ -228,9 +228,9 @@ void v_gdp(Vwk * vwk)
         yc = *(xy_pointer + 1);
         xrad = *(xy_pointer + 4);
         yrad = mul_div(xrad, xsize, ysize);
-        del_ang = 3600;
+        del_ang = TWOPI;
         beg_ang = 0;
-        end_ang = 3600;
+        end_ang = TWOPI;
         clc_arc(vwk, clc_nsteps(/*vwk*/));
         break;
 
@@ -241,7 +241,7 @@ void v_gdp(Vwk * vwk)
         yrad = *(xy_pointer + 3);
         if (vwk->xfm_mode < 2)
             yrad = yres - yrad;
-        del_ang = 3600;
+        del_ang = TWOPI;
         beg_ang = 0;
         end_ang = 0;
         clc_arc(vwk, clc_nsteps(/*vwk*/));
@@ -382,13 +382,13 @@ static void gdp_arc(Vwk * vwk)
     end_ang = *pointer;
     del_ang = end_ang - beg_ang;
     if (del_ang < 0)
-        del_ang += 3600;
+        del_ang += TWOPI;
 
     pointer = PTSIN;
     xrad = *(pointer + 6);
     yrad = mul_div(xrad, xsize, ysize);
     steps = clc_nsteps(/*vwk*/);
-    steps = mul_div(del_ang, steps, 3600);
+    steps = mul_div(del_ang, steps, TWOPI);
     if (steps == 0)
         steps = 1;      /* always draw something! */
     xc = *pointer++;
@@ -437,7 +437,7 @@ static void gdp_ell(Vwk * vwk)
     end_ang = *pointer;
     del_ang = end_ang - beg_ang;
     if (del_ang < 0)
-        del_ang += 3600;
+        del_ang += TWOPI;
 
     pointer = PTSIN;
     xc = *pointer++;
@@ -447,7 +447,7 @@ static void gdp_ell(Vwk * vwk)
     if (vwk->xfm_mode < 2)
         yrad = yres - yrad;
     steps = clc_nsteps(/*vwk*/);
-    steps = mul_div(del_ang, steps, 3600);
+    steps = mul_div(del_ang, steps, TWOPI);
     if (steps == 0)
         steps = 1;      /* always draw something! */
     clc_arc(vwk, steps);
