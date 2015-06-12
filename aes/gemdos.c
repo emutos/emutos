@@ -23,7 +23,7 @@
 #include "dta.h"
 
 
-GLOBAL UWORD    DOS_AX; /* really a "DOS_RET"   */
+GLOBAL WORD     DOS_AX; /* really a "DOS_RET"   */
 GLOBAL UWORD    DOS_ERR;
 
 /* K&R prototype to avoid prototype mismatch warnings
