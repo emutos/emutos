@@ -56,25 +56,8 @@ typedef struct sfcb
 } SFCB;
 
 
-/************************************************************************/
-/* m y _ i t o a                                                        */
-/************************************************************************/
-static void my_itoa(UWORD number, BYTE *pnumstr)
-{
-    WORD ii;
-
-    for (ii = 0; ii < 2; pnumstr[ii++] = '0')
-        ;
-    pnumstr[2] = 0;
-    if (number > 9)
-        sprintf(pnumstr, "%d", number);
-    else
-        sprintf(pnumstr+1, "%d", number);
-}
-
-
 /*
- * Routine to format DOS style time.
+ * Routine to format DOS style time
  *
  *  15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
  *  <     hh     > <    mm    > <   xx  >
@@ -82,73 +65,68 @@ static void my_itoa(UWORD number, BYTE *pnumstr)
  *  mm = binary 0-59
  *  xx = binary seconds / 2
  *
- * put into this form: 12:45 pm
+ * Outputs 6 bytes, left aligned, filled with spaces:
+ *  1245pm (12-hour clock)
+ *  0045   (24-hour clock)
  */
 static void fmt_time(UWORD time, BYTE *ptime)
 {
-    WORD pm, val;
+    BOOL pm;
+    WORD hh, mm;
 
-    val = ((time & 0xf800) >> 11) & 0x001f;
+    hh = (time >> 11) & 0x001f;
+    mm = (time >> 5) & 0x003f;
     pm = FALSE;
 
     if (G.g_ctimeform)
     {
-        if (val >= 12)
+        if (hh >= 12)
         {
-            if (val > 12)
-                val -= 12;
+            hh -= 12;
             pm = TRUE;
         }
-        else
-        {
-            if (val == 0)
-                val = 12;
-            pm = FALSE;
-        }
+        if (hh == 0)
+            hh = 12;
+        sprintf(ptime,"%02d%02d%s",hh,mm,pm?gl_pmstr:gl_amstr);
     }
-    my_itoa( val, &ptime[0]);
-    my_itoa( ((time & 0x07e0) >> 5) & 0x003f, &ptime[2]);
-    if (G.g_ctimeform)
-        strcpy(&ptime[4], (pm?&gl_pmstr[0]:&gl_amstr[0]));
     else
-        strcpy(&ptime[4], "  ");
+    {
+        sprintf(ptime,"%02d%02d%s",hh,mm,"  ");
+    }
 }
 
 
 /*
- * Routine to format DOS style date.
+ * Routine to format DOS style date
  *
  *  15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
  *  <     yy          > < mm  > <  dd   >
  *  yy = 0 - 119 (1980 - 2099)
  *  mm = 1 - 12
  *  dd = 1 - 31
+ *
+ * Outputs 6 bytes:
+ *  ddmmyy      (English style)
+ *  mmddyy      (US style)
  */
 static void fmt_date(UWORD date, BYTE *pdate)
 {
-    WORD year;
+    WORD dd, mm, yy;
+
+    yy = (1980 + ((date >> 9) & 0x007f)) % 100;
+    mm = (date >> 5) & 0x000f;
+    dd = date & 0x001f;
 
     if (G.g_cdateform)
     {
         /* MM-DD-YY */
-        my_itoa( (date & 0x01e0) >> 5, &pdate[0]);
-        my_itoa(date & 0x001f, &pdate[2]);
+        sprintf(pdate,"%02d%02d%02d",mm,dd,yy);
     }
     else
     {
         /* DD-MM-YY */
-        my_itoa(date & 0x001f, &pdate[0]);
-        my_itoa( (date & 0x01e0) >> 5, &pdate[2]);
+        sprintf(pdate,"%02d%02d%02d",dd,mm,yy);
     }
-
-    /* [JCE 25-11-2001] year 2000 bugfix. Without this, the
-     * my_itoa() call overruns the buffer in ob_sfcb() by
-     * putting 3 bytes where there was only room for 2. The
-     * last byte hits the saved BP value, with hilarious
-     * consequences.
-     */
-    year = 1980 + (((date & 0xfe00) >> 9) & 0x007f);
-    my_itoa(year % 100, &pdate[4]);
 }
 
 
