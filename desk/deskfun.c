@@ -185,7 +185,7 @@ WORD fun_mkdir(WNODE *pw_node)
  */
 static BYTE *ret_path(BYTE *pcurr)
 {
-    REG BYTE *path;
+    BYTE *path;
 
     /* find next level */
     while( (*pcurr) && (*pcurr != '\\') )
@@ -211,9 +211,9 @@ static BYTE *ret_path(BYTE *pcurr)
  */
 static WORD source_is_parent(BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path)
 {
-    REG BYTE *tsrc, *tdst;
+    BYTE *tsrc, *tdst;
     WORD same;
-    REG FNODE *pf;
+    FNODE *pf;
     BYTE srcpth[MAXPATHLEN];
     BYTE dstpth[MAXPATHLEN];
 

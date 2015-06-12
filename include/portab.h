@@ -71,7 +71,6 @@
  *  Miscellaneous
  */
 
-#define REG             register                /* register variable       */
 #define GLOBAL                                  /* Global variable         */
 #define UNUSED(x)       (void)(x)               /* Unused variable         */
 #define MAYBE_UNUSED(x) UNUSED(x)               /* Maybe unused variable   */
