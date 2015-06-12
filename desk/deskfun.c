@@ -114,7 +114,7 @@ WORD fun_mkdir(WNODE *pw_node)
 {
     PNODE *pp_node;
     LONG  tree;
-    WORD  i;
+    WORD  i, len;
     BYTE  fnew_name[LEN_ZFNAME], unew_name[LEN_ZFNAME], *ptmp;
     BYTE  path[MAXPATHLEN];
 
@@ -160,8 +160,9 @@ WORD fun_mkdir(WNODE *pw_node)
             break;
         }
 
+        len = strlen(path); /* before we restore old path */
         restore_path(ptmp); /* restore original path */
-        if (strlen(path) >= LEN_ZPATH-3)
+        if (len >= LEN_ZPATH-3)
         {
             fun_alert(1,STDEEPPA,NULLPTR);
             break;
