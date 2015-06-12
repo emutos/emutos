@@ -114,7 +114,7 @@ WORD fun_mkdir(WNODE *pw_node)
 {
     PNODE *pp_node;
     LONG  tree;
-    WORD  more, cont, i;
+    WORD  i;
     BYTE  fnew_name[LEN_ZFNAME], unew_name[LEN_ZFNAME], *ptmp;
     BYTE  path[MAXPATHLEN];
 
@@ -133,48 +133,50 @@ WORD fun_mkdir(WNODE *pw_node)
     if (i > MAX_LEVEL)
     {
         fun_alert(1, STFO8DEE, NULLPTR);
-        return(FALSE);
+        return FALSE;
     }
 
-    cont = TRUE;
-    while (cont)
+    while(1)
     {
         fnew_name[0] = NULL;
-        inf_sset(tree, MKNAME, &fnew_name[0]);
+        inf_sset(tree, MKNAME, fnew_name);
         show_hide(FMD_START, tree);
         form_do(tree, 0);
-        cont = FALSE;
-        if (inf_what(tree, MKOK, MKCNCL))
+        if (inf_what(tree, MKOK, MKCNCL) == 0)
+            break;
+
+        inf_sget(tree, MKNAME, fnew_name);
+        unfmt_str(fnew_name, unew_name);
+
+        if (unew_name[0] == NULL)
+            break;
+
+        ptmp = add_fname(path, unew_name);
+        dos_mkdir(path);
+
+        if (!DOS_ERR)       /* mkdir succeeded */
         {
-            inf_sget(tree, MKNAME, &fnew_name[0]);
-            unfmt_str(&fnew_name[0], &unew_name[0]);
-            if ( unew_name[0] != NULL )
-            {
-                ptmp = add_fname(path, unew_name);
-                dos_mkdir(path);
-                if (DOS_ERR)
-                {
-                    restore_path(ptmp); /* restore original path */
-                    if (strlen(path) >= LEN_ZPATH-3)
-                        fun_alert(1,STDEEPPA,NULLPTR);
-                    else
-                    {
-                        if (fun_alert(2,STFOFAIL,NULLPTR) == 2)
-                            cont = TRUE;
-                    }
-                }
-                else
-                {
-                    more = d_errmsg();
-                    if (more)
-                        fun_rebld(pw_node);
-                } /* else */
-            } /* if */
-        } /* if OK */
-    } /* while */
+            fun_rebld(pw_node);
+            break;
+        }
+
+        restore_path(ptmp); /* restore original path */
+        if (strlen(path) >= LEN_ZPATH-3)
+        {
+            fun_alert(1,STDEEPPA,NULLPTR);
+            break;
+        }
+
+        /*
+         * mkdir failed with a recoverable error:
+         * prompt for Cancel or Retry
+         */
+        if (fun_alert(2,STFOFAIL,NULLPTR) == 1) /* Cancel */
+            break;
+    }
 
     show_hide(FMD_FINISH, tree);
-    return(TRUE);
+    return TRUE;
 }
 
 
