@@ -39,7 +39,7 @@
 #include "ikbd.h"
 
 #include "string.h"
-
+#include "gemerror.h"
 
 
 
@@ -159,6 +159,14 @@ WORD fun_mkdir(WNODE *pw_node)
             fun_rebld(pw_node);
             break;
         }
+
+        /*
+         * if we're getting a BIOS (rather than GEMDOS) error, the
+         * critical error handler has already issued a message, so
+         * just quit
+         */
+        if (IS_BIOS_ERROR(DOS_AX))
+            break;
 
         len = strlen(path); /* before we restore old path */
         restore_path(ptmp); /* restore original path */

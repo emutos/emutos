@@ -59,4 +59,8 @@
 #define EPLFMT  -66L    /* invalid program load format                  */
 #define EGSBF   -67L    /* setblock failure due to growth restrictions  */
 
+/* macros */
+
+#define IS_BIOS_ERROR(n)    (((n) < E_OK) && ((n) > EINVFN))
+
 #endif /* GEMERROR_H */
