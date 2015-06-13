@@ -512,7 +512,7 @@ msgid "The EmuTOS development team"
 msgstr "Команда разработчиков EmuTOS"
 
 #: desk/desk_rsc.c:698
-msgid "Based on 'GPLed' sources"
+msgid "  Based on 'GPLed' sources"
 msgstr "Основан на исходниках 'GPL'"
 
 #: desk/desk_rsc.c:728
