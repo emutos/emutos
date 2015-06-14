@@ -41,6 +41,7 @@
 #include "deskmain.h"
 #include "desk1.h"
 #include "deskdir.h"
+#include "gemerror.h"
 
 
 #define MAX_CLUS_SIZE   (32*1024L)  /* maximum cluster size */
@@ -343,12 +344,13 @@ static void get_fname(BYTE *pstr, BYTE *newstr)
 
 WORD d_errmsg(void)
 {
-        if (DOS_ERR)
-        {
+        if (!DOS_ERR)
+          return TRUE;
+
+        if (!IS_BIOS_ERROR(DOS_AX))
           form_error(DOS_AX);
-          return(FALSE);
-        }
-        return(TRUE);
+
+        return(FALSE);
 }
 
 

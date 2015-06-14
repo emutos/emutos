@@ -466,9 +466,10 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
     }
 
     /*
-     * if user has changed the attributes, tell DOS to change them
+     * if user has changed the attributes, and we haven't had
+     * an error from the rename, tell DOS to change them
      */
-    if (!(pf->f_attr & F_SUBDIR))
+    if (!(pf->f_attr & F_SUBDIR) && more)
     {
         attr = pf->f_attr;
         obj = (OBJECT *)tree + FFRONLY;
