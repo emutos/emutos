@@ -62,7 +62,7 @@ void win_view(WORD vtype, WORD isort)
           case V_TEXT:
                 G.g_iwext = LEN_FNODE * gl_wchar;
                 G.g_ihext = gl_hchar;
-                G.g_iwint = (2 * gl_wchar) - 1;
+                G.g_iwint = 0;      /* so text starts at left-most position */
                 G.g_ihint = 2;
                 G.g_num = G.g_nmtext;
                 G.g_pxy = &G.g_xytext[0];

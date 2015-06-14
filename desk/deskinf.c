@@ -68,31 +68,35 @@ typedef struct sfcb
  * Outputs 6 bytes, left aligned, filled with spaces:
  *  1245pm (12-hour clock)
  *  0045   (24-hour clock)
+ * formatted as per sprintf string 'fmt_string'
+ *
+ * Returns pointer to end of formatted string
  */
-static void fmt_time(UWORD time, BYTE *ptime)
+static BYTE *fmt_time(UWORD time, BYTE *fmt_string, BYTE *ptime)
 {
-    BOOL pm;
     WORD hh, mm;
+    BYTE *suffix = "  ";
 
     hh = (time >> 11) & 0x001f;
     mm = (time >> 5) & 0x003f;
-    pm = FALSE;
 
     if (G.g_ctimeform)
     {
         if (hh >= 12)
         {
             hh -= 12;
-            pm = TRUE;
+            suffix = gl_pmstr;  /* "pm" */
+        }
+        else
+        {
+            suffix = gl_amstr;  /* "am" */
         }
         if (hh == 0)
             hh = 12;
-        sprintf(ptime,"%02d%02d%s",hh,mm,pm?gl_pmstr:gl_amstr);
     }
-    else
-    {
-        sprintf(ptime,"%02d%02d%s",hh,mm,"  ");
-    }
+    sprintf(ptime,fmt_string,hh,mm,suffix);
+
+    return ptime+strlen(ptime);
 }
 
 
@@ -108,97 +112,138 @@ static void fmt_time(UWORD time, BYTE *ptime)
  * Outputs 6 bytes:
  *  ddmmyy      (English style)
  *  mmddyy      (US style)
+ * formatted as per sprintf string 'fmt_string'
+ *
+ * Returns pointer to end of formatted string
  */
-static void fmt_date(UWORD date, BYTE *pdate)
+static BYTE *fmt_date(UWORD date, BYTE *fmt_string, BYTE *pdate)
 {
     WORD dd, mm, yy;
+    WORD var1, var2;
 
     yy = (1980 + ((date >> 9) & 0x007f)) % 100;
     mm = (date >> 5) & 0x000f;
     dd = date & 0x001f;
 
-    if (G.g_cdateform)
+    if (G.g_cdateform)      /* MM-DD-YY */
     {
-        /* MM-DD-YY */
-        sprintf(pdate,"%02d%02d%02d",mm,dd,yy);
+        var1 = mm;
+        var2 = dd;
     }
-    else
+    else                    /* DD-MM-YY */
     {
-        /* DD-MM-YY */
-        sprintf(pdate,"%02d%02d%02d",dd,mm,yy);
+        var1 = dd;
+        var2 = mm;
     }
+    sprintf(pdate,fmt_string,var1,var2,yy);
+
+    return pdate+strlen(pdate);
 }
 
 
-static WORD ob_sfcb(LONG psfcb, BYTE *pfmt)
+/*
+ * Routine to format sfcb_size into an 8- or 11-byte field,
+ * depending on the current screen width
+ *
+ * Note: files larger than 9999999 bytes will be displayed
+ * in kbytes on narrow screens
+ */
+static BYTE *fmt_size(LONG size, BOOL wide, BYTE *psize)
+{
+    BYTE *fmt_string;
+
+    /*
+     * if the screen is wide enough, it's simple
+     */
+    if (wide)
+    {
+        sprintf(psize, " %10lu", size);
+        return psize+11;
+    }
+
+    /*
+     * ST low or similar: we may have to scrunch things
+     * for big files
+     */
+    if (size <= 9999999L)       /* small files are ok */
+        fmt_string = " %7lu";
+    else                        /* big files are a bit ugly */
+    {
+        size /= 1024;
+        fmt_string = "%7luK";
+    }
+    sprintf(psize, fmt_string, size);
+
+    return psize+8;
+}
+
+
+static WORD format_sfcb(LONG psfcb, BYTE *pfmt)
 {
     SFCB sf;
     BYTE *pdst, *psrc;
-    BYTE pdate_str[7], ptime_str[7], psize_str[9];
-    WORD cnt;
+    WORD i;
+    BOOL wide;
 
-    memcpy(&sf.sfcb_junk, (SFCB *)psfcb, sizeof(SFCB));
+    /*
+     * determine if we should use the wide format
+     */
+    wide = (G.g_wdesk < 640) ? FALSE : TRUE;
+
+    memcpy(&sf, (SFCB *)psfcb, sizeof(SFCB));
     pdst = pfmt;
-    psrc = &sf.sfcb_name[0];
-    *pdst++ = ' ';
+
+    /*
+     * folder indicator
+     */
+    if (wide)
+        *pdst++ = ' ', *pdst++ = ' ';
     *pdst++ = (sf.sfcb_attr & F_SUBDIR) ? 0x07 : ' ';
-    *pdst++ = ' ';
-    while( (*psrc) &&
-               (*psrc != '.') )
-        *pdst++ = *psrc++;
-    while( (pdst - pfmt) < 12 )
+    if (wide)
         *pdst++ = ' ';
-    if (*psrc)
-        psrc++;
-    while (*psrc)
+
+    /*
+     * name and extension
+     */
+    for (i = 0, psrc = sf.sfcb_name; *psrc; i++)
+    {
+        if (*psrc == '.')
+        {
+            psrc++;
+            break;
+        }
         *pdst++ = *psrc++;
-    while( (pdst - pfmt) < 16 )
+    }
+    for ( ; i < 9; i++)
         *pdst++ = ' ';
-    psrc = &psize_str[0];
+    for (i = 0; *psrc; i++)
+        *pdst++ = *psrc++;
+    for ( ; i < 3; i++)
+        *pdst++ = ' ';
+
+    /*
+     * size
+     */
     if (sf.sfcb_attr & F_SUBDIR)
-        *psrc = 0;
+    {
+        WORD n = wide ? 11 : 8;
+        while(n--)
+            *pdst++ = ' ';
+    }
     else
     {
-        ULONG size = sf.sfcb_size;
-        static const char *fix[4] = { "", "K", "M", "G" };
-        int fi = 0;
-        while (size >= 10000000L && fi <= 3)
-        {
-            size = (size + 1023) / 1024;
-            fi += 1;
-        }
-        sprintf(psize_str, "%lu", size);
-        strcat(psize_str, fix[fi]);
+        pdst = fmt_size(sf.sfcb_size, wide, pdst);
     }
-    for (cnt = 8 - strlen(psrc); cnt--; *pdst++ = ' ')
-        ;
-    while (*psrc)
-        *pdst++ = *psrc++;
-    *pdst++ = ' ';
-    *pdst++ = ' ';
-    fmt_date(sf.sfcb_date, &pdate_str[0]);
-    psrc = &pdate_str[0];
-    for(cnt = 3; cnt--; )
-    {
-        *pdst++ = *psrc++;
-        *pdst++ = *psrc++;
-        if (cnt)
-            *pdst++ = '-';
-    }
-    *pdst++ = ' ';
-    *pdst++ = ' ';
-    fmt_time(sf.sfcb_time, &ptime_str[0]);
-    psrc = &ptime_str[0];
-    for (cnt = 2; cnt--; )
-    {
-        *pdst++ = *psrc++;
-        *pdst++ = *psrc++;
-        if (cnt)
-            *pdst++ = ':';
-    }
-    *pdst++ = ' ';
-    strcpy(pdst, &ptime_str[4]); /* am or pm */
-    pdst += 2;
+
+    /*
+     * date and time
+     */
+    if (wide)
+        *pdst++ = ' ';
+    pdst = fmt_date(sf.sfcb_date, " %02d-%02d-%02d ", pdst);
+    if (wide)
+        *pdst++ = ' ';
+    pdst = fmt_time(sf.sfcb_time, wide?"%02d:%02d %s":"%02d:%02d%s", pdst);
 
     return (pdst-pfmt);
 }
@@ -213,7 +258,7 @@ static WORD dr_fnode(UWORD last_state, UWORD curr_state, WORD x, WORD y,
         bb_fill(MD_XOR, FIS_SOLID, IP_SOLID, x, y, w, h);
     else
     {
-        len = ob_sfcb(psfcb, &G.g_tmppth[0]);
+        len = format_sfcb(psfcb, G.g_tmppth);   /* convert to text */
         gsx_attr(TRUE, MD_REPLACE, BLACK);
         expand_string(intin, G.g_tmppth);
         gsx_tblt(IBM, x, y, len);
@@ -296,12 +341,12 @@ static void inf_fifosz(LONG tree, WORD dl_fi, WORD dl_fo, WORD dl_sz)
 
 static void inf_dttm(LONG tree, FNODE *pf, WORD dl_dt, WORD dl_tm)
 {
-    BYTE str[11];
+    BYTE str[7];
 
-    fmt_date(pf->f_date, str);
+    fmt_date(pf->f_date, "%02d%02d%02d", str);
     inf_sset(tree, dl_dt, str);
 
-    fmt_time(pf->f_time, str);
+    fmt_time(pf->f_time, "%02d%02d%s", str);
     inf_sset(tree, dl_tm, str);
 }
 
