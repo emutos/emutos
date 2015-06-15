@@ -60,7 +60,7 @@
 #include <stdarg.h>
 #include <time.h>
 
-#define VERSION "0.2b"
+#define VERSION "0.2c"
 
 #define ALERT_TEXT_WARNINGS 0   /* 1 => generate experimental warning msgs */
 
@@ -1001,7 +1001,18 @@ parse_c_action pca_translate [] = { {
   pca_translate_other,
 } } ;
 
-
+/*
+ * parse C code
+ *
+ * the state machine appears to have the following states
+ * (info supplied by Eero Tamminen):
+ *  state   meaning
+ *    0     valid place to start token
+ *    1     within token starting with 'N'
+ *    2     within 'N_' or '_' token
+ *    3     valid token ended by '(', can now parse string
+ *    4     within invalid token
+ */
 static void parse_c_file(char *fname, parse_c_action *pca, void *this)
 {
   int c;
@@ -1075,7 +1086,7 @@ static void parse_c_file(char *fname, parse_c_action *pca, void *this)
         if(state < 2) {
           state = 2;
         } else {
-          state = 0;
+          state = 4;
         }
       } else if(c == 'N') {
         if(state == 0) {
