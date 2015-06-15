@@ -17,6 +17,7 @@
 #include "doprintf.h"
 #include "portab.h"
 #include "kprint.h"
+#include "nls.h"
 #include "lineavars.h"
 #include "vt52.h"
 #include "tosvars.h"
@@ -528,7 +529,7 @@ void dopanic(const char *fmt, ...)
     set_sr(0x2300);         /* allow interrupts so we get keypresses */
     while(bconstat2())      /* eat any pending ones */
         bconin2();
-    cprintf("\n*** Press any key to continue ***");
+    cprintf(_("\n*** Press any key to continue ***"));
     bconin2();
 
     savptr = (LONG) trap_save_area; /* in case running program has altered it */

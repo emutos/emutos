@@ -5,6 +5,7 @@
 
 bios/bios.c
 bios/initinfo.c
+bios/kprint.c
 
 bdos/osmem.c
 
