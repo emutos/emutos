@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EMUTOS beta\n"
 "POT-Creation-Date: 2004-01-27 14:37+0100\n"
-"PO-Revision-Date: 2015-04-23 21:50+0200\n"
+"PO-Revision-Date: 2015-06-16 23:24+0200\n"
 "Last-Translator: Vincent Riviere <vincent.riviere@freesbee.fr>\n"
 "Language-Team: French <fr@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -23,61 +23,69 @@ msgid ""
 msgstr ""
 "Système stoppé !\n"
 
-#: bios/initinfo.c:162
+#: bios/initinfo.c:165
 msgid "GEMDOS drives"
 msgstr "Lecteurs GEMDOS"
 
-#: bios/initinfo.c:207
+#: bios/initinfo.c:218
 msgid "EmuTOS Version"
 msgstr "EmuTOS Version"
 
-#: bios/initinfo.c:209
+#: bios/initinfo.c:220
 msgid "CPU type"
 msgstr "Type de CPU"
 
-#: bios/initinfo.c:217
+#: bios/initinfo.c:228
 msgid "Machine"
 msgstr "Machine"
 
-#: bios/initinfo.c:219
+#: bios/initinfo.c:230
 msgid "Free ST-RAM"
 msgstr "ST-RAM libre"
 
-#: bios/initinfo.c:220 bios/initinfo.c:227
+#: bios/initinfo.c:231 bios/initinfo.c:238
 msgid "%ld kB"
 msgstr "%ld ko"
 
-#: bios/initinfo.c:226
+#: bios/initinfo.c:237
 msgid "Free FastRAM"
 msgstr "FastRAM libre"
 
-#: bios/initinfo.c:232
+#: bios/initinfo.c:243
 msgid "Screen start"
 msgstr "Début écran"
 
-#: bios/initinfo.c:238
+#: bios/initinfo.c:249
 msgid "Boot time"
 msgstr "Heure de démarrage"
 
-#: bios/initinfo.c:244
+#: bios/initinfo.c:255
 msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "Touche CTRL => pas d'AUTO/ACC"
 
-#: bios/initinfo.c:247
+#: bios/initinfo.c:258
 msgid "Hold <Alternate> to skip HDD boot"
 msgstr "Touche ALT => pas de disque dur"
 
-#: bios/initinfo.c:250
+#: bios/initinfo.c:261
 msgid "Press key 'X' to boot from X:"
 msgstr "Tapez 'X' pour démarrer depuis X:"
 
-#: bios/initinfo.c:253
+#: bios/initinfo.c:264
 msgid "Press <Esc> to run an early console"
 msgstr "Tapez <Esc> pour lancer la console"
 
-#: bios/initinfo.c:264
+#: bios/initinfo.c:274
 msgid " Hold <Shift> to pause this screen "
 msgstr " <Shift> pour maintenir cet écran "
+
+#: bios/kprint.c:532
+msgid ""
+"\n"
+"*** Press any key to continue ***"
+msgstr ""
+"\n"
+"*** Appuyez sur une touche pour continuer ***"
 
 #: bdos/osmem.c:163
 msgid ""
@@ -189,79 +197,73 @@ msgstr "[3]["
 
 #: aes/gem_rsc.c:744
 msgid "[1]["
-"The application cannot find|"
-"the folder or document you|"
-"are trying to open.  Check|"
-"the name you have entered.][  OK  ]"
+"This application cannot|"
+"find the folder or file|"
+"you just tried to access.][  OK  ]"
 msgstr "[1]["
-"Cette application ne trouve pas|"
-"le dossier ou le document que|"
-"vous essayez d'ouvrir. Vérifiez|"
-"le nom que vous avez entré.][  OK  ]"
+"Cette application ne peut pas|"
+"trouver le dossier ou fichier|"
+"auquel avez tenté d'accéder.][  OK  ]"
 
-#: aes/gem_rsc.c:751
+#: aes/gem_rsc.c:749
 msgid "[1]["
-"The application doesn't have|"
-"enough room to open another|"
-"document.  To make room, close|"
-"any documents you don't need.][  OK  ]"
+"This application does not|"
+"have room to open another|"
+"document.  To make room,|"
+"close any document that|"
+"you do not need.][  OK  ]"
 msgstr "[1]["
 "Cette application n'a pas assez|"
-"de place pour ouvrir une autre|"
+"de place pour ouvrir un autre|"
 "document. Pour faire de la|"
-"place, veuillez fermer tous les|"
-"documents inutilisés.][  OK  ]"
+"place, fermez un document dont|"
+"vous n'avez plus besoin.][  OK  ]"
 
 #: aes/gem_rsc.c:758
 msgid "[1]["
-"An item with this name already|"
-"exists in the folder, or the|"
-"item is set to Read-Only.|"
-"Use the \"Info/Rename\" command|"
-"to change the item's status.][  OK  ]"
+"An item with this name|"
+"already exists in the|"
+"directory, or this item|"
+"is set to Read Only status.][  OK  ]"
 msgstr "[1]["
-"Il existe déjà un objet avec ce|"
-"nom dans ce dossier, ou bien il|"
-"est en lecture seule. Veuillez|"
-"utiliser \"Info/Renommer\" pour|"
-"changer l'état de cet objet.][  OK  ]"
+"Un objet portant ce nom existe|"
+"déjà dans ce dossier, ou bien|"
+"il est en lecture seule.][  OK  ]"
 
-#: aes/gem_rsc.c:767
+#: aes/gem_rsc.c:765
 msgid "[1]["
-"The specified disk drive does|"
-"not exist.  Check the drive|"
-"letter you entered.][  OK  ]"
+"The drive you specified|"
+"does not exist.][ Cancel ]"
 msgstr "[1]["
-"Le lecteur spécifié n'existe pas.|"
-"Vérifiez la lettre de lecteur que|"
-"vous avez saisie.][  OK  ]"
+"Le lecteur spécifié|"
+"n'existe pas.][Annuler]"
 
-#: aes/gem_rsc.c:772
+#: aes/gem_rsc.c:768
 msgid "[1]["
-"Cannot run the application|"
-"you have selected.  It may|"
-"be damaged, or your system|"
-"may not have enough memory.][  OK  ]"
+"There is not enough memory|"
+"in your computer for the|"
+"application you just tried|"
+"to run.][  OK  ]"
 msgstr "[1]["
-"Impossible d'exécuter cette|"
-"application. Elle est peut-être|"
-"endommagée, ou votre système|"
-"manque de mémoire.][  OK  ]"
+"Votre ordinateur n'a pas|"
+"suffisamment de mémoire pour|"
+"l'application que vous venez|"
+"d'essayer de lancer.][  OK  ]"
 
-#: aes/gem_rsc.c:779
+#: aes/gem_rsc.c:775
 msgid "[3]["
-"DOS error #%d.][Cancel]"
+"TOS error #%u.][Cancel]"
 msgstr "[3]["
-"Erreur DOS #%d.][Annuler]"
+"Erreur TOS #%u.][Annuler]"
 
-#: aes/gem_rsc.c:780
+#: aes/gem_rsc.c:776
 msgid "[3]["
 "Unsupported AES function #%d.][Cancel]"
 msgstr "[3]["
 "La fonction AES #%d|"
 "n'est pas supportée.][Annuler]"
 
-#: aes/gem_rsc.c:781
+#: aes/gem_rsc.c:777
 msgid "ITEM SELECTOR"
 msgstr "SÉLECTEUR DE FICHIER"
 
@@ -294,8 +296,8 @@ msgid "Size: __________"
 msgstr "Taille: __________"
 
 #: desk/desk_rsc.c:42
-msgid "Date: __/__/__"
-msgstr "Date: __/__/__"
+msgid "Date: __________"
+msgstr "Date: __________"
 
 #: desk/desk_rsc.c:47
 msgid "Time: __:__ __"
@@ -486,7 +488,7 @@ msgid "The EmuTOS development team"
 msgstr "L'équipe de dévelopement d'EmuTOS"
 
 #: desk/desk_rsc.c:698
-msgid "Based on 'GPLed' sources"
+msgid "  Based on 'GPLed' sources"
 msgstr "Basé sur des sources GPL-isées"
 
 #: desk/desk_rsc.c:728
@@ -1262,11 +1264,11 @@ msgstr " ou "
 msgid "CR to continue ..."
 msgstr "Entrée pour continuer..."
 
-#: cli/cmdmain.c:59
+#: cli/cmdmain.c:61
 msgid "Welcome to EmuCON2: type HELP for builtin commands"
 msgstr "Bienvenue dans EmuCON2 : tapez HELP pour les commandes internes"
 
-#: cli/cmdmain.c:78
+#: cli/cmdmain.c:80
 msgid "warning: no history buffers"
 msgstr "avertissement : aucun buffer d'historique"
 
