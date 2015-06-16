@@ -112,16 +112,18 @@ static BYTE *fmt_time(UWORD time, BYTE *fmt_string, BYTE *ptime)
  * Outputs 6 bytes:
  *  ddmmyy      (English style)
  *  mmddyy      (US style)
- * formatted as per sprintf string 'fmt_string'
+ * where yy is a 2- or 4-digit year, depending on the value of 'fourdigit'
  *
  * Returns pointer to end of formatted string
  */
-static BYTE *fmt_date(UWORD date, BYTE *fmt_string, BYTE *pdate)
+static BYTE *fmt_date(UWORD date, BOOL fourdigit, BYTE *pdate)
 {
     WORD dd, mm, yy;
     WORD var1, var2;
 
-    yy = (1980 + ((date >> 9) & 0x007f)) % 100;
+    yy = 1980 + ((date >> 9) & 0x007f);
+    if (!fourdigit)
+        yy %= 100;
     mm = (date >> 5) & 0x000f;
     dd = date & 0x001f;
 
@@ -135,7 +137,7 @@ static BYTE *fmt_date(UWORD date, BYTE *fmt_string, BYTE *pdate)
         var1 = dd;
         var2 = mm;
     }
-    sprintf(pdate,fmt_string,var1,var2,yy);
+    sprintf(pdate,"%02d/%02d/%02d",var1,var2,yy);
 
     return pdate+strlen(pdate);
 }
@@ -187,6 +189,10 @@ static WORD format_sfcb(LONG psfcb, BYTE *pfmt)
 
     /*
      * determine if we should use the wide format
+     *
+     * the wide format actually requires about 50 bytes,
+     * so 400 pixels should be enough, but for now we'll
+     * stick with standard Atari resolutions
      */
     wide = (G.g_wdesk < 640) ? FALSE : TRUE;
 
@@ -237,10 +243,16 @@ static WORD format_sfcb(LONG psfcb, BYTE *pfmt)
 
     /*
      * date and time
+     *
+     * note: we display 4 digits for year on wide screens, or if
+     * we're using a 24-hour clock on any screen (no need for
+     * am/pm space)
      */
+    *pdst++ = ' ';
     if (wide)
         *pdst++ = ' ';
-    pdst = fmt_date(sf.sfcb_date, " %02d-%02d-%02d ", pdst);
+    pdst = fmt_date(sf.sfcb_date, wide || (G.g_ctimeform == 0), pdst);
+    *pdst++ = ' ';
     if (wide)
         *pdst++ = ' ';
     pdst = fmt_time(sf.sfcb_time, wide?"%02d:%02d %s":"%02d:%02d%s", pdst);
@@ -341,9 +353,9 @@ static void inf_fifosz(LONG tree, WORD dl_fi, WORD dl_fo, WORD dl_sz)
 
 static void inf_dttm(LONG tree, FNODE *pf, WORD dl_dt, WORD dl_tm)
 {
-    BYTE str[7];
+    BYTE str[11];
 
-    fmt_date(pf->f_date, "%02d%02d%02d", str);
+    fmt_date(pf->f_date, 1, str);   /* 4-digit year always */
     inf_sset(tree, dl_dt, str);
 
     fmt_time(pf->f_time, "%02d%02d%s", str);
