@@ -974,7 +974,7 @@ static void pca_translate_gstring(void *this, str *s, char *fname, int lineno)
     t = xstrdup(e->msgstr);
   }
   p->conv(t);  /* convert the string, be it a translation or the original */
-  print_canon(p->f, t, "");
+  print_canon(p->f, t, NULL);
   free(t);
 }
 
@@ -984,7 +984,7 @@ static void pca_translate_string(void *this, str *s)
   char *t;
 
   t = s_detach(s);
-  print_canon(p->f, t, "");
+  print_canon(p->f, t, NULL);
   free(t);
 }
 
@@ -1431,13 +1431,26 @@ static void alert_check(const char *start, const char *end, int lines)
 static void print_canon(FILE *f, const char *t, const char *prefix)
 {
   unsigned a;
+  int translate = 0;
 #if CANON_GEM_ALERT
   int gem_alert = 0, gem_button = 0, alert_lines = 0;
   const char *line_start = NULL;
 #endif /* CANON_GEM_ALERT */
 
+  /*
+   * we need a special translate mode indicator
+   * so we can generate backslashes in the output
+   */
+  if (!prefix) {    /* being called for translation */
+    translate = 1;
+    prefix = "";
+  }
+
   if(strchr(t, '\n')) {
-    fprintf(f, "\"\"\n%s", prefix);
+    if (translate)
+      fprintf(f,"\"\"\\\n");           /* insert backslash before newline */
+    else
+      fprintf(f, "\"\"\n%s", prefix);
   }
 
 #if CANON_GEM_ALERT
@@ -1454,7 +1467,10 @@ static void print_canon(FILE *f, const char *t, const char *prefix)
     switch(*t) {
     case '\n':
       if(t[1]) {
-        fprintf(f, "\\n\"\n%s\"", prefix);
+        if (translate)
+          fprintf(f, "\\n\"\\\n\"");    /* insert backslash before newline */
+        else
+          fprintf(f, "\\n\"\n%s\"", prefix);
       } else {
         fprintf(f, "\\n");
       }
