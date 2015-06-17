@@ -16,6 +16,8 @@
 *       -------------------------------------------------------------
 */
 
+/* #define ENABLE_KDEBUG */
+
 #include "config.h"
 #include "portab.h"
 #include "string.h"
@@ -36,6 +38,7 @@
 #include "dos.h"
 #include "desk1.h"
 #include "ikbd.h"
+#include "kprint.h"
 
 
 static void zoom_closed(WORD close, WORD w_id, WORD xicon, WORD yicon)

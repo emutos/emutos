@@ -16,6 +16,8 @@
 *       -------------------------------------------------------------
 */
 
+/* #define ENABLE_KDEBUG */
+
 #include "config.h"
 #include "portab.h"
 #include "compat.h"
@@ -29,6 +31,7 @@
 #include "gembind.h"
 #include "aesbind.h"
 #include "deskgraf.h"
+#include "kprint.h"
 
 
 #define ORGADDR 0x0L

@@ -18,6 +18,8 @@
 *       -------------------------------------------------------------
 */
 
+/* #define ENABLE_KDEBUG */
+
 #include "config.h"
 #include "portab.h"
 #include "obdefs.h"
@@ -40,6 +42,7 @@
 
 #include "string.h"
 #include "gemerror.h"
+#include "kprint.h"
 
 
 

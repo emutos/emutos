@@ -18,10 +18,13 @@
 *       -------------------------------------------------------------
 */
 
+/* #define ENABLE_KDEBUG */
+
 #include "config.h"
 #include "portab.h"
 #include "obdefs.h"
 #include "gembind.h"
+#include "kprint.h"
 
 
 #define CTRL_CNT        3

@@ -16,6 +16,8 @@
 *       -------------------------------------------------------------
 */
 
+/* #define ENABLE_KDEBUG */
+
 #include "config.h"
 #include <string.h>
 
@@ -42,6 +44,8 @@
 #include "desk1.h"
 #include "intmath.h"
 #include "deskins.h"
+#include "kprint.h"
+
 
 #if HAVE_APPL_IBLKS
 static ICONBLK  gl_aib;

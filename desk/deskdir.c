@@ -18,6 +18,8 @@
 *       -------------------------------------------------------------
 */
 
+/* #define ENABLE_KDEBUG */
+
 #include "config.h"
 #include "portab.h"
 #include "string.h"
@@ -42,6 +44,7 @@
 #include "desk1.h"
 #include "deskdir.h"
 #include "gemerror.h"
+#include "kprint.h"
 
 
 #define MAX_CLUS_SIZE   (32*1024L)  /* maximum cluster size */

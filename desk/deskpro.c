@@ -17,6 +17,8 @@
 *       -------------------------------------------------------------
 */
 
+/* #define ENABLE_KDEBUG */
+
 #include "config.h"
 #include <string.h>
 
@@ -32,6 +34,7 @@
 #include "deskglob.h"
 #include "desksupp.h"
 #include "deskpro.h"
+#include "kprint.h"
 
 
 WORD pro_chdir(WORD drv, BYTE *ppath)

@@ -16,6 +16,8 @@
 *       -------------------------------------------------------------
 */
 
+/* #define ENABLE_KDEBUG */
+
 #include "config.h"
 #include "portab.h"
 #include "string.h"
@@ -30,6 +32,7 @@
 #include "deskgraf.h"
 #include "deskglob.h"
 #include "deskobj.h"
+#include "kprint.h"
 
 
 static const OBJECT gl_sampob[2] =

@@ -17,11 +17,15 @@
 *       -------------------------------------------------------------
 */
 
+/* #define ENABLE_KDEBUG */
+
 #include "config.h"
 #include "portab.h"
 
 #include "aesbind.h"
 #include "deskrsrc.h"
+#include "kprint.h"
+
 
 #define R_STRING 5
 

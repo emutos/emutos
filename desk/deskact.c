@@ -16,6 +16,8 @@
 *       -------------------------------------------------------------
 */
 
+/* #define ENABLE_KDEBUG */
+
 #include "config.h"
 #include "portab.h"
 #include "obdefs.h"
@@ -34,6 +36,7 @@
 #include "deskmain.h"
 #include "desksupp.h"
 #include "desk1.h"
+#include "kprint.h"
 
 
 /* defines */

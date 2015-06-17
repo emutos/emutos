@@ -17,6 +17,8 @@
 *       -------------------------------------------------------------
 */
 
+/* #define ENABLE_KDEBUG */
+
 #include "config.h"
 #include <string.h>
 
@@ -45,6 +47,7 @@
 #include "desk1.h"
 #include "xbiosbind.h"
 #include "country.h"
+#include "kprint.h"
 
 
 GLOBAL WORD     gl_numics;

@@ -17,6 +17,8 @@
 *       -------------------------------------------------------------
 */
 
+/* #define ENABLE_KDEBUG */
+
 #include "config.h"
 #include "portab.h"
 #include "string.h"
@@ -27,7 +29,6 @@
 #include "dos.h"
 #include "gembind.h"
 #include "deskbind.h"
-
 #include "rectfunc.h"
 #include "intmath.h"
 #include "aesbind.h"
@@ -39,7 +40,6 @@
 #include "deskmain.h"
 #include "deskglob.h"
 #include "deskinf.h"
-
 #include "kprint.h"
 
 

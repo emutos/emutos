@@ -33,6 +33,7 @@
 *       v_opnvwk( pwork_in, phandle, pwork_out )
 */
 
+/* #define ENABLE_KDEBUG */
 
 #include "config.h"
 #include "portab.h"
@@ -43,6 +44,7 @@
 #include "deskgraf.h"
 #include "gsx2.h"
 #include "deskgsx.h"
+#include "kprint.h"
 
 
 void gsx_ncode(WORD code, WORD n, WORD m)
