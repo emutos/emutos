@@ -167,6 +167,10 @@
  *            longer wrap certain free strings with #ifdef DESK1/#endif.
  *            as a result, frstr_cond is no longer used for any resource,
  *            and could be dropped along with its associated code.
+ *
+ * v4.6     roger burrows, june/2015
+ *          . add full decoding for ob_flags: use hex values for
+ *            non-standard flags.
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -376,7 +380,7 @@ typedef struct {
   #define PROGRAM_NAME  "ird"
 #endif
 
-#define VERSION         "v4.5"
+#define VERSION         "v4.6"
 #define MAX_STRLEN      300         /* max size for internal string areas */
 #define NLS             "N_("       /* the macro used in EmuTOS for NLS support*/
 
@@ -609,7 +613,7 @@ LOCAL int generate_objects = 1;
  *  table for decoding ob_flags
  */
 typedef struct {
-    short mask;
+    unsigned short mask;
     char *desc;
 } FLAGS;
 
@@ -669,7 +673,7 @@ PRIVATE short convert_def_type(int deftype);
 PRIVATE short convert_dfn_type(int dfntype,int dfnind);
 PRIVATE int copycheck(char *dest,char *src,int len);
 PRIVATE void copyfix(char *dest,char *src,int len);
-PRIVATE char *decode_flags(short flags);
+PRIVATE char *decode_flags(unsigned short flags);
 PRIVATE char *decode_font(short font);
 PRIVATE char *decode_ib_char(short iconchar);
 PRIVATE char *decode_just(short just);
@@ -2155,13 +2159,16 @@ unsigned char c;
 /*
  *  returns pointer to string defining flags
  */
-PRIVATE char *decode_flags(short flags)
+PRIVATE char *decode_flags(unsigned short flags)
 {
 static char temp[MAX_STRLEN];
 const FLAGS *f;
+int n;
 
-    if (flags == 0)
-        return "NONE";
+    if (flags == 0) {
+        strcpy(temp,"NONE");
+        return temp;
+    }
 
     temp[0] = '\0';
     for (f = flaglist; f->mask; f++) {
@@ -2169,7 +2176,16 @@ const FLAGS *f;
             if (temp[0])
                 strcat(temp," | ");
             strcat(temp,f->desc);
+            flags &= ~f->mask;  /* track which ones we've decoded */
         }
+    }
+
+    /* check for any non-standard flags set */
+    if (flags) {
+        if (temp[0])
+            strcat(temp," | ");
+        n = strlen(temp);
+        sprintf(temp+n,"0x%04x",flags);
     }
 
     return temp;
