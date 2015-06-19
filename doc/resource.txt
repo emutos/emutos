@@ -13,6 +13,29 @@ then compiled into the EmuTOS image(s).  All the resource decompilers
 are built from the same source code, with some compile-time and
 run-time differences.
 
+
+Object alignment in EmuTOS
+==========================
+Translations typically have a length different from the original
+English text.  In order to keep dialogs looking tidy in all languages,
+it is often useful to centre- or right-align text objects.  The AES
+does not provide an easy way of doing this (alignment in TEDINFO objects
+affects the text within the object, as well as object positioning).
+
+To allow centre- or right-alignment alignment of text objects, we
+steal unused bits in ob_flags to indicate the required alignment.
+The following bits are used:
+    0x8000      centre-aligned
+    0x4000      right-aligned
+If both bits are set, centre alignment takes precedence.
+
+Note that this does not cause any incompatibilities, because this
+extra function is performed outside the AES, and only for the internal
+desktop resource.  Also note that this aligns the *object*, not the
+text within the object.  It is perfectly reasonable (and common) to
+have left-aligned text within a right-aligned TEDINFO object.
+
+
 Tips on using a resource editor with the current EmuTOS resources
 =================================================================
 1. Atari TOS and most resource editors support a maximum of 30 or 31
@@ -33,6 +56,7 @@ Tips on using a resource editor with the current EmuTOS resources
    be always compiled, you *must* add it before the start of the
    conditionally-compiled items; this is currently specified as ADTTREZ
    for dialogs, STNOOPEN for free strings/alerts.
+
 
 erd/grd/ird: the EmuTOS Resource Decompilers
 ============================================

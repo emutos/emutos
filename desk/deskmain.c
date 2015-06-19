@@ -91,6 +91,16 @@
 #define SORT_HAS_CHANGED    0x0002
 
 
+/*
+ * values in ob_flags for alignment of text objects
+ * (note: internal only for the desktop, _not_ understood by the AES)
+ *
+ * these values must not conflict with "standard" ob_flags items
+ */
+#define CENTRE_ALIGNED  0x8000
+#define RIGHT_ALIGNED   0x4000
+
+
 GLOBAL BYTE     gl_amstr[4];
 GLOBAL BYTE     gl_pmstr[4];
 
@@ -1173,6 +1183,68 @@ static void adjust_menu(OBJECT *obj_array)
 }
 
 /*
+ *  Align text objects according to special values in ob_flags
+ *
+ *  Translations typically have a length different from the original
+ *  English text.  In order to keep dialogs looking tidy in all
+ *  languages, it is often useful to centre- or right-align text
+ *  objects.  The AES does not provide an easy way of doing this
+ *  (alignment in TEDINFO objects affects the text within the object,
+ *  as well as object positioning).
+ *
+ *  To allow centre- or right-alignment alignment of text objects,
+ *  we steal unused bits in ob_flags to indicate the required
+ *  alignment.  Note that this does not cause any incompatibilities
+ *  because this extra function is performed outside the AES, and
+ *  only for the internal desktop resource.
+ *
+ *  Also note that this aligns the *object*, not the text within
+ *  the object.  It is perfectly reasonable (and common) to have
+ *  left-aligned text within a right-aligned TEDINFO object.
+ */
+static void align_objects(OBJECT *obj_array, int nobj)
+{
+    OBJECT *obj;
+    char *p;
+    WORD len;       /* string length in pixels */
+
+    for (obj = obj_array; --nobj >= 0; obj++)
+    {
+        switch(obj->ob_type)
+        {
+        case G_STRING:
+        case G_TEXT:
+        case G_FTEXT:
+        case G_BOXTEXT:
+        case G_FBOXTEXT:
+            if (obj->ob_type == G_STRING)
+                p = (char *)obj->ob_spec;
+            else
+                p = ((TEDINFO *)obj->ob_spec)->te_ptmplt;
+            len = strlen(p) * gl_wchar;
+            if (obj->ob_flags & CENTRE_ALIGNED)
+            {
+                obj->ob_x += (obj->ob_width-len)/2;
+                if (obj->ob_x < 0)
+                    obj->ob_x = 0;
+                obj->ob_width = len;
+                break;
+            }
+            if (obj->ob_flags & RIGHT_ALIGNED)
+            {
+                obj->ob_x += obj->ob_width-len;
+                if (obj->ob_x < 0)
+                    obj->ob_x = 0;
+                obj->ob_width = len;
+            }
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+/*
  *  Horizontally centre dialog title: this is done dynamically to
  *  handle translated titles.
  *
@@ -1230,6 +1302,12 @@ static void desk_xlate_fix(void)
 
     /* translate and fix TEDINFO strings */
     xlate_fix_tedinfo(desk_rs_tedinfo, RS_NTED);
+
+    /*
+     * perform special object alignment - this must be done after
+     * translation and coordinate fixing
+     */
+    align_objects(desk_rs_obj, RS_NOBS);
 }
 
 /* Fake a rsrc_gaddr for the ROM desktop: */
