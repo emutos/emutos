@@ -29,11 +29,32 @@ The following bits are used:
     0x4000      right-aligned
 If both bits are set, centre alignment takes precedence.
 
-Note that this does not cause any incompatibilities, because this
+Note that this does not require any changes to the AES, because this
 extra function is performed outside the AES, and only for the internal
 desktop resource.  Also note that this aligns the *object*, not the
 text within the object.  It is perfectly reasonable (and common) to
 have left-aligned text within a right-aligned TEDINFO object.
+
+*IMPORTANT*
+At the lowest level, the AES attempts to align text on screen byte
+boundaries (see function gr_just()in gemgraf.c).  In doing this, it
+takes into account text justification as specified in the TEDINFO
+'te_just' variable, but it does not know that we have pre-aligned
+objects as described above.  This can cause the horizontal position of
+a pre-aligned string to be adjusted differently from that of a normal
+string and, if the two types of string appear next to each other, they
+may not be aligned with each other even though they should be.
+
+There is no simple general fix for this without modifying the AES,
+which is not desirable for compatibility reasons.  The problem is most
+likely to show up with a dialog box that is not an even number of bytes
+wide: when centered, it will start on a half-byte screen boundary, and
+typically so will all contained strings (before any AES adjustment).
+
+Normally, you can avoid this issue by ensuring that any dialog box
+containing pre-aligned objects is an even number of bytes wide.  If
+this does not help, increasing or decreasing the length of affected
+pre-aligned strings by 1 byte should fix the problem.
 
 
 Tips on using a resource editor with the current EmuTOS resources
