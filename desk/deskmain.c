@@ -1344,13 +1344,6 @@ WORD deskmain(void)
     /* get GEM's gsx handle */
     gl_handle = graf_handle(&gl_wchar, &gl_hchar, &gl_wbox, &gl_hbox);
 
-    /* open a virtual workstation for use by the desktop */
-#ifdef NO_ROM
-    gsx_vopen();
-    /* init gsx and related device dependent variables */
-    gsx_start();
-#endif
-
     /* set clip to working desk and calc full */
     wind_get(0, WF_WXYWH, &G.g_xdesk, &G.g_ydesk, &G.g_wdesk, &G.g_hdesk);
     wind_calc(1, -1, G.g_xdesk,  G.g_ydesk,  G.g_wdesk,  G.g_hdesk,
@@ -1365,17 +1358,8 @@ WORD deskmain(void)
     detect_features();
 
     /* initialize resources */
-#if 0
-    if (!rsrc_load((LONG)"DESKTOP.RSC"))
-    {
-        form_alert(1,(LONG)"[3][ Can not load | the DESKTOP.RSC ][Cancel]");
-        appl_exit();
-        return FALSE;
-    }
-#else
     desk_rs_init();                 /* copies ROM to RAM */
     desk_xlate_fix();               /* translates & fixes desktop */
-#endif
 
     /* initialize menus and dialogs */
     for (ii = 0; ii < RS_NTREE; ii++)
@@ -1501,11 +1485,6 @@ WORD deskmain(void)
 
     /* turn off the menu bar */
     menu_bar(0x0L, FALSE);
-
-    /* close gsx virtual ws */
-#ifdef NO_ROM
-    gsx_vclose();
-#endif
 
     /* exit the gem AES */
     appl_exit();

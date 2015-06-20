@@ -16,9 +16,6 @@
         .globl  _deskstart
         .globl  _gem
         .globl  _get_deskwh
-#ifdef NO_ROM
-        .globl  _gemdos
-#endif
 #if CONF_DEBUG_DESK_STACK
         .globl  _deskstackbottom
 #endif
@@ -60,34 +57,6 @@ fill:
         trap    #1                      // Pterm
 
 
-
-#ifdef NO_ROM
-_gemdos:
-LF2:
-        move.l  (SP)+,saveret
-
-        movem.l d2/a2,saveregs
-
-        move.w  #0,_DOS_ERR
-        move.w  #0,_DOS_AX
-        trap    #1
-        cmp.l   #0,D0
-        bge     L134
-        move.w  #1,_DOS_ERR
-        move.w  D0,_DOS_AX
-        cmp.w   #0xFFE0,D0
-        bgt     L134
-        not.w   _DOS_AX
-        subi.w  #0x1E,_DOS_AX
-L134:
-
-        movem.l saveregs,d2/a2
-
-        move.l  saveret,-(SP)
-        rts
-#endif
-
-
 _gem:
         move.l  4(sp),d1
         move.w  #0xc8,d0
@@ -117,12 +86,3 @@ _get_deskwh:
 _deskstackbottom:
         .ds.b   DESKSTACKSIZE
 deskustack:
-
-
-#ifdef NO_ROM
-saveret:
-        .ds.l   1
-
-saveregs:
-        .ds.l   2
-#endif

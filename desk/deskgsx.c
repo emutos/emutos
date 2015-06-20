@@ -57,12 +57,6 @@ void gsx_ncode(WORD code, WORD n, WORD m)
 }
 
 
-void gsx_vclose(void)
-{
-        gsx_ncode(CLOSE_VWORKSTATION, 0, 0);
-}
-
-
 void d_v_pline(WORD count, WORD *pxyarray)
 {
         i_ptsin( pxyarray );
@@ -97,18 +91,6 @@ void v_opnvwk(WORD *pwork_in, WORD *phandle, WORD *pwork_out )
         i_intout( intout );
         i_ptsin( ptsin );
         i_ptsout( ptsout );
-}
-
-
-void gsx_vopen(void)
-{
-        WORD            i;
-
-        for(i=0; i<10; i++)
-          intin[i] = 1;
-        intin[10] = 2;                  /* device coordinate space */
-
-        v_opnvwk( intin, &gl_handle, (WORD *)&gl_ws);
 }
 
 

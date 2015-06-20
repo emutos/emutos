@@ -291,46 +291,6 @@ void gsx_trans(LONG saddr, UWORD swb, LONG daddr, UWORD dwb, UWORD h)
 }
 
 
-/*
-*       Routine to initialize all the global variables dealing
-*       with a particular workstation open
-*/
-void gsx_start(void)
-{
-        WORD            char_height, nc;
-
-        gl_xclip = 0;
-        gl_yclip = 0;
-        gl_width = gl_wclip = gl_ws.ws_xres + 1;
-        gl_height = gl_hclip = gl_ws.ws_yres + 1;
-
-        nc = gl_ws.ws_ncolors;
-        gl_nplanes = 0;
-        while (nc != 1)
-        {
-          nc >>= 1;
-          gl_nplanes++;
-        }
-        char_height = gl_ws.ws_chminh;
-        vst_height( char_height, &gl_wptschar, &gl_hptschar,
-                                &gl_wschar, &gl_hschar );
-        char_height = gl_ws.ws_chmaxh;
-        vst_height( char_height, &gl_wptschar, &gl_hptschar,
-                                &gl_wchar, &gl_hchar );
-        gl_hbox = gl_hchar + 3;
-        gl_wbox = (gl_hbox * gl_ws.ws_hpixel) / gl_ws.ws_wpixel;
-        d_vsl_type( 7 );
-        d_vsl_width( 1 );
-        d_vsl_udsty( 0xffff );
-        r_set(&gl_rscreen, 0, 0, gl_width, gl_height);
-        r_set(&gl_rfull, 0, gl_hbox, gl_width, (gl_height - gl_hbox));
-        r_set(&gl_rzero, 0, 0, 0, 0);
-        r_set(&gl_rcenter, (gl_width-gl_wbox)/2, (gl_height-(2*gl_hbox))/2,
-                        gl_wbox, gl_hbox);
-        r_set(&gl_rmenu, 0, 0, gl_width, gl_hbox);
-}
-
-
 void gsx_tblt(WORD tb_f, WORD x, WORD y, WORD tb_nc)
 {
         WORD            pts_height;

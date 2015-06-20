@@ -172,47 +172,8 @@ void app_free(ANODE *pa)
 }
 
 
-/*
-*       Convert a single hex ASCII digit to a number
-*/
-#ifdef NO_ROM
-WORD hex_dig(BYTE achar)
-{
-        if ( (achar >= '0') &&
-             (achar <= '9') )
-          return(achar - '0');
-        if ( (achar >= 'A') &&
-             (achar <= 'F') )
-          return(achar - 'A' + 10);
-        return(0);
-}
-#endif
-
-/*
-*       Scan off and convert the next two hex digits and return with
-*       pcurr pointing one space past the end of the four hex digits
-*/
-#ifdef NO_ROM
-BYTE *scan_2(BYTE *pcurr, WORD *pwd)
-{
-        UWORD   temp;
-
-        if( *pcurr==' ' )
-          pcurr += 1;
-
-        temp = 0x0;
-        temp |= hex_dig(*pcurr++) << 4;
-        temp |= hex_dig(*pcurr++);
-        if (temp == 0x00ff)
-          temp = NIL;
-        *pwd = temp;
-
-        return( pcurr );
-}
-#else
 /* We're using scan_2 from the AES sources: */
 extern BYTE *scan_2(BYTE *pcurr, WORD *pwd);
-#endif
 
 
 /*
