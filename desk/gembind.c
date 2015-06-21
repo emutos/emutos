@@ -866,10 +866,10 @@ WORD graf_handle(WORD *pwchar, WORD *phchar, WORD *pwbox, WORD *phbox)
 }
 
 
-WORD graf_mouse(WORD m_number, WORD m_addr)
+WORD graf_mouse(WORD m_number, void *m_addr)
 {
         GR_MNUMBER = m_number;
-        GR_MADDR = m_addr;
+        GR_MADDR = (LONG)m_addr;
         return( gem_if( GRAF_MOUSE ) );
 }
 

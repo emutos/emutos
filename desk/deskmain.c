@@ -185,7 +185,7 @@ static void display_free_stack(void)
  */
 static void desk_wait(WORD turnon)
 {
-    graf_mouse(turnon ? HGLASS : ARROW, 0x0L);
+    graf_mouse(turnon ? HGLASS : ARROW, NULL);
 }
 
 

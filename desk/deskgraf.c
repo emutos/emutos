@@ -245,7 +245,7 @@ gsx_blt(LONG saddr, UWORD sx, UWORD sy, UWORD swb,
         gsx_fix(&gl_src, saddr, swb, h);
         gsx_fix(&gl_dst, daddr, dwb, h);
 
-        graf_mouse(M_OFF, 0x0L);
+        graf_mouse(M_OFF, NULL);
 
         ptsin[0] = sx;
         ptsin[1] = sy;
@@ -260,7 +260,7 @@ gsx_blt(LONG saddr, UWORD sx, UWORD sy, UWORD swb,
         else
           vrt_cpyfm( rule, &ptsin[0], &gl_src, &gl_dst, fgcolor, bgcolor);
 
-        graf_mouse(M_ON, 0x0L);
+        graf_mouse(M_ON, NULL);
 }
 
 

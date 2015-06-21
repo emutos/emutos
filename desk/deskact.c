@@ -176,14 +176,14 @@ static void gr_plns(WORD x, WORD y, WORD numpts, WORD *xylnpts, WORD numobs,
 {
         WORD    i, j;
 
-        graf_mouse(M_OFF, 0x0L);
+        graf_mouse(M_OFF, NULL);
 
         for(i=0; i<numobs; i++)
         {
           j = i * 2;
           gsx_pline(x + xyobpts[j], y + xyobpts[j+1], numpts, xylnpts);
         }
-        graf_mouse(M_ON, 0x0L);
+        graf_mouse(M_ON, NULL);
 }
 
 
@@ -241,7 +241,7 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD numpts,
         ANODE   *pa;
         OBJECT *obj;
 
-        graf_mouse(4, 0x0L);                    /* flat hand            */
+        graf_mouse(4, NULL);                    /* flat hand            */
 
         l_mx = in_mx;
         l_my = in_my;
@@ -343,7 +343,7 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD numpts,
         *pdulx = l_mx;                          /* pass back dest. x,y  */
         *pduly = l_my;
         *pdwh = dst_wh;
-        graf_mouse(ARROW, 0x0L);
+        graf_mouse(ARROW, NULL);
 } /* gr_drgplns */
 
 

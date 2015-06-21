@@ -61,11 +61,11 @@ static WORD pro_exec(WORD isgraf, WORD isover, BYTE *pcmd, BYTE *ptail)
 {
         WORD            ret;
 
-        graf_mouse(HGLASS, 0x0L);
+        graf_mouse(HGLASS, NULL);
 
         ret = shel_write(TRUE, isgraf, isover, pcmd, ptail);
         if (!ret)
-          graf_mouse(ARROW, 0x0L);
+          graf_mouse(ARROW, NULL);
         return( ret );
 } /* pro_exec */
 

@@ -86,7 +86,7 @@ void fun_rebld(WNODE *pwin)
     WORD x, y, w, h;
     BYTE *ptst;
 
-    graf_mouse(HGLASS, 0x0L);
+    graf_mouse(HGLASS, NULL);
 
     /* set up path to check against all windows*/
     ptst = &pwin->w_path->p_spec[0];
@@ -106,7 +106,7 @@ void fun_rebld(WNODE *pwin)
         } /* if */
     } /* for */
 
-    graf_mouse(ARROW, 0x0L);
+    graf_mouse(ARROW, NULL);
 } /* fun_rebld */
 
 
@@ -310,7 +310,7 @@ WORD fun_op(WORD op, PNODE *pspath, BYTE *pdest)
         return TRUE;
     }
 
-    graf_mouse(ARROW, 0);
+    graf_mouse(ARROW, NULL);
     return FALSE;
 }
 

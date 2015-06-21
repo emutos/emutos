@@ -129,7 +129,7 @@ void do_wredraw(WORD w_handle, WORD xc, WORD yc, WORD wc, WORD hc)
         else
           root = 1;
 
-        graf_mouse(M_OFF, 0x0L);
+        graf_mouse(M_OFF, NULL);
 
         wind_get(w_handle, WF_FIRSTXYWH, &t.g_x, &t.g_y, &t.g_w, &t.g_h);
         while ( t.g_w && t.g_h )
@@ -138,7 +138,7 @@ void do_wredraw(WORD w_handle, WORD xc, WORD yc, WORD wc, WORD hc)
             objc_draw(G.g_screen, root, MAX_DEPTH, t.g_x, t.g_y, t.g_w, t.g_h);
           wind_get(w_handle, WF_NEXTXYWH, &t.g_x, &t.g_y, &t.g_w, &t.g_h);
         }
-        graf_mouse(M_ON, 0x0L);
+        graf_mouse(M_ON, NULL);
 }
 
 
@@ -237,12 +237,12 @@ WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon, WORD drv,
         WORD    ret;
         PNODE   *tmp;
                                                 /* convert to hourglass */
-        graf_mouse(HGLASS, 0x0L);
+        graf_mouse(HGLASS, NULL);
                                                 /* open a path node     */
         tmp = pn_open(drv, ppath, pname, pext, F_SUBDIR);
         if ( tmp == NULL)
         {
-          graf_mouse(ARROW, 0x0L);
+          graf_mouse(ARROW, NULL);
           return(FALSE);
         }
         else
@@ -281,7 +281,7 @@ WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon, WORD drv,
         if (redraw && ( !new_win ))
           fun_msg(WM_REDRAW, pw->w_id, pt->g_x, pt->g_y, pt->g_w, pt->g_h);
 
-        graf_mouse(ARROW, 0x0L);
+        graf_mouse(ARROW, NULL);
         return(TRUE);
 } /* do_diropen */
 
@@ -410,7 +410,7 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
         /*
          * set up for text output
          */
-        graf_mouse(M_OFF, 0);
+        graf_mouse(M_OFF, NULL);
         menu_bar(G.a_trees[ADMENU],0);
         wind_update(BEG_UPDATE);
         form_dial(FMD_START, 0,0,0,0, 0,0,scr_width,scr_height);
@@ -447,7 +447,7 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
         form_dial(FMD_FINISH, 0,0,0,0, 0,0,scr_width,scr_height);
         wind_update(END_UPDATE);
         menu_bar(G.a_trees[ADMENU],1);
-        graf_mouse(M_ON, 0);
+        graf_mouse(M_ON, NULL);
 }
 #endif
 
@@ -752,7 +752,7 @@ int do_format(WORD curr)
             else
               fun_alert(1, STNOFRMT, NULL);
 
-            graf_mouse(ARROW, 0x0L);
+            graf_mouse(ARROW, NULL);
           } /* if ret */
         } /* if */
 

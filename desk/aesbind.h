@@ -75,7 +75,7 @@ WORD graf_shrinkbox(WORD orgx, WORD orgy, WORD orgw, WORD orgh,
 WORD graf_watchbox(LONG tree, WORD obj, UWORD instate, UWORD outstate);
 WORD graf_slidebox(LONG tree, WORD parent, WORD obj, WORD isvert);
 WORD graf_handle(WORD *pwchar, WORD *phchar, WORD *pwbox, WORD *phbox);
-WORD graf_mouse(WORD m_number, WORD m_addr);
+WORD graf_mouse(WORD m_number, void *m_addr);
 void graf_mkstate(WORD *pmx, WORD *pmy, WORD *pmstate, WORD *pkstate);
 
 /*

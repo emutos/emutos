@@ -113,7 +113,7 @@ static WORD do_namecon(void)
     LONG tree = G.a_trees[ADCPALER];
     WORD ob;
 
-    graf_mouse(ARROW, 0x0L);
+    graf_mouse(ARROW, NULL);
     if (ml_havebox)
         draw_dial(tree);
     else
@@ -123,7 +123,7 @@ static WORD do_namecon(void)
     }
     form_do(tree, 0);
     draw_dial(G.a_trees[ADCPYDEL]);
-    graf_mouse(HGLASS, 0);
+    graf_mouse(HGLASS, NULL);
 
     ob = inf_gindex(tree, CAOK, 3) + CAOK;
     ((OBJECT *)tree+ob)->ob_state = NORMAL;
@@ -518,9 +518,9 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
             break;
         if (writelen != readlen)    /* disk full? */
         {
-            graf_mouse(ARROW, 0);
+            graf_mouse(ARROW, NULL);
             fun_alert(1, STDISKFU, NULL);
-            graf_mouse(HGLASS, 0);
+            graf_mouse(HGLASS, NULL);
             rc = -1;        /* indicate disk full error */
             break;
         }
@@ -806,7 +806,7 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
     BYTE srcpth[MAXPATHLEN], dstpth[MAXPATHLEN];
     OBJECT *obj;
 
-    graf_mouse(HGLASS, 0);
+    graf_mouse(HGLASS, NULL);
 
     ml_havebox = FALSE;
     confirm = 0;
@@ -835,7 +835,7 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
         if (lavail < 0L)
         {
             form_error(E_NOMEMORY);     /* let user know */
-            graf_mouse(ARROW, 0);
+            graf_mouse(ARROW, NULL);
             return FALSE;
         }
         /*
@@ -873,9 +873,9 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
         ml_havebox = TRUE;
         if (confirm)
         {
-            graf_mouse(ARROW, 0);
+            graf_mouse(ARROW, NULL);
             form_do(tree, 0);
-            graf_mouse(HGLASS, 0);
+            graf_mouse(HGLASS, NULL);
             more = inf_what(tree, CDOK, CDCNCL);
         }
     }
@@ -963,7 +963,7 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
 
     if (tree)
         show_hide(FMD_FINISH, tree);
-    graf_mouse(ARROW, 0);
+    graf_mouse(ARROW, NULL);
 
     return TRUE;
 }

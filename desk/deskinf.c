@@ -409,11 +409,11 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
      */
     if (pf->f_attr & F_SUBDIR)
     {
-        graf_mouse(HGLASS, 0x0L);
+        graf_mouse(HGLASS, NULL);
         strcpy(srcpth+nmidx, pf->f_name);
         strcat(srcpth, "\\*.*");
         more = count_ffs(srcpth);
-        graf_mouse(ARROW, 0x0L);
+        graf_mouse(ARROW, NULL);
 
         if (!more)
             return FALSE;
@@ -461,7 +461,7 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
     /*
      * user selected OK - we rename and/or change attributes
      */
-    graf_mouse(HGLASS, 0x0L);
+    graf_mouse(HGLASS, NULL);
 
     more = TRUE;
     inf_sget(tree, FFNAME, pnname);
@@ -500,7 +500,7 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
         }
     }
 
-    graf_mouse(ARROW, 0x0L);
+    graf_mouse(ARROW, NULL);
 
     return more;
 }
@@ -518,7 +518,7 @@ WORD inf_disk(BYTE dr_id)
     BYTE str[12];
     BYTE drive[2];
 
-    graf_mouse(HGLASS, 0x0L);
+    graf_mouse(HGLASS, NULL);
     tree = G.a_trees[ADDISKIN];
 
     drive[0] = dr_id;
@@ -527,7 +527,7 @@ WORD inf_disk(BYTE dr_id)
     srcpth[1] = ':';
     strcpy(srcpth+2, "\\*.*");
     more = count_ffs(srcpth);
-    graf_mouse(ARROW, 0x0L);
+    graf_mouse(ARROW, NULL);
 
     if (!more)
         return FALSE;
