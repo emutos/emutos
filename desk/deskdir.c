@@ -62,185 +62,186 @@ static WORD     deleted_folders;
  */
 static WORD user_abort(void)
 {
-        LONG            rawin;
-        WORD            rc = 0;
+    LONG rawin;
+    WORD rc = 0;
 
-        if (dos_conis() == -1)          /* character waiting */
-        {
-            rawin = dos_rawcin() & 0x00ff00ffL;
-            if (rawin == 0x00610000L)   /* the Atari UNDO key */
-                rc = fun_alert(1, STABORT, NULL);
-        }
+    if (dos_conis() == -1)          /* character waiting */
+    {
+        rawin = dos_rawcin() & 0x00ff00ffL;
+        if (rawin == 0x00610000L)   /* the Atari UNDO key */
+            rc = fun_alert(1, STABORT, NULL);
+    }
 
-        DOS_ERR = 0;
-        return (rc==1) ? 1 : 0;
+    DOS_ERR = 0;
+
+    return (rc==1) ? 1 : 0;
 }
 
 
 /*
-*       Routine to DRAW a DIALog box centered on the screen
-*/
+ *  Routine to DRAW a DIALog box centered on the screen
+ */
 static void draw_dial(LONG tree)
 {
-        WORD            xd, yd, wd, hd;
-        OBJECT          *obtree = (OBJECT *)tree;
+    WORD xd, yd, wd, hd;
+    OBJECT *obtree = (OBJECT *)tree;
 
-        form_center(tree, &xd, &yd, &wd, &hd);
-        objc_draw(obtree, ROOT, MAX_DEPTH, xd, yd, wd, hd);
-} /* draw_dial */
+    form_center(tree, &xd, &yd, &wd, &hd);
+    objc_draw(obtree, ROOT, MAX_DEPTH, xd, yd, wd, hd);
+}
 
 
 void show_hide(WORD fmd, LONG tree)
 {
-        WORD            xd, yd, wd, hd;
-        OBJECT          *obtree = (OBJECT *)tree;
+    WORD xd, yd, wd, hd;
+    OBJECT *obtree = (OBJECT *)tree;
 
-        form_center(tree, &xd, &yd, &wd, &hd);
-        form_dial(fmd, 0, 0, 0, 0, xd, yd, wd, hd);
-        if (fmd == FMD_START)
-          objc_draw(obtree, ROOT, MAX_DEPTH, xd, yd, wd, hd);
+    form_center(tree, &xd, &yd, &wd, &hd);
+    form_dial(fmd, 0, 0, 0, 0, xd, yd, wd, hd);
+    if (fmd == FMD_START)
+        objc_draw(obtree, ROOT, MAX_DEPTH, xd, yd, wd, hd);
 }
 
 
 /*
  * display copy alert dialog & wait for selection, then (re)display copying dialog
+ *
  * returns selected object number
  */
 static WORD do_namecon(void)
 {
-        LONG tree = G.a_trees[ADCPALER];
-        WORD ob;
+    LONG tree = G.a_trees[ADCPALER];
+    WORD ob;
 
-        graf_mouse(ARROW, 0x0L);
-        if (ml_havebox)
-          draw_dial(tree);
-        else
-        {
-          show_hide(FMD_START, tree);
-          ml_havebox = TRUE;
-        }
-        form_do(tree, 0);
-        draw_dial(G.a_trees[ADCPYDEL]);
-        graf_mouse(HGLASS, 0);
+    graf_mouse(ARROW, 0x0L);
+    if (ml_havebox)
+        draw_dial(tree);
+    else
+    {
+        show_hide(FMD_START, tree);
+        ml_havebox = TRUE;
+    }
+    form_do(tree, 0);
+    draw_dial(G.a_trees[ADCPYDEL]);
+    graf_mouse(HGLASS, 0);
 
-        ob = inf_gindex(tree, CAOK, 3) + CAOK;
-        ((OBJECT *)tree+ob)->ob_state = NORMAL;
+    ob = inf_gindex(tree, CAOK, 3) + CAOK;
+    ((OBJECT *)tree+ob)->ob_state = NORMAL;
 
-        return ob;
+    return ob;
 }
 
 
 /*
-*       Draw a single field of a dialog box
-*/
+ *  Draw a single field of a dialog box
+ */
 void draw_fld(LONG tree, WORD obj)
 {
-        GRECT           t;
-        OBJECT *obtree = (OBJECT *)tree;
-        OBJECT *objptr = obtree + obj;
+    GRECT t;
+    OBJECT *obtree = (OBJECT *)tree;
+    OBJECT *objptr = obtree + obj;
 
-        memcpy(&t,&objptr->ob_x,sizeof(GRECT));
-        objc_offset(obtree, obj, &t.g_x, &t.g_y);
-        objc_draw(obtree, obj, MAX_DEPTH, t.g_x, t.g_y, t.g_w, t.g_h);
-} /* draw_fld */
+    memcpy(&t,&objptr->ob_x,sizeof(GRECT));
+    objc_offset(obtree, obj, &t.g_x, &t.g_y);
+    objc_draw(obtree, obj, MAX_DEPTH, t.g_x, t.g_y, t.g_w, t.g_h);
+}
 
 
 /*
- *      Scans the specified path string & returns pointer to last
- *      path separator (i.e. backslash).
- *      If a separator isn't found, returns pointer to end of string.
+ *  Scans the specified path string & returns pointer to last
+ *  path separator (i.e. backslash)
+ *
+ *  If a separator isn't found, returns pointer to end of string.
  */
 BYTE *last_separator(BYTE *path)
 {
-        BYTE *last = NULL;
+    BYTE *last = NULL;
 
-        for ( ; *path; path++)
-          if (*path == '\\')
+    for ( ; *path; path++)
+        if (*path == '\\')
             last = path;
 
-        return last ? last : path;
+    return last ? last : path;
 }
 
 
 /*
-*       Add a new directory name to the end of an existing path.  This
-*       includes appending a \*.*.
-*/
+ *  Add a new directory name to the end of an existing path.  This
+ *  includes appending a \*.*.
+ */
 void add_path(BYTE *path, BYTE *new_name)
 {
-        while (*path != '*')
-          path++;
-        strcpy(path, new_name);
-        strcat(path, "\\*.*");
-} /* add_path */
+    while (*path != '*')
+        path++;
+    strcpy(path, new_name);
+    strcat(path, "\\*.*");
+}
 
 
 /*
-*       Remove the last directory in the path and replace it with
-*       *.*.
-*/
+ *  Remove the last directory in the path and replace it with *.*
+ */
 static void sub_path(BYTE *path)
 {
-                                                /* scan to last slash   */
-        path = last_separator(path);
-                                                /* now skip to previous */
-                                                /*   directroy in path  */
+    /* scan to last slash   */
+    path = last_separator(path);
+
+    /* now skip to previous directory in path */
+    path--;
+    while (*path != '\\')
         path--;
-        while (*path != '\\')
-          path--;
-                                                /* append a *.*         */
-        strcpy(path, "\\*.*");
-} /* sub_path */
+
+    strcpy(path, "\\*.*");
+}
 
 
 /*
- *      Add a file name to the end of an existing path, assuming that
- *      the existing path ends in "*...".
- *      Returns pointer to the start of the added name within the path.
+ *  Add a file name to the end of an existing path, assuming that
+ *  the existing path ends in "*...".
+ *
+ *  Returns pointer to the start of the added name within the path.
  */
 BYTE *add_fname(BYTE *path, BYTE *new_name)
 {
-        while (*path != '*')
-          path++;
+    while (*path != '*')
+        path++;
 
-        return strcpy(path, new_name);
-} /* add_fname */
-
+    return strcpy(path, new_name);
+}
 
 
 /*
- *      Restores "*.*" to the position in a path that was
- *      overwritten by add_fname() above
+ *  Restores "*.*" to the position in a path that was
+ *  overwritten by add_fname() above
  */
 void restore_path(BYTE *target)
 {
-        strcpy(target,"*.*");
+    strcpy(target,"*.*");
 }
 
 
-
 /*
-*       Check if path is associated with an open window
-*
-*       If so, returns pointer to first matching window;
-*       otherwise returns NULL.
-*/
+ *  Check if path is associated with an open window
+ *
+ *  If so, returns pointer to first matching window; otherwise returns NULL
+ */
 WNODE *fold_wind(BYTE *path)
 {
-        WNODE           *pwin;
+    WNODE *pwin;
 
-        for (pwin = G.g_wfirst; pwin; pwin = pwin->w_next)
-        {
-          if (pwin->w_id)
+    for (pwin = G.g_wfirst; pwin; pwin = pwin->w_next)
+    {
+        if (pwin->w_id)
             if (strcmp(pwin->w_path->p_spec, path) == 0)
-              return pwin;
-        }
-        return NULL;
+                return pwin;
+    }
+
+    return NULL;
 }
 
 
 /*
- * test if specified folder exists
+ *  test if specified folder exists
  */
 static WORD folder_exists(BYTE *path)
 {
@@ -262,98 +263,101 @@ static WORD folder_exists(BYTE *path)
 
 
 /*
-*       Routine to check that the name we will be adding is like the
-*       last folder name in the path.
-*/
+ *  Routine to check that the name we will be adding is like the
+ *  last folder name in the path.
+ */
 static void like_parent(BYTE *path, BYTE *new_name)
 {
-        BYTE            *pstart, *lastfold, *lastslsh;
-                                                /* remember start of path*/
-        pstart = path;
-                                                /* scan to lastslsh     */
-        lastslsh = path = last_separator(path);
-                                                /* back up to next to   */
-                                                /*   last slash if it   */
-                                                /*   exists             */
+    BYTE *pstart, *lastfold, *lastslsh;
+
+    /* remember start of path */
+    pstart = path;
+
+    /* scan to lastslsh */
+    lastslsh = path = last_separator(path);
+
+    /* back up to next to last slash if it exists */
+    path--;
+    while ((*path != '\\') && (path > pstart))
         path--;
-        while ( (*path != '\\') &&
-                (path > pstart) )
-          path--;
-                                                /* remember start of    */
-                                                /*   last folder name   */
-        if (*path == '\\')
-          lastfold = path + 1;
-        else
-          lastfold = 0;
 
-        if (lastfold)
-        {
-          *lastslsh = '\0';
-          if( strcmp(lastfold, new_name)==0 )
-            return;
-          *lastslsh = '\\';
-        }
-        add_fname(pstart, new_name);
-} /* like_parent */
+    /* remember start of last folder name */
+    if (*path == '\\')
+        lastfold = path + 1;
+    else
+        lastfold = 0;
 
-
-/*
-*       See if these two paths represent the same folder.  The first
-*       path ends in \*.*, the second path ends with just the folder.
-*/
-static WORD same_fold(BYTE *psrc, BYTE *pdst)
-{
-        WORD            ret;
-        BYTE            *lastslsh;
-                                                /* scan to lastslsh     */
-        lastslsh = last_separator(psrc);
-                                                /* null it              */
+    if (lastfold)
+    {
         *lastslsh = '\0';
-                                                /* see if they match    */
-        ret = !strcmp(psrc, pdst);
-                                                /* restore it           */
+        if (strcmp(lastfold, new_name) == 0)
+            return;
         *lastslsh = '\\';
-                                                /* return if same       */
-        return( ret );
+    }
+
+    add_fname(pstart, new_name);
 }
 
 
+/*
+ *  See if these two paths represent the same folder.  The first
+ *  path ends in \*.*, the second path ends with just the folder.
+ */
+static WORD same_fold(BYTE *psrc, BYTE *pdst)
+{
+    WORD ret;
+    BYTE *lastslsh;
+
+    /* scan to lastslsh */
+    lastslsh = last_separator(psrc);
+
+    /* null it */
+    *lastslsh = '\0';
+
+    /* set ret TRUE iff they match */
+    ret = !strcmp(psrc, pdst);
+
+    /* restore it */
+    *lastslsh = '\\';
+    
+    return ret;
+}
+
 
 /*
-*       Remove the file name from the end of a path and append on
-*       an \*.*
-*/
+ *  Remove the file name from the end of a path and append an \*.*
+ */
 void del_fname(BYTE *pstr)
 {
-        strcpy(last_separator(pstr), "\\*.*");
-} /* del_fname */
+    strcpy(last_separator(pstr), "\\*.*");
+}
 
 
 /*
-*       Parse to find the filename part of a path and return a copy of it
-*       in a form ready to be placed in a dialog box.
-*
-*       input:  pstr, the full pathname
-*       output: newstr, the formatted filename
-*/
+ *  Parse to find the filename part of a path and return a copy of it
+ *  in a form ready to be placed in a dialog box.
+ *
+ *  input:  pstr, the full pathname
+ *  output: newstr, the formatted filename
+ */
 static void get_fname(BYTE *pstr, BYTE *newstr)
 {
-        BYTE ml_ftmp[LEN_ZFNAME];
+    BYTE ml_ftmp[LEN_ZFNAME];
 
-        strcpy(ml_ftmp, last_separator(pstr)+1);
-        fmt_str(ml_ftmp, newstr);
-} /* get_fname */
+    strcpy(ml_ftmp, last_separator(pstr)+1);
+    fmt_str(ml_ftmp, newstr);
+}
 
 
 WORD d_errmsg(void)
 {
-        if (!DOS_ERR)
-          return TRUE;
+    if (!DOS_ERR)
+        return TRUE;
 
-        if (!IS_BIOS_ERROR(DOS_AX))
-          form_error(DOS_AX);
+    if (!IS_BIOS_ERROR(DOS_AX))
+        form_error(DOS_AX);
 
-        return(FALSE);
+    return FALSE;
 }
 
 
@@ -365,21 +369,22 @@ static WORD invalid_copy_msg(void)
 
 
 /*
-*       Directory routine to DO File DELeting.
-*/
+ *  Directory routine to DO File DELeting
+ */
 static WORD d_dofdel(BYTE *ppath)
 {
-        dos_delete(ppath);
-        return( d_errmsg() );
-} /* d_dofdel */
+    dos_delete(ppath);
+    return d_errmsg();
+}
 
 
 /*
- *      Determines output filename as required by d_dofcopy()
- *      Returns:
- *          1   filename is OK
- *          0   error, stop copying
- *          -1  error, but allow more copying
+ *  Determines output filename as required by d_dofcopy()
+ *
+ *  Returns:
+ *      1   filename is OK
+ *      0   error, stop copying
+ *      -1  error, but allow more copying
  */
 static WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
 {
@@ -466,11 +471,12 @@ static WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
 
 
 /*
- *      Directory routine to DO File COPYing
- *      Returns:
- *          1/TRUE  ok
- *          0/FALSE if error opening destination, or user said stop
- *          -1      user cancelled (this) copy
+ *  Directory routine to DO File COPYing
+ *
+ *  Returns:
+ *      1/TRUE  ok
+ *      0/FALSE if error opening destination, or user said stop
+ *      -1      user cancelled (this) copy
  */
 static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WORD attr)
 {
@@ -543,14 +549,14 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
 
 
 /*
- *      Routine to update any windows that were displaying
- *      a subfolder of a folder that has been deleted/moved.
- *      Such windows are updated to display the root directory
- *      of the drive concerned.
+ *  Routine to update any windows that were displaying
+ *  a subfolder of a folder that has been deleted/moved.
+ *  Such windows are updated to display the root directory
+ *  of the drive concerned.
  */
 static void update_modified_windows(BYTE *path,WORD length)
 {
-    WNODE   *pwin;
+    WNODE *pwin;
 
     for (pwin = G.g_wfirst; pwin; pwin = pwin->w_next)
     {
@@ -562,14 +568,14 @@ static void update_modified_windows(BYTE *path,WORD length)
 
 
 /*
-*       Directory routine to DO an operation on an entire sub-directory.
-*/
+ *  Directory routine to DO an operation on an entire sub-directory
+ */
 WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
             LONG tree, WORD *pfcnt, WORD *pdcnt)
 {
-    BYTE    *ptmp, *ptmpdst;
-    DTA     *dta = &G.g_dtastk[level];
-    WORD    more;
+    BYTE *ptmp, *ptmpdst;
+    DTA  *dta = &G.g_dtastk[level];
+    WORD more;
 
     if (level == 0)
         deleted_folders = 0L;
@@ -723,10 +729,11 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
 
 
 /*
- *      Determines output path as required by d_doop()
- *      Returns:
- *          1   path is OK (folder has been created if necessary)
- *          0   error, stop copying
+ *  Determines output path as required by d_doop()
+ *
+ *  Returns:
+ *      1   path is OK (folder has been created if necessary)
+ *      0   error, stop copying
  */
 static WORD output_path(BYTE *srcpth, BYTE *dstpth)
 {
@@ -784,20 +791,20 @@ static WORD output_path(BYTE *srcpth, BYTE *dstpth)
 
 
 /*
- *      DIRectory routine that does an OPeration on all the selected files and
- *      folders in the source path.  The selected files and folders are
- *      marked in the source file list.
+ *  DIRectory routine that does an OPeration on all the selected files and
+ *  folders in the source path.  The selected files and folders are
+ *  marked in the source file list.
  */
 WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
             WORD *pfcnt, WORD *pdcnt, LONG *psize)
 {
-    LONG    tree;
-    FNODE   *pf;
-    WORD    more, confirm;
-    BYTE    *ptmpsrc, *ptmpdst;
-    LONG    lavail;
-    BYTE    srcpth[MAXPATHLEN], dstpth[MAXPATHLEN];
-    OBJECT  *obj;
+    LONG tree;
+    FNODE *pf;
+    WORD more, confirm;
+    BYTE *ptmpsrc, *ptmpdst;
+    LONG lavail;
+    BYTE srcpth[MAXPATHLEN], dstpth[MAXPATHLEN];
+    OBJECT *obj;
 
     graf_mouse(HGLASS, 0);
 
