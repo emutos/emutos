@@ -81,40 +81,6 @@ static const char *desk_inf_data2 =
     "#P 08 FF *.TTP@ @\r\n"
     "#F 08 FF *.TOS@ @\r\n";
 
-/*
- *  get default drive
- */
-static BYTE get_defdrv(UWORD dr_exist, UWORD dr_hard)
-{
-/* this routine returns the drive letter of the lowest drive: lowest    */
-/* lettered hard disk if possible, otherwise lowest lettered floppy     */
-/* (which is usually A)                                                 */
-/* in dr_exist, MSbit = A                                               */
-    UWORD mask, hd_disk;
-    WORD ii;
-    BYTE drvletr;
-
-    drvletr = 'A';      /* assume A is always lowest floppy */
-
-    mask = 0x8000;
-    hd_disk = dr_exist & dr_hard;
-
-    if (hd_disk)
-    {               /* there's a hard disk out there somewhere      */
-        for (ii = 0; ii <= 15; ii++)
-        {
-            if (mask & hd_disk)
-            {
-                drvletr = ii + 'A';
-                break;
-            }
-            mask >>= 1;
-        }
-    }
-
-    return drvletr;
-}
-
 
 /*
  *  Allocate an application object
@@ -776,10 +742,9 @@ void app_save(WORD todisk)
 /*
  *  Build the desktop list of objects based on this current application list
  */
-BYTE app_blddesk(void)
+void app_blddesk(void)
 {
     WORD obid;
-    UWORD bvdisk, bvhard, bvect;
     ANODE *pa;
     OBJECT *pob;
     ICONBLK *pic;
@@ -789,7 +754,6 @@ BYTE app_blddesk(void)
     obj_wfree(DROOT, 0, 0, gl_width, gl_height);
     ptr = (LONG *)&global[3];
     G.g_screen[DROOT].ob_spec = *ptr;
-    bvdisk = bvhard = 0x0;
 
     for(pa = G.g_ahead; pa; pa = pa->a_next)
     {
@@ -801,16 +765,10 @@ BYTE app_blddesk(void)
             {
             /* error case, no more obs */
             }
-            /* set up disk vector */
-            if (pa->a_type == AT_ISDISK)
-            {
-                bvect = ((UWORD) 0x8000) >> ((UWORD) (pa->a_letter - 'A'));
-                bvdisk |= bvect;
-                if (pa->a_aicon == IG_HARD)
-                    bvhard |= bvect;
-            }
+
             /* remember it */
             pa->a_obid = obid;
+
             /* build object */
             pob = &G.g_screen[obid];
             pob->ob_state = NORMAL;
@@ -825,9 +783,6 @@ BYTE app_blddesk(void)
             pic->ib_char |= (0x00ff & pa->a_letter);
         }
     }
-
-    /*appl_bvset(bvdisk, bvhard);*/ /* This call does not exist in GEM 1.0 - THH */
-    return get_defdrv(bvdisk, bvhard);
 }
 
 

@@ -155,7 +155,7 @@ BYTE *scan_str(BYTE *pcurr, BYTE **ppstr);
 void app_tran(WORD bi_num);
 void app_start(void);
 void app_save(WORD todisk);
-BYTE app_blddesk(void);
+void app_blddesk(void);
 ANODE *app_afind(WORD isdesk, WORD atype, WORD obid, BYTE *pname, WORD *pisapp);
 
 
