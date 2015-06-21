@@ -374,7 +374,7 @@ static WORD count_ffs(BYTE *path)
 {
     G.g_nfiles = G.g_ndirs = G.g_size = 0L;
 
-    return d_doop(0, OP_COUNT, path, path, NULL, NULL, NULL);
+    return d_doop(0, OP_COUNT, path, path, 0L, NULL, NULL);
 }
 
 
@@ -522,7 +522,7 @@ WORD inf_disk(BYTE dr_id)
     tree = G.a_trees[ADDISKIN];
 
     drive[0] = dr_id;
-    drive[1] = NULL;
+    drive[1] = '\0';
     srcpth[0] = dr_id;
     srcpth[1] = ':';
     strcpy(srcpth+2, "\\*.*");

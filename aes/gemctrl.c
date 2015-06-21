@@ -79,7 +79,7 @@ static const WORD gl_wa[] =
  */
 static void ct_msgup(WORD message, AESPD *owner, WORD wh, WORD m1, WORD m2, WORD m3, WORD m4)
 {
-    if (message == NULL)
+    if (message == 0)
         return;
 
     ap_sendmsg(appl_msg, message, owner, wh, m1, m2, m3, m4);

@@ -62,7 +62,7 @@
  *  Constants
  */
 
-#define NULL    0                       /*      Null character value        */
+#define NULL    ((void *)0)             /*      Null character value        */
 #define TRUE    (1)                     /*      Function TRUE  value        */
 #define FALSE   (0)                     /*      Function FALSE value        */
 #define NULLPTR ((void*)0)              /*      Null pointer value          */

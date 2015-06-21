@@ -289,24 +289,24 @@ void sh_envrn(BYTE **ppath, const BYTE *psrch)
         len = strlencpy(loc2, psrch);
         len--;
 
-        loc1[len] = NULL;
+        loc1[len] = '\0';
 
         lp = ad_envrn;
         findend = FALSE;
-        tmp = NULL;
+        tmp = '\0';
         do
         {
           last = tmp;
           tmp = *lp++;
           if ( (findend) &&
-               (tmp == NULL) )
+               (tmp == '\0') )
           {
             findend = FALSE;
             tmp = (BYTE)0xFF;
           }
           else
           {
-            if (((last == NULL) || (last == -1)) && (tmp == loc2[0]))
+            if (((last == '\0') || (last == -1)) && (tmp == loc2[0]))
             {
               memcpy(loc1, lp, len);
               if ( strcmp(&loc1[0], &loc2[1])==0 )
@@ -449,7 +449,7 @@ WORD sh_find(BYTE *pspec)
 
         /* (3) search in the current directory */
         sh_curdir(D.g_work);                /* get current drive/dir*/
-        if (D.g_work[3] != NULL)            /* if not at root       */
+        if (D.g_work[3] != '\0')            /* if not at root       */
           strcat(D.g_work, "\\");           /*  add backslash       */
         strcat(D.g_work, pname);            /* append name          */
         dos_sfirst(D.g_work, F_RDONLY | F_SYSTEM);

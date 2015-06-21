@@ -141,7 +141,7 @@ WORD fun_mkdir(WNODE *pw_node)
 
     while(1)
     {
-        fnew_name[0] = NULL;
+        fnew_name[0] = '\0';
         inf_sset(tree, MKNAME, fnew_name);
         show_hide(FMD_START, tree);
         form_do(tree, 0);
@@ -151,7 +151,7 @@ WORD fun_mkdir(WNODE *pw_node)
         inf_sget(tree, MKNAME, fnew_name);
         unfmt_str(fnew_name, unew_name);
 
-        if (unew_name[0] == NULL)
+        if (unew_name[0] == '\0')
             break;
 
         ptmp = add_fname(path, unew_name);
@@ -213,7 +213,7 @@ static BYTE *ret_path(BYTE *pcurr)
     while( (*path) && (*path != '\\') )
         path++;
 
-    *path = NULL;
+    *path = '\0';
     return(pcurr);
 } /* ret_path */
 
@@ -310,7 +310,7 @@ WORD fun_op(WORD op, PNODE *pspath, BYTE *pdest)
         return TRUE;
     }
 
-    graf_mouse(ARROW, NULL);
+    graf_mouse(ARROW, 0);
     return FALSE;
 }
 

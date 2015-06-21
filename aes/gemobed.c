@@ -309,7 +309,7 @@ WORD ob_edit(LONG tree, WORD obj, WORD in_char, WORD *idx, WORD kind)
         while ( (ii > 0) &&
                 (len < edblk.te_tmplen) )
           D.g_valstr[len++] = D.g_valstr[ii-1];
-        D.g_valstr[len] = NULL;
+        D.g_valstr[len] = '\0';
                                                 /* init formatted       */
                                                 /*   string             */
         ob_format(edblk.te_just, &D.g_rawstr[0], &D.g_tmpstr[0],
@@ -343,7 +343,7 @@ WORD ob_edit(LONG tree, WORD obj, WORD in_char, WORD *idx, WORD kind)
                         break;
                   case ESCAPE:
                         *idx = 0;
-                        D.g_rawstr[0] = NULL;
+                        D.g_rawstr[0] = '\0';
                         no_redraw = FALSE;
                         break;
                   case DELETE:
@@ -392,7 +392,7 @@ WORD ob_edit(LONG tree, WORD obj, WORD in_char, WORD *idx, WORD kind)
                             if (pos < (edblk.te_txtlen - 2) )
                             {
                               memset(&D.g_rawstr[*idx], ' ', pos - *idx);
-                              D.g_rawstr[pos] = NULL;
+                              D.g_rawstr[pos] = '\0';
                               *idx = pos;
                               no_redraw = FALSE;
                             }

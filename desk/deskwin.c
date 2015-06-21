@@ -597,7 +597,7 @@ void win_sname(WNODE *pw)
         while ( (*psrc) && (*psrc != '*') )
           *pdst++ = *psrc++;
         *pdst++ = ' ';
-        *pdst = NULL;
+        *pdst = '\0';
 } /* win_sname */
 
 

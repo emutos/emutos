@@ -121,7 +121,7 @@ WORD hex_dig(BYTE achar)
           if ( (achar >= 'A') && (achar <= 'F') )
              return(achar - 'A' + 10);
           else
-            return(NULL);
+            return 0;
         }
 }
 

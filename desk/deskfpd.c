@@ -101,7 +101,7 @@ static WORD fpd_bldspec(WORD drive, BYTE *ppath, BYTE *pname, BYTE *pext, BYTE *
               *pspec++ = *pext++;
           }
         }
-        *pspec++ = NULL;
+        *pspec++ = '\0';
         return(TRUE);
 }
 
@@ -150,13 +150,13 @@ void fpd_parse(BYTE *pspec, WORD *pdrv, BYTE *ppath, BYTE *pname, BYTE *pext)
                                                 /* get the path */
         while (p1st != plast)
           *ppath++ = *p1st++;
-        *ppath = NULL;
+        *ppath = '\0';
         if (*plast == '\\')
           plast++;
                                                 /* get the name */
         while (plast != pperiod)
           *pname++ = *plast++;
-        *pname = NULL;
+        *pname = '\0';
                                                 /* get the ext  */
         if ( *pperiod )
         {
@@ -164,7 +164,7 @@ void fpd_parse(BYTE *pspec, WORD *pdrv, BYTE *ppath, BYTE *pname, BYTE *pext)
           while (pperiod != pspec)
             *pext++ = *pperiod++;
         }
-        *pext = NULL;
+        *pext = '\0';
 }
 
 

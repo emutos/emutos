@@ -112,7 +112,7 @@ void ob_format(WORD just, BYTE *raw_str, BYTE *tmpl_str, BYTE *fmt_str)
         register WORD   inc, ptlen, prlen;
 
         if (*raw_str == '@')
-          *raw_str = NULL;
+          *raw_str = '\0';
 
         pfbeg = fmt_str;
         ptbeg = tmpl_str;
@@ -122,7 +122,7 @@ void ob_format(WORD just, BYTE *raw_str, BYTE *tmpl_str, BYTE *fmt_str)
         prlen = strlen(raw_str);
 
         inc = 1;
-        pfbeg[ptlen] = NULL;
+        pfbeg[ptlen] = '\0';
         if (just == TE_RIGHT)
         {
           inc = -1;
@@ -285,7 +285,7 @@ static void  just_draw(LONG tree, WORD obj, WORD sx, WORD sy)
                 if (obtype == G_BOXCHAR)
                 {
                   D.g_fmtstr[0] = ch;
-                  D.g_fmtstr[1] = NULL;
+                  D.g_fmtstr[1] = '\0';
                   edblk.te_just = TE_CNTR;
                   edblk.te_font = IBM;
                 }

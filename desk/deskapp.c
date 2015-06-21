@@ -151,7 +151,7 @@ BYTE *scan_str(BYTE *pcurr, BYTE **ppstr)
     *ppstr = G.g_pbuff;
     while(*pcurr != '@')
         *G.g_pbuff++ = *pcurr++;
-    *G.g_pbuff++ = NULL;
+    *G.g_pbuff++ = '\0';
     pcurr++;
 
     return pcurr;
@@ -213,7 +213,7 @@ static BYTE *app_parse(BYTE *pcurr, ANODE *pa)
 
     if (pa->a_flags & AF_ISDESK)
     {
-        pa->a_letter = (*pcurr == ' ') ? NULL : *pcurr;
+        pa->a_letter = (*pcurr == ' ') ? '\0' : *pcurr;
         pcurr += 2;
     }
     pcurr = scan_str(pcurr, &pa->a_pappl);
@@ -418,7 +418,7 @@ void app_start(void)
         {
             G.g_afsize = dos_read(fh, SIZE_AFILE, gl_afile);
             dos_close(fh);
-            gl_afile[G.g_afsize] = NULL;
+            gl_afile[G.g_afsize] = '\0';
         }
     }
 
@@ -526,7 +526,7 @@ void app_start(void)
                     pcurr++;
                     while(*pcurr != '@')
                         *ptmp++ = *pcurr++;
-                    *ptmp = NULL;
+                    *ptmp = '\0';
                     wincnt += 1;
                 }
                 break;

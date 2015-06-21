@@ -410,7 +410,7 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
         /*
          * set up for text output
          */
-        graf_mouse(M_OFF,NULL);
+        graf_mouse(M_OFF, 0);
         menu_bar(G.a_trees[ADMENU],0);
         wind_update(BEG_UPDATE);
         form_dial(FMD_START, 0,0,0,0, 0,0,scr_width,scr_height);
@@ -447,7 +447,7 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
         form_dial(FMD_FINISH, 0,0,0,0, 0,0,scr_width,scr_height);
         wind_update(END_UPDATE);
         menu_bar(G.a_trees[ADMENU],1);
-        graf_mouse(M_ON,NULL);
+        graf_mouse(M_ON, 0);
 }
 #endif
 
@@ -468,7 +468,7 @@ static WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, WORD drv,
         isparm = pa->a_flags & AF_ISPARM;
         uninstalled = ( (*pa->a_pappl == '*') ||
                         (*pa->a_pappl == '?') ||
-                        (*pa->a_pappl == NULL) );
+                        (*pa->a_pappl == '\0') );
                                                 /* change current dir.  */
                                                 /*   to selected icon's */
         pro_chdir(drv, ppath);
@@ -479,7 +479,7 @@ static WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, WORD drv,
                                                 /*   associated primary */
                                                 /*   application        */
         pcmd = ptail = NULLPTR;
-        G.g_cmd[0] = G.g_tail[1] = NULL;
+        G.g_cmd[0] = G.g_tail[1] = '\0';
         ret = TRUE;
 
         if ( (!uninstalled) && (!isapp) )
@@ -607,7 +607,7 @@ void do_fopen(WNODE *pw, WORD curr, WORD drv, BYTE *ppath, BYTE *pname,
           fun_alert(1, STDEEPPA, NULLPTR);
                                                 /* back up one level    */
           pp = last_separator(pnew);
-          *pp = NULL;
+          *pp = '\0';
           pro_chdir(drv,pnew);                  /* fixup current dir */
           do_diropen(pw, FALSE, curr, drv, pnew, pname, pext, &t, redraw);
         }
@@ -641,7 +641,7 @@ WORD do_open(WORD curr)
                 done = do_aopen(pa,isapp,curr,drv,&path[0],&pf->f_name[0]);
                 break;
             case AT_ISFOLD:
-                if (path[0] != NULL)
+                if (path[0] != '\0')
                   strcat(&path[0], "\\");
                 if ( (strlen(path) + strlen(pf->f_name)) >= (LEN_ZPATH-3) )
                   fun_alert(1, STDEEPPA, NULLPTR);

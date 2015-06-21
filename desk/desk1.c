@@ -120,7 +120,7 @@ WORD fun_close(WNODE *pw, WORD closetype)
             return 0;
         }
 
-        graf_mouse(HGLASS, NULL);
+        graf_mouse(HGLASS, 0);
 
         /*
          * handle CLOSE_FOLDER and CLOSE_TO_ROOT
@@ -141,7 +141,7 @@ WORD fun_close(WNODE *pw, WORD closetype)
 
         rc = (closetype==CLOSE_WINDOW) ? true_closewnd(pw) : w_setpath(pw,drv,path,name,ext);
 
-        graf_mouse(ARROW, NULL);
+        graf_mouse(ARROW, 0);
 
         return rc;
 }

@@ -124,7 +124,7 @@ void unfmt_str(BYTE *instr, BYTE *outstr)
           while (*pstr)
             *outstr++ = *pstr++;
         }
-        *outstr = NULL;
+        *outstr = '\0';
 }
 
 
@@ -287,7 +287,7 @@ WORD wildcmp(BYTE *pwld, BYTE *ptst)
                                                 /* if any part of wild- */
                                                 /*   card or test is    */
                                                 /*   left then no match */
-          if ( ((*pwild == NULL) || (*pwild == ',')) &&
+          if ( ((*pwild == '\0') || (*pwild == ',')) &&
                (!*ptest) )
             return( TRUE );
         }
@@ -314,7 +314,7 @@ void ins_char(BYTE *str, WORD pos, BYTE chr, WORD tot_len)
           str[ii] = str[ii-1];
         str[ii] = chr;
         if (len+1 < tot_len)
-          str[len+1] = NULL;
+          str[len+1] = '\0';
         else
-          str[tot_len-1] = NULL;
+          str[tot_len-1] = '\0';
 }

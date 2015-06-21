@@ -58,7 +58,7 @@ static ICONBLK  gl_dib;
 WORD is_installed(ANODE *pa)
 {
         return ( !((*pa->a_pappl == '*') || (*pa->a_pappl == '?') ||
-                   (*pa->a_pappl == NULL)  ) );
+                   (*pa->a_pappl == '\0')  ) );
 }
 
 
@@ -158,7 +158,7 @@ WORD ins_disk(ANODE *pa)
 
         change = FALSE;
         cletter[0] = pa->a_letter;
-        cletter[1] = NULL;
+        cletter[1] = '\0';
         strcpy(&clabel[0], pa->a_pappl);
 
         inf_sset((LONG)tree, DRID, &cletter[0]);
@@ -180,7 +180,7 @@ WORD ins_disk(ANODE *pa)
         if ( fld == 0 )                 /* Install              */
         {
 /* BugFix       */
-          if ( (cletter[0] != nletter[0]) && (nletter[0] != NULL) )
+          if ( (cletter[0] != nletter[0]) && (nletter[0] != '\0') )
           {
             newpa = get_disk(nletter[0]);
             if (!newpa)
@@ -217,7 +217,7 @@ WORD ins_disk(ANODE *pa)
           }
                                                 /* see if label changed */
 /* BugFix       */
-          if ( (strcmp(&clabel[0], &nlabel[0])) && (nlabel[0] != NULL) )
+          if ( (strcmp(&clabel[0], &nlabel[0])) && (nlabel[0] != '\0') )
           {
             nlabel[ strlen(&nlabel[0]) ] = '@';
             scan_str(&nlabel[0], &pa->a_pappl);
@@ -311,7 +311,7 @@ static WORD insa_dial(LONG tree, WORD nicon, WORD numics)
           {
             pstr = &doctype[0];
             inf_sget(tree, APDFTYPE+i, pstr);
-            if (*pstr == NULL)
+            if (*pstr == '\0')
               firstslot = i;
           }
           touchob = form_do(tree, APDFTYPE+firstslot);
@@ -387,7 +387,7 @@ static void insa_gtypes(LONG tree, BYTE *ptypes)
         BYTE            *pstr, doctype[4];
 
         j = 0;
-        *ptypes = NULL;
+        *ptypes = '\0';
         for(i=0; i<8; i++)
         {
           pstr = &doctype[0];
@@ -418,7 +418,7 @@ static void insa_stypes(LONG tree, BYTE *pdata)
           while ( (*pdata) &&
                   (*pdata != ',') )
             *pstr++ = *pdata++;
-          *pstr = NULL;
+          *pstr = '\0';
           inf_sset(tree, APDFTYPE+i, &doctype[0]);
         }
 }
@@ -514,7 +514,7 @@ WORD ins_app(BYTE *pfname, ANODE *pa)
                 newpa->a_flags = nflag;
                 newpa->a_type = AT_ISFILE;
                 newpa->a_obid = NIL;
-                newpa->a_letter = NULL;
+                newpa->a_letter = '\0';
                 newpa->a_xspot = 0x0;
                 newpa->a_yspot = 0x0;
               }
