@@ -448,7 +448,7 @@ void app_start(void)
 
         /* Scan for valid drives: */
         drivemask = dos_sdrv(dos_gdrv());
-          for (i = 0; i < 26; i++)
+          for (i = 0; i < BLKDEVNUM; i++)
                 if (drivemask&(1L<<i))
                 {
                     x = strlen(gl_afile);
