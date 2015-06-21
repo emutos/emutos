@@ -240,7 +240,7 @@ WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon, WORD drv,
         graf_mouse(HGLASS, 0x0L);
                                                 /* open a path node     */
         tmp = pn_open(drv, ppath, pname, pext, F_SUBDIR);
-        if ( tmp == NULLPTR)
+        if ( tmp == NULL)
         {
           graf_mouse(ARROW, 0x0L);
           return(FALSE);
@@ -478,7 +478,7 @@ static WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, WORD drv,
                                                 /*   data file with an  */
                                                 /*   associated primary */
                                                 /*   application        */
-        pcmd = ptail = NULLPTR;
+        pcmd = ptail = NULL;
         G.g_cmd[0] = G.g_tail[1] = '\0';
         ret = TRUE;
 
@@ -517,7 +517,7 @@ static WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, WORD drv,
               }
             }
 #else
-            fun_alert(1, STNOAPPL, NULLPTR);
+            fun_alert(1, STNOAPPL, NULL);
 #endif
             ret = FALSE;
           } /* else */
@@ -527,10 +527,10 @@ static WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, WORD drv,
         if (ret)
         {
           if ( (pcmd != &G.g_cmd[0]) &&
-               (pcmd != NULLPTR) )
+               (pcmd != NULL) )
             strcpy(&G.g_cmd[0], pcmd);
           if ( (ptail != &G.g_tail[1])  &&
-               (ptail != NULLPTR) )
+               (ptail != NULL) )
             strcpy(&G.g_tail[1], ptail);
           done = pro_run(isgraf, 1, G.g_cwin, curr);
         } /* if ret */
@@ -604,7 +604,7 @@ void do_fopen(WNODE *pw, WORD curr, WORD drv, BYTE *ppath, BYTE *pname,
         ok = do_diropen(pw, FALSE, curr, drv, pnew, pname, pext, &t, redraw);
         if ( !ok )
         {
-          fun_alert(1, STDEEPPA, NULLPTR);
+          fun_alert(1, STDEEPPA, NULL);
                                                 /* back up one level    */
           pp = last_separator(pnew);
           *pp = '\0';
@@ -644,7 +644,7 @@ WORD do_open(WORD curr)
                 if (path[0] != '\0')
                   strcat(&path[0], "\\");
                 if ( (strlen(path) + strlen(pf->f_name)) >= (LEN_ZPATH-3) )
-                  fun_alert(1, STDEEPPA, NULLPTR);
+                  fun_alert(1, STDEEPPA, NULL);
                 else
                 {
                   strcat(&path[0], &pf->f_name[0]);
@@ -696,7 +696,7 @@ WORD do_info(WORD curr)
                 inf_disk(junk);
                 break;
             case AT_ISTRSH:
-                fun_alert(1, STTRINFO, NULLPTR);
+                fun_alert(1, STTRINFO, NULL);
                 break;
           }
         }
@@ -750,7 +750,7 @@ int do_format(WORD curr)
               done = 1;
             } /* if */
             else
-              fun_alert(1, STNOFRMT, NULLPTR);
+              fun_alert(1, STNOFRMT, NULL);
 
             graf_mouse(ARROW, 0x0L);
           } /* if ret */

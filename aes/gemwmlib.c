@@ -485,7 +485,7 @@ void w_setactive(void)
         ppd = D.w_win[wh].w_owner;
                                                 /* BUGFIX 2.1           */
                                                 /*  don't chg own if null*/
-        if (ppd != NULLPTR)
+        if (ppd != NULL)
           ct_chgown(ppd, &d);
 }
 
@@ -1085,7 +1085,7 @@ void wm_start(void)
 #if 0
                                                 /* init default owner   */
                                                 /*  to be screen mgr.   */
-        ppd = fpdnm(NULLPTR, SCR_MGR);
+        ppd = fpdnm(NULL, SCR_MGR);
 #else
                                                 /* init default owner   */
                                                 /* to be current process*/
@@ -1225,7 +1225,7 @@ void wm_delete(WORD w_handle)
         w_setsize(WS_FULL, w_handle, &gl_rfull);
         w_setsize(WS_WORK, w_handle, &gl_rfull);
         D.w_win[w_handle].w_flags = 0x0;        /*&= ~VF_INUSE; */
-        D.w_win[w_handle].w_owner = NULLPTR;
+        D.w_win[w_handle].w_owner = NULL;
 }
 
 

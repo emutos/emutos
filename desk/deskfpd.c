@@ -136,7 +136,7 @@ void fpd_parse(BYTE *pspec, WORD *pdrv, BYTE *ppath, BYTE *pname, BYTE *pext)
                                                 /* scan for key bytes   */
         p1st = pspec;
         plast = pspec;
-        pperiod = NULLPTR;
+        pperiod = NULL;
         while( *pspec )
         {
           if (*pspec == '\\')
@@ -145,7 +145,7 @@ void fpd_parse(BYTE *pspec, WORD *pdrv, BYTE *ppath, BYTE *pname, BYTE *pext)
             pperiod = pspec;
           pspec++;
         }
-        if (pperiod == NULLPTR)
+        if (pperiod == NULL)
           pperiod = pspec;
                                                 /* get the path */
         while (p1st != plast)
@@ -180,7 +180,7 @@ FNODE *fpd_ofind(FNODE *pf, WORD obj)
             return(pf);
           pf = pf->f_next;
         }
-        return(NULLPTR);
+        return NULL;
 }
 
 
@@ -219,7 +219,7 @@ static PNODE *pn_alloc(void)
           thepath->p_flist = (FNODE *) NULL;
           return(thepath);
         }
-        return(NULLPTR);
+        return NULL;
 }
 
 
@@ -276,11 +276,11 @@ PNODE *pn_open(WORD  drive, BYTE *path, BYTE *name, BYTE *ext, WORD attr)
           else
           {
             pn_close(thepath);
-            return(NULLPTR);
+            return NULL;
           }
         }
         else
-          return(NULLPTR);
+          return NULL;
 }
 
 

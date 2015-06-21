@@ -130,7 +130,7 @@ static ORECT *brkrct(ORECT *new, ORECT *r, ORECT *p)
           rul = r;
           return(p);
         }
-        return(NULLPTR);
+        return NULL;
 }
 
 

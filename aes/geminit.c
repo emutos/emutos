@@ -668,7 +668,7 @@ void gem_main(void)
     elinkoff = (BYTE *) &(D.g_int[0].a_evb[0].e_link) - (BYTE *) &(D.g_int[0].a_evb[0]);
 
     /* link up all the evb's to the event unused list */
-    eul = NULLPTR;
+    eul = NULL;
     for (i = 0; i < 2; i++)
         ev_init(&D.g_int[i].a_evb[0],EVBS_PER_PD);
     for (i = 0; i < num_accs; i++)
@@ -676,7 +676,7 @@ void gem_main(void)
 
     /* initialize sync blocks */
     wind_spb.sy_tas = 0;
-    wind_spb.sy_owner = NULLPTR;
+    wind_spb.sy_owner = NULL;
     wind_spb.sy_wait = 0;
 
     /*
@@ -684,8 +684,8 @@ void gem_main(void)
      */
 
     /* initialize list and unused lists   */
-    nrl = drl = NULLPTR;
-    dlr = zlr = NULLPTR;
+    nrl = drl = NULL;
+    dlr = zlr = NULL;
     fph = fpt = fpcnt = 0;
 
     /* init initial process */
@@ -714,7 +714,7 @@ void gem_main(void)
     }
     curpid = 0;
     rlr->p_pid = curpid++;
-    rlr->p_link = NULLPTR;
+    rlr->p_link = NULL;
 
     /* end of process init */
 

@@ -722,7 +722,7 @@ void app_save(WORD todisk)
             if (DOS_ERR)
             {
                 fh = 0;
-                ret = fun_alert(1, STNOINF, NULLPTR);
+                ret = fun_alert(1, STNOINF, NULL);
                 if (ret == 2)
                     return;
             }

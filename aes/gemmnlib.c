@@ -469,7 +469,7 @@ void mn_bar(LONG tree, WORD showit, WORD pid)
         AESPD           *p;
         OBJECT          *obj;
 
-        p = fpdnm(NULLPTR, pid);
+        p = fpdnm(NULL, pid);
 
         if ( showit )
         {

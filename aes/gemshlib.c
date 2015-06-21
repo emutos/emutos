@@ -277,7 +277,7 @@ BYTE *sh_name(BYTE *ppath)
 /*
 *       Search for a particular string in the DOS environment and return
 *       a long pointer to the character after the string if it is found.
-*       Otherwise, return a NULLPTR
+*       Otherwise, return a NULL pointer
 */
 void sh_envrn(BYTE **ppath, const BYTE *psrch)
 {
@@ -663,7 +663,7 @@ void sh_main(void)
           desk_tree[rlr->p_pid] = 0x0L; /* clear his desk field */
 
           if (rc)                       /* display alert for most recent error */
-            fm_show(rc, NULLPTR, 1);
+            fm_show(rc, NULL, 1);
 
           rc = sh_ldapp(psh);           /* run the desktop/console/app */
 

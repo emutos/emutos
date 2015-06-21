@@ -212,7 +212,7 @@ long xmkdir(char *s)
     fd = f->o_dirfil;
 
     ixlseek(fd,f->o_dirbyt);
-    b = (FCB *) ixread(fd,32L,NULLPTR);
+    b = (FCB *) ixread(fd,32L,NULL);
 
     /* is the total path length too long? */    /* M01.01.1107.01 */
     plen = namlen( b->f_name );
@@ -232,7 +232,7 @@ long xmkdir(char *s)
     if (nextcl(f0,1))
     {
         ixdel(f->o_dnode, b, f->o_dirbyt);      /* M01.01.1103.01 */
-        f->o_dnode->d_left = NULLPTR;           /* M01.01.1103.01 */
+        f->o_dnode->d_left = NULL;              /* M01.01.1103.01 */
         freednd(dn);                            /* M01.01.1031.02 */
         return EACCDN;
     }
@@ -319,11 +319,11 @@ long xrmdir(char *p)
     ixlseek(fd,0x40L);              /* skip over . and .. */
     do
     {
-        if (!(f = (FCB *) ixread(fd,32L,NULLPTR)))
+        if (!(f = (FCB *) ixread(fd,32L,NULL)))
             break;
     } while ((f->f_name[0] == (char)ERASE_MARKER) || (f->f_attrib == FA_LFN));
 
-    if ((f != (FCB *)NULLPTR) && (f->f_name[0] != 0x00))
+    if ((f != (FCB *)NULL) && (f->f_name[0] != 0x00))
         return EACCDN;
 
     /*
@@ -370,7 +370,7 @@ long xrmdir(char *p)
      * finally, we delete the entry from the parent directory
      */
     ixlseek((f2 = fd->o_dirfil),(pos = fd->o_dirbyt));
-    f = (FCB *)ixread(f2,32L,NULLPTR);
+    f = (FCB *)ixread(f2,32L,NULL);
 
     return ixdel(d1,f,pos);
 }
@@ -444,14 +444,14 @@ long ixsfirst(char *name, register WORD att, register DTAINFO *addr)
     if ((long)(dn = findit(name,&s,0)) < 0) /* M01.01.1212.01 */
         return (long)dn;
 
-    if (dn == (DND*)NULLPTR)                /* M01.01.1214.01 */
+    if (dn == (DND*)NULL)                   /* M01.01.1214.01 */
         return EFILNF;
 
     /* now scan for filename from start of directory */
 
     pos = 0;
 
-    if ((f = scan(dn,s,att,&pos)) == (FCB*)NULLPTR)
+    if ((f = scan(dn,s,att,&pos)) == (FCB*)NULL)
         return EFILNF;
 
     KDEBUG(("\nixfirst(%s, DND=%p, DTA=%p)",s,dn,addr));
@@ -499,7 +499,7 @@ long xsfirst(char *name, int att)
     dt = (DTAINFO *)(run->p_xdta);          /* M01.01.1209.01 */
 
     /* set an indication of 'uninitialized DTA' */
-    dt->dt_dnd = (DND*)NULLPTR;             /* M01.01.1209.01 */
+    dt->dt_dnd = (DND*)NULL;                /* M01.01.1209.01 */
 
     KDEBUG(("\nxsfirst(%s, DTA=%p)",name,dt));
 
@@ -534,14 +534,14 @@ long xsnext(void)
     dn = dt->dt_dnd;
 
     /* has the DTA been initialized? */
-    if (dn == (DND *)NULLPTR)               /* M01.01.1209.01 */
+    if (dn == (DND *)NULL)                  /* M01.01.1209.01 */
         return ENMFIL;                      /* M01.01.1209.01 */
 
     KDEBUG(("\n xsnext(pos=%ld DTA=%p DND=%p)",dt->dt_pos,dt,dn));
 
     f = scan(dn,dt->dt_name,dt->dt_attr,&dt->dt_pos);
 
-    if (f == (FCB *)NULLPTR)    /* end of directory, no longer in-use */
+    if (f == (FCB *)NULL)       /* end of directory, no longer in-use */
     {
         dn->d_usecount--;
         if (dn->d_usecount < 0)             /* shouldn't happen */
@@ -1271,7 +1271,7 @@ DND *findit(char *name, const char **sp, int dflag)
 
         /*
          *  check all subdirectories at this level.  if we run out
-         *     of siblings in the DND list (p->d_right == NULLPTR), then
+         *     of siblings in the DND list (p->d_right == NULL), then
          *     we should rescan the whole directory and make sure they
          *     are all logged in.
          */
@@ -1279,7 +1279,7 @@ DND *findit(char *name, const char **sp, int dflag)
         {
             newp = p->d_right;          /*  next sibling        */
 
-            if (newp == NULLPTR)        /* if no more siblings  */
+            if (newp == NULL)           /* if no more siblings  */
             {
                 p = 0;
                 if (pp)
@@ -1358,7 +1358,7 @@ FCB *scan(register DND *dnd, const char *n, WORD att, LONG *posp)
     /*
      *  scan thru the directory file, looking for a match
      */
-    while ((fcb = (FCB *) ixread(fd,32L,NULLPTR)) && (fcb->f_name[0]))
+    while ((fcb = (FCB *) ixread(fd,32L,NULL)) && (fcb->f_name[0]))
     {
         /*
          *  Add New DND.
@@ -1440,7 +1440,7 @@ static DND *makdnd(DND *p, FCB *b)
 
             KDEBUG(("\n makdnd check dirtbl (%d)",i));
 
-            if ((i >= NCURDIR) && (p1->d_files == NULLPTR))
+            if ((i >= NCURDIR) && (p1->d_files == NULL))
             {       /*  M01.01.KTB.SCC.02  */
                 /* clean out this DND for reuse */
 
@@ -1688,7 +1688,7 @@ static DND *getdnd(char *n, DND *d)
             return dnd;
     }
 
-    return (DND *)NULLPTR;
+    return (DND *)NULL;
 }
 
 

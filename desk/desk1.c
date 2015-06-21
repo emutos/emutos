@@ -315,7 +315,7 @@ static void fun_desk2win(WORD wh, WORD dobj, WORD keystate)
                 an_src = i_find(0, sobj, &fn_src, &isapp);
                 if (an_src->a_type == AT_ISTRSH)
                 {
-                        fun_alert(1, STNODRA2, NULLPTR);
+                        fun_alert(1, STNODRA2, NULL);
                         continue;
                 }
                 copied = fun_file2any(sobj, wn_dest, an_dest, fn_dest, dobj, keystate);
@@ -344,7 +344,7 @@ static void fun_desk2desk(WORD dobj, WORD keystate)
 
                 if (source->a_type == AT_ISTRSH)
                 {
-                        fun_alert(1, STNOSTAK, NULLPTR);
+                        fun_alert(1, STNOSTAK, NULL);
                         continue;
                 }
                 cont = 1;
@@ -372,7 +372,7 @@ WORD desk1_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my, W
                 {
                         if (sobj == dobj)
                         {
-                                fun_alert(1, STNODRA1, NULLPTR);
+                                fun_alert(1, STNODRA1, NULL);
                         }
                         else
                         {

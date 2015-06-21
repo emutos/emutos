@@ -108,7 +108,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
           case APPL_READ:
           case APPL_WRITE:
                 ap_rdwr(opcode == APPL_READ ? MU_MESAG : MU_SDMSG,
-                        fpdnm(NULLPTR, AP_RWID), AP_LENGTH, AP_PBUFF);
+                        fpdnm(NULL, AP_RWID), AP_LENGTH, AP_PBUFF);
                 break;
           case APPL_FIND:
                 ret = ap_find( AP_PNAME );

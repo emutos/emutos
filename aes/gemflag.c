@@ -137,6 +137,6 @@ void unsync(SPB *sy)
            dsptch();
           }
           else
-            sy->sy_owner = NULLPTR;             /* reset owner field    */
+            sy->sy_owner = NULL;                /* reset owner field    */
         }
 }

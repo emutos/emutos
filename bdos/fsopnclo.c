@@ -196,7 +196,7 @@ long ixcreat(char *name, char attr)
         ixwrite(fd,11L,a);      /* write name, set dirty flag */
         ixclose(fd,CL_DIR);     /* partial close to flush */
         ixlseek(fd,pos);
-        s = (char*) ixread(fd,32L,NULLPTR);
+        s = (char*) ixread(fd,32L,NULL);
         f2 = rc = opnfil((FCB*)s,dn,(f->f_attrib&FA_RO)?RO_MODE:RW_MODE);
 
         if (rc < 0)
@@ -386,9 +386,9 @@ static FTAB *sftsrch(int field, char *ptr)
                                 ;
                         break ;
                 default:
-                        return (FTAB *)NULLPTR;
+                        return (FTAB *)NULL;
         }
-        return( i >= OPNFILES ? (FTAB *)NULLPTR : sftp ) ;      /* M01.01.1023.03 */
+        return( i >= OPNFILES ? (FTAB *)NULL : sftp ) ;         /* M01.01.1023.03 */
 }
 /*
 **  sftdel - delete an entry from the sft
@@ -411,7 +411,7 @@ static void sftdel( FTAB *sftp )
 
         /*  if no other sft entries with same OFD, delete ofd  */
 
-        if( SFTOFDSRCH( ofd ) == (FTAB *)NULLPTR )      /* M01.01.1023.03 */
+        if( SFTOFDSRCH( ofd ) == (FTAB *)NULL )         /* M01.01.1023.03 */
                 xmfreblk( (int *) ofd ) ;
 }
 

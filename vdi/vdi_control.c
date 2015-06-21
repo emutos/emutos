@@ -323,7 +323,7 @@ void d_opnvwk(Vwk * vwk)
 
     /* Allocate the memory for a virtual workstation. */
     vwk = (Vwk *)trap1(X_MALLOC, (LONG) (sizeof(Vwk)));
-    if (vwk == NULLPTR) {
+    if (vwk == NULL) {
         CONTRL[6] = 0;  /* No memory available, exit */
         return;
     }
@@ -333,7 +333,7 @@ void d_opnvwk(Vwk * vwk)
     work_ptr = &virt_work;
     while (handle == work_ptr->handle) {
         handle++;
-        if (work_ptr->next_work == NULLPTR)
+        if (work_ptr->next_work == NULL)
             break;
         work_ptr = work_ptr->next_work;
     }
@@ -404,7 +404,7 @@ void _v_opnwk(Vwk * vwk)
 
     vwk = &virt_work;
     CONTRL[6] = vwk->handle = 1;
-    vwk->next_work = NULLPTR;
+    vwk->next_work = NULL;
 
     line_cw = -1;               /* invalidate current line width */
 
@@ -426,7 +426,7 @@ void _v_clswk(Vwk * vwk)
 {
     Vwk *next_work;
 
-    if (virt_work.next_work != NULLPTR) {       /* Are there VWs to close */
+    if (virt_work.next_work != NULL) {      /* Are there VWs to close */
         vwk = virt_work.next_work;
         do {
             next_work = vwk->next_work;

@@ -359,7 +359,7 @@ WORD d_errmsg(void)
 
 static WORD invalid_copy_msg(void)
 {
-    fun_alert(1, STINVCPY, NULLPTR);
+    fun_alert(1, STINVCPY, NULL);
     return FALSE;
 }
 

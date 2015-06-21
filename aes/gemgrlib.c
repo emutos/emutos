@@ -58,7 +58,7 @@ static WORD gr_stilldn(WORD out, WORD x, WORD y, WORD w, WORD h)
         tmpmoblk.m_h = h;
 
         which = ev_multi(MU_KEYBD | MU_BUTTON | MU_M1, &tmpmoblk,
-                NULLPTR, 0x0L, 0x0001ff00L, 0x0L, &rets[0]);
+                            NULL, 0x0L, 0x0001ff00L, 0x0L, &rets[0]);
 
         if ( which & MU_BUTTON )
           return(FALSE);

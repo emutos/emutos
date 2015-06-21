@@ -339,7 +339,7 @@ WORD fm_do(LONG tree, WORD start_fld)
             ob_edit(tree, edit_obj, 0, &idx, EDINIT);
           }
                                                 /* wait for mouse or key */
-          which = ev_multi(MU_KEYBD | MU_BUTTON, NULLPTR, NULLPTR,
+          which = ev_multi(MU_KEYBD | MU_BUTTON, NULL, NULL,
                          0x0L, 0x0002ff01L, 0x0L, &rets[0]);
                                                 /* handle keyboard event*/
           if (which & MU_KEYBD)
@@ -444,7 +444,7 @@ WORD eralert(WORD n, WORD d)
         drive_let = 'A' + d;
 
         level = (ml_pwlv[n] & 0x00FF);
-        pwd = (ml_pwlv[n] & 0xFF00) ? &drive_let : NULLPTR;
+        pwd = (ml_pwlv[n] & 0xFF00) ? &drive_let : NULL;
 
         ret = fm_show(ml_alrt[n], pwd, level);
 

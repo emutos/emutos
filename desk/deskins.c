@@ -203,7 +203,7 @@ WORD ins_disk(ANODE *pa)
                                         &newpa->a_xspot, &newpa->a_yspot);
               } /* if newpa */
               else
-                fun_alert(1, STAPGONE, NULLPTR);
+                fun_alert(1, STAPGONE, NULL);
             } /* if !newpa */
             if (newpa)
               pa = newpa;
@@ -521,7 +521,7 @@ WORD ins_app(BYTE *pfname, ANODE *pa)
               pa = newpa;
             }
             else
-              fun_alert(1, STAPGONE, NULLPTR);
+              fun_alert(1, STAPGONE, NULL);
           }
                                                 /* see if icon changed  */
                                                 /*   or flags changed   */

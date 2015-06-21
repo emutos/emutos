@@ -135,7 +135,7 @@ WORD fun_mkdir(WNODE *pw_node)
 
     if (i > MAX_LEVEL)
     {
-        fun_alert(1, STFO8DEE, NULLPTR);
+        fun_alert(1, STFO8DEE, NULL);
         return FALSE;
     }
 
@@ -175,7 +175,7 @@ WORD fun_mkdir(WNODE *pw_node)
         restore_path(ptmp); /* restore original path */
         if (len >= LEN_ZPATH-3)
         {
-            fun_alert(1,STDEEPPA,NULLPTR);
+            fun_alert(1,STDEEPPA,NULL);
             break;
         }
 
@@ -183,7 +183,7 @@ WORD fun_mkdir(WNODE *pw_node)
          * mkdir failed with a recoverable error:
          * prompt for Cancel or Retry
          */
-        if (fun_alert(2,STFOFAIL,NULLPTR) == 1) /* Cancel */
+        if (fun_alert(2,STFOFAIL,NULL) == 1)    /* Cancel */
             break;
     }
 
@@ -270,7 +270,7 @@ static WORD source_is_parent(BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path)
                         (!strcmp(&pf->f_name[0], tdst)) )
                     {
                         /* INVALID      */
-                        fun_alert(1, STBADCOP, NULLPTR);
+                        fun_alert(1, STBADCOP, NULL);
                         return TRUE;
                     }
                 }

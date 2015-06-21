@@ -71,7 +71,7 @@ WORD pgmld(WORD handle, BYTE *pname, LONG **ldaddr)
         LONG    length;
         LONG    *temp;
 
-        *ldaddr = (LONG *) gemdos(X_EXEC, 3, pname, "", NULLPTR);
+        *ldaddr = (LONG *) gemdos(X_EXEC, 3, pname, "", NULL);
         if (!DOS_ERR)
         {                                                /* code+data+bss lengths */
           temp = *ldaddr;

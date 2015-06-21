@@ -49,7 +49,7 @@ AESPD *fpdnm(BYTE *pname, UWORD pid)
         for(i=0; i<totpds; i++)
         {
           p = pd_index(i);
-          if (pname != NULLPTR)
+          if (pname != NULL)
           {
             /* TODO - strncmp */
             memcpy(temp, p->p_name, 8);

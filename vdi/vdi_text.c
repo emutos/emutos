@@ -333,7 +333,7 @@ void d_gtext(Vwk * vwk)
 void text_init2(Vwk * vwk)
 {
     vwk->cur_font = def_font;
-    vwk->loaded_fonts = NULLPTR;
+    vwk->loaded_fonts = NULL;
     vwk->scrpt2 = scrtsiz;
     vwk->scrtchp = deftxbuf;
     vwk->num_fonts = font_count;
@@ -363,8 +363,8 @@ void text_init(Vwk * vwk)
     /* Initialize the font ring. */
     font_ring[0] = &fon6x6;
     font_ring[1] = &fon8x8;
-    font_ring[2] = NULLPTR;
-    font_ring[3] = NULLPTR;
+    font_ring[2] = NULL;
+    font_ring[3] = NULL;
 
     id_save = fon6x6.font_id;
 
