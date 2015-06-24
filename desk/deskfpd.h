@@ -39,8 +39,8 @@
 #define E_NODNODES 102
 
 
-#define FNODE struct filenode
-FNODE
+typedef struct _filenode FNODE;
+struct _filenode
 {
         FNODE           *f_next;
         BYTE            f_junk;         /* to align on even boundaries  */
@@ -55,8 +55,8 @@ FNODE
 };
 
 
-#define PNODE struct pathnode
-PNODE
+typedef struct _pathnode PNODE;
+struct _pathnode
 {
         PNODE           *p_next;
         WORD            p_attr;     /* attribs used in Fsfirst() */

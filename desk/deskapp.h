@@ -98,8 +98,9 @@
 #define HAVE_APPL_IBLKS 0
 #endif
 
-#define ANODE struct applstr
-ANODE
+
+typedef struct _applstr ANODE;
+struct _applstr
 {
         ANODE           *a_next;
         WORD            a_flags;
@@ -115,8 +116,8 @@ ANODE
 };
 
 
-#define WSAVE   struct window_save
-WSAVE
+/* save current info for one window */
+typedef struct
 {
         WORD    x_save;
         WORD    y_save;
@@ -125,11 +126,11 @@ WSAVE
         WORD    vsl_save;
         WORD    obid_save;
         BYTE    pth_save[LEN_ZPATH];
-};
+} WSAVE;
 
 
-#define CSAVE   struct context_save
-CSAVE
+/* save desktop context (preferences and windows) */
+typedef struct
 {
         BYTE    sitem_save;     /* Sort mode */
         BYTE    vitem_save;     /* Show files as icons or text */
@@ -141,7 +142,7 @@ CSAVE
         BYTE    ctmfm_save;     /* Time format */
         BYTE    cdtfm_save;     /* Date format */
         WSAVE   win_save[NUM_WNODES];
-};
+} CSAVE;
 
 
 extern WORD     gl_numics;

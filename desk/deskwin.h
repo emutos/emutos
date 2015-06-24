@@ -20,9 +20,9 @@
 
 #define DROOT 1
 
-#define WNODE struct windnode
 
-WNODE
+typedef struct _windnode WNODE;
+struct _windnode
 {
         WNODE           *w_next;            /* -> next 'highest' window */
         WORD            w_flags;

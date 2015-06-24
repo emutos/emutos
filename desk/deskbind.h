@@ -37,8 +37,7 @@
 #define MIN_HINT        2      /* vertical */
 
 
-#define GLOBES struct glnode
-GLOBES
+typedef struct
 {
 /*GLOBAL*/ PNODE        g_plist[NUM_PNODES];
 /*GLOBAL*/ PNODE        *g_pavail;
@@ -142,4 +141,4 @@ GLOBES
 /*GLOBAL*/ CSAVE        g_cnxsave;
 
 /*GLOBAL*/ OBJECT       g_screen[NUM_SOBS];             /* NUM_SOBS     */
-};
+} GLOBES;
