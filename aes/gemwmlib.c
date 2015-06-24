@@ -199,7 +199,7 @@ static GRECT *w_getxptr(WORD which, WORD w_handle)
                 return( (GRECT *)&D.w_win[w_handle].w_xfull );
         }
 
-        return 0;
+        return NULL;
 }
 
 

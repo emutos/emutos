@@ -152,7 +152,7 @@ WNODE *win_alloc(WORD obid)
           else
             win_free(pw);
         }
-        return(0);
+        return NULL;
 }
 
 
@@ -168,7 +168,7 @@ WNODE *win_find(WORD wh)
           if (pw->w_id == wh)
             return pw;
         }
-        return(0);
+        return NULL;
 }
 
 
@@ -203,7 +203,7 @@ void win_top(WNODE *thewin)
 /*
 *       Find out if the window node on top has size, if it does then it
 *       is the currently active window.  If not, then no window is on
-*       top and return 0.
+*       top, so return NULL.
 */
 WNODE *win_ontop(void)
 {
@@ -213,7 +213,7 @@ WNODE *win_ontop(void)
         if (G.g_screen[wob].ob_width && G.g_screen[wob].ob_height)
           return(&G.g_wlist[wob-2]);
         else
-          return(0);
+          return NULL;
 }
 
 

@@ -60,7 +60,7 @@ AESPD *fpdnm(BYTE *pname, UWORD pid)
             if (p->p_pid == pid)
               return(p);
         }
-        return(0);
+        return NULL;
 }
 
 

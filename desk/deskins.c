@@ -146,7 +146,7 @@ static ANODE *get_disk(WORD letter)
             return pa;
     }
 
-    return 0;       //should be NULL
+    return NULL;
 }
 
 
