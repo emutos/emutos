@@ -913,15 +913,15 @@ static void cnx_put(void)
     WSAVE *pws;
     WNODE *pw;
 
-    G.g_cnxsave.vitem_save = (G.g_iview == V_ICON) ? 0 : 1;
-    G.g_cnxsave.sitem_save = G.g_csortitem - NAMEITEM;
-    G.g_cnxsave.ccopy_save = G.g_ccopypref;
-    G.g_cnxsave.cdele_save = G.g_cdelepref;
-    G.g_cnxsave.cdclk_save = G.g_cdclkpref;
-    G.g_cnxsave.covwr_save = G.g_covwrpref;
-    G.g_cnxsave.cmclk_save = G.g_cmclkpref;
-    G.g_cnxsave.ctmfm_save = G.g_ctimeform;
-    G.g_cnxsave.cdtfm_save = G.g_cdateform;
+    G.g_cnxsave.cs_view = (G.g_iview == V_ICON) ? 0 : 1;
+    G.g_cnxsave.cs_sort = G.g_csortitem - NAMEITEM;
+    G.g_cnxsave.cs_confcpy = G.g_ccopypref;
+    G.g_cnxsave.cs_confdel = G.g_cdelepref;
+    G.g_cnxsave.cs_dblclick = G.g_cdclkpref;
+    G.g_cnxsave.cs_confovwr = G.g_covwrpref;
+    G.g_cnxsave.cs_mnuclick = G.g_cmclkpref;
+    G.g_cnxsave.cs_timefmt = G.g_ctimeform;
+    G.g_cnxsave.cs_datefmt = G.g_cdateform;
 
     /*
      * first, count the unused slots & initialise them
@@ -932,7 +932,7 @@ static void cnx_put(void)
             unused--;
     }
 
-    for (i = 0, pws = &G.g_cnxsave.win_save[NUM_WNODES-1]; i < unused; i++, pws--)
+    for (i = 0, pws = &G.g_cnxsave.cs_wnode[NUM_WNODES-1]; i < unused; i++, pws--)
     {
         pws->obid_save = 0;
         pws->pth_save[0] = 0;
@@ -967,23 +967,23 @@ static void cnx_get(void)
     BYTE fname[9];
     BYTE fext[4];
 
-    G.g_iview = (G.g_cnxsave.vitem_save == 0) ? V_TEXT : V_ICON;
+    G.g_iview = (G.g_cnxsave.cs_view == 0) ? V_TEXT : V_ICON;
     do_viewmenu(ICONITEM);
-    do_viewmenu(NAMEITEM + G.g_cnxsave.sitem_save);
-    G.g_ccopypref = G.g_cnxsave.ccopy_save;
-    G.g_cdelepref = G.g_cnxsave.cdele_save;
-    G.g_covwrpref = G.g_cnxsave.covwr_save;
-    G.g_cdclkpref = G.g_cnxsave.cdclk_save;
-    G.g_cmclkpref = G.g_cnxsave.cmclk_save;
-    G.g_ctimeform = G.g_cnxsave.ctmfm_save;
-    G.g_cdateform = G.g_cnxsave.cdtfm_save;
+    do_viewmenu(NAMEITEM + G.g_cnxsave.cs_sort);
+    G.g_ccopypref = G.g_cnxsave.cs_confcpy;
+    G.g_cdelepref = G.g_cnxsave.cs_confdel;
+    G.g_covwrpref = G.g_cnxsave.cs_confovwr;
+    G.g_cdclkpref = G.g_cnxsave.cs_dblclick;
+    G.g_cmclkpref = G.g_cnxsave.cs_mnuclick;
+    G.g_ctimeform = G.g_cnxsave.cs_timefmt;
+    G.g_cdateform = G.g_cnxsave.cs_datefmt;
     G.g_cdclkpref = evnt_dclick(G.g_cdclkpref, TRUE);
     G.g_cmclkpref = menu_click(G.g_cmclkpref, TRUE);
 
     /* DESKTOP v1.2: Remove 2-window limit; and cnx_open() inlined. */
     for (nw = 0; nw < NUM_WNODES; nw++)
     {
-        pws = &G.g_cnxsave.win_save[nw];
+        pws = &G.g_cnxsave.cs_wnode[nw];
 
         /* Check for valid position */
         if (pws->x_save >= G.g_wdesk)

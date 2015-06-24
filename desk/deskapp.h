@@ -132,16 +132,16 @@ typedef struct
 /* save desktop context (preferences and windows) */
 typedef struct
 {
-        BYTE    sitem_save;     /* Sort mode */
-        BYTE    vitem_save;     /* Show files as icons or text */
-        BYTE    ccopy_save;     /* Confirm copies */
-        BYTE    cdele_save;     /* Confirm deletes */
-        BYTE    covwr_save;     /* Confirm overwrite */
-        BYTE    cdclk_save;     /* Double click speed */
-        BYTE    cmclk_save;     /* Drop down menu click mode */
-        BYTE    ctmfm_save;     /* Time format */
-        BYTE    cdtfm_save;     /* Date format */
-        WSAVE   win_save[NUM_WNODES];
+        BYTE    cs_sort;        /* Sort mode */
+        BYTE    cs_view;        /* Show files as icons or text */
+        BYTE    cs_confcpy;     /* Confirm copies */
+        BYTE    cs_confdel;     /* Confirm deletes */
+        BYTE    cs_confovwr;    /* Confirm overwrite */
+        BYTE    cs_dblclick;    /* Double click speed */
+        BYTE    cs_mnuclick;    /* Drop down menu click mode */
+        BYTE    cs_timefmt;     /* Time format */
+        BYTE    cs_datefmt;     /* Date format */
+        WSAVE   cs_wnode[NUM_WNODES];
 } CSAVE;
 
 

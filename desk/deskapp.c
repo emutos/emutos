@@ -527,7 +527,7 @@ void app_start(void)
                 pcurr++;
                 if (wincnt < NUM_WNODES)
                 {
-                    pws = &G.g_cnxsave.win_save[wincnt];
+                    pws = &G.g_cnxsave.cs_wnode[wincnt];
                     pcurr = scan_2(pcurr, &dummy);
                     pcurr = scan_2(pcurr, &pws->vsl_save);
 /* BugFix       */
@@ -552,17 +552,17 @@ void app_start(void)
             case 'E':
                 pcurr++;
                 pcurr = scan_2(pcurr, &envr);
-                G.g_cnxsave.vitem_save = ( (envr & INF_E1_VIEWTEXT) != 0);
-                G.g_cnxsave.sitem_save = ( (envr & INF_E1_SORTMASK) >> 5);
-                G.g_cnxsave.cdele_save = ( (envr & INF_E1_CONFDEL) != 0);
-                G.g_cnxsave.ccopy_save = ( (envr & INF_E1_CONFCPY) != 0);
-                G.g_cnxsave.cdclk_save = envr & INF_E1_DCMASK;
+                G.g_cnxsave.cs_view = ( (envr & INF_E1_VIEWTEXT) != 0);
+                G.g_cnxsave.cs_sort = ( (envr & INF_E1_SORTMASK) >> 5);
+                G.g_cnxsave.cs_confdel = ( (envr & INF_E1_CONFDEL) != 0);
+                G.g_cnxsave.cs_confcpy = ( (envr & INF_E1_CONFCPY) != 0);
+                G.g_cnxsave.cs_dblclick = envr & INF_E1_DCMASK;
 
                 pcurr = scan_2(pcurr, &envr);
-                G.g_cnxsave.covwr_save = ( (envr & INF_E2_ALLOWOVW) == 0);
-                G.g_cnxsave.cmclk_save = gl_mnclick = ( (envr & INF_E2_MNUCLICK) != 0);
-                G.g_cnxsave.cdtfm_save = ( (envr & INF_E2_DAYMONTH) == 0);
-                G.g_cnxsave.ctmfm_save = ( (envr & INF_E2_24HCLOCK) == 0);
+                G.g_cnxsave.cs_confovwr = ( (envr & INF_E2_ALLOWOVW) == 0);
+                G.g_cnxsave.cs_mnuclick = gl_mnclick = ( (envr & INF_E2_MNUCLICK) != 0);
+                G.g_cnxsave.cs_datefmt = ( (envr & INF_E2_DAYMONTH) == 0);
+                G.g_cnxsave.cs_timefmt = ( (envr & INF_E2_24HCLOCK) == 0);
                 sound(FALSE, !(envr & INF_E2_SOUND), 0);
                 break;
             }
@@ -650,15 +650,15 @@ void app_save(WORD todisk)
     pcurr = &gl_afile[0];
 
     /* save environment */
-    env1 = (G.g_cnxsave.vitem_save) ? INF_E1_VIEWTEXT : 0x00;
-    env1 |= ((G.g_cnxsave.sitem_save) << 5) & INF_E1_SORTMASK;
-    env1 |= (G.g_cnxsave.cdele_save) ? INF_E1_CONFDEL : 0x00;
-    env1 |= (G.g_cnxsave.ccopy_save) ? INF_E1_CONFCPY : 0x00;
-    env1 |= G.g_cnxsave.cdclk_save;
-    env2 = (G.g_cnxsave.covwr_save) ? 0x00 : INF_E2_ALLOWOVW;
-    env2 |= (G.g_cnxsave.cmclk_save) ? INF_E2_MNUCLICK : 0x00;
-    env2 |= (G.g_cnxsave.cdtfm_save) ? 0x00 : INF_E2_DAYMONTH;
-    env2 |= (G.g_cnxsave.ctmfm_save) ? 0x00 : INF_E2_24HCLOCK;
+    env1 = (G.g_cnxsave.cs_view) ? INF_E1_VIEWTEXT : 0x00;
+    env1 |= ((G.g_cnxsave.cs_sort) << 5) & INF_E1_SORTMASK;
+    env1 |= (G.g_cnxsave.cs_confdel) ? INF_E1_CONFDEL : 0x00;
+    env1 |= (G.g_cnxsave.cs_confcpy) ? INF_E1_CONFCPY : 0x00;
+    env1 |= G.g_cnxsave.cs_dblclick;
+    env2 = (G.g_cnxsave.cs_confovwr) ? 0x00 : INF_E2_ALLOWOVW;
+    env2 |= (G.g_cnxsave.cs_mnuclick) ? INF_E2_MNUCLICK : 0x00;
+    env2 |= (G.g_cnxsave.cs_datefmt) ? 0x00 : INF_E2_DAYMONTH;
+    env2 |= (G.g_cnxsave.cs_timefmt) ? 0x00 : INF_E2_24HCLOCK;
     env2 |= sound(FALSE, 0xFFFF, 0)  ? 0x00 : INF_E2_SOUND;
 #if CONF_WITH_VIDEL
     mode = get_videl_mode();
@@ -671,7 +671,7 @@ void app_save(WORD todisk)
     /* save windows */
     for (i = 0; i < NUM_WNODES; i++)
     {
-        pws = &G.g_cnxsave.win_save[i];
+        pws = &G.g_cnxsave.cs_wnode[i];
         ptmp = pws->pth_save;
         pcurr += sprintf(pcurr,"#W %02X %02X %02X %02X %02X %02X %02X",
                         0,pws->vsl_save,pws->x_save/gl_wchar,
