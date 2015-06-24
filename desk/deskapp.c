@@ -654,7 +654,7 @@ void app_save(WORD todisk)
     env1 |= ((G.g_cnxsave.cs_sort) << 5) & INF_E1_SORTMASK;
     env1 |= (G.g_cnxsave.cs_confdel) ? INF_E1_CONFDEL : 0x00;
     env1 |= (G.g_cnxsave.cs_confcpy) ? INF_E1_CONFCPY : 0x00;
-    env1 |= G.g_cnxsave.cs_dblclick;
+    env1 |= G.g_cnxsave.cs_dblclick & INF_E1_DCMASK;
     env2 = (G.g_cnxsave.cs_confovwr) ? 0x00 : INF_E2_ALLOWOVW;
     env2 |= (G.g_cnxsave.cs_mnuclick) ? INF_E2_MNUCLICK : 0x00;
     env2 |= (G.g_cnxsave.cs_datefmt) ? 0x00 : INF_E2_DAYMONTH;
