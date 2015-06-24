@@ -50,6 +50,25 @@
 #include "kprint.h"
 
 
+/*
+ *  the following bit masks apply to EMUDESK.INF
+ */
+                            /* 'E' byte 1 */
+#define INF_E1_VIEWTEXT 0x80    /* 1 => view folder contents as text */
+#define INF_E1_SORTMASK 0x60    /* mask for folder contents sort (0-3 are valid) */
+#define INF_E1_CONFDEL  0x10    /* 1 => confirm deletes */
+#define INF_E1_CONFCPY  0x08    /* 1 => confirm copies */
+#define INF_E1_DCMASK   0x07    /* mask for double-click speed (0-4 are valid) */
+#define INF_E1_DEFAULT  (INF_E1_CONFDEL|INF_E1_CONFCPY|2)   /* default if no .INF */
+
+                            /* 'E' byte 2 */
+#define INF_E2_ALLOWOVW 0x10    /* 1 => allow overwrites (yes, it's backwards) */
+#define INF_E2_MNUCLICK 0x08    /* 1 => click to drop down menus */
+#define INF_E2_DAYMONTH 0x04    /* 1 => day before month */
+#define INF_E2_24HCLOCK 0x02    /* 1 => 24 hour clock */
+#define INF_E2_SOUND    0x01    /* 1 => sound effects on */
+
+
 GLOBAL WORD     gl_numics;
 GLOBAL WORD     gl_stdrv;
 
@@ -435,12 +454,12 @@ void app_start(void)
         BYTE env1, env2;
 
         /* Preferences */
-        env1 = 0x1a;
-        env2 = 0x01;
+        env1 = INF_E1_DEFAULT;
+        env2 = INF_E2_SOUND;            /* sound effects on */
         if (cookie_idt & IDT_24H)
-            env2 |= 0x02; /* 24 hours */
+            env2 |= INF_E2_24HCLOCK;    /* 24 hours */
         if (cookie_idt & IDT_BIT_DM)
-            env2 |= 0x04; /* day before month */
+            env2 |= INF_E2_DAYMONTH;    /* day before month */
         sprintf(gl_afile, "#E %02X %02X\r\n", env1, env2);
 
         /* Windows */
@@ -533,18 +552,18 @@ void app_start(void)
             case 'E':
                 pcurr++;
                 pcurr = scan_2(pcurr, &envr);
-                G.g_cnxsave.vitem_save = ( (envr & 0x80) != 0);
-                G.g_cnxsave.sitem_save = ( (envr & 0x60) >> 5);
-                G.g_cnxsave.cdele_save = ( (envr & 0x10) != 0);
-                G.g_cnxsave.ccopy_save = ( (envr & 0x08) != 0);
-                G.g_cnxsave.cdclk_save = envr & 0x07;
+                G.g_cnxsave.vitem_save = ( (envr & INF_E1_VIEWTEXT) != 0);
+                G.g_cnxsave.sitem_save = ( (envr & INF_E1_SORTMASK) >> 5);
+                G.g_cnxsave.cdele_save = ( (envr & INF_E1_CONFDEL) != 0);
+                G.g_cnxsave.ccopy_save = ( (envr & INF_E1_CONFCPY) != 0);
+                G.g_cnxsave.cdclk_save = envr & INF_E1_DCMASK;
 
                 pcurr = scan_2(pcurr, &envr);
-                G.g_cnxsave.covwr_save = ( (envr & 0x10) == 0);
-                G.g_cnxsave.cmclk_save = gl_mnclick = ( (envr & 0x08) != 0);
-                G.g_cnxsave.cdtfm_save = ( (envr & 0x04) == 0);
-                G.g_cnxsave.ctmfm_save = ( (envr & 0x02) == 0);
-                sound(FALSE, !(envr & 0x01), 0);
+                G.g_cnxsave.covwr_save = ( (envr & INF_E2_ALLOWOVW) == 0);
+                G.g_cnxsave.cmclk_save = gl_mnclick = ( (envr & INF_E2_MNUCLICK) != 0);
+                G.g_cnxsave.cdtfm_save = ( (envr & INF_E2_DAYMONTH) == 0);
+                G.g_cnxsave.ctmfm_save = ( (envr & INF_E2_24HCLOCK) == 0);
+                sound(FALSE, !(envr & INF_E2_SOUND), 0);
                 break;
             }
         }
@@ -631,16 +650,16 @@ void app_save(WORD todisk)
     pcurr = &gl_afile[0];
 
     /* save environment */
-    env1 = (G.g_cnxsave.vitem_save) ? 0x80 : 0x00;
-    env1 |= ((G.g_cnxsave.sitem_save) << 5) & 0x60;
-    env1 |= (G.g_cnxsave.cdele_save) ? 0x10 : 0x00;
-    env1 |= (G.g_cnxsave.ccopy_save) ? 0x08 : 0x00;
+    env1 = (G.g_cnxsave.vitem_save) ? INF_E1_VIEWTEXT : 0x00;
+    env1 |= ((G.g_cnxsave.sitem_save) << 5) & INF_E1_SORTMASK;
+    env1 |= (G.g_cnxsave.cdele_save) ? INF_E1_CONFDEL : 0x00;
+    env1 |= (G.g_cnxsave.ccopy_save) ? INF_E1_CONFCPY : 0x00;
     env1 |= G.g_cnxsave.cdclk_save;
-    env2 = (G.g_cnxsave.covwr_save) ? 0x00 : 0x10;
-    env2 |= (G.g_cnxsave.cmclk_save) ? 0x08 : 0x00;
-    env2 |= (G.g_cnxsave.cdtfm_save) ? 0x00 : 0x04;
-    env2 |= (G.g_cnxsave.ctmfm_save) ? 0x00 : 0x02;
-    env2 |= sound(FALSE, 0xFFFF, 0)  ? 0x00 : 0x01;
+    env2 = (G.g_cnxsave.covwr_save) ? 0x00 : INF_E2_ALLOWOVW;
+    env2 |= (G.g_cnxsave.cmclk_save) ? INF_E2_MNUCLICK : 0x00;
+    env2 |= (G.g_cnxsave.cdtfm_save) ? 0x00 : INF_E2_DAYMONTH;
+    env2 |= (G.g_cnxsave.ctmfm_save) ? 0x00 : INF_E2_24HCLOCK;
+    env2 |= sound(FALSE, 0xFFFF, 0)  ? 0x00 : INF_E2_SOUND;
 #if CONF_WITH_VIDEL
     mode = get_videl_mode();
     if (!mode)                      /* i.e. not videl */
