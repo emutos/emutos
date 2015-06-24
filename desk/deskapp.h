@@ -131,15 +131,15 @@ WSAVE
 #define CSAVE   struct context_save
 CSAVE
 {
-        WORD    sitem_save;     /* Sort mode */
-        WORD    vitem_save;     /* Show files as icons or text */
-        WORD    ccopy_save;     /* Confirm copies */
-        WORD    cdele_save;     /* Confirm deletes */
-        WORD    covwr_save;     /* Confirm overwrite */
-        WORD    cdclk_save;     /* Double click speed */
-        WORD    cmclk_save;     /* Drop down menu click mode */
-        WORD    ctmfm_save;     /* Time format */
-        WORD    cdtfm_save;     /* Date format */
+        BYTE    sitem_save;     /* Sort mode */
+        BYTE    vitem_save;     /* Show files as icons or text */
+        BYTE    ccopy_save;     /* Confirm copies */
+        BYTE    cdele_save;     /* Confirm deletes */
+        BYTE    covwr_save;     /* Confirm overwrite */
+        BYTE    cdclk_save;     /* Double click speed */
+        BYTE    cmclk_save;     /* Drop down menu click mode */
+        BYTE    ctmfm_save;     /* Time format */
+        BYTE    cdtfm_save;     /* Date format */
         WSAVE   win_save[NUM_WNODES];
 };
 
