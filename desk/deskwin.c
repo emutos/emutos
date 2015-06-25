@@ -130,7 +130,6 @@ WNODE *win_alloc(WORD obid)
         return ((WNODE *) NULL);
 
     pt = (GRECT *) &G.g_cnxsave.cs_wnode[G.g_wcnt].x_save;
-    G.g_wcnt++;
 
     wob = obj_walloc(pt->g_x, pt->g_y, pt->g_w, pt->g_h);
     if (wob)
@@ -147,11 +146,12 @@ WNODE *win_alloc(WORD obid)
                                  G.g_wdesk, G.g_hdesk);
         if (pw->w_id != -1)
         {
+            G.g_wcnt++;
             return pw;
         }
-        else
-            win_free(pw);
+        win_free(pw);
     }
+
     return NULL;
 }
 
