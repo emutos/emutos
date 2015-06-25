@@ -134,6 +134,7 @@ WNODE *win_alloc(WORD obid)
     wob = obj_walloc(pt->g_x, pt->g_y, pt->g_w, pt->g_h);
     if (wob)
     {
+        G.g_wcnt++;
         pw = &G.g_wlist[wob-2];
         pw->w_flags = 0x0;
         pw->w_obid = obid;    /* DESKTOP v1.2 */
@@ -146,10 +147,9 @@ WNODE *win_alloc(WORD obid)
                                  G.g_wdesk, G.g_hdesk);
         if (pw->w_id != -1)
         {
-            G.g_wcnt++;
             return pw;
         }
-        win_free(pw);
+        win_free(pw);   /* decrement G.g_wcnt & call obj_wfree() */
     }
 
     return NULL;
