@@ -548,88 +548,114 @@ WORD inf_disk(BYTE dr_id)
 
 
 /*
- * Set preferences dialog
+ *  Examines 'numobj' objects in 'tree', starting at 'baseobj', looking
+ *  for a SELECTED object.  Returns the number of the first such object,
+ *  relative to the end.  For example, if there are four objects, the
+ *  value returned is 3, 2, 1, or 0 for the first, second, third, or
+ *  fourth object respectively.  If none of the objects is selected,
+ *  -1 is returned.
+ *  This is more-or-less the reverse of inf_gindex()
+ */
+static WORD inf_which(OBJECT *tree, WORD baseobj, WORD numobj)
+{
+    WORD   i;
+    OBJECT *obj;
+
+    for (i = numobj-1, obj = tree+baseobj; i >= 0; i--, obj++)
+        if (obj->ob_state & SELECTED)
+            break;
+
+    return i;
+}
+
+
+/*
+ * Handle preferences dialog
  */
 WORD inf_pref(void)
 {
-    OBJECT *tree;
-    WORD cyes, cno, i;
+    OBJECT *tree, *obj;
+    WORD oldtime, olddate;
     WORD sndefpref;
     WORD rbld;
 
     tree = (OBJECT *)G.a_trees[ADSETPRE];
     rbld = FALSE;
 
-    cyes = (G.g_cdelepref) ? SELECTED : NORMAL;
-    cno = (G.g_cdelepref) ? NORMAL : SELECTED;
-    tree[SPCDYES].ob_state = cyes;
-    tree[SPCDNO].ob_state = cno;
+    /* first, deselect all objects */
+    obj = tree;
+    do {
+        obj->ob_state &= ~SELECTED;
+    } while(!(obj++->ob_flags&LASTOB));
 
-    cyes = (G.g_ccopypref) ? SELECTED : NORMAL;
-    cno = (G.g_ccopypref) ? NORMAL : SELECTED;
-    tree[SPCCYES].ob_state = cyes;
-    tree[SPCCNO].ob_state = cno;
+    /* select buttons corresponding to current state */
+    if (G.g_cdelepref)
+        tree[SPCDYES].ob_state |= SELECTED;
+    else
+        tree[SPCDNO].ob_state |= SELECTED;
 
-    cyes = (G.g_covwrpref) ? SELECTED : NORMAL;
-    cno = (G.g_covwrpref) ? NORMAL : SELECTED;
-    tree[SPCOWYES].ob_state = cyes;
-    tree[SPCOWNO].ob_state = cno;
+    if (G.g_ccopypref)
+        tree[SPCCYES].ob_state |= SELECTED;
+    else
+        tree[SPCCNO].ob_state |= SELECTED;
 
-    cyes = (G.g_cmclkpref) ? SELECTED : NORMAL;
-    cno = (G.g_cmclkpref) ? NORMAL : SELECTED;
-    tree[SPMNCLKY].ob_state = cyes;
-    tree[SPMNCLKN].ob_state = cno;
-
-    cyes = (G.g_ctimeform) ? SELECTED : NORMAL;
-    cno = (G.g_ctimeform) ? NORMAL : SELECTED;
-    tree[SPTF12HR].ob_state = cyes;
-    tree[SPTF24HR].ob_state = cno;
-
-    cyes = (G.g_cdateform) ? SELECTED : NORMAL;
-    cno = (G.g_cdateform) ? NORMAL : SELECTED;
-    tree[SPDFMMDD].ob_state = cyes;
-    tree[SPDFDDMM].ob_state = cno;
-
-    for (i = 0; i < 5; i++)
-        tree[SPDC1+i].ob_state = NORMAL;
+    if (G.g_covwrpref)
+        tree[SPCOWYES].ob_state |= SELECTED;
+    else
+        tree[SPCOWNO].ob_state |= SELECTED;
 
     G.g_cdclkpref = evnt_dclick(0, FALSE);
-    tree[SPDC1+G.g_cdclkpref].ob_state = SELECTED;
+    tree[SPDC1+G.g_cdclkpref].ob_state |= SELECTED;
+
+    if (G.g_cmclkpref)
+        tree[SPMNCLKY].ob_state |= SELECTED;
+    else
+        tree[SPMNCLKN].ob_state |= SELECTED;
 
     sndefpref = !sound(FALSE, 0xFFFF, 0);
+    if (sndefpref)
+        tree[SPSEYES].ob_state |= SELECTED;
+    else
+        tree[SPSENO].ob_state |= SELECTED;
 
-    cyes = (sndefpref) ? SELECTED : NORMAL;
-    cno = (sndefpref) ? NORMAL : SELECTED;
-    tree[SPSEYES].ob_state = cyes;
-    tree[SPSENO].ob_state = cno;
+    if (G.g_ctimeform)
+        tree[SPTF12HR].ob_state |= SELECTED;
+    else
+        tree[SPTF24HR].ob_state |= SELECTED;
 
+    if (G.g_cdateform)
+        tree[SPDFMMDD].ob_state |= SELECTED;
+    else
+        tree[SPDFDDMM].ob_state |= SELECTED;
+
+    oldtime = G.g_ctimeform;    /* remember current formats */
+    olddate = G.g_cdateform;
+
+    /* allow user to select preferences */
     inf_show((LONG)tree, 0);
 
-    if ( inf_what((LONG)tree, SPOK, SPCNCL) )
+    if (inf_what((LONG)tree, SPOK, SPCNCL))
     {
-        G.g_cdelepref = inf_what((LONG)tree, SPCDYES, SPCDNO);
-        G.g_ccopypref = inf_what((LONG)tree, SPCCYES, SPCCNO);
-        G.g_covwrpref = inf_what((LONG)tree, SPCOWYES, SPCOWNO);
-        G.g_cmclkpref = inf_what((LONG)tree, SPMNCLKY, SPMNCLKN);
-        G.g_cmclkpref = menu_click(G.g_cmclkpref, TRUE);
+        G.g_cdelepref = inf_which(tree, SPCDYES, 2);
+        G.g_ccopypref = inf_which(tree, SPCCYES, 2);
+        G.g_covwrpref = inf_which(tree, SPCOWYES, 2);
         G.g_cdclkpref = inf_gindex((LONG)tree, SPDC1, 5);
         G.g_cdclkpref = evnt_dclick(G.g_cdclkpref, TRUE);
-        sndefpref = inf_what((LONG)tree, SPSEYES, SPSENO);
-
-        /* changes if file display? */
-        cyes = inf_what((LONG)tree, SPTF12HR, SPTF24HR);
-        if (G.g_ctimeform != cyes)
-        {
-            rbld = (G.g_iview == V_TEXT);
-            G.g_ctimeform = cyes;
-        }
-        cyes = inf_what((LONG)tree, SPDFMMDD, SPDFDDMM);
-        if (G.g_cdateform != cyes)
-        {
-            rbld |= (G.g_iview == V_TEXT);
-            G.g_cdateform = cyes;
-        }
+        G.g_cmclkpref = inf_which(tree, SPMNCLKY, 2);
+        G.g_cmclkpref = menu_click(G.g_cmclkpref, TRUE);
+        sndefpref = inf_which(tree, SPSEYES, 2);
         sound(FALSE, !sndefpref, 0);
+        G.g_ctimeform = inf_which(tree, SPTF12HR, 2);
+        G.g_cdateform = inf_which(tree, SPDFMMDD, 2);
+
+        /*
+         * if the current view is as text, and the date or time
+         * format has changed, we need to tell the caller so he
+         * can rebuild the windows if necessary
+         */
+        if (G.g_iview == V_TEXT)
+            if ((G.g_ctimeform != oldtime) || (G.g_cdateform != olddate))
+                rbld = TRUE;
     }
 
     return rbld;
