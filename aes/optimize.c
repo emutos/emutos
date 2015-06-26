@@ -32,7 +32,23 @@
 #include "xbiosbind.h"
 
 
-
+/*
+ *  sound() - an internal routine used by the AES and desktop
+ *
+ *  This routine has two functions:
+ *  1. play a sound (iff isfreq==TRUE)
+ *      'freq' is the frequency in Hz; must be > 0
+ *      'dura' is the duration in ~250msec units: must be < 32
+ *  2. enable/disable sound playing by this function (iff isfreq==FALSE)
+ *      'freq' is the control:
+ *          -1 => do nothing
+ *           0 => enable
+ *           otherwise disable
+ *      'dura' is not used
+ *
+ *  in both cases, the function returns the current disabled state, as
+ *  set previously (0 => enabled, otherwise disabled)
+ */
 WORD sound(WORD isfreq, WORD freq, WORD dura)
 {
     static UBYTE snddat[16];
