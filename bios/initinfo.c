@@ -185,7 +185,7 @@ static void cprint_devices(WORD dev)
 WORD initinfo(void)
 {
     int screen_height = v_cel_my + 1;
-    int initinfo_height = 22; /* Define ENABLE_KDEBUG to guess correct value */
+    int initinfo_height = 21; /* Define ENABLE_KDEBUG to guess correct value */
     int top_margin;
 #ifdef ENABLE_KDEBUG
     int actual_initinfo_height;
@@ -193,6 +193,11 @@ WORD initinfo(void)
     int i;
     WORD olddev = -1, dev = bootdev;
 
+// If additional info lines are going to be printed in specific cases,
+// then initinfo_height must be adjusted in the same way here.
+#if WITH_CLI
+    initinfo_height += 1;
+#endif
 #if CONF_WITH_AROS
     initinfo_height += 3;
 #endif
