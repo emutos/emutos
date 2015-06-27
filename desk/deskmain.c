@@ -31,7 +31,6 @@
 #include "deskwin.h"
 #include "deskbind.h"
 
-#include "kprint.h"
 #include "lineavars.h"
 #include "machine.h"
 #include "screen.h"
