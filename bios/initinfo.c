@@ -185,7 +185,7 @@ static void cprint_devices(WORD dev)
 WORD initinfo(void)
 {
     int screen_height = v_cel_my + 1;
-    int initinfo_height = 23; /* Define ENABLE_KDEBUG to guess correct value */
+    int initinfo_height = 22; /* Define ENABLE_KDEBUG to guess correct value */
     int top_margin;
 #ifdef ENABLE_KDEBUG
     int actual_initinfo_height;
@@ -194,7 +194,7 @@ WORD initinfo(void)
     WORD olddev = -1, dev = bootdev;
 
 #if CONF_WITH_AROS
-    initinfo_height += 2;
+    initinfo_height += 3;
 #endif
 
     /* Center the initinfo screen vertically */
@@ -240,9 +240,6 @@ WORD initinfo(void)
         }
     }
 
-    pair_start(_("Screen start")); cprintf("%p", v_bas_ad);
-    pair_end();
-
     cprintf("\033j");       /* save current cursor position */
     cprint_devices(dev);
 
@@ -265,6 +262,7 @@ WORD initinfo(void)
     cprintf("\r\n");
 #endif
 #if CONF_WITH_AROS
+    cprintf("\r\n");
     set_margin(); cprintf("\033pThis binary mixes GPL and AROS APL\033q\r\n");
     set_margin(); cprintf("\033pcode, redistribution is forbidden.\033q\r\n");
 #endif
