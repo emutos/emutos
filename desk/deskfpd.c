@@ -275,14 +275,10 @@ PNODE *pn_open(WORD  drive, BYTE *path, BYTE *name, BYTE *ext, WORD attr)
             thepath->p_attr = attr;
             return thepath;
         }
-        else
-        {
-            pn_close(thepath);
-            return NULL;
-        }
+        pn_close(thepath);  /* failed, free it up */
     }
-    else
-        return NULL;
+
+    return NULL;
 }
 
 
@@ -338,9 +334,9 @@ static WORD pn_fcomp(FNODE *pf1, FNODE *pf2, WORD which)
 static WORD pn_comp(FNODE *pf1, FNODE *pf2)
 {
     if ((pf1->f_attr ^ pf2->f_attr) & F_SUBDIR)
-        return ((pf1->f_attr & F_SUBDIR)? -1: 1);
-    else
-        return (pn_fcomp(pf1,pf2,G.g_isort));
+        return (pf1->f_attr & F_SUBDIR) ? -1 : 1;
+
+    return pn_fcomp(pf1,pf2,G.g_isort);
 }
 
 
