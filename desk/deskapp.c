@@ -62,11 +62,14 @@
 #define INF_E1_DEFAULT  (INF_E1_CONFDEL|INF_E1_CONFCPY|2)   /* default if no .INF */
 
                             /* 'E' byte 2 */
+#define INF_E2_IDTDATE  0x40    /* 1 => get date format from _IDT (ignore INF_E2_DAYMONTH bit) */
+#define INF_E2_IDTTIME  0x20    /* 1 => get time format from _IDT (ignore INF_E2_24HCLOCK bit) */
 #define INF_E2_ALLOWOVW 0x10    /* 1 => allow overwrites (yes, it's backwards) */
 #define INF_E2_MNUCLICK 0x08    /* 1 => click to drop down menus */
 #define INF_E2_DAYMONTH 0x04    /* 1 => day before month */
 #define INF_E2_24HCLOCK 0x02    /* 1 => 24 hour clock */
 #define INF_E2_SOUND    0x01    /* 1 => sound effects on */
+#define INF_E2_DEFAULT  (INF_E2_IDTDATE|INF_E2_IDTTIME|INF_E2_SOUND)    /* default if no .INF */
 
 
 GLOBAL WORD     gl_numics;
@@ -81,12 +84,12 @@ static BYTE     gl_buffer[SIZE_BUFF];
 
 /* When we can't get EMUDESK.INF via shel_get() or by reading from
  * the disk, we create one dynamically from three sources:
- *  the desktop preferences, for #E line
- *  desk_inf_data1 below, for #W lines
+ *  desk_inf_data1 below, for the #E and #W lines
  *  the drivemask, for #M lines
  *  desk_inf_data2 below, for the remaining lines
  */
 static const char *desk_inf_data1 =
+    "#E 1A 61\r\n"                      /* INF_E1_DEFAULT and INF_E2_DEFAULT */
     "#W 00 00 02 06 26 0C 00 @\r\n"
     "#W 00 00 02 08 26 0C 00 @\r\n"
     "#W 00 00 02 0A 26 0C 00 @\r\n"
@@ -451,18 +454,8 @@ void app_start(void)
         int trash_x, trash_y;
         int icon_type;
         char drive_letter;
-        BYTE env1, env2;
 
-        /* Preferences */
-        env1 = INF_E1_DEFAULT;
-        env2 = INF_E2_SOUND;            /* sound effects on */
-        if (cookie_idt & IDT_24H)
-            env2 |= INF_E2_24HCLOCK;    /* 24 hours */
-        if (cookie_idt & IDT_BIT_DM)
-            env2 |= INF_E2_DAYMONTH;    /* day before month */
-        sprintf(gl_afile, "#E %02X %02X\r\n", env1, env2);
-
-        /* Windows */
+        /* Environment and Windows */
         strcat(gl_afile, desk_inf_data1);
 
         /* Scan for valid drives: */
@@ -561,8 +554,14 @@ void app_start(void)
                 pcurr = scan_2(pcurr, &envr);
                 G.g_cnxsave.cs_confovwr = ( (envr & INF_E2_ALLOWOVW) == 0);
                 G.g_cnxsave.cs_mnuclick = gl_mnclick = ( (envr & INF_E2_MNUCLICK) != 0);
-                G.g_cnxsave.cs_datefmt = ( (envr & INF_E2_DAYMONTH) == 0);
-                G.g_cnxsave.cs_timefmt = ( (envr & INF_E2_24HCLOCK) == 0);
+                if (envr & INF_E2_IDTDATE)
+                    G.g_cnxsave.cs_datefmt = DATEFORM_IDT;
+                else
+                    G.g_cnxsave.cs_datefmt = (envr & INF_E2_DAYMONTH) ? DATEFORM_DMY : DATEFORM_MDY;
+                if (envr & INF_E2_IDTTIME)
+                    G.g_cnxsave.cs_timefmt = TIMEFORM_IDT;
+                else
+                    G.g_cnxsave.cs_timefmt = (envr & INF_E2_24HCLOCK) ? TIMEFORM_24H : TIMEFORM_12H;
                 sound(FALSE, !(envr & INF_E2_SOUND), 0);
                 break;
             }
@@ -657,8 +656,24 @@ void app_save(WORD todisk)
     env1 |= G.g_cnxsave.cs_dblclick & INF_E1_DCMASK;
     env2 = (G.g_cnxsave.cs_confovwr) ? 0x00 : INF_E2_ALLOWOVW;
     env2 |= (G.g_cnxsave.cs_mnuclick) ? INF_E2_MNUCLICK : 0x00;
-    env2 |= (G.g_cnxsave.cs_datefmt) ? 0x00 : INF_E2_DAYMONTH;
-    env2 |= (G.g_cnxsave.cs_timefmt) ? 0x00 : INF_E2_24HCLOCK;
+    switch(G.g_cnxsave.cs_datefmt)
+    {
+    case DATEFORM_IDT:
+        env2 |= INF_E2_IDTDATE;
+        break;
+    case DATEFORM_DMY:
+        env2 |= INF_E2_DAYMONTH;
+        break;
+    }
+    switch(G.g_cnxsave.cs_timefmt)
+    {
+    case TIMEFORM_IDT:
+        env2 |= INF_E2_IDTTIME;
+        break;
+    case TIMEFORM_24H:
+        env2 |= INF_E2_24HCLOCK;
+        break;
+    }
     env2 |= sound(FALSE, 0xFFFF, 0)  ? 0x00 : INF_E2_SOUND;
 #if CONF_WITH_VIDEL
     mode = get_videl_mode();

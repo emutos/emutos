@@ -1408,13 +1408,6 @@ WORD deskmain(void)
 
     menu_ienable(G.a_trees[ADMENU], RESITEM, can_change_resolution);
 
-    /* set up initial prefs */
-    G.g_ccopypref = TRUE;
-    G.g_cdelepref = TRUE;
-    G.g_ctimeform = TRUE;
-    G.g_cdateform = TRUE;
-    G.g_cdclkpref = 3;
-
     /* initialize desktop and its objects */
     app_blddesk();
 

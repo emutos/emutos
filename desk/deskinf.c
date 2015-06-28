@@ -40,6 +40,7 @@
 #include "deskdir.h"
 #include "deskrsrc.h"
 #include "deskinf.h"
+#include "country.h"
 #include "kprint.h"
 
 
@@ -83,8 +84,13 @@ static BYTE *fmt_time(UWORD time, BYTE *fmt_string, BYTE *ptime)
     hh = (time >> 11) & 0x001f;
     mm = (time >> 5) & 0x003f;
 
-    if (G.g_ctimeform)
+    switch(G.g_ctimeform)
     {
+    case TIMEFORM_IDT:
+        if ((cookie_idt&IDT_TMASK) == IDT_24H)
+            break;
+        /* else 12 hour clock, so drop thru */
+    case TIMEFORM_12H:
         if (hh >= 12)
         {
             hh -= 12;
@@ -96,6 +102,7 @@ static BYTE *fmt_time(UWORD time, BYTE *fmt_string, BYTE *ptime)
         }
         if (hh == 0)
             hh = 12;
+        break;
     }
     sprintf(ptime,fmt_string,hh,mm,suffix);
 
@@ -122,7 +129,9 @@ static BYTE *fmt_time(UWORD time, BYTE *fmt_string, BYTE *ptime)
 static BYTE *fmt_date(UWORD date, BOOL fourdigit, BYTE *pdate)
 {
     WORD dd, mm, yy;
-    WORD var1, var2;
+    WORD var1, var2, var3;
+    char tmp, separator = DATEFORM_SEP;
+    WORD format;
 
     yy = 1980 + ((date >> 9) & 0x007f);
     if (!fourdigit)
@@ -130,17 +139,46 @@ static BYTE *fmt_date(UWORD date, BOOL fourdigit, BYTE *pdate)
     mm = (date >> 5) & 0x000f;
     dd = date & 0x001f;
 
-    if (G.g_cdateform)      /* MM-DD-YY */
+    switch(G.g_cdateform)
     {
+    case DATEFORM_IDT:
+        tmp = cookie_idt & IDT_SMASK;   /* separator */
+        if ((tmp >= 0x20) && (tmp <= 0x7f))
+            separator = tmp;
+        format = cookie_idt&IDT_DMASK;
+        break;
+    case DATEFORM_DMY:
+        format = IDT_DDMMYY;
+        break;
+    default:
+        format = IDT_MMDDYY;
+        break;
+    }
+
+    switch(format)
+    {
+    case IDT_MMDDYY:
         var1 = mm;
         var2 = dd;
-    }
-    else                    /* DD-MM-YY */
-    {
+        var3 = yy;
+        break;
+    case IDT_YYMMDD:
+        var1 = yy;
+        var2 = mm;
+        var3 = dd;
+        break;
+    case IDT_YYDDMM:    /* does anyone ever use this? */
+        var1 = yy;
+        var2 = dd;
+        var3 = mm;
+        break;
+    default:            /* default to DDMMYY */
         var1 = dd;
         var2 = mm;
+        var3 = yy;
+        break;
     }
-    sprintf(pdate,"%02d/%02d/%02d",var1,var2,yy);
+    sprintf(pdate,"%02d%c%02d%c%02d",var1,separator,var2,separator,var3);
 
     return pdate+strlen(pdate);
 }
@@ -618,15 +656,31 @@ WORD inf_pref(void)
     else
         tree[SPSENO].ob_state |= SELECTED;
 
-    if (G.g_ctimeform)
+    switch(G.g_ctimeform)
+    {
+    case TIMEFORM_12H:
         tree[SPTF12HR].ob_state |= SELECTED;
-    else
+        break;
+    case TIMEFORM_24H:
         tree[SPTF24HR].ob_state |= SELECTED;
+        break;
+    default:
+        tree[SPTF_DEF].ob_state |= SELECTED;
+        break;
+    }
 
-    if (G.g_cdateform)
+    switch(G.g_cdateform)
+    {
+    case DATEFORM_MDY:
         tree[SPDFMMDD].ob_state |= SELECTED;
-    else
+        break;
+    case DATEFORM_DMY:
         tree[SPDFDDMM].ob_state |= SELECTED;
+        break;
+    default:
+        tree[SPDF_DEF].ob_state |= SELECTED;
+        break;
+    }
 
     oldtime = G.g_ctimeform;    /* remember current formats */
     olddate = G.g_cdateform;
@@ -645,8 +699,16 @@ WORD inf_pref(void)
         G.g_cmclkpref = menu_click(G.g_cmclkpref, TRUE);
         sndefpref = inf_which(tree, SPSEYES, 2);
         sound(FALSE, !sndefpref, 0);
-        G.g_ctimeform = inf_which(tree, SPTF12HR, 2);
-        G.g_cdateform = inf_which(tree, SPDFMMDD, 2);
+        /*
+         * the following assumes that the buttons are in the
+         * left-to-right order: default, 12hour, 24hour
+         */
+        G.g_ctimeform = inf_which(tree, SPTF_DEF, 3);
+        /*
+         * the following assumes that the buttons are in the
+         * left-to-right order: default, mmddyy, ddmmyy
+         */
+        G.g_cdateform = inf_which(tree, SPDF_DEF, 3);
 
         /*
          * if the current view is as text, and the date or time

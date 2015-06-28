@@ -37,6 +37,20 @@
 #define MIN_HINT        2      /* vertical */
 
 
+/*
+ * the following defines apply to the date & time format fields
+ * in GLOBES (g_cdateform, g_ctimeform) and in CSAVE (cs_datefmt,
+ * cs_timefmt)
+ */
+#define DATEFORM_SEP    '/'     /* separator used if not using _IDT */
+#define DATEFORM_DMY    0       /* day-month-year */   
+#define DATEFORM_MDY    1       /* month-day-year */   
+#define DATEFORM_IDT    2       /* use format (incl separator) from _IDT cookie */
+#define TIMEFORM_24H    0       /* 24 hour clock */
+#define TIMEFORM_12H    1       /* 12 hour clock */
+#define TIMEFORM_IDT    2       /* use format from _IDT cookie */
+
+
 typedef struct
 {
 /*GLOBAL*/ PNODE        g_plist[NUM_PNODES];

@@ -1,5 +1,4 @@
 Common AES/VDI/Line-A bugs:
-- Desktop doesn't use the _IDT date separator.
 - Drag-and-drop does not work in the freeware GEM games "Abalone"
   "Hotshot checkers", "Risky", "Yukon" and in the shareware solitaire
   game "Patience".

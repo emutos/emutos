@@ -532,8 +532,18 @@ void fill_cookie_jar(void)
    * number currently undefined.
    */
 
-  /* _IDT This cookie defines the currently configured date and time
-   * format, Bits #0-7 contain the ASCII code of the date separator.
+  /* _AKP  This cookie indicates the presence of an Advanced Keyboard
+   * Processor. The high word of this cookie is currently reserved.
+   * The low word indicates the language currently used by TOS for
+   * keyboard interpretation and alerts.
+   */
+
+  detect_akp();
+  KDEBUG(("cookie_akp = 0x%08lx\n", cookie_akp));
+  cookie_add(COOKIE_AKP, cookie_akp);
+
+  /* _IDT  This cookie defines the currently configured date and time
+   * format.  Bits #0-7 contain the ASCII code of the date separator.
    * Bits #8-11 contain a value indicating the date display format as
    * follows:
    *   0 MM-DD-YY
@@ -545,17 +555,8 @@ void fill_cookie_jar(void)
    *   1 24 hour
    * Note: The value of this cookie does not affect any of the internal
    * time functions. It is intended for informational use by applications
+   * and may also used by the desktop for its date & time displays.
    */
-
-  /* _AKP  This cookie indicates the presence of an Advanced Keyboard
-   * Processor. The high word of this cookie is currently reserved.
-   * The low word indicates the language currently used by TOS for
-   * keyboard interpretation and alerts.
-   */
-
-  detect_akp();
-  KDEBUG(("cookie_akp = 0x%08lx\n", cookie_akp));
-  cookie_add(COOKIE_AKP, cookie_akp);
 
   detect_idt();
   KDEBUG(("cookie_idt = 0x%08lx\n", cookie_idt));
