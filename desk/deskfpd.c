@@ -38,416 +38,416 @@
 
 
 /*
-*       Initialize the list of pnodes
-*/
+ *  Initialize the list of pnodes
+ */
 static void pn_init(void)
 {
-        WORD            i;
+    WORD i;
 
-        for(i=NUM_PNODES - 2; i >= 0; i--)
-          G.g_plist[i].p_next = &G.g_plist[i + 1];
-        G.g_pavail = &G.g_plist[0];
-        G.g_phead = (PNODE *) NULL;
-        G.g_plist[NUM_PNODES - 1].p_next = (PNODE *) NULL;
+    for (i = NUM_PNODES-2; i >= 0; i--)
+        G.g_plist[i].p_next = &G.g_plist[i +1];
+    G.g_pavail = &G.g_plist[0];
+    G.g_phead = (PNODE *) NULL;
+    G.g_plist[NUM_PNODES-1].p_next = (PNODE *) NULL;
 }
 
 
 /*
-*       Start up by initializing global variables
-*/
+ *  Start up by initializing global variables
+ */
 void fpd_start(void)
 {
-        pn_init();
+    pn_init();
 }
 
 
 /*
-*       Build a filespec out of drive letter, a pointer to a path, a pointer
-*       to a filename, and a pointer to an extension.
-*/
+ *  Build a filespec out of drive letter, a pointer to a path, a pointer
+ *  to a filename, and a pointer to an extension
+ */
 static WORD fpd_bldspec(WORD drive, BYTE *ppath, BYTE *pname, BYTE *pext, BYTE *pspec)
 {
-/* BUGFIX 2.1   */
-        int len = 0;
+    int len = 0;
 
-        if (*pname)
-        {
-          len = strlen(pname) + 1;      /* allow for "\" */
-          if (*pext)
+    if (*pname)
+    {
+        len = strlen(pname) + 1;        /* allow for "\" */
+        if (*pext)
             len += strlen(pext) + 1;    /* allow for "." */
-        }
-        if ( (strlen(ppath) + len) >= (LEN_ZPATH-3) )
-          return(FALSE);
-/* */
-        *pspec++ = drive;
-        *pspec++ = ':';
-        *pspec++ = '\\';
-        if (*ppath)
-        {
-          while (*ppath)
-            *pspec++ = *ppath++;
-          if (*pname)
-            *pspec++ = '\\';
-        }
+    }
+    if ((strlen(ppath) + len) >= (LEN_ZPATH-3))
+        return FALSE;
 
+    *pspec++ = drive;
+    *pspec++ = ':';
+    *pspec++ = '\\';
+    if (*ppath)
+    {
+        while(*ppath)
+            *pspec++ = *ppath++;
         if (*pname)
-        {
-          while (*pname)
+            *pspec++ = '\\';
+    }
+
+    if (*pname)
+    {
+        while(*pname)
             *pspec++ = *pname++;
-          if (*pext)
-          {
+        if (*pext)
+        {
             *pspec++ = '.';
-            while (*pext)
-              *pspec++ = *pext++;
-          }
+            while(*pext)
+                *pspec++ = *pext++;
         }
-        *pspec++ = '\0';
-        return(TRUE);
+    }
+    *pspec++ = '\0';
+
+    return TRUE;
 }
 
 
 /*
-*       Parse a filespec into its drive, path, name, and extension
-*       parts.
-*/
+ *  Parse a filespec into its drive, path, name, and extension parts
+ */
 void fpd_parse(BYTE *pspec, WORD *pdrv, BYTE *ppath, BYTE *pname, BYTE *pext)
 {
-        BYTE            *pstart, *p1st, *plast, *pperiod;
+    BYTE *pstart, *p1st, *plast, *pperiod;
 
-        pstart = pspec;
-                                                /* get the drive */
-        while ( (*pspec) &&
-                (*pspec != ':') )
-          pspec++;
-        if (*pspec == ':')
-        {
-          pspec--;
-          *pdrv = (WORD) *pspec;
-          pspec++;
-          pspec++;
-          if ( *pspec == '\\')
+    pstart = pspec;
+
+    /* get the drive */
+    while(*pspec && (*pspec != ':'))
+        pspec++;
+    if (*pspec == ':')
+    {
+        pspec--;
+        *pdrv = (WORD) *pspec;
+        pspec++;
+        pspec++;
+        if (*pspec == '\\')
             pspec++;
-        }
-        else
-        {
-          *pdrv = (WORD) (dos_gdrv() + 'A');
-          pspec = pstart;
-        }
-                                                /* scan for key bytes   */
-        p1st = pspec;
-        plast = pspec;
-        pperiod = NULL;
-        while( *pspec )
-        {
-          if (*pspec == '\\')
+    }
+    else
+    {
+        *pdrv = (WORD) (dos_gdrv() + 'A');
+        pspec = pstart;
+    }
+
+    /* scan for key bytes */
+    p1st = pspec;
+    plast = pspec;
+    pperiod = NULL;
+    while(*pspec)
+    {
+        if (*pspec == '\\')
             plast = pspec;
-          if (*pspec == '.')
+        if (*pspec == '.')
             pperiod = pspec;
-          pspec++;
-        }
-        if (pperiod == NULL)
-          pperiod = pspec;
-                                                /* get the path */
-        while (p1st != plast)
-          *ppath++ = *p1st++;
-        *ppath = '\0';
-        if (*plast == '\\')
-          plast++;
-                                                /* get the name */
-        while (plast != pperiod)
-          *pname++ = *plast++;
-        *pname = '\0';
-                                                /* get the ext  */
-        if ( *pperiod )
-        {
-          pperiod++;
-          while (pperiod != pspec)
+        pspec++;
+    }
+    if (pperiod == NULL)
+        pperiod = pspec;
+
+    /* get the path */
+    while(p1st != plast)
+        *ppath++ = *p1st++;
+    *ppath = '\0';
+    if (*plast == '\\')
+        plast++;
+
+    /* get the name */
+    while(plast != pperiod)
+        *pname++ = *plast++;
+    *pname = '\0';
+
+    /* get the ext  */
+    if (*pperiod)
+    {
+        pperiod++;
+        while(pperiod != pspec)
             *pext++ = *pperiod++;
-        }
-        *pext = '\0';
+    }
+    *pext = '\0';
 }
 
 
-
 /*
-*       Find the file node that matches a particular object id.
-*/
+ *  Find the file node that matches a particular object id
+ */
 FNODE *fpd_ofind(FNODE *pf, WORD obj)
 {
-        while(pf)
-        {
-          if (pf->f_obid == obj)
-            return(pf);
-          pf = pf->f_next;
-        }
-        return NULL;
+    while(pf)
+    {
+        if (pf->f_obid == obj)
+            return pf;
+        pf = pf->f_next;
+    }
+
+    return NULL;
 }
 
 
 /*
- *      Free the file nodes for a specified pathnode
+ *  Free the file nodes for a specified pathnode
  */
 static void fl_free(PNODE *pn)
 {
-        if (pn->p_fbase)
-            dos_free((LONG)pn->p_fbase);
+    if (pn->p_fbase)
+        dos_free((LONG)pn->p_fbase);
 
-        pn->p_fbase = pn->p_flist = NULL;
-        pn->p_count = 0;
-        pn->p_size = 0L;
+    pn->p_fbase = pn->p_flist = NULL;
+    pn->p_count = 0;
+    pn->p_size = 0L;
 }
 
 
 /*
-*       Allocate a path node.
-*/
+ *  Allocate a path node
+ */
 static PNODE *pn_alloc(void)
 {
-        PNODE           *thepath;
+    PNODE *thepath;
 
-        if ( G.g_pavail )
+    if (G.g_pavail)
+    {
+        /* get up off the avail list */
+        thepath = G.g_pavail;
+        G.g_pavail = G.g_pavail->p_next;
+
+        /* put us on the active list */
+        thepath->p_next = G.g_phead;
+        G.g_phead = thepath;
+
+        /* init. and return */
+        thepath->p_flist = (FNODE *) NULL;
+        return thepath;
+    }
+
+    return NULL;
+}
+
+
+/*
+ *  Free a path node
+ */
+static void pn_free(PNODE *thepath)
+{
+    PNODE *pp;
+
+    /* free our file list */
+    fl_free(thepath);
+
+    /* if first in list, unlink by changing phead
+     * else by finding and changing our previous guy
+     */
+    pp = (PNODE *) &G.g_phead;
+    while(pp->p_next != thepath)
+        pp = pp->p_next;
+    pp->p_next = thepath->p_next;
+
+    /* put us on the avail list */
+    thepath->p_next = G.g_pavail;
+    G.g_pavail = thepath;
+}
+
+
+/*
+ *  Close a particular path
+ */
+void pn_close(PNODE *thepath)
+{
+    pn_free(thepath);
+}
+
+
+/*
+ *  Open a particular path
+ */
+PNODE *pn_open(WORD  drive, BYTE *path, BYTE *name, BYTE *ext, WORD attr)
+{
+    PNODE *thepath;
+
+    thepath = pn_alloc();
+    if (thepath)
+    {
+        if (fpd_bldspec(drive, path, name, ext, &thepath->p_spec[0]))
         {
-                                                /* get up off the avail */
-                                                /*   list               */
-          thepath = G.g_pavail;
-          G.g_pavail = G.g_pavail->p_next;
-                                                /* put us on the active */
-                                                /*   list               */
-          thepath->p_next = G.g_phead;
-          G.g_phead = thepath;
-                                                /* init. and return     */
-          thepath->p_flist = (FNODE *) NULL;
-          return(thepath);
+            thepath->p_attr = attr;
+            return thepath;
         }
+        else
+        {
+            pn_close(thepath);
+            return NULL;
+        }
+    }
+    else
         return NULL;
 }
 
 
 /*
-*       Free a path node.
-*/
-static void pn_free(PNODE *thepath)
-{
-        PNODE           *pp;
-
-                                                /* free our file list   */
-        fl_free(thepath);
-                                                /* if first in list     */
-                                                /*   unlink by changing */
-                                                /*   phead else by      */
-                                                /*   finding and chang- */
-                                                /*   our previouse guy  */
-        pp = (PNODE *) &G.g_phead;
-        while (pp->p_next != thepath)
-          pp = pp->p_next;
-        pp->p_next = thepath->p_next;
-                                                /* put us on the avail  */
-                                                /*   list               */
-        thepath->p_next = G.g_pavail;
-        G.g_pavail = thepath;
-}
-
-
-/*
-*       Close a particular path.
-*/
-void pn_close(PNODE *thepath)
-{
-        pn_free(thepath);
-}
-
-
-/*
-*       Open a particular path.
-*/
-PNODE *pn_open(WORD  drive, BYTE *path, BYTE *name, BYTE *ext, WORD attr)
-{
-        PNODE           *thepath;
-
-        thepath = pn_alloc();
-        if (thepath)
-        {
-/* BUGFIX 2.1   */
-          if ( fpd_bldspec(drive, path, name, ext, &thepath->p_spec[0]) )
-          {
-            thepath->p_attr = attr;
-            return(thepath);
-          }
-          else
-          {
-            pn_close(thepath);
-            return NULL;
-          }
-        }
-        else
-          return NULL;
-}
-
-
-/*
- *      Compare file nodes pf1 & pf2, using:
- *          (1) a field determined by 'which'
- *          (2) the full name, if (1) compares equal
+ *  Compare file nodes pf1 & pf2, using:
+ *      (1) a field determined by 'which'
+ *      (2) the full name, if (1) compares equal
  *
- *      Returns -ve if pf1<pf2, 0 if pf1==pf2, +ve if pf1>pf2
+ *  Returns -ve if pf1<pf2, 0 if pf1==pf2, +ve if pf1>pf2
  */
 static WORD pn_fcomp(FNODE *pf1, FNODE *pf2, WORD which)
 {
-        WORD            chk;
-        BYTE            *ps1, *ps2;
+    WORD chk;
+    BYTE *ps1, *ps2;
 
-        ps1 = pf1->f_name;
-        ps2 = pf2->f_name;
+    ps1 = pf1->f_name;
+    ps2 = pf2->f_name;
 
-        switch(which)
-        {
-        case S_DATE:
-            chk = pf2->f_date - pf1->f_date;
-            if (chk)
-                return chk;
-            chk = pf2->f_time - pf1->f_time;
-            if (chk)
-                return chk;
-            break;
-        case S_SIZE:
-            if (pf2->f_size > pf1->f_size)
-                return 1;
-            if (pf2->f_size < pf1->f_size)
-                return -1;
-            break;
-        case S_TYPE:
-            chk = strcmp(scasb(ps1,'.'),scasb(ps2,'.'));
-            if (chk)
-                return chk;
-            break;
-        }
+    switch(which)
+    {
+    case S_DATE:
+        chk = pf2->f_date - pf1->f_date;
+        if (chk)
+            return chk;
+        chk = pf2->f_time - pf1->f_time;
+        if (chk)
+            return chk;
+        break;
+    case S_SIZE:
+        if (pf2->f_size > pf1->f_size)
+            return 1;
+        if (pf2->f_size < pf1->f_size)
+            return -1;
+        break;
+    case S_TYPE:
+        chk = strcmp(scasb(ps1,'.'),scasb(ps2,'.'));
+        if (chk)
+            return chk;
+        break;
+    }
 
-        return strcmp(ps1,ps2); /* always the last test (the only test if S_NAME) */
+    return strcmp(ps1,ps2); /* always the last test (the only test if S_NAME) */
 }
 
 
 /*
-*       Routine to compare two fnodes to see which one is greater.
-*       Folders always sort out first, and then it is based on
-*       the G.g_isort parameter.  Return -ve if pf1 < pf2, 0 if
-*       pf1 == pf2, and +ve if pf1 > pf2.
-*/
+ *  Routine to compare two fnodes to see which one is greater.
+ *  Folders always sort out first, and then it is based on
+ *  the G.g_isort parameter.
+ *
+ *  Returns -ve if pf1 < pf2, 0 if pf1 == pf2, and +ve if pf1 > pf2
+ */
 static WORD pn_comp(FNODE *pf1, FNODE *pf2)
 {
-        if ( (pf1->f_attr ^ pf2->f_attr) & F_SUBDIR)
-          return ((pf1->f_attr & F_SUBDIR)? -1: 1);
-        else
-          return (pn_fcomp(pf1,pf2,G.g_isort));
+    if ((pf1->f_attr ^ pf2->f_attr) & F_SUBDIR)
+        return ((pf1->f_attr & F_SUBDIR)? -1: 1);
+    else
+        return (pn_fcomp(pf1,pf2,G.g_isort));
 }
 
 
 /*
- *      Sort the fnodes in the list chained from the specified pathnode
+ *  Sort the fnodes in the list chained from the specified pathnode
  *
  */
 FNODE *pn_sort(PNODE *pn)
 {
-        FNODE           *pf, *pftemp;
-        FNODE           *newlist;
-        FNODE           **ml_pfndx;
+    FNODE *pf, *pftemp;
+    FNODE *newlist;
+    FNODE **ml_pfndx;
+    WORD  count, gap, i, j;
 
-        WORD            count, gap, i, j;
+    if (pn->p_count < 2)        /* the list is already sorted */
+        return pn->p_flist;
 
-        if (pn->p_count < 2)        /* the list is already sorted */
-            return pn->p_flist;
+    /*
+     * malloc & build index array
+     */
+    ml_pfndx = (FNODE **)dos_alloc(pn->p_count*sizeof(FNODE *));
+    if (!ml_pfndx)              /* no space, can't sort */
+        return pn->p_flist;
 
-        /*
-         * malloc & build index array
-         */
-        ml_pfndx = (FNODE **)dos_alloc(pn->p_count*sizeof(FNODE *));
-        if (!ml_pfndx)              /* no space, can't sort */
-            return pn->p_flist;
+    for (count = 0, pf = pn->p_flist; pf; pf = pf->f_next)
+        ml_pfndx[count++] = pf;
 
-        for (count = 0, pf = pn->p_flist; pf; pf = pf->f_next)
-            ml_pfndx[count++] = pf;
-
-                                                /* sort files using shell*/
-                                                /*   sort on page 108 of */
-                                                /*   K&R C Prog. Lang.  */
-        for(gap = count/2; gap > 0; gap /= 2)
+    /* sort files using shell sort on page 108 of  K&R C Prog. Lang. */
+    for (gap = count/2; gap > 0; gap /= 2)
+    {
+        for (i = gap; i < count; i++)
         {
-          for(i = gap; i < count; i++)
-          {
             for (j = i-gap; j >= 0; j -= gap)
             {
-              if ( pn_comp(ml_pfndx[j], ml_pfndx[j+gap]) <= 0 )
-                break;
-              pftemp = ml_pfndx[j];
-              ml_pfndx[j] = ml_pfndx[j+gap];
-              ml_pfndx[j+gap] = pftemp;
+                if (pn_comp(ml_pfndx[j], ml_pfndx[j+gap]) <= 0)
+                    break;
+                pftemp = ml_pfndx[j];
+                ml_pfndx[j] = ml_pfndx[j+gap];
+                ml_pfndx[j+gap] = pftemp;
             }
-          }
         }
-                                                /* link up the list in  */
-                                                /*   order              */
-        newlist = ml_pfndx[0];
-        pf = ml_pfndx[0];
-        for(i=1; i<count; i++)
-        {
-          pf->f_next = ml_pfndx[i];
-          pf = ml_pfndx[i];
-        }
-        pf->f_next = (FNODE *) NULL;
+    }
 
-        dos_free((LONG)ml_pfndx);
+    /* link up the list in order */
+    newlist = ml_pfndx[0];
+    pf = ml_pfndx[0];
+    for (i = 1; i < count; i++)
+    {
+        pf->f_next = ml_pfndx[i];
+        pf = ml_pfndx[i];
+    }
+    pf->f_next = (FNODE *) NULL;
 
-        return(newlist);
+    dos_free((LONG)ml_pfndx);
+
+    return newlist;
 }
 
 
 /*
- *      Build the filenode list for the specified pathnode
+ *  Build the filenode list for the specified pathnode
  */
 WORD pn_active(PNODE *pn)
 {
-        FNODE *fn, *prev;
-        LONG maxmem, maxcount, size = 0L;
-        WORD count;
+    FNODE *fn, *prev;
+    LONG maxmem, maxcount, size = 0L;
+    WORD count;
 
-        fl_free(pn);                    /* free any existing filenodes */
+    fl_free(pn);                    /* free any existing filenodes */
 
-        maxmem = dos_avail();           /* allocate max possible memory */
-        if (maxmem < sizeof(FNODE))
-            return E_NOMEMORY;
+    maxmem = dos_avail();           /* allocate max possible memory */
+    if (maxmem < sizeof(FNODE))
+        return E_NOMEMORY;
 
-        pn->p_fbase = (FNODE *)dos_alloc(maxmem);
-        maxcount = maxmem / sizeof(FNODE);
+    pn->p_fbase = (FNODE *)dos_alloc(maxmem);
+    maxcount = maxmem / sizeof(FNODE);
 
-        fn = pn->p_fbase;
-        prev = (FNODE *)&pn->p_flist;   /* assumes fnode link is at start of fnode */
+    fn = pn->p_fbase;
+    prev = (FNODE *)&pn->p_flist;   /* assumes fnode link is at start of fnode */
 
-        dos_sdta(&G.g_wdta);
+    dos_sdta(&G.g_wdta);
 
-        for (dos_sfirst(pn->p_spec,pn->p_attr), count = 0; count < maxcount; dos_snext())
-        {
-            if (DOS_ERR)
-                break;
-            if (G.g_wdta.d_fname[0] == '.') /* skip "." & ".." entries */
-                continue;
-            memcpy(&fn->f_junk, &G.g_wdta.d_reserved[20], 23);
-            count++;
-            size += fn->f_size;
-            prev->f_next = fn;      /* link fnodes */
-            prev = fn++;
-        }
-        prev->f_next = NULL;        /* terminate chain */
-        pn->p_count = count;        /* & update pathnode */
-        pn->p_size = size;
+    for (dos_sfirst(pn->p_spec,pn->p_attr), count = 0; count < maxcount; dos_snext())
+    {
+        if (DOS_ERR)
+            break;
+        if (G.g_wdta.d_fname[0] == '.') /* skip "." & ".." entries */
+            continue;
+        memcpy(&fn->f_junk, &G.g_wdta.d_reserved[20], 23);
+        count++;
+        size += fn->f_size;
+        prev->f_next = fn;      /* link fnodes */
+        prev = fn++;
+    }
+    prev->f_next = NULL;        /* terminate chain */
+    pn->p_count = count;        /* & update pathnode */
+    pn->p_size = size;
 
-        if (count == 0)
-        {
-            dos_free((LONG)pn->p_fbase);
-            pn->p_fbase = NULL;
-            return 0;
-        }
-        dos_shrink(pn->p_fbase,count*sizeof(FNODE));
+    if (count == 0)
+    {
+        dos_free((LONG)pn->p_fbase);
+        pn->p_fbase = NULL;
+        return 0;
+    }
+    dos_shrink(pn->p_fbase,count*sizeof(FNODE));
 
-        pn->p_flist = pn_sort(pn);
+    pn->p_flist = pn_sort(pn);
 
-        return 0;   /* TODO: return error if error occurred? */
+    return 0;   /* TODO: return error if error occurred? */
 }
