@@ -289,9 +289,9 @@ PNODE *pn_open(WORD  drive, BYTE *path, BYTE *name, BYTE *ext, WORD attr)
  *
  *  Returns -ve if pf1<pf2, 0 if pf1==pf2, +ve if pf1>pf2
  */
-static WORD pn_fcomp(FNODE *pf1, FNODE *pf2, WORD which)
+static LONG pn_fcomp(FNODE *pf1, FNODE *pf2, WORD which)
 {
-    WORD chk;
+    LONG chk = 0L;
     BYTE *ps1, *ps2;
 
     ps1 = pf1->f_name;
@@ -300,25 +300,19 @@ static WORD pn_fcomp(FNODE *pf1, FNODE *pf2, WORD which)
     switch(which)
     {
     case S_DATE:
-        chk = pf2->f_date - pf1->f_date;
-        if (chk)
-            return chk;
-        chk = pf2->f_time - pf1->f_time;
-        if (chk)
-            return chk;
+        chk = (LONG)pf2->f_date - (LONG)pf1->f_date;
+        if (chk == 0L)
+            chk = (LONG)pf2->f_time - (LONG)pf1->f_time;
         break;
     case S_SIZE:
-        if (pf2->f_size > pf1->f_size)
-            return 1;
-        if (pf2->f_size < pf1->f_size)
-            return -1;
+        chk = (LONG)pf2->f_size - (LONG)pf1->f_size;
         break;
     case S_TYPE:
         chk = strcmp(scasb(ps1,'.'),scasb(ps2,'.'));
-        if (chk)
-            return chk;
         break;
     }
+    if (chk)
+        return chk;
 
     return strcmp(ps1,ps2); /* always the last test (the only test if S_NAME) */
 }
@@ -331,10 +325,10 @@ static WORD pn_fcomp(FNODE *pf1, FNODE *pf2, WORD which)
  *
  *  Returns -ve if pf1 < pf2, 0 if pf1 == pf2, and +ve if pf1 > pf2
  */
-static WORD pn_comp(FNODE *pf1, FNODE *pf2)
+static LONG pn_comp(FNODE *pf1, FNODE *pf2)
 {
     if ((pf1->f_attr ^ pf2->f_attr) & F_SUBDIR)
-        return (pf1->f_attr & F_SUBDIR) ? -1 : 1;
+        return (pf1->f_attr & F_SUBDIR) ? -1L : 1L;
 
     return pn_fcomp(pf1,pf2,G.g_isort);
 }
@@ -371,7 +365,7 @@ FNODE *pn_sort(PNODE *pn)
         {
             for (j = i-gap; j >= 0; j -= gap)
             {
-                if (pn_comp(ml_pfndx[j], ml_pfndx[j+gap]) <= 0)
+                if (pn_comp(ml_pfndx[j], ml_pfndx[j+gap]) <= 0L)
                     break;
                 pftemp = ml_pfndx[j];
                 ml_pfndx[j] = ml_pfndx[j+gap];
