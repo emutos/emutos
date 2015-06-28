@@ -43,12 +43,14 @@
 static void pn_init(void)
 {
     WORD i;
+    PNODE *pn;
 
-    for (i = NUM_PNODES-2; i >= 0; i--)
-        G.g_plist[i].p_next = &G.g_plist[i +1];
+    for (i = 0, pn = G.g_plist; i < NUM_PNODES-1; i++, pn++)
+        pn->p_next = pn + 1;
+    pn->p_next = NULL;
+
     G.g_pavail = &G.g_plist[0];
     G.g_phead = (PNODE *) NULL;
-    G.g_plist[NUM_PNODES-1].p_next = (PNODE *) NULL;
 }
 
 
