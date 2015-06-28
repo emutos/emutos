@@ -22,6 +22,7 @@
 #include "portab.h"
 #include "string.h"
 #include "obdefs.h"
+#include "gsxdefs.h"
 #include "deskapp.h"
 #include "deskfpd.h"
 #include "deskwin.h"
@@ -29,7 +30,6 @@
 
 #include "optimopt.h"
 #include "aesbind.h"
-#include "deskgraf.h"
 #include "deskglob.h"
 #include "deskobj.h"
 #include "kprint.h"

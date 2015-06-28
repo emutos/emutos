@@ -35,8 +35,6 @@
 #include "gemdos.h"
 #include "aesbind.h"
 #include "deskglob.h"
-#include "deskgraf.h"
-#include "deskgsx.h"
 #include "desksupp.h"
 #include "deskfun.h"
 #include "deskrsrc.h"

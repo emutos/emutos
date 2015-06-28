@@ -27,6 +27,7 @@
 
 #include "portab.h"
 #include "obdefs.h"
+#include "gsxdefs.h"
 #include "deskapp.h"
 #include "deskfpd.h"
 #include "deskwin.h"
@@ -41,7 +42,6 @@
 #include "deskglob.h"
 #include "deskinf.h"
 #include "deskfun.h"
-#include "deskgraf.h"
 #include "deskrsrc.h"
 #include "deskdir.h"
 #include "icons.h"
