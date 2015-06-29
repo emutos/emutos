@@ -714,7 +714,7 @@ int do_format(WORD curr)
     WORD junk, ret;
     WORD foundit;
     int done;
-    BYTE msg[6];
+    BYTE *p;
     ANODE *pa;
     FNODE *pf;
     WORD drive_letter;
@@ -722,40 +722,51 @@ int do_format(WORD curr)
 
     done = 0;
 
+    /*
+     * check icon type (should be OK, since deskmain should have
+     * disabled the menu item unless the selected icon is a floppy)
+     */
     pa = i_find(G.g_cwin, curr, &pf, &junk);
 
-    if (pa && (pa->a_type == AT_ISDISK))
+    if (pa && (pa->a_type == AT_ISDISK) && (pa->a_aicon == IG_FLOPPY))
     {
+        /*
+         * it's a floppy disk: check if a formatter is available
+         * we prefer a graphical one
+         */
+        strcpy(G.g_cmd, "FORMAT.PRG");
+        isgraf = TRUE;
+        foundit = shel_find(G.g_cmd);
+        if (!foundit)
+        {
+            strcpy(G.g_cmd, "FORMAT.TTP");
+            isgraf = FALSE;
+            foundit = shel_find(G.g_cmd);
+        }
+        if (!foundit)
+        {
+            fun_alert(1, STNOFRMT, NULL);
+            return 0;
+        }
+
+        /*
+         * we have a formatter, ask user if we should run it
+         */
         drive_letter = (get_iconblk_ptr(G.g_screen, curr)->ib_char) & 0xFF;
         ret = fun_alert(2, STFORMAT, &drive_letter);
+        if (ret != 1)
+            return 0;
 
-        msg[0] = drive_letter;
-        msg[1] = ':';
-        msg[2] = 0;
+        /*
+         * user says OK
+         */
+        p = G.g_tail + 1;       /* set up command tail */
+        *p++ = drive_letter;
+        *p++ = ':';
+        *p = '\0';
 
-        if (ret == 1)
-        {
-            strcpy(&G.g_cmd[0], "FORMAT.PRG");
-            isgraf = TRUE;
-            foundit = shel_find(G.g_cmd);
-            if (!foundit)
-            {
-                strcpy(&G.g_cmd[0], "FORMAT.TTP");
-                isgraf = FALSE;
-                foundit = shel_find(G.g_cmd);
-            }
-
-            if (foundit)
-            {
-                strcpy(&G.g_tail[1], &msg[0]);
-                pro_run(isgraf, 1, G.g_cwin, curr);
-                done = 1;
-            }
-            else
-                fun_alert(1, STNOFRMT, NULL);
-
-            graf_mouse(ARROW, NULL);
-        }
+        pro_run(isgraf, 1, G.g_cwin, curr);
+        done = 1;
     }
 
     return done;
