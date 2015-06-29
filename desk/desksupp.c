@@ -157,9 +157,9 @@ static void get_xywh(OBJECT olist[], WORD obj, WORD *px, WORD *py,
 
 
 /*
- *  Picks ob_spec field out of object list
+ *  Returns ICONBLK pointer from object's ob_spec field
  */
-ICONBLK *get_spec(OBJECT olist[], WORD obj)
+static ICONBLK *get_iconblk_ptr(OBJECT olist[], WORD obj)
 {
     return (ICONBLK *)olist[obj].ob_spec;
 }
@@ -549,7 +549,7 @@ static WORD do_dopen(WORD curr)
     WNODE *pw;
     ICONBLK *pib;
 
-    pib = (ICONBLK *) get_spec(G.g_screen, curr);
+    pib = (ICONBLK *) get_iconblk_ptr(G.g_screen, curr);
     pw = win_alloc(curr);
     if (pw)
     {
@@ -696,7 +696,7 @@ WORD do_info(WORD curr)
                 fun_rebld(pw);
             break;
         case AT_ISDISK:
-            junk = (get_spec(G.g_screen, curr)->ib_char) & 0xFF;
+            junk = (get_iconblk_ptr(G.g_screen, curr)->ib_char) & 0xFF;
             inf_disk(junk);
             break;
         case AT_ISTRSH:
@@ -729,7 +729,7 @@ int do_format(WORD curr)
 
     if (pa && (pa->a_type == AT_ISDISK))
     {
-        drive_letter = (get_spec(G.g_screen, curr)->ib_char) & 0xFF;
+        drive_letter = (get_iconblk_ptr(G.g_screen, curr)->ib_char) & 0xFF;
         ret = fun_alert(2, STFORMAT, &drive_letter);
 
         msg[0] = drive_letter;
