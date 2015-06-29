@@ -594,10 +594,7 @@ void do_fopen(WNODE *pw, WORD curr, WORD drv, BYTE *ppath, BYTE *pname,
         true_closewnd(pw);
         return;
     }
-    else
-    {
-        pro_chdir(drv, ppath);
-    }
+    pro_chdir(drv, ppath);
 
     pn_close(pw->w_path);
     if (!DOS_ERR)
