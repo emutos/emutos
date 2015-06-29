@@ -573,6 +573,7 @@ void screen_init(void)
 #endif /* CONF_VRAM_ADDRESS */
     /* set new v_bas_ad */
     v_bas_ad = (UBYTE *)screen_start;
+    KDEBUG(("v_bas_ad = 0x%08lx\n", (ULONG)v_bas_ad));
 #ifdef MACHINE_AMIGA
     amiga_screen_init();
 #endif
@@ -787,6 +788,8 @@ LONG physbase(void)
 
 static void setphys(LONG addr,int checkaddr)
 {
+    KDEBUG(("setphys(0x%08lx)\n", (ULONG)addr));
+
     if (checkaddr) {
         if (addr > ((ULONG)phystop - vram_size())) {
             panic("VideoRAM covers ROM area!!\n");
@@ -878,6 +881,7 @@ void setscreen(LONG logLoc, LONG physLoc, WORD rez, WORD videlmode)
 {
     if (logLoc >= 0) {
         v_bas_ad = (UBYTE *) logLoc;
+        KDEBUG(("v_bas_ad = 0x%08lx\n", (ULONG)v_bas_ad));
     }
     if (physLoc >= 0) {
         setphys(physLoc,1);
