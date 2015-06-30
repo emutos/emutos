@@ -55,19 +55,16 @@ static void zoom_closed(WORD close, WORD w_id, WORD xicon, WORD yicon)
 }
 
 
-static WORD w_setpath(WNODE *pw, WORD drv, BYTE *path, BYTE *name, BYTE *ext)
+static void w_setpath(WNODE *pw, WORD drv, BYTE *path, BYTE *name, BYTE *ext)
 {
     WORD icx, icy;
     GRECT rc;
-    WORD res = 0;
 
     wind_get(pw->w_id,WF_WXYWH, &rc.g_x, &rc.g_y, &rc.g_w, &rc.g_h);
     icx = rc.g_x + (rc.g_w / 2) - (G.g_wicon / 2);
     icy = rc.g_y + (rc.g_h / 2) - (G.g_hicon / 2);
     zoom_closed(0, pw->w_id, icx, icy);
     do_fopen(pw, 0, drv, path, name, ext, FALSE, TRUE);
-
-    return res;
 }
 
 
@@ -91,10 +88,9 @@ static void remove_one_level(BYTE *path)
 }
 
 
-WORD true_closewnd(WNODE *pw)
+void true_closewnd(WNODE *pw)
 {
     GRECT rc;
-    WORD  res = 0;
 
     wind_get(pw->w_id,WF_WXYWH, &rc.g_x, &rc.g_y, &rc.g_w, &rc.g_h);
     zoom_closed(1, pw->w_id, G.g_screen[pw->w_obid].ob_x,
@@ -102,25 +98,23 @@ WORD true_closewnd(WNODE *pw)
     pn_close(pw->w_path);
     win_free(pw);
     do_chkall(TRUE);
-
-    return res;
 }
 
 
 /*
  * full or partial close of desktop window
  */
-WORD fun_close(WNODE *pw, WORD closetype)
+void fun_close(WNODE *pw, WORD closetype)
 {
     BYTE ext[LEN_ZEXT+1];
     BYTE name[LEN_ZNODE+1];
     BYTE path[LEN_ZPATH+1];
-    WORD drv, rc;
+    WORD drv;
 
     if (!pw->w_path)
     {
         KDEBUG(("Invalid WNODE passed to fun_close()\n"));
-        return 0;
+        return;
     }
 
     graf_mouse(HGLASS, NULL);
@@ -142,11 +136,12 @@ WORD fun_close(WNODE *pw, WORD closetype)
             remove_one_level(path);
     }
 
-    rc = (closetype==CLOSE_WINDOW) ? true_closewnd(pw) : w_setpath(pw,drv,path,name,ext);
+    if (closetype == CLOSE_WINDOW)
+        true_closewnd(pw);
+    else
+        w_setpath(pw,drv,path,name,ext);
 
     graf_mouse(ARROW, NULL);
-
-    return rc;
 }
 
 
@@ -363,10 +358,8 @@ static void fun_desk2desk(WORD dobj, WORD keystate)
 }
 
 
-WORD desk1_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my, WORD keystate)
+void desk1_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my, WORD keystate)
 {
-    WORD done = 0;
-
     if (wh) /* Dragging something from window */
     {
         if (dest_wh)
@@ -391,6 +384,4 @@ WORD desk1_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my, W
                 fun_desk2desk(dobj, keystate);
         }
     }
-
-    return done;
 }
