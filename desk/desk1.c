@@ -119,7 +119,7 @@ WORD fun_close(WNODE *pw, WORD closetype)
 
     if (!pw->w_path)
     {
-        form_alert(1,(LONG)"[1][Invalid WNODE passed|to fun_close()][OK]");
+        KDEBUG(("Invalid WNODE passed to fun_close()\n"));
         return 0;
     }
 
