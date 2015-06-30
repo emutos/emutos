@@ -22,6 +22,7 @@
 
 #define ARROW   0
 #define HGLASS  2
+#define FLATHAND 4
 
 
 /*

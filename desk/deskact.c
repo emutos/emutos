@@ -243,7 +243,7 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD numpts,
     ANODE  *pa;
     OBJECT *obj;
 
-    graf_mouse(4, NULL);    /* flat hand */
+    graf_mouse(FLATHAND, NULL);     /* flat hand */
 
     l_mx = in_mx;
     l_my = in_my;
