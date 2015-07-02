@@ -220,9 +220,7 @@ WORD appl_init(void)
     gb.gb_pintout = int_out;
     gb.gb_padrin = addr_in;
     gb.gb_padrout = addr_out;
-
-    gem_if(APPL_INIT);
-    return (WORD)RET_CODE;
+    return gem_if(APPL_INIT);
 }
 
 
@@ -649,105 +647,6 @@ WORD form_button(LONG form, WORD obj, WORD clks, WORD *pnxt_obj)
 */
 
 
-                                        /* Process Manager              */
-/*
-        WORD
-proc_create(ibegaddr, isize, isswap, isgem, onum)
-        LONG            ibegaddr, isize;
-        WORD            isswap, isgem;
-        WORD            *onum;
-{
-        WORD    ret;
-
-        PR_IBEGADDR = ibegaddr;
-        PR_ISIZE = isize;
-        PR_ISSWAP = isswap;
-        PR_ISGEM = isgem;
-        ret = gem_if(PROC_CREATE);
-        *onum = PR_ONUM;
-        return(ret);
-}
-
-        WORD
-proc_run(proc_num, isgraf, isover, pcmd, ptail)
-        WORD            proc_num;
-        WORD            isgraf, isover;
-        LONG            pcmd, ptail;
-{
-        PR_NUM = proc_num;
-        PR_ISGRAF = isgraf;
-        PR_ISOVER = isover;
-        PR_PCMD = pcmd;
-        PR_PTAIL = ptail;
-        return( gem_if(PROC_RUN) );
-}
-
-        WORD
-proc_delete(proc_num)
-        WORD            proc_num;
-{
-        PR_NUM = proc_num;
-        return( gem_if(PROC_DELETE) );
-}
-
-        WORD
-proc_info(num, oisswap, oisgem, obegaddr, ocsize, oendmem, ossize, ointtbl)
-        WORD            num;
-        WORD            *oisswap;
-        WORD            *oisgem;
-        LONG            *obegaddr;
-        LONG            *ocsize;
-        LONG            *oendmem;
-        LONG            *ossize;
-        LONG            *ointtbl;
-{
-        WORD            ret;
-
-        PR_NUM = num;
-        AOUT_LEN = 5;
-        ret = gem_if(PROC_INFO);
-        AOUT_LEN = 0;
-        *oisswap = PR_OISSWAP;
-        *oisgem = PR_OISGEM;
-        *obegaddr = PR_OBEGADDR;
-        *ocsize = PR_OCSIZE;
-        *oendmem = PR_OENDMEM;
-        *ossize = PR_OSSIZE;
-        *ointtbl = PR_OITBL;
-        return(ret);
-}
-
-        LONG
-proc_malloc(csize, adrcsize)
-        LONG            csize;
-        LONG            *adrcsize;
-{
-        PR_IASIZE = csize;
-        AOUT_LEN = 2;
-        gem_if(PROC_MALLOC);
-        *adrcsize = PR_OCSIZE;
-        AOUT_LEN = 0;
-        return(PR_OBEGADDR);
-}
-
-        WORD
-proc_switch(pid)
-        WORD            pid;
-{
-        PR_NUM = pid;
-        return(gem_if(PROC_SWITCH));
-}
-
-
-        WORD
-proc_shrink(pid)
-        WORD            pid;
-{
-        PR_NUM = pid;
-        return(gem_if(PROC_SHRINK));
-}
-*/
-
 /*
  *  Graphics Manager
  */
@@ -765,6 +664,7 @@ WORD graf_rubbox(WORD xorigin, WORD yorigin, WORD wmin, WORD hmin,
 }
 
 
+/* unused
 WORD graf_dragbox(WORD w, WORD h, WORD sx, WORD sy, WORD xc, WORD yc,
                   WORD wc, WORD hc, WORD *pdx, WORD *pdy)
 {
@@ -781,8 +681,10 @@ WORD graf_dragbox(WORD w, WORD h, WORD sx, WORD sy, WORD xc, WORD yc,
     *pdy = GR_O2;
     return (WORD)RET_CODE;
 }
+*/
 
 
+/* unused
 WORD graf_mbox(WORD w, WORD h, WORD srcx, WORD srcy, WORD dstx, WORD dsty)
 {
     GR_I1 = w;
@@ -793,6 +695,7 @@ WORD graf_mbox(WORD w, WORD h, WORD srcx, WORD srcy, WORD dstx, WORD dsty)
     GR_I6 = dsty;
     return gem_if(GRAF_MBOX);
 }
+*/
 
 
 WORD graf_growbox(WORD orgx, WORD orgy, WORD orgw, WORD orgh,
@@ -825,6 +728,7 @@ WORD graf_shrinkbox(WORD orgx, WORD orgy, WORD orgw, WORD orgh,
 }
 
 
+/* unused
 WORD graf_watchbox(LONG tree, WORD obj, UWORD instate, UWORD outstate)
 {
     GR_TREE = tree;
@@ -833,6 +737,7 @@ WORD graf_watchbox(LONG tree, WORD obj, UWORD instate, UWORD outstate)
     GR_OUTSTATE = outstate;
     return gem_if(GRAF_WATCHBOX);
 }
+*/
 
 
 WORD graf_slidebox(LONG tree, WORD parent, WORD obj, WORD isvert)
@@ -1061,12 +966,14 @@ WORD rsrc_obfix(LONG tree, WORD obj)
 /*
  *  Shell Manager
  */
+/* unused
 WORD shel_read(LONG pcmd, LONG ptail)
 {
     SH_PCMD = pcmd;
     SH_PTAIL = ptail;
     return gem_if(SHEL_READ);
 }
+*/
 
 
 WORD shel_write(WORD doex, WORD isgr, WORD iscr, BYTE *pcmd, BYTE *ptail)
@@ -1103,12 +1010,14 @@ WORD shel_find(BYTE *ppath)
 }
 
 
+/* unused
 WORD shel_envrn(LONG ppath, LONG psrch)
 {
     SH_PATH = ppath;
     SH_SRCH = psrch;
     return gem_if(SHEL_ENVRN);
 }
+*/
 
 
 /* unused
