@@ -63,14 +63,6 @@
 #define FORM_CENTER 54
 #define FORM_KEYBD 55
 #define FORM_BUTTON 56
-                                /* Process Manager                      */
-#define PROC_CREATE 60
-#define PROC_RUN 61
-#define PROC_DELETE 62
-#define PROC_INFO 63
-#define PROC_MALLOC 64
-#define PROC_SWITCH 66
-#define PROC_SHRINK 67
                                 /* Graphics Manager                     */
 #define GRAF_RUBBOX 70
 #define GRAF_DRAGBOX 71
@@ -316,29 +308,6 @@ extern LONG     addr_out[AO_SIZE];
 #define FM_OCHAR int_out[2]
 
 #define FM_CLKS int_in[1]
-                                        /* process library parameters   */
-
-#define PR_ISSWAP int_in[0]             /* proc_create  */
-#define PR_ISGEM int_in[1]
-#define PR_IBEGADDR addr_in[0]
-#define PR_ISIZE addr_in[1]
-#define PR_ONUM int_out[1]
-
-#define PR_NUM int_in[0]                /* proc_run     */
-#define PR_ISGRAF int_in[1]
-#define PR_ISOVER int_in[2]
-#define PR_PCMD addr_in[0]
-#define PR_PTAIL addr_in[1]
-
-#define PR_OISSWAP int_out[1]           /* proc_info    */
-#define PR_OISGEM int_out[2]
-#define PR_OBEGADDR addr_out[0]
-#define PR_OCSIZE addr_out[1]
-#define PR_OENDMEM addr_out[2]
-#define PR_OSSIZE addr_out[3]
-#define PR_OITBL addr_out[4]
-
-#define PR_IASIZE addr_in[0]            /* proc_malloc  */
 
                                         /* object library parameters    */
 
@@ -572,20 +541,3 @@ extern LONG     addr_out[AO_SIZE];
 
 #define SH_LPCMD addr_in[0]
 #define SH_LPDIR addr_in[1]
-                                /* extended graphics library            */
-#define XGR_I1 int_in[0]
-#define XGR_I2 int_in[1]
-#define XGR_I3 int_in[2]
-#define XGR_I4 int_in[3]
-#define XGR_I5 int_in[4]
-#define XGR_I6 int_in[5]
-#define XGR_I7 int_in[6]
-#define XGR_I8 int_in[7]
-#define XGR_I9 int_in[8]
-#define XGR_I10 int_in[9]
-
-#define XGR_O1 int_out[1]
-#define XGR_O2 int_out[2]
-#define XGR_O3 int_out[3]
-#define XGR_O4 int_out[4]
-#define XGR_O5 int_out[5]
