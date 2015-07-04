@@ -42,58 +42,74 @@ static const OBJECT gl_sampob[2] =
 };
 
 
-
 /*
- *  Initialize all objects as children of the 0th root which is
- *  the parent of unused objects
+ *  Initialize all objects in the G.g_screen[] array
+ *
+ *  . every object is marked as unused by setting ob_next to NIL
+ *  . the root object is initialized as a G_IBOX object covering the
+ *    entire screen
+ *  . the objects that represent the desktop and desktop windows
+ *    (objects 1->NUM_WNODES+1) are initialized as zero-size G_IBOX
+ *    objects and made children of the root object
  */
 void obj_init(void)
 {
     WORD ii;
+    OBJECT *obj;
 
-    for (ii = 0; ii < NUM_SOBS; ii++)
+    for (ii = 0, obj = G.g_screen; ii < NUM_SOBS; ii++, obj++)
     {
-        G.g_screen[ii].ob_head = NIL;
-        G.g_screen[ii].ob_next = NIL;
-        G.g_screen[ii].ob_tail = NIL;
+        obj->ob_head = NIL;
+        obj->ob_next = NIL;
+        obj->ob_tail = NIL;
     }
+
     memcpy(&G.g_screen[ROOT], &gl_sampob[0], sizeof(OBJECT));
     r_set((GRECT *)&G.g_screen[ROOT].ob_x, 0, 0, gl_width, gl_height);
 
-    for (ii = 0; ii < (NUM_WNODES+1); ii++)
+    for (ii = 0, obj = G.g_screen+DROOT; ii < (NUM_WNODES+1); ii++, obj++)
     {
-        memcpy(&G.g_screen[DROOT+ii], &gl_sampob[1], sizeof(OBJECT));
+        memcpy(obj, &gl_sampob[1], sizeof(OBJECT));
         objc_add(G.g_screen, ROOT, DROOT+ii);
     }
 }
 
 
 /*
- *  Allocate a window object from the screen tree by looking for
- *  the child of the parent with no size
+ *  Allocate a window object from the screen tree by looking for one
+ *  with zero width and/or height, starting at object 2.
+ *
+ *  Returns number of object allocated, or 0 if no objects available
  */
 WORD obj_walloc(WORD x, WORD y, WORD w, WORD h)
 {
     WORD ii;
+    OBJECT *obj;
 
-    for (ii = DROOT; ii < (NUM_WNODES+1); ii++)
+    for (ii = DROOT+1, obj = G.g_screen+ii; ii < (NUM_WNODES+2); ii++, obj++)
     {
-        if (!(G.g_screen[ii+1].ob_width && G.g_screen[ii+1].ob_height))
-            break;
+        if (!(obj->ob_width && obj->ob_height))
+        {
+            r_set((GRECT *)&obj->ob_x, x, y, w, h);
+            return ii;
+        }
     }
-    if (ii < (NUM_WNODES+1))
-    {
-        r_set((GRECT *)&G.g_screen[ii+1].ob_x, x, y, w, h);
-        return ii+1;
-    }
-    else
-        return 0;
+    KDEBUG(("obj_walloc(): no window objects available\n"));
+
+    return 0;
 }
 
 
 /*
- *  Free a window object by changing its size to zero and
- *  NILing out all its children
+ *  Reset a window object's x/y/w/h & free all its children
+ * 
+ *  The children are freed by NILing out the ob_next pointers of the
+ *  children and the ob_head/ob_tail pointers of the parent.
+ *
+ *  The window object may be freed at the same time by setting the
+ *  w/h function arguments to zeros; otherwise it remains allocated
+ *  and may be re-used (this optimises the common situation of
+ *  freeing and immediately reallocating).
  */
 void obj_wfree(WORD obj, WORD x, WORD y, WORD w, WORD h)
 {
@@ -110,26 +126,28 @@ void obj_wfree(WORD obj, WORD x, WORD y, WORD w, WORD h)
 
 
 /*
- *  Routine to find and allocate a particular item object.  The
- *  next free object is found by looking for any object that
- *  is available (i.e. a next pointer of NIL).
+ *  Find and allocate an item object at x/y/w/h.  The next free object
+ *  is found by starting at object NUM_WNODES+2 and looking for any
+ *  object that is available (i.e. that has a next pointer of NIL).
+ *
+ *  Returns number of object allocated, or 0 if no objects available
  */
 WORD obj_ialloc(WORD wparent, WORD x, WORD y, WORD w, WORD h)
 {
     WORD ii;
+    OBJECT *obj;
 
-    for (ii = NUM_WNODES+2; ii < NUM_SOBS; ii++)
+    for (ii = NUM_WNODES+2, obj = G.g_screen+ii; ii < NUM_SOBS; ii++, obj++)
     {
-        if (G.g_screen[ii].ob_next == NIL)
-            break;
+        if (obj->ob_next == NIL)
+        {
+            obj->ob_head = obj->ob_tail = NIL;
+            objc_add(G.g_screen, wparent, ii);
+            r_set((GRECT *)&obj->ob_x, x, y, w, h);
+            return ii;
+        }
     }
-    if (ii < NUM_SOBS)
-    {
-        G.g_screen[ii].ob_head = G.g_screen[ii].ob_tail = NIL;
-        objc_add(G.g_screen, wparent, ii);
-        r_set((GRECT *)&G.g_screen[ii].ob_x, x, y, w, h);
-        return ii;
-    }
-    else
-        return 0;
+    KDEBUG(("obj_ialloc(): no item objects available\n"));
+
+    return 0;
 }
