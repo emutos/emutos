@@ -311,9 +311,10 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
         /* allocate object */
         obid = obj_ialloc(pwin->w_root, xoff + G.g_iwint, yoff + G.g_ihint,
                                  G.g_iwext, G.g_ihext);
-        if (!obid)
+        if (!obid)          /* can't allocate item object */
         {
-            /* error case, no more obs */
+            KDEBUG(("win_bldview(): can't create window item object\n"));
+            break;
         }
 
         /* remember it          */

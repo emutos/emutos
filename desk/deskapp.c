@@ -795,9 +795,10 @@ void app_blddesk(void)
         {
             obid = obj_ialloc(DROOT, pa->a_xspot, pa->a_yspot,
                                         G.g_wicon, G.g_hicon);
-            if (!obid)
+            if (!obid)      /* can't allocate item object */
             {
-            /* error case, no more obs */
+                KDEBUG(("app_blddesk(): can't create desktop item object\n"));
+                break;
             }
 
             /* remember it */
