@@ -64,10 +64,6 @@ typedef struct
 /*GLOBAL*/ WNODE        g_wlist[NUM_WNODES];
 /*GLOBAL*/ WORD         g_wcnt;
 
-/* BugFix       */
-/* this has been moved into gl_icons[NUM_WOBS] & declared in DESKGLOB.C */
-/*GLOBAL*/ /* ICONBLK   g_icons[NUM_WOBS];*/
-/* */
 
 /* The following arrays are used for the individual item objects on the
  * desktop and in screen windows, so only require NUM_WOBS entries.
@@ -76,8 +72,8 @@ typedef struct
  * This has a small cost in memory usage, but the code itself is
  * simpler and smaller.
  */
+/*GLOBAL*/ ICONBLK      g_icons[NUM_SOBS];
 /*GLOBAL*/ WORD         g_index[NUM_SOBS];
-
 /*GLOBAL*/ USERBLK      g_udefs[NUM_SOBS];
 
                                                 /* view related parms   */

@@ -338,10 +338,10 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
             i_index = (pstart->f_isap) ? pstart->f_pa->a_aicon :
                                             pstart->f_pa->a_dicon;
             G.g_index[obid] = i_index;
-            G.g_screen[obid].ob_spec = (LONG)&gl_icons[obid];
-            memcpy(&gl_icons[obid], &G.g_iblist[i_index], sizeof(ICONBLK));
-            gl_icons[obid].ib_ptext = pstart->f_name;
-            gl_icons[obid].ib_char |= (0x00ff & pstart->f_pa->a_letter);
+            G.g_screen[obid].ob_spec = (LONG)&G.g_icons[obid];
+            memcpy(&G.g_icons[obid], &G.g_iblist[i_index], sizeof(ICONBLK));
+            G.g_icons[obid].ib_ptext = pstart->f_name;
+            G.g_icons[obid].ib_char |= (0x00ff & pstart->f_pa->a_letter);
             break;
         }
         pstart = pstart->f_next;

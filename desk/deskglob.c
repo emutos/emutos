@@ -24,9 +24,4 @@
 #include "deskwin.h"
 #include "deskbind.h"
 
-/* BugFix       */
-/* this has been pulled out of GLOBES & moved here from DESKBIND.H      */
-GLOBAL ICONBLK          gl_icons[NUM_SOBS];
-/* */
-
 GLOBAL GLOBES           G;
