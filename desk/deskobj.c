@@ -86,7 +86,7 @@ WORD obj_walloc(WORD x, WORD y, WORD w, WORD h)
     WORD ii;
     OBJECT *obj;
 
-    for (ii = DROOT+1, obj = G.g_screen+ii; ii < (NUM_WNODES+2); ii++, obj++)
+    for (ii = DROOT+1, obj = G.g_screen+ii; ii < WOBS_START; ii++, obj++)
     {
         if (!(obj->ob_width && obj->ob_height))
         {
@@ -127,7 +127,7 @@ void obj_wfree(WORD obj, WORD x, WORD y, WORD w, WORD h)
 
 /*
  *  Find and allocate an item object at x/y/w/h.  The next free object
- *  is found by starting at object NUM_WNODES+2 and looking for any
+ *  is found by starting at object WOBS_START and looking for any
  *  object that is available (i.e. that has a next pointer of NIL).
  *
  *  Returns number of object allocated, or 0 if no objects available
@@ -137,7 +137,7 @@ WORD obj_ialloc(WORD wparent, WORD x, WORD y, WORD w, WORD h)
     WORD ii;
     OBJECT *obj;
 
-    for (ii = NUM_WNODES+2, obj = G.g_screen+ii; ii < NUM_SOBS; ii++, obj++)
+    for (ii = WOBS_START, obj = G.g_screen+ii; ii < NUM_SOBS; ii++, obj++)
     {
         if (obj->ob_next == NIL)
         {

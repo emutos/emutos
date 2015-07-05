@@ -23,14 +23,12 @@
  *             1                the desktop itself, parent of the desktop icon objects
  *      2->NUM_WNODES+1         the desktop window objects
  *  NUM_WNODES+2->NUM_SOBS-1    the desktop item objects (desktop icons & items within desktop windows)
- *
- * Note: because of the faulty definition of NUM_SOBS below, the actual
- * maximum number of desktop item objects is NUM_WOBS-1.
  */
 #define NUM_WNODES  7               /* maximum number of desktop windows */
 #define NUM_WOBS    128             /* maximum number of desktop item objects */
 
-#define NUM_SOBS    (NUM_WOBS + NUM_WNODES + 1)
+#define WOBS_START  (NUM_WNODES + 2)        /* first item object within g_screen[] */
+#define NUM_SOBS    (WOBS_START + NUM_WOBS) /* number of entries in g_screen[] */
 
 #define NUM_PNODES  (NUM_WNODES+1)  /* one more than windows for unopen disk copy */
 

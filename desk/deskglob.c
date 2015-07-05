@@ -26,7 +26,7 @@
 
 /* BugFix       */
 /* this has been pulled out of GLOBES & moved here from DESKBIND.H      */
-GLOBAL ICONBLK          gl_icons[NUM_WOBS];
+GLOBAL ICONBLK          gl_icons[NUM_SOBS];
 /* */
 
 GLOBAL GLOBES           G;

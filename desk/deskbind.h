@@ -69,9 +69,16 @@ typedef struct
 /*GLOBAL*/ /* ICONBLK   g_icons[NUM_WOBS];*/
 /* */
 
-/*GLOBAL*/ WORD         g_index[NUM_WOBS];
+/* The following arrays are used for the individual item objects on the
+ * desktop and in screen windows, so only require NUM_WOBS entries.
+ * However, by using NUM_SOBS entries, we can use the same value to
+ * access entries that we use to access the g_screen[] array.
+ * This has a small cost in memory usage, but the code itself is
+ * simpler and smaller.
+ */
+/*GLOBAL*/ WORD         g_index[NUM_SOBS];
 
-/*GLOBAL*/ USERBLK      g_udefs[NUM_WOBS];
+/*GLOBAL*/ USERBLK      g_udefs[NUM_SOBS];
 
                                                 /* view related parms   */
 /*GLOBAL*/ WORD         g_num;                  /* number of points     */
