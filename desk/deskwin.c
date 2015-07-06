@@ -304,6 +304,10 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
     r_cnt = c_cnt = 0;
     while ((c_cnt < o_wfit) && (r_cnt < o_hfit) && pstart)
     {
+        OBJECT *obj;
+        USERBLK *ub;
+        ICONBLK *ib;
+
         /* calc offset */
         yoff = r_cnt * G.g_ihspc;
         xoff = c_cnt * G.g_iwspc;
@@ -321,27 +325,30 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
         pstart->f_obid = obid;
 
         /* build object */
-        G.g_screen[obid].ob_state = WHITEBAK /*| DRAW3D*/;
-        G.g_screen[obid].ob_flags = 0x0;
+        obj = &G.g_screen[obid];
+        obj->ob_state = WHITEBAK /*| DRAW3D*/;
+        obj->ob_flags = 0x00;
         switch(G.g_iview)
         {
         case V_TEXT:
-            G.g_screen[obid].ob_type = G_USERDEF;
-            G.g_screen[obid].ob_spec = (LONG)&G.g_udefs[obid];
-            G.g_udefs[obid].ub_code = &dr_code;
-            G.g_udefs[obid].ub_parm = (LONG)&pstart->f_junk;
+            ub = &G.g_udefs[obid];
+            obj->ob_type = G_USERDEF;
+            obj->ob_spec = (LONG)ub;
+            ub->ub_code = &dr_code;
+            ub->ub_parm = (LONG)&pstart->f_junk;
             win_icalc(pstart);
             break;
         case V_ICON:
-            G.g_screen[obid].ob_type = G_ICON;
+            ib = &G.g_icons[obid];
+            obj->ob_type = G_ICON;
             win_icalc(pstart);
             i_index = (pstart->f_isap) ? pstart->f_pa->a_aicon :
                                             pstart->f_pa->a_dicon;
             G.g_index[obid] = i_index;
-            G.g_screen[obid].ob_spec = (LONG)&G.g_icons[obid];
-            memcpy(&G.g_icons[obid], &G.g_iblist[i_index], sizeof(ICONBLK));
-            G.g_icons[obid].ib_ptext = pstart->f_name;
-            G.g_icons[obid].ib_char |= (0x00ff & pstart->f_pa->a_letter);
+            obj->ob_spec = (LONG)ib;
+            memcpy(ib, &G.g_iblist[i_index], sizeof(ICONBLK));
+            ib->ib_ptext = pstart->f_name;
+            ib->ib_char |= (0x00ff & pstart->f_pa->a_letter);
             break;
         }
         pstart = pstart->f_next;
