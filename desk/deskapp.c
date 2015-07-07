@@ -781,6 +781,7 @@ void app_blddesk(void)
     WORD obid;
     ANODE *pa;
     OBJECT *pob;
+    SCREENINFO *si;
     ICONBLK *pic;
     LONG *ptr;
 
@@ -809,8 +810,9 @@ void app_blddesk(void)
             pob->ob_state = NORMAL;
             pob->ob_flags = NONE;
             pob->ob_type = G_ICON;
-            G.g_index[obid] = pa->a_aicon;
-            pic = &G.g_icons[obid];
+            si = &G.g_screeninfo[obid];
+            si->icon.index = pa->a_aicon;
+            pic = &si->icon.block;
             pob->ob_spec = (LONG)pic;
             memcpy(pic, &G.g_iblist[pa->a_aicon], sizeof(ICONBLK));
             pic->ib_xicon = ((G.g_wicon - pic->ib_wicon) / 2);

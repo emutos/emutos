@@ -392,7 +392,7 @@ static WORD act_chkobj(OBJECT *tree, WORD root, WORD obj, WORD mx, WORD my, WORD
     case V_ICON:
         r_set(&t, mx - ox, my - oy, w, h);
         r_set(&m, mx - ox, my - oy, w, h);
-        icon = G.g_index[obj];
+        icon = G.g_screeninfo[obj].icon.index;
         ib = (ICONBLK *) &G.g_iblist[icon];
         if (!rc_intersect((GRECT *)&ib->ib_xtext, &t))
         {

@@ -52,6 +52,34 @@
 #define TIMEFORM_IDT    2       /* use format from _IDT cookie */
 
 
+/*
+ * An object in the g_screen[] array can be one of two types; each type
+ * needs additional data, as follows:
+ *  G_ICON      Used for icons on the desktop or in a desktop window.
+ *              Needs an ICONBLK plus an index into g_iblist[].
+ *  G_USERDEF   Used for text display in a desktop window.
+ *              Needs a USERBLK.
+ *
+ * The following typedefs allow us to conveniently use a single array
+ * for the additional data, thus saving some RAM space over the previous
+ * approach.
+ */
+typedef struct
+{
+    WORD index;         /* index into G.g_iblist[] (transformed icon data/mask */
+    ICONBLK block;      /* the ICONBLK for this object */
+} ICONINFO;
+
+typedef union
+{
+    ICONINFO icon;      /* relevant when the corresponding object is a G_ICON */
+    USERBLK udef;       /* relevant when the corresponding object is a G_USERDEF */
+} SCREENINFO;
+
+
+/*
+ * The desktop global data area
+ */
 typedef struct
 {
 /*GLOBAL*/ PNODE        g_plist[NUM_PNODES];
@@ -63,18 +91,6 @@ typedef struct
 /*GLOBAL*/ WNODE        *g_wfirst;
 /*GLOBAL*/ WNODE        g_wlist[NUM_WNODES];
 /*GLOBAL*/ WORD         g_wcnt;
-
-
-/* The following arrays are used for the individual item objects on the
- * desktop and in screen windows, so only require NUM_WOBS entries.
- * However, by using NUM_SOBS entries, we can use the same value to
- * access entries that we use to access the g_screen[] array.
- * This has a small cost in memory usage, but the code itself is
- * simpler and smaller.
- */
-/*GLOBAL*/ ICONBLK      g_icons[NUM_SOBS];
-/*GLOBAL*/ WORD         g_index[NUM_SOBS];
-/*GLOBAL*/ USERBLK      g_udefs[NUM_SOBS];
 
                                                 /* view related parms   */
 /*GLOBAL*/ WORD         g_num;                  /* number of points     */
@@ -158,5 +174,19 @@ typedef struct
 
 /*GLOBAL*/ CSAVE        g_cnxsave;
 
-/*GLOBAL*/ OBJECT       g_screen[NUM_SOBS];             /* NUM_SOBS     */
+/* The following array is used to store the objects displayed on
+ * the desktop and within desktop windows.  Objects are either
+ * G_ICON or G_USERDEF.
+ */
+        OBJECT          g_screen[NUM_SOBS];
+
+/* The following array is used to store the additional information
+ * required for the individual item objects on the desktop and in
+ * screen windows, so only requires NUM_WOBS entries.
+ * However, by using NUM_SOBS entries, we can use the same value to
+ * access entries that we use to access the g_screen[] array.
+ * This has a small cost in memory usage, but the code itself is
+ * simpler and smaller.
+ */
+        SCREENINFO      g_screeninfo[NUM_SOBS];
 } GLOBES;

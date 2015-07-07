@@ -305,6 +305,7 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
     while ((c_cnt < o_wfit) && (r_cnt < o_hfit) && pstart)
     {
         OBJECT *obj;
+        SCREENINFO *si;
         USERBLK *ub;
         ICONBLK *ib;
 
@@ -328,10 +329,11 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
         obj = &G.g_screen[obid];
         obj->ob_state = WHITEBAK /*| DRAW3D*/;
         obj->ob_flags = 0x00;
+        si = &G.g_screeninfo[obid];
         switch(G.g_iview)
         {
         case V_TEXT:
-            ub = &G.g_udefs[obid];
+            ub = &si->udef;
             obj->ob_type = G_USERDEF;
             obj->ob_spec = (LONG)ub;
             ub->ub_code = &dr_code;
@@ -339,12 +341,12 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
             win_icalc(pstart);
             break;
         case V_ICON:
-            ib = &G.g_icons[obid];
+            ib = &si->icon.block;
             obj->ob_type = G_ICON;
             win_icalc(pstart);
             i_index = (pstart->f_isap) ? pstart->f_pa->a_aicon :
                                             pstart->f_pa->a_dicon;
-            G.g_index[obid] = i_index;
+            si->icon.index = i_index;
             obj->ob_spec = (LONG)ib;
             memcpy(ib, &G.g_iblist[i_index], sizeof(ICONBLK));
             ib->ib_ptext = pstart->f_name;
