@@ -45,7 +45,8 @@ static const OBJECT gl_sampob[2] =
 /*
  *  Initialize all objects in the G.g_screen[] array
  *
- *  . every object is marked as unused by setting ob_next to NIL
+ *  . every non-item object is initialized by setting the links to NIL
+ *  . all item objects are chained from g_screenfree
  *  . the root object is initialized as a G_IBOX object covering the
  *    entire screen
  *  . the objects that represent the desktop and desktop windows
@@ -57,12 +58,21 @@ void obj_init(void)
     WORD ii;
     OBJECT *obj;
 
-    for (ii = 0, obj = G.g_screen; ii < NUM_SOBS; ii++, obj++)
+    /* initialize non-item objects */
+    for (ii = 0, obj = G.g_screen; ii < WOBS_START; ii++, obj++)
     {
         obj->ob_head = NIL;
         obj->ob_next = NIL;
         obj->ob_tail = NIL;
     }
+
+    /* put all item objects on the free chain */
+    for ( ; ii < NUM_SOBS-1; ii++, obj++)
+    {
+        obj->ob_next = ii + 1;
+    }
+    obj->ob_next = NIL;         /* last object marker */
+    G.g_screenfree = WOBS_START;
 
     memcpy(&G.g_screen[ROOT], &gl_sampob[0], sizeof(OBJECT));
     r_set((GRECT *)&G.g_screen[ROOT].ob_x, 0, 0, gl_width, gl_height);
@@ -103,8 +113,9 @@ WORD obj_walloc(WORD x, WORD y, WORD w, WORD h)
 /*
  *  Reset a window object's x/y/w/h & free all its children
  * 
- *  The children are freed by NILing out the ob_next pointers of the
- *  children and the ob_head/ob_tail pointers of the parent.
+ *  The children (if any) are freed by moving them to the head of
+ *  the free chain and NILing out the ob_head/ob_tail pointers of
+ *  the parent.
  *
  *  The window object may be freed at the same time by setting the
  *  w/h function arguments to zeros; otherwise it remains allocated
@@ -113,40 +124,54 @@ WORD obj_walloc(WORD x, WORD y, WORD w, WORD h)
  */
 void obj_wfree(WORD obj, WORD x, WORD y, WORD w, WORD h)
 {
-    WORD ii, nxtob;
+    OBJECT *window = &G.g_screen[obj];
+    OBJECT *item;
+    WORD ii, oldfree;
 
-    r_set((GRECT *)&G.g_screen[obj].ob_x, x, y, w, h);
-    for (ii = G.g_screen[obj].ob_head; ii > obj; ii = nxtob)
+    r_set((GRECT *)&window->ob_x, x, y, w, h);
+
+    if (window->ob_head >= WOBS_START)      /* there are children */
     {
-        nxtob = G.g_screen[ii].ob_next;
-        G.g_screen[ii].ob_next = NIL;
+        oldfree = G.g_screenfree;
+        G.g_screenfree = window->ob_head;   /* update start of free chain */
+        for (ii = window->ob_head; ; ii = item->ob_next)
+        {
+            item = &G.g_screen[ii];
+            if (item->ob_next < WOBS_START)
+            {
+                item->ob_next = oldfree;    /* link to previous chain */
+                break;
+            }
+        }
     }
-    G.g_screen[obj].ob_head = G.g_screen[obj].ob_tail = NIL;
+
+    window->ob_head = window->ob_tail = NIL;
 }
 
 
 /*
- *  Find and allocate an item object at x/y/w/h.  The next free object
- *  is found by starting at object WOBS_START and looking for any
- *  object that is available (i.e. that has a next pointer of NIL).
+ *  Find and allocate an item object at x/y/w/h; the next free object
+ *  is taken from the free chain.
  *
  *  Returns number of object allocated, or 0 if no objects available
  */
 WORD obj_ialloc(WORD wparent, WORD x, WORD y, WORD w, WORD h)
 {
-    WORD ii;
+    WORD objnum;
     OBJECT *obj;
 
-    for (ii = WOBS_START, obj = G.g_screen+ii; ii < NUM_SOBS; ii++, obj++)
+    objnum = G.g_screenfree;
+
+    if (objnum >= WOBS_START)
     {
-        if (obj->ob_next == NIL)
-        {
-            obj->ob_head = obj->ob_tail = NIL;
-            objc_add(G.g_screen, wparent, ii);
-            r_set((GRECT *)&obj->ob_x, x, y, w, h);
-            return ii;
-        }
+        obj = G.g_screen + objnum;
+        G.g_screenfree = obj->ob_next;
+        obj->ob_next = obj->ob_head = obj->ob_tail = NIL;
+        objc_add(G.g_screen, wparent, objnum);
+        r_set((GRECT *)&obj->ob_x, x, y, w, h);
+        return objnum;
     }
+
     KDEBUG(("obj_ialloc(): no item objects available\n"));
 
     return 0;

@@ -174,6 +174,11 @@ typedef struct
 
 /*GLOBAL*/ CSAVE        g_cnxsave;
 
+/* Pointer to first free object within g_screen[]; free objects
+ * are chained via ob_next.
+ */
+        WORD            g_screenfree;
+
 /* The following array is used to store the objects displayed on
  * the desktop and within desktop windows.  Objects are either
  * G_ICON or G_USERDEF.
