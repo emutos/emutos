@@ -276,12 +276,17 @@ static WORD fun_file2any(WORD sobj, WNODE *wn_dest, ANODE *an_dest, FNODE *fn_de
         {
             for (bp8 = pn_src->p_flist; bp8; bp8 = bp8->f_next)
                 bp8->f_obid = 0;
+            /*
+             * if we do not set the root's SELECTED attribute, dir_op()
+             * (which is called by fun_file2win() & fun_file2desk())
+             * will not process any of these files ...
+             */
             G.g_screen->ob_state = SELECTED;
-            if (wn_dest)
+            if (wn_dest)    /* we are dragging a desktop icon to a window */
             {
                 okay = fun_file2win(pn_src, wn_dest->w_path->p_spec, an_dest, fn_dest);
             }
-            else
+            else    /* we are dragging a desktop item to another desktop item */
             {
                 okay = fun_file2desk(pn_src, an_dest, dobj, keystate);
             }
