@@ -39,35 +39,35 @@
 
 WORD pro_chdir(WORD drv, BYTE *ppath)
 {
-        BYTE            path[MAXPATHLEN];
-                                                /* change to directory  */
-                                                /*   that application   */
-                                                /*   is in              */
-        if (!drv)
-          return( (DOS_ERR = TRUE) );
+    BYTE path[MAXPATHLEN];
 
-        dos_sdrv(drv - 'A');
-        path[0] = drv;
-        path[1] = ':';
-        path[2] = '\\';
-        strcpy(path+3, ppath);
-        dos_chdir(path);
+    /* change to directory that application is in */
+    if (!drv)
+        return (DOS_ERR = TRUE);
 
-        return(TRUE);
-} /* pro_chdir */
+    dos_sdrv(drv - 'A');
+    path[0] = drv;
+    path[1] = ':';
+    path[2] = '\\';
+    strcpy(path+3, ppath);
+    dos_chdir(path);
+
+    return TRUE;
+}
 
 
 static WORD pro_exec(WORD isgraf, WORD isover, BYTE *pcmd, BYTE *ptail)
 {
-        WORD            ret;
+    WORD ret;
 
-        graf_mouse(HGLASS, NULL);
+    graf_mouse(HGLASS, NULL);
 
-        ret = shel_write(TRUE, isgraf, isover, pcmd, ptail);
-        if (!ret)
-          graf_mouse(ARROW, NULL);
-        return( ret );
-} /* pro_exec */
+    ret = shel_write(TRUE, isgraf, isover, pcmd, ptail);
+    if (!ret)
+        graf_mouse(ARROW, NULL);
+    return ret;
+}
+
 
 /*
  * run a program via shel_write()
@@ -75,25 +75,23 @@ static WORD pro_exec(WORD isgraf, WORD isover, BYTE *pcmd, BYTE *ptail)
  */
 WORD pro_run(WORD isgraf, WORD isover, WORD wh, WORD curr)
 {
-        WORD            ret, len;
+    WORD ret, len;
 
-        G.g_tail[0] = len = strlen(&G.g_tail[1]);
-        G.g_tail[len+1] = 0x0D;
-        ret = pro_exec(isgraf, isover, G.g_cmd, G.g_tail);
+    G.g_tail[0] = len = strlen(&G.g_tail[1]);
+    G.g_tail[len+1] = 0x0D;
+    ret = pro_exec(isgraf, isover, G.g_cmd, G.g_tail);
 
-        if (wh != -1)
-          do_wopen(FALSE, wh, curr, G.g_xdesk, G.g_ydesk,
-                   G.g_wdesk, G.g_hdesk);
+    if (wh != -1)
+        do_wopen(FALSE, wh, curr, G.g_xdesk, G.g_ydesk, G.g_wdesk, G.g_hdesk);
 
-        return(ret);
-} /* pro_run */
-
+    return ret;
+}
 
 
 WORD pro_exit(BYTE *pcmd, BYTE *ptail)
 {
-        WORD            ret;
+    WORD ret;
 
-        ret = shel_write(FALSE, FALSE, 1, pcmd, ptail);
-        return( ret );
-} /* pro_exit */
+    ret = shel_write(FALSE, FALSE, 1, pcmd, ptail);
+    return ret;
+}

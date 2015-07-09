@@ -32,8 +32,8 @@
 
 BYTE *ini_str(WORD stnum)
 {
-        LONG            lstr;
+    LONG lstr;
 
-        rsrc_gaddr(R_STRING, stnum, &lstr);
-        return (BYTE *)lstr;
+    rsrc_gaddr(R_STRING, stnum, &lstr);
+    return (BYTE *)lstr;
 }
