@@ -28,10 +28,12 @@
 #include "deskwin.h"
 #include "deskbind.h"
 
+#include "gemdos.h"
 #include "optimopt.h"
 #include "aesbind.h"
 #include "deskglob.h"
 #include "deskobj.h"
+#include "gembind.h"
 #include "kprint.h"
 
 
@@ -40,6 +42,62 @@ static const OBJECT gl_sampob[2] =
     { NIL, NIL, NIL, G_IBOX, NONE, NORMAL, 0x0L, 0, 0, 0, 0 },
     { NIL, NIL, NIL, G_BOX,  NONE, NORMAL, 0x00001100L, 0, 0, 0, 0 }
 };
+
+
+/*
+ *  Allocate memory for screen objects
+ *
+ *  We try to allocate sufficient memory so that, with all windows open
+ *  and the desktop full of icons, everything can be displayed
+ *
+ *  Returns the number of entries in the object array
+ */
+static WORD sob_malloc(void)
+{
+    WORD dummy, w, h;
+    LONG mem, limit, num_obs;
+    BYTE *p;
+
+    /* We need to calculate how many objects can be displayed in a
+     * maximum-sized window.  Because icons take less display space,
+     * this is the same as the number of icons that can be displayed
+     * in such a window.  There is no single wind_get() call to get
+     * the workarea size for a maximum-size window; we would need to
+     * create one, do a wind_get(), and then delete it, which is
+     * time-consuming.
+     *
+     * Instead, the following apparently-crude approximation provides
+     * accurate values for all ST & Falcon resolutions, and should be
+     * adequate for other resolutions too.  We use gl_wchar as a proxy
+     * for the scroll-bar width, and gl_hchar as a proxy for the title
+     * bar/info line height.  Rounding down takes care of the rest :-).
+     */
+    wind_get(0, WF_WXYWH, &dummy, &dummy, &w, &h);
+    num_obs = (NUM_WNODES+1) * ((w-gl_wchar)/G.g_iwspc) * ((h-gl_hchar)/G.g_ihspc);
+
+    /* In case we're memory-constrained, we limit ourselves to 5% of
+     * available memory, or MIN_WOBS, whichever is greater.  In practice,
+     * this should not be a restriction.
+     */
+    mem = dos_alloc(-1L);
+    limit = mem / (20*(sizeof(OBJECT)+sizeof(SCREENINFO)));
+    if (limit < MIN_WOBS)
+        limit = MIN_WOBS;
+    if (limit < num_obs)
+        num_obs = limit;
+
+    num_obs += WOBS_START;      /* allow for root, desktop, windows */
+    mem = num_obs * (sizeof(OBJECT)+sizeof(SCREENINFO));
+
+    p = (BYTE *)dos_alloc(mem);
+    if (!p)
+        panic("sob_malloc(%ld): no memory\n",mem);
+
+    G.g_screen = (OBJECT *)p;
+    G.g_screeninfo = (SCREENINFO *)(G.g_screen+num_obs);
+
+    return num_obs;
+}
 
 
 /*
@@ -55,8 +113,11 @@ static const OBJECT gl_sampob[2] =
  */
 void obj_init(void)
 {
-    WORD ii;
+    WORD ii, num_sobs;
     OBJECT *obj;
+
+    num_sobs = sob_malloc();
+    KDEBUG(("obj_init(): allocated %d screen objects\n",num_sobs));
 
     /* initialize non-item objects */
     for (ii = 0, obj = G.g_screen; ii < WOBS_START; ii++, obj++)
@@ -67,7 +128,7 @@ void obj_init(void)
     }
 
     /* put all item objects on the free chain */
-    for ( ; ii < NUM_SOBS-1; ii++, obj++)
+    for ( ; ii < num_sobs-1; ii++, obj++)
     {
         obj->ob_next = ii + 1;
     }

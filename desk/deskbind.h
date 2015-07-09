@@ -174,24 +174,30 @@ typedef struct
 
 /*GLOBAL*/ CSAVE        g_cnxsave;
 
-/* Pointer to first free object within g_screen[]; free objects
+/* Number of first free item object within g_screen[]; free objects
  * are chained via ob_next.
  */
         WORD            g_screenfree;
 
-/* The following array is used to store the objects displayed on
- * the desktop and within desktop windows.  Objects are either
- * G_ICON or G_USERDEF.
+/* This points to an array used to store two types of object:
+ * . the desktop and desktop windows
+ *      these are stored in the first NUM_WNODES+2 entries
+ * . item objects displayed on the desktop and within desktop windows
+ *      these are stored in the remaining entries as either G_ICON
+ *      or G_USERDEF objects.  if sufficient memory is available, the
+ *      number of entries is sufficient to display the desktop and all
+ *      available windows, all filled with icons.
  */
-        OBJECT          g_screen[NUM_SOBS];
+        OBJECT          *g_screen;
 
-/* The following array is used to store the additional information
+/* This points to an array used to store the additional information
  * required for the individual item objects on the desktop and in
- * screen windows, so only requires NUM_WOBS entries.
- * However, by using NUM_SOBS entries, we can use the same value to
- * access entries that we use to access the g_screen[] array.
- * This has a small cost in memory usage, but the code itself is
- * simpler and smaller.
+ * screen windows; therefore this could have NUM_WNODES+2 entries
+ * fewer than g_screen[].
+ * However, by allocating the same number of entries (and not using
+ * the first few), we can use the same value to access entries in both
+ * the g_screen[] & g_screeninfo[] arrays.  This has a small cost in
+ * RAM usage, but the code itself is simpler and smaller.
  */
-        SCREENINFO      g_screeninfo[NUM_SOBS];
+        SCREENINFO      *g_screeninfo;
 } GLOBES;

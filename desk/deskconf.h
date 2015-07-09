@@ -16,19 +16,21 @@
 #define _DESKCONF_H
 
 /*
- * NUM_SOBS is the size of the G.g_screen[] array, which is organized
- * as follows:
+ * The G.g_screen[] array is organized as follows:
  *          object                          usage
  *             0                parent of the desktop & desktop window objects
  *             1                the desktop itself, parent of the desktop icon objects
- *      2->NUM_WNODES+1         the desktop window objects
- *  NUM_WNODES+2->NUM_SOBS-1    the desktop item objects (desktop icons & items within desktop windows)
+ *      2->WOBS_START-1         the desktop window objects
+ *  WOBS_START-> (end)          the desktop item objects (desktop icons & items within desktop windows)
+ *
+ * The desktop item objects are initially on a free chain, with the number
+ * of the first object in G.g_screenfree; they are chained together via
+ * ob_next, and the last object has a value of NIL in ob_next.
  */
 #define NUM_WNODES  7               /* maximum number of desktop windows */
-#define NUM_WOBS    128             /* maximum number of desktop item objects */
 
-#define WOBS_START  (NUM_WNODES + 2)        /* first item object within g_screen[] */
-#define NUM_SOBS    (WOBS_START + NUM_WOBS) /* number of entries in g_screen[] */
+#define WOBS_START  (NUM_WNODES+2)  /* first desktop item object within g_screen[] */
+#define MIN_WOBS    128             /* minimum number of desktop item objects */
 
 #define NUM_PNODES  (NUM_WNODES+1)  /* one more than windows for unopen disk copy */
 

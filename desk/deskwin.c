@@ -89,8 +89,9 @@ void win_start(void)
     WNODE *pw;
     WORD i;
 
-    obj_init();
     win_view(START_VIEW, S_NAME);
+    obj_init();         /* must be called *after* win_view(), because it uses */
+                        /*  G.g_iwspc/G.g_ihspc which are set by win_view()   */
 
     for (i = 0, G.g_wfirst = pw = G.g_wlist; i < NUM_WNODES; i++, pw++)
     {
