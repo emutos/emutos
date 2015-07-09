@@ -19,6 +19,7 @@
 #include "portab.h"
 
 #include "aesbind.h"
+#include "gembind.h"
 #include "obdefs.h"
 #include "deskrsrc.h"
 #include "optimize.h"
@@ -37,8 +38,6 @@
 #include "videl.h"
 #include "kprint.h"
 
-
-#define R_STRING 5      /* this should be obtained from a header! */
 
 #if CONF_WITH_TT_SHIFTER
 

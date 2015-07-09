@@ -23,11 +23,9 @@
 #include "portab.h"
 
 #include "aesbind.h"
+#include "gembind.h"
 #include "deskrsrc.h"
 #include "kprint.h"
-
-
-#define R_STRING 5
 
 
 BYTE *ini_str(WORD stnum)
