@@ -42,9 +42,6 @@ WORD pro_chdir(WORD drv, BYTE *ppath)
     BYTE path[MAXPATHLEN];
 
     /* change to directory that application is in */
-    if (!drv)
-        return (DOS_ERR = TRUE);
-
     dos_sdrv(drv - 'A');
     path[0] = drv;
     path[1] = ':';
