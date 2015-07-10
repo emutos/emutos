@@ -115,7 +115,7 @@ _os_magic:
 _os_date:
     .dc.l   OS_DATE     // os_date, Date of system build
 _os_conf:
-    .dc.w   (OS_COUNTRY << 1) + OS_PAL // Flag for PAL version + country
+    .dc.w   (OS_CONF << 1) + OS_PAL // Flag for PAL version + country
 _os_dosdate:
     .dc.w   OS_DOSDATE  // os_date, Date of system build in GEMDOS format
 os_root:

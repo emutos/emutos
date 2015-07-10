@@ -34,6 +34,7 @@
 #define COUNTRY_NL 14   /* Holland */
 #define COUNTRY_CZ 15   /* Czech Republic */
 #define COUNTRY_HU 16   /* Hungary */
+#define COUNTRY_ALL 127 /* special code for multilanguage support */
 
 /*
  * The following country codes were not defined by Atari.

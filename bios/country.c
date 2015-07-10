@@ -20,7 +20,7 @@
 #include "country.h"
 #include "nvram.h"
 #include "tosvars.h"
-#include "i18nconf.h"
+#include "header.h"
 
 /*
  * country tables - we define the data structures here, then include the
@@ -118,11 +118,24 @@ static int get_charset_index(void)
 
 #endif
 
+/*
+ * initialise the _AKP cookie
+ *
+ * the default values are taken from os_conf; if os_conf specifies
+ * COUNTRY_ALL (invalid in _AKP), we replace it with OS_COUNTRY
+ * 
+ * if configured for multilanguage and NVRAM, and NVRAM is readable,
+ * we override the defaults with the values from NVRAM
+ */
 void detect_akp(void)
 {
-    /* By default, use the ROM default country */
     int country = os_conf >> 1;
-    int keyboard = country;
+    int keyboard;
+
+    if (country == COUNTRY_ALL)
+        country = OS_COUNTRY;
+
+    keyboard = country;
 
 #if CONF_WITH_NVRAM && CONF_MULTILANG
     char buf[2];
