@@ -519,7 +519,7 @@ void biosmain(void)
         cprintf(_("Please eject the floppy and hit RETURN"));
         bconin2();
         cprintf("\r\033K"); /* clear the message */
-        eject_magic = NULL; /* do not ask on next warm boot */
+        eject_magic = 0L;   /* do not ask on next warm boot */
     }
 #endif
 
