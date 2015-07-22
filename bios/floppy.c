@@ -30,6 +30,7 @@
 #include "xbiosbind.h"  /* Random() */
 #include "delay.h"
 #include "processor.h"
+#include "cookie.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif
@@ -145,15 +146,6 @@ static void fdc_start_dma_write(WORD count);
  */
 #define fdc_delay() delay_loop(loopcount_fdc)
 
-/*
- * during write sector and write track sequences, just before sending
- * the fdc command, Falcon TOS (TOS4) loops waiting for a bit in a
- * Falcon-only register (at $860f) to become zero before sending the
- * write command.  for simplicity and in order to maintain the same
- * code across all systems, we introduce an extra delay instead.
- */
-#define falcon_delay() delay_loop(loopcount_falcon)
-
 /*==== Internal floppy status =============================================*/
 
 /* cur_dev is the current drive, or -1 if none is current.
@@ -215,7 +207,6 @@ static void fdc_start_dma_write(WORD count);
 static WORD cur_dev;
 static ULONG deselect_time;
 static ULONG loopcount_fdc;
-static ULONG loopcount_falcon;
 
 /* the following is updated by flopvbl(), and used by flopcmd().  it is
  * non-zero iff the motor on bit is set in the floppy status byte.
@@ -298,7 +289,6 @@ void flop_hdv_init(void)
     cur_dev = -1;
     drivetype = (cookie_fdc >> 24) ? HD_DRIVE : DD_DRIVE;
     loopcount_fdc = loopcount_1_msec / 20;  /* 50 usec */
-    loopcount_falcon = loopcount_1_msec / 100;  /* 10 usec - seems to be safe */
     deselect_time = 0UL;
 #endif
 
@@ -847,6 +837,19 @@ LONG floprate(WORD dev, WORD rate)
 
 /*==== internal floprw ====================================================*/
 
+/*
+ * during write sector and write track sequences, just before sending
+ * the write command, Falcon TOS (TOS4) loops waiting for a bit in a
+ * Falcon-only register (at $860f) to become zero.  at a guess, this
+ * bit is set to zero when the DMA has been cleared, but who knows?
+ * we just do the same.
+ */
+static void falcon_wait(void)
+{
+    while(DMA->modectl&DMA_MCBIT3)
+        ;
+}
+
 static WORD floprw(LONG buf, WORD rw, WORD dev,
                    WORD sect, WORD track, WORD side, WORD count)
 {
@@ -893,7 +896,8 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
             cmd = FDC_READ;
         } else {
             fdc_start_dma_write(1);
-            falcon_delay(); /* a kludge - see comments at start of module */
+            if (cookie_mch == MCH_FALCON)
+                falcon_wait();
             cmd = FDC_WRITE;
         }
         if (flopcmd(cmd) < 0) {     /* timeout */
@@ -967,7 +971,8 @@ static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side, WORD track_siz
     for (retry = 0; retry < 2; retry++) {
         set_dma_addr((ULONG) buf);
         fdc_start_dma_write((track_size + SECTOR_SIZE-1) / SECTOR_SIZE);
-        falcon_delay(); /* a kludge - see comments at start of module */
+        if (cookie_mch == MCH_FALCON)
+            falcon_wait();
         if (flopcmd(FDC_WRITETR) < 0) { /* timeout */
             err = EDRVNR;               /* drive not ready */
             break;
@@ -1022,7 +1027,7 @@ struct flop_info *f = &finfo[dev];
 
     /* for HD drives, always set density & update actual step rate */
     if (drivetype == HD_DRIVE) {
-        DMA->density = f->cur_density;
+        DMA->modectl = f->cur_density;
         f->actual_rate = (f->cur_density == DENSITY_HD) ? hd_steprate[f->rate] : f->rate;
     }
 }

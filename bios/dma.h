@@ -28,7 +28,9 @@ struct dma {
     UBYTE   pad3;
     UBYTE   addr_low;
     UBYTE   pad4;
-    UBYTE   density;    /* floppy density control (DD or HD) */
+                    /* the "mode/control" register is only present on the Falcon */
+    UBYTE   modectl;    /* R: bit 3 is tested during write/format */
+                        /* W: floppy density control (DD or HD) */
 };
 
 /*
@@ -50,6 +52,11 @@ struct dma {
 #define DMA_OK      0x0001          /* something wrong */
 #define DMA_SCNOT0  0x0002          /* sector count not 0 */
 #define DMA_DATREQ  0x0004          /* FDC data request signal */
+
+/*
+ * Falcon "mode/control" bits
+ */
+#define DMA_MCBIT3  0x08            /* must be zero before starting write */
 
 void set_dma_addr(ULONG addr);
 
