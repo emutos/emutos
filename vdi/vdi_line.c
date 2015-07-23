@@ -808,41 +808,31 @@ static void cir_dda(WORD line_width)
  */
 static void do_circ(Vwk * vwk, WORD cx, WORD cy)
 {
+    Line line;
     WORD k;
     WORD *pointer;
 
-    /* Only perform the act if the circle has radius. */
-    if (num_qc_lines > 0) {
-        Line line;
-
-        /* Do the horizontal line through the center of the circle. */
-        pointer = q_circle;
+    /* Do the upper and lower semi-circles. */
+    for (k = 0, pointer = q_circle; k < num_qc_lines; k++, pointer++) {
+        /* Upper semi-circle, plus the horizontal line through the center of the circle. */
         line.x1 = cx - *pointer;
         line.x2 = cx + *pointer;
-        line.y1 = cy;
-        line.y2 = cy;
+        line.y1 = cy - k;
+        line.y2 = cy - k;
         if (clip_line(vwk, &line))
             horzline(vwk, &line);
 
-        /* Do the upper and lower semi-circles. */
-        for (k = 1, ++pointer; k < num_qc_lines; k++, pointer++) {
-            /* Upper semi-circle. */
-            line.x1 = cx - *pointer;
-            line.x2 = cx + *pointer;
-            line.y1 = cy - k;
-            line.y2 = cy - k;
-            if (clip_line(vwk, &line))
-                horzline(vwk, &line);
+        if (k == 0)
+            continue;
 
-            /* Lower semi-circle. */
-            line.x1 = cx - *pointer;
-            line.x2 = cx + *pointer;
-            line.y1 = cy + k;
-            line.y2 = cy + k;
-            if (clip_line(vwk, &line))
-                horzline(vwk, &line);
-        }                       /* End for. */
-    }                           /* End if:  circle has positive radius. */
+        /* Lower semi-circle. */
+        line.x1 = cx - *pointer;
+        line.x2 = cx + *pointer;
+        line.y1 = cy + k;
+        line.y2 = cy + k;
+        if (clip_line(vwk, &line))
+            horzline(vwk, &line);
+    }
 }
 
 
