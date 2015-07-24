@@ -133,6 +133,8 @@
 #include "string.h"
 #include "kprint.h"
 
+#define ROOT_PSEUDO_CLUSTER 1   /* see comments in xrename() */
+
 /*
  * forward prototypes
  */
@@ -775,8 +777,17 @@ long xrename(int n, char *p1, char *p2)
     if (!dn1)                                        /* M01.01.1214.01 */
         return EPTHNF;
 
-    dmd1 = dn1->d_drv;          /* remember the drive and */
-    strtcl1 = dn1->d_strtcl;    /* starting cluster for old path */
+    /*
+     * remember the drive and starting cluster for the old path, so
+     * that we can detect cross-device and cross-directory renames
+     *
+     * note: the starting cluster for the root directory is set to 2
+     * to simplify calculations elsewhere, so here we must use a
+     * special cluster number for the root to avoid the possibility
+     * of confusion with a real directory starting at cluster 2
+     */
+    dmd1 = dn1->d_drv;
+    strtcl1 = dn1->d_parent ? dn1->d_strtcl : ROOT_PSEUDO_CLUSTER;
 
     /* scan DND for matching name */
     posp = 0L;
@@ -807,8 +818,13 @@ long xrename(int n, char *p1, char *p2)
         return (long)dn2;
     if (!dn2)                                        /* M01.01.1214.01 */
         return EPTHNF;
-    dmd2 = dn2->d_drv;          /* remember the drive and */
-    strtcl2 = dn2->d_strtcl;    /* starting cluster for new path */
+
+    /*
+     * remember the drive and starting cluster for the new path
+     * (see comments above for the purpose of ROOT_PSEUDO_CLUSTER)
+     */
+    dmd2 = dn2->d_drv;
+    strtcl2 = dn2->d_parent ? dn2->d_strtcl : ROOT_PSEUDO_CLUSTER;
 
     if (contains_illegal_characters(s2))
         return EACCDN;
