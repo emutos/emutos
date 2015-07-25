@@ -742,6 +742,22 @@ static BOOL is_subdir(const char *s1,DND *dn1, DND *dn2)
 
 
 /*
+ *  update_fcb
+ *
+ *  returns 0 if ok, -1 if error
+ */
+static WORD update_fcb(OFD *fd,LONG posp,LONG len,BYTE *buf)
+{
+    if (ixlseek(fd,posp) != posp)
+        return -1;
+    if (ixwrite(fd,len,buf) != len)
+        return -1;
+
+    return 0;
+}
+
+
+/*
  *  xrename - rename a file,
  *      oldpath p1, new path p2
  *
@@ -857,8 +873,11 @@ long xrename(int n, char *p1, char *p2)
 
         /* now we can erase (0xe5) the old file */
         buf[0] = (char)ERASE_MARKER;
-        ixlseek(fd,posp);
-        ixwrite(fd,1L,buf);
+        if (update_fcb(fd,posp,1L,buf) < 0)
+        {
+            KDEBUG(("xrename(): can't erase old entry\n"));
+            return EACCDN;
+        }
 
         /* copy the time/date/cluster/length to the OFD */
         swpcopyw(&time,&fd2->o_td.time);   /* must be little-endian! */
@@ -882,12 +901,18 @@ long xrename(int n, char *p1, char *p2)
                 temp = 0;
             else temp = fdparent->o_strtcl; /* else real start cluster */
             swpw(temp);                     /* convert to disk format */
-            ixlseek(fd2,32+26);             /* seek to cluster field  */
-            ixwrite(fd2,2l,&temp);          /*  & write it            */
+            if (update_fcb(fd2,32+26,2L,(BYTE *)&temp) < 0)
+            {
+                KDEBUG(("xrename(): can't update .. entry\n"));
+                return EINTRN;
+            }
 
             /* set attribute for this file in parent directory */
-            ixlseek(fdparent,fd2->o_dirbyt+11);
-            ixwrite(fdparent,1L,&att);
+            if (update_fcb(fdparent,fd2->o_dirbyt+11,1L,&att) < 0)
+            {
+                KDEBUG(("xrename(): can't update parent's attr byte\n"));
+                return EINTRN;
+            }
         }
         fd2->o_flag |= O_DIRTY;
         if (att&FA_SUBDIR) {
@@ -898,11 +923,14 @@ long xrename(int n, char *p1, char *p2)
         } else xclose(hnew);
         ixclose(fdparent,CL_DIR);
     }
-    else
+    else                        /* rename within directory */
     {
         builds(s2,buf);             /* build disk version of name */
-        ixlseek(fd,posp);           /* and just overwrite the FCB */
-        ixwrite(fd,11L,buf);
+        if (update_fcb(fd,posp,11L,buf) < 0) /* just overwrite the FCB */
+        {
+            KDEBUG(("xrename(): can't update FCB with new name\n"));
+            return EACCDN;
+        }
     }
 
     /*
