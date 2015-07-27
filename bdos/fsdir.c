@@ -830,7 +830,17 @@ long xrename(int n, char *p1, char *p2)
     fileln = f->f_fileln;
     swpl(fileln);
 
-    if ((long)(dn2 = findit(p2,&s2,0)) < 0)          /* M01.01.1212.01 */
+    /*
+     * get the DND for the target folder
+     *
+     * we lock the DND during findit() to prevent it being scavenged
+     * by makdnd(), which is called by dirscan()/scan() from findit()
+     */
+    dn1->d_flag |= DND_LOCKED;
+    dn2 = findit(p2,&s2,0);
+    dn1->d_flag &= ~DND_LOCKED;
+
+    if ((long)dn2 < 0)
         return (long)dn2;
     if (!dn2)                                        /* M01.01.1214.01 */
         return EPTHNF;
@@ -865,8 +875,15 @@ long xrename(int n, char *p1, char *p2)
         /* create new directory entry with old info.  even if
          * we're renaming a folder, we call xcreat() to create
          * a normal file.  we'll fix it up later.
+         *
+         * again we need to protect the DNDs from scavenging, since
+         * ixcreat() uses both findit() and scan()
          */
-        hnew = xcreat(p2,att);
+        dn1->d_flag |= DND_LOCKED;
+        dn2->d_flag |= DND_LOCKED;
+        hnew = ixcreat(p2,att);
+        dn1->d_flag &= ~DND_LOCKED;
+        dn2->d_flag &= ~DND_LOCKED;
         if (hnew < 0)
             return EPTHNF;
         fd2 = getofd(hnew); /* fd2 is the OFD for the new file/folder */
@@ -1473,6 +1490,10 @@ static DND *makdnd(DND *p, FCB *b)
     {
         if (!p1->d_left)
         {
+            /* do not scavenge if it's locked */
+            if (p1->d_flag & DND_LOCKED)
+                continue;
+
             /* check if this DND is in use for Fsfirst/Fsnext */
             if (p1->d_usecount > 0)
                 continue;
