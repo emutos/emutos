@@ -17,7 +17,7 @@
 
 #ifndef GEMSTRUCT_H
 #define GEMSTRUCT_H
-
+#include "config.h"                     /* for AES_STACK_SIZE */
 
 typedef struct aespd   AESPD;           /* process descriptor           */
 #define UDA     struct uda              /* user stack data area         */
@@ -35,25 +35,6 @@ typedef UWORD   EVSPEC;
 #define KBD_SIZE 8
 #define QUEUE_SIZE 128
 #define NFORKS 32
-
-/* STACK_SIZE is the size of the private stack for each AES process.
- * It is used for the AES itself, including each call to the VDI, BIOS
- * and GEMDOS.
- *
- * Warning: When FreeMiNT and is used, EmuTOS' BDOS is replaced by FreeMiNT
- * implementation. Thus when GEM=ROM is used, the EmuTOS AES uses FreeMiNT's
- * GEMDOS. When called from supervisor mode, FreeMiNT's GEMDOS functions can
- * use significantly more stack than EmuTOS ones. For example, Fsfirst() uses
- * about 1.5 kB of stack space. It is used by scrp_write() and appl_init().
- *
- * Typically, the operation requiring the most stack usage is running FreeMiNT
- * with GEM=ROM, and double-click xaloader.prg to run XaAES. That calls
- * EmuTOS' appl_init() to determine if the physical VDI workstation is opened.
- *
- * The best value for STACK_SIZE can be estimated by enabling the define
- * CONF_DEBUG_AES_STACK in config.h.
- */
-#define STACK_SIZE 590
 
 CQUEUE
 {
@@ -99,8 +80,8 @@ UDA
         ULONG   *u_spsuper;             /*  3E  supervisor stack         */
         ULONG   *u_spuser;              /*  42  user stack               */
         ULONG   *u_oldspsuper;          /*  46  old ssp, used in trapaes [gemdosif.S] */
-        ULONG   u_super[STACK_SIZE];    /*  4A  */
-        ULONG   u_supstk;               /* 746  */
+        ULONG   u_super[AES_STACK_SIZE];/*  4A  */
+        ULONG   u_supstk;
 } ;
 
 

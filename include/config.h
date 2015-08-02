@@ -87,6 +87,9 @@
 # ifndef INITINFO_DURATION
 #  define INITINFO_DURATION 8 /* Longer time for LCD monitors startup */
 # endif
+# ifndef AES_STACK_SIZE
+#  define AES_STACK_SIZE 2048   /* in LONGs */
+# endif
 #endif
 
 /*
@@ -202,6 +205,9 @@
 # endif
 # ifndef CONF_WITH_IDE
 #  define CONF_WITH_IDE 1
+# endif
+# ifndef AES_STACK_SIZE
+#  define AES_STACK_SIZE 2048   /* in LONGs */
 # endif
 #endif
 
@@ -709,6 +715,32 @@
  */
 #ifndef INITINFO_DURATION
 # define INITINFO_DURATION 3
+#endif
+
+/*
+ * AES_STACK_SIZE is the size of the private stack for each AES process,
+ * specified in LONGs. It is used for the AES itself, including each
+ * call to the VDI, BIOS and GEMDOS. In typical usage, the operation
+ * requiring the most stack space is running FreeMiNT with GEM=ROM, and
+ * double-clicking xaloader.prg to run XaAES. That calls EmuTOS's
+ * appl_init() (to determine if the physical VDI workstation is open),
+ * which ends up calling Fsfirst().  In this situation, this is FreeMiNT's
+ * Fsfirst() which uses about 1.5kB of stack space.
+ *
+ * NOTE: an application that calls v_gtext() via a USERDEF (e.g. using
+ * CFlib), and links to Gemlib to provide v_gtext(), will need a large AES
+ * stack, since Gemlib's v_gtext() implementation puts a 1024-word buffer
+ * on the stack. In order to run such programs, we use a large stack.
+ * Existing 68K-compatible TOS programs will have worked around this problem,
+ * otherwise they would not run on standard Ataris TOSs. Thus this is
+ * principally a problem when recompiling for Coldfire systems, and so
+ * we default to a larger value when building for them (see above).
+ *
+ * A value for AES_STACK_SIZE can be estimated by enabling the define
+ * CONF_DEBUG_AES_STACK (see below).
+ */
+#ifndef AES_STACK_SIZE
+# define AES_STACK_SIZE 590     /* standard value for 68K systems, in LONGs */
 #endif
 
 /*
