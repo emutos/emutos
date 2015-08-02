@@ -1195,7 +1195,8 @@ static void adjust_menu(OBJECT *obj_array)
  *  we steal unused bits in ob_flags to indicate the required
  *  alignment.  Note that this does not cause any incompatibilities
  *  because this extra function is performed outside the AES, and
- *  only for the internal desktop resource.
+ *  only for the internal desktop resource.  Furthermore, we zero
+ *  out the stolen bits after performing the alignment.
  *
  *  Also note that this aligns the *object*, not the text within
  *  the object.  It is perfectly reasonable (and common) to have
@@ -1227,15 +1228,14 @@ static void align_objects(OBJECT *obj_array, int nobj)
                 if (obj->ob_x < 0)
                     obj->ob_x = 0;
                 obj->ob_width = len;
-                break;
-            }
-            if (obj->ob_flags & RIGHT_ALIGNED)
+            } else if (obj->ob_flags & RIGHT_ALIGNED)
             {
                 obj->ob_x += obj->ob_width-len;
                 if (obj->ob_x < 0)
                     obj->ob_x = 0;
                 obj->ob_width = len;
             }
+            obj->ob_flags &= ~(CENTRE_ALIGNED|RIGHT_ALIGNED);
             break;
         default:
             break;
