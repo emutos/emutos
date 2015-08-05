@@ -134,6 +134,7 @@ static WORD get_fdc_reg(WORD reg);
 static void set_fdc_reg(WORD reg, WORD value);
 static void fdc_start_dma_read(WORD count);
 static void fdc_start_dma_write(WORD count);
+static void falcon_wait(void);
 
 /*
  * fdc_delay() is for worst-case 1772 access (in MFM mode)
@@ -837,19 +838,6 @@ LONG floprate(WORD dev, WORD rate)
 
 /*==== internal floprw ====================================================*/
 
-/*
- * during write sector and write track sequences, just before sending
- * the write command, Falcon TOS (TOS4) loops waiting for a bit in a
- * Falcon-only register (at $860f) to become zero.  at a guess, this
- * bit is set to zero when the DMA has been cleared, but who knows?
- * we just do the same.
- */
-static void falcon_wait(void)
-{
-    while(DMA->modectl&DMA_MCBIT3)
-        ;
-}
-
 static WORD floprw(LONG buf, WORD rw, WORD dev,
                    WORD sect, WORD track, WORD side, WORD count)
 {
@@ -1321,6 +1309,19 @@ static void fdc_start_dma_write(WORD count)
     DMA->control = DMA_SCREG | DMA_FDC;
     DMA->control = DMA_SCREG | DMA_FDC | DMA_WRBIT;
     DMA->data = count;
+}
+
+/*
+ * during write sector and write track sequences, just before sending
+ * the write command, Falcon TOS (TOS4) loops waiting for a bit in a
+ * Falcon-only register (at $860f) to become zero.  at a guess, this
+ * bit is set to zero when the DMA has been cleared, but who knows?
+ * we just do the same.
+ */
+static void falcon_wait(void)
+{
+    while(DMA->modectl&DMA_MCBIT3)
+        ;
 }
 
 #endif /* CONF_WITH_FDC */
