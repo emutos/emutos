@@ -149,12 +149,7 @@ struct IDE
 #ifdef MACHINE_FIREBEE
 #define NUM_IDE_INTERFACES  2
 #else
-/*
- * temporarily changed from 4 (ST Doubler support) to avoid incorrect
- * detection of multiple interfaces due to incomplete address decoding
- * in some 3rd-party add-on hardware.
- */
-#define NUM_IDE_INTERFACES  1
+#define NUM_IDE_INTERFACES  4   /* (e.g. stacked ST Doubler) */
 #endif
 
 struct IDE
@@ -279,19 +274,108 @@ static LONG ide_identify(WORD dev);
 static void set_multiple_mode(WORD dev,UWORD multi_io);
 static int wait_for_not_BSY(volatile struct IDE *interface,LONG timeout);
 
+/*
+ * some add-on IDE interfaces for Atari systems do not completely
+ * decode the address of the interface, causing it to appear at
+ * multiple locations.  since multiple interfaces are also available
+ * for these systems, we must distinguish between the two situations.
+ * the following routines do this.
+ * 
+ * we do not check for the FireBee, since there are always exactly
+ * two interfaces, or for non-Atari hardware.
+ */
+#if (CONF_ATARI_HARDWARE && !defined(MACHINE_FIREBEE))
+
+/* used by duplicate interface detection logic */
+#define SECNUM_MAGIC    0xcc
+#define SECCNT_MAGIC    0x33
+
+/*
+ * set a special value in the sector number/count registers of
+ * device 0 in the specified interface
+ */
+static void set_interface_magic(WORD ifnum)
+{
+    volatile struct IDE *interface = ide_interface + ifnum;
+    UBYTE secnum = SECNUM_MAGIC + ifnum;
+    UBYTE seccnt = SECCNT_MAGIC + ifnum;
+
+    IDE_WRITE_CONTROL(IDE_CONTROL_nIEN);/* no interrupts please */
+    IDE_WRITE_HEAD(IDE_DEVICE(0));
+    DELAY_400NS;
+    IDE_WRITE_SECTOR_NUMBER_SECTOR_COUNT(secnum,seccnt);
+}
+
+/*
+ * check for special value in the sector number/count
+ * registers of device 0 in the specified interface
+ *
+ * returns 1 if OK, 0 otherwise
+ */
+static int check_interface_magic(WORD ifnum)
+{
+    volatile struct IDE *interface = ide_interface + ifnum;
+    UWORD numcnt = ((SECNUM_MAGIC + ifnum) << 8) | (SECCNT_MAGIC + ifnum);
+
+    if (IDE_READ_SECTOR_NUMBER_SECTOR_COUNT() == numcnt)
+        return 1;
+
+    return 0;
+}
+
+/*
+ * determine if interface really exists, allowing
+ * for incomplete hardware address decoding
+ */
+static int ide_interface_exists(WORD ifnum)
+{
+    volatile struct IDE *interface = ide_interface + ifnum;
+    int rc = 0;             /* assume it doesn't exist */
+
+    if (check_read_byte((long)&interface->command)) {
+        /*
+        * if this is the first one, we know it's real, and
+        * we seed the sector number/count with a special value.
+        * for subsequent interfaces, we write sector number/count
+        * and check if the interface 0 values were modified
+        */
+        if (ifnum == 0) {
+            set_interface_magic(0);
+            rc = 1;
+        } else {
+            set_interface_magic(ifnum);
+            rc = check_interface_magic(0);
+        }
+    }
+
+    KDEBUG(("ide interface %d %s",ifnum,rc?"exists":"not present"));
+
+    return rc;
+}
+#endif
 
 void detect_ide(void)
 {
 #ifdef MACHINE_AMIGA
-    has_ide = has_gayle ? 1 : 0;
+    has_ide = has_gayle ? 0x01 : 0x00;
 #elif defined(MACHINE_M548X)
-    has_ide = 1;
-#else
+    has_ide = 0x01;
+#elif defined(MACHINE_FIREBEE)
+    has_ide = 0x03;
+#elif CONF_ATARI_HARDWARE
     int i, bitmask;
+
+    /*
+     * we initialise this early, because ide_interface_exists() calls
+     * set_interface_magic(), which uses it (via the DELAY_400NS macro).
+     * at this point, the delay values will be the default ones, not
+     * the calibrated ones (see init_delay() in delay.c)
+     */
+    delay400ns = loopcount_1_msec / 2500;
 
     for (i = 0, bitmask = 1, has_ide = 0; i < NUM_IDE_INTERFACES; i++, bitmask <<= 1)
     {
-        if (check_read_byte((long)&ide_interface[i].command))
+        if (ide_interface_exists(i))
             has_ide |= bitmask;
 
 #if CONF_WITH_ARANYM
@@ -302,9 +386,11 @@ void detect_ide(void)
         }
 #endif /* CONF_WITH_ARANYM */
     }
+#else
+    has_ide = 0x00;
 #endif
 
-    KDEBUG(("has_ide = %d\n",has_ide));
+    KDEBUG(("has_ide = 0x%02x\n",has_ide));
 }
 
 /*
