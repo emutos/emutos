@@ -487,28 +487,16 @@ static poe * poe_new(char *t)
  */
 
 typedef struct {
-  char *pidvers;
-  char *potcrdate;
-  char *porevdate;
   char *lasttrans;
   char *langteam;
   char *charset;
   char *other;
 } ae_t;
 
-static void update_ae(ae_t *a, ae_t *pot_ae)
-{
-  a->potcrdate = pot_ae->potcrdate;
-  a->porevdate = now();
-}
-
 static void fill_pot_ae(ae_t *a)
 {
-  a->pidvers = "PACKAGE VERSION";
-  a->potcrdate = now();
-  a->porevdate = "YEAR-MO-DA HO:MI+ZONE";
   a->lasttrans = "FULL NAME <EMAIL@ADDRESS>";
-  a->langteam = "LANGUAGE <LL@li.org>";
+  a->langteam = "LANGUAGE";
   a->charset = "CHARSET";
   a->other = "";
 }
@@ -516,10 +504,7 @@ static void fill_pot_ae(ae_t *a)
 static char * ae_to_string(ae_t *a)
 {
   str *s = s_new();
-  s_addstr(s, "Project-Id-Version: "); s_addstr(s, a->pidvers);
-  s_addstr(s, "\nPOT-Creation-Date: "); s_addstr(s, a->potcrdate);
-  s_addstr(s, "\nPO-Revision-Date: "); s_addstr(s, a->porevdate);
-  s_addstr(s, "\nLast-Translator: "); s_addstr(s, a->lasttrans);
+  s_addstr(s, "Last-Translator: "); s_addstr(s, a->lasttrans);
   s_addstr(s, "\nLanguage-Team: "); s_addstr(s, a->langteam);
   s_addstr(s, "\nMIME-Version: 1.0\nContent-Type: text/plain; charset=");
   s_addstr(s, a->charset);
@@ -556,9 +541,6 @@ static int parse_ae(char *msgstr, ae_t *a)
 {
   char *c = msgstr;
   char *tmp;
-  if(!ae_check_line(&c, "Project-Id-Version: ", &a->pidvers)) goto fail;
-  if(!ae_check_line(&c, "POT-Creation-Date: ", &a->potcrdate)) goto fail;
-  if(!ae_check_line(&c, "PO-Revision-Date: ", &a->porevdate)) goto fail;
   if(!ae_check_line(&c, "Last-Translator: ", &a->lasttrans)) goto fail;
   if(!ae_check_line(&c, "Language-Team: ", &a->langteam)) goto fail;
   if(!ae_check_line(&c, "MIME-Version: ", &tmp)) goto fail;
@@ -1656,7 +1638,6 @@ static void update(char *fname)
       warn("bad administrative entry, getting back that of the template");
       a2 = a1;
     }
-    update_ae(&a2, &a1);
     e = poe_new("");
     if(e2 != NULL) {
       e->comment = e2->comment; /* keep the initial comment */

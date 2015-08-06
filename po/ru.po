@@ -3,9 +3,6 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: EMUTOS beta\n"
-"POT-Creation-Date: 2015-06-16 09:24+0300\n"
-"PO-Revision-Date: 2015-06-16 09:35+0300\n"
 "Last-Translator: Dima Sobolev <avtandil33@gmail.com>\n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"

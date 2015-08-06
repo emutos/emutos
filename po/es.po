@@ -4,11 +4,8 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: EMUTOS beta\n"
-"POT-Creation-Date: 2005-04-11 17:18+0200\n"
-"PO-Revision-Date: 2015-02-15 22:43+0100\n"
 "Last-Translator: David Gálvez <dgalvez75@gmail.com>\n"
-"Language-Team: Español <dr.worst@terra.es>\n"
+"Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-15\n"
 "Content-Transfer-Encoding: 8bit\n"
