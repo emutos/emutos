@@ -33,7 +33,7 @@ declarations, as in the following example:
            gettext( answer_names[answer] ));
   }
 
-translatable strings not immediately translated by _(...) need
+Translatable strings not immediately translated by _(...) need
 to be translated using gettext() explicitly.
 
 
@@ -116,7 +116,7 @@ po/messages.pot and the various po/xx.po are po-files, described below.
 Format of po-files
 ==================
 
-the po-file contains free comments (blocks of lines beginning with #),
+The po-file contains free comments (blocks of lines beginning with #),
 and entries. Each entry has
 - optional free comment lines, beginning with '# ' (sharp, space)
 - optional special comments, beginning with #, and whose second
@@ -124,7 +124,7 @@ and entries. Each entry has
 - the English string,    msgid "..."
 - the translation,       msgstr "..."
 
-the strings after msgid and msgstr follow the C syntax, and can contain
+The strings after msgid and msgstr follow the C syntax, and can contain
 several "..." strings concatenated. Example:
 
   #
@@ -159,26 +159,18 @@ Administrative entry
 The first entry in a po-file is the administrative entry.
 Its msgid is the empty string, and its msgstr contains
 lines in the form "Keyword: value\n". This is an example
-from the Czech GNU gettext po-file:
+from the French po-file:
 
   msgid ""
   msgstr ""
-  "Project-Id-Version: GNU gettext 0.10.38\n"
-  "POT-Creation-Date: 2001-05-23 23:03+0200\n"
-  "PO-Revision-Date: 2001-08-18 15:22+0200\n"
-  "Last-Translator: Vladimir Michl <Vladimir.Michl@seznam.cz>\n"
-  "Language-Team: Czech <cs@li.org>\n"
+  "Last-Translator: Vincent Riviere <vincent.riviere@freesbee.fr>\n"
+  "Language-Team: French\n"
   "MIME-Version: 1.0\n"
-  "Content-Type: text/plain; charset=ISO-8859-2\n"
+  "Content-Type: text/plain; charset=ISO-8859-1\n"
   "Content-Transfer-Encoding: 8bit\n"
 
-The eight lines shown here are mandatory, in this order.
+The five lines shown here are mandatory, in this order.
 Bug uses the charset given in "Content-Type".
-The "POT-Creation-Date" field is set in po/messages.pot when
-doing 'bug xgettext', and copied from po/messages.pot into the
-po files when doing 'bug update'.
-the "PO-Revision-Date" field is set in po files when doing
-'bug update'.
 
 
 Details
@@ -194,7 +186,6 @@ updating po-files will
 - add entries found in messages.pot, but missing from the
   previous po-file
 - create an administrative entry if there is none
-- update the date fields of the administrative entry.
 The po-files are parsed entirely in memory, then written
 back to files. Any special string formatting will be lost.
 
@@ -217,7 +208,7 @@ if your po-file is in another encoding (here, ISO latin 2).
 When translating a *.po file, please note that some strings are limited
 in size. For example, the texts used in a "form_alert" box are limited
 to five lines with 32 characters each. Each of the three buttons of such
-a "form_alert" box is limited to 20 characters.
+a "form_alert" box is limited to 10 characters.
 You should always check the translated text in EmuTOS to see if it looks
 as you expected it.
 
@@ -226,6 +217,9 @@ References
 ==========
 
 - the bug source code
+
+The following are probably only slightly relevant:
+
 - the GNU gettext manual
 - GNU gettext tools
 - GNU recode, for the names of some charsets.
