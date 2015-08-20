@@ -16,7 +16,6 @@ it atarist
 cs latin2
 es latin9
 
-# FIXME: What about greek?
-gr latin1
+gr cp737
 
 ru russian-atarist
