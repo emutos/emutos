@@ -1490,8 +1490,8 @@ static void print_canon(FILE *f, const char *t, const char *prefix)
 #endif /* CANON_GEM_ALERT */
     default:
       a = ((unsigned)(*t))&0xFF;
-      if((a < ' ') || (a >= 127 && a < 0xa0)) {
-        /* not ISO latin 1 */
+      if (a < ' ') {
+        /* control character */
         fprintf(f, "\\%03o", a);
       } else {
         fprintf(f, "%c", *t);
