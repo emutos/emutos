@@ -55,6 +55,7 @@
 #include "string.h"
 #include "natfeat.h"
 #include "delay.h"
+#include "biosbind.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif
@@ -510,6 +511,11 @@ void biosmain(void)
 
     if (!rtc_present)
         trap1( 0x2b, os_dosdate);  /* set initial date in GEMDOS format: Tsetdate() */
+
+    /* Steem needs this to initialize its GEMDOS hard disk emulation.
+     * This may change drvbits. See Steem sources:
+     * File steem/code/emulator.cpp, function intercept_bios(). */
+    Drvmap();
 
 #ifdef EMUTOS_RAM
     /* if TOS in RAM booted from an autoboot floppy, ask to remove the
