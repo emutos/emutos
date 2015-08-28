@@ -81,7 +81,7 @@
     .org    0xd0
     reset
 amiga_main:
-    bra.s   main_after_reset_instruction
+    // drop into _os_entry
 #endif
 
 _os_entry:
@@ -163,8 +163,12 @@ _main:
 vbr_ok:
 #endif
 
-#if CONF_WITH_RESET
+#if CONF_WITH_RESET && !defined(MACHINE_AMIGA)
         // now, reset the external hardware
+
+        // we don't need to call reset on Amiga
+        // because either this is a cold boot
+        // or reset has been called just before amiga_main
 
 #if CONF_ATARI_HARDWARE
         // on Falcon, we need special care around the reset instruction
@@ -180,9 +184,8 @@ vbr_ok:
 not_falcon:
         // we are not on Falcon, a simple reset is enough
         reset
-#endif /* CONF_WITH_RESET */
-
 main_after_reset_instruction:
+#endif /* CONF_WITH_RESET && !defined(MACHINE_AMIGA) */
 
 #ifdef __mcoldfire__
         lea     coldfire_startup_ret,a6
