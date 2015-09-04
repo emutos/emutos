@@ -586,7 +586,7 @@ msgstr "Formato ora:"
 
 #: desk/desk_rsc.c:1338 desk/desk_rsc.c:1368
 msgid "Default"
-msgstr "Predefinito"
+msgstr "Default"
 
 #: desk/desk_rsc.c:1344
 msgid "12H"
@@ -1183,7 +1183,7 @@ msgstr "Cancella file "
 
 #: cli/cmdint.c:488
 msgid "Allocation info for drive "
-msgstr "Info allocazione del disco "
+msgstr "Info allocazione disco "
 
 #: cli/cmdint.c:491
 msgid "  Size (bytes):   "
@@ -1195,7 +1195,7 @@ msgstr "  Byte usati:     "
 
 #: cli/cmdint.c:493
 msgid "  Bytes free:     "
-msgstr " Byte liberi:     "
+msgstr "  Byte liberi:    "
 
 #: cli/cmdint.c:494
 msgid "  Total clusters: "
