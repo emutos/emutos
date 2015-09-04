@@ -10,67 +10,81 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-15\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: bios/bios.c:519
+#: bios/bios.c:525
 msgid "Please eject the floppy and hit RETURN"
 msgstr "Por favor, expulse el floppy y pulse RETURN"
 
-#: bios/bios.c:585
+#: bios/bios.c:593
 msgid ""
 "System halted!\n"
 msgstr ""
 "¡Sistema detenido!\n"
 
-#: bios/initinfo.c:179
+#: bios/initinfo.c:223
 msgid "EmuTOS Version"
 msgstr "EmuTOS Versión"
 
-#: bios/initinfo.c:181
+#: bios/initinfo.c:225
 msgid "CPU type"
 msgstr "Tipo de CPU"
 
-#: bios/initinfo.c:189
+#: bios/initinfo.c:233
 msgid "Machine"
 msgstr "Máquina"
 
-#: bios/initinfo.c:191
+#: bios/initinfo.c:235
 msgid "Free ST-RAM"
 msgstr "ST RAM disponible"
 
-#: bios/initinfo.c:192 bios/initinfo.c:199
+#: bios/initinfo.c:236 bios/initinfo.c:243
 msgid "%ld kB"
 msgstr "%ld kB"
 
-#: bios/initinfo.c:198
+#: bios/initinfo.c:242
 msgid "Free FastRAM"
 msgstr "TT/FastRAM disponible"
 
-#: bios/initinfo.c:204
-msgid "Screen start"
-msgstr "Pantalla inicial"
+#~msgid "Screen start"
+#~msgstr "Pantalla inicial"
 
-#: bios/initinfo.c:206
+#: bios/initinfo.c:165
 msgid "GEMDOS drives"
 msgstr "Unidades GEMDOS"
 
-#: bios/initinfo.c:220
+#: bios/initinfo.c:251
 msgid "Boot time"
 msgstr "Tiempo de arranque"
 
-#: bios/initinfo.c:226
+#: bios/initinfo.c:257
 msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "<Control> para saltar AUTO/ACC"
 
-#: bios/initinfo.c:228
+#: bios/initinfo.c:260
 msgid "Hold <Alternate> to skip HDD boot"
 msgstr "<Alt> no iniciar disco duro"
 
-#: bios/initinfo.c:231
-msgid "Press 'C' to run an early console"
-msgstr "Pulse 'C' para correr en una cónsola primitiva"
+#~msgid "Press 'C' to run an early console"
+#~msgstr "Pulse 'C' para correr en una cónsola primitiva"
 
-#: bios/initinfo.c:242
+#: bios/initinfo.c:277
 msgid " Hold <Shift> to pause this screen "
 msgstr " <Shift> para detener esta pantalla "
+
+#: bios/initinfo.c:263
+msgid "Press key 'X' to boot from X:"
+msgstr "Pulse 'X' para iniciar desde X:"
+
+#: bios/initinfo.c:266
+msgid "Press <Esc> to run an early console"
+msgstr "Pulse <Esc> para ejecutar la consola"
+
+#: bios/kprint.c:480
+msgid ""
+"\n"
+"*** Press any key to continue ***"
+msgstr ""
+"\n"
+"*** Pulse cualquier tecla para continuar ***"
 
 #: bdos/osmem.c:163
 msgid ""
@@ -134,11 +148,11 @@ msgid "[2]["
 "of disk and the drive is|"
 "connected properly.][Cancel|Retry]"
 msgstr "[2]["
-"Los datos en la unidad %c:|"
-"pueden estar dañados. Asegúrese de|"
-"que está usando un tipo de disco|"
-"correcto y de que la unidad esté|"
-"conectada correctamente.][Cancelar|Reintentar]"
+"Los datos en la unidad %c: pueden|"
+"estar dañados. Asegúrese de que|"
+"está usando un tipo de disco|"
+"correcto y de que la unidad|"
+"esté conectada correctamente.][Cancelar|Reintentar]"
 
 #: aes/gem_rsc.c:719
 msgid "[2]["
@@ -183,105 +197,73 @@ msgstr "[3]["
 
 #: aes/gem_rsc.c:744
 msgid "[1]["
-"The application cannot find|"
-"the folder or document you|"
-"are trying to open.  Check|"
-"the name you have entered.][  OK  ]"
+"This application cannot|"
+"find the folder or file|"
+"you just tried to access.][  OK  ]"
 msgstr "[1]["
-"La aplicación no encuentra|"
-"la carpeta o documento que|"
-"usted está intentando abrir.|"
-"Compruebe el nombre que ha|"
-"introducido.][  OK  ]"
+"Esta aplicación no puede|"
+"encontrar la carpeta o fichero|"
+"que usted intenta acceder.][  OK  ]"
 
-#: aes/gem_rsc.c:751
-msgid "[3]["
-"Your system doesn't have|"
-"enough memory to run EmuDesk.][Cancel]"
-msgstr "[3]["
-"Su sistema no tine suficiente|"
-"memoria para ejecutar EmuDesk.][Cancel]"
-
-#: aes/gem_rsc.c:754
+#: aes/gem_rsc.c:749
 msgid "[1]["
-"The application doesn't have|"
-"enough room to open another|"
-"document.  To make room, close|"
-"any documents you don't need.][  OK  ]"
+"This application does not|"
+"have room to open another|"
+"document.  To make room,|"
+"close any document that|"
+"you do not need.][  OK  ]"
 msgstr "[1]["
-"Esta aplicación carece de espacio|"
-"para abrir otro documento. Cierre|"
-"alguno que no necesite.][ OK ]"
+"Esta aplicación no tiene|"
+"espacio para abrir otro|"
+"documento. Para ganar espacio|"
+"cierre cualquier documento que|"
+"no necesite.][  OK  ]"
 
-#: aes/gem_rsc.c:761
+#: aes/gem_rsc.c:758
 msgid "[1]["
-"An item with this name already|"
-"exists in the folder, or the|"
-"item is set to Read-Only.|"
-"Use the \"Info/Rename\" command|"
-"to change the item's status.][  OK  ]"
+"An item with this name|"
+"already exists in the|"
+"directory, or this item|"
+"is set to Read Only status.][  OK  ]"
 msgstr "[1]["
-"Ya existe un elemento con este|"
-"nombre en la carpeta, o el|"
-"elemento es de solo lectura.|"
-"Use \"Información/Renombrar\"|"
-"para cambiar los atributos.][ OK ]"
+"Un elemento con este nombre|"
+"ya existe en el directorio,|"
+"o este elemento es de solo|"
+"lectura.][  OK  ]"
 
-#: aes/gem_rsc.c:770
+#: aes/gem_rsc.c:765
 msgid "[1]["
-"The specified disk drive does|"
-"not exist.  Check the drive|"
-"letter you entered.][  OK  ]"
+"The drive you specified|"
+"does not exist.][ Cancel ]"
 msgstr "[1]["
-"La unidad indicada no existe.|"
-"Compruebe la unidad seleccionada.][Cancelar]"
+"El dispositivo especificado|"
+"no existe.][ Cancel ]"
+
+#: aes/gem_rsc.c:768
+msgid "[1]["
+"There is not enough memory|"
+"in your computer for the|"
+"application you just tried|"
+"to run.][  OK  ]"
+msgstr "[1]["
+"No hay suficiente memoria|"
+"en tu ordenador para la|"
+"aplicación que intenta|"
+"ejecutar.][  OK  ]"
 
 #: aes/gem_rsc.c:775
-msgid "[1]["
-"You cannot delete the folder|"
-"in which you are currently|"
-"working.][  OK  ]"
-msgstr "[1]["
-"No puede eliminar la carpeta|"
-"en la que está trabajando.][ OK ]"
-
-#: aes/gem_rsc.c:780
-msgid "[1]["
-"Cannot run the application|"
-"you have selected.  It may|"
-"be damaged, or your system|"
-"may not have enough memory.][  OK  ]"
-msgstr "[1]["
-"Imposible ejecutar la aplicación|"
-"seleccionada. Puede estar dañada,|"
-"o no hay bastante memoria|"
-"disponible.][ OK ]"
-
-#: aes/gem_rsc.c:787
 msgid "[3]["
-"DOS error #%d.][Cancel]"
+"TOS error #%u.][Cancel]"
 msgstr "[3]["
-"DOS-error #%d.][Cancelar]"
+"Error TOS #%u.][Cancelar]"
 
-#: aes/gem_rsc.c:788
+#: aes/gem_rsc.c:776
 msgid "[3]["
 "Unsupported AES function #%d.][Cancel]"
 msgstr "[3]["
 "Función #%d del AES errónea][Cancelar]"
 
-#: aes/gem_rsc.c:789
-msgid "[3]["
-"An unexpected error has|"
-"occurred.  Please report|"
-"this message to the EmuTOS|"
-"Development team.][Cancel]"
-msgstr "[3]["
-"Un error inesperado ha|"
-"ocurrido. Por favor informe|"
-"al Equipo de Desarrollo|"
-"de EmuTOS.][Cancelar]"
-
-#: aes/gem_rsc.c:796
+#: aes/gem_rsc.c:777
 msgid "ITEM SELECTOR"
 msgstr "SELECTOR DE ELEMENTOS"
 
@@ -309,455 +291,451 @@ msgstr "Si"
 msgid "No"
 msgstr "No"
 
+#: desk/desk_rsc.c:32 desk/desk_rsc.c:92 desk/desk_rsc.c:182
+msgid "Name: ________.___"
+msgstr "Nombre: ________.___"
+
 #: desk/desk_rsc.c:37
 msgid "Size: __________"
 msgstr "Tamaño: __________"
 
 #: desk/desk_rsc.c:42
-msgid "Date: __/__/__"
-msgstr "Fecha: __/__/__"
+msgid "Date: __________"
+msgstr "Fecha: __________"
 
 #: desk/desk_rsc.c:47
 msgid "Time: __:__ __"
 msgstr "Hora: __:__ __"
 
-#: desk/desk_rsc.c:62
-msgid "Name:"
-msgstr "Nombre:"
-
-#: desk/desk_rsc.c:67
+#: desk/desk_rsc.c:62 desk/desk_rsc.c:102
 msgid "Drive identifier: _:"
 msgstr "Identificador del dispositivo: _"
 
-#: desk/desk_rsc.c:72
+#: desk/desk_rsc.c:67
 msgid "Disk label: ___________"
 msgstr "Etiqueta del disco: ___________"
 
-#: desk/desk_rsc.c:87
+#: desk/desk_rsc.c:82
 msgid "Bytes used: __________"
 msgstr "Bytes usados: __________"
 
-#: desk/desk_rsc.c:92
+#: desk/desk_rsc.c:87
 msgid "Bytes available: __________"
 msgstr "Bytes disponibles: __________"
 
-#: desk/desk_rsc.c:97
-msgid "Name: ________.___"
-msgstr "Nombre: ________.___"
-
 #: desk/desk_rsc.c:107
-msgid "Drive identifier:  _"
-msgstr "Identificador de unidad:  _"
+msgid "Icon label: ____________"
+msgstr "Etiqueta del icono: ____________"
 
 #: desk/desk_rsc.c:112
-msgid "Icon label:  ____________"
-msgstr "Etiqueta del icono:  ____________"
+msgid "Application name: ________.___"
+msgstr "Nombre de la aplicación: ________.___"
 
-#: desk/desk_rsc.c:117
-msgid "Application name:  ________.___"
-msgstr "Nombre de la aplicación:  ________.___"
+#: desk/desk_rsc.c:172
+msgid "Current name: ________.___"
+msgstr "Nombre actual: ________.___"
 
 #: desk/desk_rsc.c:177
-msgid "Current name:  ________.___"
-msgstr "Nombre actual:  ________.___"
+msgid "Copy's name: ________.___"
+msgstr "Nombre de la copia: ________.___"
 
-#: desk/desk_rsc.c:182
-msgid "Copy's name:  ________.___"
-msgstr "Nombre de la copia:  ________.___"
-
-#: desk/desk_rsc.c:187
-msgid "Name:  ________.___"
-msgstr "Nombre:  ________.___"
-
-#: desk/desk_rsc.c:245
+#: desk/desk_rsc.c:240
 msgid " Desk "
 msgstr " Desk "
 
-#: desk/desk_rsc.c:251
+#: desk/desk_rsc.c:246
 msgid " File "
 msgstr " Fichero "
 
-#: desk/desk_rsc.c:257
+#: desk/desk_rsc.c:252
 msgid " Options "
 msgstr " Opciones "
 
-#: desk/desk_rsc.c:263
+#: desk/desk_rsc.c:258
 msgid " Arrange "
 msgstr " Orden "
 
-#: desk/desk_rsc.c:281
+#: desk/desk_rsc.c:276
 msgid "  Desktop info..."
 msgstr "  Información del Desktop..."
 
-#: desk/desk_rsc.c:287
+#: desk/desk_rsc.c:282
 msgid "--------------------"
 msgstr "-----------------------------"
 
-#: desk/desk_rsc.c:335
+#: desk/desk_rsc.c:330
 msgid "  Open"
 msgstr "  Abrir"
 
-#: desk/desk_rsc.c:341
+#: desk/desk_rsc.c:336
 msgid "  Info/Rename...  \007I"
 msgstr "  Info/Renombrar... \007I"
 
-#: desk/desk_rsc.c:347 desk/desk_rsc.c:371 desk/desk_rsc.c:389
+#: desk/desk_rsc.c:342 desk/desk_rsc.c:366 desk/desk_rsc.c:384
 msgid "---------------------"
 msgstr "-----------------------"
 
-#: desk/desk_rsc.c:353
+#: desk/desk_rsc.c:348
 msgid "  New Folder..."
 msgstr "  Nueva Carpeta..."
 
-#: desk/desk_rsc.c:359
+#: desk/desk_rsc.c:354
 msgid "  Close"
 msgstr "  Cerrar"
 
-#: desk/desk_rsc.c:365
+#: desk/desk_rsc.c:360
 msgid "  Close window"
 msgstr "  Cerrar ventana"
 
-#: desk/desk_rsc.c:377
+#: desk/desk_rsc.c:372
 msgid "  Delete...       \007D"
 msgstr "  Borrar...         \007D"
 
-#: desk/desk_rsc.c:383
+#: desk/desk_rsc.c:378
 msgid "  Format..."
 msgstr "  Formatear..."
 
-#: desk/desk_rsc.c:395
+#: desk/desk_rsc.c:390
 msgid "  Execute EmuCON  ^Z"
 msgstr "  Ejecutar EmuCON   ^Z"
 
-#: desk/desk_rsc.c:401
+#: desk/desk_rsc.c:396
 msgid "  Shutdown        ^Q"
 msgstr "  Cerrar sistema    ^Q"
 
-#: desk/desk_rsc.c:413
+#: desk/desk_rsc.c:408
 msgid "  Install disk drive..."
 msgstr "  Instalar unidad de disco..."
 
-#: desk/desk_rsc.c:419
+#: desk/desk_rsc.c:414
 msgid "  Configure application... \007A"
 msgstr "  Configurar aplicación...    \007A"
 
-#: desk/desk_rsc.c:425
+#: desk/desk_rsc.c:420
 msgid "------------------------------"
 msgstr "---------------------------------"
 
-#: desk/desk_rsc.c:431
+#: desk/desk_rsc.c:426
 msgid "  Set preferences..."
 msgstr "  Establecer preferencias..."
 
-#: desk/desk_rsc.c:437
+#: desk/desk_rsc.c:432
 msgid "  Save desktop             \007V"
 msgstr "  Guardar escritorio          \007V"
 
-#: desk/desk_rsc.c:443
+#: desk/desk_rsc.c:438
 msgid "  Change resolution...     \007C"
 msgstr "  Cambiar resolución...       \007C"
 
-#: desk/desk_rsc.c:461
+#: desk/desk_rsc.c:456
 msgid "-------------------"
 msgstr "-------------------------"
 
-#: desk/desk_rsc.c:467
+#: desk/desk_rsc.c:462
 msgid "  Sort by name  \007N"
 msgstr "  Ordenar por nombre  \007N"
 
-#: desk/desk_rsc.c:473
+#: desk/desk_rsc.c:468
 msgid "  Sort by type  \007P"
 msgstr "  Ordenar por tipo    \007P"
 
-#: desk/desk_rsc.c:479
+#: desk/desk_rsc.c:474
 msgid "  Sort by size  \007Z"
 msgstr "  Ordenar por tamaño  \007Z"
 
-#: desk/desk_rsc.c:485
+#: desk/desk_rsc.c:480
 msgid "  Sort by date  \007T"
 msgstr "  Ordenar por fecha   \007T"
 
-#: desk/desk_rsc.c:542
+#: desk/desk_rsc.c:537
 msgid "Attribute:"
 msgstr "Atributos:"
 
-#: desk/desk_rsc.c:554
+#: desk/desk_rsc.c:549
 msgid "Read/Write"
 msgstr "Lect./Escr."
 
-#: desk/desk_rsc.c:560
+#: desk/desk_rsc.c:555
 msgid "Read-Only"
 msgstr "Sólo lectura"
 
-#: desk/desk_rsc.c:593
+#: desk/desk_rsc.c:582
 msgid "DISK INFORMATION"
 msgstr "INFORMACIÓN DEL DISCO"
 
-#: desk/desk_rsc.c:668
+#: desk/desk_rsc.c:657
 msgid "Version"
 msgstr "Versión"
 
-#: desk/desk_rsc.c:680
+#: desk/desk_rsc.c:669
 msgid "Copyright (c) by"
 msgstr "Copyright (c)"
 
-#: desk/desk_rsc.c:686
+#: desk/desk_rsc.c:675
 msgid "The EmuTOS development team"
 msgstr "El equipo de desarrollo EmuTOS"
 
-#: desk/desk_rsc.c:698
+#: desk/desk_rsc.c:687
 msgid "Based on 'GPLed' sources"
 msgstr "Basado en fuentes GPL"
 
-#: desk/desk_rsc.c:728
+#: desk/desk_rsc.c:717
 msgid "EmuTOS is distributed under the GPL"
 msgstr "EmuTOS se distribuye bajo GPL"
 
-#: desk/desk_rsc.c:740
+#: desk/desk_rsc.c:729
 msgid "See doc\\license.txt for details"
 msgstr "Lea licencia.txt para más detalle"
 
-#: desk/desk_rsc.c:755
+#: desk/desk_rsc.c:744
 msgid "OPEN APPLICATION"
 msgstr "ABRIR APLICACIÓN"
 
-#: desk/desk_rsc.c:767
+#: desk/desk_rsc.c:756
 msgid "Parameters:"
 msgstr "Parámetros:"
 
-#: desk/desk_rsc.c:800
+#: desk/desk_rsc.c:789
 msgid "INSTALL DISK DRIVE"
 msgstr "INSTALAR UNIDAD DE DISCO"
 
-#: desk/desk_rsc.c:818
+#: desk/desk_rsc.c:807
 msgid "Disk type:"
 msgstr "Tipo disco:"
 
-#: desk/desk_rsc.c:830
+#: desk/desk_rsc.c:819
 msgid "Floppy"
 msgstr "Floppy"
 
-#: desk/desk_rsc.c:836
+#: desk/desk_rsc.c:825
 msgid "Hard"
 msgstr "Duro"
 
-#: desk/desk_rsc.c:869
+#: desk/desk_rsc.c:858
 msgid "CONFIGURE APPLICATION"
 msgstr "CONFIGURAR APLICACIÓN"
 
-#: desk/desk_rsc.c:881
+#: desk/desk_rsc.c:870
 msgid "Document types:"
 msgstr "Tipos de documento:"
 
-#: desk/desk_rsc.c:935
+#: desk/desk_rsc.c:924
 msgid "Application type:"
 msgstr "Tipo de aplicación:"
 
-#: desk/desk_rsc.c:965
+#: desk/desk_rsc.c:954
 msgid "Icon type:"
 msgstr "Tipo de icono:"
 
-#: desk/desk_rsc.c:1091
+#: desk/desk_rsc.c:1080
 msgid "NAME CONFLICT DURING COPY"
 msgstr "NOMBRE CONFLICTIVO "
 
-#: desk/desk_rsc.c:1121
+#: desk/desk_rsc.c:1104
+msgid "Skip"
+msgstr "Ignorar"
+
+#: desk/desk_rsc.c:1110
 msgid "Stop"
 msgstr "Stop"
 
-#: desk/desk_rsc.c:1136
+#: desk/desk_rsc.c:1125
 msgid "NEW FOLDER"
 msgstr "NUEVA CARPETA"
 
-#: desk/desk_rsc.c:1169
+#: desk/desk_rsc.c:1158
 msgid "SET PREFERENCES"
 msgstr "ESTABLECER PREFERENCIAS"
 
-#: desk/desk_rsc.c:1175
+#: desk/desk_rsc.c:1164
 msgid "Confirm deletes?"
 msgstr "¿Confirma borrar?"
 
-#: desk/desk_rsc.c:1199
+#: desk/desk_rsc.c:1188
 msgid "Confirm copies?"
 msgstr "¿Confirma copiar?"
 
-#: desk/desk_rsc.c:1223
+#: desk/desk_rsc.c:1212
 msgid "Confirm overwrites?"
 msgstr "¿Confirma sobreescribir?"
 
-#: desk/desk_rsc.c:1247
+#: desk/desk_rsc.c:1236
 msgid "Double-click speed:"
 msgstr "Velocidad de click:"
 
-#: desk/desk_rsc.c:1295
+#: desk/desk_rsc.c:1284
 msgid "Click"
 msgstr "Click"
 
-#: desk/desk_rsc.c:1301
+#: desk/desk_rsc.c:1290
 msgid "No click"
 msgstr "No Click"
 
-#: desk/desk_rsc.c:1307
+#: desk/desk_rsc.c:1296
 msgid "To drop down menus:"
 msgstr "Para desplegar menús"
 
-#: desk/desk_rsc.c:1313
+#: desk/desk_rsc.c:1302
 msgid "Sound effects:"
 msgstr "Efecto sonoro:"
 
-#: desk/desk_rsc.c:1325
+#: desk/desk_rsc.c:1314
 msgid "On"
 msgstr "On"
 
-#: desk/desk_rsc.c:1331
+#: desk/desk_rsc.c:1320
 msgid "Off"
 msgstr "Off"
 
-#: desk/desk_rsc.c:1337
+#: desk/desk_rsc.c:1326
 msgid "Time format:"
 msgstr "Formato temporal:"
 
-#: desk/desk_rsc.c:1349
-msgid "12 Hour"
-msgstr "12 Horas"
+#: desk/desk_rsc.c:1338 desk/desk_rsc.c:1368
+msgid "Default"
+msgstr "Defecto"
 
-#: desk/desk_rsc.c:1355
-msgid "24 Hour"
-msgstr "24 Horas"
+#: desk/desk_rsc.c:1344
+msgid "12H"
+msgstr "12H"
 
-#: desk/desk_rsc.c:1361
+#: desk/desk_rsc.c:1350
+msgid "24H"
+msgstr "24H"
+
+#: desk/desk_rsc.c:1356
 msgid "Date format:"
 msgstr "Formato fecha:"
 
-#: desk/desk_rsc.c:1373
-msgid "MM-DD-YY"
-msgstr "MM-DD-AA"
+#: desk/desk_rsc.c:1374
+msgid "MDY"
+msgstr "MDA"
 
-#: desk/desk_rsc.c:1379
-msgid "DD-MM-YY"
-msgstr "DD-MM-AA"
+#: desk/desk_rsc.c:1380
+msgid "DMY"
+msgstr "DMA"
 
-#: desk/desk_rsc.c:1407 desk/desk_rsc.c:1470
+#: desk/desk_rsc.c:1408 desk/desk_rsc.c:1471
 msgid "SET SCREEN RESOLUTION"
 msgstr "APLICAR RESOLUCION"
 
-#: desk/desk_rsc.c:1419
+#: desk/desk_rsc.c:1420
 msgid "ST Low"
 msgstr "ST Baja"
 
-#: desk/desk_rsc.c:1425
+#: desk/desk_rsc.c:1426
 msgid "ST Medium"
 msgstr "ST Media"
 
-#: desk/desk_rsc.c:1431
+#: desk/desk_rsc.c:1432
 msgid "ST High"
 msgstr "ST Alta"
 
-#: desk/desk_rsc.c:1437
+#: desk/desk_rsc.c:1438
 msgid "TT Low"
 msgstr "TT Baja"
 
-#: desk/desk_rsc.c:1443
+#: desk/desk_rsc.c:1444
 msgid "TT Medium"
 msgstr "TT Media"
 
-#: desk/desk_rsc.c:1590
+#: desk/desk_rsc.c:1591
 msgid "High"
 msgstr "Alta"
 
-#: desk/desk_rsc.c:1596
+#: desk/desk_rsc.c:1597
 msgid "Medium"
 msgstr "Media"
 
-#: desk/desk_rsc.c:1602
+#: desk/desk_rsc.c:1603
 msgid "Low"
 msgstr "Baja"
 
-#: desk/desk_rsc.c:1632
+#: desk/desk_rsc.c:1633
 msgid "ST Compatible"
 msgstr "ST Compatible"
 
-#: desk/desk_rsc.c:1671
+#: desk/desk_rsc.c:1672
 msgid "%ld bytes used in %d items."
 msgstr "%ld Bytes en %d elementos."
 
-#: desk/desk_rsc.c:1672
+#: desk/desk_rsc.c:1673
 msgid "  Show as icons \007S"
 msgstr "  Mostrar como iconos \007S"
 
-#: desk/desk_rsc.c:1673
+#: desk/desk_rsc.c:1674
 msgid "  Show as text  \007S"
 msgstr "  Mostrar como texto  \007S"
 
-#: desk/desk_rsc.c:1674
+#: desk/desk_rsc.c:1675
 msgid "Not available"
 msgstr "No disponible"
 
-#: desk/desk_rsc.c:1675
+#: desk/desk_rsc.c:1676
 msgid "application"
 msgstr "aplicación"
 
-#: desk/desk_rsc.c:1676
+#: desk/desk_rsc.c:1677
 msgid "documents"
 msgstr "Documentos"
 
-#: desk/desk_rsc.c:1677
+#: desk/desk_rsc.c:1678
 msgid "New Folder"
 msgstr "Nueva Carpeta"
 
-#: desk/desk_rsc.c:1678
+#: desk/desk_rsc.c:1679
 msgid "Disk Drives:"
 msgstr "Unidades de Disco"
 
-#: desk/desk_rsc.c:1679
+#: desk/desk_rsc.c:1680
 msgid "FILE INFORMATION"
 msgstr "INFORMACIÓN DEL FICHERO"
 
-#: desk/desk_rsc.c:1680
+#: desk/desk_rsc.c:1681
 msgid "FOLDER INFORMATION"
 msgstr "INFORMACIÓN DE LA CARPETA"
 
-#: desk/desk_rsc.c:1681
+#: desk/desk_rsc.c:1682
 msgid "COPY FILE(S)"
 msgstr "COPIAR FICHEROS(S)"
 
-#: desk/desk_rsc.c:1682
+#: desk/desk_rsc.c:1683
 msgid "MOVE FILE(S)"
 msgstr "MOVER FICHERO(S)"
 
-#: desk/desk_rsc.c:1683
+#: desk/desk_rsc.c:1684
 msgid "DELETE FILE(S)"
 msgstr "BORRAR FICHERO(S)"
 
-#: desk/desk_rsc.c:1690
+#: desk/desk_rsc.c:1691
 msgid "DISK"
 msgstr "DISCO"
 
-#: desk/desk_rsc.c:1691
+#: desk/desk_rsc.c:1692
 msgid "TRASH"
 msgstr "PAPELERA"
 
-#: desk/desk_rsc.c:1692
+#: desk/desk_rsc.c:1693 cli/cmdint.c:1016
 msgid "-More-"
 msgstr "-Más-"
 
-#: desk/desk_rsc.c:1693
+#: desk/desk_rsc.c:1694
 msgid "-End of file-"
 msgstr "-Final de fichero-"
 
-#: desk/desk_rsc.c:1694
+#: desk/desk_rsc.c:1695
 msgid "[2]["
 "Switch resolution?][Yes|No]"
 msgstr "[2]["
 "¿Cambiar la resolución?][Si|No]"
 
-#: desk/desk_rsc.c:1695
+#: desk/desk_rsc.c:1696
 msgid "[2]["
 "Show this document?][Show|Cancel]"
 msgstr "[2]["
 "¿Mostrar documento?][Mostrar|Cancelar]"
 
-#: desk/desk_rsc.c:1696
+#: desk/desk_rsc.c:1697
 msgid "[1]["
 "This document type has no|"
 "associated application.][  OK  ]"
@@ -765,7 +743,7 @@ msgstr "[1]["
 "Este tipo de documento no tiene|"
 "una aplicación asociada.][  OK  ]"
 
-#: desk/desk_rsc.c:1699
+#: desk/desk_rsc.c:1700
 msgid "[1]["
 "The GEM Desktop has no more|"
 "available windows. Before you|"
@@ -777,15 +755,15 @@ msgstr "[1]["
 "abrir un disco cierre una|"
 "ventana en desuso.][  OK  ]"
 
-#: desk/desk_rsc.c:1706
+#: desk/desk_rsc.c:1707
 msgid "[3]["
 "Cannot find FORMAT.PRG|"
 "or FORMAT.TTP.][  OK  ]"
 msgstr "[3]["
-"Fue imposible encontrar FORMAT.PRG|"
-"o FORMAT.TTP.][ OK ]"
+"Fue imposible encontrar|"
+"FORMAT.PRG o FORMAT.TTP.][ OK ]"
 
-#: desk/desk_rsc.c:1709
+#: desk/desk_rsc.c:1710
 msgid "[3]["
 "Formatting will ERASE all|"
 "information on the disk in|"
@@ -799,27 +777,28 @@ msgstr "[1]["
 "si est  de acuerdo con perder la|"
 "información en el disco.][  OK  |Cancelar]"
 
-#: desk/desk_rsc.c:1718
+#: desk/desk_rsc.c:1719
 msgid "[3]["
 "You cannot copy a parent folder|"
 "into one of its child folders.][  OK  ]"
 msgstr "[3]["
 "No puede copiar una carpeta de |"
-"nivel superior en una de inferior.][  OK  ]"
+"nivel superior en una de|"
+"inferior.][  OK  ]"
 
-#: desk/desk_rsc.c:1721
+#: desk/desk_rsc.c:1722
 msgid "[3]["
 "Invalid copy operation.][  OK  ]"
 msgstr "[3]["
 "Operación de copia invalida.][  OK  ]"
 
-#: desk/desk_rsc.c:1722
+#: desk/desk_rsc.c:1723
 msgid "[2]["
 "Abort this operation?][  Yes  |  No  ]"
 msgstr "[2]["
 "¿Abortar esta operación?][  Si  |  No  ]"
 
-#: desk/desk_rsc.c:1723
+#: desk/desk_rsc.c:1724
 msgid "[3]["
 "If you are sure you want to|"
 "delete ALL the information on|"
@@ -832,7 +811,7 @@ msgstr "[3]["
 "unidad %c:, clique en OK.|"
 "Sino clique en Cancelar.][  OK  |Cancelar]"
 
-#: desk/desk_rsc.c:1732
+#: desk/desk_rsc.c:1733
 msgid "[1]["
 "There is not enough space|"
 "available to configure this|"
@@ -845,7 +824,7 @@ msgstr "[1]["
 "Necesitar  suprimir una de las|"
 "aplicaciones configuradas.][  OK  ]"
 
-#: desk/desk_rsc.c:1741
+#: desk/desk_rsc.c:1742
 msgid "[2]["
 "You cannot create a folder|"
 "with that name. Please retry|"
@@ -856,7 +835,7 @@ msgstr "[2]["
 "Por favor intentelo|"
 "con otro nombre, o cancele.][Cancelar|Reintentar]"
 
-#: desk/desk_rsc.c:1746
+#: desk/desk_rsc.c:1747
 msgid "[1]["
 "This disk does not have enough|"
 "room for the information you|"
@@ -870,7 +849,7 @@ msgstr "[1]["
 "elementos han podido ser|"
 "copiados en el disco.][  OK  ]"
 
-#: desk/desk_rsc.c:1755
+#: desk/desk_rsc.c:1756
 msgid "[3]["
 "Cannot create EMUDESK.INF.|"
 "Make sure that a disk is in|"
@@ -879,12 +858,12 @@ msgid "[3]["
 "don't want to save the desktop.][  OK  |Cancel]"
 msgstr "[3]["
 "Imposible crear EMUDESK.INF.|"
-"Asegurese de que haya un disco|"
-"en la unidad de arranque y clique en|"
-"OK, o clique en Cancelar si no|"
-"quiere guardar el escritorio.][  OK  |Cancelar]"
+"Introduzca un disco en la|"
+"unidad de arranque y clique|"
+"OK, o clique Cancelar para|"
+"no guardar el escritorio.][  OK  |Cancelar]"
 
-#: desk/desk_rsc.c:1764
+#: desk/desk_rsc.c:1765
 msgid "[3]["
 "You cannot create or|"
 "access a folder this far|"
@@ -894,7 +873,7 @@ msgstr "[3]["
 "acceder a una carpeta tan abajo|"
 "en la ruta del directorio.][  OK  ]"
 
-#: desk/desk_rsc.c:1769
+#: desk/desk_rsc.c:1770
 msgid "[3]["
 "You cannot create or access|"
 "a file or folder with that|"
@@ -905,7 +884,7 @@ msgstr "[3]["
 "al fichero o carpeta porque|"
 "la ruta es demasiado larga.][  OK  ]|"
 
-#: desk/desk_rsc.c:1776
+#: desk/desk_rsc.c:1777
 msgid "[1]["
 "You cannot open the trash can|"
 "icon. To delete a disk, folder,|"
@@ -917,7 +896,7 @@ msgstr "[1]["
 "documento o aplicación, |"
 "arrastrelo a la papelera.][  OK  ]"
 
-#: desk/desk_rsc.c:1783
+#: desk/desk_rsc.c:1784
 msgid "[1]["
 "The trash can is where you drag|"
 "the disks, folders, documents,|"
@@ -929,7 +908,7 @@ msgstr "[1]["
 "documentos o aplicaciones para|"
 "ser suprimidos DEFINITIVAMENTE][  OK  ]"
 
-#: desk/desk_rsc.c:1790
+#: desk/desk_rsc.c:1791
 msgid "[1]["
 "You cannot drag folders,|"
 "documents or applications onto|"
@@ -943,7 +922,7 @@ msgstr "[1]["
 "pueden copiar discos o|"
 "arrastraslos a la papelera.][  OK  ]"
 
-#: desk/desk_rsc.c:1799
+#: desk/desk_rsc.c:1800
 msgid "[1]["
 "You cannot drag the trash can|"
 "into a window.][  OK  ]"
@@ -951,7 +930,7 @@ msgstr "[1]["
 "No es posible situar la papelera|"
 "dentro de una ventana.][  OK  ]"
 
-#: desk/desk_rsc.c:1802
+#: desk/desk_rsc.c:1803
 msgid "[1]["
 "You can drag the trash can to|"
 "another location on the GEM|"
@@ -1039,3 +1018,310 @@ msgstr " Escaner "
 msgid " Mail "
 msgstr " Correo "
 
+#: cli/cmdint.c:73
+msgid "Copy <filespec> ... to standard output"
+msgstr "Copiar <filespec> ... en la salida estándar"
+
+#: cli/cmdint.c:75
+msgid "Change current directory to <dir>"
+msgstr "Cambiar el directorio actual a <dir>"
+
+#: cli/cmdint.c:76
+msgid "or display current directory"
+msgstr " o mostrar el directorio actual"
+
+#: cli/cmdint.c:78
+msgid "Change attributes for <filename>"
+msgstr "Cambiar atributos para <filename>"
+
+#: cli/cmdint.c:79
+msgid "<mode> is the following ORed together:"
+msgstr "<mode> puede tomar los siguientes valores combinados como una suma booleana O(OR):"
+
+#: cli/cmdint.c:80
+msgid "1: read-only  2: hidden  4: system"
+msgstr "1: solo-lectura  2: oculto  4: sistema"
+
+#: cli/cmdint.c:82
+msgid "Clear screen"
+msgstr "Limpiar pantalla"
+
+#: cli/cmdint.c:84
+msgid "Copy files matching <filespec> to <dest>"
+msgstr "Copiar ficheros coincidentes con <filespec> a <dest>"
+
+#: cli/cmdint.c:85
+msgid "If <filespec> matches multiple files,"
+msgstr "Si <filespec> coincide con multiples ficheros"
+
+#: cli/cmdint.c:86
+msgid "<dest> must be a directory"
+msgstr "<dest> debe ser un directorio"
+
+#: cli/cmdint.c:88
+msgid "Copy <string> ... to standard output"
+msgstr "Copiar <string> ... a la salida estándar"
+
+#: cli/cmdint.c:89
+msgid "Strings may be surrounded by \"\""
+msgstr "Las cadenas de caracteres pueden estar entre \"\""
+
+#: cli/cmdint.c:91
+msgid "Exit EmuCON2"
+msgstr "Salir de EmuCON2"
+
+#: cli/cmdint.c:93
+msgid "Get help about <cmd> or list available commands"
+msgstr "Ayuda sobre <cmd> o listar comandos disponibles"
+
+#: cli/cmdint.c:94
+msgid "Use HELP ALL for help on all commands"
+msgstr "Use HELP ALL para ayuda de todos los comandos"
+
+#: cli/cmdint.c:95
+msgid "Use HELP EDIT for help on line editing"
+msgstr "Use HELP EDIT para ayuda sobre edición de línea"
+
+#: cli/cmdint.c:97
+msgid "List files (default terse, horizontal)"
+msgstr "Listar ficheros (por defecto: sucinto, horizontal)"
+
+#: cli/cmdint.c:98
+msgid "Specify -l for detailed list"
+msgstr "Añadir -l para una lista detallada"
+
+#: cli/cmdint.c:100
+msgid "Create directory <dir>"
+msgstr "Crear directorio <dir>"
+
+#: cli/cmdint.c:102
+msgid "Copy <filespec> to standard output,"
+msgstr "Copiar <filespec> a la salida estándar"
+
+#: cli/cmdint.c:103
+msgid "pausing every screenful"
+msgstr "pausar cada página"
+
+#: cli/cmdint.c:105
+msgid "Copy files matching <filespec> to <dir>,"
+msgstr "Copiar ficheros coincidentes con <filespec> a <dir>,"
+
+#: cli/cmdint.c:106
+msgid "then delete input files"
+msgstr "y borrar ficheros origen"
+
+#: cli/cmdint.c:108
+msgid "Set search path for external programs"
+msgstr "Definir la ruta de busqueda para programas externos"
+
+#: cli/cmdint.c:109
+msgid "or display current search path"
+msgstr "o mostrar la ruta actual"
+
+#: cli/cmdint.c:111
+msgid "Display current drive and directory"
+msgstr "Mostrar dispositivo y directorio actual"
+
+#: cli/cmdint.c:113
+msgid "Rename <oldname> to <newname>"
+msgstr "Renombrar <oldname> por <newname>"
+
+#: cli/cmdint.c:115
+msgid "Delete files matching <filespec>"
+msgstr "Borrar ficheros coincidentes con <filespec>"
+
+#: cli/cmdint.c:116
+msgid "Specify -q to be prompted each time"
+msgstr "Añadir -q para confirmar cada vez"
+
+#: cli/cmdint.c:118
+msgid "Delete directory <dir>"
+msgstr "Borrar directorio <dir>"
+
+#: cli/cmdint.c:120
+msgid "Show info for <drive> or current drive"
+msgstr "Mostrar info de <drive> o del dispositivo actual"
+
+#: cli/cmdint.c:122
+msgid "Display GEMDOS version"
+msgstr "Mostrar versión del GEMDOS"
+
+#: cli/cmdint.c:124
+msgid "Set line wrap or show current status"
+msgstr "Activar retorno de carro o mostrar estado actual"
+
+#: cli/cmdint.c:128
+msgid "up/down arrow = previous/next line in history"
+msgstr "flecha arriba/abajo = anterior/siguiente línea en historial"
+
+#: cli/cmdint.c:129
+msgid "left/right arrow = previous/next character"
+msgstr "flecha izquierda/derecha = caracter anterior/siguiente"
+
+#: cli/cmdint.c:130
+msgid "shift-left/right arrow = previous/next word"
+msgstr "shift-flecha izquierda/derecha = palabra anterior/siguiente"
+
+#: cli/cmdint.c:219
+msgid "invalid mode argument"
+msgstr "argumento de modo inválido"
+
+#: cli/cmdint.c:261
+msgid "Builtin commands:"
+msgstr "Comandos internos"
+
+#: cli/cmdint.c:322
+msgid "Listing of "
+msgstr "Listado de "
+
+#: cli/cmdint.c:372
+msgid "(empty)"
+msgstr "(vacío)"
+
+#: cli/cmdint.c:429
+msgid "Delete ALL matching files"
+msgstr "Borrar TODOS los ficheros coincidentes"
+
+#: cli/cmdint.c:436
+msgid "Delete file "
+msgstr "Borrar fichero "
+
+#: cli/cmdint.c:488
+msgid "Allocation info for drive "
+msgstr "Información de uso del dispositivo "
+
+#: cli/cmdint.c:491
+msgid "  Size (bytes):   "
+msgstr "  Tamaño (bytes):   "
+
+#: cli/cmdint.c:492
+msgid "  Bytes used:     "
+msgstr "  Bytes usados:     "
+
+#: cli/cmdint.c:493
+msgid "  Bytes free:     "
+msgstr "  Bytes libres:     "
+
+#: cli/cmdint.c:494
+msgid "  Total clusters: "
+msgstr "  Total clusters: "
+
+#: cli/cmdint.c:495
+msgid "  Free clusters:  "
+msgstr "  Clusters libres:  "
+
+#: cli/cmdint.c:496
+msgid "  Sectors/cluster:"
+msgstr "  Sectores/clusters:"
+
+#: cli/cmdint.c:497
+msgid "  Bytes/sector:   "
+msgstr "  Bytes/sector:   "
+
+#: cli/cmdint.c:625
+msgid " is not a directory"
+msgstr " no es un directorio"
+
+#: cli/cmdint.c:654
+msgid " and "
+msgstr " y "
+
+#: cli/cmdint.c:660
+msgid "Copying "
+msgstr "Copiando "
+
+#: cli/cmdint.c:662
+msgid " to "
+msgstr " a "
+
+#: cli/cmdint.c:698
+msgid " ... deleting "
+msgstr " ... borrando "
+
+#: cli/cmdint.c:708
+msgid " ... done"
+msgstr " .. hecho"
+
+#: cli/cmdint.c:764
+msgid " or "
+msgstr " o "
+
+#: cli/cmdint.c:792
+msgid "CR to continue ..."
+msgstr "CR para continuar ..."
+
+#: cli/cmdmain.c:61
+msgid "Welcome to EmuCON2: type HELP for builtin commands"
+msgstr "Bienvenido a EmuCON2: teclee HELP para ver los comandos internos"
+
+#: cli/cmdmain.c:80
+msgid "warning: no history buffers"
+msgstr "aviso: historial no almacenado"
+
+#: cli/cmdparse.c:29
+msgid "more than one redirection"
+msgstr "más de una redirección"
+
+#: cli/cmdparse.c:47
+msgid "no filename for redirection"
+msgstr "no hay nombre de fichero para la redirección"
+
+#: cli/cmdparse.c:53
+msgid "error in quoted field"
+msgstr "error en el texto entre comillas"
+
+#: cli/cmdparse.c:57
+msgid "error parsing line"
+msgstr "error diseccionando la línea"
+
+#: cli/cmdutil.c:63
+msgid "file not found"
+msgstr "fichero no encontrado"
+
+#: cli/cmdutil.c:66
+msgid "path not found"
+msgstr "ruta no encontrada"
+
+#: cli/cmdutil.c:69
+msgid "no more file handles"
+msgstr "no hay más handles para ficheros"
+
+#: cli/cmdutil.c:72
+msgid "can't create file"
+msgstr "no se puede crear el fichero"
+
+#: cli/cmdutil.c:75
+msgid "not enough memory"
+msgstr "no hay memoria suficiente"
+
+#: cli/cmdutil.c:78
+msgid "invalid drive"
+msgstr "dispositivo inválido"
+
+#: cli/cmdutil.c:81
+msgid "interrupted"
+msgstr "interrumpido"
+
+#: cli/cmdutil.c:84
+msgid "invalid path"
+msgstr "ruta inválida"
+
+#: cli/cmdutil.c:87
+msgid "can't write to disk (full?)"
+msgstr "no se puede escribir en el disco (¿lleno?)"
+
+#: cli/cmdutil.c:90
+msgid "cmdline too long"
+msgstr "línea de comando demasiado larga"
+
+#: cli/cmdutil.c:93
+msgid "directory not empty"
+msgstr "directorio no vacío"
+
+#: cli/cmdutil.c:96
+msgid "wrong number of arguments"
+msgstr "número de argumentos inválido"
+
+#: cli/cmdutil.c:99
+msgid "error code "
+msgstr "código de error "
