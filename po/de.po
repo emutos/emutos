@@ -777,9 +777,10 @@ msgid "[3]["
 "You cannot copy a parent folder|"
 "into one of its child folders.][  OK  ]"
 msgstr "[3]["
-"Man kann nicht einen übergeordneten|"
-"Ordner in einen seiner untergeordneten|"
-"Ordner kopieren.][  OK  ]"
+"Man kann nicht einen|"
+"übergeordneten Ordner in einen|"
+"seiner untergeordneten Ordner|"
+"kopieren.][  OK  ]"
 
 #: desk/desk_rsc.c:1722
 msgid "[3]["
