@@ -594,7 +594,7 @@ msgstr "12×"
 
 #: desk/desk_rsc.c:1350
 msgid "24H"
-msgstr "14×"
+msgstr "24×"
 
 #: desk/desk_rsc.c:1356
 msgid "Date format:"
