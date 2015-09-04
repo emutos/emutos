@@ -15,6 +15,7 @@
 #include "parport.h"
 #if CONF_WITH_PRINTER_PORT
 #include "asm.h"
+#include "delay.h"
 #include "sound.h"
 #include "mfp.h"
 #include "psg.h"
@@ -29,11 +30,20 @@
  * - no 30 seconds delay for printer output.
  */
 
+#if CONF_WITH_PRINTER_PORT
+/* timing stuff */
+#define DELAY_1US       delay_loop(delay1us)
+static ULONG delay1us;
+#endif
+
 void parport_init(void)
 {
 #if CONF_WITH_PRINTER_PORT
     /* set Strobe high */
     ongibit(0x20);
+
+    /* initialize delay */
+    delay1us = loopcount_1_msec / 1000;
 #endif
 }
 
@@ -75,12 +85,27 @@ LONG bconout0(WORD dev, WORD c)
         giaccess(a, PSG_MULTI | GIACCESS_WRITE);
         /* write char in port B */
         giaccess(c, PSG_PORT_B | GIACCESS_WRITE);
-        /* set Strobe low */
-        offgibit(~0x20);
-        /* delay ? */
 
-        /* Strobe high */
+        /*
+         * according to the Centronics spec, we must leave valid data on
+         * the lines for at least 500ns before pulsing the strobe line,
+         * so we leave it for 1 microsecond
+         */
+        DELAY_1US;
+
+        /*
+         * according to the spec, the strobe line must be pulsed low
+         * for a minimum of 500ns, so we do it for 1 microsecond
+         */
+        offgibit(~0x20);
+        DELAY_1US;
         ongibit(0x20);
+
+        /*
+         * at this point, we should wait for ACK to go low, but
+         * most drivers don't bother
+         */
+
         /* restore sr */
         set_sr(old_sr);
         return 1L;
