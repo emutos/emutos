@@ -138,6 +138,7 @@ void detect_akp(void)
     keyboard = country;
 
 #if CONF_WITH_NVRAM && CONF_MULTILANG
+    {
     char buf[2];
     int err;
 
@@ -147,6 +148,7 @@ void detect_akp(void)
         /* Override with the NVRAM settings */
         country = buf[0];
         keyboard = buf[1];
+    }
     }
 #endif
 
