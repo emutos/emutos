@@ -281,8 +281,8 @@ linea_blit:
  *
  * Several functions need C-wrapper around utility functions shared
  * with VDI.  They are draw_sprite, undraw_sprite, linea_line,
- * linea_hline, linea_rect, linea_polygon, linea_raster.  Their
- * arguments are in global variables/arrays.
+ * linea_hline, linea_rect, linea_polygon, linea_raster, linea_fill.
+ * Their arguments are in global variables/arrays.
  *
  * Bitblt has both small C-wrapper and an ASM -wrapper, as
  * pointer to its argument array is given in register.
@@ -314,7 +314,7 @@ linea_vecs:
         .dc.l   _undraw_sprite  /* $C - undraw sprite */
         .dc.l   _draw_sprite    /* $D - draw sprite */
         .dc.l   _linea_raster   /* $E - copy raster form */
-        .dc.l   _linea_f        /* _d_contourfill?? */
+        .dc.l   _linea_fill     /* $F - flood fill */
 linea_ents:
         /* Number of implemented Line A routines */
         .equ    nb_linea,(linea_ents-linea_vecs)/4

@@ -493,6 +493,30 @@ void linea_polygon(void)
 
 
 /*
+ * Line-A wrapper for floodfill
+ */
+void linea_fill(void)
+{
+    VwkClip clipper;
+    VwkAttrib attr;
+    lineA2Attrib(&attr);
+    attr.color = CUR_WORK->fill_color;
+    if (CLIP) {
+        clipper.xmn_clip = XMN_CLIP;
+        clipper.xmx_clip = XMX_CLIP;
+        clipper.ymn_clip = YMN_CLIP;
+        clipper.ymx_clip = YMX_CLIP;
+    } else {
+        clipper.xmn_clip = 0;
+        clipper.xmx_clip = xres;
+        clipper.ymn_clip = 0;
+        clipper.ymx_clip = yres;
+    }
+    contourfill(&attr, &clipper);
+}
+
+
+/*
  * _v_pline - wrapper for polyline/wideline
  */
 void _v_pline(Vwk * vwk)

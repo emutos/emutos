@@ -757,10 +757,10 @@ pixelread(const WORD x, const WORD y)
 }
 
 static UWORD
-search_to_right (Vwk * vwk, WORD x, UWORD mask, const UWORD search_col, UWORD * addr)
+search_to_right (const VwkClip * clip, WORD x, UWORD mask, const UWORD search_col, UWORD * addr)
 {
     /* is x coord < x resolution ? */
-    while( x++ < vwk->xmx_clip ) {
+    while( x++ < clip->xmx_clip ) {
         UWORD color;
 
         /* need to jump over interleaved bit_plane? */
@@ -780,10 +780,10 @@ search_to_right (Vwk * vwk, WORD x, UWORD mask, const UWORD search_col, UWORD * 
 }
 
 static UWORD
-search_to_left (Vwk * vwk, WORD x, UWORD mask, const UWORD search_col, UWORD * addr)
+search_to_left (const VwkClip * clip, WORD x, UWORD mask, const UWORD search_col, UWORD * addr)
 {
     /* Now, search to the left. */
-    while (x-- > vwk->xmn_clip) {
+    while (x-- > clip->xmn_clip) {
         UWORD color;
 
         /* need to jump over interleaved bit_plane? */
@@ -820,7 +820,7 @@ search_to_left (Vwk * vwk, WORD x, UWORD mask, const UWORD search_col, UWORD * a
  */
 
 static WORD
-end_pts(Vwk * vwk, WORD x, WORD y, WORD *xleftout, WORD *xrightout,
+end_pts(const VwkClip * clip, WORD x, WORD y, WORD *xleftout, WORD *xrightout,
         BOOL seed_type)
 {
     UWORD color;
@@ -828,7 +828,7 @@ end_pts(Vwk * vwk, WORD x, WORD y, WORD *xleftout, WORD *xrightout,
     UWORD mask;
 
     /* see, if we are in the y clipping range */
-    if ( y < vwk->ymn_clip || y > vwk->ymx_clip)
+    if ( y < clip->ymn_clip || y > clip->ymx_clip)
         return 0;
 
     /* convert x,y to start adress and bit mask */
@@ -838,8 +838,8 @@ end_pts(Vwk * vwk, WORD x, WORD y, WORD *xleftout, WORD *xrightout,
 
     /* get search color and the left and right end */
     color = get_color (mask, addr);
-    *xrightout = search_to_right (vwk, x, mask, color, addr);
-    *xleftout = search_to_left (vwk, x, mask, color, addr);
+    *xrightout = search_to_right (clip, x, mask, color, addr);
+    *xleftout = search_to_left (clip, x, mask, color, addr);
 
     /* see, if the whole found segment is of search color? */
     if ( color != search_color ) {
@@ -850,12 +850,13 @@ end_pts(Vwk * vwk, WORD x, WORD y, WORD *xleftout, WORD *xrightout,
 
 /* Prototypes local to this module */
 static WORD
-get_seed(Vwk * vwk, WORD xin, WORD yin, WORD *xleftout, WORD *xrightout,
-             BOOL seed_type);
+get_seed(const VwkAttrib * attr, const VwkClip * clip,
+	 WORD xin, WORD yin, WORD *xleftout, WORD *xrightout,
+         BOOL seed_type);
 
 
-void
-d_contourfill(Vwk * vwk)
+/* common function for line-A linea_fill() and VDI d_countourfill() */
+void contourfill(const VwkAttrib * attr, const VwkClip *clip)
 {
     WORD newxleft;              /* ends of line at oldy +       */
     WORD newxright;             /* the current direction    */
@@ -872,8 +873,8 @@ d_contourfill(Vwk * vwk)
     xleft = PTSIN[0];
     oldy = PTSIN[1];
 
-    if (xleft < vwk->xmn_clip || xleft > vwk->xmx_clip ||
-        oldy < vwk->ymn_clip  || oldy > vwk->ymx_clip)
+    if (xleft < clip->xmn_clip || xleft > clip->xmx_clip ||
+        oldy < clip->ymn_clip  || oldy > clip->ymx_clip)
         return;
 
     search_color = INTIN[0];
@@ -902,7 +903,7 @@ d_contourfill(Vwk * vwk)
     /* Initialize the line drawing parameters */
     LSTLIN = FALSE;
 
-    notdone = end_pts(vwk, xleft, oldy, &oldxleft, &oldxright, seed_type);
+    notdone = end_pts(clip, xleft, oldy, &oldxleft, &oldxright, seed_type);
 
     qptr = qbottom = 0;
     qtop = 3;                   /* one above highest seed point */
@@ -916,27 +917,27 @@ d_contourfill(Vwk * vwk)
             Rect rect;
 
             direction = (oldy & DOWN_FLAG) ? 1 : -1;
-            gotseed = get_seed(vwk, oldxleft, (oldy + direction),
+            gotseed = get_seed(attr, clip, oldxleft, (oldy + direction),
                                &newxleft, &newxright, seed_type);
 
             if ((newxleft < (oldxleft - 1)) && gotseed) {
                 xleft = oldxleft;
                 while (xleft > newxleft) {
                     --xleft;
-                    get_seed(vwk, xleft, oldy ^ DOWN_FLAG,
+                    get_seed(attr, clip, xleft, oldy ^ DOWN_FLAG,
                              &xleft, &xright, seed_type);
                 }
             }
             while (newxright < oldxright) {
                 ++newxright;
-                gotseed = get_seed(vwk, newxright, oldy + direction,
+                gotseed = get_seed(attr, clip, newxright, oldy + direction,
                                    &xleft, &newxright, seed_type);
             }
             if ((newxright > (oldxright + 1)) && gotseed) {
                 xright = oldxright;
                 while (xright < newxright) {
                     ++xright;
-                    get_seed(vwk, xright, oldy ^ DOWN_FLAG,
+                    get_seed(attr, clip, xright, oldy ^ DOWN_FLAG,
                              &xleft, &xright, seed_type);
                 }
             }
@@ -964,7 +965,7 @@ d_contourfill(Vwk * vwk)
             rect.y2 = ABS(oldy);
 
             /* rectangle fill routine draws horizontal line */
-            draw_rect(vwk, &rect, vwk->fill_color);
+            draw_rect_common(attr, &rect);
         }
     }
 }                               /* end of fill() */
@@ -985,10 +986,11 @@ crunch_queue(void)
  * get_seed - put seeds into Q, if (xin,yin) is not of search_color
  */
 static WORD
-get_seed(Vwk * vwk, WORD xin, WORD yin, WORD *xleftout, WORD *xrightout,
+get_seed(const VwkAttrib * attr, const VwkClip * clip,
+	 WORD xin, WORD yin, WORD *xleftout, WORD *xrightout,
          BOOL seed_type)
 {
-    if (end_pts(vwk, xin, ABS(yin), xleftout, xrightout, seed_type)) {
+    if (end_pts(clip, xin, ABS(yin), xleftout, xrightout, seed_type)) {
         /* false if of search_color */
         for (qtmp = qbottom, qhole = EMPTY; qtmp < qtop; qtmp += 3) {
             /* see, if we ran into another seed */
@@ -1005,7 +1007,7 @@ get_seed(Vwk * vwk, WORD xin, WORD yin, WORD *xleftout, WORD *xrightout,
                 rect.y2 = ABS(yin);
 
                 /* rectangle fill routine draws horizontal line */
-                draw_rect(vwk, &rect, vwk->fill_color);
+                draw_rect_common(attr, &rect);
 
                 queue[qtmp] = EMPTY;
                 if ((qtmp + 3) == qtop)
@@ -1033,6 +1035,14 @@ get_seed(Vwk * vwk, WORD xin, WORD yin, WORD *xleftout, WORD *xrightout,
     return 0;           /* we didnt put a seed in the Q */
 }
 
+
+/* VDI version */
+void d_contourfill(Vwk * vwk)
+{
+    VwkAttrib attr;
+    Vwk2Attrib(vwk, &attr, vwk->fill_color);
+    contourfill(&attr, VDI_CLIP(vwk));
+}
 
 
 void
