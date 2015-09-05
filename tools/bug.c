@@ -19,11 +19,6 @@
  * - no fuzzy or printf-format parameters
  * - some weird messages
  * - trigraphs are not handled (this is a feature actually !)
- *
- * NOTE: to get warning messages about generation of illegal alert
- * strings, you must #define ALERT_TEXT_WARNINGS.  The generated
- * messages can include Atari versions of non-Latin characters, so
- * may appear as garbage on non-Atari systems.
  */
 
 /*
@@ -60,9 +55,15 @@
 #include <stdarg.h>
 #include <time.h>
 
-#define VERSION "0.2c"
+#define VERSION "0.2d"
 
-#define ALERT_TEXT_WARNINGS 0   /* 1 => generate experimental warning msgs */
+#define ALERT_TEXT_WARNINGS 1   /* 1 => generate warning msgs */
+#define MAX_LINE_COUNT      5   /* validation values */
+#define MAX_LINE_LENGTH     32
+#define MAX_BUTTON_LENGTH   10
+#define AC_LINE_COUNT       -1  /* error codes from alert_check() */
+#define AC_LINE_LENGTH      -2
+#define AC_BUTTON_LENGTH    -3
 
 #define TOOLNAME "bug"
 #define DOCNAME  "doc/nls.txt"
@@ -930,7 +931,7 @@ parse_c_action pca_xgettext[] = { {
   pca_xgettext_other,
 } };
 
-static void print_canon(FILE *, const char *, const char *);
+static int print_canon(FILE *, const char *, const char *);
 
 /* pcati - Parse C Action Translate Info */
 typedef struct pcati {
@@ -1359,45 +1360,72 @@ static void parse_oipl_file(char *fname, da *d)
 }
 
 
+#if ALERT_TEXT_WARNINGS
 /*
- * Check given alert line and button text and complain
+ * Check given alert line and button text and set return code
  * if they're too long or there are too many lines of
  * text.  For buttons the lines parameter is zero.
  */
-static void alert_check(const char *start, const char *end, int lines)
+static int alert_check(const char *start, const char *end, int lines)
 {
-#if ALERT_TEXT_WARNINGS
   int len = end - start - 1;
-  const char *errstr;
-  char *tmpstr;
+
+  if (lines > MAX_LINE_COUNT)
+    return AC_LINE_COUNT;
 
   if (lines) {
     /* dialog text */
-    if (lines > 5) {
-      errstr = "with line '%s', dialog has more than 5 lines";
-    } else if (len > 32) {
-      errstr = "dialog line '%s' longer than 32 chars";
-    } else {
-      return;
-    }
+    if (len > MAX_LINE_LENGTH)
+      return AC_LINE_LENGTH;
   } else {
     /* dialog button */
-    if (len > 10) {
-      errstr = "dialog button text '%s' exceeds 10 chars";
-    } else {
-      return;
-    }
+    if (len > MAX_BUTTON_LENGTH)
+      return AC_BUTTON_LENGTH;
   }
-  tmpstr = xstrdup(start);
-  tmpstr[len] = '\0';
-  warn(errstr, tmpstr);
-  free(tmpstr);
-#else /* !ALERT_TEXT_WARNINGS */
+
+  return 0;
+}
+
+/*
+ * Print warning message corresponding to code
+ */
+static void print_alert_warning(int code,char *lang,char *key)
+{
+  char msg[100];
+
+  switch(code) {
+  case AC_LINE_COUNT:
+    sprintf(msg,"has more than %d lines",MAX_LINE_COUNT);
+    break;
+  case AC_LINE_LENGTH:
+    sprintf(msg,"line has more than %d characters",MAX_LINE_LENGTH);
+    break;
+  case AC_BUTTON_LENGTH:
+    sprintf(msg,"button has more than %d characters",MAX_BUTTON_LENGTH);
+    break;
+  default:
+    sprintf(msg,"has error code %d",code);
+    break;
+  }
+
+  printf("lang %s: translated dialog %s (see %s in %s)\n",lang,msg,key,LANGS_C);
+}
+#else
+static int alert_check(const char *start, const char *end, int lines)
+{
   UNUSED(start);
   UNUSED(end);
   UNUSED(lines);
-#endif
+
+  return 0;
 }
+static void print_alert_warning(int code,char *lang,char *key)
+{
+  UNUSED(code);
+  UNUSED(lang);
+  UNUSED(key);
+}
+#endif
 
 /*
  * print string in canonical format
@@ -1406,16 +1434,20 @@ static void alert_check(const char *start, const char *end, int lines)
  * the GEM Alert string specifications: if the string begins with
  * [n][, where n is a digit, then the string will be cut after
  * this initial [n][ and after every |.
+ *
+ * returns error code from alert_check() (if any)
  */
 
 #define CANON_GEM_ALERT 1
 
-static void print_canon(FILE *f, const char *t, const char *prefix)
+static int print_canon(FILE *f, const char *t, const char *prefix)
 {
   unsigned a;
   int translate = 0;
+  int rc = 0;
 #if CANON_GEM_ALERT
   int gem_alert = 0, gem_button = 0, alert_lines = 0;
+  int err;
   const char *line_start = NULL;
 #endif /* CANON_GEM_ALERT */
 
@@ -1465,26 +1497,30 @@ static void print_canon(FILE *f, const char *t, const char *prefix)
     case '|':
       if(gem_alert) {
         alert_lines += 1;
-        alert_check(line_start, t, alert_lines);
+        if ((err=alert_check(line_start, t, alert_lines)) < 0)
+          rc = err;
         line_start = t + 1;
         fprintf(f, "%c\"\n%s\"", *t, prefix);
         break;
       } else if (gem_button) {
-        alert_check(line_start, t, 0);
+        if ((err=alert_check(line_start, t, 0)) < 0)
+          rc = err;
         line_start = t + 1;
       }
       /* fallthrough */
     case ']':
       if(gem_alert) {
         gem_alert = 0;
-        alert_check(line_start, t, alert_lines + 1);
+        if ((err=alert_check(line_start, t, alert_lines + 1)) < 0)
+          rc = err;
         if(t[1] == '[') {
           line_start = t + 2;
           gem_button = 1;
         }
       } else if (gem_button && *t != '|') {
         gem_button = 0;
-        alert_check(line_start, t, 0);
+        if ((err=alert_check(line_start, t, 0)) < 0)
+          rc = err;
       }
       /* fallthrough */
 #endif /* CANON_GEM_ALERT */
@@ -1500,6 +1536,8 @@ static void print_canon(FILE *f, const char *t, const char *prefix)
     t++;
   }
   fprintf(f, "\"");
+
+  return rc;
 }
 
 /*
@@ -2064,12 +2102,14 @@ static void make(void)
     fprintf(f, "/*\n * hash table for lang %s.\n */\n\n", lang);
     for(j = 0 ; j < TH_SIZE ; j++) {
       if(th[j] != 0) {
-        int ii, nn;
+        int ii, nn, rc;
         fprintf(f, "static const char * const msg_%s_hash_%d[] = {\n", lang, j);
         nn = da_len(th[j]);
         for(ii = 0 ; ii < nn ; ii+=2) {
           fprintf(f, "  %s, ", (char *) da_nth(th[j],ii));
-          print_canon(f, da_nth(th[j],ii+1), "    ");
+          rc = print_canon(f, da_nth(th[j],ii+1), "    ");
+          if (rc < 0)
+            print_alert_warning(rc,lang,da_nth(th[j],ii));
           fprintf(f, ",\n");
         }
         fprintf(f, "  0\n};\n\n");
