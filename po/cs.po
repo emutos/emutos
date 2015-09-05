@@ -150,9 +150,7 @@ msgstr "[2]["
 "Nelze pøeèíst data z disku|"
 "v jednotce %c:. Ujistìte se, ¾e|"
 "disk je zformátován a mechanika|"
-"je správnì pøipojena a napájena.|"
-"[Cancel|"
-"Retry]"
+"je správnì pøipojena a napájena.][Cancel|Retry]"
 
 #: aes/gem_rsc.c:728
 msgid "[2]["
