@@ -1,7 +1,7 @@
 /*
  * linea.S - linea graphics stuff
  *
- * Copyright (c) 2002-2014 by Authors:
+ * Copyright (c) 2002-2015 by Authors:
  *
  * Authors:
  *  THH  Thomas Huth
@@ -151,124 +151,13 @@ _linea_0:
         lea     linea_vecs,a2   // get pointer to table of the Line-A routines
         rts
 
-//
-// These are stubs for linea :
-// the stub will print the pc of the caller, whether the function
-// was called using the line a opcode, or directly via its address.
-//
-
-_linea_1:
-#if HAS_KPRINTF
-        moveq   #1,d0
-        bra.s   linea_stub
-#endif
-
-_linea_2:
-#if HAS_KPRINTF
-        moveq   #2,d0
-        bra.s   linea_stub
-#endif
-
-_linea_3:
-#if HAS_KPRINTF
-        moveq   #3,d0
-        bra.s   linea_stub
-#endif
-
-_linea_4:
-#if HAS_KPRINTF
-        moveq   #4,d0
-        bra.s   linea_stub
-#endif
-
-_linea_5:
-#if HAS_KPRINTF
-        moveq   #5,d0
-        bra.s   linea_stub
-#endif
-
-_linea_6:
-#if HAS_KPRINTF
-        moveq   #6,d0
-        bra.s   linea_stub
-#endif
-
-_linea_7:
-#if HAS_KPRINTF
-        moveq   #7,d0
-        bra.s   linea_stub
-#endif
-
-_linea_8:
-#if HAS_KPRINTF
-        moveq   #8,d0
-        bra.s   linea_stub
-#endif
-
-_linea_b:
-#if HAS_KPRINTF
-        moveq   #0xb,d0
-        bra.s   linea_stub
-#endif
-
-_linea_c:
-#if HAS_KPRINTF
-        moveq   #0xc,d0
-        bra.s   linea_stub
-#endif
-
-_linea_d:
-#if HAS_KPRINTF
-        moveq   #0xd,d0
-        bra.s   linea_stub
-#endif
-
-_linea_e:
-#if HAS_KPRINTF
-        moveq   #0xe,d0
-        bra.s   linea_stub
-#endif
-
-_linea_f:
-#if HAS_KPRINTF
-        moveq   #0xf,d0
-#endif
-        // Fall into linea_stub
-
-/* We may arrive here either from our own Line A exception dispatcher,
- * or from direct function call.
- */
-linea_stub:
-#if HAS_KPRINTF
-        move.l  (sp),d1
-        cmp.l   #linea_dispatch_pc,d1   // Our own exception dispatcher?
-        bne.s   1f                      // No
-        move.l  a1,a0                   // Get the exception opcode address
-        bra.s   2f
-1:      move.l  d1,a0                   // Get the caller return address
-2:      move.w  d0,-(sp)                // Opcode
-        move.l  a0,-(sp)                // Opcode/Return address
-        pea     linea_stub_msg
-        jsr     _kprintf
-        lea     10(sp),sp
-#endif
-        rts
-
-        SECTION_RODATA
-
-#if HAS_KPRINTF
-linea_stub_msg:
-        .ascii  "pc=0x%08lx: unimplemented Line-A call number 0x%03x\n\0"
-        .even
-#endif
-
-
 linea_blit:
         move.l  a6,-(sp)                // blit frame structure addr
         jsr     _linea_blit
         addq.l  #4,sp
         rts
 
+        SECTION_RODATA
 
 
 /* Some VDI C-functions can be used directly as-is because:
