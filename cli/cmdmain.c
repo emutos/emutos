@@ -49,7 +49,7 @@ PRIVATE void create_redir(const char *name);
 PRIVATE WORD execute(WORD argc,char **argv,char *redir);
 PRIVATE void strip_quotes(int argc,char **argv);
 
-extern int cmdmain(void); /* called only from cmdmain.S */
+extern int cmdmain(void); /* called only from cmdasm.S */
 
 int cmdmain(void)
 {
