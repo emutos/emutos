@@ -109,7 +109,7 @@ msgid "[2]["
 "write-protected.][Cancel|Retry]"
 msgstr "[2]["
 "Nelze zapisovat na disk %c:,|"
-"proto¾e je uzamèen proti zápisu.][Cancel|Retry]"
+"proto¾e je uzamèen proti zápisu.][Zru¹it|Znovu]"
 
 #: aes/gem_rsc.c:701
 msgid "[2]["
@@ -120,10 +120,10 @@ msgid "[2]["
 "connected properly.][Cancel|Retry]"
 msgstr "[2]["
 "Disk %c: neodpovídá.|"
-"Ujistìte se, ¾e je medium správnì|"
-"Zasunuto. Pokud je toto zaøízení|"
+"Ujistìte se, ¾e disk je správnì|"  
+"zasunut. Pokud je toto zaøízení|"
 "hard disk, zkontrolujte, zda je|"
-"správnì zapojen.][Cancel|Retry]"
+"správnì zapojen.][Zru¹it|Znovu]"
 
 #: aes/gem_rsc.c:710
 msgid "[2]["
@@ -137,7 +137,7 @@ msgstr "[2]["
 "po¹kozena. Ujistìte se, ¾e|"
 "pou¾íváte správný druh media|"
 "a ¾e mechanika je bezchybnì|"
-"pøipojena.][Cancel|Retry]"
+"pøipojena.][Zru¹it|Znovu]"
 
 #: aes/gem_rsc.c:719
 msgid "[2]["
@@ -150,7 +150,7 @@ msgstr "[2]["
 "Nelze pøeèíst data z disku|"
 "v jednotce %c:. Ujistìte se, ¾e|"
 "disk je zformátován a mechanika|"
-"je správnì pøipojena a napájena.][Cancel|Retry]"
+"je správnì pøipojena a napájena.][Zru¹it|Znovu]"
 
 #: aes/gem_rsc.c:728
 msgid "[2]["
@@ -164,7 +164,7 @@ msgstr "[2]["
 "¾ádná data. Pøed opakováním se|"
 "ujistìte, ¾e zaøízení je|"
 "napájeno, je on-line, a je|"
-"pøipraveno.][Cancel|Retry]"
+"pøipraveno.][Zru¹it|Znovu]"
 
 #: aes/gem_rsc.c:737
 msgid "[3]["
@@ -176,7 +176,7 @@ msgstr "[3]["
 "Objevila se chyba uvnitø GEM.|"
 "Prosím kontaktujte vývojový|"
 "team EmuTOS a za¹lete nám|"
-"hlá¹ení o chybì.][Cancel]"
+"hlá¹ení o chybì.][Zru¹it]"
 
 #: aes/gem_rsc.c:744
 msgid "[1]["
@@ -196,7 +196,7 @@ msgid "[3]["
 "enough memory to run EmuDesk.][Cancel]"
 msgstr "[3]["
 "Vá¹ poèítaè nemá dostatek pamìti|"
-"ke spu¹tìní EmuDesk-u.][Cancel]"
+"ke spu¹tìní EmuDesk-u.][Zru¹it]"
 
 #: aes/gem_rsc.c:754
 msgid "[1]["
@@ -264,7 +264,7 @@ msgstr "[3]["
 msgid "[3]["
 "Unsupported AES function #%d.][Cancel]"
 msgstr "[3]["
-"Nepodporovaná AES funkce #%d.][Cancel]"
+"Nepodporovaná AES funkce #%d.][Zru¹it]"
 
 #: aes/gem_rsc.c:789
 msgid "[3]["
@@ -275,7 +275,7 @@ msgid "[3]["
 msgstr "[3]["
 "Objevila se neoèekávaná chyba.|"
 "Prosím ode¹letehlá¹ení o této|"
-"chybì vývojovému teamu EmuTOS][Cancel]"
+"chybì vývojovému teamu EmuTOS][Zru¹it]"
 
 #: aes/gem_rsc.c:796
 msgid "ITEM SELECTOR"
