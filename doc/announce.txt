@@ -3,67 +3,67 @@ Dear Atari Community!
 
 We are happy to announce a new public release of EmuTOS:
 
-EmuTOS 0.9.4 -- March 6, 2015
+EmuTOS 0.9.5 -- October xx, 2015
 
 
 
 INTRODUCTION
 
-EmuTOS is a single-user single-tasking operating system for the 32-bit Atari
-computers, clones and emulators. It can be used as a replacement for the TOS
-images typically needed today for using emulators and can also run on some
-real hardware, like the Atari STe, Falcon and the FireBee. It can even run
-on non-Atari hardware such as Amiga and ColdFire Evaluation Boards.
-All the source code is open and free, licensed under the GNU General Public
-License (GPL).
+EmuTOS is a single-user single-tasking operating system for 32-bit Atari
+computers, clones and emulators. It can be used as a replacement for the
+TOS images typically needed by emulators and can also run on some real
+hardware, including the Atari ST(e) and Falcon, and the FireBee. It can
+even run on non-Atari hardware such as Amiga and ColdFire Evaluation
+Boards. All the source code is open and free, licensed under the GNU
+General Public License (GPL).
 
 
 
-CHANGES SINCE RELEASE 0.9.3
+CHANGES SINCE RELEASE 0.9.4
 
 Major changes:
-- Compile with -O2 by default for best optimization.
-- New emutos-m548x-bas variant to support BaS_gcc on ColdFire Evaluation Boards.
-- Less RAM usage: 94 kB saved from previous release.
-- EmuDesk: Added feature to display text files.
-- EmuDesk: Added feature to move files/folders with Control key.
+- AES/BIOS: implement critical error handler
+- BDOS: fix file not found issues with Steem hard disk emulation
+- BDOS: implement Pexec mode 7
+- BIOS: add alt-arrow support (mouse actions via keyboard)
+- BIOS: add dual keyboard support (for Greek/Russian keyboards)
+- BIOS: allow EmuTOS to recover from program exceptions in user programs
+- BIOS: fix detection of C: drive with Steem
+- EmuDesk: improve text object alignment for translated strings
+- VDI: add line-A flood fill; all line-A opcodes are now supported
 
 Other changes:
-- Renamed the emutos-m548x variant to emutos-m548x-dbug to avoid confusion.
-- BIOS: Fixed floppy drive motor remaining on if there was no floppy.
-- BIOS: Do not disable IKBD mouse and joystick on startup.
-- BIOS: Added basepage information in panic messages.
-- BIOS: Added missing standard ST glyphs from the 6x6 system font.
-- BIOS: Fixed _FDC cookie initialization.
-- BIOS: Improved floppy routines and media change detection.
-- BIOS: Fixed application cartridge initialization address on 32-bit address bus.
-- BIOS: Limit IDE interfaces to 1 for non-Firebee hardware.
-- BDOS: Check for special device names in Fopen() and Fcreate().
-- BDOS: Do not check Fopen() mode (R,W,RW) in Fread()/Fwrite() - just like Atari TOS.
-- BDOS: Fixed file date/time incorrectly changed by a cross-directory rename.
-- VDI: Select right default fonts, according to vertical screen resolution.
-- VDI: Fixed aspect ratio values returned by v_opnwk().
-- VDI: Fixed crash due to text blit outside screen area.
-- VDI: Fixed v_pieslice() & v_ellpie() which did not draw small slices.
-- VDI: Fixed vqt_extent() output for 270° rotation.
-- VDI: Fixed vst_rotation() to behave like TOS3/TOS4.
-- AES: Improved File Selector.
-- AES: Make most dialogs inner border 1-pixel wide.
-- AES: Fixed bug that caused accessories to stop responding after a few resolution changes.
-- AES: Fixed alert buttons which could overlap icons.
-- AES: Fixed 7up hang on exit.
-- EmuDesk: Always display file/folder countdown when copying/deleting.
-- EmuDesk: Improved error messages.
-- EmuDesk: The total number of items in all open windows is no longer limited to 400.
-- EmuDesk: Allow desktop copy/delete operations to be interrupted by UNDO key.
-- EmuDesk: Increase horizontal spacing for window icons in some resolutions.
-- EmuDesk: Fixed the width of the menu items in all languages.
-- EmuCON: 'type/cat' can now display correctly files with UNIX line endings.
-- EmuCON: Added 'more' command.
-- EmuCON: Allow the user to interrupt 'cp/mv' commands.
-- Lots of various improvements and bugfixes.
+- AES: increase button spacing in alerts
+- AES: increase AES stack size for Coldfire machines
+- BDOS: evaluate TPAsize flags in Pexec processing
+- BDOS: fix bug in cross-directory rename
+- BIOS: use interrupts for serial console instead of polling
+- BIOS: fix FPU detection: 68881/68882 are now differentiated correctly
+- BIOS: fix delay_loop() timing for M548X machines
+- BIOS: allow user to specify boot partition at startup
+- BIOS: fix key repeat bug when entering values via alt-keypad
+- BIOS: implement XHInqDriver() XHDI function
+- BIOS: auto-detect multiple IDE interfaces
+- BIOS: add explicit delay for parallel port strobe (fixes printing on fast systems)
+- BIOS: fix nationality code in ROM header
+- EmuCON2: all text is now translated
+- EmuDesk: allow folders being displayed in an open window to be moved/deleted
+- EmuDesk: allow desktop "rubber-banding" in all directions
+- EmuDesk: display year as 4 digits where possible
+- EmuDesk: use _IDT cookie for EmuDesk date/time formatting
+- EmuDesk: fix bug in "sort by date" for directory display
+- EmuDesk: allocate screen objects dynamically
+- General: convert source code repository to git
+- General: implement error checking for translated alerts
+- General: replace "make release-version" with "make version"
+- VDI: ignore lineA variable 'multifill' for linea_rect() and linea_polygon()
+- VDI: speed up drawing of horizontal lines by v_pline()
+- VDI: fix lineA rectangle fill bugs
+- VDI: fix gap in circle drawn by v_arc()
+- VDI: fix VDI wideline display in 320x480 resolution
+- Lots of source code cleanup and minor bug fixes
 
-Have a look at changelog.txt for more detailed information.
+For a complete list of changes, refer to README.txt.
 
 
 
@@ -139,7 +139,7 @@ This is the currently supported Atari hardware:
 - Memory controller (both ST and Falcon)
 - Monitor type detection (mono, RGB or VGA)
 - DMA controller
-- WD 1772 / AJAX Floppy disk controller (write track not tested)
+- WD 1772 / AJAX Floppy disk controller
 - MFP
 - PSG
 - ST shifter
@@ -153,6 +153,7 @@ This is the currently supported Atari hardware:
 - SCC
 - IDE
 - ACSI
+- SD/MMC
 - The Native Features interface to some degree
 
 Currently unsupported hardware features:
@@ -195,7 +196,7 @@ OS, you are invited to subscribe to our mailing list for developers at:
 
 
 We hope that you like EmuTOS. If you have any suggestions or comments, we
-always appreciate to hear the good and also the bad things about it.
+always appreciate hearing both the good and the bad things about it.
 
 
 The EmuTOS development team.

@@ -31,7 +31,6 @@ project. In this project virtually everybody modifies every file,
 nevertheless here is an attempt at identifying who's guilty of what:
 
 Vincent Rivière (VRI) <vincent.riviere at freesbee.fr>
-- Current project admin
 - Patches for compiling with GCC 4.x
 - ColdFire CPU and FireBee support
 - Initial IDE driver
@@ -41,6 +40,7 @@ Vincent Rivière (VRI) <vincent.riviere at freesbee.fr>
 - Various bug fixes
 
 Roger Burrows (RFB) <rfburrows at ymail.com>
+- Current project admin
 - Support for SD/MMC Cards on the FireBee
 - Improvements on IDE, CompactFlash, ACSI, and other mass-storage support
 - FAT16 partitions up to 2 GB (inspired from Didier Méquignon's BDOS fork)

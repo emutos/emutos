@@ -50,7 +50,7 @@ T tested and working on an emulator or real hardware
 
  t CPU setting, tested on:
    68000 (real & emu), 68030 (real & emu), 68040 (emu), v4e (real)
- > FPU (detected, is any initialization needed?)
+ X FPU (detected, is any initialization needed?)
  T 68030 MMU and cache initialization
  T Memory controller (both ST and Falcon)
  T DMA controller
