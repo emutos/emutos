@@ -1,7 +1,7 @@
 /*
  * vectors.h - exception vectors, interrupt routines and system hooks
  *
- * Copyright (c) 2001-2013 The EmuTOS development team
+ * Copyright (c) 2001-2015 The EmuTOS development team
  *
  * Authors:
  *  LVL     Laurent Vogel

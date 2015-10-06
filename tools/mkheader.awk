@@ -1,7 +1,7 @@
 #
 # mkheader.awk - generate definitions for the TOS header
 #
-# Copyright (c) 2003 The EmuTOS development team
+# Copyright (c) 2003-2015 The EmuTOS development team
 #
 # Authors:
 #  LVL     Laurent Vogel

@@ -4,7 +4,7 @@
  * This file was created to support desktop resolution changes
  * for the TT and Falcon.
  *
- * Copyright (c) 2012-2014 The EmuTOS development team
+ * Copyright (c) 2012-2015 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows

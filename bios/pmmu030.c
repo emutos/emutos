@@ -1,7 +1,7 @@
 /*
  * pmmu030.c - initialisation for 68030 PMMU
  *
- * Copyright (c) 2013 The EmuTOS development team
+ * Copyright (c) 2013-2015 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows

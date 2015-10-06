@@ -2,6 +2,7 @@
  * pghdr.h - header file for program loaders, 'size' pgms, etc.
  *
  * Copyright (c) 2001 Lineo, Inc.
+ * Copyright (c) 2015 The EmuTOS development team
  *
  * Authors:
  *  xxx <xxx@xxx>

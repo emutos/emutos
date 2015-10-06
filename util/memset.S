@@ -1,7 +1,7 @@
 /*
  * memset.S - a quick memset() for 68000.
  *
- * Copyright (c) 2001 The EmuTOS development team
+ * Copyright (c) 2001-2015 The EmuTOS development team
  *
  * Authors:
  *  LVL  Laurent Vogel
