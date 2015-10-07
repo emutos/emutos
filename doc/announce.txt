@@ -27,7 +27,9 @@ Major changes:
 - BDOS: implement Pexec mode 7
 - BIOS: add alt-arrow support (mouse actions via keyboard)
 - BIOS: add dual keyboard support (for Greek/Russian keyboards)
+- BIOS: allow user to specify boot partition at startup
 - BIOS: allow EmuTOS to recover from program exceptions in user programs
+- BIOS: auto-detect multiple IDE interfaces
 - BIOS: fix detection of C: drive with Steem
 - EmuDesk: improve text object alignment for translated strings
 - VDI: add line-A flood fill; all line-A opcodes are now supported
@@ -40,10 +42,8 @@ Other changes:
 - BIOS: use interrupts for serial console instead of polling
 - BIOS: fix FPU detection: 68881/68882 are now differentiated correctly
 - BIOS: fix delay_loop() timing for M548X machines
-- BIOS: allow user to specify boot partition at startup
 - BIOS: fix key repeat bug when entering values via alt-keypad
 - BIOS: implement XHInqDriver() XHDI function
-- BIOS: auto-detect multiple IDE interfaces
 - BIOS: add explicit delay for parallel port strobe (fixes printing on fast systems)
 - BIOS: fix nationality code in ROM header
 - EmuCON2: all text is now translated
@@ -97,7 +97,7 @@ the one in TOS 2 or higher. It is still quite usable, and of course you are
 always free to use a more advanced desktop replacement like TeraDesk.
 
 EmuCON2 is a basic but useful command-line interpreter, written from scratch
-by Roger Burrows in 2013.
+by Roger Burrows in 2013 to replace the original CLI.
 
 Since EmuTOS just implements TOS functionality, you might want to use
 MiNT on top of it in order to run more modern software. EmuTOS is not
@@ -134,7 +134,7 @@ to have it running on top of EmuTOS.
 This is the currently supported Atari hardware:
 
 - CPU support for m68000, m68010, m68020, m68030, m68040, m68060, ColdFire V4e
-- FPU detected
+- FPU detection
 - 68030 MMU and cache
 - Memory controller (both ST and Falcon)
 - Monitor type detection (mono, RGB or VGA)

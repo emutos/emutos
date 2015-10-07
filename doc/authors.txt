@@ -5,19 +5,19 @@ code under GPL.
 The 'historical' authors - those who wrote the code before the start of the
 EmuTOS project - are mentioned in the individual files they've authored.
 Major 'historical' parts are:
-- BDOS, VDI, CLI - it comes from the latest known GEMDOS version from
+- BDOS, VDI - both come from the latest known GEMDOS version from
   Digital Research (later versions seem to have been developed by Atari).
 - AES, desktop - The C source code for GEM comes from the x86 version.
 - Some GEM assembler files come from the AES for the Apple LISA.
 
-All these historical parts were released under the General Public License by
-Caldera, Inc. in mid april 2000 (?)
-(For the record, Caldera bought it from Novell in 1997 along with DR-DOS; later
- Caldera disappeared and this is the copyright notice that refers to Lineo)
+All these historical parts were released under the General Public License
+by Caldera, Inc. in mid april 2000 (?)  (For the record, Caldera bought it
+from Novell in 1997 along with DR-DOS; later Caldera disappeared and this
+is the copyright notice that refers to Lineo)
 
 Minor borrowed stuff:
-- the printf and memcpy stuff was inspired from the Minix kernel and library;
-- the processor detection is taken from the MiNT kernel;
+- the printf and memcpy stuff is inspired by the Minix kernel and library;
+- the processor/FPU detection is taken from the MiNT kernel;
 - "Bug" includes parts of the original gettext source code;
 - some low-level hardware stuff comes from the Linux kernel;
 
@@ -26,9 +26,21 @@ some advanced code (FastRAM and floppy support) has been borrowed from the
 AROS project. Due to license incompatibilities, that code is shipped in the
 source archive, but not compiled into the official binaries.
 
-Here is about the 'recent' contributors - individuals involved in the EmuTOS
-project. In this project virtually everybody modifies every file,
+The following is a list of 'recent' contributors - individuals involved in the
+EmuTOS project. In this project virtually everybody modifies every file;
 nevertheless here is an attempt at identifying who's guilty of what:
+
+Roger Burrows (RFB) <rfburrows at ymail.com>
+- Current project admin
+- Support for SD/MMC Cards on the FireBee
+- Improvements to IDE, CompactFlash, ACSI, and other mass-storage support
+- FAT16 partitions up to 2 GB (inspired by Didier Méquignon's BDOS fork)
+- Full support for Falcon video hardware
+- Real Falcon 030 support (cache, MMU, SCC, HD floppy)
+- Desktop and file selector improvements
+- EmuCON2
+- erd tool: the EmuTOS Resource Decompiler
+- Various bugfixes and cleanups
 
 Vincent Rivière (VRI) <vincent.riviere at freesbee.fr>
 - Patches for compiling with GCC 4.x
@@ -38,18 +50,6 @@ Vincent Rivière (VRI) <vincent.riviere at freesbee.fr>
 - ColdFire Evaluation Boards support
 - French translation update
 - Various bug fixes
-
-Roger Burrows (RFB) <rfburrows at ymail.com>
-- Current project admin
-- Support for SD/MMC Cards on the FireBee
-- Improvements on IDE, CompactFlash, ACSI, and other mass-storage support
-- FAT16 partitions up to 2 GB (inspired from Didier Méquignon's BDOS fork)
-- Full support for Falcon and TT video hardware
-- Real Falcon 030 support (cache, MMU, SCC, HD floppy)
-- Desktop and file selector improvements
-- EmuCON2
-- erd tool: the EmuTOS Resource Decompiler
-- Various bugfixes and cleanups
 
 Thomas Huth (THH) <huth at users.berlios.de>
 - Lots of bugfixes all over the place
@@ -68,9 +68,9 @@ Laurent Vogel (LVL) <lvl at club-internet.fr>
 - NLS support
 
 Martin Doering (MAD) <mdoering at users.sourceforge.net>
-- Original project initiator (but retired since years already)
+- Original project initiator (but retired many years ago)
 - Memory setup, VT52 console, Line A, mouse
-- Virtually everything not modified later by the other fellows
+- Virtually everything not modified later by the others
 
 
 Thanks also to all mailing list contributors for their help, and
