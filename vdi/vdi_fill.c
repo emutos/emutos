@@ -851,7 +851,7 @@ end_pts(const VwkClip * clip, WORD x, WORD y, WORD *xleftout, WORD *xrightout,
 /* Prototypes local to this module */
 static WORD
 get_seed(const VwkAttrib * attr, const VwkClip * clip,
-	 WORD xin, WORD yin, WORD *xleftout, WORD *xrightout,
+         WORD xin, WORD yin, WORD *xleftout, WORD *xrightout,
          BOOL seed_type);
 
 
@@ -987,7 +987,7 @@ crunch_queue(void)
  */
 static WORD
 get_seed(const VwkAttrib * attr, const VwkClip * clip,
-	 WORD xin, WORD yin, WORD *xleftout, WORD *xrightout,
+         WORD xin, WORD yin, WORD *xleftout, WORD *xrightout,
          BOOL seed_type)
 {
     if (end_pts(clip, xin, ABS(yin), xleftout, xrightout, seed_type)) {
