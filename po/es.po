@@ -20,6 +20,10 @@ msgid ""
 msgstr ""
 "¡Sistema detenido!\n"
 
+#: bios/initinfo.c:165
+msgid "GEMDOS drives"
+msgstr "Unidades GEMDOS"
+
 #: bios/initinfo.c:223
 msgid "EmuTOS Version"
 msgstr "EmuTOS Versión"
@@ -44,13 +48,6 @@ msgstr "%ld kB"
 msgid "Free FastRAM"
 msgstr "TT/FastRAM disponible"
 
-#~msgid "Screen start"
-#~msgstr "Pantalla inicial"
-
-#: bios/initinfo.c:165
-msgid "GEMDOS drives"
-msgstr "Unidades GEMDOS"
-
 #: bios/initinfo.c:251
 msgid "Boot time"
 msgstr "Tiempo de arranque"
@@ -63,13 +60,6 @@ msgstr "<Control> para saltar AUTO/ACC"
 msgid "Hold <Alternate> to skip HDD boot"
 msgstr "<Alt> no iniciar disco duro"
 
-#~msgid "Press 'C' to run an early console"
-#~msgstr "Pulse 'C' para correr en una cónsola primitiva"
-
-#: bios/initinfo.c:277
-msgid " Hold <Shift> to pause this screen "
-msgstr " <Shift> para detener esta pantalla "
-
 #: bios/initinfo.c:263
 msgid "Press key 'X' to boot from X:"
 msgstr "Pulse 'X' para iniciar desde X:"
@@ -77,6 +67,10 @@ msgstr "Pulse 'X' para iniciar desde X:"
 #: bios/initinfo.c:266
 msgid "Press <Esc> to run an early console"
 msgstr "Pulse <Esc> para ejecutar la consola"
+
+#: bios/initinfo.c:277
+msgid " Hold <Shift> to pause this screen "
+msgstr " <Shift> para detener esta pantalla "
 
 #: bios/kprint.c:480
 msgid ""

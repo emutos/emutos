@@ -284,6 +284,10 @@ msgstr "Да"
 msgid "No"
 msgstr "Нет"
 
+#: desk/desk_rsc.c:32 desk/desk_rsc.c:92 desk/desk_rsc.c:182
+msgid "Name: ________.___"
+msgstr "Имя: ________.___"
+
 #: desk/desk_rsc.c:37
 msgid "Size: __________"
 msgstr "Размер: ________"
@@ -311,10 +315,6 @@ msgstr "Байт использ.: ________"
 #: desk/desk_rsc.c:87
 msgid "Bytes available: __________"
 msgstr "Байт свободно: __________"
-
-#: desk/desk_rsc.c:32 desk/desk_rsc.c:92 desk/desk_rsc.c:182
-msgid "Name: ________.___"
-msgstr "Имя: ________.___"
 
 #: desk/desk_rsc.c:107
 msgid "Icon label: ____________"

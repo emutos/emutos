@@ -285,6 +285,10 @@ msgstr "Ja"
 msgid "No"
 msgstr "Nein"
 
+#: desk/desk_rsc.c:32 desk/desk_rsc.c:92 desk/desk_rsc.c:182
+msgid "Name: ________.___"
+msgstr "Name: ________.___"
+
 #: desk/desk_rsc.c:37
 msgid "Size: __________"
 msgstr "Größe: __________"
@@ -312,10 +316,6 @@ msgstr "Bytes belegt: __________"
 #: desk/desk_rsc.c:87
 msgid "Bytes available: __________"
 msgstr "Bytes frei: __________"
-
-#: desk/desk_rsc.c:32 desk/desk_rsc.c:92 desk/desk_rsc.c:182
-msgid "Name: ________.___"
-msgstr "Name: ________.___"
 
 #: desk/desk_rsc.c:107
 msgid "Icon label: ____________"

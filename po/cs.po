@@ -279,6 +279,10 @@ msgstr "Ano"
 msgid "No"
 msgstr "Ne"
 
+#: desk/desk_rsc.c:32 desk/desk_rsc.c:92 desk/desk_rsc.c:182
+msgid "Name: ________.___"
+msgstr "Jméno: ________.___"
+
 #: desk/desk_rsc.c:37
 msgid "Size: __________"
 msgstr "Velikost: __________"
@@ -290,9 +294,6 @@ msgstr "Datum: __________"
 #: desk/desk_rsc.c:47
 msgid "Time: __:__ __"
 msgstr "Èas: __:__ __"
-
-#~msgid "Name:"
-#~msgstr "Jméno:"
 
 #: desk/desk_rsc.c:62 desk/desk_rsc.c:102
 msgid "Drive identifier: _:"
@@ -309,10 +310,6 @@ msgstr "Obsazeno: __________ B"
 #: desk/desk_rsc.c:87
 msgid "Bytes available: __________"
 msgstr "Volných: __________ B"
-
-#: desk/desk_rsc.c:32 desk/desk_rsc.c:92 desk/desk_rsc.c:182
-msgid "Name: ________.___"
-msgstr "Jméno: ________.___"
 
 #: desk/desk_rsc.c:107
 msgid "Icon label: ____________"
