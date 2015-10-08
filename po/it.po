@@ -10,11 +10,11 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: bios/bios.c:519
+#: bios/bios.c:525
 msgid "Please eject the floppy and hit RETURN"
 msgstr "Espellere il dischetto e premere INVIO"
 
-#: bios/bios.c:587
+#: bios/bios.c:593
 msgid ""
 "System halted!\n"
 msgstr ""

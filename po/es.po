@@ -1319,3 +1319,4 @@ msgstr "número de argumentos inválido"
 #: cli/cmdutil.c:99
 msgid "error code "
 msgstr "código de error "
+

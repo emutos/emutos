@@ -1004,3 +1004,312 @@ msgstr " Scan "
 #: desk/icons.c:1048
 msgid " Mail "
 msgstr " Po¹ta "
+
+#: cli/cmdint.c:73
+msgid "Copy <filespec> ... to standard output"
+msgstr ""
+
+#: cli/cmdint.c:75
+msgid "Change current directory to <dir>"
+msgstr ""
+
+#: cli/cmdint.c:76
+msgid "or display current directory"
+msgstr ""
+
+#: cli/cmdint.c:78
+msgid "Change attributes for <filename>"
+msgstr ""
+
+#: cli/cmdint.c:79
+msgid "<mode> is the following ORed together:"
+msgstr ""
+
+#: cli/cmdint.c:80
+msgid "1: read-only  2: hidden  4: system"
+msgstr ""
+
+#: cli/cmdint.c:82
+msgid "Clear screen"
+msgstr ""
+
+#: cli/cmdint.c:84
+msgid "Copy files matching <filespec> to <dest>"
+msgstr ""
+
+#: cli/cmdint.c:85
+msgid "If <filespec> matches multiple files,"
+msgstr ""
+
+#: cli/cmdint.c:86
+msgid "<dest> must be a directory"
+msgstr ""
+
+#: cli/cmdint.c:88
+msgid "Copy <string> ... to standard output"
+msgstr ""
+
+#: cli/cmdint.c:89
+msgid "Strings may be surrounded by \"\""
+msgstr ""
+
+#: cli/cmdint.c:91
+msgid "Exit EmuCON2"
+msgstr ""
+
+#: cli/cmdint.c:93
+msgid "Get help about <cmd> or list available commands"
+msgstr ""
+
+#: cli/cmdint.c:94
+msgid "Use HELP ALL for help on all commands"
+msgstr ""
+
+#: cli/cmdint.c:95
+msgid "Use HELP EDIT for help on line editing"
+msgstr ""
+
+#: cli/cmdint.c:97
+msgid "List files (default terse, horizontal)"
+msgstr ""
+
+#: cli/cmdint.c:98
+msgid "Specify -l for detailed list"
+msgstr ""
+
+#: cli/cmdint.c:100
+msgid "Create directory <dir>"
+msgstr ""
+
+#: cli/cmdint.c:102
+msgid "Copy <filespec> to standard output,"
+msgstr ""
+
+#: cli/cmdint.c:103
+msgid "pausing every screenful"
+msgstr ""
+
+#: cli/cmdint.c:105
+msgid "Copy files matching <filespec> to <dir>,"
+msgstr ""
+
+#: cli/cmdint.c:106
+msgid "then delete input files"
+msgstr ""
+
+#: cli/cmdint.c:108
+msgid "Set search path for external programs"
+msgstr ""
+
+#: cli/cmdint.c:109
+msgid "or display current search path"
+msgstr ""
+
+#: cli/cmdint.c:111
+msgid "Display current drive and directory"
+msgstr ""
+
+#: cli/cmdint.c:113
+msgid "Rename <oldname> to <newname>"
+msgstr ""
+
+#: cli/cmdint.c:115
+msgid "Delete files matching <filespec>"
+msgstr ""
+
+#: cli/cmdint.c:116
+msgid "Specify -q to be prompted each time"
+msgstr ""
+
+#: cli/cmdint.c:118
+msgid "Delete directory <dir>"
+msgstr ""
+
+#: cli/cmdint.c:120
+msgid "Show info for <drive> or current drive"
+msgstr ""
+
+#: cli/cmdint.c:122
+msgid "Display GEMDOS version"
+msgstr ""
+
+#: cli/cmdint.c:124
+msgid "Set line wrap or show current status"
+msgstr ""
+
+#: cli/cmdint.c:128
+msgid "up/down arrow = previous/next line in history"
+msgstr ""
+
+#: cli/cmdint.c:129
+msgid "left/right arrow = previous/next character"
+msgstr ""
+
+#: cli/cmdint.c:130
+msgid "shift-left/right arrow = previous/next word"
+msgstr ""
+
+#: cli/cmdint.c:219
+msgid "invalid mode argument"
+msgstr ""
+
+#: cli/cmdint.c:261
+msgid "Builtin commands:"
+msgstr ""
+
+#: cli/cmdint.c:322
+msgid "Listing of "
+msgstr ""
+
+#: cli/cmdint.c:372
+msgid "(empty)"
+msgstr ""
+
+#: cli/cmdint.c:429
+msgid "Delete ALL matching files"
+msgstr ""
+
+#: cli/cmdint.c:436
+msgid "Delete file "
+msgstr ""
+
+#: cli/cmdint.c:488
+msgid "Allocation info for drive "
+msgstr ""
+
+#: cli/cmdint.c:491
+msgid "  Size (bytes):   "
+msgstr ""
+
+#: cli/cmdint.c:492
+msgid "  Bytes used:     "
+msgstr ""
+
+#: cli/cmdint.c:493
+msgid "  Bytes free:     "
+msgstr ""
+
+#: cli/cmdint.c:494
+msgid "  Total clusters: "
+msgstr ""
+
+#: cli/cmdint.c:495
+msgid "  Free clusters:  "
+msgstr ""
+
+#: cli/cmdint.c:496
+msgid "  Sectors/cluster:"
+msgstr ""
+
+#: cli/cmdint.c:497
+msgid "  Bytes/sector:   "
+msgstr ""
+
+#: cli/cmdint.c:625
+msgid " is not a directory"
+msgstr ""
+
+#: cli/cmdint.c:654
+msgid " and "
+msgstr ""
+
+#: cli/cmdint.c:660
+msgid "Copying "
+msgstr ""
+
+#: cli/cmdint.c:662
+msgid " to "
+msgstr ""
+
+#: cli/cmdint.c:698
+msgid " ... deleting "
+msgstr ""
+
+#: cli/cmdint.c:708
+msgid " ... done"
+msgstr ""
+
+#: cli/cmdint.c:764
+msgid " or "
+msgstr ""
+
+#: cli/cmdint.c:792
+msgid "CR to continue ..."
+msgstr ""
+
+#: cli/cmdmain.c:61
+msgid "Welcome to EmuCON2: type HELP for builtin commands"
+msgstr ""
+
+#: cli/cmdmain.c:80
+msgid "warning: no history buffers"
+msgstr ""
+
+#: cli/cmdparse.c:29
+msgid "more than one redirection"
+msgstr ""
+
+#: cli/cmdparse.c:47
+msgid "no filename for redirection"
+msgstr ""
+
+#: cli/cmdparse.c:53
+msgid "error in quoted field"
+msgstr ""
+
+#: cli/cmdparse.c:57
+msgid "error parsing line"
+msgstr ""
+
+#: cli/cmdutil.c:63
+msgid "file not found"
+msgstr ""
+
+#: cli/cmdutil.c:66
+msgid "path not found"
+msgstr ""
+
+#: cli/cmdutil.c:69
+msgid "no more file handles"
+msgstr ""
+
+#: cli/cmdutil.c:72
+msgid "can't create file"
+msgstr ""
+
+#: cli/cmdutil.c:75
+msgid "not enough memory"
+msgstr ""
+
+#: cli/cmdutil.c:78
+msgid "invalid drive"
+msgstr ""
+
+#: cli/cmdutil.c:81
+msgid "interrupted"
+msgstr ""
+
+#: cli/cmdutil.c:84
+msgid "invalid path"
+msgstr ""
+
+#: cli/cmdutil.c:87
+msgid "can't write to disk (full?)"
+msgstr ""
+
+#: cli/cmdutil.c:90
+msgid "cmdline too long"
+msgstr ""
+
+#: cli/cmdutil.c:93
+msgid "directory not empty"
+msgstr ""
+
+#: cli/cmdutil.c:96
+msgid "wrong number of arguments"
+msgstr ""
+
+#: cli/cmdutil.c:99
+msgid "error code "
+msgstr ""
+
