@@ -5,25 +5,27 @@ or how having printf("welcome") display "willkommen".
 Principle
 =========
 
-A gettext-like approach is used. A run-time function
+Two different methods are used, depending on whether EmuTOS is being
+built for a single language or multiple languages.  For single languages,
+the strings are translated 'in place'; for multiple languages, they are
+translated at run time via gettext(). gettext() is a function which is
+called on translatable strings, looks in a hash table and returns a
+translation. If no translation is found, the supplied string is returned.
 
-  char * gettext(char *)
+In either case, we need to know which strings are translatable.
+Translatable strings are marked in the source code in two ways:
+  _("blah") specifies a string used in an expression
+  N_("blah") specifies a string used in a declaration
 
-is called on translatable strings, looks in a hash table and returns
-a translation. If no translation is found, the supplied string is
-returned. So we need to know
-- what string is translatable
-- when to do the translation
+Both macros are defined in "nls.h".  For single-language support, both
+macros just expand to a string, i.e.
+  _("blah") => "blah"
+  N_("blah") => "blah"
+For multiple-language support, the macros expand as follows:
+  _("blah") => gettext("blah")
+  N_("blah") => "blah"
 
-Translatable strings are marked in the source code using two ways:
-
-  _("blah")    is #defined as being      gettext("blah")
-  N_("blah")   is #defined as simply     "blah"
-
-Both macros are defined in "nls.h".
-The former is intended to be used in expressions, the latter in
-declarations, as in the following example:
-
+Here's a simple example of usage:
   #include "nls.h"
   char *answer_names[] = { N_("yes"), N_("no") };
 
@@ -33,24 +35,27 @@ declarations, as in the following example:
            gettext( answer_names[answer] ));
   }
 
-Translatable strings not immediately translated by _(...) need
-to be translated using gettext() explicitly.
+Note that translatable strings not immediately translated by _(...)
+need to be translated using gettext() explicitly.
 
 
-Operations
-==========
+Operation
+=========
 
-A tool called "bug" is supplied. Bug does three operations:
-- xgettext: scan the C source files to collect translateable
-  strings by looking for _("...") and N_("..."), and put all
-  translatable strings in a po-file called messages.pot
-- update po-file: compares the supplied po-file to messages.pot
-  and updates the po-file (adding for instance new entries
-  for new translatable strings)
-- make: creates the C file(s) that will be linked to EmuTOS
-  to provide the translation hashes. NOTE: "bug make" is invoked
-  by the EmuTOS Makefile, you should not invoke it directly.
-
+A tool called "bug" is supplied. Bug does four operations:
+- xgettext: scans the C source files to collect translatable strings
+  by looking for _("...") and N_("..."), and puts all such strings into
+  a po-file called messages.pot
+- update po-file: compares the supplied po-file to messages.pot and
+  updates the po-file (adding for instance new entries for new
+  translatable strings)
+- make: creates the C file langs.c that will be linked to EmuTOS to
+  provide the translation hashes for multi-language versions of EmuTOS.
+  NOTE: "bug make" is invoked by the EmuTOS Makefile; you should not
+  invoke it directly.
+- translate: translates the translatable strings in a single C file,
+  creating a temporary C file that will be directly compiled into
+  EmuTOS, when it is being built for a single language
 
 po/POTFILES.in  }   bug xgettext
 C source code   }------------------> po/messages.pot
@@ -62,28 +67,31 @@ po/messages.pot }   bug update po/xx.po
 po/xx.po        }------------------------->  po/xx.po
 
 po/LINGUAS      }   bug make   (invoked by the Makefile)
-po files        }--------------> C source files
+po files        }--------------> langs.c
 po/messages.pot }
+
+po/LINGUAS      }   bug translate (invoked by the Makefile)
+po file         }--------------> translated C source file
+C source file   }
 
 
 Who does what
 =============
 
-The translator for language 'xx' owns po/xx.po. The translator
-edits it, adding translations (initially all translations are
-empty). It is the translator's responsibility to update the po-file
-regularly to make sure no translation is missing. "update" here
-means, generate po/messages.pot using bug xgettext, and then do
-bug update po/xx.po. This is a manual task.
+The translator for language 'xx' owns po/xx.po. The translator edits it,
+adding translations (initially all translations are empty). It is the
+translator's responsibility to update the po-file regularly to make sure
+no translation is missing. "update" here means: generate po/messages.pot
+using bug xgettext, and then do bug update po/xx.po. This is a manual task.
 
-To build EmuTOS, a set of C source files containing the translation
-hashes are needed. These files are output by bug make. Bug make needs
-a po/messages.pot. Thus, the Makefile contains rules to run
-bug make and if po/messages.pot is not present, bug xgettext.
+To build EmuTOS for multiple languages, a C source file containing the
+translation hashes are needed. This file, langs.c, is output by bug make.
+Bug make needs a po/messages.pot. Thus, the Makefile contains rules to
+run bug make and if po/messages.pot is not present, bug xgettext.
 
-Running bug xgettext over an existing messages.pot is not done
-by the Makefile, because the Makefile has no easy way to know
-when this is needed.
+Running bug xgettext over an existing messages.pot is not done by the
+Makefile, because the Makefile has no easy way of knowing when this is
+needed.
 
 
 Makefile and Git usage
@@ -179,15 +187,14 @@ Details
 updating po-files will
 - create a backup po/xx.po.bak
 - keep all user comments from the previous po-file
-- take no user comments from messages.pot (messages.pot is not
-  intended to be edited)
+- take no user comments from messages.pot (messages.pot is not intended
+  to be edited)
 - replace all #: references by those found in messages.pot
 - comment out entries not found in messages.pot
-- add entries found in messages.pot, but missing from the
-  previous po-file
+- add entries found in messages.pot, but missing from the previous po-file
 - create an administrative entry if there is none
-The po-files are parsed entirely in memory, then written
-back to files. Any special string formatting will be lost.
+The po-files are parsed entirely in memory, then written back to files.
+Any special string formatting will be lost.
 
 
 Hints
