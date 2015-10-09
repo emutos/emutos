@@ -55,7 +55,7 @@
 #include <stdarg.h>
 #include <time.h>
 
-#define VERSION "0.2d"
+#define VERSION "0.2e"
 
 #define ALERT_TEXT_WARNINGS 1   /* 1 => generate warning msgs */
 #define MAX_LINE_COUNT      5   /* validation values */
@@ -953,8 +953,10 @@ static void pca_translate_gstring(void *this, str *s, char *fname, int lineno)
   t = s_detach(s);
   e = o_find(p->o, t);
   if(e) {  /* if there is a translation, get it instead */
-    free(t);
-    t = xstrdup(e->msgstr);
+    if (e->msgstr[0]) { /* if the translation isn't empty, use it instead */
+      free(t);
+      t = xstrdup(e->msgstr);
+    }
   }
   p->conv(t);  /* convert the string, be it a translation or the original */
   print_canon(p->f, t, NULL);
