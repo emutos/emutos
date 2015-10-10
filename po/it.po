@@ -708,7 +708,7 @@ msgstr "DISCO"
 msgid "TRASH"
 msgstr "CESTINO"
 
-#: desk/desk_rsc.c:1693 cli/cmdint.c:1016
+#: desk/desk_rsc.c:1693
 msgid "-More-"
 msgstr "-Continua-"
 
@@ -1321,3 +1321,6 @@ msgstr "numero errato di argomenti"
 msgid "error code "
 msgstr "codice errore "
 
+#: cli/cmdint.c:1016
+msgid "--More--"
+msgstr "--Continua--"

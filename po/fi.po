@@ -703,7 +703,7 @@ msgstr "LEVYKE"
 msgid "TRASH"
 msgstr "ROSKIS"
 
-#: desk/desk_rsc.c:1693 cli/cmdint.c:1016
+#: desk/desk_rsc.c:1693
 msgid "-More-"
 msgstr "-Lis‰‰-"
 
@@ -1309,3 +1309,6 @@ msgstr "v‰‰r‰ m‰‰r‰ argumentteja"
 msgid "error code "
 msgstr "virhekoodi "
 
+#: cli/cmdint.c:1016
+msgid "--More--"
+msgstr "--Lis‰‰--"

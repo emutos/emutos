@@ -1013,7 +1013,7 @@ char c, cprev = 0, response;
             conout(c);
             if (paging && (c == '\n')) {
                 if (++linecount >= screen_rows-1) {
-                    message(_("-More-"));
+                    message(_("--More--"));
                     while(1) {
                         response = conin() & 0xff;
                         if (response == '\r')   /* CR displays the next line */

@@ -715,7 +715,7 @@ msgstr "ƒˆ‘‰‘"
 msgid "TRASH"
 msgstr "€ˆ‹€’€"
 
-#: desk/desk_rsc.c:1693 cli/cmdint.c:1016
+#: desk/desk_rsc.c:1693
 msgid "-More-"
 msgstr "-œ¨ ©©æ«œ¨˜-"
 
@@ -1328,3 +1328,6 @@ msgstr "œ©­˜¢£â¤¦ª ˜¨ Ÿ£æª §˜¨˜£â«¨à¤"
 msgid "error code "
 msgstr "¡à› ¡æª ©­á¢£˜«¦ª"
 
+#: cli/cmdint.c:1016
+msgid "--More--"
+msgstr "--œ¨ ©©æ«œ¨˜--"

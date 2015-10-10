@@ -708,7 +708,7 @@ msgstr "DISQUE"
 msgid "TRASH"
 msgstr "CORBEILLE"
 
-#: desk/desk_rsc.c:1693 cli/cmdint.c:1016
+#: desk/desk_rsc.c:1693
 msgid "-More-"
 msgstr "-Plus-"
 
@@ -1325,3 +1325,6 @@ msgstr "mauvais nombre d'arguments"
 msgid "error code "
 msgstr "code d'erreur "
 
+#: cli/cmdint.c:1016
+msgid "--More--"
+msgstr "--Plus--"

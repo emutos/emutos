@@ -709,7 +709,7 @@ msgstr "DISCO"
 msgid "TRASH"
 msgstr "PAPELERA"
 
-#: desk/desk_rsc.c:1693 cli/cmdint.c:1016
+#: desk/desk_rsc.c:1693
 msgid "-More-"
 msgstr "-Más-"
 
@@ -1320,3 +1320,6 @@ msgstr "número de argumentos inválido"
 msgid "error code "
 msgstr "código de error "
 
+#: cli/cmdint.c:1016
+msgid "--More--"
+msgstr "--Más--"

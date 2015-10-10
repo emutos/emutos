@@ -709,7 +709,7 @@ msgstr "LAUFWERK"
 msgid "TRASH"
 msgstr "PAPIERKORB"
 
-#: desk/desk_rsc.c:1693 cli/cmdint.c:1016
+#: desk/desk_rsc.c:1693
 msgid "-More-"
 msgstr "-Mehr-"
 
@@ -1325,3 +1325,6 @@ msgstr "Falsche Zahl von Parametern"
 msgid "error code "
 msgstr "Fehlercode "
 
+#: cli/cmdint.c:1016
+msgid "--More--"
+msgstr "--Mehr--"

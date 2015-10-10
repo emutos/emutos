@@ -708,7 +708,7 @@ msgstr "ДИСК"
 msgid "TRASH"
 msgstr "КОРЗИНА"
 
-#: desk/desk_rsc.c:1693 cli/cmdint.c:1016
+#: desk/desk_rsc.c:1693
 msgid "-More-"
 msgstr "-Еще-"
 
@@ -1322,3 +1322,6 @@ msgstr "неверное количество аргументов"
 msgid "error code "
 msgstr "код ошибки "
 
+#: cli/cmdint.c:1016
+msgid "--More--"
+msgstr "--Еще--"

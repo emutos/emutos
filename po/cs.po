@@ -703,7 +703,7 @@ msgstr "DISK"
 msgid "TRASH"
 msgstr "KO©"
 
-#: desk/desk_rsc.c:1693 cli/cmdint.c:1016
+#: desk/desk_rsc.c:1693
 msgid "-More-"
 msgstr "-Pokraèování-"
 
@@ -1313,3 +1313,6 @@ msgstr ""
 msgid "error code "
 msgstr ""
 
+#: cli/cmdint.c:1016
+msgid "--More--"
+msgstr "--Pokraèování--"
