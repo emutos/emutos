@@ -2,6 +2,8 @@
 #
 # cs.po: the czech translations.
 #
+# Note that the CLI is deliberately left untranslated
+#
 msgid ""
 msgstr ""
 "Last-Translator: Jan Krupka <krupkaj@centrum.cz>\n"
@@ -1007,312 +1009,312 @@ msgstr " Po¹ta "
 
 #: cli/cmdint.c:73
 msgid "Copy <filespec> ... to standard output"
-msgstr ""
+msgstr "Copy <filespec> ... to standard output"
 
 #: cli/cmdint.c:75
 msgid "Change current directory to <dir>"
-msgstr ""
+msgstr "Change current directory to <dir>"
 
 #: cli/cmdint.c:76
 msgid "or display current directory"
-msgstr ""
+msgstr "or display current directory"
 
 #: cli/cmdint.c:78
 msgid "Change attributes for <filename>"
-msgstr ""
+msgstr "Change attributes for <filename>"
 
 #: cli/cmdint.c:79
 msgid "<mode> is the following ORed together:"
-msgstr ""
+msgstr "<mode> is the following ORed together:"
 
 #: cli/cmdint.c:80
 msgid "1: read-only  2: hidden  4: system"
-msgstr ""
+msgstr "1: read-only  2: hidden  4: system"
 
 #: cli/cmdint.c:82
 msgid "Clear screen"
-msgstr ""
+msgstr "Clear screen"
 
 #: cli/cmdint.c:84
 msgid "Copy files matching <filespec> to <dest>"
-msgstr ""
+msgstr "Copy files matching <filespec> to <dest>"
 
 #: cli/cmdint.c:85
 msgid "If <filespec> matches multiple files,"
-msgstr ""
+msgstr "If <filespec> matches multiple files,"
 
 #: cli/cmdint.c:86
 msgid "<dest> must be a directory"
-msgstr ""
+msgstr "<dest> must be a directory"
 
 #: cli/cmdint.c:88
 msgid "Copy <string> ... to standard output"
-msgstr ""
+msgstr "Copy <string> ... to standard output"
 
 #: cli/cmdint.c:89
 msgid "Strings may be surrounded by \"\""
-msgstr ""
+msgstr "Strings may be surrounded by \"\""
 
 #: cli/cmdint.c:91
 msgid "Exit EmuCON2"
-msgstr ""
+msgstr "Exit EmuCON2"
 
 #: cli/cmdint.c:93
 msgid "Get help about <cmd> or list available commands"
-msgstr ""
+msgstr "Get help about <cmd> or list available commands"
 
 #: cli/cmdint.c:94
 msgid "Use HELP ALL for help on all commands"
-msgstr ""
+msgstr "Use HELP ALL for help on all commands"
 
 #: cli/cmdint.c:95
 msgid "Use HELP EDIT for help on line editing"
-msgstr ""
+msgstr "Use HELP EDIT for help on line editing"
 
 #: cli/cmdint.c:97
 msgid "List files (default terse, horizontal)"
-msgstr ""
+msgstr "List files (default terse, horizontal)"
 
 #: cli/cmdint.c:98
 msgid "Specify -l for detailed list"
-msgstr ""
+msgstr "Specify -l for detailed list"
 
 #: cli/cmdint.c:100
 msgid "Create directory <dir>"
-msgstr ""
+msgstr "Create directory <dir>"
 
 #: cli/cmdint.c:102
 msgid "Copy <filespec> to standard output,"
-msgstr ""
+msgstr "Copy <filespec> to standard output,"
 
 #: cli/cmdint.c:103
 msgid "pausing every screenful"
-msgstr ""
+msgstr "pausing every screenful"
 
 #: cli/cmdint.c:105
 msgid "Copy files matching <filespec> to <dir>,"
-msgstr ""
+msgstr "Copy files matching <filespec> to <dir>,"
 
 #: cli/cmdint.c:106
 msgid "then delete input files"
-msgstr ""
+msgstr "then delete input files"
 
 #: cli/cmdint.c:108
 msgid "Set search path for external programs"
-msgstr ""
+msgstr "Set search path for external programs"
 
 #: cli/cmdint.c:109
 msgid "or display current search path"
-msgstr ""
+msgstr "or display current search path"
 
 #: cli/cmdint.c:111
 msgid "Display current drive and directory"
-msgstr ""
+msgstr "Display current drive and directory"
 
 #: cli/cmdint.c:113
 msgid "Rename <oldname> to <newname>"
-msgstr ""
+msgstr "Rename <oldname> to <newname>"
 
 #: cli/cmdint.c:115
 msgid "Delete files matching <filespec>"
-msgstr ""
+msgstr "Delete files matching <filespec>"
 
 #: cli/cmdint.c:116
 msgid "Specify -q to be prompted each time"
-msgstr ""
+msgstr "Specify -q to be prompted each time"
 
 #: cli/cmdint.c:118
 msgid "Delete directory <dir>"
-msgstr ""
+msgstr "Delete directory <dir>"
 
 #: cli/cmdint.c:120
 msgid "Show info for <drive> or current drive"
-msgstr ""
+msgstr "Show info for <drive> or current drive"
 
 #: cli/cmdint.c:122
 msgid "Display GEMDOS version"
-msgstr ""
+msgstr "Display GEMDOS version"
 
 #: cli/cmdint.c:124
 msgid "Set line wrap or show current status"
-msgstr ""
+msgstr "Set line wrap or show current status"
 
 #: cli/cmdint.c:128
 msgid "up/down arrow = previous/next line in history"
-msgstr ""
+msgstr "up/down arrow = previous/next line in history"
 
 #: cli/cmdint.c:129
 msgid "left/right arrow = previous/next character"
-msgstr ""
+msgstr "left/right arrow = previous/next character"
 
 #: cli/cmdint.c:130
 msgid "shift-left/right arrow = previous/next word"
-msgstr ""
+msgstr "shift-left/right arrow = previous/next word"
 
 #: cli/cmdint.c:219
 msgid "invalid mode argument"
-msgstr ""
+msgstr "invalid mode argument"
 
 #: cli/cmdint.c:261
 msgid "Builtin commands:"
-msgstr ""
+msgstr "Builtin commands:"
 
 #: cli/cmdint.c:322
 msgid "Listing of "
-msgstr ""
+msgstr "Listing of "
 
 #: cli/cmdint.c:372
 msgid "(empty)"
-msgstr ""
+msgstr "(empty)"
 
 #: cli/cmdint.c:429
 msgid "Delete ALL matching files"
-msgstr ""
+msgstr "Delete ALL matching files"
 
 #: cli/cmdint.c:436
 msgid "Delete file "
-msgstr ""
+msgstr "Delete file "
 
 #: cli/cmdint.c:488
 msgid "Allocation info for drive "
-msgstr ""
+msgstr "Allocation info for drive "
 
 #: cli/cmdint.c:491
 msgid "  Size (bytes):   "
-msgstr ""
+msgstr "  Size (bytes):   "
 
 #: cli/cmdint.c:492
 msgid "  Bytes used:     "
-msgstr ""
+msgstr "  Bytes used:     "
 
 #: cli/cmdint.c:493
 msgid "  Bytes free:     "
-msgstr ""
+msgstr "  Bytes free:     "
 
 #: cli/cmdint.c:494
 msgid "  Total clusters: "
-msgstr ""
+msgstr "  Total clusters: "
 
 #: cli/cmdint.c:495
 msgid "  Free clusters:  "
-msgstr ""
+msgstr "  Free clusters:  "
 
 #: cli/cmdint.c:496
 msgid "  Sectors/cluster:"
-msgstr ""
+msgstr "  Sectors/cluster:"
 
 #: cli/cmdint.c:497
 msgid "  Bytes/sector:   "
-msgstr ""
+msgstr "  Bytes/sector:   "
 
 #: cli/cmdint.c:625
 msgid " is not a directory"
-msgstr ""
+msgstr " is not a directory"
 
 #: cli/cmdint.c:654
 msgid " and "
-msgstr ""
+msgstr " and "
 
 #: cli/cmdint.c:660
 msgid "Copying "
-msgstr ""
+msgstr "Copying "
 
 #: cli/cmdint.c:662
 msgid " to "
-msgstr ""
+msgstr " to "
 
 #: cli/cmdint.c:698
 msgid " ... deleting "
-msgstr ""
+msgstr " ... deleting "
 
 #: cli/cmdint.c:708
 msgid " ... done"
-msgstr ""
+msgstr " ... done"
 
 #: cli/cmdint.c:764
 msgid " or "
-msgstr ""
+msgstr " or "
 
 #: cli/cmdint.c:792
 msgid "CR to continue ..."
-msgstr ""
+msgstr "CR to continue ..."
 
 #: cli/cmdmain.c:61
 msgid "Welcome to EmuCON2: type HELP for builtin commands"
-msgstr ""
+msgstr "Welcome to EmuCON2: type HELP for builtin commands"
 
 #: cli/cmdmain.c:80
 msgid "warning: no history buffers"
-msgstr ""
+msgstr "warning: no history buffers"
 
 #: cli/cmdparse.c:29
 msgid "more than one redirection"
-msgstr ""
+msgstr "more than one redirection"
 
 #: cli/cmdparse.c:47
 msgid "no filename for redirection"
-msgstr ""
+msgstr "no filename for redirection"
 
 #: cli/cmdparse.c:53
 msgid "error in quoted field"
-msgstr ""
+msgstr "error in quoted field"
 
 #: cli/cmdparse.c:57
 msgid "error parsing line"
-msgstr ""
+msgstr "error parsing line"
 
 #: cli/cmdutil.c:63
 msgid "file not found"
-msgstr ""
+msgstr "file not found"
 
 #: cli/cmdutil.c:66
 msgid "path not found"
-msgstr ""
+msgstr "path not found"
 
 #: cli/cmdutil.c:69
 msgid "no more file handles"
-msgstr ""
+msgstr "no more file handles"
 
 #: cli/cmdutil.c:72
 msgid "can't create file"
-msgstr ""
+msgstr "can't create file"
 
 #: cli/cmdutil.c:75
 msgid "not enough memory"
-msgstr ""
+msgstr "not enough memory"
 
 #: cli/cmdutil.c:78
 msgid "invalid drive"
-msgstr ""
+msgstr "invalid drive"
 
 #: cli/cmdutil.c:81
 msgid "interrupted"
-msgstr ""
+msgstr "interrupted"
 
 #: cli/cmdutil.c:84
 msgid "invalid path"
-msgstr ""
+msgstr "invalid path"
 
 #: cli/cmdutil.c:87
 msgid "can't write to disk (full?)"
-msgstr ""
+msgstr "can't write to disk (full?)"
 
 #: cli/cmdutil.c:90
 msgid "cmdline too long"
-msgstr ""
+msgstr "cmdline too long"
 
 #: cli/cmdutil.c:93
 msgid "directory not empty"
-msgstr ""
+msgstr "directory not empty"
 
 #: cli/cmdutil.c:96
 msgid "wrong number of arguments"
-msgstr ""
+msgstr "wrong number of arguments"
 
 #: cli/cmdutil.c:99
 msgid "error code "
-msgstr ""
+msgstr "error code "
 
 #: cli/cmdint.c:1016
 msgid "--More--"
-msgstr "--Pokraèování--"
+msgstr "--More--"
