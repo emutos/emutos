@@ -1,6 +1,9 @@
 # -*- coding: iso-latin-1; -*-
 # translation of fi.po to Suomi
 # Eero Tamminen <eerott@gmail>, 2005-2013.
+#
+# Note that the CLI is deliberately left untranslated
+#
 msgid ""
 msgstr ""
 "Last-Translator: Eero Tamminen <eerott@gmail>\n"
@@ -1003,312 +1006,312 @@ msgstr " Posti "
 
 #: cli/cmdint.c:73
 msgid "Copy <filespec> ... to standard output"
-msgstr "Kopioi <filespec> ... vakiotulosteeseen"
+msgstr "Copy <filespec> ... to standard output"
 
 #: cli/cmdint.c:75
 msgid "Change current directory to <dir>"
-msgstr "Siirry nykyisestä <dir> hakemistoon"
+msgstr "Change current directory to <dir>"
 
 #: cli/cmdint.c:76
 msgid "or display current directory"
-msgstr "tai näytä nykyinen hakemisto"
+msgstr "or display current directory"
 
 #: cli/cmdint.c:78
 msgid "Change attributes for <filename>"
-msgstr "Vaihda <filename> tiedoston ominaisuuksia"
+msgstr "Change attributes for <filename>"
 
 #: cli/cmdint.c:79
 msgid "<mode> is the following ORed together:"
-msgstr "<mode> on seuraavien OR-yhdistelmä:"
+msgstr "<mode> is the following ORed together:"
 
 #: cli/cmdint.c:80
 msgid "1: read-only  2: hidden  4: system"
-msgstr "1: kirjoitussuojattu  2: piilotettu  4: systeemi"
+msgstr "1: read-only  2: hidden  4: system"
 
 #: cli/cmdint.c:82
 msgid "Clear screen"
-msgstr "Tyhjennä ruutu"
+msgstr "Clear screen"
 
 #: cli/cmdint.c:84
 msgid "Copy files matching <filespec> to <dest>"
-msgstr "Kopioi <filespec> -> <dest>"
+msgstr "Copy files matching <filespec> to <dest>"
 
 #: cli/cmdint.c:85
 msgid "If <filespec> matches multiple files,"
-msgstr "Jos <filespec> vastaa useampaa tiedostoa,"
+msgstr "If <filespec> matches multiple files,"
 
 #: cli/cmdint.c:86
 msgid "<dest> must be a directory"
-msgstr "<dest>:n pitää olla hakemisto"
+msgstr "<dest> must be a directory"
 
 #: cli/cmdint.c:88
 msgid "Copy <string> ... to standard output"
-msgstr "Kopioi merkkijono <string> ... vakiotulosteeseen"
+msgstr "Copy <string> ... to standard output"
 
 #: cli/cmdint.c:89
 msgid "Strings may be surrounded by \"\""
-msgstr "Merkkijonot voidaan antaa \"\" merkkien sisällä"
+msgstr "Strings may be surrounded by \"\""
 
 #: cli/cmdint.c:91
 msgid "Exit EmuCON2"
-msgstr "Poistu EmuCON2:sta"
+msgstr "Exit EmuCON2"
 
 #: cli/cmdint.c:93
 msgid "Get help about <cmd> or list available commands"
-msgstr "Näytä <cmd> komennon kuvaus tai listaa komennot"
+msgstr "Get help about <cmd> or list available commands"
 
 #: cli/cmdint.c:94
 msgid "Use HELP ALL for help on all commands"
-msgstr "HELP ALL näyttää kaikkien komentojen kuvaukset"
+msgstr "Use HELP ALL for help on all commands"
 
 #: cli/cmdint.c:95
 msgid "Use HELP EDIT for help on line editing"
-msgstr "HELP EDIT kertoo rivin muokkauksesta"
+msgstr "Use HELP EDIT for help on line editing"
 
 #: cli/cmdint.c:97
 msgid "List files (default terse, horizontal)"
-msgstr "Listaa tiedostot (suppeasti, vaakaan)"
+msgstr "List files (default terse, horizontal)"
 
 #: cli/cmdint.c:98
 msgid "Specify -l for detailed list"
-msgstr "-l antaa yksityiskohtaisen listan"
+msgstr "Specify -l for detailed list"
 
 #: cli/cmdint.c:100
 msgid "Create directory <dir>"
-msgstr "Luo <dir> hakemisto"
+msgstr "Create directory <dir>"
 
 #: cli/cmdint.c:102
 msgid "Copy <filespec> to standard output,"
-msgstr "Kopioi <filespec> vakiotulosteeseen,"
+msgstr "Copy <filespec> to standard output,"
 
 #: cli/cmdint.c:103
 msgid "pausing every screenful"
-msgstr "pysähtyen joka ruudullisella"
+msgstr "pausing every screenful"
 
 #: cli/cmdint.c:105
 msgid "Copy files matching <filespec> to <dir>,"
-msgstr "Kopioi <filespec>:ä vastaavat tiedostot hakemistoon <dir>,"
+msgstr "Copy files matching <filespec> to <dir>,"
 
 #: cli/cmdint.c:106
 msgid "then delete input files"
-msgstr "sitten poista syötetiedostot"
+msgstr "then delete input files"
 
 #: cli/cmdint.c:108
 msgid "Set search path for external programs"
-msgstr "Aseta hakupolku ulkoisille ohjelmille"
+msgstr "Set search path for external programs"
 
 #: cli/cmdint.c:109
 msgid "or display current search path"
-msgstr "tai näytä nykyinen hakupolku"
+msgstr "or display current search path"
 
 #: cli/cmdint.c:111
 msgid "Display current drive and directory"
-msgstr "Näytä nykyinen asema ja hakemisto"
+msgstr "Display current drive and directory"
 
 #: cli/cmdint.c:113
 msgid "Rename <oldname> to <newname>"
-msgstr "Nimeä <oldname> -> <newname>"
+msgstr "Rename <oldname> to <newname>"
 
 #: cli/cmdint.c:115
 msgid "Delete files matching <filespec>"
-msgstr "Poista <filespec>:ä vastaavat tiedostot"
+msgstr "Delete files matching <filespec>"
 
 #: cli/cmdint.c:116
 msgid "Specify -q to be prompted each time"
-msgstr "-q kysyy varmistuksen jokaiselle"
+msgstr "Specify -q to be prompted each time"
 
 #: cli/cmdint.c:118
 msgid "Delete directory <dir>"
-msgstr "Poista <dir> hakemisto"
+msgstr "Delete directory <dir>"
 
 #: cli/cmdint.c:120
 msgid "Show info for <drive> or current drive"
-msgstr "Näytä tiedot <drive>:lle tai nykyiselle asemalle"
+msgstr "Show info for <drive> or current drive"
 
 #: cli/cmdint.c:122
 msgid "Display GEMDOS version"
-msgstr "Näytä GEMDOS versio"
+msgstr "Display GEMDOS version"
 
 #: cli/cmdint.c:124
 msgid "Set line wrap or show current status"
-msgstr "Aseta rivitys tai näytä nykyinen tila"
+msgstr "Set line wrap or show current status"
 
 #: cli/cmdint.c:128
 msgid "up/down arrow = previous/next line in history"
-msgstr "ylös/alas = edellinen/seuraava rivi historiassa"
+msgstr "up/down arrow = previous/next line in history"
 
 #: cli/cmdint.c:129
 msgid "left/right arrow = previous/next character"
-msgstr "vasen/oikea = edellinen/seuraava merkki"
+msgstr "left/right arrow = previous/next character"
 
 #: cli/cmdint.c:130
 msgid "shift-left/right arrow = previous/next word"
-msgstr "shift-vasen/oikea = edellinen/seuraava sana"
+msgstr "shift-left/right arrow = previous/next word"
 
 #: cli/cmdint.c:219
 msgid "invalid mode argument"
-msgstr "Sopimaton tila-argumentti"
+msgstr "invalid mode argument"
 
 #: cli/cmdint.c:261
 msgid "Builtin commands:"
-msgstr "Sisäänrakennetut komennot:"
+msgstr "Builtin commands:"
 
 #: cli/cmdint.c:322
 msgid "Listing of "
-msgstr "Listataan "
+msgstr "Listing of "
 
 #: cli/cmdint.c:372
 msgid "(empty)"
-msgstr "(tyhjä)"
+msgstr "(empty)"
 
 #: cli/cmdint.c:429
 msgid "Delete ALL matching files"
-msgstr "Poista KAIKKI vastaavat tiedostot"
+msgstr "Delete ALL matching files"
 
 #: cli/cmdint.c:436
 msgid "Delete file "
-msgstr "Poista tiedosto "
+msgstr "Delete file "
 
 #: cli/cmdint.c:488
 msgid "Allocation info for drive "
-msgstr "Varaustiedot asemalle "
+msgstr "Allocation info for drive "
 
 #: cli/cmdint.c:491
 msgid "  Size (bytes):   "
-msgstr "  Koko (tavuja):      "
+msgstr "  Size (bytes):   "
 
 #: cli/cmdint.c:492
 msgid "  Bytes used:     "
-msgstr "  Tavuja käytetty:    "
+msgstr "  Bytes used:     "
 
 #: cli/cmdint.c:493
 msgid "  Bytes free:     "
-msgstr "  Tavuja vapaana:     "
+msgstr "  Bytes free:     "
 
 #: cli/cmdint.c:494
 msgid "  Total clusters: "
-msgstr "  Kaikki klusterit:   "
+msgstr "  Total clusters: "
 
 #: cli/cmdint.c:495
 msgid "  Free clusters:  "
-msgstr "  Vapaita klustereita:"
+msgstr "  Free clusters:  "
 
 #: cli/cmdint.c:496
 msgid "  Sectors/cluster:"
-msgstr "  Sektoreita/klusteri:"
+msgstr "  Sectors/cluster:"
 
 #: cli/cmdint.c:497
 msgid "  Bytes/sector:   "
-msgstr "  Tavuja/sektori:     "
+msgstr "  Bytes/sector:   "
 
 #: cli/cmdint.c:625
 msgid " is not a directory"
-msgstr " ei ole hakemisto"
+msgstr " is not a directory"
 
 #: cli/cmdint.c:654
 msgid " and "
-msgstr " ja "
+msgstr " and "
 
 #: cli/cmdint.c:660
 msgid "Copying "
-msgstr "Kopioidaan "
+msgstr "Copying "
 
 #: cli/cmdint.c:662
 msgid " to "
-msgstr " -> "
+msgstr " to "
 
 #: cli/cmdint.c:698
 msgid " ... deleting "
-msgstr " ... poistetaan "
+msgstr " ... deleting "
 
 #: cli/cmdint.c:708
 msgid " ... done"
-msgstr " ... tehty"
+msgstr " ... done"
 
 #: cli/cmdint.c:764
 msgid " or "
-msgstr " tai "
+msgstr " or "
 
 #: cli/cmdint.c:792
 msgid "CR to continue ..."
-msgstr "Jatka rivinvaihdolla...."
+msgstr "CR to continue ..."
 
 #: cli/cmdmain.c:61
 msgid "Welcome to EmuCON2: type HELP for builtin commands"
-msgstr "EmuCON2: HELP komento listaa kaikki EmuTOS komennot"
+msgstr "Welcome to EmuCON2: type HELP for builtin commands"
 
 #: cli/cmdmain.c:80
 msgid "warning: no history buffers"
-msgstr "varoitus: ei historiapuskureita"
+msgstr "warning: no history buffers"
 
 #: cli/cmdparse.c:29
 msgid "more than one redirection"
-msgstr "enemmän kuin yksi uudelleenohjaus"
+msgstr "more than one redirection"
 
 #: cli/cmdparse.c:47
 msgid "no filename for redirection"
-msgstr "uudelleenohjattava tiedosto puuttuu"
+msgstr "no filename for redirection"
 
 #: cli/cmdparse.c:53
 msgid "error in quoted field"
-msgstr "virhe lainatussa kentässä"
+msgstr "error in quoted field"
 
 #: cli/cmdparse.c:57
 msgid "error parsing line"
-msgstr "rivin tulkinta ei onnistu"
+msgstr "error parsing line"
 
 #: cli/cmdutil.c:63
 msgid "file not found"
-msgstr "tiedostoa ei löydy"
+msgstr "file not found"
 
 #: cli/cmdutil.c:66
 msgid "path not found"
-msgstr "polkua ei löydy"
+msgstr "path not found"
 
 #: cli/cmdutil.c:69
 msgid "no more file handles"
-msgstr "ei riitävästi tiedostokahvoja"
+msgstr "no more file handles"
 
 #: cli/cmdutil.c:72
 msgid "can't create file"
-msgstr "tiedoston luonti ei onnistu"
+msgstr "can't create file"
 
 #: cli/cmdutil.c:75
 msgid "not enough memory"
-msgstr "ei riittävästi muistia"
+msgstr "not enough memory"
 
 #: cli/cmdutil.c:78
 msgid "invalid drive"
-msgstr "sopimaton asema"
+msgstr "invalid drive"
 
 #: cli/cmdutil.c:81
 msgid "interrupted"
-msgstr "keskeytetty"
+msgstr "interrupted"
 
 #: cli/cmdutil.c:84
 msgid "invalid path"
-msgstr "sopimaton polku"
+msgstr "invalid path"
 
 #: cli/cmdutil.c:87
 msgid "can't write to disk (full?)"
-msgstr "levyn kirjoitus ei onnistu (täynnä?)"
+msgstr "can't write to disk (full?)"
 
 #: cli/cmdutil.c:90
 msgid "cmdline too long"
-msgstr "liian pitkä komentorivi"
+msgstr "cmdline too long"
 
 #: cli/cmdutil.c:93
 msgid "directory not empty"
-msgstr "hakemisto ei ole tyhjä"
+msgstr "directory not empty"
 
 #: cli/cmdutil.c:96
 msgid "wrong number of arguments"
-msgstr "väärä määrä argumentteja"
+msgstr "wrong number of arguments"
 
 #: cli/cmdutil.c:99
 msgid "error code "
-msgstr "virhekoodi "
+msgstr "error code "
 
 #: cli/cmdint.c:1016
 msgid "--More--"
-msgstr "--Lisää--"
+msgstr "--More--"
