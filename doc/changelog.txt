@@ -6192,3 +6192,56 @@ Start... early ages
 - bios/dmasound.c: Mask bits when gpio mode 0 is called, just like original
   TOS is doing it. (THH)
 - po/de.po: Updated German translations. (THH)
+
+*******************************************************************************
+***                                                                         ***
+*** At this point, the repository was converted to git, which should be     ***
+*** referenced for detailed changes beyond this point.  Subsequent entries  ***
+*** in this file summarise the main changes between releases, as listed in  ***
+*** the announce.txt file provided with each release.                       ***
+***                                                                         ***
+*******************************************************************************
+
+CHANGES BETWEEN RELEASE 0.9.4 AND RELEASE 0.9.5
+
+Major changes:
+- AES/BIOS: implement critical error handler
+- BDOS: fix file not found issues with Steem hard disk emulation
+- BDOS: implement Pexec mode 7
+- BIOS: add alt-arrow support (mouse actions via keyboard)
+- BIOS: add dual keyboard support (for Greek/Russian keyboards)
+- BIOS: allow user to specify boot partition at startup
+- BIOS: allow EmuTOS to recover from program exceptions in user programs
+- BIOS: auto-detect multiple IDE interfaces
+- BIOS: fix detection of C: drive with Steem
+- EmuDesk: improve text object alignment for translated strings
+- VDI: add line-A flood fill; all line-A opcodes are now supported
+
+Other changes:
+- AES: increase button spacing in alerts
+- AES: increase AES stack size for Coldfire machines
+- BDOS: evaluate TPAsize flags in Pexec processing
+- BDOS: fix bug in cross-directory rename
+- BIOS: use interrupts for serial console instead of polling
+- BIOS: fix FPU detection: 68881/68882 are now differentiated correctly
+- BIOS: fix delay_loop() timing for M548X machines
+- BIOS: fix key repeat bug when entering values via alt-keypad
+- BIOS: implement XHInqDriver() XHDI function
+- BIOS: add explicit delay for parallel port strobe (fixes printing on fast systems)
+- BIOS: fix nationality code in ROM header
+- EmuCON2: translate text (by choice, some country codes use English)
+- EmuDesk: allow folders being displayed in an open window to be moved/deleted
+- EmuDesk: allow desktop "rubber-banding" in all directions
+- EmuDesk: display year as 4 digits where possible
+- EmuDesk: use _IDT cookie for EmuDesk date/time formatting
+- EmuDesk: fix bug in "sort by date" for directory display
+- EmuDesk: allocate screen objects dynamically
+- General: convert source code repository to git
+- General: implement error checking for translated alerts
+- General: replace "make release-version" with "make version"
+- VDI: ignore lineA variable 'multifill' for linea_rect() and linea_polygon()
+- VDI: speed up drawing of horizontal lines by v_pline()
+- VDI: fix lineA rectangle fill bugs
+- VDI: fix gap in circle drawn by v_arc()
+- VDI: fix VDI wideline display in 320x480 resolution
+- Lots of source code cleanup and minor bug fixes

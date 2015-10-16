@@ -46,7 +46,7 @@ Other changes:
 - BIOS: implement XHInqDriver() XHDI function
 - BIOS: add explicit delay for parallel port strobe (fixes printing on fast systems)
 - BIOS: fix nationality code in ROM header
-- EmuCON2: all text is now translated
+- EmuCON2: translate text (note: some country codes use English by choice)
 - EmuDesk: allow folders being displayed in an open window to be moved/deleted
 - EmuDesk: allow desktop "rubber-banding" in all directions
 - EmuDesk: display year as 4 digits where possible
@@ -63,7 +63,7 @@ Other changes:
 - VDI: fix VDI wideline display in 320x480 resolution
 - Lots of source code cleanup and minor bug fixes
 
-For a complete list of changes, refer to README.txt.
+For a detailed list of changes, refer to the git repository.
 
 
 

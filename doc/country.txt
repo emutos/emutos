@@ -43,7 +43,7 @@ Where is it in the code
   bios/country.c contains the logic to choose the fontsets to use.
 
 - date&time:
-  the cookie _IDT. Should be used by cli/command.c and bios/initinfo.
+  the cookie _IDT. Used by EmuDesk and EmuCON2.
 
 How is it set?
 --------------

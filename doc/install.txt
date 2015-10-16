@@ -47,58 +47,59 @@ A complete list of targets
 EmuTOS binaries
 ---------------
 
-192     etos192k.img, EmuTOS ROM padded to size 192 kB (starting at 0x00fc0000)
-256     etos256k.img, EmuTOS ROM padded to size 256 kB (starting at 0x00e00000)
-512     etos512k.img, EmuTOS ROM padded to size 512 kB (starting at 0x00e00000)
-aranym  emutos-aranym.img, suitable for ARAnyM
-firebee emutosfb.s19, to be flashed on the FireBee
+192         etos192k.img, EmuTOS ROM padded to size 192 kB (starting at 0x00fc0000)
+256         etos256k.img, EmuTOS ROM padded to size 256 kB (starting at 0x00e00000)
+512         etos512k.img, EmuTOS ROM padded to size 512 kB (starting at 0x00e00000)
+aranym      emutos-aranym.img, suitable for ARAnyM
+firebee     emutosfb.s19, to be flashed on the FireBee
 firebee-ram ramtos.img + boot.prg, a RAM tos for the FireBee
-amiga   emutos-amiga.rom, EmuTOS ROM for Amiga hardware
-amigakd emutos-kickdisk.adf, EmuTOS as Amiga 1000 Kickstart disk
-m548x   emutos-m548x.s19, EmuTOS-RAM for ColdFire Evaluation Boards
-ram     ramtos.img + boot.prg, a RAM tos
-flop    emutos.st, a bootable floppy with RAM tos
-cart    etoscart.img, EmuTOS as a diagnostic cartridge
+amiga       emutos-amiga.rom, EmuTOS ROM for Amiga hardware
+amigakd     emutos-kickdisk.adf, EmuTOS as Amiga 1000 Kickstart disk
+m548x-dbug  emutos-m548x-dbug.s19, EmuTOS-RAM for dBUG on ColdFire Evaluation Boards
+m548x-bas   emutos-m548x-bas.s19, EmuTOS-RAM for BaS_gcc on ColdFire Evaluation Boards
+ram         ramtos.img + boot.prg, a RAM tos
+flop        emutos.st, a bootable floppy with RAM tos
+cart        etoscart.img, EmuTOS as a diagnostic cartridge
 
 Binary targets modifiers
 ------------------------
 
-nothing       same as COUNTRY=us
-COUNTRY=xx    all countries in the binary, country xx being the default
-UNIQUE=xx     a smaller binary with only support for country xx
+nothing     same as COUNTRY=us
+COUNTRY=xx  all countries in the binary, country xx being the default
+UNIQUE=xx   a smaller binary with only support for country xx
 DEF='-DSOMEDEFINE=value'
-              used to override the default settings from include/config.h.
-              WARNING: do "make clean" first.
+            used to override the default settings from include/config.h.
+            WARNING: do "make clean" first.
 
 Utility targets
 ---------------
 
-fd0           dd emutos.st on a floppy (linux-specific)
+fd0         dd emutos.st on a floppy (linux-specific)
 
 Debug targets
 -------------
 
-dsm     dsm.txt, an edited disassembly of emutos.img
-fdsm    fal_dsm.txt, like above, but for 0x00e00000 ROMs
-*.dsm   disassembly of any .c or almost any .img file
+dsm         dsm.txt, an edited disassembly of emutos.img
+fdsm        fal_dsm.txt, like above, but for 0x00e00000 ROMs
+*.dsm       disassembly of any .c or almost any .img file
 
 Git-related targets
 -------------------
 
-depend       generates dependencies
-clean        cleans all generated files
-distclean    as clean + deletes also some temporary editor files
-gitready     ensure the files have a proper, canonic, format for Git
-checkindent  try 'indent' without altering the files
-indent       indent all files - never done yet :-(
+depend      generates dependencies
+clean       cleans all generated files
+distclean   as clean + deletes also some temporary editor files
+gitready    ensure the files have a proper, canonic, format for Git
+checkindent try 'indent' without altering the files
+indent      indent all files - never done yet :-(
 
 Release-related targets
 -------------------
 
-all192  all 192 kB images
-all256  all 256 kB images
-allbin  all 192 kB, 256 kB and 512 kB images
-release build the release archives into release-archives
+all192      all 192 kB images
+all256      all 256 kB images
+allbin      all 192 kB, 256 kB and 512 kB images
+release     build the release archives into release-archives
 
 
 STonX-specific notes
@@ -144,7 +145,7 @@ things:
    parameter STONX_NATIVE_PRINT to 1 before building EmuTOS.
 
 
-Have success!
+Good luck!
 
 -- 
 The EmuTOS development team
