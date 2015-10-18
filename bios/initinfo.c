@@ -185,13 +185,15 @@ static void cprint_devices(WORD dev)
 WORD initinfo(void)
 {
     int screen_height = v_cel_my + 1;
-    int initinfo_height = 21; /* Define ENABLE_KDEBUG to guess correct value */
+    int initinfo_height = 19; /* Define ENABLE_KDEBUG to guess correct value */
     int top_margin;
 #ifdef ENABLE_KDEBUG
     int actual_initinfo_height;
 #endif
     int i;
     WORD olddev = -1, dev = bootdev;
+    long fastramsize = xmxalloc(-1L, MX_TTRAM);
+    LONG hdd_available = blkdev_avail(HARDDISK_BOOTDEV);
 
 // If additional info lines are going to be printed in specific cases,
 // then initinfo_height must be adjusted in the same way here.
@@ -201,6 +203,10 @@ WORD initinfo(void)
 #if CONF_WITH_AROS
     initinfo_height += 3;
 #endif
+    if (fastramsize > 0)
+        initinfo_height += 1;
+    if (hdd_available)
+        initinfo_height += 1;
 
     /* Center the initinfo screen vertically */
     top_margin = (screen_height - initinfo_height) / 2;
@@ -236,13 +242,10 @@ WORD initinfo(void)
         cprintf(_("%ld kB"), /* memtop-membot */ xmxalloc(-1L, MX_STRAM) >> 10);
     pair_end();
 
-    {
-        long fastramsize = xmxalloc(-1L, MX_TTRAM);
-        if (fastramsize > 0) {
-            pair_start(_("Free FastRAM"));
-            cprintf(_("%ld kB"), fastramsize >> 10);
-            pair_end();
-        }
+    if (fastramsize > 0) {
+        pair_start(_("Free FastRAM"));
+        cprintf(_("%ld kB"), fastramsize >> 10);
+        pair_end();
     }
 
     cprintf("\033j");       /* save current cursor position */
@@ -256,7 +259,7 @@ WORD initinfo(void)
 
     set_margin(); cprintf(_("Hold <Control> to skip AUTO/ACC"));
     cprintf("\r\n");
-    if (blkdev_avail(HARDDISK_BOOTDEV)) {
+    if (hdd_available) {
         set_margin(); cprintf(_("Hold <Alternate> to skip HDD boot"));
         cprintf("\r\n");
     }
