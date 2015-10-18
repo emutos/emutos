@@ -474,7 +474,12 @@ void dopanic(const char *fmt, ...)
         kcprintf("%67susp=%08lx\n", "", proc_usp);
     }
 
-    set_sr(0x2300);         /* allow interrupts so we get keypresses */
+    /* allow interrupts so we get keypresses */
+#if CONF_WITH_SHIFTER
+    set_sr(0x2300);
+#else
+    set_sr(0x2000);
+#endif
     while(bconstat2())      /* eat any pending ones */
         bconin2();
     cprintf(_("\n*** Press any key to continue ***"));
