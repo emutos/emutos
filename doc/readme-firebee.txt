@@ -1,7 +1,7 @@
 EmuTOS - FireBee version
 
-This ROM is suitable for the FireBee hardware:
-http://acp.atari.org/
+This ROM is suitable for FireBee hardware.  See:
+http://firebee.org/
 
 emutosfb.s19 - Multilanguage
 
@@ -36,8 +36,8 @@ you don't need to change anything.
 
 To start EmuTOS on the FireBee, you have 2 options.
 
-1) Put the DIP switch #5 down and DIP switch #6 up. This is the preferred
-method, EmuTOS will be started directly from the BaS in fully native mode.
+1) Put DIP switch #5 down and DIP switch #6 up. This is the preferred
+method; EmuTOS will be started directly from the BaS in fully native mode.
 
 2) Start FireTOS. At the very beginning, a boot menu appears. Select 2 - EMUTOS.
 This will run EmuTOS over FreeRTOS and enable extra features, such as support
@@ -52,4 +52,3 @@ The FireBee ROM features:
 
 This ROM image has been built using:
 make firebee
-

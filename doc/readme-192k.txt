@@ -7,7 +7,7 @@ These ROMs are suitable for the following hardware:
 
 Unlike other ROM versions, they do NOT autodetect extra hardware, and might not
 work on machines with additional hardware. For example, they don't work under
-Hatari emulator's Falcon emulation due to missing VIDEL support.
+the Hatari emulator's Falcon emulation due to missing VIDEL support.
 
 Each ROM contains a single language:
 
@@ -30,4 +30,3 @@ Since EmuTOS 0.9.1, the 192 kB ROMs contain the same desktop as other variants.
 
 These ROM images have been built using:
 make all192
-
