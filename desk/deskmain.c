@@ -105,6 +105,7 @@ GLOBAL BYTE     gl_pmstr[4];
 
 GLOBAL WORD     gl_apid;
 
+extern WORD     enable_ceh;     /* in gemdosif.S */
 
 /* forward declaration  */
 static void    cnx_put(void);
@@ -437,6 +438,7 @@ static WORD do_filemenu(WORD item)
         break;
 
     case QUITITEM:
+        enable_ceh = FALSE; /* avoid possibility of useless form_alert()s */
         display_free_stack();
         pro_exit(G.g_cmd, G.g_tail);
         done = TRUE;
@@ -1433,6 +1435,9 @@ WORD deskmain(void)
 
     /* turn mouse on */
     desk_wait(FALSE);
+
+    /* enable graphical critical error handler */
+    enable_ceh = TRUE;
 
     /* loop handling user input until done */
     while(!done)

@@ -32,6 +32,7 @@
         .globl  _NUM_TICK
         .globl  _drwaddr
         .globl  _tikcod
+        .globl  _enable_ceh
 
         .extern _eralert
         .extern _rlr
@@ -110,6 +111,8 @@ _giveerr:
  * called during desktop startup, just before entering graphics mode
  */
 _takeerr:
+        moveq   #0,d0
+        move.w  d0,_enable_ceh      // initialise flag for _criterr_handler
         moveq   #-1,d0
         bsr     call_err            // get current error vector
         move.l  d0,save_etv_critic  //  & save it locally
@@ -119,7 +122,7 @@ _takeerr:
 /*
  * default critical error handler in graphics mode
  *
- * NOTE: we call form_alert() from eralert(), without going through
+ * NOTE 1: we call form_alert() from eralert(), without going through
  * the AES trap.  form_alert() may do a context switch, during which
  * the current stack pointer is saved in UDA_SPSUPER.  Although this
  * is restored later when the context is switched back to us, it will
@@ -130,8 +133,17 @@ _takeerr:
  *  . save UDA_SPSUPER before calling eralert(), and restore it after
  *  . save the current stack pointer, and restore it after
  *  . use our own private stack during critical error processing
+ *
+ * NOTE 2: for TOS compatibility, we should always call the old handler
+ * until the desktop is fully initialised.  We use the _enable_ceh flag,
+ * which is set to non-zero just before the main loop in deskmain().
  */
 criterr_handler:
+        tst.w   _enable_ceh         // should we invoke form_alert?
+        bne.b   normal              // yes
+        move.l  save_etv_critic,a0  // else go to old handler
+        jmp     (a0)
+normal:
         move.w  4(sp),d0            // d0 = error code
         move.w  6(sp),d1            // d1 = drive number
         movea.l _rlr,a0
@@ -454,6 +466,8 @@ _NUM_TICK:
         .ds.l    1
 _CMP_TICK:
         .ds.l    1
+_enable_ceh:
+        .ds.w    1      // flag to enable gui critical error handler
 
 /*
  *  data areas used by the critical error handler
