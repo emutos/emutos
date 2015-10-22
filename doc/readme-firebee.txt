@@ -52,3 +52,4 @@ The FireBee ROM features:
 
 This ROM image has been built using:
 make firebee
+

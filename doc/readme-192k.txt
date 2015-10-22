@@ -30,3 +30,4 @@ Since EmuTOS 0.9.1, the 192 kB ROMs contain the same desktop as other variants.
 
 These ROM images have been built using:
 make all192
+
