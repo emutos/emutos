@@ -1,5 +1,5 @@
 This release has been built on Linux Mint (a Ubuntu derivative), using
-Vincent Riviere's GCC 4.6.4 cross-compiler.  The custom tools used in
+Vincent Rivière's GCC 4.6.4 cross-compiler.  The custom tools used in
 the build process were built with native GCC 4.8.4.
 
 The source package and other binary packages are available at:

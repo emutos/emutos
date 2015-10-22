@@ -4222,7 +4222,7 @@ Start... early ages
 
 2012-12-31
 - bios/serport.c bios/serport.h: Refactored serial port support, based on
-  previous patch by Vincent Riviere. (RFB)
+  previous patch by Vincent Rivière. (RFB)
 
 2013-01-01
 - bios/blkdev.c bios/blkdev.h bios/disk.c bios/floppy.c bios/xhdi.c:
@@ -4689,7 +4689,7 @@ Start... early ages
   (standalone) version of EmuCON. (RFB)
 
 2013-04-07
-- cli/cmdasm.S: Minor code cleanup. Thanks to Vincent Riviere. (RFB)
+- cli/cmdasm.S: Minor code cleanup. Thanks to Vincent Rivière. (RFB)
 - cli/cmdexec.c: Formatting: change tabs to spaces, add GPL. (RFB)
 - cli/cmdexec.c: Execute programs even if file extension is omitted. (RFB)
 
