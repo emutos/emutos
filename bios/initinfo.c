@@ -354,7 +354,12 @@ WORD initinfo(void)
      * on exit, restore (pop) cursor position (neatness), then
      * clear screen so that subsequent text displays are clean
      */
+#if CONF_SERIAL_CONSOLE_ANSI
+    /* FIXME: Quick fix until save/restore cursor works with CONF_SERIAL_CONSOLE_ANSI */
+    cprintf("\r\n\r\n");
+#else
     cprintf("\033k\033E");
+#endif
 
     return dev;
 }
