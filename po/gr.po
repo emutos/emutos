@@ -37,55 +37,55 @@ msgstr "’¦ ©ç©«£˜ §ášà©œ!"
 msgid "GEMDOS drives"
 msgstr "Drives «¦¬ GEMDOS"
 
-#: bios/initinfo.c:223
+#: bios/initinfo.c:229
 msgid "EmuTOS Version"
 msgstr "EmuTOS Version"
 
-#: bios/initinfo.c:225
+#: bios/initinfo.c:231
 msgid "CPU type"
 msgstr "’ç§¦ª CPU"
 
-#: bios/initinfo.c:233
+#: bios/initinfo.c:239
 msgid "Machine"
 msgstr "“§¦¢¦š ©«ãª"
 
-#: bios/initinfo.c:235
+#: bios/initinfo.c:241
 msgid "Free ST-RAM"
 msgstr "„¢œçŸœ¨ ST-RAM"
 
-#: bios/initinfo.c:236 bios/initinfo.c:243
+#: bios/initinfo.c:242 bios/initinfo.c:247
 msgid "%ld kB"
 msgstr "%ld kB"
 
-#: bios/initinfo.c:242
+#: bios/initinfo.c:246
 msgid "Free FastRAM"
 msgstr "„¢œçŸœ¨ FastRAM"
 
-#: bios/initinfo.c:251
+#: bios/initinfo.c:254
 msgid "Boot time"
 msgstr "ğ¨˜ «¦¬ boot"
 
-#: bios/initinfo.c:257
+#: bios/initinfo.c:260
 msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "˜«ã©«œ <Control> š ˜ ¤˜ §˜¨˜¡á£¯œ«œ AUTO/ACC"
 
-#: bios/initinfo.c:260
+#: bios/initinfo.c:263
 msgid "Hold <Alternate> to skip HDD boot"
 msgstr "˜«ã©«œ <Alternate> š ˜ ¤˜ §˜¨˜¡á£¯œ«œ HDD"
 
-#: bios/initinfo.c:263
+#: bios/initinfo.c:266
 msgid "Press key 'X' to boot from X:"
 msgstr "˜«ã©«œ «¦ '•' š ˜ ¤˜ œ¡¡ ¤ã©œ«œ ˜§æ «¦ •:"
 
-#: bios/initinfo.c:266
+#: bios/initinfo.c:269
 msgid "Press <Esc> to run an early console"
 msgstr "˜«ã©«œ <Esc> š ˜ ¤˜ «¨â¥œ«œ £ ˜ §¨é £ ¡¦¤©æ¢˜"
 
-#: bios/initinfo.c:277
+#: bios/initinfo.c:280
 msgid " Hold <Shift> to pause this screen "
 msgstr "   ˜«ã©«œ «¦ <Shift> š ˜ §˜ç©   "
 
-#: bios/kprint.c:480
+#: bios/kprint.c:485
 msgid ""
 "\n"
 "*** Press any key to continue ***"
@@ -1334,3 +1334,4 @@ msgstr "error code "
 #: cli/cmdint.c:1016
 msgid "--More--"
 msgstr "--More--"
+

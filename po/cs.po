@@ -26,55 +26,55 @@ msgstr ""
 msgid "GEMDOS drives"
 msgstr "Disky GEMDOSu"
 
-#: bios/initinfo.c:223
+#: bios/initinfo.c:229
 msgid "EmuTOS Version"
 msgstr "EmuTOS verze"
 
-#: bios/initinfo.c:225
+#: bios/initinfo.c:231
 msgid "CPU type"
 msgstr "Typ CPU"
 
-#: bios/initinfo.c:233
+#: bios/initinfo.c:239
 msgid "Machine"
 msgstr "Poèítaè"
 
-#: bios/initinfo.c:235
+#: bios/initinfo.c:241
 msgid "Free ST-RAM"
 msgstr "Volná ST-RAM"
 
-#: bios/initinfo.c:236 bios/initinfo.c:243
+#: bios/initinfo.c:242 bios/initinfo.c:247
 msgid "%ld kB"
 msgstr "%ld kB"
 
-#: bios/initinfo.c:242
+#: bios/initinfo.c:246
 msgid "Free FastRAM"
 msgstr "Volná FastRAM"
 
-#: bios/initinfo.c:251
+#: bios/initinfo.c:254
 msgid "Boot time"
 msgstr "Èas startu"
 
-#: bios/initinfo.c:257
+#: bios/initinfo.c:260
 msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "Podr¾ <Ctrl> a pøeskoè AUTO/ACC"
 
-#: bios/initinfo.c:260
+#: bios/initinfo.c:263
 msgid "Hold <Alternate> to skip HDD boot"
 msgstr "Podr¾ <Alt> k pøeskoèení HDD"
 
-#: bios/initinfo.c:263
+#: bios/initinfo.c:266
 msgid "Press key 'X' to boot from X:"
 msgstr "Pro start z disku X: stisknìte klávesu 'X'."
 
-#: bios/initinfo.c:266
+#: bios/initinfo.c:269
 msgid "Press <Esc> to run an early console"
 msgstr "Pro spu¹tìní brzké konzole stisknìte <Esc>."
 
-#: bios/initinfo.c:277
+#: bios/initinfo.c:280
 msgid " Hold <Shift> to pause this screen "
 msgstr " Podr¾ <Shift> pro pauzu obrazovky "
 
-#: bios/kprint.c:480
+#: bios/kprint.c:485
 msgid ""
 "\n"
 "*** Press any key to continue ***"
@@ -1318,3 +1318,4 @@ msgstr "error code "
 #: cli/cmdint.c:1016
 msgid "--More--"
 msgstr "--More--"
+

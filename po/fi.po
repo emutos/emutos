@@ -26,55 +26,55 @@ msgstr ""
 msgid "GEMDOS drives"
 msgstr "GEMDOS-asemat"
 
-#: bios/initinfo.c:223
+#: bios/initinfo.c:229
 msgid "EmuTOS Version"
 msgstr "EmuTOS versio"
 
-#: bios/initinfo.c:225
+#: bios/initinfo.c:231
 msgid "CPU type"
 msgstr "CPU-tyyppi"
 
-#: bios/initinfo.c:233
+#: bios/initinfo.c:239
 msgid "Machine"
 msgstr "Kone"
 
-#: bios/initinfo.c:235
+#: bios/initinfo.c:241
 msgid "Free ST-RAM"
 msgstr "Vapaa ST-RAM"
 
-#: bios/initinfo.c:236 bios/initinfo.c:243
+#: bios/initinfo.c:242 bios/initinfo.c:247
 msgid "%ld kB"
 msgstr "%ld kB"
 
-#: bios/initinfo.c:242
+#: bios/initinfo.c:246
 msgid "Free FastRAM"
 msgstr "Vapaa FastRAM"
 
-#: bios/initinfo.c:251
+#: bios/initinfo.c:254
 msgid "Boot time"
 msgstr "Käynnistysaika"
 
-#: bios/initinfo.c:257
+#: bios/initinfo.c:260
 msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "<Cntrl> pohjassa = ohita AUTO/ACC"
 
-#: bios/initinfo.c:260
+#: bios/initinfo.c:263
 msgid "Hold <Alternate> to skip HDD boot"
 msgstr "<Alt> pohjassa = ohita kovalevy"
 
-#: bios/initinfo.c:263
+#: bios/initinfo.c:266
 msgid "Press key 'X' to boot from X:"
 msgstr "Käynnistys asemalta X: -> paina 'X'"
 
-#: bios/initinfo.c:266
+#: bios/initinfo.c:269
 msgid "Press <Esc> to run an early console"
 msgstr "Käynnistyskonsoli -> paina <Esc>"
 
-#: bios/initinfo.c:277
+#: bios/initinfo.c:280
 msgid " Hold <Shift> to pause this screen "
 msgstr "Pysäytä ruutu <Shift> näppäimellä "
 
-#: bios/kprint.c:480
+#: bios/kprint.c:485
 msgid ""
 "\n"
 "*** Press any key to continue ***"
@@ -1315,3 +1315,4 @@ msgstr "error code "
 #: cli/cmdint.c:1016
 msgid "--More--"
 msgstr "--More--"
+

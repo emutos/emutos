@@ -24,55 +24,55 @@ msgstr ""
 msgid "GEMDOS drives"
 msgstr "Lecteurs GEMDOS"
 
-#: bios/initinfo.c:223
+#: bios/initinfo.c:229
 msgid "EmuTOS Version"
 msgstr "EmuTOS Version"
 
-#: bios/initinfo.c:225
+#: bios/initinfo.c:231
 msgid "CPU type"
 msgstr "Type de CPU"
 
-#: bios/initinfo.c:233
+#: bios/initinfo.c:239
 msgid "Machine"
 msgstr "Machine"
 
-#: bios/initinfo.c:235
+#: bios/initinfo.c:241
 msgid "Free ST-RAM"
 msgstr "ST-RAM libre"
 
-#: bios/initinfo.c:236 bios/initinfo.c:243
+#: bios/initinfo.c:242 bios/initinfo.c:247
 msgid "%ld kB"
 msgstr "%ld ko"
 
-#: bios/initinfo.c:242
+#: bios/initinfo.c:246
 msgid "Free FastRAM"
 msgstr "FastRAM libre"
 
-#: bios/initinfo.c:251
+#: bios/initinfo.c:254
 msgid "Boot time"
 msgstr "Heure de démarrage"
 
-#: bios/initinfo.c:257
+#: bios/initinfo.c:260
 msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "Touche CTRL => pas d'AUTO/ACC"
 
-#: bios/initinfo.c:260
+#: bios/initinfo.c:263
 msgid "Hold <Alternate> to skip HDD boot"
 msgstr "Touche ALT => pas de disque dur"
 
-#: bios/initinfo.c:263
+#: bios/initinfo.c:266
 msgid "Press key 'X' to boot from X:"
 msgstr "Tapez 'X' pour démarrer depuis X:"
 
-#: bios/initinfo.c:266
+#: bios/initinfo.c:269
 msgid "Press <Esc> to run an early console"
 msgstr "Tapez <Esc> pour lancer la console"
 
-#: bios/initinfo.c:277
+#: bios/initinfo.c:280
 msgid " Hold <Shift> to pause this screen "
 msgstr " <Shift> pour maintenir cet écran "
 
-#: bios/kprint.c:480
+#: bios/kprint.c:485
 msgid ""
 "\n"
 "*** Press any key to continue ***"
@@ -1328,3 +1328,4 @@ msgstr "code d'erreur "
 #: cli/cmdint.c:1016
 msgid "--More--"
 msgstr "--Plus--"
+
