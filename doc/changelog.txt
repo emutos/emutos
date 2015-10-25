@@ -6214,6 +6214,7 @@ Major changes:
 - BIOS: allow EmuTOS to recover from program exceptions in user programs
 - BIOS: auto-detect multiple IDE interfaces
 - BIOS: fix detection of C: drive with Steem
+- BIOS: fix early stack initialization on Amiga
 - EmuDesk: improve text object alignment for translated strings
 - VDI: add line-A flood fill; all line-A opcodes are now supported
 
@@ -6227,9 +6228,10 @@ Other changes:
 - BIOS: fix delay_loop() timing for M548X machines
 - BIOS: fix key repeat bug when entering values via alt-keypad
 - BIOS: implement XHInqDriver() XHDI function
+- BIOS: fix some XHDI return codes (EDRIVE and EWRPRO)
 - BIOS: add explicit delay for parallel port strobe (fixes printing on fast systems)
 - BIOS: fix nationality code in ROM header
-- EmuCON2: translate text (by choice, some country codes use English)
+- EmuCON2: translate text (note: some country codes use English by choice)
 - EmuDesk: allow folders being displayed in an open window to be moved/deleted
 - EmuDesk: allow desktop "rubber-banding" in all directions
 - EmuDesk: display year as 4 digits where possible
