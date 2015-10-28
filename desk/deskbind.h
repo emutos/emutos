@@ -44,8 +44,8 @@
  * cs_timefmt)
  */
 #define DATEFORM_SEP    '/'     /* separator used if not using _IDT */
-#define DATEFORM_DMY    0       /* day-month-year */   
-#define DATEFORM_MDY    1       /* month-day-year */   
+#define DATEFORM_DMY    0       /* day-month-year */
+#define DATEFORM_MDY    1       /* month-day-year */
 #define DATEFORM_IDT    2       /* use format (incl separator) from _IDT cookie */
 #define TIMEFORM_24H    0       /* 24 hour clock */
 #define TIMEFORM_12H    1       /* 12 hour clock */

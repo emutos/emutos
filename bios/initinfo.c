@@ -179,7 +179,7 @@ static void cprint_devices(WORD dev)
 
 /*
  * initinfo - Show initial configuration at startup
- * 
+ *
  * returns the selected boot device
  */
 WORD initinfo(void)
@@ -328,7 +328,7 @@ WORD initinfo(void)
         /* if a non-modifier key was pressed, examine it */
         if (bconstat2()) {
             int c = 0xFF & bconin2();
- 
+
             c = toupper(c);
 #if WITH_CLI
             if (c == 0x1b) {

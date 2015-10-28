@@ -123,7 +123,7 @@ static int get_charset_index(void)
  *
  * the default values are taken from os_conf; if os_conf specifies
  * COUNTRY_ALL (invalid in _AKP), we replace it with OS_COUNTRY
- * 
+ *
  * if configured for multilanguage and NVRAM, and NVRAM is readable,
  * we override the defaults with the values from NVRAM
  */

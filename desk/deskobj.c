@@ -173,7 +173,7 @@ WORD obj_walloc(WORD x, WORD y, WORD w, WORD h)
 
 /*
  *  Reset a window object's x/y/w/h & free all its children
- * 
+ *
  *  The children (if any) are freed by moving them to the head of
  *  the free chain and NILing out the ob_head/ob_tail pointers of
  *  the parent.

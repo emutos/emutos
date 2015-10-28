@@ -6109,7 +6109,7 @@ Start... early ages
 - bios/lineavars.S: Updated comments.  Contributed by Eero Tamminen. (RFB)
 - vdi/vdi_line.c: Ignore lineA variable 'multifill' for linea_rect() and
   linea_polygon().  Contributed by Eero Tamminen. (RFB)
-  
+
 2015-03-27
 - vdi/vdi_fill.c: Code cleanup, better comments.  Contributed by Eero
   Tamminen. (RFB)

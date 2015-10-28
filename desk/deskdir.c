@@ -317,7 +317,7 @@ static WORD same_fold(BYTE *psrc, BYTE *pdst)
 
     /* restore it */
     *lastslsh = '\\';
-    
+
     return ret;
 }
 

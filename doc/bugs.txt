@@ -64,7 +64,7 @@ Atari Falcon / TOS v4 compatibility bugs:
 Problems that also occur in Atari TOS:
 - VDI: when drawing a wide polyline with squared ends and more than one
   segment, if the width of the line is greater than twice the length of
-  an ending segment, the end will have a bump rather than being square. 
+  an ending segment, the end will have a bump rather than being square.
   This is because wideline segments are joined by using filled circles
   whose radius is half the width of the line: the bump is a protruding
   part of the circle that joins the end segment to the previous one.

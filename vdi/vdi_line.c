@@ -676,7 +676,7 @@ static void quad_xform(WORD quad, WORD x, WORD y, WORD *tx, WORD *ty)
 
 
 /*
- * perp_off - calculate the perpendicular offsets 
+ * perp_off - calculate the perpendicular offsets
  *
  * Given a vector (vx,vy) which specifies the length and direction of
  * a line segment, this function returns x & y offsets to add/subtract
@@ -749,7 +749,7 @@ static void perp_off(WORD * px, WORD * py)
 
 /*
  * cir_dda - populate q_circle[] array
- * 
+ *
  * This is called by wideline() when the current wideline width (line_cw)
  * changes, in order to reinitialise q_circle[].  It uses Bresenham's
  * circle algorithm.

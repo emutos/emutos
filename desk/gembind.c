@@ -930,7 +930,7 @@ WORD rsrc_free(void)
 
 
 /* unused
- * 
+ *
  * Note: We fake this call in deskmain.c when desktop is in ROM
  *
 WORD rsrc_gaddr(WORD rstype, WORD rsid, LONG *paddr)

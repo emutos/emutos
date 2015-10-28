@@ -106,7 +106,7 @@ static void perform_untop(WORD wh)
 
     /* send msg, wait for button up */
     ct_msgup(WM_UNTOPPED, D.w_win[wh].w_owner, wh, 0, 0, 0, 0);
-    
+
     for (i = 0; i < num_accs; i++)
         dsptch();
 }

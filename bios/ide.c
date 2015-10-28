@@ -280,7 +280,7 @@ static int wait_for_not_BSY(volatile struct IDE *interface,LONG timeout);
  * multiple locations.  since multiple interfaces are also available
  * for these systems, we must distinguish between the two situations.
  * the following routines do this.
- * 
+ *
  * we do not check for the FireBee, since there are always exactly
  * two interfaces, or for non-Atari hardware.
  */

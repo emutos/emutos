@@ -478,7 +478,7 @@ save_spcriterr:
         .ds.l    1              // save area for stack ptr on entry
 
         .ds.w   512             // private stack, has about 50 words spare
-criterr_stack:          
+criterr_stack:
 
 /*
  * miscellaneous stacks

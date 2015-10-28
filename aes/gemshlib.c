@@ -128,7 +128,7 @@ void sh_curdir(BYTE *ppath)
  *              isover      ignored, should currently always be 1
  *              isgem = 0   run in character mode (TOS/TTP)
  *              isgem = 1   run in graphic mode (APP/PRG)
- *              
+ *
  *      (3) doex = 0
  *          . set no application to run after the current one terminates
  *              note that this is used by the desktop shutdown code
