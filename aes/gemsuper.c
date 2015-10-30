@@ -209,7 +209,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
                 ob_add(OB_TREE, OB_PARENT, OB_CHILD);
                 break;
           case OBJC_DELETE:
-                ob_delete(OB_TREE, OB_DELOB);
+                ret = ob_delete(OB_TREE, OB_DELOB);
                 break;
           case OBJC_DRAW:
                 gsx_sclip((GRECT *)&OB_XCLIP);

@@ -16,6 +16,8 @@
 *       -------------------------------------------------------------
 */
 
+/* #define ENABLE_KDEBUG */
+
 #include "config.h"
 #include "portab.h"
 #include "struct.h"
@@ -420,19 +422,20 @@ static WORD get_prev(LONG tree, WORD parent, WORD obj)
         OBJECT *treeptr = (OBJECT *)tree;
 
         pobj = (treeptr+parent)->ob_head;
-        if (pobj != obj)
+        if (pobj == obj)
+          return NIL;
+
+        while(TRUE)
         {
-          while (TRUE)
-          {
-            nobj = (treeptr+pobj)->ob_next;
-            if (nobj != obj)
-              pobj = nobj;
-            else
-              return(pobj);
-          }
+          nobj = (treeptr+pobj)->ob_next;
+          if (nobj == obj)      /* next object is us,         */
+            return pobj;        /*  so return previous object */
+
+          if (nobj == parent)   /* next object is the parent,  */
+            return NIL;         /*  so we're not in this chain */
+
+          pobj = nobj;
         }
-        else
-          return(NIL);
 } /* get_prev */
 
 
@@ -552,7 +555,7 @@ void ob_add(LONG tree, WORD parent, WORD child)
 /*
 *       Routine to delete an object from the tree.
 */
-void ob_delete(LONG tree, WORD obj)
+WORD ob_delete(LONG tree, WORD obj)
 {
         register WORD   parent;
         WORD            prev, nextsib;
@@ -560,9 +563,10 @@ void ob_delete(LONG tree, WORD obj)
         OBJECT          *parentptr, *prevptr;
 
         if (obj == ROOT)
-          return;
+          return 0;         /* can't delete the root object! */
 
         parent = get_par(tree, obj, &nextsib);
+
         parentptr = treeptr + parent;
 
         if ( parentptr->ob_head == obj )
@@ -587,6 +591,12 @@ void ob_delete(LONG tree, WORD obj)
                                                 /*   so move pnext      */
                                                 /*   around it          */
           prev = get_prev(tree, parent, obj);
+          if (prev == NIL)  /* object not found */
+          {
+            KINFO(("objc_delete() failed: object %d not found\n",obj));
+            return 0;
+          }
+
           prevptr = treeptr + prev;
           prevptr->ob_next = nextsib;
           if ( parentptr->ob_tail == obj)
@@ -596,6 +606,8 @@ void ob_delete(LONG tree, WORD obj)
                                                 /*   child in list      */
             parentptr->ob_tail = prev;
         }
+
+        return 1;
 } /* ob_delete */
 
 
