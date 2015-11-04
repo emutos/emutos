@@ -49,6 +49,8 @@
 
 #define ALLFILES    (F_SUBDIR|F_SYSTEM|F_HIDDEN)
 
+#define OP_RENAME   777     /* used internally by dir_op(): must not be the same as any other OP_XXX ! */
+
 static UBYTE    *copybuf;   /* for copy operations */
 static LONG     copylen;    /* size of above buffer */
 
@@ -727,13 +729,13 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
 
 
 /*
- *  Determines output path as required by d_doop()
+ *      Determines output path as required by dir_op()
  *
  *  Returns:
  *      1   path is OK (folder has been created if necessary)
  *      0   error, stop copying
  */
-static WORD output_path(BYTE *srcpth, BYTE *dstpth)
+static WORD output_path(WORD op,BYTE *srcpth, BYTE *dstpth)
 {
     BYTE ml_fsrc[LEN_ZFNAME], ml_fdst[LEN_ZFNAME], ml_fstr[LEN_ZFNAME];
 
@@ -741,29 +743,42 @@ static WORD output_path(BYTE *srcpth, BYTE *dstpth)
 
     while(1)
     {
-        dos_mkdir(dstpth);
-        if (!DOS_ERR)               /* ok, we created the new folder */
-            break;
-        if (DOS_AX != E_NOACCESS)   /* some strange problem */
-            return d_errmsg();
-
         /*
-         * we cannot create the folder: either it already exists
-         * or there is insufficient space (e.g. in root dir)
+         * for move via rename, the destination folder must not exist
          */
-        if (!folder_exists(dstpth))
-            return invalid_copy_msg();
+        if (op == OP_RENAME)
+        {
+            if (!folder_exists(dstpth))
+                break;
+        }
+        else
+        {
+            dos_mkdir(dstpth);
+            if (!DOS_ERR)               /* ok, we created the new folder */
+                break;
+            if (DOS_AX != E_NOACCESS)   /* some strange problem */
+                return d_errmsg();
+
+            /*
+             * we cannot create the folder: either it already exists
+             * or there is insufficient space (e.g. in root dir)
+             */
+            if (!folder_exists(dstpth))
+                return invalid_copy_msg();
+
+            /*
+             * the destination folder already exists ... this is OK
+             * as long as it's not exactly the same as the source!
+             */
+            if (!same_fold(srcpth, dstpth))
+                break;
+        }
 
         /*
-         * the destination folder already exists ... this is OK
-         * as long as it's not exactly the same as the source!
-         */
-        if (!same_fold(srcpth, dstpth))
-            break;
-
-        /*
-         * we're trying to copy to ourselves, which is not allowed:
-         * we must get a new destination folder
+         * either:
+         * (1) we are doing a move via rename, and the destination folder exists, or
+         * (2) we're trying to copy to ourselves
+         * in either case, we must get a new destination folder
          */
         get_fname(dstpth, ml_fsrc);         /* extract current folder name */
         ml_fdst[0] = '\0';                  /* pre-fill new folder name */
@@ -789,6 +804,40 @@ static WORD output_path(BYTE *srcpth, BYTE *dstpth)
 
 
 /*
+ *      Routine to do file rename for dir_op()
+ */
+static WORD d_dofileren(BYTE *oldname, BYTE *newname)
+{
+        dos_rename(oldname,newname);
+        if (!DOS_ERR)               /* rename ok */
+            return TRUE;
+        if (DOS_AX != E_NOACCESS)   /* some strange problem */
+            return d_errmsg();
+        /*
+         * we cannot rename the file/folder: either it already exists
+         * or there is insufficient space (e.g. in root dir)
+         */
+        return invalid_copy_msg();
+}
+
+
+/*
+ *      Routine to do folder rename for dir_op()
+ */
+static WORD d_dofoldren(BYTE *oldname, BYTE *newname)
+{
+        BYTE *p;
+
+        p = last_separator(oldname);    /* remove trailing wildcards */
+        *p = '\0';
+        p = last_separator(newname);
+        *p = '\0';
+
+        return d_dofileren(oldname,newname);
+}
+
+
+/*
  *  DIRectory routine that does an OPeration on all the selected files and
  *  folders in the source path.  The selected files and folders are
  *  marked in the source file list.
@@ -808,6 +857,12 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
 
     ml_havebox = FALSE;
     confirm = 0;
+
+    if ((op == OP_MOVE) && (*psrc_path == *pdst_path))
+    {
+        KDEBUG(("dir_op(): converting move %s->%s to rename\n",psrc_path,pdst_path));
+        op = OP_RENAME;
+    }
 
     tree = 0L;
     if (op != OP_COUNT)
@@ -849,10 +904,11 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
             copylen = lavail & ~(MAX_CLUS_SIZE-1);
         else copylen = lavail;
         copybuf = (UBYTE *)dos_alloc(copylen);
-
+        /* drop thru */
+    case OP_RENAME:
         confirm = G.g_ccopypref;
         obj->ob_spec = (LONG) ini_str(STCOPY);
-        if (op == OP_MOVE)
+        if (op != OP_COPY)      /* i.e. OP_MOVE or OP_RENAME */
         {
             confirm |= G.g_cdelepref;
             obj->ob_spec = (LONG) ini_str(STMOVE);
@@ -889,7 +945,7 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
                 break;
 
         strcpy(srcpth, psrc_path);
-        if ((op == OP_COPY) || (op == OP_MOVE))
+        if ((op == OP_COPY) || (op == OP_MOVE) || (op == OP_RENAME))
             strcpy(dstpth, pdst_path);
 
         /*
@@ -898,14 +954,15 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
         if (pf->f_attr & F_SUBDIR)
         {
             add_path(srcpth, pf->f_name);
-            if ((op == OP_COPY) || (op == OP_MOVE))
+            if ((op == OP_COPY) || (op == OP_MOVE) || (op == OP_RENAME))
             {
                 like_parent(dstpth, pf->f_name);
-                more = output_path(srcpth,dstpth);
+                more = output_path(op,srcpth,dstpth);
             }
 
             if (more)
-                more = d_doop(0, op, srcpth, dstpth, tree, pfcnt, pdcnt);
+                more = (op==OP_RENAME) ? d_dofoldren(srcpth,dstpth) :
+                        d_doop(0, op, srcpth, dstpth, tree, pfcnt, pdcnt);
             continue;
         }
 
@@ -925,8 +982,10 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
             break;
         case OP_COPY:
         case OP_MOVE:
+        case OP_RENAME:
             ptmpdst = add_fname(dstpth, pf->f_name);
-            more = d_dofcopy(srcpth, dstpth, pf->f_time, pf->f_date, pf->f_attr);
+            more = (op==OP_RENAME) ? d_dofileren(srcpth,dstpth) :
+                    d_dofcopy(srcpth, dstpth, pf->f_time, pf->f_date, pf->f_attr);
             restore_path(ptmpdst);  /* restore original dest path */
             /* if moving, delete original only if copy was ok */
             if ((op == OP_MOVE) && (more > 0))
@@ -952,6 +1011,7 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
         *psize = G.g_size;
         break;
     case OP_DELETE:
+    case OP_RENAME:
         break;
     case OP_COPY:
     case OP_MOVE:
