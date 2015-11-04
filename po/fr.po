@@ -341,12 +341,12 @@ msgid " File "
 msgstr " Fichier "
 
 #: desk/desk_rsc.c:252
-msgid " Options "
-msgstr " Options "
+msgid " View "
+msgstr " Visualisation "
 
 #: desk/desk_rsc.c:258
-msgid " Arrange "
-msgstr " Rangement "
+msgid " Options "
+msgstr " Options "
 
 #: desk/desk_rsc.c:276
 msgid "  Desktop info..."
@@ -396,49 +396,49 @@ msgstr "  Exécuter EmuCON    ^Z"
 msgid "  Shutdown        ^Q"
 msgstr "  Arrêter            ^Q"
 
-#: desk/desk_rsc.c:408
-msgid "  Install disk drive..."
-msgstr "  Installer un lecteur..."
-
 #: desk/desk_rsc.c:414
-msgid "  Configure application... \007A"
-msgstr "  Configurer une application... \007A"
-
-#: desk/desk_rsc.c:420
-msgid "------------------------------"
-msgstr "-----------------------------------"
-
-#: desk/desk_rsc.c:426
-msgid "  Set preferences..."
-msgstr "  Préférences..."
-
-#: desk/desk_rsc.c:432
-msgid "  Save desktop             \007V"
-msgstr "  Sauver le bureau              \007V"
-
-#: desk/desk_rsc.c:438
-msgid "  Change resolution...     \007C"
-msgstr "  Changer la résolution...      \007C"
-
-#: desk/desk_rsc.c:456
 msgid "-------------------"
 msgstr "-----------------------"
 
-#: desk/desk_rsc.c:462
+#: desk/desk_rsc.c:420
 msgid "  Sort by name  \007N"
 msgstr "  Trier par nom     \007N"
 
-#: desk/desk_rsc.c:468
+#: desk/desk_rsc.c:426
 msgid "  Sort by type  \007P"
 msgstr "  Trier par type    \007P"
 
-#: desk/desk_rsc.c:474
+#: desk/desk_rsc.c:432
 msgid "  Sort by size  \007Z"
 msgstr "  Trier par taille  \007Z"
 
-#: desk/desk_rsc.c:480
+#: desk/desk_rsc.c:438
 msgid "  Sort by date  \007T"
 msgstr "  Trier par date    \007T"
+
+#: desk/desk_rsc.c:450
+msgid "  Install disk drive..."
+msgstr "  Installer un lecteur..."
+
+#: desk/desk_rsc.c:456
+msgid "  Configure application... \007A"
+msgstr "  Configurer une application... \007A"
+
+#: desk/desk_rsc.c:462
+msgid "------------------------------"
+msgstr "-----------------------------------"
+
+#: desk/desk_rsc.c:468
+msgid "  Set preferences..."
+msgstr "  Préférences..."
+
+#: desk/desk_rsc.c:474
+msgid "  Save desktop             \007V"
+msgstr "  Sauver le bureau              \007V"
+
+#: desk/desk_rsc.c:480
+msgid "  Change resolution...     \007C"
+msgstr "  Changer la résolution...      \007C"
 
 #: desk/desk_rsc.c:537
 msgid "Attribute:"
@@ -1249,6 +1249,10 @@ msgstr " ou "
 msgid "CR to continue ..."
 msgstr "Entrée pour continuer..."
 
+#: cli/cmdint.c:1016
+msgid "--More--"
+msgstr "--Plus--"
+
 #: cli/cmdmain.c:61
 msgid "Welcome to EmuCON2: type HELP for builtin commands"
 msgstr "Bienvenue dans EmuCON2 : tapez HELP pour les commandes internes"
@@ -1324,8 +1328,4 @@ msgstr "mauvais nombre d'arguments"
 #: cli/cmdutil.c:99
 msgid "error code "
 msgstr "code d'erreur "
-
-#: cli/cmdint.c:1016
-msgid "--More--"
-msgstr "--Plus--"
 
