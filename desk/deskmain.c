@@ -1139,16 +1139,20 @@ static void adjust_menu(OBJECT *obj_array)
     OBJECT *menu = OBJ(0);
     OBJECT *mbar = OBJ(OBJ(menu->ob_head)->ob_head);
     OBJECT *pulls = OBJ(menu->ob_tail);
+    OBJECT *title;
 
     x = 0;
     j = pulls->ob_head;
-    for (i = mbar->ob_head; i <= mbar->ob_tail; i++)
+    for (i = mbar->ob_head, title = OBJ(i); i <= mbar->ob_tail; i++, title++)
     {
-        OBJECT *title = OBJ(i);
-        int n = strlen( (char *) title->ob_spec);
+        int n;
         int k, m;
+
+        n = strlen((char *)title->ob_spec);
         title->ob_x = x;
         title->ob_width = n;
+        KDEBUG(("menu heading %d (%s): x=%d, w=%d\n",i,(char *)title->ob_spec,
+                title->ob_x,title->ob_width));
 
         m = 0;
         for (k = OBJ(j)->ob_head; k <= OBJ(j)->ob_tail; k++)
@@ -1180,6 +1184,22 @@ static void adjust_menu(OBJECT *obj_array)
     }
 
     mbar->ob_width = x;
+
+    /* if menu bar is too wide, shorten by truncating last heading */
+    x = mbar->ob_width - width;
+    if (x > 0)
+    {
+        title--;
+        title->ob_width -= x;
+        mbar->ob_width -= x;
+    }
+
+    /* if menu bar is too far right, move it left */
+    x = mbar->ob_x + mbar->ob_width - width;
+    if (x > 0)
+        mbar->ob_x -= x;
+
+    KDEBUG(("menu bar: x=%d, w=%d\n",mbar->ob_x,mbar->ob_width));
 #undef OBJ
 }
 
