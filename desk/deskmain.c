@@ -1127,79 +1127,119 @@ void xlate_fix_tedinfo(TEDINFO *tedinfo, int nted)
  *  Note - the code below is based on the assumption that the width of
  *  the system font is eight (documented as such in lineavars.h)
  */
+#define CHAR_WIDTH 8
 static void adjust_menu(OBJECT *obj_array)
 {
-
 #define OBJ(i) (&obj_array[i])
 
     int i;  /* index in the menu bar */
     int j;  /* index in the array of pull downs */
-    int width = (v_hz_rez >> 3); /* screen width in chars */
-    int x;
+    int width = (v_hz_rez >> 3);    /* screen width in chars */
+    int n, x;
     OBJECT *menu = OBJ(0);
     OBJECT *mbar = OBJ(OBJ(menu->ob_head)->ob_head);
-    OBJECT *pulls = OBJ(menu->ob_tail);
     OBJECT *title;
 
-    x = 0;
-    j = pulls->ob_head;
-    for (i = mbar->ob_head, title = OBJ(i); i <= mbar->ob_tail; i++, title++)
+    /*
+     * first, set ob_x & ob_width for all the menu headings, and
+     * determine the required width of the (translated) menu bar.
+     */
+    for (i = mbar->ob_head, title = OBJ(i), x = 0; i <= mbar->ob_tail; i++, title++, x += n)
     {
-        int n;
-        int k, m;
-
         n = strlen((char *)title->ob_spec);
         title->ob_x = x;
         title->ob_width = n;
-        KDEBUG(("menu heading %d (%s): x=%d, w=%d\n",i,(char *)title->ob_spec,
-                title->ob_x,title->ob_width));
+    }
+    mbar->ob_width = x;
 
-        m = 0;
-        for (k = OBJ(j)->ob_head; k <= OBJ(j)->ob_tail; k++)
+    /*
+     * the menu bar cannot start at character offset 0 because, in that
+     * case, the outline of the Desk dropdown box will not be drawn
+     * properly. we assume that ob_x will be at least 1, so ob_width
+     * must be less than the screen width.
+     *
+     * if the current ob_width is too great, we shrink each heading by
+     * 1/2 character (we're assuming that each title has a space at the
+     * end of the string).
+     *
+     * note that this code (and the subsequent menu bar ob_x adjustment)
+     * was added to handle the French desktop menu bar which would
+     * otherwise be slightly wider than the screen in ST Low.
+     */
+    if (mbar->ob_width >= width)
+    {
+        for (i = mbar->ob_head, title = OBJ(i), n = 0; i <= mbar->ob_tail; i++, title++, n++)
         {
-            OBJECT *item = OBJ(k);
-            int l = strlen( (char *) item->ob_spec);
+            title->ob_x -= n/2;
+            if (n&1)
+            {
+                title->ob_x--;
+                title->ob_x |= (CHAR_WIDTH/2)<<8;
+                title->ob_width--;
+                title->ob_width |= (CHAR_WIDTH/2)<<8;
+            }
+        }
+        mbar->ob_width -= n/2;
+    }
+
+    /*
+     * if the menu bar is still too wide, we shorten it by truncating
+     * the last heading.
+     *
+     * at the moment, this is a 'last resort' solution; however, if we
+     * become desperate for code space, we could drop the '1/2 character'
+     * adjustment above and use this as the only fixup (at the cost of
+     * some ugliness in the French-language low-res display).
+     */
+    n = mbar->ob_width - width + 1;
+    if (n > 0)
+    {
+        title--;
+        title->ob_width -= n;
+        mbar->ob_width -= n;
+    }
+
+    /*
+     * next, if the menu bar is too far to the right, move it to the left,
+     * but only as far as char posn 1
+     */
+    n = mbar->ob_x + mbar->ob_width - width;
+    if (n > 0)
+        mbar->ob_x = 1;
+
+    /*
+     * finally we can set ob_x and ob_width for the pulldown objects within the menu
+     */
+    j = OBJ(menu->ob_tail)->ob_head;
+    for (i = mbar->ob_head, title = OBJ(i); i <= mbar->ob_tail; i++, title++)
+    {
+        int k, m;
+        OBJECT *dropbox = OBJ(j);
+        OBJECT *item;
+
+        /* find widest object under this menu heading */
+        for (k = dropbox->ob_head, item = OBJ(k), m = 0; k <= dropbox->ob_tail; k++, item++)
+        {
+            int l = strlen((char *)item->ob_spec);
             if (m < l)
                 m = l;
         }
-
-        OBJ(j)->ob_x = 2+x;
+        dropbox->ob_x = mbar->ob_x + title->ob_x;
 
         /* make sure the menu is not too far on the right of the screen */
-        if (OBJ(j)->ob_x + m >= width)
+        if ((dropbox->ob_x&0x00ff) + m >= width)
         {
-            OBJ(j)->ob_x = width - m;
-            m = (m-1) | 0x700;
+            dropbox->ob_x = width - m;
+            m = (m-1) | ((CHAR_WIDTH-1)<<8);
         }
 
-        for (k = OBJ(j)->ob_head; k <= OBJ(j)->ob_tail; k++)
-        {
-            OBJECT *item = OBJ(k);
+        for (k = dropbox->ob_head, item = OBJ(k); k <= dropbox->ob_tail; k++, item++)
             item->ob_width = m;
-        }
-        OBJ(j)->ob_width = m;
+        dropbox->ob_width = m;
 
-        j = OBJ(j)->ob_next;
-        x += n;
+        j = dropbox->ob_next;
     }
-
-    mbar->ob_width = x;
-
-    /* if menu bar is too wide, shorten by truncating last heading */
-    x = mbar->ob_width - width;
-    if (x > 0)
-    {
-        title--;
-        title->ob_width -= x;
-        mbar->ob_width -= x;
-    }
-
-    /* if menu bar is too far right, move it left */
-    x = mbar->ob_x + mbar->ob_width - width;
-    if (x > 0)
-        mbar->ob_x -= x;
-
-    KDEBUG(("menu bar: x=%d, w=%d\n",mbar->ob_x,mbar->ob_width));
+    KDEBUG(("desktop menu bar: x=0x%04x, w=0x%04x\n",mbar->ob_x,mbar->ob_width));
 #undef OBJ
 }
 
