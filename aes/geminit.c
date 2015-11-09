@@ -109,42 +109,52 @@ GLOBAL THEGLO   D;
 extern void accdesk_start(void) NORETURN;   /* see gemstart.S */
 
 /*
-*       Convert a single hex ASCII digit to a number
-*/
-WORD hex_dig(BYTE achar)
+ *  Convert a single hex ASCII digit to the corresponding decimal number
+ *
+ *  Note that this could be static, since it is used only within this
+ *  module.  However, making it so will consume more code space in
+ *  current versions of GCC, even with -Os optimisation
+ */
+UBYTE hex_dig(BYTE achar)
 {
-        if ( (achar >= '0') && (achar <= '9') )
-          return(achar - '0');
-        else
-        {
-          achar = toupper(achar);
-          if ( (achar >= 'A') && (achar <= 'F') )
-             return(achar - 'A' + 10);
-          else
-            return 0;
-        }
+    if ((achar >= '0') && (achar <= '9'))
+        return (achar - '0');
+
+    achar = toupper(achar);
+    if ((achar >= 'A') && (achar <= 'F'))
+        return (achar - 'A' + 10);
+
+    return 0;
 }
 
 
 /*
-*       Scan off and convert the next two hex digits and return with
-*       pcurr pointing one space past the end of the four hex digits
-*/
+ *  Starting at the specified position within a string, skip over any
+ *  leading spaces.  If the next non-space byte is '\r', stop scanning,
+ *  set the scanned value to zero, and return a pointer to the '\r'.
+ *
+ *  Otherwise, convert the next two characters (assumed to be hex digits)
+ *  into a value N.  If N is 0xff, set the scanned value to -1; otherwise
+ *  set the scanned value to N.  In either case, return a pointer to the
+ *  byte immediately following the two hex characters.
+ */
 BYTE *scan_2(BYTE *pcurr, WORD *pwd)
 {
-        UWORD   temp;
+    WORD temp = 0;
 
-        if (*pcurr==' ')
-          pcurr += 1;
+    while(*pcurr == ' ')
+        pcurr++;
 
-        temp = 0x0;
-        temp |= hex_dig(*pcurr++) << 4;
+    if (*pcurr != '\r')
+    {
+        temp = hex_dig(*pcurr++) << 4;
         temp |= hex_dig(*pcurr++);
         if (temp == 0x00ff)
-          temp = NIL;
+            temp = -1;
         *pwd = temp;
+    }
 
-        return( pcurr );
+    return pcurr;
 }
 
 

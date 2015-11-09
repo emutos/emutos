@@ -494,77 +494,71 @@ void app_start(void)
 
     while(*pcurr)
     {
-        if (*pcurr != '#')
-            pcurr++;
-        else
-        {
-            pcurr++;
-            switch(*pcurr)
-            {
-            case 'T':                         /* Trash */
-                pa = app_alloc(TRUE);
-                pcurr = app_parse(pcurr, pa);
-                break;
-            case 'M':                         /* Media (Hard/Floppy)  */
-            case 'G':                         /* GEM Application      */
-            case 'Y':                         /* GEM App. with parms  */
-            case 'F':                         /* File (DOS w/o parms) */
-            case 'f':                         /*   use full memory    */
-            case 'P':                         /* Parm (DOS w/ parms)  */
-            case 'p':                         /*   use full memory    */
-            case 'D':                         /* Directory            */
-                pa = app_alloc(TRUE);
-                pcurr = app_parse(pcurr, pa);
-                break;
-            case 'W':                         /* Window               */
-                pcurr++;
-                if (wincnt < NUM_WNODES)
-                {
-                    pws = &G.g_cnxsave.cs_wnode[wincnt];
-                    pcurr = scan_2(pcurr, &dummy);
-                    pcurr = scan_2(pcurr, &pws->vsl_save);
-/* BugFix       */
-                    pcurr = scan_2(pcurr, &pws->x_save);
-                    pws->x_save *= gl_wchar;
-                    pcurr = scan_2(pcurr, &pws->y_save);
-                    pws->y_save *= gl_hchar;
-                    pcurr = scan_2(pcurr, &pws->w_save);
-                    pws->w_save *= gl_wchar;
-                    pcurr = scan_2(pcurr, &pws->h_save);
-                    pws->h_save *= gl_hchar;
-/* */
-                    pcurr = scan_2(pcurr, &pws->obid_save);
-                    ptmp = &pws->pth_save[0];
-                    pcurr++;
-                    while(*pcurr != '@')
-                        *ptmp++ = *pcurr++;
-                    *ptmp = '\0';
-                    wincnt += 1;
-                }
-                break;
-            case 'E':
-                pcurr++;
-                pcurr = scan_2(pcurr, &envr);
-                G.g_cnxsave.cs_view = ( (envr & INF_E1_VIEWTEXT) != 0);
-                G.g_cnxsave.cs_sort = ( (envr & INF_E1_SORTMASK) >> 5);
-                G.g_cnxsave.cs_confdel = ( (envr & INF_E1_CONFDEL) != 0);
-                G.g_cnxsave.cs_confcpy = ( (envr & INF_E1_CONFCPY) != 0);
-                G.g_cnxsave.cs_dblclick = envr & INF_E1_DCMASK;
+        if (*pcurr++ != '#')            /* look for start of line */
+            continue;
 
-                pcurr = scan_2(pcurr, &envr);
-                G.g_cnxsave.cs_confovwr = ( (envr & INF_E2_ALLOWOVW) == 0);
-                G.g_cnxsave.cs_mnuclick = gl_mnclick = ( (envr & INF_E2_MNUCLICK) != 0);
-                if (envr & INF_E2_IDTDATE)
-                    G.g_cnxsave.cs_datefmt = DATEFORM_IDT;
-                else
-                    G.g_cnxsave.cs_datefmt = (envr & INF_E2_DAYMONTH) ? DATEFORM_DMY : DATEFORM_MDY;
-                if (envr & INF_E2_IDTTIME)
-                    G.g_cnxsave.cs_timefmt = TIMEFORM_IDT;
-                else
-                    G.g_cnxsave.cs_timefmt = (envr & INF_E2_24HCLOCK) ? TIMEFORM_24H : TIMEFORM_12H;
-                sound(FALSE, !(envr & INF_E2_SOUND), 0);
-                break;
+        switch(*pcurr)
+        {
+        case 'T':                       /* Trash */
+        case 'M':                       /* Media (Hard/Floppy)  */
+        case 'G':                       /* GEM Application      */
+        case 'Y':                       /* GEM App. with parms  */
+        case 'F':                       /* File (DOS w/o parms) */
+        case 'f':                       /*   use full memory    */
+        case 'P':                       /* Parm (DOS w/ parms)  */
+        case 'p':                       /*   use full memory    */
+        case 'D':                       /* Directory            */
+            pa = app_alloc(TRUE);
+            pcurr = app_parse(pcurr, pa);
+            break;
+        case 'W':                       /* Window               */
+            pcurr++;
+            if (wincnt < NUM_WNODES)
+            {
+                pws = &G.g_cnxsave.cs_wnode[wincnt];
+                pcurr = scan_2(pcurr, &dummy);
+                pcurr = scan_2(pcurr, &pws->vsl_save);
+/* BugFix       */
+                pcurr = scan_2(pcurr, &pws->x_save);
+                pws->x_save *= gl_wchar;
+                pcurr = scan_2(pcurr, &pws->y_save);
+                pws->y_save *= gl_hchar;
+                pcurr = scan_2(pcurr, &pws->w_save);
+                pws->w_save *= gl_wchar;
+                pcurr = scan_2(pcurr, &pws->h_save);
+                pws->h_save *= gl_hchar;
+/* */
+                pcurr = scan_2(pcurr, &pws->obid_save);
+                ptmp = &pws->pth_save[0];
+                pcurr++;
+                while(*pcurr != '@')
+                    *ptmp++ = *pcurr++;
+                *ptmp = '\0';
+                wincnt += 1;
             }
+            break;
+        case 'E':                       /* Environment */
+            pcurr++;
+            pcurr = scan_2(pcurr, &envr);
+            G.g_cnxsave.cs_view = ( (envr & INF_E1_VIEWTEXT) != 0);
+            G.g_cnxsave.cs_sort = ( (envr & INF_E1_SORTMASK) >> 5);
+            G.g_cnxsave.cs_confdel = ( (envr & INF_E1_CONFDEL) != 0);
+            G.g_cnxsave.cs_confcpy = ( (envr & INF_E1_CONFCPY) != 0);
+            G.g_cnxsave.cs_dblclick = envr & INF_E1_DCMASK;
+
+            pcurr = scan_2(pcurr, &envr);
+            G.g_cnxsave.cs_confovwr = ( (envr & INF_E2_ALLOWOVW) == 0);
+            G.g_cnxsave.cs_mnuclick = gl_mnclick = ( (envr & INF_E2_MNUCLICK) != 0);
+            if (envr & INF_E2_IDTDATE)
+                G.g_cnxsave.cs_datefmt = DATEFORM_IDT;
+            else
+                G.g_cnxsave.cs_datefmt = (envr & INF_E2_DAYMONTH) ? DATEFORM_DMY : DATEFORM_MDY;
+            if (envr & INF_E2_IDTTIME)
+                G.g_cnxsave.cs_timefmt = TIMEFORM_IDT;
+            else
+                G.g_cnxsave.cs_timefmt = (envr & INF_E2_24HCLOCK) ? TIMEFORM_24H : TIMEFORM_12H;
+            sound(FALSE, !(envr & INF_E2_SOUND), 0);
+            break;
         }
     }
 
