@@ -129,6 +129,9 @@ typedef struct
 } WSAVE;
 
 
+/* values stored in cs_sort (below) range from 0 to CS_NOSORT */
+#define CS_NOSORT   (NSRTITEM-NAMEITEM)
+
 /* save desktop context (preferences and windows) */
 typedef struct
 {

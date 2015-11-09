@@ -71,6 +71,11 @@
 #define INF_E2_SOUND    0x01    /* 1 => sound effects on */
 #define INF_E2_DEFAULT  (INF_E2_IDTDATE|INF_E2_IDTTIME|INF_E2_SOUND)    /* default if no .INF */
 
+                            /* 'E' bytes 3-4 are video mode (see process_inf1() in aes/geminit.c) */
+
+                            /* 'E' byte 5 */
+#define INF_E5_NOSORT   0x80    /* 1 => do not sort folder contents (overrides INF_E1_SORTMASK) */
+                                /* (note: unsorted folders are displayed before unsorted files) */
 
 GLOBAL WORD     gl_numics;
 GLOBAL WORD     gl_stdrv;
@@ -558,6 +563,13 @@ void app_start(void)
             else
                 G.g_cnxsave.cs_timefmt = (envr & INF_E2_24HCLOCK) ? TIMEFORM_24H : TIMEFORM_12H;
             sound(FALSE, !(envr & INF_E2_SOUND), 0);
+
+            pcurr = scan_2(pcurr, &dummy);  /* skip video stuff */
+            pcurr = scan_2(pcurr, &dummy);
+
+            pcurr = scan_2(pcurr, &envr);
+            if (envr & INF_E5_NOSORT)
+                G.g_cnxsave.cs_sort = CS_NOSORT;
             break;
         }
     }
@@ -631,7 +643,7 @@ static void app_revit(void)
 void app_save(WORD todisk)
 {
     WORD i, fh, ret;
-    WORD env1, env2, mode;
+    WORD env1, env2, mode, env5;
     BYTE type;
     BYTE *pcurr, *ptmp;
     ANODE *pa;
@@ -674,8 +686,9 @@ void app_save(WORD todisk)
     if (!mode)                      /* i.e. not videl */
 #endif
         mode = 0xff00 | Getrez();
-    pcurr += sprintf(pcurr,"#E %02X %02X %02X %02X\r\n",
-                    env1,env2,(mode>>8)&0x00ff,mode&0x00ff);
+    env5 = (G.g_cnxsave.cs_sort == CS_NOSORT) ? INF_E5_NOSORT : 0;
+    pcurr += sprintf(pcurr,"#E %02X %02X %02X %02X %02X\r\n",
+                    env1,env2,(mode>>8)&0x00ff,mode&0x00ff,env5);
 
     /* save windows */
     for (i = 0; i < NUM_WNODES; i++)

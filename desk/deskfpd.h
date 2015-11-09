@@ -28,10 +28,14 @@
 #define V_ICON 0
 #define V_TEXT 1
 
-#define S_NAME 0
-#define S_DATE 1
-#define S_SIZE 2
-#define S_TYPE 3
+/*
+ * sort sequence for display (folders are always listed before files)
+ */
+#define S_NAME 0                /* file name (ascending) */
+#define S_DATE 1                /* date (newest first), then name */
+#define S_SIZE 2                /* size (largest first), then name */
+#define S_TYPE 3                /* file extension (ascending), then name */
+#define S_NSRT 4                /* no sort (directory sequence) */
 
 #define E_NOERROR 0
 #define E_NOFNODES 100
@@ -49,6 +53,7 @@ struct _filenode
         UWORD           f_date;             /*   the same sequence as the  */
         LONG            f_size;             /*    corresponding items in   */
         BYTE            f_name[LEN_ZFNAME]; /*     the DTA structure!      */
+        WORD            f_seq;          /* sequence within directory */
         WORD            f_obid;
         ANODE           *f_pa;
         WORD            f_isap;

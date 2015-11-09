@@ -473,6 +473,9 @@ static WORD do_viewmenu(WORD item)
     case TYPEITEM:
         newsort = S_TYPE;
         break;
+    case NSRTITEM:
+        newsort = S_NSRT;
+        break;
     }
 
     if (newview != G.g_iview)

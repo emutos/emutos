@@ -312,6 +312,9 @@ static LONG pn_fcomp(FNODE *pf1, FNODE *pf2, WORD which)
     case S_TYPE:
         chk = strcmp(scasb(ps1,'.'),scasb(ps2,'.'));
         break;
+    case S_NSRT:
+        chk = pf1->f_seq - pf2->f_seq;
+        break;
     }
     if (chk)
         return chk;
@@ -422,7 +425,7 @@ WORD pn_active(PNODE *pn)
         if (G.g_wdta.d_fname[0] == '.') /* skip "." & ".." entries */
             continue;
         memcpy(&fn->f_junk, &G.g_wdta.d_reserved[20], 23);
-        count++;
+        fn->f_seq = count++;
         size += fn->f_size;
         prev->f_next = fn;      /* link fnodes */
         prev = fn++;
