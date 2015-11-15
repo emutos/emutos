@@ -90,6 +90,9 @@
 # ifndef AES_STACK_SIZE
 #  define AES_STACK_SIZE 2048   /* in LONGs */
 # endif
+# ifndef CONF_WITH_ACSI
+#  define CONF_WITH_ACSI 0      /* broken in current FireBee hardware */
+# endif
 #endif
 
 /*
