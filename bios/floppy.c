@@ -1052,6 +1052,10 @@ void flopvbl(void)
     WORD n, status;
     UBYTE a, old_a, wp;
 
+    /* if there are no floppies, do nothing */
+    if (nflops == 0)
+        return;
+
     /* don't do anything if the DMA circuitry is being used */
     if (flock)
         return;
