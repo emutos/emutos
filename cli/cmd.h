@@ -145,16 +145,6 @@ typedef struct {
 #define DIR_NOT_EMPTY   -104        /* translated from EACCDN for folders */
 #define WRONG_NUM_ARGS  -105        /* for builtin commands */
 
-#define TAB             0x0f09
-#define BKSP            0x0e08
-#define DEL             0x537f
-#define UPARROW         0x4800
-#define DNARROW         0x5000
-#define LTARROW         0x4b00
-#define LTARROW_SHFT    0x4b34
-#define RTARROW         0x4d00
-#define RTARROW_SHFT    0x4d36
-
 #define ESC             0x1b
 #define DBLQUOTE        0x22
 

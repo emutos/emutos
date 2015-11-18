@@ -40,23 +40,14 @@
 #include "geminit.h"
 #include "gemmnlib.h"
 #include "gemfmlib.h"
+#include "scancode.h"
 
 
 #define FORWARD 0
 #define BACKWARD 1
 #define DEFLT 2
 
-#define BACKSPACE 0x0E08                        /* backspace            */
-#define SPACE 0x3920                            /* ASCII <space>        */
-#define UP 0x4800                               /* up arrow             */
-#define DOWN 0x5000                             /* down arrow           */
-#define LEFT 0x4B00                             /* left arrow           */
-#define RIGHT 0x4D00                            /* right arrow          */
-#define DELETE 0x5300                           /* keypad delete        */
-#define TAB 0x0F09                              /* tab                  */
 #define BACKTAB 0x0F00                          /* backtab              */
-#define RETURN 0x1C0D                           /* carriage return      */
-#define ENTER 0x720D                            /* keypad enter         */
 
 
 /* Global variables: */
@@ -187,11 +178,11 @@ WORD fm_keybd(LONG tree, WORD obj, WORD *pchar, WORD *pnew_obj)
                 direction = DEFLT;
                 break;
           case BACKTAB:
-          case UP:
+          case ARROW_UP:
                 direction = BACKWARD;
                 break;
           case TAB:
-          case DOWN:
+          case ARROW_DOWN:
                 direction = FORWARD;
                 break;
         }

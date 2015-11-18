@@ -57,13 +57,13 @@
 #include "deskrez.h"
 #include "kprint.h"
 #include "deskmain.h"
+#include "scancode.h"
 
 #define abs(x) ( (x) < 0 ? -(x) : (x) )
 #define menu_text(tree,inum,ptext) (((OBJECT *)(tree)+(inum))->ob_spec = ptext)
 
 /* BugFix       */
                                         /* keyboard shortcuts & others  */
-#define ESCAPE 0x011B                   /* resort directory in window   */
 #define ALTA 0x1E00                     /* Configure App                */
 #define ALTC 0x2E00                     /* Change resolution            */
 #define ALTD 0x2000                     /* Delete                       */
@@ -77,10 +77,6 @@
 #define CNTLU 0x1615                    /* To Output                    */
 #define CNTLZ 0x2c1a                    /* Execute CLI                  */
 #define CNTLQ 0x1011                    /* Exit To Dos                  */
-#define ARROW_UP    0x4800
-#define ARROW_DOWN  0x5000
-#define ARROW_LEFT  0x4b00
-#define ARROW_RIGHT 0x4d00
 
 
 /*
@@ -696,7 +692,7 @@ static WORD hndl_kbd(WORD thechar)
 
     switch(thechar)
     {
-    case ESCAPE:
+    case ESCAPE:        /* resort directory in window   */
         do_chkall(TRUE);
         break;
     case ALTA:          /* Options: Install App */

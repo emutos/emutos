@@ -34,18 +34,9 @@
 #include "gemobed.h"
 
 #include "string.h"
+#include "scancode.h"
 
-#define BACKSPACE 0x0E08                        /* backspace            */
-#define SPACE 0x3920                            /* ASCII <space>        */
-#define UP 0x4800                               /* up arrow             */
-#define DOWN 0x5000                             /* down arrow           */
-#define LEFT 0x4B00                             /* left arrow           */
-#define RIGHT 0x4D00                            /* right arrow          */
-#define DELETE 0x5300                           /* keypad delete        */
-#define TAB 0x0F09                              /* tab                  */
-#define BACKTAB 0x0F00                          /* backtab              */
-#define RETURN 0x1C0D                           /* carriage return      */
-#define ESCAPE 0x011B                           /* escape               */
+#define KEYPAD_DELETE 0x5300                           /* keypad delete        */
 
 
 
@@ -346,15 +337,15 @@ WORD ob_edit(LONG tree, WORD obj, WORD in_char, WORD *idx, WORD kind)
                         D.g_rawstr[0] = '\0';
                         no_redraw = FALSE;
                         break;
-                  case DELETE:
+                  case KEYPAD_DELETE:
                         if (*idx <= (edblk.te_txtlen - 2))
                           no_redraw = ob_delit(*idx);
                         break;
-                  case LEFT:
+                  case ARROW_LEFT:
                         if (*idx > 0)
                           *idx -= 1;
                         break;
-                  case RIGHT:
+                  case ARROW_RIGHT:
                         if ( *idx < strlen(&D.g_rawstr[0]) )
                           *idx += 1;
                         break;

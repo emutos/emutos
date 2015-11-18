@@ -10,6 +10,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 #include "cmd.h"
+#include <scancode.h>
 #include <string.h>
 
 /*
@@ -167,21 +168,21 @@ LONG rc;
 WORD n, shift = 0;
 
     switch(scancode) {
-    case UPARROW:
+    case ARROW_UP:
         if (history_num >= 0) {
             erase_line(line,*pos);
             *pos = *len = previous_history(line);
         }
         break;
-    case DNARROW:
+    case ARROW_DOWN:
         if (history_num >= 0) {
             erase_line(line,*pos);
             *pos = *len = next_history(line);
         }
         break;
-    case LTARROW_SHFT:
+    case SHIFT_ARROW_LEFT:
         shift = 1;
-    case LTARROW:
+    case ARROW_LEFT:
         if (*pos > 0) {
             n = shift ? previous_word_count(line,*pos) : 1;
             while (n-- > 0) {
@@ -190,9 +191,9 @@ WORD n, shift = 0;
             }
         }
         break;
-    case RTARROW_SHFT:
+    case SHIFT_ARROW_RIGHT:
         shift = 1;
-    case RTARROW:
+    case ARROW_RIGHT:
         if (*pos < *len) {
             n = shift ? next_word_count(line,*pos,*len) : 1;
             while (n-- > 0) {
@@ -201,14 +202,14 @@ WORD n, shift = 0;
             }
         }
         break;
-    case BKSP:          /* delete char to left of cursor */
+    case BACKSPACE:     /* delete char to left of cursor */
         if (*pos > 0) {
             delete_char(line,*pos,*len,1);
             (*pos)--;
             (*len)--;
         }
         break;
-    case DEL:           /* delete char at cursor */
+    case DELETE:        /* delete char at cursor */
         if (*pos < *len) {
             delete_char(line,*pos,*len,0);
             (*len)--;
