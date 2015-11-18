@@ -828,10 +828,13 @@ static WORD xbios_2e(WORD op, WORD start, WORD count, PTR buffer)
  * this is a minimalist implementation: we ignore any requests to use
  * the blitter, we just return hardware status
  */
-#if CONF_WITH_BLITTER
 static WORD blitmode(WORD mode)
 {
-    return has_blitter ? 0x0002 : 0x0000;
+#if CONF_WITH_BLITTER
+    if (has_blitter)
+        return 0x0002;
+#endif
+    return 0x0000;
 }
 
 #if DBG_XBIOS
@@ -840,7 +843,6 @@ static WORD xbios_40(WORD mode)
     kprintf("XBIOS: Blitmode\n");
     return blitmode(mode);
 }
-#endif
 #endif
 
 /*
@@ -1132,11 +1134,7 @@ const PFLONG xbios_vecs[] = {
     xbios_unimpl,   /* 3d */
     xbios_unimpl,   /* 3e */
     xbios_unimpl,   /* 3f */
-#if CONF_WITH_BLITTER
     VEC(xbios_40, blitmode),  /* 40 */
-#else
-    xbios_unimpl,   /* 40 */
-#endif
 #if TOS_VERSION >= 0x200
     xbios_unimpl,   /* 41 */
     xbios_unimpl,   /* 42 */
