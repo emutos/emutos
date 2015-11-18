@@ -36,9 +36,6 @@
 #include "string.h"
 #include "scancode.h"
 
-#define KEYPAD_DELETE 0x5300                           /* keypad delete        */
-
-
 
 
 
@@ -337,7 +334,7 @@ WORD ob_edit(LONG tree, WORD obj, WORD in_char, WORD *idx, WORD kind)
                         D.g_rawstr[0] = '\0';
                         no_redraw = FALSE;
                         break;
-                  case KEYPAD_DELETE:
+                  case DELETE:
                         if (*idx <= (edblk.te_txtlen - 2))
                           no_redraw = ob_delit(*idx);
                         break;
