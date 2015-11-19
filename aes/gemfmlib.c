@@ -47,8 +47,6 @@
 #define BACKWARD 1
 #define DEFLT 2
 
-#define BACKTAB 0x0F00                          /* backtab              */
-
 
 /* Global variables: */
 WORD     ml_ocnt;    /* Needs to be 0 initially! */
@@ -177,11 +175,10 @@ WORD fm_keybd(LONG tree, WORD obj, WORD *pchar, WORD *pnew_obj)
                 obj = 0;
                 direction = DEFLT;
                 break;
-          case BACKTAB:
           case ARROW_UP:
                 direction = BACKWARD;
                 break;
-          case TAB:
+          case TAB:         /* shift-tab, ctrl-tab, alta-tab have the same scancode */
           case ARROW_DOWN:
                 direction = FORWARD;
                 break;
