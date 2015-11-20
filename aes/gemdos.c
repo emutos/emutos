@@ -69,22 +69,22 @@ extern LONG gemdos();
 
 WORD pgmld(WORD handle, BYTE *pname, LONG **ldaddr)
 {
-    LONG    length;
+    LONG    length, ret;
     LONG    *temp;
 
-    *ldaddr = (LONG *) gemdos(X_EXEC, 3, pname, "", NULL);
-    if (!DOS_ERR)
-    {                                                   /* code+data+bss lengths */
-        temp = *ldaddr;
-        length = temp[3] + temp[5] + temp[7] + 0x100;   /* and base page length */
-        gemdos(X_SETBLOCK,0, *ldaddr, length);
-        if (!DOS_ERR)
-            return(TRUE);
-        else
-            return(-1);
-    }
-    else
-        return(-1);
+    ret = gemdos(X_EXEC, 3, pname, "", NULL);
+    if (ret < 0L)
+        return -1;
+
+    *ldaddr = (LONG *) ret;
+
+    /* program length = code+data+bss lengths plus basepage length */
+    temp = *ldaddr;
+    length = temp[3] + temp[5] + temp[7] + 0x100;
+    if (gemdos(X_SETBLOCK, 0, *ldaddr, length) < 0L)
+        return -1;
+
+    return 0;
 }
 
 
