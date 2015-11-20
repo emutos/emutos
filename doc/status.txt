@@ -149,7 +149,7 @@ All XBIOS versions:
  X 0x03 Logbase
  X 0x04 Getrez
  X 0x05 Setscreen
- X 0x06 SetpaleTte
+ X 0x06 Setpalette
  X 0x07 Setcolor
  X 0x08 Floprd
  X 0x09 Flopwr
@@ -316,21 +316,21 @@ GEMDOS v0.19 (TOS v2):
  Line-A functions
  ----------------------------------------------------------------------------
  T $0 - Initialization
- > $1 - Put pixel
- > $2 - Get pixel
- > $3 - Arbitrary line
- > $4 - Horizontal line
- > $5 - Filled rectangle
- > $6 - Filled polygon
- > $7 - Bit block transfer
- > $8 - Text block transfer
+ t $1 - Put pixel
+ t $2 - Get pixel
+ t $3 - Arbitrary line
+ t $4 - Horizontal line
+ t $5 - Filled rectangle
+ t $6 - Filled polygon (see bugs.txt)
+ t $7 - Bit block transfer (may miss options not needed by VDI)
+ t $8 - Text block transfer
  T $9 - Show mouse
  T $A - Hide mouse
- > $B - Transform mouse
- > $C - Undraw sprite
- > $D - Draw sprite
- > $E - Copy raster form
- - $F - Seedfill
+ t $B - Transform mouse
+ t $C - Undraw sprite
+ t $D - Draw sprite
+ t $E - Copy raster form
+ t $F - Seedfill
 
 
  VDI functions
@@ -346,37 +346,37 @@ GEMDOS v0.19 (TOS v2):
  -      v_updwk
  >      vst_load_fonts      (needs GDOS or equivalent)
  >      vst_unload_fonts    (needs GDOS or equivalent)
- X      vs_clip
- t      v_pline
- t      v_pmarker
- t      v_gtext
- t      v_fillarea
+ t      vs_clip
+ T      v_pline
+ T      v_pmarker
+ T      v_gtext
+ T      v_fillarea
  -      v_cellarray         (not supported by any current VDI driver)
- X      v_contourfill
- t      vr_recfl
- t      v_bar
- t      v_arc
- t      v_pieslice
- t      v_circle
- t      v_ellipse
- t      v_ellarc
- t      v_ellpie
+ T      v_contourfill
+ T      vr_recfl
+ T      v_bar
+ T      v_arc
+ T      v_pieslice
+ T      v_circle
+ T      v_ellipse
+ T      v_ellarc
+ T      v_ellpie
  X      v_rbox
- t      v_rfbox
- X      v_justified
- X      vswr_mode
+ T      v_rfbox
+ T      v_justified
+ T      vswr_mode
  >      vs_color
- X      vsl_type
+ T      vsl_type
  X      vsl_udsty
- t      vsl_width
+ T      vsl_width
  >      vsl_color
- t      vsl_ends
- t      vsm_type
- t      vsm_height
+ T      vsl_ends
+ T      vsm_type
+ T      vsm_height
  >      vsm_color
- t      vst_height
- t      vst_point
- X      vst_rotation
+ T      vst_height
+ T      vst_point
+ T      vst_rotation
  X      vst_font
  >      vst_color
  T      vst_effects
@@ -386,9 +386,9 @@ GEMDOS v0.19 (TOS v2):
  t      vsf_color
  T      vsf_perimeter
  X      vsf_udpat
- X      vro_cpyfm
+ t      vro_cpyfm
  >      vrt_cpyfm
- X      vr_trnfm
+ t      vr_trnfm
  >      v_get_pixel
  X      vsin_mode
  X      vrq_locator
@@ -459,83 +459,83 @@ GEMDOS v0.19 (TOS v2):
  ----------------------------------------------------------------------------
 
 All AES versions:
- X      appl_init
+ t      appl_init
  X      appl_read
  X      appl_write
- X      appl_find
+ t      appl_find
  X      appl_tplay
  X      appl_trecord
  X      appl_yield              (PC-GEM call)
- X      appl_exit
+ t      appl_exit
  X      evnt_keybd
- X      evnt_button
+ t      evnt_button
  X      evnt_mouse
- X      evnt_mesag
+ t      evnt_mesag
  X      evnt_timer
- X      evnt_multi
+ t      evnt_multi
  X      evnt_dclick
- X      menu_bar
- X      menu_icheck
+ t      menu_bar
+ t      menu_icheck
  X      menu_ienable
  X      menu_tnormal
  X      menu_text
- X      menu_register
+ t      menu_register
  X      menu_unregister         (PC-GEM call)
  X      menu_click              (PC-GEM call)
  X      objc_add
  X      objc_delete
- X      objc_draw
+ t      objc_draw
  X      objc_find
- X      objc_offset
+ t      objc_offset
  X      objc_order
  X      objc_edit
- X      objc_change
- X      form_do
- X      form_dial
- X      form_alert
+ t      objc_change
+ t      form_do
+ t      form_dial
+ t      form_alert
  X      form_error
- X      form_center
+ t      form_center
  X      form_keybd
  X      form_button
- X      graf_rubbox
+ t      graf_rubberbox
  X      graf_dragbox
  X      graf_mbox
  T      graf_growbox
  T      graf_shrinkbox
  X      graf_watchbox
  X      graf_slidebox
- X      graf_handle
- X      graf_mouse
- X      graf_mkstate
+ t      graf_handle
+ t      graf_mouse
+ t      graf_mkstate
  X      scrp_read
  X      scrp_write
  X      scrp_clear              (PC-GEM call)
  X      fsel_input
- X      wind_create
- X      wind_open
- X      wind_close
- X      wind_delete
- X      wind_get
+ t      wind_create
+ t      wind_open
+ t      wind_close
+ t      wind_delete
+ t      wind_get
  X      wind_set
  X      wind_find
- X      wind_update
- X      wind_calc
- X      rsrc_load
- X      rsrc_free
- X      rsrc_gaddr
+ t      wind_update
+ t      wind_calc
+ t      rsrc_load
+ t      rsrc_free
+ t      rsrc_gaddr
  X      rsrc_saddr
- X      rsrc_obfix
+ t      rsrc_obfix
  X      shel_read
  X      shel_write
  X      shel_get
  X      shel_put
- X      shel_find
+ T      shel_find
  X      shel_envrn
  X      shel_rdef              (PC-GEM call)
  X      shel_wdef              (PC-GEM call)
 
 AES v1.40 (TOS >= v1.04):
- X      fsel_exinput
+ T      fsel_exinput
  t      wind_new
 
 AES v3.30 (TOS > v3.06):
