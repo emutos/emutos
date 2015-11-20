@@ -32,6 +32,8 @@
 #define ARROW_LEFT          0x4b00
 #define ARROW_RIGHT         0x4d00
 
+#define SHIFT_ARROW_UP      0x4838
+#define SHIFT_ARROW_DOWN    0x5032
 #define SHIFT_ARROW_LEFT    0x4b34
 #define SHIFT_ARROW_RIGHT   0x4d36
 

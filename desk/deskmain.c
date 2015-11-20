@@ -756,6 +756,12 @@ static WORD hndl_kbd(WORD thechar)
         menu_tnormal(G.a_trees[ADMENU], FILEMENU, FALSE);
         done = hndl_menu(FILEMENU, QUITITEM);
         break;
+    case SHIFT_ARROW_UP:
+        kbd_arrow(WA_UPPAGE);
+        break;
+    case SHIFT_ARROW_DOWN:
+        kbd_arrow(WA_DNPAGE);
+        break;
     case ARROW_UP:
         kbd_arrow(WA_UPLINE);
         break;
