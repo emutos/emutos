@@ -158,10 +158,9 @@ BYTE *scan_2(BYTE *pcurr, WORD *pwd)
 }
 
 
-
 /*
- * return size of global area
- * called from gemstart.S
+ *  return size of global area
+ *  called from gemstart.S
  */
 LONG size_theglo(void)
 {
@@ -169,13 +168,12 @@ LONG size_theglo(void)
 }
 
 
-
 /*
-*       called from startup code to initialise the process 0 supervisor stack ptr:
-*        1. determines the end of the supervisor stack
-*        2. initialises the supervisor stack pointer in the UDA
-*        3. returns the offset from the start of THEGLO to the end of the stack
-*/
+ *  called from startup code to initialise the process 0 supervisor stack ptr:
+ *      1. determines the end of the supervisor stack
+ *      2. initialises the supervisor stack pointer in the UDA
+ *      3. returns the offset from the start of THEGLO to the end of the stack
+ */
 LONG init_p0_stkptr(void)
 {
     UDA *u = &D.g_int[0].a_uda;
@@ -186,283 +184,276 @@ LONG init_p0_stkptr(void)
 }
 
 
-
 static void ev_init(EVB evblist[], WORD cnt)
 {
-        WORD            i;
+    WORD    i;
 
-        for(i=0; i<cnt; i++)
-        {
-          evblist[i].e_nextp = eul;
-          eul = &evblist[i];
-        }
+    for (i = 0; i < cnt; i++)
+    {
+        evblist[i].e_nextp = eul;
+        eul = &evblist[i];
+    }
 }
 
 
 /*
-*       Create a local process for the routine and start him executing.
-*       Also do all the initialization that is required.
-* TODO - get rid of this.
-*/
+ *  Create a local process for the routine and start him executing.
+ *  Also do all the initialization that is required.
+ *      TODO - get rid of this.
+ */
 static AESPD *iprocess(BYTE *pname, PFVOID routine)
 {
-        register ULONG  ldaddr;
+    register ULONG  ldaddr;
 
-        KDEBUG(("iprocess(\"%s\")\n", (const char*)pname));
+    KDEBUG(("iprocess(\"%s\")\n", (const char*)pname));
 
-        /* figure out load addr */
+    /* figure out load addr */
 
-        ldaddr = (ULONG) routine;
+    ldaddr = (ULONG) routine;
 
-        /* create process to execute it */
-        return( pstart(routine, pname, ldaddr) );
+    /* create process to execute it */
+    return pstart(routine, pname, ldaddr);
 }
 
 
 /*
-*       Start up the file selector by initializing the fs_tree
-*/
+ *  Start up the file selector by initializing the fs_tree
+ */
 static void fs_start(void)
 {
-        OBJECT *tree;
+    OBJECT *tree;
 
-        tree = rs_trees[FSELECTR];
-        ad_fstree = (LONG)tree;
-        ob_center((LONG)tree, &gl_rfs);
+    tree = rs_trees[FSELECTR];
+    ad_fstree = (LONG)tree;
+    ob_center((LONG)tree, &gl_rfs);
 }
 
 
 /*
-*       Routine to load program file pointed at by pfilespec, then
-*       create new process context for it.  This uses the load overlay
-*       function of DOS.
-*/
-
+ *  Routine to load program file pointed at by pfilespec, then create a
+ *  new process context for it.  This is used to load a desk accessory.
+ */
 static void sndcli(BYTE *pfilespec)
 {
-        register WORD   handle;
-        WORD            err_ret;
-        LONG            ldaddr;
+    register WORD   handle;
+    WORD    err_ret;
+    LONG    ldaddr;
 
-        KDEBUG(("sndcli(\"%s\")\n", (const char*)pfilespec));
+    KDEBUG(("sndcli(\"%s\")\n", (const char*)pfilespec));
 
-        strcpy(&D.s_cmd[0], pfilespec);
+    strcpy(&D.s_cmd[0], pfilespec);
 
-        handle = dos_open(D.s_cmd, ROPEN);
-        if (!DOS_ERR)
-        {
-          err_ret = pgmld(handle, &D.s_cmd[0], (LONG **)&ldaddr);
-          dos_close(handle);
-                                                /* create process to    */
-                                                /*   execute it         */
-          if (err_ret != -1)
+    handle = dos_open(D.s_cmd, ROPEN);
+    if (!DOS_ERR)
+    {
+        err_ret = pgmld(handle, &D.s_cmd[0], (LONG **)&ldaddr);
+        dos_close(handle);
+        /* create process to execute it */
+        if (err_ret != -1)
             pstart(gotopgm, pfilespec, ldaddr);
-        }
+    }
 }
 
 
-
 /*
- *      Count up to a maximum of NUM_ACCS desk accessories, saving
- *      their names in acc_name[].
+ *  Count up to a maximum of NUM_ACCS desk accessories, saving
+ *  their names in acc_name[].
  */
 static WORD count_accs(void)
 {
-        WORD i, rc;
+    WORD i, rc;
 
-        /* if Control is held down, skip loading of accessories */
-        if ((kbshift(-1) & MODE_CTRL))
-          return 0;
+    /* if Control is held down, skip loading of accessories */
+    if ((kbshift(-1) & MODE_CTRL))
+        return 0;
 
-        strcpy(D.g_work,"*.ACC");
-        dos_sdta(&D.g_dta);
+    strcpy(D.g_work,"*.ACC");
+    dos_sdta(&D.g_dta);
 
-        for (i = 0; i < NUM_ACCS; i++)
-        {
-          rc = (i==0) ? dos_sfirst(D.g_work,F_RDONLY) : dos_snext();
-          if (rc == 0)
+    for (i = 0; i < NUM_ACCS; i++)
+    {
+        rc = (i==0) ? dos_sfirst(D.g_work,F_RDONLY) : dos_snext();
+        if (rc == 0)
             break;
-          strlcpy(acc_name[i],D.g_dta.d_fname,LEN_ZFNAME);
-        }
+        strlcpy(acc_name[i],D.g_dta.d_fname,LEN_ZFNAME);
+    }
 
-        return i;
+    return i;
 }
-
 
 
 /*
- *      Load in the desk accessories specified by acc_name[]
+ *  Load in the desk accessories specified by acc_name[]
  */
 static void load_accs(WORD n)
 {
-        WORD i;
+    WORD i;
 
-        for (i = 0; i < n; i++)
-            sndcli(acc_name[i]);
+    for (i = 0; i < n; i++)
+        sndcli(acc_name[i]);
 }
-
 
 
 static void sh_addpath(void)
 {
-        char    *lp, *np, *new_envr;
-        const char *pp;
-        WORD    oelen, oplen, nplen, pplen, fstlen;
-        BYTE    tmp;
-        char    tmpstr[MAX_LEN];
+    char    *lp, *np, *new_envr;
+    const char *pp;
+    WORD    oelen, oplen, nplen, pplen, fstlen;
+    BYTE    tmp;
+    char    tmpstr[MAX_LEN];
 
-        lp = ad_envrn;
-                                                /* get to end of envrn  */
-        while ( *lp || *(lp+1) )                /* ends with 2 nulls    */
-          lp++;
-        lp++;                                   /* past 2nd null        */
-                                                /* old environment length*/
-        oelen = (lp - ad_envrn) + 2;
-                                                /* PATH= length & new path length */
-        pp = PATH_ENV;
-        strcpy(tmpstr, DEF_PATH);
-        np = tmpstr;
+    lp = ad_envrn;
 
-        pplen = strlen(pp);
-        nplen = strlen(np);
+    /* get to end of environment string (ends with 2 nulls) */
+    while (*lp || *(lp+1))
+        lp++;
+    lp++;               /* past 2nd null */
 
-        if (oelen+nplen+pplen+1 > ENV_SIZE) {
-            KDEBUG(("sh_addpath(): cannot add path, environment buffer too small\n"));
-            return;
-        }
-                                                /* fix up drive letters */
-        lp = np;
-        while ( (tmp = *lp) != 0 )
-        {
-          if (tmp == ':')
+    /* old environment length*/
+    oelen = (lp - ad_envrn) + 2;
+
+    /* PATH= length & new path length */
+    pp = PATH_ENV;
+    strcpy(tmpstr, DEF_PATH);
+    np = tmpstr;
+
+    pplen = strlen(pp);
+    nplen = strlen(np);
+
+    if (oelen+nplen+pplen+1 > ENV_SIZE)
+    {
+        KDEBUG(("sh_addpath(): cannot add path, environment buffer too small\n"));
+        return;
+    }
+
+    /* fix up drive letters */
+    lp = np;
+    while ((tmp = *lp) != 0)
+    {
+        if (tmp == ':')
             *(lp-1) = gl_logdrv;
-          lp++;
-        }
-                                                /* alloc new environ    */
-        new_envr = envbuf;
-                                                /* get ptr to initial   */
-                                                /*   PATH=              */
-        sh_envrn(&lp, pp);
+        lp++;
+    }
 
-        if(lp)
-        {
-                                                /* first part length    */
-          oplen = strlen(lp);                   /* length of actual path */
+    /* alloc new environ    */
+    new_envr = envbuf;
 
-          fstlen = lp - ad_envrn + oplen;       /* len thru end of path */
-          memcpy(new_envr,ad_envrn,fstlen);
-        }
-        else
-        {
-          oplen = 0;
-          strcpy(new_envr,pp);
-          fstlen = pplen + 1;
-        }
+    /* get ptr to initial PATH= */
+    sh_envrn(&lp, pp);
 
-        if (oplen)
-        {
-          *(new_envr+fstlen) = ';';     /* to splice in new path */
-          fstlen += 1;
-        }
+    if (lp)
+    {
+        /* first part length    */
+        oplen = strlen(lp);             /* length of actual path */
 
-        memcpy(new_envr+fstlen,np,nplen);       /* splice on more path  */
-                                                /* copy rest of environ */
-        if(lp)
-        {
-          memcpy(new_envr+fstlen+nplen,lp+oplen,oelen-fstlen);
-        }
+        fstlen = lp - ad_envrn + oplen; /* len thru end of path */
+        memcpy(new_envr,ad_envrn,fstlen);
+    }
+    else
+    {
+        oplen = 0;
+        strcpy(new_envr,pp);
+        fstlen = pplen + 1;
+    }
 
-        ad_envrn = new_envr;                    /* remember new environ.*/
+    if (oplen)
+    {
+        *(new_envr+fstlen) = ';';       /* to splice in new path */
+        fstlen += 1;
+    }
+
+    memcpy(new_envr+fstlen,np,nplen);   /* splice on more path */
+
+    /* copy rest of environ */
+    if (lp)
+        memcpy(new_envr+fstlen+nplen,lp+oplen,oelen-fstlen);
+
+    ad_envrn = new_envr;                /* remember new environ.*/
 }
-
-
 
 
 void sh_deskf(WORD obj, LONG plong)
 {
-        register OBJECT *tree;
+    register OBJECT *tree;
 
-        tree = rs_trees[DESKTOP];
-        *(LONG *)plong = tree[obj].ob_spec;
+    tree = rs_trees[DESKTOP];
+    *(LONG *)plong = tree[obj].ob_spec;
 }
-
 
 
 static void sh_init(void)
 {
-        SHELL   *psh;
+    SHELL   *psh;
 
-        psh = &sh[0];
+    psh = &sh[0];
 
-        sh_deskf(2, (LONG)&ad_pfile);
-                                                /* add in internal      */
-                                                /*   search paths with  */
-                                                /*   right drive letter */
-        sh_addpath();
-                                                /* set defaults         */
-        psh->sh_doexec = psh->sh_dodef = gl_shgem
-                 = psh->sh_isgem = TRUE;
+    sh_deskf(2, (LONG)&ad_pfile);
+
+    /* add in internal search paths with right drive letter */
+    sh_addpath();
+
+    /* set defaults */
+    psh->sh_doexec = psh->sh_dodef = gl_shgem = psh->sh_isgem = TRUE;
 }
 
 
-
 /*
-*       Routine to read in the start of the emudesk.inf file,
-*       expected to contain the #E and #Z lines.
-*/
+ *  Routine to read in the start of the emudesk.inf file,
+ *  expected to contain the #E and #Z lines.
+ */
 static void sh_rdinf(void)
 {
-        WORD    fh;
-        LONG    size;
-        char    *pfile;
-        char    tmpstr[MAX_LEN];
+    WORD    fh;
+    LONG    size;
+    char    *pfile;
+    char    tmpstr[MAX_LEN];
 
-        infbuf[0] = 0;
+    infbuf[0] = 0;
 
-        strcpy(tmpstr, INF_FILE_NAME);
-        pfile = tmpstr;
-        *pfile += dos_gdrv();                   /* set the drive        */
+    strcpy(tmpstr, INF_FILE_NAME);
+    pfile = tmpstr;
+    *pfile += dos_gdrv();                   /* set the drive        */
 
-        fh = dos_open(pfile, ROPEN);
-        if ( !fh || DOS_ERR)
-          return;
-                                                /* NOTA BENE all required info */
-                                                /*  MUST be within INF_SIZE    */
-                                                /*  bytes from beg of file     */
-        size = dos_read(fh, INF_SIZE, infbuf);
-        dos_close(fh);
-        if (DOS_ERR)
-          return;
-        infbuf[size] = 0;
+    fh = dos_open(pfile, ROPEN);
+    if (!fh || DOS_ERR)
+        return;
+
+    /* NOTA BENE: all required info MUST be within INF_SIZE
+     * bytes from the beginning of the file
+     */
+    size = dos_read(fh, INF_SIZE, infbuf);
+    dos_close(fh);
+    if (DOS_ERR)
+        return;
+    infbuf[size] = 0;
 }
 
 
-
 /*
-*       Part 1 of early emudesk.inf processing
-*
-*       This has one function: determine if we need to change resolutions
-*       (from #E).  If so, we set gl_changerez and gl_nextrez appropriately.
-*/
+ *  Part 1 of early emudesk.inf processing
+ *
+ *  This has one function: determine if we need to change resolutions
+ *  (from #E).  If so, we set gl_changerez and gl_nextrez appropriately.
+ */
 static void process_inf1(void)
 {
 #if CONF_WITH_SHIFTER
-        WORD    env1, env2;
-        WORD    mode;
+    WORD    env1, env2;
+    WORD    mode;
 #endif
-        char    *pcurr;
+    char    *pcurr;
 
-        gl_changerez = 0;       /* assume no change */
+    gl_changerez = 0;           /* assume no change */
 
-        for (pcurr = infbuf; *pcurr; )
-        {
-          if ( *pcurr++ != '#' )
+    for (pcurr = infbuf; *pcurr; )
+    {
+        if ( *pcurr++ != '#' )
             continue;
-          if (*pcurr++ == 'E')          /* #E 3A 11 FF 02               */
-          {                             /* desktop environment          */
+        if (*pcurr++ == 'E')            /* #E 3A 11 FF 02               */
+        {                               /* desktop environment          */
             pcurr += 6;                 /* skip over non-video preferences */
             if (*pcurr == '\r')         /* no video info saved */
-              break;
+                break;
 
 #if CONF_WITH_SHIFTER
             pcurr = scan_2(pcurr, &env1);
@@ -470,71 +461,69 @@ static void process_inf1(void)
             mode = (env1 << 8) | (env2 & 0x00ff);
             mode = check_moderez(mode);
             if (mode == 0)              /* no change required */
-              break;
+                break;
             if (mode > 0)               /* need to set Falcon mode */
             {
-              gl_changerez = 2;
-              gl_nextrez = mode;
+                gl_changerez = 2;
+                gl_nextrez = mode;
             }
             else                        /* set ST/TT rez */
             {
-              gl_changerez = 1;
-              gl_nextrez = (mode & 0x00ff) + 2;
+                gl_changerez = 1;
+                gl_nextrez = (mode & 0x00ff) + 2;
             }
 #endif /* CONF_WITH_SHIFTER */
-          }
         }
+    }
 }
 
 
-
 /*
-*       Part 2 of early emudesk.inf processing
-*
-*       This has two functions:
-*        1. Determine the auto-run program to be started (from #Z).
-*        2. Set the double-click speed (from #E).  This is done here
-*           in case we have an auto-run program.
-*/
+ *  Part 2 of early emudesk.inf processing
+ *
+ *  This has two functions:
+ *      1. Determine the auto-run program to be started (from #Z).
+ *      2. Set the double-click speed (from #E).  This is done here
+ *         in case we have an auto-run program.
+ */
 static void process_inf2(void)
 {
-        WORD    env;
-        char    *pcurr;
-        BYTE    tmp;
+    WORD    env;
+    char    *pcurr;
+    BYTE    tmp;
 
-        pcurr = infbuf;
-        while (*pcurr)
-        {
-          if ( *pcurr++ != '#' )
+    pcurr = infbuf;
+    while (*pcurr)
+    {
+        if ( *pcurr++ != '#' )
             continue;
-          tmp = *pcurr;
-          if (tmp == 'E')               /* #E 3A 11                     */
-          {                             /* desktop environment          */
+        tmp = *pcurr;
+        if (tmp == 'E')             /* #E 3A 11                     */
+        {                           /* desktop environment          */
             pcurr += 2;
             scan_2(pcurr, &env);
             ev_dclick(env & 0x07, TRUE);
-          }
-          else if (tmp == 'Z')      /* something like "#Z 01 C:\THING.APP@" */
-          {
+        }
+        else if (tmp == 'Z')        /* something like "#Z 01 C:\THING.APP@" */
+        {
             BYTE *tmpptr1, *tmpptr2;
             pcurr += 5;
             tmpptr1 = pcurr;
             while (*pcurr && (*pcurr != '@'))
-              ++pcurr;
+                ++pcurr;
             *pcurr = 0;
             tmpptr2 = sh_name(tmpptr1);
             *(tmpptr2-1) = 0;
             KDEBUG(("Found #Z entry in EMUDESK.INF: path=%s, prg=%s\n",tmpptr1,tmpptr2));
             sh_wdef(tmpptr2, tmpptr1);
             ++pcurr;
-          }
         }
+    }
 }
 
 
-
 /*
- * Give everyone a chance to run, at least once
+ *  Give everyone a chance to run, at least once
  */
 void all_run(void)
 {
@@ -552,13 +541,13 @@ void all_run(void)
 
 
 /*
- * this function is called from accdesk_start (in gemstart.S) which
- * is itself called from gem_main() below
+ *  This function is called from accdesk_start (in gemstart.S) which
+ *  is itself called from gem_main() below.
  *
- * it runs under a separate process which terminates on shutdown or
- * resolution change (see accdesk_start).  this ensures that all
- * memory allocated to or by desk accessories is automatically freed
- * on resolution change.
+ *  It runs under a separate process which terminates on shutdown or
+ *  resolution change (see accdesk_start).  This ensures that all
+ *  memory allocated to or by desk accessories is automatically freed
+ *  on resolution change.
  */
 void run_accs_and_desktop(void)
 {
