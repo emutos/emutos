@@ -55,64 +55,62 @@ FPD      *gl_rbuf;
 
 
 /*
-*       Routine to initialize the application
-*/
+ *  Routine to initialize the application
+ */
 WORD ap_init(void)
 {
-        WORD    pid;
-        char    scdir[32];
+    WORD    pid;
+    char    scdir[32];
 
-        pid = rlr->p_pid;
+    pid = rlr->p_pid;
 
-        strcpy(scdir, SCRAP_DIR_NAME);
+    strcpy(scdir, SCRAP_DIR_NAME);
 
-        scdir[0] = gl_logdrv;                   /* set drive letter     */
-        sc_write(scdir);
+    scdir[0] = gl_logdrv;           /* set drive letter     */
+    sc_write(scdir);
 
-        return( pid );
+    return pid;
 }
 
 
 /*
-*       APplication READ or WRITE
-*/
+ *  APplication READ or WRITE
+ */
 void ap_rdwr(WORD code, AESPD *p, WORD length, LONG pbuff)
 {
-        QPB             m;
-                                                /* do quick version if  */
-                                                /*   it is standard 16  */
-                                                /*   byte read and the  */
-                                                /*   pipe has only 16   */
-                                                /*   bytes inside it    */
-        if ( (code == MU_MESAG) &&
-             (p->p_qindex == length) &&
-             (length == 16) )
-        {
-          memcpy((void *)pbuff, (void *)p->p_qaddr, p->p_qindex);
-          p->p_qindex = 0;
-        }
-        else
-        {
-          m.qpb_ppd = p;
-          m.qpb_cnt = length;
-          m.qpb_buf = pbuff;
-          ev_block(code, (LONG)&m);
-          }
+    QPB     m;
+
+    /*
+     * do quick version if it is standard 16-byte read and the
+     * pipe has only 16 bytes inside it
+     */
+    if ((code == MU_MESAG) && (p->p_qindex == length) && (length == 16))
+    {
+        memcpy((void *)pbuff, (void *)p->p_qaddr, p->p_qindex);
+        p->p_qindex = 0;
+    }
+    else
+    {
+        m.qpb_ppd = p;
+        m.qpb_cnt = length;
+        m.qpb_buf = pbuff;
+        ev_block(code, (LONG)&m);
+    }
 }
 
 
 /*
-*       APplication FIND
-*/
+ *  APplication FIND
+ */
 WORD ap_find(LONG pname)
 {
-        register AESPD  *p;
-        BYTE            temp[9];
+    register AESPD  *p;
+    BYTE    temp[9];
 
-        strcpy(temp, (char *)pname);
+    strcpy(temp, (char *)pname);
 
-        p = fpdnm(&temp[0], 0x0);
-        return( ((p) ? (p->p_pid) : (-1)) );
+    p = fpdnm(&temp[0], 0x0);
+    return p ? p->p_pid : -1;
 }
 
 
@@ -210,11 +208,11 @@ WORD ap_trecd(FPD *pbuff,WORD length)
 
 void ap_exit(void)
 {
-        wm_update(TRUE);
-        mn_clsda();
-        if (rlr->p_qindex)
-          ap_rdwr(MU_MESAG, rlr, rlr->p_qindex, (LONG)D.g_valstr);
-        gsx_mfset(ad_armice);
-        wm_update(FALSE);
-        all_run();
+    wm_update(TRUE);
+    mn_clsda();
+    if (rlr->p_qindex)
+        ap_rdwr(MU_MESAG, rlr, rlr->p_qindex, (LONG)D.g_valstr);
+    gsx_mfset(ad_armice);
+    wm_update(FALSE);
+    all_run();
 }

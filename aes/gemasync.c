@@ -35,189 +35,205 @@
 
 static void signal(EVB *e)
 {
-        register AESPD  *p, *p1, **pp1;
-        p = e->e_pd;
-        p->p_evflg |= e->e_mask;
-                                                /* off the not-ready    */
-                                                /*   list               */
-        for (pp1 = &nrl, p1 = nrl; (p1 != p) && (p1);
-          pp1 = &p1->p_link, p1 = p1->p_link);
-        if ( p != rlr )
+    register AESPD  *p, *p1, **pp1;
+
+    p = e->e_pd;
+    p->p_evflg |= e->e_mask;
+
+    /* off the not-ready list */
+    for (pp1 = &nrl, p1 = nrl; (p1 != p) && (p1); pp1 = &p1->p_link, p1 = p1->p_link)
+        ;
+
+    if (p != rlr)
+    {
+        if (p->p_evflg & p->p_evwait)
         {
-          if ( p->p_evflg & p->p_evwait)
-          {
-            if ( p1 )
+            if (p1)
             {
-              p1->p_stat &= ~WAITIN;
+                p1->p_stat &= ~WAITIN;
 
-              *pp1 = p1->p_link;                /* remove from nrl      */
+                *pp1 = p1->p_link;                /* remove from nrl      */
 
-              p1->p_link = drl;                 /* onto the drl         */
-              drl = p1;
+                p1->p_link = drl;                 /* onto the drl         */
+                drl = p1;
             }
-          }
         }
+    }
 }
 
 
 void azombie(EVB *e, UWORD ret)
 {
-                                                /* must be called with  */
-                                                /*   dispatching off    */
-        e->e_return = ((LONG)button<<16) | ret;
-        e->e_parm = ((LONG)xrat<<16) | (UWORD)yrat;
+    /* must be called with dispatching off */
+    e->e_return = ((LONG)button<<16) | ret;
+    e->e_parm = ((LONG)xrat<<16) | (UWORD)yrat;
 
-        e->e_link = zlr;
-        if ( zlr )
-          zlr->e_pred = e;
-        e->e_pred = (EVB *)(((BYTE *) &zlr) - elinkoff);
-        zlr = e;
-        e->e_flag = COMPLETE;
-        signal(e);
+    e->e_link = zlr;
+    if (zlr)
+        zlr->e_pred = e;
+
+    e->e_pred = (EVB *)(((BYTE *) &zlr) - elinkoff);
+    zlr = e;
+    e->e_flag = COMPLETE;
+    signal(e);
 }
 
 
 void evinsert(EVB *e, EVB **root)
 {
-        register EVB    *p, *q;
-                                                /* insert event block   */
-                                                /*   on list            */
-        q = (EVB *)((BYTE *) root - elinkoff) ;
-        p = *root;
-        e->e_pred = q;
-        q->e_link = e;
-        e->e_link = p;
-        if ( p )
-          p->e_pred = e;
+    register EVB    *p, *q;
+
+    /* insert event block on list */
+    q = (EVB *)((BYTE *) root - elinkoff);
+    p = *root;
+    e->e_pred = q;
+    q->e_link = e;
+    e->e_link = p;
+    if (p)
+        p->e_pred = e;
 }
 
 
 static void takeoff(EVB *p)
 {
-        register LONG   c;
+    register LONG   c;
 
-                                                /* take event p off     */
-                                                /*   e_link list, must  */
-                                                /*   be NODISP          */
-        p->e_pred->e_link = p->e_link;
-        if (p->e_link)
+    /* take event p off e_link list, must be NODISP */
+    p->e_pred->e_link = p->e_link;
+    if (p->e_link)
+    {
+        p->e_link->e_pred = p->e_pred;
+        if (p->e_flag & EVDELAY)
         {
-          p->e_link->e_pred = p->e_pred;
-          if (p->e_flag & EVDELAY)
-          {
             c = (LONG) p->e_link->e_parm;
             c += (LONG) p->e_parm;
             p->e_link->e_parm = (LONG) c;
-          }
         }
-        p->e_nextp = eul;
-        eul = p;
+    }
+    p->e_nextp = eul;
+    eul = p;
 }
 
 
 EVSPEC mwait(EVSPEC mask)
 {
-        rlr->p_evwait = mask;
-        if ( !(mask & rlr->p_evflg) )
-        {
-          rlr->p_stat |= WAITIN;
-          dsptch();
-        }
-        return(rlr->p_evflg);
+    rlr->p_evwait = mask;
+    if (!(mask & rlr->p_evflg))
+    {
+        rlr->p_stat |= WAITIN;
+        dsptch();
+    }
+
+    return rlr->p_evflg;
 }
 
 
 EVSPEC iasync(WORD afunc, LONG aparm)
 {
-        register EVB    *e;
-                                                /* get an evb           */
-        if ((e = eul) != 0)
-        {
-          eul = eul->e_nextp;
-          memset(e, 0, sizeof(EVB));
-        }
-                                                /* put in on list       */
-        e->e_nextp = rlr->p_evlist;
-        rlr->p_evlist = e;
-        e->e_pd = rlr;
-        e->e_flag = 0;
-        e->e_pred = 0;
-                                                /* find a free bit in   */
-                                                /*   in the mask        */
-        e->e_mask = afunc;
-        rlr->p_evbits |= e->e_mask;
+    register EVB    *e;
 
-        switch(afunc)
-        {
-          case MU_KEYBD: akbin(e);              break;
-          case MU_BUTTON:abutton(e,aparm);      break;
-          case MU_M1:
-          case MU_M2:    amouse(e,aparm);       break;
-          case MU_MESAG: aqueue(FALSE,e,aparm); break;
-          case MU_TIMER: adelay(e,aparm);       break;
-          case MU_SDMSG: aqueue(TRUE,e,aparm);  break;
-          case MU_MUTEX: amutex(e,aparm);       break;
-        }
-        return(e->e_mask);
+    /* get an evb */
+    if ((e = eul) != 0)
+    {
+        eul = eul->e_nextp;
+        memset(e, 0, sizeof(EVB));
+    }
+
+    /* put in on list */
+    e->e_nextp = rlr->p_evlist;
+    rlr->p_evlist = e;
+    e->e_pd = rlr;
+    e->e_flag = 0;
+    e->e_pred = 0;
+
+    /* find a free bit in the mask */
+    e->e_mask = afunc;
+    rlr->p_evbits |= e->e_mask;
+
+    switch(afunc)
+    {
+    case MU_KEYBD:
+        akbin(e);
+        break;
+    case MU_BUTTON:
+        abutton(e,aparm);
+        break;
+    case MU_M1:
+    case MU_M2:
+        amouse(e,aparm);
+        break;
+    case MU_MESAG:
+        aqueue(FALSE,e,aparm);
+        break;
+    case MU_TIMER:
+        adelay(e,aparm);
+        break;
+    case MU_SDMSG:
+        aqueue(TRUE,e,aparm);
+        break;
+    case MU_MUTEX:
+        amutex(e,aparm);
+        break;
+    }
+
+    return e->e_mask;
 }
 
 
 UWORD apret(EVSPEC mask)
 {
-        register EVB    *p, *q;
-        UWORD           erret;
-                                                /* first find the event */
-                                                /*   on the process list*/
-        for (p = (q = (EVB *) &rlr->p_evlist) -> e_nextp; p;
-                                                 p = (q=p)->e_nextp)
-          if (p->e_mask == mask)
+    register EVB    *p, *q;
+    UWORD   erret;
+
+    /* first find the event on the process list*/
+    for (p = (q = (EVB *) &rlr->p_evlist) -> e_nextp; p; p = (q=p)->e_nextp)
+        if (p->e_mask == mask)
             break;
-                                                /* found the event,     */
-                                                /*   remove it from the */
-                                                /*   zombie list        */
-        p->e_pred->e_link = p->e_link;
-        if ( p->e_link )
-          p->e_link->e_pred = p->e_pred;
-        q->e_nextp = p->e_nextp;
-        rlr->p_evbits &= ~mask;
-        rlr->p_evwait &= ~mask;
-        rlr->p_evflg &= ~mask;
 
-        erret = (UWORD)p->e_return;
+    /* found the event, remove it from the zombie list */
+    p->e_pred->e_link = p->e_link;
+    if (p->e_link)
+        p->e_link->e_pred = p->e_pred;
 
-        p->e_nextp = eul;
-        eul = p;
+    q->e_nextp = p->e_nextp;
+    rlr->p_evbits &= ~mask;
+    rlr->p_evwait &= ~mask;
+    rlr->p_evflg &= ~mask;
 
-        return( erret );
+    erret = (UWORD)p->e_return;
+
+    p->e_nextp = eul;
+    eul = p;
+
+    return erret;
 }
 
 
 EVSPEC acancel(EVSPEC m)
 {
-        register EVSPEC m1;              /* mask of items not cancelled */
-        register WORD   f;
-        register EVB    *p, *q;
+    register EVSPEC m1;             /* mask of items not cancelled */
+    register WORD   f;
+    register EVB    *p, *q;
 
-        m1 = 0;
-        for (p = (q = (EVB *) &rlr->p_evlist)->e_nextp; p; p = (q=p)->e_nextp)
+    m1 = 0;
+    for (p = (q = (EVB *) &rlr->p_evlist)->e_nextp; p; p = (q=p)->e_nextp)
+    {
+        if (p->e_mask & m)
         {
-          if ( p->e_mask & m )
-          {
-                                                /* take it off, if not  */
-                                                /*   completed or in-   */
-                                                /*   progress           */
+            /* take it off, if not completed or in-progress */
             f = p->e_flag;
-            if ( (f & NOCANCEL) || (f & COMPLETE) )
-              m1 |= p->e_mask;
+            if ((f & NOCANCEL) || (f & COMPLETE))
+                m1 |= p->e_mask;
             else
             {
-              q->e_nextp = p->e_nextp;
-              takeoff(p);
-              rlr->p_evbits &= ~p->e_mask;
-              rlr->p_evwait &= ~p->e_mask;
-              p = q;                            /* contine traversal    */
+                q->e_nextp = p->e_nextp;
+                takeoff(p);
+                rlr->p_evbits &= ~p->e_mask;
+                rlr->p_evwait &= ~p->e_mask;
+                p = q;              /* contine traversal    */
             }
-          }
         }
-        return(m1);
+    }
+
+    return m1;
 }
