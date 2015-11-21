@@ -104,8 +104,13 @@ void sh_curdir(BYTE *ppath)
         drive = dos_gdrv();
         *ppath++ = drive + 'A';
         *ppath++ = ':';
-        *ppath++ = '\\';
-        dos_gdir( drive+1, ppath );
+        *ppath = '\0';
+        dos_gdir(drive+1, ppath);
+        if (*ppath == '\0')
+        {
+            *ppath++ = '\\';
+            *ppath = '\0';
+        }
 }
 
 

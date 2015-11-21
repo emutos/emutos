@@ -217,12 +217,7 @@ LONG dos_chdir(BYTE *pdrvpath)
 
 WORD dos_gdir(WORD drive, BYTE *pdrvpath)
 {
-    register WORD ret;
-
-    ret = gemdos(X_GETDIR,pdrvpath,drive);
-    if (pdrvpath[0] == '\\')
-        strcpy(pdrvpath, &pdrvpath[1]);     /* remove leading '\' */
-    return ret;
+    return gemdos(X_GETDIR,pdrvpath,drive);
 }
 
 
