@@ -368,7 +368,8 @@ static WORD rs_readit(AESGLOBAL *pglobal,UWORD fd)
         if (DOS_ERR)
           return FALSE;
                                                 /* read it all in       */
-        dos_lseek(fd, SMODE, 0x0L);
+        if (dos_lseek(fd, SMODE, 0x0L) < 0L)
+          return FALSE;
         dos_read(fd, rslsize, (void *)rs_hdr.base);
         if (DOS_ERR)
           return FALSE;
