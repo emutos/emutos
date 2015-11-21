@@ -50,7 +50,7 @@ WORD dos_chmod(BYTE *name, WORD wrt, WORD mod);
 WORD dos_setdt(UWORD h, UWORD time, UWORD date);
 WORD dos_label(BYTE drive, BYTE *plabel);
 LONG dos_delete(BYTE *name);
-WORD dos_space(WORD drv, LONG *ptotal, LONG *pavail);
+void dos_space(WORD drv, LONG *ptotal, LONG *pavail);
 WORD dos_rename(BYTE *p1, BYTE *p2);
 WORD dos_rmdir(BYTE *path);
 

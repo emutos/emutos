@@ -285,16 +285,19 @@ LONG dos_delete(BYTE *name)
 }
 
 
-WORD dos_space(WORD drv, LONG *ptotal, LONG *pavail)
+void dos_space(WORD drv, LONG *ptotal, LONG *pavail)
 {
     LONG    buf[4];
     LONG    mult;
 
-    gemdos(X_GETFREE,buf,drv);      /* 0=default, 1=A for gemdos    */
+    *ptotal = *pavail = 0L;
+
+    if (gemdos(X_GETFREE,buf,drv) < 0L) /* 0=default, 1=A for gemdos */
+        return;
+
     mult = buf[3] * buf[2];
     *ptotal = mult * buf[1];
     *pavail = mult * buf[0];
-    return TRUE;
 }
 
 
