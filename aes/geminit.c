@@ -423,8 +423,8 @@ static void sh_rdinf(void)
      */
     size = dos_read(fh, INF_SIZE, infbuf);
     dos_close(fh);
-    if (DOS_ERR)
-        return;
+    if (size < 0L)      /* if read error, force empty buffer */
+        size = 0L;
     infbuf[size] = 0;
 }
 
