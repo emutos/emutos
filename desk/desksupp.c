@@ -404,7 +404,7 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
     BYTE *msg;
 
     rc = dos_open(name,0);
-    if (DOS_ERR)
+    if (rc < 0L)
         return;
 
     handle = (WORD) (rc & 0xffff);
@@ -427,8 +427,6 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
     while(1)
     {
         n = rc = dos_read(handle,bufsize,iobuf);
-        if (DOS_ERR)
-            rc = -1L;
         if (rc <= 0L)
             break;
         rc = show_buf(iobuf,n);
@@ -554,8 +552,7 @@ static WORD do_dopen(WORD curr)
     if (pw)
     {
         drv = (0x00ff & pib->ib_char);
-        pro_chdir(drv, "");
-        if (!DOS_ERR)
+        if (pro_chdir(drv, "") == 0)
             do_diropen(pw, TRUE, curr, drv, "", "*", "*",
                         (GRECT *)&G.g_screen[pw->w_root].ob_x, TRUE);
         else
@@ -588,20 +585,18 @@ void do_fopen(WNODE *pw, WORD curr, WORD drv, BYTE *ppath, BYTE *pname,
     pnew = ppath;
     wind_get(pw->w_id, WF_WXYWH, &t.g_x, &t.g_y, &t.g_w, &t.g_h);
 
-    pro_chdir(drv, "");
-    if (DOS_ERR)
+    if (pro_chdir(drv, "") < 0L)    /* drive (no longer) valid? */
     {
         true_closewnd(pw);
         return;
     }
-    pro_chdir(drv, ppath);
-
-    pn_close(pw->w_path);
-    if (!DOS_ERR)
-    {
+    if (pro_chdir(drv, ppath) == 0) /* if directory exists, */
+    {                               /* ensure all contents are displayed */
         pname = "*";
         pext  = "*";
     }
+
+    pn_close(pw->w_path);
 
     ok = do_diropen(pw, FALSE, curr, drv, pnew, pname, pext, &t, redraw);
     if (!ok)
