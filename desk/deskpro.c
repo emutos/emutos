@@ -47,9 +47,7 @@ WORD pro_chdir(WORD drv, BYTE *ppath)
     path[1] = ':';
     path[2] = '\\';
     strcpy(path+3, ppath);
-    dos_chdir(path);
-
-    return TRUE;
+    return (WORD)dos_chdir(path);
 }
 
 
