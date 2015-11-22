@@ -304,8 +304,7 @@ WORD rs_free(AESGLOBAL *pglobal)
 {
         rs_global = pglobal;
 
-        dos_free(rs_global->ap_1resv);
-        return(!DOS_ERR);
+        return !dos_free(rs_global->ap_1resv);
 }/* rs_free() */
 
 
