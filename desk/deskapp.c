@@ -436,14 +436,17 @@ void app_start(void)
     shel_get(gl_afile, SIZE_AFILE);
     if (gl_afile[0] != '#')                 /* invalid signature    */
     {                                       /*   so read from disk  */
+        LONG ret;
         WORD fh;
         char inf_file_name[16];
         strcpy(inf_file_name, INF_FILE_NAME);
         inf_file_name[0] += gl_stdrv;         /* Adjust drive letter  */
-        fh = dos_open(inf_file_name, 0x0);
-        if (!DOS_ERR)
+        ret = dos_open(inf_file_name, 0x0);
+        if (ret >= 0L)
         {
-            G.g_afsize = dos_read(fh, SIZE_AFILE, gl_afile);
+            fh = (WORD) ret;
+            ret = dos_read(fh, SIZE_AFILE, gl_afile);
+            G.g_afsize = (ret < 0L) ? 0L : ret;
             dos_close(fh);
             gl_afile[G.g_afsize] = '\0';
         }
