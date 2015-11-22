@@ -1018,8 +1018,7 @@ static void cnx_get(void)
                 pw->w_cvrow = pws->vsl_save;
                 fpd_parse(pws->pth_save, &drv, G.g_tmppth, fname, fext);
                 do_xyfix(&pws->x_save, &pws->y_save);
-                pro_chdir(drv, G.g_tmppth);
-                if (DOS_ERR)
+                if (pro_chdir(drv, G.g_tmppth) < 0)
                 {
                     win_free(pw);
                     continue;
