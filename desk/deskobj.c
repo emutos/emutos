@@ -79,7 +79,7 @@ static WORD sob_malloc(void)
      * available memory, or MIN_WOBS, whichever is greater.  In practice,
      * this should not be a restriction.
      */
-    mem = dos_alloc(-1L);
+    mem = dos_avail();
     limit = mem / (20*(sizeof(OBJECT)+sizeof(SCREENINFO)));
     if (limit < MIN_WOBS)
         limit = MIN_WOBS;
