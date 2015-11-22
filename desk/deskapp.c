@@ -641,18 +641,59 @@ static void app_revit(void)
 
 
 /*
- *  Save the current state of all the icons to a file called EMUDESK.INF
+ *  Perform the actual save of the EMUDESK.INF file
+ */
+static void save_to_disk(void)
+{
+    LONG ret, len;
+    WNODE *w;
+    WORD fh;
+    BYTE inf_file_name[sizeof(INF_FILE_NAME)];
+
+    strcpy(inf_file_name, INF_FILE_NAME);
+    inf_file_name[0] += gl_stdrv;   /* Adjust drive letter  */
+
+    while(1)
+    {
+        ret = dos_create(inf_file_name, 0);
+        if (ret >= 0L)
+        {
+            fh = (WORD) ret;
+            len = G.g_afsize - 1;
+            ret = dos_write(fh, len, gl_afile);
+            dos_close(fh);
+            if (ret == len)         /* if all ok, exit loop */
+                break;
+        }
+        if (fun_alert(1, STNOINF, NULL) == 2)
+            break;                  /* user cancelled */
+    }
+
+    /*
+     * now update any open windows for the directory containing
+     * the saved file.  we always update, even if the user
+     * cancelled, since the file may have been created but not
+     * written successfully before the alert was issued.
+     */
+    del_fname(inf_file_name);       /* convert to pathname ending in *.* */
+    w = fold_wind(inf_file_name);   /* scan for matching windows */
+    if (w)                          /* got one:                          */
+        fun_rebld(w);               /* rebuild all matching open windows */
+}
+
+
+/*
+ *  Save the current state of all the desktop options/icons/windows
+ *  etc to memory and, optionally, to a file called EMUDESK.INF
  */
 void app_save(WORD todisk)
 {
-    WORD i, fh, ret;
+    WORD i;
     WORD env1, env2, mode, env5;
     BYTE type;
     BYTE *pcurr, *ptmp;
     ANODE *pa;
     WSAVE *pws;
-    WNODE *w;
-    BYTE inf_file_name[sizeof(INF_FILE_NAME)];
 
     memset(&gl_afile[0], 0, SIZE_AFILE);
     pcurr = &gl_afile[0];
@@ -755,31 +796,7 @@ void app_save(WORD todisk)
 
     /* save to disk */
     if (todisk)
-    {
-        G.g_afsize--;
-        fh = 0;
-        while(!fh)
-        {
-            strcpy(inf_file_name, INF_FILE_NAME);
-            inf_file_name[0] += gl_stdrv;   /* Adjust drive letter  */
-            fh = dos_create(inf_file_name, 0x0);
-            if (DOS_ERR)
-            {
-                fh = 0;
-                ret = fun_alert(1, STNOINF, NULL);
-                if (ret == 2)
-                    return;
-            }
-        }
-        G.g_afsize = dos_write(fh, G.g_afsize, gl_afile);
-        dos_close(fh);
-
-        /* now update any open windows for the directory containing the saved file */
-        del_fname(inf_file_name);       /* convert to pathname ending in *.* */
-        w = fold_wind(inf_file_name);   /* scan for matching windows */
-        if (w)                          /* got one:                          */
-            fun_rebld(w);               /* rebuild all matching open windows */
-    }
+        save_to_disk();
 }
 
 
