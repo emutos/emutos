@@ -228,8 +228,7 @@ LONG dos_create(BYTE *name, WORD attr)
 
 WORD dos_mkdir(BYTE *path)
 {
-    gemdos(X_MKDIR,path);
-    return !DOS_ERR;
+    return gemdos(X_MKDIR,path);
 }
 
 
