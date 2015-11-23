@@ -244,7 +244,7 @@ static void sndcli(BYTE *pfilespec)
     strcpy(&D.s_cmd[0], pfilespec);
 
     ret = dos_open(D.s_cmd, ROPEN);
-    if (!DOS_ERR)
+    if (ret >= 0L)
     {
         handle = (WORD)ret;
         err_ret = pgmld(handle, &D.s_cmd[0], (LONG **)&ldaddr);
@@ -416,7 +416,7 @@ static void sh_rdinf(void)
     *pfile += dos_gdrv();                   /* set the drive        */
 
     ret = dos_open(pfile, ROPEN);
-    if (DOS_ERR)
+    if (ret < 0L)
         return;
     fh = (WORD)ret;
 
