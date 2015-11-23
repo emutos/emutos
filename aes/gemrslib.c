@@ -357,9 +357,8 @@ static WORD rs_readit(AESGLOBAL *pglobal,UWORD fd)
         WORD    ibcnt;
         UWORD   rslsize;
                                                 /* read the header      */
-        dos_read(fd, sizeof(hdr_buff), &hdr_buff);
-        if (DOS_ERR)
-          return FALSE;
+        if (dos_read(fd, sizeof(hdr_buff), &hdr_buff) != sizeof(hdr_buff))
+          return FALSE;                         /* error or short read */
                                                 /* get size of resource */
         rslsize = hdr_buff.rsh_rssize;
                                                 /* allocate memory      */
@@ -369,9 +368,8 @@ static WORD rs_readit(AESGLOBAL *pglobal,UWORD fd)
                                                 /* read it all in       */
         if (dos_lseek(fd, SMODE, 0x0L) < 0L)
           return FALSE;
-        dos_read(fd, rslsize, (void *)rs_hdr.base);
-        if (DOS_ERR)
-          return FALSE;
+        if (dos_read(fd, rslsize, (void *)rs_hdr.base) != rslsize)
+          return FALSE;                         /* error or short read */
                                                 /* init global          */
         rs_global = pglobal;
 
