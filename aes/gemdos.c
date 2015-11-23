@@ -172,16 +172,9 @@ WORD dos_snext(void)
 }
 
 
-WORD dos_open(BYTE *pname, WORD access)
+LONG dos_open(BYTE *pname, WORD access)
 {
-    LONG    ret;
-
-    ret = gemdos(X_OPEN,pname,access);
-
-    if (DOS_ERR)
-        return(FALSE);
-    else
-        return (UWORD)ret;
+    return gemdos(X_OPEN,pname,access);
 }
 
 

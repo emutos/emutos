@@ -411,6 +411,7 @@ void rs_fixit(AESGLOBAL *pglobal)
 */
 WORD rs_load(AESGLOBAL *pglobal, LONG rsfname)
 {
+        LONG  dosrc;
         WORD  ret;
         UWORD fd;
 
@@ -421,9 +422,10 @@ WORD rs_load(AESGLOBAL *pglobal, LONG rsfname)
         if (!sh_find(tmprsfname))
           return FALSE;
 
-        fd = dos_open((BYTE *)tmprsfname,RMODE_RD);
+        dosrc = dos_open((BYTE *)tmprsfname,RMODE_RD);
         if (DOS_ERR)
           return FALSE;
+        fd = (UWORD)dosrc;
 
         ret = rs_readit(pglobal,fd);
         if (ret)

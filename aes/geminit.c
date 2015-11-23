@@ -235,17 +235,18 @@ static void fs_start(void)
  */
 static void sndcli(BYTE *pfilespec)
 {
-    register WORD   handle;
+    WORD    handle;
     WORD    err_ret;
-    LONG    ldaddr;
+    LONG    ldaddr, ret;
 
     KDEBUG(("sndcli(\"%s\")\n", (const char*)pfilespec));
 
     strcpy(&D.s_cmd[0], pfilespec);
 
-    handle = dos_open(D.s_cmd, ROPEN);
+    ret = dos_open(D.s_cmd, ROPEN);
     if (!DOS_ERR)
     {
+        handle = (WORD)ret;
         err_ret = pgmld(handle, &D.s_cmd[0], (LONG **)&ldaddr);
         dos_close(handle);
         /* create process to execute it */
@@ -404,7 +405,7 @@ static void sh_init(void)
 static void sh_rdinf(void)
 {
     WORD    fh;
-    LONG    size;
+    LONG    size, ret;
     char    *pfile;
     char    tmpstr[MAX_LEN];
 
@@ -414,9 +415,10 @@ static void sh_rdinf(void)
     pfile = tmpstr;
     *pfile += dos_gdrv();                   /* set the drive        */
 
-    fh = dos_open(pfile, ROPEN);
-    if (!fh || DOS_ERR)
+    ret = dos_open(pfile, ROPEN);
+    if (DOS_ERR)
         return;
+    fh = (WORD)ret;
 
     /* NOTA BENE: all required info MUST be within INF_SIZE
      * bytes from the beginning of the file

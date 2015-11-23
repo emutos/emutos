@@ -407,7 +407,7 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
     if (rc < 0L)
         return;
 
-    handle = (WORD) (rc & 0xffff);
+    handle = (WORD)rc;
 
     scr_width = G.g_wdesk;
     scr_height = G.g_ydesk + G.g_hdesk;

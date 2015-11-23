@@ -35,7 +35,7 @@ void dos_sdta(void *ldta);
 void *dos_gdta(void);
 WORD dos_sfirst(BYTE *pspec, WORD attr);
 WORD dos_snext(void);
-WORD dos_open(BYTE *pname, WORD access);
+LONG dos_open(BYTE *pname, WORD access);
 WORD dos_close(WORD handle);
 LONG dos_read(WORD handle, LONG cnt, void *pbuffer);
 LONG dos_write(WORD handle, LONG cnt, void *pbuffer);

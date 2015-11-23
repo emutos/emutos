@@ -389,6 +389,7 @@ static WORD d_dofdel(BYTE *ppath)
 static WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
 {
     WORD fh, ob = 0, samefile;
+    LONG ret;
     LONG tree = G.a_trees[ADCPALER];
     BYTE ml_fsrc[LEN_ZFNAME], ml_fdst[LEN_ZFNAME], ml_fstr[LEN_ZFNAME];
     BYTE old_dst[LEN_ZFNAME];
@@ -414,13 +415,14 @@ static WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
                 break;
             if (!G.g_covwrpref)
                 break;
-            fh = dos_open(pdst_file, 0);
+            ret = dos_open(pdst_file, 0);
             if (DOS_ERR)
             {
                 if (DOS_AX == E_FILENOTFND)
                     break;
                 return d_errmsg();
             }
+            fh = (WORD)ret;
             dos_close(fh);
         }
 
@@ -481,11 +483,12 @@ static WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
 static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WORD attr)
 {
     WORD srcfh, dstfh, rc;
-    LONG readlen, writelen;
+    LONG readlen, writelen, ret;
 
-    srcfh = dos_open(psrc_file, 0);
+    ret = dos_open(psrc_file, 0);
     if (DOS_ERR)
         return d_errmsg();
+    srcfh = (WORD)ret;
 
     rc = output_fname(psrc_file, pdst_file);
     if (rc <= 0)        /* not allowed to copy file */
