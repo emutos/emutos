@@ -363,7 +363,7 @@ static WORD rs_readit(AESGLOBAL *pglobal,UWORD fd)
         rslsize = hdr_buff.rsh_rssize;
                                                 /* allocate memory      */
         rs_hdr.base = (LONG)dos_alloc(rslsize);
-        if (DOS_ERR)
+        if (!rs_hdr.base)
           return FALSE;
                                                 /* read it all in       */
         if (dos_lseek(fd, SMODE, 0x0L) < 0L)
@@ -421,7 +421,7 @@ WORD rs_load(AESGLOBAL *pglobal, LONG rsfname)
           return FALSE;
 
         dosrc = dos_open((BYTE *)tmprsfname,RMODE_RD);
-        if (DOS_ERR)
+        if (dosrc < 0L)
           return FALSE;
         fd = (UWORD)dosrc;
 
