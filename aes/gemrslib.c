@@ -57,41 +57,44 @@ static RSHDR   hdr_buff;
 static char    free_str[256];   /* must be long enough for longest freestring in gem.rsc */
 
 
-
 /*
-*       Fix up a character position, from offset,row/col to a pixel value.
-*       If width is 80 then convert to full screen width.  If height is 25
-*       then convert to full screen height.  Is this correct??
-*/
+ *  Fix up a character position, from offset,row/col to a pixel value.
+ *  If width is 80 then convert to full screen width.  If height is 25
+ *  then convert to full screen height.  Is this correct??
+ */
 static void fix_chpos(WORD *pfix, WORD offset)
 {
-        WORD    coffset;
-        WORD    cpos;
+    WORD coffset;
+    WORD cpos;
 
-        cpos = *pfix;
-        coffset = (cpos >> 8) & 0x00ff;
-        cpos &= 0x00ff;
+    cpos = *pfix;
+    coffset = (cpos >> 8) & 0x00ff;
+    cpos &= 0x00ff;
 
-        switch(offset)
-        {
-          case 0: cpos *= gl_wchar;
-            break;
-          case 1: cpos *= gl_hchar;
-            break;
-          case 2: if (cpos == 80)
-               cpos = gl_width;
-             else
-               cpos *= gl_wchar;
-            break;
-          case 3: if (cpos == 25)
-               cpos = gl_height;
-             else
-               cpos *= gl_hchar;
-            break;
-        }
+    switch(offset)
+    {
+    case 0:
+        cpos *= gl_wchar;
+        break;
+    case 1:
+        cpos *= gl_hchar;
+        break;
+    case 2:
+        if (cpos == 80)
+            cpos = gl_width;
+        else
+            cpos *= gl_wchar;
+        break;
+    case 3:
+        if (cpos == 25)
+            cpos = gl_height;
+        else
+            cpos *= gl_hchar;
+        break;
+    }
 
-        cpos += ( coffset > 128 ) ? (coffset - 256) : coffset;
-        *pfix = cpos;
+    cpos += ( coffset > 128 ) ? (coffset - 256) : coffset;
+    *pfix = cpos;
 }
 
 
@@ -100,346 +103,347 @@ static void fix_chpos(WORD *pfix, WORD offset)
 /************************************************************************/
 void rs_obfix(LONG tree, WORD curob)
 {
-        register WORD   offset;
-        OBJECT *obj = (OBJECT *)tree + curob;
-        WORD *p;
-                                                /* set X,Y,W,H */
-        p = &obj->ob_x;
+    register WORD offset;
+    OBJECT *obj = (OBJECT *)tree + curob;
+    WORD *p;
 
-        for (offset=0; offset<4; offset++)
-          fix_chpos(p+offset, offset);
+    /* set X,Y,W,H */
+    p = &obj->ob_x;
+
+    for (offset=0; offset<4; offset++)
+        fix_chpos(p+offset, offset);
 }
-
 
 
 static RSCITEM get_sub(WORD rsindex, WORD rtype, WORD rsize)
 {
-        UWORD           offset;
+    UWORD offset;
 
-        offset = rs_hdr.wordptr[rtype];
-                                                /* get base of objects  */
-                                                /*   and then index in  */
-        return (RSCITEM)( rs_hdr.base + offset + rsize * rsindex );
+    offset = rs_hdr.wordptr[rtype];
+
+    /* get base of objects and then index in */
+    return (RSCITEM)(rs_hdr.base + offset + rsize * rsindex);
 }
 
 
 /*
- *      return address of given type and index, INTERNAL ROUTINE
+ *  return address of given type and index, INTERNAL ROUTINE
  */
 static RSCITEM get_addr(UWORD rstype, UWORD rsindex)
 {
-        RSCITEM         item;
-        register WORD   size;
-        register WORD   rt;
-        WORD            valid;
+    RSCITEM item;
+    register WORD size;
+    register WORD rt;
+    WORD valid;
 
-        valid = TRUE;
-        rt = size = 0;
+    valid = TRUE;
+    rt = size = 0;
 
-        switch(rstype)
-        {
-          case R_TREE:
-                item.base = rs_global->ap_ptree;
-                return (RSCITEM)(item.lptr[rsindex]);
-          case R_OBJECT:
-                rt = RT_OB;
-                size = sizeof(OBJECT);
-                break;
-          case R_TEDINFO:
-          case R_TEPTEXT:
-                rt = RT_TEDINFO;
-                size = sizeof(TEDINFO);
-                break;
-          case R_ICONBLK:
-          case R_IBPMASK:
-                rt = RT_ICONBLK;
-                size = sizeof(ICONBLK);
-                break;
-          case R_BITBLK:
-          case R_BIPDATA:
-                rt = RT_BITBLK;
-                size = sizeof(BITBLK);
-                break;
-          case R_OBSPEC:
-                item = get_addr(R_OBJECT, rsindex);
-                return (RSCITEM)(&item.obj->ob_spec);
-          case R_TEPTMPLT:
-                item = get_addr(R_TEDINFO, rsindex);
-                return (RSCITEM)(&item.ted->te_ptmplt);
-          case R_TEPVALID:
-                item = get_addr(R_TEDINFO, rsindex);
-                return (RSCITEM)(&item.ted->te_pvalid);
-          case R_IBPDATA:
-                item = get_addr(R_ICONBLK, rsindex);
-                return (RSCITEM)(&item.iblk->ib_pdata);
-          case R_IBPTEXT:
-                item = get_addr(R_ICONBLK, rsindex);
-                return (RSCITEM)(&item.iblk->ib_ptext);
-          case R_STRING:
-                item = get_sub(rsindex, RT_FREESTR, sizeof(LONG));
-                return (RSCITEM)(*item.lptr);
-          case R_IMAGEDATA:
-                item = get_sub(rsindex, RT_FREEIMG, sizeof(LONG));
-                return (RSCITEM)(*item.lptr);
-          case R_FRSTR:
-                rt = RT_FREESTR;
-                size = sizeof(LONG);
-                break;
-          case R_FRIMG:
-                rt = RT_FREEIMG;
-                size = sizeof(LONG);
-                break;
-          default:
-                valid = FALSE;
-                break;
-        }
-        if (valid)
-          return get_sub(rsindex, rt, size);
+    switch(rstype)
+    {
+    case R_TREE:
+        item.base = rs_global->ap_ptree;
+        return (RSCITEM)(item.lptr[rsindex]);
+    case R_OBJECT:
+        rt = RT_OB;
+        size = sizeof(OBJECT);
+        break;
+    case R_TEDINFO:
+    case R_TEPTEXT:
+        rt = RT_TEDINFO;
+        size = sizeof(TEDINFO);
+        break;
+    case R_ICONBLK:
+    case R_IBPMASK:
+        rt = RT_ICONBLK;
+        size = sizeof(ICONBLK);
+        break;
+    case R_BITBLK:
+    case R_BIPDATA:
+        rt = RT_BITBLK;
+        size = sizeof(BITBLK);
+        break;
+    case R_OBSPEC:
+        item = get_addr(R_OBJECT, rsindex);
+        return (RSCITEM)(&item.obj->ob_spec);
+    case R_TEPTMPLT:
+        item = get_addr(R_TEDINFO, rsindex);
+        return (RSCITEM)(&item.ted->te_ptmplt);
+    case R_TEPVALID:
+        item = get_addr(R_TEDINFO, rsindex);
+        return (RSCITEM)(&item.ted->te_pvalid);
+    case R_IBPDATA:
+        item = get_addr(R_ICONBLK, rsindex);
+        return (RSCITEM)(&item.iblk->ib_pdata);
+    case R_IBPTEXT:
+        item = get_addr(R_ICONBLK, rsindex);
+        return (RSCITEM)(&item.iblk->ib_ptext);
+    case R_STRING:
+        item = get_sub(rsindex, RT_FREESTR, sizeof(LONG));
+        return (RSCITEM)(*item.lptr);
+    case R_IMAGEDATA:
+        item = get_sub(rsindex, RT_FREEIMG, sizeof(LONG));
+        return (RSCITEM)(*item.lptr);
+    case R_FRSTR:
+        rt = RT_FREESTR;
+        size = sizeof(LONG);
+        break;
+    case R_FRIMG:
+        rt = RT_FREEIMG;
+        size = sizeof(LONG);
+        break;
+    default:
+        valid = FALSE;
+        break;
+    }
 
-        return (RSCITEM)-1L;
+    if (valid)
+        return get_sub(rsindex, rt, size);
+
+    return (RSCITEM)-1L;
 } /* get_addr() */
 
 
 static LONG fix_long(RSCITEM item)
 {
-        register LONG   lngval;
+    register LONG lngval;
 
-        lngval = *item.lptr;
-        if (lngval != -1L)
-        {
-          lngval += rs_hdr.base;
-          *item.lptr = lngval;
-          return lngval;
-        }
+    lngval = *item.lptr;
+    if (lngval != -1L)
+    {
+        lngval += rs_hdr.base;
+        *item.lptr = lngval;
+        return lngval;
+    }
 
-        return 0x0L;
+    return 0L;
 }
 
 
 static void fix_trindex(void)
 {
-        register WORD   ii;
-        RSCITEM item;
-        OBJECT *root;
+    register WORD ii;
+    RSCITEM item;
+    OBJECT *root;
 
-        item = get_sub(0, RT_TRINDEX, sizeof(LONG) );
-        rs_global->ap_ptree = item.base;
+    item = get_sub(0, RT_TRINDEX, sizeof(LONG) );
+    rs_global->ap_ptree = item.base;
 
-        for (ii = rs_hdr.wordptr[R_NTREE]-1; ii >= 0; ii--)
-        {
-          root = (OBJECT *)fix_long((RSCITEM)(item.lptr+ii));
-          if ( (root->ob_state == OUTLINED) &&
-               (root->ob_type == G_BOX) )
+    for (ii = rs_hdr.wordptr[R_NTREE]-1; ii >= 0; ii--)
+    {
+        root = (OBJECT *)fix_long((RSCITEM)(item.lptr+ii));
+        if ((root->ob_state == OUTLINED) && (root->ob_type == G_BOX))
             root->ob_state = SHADOWED;
-        }
+    }
 }
 
 
 static void fix_objects(void)
 {
-        register WORD   ii;
-        register WORD   obtype;
-        RSCITEM         item;
+    register WORD ii;
+    register WORD obtype;
+    RSCITEM item;
 
-        for (ii = rs_hdr.wordptr[R_NOBS]-1; ii >= 0; ii--)
-        {
-          item = get_addr(R_OBJECT, ii);
-          rs_obfix(item.base, 0);
-          obtype = item.obj->ob_type & 0x00ff;
-          if ( (obtype != G_BOX) &&
-               (obtype != G_IBOX) &&
-               (obtype != G_BOXCHAR) )
+    for (ii = rs_hdr.wordptr[R_NOBS]-1; ii >= 0; ii--)
+    {
+        item = get_addr(R_OBJECT, ii);
+        rs_obfix(item.base, 0);
+        obtype = item.obj->ob_type & 0x00ff;
+        if ((obtype != G_BOX) && (obtype != G_IBOX) && (obtype != G_BOXCHAR))
             fix_long((RSCITEM)(&item.obj->ob_spec));
-        }
+    }
 }
 
 
 static void fix_nptrs(WORD cnt, WORD type)
 {
-        register WORD   i;
+    register WORD i;
 
-        for(i=cnt; i>=0; i--)
-          fix_long( get_addr(type, i) );
+    for (i = cnt; i >= 0; i--)
+        fix_long(get_addr(type, i));
 }
 
 
 static WORD fix_ptr(WORD type, WORD index)
 {
-        return( fix_long( get_addr(type, index) ) != 0x0L );
+    return (fix_long(get_addr(type, index)) != 0L);
 }
 
 
 static void fix_tedinfo(void)
 {
-        register WORD   ii;
-        RSCITEM         item;
+    register WORD ii;
+    RSCITEM item;
 
-        for (ii = rs_hdr.wordptr[R_NTED]-1; ii >= 0; ii--)
-        {
-          item = get_addr(R_TEDINFO, ii);
-          if (fix_ptr(R_TEPTEXT, ii) )
+    for (ii = rs_hdr.wordptr[R_NTED]-1; ii >= 0; ii--)
+    {
+        item = get_addr(R_TEDINFO, ii);
+        if (fix_ptr(R_TEPTEXT, ii))
             item.ted->te_txtlen = strlen((char *)item.ted->te_ptext) + 1;
-          if (fix_ptr(R_TEPTMPLT, ii) )
+        if (fix_ptr(R_TEPTMPLT, ii))
             item.ted->te_tmplen = strlen((char *)item.ted->te_ptmplt) + 1;
-          fix_ptr(R_TEPVALID, ii);
-        }
+        fix_ptr(R_TEPVALID, ii);
+    }
 }
 
 
 /*
-*       Set global addresses that are used by the resource library sub-
-*       routines
-*/
+ *  Set global addresses that are used by the resource library subroutines
+ */
 static void rs_sglobe(AESGLOBAL *pglobal)
 {
-        rs_global = pglobal;
-        rs_hdr.base = rs_global->ap_1resv;
+    rs_global = pglobal;
+    rs_hdr.base = rs_global->ap_1resv;
 }
 
 
 /*
-*       Free the memory associated with a particular resource load.
-*/
+ *  Free the memory associated with a particular resource load
+ */
 WORD rs_free(AESGLOBAL *pglobal)
 {
-        rs_global = pglobal;
+    rs_global = pglobal;
 
-        return !dos_free(rs_global->ap_1resv);
-}/* rs_free() */
+    return !dos_free(rs_global->ap_1resv);
+}
 
 
 /*
-*       Get a particular ADDRess out of a resource file that has been
-*       loaded into memory.
-*/
+ *  Get a particular ADDRess out of a resource file that has been
+ *  loaded into memory
+ */
 WORD rs_gaddr(AESGLOBAL *pglobal, UWORD rtype, UWORD rindex, LONG *rsaddr)
 {
-        RSCITEM item;
+    RSCITEM item;
 
-        rs_sglobe(pglobal);
+    rs_sglobe(pglobal);
 
-        item = get_addr(rtype, rindex);
-        *rsaddr = item.base;
+    item = get_addr(rtype, rindex);
+    *rsaddr = item.base;
 
-        return (*rsaddr != -1L);
-} /* rs_gaddr() */
+    return (*rsaddr != -1L);
+}
 
 
 /*
-*       Set a particular ADDRess in a resource file that has been
-*       loaded into memory.
-*/
+ *  Set a particular ADDRess in a resource file that has been
+ *  loaded into memory
+ */
 WORD rs_saddr(AESGLOBAL *pglobal, UWORD rtype, UWORD rindex, LONG rsaddr)
 {
-        RSCITEM item;
+    RSCITEM item;
 
-        rs_sglobe(pglobal);
+    rs_sglobe(pglobal);
 
-        item = get_addr(rtype, rindex);
-        if (item.base != -1L)
-        {
-          *item.lptr = rsaddr;
-          return TRUE;
-        }
+    item = get_addr(rtype, rindex);
+    if (item.base != -1L)
+    {
+        *item.lptr = rsaddr;
+        return TRUE;
+    }
 
-        return FALSE;
-} /* rs_saddr() */
+    return FALSE;
+}
 
 
 /*
-*       Read resource file into memory and fix everything up except the
-*       x,y,w,h, parts which depend upon a GSX open workstation.  In the
-*       case of the GEM resource file this workstation will not have
-*       been loaded into memory yet.
-*/
+ *  Read resource file into memory and fix everything up except the
+ *  x,y,w,h, parts which depend upon a GSX open workstation.  In the
+ *  case of the GEM resource file this workstation will not have
+ *  been loaded into memory yet.
+ */
 static WORD rs_readit(AESGLOBAL *pglobal,UWORD fd)
 {
-        WORD    ibcnt;
-        UWORD   rslsize;
-                                                /* read the header      */
-        if (dos_read(fd, sizeof(hdr_buff), &hdr_buff) != sizeof(hdr_buff))
-          return FALSE;                         /* error or short read */
-                                                /* get size of resource */
-        rslsize = hdr_buff.rsh_rssize;
-                                                /* allocate memory      */
-        rs_hdr.base = (LONG)dos_alloc(rslsize);
-        if (!rs_hdr.base)
-          return FALSE;
-                                                /* read it all in       */
-        if (dos_lseek(fd, SMODE, 0x0L) < 0L)
-          return FALSE;
-        if (dos_read(fd, rslsize, (void *)rs_hdr.base) != rslsize)
-          return FALSE;                         /* error or short read */
-                                                /* init global          */
-        rs_global = pglobal;
+    WORD ibcnt;
+    UWORD rslsize;
 
-        rs_global->ap_1resv = rs_hdr.base;
-        rs_global->ap_2resv[0] = rslsize;
-                                        /* xfer RT_TRINDEX to global    */
-                                        /*   and turn all offsets from  */
-                                        /*   base of file into pointers */
-        fix_trindex();
-        fix_tedinfo();
-        ibcnt = rs_hdr.wordptr[R_NICON]-1;
-        fix_nptrs(ibcnt, R_IBPMASK);
-        fix_nptrs(ibcnt, R_IBPDATA);
-        fix_nptrs(ibcnt, R_IBPTEXT);
-        fix_nptrs(rs_hdr.wordptr[R_NBITBLK]-1, R_BIPDATA);
-        fix_nptrs(rs_hdr.wordptr[R_NSTRING]-1, R_FRSTR);
-        fix_nptrs(rs_hdr.wordptr[R_IMAGES]-1, R_FRIMG);
+    /* read the header */
+    if (dos_read(fd, sizeof(hdr_buff), &hdr_buff) != sizeof(hdr_buff))
+        return FALSE;           /* error or short read */
 
-        return TRUE;
+    /* get size of resource & allocate memory */
+    rslsize = hdr_buff.rsh_rssize;
+    rs_hdr.base = (LONG)dos_alloc(rslsize);
+    if (!rs_hdr.base)
+        return FALSE;
+
+    /* read it all in */
+    if (dos_lseek(fd, SMODE, 0x0L) < 0L)
+        return FALSE;
+    if (dos_read(fd, rslsize, (void *)rs_hdr.base) != rslsize)
+        return FALSE;           /* error or short read */
+
+    /* init global */
+    rs_global = pglobal;
+    rs_global->ap_1resv = rs_hdr.base;
+    rs_global->ap_2resv[0] = rslsize;
+
+    /*
+     * transfer RT_TRINDEX to global and turn all offsets from
+     * base of file into pointers
+     */
+    fix_trindex();
+    fix_tedinfo();
+    ibcnt = rs_hdr.wordptr[R_NICON]-1;
+    fix_nptrs(ibcnt, R_IBPMASK);
+    fix_nptrs(ibcnt, R_IBPDATA);
+    fix_nptrs(ibcnt, R_IBPTEXT);
+    fix_nptrs(rs_hdr.wordptr[R_NBITBLK]-1, R_BIPDATA);
+    fix_nptrs(rs_hdr.wordptr[R_NSTRING]-1, R_FRSTR);
+    fix_nptrs(rs_hdr.wordptr[R_IMAGES]-1, R_FRIMG);
+
+    return TRUE;
 }
 
 
 /*
-*       Fix up objects separately so that we can read GEM resource before we
-*       do an open workstation, then once we know the character sizes we
-*       can fix up the objects accordingly.
-*/
+ *  Fix up objects separately so that we can read GEM resource before we
+ *  do an open workstation, then once we know the character sizes we
+ *  can fix up the objects accordingly.
+ */
 void rs_fixit(AESGLOBAL *pglobal)
 {
-        rs_sglobe(pglobal);
-        fix_objects();
+    rs_sglobe(pglobal);
+    fix_objects();
 }
 
 
 /*
-*       RS_LOAD         mega resource load
-*/
+ *  rs_load: the rsrc_load() implementation
+ */
 WORD rs_load(AESGLOBAL *pglobal, LONG rsfname)
 {
-        LONG  dosrc;
-        WORD  ret;
-        UWORD fd;
+    LONG  dosrc;
+    WORD  ret;
+    UWORD fd;
 
-        /*
-         * use shel_find() to get resource location
-         */
-        strcpy(tmprsfname,(char *)rsfname);
-        if (!sh_find(tmprsfname))
-          return FALSE;
+    /*
+     * use shel_find() to get resource location
+     */
+    strcpy(tmprsfname,(char *)rsfname);
+    if (!sh_find(tmprsfname))
+        return FALSE;
 
-        dosrc = dos_open((BYTE *)tmprsfname,RMODE_RD);
-        if (dosrc < 0L)
-          return FALSE;
-        fd = (UWORD)dosrc;
+    dosrc = dos_open((BYTE *)tmprsfname,RMODE_RD);
+    if (dosrc < 0L)
+        return FALSE;
+    fd = (UWORD)dosrc;
 
-        ret = rs_readit(pglobal,fd);
-        if (ret)
-          rs_fixit(pglobal);
-        dos_close(fd);
+    ret = rs_readit(pglobal,fd);
+    if (ret)
+        rs_fixit(pglobal);
+    dos_close(fd);
 
-        return ret;
+    return ret;
 }
 
 
 /* Get a string from the GEM-RSC */
 BYTE *rs_str(UWORD stnum)
 {
-        LONG            ad_string;
+    LONG ad_string;
 
-        ad_string = (LONG) gettext( rs_fstr[stnum] );
-        strcpy(free_str, (char *) ad_string);
-        return( &free_str[0] );
+    ad_string = (LONG) gettext(rs_fstr[stnum]);
+    strcpy(free_str, (char *)ad_string);
+    return free_str;
 }
