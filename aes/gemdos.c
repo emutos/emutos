@@ -302,14 +302,14 @@ WORD dos_rmdir(BYTE *path)
 
 
 
-LONG dos_alloc(LONG nbytes)
+void *dos_alloc(LONG nbytes)
 {
     register LONG ret;
 
     ret = gemdos(X_MALLOC,nbytes);
     if (ret == 0)
         DOS_ERR = TRUE;             /* gemdos() sets it to FALSE    */
-    return ret;
+    return (void *)ret;
 }
 
 

@@ -89,7 +89,7 @@ static WORD sob_malloc(void)
     num_obs += WOBS_START;      /* allow for root, desktop, windows */
     mem = num_obs * (sizeof(OBJECT)+sizeof(SCREENINFO));
 
-    p = (BYTE *)dos_alloc(mem);
+    p = dos_alloc(mem);
     if (!p)
         panic("sob_malloc(%ld): no memory\n",mem);
 

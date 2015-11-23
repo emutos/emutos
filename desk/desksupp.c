@@ -510,7 +510,7 @@ static WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, WORD drv,
             ret = fun_alert(1, STSHOW, NULL);
             if (ret == 1)
             {
-                char *iobuf = (char *)dos_alloc(IOBUFSIZE);
+                char *iobuf = dos_alloc(IOBUFSIZE);
                 if (iobuf)
                 {
                     show_file(pname, IOBUFSIZE, iobuf);

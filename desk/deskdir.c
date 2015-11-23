@@ -906,7 +906,7 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
         if (lavail >= MAX_CLUS_SIZE)
             copylen = lavail & ~(MAX_CLUS_SIZE-1);
         else copylen = lavail;
-        copybuf = (UBYTE *)dos_alloc(copylen);
+        copybuf = dos_alloc(copylen);
         /* drop thru */
     case OP_RENAME:
         confirm = G.g_ccopypref;

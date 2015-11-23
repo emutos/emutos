@@ -340,7 +340,7 @@ static void app_rdicon(void)
      * Allocate memory for the mask/data icons, and copy them
      * FIXME: we should check that memory is allocated successfully
      */
-    maskstart = (char *)dos_alloc(num_mask*num_bytes);
+    maskstart = dos_alloc(num_mask*num_bytes);
     memset(copied, 0x00, NUM_IBLKS);
     for (i = 0, p = maskstart; i < NUM_IBLKS; i++)
     {
@@ -352,7 +352,7 @@ static void app_rdicon(void)
         }
     }
 
-    datastart = (char *)dos_alloc(num_data*num_bytes);
+    datastart = dos_alloc(num_data*num_bytes);
     memset(copied, 0x00, NUM_IBLKS);
     for (i = 0, p = datastart; i < NUM_IBLKS; i++)
     {
