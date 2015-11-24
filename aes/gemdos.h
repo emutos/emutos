@@ -40,7 +40,7 @@ WORD dos_close(WORD handle);
 LONG dos_read(WORD handle, LONG cnt, void *pbuffer);
 LONG dos_write(WORD handle, LONG cnt, void *pbuffer);
 LONG dos_lseek(WORD handle, WORD smode, LONG sofst);
-void dos_exec(WORD mode, const BYTE *pcspec, const BYTE *pcmdln, const BYTE *segenv);  /* see: gemstart.S */
+LONG dos_exec(WORD mode, const BYTE *pcspec, const BYTE *pcmdln, const BYTE *segenv); /* see: gemstart.S */
 LONG dos_chdir(BYTE *pdrvpath);
 WORD dos_gdir(WORD drive, BYTE *pdrvpath);
 LONG dos_sdrv(WORD newdrv);

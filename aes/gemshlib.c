@@ -413,8 +413,7 @@ WORD sh_find(BYTE *pspec)
     {
         strcpy(D.g_work, rlr->p_appdir);
         strcat(D.g_work, pname);
-        dos_sfirst(D.g_work, F_RDONLY | F_SYSTEM);
-        if (!DOS_ERR)
+        if (dos_sfirst(D.g_work, F_RDONLY | F_SYSTEM))  /* found */
         {
             strcpy(pspec, D.g_work);
             KDEBUG(("sh_find(1): returning pspec='%s'\n",pspec));
@@ -425,10 +424,12 @@ WORD sh_find(BYTE *pspec)
     /* (2) if filename includes path, search that path */
     if (pname != pspec)
     {
+        WORD ret;
+
         strcpy(D.g_work, pspec);
-        dos_sfirst(D.g_work, F_RDONLY | F_SYSTEM);
-        KDEBUG(("sh_find(2): rc=%d, returning pspec='%s'\n",!DOS_ERR,pspec));
-        return !DOS_ERR;
+        ret = dos_sfirst(D.g_work, F_RDONLY | F_SYSTEM);
+        KDEBUG(("sh_find(2): rc=%d, returning pspec='%s'\n",ret,pspec));
+        return ret;
     }
 
     /* (3) search in the current directory */
@@ -436,8 +437,7 @@ WORD sh_find(BYTE *pspec)
     if (D.g_work[3] != '\0')                /* if not at root       */
         strcat(D.g_work, "\\");             /*  add backslash       */
     strcat(D.g_work, pname);                /* append name          */
-    dos_sfirst(D.g_work, F_RDONLY | F_SYSTEM);
-    if (!DOS_ERR)
+    if (dos_sfirst(D.g_work, F_RDONLY | F_SYSTEM))  /* found */
     {
         KDEBUG(("sh_find(3): returning pspec='%s'\n",pspec));
         return 1;
@@ -446,8 +446,7 @@ WORD sh_find(BYTE *pspec)
     /* (4) search in the root directory of the current drive */
     D.g_work[0] = '\\';
     strcpy(D.g_work+1, pname);
-    dos_sfirst(D.g_work, F_RDONLY | F_SYSTEM);
-    if (!DOS_ERR)
+    if (dos_sfirst(D.g_work, F_RDONLY | F_SYSTEM))  /* found */
     {
         strcpy(pspec, D.g_work);
         KDEBUG(("sh_find(4): returning pspec='%s'\n",pspec));
@@ -461,8 +460,7 @@ WORD sh_find(BYTE *pspec)
         path = sh_path(path, D.g_work, pname);
         if (!path)    /* end of PATH= */
             break;
-        dos_sfirst(D.g_work, F_RDONLY | F_SYSTEM);
-        if (!DOS_ERR)
+        if (dos_sfirst(D.g_work, F_RDONLY | F_SYSTEM))  /* found */
         {
             strcpy(pspec, D.g_work);
             KDEBUG(("sh_find(5): returning pspec='%s'\n",pspec));
@@ -563,6 +561,8 @@ static void set_default_desktop(SHELL *psh)
 
 static WORD sh_ldapp(SHELL *psh)
 {
+    LONG ret;
+
     KDEBUG(("sh_ldapp: Starting %s\n",D.s_cmd));
     if (psh->sh_isdef && strcmp(D.s_cmd, DEF_DESKTOP) == 0)
     {
@@ -590,7 +590,7 @@ static WORD sh_ldapp(SHELL *psh)
         p_nameit(rlr, sh_name(&D.s_cmd[0]));
         strcpy(rlr->p_appdir,sh_apdir);
         strcat(rlr->p_appdir,"\\");
-        dos_exec(PE_LOADGO, D.s_cmd, ad_stail, ad_envrn);   /* Run the APP */
+        ret = dos_exec(PE_LOADGO, D.s_cmd, ad_stail, ad_envrn); /* Run the APP */
 
         /* If the user ran an "autorun" application and quitted it,
          * return now to the default desktop
@@ -604,7 +604,7 @@ static WORD sh_ldapp(SHELL *psh)
         if (wind_spb.sy_owner == rlr)   /* if he still owns screen*/
             unsync(&wind_spb);          /*   then take him off. */
 
-        return DOS_ERR ? AL08ERR : 0;
+        return (ret<0L) ? AL08ERR : 0;
     }
 
     set_default_desktop(psh);   /* ensure something valid will run */
