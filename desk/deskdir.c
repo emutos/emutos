@@ -814,15 +814,15 @@ static WORD output_path(WORD op,BYTE *srcpth, BYTE *dstpth)
  */
 static WORD d_dofileren(BYTE *oldname, BYTE *newname)
 {
-        if (dos_rename(oldname,newname) == 0)   /* rename ok */
-            return TRUE;
-        if (DOS_AX != E_NOACCESS)   /* some strange problem */
-            return d_errmsg();
-        /*
-         * we cannot rename the file/folder: either it already exists
-         * or there is insufficient space (e.g. in root dir)
-         */
-        return invalid_copy_msg();
+    if (dos_rename(oldname,newname) == 0)   /* rename ok */
+        return TRUE;
+    if (DOS_AX != E_NOACCESS)       /* some strange problem */
+        return d_errmsg();
+    /*
+     * we cannot rename the file/folder: either it already exists
+     * or there is insufficient space (e.g. in root dir)
+     */
+    return invalid_copy_msg();
 }
 
 
@@ -831,14 +831,14 @@ static WORD d_dofileren(BYTE *oldname, BYTE *newname)
  */
 static WORD d_dofoldren(BYTE *oldname, BYTE *newname)
 {
-        BYTE *p;
+    BYTE *p;
 
-        p = last_separator(oldname);    /* remove trailing wildcards */
-        *p = '\0';
-        p = last_separator(newname);
-        *p = '\0';
+    p = last_separator(oldname);    /* remove trailing wildcards */
+    *p = '\0';
+    p = last_separator(newname);
+    *p = '\0';
 
-        return d_dofileren(oldname,newname);
+    return d_dofileren(oldname,newname);
 }
 
 
