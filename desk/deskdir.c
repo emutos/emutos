@@ -253,8 +253,7 @@ static WORD folder_exists(BYTE *path)
     dos_sdta(&G.g_wdta);
     p = path + strlen(path);        /* point to end of path */
     strcpy(p, "\\*.*");
-    dos_sfirst(path, ALLFILES);     /* check if folder exists */
-    rc = DOS_ERR ? FALSE : TRUE;
+    rc = dos_sfirst(path, ALLFILES);/* check if folder exists */
     *p = '\0';
     dos_sdta(dta);
 
@@ -416,7 +415,7 @@ static WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
             if (!G.g_covwrpref)
                 break;
             ret = dos_open(pdst_file, 0);
-            if (DOS_ERR)
+            if (ret < 0L)
             {
                 if (DOS_AX == E_FILENOTFND)
                     break;
@@ -477,8 +476,9 @@ static WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
  *
  *  Returns:
  *      1/TRUE  ok
- *      0/FALSE if error opening destination, or user said stop
- *      -1      user cancelled (this) copy
+ *      0/FALSE if error opening destination, or user said stop,
+ *              or error during copy
+ *      -1      user cancelled (this) copy, or disk full
  */
 static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WORD attr)
 {
@@ -486,7 +486,7 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
     LONG readlen, writelen, ret;
 
     ret = dos_open(psrc_file, 0);
-    if (DOS_ERR)
+    if (ret < 0L)
         return d_errmsg();
     srcfh = (WORD)ret;
 
@@ -502,23 +502,32 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
     /*
      * we have the (possibly-modified) filename in pdst_file
      */
-    dstfh = dos_create(pdst_file, attr);
-    if (DOS_ERR)
+    ret = dos_create(pdst_file, attr);
+    if (ret < 0L)
         return invalid_copy_msg();
+    dstfh = (WORD)ret;
 
     /*
      * perform copy
      */
+    rc = TRUE;
     while(1)
     {
         readlen = dos_read(srcfh, copylen, copybuf);
-        if (DOS_ERR)
+        if (readlen < 0L)   /* i.e. error */
+        {
+            rc = d_errmsg();
             break;
+        }
         if (readlen == 0)   /* end of file */
             break;
+
         writelen = dos_write(dstfh, readlen, copybuf);
-        if (DOS_ERR)
+        if (writelen < 0L)  /* i.e. error */
+        {
+            rc = d_errmsg();
             break;
+        }
         if (writelen != readlen)    /* disk full? */
         {
             graf_mouse(ARROW, NULL);
@@ -528,9 +537,6 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
             break;
         }
     }
-
-    if (DOS_ERR)
-        rc = d_errmsg();    /* report read or write error */
 
     if (rc > 0)
     {
@@ -578,20 +584,20 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
 {
     BYTE *ptmp, *ptmpdst;
     DTA  *dta = &G.g_dtastk[level];
-    WORD more;
+    WORD more, found;
 
     if (level == 0)
         deleted_folders = 0L;
 
     dos_sdta(dta);
 
-    for (dos_sfirst(psrc_path, ALLFILES); ; dos_snext())
+    for (found = dos_sfirst(psrc_path, ALLFILES); ; found = dos_snext())
     {
         more = TRUE;
         /*
          * handle end of folder
          */
-        if (DOS_ERR && ((DOS_AX == E_NOFILES) || (DOS_AX == E_FILENOTFND)))
+        if (!found && ((DOS_AX == E_NOFILES) || (DOS_AX == E_FILENOTFND)))
         {
             switch(op)
             {
@@ -629,7 +635,7 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
         /*
          * return if real error
          */
-        if (DOS_ERR)
+        if (!found)
             return d_errmsg();
 
         if (op != OP_COUNT)
@@ -650,8 +656,7 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
                 if ((op == OP_COPY) || (op == OP_MOVE))
                 {
                     add_fname(pdst_path, dta->d_fname);
-                    dos_mkdir(pdst_path);
-                    if (DOS_ERR)
+                    if (dos_mkdir(pdst_path) < 0)
                     {
                         if (DOS_AX != E_NOACCESS)
                             more = d_errmsg();
@@ -722,9 +727,8 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
     if (!more)
     {
         dos_sdta(dta);  /* must restore this in case we called ourselves */
-        do {
-            dos_snext();
-        } while(!DOS_ERR);
+        while(dos_snext())
+            ;
     }
 
     return more;
@@ -756,8 +760,7 @@ static WORD output_path(WORD op,BYTE *srcpth, BYTE *dstpth)
         }
         else
         {
-            dos_mkdir(dstpth);
-            if (!DOS_ERR)               /* ok, we created the new folder */
+            if (dos_mkdir(dstpth) == 0) /* ok, we created the new folder */
                 break;
             if (DOS_AX != E_NOACCESS)   /* some strange problem */
                 return d_errmsg();
@@ -811,8 +814,7 @@ static WORD output_path(WORD op,BYTE *srcpth, BYTE *dstpth)
  */
 static WORD d_dofileren(BYTE *oldname, BYTE *newname)
 {
-        dos_rename(oldname,newname);
-        if (!DOS_ERR)               /* rename ok */
+        if (dos_rename(oldname,newname) == 0)   /* rename ok */
             return TRUE;
         if (DOS_AX != E_NOACCESS)   /* some strange problem */
             return d_errmsg();
