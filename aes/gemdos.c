@@ -162,13 +162,13 @@ void *dos_gdta(void)
 
 WORD dos_sfirst(BYTE *pspec, WORD attr)
 {
-    return !gemdos(X_SFIRST,pspec,attr);
+    return gemdos(X_SFIRST,pspec,attr);
 }
 
 
 WORD dos_snext(void)
 {
-    return !gemdos(X_SNEXT);
+    return gemdos(X_SNEXT);
 }
 
 

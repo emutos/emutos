@@ -72,7 +72,7 @@ WORD sc_write(const BYTE *pscrap)
     if (D.g_scrap[--len] == '\\')           /* remove backslash     */
       D.g_scrap[len] = '\0';
     dos_sdta(&D.g_dta);                     /* use our dta          */
-    return(dos_sfirst(D.g_scrap, F_SUBDIR)); /* make sure path ok    */
+    return !dos_sfirst(D.g_scrap, F_SUBDIR);/* make sure path ok    */
 }
 
 #if CONF_WITH_PCGEM
@@ -88,7 +88,7 @@ WORD sc_write(const BYTE *pscrap)
 WORD sc_clear(void)
 {
     BYTE    *ptmp;
-    WORD    found;
+    WORD    ret;
     static const char *scrapmask = "\\SCRAP.*";
 
     if (D.g_scrap[0] == '\0')
@@ -102,13 +102,13 @@ WORD sc_clear(void)
 
     dos_sdta(&D.g_dta);                     /* make sure dta ok */
 
-    found = dos_sfirst(D.g_scrap, F_SUBDIR);
-    while(found)
+    ret = dos_sfirst(D.g_scrap, F_SUBDIR);
+    while(ret == 0)
     {
         strcpy(ptmp + 1, D.g_dta.d_fname);  /* Add file name */
         dos_delete(D.g_scrap);              /* delete scrap.* */
         strcpy(ptmp, scrapmask);            /* Add mask */
-        found = dos_snext();
+        ret = dos_snext();
     }
 
     *ptmp = '\0';                           /* keep just path name */

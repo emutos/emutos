@@ -157,7 +157,7 @@ static WORD fs_active(BYTE *ppath, BYTE *pspec, WORD *pcount)
     strcpy(fname,"*.*");
     dos_sdta(&D.g_dta);
     ret = dos_sfirst(allpath, F_SUBDIR);
-    while (ret)
+    while (ret == 0)
     {
         /* if it is a real file or directory then save it and set
          * the first byte to tell which
@@ -174,8 +174,8 @@ static WORD fs_active(BYTE *ppath, BYTE *pspec, WORD *pcount)
 
         if (thefile >= nm_files)    /* too many files */
         {
-            ret = FALSE;
             sound(TRUE, 660, 4);
+            break;
         }
     }
 

@@ -257,7 +257,7 @@ static WORD folder_exists(BYTE *path)
     *p = '\0';
     dos_sdta(dta);
 
-    return rc;
+    return !rc;
 }
 
 
@@ -584,20 +584,20 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
 {
     BYTE *ptmp, *ptmpdst;
     DTA  *dta = &G.g_dtastk[level];
-    WORD more, found;
+    WORD more, ret;
 
     if (level == 0)
         deleted_folders = 0L;
 
     dos_sdta(dta);
 
-    for (found = dos_sfirst(psrc_path, ALLFILES); ; found = dos_snext())
+    for (ret = dos_sfirst(psrc_path, ALLFILES); ; ret = dos_snext())
     {
         more = TRUE;
         /*
          * handle end of folder
          */
-        if (!found && ((DOS_AX == E_NOFILES) || (DOS_AX == E_FILENOTFND)))
+        if ((ret < 0) && ((DOS_AX == E_NOFILES) || (DOS_AX == E_FILENOTFND)))
         {
             switch(op)
             {
@@ -635,7 +635,7 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
         /*
          * return if real error
          */
-        if (!found)
+        if (ret < 0)
             return d_errmsg();
 
         if (op != OP_COUNT)
@@ -727,7 +727,7 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
     if (!more)
     {
         dos_sdta(dta);  /* must restore this in case we called ourselves */
-        while(dos_snext())
+        while(dos_snext() == 0)
             ;
     }
 

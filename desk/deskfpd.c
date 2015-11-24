@@ -402,7 +402,7 @@ WORD pn_active(PNODE *pn)
 {
     FNODE *fn, *prev;
     LONG maxmem, maxcount, size = 0L;
-    WORD count, found;
+    WORD count, ret;
 
     fl_free(pn);                    /* free any existing filenodes */
 
@@ -418,7 +418,7 @@ WORD pn_active(PNODE *pn)
 
     dos_sdta(&G.g_wdta);
 
-    for (found = dos_sfirst(pn->p_spec,pn->p_attr), count = 0; found && (count < maxcount); found = dos_snext())
+    for (ret = dos_sfirst(pn->p_spec,pn->p_attr), count = 0; (ret == 0) && (count < maxcount); ret = dos_snext())
     {
         if (G.g_wdta.d_fname[0] == '.') /* skip "." & ".." entries */
             continue;
