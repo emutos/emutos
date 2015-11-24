@@ -155,9 +155,7 @@ WORD fun_mkdir(WNODE *pw_node)
             break;
 
         ptmp = add_fname(path, unew_name);
-        dos_mkdir(path);
-
-        if (!DOS_ERR)       /* mkdir succeeded */
+        if (dos_mkdir(path) == 0)   /* mkdir succeeded */
         {
             fun_rebld(pw_node);
             break;
