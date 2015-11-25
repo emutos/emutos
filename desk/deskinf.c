@@ -422,7 +422,7 @@ static WORD count_ffs(BYTE *path)
 WORD inf_file_folder(BYTE *ppath, FNODE *pf)
 {
     LONG tree;
-    WORD more, nmidx, title;
+    WORD more, nmidx, title, ret;
     BYTE attr;
     BYTE srcpth[MAXPATHLEN];
     BYTE dstpth[MAXPATHLEN];
@@ -513,8 +513,8 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
      */
     if (strcmp(srcpth+nmidx, dstpth+nmidx))
     {
-        dos_rename(srcpth, dstpth);
-        if ((more = d_errmsg()) != 0)
+        ret = dos_rename(srcpth, dstpth);
+        if ((more=d_errmsg(ret)) != 0)
             strcpy(pf->f_name, dstpth+nmidx);
     }
 
@@ -532,8 +532,8 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
             attr &= ~F_RDONLY;
         if (attr != pf->f_attr)
         {
-            dos_chmod(dstpth, F_SETMOD, attr);
-            if ((more = d_errmsg()) != 0)
+            ret = dos_chmod(dstpth, F_SETMOD, attr);
+            if ((more=d_errmsg(ret)) != 0)
                 pf->f_attr = attr;
         }
     }

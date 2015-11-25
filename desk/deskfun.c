@@ -117,7 +117,7 @@ WORD fun_mkdir(WNODE *pw_node)
 {
     PNODE *pp_node;
     LONG  tree;
-    WORD  i, len;
+    WORD  i, len, err;
     BYTE  fnew_name[LEN_ZFNAME], unew_name[LEN_ZFNAME], *ptmp;
     BYTE  path[MAXPATHLEN];
 
@@ -155,7 +155,8 @@ WORD fun_mkdir(WNODE *pw_node)
             break;
 
         ptmp = add_fname(path, unew_name);
-        if (dos_mkdir(path) == 0)   /* mkdir succeeded */
+        err = dos_mkdir(path);
+        if (err == 0)       /* mkdir succeeded */
         {
             fun_rebld(pw_node);
             break;
@@ -166,7 +167,7 @@ WORD fun_mkdir(WNODE *pw_node)
          * critical error handler has already issued a message, so
          * just quit
          */
-        if (IS_BIOS_ERROR(DOS_AX))
+        if (IS_BIOS_ERROR(err))
             break;
 
         len = strlen(path); /* before we restore old path */

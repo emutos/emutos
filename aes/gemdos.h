@@ -10,20 +10,6 @@
 #ifndef GEMDOS_H
 #define GEMDOS_H
 
-/*
- * The following globals are set by the dos_xxx() functions for errors,
- * rather than returning a special value.  Iff DOS_ERR is non-zero, an
- * error has occurred, and the value in DOS_AX indicates the type of
- * error.  For historical reasons, DOS_AX is set as follows:
- *  -1 to -31   a BIOS error has occurred: see gemerror.h for a list
- *  +1 to +18   a GEMDOS error has occurred: see dos.h for a list (the
- *              values are actually obtained by subtracting 31 from the
- *              absolute value of the "normal" GEMDOS error value)
- */
-extern WORD     DOS_AX;
-extern UWORD    DOS_ERR;
-
-
 WORD pgmld(WORD handle, BYTE *pname, LONG **ldaddr);
 
 void dos_conout(WORD ch);

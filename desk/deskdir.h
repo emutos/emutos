@@ -15,7 +15,7 @@ void restore_path(BYTE *target);
 void del_fname(BYTE *pstr);
 void add_path(BYTE *path, BYTE *new_name);
 WNODE *fold_wind(BYTE *path);
-WORD d_errmsg(void);
+WORD d_errmsg(WORD err);
 WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
             LONG tree, WORD *pfcnt, WORD *pdcnt);
 WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,

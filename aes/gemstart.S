@@ -37,8 +37,6 @@
         .extern _gem_main
         .extern _gl_changerez
         .extern _run_accs_and_desktop
-        .extern _DOS_ERR
-        .extern _DOS_AX
         .extern _disable_interrupts
         .extern _rlr
         .extern _enable_interrupts
@@ -184,31 +182,7 @@ _gemdos:
         movem.l d2/a2,saveregs
 #endif
 
-        clr.w   _DOS_ERR
-        clr.w   _DOS_AX
         trap    #1
-        cmp.l   #0,D0
-        bge.s   gd_end
-#ifdef __mcoldfire__
-        moveq   #1,d1
-        move.w  d1,_DOS_ERR
-#else
-        move.w  #1,_DOS_ERR
-#endif
-        move.w  D0,_DOS_AX
-        cmp.w   #0xFFE0,D0
-        bgt.s   gd_end
-#ifdef __mcoldfire__
-        move.w  d0,d1
-        ext.l   d1
-        not.l   d1
-        subi.l  #0x1E,d1
-        move.w  d1,_DOS_AX
-#else
-        not.w   _DOS_AX
-        subi.w  #0x1E,_DOS_AX
-#endif
-gd_end:
 #ifdef __mcoldfire__
         move.l  saveregs,d2
         move.l  saveregs+4,a2
@@ -290,16 +264,9 @@ _dos_exec:
 #ifdef __mcoldfire__
         move.l  (sp)+,d2
         move.l  (sp)+,a2
-        moveq   #1,d1
-        move.w  d1,_DOS_ERR
 #else
         movem.l (sp)+,d2/a2
-        move.w  #1,_DOS_ERR
 #endif
-        tst.l   d0
-        bmi.s   de_return
-        clr.w   _DOS_ERR
-de_return:
         rts
 
 

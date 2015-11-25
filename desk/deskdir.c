@@ -72,8 +72,6 @@ static WORD user_abort(void)
             rc = fun_alert(1, STABORT, NULL);
     }
 
-    DOS_ERR = 0;
-
     return (rc==1) ? 1 : 0;
 }
 
@@ -348,13 +346,18 @@ static void get_fname(BYTE *pstr, BYTE *newstr)
 }
 
 
-WORD d_errmsg(void)
+/*
+ *  if err is not negative, return TRUE; otherwise:
+ *      (1) if it's a BDOS error, issue a message via form_error()
+ *      (2) return FALSE
+ */
+WORD d_errmsg(WORD err)
 {
-    if (!DOS_ERR)
+    if (err >= 0)
         return TRUE;
 
-    if (!IS_BIOS_ERROR(DOS_AX))
-        form_error(DOS_AX);
+    if (!IS_BIOS_ERROR(err))
+        form_error(-err-31);    /* convert to 'MS-DOS error code' */
 
     return FALSE;
 }
@@ -372,8 +375,11 @@ static WORD invalid_copy_msg(void)
  */
 static WORD d_dofdel(BYTE *ppath)
 {
-    dos_delete(ppath);
-    return d_errmsg();
+    WORD ret;
+
+    ret = dos_delete(ppath);
+
+    return d_errmsg(ret);
 }
 
 
@@ -419,7 +425,7 @@ static WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
             {
                 if (ret == EFILNF)
                     break;
-                return d_errmsg();
+                return d_errmsg((WORD)ret);
             }
             fh = (WORD)ret;
             dos_close(fh);
@@ -487,7 +493,7 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
 
     ret = dos_open(psrc_file, 0);
     if (ret < 0L)
-        return d_errmsg();
+        return d_errmsg((WORD)ret);
     srcfh = (WORD)ret;
 
     rc = output_fname(psrc_file, pdst_file);
@@ -516,7 +522,7 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
         readlen = dos_read(srcfh, copylen, copybuf);
         if (readlen < 0L)   /* i.e. error */
         {
-            rc = d_errmsg();
+            rc = d_errmsg((WORD)readlen);
             break;
         }
         if (readlen == 0)   /* end of file */
@@ -525,7 +531,7 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
         writelen = dos_write(dstfh, readlen, copybuf);
         if (writelen < 0L)  /* i.e. error */
         {
-            rc = d_errmsg();
+            rc = d_errmsg((WORD)writelen);
             break;
         }
         if (writelen != readlen)    /* disk full? */
@@ -540,8 +546,8 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
 
     if (rc > 0)
     {
-        dos_setdt(dstfh, time, date);
-        rc = d_errmsg();
+        WORD err = dos_setdt(dstfh, time, date);
+        rc = d_errmsg(err);
     }
 
     dos_close(srcfh);       /* close files */
@@ -608,9 +614,9 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
             case OP_MOVE:
                 ptmp = last_separator(psrc_path);
                 *ptmp = '\0';
-                dos_rmdir(psrc_path);
+                ret = dos_rmdir(psrc_path);
                 strcpy(ptmp, "\\*.*");
-                more = d_errmsg();
+                more = d_errmsg(ret);
                 if (more)
                     deleted_folders++;
                 /*
@@ -636,7 +642,7 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
          * return if real error
          */
         if (ret < 0)
-            return d_errmsg();
+            return d_errmsg(ret);
 
         if (op != OP_COUNT)
             if (user_abort())
@@ -660,7 +666,7 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
                     if (ret < 0)
                     {
                         if (ret != EACCDN)
-                            more = d_errmsg();
+                            more = d_errmsg(ret);
                         else if (!folder_exists(pdst_path))
                             more = invalid_copy_msg();
                     }
@@ -765,7 +771,7 @@ static WORD output_path(WORD op,BYTE *srcpth, BYTE *dstpth)
             if (ret == 0)           /* ok, we created the new folder */
                 break;
             if (ret != EACCDN)      /* some strange problem */
-                return d_errmsg();
+                return d_errmsg(ret);
 
             /*
              * we cannot create the folder: either it already exists
@@ -823,7 +829,7 @@ static WORD d_dofileren(BYTE *oldname, BYTE *newname)
         return TRUE;
 
     if (ret != EACCDN)              /* some strange problem */
-        return d_errmsg();
+        return d_errmsg(ret);
 
     /*
      * we cannot rename the file/folder: either it already exists

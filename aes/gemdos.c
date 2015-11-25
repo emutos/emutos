@@ -23,9 +23,6 @@
 #include "dta.h"
 
 
-GLOBAL WORD     DOS_AX; /* really a "DOS_RET"   */
-GLOBAL UWORD    DOS_ERR;
-
 /*
  *  K&R prototype to avoid prototype mismatch warnings
  *  with different arguments.
@@ -300,15 +297,9 @@ WORD dos_rmdir(BYTE *path)
 }
 
 
-
 void *dos_alloc(LONG nbytes)
 {
-    register LONG ret;
-
-    ret = gemdos(X_MALLOC,nbytes);
-    if (ret == 0)
-        DOS_ERR = TRUE;             /* gemdos() sets it to FALSE    */
-    return (void *)ret;
+    return (void *)gemdos(X_MALLOC,nbytes);
 }
 
 
