@@ -417,7 +417,7 @@ static WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
             ret = dos_open(pdst_file, 0);
             if (ret < 0L)
             {
-                if (DOS_AX == E_FILENOTFND)
+                if (ret == EFILNF)
                     break;
                 return d_errmsg();
             }
@@ -597,7 +597,7 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
         /*
          * handle end of folder
          */
-        if ((ret < 0) && ((DOS_AX == E_NOFILES) || (DOS_AX == E_FILENOTFND)))
+        if ((ret < 0) && ((ret == ENMFIL) || (ret == EFILNF)))
         {
             switch(op)
             {
@@ -656,9 +656,10 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
                 if ((op == OP_COPY) || (op == OP_MOVE))
                 {
                     add_fname(pdst_path, dta->d_fname);
-                    if (dos_mkdir(pdst_path) < 0)
+                    ret = dos_mkdir(pdst_path);
+                    if (ret < 0)
                     {
-                        if (DOS_AX != E_NOACCESS)
+                        if (ret != EACCDN)
                             more = d_errmsg();
                         else if (!folder_exists(pdst_path))
                             more = invalid_copy_msg();
@@ -745,7 +746,7 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
 static WORD output_path(WORD op,BYTE *srcpth, BYTE *dstpth)
 {
     BYTE ml_fsrc[LEN_ZFNAME], ml_fdst[LEN_ZFNAME], ml_fstr[LEN_ZFNAME];
-
+    WORD ret;
     LONG tree = G.a_trees[ADCPALER];
 
     while(1)
@@ -760,9 +761,10 @@ static WORD output_path(WORD op,BYTE *srcpth, BYTE *dstpth)
         }
         else
         {
-            if (dos_mkdir(dstpth) == 0) /* ok, we created the new folder */
+            ret = dos_mkdir(dstpth);
+            if (ret == 0)           /* ok, we created the new folder */
                 break;
-            if (DOS_AX != E_NOACCESS)   /* some strange problem */
+            if (ret != EACCDN)      /* some strange problem */
                 return d_errmsg();
 
             /*
@@ -814,10 +816,15 @@ static WORD output_path(WORD op,BYTE *srcpth, BYTE *dstpth)
  */
 static WORD d_dofileren(BYTE *oldname, BYTE *newname)
 {
-    if (dos_rename(oldname,newname) == 0)   /* rename ok */
+    WORD ret;
+
+    ret = dos_rename(oldname,newname);
+    if (ret == 0)                   /* rename ok */
         return TRUE;
-    if (DOS_AX != E_NOACCESS)       /* some strange problem */
+
+    if (ret != EACCDN)              /* some strange problem */
         return d_errmsg();
+
     /*
      * we cannot rename the file/folder: either it already exists
      * or there is insufficient space (e.g. in root dir)
