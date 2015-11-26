@@ -62,7 +62,12 @@ void win_view(WORD vtype, WORD isort)
     case V_TEXT:
         G.g_iwext = LEN_FNODE * gl_wchar;
         G.g_ihext = gl_hchar;
-        G.g_iwint = 0;      /* so text starts at left-most position */
+        /*
+         * G.g_iwint defines the width of window space in front of
+         * each text line.  this must be greater than zero to allow
+         * for multiple item selection by "rubber-banding"
+         */
+        G.g_iwint = USE_WIDE_FORMAT() ? 2*gl_wchar+4 : gl_wchar+4;
         G.g_ihint = 2;
         G.g_num = G.g_nmtext;
         G.g_pxy = &G.g_xytext[0];

@@ -230,12 +230,8 @@ static WORD format_sfcb(LONG psfcb, BYTE *pfmt)
 
     /*
      * determine if we should use the wide format
-     *
-     * the wide format actually requires about 50 bytes,
-     * so 400 pixels should be enough, but for now we'll
-     * stick with standard Atari resolutions
      */
-    wide = (G.g_wdesk < 640) ? FALSE : TRUE;
+    wide = USE_WIDE_FORMAT();
 
     memcpy(&sf, (SFCB *)psfcb, sizeof(SFCB));
     pdst = pfmt;
@@ -243,8 +239,6 @@ static WORD format_sfcb(LONG psfcb, BYTE *pfmt)
     /*
      * folder indicator
      */
-    if (wide)
-        *pdst++ = ' ', *pdst++ = ' ';
     *pdst++ = (sf.sfcb_attr & F_SUBDIR) ? 0x07 : ' ';
     if (wide)
         *pdst++ = ' ';
@@ -292,7 +286,7 @@ static WORD format_sfcb(LONG psfcb, BYTE *pfmt)
     *pdst++ = ' ';
     if (wide)
         *pdst++ = ' ';
-    pdst = fmt_date(sf.sfcb_date, wide || (G.g_ctimeform == 0), pdst);
+    pdst = fmt_date(sf.sfcb_date, wide, pdst);
     *pdst++ = ' ';
     if (wide)
         *pdst++ = ' ';

@@ -18,6 +18,24 @@
 #define _DESKWIN_H
 #include "deskconf.h"
 
+/*
+ * items related to the text display of file folder information
+ */
+/*
+ * macro to determine whether to use the 'wide format' when building
+ * the text line to display file/folder information.  the wide format
+ * actually requires about 50 bytes, so 400 pixels should be enough,
+ * but for now we stick with standard Atari resolutions
+ */
+#define USE_WIDE_FORMAT()   (G.g_wdesk >= 640)
+
+/*
+ * total length of highlighted text for selected files in
+ * text display mode
+ */
+#define LEN_FNODE   48
+
+
 #define DROOT 1
 
 

@@ -38,7 +38,4 @@
 
 #define MAX_LEVEL   8               /* max directory depth supported by the desktop */
 
-#define LEN_FNODE   49              /* total length of highlighted text in window */
-                                    /*  for selected files in "show as text" mode */
-
 #endif  /* _DESKCONF_H */
