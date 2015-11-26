@@ -138,12 +138,14 @@ typedef struct {
 #define ENSMEM          -39
 #define EDRIVE          -46
 #define ENMFIL          -49
+                                /* additional emucon-only error codes */
 #define USER_BREAK      -100        /* user interrupted long output */
 #define INVALID_PATH    -101        /* invalid component for PATH command */
 #define DISK_FULL       -102
 #define CMDLINE_LENGTH  -103
 #define DIR_NOT_EMPTY   -104        /* translated from EACCDN for folders */
-#define WRONG_NUM_ARGS  -105        /* for builtin commands */
+#define CANT_DELETE     -105        /* translated from EACCDN for files */
+#define WRONG_NUM_ARGS  -127        /* for builtin commands */
 
 #define ESC             0x1b
 #define DBLQUOTE        0x22

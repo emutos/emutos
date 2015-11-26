@@ -92,6 +92,9 @@ const char *p;
     case DIR_NOT_EMPTY:
         p = _("directory not empty");
         break;
+    case CANT_DELETE:
+        p = _("can't delete file (read-only?)");
+        break;
     case WRONG_NUM_ARGS:
         p = _("wrong number of arguments");
         break;

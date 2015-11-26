@@ -439,8 +439,11 @@ LONG rc;
                 continue;
         }
         rc = Fdelete(*argv);
-        if (rc < 0L)
+        if (rc < 0L) {
+            if (rc == EACCDN)
+                rc = CANT_DELETE;
             break;
+        }
     }
 
     if (rc == ENMFIL)
