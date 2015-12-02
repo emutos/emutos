@@ -8,26 +8,19 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
+#define ENABLE_KDEBUG
 
 #include "config.h"
 #include "portab.h"
 #include "vdi_defs.h"
 #include "lineavars.h"
 #include "tosvars.h"
-//#include "mouse.h"
-
-
-#define DBG_BLIT 0      // see, what happens (a bit)
+#include "kprint.h"
 
 #ifdef __mcoldfire__
 #define ASM_BLIT 0      // the assembler routine does not support ColdFire.
 #else
 #define ASM_BLIT 1      // use m68k assembler bit_blt routine.
-#endif
-
-#if DBG_BLIT
-#include "kprint.h"
 #endif
 
 /* bitblt modes (defines not used) */
@@ -293,24 +286,25 @@ do_blit(blit * blt)
     UWORD   blt_src_out, blt_dst_in, blt_dst_out, mask_out;
     int  xc, yc, last, first;
 
-#if DBG_BLIT
-    kprintf ("bitblt: Start\n");
-    kprintf ("HALFT[] 0x%04x-%04x-%04x-%04x\n", (UWORD) blt->halftone[0], blt->halftone[1], blt->halftone[2], blt->halftone[3]);
-    kprintf ("X COUNT 0x%04x\n", (UWORD) blt->x_cnt);
-    kprintf ("Y COUNT 0x%04x\n", (UWORD) blt->y_cnt);
-    kprintf ("X S INC 0x%04x\n", (UWORD) blt->src_x_inc);
-    kprintf ("Y S INC 0x%04x\n", (UWORD) blt->src_y_inc);
-    kprintf ("X D INC 0x%04x\n", (UWORD) blt->dst_x_inc);
-    kprintf ("Y D INC 0x%04x\n", (UWORD) blt->dst_y_inc);
-    kprintf ("ENDMASK 0x%04x-%04x-%04x\n", (UWORD) blt->end_1, (UWORD) blt->end_2, (UWORD) blt->end_3);
-    kprintf ("S_ADDR  0x%08lx\n", blt->src_addr);
-    kprintf ("D_ADDR  0x%08lx\n", blt->dst_addr);
-    kprintf ("HOP=%01d, OP=%02d\n", blt->hop & 0x3, blt->op & 0xf);
-    kprintf ("HOPline=%02d\n", blt->status & 0xf);
-    kprintf ("NFSR=%d, FXSR=%d, SKEW=%02d\n", (blt->skew & NFSR) != 0,
-                                              (blt->skew & FXSR) != 0,
-                                              (blt->skew & SKEW));
-#endif
+    KDEBUG(("do_blit(): Start\n"));
+    /*
+     * note: because HOP is always set to source, the halftone RAM
+     * and the starting halftone line number (status&0x0f) are not
+     * used and so are not dumped at the moment ...
+     */
+    KDEBUG(("X COUNT %u\n",blt->x_cnt));
+    KDEBUG(("Y COUNT %u\n",blt->y_cnt));
+    KDEBUG(("X S INC %d\n",blt->src_x_inc));
+    KDEBUG(("Y S INC %d\n",blt->src_y_inc));
+    KDEBUG(("X D INC %d\n",blt->dst_x_inc));
+    KDEBUG(("Y D INC %d\n",blt->dst_y_inc));
+    KDEBUG(("ENDMASK 0x%04x-%04x-%04x\n",(UWORD)blt->end_1,(UWORD)blt->end_2,(UWORD)blt->end_3));
+    KDEBUG(("S_ADDR  0x%08lx\n",blt->src_addr));
+    KDEBUG(("D_ADDR  0x%08lx\n",blt->dst_addr));
+    KDEBUG(("HOP %d, OP %d\n",blt->hop&0x03,blt->op&0x0f));
+    KDEBUG(("NFSR=%d,FXSR=%d,SKEW=%d\n",
+            (blt->skew&NFSR)!=0,(blt->skew&FXSR)!=0,(blt->skew & SKEW)));
+
     if (blt->x_cnt == 0) blt->x_cnt = 65535;
     if (blt->y_cnt == 0) blt->y_cnt = 65535;
 
