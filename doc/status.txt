@@ -388,7 +388,7 @@ GEMDOS v0.19 (TOS v2):
  X      vsf_udpat
  t      vro_cpyfm
  >      vrt_cpyfm
- t      vr_trnfm
+ T      vr_trnfm
  >      v_get_pixel
  X      vsin_mode
  X      vrq_locator

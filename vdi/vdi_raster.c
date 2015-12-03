@@ -118,22 +118,22 @@ static struct blit_frame vdi_info;
 /* which blit information to use, should be set before calling bit_blt() */
 struct blit_frame *blit_info;
 
-
 /*
- * _vr_trnfm - Convert bitmaps
+ * _vr_trnfm - transform screen bitmaps
  *
- * Convert device independant bitmaps into device dependants and vice versa.
+ * Convert device-independent bitmaps to device-dependent and vice versa
  *
- * The major difference is, that in the device independant format the planes
- * are consecutive, while on the screen they are interleaved.
+ * The major difference between the two foramts is that, in the device-
+ * independent ("standard") form, the planes are consecutive, while on
+ * the Atari screen they are interleaved.
  */
-void
-_vr_trnfm(Vwk * vwk)
+void _vr_trnfm(Vwk * vwk)
 {
     MFDB *src_mfdb, *dst_mfdb;
-    WORD *src;
-    WORD *dst;
-    WORD height, wdwidth, planes, standard;
+    WORD *src, *dst, *work;
+    WORD planes;
+    BOOL inplace;
+    LONG size, inner, outer, i, j;
 
     /* Get the pointers to the MFDBs */
     src_mfdb = *(MFDB **)&CONTRL[7];
@@ -141,89 +141,62 @@ _vr_trnfm(Vwk * vwk)
 
     src = src_mfdb->fd_addr;
     dst = dst_mfdb->fd_addr;
-    height = src_mfdb->fd_h;
-    wdwidth = src_mfdb->fd_wdwidth;            /* Pixels / 16 */
     planes = src_mfdb->fd_nplanes;
-    standard = src_mfdb->fd_stand;
+    size = (LONG)src_mfdb->fd_h * src_mfdb->fd_wdwidth; /* size of plane in words */
+    inplace = (src==dst);
 
-    /* Is the transformation in or out of place? */
-    if (src != dst) {
-        /* transformation is completely non-overlapped (out of place) */
-         if (standard) {
-            /* Source is in standard format and device independent (raster area) */
-            LONG plane_total;
-            WORD h;
+    if (src_mfdb->fd_stand)     /* source is standard format */
+    {
+        dst_mfdb->fd_stand = 0;     /* force dest to device-dependent */
+        outer = planes;             /* set outer & inner loop counts */
+        inner = size;
+    }
+    else                        /* source is device-dependent format */
+    {
+        dst_mfdb->fd_stand = 1;     /* force dest to standard */
+        outer = size;               /* set loop counts */
+        inner = planes;
+    }
 
-            plane_total = (LONG)wdwidth * height;
-            for(h = height - 1; h >= 0; h--) {
-                WORD w;
-
-                for(w = wdwidth - 1; w >= 0; w--) {
-                    WORD *tmp;
-                    WORD p;
-
-                    tmp = src;
-                    for(p = planes - 1; p >= 0; p--) {
-                        *dst++ = *src;
-                        src += plane_total;
-                    }
-                    src = tmp + 1;
-                }
-            }
-        } else {
-            /* Source is device dependent (physical device) */
-            WORD p;
-
-            for(p = planes - 1; p >= 0; p--) {
-                WORD *tmp;
-                WORD h;
-
-                tmp = src;
-                for(h = height - 1; h >= 0; h--) {
-                    WORD w;
-
-                    for(w = wdwidth - 1; w >= 0; w--) {
-                        *dst++ = *src;
-                        src += planes;
-                    }
-                }
-                src = tmp + 1;
+    if (!inplace)               /* the simple option */
+    {
+        for (i = 0; i < outer; i++, dst++)
+        {
+            for (j = 0, work = dst; j < inner; j++)
+            {
+                *work = *src++;
+                work += outer;
             }
         }
-    } else {
-        /* transformation is completely overlapped (in place ).*/
-        if (!standard) {
-            /* Source is device dependent (physical device) */
-            WORD p;
+        return;
+    }
 
-            for(p = planes - 1; p >= 0; p--) {
-                WORD shift;
-                WORD h;
+    /* handle in-place transform - can be slow (on Atari TOS too) */
+    if (planes == 1)            /* for mono, there is no difference    */
+        return;                 /* between standard & device-dependent */
 
-                shift = p + 1;
-                src = dst + (p + 1);
-                for(h = height - 1; h >= 0; h--) {
-                    WORD w;
+    if (--outer <= 0)
+        return;
 
-                    for(w = wdwidth - 1; w >= 0; w--) {
-                        WORD first;
-                        WORD *lower;
-                        WORD *higher;
-                        WORD s;
-
-                        first = *src;
-                        lower = src;
-                        higher = (src + 1);
-                        for(s = shift - 1; s >= 0; s--) {
-                            *--higher = *--lower;
-                        }
-                        *dst++ = first;
-                        src += (p + 1);
-                        shift += p;
-                    }
-                }
+    for (--inner; inner >= 0; inner--)
+    {
+        LONG count;
+        for (i = 0, count = 0L; i < outer; i++)
+        {
+            WORD temp;
+            src += inner + 1;
+            temp = *src;
+            dst = src;
+            work = src;
+            count += inner;
+            for (j = 0; j < count; j++)
+            {
+                work = dst--;
+                *work = *dst;
             }
+            *dst = temp;
         }
+        src = work;
     }
 }
 
