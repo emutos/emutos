@@ -7,11 +7,15 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+/* #define ENABLE_KDEBUG */
+
 #include "config.h"
 #include "portab.h"
 #include "vdi_defs.h"
 #include "lineavars.h"
 #include "asm.h"
+#include "kprint.h"
+
 
 /* Local Constants */
 
@@ -301,6 +305,8 @@ static void (* const esctbl[])(Vwk *) =
 void chk_esc(Vwk * vwk)
 {
     UWORD escfun = CONTRL[5];
+
+    KDEBUG(("VDI esc, subfunction %u called\n",escfun));
 
 #if HAVE_BEZIER
     if (escfun == 99) {
