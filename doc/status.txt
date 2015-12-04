@@ -434,7 +434,7 @@ GEMDOS v0.19 (TOS v2):
  T      v_curtext
  X      v_rvon
  X      v_rvoff
- -      vq_curaddress
+ T      vq_curaddress
  T      vq_tabstatus
  -      v_hardcopy
  X      v_dspcur

@@ -38,8 +38,6 @@ extern WORD v_col_fg;           /* current foreground color */
 
 extern UBYTE *v_cur_ad;         /* current cursor address */
 extern WORD v_cur_of;           /* cursor offset */
-extern WORD v_cur_cx;           /* current cursor cell x */
-extern WORD v_cur_cy;           /* current cursor cell y */
 extern BYTE v_cur_tim;          /* cursor blink timer */
 
 extern BYTE v_period;

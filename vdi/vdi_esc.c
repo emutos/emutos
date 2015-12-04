@@ -200,16 +200,13 @@ static void escfn14(Vwk * vwk)
 
 
 /*
- * escfn15: vq_curaddress() - returns current x- and y-coordinates of the alpha cursor
- *
- * This function is currently just a stub because this information
- * is not readily available.
+ * escfn15: vq_curaddress() - returns current row and column of the alpha cursor
  */
 static void escfn15(Vwk * vwk)
 {
     CONTRL[4] = 2;              // 2 integers are returned
-    INTOUT[0] = 0;              // dummy
-    INTOUT[1] = 0;              // dummy
+    INTOUT[0] = v_cur_cy;       // row
+    INTOUT[1] = v_cur_cx;       // column
 }
 
 

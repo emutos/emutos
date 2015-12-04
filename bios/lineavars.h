@@ -44,6 +44,8 @@ extern UWORD v_planes;          /* count of color planes */
 extern UWORD v_lin_wr;          /* line wrap : bytes per line */
 extern UWORD v_cel_mx;          /* number of columns - 1 */
 extern UWORD v_cel_my;          /* number of rows - 1 */
+extern UWORD v_cur_cx;          /* current cursor column */
+extern UWORD v_cur_cy;          /* current cursor row */
 extern UWORD v_hz_rez;          /* screen horizontal resolution */
 extern UWORD v_vt_rez;          /* screen vertical resolution */
 extern UWORD v_bytes_lin;       /* width of line in bytes */
