@@ -431,7 +431,7 @@ GEMDOS v0.19 (TOS v2):
  X      v_eeos
  X      v_eeol
  X      vs_curaddress
- X      v_curtext
+ T      v_curtext
  X      v_rvon
  X      v_rvoff
  -      vq_curaddress

@@ -166,13 +166,13 @@ static void escfn11(Vwk * vwk)
 static void escfn12(Vwk * vwk)
 {
     int cnt;
-    char *chr;
+    WORD *chr;
 
     cnt = CONTRL[3];            /* get the character count */
-    chr = (char*)&INTIN[0];     /* address of the character array */
+    chr = INTIN;                /* address of the character array */
 
     while (cnt--) {
-        trap1(rawio, chr++);    /*  raw i/o to standard input/output */
+        trap1(rawio, *chr++);   /* raw i/o to standard input/output */
     }
 }
 
