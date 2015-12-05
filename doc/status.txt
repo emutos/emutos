@@ -422,18 +422,18 @@ GEMDOS v0.19 (TOS v2):
  X      vqt_fontinfo
  T      vq_chcells
  T      v_exit_cur
- X      v_enter_cur
- X      v_curup
- X      v_curdown
- X      v_curright
- X      v_curleft
+ T      v_enter_cur
+ T      v_curup
+ T      v_curdown
+ T      v_curright
+ T      v_curleft
  T      v_curhome
- X      v_eeos
- X      v_eeol
- X      vs_curaddress
+ T      v_eeos
+ T      v_eeol
+ T      vs_curaddress
  T      v_curtext
- X      v_rvon
- X      v_rvoff
+ T      v_rvon
+ T      v_rvoff
  T      vq_curaddress
  T      vq_tabstatus
  -      v_hardcopy
