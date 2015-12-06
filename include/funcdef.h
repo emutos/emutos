@@ -1,6 +1,8 @@
 /*      FUNCDEF.H
 *
 *       Copyright 1999, Caldera Thin Clients, Inc.
+*       Copyright (c) 2015 The EmuTOS development team
+*
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
 *
@@ -11,14 +13,15 @@
 *       Copyright (C) 1986                    Digital Research Inc.
 *       -----------------------------------------------------------
 */
+#ifndef _FUNCDEF_H
+#define _FUNCDEF_H
 
 #define OPEN_WORKSTATION        1
 #define CLOSE_WORKSTATION       2
 #define CLEAR_WORKSTATION       3
 #define UPDATE_WORKSTATION      4
 
-#define ESCAPE                  5
-
+#define ESCAPE_FUNCTION         5
 
 #define POLYLINE                6
 #define POLYMARKER              7
@@ -89,3 +92,5 @@
 #define KEY_SHST                128
 #define TEXT_CLIP               129
 #define WHEEL_VECX              134
+
+#endif  /* _FUNCDEF_H */
