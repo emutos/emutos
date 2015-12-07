@@ -437,8 +437,8 @@ GEMDOS v0.19 (TOS v2):
  T      vq_curaddress
  T      vq_tabstatus
  -      v_hardcopy
- X      v_dspcur
- X      v_rmcur
+ T      v_dspcur            (Atari docs are incorrect for this call)
+ T      v_rmcur             (Atari docs are incorrect for this call)
  -      v_form_adv
  -      v_output_window
  -      v_clear_disp_list

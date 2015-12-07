@@ -238,6 +238,11 @@ static void escfn17(Vwk * vwk)
 
 /*
  * escfn18: v_dspcur() - display the graphics cursor
+ *
+ * note: although Atari documentation specifies that this call
+ * is v_dspcur(handle,x,y), where x/y are the coordinates where
+ * the cursor should be displayed, Atari TOS apparently ignores
+ * these values, as do we ...
  */
 static void escfn18(Vwk * vwk)
 {
