@@ -68,15 +68,15 @@ static UWORD getiword(UBYTE *addr)
 }
 
 /*
- * compute (bootsector) checksum
+ * compute word checksum
  */
-UWORD compute_cksum(struct bs *buf)
+UWORD compute_cksum(void *buf)
 {
     int i;
-    UWORD sum, *w;
+    UWORD sum, *p = buf;
 
-    for (i = 0, sum = 0, w = (UWORD *)buf; i < SECTOR_SIZE/sizeof(UWORD); i++, w++)
-        sum += *w;
+    for (i = 0, sum = 0; i < SECTOR_SIZE/sizeof(UWORD); i++)
+        sum += *p++;
 
     return sum;
 }
@@ -246,7 +246,6 @@ static LONG blkdev_hdv_boot(void)
 
 static LONG bootcheck(void)
 {
-    struct bs *b = (struct bs *) dskbufp;
     WORD err;
 
     if ((bootdev < 0) || (bootdev >= BLKDEVNUM))
@@ -256,7 +255,7 @@ static LONG bootcheck(void)
     if (err)
         return 3;   /* unreadable */
 
-    if (compute_cksum(b) != 0x1234)
+    if (compute_cksum(dskbufp) != 0x1234)
         return 4;   /* not valid boot sector */
 
     return 0;       /* bootable */

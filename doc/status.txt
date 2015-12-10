@@ -88,7 +88,7 @@ T tested and working on an emulator or real hardware
  T init floppy drives
  T boot floppy
  t boot DMA (note it does not work with e.g. AHDI)
- - execute reset-resident prgs
+ T execute reset-resident prgs: undocumented TOS feature, disabled by default
  T run AUTO prgs
  T run 'command.prg'
  T run the default shell, EmuCON

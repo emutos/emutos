@@ -69,6 +69,7 @@
 
 #define DBGBIOS 0               /* If you want to enable debug wrappers */
 #define DBGAUTOBOOT 0           /* If you want to see AUTO folder loading */
+#define ENABLE_RESET_RESIDENT 0 /* enable to run "reset-resident" code (see below) */
 
 /*==== External declarations ==============================================*/
 
@@ -412,6 +413,46 @@ err:
 }
 
 
+#if ENABLE_RESET_RESIDENT
+/*
+ * run_reset_resident - run "reset-resident" code
+ *
+ * "Reset-resident" code is code that has been loaded into RAM prior
+ * to a warm boot.  It has a special header with a magic number, it
+ * is 512 bytes long (aligned on a 512-byte boundary), and it has a
+ * specific checksum (calculated on a word basis).
+ *
+ * Note: this is an undocumented feature of TOS that exists in all
+ * versions of Atari TOS.
+ */
+struct rrcode {
+    long magic;
+    struct rrcode *pointer;
+    char program[502];
+    short chksumfix;
+};
+#define RR_MAGIC    0x12123456L
+#define RR_CHKSUM   0x5678
+        
+static void run_reset_resident(void)
+{
+    struct rrcode *p = phystop;
+
+    for (--p; p > (struct rrcode *)&etv_timer; p--)
+    {
+        if (p->magic != RR_MAGIC)
+            continue;
+        if (p->pointer != p)
+            continue;
+        if (compute_cksum(p) != RR_CHKSUM)
+            continue;
+        regsafe_call(p->program);
+    }
+}
+#else
+#define run_reset_resident()
+#endif
+
 /*
  * autoexec - run programs in auto folder
  *
@@ -547,7 +588,7 @@ void biosmain(void)
     defdrv = bootdev;
     trap1( 0x0e , defdrv );    /* Set boot drive: Dsetdrv(defdrv) */
 
-    /* TODO: execute Reset-resistent PRGs ? */
+    run_reset_resident();       /* see comments above */
 
 #if WITH_CLI
     if (early_cli) {            /* run an early console */
