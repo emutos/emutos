@@ -341,12 +341,12 @@ msgid " File "
 msgstr " Файл "
 
 #: desk/desk_rsc.c:252
-msgid " Options "
-msgstr " Опции "
+msgid " View "
+msgstr " Вид "
 
 #: desk/desk_rsc.c:258
-msgid " Arrange "
-msgstr " Показать "
+msgid " Options "
+msgstr " Опции "
 
 #: desk/desk_rsc.c:276
 msgid "  Desktop info..."
@@ -439,6 +439,10 @@ msgstr "  Сортировать по размеру \007Z"
 #: desk/desk_rsc.c:480
 msgid "  Sort by date  \007T"
 msgstr "  Сортировать по дате    \007T"
+
+#: desk/desk_rsc.c:444
+msgid "  No sort"
+msgstr "  Не сортировать"
 
 #: desk/desk_rsc.c:537
 msgid "Attribute:"
@@ -1315,10 +1319,14 @@ msgid "directory not empty"
 msgstr "директория не пуста"
 
 #: cli/cmdutil.c:96
+msgid "can't delete file (read-only?)"
+msgstr "не могу удалить файл (ТлкЧтение?)"
+
+#: cli/cmdutil.c:99
 msgid "wrong number of arguments"
 msgstr "неверное количество аргументов"
 
-#: cli/cmdutil.c:99
+#: cli/cmdutil.c:102
 msgid "error code "
 msgstr "код ошибки "
 
