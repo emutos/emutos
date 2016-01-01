@@ -77,6 +77,7 @@ extern LONG jmp_xbios(WORD, ...);
 #define Bconout(a,b)        jmp_bios_ww(0x03,a,b)
 
 #define Cursconf(a,b)       jmp_xbios_ww(0x15,a,b)
+#define Kbrate(a,b)         jmp_xbios_ww(0x23,a,b)
 #define Supexec(a)          jmp_xbios_l(0x26,a)
 
 
@@ -145,6 +146,7 @@ typedef struct {
 #define CMDLINE_LENGTH  -103
 #define DIR_NOT_EMPTY   -104        /* translated from EACCDN for folders */
 #define CANT_DELETE     -105        /* translated from EACCDN for files */
+#define INVALID_PARAM   -126        /* for builtin commands */
 #define WRONG_NUM_ARGS  -127        /* for builtin commands */
 
 #define ESC             0x1b
@@ -204,6 +206,7 @@ WORD decode_date_time(char *s,UWORD date,UWORD time);
 void errmsg(LONG rc);
 void escape(char c);
 WORD getcookie(LONG cookie,LONG *pvalue);
+WORD getword(char *buf);
 WORD get_path_component(char **pp,char *dest);
 WORD has_wildcard(const char *name);
 void message(const char *msg);

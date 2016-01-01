@@ -55,6 +55,7 @@ PRIVATE LONG run_help(WORD argc,char **argv);
 PRIVATE LONG run_ls(WORD argc,char **argv);
 PRIVATE LONG run_mkdir(WORD argc,char **argv);
 PRIVATE LONG run_more(WORD argc,char **argv);
+PRIVATE LONG run_mode(WORD argc,char **argv);
 PRIVATE LONG run_path(WORD argc,char **argv);
 PRIVATE LONG run_pwd(WORD argc,char **argv);
 PRIVATE LONG run_mv(WORD argc,char **argv);
@@ -98,6 +99,8 @@ LOCAL const char * const help_ls[] = { "[-l] <path>",
     N_("Specify -l for detailed list"), NULL };
 LOCAL const char * const help_mkdir[] = { "<dir>",
     N_("Create directory <dir>"), NULL };
+LOCAL const char * const help_mode[] = { "con[:] [delay=<m>] [rate=<n>]",
+    N_("Set or display keyboard typematic values"), NULL };
 LOCAL const char * const help_more[] = { "<filespec>",
     N_("Copy <filespec> to standard output,"),
     N_("pausing every screenful"), NULL };
@@ -144,6 +147,7 @@ LOCAL const COMMAND cmdtable[] = {
     { "help", NULL, 0, 1, run_help, help_help },
     { "ls", "dir", 0, 2, run_ls, help_ls },
     { "mkdir", "md", 1, 1, run_mkdir, help_mkdir },
+    { "mode", NULL, 1, 3, run_mode, help_mode },
     { "more", NULL, 1, 1, run_more, help_more },
     { "mv", "move", 2, 2, run_mv, help_mv },
     { "path", NULL, 0, 1, run_path, help_path },
@@ -349,6 +353,42 @@ WORD detail = 0;
 PRIVATE LONG run_mkdir(WORD argc,char **argv)
 {
     return Dcreate(argv[1]);
+}
+
+PRIVATE LONG run_mode(WORD argc,char **argv)
+{
+char buf[30];
+WORD i, old;
+WORD rate = -1, delay = -1;
+
+    argv++;
+    if (strequal(*argv,"con") || strequal(*argv,"con:")) {
+        if (argc == 2) {    /* just status wanted */
+            old = Kbrate(-1,-1);
+            outputnl(_("Status for CON:"));
+            sprintf(buf,"%-20s %3d",_("    Keyboard rate:"),old&0x00ff);
+            outputnl(buf);
+            sprintf(buf,"%-20s %3d",_("    Keyboard delay:"),(old>>8)&0x00ff);
+            outputnl(buf);
+            return 0;
+        }
+        for (i = 2, argv++; i < argc; i++, argv++) {
+            if (strncasecmp(*argv,"rate=",5) == 0) {
+                rate = getword(*argv+5);
+                if (rate < 0)
+                    return INVALID_PARAM;
+            } else if (strncasecmp(*argv,"delay=",6) == 0) {
+                delay = getword(*argv+6);
+                if (delay < 0)
+                    return INVALID_PARAM;
+            } else return INVALID_PARAM;
+        }
+        Kbrate(delay,rate);
+
+        return 0;
+    }
+
+    return INVALID_PARAM;
 }
 
 PRIVATE LONG run_more(WORD argc,char **argv)

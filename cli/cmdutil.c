@@ -95,6 +95,9 @@ const char *p;
     case CANT_DELETE:
         p = _("can't delete file (read-only?)");
         break;
+    case INVALID_PARAM:
+        p = _("invalid parameter");
+        break;
     case WRONG_NUM_ARGS:
         p = _("wrong number of arguments");
         break;
@@ -138,6 +141,28 @@ char *p;
             *p &= ~0x20;
 
     return str;
+}
+
+/*
+ *  convert a string to a word value
+ *
+ *  returns -1 iff error in value
+ */
+WORD getword(char *buf)
+{
+LONG n = 0L;
+WORD m;
+char *p;
+
+    for (p = buf; *p; p++) {
+        m = *p - '0';
+        if ((m < 0) || (m > 9))
+            return -1;
+        n = n * 10 + m;
+        if (n > 32767)
+            return -1;
+    }
+    return (WORD)n;
 }
 
 /*
