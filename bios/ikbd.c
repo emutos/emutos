@@ -364,10 +364,12 @@ static PFVOID kb_last_ikbdsys; /* ikbdsys when kb_last_key was set */
 WORD kbrate(WORD initial, WORD repeat)
 {
     WORD ret = (kb_initial << 8) | (kb_repeat & 0xFF);
-    if(initial > 1)
-        kb_initial = initial;
-    if(repeat > 1)
-        kb_repeat = repeat;
+
+    if (initial >= 0)
+        kb_initial = initial & 0x00ff;
+    if (repeat >= 0)
+        kb_repeat = repeat & 0x00ff;
+
     return ret;
 }
 
