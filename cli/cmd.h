@@ -45,6 +45,7 @@ extern LONG jmp_xbios(WORD, ...);
 #define jmp_bios_w(a,b)         jmp_bios((WORD)(a),(WORD)(b))
 #define jmp_bios_ww(a,b,c)      jmp_bios((WORD)(a),(WORD)(b),(WORD)(c))
 #define jmp_xbios_l(a,b)        jmp_xbios((WORD)(a),(LONG)(b))
+#define jmp_xbios_llww(a,b,c,d,e)   jmp_xbios((WORD)a,(LONG)b,(LONG)c,(WORD)d,(WORD)e)
 #define jmp_xbios_ww(a,b,c)     jmp_xbios((WORD)(a),(WORD)(b),(WORD)(c))
 
 #define Dsetdrv(a)          jmp_gemdos_w(0x0e,a)
@@ -76,6 +77,7 @@ extern LONG jmp_xbios(WORD, ...);
 #define Bconin(a)           jmp_bios_w(0x02,a)
 #define Bconout(a,b)        jmp_bios_ww(0x03,a,b)
 
+#define Setscreen(a,b,c,d)  jmp_xbios_llww(0x05,a,b,c,d)
 #define Cursconf(a,b)       jmp_xbios_ww(0x15,a,b)
 #define Kbrate(a,b)         jmp_xbios_ww(0x23,a,b)
 #define Supexec(a)          jmp_xbios_l(0x26,a)
@@ -218,3 +220,4 @@ char *strupper(char *str);
 
 /* cmdasm.S */
 ULONG getwh(void);
+WORD getht(void);

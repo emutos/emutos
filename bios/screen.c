@@ -877,6 +877,19 @@ WORD getrez(void)
 }
 
 
+/*
+ * setscreen(): implement the Setscreen() xbios call
+ *
+ * implementation details:
+ *  . sets the logical screen address, iff logLoc >= 0
+ *  . sets the physical screen address, iff physLoc >= 0
+ *  . sets the screen resolution iff 0 <= rez <= 7
+ *      if a VIDEL is present and rez==3, then the video mode is
+ *      set by a call to vsetmode with 'videlmode' as the argument
+ *  . *** special EmuTOS-only extension, used by EmuCON ***
+ *      if logLoc==physLoc==rez==-1, 'videlmode' is used to select
+ *      the cellheight of the default font
+ */
 void setscreen(LONG logLoc, LONG physLoc, WORD rez, WORD videlmode)
 {
     if (logLoc >= 0) {
@@ -918,7 +931,13 @@ void setscreen(LONG logLoc, LONG physLoc, WORD rez, WORD videlmode)
 
         /* Re-initialize line-a, VT52 etc: */
         linea_init();
-        font_set_default();
+        font_set_default(-1);
+        vt52_init();
+    }
+
+    /* handle EmuCON extension */
+    if ((logLoc == -1L) && (physLoc == -1L) && (rez == -1)) {
+        font_set_default(videlmode);
         vt52_init();
     }
 }

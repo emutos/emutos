@@ -63,19 +63,32 @@ void font_init(void)
 }
 
 /*
- * font_set_default - choose default font depending on screen height
+ * font_set_default - choose default font
  *
- * set linea variables according to chosen font configuration
+ * if the 'cellheight' value is a known height, use corresponding font;
+ * otherwise choose font according to screen height
+ *
+ * sets linea variables according to chosen font configuration
  */
 
-void font_set_default(void)
+void font_set_default(WORD cellheight)
 {
     Fonthead *font;
 
-    if (v_vt_rez < 400)
+    switch(cellheight)
+    {
+    case 8:
         font = &fon8x8;
-    else
+        break;
+    case 16:
         font = &fon8x16;
+        break;
+    default:
+        if (v_vt_rez < 400)
+            font = &fon8x8;
+        else
+            font = &fon8x16;
+    }
 
     v_cel_ht = font->form_height;
     v_cel_wr = v_lin_wr * font->form_height;

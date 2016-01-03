@@ -215,7 +215,7 @@ static void bios_init(void)
     KDEBUG(("linea_init()\n"));
     linea_init();       /* initialize screen related line-a variables */
     font_init();        /* initialize font ring (requires cookie_akp) */
-    font_set_default(); /* set default font */
+    font_set_default(-1);/* set default font */
     vt52_init();        /* initialize the vt52 console */
 
     /* Now kcprintf() will also send debug info to the screen */
