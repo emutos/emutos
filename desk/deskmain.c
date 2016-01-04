@@ -226,17 +226,7 @@ ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp)
         pw = win_find(wh);
         pf = fpd_ofind(pw->w_path->p_flist, item);
         if (pf)
-        {
-            pname = &pf->f_name[0];
-            if (pf->f_attr & F_SUBDIR)
-            {
-                pa = app_afind(FALSE, 1, -1, pname, pisapp);
-            }
-            else
-            {
-                pa = app_afind(FALSE, 0, -1, pname, pisapp);
-            }
-        }
+            pa = app_afind(FALSE, (pf->f_attr&F_SUBDIR)?1:0, -1, pf->f_name, pisapp);
     }
 
     *ppf = pf;
