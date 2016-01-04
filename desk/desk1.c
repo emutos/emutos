@@ -336,7 +336,7 @@ static void fun_desk2desk(WORD dobj, WORD keystate)
     ICONBLK * lpicon;
     WORD drive_letter;
 
-    target = app_afind(1, 0, dobj, NULL, NULL);
+    target = app_afind(TRUE, AT_ISFILE, dobj, NULL, NULL);
     sobj  = 0;
     while ((sobj = win_isel(G.g_screen, 1, sobj)))
     {
