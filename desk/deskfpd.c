@@ -178,6 +178,9 @@ void fpd_parse(BYTE *pspec, WORD *pdrv, BYTE *ppath, BYTE *pname, BYTE *pext)
  */
 FNODE *fpd_ofind(FNODE *pf, WORD obj)
 {
+    if (obj < 0)    /* if object doesn't exist, */
+        return NULL;/* neither does file node.  */
+
     while(pf)
     {
         if (pf->f_obid == obj)
