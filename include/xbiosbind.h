@@ -55,6 +55,7 @@
 #define Vsync() xbios_v_v(37)
 #define Supexec(a) xbios_v_l(38,a)  /* void ??? */
 #define Puntaes() xbios_v_v(39)
+#define EsetColor(a,b) xbios_w_ww(83,a,b)
 #define VsetMode(a) xbios_w_w(88,a)
 #define VgetMonitor() xbios_w_v(89)
 #define VsetRGB(a,b,c) xbios_v_wwl(93,a,b,c)

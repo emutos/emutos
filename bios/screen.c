@@ -332,17 +332,14 @@ WORD esetsmear(WORD mode)
  */
 static void initialise_tt_palette(WORD rez)
 {
-    volatile WORD *col_regs = (WORD *) ST_PALETTE_REGS;
     volatile WORD *ttcol_regs = (WORD *) TT_PALETTE_REGS;
     int i;
 
     for (i = 0; i < 256; i++)
         ttcol_regs[i] = tt_dflt_palette[i];
 
-    if (rez == TT_HIGH) {
-        col_regs[1] = col_regs[15];
-        ttcol_regs[1] = ttcol_regs[15];
-    }
+    if (rez == TT_HIGH)
+        ttcol_regs[1] = ttcol_regs[15]; /* col_regs[1] is updated by h/w */
 }
 
 #endif /* CONF_WITH_TT_SHIFTER */
@@ -959,15 +956,19 @@ void setpalette(LONG palettePtr)
     colorptr = (WORD *) palettePtr;
 }
 
+/*
+ * setcolor(): implement the Setcolor() xbios call
+ *
+ * note that this only sets the ST(e)-compatible palette registers.
+ * on a TT, the h/w updates the corresponding TT palette registers
+ * automagically.
+ */
 WORD setcolor(WORD colorNum, WORD color)
 {
     WORD oldcolor;
 #if CONF_WITH_SHIFTER
     WORD mask;
     volatile WORD *palette = (WORD *) ST_PALETTE_REGS;
-#if CONF_WITH_TT_SHIFTER
-    volatile WORD *ttpalette = (WORD *) TT_PALETTE_REGS;
-#endif
 
     KDEBUG(("Setcolor(0x%04x, 0x%04x)\n", colorNum, color));
 
@@ -993,23 +994,14 @@ WORD setcolor(WORD colorNum, WORD color)
     }
 
     oldcolor = palette[colorNum] & mask;
-    if (color == -1)
-        return oldcolor;
+    if (color >= 0)
+        palette[colorNum] = color;  /* update ST(e)-compatible palette */
 
-#if CONF_WITH_TT_SHIFTER
-    if (has_tt_shifter) {
-        WORD msb, lsb;
-        msb = (color << 1) & 0x0eee;    /* move most significant bits to left */
-        lsb = (color >> 3) & 0x0111;    /* move least significant bit to right */
-        ttpalette[colorNum] = msb | lsb;/* update TT-compatible palette */
-    }
-#endif
-
-    palette[colorNum] = color;          /* update ST(e)-compatible palette */
 #else /* CONF_WITH_SHIFTER */
     /* No hardware, fake value */
     oldcolor = 0;
 #endif /* CONF_WITH_SHIFTER */
+
     return oldcolor;
 }
 

@@ -59,6 +59,7 @@ T tested and working on an emulator or real hardware
  T PSG
  T ST shifter
  t STe shifter
+ t TT shifter
  T VIDEL
  T ACIAs, IKBD protocol
  t MegaST Real-Time Clock  (set clock not tested)
