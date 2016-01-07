@@ -23,7 +23,7 @@
 _strlencpy:
         movea.l 8(sp),a0
         movea.l 4(sp),a1
-        clr.l   d0
+        moveq   #0,d0
 lstcpy_loop:
 #ifdef __mcoldfire__
         addq.l  #1,d0

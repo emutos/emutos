@@ -58,7 +58,7 @@ _getht:
 #else
         .dc.w   0xa000                  // lineA init
 #endif
-        clr.l   d0
+        moveq   #0,d0
         move.w  -46(a0),d0              // v_cel_ht
         movea.l (sp)+,a2
         rts

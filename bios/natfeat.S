@@ -38,7 +38,7 @@
  * NatFeats test
  */
 _detect_native_features:
-        clr.l   d0                   // assume no NatFeats available
+        moveq   #0,d0               // assume no NatFeats available
         move.l  sp,a1
         move.l  vec_illegal,a0
         move.l  #fail_natfeat,vec_illegal

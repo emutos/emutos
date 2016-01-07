@@ -789,7 +789,7 @@ _check_read_byte:
         move.l  (8).w,a1
         lea     berr.w(pc),a0
         move.l  a0,(8).w
-        clr.l   d0
+        moveq   #0,d0
         nop                                     // flush pipeline
 
         move.l  4(sp),a0

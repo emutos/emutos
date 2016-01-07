@@ -218,8 +218,8 @@ init_pattern_loop:
  * A5 = pattern test subroutine return address.
  */
         move.l  #0x200000,d1            // we begin with the bank 1
-        clr.l   d5                      // total memory (later phystop)
-        clr.l   d6                      // MMU setting set to 0
+        moveq   #0,d5                   // total memory (later phystop)
+        moveq   #0,d6                   // MMU setting set to 0
 
         /* test the presence of a 256k bank config */
 test_256k:
@@ -228,7 +228,7 @@ test_256k:
 #else
         lsr.w   #2,d6                   // switch bank in configuration byte
 #endif
-        clr.l   d4                      // bank memory size
+        moveq   #0,d4                   // bank memory size
 
         movea.l #0x40008,a0             // 256k test
         lea     test_512k,a5            // return point of test pattern

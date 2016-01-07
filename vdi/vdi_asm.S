@@ -117,7 +117,7 @@ intin_ok:
 #else
         movem.l (sp)+, d1-d7/a0-a6 // restore the caller's registers
 #endif
-        clr.l   d0
+        moveq   #0,d0
         move.w  _flip_y,d0      // set d0 to indicate magnitude/coordinate
 
         rts

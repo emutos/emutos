@@ -77,7 +77,7 @@ _detect_cpu:
 
 // on 68000 we try out a `move from CCR'.
 
-        clr.l   d0              // assume 68000
+        moveq   #0,d0           // assume 68000
         MOVEW_CCR_D0            // move.w ccr,d0 legal on 68010+
         moveq   #10,d0
 
@@ -151,7 +151,7 @@ exit:
 _detect_fpu:
         move.l  a2,-(sp)
         move.l  sp,a0           // save the ssp
-        clr.l   d0              // assume no FPU
+        moveq   #0,d0           // assume no FPU
         move.l  (0x2c).w,a1     // save the Line-F vector
         move.l  (0x08).w,a2
         move.l  #fexit,d1

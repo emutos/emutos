@@ -102,7 +102,7 @@ start:
 
         /* d4 = max size of TOS */
 
-        clr.l   d4
+        moveq   #0,d4
         move.w  d6,d4
         lsl.l   #8,d4
         add.l   d4,d4
