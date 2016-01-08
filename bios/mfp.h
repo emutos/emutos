@@ -20,9 +20,9 @@
 #define CLOCKS_PER_SEC  200UL
 
 
-#if CONF_WITH_MFP
+#if CONF_WITH_MFP || CONF_WITH_TT_MFP
 
-/*=========================================================================*/
+/*==== MFP memory mapping =================================================*/
 typedef struct
 {
         UBYTE   dum1;
@@ -75,8 +75,19 @@ typedef struct
         volatile UBYTE  udr;    /* USART data register               */
 } MFP;
 
+#endif
 
 
+#if CONF_WITH_TT_MFP
+
+#define TT_MFP_BASE     ((MFP *)(0xfffffa80L))
+
+void tt_mfp_init(void);
+
+#endif
+
+
+#if CONF_WITH_MFP
 
 /*==== Defines ============================================================*/
 #define MFP_BASE        ((MFP *)(0xfffffa00L))
@@ -90,7 +101,7 @@ void jenabint(WORD num);
 /*==== internal functions =================================================*/
 
 void mfp_init(void);
-void setup_timer(WORD timer, WORD control, WORD data);
+void setup_timer(MFP *mfp,WORD timer, WORD control, WORD data);
 
 /* function which returns 1 if the timeout elapsed before the gpip changed */
 int timeout_gpip(LONG delay);   /* delay in ticks */

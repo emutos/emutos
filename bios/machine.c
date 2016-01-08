@@ -127,7 +127,7 @@ static void detect_serial_ports(void)
 {
 #if CONF_WITH_TT_MFP
   has_tt_mfp = 0;
-  if (check_read_byte(TT_MFP_BASE+1))
+  if (check_read_byte((LONG)TT_MFP_BASE+1))
     has_tt_mfp = 1;
 
   KDEBUG(("has_tt_mfp = %d\n", has_tt_mfp));

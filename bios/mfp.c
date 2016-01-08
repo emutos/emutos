@@ -1,5 +1,5 @@
 /*
- * mfp.c - handling of the Atari ST Multi-Function Peripheral MFP 68901
+ * mfp.c - handling of the Multi-Function Peripheral MFP 68901
  *
  * Copyright (c) 2001 Martin Doering
  * Copyright (c) 2001-2014 The EmuTOS development team
@@ -21,15 +21,10 @@
 #include "vectors.h"
 #include "coldfire.h"
 
-#if CONF_WITH_MFP
+#if CONF_WITH_MFP || CONF_WITH_TT_MFP
 
-/*==== mfp_init - initialize the MFP ========================================*/
-
-void mfp_init(void)
+static void reset_mfp_regs(MFP *mfp)
 {
-    MFP *mfp=MFP_BASE;   /* set base address of MFP */
-
-    /* reset the MFP registers */
     mfp->gpip = 0x00;
     mfp->aer = 0x00;
     mfp->ddr = 0x00;
@@ -55,9 +50,34 @@ void mfp_init(void)
 
     mfp->rsr = 0x00;
     mfp->tsr = 0x00;
+}
 
-    /* initialize the MFP */
-    mfp->vr = 0x48;      /* vectors 0x40 to 0x4F, software end of interrupt */
+#endif
+
+
+#if CONF_WITH_TT_MFP
+
+void tt_mfp_init(void)
+{
+    MFP *mfp = TT_MFP_BASE; /* set base address of MFP */
+
+    reset_mfp_regs(mfp);    /* reset the MFP registers */
+    mfp->vr = 0x58;         /* vectors 0x50 to 0x5F, software end of interrupt */
+}
+
+#endif
+
+
+#if CONF_WITH_MFP
+
+/*==== mfp_init - initialize the MFP ========================================*/
+
+void mfp_init(void)
+{
+    MFP *mfp = MFP_BASE;    /* set base address of MFP */
+
+    reset_mfp_regs(mfp);    /* reset the MFP registers */
+    mfp->vr = 0x48;         /* vectors 0x40 to 0x4F, software end of interrupt */
 }
 
 
@@ -110,9 +130,8 @@ void jenabint(WORD num)
 }
 
 /* setup the timer, but do not activate the interrupt */
-void setup_timer(WORD timer, WORD control, WORD data)
+void setup_timer(MFP *mfp, WORD timer, WORD control, WORD data)
 {
-    MFP *mfp=MFP_BASE;   /* set base address of MFP */
     switch(timer) {
     case 0:  /* timer A */
         mfp->tacr = 0;
@@ -144,7 +163,7 @@ static const WORD timer_num[] = { 13, 8, 5, 4 };
 void xbtimer(WORD timer, WORD control, WORD data, LONG vector)
 {
     if(timer < 0 || timer > 3) return;
-    setup_timer(timer, control, data);
+    setup_timer(MFP_BASE,timer, control, data);
     mfpint(timer_num[timer], vector);
 }
 

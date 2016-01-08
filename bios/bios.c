@@ -244,6 +244,14 @@ static void bios_init(void)
     mfp_init();
 #endif
 
+#if CONF_WITH_TT_MFP
+    if (has_tt_mfp)
+    {
+        KDEBUG(("tt_mfp_init()\n"));
+        tt_mfp_init();
+    }
+#endif
+
     /* Initialize the system 200 Hz timer */
     KDEBUG(("init_system_timer()\n"));
     init_system_timer();

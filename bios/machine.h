@@ -25,7 +25,6 @@
 #define SCU_GPR1            0xffff8e09UL
 #define VME_INT_MASK        0xffff8e0dUL
 #define DIP_SWITCHES        0xffff9200UL
-#define TT_MFP_BASE         0xfffffa80UL
 
 /*
  * some useful cookies.

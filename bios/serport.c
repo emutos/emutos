@@ -219,17 +219,14 @@ static const struct mfp_rs232_table mfp_rs232_init[] = {
 };
 #endif  /* CONF_WITH_MFP_RS232 */
 
-ULONG rsconf1(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
+#if CONF_WITH_MFP || CONF_WITH_TT_MFP
+static ULONG rsconf_mfp(MFP *mfp, EXT_IOREC *iorec, WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 {
-#if CONF_WITH_MFP_RS232
-    MFP *mfp;
     const struct mfp_rs232_table *init;
     ULONG old;
 
     if (baud == -2)     /* wants current baud rate */
-        return iorec1.baudrate;
-
-    mfp = MFP_BASE;     /* set base address of MFP */
+        return iorec->baudrate;
 
     /*
      * remember old ucr/rsr/tsr; note that we don't bother with scr, despite
@@ -238,13 +235,13 @@ ULONG rsconf1(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
     old = ((ULONG)mfp->ucr<<24) | ((ULONG)mfp->rsr<<16) | (ULONG)mfp->tsr<<8;
 
     if ((baud >= MIN_BAUDRATE_CODE ) && (baud <= MAX_BAUDRATE_CODE)) {
-        iorec1.baudrate = baud;
+        iorec->baudrate = baud;
         init = &mfp_rs232_init[baud];
-        setup_timer(3,init->control,init->data);
+        setup_timer(mfp,3,init->control,init->data);
     }
 
     if ((ctrl >= MIN_FLOW_CTRL) && (ctrl <= MAX_FLOW_CTRL))
-        iorec1.flowctrl = ctrl;
+        iorec->flowctrl = ctrl;
     if (ucr >= 0)
         mfp->ucr = ucr;
     if (rsr >= 0)
@@ -255,6 +252,13 @@ ULONG rsconf1(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
         mfp->scr = scr;
 
     return old;
+}
+#endif
+
+ULONG rsconf1(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
+{
+#if CONF_WITH_MFP_RS232
+    return rsconf_mfp(MFP_BASE,&iorec1,baud,ctrl,ucr,rsr,tsr,scr);
 #else
     return 0UL;
 #endif  /* CONF_WITH_MFP_RS232 */
@@ -559,43 +563,54 @@ ULONG reset_recovery_loops;
 #if CONF_WITH_TT_MFP
 /*
  * TT MFP i/o routines
- *
- * TODO: implement these!
  */
 static LONG bconstatTT(void)
 {
+    /* Character available in the serial input buffer? */
+    /* FIXME: We ought to use Iorec() for this... */
+    if (TT_MFP_BASE->rsr & 0x80)
+        return -1L;
+
     return 0L;
 }
 
 static LONG bconinTT(void)
 {
-    return 0L;
+    /* Wait for character at the serial line */
+    while(!bconstatTT())
+        ;
+
+    /* Return character...
+     * FIXME: We ought to use Iorec() for this... */
+    return (LONG)TT_MFP_BASE->udr;
 }
 
 static LONG bcostatTT(void)
 {
-    return -1L;
+    if (TT_MFP_BASE->tsr & 0x80)
+        return -1L;
+
+    return 0L;
 }
 
 static LONG bconoutTT(WORD dev, WORD b)
 {
-    return 0L;
+    /* Wait for transmit buffer to become empty */
+    while(!bcostatTT())
+        ;
+
+    /* Output to RS232 interface */
+    TT_MFP_BASE->udr = (UBYTE)b;
+
+    return 1L;
 }
 
 /*
- * TT Rsconf() routines
+ * TT Rsconf() routine
  */
 static ULONG rsconfTT(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 {
-    ULONG old = 0UL;
-
-    if (baud == -2)     /* wants current baud rate */
-        return iorecTT.baudrate;
-
-    if ((ctrl >= MIN_FLOW_CTRL) && (ctrl <= MAX_FLOW_CTRL))
-        iorecTT.flowctrl = ctrl;
-
-    return old;
+    return rsconf_mfp(TT_MFP_BASE,&iorecTT,baud,ctrl,ucr,rsr,tsr,scr);
 }
 #endif  /* CONF_WITH_TT_MFP */
 
