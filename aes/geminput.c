@@ -50,394 +50,334 @@ extern void b_delay(WORD amnt);  /* called only from aes/gemdosif.S */
 GLOBAL WORD     button, xrat, yrat, kstate, mclick, mtrans;
 GLOBAL WORD     pr_button, pr_xrat, pr_yrat, pr_mclick;
 
-GLOBAL AESPD    *gl_mowner;                     /* current mouse/keybd  */
-                                                /*   owner              */
-GLOBAL AESPD    *gl_cowner;                     /* current control rect.*/
-                                                /*   owner              */
-GLOBAL AESPD    *ctl_pd;                        /* screen manager proces*/
-                                                /*   that controls the  */
-                                                /*   mouse when its     */
-                                                /*   outside the control*/
-                                                /*   rectangle.         */
-GLOBAL GRECT    ctrl;                           /* current control rect.*/
+GLOBAL AESPD    *gl_mowner;     /* current mouse/keybd owner            */
+GLOBAL AESPD    *gl_cowner;     /* current control rectangle owner      */
+GLOBAL AESPD    *ctl_pd;        /* screen manager process that controls the mouse */
+                                /*  when it's outside the control rectangle.      */
+GLOBAL GRECT    ctrl;           /* current control rectangle            */
 
-
-GLOBAL WORD     gl_bclick;                      /* # of times into the  */
-                                                /*   desired button     */
-                                                /*   state              */
-GLOBAL WORD     gl_bpend;                       /* number of pending    */
-                                                /*   events desiring    */
-                                                /*   more than a single */
-                                                /*   clicks             */
-GLOBAL WORD     gl_bdesired;                    /* the current desired  */
-                                                /*   button state       */
-GLOBAL WORD     gl_btrue;                       /* the current true     */
-                                                /*   button state       */
-GLOBAL WORD     gl_bdely;                       /* the current amount   */
-                                                /*   of time before the */
-                                                /*   button event is    */
-                                                /*   considered finished*/
+GLOBAL WORD     gl_bclick;      /* # of times into the desired button state */
+GLOBAL WORD     gl_bpend;       /* number of pending events desiring */
+                                /*  more than a single click         */
+GLOBAL WORD     gl_bdesired;    /* the current desired button state  */
+GLOBAL WORD     gl_btrue;       /* the current true button state     */
+GLOBAL WORD     gl_bdely;       /* the current amount of time before the */
+                                /*  button event is considered finished  */
 
 
 /* Prototypes: */
 void post_mb(WORD ismouse, EVB *elist, WORD parm1, WORD parm2);
 
 
-
-
-
 /*
-*       Routine to return TRUE if mouse is in a position that
-*       satisfies a particular mouse rectangle block.
-*/
+ *  Routine to return TRUE if mouse is in a position that
+ *  satisfies a particular mouse rectangle block
+ */
 UWORD in_mrect(MOBLK *pmo)
 {
-        return( pmo->m_out != inside(xrat, yrat, (GRECT *)&pmo->m_x) );
+    return (pmo->m_out != inside(xrat, yrat, (GRECT *)&pmo->m_x));
 }
 
 
 /*
-*       Routine to check if the mouse is in part of the screen owned by
-*       the control manager.  It returns -1 if it is, otherwise it
-*       returns 0 if it is over the desktop, or +1 if it is over
-*       the active window.
-*/
+ *  Routine to check if the mouse is in part of the screen owned by
+ *  the control manager.  If so, return -1; otherwise return 0 if it
+ *  is over the desktop, or +1 if it is over the active window.
+ */
 static WORD chk_ctrl(WORD mx, WORD my)
 {
-        WORD            wh;
-                                                /* if inside ctrl rect  */
-                                                /*   then owned by      */
-                                                /*   active process     */
-        if ( inside(mx, my, &ctrl) )
-          return(1);
-                                                /* if in menu bar then  */
-                                                /*   owned by ctrl mgr  */
-        if ( inside(mx, my, &gl_rmenu) )
-          return(-1);
-                                                /* if on any window     */
-                                                /*   beside the desktop */
-                                                /*   then ctrl mgr owns */
-        wh = wm_find(mx, my);
-        if (wh)
-        {
-          if ( (D.w_win[gl_wtop].w_flags & VF_SUBWIN) &&
-               (D.w_win[wh].w_flags & VF_SUBWIN) &&
-               (inside(mx, my, (GRECT *)&D.w_win[wh].w_xwork)) )
-            return(1);
-          else
-            return(-1);
-        }
+    WORD    wh;
+
+    /* if inside ctrl rectangle, then owned by active process */
+    if (inside(mx, my, &ctrl))
+        return 1;
+
+    /* if in menu bar, then owned by ctrl mgr */
+    if (inside(mx, my, &gl_rmenu))
+        return -1;
+
+    /* if on any window beside the desktop, then ctrl mgr owns */
+    wh = wm_find(mx, my);
+    if (wh)
+    {
+        if ((D.w_win[gl_wtop].w_flags & VF_SUBWIN) &&
+            (D.w_win[wh].w_flags & VF_SUBWIN) &&
+            inside(mx, my, (GRECT *)&D.w_win[wh].w_xwork))
+            return 1;
         else
-          return( 0 );
+            return -1;
+    }
+    else
+        return 0;
 }
 
 
 /*
-*       Button click code call that is from the button interrupt
-*       code with interrupts off.
-*/
+ *  Button click code call that is from the button interrupt code
+ *  with interrupts off
+ */
 void b_click(WORD state)
 {
-                                                /* ignore it unless it  */
-                                                /*   represents a change*/
-        if ( state != gl_btrue)
+    /* ignore it unless it represents a change */
+    if (state != gl_btrue)
+    {
+        /* see if we've already set up a wait */
+        if (gl_bdely)
         {
-                                                /* see if we've already */
-                                                /*   set up a wait      */
-          if ( gl_bdely )
-          {
-                                                /* if the change is into*/
-                                                /*   the desired state  */
-                                                /*   then increment cnt */
+            /* if the change is into the desired state, increment cnt */
             if (state == gl_bdesired)
             {
-              gl_bclick++;
-              gl_bdely += 3;
+                gl_bclick++;
+                gl_bdely += 3;
             }
-          }
-          else
-          {
-                                                /* if someone cares     */
-                                                /*   about multiple     */
-                                                /*   clicks and this is */
-                                                /*   not a null mouse   */
-                                                /*   then set up delay  */
-                                                /*   else just fork it  */
-            if ( (gl_bpend) &&
-                 (state) )
+        }
+        else
+        {
+            /*
+             * if someone cares about multiple clicks and this is not
+             * a null mouse then set up delay else just fork it
+             */
+            if (gl_bpend && state)
             {
-                                                /* start click cnt at 1 */
-                                                /*   establish desired  */
-                                                /*   state and set wait */
-                                                /*   flag               */
-              gl_bclick = 1;
-              gl_bdesired = state;
-                                                /* button delay set in  */
-                                                /*   ev_dclick (5)      */
-              gl_bdely = gl_dclick;
+                /* start click cnt at 1, establish desired state and set wait flag */
+                gl_bclick = 1;
+                gl_bdesired = state;
+                gl_bdely = gl_dclick;   /* button delay set in ev_dclick() */
             }
             else
-              forkq(bchange, MAKE_ULONG(state, 1));
-          }
-                                                /* update true state of */
-                                                /*   the mouse          */
-          gl_btrue = state;
+                forkq(bchange, MAKE_ULONG(state, 1));
         }
+        /* update true state of the mouse */
+        gl_btrue = state;
+    }
 }
 
 
 /*
-*       Button delay code that is called from the tick interrupt code with
-*       interrupts off.
-*/
-
+ *  Button delay code that is called from the tick interrupt code
+ *  with interrupts off
+ */
 void b_delay(WORD amnt)
 {
-                                                /* see if we have a     */
-                                                /*   delay for mouse    */
-                                                /*   click in progress  */
-        if (gl_bdely)
+    /* see if we have a delay for mouse click in progress */
+    if (gl_bdely)
+    {
+        /* see if decrementing delay cnt causes delay to be over */
+        gl_bdely -= amnt;
+        if (!gl_bdely)
         {
-                                                /* see if decrementing  */
-                                                /*  delay cnt causes    */
-                                                /*  delay to be over    */
-          gl_bdely -= amnt;
-          if ( !(gl_bdely) )
-          {
             forkq(bchange, MAKE_ULONG(gl_bdesired, gl_bclick));
             if (gl_bdesired != gl_btrue)
             {
-              forkq(bchange, MAKE_ULONG(gl_btrue, 1));
+                forkq(bchange, MAKE_ULONG(gl_btrue, 1));
             }
-          }
         }
+    }
 }
 
 
 /*
-*       Set the current control rectangle which is the part of the
-*       screen owned by the active process.  Normally, the work area
-*       of the top window.
-*/
-
+ *  Set the current control rectangle which is the part of the screen
+ *  owned by the active process.  Normally, the work area of the top window.
+ */
 void set_ctrl(GRECT *pt)
 {
-        rc_copy(pt, &ctrl);
+    rc_copy(pt, &ctrl);
 }
 
 
-
 /*
-*       Get the current control rectangle which is the part of the
-*       screen owned by the active process.  Normally, the work area
-*       of the top window, but sometimes the whole screen during
-*       form fill-in.
-*/
-
+ *  Get the current control rectangle which is the part of the screen
+ *  owned by the active process.  Normally, the work area of the top
+ *  window, but sometimes the whole screen during form fill-in.
+ */
 void get_ctrl(GRECT *pt)
 {
-        rc_copy(&ctrl, pt);
+    rc_copy(&ctrl, pt);
 }
 
 
 /*
-*       Used by form_do to remember the current keyboard and mouse
-*       owners.
-*/
-
+ *  Used by form_do to remember the current keyboard and mouse owners
+ */
 void get_mown(AESPD **pmown)
 {
-        *pmown = gl_mowner;
+    *pmown = gl_mowner;
 }
 
 
 /*
-*       Used by control manager and form_do to give the mouse or keyboard
-*       to another process.  The mouse should only be given with the
-*       buttons in an up state.
-*/
-
+ *  Used by control manager and form_do() to give the mouse or keyboard
+ *  to another process.  The mouse should only be transferred with the
+ *  buttons in an up state.
+ */
 void set_mown(AESPD *mp)
 {
-        if (!button)
-        {
-                                                /* change the owner     */
-          gl_cowner = gl_mowner = mp;
-                                                /* pretend mouse        */
-                                                /*   moved to get the   */
-                                                /*   right form showing */
-                                                /*   and get mouse event*/
-                                                /*   posted correctly   */
-          post_mb(TRUE, gl_mowner->p_cda->c_msleep, xrat, yrat);
-                                                /* post a button event  */
-                                                /*   in case the new    */
-                                                /*   owner was waiting  */
-          post_mb(FALSE, gl_mowner->p_cda->c_bsleep, button, 1);
-        }
+    if (!button)
+    {
+        /* change the owner */
+        gl_cowner = gl_mowner = mp;
+
+        /*
+         * pretend mouse moved to get the right form showing and
+         * get the mouse event posted correctly
+         */
+        post_mb(TRUE, gl_mowner->p_cda->c_msleep, xrat, yrat);
+        /* post a button event in case the new owner was waiting */
+        post_mb(FALSE, gl_mowner->p_cda->c_bsleep, button, 1);
+    }
 }
 
 
 /*
-*       EnQueue a a character on a circular keyboard buffer.
-*/
+ *  eNQueue a character on a circular keyboard buffer
+ */
 static void nq(UWORD ch, CQUEUE *qptr)
 {
-        if (qptr->c_cnt < KBD_SIZE)
-        {
-          qptr->c_buff[qptr->c_rear++] = ch;
-          if ((qptr->c_rear) == KBD_SIZE)
+    if (qptr->c_cnt < KBD_SIZE)
+    {
+        qptr->c_buff[qptr->c_rear++] = ch;
+        if ((qptr->c_rear) == KBD_SIZE)
             qptr->c_rear = 0;
-          qptr->c_cnt++ ;
-        }
+        qptr->c_cnt++;
+    }
 }
 
 
 /*
-*       DeQueue a a character from a circular keyboard buffer.
-*/
+ *  DeQueue a character from a circular keyboard buffer
+ */
 UWORD dq(CQUEUE *qptr)
 {
-        register WORD   q2;
+    register WORD   q2;
 
-        qptr->c_cnt--;
-        q2 = qptr->c_front++;
-        if ((qptr->c_front) == KBD_SIZE)
-          qptr->c_front = 0;
-        return( qptr->c_buff[q2] );
+    qptr->c_cnt--;
+    q2 = qptr->c_front++;
+    if ((qptr->c_front) == KBD_SIZE)
+        qptr->c_front = 0;
+
+    return qptr->c_buff[q2];
 }
 
 
 /*
-*       Flush the characters from a circular keyboard buffer.
-*/
+ *  Flush the characters from a circular keyboard buffer
+ */
 void fq(void)
 {
-        while (rlr->p_cda->c_q.c_cnt)
-          dq(&rlr->p_cda->c_q);
+    while (rlr->p_cda->c_q.c_cnt)
+        dq(&rlr->p_cda->c_q);
 }
 
 
 void evremove(EVB *e, UWORD ret)
 {
-        e->e_pred->e_link = e->e_link;
-        if (e->e_link)
-          e->e_link->e_pred = e->e_pred;
-        azombie(e, ret);
+    e->e_pred->e_link = e->e_link;
+    if (e->e_link)
+        e->e_link->e_pred = e->e_pred;
+    azombie(e, ret);
 }
 
 
 void kchange(LONG fdata)
 {
-        UWORD ch = (UWORD)(fdata>>16);
-        WORD kstat = (UWORD)fdata;
+    UWORD ch = (UWORD)(fdata>>16);
+    WORD kstat = (UWORD)fdata;
 
-        kstate = kstat;
-        if (ch)
-          post_keybd(gl_mowner->p_cda, ch);
+    kstate = kstat;
+    if (ch)
+        post_keybd(gl_mowner->p_cda, ch);
 }
 
 
 void post_keybd(CDA *c, UWORD ch)
 {
-        register EVB    *e;
+    register EVB    *e;
 
-                                                /* if anyone waiting ?  */
-        if ((e = c->c_iiowait) != 0)                    /*   wake him up        */
-          evremove(e, ch);
-        else
-                                                /* no one is waiting,   */
-                                                /*   just toss it in    */
-                                                /*   the buffer         */
-          nq(ch, &c->c_q);
+    /* if someone is waiting, wake him up */
+    if ((e = c->c_iiowait) != 0)
+        evremove(e, ch);
+    else    /* no one is waiting, just toss it in the buffer */
+        nq(ch, &c->c_q);
 }
 
 
 /*
-*       Routine to give mouse to right owner based on position.  Called
-*       when button initially goes down, or when it is moved with the
-*       mouse button down.
-*/
+ *  Routine to give mouse to right owner based on position.  Called
+ *  when button initially goes down, or when the mouse is moved with
+ *  the mouse button down.
+ */
 static void chkown(void)
 {
-        register WORD   val;
+    register WORD   val;
 
-        val = chk_ctrl(xrat, yrat);
-        if (val == 1)
-          gl_mowner = gl_cowner;
-        else
-          gl_mowner = (val == -1) ? ctl_pd : D.w_win[0].w_owner;
+    val = chk_ctrl(xrat, yrat);
+    if (val == 1)
+        gl_mowner = gl_cowner;
+    else
+        gl_mowner = (val == -1) ? ctl_pd : D.w_win[0].w_owner;
 }
 
 
 void bchange(LONG fdata)
 {
-        WORD new = (UWORD)(fdata>>16);
-        WORD clicks = (UWORD)fdata;
-                                                /* see if this button   */
-                                                /*   event causes an    */
-                                                /*   ownership change   */
-                                                /*   to or from ctrlmgr */
-        if ( (!gl_ctmown) &&
-             (new == MB_DOWN) &&
-             (button == 0x0) )
-          chkown();
+    WORD new = (UWORD)(fdata>>16);
+    WORD clicks = (UWORD)fdata;
 
-        mtrans++;
-        pr_button = button;
-        pr_mclick = mclick;
-        pr_xrat = xrat;
-        pr_yrat = yrat;
-        button = new;
-        mclick = clicks;
-        post_mb(FALSE, gl_mowner->p_cda->c_bsleep, button, clicks);
+    /* see if this button event causes an ownership change to or from ctrlmgr */
+    if (!gl_ctmown && (new == MB_DOWN) && (button == 0))
+        chkown();
+
+    mtrans++;
+    pr_button = button;
+    pr_mclick = mclick;
+    pr_xrat = xrat;
+    pr_yrat = yrat;
+    button = new;
+    mclick = clicks;
+    post_mb(FALSE, gl_mowner->p_cda->c_bsleep, button, clicks);
 }
 
 
 WORD downorup(WORD new, LONG buparm)
 {
-        register WORD   flag, mask, val;
+    register WORD   flag, mask, val;
 
-        flag = (buparm >> 24) & 0x00ffL;
-        mask = (buparm >> 8) & 0x00ffL;
-        val = (buparm) & 0x00ffL;
-        return( ((mask & (val ^ new)) == 0) != flag );
+    flag = (buparm >> 24) & 0x00ffL;
+    mask = (buparm >> 8) & 0x00ffL;
+    val = (buparm) & 0x00ffL;
+
+    return (((mask & (val^new)) == 0) != flag);
 }
 
 
 void mchange(LONG fdata)
 {
-        WORD rx = (UWORD)(fdata>>16);
-        WORD ry = (UWORD)fdata;
-                                                /* zero out button wait */
-                                                /*   if mouse moves more*/
-                                                /*   then a little      */
-        if ( (gl_bdely) &&
-             ( (xrat-rx > 2) ||
-               (xrat-rx < -2) ||
-               (yrat-ry > 2) ||
-               (yrat-ry < -2) ) )
-          b_delay(gl_bdely );
+    WORD rx = (UWORD)(fdata>>16);
+    WORD ry = (UWORD)fdata;
 
-                                                /* xrat, yrat hold true */
-        xrat = rx;
-        yrat = ry;
-                                                /* post the event       */
-        if (gl_play)
-        {
-            drawrat(rx, ry);
-        }
-                                                /* give mouse to screen */
-                                                /*   handler when not   */
-                                                /*   button down and    */
-                                                /*   there is an active */
-                                                /*   menu and it will   */
-                                                /*   satisfy his event  */
-        if ( (gl_mowner != ctl_pd) &&
-             (button == 0x0) &&
-             (gl_mntree) &&
-             (in_mrect(&gl_ctwait)) )
-          gl_mowner = ctl_pd;
-        post_mb(TRUE, gl_mowner->p_cda->c_msleep, xrat, yrat);
+    /* zero out button wait if mouse moves more than a little */
+    if (gl_bdely &&
+        ((xrat-rx > 2) || (xrat-rx < -2) || (yrat-ry > 2) || (yrat-ry < -2)) )
+        b_delay(gl_bdely );
+
+    /* xrat, yrat hold true */
+    xrat = rx;
+    yrat = ry;
+
+    /* post the event */
+    if (gl_play)
+    {
+        drawrat(rx, ry);
+    }
+
+    /*
+     * give mouse to screen handler when not button down and
+     * there is an active menu and it will satisfy his event
+     */
+    if ( (gl_mowner != ctl_pd) && (button == 0) && gl_mntree && (in_mrect(&gl_ctwait)) )
+        gl_mowner = ctl_pd;
+    post_mb(TRUE, gl_mowner->p_cda->c_msleep, xrat, yrat);
 }
 
 
@@ -474,162 +414,153 @@ void wheel_change(WORD wheel_number, WORD wheel_amount)
 
 static WORD inorout(EVB *e, WORD rx, WORD ry)
 {
-        MOBLK   mo;
-                                                /* in or out of         */
-                                                /*   specified rectangle*/
-        mo.m_out = ((e->e_flag & EVMOUT) != 0x0);
-        mo.m_x = (UWORD)(e->e_parm>>16);
-        mo.m_y = (UWORD)e->e_parm;
-        mo.m_w = (UWORD)(e->e_return>>16);
-        mo.m_h = (UWORD)e->e_return;
-        /* FIXME: The following GRECT*-typecast is not very nice */
-        return( mo.m_out != inside(rx, ry, (GRECT *)&mo.m_x) );
+    MOBLK   mo;
+
+    /* in or out of specified rectangle */
+    mo.m_out = ((e->e_flag & EVMOUT) != 0);
+    mo.m_x = (UWORD)(e->e_parm>>16);
+    mo.m_y = (UWORD)e->e_parm;
+    mo.m_w = (UWORD)(e->e_return>>16);
+    mo.m_h = (UWORD)e->e_return;
+
+    /* FIXME: The following GRECT*-typecast is not very nice */
+    return (mo.m_out != inside(rx, ry, (GRECT *)&mo.m_x));
 }
 
 /*
-*       Routine to walk the list of mouse or button events and remove
-*       the ones that are satisfied.
-*/
+ *  Routine to walk the list of mouse or button events and remove
+ *  the ones that are satisfied
+ */
 void post_mb(WORD ismouse, EVB *elist, WORD parm1, WORD parm2)
 {
-        register EVB    *e1, *e;
-        UWORD           clicks;
+    register EVB    *e1, *e;
+    UWORD   clicks;
 
-        for (e = elist; e; e = e1)
+    for (e = elist; e; e = e1)
+    {
+        e1 = e->e_link;
+        if (ismouse)
         {
-          e1 = e->e_link;
-          if (ismouse)
-          {
-            if ( inorout(e, parm1, parm2) )
-              evremove(e, 0);
-          }
-          else
-          {
-            if ( downorup(parm1, e->e_parm) )
-            {
-                                                /* decrement counting   */
-                                                /*   semaphore if one   */
-                                                /*   of the multi-      */
-                                                /*   click guys was     */
-                                                /*   satisfied          */
-
-              clicks = (UWORD)(e->e_parm>>16) & 0x00ff;
-              if (clicks > 1)
-                gl_bpend--;
-              evremove(e, (parm2 > clicks) ? clicks : parm2);
-            }
-          }
+            if (inorout(e, parm1, parm2))
+                evremove(e, 0);
         }
+        else
+        {
+            if (downorup(parm1, e->e_parm))
+            {
+                /*
+                 * decrement counting semaphore if one of the multi-click
+                 * guys was satisfied
+                 */
+                clicks = (UWORD)(e->e_parm>>16) & 0x00ff;
+                if (clicks > 1)
+                    gl_bpend--;
+                evremove(e, (parm2 > clicks) ? clicks : parm2);
+            }
+        }
+    }
 }
-
 
 
 void akbin(EVB *e)
 {
-                                                /* see if already       */
-                                                /*   satisfied          */
-        if (rlr->p_cda->c_q.c_cnt)
-          azombie(e, dq(&rlr->p_cda->c_q) );
-        else                                    /* time to zzzzz...     */
-          evinsert(e, &rlr->p_cda->c_iiowait);
+    /* see if already satisfied */
+    if (rlr->p_cda->c_q.c_cnt)
+        azombie(e, dq(&rlr->p_cda->c_q));
+    else                    /* time to zzzzz... */
+        evinsert(e, &rlr->p_cda->c_iiowait);
 }
 
 
 void adelay(EVB *e, LONG c)
 {
-        register EVB   *p, *q;
+    register EVB   *p, *q;
 
-        if (c == 0x0L)
-          c = 0x1L;
+    if (c == 0L)
+        c = 1L;
 
-        disable_interrupts();
-        if (CMP_TICK)
-        {
-                                                /* if already counting  */
-                                                /*   down then reset    */
-                                                /*   CMP_TICK to the    */
-                                                /*   lower number but   */
-                                                /*   let NUM_TICK grow  */
-                                                /*   from its accumulated*/
-                                                /*   value              */
-          if (c <= CMP_TICK)
+    disable_interrupts();
+    if (CMP_TICK)
+    {
+        /*
+         * if already counting down, then reset CMP_TICK to the lower
+         * number, but let NUM_TICK grow from its accumulated value
+         */
+        if (c <= CMP_TICK)
             CMP_TICK = c;
-        }
-        else
-        {
-                                                /* if we aren't currently*/
-                                                /*   counting down for  */
-                                                /*   someone else then  */
-                                                /*   start ticking      */
-          CMP_TICK = c;
-                                                /* start NUM_TICK out   */
-                                                /*   at zero            */
-          NUM_TICK = 0x0L;
-        }
-        e->e_flag |= EVDELAY;
-        q = (EVB *) ((BYTE *) &dlr - elinkoff);
-        for (p = dlr; p; p = (q = p) -> e_link)
-        {
-          if (c <= (LONG) p->e_parm)
+    }
+    else
+    {
+        /*
+         * if we aren't currently counting down for someone else,
+         * then start ticking
+         */
+        CMP_TICK = c;
+        NUM_TICK = 0L;      /* start NUM_TICK out at zero */
+    }
+
+    e->e_flag |= EVDELAY;
+    q = (EVB *) ((BYTE *) &dlr - elinkoff);
+    for (p = dlr; p; p = (q = p) -> e_link)
+    {
+        if (c <= (LONG) p->e_parm)
             break;
-          c -= (LONG) p->e_parm;
-        }
-        e->e_pred = q;
-        q->e_link = e;
-        e->e_parm = (LONG) c;
-        e->e_link = p;
-        if ( p )
-        {
-          c = (LONG) p->e_parm - c;
-          p->e_pred = e;
-          p->e_parm = (LONG) c;
-        }
-        enable_interrupts();
+        c -= (LONG) p->e_parm;
+    }
+    e->e_pred = q;
+    q->e_link = e;
+    e->e_parm = (LONG) c;
+    e->e_link = p;
+    if (p)
+    {
+        c = (LONG) p->e_parm - c;
+        p->e_pred = e;
+        p->e_parm = (LONG) c;
+    }
+    enable_interrupts();
 }
 
 
 void abutton(EVB *e, LONG p)
 {
-        register WORD   bclicks;
+    register WORD   bclicks;
 
-        if ( (rlr == gl_mowner) &&
-             (downorup(button, p)) )
-        {
-          azombie(e, 1);                        /* 'nuff said           */
-        }
-        else
-        {
-                                                /* increment counting   */
-                                                /*   semaphore to show  */
-                                                /*   someone cares about*/
-                                                /*   multiple clicks    */
-          bclicks = (UWORD)(p>>16) & 0x00ff;
-          if (bclicks > 1)
+    if ((rlr == gl_mowner) && downorup(button, p))
+    {
+        azombie(e, 1);      /* 'nuff said */
+    }
+    else
+    {
+        /*
+         * increment counting semaphore to show someone cares
+         * about multiple clicks
+         */
+        bclicks = (UWORD)(p>>16) & 0x00ff;
+        if (bclicks > 1)
             gl_bpend++;
-          e->e_parm = p;
-          evinsert(e, &rlr->p_cda->c_bsleep);
-        }
+        e->e_parm = p;
+        evinsert(e, &rlr->p_cda->c_bsleep);
+    }
 }
 
 
 void amouse(EVB *e, LONG pmo)
 {
-        MOBLK           mob;
+    MOBLK   mob;
 
-        memcpy(&mob, (MOBLK *)pmo, sizeof(MOBLK));
-                                               /* if already in (or out) */
-                                               /* signal immediately     */
-        if ( (rlr == gl_mowner) &&
-             (in_mrect(&mob)) )
-          azombie(e, 0);
-        else
-        {
-          if (mob.m_out)
+    memcpy(&mob, (MOBLK *)pmo, sizeof(MOBLK));
+
+    /* if already in (or out) of rectangle, signal immediately */
+    if ((rlr == gl_mowner) && in_mrect(&mob))
+        azombie(e, 0);
+    else
+    {
+        if (mob.m_out)
             e->e_flag |= EVMOUT;
-          else
+        else
             e->e_flag &= ~EVMOUT;
-          e->e_parm = ((LONG)mob.m_x<<16) | (UWORD)mob.m_y;
-          e->e_return = ((LONG)mob.m_w<<16) | (UWORD)mob.m_h;
-          evinsert(e, &rlr->p_cda->c_msleep );
-        }
+        e->e_parm = ((LONG)mob.m_x<<16) | (UWORD)mob.m_y;
+        e->e_return = ((LONG)mob.m_w<<16) | (UWORD)mob.m_h;
+        evinsert(e, &rlr->p_cda->c_msleep );
+    }
 }
