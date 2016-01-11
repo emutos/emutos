@@ -1,25 +1,12 @@
 Common AES/VDI/Line-A bugs:
-- Drag-and-drop does not work in the freeware GEM games "Abalone"
-  "Hotshot checkers", "Risky", "Yukon" and in the shareware solitaire
-  game "Patience".
+- Drag-and-drop does not work in the freeware GEM game "Hotshot checkers".
 - Mouse buttons don't work properly in several GEM programs:
-  - In "Sysinfo" (v5.02) dialog buttons and window scrollbar buttons
-    are selected only on mouse button release and acted only if
-    press and release are within certain time of each other.
-    http://sourceforge.net/mailarchive/message.php?msg_id=28236630
-  - In PixArt4, buttons within windows don't react to mouse clicks,
-    only window close button does
+  - In PixArt v4.52, buttons on image dialog don't work properly.
   - In "Patience", all the dialogs (quit, start new game) show
     the button selected last time still as selected and it needs
     to be unselected to use the dialog.
-  - "Awele" v1.01 window menus close immediately after clicking to open
-    them.  "Awele" v1.02 compiled with newer Windom version works fine.
-  - In (original) "Ballerburg", when not in a dialog, there are constant
-    "ding" sounds and moving mouse over interactive elements activates
-    them without a click.
-  - Clicks don't work at all in "Yams" (mine sweeper) game.
-  - In "Bombs" & "Mind Sweeper" (mine sweeper) games, it's pretty
-    random whether mouse clicks go through, mostly they don't.
+  - In "Bombs", it's pretty random whether mouse clicks go through,
+    mostly they don't.
 - Text output is located correctly, but input text goes to
   top left of screen in Gfa basic 2.x runner.
 - Because EmuTOS doesn't take outline into account in text extents
@@ -42,9 +29,22 @@ Common AES/VDI/Line-A bugs:
   because clc_flit() function does it for VDI (where perimeter
   is drawn separately).  It is visible e.g. in "Japlish" game.
 
+Video problems
+- In "Awele", mono desktop colours are inverted after exiting program.
+- Omega's XiTec presentations "swing.prg" throws privilege exception
+  on exit.  Both TOS v3 & EmuTOS survive that OK, but in EmuTOS both
+  screen and mouse acceleration are messed up: EmuTOS exception restore
+  is missing videomode & mouse reset.
+
 Atari TT / TOS v3 compatibility bugs:
-- Changing the VDI color palette is not possible on the TT.
-- Colors are wrong in GEM Nethack on TT (and it panics EmuTOS on exit).
+- GEM Nethack on TT panics EmuTOS on exit.
+- Jay Software's Blyp (STG editor) crashes on startup.
+- 4getful has way too low volume both in TT & Falcon versions
+- PixArt v4.52 issues:
+  - None of the selected Tools (selected from window that opens from
+    Modules -> Tools) has any effect on the loaded image.
+  - Text for the last item in the "Options" menu isn't visible and
+    going over that item inverts the whole menu, not just that item.
 
 Atari Falcon / TOS v4 compatibility bugs:
 - EmuTOS doesn't update mouse clip rect or limits when Falcon program
@@ -70,14 +70,14 @@ Problems that also occur in Atari TOS:
   part of the circle that joins the end segment to the previous one.
 
 Links to programs listed above:
-- Abalone:
-  http://www.umich.edu/~archive/atari/Games/Board/abalone.zoo
+- 4getful:
+  http://www.pouet.net/prod.php?which=24961
 - Anduril:
   http://www.umich.edu/~archive/atari/Games/Adventure/andurlin.arc
 - Awele v1.01:
   http://windom.free.fr/awele/bin/awele.zip
-- Ballerburg:
-  http://www.eckhardkruse.net/en/atari_st/baller.html
+- Blyp:
+  http://phoenix.inf.upol.cz/~opichals/jay/
 - Bombs:
   http://www.umich.edu/~archive/atari/Games/Puzzle/bombs.arc
 - Chainz, Jewelz, Sweety Things:
@@ -94,23 +94,16 @@ Links to programs listed above:
   http://www.umich.edu/~archive/atari/Games/Arcade/invaders.lzh
 - Japlish:
   http://www.ntrautanen.fi/marko/arkisto.atari.org/sivut/menu_pelit.htm
-- Mind sweeper:
-  http://www.umich.edu/~archive/atari/Games/Puzzle/minds_11.zip
 - Pacman:
   http://gem.win.co.nz/mb/atarisw/pacman.html
 - Patience (older version):
   http://www.umich.edu/~archive/atari/Games/Cards/patience.lzh
 - PixArt4:
   http://www.1632systems.co.uk/www/html/Product/pixart.htm
-- Risky (English version):
-  http://www.umich.edu/~archive/atari/Games/Board/risk_eng.lzh
 - Sherlock:
   http://www.umich.edu/~archive/atari/Games/Adventure/sherlock.arc
-- Sysinfo 5.02:
-  http://gfa.atari-users.net/ftp/download.php?fn=sinf502e.zip
-- Yukon:
-  http://www.umich.edu/~archive/atari/Games/Cards/yukone1.lzh
-  http://www.haun-online.de/Atari/e_index.html
+- Swing:
+  http://www.pouet.net/prod.php?which=52370
 - Zodiax:
   http://christophe.bray.free.fr/informatique/falcon/falcon_jeux3.htm#Zodiax
 
