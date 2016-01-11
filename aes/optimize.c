@@ -56,281 +56,282 @@ WORD sound(WORD isfreq, WORD freq, WORD dura)
 
     if (isfreq)     /* Play a sound? */
     {
-      if (disabled)  return 1;
+        if (disabled)
+            return 1;
 
-      snddat[0] = 0;  snddat[1] = (125000L / freq);       /* channel A pitch lo */
-      snddat[2] = 1;  snddat[3] = (125000L / freq) >> 8;  /* channel A pitch hi */
-      snddat[4] = 7;  snddat[5] = (isfreq ? 0xFE : 0xFF);
-      snddat[6] = 8;  snddat[7] = 0x10;                   /* amplitude: envelop */
-      snddat[8] = 11;  snddat[9] = 0;                     /* envelope lo */
-      snddat[10] = 12;  snddat[11] = dura * 8;            /* envelope hi */
-      snddat[12] = 13;  snddat[13] = 9;                   /* envelope type */
-      snddat[14] = 0xFF;  snddat[15] = 0;
+        snddat[0] = 0;  snddat[1] = (125000L / freq);       /* channel A pitch lo */
+        snddat[2] = 1;  snddat[3] = (125000L / freq) >> 8;  /* channel A pitch hi */
+        snddat[4] = 7;  snddat[5] = (isfreq ? 0xFE : 0xFF);
+        snddat[6] = 8;  snddat[7] = 0x10;                   /* amplitude: envelop */
+        snddat[8] = 11;  snddat[9] = 0;                     /* envelope lo */
+        snddat[10] = 12;  snddat[11] = dura * 8;            /* envelope hi */
+        snddat[12] = 13;  snddat[13] = 9;                   /* envelope type */
+        snddat[14] = 0xFF;  snddat[15] = 0;
 
-      Dosound((LONG)snddat);
+        Dosound((LONG)snddat);
     }
     else            /* else enable/disable sound */
     {
-      if (freq != -1)
-        disabled = freq;
+        if (freq != -1)
+            disabled = freq;
     }
 
-    return(disabled);
+    return disabled;
 }
 
 
 /*
- *      Convert 'normal' filename to a value suitable for formatting
- *      with a TEDINFO FFFFFFFF.FFF text string.  For example:
+ *  Convert 'normal' filename to a value suitable for formatting
+ *  with a TEDINFO FFFFFFFF.FFF text string.  For example:
  *      . 'SAMPLE.PRG' is converted to 'SAMPLE  PRG'
  *      . 'TESTPROG.C' is converted to 'TESTPROGC'
  *      . 'TEST' is converted to 'TEST'
  *
- *      This code also handles input filenames that are not in 8.3
- *      format that may be provided by e.g. Hatari GEMDOS drive
- *      emulation.  For example:
+ *  This code also handles input filenames that are not in 8.3
+ *  format that may be provided by e.g. Hatari GEMDOS drive emulation.
+ *  For example:
  *      . 'TESTWINDOW.C' is converted to 'TESTWINDC'
  *      . 'TEST.A.B.C' is converted to 'TEST    A.B'
  *      . 'TESTTESTTEST' is converted to 'TESTTEST'
  */
 void fmt_str(BYTE *instr,BYTE *outstr)
 {
-        BYTE *p, *q;
+    BYTE *p, *q;
 
-        /* copy up to 8 bytes before the (first) dot (we eat excess bytes) */
-        for (p = instr, q = outstr; *p; p++) {
-          if (*p == '.') {
+    /* copy up to 8 bytes before the (first) dot (we eat excess bytes) */
+    for (p = instr, q = outstr; *p; p++)
+    {
+        if (*p == '.')
+        {
             p++;
             break;
-          }
-          if (q-outstr < 8)
+        }
+        if (q-outstr < 8)
             *q++ = *p;
-        }
+    }
 
-        /* if any extension present, fill out with spaces, then copy extension */
-        if (*p) {
-          while(q-outstr < 8)
+    /* if any extension present, fill out with spaces, then copy extension */
+    if (*p)
+    {
+        while(q-outstr < 8)
             *q++ = ' ';
-          while((q-outstr < 11) && *p)
+        while((q-outstr < 11) && *p)
             *q++ = *p++;
-        }
+    }
 
-        *q = '\0';  /* always nul-terminate */
+    *q = '\0';  /* always nul-terminate */
 }
 
 
 /*
- *      Does the reverse of fmt_str() above.  For example,
+ *  Does the reverse of fmt_str() above.  For example,
  *      'SAMPLE  PRG' is converted to 'SAMPLE.PRG'.
  */
 void unfmt_str(BYTE *instr, BYTE *outstr)
 {
-        BYTE            *pstr, temp;
+    BYTE    *pstr, temp;
 
-        pstr = instr;
-        while( (*pstr) && ((pstr - instr) < 8) )
-        {
-          temp = *pstr++;
-          if (temp != ' ')
+    pstr = instr;
+    while(*pstr && ((pstr - instr) < 8))
+    {
+        temp = *pstr++;
+        if (temp != ' ')
             *outstr++ = temp;
-        }
-        if (*pstr)
-        {
-          *outstr++ = '.';
-          while (*pstr)
+    }
+    if (*pstr)
+    {
+        *outstr++ = '.';
+        while (*pstr)
             *outstr++ = *pstr++;
-        }
-        *outstr = '\0';
+    }
+    *outstr = '\0';
 }
 
 
 /*
- *      Insert an unsigned long value into the te_ptext field of the TEDINFO
- *      structure for the specified object, truncating if necessary
+ *  Insert an unsigned long value into the te_ptext field of the TEDINFO
+ *  structure for the specified object, truncating if necessary
  */
 void inf_numset(LONG tree, WORD obj, ULONG value)
 {
-        BYTE            str[12];
+    BYTE    str[12];
 
-        sprintf(str,"%lu",value);
-        inf_sset(tree,obj,str);
+    sprintf(str,"%lu",value);
+    inf_sset(tree,obj,str);
 }
 
 
 /*
- *      Copies the specified string to the te_ptext field of the TEDINFO
- *      structure for (tree,object), truncating if necessary to fit.
+ *  Copies the specified string to the te_ptext field of the TEDINFO
+ *  structure for (tree,object), truncating if necessary to fit
  */
 void inf_sset(LONG tree, WORD obj, BYTE *pstr)
 {
-        BYTE            *text;
-        TEDINFO         *ted;
-        OBJECT          *objptr = ((OBJECT *)tree) + obj;
+    BYTE    *text;
+    TEDINFO *ted;
+    OBJECT  *objptr = ((OBJECT *)tree) + obj;
 
-        ted = (TEDINFO *)objptr->ob_spec;
-        text = (BYTE *)ted->te_ptext;
-        strlcpy(text,pstr,ted->te_txtlen);
+    ted = (TEDINFO *)objptr->ob_spec;
+    text = (BYTE *)ted->te_ptext;
+    strlcpy(text,pstr,ted->te_txtlen);
 }
 
 
 /*
- *      Copies the te_ptext field of the TEDINFO structure for (tree,object)
- *      to the specified string.
+ *  Copies the te_ptext field of the TEDINFO structure for (tree,object)
+ *  to the specified string
  */
 void inf_sget(LONG tree, WORD obj, BYTE *pstr)
 {
-        TEDINFO         *ted;
-        OBJECT          *objptr = ((OBJECT *)tree) + obj;
+    TEDINFO *ted;
+    OBJECT  *objptr = ((OBJECT *)tree) + obj;
 
-        ted = (TEDINFO *)objptr->ob_spec;
-        strcpy(pstr, (BYTE *)ted->te_ptext);
+    ted = (TEDINFO *)objptr->ob_spec;
+    strcpy(pstr, (BYTE *)ted->te_ptext);
 }
 
 
 /*
- *      Examines 'numobj' objects in 'tree', starting at 'baseobj', looking
- *      for a SELECTED onject.  Returns the relative number of the first
- *      SELECTED object, or -1 if none of the objects is selected.
+ *  Examines 'numobj' objects in 'tree', starting at 'baseobj', looking
+ *  for a SELECTED onject.  Returns the relative number of the first
+ *  SELECTED object, or -1 if none of the objects is selected.
  */
 WORD inf_gindex(LONG tree, WORD baseobj, WORD numobj)
 {
-        WORD            retobj;
-        OBJECT          *objptr;
+    WORD    retobj;
+    OBJECT  *objptr;
 
-        for (retobj=0, objptr=((OBJECT *)tree)+baseobj; retobj < numobj; retobj++, objptr++)
-        {
-          if (objptr->ob_state & SELECTED)
-            return(retobj);
-        }
-        return(-1);
+    for (retobj = 0, objptr = ((OBJECT *)tree)+baseobj; retobj < numobj; retobj++, objptr++)
+    {
+        if (objptr->ob_state & SELECTED)
+            return retobj;
+    }
+
+    return -1;
 }
 
 
 /*
-*       Return 0 if cancel was selected, 1 if okay was selected, -1 if
-*       nothing was selected.
-*/
-
+ *  Return 0 if cancel was selected, 1 if okay was selected, -1 if
+ *  nothing was selected
+ */
 WORD inf_what(LONG tree, WORD ok, WORD cncl)
 {
-        WORD            field;
-        OBJECT          *objptr;
+    WORD    field;
+    OBJECT  *objptr;
 
-        field = inf_gindex(tree, ok, 2);
+    field = inf_gindex(tree, ok, 2);
 
-        if (field != -1)
-        {
-          objptr = ((OBJECT *)tree) + ok + field;
-          objptr->ob_state = NORMAL;
-          field = (field == 0);
-        }
-        return(field);
+    if (field != -1)
+    {
+        objptr = ((OBJECT *)tree) + ok + field;
+        objptr->ob_state = NORMAL;
+        field = (field == 0);
+    }
+
+    return field;
 }
 
 
 /*
-*       Routine to see if the test filename matches one of a set of
-*       comma delimited wildcard strings.
-*               e.g.,   pwld = "*.COM,*.EXE,*.BAT"
-*                       ptst = "MYFILE.BAT"
-*/
+ *  Routine to see if the test filename matches one of a set of
+ *  comma delimited wildcard strings.  For example:
+ *      pwld = "*.COM,*.EXE,*.BAT"
+ *      ptst = "MYFILE.BAT"
+ */
 WORD wildcmp(BYTE *pwld, BYTE *ptst)
 {
-        BYTE            *pwild;
-        BYTE            *ptest;
-                                                /* skip over *.*, and   */
-                                                /*   *.ext faster       */
-        while(*pwld)
-        {
-          ptest = ptst;
-          pwild = pwld;
-                                                /* move on to next      */
-                                                /*   set of wildcards   */
-          pwld = scasb(pwld, ',');
-          if (*pwld)
+    BYTE    *pwild;
+    BYTE    *ptest;
+
+    /* skip over *.*, and *.ext faster */
+    while(*pwld)
+    {
+        ptest = ptst;
+        pwild = pwld;
+
+        /* move on to next set of wildcards */
+        pwld = scasb(pwld, ',');
+        if (*pwld)
             pwld++;
-                                                /* start the checking   */
-          if (pwild[0] == '*')
-          {
-            if (pwild[2] == '*')
-              return(TRUE);
+
+        /* start the checking */
+        if (pwild[0] == '*')
+        {
+            if (pwild[2] == '*')        /* "*.*" matches everything */
+                return TRUE;
             else
             {
-              pwild = &pwild[2];
-              ptest = scasb(ptest, '.');
-              if (*ptest)
-                ptest++;
+                pwild = &pwild[2];
+                ptest = scasb(ptest, '.');
+                if (*ptest)
+                    ptest++;
             }
-          }
-                                                /* finish off comparison*/
-          while( (*ptest) &&
-                 (*pwild) &&
-                 (*pwild != ',') )
-          {
+        }
+
+        /* finish off comparison */
+        while(*ptest && *pwild && (*pwild != ','))
+        {
             if (*pwild == '?')
             {
-               pwild++;
-               if (*ptest != '.')
-                 ptest++;
+                pwild++;
+                if (*ptest != '.')
+                    ptest++;
             }
             else
             {
-              if (*pwild == '*')
-              {
-                if (*ptest != '.')
-                  ptest++;
-                else
-                  pwild++;
-              }
-              else
-              {
-                if (*ptest == *pwild)
+                if (*pwild == '*')
                 {
-                  pwild++;
-                  ptest++;
+                    if (*ptest != '.')
+                        ptest++;
+                    else
+                        pwild++;
                 }
                 else
-                  break;
-              }
+                {
+                    if (*ptest == *pwild)
+                    {
+                        pwild++;
+                        ptest++;
+                        }
+                    else
+                        break;
+                }
             }
-          }
-                                                /* eat up remaining     */
-                                                /*   wildcard chars     */
-          while( (*pwild == '*') ||
-                 (*pwild == '?') ||
-                 (*pwild == '.') )
-            pwild++;
-                                                /* if any part of wild- */
-                                                /*   card or test is    */
-                                                /*   left then no match */
-          if ( ((*pwild == '\0') || (*pwild == ',')) &&
-               (!*ptest) )
-            return( TRUE );
         }
-        return(FALSE);
+
+        /* eat up remaining wildcard chars */
+        while((*pwild == '*') || (*pwild == '?') || (*pwild == '.'))
+            pwild++;
+
+        /* if no part of wildcard or test is left then it's a match */
+        if (((*pwild == '\0') || (*pwild == ',')) && !*ptest)
+            return TRUE;
+    }
+
+    return FALSE;
 }
 
 
-
 /*
- *      Inserts character 'chr' into the string pointed to 'str', at
- *      position 'pos' (positions are relative to the start of the
- *      string; inserting at position 0 means inserting at the start
- *      of the string).  'tot_len' gives the maximum length the string
- *      can grow to; if necessary, the string will be truncated after
- *      inserting the character.
+ *  Inserts character 'chr' into the string pointed to 'str', at
+ *  position 'pos' (positions are relative to the start of the
+ *  string; inserting at position 0 means inserting at the start
+ *  of the string).  'tot_len' gives the maximum length the string
+ *  can grow to; if necessary, the string will be truncated after
+ *  inserting the character.
  */
 void ins_char(BYTE *str, WORD pos, BYTE chr, WORD tot_len)
 {
-        register WORD   ii, len;
+    register WORD   ii, len;
 
-        len = strlen(str);
+    len = strlen(str);
 
-        for (ii = len; ii > pos; ii--)
-          str[ii] = str[ii-1];
-        str[ii] = chr;
-        if (len+1 < tot_len)
-          str[len+1] = '\0';
-        else
-          str[tot_len-1] = '\0';
+    for (ii = len; ii > pos; ii--)
+        str[ii] = str[ii-1];
+    str[ii] = chr;
+    if (len+1 < tot_len)
+        str[len+1] = '\0';
+    else
+        str[tot_len-1] = '\0';
 }
