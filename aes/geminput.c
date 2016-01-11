@@ -66,7 +66,7 @@ GLOBAL WORD     gl_bdely;       /* the current amount of time before the */
 
 
 /* Prototypes: */
-void post_mb(WORD ismouse, EVB *elist, WORD parm1, WORD parm2);
+static void post_mb(WORD ismouse, EVB *elist, WORD parm1, WORD parm2);
 
 
 /*
@@ -431,7 +431,7 @@ static WORD inorout(EVB *e, WORD rx, WORD ry)
  *  Routine to walk the list of mouse or button events and remove
  *  the ones that are satisfied
  */
-void post_mb(WORD ismouse, EVB *elist, WORD parm1, WORD parm2)
+static void post_mb(WORD ismouse, EVB *elist, WORD parm1, WORD parm2)
 {
     register EVB    *e1, *e;
     UWORD   clicks;
