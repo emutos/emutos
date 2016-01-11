@@ -32,105 +32,96 @@
 
 static void doq(WORD donq, AESPD *p, QPB *m)
 {
-        register WORD   n, index;
-        register WORD   *om, *nm;
+    register WORD   n, index;
+    register WORD   *om, *nm;
 
-        n = m->qpb_cnt;
-        if (donq)
+    n = m->qpb_cnt;
+    if (donq)
+    {
+        memcpy((BYTE *)p->p_qaddr+p->p_qindex, (BYTE *)m->qpb_buf, n);
+        /*
+         * if it's a redraw msg, try to find a matching msg and
+         * union the redraw rectangles together
+         */
+        nm = (WORD *) &p->p_queue[p->p_qindex];
+        if ((nm[0] == WM_REDRAW) || (nm[0] == WM_ARROWED) || (nm[0] == WM_HSLID) || (nm[0] == WM_VSLID))
         {
-          memcpy((BYTE *)p->p_qaddr+p->p_qindex, (BYTE *)m->qpb_buf, n);
-                                                /* if its a redraw msg  */
-                                                /*   try to find a      */
-                                                /*   matching msg and   */
-                                                /*   union the redraw   */
-                                                /*   rects together     */
-          nm = (WORD *) &p->p_queue[p->p_qindex];
-          if ( (nm[0] == WM_REDRAW) ||
-               (nm[0] == WM_ARROWED) ||
-               (nm[0] == WM_HSLID) ||
-               (nm[0] == WM_VSLID) )
-          {
             index = 0;
-            while ( (index < p->p_qindex) &&
-                    (n) )
+            while ((index < p->p_qindex) && n)
             {
-              om = (WORD *) &p->p_queue[index];
-                                                /* if redraw and same   */
-                                                /*   handle then union  */
-              if ( (om[0] == WM_REDRAW) &&
-                   (nm[3] == om[3]) )
-              {
-                rc_union((GRECT *)&nm[4], (GRECT *)&om[4]);  /* FIXME: Ugly pointer typecasting */
-                n = 0;
-              }
-              else
-              {
-                                                /* if another arrow     */
-                                                /*   command then copy  */
-                                                /*   over with new msg  */
-                                                /*   else add in length */
-                                                /*   and get next messg */
-                if (om[0] == WM_ARROWED)
+                om = (WORD *) &p->p_queue[index];
+                /* if redraw and same handle then union */
+                if ((om[0] == WM_REDRAW) && (nm[3] == om[3]))
                 {
-                  memcpy(om, nm, 16);
-                  n = 0;
+                    rc_union((GRECT *)&nm[4], (GRECT *)&om[4]);  /* FIXME: Ugly pointer typecasting */
+                    n = 0;
                 }
                 else
-                  index += (om[2] != 0xFFFF) ? (om[2] + 16) : 16;
-              }
+                {
+                    /*
+                     * if another arrow command then copy over with new msg
+                     * else add in length and get next msg
+                     */
+                    if (om[0] == WM_ARROWED)
+                    {
+                        memcpy(om, nm, 16);
+                        n = 0;
+                    }
+                    else
+                        index += (om[2] != 0xFFFF) ? (om[2] + 16) : 16;
+                }
             }
-          }
-          p->p_qindex += n;
         }
-        else
-        {
-          memcpy((BYTE *)m->qpb_buf, (BYTE *)p->p_qaddr, n);
-          p->p_qindex -= n;
-          if ( p->p_qindex )
-            memcpy((BYTE *)p->p_qaddr, (BYTE *)p->p_qaddr + n, p->p_qindex);
-        }
+        p->p_qindex += n;
+    }
+    else
+    {
+        memcpy((BYTE *)m->qpb_buf, (BYTE *)p->p_qaddr, n);
+        p->p_qindex -= n;
+        if (p->p_qindex)
+            memcpy((BYTE *)p->p_qaddr, (BYTE *)p->p_qaddr+n, p->p_qindex);
+    }
 }
-
 
 
 void aqueue(WORD isqwrite, EVB *e, LONG lm)
 {
-        register AESPD  *p;
-        register QPB    *m;
-        EVB             **ppe;
-        WORD            qready;
+    register AESPD  *p;
+    register QPB    *m;
+    EVB     **ppe;
+    WORD    qready;
 
-        m = (QPB *) lm;
+    m = (QPB *)lm;
 
-        p = m->qpb_ppd;
+    p = m->qpb_ppd;
 
-        if (isqwrite)
-          qready = ( m->qpb_cnt <= (QUEUE_SIZE - p->p_qindex) );
-        else
-          qready = ( p->p_qindex > 0 );
+    if (isqwrite)
+        qready = (m->qpb_cnt <= (QUEUE_SIZE-p->p_qindex));
+    else
+        qready = (p->p_qindex > 0);
 
-        ppe = (isqwrite ^ qready) ? &p->p_qnq : &p->p_qdq;
-                                                /* room for message     */
-                                                /*  or messages in q    */
-        if (qready)
+    ppe = (isqwrite ^ qready) ? &p->p_qnq : &p->p_qdq;
+
+    /* room for message or messages in q */
+    if (qready)
+    {
+        doq(isqwrite, p, m);
+        azombie(e, 0);
+        if ((e = *ppe) != 0)    /* assignment ok */
         {
-          doq(isqwrite, p, m);
-          azombie(e, 0);
-          if (( e = *ppe ) != 0)                /* assignment ok        */
-          {
             e->e_flag |= NOCANCEL;
             *ppe = e->e_link;
 
-            if ( e->e_link )
-              e->e_link->e_pred = e->e_pred;
+            if (e->e_link)
+                e->e_link->e_pred = e->e_pred;
 
-            doq(!isqwrite, p, (QPB *) e->e_parm);
+            doq(!isqwrite, p, (QPB *)e->e_parm);
             azombie(e, 0);
-          }
         }
-        else                                    /* "block" the event    */
-        {
-          e->e_parm = lm;
-          evinsert(e, ppe);
-        }
+    }
+    else            /* "block" the event */
+    {
+        e->e_parm = lm;
+        evinsert(e, ppe);
+    }
 }
