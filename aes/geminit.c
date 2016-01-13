@@ -703,7 +703,7 @@ void gem_main(void)
             rlr->p_uda = &D.g_acc[i-2].a_uda;
             rlr->p_cda = &D.g_acc[i-2].a_cda;
         }
-        rlr->p_qaddr = (LONG)(&rlr->p_queue[0]);
+        rlr->p_qaddr = rlr->p_queue;
         rlr->p_qindex = 0;
         memset(rlr->p_name, ' ', 8);
         rlr->p_appdir[0] = '\0'; /* by default, no application directory */

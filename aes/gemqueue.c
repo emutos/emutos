@@ -38,7 +38,7 @@ static void doq(WORD donq, AESPD *p, QPB *m)
     n = m->qpb_cnt;
     if (donq)
     {
-        memcpy((BYTE *)p->p_qaddr+p->p_qindex, (BYTE *)m->qpb_buf, n);
+        memcpy(p->p_qaddr+p->p_qindex, (BYTE *)m->qpb_buf, n);
         /*
          * if it's a redraw msg, try to find a matching msg and
          * union the redraw rectangles together
@@ -76,10 +76,10 @@ static void doq(WORD donq, AESPD *p, QPB *m)
     }
     else
     {
-        memcpy((BYTE *)m->qpb_buf, (BYTE *)p->p_qaddr, n);
+        memcpy((BYTE *)m->qpb_buf, p->p_qaddr, n);
         p->p_qindex -= n;
         if (p->p_qindex)
-            memcpy((BYTE *)p->p_qaddr, (BYTE *)p->p_qaddr+n, p->p_qindex);
+            memcpy(p->p_qaddr, p->p_qaddr+n, p->p_qindex);
     }
 }
 

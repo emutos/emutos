@@ -130,7 +130,7 @@ struct aespd                    /* process descriptor           */
         EVB     *p_evlist;      /* 28 */
         EVB     *p_qdq;         /* 2C */
         EVB     *p_qnq;         /* 30 */
-        LONG    p_qaddr;        /* 34 */
+        BYTE    *p_qaddr;       /* 34 */
         WORD    p_qindex;       /* 38 */
         BYTE    p_queue[QUEUE_SIZE];   /* 3A */
         BYTE    p_appdir[LEN_ZPATH+2];  /* directory containing the executable */

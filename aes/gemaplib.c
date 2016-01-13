@@ -88,7 +88,7 @@ void ap_rdwr(WORD code, AESPD *p, WORD length, LONG pbuff)
      */
     if ((code == MU_MESAG) && (p->p_qindex == length) && (length == 16))
     {
-        memcpy((void *)pbuff, (void *)p->p_qaddr, p->p_qindex);
+        memcpy((void *)pbuff, p->p_qaddr, p->p_qindex);
         p->p_qindex = 0;
     }
     else
