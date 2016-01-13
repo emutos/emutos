@@ -42,18 +42,14 @@ AESPD *pd_index(WORD i)
 AESPD *fpdnm(BYTE *pname, UWORD pid)
 {
     WORD    i;
-    BYTE    temp[9];
     AESPD   *p;
 
-    temp[8] = 0;
     for (i = 0; i < totpds; i++)
     {
         p = pd_index(i);
         if (pname != NULL)
         {
-            /* TODO - strncmp */
-            memcpy(temp, p->p_name, 8);
-            if (strcmp(pname, temp) == 0)
+            if (strncmp(pname, p->p_name, 8) == 0)
                 return p;
         }
         else
