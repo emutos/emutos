@@ -42,6 +42,8 @@
 #include "gemflag.h"
 #include "geminit.h"
 #include "gemrslib.h"
+#include "gemaplib.h"
+#include "gemmnlib.h"
 #include "gemasm.h"
 #include "optimopt.h"
 
@@ -590,7 +592,20 @@ static WORD sh_ldapp(SHELL *psh)
         p_nameit(rlr, sh_name(&D.s_cmd[0]));
         strcpy(rlr->p_appdir,sh_apdir);
         strcat(rlr->p_appdir,"\\");
+        rlr->p_flags = 0;
         ret = dos_exec(PE_LOADGO, D.s_cmd, ad_stail, ad_envrn); /* Run the APP */
+
+        /* if the user did an appl_init() without an appl_exit(),
+         * do the important parts for him
+         */
+        if (rlr->p_flags&AP_OPEN)
+        {
+            KDEBUG(("sh_ldapp: appl_init() without appl_exit()\n"));
+            mn_clsda();
+            if (rlr->p_qindex)
+                ap_rdwr(MU_MESAG, rlr, rlr->p_qindex, (LONG)D.g_valstr);
+            rlr->p_flags &= ~AP_OPEN;
+        }
 
         /* If the user ran an "autorun" application and quitted it,
          * return now to the default desktop

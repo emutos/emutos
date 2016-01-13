@@ -106,6 +106,8 @@ EVB             /* event block structure */
 /* p_stat */
 #define         WAITIN          0x0001
 #define         SWITCHIN        0x8000
+/* p_flags */
+#define AP_OPEN     0x0001      /* application is between appl_init() & appl_exit() */
 
 struct aespd                    /* process descriptor           */
 {
@@ -124,6 +126,7 @@ struct aespd                    /* process descriptor           */
         EVSPEC  p_evwait;       /* 22  event wait mask      */
         EVSPEC  p_evflg;        /* 24  event flags          */
 
+        UWORD   p_flags;        /* 26  process status flags, see above */
         EVB     *p_evlist;      /* 28 */
         EVB     *p_qdq;         /* 2C */
         EVB     *p_qnq;         /* 30 */

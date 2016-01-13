@@ -69,6 +69,8 @@ WORD ap_init(void)
     scdir[0] = gl_logdrv;           /* set drive letter     */
     sc_write(scdir);
 
+    rlr->p_flags |= AP_OPEN;        /* appl_init() done */
+
     return pid;
 }
 
@@ -206,6 +208,9 @@ WORD ap_trecd(FPD *pbuff,WORD length)
     return length;
 }
 
+/*
+ *  APplication EXIT
+ */
 void ap_exit(void)
 {
     wm_update(TRUE);
@@ -215,4 +220,5 @@ void ap_exit(void)
     gsx_mfset(ad_armice);
     wm_update(FALSE);
     all_run();
+    rlr->p_flags &= ~AP_OPEN;   /* say appl_exit() is done */
 }
