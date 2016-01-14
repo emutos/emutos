@@ -225,17 +225,14 @@ long    xsetblk(int n, void *blk, long len)
  *      Function 0x44   m_xalloc
  */
 
-#define MX_STRAM 0
-#define MX_TTRAM 1
-#define MX_PREFSTRAM 2
-#define MX_PREFTTRAM 3
-
 long    xmxalloc(long amount, int mode)
 {
     MD *m;
     long ret_value;
 
-    KDEBUG(("BDOS: xmxalloc(%ld,%d)\n",amount,mode));
+    KDEBUG(("BDOS: xmxalloc(%ld,0x%04x)\n",amount,mode));
+
+    mode &= MX_MODEMASK;    /* ignore unsupported bits */
 
     /*
      * if amount == -1L, return the size of the biggest block
