@@ -170,6 +170,17 @@
 #endif
 
 /*
+ * Defaults for the diagnostic cartridge target (maximum size 128K).
+ * When this is selected, the Makefile excludes AES support in order
+ * to reduce ROM size.  However this is still insufficient, so we
+ * need to exclude some feature(s).  Since the cartridge is targetted
+ * for ST/STe, we exclude TT video support.
+ */
+#ifdef DIAGNOSTIC_CARTRIDGE
+# define CONF_WITH_TT_SHIFTER 0
+#endif
+
+/*
  * Defaults for the Amiga target.
  */
 #ifdef MACHINE_AMIGA
