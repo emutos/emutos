@@ -176,8 +176,13 @@
  * need to exclude some feature(s).  Since the cartridge is targetted
  * for ST/STe, we exclude TT video support.
  */
-#ifdef DIAGNOSTIC_CARTRIDGE
-# define CONF_WITH_TT_SHIFTER 0
+#ifdef TARGET_CART
+# ifndef DIAGNOSTIC_CARTRIDGE
+#  define DIAGNOSTIC_CARTRIDGE 1
+# endif
+# ifndef CONF_WITH_TT_SHIFTER
+#  define CONF_WITH_TT_SHIFTER 0
+# endif
 #endif
 
 /*
