@@ -107,11 +107,8 @@ void ap_rdwr(WORD code, AESPD *p, WORD length, LONG pbuff)
 WORD ap_find(LONG pname)
 {
     register AESPD  *p;
-    BYTE    temp[9];
 
-    strcpy(temp, (char *)pname);
-
-    p = fpdnm(&temp[0], 0x0);
+    p = fpdnm((BYTE *)pname, 0);
     return p ? p->p_pid : -1;
 }
 
