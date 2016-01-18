@@ -337,6 +337,9 @@ static void fun_desk2desk(WORD dobj, WORD keystate)
     WORD drive_letter;
 
     target = app_afind(TRUE, AT_ISFILE, dobj, NULL, NULL);
+    if (!target)    /* "can't happen" */
+        return;
+
     sobj  = 0;
     while ((sobj = win_isel(G.g_screen, 1, sobj)))
     {
