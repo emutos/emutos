@@ -64,11 +64,11 @@ static LONG     ad_rso;
 #ifdef ENABLE_KDEBUG
 static void aestrace(const char* message)
 {
-    char appname[9];
+    char appname[AP_NAMELEN+1];
     const char *src = rlr->p_name;
     char *dest = appname;
 
-    while (dest < &appname[8] && *src != ' ')
+    while (dest < &appname[AP_NAMELEN] && *src != ' ')
         *dest++ = *src++;
     *dest++ = '\0';
 

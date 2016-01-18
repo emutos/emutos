@@ -103,6 +103,8 @@ EVB             /* event block structure */
 } ;
 
 /* pd defines */
+/* p_name */
+#define AP_NAMELEN  8           /* architectural */
 /* p_stat */
 #define         WAITIN          0x0001
 #define         SWITCHIN        0x8000
@@ -115,7 +117,7 @@ struct aespd                    /* process descriptor           */
         AESPD   *p_thread;      /*  4 */
         UDA     *p_uda;         /*  8 */
 
-        BYTE    p_name[8];      /*  C */
+        BYTE    p_name[AP_NAMELEN]; /*  C */
 
         CDA     *p_cda;         /* 14  cio data area        */
         LONG    p_ldaddr;       /* 18  long addr. of load   */

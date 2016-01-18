@@ -705,7 +705,7 @@ void gem_main(void)
         }
         rlr->p_qaddr = rlr->p_queue;
         rlr->p_qindex = 0;
-        memset(rlr->p_name, ' ', 8);
+        memset(rlr->p_name, ' ', AP_NAMELEN);
         rlr->p_appdir[0] = '\0'; /* by default, no application directory */
         /* if not rlr then initialize his stack pointer */
         if (i != 0)

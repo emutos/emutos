@@ -49,7 +49,7 @@ AESPD *fpdnm(BYTE *pname, UWORD pid)
         p = pd_index(i);
         if (pname != NULL)
         {
-            if (strncmp(pname, p->p_name, 8) == 0)
+            if (strncmp(pname, p->p_name, AP_NAMELEN) == 0)
                 return p;
         }
         else
@@ -86,7 +86,7 @@ void p_nameit(AESPD *p, BYTE *pname)
     char *s, *d;
     int i;
 
-    for (i = 0, s = pname, d = p->p_name; (i < 8) && *s && (*s != '.'); i++)
+    for (i = 0, s = pname, d = p->p_name; (i < AP_NAMELEN) && *s && (*s != '.'); i++)
         *d++ = *s++;
     for ( ; i < 8; i++)
         *d++ = ' ';
