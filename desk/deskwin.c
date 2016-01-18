@@ -277,12 +277,8 @@ static void win_ocalc(WNODE *pwin, WORD wfit, WORD hfit, FNODE **ppstart)
  */
 static void win_icalc(FNODE *pfnode)
 {
-    if (pfnode->f_attr & F_SUBDIR)
-        pfnode->f_pa = app_afind(FALSE, AT_ISFOLD, -1,
-                                &pfnode->f_name[0], &pfnode->f_isap);
-    else
-        pfnode->f_pa = app_afind(FALSE, AT_ISFILE, -1,
-                                &pfnode->f_name[0], &pfnode->f_isap);
+    pfnode->f_pa = app_afind(FALSE, (pfnode->f_attr&F_SUBDIR) ? AT_ISFOLD : AT_ISFILE,
+                            -1, &pfnode->f_name[0], &pfnode->f_isap);
 }
 
 
