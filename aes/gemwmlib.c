@@ -53,18 +53,21 @@
 #define NUM_MWIN NUM_WIN
 
 
-
-GLOBAL LONG gl_newdesk;         /* current desktop background pattern */
-GLOBAL WORD gl_newroot;         /* current object within gl_newdesk   */
 GLOBAL LONG desk_tree[NUM_PDS]; /* list of object trees for the desktop */
                                 /*  background pattern                  */
+
+GLOBAL WORD     gl_wtop;
+GLOBAL LONG     gl_awind;
+
+static LONG gl_newdesk;         /* current desktop background pattern */
+static WORD gl_newroot;         /* current object within gl_newdesk   */
 static WORD desk_root[NUM_PDS]; /* starting object to draw within desk_tree */
 
-GLOBAL OBJECT   W_TREE[NUM_MWIN];
-GLOBAL OBJECT   W_ACTIVE[NUM_ELEM];
+static OBJECT W_TREE[NUM_MWIN];
+static OBJECT W_ACTIVE[NUM_ELEM];
 
 
-GLOBAL const WORD gl_watype[NUM_ELEM] =
+static const WORD gl_watype[NUM_ELEM] =
 {
     G_IBOX,         /* W_BOX        */
     G_BOX,          /* W_TITLE      */
@@ -87,7 +90,7 @@ GLOBAL const WORD gl_watype[NUM_ELEM] =
     G_BOX           /* W_HELEV      */
 };
 
-GLOBAL const LONG gl_waspec[NUM_ELEM] =
+static const LONG gl_waspec[NUM_ELEM] =
 {
     0x00011101L,    /* W_BOX        */
     0x00011101L,    /* W_TITLE      */
@@ -110,21 +113,17 @@ GLOBAL const LONG gl_waspec[NUM_ELEM] =
     0x00011101L     /* W_HELEV      */
 };
 
-GLOBAL TEDINFO  gl_aname;
-GLOBAL TEDINFO  gl_ainfo;
+static TEDINFO gl_aname;
+static TEDINFO gl_ainfo;
 
-GLOBAL const TEDINFO gl_asamp =
+static const TEDINFO gl_asamp =
 {
     0x0L, 0x0L, 0x0L, IBM, MD_REPLACE, TE_LEFT, SYS_FG, 0x0, 1, 80, 80
 };
 
+static WORD wind_msg[8];
 
-GLOBAL WORD     wind_msg[8];
-
-GLOBAL WORD     gl_wtop;
-GLOBAL LONG     gl_awind;
-
-static LONG     gl_wtree;
+static LONG gl_wtree;
 
 
 

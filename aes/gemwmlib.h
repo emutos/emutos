@@ -10,17 +10,7 @@
 #ifndef GEMWMLIB_H
 #define GEMWMLIB_H
 
-extern LONG     gl_newdesk;
-extern WORD     gl_newroot;
 extern LONG     desk_tree[];
-extern OBJECT   W_TREE[];
-extern OBJECT   W_ACTIVE[];
-extern const WORD gl_watype[];
-extern const LONG gl_waspec[];
-extern TEDINFO  gl_aname;
-extern TEDINFO  gl_ainfo;
-extern const TEDINFO gl_asamp;
-extern WORD     wind_msg[8];
 extern WORD     gl_wtop;
 extern LONG     gl_awind;
 
