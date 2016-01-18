@@ -473,8 +473,8 @@ static void xif(AESPB *pcrys_blk)
     if (AIN_LEN)
         memcpy(addr_in, pcrys_blk->addrin, min(AIN_LEN,AI_SIZE)*sizeof(LONG));
 
-    int_out[0] = crysbind(OP_CODE, (AESGLOBAL *)pcrys_blk->global, &control[0], &int_in[0], &int_out[0],
-                                &addr_in[0]);
+    int_out[0] = crysbind(OP_CODE, (AESGLOBAL *)pcrys_blk->global, control, int_in, int_out,
+                                addr_in);
 
     if (OUT_LEN)
         memcpy(pcrys_blk->intout, int_out, OUT_LEN*sizeof(WORD));

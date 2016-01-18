@@ -186,7 +186,7 @@ static void gsx_wsopen(void)
     for(i=0; i<10; i++)
         intin[i] = 1;
     intin[10] = 2;                  /* device coordinate space */
-    g_v_opnwk( &intin[0], &gl_handle, &gl_ws );
+    g_v_opnwk(intin, &gl_handle, &gl_ws);
     gl_graphic = TRUE;
 }
 
@@ -329,7 +329,7 @@ static void bb_set(WORD sx, WORD sy, WORD sw, WORD sh, WORD *pts1, WORD *pts2,
     pts2[3] = sh - 1 ;
 
     gsx_fix(pfd, 0L, 0, 0);
-    vro_cpyfm( S_ONLY, &ptsin[0], psrc, pdst );
+    vro_cpyfm(S_ONLY, ptsin, psrc, pdst);
     gsx_mon();
 }
 

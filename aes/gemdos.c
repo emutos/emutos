@@ -241,7 +241,7 @@ WORD dos_setdt(UWORD h, UWORD time, UWORD date)
 
     buf[0] = time;
     buf[1] = date;
-    return gemdos(X_GSDTOF,&buf[0],h,TRUE);
+    return gemdos(X_GSDTOF,buf,h,TRUE);
 }
 
 

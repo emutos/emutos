@@ -113,7 +113,7 @@ static void menu_fixup(BYTE *pname)
     if ((tree=gl_mntree) == 0L)
         return;
 
-    w_nilit(3 + NUM_ACCS, &M_DESK[0]);
+    w_nilit(3 + NUM_ACCS, M_DESK);
 
     obj = ((OBJECT *)tree) + THESCREEN;
     themenus = obj->ob_tail;
@@ -350,7 +350,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
 
         /* wait for something */
         rets[5] = 0;
-        ev_which = ev_multi(mnu_flags, &p1mor, &p2mor, 0x0L, buparm, 0x0L, &rets[0]);
+        ev_which = ev_multi(mnu_flags, &p1mor, &p2mor, 0x0L, buparm, 0x0L, rets);
 
         /* if it's a button and not in a title then done, else flip state */
         if (ev_which & MU_BUTTON)
@@ -462,7 +462,7 @@ void mn_bar(LONG tree, WORD showit, WORD pid)
     {
         gl_mnppd = p;
         menu_tree[pid] = gl_mntree = tree;
-        menu_fixup(&p->p_name[0]);
+        menu_fixup(p->p_name);
         obj = ((OBJECT *)tree) + 1;
         obj->ob_width = gl_width - obj->ob_x;
         ob_actxywh(gl_mntree, THEACTIVE, (GRECT *)&gl_ctwait.m_x);
@@ -546,7 +546,7 @@ WORD mn_register(WORD pid, LONG pstr)
         desk_ppd[openda] = rlr;
         D.g_acctitle[openda] = (BYTE *)pstr;    /* save pointer, like Atari TOS */
 
-        menu_fixup(&rlr->p_name[0]);
+        menu_fixup(rlr->p_name);
         build_menuid_lookup();
         return openda;
     }
@@ -570,7 +570,7 @@ void mn_unregister(WORD da_id)
             build_menuid_lookup();
         }
     }
-    menu_fixup(&rlr->p_name[0]);
+    menu_fixup(rlr->p_name);
 }
 #endif
 

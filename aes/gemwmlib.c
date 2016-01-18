@@ -494,7 +494,7 @@ void w_bldactive(WORD w_handle)
 
     istop = (gl_wtop == w_handle);  /* set if it is on top */
     kind = pw->w_kind;              /* get the kind of window */
-    w_nilit(NUM_ELEM, &W_ACTIVE[0]);
+    w_nilit(NUM_ELEM, W_ACTIVE);
 
     /* start adding pieces & adjusting sizes */
     gl_aname.te_ptext = pw->w_pname;
@@ -602,7 +602,7 @@ void ap_sendmsg(WORD ap_msg[], WORD type, AESPD *towhom,
     ap_msg[5] = w5;
     ap_msg[6] = w6;
     ap_msg[7] = w7;
-    ap_rdwr(MU_SDMSG, towhom, 16, (LONG)&ap_msg[0]);
+    ap_rdwr(MU_SDMSG, towhom, 16, (LONG)ap_msg);
 }
 
 
@@ -1014,8 +1014,8 @@ static void w_owns(WORD w_handle, ORECT *po, GRECT *pt, WORD *poutwds)
         poutwds[3] = po->o_h;
         D.w_win[w_handle].w_rnext = po = po->o_link;
         /* FIXME: GRECT typecasting again */
-        if ((rc_intersect(pt, (GRECT *)&poutwds[0])) &&
-            (rc_intersect(&gl_rfull, (GRECT *)&poutwds[0])))
+        if ((rc_intersect(pt, (GRECT *)poutwds)) &&
+            (rc_intersect(&gl_rfull, (GRECT *)poutwds)))
             return;
     }
 
@@ -1059,7 +1059,7 @@ void wm_start(void)
 
     /* init window element objects */
     memset(&W_ACTIVE[ROOT], 0, NUM_ELEM * sizeof(OBJECT));
-    w_nilit(NUM_ELEM, &W_ACTIVE[0]);
+    w_nilit(NUM_ELEM, W_ACTIVE);
     for (i = 0; i < NUM_ELEM; i++)
     {
         W_ACTIVE[i].ob_type = gl_watype[i];
@@ -1083,7 +1083,7 @@ void wm_start(void)
     /* init global variables */
     gl_wtop = NIL;
     gl_wtree = (LONG)&W_TREE[ROOT];
-    gl_awind = (LONG)&W_ACTIVE[0];
+    gl_awind = (LONG)W_ACTIVE;
     gl_newdesk = 0x0L;
 
     /* init tedinfo parts of title and info lines */
@@ -1222,10 +1222,10 @@ void wm_get(WORD w_handle, WORD w_field, WORD *poutwds)
     case WF_NEXTXYWH:
         w_getsize(WS_WORK, w_handle, &t);
         po = (w_field == WF_FIRSTXYWH) ? D.w_win[w_handle].w_rlist : D.w_win[w_handle].w_rnext;
-        w_owns(w_handle, po, &t, &poutwds[0]);
+        w_owns(w_handle, po, &t, poutwds);
         break;
     case WF_SCREEN:
-        gsx_mret((LONG *)&poutwds[0], (LONG *)&poutwds[2]);
+        gsx_mret((LONG *)poutwds, (LONG *)(poutwds+2));
         break;
     case WF_TATTRB:
         poutwds[0] = D.w_win[w_handle].w_flags >> 3;
@@ -1233,7 +1233,7 @@ void wm_get(WORD w_handle, WORD w_field, WORD *poutwds)
     }
 
     if (which != -1)
-        w_getsize(which, w_handle, (GRECT *)&poutwds[0]);
+        w_getsize(which, w_handle, (GRECT *)poutwds);
 }
 
 
@@ -1314,7 +1314,7 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
         ob_order(gl_wtree, w_handle, NIL);
         /* fall thru    */
     case WF_CXYWH:
-        draw_change(w_handle, (GRECT *)&pinwds[0]);
+        draw_change(w_handle, (GRECT *)pinwds);
         break;
     case WF_TOP:
         if (w_handle != gl_wtop)
@@ -1332,7 +1332,7 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
         break;
     case WF_NEWDESK:
         pwin->w_owner = rlr;
-        desk_tree[rlr->p_pid] = gl_newdesk = *(LONG *) &pinwds[0];
+        desk_tree[rlr->p_pid] = gl_newdesk = *(LONG *) pinwds;
         desk_root[rlr->p_pid] = gl_newroot = pinwds[2];
         break;
     case WF_HSLSIZ:

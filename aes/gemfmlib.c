@@ -253,7 +253,7 @@ WORD fm_button(LONG tree, WORD new_obj, WORD clks, WORD *pnew_obj)
         }
         /* if not touchexit then wait for button up */
         if (cont && (flags & (SELECTABLE | EDITABLE)))
-            ev_button(1, 0x00001, 0x0000, &rets[0]);
+            ev_button(1, 0x00001, 0x0000, rets);
     }
 
     /* see if this selection gets us out */
@@ -310,7 +310,7 @@ WORD fm_do(LONG tree, WORD start_fld)
         }
         /* wait for mouse or key */
         which = ev_multi(MU_KEYBD | MU_BUTTON, NULL, NULL,
-                         0x0L, 0x0002ff01L, 0x0L, &rets[0]);
+                         0x0L, 0x0002ff01L, 0x0L, rets);
 
         /* handle keyboard event */
         if (which & MU_KEYBD)

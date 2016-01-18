@@ -304,7 +304,7 @@ static WORD fs_nscroll(LONG tree, WORD *psel, WORD curr, WORD count,
         *psel = 0;
         fs_format(tree, curr, count);
         gsx_gclip(&r[1]);
-        ob_actxywh(tree, F1NAME, &r[0]);
+        ob_actxywh(tree, F1NAME, r);
 
         if ((neg = (diffcurr < 0)) != 0)
             diffcurr = -diffcurr;
@@ -362,7 +362,7 @@ static WORD fs_newdir(BYTE *fpath, BYTE *pspec, LONG tree, WORD *pcount)
     tedinfo = (TEDINFO *)obj->ob_spec;
     tedinfo->te_ptext = pspec;
 
-    ptmp = &gl_fsobj[0];        /* redraw file selector objects */
+    ptmp = gl_fsobj;            /* redraw file selector objects */
     while(*ptmp)
         ob_draw(tree, *ptmp++, MAX_DEPTH);
 

@@ -260,8 +260,8 @@ static WORD check(BYTE *in_char, BYTE valchar)
  */
 static void ob_stfn(WORD idx, WORD *pstart, WORD *pfinish)
 {
-    *pstart = find_pos(&D.g_tmpstr[0], idx);
-    *pfinish = find_pos(&D.g_tmpstr[0], strlen(&D.g_rawstr[0]));
+    *pstart = find_pos(D.g_tmpstr, idx);
+    *pfinish = find_pos(D.g_tmpstr, strlen(D.g_rawstr));
 }
 
 
@@ -301,12 +301,12 @@ WORD ob_edit(LONG tree, WORD obj, WORD in_char, WORD *idx, WORD kind)
     D.g_valstr[len] = '\0';
 
     /* init formatted string */
-    ob_format(edblk.te_just, &D.g_rawstr[0], &D.g_tmpstr[0], &D.g_fmtstr[0]);
+    ob_format(edblk.te_just, D.g_rawstr, D.g_tmpstr, D.g_fmtstr);
 
     switch(kind)
     {
     case EDINIT:
-        *idx = strlen(&D.g_rawstr[0]);
+        *idx = strlen(D.g_rawstr);
         break;
     case EDCHAR:
         /*
@@ -344,7 +344,7 @@ WORD ob_edit(LONG tree, WORD obj, WORD in_char, WORD *idx, WORD kind)
                 *idx -= 1;
             break;
         case ARROW_RIGHT:
-            if (*idx < strlen(&D.g_rawstr[0]))
+            if (*idx < strlen(D.g_rawstr))
                 *idx += 1;
             break;
         default:
@@ -362,7 +362,7 @@ WORD ob_edit(LONG tree, WORD obj, WORD in_char, WORD *idx, WORD kind)
                 /* make sure char is in specified set */
                 if (check(&bin_char, D.g_valstr[*idx]))
                 {
-                    ins_char(&D.g_rawstr[0], *idx, bin_char, edblk.te_txtlen);
+                    ins_char(D.g_rawstr, *idx, bin_char, edblk.te_txtlen);
                     *idx += 1;
                     no_redraw = FALSE;
                 }
@@ -373,7 +373,7 @@ WORD ob_edit(LONG tree, WORD obj, WORD in_char, WORD *idx, WORD kind)
                         *idx += 1;
                         cur_pos++;
                     }
-                    pos = scan_to_end(&D.g_tmpstr[0]+cur_pos, *idx, bin_char);
+                    pos = scan_to_end(D.g_tmpstr+cur_pos, *idx, bin_char);
                     if (pos < (edblk.te_txtlen-2))
                     {
                         memset(&D.g_rawstr[*idx], ' ', pos - *idx);
@@ -389,7 +389,7 @@ WORD ob_edit(LONG tree, WORD obj, WORD in_char, WORD *idx, WORD kind)
         strcpy((char *) edblk.te_ptext,D.g_rawstr);
         if (!no_redraw)
         {
-            ob_format(edblk.te_just, &D.g_rawstr[0], &D.g_tmpstr[0], &D.g_fmtstr[0]);
+            ob_format(edblk.te_just, D.g_rawstr, D.g_tmpstr, D.g_fmtstr);
             ob_stfn(*idx, &nstart, &nfinish);
             start = min(start, nstart);
             dist = max(finish, nfinish) - start;
@@ -402,7 +402,7 @@ WORD ob_edit(LONG tree, WORD obj, WORD in_char, WORD *idx, WORD kind)
     }
 
     /* draw/erase the cursor */
-    cur_pos = find_pos(&D.g_tmpstr[0], *idx);
+    cur_pos = find_pos(D.g_tmpstr, *idx);
     curfld(tree, obj, cur_pos, 0);
     return TRUE;
 }

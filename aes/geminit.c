@@ -241,13 +241,13 @@ static void sndcli(BYTE *pfilespec)
 
     KDEBUG(("sndcli(\"%s\")\n", (const char*)pfilespec));
 
-    strcpy(&D.s_cmd[0], pfilespec);
+    strcpy(D.s_cmd, pfilespec);
 
     ret = dos_open(D.s_cmd, ROPEN);
     if (ret >= 0L)
     {
         handle = (WORD)ret;
-        err_ret = pgmld(handle, &D.s_cmd[0], (LONG **)&ldaddr);
+        err_ret = pgmld(handle, D.s_cmd, (LONG **)&ldaddr);
         dos_close(handle);
         /* create process to execute it */
         if (err_ret != -1)
@@ -386,7 +386,7 @@ static void sh_init(void)
 {
     SHELL   *psh;
 
-    psh = &sh[0];
+    psh = sh;
 
     sh_deskf(2, (LONG)&ad_pfile);
 
@@ -671,9 +671,9 @@ void gem_main(void)
     /* link up all the evb's to the event unused list */
     eul = NULL;
     for (i = 0; i < 2; i++)
-        ev_init(&D.g_int[i].a_evb[0],EVBS_PER_PD);
+        ev_init(D.g_int[i].a_evb,EVBS_PER_PD);
     for (i = 0; i < num_accs; i++)
-        ev_init(&D.g_acc[i].a_evb[0],EVBS_PER_PD);
+        ev_init(D.g_acc[i].a_evb,EVBS_PER_PD);
 
     /* initialize sync blocks */
     wind_spb.sy_tas = 0;

@@ -286,7 +286,7 @@ static void  just_draw(LONG tree, WORD obj, WORD sx, WORD sy)
         case G_FBOXTEXT:
             strcpy(D.g_rawstr, (char *) edblk.te_ptext);
             strcpy(D.g_tmpstr, (char *) edblk.te_ptmplt);
-            ob_format(edblk.te_just, &D.g_rawstr[0], &D.g_tmpstr[0], &D.g_fmtstr[0]);
+            ob_format(edblk.te_just, D.g_rawstr, D.g_tmpstr, D.g_fmtstr);
             /* drop thru to gr_gtext */
         case G_BOXCHAR:
             edblk.te_ptext = D.g_fmtstr;

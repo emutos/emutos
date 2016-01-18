@@ -90,7 +90,7 @@ UWORD ev_button(WORD bflgclks, UWORD bmask, UWORD bstate, WORD rets[])
 
     parm = combine_cms(bflgclks,bmask,bstate);
     ret = ev_block(MU_BUTTON, parm);
-    ev_rets(&rets[0]);
+    ev_rets(rets);
 
     return ret;
 }
@@ -104,7 +104,7 @@ UWORD ev_mouse(MOBLK *pmo, WORD rets[])
     WORD    ret;
 
     ret = ev_block(MU_M1, (LONG)pmo);
-    ev_rets(&rets[0]);
+    ev_rets(rets);
 
     return ret;
 }
@@ -226,7 +226,7 @@ WORD ev_multi(WORD flags, MOBLK *pmo1, MOBLK *pmo2, LONG tmcount,
     }
 
     /* get the returns */
-    ev_rets(&prets[0]);
+    ev_rets(prets);
 
     /* do aprets() if something hasn't already happened */
     if (what == 0)

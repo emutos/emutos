@@ -485,8 +485,8 @@ void sh_rdef(BYTE *lpcmd, BYTE *lpdir)
 
     psh = &sh[rlr->p_pid];
 
-    strcpy(lpcmd, &psh->sh_desk[0]);
-    strcpy(lpdir, &psh->sh_cdir[0]);
+    strcpy(lpcmd, psh->sh_desk);
+    strcpy(lpdir, psh->sh_cdir);
 }
 #endif
 
@@ -500,8 +500,8 @@ void sh_wdef(const BYTE *lpcmd, const BYTE *lpdir)
 
     psh = &sh[rlr->p_pid];
 
-    strcpy(&psh->sh_desk[0], lpcmd);
-    strcpy(&psh->sh_cdir[0], lpdir);
+    strcpy(psh->sh_desk, lpcmd);
+    strcpy(psh->sh_cdir, lpdir);
 }
 
 
@@ -530,7 +530,7 @@ static void sh_chdef(SHELL *psh)
         if (psh->sh_cdir[1] == ':')
             dos_sdrv(psh->sh_cdir[0] - 'A');
         dos_chdir(psh->sh_cdir);
-        strcpy(&D.s_cmd[0], &psh->sh_desk[0]);
+        strcpy(D.s_cmd, psh->sh_desk);
     }
     else
     {
@@ -570,7 +570,7 @@ static WORD sh_ldapp(SHELL *psh)
     {
         /* Start the ROM desktop: */
         sh_show(D.s_cmd);
-        p_nameit(rlr, sh_name(&D.s_cmd[0]));
+        p_nameit(rlr, sh_name(D.s_cmd));
         p_setappdir(rlr, D.s_cmd);
         aes_run_rom_program(deskstart);
         return 0;
@@ -589,7 +589,7 @@ static WORD sh_ldapp(SHELL *psh)
     {
         /* Run a normal application: */
         sh_show(D.s_cmd);
-        p_nameit(rlr, sh_name(&D.s_cmd[0]));
+        p_nameit(rlr, sh_name(D.s_cmd));
         strcpy(rlr->p_appdir,sh_apdir);
         strcat(rlr->p_appdir,"\\");
         rlr->p_flags = 0;

@@ -105,10 +105,10 @@ void gsx_sclip(const GRECT *pt)
         ptsin[1] = gl_yclip;
         ptsin[2] = gl_xclip + gl_wclip - 1;
         ptsin[3] = gl_yclip + gl_hclip - 1;
-        vst_clip( TRUE, &ptsin[0]);
+        vst_clip( TRUE, ptsin);
     }
     else
-        vst_clip( FALSE, &ptsin[0]);
+        vst_clip( FALSE, ptsin);
 }
 
 
@@ -185,7 +185,7 @@ void gsx_pline(WORD offx, WORD offy, WORD cnt, const WORD *pts)
         ptsin[j+1] = offy + pts[j+1];
     }
 
-    gsx_xline(cnt, &ptsin[0]);
+    gsx_xline(cnt, ptsin);
 }
 
 
@@ -269,7 +269,7 @@ static void gsx_bxpts(GRECT *pt)
 static void gsx_box(GRECT *pt)
 {
     gsx_bxpts(pt);
-    g_v_pline(5, &ptsin[0]);
+    g_v_pline(5, ptsin);
 }
 
 
@@ -279,7 +279,7 @@ static void gsx_box(GRECT *pt)
 void gsx_xbox(GRECT *pt)
 {
     gsx_bxpts(pt);
-    gsx_xline(5, &ptsin[0]);
+    gsx_xline(5, ptsin);
 }
 
 
@@ -299,7 +299,7 @@ void gsx_xcbox(GRECT *pt)
     ptsin[3] = pt->g_y;
     ptsin[4] = pt->g_x + wa;
     ptsin[5] = pt->g_y;
-    gsx_xline(3, &ptsin[0]);
+    gsx_xline(3, ptsin);
 
     ptsin[0] = pt->g_x + pt->g_w - wa;
     ptsin[1] = pt->g_y;
@@ -307,7 +307,7 @@ void gsx_xcbox(GRECT *pt)
     ptsin[3] = pt->g_y;
     ptsin[4] = pt->g_x + pt->g_w - 1;
     ptsin[5] = pt->g_y + ha;
-    gsx_xline(3, &ptsin[0]);
+    gsx_xline(3, ptsin);
 
     ptsin[0] = pt->g_x + pt->g_w - 1;
     ptsin[1] = pt->g_y + pt->g_h - ha;
@@ -315,7 +315,7 @@ void gsx_xcbox(GRECT *pt)
     ptsin[3] = pt->g_y + pt->g_h - 1;
     ptsin[4] = pt->g_x + pt->g_w - wa;
     ptsin[5] = pt->g_y + pt->g_h - 1;
-    gsx_xline(3, &ptsin[0]);
+    gsx_xline(3, ptsin);
 
     ptsin[0] = pt->g_x + wa;
     ptsin[1] = pt->g_y + pt->g_h - 1;
@@ -323,7 +323,7 @@ void gsx_xcbox(GRECT *pt)
     ptsin[3] = pt->g_y + pt->g_h - 1;
     ptsin[4] = pt->g_x;
     ptsin[5] = pt->g_y + pt->g_h - ha;
-    gsx_xline(3, &ptsin[0]);
+    gsx_xline(3, ptsin);
 }
 
 
@@ -371,9 +371,9 @@ void gsx_blt(LONG saddr, UWORD sx, UWORD sy, UWORD swb,
     ptsin[6] = dx + w - 1;
     ptsin[7] = dy + h - 1 ;
     if (fgcolor == -1)
-        vro_cpyfm(rule, &ptsin[0], &gl_src, &gl_dst);
+        vro_cpyfm(rule, ptsin, &gl_src, &gl_dst);
     else
-        vrt_cpyfm(rule, &ptsin[0], &gl_src, &gl_dst, fgcolor, bgcolor);
+        vrt_cpyfm(rule, ptsin, &gl_src, &gl_dst, fgcolor, bgcolor);
     gsx_mon();
 }
 
@@ -466,7 +466,7 @@ void bb_fill(WORD mode, WORD fis, WORD patt, WORD hx, WORD hy, WORD hw, WORD hh)
         g_vsf_style(patt);
         gl_patt = patt;
     }
-    vr_recfl(&ptsin[0], &gl_dst);
+    vr_recfl(ptsin, &gl_dst);
 }
 
 
