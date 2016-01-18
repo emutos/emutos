@@ -12,7 +12,6 @@
 
 extern TEDINFO  edblk;
 extern BITBLK   bi;
-extern ICONBLK  ib;
 
 void ob_format(WORD just, BYTE *raw_str, BYTE *tmpl_str, BYTE *fmt_str);
 void ob_draw(LONG tree, WORD obj, WORD depth);

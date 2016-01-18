@@ -17,12 +17,9 @@ extern WORD     button, xrat, yrat, kstate, mclick, mtrans;
 extern WORD     pr_button, pr_xrat, pr_yrat, pr_mclick;
 
 extern AESPD    *gl_mowner;
-extern AESPD    *gl_cowner;
 extern AESPD    *ctl_pd;
-extern GRECT    ctrl;
 
 extern WORD     gl_bclick;
-extern WORD     gl_bpend;
 extern WORD     gl_bdesired;
 extern WORD     gl_btrue;
 extern WORD     gl_bdely;

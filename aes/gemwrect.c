@@ -34,8 +34,8 @@
 #define BOTTOM  3
 
 
-GLOBAL ORECT    *rul;
-GLOBAL ORECT    gl_mkrect;
+static ORECT *rul;
+static ORECT gl_mkrect;
 
 
 void or_start(void)

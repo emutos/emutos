@@ -10,8 +10,6 @@
 #ifndef GEMEVLIB_H
 #define GEMEVLIB_H
 
-extern const WORD gl_dcrates[5];
-extern WORD     gl_dcindex;
 extern WORD     gl_dclick;
 extern WORD     gl_ticktime;
 

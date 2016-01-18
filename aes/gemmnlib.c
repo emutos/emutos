@@ -53,7 +53,7 @@ GLOBAL LONG     menu_tree[NUM_PDS];
 
 GLOBAL WORD     gl_dabox;
 
-GLOBAL OBJECT   M_DESK[3+NUM_ACCS];
+static OBJECT   M_DESK[3+NUM_ACCS];
 
 static LONG     gl_datree;
 

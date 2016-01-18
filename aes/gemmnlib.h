@@ -18,8 +18,6 @@ extern LONG     menu_tree[];
 
 extern WORD     gl_dabox;
 
-extern OBJECT   M_DESK[];
-
 
 UWORD do_chg(LONG tree, WORD iitem, UWORD chgvalue,
              WORD dochg, WORD dodraw, WORD chkdisabled);

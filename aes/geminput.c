@@ -51,19 +51,19 @@ GLOBAL WORD     button, xrat, yrat, kstate, mclick, mtrans;
 GLOBAL WORD     pr_button, pr_xrat, pr_yrat, pr_mclick;
 
 GLOBAL AESPD    *gl_mowner;     /* current mouse/keybd owner            */
-GLOBAL AESPD    *gl_cowner;     /* current control rectangle owner      */
 GLOBAL AESPD    *ctl_pd;        /* screen manager process that controls the mouse */
                                 /*  when it's outside the control rectangle.      */
-GLOBAL GRECT    ctrl;           /* current control rectangle            */
 
 GLOBAL WORD     gl_bclick;      /* # of times into the desired button state */
-GLOBAL WORD     gl_bpend;       /* number of pending events desiring */
-                                /*  more than a single click         */
 GLOBAL WORD     gl_bdesired;    /* the current desired button state  */
 GLOBAL WORD     gl_btrue;       /* the current true button state     */
 GLOBAL WORD     gl_bdely;       /* the current amount of time before the */
                                 /*  button event is considered finished  */
 
+static GRECT    ctrl;           /* current control rectangle            */
+static AESPD    *gl_cowner;     /* current control rectangle owner      */
+static WORD     gl_bpend;       /* number of pending events desiring */
+                                /*  more than a single click         */
 
 /* Prototypes: */
 static void post_mb(WORD ismouse, EVB *elist, WORD parm1, WORD parm2);

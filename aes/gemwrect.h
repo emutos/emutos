@@ -10,10 +10,6 @@
 #ifndef GEMWRECT_H
 #define GEMWRECT_H
 
-extern ORECT    *rul;
-extern ORECT    gl_mkrect;
-
-
 void or_start(void);
 ORECT *get_orect(void);
 void newrect(LONG tree, WORD wh);

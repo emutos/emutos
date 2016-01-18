@@ -43,7 +43,7 @@
 
 GLOBAL TEDINFO  edblk;
 GLOBAL BITBLK   bi;
-GLOBAL ICONBLK  ib;
+static ICONBLK  ib;
 
 
 
