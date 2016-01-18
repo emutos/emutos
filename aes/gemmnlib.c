@@ -565,7 +565,7 @@ void mn_unregister(WORD da_id)
         if (D.g_acctitle[da_id])
         {
             D.g_accreg--;
-            desk_ppd[da_id] = (AESPD *)0x0;
+            desk_ppd[da_id] = NULL;
             D.g_acctitle[da_id] = NULL;
             build_menuid_lookup();
         }

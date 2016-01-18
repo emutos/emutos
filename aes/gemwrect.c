@@ -42,7 +42,7 @@ void or_start(void)
 {
     register WORD   i;
 
-    rul = (ORECT *) 0;
+    rul = NULL;
     for (i = 0; i < NUM_ORECT; i++)
     {
         D.g_olist[i].o_link = rul;
@@ -182,7 +182,7 @@ void newrect(LONG tree, WORD wh)
     }
 
     /* zero the rectangle list */
-    pwin->w_rlist = 0x0;
+    pwin->w_rlist = NULL;
 
     /* start out with no broken rectangles */
     pwin->w_flags &= ~VF_BROKEN;
@@ -193,14 +193,14 @@ void newrect(LONG tree, WORD wh)
         return;
 
     /* init. a global orect for use during mkrect calls */
-    gl_mkrect.o_link = (ORECT *) 0x0;
+    gl_mkrect.o_link = NULL;
 
     /* break other window's rects with our current rect */
     everyobj(tree, ROOT, wh, (EVERYOBJ_CALLBACK)mkrect, 0, 0, MAX_DEPTH);
 
     /* get an orect in this window's list */
     new = get_orect();
-    new->o_link  = (ORECT *) 0x0;
+    new->o_link  = NULL;
     w_getsize(WS_TRUE, wh, (GRECT *)&new->o_x);
     pwin->w_rlist = new;
 }

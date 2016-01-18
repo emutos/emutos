@@ -1050,7 +1050,7 @@ void wm_start(void)
     for (i = 0; i < NUM_MWIN; i++)
     {
         D.w_win[i].w_flags = 0x0;
-        D.w_win[i].w_rlist = (ORECT *) 0x0;
+        D.w_win[i].w_rlist = NULL;
         W_TREE[i].ob_type = G_IBOX;
     }
     W_TREE[ROOT].ob_type = G_BOX;
@@ -1069,7 +1069,7 @@ void wm_start(void)
 
     /* init rectangle list */
     D.w_win[0].w_rlist = po = get_orect();
-    po->o_link = (ORECT *) 0x0;
+    po->o_link = NULL;
     po->o_x = XFULL;
     po->o_y = YFULL;
     po->o_w = WFULL;
