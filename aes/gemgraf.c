@@ -42,6 +42,8 @@
 #define g_vsf_color( x )          gsx_1code(S_FILL_COLOR, x)
 #define g_vsl_udsty( x )          gsx_1code(ST_UD_LINE_STYLE, x)
 
+#define YRES_LIMIT  380     /* screens with yres less than this are considered */
+                            /*  'small' for the purposes of get_char_height()  */
 
 GLOBAL WORD     gl_width;
 GLOBAL WORD     gl_height;
@@ -405,6 +407,15 @@ void gsx_trans(LONG saddr, UWORD swb, LONG daddr, UWORD dwb, UWORD h)
 
 
 /*
+ *  Determine char height based on yres in WS
+ */
+static WORD get_char_height(WS *ws)
+{
+    return (ws->ws_yres<YRES_LIMIT) ? 6 : ws->ws_chmaxh;
+}
+
+
+/*
  *  Routine to initialize all the global variables dealing with
  *  a particular workstation open
  */
@@ -423,10 +434,7 @@ void gsx_start(void)
     char_height = gl_ws.ws_chminh;
     vst_height( char_height, &gl_wsptschar, &gl_hsptschar,
                                 &gl_wschar, &gl_hschar );
-    if (gl_ws.ws_yres < 380)    /* Use a smaller font on tiny screens */
-        char_height = 6;
-    else
-        char_height = gl_ws.ws_chmaxh;
+    char_height = get_char_height(&gl_ws);
     vst_height(char_height, &gl_wptschar, &gl_hptschar, &gl_wchar, &gl_hchar);
 
     gl_hbox = gl_hchar + 3;
@@ -522,10 +530,7 @@ void gsx_tblt(WORD tb_f, WORD x, WORD y, WORD tb_nc)
     {
         if (tb_f != gl_font)
         {
-            if (gl_ws.ws_yres < 380)    /* Use a smaller font on tiny screens */
-                pts_height = 6;
-            else
-                pts_height = gl_ws.ws_chmaxh;
+            pts_height = get_char_height(&gl_ws);
             vst_height(pts_height, &gl_wptschar, &gl_hptschar, &gl_wchar, &gl_hchar);
             gl_font = tb_f;
         }
