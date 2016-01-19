@@ -20,6 +20,7 @@
 #include "coldpriv.h"
 #include "tosvars.h"
 #include "ikbd.h"
+#include "string.h"
 
 void coldfire_early_init(void)
 {
@@ -212,3 +213,41 @@ void coldfire_rs232_interrupt_handler(void)
 }
 
 #endif /* CONF_SERIAL_CONSOLE */
+
+MCF_COOKIE cookie_mcf;
+
+void setvalue_mcf(void)
+{
+    cookie_mcf.magic[0] = 0x4d; /* 'M' */
+    cookie_mcf.magic[1] = 0x43; /* 'C' */
+    cookie_mcf.magic[2] = 0x46; /* 'F' */
+    cookie_mcf.version = COOKIE_MCF_VERSION;
+    cookie_mcf.core = MCF_V4;
+    cookie_mcf.revision = MCF_VALUE_UNKNOWN;
+    cookie_mcf.units = MCF_UNITS_DIV | MCF_UNITS_EMAC | MCF_UNITS_FPU | MCF_UNITS_MMU;
+    cookie_mcf.isa = MCF_ISA_B;
+    cookie_mcf.debug = MCF_DEBUG_D;
+
+    switch (MCF_SIU_JTAGID & MCF_SIU_JTAGID_PROCESSOR)
+    {
+        case MCF_SIU_JTAGID_MCF5484:
+            strcpy(cookie_mcf.device_name, "MCF5484");
+            /* If a MCF5484 we guess it is a LITE board */
+            cookie_mcf.sysbus_frequency = 100;
+            break;
+        case MCF_SIU_JTAGID_MCF5485:
+            strcpy(cookie_mcf.device_name, "MCF5485");
+            /* If a MCF5485 we guess it is a EVB board */
+            cookie_mcf.sysbus_frequency = 133;
+            break;
+        case MCF_SIU_JTAGID_MCF5474:
+            strcpy(cookie_mcf.device_name, "MCF5474");
+            /* If a MCF5474 we guess it is a FireBee */
+            cookie_mcf.sysbus_frequency = 132;
+            break;
+        default:
+            strcpy(cookie_mcf.device_name, "UNKNOWN");
+            cookie_mcf.sysbus_frequency = MCF_VALUE_UNKNOWN;
+            break;
+    }
+}

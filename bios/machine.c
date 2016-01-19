@@ -465,6 +465,8 @@ void fill_cookie_jar(void)
 {
 #ifdef __mcoldfire__
   cookie_add(COOKIE_COLDFIRE, 0);
+  setvalue_mcf();
+  cookie_add(COOKIE_MCF, (long)&cookie_mcf);
 #else
   /* this is detected by detect_cpu(), called from processor_init() */
   cookie_add(COOKIE_CPU, mcpu);

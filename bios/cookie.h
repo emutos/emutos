@@ -40,6 +40,7 @@ struct cookie {
 #define COOKIE_NATFEAT  0x5f5f4e46L
 #define COOKIE_XHDI     0x58484449L
 #define COOKIE_COLDFIRE 0x5f43465fL
+#define COOKIE_MCF      0x5f4d4346L
 
 /*
  * values of MCH cookie
