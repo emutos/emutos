@@ -103,7 +103,7 @@ WORD mn_getda(AESPD *ppd)
 #endif
 
 
-static void menu_fixup(BYTE *pname)
+static void menu_fixup(void)
 {
     register OBJECT *pob, *obj;
     GRECT   t;
@@ -462,7 +462,7 @@ void mn_bar(LONG tree, WORD showit, WORD pid)
     {
         gl_mnppd = p;
         menu_tree[pid] = gl_mntree = tree;
-        menu_fixup(p->p_name);
+        menu_fixup();
         obj = ((OBJECT *)tree) + 1;
         obj->ob_width = gl_width - obj->ob_x;
         ob_actxywh(gl_mntree, THEACTIVE, (GRECT *)&gl_ctwait.m_x);
@@ -546,7 +546,7 @@ WORD mn_register(WORD pid, LONG pstr)
         desk_ppd[openda] = rlr;
         D.g_acctitle[openda] = (BYTE *)pstr;    /* save pointer, like Atari TOS */
 
-        menu_fixup(rlr->p_name);
+        menu_fixup();
         build_menuid_lookup();
         return openda;
     }
@@ -570,7 +570,7 @@ void mn_unregister(WORD da_id)
             build_menuid_lookup();
         }
     }
-    menu_fixup(rlr->p_name);
+    menu_fixup();
 }
 #endif
 
