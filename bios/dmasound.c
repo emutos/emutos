@@ -72,11 +72,9 @@ struct dmasound
 #define DMASOUND ((volatile struct dmasound*)0xffff8900)
 
 /* Generic Microwire macros */
-#define MICROWIRE_BIT_OFFSET        1 /* As seen in TOS 1.62 */
-#define MICROWIRE_UNKNOWN_BITS      0x0001 /* Something like a stop bit ?? */
-#define MICROWIRE_MASK              (0x07ff << MICROWIRE_BIT_OFFSET)
+#define MICROWIRE_MASK              0x07ff
 #define MICROWIRE_ADDRESS(x)        ((x) << 9)
-#define MICROWIRE_COMMAND(a,c)      (((MICROWIRE_ADDRESS(a) | (c)) << MICROWIRE_BIT_OFFSET) | MICROWIRE_UNKNOWN_BITS)
+#define MICROWIRE_COMMAND(a,c)      (MICROWIRE_ADDRESS(a) | (c))
 
 /* LMC1992 macros */
 #define LMC1992_MICROWIRE_ADDRESS   2
