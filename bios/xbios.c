@@ -951,72 +951,72 @@ static void xbios_5e(WORD index,WORD count,LONG *rgb)
 #if DBG_XBIOS & CONF_WITH_DMASOUND
 static LONG xbios_80(void)
 {
-    kprintf("XBIOS: locksnd\n");
+    kprintf("XBIOS: Locksnd\n");
     return locksnd();
 }
 static LONG xbios_81(void)
 {
-     kprintf("XBIOS: unlocksnd\n");
+     kprintf("XBIOS: Unlocksnd\n");
    return unlocksnd();
 }
 static LONG xbios_82(WORD mode, WORD data)
 {
-    kprintf("XBIOS: soundcmd\n");
+    kprintf("XBIOS: Soundcmd\n");
     return soundcmd(mode, data);
 }
 static LONG xbios_83(UWORD mode, ULONG startaddr, ULONG endaddr)
 {
-    kprintf("XBIOS: setbuffer\n");
+    kprintf("XBIOS: Setbuffer\n");
     return setbuffer(mode, startaddr, endaddr);
 }
 static LONG xbios_84(UWORD mode)
 {
-    kprintf("XBIOS: setsndmode\n");
+    kprintf("XBIOS: Setmode\n");
     return setsndmode(mode);
 }
 static LONG xbios_85(UWORD playtracks, UWORD rectracks)
 {
-    kprintf("XBIOS: settracks\n");
+    kprintf("XBIOS: Settracks\n");
     return settracks(playtracks, rectracks);
 }
 static LONG xbios_86(UWORD track)
 {
-    kprintf("XBIOS: setsndmode\n");
+    kprintf("XBIOS: Setmontracks\n");
     return setmontracks(track);
 }
 static LONG xbios_87(UWORD mode, WORD cause)
 {
-    kprintf("XBIOS: setinterrupt\n");
+    kprintf("XBIOS: Setinterrupt\n");
     return setinterrupt(mode, cause);
 }
 static LONG xbios_88(WORD mode)
 {
-    kprintf("XBIOS: buffoper\n");
+    kprintf("XBIOS: Buffoper\n");
     return buffoper(mode);
 }
 static LONG xbios_89(WORD dspxmit, WORD dsprec)
 {
-    kprintf("XBIOS: dsptristate\n");
+    kprintf("XBIOS: Dsptristate\n");
     return dsptristate(dspxmit, dsprec);
 }
 static LONG xbios_8a(UWORD mode, UWORD data)
 {
-    kprintf("XBIOS: gpio\n");
+    kprintf("XBIOS: Gpio\n");
     return gpio(mode, data);
 }
 static LONG xbios_8b(WORD source, WORD dest, WORD clk, WORD prescale, WORD protocol)
 {
-    kprintf("XBIOS: devconnect\n");
+    kprintf("XBIOS: Devconnect\n");
     return devconnect(source, dest, clk, prescale, protocol);
 }
 static LONG xbios_8c(WORD reset)
 {
-    kprintf("XBIOS: sndstatus\n");
+    kprintf("XBIOS: Sndstatus\n");
     return sndstatus(reset);
 }
 static LONG xbios_8d(LONG sptr)
 {
-    kprintf("XBIOS: buffptr\n");
+    kprintf("XBIOS: Buffptr\n");
     return buffptr(sptr);
 }
 
