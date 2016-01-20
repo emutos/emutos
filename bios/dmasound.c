@@ -72,43 +72,43 @@ struct dmasound
 #define DMASOUND ((volatile struct dmasound*)0xffff8900)
 
 /* Generic Microwire macros */
-#define MICROWIRE_BIT_OFFSET 1 /* As seen in TOS 1.62 */
-#define MICROWIRE_UNKNWON_BITS 0x0001 /* Something like a stop bit ?? */
-#define MICROWIRE_MASK (0x07ff << MICROWIRE_BIT_OFFSET)
-#define MICROWIRE_ADDRESS(x) ((x) << 9)
-#define MICROWIRE_COMMAND(a,c) (((MICROWIRE_ADDRESS(a) | (c)) << MICROWIRE_BIT_OFFSET) | MICROWIRE_UNKNWON_BITS)
+#define MICROWIRE_BIT_OFFSET        1 /* As seen in TOS 1.62 */
+#define MICROWIRE_UNKNOWN_BITS      0x0001 /* Something like a stop bit ?? */
+#define MICROWIRE_MASK              (0x07ff << MICROWIRE_BIT_OFFSET)
+#define MICROWIRE_ADDRESS(x)        ((x) << 9)
+#define MICROWIRE_COMMAND(a,c)      (((MICROWIRE_ADDRESS(a) | (c)) << MICROWIRE_BIT_OFFSET) | MICROWIRE_UNKNOWN_BITS)
 
 /* LMC1992 macros */
-#define LMC1992_MICROWIRE_ADDRESS 2
-#define LMC1992_FUNCTION(x) ((x) << 6)
-#define LMC1992_PARAMETER(x) (x)
-#define LMC1992_COMMAND(f,p) MICROWIRE_COMMAND(LMC1992_MICROWIRE_ADDRESS, LMC1992_FUNCTION(f) | LMC1992_PARAMETER(p))
+#define LMC1992_MICROWIRE_ADDRESS   2
+#define LMC1992_FUNCTION(x)         ((x) << 6)
+#define LMC1992_PARAMETER(x)        (x)
+#define LMC1992_COMMAND(f,p)        MICROWIRE_COMMAND(LMC1992_MICROWIRE_ADDRESS, LMC1992_FUNCTION(f) | LMC1992_PARAMETER(p))
 
 /* LMC1992 functions */
-#define LMC1992_FUNCTION_INPUT_SELECT 0
-#define LMC1992_FUNCTION_BASS 1
-#define LMC1992_FUNCTION_TREEBLE 2
-#define LMC1992_FUNCTION_VOLUME 3
-#define LMC1992_FUNCTION_RIGHT_FRONT_FADER 4
-#define LMC1992_FUNCTION_LEFT_FRONT_FADER 5
-#define LMC1992_FUNCTION_RIGHT_REAR_FADER 6
-#define LMC1992_FUNCTION_LEFT_REAR_FADER 7
+#define LMC1992_FUNCTION_INPUT_SELECT       0
+#define LMC1992_FUNCTION_BASS               1
+#define LMC1992_FUNCTION_TREBLE             2
+#define LMC1992_FUNCTION_VOLUME             3
+#define LMC1992_FUNCTION_RIGHT_FRONT_FADER  4
+#define LMC1992_FUNCTION_LEFT_FRONT_FADER   5
+#define LMC1992_FUNCTION_RIGHT_REAR_FADER   6   /* these two functions are not available */
+#define LMC1992_FUNCTION_LEFT_REAR_FADER    7   /*  on Atari systems                     */
 
-/* LMC1992 parameters for function INPUT_SELECT */
-#define LMC1992_INPUT_OPEN 0
-#define LMC1992_INPUT_1 1
-#define LMC1992_INPUT_2 2
-#define LMC1992_INPUT_3 3
-#define LMC1992_INPUT_4 4
+/* LMC1992 parameters for function INPUT_SELECT ("Set Mix" in Atari documentation) */
+#define LMC1992_INPUT_OPEN  0                   /* Atari: -12dB */
+#define LMC1992_INPUT_1     1                   /* Atari: Mix GI sound chip output */
+#define LMC1992_INPUT_2     2                   /* Atari: Do not mix GI sound chip output */
+#define LMC1992_INPUT_3     3                   /* Atari: reserved */
+#define LMC1992_INPUT_4     4                   /* Atari: undocumented */
 
-/* LMC1992 parameter for Bass and Treeble functions */
-#define LMC1992_TONE(x) (((x) + 12) / 2) /* Range from -12 to +12 dB */
+/* LMC1992 parameter for Bass and Treble functions */
+#define LMC1992_TONE(x)     (((x) + 12) / 2)    /* Range from -12 to +12 dB */
 
 /* LMC1992 parameter for Volume function */
-#define LMC1992_VOLUME(x) (((x) + 80) / 2) /* Range from -80 to 0 dB */
+#define LMC1992_VOLUME(x)   (((x) + 80) / 2)    /* Range from -80 to 0 dB */
 
-/* LMC1992 parameter for Faders functions */
-#define LMC1992_FADER(x) (((x) + 40) / 2) /* Range from -40 to 0 dB */
+/* LMC1992 parameter for Fader functions */
+#define LMC1992_FADER(x)    (((x) + 40) / 2)    /* Range from -40 to 0 dB */
 
 static int sound_locked;
 
@@ -162,7 +162,7 @@ static void lmc1992_init(void)
     write_microwire(LMC1992_COMMAND(LMC1992_FUNCTION_VOLUME, LMC1992_VOLUME(0)));
     write_microwire(LMC1992_COMMAND(LMC1992_FUNCTION_LEFT_FRONT_FADER, LMC1992_FADER(0)));
     write_microwire(LMC1992_COMMAND(LMC1992_FUNCTION_RIGHT_FRONT_FADER, LMC1992_FADER(0)));
-    write_microwire(LMC1992_COMMAND(LMC1992_FUNCTION_TREEBLE, LMC1992_TONE(0)));
+    write_microwire(LMC1992_COMMAND(LMC1992_FUNCTION_TREBLE, LMC1992_TONE(0)));
     write_microwire(LMC1992_COMMAND(LMC1992_FUNCTION_BASS, LMC1992_TONE(0)));
     write_microwire(LMC1992_COMMAND(LMC1992_FUNCTION_INPUT_SELECT, LMC1992_INPUT_1));
 }
