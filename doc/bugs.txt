@@ -21,10 +21,6 @@ Common AES/VDI/Line-A bugs:
   drawn pixels at top of screen in vdiline tester.
 - In Mario Becroft's GEM Pacman, "game over" melt effect happens
   for the whole screen, not just for the game window.
-- '-' key for moving left in VDI "Invaders" and 'h' & 'j' keys
-  for moving character left & right in "Anduril" don't work, only
-  special key (Alt/Shift) input works:
-  http://sourceforge.net/mailarchive/message.php?msg_id=29277643
 - In "MathMaze" and "The Ultimate Minesweeper", game win and score
   dialogs leave left/bottom outline on screen when they close.
 - Line-A polygons are one pixel short at both sides.  This is
@@ -39,7 +35,6 @@ Video problems
   is missing videomode & mouse reset.
 
 Atari TT / TOS v3 compatibility bugs:
-- 4getful has way too low volume both in TT & Falcon versions
 - PixArt v4.52 issues:
   - None of the selected Tools (selected from window that opens from
     Modules -> Tools) has any effect on the loaded image.
@@ -70,10 +65,6 @@ Problems that also occur in Atari TOS:
   part of the circle that joins the end segment to the previous one.
 
 Links to programs listed above:
-- 4getful:
-  http://www.pouet.net/prod.php?which=24961
-- Anduril:
-  http://www.umich.edu/~archive/atari/Games/Adventure/andurlin.arc
 - Awele v1.01:
   http://windom.free.fr/awele/bin/awele.zip
 - Bombs:
@@ -86,8 +77,6 @@ Links to programs listed above:
   http://deunstg.free.fr/sct1/falcamp/
 - Hotshot checkers:
   http://www.umich.edu/~archive/atari/Games/Board/hotshot.arc
-- Invaders:
-  http://www.umich.edu/~archive/atari/Games/Arcade/invaders.lzh
 - Japlish:
   http://www.ntrautanen.fi/marko/arkisto.atari.org/sivut/menu_pelit.htm
 - Minigolf (GFA):
