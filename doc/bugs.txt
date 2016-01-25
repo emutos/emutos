@@ -19,8 +19,6 @@ Common AES/VDI/Line-A bugs:
   they overlap vertically.
 - Thick arcs going partly outside of screen have incorrectly
   drawn pixels at top of screen in vdiline tester.
-- In Mario Becroft's GEM Pacman, "game over" melt effect happens
-  for the whole screen, not just for the game window.
 - In "MathMaze" and "The Ultimate Minesweeper", game win and score
   dialogs leave left/bottom outline on screen when they close.
 - Line-A polygons are one pixel short at both sides.  This is
@@ -81,8 +79,6 @@ Links to programs listed above:
   http://www.ntrautanen.fi/marko/arkisto.atari.org/sivut/menu_pelit.htm
 - Minigolf (GFA):
   http://koti.mbnet.fi/tammat/src/minigolf.tar.gz
-- Pacman:
-  http://gem.win.co.nz/mb/atarisw/pacman.html
 - Patience (older version):
   http://www.umich.edu/~archive/atari/Games/Cards/patience.lzh
 - PixArt4:

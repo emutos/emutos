@@ -857,7 +857,7 @@ cpy_raster(struct raster_t *raster, struct blit_frame *info)
     WORD fg_col, bg_col;
 
     arb_corner((Rect*)PTSIN);
-    arb_corner((Rect*)PTSIN + 4);
+    arb_corner((Rect*)(PTSIN+4));
     mode = INTIN[0];
 
     /* if mode is made up of more than the first 5 bits */
