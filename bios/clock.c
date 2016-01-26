@@ -255,7 +255,7 @@ static void msetdt(ULONG dt)
 /*==== NVRAM RTC internal functions =======================================*/
 
 /*
- * The MC146818 was used as the RTC and NVRAM in MegaSTE, TT and Falcon.
+ * The MC146818 was used as the RTC and NVRAM in TT and Falcon.
  * You can find a header file in /usr/src/linux/include/linux/mc146818rtc.h
  * Proper implementation of RTC functions is in linux/arch/m68k/atari/time.c.
  * The code below is just my quick hack. It works but it could not be used
@@ -271,17 +271,9 @@ static void msetdt(ULONG dt)
 #define NVRAM_RTC_MONTHS  8
 #define NVRAM_RTC_YEARS   9
 
-/*
- * this is an interesting moment: we should detect the year offset in the RTC
- * but it depends on the TOS version that wrote the value there.
- * It seems that MegaSTE (regardless of TOS version) does have the offset 1970.
- * But in the TT030 case it's unsure - with old TOS (3.01, 3.05) it's 1970, but
- * with latest TT TOS (3.06) it's 1968. This is completely crazy and only Atari
- * engineers could do something like that.
- * With Falcon TOS 4.0x the situation is clear - the offset is always 1968.
- * So we try to figure out the machine we're running on in clock_init and set
- * the year offset accordingly to what we've detected.
- */
+/* Offset to be added to the NVRAM RTC year to get the actual year.
+ * Beware, this value depends on the ROM OS version.
+ * See clock_init() for details. */
 static int nvram_rtc_year_offset;
 
 static void ndosettime(UWORD time)
@@ -512,13 +504,28 @@ void clock_init(void)
 #endif /* MACHINE_AMIGA */
 #if CONF_WITH_NVRAM
   else if(has_nvram) {
-    /* On Mega-STe and early TTs the year offset in the NVRAM is different */
-    if (cookie_mch < MCH_TT || (cookie_mch == MCH_TT && TOS_VERSION <= 0x0305)) {
-        nvram_rtc_year_offset = 1970 - 1980;
+    /* The base year of the NVRAM varies among TOS versions.
+     * On TT TOS <= 3.05, the year start at 1970.
+     * On later TT TOS and Falcon TOS, the year starts at 1968.
+     * This has been fixed by Atari because the NVRAM base year must be leap.
+     * By default, we use the new offset in EmuTOS. */
+     BOOL new_year_offset = TRUE;
+
+#ifdef EMUTOS_RAM
+    /* We run from RAM, so we must respect the base year of the ROM OS. */
+    if (cookie_mch == MCH_TT) {
+      BOOL rom_is_emutos = *(ULONG*)0xe0002c == 0x45544f53; /* ETOS */
+      if (!rom_is_emutos) {
+        UWORD rom_os_version = *(UWORD*)0xe00002;
+        if (rom_os_version <= 0x0305) {
+          /* Old TOS in ROM: use old NVRAM offset */
+          new_year_offset = FALSE;
+        }
+      }
     }
-    else {
-        nvram_rtc_year_offset = 1968 - 1980;
-    }
+#endif /* EMUTOS_RAM */
+
+    nvram_rtc_year_offset = (new_year_offset ? 1968 : 1970) - 1980;
   }
 #endif /* CONF_WITH_NVRAM */
 #if CONF_WITH_MEGARTC
