@@ -228,6 +228,10 @@ void setvalue_mcf(void)
     cookie_mcf.isa = MCF_ISA_B;
     cookie_mcf.debug = MCF_DEBUG_D;
 
+#ifdef MACHINE_FIREBEE
+    strcpy(cookie_mcf.device_name, "MCF5474");
+    cookie_mcf.sysbus_frequency = 132;
+#else
     switch (MCF_SIU_JTAGID & MCF_SIU_JTAGID_PROCESSOR)
     {
         case MCF_SIU_JTAGID_MCF5484:
@@ -240,14 +244,10 @@ void setvalue_mcf(void)
             /* If a MCF5485 we guess it is a EVB board */
             cookie_mcf.sysbus_frequency = 133;
             break;
-        case MCF_SIU_JTAGID_MCF5474:
-            strcpy(cookie_mcf.device_name, "MCF5474");
-            /* If a MCF5474 we guess it is a FireBee */
-            cookie_mcf.sysbus_frequency = 132;
-            break;
         default:
             strcpy(cookie_mcf.device_name, "UNKNOWN");
             cookie_mcf.sysbus_frequency = MCF_VALUE_UNKNOWN;
             break;
     }
+#endif
 }
