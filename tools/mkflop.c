@@ -22,111 +22,116 @@
 
 #define FLOPNAME "emutos.st"
 #define BOOTNAME "bootsect.img"
-#define TOSNAME "ramtos.img"
+#define TOSNAME  "ramtos.img"
 #define TOTAL_DISK_SECTORS (1 * 80 * 9) /* Single sided floppy */
 #define MAX_EMUTOS_SIZE ((TOTAL_DISK_SECTORS - 1) * 512)
 
 typedef unsigned char uchar;
 
 struct loader {
-  uchar pad[0x1e];
-  uchar execflg[2];
-  uchar ldmode[2];
-  uchar ssect[2];
-  uchar sectcnt[2];
-  uchar ldaddr[4];
-  uchar fatbuf[4];
-  uchar fname[11];
-  uchar reserved;
+    uchar pad[0x1e];
+    uchar execflg[2];
+    uchar ldmode[2];
+    uchar ssect[2];
+    uchar sectcnt[2];
+    uchar ldaddr[4];
+    uchar fatbuf[4];
+    uchar fname[11];
+    uchar reserved;
 };
 
 static int fill = 1;
 
 static int mkflop(FILE *bootf, FILE *tosf, FILE *flopf)
 {
-  uchar buf[512];
-  struct loader *b = (struct loader *)buf;
-  size_t count;
-  unsigned short sectcnt;
-  int i;
+    uchar buf[512];
+    struct loader *b = (struct loader *)buf;
+    size_t count;
+    unsigned short sectcnt;
+    int i;
 
-  /* read bootsect */
-  count = 512;
-  count = fread(buf, 1, count, bootf);
-  if(count <= 0) return 1; /* failure */
-  if(count < 512) {
-    memset(buf+count, 0, 512 - count);
-  }
-
-  /* compute size of tosf, and update sectcnt */
-  fseek(tosf, 0, SEEK_END);
-  count = ftell(tosf);
-  fseek(tosf, 0, SEEK_SET);
-
-  if (count > MAX_EMUTOS_SIZE)
-  {
-    fprintf(stderr, "Error: %s is too big to fit on the floppy (%ld extra bytes).\n",
-      TOSNAME, (long)count - MAX_EMUTOS_SIZE);
-    return 1;
-  }
-
-  sectcnt = (count + 511) / 512;
-  b->sectcnt[0] = sectcnt>>8;
-  b->sectcnt[1] = sectcnt;
-
-  /* make bootsector bootable */
-  {
-    unsigned short a, sum;
-    sum = 0;
-    for(i = 0 ; i < 255 ; i++) {
-      a = (buf[2*i]<<8) + buf[2*i+1];
-      sum += a;
+    /* read bootsect */
+    count = 512;
+    count = fread(buf, 1, count, bootf);
+    if (count <= 0)
+        return 1;       /* failure */
+    if (count < 512) {
+        memset(buf+count, 0, 512 - count);
     }
-    a = 0x1234 - sum;
-    buf[510] = a>>8;
-    buf[511] = a;
-  }
 
-  /* write down bootsector */
-  fwrite(buf, 1, 512, flopf);
+    /* compute size of tosf, and update sectcnt */
+    fseek(tosf, 0, SEEK_END);
+    count = ftell(tosf);
+    fseek(tosf, 0, SEEK_SET);
 
-  /* copy the tos starting at sector 1 */
-  for(i = 0 ; i < sectcnt ; i++) {
-    count = fread(buf, 1, 512, tosf);
-    if(count < 512) {
-      memset(buf+count, 0, 512 - count);
+    if (count > MAX_EMUTOS_SIZE)
+    {
+        fprintf(stderr, "Error: %s is too big to fit on the floppy (%ld extra bytes).\n",
+                        TOSNAME, (long)count - MAX_EMUTOS_SIZE);
+        return 1;
     }
+
+    sectcnt = (count + 511) / 512;
+    b->sectcnt[0] = sectcnt>>8;
+    b->sectcnt[1] = sectcnt;
+
+    /* make bootsector bootable */
+    {
+        unsigned short a, sum;
+        sum = 0;
+        for (i = 0; i < 255; i++) {
+            a = (buf[2*i]<<8) + buf[2*i+1];
+            sum += a;
+        }
+        a = 0x1234 - sum;
+        buf[510] = a>>8;
+        buf[511] = a;
+    }
+
+    /* write down bootsector */
     fwrite(buf, 1, 512, flopf);
-  }
 
-  /* fill the disk with zeroes */
-  if(fill) {
-    memset(buf, 0, 512);
-    for(i = sectcnt+1 ; i < TOTAL_DISK_SECTORS ; i++) {
-      fwrite(buf, 1, 512, flopf);
+    /* copy the tos starting at sector 1 */
+    for (i = 0; i < sectcnt; i++) {
+        count = fread(buf, 1, 512, tosf);
+        if (count < 512) {
+            memset(buf+count, 0, 512 - count);
+        }
+        fwrite(buf, 1, 512, flopf);
     }
-  }
 
-  /* that's it */
+    /* fill the disk with zeroes */
+    if (fill) {
+        memset(buf, 0, 512);
+        for (i = sectcnt+1; i < TOTAL_DISK_SECTORS; i++) {
+            fwrite(buf, 1, 512, flopf);
+        }
+    }
 
-  return 0;
+    /* that's it */
+
+    return 0;
 }
 
 int main(void)
 {
-  FILE *bootf, *tosf, *flopf;
+    FILE *bootf, *tosf, *flopf;
 
-  bootf = fopen(BOOTNAME, "rb");
-  if(bootf == 0) goto fail;
-  tosf = fopen(TOSNAME, "rb");
-  if(tosf == 0) goto fail;
-  flopf = fopen(FLOPNAME, "wb");
-  if(flopf == 0) goto fail;
-  if(mkflop(bootf, tosf, flopf)) goto fail;
-  printf("done\n");
-  exit(0);
+    bootf = fopen(BOOTNAME, "rb");
+    if (bootf == 0)
+        goto fail;
+    tosf = fopen(TOSNAME, "rb");
+    if (tosf == 0)
+        goto fail;
+    flopf = fopen(FLOPNAME, "wb");
+    if (flopf == 0)
+        goto fail;
+    if (mkflop(bootf, tosf, flopf))
+        goto fail;
+    printf("done\n");
+    exit(0);
 
 fail:
-  fprintf(stderr, "something failed.\n");
-  exit(EXIT_FAILURE);
+    fprintf(stderr, "something failed.\n");
+    exit(EXIT_FAILURE);
 }
