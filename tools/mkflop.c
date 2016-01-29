@@ -20,11 +20,17 @@
 #include <stdlib.h>
 #include <string.h>
 
+/*
+ * manifest constants
+ */
+#define SECTOR_SIZE         512L
+#define BOOTABLE_CHECKSUM   0x1234
+
 #define FLOPNAME "emutos.st"
 #define BOOTNAME "bootsect.img"
 #define TOSNAME  "ramtos.img"
 #define TOTAL_DISK_SECTORS (1 * 80 * 9) /* Single sided floppy */
-#define MAX_EMUTOS_SIZE ((TOTAL_DISK_SECTORS - 1) * 512)
+#define MAX_EMUTOS_SIZE ((TOTAL_DISK_SECTORS - 1) * SECTOR_SIZE)
 
 typedef unsigned char uchar;
 
@@ -44,19 +50,19 @@ static int fill = 1;
 
 static int mkflop(FILE *bootf, FILE *tosf, FILE *flopf)
 {
-    uchar buf[512];
+    uchar buf[SECTOR_SIZE];
     struct loader *b = (struct loader *)buf;
     size_t count;
     unsigned short sectcnt;
     int i;
 
     /* read bootsect */
-    count = 512;
+    count = SECTOR_SIZE;
     count = fread(buf, 1, count, bootf);
     if (count <= 0)
         return 1;       /* failure */
-    if (count < 512) {
-        memset(buf+count, 0, 512 - count);
+    if (count < SECTOR_SIZE) {
+        memset(buf+count, 0, SECTOR_SIZE-count);
     }
 
     /* compute size of tosf, and update sectcnt */
@@ -67,11 +73,11 @@ static int mkflop(FILE *bootf, FILE *tosf, FILE *flopf)
     if (count > MAX_EMUTOS_SIZE)
     {
         fprintf(stderr, "Error: %s is too big to fit on the floppy (%ld extra bytes).\n",
-                        TOSNAME, (long)count - MAX_EMUTOS_SIZE);
+                        TOSNAME, (long)count-MAX_EMUTOS_SIZE);
         return 1;
     }
 
-    sectcnt = (count + 511) / 512;
+    sectcnt = (count+SECTOR_SIZE-1) / SECTOR_SIZE;
     b->sectcnt[0] = sectcnt>>8;
     b->sectcnt[1] = sectcnt;
 
@@ -79,32 +85,32 @@ static int mkflop(FILE *bootf, FILE *tosf, FILE *flopf)
     {
         unsigned short a, sum;
         sum = 0;
-        for (i = 0; i < 255; i++) {
+        for (i = 0; i < (SECTOR_SIZE/2-1); i++) {
             a = (buf[2*i]<<8) + buf[2*i+1];
             sum += a;
         }
-        a = 0x1234 - sum;
+        a = BOOTABLE_CHECKSUM - sum;
         buf[510] = a>>8;
         buf[511] = a;
     }
 
     /* write down bootsector */
-    fwrite(buf, 1, 512, flopf);
+    fwrite(buf, 1, SECTOR_SIZE, flopf);
 
     /* copy the tos starting at sector 1 */
     for (i = 0; i < sectcnt; i++) {
-        count = fread(buf, 1, 512, tosf);
-        if (count < 512) {
-            memset(buf+count, 0, 512 - count);
+        count = fread(buf, 1, SECTOR_SIZE, tosf);
+        if (count < SECTOR_SIZE) {
+            memset(buf+count, 0, SECTOR_SIZE - count);
         }
-        fwrite(buf, 1, 512, flopf);
+        fwrite(buf, 1, SECTOR_SIZE, flopf);
     }
 
     /* fill the disk with zeroes */
     if (fill) {
-        memset(buf, 0, 512);
+        memset(buf, 0, SECTOR_SIZE);
         for (i = sectcnt+1; i < TOTAL_DISK_SECTORS; i++) {
-            fwrite(buf, 1, 512, flopf);
+            fwrite(buf, 1, SECTOR_SIZE, flopf);
         }
     }
 
