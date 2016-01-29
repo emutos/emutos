@@ -48,31 +48,54 @@ struct loader {
 
 static int fill = 1;
 
+/*
+ * concatenate the files to create the floppy image
+ *
+ * returns 1 if error
+ */
 static int mkflop(FILE *bootf, FILE *tosf, FILE *flopf)
 {
     uchar buf[SECTOR_SIZE];
     struct loader *b = (struct loader *)buf;
     size_t count;
+    long n;
     unsigned short sectcnt;
     int i;
 
-    /* read bootsect */
-    count = SECTOR_SIZE;
-    count = fread(buf, 1, count, bootf);
-    if (count <= 0)
-        return 1;       /* failure */
-    if (count < SECTOR_SIZE) {
+    /*
+     * read bootsector
+     */
+    count = fread(buf, 1, SECTOR_SIZE, bootf);
+    if (count < SECTOR_SIZE)
+    {
+        if (ferror(bootf))
+        {
+            fprintf(stderr,"Error: can't read %s\n",BOOTNAME);
+            return 1;
+        }
         memset(buf+count, 0, SECTOR_SIZE-count);
     }
 
-    /* compute size of tosf, and update sectcnt */
-    fseek(tosf, 0, SEEK_END);
-    count = ftell(tosf);
-    fseek(tosf, 0, SEEK_SET);
+    /*
+     * compute size of tosf, and update sectcnt
+     */
+    n = -1;
+    if (fseek(tosf, 0, SEEK_END) == 0)
+    {
+        n = ftell(tosf);
+        if (fseek(tosf, 0, SEEK_SET) != 0)
+            n = -1;
+    }
+    if (n < 0)
+    {
+        fprintf(stderr,"Error: can't determine size of %s\n",TOSNAME);
+        return 1;
+    }
+    count = n;
 
     if (count > MAX_EMUTOS_SIZE)
     {
-        fprintf(stderr, "Error: %s is too big to fit on the floppy (%ld extra bytes).\n",
+        fprintf(stderr, "Error: %s is %ld bytes too big to fit on the floppy\n",
                         TOSNAME, (long)count-MAX_EMUTOS_SIZE);
         return 1;
     }
@@ -81,7 +104,9 @@ static int mkflop(FILE *bootf, FILE *tosf, FILE *flopf)
     b->sectcnt[0] = sectcnt>>8;
     b->sectcnt[1] = sectcnt;
 
-    /* make bootsector bootable */
+    /*
+     * make bootsector bootable
+     */
     {
         unsigned short a, sum;
         sum = 0;
@@ -94,23 +119,46 @@ static int mkflop(FILE *bootf, FILE *tosf, FILE *flopf)
         buf[511] = a;
     }
 
-    /* write down bootsector */
-    fwrite(buf, 1, SECTOR_SIZE, flopf);
+    /*
+     * write out bootsector
+     */
+    if (fwrite(buf, 1, SECTOR_SIZE, flopf) != SECTOR_SIZE)
+    {
+        fprintf(stderr,"Error: can't write %s\n",FLOPNAME);
+        return 1;
+    }
 
-    /* copy the tos starting at sector 1 */
+    /*
+     * copy emutos starting at sector 1
+     */
     for (i = 0; i < sectcnt; i++) {
         count = fread(buf, 1, SECTOR_SIZE, tosf);
         if (count < SECTOR_SIZE) {
+            if (ferror(tosf))
+            {
+                fprintf(stderr,"Error: can't read %s\n",TOSNAME);
+                return 1;
+            }
             memset(buf+count, 0, SECTOR_SIZE - count);
         }
-        fwrite(buf, 1, SECTOR_SIZE, flopf);
+        if (fwrite(buf, 1, SECTOR_SIZE, flopf) != SECTOR_SIZE)
+        {
+            fprintf(stderr,"Error: can't write %s\n",FLOPNAME);
+            return 1;
+        }
     }
 
-    /* fill the disk with zeroes */
+    /*
+     * fill the remainder of the disk with zeroes
+     */
     if (fill) {
         memset(buf, 0, SECTOR_SIZE);
         for (i = sectcnt+1; i < TOTAL_DISK_SECTORS; i++) {
-            fwrite(buf, 1, SECTOR_SIZE, flopf);
+            if (fwrite(buf, 1, SECTOR_SIZE, flopf) != SECTOR_SIZE)
+            {
+                fprintf(stderr,"Error: can't write %s\n",FLOPNAME);
+                return 1;
+            }
         }
     }
 
@@ -124,20 +172,31 @@ int main(void)
     FILE *bootf, *tosf, *flopf;
 
     bootf = fopen(BOOTNAME, "rb");
-    if (bootf == 0)
-        goto fail;
+    if (!bootf)
+    {
+        fprintf(stderr,"Error: can't open %s\n",BOOTNAME);
+        exit(EXIT_FAILURE);
+    }
+
     tosf = fopen(TOSNAME, "rb");
-    if (tosf == 0)
-        goto fail;
+    if (!tosf)
+    {
+        fprintf(stderr,"Error: can't open %s\n",TOSNAME);
+        exit(EXIT_FAILURE);
+    }
+
     flopf = fopen(FLOPNAME, "wb");
-    if (flopf == 0)
-        goto fail;
+    if (!flopf)
+    {
+        fprintf(stderr,"Error: can't open %s\n",FLOPNAME);
+        exit(EXIT_FAILURE);
+    }
+
     if (mkflop(bootf, tosf, flopf))
-        goto fail;
+    {
+        exit(EXIT_FAILURE);     /* message already issued */
+    }
+
     printf("done\n");
     exit(0);
-
-fail:
-    fprintf(stderr, "something failed.\n");
-    exit(EXIT_FAILURE);
 }
