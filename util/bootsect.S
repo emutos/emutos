@@ -1,7 +1,7 @@
 /*
  * bootsect.S - bootsector for fast loading EmuTOS in RAM
  *
- * Copyright (c) 2001-2013 The EmuTOS development team
+ * Copyright (c) 2001-2016 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -12,7 +12,6 @@
 
 /*
  * this bootsector will load a ramtos.img using rwabs.
- * (load COUNT sectors starting at sector number START)
  * the ramtos will be loaded at address TMPADDR, then
  * a boot routine will be copied after it, and finally
  * the bootsector will jump into this boot routine
@@ -22,9 +21,6 @@
  */
 
 #include "asmdefs.h"
-
-#define START 1
-#define COUNT 384
 
 /* The temporary load address must be:
  *   - high enough to not override the TOS internal variables
@@ -57,22 +53,12 @@
         .dc.b   0x09, 0x00    // 18 spt[2]    sectors per track
         .dc.b   0x01, 0x00    // 1a sides[2]  number of sides
         .dc.b   0x00, 0x00    // 1c hid[2]    number of hidden sectors
-execflg:
-        .dc.w   0
-ldmode:
-        .dc.w   0
 ssect:
-        .dc.w   START
+        .dc.w   0               // set by mkflop.c
 sectcnt:
-        .dc.w   COUNT
+        .dc.w   0               // set by mkflop.c
 ldaddr:
         .dc.l   TMPADDR
-fatbuf:
-        .dc.l   0
-fname:
-        .ds.b   11
-resvd:
-        .ds.b   1
 start:
         /* getbpb before rwabs */
 
