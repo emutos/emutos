@@ -138,11 +138,12 @@ extern struct kbdvecs kbdvecs;
 #ifdef EMUTOS_RAM
 
 /*
- * If eject_magic == EJECT_MAGIC, this is a cold boot from emutos-floppy.
- * So ask to remove the floppy before going on.
+ * If eject_magic == AUTOBOOT_MAGIC, this is a cold boot from an
+ * autobooting floppy; we need to know this to avoid continual
+ * rebooting.
  */
-#define EJECT_MAGIC 0x1234abcd
-extern ULONG eject_magic;
+#define AUTOBOOT_MAGIC 0x1234abcd
+extern ULONG autoboot_magic;
 
 #endif /* EMUTOS_RAM */
 

@@ -98,7 +98,7 @@
         .globl  _kcl_hook
 
 #ifdef EMUTOS_RAM
-        .globl  _eject_magic
+        .globl  _autoboot_magic
 #endif
 
 #if CONF_WITH_PSEUDO_COLD_BOOT
@@ -229,7 +229,7 @@ _kcl_hook:      .ds.l   1       // pointer to routine for system keyclick
 
 #ifdef EMUTOS_RAM
         .org 0x6f8              // must match the value in util/bootsect.S
-_eject_magic:   .ds.l   1
+_autoboot_magic:.ds.l   1
 #endif
 
 #if CONF_WITH_PSEUDO_COLD_BOOT

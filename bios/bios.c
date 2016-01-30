@@ -566,18 +566,6 @@ void biosmain(void)
      * File steem/code/emulator.cpp, function intercept_bios(). */
     Drvmap();
 
-#ifdef EMUTOS_RAM
-    /* if TOS in RAM booted from an autoboot floppy, ask to remove the
-     * floppy before going on.
-     */
-    if(eject_magic == EJECT_MAGIC) {
-        cprintf(_("Please eject the floppy and hit RETURN"));
-        bconin2();
-        cprintf("\r\033K"); /* clear the message */
-        eject_magic = 0L;   /* do not ask on next warm boot */
-    }
-#endif
-
     bootdev = blkdev_avail(DEFAULT_BOOTDEV) ? DEFAULT_BOOTDEV : FLOPPY_BOOTDEV;
 
 #if INITINFO_DURATION > 0
@@ -591,7 +579,19 @@ void biosmain(void)
 #endif
 
     /* boot eventually from a block device (floppy or harddisk) */
-    blkdev_boot();
+#ifdef EMUTOS_RAM
+    /*
+     * but if TOS in RAM was booted from an autoboot floppy, avoid
+     * trying to boot again!
+     */
+    if (autoboot_magic == AUTOBOOT_MAGIC) {
+        autoboot_magic = 0L;    /* do not prevent next warm boot */
+    }
+    else
+#endif
+    {
+        blkdev_boot();
+    }
 
     defdrv = bootdev;
     trap1( 0x0e , defdrv );    /* Set boot drive: Dsetdrv(defdrv) */

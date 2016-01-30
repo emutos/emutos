@@ -82,9 +82,9 @@ start:
         tst.w   d0
         bne     fail
 
-        /* tell EmuTOS to ask for floppy removal before going on */
+        /* tell EmuTOS that it's being started from an auto-booting floppy */
 
-        move.l  #0x1234abcd,0x6f8.w     // EJECT_MAGIC, _eject_magic
+        move.l  #0x1234abcd,0x6f8.w     // AUTOBOOT_MAGIC, _autoboot_magic
 
         /* d4 = max size of TOS */
 
