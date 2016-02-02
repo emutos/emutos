@@ -565,6 +565,7 @@ m548x-bas:
 TOCLEAN += boot.prg
 
 .PHONY: ram
+ram: override DEF += -DTARGET_PRG
 ram: ramtos.img boot.prg
 	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT_RAM,ramtos.map));\
 	echo "# RAM used: $$(($$MEMBOT)) bytes"
@@ -651,6 +652,7 @@ NODEP += fd0
 fd0: flop
 	dd if=emutos.st of=/dev/fd0D360
 
+emutos.st: override DEF += -DTARGET_FLOPPY
 emutos.st: mkflop$(EXE) bootsect.img ramtos.img
 	./mkflop$(EXE)
 
