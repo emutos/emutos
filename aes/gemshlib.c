@@ -619,6 +619,7 @@ static WORD sh_ldapp(SHELL *psh)
         if (wind_spb.sy_owner == rlr)   /* if he still owns screen*/
             unsync(&wind_spb);          /*   then take him off. */
 
+        KDEBUG(("sh_ldapp: %s exited with rc=%ld\n",D.s_cmd,ret));
         return (ret<0L) ? AL08ERR : 0;
     }
 
