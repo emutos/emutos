@@ -982,7 +982,8 @@ void d_justified(Vwk * vwk)
     WORD *pointer;
 
     pointer = (CONTRL + 3);
-    cnt = *pointer = (sav_cnt = *pointer) - 2;
+    sav_cnt = *pointer;     /* so we can modify CONTRL[3] for dqt_extent() */
+    cnt = *pointer = sav_cnt - 2;
 
     pointer = INTIN;
     interword = *pointer++;
@@ -1103,7 +1104,7 @@ void d_justified(Vwk * vwk)
 
     d_gtext(vwk);
 
-    CONTRL[2] = sav_cnt;
+    CONTRL[3] = sav_cnt;    /* restore original value for neatness */
     PTSOUT = old_ptsout;
     INTIN = old_intin;
 }
