@@ -573,14 +573,13 @@ ram: ramtos.img boot.prg
 .PHONY: emutos2-ram
 emutos2-ram:
 	@echo '# First pass to build emutos2.map and determine the end of the BSS'
-	$(MAKE) emutos2.map DEF='$(DEF) -DEMUTOS_RAM'
+	$(MAKE) emutos2.map DEF='$(DEF)'
 
 ramtos.img ramtos.map: VMA = $(shell sed -e '/__end/!d;s/^ *//;s/ .*//' emutos2.map)
 ramtos.img ramtos.map: emutos2-ram
 	@echo '# Second pass to build ramtos.img with TEXT and DATA just after the BSS'
 	$(LD) -o ramtos.img $(OBJECTS) $(LDFLAGS) -Wl,-Map,ramtos.map
 
-boot.prg: override DEF += -DEMUTOS_RAM
 boot.prg: obj/minicrt.o obj/boot.o obj/bootasm.o
 	$(LD) -s -o $@ $+ -lgcc
 
@@ -589,7 +588,7 @@ boot.prg: obj/minicrt.o obj/boot.o obj/bootasm.o
 #
 
 # The following hack allows to build the shared sources with different
-# preprocessor defines (ex: EMUTOS_RAM)
+# preprocessor defines
 obj/compr-%.o : %.S
 	$(CC) $(SFILE_FLAGS) -c $< -o $@
 

@@ -515,7 +515,7 @@ tt_cleared:
 // a6 = return address
 // d0-d4/a0-a5 = clobbered
 clear_st_ram:
-#ifdef EMUTOS_RAM
+#if EMUTOS_LIVES_IN_RAM
         // When EmuTOS lives in the RAM, it must not be cleared!
         move.l  _os_end, d0             // end of EmuTOS in RAM
         addi.l  #0xff, d0               // round to next multiple of 256

@@ -27,6 +27,15 @@
 #endif
 
 /*
+ * Determine if this EmuTOS is built for ROM or RAM.
+ */
+#if defined(TARGET_PRG) || defined(TARGET_FLOPPY)
+# define EMUTOS_LIVES_IN_RAM 1
+#else
+# define EMUTOS_LIVES_IN_RAM 0
+#endif
+
+/*
  * Defaults for the ARAnyM target
  */
 #ifdef MACHINE_ARANYM
@@ -705,7 +714,7 @@
  * This is also always the case when EmuTOS is run from the RAM.
  */
 #ifndef CONF_WITH_PSEUDO_COLD_BOOT
-# ifdef EMUTOS_RAM
+# if EMUTOS_LIVES_IN_RAM
 #  define CONF_WITH_PSEUDO_COLD_BOOT 1
 # else
 #  define CONF_WITH_PSEUDO_COLD_BOOT 0
@@ -808,7 +817,7 @@
  * Also, there is no reset instruction on ColdFire.
  */
 #ifndef CONF_WITH_RESET
-# if defined(EMUTOS_RAM) || defined(__mcoldfire__)
+# if EMUTOS_LIVES_IN_RAM || defined(__mcoldfire__)
  # define CONF_WITH_RESET 0
 # else
  # define CONF_WITH_RESET 1
@@ -1020,6 +1029,12 @@
 /*
  * Sanity checks
  */
+
+#if EMUTOS_LIVES_IN_RAM
+# if DIAGNOSTIC_CARTRIDGE
+#  error "DIAGNOSTIC_CARTRIDGE is incompatible with EMUTOS_LIVES_IN_RAM."
+# endif
+#endif
 
 #if !DETECT_NATIVE_FEATURES
 # if CONF_WITH_ARANYM

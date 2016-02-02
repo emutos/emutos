@@ -579,7 +579,7 @@ void biosmain(void)
 #endif
 
     /* boot eventually from a block device (floppy or harddisk) */
-#ifdef EMUTOS_RAM
+#if EMUTOS_LIVES_IN_RAM
     /*
      * but if TOS in RAM was booted from an autoboot floppy, avoid
      * trying to boot again!

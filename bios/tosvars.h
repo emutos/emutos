@@ -135,7 +135,7 @@ struct kbdvecs
 };
 extern struct kbdvecs kbdvecs;
 
-#ifdef EMUTOS_RAM
+#if EMUTOS_LIVES_IN_RAM
 
 /*
  * If eject_magic == AUTOBOOT_MAGIC, this is a cold boot from an
@@ -145,7 +145,7 @@ extern struct kbdvecs kbdvecs;
 #define AUTOBOOT_MAGIC 0x1234abcd
 extern ULONG autoboot_magic;
 
-#endif /* EMUTOS_RAM */
+#endif /* EMUTOS_LIVES_IN_RAM */
 
 #if CONF_WITH_PSEUDO_COLD_BOOT
 #define WARM_MAGIC 0x5741524D /* "WARM" */

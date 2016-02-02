@@ -97,7 +97,7 @@
         .globl  _bell_hook
         .globl  _kcl_hook
 
-#ifdef EMUTOS_RAM
+#if EMUTOS_LIVES_IN_RAM
         .globl  _autoboot_magic
 #endif
 
@@ -227,7 +227,7 @@ _bell_hook:     .ds.l   1       // pointer to routine for system bell
 _kcl_hook:      .ds.l   1       // pointer to routine for system keyclick
         .org 0x5b4
 
-#ifdef EMUTOS_RAM
+#if EMUTOS_LIVES_IN_RAM
         .org 0x6f8              // must match the value in util/bootsect.S
 _autoboot_magic:.ds.l   1
 #endif

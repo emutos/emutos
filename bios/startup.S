@@ -72,7 +72,7 @@
     .dc.l   0xfa52235f  // diagnostic cartridge magic number
 #endif
 
-#if defined(MACHINE_AMIGA) && !defined(EMUTOS_RAM)
+#if defined(MACHINE_AMIGA) && !EMUTOS_LIVES_IN_RAM
     .dc.w   0x1111      // 256 kB ROM
     .dc.w   0x4ef9      // jmp
     .dc.l   amiga_main  // pc at power on or after physical reset
@@ -93,7 +93,7 @@ reseth:
 _os_beg:
     .dc.l   _os_entry   // os_beg, base of os = _sysbase
 _os_end:
-#ifdef EMUTOS_RAM
+#if EMUTOS_LIVES_IN_RAM
     // When EmuTOS is run from the RAM, the BSS starts at address 0 as usual,
     // but the TEXT and DATA segments are just after the BSS.
     // Thus the first unused RAM address is the end of the DATA segment.
