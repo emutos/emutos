@@ -417,6 +417,7 @@ void _vq_color(Vwk *vwk)
     colnum = INTIN[0];
 
     INTOUT[0] = INTOUT[1] = INTOUT[2] = INTOUT[3] = 0;  // Default values
+    CONTRL[4] = 4;
 
     /* Check for valid color index */
     if (colnum < 0 || colnum >= DEV_TAB[13])

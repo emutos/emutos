@@ -215,33 +215,30 @@ void v_locator(Vwk * vwk)
         PTSOUT[1] = point->y;
         hide_cur();
     } else {
-        CONTRL[4] = 1;
-        CONTRL[2] = 0;
-
         i = gloc_key();
         switch (i) {
         case 0:
-            CONTRL[2] = 0;
             break;
 
         case 1:
-            CONTRL[2] = 0;
             CONTRL[4] = 1;
             *(INTOUT) = TERM_CH & 0x00ff;
             break;
 
         case 2:
+            CONTRL[2] = 1;
             PTSOUT[0] = point->x;
             PTSOUT[1] = point->y;
             break;
 
         case 3:
-            CONTRL[4] = 1;
+            CONTRL[2] = 1;
             PTSOUT[0] = point->x;
             PTSOUT[1] = point->y;
             break;
 
         case 4:
+            CONTRL[2] = 1;
             if (HIDE_CNT == 0) {
                 hide_cur();
                 PTSOUT[0] = GCURX = point->x;
