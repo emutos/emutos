@@ -333,6 +333,10 @@ static void men_update(LONG tree)
         men_list(tree, pvalue, FALSE);
     }
 
+#if !CONF_WITH_SHUTDOWN
+    menu_ienable(tree, QUITITEM, FALSE);
+#endif
+
 #if WITH_CLI == 0
     menu_ienable(tree, CLIITEM, FALSE);
 #endif
@@ -430,12 +434,14 @@ static WORD do_filemenu(WORD item)
         done = pro_run(FALSE, 1, -1, -1);
         break;
 
+#if CONF_WITH_SHUTDOWN
     case QUITITEM:
         enable_ceh = FALSE; /* avoid possibility of useless form_alert()s */
         display_free_stack();
         pro_exit(G.g_cmd, G.g_tail);
         done = TRUE;
         break;
+#endif
     }
 
     return done;
@@ -747,10 +753,12 @@ static WORD hndl_kbd(WORD thechar)
         done = hndl_menu(FILEMENU, CLIITEM);
         break;
 #endif
+#if CONF_WITH_SHUTDOWN
     case CNTLQ:         /* Shutdown */
         menu_tnormal(G.a_trees[ADMENU], FILEMENU, FALSE);
         done = hndl_menu(FILEMENU, QUITITEM);
         break;
+#endif
     case SHIFT_ARROW_UP:
         kbd_arrow(WA_UPPAGE);
         break;

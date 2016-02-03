@@ -176,6 +176,9 @@
 # ifndef CONF_WITH_68040_PMMU
 #  define CONF_WITH_68040_PMMU 0
 # endif
+# ifndef CONF_WITH_SHUTDOWN
+#  define CONF_WITH_SHUTDOWN 0
+# endif
 #endif
 
 /*
@@ -200,6 +203,9 @@
 # endif
 # ifndef CONF_WITH_ASSERT
 #  define CONF_WITH_ASSERT 0
+# endif
+# ifndef CONF_WITH_SHUTDOWN
+#  define CONF_WITH_SHUTDOWN 0
 # endif
 #endif
 
@@ -1000,6 +1006,18 @@
 #define HAS_KPRINTF 1
 #else
 #define HAS_KPRINTF 0
+#endif
+
+/*
+ * Set CONF_WITH_SHUTDOWN to 1 to enable the shutdown() function.
+ * It tries to poweroff the machine, if possible.
+ */
+#ifndef CONF_WITH_SHUTDOWN
+# if DETECT_NATIVE_FEATURES || defined(MACHINE_FIREBEE) || defined(MACHINE_AMIGA)
+#  define CONF_WITH_SHUTDOWN 1
+# else
+#  define CONF_WITH_SHUTDOWN 0
+# endif
 #endif
 
 /*

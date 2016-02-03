@@ -513,7 +513,23 @@ static void autoexec(void)
     }
 }
 
+#if CONF_WITH_SHUTDOWN
 
+/* Try to shutdown the machine. This may fail. */
+static void shutdown(void)
+{
+#if DETECT_NATIVE_FEATURES
+    nf_shutdown();
+#endif
+
+#ifdef MACHINE_FIREBEE
+    firebee_shutdown();
+#elif defined(MACHINE_AMIGA)
+    amiga_shutdown();
+#endif
+}
+
+#endif /* CONF_WITH_SHUTDOWN */
 
 /*
  * biosmain - c part of the bios init code
@@ -625,15 +641,9 @@ void biosmain(void)
         trap1_pexec(PE_GO, "", pd, "");
     }
 
-    /* try to shutdown the machine if available */
-#if DETECT_NATIVE_FEATURES
-    nf_shutdown();
-#endif
-
-#ifdef MACHINE_FIREBEE
-    firebee_shutdown();
-#elif defined(MACHINE_AMIGA)
-    amiga_shutdown();
+#if CONF_WITH_SHUTDOWN
+	/* try to shutdown the machine / close the emulator */
+	shutdown();
 #endif
 
     /* hide cursor */
