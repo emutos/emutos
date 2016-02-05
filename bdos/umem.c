@@ -95,13 +95,17 @@ static void dump_mem_map(void)
 
 long    xmalloc(long amount)
 {
+    long rc;
+
     if( run->p_flags & PF_TTRAMMEM ) {
         /* allocate TT RAM, or ST RAM if not enough TT RAM */
-        return xmxalloc(amount, MX_PREFTTRAM);
+        rc = xmxalloc(amount, MX_PREFTTRAM);
     } else {
         /* allocate only ST RAM */
-        return xmxalloc(amount, MX_STRAM);
+        rc = xmxalloc(amount, MX_STRAM);
     }
+    KDEBUG(("BDOS: Malloc(%ld), pgmflags=0x%08lx: rc=0x%08lx\n",amount,run->p_flags,rc));
+    return rc;
 }
 
 
