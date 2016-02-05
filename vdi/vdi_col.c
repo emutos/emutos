@@ -416,7 +416,7 @@ void _vq_color(Vwk *vwk)
 
     colnum = INTIN[0];
 
-    INTOUT[0] = INTOUT[1] = INTOUT[2] = INTOUT[3] = 0;  // Default values
+    INTOUT[1] = INTOUT[2] = INTOUT[3] = 0;  /* Default values */
     CONTRL[4] = 4;
 
     /* Check for valid color index */
@@ -426,6 +426,7 @@ void _vq_color(Vwk *vwk)
         INTOUT[0] = -1;
         return;
     }
+    INTOUT[0] = colnum;
 
     if (INTIN[1] == 0)  /* return last-requested value */
     {
