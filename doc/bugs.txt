@@ -26,7 +26,6 @@ Common AES/VDI/Line-A bugs:
   is drawn separately).  It is visible e.g. in "Japlish" game.
 
 Video problems
-- In "Awele", mono desktop colours are inverted after exiting program.
 - Omega's XiTec presentations "swing.prg" throws privilege exception
   on exit.  Both TOS v3 & EmuTOS survive that OK, but in EmuTOS both
   screen and mouse acceleration are messed up: EmuTOS exception restore
@@ -63,8 +62,6 @@ Problems that also occur in Atari TOS:
   part of the circle that joins the end segment to the previous one.
 
 Links to programs listed above:
-- Awele v1.01:
-  http://windom.free.fr/awele/bin/awele.zip
 - Bombs:
   http://www.umich.edu/~archive/atari/Games/Puzzle/bombs.arc
 - Chainz, Jewelz, Sweety Things:
