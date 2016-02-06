@@ -322,6 +322,7 @@ static void set_color(int colnum, int r, int g, int b)
 void _vs_color(Vwk *vwk)
 {
     int colnum, i;
+    WORD *intin, rgb[3], *rgbptr;
 
     colnum = INTIN[0];
 
@@ -332,23 +333,26 @@ void _vs_color(Vwk *vwk)
         return;
     }
 
-    /* Check if color values are in range and copy them to REQ_COL array */
-    for (i = 1; i <= 3; i++)
+    /*
+     * Copy raw values to the "requested colour" arrays, then clamp
+     * them to 0-1000 before calling set_color()
+     */
+    for (i = 0, intin = INTIN+1, rgbptr = rgb; i < 3; i++, intin++, rgbptr++)
     {
-        if (INTIN[i] > 1000)
-            INTIN[i] = 1000;
-        else if (INTIN[i] < 0)
-            INTIN[i] = 0;
-
         if (colnum < 16)
-            REQ_COL[colnum][i-1] = INTIN[i];
+            REQ_COL[colnum][i] = *intin;
 #if EXTENDED_PALETTE
         else
-            req_col2[colnum-16][i-1] = INTIN[i];
+            req_col2[colnum-16][i] = *intin;
 #endif
+        if (*intin > 1000)
+            *rgbptr = 1000;
+        else if (*intin < 0)
+            *rgbptr = 0;
+        else *rgbptr = *intin;
     }
 
-    set_color(colnum, INTIN[1], INTIN[2], INTIN[3]);
+    set_color(colnum, rgb[0], rgb[1], rgb[2]);
 }
 
 
