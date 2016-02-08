@@ -31,6 +31,12 @@ WORD REV_MAP_COL[MAXCOLOURS];   /* maps hardware register -> vdi pen */
 static const WORD MAP_COL_ROM[] =
     { 0, 15, 1, 2, 4, 6, 3, 5, 7, 8, 9, 10, 12, 14, 11, 13 };
 
+/*
+ * the following factors are used in adjust_mono_values()
+ */
+#define STE_MONO_FUDGE_FACTOR   0x43
+#define ST_MONO_FUDGE_FACTOR    0x8e
+
 #if EXTENDED_PALETTE
 /* req_col2 contains the VDI color palette entries 16 - 255 for vq_color().
  * To stay compatible with the line-a variables, only entries > 16 are
@@ -272,21 +278,80 @@ static WORD videl2vdi(LONG col)
 #endif
 
 
-/* Set an entry in the hardware color palette */
-static void set_color(int colnum, int r, int g, int b)
+/*
+ * Monochrome screens get special handling because they don't use the
+ * regular palette setup; instead, bit 0 of h/w palette register 0
+ * controls whether the screen background is white (bit0=0) or black
+ * (bit0=1).
+ * 
+ * Also, from a VDI standpoint, you would expect that setting pen 0 to
+ * (1000,1000,1000) would get white and setting pen 0 to (0,0,0) would
+ * get black; but what should happen with intermediate values?
+ * 
+ * Atari TOS handles this as follows:
+ * 1. each RGB value less than a fudge factor F is converted to 0 and
+ *    each value greater than or equal to 1000-F is converted to 1000
+ * 2. if the sum of the values is neither 0 nor 3000, nothing is done
+ * 3. if asked to change pen 1, it sets pen 0 to white, irrespective of
+ *    RGB values
+ * 4. if changing pen 0, it respects the RGB values
+ *
+ * We do the same ...
+ */
+static WORD adjust_mono_values(WORD colnum,WORD *rgb)
 {
+    WORD i, sum, fudge = ST_MONO_FUDGE_FACTOR;
+
+#if CONF_WITH_STE_SHIFTER
+    if (has_ste_shifter)
+        fudge = STE_MONO_FUDGE_FACTOR;
+#endif
+
+    for (i = 0, sum = 0; i < 3; i++)
+    {
+        if (rgb[i] < fudge)
+            rgb[i] = 0;
+        else if (rgb[i] >= (1000-fudge))
+            rgb[i] = 1000;
+        sum += rgb[i];
+    }
+
+    if ((sum > 0) && (sum < 3000))
+        return -1;      /* 'do nothing' indicator */
+
+    if (colnum == 1)
+    {
+        colnum = 0;     /* set pen 0 to white */
+        rgb[0] = rgb[1] = rgb[2] = 1000;
+    }
+
+    return colnum;
+}
+
+
+/* Set an entry in the hardware color palette
+ * Note that rgb[] entries are VDI-style values, assumed to be 0-1000
+ */
+static void set_color(int colnum, WORD *rgb)
+{
+    WORD r, g, b;
+
     colnum = MAP_COL[colnum];   /* get hardware register */
+    r = rgb[0];
+    g = rgb[1];
+    b = rgb[2];
 
 #if CONF_WITH_VIDEL
     if (has_videl)
     {
-        LONG rgb;
+        LONG videlrgb;
 
-        rgb = (vdi2videl(r) << 16) | (vdi2videl(g) << 8) | vdi2videl(b);
-        VsetRGB(colnum,1,(LONG)&rgb);
+        videlrgb = (vdi2videl(r) << 16) | (vdi2videl(g) << 8) | vdi2videl(b);
+        VsetRGB(colnum,1,(LONG)&videlrgb);
+        return;
     }
-    else
 #endif
+
 #if CONF_WITH_TT_SHIFTER
     if (has_tt_shifter)
     {
@@ -294,16 +359,26 @@ static void set_color(int colnum, int r, int g, int b)
         g = vdi2tt(g);
         b = vdi2tt(b);        
         EsetColor(colnum, (r << 8) | (g << 4) | b);
+        return;
     }
-    else
 #endif
+
+    if (v_planes == 1)  /* special handling for monochrome screens */
+    {
+        colnum = adjust_mono_values(colnum,rgb);/* may update rgb[] */
+        if (colnum < 0)                         /* 'do nothing' */
+            return;
+        r = rgb[0];
+        g = rgb[1];
+        b = rgb[2];
+    }
+
 #if CONF_WITH_STE_SHIFTER
     if (has_ste_shifter)
     {
         r = vdi2ste(r);
         g = vdi2ste(g);
         b = vdi2ste(b);
-        Setcolor(colnum, (r << 8) | (g << 4) | b);
     }
     else
 #endif
@@ -311,8 +386,9 @@ static void set_color(int colnum, int r, int g, int b)
         r = vdi2st(r);
         g = vdi2st(g);
         b = vdi2st(b);
-        Setcolor(colnum, (r << 8) | (g << 4) | b);
     }
+
+    Setcolor(colnum, (r << 8) | (g << 4) | b);
 }
 
 
@@ -352,7 +428,7 @@ void _vs_color(Vwk *vwk)
         else *rgbptr = *intin;
     }
 
-    set_color(colnum, rgb[0], rgb[1], rgb[2]);
+    set_color(colnum, rgb);
 }
 
 
@@ -402,10 +478,10 @@ void init_colors(void)
     for (i = 0; i < DEV_TAB[13]; i++)
     {
         if (i < 16)
-            set_color(i, REQ_COL[i][0], REQ_COL[i][1], REQ_COL[i][2]);
+            set_color(i, REQ_COL[i]);
 #if EXTENDED_PALETTE
         else
-            set_color(i, req_col2[i-16][0], req_col2[i-16][1], req_col2[i-16][2]);
+            set_color(i, req_col2[i-16]);
 #endif
     }
 }
