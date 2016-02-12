@@ -14,7 +14,7 @@
  */
 
 
-/* define ENABLE_KDEBUG */
+/* #define ENABLE_KDEBUG */
 
 
 
@@ -50,35 +50,34 @@ long end_stram;
  */
 
 #ifdef ENABLE_KDEBUG
-static void dump_mem_map(void)
+static void dump_md_list(char *title,MD *m)
 {
-    MD *m;
     int i;
 
-    kprintf("===mem_dump==========================\n");
-    kprintf("| mp_mfl = 0x%08lx {\n|   ", (long)(m = pmd.mp_mfl));
+    kprintf("| %s = %p {\n|   ", title, m);
     i = 0;
-    for(; m != NULL ; m = m->m_link) {
-        if(i >= 3) {
+    for (i = 0; m; i++, m = m->m_link) {
+        if (i >= 3) {
             kprintf("\n|   ");
             i = 0;
         }
-        i++;
         kprintf("[0x%06lx, 0x%06lx], ", m->m_start, m->m_length);
     }
     kprintf("\n| }\n");
-    kprintf("| mp_mal = 0x%08lx {\n|   ",  (long)(m = pmd.mp_mal));
-    i = 0;
-    for(; m != NULL ; m = m->m_link) {
-        if(i >= 3) {
-            kprintf(" \n|   ");
-            i = 0;
-        }
-        i++;
-        kprintf("[0x%06lx, 0x%06lx], ", m->m_start, m->m_length);
-    }
-    kprintf("\n| }\n");
-    kprintf("| mp_rover = 0x%08lx\n",  (long)(pmd.mp_rover));
+}
+
+static void dump_mem_map(void)
+{
+    kprintf("===mem_dump==========================\n");
+    dump_md_list("std free ", pmd.mp_mfl);
+    dump_md_list("std alloc", pmd.mp_mal);
+    kprintf("| std rover = %p\n", pmd.mp_rover);
+#if CONF_WITH_ALT_RAM
+    kprintf("| ----------------------\n");
+    dump_md_list("alt free ", pmdalt.mp_mfl);
+    dump_md_list("alt alloc", pmdalt.mp_mal);
+    kprintf("| alt rover = %p\n", pmdalt.mp_rover);
+#endif
     kprintf("===/mem_dump==========================\n");
 }
 #else
