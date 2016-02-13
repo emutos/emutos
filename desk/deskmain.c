@@ -202,6 +202,8 @@ static void desk_all(WORD flags)
 
 /*
  *  Given an icon index, go find the ANODE which it represents
+ *
+ *  returns NULL if no matching index
  */
 ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp)
 {
@@ -272,6 +274,8 @@ static void men_update(LONG tree)
     for (item = 0; (item=win_isel(G.g_screen, G.g_croot, item)) != 0; nsel++)
     {
         appl = i_find(G.g_cwin, item, (FNODE **)(void*)&pjunk, &isapp);
+        if (!appl)
+            continue;
         switch(appl->a_type)
         {
         case AT_ISFILE:
