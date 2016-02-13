@@ -69,7 +69,7 @@ static jmp_buf bakbuf;         /* longjmp buffer */
 static MPB *find_mpb(void *addr);
 static void free_all_owned(PD *p, MPB *mpb);
 static void set_owner(void *addr, PD *p, MPB *mpb);
-static void reserve_block(void *addr, MPB *mpb);
+static void reserve_blocks(PD *pd, MPB *mpb);
 
 static MPB *find_mpb(void *addr)
 {
@@ -85,13 +85,17 @@ static MPB *find_mpb(void *addr)
     }
 }
 
-/* reserve a block, i.e. remove it from the allocated list */
-static void reserve_block(void *addr, MPB *mpb)
+/* reserve blocks, i.e. remove them from the allocated list
+ *
+ * the memory associated with these blocks will remain permanently
+ * allocated - this is used by Ptermres()
+ */
+static void reserve_blocks(PD *p, MPB *mpb)
 {
-    MD *m,**q;
+    MD *m, **q;
 
-    for (m = *(q = &mpb->mp_mal); m ; m = *q) {
-        if (m->m_own == run) {
+    for (m = *(q = &mpb->mp_mal); m; m = *q) {
+        if (m->m_own == p) {
             *q = m->m_link; /* pouf ! like magic */
             xmfreblk(m);
         } else {
@@ -655,7 +659,10 @@ WORD    xtermres(long blkln, WORD rc)
 {
     xsetblk(0,run,blkln);
 
-    reserve_block(run, find_mpb(run));
-
+    reserve_blocks(run, &pmd);
+#if CONF_WITH_ALT_RAM
+    if(has_alt_ram)
+        reserve_blocks(run, &pmdalt);
+#endif
     xterm(rc);
 }
