@@ -251,6 +251,8 @@ static void fun_win2desk(WORD wh, WORD obj, WORD keystate)
 
     an_dest = app_afind(TRUE, AT_ISFILE, obj, NULL, NULL);
     wn_src = win_find(wh);
+    if (!wn_src)
+        return;
 
     if (fun_file2desk(wn_src->w_path, an_dest, obj, keystate))
         fun_rebld(wn_src);
@@ -309,6 +311,9 @@ static void fun_desk2win(WORD wh, WORD dobj, WORD keystate)
     ANODE *an_src, *an_dest;
 
     wn_dest = win_find(wh);
+    if (!wn_dest)
+        return;
+
     an_dest = i_find(wh, dobj, &fn_dest, &isapp);
     sobj = 0;
     while ((sobj = win_isel(G.g_screen, 1, sobj)))

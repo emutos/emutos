@@ -226,9 +226,12 @@ ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp)
     else
     {
         pw = win_find(wh);
-        pf = fpd_ofind(pw->w_path->p_flist, item);
-        if (pf)
-            pa = app_afind(FALSE, (pf->f_attr&F_SUBDIR)?AT_ISFOLD:AT_ISFILE, -1, pf->f_name, pisapp);
+        if (pw)
+        {
+            pf = fpd_ofind(pw->w_path->p_flist, item);
+            if (pf)
+                pa = app_afind(FALSE, (pf->f_attr&F_SUBDIR)?AT_ISFOLD:AT_ISFILE, -1, pf->f_name, pisapp);
+        }
     }
 
     *ppf = pf;
@@ -602,14 +605,12 @@ static WORD hndl_button(WORD clicks, WORD mx, WORD my, WORD button, WORD keystat
                                 &keystate, &c, &dobj);
             if (dest_wh != NIL)
             {
-                if (dest_wh == 0)
-                {
-                    root = 1;
-                }
-                else
+                root = 1;
+                if (dest_wh != 0)
                 {
                     wn = win_find(dest_wh);
-                    root = wn->w_root;
+                    if (wn)
+                        root = wn->w_root;
                 }
                 desk1_drag(wh, dest_wh, root, dobj, mx, my, keystate);
                 desk_clear(wh);
@@ -821,17 +822,15 @@ WORD hndl_msg(void)
         }
         break;
     case WM_TOPPED:
-        wind_set(G.g_rmsg[3], WF_TOP, 0, 0, 0, 0);
-        wind_get(G.g_rmsg[3], WF_WXYWH, &x, &y, &w, &h);
-
         pw = win_find(G.g_rmsg[3]);
         if (pw)
         {
+            wind_set(G.g_rmsg[3], WF_TOP, 0, 0, 0, 0);
             win_top(pw);
             desk_verify(pw->w_id, FALSE);
+            G.g_wlastsel = pw->w_id;
+            change = TRUE;
         }
-        change = TRUE;
-        G.g_wlastsel = pw->w_id;
         break;
     case WM_CLOSED:
         do_filemenu(CLOSITEM);
@@ -845,8 +844,8 @@ WORD hndl_msg(void)
             if (!do_wfull(G.g_rmsg[3]))
                 shrunk = TRUE;
             desk_verify(G.g_rmsg[3], TRUE);   /* build window, update w_pncol */
+            change = TRUE;
         }
-        change = TRUE;
         break;
     case WM_ARROWED:
         win_arrow(G.g_rmsg[3], G.g_rmsg[4]);
@@ -857,6 +856,8 @@ WORD hndl_msg(void)
     case WM_MOVED:
     case WM_SIZED:
         pw = win_find(G.g_rmsg[3]);
+        if (!pw)
+            break;
         x = G.g_rmsg[4];
         y = G.g_rmsg[5];
         do_xyfix(&x, &y);

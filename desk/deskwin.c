@@ -164,6 +164,8 @@ WNODE *win_alloc(WORD obid)
 
 /*
  *  Find the WNODE that has this id
+ *
+ *  Returns NULL if not found
  */
 WNODE *win_find(WORD wh)
 {
@@ -448,6 +450,8 @@ void win_slide(WORD wh, WORD sl_value)
     WORD  vn, pn, i, sls, sl_size;
 
     pw = win_find(wh);
+    if (!pw)
+        return;
 
     vn = pw->w_vnrow;
     pn = pw->w_pnrow;
@@ -469,6 +473,8 @@ void win_arrow(WORD wh, WORD arrow_type)
 
     newcv = 0;
     pw = win_find(wh);
+    if (!pw)
+        return;
 
     switch(arrow_type)
     {

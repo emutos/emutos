@@ -121,13 +121,13 @@ void do_wredraw(WORD w_handle, WORD xc, WORD yc, WORD wc, WORD hc)
     clip_r.g_y = yc;
     clip_r.g_w = wc;
     clip_r.g_h = hc;
+    root = 1;
     if (w_handle != 0)
     {
         pw = win_find(w_handle);
-        root = pw->w_root;
+        if (pw)
+            root = pw->w_root;
     }
-    else
-        root = 1;
 
     graf_mouse(M_OFF, NULL);
 
@@ -627,6 +627,8 @@ WORD do_open(WORD curr)
 
     pa = i_find(G.g_cwin, curr, &pf, &isapp);
     pw = win_find(G.g_cwin);
+    if (!pw)
+        return FALSE;
     if (pf)
         fpd_parse(&pw->w_path->p_spec[0],&drv,&path[0],&name[0],&ext[0]);
 
@@ -675,6 +677,8 @@ WORD do_info(WORD curr)
 
     pa = i_find(G.g_cwin, curr, &pf, &junk);
     pw = win_find(G.g_cwin);
+    if (!pw)
+        return FALSE;
 
     if (pa)
     {

@@ -336,7 +336,11 @@ void fun_drag(WORD src_wh, WORD dst_wh, WORD dst_ob, WORD dulx, WORD duly, WORD 
 
     op = (keystate&MODE_CTRL) ? OP_MOVE : OP_COPY;
     psw = win_find(src_wh);
+    if (!psw)
+        return;
     pdw = win_find(dst_wh);
+    if (!pdw)
+        return;
 
     pda = i_find(dst_wh, dst_ob, &pdf, &junk);
     datype = (pda) ? pda->a_type : AT_ISFILE;
