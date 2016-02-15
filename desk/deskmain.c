@@ -428,11 +428,13 @@ static WORD do_filemenu(WORD item)
             done = do_format(curr);
         break;
 
+#if WITH_CLI != 0
     case CLIITEM:                         /* Start EmuCON */
         G.g_tail[0] = G.g_tail[1] = 0;
         strcpy(G.g_cmd, "EMUCON");
         done = pro_run(FALSE, 1, -1, -1);
         break;
+#endif
 
 #if CONF_WITH_SHUTDOWN
     case QUITITEM:
