@@ -78,7 +78,7 @@ long get_xhdi_nfid(void)
     return nfid_xhdi;
 }
 
-/* terminate the execution of the emulato if possible, else no-op */
+/* terminate the execution of the emulator if possible, else no-op */
 void nf_shutdown(void)
 {
     if(hasNF) {
