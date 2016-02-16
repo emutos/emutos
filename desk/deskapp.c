@@ -427,11 +427,11 @@ void app_start(void)
     G.g_wicon = (12 * gl_wschar) + (2 * G.g_iblist[0].ib_xtext);
     G.g_hicon = G.g_iblist[0].ib_hicon + gl_hschar + 2;
 
-    xcnt = gl_width / (G.g_wicon+MIN_WINT); /* icon count */
-    G.g_icw = gl_width / xcnt;              /* width */
+    xcnt = G.g_wdesk / (G.g_wicon+MIN_WINT);/* icon count */
+    G.g_icw = G.g_wdesk / xcnt;             /* width */
 
-    ycnt = (gl_height-gl_hbox) / (G.g_hicon+MIN_HINT);  /* icon count */
-    G.g_ich = (gl_height-gl_hbox) / ycnt;   /* height */
+    ycnt = G.g_hdesk / (G.g_hicon+MIN_HINT);/* icon count */
+    G.g_ich = G.g_hdesk / ycnt;             /* height */
 
     shel_get(gl_afile, SIZE_AFILE);
     if (gl_afile[0] != '#')                 /* invalid signature    */
