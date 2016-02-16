@@ -1067,7 +1067,7 @@ static int count_chars(char *str, char c)
 /* Translates the strings in an OBJECT array */
 void xlate_obj_array(OBJECT *obj_array, int nobj)
 {
-    register OBJECT *obj;
+    OBJECT *obj;
 
     for (obj = obj_array; --nobj >= 0; obj++) {
         switch(obj->ob_type)
@@ -1095,7 +1095,7 @@ void xlate_obj_array(OBJECT *obj_array, int nobj)
 /* Translates and fixes the TEDINFO strings */
 void xlate_fix_tedinfo(TEDINFO *tedinfo, int nted)
 {
-    register int i = 0;
+    int i = 0;
     long len;
     int j;
     char *tedinfptr;
@@ -1352,7 +1352,7 @@ static void desk_xlate_fix(void)
     OBJECT *tree = desk_rs_trees[ADDINFO];
     OBJECT *objlabel = &tree[DELABEL];
     OBJECT *objversion = &tree[DEVERSN];
-    register int i;
+    int i;
 
     /* translate strings in objects */
     xlate_obj_array(desk_rs_obj, RS_NOBS);
