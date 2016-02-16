@@ -133,8 +133,8 @@ LONG dosound(LONG table)
 
 void sndirq(void)
 {
-  register BYTE *code;
-  register BYTE instr;
+  BYTE *code;
+  BYTE instr;
 
   code = sndtable;
   if(code == 0) return;
