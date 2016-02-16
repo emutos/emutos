@@ -51,7 +51,7 @@
  *
  * Possible Improvements
  * - it shouldn't be necessary to read all the file, just keeping
- *   64 kB in memory (32 ahead, and 32 back) should suffice.
+ *   64 KB in memory (32 ahead, and 32 back) should suffice.
  */
 
 #include <stdio.h>

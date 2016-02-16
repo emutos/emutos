@@ -35,7 +35,7 @@ ARAnyM), the country number in the NVRAM will override that setting of the
 country in the TOS header.
 
 To build EmuTOS for a single country only, you must use UNIQUE instead of
-COUNTRY. This is mainly useful for the 192 and 256 kB targets. Example:
+COUNTRY. This is mainly useful for the 192 and 256 KB targets. Example:
 
     make 256 UNIQUE=fr
 
@@ -47,9 +47,9 @@ A complete list of targets
 EmuTOS binaries
 ---------------
 
-192         etos192k.img, EmuTOS ROM padded to size 192 kB (starting at 0x00fc0000)
-256         etos256k.img, EmuTOS ROM padded to size 256 kB (starting at 0x00e00000)
-512         etos512k.img, EmuTOS ROM padded to size 512 kB (starting at 0x00e00000)
+192         etos192k.img, EmuTOS ROM padded to size 192 KB (starting at 0x00fc0000)
+256         etos256k.img, EmuTOS ROM padded to size 256 KB (starting at 0x00e00000)
+512         etos512k.img, EmuTOS ROM padded to size 512 KB (starting at 0x00e00000)
 aranym      emutos-aranym.img, suitable for ARAnyM
 firebee     emutosfb.s19, to be flashed on the FireBee
 firebee-ram ramtos.img + boot.prg, a RAM tos for the FireBee
@@ -96,9 +96,9 @@ indent      indent all files - never done yet :-(
 Release-related targets
 -------------------
 
-all192      all 192 kB images
-all256      all 256 kB images
-allbin      all 192 kB, 256 kB and 512 kB images
+all192      all 192 KB images
+all256      all 256 KB images
+allbin      all 192 KB, 256 KB and 512 KB images
 release     build the release archives into release-archives
 
 

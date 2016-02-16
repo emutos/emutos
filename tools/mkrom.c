@@ -245,7 +245,7 @@ static int cmd_pad(FILE* infile, const char* infilename,
     size_t free_size;
     int ret; /* boolean return value: 0 == error, 1 == OK */
 
-    printf("# Padding %s to %ld kB image into %s\n", infilename, ((long)target_size) / 1024, outfilename);
+    printf("# Padding %s to %ld KB image into %s\n", infilename, ((long)target_size) / 1024, outfilename);
 
     /* Get the input file size */
     source_size = get_file_size(infile, infilename);
@@ -284,7 +284,7 @@ static int cmd_stc(FILE* infile, const char* infilename,
     size_t free_size;
     int ret; /* boolean return value: 0 == error, 1 == OK */
 
-    printf("# Padding %s to %ld kB Steem Engine cartridge image into %s\n", infilename, ((long)target_size) / 1024, outfilename);
+    printf("# Padding %s to %ld KB Steem Engine cartridge image into %s\n", infilename, ((long)target_size) / 1024, outfilename);
 
     /* Get the input file size */
     source_size = get_file_size(infile, infilename);
@@ -387,7 +387,7 @@ static int cmd_amiga(FILE* infile, const char* infilename,
     int err; /* Seek error */
     uint32_t checksum;
 
-    printf("# Padding %s to %ld kB Amiga ROM image into %s\n", infilename, ((long)target_size) / 1024, outfilename);
+    printf("# Padding %s to %ld KB Amiga ROM image into %s\n", infilename, ((long)target_size) / 1024, outfilename);
 
     /* Get the input file size */
     source_size = get_file_size(infile, infilename);

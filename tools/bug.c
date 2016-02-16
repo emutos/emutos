@@ -1924,7 +1924,7 @@ static converter_t get_converter(const char * from, const char * to)
  * code using this hash in the run-time routine
  */
 
-/* 1024 entries, means at least 8 kB, plus 8 bytes per string,
+/* 1024 entries, means at least 8 KB, plus 8 bytes per string,
  * plus the lengths of strings
  */
 #define TH_BITS 10

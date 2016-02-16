@@ -46,7 +46,7 @@ Supported Atari features:
 - IDE hard disk (with EmuTOS internal driver)
 - XBIOS hardware clock
 - FastRAM (*)
-- ST floppy disks (only 9 sectors, 720 kB, read-only) (*)
+- ST floppy disks (only 9 sectors, 720 KB, read-only) (*)
 
 Unsupported Atari features:
 - Color video modes

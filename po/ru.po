@@ -40,7 +40,7 @@ msgid "Free ST-RAM"
 msgstr "STRAM свободно"
 
 #: bios/initinfo.c:242 bios/initinfo.c:247
-msgid "%ld kB"
+msgid "%ld KB"
 msgstr "%ld КБ"
 
 #: bios/initinfo.c:246

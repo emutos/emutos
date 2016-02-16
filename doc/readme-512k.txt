@@ -1,4 +1,4 @@
-EmuTOS - 512 kB version
+EmuTOS - 512 KB version
 
 This ROM is suitable for the following hardware:
 - TT

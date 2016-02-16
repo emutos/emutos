@@ -1,4 +1,4 @@
-EmuTOS - 192 kB versions
+EmuTOS - 192 KB versions
 
 These ROMs are suitable for the following hardware:
 - ST / STf
@@ -23,10 +23,10 @@ etos192sg.img - Swiss German (PAL)
 etos192us.img - English (NTSC)
 etos192uk.img - English (PAL)
 
-Due to size limitations, the 192 kB ROMs contains:
+Due to size limitations, the 192 KB ROMs contains:
 - no EmuCON
 
-Since EmuTOS 0.9.1, the 192 kB ROMs contain the same desktop as other variants.
+Since EmuTOS 0.9.1, the 192 KB ROMs contain the same desktop as other variants.
 
 These ROM images have been built using:
 make all192

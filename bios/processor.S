@@ -444,8 +444,8 @@ cpushl_loop:
         // then invalidates the caches (data + instruction) except if
         // the DDPI and IDPI bits have been set in the CACR.
         //
-        // The ColdFire V4e core has a 32 kB instruction cache
-        // and a 32 kB data cache. Both caches have the same structure.
+        // The ColdFire V4e core has a 32 KB instruction cache
+        // and a 32 KB data cache. Both caches have the same structure.
         // The data is stored in "Line" elements of 16 bytes.
         // The Lines are stored in a 2D array of 4 Ways * 512 Sets.
         //

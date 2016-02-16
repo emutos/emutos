@@ -239,12 +239,12 @@ WORD initinfo(void)
     pair_start(_("Machine")); cprintf(machine_name()); pair_end();
 /*  pair_start(_("MMU available")); cprintf(_("No")); pair_end(); */
     pair_start(_("Free ST-RAM"));
-        cprintf(_("%ld kB"), /* memtop-membot */ xmxalloc(-1L, MX_STRAM) >> 10);
+        cprintf(_("%ld KB"), /* memtop-membot */ xmxalloc(-1L, MX_STRAM) >> 10);
     pair_end();
 
     if (fastramsize > 0) {
         pair_start(_("Free FastRAM"));
-        cprintf(_("%ld kB"), fastramsize >> 10);
+        cprintf(_("%ld KB"), fastramsize >> 10);
         pair_end();
     }
 

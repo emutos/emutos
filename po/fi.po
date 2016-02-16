@@ -43,8 +43,8 @@ msgid "Free ST-RAM"
 msgstr "Vapaa ST-RAM"
 
 #: bios/initinfo.c:242 bios/initinfo.c:247
-msgid "%ld kB"
-msgstr "%ld kB"
+msgid "%ld KB"
+msgstr "%ld KB"
 
 #: bios/initinfo.c:246
 msgid "Free FastRAM"
