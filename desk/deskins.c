@@ -89,46 +89,62 @@ static WORD lastdisk(void)
 
 
 /*
- *  Routine to place disk icon between the current disk icon and
- *  the trash can
+ *  Check if icon grid position (x,y) is free
  */
-static void ins_posdisk(WORD dx, WORD dy, WORD *pdx, WORD *pdy)
+static WORD grid_free(WORD x,WORD y)
 {
-    WORD  tx, ty;
-    WORD  xdiff, ydiff, xdir, ydir;
     ANODE *pa;
-
-    tx = ty = 0;
 
     for (pa = G.g_ahead; pa; pa = pa->a_next)
     {
-        if (pa->a_type == AT_ISTRSH)
+        if (pa->a_flags & AF_ISDESK)    /* icon on desktop? */
         {
-            tx = pa->a_xspot;
-            ty = pa->a_yspot;
-            break;
+            if ((x == pa->a_xspot/G.g_icw) && (y == pa->a_yspot/G.g_ich))
+            {
+                return FALSE;
+            }
         }
     }
 
-    xdiff = tx - dx;
-    ydiff = ty - dy;
+    return TRUE;
+}
 
-    xdir = (xdiff < 0) ? -1 : 1;
-    ydir = (ydiff < 0) ? -1 : 1;
 
-    xdiff *= xdir;
-    ydiff *= ydir;
+/*
+ *  Routine to place disk icon
+ *
+ *  we start at the position of the sample icon, and scan rightwards for
+ *  a free grid position, wrapping to subsequent lines as necessary.
+ *  if no free position is available, we just return the input position.
+ *
+ *  Input:  position of sample icon
+ *  Output: position of new icon
+ */
+static void ins_posdisk(WORD dx, WORD dy, WORD *pdx, WORD *pdy)
+{
+    WORD  xcnt, ycnt, xin, yin, x, y;
 
-    if (ydiff > xdiff)
+    xcnt = G.g_wdesk / G.g_icw;     /* number of grid positions */
+    ycnt = G.g_hdesk / G.g_ich;
+
+    xin = dx / G.g_icw;             /* input grid position */
+    yin = dy / G.g_ich;
+
+    for (x = xin, y = yin; y < ycnt; y++, x = 0)
     {
-        *pdx = dx;
-        *pdy = dy + (G.g_ich * ydir);
+        for ( ; x < xcnt; x++)
+        {
+            if (grid_free(x,y))
+            {
+                *pdx = dx + (x - xin) * G.g_icw;
+                *pdy = dy + (y - yin) * G.g_ich;
+                return;
+            }
+        }
     }
-    else
-    {
-        *pdx = dx + (G.g_icw * xdir);
-        *pdy = dy;
-    }
+
+    *pdx = dx;
+    *pdy = dy;
 }
 
 
@@ -203,11 +219,7 @@ WORD ins_disk(ANODE *pa)
                     newpa->a_aicon = pa->a_aicon;
                     newpa->a_dicon = NIL;
                     newpa->a_letter = nletter[0];
-                    ins_posdisk(pa->a_xspot, pa->a_yspot, &newpa->a_xspot,
-                                    &newpa->a_yspot);
-
-                    snap_disk(newpa->a_xspot, newpa->a_yspot,
-                                    &newpa->a_xspot, &newpa->a_yspot);
+                    ins_posdisk(pa->a_xspot, pa->a_yspot, &newpa->a_xspot, &newpa->a_yspot);
                 }
                 else
                     fun_alert(1, STAPGONE, NULL);
