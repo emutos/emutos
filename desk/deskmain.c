@@ -23,6 +23,7 @@
 
 #include "xbiosbind.h"
 #include "portab.h"
+#include "biosext.h"
 #include "obdefs.h"
 #include "gsxdefs.h"
 #include "dos.h"
@@ -333,7 +334,9 @@ static void men_update(LONG tree)
         men_list(tree, pvalue, FALSE);
     }
 
-#if !CONF_WITH_SHUTDOWN
+#if CONF_WITH_SHUTDOWN
+    menu_ienable(tree, QUITITEM, can_shutdown());
+#else
     menu_ienable(tree, QUITITEM, FALSE);
 #endif
 
@@ -757,8 +760,11 @@ static WORD hndl_kbd(WORD thechar)
 #endif
 #if CONF_WITH_SHUTDOWN
     case CNTLQ:         /* Shutdown */
-        menu_tnormal(G.a_trees[ADMENU], FILEMENU, FALSE);
-        done = hndl_menu(FILEMENU, QUITITEM);
+        if (can_shutdown())
+        {
+            menu_tnormal(G.a_trees[ADMENU], FILEMENU, FALSE);
+            done = hndl_menu(FILEMENU, QUITITEM);
+        }
         break;
 #endif
     case SHIFT_ARROW_UP:

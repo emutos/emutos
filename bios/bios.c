@@ -21,6 +21,7 @@
 
 #include "config.h"
 #include "portab.h"
+#include "biosext.h"
 #include "bios.h"
 #include "dos.h"
 #include "pd.h"
@@ -526,6 +527,21 @@ static void shutdown(void)
     firebee_shutdown();
 #elif defined(MACHINE_AMIGA)
     amiga_shutdown();
+#endif
+}
+
+/* Will shutdown() succeed ? */
+BOOL can_shutdown(void)
+{
+#if DETECT_NATIVE_FEATURES
+    if (has_nf_shutdown())
+        return TRUE;
+#endif
+
+#if defined(MACHINE_FIREBEE) || defined (MACHINE_AMIGA)
+    return TRUE;
+#else
+    return FALSE;
 #endif
 }
 

@@ -37,6 +37,7 @@ extern long get_xhdi_nfid(void);
 
 /* terminate the execution of the emulator if possible, else no-op */
 extern void nf_shutdown(void);
+extern int has_nf_shutdown(void);
 
 /* load a new OS kernel into the memory to 'addr' ('size' bytes available) */
 extern long nf_bootstrap(char *addr, long size);

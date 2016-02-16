@@ -21,6 +21,7 @@ static int hasNF;
 static long nfid_name;
 static long nfid_stderr;
 static long nfid_xhdi;
+static long nfid_shutdown;
 
 int detect_native_features(void);    /* defined in natfeat.S */
 
@@ -32,11 +33,13 @@ void natfeat_init(void)
         nfid_name = NFID("NF_NAME");
         nfid_stderr = NFID("NF_STDERR");
         nfid_xhdi = NFID("XHDI");
+        nfid_shutdown = NFID("NF_SHUTDOWN");
     }
     else {
         nfid_name = 0;
         nfid_stderr = 0;
         nfid_xhdi = 0;
+        nfid_shutdown = 0;
     }
 }
 
@@ -81,14 +84,17 @@ long get_xhdi_nfid(void)
 /* terminate the execution of the emulator if possible, else no-op */
 void nf_shutdown(void)
 {
-    if(hasNF) {
-        long shutdown_id = NFID("NF_SHUTDOWN");
-        if(shutdown_id) {
-            NFCall(shutdown_id);
-        } else {
-            kprintf("NF_SHUTDOWN not available\n");
-        }
+    if(nfid_shutdown) {
+        NFCall(nfid_shutdown);
+    } else {
+        kprintf("NF_SHUTDOWN not available\n");
     }
+}
+
+/* check if nf_shutdown() is available */
+int has_nf_shutdown(void)
+{
+    return nfid_shutdown > 0;
 }
 
 /* load a new OS kernel into the memory to 'addr' ('size' bytes available) */
