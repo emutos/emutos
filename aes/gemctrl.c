@@ -117,7 +117,7 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
     GRECT   t, f, pt;
     WORD    x, y, w, h;
     WORD    kind;
-    register WORD cpt, message;
+    WORD    cpt, message;
     LONG    tree;
     OBJECT  *obj;
 
@@ -242,7 +242,7 @@ doelev:     message = (cpt == W_HELEV) ? WM_HSLID : WM_VSLID;
 static void hctl_rect(void)
 {
     WORD    title, item;
-    register WORD mesag;
+    WORD    mesag;
     AESPD   *owner;
 
     if ( gl_mntree != 0x0L )
@@ -322,7 +322,7 @@ void ct_mouse(WORD grabit)
  */
 void ctlmgr(void)
 {
-    register WORD ev_which;
+    WORD    ev_which;
     WORD    rets[6];
     WORD    i, wh;
 

@@ -108,9 +108,9 @@ void ob_setxywh(LONG tree, WORD obj, GRECT *pt)
  */
 void ob_format(WORD just, BYTE *raw_str, BYTE *tmpl_str, BYTE *fmt_str)
 {
-    register BYTE   *pfbeg, *ptbeg, *prbeg;
-    BYTE                    *ptend, *prend;
-    register WORD   inc, ptlen, prlen;
+    BYTE *pfbeg, *ptbeg, *prbeg;
+    BYTE *ptend, *prend;
+    WORD inc, ptlen, prlen;
 
     if (*raw_str == '@')
         *raw_str = '\0';
@@ -433,7 +433,7 @@ void ob_draw(LONG tree, WORD obj, WORD depth)
  */
 static WORD get_prev(LONG tree, WORD parent, WORD obj)
 {
-    register WORD nobj, pobj;
+    WORD nobj, pobj;
     OBJECT *treeptr = (OBJECT *)tree;
 
     pobj = (treeptr+parent)->ob_head;
@@ -536,7 +536,7 @@ WORD ob_find(LONG tree, WORD currobj, WORD depth, WORD mx, WORD my)
  */
 void ob_add(LONG tree, WORD parent, WORD child)
 {
-    register WORD lastkid;
+    WORD lastkid;
     OBJECT *treeptr = (OBJECT *)tree;
     OBJECT *parentptr;
 
@@ -562,7 +562,7 @@ void ob_add(LONG tree, WORD parent, WORD child)
  */
 WORD ob_delete(LONG tree, WORD obj)
 {
-    register WORD parent;
+    WORD parent;
     WORD prev, nextsib;
     OBJECT *treeptr = (OBJECT *)tree;
     OBJECT *parentptr, *prevptr;
@@ -615,7 +615,7 @@ WORD ob_delete(LONG tree, WORD obj)
  */
 void ob_order(LONG tree, WORD mov_obj, WORD new_pos)
 {
-    register WORD parent;
+    WORD parent;
     WORD chg_obj, ii, junk;
     OBJECT *treeptr = (OBJECT *)tree;
     OBJECT *parentptr, *movptr, *chgptr;

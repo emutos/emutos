@@ -203,7 +203,7 @@ static void ev_init(EVB evblist[], WORD cnt)
  */
 static AESPD *iprocess(BYTE *pname, PFVOID routine)
 {
-    register ULONG  ldaddr;
+    ULONG ldaddr;
 
     KDEBUG(("iprocess(\"%s\")\n", (const char*)pname));
 
@@ -375,7 +375,7 @@ static void sh_addpath(void)
 
 void sh_deskf(WORD obj, LONG plong)
 {
-    register OBJECT *tree;
+    OBJECT *tree;
 
     tree = rs_trees[DESKTOP];
     *(LONG *)plong = tree[obj].ob_spec;

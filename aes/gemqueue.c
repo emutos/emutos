@@ -32,8 +32,8 @@
 
 static void doq(WORD donq, AESPD *p, QPB *m)
 {
-    register WORD   n, index;
-    register WORD   *om, *nm;
+    WORD n, index;
+    WORD *om, *nm;
 
     n = m->qpb_cnt;
     if (donq)
@@ -86,8 +86,8 @@ static void doq(WORD donq, AESPD *p, QPB *m)
 
 void aqueue(WORD isqwrite, EVB *e, LONG lm)
 {
-    register AESPD  *p;
-    register QPB    *m;
+    AESPD   *p;
+    QPB     *m;
     EVB     **ppe;
     WORD    qready;
 

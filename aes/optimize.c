@@ -323,7 +323,7 @@ WORD wildcmp(BYTE *pwld, BYTE *ptst)
  */
 void ins_char(BYTE *str, WORD pos, BYTE chr, WORD tot_len)
 {
-    register WORD   ii, len;
+    WORD ii, len;
 
     len = strlen(str);
 

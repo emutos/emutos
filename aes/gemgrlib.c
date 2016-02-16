@@ -84,8 +84,8 @@ static void gr_clamp(WORD xorigin, WORD yorigin, WORD wmin, WORD hmin,
 
 static void gr_scale(WORD xdist, WORD ydist, WORD *pcnt, WORD *pxstep, WORD *pystep)
 {
-    register WORD   i;
-    register WORD   dist;
+    WORD i;
+    WORD dist;
 
 
     gr_setup(BLACK);
@@ -162,8 +162,8 @@ static void gr_draw(WORD have2box, GRECT *po, GRECT *poff)
 
 static WORD gr_wait(GRECT *po, GRECT *poff)
 {
-    register WORD   have2box;
-    register WORD   down;
+    WORD have2box;
+    WORD down;
 
     have2box = !rc_equal(&gl_rzero, poff);
 
@@ -263,7 +263,7 @@ void gr_dragbox(WORD w, WORD h, WORD sx, WORD sy, GRECT *pc,
 
 void gr_2box(WORD flag1, WORD cnt, GRECT *pt, WORD xstep, WORD ystep, WORD flag2)
 {
-    register WORD   i;
+    WORD i;
 
     gsx_moff();
     for (i = 0; i < 2; i++)
@@ -279,7 +279,7 @@ void gr_2box(WORD flag1, WORD cnt, GRECT *pt, WORD xstep, WORD ystep, WORD flag2
 
 void gr_movebox(WORD w, WORD h, WORD srcx, WORD srcy, WORD dstx, WORD dsty)
 {
-    register WORD   signx, signy;
+    WORD    signx, signy;
     WORD    cnt;
     WORD    xstep, ystep;
     GRECT   t;
@@ -329,8 +329,8 @@ void gr_shrinkbox(GRECT *po, GRECT *pt)
 
 WORD gr_watchbox(LONG tree, WORD obj, WORD instate, WORD outstate)
 {
-    register WORD   out;
-    register WORD   state;
+    WORD    out;
+    WORD    state;
     GRECT   t;
 
     gsx_sclip(&gl_rscreen);

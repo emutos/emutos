@@ -144,7 +144,7 @@ static WORD fs_active(BYTE *ppath, BYTE *pspec, WORD *pcount)
 {
     WORD ret;
     LONG thefile, fs_index, temp;
-    register WORD i, j, gap;
+    WORD i, j, gap;
     BYTE *fname, allpath[LEN_ZPATH+1];
 
     gsx_mfset(ad_hgmice);
@@ -210,7 +210,7 @@ static WORD fs_active(BYTE *ppath, BYTE *pspec, WORD *pcount)
  */
 static WORD fs_1scroll(WORD curr, WORD count, WORD touchob)
 {
-    register WORD newcurr;
+    WORD newcurr;
 
     newcurr = (touchob == FUPAROW) ? (curr - 1) : (curr + 1);
     if (newcurr < 0)
@@ -228,8 +228,8 @@ static WORD fs_1scroll(WORD curr, WORD count, WORD touchob)
  */
 static void fs_format(LONG tree, WORD currtop, WORD count)
 {
-    register WORD i, cnt;
-    register WORD y, h, th;
+    WORD i, cnt;
+    WORD y, h, th;
     BYTE   *p, name[LEN_FSNAME];
     OBJECT *obj, *treeptr = (OBJECT *)tree;
 
@@ -286,7 +286,7 @@ static void fs_sel(WORD sel, WORD state)
 static WORD fs_nscroll(LONG tree, WORD *psel, WORD curr, WORD count,
                        WORD touchob, WORD n)
 {
-    register WORD i, newcurr, diffcurr;
+    WORD i, newcurr, diffcurr;
     WORD sy, dy, neg;
     GRECT r[2];
 
@@ -461,7 +461,7 @@ static WORD get_drive(char *path)
  */
 WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
 {
-    register WORD touchob, value, fnum;
+    WORD touchob, value, fnum;
     WORD curr, count, sel;
     WORD mx, my;
     LONG tree;
@@ -469,7 +469,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
     BYTE *ad_fpath, *ad_fname, *ad_ftitle;
     WORD drive;
     WORD dclkret, cont, newlist, newsel, newdrive;
-    register BYTE *pstr;
+    BYTE *pstr;
     GRECT pt;
     BYTE locstr[LEN_ZPATH+1], mask[LEN_ZFNAME+1], selname[LEN_FSNAME];
     OBJECT *obj;

@@ -103,7 +103,7 @@ static void fix_chpos(WORD *pfix, WORD offset)
 /************************************************************************/
 void rs_obfix(LONG tree, WORD curob)
 {
-    register WORD offset;
+    WORD offset;
     OBJECT *obj = (OBJECT *)tree + curob;
     WORD *p;
 
@@ -132,8 +132,8 @@ static RSCITEM get_sub(WORD rsindex, WORD rtype, WORD rsize)
 static RSCITEM get_addr(UWORD rstype, UWORD rsindex)
 {
     RSCITEM item;
-    register WORD size;
-    register WORD rt;
+    WORD size;
+    WORD rt;
     WORD valid;
 
     valid = TRUE;
@@ -206,7 +206,7 @@ static RSCITEM get_addr(UWORD rstype, UWORD rsindex)
 
 static LONG fix_long(RSCITEM item)
 {
-    register LONG lngval;
+    LONG lngval;
 
     lngval = *item.lptr;
     if (lngval != -1L)
@@ -222,7 +222,7 @@ static LONG fix_long(RSCITEM item)
 
 static void fix_trindex(void)
 {
-    register WORD ii;
+    WORD ii;
     RSCITEM item;
     OBJECT *root;
 
@@ -240,8 +240,8 @@ static void fix_trindex(void)
 
 static void fix_objects(void)
 {
-    register WORD ii;
-    register WORD obtype;
+    WORD ii;
+    WORD obtype;
     RSCITEM item;
 
     for (ii = rs_hdr.wordptr[R_NOBS]-1; ii >= 0; ii--)
@@ -257,7 +257,7 @@ static void fix_objects(void)
 
 static void fix_nptrs(WORD cnt, WORD type)
 {
-    register WORD i;
+    WORD i;
 
     for (i = cnt; i >= 0; i--)
         fix_long(get_addr(type, i));
@@ -272,7 +272,7 @@ static WORD fix_ptr(WORD type, WORD index)
 
 static void fix_tedinfo(void)
 {
-    register WORD ii;
+    WORD ii;
     RSCITEM item;
 
     for (ii = rs_hdr.wordptr[R_NTED]-1; ii >= 0; ii--)

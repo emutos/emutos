@@ -252,7 +252,7 @@ static void sh_show(const BYTE *lcmd)
  */
 BYTE *sh_name(BYTE *ppath)
 {
-    register BYTE *pname;
+    BYTE *pname;
 
     pname = &ppath[strlen(ppath)];
     while((pname >= ppath) && (*pname != '\\') && (*pname != ':'))
@@ -322,9 +322,9 @@ void sh_envrn(BYTE **ppath, const BYTE *psrch)
  */
 static WORD sh_path(WORD whichone, BYTE *dp, BYTE *pname)
 {
-    register BYTE tmp, last;
+    BYTE tmp, last;
     BYTE *lp;
-    register WORD i;
+    WORD i;
 
     last = 0;
 

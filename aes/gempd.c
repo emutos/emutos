@@ -63,7 +63,7 @@ AESPD *fpdnm(BYTE *pname, UWORD pid)
 
 static AESPD *getpd(void)
 {
-    register AESPD  *p;
+    AESPD *p;
 
     /* we got all our memory so link it  */
     p = pd_index(curpid);
@@ -116,7 +116,7 @@ void p_setappdir(AESPD *pd, BYTE *pfilespec)
 
 AESPD *pstart(PFVOID pcode, BYTE *pfilespec, LONG ldaddr)
 {
-    register AESPD  *px;
+    AESPD *px;
 
     /* create process to execute it */
     px = getpd();
@@ -140,7 +140,7 @@ AESPD *pstart(PFVOID pcode, BYTE *pfilespec, LONG ldaddr)
 /* put pd pi into list, *root at the end */
 void insert_process(AESPD *pi, AESPD **root)
 {
-    register AESPD  *p, *q;
+    AESPD *p, *q;
 
     /* find the end */
     for (p = (q = (AESPD *)root)->p_link; p; p = (q = p)->p_link)

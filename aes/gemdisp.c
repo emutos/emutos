@@ -49,7 +49,7 @@
 
 void forkq(FCODE fcode, LONG fdata)
 {
-    register FPD    *f;
+    FPD *f;
 
     /* q a fork process, enter with ints OFF */
     if (fpcnt == 0)
@@ -93,8 +93,8 @@ static void mwait_act(AESPD *p)
 
 void forker(void)
 {
-    register FPD    *f;
-    register AESPD  *oldrl;
+    FPD *f;
+    AESPD *oldrl;
     FPD g;
 
     oldrl = rlr;
@@ -149,7 +149,7 @@ void forker(void)
 
 void chkkbd(void)
 {
-    register WORD   achar, kstat;
+    WORD achar, kstat;
 
     /* poll keybd */
     if (!gl_play)
@@ -173,7 +173,7 @@ void chkkbd(void)
 
 static void schedule(void)
 {
-    register AESPD  *p;
+    AESPD *p;
 
     /* run through lists until someone is on the rlr
      * or the fork list
@@ -211,7 +211,7 @@ extern void disp(void); /* called only from aes/gemasm.S */
 
 void disp(void)
 {
-    register AESPD  *p;
+    AESPD *p;
 
     /* take the process p off the ready list root */
     p = rlr;

@@ -249,7 +249,7 @@ static void nq(UWORD ch, CQUEUE *qptr)
  */
 UWORD dq(CQUEUE *qptr)
 {
-    register WORD   q2;
+    WORD q2;
 
     qptr->c_cnt--;
     q2 = qptr->c_front++;
@@ -292,7 +292,7 @@ void kchange(LONG fdata)
 
 void post_keybd(CDA *c, UWORD ch)
 {
-    register EVB    *e;
+    EVB *e;
 
     /* if someone is waiting, wake him up */
     if ((e = c->c_iiowait) != 0)
@@ -309,7 +309,7 @@ void post_keybd(CDA *c, UWORD ch)
  */
 static void chkown(void)
 {
-    register WORD   val;
+    WORD val;
 
     val = chk_ctrl(xrat, yrat);
     if (val == 1)
@@ -341,7 +341,7 @@ void bchange(LONG fdata)
 
 WORD downorup(WORD new, LONG buparm)
 {
-    register WORD   flag, mask, val;
+    WORD flag, mask, val;
 
     flag = (buparm >> 24) & 0x00ffL;
     mask = (buparm >> 8) & 0x00ffL;
@@ -433,7 +433,7 @@ static WORD inorout(EVB *e, WORD rx, WORD ry)
  */
 static void post_mb(WORD ismouse, EVB *elist, WORD parm1, WORD parm2)
 {
-    register EVB    *e1, *e;
+    EVB     *e1, *e;
     UWORD   clicks;
 
     for (e = elist; e; e = e1)
@@ -474,7 +474,7 @@ void akbin(EVB *e)
 
 void adelay(EVB *e, LONG c)
 {
-    register EVB   *p, *q;
+    EVB *p, *q;
 
     if (c == 0L)
         c = 1L;
@@ -523,7 +523,7 @@ void adelay(EVB *e, LONG c)
 
 void abutton(EVB *e, LONG p)
 {
-    register WORD   bclicks;
+    WORD bclicks;
 
     if ((rlr == gl_mowner) && downorup(button, p))
     {

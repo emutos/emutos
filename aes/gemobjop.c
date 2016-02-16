@@ -78,8 +78,8 @@ BYTE ob_sst(LONG tree, WORD obj, LONG *pspec, WORD *pstate, WORD *ptype,
 void everyobj(LONG tree, WORD this, WORD last, EVERYOBJ_CALLBACK routine,
               WORD startx, WORD starty, WORD maxdep)
 {
-    register WORD   tmp1;
-    register WORD   depth;
+    WORD    tmp1;
+    WORD    depth;
     WORD    x[8], y[8];
     OBJECT  *obj;
 

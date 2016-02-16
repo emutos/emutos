@@ -126,9 +126,9 @@ WORD ev_multi(WORD flags, MOBLK *pmo1, MOBLK *pmo2, LONG tmcount,
               LONG buparm, LONG mebuff, WORD prets[])
 {
     QPB     m;
-    register EVSPEC which;
-    register WORD   what;
-    register CQUEUE *pc;
+    EVSPEC  which;
+    WORD    what;
+    CQUEUE  *pc;
 
     /* say nothing has happened yet */
     what = 0;

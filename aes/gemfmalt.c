@@ -272,7 +272,7 @@ static void fm_build(LONG tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
 
 WORD fm_alert(WORD defbut, LONG palstr)
 {
-    register WORD i;
+    WORD i;
     WORD inm, nummsg, mlenmsg, numbut, mlenbut, image;
     LONG tree;
     GRECT d, t;

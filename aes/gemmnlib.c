@@ -91,7 +91,7 @@ static WORD menu_sub(LONG *ptree, WORD ititle)
 #if 0  /* unused */
 WORD mn_getda(AESPD *ppd)
 {
-        register WORD   i;
+        WORD i;
 
         for (i=0; i<NUM_ACCS; i++)
         {
@@ -105,7 +105,7 @@ WORD mn_getda(AESPD *ppd)
 
 static void menu_fixup(void)
 {
-    register OBJECT *pob, *obj;
+    OBJECT  *pob, *obj;
     GRECT   t;
     WORD    themenus, i, cnt, st;
     LONG    tree;
@@ -201,7 +201,7 @@ UWORD do_chg(LONG tree, WORD iitem, UWORD chgvalue,
 /* dodraw:       draw resulting change*/
 /* chkdisabled:  only if item enabled */
 {
-    register UWORD  curr_state;
+    UWORD   curr_state;
     OBJECT  *obj;
 
     obj = ((OBJECT *)tree) + iitem;
@@ -266,7 +266,7 @@ static void menu_sr(WORD saveit, LONG tree, WORD imenu)
 static WORD menu_down(WORD ititle)
 {
     LONG    tree;
-    register WORD   imenu;
+    WORD    imenu;
 
     tree = gl_mntree;
     imenu = menu_sub(&tree, ititle);
@@ -286,10 +286,10 @@ static WORD menu_down(WORD ititle)
 
 WORD mn_do(WORD *ptitle, WORD *pitem)
 {
-    register LONG   tree;
+    LONG    tree;
     LONG    buparm, cur_tree, last_tree;
     WORD    mnu_flags, done;
-    register WORD   cur_menu, cur_item, last_item;
+    WORD    cur_menu, cur_item, last_item;
     WORD    cur_title, last_title;
     UWORD   ev_which;
     MOBLK   p1mor, p2mor;
@@ -487,7 +487,7 @@ void mn_bar(LONG tree, WORD showit, WORD pid)
  */
 void mn_clsda(void)
 {
-    register WORD   i;
+    WORD i;
 
     for (i = 0; i < NUM_ACCS; i++)
     {

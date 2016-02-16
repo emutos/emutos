@@ -106,7 +106,7 @@ void ap_rdwr(WORD code, AESPD *p, WORD length, LONG pbuff)
  */
 WORD ap_find(LONG pname)
 {
-    register AESPD  *p;
+    AESPD  *p;
 
     p = fpdnm((BYTE *)pname, 0);
     return p ? p->p_pid : -1;

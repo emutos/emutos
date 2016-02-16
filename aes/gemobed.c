@@ -41,7 +41,7 @@
 
 static void ob_getsp(LONG tree, WORD obj, TEDINFO *pted)
 {
-    register LONG   spec;
+    LONG    spec;
     OBJECT  *objptr = ((OBJECT *)tree) + obj;
 
     spec = objptr->ob_spec;
@@ -53,7 +53,7 @@ static void ob_getsp(LONG tree, WORD obj, TEDINFO *pted)
 
 void ob_center(LONG tree, GRECT *pt)
 {
-    register WORD   xd, yd, wd, hd;
+    WORD    xd, yd, wd, hd;
     OBJECT  *root = (OBJECT *)tree;
 
     wd = root->ob_width;
@@ -102,7 +102,7 @@ static WORD scan_to_end(BYTE *pstr, WORD idx, BYTE chr)
  */
 static WORD find_pos(BYTE *str, WORD pos)
 {
-    register WORD   i;
+    WORD i;
 
     for (i = 0; pos > 0; i++)
     {
@@ -172,7 +172,7 @@ static void curfld(LONG tree, WORD obj, WORD new_pos, WORD dist)
  */
 static WORD instr(BYTE chr, BYTE *str)
 {
-    register BYTE   test1, test2;
+    BYTE test1, test2;
 
     while(*str)
     {
@@ -196,8 +196,8 @@ static WORD instr(BYTE chr, BYTE *str)
  */
 static WORD check(BYTE *in_char, BYTE valchar)
 {
-    register WORD   upcase;
-    register BYTE   *rstr;
+    WORD upcase;
+    BYTE *rstr;
 
     upcase = TRUE;
     rstr = NULL;
@@ -281,7 +281,7 @@ WORD ob_edit(LONG tree, WORD obj, WORD in_char, WORD *idx, WORD kind)
 {
     WORD    pos, len;
     WORD    ii, no_redraw, start, finish, nstart, nfinish;
-    register WORD   dist, tmp_back, cur_pos;
+    WORD    dist, tmp_back, cur_pos;
     BYTE    bin_char;
 
     if ((kind == EDSTART) || (obj <= 0))
