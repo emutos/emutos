@@ -141,8 +141,8 @@ static void set_owner(void *addr, PD *p, MPB *mpb)
 
 static void     ixterm( PD *r )
 {
-    register WORD h;
-    register WORD i;
+    WORD h;
+    WORD i;
 
     /* check the standard devices in both file tables  */
 
@@ -188,8 +188,8 @@ static void     ixterm( PD *r )
 
 static  WORD envsize( char *env )
 {
-    register char       *e ;
-    register WORD       cnt ;
+    char *e;
+    WORD cnt;
 
     for( e = env, cnt = 0 ; !(*e == '\0' && *(e+1) == '\0') ; ++e, ++cnt )
         ;

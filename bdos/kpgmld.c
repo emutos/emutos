@@ -126,8 +126,8 @@ LONG   kpgmld(PD *p, FH h, PGMHDR01 *hd )
 
 static LONG     pgmld01( FH h , PD *pdptr, PGMHDR01 *hd)
 {
-    register PGMINFO    *pi ;
-    register PD         *p ;
+    PGMINFO    *pi ;
+    PD         *p ;
     PGMINFO             pinfo ;
     BYTE                *cp ;
     LONG                relst ;
@@ -268,11 +268,11 @@ static LONG     pgmld01( FH h , PD *pdptr, PGMHDR01 *hd)
 
 static LONG     pgfix01( void *lastcp, LONG nrelbytes , PGMINFO *pi )
 {
-    register UBYTE      *cp ;           /*  code pointer                */
-    register UBYTE      *rp ;           /*  relocation info pointer     */
-    register LONG       n ;             /*  nbr of relocation bytes     */
-    register UBYTE      *bbase ;        /*  base addr of bss segment    */
-    register LONG       tbase ;         /*  base addr of text segment   */
+    UBYTE      *cp ;            /*  code pointer                */
+    UBYTE      *rp ;            /*  relocation info pointer     */
+    LONG       n ;              /*  nbr of relocation bytes     */
+    UBYTE      *bbase ;         /*  base addr of bss segment    */
+    LONG       tbase ;          /*  base addr of text segment   */
 
     cp = lastcp ;
     rp = (UBYTE *)pi->pi_bbase ;

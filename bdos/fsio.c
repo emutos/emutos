@@ -209,7 +209,7 @@ long    ixread(OFD *p, long len, void *ubufr)
 
 long    xwrite(int h, long len, void *ubufr)
 {
-    register OFD *p;
+    OFD *p;
     long ret;
 
     p = getofd(h);
@@ -292,7 +292,7 @@ static void addit(OFD *p, long siz, int flg)
 
 static long xrw(int wrtflg, OFD *p, long len, char *ubufr)
 {
-    register DMD *dm;
+    DMD *dm;
     char *bufp;
     unsigned int bytn, tailrec;
     int lenxfr, lentail;
@@ -472,7 +472,7 @@ eof:
 
 static void usrio(int rwflg, int num, long strt, char *ubuf, DMD *dm)
 {
-    register BCB *b;
+    BCB *b;
 
     for (b = bufl[BI_DATA]; b; b = b->b_link)
         if ((b->b_bufdrv == dm->m_drvnum) &&

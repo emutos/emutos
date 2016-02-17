@@ -27,7 +27,7 @@
 #if !(USE_STATIC_INLINES)
 char *strcpy(char *dest, const char *src)
 {
-    register char *tmp = dest;
+    char *tmp = dest;
 
     while( (*tmp++ = *src++) )
         ;
@@ -92,7 +92,7 @@ unsigned long int strlen(const char *s)
 
 char *strcat(char *dest, const char *src)
 {
-    register char *tmp = dest;
+    char *tmp = dest;
     while( *tmp++ )
         ;
     tmp --;

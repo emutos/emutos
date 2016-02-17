@@ -115,7 +115,7 @@ void flush(BCB *b)
 char *getrec(RECNO recn, OFD *of, int wrtflg)
 {
     DMD *dm = of->o_dmd;
-    register BCB *b;
+    BCB *b;
     BCB *p,*mtbuf,**q,**phdr;
     int n,err;
 

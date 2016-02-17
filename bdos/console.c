@@ -126,8 +126,8 @@ long xauxostat(void)
  */
 static void conbrk(int h)
 {
-    register long ch;
-    register int stop, c;
+    long ch;
+    int stop, c;
 
     stop = 0;
     if ( Bconstat(h) ) {
@@ -333,8 +333,8 @@ long xconin(void)
  */
 long x8in(void)
 {
-    register int h;
-    register long ch;
+    int h;
+    long ch;
 
     h = HXFORM(run->p_uft[0]);
     conbrk(h);
@@ -408,9 +408,9 @@ static void newline(int h, int startcol)
 /* col is the starting console column */
 static int backsp(int h, char *cbuf, int retlen, int col)
 {
-    register char       ch;             /* current character            */
-    register int        i;
-    register char       *p;             /* character pointer            */
+    char       ch;              /* current character            */
+    int        i;
+    char       *p;              /* character pointer            */
 
     if (retlen) --retlen;
                                 /* if buffer non-empty, decrease it by 1 */

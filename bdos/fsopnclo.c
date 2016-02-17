@@ -121,8 +121,8 @@ long    xcreat(char *name, char attr)
  */
 long ixcreat(char *name, char attr)
 {
-        register DND *dn;
-        register OFD *fd;
+        DND *dn;
+        OFD *fd;
         FCB *f;
         const char *s;
         char    n[2],a[11];                     /*  M01.01.03   */
@@ -275,8 +275,8 @@ ixopen(char *name, int mod)
 
 static long makopn(FCB *f, DND *dn, int h, int mod)
 {
-        register OFD *p;
-        register OFD *p2;
+        OFD *p;
+        OFD *p2;
         DMD *dm;                        /*  M01.01.03   */
 
         dm = dn->d_drv;
@@ -333,7 +333,7 @@ static long makopn(FCB *f, DND *dn, int h, int mod)
 
 static long opnfil(FCB *f, DND *dn, int mod)
 {
-        register int i;
+        int i;
         int h;
 
         /* find free sft handle */
@@ -366,10 +366,10 @@ static long opnfil(FCB *f, DND *dn, int mod)
 
 static FTAB *sftsrch(int field, char *ptr)
 {
-        register FTAB   *sftp ; /*  scan ptr for sft                    */
-        register int    i ;
-        register OFD    *ofd ;
-        register PD             *pd ;
+        FTAB   *sftp ;  /*  scan ptr for sft                    */
+        int    i ;
+        OFD    *ofd ;
+        PD             *pd ;
 
         switch( field )
         {
@@ -398,8 +398,8 @@ static FTAB *sftsrch(int field, char *ptr)
 
 static void sftdel( FTAB *sftp )
 {
-        register FTAB   *s ;
-        register OFD    *ofd ;
+        FTAB   *s ;
+        OFD    *ofd ;
 
         /*  clear out the entry  */
 
@@ -491,7 +491,7 @@ long    ixclose(OFD *fd, int part)
 {                                       /*  M01.01.03                   */
         OFD *p,**q;
         long tmp;
-        register int i;                 /*  M01.01.03                   */
+        int i;                          /*  M01.01.03                   */
         BCB *b;
 
 
@@ -571,8 +571,8 @@ long    ixclose(OFD *fd, int part)
 
 long xunlink(char *name)
 {
-        register DND *dn;
-        register FCB *f;
+        DND *dn;
+        FCB *f;
         const char *s;
         long pos;
 
@@ -618,9 +618,9 @@ long xunlink(char *name)
 
 long ixdel(DND *dn, FCB *f, long pos)
 {
-        register OFD *fd;
+        OFD *fd;
         DMD *dm;
-        register int n2;
+        int n2;
         int n;
         char c;
 

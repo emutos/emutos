@@ -116,7 +116,7 @@ int syshnd(int h)
 
 long dup(int h)
 {
-    register int i;
+    int i;
 
     if ((h<0) || (h >= NUMSTD))
         return(EIHNDL);         /* only dup standard */

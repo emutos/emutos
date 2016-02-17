@@ -197,8 +197,8 @@ static int namlen(char *s11)                            /* M01.01.1107.01 */
  */
 long xmkdir(char *s)
 {
-    register OFD *f;
-    register FCB *f2;
+    OFD *f;
+    FCB *f2;
     OFD *fd,*f0;
     FCB *b;
     DND *dn;
@@ -292,7 +292,7 @@ long xmkdir(char *s)
  */
 long xrmdir(char *p)
 {
-    register DND *d;
+    DND *d;
     DND *d1,**q;
     FCB *f;
     OFD *fd,*f2;                    /* M01.01.03 */
@@ -433,7 +433,7 @@ long xchmod(char *p, int wrt, char mod)
  *  returns:
  *      error code.
  */
-long ixsfirst(char *name, register WORD att, register DTAINFO *addr)
+long ixsfirst(char *name, WORD att, DTAINFO *addr)
 {
     const char *s;              /*  M01.01.03                   */
     DND *dn;
@@ -528,8 +528,8 @@ long xsfirst(char *name, int att)
  */
 long xsnext(void)
 {
-    register FCB *f;
-    register DTAINFO *dt;
+    FCB *f;
+    DTAINFO *dt;
     DND *dn;
 
     dt = (DTAINFO *)run->p_xdta;            /* M01.01.1209.01 */
@@ -614,7 +614,7 @@ long xgsdtof(DOSTIME *buf, int h, int wrt)
  */
 void builds(char *s1, char *s2)
 {
-    register int i;
+    int i;
     char c;
 
     /*
@@ -1280,7 +1280,7 @@ static const long negone = { -1L };
  */
 DND *findit(char *name, const char **sp, int dflag)
 {
-    register DND *p;
+    DND *p;
     const char *n;
     DND *pp, *newp;
     int i;
@@ -1387,10 +1387,10 @@ DND *findit(char *name, const char **sp, int dflag)
  *      searching.  A posp of -1 means to use the scan pointer in the dnd, and
  *      return the pointer to the DND, not the FCB.
  */
-FCB *scan(register DND *dnd, const char *n, WORD att, LONG *posp)
+FCB *scan(DND *dnd, const char *n, WORD att, LONG *posp)
 {
     char name[12];
-    register FCB *fcb;
+    FCB *fcb;
     OFD *fd;
     DND *dnd1;
     BOOL m;                 /*  T: found a matching FCB             */
@@ -1475,10 +1475,10 @@ FCB *scan(register DND *dnd, const char *n, WORD att, LONG *posp)
 static DND *makdnd(DND *p, FCB *b)
 {
     DIRTBL_ENTRY *dt;
-    register DND *p1;
-    register DND **prev;
+    DND *p1;
+    DND **prev;
     OFD *fd;
-    register int i;
+    int i;
 
     fd = p->d_ofd;
 
@@ -1563,9 +1563,9 @@ static DND *makdnd(DND *p, FCB *b)
  */
 static DND *dcrack(const char **np)
 {
-    register const char *n;
+    const char *n;
     DND *p;
-    register int d;
+    int d;
     LONG l;                                             /* M01.01.1212.01 */
 
     KDEBUG(("\n dcrack(%p -> '%s')",np,*np));
@@ -1632,8 +1632,8 @@ static DND *dcrack(const char **np)
  */
 static int getpath(const char *p, char *d, int dirspec)
 {
-    register int i, i2;
-    register const char *p1;
+    int i, i2;
+    const char *p1;
 
     for (i = 0, p1 = p; *p1 && (*p1 != SLASH); p1++, i++)
         ;
@@ -1673,7 +1673,7 @@ static int getpath(const char *p, char *d, int dirspec)
 /* char *s2  -   name in fcb */
 static BOOL match(char *s1, char *s2)
 {
-    register int i;
+    int i;
 
     /*
      **  skip VFAT long file name entries
@@ -1745,7 +1745,7 @@ static void makbuf(FCB *f, DTAINFO *dt)
  */
 static DND *getdnd(char *n, DND *d)
 {
-    register DND *dnd;
+    DND *dnd;
 
     for (dnd = d->d_left; dnd; dnd = dnd->d_right)
     {
