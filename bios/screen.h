@@ -34,11 +34,14 @@
 #define SPSHIFT             0xffff8266L
 
 #define TT_SHIFTER_BITMASK  0x970f      /* valid bits in TT_SHIFTER */
+#define TT_HYPER_MONO       0x1000          /* bit usage */
 
 #define ST_PALETTE_REGS     0xffff8240L
 #define FALCON_PALETTE_REGS 0xffff9800L
 
 #define TT_PALETTE_BITMASK  0x0fff      /* valid bits in TT_PALETTE_REGS */
+
+#define TT_DUOCHROME_INVERT 0x0002      /* inversion bit in TT h/w palette reg 0 */
 
 /* misc routines */
 WORD check_moderez(WORD moderez);

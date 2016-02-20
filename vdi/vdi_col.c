@@ -9,12 +9,14 @@
 
 #include "config.h"
 #include "portab.h"
+#include "intmath.h"
 #include "vdi_defs.h"
 #include "string.h"
 #include "machine.h"
 #include "xbiosbind.h"
 #include "vdi_col.h"
 #include "lineavars.h"
+#include "screen.h"
 
 #define EXTENDED_PALETTE (CONF_WITH_VIDEL || CONF_WITH_TT_SHIFTER)
 
@@ -250,14 +252,194 @@ static int ste2vdi(int col)
 /* Create a TT color value from VDI color */
 static int vdi2tt(int col)
 {
-    return col * 3 / 200;
+    return (col * 15 + 500) / 1000;
 }
 
 
 /* Create a VDI color value from TT color */
 static int tt2vdi(int col)
 {
-    return (col & 0x0f) * 200 / 3;
+    return ((col & 0x0f) * 1000 + 7) / 15;
+}
+
+
+/* Return adjusted VDI color number for TT systems
+ *
+ * This ensures that we access the right save area
+ * (REQ_COL or req_col2) if bank switching is in effect
+ */
+static WORD adjust_tt_colnum(WORD colnum)
+{
+    UWORD tt_shifter, rez, bank;
+
+    tt_shifter = EgetShift();
+    rez = (tt_shifter>>8) & 0x07;
+    switch(rez) {
+    case ST_LOW:
+    case ST_MEDIUM:
+    case TT_MEDIUM:
+        bank = tt_shifter & 0x000f;
+        colnum += bank * 16;
+    }
+
+    return colnum;
+}
+
+
+/* Set an entry in the TT hardware palette
+ *
+ * TT video hardware has several obscure features which complicate
+ * the VDI handler; we try to be TOS3-compatible
+ *
+ * Input is VDI-style: colnum is VDI pen#, rgb[] entries are 0-1000
+ */
+static void set_tt_color(WORD colnum, WORD *rgb)
+{
+    WORD r, g, b;
+    WORD hwreg, hwvalue;
+    UWORD tt_shifter, rez, bank, mask;
+
+    /*
+     * first we determine which h/w palette register to update
+     */
+    hwreg = MAP_COL[colnum];    /* default, can be modified below */
+
+    tt_shifter = EgetShift();
+    rez = (tt_shifter>>8) & 0x07;
+    bank = tt_shifter & 0x000f;
+    mask = DEV_TAB[13] - 1;
+
+    switch(rez) {
+    case ST_LOW:
+    case ST_MEDIUM:
+    case TT_MEDIUM:
+        hwreg &= mask;      /* mask out unwanted bits */
+        hwreg += bank * 16; /* allow for bank number */
+        break;
+    case ST_HIGH:   /* also known as duochrome on a TT */
+        /*
+         * set register 254 or 255 depending on the VDI pen#
+         * and the invert bit in palette register 0
+         */
+        hwvalue = EsetColor(0,-1);
+        if (hwvalue & TT_DUOCHROME_INVERT)
+            hwreg = 255 - colnum;
+        else hwreg = 254 + colnum;
+        break;
+    case TT_HIGH:
+        return;
+    }
+
+    /*
+     * then we determine what value to put in it
+     */
+    r = rgb[0];     /* VDI values */
+    g = rgb[1];
+    b = rgb[2];
+
+    if (tt_shifter & TT_HYPER_MONO)
+    {
+        /* we do what TOS3 does: first, derive a weighted value 0-1000
+         * based on input RGB values; then, scale it to a value 0-255
+         * (which the h/w applies to all 3 guns)
+         */
+        hwvalue = mul_div(30,r,100) + mul_div(59,g,100) + mul_div(11,b,100);
+        hwvalue = mul_div(255,hwvalue,1000);
+    }
+    else
+    {
+        hwvalue = (vdi2tt(r) << 8) | (vdi2tt(g) << 4) | vdi2tt(b);        
+    }
+    EsetColor(hwreg, hwvalue);
+}
+
+
+/*
+ * Return VDI values for hyper mono mode
+ *
+ * In hyper mono mode, the original VDI values are not even approximately
+ * preserved in the hardware palette registers.  So we do what TOS3 does:
+ * we fake the return values based on the previously saved values.
+ */
+static void get_tt_hyper_mono(WORD colnum,WORD *retval)
+{
+    WORD *save, i, vditemp;
+
+    save = (colnum < 16) ? REQ_COL[colnum] : req_col2[colnum-16];
+
+    for (i = 0; i < 3; i++, save++, retval++)
+    {
+        /* first clamp the raw values */
+        if (*save > 1000)
+            vditemp = 1000;
+        else if (*save < 0)
+            vditemp = 0;
+        else vditemp = *save;
+
+        /*
+         * convert to h/w value then back to the equivalent VDI value,
+         * just as if we had actually written them in a normal mode
+         */
+        *retval = tt2vdi(vdi2tt(vditemp));
+    }
+}
+
+
+/* Query an entry in the TT hardware palette
+ *
+ * TT video hardware has several obscure features which complicate
+ * the VDI handler; we try to be TOS3-compatible
+ *
+ * Input colnum is VDI pen#, returned values are nominally 0-1000
+ */
+static void query_tt_color(WORD colnum,WORD *retval)
+{
+    WORD hwreg, hwvalue;
+    UWORD tt_shifter, rez, bank, mask;
+
+    /*
+     * first we determine which h/w palette register to read
+     */
+    hwreg = MAP_COL[colnum];    /* default, can be modified below */
+
+    tt_shifter = EgetShift();
+    rez = (tt_shifter>>8) & 0x07;
+    bank = tt_shifter & 0x000f;
+    mask = DEV_TAB[13] - 1;
+
+    switch(rez) {
+    case ST_LOW:
+    case ST_MEDIUM:
+    case TT_MEDIUM:
+        hwreg &= mask;      /* mask out unwanted bits */
+        hwreg += bank * 16; /* allow for bank number */
+        break;
+    case ST_HIGH:   /* also known as duochrome on a TT */
+        /*
+         * set register 254 or 255 depending on the VDI pen#
+         * and the invert bit in palette register 0
+         */
+        hwvalue = EsetColor(0,-1);
+        if (hwvalue & TT_DUOCHROME_INVERT)
+            hwreg = 255 - colnum;
+        else hwreg = 254 + colnum;
+        break;
+    case TT_HIGH:
+        retval[0] = retval[1] = retval[2] = colnum ? 0 : 1000;
+        return;
+    }
+
+    if (tt_shifter & TT_HYPER_MONO)
+    {
+        get_tt_hyper_mono(colnum,retval);
+    }
+    else
+    {
+        hwvalue = EsetColor(hwreg,-1);
+        retval[0] = tt2vdi(hwvalue >> 8);
+        retval[1] = tt2vdi(hwvalue >> 4);
+        retval[2] = tt2vdi(hwvalue);
+    }
 }
 #endif
 
@@ -330,13 +512,14 @@ static WORD adjust_mono_values(WORD colnum,WORD *rgb)
 
 
 /* Set an entry in the hardware color palette
- * Note that rgb[] entries are VDI-style values, assumed to be 0-1000
+ *
+ * Input is VDI-style: colnum is VDI pen#, rgb[] entries are 0-1000
  */
-static void set_color(int colnum, WORD *rgb)
+static void set_color(WORD colnum, WORD *rgb)
 {
     WORD r, g, b;
+    WORD hwreg = MAP_COL[colnum];   /* get hardware register */
 
-    colnum = MAP_COL[colnum];   /* get hardware register */
     r = rgb[0];
     g = rgb[1];
     b = rgb[2];
@@ -347,7 +530,7 @@ static void set_color(int colnum, WORD *rgb)
         LONG videlrgb;
 
         videlrgb = (vdi2videl(r) << 16) | (vdi2videl(g) << 8) | vdi2videl(b);
-        VsetRGB(colnum,1,(LONG)&videlrgb);
+        VsetRGB(hwreg,1,(LONG)&videlrgb);
         return;
     }
 #endif
@@ -355,18 +538,15 @@ static void set_color(int colnum, WORD *rgb)
 #if CONF_WITH_TT_SHIFTER
     if (has_tt_shifter)
     {
-        r = vdi2tt(r);
-        g = vdi2tt(g);
-        b = vdi2tt(b);        
-        EsetColor(colnum, (r << 8) | (g << 4) | b);
+        set_tt_color(colnum,rgb);
         return;
     }
 #endif
 
     if (v_planes == 1)  /* special handling for monochrome screens */
     {
-        colnum = adjust_mono_values(colnum,rgb);/* may update rgb[] */
-        if (colnum < 0)                         /* 'do nothing' */
+        hwreg = adjust_mono_values(hwreg,rgb);  /* may update rgb[] */
+        if (hwreg < 0)                          /* 'do nothing' */
             return;
         r = rgb[0];
         g = rgb[1];
@@ -388,7 +568,7 @@ static void set_color(int colnum, WORD *rgb)
         b = vdi2st(b);
     }
 
-    Setcolor(colnum, (r << 8) | (g << 4) | b);
+    Setcolor(hwreg, (r << 8) | (g << 4) | b);
 }
 
 
@@ -397,7 +577,7 @@ static void set_color(int colnum, WORD *rgb)
  */
 void _vs_color(Vwk *vwk)
 {
-    int colnum, i;
+    WORD colnum, i;
     WORD *intin, rgb[3], *rgbptr;
 
     colnum = INTIN[0];
@@ -408,6 +588,11 @@ void _vs_color(Vwk *vwk)
         /* It was out of range */
         return;
     }
+
+#if CONF_WITH_TT_SHIFTER
+    if (has_tt_shifter)
+        colnum = adjust_tt_colnum(colnum);  /* handles palette bank issues */
+#endif
 
     /*
      * Copy raw values to the "requested colour" arrays, then clamp
@@ -428,6 +613,7 @@ void _vs_color(Vwk *vwk)
         else *rgbptr = *intin;
     }
 
+    colnum = INTIN[0];      /* may have been munged on TT system, see above */
     set_color(colnum, rgb);
 }
 
@@ -492,7 +678,7 @@ void init_colors(void)
  */
 void _vq_color(Vwk *vwk)
 {
-    int colnum, c;
+    WORD colnum, c, hwreg;
 
     colnum = INTIN[0];
 
@@ -507,6 +693,11 @@ void _vq_color(Vwk *vwk)
         return;
     }
     INTOUT[0] = colnum;
+
+#if CONF_WITH_TT_SHIFTER
+    if (has_tt_shifter)
+        colnum = adjust_tt_colnum(colnum);  /* handles palette bank issues */
+#endif
 
     if (INTIN[1] == 0)  /* return last-requested value */
     {
@@ -530,45 +721,41 @@ void _vq_color(Vwk *vwk)
     /*
      * return actual current value
      */
-    colnum = MAP_COL[colnum];   /* get hardware register */
+    colnum = INTIN[0];          /* may have been munged on TT system, see above */
+    hwreg = MAP_COL[colnum];    /* get hardware register */
 
 #if CONF_WITH_VIDEL
     if (has_videl)
     {
     LONG rgb;
 
-        VgetRGB(colnum,1,(LONG)&rgb);
+        VgetRGB(hwreg,1,(LONG)&rgb);
         INTOUT[1] = videl2vdi(rgb >> 16);
         INTOUT[2] = videl2vdi(rgb >> 8);
         INTOUT[3] = videl2vdi(rgb);
+        return;
     }
-    else
 #endif
 #if CONF_WITH_TT_SHIFTER
     if (has_tt_shifter)
     {
-        c = EsetColor(colnum, -1);
-        INTOUT[1] = tt2vdi(c >> 8);
-        INTOUT[2] = tt2vdi(c >> 4);
-        INTOUT[3] = tt2vdi(c);
+        query_tt_color(colnum,&INTOUT[1]);
+        return;
     }
-    else
 #endif
 #if CONF_WITH_STE_SHIFTER
     if (has_ste_shifter)
     {
-        c = Setcolor(colnum, -1);
+        c = Setcolor(hwreg, -1);
         INTOUT[1] = ste2vdi(c >> 8);
         INTOUT[2] = ste2vdi(c >> 4);
         INTOUT[3] = ste2vdi(c);
+        return;
     }
-    else
 #endif
     /* ST shifter */
-    {
-        c = Setcolor(colnum, -1);
-        INTOUT[1] = st2vdi(c >> 8);
-        INTOUT[2] = st2vdi(c >> 4);
-        INTOUT[3] = st2vdi(c);
-    }
+    c = Setcolor(hwreg, -1);
+    INTOUT[1] = st2vdi(c >> 8);
+    INTOUT[2] = st2vdi(c >> 4);
+    INTOUT[3] = st2vdi(c);
 }
