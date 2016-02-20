@@ -348,7 +348,7 @@ static void set_tt_color(WORD colnum, WORD *rgb)
     }
     else
     {
-        hwvalue = (vdi2tt(r) << 8) | (vdi2tt(g) << 4) | vdi2tt(b);        
+        hwvalue = (vdi2tt(r) << 8) | (vdi2tt(g) << 4) | vdi2tt(b);
     }
     EsetColor(hwreg, hwvalue);
 }
@@ -465,11 +465,11 @@ static WORD videl2vdi(LONG col)
  * regular palette setup; instead, bit 0 of h/w palette register 0
  * controls whether the screen background is white (bit0=0) or black
  * (bit0=1).
- * 
+ *
  * Also, from a VDI standpoint, you would expect that setting pen 0 to
  * (1000,1000,1000) would get white and setting pen 0 to (0,0,0) would
  * get black; but what should happen with intermediate values?
- * 
+ *
  * Atari TOS handles this as follows:
  * 1. each RGB value less than a fudge factor F is converted to 0 and
  *    each value greater than or equal to 1000-F is converted to 1000
@@ -694,7 +694,7 @@ void init_colors(void)
      *
      * Since it's desirable for other reasons to leave register 0 as
      * white, TOS3 (and EmuTOS) compensate as follows: if the inversion
-     * bit is set, registers 254/255 are set to 0x0000/0x0fff.  This 
+     * bit is set, registers 254/255 are set to 0x0000/0x0fff.  This
      * produces the correct black on white display on real hardware, but
      * a display of white on white under Hatari (both EmuTOS and TOS3).
      *
