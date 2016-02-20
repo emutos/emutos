@@ -772,7 +772,10 @@ LONG physbase(void)
     if (has_ste_shifter) {
         addr += *(volatile UBYTE *) VIDEOBASE_ADDR_LOW;
     }
+    else
 #endif
+    {
+    }
 #else /* CONF_WITH_SHIFTER */
     /* No real physical screen, fall back to Logbase() */
     addr = logbase();
@@ -817,7 +820,10 @@ static void setphys(LONG addr,int checkaddr)
     if (has_ste_shifter) {
         *(volatile UBYTE *) VIDEOBASE_ADDR_LOW = ((ULONG) addr);
     }
+    else
 #endif
+    {
+    }
 #endif /* CONF_WITH_SHIFTER */
 }
 
