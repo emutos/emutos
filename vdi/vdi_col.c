@@ -670,6 +670,46 @@ void init_colors(void)
             set_color(i, req_col2[i-16]);
 #endif
     }
+
+#ifdef HATARI_DUOCHROME_WORKAROUND
+    /*
+     * The following is a workaround for a bug in Hatari v1.9 and earlier.
+     * It is disabled by default, and should be removed once the Hatari
+     * bug is fixed.
+     *
+     * In Duochrome mode (ST high on a TT), Hatari uses palette register
+     * 0 as the background colour and register 255 as the foreground
+     * colour; this is not how real hardware behaves.  However, there
+     * was a compensating bug in EmuTOS that set register 0 to white and
+     * register 255 to black, so everything displayed OK.
+     *
+     * On real hardware, register 0 contains the inversion bit (bit 1),
+     * and the foreground/background colours are in registers 254/255.
+     * For both TOS3 and EmuTOS, the initial value for VDI pens 0/254/255
+     * are white/white/black for all resolutions, which causes hardware
+     * registers 0/254/255 to be set to 0x0fff/0x0fff/0x000.  Without any
+     * compensation, this would cause problems when switching to duochrome
+     * mode: since the inversion bit in register 0 is set, the display
+     * would show as white on black.
+     *
+     * Since it's desirable for other reasons to leave register 0 as
+     * white, TOS3 (and EmuTOS) compensate as follows: if the inversion
+     * bit is set, registers 254/255 are set to 0x0000/0x0fff.  This 
+     * produces the correct black on white display on real hardware, but
+     * a display of white on white under Hatari (both EmuTOS and TOS3).
+     *
+     * The following workaround preserves the inversion bit, but sets a
+     * value of "almost black" in register 0.  The output will be visible
+     * on both Hatari and real TT hardware, but Hatari will display black
+     * on white, while real hardware displays white on black.  Another
+     * consequence of this workaround is that a vq_color() for the actual
+     * value of pen 0 will return an unexpected result.
+     */
+#if CONF_WITH_TT_SHIFTER
+    if (has_tt_shifter && (sshiftmod == ST_HIGH))
+        EsetColor(0,0x0002);
+#endif
+#endif
 }
 
 
