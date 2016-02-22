@@ -219,11 +219,17 @@ static int vdi2st(int col)
 }
 
 
-/* Create a VDI color value from ST color */
-static int st2vdi(int col)
-{
-    return (col & 0x7) * 1000 / 7;
-}
+/* Create a VDI color value from ST color
+ *
+ * we use a lookup table for speed and space savings
+ */
+#define st2vdi(col) st2vdi_lookup_table[(col)&0x07]
+/*
+ * this table implements the following calculation, as used by ST TOS:
+ *      VDI value = (ST palette hardware value * 1000) / 7
+ */
+static const WORD st2vdi_lookup_table[8] =
+    { 0, 142, 285, 428, 571, 714, 857, 1000 };
 
 
 #if CONF_WITH_STE_SHIFTER
@@ -237,14 +243,21 @@ static int vdi2ste(int col)
 }
 
 
-/* Create a VDI color value from STe color */
-static int ste2vdi(int col)
-{
-    col = ((col & 0x7) << 1) | ((col >> 3) & 0x1);
-    col = col * 200 / 3;
-
-    return col;
-}
+/* Create a VDI color value from STe color
+ *
+ * we use a lookup table for speed and space savings
+ */
+#define ste2vdi(col) ste2vdi_lookup_table[(col)&0x0f]
+/*
+ * this table implements the following calculation, as used by STe TOS:
+ *      VDI value = (STe palette hardware value * 1000 + 7) / 15
+ *
+ * the sequence of numbers in the table reflects the arrangement of bits
+ * in the STe palette hardware: 0 3 2 1
+ */
+static const WORD ste2vdi_lookup_table[16] =
+    { 0, 133, 267, 400, 533, 667, 800, 933,     /* values 0,2 ... 14 */
+      67, 200, 333, 467, 600, 733, 867, 1000 }; /* values 1,3 ... 15 */
 #endif
 
 
@@ -256,11 +269,18 @@ static int vdi2tt(int col)
 }
 
 
-/* Create a VDI color value from TT color */
-static int tt2vdi(int col)
-{
-    return ((col & 0x0f) * 1000 + 7) / 15;
-}
+/* Create a VDI color value from TT color
+ *
+ * we use a lookup table for speed & space savings
+ */
+#define tt2vdi(col) tt2vdi_lookup_table[(col)&0x0f]
+/*
+ * this table implements the following calculation, as used by TT TOS:
+ *      VDI value = (TT palette hardware value * 1000 + 7) / 15
+ */
+static const WORD tt2vdi_lookup_table[16] =
+    { 0, 67, 133, 200, 267, 333, 400, 467,
+      533, 600, 667, 733, 800, 867, 933, 1000 };
 
 
 /* Return adjusted VDI color number for TT systems
