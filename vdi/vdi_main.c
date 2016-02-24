@@ -33,7 +33,7 @@ static void (* const jmptb1[])(Vwk *) = {
     _v_pmarker,         /*   7 */
     d_gtext,            /*   8 */
     _v_fillarea,        /*   9 */
-    _v_cellarray,       /*  10 */
+    v_nop,              /*  10 - v_cellarray(), not usually implemented by drivers */
     v_gdp,              /*  11 */
     dst_height,         /*  12 */
     dst_rotation,       /*  13 */
@@ -50,14 +50,14 @@ static void (* const jmptb1[])(Vwk *) = {
     _vsf_style,         /*  24 */
     _vsf_color,         /*  25 */
     _vq_color,          /*  26 */
-    _vq_cellarray,      /*  27 */
+    v_nop,              /*  27 - vq_cellarray, not usually implemented by drivers */
     v_locator,          /*  28 */
     v_valuator,         /*  29 */
     v_choice,           /*  30 */
     v_string,           /*  31 */
     _vswr_mode,         /*  32 */
     _vsin_mode,         /*  33 */
-    v_nop,              /*  34 */
+    v_nop,              /*  34 - does not exist */
     vql_attr,           /*  35 */
     vqm_attr,           /*  36 */
     vqf_attr,           /*  37 */

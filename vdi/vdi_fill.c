@@ -267,28 +267,6 @@ dr_recfl(Vwk * vwk)
 
 
 /*
- * _v_cellarray - Draw a square of sqares (just color devices)
- */
-void
-_v_cellarray(Vwk * vwk)
-{
-    /* not implemented */
-}
-
-
-
-/*
- * _vq_cellarray -
- */
-void
-_vq_cellarray(Vwk * vwk)
-{
-    /* not implemented */
-}
-
-
-
-/*
  * vql_attr - Inquire current fill area attributes
  */
 
