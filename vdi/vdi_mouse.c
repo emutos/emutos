@@ -183,8 +183,8 @@ static void hide_cur(void)
 
 
 
-/* LOCATOR_INPUT: */
-void v_locator(Vwk * vwk)
+/* LOCATOR_INPUT: implements vrq_locator()/vsm_locator() */
+void vdi_v_locator(Vwk * vwk)
 {
     WORD i;
     Point * point = (Point*)PTSIN;
@@ -256,10 +256,9 @@ void v_locator(Vwk * vwk)
 
 
 /*
- * _v_show_c - show cursor
+ * vdi_v_show_c - show cursor
  */
-
-void _v_show_c(Vwk * vwk)
+void vdi_v_show_c(Vwk * vwk)
 {
     if (!*INTIN && HIDE_CNT)
         HIDE_CNT = 1;           /* reset cursor to on */
@@ -270,10 +269,9 @@ void _v_show_c(Vwk * vwk)
 
 
 /*
- * _v_hide_c - hide cursor
+ * vdi_v_hide_c - hide cursor
  */
-
-void _v_hide_c(Vwk * vwk)
+void vdi_v_hide_c(Vwk * vwk)
 {
     hide_cur();
 }
@@ -281,10 +279,9 @@ void _v_hide_c(Vwk * vwk)
 
 
 /*
- * _vq_mouse - Query mouse position and button status
+ * vdi_vq_mouse - Query mouse position and button status
  */
-
-void _vq_mouse(Vwk * vwk)
+void vdi_vq_mouse(Vwk * vwk)
 {
     WORD *pointer;
 
@@ -301,15 +298,15 @@ void _vq_mouse(Vwk * vwk)
 
 
 
-/* VALUATOR_INPUT: */
-void v_valuator(Vwk * vwk)
+/* VALUATOR_INPUT: implements vrq_valuator()/vsm_valuator() */
+void vdi_v_valuator(Vwk * vwk)
 {
 }
 
 
 
 /*
- * _vex_butv
+ * vdi_vex_butv
  *
  * This routine replaces the mouse button change vector with
  * the address of a user-supplied routine.  The previous value
@@ -322,8 +319,7 @@ void v_valuator(Vwk * vwk)
  * Outputs:
  *    contrl[9], contrl[10] - pointer to old routine
  */
-
-void _vex_butv(Vwk * vwk)
+void vdi_vex_butv(Vwk * vwk)
 {
     LONG * pointer;
 
@@ -335,7 +331,7 @@ void _vex_butv(Vwk * vwk)
 
 
 /*
- * _vex_motv
+ * vdi_vex_motv
  *
  * This routine replaces the mouse coordinate change vector with the address
  * of a user-supplied routine.  The previous value is returned so that it
@@ -347,8 +343,7 @@ void _vex_butv(Vwk * vwk)
  *  Outputs:
  *     contrl[9], contrl[10] - pointer to old routine
  */
-
-void _vex_motv(Vwk * vwk)
+void vdi_vex_motv(Vwk * vwk)
 {
     LONG * pointer;
 
@@ -360,7 +355,7 @@ void _vex_motv(Vwk * vwk)
 
 
 /*
- * _vex_curv
+ * vdi_vex_curv
  *
  * This routine replaces the mouse draw vector with the
  * address of a user-supplied routine.  The previous value
@@ -374,8 +369,7 @@ void _vex_motv(Vwk * vwk)
  *    contrl[9], contrl[10] - pointer to old routine
  *
  */
-
-void _vex_curv(Vwk * vwk)
+void vdi_vex_curv(Vwk * vwk)
 {
     LONG * pointer;
 
@@ -387,7 +381,7 @@ void _vex_curv(Vwk * vwk)
 
 
 /*
- * _vex_wheelv
+ * vdi_vex_wheelv
  *
  * This routine replaces the mouse wheel vector with the
  * address of a user-supplied routine.  The previous value
@@ -401,8 +395,7 @@ void _vex_curv(Vwk * vwk)
  *    contrl[9], contrl[10] - pointer to old routine
  *
  */
-
-void _vex_wheelv(Vwk * vwk)
+void vdi_vex_wheelv(Vwk * vwk)
 {
     LONG * pointer;
 
@@ -469,7 +462,7 @@ static void set_mouse_form (const Mcdb *src, Mcdb * dst)
 
 
 /*
- * xfm_crfm - Transforms user defined cursor to device specific format.
+ * vdi_vsc_form - Transforms user defined cursor to device specific format.
  *
  * Get the new values for the x and y-coordinates of the mouse hot
  * spot and the new color indices for the mouse mask and data.
@@ -485,7 +478,7 @@ static void set_mouse_form (const Mcdb *src, Mcdb * dst)
  *
  * Outputs:        None
  */
-void xfm_crfm (Vwk * vwk)
+void vdi_vsc_form(Vwk * vwk)
 {
     set_mouse_form((const Mcdb *)INTIN, &mouse_cdb);
 }

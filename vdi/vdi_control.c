@@ -164,7 +164,7 @@ Vwk * get_vwk_by_handle(WORD handle)
 
 
 /* Set Clip Region */
-void s_clip(Vwk * vwk)
+void vdi_vs_clip(Vwk * vwk)
 {
     vwk->clip = *INTIN;
     if (vwk->clip) {
@@ -194,7 +194,7 @@ void s_clip(Vwk * vwk)
 
 
 /* SET_WRITING_MODE: */
-void _vswr_mode(Vwk * vwk)
+void vdi_vswr_mode(Vwk * vwk)
 {
     WORD wm;
 
@@ -316,7 +316,7 @@ static void init_wk(Vwk * vwk)
 
 
 
-void d_opnvwk(Vwk * vwk)
+void vdi_v_opnvwk(Vwk * vwk)
 {
     WORD handle;
     Vwk *temp, *work_ptr;
@@ -348,7 +348,7 @@ void d_opnvwk(Vwk * vwk)
     CUR_WORK = vwk;
 }
 
-void d_clsvwk(Vwk * vwk)
+void vdi_v_clsvwk(Vwk * vwk)
 {
     Vwk *work_ptr;
     WORD handle;
@@ -369,7 +369,7 @@ void d_clsvwk(Vwk * vwk)
 
 
 /* OPEN_WORKSTATION: */
-void _v_opnwk(Vwk * vwk)
+void vdi_v_opnwk(Vwk * vwk)
 {
     int i;
 
@@ -422,7 +422,7 @@ void _v_opnwk(Vwk * vwk)
 
 
 /* CLOSE_WORKSTATION: */
-void _v_clswk(Vwk * vwk)
+void vdi_v_clswk(Vwk * vwk)
 {
     Vwk *next_work;
 
@@ -442,12 +442,12 @@ void _v_clswk(Vwk * vwk)
 
 
 /*
- * _v_clrwk - clear screen
+ * vdi_v_clrwk - clear screen
  *
  * Screen is cleared from the base address v_bas_ad.
  */
 
-void _v_clrwk(Vwk * vwk)
+void vdi_v_clrwk(Vwk * vwk)
 {
     ULONG size;
 
@@ -461,10 +461,9 @@ void _v_clrwk(Vwk * vwk)
 
 
 /*
- * _vq_extnd - Extended workstation inquire
+ * vdi_vq_extnd - Extended workstation inquire
  */
-
-void _vq_extnd(Vwk * vwk)
+void vdi_vq_extnd(Vwk * vwk)
 {
     WORD i;
     WORD *dst, *src;
@@ -504,9 +503,9 @@ void _vq_extnd(Vwk * vwk)
 
 
 /*
- * v_nop - dummy
+ * vdi_v_nop - dummy
  */
-void v_nop(Vwk * vwk)
+void vdi_v_nop(Vwk * vwk)
 {
-    /* never will be  implemented */
+    /* will never be implemented */
 }

@@ -119,15 +119,15 @@ static struct blit_frame vdi_info;
 struct blit_frame *blit_info;
 
 /*
- * _vr_trnfm - transform screen bitmaps
+ * vdi_vr_trnfm - transform screen bitmaps
  *
  * Convert device-independent bitmaps to device-dependent and vice versa
  *
- * The major difference between the two foramts is that, in the device-
+ * The major difference between the two formats is that, in the device-
  * independent ("standard") form, the planes are consecutive, while on
  * the Atari screen they are interleaved.
  */
-void _vr_trnfm(Vwk * vwk)
+void vdi_vr_trnfm(Vwk * vwk)
 {
     MFDB *src_mfdb, *dst_mfdb;
     WORD *src, *dst, *work;

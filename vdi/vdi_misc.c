@@ -120,13 +120,12 @@ static void tick_int(int u)
 
 
 /*
- * _vex_timv - exchange timer interrupt vector
+ * vdi_vex_timv - exchange timer interrupt vector
  *
  * entry:          new vector in CONTRL[7-8]
  * exit:           old vector in CONTRL[9-10]
  */
-
-void _vex_timv(Vwk * vwk)
+void vdi_vex_timv(Vwk * vwk)
 {
     WORD old_sr;
     LONG * pointer;

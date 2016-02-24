@@ -50,18 +50,18 @@ static WORD s_begsty, s_endsty, s_fil_col, s_fill_per;
 
 
 /*
- * _vsl_udsty - set user-defined line style
+ * vdi_vsl_udsty - set user-defined line style
  */
-void _vsl_udsty(Vwk * vwk)
+void vdi_vsl_udsty(Vwk * vwk)
 {
     vwk->ud_ls = *INTIN;
 }
 
 
 /*
- * _vsl_type - Set line style for line-drawing functions
+ * vdi_vsl_type - Set line type for line-drawing functions
  */
-void _vsl_type(Vwk * vwk)
+void vdi_vsl_type(Vwk * vwk)
 {
     WORD li;
 
@@ -76,9 +76,9 @@ void _vsl_type(Vwk * vwk)
 
 
 /*
- * _vsl_width - Set line width
+ * vdi_vsl_width - Set line width
  */
-void _vsl_width(Vwk * vwk)
+void vdi_vsl_width(Vwk * vwk)
 {
     WORD w, *pts_out;
 
@@ -102,9 +102,9 @@ void _vsl_width(Vwk * vwk)
 
 
 /*
- * _vsl_ends - sets the style of end point for line starting and ending points
+ * vdi_vsl_ends - sets the style of end point for line starting and ending points
  */
-void _vsl_ends(Vwk * vwk)
+void vdi_vsl_ends(Vwk * vwk)
 {
     WORD lb, le;
     WORD *pointer;
@@ -127,9 +127,9 @@ void _vsl_ends(Vwk * vwk)
 
 
 /*
- * _vsl_color - sets the color for line-drawing
+ * vdi_vsl_color - sets the color for line-drawing
  */
-void _vsl_color(Vwk * vwk)
+void vdi_vsl_color(Vwk * vwk)
 {
     WORD lc;
 
@@ -143,9 +143,9 @@ void _vsl_color(Vwk * vwk)
 
 
 /*
- * vql_attr - Inquire current polyline attributes
+ * vdi_vql_attributes - Inquire current polyline attributes
  */
-void vql_attr(Vwk * vwk)
+void vdi_vql_attributes(Vwk * vwk)
 {
     INTOUT[0] = vwk->line_index + 1;
     INTOUT[1] = REV_MAP_COL[vwk->line_color];
@@ -517,9 +517,9 @@ void linea_fill(void)
 
 
 /*
- * _v_pline - wrapper for polyline/wideline
+ * vdi_v_pline - wrapper for polyline/wideline
  */
-void _v_pline(Vwk * vwk)
+void vdi_v_pline(Vwk * vwk)
 {
     Point * point = (Point*)PTSIN;
     int count = CONTRL[1];

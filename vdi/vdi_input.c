@@ -24,8 +24,8 @@ static WORD gchr_key(void);
 static WORD gshift_s(void);
 
 
-/* CHOICE_INPUT: */
-void v_choice(Vwk * vwk)
+/* CHOICE_INPUT: implements vrq_choice()/vsm_choice() */
+void vdi_v_choice(Vwk * vwk)
 {
     WORD i;
 
@@ -45,8 +45,8 @@ void v_choice(Vwk * vwk)
 
 
 
-/* STRING_INPUT: */
-void v_string(Vwk * vwk)
+/* STRING_INPUT: implements vrq_string()/vsm_string() */
+void vdi_v_string(Vwk * vwk)
 {
     WORD i, j, mask;
 
@@ -77,7 +77,7 @@ void v_string(Vwk * vwk)
 
 
 /* Return Shift, Control, Alt State */
-void _vq_key_s(Vwk * vwk)
+void vdi_vq_key_s(Vwk * vwk)
 {
     CONTRL[4] = 1;
     INTOUT[0] = gshift_s();
@@ -86,7 +86,7 @@ void _vq_key_s(Vwk * vwk)
 
 
 /* SET_INPUT_MODE: */
-void _vsin_mode(Vwk * vwk)
+void vdi_vsin_mode(Vwk * vwk)
 {
     WORD i, *int_in;
 
@@ -120,7 +120,7 @@ void _vsin_mode(Vwk * vwk)
 
 
 /* INQUIRE INPUT MODE: */
-void vqi_mode(Vwk * vwk)
+void vdi_vqin_mode(Vwk * vwk)
 {
     WORD *int_out;
 

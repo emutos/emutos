@@ -188,10 +188,10 @@ static void clc_arc(Vwk * vwk, int steps)
 
 
 /*
- * v_gdp - Major opcode for graphics device primitives
+ * vdi_v_gdp - Major opcode for graphics device primitives
  */
 
-void v_gdp(Vwk * vwk)
+void vdi_v_gdp(Vwk * vwk)
 {
     WORD i, ltmp_end, rtmp_end;
     WORD *xy_pointer;
@@ -201,7 +201,7 @@ void v_gdp(Vwk * vwk)
 
     switch (i) {
     case 1:         /* GDP BAR - converted to alpha 2 RJG 12-1-84 */
-        dr_recfl(vwk);
+        vdi_vr_recfl(vwk);
         if (vwk->fill_per == TRUE) {
             LN_MASK = 0xffff;
 

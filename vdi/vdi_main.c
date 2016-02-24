@@ -24,83 +24,83 @@ WORD flip_y;                    /* True if magnitudes being returned */
 
 /* Two main jumptables for VDI functions */
 static void (* const jmptb1[])(Vwk *) = {
-    _v_opnwk,           /*   1 */
-    _v_clswk,           /*   2 */
-    _v_clrwk,           /*   3 */
-    v_nop,              /*   4 - v_updwk not yet implemented */
-    chk_esc,            /*   5 - each escape function has it's own call */
-    _v_pline,           /*   6 */
-    _v_pmarker,         /*   7 */
-    d_gtext,            /*   8 */
-    _v_fillarea,        /*   9 */
-    v_nop,              /*  10 - v_cellarray(), not usually implemented by drivers */
-    v_gdp,              /*  11 */
-    dst_height,         /*  12 */
-    dst_rotation,       /*  13 */
-    _vs_color,          /*  14 */
-    _vsl_type,          /*  15 */
-    _vsl_width,         /*  16 */
-    _vsl_color,         /*  17 */
-    _vsm_type,          /*  18 */
-    _vsm_height,        /*  19 */
-    _vsm_color,         /*  20 */
-    dst_font,           /*  21 */
-    dst_color,          /*  22 */
-    _vsf_interior,      /*  23 */
-    _vsf_style,         /*  24 */
-    _vsf_color,         /*  25 */
-    _vq_color,          /*  26 */
-    v_nop,              /*  27 - vq_cellarray, not usually implemented by drivers */
-    v_locator,          /*  28 */
-    v_valuator,         /*  29 */
-    v_choice,           /*  30 */
-    v_string,           /*  31 */
-    _vswr_mode,         /*  32 */
-    _vsin_mode,         /*  33 */
-    v_nop,              /*  34 - does not exist */
-    vql_attr,           /*  35 */
-    vqm_attr,           /*  36 */
-    vqf_attr,           /*  37 */
-    dqt_attributes,     /*  38 */
-    dst_alignment       /*  39 */
+    vdi_v_opnwk,            /*   1 */
+    vdi_v_clswk,            /*   2 */
+    vdi_v_clrwk,            /*   3 */
+    vdi_v_nop,              /*   4 - v_updwk not yet implemented */
+    vdi_v_escape,           /*   5 - each escape subfunction has its own call */
+    vdi_v_pline,            /*   6 */
+    vdi_v_pmarker,          /*   7 */
+    vdi_v_gtext,            /*   8 */
+    vdi_v_fillarea,         /*   9 */
+    vdi_v_nop,              /*  10 - v_cellarray(), not usually implemented by drivers */
+    vdi_v_gdp,              /*  11 */
+    vdi_vst_height,         /*  12 */
+    vdi_vst_rotation,       /*  13 */
+    vdi_vs_color,           /*  14 */
+    vdi_vsl_type,           /*  15 */
+    vdi_vsl_width,          /*  16 */
+    vdi_vsl_color,          /*  17 */
+    vdi_vsm_type,           /*  18 */
+    vdi_vsm_height,         /*  19 */
+    vdi_vsm_color,          /*  20 */
+    vdi_vst_font,           /*  21 */
+    vdi_vst_color,          /*  22 */
+    vdi_vsf_interior,       /*  23 */
+    vdi_vsf_style,          /*  24 */
+    vdi_vsf_color,          /*  25 */
+    vdi_vq_color,           /*  26 */
+    vdi_v_nop,              /*  27 - vq_cellarray, not usually implemented by drivers */
+    vdi_v_locator,          /*  28 */
+    vdi_v_valuator,         /*  29 */
+    vdi_v_choice,           /*  30 */
+    vdi_v_string,           /*  31 */
+    vdi_vswr_mode,          /*  32 */
+    vdi_vsin_mode,          /*  33 */
+    vdi_v_nop,              /*  34 - does not exist */
+    vdi_vql_attributes,     /*  35 */
+    vdi_vqm_attributes,     /*  36 */
+    vdi_vqf_attributes,     /*  37 */
+    vdi_vqt_attributes,     /*  38 */
+    vdi_vst_alignment       /*  39 */
 };
 
 static void(* const jmptb2[])(Vwk *) = {
-    d_opnvwk,           /* 100 */
-    d_clsvwk,           /* 101 */
-    _vq_extnd,          /* 102 */
-    d_contourfill,      /* 103 */
-    _vsf_perimeter,     /* 104 */
-    _v_get_pixel,       /* 105 */
-    dst_style,          /* 106 */
-    dst_point,          /* 107 */
-    _vsl_ends,          /* 108 */
-    vdi_vro_cpyfm,      /* 109 */
-    _vr_trnfm,          /* 110 */
-    xfm_crfm,           /* 111 */
-    dsf_udpat,          /* 112 */
-    _vsl_udsty,         /* 113 */
-    dr_recfl,           /* 114 */
-    vqi_mode,           /* 115 */
-    dqt_extent,         /* 116 */
-    dqt_width,          /* 117 */
-    _vex_timv,          /* 118 */ /* in vdi_misc.c */
-    dt_loadfont,        /* 119 */
-    dt_unloadfont,      /* 120 */
-    vdi_vrt_cpyfm,      /* 121 */
-    _v_show_c,          /* 122 */
-    _v_hide_c,          /* 123 */
-    _vq_mouse,          /* 124 */
-    _vex_butv,          /* 125 */ /* in vdi_mouse.c */
-    _vex_motv,          /* 126 */ /* in vdi_mouse.c */
-    _vex_curv,          /* 127 */ /* in vdi_mouse.c */
-    _vq_key_s,          /* 128 */
-    s_clip,             /* 129 */
-    dqt_name,           /* 130 */
-    dqt_fontinfo,       /* 131 */
-    v_nop,              /* 132 */ /* vqt_justified */
-    v_nop,              /* 133 */
-    _vex_wheelv         /* 134 */
+    vdi_v_opnvwk,           /* 100 */
+    vdi_v_clsvwk,           /* 101 */
+    vdi_vq_extnd,           /* 102 */
+    vdi_v_contourfill,      /* 103 */
+    vdi_vsf_perimeter,      /* 104 */
+    vdi_v_get_pixel,        /* 105 */
+    vdi_vst_effects,        /* 106 */
+    vdi_vst_point,          /* 107 */
+    vdi_vsl_ends,           /* 108 */
+    vdi_vro_cpyfm,          /* 109 */
+    vdi_vr_trnfm,           /* 110 */
+    vdi_vsc_form,           /* 111 */
+    vdi_vsf_udpat,          /* 112 */
+    vdi_vsl_udsty,          /* 113 */
+    vdi_vr_recfl,           /* 114 */
+    vdi_vqin_mode,          /* 115 */
+    vdi_vqt_extent,         /* 116 */
+    vdi_vqt_width,          /* 117 */
+    vdi_vex_timv,           /* 118 */ /* in vdi_misc.c */
+    vdi_vst_load_fonts,     /* 119 */
+    vdi_vst_unload_fonts,   /* 120 */
+    vdi_vrt_cpyfm,          /* 121 */
+    vdi_v_show_c,           /* 122 */
+    vdi_v_hide_c,           /* 123 */
+    vdi_vq_mouse,           /* 124 */
+    vdi_vex_butv,           /* 125 */ /* in vdi_mouse.c */
+    vdi_vex_motv,           /* 126 */ /* in vdi_mouse.c */
+    vdi_vex_curv,           /* 127 */ /* in vdi_mouse.c */
+    vdi_vq_key_s,           /* 128 */
+    vdi_vs_clip,            /* 129 */
+    vdi_vqt_name,           /* 130 */
+    vdi_vqt_fontinfo,       /* 131 */
+    vdi_v_nop,              /* 132 */ /* vqt_justified */
+    vdi_v_nop,              /* 133 */
+    vdi_vex_wheelv          /* 134 */
 };
 
 

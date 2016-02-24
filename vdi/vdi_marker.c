@@ -28,10 +28,9 @@ static const WORD m_dmnd[] = { 1, 5, -4, 0, 0, -3, 4, 0, 0, 3, -4, 0 };
 
 
 /*
- * _vsm_height - Sets the height of markers
+ * vdi_vsm_height - Sets the height of markers
  */
-
-void _vsm_height(Vwk * vwk)
+void vdi_vsm_height(Vwk * vwk)
 {
     WORD h, *pts_out;
 
@@ -57,9 +56,9 @@ void _vsm_height(Vwk * vwk)
 
 
 /*
- * _vsm_type - Sets the current type of marker
+ * vdi_vsm_type - Sets the current type of marker
  */
-void _vsm_type(Vwk * vwk)
+void vdi_vsm_type(Vwk * vwk)
 {
     WORD i;
 
@@ -72,10 +71,9 @@ void _vsm_type(Vwk * vwk)
 
 
 /*
- * _vsm_color - Set mark color
+ * vdi_vsm_color - Set marker color
  */
-
-void _vsm_color(Vwk * vwk)
+void vdi_vsm_color(Vwk * vwk)
 {
     WORD i;
 
@@ -89,10 +87,9 @@ void _vsm_color(Vwk * vwk)
 
 
 /*
- * _v_pmarker - Polymarker
+ * vdi_v_pmarker - Polymarker
  */
-
-void _v_pmarker(Vwk * vwk)
+void vdi_v_pmarker(Vwk * vwk)
 {
 /* If this constant goes greater than 5, you must increase size of sav_points */
 #define MARKSEGMAX 5
@@ -152,7 +149,7 @@ void _v_pmarker(Vwk * vwk)
 
             /* Output the polyline. */
             mrk_ptr = m_ptr;    /* Save for next pass */
-            _v_pline(vwk);
+            vdi_v_pline(vwk);
             m_ptr = mrk_ptr;
         }                       /* End for:  over the number of polylines
                                    defining the marker. */
@@ -173,10 +170,9 @@ void _v_pmarker(Vwk * vwk)
 
 
 /*
- * vql_attr - Inquire current polymarker attributes
+ * vdi_vqm_attributes - Inquire current polymarker attributes
  */
-
-void vqm_attr(Vwk * vwk)
+void vdi_vqm_attributes(Vwk * vwk)
 {
     INTOUT[0] = vwk->mark_index;
     INTOUT[1] = REV_MAP_COL[vwk->mark_color];

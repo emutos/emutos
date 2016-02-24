@@ -145,11 +145,9 @@ const UWORD SOLID = 0xFFFF;
 
 
 /*
- * dsf_udpat - Update pattern
+ * vdi_vsf_udpat - Set user-defined fill pattern
  */
-
-void
-dsf_udpat(Vwk * vwk)
+void vdi_vsf_udpat(Vwk * vwk)
 {
     WORD *sp, *dp, i, count;
 
@@ -171,11 +169,9 @@ dsf_udpat(Vwk * vwk)
 
 
 /*
- * _vsf_interior - Set fill style
+ * vdi_vsf_interior - Set fill style
  */
-
-void
-_vsf_interior(Vwk * vwk)
+void vdi_vsf_interior(Vwk * vwk)
 {
     WORD fs;
 
@@ -190,8 +186,7 @@ _vsf_interior(Vwk * vwk)
 
 
 /* S_FILL_INDEX: */
-void
-_vsf_style(Vwk * vwk)
+void vdi_vsf_style(Vwk * vwk)
 {
     WORD fi;
 
@@ -212,8 +207,7 @@ _vsf_style(Vwk * vwk)
 
 
 /* S_FILL_COLOR: */
-void
-_vsf_color(Vwk * vwk)
+void vdi_vsf_color(Vwk * vwk)
 {
     WORD fc;
 
@@ -229,8 +223,7 @@ _vsf_color(Vwk * vwk)
 
 
 /* ST_FILLPERIMETER: */
-void
-_vsf_perimeter(Vwk * vwk)
+void vdi_vsf_perimeter(Vwk * vwk)
 {
     WORD *int_out;
 
@@ -248,11 +241,9 @@ _vsf_perimeter(Vwk * vwk)
 
 
 /*
- * dr_recfl - draw filled rectangle
+ * vdi_vr_recfl - draw filled rectangle
  */
-
-void
-dr_recfl(Vwk * vwk)
+void vdi_vr_recfl(Vwk * vwk)
 {
     Rect * rect = (Rect*)PTSIN;
 
@@ -267,11 +258,9 @@ dr_recfl(Vwk * vwk)
 
 
 /*
- * vql_attr - Inquire current fill area attributes
+ * vdi_vqf_attributes - Inquire current fill area attributes
  */
-
-void
-vqf_attr(Vwk * vwk)
+void vdi_vqf_attributes(Vwk * vwk)
 {
     WORD *pointer;
 
@@ -606,11 +595,9 @@ polygon(Vwk * vwk, Point * ptsin, int count)
 
 
 /*
- * _v_fillarea - Fill an area
+ * vdi_v_fillarea - Fill an area
  */
-
-void
-_v_fillarea(Vwk * vwk)
+void vdi_v_fillarea(Vwk * vwk)
 {
     Point * point = (Point*)PTSIN;
     int count = CONTRL[1];
@@ -1015,7 +1002,7 @@ get_seed(const VwkAttrib * attr, const VwkClip * clip,
 
 
 /* VDI version */
-void d_contourfill(Vwk * vwk)
+void vdi_v_contourfill(Vwk * vwk)
 {
     VwkAttrib attr;
     Vwk2Attrib(vwk, &attr, vwk->fill_color);
@@ -1023,8 +1010,7 @@ void d_contourfill(Vwk * vwk)
 }
 
 
-void
-_v_get_pixel(Vwk * vwk)
+void vdi_v_get_pixel(Vwk * vwk)
 {
     WORD pel;
     WORD *int_out;

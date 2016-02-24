@@ -63,7 +63,7 @@ extern Fonthead fon8x8;         /* See bios/fntxxx.c */
 extern Fonthead fon8x16;        /* See bios/fntxxx.c */
 
 /* Local variables */
-static WORD width, height;      /* extent of string set in dqt_extent   */
+static WORD width, height;      /* extent of string set in vdi_vqt_extent()   */
 static WORD wordx, wordy;       /* add this to each space for interword */
 static WORD rmword;             /* the number of pixels left over   */
 static WORD rmwordx, rmwordy;   /* add this to use up remainder     */
@@ -77,7 +77,7 @@ static void make_header(Vwk * vwk);
 static UWORD clc_dda(Vwk * vwk, UWORD act, UWORD req);
 
 
-void d_gtext(Vwk * vwk)
+void vdi_v_gtext(Vwk * vwk)
 {
     WORD count;
     WORD i, j;
@@ -144,7 +144,7 @@ void d_gtext(Vwk * vwk)
             if (!justified) {   /* width set if GDP */
                 old_ptr = PTSOUT;
                 PTSOUT = extent;
-                dqt_extent(vwk);
+                vdi_vqt_extent(vwk);
                 PTSOUT = old_ptr;
                 CONTRL[2] = 0;
             }
@@ -154,7 +154,7 @@ void d_gtext(Vwk * vwk)
             if (!justified) {   /* width set if GDP */
                 old_ptr = PTSOUT;
                 PTSOUT = extent;
-                dqt_extent(vwk);
+                vdi_vqt_extent(vwk);
                 PTSOUT = old_ptr;
                 CONTRL[2] = 0;
             }
@@ -427,7 +427,7 @@ static void setup_width_height(const Fonthead *font)
     flip_y = 1;
 }
 
-void dst_height(Vwk * vwk)
+void vdi_vst_height(Vwk * vwk)
 {
     const Fonthead **chain_ptr;
     const Fonthead *test_font, *single_font;
@@ -567,7 +567,7 @@ static void make_header(Vwk * vwk)
 }
 
 
-void dst_point(Vwk * vwk)
+void vdi_vst_point(Vwk * vwk)
 {
     WORD font_id;
     const Fonthead **chain_ptr, *double_font;
@@ -627,14 +627,14 @@ void dst_point(Vwk * vwk)
 }
 
 
-void dst_style(Vwk * vwk)
+void vdi_vst_effects(Vwk * vwk)
 {
     INTOUT[0] = vwk->style = INTIN[0] & INQ_TAB[2];
     CONTRL[4] = 1;
 }
 
 
-void dst_alignment(Vwk * vwk)
+void vdi_vst_alignment(Vwk * vwk)
 {
     WORD a, *int_out, *int_in;
 
@@ -670,10 +670,10 @@ void dst_alignment(Vwk * vwk)
  *
  * TOS1 difference: TOS1 does not normalise before rounding, so
  * stored values range from -32400 to +32400; values outside the
- * range of 0 to 3600 inclusive cause dqt_extent() to not return
+ * range of 0 to 3600 inclusive cause vqt_extent() to not return
  * values ...
  */
-void dst_rotation(Vwk * vwk)
+void vdi_vst_rotation(Vwk * vwk)
 {
     WORD angle = INTIN[0];
 
@@ -689,7 +689,7 @@ void dst_rotation(Vwk * vwk)
 }
 
 
-void dst_font(Vwk * vwk)
+void vdi_vst_font(Vwk * vwk)
 {
     WORD *old_intin, point, *old_ptsout, dummy[4], *old_ptsin;
     WORD face;
@@ -725,9 +725,9 @@ void dst_font(Vwk * vwk)
     PTSIN = PTSOUT = dummy;
 
     if (vwk->pts_mode)
-        dst_point(vwk);
+        vdi_vst_point(vwk);
     else
-        dst_height(vwk);
+        vdi_vst_height(vwk);
 
     INTIN = old_intin;
     PTSIN = old_ptsin;
@@ -739,7 +739,7 @@ void dst_font(Vwk * vwk)
 }
 
 
-void dst_color(Vwk * vwk)
+void vdi_vst_color(Vwk * vwk)
 {
     WORD r;
 
@@ -752,7 +752,7 @@ void dst_color(Vwk * vwk)
 }
 
 
-void dqt_attributes(Vwk * vwk)
+void vdi_vqt_attributes(Vwk * vwk)
 {
     WORD *pointer;
     const Fonthead *fnt_ptr;
@@ -779,7 +779,7 @@ void dqt_attributes(Vwk * vwk)
 }
 
 
-void dqt_extent(Vwk * vwk)
+void vdi_vqt_extent(Vwk * vwk)
 {
     WORD i, chr, table_start;
     WORD *pointer;
@@ -823,7 +823,7 @@ void dqt_extent(Vwk * vwk)
 
     memset(PTSOUT,0,8*sizeof(WORD));
     switch (vwk->chup) {
-    default:                    /* 0 or 3600 ... see dst_rotation() */
+    default:                    /* 0 or 3600 ... see vdi_vst_rotation() */
         PTSOUT[2] = width;
         PTSOUT[4] = width;
         PTSOUT[5] = height;
@@ -852,7 +852,7 @@ void dqt_extent(Vwk * vwk)
 }
 
 
-void dqt_width(Vwk * vwk)
+void vdi_vqt_width(Vwk * vwk)
 {
     WORD k;
     WORD *pointer;
@@ -892,7 +892,7 @@ void dqt_width(Vwk * vwk)
 
 
 
-void dqt_name(Vwk * vwk)
+void vdi_vqt_name(Vwk * vwk)
 {
     WORD i, element;
     const BYTE *name;
@@ -930,7 +930,7 @@ void dqt_name(Vwk * vwk)
 }
 
 
-void dqt_fontinfo(Vwk * vwk)
+void vdi_vqt_fontinfo(Vwk * vwk)
 {
     WORD *pointer;
     const Fonthead *fnt_ptr;
@@ -982,7 +982,7 @@ void d_justified(Vwk * vwk)
     WORD *pointer;
 
     pointer = (CONTRL + 3);
-    sav_cnt = *pointer;     /* so we can modify CONTRL[3] for dqt_extent() */
+    sav_cnt = *pointer;     /* so we can modify CONTRL[3] for vdi_vqt_extent() */
     cnt = *pointer = sav_cnt - 2;
 
     pointer = INTIN;
@@ -998,7 +998,7 @@ void d_justified(Vwk * vwk)
         if (*(pointer++) == 32)
             spaces++;
 
-    dqt_extent(vwk);
+    vdi_vqt_extent(vwk);
     CONTRL[2] = 0;
 
     max_x = PTSIN[2];
@@ -1102,7 +1102,7 @@ void d_justified(Vwk * vwk)
 
     width = max_x;
 
-    d_gtext(vwk);
+    vdi_v_gtext(vwk);
 
     CONTRL[3] = sav_cnt;    /* restore original value for neatness */
     PTSOUT = old_ptsout;
@@ -1110,14 +1110,14 @@ void d_justified(Vwk * vwk)
 }
 
 
-void dt_loadfont(Vwk * vwk)
+void vdi_vst_load_fonts(Vwk * vwk)
 {
     CONTRL[4] = 1;
     INTOUT[0] = 0;      /* we loaded no new fonts */
 }
 
 
-void dt_unloadfont(Vwk * vwk)
+void vdi_vst_unload_fonts(Vwk * vwk)
 {
     /* nothing to do */
 }

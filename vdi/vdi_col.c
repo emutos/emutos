@@ -593,9 +593,9 @@ static void set_color(WORD colnum, WORD *rgb)
 
 
 /*
- * _vs_color - set color index table
+ * vdi_vs_color - set color index table
  */
-void _vs_color(Vwk *vwk)
+void vdi_vs_color(Vwk *vwk)
 {
     WORD colnum, i;
     WORD *intin, rgb[3], *rgbptr;
@@ -734,9 +734,9 @@ void init_colors(void)
 
 
 /*
- * _vq_color - query color index table
+ * vdi_vq_color - query color index table
  */
-void _vq_color(Vwk *vwk)
+void vdi_vq_color(Vwk *vwk)
 {
     WORD colnum, c, hwreg;
 

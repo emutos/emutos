@@ -711,7 +711,7 @@ static inline void get_std_pixel_size(WORD *width,WORD *height)
 }
 
 /*
- * used by _v_opnwk()
+ * used by vdi_v_opnwk()
  *
  * pixel sizes returned here affect (at least) how the following
  * are displayed:
