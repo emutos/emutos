@@ -25,6 +25,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem);
 
 void mn_bar(LONG tree, WORD showit, WORD pid);
 void mn_clsda(void);
+void mn_init(void);
 WORD mn_register(WORD pid, LONG pstr);
 void mn_unregister(WORD da_id);
 void mn_getownid(AESPD **owner,WORD *id,WORD item);

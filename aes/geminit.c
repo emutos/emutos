@@ -647,6 +647,8 @@ void gem_main(void)
 
     gl_changerez = FALSE;
 
+    mn_init();                      /* initialise variables for menu_register() */
+
     num_accs = count_accs();        /* puts ACC names in acc_name[] */
 
     D.g_acc = NULL;

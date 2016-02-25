@@ -575,6 +575,22 @@ void mn_unregister(WORD da_id)
 #endif
 
 /*
+ *  Routine to reset all variables related to menu registration
+ */
+void mn_init(void)
+{
+    WORD i;
+
+    for (i = 0; i < NUM_ACCS; i++)
+    {
+        desk_ppd[i] = NULL;
+        D.g_acctitle[i] = NULL;
+    }
+
+    D.g_accreg = 0;
+}
+
+/*
  *  Routine to get the owner and menu id of the DA corresponding
  *  to the desktop display item number
  */
