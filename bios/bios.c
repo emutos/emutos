@@ -356,9 +356,11 @@ static void bios_init(void)
         KDEBUG(("after run_cartridge_applications()\n"));
 
         if ((v_hz_rez != save_hz) || (v_vt_rez != save_vt) || (v_planes != save_pl))
+        {
             set_rez_hacked();
             font_set_default(-1);   /* set default font */
             vt52_init();            /* initialize the vt52 console */
+        }
     }
 #endif
 
