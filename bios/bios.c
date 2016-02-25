@@ -344,21 +344,21 @@ static void bios_init(void)
 
 #if CONF_WITH_CARTRIDGE
     {
-    WORD save_hz = v_hz_rez, save_vt = v_vt_rez, save_pl = v_planes;
+        WORD save_hz = v_hz_rez, save_vt = v_vt_rez, save_pl = v_planes;
 
-    /* Run all boot applications from the application cartridge.
-     * Beware: Hatari features a special cartridge which is used
-     * for GEMDOS drive emulation. It will hack drvbits and hook Pexec().
-     * It will also hack Line A variables to enable extended VDI video modes.
-     */
-    KDEBUG(("run_cartridge_applications(3)\n"));
-    run_cartridge_applications(3); /* Type "Execute prior to bootdisk" */
-    KDEBUG(("after run_cartridge_applications()\n"));
+        /* Run all boot applications from the application cartridge.
+         * Beware: Hatari features a special cartridge which is used
+         * for GEMDOS drive emulation. It will hack drvbits and hook Pexec().
+         * It will also hack Line A variables to enable extended VDI video modes.
+         */
+        KDEBUG(("run_cartridge_applications(3)\n"));
+        run_cartridge_applications(3); /* Type "Execute prior to bootdisk" */
+        KDEBUG(("after run_cartridge_applications()\n"));
 
-    if ((v_hz_rez != save_hz) || (v_vt_rez != save_vt) || (v_planes != save_pl))
-        set_rez_hacked();
-        font_set_default(-1);   /* set default font */
-        vt52_init();            /* initialize the vt52 console */
+        if ((v_hz_rez != save_hz) || (v_vt_rez != save_vt) || (v_planes != save_pl))
+            set_rez_hacked();
+            font_set_default(-1);   /* set default font */
+            vt52_init();            /* initialize the vt52 console */
     }
 #endif
 
