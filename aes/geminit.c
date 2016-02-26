@@ -641,6 +641,13 @@ void gem_main(void)
 #endif
         }
         gsx_wsclear();              /* avoid artefacts that may show briefly */
+        /*
+         * resolution change always resets the default drive to the
+         * boot device.  TOS3 issues a Dsetdrv() when this happens,
+         * which Hatari's GEMDOS drive emulation uses to keep track
+         * of the current drive.  we do the same.
+         */
+        dos_sdrv(bootdev);
     }
 
     ml_ocnt = 0;
