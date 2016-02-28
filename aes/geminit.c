@@ -33,6 +33,7 @@
 #include "xbiosbind.h"
 #include "screen.h"
 #include "videl.h"
+#include "biosbind.h"
 
 #include "gemgsxif.h"
 #include "gemdosif.h"
@@ -265,7 +266,7 @@ static WORD count_accs(void)
     WORD i, rc;
 
     /* if Control is held down, skip loading of accessories */
-    if ((kbshift(-1) & MODE_CTRL))
+    if ((Kbshift(-1) & MODE_CTRL))
         return 0;
 
     strcpy(D.g_work,"*.ACC");
