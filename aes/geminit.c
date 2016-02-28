@@ -61,7 +61,7 @@
 #include "optimopt.h"
 
 #include "string.h"
-#include "../bios/ikbd.h"
+#include "biosdefs.h"
 #include "kprint.h"
 
 extern LONG size_theglo(void); /* called only from gemstart.S */

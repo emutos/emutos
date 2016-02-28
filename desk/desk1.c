@@ -37,7 +37,7 @@
 #include "../aes/rectfunc.h"
 #include "dos.h"
 #include "desk1.h"
-#include "../bios/ikbd.h"
+#include "biosdefs.h"
 #include "kprint.h"
 
 

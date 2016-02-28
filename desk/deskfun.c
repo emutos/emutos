@@ -38,7 +38,7 @@
 #include "desksupp.h"
 #include "deskdir.h"
 #include "deskfun.h"
-#include "../bios/ikbd.h"
+#include "biosdefs.h"
 
 #include "string.h"
 #include "gemerror.h"

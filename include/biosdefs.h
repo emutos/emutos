@@ -39,4 +39,14 @@ typedef struct _bpb BPB;
 #define B_16    1       /* device has 16-bit FATs */
 #define B_FIX   2       /* device has fixed media */
 
+/*
+ * Flags for Kbshift()
+ */
+#define MODE_RSHIFT 0x01        /* Right Shift key is down */
+#define MODE_LSHIFT 0x02        /* Left Shift key is down  */
+#define MODE_CTRL   0x04        /* Control is down         */
+#define MODE_ALT    0x08        /* Alternate is down       */
+#define MODE_CAPS   0x10        /* CapsLock is down        */
+#define MODE_CLEAR  0x20        /* Clr/Home is down        */
+
 #endif /* BIOSDEFS_H */
