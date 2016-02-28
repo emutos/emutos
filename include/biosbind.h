@@ -28,7 +28,6 @@
 #define Mediach(a) bios_l_w(0x9,a)
 #define Drvmap() bios_l_v(0xa)
 #define Kbshift(a) bios_l_w(0xb,a)
-#define Getshift(a) bios_l_w(0xb,a)
 
 
 
