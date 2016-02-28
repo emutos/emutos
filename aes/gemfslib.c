@@ -12,7 +12,7 @@
 #include "struct.h"
 #include "obdefs.h"
 #include "dos.h"
-#include "tosvars.h"
+#include "../bios/tosvars.h"
 #include "gemlib.h"
 #include "gem_rsc.h"
 

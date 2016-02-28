@@ -16,7 +16,7 @@
 #include "asm.h"
 #include "string.h"
 #include "vdi_defs.h"
-#include "lineavars.h"
+#include "../bios/lineavars.h"
 
 
 extern const Fonthead *def_font;    /* Default font of open workstation */

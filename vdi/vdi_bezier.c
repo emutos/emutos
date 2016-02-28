@@ -12,8 +12,6 @@
 
 #include "config.h"
 #include "portab.h"
-#include "tosvars.h"
-#include "lineavars.h"
 #include "vdi_defs.h"
 #include "biosbind.h"
 #include "asm.h"        /* for malloc */

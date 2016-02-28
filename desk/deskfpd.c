@@ -28,8 +28,8 @@
 #include "dos.h"
 #include "deskbind.h"
 
-#include "gemdos.h"
-#include "optimopt.h"
+#include "../aes/gemdos.h"
+#include "../aes/optimopt.h"
 #include "deskrsrc.h"
 #include "deskglob.h"
 

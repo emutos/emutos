@@ -34,10 +34,10 @@
 #include "desksupp.h"
 #include "deskfun.h"
 #include "deskmain.h"
-#include "rectfunc.h"
+#include "../aes/rectfunc.h"
 #include "dos.h"
 #include "desk1.h"
-#include "ikbd.h"
+#include "../bios/ikbd.h"
 #include "kprint.h"
 
 

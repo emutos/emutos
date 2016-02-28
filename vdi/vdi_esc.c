@@ -12,7 +12,7 @@
 #include "config.h"
 #include "portab.h"
 #include "vdi_defs.h"
-#include "lineavars.h"
+#include "../bios/lineavars.h"
 #include "asm.h"
 #include "kprint.h"
 

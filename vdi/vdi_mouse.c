@@ -16,8 +16,8 @@
 #include "asm.h"
 #include "xbiosbind.h"
 #include "vdi_defs.h"
-#include "tosvars.h"
-#include "lineavars.h"
+#include "../bios/tosvars.h"
+#include "../bios/lineavars.h"
 #include "kprint.h"
 
 

@@ -11,12 +11,11 @@
 
 #include "config.h"
 #include "portab.h"
-#include "tosvars.h"
-#include "lineavars.h"
+#include "../bios/lineavars.h"
 #include "vdi_defs.h"
 //#include "kprint.h"
 #include "biosbind.h"
-#include "screen.h"
+#include "../bios/screen.h"
 #include "asm.h"
 #include "string.h"
 

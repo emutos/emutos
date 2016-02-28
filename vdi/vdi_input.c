@@ -15,7 +15,6 @@
 #include "portab.h"
 #include "biosbind.h"
 #include "xbiosbind.h"
-#include "lineavars.h"
 #include "vdi_defs.h"
 
 

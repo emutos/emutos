@@ -31,8 +31,8 @@
 #include "deskwin.h"
 #include "deskbind.h"
 
-#include "rectfunc.h"
-#include "gemdos.h"
+#include "../aes/rectfunc.h"
+#include "../aes/gemdos.h"
 #include "aesbind.h"
 #include "deskact.h"
 #include "deskpro.h"

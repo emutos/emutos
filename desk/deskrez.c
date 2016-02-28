@@ -22,7 +22,7 @@
 #include "gembind.h"
 #include "obdefs.h"
 #include "deskrsrc.h"
-#include "optimize.h"
+#include "../aes/optimize.h"
 #include "desk_rsc.h"
 #include "deskapp.h"
 #include "deskfpd.h"
@@ -33,9 +33,9 @@
 #include "deskrez.h"
 
 #include "xbiosbind.h"
-#include "machine.h"    /* for has_videl etc */
-#include "screen.h"
-#include "videl.h"
+#include "../bios/machine.h"    /* for has_videl etc */
+#include "../bios/screen.h"
+#include "../bios/videl.h"
 #include "kprint.h"
 
 

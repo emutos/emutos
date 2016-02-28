@@ -30,15 +30,15 @@
 #include "gembind.h"
 #include "deskbind.h"
 
-#include "optimize.h"
-#include "gemdos.h"
+#include "../aes/optimize.h"
+#include "../aes/gemdos.h"
 #include "aesbind.h"
 #include "deskmain.h"
 #include "deskglob.h"
 #include "desksupp.h"
 #include "deskdir.h"
 #include "deskfun.h"
-#include "ikbd.h"
+#include "../bios/ikbd.h"
 
 #include "string.h"
 #include "gemerror.h"

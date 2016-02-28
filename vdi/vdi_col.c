@@ -12,11 +12,11 @@
 #include "intmath.h"
 #include "vdi_defs.h"
 #include "string.h"
-#include "machine.h"
+#include "../bios/machine.h"
 #include "xbiosbind.h"
 #include "vdi_col.h"
-#include "lineavars.h"
-#include "screen.h"
+#include "../bios/lineavars.h"
+#include "../bios/screen.h"
 
 #define EXTENDED_PALETTE (CONF_WITH_VIDEL || CONF_WITH_TT_SHIFTER)
 

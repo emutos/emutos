@@ -31,16 +31,16 @@
 #include "gembind.h"
 #include "deskbind.h"
 
-#include "gemdos.h"
-#include "optimize.h"
-#include "optimopt.h"
+#include "../aes/gemdos.h"
+#include "../aes/optimize.h"
+#include "../aes/optimopt.h"
 #include "aesbind.h"
 #include "deskmain.h"
 #include "deskglob.h"
 #include "deskdir.h"
 #include "deskrsrc.h"
 #include "deskinf.h"
-#include "country.h"
+#include "../bios/country.h"
 #include "kprint.h"
 
 

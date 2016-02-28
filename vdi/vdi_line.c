@@ -12,8 +12,7 @@
 #include "portab.h"
 #include "intmath.h"
 #include "vdi_defs.h"
-#include "tosvars.h"
-#include "lineavars.h"
+#include "../bios/lineavars.h"
 
 
 extern void linea_rect(void);     /* called only from linea.S */

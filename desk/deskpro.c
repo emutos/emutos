@@ -29,7 +29,7 @@
 #include "deskwin.h"
 #include "deskbind.h"
 
-#include "gemdos.h"
+#include "../aes/gemdos.h"
 #include "aesbind.h"
 #include "deskglob.h"
 #include "desksupp.h"

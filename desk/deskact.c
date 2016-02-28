@@ -28,8 +28,7 @@
 #include "deskwin.h"
 #include "deskbind.h"
 
-#include "optimopt.h"
-#include "rectfunc.h"
+#include "../aes/rectfunc.h"
 #include "aesbind.h"
 #include "deskact.h"
 #include "deskglob.h"

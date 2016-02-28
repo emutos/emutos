@@ -252,11 +252,11 @@ cli_ssrc = cmdasm.S
 
 bios_copts =
 bdos_copts =
-util_copts = -Ibios
+util_copts =
 cli_copts  =
-vdi_copts  = -Ibios
-aes_copts  = -Ibios
-desk_copts = -Ibios -Iaes
+vdi_copts  =
+aes_copts  =
+desk_copts =
 
 #
 # Makefile functions

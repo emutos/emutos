@@ -13,8 +13,8 @@
 #include "config.h"
 #include "portab.h"
 #include "vdi_defs.h"
-#include "lineavars.h"
-#include "tosvars.h"
+#include "../bios/lineavars.h"
+#include "../bios/tosvars.h"
 #include "kprint.h"
 
 #ifdef __mcoldfire__

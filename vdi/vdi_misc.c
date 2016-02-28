@@ -15,9 +15,9 @@
 #include "portab.h"
 #include "asm.h"
 #include "biosbind.h"
-#include "tosvars.h"
+#include "../bios/tosvars.h"
 #include "vdi_defs.h"
-#include "lineavars.h"
+#include "../bios/lineavars.h"
 
 
 

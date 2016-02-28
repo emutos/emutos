@@ -31,8 +31,8 @@
 #include "gem_rsc.h"
 #include "dos.h"
 #include "xbiosbind.h"
-#include "screen.h"
-#include "videl.h"
+#include "../bios/screen.h"
+#include "../bios/videl.h"
 #include "biosbind.h"
 
 #include "gemgsxif.h"
@@ -61,7 +61,7 @@
 #include "optimopt.h"
 
 #include "string.h"
-#include "ikbd.h"
+#include "../bios/ikbd.h"
 #include "kprint.h"
 
 extern LONG size_theglo(void); /* called only from gemstart.S */

@@ -30,7 +30,7 @@
 #include "dos.h"
 #include "gembind.h"
 #include "deskbind.h"
-#include "rectfunc.h"
+#include "../aes/rectfunc.h"
 #include "intmath.h"
 #include "aesbind.h"
 #include "deskobj.h"

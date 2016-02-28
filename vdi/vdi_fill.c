@@ -14,8 +14,8 @@
 #include "config.h"
 #include "portab.h"
 #include "vdi_defs.h"
-#include "tosvars.h"
-#include "lineavars.h"
+#include "../bios/tosvars.h"
+#include "../bios/lineavars.h"
 
 #define EMPTY   0xffff
 #define DOWN_FLAG 0x8000
