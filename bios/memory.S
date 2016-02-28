@@ -487,21 +487,6 @@ alter:
         move.l  #0x1357BD13, _ramvalid  // set ramvalid to ok
 #endif
 
-#if 0
-// Clearing the FastRAM takes time, especially when it has big size.
-// So we don't clear it anymore.
-// Clean programs should not rely on the contents of the non-initialized RAM,
-// and dirty ones should have the FastLoad bit unset.
-
-        /* clear all Fast/TT-RAM - from 0x1000000 till the end */
-        lea     0x1000000, a4           // start from 16MB boundary
-        move.l  a3, d5                  // end at ramtop
-        beq     tt_cleared              // if no FastRAM then skip clearing
-        lea     tt_cleared(pc),a6       // remember return address
-        bra     clear_ram               // jump to routine clearing the RAM
-tt_cleared:
-#endif
-
 #endif /* CONF_WITH_FASTRAM */
 
         jmp     memdone                 // config done -> return to startup.s

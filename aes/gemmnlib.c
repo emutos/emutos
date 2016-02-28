@@ -85,24 +85,6 @@ static WORD menu_sub(LONG *ptree, WORD ititle)
 }
 
 
-/*
- *  Routine to find a desk accessory id number given a process descriptor
- */
-#if 0  /* unused */
-WORD mn_getda(AESPD *ppd)
-{
-        WORD i;
-
-        for (i=0; i<NUM_ACCS; i++)
-        {
-          if (ppd == desk_ppd[i])
-            return(i);
-        }
-        return(0);
-}
-#endif
-
-
 static void menu_fixup(void)
 {
     OBJECT  *pob, *obj;

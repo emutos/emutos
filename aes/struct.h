@@ -45,21 +45,6 @@ CQUEUE
 };
 
 
-/* mouse form */
-#if 0  /* Defined in gsxdefs.h */
-typedef struct mform
-{
-        WORD    mf_xhot;
-        WORD    mf_yhot;
-        WORD    mf_nplanes;
-        WORD    mf_fg;
-        WORD    mf_bg;
-        WORD    mf_mask[16];
-        WORD    mf_data[16];
-} MFORM;
-#endif
-
-
 #define C_KOWNER 0x0001
 #define C_MOWNER 0x0002
 

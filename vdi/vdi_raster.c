@@ -218,26 +218,6 @@ extern void bit_blt(void);
 #define GetMemW(addr) ((ULONG)*(UWORD*)(addr))
 #define SetMemW(addr, val) *(UWORD*)(addr) = val
 
-/* BLiTTER REGISTER OFFSETS - not neede here */
-#if 0
-#define Halftone  0:
-#define Src_Xinc 32:
-#define Src_Yinc 34:
-#define Src_Addr 36:
-#define Endmask1 40:
-#define Endmask2 42:
-#define Endmask3 44:
-#define Dst_Xinc 46:
-#define Dst_Yinc 48:
-#define Dst_Addr 50:
-#define X_Count  54:
-#define Y_Count  56:
-#define HOP      58:
-#define OP       59:
-#define Line_Num 60:
-#define Skew     61:
-#endif
-
 /* blitter registers */
 typedef struct blit blit;
 struct blit {
@@ -401,26 +381,6 @@ do_blit(blit * blt)
     /* blt->status &= ~BUSY; */
     blt->y_cnt = 0;
 }
-
-
-
-/* BLiTTER BASE ADDRESS */
-//#define BLiTTER 0xFFFF8A00:
-
-    /* BLiTTER REGISTER FLAGS */
-#define fHOP_Source    1
-#define fHOP_Halftone  0
-
-#define fSkewFXSR  7
-#define fSkewNFSR  6
-
-#define fLineBusy  7
-#define fLineHog  6
-#define fLineSmudge  5
-
-#define mLineBusy    0x80
-#define mLineHog     0x40
-#define mLineSmudge  0x20
 
 /*
  * endmask data

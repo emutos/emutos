@@ -349,36 +349,7 @@ static void offree(DMD *d)
  *  osif -
  */
 
-#if 0     // was #if    DBGOSIF
-/*
- * if in debug mode, use this 'front end' so we can tell if we exit
- * from osif
- */
-
-long    osif(int *pw )
-{
-    long        osif2() ;
-    char        *p ;
-    long        r ;
-
-    p = (char *) &pw ;
-    osifdmp( p-4 , pw ) ;               /*  pass return addr and pw ptr */
-
-    r = osif2( pw ) ;
-
-    osifret() ;
-    return( r ) ;
-}
-#else
-/*
- * if not in debug mode, go directory to 'osif2'.  Do not pass go, do
- * not collect $200, and do not spend time on an extra call
- */
-#define osif2   osif
-
-#endif
-
-long    osif2(int *pw)
+long    osif(int *pw)
 {
     char **pb,*pb2,*p,ctmp;
     BPB *b;

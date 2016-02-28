@@ -368,17 +368,10 @@ static void w_barcalc(WORD isvert, WORD space, WORD sl_value, WORD sl_size,
 
     sl_value = mul_div(space - sl_size, sl_value, 1000);
 
-#if 0 /* anemic slidebars */
-    if (isvert)
-        r_set(ptv, 3, sl_value, gl_wbox-6, sl_size);
-    else
-        r_set(pth, sl_value, 2, sl_size, gl_hbox-4);
-#else
     if (isvert)
         r_set(ptv, 0, sl_value, gl_wbox, sl_size);
     else
         r_set(pth, sl_value, 0, sl_size, gl_hbox);
-#endif
 }
 
 
@@ -1032,13 +1025,8 @@ void wm_start(void)
     OBJECT  *tree;
     AESPD   *ppd;
 
-#if 0
-    /* init default owner to be screen mgr */
-    ppd = fpdnm(NULL, SCR_MGR);
-#else
     /* init default owner to be current process */
     ppd = rlr;
-#endif
 
     /* init owner rectangles */
     or_start();

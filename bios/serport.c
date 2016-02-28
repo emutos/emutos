@@ -28,11 +28,8 @@
 /*
  * defines
  */
-#if 0 /* CONF_WITH_SERIAL_INTERRUPTS TODO */
-#define RS232_BUFSIZE 256
-#else
 #define RS232_BUFSIZE 4         /* save space if buffers unused */
-#endif
+/* TODO: Set to 256 when serial interrupts are enabled. */
 
 #if CONF_WITH_SCC
 #define RESET_RECOVERY_DELAY    delay_loop(reset_recovery_loops)

@@ -81,23 +81,6 @@ void arb_line(Line * line)
 
 
 /*
- * arb_hzline - copy and sort (arbitrate) the line x coordinates
- */
-#if 0
-void arb_hzline(Line * line)
-{
-    /* Fix the x coordinate values, if necessary. */
-    if (line->x1 > line->x2) {
-        WORD temp = line->x1;
-        line->x1 = line->x2;
-        line->x2 = temp;
-    }
-}
-#endif
-
-
-
-/*
  * tick_int -  VDI Timer interrupt routine
  *
  * The etv_timer does point to this routine

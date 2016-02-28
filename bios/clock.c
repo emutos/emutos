@@ -97,30 +97,6 @@ void detect_megartc(void)
       has_megartc = 1;
     }
   }
-
-#if 0
-  /*
-   * Then this is what TOS 1.2 seems to do. However emulators like
-   * STonX do not accept writing to the RTC registers, even in the
-   * 'second bank' (if this is what setting rega := 9 means).
-   * For this reason it is commented out.
-   */
-  if (has_megartc) {
-    /* use 'second bank' (?), write some test (?) values in registers */
-    clk.rega = 9;
-    clk.min_l = 10;
-    clk.min_h = 5;
-    if((clk.min_l != 10) || (clk.min_h != 5)) {
-      has_megartc = 0;
-    } else {
-      /* set back to 'first bank' (?), do some initialisation (?) */
-      has_megartc = 1;
-      clk.sec_l = 1;
-      clk.rega = 8;
-      clk.regb = 0;
-    }
-  }
-#endif
 }
 
 /*==== MegaRTC internal functions =========================================*/
@@ -400,19 +376,6 @@ static void igetregs(void)
     --delay;
   }
 }
-
-#if 0  /* currently unused */
-static void iresetregs(void)
-{
-  iclkbuf.cmd   = 0x1B;
-  iclkbuf.year  = 0xFF;
-  iclkbuf.month = 0xFF;
-  iclkbuf.day   = 0xFF;
-  iclkbuf.hour  = 0xFF;
-  iclkbuf.min   = 0xFF;
-  iclkbuf.sec   = 0xFF;
-}
-#endif
 
 static void isetregs(void)
 {
