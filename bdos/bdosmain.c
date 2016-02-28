@@ -23,7 +23,7 @@
 #include "config.h"
 #include "portab.h"
 #include "fs.h"
-#include "bpb.h"
+#include "biosdefs.h"
 #include "mem.h"
 #include "proc.h"
 #include "console.h"

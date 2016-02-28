@@ -1,20 +1,18 @@
 /*
- * bpb.h - the BPB
+ * biosdefs.h - Public BIOS defines and structures
  *
- * This file exists to centralise the definition of the BPB, which was
- * previously defined (identically, fortunately) in three different places.
- *
- * Copyright (c) 2011 The EmuTOS development team
+ * Copyright (c) 2016 The EmuTOS development team
  *
  * Authors:
- *  RFB    Roger Burrows
+ *  RFB   Roger Burrows
+ *  VRI   Vincent Rivière
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef BPB_H
-#define BPB_H
+#ifndef BIOSDEFS_H
+#define BIOSDEFS_H
 
 #include "portab.h"
 
@@ -41,4 +39,4 @@ typedef struct _bpb BPB;
 #define B_16    1       /* device has 16-bit FATs */
 #define B_FIX   2       /* device has fixed media */
 
-#endif /* BIOS_H */
+#endif /* BIOSDEFS_H */

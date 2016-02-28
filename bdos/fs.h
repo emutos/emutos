@@ -21,7 +21,7 @@
 #ifndef FS_H
 #define FS_H
 
-#include "bpb.h"
+#include "biosdefs.h"
 #include "pd.h"
 
 /*

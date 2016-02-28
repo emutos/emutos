@@ -15,7 +15,7 @@
 #define BLKDEV_H
 
 #include "portab.h"
-#include "bpb.h"
+#include "biosdefs.h"
 
 
 /*
