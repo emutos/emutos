@@ -21,7 +21,6 @@
 #define Bconin(a) bios_l_w(0x2,a)
 #define Bconout(a,b) bios_l_ww(0x3,a,b)
 #define Rwabs(a,b,c,d,e,lrec) bios_l_wlwwwl(0x4,a,b,c,d,e,lrec)
-#define Setexec(a,b) bios_l_wl(0x5,a,b)
 #define Setexc(a,b) bios_l_wl(0x5,a,b)
 #define Tickcal() bios_l_v(0x6)
 #define Getbpb(a) bios_l_w(0x7,a)

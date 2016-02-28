@@ -859,11 +859,11 @@ static LONG bios_4(WORD r_w, LONG adr, WORD numb, WORD first, WORD drive, LONG l
 
 
 /**
- * Setexec - set exception vector
+ * Setexc - set exception vector
  *
  */
 
-LONG setexec(WORD num, LONG vector)
+LONG setexc(WORD num, LONG vector)
 {
     LONG oldvector;
     LONG *addr = (LONG *) (4L * num);
@@ -878,8 +878,8 @@ LONG setexec(WORD num, LONG vector)
 #if DBGBIOS
 static LONG bios_5(WORD num, LONG vector)
 {
-    LONG ret = setexec(num, vector);
-    KDEBUG(("Bios 5: Setexec(num = 0x%x, vector = 0x%08lx)\n", num, vector));
+    LONG ret = setexc(num, vector);
+    KDEBUG(("Bios 5: Setexc(num = 0x%x, vector = 0x%08lx)\n", num, vector));
     return ret;
 }
 #endif
@@ -1070,7 +1070,7 @@ const PFLONG bios_vecs[] = {
     VEC(bios_2, bconin),
     VEC(bios_3, bconout),
     VEC(bios_4, lrwabs),
-    VEC(bios_5, setexec),
+    VEC(bios_5, setexc),
     VEC(bios_6, tickcal),
     VEC(bios_7, getbpb),
     VEC(bios_8, bcostat),

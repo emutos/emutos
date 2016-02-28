@@ -18,7 +18,7 @@ LONG bconstat(WORD handle);
 LONG bconin(WORD handle);
 LONG bconout(WORD handle, WORD what);
 LONG lrwabs(WORD r_w, LONG adr, WORD numb, WORD first, WORD drive, LONG lfirst);
-LONG setexec(WORD num, LONG vector);
+LONG setexc(WORD num, LONG vector);
 LONG tickcal(void);
 LONG getbpb(WORD drive);
 LONG bcostat(WORD handle);
