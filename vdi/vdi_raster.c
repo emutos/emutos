@@ -23,7 +23,7 @@
 #define ASM_BLIT 1      // use m68k assembler bit_blt routine.
 #endif
 
-/* bitblt modes (defines not used) */
+/* bitblt modes */
 #define BM_ALL_WHITE   0
 #define BM_S_AND_D     1
 #define BM_S_AND_NOTD  2
@@ -310,52 +310,52 @@ do_blit(blit * blt)
             blt_dst_in = GetMemW (blt->dst_addr);
             /* op into blt_dst_out */
             switch (blt->op & 0xf) {
-            case 0:
+            case BM_ALL_WHITE:
                 blt_dst_out = 0;
                 break;
-            case 1:
+            case BM_S_AND_D:
                 blt_dst_out = blt_src_out & blt_dst_in;
                 break;
-            case 2:
+            case BM_S_AND_NOTD:
                 blt_dst_out = blt_src_out & ~blt_dst_in;
                 break;
-            case 3:
+            case BM_S_ONLY:
                 blt_dst_out = blt_src_out;
                 break;
-            case 4:
+            case BM_NOTS_AND_D:
                 blt_dst_out = ~blt_src_out & blt_dst_in;
                 break;
-            case 5:
+            case BM_D_ONLY:
                 blt_dst_out = blt_dst_in;
                 break;
-            case 6:
+            case BM_S_XOR_D:
                 blt_dst_out = blt_src_out ^ blt_dst_in;
                 break;
-            case 7:
+            case BM_S_OR_D:
                 blt_dst_out = blt_src_out | blt_dst_in;
                 break;
-            case 8:
+            case BM_NOT_SORD:
                 blt_dst_out = ~blt_src_out & ~blt_dst_in;
                 break;
-            case 9:
+            case BM_NOT_SXORD:
                 blt_dst_out = ~blt_src_out ^ blt_dst_in;
                 break;
-            case 0xa:
+            case BM_NOT_D:
                 blt_dst_out = ~blt_dst_in;
                 break;
-            case 0xb:
+            case BM_S_OR_NOTD:
                 blt_dst_out = blt_src_out | ~blt_dst_in;
                 break;
-            case 0xc:
+            case BM_NOT_S:
                 blt_dst_out = ~blt_src_out;
                 break;
-            case 0xd:
+            case BM_NOTS_OR_D:
                 blt_dst_out = ~blt_src_out | blt_dst_in;
                 break;
-            case 0xe:
+            case BM_NOT_SANDD:
                 blt_dst_out = ~blt_src_out | ~blt_dst_in;
                 break;
-            case 0xf:
+            case BM_ALL_BLACK:
                 blt_dst_out = 0xffff;
                 break;
             }
