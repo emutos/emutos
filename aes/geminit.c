@@ -59,6 +59,7 @@
 #include "geminit.h"
 #include "optimize.h"
 #include "optimopt.h"
+#include "aespub.h"
 
 #include "string.h"
 #include "biosdefs.h"
@@ -81,6 +82,13 @@ static BYTE     envbuf[ENV_SIZE];       /* for initial desktop environment */
 static BYTE     acc_name[NUM_ACCS][LEN_ZFNAME]; /* used by count_accs()/ldaccs() */
 
 /* Some global variables: */
+
+GLOBAL const GEM_MUPB ui_mupb =
+{
+    GEM_MUPB_MAGIC, /* Magic value identifying this structure */
+    end,            /* FIXME: Should be the end of the GEM BSS */
+    ui_start        /* AES entry point */
+};
 
 GLOBAL WORD     totpds;
 GLOBAL WORD     num_accs;

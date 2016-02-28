@@ -269,18 +269,6 @@ _dos_exec:
 #endif
         rts
 
-
-
-
-SECTION_RODATA
-
-// The AES MUPB structure:
-_ui_mupb:
-        .dc.l   0x87654321      // Magic value
-        .dc.l   ui_bss_end      // End of AES' BSS (actually a dummy value)
-        .dc.l   _ui_start       // Start of AES code
-
-
 .bss
 
 
@@ -304,4 +292,3 @@ saveregs:
 // pointer to original environment, restored on AES restart
 save_ad_envrn:
         .ds.l   1
-ui_bss_end:

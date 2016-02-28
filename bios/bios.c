@@ -37,7 +37,7 @@
 #include "country.h"
 #include "nls.h"
 #include "biosmem.h"
-
+#include "aespub.h"
 #include "ikbd.h"
 #include "mouse.h"
 #include "midi.h"
@@ -78,8 +78,6 @@
 extern void run_cartridge_applications(WORD typebit); /* found in startup.S */
 #endif
 
-extern void ui_start(void) NORETURN;    /* found in aes/gemstart.S */
-                              /* it is the start addr. of the user interface */
 #if WITH_CLI
 extern void coma_start(void) NORETURN;  /* found in cli/cmdasm.S */
 #endif
