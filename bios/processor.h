@@ -60,7 +60,7 @@ long detect_cpu(void);
 long detect_fpu(void);
 
 extern void processor_init(void);
-extern void invalidate_instruction_cache(void *start, long size);
+/* invalidate_instruction_cache() is declared in include/biosext.h */
 extern void instruction_cache_kludge(void *start,long size);
 extern void flush_data_cache(void *start, long size);
 extern void invalidate_data_cache(void *start, long size);

@@ -24,7 +24,7 @@
 #include "biosbind.h"
 #include "string.h"
 #include "kprint.h"
-#include "../bios/processor.h"
+#include "biosext.h"
 #include "asm.h"
 
 

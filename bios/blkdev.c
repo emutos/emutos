@@ -30,6 +30,7 @@
 #include "acsi.h"
 #include "ide.h"
 #include "sd.h"
+#include "biosext.h"
 
 /*
  * undefine the following to enable booting from hard disk.

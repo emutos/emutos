@@ -10,6 +10,8 @@
 #ifndef BIOSEXT_H
 #define BIOSEXT_H
 
+void invalidate_instruction_cache(void *start, long size);
+
 #if CONF_WITH_SHUTDOWN
 BOOL can_shutdown(void);
 #endif
