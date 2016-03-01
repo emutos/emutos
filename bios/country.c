@@ -139,16 +139,16 @@ void detect_akp(void)
 
 #if CONF_WITH_NVRAM && CONF_MULTILANG
     {
-    char buf[2];
-    int err;
+        char buf[2];
+        int err;
 
-    err = nvmaccess(0, 6, 2, (PTR) buf);
-    if (err == 0)
-    {
-        /* Override with the NVRAM settings */
-        country = buf[0];
-        keyboard = buf[1];
-    }
+        err = nvmaccess(0, 6, 2, (PTR) buf);
+        if (err == 0)
+        {
+            /* Override with the NVRAM settings */
+            country = buf[0];
+            keyboard = buf[1];
+        }
     }
 #endif
 

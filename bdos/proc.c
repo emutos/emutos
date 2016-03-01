@@ -504,25 +504,25 @@ static MD *alloc_tpa(ULONG flags,LONG needed,LONG *avail)
 
 #if CONF_WITH_ALT_RAM
     {
-    LONG alt_ram_size = 0L, tpasize;
-    BOOL alt_ram_available = FALSE;
+        LONG alt_ram_size = 0L, tpasize;
+        BOOL alt_ram_available = FALSE;
 
-    if (has_alt_ram && (flags & PF_TTRAMLOAD)) {
-        alt_ram_size = (LONG) ffit(-1L, &pmdalt);
-        if (alt_ram_size >= needed)
-            alt_ram_available = TRUE;
-    }
+        if (has_alt_ram && (flags & PF_TTRAMLOAD)) {
+            alt_ram_size = (LONG) ffit(-1L, &pmdalt);
+            if (alt_ram_size >= needed)
+                alt_ram_available = TRUE;
+        }
 
-    if (st_ram_available && alt_ram_available && (st_ram_size > alt_ram_size)) {
-        tpasize = (((flags >> 28) & 0x0f) + 1) * TPASIZE_QUANTUM;
-        if (needed+tpasize > alt_ram_size)
-            alt_ram_available = FALSE;  /* force allocation in ST RAM */
-    }
+        if (st_ram_available && alt_ram_available && (st_ram_size > alt_ram_size)) {
+            tpasize = (((flags >> 28) & 0x0f) + 1) * TPASIZE_QUANTUM;
+            if (needed+tpasize > alt_ram_size)
+                alt_ram_available = FALSE;  /* force allocation in ST RAM */
+        }
 
-    if (alt_ram_available) {
-        *avail = alt_ram_size;
-        return ffit(alt_ram_size, &pmdalt);
-    }
+        if (alt_ram_available) {
+            *avail = alt_ram_size;
+            return ffit(alt_ram_size, &pmdalt);
+        }
     }
 #endif
 
