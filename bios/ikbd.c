@@ -749,11 +749,10 @@ LONG bconout4(WORD dev, WORD c)
  * ridiculously small stack (sp == 0x22), so keep stack usage as small as
  * possible here.
  */
-void ikbdws(WORD cnt, PTR ptr)
+void ikbdws(WORD cnt, const UBYTE *ptr)
 {
-    UBYTE *p = (UBYTE *) ptr;
     while (cnt-- >= 0)
-        ikbd_writeb(*p++);
+        ikbd_writeb(*ptr++);
 }
 
 /* send a byte to the IKBD - for general use */

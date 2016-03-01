@@ -548,7 +548,7 @@ static void xbios_18(void)
 static void xbios_19(WORD cnt, LONG ptr)
 {
     kprintf("XBIOS: Ikbdws(0x%04x, 0x%08lx)\n", cnt, ptr);
-    ikbdws(cnt, (PTR) ptr);
+    ikbdws(cnt, (UBYTE*) ptr);
 }
 #endif
 
@@ -776,7 +776,7 @@ static LONG xbios_29(WORD dev, WORD rate)
  */
 
 #if DBG_XBIOS
-static LONG xbios_2a(LONG sector, WORD count, PTR buf, WORD major)
+static LONG xbios_2a(LONG sector, WORD count, LONG buf, WORD major)
 {
     kprintf("XBIOS: DMAread\n");
     return DMAread(sector, count, buf, major);
@@ -788,7 +788,7 @@ static LONG xbios_2a(LONG sector, WORD count, PTR buf, WORD major)
  */
 
 #if DBG_XBIOS
-static LONG xbios_2b(LONG sector, WORD count, PTR buf, WORD major)
+static LONG xbios_2b(LONG sector, WORD count, LONG buf, WORD major)
 {
     kprintf("XBIOS: DMAwrite\n");
     return DMAwrite(sector, count, buf, major);
@@ -814,7 +814,7 @@ static LONG xbios_2c(WORD devno)
  */
 
 #if DBG_XBIOS && CONF_WITH_NVRAM
-static WORD xbios_2e(WORD op, WORD start, WORD count, PTR buffer)
+static WORD xbios_2e(WORD op, WORD start, WORD count, UBYTE *buffer)
 {
     kprintf("XBIOS: NVMaccess\n");
     return nvmaccess(op, start, count, buffer);

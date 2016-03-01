@@ -368,7 +368,7 @@ static void igetregs(void)
   long delay;
   iclk_ready = 0;
   iclkbuf.cmd = 0x1C;
-  ikbdws(0, (PTR) &iclkbuf);
+  ikbdws(0, (const UBYTE*) &iclkbuf);
 
   /* wait until the interrupt receives the full packet */
   delay = 8000000;
@@ -380,7 +380,7 @@ static void igetregs(void)
 static void isetregs(void)
 {
   iclkbuf.cmd = 0x1B;
-  ikbdws(6, (PTR) &iclkbuf);
+  ikbdws(6, (const UBYTE*) &iclkbuf);
 }
 
 static UWORD idogetdate(void)

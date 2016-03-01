@@ -118,11 +118,10 @@ static void set_sum(UWORD sum)
  *   count  - count of bytes
  *   buffer - buffer for operations
  */
-WORD nvmaccess(WORD type, WORD start, WORD count, PTR buffer)
+WORD nvmaccess(WORD type, WORD start, WORD count, UBYTE *buffer)
 {
     volatile UBYTE * addr_reg = (volatile UBYTE *)0xffff8961;
     volatile UBYTE * data_reg = (volatile UBYTE *)0xffff8963;
-    UBYTE * ubuffer = (UBYTE *) buffer;
     int i;
 
     if(! has_nvram) {
@@ -146,7 +145,7 @@ WORD nvmaccess(WORD type, WORD start, WORD count, PTR buffer)
         inited = 1;
     }
 
-    if (ubuffer == NULL || start < 0 || count < 1 || (start + count) > 49)
+    if (buffer == NULL || start < 0 || count < 1 || (start + count) > 49)
         return -5;
 
     switch(type) {
@@ -159,14 +158,14 @@ WORD nvmaccess(WORD type, WORD start, WORD count, PTR buffer)
             return -12;
         }
         for(i = start ; i < start + count ; i++) {
-            *ubuffer++ = nvram_buf[i];
+            *buffer++ = nvram_buf[i];
         }
         break;
     }
     case 1: /* write, in our buffer and in the memory */
         for(i = start ; i < start + count ; i++) {
             *addr_reg = i + 14;
-            *data_reg = nvram_buf[i] = *ubuffer++;
+            *data_reg = nvram_buf[i] = *buffer++;
         }
         set_sum(compute_sum());
         /* TODO - verify ? */

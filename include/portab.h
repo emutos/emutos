@@ -81,7 +81,6 @@
 typedef char            BYTE;                   /*  Signed byte         */
 typedef unsigned char   UBYTE;                  /*  Unsigned byte       */
 typedef unsigned long   ULONG;                  /*  unsigned 32 bit word*/
-typedef long            PTR;                    /*  32 bit pointer */
 typedef int             BOOL;                   /*  boolean, TRUE or FALSE */
 typedef short int       WORD;                   /*  signed 16 bit word  */
 typedef unsigned short  UWORD;                  /*  unsigned 16 bit word*/

@@ -139,10 +139,10 @@ void detect_akp(void)
 
 #if CONF_WITH_NVRAM && CONF_MULTILANG
     {
-        char buf[2];
+        UBYTE buf[2];
         int err;
 
-        err = nvmaccess(0, 6, 2, (PTR) buf);
+        err = nvmaccess(0, 6, 2, buf);
         if (err == 0)
         {
             /* Override with the NVRAM settings */
@@ -158,10 +158,10 @@ void detect_akp(void)
 void detect_idt(void)
 {
 #if CONF_WITH_NVRAM
-    char buf[2];
+    UBYTE buf[2];
     int err;
 
-    err = nvmaccess(0, 8, 2, (PTR) buf);
+    err = nvmaccess(0, 8, 2, buf);
     if (err == 0)
     {
         cookie_idt = (buf[0] << 8) | buf[1];
