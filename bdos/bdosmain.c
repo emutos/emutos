@@ -232,7 +232,7 @@ static const FND funcs[] =
     { xrename,  0, 5 },    /* 0x56 */
     { xgsdtof,  0, 4 }       /* 0x57 */
 };
-#define MAX_FNCALL  ((int)((sizeof(funcs)/sizeof(FND))-1))
+#define MAX_FNCALL (_countof(funcs) - 1)
 
 
 

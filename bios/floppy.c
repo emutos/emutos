@@ -560,7 +560,7 @@ static const struct _protobt protobt_data[] = {
     { SECTOR_SIZE, 2, 1, 2, 224, 2880, 0xf0, 5, 18, 2, 0 }, /* for HD floppy */
     { SECTOR_SIZE, 2, 1, 2, 224, 5760, 0xf0, 10, 36, 2, 0 } /* for ED floppy */
 };
-#define NUM_PROTOBT_ENTRIES (sizeof(protobt_data)/sizeof(struct _protobt))
+#define NUM_PROTOBT_ENTRIES _countof(protobt_data)
 
 void protobt(LONG buf, LONG serial, WORD type, WORD exec)
 {

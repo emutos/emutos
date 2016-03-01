@@ -100,6 +100,9 @@ typedef void (*PFVOID)(void);
 #define MAKE_UWORD(hi,lo) (((UWORD)(BYTE)(hi) << 8) | (BYTE)(lo))
 #define MAKE_ULONG(hi,lo) (((ULONG)(UWORD)(hi) << 16) | (UWORD)(lo))
 
+/* Number of elements of an array */
+#define _countof(array) ((int)(sizeof(array)/sizeof(array[0])))
+
 /*
  * Workarounds for the GCC strict aliasing rule
  */
