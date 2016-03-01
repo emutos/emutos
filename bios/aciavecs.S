@@ -311,7 +311,7 @@ _midivec:
         moveq   #0,d1
 1:      cmp.w   midiibufhd,d1
         beq     1f
-        lea     midiibufbuf,a0
+        movea.l midiibuf,a0             // must use ptr, user may have changed it
 #ifdef __mcoldfire__
         move.b  d0,0(a0,d1.l)
 #else

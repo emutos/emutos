@@ -102,7 +102,7 @@ T tested and working on an emulator or real hardware
  > 0 PRN: parallel port
  > 1 AUX: default serial port
  T 2 CON: console (screen)
- X 3 MIDI
+ t 3 MIDI
  T 4 IKBD
  T 5 raw screen
  T 6 ST-compatible serial port
@@ -116,7 +116,7 @@ T tested and working on an emulator or real hardware
 
  - midierr
  - ikbderr
- X midi input
+ t midi input
  T ikbd key events
  T IKBD clock
  T mouse

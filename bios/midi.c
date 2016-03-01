@@ -105,8 +105,7 @@ void midiws(WORD cnt, LONG ptr)
 
 /*==== midi_init - initialize the MIDI acia ==================*/
 /*
- *      FUNCTION:  This routine is needed for the keyboard to
- *      work, since the IRQ is shared between both ACIAs.
+ *  Enable receive interrupts, set the clock for 31.25 kbaud
  */
 
 void midi_init(void)
@@ -117,7 +116,7 @@ void midi_init(void)
         ACIA_RESET;     /* master reset */
 
     midi_acia.ctrl =
-        ACIA_RID|       /* disable interrupts */
+        ACIA_RIE|       /* enable RxINT */
         ACIA_RLTID|     /* RTS low, TxINT disabled */
         ACIA_DIV16|     /* clock/16 */
         ACIA_D8N1S;  /* 8 bit, 1 stop, no parity */
