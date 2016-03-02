@@ -386,41 +386,40 @@ void initialise_palette_registers(WORD rez,WORD mode)
 #if CONF_WITH_SHIFTER
 WORD mask;
 
+    if (FALSE) {
+        /* Dummy case for conditional compilation */
+    }
 #if CONF_WITH_VIDEL
-    if (has_videl)
+    else if (has_videl)
         mask = 0x0fff;
-    else
 #endif
 #if CONF_WITH_TT_SHIFTER
-    if (has_tt_shifter)
+    else if (has_tt_shifter)
         mask = 0x0fff;
-    else
 #endif
 #if CONF_WITH_STE_SHIFTER
-    if (has_ste_shifter)
+    else if (has_ste_shifter)
         mask = 0x0fff;
-    else
 #endif
-    {
+    else
         mask = 0x0777;
-    }
+
     initialise_ste_palette(mask);
 
+    if (FALSE) {
+        /* Dummy case for conditional compilation */
+    }
 #if CONF_WITH_VIDEL
-    if (has_videl)
+    else if (has_videl)
         initialise_falcon_palette(mode);
-    else
 #endif
 #if CONF_WITH_TT_SHIFTER
-    if (has_tt_shifter)
+    else if (has_tt_shifter)
         initialise_tt_palette(rez);
-    else
 #endif
-    {
-    }
 
     fixup_ste_palette(rez);
-#endif
+#endif /* CONF_WITH_SHIFTER */
 }
 
 static char rez_was_hacked;
@@ -757,26 +756,26 @@ const UBYTE *physbase(void)
     addr <<= 8;
     addr += *(volatile UBYTE *) VIDEOBASE_ADDR_MID;
     addr <<= 8;
+
+    if (FALSE) {
+        /* Dummy case for conditional compilation */
+    }
 #if CONF_WITH_VIDEL
-    if (has_videl) {
+    else if (has_videl) {
         addr += *(volatile UBYTE *) VIDEOBASE_ADDR_LOW;
     }
-    else
 #endif
 #if CONF_WITH_TT_SHIFTER
-    if (has_tt_shifter) {
+    else if (has_tt_shifter) {
         addr += *(volatile UBYTE *) VIDEOBASE_ADDR_LOW;
     }
-    else
 #endif
 #if CONF_WITH_STE_SHIFTER
-    if (has_ste_shifter) {
+    else if (has_ste_shifter) {
         addr += *(volatile UBYTE *) VIDEOBASE_ADDR_LOW;
     }
-    else
 #endif
-    {
-    }
+
 #else /* CONF_WITH_SHIFTER */
     /* No real physical screen, fall back to Logbase() */
     addr = (LONG)logbase();
@@ -805,26 +804,26 @@ static void setphys(const UBYTE *addr,int checkaddr)
 #if CONF_WITH_SHIFTER
     *(volatile UBYTE *) VIDEOBASE_ADDR_HI = ((ULONG) addr) >> 16;
     *(volatile UBYTE *) VIDEOBASE_ADDR_MID = ((ULONG) addr) >> 8;
+
+    if (FALSE) {
+        /* Dummy case for conditional compilation */
+    }
 #if CONF_WITH_VIDEL
-    if (has_videl) {
+    else if (has_videl) {
         *(volatile UBYTE *) VIDEOBASE_ADDR_LOW = ((ULONG) addr);
     }
-    else
 #endif
 #if CONF_WITH_TT_SHIFTER
-    if (has_tt_shifter) {
+    else if (has_tt_shifter) {
         *(volatile UBYTE *) VIDEOBASE_ADDR_LOW = ((ULONG) addr);
     }
-    else
 #endif
 #if CONF_WITH_STE_SHIFTER
-    if (has_ste_shifter) {
+    else if (has_ste_shifter) {
         *(volatile UBYTE *) VIDEOBASE_ADDR_LOW = ((ULONG) addr);
     }
-    else
 #endif
-    {
-    }
+
 #endif /* CONF_WITH_SHIFTER */
 }
 
@@ -981,24 +980,23 @@ WORD setcolor(WORD colorNum, WORD color)
 
     colorNum &= 0x000f;         /* just like real TOS */
 
+    if (FALSE) {
+        /* Dummy case for conditional compilation */
+    }
 #if CONF_WITH_VIDEL
-    if (has_videl) {
-        mask = 0xfff;
-    } else
+    else if (has_videl)
+        mask = 0x0fff;
 #endif
 #if CONF_WITH_TT_SHIFTER
-    if (has_tt_shifter) {
-        mask = 0xfff;
-    } else
+    else if (has_tt_shifter)
+        mask = 0x0fff;
 #endif
 #if CONF_WITH_STE_SHIFTER
-    if (has_ste_shifter) {
-        mask = 0xfff;
-    } else
+    else if (has_ste_shifter)
+        mask = 0x0fff;
 #endif
-    {
-        mask = 0x777;
-    }
+    else
+        mask = 0x0777;
 
     oldcolor = palette[colorNum] & mask;
     if (color >= 0)
