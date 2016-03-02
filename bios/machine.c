@@ -272,15 +272,13 @@ static void setvalue_snd(void)
   cookie_snd |= SND_PSG;
 #endif
 
-#if CONF_WITH_DMASOUND
-  if (has_dmasound) {
+  if (HAS_DMASOUND) {
     cookie_snd |= SND_8BIT;
   }
 
-  if (has_falcon_dmasound) {
+  if (HAS_FALCON_DMASOUND) {
     cookie_snd |= SND_16BIT | SND_MATRIX;
   }
-#endif
 
   KDEBUG(("cookie_snd = 0x%08lx\n", cookie_snd));
 }
@@ -569,15 +567,10 @@ static const char * guess_machine_name(void)
 
   switch(cookie_mch) {
   case MCH_ST:
-#if CONF_WITH_MEGARTC
-    if(has_megartc) {
+    if(HAS_MEGARTC)
       return "MegaST";
-    }
     else
-#endif /* CONF_WITH_MEGARTC */
-    {
       return "ST";
-    }
   case MCH_STE: return "STe";
   case MCH_MSTE: return "MegaSTe";
   case MCH_TT: return "TT";

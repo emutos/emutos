@@ -491,11 +491,9 @@ void clock_init(void)
     nvram_rtc_year_offset = (new_year_offset ? 1968 : 1970) - 1980;
   }
 #endif /* CONF_WITH_NVRAM */
-#if CONF_WITH_MEGARTC
-  else if(has_megartc) {
+  else if(HAS_MEGARTC) {
     /* Nothing to initialize */
   }
-#endif /* CONF_WITH_MEGARTC */
 #if CONF_WITH_IKBD_CLOCK
   else {
     /* The IKBD clock is lost at power off, and has bogus values at poweron.

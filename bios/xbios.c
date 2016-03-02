@@ -830,11 +830,10 @@ static WORD xbios_2e(WORD op, WORD start, WORD count, UBYTE *buffer)
  */
 static WORD blitmode(WORD mode)
 {
-#if CONF_WITH_BLITTER
-    if (has_blitter)
+    if (HAS_BLITTER)
         return 0x0002;
-#endif
-    return 0x0000;
+    else
+        return 0x0000;
 }
 
 #if DBG_XBIOS

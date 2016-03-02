@@ -97,20 +97,43 @@ extern int has_vme;
 
 #if CONF_WITH_MEGARTC
 extern int has_megartc;   /* in clock.c */
+  #define HAS_MEGARTC has_megartc
+#else
+  #define HAS_MEGARTC 0
 #endif
+
 #if CONF_WITH_NVRAM
 extern int has_nvram;     /* in nvram.c */
+  #define HAS_NVRAM has_nvram
+#else
+  #define HAS_NVRAM 0
 #endif
+
 #if CONF_WITH_BLITTER
 extern int has_blitter;
+  #define HAS_BLITTER has_blitter
+#else
+  #define HAS_BLITTER 0
 #endif
+
 #if CONF_WITH_DMASOUND
 extern int has_dmasound;  /* in dmasound.c */
 extern int has_microwire; /* in dmasound.c */
 extern int has_falcon_dmasound; /* in dmasound.c */
+  #define HAS_DMASOUND has_dmasound
+  #define HAS_MICROWIRE has_microwire
+  #define HAS_FALCON_DMASOUND has_falcon_dmasound
+#else
+  #define HAS_DMASOUND 0
+  #define HAS_MICROWIRE 0
+  #define HAS_FALCON_DMASOUND 0
 #endif
+
 #if CONF_WITH_DIP_SWITCHES
 extern int has_dip_switches;
+  #define HAS_DIP_SWITCHES has_dip_switches
+#else
+  #define HAS_DIP_SWITCHES 0
 #endif
 
 /*
