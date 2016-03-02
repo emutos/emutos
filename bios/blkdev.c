@@ -71,10 +71,11 @@ static UWORD getiword(UBYTE *addr)
 /*
  * compute word checksum
  */
-UWORD compute_cksum(void *buf)
+UWORD compute_cksum(const UWORD *buf)
 {
     int i;
-    UWORD sum, *p = buf;
+    UWORD sum;
+    const UWORD *p = buf;
 
     for (i = 0, sum = 0; i < SECTOR_SIZE/sizeof(UWORD); i++)
         sum += *p++;
@@ -256,7 +257,7 @@ static LONG bootcheck(void)
     if (err)
         return 3;   /* unreadable */
 
-    if (compute_cksum(dskbufp) != 0x1234)
+    if (compute_cksum((const UWORD *)dskbufp) != 0x1234)
         return 4;   /* not valid boot sector */
 
     return 0;       /* bootable */

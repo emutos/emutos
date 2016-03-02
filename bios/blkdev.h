@@ -102,7 +102,7 @@ LONG blkdev_boot(void);
 LONG blkdev_getbpb(WORD dev);
 LONG blkdev_drvmap(void);
 LONG blkdev_avail(WORD dev);
-UWORD compute_cksum(void *buf);
+UWORD compute_cksum(const UWORD *buf);
 WORD get_shift(ULONG blocksize);
 
 int add_partition(UWORD unit, LONG *devices_available, char id[], ULONG start, ULONG size);

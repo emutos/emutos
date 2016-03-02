@@ -455,7 +455,7 @@ static void run_reset_resident(void)
             continue;
         if (p->pointer != p)
             continue;
-        if (compute_cksum(p) != RR_CHKSUM)
+        if (compute_cksum((const UWORD *)p) != RR_CHKSUM)
             continue;
         regsafe_call(p->program);
     }

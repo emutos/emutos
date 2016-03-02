@@ -568,7 +568,7 @@ void protobt(LONG buf, LONG serial, WORD type, WORD exec)
     struct bs *b = (struct bs *)buf;
     UWORD cksum;
 
-    is_exec = (compute_cksum(b) == 0x1234);
+    is_exec = (compute_cksum((const UWORD *)b) == 0x1234);
 
     if (serial >= 0) {
         if (serial >= 0x01000000)   /* create a random serial */
@@ -610,7 +610,7 @@ void protobt(LONG buf, LONG serial, WORD type, WORD exec)
         exec = is_exec ? 1 : 0;
 
     b->cksum[0] = b->cksum[1] = 0;
-    cksum = 0x1234 - compute_cksum(b);
+    cksum = 0x1234 - compute_cksum((const UWORD *)b);
     b->cksum[0] = cksum>>8;
     b->cksum[1] = cksum;
     if (!exec)
