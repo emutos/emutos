@@ -726,6 +726,29 @@ static void atari_setrez(WORD rez, WORD videlmode)
     }
 }
 
+static WORD atari_setcolor(WORD colorNum, WORD color)
+{
+    WORD oldcolor;
+
+    WORD mask;
+    volatile WORD *palette = (WORD *) ST_PALETTE_REGS;
+
+    KDEBUG(("Setcolor(0x%04x, 0x%04x)\n", colorNum, color));
+
+    colorNum &= 0x000f;         /* just like real TOS */
+
+    if (HAS_VIDEL || HAS_TT_SHIFTER || HAS_STE_SHIFTER)
+        mask = 0x0fff;
+    else
+        mask = 0x0777;
+
+    oldcolor = palette[colorNum] & mask;
+    if (color >= 0)
+        palette[colorNum] = color;  /* update ST(e)-compatible palette */
+
+    return oldcolor;
+}
+
 #endif /* CONF_WITH_SHIFTER */
 
 /* hardware independent xbios routines */
@@ -877,30 +900,12 @@ void setpalette(LONG palettePtr)
  */
 WORD setcolor(WORD colorNum, WORD color)
 {
-    WORD oldcolor;
 #if CONF_WITH_SHIFTER
-    WORD mask;
-    volatile WORD *palette = (WORD *) ST_PALETTE_REGS;
-
-    KDEBUG(("Setcolor(0x%04x, 0x%04x)\n", colorNum, color));
-
-    colorNum &= 0x000f;         /* just like real TOS */
-
-    if (HAS_VIDEL || HAS_TT_SHIFTER || HAS_STE_SHIFTER)
-        mask = 0x0fff;
-    else
-        mask = 0x0777;
-
-    oldcolor = palette[colorNum] & mask;
-    if (color >= 0)
-        palette[colorNum] = color;  /* update ST(e)-compatible palette */
-
-#else /* CONF_WITH_SHIFTER */
-    /* No hardware, fake value */
-    oldcolor = 0;
-#endif /* CONF_WITH_SHIFTER */
-
-    return oldcolor;
+    return atari_setcolor(colorNum, color);
+#else
+    /* No hardware, fake return value */
+    return 0;
+#endif
 }
 
 
