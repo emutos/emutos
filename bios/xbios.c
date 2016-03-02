@@ -73,7 +73,7 @@ static void xbios_0(WORD type, struct param * param, PFVOID vec)
  */
 
 #if DBG_XBIOS
-static ULONG xbios_2(void)
+static const UBYTE *xbios_2(void)
 {
     kprintf("XBIOS: Physbase ...\n");
     return physbase();
@@ -89,7 +89,7 @@ static ULONG xbios_2(void)
  */
 
 #if DBG_XBIOS
-static LONG xbios_3(void)
+static UBYTE *xbios_3(void)
 {
     kprintf("XBIOS: Logbase ...\n");
     return logbase();
@@ -125,10 +125,10 @@ static WORD xbios_4(void)
  */
 
 #if DBG_XBIOS
-static void xbios_5(LONG logLoc, LONG physLoc, WORD rez, WORD videlmode)
+static void xbios_5(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
 {
     kprintf("XBIOS: SetScreen(log = 0x%08lx, phys = 0x%08lx, rez = 0x%04x)\n",
-           logLoc, physLoc, rez);
+           (ULONG)logLoc, (ULONG)physLoc, rez);
     setscreen(logLoc, physLoc, rez, videlmode);
 }
 #endif

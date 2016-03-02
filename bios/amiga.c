@@ -74,7 +74,7 @@ void amiga_add_alt_ram(void)
 /* Screen                                                                     */
 /******************************************************************************/
 
-void *amiga_screenbase;
+const UBYTE *amiga_screenbase;
 UWORD copper_list[6];
 
 void amiga_screen_init(void)
@@ -114,15 +114,15 @@ void amiga_screen_init(void)
     *(volatile UWORD*)0xdff096 = DMAF_SETCLR | DMAF_COPPER | DMAF_RASTER | DMAF_MASTER;
 }
 
-void amiga_setphys(void *addr)
+void amiga_setphys(const UBYTE *addr)
 {
     KDEBUG(("amiga_setphys(0x%08lx)\n", (ULONG)addr));
     amiga_screenbase = addr;
 }
 
-LONG amiga_physbase(void)
+const UBYTE *amiga_physbase(void)
 {
-    return (LONG)amiga_screenbase;
+    return amiga_screenbase;
 }
 
 /******************************************************************************/

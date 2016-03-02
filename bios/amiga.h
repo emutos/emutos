@@ -42,7 +42,7 @@ struct IDE
 #define ide_interface ((volatile struct IDE*)0x00da0000)
 
 extern const UBYTE scancode_atari_from_amiga[128];
-extern void *amiga_screenbase;
+extern const UBYTE *amiga_screenbase;
 extern UWORD copper_list[6];
 extern int has_gayle;
 
@@ -51,8 +51,8 @@ void amiga_machine_detect(void);
 void amiga_add_alt_ram(void);
 #endif
 void amiga_screen_init(void);
-void amiga_setphys(void *addr);
-LONG amiga_physbase(void);
+void amiga_setphys(const UBYTE *addr);
+const UBYTE *amiga_physbase(void);
 void amiga_mouse_vbl(void);
 void amiga_clock_init(void);
 ULONG amiga_getdt(void);

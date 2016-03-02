@@ -35,7 +35,7 @@
 
 static ULONG initial_vram_size(void);
 static ULONG vram_size(void);
-static void setphys(LONG addr,int checkaddr);
+static void setphys(const UBYTE *addr,int checkaddr);
 
 #if CONF_WITH_SHIFTER
 
@@ -464,9 +464,9 @@ void screen_init(void)
         /* reset VIDEL on boot-up */
         /* first set the physbase to a safe memory */
 #if CONF_VRAM_ADDRESS
-        setphys(CONF_VRAM_ADDRESS,0);
+        setphys((const UBYTE *)CONF_VRAM_ADDRESS,0);
 #else
-        setphys(0x10000L,0);
+        setphys((const UBYTE *)0x10000L,0);
 #endif
 
 #if CONF_WITH_NVRAM && !defined(MACHINE_FIREBEE)
@@ -576,7 +576,7 @@ void screen_init(void)
     amiga_screen_init();
 #endif
     /* correct physical address */
-    setphys(screen_start,1);
+    setphys((const UBYTE *)screen_start,1);
     rez_was_hacked = FALSE; /* initial assumption */
 }
 
@@ -744,7 +744,7 @@ void get_pixel_size(WORD *width,WORD *height)
 
 /* hardware independent xbios routines */
 
-LONG physbase(void)
+const UBYTE *physbase(void)
 {
     LONG addr;
 
@@ -779,26 +779,26 @@ LONG physbase(void)
     }
 #else /* CONF_WITH_SHIFTER */
     /* No real physical screen, fall back to Logbase() */
-    addr = logbase();
+    addr = (LONG)logbase();
 #endif /* #if CONF_WITH_SHIFTER */
 
-    return (addr);
+    return (UBYTE *)addr;
 }
 
 /* Set physical screen address */
 
-static void setphys(LONG addr,int checkaddr)
+static void setphys(const UBYTE *addr,int checkaddr)
 {
     KDEBUG(("setphys(0x%08lx)\n", (ULONG)addr));
 
     if (checkaddr) {
-        if (addr > ((ULONG)phystop - vram_size())) {
+        if (addr > ((UBYTE *)phystop - vram_size())) {
             panic("VideoRAM covers ROM area!!\n");
         }
     }
 
 #ifdef MACHINE_AMIGA
-    amiga_setphys((void*)addr);
+    amiga_setphys(addr);
     return;
 #endif
 
@@ -828,9 +828,9 @@ static void setphys(LONG addr,int checkaddr)
 #endif /* CONF_WITH_SHIFTER */
 }
 
-LONG logbase(void)
+UBYTE *logbase(void)
 {
-    return ((ULONG) v_bas_ad);
+    return v_bas_ad;
 }
 
 WORD getrez(void)
@@ -894,13 +894,13 @@ WORD getrez(void)
  *      if logLoc==physLoc==rez==-1, 'videlmode' is used to select
  *      the cellheight of the default font
  */
-void setscreen(LONG logLoc, LONG physLoc, WORD rez, WORD videlmode)
+void setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
 {
-    if (logLoc >= 0) {
-        v_bas_ad = (UBYTE *) logLoc;
+    if (logLoc != (UBYTE *)-1) {
+        v_bas_ad = logLoc;
         KDEBUG(("v_bas_ad = 0x%08lx\n", (ULONG)v_bas_ad));
     }
-    if (physLoc >= 0) {
+    if (physLoc != (UBYTE *)-1) {
         setphys(physLoc,1);
     }
     if (rez >= 0 && rez < 8) {
@@ -940,7 +940,7 @@ void setscreen(LONG logLoc, LONG physLoc, WORD rez, WORD videlmode)
     }
 
     /* handle EmuCON extension */
-    if ((logLoc == -1L) && (physLoc == -1L) && (rez == -1)) {
+    if ((logLoc == (UBYTE *)-1) && (physLoc == (UBYTE *)-1) && (rez == -1)) {
         font_set_default(videlmode);
         vt52_init();
     }
