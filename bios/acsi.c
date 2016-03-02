@@ -39,7 +39,7 @@ static void hdc_start_dma(UWORD control);
 static void dma_send_byte(UBYTE data, UWORD control);
 static int build_rw_command(UBYTE *cdb,WORD rw,WORD dev,LONG sector,WORD cnt);
 static int send_command(UBYTE *cdb,WORD cdblen,WORD rw,WORD dev,WORD cnt,UWORD repeat);
-static int do_acsi_rw(WORD rw, LONG sect, WORD cnt, LONG buf, WORD dev);
+static int do_acsi_rw(WORD rw, LONG sect, WORD cnt, UBYTE *buf, WORD dev);
 static LONG acsi_capacity(WORD dev, ULONG *info);
 static LONG acsi_testunit(WORD dev);
 
@@ -97,13 +97,13 @@ void acsi_init(void)
     next_acsi_time = hz_200;    /* immediate :-) */
 }
 
-LONG acsi_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
+LONG acsi_rw(WORD rw, LONG sector, WORD count, UBYTE *buf, WORD dev)
 {
     int cnt;
     int need_frb = 0;
     int retry;
     int err = 0;
-    LONG tmp_buf;
+    UBYTE *tmp_buf;
 
     rw &= RW_RW;    /* we just care about read or write for now */
 
@@ -117,8 +117,8 @@ LONG acsi_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
             cnt = count;
 
 #if CONF_WITH_FRB
-        if (buf > 0x1000000L) {
-            if (cookie_frb == 0) {
+        if (buf > (UBYTE *)0x1000000L) {
+            if (cookie_frb == NULL) {
                 KDEBUG(("acsi.c: FRB is missing\n"));
                 return -1L;
             } else {
@@ -133,14 +133,14 @@ LONG acsi_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
         }
 
         if(rw && need_frb) {
-            memcpy((void *)tmp_buf, (void *)buf, (LONG)cnt * SECTOR_SIZE);
+            memcpy(tmp_buf, buf, (LONG)cnt * SECTOR_SIZE);
         }
         for(retry = 0; retry < 2 ; retry++) {
             err = do_acsi_rw(rw, sector, cnt, tmp_buf, dev);
             if(err == 0) break;
         }
         if((!rw) && need_frb) {
-            memcpy((void *)buf, (void *)tmp_buf, (LONG)cnt * SECTOR_SIZE);
+            memcpy(buf, tmp_buf, (LONG)cnt * SECTOR_SIZE);
         }
         if(need_frb) {
             /* proper FRB unlock (TODO) */
@@ -198,7 +198,7 @@ static LONG acsi_capacity(WORD dev, ULONG *info)
     acsi_begin();
 
     /* load DMA base address */
-    set_dma_addr((ULONG) data);
+    set_dma_addr((UBYTE *) data);
 
     cdb[0] = 0x25;          /* set up Read Capacity cdb */
     memset(cdb+1,0x00,9);
@@ -256,7 +256,7 @@ static void acsi_end(void)
  * cnt <= 0xFF, no retry done, returns -1 if timeout, or the DMA status.
  */
 
-static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, LONG buf, WORD dev)
+static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, UBYTE *buf, WORD dev)
 {
     UBYTE cdb[10];  /* allow for 10-byte read/write commands */
     int status, cdblen;
@@ -264,12 +264,12 @@ static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, LONG buf, WORD dev)
 
     /* flush data cache here so that memory is current */
     if (rw == RW_WRITE)
-        flush_data_cache((void *)buf,buflen);
+        flush_data_cache(buf,buflen);
 
     acsi_begin();
 
     /* load DMA base address */
-    set_dma_addr((ULONG) buf);
+    set_dma_addr(buf);
 
     /* emit command */
     cdblen = build_rw_command(cdb,rw,dev,sector,cnt);
@@ -279,7 +279,7 @@ static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, LONG buf, WORD dev)
 
     /* invalidate data cache if we've read into memory */
     if (rw == RW_READ)
-        invalidate_data_cache((void *)buf,buflen);
+        invalidate_data_cache(buf,buflen);
 
     return status;
 }

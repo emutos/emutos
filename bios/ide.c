@@ -804,9 +804,9 @@ static LONG ide_write(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UWORD count,U
     return rc;
 }
 
-LONG ide_rw(WORD rw,LONG sector,WORD count,LONG buf,WORD dev,BOOL need_byteswap)
+LONG ide_rw(WORD rw,LONG sector,WORD count,UBYTE *buf,WORD dev,BOOL need_byteswap)
 {
-    UBYTE *p = (UBYTE *)buf;
+    UBYTE *p = buf;
     UWORD ifnum;
     LONG ret;
 

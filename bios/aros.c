@@ -2212,7 +2212,7 @@ BOOL aros_flop_detect_drive(WORD dev)
     return !tdu->tdu_broken;
 }
 
-WORD aros_floprw(LONG buf, WORD rw, WORD dev, WORD sect, WORD track, WORD side, WORD count)
+WORD aros_floprw(UBYTE *buf, WORD rw, WORD dev, WORD sect, WORD track, WORD side, WORD count)
 {
     struct TrackDiskBase* tdb = &tdb0;
     struct TDU* tdu = (dev == 0) ? &tdu0 : &tdu1;
@@ -2226,7 +2226,7 @@ WORD aros_floprw(LONG buf, WORD rw, WORD dev, WORD sect, WORD track, WORD side, 
     iotd.iotd_Req.io_Data = (APTR)buf;
     iotd.iotd_Req.io_Length = (ULONG)count * 512;
 
-    D(bug("aros_floprw buf=0x%08lx track=%d side=%d sect=%d count=%d offset=%lu\n", buf, track, side, sect, count, iotd.iotd_Req.io_Offset));
+    D(bug("aros_floprw buf=0x%08lx track=%d side=%d sect=%d count=%d offset=%lu\n", (ULONG)buf, track, side, sect, count, iotd.iotd_Req.io_Offset));
     if (rw & 1) {
         err = td_write(&iotd, tdu, tdb);
         D(bug("td_write() returns %d\n", err));

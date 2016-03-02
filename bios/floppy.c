@@ -87,11 +87,11 @@
 static void setiword(UBYTE *addr, UWORD value);
 
 /* floppy read/write */
-static WORD floprw(LONG buf, WORD rw, WORD dev,
+static WORD floprw(UBYTE *buf, WORD rw, WORD dev,
                    WORD sect, WORD track, WORD side, WORD count);
 
 /* floppy write track */
-static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side, WORD track_size);
+static WORD flopwtrack(UBYTE *buf, WORD dev, WORD track, WORD side, WORD track_size);
 
 /* initialise a floppy for hdv_init */
 static void flop_detect_drive(WORD dev);
@@ -303,7 +303,7 @@ void flop_hdv_init(void)
  */
 WORD flop_boot_read(void)
 {
-    return floprw((LONG)dskbufp,RW_READ,bootdev,1,0,0,1);
+    return floprw(dskbufp,RW_READ,bootdev,1,0,0,1);
 }
 
 static void flop_add_drive(WORD dev)
@@ -422,7 +422,7 @@ LONG flop_mediach(WORD dev)
      * from a drive, or even replaced one WP diskette by another.  we
      * attempt to read the boot sector to check the diskette serial number
      */
-    if (floprw((LONG)bootsec,RW_READ,dev,1,0,0,1) != 0) {
+    if (floprw((UBYTE *)bootsec,RW_READ,dev,1,0,0,1) != 0) {
         KDEBUG(("flop_mediach(): can't read boot sector => media change\n"));
         return MEDIACHANGE;
     }
@@ -448,7 +448,7 @@ LONG flop_mediach(WORD dev)
 }
 
 
-LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
+LONG floppy_rw(WORD rw, UBYTE *buf, WORD cnt, LONG recnr, WORD spt,
                WORD sides, WORD dev)
 {
     WORD track;
@@ -458,7 +458,7 @@ LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
     WORD bootsec = 0;
 
     KDEBUG(("floppy_rw(rw %d, buf 0x%lx, cnt %d, recnr %ld, spt %d, sides %d, dev %d)\n",
-            rw,buf,cnt,recnr,spt,sides,dev));
+            rw,(ULONG)buf,cnt,recnr,spt,sides,dev));
 
     if (!IS_VALID_FLOPPY_DEVICE(dev))
         return EUNDEV;  /* unknown device */
@@ -484,17 +484,17 @@ LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
             track /= 2;
         }
 #if CONF_WITH_FRB
-        if ((void *)buf >= phystop) {
+        if (buf >= (UBYTE *)phystop) {
             /* The buffer provided by the user is outside the ST-RAM,
              * but floprw() needs to use the DMA.
              * We must use the intermediate _FRB buffer.
              */
             if (cookie_frb) {
                 if ((rw & RW_RW) == RW_WRITE)
-                    memcpy((void *)cookie_frb, (void *)buf, SECTOR_SIZE);
+                    memcpy(cookie_frb, buf, SECTOR_SIZE);
                 err = floprw(cookie_frb, rw, dev, sect, track, side, 1);
                 if ((rw & RW_RW) == RW_READ)
-                    memcpy((void *)buf, (void *)cookie_frb, SECTOR_SIZE);
+                    memcpy(buf, cookie_frb, SECTOR_SIZE);
             } else {
                 err = -1;   /* problem: can't DMA to FastRAM */
             }
@@ -562,7 +562,7 @@ static const struct _protobt protobt_data[] = {
 };
 #define NUM_PROTOBT_ENTRIES _countof(protobt_data)
 
-void protobt(LONG buf, LONG serial, WORD type, WORD exec)
+void protobt(UBYTE *buf, LONG serial, WORD type, WORD exec)
 {
     WORD is_exec;
     struct bs *b = (struct bs *)buf;
@@ -629,17 +629,17 @@ static void setiword(UBYTE *addr, UWORD value)
 /*==== xbios floprd, flopwr ===============================================*/
 
 
-LONG floprd(LONG buf, LONG filler, WORD dev,
+LONG floprd(UBYTE *buf, LONG filler, WORD dev,
             WORD sect, WORD track, WORD side, WORD count)
 {
     return floprw(buf, RW_READ, dev, sect, track, side, count);
 }
 
 
-LONG flopwr(LONG buf, LONG filler, WORD dev,
+LONG flopwr(const UBYTE *buf, LONG filler, WORD dev,
             WORD sect, WORD track, WORD side, WORD count)
 {
-    return floprw(buf, RW_WRITE, dev, sect, track, side, count);
+    return floprw((UBYTE *)buf, RW_WRITE, dev, sect, track, side, count);
 }
 
 /*==== xbios flopver ======================================================*/
@@ -681,7 +681,7 @@ LONG flopwr(LONG buf, LONG filler, WORD dev,
  * otherwise it's the return code from the last unexpected error.
  */
 
-LONG flopver(LONG buf, LONG filler, WORD dev,
+LONG flopver(WORD *buf, LONG filler, WORD dev,
              WORD sect, WORD track, WORD side, WORD count)
 {
     WORD i, err;
@@ -692,7 +692,7 @@ LONG flopver(LONG buf, LONG filler, WORD dev,
         return EUNDEV;  /* unknown disk */
 
     for (i = 0; i < count; i++, sect++) {
-        err = floprw((LONG)dskbufp, RW_READ, dev, sect, track, side, 1);
+        err = floprw(dskbufp, RW_READ, dev, sect, track, side, 1);
         if (err) {
             *bad++ = sect ? sect : -1;
             if ((err != EREADF) && (err != ESECNF))
@@ -709,7 +709,7 @@ LONG flopver(LONG buf, LONG filler, WORD dev,
 
 /*==== xbios flopfmt ======================================================*/
 
-LONG flopfmt(LONG buf, WORD *skew, WORD dev, WORD spt,
+LONG flopfmt(UBYTE *buf, WORD *skew, WORD dev, WORD spt,
              WORD track, WORD side, WORD interleave,
              ULONG magic, WORD virgin)
 {
@@ -743,7 +743,7 @@ LONG flopfmt(LONG buf, WORD *skew, WORD dev, WORD spt,
     if (interleave == 0)
         interleave = 1;
 
-    s = (UBYTE *)buf;
+    s = buf;
 
     /*
      * create the image in memory.
@@ -803,7 +803,7 @@ LONG flopfmt(LONG buf, WORD *skew, WORD dev, WORD spt,
         return err;
 
     /* verify sectors and store bad sector numbers in buf */
-    err = flopver(buf, 0L, dev, 1, track, side, spt);
+    err = flopver((WORD *)buf, 0L, dev, 1, track, side, spt);
     if (err || (*(WORD *)buf != 0))
         return EBADSF;
 
@@ -838,7 +838,7 @@ LONG floprate(WORD dev, WORD rate)
 
 /*==== internal floprw ====================================================*/
 
-static WORD floprw(LONG buf, WORD rw, WORD dev,
+static WORD floprw(UBYTE *buf, WORD rw, WORD dev,
                    WORD sect, WORD track, WORD side, WORD count)
 {
     WORD err;
@@ -864,7 +864,7 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
 #elif CONF_WITH_FDC
     /* flush data cache here so that memory is current */
     if (rw == RW_WRITE)
-        flush_data_cache((void *)buf,buflen);
+        flush_data_cache(buf,buflen);
 
     floplock(dev);
 
@@ -878,7 +878,7 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
     while(count--) {
       for (retry = 0; retry < 2; retry++) {
         set_fdc_reg(FDC_SR, sect);
-        set_dma_addr((ULONG) buf);
+        set_dma_addr(buf);
         if (rw == RW_READ) {
             fdc_start_dma_read(1);
             cmd = FDC_READ;
@@ -924,7 +924,7 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
 
     /* invalidate data cache if we've read into memory */
     if (rw == RW_READ)
-        invalidate_data_cache((void *)buf,buflen);
+        invalidate_data_cache(buf,buflen);
 #else
     err = EUNDEV;
 #endif
@@ -933,7 +933,7 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
 
 /*==== internal flopwtrack =================================================*/
 
-static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side, WORD track_size)
+static WORD flopwtrack(UBYTE *buf, WORD dev, WORD track, WORD side, WORD track_size)
 {
 #if CONF_WITH_FDC
     WORD retry;
@@ -945,7 +945,7 @@ static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side, WORD track_siz
     }
 
     /* flush cache here so that track image is pushed to memory */
-    flush_data_cache((void *)buf,track_size);
+    flush_data_cache(buf,track_size);
 
     floplock(dev);
 
@@ -957,7 +957,7 @@ static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side, WORD track_siz
     }
 
     for (retry = 0; retry < 2; retry++) {
-        set_dma_addr((ULONG) buf);
+        set_dma_addr(buf);
         fdc_start_dma_write((track_size + SECTOR_SIZE-1) / SECTOR_SIZE);
         if (cookie_mch == MCH_FALCON)
             falcon_wait();

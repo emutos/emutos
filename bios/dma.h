@@ -58,6 +58,6 @@ struct dma {
  */
 #define DMA_MCBIT3  0x08            /* must be zero before starting write */
 
-void set_dma_addr(ULONG addr);
+void set_dma_addr(UBYTE *addr);
 
 #endif /* DMA_H */

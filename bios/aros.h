@@ -20,7 +20,7 @@ void aros_machine_detect(void);
 void aros_add_alt_ram(void);
 #endif
 BOOL aros_flop_detect_drive(WORD dev);
-WORD aros_floprw(LONG buf, WORD rw, WORD dev, WORD sect, WORD track, WORD side, WORD count);
+WORD aros_floprw(UBYTE *buf, WORD rw, WORD dev, WORD sect, WORD track, WORD side, WORD count);
 
 #endif /* MACHINE_AMIGA */
 

@@ -192,7 +192,7 @@ static WORD xbios_7(WORD colorNum, WORD color)
  */
 
 #if DBG_XBIOS
-static LONG xbios_8(LONG buf, LONG filler, WORD devno, WORD sectno,
+static LONG xbios_8(UBYTE *buf, LONG filler, WORD devno, WORD sectno,
                     WORD trackno, WORD sideno, WORD count)
 {
     kprintf("XBIOS: Floprd()\n");
@@ -215,7 +215,7 @@ static LONG xbios_8(LONG buf, LONG filler, WORD devno, WORD sectno,
 
 
 #if DBG_XBIOS
-static LONG xbios_9(LONG buf, LONG filler, WORD devno, WORD sectno,
+static LONG xbios_9(const UBYTE *buf, LONG filler, WORD devno, WORD sectno,
                     WORD trackno, WORD sideno, WORD count)
 {
     kprintf("XBIOS: Flopwr()\n");
@@ -258,7 +258,7 @@ static LONG xbios_9(LONG buf, LONG filler, WORD devno, WORD sectno,
  */
 
 #if DBG_XBIOS
-static LONG xbios_a(LONG buf, WORD *skew, WORD devno, WORD spt,
+static LONG xbios_a(UBYTE *buf, WORD *skew, WORD devno, WORD spt,
                     WORD trackno, WORD sideno, WORD interlv, WORD virgin,
                     LONG magic)
 {
@@ -444,7 +444,7 @@ static LONG xbios_11(void)
  */
 
 #if DBG_XBIOS
-static void xbios_12(LONG buf, LONG serialno, WORD disktype, WORD execflag)
+static void xbios_12(UBYTE *buf, LONG serialno, WORD disktype, WORD execflag)
 {
     kprintf("XBIOS: Protobt()\n");
     protobt(buf, serialno, disktype, execflag);
@@ -458,7 +458,7 @@ static void xbios_12(LONG buf, LONG serialno, WORD disktype, WORD execflag)
  */
 
 #if DBG_XBIOS
-static LONG xbios_13(LONG buf, LONG filler, WORD devno, WORD sectno,
+static LONG xbios_13(WORD *buf, LONG filler, WORD devno, WORD sectno,
                      WORD trackno, WORD sideno, WORD count)
 {
     kprintf("XBIOS: Flopver()\n");
@@ -776,7 +776,7 @@ static LONG xbios_29(WORD dev, WORD rate)
  */
 
 #if DBG_XBIOS
-static LONG xbios_2a(LONG sector, WORD count, LONG buf, WORD major)
+static LONG xbios_2a(LONG sector, WORD count, UBYTE *buf, WORD major)
 {
     kprintf("XBIOS: DMAread\n");
     return DMAread(sector, count, buf, major);
@@ -788,7 +788,7 @@ static LONG xbios_2a(LONG sector, WORD count, LONG buf, WORD major)
  */
 
 #if DBG_XBIOS
-static LONG xbios_2b(LONG sector, WORD count, LONG buf, WORD major)
+static LONG xbios_2b(LONG sector, WORD count, const UBYTE *buf, WORD major)
 {
     kprintf("XBIOS: DMAwrite\n");
     return DMAwrite(sector, count, buf, major);

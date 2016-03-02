@@ -48,7 +48,7 @@ long cookie_mch;
 long cookie_swi;
 #endif
 #if CONF_WITH_FRB
-long cookie_frb;
+UBYTE *cookie_frb;
 #endif
 
 
@@ -336,10 +336,10 @@ static void setvalue_frb(void)
 #endif
 
   if (need_frb) {
-    cookie_frb = (long)balloc(64 * 1024UL);
+    cookie_frb = (UBYTE *)balloc(64 * 1024UL);
   }
 
-  KDEBUG(("cookie_frb = 0x%08lx\n", cookie_frb));
+  KDEBUG(("cookie_frb = 0x%08lx\n", (ULONG)cookie_frb));
 }
 
 #endif /* CONF_WITH_FRB */
@@ -525,7 +525,7 @@ void fill_cookie_jar(void)
    */
   setvalue_frb();
   if (cookie_frb) {
-    cookie_add(COOKIE_FRB, cookie_frb);
+    cookie_add(COOKIE_FRB, (long)cookie_frb);
   }
 #endif /* CONF_WITH_FRB */
 

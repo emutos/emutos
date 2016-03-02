@@ -11,9 +11,11 @@
 #include "portab.h"
 #include "dma.h"
 
-void set_dma_addr(ULONG addr)
+void set_dma_addr(UBYTE *addr)
 {
-    DMA->addr_low = addr;
-    DMA->addr_med = addr>>8;
-    DMA->addr_high = addr>>16;
+    ULONG value = (ULONG)addr;
+
+    DMA->addr_low = value;
+    DMA->addr_med = value>>8;
+    DMA->addr_high = value>>16;
 }

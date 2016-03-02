@@ -20,7 +20,7 @@
 void detect_ide(void);
 void ide_init(void);
 LONG ide_ioctl(WORD dev, UWORD ctrl, void *arg);
-LONG ide_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev, BOOL need_byteswap);
+LONG ide_rw(WORD rw, LONG sector, WORD count, UBYTE *buf, WORD dev, BOOL need_byteswap);
 
 #endif /* CONF_WITH_IDE */
 

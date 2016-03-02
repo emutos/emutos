@@ -62,7 +62,7 @@ void kprintf_outc_uae(int c);
 #endif
 void amiga_shutdown(void);
 BOOL amiga_flop_detect_drive(WORD dev);
-WORD amiga_floprw(LONG buf, WORD rw, WORD dev, WORD sect, WORD track, WORD side, WORD count);
+WORD amiga_floprw(UBYTE *buf, WORD rw, WORD dev, WORD sect, WORD track, WORD side, WORD count);
 
 /* The following functions are defined in amiga2.S */
 

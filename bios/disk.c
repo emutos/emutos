@@ -371,7 +371,7 @@ static int atari_partition(UWORD unit,LONG *devices_available)
     /* reset the sector buffer content */
     bzero(&physsect, sizeof(physsect));
 
-    if (disk_rw(unit, RW_READ, 0, 1, &physsect))
+    if (disk_rw(unit, RW_READ, 0, 1, sect))
         return -1;
 
     KINFO(("%cd%c: ","ashf????"[major>>3],'a'+(major&0x07)));
@@ -526,7 +526,7 @@ static int atari_partition(UWORD unit,LONG *devices_available)
             /* reset the sector buffer content */
             bzero(&physsect2, sizeof(physsect2));
 
-            if (disk_rw(unit, RW_READ, partsect, 1, &physsect2)) {
+            if (disk_rw(unit, RW_READ, partsect, 1, physsect2.sect)) {
                 KINFO((" block %ld read failed\n", partsect));
                 return 0;
             }
@@ -724,7 +724,7 @@ LONG disk_get_capacity(UWORD unit, ULONG *blocks, ULONG *blocksize)
 }
 
 /* Unit read/write */
-LONG disk_rw(UWORD unit, UWORD rw, ULONG sector, UWORD count, void *buf)
+LONG disk_rw(UWORD unit, UWORD rw, ULONG sector, UWORD count, UBYTE *buf)
 {
     UWORD major = unit - NUMFLOPPIES;
     LONG ret;
@@ -747,7 +747,7 @@ LONG disk_rw(UWORD unit, UWORD rw, ULONG sector, UWORD count, void *buf)
     switch(bus) {
 #if CONF_WITH_ACSI
     case ACSI_BUS:
-        ret = acsi_rw(rw, sector, count, (LONG)buf, reldev);
+        ret = acsi_rw(rw, sector, count, buf, reldev);
         KDEBUG(("acsi_rw() returned %ld\n", ret));
         break;
 #endif /* CONF_WITH_ACSI */
@@ -755,14 +755,14 @@ LONG disk_rw(UWORD unit, UWORD rw, ULONG sector, UWORD count, void *buf)
     case IDE_BUS:
     {
         BOOL need_byteswap = units[unit].byteswap;
-        ret = ide_rw(rw, sector, count, (LONG)buf, reldev, need_byteswap);
+        ret = ide_rw(rw, sector, count, buf, reldev, need_byteswap);
         KDEBUG(("ide_rw() returned %ld\n", ret));
         break;
     }
 #endif /* CONF_WITH_IDE */
 #if CONF_WITH_SDMMC
     case SDMMC_BUS:
-        ret = sd_rw(rw, sector, count, (LONG)buf, reldev);
+        ret = sd_rw(rw, sector, count, buf, reldev);
         KDEBUG(("sd_rw() returned %ld\n", ret));
         break;
 #endif /* CONF_WITH_SDMMC */
@@ -775,24 +775,24 @@ LONG disk_rw(UWORD unit, UWORD rw, ULONG sector, UWORD count, void *buf)
 
 /*==== XBIOS functions ====================================================*/
 
-LONG DMAread(LONG sector, WORD count, LONG buf, WORD major)
+LONG DMAread(LONG sector, WORD count, UBYTE *buf, WORD major)
 {
     UWORD unit = NUMFLOPPIES + major;
     LONG rc;
 
-    rc = disk_rw(unit, RW_READ, sector, count, (void *)buf);
+    rc = disk_rw(unit, RW_READ, sector, count, buf);
 
     /* TOS invalidates the i-cache here, so be compatible */
-    instruction_cache_kludge((void *)buf,count<<units[unit].psshift);
+    instruction_cache_kludge(buf,count<<units[unit].psshift);
 
     return rc;
 }
 
-LONG DMAwrite(LONG sector, WORD count, LONG buf, WORD major)
+LONG DMAwrite(LONG sector, WORD count, const UBYTE *buf, WORD major)
 {
     UWORD unit = NUMFLOPPIES + major;
 
-    return disk_rw(unit, RW_WRITE, sector, count, (void *)buf);
+    return disk_rw(unit, RW_WRITE, sector, count, (UBYTE *)buf);
 }
 
 void byteswap(UBYTE *buffer, ULONG size)

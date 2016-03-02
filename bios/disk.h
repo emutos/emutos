@@ -90,12 +90,12 @@ extern UNIT units[];
 
 LONG disk_inquire(UWORD unit, ULONG *blocksize, ULONG *deviceflags, char *productname, UWORD stringlen);
 LONG disk_get_capacity(UWORD unit, ULONG *blocks, ULONG *blocksize);
-LONG disk_rw(UWORD unit, UWORD rw, ULONG sector, UWORD count, void *buf);
+LONG disk_rw(UWORD unit, UWORD rw, ULONG sector, UWORD count, UBYTE *buf);
 
 /* xbios functions */
 
-extern LONG DMAread(LONG sector, WORD count, LONG buf, WORD major);
-extern LONG DMAwrite(LONG sector, WORD count, LONG buf, WORD major);
+extern LONG DMAread(LONG sector, WORD count, UBYTE *buf, WORD major);
+extern LONG DMAwrite(LONG sector, WORD count, const UBYTE *buf, WORD major);
 
 /* partition detection */
 

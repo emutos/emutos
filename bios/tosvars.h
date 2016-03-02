@@ -46,7 +46,7 @@ extern void *phystop;
 extern WORD timer_ms;
 
 extern volatile LONG hz_200;
-extern void *dskbufp;
+extern UBYTE *dskbufp;
 extern volatile WORD flock;
 extern WORD nflops;
 extern LONG drvbits;
@@ -104,7 +104,7 @@ extern LONG (*bconin_vec[])(void);
 extern LONG (*bconout_vec[])(WORD, WORD);
 extern LONG (*bcostat_vec[])(void);
 
-extern LONG (*hdv_rw)(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr);
+extern LONG (*hdv_rw)(WORD rw, UBYTE *buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr);
 extern LONG (*hdv_bpb)(WORD dev);
 extern LONG (*hdv_mediach)(WORD dev);
 extern LONG (*hdv_boot)(void);

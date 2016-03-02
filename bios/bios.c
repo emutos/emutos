@@ -836,13 +836,13 @@ void bconout_str(WORD handle, const char* str)
  * drive = drive #: 0 = A:, 1 = B:, etc
  */
 
-LONG lrwabs(WORD r_w, LONG adr, WORD numb, WORD first, WORD drive, LONG lfirst)
+LONG lrwabs(WORD r_w, UBYTE *adr, WORD numb, WORD first, WORD drive, LONG lfirst)
 {
-    return protect_wlwwwl((PFLONG)hdv_rw, r_w, adr, numb, first, drive, lfirst);
+    return protect_wlwwwl((PFLONG)hdv_rw, r_w, (LONG)adr, numb, first, drive, lfirst);
 }
 
 #if DBGBIOS
-static LONG bios_4(WORD r_w, LONG adr, WORD numb, WORD first, WORD drive, LONG lfirst)
+static LONG bios_4(WORD r_w, UBYTE *adr, WORD numb, WORD first, WORD drive, LONG lfirst)
 {
     LONG ret;
     KDEBUG(("BIOS rwabs(rw = %d, addr = 0x%08lx, count = 0x%04x, "

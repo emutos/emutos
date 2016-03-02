@@ -28,15 +28,15 @@ extern LONG flop_mediach(WORD dev);
 
 /* xbios functions */
 
-extern LONG floprd(LONG buf, LONG filler, WORD dev,
+extern LONG floprd(UBYTE *buf, LONG filler, WORD dev,
                    WORD sect, WORD track, WORD side, WORD count);
-extern LONG flopwr(LONG buf, LONG filler, WORD dev,
+extern LONG flopwr(const UBYTE *buf, LONG filler, WORD dev,
                    WORD sect, WORD track, WORD side, WORD count);
-extern LONG flopfmt(LONG buf, WORD *skew, WORD dev, WORD spt,
+extern LONG flopfmt(UBYTE *buf, WORD *skew, WORD dev, WORD spt,
                     WORD track, WORD side, WORD interleave,
                     ULONG magic, WORD virgin);
-extern void protobt(LONG buf, LONG serial, WORD type, WORD exec);
-extern LONG flopver(LONG buf, LONG filler, WORD dev,
+extern void protobt(UBYTE *buf, LONG serial, WORD type, WORD exec);
+extern LONG flopver(WORD *buf, LONG filler, WORD dev,
                     WORD sect, WORD track, WORD side, WORD count);
 extern LONG floprate(WORD dev, WORD rate);
 
@@ -49,6 +49,6 @@ extern void flopvbl(void);
 #endif /* CONF_WITH_FDC */
 
 /* lowlevel floppy_rwabs */
-LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt, WORD sides, WORD dev);
+LONG floppy_rw(WORD rw, UBYTE *buf, WORD cnt, LONG recnr, WORD spt, WORD sides, WORD dev);
 
 #endif /* FLOPPY_H */

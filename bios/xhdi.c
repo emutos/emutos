@@ -339,7 +339,7 @@ static long XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocks
 }
 
 static long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
-                 UWORD count, void *buf)
+                 UWORD count, UBYTE *buf)
 {
     UWORD unit;
 
@@ -505,7 +505,7 @@ long xhdi_handler(UWORD *stack)
                 UWORD rw;
                 ULONG sector;
                 UWORD count;
-                void *buf;
+                UBYTE *buf;
             } *args = (struct XHREADWRITE_args *)stack;
 
             return XHReadWrite(args->major, args->minor, args->rw, args->sector, args->count, args->buf);

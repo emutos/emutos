@@ -19,7 +19,7 @@
 
 void acsi_init(void);
 LONG acsi_ioctl(UWORD drv, UWORD ctrl, void *arg);
-LONG acsi_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev);
+LONG acsi_rw(WORD rw, LONG sector, WORD count, UBYTE *buf, WORD dev);
 
 #endif /* CONF_WITH_ACSI */
 

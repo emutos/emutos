@@ -155,10 +155,10 @@ void sd_init(void)
 /*
  *  read/write interface
  */
-LONG sd_rw(WORD rw,LONG sector,WORD count,LONG buf,WORD dev)
+LONG sd_rw(WORD rw,LONG sector,WORD count,UBYTE *buf,WORD dev)
 {
 LONG ret;
-UBYTE *p = (UBYTE *)buf;
+UBYTE *p = buf;
 int i;
 
     if (dev)

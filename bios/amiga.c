@@ -445,7 +445,7 @@ BOOL amiga_flop_detect_drive(WORD dev)
 #endif
 }
 
-WORD amiga_floprw(LONG buf, WORD rw, WORD dev, WORD sect, WORD track, WORD side, WORD count)
+WORD amiga_floprw(UBYTE *buf, WORD rw, WORD dev, WORD sect, WORD track, WORD side, WORD count)
 {
 #if CONF_WITH_AROS
     return aros_floprw(buf, rw, dev, sect, track, side, count);

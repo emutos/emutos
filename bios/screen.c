@@ -16,6 +16,7 @@
 /*#define ENABLE_KDEBUG*/
 
 #include "config.h"
+#include "portab.h"
 #include "machine.h"
 #include "screen.h"
 #include "videl.h"

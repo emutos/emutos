@@ -45,7 +45,7 @@
 
 BLKDEV blkdev[BLKDEVNUM];
 
-static BYTE diskbuf[2*SECTOR_SIZE];     /* buffer for 2 sectors */
+static UBYTE diskbuf[2*SECTOR_SIZE];    /* buffer for 2 sectors */
 
 static PUN_INFO pun_info;
 
@@ -55,7 +55,7 @@ static PUN_INFO pun_info;
 static LONG blkdev_hdv_boot(void);
 static void blkdev_hdv_init(void);
 static LONG blkdev_mediach(WORD dev);
-static LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr);
+static LONG blkdev_rwabs(WORD rw, UBYTE *buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr);
 static LONG bootcheck(void);
 static void bus_init(void);
 static WORD hd_boot_read(void);
@@ -93,7 +93,7 @@ UWORD compute_cksum(const UWORD *buf)
 void blkdev_init(void)
 {
     /* set the block buffer pointer to reserved memory */
-    dskbufp = &diskbuf;
+    dskbufp = diskbuf;
     KDEBUG(("diskbuf = %08lx\n",(long)dskbufp));
 
     /* setup booting related vectors */
@@ -341,18 +341,18 @@ int add_partition(UWORD unit, LONG *devices_available, char id[], ULONG start, U
 
 #define CNTMAX  0x7FFF  /* 16-bit MAXINT */
 
-static LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr)
+static LONG blkdev_rwabs(WORD rw, UBYTE *buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr)
 {
     int retries = RWABS_RETRIES;
     int unit = dev;
     LONG lcount = cnt;
     LONG retval;
     WORD psshift;
-    void *bufstart = (void *)buf;
+    UBYTE *bufstart = buf;
     GEOMETRY *geo;
 
     KDEBUG(("rwabs(rw=%d, buf=%ld, count=%ld, recnr=%u, dev=%d, lrecnr=%ld)\n",
-            rw,buf,lcount,recnr,dev,lrecnr));
+            rw,(ULONG)buf,lcount,recnr,dev,lrecnr));
 
     if (recnr != -1)            /* if long offset not used */
         lrecnr = (UWORD)recnr;  /* recnr as unsigned to enable 16-bit recn */
@@ -428,7 +428,7 @@ static LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG
         do {        /* outer loop retries if critical event handler says we should */
             do {    /* inner loop automatically retries */
                 retval = (unit<NUMFLOPPIES) ? floppy_rw(rw, buf, scount, lrecnr, geo->spt, geo->sides, unit)
-                                            : disk_rw(unit, (rw & ~RW_NOTRANSLATE), lrecnr, scount, (void *)buf);
+                                            : disk_rw(unit, (rw & ~RW_NOTRANSLATE), lrecnr, scount, buf);
                 if (retval == E_CHNG)       /* no automatic retry on media change */
                     break;
             } while((retval < 0) && (--retries > 0));
@@ -511,7 +511,7 @@ LONG blkdev_getbpb(WORD dev)
     /* now we can read the bootsector using the physical mode */
     do {
         ret = blkdev_rwabs(RW_READ | RW_NOMEDIACH | RW_NOTRANSLATE,
-                     (LONG)dskbufp, 1, -1, unit, bdev->start);
+                           dskbufp, 1, -1, unit, bdev->start);
         if (ret < 0L)
             ret = call_etv_critic((WORD)ret,dev);
     } while(ret == CRITIC_RETRY_REQUEST);

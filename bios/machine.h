@@ -42,7 +42,7 @@ extern long cookie_swi;
 extern long cookie_idt;
 extern long cookie_akp;
 #if CONF_WITH_FRB
-extern long cookie_frb;
+extern UBYTE *cookie_frb;
 #endif
 
 /*
