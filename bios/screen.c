@@ -699,6 +699,33 @@ static void atari_setphys(const UBYTE *addr)
         *(volatile UBYTE *) VIDEOBASE_ADDR_LOW = ((ULONG) addr);
 }
 
+static void atari_setrez(WORD rez, WORD videlmode)
+{
+    if (FALSE) {
+        /* Dummy case for conditional compilation */
+    }
+#if CONF_WITH_VIDEL
+    else if (has_videl) {
+        if (rez == FALCON_REZ) {
+            vsetmode(videlmode);
+            sshiftmod = rez;
+        } else if (rez < 3) {   /* ST compatible resolution */
+            *(volatile UWORD *)SPSHIFT = 0;
+            *(volatile UBYTE *)ST_SHIFTER = sshiftmod = rez;
+        }
+    }
+#endif
+#if CONF_WITH_TT_SHIFTER
+    else if (has_tt_shifter) {
+        if ((rez != 3) && (rez != 5))
+            *(volatile UBYTE *)TT_SHIFTER = sshiftmod = rez;
+    }
+#endif
+    else if (rez < 3) {         /* ST resolution */
+        *(volatile UBYTE *)ST_SHIFTER = sshiftmod = rez;
+    }
+}
+
 #endif /* CONF_WITH_SHIFTER */
 
 /* hardware independent xbios routines */
@@ -807,30 +834,8 @@ void setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
         /* Wait for the end of display to avoid the plane-shift bug on ST */
         vsync();
 
-        if (FALSE) {
-            /* Dummy case for conditional compilation */
-        }
-#if CONF_WITH_VIDEL
-        else if (has_videl) {
-            if (rez == FALCON_REZ) {
-                vsetmode(videlmode);
-                sshiftmod = rez;
-            } else if (rez < 3) {   /* ST compatible resolution */
-                *(volatile UWORD *)SPSHIFT = 0;
-                *(volatile UBYTE *)ST_SHIFTER = sshiftmod = rez;
-            }
-        }
-#endif
-#if CONF_WITH_TT_SHIFTER
-        else if (has_tt_shifter) {
-            if ((rez != 3) && (rez != 5))
-                *(volatile UBYTE *)TT_SHIFTER = sshiftmod = rez;
-        }
-#endif
 #if CONF_WITH_SHIFTER
-        else if (rez < 3) {      /* ST resolution */
-            *(volatile UBYTE *)ST_SHIFTER = sshiftmod = rez;
-        }
+        atari_setrez(rez, videlmode);
 #endif
 
         /* Re-initialize line-a, VT52 etc: */
