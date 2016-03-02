@@ -13,9 +13,9 @@
 
 void set_dma_addr(UBYTE *addr)
 {
-    ULONG value = (ULONG)addr;
+    UBYTE_ALIAS* b = (UBYTE_ALIAS*)&addr;
 
-    DMA->addr_low = value;
-    DMA->addr_med = value>>8;
-    DMA->addr_high = value>>16;
+    DMA->addr_low = b[3];
+    DMA->addr_med = b[2];
+    DMA->addr_high = b[1];
 }
