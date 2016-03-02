@@ -848,63 +848,42 @@ static WORD xbios_40(WORD mode)
 /*
  * TT video
  */
-#if DBG_XBIOS
+#if DBG_XBIOS && CONF_WITH_TT_SHIFTER
 static WORD xbios_50(WORD mode)
 {
     kprintf("XBIOS: EsetShift\n");
     return esetshift(mode);
 }
-#endif
-
-#if DBG_XBIOS
 static WORD xbios_51(void)
 {
     kprintf("XBIOS: EgetShift\n");
     return egetshift();
 }
-#endif
-
-#if DBG_XBIOS
 static WORD xbios_52(WORD bank)
 {
     kprintf("XBIOS: EsetBank\n");
     return esetbank(bank);
 }
-#endif
-
-#if DBG_XBIOS
 static WORD xbios_53(WORD index, WORD color)
 {
     kprintf("XBIOS: EsetColor\n");
     return esetcolor(index, color);
 }
-#endif
-
-#if DBG_XBIOS
 static void xbios_54(WORD index,WORD count,WORD *rgb)
 {
     kprintf("XBIOS: EsetPalette\n");
     esetpalette(index, count, rgb);
 }
-#endif
-
-#if DBG_XBIOS
 static void xbios_55(WORD index, WORD count, WORD *rgb)
 {
     kprintf("XBIOS: EgetPalette\n");
     egetpalette(index, count, rgb);
 }
-#endif
-
-#if DBG_XBIOS
 static WORD xbios_56(WORD mode)
 {
     kprintf("XBIOS: EsetGray\n");
     return esetgray(mode);
 }
-#endif
-
-#if DBG_XBIOS
 static WORD xbios_57(WORD mode)
 {
     kprintf("XBIOS: EsetSmear\n");
