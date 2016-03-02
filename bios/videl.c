@@ -802,11 +802,6 @@ WORD videl_check_moderez(WORD moderez)
     return (return_mode==current_mode)?0:return_mode;
 }
 
-ULONG videl_vram_size(void)
-{
-    return get_videl_width() / 8L * get_videl_height() * get_videl_bpp();
-}
-
 void videl_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *vt_rez)
 {
     *planes = get_videl_bpp();

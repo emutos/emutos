@@ -34,8 +34,7 @@
 #endif
 
 static ULONG initial_vram_size(void);
-static ULONG vram_size(void);
-static void setphys(const UBYTE *addr,int checkaddr);
+static void setphys(const UBYTE *addr);
 
 #if CONF_WITH_SHIFTER
 
@@ -158,16 +157,6 @@ static const WORD tt_dflt_palette[] = {
 /*
  * TT shifter functions
  */
-
-static ULONG tt_vram_size(void)
-{
-    WORD rez = getrez();
-
-    if (rez >= TT_MEDIUM)
-        return TT_VRAM_SIZE;
-    else
-        return ST_VRAM_SIZE;
-}
 
 /* xbios routines */
 
@@ -445,9 +434,9 @@ void screen_init(void)
         /* reset VIDEL on boot-up */
         /* first set the physbase to a safe memory */
 #if CONF_VRAM_ADDRESS
-        setphys((const UBYTE *)CONF_VRAM_ADDRESS,0);
+        setphys((const UBYTE *)CONF_VRAM_ADDRESS);
 #else
-        setphys((const UBYTE *)0x10000L,0);
+        setphys((const UBYTE *)0x10000L);
 #endif
 
 #if CONF_WITH_NVRAM && !defined(MACHINE_FIREBEE)
@@ -546,7 +535,7 @@ void screen_init(void)
     amiga_screen_init();
 #endif
     /* correct physical address */
-    setphys(screen_start,1);
+    setphys(screen_start);
     rez_was_hacked = FALSE; /* initial assumption */
 }
 
@@ -605,24 +594,6 @@ static ULONG initial_vram_size(void)
         return FALCON_VRAM_SIZE;
     else if (HAS_TT_SHIFTER)
         return TT_VRAM_SIZE;
-    else
-        return ST_VRAM_SIZE;
-}
-
-/* calculate VRAM size for current video mode */
-static ULONG vram_size(void)
-{
-    if (FALSE) {
-        /* Dummy case for conditional compilation */
-    }
-#if CONF_WITH_VIDEL
-    else if (has_videl)
-        return videl_vram_size();
-#endif
-#if CONF_WITH_TT_SHIFTER
-    else if (has_tt_shifter)
-        return tt_vram_size();
-#endif
     else
         return ST_VRAM_SIZE;
 }
@@ -731,15 +702,9 @@ const UBYTE *physbase(void)
 
 /* Set physical screen address */
 
-static void setphys(const UBYTE *addr,int checkaddr)
+static void setphys(const UBYTE *addr)
 {
     KDEBUG(("setphys(0x%08lx)\n", (ULONG)addr));
-
-    if (checkaddr) {
-        if (addr > ((UBYTE *)phystop - vram_size())) {
-            panic("VideoRAM covers ROM area!!\n");
-        }
-    }
 
 #ifdef MACHINE_AMIGA
     amiga_setphys(addr);
@@ -829,7 +794,7 @@ void setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
         KDEBUG(("v_bas_ad = 0x%08lx\n", (ULONG)v_bas_ad));
     }
     if (physLoc != (UBYTE *)-1) {
-        setphys(physLoc,1);
+        setphys(physLoc);
     }
     if (rez >= 0 && rez < 8) {
         /* Wait for the end of display to avoid the plane-shift bug on ST */
