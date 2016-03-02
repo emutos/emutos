@@ -83,13 +83,10 @@ static WORD shifter_check_moderez(WORD moderez)
 
     return_rez = moderez & 0x00ff;
 
-#if CONF_WITH_TT_SHIFTER
-    if (has_tt_shifter) {
+    if (HAS_TT_SHIFTER) {
         if (return_rez == TT_HIGH)
             return_rez = TT_MEDIUM;
-    } else
-#endif
-    {
+    } else {
         if (return_rez > ST_MEDIUM)
             return_rez = ST_MEDIUM;
     }
@@ -101,10 +98,8 @@ static int shifter_rez_changeable(void)
 {
     int rez = Getrez();
 
-#if CONF_WITH_TT_SHIFTER
-    if (has_tt_shifter)
+    if (HAS_TT_SHIFTER)
         return (rez != TT_HIGH);
-#endif
 
     return (rez != ST_HIGH);    /* can't change if mono monitor */
 }
@@ -386,21 +381,8 @@ void initialise_palette_registers(WORD rez,WORD mode)
 #if CONF_WITH_SHIFTER
 WORD mask;
 
-    if (FALSE) {
-        /* Dummy case for conditional compilation */
-    }
-#if CONF_WITH_VIDEL
-    else if (has_videl)
+    if (HAS_VIDEL || HAS_TT_SHIFTER || HAS_STE_SHIFTER)
         mask = 0x0fff;
-#endif
-#if CONF_WITH_TT_SHIFTER
-    else if (has_tt_shifter)
-        mask = 0x0fff;
-#endif
-#if CONF_WITH_STE_SHIFTER
-    else if (has_ste_shifter)
-        mask = 0x0fff;
-#endif
     else
         mask = 0x0777;
 
@@ -554,19 +536,8 @@ void screen_init(void)
     /* Original TOS leaves a gap of 768 bytes between screen ram and phys_top...
      * ... we normally don't need that, but some old software relies on that fact,
      * so we use this gap, too. */
-#if CONF_WITH_VIDEL
-    if (has_videl)
-        ;
-    else
-#endif
-#if CONF_WITH_TT_SHIFTER
-    if (has_tt_shifter)
-        ;
-    else
-#endif
-    {
+    if (!(HAS_VIDEL || HAS_TT_SHIFTER))
         screen_start -= 0x300;
-    }
 #endif /* CONF_VRAM_ADDRESS */
     /* set new v_bas_ad */
     v_bas_ad = (UBYTE *)screen_start;
@@ -630,33 +601,30 @@ WORD get_monitor_type(void)
 /* calculate initial VRAM size based on video hardware */
 static ULONG initial_vram_size(void)
 {
-#if CONF_WITH_VIDEL
-    if (has_videl)
+    if (HAS_VIDEL)
         return FALCON_VRAM_SIZE;
-#endif
-
-#if CONF_WITH_TT_SHIFTER
-    if (has_tt_shifter)
+    else if (HAS_TT_SHIFTER)
         return TT_VRAM_SIZE;
-#endif
-
-    return ST_VRAM_SIZE;
+    else
+        return ST_VRAM_SIZE;
 }
 
 /* calculate VRAM size for current video mode */
 static ULONG vram_size(void)
 {
+    if (FALSE) {
+        /* Dummy case for conditional compilation */
+    }
 #if CONF_WITH_VIDEL
-    if (has_videl)
+    else if (has_videl)
         return videl_vram_size();
 #endif
-
 #if CONF_WITH_TT_SHIFTER
-    if (has_tt_shifter)
+    else if (has_tt_shifter)
         return tt_vram_size();
 #endif
-
-    return ST_VRAM_SIZE;
+    else
+        return ST_VRAM_SIZE;
 }
 
 /* Settings for the different video modes */
@@ -720,16 +688,9 @@ static inline void get_std_pixel_size(WORD *width,WORD *height)
  */
 void get_pixel_size(WORD *width,WORD *height)
 {
-#if CONF_WITH_VIDEL
-    if (has_videl)
+    if (HAS_VIDEL || HAS_TT_SHIFTER)
         get_std_pixel_size(width,height);
     else
-#endif
-#if CONF_WITH_TT_SHIFTER
-    if (has_tt_shifter)
-        get_std_pixel_size(width,height);
-    else
-#endif
     {
         /* ST TOS has its own set of magic numbers */
         if (v_vt_rez == 400)        /* ST high */
@@ -757,29 +718,13 @@ const UBYTE *physbase(void)
     addr += *(volatile UBYTE *) VIDEOBASE_ADDR_MID;
     addr <<= 8;
 
-    if (FALSE) {
-        /* Dummy case for conditional compilation */
-    }
-#if CONF_WITH_VIDEL
-    else if (has_videl) {
+    if (HAS_VIDEL || HAS_TT_SHIFTER || HAS_STE_SHIFTER)
         addr += *(volatile UBYTE *) VIDEOBASE_ADDR_LOW;
-    }
-#endif
-#if CONF_WITH_TT_SHIFTER
-    else if (has_tt_shifter) {
-        addr += *(volatile UBYTE *) VIDEOBASE_ADDR_LOW;
-    }
-#endif
-#if CONF_WITH_STE_SHIFTER
-    else if (has_ste_shifter) {
-        addr += *(volatile UBYTE *) VIDEOBASE_ADDR_LOW;
-    }
-#endif
 
 #else /* CONF_WITH_SHIFTER */
     /* No real physical screen, fall back to Logbase() */
     addr = (LONG)logbase();
-#endif /* #if CONF_WITH_SHIFTER */
+#endif /* CONF_WITH_SHIFTER */
 
     return (UBYTE *)addr;
 }
@@ -805,24 +750,8 @@ static void setphys(const UBYTE *addr,int checkaddr)
     *(volatile UBYTE *) VIDEOBASE_ADDR_HI = ((ULONG) addr) >> 16;
     *(volatile UBYTE *) VIDEOBASE_ADDR_MID = ((ULONG) addr) >> 8;
 
-    if (FALSE) {
-        /* Dummy case for conditional compilation */
-    }
-#if CONF_WITH_VIDEL
-    else if (has_videl) {
+    if (HAS_VIDEL || HAS_TT_SHIFTER || HAS_STE_SHIFTER)
         *(volatile UBYTE *) VIDEOBASE_ADDR_LOW = ((ULONG) addr);
-    }
-#endif
-#if CONF_WITH_TT_SHIFTER
-    else if (has_tt_shifter) {
-        *(volatile UBYTE *) VIDEOBASE_ADDR_LOW = ((ULONG) addr);
-    }
-#endif
-#if CONF_WITH_STE_SHIFTER
-    else if (has_ste_shifter) {
-        *(volatile UBYTE *) VIDEOBASE_ADDR_LOW = ((ULONG) addr);
-    }
-#endif
 
 #endif /* CONF_WITH_SHIFTER */
 }
@@ -980,21 +909,8 @@ WORD setcolor(WORD colorNum, WORD color)
 
     colorNum &= 0x000f;         /* just like real TOS */
 
-    if (FALSE) {
-        /* Dummy case for conditional compilation */
-    }
-#if CONF_WITH_VIDEL
-    else if (has_videl)
+    if (HAS_VIDEL || HAS_TT_SHIFTER || HAS_STE_SHIFTER)
         mask = 0x0fff;
-#endif
-#if CONF_WITH_TT_SHIFTER
-    else if (has_tt_shifter)
-        mask = 0x0fff;
-#endif
-#if CONF_WITH_STE_SHIFTER
-    else if (has_ste_shifter)
-        mask = 0x0fff;
-#endif
     else
         mask = 0x0777;
 

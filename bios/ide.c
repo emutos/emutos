@@ -378,13 +378,11 @@ void detect_ide(void)
         if (ide_interface_exists(i))
             has_ide |= bitmask;
 
-#if CONF_WITH_ARANYM
-        if (is_aranym)
+        if (IS_ARANYM)
         {
             /* ARAnyM-JIT crashes when detecting extra IDE interfaces */
             break;
         }
-#endif /* CONF_WITH_ARANYM */
     }
 #else
     has_ide = 0x00;

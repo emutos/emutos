@@ -192,14 +192,12 @@ int has_dip_switches;
 
 static void detect_dip_switches(void)
 {
-#if CONF_WITH_ARANYM
-  if (is_aranym)
+  if (IS_ARANYM)
   {
     /* The auto-detection currently crashes ARAnyM-JIT. */
     has_dip_switches = 0;
   }
   else
-#endif
   {
     has_dip_switches = check_read_byte(DIP_SWITCHES+1);
   }
@@ -227,27 +225,14 @@ static void setvalue_swi(void)
 
 static void setvalue_vdo(void)
 {
-#if CONF_WITH_VIDEL
-  if(has_videl) {
+  if(HAS_VIDEL)
     cookie_vdo = 0x00030000L;
-  }
-  else
-#endif
-#if CONF_WITH_TT_SHIFTER
-  if(has_tt_shifter) {
+  else if(HAS_TT_SHIFTER)
     cookie_vdo = 0x00020000L;
-  }
-  else
-#endif
-#if CONF_WITH_STE_SHIFTER
-  if(has_ste_shifter) {
+  else if(HAS_STE_SHIFTER)
     cookie_vdo = 0x00010000L;
-  }
   else
-#endif
-  {
     cookie_vdo = 0x00000000L;
-  }
 
   KDEBUG(("cookie_vdo = 0x%08lx\n", cookie_vdo));
 }
@@ -256,40 +241,20 @@ static void setvalue_vdo(void)
 static void setvalue_mch(void)
 {
 #if CONF_ATARI_HARDWARE
-  if (FALSE) {
-    /* Dummy case for conditional compilation */
-  }
-#if CONF_WITH_ARANYM
-  else if (is_aranym) {
+  if (IS_ARANYM)
     cookie_mch = MCH_ARANYM;
-  }
-#endif
-#if CONF_WITH_VIDEL
-  else if(has_videl) {
+  else if(HAS_VIDEL)
     cookie_mch = MCH_FALCON;
-  }
-#endif
-#if CONF_WITH_TT_SHIFTER
-  else if(has_tt_shifter) {
+  else if(HAS_TT_SHIFTER)
     cookie_mch = MCH_TT;
-  }
-#endif
-#if CONF_WITH_STE_SHIFTER
-  else if(has_ste_shifter) {
-#if CONF_WITH_VME
-    if(has_vme) {
+  else if(HAS_STE_SHIFTER) {
+    if(HAS_VME)
       cookie_mch = MCH_MSTE;
-    }
     else
-#endif /* CONF_WITH_VME */
-    {
       cookie_mch = MCH_STE;
-    }
   }
-#endif
-  else {
+  else
     cookie_mch = MCH_ST;
-  }
 #else
   cookie_mch = MCH_NOHARD;
 #endif /* CONF_ATARI_HARDWARE */
