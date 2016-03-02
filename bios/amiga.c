@@ -10,10 +10,11 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#define DBG_AMIGA 0
+/* #define ENABLE_KDEBUG */
 
 #include "config.h"
 #include "portab.h"
+#include "kprint.h"
 #include "amiga.h"
 #include "vectors.h"
 #include "tosvars.h"
@@ -51,10 +52,7 @@ void amiga_machine_detect(void)
 #else
     has_gayle = (mcpu >= 20);
 #endif
-
-#if DBG_AMIGA
-    kprintf("has_gayle = %d\n", has_gayle);
-#endif
+    KDEBUG(("has_gayle = %d\n", has_gayle));
 }
 
 #if CONF_WITH_ALT_RAM
@@ -118,9 +116,7 @@ void amiga_screen_init(void)
 
 void amiga_setphys(void *addr)
 {
-#if DBG_AMIGA
-    kprintf("amiga_setphys(0x%08lx)\n", (ULONG)addr);
-#endif
+    KDEBUG(("amiga_setphys(0x%08lx)\n", (ULONG)addr));
     amiga_screenbase = addr;
 }
 
@@ -236,9 +232,7 @@ static UBYTE read_clock_bcd(int reg)
 
 void amiga_clock_init(void)
 {
-#if DBG_AMIGA
-    kprintf("d = %d, e = %d, f = %d\n", read_clock_reg(0xd), read_clock_reg(0xe), read_clock_reg(0xf));
-#endif
+    KDEBUG(("d = %d, e = %d, f = %d\n", read_clock_reg(0xd), read_clock_reg(0xe), read_clock_reg(0xf)));
 
     if (read_clock_reg(0xf) == 4)
     {
@@ -264,9 +258,7 @@ void amiga_clock_init(void)
         write_clock_reg(0xd, before);
     }
 
-#if DBG_AMIGA
-    kprintf("amiga_clock_type = %d\n", amiga_clock_type);
-#endif
+    KDEBUG(("amiga_clock_type = %d\n", amiga_clock_type));
 }
 
 static UWORD amiga_dogettime(void)
@@ -276,9 +268,7 @@ static UWORD amiga_dogettime(void)
     UWORD hours = read_clock_bcd(4);
     UWORD time;
 
-#if DBG_AMIGA
-    kprintf("amiga_dogettime() %02d:%02d:%02d\n", hours, minutes, seconds);
-#endif
+    KDEBUG(("amiga_dogettime() %02d:%02d:%02d\n", hours, minutes, seconds));
 
     time = (seconds >> 1)
          | (minutes << 5)
@@ -295,9 +285,7 @@ static UWORD amiga_dogetdate(void)
     UWORD years = read_clock_bcd(offset + 10);
     UWORD date;
 
-#if DBG_AMIGA
-    kprintf("amiga_dogetdate() %02d/%02d/%02d\n", years, months, days);
-#endif
+    KDEBUG(("amiga_dogetdate() %02d/%02d/%02d\n", years, months, days));
 
     /* Y2K fix */
     if (years >= 80)
@@ -350,14 +338,14 @@ void amiga_uaelib_init(void)
     else if (IS_TRAP(RTAREA_BACKUP + UAELIB_DEMUX_OFFSET))
         uaelib_demux = (uaelib_demux_t*)(RTAREA_BACKUP + UAELIB_DEMUX_OFFSET);
 
-#if DBG_AMIGA
+#ifdef ENABLE_KDEBUG
     if (has_uaelib)
     {
         ULONG version = uaelib_GetVersion();
-        kprintf("EmuTOS running on UAE version %d.%d.%d\n",
+        KDEBUG(("EmuTOS running on UAE version %d.%d.%d\n",
             (int)((version & 0xff000000) >> 24),
             (int)((version & 0x00ff0000) >> 16),
-            (int)(version & 0x0000ffff));
+            (int)(version & 0x0000ffff)));
     }
 #endif
 }
