@@ -673,31 +673,46 @@ void get_pixel_size(WORD *width,WORD *height)
     }
 }
 
+#if CONF_WITH_SHIFTER
+
+static const UBYTE *atari_physbase(void)
+{
+    ULONG addr;
+
+    addr = *(volatile UBYTE *) VIDEOBASE_ADDR_HI;
+    addr <<= 8;
+    addr |= *(volatile UBYTE *) VIDEOBASE_ADDR_MID;
+    addr <<= 8;
+
+    if (HAS_VIDEL || HAS_TT_SHIFTER || HAS_STE_SHIFTER)
+        addr |= *(volatile UBYTE *) VIDEOBASE_ADDR_LOW;
+
+    return (UBYTE *)addr;
+}
+
+static void atari_setphys(const UBYTE *addr)
+{
+    *(volatile UBYTE *) VIDEOBASE_ADDR_HI = ((ULONG) addr) >> 16;
+    *(volatile UBYTE *) VIDEOBASE_ADDR_MID = ((ULONG) addr) >> 8;
+
+    if (HAS_VIDEL || HAS_TT_SHIFTER || HAS_STE_SHIFTER)
+        *(volatile UBYTE *) VIDEOBASE_ADDR_LOW = ((ULONG) addr);
+}
+
+#endif /* CONF_WITH_SHIFTER */
+
 /* hardware independent xbios routines */
 
 const UBYTE *physbase(void)
 {
-    LONG addr;
-
 #ifdef MACHINE_AMIGA
     return amiga_physbase();
-#endif
-
-#if CONF_WITH_SHIFTER
-    addr = *(volatile UBYTE *) VIDEOBASE_ADDR_HI;
-    addr <<= 8;
-    addr += *(volatile UBYTE *) VIDEOBASE_ADDR_MID;
-    addr <<= 8;
-
-    if (HAS_VIDEL || HAS_TT_SHIFTER || HAS_STE_SHIFTER)
-        addr += *(volatile UBYTE *) VIDEOBASE_ADDR_LOW;
-
-#else /* CONF_WITH_SHIFTER */
+#elif CONF_WITH_SHIFTER
+    return atari_physbase();
+#else
     /* No real physical screen, fall back to Logbase() */
-    addr = (LONG)logbase();
-#endif /* CONF_WITH_SHIFTER */
-
-    return (UBYTE *)addr;
+    return logbase();
+#endif
 }
 
 /* Set physical screen address */
@@ -708,17 +723,9 @@ static void setphys(const UBYTE *addr)
 
 #ifdef MACHINE_AMIGA
     amiga_setphys(addr);
-    return;
+#elif CONF_WITH_SHIFTER
+    atari_setphys(addr);
 #endif
-
-#if CONF_WITH_SHIFTER
-    *(volatile UBYTE *) VIDEOBASE_ADDR_HI = ((ULONG) addr) >> 16;
-    *(volatile UBYTE *) VIDEOBASE_ADDR_MID = ((ULONG) addr) >> 8;
-
-    if (HAS_VIDEL || HAS_TT_SHIFTER || HAS_STE_SHIFTER)
-        *(volatile UBYTE *) VIDEOBASE_ADDR_LOW = ((ULONG) addr);
-
-#endif /* CONF_WITH_SHIFTER */
 }
 
 UBYTE *logbase(void)
