@@ -414,7 +414,7 @@ static char rez_was_hacked;
 
 void screen_init(void)
 {
-    ULONG screen_start;
+    UBYTE *screen_start;
 #if CONF_WITH_SHIFTER
 #if CONF_WITH_VIDEL
     UWORD boot_resolution = FALCON_DEFAULT_BOOT;
@@ -527,12 +527,12 @@ void screen_init(void)
 #endif /* CONF_WITH_SHIFTER */
 
 #if CONF_VRAM_ADDRESS
-    screen_start = CONF_VRAM_ADDRESS;
+    screen_start = (UBYTE *)CONF_VRAM_ADDRESS;
 #else
     /* videoram is placed just below the phystop */
-    screen_start = (ULONG)phystop - initial_vram_size();
+    screen_start = (UBYTE *)phystop - initial_vram_size();
     /* round down to 256 byte boundary */
-    screen_start &= 0x00ffff00;
+    screen_start = (UBYTE *)((ULONG)screen_start & 0x00ffff00);
     /* Original TOS leaves a gap of 768 bytes between screen ram and phys_top...
      * ... we normally don't need that, but some old software relies on that fact,
      * so we use this gap, too. */
@@ -540,13 +540,13 @@ void screen_init(void)
         screen_start -= 0x300;
 #endif /* CONF_VRAM_ADDRESS */
     /* set new v_bas_ad */
-    v_bas_ad = (UBYTE *)screen_start;
+    v_bas_ad = screen_start;
     KDEBUG(("v_bas_ad = 0x%08lx\n", (ULONG)v_bas_ad));
 #ifdef MACHINE_AMIGA
     amiga_screen_init();
 #endif
     /* correct physical address */
-    setphys((const UBYTE *)screen_start,1);
+    setphys(screen_start,1);
     rez_was_hacked = FALSE; /* initial assumption */
 }
 
