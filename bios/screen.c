@@ -699,6 +699,48 @@ static void atari_setphys(const UBYTE *addr)
         *(volatile UBYTE *) VIDEOBASE_ADDR_LOW = ((ULONG) addr);
 }
 
+static WORD atari_getrez(void)
+{
+    UBYTE rez;
+
+#if CONF_WITH_VIDEL
+    if (has_videl) {
+        /* Get the video mode for Falcon-hardware */
+        WORD vmode = vsetmode(-1);
+        if (vmode & VIDEL_COMPAT) {
+            switch(vmode&VIDEL_BPPMASK) {
+            case VIDEL_1BPP:
+                rez = 2;
+                break;
+            case VIDEL_2BPP:
+                rez = 1;
+                break;
+            case VIDEL_4BPP:
+                rez = 0;
+                break;
+            default:
+                kprintf("Problem - unsupported video mode\n");
+                rez = 0;
+            }
+        } else
+            rez = 2;
+    }
+    else
+#endif
+#if CONF_WITH_TT_SHIFTER
+    if (has_tt_shifter) {
+        /* Get the video mode for TT-hardware */
+        rez = *(volatile UBYTE *)TT_SHIFTER & 0x07;
+    }
+    else
+#endif
+    {
+        rez = *(volatile UBYTE *)ST_SHIFTER & 0x03;
+    }
+
+    return rez;
+}
+
 static void atari_setrez(WORD rez, WORD videlmode)
 {
     if (FALSE) {
@@ -785,49 +827,12 @@ UBYTE *logbase(void)
 
 WORD getrez(void)
 {
-    UBYTE rez;
-
 #if CONF_WITH_SHIFTER
-#if CONF_WITH_VIDEL
-    if (has_videl) {
-        /* Get the video mode for Falcon-hardware */
-        WORD vmode = vsetmode(-1);
-        if (vmode & VIDEL_COMPAT) {
-            switch(vmode&VIDEL_BPPMASK) {
-            case VIDEL_1BPP:
-                rez = 2;
-                break;
-            case VIDEL_2BPP:
-                rez = 1;
-                break;
-            case VIDEL_4BPP:
-                rez = 0;
-                break;
-            default:
-                kprintf("Problem - unsupported video mode\n");
-                rez = 0;
-            }
-        } else
-            rez = 2;
-    }
-    else
-#endif
-#if CONF_WITH_TT_SHIFTER
-    if (has_tt_shifter) {
-        /* Get the video mode for TT-hardware */
-        rez = *(volatile UBYTE *)TT_SHIFTER & 0x07;
-    }
-    else
-#endif
-    {
-        rez = *(volatile UBYTE *)ST_SHIFTER & 0x03;
-    }
-#else /* CONF_WITH_SHIFTER */
+    return atari_getrez();
+#else
     /* No video hardware, return the logical video mode */
-    rez = sshiftmod;
-#endif /* CONF_WITH_SHIFTER */
-
-    return rez;
+    return sshiftmod;
+#endif
 }
 
 
