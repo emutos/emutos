@@ -571,7 +571,7 @@ static WORD do_optnmenu(WORD item)
             else if (newres == FALCON_REZ)
                 shel_write(5,newmode,1,NULL,NULL);
 #endif
-#if CONF_WITH_SHIFTER
+#if CONF_WITH_ATARI_VIDEO
             else shel_write(5,newres+2,0,NULL,NULL);
 #endif
             done = TRUE;

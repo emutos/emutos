@@ -24,7 +24,7 @@
 
         .globl  _check_read_byte
         .globl  _int_vbl
-#if CONF_WITH_SHIFTER
+#if CONF_WITH_ATARI_VIDEO
         .globl  _int_hbl
 #endif
         .globl  _int_timerc
@@ -270,7 +270,7 @@ query:
         rte
 
 
-#if CONF_WITH_SHIFTER
+#if CONF_WITH_ATARI_VIDEO
 
 /*
  * Int 0x68 - HBL interrupt
@@ -302,7 +302,7 @@ is_ipl:
 #endif
         rte
 
-#endif /* CONF_WITH_SHIFTER */
+#endif /* CONF_WITH_ATARI_VIDEO */
 
 
 /*
@@ -337,7 +337,7 @@ _int_vbl:
 
         jsr     _blink                  // blink cursor
 
-#if CONF_WITH_SHIFTER
+#if CONF_WITH_ATARI_VIDEO
 // the contents of colorptr indicate the palette processing required; since
 // the source address must be on a word boundary, we use bit 0 as a flag:
 //  contents                 meaning
@@ -397,7 +397,7 @@ st_shifter:
 #endif
         move.b  d0,0xffff8201.w
 vbl_no_screenpt:
-#endif /* CONF_WITH_SHIFTER */
+#endif /* CONF_WITH_ATARI_VIDEO */
 
 #if CONF_WITH_FDC
         // flopvbl
@@ -462,7 +462,7 @@ vbl_end:
         addq.w  #1,_vblsem
 #endif
 
-#if CONF_WITH_SHIFTER
+#if CONF_WITH_ATARI_VIDEO
         rte
 #else
         rts

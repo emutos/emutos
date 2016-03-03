@@ -448,7 +448,7 @@ static void sh_rdinf(void)
  */
 static void process_inf1(void)
 {
-#if CONF_WITH_SHIFTER
+#if CONF_WITH_ATARI_VIDEO
     WORD    env1, env2;
     WORD    mode;
 #endif
@@ -466,7 +466,7 @@ static void process_inf1(void)
             if (*pcurr == '\r')         /* no video info saved */
                 break;
 
-#if CONF_WITH_SHIFTER
+#if CONF_WITH_ATARI_VIDEO
             pcurr = scan_2(pcurr, &env1);
             pcurr = scan_2(pcurr, &env2);
             mode = (env1 << 8) | (env2 & 0x00ff);
@@ -483,7 +483,7 @@ static void process_inf1(void)
                 gl_changerez = 1;
                 gl_nextrez = (mode & 0x00ff) + 2;
             }
-#endif /* CONF_WITH_SHIFTER */
+#endif /* CONF_WITH_ATARI_VIDEO */
         }
     }
 }
@@ -636,7 +636,7 @@ void gem_main(void)
 
     if (gl_changerez) {
         switch(gl_changerez) {
-#if CONF_WITH_SHIFTER
+#if CONF_WITH_ATARI_VIDEO
         case 1:                     /* ST(e) or TT display */
             Setscreen(-1L,-1L,gl_nextrez-2,0);
             initialise_palette_registers(gl_nextrez-2,0);

@@ -26,7 +26,7 @@ extern void init_acia_vecs(void);
 
 /* some exception vectors */
 
-#if CONF_WITH_SHIFTER
+#if CONF_WITH_ATARI_VIDEO
 extern void int_hbl(void);
 #endif
 extern void int_vbl(void);

@@ -320,8 +320,8 @@
 # ifndef CONF_WITH_IDE
 #  define CONF_WITH_IDE 0
 # endif
-# ifndef CONF_WITH_SHIFTER
-#  define CONF_WITH_SHIFTER 0
+# ifndef CONF_WITH_ATARI_VIDEO
+#  define CONF_WITH_ATARI_VIDEO 0
 # endif
 # ifndef CONF_WITH_STE_SHIFTER
 #  define CONF_WITH_STE_SHIFTER 0
@@ -595,10 +595,10 @@
 #endif
 
 /*
- * Set CONF_WITH_SHIFTER to 1 to enable general Shifter support
+ * Set CONF_WITH_ATARI_VIDEO to 1 to enable support for ST Shifter and higher
  */
-#ifndef CONF_WITH_SHIFTER
-# define CONF_WITH_SHIFTER 1
+#ifndef CONF_WITH_ATARI_VIDEO
+# define CONF_WITH_ATARI_VIDEO 1
 #endif
 
 /*
@@ -895,7 +895,7 @@
  * - use exclusively the serial port for console input
  */
 #ifndef CONF_SERIAL_CONSOLE
-# if !CONF_WITH_SHIFTER && !defined(MACHINE_AMIGA)
+# if !CONF_WITH_ATARI_VIDEO && !defined(MACHINE_AMIGA)
 #  define CONF_SERIAL_CONSOLE 1
 # else
 #  define CONF_SERIAL_CONSOLE 0
@@ -1096,15 +1096,15 @@
 # endif
 #endif
 
-#if !CONF_WITH_SHIFTER
+#if !CONF_WITH_ATARI_VIDEO
 # if CONF_WITH_STE_SHIFTER
-#  error "CONF_WITH_STE_SHIFTER requires CONF_WITH_SHIFTER."
+#  error "CONF_WITH_STE_SHIFTER requires CONF_WITH_ATARI_VIDEO."
 # endif
 # if CONF_WITH_TT_SHIFTER
-#  error "CONF_WITH_TT_SHIFTER requires CONF_WITH_SHIFTER."
+#  error "CONF_WITH_TT_SHIFTER requires CONF_WITH_ATARI_VIDEO."
 # endif
 # if CONF_WITH_VIDEL
-#  error "CONF_WITH_VIDEL requires CONF_WITH_SHIFTER."
+#  error "CONF_WITH_VIDEL requires CONF_WITH_ATARI_VIDEO."
 # endif
 #endif
 

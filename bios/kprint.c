@@ -473,7 +473,7 @@ void dopanic(const char *fmt, ...)
     }
 
     /* allow interrupts so we get keypresses */
-#if CONF_WITH_SHIFTER
+#if CONF_WITH_ATARI_VIDEO
     set_sr(0x2300);
 #else
     set_sr(0x2000);

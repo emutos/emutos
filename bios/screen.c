@@ -36,7 +36,7 @@
 static ULONG initial_vram_size(void);
 static void setphys(const UBYTE *addr);
 
-#if CONF_WITH_SHIFTER
+#if CONF_WITH_ATARI_VIDEO
 
 /* Define palette */
 
@@ -113,7 +113,7 @@ static WORD shifter_get_monitor_type(void)
         return MON_MONO;
 }
 
-#endif /* CONF_WITH_SHIFTER */
+#endif /* CONF_WITH_ATARI_VIDEO */
 
 #if CONF_WITH_TT_SHIFTER
 
@@ -354,7 +354,7 @@ WORD check_moderez(WORD moderez)
         return videl_check_moderez(moderez);
 #endif
 
-#if CONF_WITH_SHIFTER
+#if CONF_WITH_ATARI_VIDEO
     return shifter_check_moderez(moderez);
 #else
     return 0;
@@ -367,7 +367,7 @@ WORD check_moderez(WORD moderez)
  */
 void initialise_palette_registers(WORD rez,WORD mode)
 {
-#if CONF_WITH_SHIFTER
+#if CONF_WITH_ATARI_VIDEO
 WORD mask;
 
     if (HAS_VIDEL || HAS_TT_SHIFTER || HAS_STE_SHIFTER)
@@ -390,7 +390,7 @@ WORD mask;
 #endif
 
     fixup_ste_palette(rez);
-#endif /* CONF_WITH_SHIFTER */
+#endif /* CONF_WITH_ATARI_VIDEO */
 }
 
 static char rez_was_hacked;
@@ -404,7 +404,7 @@ static char rez_was_hacked;
 void screen_init(void)
 {
     UBYTE *screen_start;
-#if CONF_WITH_SHIFTER
+#if CONF_WITH_ATARI_VIDEO
 #if CONF_WITH_VIDEL
     UWORD boot_resolution = FALCON_DEFAULT_BOOT;
 #endif
@@ -513,7 +513,7 @@ void screen_init(void)
 #endif
     sshiftmod = rez;
 
-#endif /* CONF_WITH_SHIFTER */
+#endif /* CONF_WITH_ATARI_VIDEO */
 
 #if CONF_VRAM_ADDRESS
     screen_start = (UBYTE *)CONF_VRAM_ADDRESS;
@@ -565,7 +565,7 @@ int rez_changeable(void)
         return (VgetMonitor() != MON_MONO);
 #endif
 
-#if CONF_WITH_SHIFTER
+#if CONF_WITH_ATARI_VIDEO
     return shifter_rez_changeable();
 #else
     return FALSE;
@@ -580,7 +580,7 @@ WORD get_monitor_type(void)
         return vmontype();
 #endif
 
-#if CONF_WITH_SHIFTER
+#if CONF_WITH_ATARI_VIDEO
     return shifter_get_monitor_type();
 #else
     return MON_MONO;    /* fake monochrome monitor */
@@ -673,7 +673,7 @@ void get_pixel_size(WORD *width,WORD *height)
     }
 }
 
-#if CONF_WITH_SHIFTER
+#if CONF_WITH_ATARI_VIDEO
 
 static const UBYTE *atari_physbase(void)
 {
@@ -791,7 +791,7 @@ static WORD atari_setcolor(WORD colorNum, WORD color)
     return oldcolor;
 }
 
-#endif /* CONF_WITH_SHIFTER */
+#endif /* CONF_WITH_ATARI_VIDEO */
 
 /* hardware independent xbios routines */
 
@@ -799,7 +799,7 @@ const UBYTE *physbase(void)
 {
 #ifdef MACHINE_AMIGA
     return amiga_physbase();
-#elif CONF_WITH_SHIFTER
+#elif CONF_WITH_ATARI_VIDEO
     return atari_physbase();
 #else
     /* No real physical screen, fall back to Logbase() */
@@ -815,7 +815,7 @@ static void setphys(const UBYTE *addr)
 
 #ifdef MACHINE_AMIGA
     amiga_setphys(addr);
-#elif CONF_WITH_SHIFTER
+#elif CONF_WITH_ATARI_VIDEO
     atari_setphys(addr);
 #endif
 }
@@ -827,7 +827,7 @@ UBYTE *logbase(void)
 
 WORD getrez(void)
 {
-#if CONF_WITH_SHIFTER
+#if CONF_WITH_ATARI_VIDEO
     return atari_getrez();
 #else
     /* No video hardware, return the logical video mode */
@@ -862,7 +862,7 @@ void setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
         /* Wait for the end of display to avoid the plane-shift bug on ST */
         vsync();
 
-#if CONF_WITH_SHIFTER
+#if CONF_WITH_ATARI_VIDEO
         atari_setrez(rez, videlmode);
 #endif
 
@@ -905,7 +905,7 @@ void setpalette(LONG palettePtr)
  */
 WORD setcolor(WORD colorNum, WORD color)
 {
-#if CONF_WITH_SHIFTER
+#if CONF_WITH_ATARI_VIDEO
     return atari_setcolor(colorNum, color);
 #else
     /* No hardware, fake return value */
@@ -917,7 +917,7 @@ WORD setcolor(WORD colorNum, WORD color)
 void vsync(void)
 {
     LONG a;
-#if CONF_WITH_SHIFTER
+#if CONF_WITH_ATARI_VIDEO
     WORD old_sr = set_sr(0x2300);       /* allow VBL interrupt */
     /* Beware: as a side effect, MFP interrupts are also enabled.
      * So the MFP interruptions must be carefully initialized (or disabled)
@@ -934,7 +934,7 @@ void vsync(void)
         /* Wait */
     }
 
-#if CONF_WITH_SHIFTER
+#if CONF_WITH_ATARI_VIDEO
     set_sr(old_sr);
-#endif /* CONF_WITH_SHIFTER */
+#endif /* CONF_WITH_ATARI_VIDEO */
 }

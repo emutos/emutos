@@ -294,7 +294,7 @@ static void bios_init(void)
      * We need a timer for DMA timeouts in floppy and harddisk initialisation.
      * The VBL processing will be enabled later with the vblsem semaphore.
      */
-#if CONF_WITH_SHIFTER
+#if CONF_WITH_ATARI_VIDEO
     /* Keep the HBL disabled */
     set_sr(0x2300);
 #else

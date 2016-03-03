@@ -21,7 +21,7 @@
 #define TT_VRAM_SIZE        153600UL
 #define FALCON_VRAM_SIZE    307200UL
 
-#if CONF_WITH_SHIFTER
+#if CONF_WITH_ATARI_VIDEO
 
 #define VIDEOBASE_ADDR_HI   0xffff8201L
 #define VIDEOBASE_ADDR_MID  0xffff8203L
@@ -99,7 +99,7 @@ WORD esetsmear(WORD mode);
 #define TT_MEDIUM      4
 #define TT_LOW         7
 
-#endif /* CONF_WITH_SHIFTER */
+#endif /* CONF_WITH_ATARI_VIDEO */
 
 /* ST(e) resolutions */
 #define ST_HIGH        2
