@@ -159,7 +159,7 @@ void disk_init_all(void)
         devices_available |= bitmask;
 
     /* scan for attached harddrives and their partitions */
-    for(i = 0; i < _countof(majors); i++) {
+    for(i = 0; i < ARRAY_SIZE(majors); i++) {
         UWORD unit = NUMFLOPPIES + majors[i];
         disk_init_one(unit,&devices_available);
         if (!devices_available) {

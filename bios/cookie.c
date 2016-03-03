@@ -24,7 +24,7 @@ static struct cookie dflt_jar[20];
 void cookie_init(void)
 {
   dflt_jar[0].tag = 0;
-  dflt_jar[0].value = _countof(dflt_jar);
+  dflt_jar[0].value = ARRAY_SIZE(dflt_jar);
 
   CJAR = dflt_jar;
 }

@@ -312,7 +312,7 @@ void dopanic(const char *fmt, ...)
 
         pc = s->pc;
 
-        if (proc_enum >= 2 && proc_enum < _countof(exc_messages)) {
+        if (proc_enum >= 2 && proc_enum < ARRAY_SIZE(exc_messages)) {
             kcprintf("Panic: %s.\n",
                      exc_messages[proc_enum]);
         } else {
@@ -426,7 +426,7 @@ void dopanic(const char *fmt, ...)
                  exc_messages[proc_enum]);
         kcprintf("sr = %04x, pc = %08lx, fw = %04x, address = %08lx\n",
                  s->sr, s->pc, s->format_word, s->address);
-    } else if (proc_enum < _countof(exc_messages)) {
+    } else if (proc_enum < ARRAY_SIZE(exc_messages)) {
         struct {
             WORD sr;
             LONG pc;

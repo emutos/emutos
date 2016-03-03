@@ -69,7 +69,7 @@ static const struct country_record *get_country_record(int country_code)
     int default_country_index = 0;
     int i;
 
-    for(i = 0 ; i < _countof(countries) ; i++) {
+    for(i = 0 ; i < ARRAY_SIZE(countries) ; i++) {
         if(countries[i].country == country_code) {
             return &countries[i]; /* Found */
         }

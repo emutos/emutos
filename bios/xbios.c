@@ -1220,4 +1220,4 @@ const PFLONG xbios_vecs[] = {
 #endif /* TOS_VERSION >= 0x200 */
 };
 
-const UWORD xbios_ent = _countof(xbios_vecs);
+const UWORD xbios_ent = ARRAY_SIZE(xbios_vecs);

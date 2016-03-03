@@ -71,7 +71,7 @@
 
 #define HERE fprintf(stderr, "%s:%d\n", __FUNCTION__, __LINE__);
 #define UNUSED(x) (void)(x) /* Unused variable */
-#define _countof(array) ((int)(sizeof(array)/sizeof(array[0])))
+#define ARRAY_SIZE(array) ((int)(sizeof(array)/sizeof(array[0])))
 
 /*
  * typedefs
@@ -1813,7 +1813,7 @@ const struct charset_alias charsets[] = {
 static const char * get_canon_cset_name(const char *name)
 {
   int i;
-  int n = _countof(charsets);
+  int n = ARRAY_SIZE(charsets);
   for(i = 0 ; i < n ; i++) {
     if(!strcmp(charsets[i].alias, name)) {
       return charsets[i].name;
@@ -1900,7 +1900,7 @@ static const struct converter_info converters[] = {
 static converter_t get_converter(const char * from, const char * to)
 {
   int i;
-  int n = _countof(converters);
+  int n = ARRAY_SIZE(converters);
 
   if(!strcmp(from, to)) {
     return converter_noop;

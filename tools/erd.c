@@ -188,7 +188,7 @@
 #define LOCAL   static  /* comment out for LatticeC debugging */
 #define PRIVATE static
 
-#define _countof(array) ((int)(sizeof(array)/sizeof(array[0])))
+#define ARRAY_SIZE(array) ((int)(sizeof(array)/sizeof(array[0])))
 
 /*
  *  check which type of resource is to be processed
@@ -482,7 +482,7 @@ LOCAL SHARED_ENTRY shared[] = {
     { "Number of files: _____", SHRT_MAX },
     { "Number of folders: _____", SHRT_MAX }
 };
-LOCAL int num_shared = _countof(shared);
+LOCAL int num_shared = ARRAY_SIZE(shared);
 
 /*
  *  table of string prefixes for text that should not be translated
@@ -500,7 +500,7 @@ LOCAL NOTRANS_ENTRY notrans[] = {
     { 0, "640 x " },
     { 0, "320 x " }
 };
-LOCAL int num_notrans = _countof(notrans);
+LOCAL int num_notrans = ARRAY_SIZE(notrans);
 #endif
 
 
@@ -518,7 +518,7 @@ LOCAL SHARED_ENTRY shared[] = {
     { "_ ________.___ ", SHRT_MAX },
     { "xF", SHRT_MAX },
 };
-LOCAL int num_shared = _countof(shared);
+LOCAL int num_shared = ARRAY_SIZE(shared);
 
 /*
  *  table of string prefixes for text that should not be translated
@@ -527,7 +527,7 @@ LOCAL NOTRANS_ENTRY notrans[] = {
     { 0, "__________________" },
     { 0, "xF" },
 };
-LOCAL int num_notrans = _countof(notrans);
+LOCAL int num_notrans = ARRAY_SIZE(notrans);
 #endif
 
 

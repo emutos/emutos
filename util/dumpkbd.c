@@ -75,14 +75,14 @@ FILE * fopen(const char *fname, const char *mode)
     int i;
     int m = -1;
     FILE *f;
-    for(i = 0 ; i < _countof(fopen_table) ; i++) {
+    for(i = 0 ; i < ARRAY_SIZE(fopen_table) ; i++) {
         if(!strcmp(mode, fopen_table[i].mode)) {
             m = fopen_table[i].m;
             break;
         }
     }
     if(m == -1) return 0;
-    if(stdio_fileno > _countof(stdio_files) return 0;
+    if(stdio_fileno > ARRAY_SIZE(stdio_files) return 0;
     f = &stdio_files[stdio_fileno++];
     f->f = Fopen(fname, m);
     if(m == 1 && f->f == -33) f->f = Fcreate(fname, 0);
@@ -104,7 +104,7 @@ FILE * fopen(const char *fname, const char *mode)
 #define EXIT_FAILURE 1
 #define NULL ((void *)0)
 
-#define _countof(array) ((int)(sizeof(array)/sizeof(array[0])))
+#define ARRAY_SIZE(array) ((int)(sizeof(array)/sizeof(array[0])))
 
 /*
  *
