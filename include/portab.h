@@ -99,8 +99,38 @@ typedef void (*PFVOID)(void);
 #define MAKE_UWORD(hi,lo) (((UWORD)(BYTE)(hi) << 8) | (BYTE)(lo))
 #define MAKE_ULONG(hi,lo) (((ULONG)(UWORD)(hi) << 16) | (UWORD)(lo))
 
+/*
+ * The following ARRAY_SIZE() macro is taken from Linux kernel sources.
+ *
+ * Inspired from this page:
+ * http://stackoverflow.com/questions/4415530/equivalents-to-msvcs-countof-in-other-compilers
+ */
+
+/*
+ * Force a compilation error if condition is true, but also produce a
+ * result (of value 0 and type size_t), so the expression can be used
+ * e.g. in a structure initializer (or where-ever else comma expressions
+ * aren't permitted).
+ *
+ * Explanations there:
+ * http://stackoverflow.com/questions/9229601/what-is-in-c-code
+ *
+ * Note that the name of this macro is misleading:
+ * it actually produces a compilation bug when the parameter is *not zero*
+ * However, when the parameter is zero, it evaluates as 0, hence the name.
+ */
+#define BUILD_BUG_ON_ZERO(e) (sizeof(struct { int:-!!(e); }))
+
+#if __GNUC_PREREQ(3, 3)
+/* &a[0] degrades to a pointer: a different type from an array */
+# define __must_be_array(a) \
+    BUILD_BUG_ON_ZERO(__builtin_types_compatible_p(typeof(a), typeof(&a[0])))
+#else
+# define __must_be_array(a) 0
+#endif
+
 /* Number of elements of an array */
-#define ARRAY_SIZE(array) ((int)(sizeof(array)/sizeof(array[0])))
+#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
 
 /*
  * Workarounds for the GCC strict aliasing rule
