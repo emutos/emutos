@@ -126,9 +126,9 @@ INDENT = indent -kr
 
 # Linker with relocation information and binary output (image)
 LD = $(CC) $(MULTILIBFLAGS) -nostartfiles -nostdlib
-VMA_T1 = 0x00fc0000
-VMA_T2 = 0x00e00000
-VMA = $(VMA_T2)
+VMA_STANDARD = 0x00e00000
+VMA_192 = 0x00fc0000
+VMA = $(VMA_STANDARD)
 LDFLAGS = -lgcc -Wl,--oformat,binary,-Ttext=$(VMA),-Tbss=0x00000000,-e,_main
 
 # C compiler
@@ -326,9 +326,9 @@ help:
 	@echo "------  -------"
 	@echo "help    this help message"
 	@echo "version display the EmuTOS version"
-	@echo "192     $(ROM_192), EmuTOS ROM padded to size 192 KB (starting at $(VMA_T1))"
-	@echo "256     $(ROM_256), EmuTOS ROM padded to size 256 KB (starting at $(VMA_T2))"
-	@echo "512     $(ROM_512), EmuTOS ROM padded to size 512 KB (starting at $(VMA_T2))"
+	@echo "192     $(ROM_192), EmuTOS ROM padded to size 192 KB (starting at $(VMA_192))"
+	@echo "256     $(ROM_256), EmuTOS ROM padded to size 256 KB (starting at $(VMA_STANDARD))"
+	@echo "512     $(ROM_512), EmuTOS ROM padded to size 512 KB (starting at $(VMA_STANDARD))"
 	@echo "aranym  $(ROM_ARANYM), suitable for ARAnyM"
 	@echo "firebee $(SREC_FIREBEE), to be flashed on the FireBee"
 	@echo "firebee-ram ramtos.img + boot.prg, a RAM tos for the FireBee"
@@ -349,7 +349,6 @@ help:
 	@echo "gitready same as $(MAKE) expand crlf"
 	@echo "depend  creates dependancy file (makefile.dep)"
 	@echo "dsm     dsm.txt, an edited disassembly of emutos.img"
-	@echo "fdsm    fal_dsm.txt, like above, but for $(VMA_T2) ROMs"
 	@echo "*.dsm   disassembly of any .c or almost any .img file"
 	@echo "release build the release archives into $(RELEASE_DIR)"
 
@@ -366,13 +365,8 @@ version:
 
 TOCLEAN += *.img *.map
 
-emutos1.img emutos1.map: VMA = $(VMA_T1)
-emutos1.img emutos1.map: $(OBJECTS) Makefile
-	$(LD) -o emutos1.img $(OBJECTS) $(LDFLAGS) -Wl,-Map,emutos1.map
-
-emutos2.img emutos2.map: VMA = $(VMA_T2)
-emutos2.img emutos2.map: $(OBJECTS) Makefile
-	$(LD) -o emutos2.img $(OBJECTS) $(LDFLAGS) -Wl,-Map,emutos2.map
+emutos.img emutos.map: $(OBJECTS) Makefile
+	$(LD) -o emutos.img $(OBJECTS) $(LDFLAGS) -Wl,-Map,emutos.map
 
 #
 # 128kB Image
@@ -381,7 +375,7 @@ emutos2.img emutos2.map: $(OBJECTS) Makefile
 ROM_128 = etos128k.img
 
 $(ROM_128): ROMSIZE = 128
-$(ROM_128): emutos2.img mkrom$(EXE)
+$(ROM_128): emutos.img mkrom$(EXE)
 	./mkrom$(EXE) pad $(ROMSIZE)k $< $(ROM_128)
 
 #
@@ -395,11 +389,12 @@ NODEP += 192
 192: UNIQUE = $(COUNTRY)
 192:
 	$(MAKE) DEF='-DTARGET_192' OPTFLAGS=-Os WITH_CLI=0 UNIQUE=$(UNIQUE) ROM_192=$(ROM_192) $(ROM_192)
-	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT,emutos1.map));\
+	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT,emutos.map));\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS102))) bytes more than TOS 1.02)"
 
 $(ROM_192): ROMSIZE = 192
-$(ROM_192): emutos1.img mkrom$(EXE)
+$(ROM_192): VMA = $(VMA_192)
+$(ROM_192): emutos.img mkrom$(EXE)
 	./mkrom$(EXE) pad $(ROMSIZE)k $< $(ROM_192)
 
 #
@@ -413,11 +408,11 @@ NODEP += 256
 256: UNIQUE = $(COUNTRY)
 256:
 	$(MAKE) DEF='-DTARGET_256' OPTFLAGS=-Os UNIQUE=$(UNIQUE) ROM_256=$(ROM_256) $(ROM_256)
-	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT,emutos2.map));\
+	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT,emutos.map));\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS162))) bytes more than TOS 1.62)"
 
 $(ROM_256): ROMSIZE = 256
-$(ROM_256): emutos2.img mkrom$(EXE)
+$(ROM_256): emutos.img mkrom$(EXE)
 	./mkrom$(EXE) pad $(ROMSIZE)k $< $(ROM_256)
 
 #
@@ -430,11 +425,11 @@ SYMFILE = $(addsuffix .sym,$(basename $(ROM_512)))
 .PHONY: 512
 512: DEF = -DTARGET_512
 512: $(ROM_512) $(SYMFILE)
-	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT,emutos2.map));\
+	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT,emutos.map));\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 
 $(ROM_512): ROMSIZE = 512
-$(ROM_512): emutos2.img mkrom$(EXE)
+$(ROM_512): emutos.img mkrom$(EXE)
 	./mkrom$(EXE) pad $(ROMSIZE)k $< $(ROM_512)
 
 .PHONY: falcon
@@ -451,7 +446,7 @@ NODEP += aranym
 aranym:
 	@echo "# Building ARAnyM EmuTOS into $(ROM_ARANYM)"
 	$(MAKE) CPUFLAGS='-m68040' DEF='-DMACHINE_ARANYM' ROM_512=$(ROM_ARANYM) $(ROM_ARANYM)
-	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT,emutos2.map));\
+	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT,emutos.map));\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 
 #
@@ -466,8 +461,8 @@ NODEP += cart
 cart:
 	@echo "# Building Diagnostic Cartridge EmuTOS into $(ROM_CARTRIDGE)"
 	$(MAKE) OPTFLAGS=-Os DEF='-DTARGET_CART' UNIQUE=$(COUNTRY) WITH_AES=0 VMA=0x00fa0000 ROM_128=$(ROM_CARTRIDGE) $(ROM_CARTRIDGE)
-	./mkrom$(EXE) stc emutos2.img emutos.stc
-	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT,emutos2.map));\
+	./mkrom$(EXE) stc emutos.img emutos.stc
+	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT,emutos.map));\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS102))) bytes more than TOS 1.02)"
 
 #
@@ -491,10 +486,10 @@ amiga: UNIQUE = $(COUNTRY)
 amiga:
 	@echo "# Building Amiga EmuTOS into $(ROM_AMIGA)"
 	$(MAKE) DEF='$(AMIGA_DEFS)' UNIQUE=$(UNIQUE) VMA=0x00fc0000 $(ROM_AMIGA)
-	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT,emutos2.map));\
+	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT,emutos.map));\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS162))) bytes more than TOS 1.62)"
 
-$(ROM_AMIGA): emutos2.img mkrom$(EXE)
+$(ROM_AMIGA): emutos.img mkrom$(EXE)
 	./mkrom$(EXE) amiga $< $(ROM_AMIGA)
 
 #
@@ -518,7 +513,7 @@ TOCLEAN += *.s19
 SRECFILE = emutos.s19
 LMA = $(VMA)
 
-$(SRECFILE): emutos2.img
+$(SRECFILE): emutos.img
 	$(OBJCOPY) -I binary -O srec --change-addresses $(LMA) $< $(SRECFILE)
 
 SREC_FIREBEE = emutosfb.s19
@@ -528,7 +523,7 @@ NODEP += firebee
 firebee:
 	@echo "# Building FireBee EmuTOS into $(SREC_FIREBEE)"
 	$(MAKE) COLDFIRE=1 CPUFLAGS='-mcpu=5474' DEF='-DMACHINE_FIREBEE' LMA=0xe0600000 SRECFILE=$(SREC_FIREBEE) $(SREC_FIREBEE)
-	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT,emutos2.map));\
+	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT,emutos.map));\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 
 .PHONY: firebee-ram
@@ -544,7 +539,7 @@ m548x-dbug: UNIQUE = $(COUNTRY)
 m548x-dbug:
 	@echo "# Building M548x dBUG EmuTOS in $(SREC_M548X_DBUG)"
 	$(MAKE) COLDFIRE=1 DEF='-DMACHINE_M548X' UNIQUE=$(UNIQUE) SRECFILE=$(SREC_M548X_DBUG) $(SREC_M548X_DBUG)
-	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT,emutos2.map));\
+	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT,emutos.map));\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 
 SREC_M548X_BAS = emutos-m548x-bas.s19
@@ -554,11 +549,11 @@ m548x-bas: UNIQUE = $(COUNTRY)
 m548x-bas:
 	@echo "# Building M548x BaS_gcc EmuTOS in $(SREC_M548X_BAS)"
 	$(MAKE) COLDFIRE=1 DEF='-DMACHINE_M548X -DCONF_WITH_BAS_MEMORY_MAP=1 -DCONF_WITH_PSEUDO_COLD_BOOT=1' LMA=0xe0100000 UNIQUE=$(UNIQUE) SRECFILE=$(SREC_M548X_BAS) $(SREC_M548X_BAS)
-	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT,emutos2.map));\
+	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT,emutos.map));\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 
 #
-# ram - In two stages. first link emutos2.img to know the top address of bss,
+# ram - In two stages. first link emutos.img to know the top address of bss,
 # then use this value (taken from the map) to relocate the RamTOS.
 #
 
@@ -570,13 +565,13 @@ ram: ramtos.img boot.prg
 	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT_RAM,ramtos.map));\
 	echo "# RAM used: $$(($$MEMBOT)) bytes"
 
-.PHONY: emutos2-ram
-emutos2-ram:
-	@echo '# First pass to build emutos2.map and determine the end of the BSS'
-	$(MAKE) emutos2.map DEF='$(DEF)'
+.PHONY: emutos-ram
+emutos-ram:
+	@echo '# First pass to build emutos.map and determine the end of the BSS'
+	$(MAKE) emutos.map DEF='$(DEF)'
 
-ramtos.img ramtos.map: VMA = $(shell sed -e '/__end/!d;s/^ *//;s/ .*//' emutos2.map)
-ramtos.img ramtos.map: emutos2-ram
+ramtos.img ramtos.map: VMA = $(shell sed -e '/__end/!d;s/^ *//;s/ .*//' emutos.map)
+ramtos.img ramtos.map: emutos-ram
 	@echo '# Second pass to build ramtos.img with TEXT and DATA just after the BSS'
 	$(LD) -o ramtos.img $(OBJECTS) $(LDFLAGS) -Wl,-Map,ramtos.map
 
@@ -595,26 +590,19 @@ obj/compr-%.o : %.S
 COMPROBJ = obj/compr-tosvars.o obj/comprimg.o obj/compr-memory.o obj/uncompr.o \
            obj/compr-processor.o
 
-compr2.img compr2.map: VMA = $(VMA_T2)
-compr2.img compr2.map: $(COMPROBJ)
-	$(LD) -o compr2.img $(COMPROBJ) $(LDFLAGS) -Wl,-Map,compr2.map
+compr.img compr.map: $(COMPROBJ)
+	$(LD) -o compr.img $(COMPROBJ) $(LDFLAGS) -Wl,-Map,compr.map
 
-etoscpr2.img: compr2.img compr$(EXE) ramtos.img
-	./compr$(EXE) --rom compr2.img ramtos.img $@
-
-compr1.img compr1.map: VMA = $(VMA_T1)
-compr1.img compr1.map: $(COMPROBJ)
-	$(LD) -o compr1.img $(COMPROBJ) $(LDFLAGS) -Wl,-Map,compr1.map
-
-etoscpr1.img: compr1.img compr$(EXE) ramtos.img
-	./compr$(EXE) --rom compr1.img ramtos.img $@
+etoscpr.img: compr.img compr$(EXE) ramtos.img
+	./compr$(EXE) --rom compr.img ramtos.img $@
 
 ecpr256k.img: ROMSIZE = 256
-ecpr256k.img: etoscpr2.img mkrom$(EXE)
+ecpr256k.img: etoscpr.img mkrom$(EXE)
 	./mkrom$(EXE) pad $(ROMSIZE)k $< $@
 
 ecpr192k.img: ROMSIZE = 192
-ecpr192k.img: etoscpr1.img mkrom$(EXE)
+ecpr192k.img: VMA = $(VMA_192)
+ecpr192k.img: etoscpr.img mkrom$(EXE)
 	./mkrom$(EXE) pad $(ROMSIZE)k $< $@
 
 NODEP += compr$(EXE)
@@ -803,7 +791,7 @@ TOCLEAN += */*.tr.c
 
 ifneq (,$(UNIQUE))
 ifneq (us,$(ETOSLANG))
-emutos1.img emutos2.img ramtos.img: $(TRANS_SRC)
+emutos.img ramtos.img: $(TRANS_SRC)
 
 %.tr.c : %.c po/$(ETOSLANG).po bug$(EXE) po/LINGUAS obj/country
 	./bug$(EXE) translate $(ETOSLANG) $<
@@ -941,7 +929,7 @@ obj/version.o: obj/version.c
 # generic dsm handling
 #
 
-TOCLEAN += *.dsm dsm.txt fal_dsm.txt
+TOCLEAN += *.dsm dsm.txt
 
 %.dsm: %.map %.img
 	vma=`sed -e '/^\.text/!d;s/[^0]*//;s/ .*//;q' $<`; \
@@ -952,7 +940,7 @@ TOCLEAN += *.dsm dsm.txt fal_dsm.txt
 	cat dsm.tmp map.tmp | LC_ALL=C sort > $@
 	rm -f dsm.tmp map.tmp
 
-dsm.txt: emutos1.dsm
+dsm.txt: emutos.dsm
 	cp $< $@
 
 .PHONY: dsm
@@ -962,23 +950,13 @@ dsm: dsm.txt
 show: dsm.txt
 	cat dsm.txt
 
-fal_dsm.txt: emutos2.dsm
-	cp $< $@
-
-.PHONY: fdsm
-fdsm: fal_dsm.txt
-
-.PHONY: fshow
-fshow: fal_dsm.txt
-	cat fal_dsm.txt
-
 #
 # Hatari symbols file
 #
 
 TOCLEAN += *.sym
 
-%.sym: emutos2.map tools/map2sym.sh
+%.sym: emutos.map tools/map2sym.sh
 	$(SHELL) tools/map2sym.sh $< >$@
 
 #

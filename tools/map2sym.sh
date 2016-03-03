@@ -10,7 +10,7 @@ usage ()
 	echo "understood by the Hatari debugger 'symbols' command."
 	echo
 	echo "For example:"
-	echo "  $name emutos2.map > etos512.sym"
+	echo "  $name emutos.map > etos512.sym"
 	echo
 	echo "ERROR: $1!"
 	echo
