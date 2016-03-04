@@ -1113,7 +1113,8 @@ const PFLONG xbios_vecs[] = {
     xbios_unimpl,   /* 3e */
     xbios_unimpl,   /* 3f */
     VEC(xbios_40, blitmode),  /* 40 */
-#if TOS_VERSION >= 0x200
+#if CONF_WITH_TT_SHIFTER || CONF_WITH_VIDEL || CONF_WITH_DMASOUND
+    /* These fillers are required if any of the features below are enabled */
     xbios_unimpl,   /* 41 */
     xbios_unimpl,   /* 42 */
     xbios_unimpl,   /* 43 */
@@ -1129,6 +1130,7 @@ const PFLONG xbios_vecs[] = {
     xbios_unimpl,   /* 4d */
     xbios_unimpl,   /* 4e */
     xbios_unimpl,   /* 4f */
+#endif
 #if CONF_WITH_TT_SHIFTER
     VEC(xbios_50, esetshift),   /* 50 */
     VEC(xbios_51, egetshift),   /* 51 */
@@ -1138,7 +1140,8 @@ const PFLONG xbios_vecs[] = {
     VEC(xbios_55, egetpalette), /* 55 */
     VEC(xbios_56, esetgray),    /* 56 */
     VEC(xbios_57, esetsmear),   /* 57 */
-#else
+#elif CONF_WITH_VIDEL || CONF_WITH_DMASOUND
+    /* These fillers are required if any of the features below are enabled */
     xbios_unimpl,   /* 50 */
     xbios_unimpl,   /* 51 */
     xbios_unimpl,   /* 52 */
@@ -1153,17 +1156,16 @@ const PFLONG xbios_vecs[] = {
     VEC(xbios_59, vmontype),   /* 59 */
     VEC(xbios_5a, vsetsync),   /* 5a */
     VEC(xbios_5b, vgetsize),   /* 5b */
-#else
+    xbios_unimpl,   /* 5c */
+    VEC(xbios_5d, vsetrgb),   /* 5d */
+    VEC(xbios_5e, vgetrgb),   /* 5e */
+#elif CONF_WITH_DMASOUND
+    /* These fillers are required if any of the features below are enabled */
     xbios_unimpl,   /* 58 */
     xbios_unimpl,   /* 59 */
     xbios_unimpl,   /* 5a */
     xbios_unimpl,   /* 5b */
-#endif
     xbios_unimpl,   /* 5c */
-#if CONF_WITH_VIDEL
-    VEC(xbios_5d, vsetrgb),   /* 5d */
-    VEC(xbios_5e, vgetrgb),   /* 5e */
-#else
     xbios_unimpl,   /* 5d */
     xbios_unimpl,   /* 5e */
 #endif
@@ -1216,8 +1218,6 @@ const PFLONG xbios_vecs[] = {
     VEC(xbios_8c, sndstatus),   /* 8c */
     VEC(xbios_8d, buffptr),     /* 8d */
 #endif /* CONF_WITH_DMASOUND */
-
-#endif /* TOS_VERSION >= 0x200 */
 };
 
 const UWORD xbios_ent = ARRAY_SIZE(xbios_vecs);
