@@ -1034,7 +1034,7 @@ blt_done:
         .page
 
 
-        .text // .rodata
+        SECTION_RODATA
 
 /*
  * Word Mask Table
