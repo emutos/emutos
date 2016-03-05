@@ -587,32 +587,57 @@ boot.prg: obj/minicrt.o obj/boot.o obj/bootasm.o
 obj/compr-%.o : %.S
 	$(CC) $(SFILE_FLAGS) -c $< -o $@
 
-COMPROBJ = obj/compr-tosvars.o obj/comprimg.o obj/compr-memory.o obj/uncompr.o \
-           obj/compr-processor.o
+COMPROBJ = obj/compr-tosvars.o obj/compr-comprimg.o obj/compr-memory.o \
+           obj/compr-processor.o obj/compr-uncompr.o
 
+# ROM stub for compressed ROM image
+compr.img compr.map: OPTFLAGS = -Os
+compr.img compr.map: override DEF += -DTARGET_COMPR_STUB
 compr.img compr.map: $(COMPROBJ)
 	$(LD) -o compr.img $(COMPROBJ) $(LDFLAGS) -Wl,-Map,compr.map
 
-etoscpr.img: compr.img compr$(EXE) ramtos.img
+# Compressed ROM: stub + ramtos
+.PHONY: etoscpr.img
+etoscpr.img: compr.img compr$(EXE)
+	$(MAKE) DEF='-DTARGET_COMPRESSED_ROM' OPTFLAGS=-Os UNIQUE=$(UNIQUE) ramtos.img
 	./compr$(EXE) --rom compr.img ramtos.img $@
 
+# 256k compressed ROM (intermediate target)
 ecpr256k.img: ROMSIZE = 256
 ecpr256k.img: etoscpr.img mkrom$(EXE)
 	./mkrom$(EXE) pad $(ROMSIZE)k $< $@
 
+# 192k compressed ROM (intermediate target)
 ecpr192k.img: ROMSIZE = 192
 ecpr192k.img: VMA = $(VMA_192)
 ecpr192k.img: etoscpr.img mkrom$(EXE)
 	./mkrom$(EXE) pad $(ROMSIZE)k $< $@
 
+# 256k compressed ROM (main target)
+.PHONY: 256c
+NODEP += 256c
+256c: UNIQUE = $(COUNTRY)
+256c:
+	$(MAKE) UNIQUE=$(UNIQUE) ecpr256k.img
+
+# 192k compressed ROM (main target)
+.PHONY: 192c
+NODEP += 192c
+192c: UNIQUE = $(COUNTRY)
+192c:
+	$(MAKE) UNIQUE=$(UNIQUE) ecpr192k.img
+
+# Compression tool
 NODEP += compr$(EXE)
 compr$(EXE): tools/compr.c
 	$(NATIVECC) -o $@ $<
 
+# Decompression tool
 NODEP += uncompr$(EXE)
 uncompr$(EXE): tools/uncompr.c
 	$(NATIVECC) -o $@ $<
 
+# Compression test
 .PHONY: comprtest
 NODEP += comprtest
 comprtest: compr$(EXE) uncompr$(EXE)

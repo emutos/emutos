@@ -20,10 +20,15 @@
  */
 #define COMPRDBG 0
 
+        .globl  _main           // OS entry point
+
         .extern _end
         .extern resvalid
         .extern resvector
         .extern meminit
+        .extern memvalid
+        .extern memval2
+        .extern memval3
         .extern __edata
         .extern _uncompr
 
@@ -133,6 +138,11 @@ noreset:
         .globl  memdone         // return to, if memory config done
         jmp     meminit         // do/test memory config and clear it (needs sp)
 memdone:
+
+        /* make memory config valid */
+        move.l  #0x752019f3, memvalid   // set memvalid to ok
+        move.l  #0x237698aa, memval2    // set memval2 to ok
+        move.l  #0x5555aaaa, memval3    // set memval3 to ok
 
 /*
  * from there, check the starting address of the compressed data by

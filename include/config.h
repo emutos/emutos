@@ -29,7 +29,7 @@
 /*
  * Determine if this EmuTOS is built for ROM or RAM.
  */
-#if defined(TARGET_PRG) || defined(TARGET_FLOPPY)
+#if defined(TARGET_PRG) || defined(TARGET_FLOPPY) || defined(TARGET_COMPRESSED_ROM)
 # define EMUTOS_LIVES_IN_RAM 1
 #else
 # define EMUTOS_LIVES_IN_RAM 0
@@ -206,6 +206,27 @@
 # endif
 # ifndef CONF_WITH_SHUTDOWN
 #  define CONF_WITH_SHUTDOWN 0
+# endif
+#endif
+
+/*
+ * Defaults for the ROM stub used to load compressed ROM images.
+ */
+#ifdef TARGET_COMPR_STUB
+# ifndef DETECT_NATIVE_FEATURES
+#  define DETECT_NATIVE_FEATURES 0
+# endif
+# ifndef CONF_WITH_68030_PMMU
+#  define CONF_WITH_68030_PMMU 0
+# endif
+# ifndef CONF_WITH_FALCON_MMU
+#  define CONF_WITH_FALCON_MMU 0
+# endif
+# ifndef CONF_WITH_FASTRAM
+#  define CONF_WITH_FASTRAM 0
+# endif
+# ifndef CONF_WITH_SFP004
+#  define CONF_WITH_SFP004 0
 # endif
 #endif
 
