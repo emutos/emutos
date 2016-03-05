@@ -15,11 +15,6 @@
 #include "asmdefs.h"
 #include "header.h"
 
-/* define this to 1 to activate minimum debug support. This will print
- * data using the native feature interface.
- */
-#define COMPRDBG 0
-
         .globl  _main           // OS entry point
 
         .extern _end
@@ -37,9 +32,6 @@
  * zone.  We won't need that much of a stack anyway.
  */
 _stktop = 0x378
-
-/* NF_STDERR id */
-stderr = 0x37C
 
 /*
  * OSHEADER
@@ -176,122 +168,6 @@ find:
         move.l  (sp)+,a0
         move.l  (a0),a0
         jmp     (a0)
-
-
-/*
- * stubs - these are called during memory initialisation
- */
-
-        .globl  kprintf_init
-        .globl  _kprintf
-kprintf_init:
-_kprintf:
-        moveq.l #0,d0
-        rts
-
-
-/*
- * minimum natfeat init - only initializes the stderr id for debug below
- */
-        .globl  _natfeat_init
-
-#if DETECT_NATIVE_FEATURES || COMPRDBG
-
-        .equ vec_illegal, 0x10       // illegal exception vector
-
-_natfeat_init:
-        clr.l   stderr
-        move.l  sp,a1
-        move.l  #fail_natfeat,vec_illegal
-        pea     nf_stderr_name
-        sub.l   #4,sp
-        .dc.w   0x7300              // Jump to NATFEAT_ID
-        move.l  d0,stderr
-fail_natfeat:
-        move.l  a1,sp
-        rts
-
-        SECTION_RODATA
-
-nf_stderr_name:
-        .ascii  "NF_STDERR\0"
-        .even
-
-        .text
-
-#else /* no native features */
-
-_natfeat_init:
-        clr.l   stderr
-        rts
-
-#endif
-
-/*
- * debug - activate to use minimal debug support using natfeat NF_STDERR.
- * usage:
- *    move.l d0,-(sp)
- *    jsr p
- * prints d0 in hexadecimal
- *    jsr h
- * prints "H %08lx" the current pc
- */
-
-#if COMPRDBG
-        .globl  p
-p:
-        movem.l d0-d2,-(sp)
-        move.l  16(sp),d0
-        /* stack:  d0,d1,d2,rts,val */
-        move.w  #7,d1
-nibble:
-        rol.l   #4,d0
-        move.b  d0,d2
-        and.b   #0xF,d2
-        add.b   #48,d2
-        cmpi.b  #58,d2
-        blt     digit
-        add.b   #7,d2
-digit:
-        move.b  d2,-(sp)
-        bsr     outch
-        addq.l  #2,sp
-        dbra    d1,nibble
-        move.b  #10,-(sp)
-        bsr     outch
-        addq.l  #2,sp
-        movem.l (sp)+,d0-d2
-        move.l  (sp),4(sp)
-        addq.l  #4,sp
-        rts
-
-        .globl  h
-h:
-        move.b  #72,-(sp)
-        bsr     outch
-        move.b  #32,-(sp)
-        bsr     outch
-        move.l  4(sp),(sp)
-        bsr     p
-        move.b  #10,-(sp)
-        bsr     outch
-        addq.l  #2,sp
-        rts
-
-outch:
-        subq.l  #4,sp
-        clr.b   9(sp)
-        move.l  sp,(sp)
-        add.l   #8,(sp)
-        move.l  stderr,-(sp)
-        beq     no_natfeat
-        move.l  d0,-(sp)
-        .dc.w   0x7301
-        move.l  (sp)+,d0
-no_natfeat:
-        add.l   #12,sp
-        rts
-#endif
 
 
 /*
