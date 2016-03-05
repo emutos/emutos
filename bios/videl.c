@@ -513,7 +513,7 @@ WORD vsetmode(WORD mode)
     WORD ret;
 
     if (!has_videl)
-        return 0x58; /* XBIOS function number as unimplemented error code */
+        return 0x58;    /* unimplemented xbios call: return function # */
 
     if (mode == -1)
         return current_video_mode;
@@ -535,7 +535,7 @@ WORD vsetmode(WORD mode)
 WORD vmontype(void)
 {
     if (!has_videl)
-        return 0x59; /* XBIOS function number as unimplemented error code */
+        return 0x59;    /* unimplemented xbios call: return function # */
 
     return ((*(volatile UBYTE *)0xffff8006) >> 6) & 3;
 }
@@ -548,7 +548,7 @@ WORD vsetsync(WORD external)
     UWORD spshift;
 
     if (!has_videl)
-        return 0x5a; /* XBIOS function number as unimplemented error code */
+        return 0x5a;    /* unimplemented xbios call: return function # */
 
     if (external & 0x01)            /* external clock wanted? */
         *(volatile BYTE *)SYNCMODE |= 0x01;
@@ -579,7 +579,7 @@ LONG vgetsize(WORD mode)
     WORD vctl, monitor;
 
     if (!has_videl)
-        return 0x5b; /* XBIOS function number as unimplemented error code */
+        return 0x5b;    /* unimplemented xbios call: return function # */
 
     monitor = vmontype();
 
@@ -669,7 +669,7 @@ WORD vsetrgb(WORD index,WORD count,LONG *rgb)
     WORD limit;
 
     if (!has_videl)
-        return 0x5d; /* XBIOS function number as unimplemented error code */
+        return 0x5d;    /* unimplemented xbios call: return function # */
 
     if ((index < 0) || (count <= 0))
         return -1; /* Generic error */
@@ -722,7 +722,7 @@ WORD vgetrgb(WORD index,WORD count,LONG *rgb)
     WORD limit;
 
     if (!has_videl)
-        return 0x5e; /* XBIOS function number as unimplemented error code */
+        return 0x5e;    /* unimplemented xbios call: return function # */
 
     if ((index < 0) || (count <= 0))
         return -1; /* Generic error */
