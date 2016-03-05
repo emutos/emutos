@@ -169,7 +169,7 @@ WORD esetshift(WORD mode)
     WORD oldmode;
 
     if (!has_tt_shifter)
-        return -32;
+        return 0x50;    /* unimplemented xbios call: return function # */
 
     oldmode = *resreg & TT_SHIFTER_BITMASK;
     *resreg = mode & TT_SHIFTER_BITMASK;
@@ -184,7 +184,7 @@ WORD esetshift(WORD mode)
 WORD egetshift(void)
 {
     if (!has_tt_shifter)
-        return -32;
+        return 0x51;    /* unimplemented xbios call: return function # */
 
     return *(volatile WORD *)TT_SHIFTER & TT_SHIFTER_BITMASK;
 }
@@ -199,7 +199,7 @@ WORD esetbank(WORD bank)
     UBYTE old;
 
     if (!has_tt_shifter)
-        return -32;
+        return 0x52;    /* unimplemented xbios call: return function # */
 
     old = *shiftreg & 0x0f;
     if (bank >= 0)
@@ -218,7 +218,7 @@ WORD esetcolor(WORD index,WORD color)
     WORD oldcolor;
 
     if (!has_tt_shifter)
-        return -32;
+        return 0x53;    /* unimplemented xbios call: return function # */
 
     index &= 0xff;                  /* force valid index number */
     oldcolor = ttcol_regs[index] & TT_PALETTE_BITMASK;
@@ -231,13 +231,18 @@ WORD esetcolor(WORD index,WORD color)
 
 /*
  * Set multiple TT palette colour registers
+ *
+ * This function is defined by Atari to return void; however, if the TT
+ * shifter is not present, it should return the function number in a WORD,
+ * which is the de facto TOS standard for unimplemented xbios functions.
+ * Therefore internally we make it return a WORD.
  */
-void esetpalette(WORD index,WORD count,WORD *rgb)
+WORD esetpalette(WORD index,WORD count,WORD *rgb)
 {
     volatile WORD *ttcolour;
 
     if (!has_tt_shifter)
-        return;
+        return 0x54;    /* unimplemented xbios call: return function # */
 
     index &= 0xff;              /* force valid index number */
 
@@ -247,18 +252,22 @@ void esetpalette(WORD index,WORD count,WORD *rgb)
     ttcolour = (WORD *)TT_PALETTE_REGS + index;
     while(count--)
         *ttcolour++ = *rgb++ & TT_PALETTE_BITMASK;
+
+    return 0;
 }
 
 
 /*
  * Get multiple TT palette colour registers
+ *
+ * See the comments for esetpalette() above
  */
-void egetpalette(WORD index,WORD count,WORD *rgb)
+WORD egetpalette(WORD index,WORD count,WORD *rgb)
 {
     volatile WORD *ttcolour;
 
     if (!has_tt_shifter)
-        return;
+        return 0x55;    /* unimplemented xbios call: return function # */
 
     index &= 0xff;              /* force valid index number */
 
@@ -268,6 +277,8 @@ void egetpalette(WORD index,WORD count,WORD *rgb)
     ttcolour = (WORD *)TT_PALETTE_REGS + index;
     while(count--)
         *rgb++ = *ttcolour++ & TT_PALETTE_BITMASK;
+
+    return 0;
 }
 
 
@@ -280,7 +291,7 @@ WORD esetgray(WORD mode)
     UBYTE old;
 
     if (!has_tt_shifter)
-        return -32;
+        return 0x56;    /* unimplemented xbios call: return function # */
 
     old = *shiftreg;
     if (mode > 0)
@@ -301,7 +312,7 @@ WORD esetsmear(WORD mode)
     UBYTE old;
 
     if (!has_tt_shifter)
-        return -32;
+        return 0x57;    /* unimplemented xbios call: return function # */
 
     old = *shiftreg;
     if (mode > 0)
