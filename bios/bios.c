@@ -460,8 +460,6 @@ static void run_reset_resident(void)
         regsafe_call(p->program);
     }
 }
-#else
-#define run_reset_resident()
 #endif
 
 /*
@@ -619,7 +617,9 @@ void biosmain(void)
     defdrv = bootdev;
     trap1( 0x0e , defdrv );    /* Set boot drive: Dsetdrv(defdrv) */
 
+#if ENABLE_RESET_RESIDENT
     run_reset_resident();       /* see comments above */
+#endif
 
 #if WITH_CLI
     if (early_cli) {            /* run an early console */
