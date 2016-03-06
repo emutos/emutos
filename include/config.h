@@ -111,7 +111,10 @@
  */
 #ifdef TARGET_192
 # ifndef TOS_VERSION
-#  define TOS_VERSION 0x102
+/* Some software checks for TOS version < 1.06 to determine that the ROM
+ * is located at 0x00fc0000. So we use 1.04 as it is the more recent TOS
+ * version located theere. */
+#  define TOS_VERSION 0x104
 # endif
 # ifndef DETECT_NATIVE_FEATURES
 #  define DETECT_NATIVE_FEATURES 0
@@ -391,11 +394,13 @@
  */
 
 /*
- * Define the TOS version here. Valid values are 0x102 and 0x206 for example.
- * Note that using a value less than 0x200 might force some parts of
- * EmuTOS not to be compiled to save some space in the ROM image.
+ * Define the TOS version here. Valid values are 0x104 and 0x206 for example.
+ * This is just a version number, EmuTOS functionalities are not affected.
  */
 #ifndef TOS_VERSION
+/* Be default, we pretend to be TOS 2.06, as it is available as an update for
+ * both ST and STe. On the other hand, TOS 3.x is only for TT and TOS 4.x
+ * only for Falcon. */
 # define TOS_VERSION 0x206
 #endif
 
