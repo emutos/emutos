@@ -64,7 +64,7 @@ os_root:
 os_kbshift:
     .dc.l   0           // Pointer to the keyboard shift keys states
 os_run:
-    .dc.l   0           // Pointer to a pointer to the actual basepage
+    .dc.l   0           // Pointer to a pointer to the actual basepage (patched by compr.c)
 os_dummy:
     .ascii  "ETOS"      // _main should start at offset 0x30, shouldn't it?
 

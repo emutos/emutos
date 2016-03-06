@@ -506,6 +506,7 @@ static void usage(int exit_value)
 
 static void do_it(char *lfname, char *ifname, char *ofname)
 {
+  long olen;
   ofile = xfopen(ofname, "wb");
 
   if(lfname != NULL) {
@@ -540,10 +541,17 @@ static void do_it(char *lfname, char *ifname, char *ofname)
 
   compress();
 
+  olen = xftell(ofile);
+
+  /* patch loader header with ramtos header values */
+
+  /* os_run: necessary for Hatari GEMDOS drive emulation */
+  xfseek(ofile, 40, SEEK_SET);
+  out_byte(buf[40]); out_byte(buf[41]); out_byte(buf[42]); out_byte(buf[43]);
+
   /* print stats just for fun */
   if(verbose)
   {
-    long olen = xftell(ofile);
     printf("len = %ld, olen = %ld, saved %ld (%d%%)\n",
         (long)len, (long)olen, (long)len-olen, percent(len, olen));
   }
