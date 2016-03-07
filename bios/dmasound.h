@@ -16,6 +16,9 @@
 
 #if CONF_WITH_DMASOUND
 
+#define SNDNOTLOCK  -128        /* error codes from Unlocksnd(), Locksnd() */
+#define SNDLOCKED   -129
+
 void detect_dmasound(void);
 void dmasound_init(void);
 
