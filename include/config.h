@@ -149,6 +149,9 @@
 # ifndef CONF_WITH_DMASOUND
 #  define CONF_WITH_DMASOUND 0
 # endif
+# ifndef CONF_WITH_XBIOS_SOUND
+#  define CONF_WITH_XBIOS_SOUND 0
+# endif
 # ifndef CONF_WITH_VME
 #  define CONF_WITH_VME 0
 # endif
@@ -361,6 +364,9 @@
 # endif
 # ifndef CONF_WITH_DMASOUND
 #  define CONF_WITH_DMASOUND 0
+# endif
+# ifndef CONF_WITH_XBIOS_SOUND
+#  define CONF_WITH_XBIOS_SOUND 0
 # endif
 # ifndef CONF_WITH_VME
 #  define CONF_WITH_VME 0
@@ -669,6 +675,16 @@
  */
 #ifndef CONF_WITH_DMASOUND
 # define CONF_WITH_DMASOUND 1
+#endif
+
+/*
+ * Set CONF_WITH_XBIOS_SOUND to 1 to enable support for the XBIOS sound
+ * extension.  This extension provides (some of) the Falcon XBIOS sound
+ * functions when running on STe- or TT-compatible hardware.  You must
+ * also enable CONF_WITH_DMASOUND.
+ */
+#ifndef CONF_WITH_XBIOS_SOUND
+# define CONF_WITH_XBIOS_SOUND 1
 #endif
 
 /*
@@ -1169,6 +1185,12 @@
 
 #if (MIDI_DEBUG_PRINT + RS232_DEBUG_PRINT + SCC_DEBUG_PRINT + COLDFIRE_DEBUG_PRINT) > 1
 # error "Only one of MIDI_DEBUG_PRINT, RS232_DEBUG_PRINT, SCC_DEBUG_PRINT or COLDFIRE_DEBUG_PRINT must be set to 1."
+#endif
+
+#if !CONF_WITH_DMASOUND
+# if CONF_WITH_XBIOS_SOUND
+#  error "CONF_WITH_XBIOS_SOUND requires CONF_WITH_DMASOUND."
+# endif
 #endif
 
 #endif /* CONFIG_H */
