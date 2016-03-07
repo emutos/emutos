@@ -128,9 +128,9 @@ int has_falcon_dmasound;
  * macro to test for this at the beginning of each main function.
  */
 #if CONF_WITH_XBIOS_SOUND
-#define has_sound   (has_dmasound)
+#define SOUND_IS_AVAILABLE  (has_dmasound)
 #else
-#define has_sound   (has_falcon_dmasound)
+#define SOUND_IS_AVAILABLE  (has_falcon_dmasound)
 #endif
 
 void detect_dmasound(void)
@@ -207,7 +207,7 @@ void dmasound_init(void)
  */
 LONG locksnd(void)
 {
-    if (!has_sound)
+    if (!SOUND_IS_AVAILABLE)
         return 0x80;    /* unimplemented xbios call: return function # */
 
     if (sound_locked)
@@ -222,7 +222,7 @@ LONG locksnd(void)
  */
 LONG unlocksnd(void)
 {
-    if (!has_sound)
+    if (!SOUND_IS_AVAILABLE)
         return 0x81;    /* unimplemented xbios call: return function # */
 
     if (!sound_locked)
@@ -334,7 +334,7 @@ static LONG sndcmd_ste(WORD mode, WORD data)
  */
 LONG soundcmd(WORD mode, WORD data)
 {
-    if (!has_sound)
+    if (!SOUND_IS_AVAILABLE)
         return 0x82;    /* unimplemented xbios call: return function # */
 
     if (mode == 6)   /* Set STE/TT compatible prescale? */
@@ -361,7 +361,7 @@ LONG soundcmd(WORD mode, WORD data)
  */
 LONG setbuffer(UWORD mode, ULONG startaddr, ULONG endaddr)
 {
-    if (!has_sound)
+    if (!SOUND_IS_AVAILABLE)
         return 0x83;    /* unimplemented xbios call: return function # */
 
     if (mode > 1 || (mode == 1 && !has_falcon_dmasound))
@@ -395,7 +395,7 @@ LONG setsndmode(UWORD mode)
 {
     UBYTE modectrl;
 
-    if (!has_sound)
+    if (!SOUND_IS_AVAILABLE)
         return 0x84;    /* unimplemented xbios call: return function # */
 
     if (mode > 2)
@@ -416,7 +416,7 @@ LONG setsndmode(UWORD mode)
  */
 LONG settracks(UWORD playtracks, UWORD rectracks)
 {
-    if (!has_sound)
+    if (!SOUND_IS_AVAILABLE)
         return 0x85;    /* unimplemented xbios call: return function # */
 
     if (playtracks > 3 || rectracks > 3 || !has_falcon_dmasound)
@@ -433,7 +433,7 @@ LONG settracks(UWORD playtracks, UWORD rectracks)
  */
 LONG setmontracks(UWORD montrack)
 {
-    if (!has_sound)
+    if (!SOUND_IS_AVAILABLE)
         return 0x86;    /* unimplemented xbios call: return function # */
 
     if (montrack > 3 || !has_falcon_dmasound)
@@ -451,7 +451,7 @@ LONG setinterrupt(UWORD mode, WORD cause)
 {
     UBYTE irqreg;
 
-    if (!has_sound)
+    if (!SOUND_IS_AVAILABLE)
         return 0x87;    /* unimplemented xbios call: return function # */
 
     if (mode > 1)
@@ -491,7 +491,7 @@ LONG setinterrupt(UWORD mode, WORD cause)
  */
 LONG buffoper(WORD mode)
 {
-    if (!has_sound)
+    if (!SOUND_IS_AVAILABLE)
         return 0x88;    /* unimplemented xbios call: return function # */
 
     if (mode < 0)
@@ -513,7 +513,7 @@ LONG buffoper(WORD mode)
  */
 LONG dsptristate(WORD dspxmit, WORD dsprec)
 {
-    if (!has_sound)
+    if (!SOUND_IS_AVAILABLE)
         return 0x89;    /* unimplemented xbios call: return function # */
 
     if (!has_falcon_dmasound)
@@ -537,7 +537,7 @@ LONG dsptristate(WORD dspxmit, WORD dsprec)
  */
 LONG gpio(UWORD mode, UWORD data)
 {
-    if (!has_sound)
+    if (!SOUND_IS_AVAILABLE)
         return 0x8a;    /* unimplemented xbios call: return function # */
 
     switch (mode)
@@ -645,7 +645,7 @@ static LONG devconnect_ste(WORD source, WORD dest, WORD clk,
 
 LONG devconnect(WORD source, WORD dest, WORD clk, WORD prescale, WORD protocol)
 {
-    if (!has_sound)
+    if (!SOUND_IS_AVAILABLE)
         return 0x8b;    /* unimplemented xbios call: return function # */
 
     if (has_falcon_dmasound)
@@ -657,7 +657,7 @@ LONG devconnect(WORD source, WORD dest, WORD clk, WORD prescale, WORD protocol)
 
 LONG sndstatus(WORD reset)
 {
-    if (!has_sound)
+    if (!SOUND_IS_AVAILABLE)
         return 0x8c;    /* unimplemented xbios call: return function # */
 
     if (!has_falcon_dmasound)
@@ -686,7 +686,7 @@ LONG buffptr(LONG ptr)
     } *sbp;
     UBYTE hi, mid, low;
 
-    if (!has_sound)
+    if (!SOUND_IS_AVAILABLE)
         return 0x8d;    /* unimplemented xbios call: return function # */
 
     sbp = (struct SndBufPtr *)ptr;
