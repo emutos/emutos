@@ -19,7 +19,7 @@
 #define DBG_BOOT 0
 
 /* last part of the loader is in util/bootasm.S */
-extern void bootasm(long dest, UBYTE *src, long count);
+extern void bootasm(long dest, UBYTE *src, long count, long cpu);
 
 /* ramtos.img is embedded in util/ramtos.S */
 extern UBYTE ramtos[];
@@ -35,7 +35,6 @@ struct cookie {
   long id;
   long value;
 };
-long cpu;
 
 #if DBG_BOOT
 static void putl(unsigned long u)
@@ -81,6 +80,7 @@ int main(void)
 {
   long count;
   long address;
+  long cpu;
 
   /* get the file size */
 
@@ -124,7 +124,7 @@ int main(void)
 
   /* do the rest in assembler */
 
-  bootasm(address, ramtos, count);
+  bootasm(address, ramtos, count, cpu);
 
   return 1;
 }

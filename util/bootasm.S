@@ -15,7 +15,6 @@
 #include "asmdefs.h"
 
         .globl  _bootasm
-        .extern _cpu
 
         .text
 /*
@@ -33,6 +32,7 @@ _bootasm:
         move.l  4(sp),a3    // dest
         move.l  8(sp),a2    // src
         move.l  12(sp),d2   // count
+        move.l  16(sp),d3   // cpu
 
         /* align the size to a multiple of 4 */
 
@@ -170,7 +170,7 @@ setloop:
         cmpi.l  #4,d0           // flushed all the ways?
         bne.s   setloop
 #else
-        cmpi.l   #30,_cpu
+        cmpi.l   #30,d3
         bne.s    not68030
         MOVEC_CACR_D0
         ori.b   #0x08,d0        // invalidate instruction cache
