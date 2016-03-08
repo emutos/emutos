@@ -1,10 +1,11 @@
 /*
- * boot.c - standalone boot.prg to load EmuTOS in RAM
+ * boot.c - standalone PRG to load EmuTOS in RAM
  *
  * Copyright (c) 2001-2013 The EmuTOS development team
  *
  * Authors:
  *  LVL     Laurent Vogel
+ *  VRI     Vincent Rivière
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -15,27 +16,14 @@
 #include <osbind.h>
 #include <stdlib.h>
 
-extern void bootasm(long dest, char *src, long count);
-extern long getbootsize(void);
+#define DBG_BOOT 0
 
-/*
- * the file TOS_FILENAME will be loaded in memory, then copied at the
- * address indicated by its header and finally be executed by
- * jumping at that address.
- */
+/* last part of the loader is in util/bootasm.S */
+extern void bootasm(long dest, UBYTE *src, long count);
 
-#define TOS_FILENAME "ramtos.img"
-
-/* hack to ensure the file in RAM is at a higher address than the
- * final relocation address
- */
-#define ADDR 0x40000
-
-struct {
-  char fill[26];
-  long size;
-  char name[14];
-} dta;
+/* ramtos.img is embedded in util/ramtos.S */
+extern UBYTE ramtos[];
+extern UBYTE end_ramtos[];
 
 /*
  * cookie stuff
@@ -49,6 +37,7 @@ struct cookie {
 };
 long cpu;
 
+#if DBG_BOOT
 static void putl(unsigned long u)
 {
   int i;
@@ -71,6 +60,7 @@ static void fatal(const char *s)
   Cconin();
   exit(1);
 }
+#endif
 
 /* return value from _CPU cookie */
 static long get_cpu_cookie(void)
@@ -89,49 +79,36 @@ static long get_cpu_cookie(void)
 
 int main(void)
 {
-  int fh;
   long count;
-  char *buf;
   long address;
 
   /* get the file size */
 
-  Fsetdta((char *)&dta);
-  if (0 != Fsfirst(TOS_FILENAME, 0)) fatal("missing file " TOS_FILENAME);
-  count = dta.size;
-
-  /* allocate the buffer */
-
-  buf = (char *) Malloc(ADDR + count + 1 + getbootsize());
-  if(buf == 0) {
-    fatal("cannot allocate memory");
-  }
-  buf += ADDR;
-
-  /* open the file and load all in memory */
-
-  fh = Fopen(TOS_FILENAME, 0);
-  if(fh < 0) fatal("cannot open file " TOS_FILENAME);
-  if (count != Fread(fh, count, buf)) fatal("read error");
-  Fclose(fh);
+  count = end_ramtos - ramtos;
 
   /* get final address */
 
-  address = *((long *)(buf + 8));
+  address = *((long *)(ramtos + 8));
 
-  (void)Cconws("\012\015address = 0x");
+#if DBG_BOOT
+  (void)Cconws("src = 0x");
+  putl((long)ramtos);
+  (void)Cconws("\012\015");
+
+  (void)Cconws("dst = 0x");
   putl(address);
-  (void)Cconws(".\012\015");
+  (void)Cconws("\012\015");
 
-  /* check that the address is not after our buffer */
+  /* check that the address is realistic */
 
-  if((address <= 0x400L) || (address >= (long)buf)) {
+  if((address <= 0x800L) || (address >= 0x80000)) {
     fatal("bad address in header");
   }
+#endif
 
   /* hit a key to let the user remove any floppy */
 
-  (void)Cconws("Hit RETURN to boot " TOS_FILENAME);
+  (void)Cconws("Hit RETURN to boot EmuTOS");
   Cconin();
 
   /* supervisor */
@@ -147,7 +124,7 @@ int main(void)
 
   /* do the rest in assembler */
 
-  bootasm(address, buf, count);
+  bootasm(address, ramtos, count);
 
   return 1;
 }

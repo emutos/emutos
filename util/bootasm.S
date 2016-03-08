@@ -1,10 +1,11 @@
 /*
- * bootasm.S - assembler stuff for boot.prg
+ * bootasm.S - assembler stuff for boot.c
  *
  * Copyright (c) 2001-2013 The EmuTOS development team
  *
  * Authors:
  *  LVL  Laurent Vogel
+ *  VRI  Vincent Rivière
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -14,7 +15,6 @@
 #include "asmdefs.h"
 
         .globl  _bootasm
-        .globl  _getbootsize
         .extern _cpu
 
         .text
@@ -28,34 +28,44 @@
  * zone in memory.
  */
 
-_getbootsize:
-        move.l  #bootend-boot, d0
-        rts
-
 _bootasm:
         move.w  #0x2700,sr
-        move.l  4(sp),a3
-        move.l  8(sp),a2
-        move.l  12(sp),d2
+        move.l  4(sp),a3    // dest
+        move.l  8(sp),a2    // src
+        move.l  12(sp),d2   // count
 
         /* align the size to a multiple of 4 */
 
-        btst    #0,d2
-        beq     even
-        add.l   #1,d2
-even:
-        btst    #1,d2
-        beq     four
-        add.l   #2,d2
-four:
+        addq.l  #3,d2
+        andi.l  #-4,d2
 
-        /* copy the boot routine after the TOS buffer */
+        /* if the destination address is lower than the source address,
+         * then the boot routine will not be overwritten.
+         * we can safely run it in place */
 
-        lea     (a2,d2),a4
+        cmp.l   a2,a3
+        bls.s   boot
+
+        /* copy the boot routine after the destination ramtos */
+
+        lea     (a3,d2),a4  // after destination ramtos
+
+        /* if the new boot location overlaps with the current location,
+         * then copy it just after the current location. */
+
+        lea     bootend(pc),a5
+        cmp.l   a5,a4
+        bhs.s   copyboot    // no collision
+
+        move.l  a5,a4       // collision: new boot location is bootend
+
+copyboot:
         move.l  a4,a1
         lea     boot,a0
-        bsr     _getbootsize
+        move.l  #bootend-boot, d0
+        addq.l  #3,d0       // round up to next long
         lsr.l   #2,d0
+        subq.l  #1,d0       // one less for dbra
 copy:
         move.l  (a0)+,(a1)+
 #ifdef __mcoldfire__
@@ -80,11 +90,15 @@ copy:
  * As a result, it must use only PC-relative code.
  */
 boot:
+        move.l  a3,a4       // destination will be jump address
+
         /* copy the TOS to destination */
 
+        cmp.l   a2,a3
+        bhi.s   bcopy_backwards
+
         lsr.l   #2,d2
-        sub.l   #1,d2
-        move.l  a3,a4
+        subq.l  #1,d2
 bcopy:
         move.l  (a2)+,(a3)+
 #ifdef __mcoldfire__
@@ -95,7 +109,25 @@ bcopy:
         sub.l   #0x10000,d2
         bhi     bcopy
 #endif
+        bra.s   run
 
+bcopy_backwards:
+        add.l   d2,a2   // after last source long
+        add.l   d2,a3   // after last destination long
+        lsr.l   #2,d2
+        subq.l  #1,d2
+bcopy2:
+        move.l  -(a2),-(a3)
+#ifdef __mcoldfire__
+        subq.l  #1,d2
+        bpl.s   bcopy2
+#else
+        dbra    d2,bcopy2
+        sub.l   #0x10000,d2
+        bhi     bcopy2
+#endif
+
+run:
         /* jump into it */
 
         // fall into _invalidate_icache

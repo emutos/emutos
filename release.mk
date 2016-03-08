@@ -189,7 +189,7 @@ release-ram:
 	$(MAKE) clean
 	$(MAKE) ram
 	mkdir $(RELEASE_DIR)/$(RELEASE_RAM)
-	cp boot.prg ramtos.img $(RELEASE_DIR)/$(RELEASE_RAM)
+	cp emutos.prg $(RELEASE_DIR)/$(RELEASE_RAM)
 	cat doc/readme-ram.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_RAM)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_RAM)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_RAM)/doc

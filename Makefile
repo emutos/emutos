@@ -331,7 +331,7 @@ help:
 	@echo "512     $(ROM_512), EmuTOS ROM padded to size 512 KB (starting at $(VMA_STANDARD))"
 	@echo "aranym  $(ROM_ARANYM), suitable for ARAnyM"
 	@echo "firebee $(SREC_FIREBEE), to be flashed on the FireBee"
-	@echo "firebee-ram ramtos.img + boot.prg, a RAM tos for the FireBee"
+	@echo "firebee-ram emutos.prg, a RAM tos for the FireBee"
 	@echo "amiga   $(ROM_AMIGA), EmuTOS ROM for Amiga hardware"
 	@echo "amigakd $(AMIGA_KICKDISK), EmuTOS as Amiga 1000 Kickstart disk"
 	@echo "m548x-dbug $(SREC_M548X_DBUG), EmuTOS-RAM for dBUG on ColdFire Evaluation Boards"
@@ -339,7 +339,7 @@ help:
 	@echo "all192  all 192 KB images"
 	@echo "all256  all 256 KB images"
 	@echo "allbin  all 192 KB, 256 KB and 512 KB images"
-	@echo "ram     ramtos.img + boot.prg, a RAM tos"
+	@echo "ram     emutos.prg, a RAM tos"
 	@echo "flop    emutos.st, a bootable floppy with RAM tos"
 	@echo "cart    $(ROM_CARTRIDGE), EmuTOS as a diagnostic cartridge"
 	@echo "clean"
@@ -557,11 +557,11 @@ m548x-bas:
 # then use this value (taken from the map) to relocate the RamTOS.
 #
 
-TOCLEAN += boot.prg
+TOCLEAN += emutos.prg
 
 .PHONY: ram
 ram: override DEF += -DTARGET_PRG
-ram: ramtos.img boot.prg
+ram: ramtos.img emutos.prg
 	@MEMBOT=$$($(call FUNCTION_SHELL_GET_MEMBOT_RAM,ramtos.map));\
 	echo "# RAM used: $$(($$MEMBOT)) bytes"
 
@@ -575,7 +575,8 @@ ramtos.img ramtos.map: emutos-ram
 	@echo '# Second pass to build ramtos.img with TEXT and DATA just after the BSS'
 	$(LD) -o ramtos.img $(OBJECTS) $(LDFLAGS) -Wl,-Map,ramtos.map
 
-boot.prg: obj/minicrt.o obj/boot.o obj/bootasm.o
+# Be sure to keep ramtos.o before boot files
+emutos.prg: obj/minicrt.o obj/ramtos.o obj/boot.o obj/bootasm.o
 	$(LD) -s -o $@ $+ -lgcc
 
 #
