@@ -812,11 +812,14 @@ long xrename(int n, char *p1, char *p2)
     dmd1 = dn1->d_drv;
     strtcl1 = dn1->d_parent ? dn1->d_strtcl : ROOT_PSEUDO_CLUSTER;
 
-    /* scan DND for matching name */
+    /* scan DND for matching name
+     * note that, as per the Rainbow TOS Release Notes, a label may
+     * not be renamed via Frename()
+     */
     posp = 0L;
-    f = scan(dn1,s1,0xff,&posp);
+    f = scan(dn1,s1,FA_NORM|FA_SUBDIR,&posp);
     if (!f)                     /* old path doesn't exist */
-        return EPTHNF;
+        return EFILNF;
 
     /* at this point:
      *   f -> FCB for old path
