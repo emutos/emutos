@@ -37,7 +37,8 @@ _bootasm:
         /* align the size to a multiple of 4 */
 
         addq.l  #3,d2
-        andi.l  #-4,d2
+        moveq   #-4,d0
+        and.l   d0,d2
 
         /* if the destination address is lower than the source address,
          * then the boot routine will not be overwritten.
@@ -48,7 +49,7 @@ _bootasm:
 
         /* copy the boot routine after the destination ramtos */
 
-        lea     (a3,d2),a4  // after destination ramtos
+        lea     0(a3,d2.l),a4   // after destination ramtos
 
         /* if the new boot location overlaps with the current location,
          * then copy it just after the current location. */
@@ -61,11 +62,12 @@ _bootasm:
 
 copyboot:
         move.l  a4,a1
-        lea     boot,a0
-        move.l  #bootend-boot, d0
-        addq.l  #3,d0       // round up to next long
-        lsr.l   #2,d0
-        subq.l  #1,d0       // one less for dbra
+        lea     boot(pc),a0
+        // size of the boot routine,
+        // round up to next long,
+        // divide by 4 to get the number of longs,
+        // and subtract 1 for dbra
+        moveq   #(((bootend-boot)+3)>>2)-1,d0
 copy:
         move.l  (a0)+,(a1)+
 #ifdef __mcoldfire__
@@ -107,7 +109,7 @@ bcopy:
 #else
         dbra    d2,bcopy
         sub.l   #0x10000,d2
-        bhi     bcopy
+        bhi.s   bcopy
 #endif
         bra.s   run
 
@@ -124,7 +126,7 @@ bcopy2:
 #else
         dbra    d2,bcopy2
         sub.l   #0x10000,d2
-        bhi     bcopy2
+        bhi.s   bcopy2
 #endif
 
 run:
@@ -170,8 +172,9 @@ setloop:
         cmpi.l  #4,d0           // flushed all the ways?
         bne.s   setloop
 #else
-        cmpi.l   #30,d3
-        bne.s    not68030
+        moveq   #30,d0
+        cmp.l   d0,d3
+        bne.s   not68030
         MOVEC_CACR_D0
         ori.b   #0x08,d0        // invalidate instruction cache
         MOVEC_D0_CACR
