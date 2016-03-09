@@ -64,7 +64,6 @@
 /*
  * forward prototypes
  */
-
 static long ixopen(char *name, int mod);
 static long opnfil(FCB *f, DND *dn, int mod);
 static long makopn(FCB *f, DND *dn, int h, int mod);
@@ -74,7 +73,6 @@ static void sftdel(FTAB *sftp);
 /*
 **  used in calls to sftsrch to distinguish which field we are matching on
 */
-
 #define SFTOFD          0
 #define SFTOWNER        1
 
@@ -82,34 +80,25 @@ static void sftdel(FTAB *sftp);
 **  SFTOFDSRCH - search sft for entry with matching OFD ptr
 **      call sftsrch with correct parms
 */
-
 #define SFTOFDSRCH(o)   sftsrch( SFTOFD , (char *) o )
 
 /*
 **  SFTOWNSRCH - search sft for entry with matching PD
 **      call sftsrch with correct parms
 */
-
 #define SFTOWNSRCH(p)   sftsrch( SFTOWN , (char *) p )
 
 
 /*
-**  xcreat -
-**  create file with specified name, attributes
-**
-**      Function 0x3C   f_create
-**
-**      Error returns
-**              EPTHNF
-**              EACCDN
-**              ENHNDL
-**
-**      Last modified   SCC     13 May 85
-*/
-
-long    xcreat(char *name, char attr)
+ *  xcreat - create file with specified name, attributes
+ *
+ *  Function 0x3C   Fcreate
+ *
+ *  Error returns   EPTHNF, EACCDN, ENHNDL
+ */
+long xcreat(char *name, char attr)
 {
-        return(ixcreat(name, attr & ~FA_SUBDIR));
+    return ixcreat(name, attr & ~FA_SUBDIR);
 }
 
 
@@ -121,112 +110,103 @@ long    xcreat(char *name, char attr)
  */
 long ixcreat(char *name, char attr)
 {
-        DND *dn;
-        OFD *fd;
-        FCB *f;
-        const char *s;
-        char    n[2],a[11];                     /*  M01.01.03   */
-        int i,f2;                               /*  M01.01.03   */
-        long pos,rc;
+    DND *dn;
+    OFD *fd;
+    FCB *f;
+    const char *s;
+    char n[2], a[11];                       /*  M01.01.03   */
+    int i, f2;                              /*  M01.01.03   */
+    long pos, rc;
 
-        n[0] = (char)ERASE_MARKER; n[1] = 0;
+    n[0] = (char)ERASE_MARKER; n[1] = 0;
 
-        /* first find path */
+    /* first find path */
 
-        if ((long)(dn = findit(name,&s,0)) < 0)                 /* M01.01.1212.01 */
-                return( (long)dn );
-        if (!dn)                                                /* M01.01.1214.01 */
-                return( EPTHNF );
+    if ((long)(dn = findit(name,&s,0)) < 0) /* M01.01.1212.01 */
+        return (long)dn;
+    if (!dn)                                /* M01.01.1214.01 */
+        return EPTHNF;
 
-        if (!*s || (*s == '.'))         /*  no file name || '.' || '..' */
-                return(EPTHNF);
+    if (!*s || (*s == '.'))         /*  no file name || '.' || '..' */
+        return EPTHNF;
 
-        /*  M01.01.0721.01  */
-        if( contains_illegal_characters(s) )
-                return( EACCDN ) ;
+    /*  M01.01.0721.01  */
+    if (contains_illegal_characters(s))
+        return EACCDN;
 
-        if (!(fd = dn->d_ofd))
-                fd = makofd(dn);        /* makofd() also updates dn->d_ofd */
+    if (!(fd = dn->d_ofd))
+        fd = makofd(dn);            /* makofd() also updates dn->d_ofd */
 
-        /* is it already there ? */
+    /* is it already there ? */
 
-        pos = 0;
-        if ( (f = scan(dn,s,-1,&pos)) )
-        {
-                                                         /* M01.01.0730.01   */
-                if ( (f->f_attrib & (FA_SUBDIR | FA_RO)) || (attr == FA_SUBDIR) )
-                        /*  subdir or read only  */
-                        return(EACCDN);
+    pos = 0;
+    if ( (f = scan(dn,s,-1,&pos)) )
+    {
+                                    /* M01.01.0730.01   */
+        if ( (f->f_attrib & (FA_SUBDIR | FA_RO)) || (attr == FA_SUBDIR) )
+            return EACCDN;          /*  subdir or read only  */
 
-                pos -= 32;
-                ixdel(dn,f,pos);
-        }
-        else
-                pos = 0;
-
- /* now scan for empty space */
-
-        /*  M01.01.SCC.FS.02  */
-        while( !( f = scan(dn,n,-1,&pos) ) )
-        {
-                /*  not in current dir, need to grow  */
-                if (!fd->o_dnode)
-                        /*  but can't grow root  */
-                        return( EACCDN ) ;
-
-                if( nextcl( fd, 1 ) )
-                        return( EACCDN ) ;
-
-                f = dirinit(dn) ;
-                pos = 0 ;
-        }
-
-        builds(s,a);
         pos -= 32;
-        f->f_attrib = attr;
-        for (i=0; i<10; i++)
-                f->f_fill[i] = 0;
-        f->f_td.time = time;
-        swpw(f->f_td.time);
-        f->f_td.date = date;
-        swpw(f->f_td.date);
-        f->f_clust = 0;
-        f->f_fileln = 0;
-        ixlseek(fd,pos);
-        ixwrite(fd,11L,a);      /* write name, set dirty flag */
-        ixclose(fd,CL_DIR);     /* partial close to flush */
-        ixlseek(fd,pos);
-        s = (char*) ixread(fd,32L,NULL);
-        f2 = rc = opnfil((FCB*)s,dn,(f->f_attrib&FA_RO)?RO_MODE:RW_MODE);
+        ixdel(dn,f,pos);
+    }
+    else
+        pos = 0;
 
-        if (rc < 0)
-                return(rc);
+    /* now scan for empty space */
 
-        getofd(f2)->o_flag |= O_DIRTY;
+    /*  M01.01.SCC.FS.02  */
+    while( !( f = scan(dn,n,-1,&pos) ) )
+    {
+        /*  not in current dir, need to grow  */
+        if (!fd->o_dnode)           /*  but can't grow root  */
+            return EACCDN;
 
-        return(f2);
+        if ( nextcl(fd,1) )
+            return EACCDN;
+
+        f = dirinit(dn);
+        pos = 0;
+    }
+
+    builds(s,a);
+    pos -= 32;
+    f->f_attrib = attr;
+    for (i = 0; i < 10; i++)
+        f->f_fill[i] = 0;
+    f->f_td.time = time;
+    swpw(f->f_td.time);
+    f->f_td.date = date;
+    swpw(f->f_td.date);
+    f->f_clust = 0;
+    f->f_fileln = 0;
+    ixlseek(fd,pos);
+    ixwrite(fd,11L,a);              /* write name, set dirty flag */
+    ixclose(fd,CL_DIR);             /* partial close to flush */
+    ixlseek(fd,pos);
+    s = (char*) ixread(fd,32L,NULL);
+    f2 = rc = opnfil((FCB*)s,dn,(f->f_attrib&FA_RO)?RO_MODE:RW_MODE);
+
+    if (rc < 0)
+        return rc;
+
+    getofd(f2)->o_flag |= O_DIRTY;
+
+    return f2;
 }
 
 
 /*
-**  xopen - open a file (path name)
-**
-**  returns
-**      <0 = error
-**      >0 = file handle
-**
-**      Function 0x3D   f_open
-**
-**      Error returns
-**              EFILNF
-**              opnfil()
-**
-**      Last modified   SCC     5 Apr 85
-*/
-
-long    xopen(char *name, int mod)
+ *  xopen - open a file (path name)
+ *
+ *  Function 0x3D   Fopen
+ *
+ *  Error returns   EFILNF, opnfil()
+ *
+ *  +ve return      file handle
+ */
+long xopen(char *name, int mod)
 {
-        return (ixopen (name, mod&VALID_FOPEN_BITS));
+    return ixopen(name, mod&VALID_FOPEN_BITS);
 }
 
 /*
@@ -236,121 +216,113 @@ long    xopen(char *name, int mod)
 **      <0 = error
 **      >0 = file handle
 */
-
-static long
-ixopen(char *name, int mod)
+static long ixopen(char *name, int mod)
 {
-        FCB *f;
-        DND *dn;
-        const char *s;
-        long pos;
+    FCB *f;
+    DND *dn;
+    const char *s;
+    long pos;
 
-        /* first find path */
-        if ((long)(dn = findit(name,&s,0)) < 0)                 /* M01.01.1212.01 */
-                return( (long)dn );
-        if (!dn)                                                /* M01.01.1214.01 */
-                return( EFILNF );
+    /* first find path */
+    if ((long)(dn = findit(name,&s,0)) < 0)         /* M01.01.1212.01 */
+        return (long)dn;
+    if (!dn)                                        /* M01.01.1214.01 */
+        return EFILNF;
 
-        /*
-        **  now scan the directory file for a matching filename
-        */
+    /*
+     **  now scan the directory file for a matching filename
+     */
 
-        pos = 0;
-        if (!(f = scan(dn,s,FA_NORM,&pos)))
-                return(EFILNF);
+    pos = 0;
+    if (!(f = scan(dn,s,FA_NORM,&pos)))
+        return EFILNF;
 
-        /* Check to see if the file is read only*/
-        if ((f -> f_attrib & FA_RO) && (mod != 0))
-                return (EACCDN);
+    /* Check to see if the file is read only */
+    if ((f -> f_attrib & FA_RO) && (mod != 0))
+        return EACCDN;
 
-        return (opnfil (f, dn, mod));
+    return opnfil(f, dn, mod);
 }
 
 
 /*
 **  makopn - make an open file for sft handle h
 **
-**      Last modified   SCC     8 Apr 85
 */
-
 static long makopn(FCB *f, DND *dn, int h, int mod)
 {
-        OFD *p;
-        OFD *p2;
-        DMD *dm;                        /*  M01.01.03   */
+    OFD *p;
+    OFD *p2;
+    DMD *dm;                        /*  M01.01.03   */
 
-        dm = dn->d_drv;
+    dm = dn->d_drv;
 
-        p = MGET(OFD);                  /* MGET(OFD) only returns if it succeeds */
+    p = MGET(OFD);                  /* MGET(OFD) only returns if it succeeds */
 
-        p->o_mod = mod;                 /*  set mode                    */
-        p->o_dmd = dm;                  /*  link OFD to media           */
-        sft[h-NUMSTD].f_ofd = p;
-        p->o_usecnt = 0;                /*  init usage                  */
-        p->o_curcl = 0;                 /*  init file pointer info      */
-        p->o_curbyt = 0;                /*  "                           */
-        p->o_dnode = dn;                /*  link to directory           */
-        p->o_dirfil = dn->d_ofd;        /*  link to dir's ofd           */
-        p->o_dirbyt = dn->d_ofd->o_bytnum - 32; /*  offset of fcb in dir*/
+    p->o_mod = mod;                 /*  set mode                    */
+    p->o_dmd = dm;                  /*  link OFD to media           */
+    sft[h-NUMSTD].f_ofd = p;
+    p->o_usecnt = 0;                /*  init usage                  */
+    p->o_curcl = 0;                 /*  init file pointer info      */
+    p->o_curbyt = 0;                /*  "                           */
+    p->o_dnode = dn;                /*  link to directory           */
+    p->o_dirfil = dn->d_ofd;        /*  link to dir's ofd           */
+    p->o_dirbyt = dn->d_ofd->o_bytnum - 32; /*  offset of fcb in dir*/
 
-        for (p2 = dn->d_files; p2; p2 = p2->o_link)
-                if (p2->o_dirbyt == p->o_dirbyt)
-                        break; /* same dir, same dcnt */
+    for (p2 = dn->d_files; p2; p2 = p2->o_link)
+        if (p2->o_dirbyt == p->o_dirbyt)
+            break;              /* same dir, same dcnt */
 
-        p->o_link = dn->d_files;
-        dn->d_files = p;
+    p->o_link = dn->d_files;
+    dn->d_files = p;
 
-        if (p2)
-        {       /* steal time/date,startcl,fileln (a bit clumsily) */
-                memcpy(&p->o_td,&p2->o_td,sizeof(DOSTIME)+sizeof(CLNO)+sizeof(long));
-                /* not used yet... TBA *********/
-                p2->o_thread = p;
-        }
-        else
-        {
-                p->o_strtcl = f->f_clust;       /*  1st cluster of file */
-                swpw(p->o_strtcl);
-                p->o_fileln = f->f_fileln;      /*  init length of file */
-                swpl(p->o_fileln);
-                p->o_td.date = f->f_td.date;    /* note: OFD time/date are  */
-                p->o_td.time = f->f_td.time;    /*  actually little-endian! */
-        }
+    if (p2)
+    {       /* steal time/date,startcl,fileln (a bit clumsily) */
+        memcpy(&p->o_td,&p2->o_td,sizeof(DOSTIME)+sizeof(CLNO)+sizeof(long));
+        /* not used yet... TBA *********/
+        p2->o_thread = p;
+    }
+    else
+    {
+        p->o_strtcl = f->f_clust;       /*  1st cluster of file */
+        swpw(p->o_strtcl);
+        p->o_fileln = f->f_fileln;      /*  init length of file */
+        swpl(p->o_fileln);
+        p->o_td.date = f->f_td.date;    /* note: OFD time/date are  */
+        p->o_td.time = f->f_td.time;    /*  actually little-endian! */
+    }
 
-        return(h);
+    return h;
 }
 
 
 /*
 **  opnfil - does the real work in opening a file
 **
-**      Error returns
-**              ENHNDL
+**  Error returns   ENHNDL
 **
-**      NOTES:
-**              make a pointer to the ith entry of sft
-**              make i a register int.
+**  NOTES:
+**          make a pointer to the ith entry of sft
 */
-
 static long opnfil(FCB *f, DND *dn, int mod)
 {
-        int i;
-        int h;
+    int i;
+    int h;
 
-        /* find free sft handle */
-        for (i = 0; i < OPNFILES; i++)
-                if( !sft[i].f_own )
-                        break;
+    /* find free sft handle */
+    for (i = 0; i < OPNFILES; i++)
+        if( !sft[i].f_own )
+            break;
 
-        if (i == OPNFILES)
-                return(ENHNDL);
+    if (i == OPNFILES)
+        return ENHNDL;
 
-        sft[i].f_own = run;
-        sft[i].f_use = 1;
-        h = i+NUMSTD;
+    sft[i].f_own = run;
+    sft[i].f_use = 1;
+    h = i + NUMSTD;
 
-        return(makopn(f, dn, h, mod));
+    return makopn(f, dn, h, mod);
 }
-
 
 
 /*
@@ -363,182 +335,174 @@ static long opnfil(FCB *f, DND *dn, int mod)
 /* field: which field to match on
  * ptr: ptr to match on
  */
-
 static FTAB *sftsrch(int field, char *ptr)
 {
-        FTAB   *sftp ;  /*  scan ptr for sft                    */
-        int    i ;
-        OFD    *ofd ;
-        PD             *pd ;
+    FTAB *sftp;     /* scan ptr for sft */
+    int i;
+    OFD *ofd;
+    PD *pd ;
 
-        switch( field )
-        {
-                case SFTOFD:
-                        for( i = 0 , sftp = sft , ofd = (OFD *) ptr ;
-                             i < OPNFILES  &&  sftp->f_ofd != ofd ;
-                             ++i, ++sftp )
-                                ;
-                        break ;
-                case SFTOWNER:
-                        for( i = 0 , sftp = sft , pd = (PD *) ptr ;
-                             i < OPNFILES  &&  sftp->f_own != pd ;
-                             ++i, ++sftp )
-                                ;
-                        break ;
-                default:
-                        return (FTAB *)NULL;
-        }
-        return( i >= OPNFILES ? (FTAB *)NULL : sftp ) ;         /* M01.01.1023.03 */
+    switch(field) {
+    case SFTOFD:
+        for (i = 0, sftp = sft, ofd = (OFD *) ptr;
+                        i < OPNFILES  &&  sftp->f_ofd != ofd; ++i, ++sftp)
+            ;
+        break;
+    case SFTOWNER:
+        for (i = 0, sftp = sft, pd = (PD *) ptr;
+                        i < OPNFILES  &&  sftp->f_own != pd; ++i, ++sftp )
+            ;
+        break;
+    default:
+        return NULL;
+    }
+
+    return i >= OPNFILES ? NULL : sftp;     /* M01.01.1023.03 */
 }
+
+
 /*
 **  sftdel - delete an entry from the sft
 **      delete the entry from the sft.  If no other entries in the sft
 **      have the same ofd, free up the OFD, also.
 */
-
-static void sftdel( FTAB *sftp )
+static void sftdel(FTAB *sftp)
 {
-        FTAB   *s ;
-        OFD    *ofd ;
+    FTAB *s;
+    OFD *ofd;
 
-        /*  clear out the entry  */
+    /*  clear out the entry  */
 
-        ofd = (s=sftp)->f_ofd ;
+    ofd = (s=sftp)->f_ofd;
 
-        s->f_ofd = 0 ;
-        s->f_own = 0 ;
-        s->f_use = 0 ;
+    s->f_ofd = 0;
+    s->f_own = 0;
+    s->f_use = 0;
 
-        /*  if no other sft entries with same OFD, delete ofd  */
+    /*  if no other sft entries with same OFD, delete ofd  */
 
-        if( SFTOFDSRCH( ofd ) == (FTAB *)NULL )         /* M01.01.1023.03 */
-                xmfreblk( (int *) ofd ) ;
+    if (SFTOFDSRCH(ofd) == NULL)            /* M01.01.1023.03 */
+        xmfreblk((int *)ofd);
 }
 
 
-
 /*
-**  xclose - Close a file.
-**
-**      Function 0x3E   f_close
-**
-**      Error returns
-**              EIHNDL
-**              ixclose()
-**
-**      SCC:    I have added 'rc' to allow return of status from ixclose().  I
-**              do not yet know whether it is appropriate to perform the
-**              operations inside the 'if' statement following the invocation
-**              of ixclose(), but I am leaving the flow of control intact.
-*/
-
+ *  xclose - Close a file.
+ *
+ *  Function 0x3E   Fclose
+ *
+ *  Error returns   EIHNDL, ixclose()
+ *
+ *  SCC:    I have added 'rc' to allow return of status from ixclose().  I
+ *          do not yet know whether it is appropriate to perform the
+ *          operations inside the 'if' statement following the invocation
+ *          of ixclose(), but I am leaving the flow of control intact.
+ */
 long xclose(int h)
 {
-        int h0;
-        OFD *fd;
-        long rc;
+    int h0;
+    OFD *fd;
+    long rc;
 
-        if (h < 0)
-                return(E_OK);   /* always a good close on a character device */
+    if (h < 0)
+        return E_OK;    /* always a good close on a character device */
 
-        if ( h > (OPNFILES+NUMSTD-1) )  /* M01.01.1022.01 */
-                return( EIHNDL );
+    if (h > (OPNFILES+NUMSTD-1))    /* M01.01.1022.01 */
+        return EIHNDL;
 
-        if ((h0 = h) < NUMSTD)
-        {
-                h = run->p_uft[h];
-                run->p_uft[h0] = 0;     /* mark std dev as not in use */
-                if (h <= 0)             /* M01.01.1023.01 */
-                        return(E_OK);
-        }
-        else if (((long) sft[h-NUMSTD].f_ofd) < 0L)
-        {
-                if (!(--sft[h-NUMSTD].f_use))
-                {
-                        sft[h-NUMSTD].f_ofd = 0;
-                        sft[h-NUMSTD].f_own = 0;
-                }
-                return(E_OK);
-        }
-
-        if (!(fd = getofd(h)))
-                return(EIHNDL);
-
-        rc = ixclose(fd,0);
-
+    if ((h0 = h) < NUMSTD)
+    {
+        h = run->p_uft[h];
+        run->p_uft[h0] = 0;         /* mark std dev as not in use */
+        if (h <= 0)                 /* M01.01.1023.01 */
+            return E_OK;
+    }
+    else if (((long) sft[h-NUMSTD].f_ofd) < 0L)
+    {
         if (!(--sft[h-NUMSTD].f_use))
-                sftdel(&sft[h-NUMSTD]) ;
+        {
+            sft[h-NUMSTD].f_ofd = 0;
+            sft[h-NUMSTD].f_own = 0;
+        }
 
-        return(rc);
+        return E_OK;
+    }
+
+    if (!(fd = getofd(h)))
+        return EIHNDL;
+
+    rc = ixclose(fd,0);
+
+    if (!(--sft[h-NUMSTD].f_use))
+        sftdel(&sft[h-NUMSTD]);
+
+    return rc;
 }
 
 
 /*
 **  ixclose -
 **
-**      Error returns
-**              EINTRN
+**  Error returns   EINTRN
 **
-**      Last modified   SCC     10 Apr 85
+**  Last modified   SCC     10 Apr 85
 **
-**      NOTE:   I'm not sure that returning immediately upon an error from
-**              ixlseek() is the right thing to do.  Some data structures may
-**              not be updated correctly.  Watch out for this!
-**              Also, I'm not sure that the EINTRN return is ok.
+**  NOTE:   I'm not sure that returning immediately upon an error from
+**          ixlseek() is the right thing to do.  Some data structures may
+**          not be updated correctly.  Watch out for this!
+**          Also, I'm not sure that the EINTRN return is ok.
 */
+long ixclose(OFD *fd, int part)
+{                                   /*  M01.01.03                   */
+    OFD *p, **q;
+    long tmp;
+    int i;                          /*  M01.01.03                   */
+    BCB *b;
 
-long    ixclose(OFD *fd, int part)
-{                                       /*  M01.01.03                   */
-        OFD *p,**q;
-        long tmp;
-        int i;                          /*  M01.01.03                   */
-        BCB *b;
+    if (fd->o_flag & O_DIRTY)
+    {
+        ixlseek(fd->o_dirfil,fd->o_dirbyt+22);
 
+        swpw(fd->o_strtcl);
+        swpl(fd->o_fileln);
 
-        if (fd->o_flag & O_DIRTY)
+        if (part & CL_DIR)
         {
-                ixlseek(fd->o_dirfil,fd->o_dirbyt+22);
-
-                swpw(fd->o_strtcl);
-                swpl(fd->o_fileln);
-
-                if (part & CL_DIR)
-                {
-                        tmp = fd->o_fileln;             /* [1] */
-                        fd->o_fileln = 0;
-                        ixwrite(fd->o_dirfil,10L,(char *)&fd->o_td);
-                        fd->o_fileln = tmp;
-                }
-                else
-                        ixwrite(fd->o_dirfil,10L,(char *)&fd->o_td);
-
-                swpw(fd->o_strtcl);
-                swpl(fd->o_fileln);
+            tmp = fd->o_fileln;             /* [1] */
+            fd->o_fileln = 0;
+            ixwrite(fd->o_dirfil,10L,(char *)&fd->o_td);
+            fd->o_fileln = tmp;
         }
+        else
+            ixwrite(fd->o_dirfil,10L,(char *)&fd->o_td);
 
-        if ((!part) || (part & CL_FULL))
-        {
-                q = &fd->o_dnode->d_files;
+        swpw(fd->o_strtcl);
+        swpl(fd->o_fileln);
+    }
 
-                for (p = *q; p ; p = *(q = &p->o_link))
-                        if (p == fd)
-                                break;
+    if ((!part) || (part & CL_FULL))
+    {
+        q = &fd->o_dnode->d_files;
 
-                 /* someone else has this file open **** TBA */
+        for (p = *q; p ; p = *(q = &p->o_link))
+            if (p == fd)
+                break;
 
-                if (p)
-                        *q = p->o_link;
-                else
-                        return(EINTRN); /* some kind of internal error */
-        }
+        /* someone else has this file open **** TBA */
 
-        /* only flush to appropriate drive ***** TBA ******/
+        if (p)
+            *q = p->o_link;
+        else
+            return EINTRN;  /* some kind of internal error */
+    }
 
-        for (i=0; i<2; i++)
-                for (b = bufl[i]; b; b = b->b_link)
-                        flush(b);
+    /* only flush to appropriate drive ***** TBA ******/
 
-        return(E_OK);
+    for (i = 0; i < 2; i++)
+        for (b = bufl[i]; b; b = b->b_link)
+            flush(b);
+
+    return E_OK;
 }
 
 /*
@@ -558,43 +522,38 @@ long    ixclose(OFD *fd, int part)
 
 
 /*
-**  xunlink - unlink (delete) a file
-**
-**      Function 0x41   f_delete
-**
-**  returns
-**      EFILNF  file not found
-**      EACCDN  access denied
-**      ixdel()
-**
-*/
-
+ *  xunlink - unlink (delete) a file
+ *
+ *  Function 0x41   Fdelete
+ *
+ *  returns     EFILNF, EACCDN, ixdel()
+ */
 long xunlink(char *name)
 {
-        DND *dn;
-        FCB *f;
-        const char *s;
-        long pos;
+    DND *dn;
+    FCB *f;
+    const char *s;
+    long pos;
 
- /* first find path */
+    /* first find path */
 
-        if ((long)(dn = findit(name,&s,0)) < 0)                 /* M01.01.1212.01 */
-                return( (long)dn );
-        if (!dn)                                                /* M01.01.1214.01 */
-                return( EFILNF );
+    if ((long)(dn = findit(name,&s,0)) < 0)                 /* M01.01.1212.01 */
+        return (long)dn;
+    if (!dn)                                                /* M01.01.1214.01 */
+        return EFILNF;
 
- /* now scan for filename */
+    /* now scan for filename */
 
-        pos = 0;
-        if (!(f = scan(dn,s,FA_NORM,&pos)))
-                return(EFILNF);
+    pos = 0;
+    if (!(f = scan(dn,s,FA_NORM,&pos)))
+        return EFILNF;
 
-        if (f->f_attrib & FA_RO)
-                return(EACCDN);
+    if (f->f_attrib & FA_RO)
+        return EACCDN;
 
-        pos -= 32;
+    pos -= 32;
 
-        return(ixdel(dn,f,pos));
+    return ixdel(dn,f,pos);
 }
 
 
@@ -615,58 +574,54 @@ long xunlink(char *name)
 **              xrmdir()
 **
 */
-
 long ixdel(DND *dn, FCB *f, long pos)
 {
-        OFD *fd;
-        DMD *dm;
-        int n2;
-        int n;
-        char c;
+    OFD *fd;
+    DMD *dm;
+    int n2;
+    int n;
+    char c;
 
+    for (fd = dn->d_files; fd; fd = fd->o_link)
+        if (fd->o_dirbyt == pos)
+            for (n = 0; n < OPNFILES; n++)
+                if (sft[n].f_ofd == fd)
+                {
+                    if (sft[n].f_own == run)
+                        ixclose(fd,0);
+                    else
+                        return EACCDN;
+                }
 
-        for (fd = dn->d_files; fd; fd = fd->o_link)
-                if (fd->o_dirbyt == pos)
-                        for (n = 0; n < OPNFILES; n++)
-                                if (sft[n].f_ofd == fd)
-                                {
-                                        if (sft[n].f_own == run)
-                                                ixclose(fd,0);
-                                        else
-                                                return(EACCDN);
-                                }
-/*
- * Traverse this file's chain of allocated clusters, freeing them.
- */
+    /*
+     * Traverse this file's chain of allocated clusters, freeing them.
+     */
+    dm = dn->d_drv;
+    n = f->f_clust;
+    swpw(n);
 
-        dm = dn->d_drv;
-        n = f->f_clust;
-        swpw(n);
+    while (n && !endofchain(n))
+    {
+        n2 = getrealcl(n,dm);
+        clfix(n,FREECLUSTER,dm);
+        n = n2;
+    }
 
-        while (n && !endofchain(n))
-        {
-                n2 = getrealcl(n,dm);
-                clfix(n,FREECLUSTER,dm);
-                n = n2;
-        }
+    /*
+     * Mark the directory entry as erased.
+     */
+    fd = dn->d_ofd;
+    ixlseek(fd,pos);
+    c = (char)ERASE_MARKER;
+    ixwrite(fd,1L,&c);
+    ixclose(fd,CL_DIR);
 
-/*
- * Mark the directory entry as erased.
- */
-
-        fd = dn->d_ofd;
-        ixlseek(fd,pos);
-        c = (char)ERASE_MARKER;
-        ixwrite(fd,1L,&c);
-        ixclose(fd,CL_DIR);
-
-/*
-**      NOTE    that the preceding routines that do physical disk operations
-**      will 'longjmp' on failure at the BIOS level, thereby allowing us to
-**      simply return with E_OK.
-*/
-
-        return(E_OK);
+    /*
+     * NOTE that the preceding routines that do physical disk operations
+     * will 'longjmp' on failure at the BIOS level, thereby allowing us to
+     * simply return with E_OK.
+     */
+    return E_OK;
 }
 
 
@@ -675,19 +630,18 @@ long ixdel(DND *dn, FCB *f, long pos)
 **
 **  returns TRUE if found
 */
-
 BOOL contains_illegal_characters(const char *test)
 {
-        const char *ref = ILLEGAL_FNAME_CHARACTERS ;
-        const char *t ;
+    const char *ref = ILLEGAL_FNAME_CHARACTERS;
+    const char *t;
 
-        while( *ref )
-        {
-                for( t = test; *t ; t++ )
-                        if( *t == *ref )
-                                return( TRUE ) ;
-                ref++ ;
-        }
+    while(*ref)
+    {
+        for (t = test; *t; t++)
+            if (*t == *ref)
+                return TRUE;
+        ref++;
+    }
 
-        return( FALSE ) ;
+    return FALSE;
 }
