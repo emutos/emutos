@@ -41,8 +41,10 @@ _bootasm:
         and.l   d0,d2
 
         /* if the destination address is lower than the source address,
-         * then the boot routine will not be overwritten.
-         * we can safely run it in place */
+         * then the boot routine will not be overwritten,
+         * because in Makefile we carefully put ramtos.o (the source data)
+         * before bootasm.o (this code).
+         * so we can safely run the boot routine at its initial location */
 
         cmp.l   a2,a3
         bls.s   boot

@@ -578,7 +578,8 @@ ramtos.img ramtos.map: emutos-ram
 	@echo '# Second pass to build ramtos.img with TEXT and DATA just after the BSS'
 	$(LD) -o ramtos.img $(OBJECTS) $(LDFLAGS) -Wl,-Map,ramtos.map
 
-# Be sure to keep ramtos.o before boot files
+# Be sure to keep ramtos.o before boot files.
+# This simplifies the algorithm in bootasm.S.
 emutos.prg: obj/minicrt.o obj/ramtos.o obj/boot.o obj/bootasm.o
 	$(LD) -s -o $@ $+ -lgcc
 
