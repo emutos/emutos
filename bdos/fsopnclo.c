@@ -149,15 +149,29 @@ long ixcreat(char *name, char attr)
     if (!(fd = dn->d_ofd))
         fd = makofd(dn);            /* makofd() also updates dn->d_ofd */
 
-    /* is it already there ? */
-
+    /*
+     * if a matching file already exists, we delete it first.  note
+     * that the definition of matching, and the action taken, differs
+     * depending on whether the file is a volume label or not:
+     *  . for a volume label, *any* existing volume label matches
+     *    and will be deleted (reference: Rainbow TOS Release Notes)
+     *  . for other files, the name must match, and the existing
+     *    file will be deleted unless (a) it's read-only or a folder
+     *    or (b) the file being created is a folder.
+     */
     pos = 0;
-    if ( (f = scan(dn,s,-1,&pos)) )
-    {
-                                    /* M01.01.0730.01   */
-        if ( (f->f_attrib & (FA_SUBDIR | FA_RO)) || (attr == FA_SUBDIR) )
-            return EACCDN;          /*  subdir or read only  */
+    if (attr == FA_VOL)
+        f = scan(dn,"*.*",FA_VOL,&pos);
+    else f = scan(dn,s,FA_NORM|FA_SUBDIR,&pos);
 
+    if (f)                  /* found matching file / label */
+    {
+        if (attr != FA_VOL) /* for normal files, need to check more stuff */
+        {
+                                        /* M01.01.0730.01   */
+            if ((f->f_attrib & (FA_SUBDIR | FA_RO)) || (attr == FA_SUBDIR))
+                return EACCDN;          /*  subdir or read only  */
+        }
         pos -= 32;
         ixdel(dn,f,pos);
     }
@@ -167,7 +181,7 @@ long ixcreat(char *name, char attr)
     /* now scan for empty space */
 
     /*  M01.01.SCC.FS.02  */
-    while( !( f = scan(dn,n,-1,&pos) ) )
+    while( !( f = scan(dn,n,0xff,&pos) ) )
     {
         /*  not in current dir, need to grow  */
         if (!fd->o_dnode)           /*  but can't grow root  */
