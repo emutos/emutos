@@ -134,6 +134,18 @@ long ixcreat(char *name, char attr)
     if (contains_illegal_characters(s))
         return EACCDN;
 
+    /*
+     * if the volume label attribute is set, no others are allowed
+     */
+    if ((attr&FA_VOL) && (attr != FA_VOL))
+        return EACCDN;
+
+    /*
+     * volume labels may only be created in the root
+     */
+    if ((attr == FA_VOL) && dn->d_parent)
+        return EACCDN;
+
     if (!(fd = dn->d_ofd))
         fd = makofd(dn);            /* makofd() also updates dn->d_ofd */
 
