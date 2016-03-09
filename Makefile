@@ -143,7 +143,10 @@ INC = -Iinclude
 OPTFLAGS = -O2
 OTHERFLAGS = -ffreestanding -fomit-frame-pointer
 
-WARNFLAGS = -Wall -Wundef #-fno-common -Wshadow -Wmissing-prototypes -Wstrict-prototypes #-Werror
+WARNFLAGS = -Wall -Wundef
+#-fno-common -Wshadow -Wmissing-prototypes -Wstrict-prototypes
+#-Werror
+
 GCCVERSION := $(shell $(CC) -dumpversion | cut -d. -f1)
 # add warning flags not supported by GCC v2
 ifneq (,$(GCCVERSION))
