@@ -19,7 +19,7 @@
 #define DBG_BOOT 0
 
 /* last part of the loader is in util/bootasm.S */
-extern void bootasm(long dest, UBYTE *src, long count, long cpu);
+extern void bootasm(UBYTE *dest, UBYTE *src, ULONG count, ULONG cpu);
 
 /* ramtos.img is embedded in util/ramtos.S */
 extern UBYTE ramtos[];
@@ -32,12 +32,12 @@ extern UBYTE end_ramtos[];
 #define _CPU        0x5f435055L
 
 struct cookie {
-  long id;
-  long value;
+  ULONG id;
+  ULONG value;
 };
 
 #if DBG_BOOT
-static void putl(unsigned long u)
+static void putl(ULONG u)
 {
   int i;
   char c[9];
@@ -62,7 +62,7 @@ static void fatal(const char *s)
 #endif
 
 /* return value from _CPU cookie */
-static long get_cpu_cookie(void)
+static ULONG get_cpu_cookie(void)
 {
   struct cookie *cptr = _p_cookies;
 
@@ -78,9 +78,9 @@ static long get_cpu_cookie(void)
 
 int main(void)
 {
-  long count;
-  long address;
-  long cpu;
+  ULONG count;
+  UBYTE *address;
+  ULONG cpu;
 
   /* get the file size */
 
@@ -88,20 +88,20 @@ int main(void)
 
   /* get final address */
 
-  address = *((long *)(ramtos + 8));
+  address = *((UBYTE **)(ramtos + 8));
 
 #if DBG_BOOT
   (void)Cconws("src = 0x");
-  putl((long)ramtos);
+  putl((ULONG)ramtos);
   (void)Cconws("\012\015");
 
   (void)Cconws("dst = 0x");
-  putl(address);
+  putl((ULONG)address);
   (void)Cconws("\012\015");
 
   /* check that the address is realistic */
 
-  if((address <= 0x800L) || (address >= 0x80000)) {
+  if((address <= (UBYTE *)0x800L) || (address >= (UBYTE *)0x80000)) {
     fatal("bad address in header");
   }
 #endif
