@@ -405,6 +405,13 @@ long xchmod(char *p, int wrt, char mod)
     if (!scan(dn, s, FA_NORM, &pos))        /*  M01.01.03   */
         return EFILNF;
 
+    /*
+     * disallow attempts to change an ordinary file to a volume label
+     * (reference: Rainbow TOS Release Notes)
+     */
+    if (wrt && (mod&FA_VOL))
+        return EACCDN;
+
     pos -= 21;                              /* point at attribute in file */
     fd = dn->d_ofd;
     ixlseek(fd,pos);
