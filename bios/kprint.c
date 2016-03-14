@@ -78,11 +78,15 @@ int cprintf(const char *fmt, ...)
 }
 
 
-/*==== kprintf - do formatted ouput natively to the emulator ======*/
+/*==== kprintf - do formatted output to the port/emulator ======*/
 
 #if MIDI_DEBUG_PRINT
 static void kprintf_outc_midi(int c)
 {
+    /* Raw terminals usually require CRLF */
+    if (c == '\n')
+        bconout3(3,'\r');
+
     bconout3(3,c);
 }
 #endif
