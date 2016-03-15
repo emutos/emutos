@@ -1174,7 +1174,7 @@ TOCLEAN += makefile.dep
 NODEP += makefile.dep
 makefile.dep: util/langs.c bios/header.h bios/ctables.h include/i18nconf.h
 	( \
-	  $(CC) $(MULTILIBFLAGS) $(TOOLCHAIN_CFLAGS) -MM $(INC) -Ibios -Iaes $(DEF) $(CSRC); \
+	  $(CC) $(MULTILIBFLAGS) $(TOOLCHAIN_CFLAGS) -MM $(INC) $(DEF) $(CSRC); \
 	  $(CC) $(MULTILIBFLAGS) $(TOOLCHAIN_CFLAGS) -MM $(INC) $(DEF) $(SSRC) \
 	) | sed -e '/:/s,^,obj/,' >makefile.dep
 
