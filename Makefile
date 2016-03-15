@@ -188,6 +188,8 @@ ifeq (1,$(COLDFIRE))
   bios_ssrc += coldfire2.S
 endif
 
+bios_src = $(bios_ssrc) $(bios_csrc)
+
 #
 # source code in bdos/
 #
@@ -197,12 +199,16 @@ bdos_csrc = console.c fsdrive.c fshand.c fsopnclo.c osmem.c \
             fsdir.c fsglob.c fsmain.c kpgmld.c time.c
 bdos_ssrc = rwa.S
 
+bdos_src = $(bdos_ssrc) $(bdos_csrc)
+
 #
 # source code in util/
 #
 
 util_csrc = doprintf.c nls.c langs.c string.c intmath.c
 util_ssrc = memset.S memmove.S nlsasm.S setjmp.S miscasm.S stringasm.S
+
+util_src = $(util_ssrc) $(util_csrc)
 
 #
 # source code in vdi/
@@ -219,6 +225,7 @@ else
 vdi_ssrc += vdi_blit.S vdi_tblit.S
 endif
 
+vdi_src = $(vdi_ssrc) $(vdi_csrc)
 
 #
 # source code in aes/
@@ -232,6 +239,8 @@ aes_csrc = gemaplib.c gemasync.c gemctrl.c gemdisp.c gemevlib.c \
            rectfunc.c gemdos.c gem_rsc.c gsx2.c
 aes_ssrc = gemstart.S gemdosif.S gemasm.S optimopt.S
 
+aes_src = $(aes_ssrc) $(aes_csrc)
+
 #
 # source code in desk/
 #
@@ -242,12 +251,16 @@ desk_csrc = deskact.c deskapp.c deskdir.c deskfpd.c deskfun.c deskglob.c \
             deskrez.c
 desk_ssrc = deskstart.S
 
+desk_src = $(desk_ssrc) $(desk_csrc)
+
 #
 # source code in cli/ for EmuTOS console EmuCON
 #
 
 cli_csrc = cmdedit.c cmdexec.c cmdint.c cmdmain.c cmdparse.c cmdutil.c
 cli_ssrc = cmdasm.S
+
+cli_src = $(cli_ssrc) $(cli_csrc)
 
 #
 # specific CC -c options for specific directories
@@ -308,13 +321,9 @@ include country.mk
 # everything should work fine below.
 #
 
-COBJ = $(foreach d,$(dirs),$(patsubst %.c,obj/%.o,$($(d)_csrc)))
-SOBJ = $(foreach d,$(dirs),$(patsubst %.S,obj/%.o,$($(d)_ssrc)))
-
-CSRC = $(foreach d,$(dirs),$(addprefix $(d)/,$($(d)_csrc)))
-SSRC = $(foreach d,$(dirs),$(addprefix $(d)/,$($(d)_ssrc)))
-
-OBJECTS = $(SOBJ) $(COBJ) $(FONTOBJ) obj/version.o
+OBJ = $(foreach d,$(dirs),$(patsubst %.c,obj/%.o,$(patsubst %.S,obj/%.o,$($(d)_src))))
+SRC = $(foreach d,$(dirs),$(addprefix $(d)/,$($(d)_src)))
+OBJECTS = $(OBJ) $(FONTOBJ) obj/version.o
 
 #
 # production targets
@@ -1173,10 +1182,7 @@ depend: makefile.dep
 TOCLEAN += makefile.dep
 NODEP += makefile.dep
 makefile.dep: util/langs.c bios/header.h bios/ctables.h include/i18nconf.h
-	( \
-	  $(CC) $(MULTILIBFLAGS) $(TOOLCHAIN_CFLAGS) -MM $(INC) $(DEF) $(CSRC); \
-	  $(CC) $(MULTILIBFLAGS) $(TOOLCHAIN_CFLAGS) -MM $(INC) $(DEF) $(SSRC) \
-	) | sed -e '/:/s,^,obj/,' >makefile.dep
+	$(CC) $(MULTILIBFLAGS) $(TOOLCHAIN_CFLAGS) -MM $(INC) $(DEF) $(SRC) | sed -e '/:/s,^,obj/,' >makefile.dep
 
 # Do not include or rebuild makefile.dep for the targets listed in NODEP
 # as well as the default target (currently "help").
