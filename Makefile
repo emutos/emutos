@@ -576,7 +576,7 @@ emutos-ram:
 	@echo '# First pass to build emutos.map and determine the end of the BSS'
 	$(MAKE) emutos.map DEF='$(DEF)'
 
-ramtos.img ramtos.map: VMA = $(shell sed -e '/__end/!d;s/^ *//;s/ .*//' emutos.map)
+ramtos.img ramtos.map: VMA = $(shell $(SHELL_GET_MEMBOT_EMUTOS_MAP))
 ramtos.img ramtos.map: emutos-ram
 	@echo '# Second pass to build ramtos.img with TEXT and DATA just after the BSS'
 	$(LD) -o ramtos.img $(OBJECTS) $(LDFLAGS) -Wl,-Map,ramtos.map
