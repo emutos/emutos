@@ -20,6 +20,7 @@
         .globl  _proc_usp
         .globl  _proc_stk
 
+        .globl  sysvars_start
         .globl  _etv_timer
         .globl  _etv_critic
         .globl  _etv_term
@@ -96,6 +97,7 @@
         .globl  _ramvalid
         .globl  _bell_hook
         .globl  _kcl_hook
+        .globl  sysvars_end
 
 #ifdef TARGET_FLOPPY
         .globl  _autoboot_magic
@@ -140,6 +142,7 @@ _proc_stk:      .ds.w   16      // 16 words from exception stack
 
 // ==== Start of System variables ============================================
         .org 0x400
+sysvars_start:
 _etv_timer:     .ds.l   1       // GEM event timer vector
 _etv_critic:    .ds.l   1       // GEM critical error handler
 _etv_term:      .ds.l   1       // GEM program termination vector
@@ -226,6 +229,7 @@ _ramvalid:      .ds.l   1       // validates ramtop if $1357BD13
 _bell_hook:     .ds.l   1       // pointer to routine for system bell
 _kcl_hook:      .ds.l   1       // pointer to routine for system keyclick
         .org 0x5b4
+sysvars_end:
 
 #ifdef TARGET_FLOPPY
         .org 0x6f8              // must match the value in util/bootsect.S
