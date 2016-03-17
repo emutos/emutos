@@ -33,7 +33,6 @@
 // ==== tosvars.s - TOS System variables =====================================
 
         .extern sysvars_start
-        .extern sysvars_end
         .extern memctrl
         .extern _phystop
 
@@ -410,34 +409,18 @@ amiga_memconf_ret:
  * - The MMU has been properly initalized
  * - The ST-RAM is ready to be used
  *
- * We clear ST-RAM in two stages:
- * - the system variable area
- * - the rest (which depends on whether EmuTOS is in RAM or ROM)
- *
  * d5 = phystop
  * d6 = memctrl
  */
 stram_detected:
-        /* Clear the system variables area */
-        lea     sysvars_start,a0
-        lea     sysvars_end-1,a1
-        move.l  a1,d0
-        sub.l   a0,d0                   // d0 = length in bytes
-        lsr.l   #2,d0                   // in longs
-clearsys:
-        clr.l   (a0)+
-        subq.l  #1,d0
-        bpl.s   clearsys
-
-        /* Store the ST-RAM parameters in the ST-RAM itself */
-        move.b  d6,memctrl              // set copy of hw memory config
-        move.l  d5,_phystop             // highest address as phystop
-
         /* clear ST-RAM till end (phystop in d5) */
         lea     st_cleared(pc),a6       // remember return address
         bra     clear_st_ram            // jump to routine clearing the RAM
 st_cleared:
 
+        /* Store the ST-RAM parameters in the ST-RAM itself */
+        move.b  d6,memctrl              // set copy of hw memory config
+        move.l  d5,_phystop             // highest address as phystop
 
 #if CONF_WITH_FASTRAM
 
@@ -527,7 +510,7 @@ clear_st_ram:
         // at the beginning of the free ram.
         move.l  d0,a4                   // begin of RAM to clear
 #else
-        lea     bssstart,a4             // beginning of RAM to clear
+        lea     sysvars_start,a4        // beginning of RAM to clear
 #endif
         // Fall into clear_ram
 

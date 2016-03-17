@@ -96,7 +96,6 @@
         .globl  _ramvalid
         .globl  _bell_hook
         .globl  _kcl_hook
-        .globl  sysvars_end
 
 #ifdef TARGET_FLOPPY
         .globl  _autoboot_magic
@@ -218,7 +217,6 @@ _ramvalid:      .ds.l   1       // validates ramtop if $1357BD13
 _bell_hook:     .ds.l   1       // pointer to routine for system bell
 _kcl_hook:      .ds.l   1       // pointer to routine for system keyclick
         .org 0x5b4
-sysvars_end:
 
 #ifdef TARGET_FLOPPY
         .org 0x6f8              // must match the value in util/bootsect.S
