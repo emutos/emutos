@@ -380,12 +380,24 @@ vbl_no_palette:
         move.l  _screenpt,d0
         beq     vbl_no_screenpt
         move.l  d0,_v_bas_ad
+#if CONF_WITH_VIDEL
+        tst.w   _has_videl
+        bne.s   set_video_low
+#endif
+#if CONF_WITH_TT_SHIFTER
+        tst.w   _has_tt_shifter
+        bne.s   set_video_low
+#endif
 #if CONF_WITH_STE_SHIFTER
         tst.w   _has_ste_shifter
-        beq     st_shifter
-        move.b  d0,0xffff820d.w
+        bne.s   set_video_low
 #endif
+#if CONF_WITH_VIDEL || CONF_WITH_TT_SHIFTER || CONF_WITH_STE_SHIFTER
+        bra.s   st_shifter
+set_video_low:
+        move.b  d0,0xffff820d.w
 st_shifter:
+#endif
 #ifdef __mcoldfire__
         lsr.l   #8,d0
         move.b  d0,0xffff8203.w
