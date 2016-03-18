@@ -99,6 +99,8 @@ _warm_reset:
  * Invalidate the RAM configuration and reset the computer to the ROM OS
  */
 _cold_reset:
+        clr.l   resvalid        // Don't allow jump to reset vector in startup.S
+        clr.l   resvector
 #if CONF_WITH_PSEUDO_COLD_BOOT
         clr.l   _warm_magic     // Next boot will be pseudo-cold
 #endif
