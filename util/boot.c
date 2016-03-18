@@ -26,6 +26,11 @@ extern UBYTE ramtos[];
 extern UBYTE end_ramtos[];
 
 /*
+ * reset vector stuff
+ */
+#define resvalid    (ULONG *)0x426
+
+/*
  * cookie stuff
  */
 #define _p_cookies  *(struct cookie **)0x5a0
@@ -121,6 +126,8 @@ int main(void)
   /* simulate a pseudo-cold boot, when EmuTOS loads itself */
   *(ULONG*)0x6fc = 0; /* warm_magic */
 #endif
+
+  *resvalid = 0L;           /* prevent startup.S from calling now-invalid reset vector */
 
   /* do the rest in assembler */
 
