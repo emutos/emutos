@@ -509,6 +509,14 @@ void screen_init(void)
     }
     else
 #endif
+    if (HAS_TT_SHIFTER)
+    {
+        /* In the "Atari TT030 Hardware Reference Manual" (June 1990),
+         * bit 0 of the ST Sync Mode register is noted as 'set to 1'.
+         */
+        sync_mode = 0x01;
+    }
+    else
     {
         sync_mode = (os_conf&0x01)?0x02:0x00;
     }
