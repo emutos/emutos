@@ -59,7 +59,7 @@ void bmem_init(void)
 {
     KDEBUG(("_etext = 0x%08lx\n", (LONG)_etext));
     KDEBUG(("_edata = 0x%08lx\n", (LONG)_edata));
-    KDEBUG(("end    = 0x%08lx\n", (LONG)end));
+    KDEBUG(("_end   = 0x%08lx\n", (LONG)_end));
 
     /* initialise some memory variables */
     membot = end_os = os_end;

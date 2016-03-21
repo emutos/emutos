@@ -46,7 +46,7 @@
 // ==== Overall memory map ===================================================
 
         .extern bssstart      // end of documented low memory tosvars
-        .extern _end          // end of bss + comm sections (ld generated)
+        .extern __end         // end of bss + comm sections (ld generated)
         .extern _os_end       // first byte RAM not used by OS
 
 // ===========================================================================
@@ -64,7 +64,7 @@
 
 meminit:
         lea     bssstart, a0
-        lea     _end-1, a1
+        lea     __end-1, a1
         move.l  a1, d0
         sub.l   a0, d0
         lsr.l   #2, d0

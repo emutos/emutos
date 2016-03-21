@@ -74,10 +74,10 @@ extern LONG end_os;
 extern LONG m_start;
 extern LONG m_length;
 
-/* these symbols are automatically created by gcc + ld */
+/* these symbols are automatically created by ld */
 extern BYTE _etext[];     /* end of text */
 extern BYTE _edata[];     /* end of data */
-extern BYTE end[];        /* end of bss + comm sections */
+extern BYTE _end[];       /* end of bss + comm sections */
 
 extern LONG os_end;
 extern LONG membot;

@@ -283,8 +283,8 @@ FUNCTION_SHELL_GET_SYMBOL_ADDRESS = awk '/ $(1)( |$$)/{print $$1}' $(2)
 
 # membot (LONG at 0x432) is the bottom of the free RAM
 # We can guess its value from the map file
-SHELL_GET_MEMBOT_EMUTOS_MAP = $(call FUNCTION_SHELL_GET_SYMBOL_ADDRESS,_end,emutos.map)
-SHELL_GET_MEMBOT_RAMTOS_MAP = $(call FUNCTION_SHELL_GET_SYMBOL_ADDRESS,_edata,ramtos.map)
+SHELL_GET_MEMBOT_EMUTOS_MAP = $(call FUNCTION_SHELL_GET_SYMBOL_ADDRESS,__end,emutos.map)
+SHELL_GET_MEMBOT_RAMTOS_MAP = $(call FUNCTION_SHELL_GET_SYMBOL_ADDRESS,__edata,ramtos.map)
 
 # The following reference values have been gathered from major TOS versions
 MEMBOT_TOS102 = 0x0000ca00

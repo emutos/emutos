@@ -41,9 +41,9 @@
 
 // ==== Overall memory map ===================================================
 
-        .extern _end          // end of bss + comm sections (ld generated)
-        .extern _etext        // end of text section
-        .extern _edata        // end of data section
+        .extern __end         // end of bss + comm sections (ld generated)
+        .extern __etext       // end of text section
+        .extern __edata       // end of data section
 
 
 // ===========================================================================
@@ -97,12 +97,12 @@ _os_end:
     // When EmuTOS is run from the RAM, the BSS starts at address 0 as usual,
     // but the TEXT and DATA segments are just after the BSS.
     // Thus the first unused RAM address is the end of the DATA segment.
-    .dc.l   _edata
+    .dc.l   __edata
 #else
     // When EmuTOS is run from the ROM, the TEXT and DATA segments stays in the
     // ROM, but the BSS starts at address 0.
     // Thus the first unused RAM address is the end of the BSS segment.
-    .dc.l   _end        // os_end, first byte RAM not used by OS
+    .dc.l   __end       // os_end, first byte RAM not used by OS
 #endif
 os_res1:
     .dc.l   _main       // os_res1, reserved

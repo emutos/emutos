@@ -17,7 +17,7 @@
 
         .globl  _main           // OS entry point
 
-        .extern _end
+        .extern __end
         .extern resvalid
         .extern resvector
         .extern meminit
@@ -48,7 +48,7 @@ reseth:
 _os_beg:
     .dc.l   _os_entry   // os_beg, base of os = _sysbase
 _os_end:
-    .dc.l   _end        // os_end, first byte RAM not used by OS
+    .dc.l   __end       // os_end, first byte RAM not used by OS
 os_res1:
     .dc.l   _main       // os_res1, reserved
 _os_magic:
