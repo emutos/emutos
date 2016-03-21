@@ -17,6 +17,7 @@
 #include "tosvars.h"
 #include "asm.h"
 #include "vectors.h"
+#include "machine.h"
 
 /*
  * This is a straightforward implementation of PSG-related xbios routines.
@@ -49,18 +50,39 @@ static BYTE *sndtable;    /* 0xE44 */
 static UBYTE snddelay;    /* 0xE48 */
 static UBYTE sndtmp;      /* 0xE49 */
 
+/*
+ * Bit 7 of PSG port A was unused on the original ST, but has
+ * conflicting meanings for subsequent systems:
+ *  . for the TT & Mega STe, it is normally set, to enable the serial
+ *    port rather than the LAN port
+ *  . for the Falcon, it is normally clear; setting it applies a reset
+ *    to the IDE interface
+ *
+ * Ideally we would detect the LAN interface, but there seems to be no
+ * way to do this directly; we just know that it's present on the TT
+ * and the Mega STe.  The only other feature common to both machines
+ * and not present on any other machine is VME.  We use VME detection
+ * as a proxy for LAN port detection.
+ */
+#define HAS_LAN_PORT    HAS_VME
+
 #endif
 
 void snd_init(void)
 {
 #if CONF_WITH_YM2149
+    UBYTE porta_init = 0x07;    /* deselect both floppies & select side 0 */
+
+    if (HAS_LAN_PORT)
+        porta_init |= 0x80;     /* select serial, not LAN */
+
     /* set ports A and B to output */
     PSG->control = PSG_MULTI;
     PSG->data = 0xC0;
 
-    /* deselect both floppies */
+    /* initialise port A */
     PSG->control = PSG_PORT_A;
-    PSG->data = 0x07;
+    PSG->data = porta_init;
 
     /* dosound init */
     sndtable = NULL;
