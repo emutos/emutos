@@ -27,9 +27,11 @@
  * - floppy VBL interrupt (to deselect floppy drives, in port A)
  * - RS232 interrupts (to handle RTS/CTS hardware flow control)
  * - timer C sound interrupt (play dosound)
- * - parallel port bios device.
- * Since acessing to a PSG register is a two step operation that requires
- * first to write in control, then read or write control or data, it is
+ * - parallel port bios device
+ * - IDE reset (on Falcon), currently not used
+ * - LAN/serial port select on TT/Mega STe.
+ * Since accessing a PSG register is a two step operation that requires
+ * first writing control, then reading or writing control or data, it is
  * necessary that no interrupt which could also use the PSG occur when
  * using the PSG.
  */
@@ -52,125 +54,143 @@ static UBYTE sndtmp;      /* 0xE49 */
 void snd_init(void)
 {
 #if CONF_WITH_YM2149
-  /* set ports A and B to output */
-  PSG->control = PSG_MULTI;
-  PSG->data = 0xC0;
-  /* deselect both floppies */
-  PSG->control = PSG_PORT_A;
-  PSG->data = 0x07;
-  /* dosound init */
-  sndtable = NULL;
+    /* set ports A and B to output */
+    PSG->control = PSG_MULTI;
+    PSG->data = 0xC0;
+
+    /* deselect both floppies */
+    PSG->control = PSG_PORT_A;
+    PSG->data = 0x07;
+
+    /* dosound init */
+    sndtable = NULL;
 #endif
-  /* set bell_hook and kcl_hook */
-  bell_hook = do_bell;
-  kcl_hook = do_keyclick;
+
+    /* set bell_hook and kcl_hook */
+    bell_hook = do_bell;
+    kcl_hook = do_keyclick;
 }
 
 LONG giaccess(WORD data, WORD reg)
 {
 #if CONF_WITH_YM2149
-  WORD old_sr;
-  LONG value = 0;
+    WORD old_sr;
+    LONG value = 0;
 
-  old_sr = set_sr(0x2700);
-  PSG->control = reg & 0xF;
-  if(reg & GIACCESS_WRITE) {
-    PSG->data = data;
-  }
-  value = PSG->control;
-  set_sr(old_sr);
-  return value;
+    old_sr = set_sr(0x2700);
+    PSG->control = reg & 0xF;
+    if (reg & GIACCESS_WRITE)
+    {
+        PSG->data = data;
+    }
+    value = PSG->control;
+    set_sr(old_sr);
+
+    return value;
 #else
-  return 0;
+    return 0;
 #endif
 }
 
 void ongibit(WORD data)
 {
 #if CONF_WITH_YM2149
-  WORD old_sr;
-  WORD tmp;
+    WORD old_sr;
+    WORD tmp;
 
-  old_sr = set_sr(0x2700);
-  PSG->control = PSG_PORT_A;
-  tmp = PSG->control;
-  tmp |= data;
-  PSG->data = tmp;
-  set_sr(old_sr);
+    old_sr = set_sr(0x2700);
+    PSG->control = PSG_PORT_A;
+    tmp = PSG->control;
+    tmp |= data;
+    PSG->data = tmp;
+    set_sr(old_sr);
 #endif
 }
 
 void offgibit(WORD data)
 {
 #if CONF_WITH_YM2149
-  WORD old_sr;
-  WORD tmp;
+    WORD old_sr;
+    WORD tmp;
 
-  old_sr = set_sr(0x2700);
-  PSG->control = PSG_PORT_A;
-  tmp = PSG->control;
-  tmp &= data;
-  PSG->data = tmp;
-  set_sr(old_sr);
+    old_sr = set_sr(0x2700);
+    PSG->control = PSG_PORT_A;
+    tmp = PSG->control;
+    tmp &= data;
+    PSG->data = tmp;
+    set_sr(old_sr);
 #endif
 }
 
 LONG dosound(LONG table)
 {
 #if CONF_WITH_YM2149
-  LONG oldtable = (LONG) sndtable;
-  if(table >= 0) {
-    sndtable = (BYTE *) table;
-    snddelay = 0;
-  }
-  return oldtable;
+    LONG oldtable = (LONG) sndtable;
+
+    if (table >= 0)
+    {
+        sndtable = (BYTE *) table;
+        snddelay = 0;
+    }
+
+    return oldtable;
 #else
-  return 0;
+    return 0;
 #endif
 }
 
 #if CONF_WITH_YM2149
-
 void sndirq(void)
 {
-  BYTE *code;
-  BYTE instr;
+    BYTE *code;
+    BYTE instr;
 
-  code = sndtable;
-  if(code == 0) return;
-  if(snddelay) {
-    snddelay --;
-    return;
-  }
-  while((instr = *code++) >= 0) {
-    PSG->control = instr;
-    if(instr == PSG_MULTI) {
-      UBYTE tmp = PSG->control;
-      PSG->data = (tmp & 0xC0) | (*code++ & 0x3F);
-    } else {
-      PSG->data = *code++;
+    code = sndtable;
+    if (code == 0)
+        return;
+
+    if (snddelay)
+    {
+        snddelay--;
+        return;
     }
-  }
-  switch((UBYTE)instr) {
-  case 0x80:
-    sndtmp = *code++;
-    break;
-  case 0x81:
-    PSG->control = *code++;
-    sndtmp += *code++;
-    PSG->data = sndtmp;
-    if(sndtmp != *code++) {
-      code -= 4;
+
+    while((instr = *code++) >= 0)
+    {
+        PSG->control = instr;
+        if (instr == PSG_MULTI)
+        {
+            UBYTE tmp = PSG->control;
+            PSG->data = (tmp & 0xC0) | (*code++ & 0x3F);
+        } else {
+            PSG->data = *code++;
+        }
     }
-    break;
-  default:
-    /* break; ??? */
-  case 0xff:
-    snddelay = *code++;
-    if(snddelay == 0) code = 0;
-    break;
-  }
-  sndtable = code;
+
+    switch((UBYTE)instr) 
+    {
+    case 0x80:
+        sndtmp = *code++;
+        break;
+    case 0x81:
+        PSG->control = *code++;
+        sndtmp += *code++;
+        PSG->data = sndtmp;
+        if (sndtmp != *code++)
+        {
+            code -= 4;
+        }
+        break;
+    default:
+        /* break; ??? */
+    case 0xff:
+        snddelay = *code++;
+        if (snddelay == 0)
+            code = 0;
+        break;
+    }
+
+    sndtable = code;
 }
 
 static const UBYTE bellsnd[] = {
@@ -211,19 +231,19 @@ static const UBYTE keyclicksnd[] = {
 
 void bell(void)
 {
-  protect_v((PFLONG) bell_hook);
+    protect_v((PFLONG) bell_hook);
 }
 
 static void do_bell(void)
 {
 #if CONF_WITH_YM2149
-  dosound((LONG) bellsnd);
+    dosound((LONG) bellsnd);
 #endif
 }
 
 static void do_keyclick(void)
 {
 #if CONF_WITH_YM2149
-  dosound((LONG) keyclicksnd);
+    dosound((LONG) keyclicksnd);
 #endif
 }
