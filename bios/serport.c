@@ -698,6 +698,7 @@ void init_serport(void)
     memcpy(&iorecTT,&iorec_init,sizeof(EXT_IOREC));
     iorecTT.in.buf = ibufTT;
     iorecTT.out.buf = obufTT;
+    rsconfTT(B9600, 0, 0x88, 1, 1, 0);  /* set default initial values for TT MFP */
 #endif  /* CONF_WITH_TT_MFP */
 
 #if BCONMAP_AVAILABLE
