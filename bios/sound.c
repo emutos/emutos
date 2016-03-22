@@ -18,6 +18,7 @@
 #include "asm.h"
 #include "vectors.h"
 #include "machine.h"
+#include "cookie.h"
 
 /*
  * This is a straightforward implementation of PSG-related xbios routines.
@@ -60,11 +61,9 @@ static UBYTE sndtmp;      /* 0xE49 */
  *
  * Ideally we would detect the LAN interface, but there seems to be no
  * way to do this directly; we just know that it's present on the TT
- * and the Mega STe.  The only other feature common to both machines
- * and not present on any other machine is VME.  We use VME detection
- * as a proxy for LAN port detection.
+ * and the Mega STe.
  */
-#define HAS_LAN_PORT    HAS_VME
+#define HAS_LAN_PORT    ((cookie_mch==MCH_TT) || (cookie_mch==MCH_MSTE))
 
 #endif
 
