@@ -206,6 +206,8 @@ static LONG acsi_capacity(WORD dev, ULONG *info)
 
     acsi_end();
 
+    invalidate_data_cache(data,sizeof(ULONG)*4);
+
     if (status == 0) {
         info[0] = data[0] + 1;  /* data[0] is number of last sector */
         info[1] = data[1];
