@@ -129,7 +129,7 @@ LD = $(CC) $(MULTILIBFLAGS) -nostartfiles -nostdlib
 VMA_STANDARD = 0x00e00000
 VMA_192 = 0x00fc0000
 VMA = $(VMA_STANDARD)
-LDFLAGS = -lgcc -Wl,--oformat,binary,-Ttext=$(VMA),-Tbss=0x00000000,-e,_main
+LDFLAGS = -lgcc -Wl,-T,emutos.ld,-Ttext=$(VMA)
 
 # C compiler
 CC = $(TOOLCHAIN_PREFIX)gcc
