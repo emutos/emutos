@@ -79,44 +79,45 @@ int has_scc;
 static void detect_video(void)
 {
 #if CONF_WITH_STE_SHIFTER
- /* test if we have an STe Shifter by testing that register 820d
-  * works (put a value, read other reg, read again, and compare)
-  */
-  volatile BYTE *ste_reg = (BYTE *) 0xffff820d;
-  volatile BYTE *other_reg1 = (BYTE *) 0xffff8203;
-  volatile WORD *other_reg2 = (WORD *) 0xffff8240;
+    /* test if we have an STe Shifter by testing that register 820d
+     * works (put a value, read other reg, read again, and compare)
+     */
+    volatile BYTE *ste_reg = (BYTE *) 0xffff820d;
+    volatile BYTE *other_reg1 = (BYTE *) 0xffff8203;
+    volatile WORD *other_reg2 = (WORD *) 0xffff8240;
 
-  has_ste_shifter = 0;
-  if(!check_read_byte((long)ste_reg)) return;
-  *ste_reg = 90;
-  *other_reg1; /* force register read (really useful ?) */
-  if(*ste_reg == 90) {
-    *ste_reg = 0;
-    *other_reg2; /* force register read (really useful ?) */
-    if(*ste_reg == 0) {
-      has_ste_shifter = 1;
+    has_ste_shifter = 0;
+    if (!check_read_byte((long)ste_reg))
+        return;
+    *ste_reg = 90;
+    *other_reg1;        /* force register read (really useful ?) */
+    if (*ste_reg == 90)
+    {
+        *ste_reg = 0;
+        *other_reg2;    /* force register read (really useful ?) */
+        if (*ste_reg == 0)
+            has_ste_shifter = 1;
     }
-  }
 
-  KDEBUG(("has_ste_shifter = %d\n", has_ste_shifter));
+    KDEBUG(("has_ste_shifter = %d\n", has_ste_shifter));
 #endif
 
 #if CONF_WITH_TT_SHIFTER
-  /* test if we have a TT Shifter by testing for TT color palette */
-  has_tt_shifter = 0;
-  if (check_read_byte(TT_PALETTE_REGS))
-    has_tt_shifter = 1;
+    /* test if we have a TT Shifter by testing for TT color palette */
+    has_tt_shifter = 0;
+    if (check_read_byte(TT_PALETTE_REGS))
+        has_tt_shifter = 1;
 
-  KDEBUG(("has_tt_shifter = %d\n", has_tt_shifter));
+    KDEBUG(("has_tt_shifter = %d\n", has_tt_shifter));
 #endif
 
 #if CONF_WITH_VIDEL
-  /* test if we have Falcon VIDEL by testing for f030_xreg */
-  has_videl = 0;
-  if (check_read_byte(FALCON_HHT))
-    has_videl = 1;
+    /* test if we have Falcon VIDEL by testing for f030_xreg */
+    has_videl = 0;
+    if (check_read_byte(FALCON_HHT))
+        has_videl = 1;
 
-  KDEBUG(("has_videl = %d\n", has_videl));
+    KDEBUG(("has_videl = %d\n", has_videl));
 #endif
 }
 
@@ -126,42 +127,41 @@ static void detect_video(void)
 static void detect_serial_ports(void)
 {
 #if CONF_WITH_TT_MFP
-  has_tt_mfp = 0;
-  if (check_read_byte((LONG)TT_MFP_BASE+1))
-    has_tt_mfp = 1;
+    has_tt_mfp = 0;
+    if (check_read_byte((LONG)TT_MFP_BASE+1))
+        has_tt_mfp = 1;
 
-  KDEBUG(("has_tt_mfp = %d\n", has_tt_mfp));
+    KDEBUG(("has_tt_mfp = %d\n", has_tt_mfp));
 #endif
 
 #if CONF_WITH_SCC
-  has_scc = 0;
-  if (check_read_byte(SCC_BASE))
-    has_scc = 1;
+    has_scc = 0;
+    if (check_read_byte(SCC_BASE))
+        has_scc = 1;
 
-  KDEBUG(("has_scc = %d\n", has_scc));
+    KDEBUG(("has_scc = %d\n", has_scc));
 #endif
 }
 
 #if CONF_WITH_VME
 
-/* vme */
-
 int has_vme;
 
 static void detect_vme(void)
 {
-  volatile BYTE *vme_mask = (BYTE *) VME_INT_MASK;
-  volatile BYTE *sys_mask = (BYTE *) SYS_INT_MASK;
+    volatile BYTE *vme_mask = (BYTE *) VME_INT_MASK;
+    volatile BYTE *sys_mask = (BYTE *) SYS_INT_MASK;
 
-  if(check_read_byte(SCU_GPR1)) {
-    *vme_mask = 0x40;  /* ??? IRQ3 from VMEBUS/soft */
-    *sys_mask = 0x14;  /* ??? set VSYNC and HSYNC */
-    has_vme = 1;
-  } else {
-    has_vme = 0;
-  }
+    if (check_read_byte(SCU_GPR1))
+    {
+        *vme_mask = 0x40;   /* ??? IRQ3 from VMEBUS/soft */
+        *sys_mask = 0x14;   /* ??? set VSYNC and HSYNC */
+        has_vme = 1;
+    } else {
+        has_vme = 0;
+    }
 
-  KDEBUG(("has_vme = %d\n", has_vme));
+    KDEBUG(("has_vme = %d\n", has_vme));
 }
 
 #endif /* CONF_WITH_VME */
@@ -175,12 +175,12 @@ int has_blitter;
 
 static void detect_blitter(void)
 {
-  has_blitter = 0;
+    has_blitter = 0;
 
-  if (check_read_byte(BLITTER_CONFIG1))
-    has_blitter = 1;
+    if (check_read_byte(BLITTER_CONFIG1))
+        has_blitter = 1;
 
-  KDEBUG(("has_blitter = %d\n", has_blitter));
+    KDEBUG(("has_blitter = %d\n", has_blitter));
 }
 
 #endif /* CONF_WITH_BLITTER */
@@ -192,17 +192,17 @@ int has_dip_switches;
 
 static void detect_dip_switches(void)
 {
-  if (IS_ARANYM)
-  {
-    /* The auto-detection currently crashes ARAnyM-JIT. */
-    has_dip_switches = 0;
-  }
-  else
-  {
-    has_dip_switches = check_read_byte(DIP_SWITCHES+1);
-  }
+    if (IS_ARANYM)
+    {
+        /* The auto-detection currently crashes ARAnyM-JIT. */
+        has_dip_switches = 0;
+    }
+    else
+    {
+        has_dip_switches = check_read_byte(DIP_SWITCHES+1);
+    }
 
-  KDEBUG(("has_dip_switches = %d\n", has_dip_switches));
+    KDEBUG(("has_dip_switches = %d\n", has_dip_switches));
 }
 
 /* DIP switch usage is as follows (according to the "ATARI FALCON030
@@ -215,8 +215,8 @@ static void detect_dip_switches(void)
 
 static void setvalue_swi(void)
 {
-  cookie_swi = (*(volatile UWORD *)DIP_SWITCHES)>>8;
-  KDEBUG(("cookie_swi = 0x%08lx\n", cookie_swi));
+    cookie_swi = (*(volatile UWORD *)DIP_SWITCHES)>>8;
+    KDEBUG(("cookie_swi = 0x%08lx\n", cookie_swi));
 }
 
 #endif /* CONF_WITH_DIP_SWITCHES */
@@ -225,62 +225,65 @@ static void setvalue_swi(void)
 
 static void setvalue_vdo(void)
 {
-  if(HAS_VIDEL)
-    cookie_vdo = 0x00030000L;
-  else if(HAS_TT_SHIFTER)
-    cookie_vdo = 0x00020000L;
-  else if(HAS_STE_SHIFTER)
-    cookie_vdo = 0x00010000L;
-  else
-    cookie_vdo = 0x00000000L;
+    if (HAS_VIDEL)
+        cookie_vdo = 0x00030000L;
+    else if (HAS_TT_SHIFTER)
+        cookie_vdo = 0x00020000L;
+    else if (HAS_STE_SHIFTER)
+        cookie_vdo = 0x00010000L;
+    else
+        cookie_vdo = 0x00000000L;
 
-  KDEBUG(("cookie_vdo = 0x%08lx\n", cookie_vdo));
+    KDEBUG(("cookie_vdo = 0x%08lx\n", cookie_vdo));
 }
 
 /* machine type */
 static void setvalue_mch(void)
 {
 #if CONF_ATARI_HARDWARE
-  if (IS_ARANYM)
-    cookie_mch = MCH_ARANYM;
-  else if(HAS_VIDEL)
-    cookie_mch = MCH_FALCON;
-  else if(HAS_TT_SHIFTER)
-    cookie_mch = MCH_TT;
-  else if(HAS_STE_SHIFTER) {
-    if(HAS_VME)
-      cookie_mch = MCH_MSTE;
+    if (IS_ARANYM)
+        cookie_mch = MCH_ARANYM;
+    else if (HAS_VIDEL)
+        cookie_mch = MCH_FALCON;
+    else if (HAS_TT_SHIFTER)
+        cookie_mch = MCH_TT;
+    else if (HAS_STE_SHIFTER)
+    {
+        if (HAS_VME)
+            cookie_mch = MCH_MSTE;
+        else
+            cookie_mch = MCH_STE;
+    }
     else
-      cookie_mch = MCH_STE;
-  }
-  else
-    cookie_mch = MCH_ST;
+        cookie_mch = MCH_ST;
 #else
-  cookie_mch = MCH_NOHARD;
+    cookie_mch = MCH_NOHARD;
 #endif /* CONF_ATARI_HARDWARE */
 
-  KDEBUG(("cookie_mch = 0x%08lx\n", cookie_mch));
+    KDEBUG(("cookie_mch = 0x%08lx\n", cookie_mch));
 }
 
 /* SND */
 
 static void setvalue_snd(void)
 {
-  cookie_snd = 0;
+    cookie_snd = 0;
 
 #if CONF_WITH_YM2149
-  cookie_snd |= SND_PSG;
+    cookie_snd |= SND_PSG;
 #endif
 
-  if (HAS_DMASOUND) {
-    cookie_snd |= SND_8BIT;
-  }
+    if (HAS_DMASOUND)
+    {
+        cookie_snd |= SND_8BIT;
+    }
 
-  if (HAS_FALCON_DMASOUND) {
-    cookie_snd |= SND_16BIT | SND_MATRIX;
-  }
+    if (HAS_FALCON_DMASOUND)
+    {
+        cookie_snd |= SND_16BIT | SND_MATRIX;
+    }
 
-  KDEBUG(("cookie_snd = 0x%08lx\n", cookie_snd));
+    KDEBUG(("cookie_snd = 0x%08lx\n", cookie_snd));
 }
 
 #if CONF_WITH_FRB
@@ -289,20 +292,21 @@ static void setvalue_snd(void)
 
 static void setvalue_frb(void)
 {
-  BOOL need_frb; /* Required only if the system has Alt RAM */
+    BOOL need_frb; /* Required only if the system has Alt RAM */
 
 #if CONF_WITH_FASTRAM
-  /* Standard Atari TT-RAM may be present */
-  need_frb = (ramtop > 0);
+    /* Standard Atari TT-RAM may be present */
+    need_frb = (ramtop > 0);
 #else
-  need_frb = FALSE;
+    need_frb = FALSE;
 #endif
 
-  if (need_frb) {
-    cookie_frb = (UBYTE *)balloc(64 * 1024UL);
-  }
+    if (need_frb)
+    {
+        cookie_frb = (UBYTE *)balloc(64 * 1024UL);
+    }
 
-  KDEBUG(("cookie_frb = 0x%08lx\n", (ULONG)cookie_frb));
+    KDEBUG(("cookie_frb = 0x%08lx\n", (ULONG)cookie_frb));
 }
 
 #endif /* CONF_WITH_FRB */
@@ -314,16 +318,17 @@ static void setvalue_frb(void)
 static void setvalue_fdc(void)
 {
 #if CONF_WITH_DIP_SWITCHES
-  if (has_dip_switches && !(cookie_swi & 0x40)) {
+    if (has_dip_switches && !(cookie_swi & 0x40))
+    {
     /* switch *off* means AJAX controller is installed */
-    cookie_fdc = FDC_1ATC;
-  } else
+        cookie_fdc = FDC_1ATC;
+    } else
 #endif
-  {
-    cookie_fdc = FDC_0ATC;
-  }
+    {
+        cookie_fdc = FDC_0ATC;
+    }
 
-  KDEBUG(("cookie_fdc = 0x%08lx\n", cookie_fdc));
+    KDEBUG(("cookie_fdc = 0x%08lx\n", cookie_fdc));
 }
 
 #endif /* CONF_WITH_FDC */
@@ -333,44 +338,45 @@ int is_aranym;
 
 static void aranym_machine_detect(void)
 {
-  #define ARANYM_NAME "aranym"
-  is_aranym = !strncasecmp(machine_name(), ARANYM_NAME, strlen(ARANYM_NAME));
+#define ARANYM_NAME "aranym"
 
-  KDEBUG(("is_aranym = %d\n", is_aranym));
+    is_aranym = !strncasecmp(machine_name(), ARANYM_NAME, strlen(ARANYM_NAME));
+
+    KDEBUG(("is_aranym = %d\n", is_aranym));
 }
 #endif /* CONF_WITH_ARANYM */
 
 void machine_detect(void)
 {
 #if CONF_WITH_ARANYM
-  aranym_machine_detect();
+    aranym_machine_detect();
 #endif
 #ifdef MACHINE_AMIGA
-  amiga_machine_detect();
+    amiga_machine_detect();
 #endif
-  detect_video();
-  detect_serial_ports();
+    detect_video();
+    detect_serial_ports();
 #if CONF_WITH_VME
-  detect_vme();
+    detect_vme();
 #endif
 #if CONF_WITH_MEGARTC
-  detect_megartc();
-  KDEBUG(("has_megartc = %d\n", has_megartc));
+    detect_megartc();
+    KDEBUG(("has_megartc = %d\n", has_megartc));
 #endif /* CONF_WITH_MEGARTC */
 #if CONF_WITH_NVRAM
-  detect_nvram();
+    detect_nvram();
 #endif
 #if CONF_WITH_DMASOUND
-  detect_dmasound();
+    detect_dmasound();
 #endif
 #if CONF_WITH_DIP_SWITCHES
-  detect_dip_switches();
+    detect_dip_switches();
 #endif
 #if CONF_WITH_BLITTER
-  detect_blitter();
+    detect_blitter();
 #endif
 #if CONF_WITH_IDE
-  detect_ide();
+    detect_ide();
 #endif
 }
 
@@ -389,8 +395,8 @@ volatile BYTE *fbcr = (BYTE *)FALCON_BUS_CTL;
  *   0x01 : cpu speed (0=8MHz, 1=16MHz)
  * source: Hatari source code
  */
-  if (has_videl)        /* i.e. it's a Falcon */
-    *fbcr |= 0x29;      /* set STe Bus emulation off, blitter off, 16MHz CPU */
+    if (has_videl)      /* i.e. it's a Falcon */
+        *fbcr |= 0x29;  /* set STe Bus emulation off, blitter off, 16MHz CPU */
 #endif
 
 #if !CONF_WITH_RESET
@@ -399,27 +405,27 @@ volatile BYTE *fbcr = (BYTE *)FALCON_BUS_CTL;
  * been run during startup
  */
  #if CONF_WITH_MFP
-  {
-    MFP *mfp = MFP_BASE;  /* set base address of MFP */
+    {
+        MFP *mfp = MFP_BASE;  /* set base address of MFP */
 
-    mfp->iera = 0x00;     /* disable MFP interrupts */
-    mfp->ierb = 0x00;
-  }
+        mfp->iera = 0x00;     /* disable MFP interrupts */
+        mfp->ierb = 0x00;
+    }
  #endif
 
   /* TODO: disable MFP-TT interrupts when TT support is implemented */
 
  #if CONF_WITH_SCC
-  if (has_scc)
-  {
-    SCC *scc = (SCC *)SCC_BASE;
-    ULONG loops = loopcount_1_msec / 1000;  /* 1 usec = 8 cycles of SCC PCLK */
+    if (has_scc)
+    {
+        SCC *scc = (SCC *)SCC_BASE;
+        ULONG loops = loopcount_1_msec / 1000;  /* 1 usec = 8 cycles of SCC PCLK */
 
-    scc->portA.ctl = 0x09;  /* issue hardware reset */
-    delay_loop(loops);
-    scc->portA.ctl = 0xC0;
-    delay_loop(loops);
-  }
+        scc->portA.ctl = 0x09;  /* issue hardware reset */
+        delay_loop(loops);
+        scc->portA.ctl = 0xC0;
+        delay_loop(loops);
+    }
  #endif
 #endif /* CONF_WITH_RESET */
 }
@@ -427,168 +433,171 @@ volatile BYTE *fbcr = (BYTE *)FALCON_BUS_CTL;
 void fill_cookie_jar(void)
 {
 #ifdef __mcoldfire__
-  cookie_add(COOKIE_COLDFIRE, 0);
-  setvalue_mcf();
-  cookie_add(COOKIE_MCF, (long)&cookie_mcf);
+    cookie_add(COOKIE_COLDFIRE, 0);
+    setvalue_mcf();
+    cookie_add(COOKIE_MCF, (long)&cookie_mcf);
 #else
-  /* this is detected by detect_cpu(), called from processor_init() */
-  cookie_add(COOKIE_CPU, mcpu);
+    /* this is detected by detect_cpu(), called from processor_init() */
+    cookie_add(COOKIE_CPU, mcpu);
 #endif
 
-  /* _VDO
-   * This cookie represents the revision of the video shifter present.
-   * Currently valid values are:
-   * 0x00000000  ST
-   * 0x00010000  STe
-   * 0x00020000  TT030
-   * 0x00030000  Falcon030
-   */
-
-  setvalue_vdo();
-  cookie_add(COOKIE_VDO, cookie_vdo);
+    /* _VDO
+     * This cookie represents the revision of the video shifter present.
+     * Currently valid values are:
+     * 0x00000000  ST
+     * 0x00010000  STe
+     * 0x00020000  TT030
+     * 0x00030000  Falcon030
+     */
+    setvalue_vdo();
+    cookie_add(COOKIE_VDO, cookie_vdo);
 
 #ifndef __mcoldfire__
   /* this is detected by detect_fpu(), called from processor_init() */
-  cookie_add(COOKIE_FPU, fputype);
+    cookie_add(COOKIE_FPU, fputype);
 #endif
 
-  /* _MCH */
-  setvalue_mch();
-  cookie_add(COOKIE_MCH, cookie_mch);
+    /* _MCH */
+    setvalue_mch();
+    cookie_add(COOKIE_MCH, cookie_mch);
 
 #if CONF_WITH_DIP_SWITCHES
-  /* _SWI  On machines that contain internal configuration dip switches,
-   * this value specifies their positions as a bitmap. Dip switches are
-   * generally used to indicate the presence of additional hardware which
-   * will be represented by other cookies.
-   */
-  if (has_dip_switches) {
-    setvalue_swi();
-    cookie_add(COOKIE_SWI, cookie_swi);
-  }
+    /* _SWI  On machines that contain internal configuration dip switches,
+     * this value specifies their positions as a bitmap. Dip switches are
+     * generally used to indicate the presence of additional hardware which
+     * will be represented by other cookies.
+     */
+    if (has_dip_switches)
+    {
+        setvalue_swi();
+        cookie_add(COOKIE_SWI, cookie_swi);
+    }
 #endif
 
-  /* _SND
-   * This cookie contains a bitmap of sound features available to the
-   * system as follows:
-   * 0x01 GI Sound Chip (PSG)
-   * 0x02 1 Stereo 8-bit Playback
-   * 0x04 DMA Record (w/XBIOS)
-   * 0x08 16-bit CODEC
-   * 0x10 DSP
-   */
-
-  setvalue_snd();
-  cookie_add(COOKIE_SND, cookie_snd);
+    /* _SND
+     * This cookie contains a bitmap of sound features available to the
+     * system as follows:
+     * 0x01 GI Sound Chip (PSG)
+     * 0x02 1 Stereo 8-bit Playback
+     * 0x04 DMA Record (w/XBIOS)
+     * 0x08 16-bit CODEC
+     * 0x10 DSP
+     */
+    setvalue_snd();
+    cookie_add(COOKIE_SND, cookie_snd);
 
 #if CONF_WITH_FRB
-  /* _FRB  This cookie is present when alternative RAM is present. It
-   * points to a 64k buffer that may be used by DMA device drivers to
-   * transfer memory between alternative RAM and ST RAM for DMA operations.
-   */
-  setvalue_frb();
-  if (cookie_frb) {
-    cookie_add(COOKIE_FRB, (long)cookie_frb);
-  }
+    /* _FRB  This cookie is present when alternative RAM is present. It
+     * points to a 64k buffer that may be used by DMA device drivers to
+     * transfer memory between alternative RAM and ST RAM for DMA operations.
+     */
+    setvalue_frb();
+    if (cookie_frb)
+    {
+        cookie_add(COOKIE_FRB, (long)cookie_frb);
+    }
 #endif /* CONF_WITH_FRB */
 
-  /* _FLK  The presence of this cookie indicates that file and record
-   * locking extensions to GEMDOS exist. The value field is a version
-   * number currently undefined.
-   */
+    /* _FLK  The presence of this cookie indicates that file and record
+     * locking extensions to GEMDOS exist. The value field is a version
+     * number currently undefined.
+     */
 
-  /* _AKP  This cookie indicates the presence of an Advanced Keyboard
-   * Processor. The high word of this cookie is currently reserved.
-   * The low word indicates the language currently used by TOS for
-   * keyboard interpretation and alerts.
-   */
+    /* _AKP  This cookie indicates the presence of an Advanced Keyboard
+     * Processor. The high word of this cookie is currently reserved.
+     * The low word indicates the language currently used by TOS for
+     * keyboard interpretation and alerts.
+     */
+    detect_akp();
+    KDEBUG(("cookie_akp = 0x%08lx\n", cookie_akp));
+    cookie_add(COOKIE_AKP, cookie_akp);
 
-  detect_akp();
-  KDEBUG(("cookie_akp = 0x%08lx\n", cookie_akp));
-  cookie_add(COOKIE_AKP, cookie_akp);
-
-  /* _IDT  This cookie defines the currently configured date and time
-   * format.  Bits #0-7 contain the ASCII code of the date separator.
-   * Bits #8-11 contain a value indicating the date display format as
-   * follows:
-   *   0 MM-DD-YY
-   *   1 DD-MM-YY
-   *   2 YY-MM-DD
-   *   3 YY-DD-MM
-   * Bits #12-15 contain a value indicating the time format as follows:
-   *   0 12 hour
-   *   1 24 hour
-   * Note: The value of this cookie does not affect any of the internal
-   * time functions. It is intended for informational use by applications
-   * and may also used by the desktop for its date & time displays.
-   */
-
-  detect_idt();
-  KDEBUG(("cookie_idt = 0x%08lx\n", cookie_idt));
-  cookie_add(COOKIE_IDT, cookie_idt);
+    /* _IDT  This cookie defines the currently configured date and time
+     * format.  Bits #0-7 contain the ASCII code of the date separator.
+     * Bits #8-11 contain a value indicating the date display format as
+     * follows:
+     *   0 MM-DD-YY
+     *   1 DD-MM-YY
+     *   2 YY-MM-DD
+     *   3 YY-DD-MM
+     * Bits #12-15 contain a value indicating the time format as follows:
+     *   0 12 hour
+     *   1 24 hour
+     * Note: The value of this cookie does not affect any of the internal
+     * time functions. It is intended for informational use by applications
+     * and may also used by the desktop for its date & time displays.
+     */
+    detect_idt();
+    KDEBUG(("cookie_idt = 0x%08lx\n", cookie_idt));
+    cookie_add(COOKIE_IDT, cookie_idt);
 
 #if CONF_WITH_FDC
-  /* Floppy Drive Controller
-   * Most significant byte means:
-   * 0 - DD (Normal floppy interface)
-   * 1 - HD (1.44 MB with 3.5")
-   * 2 - ED (2.88 MB with 3.5")
-   * the 3 other bytes are the Controller ID:
-   * 0 - No information available
-   * 'ATC' - Fully compatible interface built in a way that
-   * behaves like part of the system.
-   */
-
-  setvalue_fdc();
-  cookie_add(COOKIE_FDC, cookie_fdc);
+    /* Floppy Drive Controller
+     * Most significant byte means:
+     * 0 - DD (Normal floppy interface)
+     * 1 - HD (1.44 MB with 3.5")
+     * 2 - ED (2.88 MB with 3.5")
+     * the 3 other bytes are the Controller ID:
+     * 0 - No information available
+     * 'ATC' - Fully compatible interface built in a way that
+     * behaves like part of the system.
+     */
+    setvalue_fdc();
+    cookie_add(COOKIE_FDC, cookie_fdc);
 #endif
 
 #if DETECT_NATIVE_FEATURES
-  if (has_natfeats()) {
-    cookie_add(COOKIE_NATFEAT, (long)&natfeat_cookie);
-  }
+    if (has_natfeats())
+    {
+        cookie_add(COOKIE_NATFEAT, (long)&natfeat_cookie);
+    }
 #endif
 
 #if CONF_WITH_XHDI
-  create_XHDI_cookie();
+    create_XHDI_cookie();
 #endif
 }
 
 static const char * guess_machine_name(void)
 {
 #if DETECT_NATIVE_FEATURES
-  static char buffer[80];
-  long bufsize;
+    static char buffer[80];
+    long bufsize;
 
-  bufsize = nfGetFullName(buffer, sizeof(buffer)-1);
-  if (bufsize > 0)
-    return buffer;
+    bufsize = nfGetFullName(buffer, sizeof(buffer)-1);
+    if (bufsize > 0)
+        return buffer;
 #endif
 
-  switch(cookie_mch) {
-  case MCH_ST:
-    if(HAS_MEGARTC)
-      return "MegaST";
-    else
-      return "ST";
-  case MCH_STE: return "STe";
-  case MCH_MSTE: return "MegaSTe";
-  case MCH_TT: return "TT";
-  case MCH_FALCON: return "Falcon";
-  default: return "unknown";
-  }
+    switch(cookie_mch) {
+    case MCH_ST:
+        if (HAS_MEGARTC)
+            return "MegaST";
+        else
+            return "ST";
+    case MCH_STE:
+        return "STe";
+    case MCH_MSTE:
+        return "MegaSTe";
+    case MCH_TT:
+        return "TT";
+    case MCH_FALCON:
+        return "Falcon";
+    default:
+        return "unknown";
+    }
 }
 
 const char * machine_name(void)
 {
-  MAYBE_UNUSED(guess_machine_name);
+    MAYBE_UNUSED(guess_machine_name);
 #ifdef MACHINE_FIREBEE
-  return "FireBee";
+    return "FireBee";
 #elif defined(MACHINE_AMIGA)
-  return "Amiga";
+    return "Amiga";
 #elif defined(MACHINE_M548X)
-  return m548x_machine_name();
+    return m548x_machine_name();
 #else
-  return guess_machine_name();
+    return guess_machine_name();
 #endif
 }

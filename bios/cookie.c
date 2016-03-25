@@ -23,31 +23,34 @@ static struct cookie dflt_jar[20];
 
 void cookie_init(void)
 {
-  dflt_jar[0].tag = 0;
-  dflt_jar[0].value = ARRAY_SIZE(dflt_jar);
+    dflt_jar[0].tag = 0;
+    dflt_jar[0].value = ARRAY_SIZE(dflt_jar);
 
-  CJAR = dflt_jar;
+    CJAR = dflt_jar;
 }
 
 void cookie_add(long tag, long value)
 {
-  long n, count;
-  struct cookie *jar = CJAR;
+    long n, count;
+    struct cookie *jar = CJAR;
 
-  assert(jar != NULL);
+    assert(jar != NULL);
 
-  count = 0;
-  while(jar->tag) {
-    assert(jar->tag != tag);
-    count++;
-    jar++;
-  }
-  n = jar->value;
-  assert(n != 0);
-  if (count < (n-1)) {
-    jar->tag = tag;
-    jar->value = value;
-    jar[1].tag = 0;
-    jar[1].value = n;
-  }
+    count = 0;
+    while(jar->tag)
+    {
+        assert(jar->tag != tag);
+        count++;
+        jar++;
+    }
+
+    n = jar->value;
+    assert(n != 0);
+    if (count < (n-1))
+    {
+        jar->tag = tag;
+        jar->value = value;
+        jar[1].tag = 0;
+        jar[1].value = n;
+    }
 }
