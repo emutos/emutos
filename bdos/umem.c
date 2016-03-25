@@ -253,8 +253,9 @@ long    xmxalloc(long amount, int mode)
 #endif
         case MX_PREFSTRAM:
         case MX_PREFTTRAM:
-            /* TODO - I assume that the correct behaviour is to return
-             * the biggest size in either pools. The documentation is unclear.
+            /*
+             * for the "preferred" options, the correct behaviour is to
+             * return the biggest size in either pool - verified on TOS3
              */
             {
                 ret_value = (long) ffit(-1L,&pmd);
