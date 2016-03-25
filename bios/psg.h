@@ -21,9 +21,14 @@ struct psg {
 
 #define PSG ((volatile struct psg *) 0xffff8800)
 
-/* bits in PSG_MULTI register: */
+/* bits in PSG_MULTI register */
 
-/* TODO */
+#define PSG_PORTB_OUTPUT    0x80
+#define PSG_PORTA_OUTPUT    0x40
+#define PSG_PORT_MASK       (PSG_PORTB_OUTPUT|PSG_PORTA_OUTPUT)
+#define PSG_NOISE_MASK      0x38
+#define PSG_TONE_MASK       0x07
+#define PSG_MIXER_MASK      (PSG_NOISE_MASK|PSG_TONE_MASK)
 
 /* PSG registers */
 

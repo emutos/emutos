@@ -80,7 +80,7 @@ LONG bconout0(WORD dev, WORD c)
         /* read PSG multi-function register */
         a = giaccess(0, PSG_MULTI | GIACCESS_READ);
         /* set port B to output mode */
-        a |= 0x80;
+        a |= PSG_PORTB_OUTPUT;
         /* write new value in register */
         giaccess(a, PSG_MULTI | GIACCESS_WRITE);
         /* write char in port B */

@@ -77,7 +77,7 @@ void snd_init(void)
 
     /* set ports A and B to output */
     PSG->control = PSG_MULTI;
-    PSG->data = 0xC0;
+    PSG->data = PSG_PORTB_OUTPUT | PSG_PORTA_OUTPUT;
 
     /* initialise port A */
     PSG->control = PSG_PORT_A;
@@ -182,7 +182,7 @@ void sndirq(void)
         if (instr == PSG_MULTI)
         {
             UBYTE tmp = PSG->control;
-            PSG->data = (tmp & 0xC0) | (*code++ & 0x3F);
+            PSG->data = (tmp & PSG_PORT_MASK) | (*code++ & PSG_MIXER_MASK);
         } else {
             PSG->data = *code++;
         }
