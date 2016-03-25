@@ -413,7 +413,15 @@ volatile BYTE *fbcr = (BYTE *)FALCON_BUS_CTL;
     }
  #endif
 
-  /* TODO: disable MFP-TT interrupts when TT support is implemented */
+ #if CONF_WITH_TT_MFP
+    if (has_tt_mfp)
+    {
+        MFP *mfp = TT_MFP_BASE; /* set base address of TT MFP */
+
+        mfp->iera = 0x00;       /* disable MFP interrupts */
+        mfp->ierb = 0x00;
+    }
+ #endif
 
  #if CONF_WITH_SCC
     if (has_scc)
