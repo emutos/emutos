@@ -299,15 +299,21 @@ MEMBOT_TOS404 = 0x0000f99c
 # Directory selection depending on the features
 #
 
-dirs = bios bdos util vdi
+# Core directories are essential for basic OS operation
+core_dirs = bios bdos util
+
+# Optional directories may be disabled for reduced features
+optional_dirs = vdi
 
 ifeq ($(WITH_AES),1)
- dirs += aes desk
+ optional_dirs += aes desk
 endif
 
 ifeq ($(WITH_CLI),1)
- dirs += cli
+ optional_dirs += cli
 endif
+
+dirs = $(core_dirs) $(optional_dirs)
 
 vpath %.c $(dirs)
 vpath %.S $(dirs)
@@ -322,9 +328,11 @@ include country.mk
 # everything should work fine below.
 #
 
-OBJ = $(foreach d,$(dirs),$(patsubst %.c,obj/%.o,$(patsubst %.S,obj/%.o,$($(d)_src))))
 SRC = $(foreach d,$(dirs),$(addprefix $(d)/,$($(d)_src)))
-OBJECTS = $(OBJ) $(FONTOBJ) obj/version.o
+
+CORE_OBJ = $(foreach d,$(core_dirs),$(patsubst %.c,obj/%.o,$(patsubst %.S,obj/%.o,$($(d)_src)))) $(FONTOBJ) obj/version.o
+OPTIONAL_OBJ = $(foreach d,$(optional_dirs),$(patsubst %.c,obj/%.o,$(patsubst %.S,obj/%.o,$($(d)_src))))
+OBJECTS = $(CORE_OBJ) $(OPTIONAL_OBJ)
 
 #
 # production targets
@@ -382,7 +390,7 @@ version:
 TOCLEAN += *.img *.map
 
 emutos.img emutos.map: $(OBJECTS) Makefile
-	$(LD) -o emutos.img $(OBJECTS) $(LIBS) $(LDFLAGS) -Wl,-Map,emutos.map
+	$(LD) -o emutos.img $(CORE_OBJ) $(LIBS) $(OPTIONAL_OBJ) $(LIBS) $(LDFLAGS) -Wl,-Map,emutos.map
 
 #
 # 128kB Image
@@ -589,7 +597,7 @@ emutos-ram:
 ramtos.img ramtos.map: VMA = $(shell $(SHELL_GET_MEMBOT_EMUTOS_MAP))
 ramtos.img ramtos.map: emutos-ram
 	@echo '# Second pass to build ramtos.img with TEXT and DATA just after the BSS'
-	$(LD) -o ramtos.img $(OBJECTS) $(LIBS) $(LDFLAGS) -Wl,-Map,ramtos.map
+	$(LD) -o ramtos.img $(CORE_OBJ) $(LIBS) $(OPTIONAL_OBJ) $(LIBS) $(LDFLAGS) -Wl,-Map,ramtos.map
 
 # incbin dependencies are not automatically generated
 obj/ramtos.o: ramtos.img
