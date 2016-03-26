@@ -191,13 +191,32 @@ static void lmc1992_init(void)
     write_microwire(LMC1992_COMMAND(LMC1992_FUNCTION_INPUT_SELECT, LMC1992_INPUT_1));
 }
 
+void falcon_dmasound_init(void)
+{
+    /*
+     * connect DMA playback to DAC (headphone/speaker)
+     * set clock = internal 25.175MHz
+     * set TT/STe compatibility mode
+     * disable handshaking
+     */
+    devconnect(0,8,0,0,1);
+
+    setsndmode(0);          /* set 8-bit stereo */
+    soundcmd(2,0x0080);     /* set left gain = 8 */
+    soundcmd(3,0x0080);     /* set right gain = 8 */
+    soundcmd(4,0x0003);     /* set ADDER input to ADC & connection matrix */
+    soundcmd(5,0x0003);     /* set L & R channel ADC source to PSG */
+    soundcmd(6,0x0003);     /* set TT-compatible prescale to /160 = 50MHz */
+}
+
 void dmasound_init(void)
 {
     sound_locked = 0;
 
     lmc1992_init();
 
-    /* TODO: Initialize the other DMA sound hardware */
+    if (has_falcon_dmasound)
+        falcon_dmasound_init();
 }
 
 /* *** XBIOS DMA sound functions *** */
