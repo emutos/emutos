@@ -141,10 +141,10 @@ endif
 MULTILIBFLAGS = $(CPUFLAGS) -mshort
 INC = -Iinclude
 OPTFLAGS = -O2
-OTHERFLAGS = -ffreestanding -fomit-frame-pointer
+OTHERFLAGS = -ffreestanding -fomit-frame-pointer -fno-common
 
 WARNFLAGS = -Wall -Wundef
-#-fno-common -Wshadow -Wmissing-prototypes -Wstrict-prototypes
+#-Wshadow -Wmissing-prototypes -Wstrict-prototypes
 #-Werror
 
 GCCVERSION := $(shell $(CC) -dumpversion | cut -d. -f1)
