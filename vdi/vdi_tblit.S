@@ -342,10 +342,11 @@
 _deftxbuf:
         .ds.b   buf_siz         // char. buffer
 
-        .text // .rodata
+        SECTION_RODATA
 
 #define _scrpt1 0               // small buffer base offset
 
+        .even   // Mandatory in ELF section .rodata
 _scrtsiz:
         .dc.w   cel_siz         // eat up some rom so value can be passed
 
