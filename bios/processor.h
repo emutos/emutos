@@ -18,7 +18,7 @@
  *
  * ColdFire processors
  * ===================
- * If EmuTOS is compiled for ColdFire, it assumes a v4e core.
+ * If EmuTOS is compiled for ColdFire, it assumes a V4e core.
  *
  * Details
  * -------
