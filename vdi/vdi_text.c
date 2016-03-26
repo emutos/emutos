@@ -54,7 +54,7 @@ extern WORD TEXT_FG;
 
 extern WORD font_count;         /* Number of fonts in driver */
 extern WORD deftxbuf[];         /* Default text scratch buffer */
-extern WORD scrtsiz;            /* Default offset to large text buffer */
+extern const WORD scrtsiz;      /* Default offset to large text buffer */
 extern WORD scrpt2;             /* Offset to large text buffer */
 extern WORD *scrtchp;           /* Pointer to text scratch buffer */
 
