@@ -369,6 +369,7 @@ cartover:
 // ===========================================================================
         SECTION_RODATA
 
+        .even   // Mandatory in ELF section .rodata
 zero:   .dc.l   0
 
 

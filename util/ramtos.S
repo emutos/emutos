@@ -17,6 +17,7 @@
 
         SECTION_RODATA
 
+        .balign 4
 _ramtos:
         .incbin "ramtos.img"
         .balign 4

@@ -492,6 +492,7 @@ cpushl_bc:
         SECTION_RODATA
 
 #if CONF_WITH_68030_PMMU
+        .even   // Mandatory in ELF section .rodata
 root_pointer_descriptor:
         .dc.l   0x80000002,_pmmutree // lower limit 0, short format, table at '_pmmutree'
 init_tc:

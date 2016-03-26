@@ -187,6 +187,7 @@ linea_blit:
  * ST/e modes.  Such programs can e.g. leave too little space for
  * sprite backup buffer in higher resolutions.
  */
+        .even   // Mandatory in ELF section .rodata
 linea_vecs:
         .dc.l   _linea_0
         .dc.l   _put_pix        /* $1 - put pixel */

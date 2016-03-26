@@ -1043,6 +1043,7 @@ blt_done:
  * fringe table and combining it with the right fringe table.
  */
 
+                .even   // Mandatory in ELF section .rodata
 lf_tab:         .dc.w   0xFFFF          // origin for not left fringe lookup.
 rf_tab:         .dc.w   0x7FFF          // origin for right fringe lookup.
                 .dc.w   0x3FFF

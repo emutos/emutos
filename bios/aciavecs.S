@@ -223,6 +223,7 @@ _init_acia_vecs:
         // EmuTOS had a functional one) instead of copying the following to
         // the .bss segment at run time.
         SECTION_RODATA
+        .even   // Mandatory in ELF section .rodata
 iorec_table:
         //         sz, hd, tl,   lo, hi
         .dc.l   ikbdibufbuf
