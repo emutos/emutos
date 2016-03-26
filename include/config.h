@@ -818,7 +818,7 @@
  * on the stack. In order to run such programs, we use a large stack.
  * Existing 68K-compatible TOS programs will have worked around this problem,
  * otherwise they would not run on standard Ataris TOSs. Thus this is
- * principally a problem when recompiling for Coldfire systems, and so
+ * principally a problem when recompiling for ColdFire systems, and so
  * we default to a larger value when building for them (see above).
  *
  * A value for AES_STACK_SIZE can be estimated by enabling the define

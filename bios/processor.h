@@ -13,12 +13,12 @@
 /*
  * Processor-related handling in EmuTOS
  * ====================================
- * EmuTOS may be compiled for Coldfire or non-Coldfire processors.
+ * EmuTOS may be compiled for ColdFire or non-ColdFire processors.
  *
  *
- * Coldfire processors
+ * ColdFire processors
  * ===================
- * If EmuTOS is compiled for Coldfire, it assumes a v4e core.
+ * If EmuTOS is compiled for ColdFire, it assumes a v4e core.
  *
  * Details
  * -------
@@ -34,9 +34,9 @@
  *    a small instruction-looping routine.  See delay.c.
  *
  *
- * Non-Coldfire processors
+ * Non-ColdFire processors
  * =======================
- * If EmuTOS is not compiled for Coldfire, it detects the following
+ * If EmuTOS is not compiled for ColdFire, it detects the following
  * CPU types:
  *  . Motorola 68000, 68010, 68020, 68030, 68ec030, 68040, 68060
  * and the following FPU types:

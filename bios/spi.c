@@ -43,7 +43,7 @@
  *      <= 20MHz    for MMC operation       DCTAR1
  *      <= 400kHz   identification mode     DCTAR2
  *
- *  the actual clock speeds available are limited by the Coldfire bus clock
+ *  the actual clock speeds available are limited by the ColdFire bus clock
  *  and the baud rate prescaler/scaler combination.  we also need to set
  *  other timings correspondingly.
  */

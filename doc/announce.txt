@@ -37,7 +37,7 @@ Major changes:
 
 Other changes:
 - AES: increase button spacing in alerts
-- AES: increase AES stack size for Coldfire machines
+- AES: increase AES stack size for ColdFire machines
 - BDOS: evaluate TPAsize flags in Pexec processing
 - BDOS: fix bug in cross-directory rename
 - BIOS: use interrupts for serial console instead of polling

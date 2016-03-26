@@ -5787,7 +5787,7 @@ Start... early ages
 - Makefile aes/large.S aes/optimopt.h: Removed LBWMOV(), no longer used. (RFB)
 
 2014-10-27
-- optimopt.S: Fix error when assembling for Coldfire. (RFB)
+- optimopt.S: Fix error when assembling for ColdFire. (RFB)
 
 2014-10-31
 - vdi/vdi_tblit.S vdi/vdi_tblit_cf.S: Scaled text now looks exactly like
@@ -6220,7 +6220,7 @@ Major changes:
 
 Other changes:
 - AES: increase button spacing in alerts
-- AES: increase AES stack size for Coldfire machines
+- AES: increase AES stack size for ColdFire machines
 - BDOS: evaluate TPAsize flags in Pexec processing
 - BDOS: fix bug in cross-directory rename
 - BIOS: use interrupts for serial console instead of polling
