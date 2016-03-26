@@ -129,7 +129,8 @@ LD = $(CC) $(MULTILIBFLAGS) -nostartfiles -nostdlib
 VMA_STANDARD = 0x00e00000
 VMA_192 = 0x00fc0000
 VMA = $(VMA_STANDARD)
-LDFLAGS = -lgcc -Wl,-T,emutos.ld,-Ttext=$(VMA)
+LIBS = -lgcc
+LDFLAGS = -Wl,-T,emutos.ld,-Ttext=$(VMA)
 
 # C compiler
 CC = $(TOOLCHAIN_PREFIX)gcc
@@ -381,7 +382,7 @@ version:
 TOCLEAN += *.img *.map
 
 emutos.img emutos.map: $(OBJECTS) Makefile
-	$(LD) -o emutos.img $(OBJECTS) $(LDFLAGS) -Wl,-Map,emutos.map
+	$(LD) -o emutos.img $(OBJECTS) $(LIBS) $(LDFLAGS) -Wl,-Map,emutos.map
 
 #
 # 128kB Image
@@ -588,7 +589,7 @@ emutos-ram:
 ramtos.img ramtos.map: VMA = $(shell $(SHELL_GET_MEMBOT_EMUTOS_MAP))
 ramtos.img ramtos.map: emutos-ram
 	@echo '# Second pass to build ramtos.img with TEXT and DATA just after the BSS'
-	$(LD) -o ramtos.img $(OBJECTS) $(LDFLAGS) -Wl,-Map,ramtos.map
+	$(LD) -o ramtos.img $(OBJECTS) $(LIBS) $(LDFLAGS) -Wl,-Map,ramtos.map
 
 # incbin dependencies are not automatically generated
 obj/ramtos.o: ramtos.img
@@ -614,7 +615,7 @@ COMPROBJ = obj/compr-tosvars.o obj/compr-comprimg.o obj/compr-memory.o \
 compr.img compr.map: OPTFLAGS = -Os
 compr.img compr.map: override DEF += -DTARGET_COMPR_STUB
 compr.img compr.map: $(COMPROBJ)
-	$(LD) -o compr.img $(COMPROBJ) $(LDFLAGS) -Wl,-Map,compr.map
+	$(LD) -o compr.img $(COMPROBJ) $(LIBS) $(LDFLAGS) -Wl,-Map,compr.map
 
 # Compressed ROM: stub + ramtos
 .PHONY: etoscpr.img
