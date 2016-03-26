@@ -1,5 +1,5 @@
 /*
- * textblt.S - Blitting of Text
+ * vdi_tblit.S - Blitting of Text
  *
  * Copyright (c) 1999 Caldera, Inc. and Authors:
  *               1984 Dave Staugas
