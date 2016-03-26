@@ -39,7 +39,6 @@
 //  13 Apr -- a. fixed text rotation when scaled RJG                    //
 //            b. act_siz preserves C registers on call                  //
 /////////////////////////////////////////////////////////////////////////
-        .page
 
 #if test0
 //  for test routine access..
@@ -55,8 +54,6 @@
         .globl  tddad
 #endif
 
-
-        .page
 /////////////////////////////////////////////////////////////////////////
 //  Text bit block transfer - TEXTBLT                                   //
 //                                                                      //
@@ -208,7 +205,6 @@
         .globl  _deftxbuf       //base of scratch buffer
         .globl  _scrtsiz
 
-        .page
 /////////////////////////////////////////////////////////
 //  NOTE: The calculations below should serve as an example for //
 //        determining the cell size and buffer size required for //
@@ -325,7 +321,7 @@
 
 #define buf_siz         cel_siz+cel2_siz+out_add    //total byte requirement =
 //                                                  // small + large buffer
-        .page
+
 /////////////////////////////////////////////////////////////////////////
 //  _text_blt expects variables scratchp & scrpt2 to be                 //
 //           initialized as follows:                                    //
@@ -587,7 +583,6 @@ add180:
 add270:
         exg     d1,d3                   //DELX <-> DELY
 
-        .page
 //////
 //   Check_clip
 //
@@ -684,7 +679,6 @@ preskew:
         btst    #OUTLINE,d1             //outlining?
         beq     chk_rota                //br if not, no preblt
 
-        .page
 /////////////////////////////////////////////////////////////////////////
 //  Copy the font character into the character buffer. Then manipulate //
 //  the copy of the character as necessary for outlining, rotating or  //
@@ -841,7 +835,6 @@ chk_db:
 //
         bsr     replicat                // double if DOUBLE nonzero
 
-        .page
 ///////////////////////////////////////////////////////////
 //  clipping                                             //
 //      change SOURCEX, SOURCEY, DELX, DELY              //
@@ -1031,9 +1024,6 @@ blt_done:
         unlk    a6
         rts                             // return to "C"
 
-        .page
-
-
         SECTION_RODATA
 
 /*
@@ -1179,7 +1169,6 @@ msk0:
         move.w  d3,src_wrd(a6)
         bra.w   plane_loop
 
-        .page
 ////////////////////////////////////
 //  writing mode mapping tables:  //
 //                                //
@@ -1316,7 +1305,6 @@ no_more_planes:
 blttype:
         .dc.l   sgl_loop, dbl_loop, mlt_rite, mlt_left
 
-        .page
 ///////////////////////
 //   Single loop - destination is a single word //
 ///////////////////////
@@ -1360,8 +1348,7 @@ sgl_rtn:
         move.w  d1,(a1)                 //store the result
         dbra    d3,sgl_lp               //do next scan line of character
         bra.w   next_plane
-//
-        .page
+
 ///////////////////////
 //  Double loop - destination is two words      //
 ///////////////////////
@@ -1423,8 +1410,7 @@ dbl_2wrd:
 //
         dbra    d3,dbl_lp               //do next scan line of character
         bra.w   next_plane
-//
-        .page
+
 /////////////////////////
 //    Multi - Left     //
 /////////////////////////
@@ -1525,9 +1511,7 @@ lft_rfrng:
 //
         dbra    d3,left_loop            //decrement # of lines to move
         bra.w   next_plane
-//
 
-        .page
 /////////////////////////
 //   Multi - right     //
 /////////////////////////
@@ -1619,9 +1603,7 @@ rgt_rfrng:
 //
         dbra    d3,rite_loop            //decrement # of lines to move
         bra.w   next_plane
-//
 
-        .page
 ///////////////////////////////////////////////////
 //      Writing Mode Operations using fringe mask //
 ///////////////////////////////////////////////////
@@ -1667,8 +1649,7 @@ topd:
         and.w   d2,d1
         or.w    d4,d1
         jmp     (a3)
-//
-        .page
+
 ///////////////////////////////////////////////////
 //      Word Writing Mode Operations             //
 ///////////////////////////////////////////////////
@@ -1770,7 +1751,6 @@ thkoplp:
         movea.l thknjmp(a6),a2
         jmp     (a2)
 
-        .page
 /////////////////////////
 //    special effect THICKEN
 //      on entry        68000   Description             8086
@@ -1808,7 +1788,6 @@ thkopwlp:
         movea.l thknjpw(a6),a2
         jmp     (a2)
 
-        .page
 /////////////////////////
 //    special effect THICKEN
 //      on entry        68000   Description             8086
@@ -1894,7 +1873,6 @@ thkopwl:
         movea.l thknjpwf(a6),a2
         jmp     (a2)
 
-        .page
 ///////////////////////////////
 //   special effect LIGHT
 //      on entry,       68000   Description             8086
@@ -1923,7 +1901,6 @@ liteopwf:
         movea.l litejpwf(a6),a2
         jmp     (a2)
 
-        .page
 ///////////////////////////////
 //   special effect SKEW
 //
@@ -1991,7 +1968,6 @@ nxt_word:
         move.w  d0,shif_cnt(a6)
         bra.b   no_shift
 
-        .page
 /////////////////////////////////////////////////////////////////////////
 //    special effect SKEW for words                                     //
 //    recomputes rotation and jumps to proper routine to finish char    //
@@ -2058,8 +2034,7 @@ wnxt_wrd:
         move.w  d2,shif_cnt(a6)
 //
         bra     mlt_left
-//
-        .page
+
 /////////////////////////
 //      rotation in 90 degree increments        //
 /////////////////////////
@@ -2228,7 +2203,7 @@ strtflip:
         move.w  d0,_SOURCEX
         clr.w   _SOURCEY
         rts
-        .page
+
 /////////////////////////
 //                                              //
 //      replication                             //
@@ -2487,7 +2462,6 @@ repdone:
         move.w  wrd_cnt(a6),d5
         rts
 
-        .page
 /////////////////////////////////////////////////////////
 //   Outline the contents of buffer                             //
 //                                                              //
