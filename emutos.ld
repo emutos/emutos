@@ -48,4 +48,13 @@ SECTIONS
     *(.bss COMMON)
     __end = .;
   }
+
+  /* Discard the following ELF sections.
+   * Some of them may be present in ELF libgcc.a.
+   */
+  /DISCARD/ :
+  {
+    *(.comment)
+    *(.debug*)
+  }
 }
