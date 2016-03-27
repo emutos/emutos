@@ -389,7 +389,7 @@ version:
 
 TOCLEAN += *.img *.map
 
-emutos.img emutos.map: $(OBJECTS) Makefile
+emutos.img emutos.map: $(OBJECTS) emutos.ld Makefile
 	$(LD) -o emutos.img $(CORE_OBJ) $(LIBS) $(OPTIONAL_OBJ) $(LIBS) $(LDFLAGS) -Wl,-Map,emutos.map
 
 #
@@ -622,7 +622,7 @@ COMPROBJ = obj/compr-tosvars.o obj/compr-comprimg.o obj/compr-memory.o \
 # ROM stub for compressed ROM image
 compr.img compr.map: OPTFLAGS = -Os
 compr.img compr.map: override DEF += -DTARGET_COMPR_STUB
-compr.img compr.map: $(COMPROBJ)
+compr.img compr.map: $(COMPROBJ) emutos.ld Makefile
 	$(LD) -o compr.img $(COMPROBJ) $(LIBS) $(LDFLAGS) -Wl,-Map,compr.map
 
 # Compressed ROM: stub + ramtos
