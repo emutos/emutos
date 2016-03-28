@@ -1,3 +1,8 @@
+General
+- the source cannot currently be compiled with the following warning flags:
+    -Wmissing-prototypes -Wstrict-prototypes
+  because certain files (e.g. bdosmain.c) deliberately omit parameter lists.
+
 BIOS/XBIOS
 - implement missing XBIOS calls
   (e.g. the Blitter, Falcon DSP functions)
@@ -17,7 +22,6 @@ Internationalization
 VDI
 - The linemask for dashed lines is not calculated correct, depending on
   the internal calculations of increase in x direction, like in original TOS.
-- vs_color and vq_color don't work with TT shifter.
 
 AES
 

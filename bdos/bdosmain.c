@@ -34,8 +34,6 @@
 #include "kprint.h"
 #include "dos.h"
 
-/* TODO: do something about prototype warnings */
-
 /*
 **  externals
 */
