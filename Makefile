@@ -391,6 +391,10 @@ TOCLEAN += *.img *.map
 
 emutos.img emutos.map: $(OBJECTS) emutos.ld Makefile
 	$(LD) -o emutos.img $(CORE_OBJ) $(LIBS) $(OPTIONAL_OBJ) $(LIBS) $(LDFLAGS) -Wl,-Map,emutos.map
+	@if [[ $$(($$(awk '/^\.data /{print $$3}' emutos.map))) > 0 ]]; then \
+	  echo "### Warning: The DATA segment is not empty."; \
+	  echo "### Please examine emutos.map and use \"const\" where appropriate."; \
+	fi
 
 #
 # 128kB Image
