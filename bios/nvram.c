@@ -165,7 +165,7 @@ WORD nvmaccess(WORD type, WORD start, WORD count, UBYTE *buffer)
         inited = 1;
     }
 
-    if (buffer == NULL || start < 0 || count < 1 || (start + count) > 49)
+    if ((buffer == NULL) || (start < 0) || (count < 1) || ((start + count) > NVRAM_USER_SIZE))
         return -5;
 
     switch(type) {
