@@ -34,20 +34,13 @@
 
 int has_nvram;
 
-static UBYTE nvram_buf[NVRAM_SIZE];
-static int inited;
-
-
 /*
  * detect_nvram - detect the nvram
  */
 void detect_nvram(void)
 {
     if (check_read_byte(NVRAM_ADDR_REG))
-    {
         has_nvram = 1;
-        inited = 0;
-    }
     else has_nvram = 0;
 }
 
@@ -95,36 +88,53 @@ void set_nvram_rtc(int index, int data)
  */
 static UWORD compute_sum(void)
 {
+    volatile UBYTE *addr_reg = (volatile UBYTE *)NVRAM_ADDR_REG;
+    volatile UBYTE *data_reg = (volatile UBYTE *)NVRAM_DATA_REG;
     UBYTE sum;
     int i;
 
-    sum = 0;
-    for (i = 0; i < NVRAM_USER_SIZE; i++)
+    for (i = 0, sum = 0; i < NVRAM_USER_SIZE; i++)
     {
-        sum += nvram_buf[i];
+        *addr_reg = i + NVRAM_START;
+        sum += *data_reg;
     }
 
     return (~sum << 8) | sum;
 }
 
+/*
+ * get_sum - read checksum from NVRAM
+ */
 static UWORD get_sum(void)
 {
-    return (nvram_buf[NVRAM_CKSUM] << 8) | nvram_buf[NVRAM_CKSUM+1];
+    volatile UBYTE *addr_reg = (volatile UBYTE *)NVRAM_ADDR_REG;
+    volatile UBYTE *data_reg = (volatile UBYTE *)NVRAM_DATA_REG;
+    UWORD sum;
+
+    *addr_reg = NVRAM_START + NVRAM_CKSUM;
+    sum = *data_reg << 8;
+    *addr_reg = NVRAM_START + NVRAM_CKSUM + 1;
+    sum |= *data_reg;
+
+    return sum;
 }
 
+/*
+ * set_sum - write checksum to NVRAM
+ */
 static void set_sum(UWORD sum)
 {
     volatile UBYTE *addr_reg = (volatile UBYTE *)NVRAM_ADDR_REG;
     volatile UBYTE *data_reg = (volatile UBYTE *)NVRAM_DATA_REG;
 
     *addr_reg = NVRAM_START + NVRAM_CKSUM;
-    *data_reg = nvram_buf[NVRAM_CKSUM] = sum >> 8;
+    *data_reg = sum >> 8;
     *addr_reg = NVRAM_START + NVRAM_CKSUM + 1;
-    *data_reg = nvram_buf[NVRAM_CKSUM+1] = sum;
+    *data_reg = sum;
 }
 
 /*
- * nvmaccess - XBIOS read or set NVRAM
+ * nvmaccess - XBIOS read/write/reset NVRAM
  *
  * Arguments:
  *
@@ -148,30 +158,17 @@ WORD nvmaccess(WORD type, WORD start, WORD count, UBYTE *buffer)
         {
             *addr_reg = i + NVRAM_START;
             *data_reg = 0;
-            nvram_buf[i] = 0;
         }
         *addr_reg = NVRAM_START + NVRAM_CKSUM;
-        *data_reg = nvram_buf[NVRAM_CKSUM] = 0xff;
-        inited = 1;
+        *data_reg = 0xff;
         return 0;
-    }
-
-    /* else, first read the nvram if not done already */
-    if (!inited)
-    {
-        for (i = 0; i < NVRAM_SIZE; i++)
-        {
-            *addr_reg = i + NVRAM_START;
-            nvram_buf[i] = *data_reg;
-        }
-        inited = 1;
     }
 
     if ((buffer == NULL) || (start < 0) || (count < 1) || ((start + count) > NVRAM_USER_SIZE))
         return -5;
 
     switch(type) {
-    case 0:         /* read, from our buffer since it is already in memory */
+    case 0:         /* read */
         {
             UWORD expected = compute_sum();
             UWORD actual = get_sum();
@@ -183,17 +180,19 @@ WORD nvmaccess(WORD type, WORD start, WORD count, UBYTE *buffer)
                 return -12;
             }
             for (i = start; i < start + count; i++)
-                *buffer++ = nvram_buf[i];
+            {
+                *addr_reg = i + NVRAM_START;
+                *buffer++ = *data_reg;
+            }
         }
         break;
-    case 1:         /* write, in our buffer and in the memory */
+    case 1:         /* write */
         for (i = start; i < start + count; i++)
         {
             *addr_reg = i + NVRAM_START;
-            *data_reg = nvram_buf[i] = *buffer++;
+            *data_reg = *buffer++;
         }
         set_sum(compute_sum());
-        /* TODO - verify ? */
         break;
     default:
         /* wrong operation code! */
