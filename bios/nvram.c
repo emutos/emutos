@@ -150,6 +150,8 @@ WORD nvmaccess(WORD type, WORD start, WORD count, UBYTE *buffer)
             *data_reg = 0;
             nvram_buf[i] = 0;
         }
+        *addr_reg = NVRAM_START + NVRAM_CKSUM;
+        *data_reg = nvram_buf[NVRAM_CKSUM] = 0xff;
         inited = 1;
         return 0;
     }
