@@ -30,16 +30,16 @@ static int inited;
 
 
 /*
- * detect_nvram - detect and init the nvram
+ * detect_nvram - detect the nvram
  */
 void detect_nvram(void)
 {
-    if(check_read_byte(0xffff8961)) {
+    if (check_read_byte(0xffff8961))
+    {
         has_nvram = 1;
         inited = 0;
-    } else {
-        has_nvram = 0;
     }
+    else has_nvram = 0;
 }
 
 /*
@@ -47,15 +47,17 @@ void detect_nvram(void)
  */
 UBYTE get_nvram_rtc(int index)
 {
-    volatile UBYTE * addr_reg = (volatile UBYTE *)0xffff8961;
-    volatile UBYTE * data_reg = (volatile UBYTE *)0xffff8963;
+    volatile UBYTE *addr_reg = (volatile UBYTE *)0xffff8961;
+    volatile UBYTE *data_reg = (volatile UBYTE *)0xffff8963;
     int ret_value = 0;
 
-    if (has_nvram) {
-        if (index >=0 && index < 14) {
+    if (has_nvram)
+    {
+        if (index >=0 && index < 14)
+        {
             *addr_reg = index;
-                ret_value = *data_reg;
-            }
+            ret_value = *data_reg;
+        }
     }
 
     return ret_value;
@@ -66,14 +68,16 @@ UBYTE get_nvram_rtc(int index)
  */
 void set_nvram_rtc(int index, int data)
 {
-    volatile UBYTE * addr_reg = (volatile UBYTE *)0xffff8961;
-    volatile UBYTE * data_reg = (volatile UBYTE *)0xffff8963;
+    volatile UBYTE *addr_reg = (volatile UBYTE *)0xffff8961;
+    volatile UBYTE *data_reg = (volatile UBYTE *)0xffff8963;
 
-    if (has_nvram) {
-        if (index >=0 && index < 14) {
+    if (has_nvram)
+    {
+        if (index >=0 && index < 14)
+        {
             *addr_reg = index;
-                *data_reg = data;
-            }
+            *data_reg = data;
+        }
     }
 }
 
@@ -86,21 +90,23 @@ static UWORD compute_sum(void)
     int i;
 
     sum = 0;
-    for(i = 0 ; i < 48 ; i++) {
+    for (i = 0; i < 48; i++)
+    {
         sum += nvram_buf[i];
     }
+
     return (~sum << 8) | sum;
 }
 
 static UWORD get_sum(void)
 {
-    return (nvram_buf[48] << 8 ) | nvram_buf[49];
+    return (nvram_buf[48] << 8) | nvram_buf[49];
 }
 
 static void set_sum(UWORD sum)
 {
-    volatile UBYTE * addr_reg = (volatile UBYTE *)0xffff8961;
-    volatile UBYTE * data_reg = (volatile UBYTE *)0xffff8963;
+    volatile UBYTE *addr_reg = (volatile UBYTE *)0xffff8961;
+    volatile UBYTE *data_reg = (volatile UBYTE *)0xffff8963;
 
     *addr_reg = 62;
     *data_reg = nvram_buf[48] = sum >> 8;
@@ -120,15 +126,17 @@ static void set_sum(UWORD sum)
  */
 WORD nvmaccess(WORD type, WORD start, WORD count, UBYTE *buffer)
 {
-    volatile UBYTE * addr_reg = (volatile UBYTE *)0xffff8961;
-    volatile UBYTE * data_reg = (volatile UBYTE *)0xffff8963;
+    volatile UBYTE *addr_reg = (volatile UBYTE *)0xffff8961;
+    volatile UBYTE *data_reg = (volatile UBYTE *)0xffff8963;
     int i;
 
-    if(! has_nvram) {
+    if (!has_nvram)
         return 0x2E;
-    }
-    if(type == 2) { /* reset all */
-        for(i = 0 ; i < 50 ; i++) {
+
+    if (type == 2)      /* reset all */
+    {
+        for (i = 0; i < 50; i++)
+        {
             *addr_reg = i + 14;
             *data_reg = 0;
             nvram_buf[i] = 0;
@@ -136,9 +144,12 @@ WORD nvmaccess(WORD type, WORD start, WORD count, UBYTE *buffer)
         inited = 1;
         return 0;
     }
+
     /* else, first read the nvram if not done already */
-    if(! inited) {
-        for(i = 0 ; i < 50 ; i++) {
+    if (!inited)
+    {
+        for (i = 0; i < 50; i++)
+        {
             *addr_reg = i + 14;
             nvram_buf[i] = *data_reg;
         }
@@ -149,21 +160,24 @@ WORD nvmaccess(WORD type, WORD start, WORD count, UBYTE *buffer)
         return -5;
 
     switch(type) {
-    case 0: { /* read, from our buffer since it is already in memory */
-        UWORD expected = compute_sum();
-        UWORD actual = get_sum();
-        if(expected != actual) {
-            KDEBUG(("wrong nvram: expected=0x%04x actual=0x%04x\n", expected, actual));
-            /* wrong checksum, return error code */
-            return -12;
-        }
-        for(i = start ; i < start + count ; i++) {
-            *buffer++ = nvram_buf[i];
+    case 0:         /* read, from our buffer since it is already in memory */
+        {
+            UWORD expected = compute_sum();
+            UWORD actual = get_sum();
+
+            if (expected != actual)
+            {
+                KDEBUG(("wrong nvram: expected=0x%04x actual=0x%04x\n", expected, actual));
+                /* wrong checksum, return error code */
+                return -12;
+            }
+            for (i = start; i < start + count; i++)
+                *buffer++ = nvram_buf[i];
         }
         break;
-    }
-    case 1: /* write, in our buffer and in the memory */
-        for(i = start ; i < start + count ; i++) {
+    case 1:         /* write, in our buffer and in the memory */
+        for (i = start; i < start + count; i++)
+        {
             *addr_reg = i + 14;
             *data_reg = nvram_buf[i] = *buffer++;
         }
@@ -174,6 +188,7 @@ WORD nvmaccess(WORD type, WORD start, WORD count, UBYTE *buffer)
         /* wrong operation code! */
         return -5;
     }
+
     return 0;
 }
 
