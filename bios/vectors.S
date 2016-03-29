@@ -66,9 +66,6 @@
         .extern _proc_usp
         .extern _proc_stk
 
-        .extern _stktop
-
-
         .text
 
 

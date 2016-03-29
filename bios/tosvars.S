@@ -107,6 +107,7 @@
 #ifdef CONF_WITH_68030_PMMU
         .globl  _pmmutree
 #endif
+        .globl  _stktop
         .globl  _shifty
 
 // ===========================================================================
@@ -239,6 +240,11 @@ _pmmutree:      .ds.l   64      // for pmmu tree on 68030
 //  or a buffer that is only accessed in supervisor mode.)
         .org 0x800
 
+// BIOS internal stack
+// Be sure to keep it under bssstart to avoid clearing it
+// when clearing the BSS segment.
+stkbot:         .ds.b   2048
+_stktop:
 
 // memory past this address will be cleared on startup or on reset.
 bssstart:

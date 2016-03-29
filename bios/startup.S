@@ -15,8 +15,6 @@
 
 // ==== Defines ==============================================================
 
-        .equ    SUPSIZ, 1024    // size of supervisor stack in words
-
         .equ    cart_base, 0x00fa0000 // Base of ROM port cartridge
 
 // ==== References ===========================================================
@@ -26,12 +24,12 @@
 #if CONF_WITH_CARTRIDGE
         .globl  _run_cartridge_applications
 #endif
-        .globl  _stktop
 
 // ==== tosvars.s - TOS System variables =====================================
 
         .extern resvalid
         .extern resvector
+        .extern _stktop
 
 // ==== memory.s - variables for memory  =====================================
 
@@ -366,12 +364,3 @@ cartover:
 
         .even   // Mandatory in ELF section .rodata
 zero:   .dc.l   0
-
-
-// ===========================================================================
-// ==== BSS segment ==========================================================
-// ===========================================================================
-        .bss
-
-_stkbot:        .ds.w   SUPSIZ  // Supervisor stack
-_stktop:                        // filled from top to bottom

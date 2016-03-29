@@ -20,18 +20,13 @@
         .extern __end
         .extern resvalid
         .extern resvector
+        .extern _stktop
         .extern meminit
         .extern memvalid
         .extern memval2
         .extern memval3
         .extern __edata
         .extern _uncompr
-
-/* To be sure not to have any trouble when loading the actual image
- * in RAM, just set the stack below the top of the exception vector
- * zone.  We won't need that much of a stack anyway.
- */
-_stktop = 0x378
 
 /*
  * OSHEADER
