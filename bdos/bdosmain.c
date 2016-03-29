@@ -83,7 +83,6 @@ FND
 };
 
 
-
 /*
  * funcs - table of os functions, indexed by function number
  *
@@ -205,11 +204,11 @@ static const FND funcs[] =
     { xunlink,  0, 2 },      /* 0x41 */
     { xlseek,   0x81, 4 },   /* 0x42 */
     { (long(*)()) xchmod, 0, 4 },  /* 0x43 */
-    { xmxalloc, 0, 3 },      /* 0x44 */
+    { (long(*)()) xmxalloc, 0, 3 }, /* 0x44 */
     { dup,      0, 1 },      /* 0x45 */
     { xforce,   0, 2 },      /* 0x46 */
     { xgetdir,  0, 3 },      /* 0x47 */
-    { xmalloc,  0, 2 },      /* 0x48 */
+    { (long(*)()) xmalloc,  0, 2 }, /* 0x48 */
     { xmfree,   0, 2 },      /* 0x49 */
     { xsetblk,  0, 5 },      /* 0x4A */
     { (long(*)()) xexec, 0, 7 },   /* 0x4B */

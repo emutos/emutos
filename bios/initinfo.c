@@ -52,7 +52,7 @@ int early_cli;
 /*==== External declarations ==============================================*/
 
 /* mxalloc (defined in bdos/mem.h) */
-extern long xmxalloc(long amount, int mode);
+extern void *xmxalloc(long amount, int mode);
 
 
 /*
@@ -192,7 +192,7 @@ WORD initinfo(void)
 #endif
     int i;
     WORD olddev = -1, dev = bootdev;
-    long fastramsize = xmxalloc(-1L, MX_TTRAM);
+    long fastramsize = (long)xmxalloc(-1L, MX_TTRAM);
     LONG hdd_available = blkdev_avail(HARDDISK_BOOTDEV);
 
 // If additional info lines are going to be printed in specific cases,
@@ -239,7 +239,7 @@ WORD initinfo(void)
     pair_start(_("Machine")); cprintf(machine_name()); pair_end();
 /*  pair_start(_("MMU available")); cprintf(_("No")); pair_end(); */
     pair_start(_("Free ST-RAM"));
-        cprintf(_("%ld KB"), /* memtop-membot */ xmxalloc(-1L, MX_STRAM) >> 10);
+        cprintf(_("%ld KB"), /* memtop-membot */ (long)xmxalloc(-1L, MX_STRAM) >> 10);
     pair_end();
 
     if (fastramsize > 0) {

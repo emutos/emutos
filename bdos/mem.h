@@ -57,13 +57,13 @@ void osmem_init(void);
  */
 
 /* allocate memory */
-long xmalloc(long amount);
+void *xmalloc(long amount);
 /* mfree */
-long xmfree(long addr);
+long xmfree(void *addr);
 /* mshrink */
 long xsetblk(int n, void *blk, long len);
 /* mxalloc */
-long xmxalloc(long amount, int mode);
+void *xmxalloc(long amount, int mode);
 
 /* supported values for Mxalloc mode: */
 #define MX_STRAM 0

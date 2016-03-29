@@ -92,9 +92,9 @@ static void dump_mem_map(void)
  *      Function 0x48   m_alloc
  */
 
-long    xmalloc(long amount)
+void *xmalloc(long amount)
 {
-    long rc;
+    void *rc;
 
     if( run->p_flags & PF_TTRAMMEM ) {
         /* allocate TT RAM, or ST RAM if not enough TT RAM */
@@ -103,7 +103,7 @@ long    xmalloc(long amount)
         /* allocate only ST RAM */
         rc = xmxalloc(amount, MX_STRAM);
     }
-    KDEBUG(("BDOS: Malloc(%ld), pgmflags=0x%08lx: rc=0x%08lx\n",amount,run->p_flags,rc));
+    KDEBUG(("BDOS: Malloc(%ld), pgmflags=0x%08lx: rc=0x%08lx\n",amount,run->p_flags,(ULONG)rc));
     return rc;
 }
 
@@ -112,12 +112,12 @@ long    xmalloc(long amount)
  *  xmfree - Function 0x49      m_free
  */
 
-long    xmfree(long addr)
+long    xmfree(void *addr)
 {
     MD *p,**q;
     MPB *mpb;
 
-    KDEBUG(("BDOS: Mfree(0x%08lx)\n",(long)addr));
+    KDEBUG(("BDOS: Mfree(0x%08lx)\n",(ULONG)addr));
 
     if((UBYTE *)addr >= start_stram && (UBYTE *)addr <= end_stram) {
         mpb = &pmd;
@@ -228,10 +228,10 @@ long    xsetblk(int n, void *blk, long len)
  *      Function 0x44   m_xalloc
  */
 
-long    xmxalloc(long amount, int mode)
+void *xmxalloc(long amount, int mode)
 {
     MD *m;
-    long ret_value;
+    void *ret_value;
 
     KDEBUG(("BDOS: xmxalloc(%ld,0x%04x)\n",amount,mode));
 
@@ -244,11 +244,11 @@ long    xmxalloc(long amount, int mode)
     if(amount == -1L) {
         switch(mode) {
         case MX_STRAM:
-            ret_value = (long) ffit(-1L,&pmd);
+            ret_value = ffit(-1L,&pmd);
             break;
 #if CONF_WITH_ALT_RAM
         case MX_TTRAM:
-            ret_value = (long) ffit(-1L,&pmdalt);
+            ret_value = ffit(-1L,&pmdalt);
             break;
 #endif
         case MX_PREFSTRAM:
@@ -258,10 +258,10 @@ long    xmxalloc(long amount, int mode)
              * return the biggest size in either pool - verified on TOS3
              */
             {
-                ret_value = (long) ffit(-1L,&pmd);
+                ret_value = ffit(-1L,&pmd);
 #if CONF_WITH_ALT_RAM
                 {
-                    long tmp = (long) ffit(-1L,&pmdalt);
+                    void *tmp = ffit(-1L,&pmdalt);
                     if(ret_value < tmp) ret_value = tmp;
                 }
 #endif
@@ -269,7 +269,7 @@ long    xmxalloc(long amount, int mode)
             break;
         default:
             /* unknown mode */
-            ret_value = 0;
+            ret_value = NULL;
         }
         goto ret;
     }
@@ -279,7 +279,7 @@ long    xmxalloc(long amount, int mode)
      */
 
     if( amount <= 0 ) {
-        ret_value = 0;
+        ret_value = NULL;
         goto ret;
     }
 
@@ -312,7 +312,7 @@ long    xmxalloc(long amount, int mode)
         break;
     default:
         /* unknown mode */
-        m = 0;
+        m = NULL;
     }
 
     /*
@@ -321,13 +321,13 @@ long    xmxalloc(long amount, int mode)
      */
 
     if(m == NULL) {
-        ret_value = 0;
+        ret_value = NULL;
     } else {
-        ret_value = (long) m->m_start;
+        ret_value = m->m_start;
     }
 
 ret:
-    KDEBUG(("BDOS xmxalloc: returns 0x%08lx\n",ret_value));
+    KDEBUG(("BDOS xmxalloc: returns 0x%08lx\n",(ULONG)ret_value));
     dump_mem_map();
 
     return(ret_value);
