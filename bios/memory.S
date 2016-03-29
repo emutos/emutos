@@ -56,25 +56,6 @@
 // ==== meminit - Reuse or detect RAM settings, then initialize RAM areas ====
 // ===========================================================================
 meminit:
-/*
- * Clear the BSS segment before calling any C function
- *
- * The C part expects the bss to be cleared. Also we want to save our
- * configuration into it, so let's do this early.
- */
-        lea     bssstart, a0
-        lea     __end-1, a1
-        move.l  a1, d0
-        sub.l   a0, d0
-        lsr.l   #2, d0
-clearbss:
-        clr.l   (a0)+
-#ifdef __mcoldfire__
-        subq.l  #1, d0
-        bpl.s   clearbss
-#else
-        dbra    d0, clearbss
-#endif
 
 /*
  * The caller (either startup.S or comprimg.S) needs to have initialized sp
@@ -140,6 +121,8 @@ memchk:
 #endif /* CONF_WITH_ST_MMU */
 
 memory_reused:
+        /* clear global variables */
+        bsr     clear_bss
         jmp     memdone                 // config ok -> memdone in startup.s
 
 // ===========================================================================
