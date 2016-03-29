@@ -447,7 +447,7 @@ struct rrcode {
         
 static void run_reset_resident(void)
 {
-    struct rrcode *p = phystop;
+    const struct rrcode *p = (const struct rrcode *)phystop;
 
     for (--p; p > (struct rrcode *)&etv_timer; p--)
     {

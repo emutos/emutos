@@ -41,7 +41,7 @@ extern UBYTE *screenpt;
 extern BYTE sshiftmod;
 extern BYTE defshiftmod;
 
-extern void *phystop;
+extern UBYTE *phystop;
 
 extern WORD timer_ms;
 
@@ -70,18 +70,18 @@ extern LONG os_date;
 extern UWORD os_dosdate;
 extern WORD os_conf;
 extern void (*exec_os)(void) NORETURN;
-extern LONG end_os;
+extern UBYTE *end_os;
 extern LONG m_start;
 extern LONG m_length;
 
 /* these symbols are automatically created by ld */
-extern BYTE _etext[];     /* end of text */
-extern BYTE _edata[];     /* end of data */
-extern BYTE _end[];       /* end of bss + comm sections */
+extern UBYTE _etext[];    /* end of text */
+extern UBYTE _edata[];    /* end of data */
+extern UBYTE _end[];      /* end of bss + comm sections */
 
-extern LONG os_end;
-extern LONG membot;
-extern LONG memtop;
+extern UBYTE *os_end;
+extern UBYTE *membot;
+extern UBYTE *memtop;
 
 extern LONG ramtop;       /* top of fastram */
 #define RAMVALID_MAGIC 0x1357BD13

@@ -65,16 +65,16 @@ void bmem_init(void)
     membot = end_os = os_end;
 #if CONF_VRAM_ADDRESS
     /* Available ST-RAM ends at the physical ST-RAM end */
-    memtop = (LONG) phystop;
+    memtop = phystop;
 #else
     /* Available ST-RAM ends at the screen start */
-    memtop = (LONG) v_bas_ad;
+    memtop = v_bas_ad;
 #endif
 
     /* Fill out the first memory descriptor */
     themd.m_link = (MD*) 0;     /* no next memory descriptor */
-    themd.m_start = os_end;
-    themd.m_length = memtop - themd.m_start;
+    themd.m_start = (LONG)os_end;
+    themd.m_length = (LONG)memtop - themd.m_start;
     themd.m_own = (PD*) 0;      /* no owner's process descriptor */
 
     bmem_allowed = 1;

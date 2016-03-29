@@ -484,7 +484,7 @@ LONG floppy_rw(WORD rw, UBYTE *buf, WORD cnt, LONG recnr, WORD spt,
             track /= 2;
         }
 #if CONF_WITH_FRB
-        if (buf >= (UBYTE *)phystop) {
+        if (buf >= phystop) {
             /* The buffer provided by the user is outside the ST-RAM,
              * but floprw() needs to use the DMA.
              * We must use the intermediate _FRB buffer.

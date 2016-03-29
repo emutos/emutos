@@ -538,7 +538,7 @@ void screen_init(void)
     screen_start = (UBYTE *)CONF_VRAM_ADDRESS;
 #else
     /* videoram is placed just below the phystop */
-    screen_start = (UBYTE *)phystop - initial_vram_size();
+    screen_start = phystop - initial_vram_size();
     /* round down to 256 byte boundary */
     screen_start = (UBYTE *)((ULONG)screen_start & 0x00ffff00);
     /* Original TOS leaves a gap of 768 bytes between screen ram and phys_top...
