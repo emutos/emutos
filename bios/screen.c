@@ -455,7 +455,7 @@ void screen_init(void)
          * unreliable. Some video modes are not displayed well.
          */
         /* get boot resolution from NVRAM */
-        ret = nvmaccess(0, 14, 2, (UBYTE*)&boot_resolution);
+        ret = nvmaccess(0, 14, 2, CONST_CAST(UBYTE*, &boot_resolution));
         if (ret != 0) {
             KDEBUG(("Invalid NVRAM, defaulting to boot video mode 0x%04x\n", boot_resolution));
         }

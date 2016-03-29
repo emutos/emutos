@@ -132,6 +132,15 @@ typedef void (*PFVOID)(void);
 /* Number of elements of an array */
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
 
+/* Lightweight cast to only remove const and volatile qualifiers from a pointer.
+ * This is similar to the C++ const_cast<> operator.
+ * It is usefull to call a function with const data while the parameter
+ * is not properly marked as const (usually because the constness depends
+ * on other parameters).
+ * A better implementation may add safer type checking.
+ */
+#define CONST_CAST(type, expr) ((type)(expr))
+
 /*
  * Workarounds for the GCC strict aliasing rule
  */

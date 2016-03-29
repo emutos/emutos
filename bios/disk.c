@@ -792,7 +792,7 @@ LONG DMAwrite(LONG sector, WORD count, const UBYTE *buf, WORD major)
 {
     UWORD unit = NUMFLOPPIES + major;
 
-    return disk_rw(unit, RW_WRITE, sector, count, (UBYTE *)buf);
+    return disk_rw(unit, RW_WRITE, sector, count, CONST_CAST(UBYTE *, buf));
 }
 
 void byteswap(UBYTE *buffer, ULONG size)

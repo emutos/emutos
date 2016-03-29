@@ -639,7 +639,7 @@ LONG floprd(UBYTE *buf, LONG filler, WORD dev,
 LONG flopwr(const UBYTE *buf, LONG filler, WORD dev,
             WORD sect, WORD track, WORD side, WORD count)
 {
-    return floprw((UBYTE *)buf, RW_WRITE, dev, sect, track, side, count);
+    return floprw(CONST_CAST(UBYTE *, buf), RW_WRITE, dev, sect, track, side, count);
 }
 
 /*==== xbios flopver ======================================================*/
