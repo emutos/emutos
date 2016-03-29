@@ -14,52 +14,49 @@
 
 #include "asmdefs.h"
 
-// ==== References ===========================================================
+// ==== Definitions ==========================================================
 
         .globl  meminit                 // memory initialization
 
 // ==== startup.s - variables for memory  ====================================
 
-        .extern memdone       // return to, if memory config done
+        .extern memdone       // return to, after memory config is done
 
-// ==== detect.s - function for detecting CPU type and for testing memory  ===
+// ==== detect.s - functions for detecting hardware and CPU type =============
 
         .extern _check_read_byte
         .extern _detect_cpu
 
 // ==== tosvars.s - TOS System variables =====================================
 
-        .extern sysvars_start
+        // ST-RAM settings
         .extern memctrl
         .extern _phystop
-
         .extern memvalid
         .extern memval2
         .extern memval3
 
+        // FastRAM settings
         .extern _ramtop
         .extern _ramvalid
 
 // ==== Overall memory map ===================================================
 
+        .extern sysvars_start // start of system variables
         .extern bssstart      // end of documented low memory tosvars
-        .extern __end         // end of bss + comm sections (ld generated)
-        .extern _os_end       // first byte RAM not used by OS
+        .extern __end         // end of BSS segment
+        .extern _os_end       // pointer to first byte RAM not used by OS
 
 // ===========================================================================
-// ==== TEXT segment (TOS image) =============================================
+// ==== meminit - Reuse or detect RAM settings, then initialize RAM areas ====
 // ===========================================================================
-
-        .text
-
+meminit:
 /*
- * meminit - Clear BSS + COMM before calling any C function
+ * Clear the BSS segment before calling any C function
  *
  * The C part expects the bss to be cleared. Also we want to save our
  * configuration into it, so let's do this early.
  */
-
-meminit:
         lea     bssstart, a0
         lea     __end-1, a1
         move.l  a1, d0
@@ -89,7 +86,7 @@ clearbss:
         tst.w   d0                      // is it Falcon MMU?
         beq     memchk                  // no -> skip 0xffff8007 test
 
-        /* Initialize ant test Falcon MMU ??? */
+        /* Initialize and test Falcon MMU ??? */
 #ifdef __mcoldfire__
         lea     0xffff8007.w, a0
         bset    #6, (a0)                // seen in TOS 4.04
@@ -99,10 +96,9 @@ clearbss:
         beq     memconf                 // not sure what 6th bit means
 #endif /* CONF_WITH_FALCON_MMU */
 
-/*
- * memchk - Check, if old memory config can be used
- */
-
+// ===========================================================================
+// ==== memchk - Check if old memory config can be used ======================
+// ===========================================================================
 memchk:
 #ifdef __mcoldfire__
         move.l  #0x752019f3, d1
@@ -123,10 +119,9 @@ memchk:
         bne     memconf                 // no -> config memory
 #endif
 
-memok:
 #if CONF_WITH_FALCON_MMU
         tst.w   d0                      // is it Falcon MMU?
-        bne     no_memctrl              // yes -> skip memctrl init
+        bne     memory_reused           // yes -> skip memctrl init
 #endif
 
 #if CONF_WITH_ST_MMU
@@ -138,27 +133,30 @@ memok:
 #endif
                                         // phystop should then also be ok
 #endif /* CONF_WITH_ST_MMU */
-no_memctrl:
+
+memory_reused:
         jmp     memdone                 // config ok -> memdone in startup.s
 
-/*
- * memconf - Configure the memory and clear it
- *
- * We first test if EmuTOS runs on a Falcon by reading a Falcon
- * hardware register. If so, we can use the Falcon register $ff8006 for
- * memory setup. Note that we can't use $ff8006 to do the Falcon test
- * since the STe does not generate a bus error when reading from this
- * register, however it does not really have the $ff8006 register :-(
- */
+// ===========================================================================
+// ==== memconf - Detect RAM and configure the memory controller =============
+// ===========================================================================
+// Inputs:
+//   d0.w: 1 = Falcon MMU, 0 = ST/TT MMU
+// Outputs:
+//   d5.l: detected end of the ST-RAM, to put into _phystop.
+//   d6.b: new value of 0xffff8001 (maybe fake), to put into memctrl.
 memconf:
 #if CONF_STRAM_SIZE
-
+        // The size of the ST-RAM is hardcoded: no real detection
         move.l  #CONF_STRAM_SIZE,d5     // this is phystop - the end of RAM
         moveq   #0,d6                   // fake memctrl
-
         // Fall into stram_detected
-
-#else /* CONF_STRAM_SIZE */
+#elif defined (MACHINE_AMIGA)
+        lea     amiga_memconf_ret(pc),a6
+        jmp     amiga_memconf
+amiga_memconf_ret:
+        // Fall into stram_detected
+#else /* ST/TT/Falcon memconf */
 
 #if CONF_WITH_FALCON_MMU
         tst.w   d0                      // is it Falcon MMU?
@@ -167,9 +165,10 @@ memconf:
 
 #if CONF_WITH_ST_MMU
 
+// ===========================================================================
+// ==== memconf for ST =======================================================
+// ===========================================================================
 /*
- * memconf for ST
- *
  * At first the memory configuration is set to 4 Mb. If the memory
  * configuration is not really 2 * 2 mb, the written test values will
  * repeat in memory. The trick is to find these repeated values and
@@ -347,9 +346,9 @@ mem_sanity_done:
 
 #if CONF_WITH_FALCON_MMU
 
-/*
- * memconf for Falcon
- */
+// ===========================================================================
+// ==== memconf for Falcon ===================================================
+// ===========================================================================
 falcmemconf:
         /* find out the memory size by checking the d0 = $ff8006 value */
 #ifdef __mcoldfire__
@@ -385,27 +384,19 @@ less16:
 
 #endif /* CONF_WITH_FALCON_MMU */
 
-#ifdef MACHINE_AMIGA
+#endif /* ST/TT/Falcon memconf */
 
-/*
- * memconf for Amiga
- */
-        lea     amiga_memconf_ret(pc),a6
-        jmp     amiga_memconf
-amiga_memconf_ret:
-
-#endif /* MACHINE_AMIGA */
-
-#endif /* CONF_STRAM_SIZE */
-
+// ===========================================================================
+// ==== End of ST-RAM detection ==============================================
+// ===========================================================================
 /*
  * At this point:
  * - The size of the ST-RAM has been detected
  * - The MMU has been properly initalized
  * - The ST-RAM is ready to be used
  *
- * d5 = phystop
- * d6 = memctrl
+ * d5.l = phystop
+ * d6.b = memctrl
  */
 stram_detected:
         /* clear ST-RAM till end (phystop in d5) */
@@ -419,11 +410,14 @@ st_cleared:
 
 #if CONF_WITH_FASTRAM
 
+// ===========================================================================
+// ==== TT-RAM (FastRAM) detection (PES) =====================================
+// ===========================================================================
 /*
- * TT-RAM (FastRAM) detection (PES)
  * This alternate RAM begins at 16MB boundary ($1000000)
  */
 #if CONF_FASTRAM_SIZE
+        // The size of the FastRAM is hardcoded: no real detection
         move.l  #0x1000000+CONF_FASTRAM_SIZE,a3    // fixed ramtop
 #else
         /* clear MB counter */
@@ -475,6 +469,8 @@ setramtop:
         sub.l   a3, a3
 alter:
 #endif /* CONF_FASTRAM_SIZE */
+
+// Write FastRAM settings into system variables (ST-RAM)
         move.l  a3, _ramtop             // set ramtop to size of found memory
 #ifdef __mcoldfire__
         lea     _ramvalid, a4
