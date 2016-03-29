@@ -303,7 +303,7 @@ static void setvalue_frb(void)
 
     if (need_frb)
     {
-        cookie_frb = (UBYTE *)balloc(64 * 1024UL);
+        cookie_frb = balloc(64 * 1024UL);
     }
 
     KDEBUG(("cookie_frb = 0x%08lx\n", (ULONG)cookie_frb));

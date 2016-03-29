@@ -41,8 +41,8 @@ int has_alt_ram;
 
 /* internal variables */
 
-long start_stram;
-long end_stram;
+UBYTE *start_stram;
+UBYTE *end_stram;
 
 
 /*
@@ -61,7 +61,7 @@ static void dump_md_list(char *title,MD *m)
             kprintf("\n|   ");
             i = 0;
         }
-        kprintf("[0x%06lx, 0x%06lx], ", m->m_start, m->m_length);
+        kprintf("[0x%06lx, 0x%06lx], ", (ULONG)m->m_start, m->m_length);
     }
     kprintf("\n| }\n");
 }
@@ -119,7 +119,7 @@ long    xmfree(long addr)
 
     KDEBUG(("BDOS: Mfree(0x%08lx)\n",(long)addr));
 
-    if(addr >= start_stram && addr <= end_stram) {
+    if((UBYTE *)addr >= start_stram && (UBYTE *)addr <= end_stram) {
         mpb = &pmd;
 #if CONF_WITH_ALT_RAM
     } else if(has_alt_ram) {
@@ -130,7 +130,7 @@ long    xmfree(long addr)
     }
 
     for (p = *(q = &mpb->mp_mal); p; p = *(q = &p->m_link))
-        if (addr == p->m_start)
+        if ((UBYTE *)addr == p->m_start)
             break;
 
     if (!p)
@@ -158,7 +158,7 @@ long    xsetblk(int n, void *blk, long len)
 
     KDEBUG(("BDOS: Mshrink(0x%08lx,%ld)\n",(long)blk,len));
 
-    if(((long)blk) >= start_stram && ((long)blk) <= end_stram) {
+    if((UBYTE*)blk >= start_stram && (UBYTE*)blk <= end_stram) {
         mpb = &pmd;
         KDEBUG(("BDOS xsetblk: mpb=&pmd\n"));
 
@@ -176,7 +176,7 @@ long    xsetblk(int n, void *blk, long len)
      */
 
     for (p = mpb->mp_mal; p; p = p->m_link)
-        if(  (long) blk == p->m_start  )
+        if(  (UBYTE *) blk == p->m_start  )
             break;
 
     /*
@@ -356,7 +356,7 @@ ret:
  * to specifically request alternative RAM.
  */
 
-long xmaddalt( LONG start, LONG size)
+long xmaddalt(UBYTE *start, LONG size)
 {
     MD *md, *p;
 

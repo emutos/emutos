@@ -73,7 +73,7 @@ static void reserve_blocks(PD *pd, MPB *mpb);
 
 static MPB *find_mpb(void *addr)
 {
-    if(((long)addr) >= start_stram && ((long)addr) <= end_stram) {
+    if((UBYTE *)addr >= start_stram && (UBYTE *)addr <= end_stram) {
         return &pmd;
 #if CONF_WITH_ALT_RAM
     } else if(has_alt_ram) {
@@ -124,7 +124,7 @@ static void set_owner(void *addr, PD *p, MPB *mpb)
 {
     MD *m;
     for( m = mpb->mp_mal ; m ; m = m->m_link ) {
-        if(m->m_start == (long)addr) {
+        if(m->m_start == (UBYTE *)addr) {
             m->m_own = p;
             return;
         }
@@ -358,7 +358,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
 
         /* free any memory allocated yet */
         freeit(cur_env_md, &pmd);
-        freeit(cur_m, find_mpb((void *)cur_m->m_start));
+        freeit(cur_m, find_mpb(cur_m->m_start));
 
         /* we still have to jump back to bdosmain.c so that the proper error
          * handling can occur.
@@ -372,7 +372,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
         KDEBUG(("BDOS xexec: kpgmld returned %ld (0x%lx)\n",rc,rc));
         /* free any memory allocated yet */
         freeit(cur_env_md, &pmd);
-        freeit(cur_m, find_mpb((void *)cur_m->m_start));
+        freeit(cur_m, find_mpb(cur_m->m_start));
 
         return rc;
     }
@@ -461,7 +461,7 @@ static MD *alloc_env(char *env)
     }
 
     /* copy it */
-    memcpy((void *)(env_md->m_start), env, size);
+    memcpy(env_md->m_start, env, size);
 
     return env_md;
 }

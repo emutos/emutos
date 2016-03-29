@@ -136,7 +136,7 @@ MD *ffit(long amount, MPB *mp)
             mp->mp_rover =
                 (q == (MD *) &mp->mp_mfl ? q->m_link : q);
 
-            KDEBUG(("BDOS ffit: start=0x%08lx, length=%ld\n",p->m_start,p->m_length));
+            KDEBUG(("BDOS ffit: start=0x%08lx, length=%ld\n",(ULONG)p->m_start,p->m_length));
 
             return(p);  /* got some */
         }
@@ -187,7 +187,7 @@ void freeit(MD *m, MPB *mp)
     else
         KDEBUG(("BDOS freeit: mp=%p\n",mp));
 #endif
-    KDEBUG(("BDOS freeit: start=0x%08lx, length=%ld\n",m->m_start,m->m_length));
+    KDEBUG(("BDOS freeit: start=0x%08lx, length=%ld\n",(ULONG)m->m_start,m->m_length));
 
     m->m_link = p;
 

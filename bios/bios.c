@@ -83,7 +83,7 @@ extern void coma_start(void) NORETURN;  /* found in cli/cmdasm.S */
 #endif
 
 #if CONF_WITH_ALT_RAM
-extern long xmaddalt(long start, long size); /* found in bdos/mem.h */
+extern long xmaddalt(UBYTE *start, long size); /* found in bdos/mem.h */
 #endif
 
 /*==== Declarations =======================================================*/
@@ -369,7 +369,7 @@ static void bios_init(void)
     if (ramtop > 0x1000000)
     {
         KDEBUG(("xmaddalt()\n"));
-        xmaddalt( 0x1000000, ramtop - 0x1000000);
+        xmaddalt((UBYTE *)0x1000000, ramtop - 0x1000000);
     }
 #endif
 

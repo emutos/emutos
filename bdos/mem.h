@@ -32,8 +32,8 @@ extern  int     has_alt_ram; /* 1 if alternative RAM has been declared to BDOS *
  * these should be internal
  */
 
-extern long start_stram;
-extern long end_stram;
+extern UBYTE *start_stram;
+extern UBYTE *end_stram;
 
 /*
  * in osmem.c
@@ -74,7 +74,7 @@ long xmxalloc(long amount, int mode);
 
 #if CONF_WITH_ALT_RAM
 /* declare additional memory */
-long xmaddalt(long start, long size);
+long xmaddalt(UBYTE *start, long size);
 #endif /* CONF_WITH_ALT_RAM */
 
 /* init user memory */

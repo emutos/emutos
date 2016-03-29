@@ -646,12 +646,12 @@ static void AddConfigDev(struct ConfigDev *configDev)
 
 /* From rom/exec/addmemlist.c *************************************************/
 
-extern long xmaddalt(long start, long size); /* found in bdos/mem.h */
+extern long xmaddalt(UBYTE *start, long size); /* found in bdos/mem.h */
 
 static void AddMemList(ULONG size, ULONG attributes, LONG pri, APTR base, STRPTR name)
 {
     // EmuTOS glue
-    xmaddalt((long)base, (long)size);
+    xmaddalt((UBYTE *)base, (long)size);
 }
 
 /* From arch/m68k-amiga/expansion/configchain.c *******************************/
@@ -817,7 +817,7 @@ static void add_slow_ram(void)
     if (size > 0)
     {
         D(bug("Slow RAM detected at %08lx, size %08lx\n", (ULONG)address, size));
-        xmaddalt((long)address, (long)size);
+        xmaddalt((UBYTE *)address, (long)size);
     }
 }
 

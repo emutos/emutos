@@ -73,8 +73,8 @@ void bmem_init(void)
 
     /* Fill out the first memory descriptor */
     themd.m_link = (MD*) 0;     /* no next memory descriptor */
-    themd.m_start = (LONG)os_end;
-    themd.m_length = (LONG)memtop - themd.m_start;
+    themd.m_start = os_end;
+    themd.m_length = memtop - themd.m_start;
     themd.m_own = (PD*) 0;      /* no owner's process descriptor */
 
     bmem_allowed = 1;
@@ -85,9 +85,9 @@ void bmem_init(void)
 /*
  * balloc - simple BIOS memory allocation
  */
-void * balloc(LONG size)
+UBYTE *balloc(LONG size)
 {
-    void * ret;
+    UBYTE *ret;
 
     if(!bmem_allowed) {
         panic("balloc(%ld) at wrong time\n", size);
@@ -101,14 +101,14 @@ void * balloc(LONG size)
         panic("balloc(%ld): no memory\n", size);
     }
 
-    ret = (void*) themd.m_start;
+    ret = themd.m_start;
 
     /* subtract needed memory from initial MD */
     themd.m_length -= size;
     themd.m_start += size;
 
     KDEBUG(("BIOS: getmpb m_start = 0x%08lx, m_length = 0x%08lx\n",
-             (LONG) themd.m_start, themd.m_length));
+             (ULONG) themd.m_start, themd.m_length));
 
     return ret;
 }

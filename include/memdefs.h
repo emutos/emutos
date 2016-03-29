@@ -26,7 +26,7 @@ typedef struct _md MD;
 struct _md
 {
         MD      *m_link;    /* next MD, or NULL */
-        LONG    m_start;    /* start address of memory block */
+        UBYTE   *m_start;   /* start address of memory block */
         LONG    m_length;   /* number of bytes in memory block*/
         PD      *m_own;     /* owner's process descriptor */
 };
