@@ -71,8 +71,6 @@ extern UWORD os_dosdate;
 extern WORD os_conf;
 extern void (*exec_os)(void) NORETURN;
 extern UBYTE *end_os;
-extern LONG m_start;
-extern LONG m_length;
 
 /* these symbols are automatically created by ld */
 extern UBYTE _etext[];    /* end of text */
