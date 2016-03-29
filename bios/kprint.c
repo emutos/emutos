@@ -34,6 +34,7 @@
 #include "amiga.h"
 #endif
 
+#if STONX_NATIVE_PRINT
 
 /* extern declarations */
 
@@ -50,6 +51,7 @@ extern void printout_stonx(char *);    /* in kprintasm.S */
 
 int native_print_kind;
 
+#endif /* STONX_NATIVE_PRINT */
 
 /*==== cprintf - do formatted string output direct to the console ======*/
 
@@ -123,7 +125,7 @@ static void kprintf_outc_natfeat(int c)
 }
 #endif
 
-#if STONX_NATIVE_PRINT || DETECT_NATIVE_PRINT
+#if STONX_NATIVE_PRINT
 static void kprintf_outc_stonx(int c)
 {
     char buf[2];
@@ -156,7 +158,7 @@ static int vkprintf(const char *fmt, va_list ap)
     }
 #endif
 
-#if STONX_NATIVE_PRINT || DETECT_NATIVE_PRINT
+#if STONX_NATIVE_PRINT
     if (native_print_kind) {
         return doprintf(kprintf_outc_stonx, fmt, ap);
     }

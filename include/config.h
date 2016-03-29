@@ -978,13 +978,6 @@
 #define STONX_NATIVE_PRINT 0
 #endif
 
-/* set this to 1 to try autodetect whether STonX
- * native print is available (experimental).
- */
-#ifndef DETECT_NATIVE_PRINT
-#define DETECT_NATIVE_PRINT 0
-#endif
-
 /* set this to 1 to detect, and (if detected) use native features provided
  * by the standard "native features" interface.
  */
@@ -1044,7 +1037,7 @@
 #endif
 
 /* Determine if kprintf() is available */
-#if CONF_WITH_UAE || DETECT_NATIVE_FEATURES || STONX_NATIVE_PRINT || DETECT_NATIVE_PRINT || MIDI_DEBUG_PRINT || RS232_DEBUG_PRINT || SCC_DEBUG_PRINT || COLDFIRE_DEBUG_PRINT
+#if CONF_WITH_UAE || DETECT_NATIVE_FEATURES || STONX_NATIVE_PRINT || MIDI_DEBUG_PRINT || RS232_DEBUG_PRINT || SCC_DEBUG_PRINT || COLDFIRE_DEBUG_PRINT
 #define HAS_KPRINTF 1
 #else
 #define HAS_KPRINTF 0

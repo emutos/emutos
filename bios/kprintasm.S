@@ -12,6 +12,8 @@
 
 #include "asmdefs.h"
 
+#if STONX_NATIVE_PRINT
+
         .globl  kprintf_init
         .globl  _printout_stonx
 
@@ -44,17 +46,7 @@
         .equ vec_illegal, 0x10       // illegal exception vector
         .equ vec_linea, 0x28         // LineA exception vector
 
-#if STONX_NATIVE_PRINT + DETECT_NATIVE_PRINT > 1
-#warning "please use only one STONX_ "
-#warning "and DETECT_NATIVE_PRINT options"
-#endif
-
 kprintf_init:
-#if STONX_NATIVE_PRINT
-        move.w  #1,_native_print_kind
-        rts
-#endif
-#if DETECT_NATIVE_PRINT
         // first, try STonX
         move.l  vec_linea,a0
         move.l  sp,a1
@@ -70,7 +62,6 @@ kprintf_init:
 fail_stonx:
         move.l  a1,sp
         move.l  a0,vec_linea
-#endif  /* DETECT_NATIVE_PRINT */
         clr.w   _native_print_kind
         rts
 
@@ -84,3 +75,5 @@ _printout_stonx:
         .dc.w   0xa0ff     // Jump to native execution
         .dc.l   0          // Printing subroutine
         rts
+
+#endif /* STONX_NATIVE_PRINT */

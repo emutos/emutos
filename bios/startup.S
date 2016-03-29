@@ -286,6 +286,7 @@ noreset:
         jmp     meminit         // do/test memory config and clear it (needs sp)
 memdone:
 
+#if STONX_NATIVE_PRINT
 
 /*
  * initialize kprintf (for debug prints)
@@ -293,6 +294,7 @@ memdone:
 
         jsr     kprintf_init
 
+#endif /* STONX_NATIVE_PRINT */
 
 /*
  * From now, the stack is allowed, and C code can be used.
