@@ -27,7 +27,6 @@
 #include "asm.h"
 #include "string.h"
 #include "blkdev.h"     /* for BLKDEVNUM */
-//#include "lineavars.h"
 #include "font.h"
 #include "tosvars.h"
 #include "machine.h"
@@ -37,6 +36,10 @@
 
 #include "initinfo.h"
 #include "conout.h"
+
+#ifdef ENABLE_KDEBUG
+#include "lineavars.h"
+#endif
 
 int early_cli;
 
