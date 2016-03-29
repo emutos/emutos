@@ -408,7 +408,6 @@ stram_detected:
         /* clear global variables */
         bsr     clear_sysvars
         bsr     clear_bss
-        bsr     clear_free_stram
 
         /* Store the ST-RAM parameters in the ST-RAM itself */
         move.b  d6,memctrl              // set copy of hw memory config
@@ -510,9 +509,4 @@ clear_sysvars:
 clear_bss:
         move.l  #bssstart,a0
         move.l  #__end,a1
-        bra.s   call_bzero_a0_a1
-
-clear_free_stram:
-        move.l  _os_end,a0  // start, depends on EMUTOS_LIVES_IN_RAM
-        move.l  d5,a1       // end
         bra.s   call_bzero_a0_a1
