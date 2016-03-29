@@ -15,8 +15,6 @@
 
 #include "asmdefs.h"
 
-#define DETECT_MMU (CONF_WITH_FALCON_MMU + CONF_WITH_ST_MMU > 1)
-
 // ==== References ===========================================================
 
         .globl  meminit                 // memory initialization
@@ -83,7 +81,7 @@ clearbss:
  * The stack will be overwritten and lost during clearing of memory
  */
 
-#if DETECT_MMU
+#if CONF_WITH_FALCON_MMU
         /* detect if this is a Falcon by reading $ff8282 register */
         pea     0xffff8282.w
         jsr     _check_read_byte
@@ -91,9 +89,7 @@ clearbss:
 
         tst.w   d0                      // is it Falcon MMU?
         beq     memchk                  // no -> skip 0xffff8007 test
-#endif /* DETECT_MMU */
 
-#if CONF_WITH_FALCON_MMU
         /* Initialize ant test Falcon MMU ??? */
 #ifdef __mcoldfire__
         lea     0xffff8007.w, a0
@@ -129,7 +125,7 @@ memchk:
 #endif
 
 memok:
-#if DETECT_MMU
+#if CONF_WITH_FALCON_MMU
         tst.w   d0                      // is it Falcon MMU?
         bne     no_memctrl              // yes -> skip memctrl init
 #endif
@@ -165,7 +161,7 @@ memconf:
 
 #else /* CONF_STRAM_SIZE */
 
-#if DETECT_MMU
+#if CONF_WITH_FALCON_MMU
         tst.w   d0                      // is it Falcon MMU?
         bne     falcmemconf             // yes -> jump to Falcon mem routine
 #endif
