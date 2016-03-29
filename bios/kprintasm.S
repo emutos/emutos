@@ -14,10 +14,10 @@
 
 #if STONX_NATIVE_PRINT
 
-        .globl  kprintf_init
+        .globl  _stonx_kprintf_init
         .globl  _printout_stonx
 
-        .extern _native_print_kind
+        .extern _stonx_kprintf_available
 
 // ===========================================================================
 // ==== TEXT segment =========================================================
@@ -26,10 +26,10 @@
         .text
 
 /*
- * void kprintf_init(void)
- * sets variable _native_print_kind:
+ * void stonx_kprintf_init(void)
+ * sets variable _stonx_kprintf_available:
  *   0: no native print detected
- *   1: STonX
+ *   1: STonX native print detected
  *
  * Calling kprintf should only be done after:
  *   1/ the bss is cleared
@@ -46,7 +46,7 @@
         .equ vec_illegal, 0x10       // illegal exception vector
         .equ vec_linea, 0x28         // LineA exception vector
 
-kprintf_init:
+_stonx_kprintf_init:
         // first, try STonX
         move.l  vec_linea,a0
         move.l  sp,a1
@@ -57,12 +57,12 @@ kprintf_init:
         .dc.l   0
         move.l  a1,sp
         move.l  a0,vec_linea
-        move.w  #1,_native_print_kind
+        move.w  #1,_stonx_kprintf_available
         rts
 fail_stonx:
         move.l  a1,sp
         move.l  a0,vec_linea
-        clr.w   _native_print_kind
+        clr.w   _stonx_kprintf_available
         rts
 
 msg_empty:

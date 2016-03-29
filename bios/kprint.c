@@ -36,20 +36,12 @@
 
 #if STONX_NATIVE_PRINT
 
-/* extern declarations */
+/* external declarations from kprintasm.S */
 
-extern void printout_stonx(char *);    /* in kprintasm.S */
+extern void printout_stonx(const char *str);
 
-
-/*
- *  globals
- */
-
-/* this variable is filled by function kprint_init(), in kprintasm.S,
- * called very early just after clearing the BSS.
- */
-
-int native_print_kind;
+/* this variable is filled by stonx_kprintf_init() */
+int stonx_kprintf_available;
 
 #endif /* STONX_NATIVE_PRINT */
 
@@ -159,7 +151,7 @@ static int vkprintf(const char *fmt, va_list ap)
 #endif
 
 #if STONX_NATIVE_PRINT
-    if (native_print_kind) {
+    if (stonx_kprintf_available) {
         return doprintf(kprintf_outc_stonx, fmt, ap);
     }
 #endif

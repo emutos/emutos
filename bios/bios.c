@@ -74,6 +74,10 @@
 
 /*==== External declarations ==============================================*/
 
+#if STONX_NATIVE_PRINT
+extern void stonx_kprintf_init(void);
+#endif
+
 #if CONF_WITH_CARTRIDGE
 extern void run_cartridge_applications(WORD typebit); /* found in startup.S */
 #endif
@@ -177,6 +181,10 @@ static void bios_init(void)
 #if DETECT_NATIVE_FEATURES
     KDEBUG(("natfeat_init()\n"));
     natfeat_init();
+#endif
+#if STONX_NATIVE_PRINT
+    KDEBUG(("stonx_kprintf_init()\n"));
+    stonx_kprintf_init();
 #endif
 #if CONF_WITH_UAE
     KDEBUG(("amiga_uaelib_init()\n"));
