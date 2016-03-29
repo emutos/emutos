@@ -621,7 +621,7 @@ obj/compr-%.o : %.S
 	$(CC) $(SFILE_FLAGS) -c $< -o $@
 
 COMPROBJ = obj/compr-tosvars.o obj/compr-comprimg.o obj/compr-memory.o \
-           obj/compr-processor.o obj/compr-uncompr.o
+           obj/compr-processor.o obj/compr-memset.o obj/compr-uncompr.o
 
 # ROM stub for compressed ROM image
 compr.img compr.map: OPTFLAGS = -Os

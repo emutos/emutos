@@ -16,6 +16,7 @@
 #include "header.h"
 
         .globl  _main           // OS entry point
+        .globl  _os_end
 
         .extern __end
         .extern resvalid

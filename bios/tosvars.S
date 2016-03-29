@@ -107,6 +107,7 @@
 #ifdef CONF_WITH_68030_PMMU
         .globl  _pmmutree
 #endif
+        .globl  sysvars_end
         .globl  _stktop
         .globl  _shifty
 
@@ -239,6 +240,7 @@ _pmmutree:      .ds.l   64      // for pmmu tree on 68030
 // (So the gap between 0x5b4 and 0x700 could be filled with system variables
 //  or a buffer that is only accessed in supervisor mode.)
         .org 0x800
+sysvars_end:
 
 // BIOS internal stack
 // Be sure to keep it under bssstart to avoid clearing it

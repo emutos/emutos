@@ -27,6 +27,10 @@
         .extern _check_read_byte
         .extern _detect_cpu
 
+// ==== memset.S - functions to clear a buffer ===============================
+
+        .extern _bzero
+
 // ==== tosvars.s - TOS System variables =====================================
 
         // ST-RAM settings
@@ -43,6 +47,7 @@
 // ==== Overall memory map ===================================================
 
         .extern sysvars_start // start of system variables
+        .extern sysvars_end   // end of system variables
         .extern bssstart      // end of documented low memory tosvars
         .extern __end         // end of BSS segment
         .extern _os_end       // pointer to first byte RAM not used by OS
@@ -394,15 +399,16 @@ less16:
  * - The size of the ST-RAM has been detected
  * - The MMU has been properly initalized
  * - The ST-RAM is ready to be used
+ * - The stack is valid between sysvars and BSS
  *
  * d5.l = phystop
  * d6.b = memctrl
  */
 stram_detected:
-        /* clear ST-RAM till end (phystop in d5) */
-        lea     st_cleared(pc),a6       // remember return address
-        bra     clear_st_ram            // jump to routine clearing the RAM
-st_cleared:
+        /* clear global variables */
+        bsr     clear_sysvars
+        bsr     clear_bss
+        bsr     clear_free_stram
 
         /* Store the ST-RAM parameters in the ST-RAM itself */
         move.b  d6,memctrl              // set copy of hw memory config
@@ -487,78 +493,26 @@ alter:
 // ==== Below are utility functions ==========================================
 // ===========================================================================
 
-// ==== Clear the ST-RAM =====================================================
-// d5 = end of the ST-RAM
-// a6 = return address
-// d0-d4/a0-a5 = clobbered
-clear_st_ram:
-#if EMUTOS_LIVES_IN_RAM
-        // When EmuTOS lives in the RAM, it must not be cleared!
-        move.l  _os_end, d0             // end of EmuTOS in RAM
-        addi.l  #0xff, d0               // round to next multiple of 256
-        andi.l  #0xffffff00, d0         // for clear_ram
-        // BUG: This is not strictly correct. A few bytes will not be cleared
-        // at the beginning of the free ram.
-        move.l  d0,a4                   // begin of RAM to clear
-#else
-        lea     sysvars_start,a4        // beginning of RAM to clear
-#endif
-        // Fall into clear_ram
+// Clear memory from a0 to a1
+call_bzero_a0_a1:
+        sub.l   a0,a1
+        move.l  a1,-(sp)    // size
+        move.l  a0,-(sp)    // start
+        jsr     _bzero
+        addq.l  #8,sp
+        rts
 
-// ==== Clear RAM from a4 to d5 and return to (a6) ===========================
-// Restriction: the amount of ram to clear must be a multiple of 256
-/*
- * a4 = begin of RAM to clear
- * d5 = end of RAM to clear
- * a6 = return address
- * d0-d4/a0-a5 = clobbered
- */
-clear_ram:
-        move.l  d5, d4
-        sub.l   a4, d4
-        lsr.l   #8, d4
-        subq.l  #1, d4
-#ifdef __mcoldfire__
-        lea     0x0100, a5
-#else
-        lea     0x0200, a5
-#endif
-        moveq   #0x00, d0
-        move.l  d0, a0
-        moveq   #0x00, d1
-        move.l  d1, a1
-        moveq   #0x00, d2
-        move.l  d2, a2
-        moveq   #0x00, d3
-        move.l  d3, a3
-        lea     0x0100(a4), a4
-clear_loop:
-#ifdef __mcoldfire__
-        movem.l d0-d3/a0-a3, -32(a4)
-        movem.l d0-d3/a0-a3, -64(a4)
-        movem.l d0-d3/a0-a3, -96(a4)
-        movem.l d0-d3/a0-a3, -128(a4)
-        movem.l d0-d3/a0-a3, -160(a4)
-        movem.l d0-d3/a0-a3, -192(a4)
-        movem.l d0-d3/a0-a3, -224(a4)
-        movem.l d0-d3/a0-a3, -256(a4)
-        adda.l  a5, a4
-        subq.l  #1, d4
-        bpl.s   clear_loop
-#else
-        movem.l d0-d3/a0-a3, -(a4)
-        movem.l d0-d3/a0-a3, -(a4)
-        movem.l d0-d3/a0-a3, -(a4)
-        movem.l d0-d3/a0-a3, -(a4)
-        movem.l d0-d3/a0-a3, -(a4)
-        movem.l d0-d3/a0-a3, -(a4)
-        movem.l d0-d3/a0-a3, -(a4)
-        movem.l d0-d3/a0-a3, -(a4)
-        adda.l  a5, a4
-        dbf     d4, clear_loop
-#endif
-        jmp     (a6)
+clear_sysvars:
+        move.l  #sysvars_start,a0
+        move.l  #sysvars_end,a1
+        bra.s   call_bzero_a0_a1
 
-// ===========================================================================
-// ==== End ==================================================================
-// ===========================================================================
+clear_bss:
+        move.l  #bssstart,a0
+        move.l  #__end,a1
+        bra.s   call_bzero_a0_a1
+
+clear_free_stram:
+        move.l  _os_end,a0  // start, depends on EMUTOS_LIVES_IN_RAM
+        move.l  d5,a1       // end
+        bra.s   call_bzero_a0_a1
