@@ -10,7 +10,7 @@
 #ifndef BIOS_H
 #define BIOS_H
 
-void biosmain(void);
+void biosmain(void) NORETURN;
 LONG bios_do_unimpl(WORD number);
 
 /* misc BIOS functions */

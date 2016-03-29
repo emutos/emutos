@@ -38,6 +38,10 @@
 
         .extern meminit       // initialize the memory and it's controller
 
+// ==== bios.c - BIOS C part =================================================
+
+        .extern _biosmain     // BIOS C entry point
+
 // ==== Overall memory map ===================================================
 
         .extern __end         // end of bss + comm sections (ld generated)
