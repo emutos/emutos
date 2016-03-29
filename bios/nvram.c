@@ -32,6 +32,17 @@
 #define NVRAM_USER_SIZE 48          /* of which the user may access 48 */
 #define NVRAM_CKSUM     NVRAM_USER_SIZE /* and the last 2 are checksum */
 
+/*
+ * on the TT, resetting NVRAM causes TOS3 to zero it.
+ * on the Falcon and FireBee, it is set to zeroes except for a small
+ * portion (see below) starting at NVRAM_INIT_START.
+ *
+ * we do the same to avoid problems booting Atari TOS and EmuTOS on the
+ * same system.
+ */
+#define NVRAM_INIT_START    8
+const UBYTE nvram_init[] = { 0x00, 0x2f, 0x20, 0xff, 0xff, 0xff };
+
 int has_nvram;
 
 /*
@@ -154,13 +165,15 @@ WORD nvmaccess(WORD type, WORD start, WORD count, UBYTE *buffer)
 
     if (type == 2)      /* reset all */
     {
-        for (i = 0; i < NVRAM_SIZE; i++)
+        for (i = 0; i < NVRAM_USER_SIZE; i++)
         {
             *addr_reg = i + NVRAM_START;
             *data_reg = 0;
         }
-        *addr_reg = NVRAM_START + NVRAM_CKSUM;
-        *data_reg = 0xff;
+        if (cookie_mch == MCH_TT)
+            set_sum(compute_sum());
+        else
+            nvmaccess(1,NVRAM_INIT_START,ARRAY_SIZE(nvram_init),(UBYTE *)nvram_init);
         return 0;
     }
 
