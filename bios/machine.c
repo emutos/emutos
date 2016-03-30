@@ -296,7 +296,7 @@ static void setvalue_frb(void)
 
 #if CONF_WITH_FASTRAM
     /* Standard Atari TT-RAM may be present */
-    need_frb = (ramtop > 0);
+    need_frb = (ramtop != NULL);
 #else
     need_frb = FALSE;
 #endif

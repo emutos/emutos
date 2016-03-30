@@ -81,7 +81,8 @@ extern UBYTE *os_end;
 extern UBYTE *membot;
 extern UBYTE *memtop;
 
-extern LONG ramtop;       /* top of fastram */
+#define FASTRAM_START ((UBYTE *)0x01000000)
+extern UBYTE *ramtop;     /* top of fastram */
 #define RAMVALID_MAGIC 0x1357BD13
 extern LONG ramvalid;     /* indicates if fastram is present */
 

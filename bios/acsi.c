@@ -117,7 +117,7 @@ LONG acsi_rw(WORD rw, LONG sector, WORD count, UBYTE *buf, WORD dev)
             cnt = count;
 
 #if CONF_WITH_FRB
-        if (buf > (UBYTE *)0x1000000L) {
+        if (buf > FASTRAM_START) {
             if (cookie_frb == NULL) {
                 KDEBUG(("acsi.c: FRB is missing\n"));
                 return -1L;

@@ -374,10 +374,10 @@ static void bios_init(void)
 
 #if CONF_WITH_FASTRAM
     /* add TT-RAM that was detected in memory.S */
-    if (ramtop > 0x1000000)
+    if (ramtop != NULL)
     {
         KDEBUG(("xmaddalt()\n"));
-        xmaddalt((UBYTE *)0x1000000, ramtop - 0x1000000);
+        xmaddalt(FASTRAM_START, ramtop - FASTRAM_START);
     }
 #endif
 
