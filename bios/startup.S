@@ -17,34 +17,30 @@
 
         .equ    cart_base, 0x00fa0000 // Base of ROM port cartridge
 
-// ==== References ===========================================================
-
+// ==== Definitions ==========================================================
 
         .globl  _os_entry
 #if CONF_WITH_CARTRIDGE
         .globl  _run_cartridge_applications
 #endif
 
-// ==== tosvars.s - TOS System variables =====================================
+// ==== References ===========================================================
 
+        // TOS System variables
         .extern resvalid
         .extern resvector
         .extern _stktop
 
-// ==== memory.s - variables for memory  =====================================
-
+        // Memory
         .extern meminit       // initialize the memory and it's controller
 
-// ==== bios.c - BIOS C part =================================================
-
+        // BIOS C part
         .extern _biosmain     // BIOS C entry point
 
-// ==== Overall memory map ===================================================
-
+        // Overall memory map
         .extern __end         // end of bss + comm sections (ld generated)
         .extern __etext       // end of text section
         .extern __edata       // end of data section
-
 
 // ===========================================================================
 // ==== TEXT segment (TOS image) =============================================

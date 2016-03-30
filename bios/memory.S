@@ -18,20 +18,14 @@
 
         .globl  meminit                 // memory initialization
 
-// ==== startup.s - variables for memory  ====================================
+// ==== References ===========================================================
 
         .extern memdone       // return to, after memory config is done
 
-// ==== detect.s - functions for detecting hardware and CPU type =============
-
+        // functions for detecting hardware and CPU type
         .extern _check_read_byte
         .extern _detect_cpu
-
-// ==== memset.S - functions to clear a buffer ===============================
-
         .extern _bzero
-
-// ==== tosvars.s - TOS System variables =====================================
 
         // ST-RAM settings
         .extern memctrl
@@ -44,8 +38,7 @@
         .extern _ramtop
         .extern _ramvalid
 
-// ==== Overall memory map ===================================================
-
+        // Overall memory map
         .extern sysvars_start // start of system variables
         .extern sysvars_end   // end of system variables
         .extern bssstart      // end of documented low memory tosvars

@@ -118,23 +118,22 @@
 
 #include "asmdefs.h"
 
-//==== Global References =====================================================
+// ==== Definitions ==========================================================
 
         .globl  _termuser
         .globl  _gouser
         .globl  _oscall
-
         .globl  _enter
         .globl  _old_trap2
         .globl  _bdos_trap2
+        .globl  _xsuper
+
+// ==== References ===========================================================
 
         .extern _osif
         .extern _xterm
         .extern _run
         .extern _longframe              // If not 0, use long stack frames
-
-        .globl  _xsuper
-
 
 //==== bdos_trap2 - trap 2 entry point =======================================
 //

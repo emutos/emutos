@@ -17,7 +17,7 @@
 
 #include "asmdefs.h"
 
-// ==== External Declarations ================================================
+// ==== References ===========================================================
 
         .extern line_a_vars
         .extern _sysfonts
@@ -45,7 +45,7 @@
         .extern _undraw_sprite
 
 
-// ==== Global Declarations ================================================
+// ==== Definitions ==========================================================
 
         .globl  _int_linea              // entry for linea exception
 

@@ -11,6 +11,8 @@
 
 #include "asmdefs.h"
 
+// ==== Definitions ==========================================================
+
         .globl  _init_exc_vec
         .globl  _init_user_vec
 
@@ -19,7 +21,6 @@
         .globl  _xbiostrap      // call XBIOS from C
         .globl  _bios_unimpl
         .globl  _xbios_unimpl
-
 
         .globl  _check_read_byte
         .globl  _int_vbl
@@ -38,8 +39,9 @@
         .globl  _call_etv_critic
         .globl  _default_etv_critic
 
-// ==== tosvars.s - TOS System variables =====================================
+// ==== References ===========================================================
 
+        // TOS System variables
         .extern _longframe
         .extern _vbclock
         .extern _frclock
