@@ -110,6 +110,7 @@
         .globl  sysvars_end
         .globl  _stktop
         .globl  _shifty
+        .globl  _first_boot
 
 // ===========================================================================
 // ==== BSS segment ==========================================================
@@ -250,10 +251,17 @@ _stktop:
 
 // memory past this address will be cleared on startup or on reset.
 bssstart:
+
 // Note: _shifty was moved here to ensure that it lies within the first 32K
 // of memory.  This is not required by the architecture, but GFA Basic
 // assumes that it is half-word addressable, and may crash the system
 // otherwise.
 _shifty:        .ds.b   1       // reflects the status up/down of mode keys
+
+// If _first_boot is 1, this means it is the first time that this EmuTOS
+// instance is run. This is always true for a cold boot from ROM. This is
+// always false for a reset. If EmuTOS lives in RAM, it is only true the first
+// time it is run.
+_first_boot:    .ds.b   1       // 1 if this is the first boot, otherwise 0
 
 // The C global variables will be placed here

@@ -151,4 +151,6 @@ extern ULONG autoboot_magic;
 extern ULONG warm_magic;
 #endif
 
+extern UBYTE first_boot; /* 1 if this is the first boot, otherwise 0 */
+
 #endif /* TOSVARS_H */

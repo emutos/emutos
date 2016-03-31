@@ -21,6 +21,7 @@
 // ==== References ===========================================================
 
         .extern memdone       // return to, after memory config is done
+        .extern _warm_magic
 
         // functions for detecting hardware and CPU type
         .extern _check_read_byte
@@ -116,6 +117,28 @@ memchk:
 memory_reused:
         /* clear global variables */
         bsr     clear_bss
+
+        // If the memory is reused, this is not a first boot
+        moveq   #0, d7                  // _first_boot = FALSE
+
+#if CONF_WITH_PSEUDO_COLD_BOOT
+        // If _warm_magic == WARM_MAGIC, then this is a reset
+        lea     _warm_magic, a0
+        move.l  #0x5741524D, d1         // WARM_MAGIC
+        cmp.l   (a0), d1
+        beq.s   .warm_magic_done        // Indeed, this is not a first boot
+
+        // _warm_magic != WARM_MAGIC: this is a first boot
+        moveq   #1, d7                  // _first_boot = TRUE
+
+        // Next boot will be warm
+        move.l  d1, (a0)
+.warm_magic_done:
+#endif
+
+        /* Remember if this is a first boot or not */
+        move.b  d7, _first_boot
+
         jmp     memdone                 // config ok -> memdone in startup.s
 
 // ===========================================================================
@@ -388,6 +411,30 @@ stram_detected:
         /* Store the ST-RAM parameters in the ST-RAM itself */
         move.b  d6,memctrl              // set copy of hw memory config
         move.l  d5,_phystop             // highest address as phystop
+
+        /* Make ST-RAM configuration valid */
+#ifdef __mcoldfire__
+        lea     memvalid, a0
+        move.l  #0x752019f3, (a0)       // set memvalid to ok
+        lea     memval2, a0
+        move.l  #0x237698aa, (a0)       // set memval2 to ok
+        lea     memval3, a0
+        move.l  #0x5555aaaa, (a0)       // set memval3 to ok
+#else
+        move.l  #0x752019f3, memvalid   // set memvalid to ok
+        move.l  #0x237698aa, memval2    // set memval2 to ok
+        move.l  #0x5555aaaa, memval3    // set memval3 to ok
+#endif
+
+#if CONF_WITH_PSEUDO_COLD_BOOT
+        lea     _warm_magic, a0
+        move.l  #0x5741524D, d1         // WARM_MAGIC
+        move.l  d1, (a0)                // Next boot will be warm (reset)
+#endif
+
+        // Since the memory was not valid, this is a first boot
+        moveq   #1, d7                  // _first_boot = TRUE
+        move.b  d7, _first_boot
 
 #if CONF_WITH_FASTRAM
 
