@@ -7,6 +7,7 @@
  *  MAD  Martin Doering
  *  PES  Petr Stehlik
  *  jfdn Jean-François DEL NERO
+ *  VRI  Vincent Rivière
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -99,25 +100,37 @@ memchk:
         bne     memconf                 // no -> config memory
 #endif
 
+// ===========================================================================
+// ==== The ST-RAM configuration is valid ====================================
+// ===========================================================================
+// Inputs:
+//   d0.w: 1 = Falcon MMU, 0 = ST/TT MMU
+// Outputs:
+//   d6.b: old memctrl
+//   d5.l: old _phystop
+//   d3.l: old _ramvalid (#if CONF_WITH_FASTRAM)
+//   a3.l: old _ramtop (#if CONF_WITH_FASTRAM)
+//   d7.b: _first_boot (autodetected)
+
+        // Load old RAM settings into registers.
+        // They will stay in safe place in case we clear the sysvars.
+        move.b  memctrl, d6
+        move.l  _phystop, d5
+#if CONF_WITH_FASTRAM
+        move.l  _ramvalid, d3
+        move.l  _ramtop, a3
+#endif
+
 #if CONF_WITH_FALCON_MMU
         tst.w   d0                      // is it Falcon MMU?
-        bne     memory_reused           // yes -> skip memctrl init
+        bne.s   memory_reused           // yes -> skip memctrl init
 #endif
 
 #if CONF_WITH_ST_MMU
-#ifdef __mcoldfire__
-        lea     0xffff8001.w, a0
-        move.b  memctrl, (a0)           // write old valid config to controller
-#else
-        move.b  memctrl, 0xffff8001.w   // write old valid config to controller
+        move.b  d6, 0xffff8001.w        // write old valid config to controller
 #endif
-                                        // phystop should then also be ok
-#endif /* CONF_WITH_ST_MMU */
 
 memory_reused:
-        /* clear global variables */
-        bsr     clear_bss
-
         // If the memory is reused, this is not a first boot
         moveq   #0, d7                  // _first_boot = FALSE
 
@@ -130,16 +143,9 @@ memory_reused:
 
         // _warm_magic != WARM_MAGIC: this is a first boot
         moveq   #1, d7                  // _first_boot = TRUE
-
-        // Next boot will be warm
-        move.l  d1, (a0)
 .warm_magic_done:
 #endif
-
-        /* Remember if this is a first boot or not */
-        move.b  d7, _first_boot
-
-        jmp     memdone                 // config ok -> memdone in startup.s
+        bra     stram_detected
 
 // ===========================================================================
 // ==== memconf - Detect RAM and configure the memory controller =============
@@ -147,19 +153,23 @@ memory_reused:
 // Inputs:
 //   d0.w: 1 = Falcon MMU, 0 = ST/TT MMU
 // Outputs:
-//   d5.l: detected end of the ST-RAM, to put into _phystop.
 //   d6.b: new value of 0xffff8001 (maybe fake), to put into memctrl.
+//   d5.l: detected end of the ST-RAM, to put into _phystop.
+//   d7.b: _first_boot (always 1 after memconf)
+// Must be preserved:
+//   d3.l: old _ramvalid (#if CONF_WITH_FASTRAM)
+//   a3.l: old _ramtop (#if CONF_WITH_FASTRAM)
 memconf:
 #if CONF_STRAM_SIZE
         // The size of the ST-RAM is hardcoded: no real detection
         move.l  #CONF_STRAM_SIZE,d5     // this is phystop - the end of RAM
         moveq   #0,d6                   // fake memctrl
-        // Fall into stram_detected
+        // Fall into memconf_done
 #elif defined (MACHINE_AMIGA)
         lea     amiga_memconf_ret(pc),a6
         jmp     amiga_memconf
 amiga_memconf_ret:
-        // Fall into stram_detected
+        // Fall into memconf_done
 #else /* ST/TT/Falcon memconf */
 
 #if CONF_WITH_FALCON_MMU
@@ -344,7 +354,7 @@ mem_sanity_loop:
         lsr.l   #1,d5                   // Decrease memory size
         bra.s   mem_sanity_loop
 mem_sanity_done:
-        bra     stram_detected
+        bra     memconf_done
 
 #endif /* CONF_WITH_ST_MMU */
 
@@ -384,11 +394,19 @@ less16:
         move.l  d0, d5                  // this is phystop - the end of RAM
         moveq   #0, d6                  // fake memctrl with Falcon MMU
 
-        // Fall into stram_detected
+        // Fall into memconf_done
 
 #endif /* CONF_WITH_FALCON_MMU */
 
 #endif /* ST/TT/Falcon memconf */
+
+memconf_done:
+        // Since the memory was not valid, this is a first boot
+        moveq   #1, d7                  // _first_boot = TRUE
+#if CONF_WITH_FASTRAM
+        // Since the ST-RAM was invalid, FastRAM settings were also invalid
+        moveq   #0, d3                  // _ramvalid
+#endif
 
 // ===========================================================================
 // ==== End of ST-RAM detection ==============================================
@@ -400,17 +418,28 @@ less16:
  * - The ST-RAM is ready to be used
  * - The stack is valid between sysvars and BSS
  *
- * d5.l = phystop
- * d6.b = memctrl
+ * d7.b = _first_boot
+ * d5.l = new phystop
+ * d6.b = new memctrl
+ * d3.l = old _ramvalid
+ * a3.l = old _ramtop (if old _ramvalid was valid)
  */
 stram_detected:
-        /* clear global variables */
-        bsr     clear_sysvars
-        bsr     clear_bss
+        tst.b   d7                      // first boot ?
+        beq     any_boot                // no: skip first boot initialization
+
+// ===========================================================================
+// ==== This part is executed only on first boot =============================
+// ===========================================================================
+
+        /* Clear the sysvars */
+        move.l  #sysvars_start, a0
+        move.l  #sysvars_end, a1
+        bsr     call_bzero_a0_a1
 
         /* Store the ST-RAM parameters in the ST-RAM itself */
-        move.b  d6,memctrl              // set copy of hw memory config
-        move.l  d5,_phystop             // highest address as phystop
+        move.b  d6, memctrl             // set copy of hw memory config
+        move.l  d5, _phystop            // highest address as phystop
 
         /* Make ST-RAM configuration valid */
 #ifdef __mcoldfire__
@@ -432,22 +461,27 @@ stram_detected:
         move.l  d1, (a0)                // Next boot will be warm (reset)
 #endif
 
-        // Since the memory was not valid, this is a first boot
-        moveq   #1, d7                  // _first_boot = TRUE
-        move.b  d7, _first_boot
-
-#if CONF_WITH_FASTRAM
-
 // ===========================================================================
 // ==== TT-RAM (FastRAM) detection (PES) =====================================
 // ===========================================================================
 /*
  * This alternate RAM begins at 16MB boundary ($1000000)
+ *
+ * Inputs (#if CONF_WITH_FASTRAM):
+ *   d3.l: old _ramvalid
+ *   a3.l: old _ramtop (if old _ramvalid was valid)
  */
-#if CONF_FASTRAM_SIZE
+        move.l  #0x1357BD13,d1          // _ramvalid magic
+
+#if !CONF_WITH_FASTRAM
+        sub.l   a3, a3                  // _ramtop = 0
+#elif CONF_FASTRAM_SIZE
         // The size of the FastRAM is hardcoded: no real detection
         move.l  #0x1000000+CONF_FASTRAM_SIZE,a3    // fixed ramtop
 #else
+        cmp.l   d1,d3                   // old _ramvalid valid ?
+        beq     fastram_detected        // yes: skip detection
+
         /* clear MB counter */
         moveq   #0, d6
 
@@ -494,20 +528,35 @@ setramtop:
         /* test MB counter */
         tst.l   d6
         bne.s   alter
-        sub.l   a3, a3
+
+        /* no FastRAM found */
+        sub.l   a3, a3                  // _ramtop = 0
 alter:
 #endif /* CONF_FASTRAM_SIZE */
 
-// Write FastRAM settings into system variables (ST-RAM)
+/*
+ * At this point:
+ *   a3.l = new _ramtop
+ *   d1.l = _ramvalid magic
+ */
+fastram_detected:
+        // Write FastRAM settings into system variables (in ST-RAM)
+        // Note that, like TOS 1.06 or TOS 2.06, we always set _ramvalid
+        // as valid even if _ramtop is 0.
         move.l  a3, _ramtop             // set ramtop to size of found memory
-#ifdef __mcoldfire__
-        lea     _ramvalid, a4
-        move.l  #0x1357BD13, (a4)       // set ramvalid to ok
-#else
-        move.l  #0x1357BD13, _ramvalid  // set ramvalid to ok
-#endif
+        move.l  d1, _ramvalid
 
-#endif /* CONF_WITH_FASTRAM */
+// ===========================================================================
+// ==== This part is executed on any boot (first boot or reset) ==============
+// ===========================================================================
+any_boot:
+        // Clear the BSS
+        move.l  #bssstart, a0
+        move.l  #__end, a1
+        bsr     call_bzero_a0_a1
+
+        // Remember if this is a first boot or not
+        move.b  d7, _first_boot
 
         jmp     memdone                 // config done -> return to startup.s
 
@@ -523,13 +572,3 @@ call_bzero_a0_a1:
         jsr     _bzero
         addq.l  #8,sp
         rts
-
-clear_sysvars:
-        move.l  #sysvars_start,a0
-        move.l  #sysvars_end,a1
-        bra.s   call_bzero_a0_a1
-
-clear_bss:
-        move.l  #bssstart,a0
-        move.l  #__end,a1
-        bra.s   call_bzero_a0_a1
