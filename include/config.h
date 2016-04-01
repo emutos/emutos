@@ -276,6 +276,9 @@
 # ifndef CONF_WITH_IDE
 #  define CONF_WITH_IDE 1
 # endif
+# ifndef CONF_WITH_PSEUDO_COLD_BOOT
+#  define CONF_WITH_PSEUDO_COLD_BOOT 1
+# endif
 # ifndef AES_STACK_SIZE
 #  define AES_STACK_SIZE 2048   /* in LONGs */
 # endif
@@ -758,8 +761,9 @@
 
 /*
  * Set CONF_WITH_PSEUDO_COLD_BOOT to 1 to simulate a cold boot on machines
- * which always do a warm boot, such as the FireBee.
- * This is also always the case when EmuTOS is run from the RAM.
+ * where the RAM is always initialized by a pre-OS, such as the FireBee.
+ * In this case, memconf is not called so it can't detect a cold boot.
+ * Also, this is always the case when EmuTOS lives in RAM.
  */
 #ifndef CONF_WITH_PSEUDO_COLD_BOOT
 # if EMUTOS_LIVES_IN_RAM
