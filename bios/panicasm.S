@@ -93,10 +93,13 @@ _kill_program:
  * Restart this OS
  */
 _warm_reset:
+        jsr     _flush_data_cache
         jmp     _main
 
 /* void cold_reset(void)
- * Invalidate the RAM configuration and reset the computer to the ROM OS
+ * Invalidate the RAM configuration and reset the computer to the ROM OS.
+ * It is important to flush the data cache so the values of the magic variables
+ * are really pushed to the RAM. Next OS may use different cache settings.
  */
 _cold_reset:
         clr.l   resvalid        // Don't allow jump to reset vector in startup.S
@@ -106,18 +109,22 @@ _cold_reset:
 #endif
 #ifdef MACHINE_AMIGA
         clr.l   0x420           // Invalidate memvalid
+        jsr     _flush_data_cache
         move.l  0x00fc0004,a0   // Get the entry adress from offset 4 in the ROM
         reset                   // The entry usually points just after reset
         jmp     (a0)
 #elif defined(MACHINE_FIREBEE)
         // Do not invalidate memvalid, to keep the RAM settings
+        jsr     _flush_data_cache
         move.l  0x00e00004,a0   // Get the entry adress from offset 4 in the ROM
         jmp     (a0)
 #elif CONF_ATARI_HARDWARE
         clr.l   0x420           // Invalidate memvalid
+        jsr     _flush_data_cache
         move.l  0x004,a0        // The 2 first longs are mapped to the ROM
         jmp     (a0)
 #else
+        jsr     _flush_data_cache
         // We don't know how to cold reset, so just warm reset this OS
-        jmp     _warm_reset
+        jmp     _main
 #endif
