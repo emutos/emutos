@@ -1267,7 +1267,7 @@ static WORD get_dma_status(void)
 {
     WORD ret;
 
-    DMA->control = DMA_SCREG | DMA_FDC;
+    DMA->control = DMA_SCREG | DMA_FLOPPY;
     ret = DMA->control;
 
     return ret;
@@ -1301,17 +1301,17 @@ static void set_fdc_reg(WORD reg, WORD value)
 
 static void fdc_start_dma_read(WORD count)
 {
-    DMA->control = DMA_SCREG | DMA_FDC;
-    DMA->control = DMA_SCREG | DMA_FDC | DMA_WRBIT;
-    DMA->control = DMA_SCREG | DMA_FDC;
+    DMA->control = DMA_SCREG | DMA_FLOPPY;
+    DMA->control = DMA_SCREG | DMA_FLOPPY | DMA_WRBIT;
+    DMA->control = DMA_SCREG | DMA_FLOPPY;
     DMA->data = count;
 }
 
 static void fdc_start_dma_write(WORD count)
 {
-    DMA->control = DMA_SCREG | DMA_FDC | DMA_WRBIT;
-    DMA->control = DMA_SCREG | DMA_FDC;
-    DMA->control = DMA_SCREG | DMA_FDC | DMA_WRBIT;
+    DMA->control = DMA_SCREG | DMA_FLOPPY | DMA_WRBIT;
+    DMA->control = DMA_SCREG | DMA_FLOPPY;
+    DMA->control = DMA_SCREG | DMA_FLOPPY | DMA_WRBIT;
     DMA->data = count;
 }
 

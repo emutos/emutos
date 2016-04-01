@@ -20,10 +20,10 @@
  * Accessing the FDC registers is indirect through ST-specific
  * DMA circuitry. See also dma.h.
  */
-#define FDC_CS  (DMA_FDC              )   /* command/status  */
-#define FDC_TR  (DMA_FDC|       DMA_A0)   /* track register  */
-#define FDC_SR  (DMA_FDC|DMA_A1       )   /* sector register */
-#define FDC_DR  (DMA_FDC|DMA_A1|DMA_A0)   /* data register   */
+#define FDC_CS  (DMA_FLOPPY              )  /* command/status  */
+#define FDC_TR  (DMA_FLOPPY|       DMA_A0)  /* track register  */
+#define FDC_SR  (DMA_FLOPPY|DMA_A1       )  /* sector register */
+#define FDC_DR  (DMA_FLOPPY|DMA_A1|DMA_A0)  /* data register   */
 
 /*
  * commands (relevant bits/fields indicated)

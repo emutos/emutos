@@ -247,7 +247,7 @@ static void acsi_begin(void)
 static void acsi_end(void)
 {
     /* put DMA back to floppy and allow floppy i/o */
-    ACSIDMA->s.control = DMA_FDC;
+    ACSIDMA->s.control = DMA_FLOPPY;
     flock = 0;
 
     next_acsi_time = hz_200 + INTER_IO_TIME;    /* next safe time */
@@ -357,9 +357,9 @@ static int send_command(UBYTE *inputcdb,WORD cdblen,WORD rw,WORD dev,WORD cnt,UW
     *cdbptr |= (dev << 5);  /* insert device number */
 
     if (rw == RW_WRITE) {
-        control = DMA_WRBIT | DMA_FDC | DMA_HDC;
+        control = DMA_WRBIT | DMA_DRQ_FLOPPY | DMA_CS_ACSI;
     } else {
-        control = DMA_FDC | DMA_HDC;
+        control = DMA_DRQ_FLOPPY | DMA_CS_ACSI;
     }
     hdc_start_dma(control);
     ACSIDMA->s.data = cnt;
@@ -375,7 +375,7 @@ static int send_command(UBYTE *inputcdb,WORD cdblen,WORD rw,WORD dev,WORD cnt,UW
         }
 
         ACSIDMA->s.control = control;   /* assert command signal */
-        control |= DMA_A0;              /* set up for remaining cmd bytes */
+        control |= DMA_NOT_NEWCDB;      /* set up for remaining cmd bytes */
 
         for (j = 0, p = cdbptr; j < cdblen-1; j++) {
             dma_send_byte(*p++,control);
@@ -395,7 +395,7 @@ static int send_command(UBYTE *inputcdb,WORD cdblen,WORD rw,WORD dev,WORD cnt,UW
         status = ACSIDMA->s.data & 0x00ff;
         if (status)
             break;
-        control &= ~DMA_A0; /* assert command signal for next time */
+        control &= ~DMA_NOT_NEWCDB; /* set new CDB signal for next time */
     } while(repeat--);
 
     return status;
