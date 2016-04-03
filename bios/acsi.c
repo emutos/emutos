@@ -357,16 +357,17 @@ static int send_command(UBYTE *inputcdb,WORD cdblen,WORD rw,WORD dev,WORD cnt,UW
     *cdbptr |= (dev << 5);  /* insert device number */
 
     if (rw == RW_WRITE) {
-        control = DMA_WRBIT | DMA_DRQ_FLOPPY | DMA_CS_ACSI;
+        control = DMA_WRBIT | DMA_DRQ_FLOPPY;
     } else {
-        control = DMA_DRQ_FLOPPY | DMA_CS_ACSI;
+        control = DMA_DRQ_FLOPPY;
     }
-    hdc_start_dma(control);
+    hdc_start_dma(control); /* select sector count register */
     ACSIDMA->s.data = cnt;
 
     /*
      * handle 'repeat' function
      */
+    control |= DMA_CS_ACSI;
     do {
         while(hz_200 < next_acsi_time) {    /* wait until safe */
 #if USE_STOP_INSN_TO_FREE_HOST_CPU

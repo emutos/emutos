@@ -48,7 +48,6 @@ struct dma {
 #define DMA_WRBIT       0x0100      /* write to floppy/ACSI via dma_data */
 
 #define DMA_FLOPPY      DMA_DRQ_FLOPPY  /* DMA_DRQ_FLOPPY=1 && DMA_CS_ACSI=0 */
-#define DMA_ACSI        DMA_CS_ACSI     /* DMA_DRQ_FLOPPY=0 && DMA_CS_ACSI=1 */
 
 /*
  * Status register bits
