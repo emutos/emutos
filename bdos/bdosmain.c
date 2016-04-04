@@ -173,9 +173,9 @@ static const FND funcs[] =
     { ni,       0, 0 },
 
     { xgetdate, 0, 0 },      /* 0x2A */
-    { xsetdate, 0, 1 },      /* 0x2B */
+    { (long(*)()) xsetdate, 0, 1 }, /* 0x2B */
     { xgettime, 0, 0 },      /* 0x2C */
-    { xsettime, 0, 1 },      /* 0x2D */
+    { (long(*)()) xsettime, 0, 1 }, /* 0x2D */
 
     { ni,       0, 0 },
 
