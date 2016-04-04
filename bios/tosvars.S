@@ -22,7 +22,6 @@
         .globl  _etv_timer
         .globl  _etv_critic
         .globl  _etv_term
-        .globl  _etv_xtra
         .globl  _memvalid
         .globl  memvalid
         .globl  memctrl

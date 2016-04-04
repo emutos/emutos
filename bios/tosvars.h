@@ -115,7 +115,6 @@ extern void (*kcl_hook)(void);
 extern void (*etv_timer)(int);
 extern LONG (*etv_critic)(WORD err,WORD dev);
 extern void (*etv_term)(void);
-extern void (*etv_xtra)(void);
 
 
 extern void (*mousexvec)(WORD scancode);    /* Additional mouse buttons */
