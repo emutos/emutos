@@ -26,6 +26,7 @@
 #include "kprint.h"
 #include "biosext.h"
 #include "asm.h"
+#include "../bios/tosvars.h"
 
 
 /*
@@ -143,6 +144,10 @@ static void     ixterm( PD *r )
 {
     WORD h;
     WORD i;
+
+    /* call process termination vector (last chance for user cleanup) */
+
+    etv_term();
 
     /* check the standard devices in both file tables  */
 
