@@ -56,7 +56,7 @@ _os_conf:
 _os_dosdate:
     .dc.w   OS_DOSDATE  // os_date, Date of system build in GEMDOS format
 os_root:
-    .dc.l   0           // Pointer to the GEMDOS mem pool - not yet supported
+    .dc.l   0           // Pointer to the GEMDOS mem pool
 os_kbshift:
     .dc.l   0           // Pointer to the keyboard shift keys states
 os_run:
