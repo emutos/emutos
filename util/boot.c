@@ -122,8 +122,8 @@ int main(void)
 
   cpu = get_cpu_cookie();   /* used by bootasm code */
 
-#if CONF_WITH_PSEUDO_COLD_BOOT
-  /* simulate a pseudo-cold boot, when EmuTOS loads itself */
+#if CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF
+  /* this boot is a first boot */
   *(ULONG*)0x6fc = 0; /* warm_magic */
 #endif
 

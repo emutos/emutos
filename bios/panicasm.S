@@ -104,8 +104,8 @@ _warm_reset:
 _cold_reset:
         clr.l   resvalid        // Don't allow jump to reset vector in startup.S
         clr.l   resvector
-#if CONF_WITH_PSEUDO_COLD_BOOT
-        clr.l   _warm_magic     // Next boot will be pseudo-cold
+#if CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF
+        clr.l   _warm_magic     // Next boot will be a first boot
 #endif
 #ifdef MACHINE_AMIGA
         clr.l   0x420           // Invalidate memvalid

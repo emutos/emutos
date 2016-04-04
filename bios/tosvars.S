@@ -99,7 +99,7 @@
         .globl  _autoboot_magic
 #endif
 
-#if CONF_WITH_PSEUDO_COLD_BOOT
+#if CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF
         .globl  _warm_magic
 #endif
 
@@ -224,9 +224,10 @@ _kcl_hook:      .ds.l   1       // pointer to routine for system keyclick
 _autoboot_magic:.ds.l   1
 #endif
 
-#if CONF_WITH_PSEUDO_COLD_BOOT
+#if CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF
         .org 0x6fc              // any location below bssstart is ok
-_warm_magic:    .ds.l   1       // set to WARM_MAGIC if this is a warm boot
+_warm_magic:    .ds.l   1       // set to WARM_MAGIC if next boot must not
+                                // be considered as a first boot (reset)
 #endif
 
 #if CONF_WITH_68030_PMMU

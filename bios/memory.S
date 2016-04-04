@@ -134,8 +134,8 @@ memory_reused:
         // If the memory is reused, this is not a first boot
         moveq   #0, d7                  // _first_boot = FALSE
 
-#if CONF_WITH_PSEUDO_COLD_BOOT
-        // If _warm_magic == WARM_MAGIC, then this is a reset
+#if CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF
+        // If _warm_magic == WARM_MAGIC, this is explicitly not a first boot
         lea     _warm_magic, a0
         move.l  #0x5741524D, d1         // WARM_MAGIC
         cmp.l   (a0), d1
@@ -455,10 +455,10 @@ stram_detected:
         move.l  #0x5555aaaa, memval3    // set memval3 to ok
 #endif
 
-#if CONF_WITH_PSEUDO_COLD_BOOT
+#if CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF
         lea     _warm_magic, a0
         move.l  #0x5741524D, d1         // WARM_MAGIC
-        move.l  d1, (a0)                // Next boot will be warm (reset)
+        move.l  d1, (a0)                // Next boot will not be a first boot
 #endif
 
 // ===========================================================================

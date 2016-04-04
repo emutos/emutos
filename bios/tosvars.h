@@ -145,8 +145,8 @@ extern ULONG autoboot_magic;
 
 #endif /* TARGET_FLOPPY */
 
-#if CONF_WITH_PSEUDO_COLD_BOOT
-#define WARM_MAGIC 0x5741524D /* "WARM" */
+#if CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF
+#define WARM_MAGIC 0x5741524D /* 'WARM' */
 extern ULONG warm_magic;
 #endif
 

@@ -90,8 +90,8 @@
 # ifndef CONF_WITH_SDMMC
 #  define CONF_WITH_SDMMC 1
 # endif
-# ifndef CONF_WITH_PSEUDO_COLD_BOOT
-#  define CONF_WITH_PSEUDO_COLD_BOOT 1
+# ifndef CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF
+#  define CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF 1
 # endif
 # ifndef INITINFO_DURATION
 #  define INITINFO_DURATION 8 /* Longer time for LCD monitors startup */
@@ -276,8 +276,8 @@
 # ifndef CONF_WITH_IDE
 #  define CONF_WITH_IDE 1
 # endif
-# ifndef CONF_WITH_PSEUDO_COLD_BOOT
-#  define CONF_WITH_PSEUDO_COLD_BOOT 1
+# ifndef CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF
+#  define CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF 1
 # endif
 # ifndef AES_STACK_SIZE
 #  define AES_STACK_SIZE 2048   /* in LONGs */
@@ -760,16 +760,17 @@
 #endif
 
 /*
- * Set CONF_WITH_PSEUDO_COLD_BOOT to 1 to simulate a cold boot on machines
- * where the RAM is always initialized by a pre-OS, such as the FireBee.
- * In this case, memconf is not called so it can't detect a cold boot.
- * Also, this is always the case when EmuTOS lives in RAM.
+ * Set CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF to 1 to detect a first boot
+ * even when memconf is not called. This is useful when the RAM is
+ * already initialized before EmuTOS boots. This is always the case on
+ * the FireBee where the actual RAM is setup by the BaS or other pre-OS.
+ * Also, this is always the case when EmuTOS itself lives in RAM.
  */
-#ifndef CONF_WITH_PSEUDO_COLD_BOOT
+#ifndef CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF
 # if EMUTOS_LIVES_IN_RAM
-#  define CONF_WITH_PSEUDO_COLD_BOOT 1
+#  define CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF 1
 # else
-#  define CONF_WITH_PSEUDO_COLD_BOOT 0
+#  define CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF 0
 # endif
 #endif
 
