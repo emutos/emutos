@@ -199,9 +199,9 @@ long ixcreat(char *name, char attr)
     f->f_attrib = attr;
     for (i = 0; i < 10; i++)
         f->f_fill[i] = 0;
-    f->f_td.time = time;
+    f->f_td.time = current_time;
     swpw(f->f_td.time);
-    f->f_td.date = date;
+    f->f_td.date = current_date;
     swpw(f->f_td.date);
     f->f_clust = 0;
     f->f_fileln = 0;

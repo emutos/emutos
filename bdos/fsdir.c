@@ -244,9 +244,9 @@ long xmkdir(char *s)
     /* write identifier */
     memcpy(f2, dots, 22);
     f2->f_attrib = FA_SUBDIR;
-    f2->f_td.time = time;
+    f2->f_td.time = current_time;
     swpw(f2->f_td.time);                /*  M01.01.SCC.FS.04  */
-    f2->f_td.date = date;
+    f2->f_td.date = current_date;
     swpw(f2->f_td.date);                /*  M01.01.SCC.FS.04  */
     cl = f0->o_strtcl;
     swpw(cl);
@@ -258,9 +258,9 @@ long xmkdir(char *s)
     memcpy(f2, dots, 22);
     f2->f_name[1] = '.';           /* This is .. */
     f2->f_attrib = FA_SUBDIR;
-    f2->f_td.time = time;
+    f2->f_td.time = current_time;
     swpw(f2->f_td.time);           /*  M01.01.SCC.FS.06  */
-    f2->f_td.date = date;
+    f2->f_td.date = current_date;
     swpw(f2->f_td.date);           /*  M01.01.SCC.FS.06  */
     cl = f->o_dirfil->o_strtcl;
 

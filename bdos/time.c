@@ -47,7 +47,7 @@ NAMES
 /*
  * globals: current time and date
  */
-UWORD time, date;
+UWORD current_time, current_date;
 
 /*
  * BIOS interface
@@ -77,8 +77,8 @@ static int msec;
 long    xgetdate(void)
 {
     /* call XBIOS and mask out*/
-    date = (Gettime() >> 16) & 0xffff;
-    return date;
+    current_date = (Gettime() >> 16) & 0xffff;
+    return current_date;
 }
 
 
@@ -110,9 +110,10 @@ long    xsetdate(int d)
         if (day > nday[curmo])
             return ERR;
 
-    date = d;                           /* ok, assign that value to date */
+    current_date = d;                   /* ok, assign that value to date */
 
-    Settime((((ULONG)date)<<16)|((ULONG)time)); /* tell bios about new date */
+    /* tell bios about new date */
+    Settime((((ULONG)current_date)<<16)|((ULONG)current_time));
 
     return E_OK;
 }
@@ -125,8 +126,8 @@ long    xsetdate(int d)
 long    xgettime(void)
 {
     /* call XBIOS and mask out*/
-    time = Gettime() & 0xffff;
-    return time;
+    current_time = Gettime() & 0xffff;
+    return current_time;
 }
 
 
@@ -149,9 +150,10 @@ long    xsettime(int t)
     if ((t & HRS_BM) >= (24 << 11))     /* max of 24 hours in a day */
         return ERR;
 
-    time = t;
+    current_time = t;
 
-    Settime((((ULONG)date)<<16)|((ULONG)time)); /* tell bios about new time */
+    /* tell bios about new time */
+    Settime((((ULONG)current_date)<<16)|((ULONG)current_time));
 
     return E_OK;
 }
@@ -165,8 +167,8 @@ void time_init(void)
 {
     ULONG dt = Gettime();
 
-    date = (dt >> 16) & 0xffff;
-    time = dt & 0xffff;
+    current_date = (dt >> 16) & 0xffff;
+    current_time = dt & 0xffff;
 
     etv_timer = tikfrk;
 }
@@ -188,57 +190,57 @@ static void tikfrk(int n)
         /* update time */
 
         msec -= 2000;
-        time++;
+        current_time++;
 
-        if ((time & 0x1F) != 30)
+        if ((current_time & 0x1F) != 30)
             return;
 
-        time &= 0xFFE0;
-        time += 0x0020;
+        current_time &= 0xFFE0;
+        current_time += 0x0020;
 
-        if ((time & 0x7E0) != (60 << 5))
+        if ((current_time & 0x7E0) != (60 << 5))
             return;
 
-        time &= 0xF81F;
-        time += 0x0800;
+        current_time &= 0xF81F;
+        current_time += 0x0800;
 
-        if ((time & 0xF800) != (24 << 11))
+        if ((current_time & 0xF800) != (24 << 11))
             return;
 
-        time = 0;
+        current_time = 0;
 
         /* update date */
 
-        if ((date & 0x001F) == 31)
+        if ((current_date & 0x001F) == 31)
             goto datok;
 
-        date++;                 /* bump day */
+        current_date++;         /* bump day */
 
-        if ((date & 0x001F) <= 28)
+        if ((current_date & 0x001F) <= 28)
             return;
 
-        if ((curmo = (date >> 5) & 0x0F) == 2)
+        if ((curmo = (current_date >> 5) & 0x0F) == 2)
         {
             /* 2100 is the next non-leap year divisible by 4, so OK */
-            if (!(date & 0x0600)) {
-                if ((date & 0x001F) <= 29)
+            if (!(current_date & 0x0600)) {
+                if ((current_date & 0x001F) <= 29)
                     return;
                 else
                     goto datok;
             }
         }
 
-        if ((date & 0x001F) <= nday[curmo])
+        if ((current_date & 0x001F) <= nday[curmo])
             return;
 
     datok:
-        date &= 0xFFE0;         /* bump month */
-        date += 0x0021;
+        current_date &= 0xFFE0; /* bump month */
+        current_date += 0x0021;
 
-        if ((date & 0x01E0) <= (12 << 5))
+        if ((current_date & 0x01E0) <= (12 << 5))
             return;
 
-        date &= 0xFE00;         /* bump year */
-        date += 0x0221;
+        current_date &= 0xFE00; /* bump year */
+        current_date += 0x0221;
     }
 }

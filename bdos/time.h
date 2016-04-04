@@ -12,7 +12,7 @@
 
 #include "portab.h"
 
-extern UWORD time, date;
+extern UWORD current_time, current_date;
 
 long xgetdate(void);
 long xsetdate(int d);
