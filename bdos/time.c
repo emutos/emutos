@@ -88,9 +88,9 @@ long    xgetdate(void)
 #define DAY_BM          0x001F
 #define MTH_BM          0x01E0
 #define YRS_BM          0xFE00
-long    xsetdate(int d)
+long xsetdate(UWORD d)
 {
-    int     curmo, day;
+    UWORD curmo, day;
 
     curmo = ((d >> 5) & 0x0F);
     day = d & DAY_BM;
@@ -139,7 +139,7 @@ long    xgettime(void)
 #define SEC_BM          0x001F
 #define MIN_BM          0x07E0
 #define HRS_BM          0xF800
-long    xsettime(int t)
+long xsettime(UWORD t)
 {
     if ((t & SEC_BM) >= 30)
         return ERR;

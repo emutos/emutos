@@ -15,9 +15,9 @@
 extern UWORD current_time, current_date;
 
 long xgetdate(void);
-long xsetdate(int d);
+long xsetdate(UWORD d);
 long xgettime(void);
-long xsettime(int t);
+long xsettime(UWORD t);
 
 /* called to initialize the module */
 void time_init(void);
