@@ -705,7 +705,7 @@ PRIVATE DEF_ENTRY *lookup_tree(int tree);
 PRIVATE void mark_conditional(void);
 PRIVATE int notranslate(char *text);
 PRIVATE FILE *openfile(char *name,char *ext,char *mode);
-PRIVATE void process_start_names(int num_defs);
+PRIVATE void process_start_names(int n);
 PRIVATE int scan_conditional(char *conditional,int length);
 PRIVATE void shrink_valid(char *dest,char *src);
 PRIVATE void sort_def_table(int n);
@@ -840,7 +840,7 @@ long fsize;
 unsigned short vrsn, rssize;
 FILE *rscfp;
 char *base;
-RSHDR *rschdr;
+RSHDR *hdr;
 char s[MAX_STRLEN];
 
     if (!(rscfp=fopen(path,"rb")))
@@ -867,20 +867,20 @@ char s[MAX_STRLEN];
 
     fclose(rscfp);
 
-    rschdr = (RSHDR *)base;
-    vrsn = get_ushort(&rschdr->rsh_vrsn);
+    hdr = (RSHDR *)base;
+    vrsn = get_ushort(&hdr->rsh_vrsn);
     if ((vrsn&~NEWRSC_FORMAT) > 1) {
         sprintf(s,"unsupported version (0x%04x) found in RSC file",vrsn);
         error(s,inrsc);
     }
 
-    rssize = get_ushort(&rschdr->rsh_rssize);
+    rssize = get_ushort(&hdr->rsh_rssize);
     if (((vrsn&NEWRSC_FORMAT) == 0)         /* old RSC format              */
      && (rssize != fsize)) {                /*  but filesize doesn't match */
         error("incorrect length in RSC file",inrsc);
     }
 
-    return rschdr;
+    return hdr;
 }
 
 /*
@@ -2729,7 +2729,7 @@ int i;
 /*
  *  initialise conditional status of trees/objects, free strings/alerts
  */
-PRIVATE void process_start_names(int num_defs)
+PRIVATE void process_start_names(int n)
 {
 int i;
 DEF_ENTRY *d;
@@ -2740,11 +2740,11 @@ OFFSET *trindex = (OFFSET *)((char *)rschdr + rsh.trindex);
      */
     conditional_tree_start = rsh.ntree;     /* assume no conditional trees */
     conditional_object_start = rsh.nobs;    /*  & no conditional objects */
-    for (i = 0, d = def; i < num_defs; i++, d++) {
+    for (i = 0, d = def; i < n; i++, d++) {
         if ((d->type == DEF_DIALOG) || (d->type == DEF_MENU)) {
             if (strcmp(d->name,other_cond.start) == 0) {
                 conditional_tree_start = d->tree;
-                for ( ; i < num_defs; i++, d++) {
+                for ( ; i < n; i++, d++) {
                     switch(d->type) {
                     case DEF_OBJECT:
                     case DEF_DIALOG:
@@ -2763,7 +2763,7 @@ OFFSET *trindex = (OFFSET *)((char *)rschdr + rsh.trindex);
     /*
      * do free strings
      */
-    for (i = 0, d = def; i < num_defs; i++, d++) {
+    for (i = 0, d = def; i < n; i++, d++) {
         if ((d->type == DEF_ALERT) || (d->type == DEF_FREESTR)) {
             if (first_freestr < 0)      /* not yet set */
                 first_freestr = i;
@@ -2771,7 +2771,7 @@ OFFSET *trindex = (OFFSET *)((char *)rschdr + rsh.trindex);
                 break;
         }
     }
-    for ( ; i < num_defs; i++, d++)
+    for ( ; i < n; i++, d++)
         if ((d->type == DEF_ALERT) || (d->type == DEF_FREESTR))
             d->conditional = 1;
 }
