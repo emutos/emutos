@@ -38,7 +38,7 @@ LONG redir_handle;
  * local to this set of functions
  */
 LOCAL char input_line[MAX_LINE_SIZE];
-LOCAL char *argv[MAX_ARGS];
+LOCAL char *arglist[MAX_ARGS];
 LOCAL char redir_name[MAXPATHLEN];
 
 /*
@@ -84,10 +84,10 @@ ULONG n;
         save_history(input_line);
         if (rc < 0)         /* user cancelled line */
             continue;
-        argc = parse_line(input_line,argv,redir_name);
+        argc = parse_line(input_line,arglist,redir_name);
         if (argc < 0)       /* parse error */
             continue;
-        if (execute(argc,argv,redir_name) < 0)
+        if (execute(argc,arglist,redir_name) < 0)
             break;
     }
 

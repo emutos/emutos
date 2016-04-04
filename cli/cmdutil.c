@@ -345,14 +345,14 @@ const char *p;
 /*
  *  return pointer to file extension iff a program
  */
-const char *program_extension(const DTA *dta)
+const char *program_extension(const DTA *dtaptr)
 {
 const char *p;
 
-    if (dta->d_attrib & 0x10)   /* a folder */
+    if (dtaptr->d_attrib & 0x10)    /* a folder */
         return NULL;
 
-    for (p = dta->d_fname; *p; ) {
+    for (p = dtaptr->d_fname; *p; ) {
         if (*p++ == '.') {
             if (strequal(p,"app") || strequal(p,"gtp") || strequal(p,"prg")
              || strequal(p,"tos") || strequal(p,"ttp"))

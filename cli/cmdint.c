@@ -26,7 +26,7 @@ typedef struct {
  */
 PRIVATE LONG check_path_component(char *component);
 PRIVATE LONG copy_move(WORD argc,char **argv,WORD delete);
-PRIVATE void display_detail(const DTA *dta);
+PRIVATE void display_dta_detail(void);
 PRIVATE char *extract_path(char *dest,const char *src);
 PRIVATE void fixup_filespec(char *filespec);
 PRIVATE char getyn(void);
@@ -333,7 +333,7 @@ WORD detail = 0;
             if (user_input(-1))
                 return USER_BREAK;
         if (detail) {
-            display_detail(dta);
+            display_dta_detail();
         } else if (dta->d_fname[0] != '.') {
             padname(buf,dta->d_fname);
             output(buf);
@@ -925,7 +925,7 @@ WORD i;
     *buf = '\0';
 }
 
-PRIVATE void display_detail(const DTA *dta)
+PRIVATE void display_dta_detail(void)
 {
 char buf[30], *p;
 UWORD i;
