@@ -788,7 +788,7 @@ long xrename(int n, char *p1, char *p2)
     char buf[11], att;
     int hnew;
     long posp;
-    UWORD time, date;
+    UWORD filetime, filedate;
     CLNO clust;
     LONG fileln;
 
@@ -831,10 +831,10 @@ long xrename(int n, char *p1, char *p2)
 
     /* get old attribute & time/date/cluster/length */
     att = f->f_attrib;
-    time = f->f_td.time;
-    swpw(time);                 /* convert from little-endian format */
-    date = f->f_td.date;
-    swpw(date);
+    filetime = f->f_td.time;
+    swpw(filetime);             /* convert from little-endian format */
+    filedate = f->f_td.date;
+    swpw(filedate);
     clust = f->f_clust;
     swpw(clust);
     fileln = f->f_fileln;
@@ -907,8 +907,8 @@ long xrename(int n, char *p1, char *p2)
         }
 
         /* copy the time/date/cluster/length to the OFD */
-        swpcopyw(&time,&fd2->o_td.time);   /* must be little-endian! */
-        swpcopyw(&date,&fd2->o_td.date);
+        swpcopyw(&filetime,&fd2->o_td.time);    /* must be little-endian! */
+        swpcopyw(&filedate,&fd2->o_td.date);
         fd2->o_strtcl = clust;
         fd2->o_fileln = fileln;
 
