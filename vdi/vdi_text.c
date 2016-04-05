@@ -572,7 +572,7 @@ void vdi_vst_point(Vwk * vwk)
     WORD font_id;
     const Fonthead **chain_ptr, *double_font;
     const Fonthead *test_font, *single_font;
-    WORD test_height, height;
+    WORD test_height, h;
     BYTE found;
 
     font_id = vwk->cur_font->font_id;
@@ -593,10 +593,10 @@ void vdi_vst_point(Vwk * vwk)
     /* Traverse the chains and find the font closest to the size requested */
     /* and closest to half the size requested.                 */
     do {
-        while (((height = test_font->point) <= test_height)
+        while (((h = test_font->point) <= test_height)
                && (test_font->font_id == font_id)) {
             single_font = test_font;
-            if (height * 2 <= test_height)
+            if (h * 2 <= test_height)
                 double_font = test_font;
 
             if (!(test_font = test_font->next_font))
@@ -609,9 +609,9 @@ void vdi_vst_point(Vwk * vwk)
     vwk->scaled = FALSE;
 
     if (single_font->point != test_height) {
-        height = double_font->point * 2;
+        h = double_font->point * 2;
 
-        if ((height > single_font->point) && (height <= test_height)) {
+        if ((h > single_font->point) && (h <= test_height)) {
             vwk->dda_inc = 0xFFFF;
             vwk->t_sclsts = 1;
             vwk->cur_font = double_font;
