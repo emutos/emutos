@@ -60,9 +60,6 @@ UWORD current_time, current_date;
 #define MTH_BM          0x01E0
 #define YRS_BM          0xFE00
 
-/* macro to test standard date format for leap year */
-#define IS_A_LEAP_YEAR(a)   (!(a&0x0600))
-
 /*
  *  shift values for the same
  */
@@ -70,6 +67,9 @@ UWORD current_time, current_date;
 #define HRS_SHIFT       11
 #define MTH_SHIFT       5
 #define YRS_SHIFT       9
+
+/* macro to test standard date format for leap year */
+#define IS_A_LEAP_YEAR(a)   (!(a&0x0600))
 
 /*
  * BIOS interface
@@ -85,7 +85,8 @@ extern void (*etv_timer)(int);
 
 static void tikfrk(int n);
 
-static const BYTE nday[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+static const BYTE nday_norm[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+static const BYTE nday_leap[] = {0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 /* static long uptime; */
 
@@ -96,7 +97,7 @@ static int msec;
 /*
  * xgetdate - Function 0x2A:  Get date
  */
-long    xgetdate(void)
+long xgetdate(void)
 {
     /* call XBIOS and mask out*/
     current_date = (Gettime() >> 16) & 0xffff;
@@ -110,24 +111,15 @@ long    xgetdate(void)
 long xsetdate(UWORD d)
 {
     UWORD curmo, day;
+    const BYTE *nday = IS_A_LEAP_YEAR(d) ? nday_leap : nday_norm;
 
-    curmo = ((d >> MTH_SHIFT) & 0x0F);
+    curmo = (d & MTH_BM) >> MTH_SHIFT;
     day = d & DAY_BM;
 
-    if ((d >> YRS_SHIFT) > 119)         /* Warranty expires 12/31/2099 */
+    if (((d >> YRS_SHIFT) > 119)        /* Warranty expires 12/31/2099 */
+     || (curmo > 12)                    /* 12 months a year */
+     || (day > nday[curmo]))            /* variable days/month */
         return ERR;
-
-    if (curmo > 12)                     /* 12 months a year */
-        return ERR;
-
-    if ((curmo == 2) && IS_A_LEAP_YEAR(d))  /* Feb && Leap */
-    {
-        if (day > 29)
-            return ERR;
-    }
-    else
-        if (day > nday[curmo])
-            return ERR;
 
     current_date = d;                   /* ok, assign that value to date */
 
@@ -142,7 +134,7 @@ long xsetdate(UWORD d)
 /*
  * xgettime - Function 0x2C:  Get time
  */
-long    xgettime(void)
+long xgettime(void)
 {
     /* call XBIOS and mask out*/
     current_time = Gettime() & 0xffff;
@@ -156,13 +148,9 @@ long    xgettime(void)
  */
 long xsettime(UWORD t)
 {
-    if ((t & SEC_BM) >= 30)
-        return ERR;
-
-    if ((t & MIN_BM) >= (60 << MIN_SHIFT))  /* 60 max minutes per hour */
-        return ERR;
-
-    if ((t & HRS_BM) >= (24 << HRS_SHIFT))  /* max of 24 hours in a day */
+    if (((t & SEC_BM) >= 30)                /* 30 "double-seconds" per minute */
+     || ((t & MIN_BM) >= (60 << MIN_SHIFT)) /* 60 minutes per hour */
+     || ((t & HRS_BM) >= (24 << HRS_SHIFT)))/* 24 hours per day */
         return ERR;
 
     current_time = t;
@@ -196,66 +184,53 @@ void time_init(void)
 static void tikfrk(int n)
 {
     int curmo;
+    const BYTE *nday;
 
 /*  uptime += n; */
 
     msec += n;
-    if (msec >= 2000)
-    {
-        /* update time */
+    if (msec < 2000)
+        return;
 
-        msec -= 2000;
-        current_time++;
+    /* update seconds */
 
-        if ((current_time & SEC_BM) != 30)
-            return;
+    msec -= 2000;
+    current_time++;
+    if ((current_time & SEC_BM) != 30)
+        return;
 
-        current_time &= ~SEC_BM;
-        current_time += (1 << MIN_SHIFT);
+    /* handle minute rollover */
 
-        if ((current_time & MIN_BM) != (60 << MIN_SHIFT))
-            return;
+    current_time &= ~SEC_BM;
+    current_time += (1 << MIN_SHIFT);
+    if ((current_time & MIN_BM) != (60 << MIN_SHIFT))
+        return;
 
-        current_time &= ~MIN_BM;
-        current_time += (1 << HRS_SHIFT);
+    /* handle hour rollover */
 
-        if ((current_time & HRS_BM) != (24 << HRS_SHIFT))
-            return;
+    current_time &= ~MIN_BM;
+    current_time += (1 << HRS_SHIFT);
+    if ((current_time & HRS_BM) != (24 << HRS_SHIFT))
+        return;
 
-        current_time = 0;
+    /* handle day rollover */
 
-        /* update date */
+    nday = IS_A_LEAP_YEAR(current_date) ? nday_leap : nday_norm;
+    curmo = (current_date & MTH_BM) >> MTH_SHIFT;
 
-        if ((current_date & DAY_BM) == 31)
-            goto datok;
+    current_time = 0;
+    current_date++;
+    if ((current_date & DAY_BM) <= nday[curmo])
+        return;
 
-        current_date++;         /* bump day */
+    /* handle month rollover */
 
-        if ((current_date & DAY_BM) <= 28)
-            return;
+    current_date &= ~DAY_BM;
+    current_date += (1 << MTH_SHIFT) + 1;
+    if ((current_date & MTH_BM) <= (12 << MTH_SHIFT))
+        return;
 
-        if ((curmo = (current_date >> MTH_SHIFT) & 0x0F) == 2)
-        {
-            /* 2100 is the next non-leap year divisible by 4, so OK */
-            if (IS_A_LEAP_YEAR(current_date)) {
-                if ((current_date & DAY_BM) <= 29)
-                    return;
-                else
-                    goto datok;
-            }
-        }
-
-        if ((current_date & DAY_BM) <= nday[curmo])
-            return;
-
-    datok:
-        current_date &= ~DAY_BM;    /* bump month */
-        current_date += (1 << MTH_SHIFT) + 1;
-
-        if ((current_date & MTH_BM) <= (12 << MTH_SHIFT))
-            return;
-
-        current_date &= YRS_BM;     /* bump year */
-        current_date += (1 << YRS_SHIFT) + (1 << MTH_SHIFT) + 1;
-    }
+    /* handle year rollover */
+    current_date &= YRS_BM;
+    current_date += (1 << YRS_SHIFT) + (1 << MTH_SHIFT) + 1;
 }
