@@ -44,10 +44,32 @@ NAMES
 #include "gemerror.h"
 #include "xbiosbind.h"
 
+
 /*
  * globals: current time and date
  */
 UWORD current_time, current_date;
+
+/*
+ *  bit masks for the various fields in the time & date variables
+ */
+#define SEC_BM          0x001F
+#define MIN_BM          0x07E0
+#define HRS_BM          0xF800
+#define DAY_BM          0x001F
+#define MTH_BM          0x01E0
+#define YRS_BM          0xFE00
+
+/* macro to test standard date format for leap year */
+#define IS_A_LEAP_YEAR(a)   (!(a&0x0600))
+
+/*
+ *  shift values for the same
+ */
+#define MIN_SHIFT       5
+#define HRS_SHIFT       11
+#define MTH_SHIFT       5
+#define YRS_SHIFT       9
 
 /*
  * BIOS interface
@@ -85,23 +107,20 @@ long    xgetdate(void)
 /*
  * xsetdate - Function 0x2B:  Set date
  */
-#define DAY_BM          0x001F
-#define MTH_BM          0x01E0
-#define YRS_BM          0xFE00
 long xsetdate(UWORD d)
 {
     UWORD curmo, day;
 
-    curmo = ((d >> 5) & 0x0F);
+    curmo = ((d >> MTH_SHIFT) & 0x0F);
     day = d & DAY_BM;
 
-    if ((d >> 9) > 119)                 /* Warranty expires 12/31/2099 */
+    if ((d >> YRS_SHIFT) > 119)         /* Warranty expires 12/31/2099 */
         return ERR;
 
     if (curmo > 12)                     /* 12 months a year */
         return ERR;
 
-    if ((curmo == 2) && !(d & 0x0600))  /* Feb && Leap */
+    if ((curmo == 2) && IS_A_LEAP_YEAR(d))  /* Feb && Leap */
     {
         if (day > 29)
             return ERR;
@@ -135,19 +154,15 @@ long    xgettime(void)
 /*
  * xsettime - Function 0x2D:  Set time
  */
-/* Bit masks for the various fields in the time variable. */
-#define SEC_BM          0x001F
-#define MIN_BM          0x07E0
-#define HRS_BM          0xF800
 long xsettime(UWORD t)
 {
     if ((t & SEC_BM) >= 30)
         return ERR;
 
-    if ((t & MIN_BM) >= (60 << 5))      /* 60 max minutes per hour */
+    if ((t & MIN_BM) >= (60 << MIN_SHIFT))  /* 60 max minutes per hour */
         return ERR;
 
-    if ((t & HRS_BM) >= (24 << 11))     /* max of 24 hours in a day */
+    if ((t & HRS_BM) >= (24 << HRS_SHIFT))  /* max of 24 hours in a day */
         return ERR;
 
     current_time = t;
@@ -192,55 +207,55 @@ static void tikfrk(int n)
         msec -= 2000;
         current_time++;
 
-        if ((current_time & 0x1F) != 30)
+        if ((current_time & SEC_BM) != 30)
             return;
 
-        current_time &= 0xFFE0;
-        current_time += 0x0020;
+        current_time &= ~SEC_BM;
+        current_time += (1 << MIN_SHIFT);
 
-        if ((current_time & 0x7E0) != (60 << 5))
+        if ((current_time & MIN_BM) != (60 << MIN_SHIFT))
             return;
 
-        current_time &= 0xF81F;
-        current_time += 0x0800;
+        current_time &= ~MIN_BM;
+        current_time += (1 << HRS_SHIFT);
 
-        if ((current_time & 0xF800) != (24 << 11))
+        if ((current_time & HRS_BM) != (24 << HRS_SHIFT))
             return;
 
         current_time = 0;
 
         /* update date */
 
-        if ((current_date & 0x001F) == 31)
+        if ((current_date & DAY_BM) == 31)
             goto datok;
 
         current_date++;         /* bump day */
 
-        if ((current_date & 0x001F) <= 28)
+        if ((current_date & DAY_BM) <= 28)
             return;
 
-        if ((curmo = (current_date >> 5) & 0x0F) == 2)
+        if ((curmo = (current_date >> MTH_SHIFT) & 0x0F) == 2)
         {
             /* 2100 is the next non-leap year divisible by 4, so OK */
-            if (!(current_date & 0x0600)) {
-                if ((current_date & 0x001F) <= 29)
+            if (IS_A_LEAP_YEAR(current_date)) {
+                if ((current_date & DAY_BM) <= 29)
                     return;
                 else
                     goto datok;
             }
         }
 
-        if ((current_date & 0x001F) <= nday[curmo])
+        if ((current_date & DAY_BM) <= nday[curmo])
             return;
 
     datok:
-        current_date &= 0xFFE0; /* bump month */
-        current_date += 0x0021;
+        current_date &= ~DAY_BM;    /* bump month */
+        current_date += (1 << MTH_SHIFT) + 1;
 
-        if ((current_date & 0x01E0) <= (12 << 5))
+        if ((current_date & MTH_BM) <= (12 << MTH_SHIFT))
             return;
 
-        current_date &= 0xFE00; /* bump year */
-        current_date += 0x0221;
+        current_date &= YRS_BM;     /* bump year */
+        current_date += (1 << YRS_SHIFT) + (1 << MTH_SHIFT) + 1;
     }
 }
