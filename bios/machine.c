@@ -334,17 +334,20 @@ static void setvalue_fdc(void)
 #endif /* CONF_WITH_FDC */
 
 #if CONF_WITH_ARANYM
+static const char *aranym_name = "ARAnyM";
 int is_aranym;
 
 static void aranym_machine_detect(void)
 {
-#define ARANYM_NAME "aranym"
+    char buffer[80];
+    long bufsize;
 
-    is_aranym = !strncasecmp(machine_name(), ARANYM_NAME, strlen(ARANYM_NAME));
+    bufsize = nfGetFullName(buffer, sizeof(buffer)-1);
+    is_aranym = bufsize > 0 && !strncasecmp(buffer, aranym_name, strlen(aranym_name));
 
     KDEBUG(("is_aranym = %d\n", is_aranym));
 }
-#endif /* CONF_WITH_ARANYM */
+#endif
 
 void machine_detect(void)
 {
@@ -568,13 +571,9 @@ void fill_cookie_jar(void)
 
 static const char * guess_machine_name(void)
 {
-#if DETECT_NATIVE_FEATURES
-    static char buffer[80];
-    long bufsize;
-
-    bufsize = nfGetFullName(buffer, sizeof(buffer)-1);
-    if (bufsize > 0)
-        return buffer;
+#if CONF_WITH_ARANYM
+    if (is_aranym)
+        return aranym_name;
 #endif
 
     switch(cookie_mch) {
