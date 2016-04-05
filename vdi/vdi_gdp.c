@@ -1,5 +1,5 @@
 /*
- *
+ * vdi_gdp.c - implement GDP functions
  *
  * Copyright 1982 by Digital Research Inc.  All rights reserved.
  * Copyright 1999 by Caldera, Inc. and Authors:
@@ -24,7 +24,7 @@
 #define    TWOPI     3600
 
 /* local GDP variables */
-static WORD angle, beg_ang, del_ang, end_ang;
+static WORD beg_ang, del_ang, end_ang;
 static WORD xc, xrad, yc, yrad;
 
 /* Prototypes local to this module */
@@ -115,7 +115,7 @@ static WORD Icos(WORD angle)
  * clc_pts - calculates
  */
 
-static void clc_pts(WORD j)
+static void clc_pts(WORD j, WORD angle)
 {
     WORD k;
     WORD *pointer;
@@ -135,7 +135,7 @@ static void clc_pts(WORD j)
 
 static void clc_arc(Vwk * vwk, int steps)
 {
-    WORD i, j, start;
+    WORD i, j, start, angle;
     Point * point;
 
     if (vwk->clip) {
@@ -143,17 +143,16 @@ static void clc_arc(Vwk * vwk, int steps)
             ((yc + yrad) < vwk->ymn_clip) || ((yc - yrad) > vwk->ymx_clip))
             return;
     }
-    start = angle = beg_ang;
+    start = beg_ang;
     j = 0;
-    clc_pts(j);
+    clc_pts(j, beg_ang);
     for (i = 1; i < steps; i++) {
         j += 2;
         angle = mul_div(del_ang, i, steps) + start;
-        clc_pts(j);
+        clc_pts(j, angle);
     }
     j += 2;
-    angle = end_ang;
-    clc_pts(j);
+    clc_pts(j, end_ang);
 
     point = (Point*)PTSIN;
 
