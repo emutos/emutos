@@ -86,6 +86,10 @@ start:
 
         move.l  #0x1234abcd,0x6f8.w     // AUTOBOOT_MAGIC, _autoboot_magic
 
+        /* this boot is a first boot */
+
+        clr.l   0x6fc.w                 // warm_magic
+
         /* prevent reset vector being called during EmuTOS startup */
 
         clr.l   0x426                   // resvalid
