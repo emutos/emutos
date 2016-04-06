@@ -69,12 +69,10 @@ WITH_CLI=1
 
 ifneq (,$(findstring CYGWIN,$(shell uname)))
 # CYGWIN-dependent stuff
-#EXE = .exe
 CORE = *.stackdump
 DDOPTS = iflag=binary oflag=binary
 else
 # ordinary Unix stuff
-EXE =
 CORE = core
 DDOPTS =
 endif
@@ -403,8 +401,8 @@ emutos.img emutos.map: $(OBJECTS) emutos.ld Makefile
 ROM_128 = etos128k.img
 
 $(ROM_128): ROMSIZE = 128
-$(ROM_128): emutos.img mkrom$(EXE)
-	./mkrom$(EXE) pad $(ROMSIZE)k $< $(ROM_128)
+$(ROM_128): emutos.img mkrom
+	./mkrom pad $(ROMSIZE)k $< $(ROM_128)
 
 #
 # 192kB Image
@@ -422,8 +420,8 @@ NODEP += 192
 
 $(ROM_192): ROMSIZE = 192
 $(ROM_192): VMA = $(VMA_192)
-$(ROM_192): emutos.img mkrom$(EXE)
-	./mkrom$(EXE) pad $(ROMSIZE)k $< $(ROM_192)
+$(ROM_192): emutos.img mkrom
+	./mkrom pad $(ROMSIZE)k $< $(ROM_192)
 
 #
 # 256kB Image
@@ -440,8 +438,8 @@ NODEP += 256
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS162))) bytes more than TOS 1.62)"
 
 $(ROM_256): ROMSIZE = 256
-$(ROM_256): emutos.img mkrom$(EXE)
-	./mkrom$(EXE) pad $(ROMSIZE)k $< $(ROM_256)
+$(ROM_256): emutos.img mkrom
+	./mkrom pad $(ROMSIZE)k $< $(ROM_256)
 
 #
 # 512kB Image (for Falcon)
@@ -457,8 +455,8 @@ SYMFILE = $(addsuffix .sym,$(basename $(ROM_512)))
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 
 $(ROM_512): ROMSIZE = 512
-$(ROM_512): emutos.img mkrom$(EXE)
-	./mkrom$(EXE) pad $(ROMSIZE)k $< $(ROM_512)
+$(ROM_512): emutos.img mkrom
+	./mkrom pad $(ROMSIZE)k $< $(ROM_512)
 
 .PHONY: falcon
 falcon: help
@@ -489,7 +487,7 @@ NODEP += cart
 cart:
 	@echo "# Building Diagnostic Cartridge EmuTOS into $(ROM_CARTRIDGE)"
 	$(MAKE) OPTFLAGS=-Os DEF='-DTARGET_CART' UNIQUE=$(COUNTRY) WITH_AES=0 VMA=0x00fa0000 ROM_128=$(ROM_CARTRIDGE) $(ROM_CARTRIDGE)
-	./mkrom$(EXE) stc emutos.img emutos.stc
+	./mkrom stc emutos.img emutos.stc
 	@MEMBOT=$$($(SHELL_GET_MEMBOT_EMUTOS_MAP));\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS102))) bytes more than TOS 1.02)"
 
@@ -517,8 +515,8 @@ amiga:
 	@MEMBOT=$$($(SHELL_GET_MEMBOT_EMUTOS_MAP));\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS162))) bytes more than TOS 1.62)"
 
-$(ROM_AMIGA): emutos.img mkrom$(EXE)
-	./mkrom$(EXE) amiga $< $(ROM_AMIGA)
+$(ROM_AMIGA): emutos.img mkrom
+	./mkrom amiga $< $(ROM_AMIGA)
 
 #
 # Amiga Kickstart disk image for Amiga 1000
@@ -531,7 +529,7 @@ AMIGA_KICKDISK = emutos-kickdisk.adf
 .PHONY: amigakd
 NODEP += amigakd
 amigakd: amiga
-	./mkrom$(EXE) amiga-kickdisk $(ROM_AMIGA) $(AMIGA_KICKDISK)
+	./mkrom amiga-kickdisk $(ROM_AMIGA) $(AMIGA_KICKDISK)
 
 #
 # ColdFire images
@@ -630,20 +628,20 @@ compr.img compr.map: $(COMPROBJ) emutos.ld Makefile
 
 # Compressed ROM: stub + ramtos
 .PHONY: etoscpr.img
-etoscpr.img: compr.img compr$(EXE)
+etoscpr.img: compr.img compr
 	$(MAKE) DEF='-DTARGET_COMPRESSED_ROM' OPTFLAGS=-Os UNIQUE=$(UNIQUE) ramtos.img
-	./compr$(EXE) --rom compr.img ramtos.img $@
+	./compr --rom compr.img ramtos.img $@
 
 # 256k compressed ROM (intermediate target)
 ecpr256k.img: ROMSIZE = 256
-ecpr256k.img: etoscpr.img mkrom$(EXE)
-	./mkrom$(EXE) pad $(ROMSIZE)k $< $@
+ecpr256k.img: etoscpr.img mkrom
+	./mkrom pad $(ROMSIZE)k $< $@
 
 # 192k compressed ROM (intermediate target)
 ecpr192k.img: ROMSIZE = 192
 ecpr192k.img: VMA = $(VMA_192)
-ecpr192k.img: etoscpr.img mkrom$(EXE)
-	./mkrom$(EXE) pad $(ROMSIZE)k $< $@
+ecpr192k.img: etoscpr.img mkrom
+	./mkrom pad $(ROMSIZE)k $< $@
 
 # 256k compressed ROM (main target)
 .PHONY: 256c
@@ -660,28 +658,28 @@ NODEP += 192c
 	$(MAKE) UNIQUE=$(UNIQUE) ecpr192k.img
 
 # Compression tool
-NODEP += compr$(EXE)
-compr$(EXE): tools/compr.c
+NODEP += compr
+compr: tools/compr.c
 	$(NATIVECC) $< -o $@
 
 # Decompression tool
-NODEP += uncompr$(EXE)
-uncompr$(EXE): tools/uncompr.c
+NODEP += uncompr
+uncompr: tools/uncompr.c
 	$(NATIVECC) $< -o $@
 
 # Compression test
 .PHONY: comprtest
 NODEP += comprtest
-comprtest: compr$(EXE) uncompr$(EXE)
+comprtest: compr uncompr
 	$(SHELL) tools/comprtst.sh
 
-TOCLEAN += compr$(EXE) uncompr$(EXE)
+TOCLEAN += compr uncompr
 
 #
 # flop
 #
 
-TOCLEAN += emutos.st mkflop$(EXE)
+TOCLEAN += emutos.st mkflop
 
 .PHONY: flop
 NODEP += flop
@@ -697,14 +695,14 @@ fd0: flop
 	dd if=emutos.st of=/dev/fd0D360
 
 emutos.st: override DEF += -DTARGET_FLOPPY
-emutos.st: mkflop$(EXE) bootsect.img ramtos.img
-	./mkflop$(EXE)
+emutos.st: mkflop bootsect.img ramtos.img
+	./mkflop
 
 bootsect.img : obj/bootsect.o
 	$(LD) obj/bootsect.o -Wl,--oformat,binary -o $@
 
-NODEP += mkflop$(EXE)
-mkflop$(EXE) : tools/mkflop.c
+NODEP += mkflop
+mkflop : tools/mkflop.c
 	$(NATIVECC) $< -o $@
 
 #
@@ -726,30 +724,30 @@ dumpkbd.prg: obj/minicrt.o obj/memmove.o obj/dumpkbd.o obj/doprintf.o \
 
 POFILES = $(wildcard po/*.po)
 
-TOCLEAN += bug$(EXE) util/langs.c po/messages.pot
+TOCLEAN += bug util/langs.c po/messages.pot
 
-NODEP += bug$(EXE)
-bug$(EXE): tools/bug.c
+NODEP += bug
+bug: tools/bug.c
 	$(NATIVECC) $< -o $@
 
-util/langs.c: $(POFILES) po/LINGUAS bug$(EXE) po/messages.pot
-	./bug$(EXE) make
+util/langs.c: $(POFILES) po/LINGUAS bug po/messages.pot
+	./bug make
 
-po/messages.pot: bug$(EXE) po/POTFILES.in $(shell grep -v '^#' po/POTFILES.in)
-	./bug$(EXE) xgettext
+po/messages.pot: bug po/POTFILES.in $(shell grep -v '^#' po/POTFILES.in)
+	./bug xgettext
 
 #
 # Resource support
 #
 
-TOCLEAN += erd$(EXE) grd$(EXE) ird$(EXE)
+TOCLEAN += erd grd ird
 
-NODEP += erd$(EXE) grd$(EXE) ird$(EXE)
-erd$(EXE): tools/erd.c
+NODEP += erd grd ird
+erd: tools/erd.c
 	$(NATIVECC) $< -o $@
-grd$(EXE): tools/erd.c
+grd: tools/erd.c
 	$(NATIVECC) -DGEM_RSC $< -o grd
-ird$(EXE): tools/erd.c
+ird: tools/erd.c
 	$(NATIVECC) -DICON_RSC $< -o ird
 
 DESKRSC_BASE = desk/desktop
@@ -760,32 +758,32 @@ ICONRSC_BASE = desk/icon
 ICONRSCGEN_BASE = desk/icons
 TOCLEAN += $(DESKRSCGEN_BASE).c $(DESKRSCGEN_BASE).h $(GEMRSCGEN_BASE).c $(GEMRSCGEN_BASE).h $(ICONRSCGEN_BASE).c $(ICONRSCGEN_BASE).h
 
-$(DESKRSCGEN_BASE).c $(DESKRSCGEN_BASE).h: erd$(EXE) $(DESKRSC_BASE).rsc $(DESKRSC_BASE).def
-	./erd$(EXE) -pdesk $(DESKRSC_BASE) $(DESKRSCGEN_BASE)
-$(GEMRSCGEN_BASE).c $(GEMRSCGEN_BASE).h: grd$(EXE) $(GEMRSC_BASE).rsc $(GEMRSC_BASE).def
-	./grd$(EXE) $(GEMRSC_BASE) $(GEMRSCGEN_BASE)
-$(ICONRSCGEN_BASE).c $(ICONRSCGEN_BASE).h: ird$(EXE) $(ICONRSC_BASE).rsc $(ICONRSC_BASE).def
-	./ird$(EXE) -picon $(ICONRSC_BASE) $(ICONRSCGEN_BASE)
+$(DESKRSCGEN_BASE).c $(DESKRSCGEN_BASE).h: erd $(DESKRSC_BASE).rsc $(DESKRSC_BASE).def
+	./erd -pdesk $(DESKRSC_BASE) $(DESKRSCGEN_BASE)
+$(GEMRSCGEN_BASE).c $(GEMRSCGEN_BASE).h: grd $(GEMRSC_BASE).rsc $(GEMRSC_BASE).def
+	./grd $(GEMRSC_BASE) $(GEMRSCGEN_BASE)
+$(ICONRSCGEN_BASE).c $(ICONRSCGEN_BASE).h: ird $(ICONRSC_BASE).rsc $(ICONRSC_BASE).def
+	./ird -picon $(ICONRSC_BASE) $(ICONRSCGEN_BASE)
 
 #
 # Special ROM support
 #
 
-TOCLEAN += mkrom$(EXE)
+TOCLEAN += mkrom
 
-NODEP += mkrom$(EXE)
-mkrom$(EXE): tools/mkrom.c
+NODEP += mkrom
+mkrom: tools/mkrom.c
 	$(NATIVECC) $< -o $@
 
 # test target to build all tools
 .PHONY: tools
 NODEP += tools
-tools: bug$(EXE) compr$(EXE) erd$(EXE) mkflop$(EXE) mkrom$(EXE) tos-lang-change$(EXE) tounix$(EXE) uncompr$(EXE)
+tools: bug compr erd mkflop mkrom tos-lang-change tounix uncompr
 
 # user tool, not needed in EmuTOS building
-TOCLEAN += tos-lang-change$(EXE)
-NODEP += tos-lang-change$(EXE)
-tos-lang-change$(EXE): tools/tos-lang-change.c
+TOCLEAN += tos-lang-change
+NODEP += tos-lang-change
+tos-lang-change: tools/tos-lang-change.c
 	$(NATIVECC) $< -o $@
 
 #
@@ -850,8 +848,8 @@ ifneq (,$(UNIQUE))
 ifneq (us,$(ETOSLANG))
 emutos.img ramtos.img: $(TRANS_SRC)
 
-%.tr.c : %.c po/$(ETOSLANG).po bug$(EXE) po/LINGUAS obj/country
-	./bug$(EXE) translate $(ETOSLANG) $<
+%.tr.c : %.c po/$(ETOSLANG).po bug po/LINGUAS obj/country
+	./bug translate $(ETOSLANG) $<
 endif
 endif
 
@@ -1070,7 +1068,7 @@ indent:
 # gitready
 #
 
-TOCLEAN += tounix$(EXE)
+TOCLEAN += tounix
 
 EXPAND_FILES = $(wildcard */*.[chS] */*.awk)
 EXPAND_NOFILES = vdi/vdi_tblit_cf.S
@@ -1084,8 +1082,8 @@ expand:
 		mv expand.tmp $$i; \
 	done
 
-NODEP += tounix$(EXE)
-tounix$(EXE): tools/tounix.c
+NODEP += tounix
+tounix: tools/tounix.c
 	$(NATIVECC) $< -o $@
 
 # LVL - I checked that both on Linux and Cygwin passing more than 10000
@@ -1094,12 +1092,12 @@ tounix$(EXE): tools/tounix.c
 # approach like that below:
 #
 # HERE = $(shell pwd)
-# crlf:	tounix$(EXE)
-#     find . -name .git -prune -or -not -name '*~' | xargs $(HERE)/tounix$(EXE)
+# crlf:	tounix
+#     find . -name .git -prune -or -not -name '*~' | xargs $(HERE)/tounix
 
 .PHONY: crlf
 NODEP += crlf
-crlf: tounix$(EXE)
+crlf: tounix
 	./$< * bios/* bdos/* cli/* doc/* util/* tools/* po/* include/* aes/* desk/* vdi/*
 
 # Check the sources charset (no automatic fix)
