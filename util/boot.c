@@ -109,12 +109,10 @@ int main(void)
   if((address <= (UBYTE *)0x800L) || (address >= (UBYTE *)0x80000)) {
     fatal("bad address in header");
   }
-#endif
-
-  /* hit a key to let the user remove any floppy */
 
   (void)Cconws("Hit RETURN to boot EmuTOS");
   Cconin();
+#endif
 
   /* supervisor */
 
