@@ -135,18 +135,40 @@ boot:
 
         /* copies d0 bytes from a0 to a1 */
 memcpy:
-        add.l   #3,d0
-        lsr.l   #2,d0
-        sub.l   #1,d0
-cpy:
+        addq.l  #3,d0   // round size to next long
+        andi.l  #-4,d0
+
+        cmp.l   a0,a1
+        bhi.s   bcopy_backwards
+
+        lsr.l   #2,d0   // number of longs
+        subq.l  #1,d0   // subtract 1 for dbra
+bcopy:
         move.l  (a0)+,(a1)+
 #ifdef __mcoldfire__
         subq.l  #1,d0
-        bpl.s   cpy
+        bpl.s   bcopy
 #else
-        dbra    d0,cpy
+        dbra    d0,bcopy
         sub.l   #0x10000,d0
-        bhi     cpy
+        bhi.s   bcopy
+#endif
+        rts
+
+bcopy_backwards:
+        add.l   d0,a0   // after last source long
+        add.l   d0,a1   // after last destination long
+        lsr.l   #2,d0   // number of longs
+        subq.l  #1,d0   // subtract 1 for dbra
+bcopy2:
+        move.l  -(a0),-(a1)
+#ifdef __mcoldfire__
+        subq.l  #1,d0
+        bpl.s   bcopy2
+#else
+        dbra    d0,bcopy2
+        sub.l   #0x10000,d0
+        bhi.s   bcopy2
 #endif
         rts
 endboot:
