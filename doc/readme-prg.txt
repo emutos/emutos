@@ -24,5 +24,5 @@ Other supported languages are:
 They can be used by setting the NVRAM appropriately.
 
 This special version has been built using:
-make ram
+make prg
 

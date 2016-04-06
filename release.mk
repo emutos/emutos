@@ -182,20 +182,20 @@ release-m548x-bas:
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_M548X_BAS).zip $(RELEASE_M548X_BAS)
 	rm -r $(RELEASE_DIR)/$(RELEASE_M548X_BAS)
 
-.PHONY: release-ram
-NODEP += release-ram
-RELEASE_RAM = emutos-ram-$(VERSION)
-release-ram:
+.PHONY: release-prg
+NODEP += release-prg
+RELEASE_PRG = emutos-prg-$(VERSION)
+release-prg:
 	$(MAKE) clean
-	$(MAKE) ram
-	mkdir $(RELEASE_DIR)/$(RELEASE_RAM)
-	cp emutos.prg $(RELEASE_DIR)/$(RELEASE_RAM)
-	cat doc/readme-ram.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_RAM)/readme.txt
-	mkdir $(RELEASE_DIR)/$(RELEASE_RAM)/doc
-	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_RAM)/doc
-	find $(RELEASE_DIR)/$(RELEASE_RAM) -name '*.txt' -exec unix2dos '{}' ';'
-	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_RAM).zip $(RELEASE_RAM)
-	rm -r $(RELEASE_DIR)/$(RELEASE_RAM)
+	$(MAKE) prg
+	mkdir $(RELEASE_DIR)/$(RELEASE_PRG)
+	cp emutos.prg $(RELEASE_DIR)/$(RELEASE_PRG)
+	cat doc/readme-prg.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_PRG)/readme.txt
+	mkdir $(RELEASE_DIR)/$(RELEASE_PRG)/doc
+	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_PRG)/doc
+	find $(RELEASE_DIR)/$(RELEASE_PRG) -name '*.txt' -exec unix2dos '{}' ';'
+	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_PRG).zip $(RELEASE_PRG)
+	rm -r $(RELEASE_DIR)/$(RELEASE_PRG)
 
 .PHONY: release-floppy
 NODEP += release-floppy

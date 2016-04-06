@@ -355,7 +355,7 @@ help:
 	@echo "512     $(ROM_512), EmuTOS ROM padded to size 512 KB (starting at $(VMA_STANDARD))"
 	@echo "aranym  $(ROM_ARANYM), suitable for ARAnyM"
 	@echo "firebee $(SREC_FIREBEE), to be flashed on the FireBee"
-	@echo "firebee-ram emutos.prg, a RAM tos for the FireBee"
+	@echo "firebee-prg emutos.prg, a RAM tos for the FireBee"
 	@echo "amiga   $(ROM_AMIGA), EmuTOS ROM for Amiga hardware"
 	@echo "amigakd $(AMIGA_KICKDISK), EmuTOS as Amiga 1000 Kickstart disk"
 	@echo "m548x-dbug $(SREC_M548X_DBUG), EmuTOS-RAM for dBUG on ColdFire Evaluation Boards"
@@ -363,7 +363,7 @@ help:
 	@echo "all192  all 192 KB images"
 	@echo "all256  all 256 KB images"
 	@echo "allbin  all 192 KB, 256 KB and 512 KB images"
-	@echo "ram     emutos.prg, a RAM tos"
+	@echo "prg     emutos.prg, a RAM tos"
 	@echo "flop    emutos.st, a bootable floppy with RAM tos"
 	@echo "cart    $(ROM_CARTRIDGE), EmuTOS as a diagnostic cartridge"
 	@echo "clean"
@@ -554,11 +554,11 @@ firebee:
 	@MEMBOT=$$($(SHELL_GET_MEMBOT_EMUTOS_MAP));\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 
-.PHONY: firebee-ram
-NODEP += firebee-ram
-firebee-ram:
-	@echo "# Building FireBee EmuTOS for RAM"
-	$(MAKE) COLDFIRE=1 CPUFLAGS='-mcpu=5474' DEF='-DMACHINE_FIREBEE' ram
+.PHONY: firebee-prg
+NODEP += firebee-prg
+firebee-prg:
+	@echo "# Building FireBee emutos.prg"
+	$(MAKE) COLDFIRE=1 CPUFLAGS='-mcpu=5474' DEF='-DMACHINE_FIREBEE' prg
 
 SREC_M548X_DBUG = emutos-m548x-dbug.s19
 .PHONY: m548x-dbug
@@ -581,15 +581,15 @@ m548x-bas:
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 
 #
-# ram - In two stages. first link emutos.img to know the top address of bss,
-# then use this value (taken from the map) to relocate the RamTOS.
+# prg - In two stages. first link emutos.img to know the top address of bss,
+# then use this value (taken from the map) to relocate ramtos.img.
 #
 
 TOCLEAN += emutos.prg
 
-.PHONY: ram
-ram: override DEF += -DTARGET_PRG
-ram: ramtos.img emutos.prg
+.PHONY: prg
+prg: override DEF += -DTARGET_PRG
+prg: ramtos.img emutos.prg
 	@MEMBOT=$$($(SHELL_GET_MEMBOT_RAMTOS_MAP));\
 	echo "# RAM used: $$(($$MEMBOT)) bytes"
 
