@@ -243,9 +243,6 @@
 # ifndef CONF_ATARI_HARDWARE
 #  define CONF_ATARI_HARDWARE 0
 # endif
-# ifndef USE_STOP_INSN_TO_FREE_HOST_CPU
-#  define USE_STOP_INSN_TO_FREE_HOST_CPU 1
-# endif
 # ifndef CONF_WITH_IDE
 #  define CONF_WITH_IDE 1
 # endif
@@ -391,9 +388,6 @@
 # endif
 # ifndef CONF_WITH_68040_PMMU
 #  define CONF_WITH_68040_PMMU 0
-# endif
-# ifndef USE_STOP_INSN_TO_FREE_HOST_CPU
-#  define USE_STOP_INSN_TO_FREE_HOST_CPU 0
 # endif
 # ifndef CONF_WITH_BUS_ERROR
 #  define CONF_WITH_BUS_ERROR 0
