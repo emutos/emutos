@@ -82,6 +82,10 @@ start:
         tst.w   d0
         bne     fail
 
+        /* disable interrupts */
+
+        move.w  #0x2700,sr
+
         /* tell EmuTOS that it's being started from an auto-booting floppy */
 
         move.l  #0x1234abcd,0x6f8.w     // AUTOBOOT_MAGIC, _autoboot_magic
@@ -117,8 +121,6 @@ fail:
         rts
 
 boot:
-        move.w  #0x2700,sr
-
         /* copy from temporary address to destination */
 
         move.l  8(a4),a3
