@@ -127,11 +127,11 @@ static UBYTE response[5];
 /*
  *  function prototypes
  */
-static void sd_cardtype(struct cardinfo *card);
-static int sd_command(UBYTE cmd,ULONG argument,UBYTE crc,UBYTE resptype,UBYTE *response);
+static void sd_cardtype(struct cardinfo *info);
+static int sd_command(UBYTE cmd,ULONG argument,UBYTE crc,UBYTE resptype,UBYTE *resp);
 static ULONG sd_calc_capacity(UBYTE *csd);
 static LONG sd_check(UWORD drv);
-static void sd_features(struct cardinfo *card);
+static void sd_features(struct cardinfo *info);
 static UBYTE sd_get_dataresponse(void);
 static int sd_mbtest(void);
 static LONG sd_read(UWORD drv,ULONG sector,UWORD count,UBYTE *buf);
@@ -472,7 +472,7 @@ LONG posn, incr;
  *          0   OK
  *          >0  error status from response[0]
  */
-static int sd_command(UBYTE cmd,ULONG argument,UBYTE crc,UBYTE resp_type,UBYTE *response)
+static int sd_command(UBYTE cmd,ULONG argument,UBYTE crc,UBYTE resp_type,UBYTE *resp)
 {
     int i, resp_length;
 
@@ -522,8 +522,8 @@ static int sd_command(UBYTE cmd,ULONG argument,UBYTE crc,UBYTE resp_type,UBYTE *
 
     /* now we look for the response, which starts with a byte with the 0x80 bit clear */
     for (i = 0; i < SD_CMD_TIMEOUT; i++) {
-        response[0] = spi_recv_byte();
-        if ((response[0]&0x80) == 0)
+        resp[0] = spi_recv_byte();
+        if ((resp[0]&0x80) == 0)
             break;
     }
     if (i >= SD_CMD_TIMEOUT)            /* timed out */
@@ -533,9 +533,9 @@ static int sd_command(UBYTE cmd,ULONG argument,UBYTE crc,UBYTE resp_type,UBYTE *
      *  retrieve remainder of response iff command is legal
      *  (if it's illegal, it's effectively an R1 response type)
      */
-    if ((response[0] & SD_ERR_ILLEGAL_CMD) == 0) {
+    if ((resp[0] & SD_ERR_ILLEGAL_CMD) == 0) {
         for (i = 1; i < resp_length; i++)
-            response[i] = spi_recv_byte();
+            resp[i] = spi_recv_byte();
     }
 
     /*
@@ -547,7 +547,7 @@ static int sd_command(UBYTE cmd,ULONG argument,UBYTE crc,UBYTE resp_type,UBYTE *
         if (sd_wait_for_not_busy(SD_WRITE_TIMEOUT_TICKS) < 0)
             return -1;
 
-    return response[0];
+    return resp[0];
 }
 
 /*
@@ -642,13 +642,13 @@ UBYTE rtoken;
 /*
  *  determine card type & version
  */
-static void sd_cardtype(struct cardinfo *card)
+static void sd_cardtype(struct cardinfo *info)
 {
 int rc;
 UBYTE csd[16];
 
-    card->type = CARDTYPE_UNKNOWN;          /* defaults */
-    card->version = 0;
+    info->type = CARDTYPE_UNKNOWN;          /* defaults */
+    info->version = 0;
 
     /*
      *  check first for SDv2
@@ -661,8 +661,8 @@ UBYTE csd[16];
             return;
         if (sd_wait_for_not_idle(ACMD41,0x40000000L) != 0)
             return;
-        card->type = CARDTYPE_SD;
-        card->version = 2;
+        info->type = CARDTYPE_SD;
+        info->version = 2;
         return;
     }
 
@@ -671,8 +671,8 @@ UBYTE csd[16];
      */
     rc = sd_wait_for_not_idle(ACMD41,0L);
     if (rc == 0) {
-        card->type = CARDTYPE_SD;
-        card->version = 1;
+        info->type = CARDTYPE_SD;
+        info->version = 1;
         return;
     }
 
@@ -681,44 +681,44 @@ UBYTE csd[16];
      */
     rc = sd_wait_for_not_idle(CMD1,0L);
     if (rc) {
-        card->type = CARDTYPE_UNKNOWN;
+        info->type = CARDTYPE_UNKNOWN;
         return;
     }
-    card->type = CARDTYPE_MMC;
+    info->type = CARDTYPE_MMC;
 
     /*
      *  determine MMC version from CSD
      */
     if (sd_command(CMD9,0L,0,R1,response) == 0)
         if (sd_receive_data(csd,16,1) == 0)
-            card->version = (csd[0] >> 2) & 0x0f;
+            info->version = (csd[0] >> 2) & 0x0f;
 }
 
 /*
  *  determine card features
  */
-static void sd_features(struct cardinfo *card)
+static void sd_features(struct cardinfo *info)
 {
-    card->features = 0;
+    info->features = 0;
 
     /*
      *  check SDv2 for block addressing
      */
-    if ((card->type == CARDTYPE_SD) && (card->version == 2)) {
+    if ((info->type == CARDTYPE_SD) && (info->version == 2)) {
         if (sd_command(CMD58,0L,0,R3,response) != 0) {  /* shouldn't happen */
-            card->type = CARDTYPE_UNKNOWN;
-            card->version = 0;
+            info->type = CARDTYPE_UNKNOWN;
+            info->version = 0;
             return;
         }
         if (response[1] & 0x40)
-            card->features |= BLOCK_ADDRESSING;
+            info->features |= BLOCK_ADDRESSING;
     }
 
     /*
      *  all SD cards support multiple block I/O
      */
-    if (card->type == CARDTYPE_SD) {
-        card->features |= MULTIBLOCK_IO;
+    if (info->type == CARDTYPE_SD) {
+        info->features |= MULTIBLOCK_IO;
         return;
     }
 
@@ -726,11 +726,11 @@ static void sd_features(struct cardinfo *card)
      *  check MMC for multiple block I/O support
      *  v3 cards always have it ... but so do some v2 & v1 cards
      */
-    if (card->type == CARDTYPE_MMC) {
-        if (card->version == 3)
-            card->features |= MULTIBLOCK_IO;
+    if (info->type == CARDTYPE_MMC) {
+        if (info->version == 3)
+            info->features |= MULTIBLOCK_IO;
         else if (sd_mbtest() == 0)
-            card->features |= MULTIBLOCK_IO;
+            info->features |= MULTIBLOCK_IO;
     }
 }
 
