@@ -395,6 +395,9 @@
 # ifndef USE_STOP_INSN_TO_FREE_HOST_CPU
 #  define USE_STOP_INSN_TO_FREE_HOST_CPU 0
 # endif
+# ifndef CONF_WITH_BUS_ERROR
+#  define CONF_WITH_BUS_ERROR 0
+# endif
 #endif
 
 /*
@@ -1058,6 +1061,15 @@
 # else
 #  define CONF_WITH_SHUTDOWN 0
 # endif
+#endif
+
+/*
+ * Set CONF_WITH_BUS_ERROR if the hardware triggers a Bus Error exception
+ * when trying to read/write data at an invalid address.
+ * This is true on Atari machines.
+ */
+#ifndef CONF_WITH_BUS_ERROR
+# define CONF_WITH_BUS_ERROR 1
 #endif
 
 /*

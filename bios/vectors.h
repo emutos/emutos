@@ -40,7 +40,9 @@ extern void xbiostrap(void);
 extern void just_rte(void);
 extern void just_rts(void);
 
+#if CONF_WITH_BUS_ERROR
 long check_read_byte(long);
+#endif
 
 
 /* */

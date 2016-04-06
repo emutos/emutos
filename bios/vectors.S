@@ -786,6 +786,8 @@ _xbios_unimpl:
        rts
 
 
+#if CONF_WITH_BUS_ERROR
+
 /* ==== check_read_byte =====================================================
  *
  * check_read_byte - Verify access to the memory pointed to by the ptr
@@ -831,6 +833,7 @@ msgcrb:
         .even
 #endif
 
+#endif /* CONF_WITH_BUS_ERROR */
 
 
 /*
