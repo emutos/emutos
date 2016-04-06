@@ -148,7 +148,21 @@ _main:
         // but it matters for software reset
         move    #0x2700,sr
 
-        lea     _stktop,sp     // required for exception
+        // Initialize an early stack to a valid write address.
+        // We use early exceptions for 2 reasons:
+        // - detect CPU type and features with illegal instructions
+        // - check for available hardware with bus errors
+        // When an exception occurs, the CPU will to store the
+        // return address and sr on this stack.
+        // Since the RAM has not yet been initialized, this stack may not
+        // point to actual memory. It is only required that the CPU will
+        // not cause a second exception when writing to that address.
+        // The exception handlers use a register as return address.
+        // It must never be assumed that this early stack can be used
+        // to store any data.
+        // We take this opportunity to set the stack pointer to the
+        // address which will become our BIOS stack after memconf.
+        lea     _stktop,sp
 
 #ifndef __mcoldfire__
         // first, reset the VBR
@@ -264,14 +278,6 @@ resetvec:
        lea      resetvec(pc), a6        // save return address
        jmp      (a0)                    // jump to resvec
 noreset:
-
-
-/*
- * Set up a supervisor stack
- * It is required by meminit, but may be destroyed.
- */
-
-        lea     _stktop, sp             // Setup Supervisor Stack
 
 
 /*

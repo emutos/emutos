@@ -23,6 +23,7 @@
 
         .extern memdone       // return to, after memory config is done
         .extern _warm_magic
+        .extern _stktop
 
         // functions for detecting hardware and CPU type
         .extern _check_read_byte
@@ -416,7 +417,6 @@ memconf_done:
  * - The size of the ST-RAM has been detected
  * - The MMU has been properly initalized
  * - The ST-RAM is ready to be used
- * - The stack is valid between sysvars and BSS
  *
  * d7.b = _first_boot
  * d5.l = new phystop
@@ -425,6 +425,11 @@ memconf_done:
  * a3.l = old _ramtop (if old _ramvalid was valid)
  */
 stram_detected:
+        // The previous temporary stack pointer may have moved
+        // during early detections, so we reinitialize it now.
+        // After that, normal stack usage is allowed.
+        lea     _stktop, sp
+
         tst.b   d7                      // first boot ?
         beq     any_boot                // no: skip first boot initialization
 

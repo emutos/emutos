@@ -73,6 +73,11 @@ os_dummy:
 
 _main:                         // stunt to guarantee entry into supervisor mode
         move    #0x2700,sr     // disable interrupts
+
+        // Set up an early stack
+        // See comments in bios/startup.S
+        lea     _stktop, sp
+
 #ifndef __mcoldfire__
         reset                  // reset all hardware
 #endif
@@ -95,12 +100,6 @@ _main:                         // stunt to guarantee entry into supervisor mode
         jmp     cart_base+4             // execute diagnostig cartridge
 nodiag:
 
-
-/*
- * Set up a supervisor stack
- */
-
-        lea     _stktop, sp             // Setup Supervisor Stack
 
 /*
  * Check, if we should jump to a reset vector after warmboot
