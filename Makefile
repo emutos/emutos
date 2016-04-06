@@ -581,15 +581,13 @@ m548x-bas:
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 
 #
-# prg - In two stages. first link emutos.img to know the top address of bss,
-# then use this value (taken from the map) to relocate ramtos.img.
+# emutos.prg
 #
 
 TOCLEAN += emutos.prg
 
 .PHONY: prg
-prg: override DEF += -DTARGET_PRG
-prg: ramtos.img emutos.prg
+prg: emutos.prg
 	@MEMBOT=$$($(SHELL_GET_MEMBOT_RAMTOS_MAP));\
 	echo "# RAM used: $$(($$MEMBOT)) bytes"
 
@@ -603,9 +601,10 @@ ramtos.img ramtos.map: emutos-ram
 	@echo '# Second pass to build ramtos.img with TEXT and DATA just after the BSS'
 	$(LD) $(CORE_OBJ) $(LIBS) $(OPTIONAL_OBJ) $(LIBS) $(LDFLAGS) -Wl,-Map,ramtos.map -o ramtos.img
 
-# incbin dependencies are not automatically generated
+# incbin dependencies are not automatically detected
 obj/ramtos.o: ramtos.img
 
+emutos.prg: override DEF += -DTARGET_PRG
 # Be sure to keep ramtos.o before boot files.
 # This simplifies the algorithm in bootasm.S.
 emutos.prg: obj/minicrt.o obj/ramtos.o obj/boot.o obj/bootasm.o
