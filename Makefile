@@ -390,7 +390,7 @@ version:
 TOCLEAN += *.img *.map
 
 emutos.img emutos.map: $(OBJECTS) emutos.ld Makefile
-	$(LD) -o emutos.img $(CORE_OBJ) $(LIBS) $(OPTIONAL_OBJ) $(LIBS) $(LDFLAGS) -Wl,-Map,emutos.map
+	$(LD) $(CORE_OBJ) $(LIBS) $(OPTIONAL_OBJ) $(LIBS) $(LDFLAGS) -Wl,-Map,emutos.map -o emutos.img
 	@if [ $$(($$(awk '/^\.data /{print $$3}' emutos.map))) -gt 0 ]; then \
 	  echo "### Warning: The DATA segment is not empty."; \
 	  echo "### Please examine emutos.map and use \"const\" where appropriate."; \
@@ -601,7 +601,7 @@ emutos-ram:
 ramtos.img ramtos.map: VMA = $(shell $(SHELL_GET_MEMBOT_EMUTOS_MAP))
 ramtos.img ramtos.map: emutos-ram
 	@echo '# Second pass to build ramtos.img with TEXT and DATA just after the BSS'
-	$(LD) -o ramtos.img $(CORE_OBJ) $(LIBS) $(OPTIONAL_OBJ) $(LIBS) $(LDFLAGS) -Wl,-Map,ramtos.map
+	$(LD) $(CORE_OBJ) $(LIBS) $(OPTIONAL_OBJ) $(LIBS) $(LDFLAGS) -Wl,-Map,ramtos.map -o ramtos.img
 
 # incbin dependencies are not automatically generated
 obj/ramtos.o: ramtos.img
@@ -609,7 +609,7 @@ obj/ramtos.o: ramtos.img
 # Be sure to keep ramtos.o before boot files.
 # This simplifies the algorithm in bootasm.S.
 emutos.prg: obj/minicrt.o obj/ramtos.o obj/boot.o obj/bootasm.o
-	$(LD) -s -o $@ $+ -lgcc
+	$(LD) $+ -lgcc -o $@ -s
 
 #
 # compressed ROM image
@@ -627,7 +627,7 @@ COMPROBJ = obj/compr-tosvars.o obj/compr-comprimg.o obj/compr-memory.o \
 compr.img compr.map: OPTFLAGS = -Os
 compr.img compr.map: override DEF += -DTARGET_COMPR_STUB
 compr.img compr.map: $(COMPROBJ) emutos.ld Makefile
-	$(LD) -o compr.img $(COMPROBJ) $(LIBS) $(LDFLAGS) -Wl,-Map,compr.map
+	$(LD) $(COMPROBJ) $(LIBS) $(LDFLAGS) -Wl,-Map,compr.map -o compr.img
 
 # Compressed ROM: stub + ramtos
 .PHONY: etoscpr.img
@@ -663,12 +663,12 @@ NODEP += 192c
 # Compression tool
 NODEP += compr$(EXE)
 compr$(EXE): tools/compr.c
-	$(NATIVECC) -o $@ $<
+	$(NATIVECC) $< -o $@
 
 # Decompression tool
 NODEP += uncompr$(EXE)
 uncompr$(EXE): tools/uncompr.c
-	$(NATIVECC) -o $@ $<
+	$(NATIVECC) $< -o $@
 
 # Compression test
 .PHONY: comprtest
@@ -702,11 +702,11 @@ emutos.st: mkflop$(EXE) bootsect.img ramtos.img
 	./mkflop$(EXE)
 
 bootsect.img : obj/bootsect.o
-	$(LD) -Wl,--oformat,binary -o $@ obj/bootsect.o
+	$(LD) obj/bootsect.o -Wl,--oformat,binary -o $@
 
 NODEP += mkflop$(EXE)
 mkflop$(EXE) : tools/mkflop.c
-	$(NATIVECC) -o $@ $<
+	$(NATIVECC) $< -o $@
 
 #
 # Misc utilities
@@ -715,11 +715,11 @@ mkflop$(EXE) : tools/mkflop.c
 TOCLEAN += date.prg dumpkbd.prg
 
 date.prg: obj/minicrt.o obj/doprintf.o obj/date.o
-	$(LD) -s -o $@ $+ -lgcc
+	$(LD) $+ -lgcc -o $@ -s
 
 dumpkbd.prg: obj/minicrt.o obj/memmove.o obj/dumpkbd.o obj/doprintf.o \
 	     obj/string.o
-	$(LD) -s -o $@ $+ -lgcc
+	$(LD) $+ -lgcc -o $@ -s
 
 #
 # NLS support
@@ -731,7 +731,7 @@ TOCLEAN += bug$(EXE) util/langs.c po/messages.pot
 
 NODEP += bug$(EXE)
 bug$(EXE): tools/bug.c
-	$(NATIVECC) -o $@ $<
+	$(NATIVECC) $< -o $@
 
 util/langs.c: $(POFILES) po/LINGUAS bug$(EXE) po/messages.pot
 	./bug$(EXE) make
@@ -747,11 +747,11 @@ TOCLEAN += erd$(EXE) grd$(EXE) ird$(EXE)
 
 NODEP += erd$(EXE) grd$(EXE) ird$(EXE)
 erd$(EXE): tools/erd.c
-	$(NATIVECC) -o $@ $<
+	$(NATIVECC) $< -o $@
 grd$(EXE): tools/erd.c
-	$(NATIVECC) -DGEM_RSC -o grd $<
+	$(NATIVECC) -DGEM_RSC $< -o grd
 ird$(EXE): tools/erd.c
-	$(NATIVECC) -DICON_RSC -o ird $<
+	$(NATIVECC) -DICON_RSC $< -o ird
 
 DESKRSC_BASE = desk/desktop
 DESKRSCGEN_BASE = desk/desk_rsc
@@ -776,7 +776,7 @@ TOCLEAN += mkrom$(EXE)
 
 NODEP += mkrom$(EXE)
 mkrom$(EXE): tools/mkrom.c
-	$(NATIVECC) -o $@ $<
+	$(NATIVECC) $< -o $@
 
 # test target to build all tools
 .PHONY: tools
@@ -787,7 +787,7 @@ tools: bug$(EXE) compr$(EXE) erd$(EXE) mkflop$(EXE) mkrom$(EXE) tos-lang-change$
 TOCLEAN += tos-lang-change$(EXE)
 NODEP += tos-lang-change$(EXE)
 tos-lang-change$(EXE): tools/tos-lang-change.c
-	$(NATIVECC) -o $@ $<
+	$(NATIVECC) $< -o $@
 
 #
 # all binaries
@@ -1087,7 +1087,7 @@ expand:
 
 NODEP += tounix$(EXE)
 tounix$(EXE): tools/tounix.c
-	$(NATIVECC) -o $@ $<
+	$(NATIVECC) $< -o $@
 
 # LVL - I checked that both on Linux and Cygwin passing more than 10000
 # arguments on the command line works fine. On other systems it might be
@@ -1163,7 +1163,7 @@ vdi/%_preprocessed.s: vdi/%.S
 
 NODEP += $(GENERATED_COLDFIRE_SOURCES)
 vdi/%_cf.S: vdi/%_preprocessed.s
-	cd $(<D) && $(PORTASM) $(PORTASMFLAGS) -o $(@F) $(<F)
+	cd $(<D) && $(PORTASM) $(PORTASMFLAGS) $(<F) -o $(@F)
 	sed -i $@ \
 		-e "s:\.section\t.bss,.*:.bss:g" \
 		-e "s:\( \|\t\)bsr\(  \|\..\):\1jbsr :g" \
