@@ -5,28 +5,22 @@
  *
  * Authors:
  *  LVL   Laurent Vogel
+ *  VRI   Vincent Rivière
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  */
 
 /*
- * this bootsector will load a ramtos.img using rwabs.
- * the ramtos will be loaded at address TMPADDR, then
- * a boot routine will be copied after it, and finally
+ * this bootsector will load a ramtos.img using rwabs into a Malloc() buffer.
+ * then a boot routine will be copied after it, and finally
  * the bootsector will jump into this boot routine
  * to avoid erasing itself. The boot routine will copy
- * the TOS from TMPADDR to the address given in the TOS
+ * the TOS from the temporary buffer to the address given in the TOS
  * header
  */
 
 #include "asmdefs.h"
-
-/* The temporary load address must be:
- *   - high enough to not override the TOS internal variables
- *   - low enough so ramtos.img will not run over the screen
- */
-#define TMPADDR 0x38000
 
 #define BOOTDEV 0x446
 
@@ -57,9 +51,26 @@ ssect:
         .dc.w   0               // set by mkflop.c
 sectcnt:
         .dc.w   0               // set by mkflop.c
-ldaddr:
-        .dc.l   TMPADDR
 start:
+        /* compute ramtos size in d3 */
+
+        moveq   #0,d3
+        move.w  sectcnt(pc),d3  // number of sectors
+        moveq   #9,d0           // 512 bytes per sector
+        lsl.l   d0,d3           // ramtos size in bytes
+
+        /* Malloc() ramtos buffer */
+
+        move.l  d3,-(sp)
+        move.w  #0x48,-(sp)     // Malloc()
+        trap    #1
+        addq.l  #6,sp
+
+        tst.l   d0
+        beq.s   fail
+
+        move.l  d0,a4           // temporary ramtos buffer
+
         /* getbpb before rwabs */
 
         move.w  BOOTDEV,-(sp)
@@ -69,12 +80,11 @@ start:
 
         /* read the sectors in memory */
 
-        move.l  ldaddr(pc),a4
         move.w  sectcnt(pc),d6
         move.w  BOOTDEV,-(sp)
         move.w  ssect(pc),-(sp)
         move.w  d6,-(sp)
-        move.l  a4,-(sp)
+        move.l  a4,-(sp)        // temporary ramtos buffer
         clr.w   -(sp)
         move.w  #RWABS,-(sp)
         trap    #13
@@ -98,19 +108,19 @@ start:
 
         clr.l   0x426                   // resvalid
 
-        /* d4 = max size of TOS */
+        /* if the boot routine is before the destionation address,
+         * then it is already in a safe place */
 
-        moveq   #0,d4
-        move.w  d6,d4
-        lsl.l   #8,d4
-        add.l   d4,d4
+        move.l  8(a4),a5                // destination address
+        cmp.l   endboot(pc),a5          // end of boot routine
+        bhs.s   boot                    // already safe place
 
-        /* copy boot routine immediately after */
+        /* copy boot routine immediately after the destination ramtos */
 
         lea     boot(pc),a0
-        lea     (a4,d4),a3
-        move.l  a3,a1
-        move.l  #endboot-boot,d0
+        lea     (a4,d3),a3              // new boot routine
+        move.l  a3,a1                   // destination
+        move.l  #endboot-boot,d0        // size
         bsr     memcpy
 
         /* jump in boot routine */
@@ -123,15 +133,14 @@ fail:
 boot:
         /* copy from temporary address to destination */
 
-        move.l  8(a4),a3
-        move.l  a3,a1
-        move.l  a4,a0
-        move.l  d4,d0
+        move.l  a5,a1   // destination
+        move.l  a4,a0   // source
+        move.l  d3,d0   // size
         bsr     memcpy
 
         /* jump in TOS */
 
-        jmp     (a3)
+        jmp     (a5)
 
         /* copies d0 bytes from a0 to a1 */
 memcpy:
