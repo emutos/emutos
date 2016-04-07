@@ -59,6 +59,24 @@ start:
         moveq   #9,d0           // 512 bytes per sector
         lsl.l   d0,d3           // ramtos size in bytes
 
+        /* We need a temporary buffer to load the ramtos.
+         * If TOS is in ROM, we can safely call Malloc().
+         * If the ROM only contains the loader for floppy TOS,
+         * then only a minimal subset of BIOS/XBIOS functions are available
+         * and there is no GEMDOS at all.
+         * In this case, we must guess a safe address to load ramtos.
+         */
+
+        move.l  0x44e,a4        // _v_bas_ad: logical screen pointer
+        cmp.l   #0x00018000,a4  // are we running with floppy TOS loader?
+        bne.s   malloc          // no, use Malloc()
+
+        // We are running on the loader for floppy TOS
+        // Our temporary buffer will start just after the screen
+        lea     32000(a4),a4
+        bra.s   read
+
+malloc:
         /* Malloc() ramtos buffer */
 
         move.l  d3,-(sp)
@@ -71,6 +89,7 @@ start:
 
         move.l  d0,a4           // temporary ramtos buffer
 
+read:
         /* getbpb before rwabs */
 
         move.w  BOOTDEV,-(sp)
