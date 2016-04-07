@@ -115,10 +115,6 @@ read:
 
         move.w  #0x2700,sr
 
-        /* tell EmuTOS that it's being started from an auto-booting floppy */
-
-        move.l  #0x1234abcd,0x6f8.w     // AUTOBOOT_MAGIC, _autoboot_magic
-
         /* this boot is a first boot */
 
         clr.l   0x6fc.w                 // warm_magic

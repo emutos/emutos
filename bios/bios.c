@@ -594,8 +594,8 @@ void biosmain(void)
      * but if TOS in RAM was booted from an autoboot floppy, avoid
      * trying to boot again!
      */
-    if (autoboot_magic == AUTOBOOT_MAGIC) {
-        autoboot_magic = 0L;    /* do not prevent next warm boot */
+    if (first_boot) {
+        /* Nothing */
     }
     else
 #endif

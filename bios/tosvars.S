@@ -95,10 +95,6 @@
         .globl  _bell_hook
         .globl  _kcl_hook
 
-#ifdef TARGET_FLOPPY
-        .globl  _autoboot_magic
-#endif
-
 #if CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF
         .globl  _warm_magic
 #endif
@@ -218,11 +214,6 @@ _ramvalid:      .ds.l   1       // validates ramtop if $1357BD13
 _bell_hook:     .ds.l   1       // pointer to routine for system bell
 _kcl_hook:      .ds.l   1       // pointer to routine for system keyclick
         .org 0x5b4
-
-#ifdef TARGET_FLOPPY
-        .org 0x6f8              // must match the value in util/bootsect.S
-_autoboot_magic:.ds.l   1
-#endif
 
 #if CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF
         .org 0x6fc              // any location below bssstart is ok

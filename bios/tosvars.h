@@ -133,18 +133,6 @@ struct kbdvecs
 };
 extern struct kbdvecs kbdvecs;
 
-#ifdef TARGET_FLOPPY
-
-/*
- * If eject_magic == AUTOBOOT_MAGIC, this is a cold boot from an
- * autobooting floppy; we need to know this to avoid continual
- * rebooting.
- */
-#define AUTOBOOT_MAGIC 0x1234abcd
-extern ULONG autoboot_magic;
-
-#endif /* TARGET_FLOPPY */
-
 #if CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF
 #define WARM_MAGIC 0x5741524D /* 'WARM' */
 extern ULONG warm_magic;
