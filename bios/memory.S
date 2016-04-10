@@ -518,7 +518,15 @@ stram_detected:
         lea     0x1000000, a3           // start from 16MB boundary
         move.l  #1024*1024, d3          // test by blocks of 1MB size
 loop:
-        lea     -1(a3,d3.l), a0
+        lea     -1(a3,d3.l), a0         // last byte of current megabyte
+
+        // Currently, the BDOS memory management functions handle sizes
+        // as signed long integers. So limit detection to the positive range.
+        // We thereby limit FastRAM support to 2032 MB.
+        // This should be enough for all most cases, anyway.
+        move.l  a0,d0
+        bmi.s   setramtop
+
         pea     (a0)
         jsr     _check_read_byte
         addq.l  #4,sp
@@ -526,8 +534,7 @@ loop:
         beq.s   setramtop
         addq.l  #1, d6
         add.l   d3, a3
-        cmp.l   #2048, d6                // 2048 MB of FastRAM should be enough
-        blt.s   loop
+        bra.s   loop
 
 setramtop:
         /* test MB counter */
