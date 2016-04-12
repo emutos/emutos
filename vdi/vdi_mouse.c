@@ -675,42 +675,36 @@ static void cur_display (Mcdb *sprite, MCS *mcs, WORD x, WORD y)
     y -= sprite->yhot;          /* y = top of destination block */
 
     mcs->stat = 0x00;           /* reset status of save buffer */
-    op = 0;                     /* default: longword save */
 
-    /* clip x axis */
-    if ( x < 0 ) {
-        /* clip left */
+    /*
+     * clip x axis
+     */
+    if (x < 0) {            /* clip left */
         x += 16;                /* get address of right word */
         op = 1;                 /* remember we're clipping left */
     }
-    else {
-        /* check for need to clip on right side */
-        /* compare to width of screen(maximum x value) */
-        if ( x >= (DEV_TAB[0] - 15) ) {
-            op = 2;             /* remember we're clipping right */
-        }
-        else {
-            mcs->stat |= 0x02;  /* no clipping, mark savearea as longword save */
-        }
+    else if (x >= (DEV_TAB[0]-15)) {    /* clip right */
+        op = 2;                 /* remember we're clipping right */
     }
-
-    /* clip y axis */
-    mask_start = sprite->mask;  /* a3 -> MASK/FORM for cursor */
-    if ( y < 0 ) {
-        /* clip up */
+    else {                  /* no clipping */
+        op = 0;                 /* longword save */
+        mcs->stat |= 0x02;      /* mark savearea as longword save */
+    }
+ 
+    /*
+     * clip y axis
+     */
+    mask_start = sprite->mask;  /* MASK/FORM for cursor */
+    if (y < 0) {            /* clip top */
         row_count = y + 16;
         mask_start -= y << 1;   /* point to first visible row of MASK/FORM */
-        y = 0;                  /* and reset start */
+        y = 0;                  /* and reset starting row */
+    }
+    else if (y > (DEV_TAB[1]-15)) { /* clip bottom */
+        row_count = DEV_TAB[1] - y + 1;
     }
     else {
-        /* check for need to clip on the bottom */
-        /* compare to height of screen (maximum y value) */
-        if ( y > (DEV_TAB[1] - 15) ) {
-            row_count = DEV_TAB[1] - y + 1;
-        }
-        else {
-            row_count = 16;
-        }
+        row_count = 16;
     }
 
     /*
@@ -718,7 +712,7 @@ static void cur_display (Mcdb *sprite, MCS *mcs, WORD x, WORD y)
      *  these bits from the x-coordinate.
      */
     addr = get_start_addr(x, y);
-    shft = x&0xf;               /* initial bit position in WORD */
+    shft = 16 - (x&0x0f);       /* amount to shift forms by */
 
     /*
      * Initialize
@@ -742,6 +736,7 @@ static void cur_display (Mcdb *sprite, MCS *mcs, WORD x, WORD y)
     for (plane = v_planes - 1; plane >= 0; plane--) {
         int row;
         UWORD * src, * dst;
+        UWORD cdb_mask = 0x01;  /* for checking cdb_bg/cdb_fg */
 
         /* setup the things we need for each plane again */
         src = mask_start;               /* calculated mask data begin */
@@ -749,9 +744,9 @@ static void cur_display (Mcdb *sprite, MCS *mcs, WORD x, WORD y)
 
         /* loop through rows */
         for (row = row_count - 1; row >= 0; row--) {
-            ULONG bits = 0;             /* our graphics data */
-            ULONG fg = 0;               /* the foreground color */
-            ULONG bg = 0;               /* the background color */
+            ULONG bits;                 /* our graphics data */
+            ULONG fg;                   /* the foreground color */
+            ULONG bg;                   /* the background color */
 
             /*
              * first, save the existing data
@@ -782,26 +777,22 @@ static void cur_display (Mcdb *sprite, MCS *mcs, WORD x, WORD y)
              * align the forms with the cursor position on the screen
              */
 
-            /* get and align background form */
-            bg = (ULONG)*src++ << 16;
-            bg = bg >> shft;
-
-            /* get and align foreground form */
-            fg = (ULONG)*src++ << 16;
-            fg = fg >> shft ;
+            /* get and align background & foreground forms */
+            bg = (ULONG)*src++ << shft;
+            fg = (ULONG)*src++ << shft;
 
             /*
              * logical operation for cursor interaction with screen
              */
 
             /* select operation for mouse mask background color */
-            if (cdb_bg & 0x0001)
+            if (cdb_bg & cdb_mask)
                 bits |= bg;
             else
                 bits &= ~bg;
 
             /* select operation for mouse mask foreground color */
-            if (cdb_fg & 0x0001)
+            if (cdb_fg & cdb_mask)
                 bits |= fg;
             else
                 bits &= ~fg;
@@ -824,9 +815,7 @@ static void cur_display (Mcdb *sprite, MCS *mcs, WORD x, WORD y)
             dst += dst_inc;             /* a1 -> next row of screen */
         } /* loop through rows */
 
-        cdb_bg >>= 1;           /* advance to next bg color bit */
-        cdb_fg >>= 1;           /* advance to next fg color bit */
-
+        cdb_mask <<= 1;
     } /* loop through planes */
 }
 
