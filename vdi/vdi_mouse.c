@@ -843,9 +843,8 @@ static void cur_replace (MCS *mcs)
     dst_inc = v_lin_wr >> 1;    /* calculate words in a scan line */
 
     /* word or longword ? */
-    if (mcs->stat & 2) {
-        /* longword ? */
-        ULONG * src = mcs->area;
+    if (mcs->stat & 2) {        /* longword stored */
+        UWORD *src = (UWORD *)mcs->area;
 
         /* plane controller, draw cursor in each graphic plane */
         for (plane = v_planes - 1; plane >= 0; plane--) {
@@ -854,9 +853,8 @@ static void cur_replace (MCS *mcs)
 
             /* loop through rows */
             for (row = mcs->len - 1; row >= 0; row--) {
-                ULONG bits = *src++;    /* get the save bits */
-                *(dst + inc) = (UWORD)bits;
-                *dst = (UWORD)(bits >> 16);
+                *dst = *src++;
+                *(dst + inc) = *src++;
                 dst += dst_inc;         /* next row of screen */
             }
         }
