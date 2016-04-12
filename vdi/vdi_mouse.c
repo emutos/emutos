@@ -647,45 +647,20 @@ static void vb_draw(void)
 
 
 /*
- * cur_display - blits a "cursor" to the destination
+ * cur_display() - blits a "cursor" to the destination
  *
- * combining a background color form, foreground color form,
- * and destination.  There are two forms.  Each form is
- * blt'ed in transparent mode.  The actual logic operation
- * is based upon the current color bit for each form.
+ * before the destination is overwritten, the current contents are
+ * saved to the user-provided save area (MCS).  then the cursor is
+ * written, combining a background colour form, a foreground colour
+ * form, and the current contents of the destination.
  *
- * Procedure:
- *
- *   plane loop
- *       i. advance the destination pointer to next plane
- *      ii. set up logic routine address based on current
- *          foreground color bit
- *     iii. initialize BG form and FG form pointers
- *
- *   outer loop
- *       i. advance destination pointer to next row
- *
- *   inner loop
- *       i. fetch destination and save it.
- *      ii. init and allign BG form and FG form.
- *     iii. combine BG form, FG form, and destination.
- *      iv. store value back to destination.
- *
- *      fetching and saving a destination long word
- *
- *  in:
- *      a0.l    points to start of BG/FG form
- *      a1.l    points to start of destination
- *      a2.l    points to start of save area
- *      a3.l    thread to alignment fragment
- *      a4.l    thread to logic fragment
- *      a5.l    thread to storage segment
- *
- *      d2.w
- *      d3.w    offset to next word
- *      d4.w    form wrap offset
- *      d5.w    row counter
- *      d6.w    shift count
+ * some points to note:
+ * the cursor is always 16x16 pixels.  in the general case, it will
+ * overlap two adjacent screen words in each plane; thus the save area
+ * requires 4 bytes per plane for each row of the cursor, or 64 bytes
+ * in total per plane (plus some bookkeeping overhead).  if the cursor
+ * is sublject to left or right clipping, however, then it must lie
+ * within one screen word (per plane), so we only save 32 bytes/plane.
  */
 
 static void cur_display (Mcdb *sprite, MCS *mcs, WORD x, WORD y)
@@ -696,25 +671,26 @@ static void cur_display (Mcdb *sprite, MCS *mcs, WORD x, WORD y)
     UWORD * save_w;
     ULONG * save_l;
 
-    x -= sprite->xhot;          /* d0 <- left side of destination block */
-    y -= sprite->yhot;          /* d1 <- hi y : destination block */
+    x -= sprite->xhot;          /* x = left side of destination block */
+    y -= sprite->yhot;          /* y = top of destination block */
 
     mcs->stat = 0x00;           /* reset status of save buffer */
-    op = 0;
+    op = 0;                     /* default: longword save */
+
     /* clip x axis */
     if ( x < 0 ) {
         /* clip left */
         x += 16;                /* get address of right word */
-        op = 1;                 /* index left clip routine addresses */
+        op = 1;                 /* remember we're clipping left */
     }
     else {
         /* check for need to clip on right side */
         /* compare to width of screen(maximum x value) */
         if ( x >= (DEV_TAB[0] - 15) ) {
-            op = 2;             /* index to right clip routine addresses */
+            op = 2;             /* remember we're clipping right */
         }
         else {
-            mcs->stat |= 0x02;  /* indicate longword save */
+            mcs->stat |= 0x02;  /* no clipping, mark savearea as longword save */
         }
     }
 
@@ -722,18 +698,18 @@ static void cur_display (Mcdb *sprite, MCS *mcs, WORD x, WORD y)
     mask_start = sprite->mask;  /* a3 -> MASK/FORM for cursor */
     if ( y < 0 ) {
         /* clip up */
-        row_count = y + 16;             /* calculate row count */
-        mask_start -= y << 1;           /* a0 -> first visible row of MASK/FORM */
-        y = 0;                  /* ymin=0 */
+        row_count = y + 16;
+        mask_start -= y << 1;   /* point to first visible row of MASK/FORM */
+        y = 0;                  /* and reset start */
     }
     else {
-        /* check for need to clip on the down side */
-        /* compare to height of screen(maximum y value) */
+        /* check for need to clip on the bottom */
+        /* compare to height of screen (maximum y value) */
         if ( y > (DEV_TAB[1] - 15) ) {
             row_count = DEV_TAB[1] - y + 1;
         }
         else {
-            row_count = 16;   /* long */    /* d5 <- row count */
+            row_count = 16;
         }
     }
 
@@ -778,13 +754,12 @@ static void cur_display (Mcdb *sprite, MCS *mcs, WORD x, WORD y)
             ULONG bg = 0;               /* the background color */
 
             /*
-             * proces the needed fetch operation
+             * first, save the existing data
              */
-
             switch(op) {
             case 0:
                 /* long word */
-                bits = ((ULONG)*dst) << 16;       /* bring to left pos. */
+                bits = ((ULONG)*dst) << 16; /* bring to left pos. */
                 bits |= *(dst + inc);
                 *save_l++ = bits;
                 break;
@@ -804,7 +779,7 @@ static void cur_display (Mcdb *sprite, MCS *mcs, WORD x, WORD y)
             }
 
             /*
-             * proces the needed alignment
+             * align the forms with the cursor position on the screen
              */
 
             /* get and align background form */
@@ -832,9 +807,8 @@ static void cur_display (Mcdb *sprite, MCS *mcs, WORD x, WORD y)
                 bits &= ~fg;
 
             /*
-             * proces the needed store operation
+             * update the screen with the new data
              */
-
             switch(op) {
             case 0:
                 /* long word */
@@ -842,7 +816,6 @@ static void cur_display (Mcdb *sprite, MCS *mcs, WORD x, WORD y)
             case 2:
                 /* left word only  */
                 bits = bits >> 16;
-
             case 1:
                 /* right word only */
                 *dst = (UWORD)bits;
@@ -878,7 +851,7 @@ static void cur_replace (MCS *mcs)
 
     addr = mcs->addr;
     inc = v_planes;
-    dst_inc = v_lin_wr >> 1;    /* calculate LONGs in a scan line */
+    dst_inc = v_lin_wr >> 1;    /* calculate words in a scan line */
 
     /* word or longword ? */
     if (mcs->stat & 2) {
@@ -892,10 +865,10 @@ static void cur_replace (MCS *mcs)
 
             /* loop through rows */
             for (row = mcs->len - 1; row >= 0; row--) {
-                ULONG bits = *src++;       /* get the save bits */
+                ULONG bits = *src++;    /* get the save bits */
                 *(dst + inc) = (UWORD)bits;
                 *dst = (UWORD)(bits >> 16);
-                dst += dst_inc;         /* a1 -> next row of screen */
+                dst += dst_inc;         /* next row of screen */
             }
         }
     }
@@ -911,7 +884,7 @@ static void cur_replace (MCS *mcs)
             /* loop through rows */
             for (row = mcs->len - 1; row >= 0; row--) {
                 *dst = *src++;
-                dst += dst_inc;         /* a1 -> next row of screen */
+                dst += dst_inc;         /* next row of screen */
             }
         }
     }
