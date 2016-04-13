@@ -644,7 +644,90 @@ static void vb_draw(void)
 #define F_SAVRDY        1       // save buffer status flag: 0:empty  1:full
 #define F_SAVWID        2       // saved line width        0:word   1:longword
 
+/*
+ * cur_display_clip()
+ *
+ * handles cursor display for cursors that are subject to L/R clipping
+ */
+static void cur_display_clip(WORD op,Mcdb *sprite,MCS *mcs,UWORD *mask_start,UWORD shft)
+{
+    WORD dst_inc, plane;
+    UWORD cdb_fg, cdb_bg;
+    UWORD *addr, *save;
 
+    dst_inc = v_lin_wr >> 1;    /* calculate number of words in a scan line */
+
+    addr = mcs->addr;           /* starting screen address */
+    save = (UWORD *)mcs->area;  /* we save words, not longwords */
+
+    cdb_bg = sprite->bg_col;    /* get mouse background color bits */
+    cdb_fg = sprite->fg_col;    /* get mouse foreground color bits */
+
+    /* plane controller, draw cursor in each graphic plane */
+    for (plane = v_planes - 1; plane >= 0; plane--) {
+        WORD row;
+        UWORD *src, *dst;
+        UWORD cdb_mask = 0x01;  /* for checking cdb_bg/cdb_fg */
+
+        /* setup the things we need for each plane again */
+        src = mask_start;               /* calculated mask data begin */
+        dst = addr++;                   /* current destination address */
+
+        /* loop through rows */
+        for (row = mcs->len - 1; row >= 0; row--) {
+            ULONG bits;                 /* our graphics data */
+            ULONG fg;                   /* the foreground color */
+            ULONG bg;                   /* the background color */
+
+            /*
+             * first, save the existing data
+             */
+            *save++ = *dst;
+            if (op == 1) {          /* right word only */
+                bits = *dst;            /* dst already at right word */
+            } else {                /* left word only  */
+                bits = ((ULONG)*dst) << 16; /* move to left posn */
+            }
+
+            /*
+             * align the forms with the cursor position on the screen
+             */
+
+            /* get and align background & foreground forms */
+            bg = (ULONG)*src++ << shft;
+            fg = (ULONG)*src++ << shft;
+
+            /*
+             * logical operation for cursor interaction with screen
+             */
+
+            /* select operation for mouse mask background color */
+            if (cdb_bg & cdb_mask)
+                bits |= bg;
+            else
+                bits &= ~bg;
+
+            /* select operation for mouse mask foreground color */
+            if (cdb_fg & cdb_mask)
+                bits |= fg;
+            else
+                bits &= ~fg;
+
+            /*
+             * update the screen with the new data
+             */
+            if (op == 1) {          /* right word only */
+                *dst = (UWORD)bits;
+            } else {                /* left word only */
+                *dst = (UWORD)(bits >> 16);
+            }
+
+            dst += dst_inc;             /* a1 -> next row of screen */
+        } /* loop through rows */
+
+        cdb_mask <<= 1;
+    } /* loop through planes */
+}
 
 /*
  * cur_display() - blits a "cursor" to the destination
@@ -659,7 +742,7 @@ static void vb_draw(void)
  * overlap two adjacent screen words in each plane; thus the save area
  * requires 4 bytes per plane for each row of the cursor, or 64 bytes
  * in total per plane (plus some bookkeeping overhead).  if the cursor
- * is sublject to left or right clipping, however, then it must lie
+ * is subject to left or right clipping, however, then it must lie
  * within one screen word (per plane), so we only save 32 bytes/plane.
  */
 
@@ -668,8 +751,7 @@ static void cur_display (Mcdb *sprite, MCS *mcs, WORD x, WORD y)
     int row_count, plane, inc, op, dst_inc;
     UWORD * addr, * mask_start;
     UWORD shft, cdb_fg, cdb_bg;
-    UWORD * save_w;
-    ULONG * save_l;
+    ULONG *save;
 
     x -= sprite->xhot;          /* x = left side of destination block */
     y -= sprite->yhot;          /* y = top of destination block */
@@ -715,19 +797,28 @@ static void cur_display (Mcdb *sprite, MCS *mcs, WORD x, WORD y)
     shft = 16 - (x&0x0f);       /* amount to shift forms by */
 
     /*
-     * Initialize
+     *  Store values required by cur_replace()
      */
-
-    inc = v_planes;             /* # distance to next word in same plane */
-    dst_inc = v_lin_wr >> 1;    /* calculate number of words in a scan line */
-
-    /* these are stored for later bringing back the cursors background */
     mcs->len = row_count;       /* number of cursor rows */
     mcs->addr = addr;           /* save area: origin of material */
     mcs->stat |= 1;             /* flag the buffer as being loaded */
 
-    save_w = (UWORD *)mcs->area;/* for word stores */
-    save_l = mcs->area;         /* for long stores */
+    /*
+     *  To allow performance optimisations in this function, we handle
+     *  L/R clipping in a separate function
+     */
+    if (op) {
+        cur_display_clip(op,sprite,mcs,mask_start,shft);
+        return;
+    }
+
+    /*
+     * The rest of this function handles the no-L/R clipping case
+     */
+    inc = v_planes;             /* # distance to next word in same plane */
+    dst_inc = v_lin_wr >> 1;    /* calculate number of words in a scan line */
+
+    save = mcs->area;           /* for long stores */
 
     cdb_bg = sprite->bg_col;    /* get mouse background color bits */
     cdb_fg = sprite->fg_col;    /* get mouse foreground color bits */
@@ -751,27 +842,9 @@ static void cur_display (Mcdb *sprite, MCS *mcs, WORD x, WORD y)
             /*
              * first, save the existing data
              */
-            switch(op) {
-            case 0:
-                /* long word */
-                bits = ((ULONG)*dst) << 16; /* bring to left pos. */
-                bits |= *(dst + inc);
-                *save_l++ = bits;
-                break;
-
-            case 1:
-                /* right word only */
-                *save_w++ = *dst;         /* dst already at right word */
-                bits = *dst;
-                break;
-
-            case 2:
-                /* left word only  */
-                *save_w++ = *dst;
-                bits = ((ULONG)*dst) << 16;       /* bring to left pos. */
-                break;
-
-            }
+            bits = ((ULONG)*dst) << 16; /* bring to left pos. */
+            bits |= *(dst + inc);
+            *save++ = bits;
 
             /*
              * align the forms with the cursor position on the screen
@@ -800,19 +873,9 @@ static void cur_display (Mcdb *sprite, MCS *mcs, WORD x, WORD y)
             /*
              * update the screen with the new data
              */
-            switch(op) {
-            case 0:
-                /* long word */
-                *(dst + inc) = (UWORD)bits;
-            case 2:
-                /* left word only  */
-                bits = bits >> 16;
-            case 1:
-                /* right word only */
-                *dst = (UWORD)bits;
-            }
-
-            dst += dst_inc;             /* a1 -> next row of screen */
+            *dst = (UWORD)(bits >> 16);
+            *(dst + inc) = (UWORD)bits;
+            dst += dst_inc;             /* next row of screen */
         } /* loop through rows */
 
         cdb_mask <<= 1;
