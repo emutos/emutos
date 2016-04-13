@@ -358,10 +358,11 @@ help:
 	@echo "amigakd $(AMIGA_KICKDISK), EmuTOS as Amiga 1000 Kickstart disk"
 	@echo "m548x-dbug $(SREC_M548X_DBUG), EmuTOS-RAM for dBUG on ColdFire Evaluation Boards"
 	@echo "m548x-bas  $(SREC_M548X_BAS), EmuTOS for BaS_gcc on ColdFire Evaluation Boards"
-	@echo "all192  all 192 KB images"
-	@echo "all256  all 256 KB images"
 	@echo "prg     emutos.prg, a RAM tos"
 	@echo "flop    emutos.st, a bootable floppy with RAM tos"
+	@echo "all192  all 192 KB images"
+	@echo "all256  all 256 KB images"
+	@echo "allprg  all emutos*.prg"
 	@echo "cart    $(ROM_CARTRIDGE), EmuTOS as a diagnostic cartridge"
 	@echo "clean"
 	@echo "expand  expand tabs to spaces"
@@ -810,6 +811,17 @@ all192:
 	  $(MAKE) 192 UNIQUE=$$i || exit 1; \
 	done
 
+.PHONY: allprg
+NODEP += allprg
+allprg:
+	$(MAKE) prg
+	@for i in $(COUNTRIES); \
+	do \
+	  echo; \
+	  echo "sleep 1"; \
+	  sleep 1; \
+	  $(MAKE) prg UNIQUE=$$i || exit 1; \
+	done
 
 #
 # Mono-country translated EmuTOS: translate files only if the language
