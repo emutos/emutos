@@ -554,7 +554,7 @@ firebee:
 .PHONY: firebee-prg
 NODEP += firebee-prg
 firebee-prg:
-	@echo "# Building FireBee emutos.prg"
+	@echo "# Building FireBee $(EMUTOS_PRG)"
 	$(MAKE) COLDFIRE=1 CPUFLAGS='-mcpu=5474' DEF='-DMACHINE_FIREBEE' prg
 
 SREC_M548X_DBUG = emutos-m548x-dbug.s19
@@ -581,10 +581,11 @@ m548x-bas:
 # emutos.prg
 #
 
-TOCLEAN += emutos.prg
+EMUTOS_PRG = emutos$(UNIQUE).prg
+TOCLEAN += emutos*.prg
 
 .PHONY: prg
-prg: emutos.prg
+prg: $(EMUTOS_PRG)
 	@MEMBOT=$$($(SHELL_GET_MEMBOT_RAMTOS_MAP));\
 	echo "# RAM used: $$(($$MEMBOT)) bytes"
 
@@ -601,8 +602,8 @@ ramtos.img ramtos.map: emutos-ram
 # incbin dependencies are not automatically detected
 obj/ramtos.o: ramtos.img
 
-emutos.prg: override DEF += -DTARGET_PRG
-emutos.prg: obj/minicrt.o obj/boot.o obj/bootram.o obj/ramtos.o
+$(EMUTOS_PRG): override DEF += -DTARGET_PRG
+$(EMUTOS_PRG): obj/minicrt.o obj/boot.o obj/bootram.o obj/ramtos.o
 	$(LD) $+ -lgcc -o $@ -s
 
 #
