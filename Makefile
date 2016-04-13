@@ -360,7 +360,6 @@ help:
 	@echo "m548x-bas  $(SREC_M548X_BAS), EmuTOS for BaS_gcc on ColdFire Evaluation Boards"
 	@echo "all192  all 192 KB images"
 	@echo "all256  all 256 KB images"
-	@echo "allbin  all 192 KB, 256 KB and 512 KB images"
 	@echo "prg     emutos.prg, a RAM tos"
 	@echo "flop    emutos.st, a bootable floppy with RAM tos"
 	@echo "cart    $(ROM_CARTRIDGE), EmuTOS as a diagnostic cartridge"
@@ -783,20 +782,6 @@ TOCLEAN += tos-lang-change
 NODEP += tos-lang-change
 tos-lang-change: tools/tos-lang-change.c
 	$(NATIVECC) $< -o $@
-
-#
-# all binaries
-#
-
-.PHONY: allbin
-NODEP += allbin
-allbin:
-	@echo "# Building $(ROM_512)"
-	$(MAKE) $(ROM_512)
-	$(RM) obj/*.o
-	$(MAKE) all256
-	$(RM) obj/*.o
-	$(MAKE) all192
 
 # The sleep command in targets below ensure that all the generated sources
 # will have a timestamp older than any object file.
