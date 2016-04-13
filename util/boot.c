@@ -18,17 +18,12 @@
 
 #define DBG_BOOT 0
 
-/* last part of the loader is in util/bootasm.S */
-extern void bootasm(UBYTE *dest, UBYTE *src, ULONG count, ULONG cpu);
+/* last part of the loader is in util/bootram.S */
+extern void bootram(const UBYTE *src, ULONG size, ULONG cpu) NORETURN;
 
 /* ramtos.img is embedded in util/ramtos.S */
-extern UBYTE ramtos[];
-extern UBYTE end_ramtos[];
-
-/*
- * reset vector stuff
- */
-#define resvalid    (ULONG *)0x426
+extern const UBYTE ramtos[];
+extern const UBYTE end_ramtos[];
 
 /*
  * cookie stuff
@@ -84,18 +79,20 @@ static ULONG get_cpu_cookie(void)
 int main(void)
 {
   ULONG count;
-  UBYTE *address;
   ULONG cpu;
+#if DBG_BOOT
+  UBYTE *address;
+#endif
 
   /* get the file size */
 
   count = end_ramtos - ramtos;
 
+#if DBG_BOOT
   /* get final address */
 
   address = *((UBYTE **)(ramtos + 8));
 
-#if DBG_BOOT
   (void)Cconws("src = 0x");
   putl((ULONG)ramtos);
   (void)Cconws("\012\015");
@@ -118,18 +115,11 @@ int main(void)
 
   Super(0);
 
-  cpu = get_cpu_cookie();   /* used by bootasm code */
-
-#if CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF
-  /* this boot is a first boot */
-  *(ULONG*)0x6fc = 0; /* warm_magic */
-#endif
-
-  *resvalid = 0L;           /* prevent startup.S from calling now-invalid reset vector */
+  cpu = get_cpu_cookie();
 
   /* do the rest in assembler */
 
-  bootasm(address, ramtos, count, cpu);
+  bootram(ramtos, count, cpu);
 
   return 1;
 }

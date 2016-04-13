@@ -12,15 +12,13 @@
  */
 
 /*
- * this bootsector will load a ramtos.img using rwabs into a Malloc() buffer.
- * then a boot routine will be copied after it, and finally
- * the bootsector will jump into this boot routine
- * to avoid erasing itself. The boot routine will copy
- * the TOS from the temporary buffer to the address given in the TOS
- * header
+ * This bootsector loads ramtos.img into a Malloc() buffer.
+ * Then it boots it using bootram().
  */
 
 #include "asmdefs.h"
+
+        .extern _bootram
 
 #define BOOTDEV 0x446
 
@@ -109,90 +107,33 @@ read:
         trap    #13
         lea     14(sp),sp
         tst.w   d0
-        bne     fail
+        bne.s   fail
 
-        /* disable interrupts */
+        /* get the value of the _CPU cookie */
 
-        move.w  #0x2700,sr
+        moveq   #0,d0           // default value: 68000
+        move.l  0x5a0.w,d1      // _p_cookies
+        beq.s   cpudone         // no cookie jar
 
-        /* this boot is a first boot */
+        move.l  d1,a0           // current cookie pointer
 
-        clr.l   0x6fc.w                 // warm_magic
+nextcookie:
+        move.l  (a0)+,d0        // cookie name
+        beq.s   cpudone         // end of cookie jar
+        move.l  (a0)+,d1        // cookie value
 
-        /* prevent reset vector being called during EmuTOS startup */
+        cmp.l   #0x5f435055,d0  // _CPU cookie?
+        bne.s   nextcookie      // no
 
-        clr.l   0x426                   // resvalid
+        move.l  d1,d0           // yes: keep value
+cpudone:
 
-        /* if the boot routine is before the destionation address,
-         * then it is already in a safe place */
+        /* boot ramtos */
 
-        move.l  8(a4),a5                // destination address
-        cmp.l   endboot(pc),a5          // end of boot routine
-        bhs.s   boot                    // already safe place
-
-        /* copy boot routine immediately after the destination ramtos */
-
-        lea     boot(pc),a0
-        lea     (a4,d3),a3              // new boot routine
-        move.l  a3,a1                   // destination
-        move.l  #endboot-boot,d0        // size
-        bsr     memcpy
-
-        /* jump in boot routine */
-
-        jmp     (a3)
+        move.l  d0,-(sp)        // cpu
+        move.l  d3,-(sp)        // size
+        move.l  a4,-(sp)        // src
+        bsr     _bootram
 
 fail:
         rts
-
-boot:
-        /* copy from temporary address to destination */
-
-        move.l  a5,a1   // destination
-        move.l  a4,a0   // source
-        move.l  d3,d0   // size
-        bsr     memcpy
-
-        /* jump in TOS */
-
-        jmp     (a5)
-
-        /* copies d0 bytes from a0 to a1 */
-memcpy:
-        addq.l  #3,d0   // round size to next long
-        andi.l  #-4,d0
-
-        cmp.l   a0,a1
-        bhi.s   bcopy_backwards
-
-        lsr.l   #2,d0   // number of longs
-        subq.l  #1,d0   // subtract 1 for dbra
-bcopy:
-        move.l  (a0)+,(a1)+
-#ifdef __mcoldfire__
-        subq.l  #1,d0
-        bpl.s   bcopy
-#else
-        dbra    d0,bcopy
-        sub.l   #0x10000,d0
-        bhi.s   bcopy
-#endif
-        rts
-
-bcopy_backwards:
-        add.l   d0,a0   // after last source long
-        add.l   d0,a1   // after last destination long
-        lsr.l   #2,d0   // number of longs
-        subq.l  #1,d0   // subtract 1 for dbra
-bcopy2:
-        move.l  -(a0),-(a1)
-#ifdef __mcoldfire__
-        subq.l  #1,d0
-        bpl.s   bcopy2
-#else
-        dbra    d0,bcopy2
-        sub.l   #0x10000,d0
-        bhi.s   bcopy2
-#endif
-        rts
-endboot:

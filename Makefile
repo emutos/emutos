@@ -603,9 +603,7 @@ ramtos.img ramtos.map: emutos-ram
 obj/ramtos.o: ramtos.img
 
 emutos.prg: override DEF += -DTARGET_PRG
-# Be sure to keep ramtos.o before boot files.
-# This simplifies the algorithm in bootasm.S.
-emutos.prg: obj/minicrt.o obj/ramtos.o obj/boot.o obj/bootasm.o
+emutos.prg: obj/minicrt.o obj/boot.o obj/bootram.o obj/ramtos.o
 	$(LD) $+ -lgcc -o $@ -s
 
 #
@@ -698,8 +696,8 @@ emutos.st: override DEF += -DTARGET_FLOPPY
 emutos.st: mkflop bootsect.img ramtos.img
 	./mkflop
 
-bootsect.img : obj/bootsect.o
-	$(LD) obj/bootsect.o -Wl,--oformat,binary -o $@
+bootsect.img : obj/bootsect.o obj/bootram.o
+	$(LD) $+ -Wl,--oformat,binary -o $@
 
 NODEP += mkflop
 mkflop : tools/mkflop.c
