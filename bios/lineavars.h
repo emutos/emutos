@@ -36,6 +36,9 @@ typedef struct {
         BYTE    reserved;
         ULONG   area[8*16];     /* handle up to 8 video planes */
 } MCS;
+/* defines for 'stat' above */
+#define MCS_VALID   0x01        /* save area is valid */
+#define MCS_LONGS   0x02        /* saved data is in longword format */
 
 extern const BYTE shift_offset[9];  /* pixel to address helper */
 extern MCS *mcs_ptr;            /* ptr to mouse cursor save area in use */

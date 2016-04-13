@@ -641,9 +641,6 @@ static void vb_draw(void)
 
 
 
-#define F_SAVRDY        1       // save buffer status flag: 0:empty  1:full
-#define F_SAVWID        2       // saved line width        0:word   1:longword
-
 /*
  * cur_display_clip()
  *
@@ -770,7 +767,7 @@ static void cur_display (Mcdb *sprite, MCS *mcs, WORD x, WORD y)
     }
     else {                  /* no clipping */
         op = 0;                 /* longword save */
-        mcs->stat |= 0x02;      /* mark savearea as longword save */
+        mcs->stat |= MCS_LONGS; /* mark savearea as longword save */
     }
  
     /*
@@ -801,7 +798,7 @@ static void cur_display (Mcdb *sprite, MCS *mcs, WORD x, WORD y)
      */
     mcs->len = row_count;       /* number of cursor rows */
     mcs->addr = addr;           /* save area: origin of material */
-    mcs->stat |= 1;             /* flag the buffer as being loaded */
+    mcs->stat |= MCS_VALID;     /* flag the buffer as being loaded */
 
     /*
      *  To allow performance optimisations in this function, we handle
@@ -898,7 +895,7 @@ static void cur_replace (MCS *mcs)
     int inc, dst_inc, plane;
     UWORD * addr;
 
-    if (!(mcs->stat & 1) )      /* does save area contain valid data ? */
+    if (!(mcs->stat & MCS_VALID))   /* does save area contain valid data ? */
         return;
 
     addr = mcs->addr;
@@ -906,7 +903,7 @@ static void cur_replace (MCS *mcs)
     dst_inc = v_lin_wr >> 1;    /* calculate words in a scan line */
 
     /* word or longword ? */
-    if (mcs->stat & 2) {        /* longword stored */
+    if (mcs->stat & MCS_LONGS) {    /* longword stored */
         UWORD *src = (UWORD *)mcs->area;
 
         /* plane controller, draw cursor in each graphic plane */
