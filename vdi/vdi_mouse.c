@@ -897,6 +897,7 @@ static void cur_replace (MCS *mcs)
 
     if (!(mcs->stat & MCS_VALID))   /* does save area contain valid data ? */
         return;
+    mcs->stat &= ~MCS_VALID;        /* yes but (like TOS) don't allow reuse */
 
     addr = mcs->addr;
     inc = v_planes;
