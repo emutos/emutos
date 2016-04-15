@@ -853,6 +853,7 @@ static void cur_display (Mcdb *sprite, MCS *mcs, WORD x, WORD y)
 
             /*
              * logical operation for cursor interaction with screen
+             * note that this only implements the "VDI" mode
              */
 
             /* select operation for mouse mask background color */
@@ -880,60 +881,59 @@ static void cur_display (Mcdb *sprite, MCS *mcs, WORD x, WORD y)
 }
 
 
-
 /*
- * cur_replace - replace cursor with data in save area.
+ * cur_replace - replace cursor with data in save area
+ *
+ * note: the near-duplication of loops for the word and longword cases
+ * is done deliberately for performance reasons
  *
  * input:
- *     mcs_ptr         ptr to mouse cursor save area
- *     _v_planes       number of planes in destination
- *     _v_line_wr      line wrap (byte width of form)
+ *      mcs         ptr to mouse cursor save area
+ *      v_planes    number of planes in destination
+ *      v_lin_wr    line wrap (byte width of form)
  */
-
 static void cur_replace (MCS *mcs)
 {
-    int inc, dst_inc, plane;
-    UWORD * addr;
+    WORD plane, row;
+    UWORD *addr, *src, *dst;
+    const WORD inc = v_planes;      /* # words to next word in same plane */
+    const WORD dst_inc = v_lin_wr >> 1; /* # words in a scan line */
 
     if (!(mcs->stat & MCS_VALID))   /* does save area contain valid data ? */
         return;
     mcs->stat &= ~MCS_VALID;        /* yes but (like TOS) don't allow reuse */
 
     addr = mcs->addr;
-    inc = v_planes;
-    dst_inc = v_lin_wr >> 1;    /* calculate words in a scan line */
+    src = (UWORD *)mcs->area;
 
-    /* word or longword ? */
-    if (mcs->stat & MCS_LONGS) {    /* longword stored */
-        UWORD *src = (UWORD *)mcs->area;
-
+    /*
+     * handle longword data
+     */
+    if (mcs->stat & MCS_LONGS) {
         /* plane controller, draw cursor in each graphic plane */
         for (plane = v_planes - 1; plane >= 0; plane--) {
-            int row;
-            UWORD * dst = addr++;       /* current destination address */
-
+            dst = addr++;           /* current destination address */
             /* loop through rows */
             for (row = mcs->len - 1; row >= 0; row--) {
                 *dst = *src++;
                 *(dst + inc) = *src++;
-                dst += dst_inc;         /* next row of screen */
+                dst += dst_inc;     /* next row of screen */
             }
         }
+        return;
     }
-    else {
-        /* word */
-        UWORD * src = (UWORD *)mcs->area;
 
-        /* plane controller, draw cursor in each graphic plane */
-        for (plane = v_planes - 1; plane >= 0; plane--) {
-            int row;
-            UWORD * dst = addr++;       /* current destination address */
+    /*
+     * handle word data
+     */
 
-            /* loop through rows */
-            for (row = mcs->len - 1; row >= 0; row--) {
-                *dst = *src++;
-                dst += dst_inc;         /* next row of screen */
-            }
+    /* plane controller, draw cursor in each graphic plane */
+    for (plane = v_planes - 1; plane >= 0; plane--) {
+        dst = addr++;               /* current destination address */
+        /* loop through rows */
+        for (row = mcs->len - 1; row >= 0; row--) {
+            *dst = *src++;
+            dst += dst_inc;         /* next row of screen */
         }
     }
 }
