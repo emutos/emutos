@@ -363,6 +363,7 @@ help:
 	@echo "all192  all 192 KB images"
 	@echo "all256  all 256 KB images"
 	@echo "allprg  all emutos*.prg"
+	@echo "allst   all emutos*.st"
 	@echo "cart    $(ROM_CARTRIDGE), EmuTOS as a diagnostic cartridge"
 	@echo "clean"
 	@echo "expand  expand tabs to spaces"
@@ -822,6 +823,17 @@ allprg:
 	  echo "sleep 1"; \
 	  sleep 1; \
 	  $(MAKE) prg UNIQUE=$$i || exit 1; \
+	done
+
+.PHONY: allst
+NODEP += allst
+allst:
+	@for i in $(COUNTRIES); \
+	do \
+	  echo; \
+	  echo "sleep 1"; \
+	  sleep 1; \
+	  $(MAKE) flop UNIQUE=$$i || exit 1; \
 	done
 
 #
