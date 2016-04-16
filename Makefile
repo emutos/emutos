@@ -359,7 +359,7 @@ help:
 	@echo "m548x-dbug $(SREC_M548X_DBUG), EmuTOS-RAM for dBUG on ColdFire Evaluation Boards"
 	@echo "m548x-bas  $(SREC_M548X_BAS), EmuTOS for BaS_gcc on ColdFire Evaluation Boards"
 	@echo "prg     emutos.prg, a RAM tos"
-	@echo "flop    emutos.st, a bootable floppy with RAM tos"
+	@echo "flop    $(EMUTOS_ST), a bootable floppy with RAM tos"
 	@echo "all192  all 192 KB images"
 	@echo "all256  all 256 KB images"
 	@echo "allprg  all emutos*.prg"
@@ -678,24 +678,25 @@ TOCLEAN += compr uncompr
 # flop
 #
 
-TOCLEAN += emutos.st mkflop
+EMUTOS_ST = emutos$(UNIQUE).st
+TOCLEAN += emutos*.st mkflop
 
 .PHONY: flop
 NODEP += flop
 flop: UNIQUE = $(COUNTRY)
 flop:
-	$(MAKE) UNIQUE=$(UNIQUE) emutos.st
+	$(MAKE) UNIQUE=$(UNIQUE) $(EMUTOS_ST)
 	@MEMBOT=$$($(SHELL_GET_MEMBOT_RAMTOS_MAP));\
 	echo "# RAM used: $$(($$MEMBOT)) bytes"
 
 .PHONY: fd0
 NODEP += fd0
 fd0: flop
-	dd if=emutos.st of=/dev/fd0D360
+	dd if=$(EMUTOS_ST) of=/dev/fd0D360
 
-emutos.st: override DEF += -DTARGET_FLOPPY
-emutos.st: mkflop bootsect.img ramtos.img
-	./mkflop bootsect.img ramtos.img emutos.st
+$(EMUTOS_ST): override DEF += -DTARGET_FLOPPY
+$(EMUTOS_ST): mkflop bootsect.img ramtos.img
+	./mkflop bootsect.img ramtos.img $@
 
 bootsect.img : obj/bootsect.o obj/bootram.o
 	$(LD) $+ -Wl,--oformat,binary -o $@
