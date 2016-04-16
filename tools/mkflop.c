@@ -31,9 +31,9 @@
 /*
  * input & output filenames
  */
-#define FLOPNAME    "emutos.st"
-#define BOOTNAME    "bootsect.img"
-#define TOSNAME     "ramtos.img"
+const char *bootname;
+const char *tosname;
+const char *flopname;
 
 /*
  * the following values are used for the root dir entry of
@@ -296,7 +296,7 @@ static int mkflop(FILE *bootf, FILE *tosf, FILE *flopf)
     {
         if (ferror(bootf))
         {
-            fprintf(stderr,"mkflop error: can't read %s\n",BOOTNAME);
+            fprintf(stderr,"mkflop error: can't read %s\n",bootname);
             return 1;
         }
         memset(bootbuf+count, 0, SECTOR_SIZE-count);
@@ -315,7 +315,7 @@ static int mkflop(FILE *bootf, FILE *tosf, FILE *flopf)
     n = get_filesize(tosf);
     if (n < 0)
     {
-        fprintf(stderr,"mkflop error: can't determine size of %s\n",TOSNAME);
+        fprintf(stderr,"mkflop error: can't determine size of %s\n",tosname);
         return 1;
     }
     count = n;
@@ -323,7 +323,7 @@ static int mkflop(FILE *bootf, FILE *tosf, FILE *flopf)
     n = count - (getiword(b->sec)-startsec) * SECTOR_SIZE;  /* calculate excess if any */
     if (n > 0)
     {
-        fprintf(stderr,"mkflop error: %s is %ld bytes too big to fit on the floppy\n",TOSNAME,n);
+        fprintf(stderr,"mkflop error: %s is %ld bytes too big to fit on the floppy\n",tosname,n);
         return 1;
     }
 
@@ -336,17 +336,17 @@ static int mkflop(FILE *bootf, FILE *tosf, FILE *flopf)
      */
     if (write_bootsec(flopf,bootbuf) < 0)
     {
-        fprintf(stderr,"mkflop error: can't write bootsector to %s\n",FLOPNAME);
+        fprintf(stderr,"mkflop error: can't write bootsector to %s\n",flopname);
         return 1;
     }
     if (write_fats(flopf,b,clusters) < 0)
     {
-        fprintf(stderr,"mkflop error: can't write FATs to %s\n",FLOPNAME);
+        fprintf(stderr,"mkflop error: can't write FATs to %s\n",flopname);
         return 1;
     }
     if (write_root(flopf,b,count) < 0)
     {
-        fprintf(stderr,"mkflop error: can't write root dir to %s\n",FLOPNAME);
+        fprintf(stderr,"mkflop error: can't write root dir to %s\n",flopname);
         return 1;
     }
 
@@ -358,14 +358,14 @@ static int mkflop(FILE *bootf, FILE *tosf, FILE *flopf)
         if (count < SECTOR_SIZE) {
             if (ferror(tosf))
             {
-                fprintf(stderr,"mkflop error: can't read %s\n",TOSNAME);
+                fprintf(stderr,"mkflop error: can't read %s\n",tosname);
                 return 1;
             }
             memset(buf+count, 0, SECTOR_SIZE - count);
         }
         if (fwrite(buf, 1, SECTOR_SIZE, flopf) != SECTOR_SIZE)
         {
-            fprintf(stderr,"mkflop error: can't write EmuTOS image to %s\n",FLOPNAME);
+            fprintf(stderr,"mkflop error: can't write EmuTOS image to %s\n",flopname);
             return 1;
         }
     }
@@ -377,7 +377,7 @@ static int mkflop(FILE *bootf, FILE *tosf, FILE *flopf)
     for (i = startsec+sectcnt; i < getiword(b->sec); i++) {
         if (fwrite(buf, 1, SECTOR_SIZE, flopf) != SECTOR_SIZE)
         {
-            fprintf(stderr,"mkflop error: can't write zeros to %s\n",FLOPNAME);
+            fprintf(stderr,"mkflop error: can't write zeros to %s\n",flopname);
             return 1;
         }
     }
@@ -387,28 +387,38 @@ static int mkflop(FILE *bootf, FILE *tosf, FILE *flopf)
     return 0;
 }
 
-int main(void)
+int main(int argc, char *argv[])
 {
     FILE *bootf, *tosf, *flopf;
 
-    bootf = fopen(BOOTNAME, "rb");
+    if (argc != 4)
+    {
+        fprintf(stderr, "usage: %s <bootsect.img> <ramtos.img> <floppy.st>\n",argv[0]);
+        exit(EXIT_FAILURE);
+    }
+
+    bootname = argv[1];
+    tosname = argv[2];
+    flopname = argv[3];
+
+    bootf = fopen(bootname, "rb");
     if (!bootf)
     {
-        fprintf(stderr,"mkflop error: can't open %s\n",BOOTNAME);
+        fprintf(stderr,"mkflop error: can't open %s\n",bootname);
         exit(EXIT_FAILURE);
     }
 
-    tosf = fopen(TOSNAME, "rb");
+    tosf = fopen(tosname, "rb");
     if (!tosf)
     {
-        fprintf(stderr,"mkflop error: can't open %s\n",TOSNAME);
+        fprintf(stderr,"mkflop error: can't open %s\n",tosname);
         exit(EXIT_FAILURE);
     }
 
-    flopf = fopen(FLOPNAME, "wb");
+    flopf = fopen(flopname, "wb");
     if (!flopf)
     {
-        fprintf(stderr,"mkflop error: can't open %s\n",FLOPNAME);
+        fprintf(stderr,"mkflop error: can't open %s\n",flopname);
         exit(EXIT_FAILURE);
     }
 

@@ -695,7 +695,7 @@ fd0: flop
 
 emutos.st: override DEF += -DTARGET_FLOPPY
 emutos.st: mkflop bootsect.img ramtos.img
-	./mkflop
+	./mkflop bootsect.img ramtos.img emutos.st
 
 bootsect.img : obj/bootsect.o obj/bootram.o
 	$(LD) $+ -Wl,--oformat,binary -o $@
