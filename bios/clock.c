@@ -20,6 +20,7 @@
 #include "kprint.h"
 #include "clock.h"
 #include "ikbd.h"
+#include "mfp.h"
 #include "tosvars.h"
 #include "string.h"
 #include "vectors.h"
@@ -343,6 +344,8 @@ static struct ikbdregs
 
 static volatile WORD iclk_ready;
 
+#define IKBD_CLOCK_TIMEOUT  (2*CLOCKS_PER_SEC)  /* 2 seconds */
+
 /* called by the ACIA interrupt */
 /* EmuTOS's ikbdsys also puts the buffer on the stack */
 void clockvec(BYTE *buf)
@@ -368,18 +371,16 @@ static UWORD bcd2int(UBYTE a)
 
 static void igetregs(void)
 {
-    long delay;
+    LONG timeout;
 
     iclk_ready = 0;
     iclkbuf.cmd = 0x1C;
     ikbdws(0, (const UBYTE*) &iclkbuf);
 
-    /* wait until the interrupt receives the full packet */
-    delay = 8000000;        /* this is ugly */
-    while(!iclk_ready && delay > 0)
-    {
-        --delay;
-    }
+    /* wait until the interrupt */
+    timeout = hz_200 + IKBD_CLOCK_TIMEOUT;
+    while(!iclk_ready && (timeout > hz_200))
+        ;
 }
 
 static void isetregs(void)
