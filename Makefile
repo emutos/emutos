@@ -594,7 +594,7 @@ prg: $(EMUTOS_PRG)
 .PHONY: emutos-ram
 emutos-ram:
 	@echo '# First pass to build emutos.map and determine the end of the BSS'
-	$(MAKE) emutos.map DEF='$(DEF)'
+	$(MAKE) emutos.map DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)'
 
 ramtos.img ramtos.map: VMA = $(shell $(SHELL_GET_MEMBOT_EMUTOS_MAP))
 ramtos.img ramtos.map: emutos-ram
@@ -605,6 +605,7 @@ ramtos.img ramtos.map: emutos-ram
 obj/ramtos.o: ramtos.img
 
 $(EMUTOS_PRG): override DEF += -DTARGET_PRG
+$(EMUTOS_PRG): OPTFLAGS = -Os
 $(EMUTOS_PRG): obj/minicrt.o obj/boot.o obj/bootram.o obj/ramtos.o
 	$(LD) $+ -lgcc -o $@ -s
 
@@ -696,6 +697,7 @@ fd0: flop
 	dd if=$(EMUTOS_ST) of=/dev/fd0D360
 
 $(EMUTOS_ST): override DEF += -DTARGET_FLOPPY
+$(EMUTOS_ST): OPTFLAGS = -Os
 $(EMUTOS_ST): mkflop bootsect.img ramtos.img
 	./mkflop bootsect.img ramtos.img $@
 
