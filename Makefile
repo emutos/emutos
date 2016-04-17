@@ -555,9 +555,10 @@ firebee:
 
 .PHONY: firebee-prg
 NODEP += firebee-prg
+firebee-prg: OPTFLAGS = -O2
 firebee-prg:
 	@echo "# Building FireBee $(EMUTOS_PRG)"
-	$(MAKE) COLDFIRE=1 CPUFLAGS='-mcpu=5474' DEF='-DMACHINE_FIREBEE' prg
+	$(MAKE) COLDFIRE=1 CPUFLAGS='-mcpu=5474' DEF='-DMACHINE_FIREBEE' OPTFLAGS=$(OPTFLAGS) prg
 
 SREC_M548X_DBUG = emutos-m548x-dbug.s19
 .PHONY: m548x-dbug
