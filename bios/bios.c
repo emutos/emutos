@@ -69,7 +69,6 @@
 /*==== Defines ============================================================*/
 
 #define DBGBIOS 0               /* If you want to enable debug wrappers */
-#define DBGAUTOBOOT 0           /* If you want to see AUTO folder loading */
 #define ENABLE_RESET_RESIDENT 0 /* enable to run "reset-resident" code (see below) */
 
 /*==== External declarations ==============================================*/
@@ -479,6 +478,18 @@ static void run_reset_resident(void)
  * to use GEMDOS calls here!
  */
 
+static void run_auto_program(const char* filename)
+{
+    char path[30];
+
+    strcpy(path, "\\AUTO\\");
+    strcat(path, filename);
+
+    KDEBUG(("Loading %s ...\n", path));
+    trap1_pexec(PE_LOADGO, path, "", null_env);   /* Pexec */
+    KDEBUG(("[OK]\n"));
+}
+
 static void autoexec(void)
 {
     struct {
@@ -489,7 +500,6 @@ static void autoexec(void)
         LONG size;
         BYTE name[14];
     } dta;
-    BYTE path[30];
     WORD err;
 
     if (kbshift(-1) & MODE_CTRL)        /* check if Control is held down */
@@ -503,21 +513,12 @@ static void autoexec(void)
     trap1( 0x1a, &dta);                      /* Setdta */
     err = trap1( 0x4e, "\\AUTO\\*.PRG", 7);  /* Fsfirst */
     while(err == 0) {
-        strcpy(path, "\\AUTO\\");
-        dta.name[12] = 0;
-        strcat(path, dta.name);
-
-#if DBGAUTOBOOT
-        KDEBUG(("Loading %s ...\n", path));
-#endif
-        trap1_pexec(PE_LOADGO, path, "", null_env);   /* Pexec */
-#if DBGAUTOBOOT
-        KDEBUG(("[OK]\n"));
-#endif
+        run_auto_program(dta.name);
 
         /* Setdta. BetaDOS corrupted the AUTO load if the Setdta
          * not here again */
         trap1( 0x1a, &dta);
+
         err = trap1( 0x4f );                 /* Fsnext */
     }
 }
