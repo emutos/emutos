@@ -419,8 +419,9 @@ ROM_192 = etos192$(UNIQUE).img
 .PHONY: 192
 NODEP += 192
 192: UNIQUE = $(COUNTRY)
+192: OPTFLAGS = $(SMALL_OPTFLAGS)
 192:
-	$(MAKE) DEF='-DTARGET_192' OPTFLAGS=$(SMALL_OPTFLAGS) WITH_CLI=0 UNIQUE=$(UNIQUE) ROM_192=$(ROM_192) $(ROM_192)
+	$(MAKE) DEF='-DTARGET_192' OPTFLAGS=$(OPTFLAGS) WITH_CLI=0 UNIQUE=$(UNIQUE) ROM_192=$(ROM_192) $(ROM_192)
 	@MEMBOT=$$($(SHELL_GET_MEMBOT_EMUTOS_MAP));\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS102))) bytes more than TOS 1.02)"
 
@@ -438,8 +439,9 @@ ROM_256 = etos256$(UNIQUE).img
 .PHONY: 256
 NODEP += 256
 256: UNIQUE = $(COUNTRY)
+256: OPTFLAGS = $(SMALL_OPTFLAGS)
 256:
-	$(MAKE) DEF='-DTARGET_256' OPTFLAGS=$(SMALL_OPTFLAGS) UNIQUE=$(UNIQUE) ROM_256=$(ROM_256) $(ROM_256)
+	$(MAKE) DEF='-DTARGET_256' OPTFLAGS=$(OPTFLAGS) UNIQUE=$(UNIQUE) ROM_256=$(ROM_256) $(ROM_256)
 	@MEMBOT=$$($(SHELL_GET_MEMBOT_EMUTOS_MAP));\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS162))) bytes more than TOS 1.62)"
 
@@ -490,9 +492,10 @@ ROM_CARTRIDGE = etoscart.img
 
 .PHONY: cart
 NODEP += cart
+cart: OPTFLAGS = $(SMALL_OPTFLAGS)
 cart:
 	@echo "# Building Diagnostic Cartridge EmuTOS into $(ROM_CARTRIDGE)"
-	$(MAKE) OPTFLAGS=$(SMALL_OPTFLAGS) DEF='-DTARGET_CART' UNIQUE=$(COUNTRY) WITH_AES=0 VMA=0x00fa0000 ROM_128=$(ROM_CARTRIDGE) $(ROM_CARTRIDGE)
+	$(MAKE) OPTFLAGS=$(OPTFLAGS) DEF='-DTARGET_CART' UNIQUE=$(COUNTRY) WITH_AES=0 VMA=0x00fa0000 ROM_128=$(ROM_CARTRIDGE) $(ROM_CARTRIDGE)
 	./mkrom stc emutos.img emutos.stc
 	@MEMBOT=$$($(SHELL_GET_MEMBOT_EMUTOS_MAP));\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS102))) bytes more than TOS 1.02)"
@@ -600,7 +603,7 @@ prg: $(EMUTOS_PRG)
 .PHONY: emutos-ram
 emutos-ram:
 	@echo '# First pass to build emutos.map and determine the end of the BSS'
-	$(MAKE) emutos.map DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)'
+	$(MAKE) emutos.map DEF='$(DEF)' OPTFLAGS=$(OPTFLAGS)
 
 ramtos.img ramtos.map: VMA = $(shell $(SHELL_GET_MEMBOT_EMUTOS_MAP))
 ramtos.img ramtos.map: emutos-ram
@@ -635,8 +638,9 @@ compr.img compr.map: $(COMPROBJ) emutos.ld Makefile
 
 # Compressed ROM: stub + ramtos
 .PHONY: etoscpr.img
+etoscpr.img: OPTFLAGS = $(SMALL_OPTFLAGS)
 etoscpr.img: compr.img compr
-	$(MAKE) DEF='-DTARGET_COMPRESSED_ROM' OPTFLAGS=$(SMALL_OPTFLAGS) UNIQUE=$(UNIQUE) ramtos.img
+	$(MAKE) DEF='-DTARGET_COMPRESSED_ROM' OPTFLAGS=$(OPTFLAGS) UNIQUE=$(UNIQUE) ramtos.img
 	./compr --rom compr.img ramtos.img $@
 
 # 256k compressed ROM (intermediate target)
