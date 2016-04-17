@@ -187,9 +187,9 @@ NODEP += release-prg
 RELEASE_PRG = emutos-prg-$(VERSION)
 release-prg:
 	$(MAKE) clean
-	$(MAKE) prg
+	$(MAKE) allprg
 	mkdir $(RELEASE_DIR)/$(RELEASE_PRG)
-	cp emutos.prg $(RELEASE_DIR)/$(RELEASE_PRG)
+	cp emutos*.prg $(RELEASE_DIR)/$(RELEASE_PRG)
 	cat doc/readme-prg.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_PRG)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_PRG)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_PRG)/doc

@@ -1,28 +1,30 @@
-EmuTOS - RAM version
+EmuTOS - PRG versions
 
-This special version allows EmuTOS to be loaded from the filesystem (floppy or
-hard disk) without the need of replacing the system ROM.
+These special versions allow EmuTOS to be loaded from the filesystem (floppy
+or hard disk) without the need of replacing the system ROM.
 This is the simplest way to test EmuTOS on real hardware.
+The drawback is less available RAM compared to ROM versions.
 
-emutos.prg - EmuTOS for RAM
+emutos.prg - Multilanguage
+emutoscz.prg - Czech (PAL)
+emutosde.prg - German (PAL)
+emutoses.prg - Spanish (PAL)
+emutosfi.prg - Finnish (PAL)
+emutosfr.prg - French (PAL)
+emutosgr.prg - Greek (PAL)
+emutosit.prg - Italian (PAL)
+emutosru.prg - Russian (PAL)
+emutossg.prg - Swiss German (PAL)
+emutosuk.prg - English (PAL)
+emutosus.prg - English (NTSC)
 
 Notes:
-- this version is compatible with any Atari hardware (except the FireBee)
-- Falcon 030 *is* supported
+- these versions are compatible with any Atari hardware (except the FireBee)
+- TT and Falcon 030 are supported
 
-The default language is English.
-Other supported languages are:
-- Czech
-- German
-- Spanish
-- Finnish
-- French
-- Greek
-- Italian
-- Russian
-- Swiss German
-They can be used by setting the NVRAM appropriately.
+For multilanguage version, the default language is English.
+It can be changed by setting the NVRAM appropriately.
 
-This special version has been built using:
-make prg
+These special versions have been built using:
+make allprg
 
