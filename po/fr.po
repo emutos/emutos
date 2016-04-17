@@ -22,11 +22,11 @@ msgstr ""
 
 #: bios/initinfo.c:165
 msgid "GEMDOS drives"
-msgstr "Lecteurs GEMDOS"
+msgstr "Lecteurs"
 
 #: bios/initinfo.c:229
 msgid "EmuTOS Version"
-msgstr "EmuTOS Version"
+msgstr "EmuTOS version"
 
 #: bios/initinfo.c:231
 msgid "CPU type"
@@ -50,7 +50,7 @@ msgstr "FastRAM libre"
 
 #: bios/initinfo.c:254
 msgid "Boot time"
-msgstr "Heure de démarrage"
+msgstr "Date et heure"
 
 #: bios/initinfo.c:260
 msgid "Hold <Control> to skip AUTO/ACC"
