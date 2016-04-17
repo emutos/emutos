@@ -513,11 +513,20 @@ static void autoexec(void)
     trap1( 0x1a, &dta);                      /* Setdta */
     err = trap1( 0x4e, "\\AUTO\\*.PRG", 7);  /* Fsfirst */
     while(err == 0) {
-        run_auto_program(dta.name);
+#ifdef TARGET_PRG
+        if (!strncmp(dta.name, "EMUTOS", 6))
+        {
+            KDEBUG(("Skipping %s from AUTO folder\n", dta.name));
+        }
+        else
+#endif
+        {
+            run_auto_program(dta.name);
 
-        /* Setdta. BetaDOS corrupted the AUTO load if the Setdta
-         * not here again */
-        trap1( 0x1a, &dta);
+            /* Setdta. BetaDOS corrupted the AUTO load if the Setdta
+             * not here again */
+            trap1( 0x1a, &dta);
+        }
 
         err = trap1( 0x4f );                 /* Fsnext */
     }
