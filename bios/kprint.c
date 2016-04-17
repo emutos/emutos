@@ -325,7 +325,7 @@ void dopanic(const char *fmt, ...)
                  s->format_word,
                  (s->format_word & 0xf000) >> 12,
                  (s->format_word & 0x03fc) >> 2,
-                 (s->format_word & 0x0c00) >> 8 | (s->format_word & 0x0002));
+                 (s->format_word & 0x0c00) >> 8 | (s->format_word & 0x0003));
         kcprintf("sr=%04x pc=%08lx\n",
                  s->sr, s->pc);
     }
