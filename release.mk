@@ -218,6 +218,6 @@ NODEP += release
 release: distclean release-clean release-mkdir \
   release-src release-512k release-256k release-192k release-cartridge \
   release-aranym release-firebee release-amiga release-m548x-dbug \
-  release-m548x-bas release-ram release-floppy
+  release-m548x-bas release-prg release-floppy
 	$(MAKE) clean
 	@echo '# Packages successfully generated inside $(RELEASE_DIR)'
