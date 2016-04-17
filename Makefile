@@ -139,8 +139,13 @@ CPUFLAGS = -m68000
 endif
 MULTILIBFLAGS = $(CPUFLAGS) -mshort
 INC = -Iinclude
-OPTFLAGS = -O2
 OTHERFLAGS = -ffreestanding -fomit-frame-pointer -fno-common
+
+# Optimization flags (affects ROM size and execution speed)
+STANDARD_OPTFLAGS = -O2
+SMALL_OPTFLAGS = -Os
+BUILD_TOOLS_OPTFLAGS = -O
+OPTFLAGS = $(STANDARD_OPTFLAGS)
 
 WARNFLAGS = -Wall -Wundef
 #-Wshadow -Wmissing-prototypes -Wstrict-prototypes
@@ -166,7 +171,7 @@ OBJDUMP = $(TOOLCHAIN_PREFIX)objdump
 OBJCOPY = $(TOOLCHAIN_PREFIX)objcopy
 
 # the native C compiler, for tools
-NATIVECC = gcc -ansi -pedantic $(WARNFLAGS) -W -O
+NATIVECC = gcc -ansi -pedantic $(WARNFLAGS) -W $(BUILD_TOOLS_OPTFLAGS)
 
 #
 # source code in bios/
@@ -415,7 +420,7 @@ ROM_192 = etos192$(UNIQUE).img
 NODEP += 192
 192: UNIQUE = $(COUNTRY)
 192:
-	$(MAKE) DEF='-DTARGET_192' OPTFLAGS=-Os WITH_CLI=0 UNIQUE=$(UNIQUE) ROM_192=$(ROM_192) $(ROM_192)
+	$(MAKE) DEF='-DTARGET_192' OPTFLAGS=$(SMALL_OPTFLAGS) WITH_CLI=0 UNIQUE=$(UNIQUE) ROM_192=$(ROM_192) $(ROM_192)
 	@MEMBOT=$$($(SHELL_GET_MEMBOT_EMUTOS_MAP));\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS102))) bytes more than TOS 1.02)"
 
@@ -434,7 +439,7 @@ ROM_256 = etos256$(UNIQUE).img
 NODEP += 256
 256: UNIQUE = $(COUNTRY)
 256:
-	$(MAKE) DEF='-DTARGET_256' OPTFLAGS=-Os UNIQUE=$(UNIQUE) ROM_256=$(ROM_256) $(ROM_256)
+	$(MAKE) DEF='-DTARGET_256' OPTFLAGS=$(SMALL_OPTFLAGS) UNIQUE=$(UNIQUE) ROM_256=$(ROM_256) $(ROM_256)
 	@MEMBOT=$$($(SHELL_GET_MEMBOT_EMUTOS_MAP));\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS162))) bytes more than TOS 1.62)"
 
@@ -487,7 +492,7 @@ ROM_CARTRIDGE = etoscart.img
 NODEP += cart
 cart:
 	@echo "# Building Diagnostic Cartridge EmuTOS into $(ROM_CARTRIDGE)"
-	$(MAKE) OPTFLAGS=-Os DEF='-DTARGET_CART' UNIQUE=$(COUNTRY) WITH_AES=0 VMA=0x00fa0000 ROM_128=$(ROM_CARTRIDGE) $(ROM_CARTRIDGE)
+	$(MAKE) OPTFLAGS=$(SMALL_OPTFLAGS) DEF='-DTARGET_CART' UNIQUE=$(COUNTRY) WITH_AES=0 VMA=0x00fa0000 ROM_128=$(ROM_CARTRIDGE) $(ROM_CARTRIDGE)
 	./mkrom stc emutos.img emutos.stc
 	@MEMBOT=$$($(SHELL_GET_MEMBOT_EMUTOS_MAP));\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS102))) bytes more than TOS 1.02)"
@@ -555,7 +560,7 @@ firebee:
 
 .PHONY: firebee-prg
 NODEP += firebee-prg
-firebee-prg: OPTFLAGS = -O2
+firebee-prg: OPTFLAGS = $(STANDARD_OPTFLAGS)
 firebee-prg:
 	@echo "# Building FireBee $(EMUTOS_PRG)"
 	$(MAKE) COLDFIRE=1 CPUFLAGS='-mcpu=5474' DEF='-DMACHINE_FIREBEE' OPTFLAGS=$(OPTFLAGS) prg
@@ -606,7 +611,7 @@ ramtos.img ramtos.map: emutos-ram
 obj/ramtos.o: ramtos.img
 
 $(EMUTOS_PRG): override DEF += -DTARGET_PRG
-$(EMUTOS_PRG): OPTFLAGS = -Os
+$(EMUTOS_PRG): OPTFLAGS = $(SMALL_OPTFLAGS)
 $(EMUTOS_PRG): obj/minicrt.o obj/boot.o obj/bootram.o obj/ramtos.o
 	$(LD) $+ -lgcc -o $@ -s
 
@@ -623,7 +628,7 @@ COMPROBJ = obj/compr-tosvars.o obj/compr-comprimg.o obj/compr-memory.o \
            obj/compr-processor.o obj/compr-memset.o obj/compr-uncompr.o
 
 # ROM stub for compressed ROM image
-compr.img compr.map: OPTFLAGS = -Os
+compr.img compr.map: OPTFLAGS = $(SMALL_OPTFLAGS)
 compr.img compr.map: override DEF += -DTARGET_COMPR_STUB
 compr.img compr.map: $(COMPROBJ) emutos.ld Makefile
 	$(LD) $(COMPROBJ) $(LIBS) $(LDFLAGS) -Wl,-Map,compr.map -o compr.img
@@ -631,7 +636,7 @@ compr.img compr.map: $(COMPROBJ) emutos.ld Makefile
 # Compressed ROM: stub + ramtos
 .PHONY: etoscpr.img
 etoscpr.img: compr.img compr
-	$(MAKE) DEF='-DTARGET_COMPRESSED_ROM' OPTFLAGS=-Os UNIQUE=$(UNIQUE) ramtos.img
+	$(MAKE) DEF='-DTARGET_COMPRESSED_ROM' OPTFLAGS=$(SMALL_OPTFLAGS) UNIQUE=$(UNIQUE) ramtos.img
 	./compr --rom compr.img ramtos.img $@
 
 # 256k compressed ROM (intermediate target)
@@ -698,7 +703,7 @@ fd0: flop
 	dd if=$(EMUTOS_ST) of=/dev/fd0D360
 
 $(EMUTOS_ST): override DEF += -DTARGET_FLOPPY
-$(EMUTOS_ST): OPTFLAGS = -Os
+$(EMUTOS_ST): OPTFLAGS = $(SMALL_OPTFLAGS)
 $(EMUTOS_ST): mkflop bootsect.img ramtos.img
 	./mkflop bootsect.img ramtos.img $@
 
