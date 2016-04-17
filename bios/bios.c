@@ -589,19 +589,7 @@ void biosmain(void)
 #endif
 
     /* boot eventually from a block device (floppy or harddisk) */
-#ifdef TARGET_FLOPPY
-    /*
-     * but if TOS in RAM was booted from an autoboot floppy, avoid
-     * trying to boot again!
-     */
-    if (first_boot) {
-        /* Nothing */
-    }
-    else
-#endif
-    {
-        blkdev_boot();
-    }
+    blkdev_boot();
 
     defdrv = bootdev;
     trap1( 0x0e , defdrv );    /* Set boot drive: Dsetdrv(defdrv) */

@@ -260,6 +260,15 @@ static LONG bootcheck(void)
     if (compute_cksum((const UWORD *)dskbufp) != 0x1234)
         return 4;   /* not valid boot sector */
 
+#ifdef TARGET_FLOPPY
+    if (!strncmp((const char*)(dskbufp + 2), "EmuTOS", 6))
+    {
+        /* Do not allow EmuTOS floppy to reload itself,
+         * otherwise there will be an infinite loop. */
+        return 4;   /* not valid boot sector */
+    }
+#endif
+
     return 0;       /* bootable */
 }
 

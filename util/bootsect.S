@@ -32,7 +32,7 @@
         .org    0
 
         bra.s   start         //  0 bra[2]    branch
-        .ascii  "Loader"      //  2 loader[6]
+        .ascii  "EmuTOS"      //  2 loader[6]
         .ascii  "ABC"         //  8 serial[3]
         .dc.b   0x00, 0x02    //  b bps[2]    bytes per sector
         .dc.b   0x02          //  d spc       sectors per cluster
