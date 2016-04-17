@@ -202,9 +202,9 @@ NODEP += release-floppy
 RELEASE_FLOPPY = emutos-floppy-$(VERSION)
 release-floppy:
 	$(MAKE) clean
-	$(MAKE) flop UNIQUE=us
+	$(MAKE) allflop
 	mkdir $(RELEASE_DIR)/$(RELEASE_FLOPPY)
-	cp emutos.st $(RELEASE_DIR)/$(RELEASE_FLOPPY)
+	cp emutos*.st $(RELEASE_DIR)/$(RELEASE_FLOPPY)
 	cat doc/readme-floppy.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_FLOPPY)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_FLOPPY)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_FLOPPY)/doc
