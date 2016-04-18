@@ -244,6 +244,9 @@ desk_src = deskstart.S deskmain.c gembind.c deskact.c deskapp.c deskdir.c \
            deskpro.c deskrez.c deskrsrc.c desksupp.c deskwin.c desk1.c \
            desk_rsc.c icons.c
 
+# The source below must be the last GEM one
+desk_src += endgem.S
+
 #
 # source code in cli/ for EmuTOS console EmuCON
 #
