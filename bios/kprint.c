@@ -20,6 +20,7 @@
 #include "nls.h"
 #include "lineavars.h"
 #include "vt52.h"
+#include "conout.h"
 #include "tosvars.h"
 #include "natfeat.h"
 #include "processor.h"
@@ -280,7 +281,8 @@ static const char *exc_messages[] = {
 void dopanic(const char *fmt, ...)
 {
     LONG pc = 0;
-    BYTE *start,*end;
+    BOOL wrap;
+    BYTE *start;
 
     /* hide cursor, new line, new line */
     cprintf("\033f\033v\n\n");
@@ -480,26 +482,24 @@ void dopanic(const char *fmt, ...)
     }
 #endif
 
-    if (v_cel_mx == 39)     /* improve display in ST Low */
-    {
-        start = "";
-        end = "";
-    }
-    else
-    {
-        start = " ";
-        end = "\n";
-    }
-    kcprintf("\nD0-3:%s%08lx %08lx %08lx %08lx%s",
-             start, proc_dregs[0], proc_dregs[1], proc_dregs[2], proc_dregs[3],end);
-    kcprintf("D4-7:%s%08lx %08lx %08lx %08lx%s",
-             start, proc_dregs[4], proc_dregs[5], proc_dregs[6], proc_dregs[7],end);
-    kcprintf("A0-3:%s%08lx %08lx %08lx %08lx%s",
-             start, proc_aregs[0], proc_aregs[1], proc_aregs[2], proc_aregs[3],end);
-    kcprintf("A4-7:%s%08lx %08lx %08lx %08lx%s",
-             start, proc_aregs[4], proc_aregs[5], proc_aregs[6], proc_aregs[7],end);
+    /* improve display in ST Low */
+    start = (v_cel_mx == 39) ? "" : " ";
+    wrap = v_stat_0 & M_CEOL;       /* remember line wrap status */
+    v_stat_0 &= ~M_CEOL;            /*  & disable it             */
+
+    kcprintf("\nD0-3:%s%08lx %08lx %08lx %08lx\n",
+             start, proc_dregs[0], proc_dregs[1], proc_dregs[2], proc_dregs[3]);
+    kcprintf("D4-7:%s%08lx %08lx %08lx %08lx\n",
+             start, proc_dregs[4], proc_dregs[5], proc_dregs[6], proc_dregs[7]);
+    kcprintf("A0-3:%s%08lx %08lx %08lx %08lx\n",
+             start, proc_aregs[0], proc_aregs[1], proc_aregs[2], proc_aregs[3]);
+    kcprintf("A4-7:%s%08lx %08lx %08lx %08lx\n",
+             start, proc_aregs[4], proc_aregs[5], proc_aregs[6], proc_aregs[7]);
     kcprintf(" USP:%s%08lx\n\n",
              start,proc_usp);
+
+    if (wrap)
+        v_stat_0 |= M_CEOL;         /* restore line wrap status */
 
     if (run)
     {
