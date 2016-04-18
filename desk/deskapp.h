@@ -81,10 +81,8 @@
 #define ID_OUTPUT 55
 
 #define NUM_ANODES 64                           /* # of appl. nodes     */
-#define SIZE_AFILE 2048                         /* size of DESKTOP.APP  */
-                                                /*   file               */
-#define SIZE_BUFF 4096                          /* size of a string     */
-                                                /*   buffer             */
+#define SIZE_AFILE  2048        /* size of buffer for EMUDESK.INF file */
+#define SIZE_BUFF   4096        /* size of buffer used to store ANODE text */
 
 #if CONF_WITH_DESKTOP_ICONS
 #define NUM_IBLKS 72
