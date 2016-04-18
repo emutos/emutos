@@ -175,96 +175,80 @@ NATIVECC = gcc -ansi -pedantic $(WARNFLAGS) -W $(BUILD_TOOLS_OPTFLAGS)
 
 #
 # source code in bios/
-# Note: tosvars.o must be the first object linked.
+#
 
-bios_csrc = kprint.c xbios.c chardev.c blkdev.c bios.c clock.c \
-            mfp.c parport.c serport.c biosmem.c acsi.c \
-            midi.c ikbd.c sound.c dma.c floppy.c disk.c screen.c videl.c lineainit.c \
-            mouse.c initinfo.c cookie.c machine.c nvram.c country.c \
-            xhdi.c natfeats.c font.c conout.c vt52.c dmasound.c ide.c amiga.c aros.c \
-            delay.c pmmu030.c sd.c
-bios_ssrc = tosvars.S startup.S aciavecs.S vectors.S lineavars.S \
-            processor.S memory.S linea.S panicasm.S kprintasm.S \
-            natfeat.S amiga2.S aros2.S delayasm.S 68040_pmmu.S
+# The 2 sources below must be the first to be linked
+bios_src = startup.S tosvars.S
+
+# Other BIOS sources can be put in any order
+bios_src +=  memory.S processor.S vectors.S aciavecs.S bios.c xbios.c acsi.c \
+             biosmem.c blkdev.c chardev.c clock.c conout.c cookie.c country.c \
+             disk.c dma.c dmasound.c floppy.c font.c ide.c ikbd.c initinfo.c \
+             kprint.c kprintasm.S linea.S lineainit.c lineavars.S machine.c \
+             mfp.c midi.c mouse.c natfeat.S natfeats.c nvram.c panicasm.S \
+             parport.c screen.c serport.c sound.c videl.c vt52.c xhdi.c \
+             pmmu030.c 68040_pmmu.S \
+             amiga.c amiga2.S aros.c aros2.S \
+             delay.c delayasm.S sd.c
 
 ifeq (1,$(COLDFIRE))
-  bios_csrc += coldfire.c spi.c
-  bios_ssrc += coldfire2.S
+  bios_src += coldfire.c coldfire2.S spi.c
 endif
-
-bios_src = $(bios_ssrc) $(bios_csrc)
 
 #
 # source code in bdos/
 #
 
-bdos_csrc = console.c fsdrive.c fshand.c fsopnclo.c osmem.c \
-            umem.c bdosmain.c fsbuf.c fsfat.c fsio.c iumem.c proc.c \
-            fsdir.c fsglob.c fsmain.c kpgmld.c time.c
-bdos_ssrc = rwa.S
-
-bdos_src = $(bdos_ssrc) $(bdos_csrc)
+bdos_src = bdosmain.c console.c fsbuf.c fsdir.c fsdrive.c fsfat.c fsglob.c \
+           fshand.c fsio.c fsmain.c fsopnclo.c iumem.c kpgmld.c osmem.c \
+           proc.c rwa.S time.c umem.c
 
 #
 # source code in util/
 #
 
-util_csrc = doprintf.c nls.c langs.c string.c intmath.c
-util_ssrc = memset.S memmove.S nlsasm.S setjmp.S miscasm.S stringasm.S
-
-util_src = $(util_ssrc) $(util_csrc)
+util_src = doprintf.c intmath.c langs.c memmove.S memset.S miscasm.S nls.c \
+           nlsasm.S setjmp.S string.c stringasm.S
 
 #
 # source code in vdi/
 #
 
-vdi_csrc = vdi_main.c vdi_col.c vdi_control.c vdi_esc.c vdi_fill.c vdi_gdp.c \
-           vdi_line.c vdi_marker.c vdi_misc.c vdi_mouse.c vdi_raster.c \
-           vdi_input.c vdi_text.c vdi_bezier.c
-vdi_ssrc = vdi_asm.S
+vdi_src = vdi_asm.S vdi_bezier.c vdi_col.c vdi_control.c vdi_esc.c \
+          vdi_fill.c vdi_gdp.c vdi_input.c vdi_line.c vdi_main.c \
+          vdi_marker.c vdi_misc.c vdi_mouse.c vdi_raster.c vdi_text.c
 
 ifeq (1,$(COLDFIRE))
-vdi_ssrc += vdi_tblit_cf.S
+vdi_src += vdi_tblit_cf.S
 else
-vdi_ssrc += vdi_blit.S vdi_tblit.S
+vdi_src += vdi_blit.S vdi_tblit.S
 endif
-
-vdi_src = $(vdi_ssrc) $(vdi_csrc)
 
 #
 # source code in aes/
 #
 
-aes_csrc = gemaplib.c gemasync.c gemctrl.c gemdisp.c gemevlib.c \
-           gemflag.c gemfmalt.c gemfmlib.c gemfslib.c gemgraf.c \
-           gemgrlib.c gemgsxif.c geminit.c geminput.c gemmnlib.c gemobed.c \
-           gemobjop.c gemoblib.c gempd.c gemqueue.c gemrslib.c gemsclib.c \
-           gemshlib.c gemsuper.c gemwmlib.c gemwrect.c optimize.c \
-           rectfunc.c gemdos.c gem_rsc.c gsx2.c
-aes_ssrc = gemstart.S gemdosif.S gemasm.S optimopt.S
-
-aes_src = $(aes_ssrc) $(aes_csrc)
+aes_src = gemasm.S gemstart.S gemdosif.S gemaplib.c gemasync.c gemctrl.c \
+          gemdisp.c gemdos.c gemevlib.c gemflag.c gemfmalt.c gemfmlib.c \
+          gemfslib.c gemgraf.c gemgrlib.c gemgsxif.c geminit.c geminput.c \
+          gemmnlib.c gemobed.c gemobjop.c gemoblib.c gempd.c gemqueue.c \
+          gemrslib.c gemsclib.c gemshlib.c gemsuper.c gemwmlib.c gemwrect.c \
+          gsx2.c optimize.c rectfunc.c optimopt.S gem_rsc.c
 
 #
 # source code in desk/
 #
 
-desk_csrc = deskact.c deskapp.c deskdir.c deskfpd.c deskfun.c deskglob.c \
-            deskinf.c deskins.c deskmain.c deskobj.c deskpro.c deskrsrc.c \
-            desksupp.c deskwin.c gembind.c desk_rsc.c icons.c desk1.c \
-            deskrez.c
-desk_ssrc = deskstart.S
-
-desk_src = $(desk_ssrc) $(desk_csrc)
+desk_src = deskstart.S deskmain.c gembind.c deskact.c deskapp.c deskdir.c \
+           deskfpd.c deskfun.c deskglob.c deskinf.c deskins.c deskobj.c \
+           deskpro.c deskrez.c deskrsrc.c desksupp.c deskwin.c desk1.c \
+           desk_rsc.c icons.c
 
 #
 # source code in cli/ for EmuTOS console EmuCON
 #
 
-cli_csrc = cmdedit.c cmdexec.c cmdint.c cmdmain.c cmdparse.c cmdutil.c
-cli_ssrc = cmdasm.S
-
-cli_src = $(cli_ssrc) $(cli_csrc)
+cli_src = cmdasm.S cmdmain.c cmdedit.c cmdexec.c cmdint.c cmdparse.c cmdutil.c
 
 #
 # specific CC -c options for specific directories
