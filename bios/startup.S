@@ -276,6 +276,9 @@ resetvec:
        bne.s    noreset                 // Yes --> noreset
        movea.l  d0, a0                  // resvec
        lea      resetvec(pc), a6        // save return address
+       // Note: the return address intentionally points to the resvalid test.
+       // So the reset routine must explicitly clear resvalid before returning
+       // to a6, otherwise there will be an infinite loop.
        jmp      (a0)                    // jump to resvec
 noreset:
 
