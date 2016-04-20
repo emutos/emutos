@@ -86,9 +86,13 @@ copyboot:
         bra.s   copy_a2_a3_d2_sync_caches
 
 boot:
-        // This boot is a first boot.
-        // ramtos.img will clear the sysvars, including resvalid
+        // This boot is a first boot
         clr.l   0x6fc.w         // warm_magic
+
+        // Prevent reset vector being called during ramtos startup.
+        // This must be done here, because ramtos checks for magic values
+        // very early, even before clearing sysvars.
+        clr.l   0x426.w         // resvalid
 
         // Copy ramtos.img to its final destination
         move.l  a4,a2           // src
