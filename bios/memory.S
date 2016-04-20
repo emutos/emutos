@@ -68,6 +68,7 @@ meminit:
         tst.w   d0                      // is it Falcon MMU?
         beq     memchk                  // no -> skip 0xffff8007 test
 
+#if !EMUTOS_LIVES_IN_RAM
         /* Initialize and test Falcon MMU ??? */
 #ifdef __mcoldfire__
         lea     0xffff8007.w, a0
@@ -76,6 +77,8 @@ meminit:
         bset    #6, 0xffff8007.w        // seen in TOS 4.04
 #endif
         beq     memconf                 // not sure what 6th bit means
+#endif // !EMUTOS_LIVES_IN_RAM
+
 #endif /* CONF_WITH_FALCON_MMU */
 
 // ===========================================================================
@@ -98,7 +101,12 @@ memchk:
 #endif
 
 #else // CONF_STRAM_SIZE
-
+        // We must determine the ST-RAM settings in some way.
+        // If EmuTOS lives in RAM, always assume that settings of previous OS
+        // are correct, and never call memconf.
+        // memconf would trash the RAM including EmuTOS itself, anyway.
+#if !EMUTOS_LIVES_IN_RAM
+        // EmuTOS lives in ROM, we must check if the RAM is valid
 #ifdef __mcoldfire__
         move.l  #0x752019f3, d1
         cmp.l   memvalid, d1            // magic in memvalid ?
@@ -114,9 +122,10 @@ memchk:
         bne     memconf                 // no -> config memory
         cmp.l   #0x237698aa, memval2    // magic in memval2 ?
         bne     memconf                 // no -> config memory
-        cmp.l   #0x5555aaaa, memval3    // magic in memval3 ?
+        cmp.l   #0x5555aaaa, memval3    // magic in memval3 ? (TOS >= 1.2)
         bne     memconf                 // no -> config memory
 #endif // __mcoldfire__
+#endif // !EMUTOS_LIVES_IN_RAM
 
         // Load old RAM settings into registers.
         // They will stay in safe place in case we clear the sysvars.
@@ -166,6 +175,8 @@ memory_reused:
 .warm_magic_done:
 #endif
         bra     stram_detected
+
+#if !EMUTOS_LIVES_IN_RAM
 
 // ===========================================================================
 // ==== memconf - Detect RAM and configure the memory controller =============
@@ -422,6 +433,8 @@ memconf_done:
         // Since the ST-RAM was invalid, FastRAM settings were also invalid
         moveq   #0, d3                  // _ramvalid
 #endif
+
+#endif // !EMUTOS_LIVES_IN_RAM
 
 // ===========================================================================
 // ==== End of ST-RAM detection ==============================================
