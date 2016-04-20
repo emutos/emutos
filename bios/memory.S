@@ -81,7 +81,24 @@ meminit:
 // ===========================================================================
 // ==== memchk - Check if old memory config can be used ======================
 // ===========================================================================
+// Inputs:
+//   d0.w: 1 = Falcon MMU, 0 = ST/TT MMU
+// Outputs:
+//   d6.b: old memctrl
+//   d5.l: old _phystop
+//   d3.l: old _ramvalid (#if CONF_WITH_FASTRAM)
+//   a3.l: old _ramtop (#if CONF_WITH_FASTRAM)
 memchk:
+#if CONF_STRAM_SIZE
+        // memchk for hardcoded ST-RAM size
+        moveq   #0, d6                  // fake memctrl
+        move.l  #CONF_STRAM_SIZE, d5    // _phystop
+#if CONF_WITH_FASTRAM
+        moveq   #0, d3                  // _ramvalid
+#endif
+
+#else // CONF_STRAM_SIZE
+
 #ifdef __mcoldfire__
         move.l  #0x752019f3, d1
         cmp.l   memvalid, d1            // magic in memvalid ?
@@ -99,19 +116,7 @@ memchk:
         bne     memconf                 // no -> config memory
         cmp.l   #0x5555aaaa, memval3    // magic in memval3 ?
         bne     memconf                 // no -> config memory
-#endif
-
-// ===========================================================================
-// ==== The ST-RAM configuration is valid ====================================
-// ===========================================================================
-// Inputs:
-//   d0.w: 1 = Falcon MMU, 0 = ST/TT MMU
-// Outputs:
-//   d6.b: old memctrl
-//   d5.l: old _phystop
-//   d3.l: old _ramvalid (#if CONF_WITH_FASTRAM)
-//   a3.l: old _ramtop (#if CONF_WITH_FASTRAM)
-//   d7.b: _first_boot (autodetected)
+#endif // __mcoldfire__
 
         // Load old RAM settings into registers.
         // They will stay in safe place in case we clear the sysvars.
@@ -121,6 +126,20 @@ memchk:
         move.l  _ramvalid, d3
         move.l  _ramtop, a3
 #endif
+
+#endif // CONF_STRAM_SIZE
+
+// ===========================================================================
+// ==== The ST-RAM configuration is valid ====================================
+// ===========================================================================
+// Inputs:
+//   d0.w: 1 = Falcon MMU, 0 = ST/TT MMU
+//   d6.b: old memctrl
+//   d5.l: old _phystop
+//   d3.l: old _ramvalid (#if CONF_WITH_FASTRAM)
+//   a3.l: old _ramtop (#if CONF_WITH_FASTRAM)
+// Outputs:
+//   d7.b: _first_boot (autodetected)
 
 #if CONF_WITH_FALCON_MMU
         tst.w   d0                      // is it Falcon MMU?
@@ -161,12 +180,7 @@ memory_reused:
 //   d3.l: old _ramvalid (#if CONF_WITH_FASTRAM)
 //   a3.l: old _ramtop (#if CONF_WITH_FASTRAM)
 memconf:
-#if CONF_STRAM_SIZE
-        // The size of the ST-RAM is hardcoded: no real detection
-        move.l  #CONF_STRAM_SIZE,d5     // this is phystop - the end of RAM
-        moveq   #0,d6                   // fake memctrl
-        // Fall into memconf_done
-#elif defined (MACHINE_AMIGA)
+#ifdef MACHINE_AMIGA
         lea     amiga_memconf_ret(pc),a6
         jmp     amiga_memconf
 amiga_memconf_ret:
