@@ -45,48 +45,87 @@ int has_megartc;
 
 #define CLK_BASE (0xfffffc20L)
 
-#define CLK     struct clkreg
-CLK     /*  needs name for casting      */
+#define NUM_MEGARTC_REGS    13  /* number of registers to copy to/from rtc */
+
+/*
+ * the structure of the registers in the MegaST RTC (an RP5C15)
+ *
+ * there are two banks of registers, selectable via a bit in the mode register.
+ * bank0 is used for most functions; bank2 contains the alarm registers (not
+ * useful in the MegaST since the ALARM output pin is not connected) and some
+ * other miscellaneous functions.
+ */
+struct megartc_bank0
 {
-    BYTE fill0,  sec_l;     /* seconds elapsed in current minute */
-    BYTE fill2,  sec_h;
-    BYTE fill4,  min_l;     /* minutes elapsed in current hour   */
-    BYTE fill6,  min_h;
-    BYTE fill8,  hour_l;    /* hours elapsed in current day      */
-    BYTE filla,  hour_h;
-    BYTE fillc,  daywk;     /* day of week (1-7); sunday=1       */
-    BYTE fille,  day_l;     /* day of month (1-31) */
-    BYTE fill10, day_h;
-    BYTE fill12, mon_l;     /* month of year (1-12) */
-    BYTE fill14, mon_h;
-    BYTE fill16, year_l;    /* year of century (0-99) */
-    BYTE fill18, year_h;
-    BYTE fill1a, rega;      /* register A */
-    BYTE fill1c, regb;      /* register B */
-    BYTE fill1e, regc;      /* register C */
+    UBYTE fill0,  sec_l;    /* seconds elapsed in current minute */
+    UBYTE fill2,  sec_h;
+    UBYTE fill4,  min_l;    /* minutes elapsed in current hour   */
+    UBYTE fill6,  min_h;
+    UBYTE fill8,  hour_l;   /* hours elapsed in current day      */
+    UBYTE filla,  hour_h;
+    UBYTE fillc,  daywk;    /* day of week (1-7); sunday=1  NOT USED */
+    UBYTE fille,  day_l;    /* day of month (1-31) */
+    UBYTE fill10, day_h;
+    UBYTE fill12, mon_l;    /* month of year (1-12) */
+    UBYTE fill14, mon_h;
+    UBYTE fill16, year_l;   /* year of century (0-99) */
+    UBYTE fill18, year_h;
+    UBYTE fill1a, mode;     /* timer/alarm enable, bank select */
+    UBYTE fill1c, test;     /* test */
+    UBYTE fill1e, misc;     /* clock pulse / reset */
+};
+struct megartc_bank1
+{
+    UBYTE fill0,  clkout;   /* clock output select */
+    UBYTE fill2,  adjust;   /* adjust, not used by us */
+    UBYTE fill4,  alarm_min_l;  /* alarm minutes */
+    UBYTE fill6,  alarm_min_h;
+    UBYTE fill8[12];        /* other alarm registers / unused */
+    UBYTE fill14, sel_24;   /* select 12hr (0x00) or 24hr (0x01) */
+    UBYTE fill16, leap_yr;  /* 0-3; 0 => this is a leap year */
+    UBYTE fill18[2];        /* unused */
+    UBYTE fill1a, mode;     /* timer/alarm enable, bank select */
+    UBYTE fill1c, test;     /* test */
+    UBYTE fill1e, misc;     /* clock pulse / reset */
+};
+/*
+ * bit masks for above registers
+ */
+#define SELECT_BANK1    0x01    /* in 'mode' */
+#define ENABLE_ALARM    0x04
+#define ENABLE_TIMER    0x08
+#define SELECT_24HR     0x01    /* in 'sel_24' */
+
+#define CLKOUT_16KHZ    0x01    /* value to store in 'clkout' */
+
+union megartc_clk
+{
+    struct megartc_bank0 bank0;
+    struct megartc_bank1 bank1;
 };
 
-#define clk (*(volatile CLK*)CLK_BASE)
+#define clk (*(volatile union megartc_clk *)CLK_BASE)
 
+/*
+ * this is an internal-only structure, used to hold the RTC values
+ * before they are transferred to the RTC chip
+ */
 struct myclkreg
 {
-    BYTE sec_l;             /* seconds elapsed in current minute */
-    BYTE sec_h;
-    BYTE min_l;             /* minutes elapsed in current hour   */
-    BYTE min_h;
-    BYTE hour_l;            /* hours elapsed in current day      */
-    BYTE hour_h;
-    BYTE daywk;             /* day of week (1-7); sunday=1       */
-    BYTE day_l;             /* day of month (1-31) */
-    BYTE day_h;
-    BYTE mon_l;             /* month of year (1-12) */
-    BYTE mon_h;
-    BYTE year_l;            /* year of century (0-99) */
-    BYTE year_h;
+    UBYTE sec_l;            /* seconds elapsed in current minute */
+    UBYTE sec_h;
+    UBYTE min_l;            /* minutes elapsed in current hour   */
+    UBYTE min_h;
+    UBYTE hour_l;           /* hours elapsed in current day      */
+    UBYTE hour_h;
+    UBYTE daywk;            /* day of week (1-7); sunday=1       */
+    UBYTE day_l;            /* day of month (1-31) */
+    UBYTE day_h;
+    UBYTE mon_l;            /* month of year (1-12) */
+    UBYTE mon_h;
+    UBYTE year_l;           /* year of century (0-99) */
+    UBYTE year_h;
 };
-
-/* buffers to hols the megartc regs */
-static struct myclkreg clkregs1, clkregs2;
 
 
 void detect_megartc(void)
@@ -96,120 +135,150 @@ void detect_megartc(void)
     /* first check if the address is valid */
     if (check_read_byte(CLK_BASE+1))
     {
-        if ((UBYTE)clk.sec_l != 0xff && (UBYTE)clk.sec_h != 0xff)
+        clk.bank1.mode |= SELECT_BANK1; /* verify like TOS does */
+        clk.bank1.alarm_min_l = 0x0a;
+        clk.bank1.alarm_min_h = 0x05;
+        if (((clk.bank1.alarm_min_l&0x0f) == 0x0a)
+         && ((clk.bank1.alarm_min_h&0x0f) == 0x05))
         {
             has_megartc = 1;
+            /* set some default values in bank1 */
+            clk.bank1.clkout = CLKOUT_16KHZ;
+            clk.bank1.test = 0;
+            clk.bank1.mode &= ~ENABLE_ALARM;
         }
+        clk.bank1.mode &= ~SELECT_BANK1;
     }
 }
 
 /*==== MegaRTC internal functions =========================================*/
 
 /*
- * MegaRTC, TODO:
- * - leap year ?
+ * MegaRTC
  */
 
-/* read the 13 non-control clock registers into clkregs1
- * read the registers twice, and returns only when the two reads
- * returned the same value.
+/* read the 13 non-control clock registers into clkregs
+ *
+ * Note:just like TOS, reads the registers twice, and returns only
+ * when the two reads obtain the same values.
  * This is because the MegaRTC clock is a very slow chip (32768 kHz)
  * and presumably the carry is not reported instantly when the
  * time changes!!! (this is LVL interpretation, any other reason
  * is welcome.)
  */
-static void mgetregs(void)
+static void mgetregs(struct myclkreg *clkregs)
 {
-    int i;
-    BYTE *a, *b, *c;
+    WORD i;
+    UBYTE *buf1, *buf2, *regs;
+    struct myclkreg clkcopy;
+
+    clk.bank0.mode &= ~SELECT_BANK1;    /* ensure bank 0 */
+
     do
     {
-        c = (BYTE *) &clk.sec_l;
-        a = (BYTE *) &clkregs1.sec_l;
-        for (i = 0; i < 13; i++)
+        regs = (UBYTE *)&clk.bank0.sec_l;
+        buf1 = (UBYTE *)&clkregs->sec_l;
+        for (i = 0; i < NUM_MEGARTC_REGS; i++)
         {
-            *a++ = *c;
-            c += 2;
+            *buf1++ = *regs;
+            regs += 2;
         }
-        c = (BYTE *) &clk.sec_l;
-        b = (BYTE *) &clkregs2.sec_l;
-        a = (BYTE *) &clkregs1.sec_l;
-        for (i = 0; i < 13; i++)
+
+        regs = (UBYTE *)&clk.bank0.sec_l;
+        buf1 = (UBYTE *)&clkregs->sec_l;
+        buf2 = (UBYTE *)&clkcopy.sec_l;
+        for (i = 0; i < NUM_MEGARTC_REGS; i++)
         {
-            *b = *c;
-            if (*b++ != *a++)
+            *buf2 = *regs;
+            if (*buf2++ != *buf1++)
                 break;
-        c += 2;
+            regs += 2;
         }
-    } while(i != 13);
+    } while(i != NUM_MEGARTC_REGS);
 }
 
-static void msetregs(void)
+static void msetregs(struct myclkreg *clkregs)
 {
-    int i;
-    BYTE *a, *c;
-    c = (BYTE *) &clk.sec_l;
-    a = (BYTE *) &clkregs1.sec_l;
-    for (i = 0; i < 13; i++)
+    WORD i;
+    UBYTE *buf, *regs;
+
+    /*
+     * set required bank1 register contents
+     */
+    clk.bank1.mode |= SELECT_BANK1;     /* select bank 1 */
+    clk.bank1.sel_24 |= SELECT_24HR;    /* set 24-hour clock */
+                                        /* set leap-year counter */
+    clk.bank1.leap_yr = (clkregs->year_h*10 + clkregs->year_l) & 0x03;
+    clk.bank1.mode &= ~SELECT_BANK1;    /* select bank 0 */
+
+    /*
+     * copy values from holding area to bank0
+     */
+    clk.bank0.mode &= ~ENABLE_TIMER;    /* disable timer */
+    regs = (UBYTE *)&clk.bank0.sec_l;
+    buf = (UBYTE *)&clkregs->sec_l;
+    for (i = 0; i < NUM_MEGARTC_REGS; i++)
     {
-        *c = *a++;
-        c += 2;
+        *regs = *buf++;
+        regs += 2;
     }
+    clk.bank0.mode |= ENABLE_TIMER;     /* enable timer */
 }
 
-static void mdosettime(UWORD time)
+static void mdosettime(struct myclkreg *clkregs,UWORD time)
 {
-    clkregs1.sec_l = ((time & 0x1f) << 1) % 10;
-    clkregs1.sec_h = ((time & 0x1f) << 1) / 10;
-    clkregs1.min_l = ((time >> 5) & 0x3f) % 10;
-    clkregs1.min_h = ((time >> 5) & 0x3f) / 10;
-    clkregs1.hour_l = ((time >> 11) & 0x1f) % 10;
-    clkregs1.hour_h = ((time >> 11) & 0x1f) / 10;
+    clkregs->sec_l = ((time & 0x1f) << 1) % 10;
+    clkregs->sec_h = ((time & 0x1f) << 1) / 10;
+    clkregs->min_l = ((time >> 5) & 0x3f) % 10;
+    clkregs->min_h = ((time >> 5) & 0x3f) / 10;
+    clkregs->hour_l = ((time >> 11) & 0x1f) % 10;
+    clkregs->hour_h = ((time >> 11) & 0x1f) / 10;
 
-    KDEBUG(("mdosettime() %x%x:%x%x:%x%x\n", clkregs1.hour_h, clkregs1.hour_l,
-            clkregs1.min_h, clkregs1.min_l, clkregs1.sec_h, clkregs1.sec_l));
+    KDEBUG(("mdosettime() %x%x:%x%x:%x%x\n", clkregs->hour_h, clkregs->hour_l,
+            clkregs->min_h, clkregs->min_l, clkregs->sec_h, clkregs->sec_l));
 }
 
-static UWORD mdogettime(void)
+static UWORD mdogettime(struct myclkreg *clkregs)
 {
     UWORD time;
 
-    KDEBUG(("mdogettime() %x%x:%x%x:%x%x\n", clkregs1.hour_h, clkregs1.hour_l,
-            clkregs1.min_h, clkregs1.min_l, clkregs1.sec_h, clkregs1.sec_l));
+    KDEBUG(("mdogettime() %x%x:%x%x:%x%x\n", clkregs->hour_h, clkregs->hour_l,
+            clkregs->min_h, clkregs->min_l, clkregs->sec_h, clkregs->sec_l));
 
-    time = (((clkregs1.sec_l & 0xf) + 10 * (clkregs1.sec_h & 0xf)) >> 1)
-            | (((clkregs1.min_l & 0xf) + 10 * (clkregs1.min_h & 0xf)) << 5)
-            | (((clkregs1.hour_l & 0xf) + 10 * (clkregs1.hour_h & 0xf)) << 11) ;
+    time = (((clkregs->sec_l & 0xf) + 10 * (clkregs->sec_h & 0xf)) >> 1)
+            | (((clkregs->min_l & 0xf) + 10 * (clkregs->min_h & 0xf)) << 5)
+            | (((clkregs->hour_l & 0xf) + 10 * (clkregs->hour_h & 0xf)) << 11);
 
     return time;
 }
 
-static void mdosetdate(UWORD date)
+static void mdosetdate(struct myclkreg *clkregs,UWORD date)
 {
-    clkregs1.day_l = (date & 0x1F) % 10;
-    clkregs1.day_h = (date & 0x1F) / 10;
-    clkregs1.mon_l = ((date >> 5) & 0xF) % 10;
-    clkregs1.mon_h = ((date >> 5) & 0xF) / 10;
-    clkregs1.year_l = (date >> 9) % 10;
-    clkregs1.year_h = (date >> 9) / 10;
+    clkregs->day_l = (date & 0x1F) % 10;
+    clkregs->day_h = (date & 0x1F) / 10;
+    clkregs->mon_l = ((date >> 5) & 0xF) % 10;
+    clkregs->mon_h = ((date >> 5) & 0xF) / 10;
+    clkregs->year_l = (date >> 9) % 10;
+    clkregs->year_h = (date >> 9) / 10;
 
-    KDEBUG(("mdosetdate() %x%x/%x%x/%x%x\n", clkregs1.year_h, clkregs1.year_l,
-            clkregs1.mon_h, clkregs1.mon_l, clkregs1.day_h, clkregs1.day_l));
+    KDEBUG(("mdosetdate() %x%x/%x%x/%x%x\n", clkregs->year_h, clkregs->year_l,
+            clkregs->mon_h, clkregs->mon_l, clkregs->day_h, clkregs->day_l));
 }
 
-static UWORD mdogetdate(void)
+static UWORD mdogetdate(struct myclkreg *clkregs)
 {
     UWORD date;
 
-    KDEBUG(("mdogetdate() %x%x/%x%x/%x%x\n", clkregs1.year_h, clkregs1.year_l,
-            clkregs1.mon_h, clkregs1.mon_l, clkregs1.day_h, clkregs1.day_l));
+    KDEBUG(("mdogetdate() %x%x/%x%x/%x%x\n", clkregs->year_h, clkregs->year_l,
+            clkregs->mon_h, clkregs->mon_l, clkregs->day_h, clkregs->day_l));
 
     /* The MegaRTC stores the year as the offset from 1980.
-     * Fortunately, this is exactly the same as in the BIOS format.
+     * Fortunately, this is exactly the same as in the BIOS format,
+     * and it's helpfully aligned on a leap year.
      */
-    date = ((clkregs1.day_l & 0xf) + 10 * (clkregs1.day_h & 0xf))
-            | (((clkregs1.mon_l & 0xf) + 10 * (clkregs1.mon_h & 0xf)) << 5)
-            | (((clkregs1.year_l & 0xf) + 10 * (clkregs1.year_h & 0xf)) << 9) ;
+    date = ((clkregs->day_l & 0xf) + 10 * (clkregs->day_h & 0xf))
+            | (((clkregs->mon_l & 0xf) + 10 * (clkregs->mon_h & 0xf)) << 5)
+            | (((clkregs->year_l & 0xf) + 10 * (clkregs->year_h & 0xf)) << 9);
 
     return date;
 }
@@ -218,16 +287,20 @@ static UWORD mdogetdate(void)
 
 static ULONG mgetdt(void)
 {
-    mgetregs();
+    struct myclkreg clkregs;
 
-    return (((ULONG) mdogetdate()) << 16) | mdogettime();
+    mgetregs(&clkregs);
+
+    return (((ULONG) mdogetdate(&clkregs)) << 16) | mdogettime(&clkregs);
 }
 
 static void msetdt(ULONG dt)
 {
-    mdosetdate(dt>>16);
-    mdosettime(dt);
-    msetregs();
+    struct myclkreg clkregs;
+
+    mdosetdate(&clkregs,dt>>16);
+    mdosettime(&clkregs,dt);
+    msetregs(&clkregs);
 }
 
 #endif /* CONF_WITH_MEGARTC */
