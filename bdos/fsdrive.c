@@ -160,10 +160,10 @@ static DMD *getdmd(int drv)
 
 
 /*
- * log2 - return log base 2 of n
+ * log2ul - return log base 2 of n
  */
 
-static int log2(unsigned long n)
+static int log2ul(unsigned long n)
 {
     int i;
 
@@ -222,11 +222,11 @@ long    log_media(BPB *b, int drv)
         dm->m_clsizb = b->clsizb;           /*    and in bytes              */
         dm->m_recsiz = rsiz;        /*  set record (sector) size    */
         dm->m_numcl = b->numcl;     /*  set cluster size in records */
-        dm->m_clrlog = log2(cs);            /*    and log of it             */
+        dm->m_clrlog = log2ul(cs);          /*    and log of it             */
         dm->m_clrm = (1L<<dm->m_clrlog)-1;          /*  and mask of it      */
-        dm->m_rblog = log2(rsiz);           /*  set log of bytes/record     */
+        dm->m_rblog = log2ul(rsiz);         /*  set log of bytes/record     */
         dm->m_rbm = (1L<<dm->m_rblog)-1;            /*  and mask of it      */
-        dm->m_clblog = log2(dm->m_clsizb);          /*  log of bytes/clus   */
+        dm->m_clblog = log2ul(dm->m_clsizb);        /*  log of bytes/clus   */
         dm->m_clbm = (1L<<dm->m_clblog)-1;          /*  and mask of it      */
 
         f->o_fileln = n * rsiz;     /*  size of file (root dir)     */
