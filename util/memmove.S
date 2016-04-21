@@ -81,6 +81,7 @@ sloop:
         move.b   (a0)+,(a1)+
 sdecr:
         dbra     d0,sloop
+        move.l   4(sp),d0        // return destination pointer
         rts
 #endif
 _memmove:
@@ -227,7 +228,9 @@ bend1:
 #else
         dbra     d0,bloop1              // decrement count, test and loop
 #endif
-end:    rts
+end:
+        move.l   4(sp),d0               // return destination pointer
+        rts
 
 // backwards, when pointers are not aligned.
 back1:
@@ -421,6 +424,7 @@ end1:
 #else
         dbra     d0,loop1              // decrement count, test and loop
 #endif
+        move.l   4(sp),d0              // return destination pointer
         rts
 
 copy1:
