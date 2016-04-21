@@ -64,11 +64,11 @@ char *strcpy(char *dest, const char *src)
  * truncation: if the return value is greater than or equal
  * to the specified length, then truncation has occurred.
  */
-unsigned long strlcpy(char *dest,const char *src,unsigned long count)
+size_t strlcpy(char *dest,const char *src,size_t count)
 {
 char *d = dest;
 const char *s = src;
-unsigned long n;
+size_t n;
 
     if (count > 0) {
         for (n = count-1; *s && n; n--)
@@ -82,9 +82,9 @@ unsigned long n;
     return s-src-1;
 }
 
-unsigned long int strlen(const char *s)
+size_t strlen(const char *s)
 {
-    int n;
+    size_t n;
 
     for (n = 0; *s++; n++);
     return (n);
@@ -117,7 +117,7 @@ int strcmp(const char *a, const char *b)
     return 0;
 }
 
-int memcmp(const void * aa, const void * bb, unsigned long int n)
+int memcmp(const void * aa, const void * bb, size_t n)
 {
     const unsigned char * a = aa;
     const unsigned char * b = bb;
@@ -133,7 +133,7 @@ int memcmp(const void * aa, const void * bb, unsigned long int n)
     return 0;
 }
 
-int strncmp(const char *a, const char *b, unsigned long int n)
+int strncmp(const char *a, const char *b, size_t n)
 {
     unsigned char s1, s2;
 
@@ -149,7 +149,7 @@ int strncmp(const char *a, const char *b, unsigned long int n)
     return 0;
 }
 
-int strncasecmp(const char *a, const char *b, unsigned long int n)
+int strncasecmp(const char *a, const char *b, size_t n)
 {
     unsigned char s1, s2;
 
