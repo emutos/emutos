@@ -39,8 +39,8 @@ const char *flopname;
  * the following values are used for the root dir entry of
  * the created filesystem
  */
-#define FILE_NAME   "EMUTOS  IMG"   /* must be in disk format! */
-#define FILE_ATTR   0x05            /* SYSTEM and READ-ONLY */
+#define FILE_NAME   "EMUTOS  SYS"   /* must be in disk format! */
+#define FILE_ATTR   0x06            /* SYSTEM and HIDDEN */
 #define FILE_CLUS   2               /* starting cluster */
 
 typedef unsigned char uchar;
