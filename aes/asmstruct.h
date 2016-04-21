@@ -26,12 +26,6 @@
 #define PD_UDA          0x08        // pointer to UDA
 #define PD_LDADDR       0x18        // pointer to basepage
 
-/* BDOS PD struct */
-#define P_TBASE         0x08        // address of TEXT segment
-#define P_BBASE         0x18        // address of BSS segment
-#define P_BLEN          0x1C        // length of BSS
-#define P_XDTA          0x20        // pointer to DTA buffer ???
-
 /* UDA struct */
 #define UDA_INSUPER                 // offset 0: the 'in supervisor' flag
 #define UDA_REGS        0x02        // registers d0-a6

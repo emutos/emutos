@@ -117,6 +117,7 @@
 //============================================================================
 
 #include "asmdefs.h"
+#include "asmpd.h"
 
 // ==== Definitions ==========================================================
 
@@ -195,15 +196,15 @@ enter_sup:
         beq     x20_sup         // yes, go perform function
 
 enter_2:
-        move.l  a6,-(sp)
-        move.l  _run,a6
-        movem.l d0/a3-a5,0x68(a6)
-        move.l  (sp)+,0x78(a6)  // olda6
+        move.l  a6,-(sp)        // save temporarily so we can use it
+        move.l  _run,a6         // a6 -> current basepage
+        movem.l d0/a3-a5,P_REGSAVE(a6)
+        move.l  (sp)+,P_A6SAVE(a6)  // save original a6
         move.w  (sp)+,d0        // status reg
         move.l  (sp)+,a4        // retadd
         btst    #13,d0          // if he is in system state, use his stack
         bne     systk
-        move.l  usp,a5
+        move.l  usp,a5          // a5 -> user stack
 #ifdef __mcoldfire__
         lea     -40(a5),a5
         movem.l d1-d7/a0-a2,(a5)
@@ -214,7 +215,7 @@ enter_2:
         move.w  d0,-(a5)        // sr
         move.l  sp,a0
         move.l  a0,-(a5)
-        move.l  a5,0x7c(a6)
+        move.l  a5,P_A7SAVE(a6) // update saved stack pointer
 // now switch to fs stack
         move.l  #fstrt,sp
         lea     50(a5),a0
@@ -231,7 +232,7 @@ systk:
         move.w  d0,-(sp)
         move.l  usp,a0
         move.l  a0,-(sp)
-        move.l  sp,0x7c(a6)
+        move.l  sp,P_A7SAVE(a6) // update saved stack pointer
         lea     50(sp),a0
         move.l  #fstrt,sp
 callos: move.l  a0,-(sp)        // push parm pointer
@@ -245,9 +246,9 @@ callos: move.l  a0,-(sp)        // push parm pointer
 //==== _gouser ===============================================================
 
 _gouser:
-        move.l  _run,a5
-        move.l  d0,0x68(a5)
-ggusr:  move.l  0x7c(a5),a6     // stack pointer (maybe usp, maybe ssp)
+        move.l  _run,a5         // a5 -> current basepage
+        move.l  d0,P_D0SAVE(a5)
+ggusr:  move.l  P_A7SAVE(a5),a6 // stack pointer (maybe usp, maybe ssp)
         move.l  (a6)+,a4        // other stack pointer
         move.w  (a6)+,d0
         move.l  (a6)+,a3        // retadd
@@ -263,7 +264,7 @@ ggusr:  move.l  0x7c(a5),a6     // stack pointer (maybe usp, maybe ssp)
         move.l  a6,usp
 gousr:  move.l  a3,-(sp)
         move    d0,-(sp)
-        movem.l 0x68(a5),d0/a3-a6
+        movem.l P_REGSAVE(a5),d0/a3-a6
 
         bra     fix_rte
 

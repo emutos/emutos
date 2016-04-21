@@ -11,6 +11,7 @@
 
 #include "asmdefs.h"
 #include "asmstruct.h"
+#include "asmpd.h"
 
         .globl  _psetup
         .globl  _gotopgm
