@@ -547,7 +547,7 @@ WORD inf_disk(BYTE dr_id)
     LONG total, avail;
     WORD more;
     BYTE srcpth[MAXPATHLEN];
-    BYTE str[12];
+    BYTE label[LEN_ZFNAME];
     BYTE drive[2];
 
     graf_mouse(HGLASS, NULL);
@@ -565,10 +565,10 @@ WORD inf_disk(BYTE dr_id)
         return FALSE;
 
     dos_space(dr_id - 'A' + 1, &total, &avail);
-    dos_label(dr_id - 'A' + 1, str);
+    dos_label(dr_id - 'A' + 1, label);
 
     inf_sset(tree, DIDRIVE, drive);
-    inf_sset(tree, DIVOLUME, str);
+    inf_sset(tree, DIVOLUME, label);
 
     inf_fifosz(tree, DINFILES, DINFOLDS, DIUSED);
     inf_numset(tree, DIAVAIL, avail);
