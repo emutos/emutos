@@ -565,7 +565,8 @@ WORD inf_disk(BYTE dr_id)
         return FALSE;
 
     dos_space(dr_id - 'A' + 1, &total, &avail);
-    dos_label(dr_id - 'A' + 1, label);
+    if (!dos_label(dr_id - 'A' + 1, label))
+        label[0] = '\0';
 
     inf_sset(tree, DIDRIVE, drive);
     inf_sset(tree, DIVOLUME, label);
