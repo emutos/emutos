@@ -17,6 +17,11 @@
 #ifndef PORTAB_H
 #define PORTAB_H
 
+/*
+ * The following include provides definitions for NULL, size_t...
+ * It is provided by the compiler itself, so this is not a dependency
+ * to the standard library.
+ */
 #include <stddef.h>
 
 /*
