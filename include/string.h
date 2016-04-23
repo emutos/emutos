@@ -10,14 +10,6 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
-/* LVL: I do not use types WORD and ULONG on purpose, to
- * avoid gcc complaining about conflicting types for built-in
- * functions (memset, memcpy, strlen, ...).
- *
- * Nevertheless this header will only work with -mshort option.
- */
-
 #ifndef STRING_H
 #define STRING_H
 
