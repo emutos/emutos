@@ -62,7 +62,6 @@
  *  Constants
  */
 
-#define NULL    ((void *)0)             /*      Null character value        */
 #define TRUE    (1)                     /*      Function TRUE  value        */
 #define FALSE   (0)                     /*      Function FALSE value        */
 
