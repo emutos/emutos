@@ -4,30 +4,39 @@ Here is a quick list of supported emulators/hardware:
 This table should be updated regularly. When indicating failure,
 if possible add a line telling in which version it did run.
 
-  emulator/machine    |  ok?  | who |   date      |  details
+  system              |  ok?  | who |   date      |  details
   --------------------+-------+-----+-------------+----------------
+  Emulators           |       |     |             |
   ARAnyM 1.0.2        |  yes  | VRI | 24 Oct 2015 |
   Hatari v1.9.0       |  yes  | VRI | 24 Oct 2015 |
-  ST                  |  yes  | RFB | 20 Feb 2014 | only RAMTOS tested
-  Mega STe            |  yes  | (1) | 26 Jun 2004 | only RAMTOS tested
-  STe                 |  yes  | (2) | 22 Sep 2013 |
   Pacifist v0.48      |  yes  | LVL | winter 2001 |
   STonX 0.6.7.6       |  yes  | THH | 14 Nov 2008 |
   STonC v0.8.1        |  yes  | LVL |  9 Feb 2003 |
   STeem SSE 3.7.2     |  yes  | VRI | 24 Oct 2015 |
   TOSBox 1.10a        |   no  |  ?  |  < Sep 2002 |
   WinSTon V0.1r2      |   no  |  ?  |  < Sep 2002 |
-  FireBee             |  yes  | VRI | 24 Oct 2015 |
-  Falcon 030          |  yes  | RFB | 21 Feb 2014 | only RAMTOS tested
   WinUAE 3.1.0        |  yes  | VRI | 24 Oct 2015 |
+  --------------------+-------+-----+-------------+----------------
+  Atari & compatibles |       |     |             |
+  ST                  |  yes  | RFB | 20 Feb 2014 | only RAMTOS tested
+  Mega ST             |  yes  | RFB | 16 Apr 2016 | only RAMTOS tested
+  STe                 |  yes  | (1) | 22 Sep 2013 |
+  Mega STe            |  yes  | (2) | 26 Jun 2004 | only RAMTOS tested
+  TT030               |  yes  | RFB |    Mar 2016 | SCSI not yet supported
+  Falcon030           |  yes  | RFB | 21 Feb 2014 | only RAMTOS tested
+  Suska III-C (2K15B) |  yes  | (5) | 23 Apr 2016 |
+  --------------------+-------+-----+-------------+----------------
+  Other systems       |       |     |             |
   Amiga Blizzard 1260 |  yes  | (3) |    Aug 2012 | tested with BlizKick
   Amiga 1000          |  yes  | (4) |    Jul 2012 |
+  FireBee             |  yes  | VRI | 24 Oct 2015 |
   M5484LITE           |  yes  | VRI | 24 Oct 2015 |
 
-  (1) reported to LVL by Frédéric Pécourt
-  (2) reported by Jean-François Del Nero
+  (1) reported by Jean-François Del Nero
+  (2) reported to LVL by Frédéric Pécourt
   (3) reported by Michaël Gibs
   (4) reported by amiman99
+  (5) reported by Markus Fröschle
 
 Now let's talk about the different subsystems, and what is implemented.
 NOTE: the information in the following table may be somewhat dated.  For
