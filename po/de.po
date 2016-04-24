@@ -527,7 +527,7 @@ msgstr "NAMENSKONFLIKT BEIM KOPIEREN"
 
 #: desk/desk_rsc.c:1104
 msgid "Skip"
-msgstr "Überspringen"
+msgstr "Auslassen"
 
 #: desk/desk_rsc.c:1110
 msgid "Stop"
