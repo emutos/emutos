@@ -154,10 +154,14 @@ void unfmt_str(BYTE *instr, BYTE *outstr)
  */
 void inf_numset(LONG tree, WORD obj, ULONG value)
 {
-    BYTE    str[12];
+    WORD len;
+    TEDINFO *ted;
+    OBJECT  *objptr = ((OBJECT *)tree) + obj;
 
-    sprintf(str,"%lu",value);
-    inf_sset(tree,obj,str);
+    ted = (TEDINFO *)objptr->ob_spec;
+    len = ted->te_txtlen - 1;
+
+    sprintf(ted->te_ptext,"%*.*lu",len,len,value);
 }
 
 
