@@ -109,6 +109,9 @@ extern int has_nvram;     /* in nvram.c */
   #define HAS_NVRAM 0
 #endif
 
+/* convenience macro: TRUE iff any kind of real time clock */
+#define HAS_RTC (HAS_NVRAM || HAS_MEGARTC)
+
 #if CONF_WITH_BLITTER
 extern int has_blitter;
   #define HAS_BLITTER has_blitter

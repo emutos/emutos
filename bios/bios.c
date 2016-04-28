@@ -578,7 +578,7 @@ void biosmain(void)
 
     trap1( 0x30 );              /* initial test, if BDOS works: Sversion() */
 
-    if (!(HAS_NVRAM || HAS_MEGARTC))
+    if (!HAS_RTC)
         trap1( 0x2b, os_dosdate);  /* set initial date in GEMDOS format: Tsetdate() */
 
     /* Steem needs this to initialize its GEMDOS hard disk emulation.
