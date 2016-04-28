@@ -609,10 +609,12 @@ void settime(LONG time)
         nsetdt(time);
     }
 #endif /* CONF_WITH_NVRAM */
-    else if (HAS_MEGARTC)
+#if CONF_WITH_MEGARTC
+    else if (has_megartc)
     {
         msetdt(time);
     }
+#endif /* CONF_WITH_MEGARTC */
     else
     {
 #if CONF_WITH_IKBD_CLOCK
@@ -639,10 +641,12 @@ LONG gettime(void)
         return ngetdt();
     }
 #endif /* ! NO_NVRAM */
-    else if (HAS_MEGARTC)
+#if CONF_WITH_MEGARTC
+    else if (has_megartc)
     {
         return mgetdt();
     }
+#endif /* CONF_WITH_MEGARTC */
     else
     {
 #if CONF_WITH_IKBD_CLOCK
