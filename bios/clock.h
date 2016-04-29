@@ -23,6 +23,10 @@ extern void clockvec(BYTE *buf);
 extern void detect_megartc(void);
 #endif /* CONF_WITH_MEGARTC */
 
+#if CONF_WITH_ICDRTC
+extern void detect_icdrtc(void);
+#endif /* CONF_WITH_ICDRTC */
+
 /* internal init */
 
 extern void clock_init(void);

@@ -366,6 +366,10 @@ void machine_detect(void)
     detect_megartc();
     KDEBUG(("has_megartc = %d\n", has_megartc));
 #endif /* CONF_WITH_MEGARTC */
+#if CONF_WITH_ICDRTC
+    detect_icdrtc();
+    KDEBUG(("has_icdrtc = %d\n", has_icdrtc));
+#endif /* CONF_WITH_ICDRTC */
 #if CONF_WITH_NVRAM
     detect_nvram();
 #endif

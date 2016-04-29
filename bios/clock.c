@@ -27,6 +27,9 @@
 #include "nvram.h"
 #include "machine.h"
 #include "cookie.h"
+#include "asm.h"
+#include "dma.h"
+#include "delay.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif
@@ -35,6 +38,285 @@
  * We use the OS creation date at 00:00:00
  */
 #define DEFAULT_DATETIME ((ULONG)os_dosdate << 16)
+
+#if CONF_WITH_ICDRTC
+
+/*==== ICD AdSCSI Plus ST RTC section =====================================*/
+
+/* one if there is an ICD real-time clock. */
+int has_icdrtc;
+
+#define NUM_ICDRTC_REGS    13  /* number of registers to copy to/from rtc */
+
+/*
+ * this is an internal-only structure, used to hold the RTC values
+ * before they are transferred to the RTC chip.  it must be organised
+ * in the same sequence as the chip registers themselves.
+ */
+struct icdclkreg
+{
+    UBYTE sec_l;                /* seconds elapsed in current minute */
+    UBYTE sec_h;
+    UBYTE min_l;                /* minutes elapsed in current hour   */
+    UBYTE min_h;
+    UBYTE hour_l;               /* hours elapsed in current day      */
+    UBYTE hour_h;
+    UBYTE daywk;                /* day of week (0-6); NOT USED */
+    UBYTE day_l;                /* day of month (1-31) */
+    UBYTE day_h;
+    UBYTE mon_l;                /* month of year (1-12) */
+    UBYTE mon_h;
+    UBYTE year_l;               /* year of century (0-99) */
+    UBYTE year_h;
+};
+
+/*
+ * bits in above fields
+ */
+#define ICDRTC_24       0x08    /* specifies 24-hour clock; in 'hour_h' */
+
+/*
+ * bit masks for RTC chip communication
+ */
+#define ICDRTC_BEGIN    0xc0
+#define ICDRTC_END      0x40
+#define ICDRTC_SELECT   0x20
+#define ICDRTC_WRITE    0x10
+#define ICDRTC_READ     0x8f
+
+/*
+ * delay_related
+ */
+static ULONG loopcount_1_usec;
+#define DELAY_1_USEC()  delay_loop(loopcount_1_usec)
+
+/*
+ * some prototypes
+ */
+static WORD icd_clock_begin(void);
+static void icd_clock_end(void);
+
+void detect_icdrtc(void)
+{
+    has_icdrtc = 0;
+
+    if (icd_clock_begin())
+        has_icdrtc = 1;
+
+    icd_clock_end();
+
+    loopcount_1_usec = loopcount_1_msec / 1000;
+}
+
+/*==== ICD RTC internal functions =========================================*/
+
+/*
+ * initialise access to clock
+ */
+static WORD icd_clock_begin(void)
+{
+    flock = 1;      /* prevent access */
+
+    DMA->control = DMA_DRQ_FLOPPY | DMA_CS_ACSI;
+    DMA->data = ICDRTC_BEGIN;
+    DMA->control = DMA_DRQ_FLOPPY | DMA_CS_ACSI | DMA_NOT_NEWCDB;
+
+    DELAY_1_USEC();     /* ICD drivers delay by about 0.5 usec */
+
+    return (MFP_BASE->gpip&0x20) ? 0 : 1;
+}
+
+/*
+ * terminate access to clock
+ */
+static void icd_clock_end(void)
+{
+    DMA->data = ICDRTC_END;
+    DMA->control = DMA_DRQ_FLOPPY;
+
+    flock = 0;      /* allow access */
+}
+
+/*
+ * read the clock registers into clkregs
+ */
+static void icdgetregs(struct icdclkreg *clkregs)
+{
+    WORD i;
+    UWORD send;
+    UBYTE *reg = (UBYTE *)clkregs;
+
+    if (!icd_clock_begin())
+        KDEBUG(("icdgetregs(): icd_clock_begin() failed\n"));
+
+    for (i = 0; i < NUM_ICDRTC_REGS; i++)
+    {
+        send = ICDRTC_BEGIN | i;        /* specify register */
+        DMA->data = send;
+        send |= ICDRTC_SELECT;          /* toggle select bit */
+        DMA->data = send;
+        send &= ~ICDRTC_SELECT;
+        DMA->data = send;
+        send &= ICDRTC_READ;            /* prepare to read */
+        DMA->data = send;
+
+        DELAY_1_USEC();
+
+        *reg++ = DMA->data & 0x0f;      /* read */
+        DMA->data = ICDRTC_BEGIN;
+    }
+
+    icd_clock_end();
+}
+
+/*
+ * write the ICD registers from clkregs
+ */
+static void icdsetregs(struct icdclkreg *clkregs)
+{
+    WORD i;
+    UWORD send;
+    UBYTE *reg = (UBYTE *)clkregs;
+
+    if (!icd_clock_begin())
+        KDEBUG(("icdsetregs(): icd_clock_begin() failed\n"));
+
+    for (i = 0; i < NUM_ICDRTC_REGS; i++)
+    {
+        send = ICDRTC_BEGIN | i;        /* specify register */
+        DMA->data = send;
+        send |= ICDRTC_SELECT;
+        DMA->data = send;
+        send &= ~ICDRTC_SELECT;
+        DMA->data = send;
+
+        DELAY_1_USEC();
+
+        send = ICDRTC_BEGIN | *reg++;
+        DMA->data = send;
+        send |= ICDRTC_WRITE;           /* prepare to write */
+        DMA->data = send;
+        send &= ~ICDRTC_WRITE;
+        DMA->data = send;               /* write */
+    }
+}
+
+static void icdsettime(struct icdclkreg *clkregs,UWORD time)
+{
+    UWORD hr, min, sec;
+
+    hr = (time >> 11) & 0x1f;
+    min = (time >> 5) & 0x3f;
+    sec = (time & 0x1f) << 1;
+
+    /*
+     * we must set the '24-hour clock' indicator in the tens-of-hours register
+     */
+    clkregs->sec_l = sec % 10;
+    clkregs->sec_h = sec / 10;
+    clkregs->min_l = min % 10;
+    clkregs->min_h = min / 10;
+    clkregs->hour_l = hr % 10;
+    clkregs->hour_h = (hr / 10) | ICDRTC_24;
+
+    KDEBUG(("icdsettime() %x%x:%x%x:%x%x\n", clkregs->hour_h, clkregs->hour_l,
+            clkregs->min_h, clkregs->min_l, clkregs->sec_h, clkregs->sec_l));
+}
+
+static UWORD icdgettime(struct icdclkreg *clkregs)
+{
+    UWORD time;
+
+    KDEBUG(("icdgettime() %x%x:%x%x:%x%x\n", clkregs->hour_h, clkregs->hour_l,
+            clkregs->min_h, clkregs->min_l, clkregs->sec_h, clkregs->sec_l));
+
+    /*
+     * bits 2-3 of the tens-of-hours register must be ignored, since they
+     * relate to time format (12-hr vs 24-hr)
+     */
+    time = ((clkregs->sec_l + 10*clkregs->sec_h) >> 1)
+            | ((clkregs->min_l + 10*clkregs->min_h) << 5)
+            | ((clkregs->hour_l + 10*(clkregs->hour_h & 0x03)) << 11);
+
+    return time;
+}
+
+static void icdsetdate(struct icdclkreg *clkregs,UWORD date)
+{
+    UWORD year, month, day;
+
+    /*
+     * The ICD RTC stores the year as the offset from 1900; thus we need
+     * to add 80 to the DOS-format year to get the RTC year.
+     *
+     * Note: despite the chip documentation, the leap year mechanism does
+     * not seem to utilise bits 2-3 of the tens-of-days register.  Instead,
+     * it appears to use the year value, i.e. if the year is divisible by
+     * 4, then it is assumed to be a leap year.
+     */
+    year = (date >> 9) + 80;
+    month = (date >> 5) & 0x0f;
+    day = date & 0x1f;
+
+    clkregs->day_l = day % 10;
+    clkregs->day_h = (day / 10);
+    clkregs->mon_l = month % 10;
+    clkregs->mon_h = month / 10;
+    clkregs->year_l = year % 10;
+    clkregs->year_h = year / 10;
+
+    KDEBUG(("icdsetdate() %x%x/%x%x/%x%x\n", clkregs->year_h, clkregs->year_l,
+            clkregs->mon_h, clkregs->mon_l, clkregs->day_h, clkregs->day_l));
+}
+
+static UWORD icdgetdate(struct icdclkreg *clkregs)
+{
+    UWORD date;
+
+    KDEBUG(("icdgetdate() %x%x/%x%x/%x%x\n", clkregs->year_h, clkregs->year_l,
+            clkregs->mon_h, clkregs->mon_l, clkregs->day_h, clkregs->day_l));
+
+    /*
+     * The ICD RTC stores the year as the offset from 1900; thus we need
+     * to subtract 80 from the RTC year to get the DOS-format year.  Also,
+     * we ignore bits 2-3 of the tens-of-days register for safety (they
+     * may be set and will retain their setting, even though they do not
+     * seem to do anything).
+     *
+     * Note: despite the chip documentation, the tens-of-years register
+     * can have a maximum value of 0x0f, allowing a maximum years value
+     * of 15*10+9, which corresponds to year 2059.  As you would expect,
+     * 2059/12/31 23:59:59 wraps to 1901/01/01 00:00:00 (tested on real
+     * hardware).
+     */
+    date = (clkregs->day_l + 10*(clkregs->day_h&0x03))
+            | ((clkregs->mon_l + 10*clkregs->mon_h) << 5)
+            | ((clkregs->year_l + 10*clkregs->year_h - 80) << 9);
+
+    return date;
+}
+
+/*==== ICD RTC high-level functions ========================================*/
+
+static ULONG icdgetdt(void)
+{
+    struct icdclkreg clkregs;
+
+    icdgetregs(&clkregs);
+
+    return (((ULONG) icdgetdate(&clkregs)) << 16) | icdgettime(&clkregs);
+}
+
+static void icdsetdt(ULONG dt)
+{
+    struct icdclkreg clkregs;
+
+    icdsetdate(&clkregs,dt>>16);
+    icdsettime(&clkregs,dt);
+    icdsetregs(&clkregs);
+}
+
+#endif /* CONF_WITH_ICDRTC */
 
 #if CONF_WITH_MEGARTC
 
@@ -583,6 +865,10 @@ void clock_init(void)
     {
         /* Nothing to initialize */
     }
+    else if (HAS_ICDRTC)
+    {
+        /* Nothing to initialize */
+    }
 #if CONF_WITH_IKBD_CLOCK
     else
     {
@@ -615,6 +901,12 @@ void settime(LONG time)
         msetdt(time);
     }
 #endif /* CONF_WITH_MEGARTC */
+#if CONF_WITH_ICDRTC
+    else if (has_icdrtc)
+    {
+        icdsetdt(time);
+    }
+#endif  /* CONF_WITH_ICDRTC */
     else
     {
 #if CONF_WITH_IKBD_CLOCK
@@ -647,6 +939,12 @@ LONG gettime(void)
         return mgetdt();
     }
 #endif /* CONF_WITH_MEGARTC */
+#if CONF_WITH_ICDRTC
+    else if (has_icdrtc)
+    {
+        return icdgetdt();
+    }
+#endif  /* CONF_WITH_ICDRTC */
     else
     {
 #if CONF_WITH_IKBD_CLOCK

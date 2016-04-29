@@ -161,6 +161,9 @@
 # ifndef CONF_WITH_NVRAM
 #  define CONF_WITH_NVRAM 0
 # endif
+# ifndef CONF_WITH_ICDRTC
+#  define CONF_WITH_ICDRTC 0
+# endif
 # ifndef CONF_WITH_XHDI
 #  define CONF_WITH_XHDI 0
 # endif
@@ -206,6 +209,9 @@
 # endif
 # ifndef CONF_WITH_TT_SHIFTER
 #  define CONF_WITH_TT_SHIFTER 0
+# endif
+# ifndef CONF_WITH_ICDRTC
+#  define CONF_WITH_ICDRTC 0
 # endif
 # ifndef CONF_WITH_ASSERT
 #  define CONF_WITH_ASSERT 0
@@ -361,6 +367,9 @@
 # endif
 # ifndef CONF_WITH_MEGARTC
 #  define CONF_WITH_MEGARTC 0
+# endif
+# ifndef CONF_WITH_ICDRTC
+#  define CONF_WITH_ICDRTC 0
 # endif
 # ifndef CONF_WITH_DMASOUND
 #  define CONF_WITH_DMASOUND 0
@@ -669,6 +678,15 @@
 #ifndef CONF_WITH_MEGARTC
 # define CONF_WITH_MEGARTC 1
 #endif
+
+/*
+ * Set CONF_WITH_ICDRTC to 1 to enable support for the real-time clock on
+ * the ICD AdSCSI Plus ST board, which is attached via the ACSI interface.
+ * You must also enable CONF_WITH_ACSI.
+ */
+# ifndef CONF_WITH_ICDRTC
+#  define CONF_WITH_ICDRTC 1
+# endif
 
 /*
  * Set CONF_WITH_DMASOUND to 1 to enable support for STe/TT/Falcon DMA sound
@@ -1189,6 +1207,12 @@
 
 #if (MIDI_DEBUG_PRINT + RS232_DEBUG_PRINT + SCC_DEBUG_PRINT + COLDFIRE_DEBUG_PRINT) > 1
 # error "Only one of MIDI_DEBUG_PRINT, RS232_DEBUG_PRINT, SCC_DEBUG_PRINT or COLDFIRE_DEBUG_PRINT must be set to 1."
+#endif
+
+#if !CONF_WITH_ACSI
+# if CONF_WITH_ICDRTC
+#  error "CONF_WITH_ICDRTC requires CONF_WITH_ACSI"
+# endif
 #endif
 
 #if !CONF_WITH_DMASOUND

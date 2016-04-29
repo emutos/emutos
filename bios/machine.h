@@ -95,6 +95,13 @@ extern int has_vme;
   #define HAS_VME 0
 #endif
 
+#if CONF_WITH_ICDRTC
+extern int has_icdrtc;    /* in clock.c */
+  #define HAS_ICDRTC has_icdrtc
+#else
+  #define HAS_ICDRTC 0
+#endif
+
 #if CONF_WITH_MEGARTC
 extern int has_megartc;   /* in clock.c */
   #define HAS_MEGARTC has_megartc
@@ -110,7 +117,7 @@ extern int has_nvram;     /* in nvram.c */
 #endif
 
 /* convenience macro: TRUE iff any kind of real time clock */
-#define HAS_RTC (HAS_NVRAM || HAS_MEGARTC)
+#define HAS_RTC (HAS_NVRAM || HAS_MEGARTC || HAS_ICDRTC)
 
 #if CONF_WITH_BLITTER
 extern int has_blitter;
