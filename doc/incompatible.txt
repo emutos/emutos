@@ -1,0 +1,46 @@
+Programs incompatible with EmuTOS
+=================================
+This is a list of programs that have program bugs or shortcomings that
+prevent them from running properly with EmuTOS, and whose problem has
+been definitively identified.  It is mainly intended to prevent these
+programs from being added to 'bugs.txt' in the future.
+
+Program: Awele v1.01
+--------------------
+Error: mono desktop colours are inverted after exiting program.
+Bug analysis:
+This version of Awele was compiled with PureC and linked with a very
+early version of Windform.  During WinDOM initialisation, malloc() is
+called to allocate an area to save the palette in.  However, although
+malloc() returns the pointer in A0, the WinDOM code assumes it is in D0.
+As a result, an area of low memory is pointed to, which is overwritten
+during Awele execution.  At program termination, the palette is restored
+from the overwritten area, resulting in the error seen.
+
+Program: Cameleon
+-----------------
+Error 1: program exits immediately when 'Start game" is selected.
+Bug analysis:
+The program requires an STe.  In order to determine whether its's
+running on an STe, it checks the contents of location 0x995 (hardcoded).
+On Atari TOS, this is where TOS initialisation happens to store the _MCH
+cookie but this is *not* how Atari says you should locate it (and it's
+not where EmuTOS stores it).
+Error 2: program crashes with a Trace exception on any exit.
+Bug analysis:
+During startup, the program switches to supervisor state via the Super()
+system call.  Subsequently, the supervisor stack overwrites the program's
+user stack.  On exit, the user stack pointer is restored and during this
+a corrupted value is loaded into the SR, causing a trace excpetion.
+
+Program: Invaders (VDI) and Anduril
+-----------------------------------
+Error: keys to move an object are ignored (in Invaders, the '-' key; in
+Anduril, the 'h' & 'j' keys)
+Bug analysis:
+Both programs were written by "M.Dheus" who found that the most recent
+key input from the keyboard was stored at offset 0x6d from the address
+returned by Kbdvbase(), and used that to read the keyboard.  This was
+never documented by Atari, but was apparently true for all versions of
+TOS 1.  However it is not true for TOS 2, 3, or 4 (or EmuTOS).
+
