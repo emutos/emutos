@@ -77,8 +77,8 @@ LOCAL const char * const help_cd[] = { "[<dir>]",
     N_("or display current directory"), NULL };
 LOCAL const char * const help_chmod[] = { "<mode> <filename>",
     N_("Change attributes for <filename>"),
-    N_("<mode> is the following ORed together:"),
-    N_("1: read-only  2: hidden  4: system"), NULL };
+    N_("<mode> specifies the new attribute(s):"),
+    N_("r=read-only  h=hidden  s=system  -=none"), NULL };
 LOCAL const char * const help_cls[] = { "",
     N_("Clear screen"), NULL };
 LOCAL const char * const help_cp[] = { "<filespec> <dest>",
@@ -218,15 +218,30 @@ PRIVATE LONG run_cd(WORD argc,char **argv)
 PRIVATE LONG run_chmod(WORD argc,char **argv)
 {
 LONG rc;
-char attr;
+UWORD attr = 0x00;
+char c, *p;
 
-    attr = argv[1][0];
-    if ((attr < '0') || (attr > '7')) {
-        messagenl(_("invalid mode argument"));
-        return 0L;
+    p = argv[1];
+    while((c=*p++)) {
+        switch(c) {
+        case 'r':
+            attr |= 0x01;
+            break;
+        case 'h':
+            attr |= 0x02;
+            break;
+        case 's':
+            attr |= 0x04;
+            break;
+        case '-':
+            break;
+        default:
+            messagenl(_("invalid mode argument"));
+            return 0L;
+        }
     }
 
-    rc = Fattrib(argv[2],1,attr-'0');
+    rc = Fattrib(argv[2],1,attr);
 
     return (rc < 0) ? rc : 0L;
 }
@@ -928,22 +943,28 @@ WORD i;
 PRIVATE void display_dta_detail(void)
 {
 char buf[30], *p;
-UWORD i;
 
     padname(buf,dta->d_fname);
     output(buf);
     decode_date_time(buf,dta->d_date,dta->d_time);
     output(buf);
+
+    p = buf;
+    memset(p,' ',7);
     if (dta->d_attrib & 0x10) {
-        outputnl("  <dir>");
-        return;
+        strcpy(p+2,"<dir>");
+    } else {
+        p += 3;
+        if (dta->d_attrib & 0x01)
+            *p++= 'r';
+        if (dta->d_attrib & 0x02)
+            *p++ = 'h';
+        if (dta->d_attrib & 0x04)
+            *p = 's';
+        if (!(dta->d_attrib & 0x07))
+            *p = '-';
+        convulong(buf+7,dta->d_length,10,' ');
     }
-
-    for (i = 0, p = buf; i < 7; i++)
-        *p++ = ' ';
-    buf[4] = (dta->d_attrib & 0x07) + '0';
-
-    convulong(buf+7,dta->d_length,10,' ');
     outputnl(buf);
 }
 
