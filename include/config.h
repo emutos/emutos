@@ -102,6 +102,9 @@
 # ifndef CONF_WITH_ACSI
 #  define CONF_WITH_ACSI 0      /* broken in current FireBee hardware */
 # endif
+# ifndef CONF_WITH_ICDRTC
+#  define CONF_WITH_ICDRTC 0    /* useless on FireBee as it has NVRAM clock */
+# endif
 #endif
 
 /*
@@ -367,9 +370,6 @@
 # endif
 # ifndef CONF_WITH_MEGARTC
 #  define CONF_WITH_MEGARTC 0
-# endif
-# ifndef CONF_WITH_ICDRTC
-#  define CONF_WITH_ICDRTC 0
 # endif
 # ifndef CONF_WITH_DMASOUND
 #  define CONF_WITH_DMASOUND 0
@@ -685,7 +685,7 @@
  * You must also enable CONF_WITH_ACSI.
  */
 # ifndef CONF_WITH_ICDRTC
-#  define CONF_WITH_ICDRTC 1
+#  define CONF_WITH_ICDRTC CONF_WITH_ACSI
 # endif
 
 /*
