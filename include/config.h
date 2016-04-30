@@ -116,7 +116,7 @@
 # ifndef TOS_VERSION
 /* Some software checks for TOS version < 1.06 to determine that the ROM
  * is located at 0x00fc0000. So we use 1.04 as it is the more recent TOS
- * version located theere. */
+ * version located there. */
 #  define TOS_VERSION 0x104
 # endif
 # ifndef DETECT_NATIVE_FEATURES
