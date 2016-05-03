@@ -1,5 +1,5 @@
 /*
- * EmuTOS aes
+ * EmuTOS aes: functions and variables implemened in gemdosif.S
  *
  * Copyright (c) 2002-2015 The EmuTOS development team
  *
@@ -37,6 +37,7 @@ extern void justretf(void);
 
 extern void unset_aestrap(void);
 extern void set_aestrap(void);
+extern BOOL aestrap_intercepted(void);
 
 extern void takeerr(void);
 extern void giveerr(void);

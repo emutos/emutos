@@ -265,7 +265,21 @@ void gsx_init(void)
     xrat = ptsout[0];
     yrat = ptsout[1];
 
-    vex_wheelv(aes_wheel, &old_wheelv);
+    /*
+     * if NVDI3 has been installed, it will see the following VDI call.
+     * since it doesn't understand vex_wheelv() (which is a Milan extension),
+     * it will attempt to issue a warning form_alert().  this leads to a
+     * crash due to a stack smash: the USP and SSP are both on the AES
+     * process 0 stack at this time, and e.g. a VBL interrupt will save
+     * registers which can overwrite dynamic variables.
+     *
+     * we circumvent this by avoiding calling vex_wheelv() if the trap #2
+     * interrupt has been intercepted.
+     */
+    if (!aestrap_intercepted())
+    {
+        vex_wheelv(aes_wheel, &old_wheelv);
+    }
 }
 
 
