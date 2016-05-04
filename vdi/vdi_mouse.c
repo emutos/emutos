@@ -380,8 +380,9 @@ void vdi_vex_curv(Vwk * vwk)
 
 
 
+#if CONF_WITH_VDI_EXTENSIONS
 /*
- * vdi_vex_wheelv
+ * vdi_vex_wheelv: a Milan VDI extension
  *
  * This routine replaces the mouse wheel vector with the
  * address of a user-supplied routine.  The previous value
@@ -403,6 +404,7 @@ void vdi_vex_wheelv(Vwk * vwk)
     *pointer = (LONG) user_wheel;
     user_wheel = (void (*)(void)) *--pointer;
 }
+#endif
 
 
 

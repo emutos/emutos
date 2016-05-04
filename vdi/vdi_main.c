@@ -97,11 +97,15 @@ static void(* const jmptb2[])(Vwk *) = {
     vdi_vs_clip,            /* 129 */
     vdi_vqt_name,           /* 130 */
     vdi_vqt_fontinfo,       /* 131 */
-    vdi_v_nop,              /* 132 */ /* vqt_justified */
-    vdi_v_nop,              /* 133 */
-    vdi_vex_wheelv          /* 134 */
+#if CONF_WITH_VDI_EXTENSIONS
+    vdi_v_nop,              /* 132 */ /* vqt_justified (PC-GEM) */
+    vdi_v_nop,              /* 133 */ /* vs_grayoverride (PC-GEM/3) */
+    vdi_vex_wheelv          /* 134 */ /* (Milan), also v_pat_rotate (PC-GEM/3) */
+#endif
 };
 
+#define JMPTB1_ENTRIES  ARRAY_SIZE(jmptb1)
+#define JMPTB2_ENTRIES  ARRAY_SIZE(jmptb2)
 
 
 /*
@@ -135,11 +139,11 @@ void screen(void)
             vwk->multifill = 0;
     }
 
-    if (opcode >= 1 && opcode <= 39) {
+    if (opcode >= 1 && opcode < 1+JMPTB1_ENTRIES) {
         (*jmptb1[opcode - 1]) (vwk);
     }
 
-    else if (opcode >= 100 && opcode <= 134) {
+    else if (opcode >= 100 && opcode < 100+JMPTB2_ENTRIES) {
         (*jmptb2[opcode - 100]) (vwk);
     }
 }

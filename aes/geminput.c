@@ -381,6 +381,7 @@ void mchange(LONG fdata)
 }
 
 
+#if CONF_WITH_VDI_EXTENSIONS
 void wheel_change(WORD wheel_number, WORD wheel_amount)
 {
     WORD wh;
@@ -410,6 +411,7 @@ void wheel_change(WORD wheel_number, WORD wheel_amount)
     (void)wh; /* silent warning */
     (void)type; /* silent warning */
 }
+#endif
 
 
 static WORD inorout(EVB *e, WORD rx, WORD ry)

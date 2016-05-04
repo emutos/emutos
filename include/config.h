@@ -179,6 +179,9 @@
 # ifndef CONF_WITH_PCGEM
 #  define CONF_WITH_PCGEM 0
 # endif
+# ifndef CONF_WITH_VDI_EXTENSIONS
+#  define CONF_WITH_VDI_EXTENSIONS 0
+# endif
 # ifndef CONF_WITH_SHOW_FILE
 #  define CONF_WITH_SHOW_FILE 0
 # endif
@@ -867,6 +870,13 @@
  */
 #ifndef CONF_WITH_PCGEM
  # define CONF_WITH_PCGEM 1
+#endif
+
+/*
+ * Set CONF_WITH_VDI_EXTENSIONS to 1 to support various VDI extension functions
+ */
+#ifndef CONF_WITH_VDI_EXTENSIONS
+# define CONF_WITH_VDI_EXTENSIONS 1
 #endif
 
 /*

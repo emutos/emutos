@@ -256,8 +256,6 @@ static void gsx_resetmb(void)
 
 void gsx_init(void)
 {
-    PFVOID old_wheelv; /* Ignored */
-
     gsx_wsopen();
     gsx_start();
     gsx_setmb(far_bcha, far_mcha, &drwaddr);
@@ -265,6 +263,7 @@ void gsx_init(void)
     xrat = ptsout[0];
     yrat = ptsout[1];
 
+#if CONF_WITH_VDI_EXTENSIONS
     /*
      * if NVDI3 has been installed, it will see the following VDI call.
      * since it doesn't understand vex_wheelv() (which is a Milan extension),
@@ -278,8 +277,10 @@ void gsx_init(void)
      */
     if (!aestrap_intercepted())
     {
+        PFVOID old_wheelv; /* Ignored */
         vex_wheelv(aes_wheel, &old_wheelv);
     }
+#endif
 }
 
 
@@ -564,9 +565,11 @@ void g_vsl_width(WORD width)
 
 
 
+#if CONF_WITH_VDI_EXTENSIONS
 void vex_wheelv(PFVOID new, PFVOID *old)
 {
     i_ptr(new);
     gsx_ncode(WHEEL_VECX, 0, 0);
     m_lptr2(old);
 }
+#endif

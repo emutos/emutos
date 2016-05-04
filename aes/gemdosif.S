@@ -372,6 +372,7 @@ _far_mcha:
         movea.l gstksave,sp
         rts
 
+#if CONF_WITH_VDI_EXTENSIONS
 /* AES mouse wheel handler called by the VDI */
 _aes_wheel:
         move.l  sp,gstksave
@@ -396,6 +397,7 @@ _aes_wheel:
 #endif
         movea.l gstksave,sp
         rts
+#endif
 
 
 /*
