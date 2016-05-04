@@ -216,6 +216,9 @@
 # ifndef CONF_WITH_TT_SHIFTER
 #  define CONF_WITH_TT_SHIFTER 0
 # endif
+# ifndef CONF_WITH_VDI_EXTENSIONS
+#  define CONF_WITH_VDI_EXTENSIONS 0
+# endif
 # ifndef CONF_WITH_ICDRTC
 #  define CONF_WITH_ICDRTC 0
 # endif
