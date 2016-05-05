@@ -25,7 +25,7 @@ Common AES/VDI/Line-A bugs:
   because clc_flit() function does it for VDI (where perimeter
   is drawn separately).  It is visible e.g. in "Japlish" game.
 
-Video problems
+Video problems:
 - Omega's XiTec presentations "swing.prg" throws privilege exception
   on exit.  Both TOS v3 & EmuTOS survive that OK, but in EmuTOS both
   screen and mouse acceleration are messed up: EmuTOS exception restore
@@ -52,6 +52,10 @@ Atari Falcon / TOS v4 compatibility bugs:
 - Sound is missing from Zodiax Falcon game because EmuTOS doesn't
   initialize Falcon sound matrix at boot: set default Sound mode
   (connect DMA to DAC) and set Codec input & Gain.
+
+Other problems:
+- Spectrum512 drawing program gives address error on XBios Kbdvbase()
+  return value handling.
 
 Problems that also occur in Atari TOS:
 - VDI: when drawing a wide polyline with squared ends and more than one

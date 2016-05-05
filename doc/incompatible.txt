@@ -5,9 +5,20 @@ prevent them from running properly with EmuTOS, and whose problem has
 been definitively identified.  It is mainly intended to prevent these
 programs from being added to 'bugs.txt' in the future.
 
+Program: STOS games
+-------------------
+Error: joystick and/or keyboard input doesn't work.
+
+Bug analysis:
+STOS Basic compiler routines check for input using undocumented and
+TOS-specific locations.  Programs using these routines work only with
+specific TOS versions, and not with EmuTOS.  STOS fixer may be used to
+fix these programs.
+
 Program: Awele v1.01
 --------------------
 Error: mono desktop colours are inverted after exiting program.
+
 Bug analysis:
 This version of Awele was compiled with PureC and linked with a very
 early version of Windform.  During WinDOM initialisation, malloc() is
@@ -19,24 +30,28 @@ from the overwritten area, resulting in the error seen.
 
 Program: Cameleon
 -----------------
-Error 1: program exits immediately when 'Start game" is selected.
+Error 1: program exits immediately when 'Start game' is selected.
+
 Bug analysis:
 The program requires an STe.  In order to determine whether its's
 running on an STe, it checks the contents of location 0x995 (hardcoded).
 On Atari TOS, this is where TOS initialisation happens to store the _MCH
 cookie but this is *not* how Atari says you should locate it (and it's
 not where EmuTOS stores it).
+
 Error 2: program crashes with a Trace exception on any exit.
+
 Bug analysis:
 During startup, the program switches to supervisor state via the Super()
 system call.  Subsequently, the supervisor stack overwrites the program's
 user stack.  On exit, the user stack pointer is restored and during this
 a corrupted value is loaded into the SR, causing a trace excpetion.
 
-Program: Invaders (VDI) and Anduril
+Program: (VDI) Invaders and Anduril
 -----------------------------------
 Error: keys to move an object are ignored (in Invaders, the '-' key; in
 Anduril, the 'h' & 'j' keys)
+
 Bug analysis:
 Both programs were written by "M.Dheus" who found that the most recent
 key input from the keyboard was stored at offset 0x6d from the address
@@ -44,3 +59,43 @@ returned by Kbdvbase(), and used that to read the keyboard.  This was
 never documented by Atari, but was apparently true for all versions of
 TOS 1.  However it is not true for TOS 2, 3, or 4 (or EmuTOS).
 
+Program: Ramses
+---------------
+Error: panic
+
+Bug analysis:
+Program calls the Line A initialization $A00A and gets the routine
+vectors in a2.  It gets the address of _v_hide_c, then starts doing
+undocumented things with the bytes of the actual routine:
+    https://sourceforge.net/p/emutos/mailman/message/30605378/
+
+Program: STVidPlay
+------------------
+Error: "Error in getting file location"
+
+Bug analysis:
+Program looks for a specific 2-byte sequence in the hard disk driver
+code pointed to by hdv_rw ($476).  If it doesn't find that sequence
+within bytes 6-48 (or thereabouts) of the start of the driver, it
+gives the error message.
+
+Program: Cubase Lite
+--------------------
+Error: panic
+
+Bug analysis:
+On TOS 1.62 etv_timer vector is a delegate to an internal private
+function.  Cubase Lite tries to guess the address of that private
+function in an undocumented way, which crashes on EmuTOS.  (Somebody
+could write a loader or TSR to change the etv_timer function so that
+Cubase will not crash.)
+
+Program: Reservoir Gods games (Bugger, Bunion, SkyFall, Sworm)
+--------------------------------------------------------------
+Error: panic
+
+Bug analysis:
+Games use an undocumented TOS4 vector for keyboard input instead of
+accessing kbdvec correctly.  This causes EmuTOS to panic.
+This can be worked around with the following hack.prg:
+	http://sourceforge.net/mailarchive/message.php?msg_id=26841274
