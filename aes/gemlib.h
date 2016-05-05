@@ -43,8 +43,6 @@ typedef struct moblk
 
 /*      MENULIB.H       05/04/84 - 11/01/84     Lowell Webster  */
 
-#define WID_DESKACC 21
-
 #define MTH 1                                   /* menu thickness       */
 
 #define THESCREEN 0
@@ -75,8 +73,6 @@ typedef struct moblk
 #define SCR_MGR 0x0001                  /* pid of the screen manager*/
 
 #define AP_MSG 0
-
-#define NP_RUNIT 1
 
 #define MN_SELECTED 10
 
@@ -119,26 +115,6 @@ typedef struct moblk
 #define SMODE 0                         /* seek mode is absolute offset */
 #define F_ATTR 0                        /* file attribute for creating  */
 
-typedef struct rssofln
-{
-        WORD    rss_offset;
-        WORD    rss_length;
-}RSSOFLN;
-
-typedef struct imofln                   /* image block structure        */
-{
-        WORD    rim_offset;
-        WORD    rim_length;
-}IMOFLN;
-
-typedef struct rstree
-{
-        WORD    rst_first;
-        WORD    rst_count;
-}RSTREE;
-
-#define RES_TREE        8               /* # of long tree pointers      */
-                                        /*  reserved in the global array*/
 
                         /* these must coincide w/ rshdr */
 #define RT_VRSN 0
