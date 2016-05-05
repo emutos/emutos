@@ -383,7 +383,7 @@ _oscall:
         unlk    a6
         rts
 
-//==== fix_trap - make 68010 exception stack frame look like a 68000 frame ===
+//==== fix_trap - make exception stack frame look like a 68000 frame =========
 
 fix_trap:
 #ifdef __mcoldfire__
@@ -419,7 +419,7 @@ ft_exit:
 
 
 
-//==== fix_rte - restore a 68010 exception stack frame =======================
+//==== fix_rte - re-build exception stack frame for current processor ========
 
 fix_rte:
 #ifdef __mcoldfire__
