@@ -374,7 +374,7 @@ PRIVATE LONG run_mkdir(WORD argc,char **argv)
 
 PRIVATE LONG run_mode(WORD argc,char **argv)
 {
-char buf[30];
+char buf[80];
 WORD i, old;
 WORD rate = -1, delay = -1, height = -1;
 
