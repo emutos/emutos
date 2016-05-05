@@ -305,7 +305,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
         return(EFILNF);     /*  file not found      */
     }
 
-    /* load the header - if IO error occurs now, the longjmp in rwabs will
+    /* load the header - if I/O error occurs now, the longjmp in rwabs will
      * jump directly back to bdosmain.c, which is not a problem because
      * we haven't allocated anything yet.
      */
@@ -383,7 +383,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
     }
 
     /* at this point the program has been correctly loaded in memory, and
-     * more IO errors cannot occur, so it is safe now to finish initializing
+     * more I/O errors cannot occur, so it is safe now to finish initializing
      * the new process.
      */
     init_pd_files(cur_p);

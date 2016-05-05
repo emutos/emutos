@@ -355,7 +355,7 @@ LONG kpgm_relocate( PD *p, long length)
     if( abs_flag )
         return( SUCCESS ) ;
 
-    /* rellocation information present */
+    /* relocation information present */
     rp = (LONG*) (pi->pi_tbase+2+sizeof(PGMHDR01)+flen+pi->pi_slen);
     if ( *rp ) {
         cp = pi->pi_tbase + *rp++;
@@ -366,11 +366,11 @@ LONG kpgm_relocate( PD *p, long length)
 
         *((long *)(cp)) += (long)pi->pi_tbase ; /*  1st fixup     */
 
-        /* move the rellocation info to the pi_bbase */
+        /* move the relocation info to the pi_bbase */
         length -= ((long)rp) - (long)pi->pi_tbase;
         memmove( pi->pi_bbase, rp, length );
 
-        /* fixup with the relloc information available */
+        /* fixup with the reloc information available */
         pgfix01( cp, length, pi);
     }
 

@@ -277,13 +277,13 @@ static void addit(OFD *p, long siz, int flg)
  *
  * We wish to do the i/o in whole clusters as much as possible.
  * Therefore, we break the i/o up into 5 sections.  Data which occupies
- * part of a logical record (e.g., sector) with data not in the request
- * (both at the start and the end of the the request) are handled
- * separateley and are called header (tail) bytes.  Data which are
- * contained complete in sectors but share part of a cluster with data not
- * in the request are called header (tail) records.  These are also
- * handled separately.  In between handling of header and tail sections,
- * we do i/o in terms of whole clusters.
+ * part of a logical sector along with data not in the request (both at
+ * the start and the end of the request) are handled separately and are
+ * called header (tail) bytes.  Data which are contained complete in
+ * sectors but share part of a cluster with data not in the request are
+ * called header (tail) records.  These are also handled separately.  In
+ * between handling of header and tail sections, we do i/o in terms of
+ * whole clusters.
  *
  *  returns
  *      1. nbr of bytes read/written from/to the file, or

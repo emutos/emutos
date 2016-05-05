@@ -47,7 +47,7 @@ static  int     osmem[LENOSM];
 /*
  *  root - root array for 'quick' pool.
  *      root is an array of ptrs to memblocks of size 'i' paragraphs,
- *      where 'i' is the index into the araay (a paragraph is 16 bites).
+ *      where 'i' is the index into the array (a paragraph is 16 bytes).
  *      Each list is singly linked.  Items on the list are
  *      deleted/added in LIFO order from the root.
  */
@@ -86,8 +86,8 @@ static int *getosm(int n)
     }
 
     m = &osmem[osmptr];         /*  start at base               */
-    osmptr += n;                        /*  new base                    */
-    osmlen -= n;                        /*  new length of free block    */
+    osmptr += n;                /*  new base                    */
+    osmlen -= n;                /*  new length of free block    */
     return(m);                  /*  allocated memory            */
 }
 
@@ -99,7 +99,7 @@ static int *getosm(int n)
  * First try to get a block of size i**16 bytes (i paragraphs) from
  * the 'fast' list - a list of lists of blocks, where list[i] is a
  * list of i paragraphs sized blocks.  These lists are singly linked
- * and are deleted/removed in LIFO order from the root.  If there is
+ * and are deleted/removed in LIFO order from the root.  If there are
  * no free blocks on the desired list, we call getosm to get a block
  * from the os memory pool.
  *

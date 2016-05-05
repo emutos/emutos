@@ -134,7 +134,7 @@ char *getrec(RECNO recn, OFD *of, int wrtflg)
     phdr = &bufl[n==BT_FAT ? BI_FAT : BI_DATA];
 
     /*
-     * See, if the desired record for the desired drive is in memory.
+     * See if the desired record for the desired drive is in memory.
      * If it is, we will use it.  Otherwise we will use
      *          the last invalid (available) buffer,  or
      *          the last (least recently) used buffer.
@@ -147,7 +147,7 @@ char *getrec(RECNO recn, OFD *of, int wrtflg)
         /*
          * keep track of the last invalid buffer
          */
-        if (b->b_bufdrv == -1)          /*  if buffer not valid */
+        if (b->b_bufdrv == -1)  /*  if buffer not valid */
             mtbuf = b;          /*    then it's 'empty' */
     }
 
