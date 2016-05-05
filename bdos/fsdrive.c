@@ -209,32 +209,32 @@ long    log_media(BPB *b, int drv)
                 return (ENSMEM);
 
         d = dm->m_dtl;              /*  root DND for drive          */
-        dm->m_fsiz = fs;                    /*  fat size                    */
+        dm->m_fsiz = fs;            /*  fat size                    */
         f = d->d_ofd;               /*  root dir file               */
         dm->m_drvnum = drv;         /*  drv nbr into media descr    */
         f->o_dmd = dm;              /*  link to OFD for rt dir file */
 
         d->d_drv = dm;              /*  link root DND with DMD      */
-        d->d_name[0] = 0;                   /*  null out name of root       */
+        d->d_name[0] = 0;           /*  null out name of root       */
 
-        dm->m_16 = b->b_flags & B_16;   /*      set 12 or 16 bit fat flag   */
+        dm->m_16 = b->b_flags & B_16;       /*  set 12 or 16 bit fat flag   */
         dm->m_clsiz = cs;                   /*  set cluster size in sectors */
         dm->m_clsizb = b->clsizb;           /*    and in bytes              */
-        dm->m_recsiz = rsiz;        /*  set record (sector) size    */
-        dm->m_numcl = b->numcl;     /*  set cluster size in records */
+        dm->m_recsiz = rsiz;                /*  set record (sector) size    */
+        dm->m_numcl = b->numcl;             /*  set cluster size in records */
         dm->m_clrlog = log2ul(cs);          /*    and log of it             */
-        dm->m_clrm = (1L<<dm->m_clrlog)-1;          /*  and mask of it      */
+        dm->m_clrm = (1L<<dm->m_clrlog)-1;  /*      and mask of it          */
         dm->m_rblog = log2ul(rsiz);         /*  set log of bytes/record     */
-        dm->m_rbm = (1L<<dm->m_rblog)-1;            /*  and mask of it      */
-        dm->m_clblog = log2ul(dm->m_clsizb);        /*  log of bytes/clus   */
-        dm->m_clbm = (1L<<dm->m_clblog)-1;          /*  and mask of it      */
+        dm->m_rbm = (1L<<dm->m_rblog)-1;    /*    and mask of it            */
+        dm->m_clblog = log2ul(dm->m_clsizb);/*  log of bytes/clus           */
+        dm->m_clbm = (1L<<dm->m_clblog)-1;  /*    and mask of it            */
 
-        f->o_fileln = n * rsiz;     /*  size of file (root dir)     */
+        f->o_fileln = n * rsiz;             /*  size of file (root dir)     */
         d->d_strtcl = f->o_strtcl = 2;      /*  root start pseudo-cluster   */
 
         fo = dm->m_fatofd;                  /*  OFD for 'fat file'          */
         fo->o_strtcl = 2;                   /*  FAT start pseudo-cluster    */
-        fo->o_dmd = dm;             /*  link with DMD               */
+        fo->o_dmd = dm;                     /*  link with DMD               */
 
         dm->m_recoff[BT_FAT] = (RECNO)b->fatrec;
         dm->m_recoff[BT_ROOT] = (RECNO)b->fatrec + fs;
