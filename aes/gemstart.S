@@ -129,7 +129,7 @@ aes_restart:
         tst.w   d0
         bne     aes_restart
 
-        // Super() to go back to user more
+        // Super() to go back to user mode
         move.l  old_gem_ssp,-(sp)
         move.w  #0x20,-(sp)
         trap    #1

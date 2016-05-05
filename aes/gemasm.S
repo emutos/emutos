@@ -63,9 +63,9 @@ _psetup:
  * gotopgm(void)
  * launches the top of rlr list, as if called from within function
  * back( basepage * )
- * This the entry point for accessories processes.
+ * This is the entry point for accessory processes.
  * It is called in supervisor mode, on the private AES stack of the new
- * accessory process. Its responsability is to go to the start of the
+ * accessory process. Its responsibility is to go to the start of the
  * accessory TEXT segment in user mode. The register a0 must contain the
  * address of the basepage. The value of the other registers is not
  * important.

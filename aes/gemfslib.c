@@ -206,7 +206,7 @@ static WORD fs_active(BYTE *ppath, BYTE *pspec, WORD *pcount)
 /*
  *  Routine to adjust the scroll counters by one in either
  *  direction, being careful not to overrun or underrun the
- *  tail and heads of the list
+ *  tail and head of the list
  */
 static WORD fs_1scroll(WORD curr, WORD count, WORD touchob)
 {

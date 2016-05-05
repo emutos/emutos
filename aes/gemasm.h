@@ -11,7 +11,7 @@
 #define GEMASM_H
 
 /* arranges for codevalue to be pushed to the stack for process p,
- * in a 68000-only RTE stack frame, "in preparation for an RTE that
+ * in a standard RTS stack frame, "in preparation for an RTS that
  * will start this process executing".
  */
 extern void psetup(AESPD *p, PFVOID codevalue);

@@ -51,7 +51,7 @@ CQUEUE
 CDA
 {
         UWORD   c_flags;
-        EVB     *c_iiowait;     /* Waiting for Input            */
+        EVB     *c_iiowait;     /* waiting for input            */
         EVB     *c_msleep;      /* wait for mouse rect          */
         EVB     *c_bsleep;      /* wait for button              */
         CQUEUE  c_q;            /* input queue                  */
@@ -70,7 +70,7 @@ UDA
 } ;
 
 
-#define NOCANCEL 0x0001         /* event is occuring */
+#define NOCANCEL 0x0001         /* event is occurring */
 #define COMPLETE 0x0002         /* event completed */
 #define EVDELAY  0x0004         /* event is delay event */
 #define EVMOUT   0x0008         /* event flag for mouse wait outside of rect*/
@@ -140,7 +140,7 @@ SPB
         EVB     *sy_wait;
 } ;
 
-typedef void (*FCODE)(LONG fdata);      /* pointer to fonction used by forkq() */
+typedef void (*FCODE)(LONG fdata);      /* pointer to function used by forkq() */
 
 struct fpd
 {

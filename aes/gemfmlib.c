@@ -176,7 +176,7 @@ WORD fm_keybd(LONG tree, WORD obj, WORD *pchar, WORD *pnew_obj)
     case ARROW_UP:
         direction = BACKWARD;
         break;
-    case TAB:       /* shift-tab, ctrl-tab, alta-tab have the same scancode */
+    case TAB:       /* shift-tab, ctrl-tab, alt-tab have the same scancode */
     case ARROW_DOWN:
         direction = FORWARD;
         break;

@@ -230,7 +230,7 @@ EVSPEC acancel(EVSPEC m)
                 takeoff(p);
                 rlr->p_evbits &= ~p->e_mask;
                 rlr->p_evwait &= ~p->e_mask;
-                p = q;              /* contine traversal    */
+                p = q;              /* continue traversal    */
             }
         }
     }
