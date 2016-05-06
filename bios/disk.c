@@ -304,16 +304,33 @@ static int VALID_PARTITION(struct partition_info *pi, unsigned long hdsiz)
         pi->st + pi->siz <= hdsiz);
 }
 
-static int OK_id(char *s)
+static int OK_id(const char *s)
 {
     /* for description of the following partition types see
      * the XHDI specification ver 1.30
+     * http://toshyp.atari.org/en/010008.html#Recommended_20partition_20types
      */
-    return  memcmp (s, "GEM", 3) == 0 || memcmp (s, "BGM", 3) == 0 ||
-            memcmp (s, "LNX", 3) == 0 || memcmp (s, "SWP", 3) == 0 ||
-            memcmp (s, "MIX", 3) == 0 || memcmp (s, "UNX", 3) == 0 ||
-            memcmp (s, "QWA", 3) == 0 || memcmp (s, "MAC", 3) == 0 ||
-            memcmp (s, "F32", 3) == 0 || memcmp (s, "RAW", 3) == 0;
+    static const char supported_partition_types[][3] = {
+        "GEM", /* GEMDOS partition < 16 MB */
+        "BGM", /* GEMDOS partition > 16 MB */
+        "LNX", /* Linux Ext2 partition, should be handled like 'RAW' */
+        "SWP", /* Swap partition, should be handled like 'RAW' */
+        "MIX", /* Minix partition, should be handled like 'RAW' */
+        "UNX", /* ASV (Atari System V R4) partition, should be handled like 'RAW' */
+        "QWA", /* QDOS partition, should be handled like 'RAW' */
+        "MAC", /* MAC HFS partition, should be handled like 'RAW' */
+        "F32", /* TOS-compatible FAT32 partition */
+        "RAW", /* Partition type RAW */
+    };
+
+    int i;
+
+    for (i = 0; i < ARRAY_SIZE(supported_partition_types); i++) {
+        if (memcmp (s, supported_partition_types[i], 3) == 0)
+            return TRUE;
+    }
+
+    return FALSE;
 }
 
 /*
