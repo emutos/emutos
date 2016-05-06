@@ -586,7 +586,13 @@ void biosmain(void)
      * File steem/code/emulator.cpp, function intercept_bios(). */
     Drvmap();
 
-    bootdev = blkdev_avail(DEFAULT_BOOTDEV) ? DEFAULT_BOOTDEV : FLOPPY_BOOTDEV;
+    /*
+     * if it's not the first boot, we use the existing bootdev.
+     * this allows a boot device that was selected via the welcome
+     * screen to persist across warm boots.
+     */
+    if (first_boot)
+        bootdev = blkdev_avail(DEFAULT_BOOTDEV) ? DEFAULT_BOOTDEV : FLOPPY_BOOTDEV;
 
 #if INITINFO_DURATION > 0
 #if ALWAYS_SHOW_INITINFO
