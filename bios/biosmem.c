@@ -11,6 +11,7 @@
  */
 
 /* #define ENABLE_KDEBUG */
+#define DBG_BALLOC 0
 
 #include "config.h"
 #include "portab.h"
@@ -21,7 +22,9 @@
 
 extern MD themd;            /* BIOS memory descriptor (from tosvars.S) */
 
+#if DBG_BALLOC
 static int bmem_allowed;
+#endif
 
 /*
  * bmem_init - initialize some memory related variables
@@ -77,7 +80,9 @@ void bmem_init(void)
     themd.m_length = memtop - themd.m_start;
     themd.m_own = (PD*) 0;      /* no owner's process descriptor */
 
+#if DBG_BALLOC
     bmem_allowed = 1;
+#endif
 }
 
 
@@ -89,9 +94,11 @@ UBYTE *balloc(LONG size)
 {
     UBYTE *ret;
 
+#if DBG_BALLOC
     if(!bmem_allowed) {
         panic("balloc(%ld) at wrong time\n", size);
     }
+#endif
 
     /* Round the size to a multiple of 4 bytes to keep alignment.
      * Alignment on long boundaries matters in FastRAM. */
@@ -115,7 +122,9 @@ UBYTE *balloc(LONG size)
 
 void getmpb(MPB * mpb)
 {
+#if DBG_BALLOC
     bmem_allowed = 0; /* BIOS memory handling not allowed past this point */
+#endif
 
     mpb->mp_mfl = mpb->mp_rover = &themd;   /* free list/rover set to init MD */
     mpb->mp_mal = (MD *)0;                /* allocated list set to NULL */
