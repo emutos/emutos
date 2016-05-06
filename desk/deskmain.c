@@ -1398,7 +1398,7 @@ WORD rsrc_gaddr(WORD rstype, WORD rsid, LONG *paddr)
         *paddr = (LONG) gettext( desk_rs_fstr[rsid] );
         break;
     default:
-        kcprintf("FIXME: unsupported (faked) rsrc_gaddr type!\n");
+        KDEBUG(("FIXME: unsupported (faked) rsrc_gaddr type!\n"));
         return FALSE;
     }
 
