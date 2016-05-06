@@ -111,7 +111,7 @@ LONG bconout0(WORD dev, WORD c)
         return 1L;
 #endif
     } else {
-        /* the TOS does wait until the printer is available...
+        /* Atari TOS waits until the printer is available...
          * We simply cancel here.
          */
     }

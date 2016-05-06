@@ -26,10 +26,10 @@ static int bmem_allowed;
 /*
  * bmem_init - initialize some memory related variables
  *
- * when the TOS is in ROM, the ST RAM is used thus:
+ * when TOS is in ROM, the ST RAM is used thus:
  *   0        400   end                         v_bas_ad   phystop
  *   +---------+-----+------------------------------+--------+
- *   | vectors | BSS | Transiant Program Area (TPA) | screen |
+ *   | vectors | BSS | Transient Program Area (TPA) | screen |
  *   +---------+-----+------------------------------+--------+
  * when it is in RAM, the memory map is:
  *   0        400   end       _edata            v_bas_ad   phystop

@@ -32,7 +32,7 @@
         .extern _stktop
 
         // Memory
-        .extern meminit       // initialize the memory and it's controller
+        .extern meminit       // initialize the memory and its controller
 
         // BIOS C part
         .extern _biosmain     // BIOS C entry point

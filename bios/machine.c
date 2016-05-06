@@ -79,7 +79,7 @@ int has_scc;
 static void detect_video(void)
 {
 #if CONF_WITH_STE_SHIFTER
-    /* test if we have an STe Shifter by testing that register 820d
+    /* test if we have an STe Shifter by testing if register 820d
      * works (put a value, read other reg, read again, and compare)
      */
     volatile BYTE *ste_reg = (BYTE *) 0xffff820d;

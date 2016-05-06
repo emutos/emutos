@@ -9,7 +9,7 @@
  * This file may not be distributed at all, or I'll have yer head off!
  *
  * Only kidding! Actually the keymaps took a bit of time to rip!
- * Yes, they were ripped of an Accessoy written by D. Gizis and
+ * Yes, they were ripped from an Accessory written by D. Gizis and
  * M.Statharas of ELKAT, Greece (which was Atari Greece if you wonder).
  *
  * Note: this file was not automatically generated, although I took this

@@ -496,7 +496,7 @@ void screen_init(void)
 #endif
     {
         /* On ST, it is important to change the resolution register when nothing
-         * is displaying, otherwise the plane shift but may appear. */
+         * is displaying, otherwise the plane shift bug may appear. */
         vsync();
 
         rez = monitor_type?ST_LOW:ST_HIGH;
@@ -941,7 +941,7 @@ void vsync(void)
     /* Beware: as a side effect, MFP interrupts are also enabled.
      * So the MFP interruptions must be carefully initialized (or disabled)
      * before calling vsync().
-     * This is ugly, but the Atari TOS does the same.
+     * This is ugly, but Atari TOS does the same.
      */
 #endif
 

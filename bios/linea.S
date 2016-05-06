@@ -74,7 +74,7 @@ _int_linea:
         /* On ColdFire, all the standard Line A opcodes conflict with
          * valid MAC instructions. Therefore they can't be used.
          * Fortunately, the 0xA92x opcodes are still illegal and trigger
-         * the Line A exception. The programs can use 0xA92x instead of
+         * the Line A exception. So programs can use 0xA92x instead of
          * 0xA00x to call the Line A. Thus we must keep only the last
          * digit as function number. */
         and.l   #0x00F,d0       /* Keep only the function number */
@@ -161,28 +161,28 @@ linea_blit:
 
 /* Some VDI C-functions can be used directly as-is because:
  * - they don't use the passed VDI workstation pointer
- * - parameters for line-A go in same Intin/Ptsin/Control arrays
+ * - parameters for line-A go in the same Intin/Ptsin/Control arrays
  * These functions are show, hide and transform (mouse) cursor.
  *
- * Couple of functions have line-A specific C-implementations.
+ * A couple of functions have line-A specific C-implementations.
  * They are put_pix, get_pix.
  *
- * Several functions need C-wrapper around utility functions shared
+ * Several functions need a C-wrapper around utility functions shared
  * with VDI.  They are draw_sprite, undraw_sprite, linea_line,
  * linea_hline, linea_rect, linea_polygon, linea_raster, linea_fill.
  * Their arguments are in global variables/arrays.
  *
- * Bitblt has both small C-wrapper and an ASM -wrapper, as
- * pointer to its argument array is given in register.
+ * Bitblt has both a small C-wrapper and an ASM-wrapper, as the
+ * pointer to its argument array is given in a register.
  *
- * Assembly "text_blt" routine can be called directly because
+ * The assembly "text_blt" routine can be called directly because
  * it uses line-A variables which VDI just sets up before
  * calling it.
  *
  * Neochrome Master and old GFA programs can use all of them,
  * and many (even new) freeware games can still use bitblt.
  *
- * It's probably safe to run line-A using programs only in (1-4 plane)
+ * It's probably only safe to run line-A-using programs in (1-4 plane)
  * ST/e modes.  Such programs can e.g. leave too little space for
  * sprite backup buffer in higher resolutions.
  */

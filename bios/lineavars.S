@@ -324,7 +324,7 @@ _DESTY:         .ds.w   1               // upper left of destination on screen
 _DELX:          .ds.w   1
 _DELY:          .ds.w   1               // width and height of character
 _FBASE:         .ds.l   1               // pointer to font data
-_FWIDTH:        .ds.w   1               // offset,segment and form with of font
+_FWIDTH:        .ds.w   1               // width of font form (in bytes)
 _STYLE:         .ds.w   1               // special effects
 _LITEMASK:      .ds.w   1               // special effects
 _SKEWMASK:      .ds.w   1               // special effects
@@ -338,4 +338,4 @@ _scrtchp:       .ds.l   1               // pointer to base of scratch buffer
 _scrpt2:        .ds.w   1               // large buffer base offset
 _TEXT_BG:       .ds.w   1               // text background color
 _COPYTRAN:      .ds.w   1               // Flag for Copy-raster-form (<>0 = Transparent)
-_FILL_ABORT:    .ds.l   1               // Adress of Routine for Test of break of contour fill function
+_FILL_ABORT:    .ds.l   1               // Address of Routine for testing break out of contourfill function

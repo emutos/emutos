@@ -142,7 +142,7 @@ void detect_dmasound(void)
     /* Then detect advanced Falcon DMA sound */
     if (has_dmasound)
     {
-        /* Warning: The Falcon registers below GPx does not exist on STe/TT
+        /* Warning: The Falcon registers below GPx do not exist on STe/TT
          * but they don't cause a bus error. */
         has_falcon_dmasound = check_read_byte((long)&DMASOUND->gpx_data_port);
     }

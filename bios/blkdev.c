@@ -385,7 +385,7 @@ static LONG blkdev_rwabs(WORD rw, UBYTE *buf, WORD cnt, WORD recnr, WORD dev, LO
         lcount *= sectors;
         lrecnr *= sectors;
 
-        /* check if the count does fit to this partition */
+        /* check if the count fits into this partition */
         if ((lrecnr < 0) || (blkdev[dev].size > 0
                              && (lrecnr + lcount) >= blkdev[dev].size))
             return ESECNF;  /* sector not found */
@@ -647,10 +647,11 @@ static LONG blkdev_mediach(WORD dev)
 /**
  * blkdev_drvmap - Read drive bitmap
  *
- * Returns a long containing a bit map of logical drives on  the system,
+ * Returns a long containing a bit map of logical drives on the system,
  * with bit 0, the least significant bit, corresponding to drive A.
  * Note that if the BIOS supports logical drives A and B on a single
- * physical drive, it should return both bits set if a floppy is present.
+ * physical drive, it should return both bits set if a floppy drive is
+ * present.
  */
 
 LONG blkdev_drvmap(void)

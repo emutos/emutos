@@ -59,7 +59,7 @@ _panic:
         // magic value
         move.l  #0x12345678,_proc_lives
 #endif
-        // at that time, we did not alter the stack, to we can jump to the
+        // at this time, we have not altered the stack, so we can jump to the
         // C routine directly in kprint.c
         jmp     _dopanic
 

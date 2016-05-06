@@ -30,7 +30,7 @@ const BYTE shift_offset[9] = {0, 3, 2, 0, 1, 0, 0, 0, 0};
 extern MCS mouse_cursor_save;       /* in linea variable area */
 static MCS ext_mouse_cursor_save;   /* use for v_planes > 4 */
 
-MCS *mcs_ptr;   /* ptr to current mouse cursor save area , based on v_planes */
+MCS *mcs_ptr;   /* ptr to current mouse cursor save area, based on v_planes */
 
 /*
  * linea_init - init linea variables

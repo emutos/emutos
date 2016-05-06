@@ -363,7 +363,7 @@ static long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
 /*=========================================================================*/
 
 /* EmuTOS' XHDI cookie points to _xhdi_vec implemented in bios/natfeat.S.
- * It backups all the registers according to the XHDI specification,
+ * It backs up all the registers according to the XHDI specification,
  * then calls the xhdi_handler() C implementation below.
  */
 long xhdi_handler(UWORD *stack)

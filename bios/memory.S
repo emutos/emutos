@@ -272,7 +272,7 @@ test_256k:
 
         /* test the presence of a 512k bank config */
 test_512k:
-        beq.s   bank_test_end           // There are a memory loop in the pevious test ! -> D6=0x0 - 256k bank
+        beq.s   bank_test_end           // There is a memory loop in the previous test ! -> D6=0x0 - 256k bank
 
         movea.l #0x80008,a0             // 512k test
         lea     test_2m,a5              // return point of test pattern
@@ -281,10 +281,10 @@ test_512k:
 
         /* test the presence of a 2M bank config */
 test_2m:
-        beq.s   bank_test_end_512k      // There are a memory loop in the pevious test -> D6=0x4 - 512K bank
+        beq.s   bank_test_end_512k      // There is a memory loop in the previous test -> D6=0x4 - 512K bank
 
-        /* This the last test. in previous tests (256k&512k) we didn't found any memory loop.
-           Here we are testing if there a 2Mb simm (full back memory size) or nothing. */
+        /* This is the last test. In previous tests (256k&512k) we didn't find any memory loop.
+           Here we are testing if there a 2Mb simm (full bank memory size) or nothing. */
 
         movea.l #0x00008,a0             // 0kb/2m test
         lea     last_return,a5          // return point of test pattern
@@ -311,8 +311,8 @@ bank_test_end_512k:
 bank_test_end:
         add.l   d4,d5                   // compute total memory size
         sub.l   #0x200000,d1            // next bank 0
-        beq.s   test_256k               // already done ?   -> no start the tests for the bank 0
-                                        // in the case this test is the end.
+        beq.s   test_256k               // already done ?   -> no start the tests for bank 0
+                                        // in this case this test is the end.
 
         // Set the final MMU config
         move.b  d6,0xffff8001.w         // set hw memory config (reg 0xffff8001 - memorycontroller)
@@ -367,7 +367,7 @@ loop_extra_stram:
         bra.s   loop_extra_stram
 detect_extra_stram_end:
 
-        /* Some emulators do not emulator the behaviour of memory banks
+        /* Some emulators do not emulate the behaviour of memory banks
          * so we end up here with a bad value in d5 ... let's do a
          * last sanity check whether the memory is really usable: */
         move.l  #0xff0055aa,d0          // Test pattern
@@ -531,17 +531,17 @@ stram_detected:
         tst.w   d0
         beq     setramtop
 
-        /* Check wether we are really on a 32 bit machine or if we warp around: */
+        /* Check whether we are really on a 32 bit machine or if we wrap around: */
         lea     0x400.w,a0
         lea     0x1000400,a3
         move.l  #0x12345678,d0
         move.l  d0,(a0)
         clr.l   (a3)
-        cmp.l   (a0),d0                 // Value destroyed => Warp around?
+        cmp.l   (a0),d0                 // Value destroyed => Wrap around?
         bne     setramtop               // yes, skip fast ram check
         clr.l   (a0)
 
-        /* No warp around detected, let's scan for FastRAM: */
+        /* No wrap around detected, let's scan for FastRAM: */
         lea     0x1000000, a3           // start from 16MB boundary
         move.l  #1024*1024, d3          // test by blocks of 1MB size
 loop:
@@ -550,7 +550,7 @@ loop:
         // Currently, the BDOS memory management functions handle sizes
         // as signed long integers. So limit detection to the positive range.
         // We thereby limit FastRAM support to 2032 MB.
-        // This should be enough for all most cases, anyway.
+        // This should be enough for most cases, anyway.
         move.l  a0,d0
         bmi.s   setramtop
 

@@ -378,7 +378,7 @@ static int atari_partition(UWORD unit,LONG *devices_available)
 
     /* check for DOS byteswapped master boot record.
      * this is enabled on IDE units only,
-     * because other media do not suffer of that problem.
+     * because other media do not suffer from that problem.
      */
     if (IS_IDE_DEVICE(major) && mbr->bootsig == 0xaa55) {
         KINFO(("DOS MBR byteswapped signature detected: enabling byteswap\n"));

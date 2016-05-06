@@ -333,7 +333,7 @@ int has_megartc;
  * the structure of the registers in the MegaST RTC (an RP5C15)
  *
  * there are two banks of registers, selectable via a bit in the mode register.
- * bank0 is used for most functions; bank2 contains the alarm registers (not
+ * bank0 is used for most functions; bank1 contains the alarm registers (not
  * useful in the MegaST since the ALARM output pin is not connected) and some
  * other miscellaneous functions.
  */
@@ -443,7 +443,7 @@ void detect_megartc(void)
  *
  * Note:just like TOS, reads the registers twice, and returns only
  * when the two reads obtain the same values.
- * This is because the MegaRTC clock is a very slow chip (32768 kHz)
+ * This is because the MegaRTC clock is a very slow chip (32.768 kHz)
  * and presumably the carry is not reported instantly when the
  * time changes!!! (this is LVL interpretation, any other reason
  * is welcome.)

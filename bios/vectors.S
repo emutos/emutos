@@ -238,8 +238,8 @@ any_vec:
  * then. It also provides a simple vq_gdos call and the "d0=-1" query function
  * that returns the dispatcher's address.
  *
- * Note that this function does not care for AES calls since the AES later
- * hook into the trap-2 vector.
+ * Note that this function does not care about AES calls since the AES later
+ * hooks into the trap-2 vector itself.
  *
  */
 
@@ -609,9 +609,9 @@ _int_illegal:
         movem.l d0/a0,-(sp)             // saving d0 and a0 while we test
         movea.l 10(sp),a0               // the offending address
         move.w  (a0),d0                 // the offending instruction
-        andi.w  #0xffc0,d0              // isolate move from SR opcode
+        andi.w  #0xffc0,d0              // isolate move from CCR opcode
         cmpi.w  #0x42c0,d0              // we don't care where "To" was
-        bne     ii_back                 // Not a MOVE SR,XX instruction
+        bne     ii_back                 // Not a MOVE CCR,XX instruction
 
         andi.w  #0xfdff,(a0)            // make it MOVE SR,XX
         movem.l (sp)+,d0/a0
@@ -626,7 +626,7 @@ ii_back:
 /*
  * _int_priv - privileged instruction handler
  *
- * Convert a priviledged 'MOVE SR,...' to 'MOVE CCR,...'
+ * Convert a privileged 'MOVE SR,...' to 'MOVE CCR,...'
  * (see bios/processor.h for the full story)
  */
 
@@ -731,7 +731,7 @@ bx_nolongframe:
 bx_sp_ok:
         moveq   #0,d0           // clear d0 (use d0 like the original TOS)
         move.w  (sp)+,d0        // remove the function number from stack
-        cmp.w   d1,d0           // Higher, than highest number?
+        cmp.w   d1,d0           // Higher than highest number?
         bhs.s   bx_ret_exc
         move.l  d0,d1           // if not implemented, returns the func number
         add.l   d1,d1           // indirection function table is 1 LW per
@@ -846,7 +846,7 @@ _just_rts:
 
 
 /*
- * just_rte - just rte for divide by zero
+ * just_rte - just rte for e.g. divide by zero on 680x0 systems
  */
 
 _just_rte:

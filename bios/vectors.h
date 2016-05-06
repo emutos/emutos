@@ -55,7 +55,7 @@ extern WORD trap_save_area[];
 /* 680x0 exception vectors */
 #define VEC_ILLEGAL (*(volatile PFVOID*)0x10) /* illegal instruction vector */
 #define VEC_DIVNULL (*(volatile PFVOID*)0x14) /* division by zero exception vector */
-#define VEC_PRIVLGE (*(volatile PFVOID*)0x20) /* priviledge exception vector */
+#define VEC_PRIVLGE (*(volatile PFVOID*)0x20) /* privilege exception vector */
 #define VEC_LINEA   (*(volatile PFVOID*)0x28) /* LineA exception vector */
 #define VEC_LEVEL1  (*(volatile PFVOID*)0x64) /* Level 1 interrupt vector */
 #define VEC_LEVEL2  (*(volatile PFVOID*)0x68) /* Level 2 interrupt vector */

@@ -97,7 +97,7 @@ int has_nf_shutdown(void)
     return nfid_shutdown > 0;
 }
 
-/* load a new OS kernel into the memory to 'addr' ('size' bytes available) */
+/* load a new OS kernel into memory at 'addr' ('size' bytes available) */
 long nf_bootstrap(char *addr, long size)
 {
     if(hasNF) {
@@ -125,7 +125,7 @@ char nf_getbootdrive(void)
     return 0;
 }
 
-/* get the boot drive number */
+/* get the bootstrap arguments */
 long nf_getbootstrap_args(char *addr, long size)
 {
     if(hasNF) {

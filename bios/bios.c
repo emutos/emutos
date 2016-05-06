@@ -132,8 +132,8 @@ static void vecs_init(void)
     /* On ColdFire, when a zero divide exception occurs, the PC value in the
      * exception frame points to the offending instruction, not the next one.
      * If we put a simple rte in the exception handler, this will result in
-     * and endless loop.
-     * New ColdFire programs are supposed to be clean and and avoid zero
+     * an endless loop.
+     * New ColdFire programs are supposed to be clean and avoid zero
      * divides. So we keep the default panic() behaviour in such case. */
 #else
     /* Original TOS cowardly ignores integer divide by zero. */
@@ -152,14 +152,14 @@ static void vecs_init(void)
      * will be emulated by a specific emulation layer loaded later. */
 #else
     if (longframe) {
-        /* On 68010+, "move from sr" called from the user mode cause a
+        /* On 68010+, "move from sr" called from user mode causes a
          * privilege violation. This instruction must be emulated for
-         * compatibility with the 68000 processors. */
+         * compatibility with 68000 processors. */
         VEC_PRIVLGE = int_priv;
     } else {
-        /* On 68000, "move from ccr" is unsupported and cause an illegal
-         * exception. This instruction must be emulated for compatibility
-         * with higher processors. */
+        /* On 68000, "move from ccr" is unsupported and causes an illegal
+         * instruction exception. This instruction must be emulated for
+         * compatibility with higher processors. */
         VEC_ILLEGAL = int_illegal;
     }
 #endif
@@ -474,7 +474,7 @@ static void run_reset_resident(void)
  *
  * Skip this if user holds the Control key down.
  *
- * Note that the GEMDOS already created a default basepage so it is save
+ * Note that GEMDOS already created a default basepage so it is safe
  * to use GEMDOS calls here!
  */
 
@@ -524,7 +524,7 @@ static void autoexec(void)
             run_auto_program(dta.name);
 
             /* Setdta. BetaDOS corrupted the AUTO load if the Setdta
-             * not here again */
+             * not repeated here */
             trap1( 0x1a, &dta);
         }
 
@@ -617,7 +617,7 @@ void biosmain(void)
     }
 #endif
 
-    autoexec();                 /* autoexec Prgs from AUTO folder */
+    autoexec();                 /* autoexec PRGs from AUTO folder */
 
 /*    env[0]='\0';               - clear environment string */
 
@@ -942,7 +942,7 @@ static LONG bios_8(WORD handle)
 
 
 /**
- * bios_9 - (mediach) See, if floppy has changed
+ * bios_9 - (mediach) See if floppy has changed
  *
  * Returns media change status for specified drive in D0.L:
  *   0  Media definitely has not changed
@@ -966,10 +966,11 @@ static LONG bios_9(WORD drv)
 /**
  * bios_a - (drvmap) Read drive bitmap
  *
- * Returns a long containing a bit map of logical drives on  the system,
+ * Returns a long containing a bit map of logical drives on the system,
  * with bit 0, the least significant bit, corresponding to drive A.
  * Note that if the BIOS supports logical drives A and B on a single
- * physical drive, it should return both bits set if a floppy is present.
+ * physical drive, it should return both bits set if a floppy drive is
+ * present.
  */
 
 LONG drvmap(void)

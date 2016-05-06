@@ -12,11 +12,11 @@
 
 /*
  * The country codes were defined by Atari. They do not need to be contiguous.
- * They are used as country identifier in the ROM header.
+ * They are used as the country identifier in the ROM header.
  * They are also used in NVRAM to select the UI language and keyboard layout.
  */
 
-/* these are documented in the compendium */
+/* these are documented in the Compendium */
 #define COUNTRY_US  0   /* USA */
 #define COUNTRY_DE  1   /* Germany */
 #define COUNTRY_FR  2   /* France */

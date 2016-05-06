@@ -43,7 +43,7 @@ struct cookie {
 #define COOKIE_MCF      0x5f4d4346L
 
 /*
- * values of MCH cookie
+ * values of _MCH cookie
  */
 
 #define MCH_NOHARD  0xffffffffL /* No ST-compatible hardware */
@@ -56,7 +56,7 @@ struct cookie {
 #define MCH_ARANYM  0x00050000L
 
 /*
- * value of FDC cookie
+ * value of _FDC cookie
  */
 
 #define FDC_0ATC    0x00415443L

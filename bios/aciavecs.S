@@ -33,7 +33,7 @@
 //  will be called, as appropriate by midisys or ikbdsys with the
 //  contents of the ACIA data register in d0.
 //- statvec, mousevec, clockvec, and joyvec all are called with
-//  the address of the packet in register A0.
+//  the address of the packet in register a0.
 //- midisys and ikbdsys are called by the MFP ACIA interrupt handler
 //  when a character is ready to be read from either the midi or
 //  keyboard ports.
@@ -56,7 +56,7 @@
 //  currently being retrieved. In that case, kbdlength represents the number
 //  of remaining bytes to retrieve that are part of an IKBD packet."
 
-/* Known differences between this and the TOS:
+/* Known differences between this and Atari TOS:
  *
  * a) Although this doesn't appear to be documented, the TOS setups the
  * following registers before entering vectors ikbdsys and midisys:
@@ -70,12 +70,12 @@
  * packets, whereas TOS uses five different buffers:
  *   statvec, mousevec (absolute), mousevec (relative), clockvec, joyvec.
  *
- * c) EmuTOS currently does not check errors at all. The TOS checks the
+ * c) EmuTOS currently does not check errors at all. Atari TOS checks the
  * following errors:
  *  - if an interrupt request was received and no full byte is ready to be
- *    read, then the TOS jumps to the error vector;
+ *    read, then TOS jumps to the error vector;
  *  - if a byte was read but an overrun occurred, then after having
- *    correctly processed the received byte, the TOS reads the data register
+ *    correctly processed the received byte, TOS reads the data register
  *    again, then jumps to the error vector.
  */
 
@@ -123,7 +123,7 @@ midiibufhi:     .ds.w   1
 
 // ==== KBDVBASE =============================================================
 // This is now the table of routines for managing midi and keyboard data
-// in packets from IKBD (shown by A0 und 4(sp))
+// in packets from IKBD (shown by a0 and 4(sp))
 
 _mousexvec:     .ds.l   1       // mouse-routine for additional buttons
 kbdvec:         .ds.l   1       // must be right before _kbdvecs
@@ -475,7 +475,7 @@ kbd_clock:
 #endif
 
 // Joystick support is special. The buffer passed to routine joyvec
-// will, in any case, contain (package header, joystick 0, joystick 1)
+// will, in all cases, contain (package header, joystick 0, joystick 1)
 // so for each kind of package we copy this info into a separate joybuf.
 
 kbd_joys:

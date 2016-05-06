@@ -150,7 +150,7 @@ ascii_out (int ch)
  * bottom/right cell x,y, inclusive.  Routine assumes top/left x is
  * even and bottom/right x is odd for cell-word alignment. This is,
  * because this routine is heavily optimized for speed, by always
- * blanking as much space as possible in one rush.
+ * blanking as much space as possible in one go.
  *
  * in:
  *   topx - top/left cell x position (must be even)
@@ -208,7 +208,7 @@ blank_out (int topx, int topy, int botx, int boty)
         }
     }
     else {
-        /* Monochome mode */
+        /* Monochrome mode */
         UWORD pl;               /* bits on screen for current plane */
 
         /* set the WORD for plane 0 */
@@ -285,8 +285,8 @@ cell_addr(int x, int y)
  *
  *
  * This routine performs a byte aligned block transfer for the purpose of
- * manipulating monospaced byte-wide text. the routine maps an single
- * plane arbitrarilly long byte-wide image to a multi-plane bit map.
+ * manipulating monospaced byte-wide text. the routine maps a single-plane,
+ * arbitrarily-long byte-wide image to a multi-plane bit map.
  * all transfers are byte aligned.
  *
  * in:
@@ -309,7 +309,7 @@ cell_xfer(UBYTE * src, UBYTE * dst)
     fnt_wr = v_fnt_wr;
     line_wr = v_lin_wr;
 
-    /* check for reversed foreground  and background colors */
+    /* check for reversed foreground and background colors */
     if ( v_stat_0 & M_REVID ) {
         fg = v_col_bg;
         bg = v_col_fg;
@@ -444,9 +444,9 @@ move_cursor(int x, int y)
 /*
  * neg_cell - negates
  *
- * This routine negates the contents of an arbitrarily tall byte wide cell
- * composed of an arbitrary number of (atari styled) bit-planes.
- * Cursor display can be accomplished via this procedure. since a second
+ * This routine negates the contents of an arbitrarily-tall byte-wide cell
+ * composed of an arbitrary number of (Atari-style) bit-planes.
+ * Cursor display can be accomplished via this procedure.  Since a second
  * negation restores the original cell condition, there is no need to save
  * the contents beneath the cursor block.
  *
@@ -482,8 +482,8 @@ neg_cell(UBYTE * cell)
 /*
  * invert_cell - negates the cells bits
  *
- * This routine negates the contents of an arbitrarily tall byte wide cell
- * composed of an arbitrary number of (atari styled) bit-planes.
+ * This routine negates the contents of an arbitrarily-tall byte-wide cell
+ * composed of an arbitrary number of (Atari-style) bit-planes.
  *
  * Wrapper for neg_cell().
  *
@@ -518,7 +518,7 @@ static BOOL next_cell(void)
         if ( !( v_stat_0 & M_CEOL ) ) {
             /* overwrite in effect */
             return 0;                   /* no wrap condition exists */
-                                        /* dont change cell parameters */
+                                        /* don't change cell parameters */
         }
 
         /* call carriage return routine */
@@ -585,7 +585,7 @@ scroll_up(int top_line)
 
 
 /*
- * scroll_down - Scroll (partitially) downwards
+ * scroll_down - Scroll (partially) downwards
  */
 
 void

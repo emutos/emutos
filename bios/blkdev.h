@@ -123,7 +123,7 @@ LONG call_etv_critic(WORD error,WORD device);   /* in vectors.S */
 #define BDM_WP_HARD            0x20    /* write-protected partition */
 
 
-/* unified block device identificator - partitially stolen from MiNT, hehe */
+/* unified block device identificator - partially stolen from MiNT, hehe */
 
 struct _blkdev
 {

@@ -381,7 +381,7 @@ static ULONG xbios_f(WORD speed, WORD flowctl, WORD ucr, WORD rsr, WORD tsr, WOR
  *
  * Returns a pointer to the beginning of a keytab structure. Each pointer
  * in the structure should point to a table 128 bytes in length. A scancode
- * is converted to Ascii by indexing into the table and taking the byte there.
+ * is converted to ascii by indexing into the table and taking the byte there.
  */
 
 #if DBG_XBIOS
@@ -431,7 +431,7 @@ static LONG xbios_11(void)
  *
  * buf       - points to a 512-byte buffer (which may contain garbage,
  *             or already contain a boot sector image).
- * serialno  - a serial number to stamp into the boot sector. If serialno' is -1,
+ * serialno  - a serial number to stamp into the boot sector. If 'serialno' is -1,
  *             the boot sector's serial number is not changed. If 'serialno'
  *             is greater than or equal to $01000000, a random serial number
  *             is generated and placed in the boot sector.
@@ -491,7 +491,7 @@ static WORD xbios_15(WORD function, WORD operand)
 
 
 /*
- * xbios_16 - (settime) Sets the intelligent keyboard's the time and date.
+ * xbios_16 - (settime) Sets the intelligent keyboard's time and date.
  *
  * 'datetime' is a 32-bit DOS-format date and time (time in the low word,
  * date in the high word).
@@ -599,7 +599,7 @@ static BYTE xbios_1c(BYTE data, WORD regno)
 
 
 /*
- * xbios_1d - (offgibit) Atomically set a bit in the PORT A register to zero.
+ * xbios_1d - (offgibit) Atomically set a bit in the PSG PORT A register to zero.
  */
 
 #if DBG_XBIOS
@@ -613,7 +613,7 @@ static void xbios_1d(WORD bitno)
 
 
 /*
- * xbios_1e - (ongibit) Atomically set a bit in the PORT A register to one
+ * xbios_1e - (ongibit) Atomically set a bit in the PSG PORT A register to one
  */
 
 #if DBG_XBIOS
@@ -663,7 +663,7 @@ static void xbios_20(LONG ptr)
  * xbios_21 - (setprt) Set/get printer configuration byte.
  *
  * If 'config' is -1 ($FFFF) return the current printer configuration
- * byte. Otherwise set the byte and return it's old value.
+ * byte. Otherwise set the byte and return its old value.
  */
 
 /* unimplemented */
@@ -728,7 +728,7 @@ static void xbios_25(void)
  * xbios_26 - (supexec)
  *
  * 'codeptr' points to a piece of code, ending in an RTS, that is
- * executed in supervisor mode. The idential code cannot perform
+ * executed in supervisor mode. The executed code cannot perform
  * BIOS or GEMDOS calls. This function is meant to allow programs
  * to hack hardware and protected locations without having to fiddle
  * with GEMDOS get/set supervisor mode call.

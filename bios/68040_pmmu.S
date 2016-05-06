@@ -208,19 +208,19 @@ create_table:   movem.l d0-a6,-(sp)
                 swap    d5
                 and.l   #0b111111100,d5
 
-        //Get root-table descriptor, contains base-address of the poiner table to use.
+        //Get root-table descriptor, contains base-address of the pointer table to use.
                 move.l  (a0,d4.l),d6
 
-        //Check if the descriptor is valid. (or resident).
+        //Check if the descriptor is valid (or resident).
                 move.b  d6,d7
                 and.b   #2,d7                   //Check udp field.
                 bne.s   .pnttab_there           //This descriptor is valid
         //The pointer table has to be created..
                 bsr     create_pointertable
 
-        //The root descriptor is the base address to the poitner table.
-        //Now get the pointer table descriptor, using the intex in D5
-.pnttab_there:  and.l   #msk_pnttab_addr,d6     //Maks out the pointer table base address in root descriptor
+        //The root descriptor is the base address of the pointer table.
+        //Now get the pointer table descriptor, using the index in D5
+.pnttab_there:  and.l   #msk_pnttab_addr,d6     //Mask out the pointer table base address in root descriptor
                 move.l  d6,a1                   //Pointer table base address in A1
                 move.l  (a1,d5.l),d6            //Get pointer table descriptor out of the pointer table
 
@@ -239,7 +239,7 @@ create_table:   movem.l d0-a6,-(sp)
                 and.l   #msk_4kpt_addr,d6
                 move.l  d6,a2                   //A2 = Base address of page table
                 move.l  d0,d6                   //We need the index into the page table,
-                                                //taken from the logial address
+                                                //taken from the logical address
 
         //Bits 12 - 17 of the logical address contains the page table index for 4K pages.
                 lsl.l   #6,d6                   //Shift bit 12 to bit 18 (into high word + 2 to mul by 4)
@@ -250,14 +250,14 @@ create_table:   movem.l d0-a6,-(sp)
                 bne.s   .overlap_error          //Yes, we can't allow that.
 
         //Now we can setup this page descriptor to point to the desired physical address
-        //and or in the desired descriptor bits/modes (cache mode and such)
+        //and OR in the desired descriptor bits/modes (cache mode and such)
                 move.l  d1,d4                   //D1 contains the physical address
                 and.l   #msk_4kpd_paddr,d4      //Mask off excessive bits
                 or.b    #1,d4                   //Make descriptor valid
                 or.w    d3,d4                   //OR in the mode
                 move.l  d4,(a2,d6.l)            //Store this descriptor
 
-        //Now we add the size of the page to the logical/phyical addresses
+        //Now we add the size of the page to the logical/physical addresses
         //and subtract page size from size of block to setup in this pass.
                 add.l   #1024*4,d0              //Next logical address
                 add.l   #1024*4,d1              //Next physical address
@@ -272,7 +272,7 @@ create_table:   movem.l d0-a6,-(sp)
                 movem.l (sp)+,d0-a6
                 rts
 
-//Create a new pagetable (pointer leve descriptor), clear it and return the
+//Create a new pagetable (pointer level descriptor), clear it and return the
 //address in D6 and store address in the pointer table at (a1,d5.l)
 //      A0 = root table
 //      A1 = pointer table
@@ -284,14 +284,14 @@ create_pagetable:
 
         //Create 4k page table
 .4kp:           and.l   #~msk_4kpt_addr,d6              //Already on a "size of 4K page-table" boundary?
-                beq.s   .4kp_nf_ok                      //,Yes
+                beq.s   .4kp_nf_ok                      //Yes
                 add.l   #(~msk_4kpt_addr)+1,d7          //Add size of page table..
                 and.l   #msk_4kpt_addr,d7               //..then align to size of pagetable.
 .4kp_nf_ok:     move.l  d7,d6                           //D6 = Base address of new page table
                 add.l   #(~msk_4kpt_addr)+1,d7          //Update the next_free pointer
                 move.l  d7,next_free                    //Save
                 move.l  d6,a2                           //A2 = Base address of new page table
-                or.b    #2,d6                           //Or in %10 in the PDT field
+                or.b    #2,d6                           //OR in %10 in the PDT field
                 move.l  d6,(a1,d5.l)                    //Store this descriptor in the pointer table (pointer level)
                 moveq   #(((~msk_4kpt_addr)+1)/4)-1,d7  //Size of page table / 4
 .4kp_clr_pt:    clr.l   (a2)+                           //Make sure all descriptors in the new page table are invalidated
