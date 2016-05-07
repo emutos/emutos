@@ -2,7 +2,7 @@
  * vdi_raster.c - Blitting routines
  *
  * Copyright 2002 Joachim Hoenig (blitter)
- * Copyright 2003-2015 The EmuTOS development team
+ * Copyright 2003-2016 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.

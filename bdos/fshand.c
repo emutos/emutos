@@ -2,7 +2,7 @@
  * fshand.c - file handle routines for the file system
  *
  * Copyright (c) 2001 Lineo, Inc.
- *               2014-2015 The EmuTOS development team
+ *               2014-2016 The EmuTOS development team
  *
  * Authors:
  *  SCC   Steve C. Cavender

@@ -1,7 +1,7 @@
 #
 # Makefile - Makefile fragment for building releases
 #
-# Copyright (c) 2011-2015 The EmuTOS development team.
+# Copyright (c) 2011-2016 The EmuTOS development team.
 #
 # Authors:
 #  VRI      Vincent Rivière

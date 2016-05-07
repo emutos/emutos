@@ -1,7 +1,7 @@
 /*
  * sd.c - SD/MMC card routines
  *
- * Copyright (c) 2013-2015 The EmuTOS development team
+ * Copyright (c) 2013-2016 The EmuTOS development team
  *
  * Authors:
  *  RFB   Roger Burrows

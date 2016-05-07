@@ -1,7 +1,7 @@
 /*
  * ide.h - Falcon IDE functions
  *
- * Copyright (c) 2011-2014 The EmuTOS development team
+ * Copyright (c) 2011-2016 The EmuTOS development team
  *
  * Authors:
  *  VRI   Vincent Rivière

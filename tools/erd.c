@@ -1,7 +1,7 @@
 /*
  *  erd: the EmuTOS Resource Decompiler
  *
- *  Copyright 2012-2015 Roger Burrows
+ *  Copyright 2012-2016 Roger Burrows
  *
  *  This program is licensed under the GNU General Public License.
  *  Please see LICENSE.TXT for details.

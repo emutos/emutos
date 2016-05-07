@@ -1,7 +1,7 @@
 /*
  * fdc.h - Western Digital 1772 Floppy Disk Controller
  *
- * Copyright (c) 2001 The EmuTOS development team
+ * Copyright (c) 2001-2016 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel

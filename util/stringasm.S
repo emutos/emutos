@@ -1,7 +1,7 @@
 /*
  * stringasm.S - simple implementation of <string.h>-like routines
  *
- * Copyright (C) 2002-2015 The EmuTOS development team
+ * Copyright (C) 2002-2016 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel

@@ -1,7 +1,7 @@
 /*
  * kprint.c - our own printf variants (mostly for debug purposes)
  *
- * Copyright (c) 2001-2015 The EmuTOS development team
+ * Copyright (c) 2001-2016 The EmuTOS development team
  *
  * Authors:
  *  MAD     Martin Doering

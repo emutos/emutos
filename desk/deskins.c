@@ -7,7 +7,7 @@
  *          . install disk
  *          . install application
  *
- *      Copyright 2002-2015 The EmuTOS development team
+ *      Copyright 2002-2016 The EmuTOS development team
  *
  *      This software is licenced under the GNU Public License.
  *      Please see LICENSE.TXT for further information.

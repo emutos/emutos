@@ -1,7 +1,7 @@
 /*
  *  biosmem.h - dumb bios-level memory management
  *
- * Copyright (c) 2002-2013 The EmuTOS development team
+ * Copyright (c) 2002-2016 The EmuTOS development team
  *
  * Authors:
  *  LVL    Laurent Vogel

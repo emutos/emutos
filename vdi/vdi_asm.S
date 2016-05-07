@@ -2,7 +2,7 @@
  * entry.S - Front end of the screen driver and mouse stuff
  *
  * Copyright 1999 Caldera, Inc. and Authors:
- * Copyright 2004-2013 The EmuTOS development team
+ * Copyright 2004-2016 The EmuTOS development team
  * Copyright      Steve Cavender
  *
  * This file is distributed under the GPL, version 2 or at your
