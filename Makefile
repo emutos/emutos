@@ -1168,7 +1168,7 @@ vdi/%_preprocessed.s: vdi/%.S
 
 NODEP += $(GENERATED_COLDFIRE_SOURCES)
 vdi/%_cf.S: vdi/%_preprocessed.s
-	cd $(<D) && $(PORTASM) $(PORTASMFLAGS) $(<F) -o $(@F)
+	cd $(<D) && $(PORTASM) $(PORTASMFLAGS) -o $(@F) $(<F)
 	sed -i $@ \
 		-e "s:\.section\t.bss,.*:.bss:g" \
 		-e "s:\( \|\t\)bsr\(  \|\..\):\1jbsr :g" \
