@@ -642,8 +642,8 @@ void biosmain(void)
     }
 
 #if CONF_WITH_SHUTDOWN
-	/* try to shutdown the machine / close the emulator */
-	shutdown();
+        /* try to shutdown the machine / close the emulator */
+        shutdown();
 #endif
 
     /* hide cursor */
