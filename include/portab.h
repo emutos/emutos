@@ -128,7 +128,7 @@ typedef void (*PFVOID)(void);
 #if __GNUC_PREREQ(3, 3)
 /* &a[0] degrades to a pointer: a different type from an array */
 # define __must_be_array(a) \
-    BUILD_BUG_ON_ZERO(__builtin_types_compatible_p(typeof(a), typeof(&a[0])))
+    BUILD_BUG_ON_ZERO(__builtin_types_compatible_p(__typeof__(a), __typeof__(&a[0])))
 #else
 # define __must_be_array(a) 0
 #endif
