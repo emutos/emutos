@@ -12,69 +12,65 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-2\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: bios/bios.c:525
-msgid "Please eject the floppy and hit RETURN"
-msgstr "Vysuòte prosím disketu a stisknìte RETURN"
-
-#: bios/bios.c:593
+#: bios/bios.c:652
 msgid ""
 "System halted!\n"
 msgstr ""
 "Systém zastaven!\n"
 
-#: bios/initinfo.c:165
+#: bios/initinfo.c:168
 msgid "GEMDOS drives"
 msgstr "Disky GEMDOSu"
 
-#: bios/initinfo.c:229
+#: bios/initinfo.c:232
 msgid "EmuTOS Version"
 msgstr "EmuTOS verze"
 
-#: bios/initinfo.c:231
+#: bios/initinfo.c:234
 msgid "CPU type"
 msgstr "Typ CPU"
 
-#: bios/initinfo.c:239
+#: bios/initinfo.c:242
 msgid "Machine"
 msgstr "Poèítaè"
 
-#: bios/initinfo.c:241
+#: bios/initinfo.c:244
 msgid "Free ST-RAM"
 msgstr "Volná ST-RAM"
 
-#: bios/initinfo.c:242 bios/initinfo.c:247
+#: bios/initinfo.c:245 bios/initinfo.c:250
 msgid "%ld KB"
 msgstr "%ld KB"
 
-#: bios/initinfo.c:246
+#: bios/initinfo.c:249
 msgid "Free FastRAM"
 msgstr "Volná FastRAM"
 
-#: bios/initinfo.c:254
+#: bios/initinfo.c:257
 msgid "Boot time"
 msgstr "Èas startu"
 
-#: bios/initinfo.c:260
+#: bios/initinfo.c:263
 msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "Podr¾ <Ctrl> a pøeskoè AUTO/ACC"
 
-#: bios/initinfo.c:263
+#: bios/initinfo.c:266
 msgid "Hold <Alternate> to skip HDD boot"
 msgstr "Podr¾ <Alt> k pøeskoèení HDD"
 
-#: bios/initinfo.c:266
+#: bios/initinfo.c:269
 msgid "Press key 'X' to boot from X:"
 msgstr "Pro start z disku X: stisknìte klávesu 'X'."
 
-#: bios/initinfo.c:269
+#: bios/initinfo.c:272
 msgid "Press <Esc> to run an early console"
 msgstr "Pro spu¹tìní brzké konzole stisknìte <Esc>."
 
-#: bios/initinfo.c:280
+#: bios/initinfo.c:283
 msgid " Hold <Shift> to pause this screen "
 msgstr " Podr¾ <Shift> pro pauzu obrazovky "
 
-#: bios/kprint.c:485
+#: bios/kprint.c:522
 msgid ""
 "\n"
 "*** Press any key to continue ***"
@@ -301,10 +297,6 @@ msgstr "Èas: __:__ __"
 msgid "Drive identifier: _:"
 msgstr "Oznaèení disku: _:"
 
-#: desk/desk_rsc.c:67
-msgid "Disk label: ___________"
-msgstr "Jmenovka disku: ___________"
-
 #: desk/desk_rsc.c:82
 msgid "Bytes used: __________"
 msgstr "Obsazeno: __________ B"
@@ -337,13 +329,9 @@ msgstr " Desk "
 msgid " File "
 msgstr " Soubor "
 
-#: desk/desk_rsc.c:252
+#: desk/desk_rsc.c:258
 msgid " Options "
 msgstr " Volby "
-
-#: desk/desk_rsc.c:258
-msgid " Arrange "
-msgstr " Uspoøádání "
 
 #: desk/desk_rsc.c:276
 msgid "  Desktop info..."
@@ -393,339 +381,339 @@ msgstr "  Spustit EmuCON  ^Z"
 msgid "  Shutdown        ^Q"
 msgstr "  Vypnout         ^Q"
 
-#: desk/desk_rsc.c:408
+#: desk/desk_rsc.c:456
 msgid "  Install disk drive..."
 msgstr "  Pøihlásit disk..."
 
-#: desk/desk_rsc.c:414
+#: desk/desk_rsc.c:462
 msgid "  Configure application... \007A"
 msgstr "  Nastavit aplikaci... \007A"
 
-#: desk/desk_rsc.c:420
+#: desk/desk_rsc.c:468
 msgid "------------------------------"
 msgstr "--------------------------"
 
-#: desk/desk_rsc.c:426
+#: desk/desk_rsc.c:474
 msgid "  Set preferences..."
 msgstr "  Nastavení..."
 
-#: desk/desk_rsc.c:432
+#: desk/desk_rsc.c:480
 msgid "  Save desktop             \007V"
 msgstr "  Ulo¾it desktop       \007V"
 
-#: desk/desk_rsc.c:438
+#: desk/desk_rsc.c:486
 msgid "  Change resolution...     \007C"
 msgstr "  Zmìnit rozli¹ení...  \007C"
 
-#: desk/desk_rsc.c:456
+#: desk/desk_rsc.c:414
 msgid "-------------------"
 msgstr "-----------------"
 
-#: desk/desk_rsc.c:462
+#: desk/desk_rsc.c:420
 msgid "  Sort by name  \007N"
 msgstr "  Podle jména \007N"
 
-#: desk/desk_rsc.c:468
+#: desk/desk_rsc.c:426
 msgid "  Sort by type  \007P"
 msgstr "  Podle typu  \007P"
 
-#: desk/desk_rsc.c:474
+#: desk/desk_rsc.c:432
 msgid "  Sort by size  \007Z"
 msgstr "  Podle bytù  \007Z"
 
-#: desk/desk_rsc.c:480
+#: desk/desk_rsc.c:438
 msgid "  Sort by date  \007T"
 msgstr "  Podle data  \007T"
 
-#: desk/desk_rsc.c:537
+#: desk/desk_rsc.c:543
 msgid "Attribute:"
 msgstr "Atributy:"
 
-#: desk/desk_rsc.c:549
+#: desk/desk_rsc.c:555
 msgid "Read/Write"
 msgstr "Ètení/zápis"
 
-#: desk/desk_rsc.c:555
+#: desk/desk_rsc.c:561
 msgid "Read-Only"
 msgstr "Jen ètení"
 
-#: desk/desk_rsc.c:582
+#: desk/desk_rsc.c:588
 msgid "DISK INFORMATION"
 msgstr "INFORMACE O DISKU"
 
-#: desk/desk_rsc.c:657
+#: desk/desk_rsc.c:663
 msgid "Version"
 msgstr "Verze"
 
-#: desk/desk_rsc.c:669
+#: desk/desk_rsc.c:675
 msgid "Copyright (c) by"
 msgstr "Copyright (c)"
 
-#: desk/desk_rsc.c:675
+#: desk/desk_rsc.c:681
 msgid "The EmuTOS development team"
 msgstr "Vývojový tým EmuTOSu"
 
-#: desk/desk_rsc.c:687
+#: desk/desk_rsc.c:693
 msgid "Based on 'GPLed' sources"
 msgstr "Zalo¾eno na 'GPL' zdrojích"
 
-#: desk/desk_rsc.c:717
+#: desk/desk_rsc.c:723
 msgid "EmuTOS is distributed under the GPL"
 msgstr "EmuTOS je ¹íøen pod licencí GPL"
 
-#: desk/desk_rsc.c:729
+#: desk/desk_rsc.c:735
 msgid "See doc\\license.txt for details"
 msgstr "Detaily viz doc\\license.txt"
 
-#: desk/desk_rsc.c:744
+#: desk/desk_rsc.c:750
 msgid "OPEN APPLICATION"
 msgstr "SPUSTIT APLIKACI"
 
-#: desk/desk_rsc.c:756
+#: desk/desk_rsc.c:762
 msgid "Parameters:"
 msgstr "Parametry:"
 
-#: desk/desk_rsc.c:789
+#: desk/desk_rsc.c:795
 msgid "INSTALL DISK DRIVE"
 msgstr "PØIHLÁSIT DISK"
 
-#: desk/desk_rsc.c:807
+#: desk/desk_rsc.c:813
 msgid "Disk type:"
 msgstr "Typ disku:"
 
-#: desk/desk_rsc.c:819
+#: desk/desk_rsc.c:825
 msgid "Floppy"
 msgstr "Disketa"
 
-#: desk/desk_rsc.c:825
+#: desk/desk_rsc.c:831
 msgid "Hard"
 msgstr "Harddisk"
 
-#: desk/desk_rsc.c:858
+#: desk/desk_rsc.c:864
 msgid "CONFIGURE APPLICATION"
 msgstr "NASTAVENÍ APLIKACE"
 
-#: desk/desk_rsc.c:870
+#: desk/desk_rsc.c:876
 msgid "Document types:"
 msgstr "Typy dokumentù:"
 
-#: desk/desk_rsc.c:924
+#: desk/desk_rsc.c:930
 msgid "Application type:"
 msgstr "Typ aplikace:"
 
-#: desk/desk_rsc.c:954
+#: desk/desk_rsc.c:960
 msgid "Icon type:"
 msgstr "Typ ikony:"
 
-#: desk/desk_rsc.c:1080
+#: desk/desk_rsc.c:1086
 msgid "NAME CONFLICT DURING COPY"
 msgstr "KONFLIKT JMEN BÌHEM KOPÍROVÁNÍ"
 
-#: desk/desk_rsc.c:1104
+#: desk/desk_rsc.c:1110
 msgid "Skip"
 msgstr "Pøeskoèit"
 
-#: desk/desk_rsc.c:1110
+#: desk/desk_rsc.c:1116
 msgid "Stop"
 msgstr "Zastavit"
 
-#: desk/desk_rsc.c:1125
+#: desk/desk_rsc.c:1131
 msgid "NEW FOLDER"
 msgstr "NOVÝ ADRESÁØ"
 
-#: desk/desk_rsc.c:1158
+#: desk/desk_rsc.c:1164
 msgid "SET PREFERENCES"
 msgstr "NASTAVENÍ"
 
-#: desk/desk_rsc.c:1164
+#: desk/desk_rsc.c:1170
 msgid "Confirm deletes?"
 msgstr "Potvrdit mazání?"
 
-#: desk/desk_rsc.c:1188
+#: desk/desk_rsc.c:1194
 msgid "Confirm copies?"
 msgstr "Potvrdit kopírování?"
 
-#: desk/desk_rsc.c:1212
+#: desk/desk_rsc.c:1218
 msgid "Confirm overwrites?"
 msgstr "Potvrdit pøepis?"
 
-#: desk/desk_rsc.c:1236
+#: desk/desk_rsc.c:1242
 msgid "Double-click speed:"
 msgstr "Rychlost dvojkliku:"
 
-#: desk/desk_rsc.c:1284
+#: desk/desk_rsc.c:1290
 msgid "Click"
 msgstr "Kliknutí"
 
-#: desk/desk_rsc.c:1290
+#: desk/desk_rsc.c:1296
 msgid "No click"
 msgstr "Bez kliknutí"
 
-#: desk/desk_rsc.c:1296
+#: desk/desk_rsc.c:1302
 msgid "To drop down menus:"
 msgstr "Do padacího menu:"
 
-#: desk/desk_rsc.c:1302
+#: desk/desk_rsc.c:1308
 msgid "Sound effects:"
 msgstr "Zvukové efekty:"
 
-#: desk/desk_rsc.c:1314
+#: desk/desk_rsc.c:1320
 msgid "On"
 msgstr "Ano"
 
-#: desk/desk_rsc.c:1320
+#: desk/desk_rsc.c:1326
 msgid "Off"
 msgstr "Ne"
 
-#: desk/desk_rsc.c:1326
+#: desk/desk_rsc.c:1332
 msgid "Time format:"
 msgstr "Formát èasu:"
 
-#: desk/desk_rsc.c:1338 desk/desk_rsc.c:1368
+#: desk/desk_rsc.c:1344 desk/desk_rsc.c:1374
 msgid "Default"
 msgstr "Výchozí"
 
-#: desk/desk_rsc.c:1344
+#: desk/desk_rsc.c:1350
 msgid "12H"
 msgstr "12H"
 
-#: desk/desk_rsc.c:1350
+#: desk/desk_rsc.c:1356
 msgid "24H"
 msgstr "24H"
 
-#: desk/desk_rsc.c:1356
+#: desk/desk_rsc.c:1362
 msgid "Date format:"
 msgstr "Formát data:"
 
-#: desk/desk_rsc.c:1374
+#: desk/desk_rsc.c:1380
 msgid "MDY"
 msgstr "MDR"
 
-#: desk/desk_rsc.c:1380
+#: desk/desk_rsc.c:1386
 msgid "DMY"
 msgstr "DMR"
 
-#: desk/desk_rsc.c:1408 desk/desk_rsc.c:1471
+#: desk/desk_rsc.c:1414 desk/desk_rsc.c:1477
 msgid "SET SCREEN RESOLUTION"
 msgstr "ROZLI©ENÍ OBRAZOVKY"
 
-#: desk/desk_rsc.c:1420
+#: desk/desk_rsc.c:1426
 msgid "ST Low"
 msgstr "ST nízké"
 
-#: desk/desk_rsc.c:1426
+#: desk/desk_rsc.c:1432
 msgid "ST Medium"
 msgstr "ST støední"
 
-#: desk/desk_rsc.c:1432
+#: desk/desk_rsc.c:1438
 msgid "ST High"
 msgstr "ST vysoké"
 
-#: desk/desk_rsc.c:1438
+#: desk/desk_rsc.c:1444
 msgid "TT Low"
 msgstr "TT nízké"
 
-#: desk/desk_rsc.c:1444
+#: desk/desk_rsc.c:1450
 msgid "TT Medium"
 msgstr "TT støední"
 
-#: desk/desk_rsc.c:1591
+#: desk/desk_rsc.c:1597
 msgid "High"
 msgstr "Vysoké"
 
-#: desk/desk_rsc.c:1597
+#: desk/desk_rsc.c:1603
 msgid "Medium"
 msgstr "Støední"
 
-#: desk/desk_rsc.c:1603
+#: desk/desk_rsc.c:1609
 msgid "Low"
 msgstr "Nízké"
 
-#: desk/desk_rsc.c:1633
+#: desk/desk_rsc.c:1639
 msgid "ST Compatible"
 msgstr "ST kompatibilní"
 
-#: desk/desk_rsc.c:1672
+#: desk/desk_rsc.c:1678
 msgid "%ld bytes used in %d items."
 msgstr "%ld bytù v %d polo¾kách."
 
-#: desk/desk_rsc.c:1673
+#: desk/desk_rsc.c:1679
 msgid "  Show as icons \007S"
 msgstr "  Jako ikony  \007S"
 
-#: desk/desk_rsc.c:1674
+#: desk/desk_rsc.c:1680
 msgid "  Show as text  \007S"
 msgstr "  Jako text   \007S"
 
-#: desk/desk_rsc.c:1675
+#: desk/desk_rsc.c:1681
 msgid "Not available"
 msgstr "Není k dispozici"
 
-#: desk/desk_rsc.c:1676
+#: desk/desk_rsc.c:1682
 msgid "application"
 msgstr "aplikace"
 
-#: desk/desk_rsc.c:1677
+#: desk/desk_rsc.c:1683
 msgid "documents"
 msgstr "dokumenty"
 
-#: desk/desk_rsc.c:1678
+#: desk/desk_rsc.c:1684
 msgid "New Folder"
 msgstr "Nový adresáø"
 
-#: desk/desk_rsc.c:1679
+#: desk/desk_rsc.c:1685
 msgid "Disk Drives:"
 msgstr "Jednotky:"
 
-#: desk/desk_rsc.c:1680
+#: desk/desk_rsc.c:1686
 msgid "FILE INFORMATION"
 msgstr "INFORMACE O SOUBORU"
 
-#: desk/desk_rsc.c:1681
+#: desk/desk_rsc.c:1687
 msgid "FOLDER INFORMATION"
 msgstr "INFORMACE O ODRESÁØI"
 
-#: desk/desk_rsc.c:1682
+#: desk/desk_rsc.c:1688
 msgid "COPY FILE(S)"
 msgstr "KOPÍROVAT SOUBOR(Y)"
 
-#: desk/desk_rsc.c:1683
+#: desk/desk_rsc.c:1689
 msgid "MOVE FILE(S)"
 msgstr "PØESUNOUT SOUBOR(Y)"
 
-#: desk/desk_rsc.c:1684
+#: desk/desk_rsc.c:1690
 msgid "DELETE FILE(S)"
 msgstr "SMAZAT SOUBOR(Y)"
 
-#: desk/desk_rsc.c:1691
+#: desk/desk_rsc.c:1697
 msgid "DISK"
 msgstr "DISK"
 
-#: desk/desk_rsc.c:1692
+#: desk/desk_rsc.c:1698
 msgid "TRASH"
 msgstr "KO©"
 
-#: desk/desk_rsc.c:1693
+#: desk/desk_rsc.c:1699
 msgid "-More-"
 msgstr "-Pokraèování-"
 
-#: desk/desk_rsc.c:1694
+#: desk/desk_rsc.c:1700
 msgid "-End of file-"
 msgstr "-Konec souboru-"
 
-#: desk/desk_rsc.c:1695
+#: desk/desk_rsc.c:1701
 msgid "[2]["
 "Switch resolution?][Yes|No]"
 msgstr "[2]["
 "Zmìnit rozli¹ení?][Ano|Ne]"
 
-#: desk/desk_rsc.c:1696
+#: desk/desk_rsc.c:1702
 msgid "[2]["
 "Show this document?][Show|Cancel]"
 msgstr "[2]["
 "Zobrazit dokumet?][Zobrazit|Zru¹it]"
 
-#: desk/desk_rsc.c:1697
+#: desk/desk_rsc.c:1703
 msgid "[1]["
 "This document type has no|"
 "associated application.][  OK  ]"
@@ -733,7 +721,7 @@ msgstr "[1]["
 "Tento typ dokumentu nemá|"
 "asociovanou aplikaci.][  OK  ]"
 
-#: desk/desk_rsc.c:1700
+#: desk/desk_rsc.c:1706
 msgid "[1]["
 "The GEM Desktop has no more|"
 "available windows. Before you|"
@@ -745,7 +733,7 @@ msgstr "[1]["
 "zavøete nìkteré okno, které|"
 "právì nepou¾íváte.][  OK  ]"
 
-#: desk/desk_rsc.c:1707
+#: desk/desk_rsc.c:1713
 msgid "[3]["
 "Cannot find FORMAT.PRG|"
 "or FORMAT.TTP.][  OK  ]"
@@ -753,7 +741,7 @@ msgstr "[3]["
 "Nenalezen FORMAT.PRG|"
 "ani FORMAT.TTP.][  OK  ]"
 
-#: desk/desk_rsc.c:1710
+#: desk/desk_rsc.c:1716
 msgid "[3]["
 "Formatting will ERASE all|"
 "information on the disk in|"
@@ -767,7 +755,7 @@ msgstr "[3]["
 "vám nevadí ztráta v¹ech dat|"
 "na tomto disku.][  OK  |Zru¹it]"
 
-#: desk/desk_rsc.c:1719
+#: desk/desk_rsc.c:1725
 msgid "[3]["
 "You cannot copy a parent folder|"
 "into one of its child folders.][  OK  ]"
@@ -775,19 +763,19 @@ msgstr "[3]["
 "Není mo¾né zkopírovat nadøazený|"
 "adresáø do jeho podadresáøe.][  OK  ]"
 
-#: desk/desk_rsc.c:1722
+#: desk/desk_rsc.c:1728
 msgid "[3]["
 "Invalid copy operation.][  OK  ]"
 msgstr "[3]["
 "Neplatná operace kopírování.][  OK  ]"
 
-#: desk/desk_rsc.c:1723
+#: desk/desk_rsc.c:1729
 msgid "[2]["
 "Abort this operation?][  Yes  |  No  ]"
 msgstr "[2]["
 "Pøeru¹it operaci?][  Ano  |  Ne  ]"
 
-#: desk/desk_rsc.c:1724
+#: desk/desk_rsc.c:1730
 msgid "[3]["
 "If you are sure you want to|"
 "delete ALL the information on|"
@@ -800,7 +788,7 @@ msgstr "[3]["
 "v jednotce %c:, kliknìte na OK.|"
 "Jinak kliknìte na Zru¹it.][  OK  |Zru¹it]"
 
-#: desk/desk_rsc.c:1733
+#: desk/desk_rsc.c:1739
 msgid "[1]["
 "There is not enough space|"
 "available to configure this|"
@@ -814,7 +802,7 @@ msgstr "[1]["
 "jednu z døíve nastavených|"
 "aplikací.][  OK  ]"
 
-#: desk/desk_rsc.c:1742
+#: desk/desk_rsc.c:1748
 msgid "[2]["
 "You cannot create a folder|"
 "with that name. Please retry|"
@@ -824,7 +812,7 @@ msgstr "[2]["
 "s tímto jménem. Prosím zadejte|"
 "jiné jméno, nebo zru¹te.][Zru¹it|Znovu]"
 
-#: desk/desk_rsc.c:1747
+#: desk/desk_rsc.c:1753
 msgid "[1]["
 "This disk does not have enough|"
 "room for the information you|"
@@ -838,7 +826,7 @@ msgstr "[1]["
 "polo¾ky mohly ji¾ být na disk|"
 "zkopírovány.][  OK  ]"
 
-#: desk/desk_rsc.c:1756
+#: desk/desk_rsc.c:1762
 msgid "[3]["
 "Cannot create EMUDESK.INF.|"
 "Make sure that a disk is in|"
@@ -852,7 +840,7 @@ msgstr "[3]["
 "kliknìte OK, nebo zvolte Zru¹it|"
 "pokud nechcete ulo¾it desktop.][  OK  |Zru¹it]"
 
-#: desk/desk_rsc.c:1765
+#: desk/desk_rsc.c:1771
 msgid "[3]["
 "You cannot create or|"
 "access a folder this far|"
@@ -862,7 +850,7 @@ msgstr "[3]["
 "k adresáøùm takto hluboko|"
 "v adresáøové cestì.][  OK  ]"
 
-#: desk/desk_rsc.c:1770
+#: desk/desk_rsc.c:1776
 msgid "[3]["
 "You cannot create or access|"
 "a file or folder with that|"
@@ -874,7 +862,7 @@ msgstr "[3]["
 "jménem, proto¾e cesta souboru|"
 "je pøíli¹ dlouhá.][  OK  ]"
 
-#: desk/desk_rsc.c:1777
+#: desk/desk_rsc.c:1783
 msgid "[1]["
 "You cannot open the trash can|"
 "icon. To delete a disk, folder,|"
@@ -886,7 +874,7 @@ msgstr "[1]["
 "adresáø, dokument nebo aplikaci,|"
 "pøetáhnìte ji do ko¹e.][  OK  ]"
 
-#: desk/desk_rsc.c:1784
+#: desk/desk_rsc.c:1790
 msgid "[1]["
 "The trash can is where you drag|"
 "the disks, folders, documents,|"
@@ -898,7 +886,7 @@ msgstr "[1]["
 "aplikace, které chcete smazat|"
 "TRVALE!][  OK  ]"
 
-#: desk/desk_rsc.c:1791
+#: desk/desk_rsc.c:1797
 msgid "[1]["
 "You cannot drag folders,|"
 "documents or applications onto|"
@@ -912,7 +900,7 @@ msgstr "[1]["
 "kopírovat na disky nebo je|"
 "pøetahovat do ko¹e.][  OK  ]"
 
-#: desk/desk_rsc.c:1800
+#: desk/desk_rsc.c:1806
 msgid "[1]["
 "You cannot drag the trash can|"
 "into a window.][  OK  ]"
@@ -920,7 +908,7 @@ msgstr "[1]["
 "Nemù¾e¹ pøesunout odpadkový|"
 "ko¹ do okna.][  OK  ]"
 
-#: desk/desk_rsc.c:1803
+#: desk/desk_rsc.c:1809
 msgid "[1]["
 "You can drag the trash can to|"
 "another location on the GEM|"
@@ -1007,243 +995,231 @@ msgstr " Scan "
 msgid " Mail "
 msgstr " Po¹ta "
 
-#: cli/cmdint.c:73
+#: cli/cmdint.c:74
 msgid "Copy <filespec> ... to standard output"
 msgstr "Copy <filespec> ... to standard output"
 
-#: cli/cmdint.c:75
+#: cli/cmdint.c:76
 msgid "Change current directory to <dir>"
 msgstr "Change current directory to <dir>"
 
-#: cli/cmdint.c:76
+#: cli/cmdint.c:77
 msgid "or display current directory"
 msgstr "or display current directory"
 
-#: cli/cmdint.c:78
+#: cli/cmdint.c:79
 msgid "Change attributes for <filename>"
 msgstr "Change attributes for <filename>"
 
-#: cli/cmdint.c:79
-msgid "<mode> is the following ORed together:"
-msgstr "<mode> is the following ORed together:"
-
-#: cli/cmdint.c:80
-msgid "1: read-only  2: hidden  4: system"
-msgstr "1: read-only  2: hidden  4: system"
-
-#: cli/cmdint.c:82
+#: cli/cmdint.c:83
 msgid "Clear screen"
 msgstr "Clear screen"
 
-#: cli/cmdint.c:84
+#: cli/cmdint.c:85
 msgid "Copy files matching <filespec> to <dest>"
 msgstr "Copy files matching <filespec> to <dest>"
 
-#: cli/cmdint.c:85
+#: cli/cmdint.c:86
 msgid "If <filespec> matches multiple files,"
 msgstr "If <filespec> matches multiple files,"
 
-#: cli/cmdint.c:86
+#: cli/cmdint.c:87
 msgid "<dest> must be a directory"
 msgstr "<dest> must be a directory"
 
-#: cli/cmdint.c:88
+#: cli/cmdint.c:89
 msgid "Copy <string> ... to standard output"
 msgstr "Copy <string> ... to standard output"
 
-#: cli/cmdint.c:89
+#: cli/cmdint.c:90
 msgid "Strings may be surrounded by \"\""
 msgstr "Strings may be surrounded by \"\""
 
-#: cli/cmdint.c:91
+#: cli/cmdint.c:92
 msgid "Exit EmuCON2"
 msgstr "Exit EmuCON2"
 
-#: cli/cmdint.c:93
+#: cli/cmdint.c:94
 msgid "Get help about <cmd> or list available commands"
 msgstr "Get help about <cmd> or list available commands"
 
-#: cli/cmdint.c:94
+#: cli/cmdint.c:95
 msgid "Use HELP ALL for help on all commands"
 msgstr "Use HELP ALL for help on all commands"
 
-#: cli/cmdint.c:95
+#: cli/cmdint.c:96
 msgid "Use HELP EDIT for help on line editing"
 msgstr "Use HELP EDIT for help on line editing"
 
-#: cli/cmdint.c:97
+#: cli/cmdint.c:98
 msgid "List files (default terse, horizontal)"
 msgstr "List files (default terse, horizontal)"
 
-#: cli/cmdint.c:98
+#: cli/cmdint.c:99
 msgid "Specify -l for detailed list"
 msgstr "Specify -l for detailed list"
 
-#: cli/cmdint.c:100
+#: cli/cmdint.c:101
 msgid "Create directory <dir>"
 msgstr "Create directory <dir>"
 
-#: cli/cmdint.c:102
+#: cli/cmdint.c:107
 msgid "Copy <filespec> to standard output,"
 msgstr "Copy <filespec> to standard output,"
 
-#: cli/cmdint.c:103
+#: cli/cmdint.c:108
 msgid "pausing every screenful"
 msgstr "pausing every screenful"
 
-#: cli/cmdint.c:105
+#: cli/cmdint.c:110
 msgid "Copy files matching <filespec> to <dir>,"
 msgstr "Copy files matching <filespec> to <dir>,"
 
-#: cli/cmdint.c:106
+#: cli/cmdint.c:111
 msgid "then delete input files"
 msgstr "then delete input files"
 
-#: cli/cmdint.c:108
+#: cli/cmdint.c:113
 msgid "Set search path for external programs"
 msgstr "Set search path for external programs"
 
-#: cli/cmdint.c:109
+#: cli/cmdint.c:114
 msgid "or display current search path"
 msgstr "or display current search path"
 
-#: cli/cmdint.c:111
+#: cli/cmdint.c:116
 msgid "Display current drive and directory"
 msgstr "Display current drive and directory"
 
-#: cli/cmdint.c:113
+#: cli/cmdint.c:118
 msgid "Rename <oldname> to <newname>"
 msgstr "Rename <oldname> to <newname>"
 
-#: cli/cmdint.c:115
+#: cli/cmdint.c:120
 msgid "Delete files matching <filespec>"
 msgstr "Delete files matching <filespec>"
 
-#: cli/cmdint.c:116
+#: cli/cmdint.c:121
 msgid "Specify -q to be prompted each time"
 msgstr "Specify -q to be prompted each time"
 
-#: cli/cmdint.c:118
+#: cli/cmdint.c:123
 msgid "Delete directory <dir>"
 msgstr "Delete directory <dir>"
 
-#: cli/cmdint.c:120
+#: cli/cmdint.c:125
 msgid "Show info for <drive> or current drive"
 msgstr "Show info for <drive> or current drive"
 
-#: cli/cmdint.c:122
+#: cli/cmdint.c:127
 msgid "Display GEMDOS version"
 msgstr "Display GEMDOS version"
 
-#: cli/cmdint.c:124
+#: cli/cmdint.c:129
 msgid "Set line wrap or show current status"
 msgstr "Set line wrap or show current status"
 
-#: cli/cmdint.c:128
+#: cli/cmdint.c:133
 msgid "up/down arrow = previous/next line in history"
 msgstr "up/down arrow = previous/next line in history"
 
-#: cli/cmdint.c:129
+#: cli/cmdint.c:134
 msgid "left/right arrow = previous/next character"
 msgstr "left/right arrow = previous/next character"
 
-#: cli/cmdint.c:130
+#: cli/cmdint.c:135
 msgid "shift-left/right arrow = previous/next word"
 msgstr "shift-left/right arrow = previous/next word"
 
-#: cli/cmdint.c:219
+#: cli/cmdint.c:239
 msgid "invalid mode argument"
 msgstr "invalid mode argument"
 
-#: cli/cmdint.c:261
+#: cli/cmdint.c:282
 msgid "Builtin commands:"
 msgstr "Builtin commands:"
 
-#: cli/cmdint.c:322
+#: cli/cmdint.c:343
 msgid "Listing of "
 msgstr "Listing of "
 
-#: cli/cmdint.c:372
+#: cli/cmdint.c:439
 msgid "(empty)"
 msgstr "(empty)"
 
-#: cli/cmdint.c:429
+#: cli/cmdint.c:496
 msgid "Delete ALL matching files"
 msgstr "Delete ALL matching files"
 
-#: cli/cmdint.c:436
+#: cli/cmdint.c:503
 msgid "Delete file "
 msgstr "Delete file "
 
-#: cli/cmdint.c:488
+#: cli/cmdint.c:558
 msgid "Allocation info for drive "
 msgstr "Allocation info for drive "
 
-#: cli/cmdint.c:491
+#: cli/cmdint.c:561
 msgid "  Size (bytes):   "
 msgstr "  Size (bytes):   "
 
-#: cli/cmdint.c:492
+#: cli/cmdint.c:562
 msgid "  Bytes used:     "
 msgstr "  Bytes used:     "
 
-#: cli/cmdint.c:493
+#: cli/cmdint.c:563
 msgid "  Bytes free:     "
 msgstr "  Bytes free:     "
 
-#: cli/cmdint.c:494
+#: cli/cmdint.c:564
 msgid "  Total clusters: "
 msgstr "  Total clusters: "
 
-#: cli/cmdint.c:495
+#: cli/cmdint.c:565
 msgid "  Free clusters:  "
 msgstr "  Free clusters:  "
 
-#: cli/cmdint.c:496
+#: cli/cmdint.c:566
 msgid "  Sectors/cluster:"
 msgstr "  Sectors/cluster:"
 
-#: cli/cmdint.c:497
+#: cli/cmdint.c:567
 msgid "  Bytes/sector:   "
 msgstr "  Bytes/sector:   "
 
-#: cli/cmdint.c:625
+#: cli/cmdint.c:695
 msgid " is not a directory"
 msgstr " is not a directory"
 
-#: cli/cmdint.c:654
+#: cli/cmdint.c:724
 msgid " and "
 msgstr " and "
 
-#: cli/cmdint.c:660
+#: cli/cmdint.c:730
 msgid "Copying "
 msgstr "Copying "
 
-#: cli/cmdint.c:662
+#: cli/cmdint.c:732
 msgid " to "
 msgstr " to "
 
-#: cli/cmdint.c:698
+#: cli/cmdint.c:768
 msgid " ... deleting "
 msgstr " ... deleting "
 
-#: cli/cmdint.c:708
+#: cli/cmdint.c:778
 msgid " ... done"
 msgstr " ... done"
 
-#: cli/cmdint.c:764
+#: cli/cmdint.c:834
 msgid " or "
 msgstr " or "
 
-#: cli/cmdint.c:792
+#: cli/cmdint.c:862
 msgid "CR to continue ..."
 msgstr "CR to continue ..."
 
-#: cli/cmdmain.c:61
-msgid "Welcome to EmuCON2: type HELP for builtin commands"
-msgstr "Welcome to EmuCON2: type HELP for builtin commands"
-
-#: cli/cmdmain.c:80
+#: cli/cmdmain.c:81
 msgid "warning: no history buffers"
 msgstr "warning: no history buffers"
 
@@ -1307,15 +1283,79 @@ msgstr "cmdline too long"
 msgid "directory not empty"
 msgstr "directory not empty"
 
-#: cli/cmdutil.c:96
+#: cli/cmdutil.c:102
 msgid "wrong number of arguments"
 msgstr "wrong number of arguments"
 
-#: cli/cmdutil.c:99
+#: cli/cmdutil.c:105
 msgid "error code "
 msgstr "error code "
 
-#: cli/cmdint.c:1016
+#: cli/cmdint.c:1092
 msgid "--More--"
 msgstr "--More--"
+
+#: desk/desk_rsc.c:67
+msgid "Disk label: ____________"
+msgstr "Jmenovka: ____________"
+
+#: desk/desk_rsc.c:252
+msgid " View "
+msgstr " Zobrazit "
+
+#: desk/desk_rsc.c:444
+msgid "  No sort"
+msgstr "  Netøídìnì"
+
+#: cli/cmdint.c:80
+msgid "<mode> specifies the new attribute(s):"
+msgstr "<mode> specifies the new attribute(s):"
+
+#: cli/cmdint.c:81
+msgid "r=read-only  h=hidden  s=system  -=none"
+msgstr "r=read-only  h=hidden  s=system  -=none"
+
+#: cli/cmdint.c:103
+msgid "Set or display console settings:"
+msgstr "Set or display console settings:"
+
+#: cli/cmdint.c:104
+msgid "delay/rate for the keyboard;"
+msgstr "delay/rate for the keyboard;"
+
+#: cli/cmdint.c:105
+msgid "line height (8,16) for the display"
+msgstr "line height (8,16) for the display"
+
+#: cli/cmdint.c:385
+msgid "Status for CON:"
+msgstr "Status for CON:"
+
+#: cli/cmdint.c:386
+msgid "    Keyboard delay:"
+msgstr "    Keyboard delay:"
+
+#: cli/cmdint.c:388
+msgid "    Keyboard rate:"
+msgstr "    Keyboard rate:"
+
+#: cli/cmdint.c:390
+msgid "    Line height:"
+msgstr "    Line height:"
+
+#: cli/cmdmain.c:61
+msgid "Welcome to EmuCON2"
+msgstr "Welcome to EmuCON2"
+
+#: cli/cmdmain.c:62
+msgid "Type HELP for builtin commands"
+msgstr "Type HELP for builtin commands"
+
+#: cli/cmdutil.c:96
+msgid "can't delete file (read-only?)"
+msgstr "can't delete file (read-only?)"
+
+#: cli/cmdutil.c:99
+msgid "invalid parameter"
+msgstr "invalid parameter"
 
