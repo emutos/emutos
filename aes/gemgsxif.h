@@ -1,7 +1,7 @@
 /*
  * EmuTOS aes
  *
- * Copyright (c) 2002-2015 The EmuTOS development team
+ * Copyright (c) 2002-2016 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -56,6 +56,9 @@ void vrt_cpyfm(WORD wr_mode, WORD *pxyarray, FDB *psrcMFDB, FDB *pdesMFDB,
                WORD fgcolor, WORD bgcolor);
 void vrn_trnfm(FDB *psrcMFDB, FDB *pdesMFDB);
 void g_vsl_width(WORD width);
+
+#if CONF_WITH_VDI_EXTENSIONS
 void vex_wheelv(PFVOID new, PFVOID *old);
+#endif
 
 #endif
