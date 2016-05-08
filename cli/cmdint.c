@@ -17,7 +17,7 @@ typedef struct {
     const char *synonym;
     WORD minargs;
     WORD maxargs;
-    LONG (*func)(WORD argc,char **argv);
+    FUNC *func;
     const char * const *help;
 } COMMAND;
 

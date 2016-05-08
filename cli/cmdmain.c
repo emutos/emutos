@@ -97,7 +97,7 @@ ULONG n;
 
 PRIVATE WORD execute(WORD argc,char **argv,char *redir)
 {
-LONG (*func)(WORD argc,char **argv);
+FUNC *func;
 LONG rc;
 
     if (argc == 0)

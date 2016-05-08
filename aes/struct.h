@@ -154,9 +154,9 @@ struct fpd
 
 typedef struct
 {
-    ULONG gm_magic; /* Magical value, has to be GEM_MUPB_MAGIC */
-    void  *gm_end;  /* End of the memory required by GEM */
-    void  *gm_init; /* Start address of GEM */
+    ULONG gm_magic;         /* Magical value, has to be GEM_MUPB_MAGIC */
+    void  *gm_end;          /* End of the memory required by GEM */
+    void  (*gm_init)(void); /* Start address of GEM */
 } GEM_MUPB;
 
 #endif /* GEMSTRUCT_H */

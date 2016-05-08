@@ -124,6 +124,9 @@ typedef struct {
     char    d_fname[14];
 } DTA;
 
+/* Type of function run by execute() */
+typedef LONG FUNC(WORD argc,char **argv);
+
 /*
  *  return codes from get_next_arg()
  */
@@ -167,8 +170,8 @@ typedef struct {
 #define constat()       Bconstat(2)
 #define conout(c)       Bconout(2,c)
 
-#define LOOKUP_EXIT     (void *)-1L     /* special return values from lookup_builtin() */
-#define LOOKUP_ARGS     (void *)-2L
+#define LOOKUP_EXIT     (FUNC *)-1L     /* special return values from lookup_builtin() */
+#define LOOKUP_ARGS     (FUNC *)-2L
 
 /*
  *  global variables
