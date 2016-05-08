@@ -117,6 +117,6 @@ extern void push_ascii_ikbdiorec(UBYTE ascii);
 #endif
 
 /* the following is in aciavecs.S */
-extern void call_mousevec(BYTE *packet);
+extern void call_mousevec(UBYTE *packet);
 
 #endif /* IKBD_H */

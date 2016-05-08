@@ -82,7 +82,7 @@ static WORD convert_scancode(UBYTE *scancodeptr);
  * a non-zero value in mouse_packet[0] indicates we are currently
  * in mouse emulation mode.
  */
-BYTE mouse_packet[3];                   /* passed to mousevec() */
+UBYTE mouse_packet[3];                  /* passed to mousevec() */
 
 /*=== Keymaps handling (xbios) =======================================*/
 
@@ -252,7 +252,7 @@ static BOOL is_mouse_key(WORD key)
 /*
  * initialise mouse packet
  */
-static void init_mouse_packet(BYTE *packet)
+static void init_mouse_packet(UBYTE *packet)
 {
     packet[0] = MOUSE_REL_POS_REPORT;
     packet[1] = packet[2] = 0;
@@ -315,7 +315,7 @@ static BOOL handle_mouse_mode(WORD newkey)
         break;
     }
 
-    KDEBUG(("Sending mouse packet %02x%02x%02x\n",(UBYTE)mouse_packet[0],(UBYTE)mouse_packet[1],(UBYTE)mouse_packet[2]));
+    KDEBUG(("Sending mouse packet %02x%02x%02x\n",mouse_packet[0],mouse_packet[1],mouse_packet[2]));
     call_mousevec(mouse_packet);
 
     return TRUE;
@@ -436,7 +436,7 @@ static void do_key_repeat(void)
 
     /* Simulate a key press or a mouse action */
     if (mouse_packet[0]) {
-        KDEBUG(("Repeating mouse packet %02x%02x%02x\n",(UBYTE)mouse_packet[0],(UBYTE)mouse_packet[1],(UBYTE)mouse_packet[2]));
+        KDEBUG(("Repeating mouse packet %02x%02x%02x\n",mouse_packet[0],mouse_packet[1],mouse_packet[2]));
         call_mousevec(mouse_packet);
     } else push_ikbdiorec(kb_last_key);
 
