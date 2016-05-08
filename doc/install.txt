@@ -98,7 +98,8 @@ Release-related targets
 
 all192      all 192 KB images
 all256      all 256 KB images
-allbin      all 192 KB, 256 KB and 512 KB images
+allprg      all emutos*.prg
+allflop     all emutos*.st
 release     build the release archives into release-archives
 
 
