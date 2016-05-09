@@ -420,7 +420,7 @@ static WORD act_chkobj(OBJECT *tree, WORD root, WORD obj, WORD mx, WORD my, WORD
  *      WORD   obj              * object to affect
  *      UWORD  chgvalue         * bit value to change
  *      WORD   dochg            * set or reset value
- *      WORD   dodraw           * draw resulting chang
+ *      WORD   dodraw           * draw resulting change
  *      WORD   chkdisabled      * only if item enabled
  */
 WORD act_chg(WORD wh, OBJECT *tree, WORD root, WORD obj, GRECT *pc, UWORD chgvalue,
@@ -453,7 +453,7 @@ WORD act_chg(WORD wh, OBJECT *tree, WORD root, WORD obj, GRECT *pc, UWORD chgval
                     curr_state, FALSE);
 
         /*
-         * clip to uncovered portion desktop or window
+         * clip to uncovered portion of desktop or window
          * and the object's extent
          */
         if (dodraw && rc_intersect(pc, &t))

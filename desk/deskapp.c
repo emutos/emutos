@@ -485,10 +485,10 @@ void app_start(void)
 
         /* add Trash icon to end */
         x = strlen(gl_afile);
-        trash_x = 0; /* Left */
-        trash_y = ycnt-1; /* Bottom */
-        if (drive_y >= trash_y) /* if the last dive icon overflows over the */
-            trash_x = xcnt-1;  /* trash row, force trash to right */
+        trash_x = 0;            /* Left */
+        trash_y = ycnt-1;       /* Bottom */
+        if (drive_y >= trash_y) /* if the last drive icon overflows over */
+            trash_x = xcnt-1;   /*  the trash row, force trash to right  */
         rsrc_gaddr(R_STRING, STTRASH, (LONG *)&text);
         sprintf(gl_afile + x, "#T %02X %02X 03 FF   %s@ @ \r\n",
                 trash_x, trash_y, text);

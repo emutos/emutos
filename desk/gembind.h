@@ -8,7 +8,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*       Copyright (c) 2002-2015 The EmuTOS development team
+*       Copyright (c) 2002-2016 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -124,7 +124,7 @@ extern UWORD    int_out[O_SIZE];
 extern LONG     addr_in[AI_SIZE];
 extern LONG     addr_out[AO_SIZE];
 */
-                                        /* Crystal funtion op code      */
+                                        /* Crystal function op code     */
 #define OP_CODE control[0]
 #define IN_LEN control[1]
 #define OUT_LEN control[2]

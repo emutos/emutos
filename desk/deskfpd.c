@@ -215,7 +215,7 @@ static PNODE *pn_alloc(void)
 
     if (G.g_pavail)
     {
-        /* get up off the avail list */
+        /* get us off the avail list */
         thepath = G.g_pavail;
         G.g_pavail = G.g_pavail->p_next;
 

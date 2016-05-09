@@ -92,16 +92,16 @@ typedef struct
 /*GLOBAL*/ WNODE        g_wlist[NUM_WNODES];
 /*GLOBAL*/ WORD         g_wcnt;
 
-                                                /* view related parms   */
+                                            /* view-related parms:      */
 /*GLOBAL*/ WORD         g_num;                  /* number of points     */
 /*GLOBAL*/ WORD         *g_pxy;                 /* outline pts to drag  */
 /*GLOBAL*/ WORD         g_iview;                /* current view type    */
 /*GLOBAL*/ WORD         g_iwext;                /* w,h of extent of a   */
-/*GLOBAL*/ WORD         g_ihext;                /*   single iten        */
+/*GLOBAL*/ WORD         g_ihext;                /*   single item        */
 /*GLOBAL*/ WORD         g_iwint;                /* w,h of interval      */
-/*GLOBAL*/ WORD         g_ihint;                /*   between item       */
-/*GLOBAL*/ WORD         g_iwspc;                /* w,h of extent of a   */
-/*GLOBAL*/ WORD         g_ihspc;                /*   single iten        */
+/*GLOBAL*/ WORD         g_ihint;                /*   between items      */
+/*GLOBAL*/ WORD         g_iwspc;                /* w,h of space used by */
+/*GLOBAL*/ WORD         g_ihspc;                /*   a single item      */
 /*GLOBAL*/ WORD         g_isort;                /* current sort type    */
 
                                                 /* stack of fcb's to use*/
