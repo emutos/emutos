@@ -115,7 +115,7 @@
 #ifdef TARGET_192
 # ifndef TOS_VERSION
 /* Some software checks for TOS version < 1.06 to determine that the ROM
- * is located at 0x00fc0000. So we use 1.04 as it is the more recent TOS
+ * is located at 0x00fc0000. So we use 1.04 as it is the most recent TOS
  * version located there. */
 #  define TOS_VERSION 0x104
 # endif
@@ -621,14 +621,14 @@
 #endif
 
 /*
- * Set this to 1 to activate experimental ACSI support
+ * Set this to 1 to activate ACSI support
  */
 #ifndef CONF_WITH_ACSI
 # define CONF_WITH_ACSI 1
 #endif
 
 /*
- * Set CONF_WITH_IDE to 1 to activate Falcon IDE support.
+ * Set CONF_WITH_IDE to 1 to activate Falcon IDE support
  */
 #ifndef CONF_WITH_IDE
 # define CONF_WITH_IDE 1
@@ -670,9 +670,9 @@
 #endif
 
 /*
- * CONF_VRAM_ADDRESS allows to set the video ram address to a fixed location,
- * outside ST-RAM or FastRam. This allows using custom graphic cards.
- * Set to 0 to allocate the video ram in the ST-RAM as usual.
+ * CONF_VRAM_ADDRESS allows the video ram address to be set to a fixed
+ * location, outside ST-RAM or FastRam. This allows the use of custom
+ * graphic cards.  Set to 0 to allocate the video ram in ST-RAM as usual.
  */
 #ifndef CONF_VRAM_ADDRESS
 # define CONF_VRAM_ADDRESS 0
@@ -712,7 +712,7 @@
 #endif
 
 /*
- * Set CONF_WITH_VME to 1 to enable support for Mega STe VME bus
+ * Set CONF_WITH_VME to 1 to enable support for the Mega STe VME bus
  */
 #ifndef CONF_WITH_VME
 # define CONF_WITH_VME 1
@@ -747,14 +747,14 @@
 #endif
 
 /*
- * Set CONF_WITH_SFP004 to 1 to enable 68881 FPU support for Mega ST
+ * Set CONF_WITH_SFP004 to 1 to enable 68881 FPU support for the Mega ST
  */
 #ifndef CONF_WITH_SFP004
 # define CONF_WITH_SFP004 1
 #endif
 
 /*
- * Set CONF_WITH_ASSERT to 1 to enable the assert() function support.
+ * Set CONF_WITH_ASSERT to 1 to enable the assert() function
  */
 #ifndef CONF_WITH_ASSERT
 # define CONF_WITH_ASSERT 1
@@ -762,8 +762,8 @@
 
 /*
  * Set this to 1 if your emulator is capable of emulating properly the
- * STOP opcode (used to spare host CPU burden during loops).
- * Set to zero for all emulators which do not properly support STOP opcode.
+ * STOP opcode (used to reduce host CPU burden during loops).  Set to
+ * zero for all emulators which do not properly support the STOP opcode.
  */
 #ifndef USE_STOP_INSN_TO_FREE_HOST_CPU
 # define USE_STOP_INSN_TO_FREE_HOST_CPU 1
@@ -772,7 +772,7 @@
 /*
  * With this switch you can control if some functions should be used as
  * static-inlines. This is generally a good idea if your compiler supports
- * this (a recent GCC does it!). It will shrink the size of the ROM since
+ * this (the current GCC does). It will shrink the size of the ROM since
  * only very small functions will be used as static inlines, and it will
  * also make the code faster!
  */
@@ -796,8 +796,8 @@
 #endif
 
 /*
- * Set FULL_INITINFO to 0 to display the EmuTOS version as a single line of text
- * instead of the full welcome screen.
+ * Set FULL_INITINFO to 0 to display the EmuTOS version as a single line
+ * of text instead of the full welcome screen.
  * This is only useful when there are severe ROM size restrictions.
  */
 #ifndef FULL_INITINFO
@@ -814,15 +814,15 @@
 #endif
 
 /*
- * By default, the EmuTOS welcome screen (initinfo) is displayed for 3 seconds.
- * On emulators, this is enough to read the text, and optionally to press Shift
- * to keep the screen displayed. But on real hardware, it can take several
- * seconds for the monitor to recover from stand-by mode, so the welcome screen
- * may never be seen. I such cases, it is wise to increase the welcome screen
- * duration.
+ * By default, the EmuTOS welcome screen (initinfo) is displayed for 3
+ * seconds. On emulators, this is enough to read the text, and optionally
+ * to press Shift to keep the screen displayed. But on real hardware, it
+ * can take several seconds for the monitor to recover from stand-by mode,
+ * so the welcome screen may never be seen. In such cases, it is wise to
+ * increase the welcome screen duration.
  * You can use the INITINFO_DURATION define to specifiy the welcome screen
- * duration, in seconds. If it is set to 0, the welcome screen will never be
- * displayed.
+ * duration, in seconds. If it is set to 0, the welcome screen will never
+ * be displayed.
  */
 #ifndef INITINFO_DURATION
 # define INITINFO_DURATION 3
@@ -855,14 +855,14 @@
 #endif
 
 /*
- * Set CONF_WITH_DESKTOP_ICONS to 1 to include all the desktop icons.
+ * Set CONF_WITH_DESKTOP_ICONS to 1 to include all the desktop icons
  */
 #ifndef CONF_WITH_DESKTOP_ICONS
 # define CONF_WITH_DESKTOP_ICONS 1
 #endif
 
 /*
- * Set CONF_WITH_EASTER_EGG to 1 to include EmuDesk Easter Egg.
+ * Set CONF_WITH_EASTER_EGG to 1 to include the EmuDesk Easter Egg
  */
 #ifndef CONF_WITH_EASTER_EGG
 # define CONF_WITH_EASTER_EGG 1
@@ -883,7 +883,8 @@
 #endif
 
 /*
- * Set CONF_WITH_SHOW_FILE to 1 to support
+ * Set CONF_WITH_SHOW_FILE to 1 to support showing a file in EmuDesk
+ * by double-clicking on it
  */
 #ifndef CONF_WITH_SHOW_FILE
  # define CONF_WITH_SHOW_FILE 1
@@ -891,11 +892,11 @@
 
 /*
  * Set CONF_WITH_RESET to 0 to force the startup code to bypass the
- * "reset" instruction during startup.  By default it is only bypassed
+ * "reset" instruction during startup.  By default it is bypassed
  * in EmuTOS RAM, because it causes crashes very early in startup (the
  * "black screen" problem).  It is surmised that the hardware reset may
  * reset the RAM controller allowing/causing RAM contents to change.
- * Also, there is no reset instruction on ColdFire.
+ * It is also bypassed in Coldfire because there is no reset instruction.
  */
 #ifndef CONF_WITH_RESET
 # if EMUTOS_LIVES_IN_RAM || defined(__mcoldfire__)
@@ -939,7 +940,8 @@
 /*
  * Set CONF_WITH_68040_PMMU to install a PMMU tree on a 68040 CPU.
  * This provides improved performance by allowing the data cache to
- * be enabled. This also allows to run FreeMiNT on 68040 without set_mmu.prg.
+ * be enabled. It also allows FreeMiNT to be run on a 68040 without
+ * using set_mmu.prg.
  */
 #ifndef CONF_WITH_68040_PMMU
 /* This is currently an experimental feature */
@@ -1001,7 +1003,8 @@
 # endif
 #endif
 
-/* set this to 1 if your emulator provides an STonX-like
+/*
+ * Set STONX_NATIVE_PRINT to 1 if your emulator provides a STonX-like
  * native_print() function, i.e. if the code:
  *   .dc.w 0xa0ff
  *   .dc.l 0
@@ -1011,8 +1014,9 @@
 #define STONX_NATIVE_PRINT 0
 #endif
 
-/* set this to 1 to detect, and (if detected) use native features provided
- * by the standard "native features" interface.
+/*
+ * Set DETECT_NATIVE_FEATURES to 1 to detect and (if detected) use native
+ * features provided by the standard "native features" interface.
  */
 #ifndef DETECT_NATIVE_FEATURES
 # ifdef __mcoldfire__
@@ -1022,7 +1026,8 @@
 # endif
 #endif
 
-/* Set this to 1 to enable ARAnyM specific features and workarounds
+/*
+ * Set CONF_WITH_ARANYM to 1 to enable ARAnyM-specific features and workarounds
  */
 #ifndef CONF_WITH_ARANYM
 # if DETECT_NATIVE_FEATURES
@@ -1032,8 +1037,10 @@
 # endif
 #endif
 
-/* set this to 1 to redirect debug prints on MFP RS232 out, for emulator
- * without any native debug print capabilities or real hardware.
+/*
+ * Set RS232_DEBUG_PRINT to 1 to redirect debug prints to MFP RS232 out.
+ * This is useful for an emulator without any native debug print capabilities,
+ * or for real hardware.
  */
 #ifndef RS232_DEBUG_PRINT
 # if CONF_SERIAL_CONSOLE && !CONF_WITH_COLDFIRE_RS232
@@ -1043,23 +1050,26 @@
 # endif
 #endif
 
-/* set this to 1 to redirect debug prints on SCC portB RS232 out.
- * this is primarily for real Falcon hardware, which does not use
+/*
+ * Set SCC_DEBUG_PRINT to 1 to redirect debug prints to SCC portB RS232 out.
+ * This is primarily for use with real Falcon hardware, which does not use
  * the MFP USART.
  */
 #ifndef SCC_DEBUG_PRINT
 #define SCC_DEBUG_PRINT 0
 #endif
 
-/* set this to 1 to redirect debug prints on MIDI out, for emulator
- * without ANY native debug print capabilities.
- * This overrides previous debug print settings.
+/*
+ * Set MIDI_DEBUG_PRINT to 1 to redirect debug prints to MIDI out.
+ * This is useful for an emulator without any native debug print capabilities,
+ * or for real hardware. This overrides previous debug print settings.
  */
 #ifndef MIDI_DEBUG_PRINT
 #define MIDI_DEBUG_PRINT 0
 #endif
 
-/* set this to 1 to redirect debug prints on the ColdFire serial port.
+/*
+ * Set COLDFIRE_DEBUG_PRINT to 1 to redirect debug prints to the ColdFire serial port
  */
 #ifndef COLDFIRE_DEBUG_PRINT
 # if CONF_SERIAL_CONSOLE && CONF_WITH_COLDFIRE_RS232

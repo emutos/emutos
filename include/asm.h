@@ -166,7 +166,7 @@ static __inline__ void swpcopyw(const UWORD* src, UWORD* dest)
 /*
  * Warning: The following macros use "memory" in the clobber list,
  * even if the memory is not modified. On ColdFire, this is necessary
- * to avoid these instructions to be reordered by the compiler.
+ * to prevent these instructions being reordered by the compiler.
  *
  * Apparently, this is standard GCC behaviour (RFB 2012).
  */
