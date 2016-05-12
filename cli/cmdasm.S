@@ -68,25 +68,41 @@ _getht:
  */
 _jmp_gemdos:
         move.l  (sp)+,ret_addr          // so parameters are in the right place
+        move.l  a2,save_a2              // must save a2/d2 because someone may
+        move.l  d2,save_d2              //  intercept the trap & clobber them
         trap    #1
+        move.l  save_a2,a2
+        move.l  save_d2,d2
         move.l  ret_addr,-(sp)
         rts
 
 _jmp_bios:
         move.l  (sp)+,ret_addr
+        move.l  a2,save_a2
+        move.l  d2,save_d2
         trap    #13
+        move.l  save_a2,a2
+        move.l  save_d2,d2
         move.l  ret_addr,-(sp)
         rts
 
 _jmp_xbios:
         move.l  (sp)+,ret_addr
+        move.l  a2,save_a2
+        move.l  d2,save_d2
         trap    #14
+        move.l  save_a2,a2
+        move.l  save_d2,d2
         move.l  ret_addr,-(sp)
         rts
 
 
         .bss
 ret_addr:
+        .ds.l   1
+save_a2:
+        .ds.l   1
+save_d2:
         .ds.l   1
 
         .ds.l   1024
