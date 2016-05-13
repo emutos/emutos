@@ -1197,6 +1197,8 @@ static void dummy_seek(void)
 
     set_fdc_reg(FDC_DR,track);
     flopcmd(FDC_SEEK | fi->actual_rate);    /* ignore any errors here */
+
+    get_fdc_reg(FDC_CS);                    /* resets IRQ */
 }
 
 /*
