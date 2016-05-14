@@ -331,7 +331,7 @@ msgstr " Soubor "
 
 #: desk/desk_rsc.c:258
 msgid " Options "
-msgstr " Volby "
+msgstr " Mo¾nosti " 
 
 #: desk/desk_rsc.c:276
 msgid "  Desktop info..."
@@ -407,23 +407,23 @@ msgstr "  Zmìnit rozli¹ení...  \007C"
 
 #: desk/desk_rsc.c:414
 msgid "-------------------"
-msgstr "-----------------"
+msgstr "---------------------"
 
 #: desk/desk_rsc.c:420
 msgid "  Sort by name  \007N"
-msgstr "  Podle jména \007N"
+msgstr "  Podle jména     \007N"
 
 #: desk/desk_rsc.c:426
 msgid "  Sort by type  \007P"
-msgstr "  Podle typu  \007P"
+msgstr "  Podle typu      \007P"
 
 #: desk/desk_rsc.c:432
 msgid "  Sort by size  \007Z"
-msgstr "  Podle bytù  \007Z"
+msgstr "  Podle velikosti \007Z" 
 
 #: desk/desk_rsc.c:438
 msgid "  Sort by date  \007T"
-msgstr "  Podle data  \007T"
+msgstr "  Podle data      \007T"
 
 #: desk/desk_rsc.c:543
 msgid "Attribute:"
@@ -543,15 +543,15 @@ msgstr "Rychlost dvojkliku:"
 
 #: desk/desk_rsc.c:1290
 msgid "Click"
-msgstr "Kliknutí"
+msgstr "Kliknout"
 
 #: desk/desk_rsc.c:1296
 msgid "No click"
-msgstr "Bez kliknutí"
+msgstr "Ukázat" 
 
 #: desk/desk_rsc.c:1302
 msgid "To drop down menus:"
-msgstr "Do padacího menu:"
+msgstr "Rozbalení nabídky:" 
 
 #: desk/desk_rsc.c:1308
 msgid "Sound effects:"
@@ -639,11 +639,11 @@ msgstr "%ld bytù v %d polo¾kách."
 
 #: desk/desk_rsc.c:1679
 msgid "  Show as icons \007S"
-msgstr "  Jako ikony  \007S"
+msgstr "  Jako ikony      \007S"
 
 #: desk/desk_rsc.c:1680
 msgid "  Show as text  \007S"
-msgstr "  Jako text   \007S"
+msgstr "  Jako text       \007S"
 
 #: desk/desk_rsc.c:1681
 msgid "Not available"
