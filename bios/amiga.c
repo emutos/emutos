@@ -177,7 +177,7 @@ void amiga_mouse_vbl(void)
        || button1 != oldButton1
        || button2 != oldButton2)
     {
-        BYTE packet[3];
+        UBYTE packet[3];
         packet[0] = 0xf8;
 
         if (button1)
