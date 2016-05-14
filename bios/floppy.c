@@ -296,6 +296,20 @@ void flop_hdv_init(void)
     /* autodetect floppy drives */
     flop_detect_drive(0);
     flop_detect_drive(1);
+
+#if CONF_WITH_FDC
+    /*
+     * if drive 1 doesn't exist, the attempt to detect it will leave the
+     * motor line on, causing drive 0 to spin until it's accessed, even
+     * if it contains a diskette. to avoid that, we reselect drive 0 now.
+     */
+    if (!units[1].valid)
+    {
+        floplock(0);
+        select(0,0);
+        flopunlk();
+    }
+#endif
 }
 
 /*
