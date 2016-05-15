@@ -393,30 +393,6 @@ msgstr "  Starte EmuCON    ^Z"
 msgid "  Shutdown        ^Q"
 msgstr "  Stoppe System    ^Q"
 
-#: desk/desk_rsc.c:456
-msgid "  Install disk drive..."
-msgstr "  Installiere Laufwerk..."
-
-#: desk/desk_rsc.c:462
-msgid "  Configure application... \007A"
-msgstr "  Anwendung einrichten... \007A"
-
-#: desk/desk_rsc.c:468
-msgid "------------------------------"
-msgstr "-----------------------------"
-
-#: desk/desk_rsc.c:474
-msgid "  Set preferences..."
-msgstr "  Voreinstellungen..."
-
-#: desk/desk_rsc.c:480
-msgid "  Save desktop             \007V"
-msgstr "  Sichere Desktop         \007V"
-
-#: desk/desk_rsc.c:486
-msgid "  Change resolution...     \007C"
-msgstr "  Auflösung ändern...     \007C"
-
 #: desk/desk_rsc.c:414
 msgid "-------------------"
 msgstr "----------------"
@@ -440,6 +416,30 @@ msgstr "  nach Datum \007T"
 #: desk/desk_rsc.c:444
 msgid "  No sort"
 msgstr "  Unsortiert"
+
+#: desk/desk_rsc.c:456
+msgid "  Install disk drive..."
+msgstr "  Installiere Laufwerk..."
+
+#: desk/desk_rsc.c:462
+msgid "  Configure application... \007A"
+msgstr "  Anwendung einrichten... \007A"
+
+#: desk/desk_rsc.c:468
+msgid "------------------------------"
+msgstr "-----------------------------"
+
+#: desk/desk_rsc.c:474
+msgid "  Set preferences..."
+msgstr "  Voreinstellungen..."
+
+#: desk/desk_rsc.c:480
+msgid "  Save desktop             \007V"
+msgstr "  Sichere Desktop         \007V"
+
+#: desk/desk_rsc.c:486
+msgid "  Change resolution...     \007C"
+msgstr "  Auflösung ändern...     \007C"
 
 #: desk/desk_rsc.c:543
 msgid "Attribute:"
@@ -1277,6 +1277,10 @@ msgstr " oder "
 msgid "CR to continue ..."
 msgstr "EINGABE um weiter zu machen ..."
 
+#: cli/cmdint.c:1092
+msgid "--More--"
+msgstr "--Mehr--"
+
 #: cli/cmdmain.c:61
 msgid "Welcome to EmuCON2"
 msgstr "Willkommen bei EmuCON2"
@@ -1365,6 +1369,3 @@ msgstr "Falsche Zahl von Parametern"
 msgid "error code "
 msgstr "Fehlercode "
 
-#: cli/cmdint.c:1092
-msgid "--More--"
-msgstr "--Mehr--"

@@ -300,6 +300,10 @@ msgstr "Время: __:__ __"
 msgid "Drive identifier: _:"
 msgstr "Идентификатор диска: _:"
 
+#: desk/desk_rsc.c:67
+msgid "Disk label: ____________"
+msgstr "Метка диска: ____________"
+
 #: desk/desk_rsc.c:82
 msgid "Bytes used: __________"
 msgstr "Байт использ.: __________"
@@ -388,30 +392,6 @@ msgstr "  Запустить EmuCON      ^Z"
 msgid "  Shutdown        ^Q"
 msgstr "  Выключить             ^Q"
 
-#: desk/desk_rsc.c:456
-msgid "  Install disk drive..."
-msgstr "  Установить диск..."
-
-#: desk/desk_rsc.c:462
-msgid "  Configure application... \007A"
-msgstr "  Настроить программу... \007A"
-
-#: desk/desk_rsc.c:468
-msgid "------------------------------"
-msgstr "----------------------------"
-
-#: desk/desk_rsc.c:474
-msgid "  Set preferences..."
-msgstr "  Настройки..."
-
-#: desk/desk_rsc.c:480
-msgid "  Save desktop             \007V"
-msgstr "  Сохранить десктоп      \007V"
-
-#: desk/desk_rsc.c:486
-msgid "  Change resolution...     \007C"
-msgstr "  Изменить разрешение... \007C"
-
 #: desk/desk_rsc.c:414
 msgid "-------------------"
 msgstr "----------------------------"
@@ -435,6 +415,30 @@ msgstr "  Сортировать по дате    \007T"
 #: desk/desk_rsc.c:444
 msgid "  No sort"
 msgstr "  Не сортировать"
+
+#: desk/desk_rsc.c:456
+msgid "  Install disk drive..."
+msgstr "  Установить диск..."
+
+#: desk/desk_rsc.c:462
+msgid "  Configure application... \007A"
+msgstr "  Настроить программу... \007A"
+
+#: desk/desk_rsc.c:468
+msgid "------------------------------"
+msgstr "----------------------------"
+
+#: desk/desk_rsc.c:474
+msgid "  Set preferences..."
+msgstr "  Настройки..."
+
+#: desk/desk_rsc.c:480
+msgid "  Save desktop             \007V"
+msgstr "  Сохранить десктоп      \007V"
+
+#: desk/desk_rsc.c:486
+msgid "  Change resolution...     \007C"
+msgstr "  Изменить разрешение... \007C"
 
 #: desk/desk_rsc.c:543
 msgid "Attribute:"
@@ -1026,6 +1030,14 @@ msgstr "или показать текущую директорию"
 msgid "Change attributes for <filename>"
 msgstr "Изменить атрибуты для <filename>"
 
+#: cli/cmdint.c:80
+msgid "<mode> specifies the new attribute(s):"
+msgstr "<mode> определяет новые атрибут(ы):"
+
+#: cli/cmdint.c:81
+msgid "r=read-only  h=hidden  s=system  -=none"
+msgstr "r=rтлкчтение  h=скрытый  s=системный  -=нет"
+
 #: cli/cmdint.c:83
 msgid "Clear screen"
 msgstr "Очистить экран"
@@ -1077,6 +1089,18 @@ msgstr "Укажите -l для подробного списка"
 #: cli/cmdint.c:101
 msgid "Create directory <dir>"
 msgstr "Создать директорию <dir>"
+
+#: cli/cmdint.c:103
+msgid "Set or display console settings:"
+msgstr "Установить или показать параметры консоли:"
+
+#: cli/cmdint.c:104
+msgid "delay/rate for the keyboard;"
+msgstr "задержка/скорость повторного ввода клавиатуры;"
+
+#: cli/cmdint.c:105
+msgid "line height (8,16) for the display"
+msgstr "высота строки (8,16) дисплея"
 
 #: cli/cmdint.c:107
 msgid "Copy <filespec> to standard output,"
@@ -1158,6 +1182,22 @@ msgstr "Внутренние команды:"
 msgid "Listing of "
 msgstr "Список"
 
+#: cli/cmdint.c:385
+msgid "Status for CON:"
+msgstr "Статус консоли CON:"
+
+#: cli/cmdint.c:386
+msgid "    Keyboard delay:"
+msgstr "  Задержка повторного ввода клавиатуры:"
+
+#: cli/cmdint.c:388
+msgid "    Keyboard rate:"
+msgstr "  Скорость повторного ввода клавиатуры:"
+
+#: cli/cmdint.c:390
+msgid "    Line height:"
+msgstr "  Высота строки:"
+
 #: cli/cmdint.c:439
 msgid "(empty)"
 msgstr "(empty)"
@@ -1234,6 +1274,18 @@ msgstr " или "
 msgid "CR to continue ..."
 msgstr "Нажмите клавишу CR для продолжения ..."
 
+#: cli/cmdint.c:1092
+msgid "--More--"
+msgstr "--Еще--"
+
+#: cli/cmdmain.c:61
+msgid "Welcome to EmuCON2"
+msgstr "Добро пожаловать в эмулятор консоли EmuCON2"
+
+#: cli/cmdmain.c:62
+msgid "Type HELP for builtin commands"
+msgstr "Введите HELP для списка команд"
+
 #: cli/cmdmain.c:81
 msgid "warning: no history buffers"
 msgstr "предупреждение: история отсутствует"
@@ -1302,6 +1354,10 @@ msgstr "директория не пуста"
 msgid "can't delete file (read-only?)"
 msgstr "не могу удалить файл (ТлкЧтение?)"
 
+#: cli/cmdutil.c:99
+msgid "invalid parameter"
+msgstr "неверный параметр"
+
 #: cli/cmdutil.c:102
 msgid "wrong number of arguments"
 msgstr "неверное количество аргументов"
@@ -1310,58 +1366,3 @@ msgstr "неверное количество аргументов"
 msgid "error code "
 msgstr "код ошибки "
 
-#: cli/cmdint.c:1092
-msgid "--More--"
-msgstr "--Еще--"
-
-#: desk/desk_rsc.c:67
-msgid "Disk label: ____________"
-msgstr "Метка диска: ____________"
-
-#: cli/cmdint.c:80
-msgid "<mode> specifies the new attribute(s):"
-msgstr "<mode> определяет новые атрибут(ы):"
-
-#: cli/cmdint.c:81
-msgid "r=read-only  h=hidden  s=system  -=none"
-msgstr "r=rтлкчтение  h=скрытый  s=системный  -=нет"
-
-#: cli/cmdint.c:103
-msgid "Set or display console settings:"
-msgstr "Установить или показать параметры консоли:"
-
-#: cli/cmdint.c:104
-msgid "delay/rate for the keyboard;"
-msgstr "задержка/скорость повторного ввода клавиатуры;"
-
-#: cli/cmdint.c:105
-msgid "line height (8,16) for the display"
-msgstr "высота строки (8,16) дисплея"
-
-#: cli/cmdint.c:385
-msgid "Status for CON:"
-msgstr "Статус консоли CON:"
-
-#: cli/cmdint.c:386
-msgid "    Keyboard delay:"
-msgstr "  Задержка повторного ввода клавиатуры:"
-
-#: cli/cmdint.c:388
-msgid "    Keyboard rate:"
-msgstr "  Скорость повторного ввода клавиатуры:"
-
-#: cli/cmdint.c:390
-msgid "    Line height:"
-msgstr "  Высота строки:"
-
-#: cli/cmdmain.c:61
-msgid "Welcome to EmuCON2"
-msgstr "Добро пожаловать в эмулятор консоли EmuCON2"
-
-#: cli/cmdmain.c:62
-msgid "Type HELP for builtin commands"
-msgstr "Введите HELP для списка команд"
-
-#: cli/cmdutil.c:99
-msgid "invalid parameter"
-msgstr "неверный параметр"

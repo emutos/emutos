@@ -298,6 +298,10 @@ msgstr "Aika: __:__ __"
 msgid "Drive identifier: _:"
 msgstr "Aseman tunnus: _:"
 
+#: desk/desk_rsc.c:67
+msgid "Disk label: ____________"
+msgstr "Levyn nimi: ____________"
+
 #: desk/desk_rsc.c:82
 msgid "Bytes used: __________"
 msgstr "Tavuja käytetty: __________"
@@ -329,6 +333,10 @@ msgstr " EmuTOS "
 #: desk/desk_rsc.c:246
 msgid " File "
 msgstr " Arkisto "
+
+#: desk/desk_rsc.c:252
+msgid " View "
+msgstr " Näytä "
 
 #: desk/desk_rsc.c:258
 msgid " Options "
@@ -382,6 +390,30 @@ msgstr "  Käynnistä EmuCON ^Z"
 msgid "  Shutdown        ^Q"
 msgstr "  Pysäytä systeemi ^Q"
 
+#: desk/desk_rsc.c:414
+msgid "-------------------"
+msgstr "-------------------"
+
+#: desk/desk_rsc.c:420
+msgid "  Sort by name  \007N"
+msgstr "  Nimi          \007N"
+
+#: desk/desk_rsc.c:426
+msgid "  Sort by type  \007P"
+msgstr "  Tyyppi        \007P"
+
+#: desk/desk_rsc.c:432
+msgid "  Sort by size  \007Z"
+msgstr "  Koko          \007Z"
+
+#: desk/desk_rsc.c:438
+msgid "  Sort by date  \007T"
+msgstr "  Päiväys       \007T"
+
+#: desk/desk_rsc.c:444
+msgid "  No sort"
+msgstr "  Järjestämätön"
+
 #: desk/desk_rsc.c:456
 msgid "  Install disk drive..."
 msgstr "  Määritä levyasema..."
@@ -405,26 +437,6 @@ msgstr "  Talleta työpöytä     \007V"
 #: desk/desk_rsc.c:486
 msgid "  Change resolution...     \007C"
 msgstr "  Vaihda tarkkuutta... \007C"
-
-#: desk/desk_rsc.c:414
-msgid "-------------------"
-msgstr "-------------------"
-
-#: desk/desk_rsc.c:420
-msgid "  Sort by name  \007N"
-msgstr "  Nimi          \007N"
-
-#: desk/desk_rsc.c:426
-msgid "  Sort by type  \007P"
-msgstr "  Tyyppi        \007P"
-
-#: desk/desk_rsc.c:432
-msgid "  Sort by size  \007Z"
-msgstr "  Koko          \007Z"
-
-#: desk/desk_rsc.c:438
-msgid "  Sort by date  \007T"
-msgstr "  Päiväys       \007T"
 
 #: desk/desk_rsc.c:543
 msgid "Attribute:"
@@ -1008,6 +1020,14 @@ msgstr "or display current directory"
 msgid "Change attributes for <filename>"
 msgstr "Change attributes for <filename>"
 
+#: cli/cmdint.c:80
+msgid "<mode> specifies the new attribute(s):"
+msgstr "<mode> specifies the new attribute(s):"
+
+#: cli/cmdint.c:81
+msgid "r=read-only  h=hidden  s=system  -=none"
+msgstr "r=read-only  h=hidden  s=system  -=none"
+
 #: cli/cmdint.c:83
 msgid "Clear screen"
 msgstr "Clear screen"
@@ -1059,6 +1079,18 @@ msgstr "Specify -l for detailed list"
 #: cli/cmdint.c:101
 msgid "Create directory <dir>"
 msgstr "Create directory <dir>"
+
+#: cli/cmdint.c:103
+msgid "Set or display console settings:"
+msgstr "Set or display console settings:"
+
+#: cli/cmdint.c:104
+msgid "delay/rate for the keyboard;"
+msgstr "delay/rate for the keyboard;"
+
+#: cli/cmdint.c:105
+msgid "line height (8,16) for the display"
+msgstr "line height (8,16) for the display"
 
 #: cli/cmdint.c:107
 msgid "Copy <filespec> to standard output,"
@@ -1140,6 +1172,22 @@ msgstr "Builtin commands:"
 msgid "Listing of "
 msgstr "Listing of "
 
+#: cli/cmdint.c:385
+msgid "Status for CON:"
+msgstr "Status for CON:"
+
+#: cli/cmdint.c:386
+msgid "    Keyboard delay:"
+msgstr "    Keyboard delay:"
+
+#: cli/cmdint.c:388
+msgid "    Keyboard rate:"
+msgstr "    Keyboard rate:"
+
+#: cli/cmdint.c:390
+msgid "    Line height:"
+msgstr "    Line height:"
+
 #: cli/cmdint.c:439
 msgid "(empty)"
 msgstr "(empty)"
@@ -1216,6 +1264,18 @@ msgstr " or "
 msgid "CR to continue ..."
 msgstr "CR to continue ..."
 
+#: cli/cmdint.c:1092
+msgid "--More--"
+msgstr "--More--"
+
+#: cli/cmdmain.c:61
+msgid "Welcome to EmuCON2"
+msgstr "Welcome to EmuCON2"
+
+#: cli/cmdmain.c:62
+msgid "Type HELP for builtin commands"
+msgstr "Type HELP for builtin commands"
+
 #: cli/cmdmain.c:81
 msgid "warning: no history buffers"
 msgstr "warning: no history buffers"
@@ -1280,74 +1340,6 @@ msgstr "cmdline too long"
 msgid "directory not empty"
 msgstr "directory not empty"
 
-#: cli/cmdutil.c:102
-msgid "wrong number of arguments"
-msgstr "wrong number of arguments"
-
-#: cli/cmdutil.c:105
-msgid "error code "
-msgstr "error code "
-
-#: cli/cmdint.c:1092
-msgid "--More--"
-msgstr "--More--"
-
-#: desk/desk_rsc.c:67
-msgid "Disk label: ____________"
-msgstr "Levyn nimi: ____________"
-
-#: desk/desk_rsc.c:252
-msgid " View "
-msgstr " Näytä "
-
-#: desk/desk_rsc.c:444
-msgid "  No sort"
-msgstr "  Järjestämätön"
-
-#: cli/cmdint.c:80
-msgid "<mode> specifies the new attribute(s):"
-msgstr "<mode> specifies the new attribute(s):"
-
-#: cli/cmdint.c:81
-msgid "r=read-only  h=hidden  s=system  -=none"
-msgstr "r=read-only  h=hidden  s=system  -=none"
-
-#: cli/cmdint.c:103
-msgid "Set or display console settings:"
-msgstr "Set or display console settings:"
-
-#: cli/cmdint.c:104
-msgid "delay/rate for the keyboard;"
-msgstr "delay/rate for the keyboard;"
-
-#: cli/cmdint.c:105
-msgid "line height (8,16) for the display"
-msgstr "line height (8,16) for the display"
-
-#: cli/cmdint.c:385
-msgid "Status for CON:"
-msgstr "Status for CON:"
-
-#: cli/cmdint.c:386
-msgid "    Keyboard delay:"
-msgstr "    Keyboard delay:"
-
-#: cli/cmdint.c:388
-msgid "    Keyboard rate:"
-msgstr "    Keyboard rate:"
-
-#: cli/cmdint.c:390
-msgid "    Line height:"
-msgstr "    Line height:"
-
-#: cli/cmdmain.c:61
-msgid "Welcome to EmuCON2"
-msgstr "Welcome to EmuCON2"
-
-#: cli/cmdmain.c:62
-msgid "Type HELP for builtin commands"
-msgstr "Type HELP for builtin commands"
-
 #: cli/cmdutil.c:96
 msgid "can't delete file (read-only?)"
 msgstr "can't delete file (read-only?)"
@@ -1355,4 +1347,12 @@ msgstr "can't delete file (read-only?)"
 #: cli/cmdutil.c:99
 msgid "invalid parameter"
 msgstr "invalid parameter"
+
+#: cli/cmdutil.c:102
+msgid "wrong number of arguments"
+msgstr "wrong number of arguments"
+
+#: cli/cmdutil.c:105
+msgid "error code "
+msgstr "error code "
 

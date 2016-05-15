@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: bios/bios.c:646
+#: bios/bios.c:652
 msgid ""
 "System halted!\n"
 msgstr ""
