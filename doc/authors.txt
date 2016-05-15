@@ -182,6 +182,10 @@ Hampa Hug
 
 Markus Fröschle
 - Tests on the FireBee and BaS_gcc support
+- Fix GEM bugs
 
 Jan Krupka <krupkaj at centrum.cz>
 - Czech translation update
+
+Christian Zietz <czietz at gmx.net>
+- Fix floppy/ACSI bug
