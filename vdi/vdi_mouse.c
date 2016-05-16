@@ -771,7 +771,7 @@ static void cur_display (Mcdb *sprite, MCS *mcs, WORD x, WORD y)
         op = 0;                 /* longword save */
         mcs->stat |= MCS_LONGS; /* mark savearea as longword save */
     }
- 
+
     /*
      * clip y axis
      */

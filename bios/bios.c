@@ -451,7 +451,7 @@ struct rrcode {
 };
 #define RR_MAGIC    0x12123456L
 #define RR_CHKSUM   0x5678
-        
+
 static void run_reset_resident(void)
 {
     const struct rrcode *p = (const struct rrcode *)phystop;

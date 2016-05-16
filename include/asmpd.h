@@ -23,7 +23,7 @@
 #define P_BLEN          0x1C        // length of BSS
 #define P_XDTA          0x20        // pointer to DTA buffer ???
 #define P_REGSAVE       0x68        // registers d0,a3-a7
-                                // redefines of above area: 
+                                // redefines of above area:
 #define P_D0SAVE        0x68        // register d0
 #define P_A6SAVE        0x78        // register a6
 #define P_A7SAVE        0x7c        // register a7

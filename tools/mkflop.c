@@ -200,7 +200,7 @@ static int write_fats(FILE *fp,struct loader *b,uword clusters)
 
     for (i = 0; i < clusters-1; i++)
         set_fat_entry(fatbuf,i+2,i+3);  /* n+1 is the next entry in the chain after n */
-    set_fat_entry(fatbuf,i+2,0xfff);    /* terminate the chain */ 
+    set_fat_entry(fatbuf,i+2,0xfff);    /* terminate the chain */
 
     /* write the fats */
     for (i = 0; i < b->fat; i++)

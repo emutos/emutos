@@ -188,7 +188,7 @@ void sndirq(void)
         }
     }
 
-    switch((UBYTE)instr) 
+    switch((UBYTE)instr)
     {
     case 0x80:
         sndtmp = *code++;

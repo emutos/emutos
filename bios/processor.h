@@ -77,7 +77,7 @@
  * 7. The processor speed is undefined. The routine calibrate_delay() is
  *    used to derive a value that is used for timing short delays via a
  *    small instruction-looping routine.  See delay.c.
- *  
+ *
  * WARNING: if you specify CONF_WITH_68040_PMMU, and you run EmuTOS on
  * a machine with a real 68040, and you do DMA into TT-RAM (e.g. SCSI),
  * there will be major problems, since TT-RAM is set up in copyback mode,
