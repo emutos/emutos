@@ -93,21 +93,3 @@ void rc_union(GRECT *p1, GRECT *p2)
     p2->g_w = tw - tx;
     p2->g_h = th - ty;
 }
-
-
-/*
- *  min(): return minimum of two values
- */
-WORD min(WORD a, WORD b)
-{
-    return (a < b) ? a : b;
-}
-
-
-/*
- *  max(): return maximum of two values
- */
-WORD max(WORD a, WORD b)
-{
-    return (a > b) ? a : b;
-}
