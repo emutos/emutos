@@ -129,6 +129,13 @@ struct IDE
 
 #endif /* MACHINE_M548X */
 
+/* the data register is naturally byteswapped on some hardware */
+#ifdef MACHINE_AMIGA
+#define IDE_DATA_REGISTER_IS_BYTESWAPPED 1
+#else
+#define IDE_DATA_REGISTER_IS_BYTESWAPPED 0
+#endif
+
 /* set the following to 1 to use 32-bit data transfer */
 #if CONF_ATARI_HARDWARE
 #define IDE_32BIT_XFER 1
@@ -896,7 +903,8 @@ static LONG ide_identify(WORD dev)
     ifdev = dev & 1;    /* 0 or 1 */
 
     if (ide_device_exists(dev)) {
-        ret = ide_read(IDE_CMD_IDENTIFY_DEVICE,ifnum,ifdev,0L,1,(UBYTE *)&identify,0);
+        ret = ide_read(IDE_CMD_IDENTIFY_DEVICE,ifnum,ifdev,0L,1,
+                       (UBYTE *)&identify,IDE_DATA_REGISTER_IS_BYTESWAPPED);
     } else ret = EUNDEV;
 
     if (ret < 0)
