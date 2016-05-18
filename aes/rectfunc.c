@@ -41,18 +41,6 @@ void rc_constrain(GRECT *pc, GRECT *pt)
 
 
 /*
- *  rc_copy(): copy source to destination rectangle
- */
-void rc_copy(GRECT *psbox, GRECT *pdbox)
-{
-    pdbox->g_x = psbox->g_x;
-    pdbox->g_y = psbox->g_y;
-    pdbox->g_w = psbox->g_w;
-    pdbox->g_h = psbox->g_h;
-}
-
-
-/*
  *  rc_equal(): test for two rectangles equal
  */
 WORD rc_equal(GRECT *p1, GRECT *p2)

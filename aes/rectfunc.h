@@ -11,12 +11,20 @@
 #define RECTFUNC_H
 
 UWORD inside(WORD x, WORD y, GRECT *pt);
-void rc_copy(GRECT *psbox, GRECT *pdbox);
 void rc_constrain(GRECT *pc, GRECT *pt);
 WORD rc_equal(GRECT *p1, GRECT *p2);
 WORD rc_intersect(GRECT *p1, GRECT *p2);
 void rc_union(GRECT *p1, GRECT *p2);
 WORD min(WORD a, WORD b);
 WORD max(WORD a, WORD b);
+
+/*
+ *  rc_copy(): copy source to destination rectangle
+ */
+static __inline__
+void rc_copy(GRECT *psbox, GRECT *pdbox)
+{
+    *pdbox = *psbox;
+}
 
 #endif
