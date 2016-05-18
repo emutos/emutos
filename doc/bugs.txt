@@ -49,9 +49,6 @@ Atari Falcon / TOS v4 compatibility bugs:
   image list window only on highlight and some UI elements flicker.
 - Falcon FalcAMP button icons aren't visible as EmuTOS doesn't support
   new style RSC files with CICONs.
-- Sound is missing from Zodiax Falcon game because EmuTOS doesn't
-  initialize Falcon sound matrix at boot: set default Sound mode
-  (connect DMA to DAC) and set Codec input & Gain.
 
 Other problems:
 - Spectrum512 drawing program gives address error on XBios Kbdvbase()
