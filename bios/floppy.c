@@ -497,27 +497,10 @@ LONG floppy_rw(WORD rw, UBYTE *buf, WORD cnt, LONG recnr, WORD spt,
             side = track % 2;
             track /= 2;
         }
-#if CONF_WITH_FRB
-        if (buf >= phystop) {
-            /* The buffer provided by the user is outside the ST-RAM,
-             * but floprw() needs to use the DMA.
-             * We must use the intermediate _FRB buffer.
-             */
-            if (cookie_frb) {
-                if ((rw & RW_RW) == RW_WRITE)
-                    memcpy(cookie_frb, buf, SECTOR_SIZE);
-                err = floprw(cookie_frb, rw, dev, sect, track, side, 1);
-                if ((rw & RW_RW) == RW_READ)
-                    memcpy(buf, cookie_frb, SECTOR_SIZE);
-            } else {
-                err = -1;   /* problem: can't DMA to FastRAM */
-            }
-        } else
-#endif
-        {
-            /* The buffer is in the ST-RAM, we can call floprw() directly */
-            err = floprw(buf, rw, dev, sect, track, side, 1);
-        }
+        /*
+         * floprw() now handles a buffer in FastRAM itself
+         */
+        err = floprw(buf, rw, dev, sect, track, side, 1);
         if (err) {
             struct flop_info *f;
             if (drivetype == DD_DRIVE)          /* DD only, so no retry */
@@ -852,7 +835,7 @@ LONG floprate(WORD dev, WORD rate)
 
 /*==== internal floprw ====================================================*/
 
-static WORD floprw(UBYTE *buf, WORD rw, WORD dev,
+static WORD floprw(UBYTE *userbuf, WORD rw, WORD dev,
                    WORD sect, WORD track, WORD side, WORD count)
 {
     WORD err;
@@ -860,6 +843,7 @@ static WORD floprw(UBYTE *buf, WORD rw, WORD dev,
     WORD retry;
     WORD status;
     WORD cmd;
+    UBYTE *iobuf, *iobufptr;
     LONG buflen = (LONG)count * SECTOR_SIZE;
 #endif
 
@@ -873,12 +857,12 @@ static WORD floprw(UBYTE *buf, WORD rw, WORD dev,
     }
 
 #ifdef MACHINE_AMIGA
-    err = amiga_floprw(buf, rw, dev, sect, track, side, count);
+    err = amiga_floprw(userbuf, rw, dev, sect, track, side, count);
     units[dev].last_access = hz_200;
 #elif CONF_WITH_FDC
     /* flush data cache here so that memory is current */
     if (rw == RW_WRITE)
-        flush_data_cache(buf,buflen);
+        flush_data_cache(userbuf,buflen);
 
     floplock(dev);
 
@@ -889,10 +873,30 @@ static WORD floprw(UBYTE *buf, WORD rw, WORD dev,
         return err;
     }
 
+    iobuf = userbuf;    /* by default, we do i/o directly into the user buffer */
+
+#if CONF_WITH_FRB
+    if (userbuf >= phystop) {
+        /*
+         * The buffer provided by the user is outside ST-RAM, but floprw()
+         * needs to use DMA, so we must use the intermediate _FRB buffer.
+         */
+        iobuf = cookie_frb;
+        if (!iobuf)
+        {
+            KDEBUG(("floprw() error: can't DMA to FastRAM\n"));
+            return ERR;
+        }
+        if (rw == RW_WRITE)
+            memcpy(iobuf, userbuf, buflen);
+    }
+#endif
+
+    iobufptr = iobuf;
     while(count--) {
       for (retry = 0; retry < 2; retry++) {
         set_fdc_reg(FDC_SR, sect);
-        set_dma_addr(buf);
+        set_dma_addr(iobufptr);
         if (rw == RW_READ) {
             fdc_start_dma_read(1);
             cmd = FDC_READ;
@@ -930,7 +934,7 @@ static WORD floprw(UBYTE *buf, WORD rw, WORD dev,
       if (err)
           break;
       //-- Otherwise carry on sequentially
-      buf += SECTOR_SIZE;
+      iobufptr += SECTOR_SIZE;
       sect++;
     }
 
@@ -938,7 +942,19 @@ static WORD floprw(UBYTE *buf, WORD rw, WORD dev,
 
     /* invalidate data cache if we've read into memory */
     if (rw == RW_READ)
-        invalidate_data_cache(buf,buflen);
+        invalidate_data_cache(iobuf,buflen);
+
+#if CONF_WITH_FRB
+    /*
+     * If we're using the intermediate _FRB buffer for reading,
+     * we need to copy the date to the user area.
+     */
+    if (iobuf == cookie_frb) {
+        if (rw == RW_READ)
+            memcpy(userbuf, iobuf, buflen);
+    }
+#endif
+
 #else
     err = EUNDEV;
 #endif
@@ -947,19 +963,20 @@ static WORD floprw(UBYTE *buf, WORD rw, WORD dev,
 
 /*==== internal flopwtrack =================================================*/
 
-static WORD flopwtrack(UBYTE *buf, WORD dev, WORD track, WORD side, WORD track_size)
+static WORD flopwtrack(UBYTE *userbuf, WORD dev, WORD track, WORD side, WORD track_size)
 {
 #if CONF_WITH_FDC
     WORD retry;
     WORD err;
     WORD status;
+    UBYTE *iobuf;
 
     if ((track == 0) && (side == 0)) {
         /* TODO, maybe media changed ? */
     }
 
     /* flush cache here so that track image is pushed to memory */
-    flush_data_cache(buf,track_size);
+    flush_data_cache(userbuf,track_size);
 
     floplock(dev);
 
@@ -970,8 +987,26 @@ static WORD flopwtrack(UBYTE *buf, WORD dev, WORD track, WORD side, WORD track_s
         return err;
     }
 
+    iobuf = userbuf;    /* by default, we do i/o directly into the user buffer */
+
+#if CONF_WITH_FRB
+    if (userbuf >= phystop) {
+        /*
+         * The buffer provided by the user is outside ST-RAM, but flopwtrack()
+         * needs to use DMA, so we must use the intermediate _FRB buffer.
+         */
+        iobuf = cookie_frb;
+        if (!iobuf)
+        {
+            KDEBUG(("flopwtrack() error: can't DMA from FastRAM\n"));
+            return ERR;
+        }
+        memcpy(iobuf, userbuf, track_size);
+    }
+#endif
+
     for (retry = 0; retry < 2; retry++) {
-        set_dma_addr(buf);
+        set_dma_addr(iobuf);
         fdc_start_dma_write((track_size + SECTOR_SIZE-1) / SECTOR_SIZE);
         if (cookie_mch == MCH_FALCON)
             falcon_wait();
