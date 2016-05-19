@@ -8,6 +8,11 @@ This ROM is suitable for the following hardware:
 Note: Extra hardware is autodetected.
 
 This ROM is the optimal one for Hatari, with any hardware combination.
+
+Note: There is a bug in special Hatari 1.9.0 variants which prevents IDE
+working in some conditions. If you experience trouble, select 68030 CPU and
+disable the "Cycle exact" option.
+
 Some legacy programs don't work with 512k TOS images, for those one may
 need to use a smaller EmuTOS image.
 
