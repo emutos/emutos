@@ -256,27 +256,37 @@ init_pattern_loop:
         moveq   #0,d5                   // total memory (later phystop)
         moveq   #0,d6                   // MMU setting set to 0
 
-        /* test the presence of a 256k bank config */
-test_256k:
+        /* test the presence of a 128k bank config */
+test_128k:
 #ifdef __mcoldfire__
         lsr.l   #2,d6                   // switch bank in configuration byte
 #else
         lsr.w   #2,d6                   // switch bank in configuration byte
 #endif
-        moveq   #0,d4                   // bank memory size
+        move.l  #0x20000,d4             // 128 kb bank memory size
+        movea.l #0x40008,a0             // 128k test for STE
+        lea     test_128k_ST,a5         // return point of test pattern
+        bra     check_test_pattern
 
-        movea.l #0x40008,a0             // 256k test
+test_128k_ST:
+        beq.s   bank_test_end           // There is a memory loop in the previous test ! -> D6=0x0 - 128k bank
+        movea.w #0x208,a0               // 128k test for ST
         lea     test_512k,a5            // return point of test pattern
-        move.l  #0x40000,d4             // 256 kb bank memory size
         bra     check_test_pattern
 
         /* test the presence of a 512k bank config */
 test_512k:
-        beq.s   bank_test_end           // There is a memory loop in the previous test ! -> D6=0x0 - 256k bank
+        beq.s   bank_test_end           // There is a memory loop in the previous test ! -> D6=0x0 - 128k bank
 
-        movea.l #0x80008,a0             // 512k test
-        lea     test_2m,a5              // return point of test pattern
         move.l  #0x80000,d4             // 512 kb bank memory size
+        movea.l #0x80008,a0             // 512k test for STE
+        lea     test_512k_ST,a5         // return point of test pattern
+        bra     check_test_pattern
+
+test_512k_ST:
+        beq.s   bank_test_end_512k      // There is a memory loop in the previous test -> D6=0x4 - 512K bank
+        movea.w #0x408,a0               // 512k test for ST
+        lea     test_2m,a5              // return point of test pattern
         bra     check_test_pattern
 
         /* test the presence of a 2M bank config */
@@ -286,9 +296,9 @@ test_2m:
         /* This is the last test. In previous tests (256k&512k) we didn't find any memory loop.
            Here we are testing if there a 2Mb simm (full bank memory size) or nothing. */
 
-        movea.l #0x00008,a0             // 0kb/2m test
+        movea.w #0x008,a0               // 0kb/2Mb test for ST & STE
         lea     last_return,a5          // return point of test pattern
-        move.l  #0x0,d4                 // 0kb/2Mb bank memory size
+        moveq   #0x0,d4                 // 0kb bank memory size
         bra     check_test_pattern
 
 last_return:
@@ -311,7 +321,7 @@ bank_test_end_512k:
 bank_test_end:
         add.l   d4,d5                   // compute total memory size
         sub.l   #0x200000,d1            // next bank 0
-        beq.s   test_256k               // already done ?   -> no start the tests for bank 0
+        beq.s   test_128k               // already done ?   -> no start the tests for bank 0
                                         // in this case this test is the end.
 
         // Set the final MMU config
