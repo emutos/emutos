@@ -1,0 +1,147 @@
+The following article is compiled from postings made to emutos-devel by
+Christian Zietz, and used with his permission.
+
+
+Memory bank detection on the ST and STe
+=======================================
+First, keep in mind that I figured this out from looking at the code
+and testing on my ST.  Jean-François del Nero helped out a lot by doing
+the STe tests, since I don't own an STe.
+
+Memory detection works individually for each bank by telling the MMU to
+assume 2 MB of RAM in that bank and then testing where patterns repeat.
+Now, the ST and the STE MMU differ on how they decode memory addresses.
+Thus, these repetitions occur at different memory locations.
+
+DRAM is addressed by rows and columns, so the MMU decodes a RAM address
+(21 bits, A20-A0, to address a maximum of 2 MB per bank) into row and
+column addresses.  As the RAM data bus is 16 bits wide, A0 doesn't need
+to be decoded.  In fact it's not even on the address bus.  So we use 20
+bits, 10 for row and 10 for column.
+
+ST memory bank detection
+------------------------
+The address that is checked by the detection algorithm for a 512 kByte
+bank is 0x408 = 0 0000 0000 0100 0000 1000b.  The ST MMU (when set to
+2MB) does the following decode of that address (Rx and Cx are row and
+column address lines respectively):
+
+0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0
+^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^
+C C C C C C C C C C R R R R R R R R R R X
+9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 X
+
+Now a 512 kByte bank does not use row and column address lines 9, so you
+can see that, if we have set the memory controller for a 2MB bank but
+really have a 512 kByte bank, 0x408 will map to 0x008.  This is exploited
+by the detection algorithm.
+
+STe memory bank detection
+-------------------------
+The address that is checked by the detection algorithm for a 512 kByte
+bank is 0x80008 = 0 1000 0000 0000 0000 1000b.  It is decoded differently
+though:
+
+0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0
+^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^
+C R C R C R C R C R C R C R C R C R C R X
+9 9 8 8 7 7 6 6 5 5 4 4 3 3 2 2 1 1 0 0 X
+
+Again, C9 and R9 don't exist in a 512 kByte bank, hence in an STe
+0x80008 will map to 0x00008 during memory detection.
+
+
+
+Writing memory detection code that works on STs and STes
+========================================================
+There are five possible different standard memory setups; each has a
+different wraparound address (always assuming that the memory controller
+has been set for a 2MB bank):
+1. STe w/128kB bank (if they exist): wraparound @ 0x40008
+2. ST w/128kB bank: wraparound @ 0x208
+3. STe w/512kB bank: wraparound @ 0x80008
+   Note that this will also wraparound on an ST w/128kB bank, so we
+   must test for the 128KB bank first
+4. ST w/512kB bank: wraparound @ 0x408
+5. ST or STe w/2MB bank: no wraparound
+
+Here are the details.  Don't forget: the wraparound occurs because the
+high order bits of row and column addresses are ignored on smaller banks.
+On a 512kB bank, bits R9/C9 are ignored; on a 128kB bank, bits R8-R9 and
+C8-C9 are ignored.
+
+Address 0x208
+-------------
+ST => will correctly wrap around at R8 when 128 kByte are installed
+0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0
+C C C C C C C C C C R R R R R R R R R R X
+9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 X
+
+STe => will not wrap around
+0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0
+C R C R C R C R C R C R C R C R C R C R X
+9 9 8 8 7 7 6 6 5 5 4 4 3 3 2 2 1 1 0 0 X
+
+Address 0x408
+-------------
+ST => will correctly wrap around at R9 when 512 kByte are installed
+0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0
+C C C C C C C C C C R R R R R R R R R R X
+9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 X
+
+STE => will not wrap around
+0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0
+C R C R C R C R C R C R C R C R C R C R X
+9 9 8 8 7 7 6 6 5 5 4 4 3 3 2 2 1 1 0 0 X
+
+Address 0x40008
+---------------
+ST => will not wrap around
+0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0
+C C C C C C C C C C R R R R R R R R R R X
+9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 X
+
+STe => will correctly wrap around at C8 when 128 kByte are installed
+0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0
+C R C R C R C R C R C R C R C R C R C R X
+9 9 8 8 7 7 6 6 5 5 4 4 3 3 2 2 1 1 0 0 X
+
+Address 0x80008
+---------------
+ST => will falsely wrap around at C8 when 128 kByte are installed
+0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0
+C C C C C C C C C C R R R R R R R R R R X
+9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 X
+
+STE => will correctly wrap around at R9 when 512 kByte are installed
+0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0
+C R C R C R C R C R C R C R C R C R C R X
+9 9 8 8 7 7 6 6 5 5 4 4 3 3 2 2 1 1 0 0 X
+
+
+
+Address decoding during normal operation
+========================================
+After memory detection is finished, the MMU is configured to the actual
+RAM bank size present in the computer.  If there is less than 2 MB in a
+bank, the address decoding needs to be adapted.
+
+For example, only 19 bits (address lines A0-A18) are used to address
+512 kByte of RAM.  Furthermore, in a 512 kByte bank only row and column
+address lines 0-8 exist.
+
+The STe simply doesn't decode the topmost address lines (R9 and C9) in
+this case, so for example the address 0x40008 is still decoded as:
+
+1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0
+C R C R C R C R C R C R C R C R C R X
+8 8 7 7 6 6 5 5 4 4 3 3 2 2 1 1 0 0 X
+
+The ST however modifies its address decoding to account for the missing
+lines R9 and C9 as follows:
+
+1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0
+C C C C C C C C C R R R R R R R R R X
+8 7 6 5 4 3 2 1 0 8 7 6 5 4 3 2 1 0 X
+
+Christian Zietz, May 2016
