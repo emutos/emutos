@@ -5,7 +5,7 @@ Christian Zietz, and used with his permission.
 Memory bank detection on the ST and STe
 =======================================
 First, keep in mind that I figured this out from looking at the code
-and testing on my ST.  Jean-François del Nero helped out a lot by doing
+and testing on my ST.  Jean-FranÃ§ois del Nero helped out a lot by doing
 the STe tests, since I don't own an STe.
 
 Memory detection works individually for each bank by telling the MMU to
