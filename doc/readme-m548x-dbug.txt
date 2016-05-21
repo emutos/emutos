@@ -29,7 +29,7 @@ Requirements:
 To use the CompactFlash card, you need to have programmed the CPLD
 (programmable component) on your board. You need to contact Logic PD
 (the board manufacturer) to get the appropriate software package.
-http://www.logicpd.com/support/
+https://support.logicpd.com/
 
 How to run EmuTOS:
 
