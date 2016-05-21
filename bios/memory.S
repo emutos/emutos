@@ -263,7 +263,7 @@ test_128k:
 #else
         lsr.w   #2,d6                   // switch bank in configuration byte
 #endif
-        move.l  #0x20000,d4             // 128 kb bank memory size
+        move.l  #0x20000,d4             // 128 KB bank memory size
         movea.l #0x40008,a0             // 128k test for STE
         lea     test_128k_ST,a5         // return point of test pattern
         bra     check_test_pattern
@@ -278,7 +278,7 @@ test_128k_ST:
 test_512k:
         beq.s   bank_test_end           // There is a memory loop in the previous test ! -> D6=0x0 - 128k bank
 
-        move.l  #0x80000,d4             // 512 kb bank memory size
+        move.l  #0x80000,d4             // 512 KB bank memory size
         movea.l #0x80008,a0             // 512k test for STE
         lea     test_512k_ST,a5         // return point of test pattern
         bra     check_test_pattern

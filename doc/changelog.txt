@@ -232,7 +232,7 @@ Start... early ages
 - native print is activated by a STONX_NATIVE_PRINT #define in config.h (LVL)
 
 2001-10-28
-- emutos.img file now is 192 kb (MAD)
+- emutos.img file now is 192 KB (MAD)
 - rewrote complete linea initialization in C (bios/lineainit.c) (MAD)
 
 2001-10-31
@@ -2786,7 +2786,7 @@ Start... early ages
 - Makefile: Introduced the ROM_192 variable to specify the name of the 192 KB
   ROM and produce more meaningful message with make all192. (VRI)
 - desk/deskact.c: Fixed warnings with make 192. (VRI)
-- Makefile: allbin target now builds the 192 Kb images, too. (THH)
+- Makefile: allbin target now builds the 192 KB images, too. (THH)
 
 2011-10-09
 - doc/bugs.txt: Updated the bug list. Contributed by Eero Tamminen. (VRI)
