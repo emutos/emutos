@@ -8,10 +8,10 @@ emutos-m548x-bas.s19 - RAM executable (English)
 Supported hardware:
 
 - M5485EVB (a.k.a. Zoom ColdFire EVB)
-http://www.logicpd.com/products/legacy/zoom-coldfire-evb/
+http://www.nxp.com/products/microcontrollers-and-processors/more-processors/coldfire-plus-coldfire-mcus-mpus/coldfire-mpus/v4-mpu/mcf5485-evaluation-board:M5485EVB
 
 - M5484LITE (a.k.a. Zoom ColdFire LITEKIT)
-http://www.logicpd.com/products/legacy/zoom-coldfire-litekit/
+http://www.nxp.com/pages/mcf5484-lite-evaluation-kit:M5484LITE
 
 Prerequisites:
 Your EVB needs to boot to BaS_gcc. It is a pre-OS similar to the one found on

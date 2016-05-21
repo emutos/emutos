@@ -22,7 +22,7 @@ This ROM image can be flashed into the FireBee flash memory using any supported
 flash tool, including:
 
 1) Freescale's CF Flasher
-http://www.freescale.com/webapp/search/Serp.jsp?QueryText=cfflasher&fsrch=1&RELEVANCE=true&Downloads=Downloads%2F010JOVEUG4CB%60%60Development+Tools%2F070JOVFYTFTB%60%60Programmers+%28Flash%2C+etc.%29&showAllCategories=false&SelectedAsset=Downloads
+http://cache.nxp.com/files/soft_dev_tools/software/programmers/CFFLASHER.zip
 This tool runs on MS Windows and requires additional hardware.
 
 2) Didier Méquignon's FLASH060.PRG
