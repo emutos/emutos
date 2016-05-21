@@ -189,3 +189,4 @@ Jan Krupka <krupkaj at centrum.cz>
 
 Christian Zietz <czietz at gmx.net>
 - Fix floppy/ACSI bug
+- Fix memory detection to support STs as well as STes

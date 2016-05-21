@@ -6247,3 +6247,75 @@ Other changes:
 - VDI: fix gap in circle drawn by v_arc()
 - VDI: fix VDI wideline display in 320x480 resolution
 - Lots of source code cleanup and minor bug fixes
+
+
+CHANGES BETWEEN RELEASE 0.9.5 AND RELEASE 0.9.6
+
+Major changes:
+- AES: fix pattern problem in window title line
+- AES: prevent crash when NVDI is installed
+- BDOS: fix bug: memory allocated by a TSR could be freed
+- BDOS: implement etv_term()
+- BIOS: clean up pending IRQ from flopunlk(), fixes some ACSI problems
+- BIOS: clear data cache after DMA read, fixes ACSI problem on TT
+- BIOS: do not clear the free ST-RAM on startup
+- BIOS: enable MIDI input
+- BIOS: initialise DMA sound matrix on Falcon
+- BIOS: fix Flopxxx XBIOS calls to work with FastRAM
+- BIOS: fix floppy motor-on problem during initialisation
+- BIOS: fix memory bank detection to work on ST and STe
+- BIOS: prevent reset vector being called on cold reset
+- EmuCON2: add 'mode' command
+- EmuCON2: fix EmuCON crash if system call is intercepted
+- EmuDesk: allow TT desktop to select TT medium res
+- EmuDesk: fix bug: copy/move could target the wrong folder 
+- EmuDesk: fix display of numeric values in desktop dialogs
+- EmuDesk: fix rubber-banding for text-mode desktop windows
+- EmuDesk: hide Shutdown if the machine can't shutdown
+- EmuDesk: improve desktop move performance by using rename if possible
+- EmuDesk: change menu bar to be more like Atari TOS
+- General: fix EmuTOS to run on real TT hardware
+- General: merge boot.prg + ramtos.img into emutos.prg
+- VDI: fully implement VDI support for TT video
+
+Other changes:
+- AES: clean up if program fails to issue appl_exit()
+- AES: fix loop when deleting non-existent object
+- AES: fix handling of Delete key by objc_edit()
+- AES: fix value returned by evnt_button()/evnt_multi()
+- AES: reset the default drive on resolution change
+- BDOS: fix volume label handling to conform to TOS standards
+- BIOS: add new cookie _MCF to the cookiejar
+- BIOS: add support for RTC on ICD AdSCSI Plus board
+- BIOS: add support for TT MFP (MFP #2)
+- BIOS: add support to run "reset-resident" code
+- BIOS: allow EmuTOS floppy to boot other floppies
+- BIOS: clear system variables if EmuTOS loads into RAM
+- BIOS: fix console font height with Hatari extended video modes
+- BIOS: fix ide_identify() on Amiga
+- BIOS: fix NVRAM year on TT
+- BIOS: fix return codes for dmasound functions on ST
+- BIOS: fix return codes for TT shifter functions
+- BIOS: fix some NVRAM reset problems
+- BIOS: fix sound volume on TT
+- BIOS: fix _screenpt processing for TT, Falcon
+- BIOS: flush the data cache before a warm or cold reset
+- BIOS: initialize the IKBD clock on first boot only
+- BIOS: rewrite MegaST(e) real time clock handler
+- EmuCON2: fix EmuCON welcome message for ST-Low
+- EmuDesk: add 'No sort' to desktop sort options
+- EmuDesk: add desktop shortcuts for scroll-by-page
+- EmuDesk: ensure desktop menu bar fits within screen 
+- EmuDesk: fix display of volume label in disk info dialog
+- EmuDesk: improve EMUDESK.INF error checking
+- EmuDesk: show the emulated machine name on Hatari even with --natfeats yes
+- General: always use STOP instruction in 'wait for interrupt' loops
+- General: create valid filesystem with hidden EmuTOS image on auto-booting floppy
+- General: do not wait for a key at EMUTOS.PRG startup
+- General: pretend to be TOS 1.04 in 192k ROMs
+- General: use country id as part of emutos.prg/emutos.st name
+- VDI: fix v_curtext()
+- VDI: implement vq_curaddress()
+- VDI: improve performance of cursor display routine
+- VDI: rewrite vr_trnfm() to fix bugs and save space
+- Lots of source code cleanup and minor bug fixes

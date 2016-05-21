@@ -3,7 +3,7 @@ Dear Atari Community!
 
 We are happy to announce a new public release of EmuTOS:
 
-EmuTOS 0.9.5 -- October 25, 2015
+EmuTOS 0.9.6 -- May 21, 2016
 
 
 
@@ -12,58 +12,84 @@ INTRODUCTION
 EmuTOS is a single-user single-tasking operating system for 32-bit Atari
 computers, clones and emulators. It can be used as a replacement for the
 TOS images typically needed by emulators and can also run on some real
-hardware, including the Atari ST(e) and Falcon, and the FireBee. It can
-even run on non-Atari hardware such as Amiga and ColdFire Evaluation
+hardware, including the Atari ST(e), TT, and Falcon, and the FireBee. It
+can even run on non-Atari hardware such as Amiga and ColdFire Evaluation
 Boards. All the source code is open and free, licensed under the GNU
 General Public License (GPL).
 
 
 
-CHANGES SINCE RELEASE 0.9.4
+CHANGES SINCE RELEASE 0.9.5
 
 Major changes:
-- AES/BIOS: implement critical error handler
-- BDOS: fix file not found issues with Steem hard disk emulation
-- BDOS: implement Pexec mode 7
-- BIOS: add alt-arrow support (mouse actions via keyboard)
-- BIOS: add dual keyboard support (for Greek/Russian keyboards)
-- BIOS: allow user to specify boot partition at startup
-- BIOS: allow EmuTOS to recover from program exceptions in user programs
-- BIOS: auto-detect multiple IDE interfaces
-- BIOS: fix detection of C: drive with Steem
-- BIOS: fix early stack initialization on Amiga
-- EmuDesk: improve text object alignment for translated strings
-- VDI: add line-A flood fill; all line-A opcodes are now supported
+- AES: fix pattern problem in window title line
+- AES: prevent crash when NVDI is installed
+- BDOS: fix bug: memory allocated by a TSR could be freed
+- BDOS: implement etv_term()
+- BIOS: clean up pending IRQ from flopunlk(), fixes some ACSI problems
+- BIOS: clear data cache after DMA read, fixes ACSI problem on TT
+- BIOS: do not clear the free ST-RAM on startup
+- BIOS: enable MIDI input
+- BIOS: initialise DMA sound matrix on Falcon
+- BIOS: fix Flopxxx XBIOS calls to work with FastRAM
+- BIOS: fix floppy motor-on problem during initialisation
+- BIOS: fix memory bank detection to work on ST and STe
+- BIOS: prevent reset vector being called on cold reset
+- EmuCON2: add 'mode' command
+- EmuCON2: fix EmuCON crash if system call is intercepted
+- EmuDesk: allow TT desktop to select TT medium res
+- EmuDesk: fix bug: copy/move could target the wrong folder 
+- EmuDesk: fix display of numeric values in desktop dialogs
+- EmuDesk: fix rubber-banding for text-mode desktop windows
+- EmuDesk: hide Shutdown if the machine can't shutdown
+- EmuDesk: improve desktop move performance by using rename if possible
+- EmuDesk: change menu bar to be more like Atari TOS
+- General: fix EmuTOS to run on real TT hardware
+- General: merge boot.prg + ramtos.img into emutos.prg
+- VDI: fully implement VDI support for TT video
 
 Other changes:
-- AES: increase button spacing in alerts
-- AES: increase AES stack size for ColdFire machines
-- BDOS: evaluate TPAsize flags in Pexec processing
-- BDOS: fix bug in cross-directory rename
-- BIOS: use interrupts for serial console instead of polling
-- BIOS: fix FPU detection: 68881/68882 are now differentiated correctly
-- BIOS: fix delay_loop() timing for M548X machines
-- BIOS: fix key repeat bug when entering values via alt-keypad
-- BIOS: implement XHInqDriver() XHDI function
-- BIOS: fix some XHDI return codes (EDRIVE and EWRPRO)
-- BIOS: add explicit delay for parallel port strobe (fixes printing on fast systems)
-- BIOS: fix nationality code in ROM header
-- EmuCON2: translate text (note: some country codes use English by choice)
-- EmuDesk: allow folders being displayed in an open window to be moved/deleted
-- EmuDesk: allow desktop "rubber-banding" in all directions
-- EmuDesk: display year as 4 digits where possible
-- EmuDesk: use _IDT cookie for EmuDesk date/time formatting
-- EmuDesk: fix bug in "sort by date" for directory display
-- EmuDesk: allocate screen objects dynamically
-- General: convert source code repository to git
-- General: implement error checking for translated alerts
-- General: replace "make release-version" with "make version"
-- VDI: ignore lineA variable 'multifill' for linea_rect() and linea_polygon()
-- VDI: speed up drawing of horizontal lines by v_pline()
-- VDI: fix lineA rectangle fill bugs
-- VDI: fix gap in circle drawn by v_arc()
-- VDI: fix VDI wideline display in 320x480 resolution
+- AES: clean up if program fails to issue appl_exit()
+- AES: fix loop when deleting non-existent object
+- AES: fix handling of Delete key by objc_edit()
+- AES: fix value returned by evnt_button()/evnt_multi()
+- AES: reset the default drive on resolution change
+- BDOS: fix volume label handling to conform to TOS standards
+- BIOS: add new cookie _MCF to the cookiejar
+- BIOS: add support for RTC on ICD AdSCSI Plus board
+- BIOS: add support for TT MFP (MFP #2)
+- BIOS: add support to run "reset-resident" code
+- BIOS: allow EmuTOS floppy to boot other floppies
+- BIOS: clear system variables if EmuTOS loads into RAM
+- BIOS: fix console font height with Hatari extended video modes
+- BIOS: fix ide_identify() on Amiga
+- BIOS: fix NVRAM year on TT
+- BIOS: fix return codes for dmasound functions on ST
+- BIOS: fix return codes for TT shifter functions
+- BIOS: fix some NVRAM reset problems
+- BIOS: fix sound volume on TT
+- BIOS: fix _screenpt processing for TT, Falcon
+- BIOS: flush the data cache before a warm or cold reset
+- BIOS: initialize the IKBD clock on first boot only
+- BIOS: rewrite MegaST(e) real time clock handler
+- EmuCON2: fix EmuCON welcome message for ST-Low
+- EmuDesk: add 'No sort' to desktop sort options
+- EmuDesk: add desktop shortcuts for scroll-by-page
+- EmuDesk: ensure desktop menu bar fits within screen 
+- EmuDesk: fix display of volume label in disk info dialog
+- EmuDesk: improve EMUDESK.INF error checking
+- EmuDesk: show the emulated machine name on Hatari even with --natfeats yes
+- General: always use STOP instruction in 'wait for interrupt' loops
+- General: create valid filesystem with hidden EmuTOS image on auto-booting floppy
+- General: do not wait for a key at EMUTOS.PRG startup
+- General: pretend to be TOS 1.04 in 192k ROMs
+- General: use country id as part of emutos.prg/emutos.st name
+- VDI: fix v_curtext()
+- VDI: implement vq_curaddress()
+- VDI: improve performance of cursor display routine
+- VDI: rewrite vr_trnfm() to fix bugs and save space
 - Lots of source code cleanup and minor bug fixes
+
 
 For a detailed list of changes, refer to the git repository.
 
@@ -139,16 +165,19 @@ This is the currently supported Atari hardware:
 - FPU detection
 - 68030 MMU and cache
 - Memory controller (both ST and Falcon)
+- TT FastRAM
 - Monitor type detection (mono, RGB or VGA)
 - DMA controller
 - WD 1772 / AJAX Floppy disk controller
-- MFP
+- MFP, MFP #2
 - PSG
 - ST shifter
 - STe shifter
+- TT shifter
 - VIDEL
 - ACIAs, IKBD protocol, mouse
 - MegaST Real-Time Clock (set clock not tested)
+- ICD AdSCSI Plus ST Real-Time Clock
 - NVRAM (including RTC)
 - Blitter (Blitmode() just returns HW status)
 - Microwire
@@ -160,8 +189,7 @@ This is the currently supported Atari hardware:
 
 Currently unsupported hardware features:
 - DSP
-- MFP #2
-- TT 256-colour palette
+- SCSI
 
 EmuTOS is also available on some non-Atari hardware:
 - Amiga (WinUAE, Amiga 1000, Amiga 1200 with Blizzard 1260)
