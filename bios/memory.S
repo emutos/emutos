@@ -46,7 +46,6 @@
         .extern sysvars_end   // end of system variables
         .extern bssstart      // end of documented low memory tosvars
         .extern __end         // end of BSS segment
-        .extern _os_end       // pointer to first byte RAM not used by OS
 
 // ===========================================================================
 // ==== meminit - Reuse or detect RAM settings, then initialize RAM areas ====

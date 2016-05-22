@@ -41,6 +41,7 @@
         .extern __end         // end of bss + comm sections (ld generated)
         .extern __etext       // end of text section
         .extern __edata       // end of data section
+        .extern __endvdibss   // end of VDI BSS
 
 // ===========================================================================
 // ==== TEXT segment (TOS image) =============================================
@@ -54,7 +55,6 @@
  */
 
         .globl  _main           // OS entry point
-        .globl  _os_end
         .globl  _os_beg
         .globl  _os_magic
         .globl  _os_date
@@ -88,18 +88,8 @@ reseth:
     .dc.l   _main       // reseth, pointer to reset handler
 _os_beg:
     .dc.l   _os_entry   // os_beg, base of os = _sysbase
-_os_end:
-#if EMUTOS_LIVES_IN_RAM
-    // When EmuTOS is run from the RAM, the BSS starts at address 0 as usual,
-    // but the TEXT and DATA segments are just after the BSS.
-    // Thus the first unused RAM address is the end of the DATA segment.
-    .dc.l   __edata
-#else
-    // When EmuTOS is run from the ROM, the TEXT and DATA segments stays in the
-    // ROM, but the BSS starts at address 0.
-    // Thus the first unused RAM address is the end of the BSS segment.
-    .dc.l   __end       // os_end, first byte RAM not used by OS
-#endif
+os_end:
+    .dc.l   __endvdibss // os_end, end of VDI BSS
 os_res1:
     .dc.l   _main       // os_res1, reserved
 _os_magic:

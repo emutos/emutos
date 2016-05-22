@@ -224,6 +224,9 @@ else
 vdi_src += vdi_blit.S vdi_tblit.S
 endif
 
+# The source below must be the last VDI one
+vdi_src += endvdi.S
+
 #
 # source code in aes/
 #

@@ -77,11 +77,11 @@ extern UBYTE _etext[];    /* end of text */
 extern UBYTE _edata[];    /* end of data */
 extern UBYTE _end[];      /* end of bss + comm sections */
 
+extern UBYTE _endvdibss[];  /* end of VDI BSS */
 #if WITH_AES
 extern UBYTE _endgembss[];  /* end of GEM BSS */
 #endif
 
-extern UBYTE *os_end;
 extern UBYTE *membot;
 extern UBYTE *memtop;
 

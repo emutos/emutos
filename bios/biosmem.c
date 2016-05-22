@@ -45,8 +45,6 @@ static int bmem_allowed;
  *   BYTE _etext[]   set by GNU LD: end of TEXT segment
  *   BYTE _edata[]   set by GNU LD: end of DATA segment
  *   LONG end_os     TOS variable in 0x4fa: start of the TPA
- *   LONG os_end     header field in _sysbase+12: start of free RAM
- *                   (set at end when compiling, patched in RAM TOS)
  *   LONG membot     TOS variable in 0x432: bottom of TPA
  *   LONG memtop     TOS variable in 0x436: top of TPA
  *   LONG phystop    TOS variable in 0x43a: top of ST RAM
@@ -54,18 +52,36 @@ static int bmem_allowed;
  * For unknown reasons, it is reported that in the first RAM TOS membot
  * and end_os id have different values. Here in EmuTOS we will always
  * have:
- *   membot = end_os = os_end = start of TPA
+ *   membot = end_os = start of TPA
  *   memtop = end of TPA
  *
  */
 void bmem_init(void)
 {
-    KDEBUG(("_etext = 0x%08lx\n", (LONG)_etext));
-    KDEBUG(("_edata = 0x%08lx\n", (LONG)_edata));
-    KDEBUG(("_end   = 0x%08lx\n", (LONG)_end));
+    KDEBUG(("_etext     = 0x%08lx\n", (LONG)_etext));
+    KDEBUG(("_edata     = 0x%08lx\n", (LONG)_edata));
+    KDEBUG(("_endvdibss = 0x%08lx\n", (LONG)_endvdibss));
+#if WITH_AES
+    KDEBUG(("_endgembss = 0x%08lx\n", (LONG)_endgembss));
+#endif
+    KDEBUG(("_end       = 0x%08lx\n", (LONG)_end));
 
-    /* initialise some memory variables */
-    membot = end_os = os_end;
+    /* Start of available ST-RAM */
+#if EMUTOS_LIVES_IN_RAM
+    // When EmuTOS is run from the RAM, the BSS starts at address 0 as usual,
+    // but the TEXT and DATA segments are just after the BSS.
+    // Thus the first unused RAM address is the end of the DATA segment.
+    end_os = _edata;
+#else
+    // When EmuTOS is run from the ROM, the TEXT and DATA segments stays in the
+    // ROM, but the BSS starts at address 0.
+    // Thus the first unused RAM address is the end of the BSS segment.
+    end_os = _end;
+#endif
+    membot = end_os;
+    KDEBUG(("membot     = 0x%08lx\n", (LONG)membot));
+
+    /* End of available ST-RAM */
 #if CONF_VRAM_ADDRESS
     /* Available ST-RAM ends at the physical ST-RAM end */
     memtop = phystop;
@@ -73,10 +89,11 @@ void bmem_init(void)
     /* Available ST-RAM ends at the screen start */
     memtop = v_bas_ad;
 #endif
+    KDEBUG(("memtop     = 0x%08lx\n", (LONG)memtop));
 
     /* Fill out the first memory descriptor */
     themd.m_link = (MD*) 0;     /* no next memory descriptor */
-    themd.m_start = os_end;
+    themd.m_start = membot;
     themd.m_length = memtop - themd.m_start;
     themd.m_own = (PD*) 0;      /* no owner's process descriptor */
 
