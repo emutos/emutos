@@ -662,7 +662,7 @@ void screen_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *vt_rez)
 }
 
 /* returns 'standard' pixel sizes */
-static inline void get_std_pixel_size(WORD *width,WORD *height)
+static __inline__ void get_std_pixel_size(WORD *width,WORD *height)
 {
     *width = (v_hz_rez < 640) ? 556 : 278;  /* magic numbers as used */
     *height = (v_vt_rez < 400) ? 556 : 278; /*  by TOS 3 & TOS 4     */
