@@ -139,7 +139,7 @@ CPUFLAGS = -m68000
 endif
 MULTILIBFLAGS = $(CPUFLAGS) -mshort
 INC = -Iinclude
-OTHERFLAGS = -ffreestanding -fomit-frame-pointer -fno-common
+OTHERFLAGS = -fomit-frame-pointer -fno-common
 
 # Optimization flags (affects ROM size and execution speed)
 STANDARD_OPTFLAGS = -O2
