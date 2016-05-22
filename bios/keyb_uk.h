@@ -1,7 +1,7 @@
 /*
  * keyb_uk.h - a keyboard layout definition
  *
- * Copyright (c) 2012-2015 David Savinkoff
+ * Copyright (C) 2012-2015 David Savinkoff
  *
  * Authors:
  *  LVL   Laurent Vogel

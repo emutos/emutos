@@ -1,7 +1,7 @@
 /*
  * console.h - console header
  *
- * Copyright (c) 2001 The EmuTOS development team
+ * Copyright (C) 2001 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel

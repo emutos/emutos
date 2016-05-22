@@ -1,7 +1,7 @@
 /*
  * spi.c - SPI interface for SD/MMC card driver
  *
- * Copyright (c) 2013-2016 The EmuTOS development team
+ * Copyright (C) 2013-2016 The EmuTOS development team
  *
  * Authors:
  *  RFB   Roger Burrows

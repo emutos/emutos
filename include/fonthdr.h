@@ -4,7 +4,7 @@
  * This file exists to centralise the definition of the font header,
  * which was previously defined in two different places.
  *
- * Copyright (c) 2015 The EmuTOS development team
+ * Copyright (C) 2015 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows

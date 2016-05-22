@@ -1,7 +1,7 @@
 /*
  * screen.h - low-level screen routines
  *
- * Copyright (c) 2013-2016 The EmuTOS development team
+ * Copyright (C) 2013-2016 The EmuTOS development team
  *
  * Authors:
  *  PES   Petr Stehlik

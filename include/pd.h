@@ -4,7 +4,7 @@
  * This file exists to centralise the definition of the process descriptor,
  * which was previously defined in several different places.
  *
- * Copyright (c) 2011-2015 The EmuTOS development team
+ * Copyright (C) 2011-2015 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows

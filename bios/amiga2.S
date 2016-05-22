@@ -1,7 +1,7 @@
 /*
  * amiga2.S - Amiga specific assembler functions
  *
- * Copyright (c) 2013-2015 The EmuTOS development team
+ * Copyright (C) 2013-2015 The EmuTOS development team
  *
  * Authors:
  *  VRI   Vincent Rivière

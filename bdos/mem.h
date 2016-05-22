@@ -1,7 +1,7 @@
 /*
  * mem.h - header file for memory and process management routines
  *
- * Copyright (c) 2001 Lineo, Inc. and
+ * Copyright (C) 2001 Lineo, Inc. and
  *               2002-2016 The EmuTOS development team
  *
  * Authors:

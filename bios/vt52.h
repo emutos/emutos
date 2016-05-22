@@ -2,8 +2,8 @@
  * vt52.h - vt52 like screen handling routine headers
  *
  *
- * Copyright (c) 2013 The EmuTOS development team
- * Copyright (c) 2004 Martin Doering
+ * Copyright (C) 2013 The EmuTOS development team
+ * Copyright (C) 2004 Martin Doering
  *
  * Authors:
  *  MAD     Martin Doering

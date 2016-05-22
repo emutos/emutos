@@ -1,7 +1,7 @@
 #
 # genctables.awk - generate country tables
 #
-# Copyright (c) 2002-2015 The EmuTOS development team
+# Copyright (C) 2002-2015 The EmuTOS development team
 #
 # Authors:
 #  LVL     Laurent Vogel

@@ -1,7 +1,7 @@
 /*
  * bootsect.S - bootsector for fast loading EmuTOS in RAM
  *
- * Copyright (c) 2001-2016 The EmuTOS development team
+ * Copyright (C) 2001-2016 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel

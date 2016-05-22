@@ -1,7 +1,7 @@
 /*
  * bootram.S - Run EmuTOS from RAM
  *
- * Copyright (c) 2016 The EmuTOS development team
+ * Copyright (C) 2016 The EmuTOS development team
  *
  * Authors:
  *  LVL  Laurent Vogel

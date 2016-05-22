@@ -1,7 +1,7 @@
 /*
  * date.c - setup and display date and time
  *
- * Copyright (c) 2001 by following authors
+ * Copyright (C) 2001 by following authors
  *
  * Authors:
  *  LVL     Laurent Vogel

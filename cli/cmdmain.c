@@ -1,7 +1,7 @@
 /*
  * EmuCON2: a command processor for EmuTOS
  *
- * Copyright (c) 2013-2016 The EmuTOS development team
+ * Copyright (C) 2013-2016 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows

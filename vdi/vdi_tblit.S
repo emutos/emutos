@@ -1,7 +1,7 @@
 /*
  * vdi_tblit.S - Blitting of Text
  *
- * Copyright (c) 1999 Caldera, Inc. and Authors:
+ * Copyright (C) 1999 Caldera, Inc. and Authors:
  *               1984 Dave Staugas
  *               2002-2016 The EmuTOS development team
  *

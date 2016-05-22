@@ -1,7 +1,7 @@
 /*
  * deskstart.S - assembler startup code of the desktop
  *
- * Copyright (c) 1987 Digital Research Inc.
+ * Copyright (C) 1987 Digital Research Inc.
  *               2001 Lineo, Inc.
  *               2002-2015 The EmuTOS development team
  *

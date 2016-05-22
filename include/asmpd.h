@@ -6,7 +6,7 @@
  * manually kept in sync with the C language definitions, but this
  * should be easier than doing the same with hard-coded offset values.
  *
- * Copyright (c) 2016 The EmuTOS development team
+ * Copyright (C) 2016 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows

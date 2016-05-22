@@ -1,7 +1,7 @@
 /*
  * iumem.c - internal user memory management routines
  *
- * Copyright (c) 2001 Lineo, Inc.
+ * Copyright (C) 2001 Lineo, Inc.
  *               2013-2016 The EmuTOS development team
  *
  * Authors:

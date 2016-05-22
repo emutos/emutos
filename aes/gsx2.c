@@ -1,7 +1,7 @@
 /*
  * gsx2.c - VDI (GSX) bindings
  *
- * Copyright (c) 2014 The EmuTOS development team
+ * Copyright (C) 2014 The EmuTOS development team
  *
  * Authors:
  *  VRI   Vincent Rivière

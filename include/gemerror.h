@@ -1,8 +1,8 @@
 /*
  * gemerror.h - standard error numbers for GEMDOS
  *
- * Copyright (c) 2001 Lineo, Inc.
- * Copyright (c) 2013-2015 The EmuTOS development team
+ * Copyright (C) 2001 Lineo, Inc.
+ * Copyright (C) 2013-2015 The EmuTOS development team
  *
  * Authors:
  *  MAD     Martin Doering

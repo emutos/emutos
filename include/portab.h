@@ -1,7 +1,7 @@
 /*
  * portab.h - Definitions for writing portable C
  *
- * Copyright (c) 2001 Lineo, Inc
+ * Copyright (C) 2001 Lineo, Inc
  *               2001-2016 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your

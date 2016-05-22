@@ -1,7 +1,7 @@
 /*
  * acia.h - ACIA 6850 related things
  *
- * Copyright (c) 2001 Martin Doering
+ * Copyright (C) 2001 Martin Doering
  *
  * Authors:
  *  MAD   Martin Doering

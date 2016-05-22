@@ -1,7 +1,7 @@
 /*
  * aros.c - Amiga assembler functions from AROS
  *
- * Copyright (c) 1995-2013, The AROS Development Team. All rights reserved.
+ * Copyright (C) 1995-2013, The AROS Development Team. All rights reserved.
  *
  * The functions in this file were borrowed from the AROS sources.
  * Glued to EmuTOS by:

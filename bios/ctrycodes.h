@@ -1,7 +1,7 @@
 /*
  * ctrycodes.h - a mere list of country codes
  *
- * Copyright (c) 2003-2016 The EmuTOS development team
+ * Copyright (C) 2003-2016 The EmuTOS development team
  *
  * Authors:
  *  LVL     Laurent Vogel

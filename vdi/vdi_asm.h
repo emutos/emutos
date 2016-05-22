@@ -1,7 +1,7 @@
 /*
  * vdiconf.h - Configuration for asm part of VDI
  *
- * Copyright (c) 2001 by Authors:
+ * Copyright (C) 2001 by Authors:
  *
  * Authors:
  * MAD  Martin Doering

@@ -1,8 +1,8 @@
 /*
  *  bios.c - C portion of BIOS initialization and front end
  *
- * Copyright (c) 2001 Lineo, Inc.
- * Copyright (c) 2001-2016 The EmuTOS development team
+ * Copyright (C) 2001 Lineo, Inc.
+ * Copyright (C) 2001-2016 The EmuTOS development team
  *
  * Authors:
  *  SCC     Steve C. Cavender

@@ -1,7 +1,7 @@
 /*
  * super.h - Super() and SuperToUser() macros
  *
- * Copyright (c) 2015 The EmuTOS development team
+ * Copyright (C) 2015 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows

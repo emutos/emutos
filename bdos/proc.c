@@ -1,7 +1,7 @@
 /*
  * proc.c - process management routines
  *
- * Copyright (c) 2001 Lineo, Inc. and Authors:
+ * Copyright (C) 2001 Lineo, Inc. and Authors:
  *               2002-2016 The EmuTOS development team
  *
  *  KTB     Karl T. Braun (kral)

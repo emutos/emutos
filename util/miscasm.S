@@ -1,8 +1,8 @@
 /*
  * miscasm.S - Some small helper functions in assembler
  *
- * Copyright (c) 2001 by following authors
- * Copyright (c) 2013 by The EmuTOS development team.
+ * Copyright (C) 2001 by following authors
+ * Copyright (C) 2013 by The EmuTOS development team.
  *
  * Authors:
  *  SCC     Steven C. Cavender

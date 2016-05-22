@@ -1,7 +1,7 @@
 /*
  * keyb_cz.h - Czech keyboard layout definition
  *
- * Copyright (c) 2002-2015 The EmuTOS development team
+ * Copyright (C) 2002-2015 The EmuTOS development team
  *
  * Authors:
  *  xxx   xxx

@@ -1,7 +1,7 @@
 /*
  * lineavars.S - Graphics related system variables
  *
- * Copyright (c) 2001-2016 by Authors:
+ * Copyright (C) 2001-2016 by Authors:
  *
  * Authors:
  *  THH  Thomas Huth

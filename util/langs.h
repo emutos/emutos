@@ -1,7 +1,7 @@
 /*
  * langs.h - internal definitions for the nls translations tables
  *
- * Copyright (c) 2001 The EmuTOS development team
+ * Copyright (C) 2001 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel

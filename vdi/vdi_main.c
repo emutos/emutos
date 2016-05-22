@@ -1,7 +1,7 @@
 /*
  * vdimain.c - the VDI screen driver dispatcher
  *
- * Copyright (c) 1999 Caldera, Inc.
+ * Copyright (C) 1999 Caldera, Inc.
  *               2002-2016 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your

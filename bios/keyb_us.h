@@ -1,7 +1,7 @@
 /*
  * keyb_us.h - a keyboard layout definition
  *
- * Copyright (c) 2001-2015 The EmuTOS development team
+ * Copyright (C) 2001-2015 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel

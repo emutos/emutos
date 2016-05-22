@@ -1,9 +1,9 @@
 /*
  * font.h - font specific definitions
  *
- * Copyright (c) 2001 Lineo, Inc.
- * Copyright (c) 2004 by Authors (see below)
- * Copyright (c) 2015-2016 The EmuTOS development team
+ * Copyright (C) 2001 Lineo, Inc.
+ * Copyright (C) 2004 by Authors (see below)
+ * Copyright (C) 2015-2016 The EmuTOS development team
  *
  * Authors:
  *  MAD     Martin Doering

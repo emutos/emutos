@@ -1,8 +1,8 @@
 /*
  * font.c - bios part of font loading and initialization
  *
- * Copyright (c) 2004-2014 by Authors (see below)
- * Copyright (c) 2016 The EmuTOS development team
+ * Copyright (C) 2004-2014 by Authors (see below)
+ * Copyright (C) 2016 The EmuTOS development team
  *
  * Authors:
  *  MAD  Martin Doering

@@ -1,7 +1,7 @@
 /*
  * tounix.c - utterly stupid program to convert text files containing ^M
  *
- * Copyright (c) 2001 The EmuTOS development team
+ * Copyright (C) 2001 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel

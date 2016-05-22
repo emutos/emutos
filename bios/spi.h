@@ -1,7 +1,7 @@
 /*
  * spi.h - header for SPI functions used by SD/MMC driver
  *
- * Copyright (c) 2013-2014 The EmuTOS development team
+ * Copyright (C) 2013-2014 The EmuTOS development team
  *
  * Authors:
  *  RFB   Roger Burrows

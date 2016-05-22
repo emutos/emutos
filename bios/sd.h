@@ -1,7 +1,7 @@
 /*
  * sd.h - header for SD/MMC card routines
  *
- * Copyright (c) 2013-2016 The EmuTOS development team
+ * Copyright (C) 2013-2016 The EmuTOS development team
  *
  * Authors:
  *  RFB   Roger Burrows
