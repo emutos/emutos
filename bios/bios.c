@@ -604,6 +604,8 @@ void biosmain(void)
     }
 #endif
 
+    KDEBUG(("bootdev = %d\n", bootdev));
+
     /* boot eventually from a block device (floppy or harddisk) */
     blkdev_boot();
 

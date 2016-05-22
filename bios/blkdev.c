@@ -200,7 +200,7 @@ static void bus_init(void)
 LONG blkdev_boot(void)
 {
     LONG mode = kbshift(-1);
-
+    KDEBUG(("mode = %08lx\n",mode));
     KDEBUG(("drvbits = %08lx\n",drvbits));
 
     /*
