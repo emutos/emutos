@@ -38,7 +38,7 @@ Major changes:
 - EmuCON2: add 'mode' command
 - EmuCON2: fix EmuCON crash if system call is intercepted
 - EmuDesk: allow TT desktop to select TT medium res
-- EmuDesk: fix bug: copy/move could target the wrong folder 
+- EmuDesk: fix bug: copy/move could target the wrong folder
 - EmuDesk: fix display of numeric values in desktop dialogs
 - EmuDesk: fix rubber-banding for text-mode desktop windows
 - EmuDesk: hide Shutdown if the machine can't shutdown
@@ -75,7 +75,7 @@ Other changes:
 - EmuCON2: fix EmuCON welcome message for ST-Low
 - EmuDesk: add 'No sort' to desktop sort options
 - EmuDesk: add desktop shortcuts for scroll-by-page
-- EmuDesk: ensure desktop menu bar fits within screen 
+- EmuDesk: ensure desktop menu bar fits within screen
 - EmuDesk: fix display of volume label in disk info dialog
 - EmuDesk: improve EMUDESK.INF error checking
 - EmuDesk: show the emulated machine name on Hatari even with --natfeats yes
