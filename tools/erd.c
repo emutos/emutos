@@ -2147,7 +2147,7 @@ static char temp[20];
 char *t;
 unsigned char c;
 
-    t = temp + sprintf(temp,"0x%04hX|'",iconchar&0xff00);
+    t = temp + sprintf(temp,"0x%04hX|'",(short)(iconchar&0xff00));
     c = iconchar & 0xff;
     if (isprint(c))
         *t++ = c;
