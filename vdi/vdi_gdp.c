@@ -193,10 +193,10 @@ static void clc_arc(Vwk * vwk, int steps)
 void vdi_v_gdp(Vwk * vwk)
 {
     WORD i, ltmp_end, rtmp_end;
-    WORD *xy_pointer;
+    WORD *xy;
 
     i = CONTRL[5];
-    xy_pointer = PTSIN;
+    xy = PTSIN;
 
     switch (i) {
     case 1:         /* GDP BAR - converted to alpha 2 RJG 12-1-84 */
@@ -204,11 +204,11 @@ void vdi_v_gdp(Vwk * vwk)
         if (vwk->fill_per == TRUE) {
             LN_MASK = 0xffff;
 
-            xy_pointer = PTSIN;
-            *(xy_pointer + 5) = *(xy_pointer + 7) = *(xy_pointer + 3);
-            *(xy_pointer + 3) = *(xy_pointer + 9) = *(xy_pointer + 1);
-            *(xy_pointer + 4) = *(xy_pointer + 2);
-            *(xy_pointer + 6) = *(xy_pointer + 8) = *(xy_pointer);
+            xy = PTSIN;
+            xy[5] = xy[7] = xy[3];
+            xy[3] = xy[9] = xy[1];
+            xy[4] = xy[2];
+            xy[6] = xy[8] = xy[0];
 
             polyline(vwk, (Point*)PTSIN, 5, vwk->fill_color);
         }
@@ -220,9 +220,9 @@ void vdi_v_gdp(Vwk * vwk)
         break;
 
     case 4:         /* GDP CIRCLE */
-        xc = *xy_pointer;
-        yc = *(xy_pointer + 1);
-        xrad = *(xy_pointer + 4);
+        xc = xy[0];
+        yc = xy[1];
+        xrad = xy[4];
         yrad = mul_div(xrad, xsize, ysize);
         del_ang = TWOPI;
         beg_ang = 0;
@@ -231,10 +231,10 @@ void vdi_v_gdp(Vwk * vwk)
         break;
 
     case 5:         /* GDP ELLIPSE */
-        xc = *xy_pointer;
-        yc = *(xy_pointer + 1);
-        xrad = *(xy_pointer + 2);
-        yrad = *(xy_pointer + 3);
+        xc = xy[0];
+        yc = xy[1];
+        xrad = xy[2];
+        yrad = xy[3];
         if (vwk->xfm_mode < 2)
             yrad = yres - yrad;
         del_ang = TWOPI;
