@@ -38,6 +38,7 @@
 #include "../bios/videl.h"
 #include "nls.h"
 #include "version.h"
+#include "../bios/header.h"
 
 #include "../aes/optimize.h"
 #include "../aes/gemdos.h"
@@ -1349,6 +1350,7 @@ static void desk_xlate_fix(void)
     OBJECT *tree = desk_rs_trees[ADDINFO];
     OBJECT *objlabel = &tree[DELABEL];
     OBJECT *objversion = &tree[DEVERSN];
+    OBJECT *objyear = &tree[DECOPYRT];
     int i;
 
     /* translate strings in objects */
@@ -1363,6 +1365,9 @@ static void desk_xlate_fix(void)
         objlabel->ob_spec = (LONG) "";  /* remove the word "Version" */
         objversion->ob_x -= 6;          /* and move the start of the string */
     }
+
+    /* insert the version number */
+    objyear->ob_spec = (LONG) COPYRIGHT_YEAR;
 
     /* adjust the size and coordinates of menu items */
     adjust_menu(desk_rs_trees[ADMENU]);

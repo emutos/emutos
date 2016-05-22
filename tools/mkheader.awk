@@ -52,6 +52,9 @@ BEGIN {
     print " * This allows tools like tos-lang-change to patch the ROM header afterwards."
     print " */\n"
 
+    print "/* the year used in copyright notices */"
+    print "#define COPYRIGHT_YEAR \"" year "\"\n"
+
     print "/* the build date in Binary-Coded Decimal */"
     print "#define OS_DATE 0x" month day year "\n"
 

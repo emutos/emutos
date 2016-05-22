@@ -471,8 +471,8 @@ msgid "Version"
 msgstr "ë¡›¦©ž"
 
 #: desk/desk_rsc.c:675
-msgid "Copyright ½"
-msgstr "Copyright ½"
+msgid "Copyright ½ 2001-"
+msgstr "Copyright ½ 2001-"
 
 #: desk/desk_rsc.c:681
 msgid "The EmuTOS development team"
