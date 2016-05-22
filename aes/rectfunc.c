@@ -14,7 +14,7 @@
 /*
  *  inside(): determine if x,y is in rectangle
  */
-UWORD inside(WORD x, WORD y, GRECT *pt)
+UWORD inside(WORD x, WORD y, const GRECT *pt)
 {
     if ((x >= pt->g_x) && (y >= pt->g_y) &&
         (x < pt->g_x+pt->g_w) && (y < pt->g_y+pt->g_h))
@@ -27,7 +27,7 @@ UWORD inside(WORD x, WORD y, GRECT *pt)
 /*
  *  rc_constrain(): constrain one rectangle within another
  */
-void rc_constrain(GRECT *pc, GRECT *pt)
+void rc_constrain(const GRECT *pc, GRECT *pt)
 {
     if (pt->g_x < pc->g_x)
         pt->g_x = pc->g_x;
@@ -43,7 +43,7 @@ void rc_constrain(GRECT *pc, GRECT *pt)
 /*
  *  rc_equal(): test for two rectangles equal
  */
-WORD rc_equal(GRECT *p1, GRECT *p2)
+WORD rc_equal(const GRECT *p1, const GRECT *p2)
 {
     if ((p1->g_x != p2->g_x) ||
         (p1->g_y != p2->g_y) ||
@@ -58,7 +58,7 @@ WORD rc_equal(GRECT *p1, GRECT *p2)
 /*
  *  rc_intersect(): find the intersection of two rectangles
  */
-WORD rc_intersect(GRECT *p1, GRECT *p2)
+WORD rc_intersect(const GRECT *p1, GRECT *p2)
 {
     WORD tx, ty, tw, th;
 
@@ -79,7 +79,7 @@ WORD rc_intersect(GRECT *p1, GRECT *p2)
 /*
  *  rc_union(): find the union of two rectangles
  */
-void rc_union(GRECT *p1, GRECT *p2)
+void rc_union(const GRECT *p1, GRECT *p2)
 {
     WORD tx, ty, tw, th;
 
