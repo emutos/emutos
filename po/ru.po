@@ -470,11 +470,11 @@ msgstr "Основано на 'GPL'-исходниках"
 
 #: desk/desk_rsc.c:723
 msgid "EmuTOS is distributed under the GPL"
-msgstr "  Распространяется по правилам GPL"
+msgstr "Распространяется по правилам GPL"
 
 #: desk/desk_rsc.c:735
 msgid "See doc\\license.txt for details"
-msgstr " Смотри doc\\license.txt для деталей"
+msgstr "Смотри doc\\license.txt для деталей"
 
 #: desk/desk_rsc.c:750
 msgid "OPEN APPLICATION"

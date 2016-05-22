@@ -326,7 +326,7 @@ msgstr "Nome attuale: ________.___"
 
 #: desk/desk_rsc.c:177
 msgid "Copy's name: ________.___"
-msgstr " Nome copia: ________.___"
+msgstr "Nome copia: ________.___"
 
 #: desk/desk_rsc.c:240
 msgid " Desk "
@@ -462,7 +462,7 @@ msgstr "Versione"
 
 #: desk/desk_rsc.c:681
 msgid "The EmuTOS development team"
-msgstr "  Team di sviluppo EmuTOS"
+msgstr "Team di sviluppo EmuTOS"
 
 #: desk/desk_rsc.c:693
 msgid "Based on 'GPLed' sources"

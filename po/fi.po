@@ -460,7 +460,7 @@ msgstr "Versio"
 
 #: desk/desk_rsc.c:681
 msgid "The EmuTOS development team"
-msgstr "    EmuTOS-kehitystiimi"
+msgstr "EmuTOS-kehitystiimi"
 
 #: desk/desk_rsc.c:693
 msgid "Based on 'GPLed' sources"
@@ -468,11 +468,11 @@ msgstr "Pohjautuu lähdekoodiin:"
 
 #: desk/desk_rsc.c:723
 msgid "EmuTOS is distributed under the GPL"
-msgstr " EmuTOS on GPL-lisenssin alainen,"
+msgstr "EmuTOS on GPL-lisenssin alainen,"
 
 #: desk/desk_rsc.c:735
 msgid "See doc\\license.txt for details"
-msgstr "    katso doc\\license.txt."
+msgstr "katso doc\\license.txt."
 
 #: desk/desk_rsc.c:750
 msgid "OPEN APPLICATION"
