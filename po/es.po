@@ -461,6 +461,10 @@ msgstr "INFORMACIÓN DEL DISCO"
 msgid "Version"
 msgstr "Versión"
 
+#: desk/desk_rsc.c:675
+msgid "Copyright ½"
+msgstr "Copyright ©"
+
 #: desk/desk_rsc.c:681
 msgid "The EmuTOS development team"
 msgstr "El equipo de desarrollo EmuTOS"
@@ -468,6 +472,18 @@ msgstr "El equipo de desarrollo EmuTOS"
 #: desk/desk_rsc.c:693
 msgid "Based on 'GPLed' sources"
 msgstr "Basado en fuentes GPL"
+
+#: desk/desk_rsc.c:705
+msgid "½ 1987 Digital Research, Inc."
+msgstr "© 1987 Digital Research, Inc."
+
+#: desk/desk_rsc.c:711
+msgid "½ 1999 Caldera Thin Clients, Inc."
+msgstr "© 1999 Caldera Thin Clients, Inc."
+
+#: desk/desk_rsc.c:717
+msgid "½ 2001 Lineo, Inc."
+msgstr "© 2001 Lineo, Inc."
 
 #: desk/desk_rsc.c:723
 msgid "EmuTOS is distributed under the GPL"

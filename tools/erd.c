@@ -495,8 +495,6 @@ LOCAL NOTRANS_ENTRY notrans[] = {
     { 0, "TTP" },
     { 0, "am" },
     { 0, "pm" },
-    { 0, "Copyright " },
-    { 0, "\275" }, /* Copyright symbol */
     { 0, "TC" },
     { 0, "640 x " },
     { 0, "320 x " }
