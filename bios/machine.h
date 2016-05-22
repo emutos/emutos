@@ -41,9 +41,6 @@ extern long cookie_swi;
 #endif
 extern long cookie_idt;
 extern long cookie_akp;
-#if CONF_WITH_FRB
-extern UBYTE *cookie_frb;
-#endif
 
 /*
  * these are != 0 if the feature is present

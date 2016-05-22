@@ -48,7 +48,7 @@ long cookie_mch;
 long cookie_swi;
 #endif
 #if CONF_WITH_FRB
-UBYTE *cookie_frb;
+static UBYTE *cookie_frb;   /* _initial_ value in the _FRB cookie */
 #endif
 
 

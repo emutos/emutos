@@ -54,3 +54,20 @@ void cookie_add(long tag, long value)
         jar[1].value = n;
     }
 }
+
+#if CONF_WITH_FRB
+/*
+ * get the current value of the _FRB cookie; we must do this
+ * dynamically because it can be changed by the user
+ */
+UBYTE *get_frb_cookie(void)
+{
+    struct cookie *jar;
+
+    for (jar = CJAR; jar->tag; jar++)
+        if (jar->tag == COOKIE_FRB)
+            return (UBYTE *)(jar->value);
+
+    return NULL;
+}
+#endif

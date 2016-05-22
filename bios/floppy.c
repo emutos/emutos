@@ -881,7 +881,7 @@ static WORD floprw(UBYTE *userbuf, WORD rw, WORD dev,
          * The buffer provided by the user is outside ST-RAM, but floprw()
          * needs to use DMA, so we must use the intermediate _FRB buffer.
          */
-        iobuf = cookie_frb;
+        iobuf = get_frb_cookie();
         if (!iobuf)
         {
             KDEBUG(("floprw() error: can't DMA to FastRAM\n"));
@@ -949,7 +949,7 @@ static WORD floprw(UBYTE *userbuf, WORD rw, WORD dev,
      * If we're using the intermediate _FRB buffer for reading,
      * we need to copy the date to the user area.
      */
-    if (iobuf == cookie_frb) {
+    if (iobuf != userbuf) {
         if (rw == RW_READ)
             memcpy(userbuf, iobuf, buflen);
     }
@@ -995,7 +995,7 @@ static WORD flopwtrack(UBYTE *userbuf, WORD dev, WORD track, WORD side, WORD tra
          * The buffer provided by the user is outside ST-RAM, but flopwtrack()
          * needs to use DMA, so we must use the intermediate _FRB buffer.
          */
-        iobuf = cookie_frb;
+        iobuf = get_frb_cookie();
         if (!iobuf)
         {
             KDEBUG(("flopwtrack() error: can't DMA from FastRAM\n"));

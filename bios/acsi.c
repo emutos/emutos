@@ -117,15 +117,14 @@ LONG acsi_rw(WORD rw, LONG sector, WORD count, UBYTE *buf, WORD dev)
             cnt = count;
 
 #if CONF_WITH_FRB
-        if (buf > FASTRAM_START) {
-            if (cookie_frb == NULL) {
+        if (buf >= phystop) {
+            tmp_buf = get_frb_cookie();
+            if (tmp_buf == NULL) {
                 KDEBUG(("acsi.c: FRB is missing\n"));
                 return -1L;
-            } else {
-                /* proper FRB lock (TODO) */
-                need_frb = 1;
-                tmp_buf = cookie_frb;
             }
+            /* proper FRB lock (TODO) */
+            need_frb = 1;
         } else
 #endif
         {
