@@ -36,7 +36,7 @@ fi
 awk '
 BEGIN {
 	type = "";
-	/* OS variables & font arrays */
+	# OS variables & font arrays
 	split("_os_ _fnt_", prefixes);
 }
 function type4str (type, str) {
@@ -44,7 +44,7 @@ function type4str (type, str) {
 		return type;
 	}
 	for (prefix in prefixes) {
-		/* starts with indexed prefix? */
+		# starts with indexed prefix?
 		if (index(str, prefixes[prefix]) == 1) {
 			return "D";
 		}
@@ -53,7 +53,7 @@ function type4str (type, str) {
 }
 function print_object (addr, name) {
 	if (name) {
-		/* remove object file path */
+		# remove object file path
 		sub("obj/", "", name);
 		print addr, "T", name;
 	}
