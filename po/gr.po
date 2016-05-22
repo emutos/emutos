@@ -470,10 +470,6 @@ msgstr "Š†”ˆ„‘ ƒˆ‘‰“"
 msgid "Version"
 msgstr "ë¡›¦©"
 
-#: desk/desk_rsc.c:675
-msgid "Copyright (c) by"
-msgstr "Copyright (c) ˜§æ"
-
 #: desk/desk_rsc.c:681
 msgid "The EmuTOS development team"
 msgstr "’¤ ¦£á›˜ ˜¤á§«¬¥ª «¦¬ EmuTOS"

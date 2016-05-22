@@ -458,10 +458,6 @@ msgstr "LEVYN TIEDOT"
 msgid "Version"
 msgstr "Versio"
 
-#: desk/desk_rsc.c:675
-msgid "Copyright (c) by"
-msgstr " Copyright (c)"
-
 #: desk/desk_rsc.c:681
 msgid "The EmuTOS development team"
 msgstr "    EmuTOS-kehitystiimi"

@@ -460,10 +460,6 @@ msgstr "INFORMAZIONI DISCO"
 msgid "Version"
 msgstr "Versione"
 
-#: desk/desk_rsc.c:675
-msgid "Copyright (c) by"
-msgstr "Copyright (c) del"
-
 #: desk/desk_rsc.c:681
 msgid "The EmuTOS development team"
 msgstr "  Team di sviluppo EmuTOS"

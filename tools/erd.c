@@ -495,7 +495,8 @@ LOCAL NOTRANS_ENTRY notrans[] = {
     { 0, "TTP" },
     { 0, "am" },
     { 0, "pm" },
-    { 0, "(c)" },
+    { 0, "Copyright " },
+    { 0, "\275" }, /* Copyright symbol */
     { 0, "TC" },
     { 0, "640 x " },
     { 0, "320 x " }
@@ -2036,7 +2037,7 @@ int i;
         if ((*s == '"') || (*s == '\\'))        /* we need to escape double quotes & backslashes */
             *d++ = '\\';
         if (!isprint((unsigned char)*s))        /* or convert to octal if not printable */
-            d += sprintf(d,"\\%03o",*s);
+            d += sprintf(d,"\\%03o",(unsigned char)*s);
         else *d++ = *s;
     }
     *d = '\0';
