@@ -245,11 +245,18 @@ void vdi_vsf_perimeter(Vwk * vwk)
  */
 void vdi_vr_recfl(Vwk * vwk)
 {
+    Rect rect;
+
+    /*
+     * exchange corners to EmuTOS preferred format (ll, ur) if necessary
+     */
+    arb_corner((Rect *) PTSIN);
+
     /*
      * make temporary copy to prevent the clipping code from damaging
      * the PTSIN values we might need later on for perimeter draws
      */
-    Rect rect = * (Rect *) PTSIN;
+    rect = * (Rect *) PTSIN;
 
     if (vwk->clip)
         if (!clipbox(VDI_CLIP(vwk), &rect))

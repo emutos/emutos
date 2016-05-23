@@ -359,7 +359,7 @@ void Vwk2Attrib(const Vwk *vwk, VwkAttrib *attr, const UWORD color)
 void draw_rect(const Vwk * vwk, Rect * rect, const UWORD fillcolor)
 {
     VwkAttrib attr;
-    arb_corner(rect);
+
     Vwk2Attrib(vwk, &attr, fillcolor);
     draw_rect_common(&attr, rect);
 }
@@ -371,6 +371,7 @@ void draw_rect(const Vwk * vwk, Rect * rect, const UWORD fillcolor)
 static __inline__ void horzline(const Vwk * vwk, Line * line)
 {
     /* a horizontal line is a rectangle with one pixel height */
+    arb_corner((Rect *)line);
     draw_rect(vwk, (Rect*)line, vwk->line_color);
 }
 
