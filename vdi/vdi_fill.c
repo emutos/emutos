@@ -245,14 +245,18 @@ void vdi_vsf_perimeter(Vwk * vwk)
  */
 void vdi_vr_recfl(Vwk * vwk)
 {
-    Rect * rect = (Rect*)PTSIN;
+    /*
+     * make temporary copy to prevent the clipping code from damaging
+     * the PTSIN values we might need later on for perimeter draws
+     */
+    Rect rect = * (Rect *) PTSIN;
 
     if (vwk->clip)
-        if (!clipbox(VDI_CLIP(vwk), rect))
+        if (!clipbox(VDI_CLIP(vwk), &rect))
             return;
 
     /* do the real work... */
-    draw_rect(vwk, rect, vwk->fill_color);
+    draw_rect(vwk, &rect, vwk->fill_color);
 }
 
 
