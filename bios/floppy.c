@@ -91,7 +91,8 @@ static WORD floprw(UBYTE *buf, WORD rw, WORD dev,
                    WORD sect, WORD track, WORD side, WORD count);
 
 /* floppy write track */
-static WORD flopwtrack(UBYTE *buf, WORD dev, WORD track, WORD side, WORD track_size);
+static WORD flopwtrack(UBYTE *buf, WORD dev, WORD track, WORD side,
+                    WORD track_size, WORD density);
 
 /* initialise a floppy for hdv_init */
 static void flop_detect_drive(WORD dev);
@@ -711,7 +712,7 @@ LONG flopfmt(UBYTE *buf, WORD *skew, WORD dev, WORD spt,
              ULONG magic, WORD virgin)
 {
     int i, j;
-    WORD track_size, leader, offset;
+    WORD density, track_size, leader, offset;
     BYTE b1, b2;
     UBYTE *s;
     LONG used, err;
@@ -724,13 +725,25 @@ LONG flopfmt(UBYTE *buf, WORD *skew, WORD dev, WORD spt,
     if (magic != 0x87654321UL)
         return EBADSF;          /* just like TOS4 */
 
-    if ((spt >= 1) && (spt <= 10)) {
-        track_size = TRACK_SIZE_DD;
-        leader = LEADER_DD;
-    } else if ((drivetype == HD_DRIVE) && (spt >= 13) && (spt <= 20)) {
-        track_size = TRACK_SIZE_HD;
-        leader = LEADER_HD;
-    } else return EBADSF;       /* consistent, at least :-) */
+    density = DENSITY_DD;       /* default density */
+    switch(drivetype) {
+    case HD_DRIVE:
+        if ((spt >= 13) && (spt <= 20)) {
+            density = DENSITY_HD;
+            track_size = TRACK_SIZE_HD;
+            leader = LEADER_HD;
+            break;
+        }
+        /* else drop thru */
+    case DD_DRIVE:
+        if ((spt >= 1) && (spt <= 10)) {
+            track_size = TRACK_SIZE_DD;
+            leader = LEADER_DD;
+            break;
+        }
+    default:
+        return EBADSF;          /* consistent, at least :-) */
+    }
 
     /*
      * fixup interleave if not using skew table
@@ -795,7 +808,7 @@ LONG flopfmt(UBYTE *buf, WORD *skew, WORD dev, WORD spt,
 #undef APPEND
 
     /* write the buffer to track */
-    err = flopwtrack(buf, dev, track, side, track_size);
+    err = flopwtrack(buf, dev, track, side, track_size, density);
     if (err)
         return err;
 
@@ -963,13 +976,14 @@ static WORD floprw(UBYTE *userbuf, WORD rw, WORD dev,
 
 /*==== internal flopwtrack =================================================*/
 
-static WORD flopwtrack(UBYTE *userbuf, WORD dev, WORD track, WORD side, WORD track_size)
+static WORD flopwtrack(UBYTE *userbuf, WORD dev, WORD track, WORD side, WORD track_size, WORD density)
 {
 #if CONF_WITH_FDC
     WORD retry;
     WORD err;
     WORD status;
     UBYTE *iobuf;
+    struct flop_info *f = &finfo[dev];
 
     if ((track == 0) && (side == 0)) {
         /* TODO, maybe media changed ? */
@@ -978,6 +992,7 @@ static WORD flopwtrack(UBYTE *userbuf, WORD dev, WORD track, WORD side, WORD tra
     /* flush cache here so that track image is pushed to memory */
     flush_data_cache(userbuf,track_size);
 
+    f->cur_density = density;   /* used by floplock() */
     floplock(dev);
 
     select(dev, side);
