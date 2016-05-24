@@ -32,7 +32,7 @@
 #define IDT_YYMMDD IDT_BIT_YM
 #define IDT_YYDDMM (IDT_BIT_YM | IDT_BIT_DM)
 #define IDT_DMASK  (IDT_BIT_YM | IDT_BIT_DM)
-#define IDT_SMASK   0xFF  /* date mask */
+#define IDT_SMASK  0xFF  /* separator mask */
 
 
 /* cookies */
