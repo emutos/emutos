@@ -907,48 +907,48 @@ static WORD floprw(UBYTE *userbuf, WORD rw, WORD dev,
 
     iobufptr = iobuf;
     while(count--) {
-      for (retry = 0; retry < 2; retry++) {
-        set_fdc_reg(FDC_SR, sect);
-        set_dma_addr(iobufptr);
-        if (rw == RW_READ) {
-            fdc_start_dma_read(1);
-            cmd = FDC_READ;
-        } else {
-            fdc_start_dma_write(1);
-            if (cookie_mch == MCH_FALCON)
-                falcon_wait();
-            cmd = FDC_WRITE;
-        }
-        if (flopcmd(cmd) < 0) {     /* timeout */
-            err = EDRVNR;           /* drive not ready */
-            break;                  /* no retry */
-        }
-        status = get_dma_status();
-        if (!(status & DMA_OK)) {   /* DMA error, retry */
-            err = EGENRL;           /* general error */
-        } else {
-            status = get_fdc_reg(FDC_CS);
-            if ((rw == RW_WRITE) && (status & FDC_WRI_PRO)) {
-                err = EWRPRO;       /* write protect */
-                break;              /* no retry */
-            } else if (status & FDC_RNF) {
-                err = ESECNF;       /* sector not found */
-            } else if (status & FDC_CRCERR) {
-                err = E_CRC;        /* CRC error */
-            } else if (status & FDC_LOSTDAT) {
-                err = EDRVNR;       /* drive not ready */
+        for (retry = 0; retry < 2; retry++) {
+            set_fdc_reg(FDC_SR, sect);
+            set_dma_addr(iobufptr);
+            if (rw == RW_READ) {
+                fdc_start_dma_read(1);
+                cmd = FDC_READ;
             } else {
-                err = 0;
-                break;
+                fdc_start_dma_write(1);
+                if (cookie_mch == MCH_FALCON)
+                    falcon_wait();
+                cmd = FDC_WRITE;
+            }
+            if (flopcmd(cmd) < 0) {     /* timeout */
+                err = EDRVNR;           /* drive not ready */
+                break;                  /* no retry */
+            }
+            status = get_dma_status();
+            if (!(status & DMA_OK)) {   /* DMA error, retry */
+                err = EGENRL;           /* general error */
+            } else {
+                status = get_fdc_reg(FDC_CS);
+                if ((rw == RW_WRITE) && (status & FDC_WRI_PRO)) {
+                    err = EWRPRO;       /* write protect */
+                    break;              /* no retry */
+                } else if (status & FDC_RNF) {
+                    err = ESECNF;       /* sector not found */
+                } else if (status & FDC_CRCERR) {
+                    err = E_CRC;        /* CRC error */
+                } else if (status & FDC_LOSTDAT) {
+                    err = EDRVNR;       /* drive not ready */
+                } else {
+                    err = 0;
+                    break;
+                }
             }
         }
-      }
-      //-- If there was an error, don't read any more sectors
-      if (err)
-          break;
-      //-- Otherwise carry on sequentially
-      iobufptr += SECTOR_SIZE;
-      sect++;
+        //-- If there was an error, don't read any more sectors
+        if (err)
+            break;
+        //-- Otherwise carry on sequentially
+        iobufptr += SECTOR_SIZE;
+        sect++;
     }
 
     flopunlk();
