@@ -81,6 +81,22 @@
 #define HD_STEPRATE_3MS    0        /* high density */
 #define HD_STEPRATE_6MS    1
 
+/*
+ * structure to track floppy drive state
+ */
+struct flop_info {
+    WORD rate;          /* rate selected via Floprate() */
+    WORD actual_rate;   /* value to send to 1772 controller */
+    BYTE cur_density;
+#define DENSITY_DD  0x00
+#define DENSITY_HD  0x03
+#if CONF_WITH_FDC
+    WORD cur_track;
+    UBYTE wpstatus;     /* current write protect status */
+    UBYTE wplatch;      /* latched copy of wpstatus */
+#endif
+};
+
 /*==== Internal prototypes ==============================================*/
 
 /* set intel words */
@@ -102,6 +118,10 @@ static void flop_detect_drive(WORD dev);
 /* called at start and end of a floppy access. */
 static void floplock(WORD dev);
 static void flopunlk(void);
+
+/* set density on HD drives */
+static void set_density(struct flop_info *f);
+static void switch_density(WORD dev);
 
 /* issue command to current drive */
 static WORD flopcmd(WORD cmd);
@@ -247,18 +267,7 @@ static UBYTE drivetype;
 #define DD_DRIVE    0x00
 #define HD_DRIVE    0x01
 
-static struct flop_info {
-  WORD rate;        /* rate selected via Floprate() */
-  WORD actual_rate; /* value to send to 1772 controller */
-  BYTE cur_density;
-#define DENSITY_DD  0x00
-#define DENSITY_HD  0x03
-#if CONF_WITH_FDC
-  WORD cur_track;
-  UBYTE wpstatus;       /* current write protect status */
-  UBYTE wplatch;        /* latched copy of wpstatus */
-#endif
-} finfo[NUMFLOPPIES];
+static struct flop_info finfo[NUMFLOPPIES];
 
 #define IS_VALID_FLOPPY_DEVICE(dev) ((UWORD)(dev) < NUMFLOPPIES && units[dev].valid)
 
@@ -470,18 +479,12 @@ LONG floppy_rw(WORD rw, UBYTE *buf, WORD cnt, LONG recnr, WORD spt,
     WORD side;
     WORD sect;
     WORD err;
-    WORD bootsec = 0;
 
     KDEBUG(("floppy_rw(rw %d, buf 0x%lx, cnt %d, recnr %ld, spt %d, sides %d, dev %d)\n",
             rw,(ULONG)buf,cnt,recnr,spt,sides,dev));
 
     if (!IS_VALID_FLOPPY_DEVICE(dev))
         return EUNDEV;  /* unknown device */
-
-    /* set flag if reading boot sector */
-    if ((cnt == 1) && (recnr == blkdev[dev].start)
-     && (rw & RW_NOTRANSLATE) && (rw & RW_NOMEDIACH))
-        bootsec = 1;
 
     /* do the transfer one sector at a time. It is easier to implement,
      * but perhaps slower when using FastRAM, as the time spent in memcpying
@@ -502,26 +505,8 @@ LONG floppy_rw(WORD rw, UBYTE *buf, WORD cnt, LONG recnr, WORD spt,
          * floprw() now handles a buffer in FastRAM itself
          */
         err = floprw(buf, rw, dev, sect, track, side, 1);
-        if (err) {
-            struct flop_info *f;
-            if (drivetype == DD_DRIVE)          /* DD only, so no retry */
-                return err;
-            if (!bootsec)                       /* not reading boot sector */
-                return err;
-            /* we now switch density and retry.  note that 'spt' will
-             * certainly be wrong for the calculation of 'sect' and
-             * 'track' above; however, since we're reading the very
-             * first sector of the diskette, this doesn't matter.
-             */
-            f = &finfo[dev];
-            KDEBUG(("switching density (current=%d)\n",f->cur_density));
-
-            if (f->cur_density == DENSITY_DD)   /* retry with changed density */
-                f->cur_density = DENSITY_HD;
-            else f->cur_density = DENSITY_DD;
-            bootsec = 0;                        /* avoid endless retries */
-            continue;
-        }
+        if (err)
+            return err;
         buf += SECTOR_SIZE;
         recnr++;
         cnt--;
@@ -853,6 +838,7 @@ static WORD floprw(UBYTE *userbuf, WORD rw, WORD dev,
 {
     WORD err;
 #if CONF_WITH_FDC
+    BOOL density_ok;
     WORD retry;
     WORD status;
     WORD cmd;
@@ -905,6 +891,12 @@ static WORD floprw(UBYTE *userbuf, WORD rw, WORD dev,
     }
 #endif
 
+    /*
+     * if the drive is double-density, then we know the density setting
+     * (none required) is OK.  otherwise, we don't know at this point.
+     */
+    density_ok = (drivetype==DD_DRIVE) ? TRUE : FALSE;
+
     iobufptr = iobuf;
     while(count--) {
         for (retry = 0; retry < 2; retry++) {
@@ -931,8 +923,14 @@ static WORD floprw(UBYTE *userbuf, WORD rw, WORD dev,
                 if ((rw == RW_WRITE) && (status & FDC_WRI_PRO)) {
                     err = EWRPRO;       /* write protect */
                     break;              /* no retry */
-                } else if (status & FDC_RNF) {
-                    err = ESECNF;       /* sector not found */
+                } else if (status & FDC_RNF) {  /* symptom of wrong density */
+                    if (!density_ok) {  /* it _may_ be wrong */
+                        switch_density(dev);
+                        density_ok = TRUE;
+                        retry = 0;      /* allow retries after density switch */
+                        err = 0;
+                    } else
+                        err = ESECNF;   /* sector not found */
                 } else if (status & FDC_CRCERR) {
                     err = E_CRC;        /* CRC error */
                 } else if (status & FDC_LOSTDAT) {
@@ -1057,6 +1055,32 @@ static WORD flopwtrack(UBYTE *userbuf, WORD dev, WORD track, WORD side, WORD tra
 
 /*==== internal status, flopvbl ===========================================*/
 
+/*
+ * set density & update step rate (HD drives only)
+ */
+static void set_density(struct flop_info *f)
+{
+    if (drivetype != HD_DRIVE)
+        return;
+
+    DMA->modectl = f->cur_density;
+    f->actual_rate = (f->cur_density == DENSITY_HD) ? hd_steprate[f->rate] : f->rate;
+}
+
+/*
+ * switch density / step rate (HD drives only)
+ */
+static void switch_density(WORD dev)
+{
+    struct flop_info *f = &finfo[dev];
+
+    if (drivetype != HD_DRIVE)
+        return;
+
+    KDEBUG(("switching density (current=%d)\n",f->cur_density));
+    f->cur_density = (f->cur_density==DENSITY_DD) ? DENSITY_HD : DENSITY_DD;
+    set_density(f);
+}
 
 static void floplock(WORD dev)
 {
@@ -1077,11 +1101,8 @@ struct flop_info *f = &finfo[dev];
         }
     }
 
-    /* for HD drives, always set density & update actual step rate */
-    if (drivetype == HD_DRIVE) {
-        DMA->modectl = f->cur_density;
-        f->actual_rate = (f->cur_density == DENSITY_HD) ? hd_steprate[f->rate] : f->rate;
-    }
+    /* set density if required */
+    set_density(f);
 }
 
 static void flopunlk(void)
