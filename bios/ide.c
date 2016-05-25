@@ -616,16 +616,6 @@ static void ide_rw_start(volatile struct IDE *interface,UWORD dev,ULONG sector,U
     IDE_WRITE_SECTOR_NUMBER_SECTOR_COUNT((sector & 0xff), (count & 0xff));
     IDE_WRITE_CYLINDER_HIGH_CYLINDER_LOW((UWORD)((sector & 0xffff00) >> 8));
     IDE_WRITE_COMMAND_HEAD(cmd,IDE_MODE_LBA|IDE_DEVICE(dev)|(UBYTE)((sector>>24)&0x0f));
-
-#ifdef MACHINE_AMIGA
-    /* Since WinUAE 3.2.0, IDE reads fails during boot when:
-     * - EmuTOS is compiled with -Os
-     * - CPU is 68060
-     * Additional delays below seems to fix the problem.
-     * FIXME: To be investigated. */
-    DELAY_400NS;
-    DELAY_400NS;
-#endif
 }
 
 /*
