@@ -18,10 +18,14 @@ etos192fi.img - Finnish (PAL)
 etos192fr.img - French (PAL)
 etos192gr.img - Greek (PAL)
 etos192it.img - Italian (PAL)
+etos192no.img - Norwegian (PAL)
 etos192ru.img - Russian (PAL)
 etos192sg.img - Swiss German (PAL)
 etos192us.img - English (NTSC)
 etos192uk.img - English (PAL)
+
+Note that selecting Norwegian currently sets the language to English, but the
+keyboard layout to Norwegian.
 
 Due to size limitations, the 192 KB ROMs contains:
 - no EmuCON

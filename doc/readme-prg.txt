@@ -13,6 +13,7 @@ emutosfi.prg - Finnish (PAL)
 emutosfr.prg - French (PAL)
 emutosgr.prg - Greek (PAL)
 emutosit.prg - Italian (PAL)
+emutosno.prg - Norwegian (PAL)
 emutosru.prg - Russian (PAL)
 emutossg.prg - Swiss German (PAL)
 emutosuk.prg - English (PAL)
@@ -21,6 +22,8 @@ emutosus.prg - English (NTSC)
 Notes:
 - these versions are compatible with any Atari hardware (except the FireBee)
 - TT and Falcon 030 are supported
+- the language of the Norwegian version is English; however the keyboard
+  layout is Norwegian
 
 For multilanguage version, the default language is English.
 It can be changed by setting the NVRAM appropriately.
