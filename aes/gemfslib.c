@@ -146,6 +146,7 @@ static WORD fs_active(BYTE *ppath, BYTE *pspec, WORD *pcount)
     LONG thefile, fs_index, temp;
     WORD i, j, gap;
     BYTE *fname, allpath[LEN_ZPATH+1];
+    DTA *user_dta;
 
     gsx_mfset(ad_hgmice);
 
@@ -155,6 +156,8 @@ static WORD fs_active(BYTE *ppath, BYTE *pspec, WORD *pcount)
     strcpy(allpath, ppath);         /* 'allpath' gets all files */
     fname = fs_pspec(allpath,NULL);
     strcpy(fname,"*.*");
+
+    user_dta = dos_gdta();          /* remember user's DTA */
     dos_sdta(&D.g_dta);
     ret = dos_sfirst(allpath, F_SUBDIR);
     while (ret == 0)
@@ -180,6 +183,7 @@ static WORD fs_active(BYTE *ppath, BYTE *pspec, WORD *pcount)
     }
 
     *pcount = thefile;
+    dos_sdta(user_dta);             /* restore user DTA */
 
     /* sort files using shell sort from page 108 of K&R C Prog. Lang. */
     for (gap = thefile/2; gap > 0; gap /= 2)
