@@ -241,7 +241,7 @@ static void da_add(da *d, void *elem)
 }
 
 /*
- * s - string
+ * str - string
  */
 
 typedef struct str {
@@ -721,8 +721,8 @@ again:
 #define is_hex(c)    (is_digit(c)||is_hexdig(c))
 
 /*
- * functions swallowing lexical tokens. returns 1 if
- * the token was the one tested for, return 0 else.
+ * functions swallowing lexical tokens. return 1 if
+ * the token was the one tested for, return 0 otherwise.
  */
 
 
@@ -805,7 +805,7 @@ static int try_c_white(IFILE *f)
 }
 
 
-/* only one "..." string, will be appended onto string s */
+/* only one "..." string will be appended to string s */
 static int get_c_string(IFILE *f, str *s)
 {
   int c;
@@ -877,6 +877,7 @@ static int get_c_string(IFILE *f, str *s)
 /*
  * parse c files
  * put strings surrounded by _("...") or N_("...") into the ordered-hash
+ *
  * state means :
  * 0 outside names, 1 after 'N', 2 after '_', 3 after '(', 4 in a name
  * when anything meaningful has been parsed, the corresponding structure of
@@ -2276,7 +2277,7 @@ Commands are:\n\
 Note: "
 TOOLNAME
 " is a very limited gettext clone, with some compatibility \n\
-with the original gettext. To have more control on your po files, \n\
+with the original gettext. To have more control of your po files, \n\
 please use the original gettext utilities. You will still need this \n\
 tool to create the C file(s) at the end, though.\n");
 

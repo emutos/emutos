@@ -56,7 +56,7 @@ static uint16_t country2conf(uint16_t conf, uint16_t country)
         return (country << 1) | (conf & 1);
 }
 
-/* return country name when given country TOS code, NULL if unrecognized code */
+/* returns country name when given country TOS code, NULL if unrecognized code */
 static const char *get_country_name(uint16_t value)
 {
         country_t *country;
@@ -69,7 +69,7 @@ static const char *get_country_name(uint16_t value)
         return country->name;
 }
 
-/* show all the TOS country alternatives and asks user for a country code
+/* show all the TOS country alternatives and ask user for a country code.
  * returns the user code if it's valid, otherwise COUNTRY_ERROR
  */
 static uint16_t get_new_country_value(void)

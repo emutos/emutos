@@ -31,7 +31,7 @@
  *
  * Numbers are encoded in a single byte if <= 0x7F, and in a word
  * with msb set if <= 0x7FFF. longer numbers are not representable
- * (so for instance a long verbatim chunk would be cut in parts of
+ * (so for instance a long verbatim chunk would be cut into parts of
  * size 0x7FFF separated with dummy instructions to copy zero bytes)
  *
  * This scheme was chosen so that the decompressor can be very fast.
@@ -40,8 +40,8 @@
  * only marginally slower than simply copying the uncompressed data.
  *
  * The compression algorithm is crude too. Conceptually, we scan
- * the data and compare the 4 bytes string at the current position
- * with all possible previous 4 bytes string to find a matching
+ * the data and compare the 4-byte string at the current position
+ * with all possible previous 4-byte strings to find a matching
  * substring, then we take the best possible substring.
  *
  * Todo:
@@ -183,11 +183,11 @@ typedef unsigned char uchar;
 static uchar *buf; /* holds the entire data to compress */
 static index_t len;  /* size of data */
 
-static const int z = 4;  /* minimum number of char for a string */
+static const int z = 4;  /* minimum number of chars for a string */
 
 /*
- * lists of indices into the buffer (to each 4-bytes string is
- * associated the list of its occurrences so far)
+ * lists of indices into the buffer (each 4-byte string is
+ * associated with the list of its occurrences so far)
  */
 
 typedef struct cell {

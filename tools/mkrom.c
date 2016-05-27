@@ -134,7 +134,7 @@ static size_t get_file_size(FILE* file, const char* filename)
     int err; /* Seek error */
     long end_pos; /* End file position */
 
-    /* Backup the initial position */
+    /* Remember the initial position */
     initial_pos = ftell(file);
     if (initial_pos == -1)
     {
@@ -170,7 +170,7 @@ static size_t get_file_size(FILE* file, const char* filename)
     return (size_t)end_pos;
 }
 
-/* Write a block of same bytes to a file */
+/* Write a block of identical bytes to a file */
 static int write_byte_block(FILE* outfile, const char* outfilename, uint8_t value, size_t count)
 {
     size_t towrite; /* Number of bytes to write this time */
