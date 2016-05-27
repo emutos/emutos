@@ -34,11 +34,12 @@ Other supported languages are:
 - Italian
 - Norwegian
 - Russian
+- Swedish
 - Swiss German
 They can be used by setting the NVRAM appropriately.
 
-Note that selecting Norwegian currently sets the language to English, but the
-keyboard layout to Norwegian.
+Note that selecting Norwegian/Swedish currently sets the language to English,
+but the keyboard layout to Norwegian/Swedish.
 
 This ROM image has been built using:
 make 512

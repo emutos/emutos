@@ -24,12 +24,13 @@ etos256gr.img - Greek (PAL)
 etos256it.img - Italian (PAL)
 etos256no.img - Norwegian (PAL)
 etos256ru.img - Russian (PAL)
+etos256se.img - Swedish (PAL)
 etos256sg.img - Swiss German (PAL)
 etos256us.img - English (NTSC)
 etos256uk.img - English (PAL)
 
-Note that selecting Norwegian currently sets the language to English, but the
-keyboard layout to Norwegian.
+Note that selecting Norwegian/Swedish currently sets the language to English,
+but the keyboard layout to Norwegian/Swedish.
 
 These ROM images have been built using:
 make all256

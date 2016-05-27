@@ -14,6 +14,7 @@ emutosgr.st - Greek (PAL)
 emutosit.st - Italian (PAL)
 emutosno.st - Norwegian (PAL)
 emutosru.st - Russian (PAL)
+emutosse.st - Swedish (PAL)
 emutossg.st - Swiss German (PAL)
 emutosuk.st - English (PAL)
 emutosus.st - English (NTSC)
@@ -21,8 +22,8 @@ emutosus.st - English (NTSC)
 Notes:
 - these versions are compatible with any Atari hardware (except the FireBee)
 - TT and Falcon 030 are supported
-- the language of the Norwegian version is English; however the keyboard
-  layout is Norwegian
+- the language of the Norwegian/Swedish versions is English; however the
+  keyboard layouts are Norwegian/Swedish
 
 These floppies are provided in the form of raw single-sided floppy images.
 They can be used as is on most emulators.

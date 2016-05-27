@@ -19,6 +19,7 @@ gr - Greek
 it - Italian
 no - Norwegian
 ru - Russian (currently unsupported by ARAnyM)
+se - Swedish
 cd - Swiss German
 us - English (US)
 uk - English (UK)
@@ -28,8 +29,8 @@ The ARAnyM ROM features:
 - no ACSI support
 - full NatFeat support (also enabled in the standard 512 KB version)
 
-Note that selecting Norwegian currently sets the language to English, but the
-keyboard layout to Norwegian.
+Note that selecting Norwegian/Swedish currently sets the language to English,
+but the keyboard layout to Norwegian/Swedish.
 
 This ROM image has been built using:
 make aranym
