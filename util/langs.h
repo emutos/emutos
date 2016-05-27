@@ -1,5 +1,5 @@
 /*
- * langs.h - internal definitions for the nls translations tables
+ * langs.h - internal definitions for the nls translation tables
  *
  * Copyright (C) 2001 The EmuTOS development team
  *

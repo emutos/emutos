@@ -1,5 +1,5 @@
 /*
- * memmove.S - a fast memmove / memcpy in 68000.
+ * memmove.S - a fast memmove/memcpy for 68000/ColdFire
  *
  * Copyright (C) 2001 by Authors:
  * Copyright (C) 2013-2016 by The EmuTOS development team.
@@ -217,7 +217,7 @@ bend4:
 #else
         dbra     d0,bloop4              // decrement count, test and loop
 #endif
-        move.l   d1,d0                 // remainder becomes new count
+        move.l   d1,d0                  // remainder becomes new count
         bra      bend1
 bloop1:
         move.b   -(a0),-(a1)

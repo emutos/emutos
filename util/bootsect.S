@@ -12,7 +12,7 @@
  */
 
 /*
- * This bootsector loads ramtos.img into a Malloc() buffer.
+ * This bootsector loads ramtos.img into a Malloc()'ed buffer.
  * Then it boots it using bootram().
  */
 
@@ -95,7 +95,7 @@ read:
         trap    #13
         addq.l  #4,sp
 
-        /* read the sectors in memory */
+        /* read the sectors into memory */
 
         move.w  sectcnt(pc),d6
         move.w  BOOTDEV,-(sp)

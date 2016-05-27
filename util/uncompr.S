@@ -15,8 +15,8 @@
  *   at offset bytes back.
  * it starts with (potentially null) verbatim data, and ends
  * when the copy-back offset is zero.
- * the address to which copy the uncompressed data is specified
- * outside of compressed data.
+ * the destination address for the uncompressed data is specified in the
+ * header of the compressed data.
  *
  * <compressed-data> ::= <verbatim> ( <copy-back> <verbatim> ) * <end>
  * <end> ::= [0]
@@ -60,7 +60,7 @@
 _uncompr:
         move.l  4(sp),a0  // src
         move.l  (a0)+,a1  // dest
-        addq.l  #4,a0     // this implementation does not care of the length
+        addq.l  #4,a0     // this implementation does not care about the length
 
 #ifdef __mcoldfire__
         move.l  a2,-(sp)

@@ -1,5 +1,5 @@
 /*
- * memset.S - a quick memset() for 68000.
+ * memset.S - a quick memset/bzero for 68000/ColdFire
  *
  * Copyright (C) 2001-2016 The EmuTOS development team
  *
@@ -9,7 +9,7 @@
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  *
- * This was inspired from Minix 1.5 kernel source copy68k.s.
+ * This was inspired by Minix 1.5 kernel source copy68k.s.
  * Laurent Vogel, 14 february 2001.
  *
  * Altered to m68k-atari-mint-as 68k syntax 12 september 2001
@@ -88,19 +88,19 @@ even:
 loop256:
         lea      256(a0),a0
 #ifdef __mcoldfire__
-        movem.l  d2-d7/a1-a5,-44(a0)   // zero 11x4 bytes
-        movem.l  d2-d7/a1-a5,-88(a0)   // zero 11x4 bytes
-        movem.l  d2-d7/a1-a5,-132(a0)  // zero 11x4 bytes
-        movem.l  d2-d7/a1-a5,-176(a0)  // zero 11x4 bytes
-        movem.l  d2-d7/a1-a5,-220(a0)  // zero 11x4 bytes
-        movem.l  d2-d7/a1-a3,-256(a0)  // zero 9x4 bytes
+        movem.l  d2-d7/a1-a5,-44(a0)   // fill 11x4 bytes
+        movem.l  d2-d7/a1-a5,-88(a0)   // fill 11x4 bytes
+        movem.l  d2-d7/a1-a5,-132(a0)  // fill 11x4 bytes
+        movem.l  d2-d7/a1-a5,-176(a0)  // fill 11x4 bytes
+        movem.l  d2-d7/a1-a5,-220(a0)  // fill 11x4 bytes
+        movem.l  d2-d7/a1-a3,-256(a0)  // fill 9x4 bytes
 #else
-        movem.l  d2-d7/a1-a5,-(a0)     // zero 11x4 bytes
-        movem.l  d2-d7/a1-a5,-(a0)     // zero 11x4 bytes
-        movem.l  d2-d7/a1-a5,-(a0)     // zero 11x4 bytes
-        movem.l  d2-d7/a1-a5,-(a0)     // zero 11x4 bytes
-        movem.l  d2-d7/a1-a5,-(a0)     // zero 11x4 bytes
-        movem.l  d2-d7/a1-a3,-(a0)     // zero 9x4 bytes
+        movem.l  d2-d7/a1-a5,-(a0)     // fill 11x4 bytes
+        movem.l  d2-d7/a1-a5,-(a0)     // fill 11x4 bytes
+        movem.l  d2-d7/a1-a5,-(a0)     // fill 11x4 bytes
+        movem.l  d2-d7/a1-a5,-(a0)     // fill 11x4 bytes
+        movem.l  d2-d7/a1-a5,-(a0)     // fill 11x4 bytes
+        movem.l  d2-d7/a1-a3,-(a0)     // fill 9x4 bytes
         lea      256(a0),a0
 #endif
 end256:
@@ -129,8 +129,8 @@ done:
 #endif
         bra.s    end
 loop64:
-        movem.l  d2-d7/a4-a5,(a0)      // zero 8x4 bytes
-        movem.l  d2-d7/a4-a5,32(a0)    // zero 8x4 bytes
+        movem.l  d2-d7/a4-a5,(a0)      // fill 8x4 bytes
+        movem.l  d2-d7/a4-a5,32(a0)    // fill 8x4 bytes
         lea      64(a0),a0
 end64:
 #ifdef __mcoldfire__

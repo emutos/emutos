@@ -1,5 +1,5 @@
 /*
- * intmath.c - simple implementation of <string.h> ANSI routines
+ * intmath.c - implementation of integer mathematical functions
  *
  * Copyright (C) 2002-2013 by EmuTOS development team.
  *

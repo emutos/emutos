@@ -12,7 +12,7 @@
  */
 
 /*
- * This code is common for all RAM loaders.
+ * This code is common to all RAM loaders.
  * It may be included in a bootsector, so everything must be pc-relative.
  * It may also run on foreign operating system, so there must not be any usage
  * of TOS features.
@@ -30,7 +30,7 @@
  * 'cpu' is 0 for 68000, 30 for 68030, etc.
  *
  * This needs to be done in assembly language, because the copy routine
- * may need to be copied to a safe place to avoid beeing overwritten
+ * may need to be copied to a safe place to avoid being overwritten
  * when ramtos is copied to its final destination.
  */
 
@@ -50,7 +50,7 @@ _bootram:
         addq.l  #3,d4
         andi.l  #-4,d4
 
-        // If the end of the boot routine is before the destionation buffer,
+        // If the end of the boot routine is before the destination buffer,
         // then it is already in a safe place. It will not be overwritten
         // so it can be run from its current location.
         lea     endboot(pc),a1
@@ -60,7 +60,7 @@ _bootram:
         move.l  a5,a0           // dest
         add.l   d4,a0           // + size
 
-        // If the start of the boot routine is after the destionation buffer,
+        // If the start of the boot routine is after the destination buffer,
         // then it is already in a safe place. It will not be overwritten
         // so it can be run from its current location.
         lea     boot(pc),a1
@@ -89,7 +89,7 @@ boot:
         // This boot is a first boot
         clr.l   0x6fc.w         // warm_magic
 
-        // Prevent reset vector being called during ramtos startup.
+        // Prevent reset vector from being called during ramtos startup.
         // This must be done here, because ramtos checks for magic values
         // very early, even before clearing sysvars.
         clr.l   0x426.w         // resvalid
