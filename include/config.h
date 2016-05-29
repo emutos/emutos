@@ -30,9 +30,9 @@
  * Determine if this EmuTOS is built for ROM or RAM.
  */
 #if defined(TARGET_PRG) || defined(TARGET_FLOPPY) || defined(TARGET_COMPRESSED_ROM)
-# define EMUTOS_LIVES_IN_RAM 1
-#else
-# define EMUTOS_LIVES_IN_RAM 0
+#  define EMUTOS_LIVES_IN_RAM 1
+# else
+#  define EMUTOS_LIVES_IN_RAM 0
 #endif
 
 /*
@@ -1092,9 +1092,9 @@
 
 /* Determine if kprintf() is available */
 #if CONF_WITH_UAE || DETECT_NATIVE_FEATURES || STONX_NATIVE_PRINT || MIDI_DEBUG_PRINT || RS232_DEBUG_PRINT || SCC_DEBUG_PRINT || COLDFIRE_DEBUG_PRINT
-#define HAS_KPRINTF 1
-#else
-#define HAS_KPRINTF 0
+#  define HAS_KPRINTF 1
+# else
+#  define HAS_KPRINTF 0
 #endif
 
 /*
