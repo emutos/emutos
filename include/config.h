@@ -288,6 +288,9 @@
 # ifndef CONF_WITH_IDE
 #  define CONF_WITH_IDE 1
 # endif
+# ifndef CONF_WITH_FLEXCAN
+#  define CONF_WITH_FLEXCAN 1
+# endif
 # ifndef CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF
 #  define CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF 1
 # endif
@@ -1037,6 +1040,14 @@
 # endif
 #endif
 
+/* Set this to 1 to enable support for the FlexCAN controller.
+ * This allows to use an Eiffel keyboard adapter plugged on the CAN port
+ * of ColdFire evaluation boards.
+ */
+#ifndef CONF_WITH_FLEXCAN
+# define CONF_WITH_FLEXCAN 0
+#endif
+
 /*
  * Set RS232_DEBUG_PRINT to 1 to redirect debug prints to MFP RS232 out.
  * This is useful for an emulator without any native debug print capabilities,
@@ -1216,6 +1227,9 @@
 #if !defined(__mcoldfire__)
 # if CONF_WITH_BAS_MEMORY_MAP
 #  error "CONF_WITH_BAS_MEMORY_MAP requires a ColdFire CPU."
+# endif
+# if CONF_WITH_FLEXCAN
+#  error "CONF_WITH_FLEXCAN requires a ColdFire CPU."
 # endif
 #endif
 

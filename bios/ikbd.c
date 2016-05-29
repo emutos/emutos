@@ -732,6 +732,8 @@ LONG bcostat4(void)
         /* Data register not empty */
         return 0;               /* not OK */
     }
+#elif CONF_WITH_FLEXCAN
+    return -1; /* Always OK */
 #else
     return -1; /* OK (but output will be ignored) */
 #endif
@@ -763,6 +765,8 @@ void ikbd_writeb(UBYTE b)
     while (!bcostat4());
 #if CONF_WITH_IKBD_ACIA
     ikbd_acia.data = b;
+#elif CONF_WITH_FLEXCAN
+    coldfire_flexcan_ikbd_writeb(b);
 #endif
 }
 
@@ -824,6 +828,11 @@ void kbd_init(void)
         ACIA_DIV64 |            /* clock/64 */
         ACIA_D8N1S;             /* 8 bit, 1 stop, no parity */
 #endif /* CONF_WITH_IKBD_ACIA */
+
+#if CONF_WITH_FLEXCAN
+    /* On ColdFire machines, an Eiffel adapter may be present on the CAN bus. */
+    coldfire_init_flexcan();
+#endif
 
     /* initialize the IKBD */
     ikbd_writeb(0x80);            /* Reset */

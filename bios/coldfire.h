@@ -111,6 +111,13 @@ extern MCF_COOKIE cookie_mcf;
 
 void setvalue_mcf(void);
 
+#if CONF_WITH_FLEXCAN
+void coldfire_init_flexcan(void);
+void coldfire_flexcan_ikbd_writeb(UBYTE b);
+void coldfire_int_57(void); /* In coldfire2.S */
+void call_ikbdraw(UBYTE b); /* In coldfire2.S */
+#endif /* CONF_WITH_FLEXCAN */
+
 #endif /* __mcoldfire__ */
 
 #endif /* COLDFIRE_H */

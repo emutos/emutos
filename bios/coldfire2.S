@@ -99,3 +99,23 @@ _coldfire_int_35:
         lea     16(sp),sp
         rte
 #endif
+
+#if CONF_WITH_FLEXCAN
+/* FlexCAN message buffer interrupt (Eiffel IKBD) */
+        .globl _coldfire_int_57
+_coldfire_int_57:
+        lea     -16(sp),sp
+        movem.l d0-d1/a0-a1,(sp)
+
+        jbsr    _coldfire_flexcan_message_buffer_interrupt
+
+        movem.l (sp),d0-d1/a0-a1
+        lea     16(sp),sp
+        rte
+
+/* Call ikbdraw from C */
+        .globl  _call_ikbdraw
+_call_ikbdraw:
+        mvz.b   5(sp),d0                // raw IKBD byte
+        jbra    ikbdraw
+#endif

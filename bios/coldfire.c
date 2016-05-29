@@ -14,6 +14,9 @@
 #error This file must only be compiled on ColdFire targets
 #endif
 
+/* #define ENABLE_KDEBUG */
+#define DEBUG_FLEXCAN 0
+
 #include "config.h"
 #include "portab.h"
 #include "coldfire.h"
@@ -21,6 +24,13 @@
 #include "tosvars.h"
 #include "ikbd.h"
 #include "string.h"
+#include "kprint.h"
+#include "delay.h"
+#include "asm.h"
+
+#if DEBUG_FLEXCAN
+static void flexcan_dump_registers(void);
+#endif
 
 void coldfire_early_init(void)
 {
@@ -209,6 +219,12 @@ void coldfire_rs232_interrupt_handler(void)
 
         /* And append a new IOREC value into the IKBD buffer */
         push_ascii_ikbdiorec(ascii);
+
+#if DEBUG_FLEXCAN
+        /* Dump FlexCAN registers when Return is typed on the serial console */
+        if (ascii == '\r')
+            flexcan_dump_registers();
+#endif
     }
 }
 
@@ -251,3 +267,208 @@ void setvalue_mcf(void)
     }
 #endif
 }
+
+#if CONF_WITH_FLEXCAN
+
+#if DEBUG_FLEXCAN
+static void flexcan_dump_registers(void)
+{
+    ULONG errstat1 = MCF_CAN_ERRSTAT1;
+
+    KDEBUG(("CANMCR1 = 0x%08lx\n", MCF_CAN_CANMCR1));
+    KDEBUG(("CANCTRL1 = 0x%08lx\n", MCF_CAN_CANCTRL1));
+    KDEBUG(("TIMER1 = 0x%08lx\n", MCF_CAN_TIMER1));
+    KDEBUG(("RXGMASK1 = 0x%08lx\n", MCF_CAN_RXGMASK1));
+    KDEBUG(("RX14MASK1 = 0x%08lx\n", MCF_CAN_RX14MASK1));
+    KDEBUG(("RX15MASK1 = 0x%08lx\n", MCF_CAN_RX15MASK1));
+    KDEBUG(("ERRCNT1 = 0x%08lx\n", MCF_CAN_ERRCNT1));
+    KDEBUG(("ERRSTAT1 = 0x%08lx\n", errstat1));
+    KDEBUG(("IMASK1 = 0x%04x\n", MCF_CAN_IMASK1));
+    KDEBUG(("IFLAG1 = 0x%04x\n", MCF_CAN_IFLAG1));
+
+    if (errstat1 & MCF_CAN_ERRSTAT_ERRINT)
+    {
+        /* FIXME: When plugged, the Eiffel device continuously sends error
+         * frames on the bus. This looks like an Eiffel firmware bug. */
+        KDEBUG(("Warning: ERRINT=1 BITERR=%d%d ACKERR=%d CRCERR=%d FRMERR=%d STFERR=%d\n",
+            !!(errstat1 & 0x00008000), /* BITERR high */
+            !!(errstat1 & 0x00004000), /* BITERR low */
+            !!(errstat1 & MCF_CAN_ERRSTAT_ACKERR),
+            !!(errstat1 & MCF_CAN_ERRSTAT_CRCERR),
+            !!(errstat1 & MCF_CAN_ERRSTAT_FRMERR),
+            !!(errstat1 & MCF_CAN_ERRSTAT_STFERR)
+        ));
+    }
+}
+#endif /* DEBUG_FLEXCAN */
+
+/*
+ * Initialize the FlexCAN interface.
+ * An Eiffel 2.0 adapter may be present on the bus, to simulate Atari IKBD
+ * devices (keyboard, mouse, joystick) from PS/2 keyboard and mouse.
+ * On ColdFire evaluation boards, the physical CAN connector is wired
+ * to the FlexCAN 1 module. FlexCAN 0 is not used.
+ * Message buffer 0 is configured to transfer messages.
+ * Message buffer 15 is configured to receive messages.
+ */
+ void coldfire_init_flexcan(void)
+{
+    int i;
+
+    KDEBUG(("coldfire_init_flexcan()\n"));
+
+    /* Reset FlexCAN 1. This matters on warm boot, to clear errors, etc. */
+    MCF_CAN_CANMCR1 = MCF_CAN_CANMCR_SOFTRST;
+    while (MCF_CAN_CANMCR1 & MCF_CAN_CANMCR_SOFTRST); /* Wait */
+
+    /* On ColdFire, the CANRX1/CANTX1 signals are mapped to several pins. See
+     * MCF5485RM.pdf, table 15-2. For normal operation, TIN2/TOUT2 pins of the
+     * Timer Module must be configured for FlexCAN 1, while other ones must be
+     * configured for GPIO to prevent unexpected behaviour. */
+
+    /* Configure IRQ6/IRQ5 pins for GPIO instead of FlexCAN 1 */
+    MCF_PAD_PAR_FECI2CIRQ |= MCF_PAD_PAR_FECI2CIRQ_PAR_IRQ5 |
+                             MCF_PAD_PAR_FECI2CIRQ_PAR_IRQ6;
+
+    /* Configure DSPICS3/DSPICS2 pins for GPIO instead of FlexCAN 1 */
+    MCF_PAD_PAR_DSPI &= ~(MCF_PAD_PAR_DSPI_PAR_CS3_DSPICS3 |
+                          MCF_PAD_PAR_DSPI_PAR_CS2_DSPICS2);
+
+    /* Configure TIN3/TOUT3 pins for GPIO, and TIN2/TOUT2 for FlexCAN 1 */
+    MCF_PAD_PAR_TIMER = MCF_PAD_PAR_TIMER_PAR_TIN3_TIN3 |
+                        MCF_PAD_PAR_TIMER_PAR_TOUT3;
+
+    /* Set bit rate to 250 kHz */
+    MCF_CAN_CANCTRL1 = MCF_CAN_CANCTRL_PRESDIV(0x18) |
+                       MCF_CAN_CANCTRL_PROPSEG(2) |
+                       MCF_CAN_CANCTRL_PSEG1(7) |
+                       MCF_CAN_CANCTRL_PSEG2(3) |
+                       MCF_CAN_CANCTRL_SAMP;
+
+    /* Set Rx Mask Registers to "all identifier bits must match" */
+    MCF_CAN_RXGMASK1 = MCF_CAN_RXGMASK_MI(0x1fffffff); /* Buffers 0-13 */
+    MCF_CAN_RX14MASK1 = MCF_CAN_RX14MASK_MI(0x1fffffff); /* Buffer 14 */
+    MCF_CAN_RX15MASK1 = MCF_CAN_RX15MASK_MI(0x1fffffff); /* Buffer 15 */
+
+    /* Disable all message buffers */
+    for (i = 0; i < 16; i++)
+        MCF_CAN_MBUF_CTRL(1, i) = MCF_CAN_MBUF_CTRL_CODE(MBOX_RXCODE_NOT_ACTIVE);
+
+    /* Configure Message Buffer 15 for reception */
+    MCF_CAN_MBUF_ID(1, 15) = MCF_CAN_MBUF_ID_STD(0x181); /* Identifier of frames sent by Eiffel */
+    MCF_CAN_MBUF_CTRL(1, 15) = MCF_CAN_MBUF_CTRL_CODE(MBOX_RXCODE_EMPTY);
+
+    /* Setup the interrupt vector */
+    INTERRUPT_VECTOR(57) = coldfire_int_57;
+
+    /* Interrupt priority.
+     * Never assign the same Level and Priority to several interrupts,
+     * otherwise an exception 127 will occur on RTE! */
+    MCF_INTC_ICR57 = MCF_INTC_ICR_IL(0x6UL) | /* Level */
+                     MCF_INTC_ICR_IP(0x4UL);  /* Priority within the level */
+
+    /* Enable interrupt for Message Buffer 15 */
+    MCF_CAN_IMASK1 = MCF_CAN_IMASK_BUF15M;
+
+    /* Start FlexCAN 1 */
+    MCF_CAN_CANMCR1 = MCF_CAN_CANMCR_FRZ |
+                      MCF_CAN_CANMCR_SUPV |
+                      MCF_CAN_CANMCR_MAXMB(15);
+
+    /* Allow reception of the interrupt */
+    MCF_INTC_IMRH &= ~MCF_INTC_IMRH_INT_MASK57;
+
+#if DEBUG_FLEXCAN
+    /* Dump FlexCAN registers before startup */
+    flexcan_dump_registers();
+#endif
+}
+
+/* Called from assembler routine coldfire_int_57 */
+void coldfire_flexcan_message_buffer_interrupt(void)
+{
+#if DEBUG_FLEXCAN
+    KDEBUG(("*** FlexCAN message buffer interrupt!\n"));
+#endif
+
+    /* Handle interrupts from message buffer 15.
+     * Read the received message and forward data bytes to IKBD handler. */
+    if (MCF_CAN_IFLAG1 & MCF_CAN_IMASK_BUF15M)
+    {
+        UWORD status;
+        int length;
+        int i;
+
+#if DEBUG_FLEXCAN
+        flexcan_dump_registers();
+#endif
+
+        /* Lock the message buffer.
+         * This is achieved by reading the control/status word. */
+        status = MCF_CAN_MBUF_CTRL(1, 15);
+        length = status & 0x000f;
+
+        /* Check for overrun */
+        if ((status & 0x0f00) == MCF_CAN_MBUF_CTRL_CODE(MBOX_RXCODE_OVERRUN))
+            KDEBUG(("FlexCAN Overrun!\n"));
+
+#if DEBUG_FLEXCAN
+        KDEBUG(("status = 0x%04x\n", status));
+        KDEBUG(("timestamp = 0x%04x\n", MCF_CAN_MBUF_TMSTP(1, 15)));
+        KDEBUG(("id = 0x%08lx\n", MCF_CAN_MBUF_ID(1, 15)));
+        KDEBUG(("stdid = 0x%lx\n", (MCF_CAN_MBUF_ID(1, 15) & 0x1ffc0000) >> 18));
+        KDEBUG(("length = %d\n", length));
+#endif
+
+        /* Read the frame data */
+        for (i = 0; i < length; i++)
+        {
+            vuint8* data = &MCF_CAN_MBUF_BYTE0(1, 15);
+            UBYTE b = data[i];
+#if DEBUG_FLEXCAN
+            KDEBUG(("received ikbd byte = 0x%02x\n", b));
+#endif
+            call_ikbdraw(b);
+        }
+
+        /* Unlock the message buffer.
+         * This is achieved by reading the free-running timer. */
+        UNUSED(MCF_CAN_TIMER1);
+
+        /* Clear the interrupt */
+        MCF_CAN_IFLAG1 = MCF_CAN_IFLAG_BUF15I;
+    }
+}
+
+/* Send a byte to Eiffel */
+void coldfire_flexcan_ikbd_writeb(UBYTE b)
+{
+    ULONG i;
+
+    /* Set up Message Buffer 0 for transmission */
+    MCF_CAN_MBUF_CTRL(1, 0) = MCF_CAN_MBUF_CTRL_CODE(MBOX_TXCODE_NOT_READY);
+    MCF_CAN_MBUF_ID(1, 0) = MCF_CAN_MBUF_ID_STD(0x201); /* Identifier of frames to send to Eiffel */
+    MCF_CAN_MBUF_BYTE0(1, 0) = b;
+    MCF_CAN_MBUF_CTRL(1, 0) = MCF_CAN_MBUF_CTRL_CODE(MBOX_TXCODE_TRANSMIT) |
+                              MCF_CAN_MBUF_CTRL_LENGTH(1);
+
+    /* If no Eiffel is plugged, the transmission will never complete.
+     * So we need to handle a timeout here.
+     * Even a rough approximation will be enough. */
+    for (i = 0; i < loopcount_1_msec * 10; i++)
+    {
+        /* Check for interrupt */
+        if (MCF_CAN_IFLAG1 & MCF_CAN_IFLAG_BUF0I)
+        {
+            /* Clear the interrupt flag */
+            MCF_CAN_IFLAG1 = MCF_CAN_IFLAG_BUF0I;
+
+            /* Success */
+            return;
+        }
+    }
+
+    /* Timeout */
+}
+
+#endif /* CONF_WITH_FLEXCAN */
