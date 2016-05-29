@@ -130,7 +130,7 @@ struct IDE
 #endif /* MACHINE_M548X */
 
 /* the data register is naturally byteswapped on some hardware */
-#ifdef MACHINE_AMIGA
+#if (defined(MACHINE_AMIGA) || CONF_WITH_TWISTED_IDE)
 #define IDE_DATA_REGISTER_IS_BYTESWAPPED 1
 #else
 #define IDE_DATA_REGISTER_IS_BYTESWAPPED 0
@@ -165,7 +165,10 @@ struct IDE
 #if !IDE_32BIT_XFER
     UBYTE filler02[2];
 #endif
+#if !CONF_WITH_TWISTED_IDE
+    /* on IDE interfaces with twisted/byte-swapped cable, registers are shifted by one byte */
     UBYTE filler04;
+#endif
     UBYTE features; /* Read: error */
     UBYTE filler06[3];
     UBYTE sector_count;
@@ -182,6 +185,9 @@ struct IDE
     UBYTE filler1e[27];
     UBYTE control;  /* Read: Alternate status */
     UBYTE filler3a[6];
+#if CONF_WITH_TWISTED_IDE
+    UBYTE filler3f;
+#endif
 };
 
 #define ide_interface           ((volatile struct IDE *)0xfff00000)

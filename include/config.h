@@ -638,6 +638,14 @@
 #endif
 
 /*
+ * Set CONF_WITH_TWISTED_IDE to 1 to use IDE interfaces with "twisted"
+ * (or byte-swapped) cables instead of regular ones
+ */
+#ifndef CONF_WITH_TWISTED_IDE
+# define CONF_WITH_TWISTED_IDE 0
+#endif
+
+/*
  * Set CONF_WITH_SDMMC to 1 to activate SD/MMC bus support
  */
 #ifndef CONF_WITH_SDMMC
