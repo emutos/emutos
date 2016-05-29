@@ -99,3 +99,18 @@ Games use an undocumented TOS4 vector for keyboard input instead of
 accessing kbdvec correctly.  This causes EmuTOS to panic.
 This can be worked around with the following hack.prg:
 	http://sourceforge.net/mailarchive/message.php?msg_id=26841274
+
+Program: OMIKRON.BASIC V3.01 (interpreter)
+------------------------------------------
+Error: Panic (bus error) during start
+
+Bug analysis:
+The program relies on undocumented internal TOS variables at several
+points.  First, it expects A0 upon return from Mediach (BIOS function)
+to point to wplatch (floppy write protect latch variable).  On EmuTOS
+A0 is 0 and hence a bus error occurs when the program wants to modify
+that variable.  Second, it parses the bytes of the 0xA00A (hide cursor)
+line-A routine to get the address of a variable reflecting the internal
+state of the mouse cursor.  This is done with the same code used in
+"Ramses" (see above).  This also fails on EmuTOS, resulting in another
+bus error.  There may be more accesses to undocumented variables.
