@@ -475,42 +475,89 @@ LONG flop_mediach(WORD dev)
 LONG floppy_rw(WORD rw, UBYTE *buf, WORD cnt, LONG recnr, WORD spt,
                WORD sides, WORD dev)
 {
-    WORD track;
-    WORD side;
-    WORD sect;
-    WORD err;
+    WORD start_trkside, end_trkside;
+    WORD start_relsec, end_relsec;
+    WORD track, side, numsecs, err;
 
-    KDEBUG(("floppy_rw(rw %d, buf 0x%lx, cnt %d, recnr %ld, spt %d, sides %d, dev %d)\n",
-            rw,(ULONG)buf,cnt,recnr,spt,sides,dev));
+    KDEBUG(("floppy_rw(): rw=%d, buf=%p, dev=%d, recnr=%ld, cnt=%d, spt=%d, sides=%d\n",
+            rw,buf,dev,recnr,cnt,spt,sides));
 
     if (!IS_VALID_FLOPPY_DEVICE(dev))
         return EUNDEV;  /* unknown device */
 
-    /* do the transfer one sector at a time. It is easier to implement,
-     * but perhaps slower when using FastRAM, as the time spent in memcpying
-     * the sector in memory may force us to wait for a complete
-     * rotation of the floppy before reading the next sector.
+    /*
+     * we divide the i/o into 3 sections, each of which may be empty:
+     *  1. the sectors from the starting sector to the end of the starting track/side
+     *  2. 0 or more entire track/sides
+     *  3. the sectors from the start of the last track/side to the ending sector
      */
+    start_trkside = recnr / spt;
+    start_relsec = recnr - (spt * start_trkside);   /* zero-based sector number */
 
-    while (cnt > 0) {
-        sect = (recnr % spt) + 1;
-        track = recnr / spt;
+    recnr += cnt - 1;
+    end_trkside = recnr / spt;
+    end_relsec = recnr - (spt * end_trkside);
+
+    KDEBUG(("floppy_rw(): start=%d/%d, end=%d/%d\n",
+            start_trkside,start_relsec,end_trkside,end_relsec));
+
+    /*
+     * section 1: the sectors at the end of the first track/side
+     */
+    if (start_trkside < end_trkside) {
         if (sides == 1) {
+            track = start_trkside;
             side = 0;
         } else {
-            side = track % 2;
-            track /= 2;
+            track = start_trkside >> 1;
+            side = start_trkside & 0x0001;
         }
-        /*
-         * floprw() now handles a buffer in FastRAM itself
-         */
-        err = floprw(buf, rw, dev, sect, track, side, 1);
+        numsecs = spt - start_relsec;
+        KDEBUG(("floppy_rw() #1: track=%d, side=%d, start=%d, count=%d\n",
+                track,side,start_relsec+1,numsecs));
+        err = floprw(buf, rw, dev, start_relsec+1, track, side, numsecs);
         if (err)
             return err;
-        buf += SECTOR_SIZE;
-        recnr++;
-        cnt--;
+        buf += SECTOR_SIZE * numsecs;
+        start_trkside++;
+        start_relsec = 0;
     }
+
+    /*
+     * section 2: zero or more entire track/sides
+     */
+    for ( ; start_trkside < end_trkside; start_trkside++) {
+        if (sides == 1) {
+            track = start_trkside;
+            side = 0;
+        } else {
+            track = start_trkside >> 1;
+            side = start_trkside & 0x0001;
+        }
+        KDEBUG(("floppy_rw() #2: track=%d, side=%d, start=%d, count=%d\n",
+                track,side,1,spt));
+        err = floprw(buf, rw, dev, 1, track, side, spt);
+        if (err)
+            return err;
+        buf += SECTOR_SIZE * spt;
+    }
+
+    /*
+     * section 3: the sectors at the start of the last (or only) track/side
+     */
+    if (sides == 1) {
+        track = start_trkside;
+        side = 0;
+    } else {
+        track = start_trkside >> 1;
+        side = start_trkside & 0x0001;
+    }
+    numsecs = end_relsec - start_relsec + 1;
+    KDEBUG(("floppy_rw() #3: track=%d, side=%d, start=%d, count=%d\n",
+            track,side,start_relsec+1,numsecs));
+    err = floprw(buf, rw, dev, start_relsec+1, track, side, numsecs);
+    if (err)
+        return err;
 
     return 0;
 }
