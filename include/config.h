@@ -15,7 +15,6 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-
 /*
  * File localconf.h will be included if reported present by the Makefile.
  * Use it to put your local configuration. File localconf.h will not be
@@ -59,6 +58,9 @@
 # endif
 # ifndef CONF_WITH_68030_PMMU
 #  define CONF_WITH_68030_PMMU 0
+# endif
+# ifndef CONF_WITH_MONSTER
+#  define CONF_WITH_MONSTER 0
 # endif
 #endif
 
@@ -105,6 +107,9 @@
 # ifndef CONF_WITH_ICDRTC
 #  define CONF_WITH_ICDRTC 0    /* useless on FireBee as it has NVRAM clock */
 # endif
+# ifndef CONF_WITH_MONSTER
+#  define CONF_WITH_MONSTER 0
+# endif
 #endif
 
 /*
@@ -127,6 +132,9 @@
 # endif
 # ifndef CONF_WITH_ALT_RAM
 #  define CONF_WITH_ALT_RAM 0
+# endif
+# ifndef CONF_WITH_MONSTER
+#  define CONF_WITH_MONSTER 0
 # endif
 # ifndef CONF_WITH_FASTRAM
 #  define CONF_WITH_FASTRAM 0
@@ -228,6 +236,9 @@
 # ifndef CONF_WITH_SHUTDOWN
 #  define CONF_WITH_SHUTDOWN 0
 # endif
+# ifndef CONF_WITH_MONSTER
+#  define CONF_WITH_MONSTER 0
+# endif
 #endif
 
 /*
@@ -248,6 +259,9 @@
 # endif
 # ifndef CONF_WITH_SFP004
 #  define CONF_WITH_SFP004 0
+# endif
+# ifndef CONF_WITH_MONSTER
+#  define CONF_WITH_MONSTER 0
 # endif
 #endif
 
@@ -410,6 +424,9 @@
 # ifndef CONF_WITH_BUS_ERROR
 #  define CONF_WITH_BUS_ERROR 0
 # endif
+# ifndef CONF_WITH_MONSTER
+#  define CONF_WITH_MONSTER 0
+# endif
 #endif
 
 /*
@@ -515,6 +532,14 @@
  */
 #ifndef CONF_FASTRAM_SIZE
 # define CONF_FASTRAM_SIZE 0
+#endif
+
+/*
+ * Define CONF_WITH_MONSTER to enable detection and usage of ST/STE
+ * MonSTer expansion card.
+ */
+#ifndef CONF_WITH_MONSTER
+# define CONF_WITH_MONSTER 1
 #endif
 
 /*

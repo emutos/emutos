@@ -166,6 +166,21 @@ static void detect_vme(void)
 
 #endif /* CONF_WITH_VME */
 
+#if CONF_WITH_MONSTER
+
+int has_monster;
+
+static void detect_monster(void)
+{
+    if (cookie_mch == MCH_ST || cookie_mch == MCH_STE || cookie_mch == MCH_MSTE)
+        has_monster = check_read_byte(MONSTER_REG);
+    else
+        has_monster = FALSE;
+
+    KDEBUG(("has_monster = %d\n", has_monster));
+}
+
+#endif /* CONF_WITH_MONSTER */
 
 #if CONF_WITH_BLITTER
 
@@ -292,13 +307,15 @@ static void setvalue_snd(void)
 
 static void setvalue_frb(void)
 {
-    BOOL need_frb; /* Required only if the system has Alt RAM */
+    BOOL need_frb = FALSE; /* Required only if the system has Alt RAM */
 
 #if CONF_WITH_FASTRAM
     /* Standard Atari TT-RAM may be present */
     need_frb = (ramtop != NULL);
-#else
-    need_frb = FALSE;
+#endif
+
+#if CONF_WITH_MONSTER
+	need_frb |= has_monster;
 #endif
 
     if (need_frb)
@@ -384,6 +401,9 @@ void machine_detect(void)
 #endif
 #if CONF_WITH_IDE
     detect_ide();
+#endif
+#if CONF_WITH_MONSTER
+    detect_monster();
 #endif
 }
 

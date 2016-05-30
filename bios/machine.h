@@ -25,6 +25,7 @@
 #define SCU_GPR1            0xffff8e09UL
 #define VME_INT_MASK        0xffff8e0dUL
 #define DIP_SWITCHES        0xffff9200UL
+#define MONSTER_REG         0xfffffe00UL
 
 /*
  * some useful cookies.
@@ -115,6 +116,10 @@ extern int has_nvram;     /* in nvram.c */
 
 /* convenience macro: TRUE iff any kind of real time clock */
 #define HAS_RTC (HAS_NVRAM || HAS_MEGARTC || HAS_ICDRTC)
+
+#if CONF_WITH_MONSTER
+extern int has_monster;
+#endif
 
 #if CONF_WITH_BLITTER
 extern int has_blitter;
