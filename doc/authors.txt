@@ -37,19 +37,21 @@ Roger Burrows (RFB) <rfburrows at ymail.com>
 - FAT16 partitions up to 2 GB (inspired by Didier Méquignon's BDOS fork)
 - Full support for Falcon video hardware
 - Real Falcon 030 support (cache, MMU, SCC, HD floppy)
+- Real TT 030 support (video, MFP2)
 - Desktop and file selector improvements
 - EmuCON2
 - erd tool: the EmuTOS Resource Decompiler
 - Various bugfixes and cleanups
 
 Vincent Rivière (VRI) <vincent.riviere at freesbee.fr>
+- Many improvements to the build and configuration process
 - Patches for compiling with GCC 4.x
 - ColdFire CPU and FireBee support
 - Initial IDE driver
 - Amiga support
 - ColdFire Evaluation Boards support
 - French translation update
-- Various bug fixes
+- Various bug fixes and cleanups
 
 Thomas Huth (THH) <huth at users.berlios.de>
 - Lots of bugfixes all over the place
@@ -190,3 +192,7 @@ Jan Krupka <krupkaj at centrum.cz>
 Christian Zietz <czietz at gmx.net>
 - Fix floppy/ACSI bug
 - Fix memory detection to support STs as well as STes
+
+Jo Even Skarstein (joska at online.no)
+- Support for Norwegian & Swedish keyboards
+- Support for MonSTer add-on board
