@@ -293,13 +293,13 @@ void gsx_graphic(WORD tographic)
         if (gl_graphic)
         {
             contrl[5] = 2;
-            gsx_ncode(5, 0, 0);
+            gsx_ncode(ESCAPE_FUNCTION, 0, 0);
             gsx_setmb(far_bcha, far_mcha, &drwaddr);
         }
         else
         {
             contrl[5] = 3;
-            gsx_ncode(5, 0, 0);
+            gsx_ncode(ESCAPE_FUNCTION, 0, 0);
             gsx_resetmb();
         }
     }
@@ -427,11 +427,11 @@ WORD gsx_char(void)
 {
     intin[0] = 4;
     intin[1] = 2;
-    gsx_ncode(33, 0, 2);
+    gsx_ncode(SET_INPUT_MODE, 0, 2);
 
     intin[0] = -1;
     intin[1] = FALSE;        /* no echo */
-    gsx_ncode(31, FALSE, 2);
+    gsx_ncode(STRING_INPUT, FALSE, 2);
     if (contrl[4])
         return(intout[0]);
     else
@@ -536,7 +536,7 @@ void vrt_cpyfm(WORD wr_mode, WORD *pxyarray, FDB *psrcMFDB, FDB *pdesMFDB,
     i_ptr( psrcMFDB );
     i_ptr2( pdesMFDB );
     i_ptsin( pxyarray );
-    gsx_ncode(121, 4, 3);
+    gsx_ncode(TRAN_RASTER_FORM, 4, 3);
     i_ptsin( ptsin );
 }
 
