@@ -298,6 +298,19 @@ static void setvalue_snd(void)
         cookie_snd |= SND_16BIT | SND_MATRIX;
     }
 
+    if (HAS_DIP_SWITCHES)
+    {
+        /*
+         * if DIP sw 8 is on (i.e. bit 7 is off), then we turn off the
+         * indicator for 8-bit DMA stereo in the _SND cookie, just like
+         * TOS3/TOS4 do.
+         */
+        if (!(cookie_swi & 0x80))
+        {
+            cookie_snd &= ~SND_8BIT;
+        }
+    }
+
     KDEBUG(("cookie_snd = 0x%08lx\n", cookie_snd));
 }
 
