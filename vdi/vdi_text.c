@@ -38,7 +38,7 @@ extern WORD SOURCEX, SOURCEY;   /* upper left of character in font file */
 extern WORD DESTX, DESTY;       /* upper left of destination on screen  */
 extern UWORD DELX, DELY;        /* width and height of character    */
 extern const UWORD *FBASE;      /* pointer to font data         */
-extern WORD FWIDTH;             /* offset,segment and form with of font */
+extern WORD FWIDTH;             /* offset,segment and form width of font */
 extern WORD LITEMASK, SKEWMASK; /* special effects          */
 extern WORD WEIGHT;             /* special effects          */
 extern WORD R_OFF, L_OFF;       /* skew above and below baseline    */

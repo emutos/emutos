@@ -156,7 +156,7 @@ void timer_init(Vwk * vwk)
 
     old_sr = set_sr(0x2700);            // disable interrupts
     tim_chain = (void(*)(int))          // save old vector
-        Setexc(0x100, (long)tick_int);  // set etv_timer to tick_int
+    Setexc(0x100, (long)tick_int);      // set etv_timer to tick_int
     set_sr(old_sr);                     // enable interrupts
 
 }
@@ -184,7 +184,7 @@ UWORD * get_start_addr(const WORD x, const WORD y)
 {
     UBYTE * addr;
 
-    /* init adress counter */
+    /* init address counter */
     addr = v_bas_ad;                    /* start of screen */
     addr += (x&0xfff0)>>shift_offset[v_planes]; /* add x coordinate part of addr */
     addr += (LONG)y * v_lin_wr;         /* add y coordinate part of addr */

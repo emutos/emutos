@@ -104,7 +104,7 @@ static const WORD DEV_TAB_rom[45] = {
     399,                        /* 1    y resolution             */
     0,                          /* 2    device precision 0=exact,1=not exact */
     372,                        /* 3    width of pixel           */
-    372,                        /* 4    heigth of pixel          */
+    372,                        /* 4    height of pixel          */
     1,                          /* 5    character sizes          */
     MX_LN_STYLE,                /* 6    linestyles               */
     0,                          /* 7    linewidth                */
@@ -117,7 +117,7 @@ static const WORD DEV_TAB_rom[45] = {
     10,                         /* 14   number of GDP's          */
     1,                          /* 15   GDP bar                  */
     2,                          /* 16   GDP arc                  */
-    3,                          /* 17   GDP pic                  */
+    3,                          /* 17   GDP pie                  */
     4,                          /* 18   GDP circle               */
     5,                          /* 19   GDP ellipse              */
     6,                          /* 20   GDP elliptical arc       */

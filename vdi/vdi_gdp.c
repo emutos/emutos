@@ -18,7 +18,7 @@
 
 
 
-/* Definitions for sine and cosinus */
+/* Definitions for sine and cosine */
 #define    HALFPI    900
 #define    PI        1800
 #define    TWOPI     3600

@@ -24,7 +24,7 @@
 
 
 /* different maximum settings */
-#define MAX_PTSIN 256           /* max. # of coordinate pairs, also asm.S! */
+#define MAX_PTSIN 256           /* max. # of coordinate pairs, also in vdi_asm.S! */
 
 
 #define MAX_COLOR       16

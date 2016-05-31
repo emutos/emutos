@@ -60,7 +60,7 @@
 struct blit_frame {
     WORD b_wd;          // +00 width of block in pixels
     WORD b_ht;          // +02 height of block in pixels
-    WORD plane_ct;     // +04 number of consequitive planes to blt
+    WORD plane_ct;      // +04 number of consecutive planes to blt
     UWORD fg_col;       // +06 foreground color (logic op table index:hi bit)
     UWORD bg_col;       // +08 background color (logic op table index:lo bit)
     UBYTE op_tab[4];    // +10 logic ops for all fore and background combos

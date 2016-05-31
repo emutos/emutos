@@ -434,7 +434,7 @@ static void set_mouse_form (const Mcdb *src, Mcdb * dst)
     }
     dst->bg_col = MAP_COL[col];
 
-    /* is forground color index too high? */
+    /* is foreground color index too high? */
     col = src->fg_col;
     if (col >= DEV_TAB[13]) {
         col = 1;               /* yes - default to 1 */
@@ -442,7 +442,7 @@ static void set_mouse_form (const Mcdb *src, Mcdb * dst)
     dst->fg_col = MAP_COL[col];
 
     /*
-     * Move the new mouse defintion into the global mouse cursor definition
+     * Move the new mouse definition into the global mouse cursor definition
      * table.  The values for the mouse mask and data are supplied as two
      * separate 16-word entities.  They must be stored as a single array
      * starting with the first word of the mask followed by the first word
@@ -609,7 +609,7 @@ void vdimouse_exit(Vwk * vwk)
  * vb_draw - moves mouse cursor, GEM VBL routine
  *
  * It removes the mouse cursor from its current location, if necessary,
- * * and redraws it at a new location.
+ * and redraws it at a new location.
  *
  *      Inputs:
  *         draw_flag - signals need to redraw cursor

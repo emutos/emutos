@@ -167,8 +167,7 @@ intin_ok:
 
 /*
  * scrn_clip - This routine clips the x and y-coordinates of the cursor
- *
- * position to the limits of the screen.
+ *             position to the limits of the screen.
  *
  *      Inputs:
  *         d0 = x coordinate
@@ -203,7 +202,7 @@ cl_xmax:
         move.w  (a0),d0         // yes - set it to the maximum value
 /*
  *      If the new y-coordinate is less than 0 then the cursor will be
- *      placed off the top side of the screen so set its value to 0.
+ *      placed off the top of the screen so set its value to 0.
  */
 cl_y:
         tst.w   d1              // is new y-coordinate < 0?
@@ -212,8 +211,8 @@ cl_y:
         rts
 
 /*
- *      If the new x-coordinate is greater than the maximum value then the
- *      cursor will be placed off the right side of the screen so set it
+ *      If the new y-coordinate is greater than the maximum value then the
+ *      cursor will be placed off the bottom of the screen so set it
  *      to the maximum value.
  */
 cl_ymax:
@@ -507,10 +506,10 @@ _mov_cur:
 
 /*
  * The cursor is not currently hidden.  Save the new coordinates for the
- * cursor, set a flag to signal the need to redraw it, and (if we have
- * no timer or vertical blank tick) then call the routine that will
- * remove the cursor from its current location and redraw it in the new
- * one.  This is a critical region so all interrupts must be turned off.
+ * cursor and set a flag to signal the need to redraw it.  The cursor will
+ * actually be drawn by vb_draw() (in vdi_mouse.c) which has been added to
+ * the VBL handler list.  This is a critical region so all interrupts must
+ * be turned off.
  */
 #ifdef __mcoldfire__
         move.l  d3,-(sp)

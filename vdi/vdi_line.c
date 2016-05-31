@@ -393,7 +393,7 @@ static UWORD linea_color(void)
     UWORD color = 0;
 
     /* Below we use += instead of |= because GCC produces better code
-     * especially addq.w instead og ori.w
+     * especially addq.w instead of ori.w
      */
 
     if (FG_BP_1 != 0)
@@ -1037,8 +1037,7 @@ static void draw_arrow(Vwk * vwk, Point * point, int count, int inc)
     /* Find the first point which is not so close to the end point that it */
     /* will be obscured by the arrowhead.                                  */
     for (i = 1; i < count; i++) {
-        /* Find the deltas between the next point and the end point.
-           Transform */
+        /* Find the deltas between the next point and the end point. Transform */
         /* to a space such that the aspect ratio is uniform and the x axis */
         /* distance is preserved. */
 
@@ -1216,7 +1215,7 @@ void abline (const Line * line, WORD wrt_mode, UWORD color)
         yinc = (LONG) v_lin_wr / 2;     /* add one line of words */
     }
 
-    adr = get_start_addr(x1, y1);       /* init adress counter */
+    adr = get_start_addr(x1, y1);       /* init address counter */
     msk = 0x8000 >> (x1&0xf);           /* initial bit position in WORD */
 
     for (plane = v_planes-1; plane >= 0; plane-- ) {

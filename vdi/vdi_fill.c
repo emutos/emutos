@@ -41,7 +41,7 @@ static UWORD search_color;       /* the color of the border      */
 /* some kind of stack for the segments to fill */
 static WORD queue[QSIZE];       /* storage for the seed points  */
 static WORD qbottom;            /* the bottom of the queue (zero)   */
-static WORD qtop;               /* points top seed +3           */
+static WORD qtop;               /* points to seed +3            */
 static WORD qptr;               /* points to the active point   */
 static WORD qtmp;
 static WORD qhole;              /* an empty space in the queue */
@@ -73,11 +73,11 @@ static const UWORD OEMPAT[128] = {
     0xF8F8, 0x6C6C, 0xC6C6, 0x8F8F, 0x1F1F, 0x3636, 0x6363, 0xF1F1,
     /* Quilt */
     0xAAAA, 0x0000, 0x8888, 0x1414, 0x2222, 0x4141, 0x8888, 0x0000,
-    /* Paterned Cross */
+    /* Patterned Cross */
     0x0808, 0x0000, 0xAAAA, 0x0000, 0x0808, 0x0000, 0x8888, 0x0000,
     /* Balls */
     0x7777, 0x9898, 0xF8F8, 0xF8F8, 0x7777, 0x8989, 0x8F8F, 0x8F8F,
-    /* Verticle Scales */
+    /* Vertical Scales */
     0x8080, 0x8080, 0x4141, 0x3E3E, 0x0808, 0x0808, 0x1414, 0xE3E3,
     /* Diagonal scales */
     0x8181, 0x4242, 0x2424, 0x1818, 0x0606, 0x0101, 0x8080, 0x8080,
@@ -520,7 +520,8 @@ clc_flit (const VwkAttrib * attr, const VwkClip * clipper, const Point * point, 
             x1 = *ptr++ + 1 ;   /* word */
             x2 = *ptr++ - 1 ;   /* word */
 
-            /* If starting point greater than ending point, nothing is done. */            /* is start still to left of end? */
+            /* If starting point greater than ending point, nothing is done. */
+            /* is start still to left of end? */
             if ( x1 <= x2 ) {
                 rect.x1 = x1;
                 rect.y1 = y;
@@ -724,7 +725,7 @@ pixelread(const WORD x, const WORD y)
     UWORD *addr;
     UWORD mask;
 
-    /* convert x,y to start adress and bit mask */
+    /* convert x,y to start address and bit mask */
     addr = get_start_addr(x, y);
     addr += v_planes;                   /* start at highest-order bit_plane */
     mask = 0x8000 >> (x&0xf);           /* initial bit position in WORD */
@@ -779,8 +780,7 @@ search_to_left (const VwkClip * clip, WORD x, UWORD mask, const UWORD search_col
 
 /*
  * end_pts - find the endpoints of a section of solid color
- *
- *   (for the _seed_fill routine.)
+ *           (for the _seed_fill routine.)
  *
  * input:  4(sp) = xstart.
  *         6(sp) = ystart.
@@ -807,7 +807,7 @@ end_pts(const VwkClip * clip, WORD x, WORD y, WORD *xleftout, WORD *xrightout,
     if ( y < clip->ymn_clip || y > clip->ymx_clip)
         return 0;
 
-    /* convert x,y to start adress and bit mask */
+    /* convert x,y to start address and bit mask */
     addr = get_start_addr(x, y);
     addr += v_planes;                   /* start at highest-order bit_plane */
     mask = 0x8000 >> (x & 0x000f);   /* fetch the pixel mask. */
@@ -1008,7 +1008,7 @@ get_seed(const VwkAttrib * attr, const VwkClip * clip,
         return 1;             /* we put a seed in the Q */
     }
 
-    return 0;           /* we didnt put a seed in the Q */
+    return 0;           /* we didn't put a seed in the Q */
 }
 
 
@@ -1075,7 +1075,7 @@ put_pix(void)
     const WORD x = PTSIN[0];
     const WORD y = PTSIN[1];
 
-    /* convert x,y to start adress */
+    /* convert x,y to start address */
     addr = get_start_addr(x, y);
     /* co-ordinates can wrap, but cannot write outside screen,
      * alternatively this could check against v_bas_ad+vram_size()

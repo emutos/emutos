@@ -50,7 +50,7 @@
 
 
 /*
- * labs - absulute for LONG
+ * labs - absolute for LONG
  */
 static LONG
 labs(LONG x)
@@ -203,7 +203,7 @@ draw_segs(Vwk * vwk, WORD nr_vertices, Point * point, WORD mode)
 /*
  * v_bez - draw a bezier curve
  *
- * outputs a (possibly disjoint) series of bezier curves & poly lines.
+ * outputs a (possibly disjoint) series of bezier curves & polylines.
  *
  * Each element in bezarr[] is a flag that controls the behaviour of the
  * corresponding input point.
