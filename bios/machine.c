@@ -298,7 +298,8 @@ static void setvalue_snd(void)
         cookie_snd |= SND_16BIT | SND_MATRIX;
     }
 
-    if (HAS_DIP_SWITCHES)
+#if CONF_WITH_DIP_SWITCHES
+    if (has_dip_switches)
     {
         /*
          * if DIP sw 8 is on (i.e. bit 7 is off), then we turn off the
@@ -310,6 +311,7 @@ static void setvalue_snd(void)
             cookie_snd &= ~SND_8BIT;
         }
     }
+#endif
 
     KDEBUG(("cookie_snd = 0x%08lx\n", cookie_snd));
 }
