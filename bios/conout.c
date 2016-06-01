@@ -388,15 +388,16 @@ move_cursor(int x, int y)
 {
     /* update cell position */
 
-    /* clip x. */
-    if ( x > v_cel_mx ) {    /* no, branch. */
-        x = v_cel_mx;       /* yes. */
-    }
+    /* clamp x,y to valid ranges */
+    if (x < 0)
+        x = 0;
+    else if (x > v_cel_mx)
+        x = v_cel_mx;
 
-    /* clip y. */
-    if ( y > v_cel_my ) {    /* no, branch. */
-        y = v_cel_my;       /* yes. */
-    }
+    if (y < 0)
+        y = 0;
+    else if (y > v_cel_my)
+        y = v_cel_my;
 
     v_cur_cx = x;
     v_cur_cy = y;
