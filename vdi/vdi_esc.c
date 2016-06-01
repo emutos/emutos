@@ -141,17 +141,18 @@ static void escfn10(Vwk * vwk)
  * if it is not currently hidden.
  *
  * inputs:
- *   INTIN[0] = cursor row (0 - max_y_cell)
- *   INTIN[1] = cursor column (0 - max_x_cell)
+ *   INTIN[0] = cursor row (1 - max_y_cell)
+ *   INTIN[1] = cursor column (1 - max_x_cell)
  */
 static void escfn11(Vwk * vwk)
 {
     char out[5];
 
+    /* send string via VT-52 terminal emulation */
     out[0] = '\033';
     out[1] = 'Y';
-    out[2] = 0x20 + INTIN[0];   /* get row number */
-    out[3] = 0x20 + INTIN[1];   /* get col number */
+    out[2] = 0x20 + INTIN[0] - 1;   /* zero-based */ 
+    out[3] = 0x20 + INTIN[1] - 1;
     out[4] = '\0';
     trap1(wntstr, out);
 }
@@ -205,8 +206,8 @@ static void escfn14(Vwk * vwk)
 static void escfn15(Vwk * vwk)
 {
     CONTRL[4] = 2;              // 2 integers are returned
-    INTOUT[0] = v_cur_cy;       // row
-    INTOUT[1] = v_cur_cx;       // column
+    INTOUT[0] = v_cur_cy + 1;   // row (starting at 1)
+    INTOUT[1] = v_cur_cx + 1;   // column (starting at 1)
 }
 
 
