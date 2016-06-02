@@ -192,11 +192,11 @@ static WORD gchr_key(void)
 {
     ULONG ch;
 
-    if (Bconstat(2)) {                  // see if a character present at con
+    if (Bconstat(2)) {                  /* see if a character present at con */
         ch = Bconin(2);
         TERM_CH = (WORD)
-            (ch >> 8)|                  // scancode down to bit 8-15
-            (ch & 0xff);                // asciicode to bit 0-7
+            (ch >> 8)|                  /* scancode down to bit 8-15 */
+            (ch & 0xff);                /* asciicode to bit 0-7 */
         return 1;
     }
     return 0;
@@ -234,27 +234,27 @@ WORD gloc_key(void)
     WORD retval;
     ULONG ch;
 
-    if (cur_ms_stat & 0xc0) {           // some button status bits set?
-        if (cur_ms_stat & 0x40)         // if bit 6 set
-            TERM_CH = 0x21;             // send terminator code for left key
+    if (cur_ms_stat & 0xc0) {           /* some button status bits set? */
+        if (cur_ms_stat & 0x40)         /* if bit 6 set,                     */
+            TERM_CH = 0x21;             /* send terminator code for left key */
         else
-            TERM_CH = 0x20;             // send terminator code for right key
-        cur_ms_stat &= 0x23;            // clear mouse button status (bit 6/7)
-        retval = 1;                     // set button pressed flag
-    } else {                            // check key stat
-        if (Bconstat(2)) {              // see if a character present at con
+            TERM_CH = 0x20;             /* send terminator code for right key */
+        cur_ms_stat &= 0x23;            /* clear mouse button status (bit 6/7) */
+        retval = 1;                     /* set button pressed flag */
+    } else {                            /* check key stat */
+        if (Bconstat(2)) {              /* see if a character present at con */
             ch = Bconin(2);
             TERM_CH = (WORD)
-                (ch >> 8)|              // scancode down to bit 8-15
-                (ch & 0xff);            // asciicode to bit 0-7
-            retval = 1;                 // set button pressed flag
+                (ch >> 8)|              /* scancode down to bit 8-15 */
+                (ch & 0xff);            /* asciicode to bit 0-7 */
+            retval = 1;                 /* set button pressed flag */
         } else {
-            if (cur_ms_stat & 0x20) {   // if bit #5 set ...
+            if (cur_ms_stat & 0x20) {   /* if bit #5 set ... */
                 Point * point = (Point*)PTSIN;
 
-                cur_ms_stat |= ~0x20;   // clear bit 5
-                point->x = GCURX;       // set X = GCURX
-                point->y = GCURY;       // set Y = GCURY
+                cur_ms_stat |= ~0x20;   /* clear bit 5 */
+                point->x = GCURX;       /* set X = GCURX */
+                point->y = GCURY;       /* set Y = GCURY */
                 retval = 2;
             } else {
                 retval = 0;

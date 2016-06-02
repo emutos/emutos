@@ -719,7 +719,7 @@ cursor_on(void)
 {
 #if CONF_SERIAL_CONSOLE_ANSI
     /* Disabled because function used from internal VT52 implementation. */
-    //bconout_str(1, "\033[?25h");
+    /* bconout_str(1, "\033[?25h"); */
 #endif
 
     /* if disable count is zero (cursor still shown) then return */
@@ -759,7 +759,7 @@ cursor_off (void)
 {
 #if CONF_SERIAL_CONSOLE_ANSI
     /* Disabled because function used from internal VT52 implementation. */
-    //bconout_str(1, "\033[?25l");
+    /* bconout_str(1, "\033[?25l"); */
 #endif
 
     disab_cnt++;                        /* increment the disable counter */
@@ -792,7 +792,7 @@ save_cursor_pos (void)
 {
 #if CONF_SERIAL_CONSOLE_ANSI
     /* Disabled because function used from internal VT52 implementation. */
-    //bconout_str(1, "\033[s");
+    /* bconout_str(1, "\033[s"); */
 #endif
 
     v_stat_0 |= M_SVPOS;    /* set "position saved" status bit. */
@@ -813,7 +813,7 @@ restore_cursor_pos (void)
 {
 #if CONF_SERIAL_CONSOLE_ANSI
     /* Disabled because function used from internal VT52 implementation. */
-    //bconout_str(1, "\033[u");
+    /* bconout_str(1, "\033[u"); */
 #endif
 
     if ( v_stat_0 & M_SVPOS )
@@ -1038,16 +1038,15 @@ void
 vt52_init(void)
 {
     /* Initial cursor settings */
-    v_cur_cx = 0;                       // cursor to column 0
-    v_cur_cy = 0;                       // cursor to line 0
-    v_cur_of = 0;                       // line offset is 0
-    v_cur_ad = v_bas_ad;                // set cursor to begin of screen
+    v_cur_cx = 0;                       /* cursor to column 0, row 0 */
+    v_cur_cy = 0;
+    v_cur_of = 0;                       /* line offset is 0 */
+    v_cur_ad = v_bas_ad;                /* set cursor to start of screen */
 
-    v_stat_0 = M_CFLASH;                // cursor invisible, flash,
-                                        // nowrap, normal video.
-    cursconf(4, 30);                    // .5 second blink rate (@60 Hz vblank).
-    v_cur_tim = v_period;               // load initial value to blink timer
-    disab_cnt = 1;                      // cursor disabled 1 level deep.
+    v_stat_0 = M_CFLASH;                /* cursor invisible, flash, nowrap, normal video */
+    cursconf(4, 30);                    /* 0.5 second blink rate (@ 60Hz vblank) */
+    v_cur_tim = v_period;               /* load initial value to blink timer */
+    disab_cnt = 1;                      /* cursor disabled 1 level deep */
 
     /* set foreground color depending on color depth */
     switch (v_planes) {

@@ -198,8 +198,10 @@ WORD initinfo(void)
     long fastramsize = (long)xmxalloc(-1L, MX_TTRAM);
     LONG hdd_available = blkdev_avail(HARDDISK_BOOTDEV);
 
-// If additional info lines are going to be printed in specific cases,
-// then initinfo_height must be adjusted in the same way here.
+    /*
+     * If additional info lines are going to be printed in specific cases,
+     * then initinfo_height must be adjusted in the same way here.
+     */
 #if WITH_CLI
     initinfo_height += 1;
 #endif

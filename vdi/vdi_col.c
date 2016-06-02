@@ -237,7 +237,7 @@ static const WORD st2vdi_lookup_table[8] =
 static int vdi2ste(int col)
 {
     col = col * 3 / 200;
-    col = ((col & 1) << 3) | (col >> 1);  // Shift lowest bit to top
+    col = ((col & 1) << 3) | (col >> 1);  /* Shift lowest bit to top */
 
     return col;
 }

@@ -98,7 +98,7 @@ void blkdev_init(void)
 
     /* setup booting related vectors */
     hdv_boot    = blkdev_hdv_boot;
-    hdv_init    = 0; // blkdev_hdv_init;
+    hdv_init    = 0;    /* blkdev_hdv_init; */
 
     /* setup general block device vectors */
     hdv_bpb     = blkdev_getbpb;

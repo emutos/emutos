@@ -988,10 +988,10 @@ static WORD floprw(UBYTE *userbuf, WORD rw, WORD dev,
                 }
             }
         }
-        //-- If there was an error, don't read any more sectors
+        /* If there was an error, don't read any more sectors */
         if (err)
             break;
-        //-- Otherwise carry on sequentially
+        /* Otherwise carry on sequentially */
         iobufptr += SECTOR_SIZE;
         sect++;
     }

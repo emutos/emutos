@@ -15,7 +15,7 @@
 #include "vdi_defs.h"
 #include "biosbind.h"
 #include "asm.h"        /* for malloc */
-//#include "kprint.h"
+/* #include "kprint.h" */
 
 
 #if HAVE_BEZIER
@@ -102,8 +102,8 @@ gen_segs(WORD *const array, WORD *px, const int bez_qual,
     /* assert( d1x >= -0x5f408000 ); */
 
     d3x = 6L*d3x;
-    //assert( d3x <=  0xbffe8 );
-    //assert( d3x >= -0xbffe8 );
+    /* assert( d3x <=  0xbffe8 ); */
+    /* assert( d3x >= -0xbffe8 ); */
 
     d2x = ((6L*d2x)<<bez_qual) + d3x;
     /* assert( d2x <=  0x2f6fa12 ); */
@@ -129,7 +129,7 @@ gen_segs(WORD *const array, WORD *px, const int bez_qual,
             x0 = x0 >> 1;
             q--;
             qd++;
-            //assert( labs(x0+(d1x>>qd)) >= 0x40000000L );
+            /* assert( labs(x0+(d1x>>qd)) >= 0x40000000L ); */
         }
 
         x0 += d1x >> qd;
@@ -139,12 +139,12 @@ gen_segs(WORD *const array, WORD *px, const int bez_qual,
             q++, qd--;
         }
 
-        //assert( d2x<0 || d1x <=  0x7fffffff-d2x );
-        //assert( d2x>0 || d1x >= -0x7fffffff-d2x );
+        /* assert( d2x<0 || d1x <=  0x7fffffff-d2x ); */
+        /* assert( d2x>0 || d1x >= -0x7fffffff-d2x ); */
         d1x += d2x;
         d2x += d3x;
-        //assert( d2x <=  0x30bf9e8 );
-        //assert( d2x >= -0x30bf9e8 );
+        /* assert( d2x <=  0x30bf9e8 ); */
+        /* assert( d2x >= -0x30bf9e8 ); */
     }
 
     /** add the last point .. */
@@ -230,7 +230,7 @@ void
 v_bez(Vwk * vwk, Point * ptsget, int nr_ptsin)
 {
     int i;
-    //WORD  const nr_ptsin = CONTRL[1];
+    /* WORD  const nr_ptsin = CONTRL[1]; */
     UBYTE * bezarr = (UBYTE*)INTIN;
     WORD bez_qual;
     WORD xmin, xmax, ymin, ymax;
@@ -238,7 +238,7 @@ v_bez(Vwk * vwk, Point * ptsget, int nr_ptsin)
     WORD total_jumps = 0;
     UWORD vertices_per_bez;
     Point ptsbuf[MAX_PTSIN];
-    //Point * ptsget = (Point*)PTSIN;
+    /* Point * ptsget = (Point*)PTSIN; */
     Point * ptsput = ptsbuf;
 
     bez_qual = vwk->bez_qual;
@@ -332,7 +332,7 @@ void
 v_bez_fill(Vwk * vwk, Point * ptsget, int nr_ptsin)
 {
     int i;
-    //WORD  const nr_ptsin = CONTRL[1];
+    /* WORD  const nr_ptsin = CONTRL[1]; */
     UBYTE * bezarr = (UBYTE*)INTIN;
     WORD bez_qual;
     WORD xmin, xmax, ymin, ymax;
@@ -341,7 +341,7 @@ v_bez_fill(Vwk * vwk, Point * ptsget, int nr_ptsin)
     UWORD vertices_per_bez;
     WORD output_vertices = 0;
     Point ptsbuf[MAX_PTSIN];
-    //Point * ptsget = (Point*)PTSIN;
+    /* Point * ptsget = (Point*)PTSIN; */
     Point * ptsput = ptsbuf;
 
     bez_qual = vwk->bez_qual;
@@ -372,11 +372,11 @@ v_bez_fill(Vwk * vwk, Point * ptsget, int nr_ptsin)
 
             output_vertices += vertices_per_bez+1;
             ptsput = ptsbuf + output_vertices;
-            //draw_segs(vwk, vertices_per_bez+1, ptsbuf, FILL );
+            /* draw_segs(vwk, vertices_per_bez+1, ptsbuf, FILL ); */
         }
         else {
             /* polyline */
-            //WORD output_vertices = 0;
+            /* WORD output_vertices = 0; */
             Point * point = ptsget;
             do {
                 int t;
@@ -415,7 +415,7 @@ v_bez_fill(Vwk * vwk, Point * ptsget, int nr_ptsin)
         /* draw segments and reset all vertex information */
         draw_segs(vwk, output_vertices, ptsbuf, FILL);
         bez_qual = vwk->bez_qual;
-        //ptsget0 = ptsget;
+        /* ptsget0 = ptsget; */
         ptsput = ptsbuf;
         output_vertices = 0;
     }
@@ -437,7 +437,7 @@ v_bez_fill(Vwk * vwk, Point * ptsget, int nr_ptsin)
 void
 v_bez_fill(Vwk * vwk, Point * ptsget, int nr_ptsin)
 {
-    //WORD  const nr_ptsin = CONTRL[1];
+    /* WORD  const nr_ptsin = CONTRL[1]; */
     const UBYTE *const bezarr = (UBYTE*)INTIN;  /* index with xor 1 to byte swap !! */
     WORD bez_qual;
     WORD xmin, xmax, ymin, ymax;
@@ -447,7 +447,7 @@ v_bez_fill(Vwk * vwk, Point * ptsget, int nr_ptsin)
     WORD i, i0;
     WORD output_vertices = 0;
     Point ptsbuf[MAX_PTSIN];
-    //Point * ptsget = (Point*)PTSIN;
+    /* Point * ptsget = (Point*)PTSIN; */
     Point * ptsget0 = ptsget;
     Point * ptsput = ptsbuf;
 
@@ -495,7 +495,7 @@ v_bez_fill(Vwk * vwk, Point * ptsget, int nr_ptsin)
                 gen_segs(&ptsget->y, &ptsput->y, bez_qual, &ymin, &ymax, vwk->xfm_mode);        /* y coords */
                 ptsput = ptsbuf + output_vertices;
             }
-            //assert( PTSIN + 2*i == ptsget );
+            /* assert( PTSIN + 2*i == ptsget ); */
             i+=3;
             ptsget += 3;
             flag = bezarr[i^1];
@@ -529,8 +529,8 @@ v_bez_fill(Vwk * vwk, Point * ptsget, int nr_ptsin)
                     output_vertices++;
                 }
 
-                //assert( ptsbuf + output_vertices == ptsput );
-                //assert( PTSIN + 2*i == ptsget );
+                /* assert( ptsbuf + output_vertices == ptsput ); */
+                /* assert( PTSIN + 2*i == ptsget ); */
                 if ( IS_BEZ(flag) )
                     break;
                 i++;

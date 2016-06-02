@@ -37,7 +37,7 @@
 #define JOY0DAT *(volatile UWORD*)0xdff00a
 #define CIAAPRA *(volatile UBYTE*)0xbfe001
 #define POTGO *(volatile UWORD*)0xdff034
-#define POTGOR *(volatile UWORD*)0xdff016 // = POTINP
+#define POTGOR *(volatile UWORD*)0xdff016 /* = POTINP */
 
 /******************************************************************************/
 /* Machine detection                                                          */
@@ -79,38 +79,38 @@ UWORD copper_list[6];
 
 void amiga_screen_init(void)
 {
-    sshiftmod = 0x02; // We emulate the ST-High monochrome video mode
+    sshiftmod = 0x02; /* We emulate the ST-High monochrome video mode */
 
-    *(volatile UWORD*)0xdff100 = 0x9204; // Hires, one bit-plane, interlaced
-    *(volatile UWORD*)0xdff102 = 0; // Horizontal scroll value 0
-    *(volatile UWORD*)0xdff108 = 80; // Modulo = 80 for odd bit-planes
-    *(volatile UWORD*)0xdff10a = 80; // Ditto for even bit-planes
-    *(volatile UWORD*)0xdff092 = 0x003c; // Set data-fetch start for hires
-    *(volatile UWORD*)0xdff094 = 0x00d4; // Set data-fetch stop
-    *(volatile UWORD*)0xdff08e = 0x2c81; // Set display window start
-    *(volatile UWORD*)0xdff090 = 0xf4c1; // Set display window stop
+    *(volatile UWORD*)0xdff100 = 0x9204; /* Hires, one bit-plane, interlaced */
+    *(volatile UWORD*)0xdff102 = 0;      /* Horizontal scroll value 0 */
+    *(volatile UWORD*)0xdff108 = 80;     /* Modulo = 80 for odd bit-planes */
+    *(volatile UWORD*)0xdff10a = 80;     /* Ditto for even bit-planes */
+    *(volatile UWORD*)0xdff092 = 0x003c; /* Set data-fetch start for hires */
+    *(volatile UWORD*)0xdff094 = 0x00d4; /* Set data-fetch stop */
+    *(volatile UWORD*)0xdff08e = 0x2c81; /* Set display window start */
+    *(volatile UWORD*)0xdff090 = 0xf4c1; /* Set display window stop */
 
-    // Set up color registers
-    *(volatile UWORD*)0xdff180 = 0x0fff; // Background color = white
-    *(volatile UWORD*)0xdff182 = 0x0000; // Foreground color = black
+    /* Set up color registers */
+    *(volatile UWORD*)0xdff180 = 0x0fff; /* Background color = white */
+    *(volatile UWORD*)0xdff182 = 0x0000; /* Foreground color = black */
 
-    // Set up the Copper list (must be in ST-RAM)
-    copper_list[0] = 0x0e0; // BPL1PTH
+    /* Set up the Copper list (must be in ST-RAM) */
+    copper_list[0] = 0x0e0; /* BPL1PTH */
     copper_list[1] = ((ULONG)amiga_screenbase & 0xffff0000) >> 16;
-    copper_list[2] = 0x0e2; // BPL1PTL
+    copper_list[2] = 0x0e2; /* BPL1PTL */
     copper_list[3] = ((ULONG)amiga_screenbase & 0x0000ffff);
-    copper_list[4] = 0xffff; // End of
-    copper_list[5] = 0xfffe; // Copper list
+    copper_list[4] = 0xffff; /* End of      */
+    copper_list[5] = 0xfffe; /* Copper list */
 
-    // Initialize the Copper
-    *(UWORD* volatile *)0xdff080 = copper_list; // COP1LCH
-    *(volatile UWORD*)0xdff088 = 0; // COPJMP1
+    /* Initialize the Copper */
+    *(UWORD* volatile *)0xdff080 = copper_list; /* COP1LCH */
+    *(volatile UWORD*)0xdff088 = 0;             /* COPJMP1 */
 
-    // VBL interrupt
+    /* VBL interrupt */
     VEC_LEVEL3 = amiga_vbl;
-    *(volatile UWORD*)0xdff09a = 0xc020; // INTENA Set Master and VBL bits
+    *(volatile UWORD*)0xdff09a = 0xc020; /* INTENA Set Master and VBL bits */
 
-    // Start the DMA
+    /* Start the DMA */
     *(volatile UWORD*)0xdff096 = DMAF_SETCLR | DMAF_COPPER | DMAF_RASTER | DMAF_MASTER;
 }
 

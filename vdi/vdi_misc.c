@@ -23,8 +23,8 @@
 
 /* timer related vectors (linea variables in bios/lineavars.S) */
 
-extern void     (*tim_addr)(int);       // timer interrupt vector
-extern void     (*tim_chain)(int);      // timer interrupt vector save
+extern void     (*tim_addr)(int);       /* timer interrupt vector */
+extern void     (*tim_chain)(int);      /* timer interrupt vector save */
 
 
 
@@ -89,15 +89,15 @@ void arb_line(Line * line)
 static void tick_int(int u)
 {
     if (!in_proc) {
-        in_proc = 1;                    // set flag, that we are running
-                                        // MAD: evtl. registers to stack
-        (*tim_addr)(u);                 // call the timer vector
-                                        // and back from stack
+        in_proc = 1;                    /* set flag, that we are running */
+                                        /* MAD: evtl. registers to stack */
+        (*tim_addr)(u);                 /* call the timer vector */
+                                        /* and back from stack */
     }
-    in_proc = 0;                        // allow yet another trip through
-                                        // MAD: evtl. registers to stack
-    (*tim_chain)(u);                    // call the old timer vector too
-                                        // and back from stack
+    in_proc = 0;                        /* allow yet another trip through */
+                                        /* MAD: evtl. registers to stack */
+    (*tim_chain)(u);                    /* call the old timer vector too */
+                                        /* and back from stack */
 }
 
 
@@ -149,15 +149,15 @@ void timer_init(Vwk * vwk)
 {
     WORD old_sr;
 
-    in_proc = 0;                        // no vblanks in process
+    in_proc = 0;                        /* no vblanks in process */
 
     /* Now initialize the lower level things */
-    tim_addr = do_nothing_int;          // tick points to rts
+    tim_addr = do_nothing_int;          /* tick points to rts */
 
-    old_sr = set_sr(0x2700);            // disable interrupts
-    tim_chain = (void(*)(int))          // save old vector
-    Setexc(0x100, (long)tick_int);      // set etv_timer to tick_int
-    set_sr(old_sr);                     // enable interrupts
+    old_sr = set_sr(0x2700);            /* disable interrupts */
+    tim_chain = (void(*)(int))          /* save old vector */
+    Setexc(0x100, (long)tick_int);      /* set etv_timer to tick_int */
+    set_sr(old_sr);                     /* enable interrupts */
 
 }
 
@@ -173,9 +173,9 @@ void timer_exit(Vwk * vwk)
 {
     WORD old_sr;
 
-    old_sr = set_sr(0x2700);            // disable interrupts
-    Setexc(0x100, (long)tim_chain);     // set etv_timer to tick_int
-    set_sr(old_sr);                     // enable interrupts
+    old_sr = set_sr(0x2700);            /* disable interrupts */
+    Setexc(0x100, (long)tim_chain);     /* set etv_timer to tick_int */
+    set_sr(old_sr);                     /* enable interrupts */
 }
 
 

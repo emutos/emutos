@@ -68,14 +68,18 @@ void bmem_init(void)
 
     /* Start of available ST-RAM */
 #if EMUTOS_LIVES_IN_RAM
-    // When EmuTOS is run from the RAM, the BSS starts at address 0 as usual,
-    // but the TEXT and DATA segments are just after the BSS.
-    // Thus the first unused RAM address is the end of the DATA segment.
+    /*
+     * When EmuTOS is run from the RAM, the BSS starts at address 0 as usual,
+     * but the TEXT and DATA segments are just after the BSS.
+     * Thus the first unused RAM address is the end of the DATA segment.
+     */
     end_os = _edata;
 #else
-    // When EmuTOS is run from the ROM, the TEXT and DATA segments stays in the
-    // ROM, but the BSS starts at address 0.
-    // Thus the first unused RAM address is the end of the BSS segment.
+    /*
+     * When EmuTOS is run from the ROM, the TEXT and DATA segments stays in the
+     * ROM, but the BSS starts at address 0.
+     * Thus the first unused RAM address is the end of the BSS segment.
+     */
     end_os = _end;
 #endif
     membot = end_os;

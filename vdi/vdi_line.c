@@ -528,7 +528,7 @@ void vdi_v_pline(Vwk * vwk)
 
 #if HAVE_BEZIER
     /* check, if we want to draw a bezier curve */
-    if (CONTRL[5] == 13 && vwk->bez_qual )        //FIXME: bez_qual ok??
+    if (CONTRL[5] == 13 && vwk->bez_qual )        /* FIXME: bez_qual ok?? */
         v_bez(vwk, point, count);
     else
 #endif

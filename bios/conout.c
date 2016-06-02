@@ -25,7 +25,7 @@
 
 
 
-#define  plane_offset   2       // interleaved planes
+#define  plane_offset   2       /* interleaved planes */
 
 
 

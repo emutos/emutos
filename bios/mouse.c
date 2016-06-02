@@ -101,7 +101,7 @@ void Initmous(WORD type, struct param *param, PFVOID newvec)
         }
         break;
     default:
-        retval = 0;             // means error
+        retval = 0;             /* means error */
     }
 
     if (retval!=0 && type!=0) {         /* if no error */

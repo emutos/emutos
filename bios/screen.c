@@ -462,7 +462,7 @@ void screen_init(void)
         else {
             KDEBUG(("NVRAM boot video mode is 0x%04x\n", boot_resolution));
         }
-#endif // CONF_WITH_NVRAM
+#endif /* CONF_WITH_NVRAM */
 
         if (!lookup_videl_mode(boot_resolution,monitor_type)) { /* mode isn't in table */
             KDEBUG(("Invalid video mode 0x%04x changed to 0x%04x\n",
@@ -486,7 +486,7 @@ void screen_init(void)
         rez = FALCON_REZ;   /* fake value indicates Falcon/Videl */
     }
     else
-#endif // CONF_WITH_VIDEL
+#endif /* CONF_WITH_VIDEL */
 #if CONF_WITH_TT_SHIFTER
     if (has_tt_shifter) {
         rez = monitor_type?TT_MEDIUM:TT_HIGH;
@@ -619,9 +619,9 @@ static ULONG initial_vram_size(void)
 
 /* Settings for the different video modes */
 struct video_mode {
-    UBYTE       planes;         // count of color planes (v_planes)
-    UWORD       hz_rez;         // screen horizontal resolution (v_hz_rez)
-    UWORD       vt_rez;         // screen vertical resolution (v_vt_rez)
+    UBYTE       planes;         /* count of color planes (v_planes) */
+    UWORD       hz_rez;         /* screen horizontal resolution (v_hz_rez) */
+    UWORD       vt_rez;         /* screen vertical resolution (v_vt_rez) */
 };
 
 static const struct video_mode video_mode[] = {

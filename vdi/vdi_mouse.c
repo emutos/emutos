@@ -24,9 +24,9 @@
 
 /* mouse related vectors (linea variables in bios/lineavars.S) */
 
-extern void     (*user_but)(void);      // user button vector
-extern void     (*user_cur)(void);      // user cursor vector
-extern void     (*user_mot)(void);      // user motion vector
+extern void     (*user_but)(void);      /* user button vector */
+extern void     (*user_cur)(void);      /* user cursor vector */
+extern void     (*user_mot)(void);      /* user motion vector */
 
 /* call the vectors from C */
 extern void call_user_but(WORD status);
@@ -73,41 +73,41 @@ static const Mcdb arrow_cdb = {
     1, 0, 1, 0, 1,
     /* background definition */
     {
-        0xE000, //%1110000000000000
-        0xF000, //%1111000000000000
-        0xF800, //%1111100000000000
-        0xFC00, //%1111110000000000
-        0xFE00, //%1111111000000000
-        0xFF00, //%1111111100000000
-        0xFF80, //%1111111110000000
-        0xFFC0, //%1111111111000000
-        0xFE00, //%1111111000000000
-        0xFE00, //%1111111000000000
-        0xEF00, //%1110111100000000
-        0x0F00, //%0000111100000000
-        0x0780, //%0000011110000000
-        0x0780, //%0000011110000000
-        0x03C0, //%0000001111000000
-        0x0000  //%0000000000000000
+        0xE000, /* %1110000000000000 */
+        0xF000, /* %1111000000000000 */
+        0xF800, /* %1111100000000000 */
+        0xFC00, /* %1111110000000000 */
+        0xFE00, /* %1111111000000000 */
+        0xFF00, /* %1111111100000000 */
+        0xFF80, /* %1111111110000000 */
+        0xFFC0, /* %1111111111000000 */
+        0xFE00, /* %1111111000000000 */
+        0xFE00, /* %1111111000000000 */
+        0xEF00, /* %1110111100000000 */
+        0x0F00, /* %0000111100000000 */
+        0x0780, /* %0000011110000000 */
+        0x0780, /* %0000011110000000 */
+        0x03C0, /* %0000001111000000 */
+        0x0000  /* %0000000000000000 */
     },
     /* foreground definition */
     {
-        0x4000, //%0100000000000000
-        0x6000, //%0110000000000000
-        0x7000, //%0111000000000000
-        0x7800, //%0111100000000000
-        0x7C00, //%0111110000000000
-        0x7E00, //%0111111000000000
-        0x7F00, //%0111111100000000
-        0x7F80, //%0111111110000000
-        0x7C00, //%0111110000000000
-        0x6C00, //%0110110000000000
-        0x4600, //%0100011000000000
-        0x0600, //%0000011000000000
-        0x0300, //%0000001100000000
-        0x0300, //%0000001100000000
-        0x0180, //%0000000110000000
-        0x0000  //%0000000000000000
+        0x4000, /* %0100000000000000 */
+        0x6000, /* %0110000000000000 */
+        0x7000, /* %0111000000000000 */
+        0x7800, /* %0111100000000000 */
+        0x7C00, /* %0111110000000000 */
+        0x7E00, /* %0111111000000000 */
+        0x7F00, /* %0111111100000000 */
+        0x7F80, /* %0111111110000000 */
+        0x7C00, /* %0111110000000000 */
+        0x6C00, /* %0110110000000000 */
+        0x4600, /* %0100011000000000 */
+        0x0600, /* %0000011000000000 */
+        0x0300, /* %0000001100000000 */
+        0x0300, /* %0000001100000000 */
+        0x0180, /* %0000000110000000 */
+        0x0000  /* %0000000000000000 */
     }
 };
 
@@ -136,16 +136,16 @@ static void do_nothing(void)
 
 static void dis_cur(void)
 {
-    mouse_flag += 1;            // disable mouse redrawing
-    HIDE_CNT -= 1;              // decrement hide operations counter
+    mouse_flag += 1;            /* disable mouse redrawing */
+    HIDE_CNT -= 1;              /* decrement hide operations counter */
     if (HIDE_CNT == 0) {
-        cur_display(&mouse_cdb, mcs_ptr, GCURX, GCURY);  // display the cursor
-        draw_flag = 0;          // disable vbl drawing routine
+        cur_display(&mouse_cdb, mcs_ptr, GCURX, GCURY);  /* display the cursor */
+        draw_flag = 0;          /* disable vbl drawing routine */
     }
     else if (HIDE_CNT < 0) {
-        HIDE_CNT = 0;           // hide counter should not become negative
+        HIDE_CNT = 0;           /* hide counter should not become negative */
     }
-    mouse_flag -= 1;            // re-enable mouse drawing
+    mouse_flag -= 1;            /* re-enable mouse drawing */
 }
 
 
@@ -172,10 +172,10 @@ static void hide_cur(void)
      * If this is the first one then remove the cursor from the screen.
      * If not then do nothing, because the cursor wasn't on the screen.
      */
-    HIDE_CNT += 1;              // increment it
-    if (HIDE_CNT == 1) {        // if cursor was not hidden...
-        cur_replace(mcs_ptr);   // remove the cursor from screen
-        draw_flag = 0;          // disable vbl drawing routine
+    HIDE_CNT += 1;              /* increment it */
+    if (HIDE_CNT == 1) {        /* if cursor was not hidden... */
+        cur_replace(mcs_ptr);   /* remove the cursor from screen */
+        draw_flag = 0;          /* disable vbl drawing routine */
     }
 
     mouse_flag -= 1;            /* re-enable mouse drawing */
@@ -558,12 +558,12 @@ void vdimouse_init(Vwk * vwk)
     /* Move in the default mouse form (presently the arrow) */
     set_mouse_form(&arrow_cdb, &mouse_cdb);
 
-    MOUSE_BT = 0;               // clear the mouse button state
-    cur_ms_stat = 0;            // clear the mouse status
-    mouse_flag = 0;             // clear the mouse flag
-    draw_flag = 0;              // clear the hide operations counter
-    newx = 0;                   // set cursor x-coordinate to 0
-    newy = 0;                   // set cursor y-coordinate to 0
+    MOUSE_BT = 0;               /* clear the mouse button state */
+    cur_ms_stat = 0;            /* clear the mouse status */
+    mouse_flag = 0;             /* clear the mouse flag */
+    draw_flag = 0;              /* clear the hide operations counter */
+    newx = 0;                   /* set cursor x-coordinate to 0 */
+    newy = 0;                   /* set cursor y-coordinate to 0 */
 
     /* vblqueue points to start of vbl_list[] */
     *vblqueue = (LONG)vb_draw;   /* set GEM VBL-routine to vbl_list[0] */
@@ -628,13 +628,13 @@ void vdimouse_exit(Vwk * vwk)
 
 static void vb_draw(void)
 {
-    WORD old_sr = set_sr(0x2700);       // disable interrupts
+    WORD old_sr = set_sr(0x2700);       /* disable interrupts */
     if (draw_flag) {
         draw_flag = FALSE;
         set_sr(old_sr);
         if (!mouse_flag) {
-            cur_replace(mcs_ptr);      // remove the old cursor from the screen
-            cur_display(&mouse_cdb, mcs_ptr, newx, newy);  // display the cursor
+            cur_replace(mcs_ptr);       /* remove the old cursor from the screen */
+            cur_display(&mouse_cdb, mcs_ptr, newx, newy);  /* display the cursor */
         }
     } else
         set_sr(old_sr);

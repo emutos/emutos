@@ -299,7 +299,7 @@ static int VALID_PARTITION(struct partition_info *pi, unsigned long hdsiz)
     KDEBUG(("        partition end (%ld <= %ld): %s\n", pi->st + pi->siz, hdsiz, (pi->st + pi->siz <= hdsiz) ? "OK" : "Failed" ));
 
     return ((pi->flg & 1) &&
-        // isalnum(pi->id[0]) && isalnum(pi->id[1]) && isalnum(pi->id[2]) &&
+        /* isalnum(pi->id[0]) && isalnum(pi->id[1]) && isalnum(pi->id[2]) && */
         pi->st <= hdsiz &&
         pi->st + pi->siz <= hdsiz);
 }

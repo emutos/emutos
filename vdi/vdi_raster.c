@@ -18,9 +18,9 @@
 #include "kprint.h"
 
 #ifdef __mcoldfire__
-#define ASM_BLIT 0      // the assembler routine does not support ColdFire.
+#define ASM_BLIT 0      /* the assembler routine does not support ColdFire. */
 #else
-#define ASM_BLIT 1      // use m68k assembler bit_blt routine.
+#define ASM_BLIT 1      /* use m68k assembler bit_blt routine. */
 #endif
 
 /* bitblt modes */
@@ -45,53 +45,53 @@
 #define PAT_FLAG        16
 
 /* PTSIN ARRAY OFFSETs */
-#define XMIN_S  0       // x of upper left of source rectangle
-#define YMIN_S  1       // y of upper left of source rectangle
-#define XMAX_S  2       // x of lower right of source rectangle
-#define YMAX_S  3       // y of lower right of source rectangle
+#define XMIN_S  0       /* x of upper left of source rectangle */
+#define YMIN_S  1       /* y of upper left of source rectangle */
+#define XMAX_S  2       /* x of lower right of source rectangle */
+#define YMAX_S  3       /* y of lower right of source rectangle */
 
-#define XMIN_D  4       // x of upper left of destination rectangle
-#define YMIN_D  5       // y of upper left of destination rectangle
-#define XMAX_D  6       // x of lower right of destination rectangle
-#define YMAX_D  7       // y of lower right of destination rectangle
+#define XMIN_D  4       /* x of upper left of destination rectangle */
+#define YMIN_D  5       /* y of upper left of destination rectangle */
+#define XMAX_D  6       /* x of lower right of destination rectangle */
+#define YMAX_D  7       /* y of lower right of destination rectangle */
 
 
 /* 76-byte line-A BITBLT struct passing parameters to bitblt */
 struct blit_frame {
-    WORD b_wd;          // +00 width of block in pixels
-    WORD b_ht;          // +02 height of block in pixels
-    WORD plane_ct;      // +04 number of consecutive planes to blt
-    UWORD fg_col;       // +06 foreground color (logic op table index:hi bit)
-    UWORD bg_col;       // +08 background color (logic op table index:lo bit)
-    UBYTE op_tab[4];    // +10 logic ops for all fore and background combos
-    WORD s_xmin;       // +14 minimum X: source
-    WORD s_ymin;       // +16 minimum Y: source
-    UWORD * s_form;     // +18 source form base address
-    WORD s_nxwd;       // +22 offset to next word in line  (in bytes)
-    WORD s_nxln;       // +24 offset to next line in plane (in bytes)
-    WORD s_nxpl;       // +26 offset to next plane from start of current plane
-    WORD d_xmin;       // +28 minimum X: destination
-    WORD d_ymin;       // +30 minimum Y: destination
-    UWORD * d_form;     // +32 destination form base address
-    WORD d_nxwd;       // +36 offset to next word in line  (in bytes)
-    WORD d_nxln;       // +38 offset to next line in plane (in bytes)
-    WORD d_nxpl;       // +40 offset to next plane from start of current plane
-    UWORD * p_addr;     // +42 address of pattern buffer   (0:no pattern)
-    WORD p_nxln;       // +46 offset to next line in pattern  (in bytes)
-    WORD p_nxpl;       // +48 offset to next plane in pattern (in bytes)
-    WORD p_mask;       // +50 pattern index mask
+    WORD b_wd;          /* +00 width of block in pixels */
+    WORD b_ht;          /* +02 height of block in pixels */
+    WORD plane_ct;      /* +04 number of consecutive planes to blt */
+    UWORD fg_col;       /* +06 foreground color (logic op table index:hi bit) */
+    UWORD bg_col;       /* +08 background color (logic op table index:lo bit) */
+    UBYTE op_tab[4];    /* +10 logic ops for all fore and background combos */
+    WORD s_xmin;        /* +14 minimum X: source */
+    WORD s_ymin;        /* +16 minimum Y: source */
+    UWORD * s_form;     /* +18 source form base address */
+    WORD s_nxwd;        /* +22 offset to next word in line  (in bytes) */
+    WORD s_nxln;        /* +24 offset to next line in plane (in bytes) */
+    WORD s_nxpl;        /* +26 offset to next plane from start of current plane */
+    WORD d_xmin;        /* +28 minimum X: destination */
+    WORD d_ymin;        /* +30 minimum Y: destination */
+    UWORD * d_form;     /* +32 destination form base address */
+    WORD d_nxwd;        /* +36 offset to next word in line  (in bytes) */
+    WORD d_nxln;        /* +38 offset to next line in plane (in bytes) */
+    WORD d_nxpl;        /* +40 offset to next plane from start of current plane */
+    UWORD * p_addr;     /* +42 address of pattern buffer   (0:no pattern) */
+    WORD p_nxln;        /* +46 offset to next line in pattern  (in bytes) */
+    WORD p_nxpl;        /* +48 offset to next plane in pattern (in bytes) */
+    WORD p_mask;        /* +50 pattern index mask */
 
     /* these frame parameters are internally set */
-    WORD p_indx;       // +52 initial pattern index
-    UWORD * s_addr;     // +54 initial source address
-    WORD s_xmax;       // +58 maximum X: source
-    WORD s_ymax;       // +60 maximum Y: source
-    UWORD * d_addr;     // +62 initial destination address
-    WORD d_xmax;       // +66 maximum X: destination
-    WORD d_ymax;       // +68 maximum Y: destination
-    WORD inner_ct;     // +70 blt inner loop initial count
-    WORD dst_wr;       // +72 destination form wrap (in bytes)
-    WORD src_wr;       // +74 source form wrap (in bytes)
+    WORD p_indx;        /* +52 initial pattern index */
+    UWORD * s_addr;     /* +54 initial source address */
+    WORD s_xmax;        /* +58 maximum X: source */
+    WORD s_ymax;        /* +60 maximum Y: source */
+    UWORD * d_addr;     /* +62 initial destination address */
+    WORD d_xmax;        /* +66 maximum X: destination */
+    WORD d_ymax;        /* +68 maximum Y: destination */
+    WORD inner_ct;      /* +70 blt inner loop initial count */
+    WORD dst_wr;        /* +72 destination form wrap (in bytes) */
+    WORD src_wr;        /* +74 source form wrap (in bytes) */
 };
 
 /* Raster definitions */
@@ -229,7 +229,7 @@ struct blit {
     ULONG          dst_addr;
     UWORD          x_cnt, y_cnt;
     BYTE           hop, op, status, skew;
-    //BYTE           ready;
+    /* BYTE           ready; */
 };
 
 static void
@@ -410,23 +410,23 @@ do_blit(blit * blt)
 
 /* I n p u t p a r a m e t e r b l o c k o f f s e t s */
 
-#define SRC_FORM  0 // Base address of source memory form .l:
-#define SRC_NXWD  4 // Offset between words in source plane .w:
-#define SRC_NXLN  6 // Source form width .w:
-#define SRC_NXPL  8 // Offset between source planes .w:
-#define SRC_XMIN 10 // Source blt rectangle minimum X .w:
-#define SRC_YMIN 12 // Source blt rectangle minimum Y .w:
+#define SRC_FORM  0 /* Base address of source memory form .l: */
+#define SRC_NXWD  4 /* Offset between words in source plane .w: */
+#define SRC_NXLN  6 /* Source form width .w: */
+#define SRC_NXPL  8 /* Offset between source planes .w: */
+#define SRC_XMIN 10 /* Source blt rectangle minimum X .w: */
+#define SRC_YMIN 12 /* Source blt rectangle minimum Y .w: */
 
-#define DST_FORM 14 // Base address of destination memory form .l:
-#define DST_NXWD 18 // Offset between words in destination plane.w:
-#define DST_NXLN 20 // Destination form width .w:
-#define DST_NXPL 22 // Offset between destination planes .w:
-#define DST_XMIN 24 // Destination blt rectangle minimum X .w:
-#define DST_YMIN 26 // Destination blt rectangle minimum Y .w:
+#define DST_FORM 14 /* Base address of destination memory form .l: */
+#define DST_NXWD 18 /* Offset between words in destination plane.w: */
+#define DST_NXLN 20 /* Destination form width .w: */
+#define DST_NXPL 22 /* Offset between destination planes .w: */
+#define DST_XMIN 24 /* Destination blt rectangle minimum X .w: */
+#define DST_YMIN 26 /* Destination blt rectangle minimum Y .w: */
 
-#define WIDTH    28 // Width of blt rectangle .w:
-#define HEIGHT   30 // Height of blt rectangle .w:
-#define PLANES   32 // Number of planes to blt .w:
+#define WIDTH    28 /* Width of blt rectangle .w: */
+#define HEIGHT   30 /* Height of blt rectangle .w: */
+#define PLANES   32 /* Number of planes to blt .w: */
 
 static void
 bit_blt (void)
@@ -441,7 +441,7 @@ bit_blt (void)
     ULONG s_addr, d_addr;
     blit blitter;
 
-    //a5 = BLiTTER;   /* word */    /* a5-> BLiTTER register block */
+    /* a5-> BLiTTER register block */
     blit * blt = &blitter;
 
     /* setting of skew flags */
@@ -504,7 +504,7 @@ bit_blt (void)
     /* correct FXSR and NFSR flag states for the given source and */
     /* destination alignments */
 
-    skew_idx = 0x0000;  //default
+    skew_idx = 0x0000;                  /* default */
 
     s_xmin_off = s_xmin >> 4;           /* d0<- word offset to src Xmin */
     s_xmax_off = s_xmax >> 4;           /* d1<- word offset to src Xmax */
@@ -530,8 +530,8 @@ bit_blt (void)
     if ( !d_span ) {
         /* merge both end masks into Endmask1. */
         lendmask &= rendmask;           /* d4<- single word end mask */
-        // VRI: This C implementation incorrectly handles the special case
-        // of a single word destination, so I comment out the following line.
+        /* VRI: This C implementation incorrectly handles the special case    */
+        /* of a single word destination, so I comment out the following line. */
         //skew_idx |= 0x0004;             /* d6[bit2]:1 => single word dst */
         /* The other end masks will be ignored by the BLiTTER */
     }
@@ -544,7 +544,7 @@ bit_blt (void)
         + (ULONG)blit_info->d_ymin * (ULONG)blit_info->d_nxln
         + (ULONG)d_xmin_off * (ULONG)blit_info->d_nxwd;
 
-    //if (just_screen && (s_addr < d_addr)) {
+    /* if (just_screen && (s_addr < d_addr)) { */
     if (s_addr < d_addr) {
         /* start from lower right corner, so add width+length */
         s_addr = (ULONG)blit_info->s_form
@@ -620,7 +620,7 @@ bit_blt (void)
         d_addr += blit_info->d_nxpl;          /* a1-> start of next dst plane   */
     }
 }
-#endif   //ASM_BLIT
+#endif   /* ASM_BLIT */
 
 
 /* common settings needed both by VDI and line-A raster

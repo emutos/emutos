@@ -100,7 +100,7 @@ LONG bconout2(WORD dev, WORD b)
 LONG bconout5(WORD dev, WORD ch)
 {
 #if CONF_SERIAL_CONSOLE
-    // The terminal will interpret the control characters, anyway.
+    /* The terminal will interpret the control characters, anyway */
     bconout(1, ch);
 #endif
     ascii_out(ch);

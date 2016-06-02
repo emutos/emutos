@@ -261,7 +261,7 @@ static LONG sndcmd_falcon(WORD mode, WORD data)
 
     switch (mode)
     {
-     case 0:                // LTATTEN
+     case 0:                /* LTATTEN */
        val = DMASOUND->channel_attenuation;
        if (data != -1)
        {
@@ -270,7 +270,7 @@ static LONG sndcmd_falcon(WORD mode, WORD data)
            DMASOUND->channel_attenuation = val;
        }
        return (val >> 4) & 0x00f0;
-     case 1:                // RTATTEN
+     case 1:                /* RTATTEN */
        val = DMASOUND->channel_attenuation;
        if (data != -1)
        {
@@ -279,7 +279,7 @@ static LONG sndcmd_falcon(WORD mode, WORD data)
            DMASOUND->channel_attenuation = val;
        }
        return val & 0x00f0;
-     case 2:                // LTGAIN
+     case 2:                /* LTGAIN */
        val = DMASOUND->channel_amplification;
        if (data != -1)
        {
@@ -288,7 +288,7 @@ static LONG sndcmd_falcon(WORD mode, WORD data)
            DMASOUND->channel_attenuation = val;
        }
        return val & 0x0f0;
-     case 3:                // RTGAIN
+     case 3:                /* RTGAIN */
        val = DMASOUND->channel_amplification;
        if (data != -1)
        {
@@ -297,13 +297,13 @@ static LONG sndcmd_falcon(WORD mode, WORD data)
            DMASOUND->channel_attenuation = val;
        }
        return (val & 0x0f) << 4;
-     case 4:                // ADDERIN
+     case 4:                /* ADDERIN */
        if (data != -1)
        {
            DMASOUND->codec_16bit_source = data;
        }
        return DMASOUND->codec_16bit_source & 0x3;
-     case 5:                // ADCINPUT
+     case 5:                /* ADCINPUT */
        if (data != -1)
        {
            DMASOUND->codec_adc_source = data;
@@ -323,7 +323,7 @@ static LONG sndcmd_ste(WORD mode, WORD data)
 
     switch (mode)
     {
-     case 0:                // LTATTEN
+     case 0:                /* LTATTEN */
         if (data != -1)
         {
             ltatten = ((UWORD)data & 0xff)/6;
@@ -333,7 +333,7 @@ static LONG sndcmd_ste(WORD mode, WORD data)
                                             LMC1992_FADER(-ltatten)));
         }
         return ltatten * 6;
-     case 1:                // RTATTEN
+     case 1:                /* RTATTEN */
         if (data != -1)
         {
             rtatten = ((UWORD)data & 0xff)/6;
@@ -685,7 +685,7 @@ LONG sndstatus(WORD reset)
     if (reset)
     {
         DMASOUND->channel_attenuation = 0x0000;
-        DMASOUND->codec_16bit_source |= 0x08;    // TOS does this, so do we
+        DMASOUND->codec_16bit_source |= 0x08;    /* TOS does this, so do we */
         DMASOUND->codec_16bit_source &= ~0x08;
     }
 

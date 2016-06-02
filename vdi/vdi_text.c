@@ -355,10 +355,10 @@ void text_init(Vwk * vwk)
     WORD id_save, cell_height;
     const Fonthead *fnt_ptr, **chain_ptr;
 
-    SIZ_TAB[0] = 32767;         // minimal char width
-    SIZ_TAB[1] = 32767;         // minimal char height
-    SIZ_TAB[2] = 0;             // maximal char width
-    SIZ_TAB[3] = 0;             // maximal char heigh
+    SIZ_TAB[0] = 32767;         /* minimal char width */
+    SIZ_TAB[1] = 32767;         /* minimal char height */
+    SIZ_TAB[2] = 0;             /* maximal char width */
+    SIZ_TAB[3] = 0;             /* maximal char height */
 
     /* Initialize the font ring. */
     font_ring[0] = &fon6x6;

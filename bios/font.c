@@ -59,7 +59,7 @@ void font_init(void)
     sysfonts[2] = &fon8x16;
     sysfonts[3] = NULL;
 
-    font_count = 3;               // total number of fonts in fontring
+    font_count = 3;               /* total number of fonts in fontring */
 }
 
 /*

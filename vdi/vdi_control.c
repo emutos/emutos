@@ -15,7 +15,7 @@
 #include "portab.h"
 #include "../bios/lineavars.h"
 #include "vdi_defs.h"
-//#include "kprint.h"
+/* #include "kprint.h" */
 #include "biosbind.h"
 #include "../bios/screen.h"
 #include "asm.h"
@@ -436,8 +436,8 @@ void vdi_v_clswk(Vwk * vwk)
     }
 
     timer_exit(vwk);
-    vdimouse_exit(vwk);                 // deinitialize mouse
-    esc_exit(vwk);                      // back to console mode
+    vdimouse_exit(vwk);                 /* deinitialize mouse */
+    esc_exit(vwk);                      /* back to console mode */
 }
 
 

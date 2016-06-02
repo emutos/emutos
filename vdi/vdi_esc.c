@@ -19,12 +19,12 @@
 
 /* Local Constants */
 
-#define ldri_escape             19      // last DRI escape = 19.
+#define ldri_escape             19      /* last DRI escape = 19. */
 
 /* GEMDOS Function Codes */
 
-#define rawio                   0x06    // raw i/o to standard input/output
-#define wntstr                  0x09    // write null terminated string to std output
+#define rawio                   0x06    /* raw i/o to standard input/output */
+#define wntstr                  0x09    /* write null terminated string to std output */
 
 
 /*
@@ -56,7 +56,7 @@ static void escfn1(Vwk * vwk)
  */
 static void escfn2(Vwk * vwk)
 {
-    trap1(wntstr, "\033f\033E");   // hide alpha cursor
+    trap1(wntstr, "\033f\033E");   /* hide alpha cursor */
     vdi_v_clrwk(vwk);
 }
 
@@ -67,7 +67,7 @@ static void escfn2(Vwk * vwk)
 static void escfn3(Vwk * vwk)
 {
     vdi_v_clrwk(vwk);
-    trap1(wntstr, "\033E\033e");   // show alpha cursor
+    trap1(wntstr, "\033E\033e");   /* show alpha cursor */
 }
 
 
@@ -205,9 +205,9 @@ static void escfn14(Vwk * vwk)
  */
 static void escfn15(Vwk * vwk)
 {
-    CONTRL[4] = 2;              // 2 integers are returned
-    INTOUT[0] = v_cur_cy + 1;   // row (starting at 1)
-    INTOUT[1] = v_cur_cx + 1;   // column (starting at 1)
+    CONTRL[4] = 2;              /* 2 integers are returned */
+    INTOUT[0] = v_cur_cy + 1;   /* row (starting at 1) */
+    INTOUT[1] = v_cur_cx + 1;   /* column (starting at 1) */
 }
 
 
@@ -222,8 +222,8 @@ static void escfn15(Vwk * vwk)
  */
 static void escfn16(Vwk * vwk)
 {
-    CONTRL[4] = 1;              // 1 integer is returned
-    INTOUT[0] = 1;              // there is a mouse
+    CONTRL[4] = 1;              /* 1 integer is returned */
+    INTOUT[0] = 1;              /* there is a mouse */
 }
 
 
