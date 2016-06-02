@@ -138,6 +138,16 @@ _main:
         // but it matters for software reset
         move    #0x2700,sr
 
+#ifdef MACHINE_AMIGA
+        // It is *mandatory* to call this as soon as possible,
+        // to do early initialization of the Amiga hardware.
+        // On cold boot, address 0 points to the ROM.
+        // After that, it will point to the RAM, as expected.
+        lea     amiga_startup_ret,a6
+        jmp     amiga_startup
+amiga_startup_ret:
+#endif
+
         // Initialize an early stack to a valid write address.
         // We use early exceptions for 2 reasons:
         // - detect CPU type and features with illegal instructions
@@ -209,12 +219,6 @@ coldfire_startup_ret:
         jmp     cart_base+4             // execute diagnostig cartridge
 nodiag:
 #endif /* CONF_WITH_CARTRIDGE */
-
-#ifdef MACHINE_AMIGA
-        lea     amiga_startup_ret,a6
-        jmp     amiga_startup
-amiga_startup_ret:
-#endif
 
 /*
  * disable the instruction/data caches
