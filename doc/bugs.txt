@@ -8,8 +8,6 @@ Common AES/VDI/Line-A bugs:
     to be unselected to use the dialog.
   - In "Bombs", it's pretty random whether mouse clicks go through
     to the window, mostly they don't.
-- Text output is located correctly, but input text goes to
-  top left of screen in Gfa basic 2.x runner.  See "Minigolf" game
 - Because EmuTOS doesn't take outline into account in text extents
   calculation, the right side of outline characters are clipped
   e.g. in "LaserChess", "Diamond miner" & "Minigolf" games,
