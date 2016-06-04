@@ -99,8 +99,6 @@ static int msec;
  */
 long xgetdate(void)
 {
-    /* call XBIOS and mask out*/
-    current_date = (Gettime() >> 16) & 0xffff;
     return current_date;
 }
 
@@ -136,8 +134,6 @@ long xsetdate(UWORD d)
  */
 long xgettime(void)
 {
-    /* call XBIOS and mask out*/
-    current_time = Gettime() & 0xffff;
     return current_time;
 }
 

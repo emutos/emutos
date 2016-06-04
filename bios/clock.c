@@ -883,8 +883,14 @@ void clock_init(void)
 
 /* xbios functions */
 
+extern UWORD current_time, current_date; /* From bdos/time.c */
+
 void settime(LONG time)
 {
+    /* Update GEMDOS time and date */
+    current_time = time & 0xffff;
+    current_date = (time >> 16) & 0xffff;
+
     if (FALSE)
     {
         /* Dummy case for conditional compilation */
