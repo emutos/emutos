@@ -598,7 +598,7 @@ msgstr "Формат времени:"
 
 #: desk/desk_rsc.c:1344 desk/desk_rsc.c:1374
 msgid "Default"
-msgstr "По умолчанию"
+msgstr "Исходный"
 
 #: desk/desk_rsc.c:1350
 msgid "12H"
