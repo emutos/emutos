@@ -191,6 +191,10 @@ void init_system_timer(void)
     timer_c_sieve = 0x1111;
     timer_ms = 20;
 
+#if !CONF_WITH_MFP
+    vector_5ms = int_timerc;
+#endif
+
 #if CONF_COLDFIRE_TIMER_C
     coldfire_init_system_timer();
 #elif CONF_WITH_MFP

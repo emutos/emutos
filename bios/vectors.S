@@ -552,11 +552,13 @@ timerc_end:
         move.l  (sp)+, d0
 #endif
 
-#if REAL_TIMER_C_HANDLER
+        // Note for non-Atari hardware:
+        // It is important to return with RTE here, because FreeMiNT may have
+        // hooked this routine. Every fourth interrupt, it pushes an additional
+        // exception stack frame pointing to a pseudo-VBL routine. In that case,
+        // the RTE below jumps to that pseudo-VBL. Then that one will return to
+        // our caller with RTE.
         rte
-#else
-        rts
-#endif
 
 
 // ==== Critical error handler functions =====================================

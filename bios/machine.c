@@ -606,6 +606,12 @@ void fill_cookie_jar(void)
 #if CONF_WITH_XHDI
     create_XHDI_cookie();
 #endif
+
+#if !CONF_WITH_MFP
+    /* Set the _5MS cookie with the address of the 200 Hz system timer
+     * interrupt vector so FreeMiNT can hook it. */
+    cookie_add(COOKIE__5MS, (long)&vector_5ms);
+#endif
 }
 
 static const char * guess_machine_name(void)

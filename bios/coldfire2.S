@@ -74,8 +74,18 @@ _coldfire_int_61:
         lea     -16(sp),sp
         movem.l d0-d1/a0-a1,(sp)
 
-        jbsr     _int_timerc
+// Call vector_5ms.
+// As it will return with RTE, we must setup a proper stack frame
+        pea     coldfire_int_61_ack(pc) // Return address
+        move.w  sr,d0
+        move.w  d0,-(sp)                // SR
+        move.w  #0x40B4,-(sp)           // Format/Vector word
 
+        .extern _vector_5ms
+        move.l  _vector_5ms,a0
+        jmp     (a0)                    // Call the 200 Hz system timer
+
+coldfire_int_61_ack:
         /* Acknowledge */
         moveq   #8,d0                   // MCF_GPT_GSR_TEXP
         move.l  d0,__MBAR+0x81c         // MCF_GPT_GSR1

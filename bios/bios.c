@@ -99,6 +99,12 @@ static const BYTE null_env[] = {0, 0};
 
 /* used by kprintf() */
 WORD boot_status;               /* see kprint.h for bit flags */
+
+/* Non-Atari hardware vectors */
+#if !CONF_WITH_MFP
+void (*vector_5ms)(void);       /* 200 Hz system timer */
+#endif
+
 /*==== BOOT ===============================================================*/
 
 

@@ -190,9 +190,20 @@ wait_kbd_ack:
 /* CIA A Timer B interrupt (for 200 Hz system timer) */
 
 _amiga_int_ciaa_timer_b:
-        .extern _int_timerc
-        jbsr    _int_timerc             // Call the standard Timer C handler
-        rts
+// Call vector_5ms. The return address is already on the stack.
+// As it will return with RTE, we must setup a proper stack frame
+        tst.w   _longframe              // CPU > 68000, long stack frame?
+        jbeq    nolong
+
+        subq.l  #2,sp                   // Make room for additional word
+        move.l  2(sp),(sp)              // Move return address
+        clr.w   4(sp)                   // Format/Vector word
+nolong:
+        move.w  sr,-(sp)                // Push SR
+
+        .extern _vector_5ms
+        move.l  _vector_5ms,a0
+        jmp     (a0)                    // Call the 200 Hz system timer
 
 /******************************************************************************/
 /* VBL interrupt                                                              */

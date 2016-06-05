@@ -41,6 +41,7 @@ struct cookie {
 #define COOKIE_XHDI     0x58484449L
 #define COOKIE_COLDFIRE 0x5f43465fL
 #define COOKIE_MCF      0x5f4d4346L
+#define COOKIE__5MS     0x5f354d53L
 
 /*
  * values of _MCH cookie
