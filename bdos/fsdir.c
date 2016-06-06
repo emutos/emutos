@@ -594,9 +594,6 @@ long xgsdtof(DOSTIME *buf, int h, int wrt)
 /*  M01.01.03  */
 #define isnotdelim(x)   ((x) && (x!='*') && (x!=SLASH) && (x!='.') && (x!=' '))
 
-#define MAXFNCHARS      8
-
-
 /*
  *  builds - build a directory style file spec from a portion of a path name
  *
@@ -629,7 +626,7 @@ void builds(const char *s1, char *s2)
      *  delimiter is found
      */
 
-    for (i = 0; (i < MAXFNCHARS) && isnotdelim(*s1); i++)
+    for (i = 0; (i < LEN_ZNODE) && isnotdelim(*s1); i++)
         *s2++ = toupper(*s1++);
 
     /*
@@ -637,7 +634,7 @@ void builds(const char *s1, char *s2)
      *   part, skip the rest until we reach a delimiter
      */
 
-    if (i == MAXFNCHARS)
+    if (i == LEN_ZNODE)
         while (*s1 && (*s1 != '.') && (*s1 != SLASH))
             s1++;
 
@@ -657,14 +654,14 @@ void builds(const char *s1, char *s2)
      *  now that we've parsed out the filename part, pad out the
      *  destination with "?" wildcard chars
      */
-    for ( ; i < MAXFNCHARS; i++)
+    for ( ; i < LEN_ZNODE; i++)
         *s2++ = c;
 
     /*
      *  copy extension part of file spec up to max number of characters
      *  or until we find a delimiter
      */
-    for (i = 0; i < 3 && isnotdelim(*s1); i++)
+    for (i = 0; i < LEN_ZEXT && isnotdelim(*s1); i++)
         *s2++ = toupper(*s1++);
 
     /*
@@ -676,7 +673,7 @@ void builds(const char *s1, char *s2)
     /*
      *  pad out the file extension
      */
-    for ( ; i < 3; i++)
+    for ( ; i < LEN_ZEXT; i++)
         *s2++ = c;
 }
 
