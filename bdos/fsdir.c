@@ -589,7 +589,7 @@ long xgsdtof(DOSTIME *buf, int h, int wrt)
 }
 
 
-
+#define NEWCODE
 #ifdef  NEWCODE
 /*  M01.01.03  */
 #define isnotdelim(x)   ((x) && (x!='*') && (x!=SLASH) && (x!='.') && (x!=' '))
@@ -619,7 +619,7 @@ long xgsdtof(DOSTIME *buf, int h, int wrt)
 /* s1 source
  * s2 dest
  */
-void builds(char *s1, char *s2)
+void builds(const char *s1, char *s2)
 {
     int i;
     char c;
