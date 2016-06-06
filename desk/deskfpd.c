@@ -315,9 +315,6 @@ static LONG pn_fcomp(FNODE *pf1, FNODE *pf2, WORD which)
     case S_TYPE:
         chk = strcmp(scasb(ps1,'.'),scasb(ps2,'.'));
         break;
-    case S_NSRT:
-        chk = pf1->f_seq - pf2->f_seq;
-        break;
     }
     if (chk)
         return chk;
@@ -353,7 +350,8 @@ FNODE *pn_sort(PNODE *pn)
     FNODE **ml_pfndx;
     WORD  count, gap, i, j;
 
-    if (pn->p_count < 2)        /* the list is already sorted */
+    if ((pn->p_count < 2)       /* the list is already sorted */
+     || (G.g_isort == S_NSRT))  /* or we shouldn't sort */
         return pn->p_flist;
 
     /*

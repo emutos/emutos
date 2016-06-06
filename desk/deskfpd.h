@@ -29,7 +29,9 @@
 #define V_TEXT 1
 
 /*
- * sort sequence for display (folders are always listed before files)
+ * sort sequence for display
+ *
+ * Note: folders are always listed before files, except for 'no sort'
  */
 #define S_NAME 0                /* file name (ascending) */
 #define S_DATE 1                /* date (newest first), then name */

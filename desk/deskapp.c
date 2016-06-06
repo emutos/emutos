@@ -73,7 +73,7 @@
 
                             /* 'E' byte 5 */
 #define INF_E5_NOSORT   0x80    /* 1 => do not sort folder contents (overrides INF_E1_SORTMASK) */
-                                /* (note: unsorted folders are displayed before unsorted files) */
+
 
 GLOBAL WORD     gl_numics;
 GLOBAL WORD     gl_stdrv;
