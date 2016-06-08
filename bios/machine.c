@@ -419,6 +419,11 @@ void machine_detect(void)
 #endif
 #if CONF_WITH_MONSTER
     detect_monster();
+    if (has_monster)
+    {
+        detect_monster_rtc();
+        KDEBUG(("has_monster_rtc = %d\n", has_monster_rtc));
+    }
 #endif
 }
 

@@ -318,6 +318,184 @@ static void icdsetdt(ULONG dt)
 
 #endif /* CONF_WITH_ICDRTC */
 
+#if CONF_WITH_MONSTER
+
+/*==== MonSTer RTC section ================================================*/
+
+/*
+ * Supports Dallas DS1307 and compatible (13072, 1337, 1338...) RTC
+ * chips connected to the MonSTer I2C bus.
+ * I2C bitbanging routines based on code by Alan Hourihane.
+ */
+
+#define MONSTER_I2C_DIR *(volatile unsigned short *)0xfffffe02L
+#define MONSTER_I2C_SCL *(volatile unsigned short *)0xfffffe04L
+#define MONSTER_I2C_SDA *(volatile unsigned short *)0xfffffe06L
+
+#define I2C_HIGH 1
+#define I2C_LOW 0
+
+static ULONG delay5us;
+#define DELAY5US delay_loop(delay5us)
+
+static void i2c_start (void)
+{
+    MONSTER_I2C_SDA = I2C_HIGH;
+    DELAY5US;
+    MONSTER_I2C_SCL = I2C_HIGH;
+    DELAY5US;
+    MONSTER_I2C_SDA = I2C_LOW;
+    DELAY5US;
+    MONSTER_I2C_SCL = I2C_LOW;
+}
+
+static void i2c_stop (void)
+{
+    MONSTER_I2C_SCL = I2C_LOW;
+    MONSTER_I2C_SDA = I2C_LOW;
+    MONSTER_I2C_SCL = I2C_HIGH;
+    DELAY5US;
+    MONSTER_I2C_SDA = I2C_HIGH;
+
+    MONSTER_I2C_DIR = 3; /* Set pins to float */
+}
+
+static void i2c_write (UBYTE data)
+{
+    UBYTE i;
+
+    for(i = 0; i < 8; i++)
+    {
+        MONSTER_I2C_SDA = (data & 0x80) ? 1 : 0;
+        data <<= 1;
+        MONSTER_I2C_SCL = I2C_HIGH;
+        DELAY5US;
+        MONSTER_I2C_SCL = I2C_LOW;
+    }
+
+    MONSTER_I2C_DIR = 2; /* SDA as input */
+    MONSTER_I2C_SCL = I2C_HIGH;
+    DELAY5US;
+    MONSTER_I2C_SCL = I2C_LOW;
+}
+
+static UBYTE i2c_read (void)
+{
+    UBYTE i, data = 0;
+
+    MONSTER_I2C_DIR = 2; /* SDA as input */
+
+    for(i = 0; i < 8; i++)
+    {
+        data <<= 1;
+        MONSTER_I2C_SCL = I2C_HIGH;
+        data |= MONSTER_I2C_SDA;
+        DELAY5US;
+        MONSTER_I2C_SCL = I2C_LOW;
+    }
+
+    return data;
+}
+
+static void write_ds1307(UBYTE address, UBYTE data)
+{
+    i2c_start();
+    i2c_write(0xd0);
+    i2c_write(address);
+    i2c_write(data);
+    i2c_stop();
+}
+
+static UBYTE read_ds1307(UBYTE address)
+{
+    UBYTE data;
+
+    i2c_start();
+    i2c_write(0xd0);
+    i2c_write(address);
+    i2c_start();
+    i2c_write(0xd1);
+    data = i2c_read();
+    i2c_stop();
+
+    return data;
+}
+
+/*==== MonSTer RTC high-level functions ====================================*/
+
+static UBYTE bcdToDec(UBYTE val)
+{
+    return (val/16*10) + (val%16);
+}
+
+static UBYTE decToBcd(UBYTE val)
+{
+    return (val/10*16) + (val%10);
+}
+
+static ULONG monstergetdt(void)
+{
+    ULONG t = 0;
+    t  = (ULONG)(bcdToDec((read_ds1307(0) & 0x7f)/2));   /* Seconds */
+    t |= (ULONG)(bcdToDec(read_ds1307(1))) << 5;         /* Minute */
+    t |= (ULONG)(bcdToDec(read_ds1307(2) & 0x3f)) << 11; /* Hour */
+
+    t |= (ULONG)(bcdToDec(read_ds1307(4))) << 16;        /* Day of month */
+    t |= (ULONG)(bcdToDec(read_ds1307(5))) << 21;        /* Month */
+    t |= (ULONG)(bcdToDec(read_ds1307(6)) + 20) << 25;   /* Year */
+
+    KDEBUG(("monstergetdt = 0x%lx\n", t));
+
+    return t;
+}
+
+static void monstersetdt(ULONG time)
+{
+    write_ds1307(0, decToBcd((time & 0x1f)*2));     /* Seconds */
+    write_ds1307(1, decToBcd((time >> 5) & 0x3f));  /* Minute */
+    write_ds1307(2, decToBcd((time >> 11) & 0x1f)); /* Hour */
+
+    write_ds1307(4, decToBcd((time >> 16) & 0x1f)); /* Day of month */
+    write_ds1307(5, decToBcd((time >> 21) & 0x0f)); /* Month */
+    write_ds1307(6, decToBcd((time >> 25) - 20));   /* Year */
+
+    KDEBUG(("monstersetdt(0x%lx)\n", time));
+}
+
+int has_monster_rtc;
+
+void detect_monster_rtc(void)
+{
+    /*
+     * Check if there's a DS1307-compatible RTC connected.
+     * If there isn't, any attempts to read from it will
+     * return all zeros. So we try to read the DAY register.
+     * If it's zero, there's either no RTC or it's not
+     * initialized. So we try to write to the DAY register
+     * and read back it's value. If still zero, then no
+     * RTC is present.
+     */
+
+    /* Initialize I2C delay. */
+    delay5us = loopcount_1_msec / 200;
+
+    /* Detect presence of RTC. */
+    has_monster_rtc = TRUE;
+
+    if (read_ds1307(4) == 0)
+    {
+        write_ds1307(4, 1);
+
+        if (read_ds1307(4) == 0)
+            has_monster_rtc = FALSE;
+        else
+            /* RTC present, but not initialized. */
+            monstersetdt(DEFAULT_DATETIME);
+    }
+}
+
+#endif /* CONF_WITH_MONSTER */
+
 #if CONF_WITH_MEGARTC
 
 /*==== MegaRTC section ====================================================*/
@@ -907,6 +1085,12 @@ void settime(LONG time)
         msetdt(time);
     }
 #endif /* CONF_WITH_MEGARTC */
+#if CONF_WITH_MONSTER
+    else if (has_monster_rtc)
+    {
+        monstersetdt(time);
+    }
+#endif /* CONF_WITH_MONSTER */
 #if CONF_WITH_ICDRTC
     else if (has_icdrtc)
     {
@@ -945,6 +1129,12 @@ LONG gettime(void)
         return mgetdt();
     }
 #endif /* CONF_WITH_MEGARTC */
+#if CONF_WITH_MONSTER
+    else if (has_monster_rtc)
+    {
+        return monstergetdt();
+    }
+#endif /* CONF_WITH_MONSTER */
 #if CONF_WITH_ICDRTC
     else if (has_icdrtc)
     {

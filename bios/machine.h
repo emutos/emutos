@@ -93,6 +93,14 @@ extern int has_vme;
   #define HAS_VME 0
 #endif
 
+#if CONF_WITH_MONSTER
+extern int has_monster;
+extern int has_monster_rtc;
+  #define HAS_MONSTER_RTC has_monster_rtc
+#else
+  #define HAS_MONSTER_RTC 0
+#endif
+
 #if CONF_WITH_ICDRTC
 extern int has_icdrtc;    /* in clock.c */
   #define HAS_ICDRTC has_icdrtc
@@ -115,11 +123,7 @@ extern int has_nvram;     /* in nvram.c */
 #endif
 
 /* convenience macro: TRUE iff any kind of real time clock */
-#define HAS_RTC (HAS_NVRAM || HAS_MEGARTC || HAS_ICDRTC)
-
-#if CONF_WITH_MONSTER
-extern int has_monster;
-#endif
+#define HAS_RTC (HAS_NVRAM || HAS_MEGARTC || HAS_ICDRTC || HAS_MONSTER_RTC)
 
 #if CONF_WITH_BLITTER
 extern int has_blitter;
