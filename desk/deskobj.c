@@ -53,7 +53,6 @@ static const OBJECT gl_sampob[2] =
  */
 static WORD sob_malloc(void)
 {
-    WORD dummy, w, h;
     LONG mem, limit, num_obs;
     BYTE *p;
 
@@ -71,8 +70,7 @@ static WORD sob_malloc(void)
      * for the scroll-bar width, and gl_hchar as a proxy for the title
      * bar/info line height.  Rounding down takes care of the rest :-).
      */
-    wind_get(0, WF_WXYWH, &dummy, &dummy, &w, &h);
-    num_obs = (NUM_WNODES+1) * ((w-gl_wchar)/G.g_iwspc) * ((h-gl_hchar)/G.g_ihspc);
+    num_obs = (NUM_WNODES+1) * ((G.g_wdesk-gl_wchar)/G.g_iwspc) * ((G.g_hdesk-gl_hchar)/G.g_ihspc);
 
     /* In case we're memory-constrained, we limit ourselves to 5% of
      * available memory, or MIN_WOBS, whichever is greater.  In practice,

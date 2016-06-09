@@ -510,7 +510,6 @@ static WORD do_optnmenu(WORD item)
     WORD isapp = FALSE;
     WORD newres, newmode;
     BYTE *pstr;
-    GRECT rect;
 
     pa = 0;
     pstr = 0;
@@ -530,8 +529,7 @@ static WORD do_optnmenu(WORD item)
         if (rebld)
         {
             app_blddesk();
-            wind_get(0, WF_WXYWH, &rect.g_x, &rect.g_y, &rect.g_w, &rect.g_h);
-            do_wredraw(0, rect.g_x, rect.g_y, rect.g_w, rect.g_h);
+            do_wredraw(0, G.g_xdesk, G.g_ydesk, G.g_wdesk, G.g_hdesk);
         }
         break;
     case IAPPITEM:

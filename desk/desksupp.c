@@ -167,16 +167,15 @@ static ICONBLK *get_iconblk_ptr(OBJECT olist[], WORD obj)
 
 void do_xyfix(WORD *px, WORD *py)
 {
-    WORD tx, ty, tw, th;
+    WORD tx;
 
-    wind_get(0, WF_WXYWH, &tx, &ty, &tw, &th);
     tx = *px;
     *px = (tx & 0x000f);
     if (*px < 8)
         *px = tx & 0xfff0;
     else
         *px = (tx & 0xfff0) + 16;
-    *py = max(*py, ty);
+    *py = max(*py, G.g_ydesk);
 }
 
 
