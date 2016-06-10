@@ -167,15 +167,9 @@ static ICONBLK *get_iconblk_ptr(OBJECT olist[], WORD obj)
 
 void do_xyfix(WORD *px, WORD *py)
 {
-    WORD tx;
-
-    tx = *px;
-    *px = (tx & 0x000f);
-    if (*px < 8)
-        *px = tx & 0xfff0;
-    else
-        *px = (tx & 0xfff0) + 16;
-    *py = max(*py, G.g_ydesk);
+    *px = (*px + 8) & 0xfff0;   /* horizontally align to nearest word boundary */
+    if (*py < G.g_ydesk)        /* ensure it's below menu bar */
+        *py = G.g_ydesk;
 }
 
 
