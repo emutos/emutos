@@ -468,14 +468,14 @@ static void query_tt_color(WORD colnum,WORD *retval)
 /* Create videl colour value from VDI colour */
 static LONG vdi2videl(WORD col)
 {
-    return (LONG)col * 51 / 200;            /* scale 1000 -> 255 */
+    return ((LONG)col * 255 + 500) / 1000;              /* scale 1000 -> 255 */
 }
 
 
 /* Create VDI colour value from videl colour */
 static WORD videl2vdi(LONG col)
 {
-    return (WORD)((col & 0xff) * 200 / 51); /* scale 255 -> 1000 */
+    return (WORD)(((col & 0xff) * 1000 + 128) / 255);   /* scale 255 -> 1000 */
 }
 #endif
 
