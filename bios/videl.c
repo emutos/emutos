@@ -719,7 +719,7 @@ WORD vgetrgb(WORD index,WORD count,LONG *rgb)
         LONG l;
         UBYTE b[4];
     } u;
-    WORD limit;
+    WORD limit, mode, value;
 
     if (!has_videl)
         return 0x5e;    /* unimplemented xbios call: return function # */
@@ -727,9 +727,28 @@ WORD vgetrgb(WORD index,WORD count,LONG *rgb)
     if ((index < 0) || (count <= 0))
         return -1; /* Generic error */
 
-    limit = (get_videl_bpp()<=4) ? 16 : 256;
+    mode = vsetmode(-1);
+    limit = ((mode&VIDEL_BPPMASK)==VIDEL_8BPP) ? 256 : 16;
+
     if ((index+count) > limit)
         return -1; /* Generic error */
+
+    /*
+     * for 4-colour or ST-compatible modes, VgetRGB() returns
+     * values derived from the STe palette
+     */
+    if (use_ste_palette(mode)) {
+        u.l = 0;
+        while(count--) {
+            value = setcolor(index++,-1);
+            value = ((value&0x0777)<<1) | ((value&0x0888)>>3);
+            u.b[1] = ((value>>8) & 0x0f) * 16;
+            u.b[2] = ((value>>4) & 0x0f) * 16;
+            u.b[3] = (value & 0x0f) * 16;
+            *rgb++ = u.l;
+        }
+        return 0;   /* OK */
+    }
 
     shadow = falcon_shadow_palette + index;
     while(count--) {
