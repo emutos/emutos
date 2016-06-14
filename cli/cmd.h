@@ -22,6 +22,7 @@
  typedef long            LONG;
  typedef unsigned long   ULONG;
  #define MAXPATHLEN      256
+ #define BLKDEVNUM       26
 #endif
 
 

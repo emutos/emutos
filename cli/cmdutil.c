@@ -437,4 +437,28 @@ char *p = dest;
 
     return dest;
 }
+
+int toupper(int c)
+{
+    if(c>='a' && c<='z')
+        return(c-'a'+'A');
+    else
+        return(c);
+}
+
+int strncasecmp(const char *a, const char *b, size_t n)
+{
+    unsigned char s1, s2;
+
+    while(n-- > 0) {
+        s1 = toupper((unsigned char)*a++);
+        s2 = toupper((unsigned char)*b++);
+        if (s1 != s2)
+            return s1 - s2;
+        if (s1 == '\0')
+            break;
+    }
+
+    return 0;
+}
 #endif
