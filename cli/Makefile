@@ -3,7 +3,8 @@
 TARGET = emucon2.tos
 LIBS = -nostartfiles -nostdlib -lgcc
 CC = m68k-atari-mint-gcc
-CFLAGS = -mshort -O -Wall -Wundef -Wold-style-definition -DSTANDALONE_CONSOLE
+CPPFLAGS = -I../include -DUSE_STATIC_INLINES=0 -DSTANDALONE_CONSOLE
+CFLAGS = $(CPPFLAGS) -mshort -O -Wall -Wundef -Wold-style-definition
 
 .PHONY: default all clean
 
