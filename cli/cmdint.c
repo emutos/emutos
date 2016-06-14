@@ -383,11 +383,14 @@ WORD rate = -1, delay = -1, height = -1;
         if (argc == 2) {    /* just status wanted */
             old = Kbrate(-1,-1);
             outputnl(_("Status for CON:"));
-            sprintf(buf,"%-20s %3d",_("    Keyboard delay:"),(old>>8)&0x00ff);
+            output(_("    Keyboard delay:"));
+            convulong(buf,(old>>8)&0x00ff,5,' ');
             outputnl(buf);
-            sprintf(buf,"%-20s %3d",_("    Keyboard rate:"),old&0x00ff);
+            output(_("    Keyboard rate:"));
+            convulong(buf,old&0x00ff,6,' ');
             outputnl(buf);
-            sprintf(buf,"%-20s %3d",_("    Line height:"),getht());
+            output(_("    Line height:"));
+            convulong(buf,getht(),8,' ');
             outputnl(buf);
             return 0;
         }
