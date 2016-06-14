@@ -738,9 +738,10 @@ WORD vgetrgb(WORD index,WORD count,LONG *rgb)
      * values derived from the STe palette
      */
     if (use_ste_palette(mode)) {
+        WORD *ste_shadow = ste_shadow_palette + index;
         u.l = 0;
         while(count--) {
-            value = setcolor(index++,-1);
+            value = *ste_shadow++;
             value = ((value&0x0777)<<1) | ((value&0x0888)>>3);
             u.b[1] = ((value>>8) & 0x0f) * 16;
             u.b[2] = ((value>>4) & 0x0f) * 16;
