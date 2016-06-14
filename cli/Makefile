@@ -23,7 +23,7 @@ HEADERS = cmd.h
 .PRECIOUS: $(TARGET) $(OBJECTS)
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(OBJECTS) -Wall $(LIBS) -o $@
+	$(CC) $(OBJECTS) -Wall $(LIBS) -s -o $@
 
 clean:
 	-rm -f *.o
