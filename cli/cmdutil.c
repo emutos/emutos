@@ -438,6 +438,27 @@ char *p = dest;
     return dest;
 }
 
+void *memcpy(void *dest, const void *src, size_t n)
+{
+unsigned char *d = (unsigned char *)dest;
+const unsigned char *s = (const unsigned char *)src;
+
+    while (n--)
+        *d++ = *s++;
+
+    return dest;
+}
+
+void *memset(void *dest, int value, size_t n)
+{
+unsigned char *d = (unsigned char *)dest;
+
+    while (n--)
+        *d++ = (unsigned char)value;
+
+    return dest;
+}
+
 int toupper(int c)
 {
     if(c>='a' && c<='z')
