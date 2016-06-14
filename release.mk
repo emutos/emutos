@@ -212,12 +212,25 @@ release-floppy:
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_FLOPPY).zip $(RELEASE_FLOPPY)
 	rm -r $(RELEASE_DIR)/$(RELEASE_FLOPPY)
 
+.PHONY: release-emucon
+NODEP += release-emucon
+RELEASE_EMUCON = emucon
+release-emucon:
+	$(MAKE) clean
+	cd cli && make
+	mkdir $(RELEASE_DIR)/$(RELEASE_EMUCON)
+	cp cli/emucon2.tos $(RELEASE_DIR)/$(RELEASE_EMUCON)
+	cp cli/readme.txt $(RELEASE_DIR)/$(RELEASE_EMUCON)
+	unix2dos $(RELEASE_DIR)/$(RELEASE_EMUCON)/readme.txt
+	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_EMUCON)-$(VERSION).zip $(RELEASE_EMUCON)
+	rm -r $(RELEASE_DIR)/$(RELEASE_EMUCON)
+
 # Main goal to build a full release distribution
 .PHONY: release
 NODEP += release
 release: distclean release-clean release-mkdir \
   release-src release-512k release-256k release-192k release-cartridge \
   release-aranym release-firebee release-amiga release-m548x-dbug \
-  release-m548x-bas release-prg release-floppy
+  release-m548x-bas release-prg release-floppy release-emucon
 	$(MAKE) clean
 	@echo '# Packages successfully generated inside $(RELEASE_DIR)'
