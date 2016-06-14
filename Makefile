@@ -1124,6 +1124,12 @@ NODEP += gitready
 gitready: expand crlf
 
 #
+# Standalone EmuCON
+#
+
+TOCLEAN += cli/*.o cli/*.tos
+
+#
 # local Makefile
 #
 
