@@ -195,7 +195,7 @@ WORD initinfo(void)
 #endif
     int i;
     WORD olddev = -1, dev = bootdev;
-    long fastramsize = (long)xmxalloc(-1L, MX_TTRAM);
+    long altramsize = (long)xmxalloc(-1L, MX_TTRAM);
     LONG hdd_available = blkdev_avail(HARDDISK_BOOTDEV);
 
     /*
@@ -208,7 +208,7 @@ WORD initinfo(void)
 #if CONF_WITH_AROS
     initinfo_height += 3;
 #endif
-    if (fastramsize > 0)
+    if (altramsize > 0)
         initinfo_height += 1;
     if (hdd_available)
         initinfo_height += 1;
@@ -247,9 +247,9 @@ WORD initinfo(void)
         cprintf(_("%ld KB"), /* memtop-membot */ (long)xmxalloc(-1L, MX_STRAM) >> 10);
     pair_end();
 
-    if (fastramsize > 0) {
-        pair_start(_("Free FastRAM"));
-        cprintf(_("%ld KB"), fastramsize >> 10);
+    if (altramsize > 0) {
+        pair_start(_("Free Alt-RAM"));
+        cprintf(_("%ld KB"), altramsize >> 10);
         pair_end();
     }
 

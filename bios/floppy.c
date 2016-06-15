@@ -930,7 +930,7 @@ static WORD floprw(UBYTE *userbuf, WORD rw, WORD dev,
         iobuf = get_frb_cookie();
         if (!iobuf)
         {
-            KDEBUG(("floprw() error: can't DMA to FastRAM\n"));
+            KDEBUG(("floprw() error: can't DMA to Alt-RAM\n"));
             return ERR;
         }
         if (rw == RW_WRITE)
@@ -1058,7 +1058,7 @@ static WORD flopwtrack(UBYTE *userbuf, WORD dev, WORD track, WORD side, WORD tra
         iobuf = get_frb_cookie();
         if (!iobuf)
         {
-            KDEBUG(("flopwtrack() error: can't DMA from FastRAM\n"));
+            KDEBUG(("flopwtrack() error: can't DMA from Alt-RAM\n"));
             return ERR;
         }
         memcpy(iobuf, userbuf, track_size);

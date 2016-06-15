@@ -41,8 +41,8 @@ msgid "%ld KB"
 msgstr "%ld Ko"
 
 #: bios/initinfo.c:249
-msgid "Free FastRAM"
-msgstr "FastRAM libre"
+msgid "Free Alt-RAM"
+msgstr "Alt-RAM libre"
 
 #: bios/initinfo.c:257
 msgid "Boot time"

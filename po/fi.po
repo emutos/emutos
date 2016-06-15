@@ -43,8 +43,8 @@ msgid "%ld KB"
 msgstr "%ld KB"
 
 #: bios/initinfo.c:249
-msgid "Free FastRAM"
-msgstr "Vapaa FastRAM"
+msgid "Free Alt-RAM"
+msgstr "Vapaa Alt-RAM"
 
 #: bios/initinfo.c:257
 msgid "Boot time"
