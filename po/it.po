@@ -1198,16 +1198,16 @@ msgid "Status for CON:"
 msgstr "Stato CON:"
 
 #: cli/cmdint.c:386
-msgid "    Keyboard delay:"
-msgstr "  Ritardo tastiera:"
+msgid "  Keyboard delay: "
+msgstr "  Ritardo tastiera:    "
 
 #: cli/cmdint.c:388
-msgid "    Keyboard rate:"
+msgid "  Keyboard rate:  "
 msgstr "  Ripetizione tastiera:"
 
 #: cli/cmdint.c:390
-msgid "    Line height:"
-msgstr "  Altezza linea:"
+msgid "  Line height:    "
+msgstr "  Altezza linea:  "
 
 #: cli/cmdint.c:439
 msgid "(empty)"

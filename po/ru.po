@@ -1199,16 +1199,16 @@ msgid "Status for CON:"
 msgstr "Статус консоли CON:"
 
 #: cli/cmdint.c:386
-msgid "    Keyboard delay:"
+msgid "  Keyboard delay: "
 msgstr "  Задержка повторного ввода клавиатуры:"
 
 #: cli/cmdint.c:388
-msgid "    Keyboard rate:"
+msgid "  Keyboard rate:  "
 msgstr "  Скорость повторного ввода клавиатуры:"
 
 #: cli/cmdint.c:390
-msgid "    Line height:"
-msgstr "  Высота строки:"
+msgid "  Line height:    "
+msgstr "  Высота строки:  "
 
 #: cli/cmdint.c:439
 msgid "(empty)"
