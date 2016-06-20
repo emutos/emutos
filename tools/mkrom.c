@@ -236,7 +236,7 @@ static int copy_stream(FILE* infile, const char* infilename,
     return 1;
 }
 
-/* Copy and pad with zeroes up to target_size */
+/* Copy and pad with zeros up to target_size */
 static int cmd_pad(FILE* infile, const char* infilename,
                    FILE* outfile, const char* outfilename,
                    size_t target_size)
@@ -264,7 +264,7 @@ static int cmd_pad(FILE* infile, const char* infilename,
     if (!ret)
         return ret;
 
-    /* Pad with zeroes */
+    /* Pad with zeros */
     free_size = target_size - source_size;
     ret = write_byte_block(outfile, outfilename, 0, free_size);
     if (!ret)
@@ -308,7 +308,7 @@ static int cmd_stc(FILE* infile, const char* infilename,
     if (!ret)
         return ret;
 
-    /* Pad with zeroes */
+    /* Pad with zeros */
     free_size = target_size - source_size;
     ret = write_byte_block(outfile, outfilename, 0, free_size);
     if (!ret)
@@ -406,7 +406,7 @@ static int cmd_amiga(FILE* infile, const char* infilename,
     if (!ret)
         return ret;
 
-    /* Pad with zeroes */
+    /* Pad with zeros */
     free_size = max_size - source_size;
     ret = write_byte_block(outfile, outfilename, 0, free_size);
     if (!ret)
@@ -504,7 +504,7 @@ static int cmd_amiga_kickdisk(FILE* infile, const char* infilename,
     if (!ret)
         return ret;
 
-    /* Pad with zeroes */
+    /* Pad with zeros */
     pad_size = target_size - bootblock_size - source_size;
     ret = write_byte_block(outfile, outfilename, 0, pad_size);
     if (!ret)
