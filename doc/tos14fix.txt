@@ -1,0 +1,925 @@
+TOS 1.4 fix status
+==================
+
+Atari's "Rainbow TOS Release Notes" is a list of fixes and improvements
+in TOS 1.4 compared to TOS 1.0/1.2.  Alternatively, it can be read as a
+(probably) incomplete list of bugs in TOS 1.0/1.2.  Since many parts of
+EmuTOS are based on the original DRI code, which corresponded closely to
+TOS 1.0, we can use the Atari document as a checklist of potential EmuTOS
+bugs.
+
+This document summarises the Atari document, and lists the current EmuTOS
+status for each TOS 1.4 fix:
+    BUG: aaaaaa             the bug exists in EmuTOS; aaaaaa is more info
+    FIXED: commit xxxxxx    the bug is fixed in EmuTOS by commit xxxxxx
+    MISSING FEATURE         the bug is associated with a feature missing
+                            from EmuTOS
+    TO BE CHECKED           it is not yet known if the bug exists
+    COMMENT: aaaaa          any other status, e.g. where EmuTOS implements
+                            things differently from Atari TOS
+The list is broken down into 5 major areas: AES, BIOS/XBIOS, Desktop,
+GEMDOS, and VDI.  Within each area, topics are listed alphabetically.
+Within each topic are items; items are numbered uniquely in the document,
+starting at 001.
+
+
+
+*******************************************************************
+*                           AES Changes                           *
+*******************************************************************
+
+appl_init()                                                           Status
+-----------                                                           ------
+001. "appl_init()" call returns a version number of 0x0140 in         FIXED: commit 3c9682
+     global[0].
+
+
+Autorun Application
+-------------------
+002. When running an autorun application, the AES changes to its      MISSING FEATURE
+     directory.
+003. When an autorun application is active, AES gives accessories     MISSING FEATURE
+     the same number of dispatch calls to initialize as they
+     would have if the Desktop were starting up.
+
+
+Context Switches
+----------------
+004. No context switches are allowed during the AES Critical          TO BE CHECKED
+     Error Handler, correcting a bug where some media errors
+     would cause the File Selector to crash at the next critical
+     error. (See "File Selector")
+
+
+Default Path
+------------
+005. The Default Path when an application starts is not changed       TO BE CHECKED
+     by shel_write(), nor is it set when the AES shell runs an
+     application.  From the Desktop, the user selects the
+     "current path" by determining which window is topped when an
+     application is launched.  The right mouse button can be used
+     to set a different default path.
+
+
+evnt_multi() and evnt_timer()
+-----------------------------
+006. evnt_timer() (or evnt_multi() with a timer) no longer cause      TO BE CHECKED
+     Desk Accessories to sleep forever.
+
+
+File Selector
+-------------
+007. An application can now send a "title" string to the File         FIXED: commit 2565ad
+     Selector.  See documentation for "fsel_exinput()."
+008. FS provides 16 drive label buttons for easier drive              FIXED: commit 7cdac5
+     selection.
+009. FS now handles <RETURN> differently on text editing: after       TO BE CHECKED
+     editing a pathname, pressing <RETURM> enters the path and
+     redisplays the FS.  After editing a filename, the FS exits.
+010. If the user passes in a path with a leading backslash, this      TO BE CHECKED
+     path is appended to the default directory of the default
+     drive internally, and files from the resulting directory are
+     displayed.
+011. The static file allocation of 100 files per FS has been          FIXED: commit 4b53c9
+     removed.  The AES will Malloc() memory for directories with
+     large numbers of files.  If available memory is insufficient,
+     fsel_input() will exit with an error code.
+012. FS now handles long pathnames.                                   TO BE CHECKED
+013. FS now handles multiple "abort/continue" errors correctly.       TO BE CHECKED
+014. FS preserves current DTA buffer addresses.                       FIXED: commit b4246a
+015. FS preserves clip rectangles.                                    TO BE CHECKED
+016. FS preserves default directories.                                TO BE CHECKED
+017. If a diskette is removed when the file selector is called,       TO BE CHECKED
+     the system now handles "Cancel" on the resulting error dialog
+     correctly.
+018. FS now handles colons in filenames, even though the colon        TO BE CHECKED
+     is NOT a legal filename character.
+019. FS no longer displays files that have the Hidden flag set.       TO BE CHECKED
+020. Sequence of the file selector redraw has been improved to        TO BE CHECKED
+      be more visually appealing.
+021. Clicking anywhere in the file display window reloads a           TO BE CHECKED
+     directory without affecting the filename template in the
+     PATH line.
+022. Media errors no longer cause the FS to crash at the next         TO BE CHECKED
+     critical error. (See "Context Switches")
+
+
+form dial()
+-----------
+023. form_dial() now only forces the top window to be redrawn if      TO BE CHECKED
+     it falls inside the rectangle of the form_dial().
+
+
+Menu Bar
+--------
+024. Toggling between True and False on the Menu Bar no longer        TO BE CHECKED
+     corrupts the semaphore.
+025. The Menu Bar line is now redrawn in REPLACE mode, rather         TO BE CHECKED
+     than XOR mode; this prevents the AES from "undrawing" a menu
+     bar line already drawn by an application.
+
+
+Menus
+-----
+026. AES now reserves 1/4 of the current screen memory (rather        TO BE CHECKED
+     than 1/4 of 32000 bytes) as a menu dropdown buffer, allowing
+     applications to take advantage of large monitors with larger
+     menus than possible on smaller screens.
+
+
+Mouse Clicks
+------------
+027. Mouse single click response has been improved for                TO BE CHECKED
+     applications which don't request double clicks.  Now,
+     applications which use only single click event reporting
+     will feel more responsive.
+
+
+Mouse Cursor
+------------
+028. AES no longer accidentally restores a previously saved mouse     TO BE CHECKED
+     state in favor of the state set with graf_mouse().  This
+     behavior sometimes caused the cursor to remain a busy bee
+     even after an application had set it to an arrow, or to
+     leave "trails" in the menu bar.
+
+
+form_center()
+-------------
+029. form_center() was changed so a form's X coordinate is no         FIXED: commit be1d27
+     longer character aligned; odd-sized forms will no longer
+     appear off center when form_center() is used to get centered
+     coordinates.
+
+
+rsrc_load()
+-----------
+030. rsrc_load() no longer uses the shel_read()/write() buffer as     FIXED: commit f943c0
+     temporary storage, so the full pathname of a Desktop-launched
+     application is always available in the shel_read()/write()
+     buffer.
+
+
+shel_envrn()
+------------
+031. shel_envrn() now uses the actual environment string to           TO BE CHECKED
+     search for environment variables, rather than using its
+     own fixed copy; environments, including the PATH= string
+     AES uses to find resource files, can be set up in the AUTO
+     folder and used by all applications thereafter.
+032. Path name separators can now be commas or semicolons;            BUG: commas not allowed
+     previously, semicolons were required.
+
+
+shel_find()
+-----------
+033. shel_find() now looks first in the directory indicated in        FIXED: commit f166f3
+     the shel_read()/write() buffer (the directory from which an
+     application was launched), then in the current directory, then
+     down the environment search path.  Installed applications can
+     be anywhere, and still find their resources.
+
+
+wind_get()
+----------
+034. A wind_get() call with field parameter of WF_SCREEN is now       FIXED: commit f29cf5
+     supported.
+
+
+Windows
+-------
+035. When the user clicks in the scroll area of a window, AES         TO BE CHECKED
+     waits for a double click time before starting the scroll
+     repeat.  Single clicks only cause one message to be sent.
+
+
+
+*******************************************************************
+*                       BIOS/XBIOS Changes                        *
+*******************************************************************
+
+Boot Sequence                                                         Status
+-------------                                                         ------
+036. The ROMs check the DMA port for bootable devices.  Each          TO BE CHECKED
+     device now gets a second chance if the first try at a boot
+     sector returns an error.
+
+
+Disk Boot
+---------
+037. Floppies are checked for "bootability" on warm and cold          TO BE CHECKED
+     starts, even if an autobooting hard disk is attached.
+     Before, this was done only on a cold boot.
+
+
+Disk Formatting
+---------------
+038. Disks are formatted to be compatible with the IBM PC;            FIXED: commit 9083c6
+     Protobt() creates MS-DOS format floppy boot sectors.
+     Programs should place E9 00 4E in the first 3 bytes to
+     insure MS-DOS compatibility.  Programs which do not use
+     these calls to format the disk will not be affected.
+
+
+Floppy Seek Rate
+----------------
+039. A new call, Floprate(), has been provided to check or set        FIXED: commit ef8e32
+     the seek rate for a floppy drive.  See BIOS/XBIOS
+     Supplemental Documentation.
+
+
+Keyboard Repeat
+---------------
+040. Keyboard repeating has been improved: if you hit a key           FIXED: commit 24bb6a
+     (say, '#'), and hold it down, you will get lots of #'s.
+     If you then hit '$' without lifting your finger off '#' you
+     will get one $ then many $'s.  The $'s won't stop repeating
+     until you let go of the '$' key, even if you do let go of
+     the '#' key in the meantime.
+
+
+Keyboard Reset
+--------------
+041. Reset is available from the keyboard.  Hold down the             FIXED: commit 03499b
+     <Control> and <Alternate> keys, and press "Delete" (below
+     "Backspace").  This accomplishes the same thing as hitting
+     the reset button.
+042. <Control><Alternate><Right Shift><Delete> causes a VERY cold     COMMENT: cold boot doesn't clear all RAM
+     boot.  It clears ALL of RAM (except about 64 bytes at the
+     bottom) and then jumps to the ROMs.  This is to get rid of
+     reset-resident RAMdisks, reset-bailout vector stuff,
+     packages, and miscellaneous system variables that are
+     cleared on a cold boot but not touched by a warm one
+     (notably _bootdev).
+
+
+Rsconf()
+--------
+043. Rsconf(-2,-1,-1,-1,-1,-1) now returns the last baud rate         FIXED: commit 6ad00c
+     value set by Rsconf().  If the first argument to Rsconf is
+     -2, the rest are ignored.
+044. Rsconf() was documented as returning 'void' but actually         FIXED: commit 6ad00c
+     returns the old values of the ucr, rsr, tsr, and scr
+     registers.  It always has, but wasn't documented as such
+     until now.
+
+
+BIOS/XBIOS Supplemental Documentation
+=====================================
+Bconout()
+---------
+045. Bconout() to the printer returns 0 for failure, and a            FIXED: commit 315dae
+     nonzero value for success.  This is used for the "Your output
+     device is not responding" message in the Desktop, and is not
+     handled through the critical error handler.  This has been
+     true of all ROMs.
+046. GEMDOS previous to Rainbow TOS just happened to return the       FIXED: commit 1af26d
+     leftover value from D0, so using the GEMDOS Cprnout()
+     function returned this, too.  New GEMDOS explicitly returns
+     the status from the BIOS call from Cprnout().
+
+
+BIOS Output-Status
+------------------
+047. The BIOS output-status functions for MIDI and Ikbd (devices      FIXED: commit 8f2ee8
+     3 and 4, respectively) are reversed: Bcostat(3) gives Ikbd
+     output status, and Bcostat(4) gives MIDI output status.  We
+     can't change these back because programs may already be
+     correcting for this behavior.
+
+
+Floprate()
+----------
+048. Floprate(), XBIOS function 41, checks or sets the seek rate      COMMENT: EmuTOS validates input
+     for a floppy drive.  This is new; the seek rate must be set
+     with (previously) undocumented variables on earlier versions
+     of TOS.  In either case, valid seek rate byte values are:
+     Value   Rate
+       0      6 ms
+       1     12 ms
+       2      2 ms
+       3      3 ms
+     This call does not range-check the drive ID or new seek rate
+     value.  If devno is zero, it assumes drive A:, if nonzero,
+     drive B:.
+
+
+ikbd driver state variable
+--------------------------
+049. Kbdvbase() returns a pointer to a list of vectors for the        FIXED: commit 44fe81
+     IKBD/MIDI subsystem.  At offset $24 from that pointer is a
+     byte which is the ikbd driver state variable.  This has
+     always been true; it's now being declared official, and
+     will remain true.
+
+
+OS Header
+---------
+050. As mentioned elsewhere in this document, the OS header           FIXED: commit 535746
+     contains a pointer to the GEMDOS variable _run, which holds
+     the basepage address of the process which is currently running.
+
+
+*******************************************************************
+*                         Desktop Changes                         *
+*******************************************************************
+
+Aborting Operations                                                   Status
+-------------------                                                   ------
+051. Copy, Delete, and Move operations can be interrupted with        FIXED: commit 5dabbf
+     <Undo>; holding down <Undo> results in a dialog asking if
+     the user wishes to abort.  (This does not apply to Disk Copy
+     or Format.)
+
+
+Application Crash
+-----------------
+052. When recovering from an application crash, wind_update(FALSE)    TO BE CHECKED
+     is executed before going into the main event_multi() that
+     waits for user interaction.  This is handled by the new
+     wind_new() function.
+
+
+Autorun Applications
+--------------------
+053. GEM programs can be autorun from disk.  This is set up           MISSING FEATURE
+     through the "Install Application" dialog, where the user can
+     select "Auto" (boot) status, then "Save Desktop".  The
+     autoboot application can also be uninstalled from this
+     dialog.  The autoboot application can be either a "PRG" or
+     a "TOS", but not a "TTP".
+054. Selecting a new Autorun Application will replace the             MISSING FEATURE
+     previous one.
+
+
+Copy, Delete, Move
+------------------
+055. The Copy, Delete, and Move dialog box shows destination          MISSING FEATURE
+     folder and file name as the operation progresses.  The file
+     name is displayed immediately in the box as the operation
+     begins.
+
+
+Desk Accessories
+----------------
+056. Desk Accessories can write any MN_SELECTED message to the        TO BE CHECKED
+     Desktop.
+
+
+DESKTOP.INF
+-----------
+057. The DESKTOP.INF file remains compatible across all existing      COMMENT: true for EMUDESK.INF
+     versions of TOS.
+058. A warning message appears if there is insufficient space to      COMMENT: true for EMUDESK.INF
+     save DESKTOP.INF.
+
+
+Dialog Boxes
+------------
+059. Many dialogs are more concise.  This includes error dialogs      TO BE CHECKED
+     like the one about "Your output device is not receiving
+     data..." and others.
+060. Leading underscores in numeric fields of boxes have been         FIXED: commit 06f9c9
+     replaced by spaces.
+
+
+Disk Copy
+---------
+061. Single-drive disk copies now require as few disk swaps as        MISSING FEATURE
+     possible; all available memory is used as a copy buffer.
+062. When copying disks between drives A: and B:, with no disk        TO BE CHECKED
+     in source or destination, an error occurs.  "Cancel" now
+     returns the user to the Disk Copy Dialog.
+
+
+Disk Copy/Format
+----------------
+063. Disk Copy and Disk Format have been combined into one dialog     MISSING FEATURE
+     box.  Whichever operation was chosen from the Desktop is the
+     default in the box when it appears.  For example, if disk A:
+     is dragged to disk B:, the Copy/Format box appears with
+     "Copy" selected.  By clicking the "Format" button, the user
+     can choose to format a disk.
+064. If users click Format from Copy, or vice versa, reasonable       MISSING FEATURE
+     defaults appear for the newly selected operation.
+
+
+Disk Directories
+----------------
+065. If you try to get a directory of a drive without a disk,         TO BE CHECKED
+     'Cancel' now aborts the operation and returns you to the
+     Desktop.
+066. Pressing <Esc> forces the Desktop to read the directory of       TO BE CHECKED
+     the topped window.  Before it would only do so if a media
+     change had been detected.
+067. The Desktop now re-reads all open directories (instead of        TO BE CHECKED
+     only those of drives A: and B:) after an operation which
+     could change the directory information.
+
+
+Disk Format
+-----------
+068. The "Format Disk" dialog now defaults to "Exit" if <Return>      MISSING FEATURE
+     is pressed.  This is consistent with other parts of the
+     Desktop.
+069. The Desktop now formats disks with an MS-DOS compatible boot     MISSING FEATURE
+     sector.
+070. Double-sided disks are now "twisted" in a more-efficient way     MISSING FEATURE
+     than before.  Single-sided disks are already "twisted"
+     optimally, and have been since Mega ROMs.
+
+
+Disk Open
+---------
+071. If an error occurs when a drive is 'opened', a blank window      TO BE CHECKED
+     no longer results.
+
+
+File Copy
+---------
+072. When files are copied, the pointer now changes to a "busy        TO BE CHECKED
+     bee" even if the Desktop is set to copy without confirmation.
+073. When copying files and an error occurs, the arrow now            TO BE CHECKED
+     becomes a busy bee when Retry is clicked.
+074. Files dragged to the border of a window whose first folder       FIXED: commit e5a3a8
+     is not displayed are copied to the current directory of that
+     window.  Previously, the files would be copied into the folder.
+
+
+Files
+-----
+075. Files which are both hidden and system or read-only will no      TO BE CHECKED
+     longer show up on the Desktop (or in the File Selector).
+
+
+File Move
+---------
+076. A file can be "moved" as well as copied.  To do this, select     FIXED: commit 0df5c2
+     the file(s), hold down <Control>, and drag the files to the
+     destination.  <Control> is checked when the mouse button is
+     released, so users can change their mind between Copy and
+     Move mid-drag (especially useful if a number of files have
+     been painstakingly selected).  When the mouse button is
+     released, a "Move File(s)" box appears.
+
+
+Filenames
+---------
+077. The Desktop no longer allows users to enter illegal              FIXED: commit 1af26d
+     characters (like *, ?, or :) in filenames.
+
+
+Folders
+-------
+078. If the user attempts to copy a file into a folder containing     FIXED: commit e9aa89
+     a folder with the same name as the file being copied, the
+     Desktop displays an "Invalid Copy Operation" alert box.
+     Formerly, it would show a "Disk Full" error.
+079. "Show Info..." now allows a folder to be renamed, just as it     FIXED: commit e28d46
+     does files.
+080. The Desktop no longer allows users to enter illegal              FIXED: commit 1af26d
+     characters (like *, ?, or :) in folder names.
+
+
+Installed Applications
+----------------------
+081. "Install Application" has a "Remove" button, and "Install"       BUG: no default
+     is now the default.  This dialog is also used to choose
+     Normal or Autorun status. (See "Autorun Applications")
+082. The default directory of an installed application is always      TO BE CHECKED
+     set to the directory of the document that invoked it, even
+     if the document is opened from a background window.
+083. Only the "filename.ext" is passed to the installed               TO BE CHECKED
+     application on its command line.  This fixed programs that
+     only expected 14 characters of command line.
+
+
+Install Disk Drive
+------------------
+084. "Install Disk Drive" has "Install" as its default.               BUG: default is Cancel
+
+
+Name Conflicts
+--------------
+085. Upon a "Name Conflict" during a Copy or Move operation, the      COMMENT: EmuTOS uses OK/Skip/Stop
+     user has three choices: Copy goes ahead and copies the file
+     (overwriting the one on the destination), Skip does nothing
+     with that particular file but continues the operation, and
+     Quit aborts the entire operation.
+086. "Set Preferences" determines if the system confirms name         FIXED: commit cc4955
+     conflicts.  If "Confirmation required for: File Overwrites"
+     is set to "No", files will be overwritten without warning.
+     If a folder name conflict occurs, a dialog appears regardless.
+087. Choosing "Skip" on a folder name conflict skips the entire       TO BE CHECKED
+     folder; choosing "Copy" begins copying files into the target
+     folder that caused the name conflict.
+
+
+Print Text File
+---------------
+088. The keyboard is checked every 16 characters; q, Q, ^C and        MISSING FEATURE
+     <Undo> all cause printing to abort.
+
+
+Running Applications
+--------------------
+089. Applications can be run from background windows; when the        TO BE CHECKED
+     Desktop launches an application, it shel_write()s the full
+     pathname of the application.
+
+
+Selecting Files
+---------------
+090. If the <Shift> key is held down while selecting files,           BUG: any click deselects
+     clicking anywhere within the window does not deselect any
+     selected files.  Clicking outside the window or clicking
+     anywhere with <Shift> released will deselect all the selected
+     files.
+091. By popular demand, selecting files in inactive windows by        BUG: does not work
+     holding down the right mouse button now works and is
+     supported.
+
+
+Show Info...
+------------
+092. "Show info..." for files or folders now uses the same            FIXED: commit 642b7d
+     dialog.  The name field allows the file or folder to be
+     renamed, but file attributes are only active for files.
+093. The date separator in "Show File Info" and "Show Folder          FIXED: commit 642b7d
+     Info" is now "/".   Before, they were inconsistent, one
+     using "/" and the other "-".
+094. "Bytes Available" and "Bytes Used" fields have been              FIXED: commit c53d3b
+     expanded to accommodate values up to 2147483647
+     (hex 7FFFFFFF).
+
+
+Show Text File
+--------------
+095. Hitting <space> in the middle of a page makes the -More-         TO BE CHECKED
+     come 24 lines from the line being displayed when the key is
+     hit, rather than having the same effect as waiting for the
+     -More- and then hitting <space>.
+096. d, D and ^D cause the -More- to come 1/2 page from the line      TO BE CHECKED
+     being displayed when the key is hit; <Return> makes it come
+     one line from the line being displayed when the key is hit.
+097. q, Q, ^C, and <Undo> cause the output to stop immediately.       TO BE CHECKED
+098. Line Wrap is not modified; if the VT-52 Emulator is in           TO BE CHECKED
+     no-wrap mode, that's what you get.
+099. If a "Drive Not Responding" alert box is displayed when the      TO BE CHECKED
+     Desktop "Shows" a file, a message is printed to the screen:
+     "Could not find filename.ext".  Pressing any key returns to
+     the Desktop.
+
+
+Time/Date Stamp
+---------------
+100. The Time/Date Stamp on files is now preserved across Copies      FIXED: commit f1217f
+     and Moves.
+
+
+Windows
+-------
+101. The desktop now opens the next window where the last window      TO BE CHECKED
+     was closed.
+102. The desktop shows as many files as possible inside each          FIXED: commit e7c1b3
+     directory window.  The only limit is the amount of free
+     memory in the system; this removes the old static file
+     allocation limit of 400.
+103. All background windows are updated after a file copy, move,      TO BE CHECKED
+     delete, disk copy, or disk format operation.
+
+
+
+*******************************************************************
+*                           GEMDOS changes                        *
+*******************************************************************
+
+GEMDOS Changes - Character I/O
+==============================
+Cconrs()                                                            Status
+--------                                                            ------
+104. Cconrs() now handles keystrokes where the high-order bit of      TO BE CHECKED
+     the ASCII code for the character is 1.
+105. Cconrs() no longer echoes the input line to the console when     TO BE CHECKED
+     the standard input is redirected to come from a file.
+
+
+Cconws()
+--------
+106. Cconws() is faster than before when handle 1 is redirected       TO BE CHECKED
+     to a file.
+
+
+Character I/O
+-------------
+107. Character I/O functions (including Crawio() and Cconout())       TO BE CHECKED
+     work predictably when redirected.  In particular, input and
+     output status, and Cconout() work when redirected.
+
+
+Control-S and Control-C Handling
+--------------------------------
+108. Console handling of ^S and ^C is consistent.  ^C during any      TO BE CHECKED
+     "cooked" input or output function (Cconin(), Cconout(),
+     Cnecin(), Cconws(), Cconrs(), and Fread() from a console
+     device) causes the current process to terminate.
+
+
+Standard Handles
+----------------
+109. Closing a standard handle (0-5) causes it to revert to its       TO BE CHECKED
+     default BIOS device definition; previously this was
+     undefined.  The normal way to deal with a standard handle
+     is to Fdup() it to make a copy, Fforce() it to whatever you
+     want, then Fforce() from the copy when you're done to revert
+     back to what it was.  Closing now works, to at least get it
+     back to a known state.
+
+
+Type-ahead
+----------
+110. Console input type-ahead buffers are implemented correctly,      TO BE CHECKED
+     and no longer grow without bound into the surrounding memory.
+
+
+
+GEMDOS Changes - File Functions
+===============================
+Archive Bit
+-----------
+111. The "archive" attribute bit (0x20) is now correctly              BUG: bit isn't set
+     maintained: it is set when a file is created or modified.
+     Archive/backup programs can check this bit to see if the
+     file needs to be backed up, and can clear the bit when
+     they have backed it up.
+
+
+Duplicate Filenames
+-------------------
+112. GEMDOS now prevents duplicate filenames; it no longer            COMMENT: appears to be fixed
+     occasionally creates two files with the same name.
+
+
+Fattrib()
+---------
+113. Fattrib() checks the legality of what is being attempted;        TO BE CHECKED
+     for example, an attempt to change the directory bit of a
+     file or subdirectory will be denied.
+
+
+Fdatime()
+---------
+114. Fdatime() no longer byte-swaps the user's input values when      FIXED: commit 18a3d6
+     writing a new date/time.
+115. Fdatime() returns EIHNDL for invalid handles and handles         BUG: does not check handle
+     which refer to character devices (which have no date or
+     time).
+
+
+Fread() and Fwrite()
+--------------------
+116. Fread() and Fwrite() with a length argument of zero do not       FIXED: commit 1af26d
+     hang.
+117. Fwrite() calls which write to a character device (CON, AUX,      BUG: writes are limited to 32K-1 bytes
+     PRN) are no longer limited to 32K-1 characters.  Applications
+     should still limit writes to retain compatibility with other
+     versions of TOS, however.  Fread() calls which read from a
+     character device have always been limited to 32K-1 characters,
+     and still are.
+
+
+Redirection
+-----------
+118. Redirection to the printer (handle 3, "PRN:") works              TO BE CHECKED
+     correctly.  Previously, GEMDOS would make the BIOS call for
+     input status on the printer device, which is not supported.
+
+
+Sector Buffering
+----------------
+119. Sector buffering in GEMDOS has been improved, and the user       TO BE CHECKED
+     can add buffers to the FAT/root directory list to improve
+     performance dramatically.  Old buffering was inefficient,
+     and (in one case) actually wrong.
+
+
+Tsetdate() and Tsettime()
+-------------------------
+120. Tsettime() and Tsetdate() cause the BIOS time and date to        FIXED: commit 4b3f47
+     be set, too.  The reverse is also true: setting the BIOS
+     date and time affects the GEMDOS values.  This is the same
+     behavior as in the 4/22/87 (Mega) ROMs, where it is
+     necessary for the real-time clock chip.
+
+
+
+GEMDOS Changes - Directory Functions
+====================================
+Dcreate()
+---------
+121. Dcreate() (mkdir) now detects and handles errors; it             TO BE CHECKED
+     recovers correctly from failures while creating a directory
+     (such as write errors and disk-full errors), and does not
+     partially build subdirectories.
+122. Attempting to Dcreate() a directory with the name of an          FIXED: commit 1af26d
+     existing file will return EACCDN.  Previously, it would
+     delete the file, then create the directory.
+
+
+Ddelete()
+---------
+123. Ddelete() immediately following a Dcreate() now works            TO BE CHECKED
+     correctly.  Formerly, this would fail but a second Ddelete()
+     would work.
+
+
+Folder Limits
+-------------
+124. The so-called "40-folder bug" is fixed.  There are still         TO BE CHECKED
+     limits, mainly on the depth of folders and the accumulated
+     depth of open files, but these limits are very far away and
+     can still be extended with "FOLDRXXX.PRG" which is widely
+     available.  Also, a folder only takes up space when it is
+     "active", not just when you've seen it.  See "OS Pool
+     Discussion."
+
+
+Frename()
+---------
+125. Frename() can now rename a folder.                               FIXED: commit 7b03a8
+126. Frename() cannot, however, move the folder around in the         COMMENT: EmuTOS can, however!
+     directory structure, the way it can a file.
+127. The entries for "." and ".." in subdirectories are correctly     BUG: the date/time of the .. entry is wrong
+     date-stamped.
+
+
+Volume Labels
+-------------
+128. Fcreate(file, 0x08) will create a volume label IF the 'file'     FIXED: commit 778232
+     ends up in the root directory of a device.  Otherwise you
+     get EACCDN.
+129. Before the new label is created, any label on that device        FIXED: commit aecc85
+     is deleted. (Well, specifically, the first file in the root
+     directory of the device with attributes == 0x08, if any, is
+     deleted.)
+130. You can create a volume label with the same name as an           FIXED: commit aecc85
+     existing file, or vice versa.  Both will coexist just fine
+     on the disk.
+131. You cannot Fdelete() a volume label.                             TO BE CHECKED
+132. You cannot Frename() a volume label.                             FIXED: commit 8b517c
+133. You cannot Fattrib() a volume label.                             TO BE CHECKED
+134. You cannot use Fattrib() to make a file into a volume label.     FIXED: commit 37deaa
+135. You cannot remove a volume label. (But see above; you can        TO BE CHECKED
+     rename one simply by creating one with the new name.)
+
+
+
+GEMDOS Changes - Processes and Memory
+=====================================
+Malloc()
+--------
+136. By and large, the restrictions on Malloc() (i.e. the 20          BUG: Malloc doesn't use the folder pool
+     blocks/process limit) have been lifted.  Malloc() still uses
+     the same internal "OS Pool" as folders, so it should still
+     be used sparingly.  Use Malloc() for large chunks, and use
+     another manager (such as a C compiler library's malloc()
+     function) for general-purpose memory management.  Also,
+     FOLDR100.PRG can be used to add to the OS Pool, which both
+     subdirectories and Malloc() use. See "OS Pool Discussion."
+
+
+OS Pool
+-------
+137. An exhausted OS Pool now results in predictable (and safe)       FIXED: commit d695ea
+     behavior.  The machine will lock up with a message to the
+     effect that the pool has been exhausted, and that you need to
+     use FOLDRXXX.PRG to enlarge it. It no longer gives incorrect
+     results; nor does it damage disks.
+138. The OS Pool has been reduced to 11/20/85 size.  This may         COMMENT: Atari pool size is unknown, but
+     allow some programs to run that ran on 520STs with 11/20/85      appears to be about 6000 bytes in TOS 1.04.
+     ROMs but failed to run with Mega ROMs.                           EmuTOS uses 8000 bytes.
+
+
+Pexec()
+-------
+139. Pexec() handles exceptional cases correctly; it no longer        COMMENT: appears to be fixed
+     causes bombs or leaves files open, and it releases memory
+     correctly.
+140. Pexec() deals correctly with files having more than 32K of       TO BE CHECKED
+     relocation information.
+141. Pexec() Mode 6, 'Just Go, Then Free', has been added.  Mode      FIXED: commit 2362ac
+     6 is similar to Mode 4, except memory ownership is changed
+     to the child process; when the child terminates, GEMDOS
+     frees any memory allocated to the child, including its TPA.
+
+
+Program Startup
+---------------
+142. The second of the two reserved longwords in a PRG file           FIXED: commit e7a337
+     header is no longer reserved: it is now defined as a bitmap
+     of requests for new features.  When the lowest-order bit,
+     0x00000001, is set, it indicates that Pexec() should not
+     bother to clear the program's entire heap, only the declared
+     BSS.
+
+
+Program Termination
+-------------------
+143. When a program is terminated with bombs (bus error, address      TO BE CHECKED
+     error, etc.), its parent's Pexec() call returns with error
+     code 0x0000ffff.  Previously, it returned with error code 0.
+
+
+
+GEMDOS Changes - Other
+======================
+FAT Search Code
+---------------
+144. The FAT searching code for hard disks and floppies is much       FIXED: commits 79ab48, 497280
+     faster.  This speedup is especially dramatic when using
+     "Show info...", or when creating a file on a heavily loaded
+     hard disk.
+
+
+FATs (12 bit)
+-------------
+145. The 12-bit FAT code now deals with disks of up to 4096           TO BE CHECKED
+     clusters correctly.  Formerly, only 2048 clusters worked;
+     above that there were sign-extension problems.
+
+
+Media Change
+------------
+146. GEMDOS now recognizes "media change" better.  It would           COMMENT: appears to be fixed
+     sometimes fail before because GEMDOS was, in effect, using a
+     cache without checking for media change.
+147. Mediach() is more reliable when using logical drives A: and      MISSING FEATURE
+     B: on a single-drive system.
+
+
+
+GEMDOS Changes - Supplemental Information
+=========================================
+OS Pool Discussion
+------------------
+Technically, the limits are as follows: there are 80 blocks in
+the system's "OS pool."  Two blocks are used per active folder.
+An "active" folder is one which is the root directory of the
+device it's on, or which has open files, or which is the current
+directory of one or more processes for that drive, or which has
+an "active" child (subdirectory).  Yes, this is a recursive
+definition.  Remember that each process has a current directory
+on every logical device, but also remember that one folder only
+takes up two blocks, no matter how many reasons it's "active."
+
+In addition, one block is used per open file, and 1/4 block is
+used per memory chunk (allocated or free) in the system TPA.
+In this context, an "open" file is one which has been Fopened
+and not Fclosed; this is not the same as the "Open" operation
+in an application.  When files are closed, processes terminate,
+or memory chunks are freed (and coalesce into larger free
+chunks), blocks are freed back into the OS pool.
+
+The improvement over previous ROMs is this: the old definition
+of "active" was "seen" - getting a list of the files in a
+directory caused all the folders there to take up blocks in the
+pool.  In addition, blocks never got freed in the pool.  Also,
+once parts of the pool had been used for managing TPA memory
+chunks, they were unavailable for managing folders, and vice
+versa.  All these restrictions are lifted.
+
+It is still possible to run out of pool, of course.  The
+program FOLDR100.PRG was released by Atari and is part of the
+HDX (hard-disk utilities) distribution.  It adds memory to the
+OS pool, and it still works, adding memory to the new kind of
+pool, too.  Placing this program in your AUTO folder causes 200
+more blocks to be added to the OS pool, which is room for 100
+more folders (remember, only ACTIVE folders take up room) or
+800 more memory chunks, or any combination.  For more
+information, see the FOLDR100.PRG documentation in your HDX
+manual.
+
+
+
+*******************************************************************
+*                           VDI Changes                           *
+*******************************************************************
+
+Mouse Code                                                            Status
+----------                                                            ------
+148. VDI Mouse Code now supports screens larger than 32K.  This       TO BE CHECKED
+     allows higher-resolution monitors (i.e. Moniterm).
+
+
+vst_extent()
+------------
+149. vst_extent() now works correctly when the rotation is 270        FIXED: commit 023f6b
+     degrees.  NOTE: there is no vst_extent()!  There is a
+     vqt_extent() and a vst_rotation(); the bug with 270 degree
+     rotation is a vst_extent() bug.
+
+
+vq_mouse()
+----------
+150. vq_mouse() has been made more reliable through a code            COMMENT: no specific code rewrite in EmuTOS
+     rewrite.
