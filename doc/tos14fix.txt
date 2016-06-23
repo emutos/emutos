@@ -596,11 +596,11 @@ Windows
 
 GEMDOS Changes - Character I/O
 ==============================
-Cconrs()                                                            Status
---------                                                            ------
-104. Cconrs() now handles keystrokes where the high-order bit of      TO BE CHECKED
+Cconrs()                                                              Status
+--------                                                              ------
+104. Cconrs() now handles keystrokes where the high-order bit of      FIXED: commit ca1d10
      the ASCII code for the character is 1.
-105. Cconrs() no longer echoes the input line to the console when     TO BE CHECKED
+105. Cconrs() no longer echoes the input line to the console when     BUG: input redirection not implemented
      the standard input is redirected to come from a file.
 
 
@@ -662,7 +662,7 @@ Duplicate Filenames
 
 Fattrib()
 ---------
-113. Fattrib() checks the legality of what is being attempted;        TO BE CHECKED
+113. Fattrib() checks the legality of what is being attempted;        BUG: bits are not validated
      for example, an attempt to change the directory bit of a
      file or subdirectory will be denied.
 
@@ -728,7 +728,7 @@ Dcreate()
 
 Ddelete()
 ---------
-123. Ddelete() immediately following a Dcreate() now works            COMMENT: appears to be fixed since at least 0.8.5
+123. Ddelete() immediately following a Dcreate() now works            FIXED: since at least 0.8.5
      correctly.  Formerly, this would fail but a second Ddelete()
      would work.
 
@@ -825,7 +825,7 @@ Program Startup
 
 Program Termination
 -------------------
-143. When a program is terminated with bombs (bus error, address      TO BE CHECKED
+143. When a program is terminated with bombs (bus error, address      FIXED: commit 0d92d4
      error, etc.), its parent's Pexec() call returns with error
      code 0x0000ffff.  Previously, it returned with error code 0.
 
