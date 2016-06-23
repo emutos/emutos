@@ -907,7 +907,7 @@ manual.
 
 Mouse Code                                                            Status
 ----------                                                            ------
-148. VDI Mouse Code now supports screens larger than 32K.  This       TO BE CHECKED
+148. VDI Mouse Code now supports screens larger than 32K.  This       FIXED: commit a98c2a
      allows higher-resolution monitors (i.e. Moniterm).
 
 
