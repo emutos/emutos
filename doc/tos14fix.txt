@@ -662,7 +662,7 @@ Duplicate Filenames
 
 Fattrib()
 ---------
-113. Fattrib() checks the legality of what is being attempted;        BUG: bits are not validated
+113. Fattrib() checks the legality of what is being attempted;        FIXED: commit 03ba1f
      for example, an attempt to change the directory bit of a
      file or subdirectory will be denied.
 
