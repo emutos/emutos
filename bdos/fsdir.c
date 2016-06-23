@@ -406,10 +406,9 @@ long xchmod(char *p, int wrt, char mod)
         return EFILNF;
 
     /*
-     * disallow attempts to change an ordinary file to a volume label
-     * (reference: Rainbow TOS Release Notes)
+     * disallow attempts to set invalid bits for an ordinary file
      */
-    if (wrt && (mod&FA_VOL))
+    if (wrt && (mod&~FA_NORM))
         return EACCDN;
 
     pos -= 21;                              /* point at attribute in file */
