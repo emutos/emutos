@@ -728,7 +728,7 @@ Dcreate()
 
 Ddelete()
 ---------
-123. Ddelete() immediately following a Dcreate() now works            TO BE CHECKED
+123. Ddelete() immediately following a Dcreate() now works            COMMENT: appears to be fixed since at least 0.8.5
      correctly.  Formerly, this would fail but a second Ddelete()
      would work.
 
@@ -765,11 +765,11 @@ Volume Labels
 130. You can create a volume label with the same name as an           FIXED: commit aecc85
      existing file, or vice versa.  Both will coexist just fine
      on the disk.
-131. You cannot Fdelete() a volume label.                             TO BE CHECKED
+131. You cannot Fdelete() a volume label.                             FIXED: commit 1af26d
 132. You cannot Frename() a volume label.                             FIXED: commit 8b517c
-133. You cannot Fattrib() a volume label.                             TO BE CHECKED
+133. You cannot Fattrib() a volume label.                             FIXED: commit 1af26d
 134. You cannot use Fattrib() to make a file into a volume label.     FIXED: commit 37deaa
-135. You cannot remove a volume label. (But see above; you can        TO BE CHECKED
+135. You cannot remove a volume label. (But see above; you can        FIXED: commit 1af26d
      rename one simply by creating one with the new name.)
 
 
