@@ -481,7 +481,6 @@ long xclose(int h)
 long ixclose(OFD *fd, int part)
 {                                   /*  M01.01.03                   */
     OFD *p, **q;
-    long tmp;
     int i;                          /*  M01.01.03                   */
     BCB *b;
 
@@ -490,36 +489,32 @@ long ixclose(OFD *fd, int part)
      * that the date/time, starting cluster, and file length in the
      * directory entry are updated.  In addition, for files, we must
      * set the archive flag.
+     *
+     * The following code avoids multiple ixlseek()/ixlread()/ixlwrite()
+     * sequences by just getting a pointer to a buffer containing the
+     * FCB, and updating it directly.  We must do an ixwrite() at the
+     * end so that the buffer is marked as dirty and is subsequently
+     * written.
      */
     if (fd->o_flag & O_DIRTY)
     {
-        ixlseek(fd->o_dirfil,fd->o_dirbyt+22);
-        swpw(fd->o_strtcl);
-        swpl(fd->o_fileln);
+        FCB *fcb;
+        UBYTE attr;
+
+        ixlseek(fd->o_dirfil,fd->o_dirbyt); /* start of dir entry */
+        fcb = (FCB *)ixread(fd->o_dirfil,32L,NULL);
+        attr = fcb->f_attrib;               /* get attributes */
+        memcpy(&fcb->f_td,&fd->o_td,10);    /* copy date/time, start, length */
+        swpw(fcb->f_clust);                 /*  & fixup byte order */
+        swpl(fcb->f_fileln);
 
         if (part & CL_DIR)
-        {
-            tmp = fd->o_fileln;             /* [1] */
-            fd->o_fileln = 0;
-            ixwrite(fd->o_dirfil,10L,(char *)&fd->o_td);
-            fd->o_fileln = tmp;
-        }
+            fcb->f_fileln = 0L;             /* dir lengths on disk are zero */
         else
-        {
-            UBYTE attr;
+            attr |= FA_ARCHIVE;             /* set the archive flag for files */
 
-            ixwrite(fd->o_dirfil,10L,(char *)&fd->o_td);
-
-            /* set the archive flag in the attribute byte */
-            ixlseek(fd->o_dirfil,fd->o_dirbyt+11);
-            ixread(fd->o_dirfil,1,&attr);
-            attr |= FA_ARCHIVE;
-            ixlseek(fd->o_dirfil,fd->o_dirbyt+11);
-            ixwrite(fd->o_dirfil,1,&attr);
-        }
-
-        swpw(fd->o_strtcl);
-        swpl(fd->o_fileln);
+        ixlseek(fd->o_dirfil,fd->o_dirbyt+11);  /* seek to attrib byte */
+        ixwrite(fd->o_dirfil,1,&attr);          /*  & rewrite it       */
     }
 
     if ((!part) || (part & CL_FULL))
@@ -546,21 +541,6 @@ long ixclose(OFD *fd, int part)
 
     return E_OK;
 }
-
-/*
-** [1]  We play games here (thanx, Jason).  The ixwrite() call will essentially
-**      copy the time, date, cluster, and length fields from the OFD of the
-**      (dir) file we are closeing to the FCB for this (dir) file in the
-**      parent dir.  The fileln field of this dir is thus set to 0.  But if
-**      this is a directory we are closing (path & CL_DIR), shouldn't the
-**      fileln be zero anyway?  I give up.
-**                                      - ktb
-**      Answer: The fileln field in a directory OFD is set to 0x7fffffff
-**      (see makofd()), so we need to do this to ensure the length in the
-**      actual directory entry is zero.
-**                                      - RFB
-*/
-
 
 
 /*
