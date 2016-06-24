@@ -431,7 +431,7 @@ Disk Format
 
 Disk Open
 ---------
-071. If an error occurs when a drive is 'opened', a blank window      TO BE CHECKED
+071. If an error occurs when a drive is 'opened', a blank window      FIXED: commit 163362
      no longer results.
 
 
@@ -647,7 +647,7 @@ GEMDOS Changes - File Functions
 ===============================
 Archive Bit
 -----------
-111. The "archive" attribute bit (0x20) is now correctly              BUG: bit isn't set
+111. The "archive" attribute bit (0x20) is now correctly              FIXED: commit fdfa4b
      maintained: it is set when a file is created or modified.
      Archive/backup programs can check this bit to see if the
      file needs to be backed up, and can clear the bit when
