@@ -485,10 +485,15 @@ long ixclose(OFD *fd, int part)
     int i;                          /*  M01.01.03                   */
     BCB *b;
 
+    /*
+     * if the file or folder has been modified, we need to make sure
+     * that the date/time, starting cluster, and file length in the
+     * directory entry are updated.  In addition, for files, we must
+     * set the archive flag.
+     */
     if (fd->o_flag & O_DIRTY)
     {
         ixlseek(fd->o_dirfil,fd->o_dirbyt+22);
-
         swpw(fd->o_strtcl);
         swpl(fd->o_fileln);
 
@@ -500,7 +505,18 @@ long ixclose(OFD *fd, int part)
             fd->o_fileln = tmp;
         }
         else
+        {
+            UBYTE attr;
+
             ixwrite(fd->o_dirfil,10L,(char *)&fd->o_td);
+
+            /* set the archive flag in the attribute byte */
+            ixlseek(fd->o_dirfil,fd->o_dirbyt+11);
+            ixread(fd->o_dirfil,1,&attr);
+            attr |= FA_ARCHIVE;
+            ixlseek(fd->o_dirfil,fd->o_dirbyt+11);
+            ixwrite(fd->o_dirfil,1,&attr);
+        }
 
         swpw(fd->o_strtcl);
         swpl(fd->o_fileln);
