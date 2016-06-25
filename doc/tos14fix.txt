@@ -600,7 +600,7 @@ Cconrs()                                                              Status
 --------                                                              ------
 104. Cconrs() now handles keystrokes where the high-order bit of      FIXED: commit ca1d10
      the ASCII code for the character is 1.
-105. Cconrs() no longer echoes the input line to the console when     BUG: input redirection not implemented
+105. Cconrs() no longer echoes the input line to the console when     FIXED: commit 678684
      the standard input is redirected to come from a file.
 
 
