@@ -455,7 +455,6 @@ restrt:
                 {
                     if (xread(h,1L,p) == 1)
                     {
-                        oscall(GEMDOS_FWRITE,1,1L,p);
                         if (*p == 0x0d)
                         {       /* eat the lf */
                             xread(h,1L,&ctmp);
