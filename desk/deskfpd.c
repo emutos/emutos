@@ -315,6 +315,9 @@ static LONG pn_fcomp(FNODE *pf1, FNODE *pf2, WORD which)
     case S_TYPE:
         chk = strcmp(scasb(ps1,'.'),scasb(ps2,'.'));
         break;
+    case S_NSRT:
+        chk = (LONG)pf1->f_seq - (LONG)pf2->f_seq;  /* low seq #s sort first */
+        break;
     }
     if (chk)
         return chk;
@@ -325,15 +328,18 @@ static LONG pn_fcomp(FNODE *pf1, FNODE *pf2, WORD which)
 
 /*
  *  Routine to compare two fnodes to see which one is greater.
- *  Folders always sort out first, and then it is based on
- *  the G.g_isort parameter.
+ *  Sort sequence is based on the G.g_isort parameter; folders
+ *  always sort out first (unless 'unsorted' is specified).
  *
  *  Returns -ve if pf1 < pf2, 0 if pf1 == pf2, and +ve if pf1 > pf2
  */
 static LONG pn_comp(FNODE *pf1, FNODE *pf2)
 {
-    if ((pf1->f_attr ^ pf2->f_attr) & F_SUBDIR)
-        return (pf1->f_attr & F_SUBDIR) ? -1L : 1L;
+    if (G.g_isort != S_NSRT)
+    {
+        if ((pf1->f_attr ^ pf2->f_attr) & F_SUBDIR)
+            return (pf1->f_attr & F_SUBDIR) ? -1L : 1L;
+    }
 
     return pn_fcomp(pf1,pf2,G.g_isort);
 }
@@ -350,8 +356,7 @@ FNODE *pn_sort(PNODE *pn)
     FNODE **ml_pfndx;
     WORD  count, gap, i, j;
 
-    if ((pn->p_count < 2)       /* the list is already sorted */
-     || (G.g_isort == S_NSRT))  /* or we shouldn't sort */
+    if (pn->p_count < 2)        /* the list is already sorted */
         return pn->p_flist;
 
     /*
