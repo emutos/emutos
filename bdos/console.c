@@ -25,6 +25,7 @@
 #include        "biosbind.h"
 
 /* The following data structures are used for the typeahead buffer */
+/* in each array, [0] is used for prn, [1] for aux, and [2] for con */
 static long glbkbchar[3][KBBUFSZ]; /* The actual typeahead buffer */
 int add[3] ;                    /*  index of add position, used from bdosmain.c */
 int remove[3] ;                 /*  index of remove position, used from bdosmain.c */
@@ -100,7 +101,7 @@ long xconostat(void)
  */
 long xprtostat(void)
 {
-    return(Bcostat(HXFORM(run->p_uft[4])));
+    return(Bcostat(HXFORM(run->p_uft[3])));
 }
 
 /*
@@ -108,7 +109,7 @@ long xprtostat(void)
  */
 long xauxistat(void)
 {
-    return(constat(HXFORM(run->p_uft[3])));
+    return(constat(HXFORM(run->p_uft[2])));
 }
 
 /*
@@ -116,7 +117,7 @@ long xauxistat(void)
  */
 long xauxostat(void)
 {
-    return(Bcostat(HXFORM(run->p_uft[3])));
+    return(Bcostat(HXFORM(run->p_uft[2])));
 }
 
 /*
@@ -244,7 +245,7 @@ static void cookdout(int h, int ch)
  */
 long xauxout(int ch)
 {
-    return Bconout(HXFORM(run->p_uft[3]), ch);
+    return Bconout(HXFORM(run->p_uft[2]), ch);
 }
 
 /*
@@ -252,7 +253,7 @@ long xauxout(int ch)
  */
 long xprtout(int ch)
 {
-    return Bconout(HXFORM(run->p_uft[4]), ch);
+    return Bconout(HXFORM(run->p_uft[3]), ch);
 }
 
 
@@ -334,7 +335,7 @@ long x8in(void)
  */
 long xauxin(void)
 {
-    return(Bconin(HXFORM(run->p_uft[3])));
+    return(Bconin(HXFORM(run->p_uft[2])));
 }
 
 /*

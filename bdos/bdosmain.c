@@ -283,9 +283,10 @@ void    osinit(void)
 
     run->p_uft[0] = H_Console;          /* stdin        =       con:    */
     run->p_uft[1] = H_Console;          /* stdout       =       con:    */
-    run->p_uft[2] = H_Console;          /* stderr       =       con:    */
-    run->p_uft[3] = H_Aux;              /* stdaux       =       aux:    */
-    run->p_uft[4] = H_Print;            /* stdprn       =       prn:    */
+    run->p_uft[2] = H_Aux;              /* stdaux       =       aux:    */
+    run->p_uft[3] = H_Print;            /* stdprn       =       prn:    */
+    run->p_uft[4] = H_Console;          /* Atari TOS redirects undefined ... */
+    run->p_uft[5] = H_Console;          /* ... handles 4, 5 to con: */
 
     add[0] = remove[0] = add[1] = remove[1] = add[2] = remove[2] = 0 ;
 
