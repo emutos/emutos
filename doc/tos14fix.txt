@@ -680,7 +680,7 @@ Fread() and Fwrite()
 --------------------
 116. Fread() and Fwrite() with a length argument of zero do not       FIXED: commit 1af26d
      hang.
-117. Fwrite() calls which write to a character device (CON, AUX,      BUG: writes are limited to 32K-1 bytes
+117. Fwrite() calls which write to a character device (CON, AUX,      FIXED: commit 060ffe
      PRN) are no longer limited to 32K-1 characters.  Applications
      should still limit writes to retain compatibility with other
      versions of TOS, however.  Fread() calls which read from a
