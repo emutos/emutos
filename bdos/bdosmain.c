@@ -533,24 +533,22 @@ restrt:
 
             if (fn == GEMDOS_FWRITE)    /* write */
             {
-                if (pw[2])      /* disallow HUGE writes     */
-                    return(0);
+                long n, count = *(long *)&pw[2];
 
                 pb2 = *pb;      /* char * is buffer address */
 
-
-                for (i = 0; i < pw[3]; i++)
+                for (n = 0; n < count; n++)
                 {
                     if( num == H_Console )
                         tabout( HXFORM(num) , (unsigned char)*pb2++ ) ;
                     else
                     {           /* M01.01.1029.01 */
                         if (Bconout( HXFORM(num), (unsigned char)*pb2++ ) == 0)
-                            return(i);
+                            return n;
                     }
                 }
 
-                return(pw[3]);
+                return count;
             }
 
             return(0);
