@@ -244,10 +244,7 @@ long xmkdir(char *s)
     /* write identifier */
     memcpy(f2, dots, 22);
     f2->f_attrib = FA_SUBDIR;
-    f2->f_td.time = current_time;
-    swpw(f2->f_td.time);                /*  M01.01.SCC.FS.04  */
-    f2->f_td.date = current_date;
-    swpw(f2->f_td.date);                /*  M01.01.SCC.FS.04  */
+    f2->f_td = f0->o_td;            /* time/date are little-endian */
     cl = f0->o_strtcl;
     swpw(cl);
     f2->f_clust = cl;
@@ -258,17 +255,19 @@ long xmkdir(char *s)
     memcpy(f2, dots, 22);
     f2->f_name[1] = '.';           /* This is .. */
     f2->f_attrib = FA_SUBDIR;
-    f2->f_td.time = current_time;
-    swpw(f2->f_td.time);           /*  M01.01.SCC.FS.06  */
-    f2->f_td.date = current_date;
-    swpw(f2->f_td.date);           /*  M01.01.SCC.FS.06  */
-    cl = f->o_dirfil->o_strtcl;
-
-    if (!fd->o_dnode)              /* if creating a folder in the root, the */
-        cl = 0;                    /*  cluster# of the .. entry must be 0   */
-
-    swpw(cl);
-    f2->f_clust = cl;
+    /* if creating a folder in the root, the parent entry needs special handling */
+    if (!fd->o_dnode)
+    {
+        f2->f_td.time = 0;          /* time/date of parent must be zero */
+        f2->f_td.date = 0;
+        f2->f_clust = 0;            /* cluster number is zero too */
+    }
+    else
+    {
+        f2->f_td = f->o_dirfil->o_td;   /* time/date are little-endian */
+        f2->f_clust = f->o_dirfil->o_strtcl;
+        swpw(f2->f_clust);
+    }
     f2->f_fileln = 0;
     memcpy(f, f0, sizeof(OFD));
     f->o_flag |= O_DIRTY;
