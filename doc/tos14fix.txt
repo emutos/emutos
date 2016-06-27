@@ -530,12 +530,12 @@ Running Applications
 
 Selecting Files
 ---------------
-090. If the <Shift> key is held down while selecting files,           BUG: any click deselects
+090. If the <Shift> key is held down while selecting files,           FIXED: commit f69658
      clicking anywhere within the window does not deselect any
      selected files.  Clicking outside the window or clicking
      anywhere with <Shift> released will deselect all the selected
      files.
-091. By popular demand, selecting files in inactive windows by        BUG: does not work
+091. By popular demand, selecting files in inactive windows by        COMMENT: this does *not* work in Atari TOS
      holding down the right mouse button now works and is
      supported.
 
