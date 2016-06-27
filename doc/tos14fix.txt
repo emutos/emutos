@@ -749,7 +749,7 @@ Frename()
 125. Frename() can now rename a folder.                               FIXED: commit 7b03a8
 126. Frename() cannot, however, move the folder around in the         COMMENT: EmuTOS can, however!
      directory structure, the way it can a file.
-127. The entries for "." and ".." in subdirectories are correctly     BUG: the date/time of the .. entry is wrong
+127. The entries for "." and ".." in subdirectories are correctly     FIXED: commit ac7552
      date-stamped.
 
 
