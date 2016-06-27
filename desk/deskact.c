@@ -527,6 +527,14 @@ void act_allchg(WORD wh, OBJECT *tree, WORD root, WORD ex_obj, GRECT *pt, GRECT 
 
 /*
  *  Single click action on the specified tree of objects
+ *
+ *  Rules:
+ *   1. a shift-click on no object within a window will leave the selection
+ *      state of all objects unchanged
+ *   2. a click on no object within a window OR a (shift-)click outside a
+ *      window will deselect all objects
+ *   3. a click on an object will deselect all objects & select the object
+ *   4. a shift-click on an object will toggle the state of that object only
  */
 void act_bsclick(WORD wh, OBJECT *tree, WORD root, WORD mx, WORD my, WORD keystate,
                  GRECT *pc, WORD dclick)
@@ -537,6 +545,9 @@ void act_bsclick(WORD wh, OBJECT *tree, WORD root, WORD mx, WORD my, WORD keysta
 
     shifted = (keystate & K_LSHIFT) || (keystate & K_RSHIFT);
     obj = gr_obfind(tree, root, mx, my);
+
+    if ((obj == root) && shifted)   /* shift-click within window does nothing */
+        return;
 
     if ((obj == root) || (obj == NIL))
     {
