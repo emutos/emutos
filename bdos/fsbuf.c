@@ -109,29 +109,18 @@ void flush(BCB *b)
 
 
 /*
- * getrec - return the ptr to the buffer containing the desired record
+ * getbcb - called by getrec() to get the BCB for the desired record
+ *
+ * buftype is BT_FAT, BT_ROOT, or BT_DATA
  */
-
-char *getrec(RECNO recn, OFD *of, int wrtflg)
+static BCB *getbcb(DMD *dmd,WORD buftype,RECNO recnum)
 {
-    DMD *dm = of->o_dmd;
     BCB *b;
-    BCB *p,*mtbuf,**q,**phdr;
-    int n,err;
-
-    KDEBUG(("getrec 0x%lx, %p, 0x%x\n",recn,dm,wrtflg));
-
-    /* put bcb management here */
-    if (of->o_dmd->m_fatofd == of)  /* is this the OFD for the 'FAT file'? */
-        n = BT_FAT;                 /* yes, must be FAT access             */
-    else if (!of->o_dnode)          /* no - do we have a dir node?         */
-        n = BT_ROOT;                /* no, must be root                    */
-    else n = BT_DATA;               /* yes, must be normal dir/file        */
-
-    KDEBUG(("n=%i, dm->m_recoff[n]=0x%lx\n",n,dm->m_recoff[n]));
+    BCB *p, *mtbuf, **q, **phdr;
+    int err;
 
     mtbuf = 0;
-    phdr = &bufl[n==BT_FAT ? BI_FAT : BI_DATA];
+    phdr = &bufl[buftype==BT_FAT ? BI_FAT : BI_DATA];
 
     /*
      * See if the desired record for the desired drive is in memory.
@@ -142,7 +131,7 @@ char *getrec(RECNO recn, OFD *of, int wrtflg)
 
     for (b = *(q = phdr); b; b = *(q = &b->b_link))
     {
-        if ((b->b_bufdrv == dm->m_drvnum) && (b->b_buftyp == n) && (b->b_bufrec == recn))
+        if ((b->b_bufdrv == dmd->m_drvnum) && (b->b_buftyp == buftype) && (b->b_bufrec == recnum))
             break;
         /*
          * keep track of the last invalid buffer
@@ -175,17 +164,17 @@ doio:   for (p = *(q = phdr); p->b_link; p = *(q = &p->b_link))
          */
 
         flush(b);
-        longjmp_rwabs(0, (long)b->b_bufr, 1, recn+dm->m_recoff[n], dm->m_drvnum);
+        longjmp_rwabs(0, (long)b->b_bufr, 1, recnum+dmd->m_recoff[buftype], dmd->m_drvnum);
 
         /*
          * make the new buffer current
          */
 
-        b->b_bufrec = recn;
+        b->b_bufrec = recnum;
         b->b_dirty = 0;
-        b->b_buftyp = n;
-        b->b_bufdrv = dm->m_drvnum;
-        b->b_dm = dm;
+        b->b_buftyp = buftype;
+        b->b_bufdrv = dmd->m_drvnum;
+        b->b_dm = dmd;
     }
     else
     {   /* use a buffer, but first validate media */
@@ -211,13 +200,38 @@ doio:   for (p = *(q = phdr); p->b_link; p = *(q = &p->b_link))
     b->b_link = *phdr;
     *phdr = b;
 
+    return b;
+}
+
+
+
+/*
+ * getrec - return the ptr to the buffer containing the desired record
+ */
+char *getrec(RECNO recn, OFD *of, int wrtflg)
+{
+    DMD *dm = of->o_dmd;
+    BCB *b;
+    int n;
+
+    KDEBUG(("getrec 0x%lx, %p, 0x%x\n",recn,dm,wrtflg));
+
+    /* put bcb management here */
+    if (of->o_dmd->m_fatofd == of)  /* is this the OFD for the 'FAT file'? */
+        n = BT_FAT;                 /* yes, must be FAT access             */
+    else if (!of->o_dnode)          /* no - do we have a dir node?         */
+        n = BT_ROOT;                /* no, must be root                    */
+    else n = BT_DATA;               /* yes, must be normal dir/file        */
+
+    KDEBUG(("n=%i, dm->m_recoff[n]=0x%lx\n",n,dm->m_recoff[n]));
+
+    b = getbcb(dm,n,recn);          /* get BCB for buffer */
+
     /*
-     *  if we are writing to the buffer, dirty it.
+     * if we are writing to the buffer, dirty it
      */
-
-    if (wrtflg) {
+    if (wrtflg)
         b->b_dirty = 1;
-    }
 
-    return(b->b_bufr);
+    return b->b_bufr;
 }
