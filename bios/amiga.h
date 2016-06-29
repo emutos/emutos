@@ -53,6 +53,7 @@ void amiga_add_alt_ram(void);
 void amiga_screen_init(void);
 void amiga_setphys(const UBYTE *addr);
 const UBYTE *amiga_physbase(void);
+WORD amiga_setcolor(WORD colorNum, WORD color);
 void amiga_mouse_vbl(void);
 void amiga_clock_init(void);
 ULONG amiga_getdt(void);

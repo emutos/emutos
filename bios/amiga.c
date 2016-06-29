@@ -125,6 +125,16 @@ const UBYTE *amiga_physbase(void)
     return amiga_screenbase;
 }
 
+WORD amiga_setcolor(WORD colorNum, WORD color)
+{
+    KDEBUG(("amiga_setcolor(%d, 0x%04x)\n", colorNum, color));
+
+    if (colorNum == 0)
+        return 0x777;
+    else
+        return 0x000;
+}
+
 /******************************************************************************/
 /* Keyboard                                                                   */
 /******************************************************************************/

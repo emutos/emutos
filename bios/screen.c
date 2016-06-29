@@ -924,7 +924,9 @@ void setpalette(LONG palettePtr)
  */
 WORD setcolor(WORD colorNum, WORD color)
 {
-#if CONF_WITH_ATARI_VIDEO
+#ifdef MACHINE_AMIGA
+    return amiga_setcolor(colorNum, color);
+#elif CONF_WITH_ATARI_VIDEO
     return atari_setcolor(colorNum, color);
 #else
     /* No hardware, fake return value */
