@@ -319,16 +319,25 @@ FTAB
 
 DTAINFO
 {
-    char  dt_name[12];          /*  file name: filename.typ     00-11   */
-    long  dt_pos;               /*  dir position                12-15   */
-    DND   *dt_dnd;              /*  pointer to DND              16-19   */
-    char  dt_attr;              /*  attributes of file          20      */
-                                /*  --  below must not change -- [1]    */
+                            /* EmuTOS private area, subject to change   */
+    char  dt_name[12];          /*  file spec from Fsfirst()            */
+    LONG  dt_offset_drive;      /*  -1 => uninitialised DTA, else:      */
+                                /*   bits 4-0: drive id                 */
+                                /*   bits 31-5: if root, offset to next */
+                                /*    FCB, otherwise 0                  */
+    UWORD dt_cloffset;          /*  if subdir, offset within cluster to */
+                                /*   next FCB, otherwise 0              */
+    CLNO  dt_clnum;             /*  if subdir, current cluster number,  */
+                                /*   otherwise 0                        */
+    char  dt_attr;              /*  attribute from Fsfirst()            */
+                            /* public area, must not change             */
     char  dt_fattr;             /*  attrib from fcb             21      */
     DOSTIME dt_td;              /*  time, date fields from fcb  22-25   */
     long  dt_fileln;            /*  file length field from fcb  26-29   */
     char  dt_fname[14];         /*  file name from fcb          30-43   */
 } ;                             /*    includes null terminator          */
+
+#define DTA_DRIVEMASK   0x0000001fL
 
 /* the following structure is used to track current directories */
 typedef struct {
@@ -408,6 +417,7 @@ void bufl_init(void);
 void flush(BCB *b);
 /* return the ptr to the buffer containing the desired record */
 char *getrec(RECNO recn, OFD *of, int wrtflg);
+BCB *getbcb(DMD *dmd,WORD buftype,RECNO recnum);
 
 /*
  * in fsfat.c

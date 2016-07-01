@@ -461,14 +461,27 @@ long ixsfirst(char *name, WORD att, DTAINFO *addr)
     if ((f = scan(dn,s,att,&pos)) == (FCB*)NULL)
         return EFILNF;
 
-    KDEBUG(("\nixfirst(%s, DND=%p, DTA=%p)",s,dn,addr));
-
     if (addr)
     {
-        memcpy(&addr->dt_name[0], s, 12);
+        OFD *ofd = dn->d_ofd;
+        memcpy(addr->dt_name, s, 12);
+        if (!ofd->o_dnode)              /* i.e. root directory */
+        {
+            addr->dt_offset_drive = pos;
+            addr->dt_cloffset = 0;
+            addr->dt_clnum = 0;
+        }
+        else
+        {
+            addr->dt_offset_drive = 0L;
+            addr->dt_cloffset = ofd->o_curbyt;
+            addr->dt_clnum = ofd->o_curcl;
+        }
+        addr->dt_offset_drive |= dn->d_drv->m_drvnum & DTA_DRIVEMASK;
         addr->dt_attr = att;
-        addr->dt_pos = pos;
-        addr->dt_dnd = dn;
+
+        KDEBUG(("ixsfirst(%s,0x%02x,%p): DTA pvt=%08lx/%04x/%04x\n",
+                name,att,addr,addr->dt_offset_drive,addr->dt_cloffset,addr->dt_clnum));
 
         makbuf(f, addr);
     }
@@ -506,21 +519,119 @@ long xsfirst(char *name, int att)
     dt = (DTAINFO *)(run->p_xdta);          /* M01.01.1209.01 */
 
     /* set an indication of 'uninitialized DTA' */
-    dt->dt_dnd = (DND*)NULL;                /* M01.01.1209.01 */
-
-    KDEBUG(("\nxsfirst(%s, DTA=%p)",name,dt));
+    dt->dt_offset_drive = -1L;
 
     result = ixsfirst(name, att, dt);       /* M01.01.1209.01 */
 
     if ((result < 0) || !contains_wildcard_characters(name))
         return result;
 
-    /*
-     * an Fsnext() is likely, so we must mark the DND as in-use
-     */
-    dt->dt_dnd->d_usecount++;
-
     return E_OK;
+}
+
+
+/*
+ * ixsnest
+ */
+static FCB *ixsnext(DTAINFO *dt)
+{
+    char name[12];
+    char *buf, *bufend;
+    DMD *dmd;
+    BCB *bcb;
+    FCB *fcb;
+    LONG offset, recnum;
+    WORD drive, buftype, rootdirlen, found;
+    CLNO cluster = 0;
+
+    drive = dt->dt_offset_drive & DTA_DRIVEMASK;
+    if (drive >= BLKDEVNUM)
+        return NULL;
+
+    builds(dt->dt_name,name);   /* build FCB-style name */
+    name[11] = dt->dt_attr;
+
+    dmd = drvtbl[drive];
+
+    /*
+     * determine starting point
+     */
+    if ((dt->dt_cloffset == 0) && (dt->dt_clnum == 0))
+    {
+        buftype = BT_ROOT;
+        offset = dt->dt_offset_drive & ~DTA_DRIVEMASK;
+        recnum = offset >> dmd->m_rblog;
+        offset &= dmd->m_rbm;           /* within record */
+        rootdirlen = dmd->m_recoff[BT_DATA] - dmd->m_recoff[BT_ROOT];
+    }
+    else
+    {
+        buftype = BT_DATA;
+        offset = dt->dt_cloffset;       /* within cluster */
+        cluster = dt->dt_clnum;
+        recnum = cl2rec(cluster,dmd) + (offset >> dmd->m_rblog);
+        offset &= dmd->m_rbm;           /* within record */
+    }
+
+    KDEBUG(("ixsnext(%p): drv=%d,buftype=%d,recnum=%ld,offset=%ld\n",
+            dt,drive,buftype,recnum,offset));
+
+    /*
+     * search directory
+     */
+    found = 0;
+    while(1)
+    {
+        if (buftype == BT_ROOT)
+        {
+            if (recnum >= rootdirlen)       /* end of root */
+                break;
+        }
+        else
+        {
+            if (((recnum&dmd->m_clrm) == 0) && (offset == 0))   /* end of cluster */
+            {
+                cluster = getrealcl(cluster,dmd);
+                if (endofchain(cluster))    /* end of directory */
+                    break;
+                recnum = cl2rec(cluster,dmd);
+            }
+        }
+
+        bcb = getbcb(dmd,buftype,recnum);
+        buf = bcb->b_bufr;
+        bufend = buf + dmd->m_recsiz;
+        for (fcb = (FCB *)(buf+offset); fcb < (FCB *)bufend; fcb++) {
+            if (fcb->f_name[0] == 0x00)     /* never used, so must be end */
+                break;
+            if ((found = match(name,fcb->f_name)))
+                break;
+        }
+        if (found)
+            break;
+        recnum++;
+        offset = 0;
+    }
+
+    if (!found)
+        return NULL;
+
+    /*
+     * update the private area
+     */
+    offset = (char *)fcb - buf + sizeof(FCB);   /* to next FCB within buffer */
+    if (buftype == BT_ROOT)
+    {
+        dt->dt_offset_drive = (recnum << dmd->m_rblog) + offset;
+        dt->dt_offset_drive |= dmd->m_drvnum;
+    }
+    else
+    {
+        dt->dt_cloffset = ((recnum&dmd->m_clrm) << dmd->m_rblog) + offset;
+        dt->dt_clnum = cluster;
+    }
+
+    return fcb;
 }
 
 
@@ -535,24 +646,18 @@ long xsnext(void)
 {
     FCB *f;
     DTAINFO *dt;
-    DND *dn;
 
     dt = (DTAINFO *)run->p_xdta;            /* M01.01.1209.01 */
-    dn = dt->dt_dnd;
 
     /* has the DTA been initialized? */
-    if (dn == (DND *)NULL)                  /* M01.01.1209.01 */
-        return ENMFIL;                      /* M01.01.1209.01 */
+    if (dt->dt_offset_drive < 0L)
+        return ENMFIL;
 
-    KDEBUG(("\n xsnext(pos=%ld DTA=%p DND=%p)",dt->dt_pos,dt,dn));
+    f = ixsnext(dt);
 
-    f = scan(dn,dt->dt_name,dt->dt_attr,&dt->dt_pos);
-
-    if (f == (FCB *)NULL)       /* end of directory, no longer in-use */
+    if (f == NULL)                          /* end of directory */
     {
-        dn->d_usecount--;
-        if (dn->d_usecount < 0)             /* shouldn't happen */
-            dn->d_usecount = 0;
+        dt->dt_offset_drive = -1L;
         return ENMFIL;
     }
 

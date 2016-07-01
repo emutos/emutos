@@ -113,7 +113,7 @@ void flush(BCB *b)
  *
  * buftype is BT_FAT, BT_ROOT, or BT_DATA
  */
-static BCB *getbcb(DMD *dmd,WORD buftype,RECNO recnum)
+BCB *getbcb(DMD *dmd,WORD buftype,RECNO recnum)
 {
     BCB *b;
     BCB *p, *mtbuf, **q, **phdr;
