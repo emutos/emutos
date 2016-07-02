@@ -84,14 +84,11 @@ extern  long    errcode;
  *  Type declarations
  */
 
-#define BCB     struct  _bcb
-#define FTAB    struct  _ftab
-#define OFD     struct  _ofd
-#define FCB     struct  _fcb
-#define DND     struct  _dnd
-#define DMD     struct  _dmd
-#define FH      unsigned int    /*  file handle    */
+typedef struct _ofd OFD;
+typedef struct _dnd DND;
+typedef struct _dmd DMD;
 
+typedef unsigned int FH;        /*  file handle    */
 typedef UWORD CLNO;             /*  cluster number */
 typedef ULONG RECNO;            /*  record number  */
 
@@ -113,8 +110,7 @@ typedef struct
  *  architectural restriction: for compatibility with FOLDRnnn.PRG,
  *  this structure must not exceed 64 bytes in length
  */
-
-OFD
+struct _ofd
 {
     OFD   *o_link;      /*  link to next OFD                    */
     UWORD o_flag;
@@ -168,8 +164,7 @@ OFD
  *  architectural restriction: this is the structure of the
  *  directory entry on disk, compatible with MSDOS etc
  */
-
-FCB
+typedef struct
 {
     char f_name[11];
     char f_attrib;
@@ -177,7 +172,7 @@ FCB
     DOSTIME f_td;           /* time, date */
     CLNO f_clust;
     long f_fileln;
-} ;
+} FCB;
 
 #define ERASE_MARKER    0xe5    /* in f_name[0], indicates erased file */
 
@@ -199,8 +194,7 @@ FCB
  *  architectural restriction: for compatibility with FOLDRnnn.PRG,
  *  this structure must not exceed 64 bytes in length
  */
-
-DND /* directory node descriptor */
+struct _dnd         /* directory node descriptor */
 {
     char d_name[11];    /*  directory name                      */
     char d_fill;        /*  attributes?                         */
@@ -231,11 +225,10 @@ DND /* directory node descriptor */
 
 /*
  *  DMD - Drive Media Block
+ *
+ *  note: in the following comments, records == logical sectors
  */
-
-/*  records == logical sectors  */
-
-DMD /* drive media block */
+struct _dmd         /* drive media block */
 {
     RECNO  m_recoff[3]; /*  record offsets for fat,dir,data     */
     int    m_drvnum;    /*  drive number for this media         */
@@ -284,8 +277,8 @@ DMD /* drive media block */
  *  and the fields marked (API) below must remain the same (contents,
  *  size, and offset within structure).
  */
-
-BCB
+typedef struct _bcb BCB;
+struct _bcb
 {
     BCB     *b_link;    /*  next bcb (API)              */
     WORD    b_bufdrv;   /*  unit for buffer (API)       */
@@ -301,22 +294,19 @@ BCB
  */
 
 /* point these at OFDs when needed */
-FTAB
+typedef struct
 {
     OFD *f_ofd;
     PD  *f_own;         /* file owners */
     int f_use;          /* use count */
-} ;
+} FTAB;
 
 
 
 /*
  * DTAINFO - Information stored in the dta by srch-frst for use by srch-nxt.
  */
-
-#define DTAINFO struct DtaInfo
-
-DTAINFO
+typedef struct
 {
                             /* EmuTOS private area, subject to change   */
     char  dt_name[12];          /*  file spec from Fsfirst()            */
@@ -334,7 +324,7 @@ DTAINFO
     DOSTIME dt_td;              /*  time, date fields from fcb  22-25   */
     long  dt_fileln;            /*  file length field from fcb  26-29   */
     char  dt_fname[14];         /*  file name from fcb          30-43   */
-} ;                             /*    includes null terminator          */
+} DTAINFO;                      /*    includes null terminator          */
 
 #define DTA_DRIVEMASK   0x0000001fL
 
