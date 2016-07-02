@@ -722,22 +722,6 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
             break;
     }
 
-    /*
-     * here we circumvent a BDOS design flaw: the use count in a DND
-     * is not decremented until ENMFIL is encountered.  if we exit
-     * prematurely (because of an error such as trying to delete a
-     * read-only file), the directory we are currently processing will
-     * be left with a non-zero use count.  this will prevent it from
-     * being deleted, even if it's empty, until after a reboot.  so we
-     * issue dos_snext() until we hit ENMFIL [or any other error :-(]
-     */
-    if (!more)
-    {
-        dos_sdta(dta);  /* must restore this in case we called ourselves */
-        while(dos_snext() == 0)
-            ;
-    }
-
     return more;
 }
 
