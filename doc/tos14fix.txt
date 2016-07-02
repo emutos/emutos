@@ -483,7 +483,7 @@ Folders
 
 Installed Applications
 ----------------------
-081. "Install Application" has a "Remove" button, and "Install"       BUG: no default
+081. "Install Application" has a "Remove" button, and "Install"       FIXED: commit b74fe4
      is now the default.  This dialog is also used to choose
      Normal or Autorun status. (See "Autorun Applications")
 082. The default directory of an installed application is always      TO BE CHECKED
@@ -496,7 +496,7 @@ Installed Applications
 
 Install Disk Drive
 ------------------
-084. "Install Disk Drive" has "Install" as its default.               BUG: default is Cancel
+084. "Install Disk Drive" has "Install" as its default.               FIXED: commit 924ab1
 
 
 Name Conflicts
