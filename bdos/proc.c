@@ -168,12 +168,6 @@ static void     ixterm( PD *r )
             decr_curdir_usage(h);
     }
 
-    /*
-     * this would also be the right place to decrement d_usecount in
-     * the relevant DNDs.  unfortunately there is no way of knowing
-     * which DNDs relate to Fsfirst/Fsnext processing by this process
-     */
-
     /* free each item in the allocated list, that is owned by 'r' */
 
     free_all_owned(r, &pmd);

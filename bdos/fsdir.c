@@ -308,9 +308,6 @@ long xrmdir(char *p)
         return EACCDN;
     /*  end M01.01.SCC.FS.09  */
 
-    if (d->d_usecount > 0)          /* in-use for Fsfirst/Fsnext */
-        return EACCDN;
-
     /*
      * scan actual directory to make sure it's empty
      */
@@ -1604,10 +1601,6 @@ static DND *makdnd(DND *p, FCB *b)
             if (p1->d_flag & DND_LOCKED)
                 continue;
 
-            /* check if this DND is in use for Fsfirst/Fsnext */
-            if (p1->d_usecount > 0)
-                continue;
-
             /* check dirtbl[] to see if anyone is using this guy */
             for (i = 1, dt = dirtbl+1; i < NCURDIR; i++, dt++)
                 if (dt->use && (dt->dnd == p1))
@@ -1983,16 +1976,7 @@ static void process_dnd_tree(DND *dndstart)
         }
 
         /*
-         * not current - but is this in-use (for Fsfirst/Fsnext) ?
-         */
-        if (dnd->d_usecount > 0) {
-            KDEBUG(("DND at %p is in-use\n",dnd));
-            prev = dnd;
-            continue;
-        }
-
-        /*
-         * not in-use - but are we at the root?
+         * not current - but are we at the root?
          */
         if (!dnd->d_parent) {
             KDEBUG(("DND at %p is a root directory\n",dnd));
