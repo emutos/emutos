@@ -340,7 +340,6 @@ typedef struct {
 extern  DIRTBL_ENTRY dirtbl[];
 extern  DMD     *drvtbl[];
 extern  LONG    drvsel;
-extern  int     logmsk[];
 extern  FTAB    sft[];
 extern  BCB     *bufl[2];              /*  in bios main.c              */
 
