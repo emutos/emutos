@@ -673,6 +673,9 @@ long xgsdtof(DOSTIME *buf, int h, int wrt)
 {
     OFD *f = getofd(h);
 
+    if (!f)
+        return EIHNDL;
+
     if (wrt)
     {
         swpcopyw(&buf->time, &f->o_td.time);
