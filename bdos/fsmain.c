@@ -448,10 +448,21 @@ long    xgetdrv(void)
 
 
 /*
- *  getofd -
+ *  getofd - returns ptr to OFD corresponding to input handle
+ *
+ *  returns NULL if invalid input handle
  */
 
-OFD     *getofd(int h)
+OFD *getofd(int h)
 {
-    return(sft[syshnd(h)].f_ofd);
+    WORD n;
+
+    if ((h < 0) | (h >= NUMSTD+OPNFILES))
+        return NULL;
+
+    n = syshnd(h);
+    if (n < 0)
+        return NULL;
+
+    return sft[n].f_ofd;
 }

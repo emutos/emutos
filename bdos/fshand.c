@@ -81,13 +81,18 @@ long ixforce(int std, int h, PD *p)
 
 
 /*
- * syshnd -
+ * syshnd - converts handle to another value:
+ *
+ * if the handle is not a standard handle, returns index into sft[]; else,
+ * if the standard handle is mapped to a user handle, returns index into sft[];
+ * else returns the bios handle that the standard handle is mapped to.
+ *
+ * note: does not validate the input argument!
  *
  * Arguments:
  *
  *  h  - handle
  */
-
 int syshnd(int h)
 {
     if (h >= NUMSTD)
