@@ -24,14 +24,6 @@
 #include "kprint.h"
 
 
-
-/*
- * private macros
- */
-
-/* this used to be in portab.h, but since it is *only* used here... */
-#define SUCCESS 0
-
 /*
  * forward prototypes
  */
@@ -175,7 +167,7 @@ static LONG     pgmld01( FH h , PD *pdptr, PGMHDR01 *hd)
         return( r ) ;
 
     if( hd->h01_abs )
-        return( SUCCESS ) ;     /*  do we need to clr bss here? */
+        return 0;           /* do we need to clr bss here? */
 
     /*
      * if not an absolute format, position past the symbols and start
@@ -240,7 +232,7 @@ static LONG     pgmld01( FH h , PD *pdptr, PGMHDR01 *hd)
         bzero(pi->pi_bbase, flen);
     }
 
-    return( SUCCESS ) ;
+    return 0;
 }
 
 
@@ -293,7 +285,7 @@ static LONG     pgfix01( void *lastcp, LONG nrelbytes , PGMINFO *pi )
         ++rp ;
     }
 
-    return(  ++n == 0  ? 1 : SUCCESS  ) ;
+    return (++n == 0) ? 1 : 0;
 }
 
 
@@ -348,7 +340,7 @@ LONG kpgm_relocate( PD *p, long length)
     memcpy(&p->p_tbase, &pi->pi_tbase, 6 * sizeof(long));
 
     if( abs_flag )
-        return( SUCCESS ) ;
+        return 0;
 
     /* relocation information present */
     rp = (LONG*) (pi->pi_tbase+2+sizeof(PGMHDR01)+flen+pi->pi_slen);
@@ -375,5 +367,5 @@ LONG kpgm_relocate( PD *p, long length)
         bzero(pi->pi_bbase, flen);
     }
 
-    return( SUCCESS ) ;
+    return 0;
 }
