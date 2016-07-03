@@ -433,7 +433,7 @@ long xclose(int h)
     if (h < 0)
         return E_OK;    /* always a good close on a character device */
 
-    if (h > (OPNFILES+NUMSTD-1))    /* M01.01.1022.01 */
+    if (h >= NUMHANDLES)            /* M01.01.1022.01 */
         return EIHNDL;
 
     if ((h0 = h) < NUMSTD)
