@@ -671,7 +671,7 @@ Fdatime()
 ---------
 114. Fdatime() no longer byte-swaps the user's input values when      FIXED: commit 18a3d6
      writing a new date/time.
-115. Fdatime() returns EIHNDL for invalid handles and handles         BUG: does not check handle
+115. Fdatime() returns EIHNDL for invalid handles and handles         FIXED: commit 9b38bd
      which refer to character devices (which have no date or
      time).
 
