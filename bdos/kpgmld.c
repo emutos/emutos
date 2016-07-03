@@ -178,29 +178,24 @@ static LONG     pgmld01( FH h , PD *pdptr, PGMHDR01 *hd)
         return( SUCCESS ) ;     /*  do we need to clr bss here? */
 
     /*
-     * if not an absolute format, position past the symbols and start the
-     * reloc pointer  (flen is tlen + dlen).  NOTE that relst is
-     * init'd to 0, so if the format is absolute, we will not drop
-     * into the fixup code.
+     * if not an absolute format, position past the symbols and start
+     * the reloc pointer (flen is tlen + dlen).
      */
 
-    if( !hd->h01_abs )
-    {
-        /**********  should change hard coded 0x1c  ******************/
+    /**********  should change hard coded 0x1c  ******************/
 
-        KDEBUG(("BDOS pgmld01: flen=0x%lx, pi_slen=0x%lx\n",flen,pi->pi_slen));
+    KDEBUG(("BDOS pgmld01: flen=0x%lx, pi_slen=0x%lx\n",flen,pi->pi_slen));
 
-        r = xlseek(flen+pi->pi_slen+0x1c,h,0);
-        if( r < 0L  )
-            return( r ) ;
+    r = xlseek(flen+pi->pi_slen+0x1c,h,0);
+    if (r < 0L)
+        return r;
 
-        r = xread( h , (long)sizeof(relst) , &relst );
+    r = xread(h,(long)sizeof(relst),&relst);
 
-        KDEBUG(("BDOS pgmld01: relst=0x%lx\n",relst));
+    KDEBUG(("BDOS pgmld01: relst=0x%lx\n",relst));
 
-        if( r <  0L  )
-            return( r ) ;
-    }
+    if (r < 0L)
+        return r;
 
     if( relst != 0 )
     {
