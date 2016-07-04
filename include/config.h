@@ -932,7 +932,7 @@
  * in EmuTOS RAM, because it causes crashes very early in startup (the
  * "black screen" problem).  It is surmised that the hardware reset may
  * reset the RAM controller allowing/causing RAM contents to change.
- * It is also bypassed in Coldfire because there is no reset instruction.
+ * It is also bypassed in ColdFire because there is no reset instruction.
  */
 #ifndef CONF_WITH_RESET
 # if EMUTOS_LIVES_IN_RAM || defined(__mcoldfire__)
