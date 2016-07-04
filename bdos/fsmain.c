@@ -389,7 +389,6 @@
 /*
  *  xgetdta - Function 0x2F     f_getdta
  */
-
 DTAINFO *xgetdta(void)          /* return address of dta */
 {
     return((DTAINFO *)run->p_xdta);
@@ -399,12 +398,10 @@ DTAINFO *xgetdta(void)          /* return address of dta */
 /*
  *  xsetdta - Function 0x1A     f_setdta
  */
-
 void xsetdta(DTAINFO *addr)     /* set transfer address to addr */
 {
     run->p_xdta = (DTA *)addr;
 }
-
 
 
 /*
@@ -412,22 +409,16 @@ void xsetdta(DTAINFO *addr)     /* set transfer address to addr */
  *      ( 0 = A, etc )
  *      Function 0x0E   d_setdrv
  */
-
-long    xsetdrv(int drv)
+long xsetdrv(int drv)
 {
-    long drvmap ;
+    long drvmap;
 
     drvmap = Drvmap();
 
-    if( drvmap & (1<<drv) )
-    {
-        run->p_curdrv = drv ;
-        return( drvmap ) ;
-    }
+    if (drvmap & (1<<drv))
+        run->p_curdrv = drv;
 
-    /*return( EDRIVE );*/
-    /* Real TOS always returns the drive map, so do we now: */
-    return( drvmap ) ;
+    return drvmap;
 }
 
 
@@ -440,10 +431,9 @@ long    xsetdrv(int drv)
  *
  *      Last modified   SCC     1 May 85
  */
-
-long    xgetdrv(void)
+long xgetdrv(void)
 {
-    return(run->p_curdrv);
+    return run->p_curdrv;
 }
 
 
@@ -452,7 +442,6 @@ long    xgetdrv(void)
  *
  *  returns NULL if invalid input handle
  */
-
 OFD *getofd(int h)
 {
     WORD n;
