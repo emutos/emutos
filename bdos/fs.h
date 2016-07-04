@@ -368,9 +368,6 @@ long log_media(BPB *b, int drv);
 long xforce(int std, int h);
 long ixforce(int std, int h, PD *p);
 
-/* ??? */
-int syshnd(int h);
-
 /* duplicate a file handle. */
 long dup(int h);
 
