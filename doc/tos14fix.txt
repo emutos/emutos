@@ -63,7 +63,7 @@ Default Path
 
 evnt_multi() and evnt_timer()
 -----------------------------
-006. evnt_timer() (or evnt_multi() with a timer) no longer cause      TO BE CHECKED
+006. evnt_timer() (or evnt_multi() with a timer) no longer cause      FIXED: since at least 0.8.5
      Desk Accessories to sleep forever.
 
 
@@ -406,7 +406,7 @@ Disk Copy/Format
 
 Disk Directories
 ----------------
-065. If you try to get a directory of a drive without a disk,         TO BE CHECKED
+065. If you try to get a directory of a drive without a disk,         FIXED: commit 3a97a6
      'Cancel' now aborts the operation and returns you to the
      Desktop.
 066. Pressing <Esc> forces the Desktop to read the directory of       TO BE CHECKED
