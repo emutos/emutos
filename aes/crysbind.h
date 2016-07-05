@@ -113,14 +113,20 @@
 #define O_SIZE 7
 #define AI_SIZE 4                       /* for fsel_boxinput() compatibility */
 #define AO_SIZE 1
-                                        /* Crystal function op code      */
+
+/*
+ * Crystal function op code
+ */
 #define OP_CODE control[0]
 #define IN_LEN control[1]
 #define OUT_LEN control[2]
 #define AIN_LEN control[3]
 
 #define RET_CODE int_out[0]
-                                        /* application lib parameters   */
+
+/*
+ * application lib parameters
+ */
 #define AP_VERSION global[0]
 #define AP_COUNT global[1]
 #define AP_ID global[2]
@@ -174,9 +180,10 @@
 #define CT_UPDATE 50
 #define CT_MOVE 51
 #define CT_NEWTOP 52
-                                                /* event lib parameters */
-#define IN_FLAGS int_in[0]
 
+/*
+ * event lib parameters
+ */
 #define B_CLICKS int_in[0]
 #define B_MASK int_in[1]
 #define B_STATE int_in[2]
@@ -231,7 +238,10 @@
 
 #define EV_DCRATE int_in[0]
 #define EV_DCSETIT int_in[1]
-                                                /* menu library parameters */
+
+/*
+ * menu library parameters
+ */
 
 #define MM_ITREE        addr_in[0]              /* ienable,icheck,tnorm */
 
@@ -252,7 +262,9 @@
 #define TITLE_NUM       int_in[0]               /* tnorm                */
 #define NORMAL_IT       int_in[1]               /* tnormal              */
 
-                                        /* form library parameters      */
+/*
+ * form library parameters
+ */
 #define FM_FORM addr_in[0]
 #define FM_START int_in[0]
 
@@ -291,8 +303,9 @@
 
 #define FM_CLKS int_in[1]
 
-                                        /* object library parameters    */
-
+/*
+ * object library parameters
+ */
 #define OB_TREE addr_in[0]              /* all ob procedures            */
 
 #define OB_DELOB int_in[0]              /* ob_delete                    */
@@ -324,7 +337,10 @@
 
 #define OB_NEWSTATE int_in[6]           /* ob_change                    */
 #define OB_REDRAW int_in[7]
-                                        /* graphics library parameters  */
+
+/*
+ * graphics library parameters
+ */
 #define GR_I1 int_in[0]
 #define GR_I2 int_in[1]
 #define GR_I3 int_in[2]
@@ -360,69 +376,23 @@
 #define GR_MY int_out[2]
 #define GR_MSTATE int_out[3]
 #define GR_KSTATE int_out[4]
-                                        /* scrap library parameters     */
+
+/*
+ * scrap library parameters
+ */
 #define SC_PATH addr_in[0]
 
-#define SC_FTCSV 0x0001
-#define SC_FTTXT 0x0002
-#define SC_FTGEM 0x0004
-#define SC_FTIMG 0x0008
-#define SC_FTDCA 0x0010
-#define SC_FTUSR 0x8000
-                                        /* file selector library parms  */
-
+/*
+ * file selector library parameters
+ */
 #define FS_IPATH addr_in[0]
 #define FS_ISEL addr_in[1]
 #define FS_ILABEL addr_in[2]
 #define FS_BUTTON int_out[1]
-                                        /* window library parameters    */
-#define XFULL 0
-#define YFULL gl_hbox
-#define WFULL gl_width
-#define HFULL (gl_height - gl_hbox)
 
-#define NAME 0x0001
-#define CLOSER 0x0002
-#define FULLER 0x0004
-#define MOVER 0x0008
-#define INFO 0x0010
-#define SIZER 0x0020
-#define UPARROW 0x0040
-#define DNARROW 0x0080
-#define VSLIDE 0x0100
-#define LFARROW 0x0200
-#define RTARROW 0x0400
-#define HSLIDE 0x0800
-
-#define WF_KIND 1
-#define WF_NAME 2
-#define WF_INFO 3
-#define WF_WXYWH 4
-#define WF_CXYWH 5
-#define WF_PXYWH 6
-#define WF_FXYWH 7
-#define WF_HSLIDE 8
-#define WF_VSLIDE 9
-#define WF_TOP 10
-#define WF_FIRSTXYWH 11
-#define WF_NEXTXYWH 12
-#define WF_IGNORE 13
-#define WF_NEWDESK 14
-#define WF_HSLSIZ 15
-#define WF_VSLSIZ 16
-#define WF_SCREEN 17
-#define WF_TATTRB 18
-#define WF_SIZTOP 19
-
-                                                /* arrow message        */
-#define WA_UPPAGE 0
-#define WA_DNPAGE 1
-#define WA_UPLINE 2
-#define WA_DNLINE 3
-#define WA_LFPAGE 4
-#define WA_RTPAGE 5
-#define WA_LFLINE 6
-#define WA_RTLINE 7
+/*
+ * window library parameters
+ */
                                                 /* wm_create            */
 #define WM_KIND int_in[0]
                                                 /* wm_open, close, del  */
@@ -436,8 +406,6 @@
 #define WM_MX int_in[0]
 #define WM_MY int_in[1]
                                                 /* wm_calc              */
-#define WC_BORDER 0
-#define WC_WORK 1
 #define WM_WCTYPE int_in[0]
 #define WM_WCKIND int_in[1]
 #define WM_WCIX int_in[2]
@@ -473,8 +441,10 @@
 #define WM_ISLIDE int_in[2]
 
 #define WM_IRECTNUM int_in[6]
-                                        /* resource library parameters  */
 
+/*
+ * resource library parameters
+ */
 #define RS_PFNAME addr_in[0]            /* rs_init,                     */
 #define RS_TYPE int_in[0]
 #define RS_INDEX int_in[1]
@@ -484,26 +454,9 @@
 #define RS_TREE addr_in[0]
 #define RS_OBJ int_in[0]
 
-#define R_TREE 0
-#define R_OBJECT 1
-#define R_TEDINFO 2
-#define R_ICONBLK 3
-#define R_BITBLK 4
-#define R_STRING 5
-#define R_IMAGEDATA 6
-#define R_OBSPEC 7
-#define R_TEPTEXT 8             /* sub ptrs in TEDINFO  */
-#define R_TEPTMPLT 9
-#define R_TEPVALID 10
-#define R_IBPMASK 11            /* sub ptrs in ICONBLK  */
-#define R_IBPDATA 12
-#define R_IBPTEXT 13
-#define R_BIPDATA 14            /* sub ptrs in BITBLK   */
-#define R_FRSTR 15              /* gets addr of ptr to free strings     */
-#define R_FRIMG 16              /* gets addr of ptr to free images      */
-
-
-                                /* shell library parameters     */
+/*
+ * shell library parameters
+ */
 #define SH_DOEX int_in[0]
 #define SH_ISGR int_in[1]
 #define SH_ISCR int_in[2]
@@ -520,20 +473,3 @@
 
 #define SH_LPCMD addr_in[0]
 #define SH_LPDIR addr_in[1]
-                                /* extended graphics library            */
-#define XGR_I1 int_in[0]
-#define XGR_I2 int_in[1]
-#define XGR_I3 int_in[2]
-#define XGR_I4 int_in[3]
-#define XGR_I5 int_in[4]
-#define XGR_I6 int_in[5]
-#define XGR_I7 int_in[6]
-#define XGR_I8 int_in[7]
-#define XGR_I9 int_in[8]
-#define XGR_I10 int_in[9]
-
-#define XGR_O1 int_out[1]
-#define XGR_O2 int_out[2]
-#define XGR_O3 int_out[3]
-#define XGR_O4 int_out[4]
-#define XGR_O5 int_out[5]
