@@ -121,7 +121,7 @@ Menu Bar
 
 Menus
 -----
-026. AES now reserves 1/4 of the current screen memory (rather        TO BE CHECKED
+026. AES now reserves 1/4 of the current screen memory (rather        FIXED: commit 2d2368
      than 1/4 of 32000 bytes) as a menu dropdown buffer, allowing
      applications to take advantage of large monitors with larger
      menus than possible on smaller screens.
@@ -448,9 +448,10 @@ File Copy
 
 Files
 -----
-075. Files which are both hidden and system or read-only will no      TO BE CHECKED
-     longer show up on the Desktop (or in the File Selector).
-
+075. Files which are both hidden and system or read-only will no      COMMENT: EmuTOS behaves the same
+     longer show up on the Desktop (or in the File Selector).         as Atari TOS, i.e. the files that
+                                                                      do not appear are hidden, system,
+                                                                      or hidden+system.
 
 File Move
 ---------
