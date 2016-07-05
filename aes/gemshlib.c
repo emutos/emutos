@@ -336,7 +336,7 @@ static BYTE *sh_path(BYTE *src, BYTE *dest, BYTE *pname)
     /* copy over path */
     for (p = src; *p; )
     {
-        if (*p == ';')
+        if ((*p == ';') || (*p == ','))
             break;
         last = *p;
         *dest++ = *p++;
