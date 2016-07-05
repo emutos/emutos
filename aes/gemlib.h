@@ -41,33 +41,6 @@ typedef struct moblk
 } MOBLK ;
 
 
-/*      MENULIB.H       05/04/84 - 11/01/84     Lowell Webster  */
-
-#define MTH 1                                   /* menu thickness       */
-
-#define THESCREEN 0
-#define THEBAR 1
-#define THEACTIVE 2
-
-/*** STATE DEFINITIONS FOR menu_state ***********************************/
-
-#define INBAR   1       /* mouse position       outside menu bar & mo dn */
-                        /* multi wait           mo up | in menu bar     */
-                        /* moves                -> 5  ,  ->2            */
-
-#define OUTTITLE 2      /* mouse position       over title && mo dn     */
-                        /* multiwait            mo up | out title rect  */
-                        /* moves                -> 5  , ->1 ->2  ->3    */
-
-#define OUTITEM 3       /* mouse position       over item && mo dn      */
-                        /* multi wait           mo up | out item rect   */
-                        /* moves                -> 5  , ->1 ->2 ->3 ->4 */
-
-#define INBARECT 4      /* mouse position       out menu rect && bar && mo dn*/                 /* multi wait   mo up | in menu rect | in menu bar */
-                        /* moves        -> 5  , -> 3         , -> 2     */
-
-
-
 /*      APPLLIB.H       05/05/84 - 10/16/84     Lee Lorenzen            */
 
 #define SCR_MGR 0x0001                  /* pid of the screen manager*/
@@ -101,86 +74,6 @@ typedef struct moblk
 #define FMD_GROW 1
 #define FMD_SHRINK 2
 #define FMD_FINISH 3
-
-/*      SCRPLIB.H       05/05/84 - 01/05/85     Lee Lorenzen            */
-
-/*      FSELLIB.H       05/05/84 - 01/07/85     Lee Lorenzen            */
-
-/*      RSRCLIB.H       05/05/84 - 09/13/84     Lowell Webster          */
-
-#define RMODE_RD 0
-#define RMODE_WR 1
-#define RMODE_RW 2
-
-#define SMODE 0                         /* seek mode is absolute offset */
-#define F_ATTR 0                        /* file attribute for creating  */
-
-
-                        /* these must coincide w/ rshdr */
-#define RT_VRSN 0
-#define RT_OB 1
-#define RT_TEDINFO 2
-#define RT_ICONBLK 3
-#define RT_BITBLK 4
-#define RT_FREESTR 5
-#define RT_STRING 6
-#define RT_IMAGEDATA 7
-#define RT_FREEIMG 8
-#define RT_TRINDEX 9
-#define R_NOBS 10
-#define R_NTREE 11
-#define R_NTED 12
-#define R_NICON 13
-#define R_NBITBLK 14
-#define R_NSTRING 15
-#define R_IMAGES 16
-
-typedef struct rshdr
-{
-        WORD            rsh_vrsn;       /* must same order as RT_       */
-        WORD            rsh_object;
-        WORD            rsh_tedinfo;
-        WORD            rsh_iconblk;    /* list of ICONBLKS             */
-        WORD            rsh_bitblk;
-        WORD            rsh_frstr;
-        WORD            rsh_string;
-        WORD            rsh_imdata;     /* image data                   */
-        WORD            rsh_frimg;
-        WORD            rsh_trindex;
-        WORD            rsh_nobs;       /* counts of various structs    */
-        WORD            rsh_ntree;
-        WORD            rsh_nted;
-        WORD            rsh_nib;
-        WORD            rsh_nbb;
-        WORD            rsh_nstring;
-        WORD            rsh_nimages;
-        WORD            rsh_rssize;     /* total bytes in resource      */
-}RSHDR;
-
-/* definitions for rsh_vrsn */
-#define NEW_FORMAT_RSC  0x0004          /* this bit set indicates a new-format */
-                                        /* resource file (not yet supported)   */
-
-/* type definitions for use by an application when calling      */
-/*  rsrc_gaddr and rsrc_saddr                                   */
-
-#define R_TREE 0
-#define R_OBJECT 1
-#define R_TEDINFO 2
-#define R_ICONBLK 3
-#define R_BITBLK 4
-#define R_STRING 5              /* gets pointer to free strings */
-#define R_IMAGEDATA 6           /* gets pointer to free images  */
-#define R_OBSPEC 7
-#define R_TEPTEXT 8             /* sub ptrs in TEDINFO  */
-#define R_TEPTMPLT 9
-#define R_TEPVALID 10
-#define R_IBPMASK 11            /* sub ptrs in ICONBLK  */
-#define R_IBPDATA 12
-#define R_IBPTEXT 13
-#define R_BIPDATA 14            /* sub ptrs in BITBLK   */
-#define R_FRSTR 15              /* gets addr of ptr to free strings     */
-#define R_FRIMG 16              /* gets addr of ptr to free images      */
 
 
 /*      WINDLIB.H       05/05/84 - 01/26/85     Lee Lorenzen            */
@@ -227,11 +120,6 @@ typedef struct window
 #define WS_WORK 3
 #define WS_TRUE 4
 
-#define XFULL 0
-#define YFULL gl_hbox
-#define WFULL gl_width
-#define HFULL (gl_height - gl_hbox)
-
 #define NAME 0x0001
 #define CLOSER 0x0002
 #define FULLER 0x0004
@@ -268,33 +156,6 @@ typedef struct window
 
 #define NUM_ELEM 19
 
-#define WC_BORDER 0
-#define WC_WORK 1
-
-
-#define WF_KIND 1
-#define WF_NAME 2
-#define WF_INFO 3
-#define WF_WXYWH 4
-#define WF_CXYWH 5
-#define WF_PXYWH 6
-#define WF_FXYWH 7
-#define WF_HSLIDE 8
-#define WF_VSLIDE 9
-#define WF_TOP 10
-#define WF_FIRSTXYWH 11
-#define WF_NEXTXYWH 12
-
-#define WF_NEWDESK 14
-#define WF_HSLSIZ 15
-#define WF_VSLSIZ 16
-#define WF_SCREEN 17
-#define WF_TATTRB 18
-
-#define WF_SIZTOP 19
-                                                /* window attributes    */
-#define WA_SUBWIN 0x01
-#define WA_KEEPWIN 0x02
                                                 /* arrow message        */
 #define WA_UPPAGE 0
 #define WA_DNPAGE 1

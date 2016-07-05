@@ -48,9 +48,43 @@
 #include "string.h"
 #include "intmath.h"
 
+/*
+ *  defines
+ */
 #define DESKWH  0x0
 
 #define NUM_MWIN NUM_WIN
+
+#define XFULL   0
+#define YFULL   gl_hbox
+#define WFULL   gl_width
+#define HFULL   (gl_height - gl_hbox)
+
+#define WC_BORDER   0           /* for wm_calc() */
+#define WC_WORK     1
+
+#define WF_KIND     1           /* for wm_get(), wm_set() */
+#define WF_NAME     2
+#define WF_INFO     3
+#define WF_WXYWH    4
+#define WF_CXYWH    5
+#define WF_PXYWH    6
+#define WF_FXYWH    7
+#define WF_HSLIDE   8
+#define WF_VSLIDE   9
+#define WF_TOP      10
+#define WF_FIRSTXYWH 11
+#define WF_NEXTXYWH 12
+
+#define WF_NEWDESK  14
+#define WF_HSLSIZ   15
+#define WF_VSLSIZ   16
+#define WF_SCREEN   17
+#define WF_TATTRB   18
+#define WF_SIZTOP   19
+
+#define WA_SUBWIN   0x01        /* window attributes    */
+#define WA_KEEPWIN  0x02
 
 
 GLOBAL LONG desk_tree[NUM_PDS]; /* list of object trees for the desktop */

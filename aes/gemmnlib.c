@@ -44,6 +44,31 @@
 #include "string.h"
 
 
+#define MTH 1                                   /* menu thickness       */
+
+#define THESCREEN 0
+#define THEBAR 1
+#define THEACTIVE 2
+
+/*** STATE DEFINITIONS FOR menu_state ***********************************/
+
+#define INBAR   1       /* mouse position       outside menu bar & mo dn */
+                        /* multi wait           mo up | in menu bar     */
+                        /* moves                -> 5  ,  ->2            */
+
+#define OUTTITLE 2      /* mouse position       over title && mo dn     */
+                        /* multiwait            mo up | out title rect  */
+                        /* moves                -> 5  , ->1 ->2  ->3    */
+
+#define OUTITEM 3       /* mouse position       over item && mo dn      */
+                        /* multi wait           mo up | out item rect   */
+                        /* moves                -> 5  , ->1 ->2 ->3 ->4 */
+
+#define INBARECT 4      /* mouse position       out menu rect && bar && mo dn*/
+                        /* multi wait   mo up | in menu rect | in menu bar */
+                        /* moves        -> 5  , -> 3         , -> 2     */
+
+
 GLOBAL LONG     gl_mntree;
 GLOBAL AESPD    *gl_mnppd;
 
