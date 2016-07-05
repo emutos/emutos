@@ -317,67 +317,40 @@ void sh_envrn(BYTE **ppath, const BYTE *psrch)
 
 
 /*
- *  Search first, search next style routine to pick up each path in
- *  the PATH= portion of the DOS environment.  It returns the next
- *  higher number to look for until there are no more paths to find.
+ *  Search next style routine to pick up each path in the PATH= portion
+ *  of the DOS environment.  It returns a pointer to the start of the
+ *  following path until there are no more paths to find.
  */
-static WORD sh_path(WORD whichone, BYTE *dp, BYTE *pname)
+static BYTE *sh_path(BYTE *src, BYTE *dest, BYTE *pname)
 {
-    BYTE tmp, last;
-    BYTE *lp;
-    WORD i;
+    BYTE last = 0;
+    BYTE *p;
 
-    last = 0;
+    if (!src)           /* precautionary */
+        return NULL;
 
-    /* find PATH= in the command tail, which is a
-     * double-null-terminated string
-     */
-    sh_envrn(&lp, PATH_ENV);
-    if (!lp)
-        return 0;
-
-    if (!*lp)                               /* skip nul after PATH= */
-        lp++;
-
-    /* if found count in to appropriate path */
-    i = whichone;
-    tmp = ';';
-    while(i)
-    {
-        while((tmp = *lp) != 0)
-        {
-            lp++;
-            if (tmp == ';')
-                break;
-        }
-        i--;
-    }
-
-    if (!tmp)
-        return 0;
+    /* check for end of PATH= env var */
+    if (!*src)
+        return NULL;
 
     /* copy over path */
-    while((tmp = *lp) != 0)
+    for (p = src; *p; )
     {
-        if (tmp != ';')
-        {
-            *dp++ = tmp;
-            last = tmp;
-            lp++;
-        }
-        else
+        if (*p == ';')
             break;
+        last = *p;
+        *dest++ = *p++;
     }
 
     /* see if extra slash is needed */
     if ((last != '\\') && (last != ':'))
-        *dp++ = '\\';
+        *dest++ = '\\';
 
     /* append file name */
-    strcpy(dp, pname);
+    strcpy(dest, pname);
 
-    /* make whichone refer to next path */
-    return whichone+1;
+    /* point past terminating separator or nul */
+    return p + 1;
 }
 
 
@@ -403,7 +376,7 @@ static WORD sh_path(WORD whichone, BYTE *dp, BYTE *pname)
  */
 WORD sh_find(BYTE *pspec)
 {
-    WORD path;
+    BYTE *path;
     BYTE *pname;
 
     KDEBUG(("sh_find(): input pspec='%s'\n",pspec));
@@ -457,11 +430,19 @@ WORD sh_find(BYTE *pspec)
     }
 
     /* (5) search in the AES path */
-    path = 0;
+    sh_envrn(&path, PATH_ENV);      /* find PATH= in the command tail */
+    if (!path)
+    {
+        KDEBUG(("sh_find(5): no AES path, '%s' not found\n",pspec));
+        return 0;
+    }
+    if (!*path)                     /* skip nul after PATH= */
+        path++;
+
     while(1)
     {
         path = sh_path(path, D.g_work, pname);
-        if (!path)    /* end of PATH= */
+        if (!path)                  /* end of PATH= */
             break;
         if (dos_sfirst(D.g_work, F_RDONLY | F_SYSTEM) == 0) /* found */
         {
