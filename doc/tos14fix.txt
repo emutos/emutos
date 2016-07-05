@@ -162,10 +162,10 @@ rsrc_load()
 
 shel_envrn()
 ------------
-031. shel_envrn() now uses the actual environment string to           TO BE CHECKED
-     search for environment variables, rather than using its
-     own fixed copy; environments, including the PATH= string
-     AES uses to find resource files, can be set up in the AUTO
+031. shel_envrn() now uses the actual environment string to           COMMENT: there were several bugs,
+     search for environment variables, rather than using its          discovered over a period of years,
+     own fixed copy; environments, including the PATH= string         that affected PATH= handling; they
+     AES uses to find resource files, can be set up in the AUTO       were finally fixed by commit e160a4
      folder and used by all applications thereafter.
 032. Path name separators can now be commas or semicolons;            BUG: commas not allowed
      previously, semicolons were required.
