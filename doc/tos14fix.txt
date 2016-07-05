@@ -114,9 +114,9 @@ Menu Bar
 --------
 024. Toggling between True and False on the Menu Bar no longer        TO BE CHECKED
      corrupts the semaphore.
-025. The Menu Bar line is now redrawn in REPLACE mode, rather         TO BE CHECKED
-     than XOR mode; this prevents the AES from "undrawing" a menu
-     bar line already drawn by an application.
+025. The Menu Bar line is now redrawn in REPLACE mode, rather         COMMENT: EmuTOS draws the Menu Bar
+     than XOR mode; this prevents the AES from "undrawing" a menu     line in TRANSPARENT mode, which is
+     bar line already drawn by an application.                        the same as REPLACE for solid lines
 
 
 Menus
@@ -167,7 +167,7 @@ shel_envrn()
      own fixed copy; environments, including the PATH= string         that affected PATH= handling; they
      AES uses to find resource files, can be set up in the AUTO       were finally fixed by commit e160a4
      folder and used by all applications thereafter.
-032. Path name separators can now be commas or semicolons;            BUG: commas not allowed
+032. Path name separators can now be commas or semicolons;            FIXED: commit 60b845
      previously, semicolons were required.
 
 
