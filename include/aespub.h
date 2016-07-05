@@ -15,6 +15,8 @@
 
 #include "portab.h"
 
+#define PATH_ENV    "PATH="     /* PATH environment variable */
+
 /* AES entry point */
 void ui_start(void) NORETURN;   /* found in aes/gemstart.S */
 

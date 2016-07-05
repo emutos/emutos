@@ -71,6 +71,9 @@
 #define DBGBIOS 0               /* If you want to enable debug wrappers */
 #define ENABLE_RESET_RESIDENT 0 /* enable to run "reset-resident" code (see below) */
 
+#define ENV_SIZE    20          /* sufficient for standard PATH=^X:\^^ (^=nul byte) */
+#define DEF_PATH    "C:\\"      /* default value for path */
+
 /*==== External declarations ==============================================*/
 
 #if STONX_NATIVE_PRINT
@@ -94,8 +97,7 @@ extern long xmaddalt(UBYTE *start, long size); /* found in bdos/mem.h */
 /* Drive specific declarations */
 static WORD defdrv;             /* default drive number (0 is a:, 2 is c:) */
 
-/* BYTE env[256];                * environment string, enough bytes??? */
-static const BYTE null_env[] = {0, 0};
+static BYTE default_env[ENV_SIZE];  /* default environment area */
 
 /* used by kprintf() */
 WORD boot_status;               /* see kprint.h for bit flags */
@@ -432,7 +434,7 @@ static void bootstrap(void)
     nf_getbootstrap_args(args, sizeof(args));
 
     /* allocate space */
-    pd = (PD *) trap1_pexec(PE_BASEPAGE, "mint.prg", args, null_env);
+    pd = (PD *) trap1_pexec(PE_BASEPAGE, "mint.prg", args, default_env);
 
     /* get the TOS executable from the emulator */
     length = nf_bootstrap( (char*)pd->p_lowtpa + sizeof(PD), (long)pd->p_hitpa - pd->p_lowtpa);
@@ -514,7 +516,7 @@ static void run_auto_program(const char* filename)
     strcat(path, filename);
 
     KDEBUG(("Loading %s ...\n", path));
-    trap1_pexec(PE_LOADGO, path, "", null_env);   /* Pexec */
+    trap1_pexec(PE_LOADGO, path, "", default_env);  /* Pexec */
     KDEBUG(("[OK]\n"));
 }
 
@@ -602,6 +604,8 @@ BOOL can_shutdown(void)
 
 void biosmain(void)
 {
+    BYTE *p;
+
     bios_init();                /* Initialize the BIOS */
 
     trap1( 0x30 );              /* initial test, if BDOS works: Sversion() */
@@ -644,9 +648,19 @@ void biosmain(void)
     run_reset_resident();       /* see comments above */
 #endif
 
+    /*
+     * build default environment, just a PATH= string
+     */
+    strcpy(default_env,PATH_ENV);
+    p = default_env + sizeof(PATH_ENV); /* point to first byte of path string */
+    strcpy(p,DEF_PATH);
+    *p = 'A' + defdrv;                  /* fix up drive letter */
+    p += sizeof(DEF_PATH);
+    *p = '\0';                          /* terminate with double nul */
+
 #if WITH_CLI
     if (early_cli) {            /* run an early console */
-        PD *pd = (PD *) trap1_pexec(PE_BASEPAGE, "", "", null_env);
+        PD *pd = (PD *) trap1_pexec(PE_BASEPAGE, "", "", default_env);
         pd->p_tbase = (LONG) coma_start;
         pd->p_tlen = pd->p_dlen = pd->p_blen = 0;
         trap1_pexec(PE_GOTHENFREE, "", pd, "");
@@ -655,17 +669,15 @@ void biosmain(void)
 
     autoexec();                 /* autoexec PRGs from AUTO folder */
 
-/*    env[0]='\0';               - clear environment string */
-
     /* clear commandline */
 
     if(cmdload != 0) {
         /* Pexec a program called COMMAND.PRG */
-        trap1_pexec(PE_LOADGO, "COMMAND.PRG", "", null_env);
+        trap1_pexec(PE_LOADGO, "COMMAND.PRG", "", default_env);
     } else if (exec_os) {
         /* start the default (ROM) shell */
         PD *pd;
-        pd = (PD *) trap1_pexec(PE_BASEPAGE, "", "", null_env);
+        pd = (PD *) trap1_pexec(PE_BASEPAGE, "", "", default_env);
         pd->p_tbase = (LONG) exec_os;
         pd->p_tlen = pd->p_dlen = pd->p_blen = 0;
         trap1_pexec(PE_GO, "", pd, "");

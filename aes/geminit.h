@@ -11,9 +11,6 @@
 #define GEMINIT_H
 #include "gsxdefs.h"
 
-#define PATH_ENV    "PATH="     /* PATH environment variable */
-#define DEF_PATH    "C:\\"      /* default value */
-
 #define DEF_DESKTOP "EMUDESK"   /* default desktop */
 
 extern MFORM    *ad_armice;

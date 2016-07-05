@@ -28,6 +28,7 @@
 #include "basepage.h"
 #include "pd.h"
 #include "dos.h"
+#include "aespub.h"
 #include "gemlib.h"
 #include "gem_rsc.h"
 
@@ -593,6 +594,7 @@ static WORD sh_ldapp(SHELL *psh)
         strcpy(rlr->p_appdir,sh_apdir);
         strcat(rlr->p_appdir,"\\");
         rlr->p_flags = 0;
+
         ret = dos_exec(PE_LOADGO, D.s_cmd, ad_stail, ad_envrn); /* Run the APP */
 
         /* if the user did an appl_init() without an appl_exit(),

@@ -74,11 +74,9 @@ extern void gem_main(void); /* called only from gemstart.S */
 
 #define INF_SIZE   300                  /* size of buffer used by sh_rdinf() */
                                         /*  for start of EMUDESK.INF file    */
-#define ENV_SIZE   200                  /* size of initial desktop environment */
 
 
 static BYTE     infbuf[INF_SIZE+1];     /* used to read part of EMUDESK.INF */
-static BYTE     envbuf[ENV_SIZE];       /* for initial desktop environment */
 static BYTE     acc_name[NUM_ACCS][LEN_ZFNAME]; /* used by count_accs()/ldaccs() */
 
 /* Some global variables: */
@@ -304,84 +302,6 @@ static void load_accs(WORD n)
 }
 
 
-static void sh_addpath(void)
-{
-    char    *lp, *np, *new_envr;
-    const char *pp;
-    WORD    oelen, oplen, nplen, pplen, fstlen;
-    BYTE    tmp;
-    char    tmpstr[MAX_LEN];
-
-    lp = ad_envrn;
-
-    /* get to end of environment string (ends with 2 nulls) */
-    while (*lp || *(lp+1))
-        lp++;
-    lp++;               /* past 2nd null */
-
-    /* old environment length*/
-    oelen = (lp - ad_envrn) + 2;
-
-    /* PATH= length & new path length */
-    pp = PATH_ENV;
-    strcpy(tmpstr, DEF_PATH);
-    np = tmpstr;
-
-    pplen = strlen(pp);
-    nplen = strlen(np);
-
-    if (oelen+nplen+pplen+1 > ENV_SIZE)
-    {
-        KDEBUG(("sh_addpath(): cannot add path, environment buffer too small\n"));
-        return;
-    }
-
-    /* fix up drive letters */
-    lp = np;
-    while ((tmp = *lp) != 0)
-    {
-        if (tmp == ':')
-            *(lp-1) = gl_logdrv;
-        lp++;
-    }
-
-    /* alloc new environ    */
-    new_envr = envbuf;
-
-    /* get ptr to initial PATH= */
-    sh_envrn(&lp, pp);
-
-    if (lp)
-    {
-        /* first part length    */
-        oplen = strlen(lp);             /* length of actual path */
-
-        fstlen = lp - ad_envrn + oplen; /* len thru end of path */
-        memcpy(new_envr,ad_envrn,fstlen);
-    }
-    else
-    {
-        oplen = 0;
-        strcpy(new_envr,pp);
-        fstlen = pplen + 1;
-    }
-
-    if (oplen)
-    {
-        *(new_envr+fstlen) = ';';       /* to splice in new path */
-        fstlen += 1;
-    }
-
-    memcpy(new_envr+fstlen,np,nplen);   /* splice on more path */
-
-    /* copy rest of environ */
-    if (lp)
-        memcpy(new_envr+fstlen+nplen,lp+oplen,oelen-fstlen);
-
-    ad_envrn = new_envr;                /* remember new environ.*/
-}
-
-
 void sh_deskf(WORD obj, LONG plong)
 {
     OBJECT *tree;
@@ -398,9 +318,6 @@ static void sh_init(void)
     psh = sh;
 
     sh_deskf(2, (LONG)&ad_pfile);
-
-    /* add in internal search paths with right drive letter */
-    sh_addpath();
 
     /* set defaults */
     psh->sh_doexec = psh->sh_dodef = gl_shgem = psh->sh_isgem = TRUE;
