@@ -43,8 +43,7 @@ extern UBYTE *end_stram;
 void *xmgetblk(int i);
 
 /*  MGET - wrapper around xmgetblk */
-#define MCELLSIZE(x)    ((sizeof(x)+15)>>4)
-#define MGET(x)         ((x *)xmgetblk(MCELLSIZE(x)))
+#define MGET(x)         ((x *)xmgetblk(sizeof(x)))
 
 /*  xmfreblk - free up memory allocated through mgetblk */
 void xmfreblk(void *m);

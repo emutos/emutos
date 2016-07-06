@@ -55,6 +55,8 @@ static  int     osmem[LENOSM];
 #define MAXQUICK        20
 int     *root[MAXQUICK];
 
+#define MCELLSIZE(n)    (((n)+15)>>4)
+
 /*
  *  local debug counters
  */
@@ -96,9 +98,10 @@ static int *getosm(int n)
 /*
  *  xmgetblk - get a block of memory from the o/s pool.
  *
- * First try to get a block of size i**16 bytes (i paragraphs) from
+ * First round up the size requested to a whole number of paragraphs
+ * (where 1 paragraph = 16 bytes), and then try to get a block from 
  * the 'fast' list - a list of lists of blocks, where list[i] is a
- * list of i paragraphs sized blocks.  These lists are singly linked
+ * list of blocks of size i paragraphs.  These lists are singly linked
  * and are deleted/removed in LIFO order from the root.  If there are
  * no free blocks on the desired list, we call getosm to get a block
  * from the os memory pool.
@@ -107,14 +110,14 @@ static int *getosm(int n)
  * a DND or OFD.
  *
  * Arguments:
- *  i - list of i paragraphs sized blocks
+ *  blksize: size of block required, in bytes
  */
-
-void    *xmgetblk(int i)
+void *xmgetblk(int blksize)
 {
-    int j,w,*m,*q,**r;
+    int i, j, w, *m, *q, **r;
 
-    w = i << 3;                 /*  number of words             */
+    i = MCELLSIZE(blksize);     /* convert to paragraphs */
+    w = i << 3;                 /* number of words */
 
     /*
      *  allocate block
@@ -148,7 +151,7 @@ void    *xmgetblk(int i)
         }
 
         /* no memory available & not DND/OFD, that's (sort of) OK */
-        if ((i != MCELLSIZE(DND)) && (i != MCELLSIZE(OFD)))
+        if ((blksize != sizeof(DND)) && (blksize != sizeof(OFD)))
             break;
 
         /*
