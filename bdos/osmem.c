@@ -33,16 +33,16 @@
 /*
  *  local constants
  */
-
 #define LENOSM 3900     /* size of os memory pool, in words */
+
 
 /*
  *  internal variables
  */
+static int osmptr;
+static int osmlen;
+static int osmem[LENOSM];
 
-static  int     osmptr;
-static  int     osmlen;
-static  int     osmem[LENOSM];
 
 /*
  *  root - root array for 'quick' pool.
@@ -53,19 +53,18 @@ static  int     osmem[LENOSM];
  *
  *  note: MAXQUICK used to be 20, but 5 (indexes 0-4) is now all we need
  */
-
 #define MAXQUICK    5
-int     *root[MAXQUICK];
+int *root[MAXQUICK];
 
 #define MCELLSIZE(n)    (((n)+15)>>4)
+
 
 /*
  *  local debug counters
  */
-
-static  long    dbgfreblk;
-static  long    dbggtosm;
-static  long    dbggtblk;
+static long dbgfreblk;
+static long dbggtosm;
+static long dbggtblk;
 
 
 /*
@@ -77,24 +76,22 @@ static  long    dbggtblk;
  * Arguments:
  *  n -  number of words
  */
-
 static int *getosm(int n)
 {
     int *m;
 
-    if( n > osmlen )
+    if (n > osmlen)
     {
-      /*  not enough room  */
-        dbggtosm++ ;
+        /* not enough room */
+        dbggtosm++;
         return 0;
     }
 
     m = &osmem[osmptr];         /*  start at base               */
     osmptr += n;                /*  new base                    */
     osmlen -= n;                /*  new length of free block    */
-    return(m);                  /*  allocated memory            */
+    return m;                   /*  allocated memory            */
 }
-
 
 
 /*
@@ -128,8 +125,8 @@ void *xmgetblk(int blksize)
     /*  M01.01a.0708.01  */
     if( i >= MAXQUICK )
     {
-        dbggtblk++ ;
-        return( NULL ) ;
+        dbggtblk++;
+        return NULL;
     }
 
     /*
@@ -174,23 +171,23 @@ void *xmgetblk(int blksize)
      *  zero out the block
      */
 
-    if( (q = m) )
-        for( j = 0 ; j < w ; j++ )
+    if ( (q = m) )
+        for (j = 0; j < w; j++)
             *q++ = 0;
 
-    return(m);
+    return m;
 }
 
-/*
- *  xmfreblk - free up memory allocated through mgetblk
- */
 
-void    xmfreblk(void *m)
+/*
+ *  xmfreblk - free up memory allocated through xmgetblk
+ */
+void xmfreblk(void *m)
 {
     int i;
 
     i = *(((int *)m) - 1);
-    if( i < 0 || i >= MAXQUICK )
+    if ((i < 0) || (i >= MAXQUICK))
     {
         /*  bad index  */
         KDEBUG(("xmfreblk: bad index (0x%x), stack at 0x%p\n",i,&m));
@@ -198,22 +195,22 @@ void    xmfreblk(void *m)
         while(1)
             ;
 #endif
-        dbgfreblk++ ;
+        dbgfreblk++;
     }
     else
     {
         /*  ok to free up  */
         *((int **) m) = root[i];
         root[i] = m;
-        if(  *((int **)m) == m )
+        if (*((int **)m) == m)
             KDEBUG(("xmfreblk: Circular link in root[0x%x] at 0x%p\n",i,m));
     }
 }
 
-/*
- * called by bdosmain to initialise the OS memory pool.
- */
 
+/*
+ * called by bdosmain to initialise the OS memory pool
+ */
 void osmem_init(void)
 {
     osmlen = LENOSM;
