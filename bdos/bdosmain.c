@@ -67,6 +67,15 @@ static long xgetver(void);
 
 
 /*
+ * the basepage for the initial process
+ *
+ * this used to be obtained via MGET, but that was a bit pointless,
+ * since it was never freed
+ */
+static PD initial_basepage;
+
+
+/*
  * FND - Function Descriptor
  *
  * Each entry in the function table (below) consists of the address of
@@ -275,9 +284,9 @@ void    osinit(void)
 
     time_init();
 
-    run = MGET(PD);
+    run = &initial_basepage;
 
-    KDEBUG(("BDOS: address of basepage = %08lx\n", (LONG)&run));
+    KDEBUG(("BDOS: address of basepage = %p\n", run));
 
     /* set up system initial standard handles */
 

@@ -34,7 +34,7 @@
  *  local constants
  */
 
-#define LENOSM 4000
+#define LENOSM 3900     /* size of os memory pool, in words */
 
 /*
  *  internal variables
@@ -50,9 +50,11 @@ static  int     osmem[LENOSM];
  *      where 'i' is the index into the array (a paragraph is 16 bytes).
  *      Each list is singly linked.  Items on the list are
  *      deleted/added in LIFO order from the root.
+ *
+ *  note: MAXQUICK used to be 20, but 5 (indexes 0-4) is now all we need
  */
 
-#define MAXQUICK        20
+#define MAXQUICK    5
 int     *root[MAXQUICK];
 
 #define MCELLSIZE(n)    (((n)+15)>>4)
