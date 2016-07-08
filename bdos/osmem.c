@@ -59,9 +59,9 @@ struct _mdb {
 /*
  *  internal variables
  */
-static int osmptr;
-static int osmlen;
-static int osmem[LENOSM];
+static WORD osmptr;
+static WORD osmlen;
+static WORD osmem[LENOSM];
 
 
 /*
@@ -76,7 +76,7 @@ static int osmem[LENOSM];
  *  and we actually only use index 4 (all blocks are 64 bytes).
  */
 #define MAXQUICK    5
-int *root[MAXQUICK];
+WORD *root[MAXQUICK];
 
 static MDBLOCK *mdbroot;    /* root for partially-used MDBLOCKs */
 
@@ -84,9 +84,9 @@ static MDBLOCK *mdbroot;    /* root for partially-used MDBLOCKs */
 /*
  *  local debug counters
  */
-static long dbgfreblk;
-static long dbggtosm;
-static long dbggtblk;
+static LONG dbgfreblk;
+static LONG dbggtosm;
+static LONG dbggtblk;
 
 
 /*
@@ -98,9 +98,9 @@ static long dbggtblk;
  * Arguments:
  *  n -  number of words
  */
-static int *getosm(int n)
+static WORD *getosm(WORD n)
 {
-    int *m;
+    WORD *m;
 
     if (n > osmlen)
     {
@@ -253,9 +253,9 @@ void xmfremd(MD *md)
  * Arguments:
  *  memtype: the type of request
  */
-void *xmgetblk(int memtype)
+void *xmgetblk(WORD memtype)
 {
-    int i, j, w, *m, *q, **r;
+    WORD i, j, w, *m, *q, **r;
 
     if ((memtype < MEMTYPE_MDBLOCK) || (memtype > MEMTYPE_OFD))
     {
@@ -278,7 +278,7 @@ void *xmgetblk(int memtype)
         if ( *(r = &root[i]) )      /* there is an item on the free list */
         {
             m = *r;                 /* get first item on list   */
-            *r = *((int **) m);     /* root points to next item */
+            *r = *((WORD **) m);    /* root points to next item */
             break;
         }
 
@@ -324,9 +324,9 @@ void *xmgetblk(int memtype)
  */
 void xmfreblk(void *m)
 {
-    int i;
+    WORD i;
 
-    i = *(((int *)m) - 1);
+    i = *(((WORD *)m) - 1);
 
     if (i != 4)
     {
@@ -341,9 +341,9 @@ void xmfreblk(void *m)
     else
     {
         /*  ok to free up  */
-        *((int **) m) = root[i];
+        *((WORD **) m) = root[i];
         root[i] = m;
-        if (*((int **)m) == m)
+        if (*((WORD **)m) == m)
             KDEBUG(("xmfreblk: Circular link in root[0x%x] at 0x%p\n",i,m));
     }
 }

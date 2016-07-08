@@ -40,7 +40,7 @@ extern UBYTE *end_stram;
  */
 
 /*  xmgetblk - get a block of memory from the o/s pool. */
-void *xmgetblk(int memtype);
+void *xmgetblk(WORD memtype);
 
 /*  MGET - wrapper around xmgetblk */
 #define MGET(x)         ((x *)xmgetblk(MEMTYPE_ ## x))
