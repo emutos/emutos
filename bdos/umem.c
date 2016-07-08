@@ -17,7 +17,6 @@
 /* #define ENABLE_KDEBUG */
 
 
-
 #include "config.h"
 #include "portab.h"
 #include "fs.h"
@@ -27,17 +26,15 @@
 #include "kprint.h"
 
 
-
 /*
  *  global variables
  */
-
-
 MPB pmd;
 #if CONF_WITH_ALT_RAM
 MPB pmdalt;
 int has_alt_ram;
 #endif
+
 
 /* internal variables */
 
@@ -48,7 +45,6 @@ UBYTE *end_stram;
 /*
  * static functions
  */
-
 #ifdef ENABLE_KDEBUG
 static void dump_md_list(char *title,MD *m)
 {
@@ -87,16 +83,13 @@ static void dump_mem_map(void)
 
 
 /*
- *  xmalloc - allocate memory
- *
- *      Function 0x48   m_alloc
+ *  xmalloc - Function 0x48 (Malloc)
  */
-
 void *xmalloc(long amount)
 {
     void *rc;
 
-    if( run->p_flags & PF_TTRAMMEM ) {
+    if (run->p_flags & PF_TTRAMMEM) {
         /* allocate TT RAM, or ST RAM if not enough TT RAM */
         rc = xmxalloc(amount, MX_PREFTTRAM);
     } else {
@@ -109,20 +102,19 @@ void *xmalloc(long amount)
 
 
 /*
- *  xmfree - Function 0x49      m_free
+ *  xmfree - Function 0x49 (Mfree)
  */
-
-long    xmfree(void *addr)
+long xmfree(void *addr)
 {
     MD *p,**q;
     MPB *mpb;
 
     KDEBUG(("BDOS: Mfree(0x%08lx)\n",(ULONG)addr));
 
-    if((UBYTE *)addr >= start_stram && (UBYTE *)addr <= end_stram) {
+    if (((UBYTE *)addr >= start_stram) && ((UBYTE *)addr <= end_stram)) {
         mpb = &pmd;
 #if CONF_WITH_ALT_RAM
-    } else if(has_alt_ram) {
+    } else if (has_alt_ram) {
         mpb = &pmdalt;
 #endif
     } else {
@@ -134,36 +126,35 @@ long    xmfree(void *addr)
             break;
 
     if (!p)
-        return(EIMBA);
+        return EIMBA;
 
     *q = p->m_link;
     freeit(p,mpb);
 
-    return(E_OK);
+    return E_OK;
 }
 
+
 /*
- * xsetblk - Function 0x4A      m_shrink
+ * xsetblk - Function 0x4A (Mshrink)
  *
  * Arguments:
  *  n   - dummy, not used
  *  blk - addr of block to free
  *  len - length of block to free
  */
-
-long    xsetblk(int n, void *blk, long len)
+long xsetblk(int n, void *blk, long len)
 {
     MD *m,*p;
     MPB *mpb;
 
     KDEBUG(("BDOS: Mshrink(0x%08lx,%ld)\n",(long)blk,len));
 
-    if((UBYTE*)blk >= start_stram && (UBYTE*)blk <= end_stram) {
+    if (((UBYTE*)blk >= start_stram) && ((UBYTE*)blk <= end_stram)) {
         mpb = &pmd;
         KDEBUG(("BDOS xsetblk: mpb=&pmd\n"));
-
 #if CONF_WITH_ALT_RAM
-    } else if(has_alt_ram) {
+    } else if (has_alt_ram) {
         mpb = &pmdalt;
         KDEBUG(("BDOS xsetblk: mpb=&pmdalt\n"));
 #endif /* CONF_WITH_ALT_RAM */
@@ -174,23 +165,20 @@ long    xsetblk(int n, void *blk, long len)
     /*
      * Traverse the list of memory descriptors looking for this block.
      */
-
     for (p = mpb->mp_mal; p; p = p->m_link)
-        if(  (UBYTE *) blk == p->m_start  )
+        if ((UBYTE *)blk == p->m_start)
             break;
 
     /*
      * If block address doesn't match any memory descriptor, then abort.
      */
-
     if (!p)
-        return(EIMBA);
+        return EIMBA;
 
     /*
      * Round the size to a multiple of 4 bytes to keep alignment.
      * Alignment on long boundaries matters in FastRAM.
      */
-
     len = (len + 3) & ~3;
 
     KDEBUG(("BDOS xsetblk: new length=%ld\n",len));
@@ -198,20 +186,18 @@ long    xsetblk(int n, void *blk, long len)
     /*
      * If the caller is not shrinking the block size, then abort.
      */
-
     if (p->m_length < len)
-        return(EGSBF);
+        return EGSBF;
 
     /*
      * Create a memory descriptor for the freed portion of memory.
      */
-
     m = xmgetmd();
 
 #ifdef ENABLE_KDEBUG
     /* what if 0? */
-    if( m == 0 )
-        panic("umem.c/xsetblk: Null Return From MGET\n") ;
+    if (m == 0)
+        panic("umem.c/xsetblk: Null Return From MGET\n");
 #endif
 
     m->m_start = p->m_start + len;
@@ -219,15 +205,12 @@ long    xsetblk(int n, void *blk, long len)
     p->m_length = len;
     freeit(m,mpb);
 
-    return(E_OK);
+    return E_OK;
 }
 
 /*
- *  xmxalloc - allocate memory
- *
- *      Function 0x44   m_xalloc
+ *  xmxalloc - Function 0x44 (Mxalloc)
  */
-
 void *xmxalloc(long amount, int mode)
 {
     MD *m;
@@ -241,7 +224,7 @@ void *xmxalloc(long amount, int mode)
      * if amount == -1L, return the size of the biggest block
      *
      */
-    if(amount == -1L) {
+    if (amount == -1L) {
         switch(mode) {
         case MX_STRAM:
             ret_value = ffit(-1L,&pmd);
@@ -262,7 +245,8 @@ void *xmxalloc(long amount, int mode)
 #if CONF_WITH_ALT_RAM
                 {
                     void *tmp = ffit(-1L,&pmdalt);
-                    if(ret_value < tmp) ret_value = tmp;
+                    if (ret_value < tmp)
+                        ret_value = tmp;
                 }
 #endif
             }
@@ -277,8 +261,7 @@ void *xmxalloc(long amount, int mode)
     /*
      * return NULL if asking for a negative or null amount
      */
-
-    if( amount <= 0 ) {
+    if (amount <= 0) {
         ret_value = NULL;
         goto ret;
     }
@@ -286,7 +269,6 @@ void *xmxalloc(long amount, int mode)
     /*
      * Pass the request on to the internal routine.
      */
-
     switch(mode) {
     case MX_STRAM:
         m = ffit(amount,&pmd);
@@ -299,14 +281,14 @@ void *xmxalloc(long amount, int mode)
     case MX_PREFSTRAM:
         m = ffit(amount,&pmd);
 #if CONF_WITH_ALT_RAM
-        if(m == NULL)
+        if (m == NULL)
             m = ffit(amount,&pmdalt);
 #endif
         break;
     case MX_PREFTTRAM:
 #if CONF_WITH_ALT_RAM
         m = ffit(amount,&pmdalt);
-        if(m == NULL)
+        if (m == NULL)
 #endif
             m = ffit(amount,&pmd);
         break;
@@ -319,8 +301,7 @@ void *xmxalloc(long amount, int mode)
      * The internal routine returned a pointer to a memory descriptor, or NULL
      * Return its pointer to the start of the block.
      */
-
-    if(m == NULL) {
+    if (m == NULL) {
         ret_value = NULL;
     } else {
         ret_value = m->m_start;
@@ -330,7 +311,7 @@ ret:
     KDEBUG(("BDOS xmxalloc: returns 0x%08lx\n",(ULONG)ret_value));
     dump_mem_map();
 
-    return(ret_value);
+    return ret_value;
 }
 
 #if CONF_WITH_ALT_RAM
@@ -364,10 +345,12 @@ long xmaddalt(UBYTE *start, LONG size)
     size &= -4L;
 
     /* only strictly positive sizes allowed */
-    if(size <= 0) return -1;
+    if (size <= 0)
+        return -1;
 
     /* does it overlap with ST RAM? */
-    if((start < start_stram && start+size > start_stram) || start < end_stram)
+    if (((start < start_stram) && (start+size > start_stram))
+     || (start < end_stram))
         return -1;
 
     /* if the new block is just after a free one, just extend it */
@@ -379,17 +362,20 @@ long xmaddalt(UBYTE *start, LONG size)
     }
 
     md = xmgetmd();
-    if(md == NULL) return ENSMEM;
+    if (md == NULL)
+        return ENSMEM;
+
     md->m_start = start;
     md->m_length = size;
     md->m_own = NULL;
-    if(has_alt_ram) {
+    if (has_alt_ram) {
         /* some alternative RAM has already been registered, just insert it
          * to the beginning of the free block list.
          */
         p = pmdalt.mp_mfl;
         pmdalt.mp_mfl = md;
-        if(pmdalt.mp_rover == p) pmdalt.mp_rover = md;
+        if (pmdalt.mp_rover == p)
+            pmdalt.mp_rover = md;
         md->m_link = p;
     } else {
         md->m_link = NULL;
@@ -398,6 +384,7 @@ long xmaddalt(UBYTE *start, LONG size)
         pmdalt.mp_rover = md;
         has_alt_ram = 1;
     }
+
     return 0;
 }
 
@@ -409,11 +396,11 @@ long xmaddalt(UBYTE *start, LONG size)
  * keep the start and end addresses to be able later to determine if
  * addresses belong to one pool or the other.
  */
-
 void umem_init(void)
 {
     /* get the MPB */
     Getmpb((long)&pmd);
+
     /* derive the addresses, assuming the MPB is in clean state */
     start_stram = pmd.mp_mfl->m_start;
     end_stram = start_stram + pmd.mp_mfl->m_length;
