@@ -779,7 +779,7 @@ GEMDOS Changes - Processes and Memory
 =====================================
 Malloc()
 --------
-136. By and large, the restrictions on Malloc() (i.e. the 20          BUG: Malloc doesn't use the folder pool
+136. By and large, the restrictions on Malloc() (i.e. the 20          FIXED: commit f54411
      blocks/process limit) have been lifted.  Malloc() still uses
      the same internal "OS Pool" as folders, so it should still
      be used sparingly.  Use Malloc() for large chunks, and use
