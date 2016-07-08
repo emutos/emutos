@@ -206,7 +206,7 @@ long    xsetblk(int n, void *blk, long len)
      * Create a memory descriptor for the freed portion of memory.
      */
 
-    m = MGET(MD);
+    m = xmgetmd();
 
 #ifdef ENABLE_KDEBUG
     /* what if 0? */
@@ -378,7 +378,7 @@ long xmaddalt(UBYTE *start, LONG size)
         return 0;
     }
 
-    md = MGET(MD);
+    md = xmgetmd();
     if(md == NULL) return ENSMEM;
     md->m_start = start;
     md->m_length = size;

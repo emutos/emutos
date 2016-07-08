@@ -98,7 +98,7 @@ static void reserve_blocks(PD *p, MPB *mpb)
     for (m = *(q = &mpb->mp_mal); m; m = *q) {
         if (m->m_own == p) {
             *q = m->m_link; /* pouf ! like magic */
-            xmfreblk(m);
+            xmfremd(m);
         } else {
             q = &m->m_link;
         }

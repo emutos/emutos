@@ -107,7 +107,7 @@ MD *ffit(long amount, MPB *mp)
                  *  Nicer Handling of This *
                  *        Situation       *
                  **************************/
-                if( (p1=MGET(MD)) == 0 )
+                if( (p1=xmgetmd()) == 0 )
                 {
                     KDEBUG(("BDOS ffit: null MGET\n"));
                     return(0);
@@ -208,7 +208,7 @@ void freeit(MD *m, MPB *mp)
             if (p == mp->mp_rover)
                 mp->mp_rover = m;
 
-            xmfreblk(p);
+            xmfremd(p);
         }
 
     if (q)
@@ -220,6 +220,6 @@ void freeit(MD *m, MPB *mp)
             if (m == mp->mp_rover)
                 mp->mp_rover = q;
 
-            xmfreblk(m);
+            xmfremd(m);
         }
 }

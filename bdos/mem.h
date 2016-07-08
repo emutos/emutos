@@ -40,13 +40,20 @@ extern UBYTE *end_stram;
  */
 
 /*  xmgetblk - get a block of memory from the o/s pool. */
-void *xmgetblk(int i);
+void *xmgetblk(int memtype);
 
 /*  MGET - wrapper around xmgetblk */
-#define MGET(x)         ((x *)xmgetblk(sizeof(x)))
+#define MGET(x)         ((x *)xmgetblk(MEMTYPE_ ## x))
+#define MEMTYPE_MDBLOCK 0   /* the 4 types of valid request, all needing 64 bytes */
+#define MEMTYPE_DMD     1
+#define MEMTYPE_DND     2
+#define MEMTYPE_OFD     3
 
 /*  xmfreblk - free up memory allocated through mgetblk */
 void xmfreblk(void *m);
+
+MD *xmgetmd(void);          /* xmgetmd - get an MD */
+void xmfremd(MD *md);       /* xmfremd - free an MD */
 
 /* init os memory */
 void osmem_init(void);

@@ -33,7 +33,27 @@
 /*
  *  local constants
  */
-#define LENOSM 3900     /* size of os memory pool, in words */
+#define NUM_OSM_BLOCKS  118         /* more than TOS, probably larger than necessary */
+#define LEN_OSM_BLOCK   (2+64)      /* in bytes */
+/* size of os memory pool, in words: */
+#define LENOSM          (LEN_OSM_BLOCK*NUM_OSM_BLOCKS/sizeof(WORD))
+
+
+/*
+ *  local typedefs
+ */
+#define MDS_PER_BLOCK   3
+
+typedef struct {
+    MD md;
+    WORD index;         /* if used, 0-2, else -1 */
+} MDEXT;
+
+typedef struct _mdb MDBLOCK;
+struct _mdb {
+    MDBLOCK *mdb_next;
+    MDEXT entry[MDS_PER_BLOCK];
+};
 
 
 /*
@@ -45,18 +65,20 @@ static int osmem[LENOSM];
 
 
 /*
- *  root - root array for 'quick' pool.
- *      root is an array of ptrs to memblocks of size 'i' paragraphs,
- *      where 'i' is the index into the array (a paragraph is 16 bytes).
- *      Each list is singly linked.  Items on the list are
- *      deleted/added in LIFO order from the root.
+ *  root - root array for 'quick' pool
  *
- *  note: MAXQUICK used to be 20, but 5 (indexes 0-4) is now all we need
+ *  root is an array of ptrs to memblocks of size 'i' paragraphs, where
+ *  'i' is the index into the array (a paragraph is 16 bytes).  Each
+ *  list is singly linked.  Items on the list are deleted/added in LIFO
+ *  order from the root.
+ *
+ *  note: MAXQUICK used to be 20, but 5 (indexes 0-4) is now all we need,
+ *  and we actually only use index 4 (all blocks are 64 bytes).
  */
 #define MAXQUICK    5
 int *root[MAXQUICK];
 
-#define MCELLSIZE(n)    (((n)+15)>>4)
+static MDBLOCK *mdbroot;    /* root for partially-used MDBLOCKs */
 
 
 /*
@@ -95,43 +117,161 @@ static int *getosm(int n)
 
 
 /*
+ *  xmgetmd - get an MD
+ *
+ *  To create a single pool for all osmem requests, MDs are grouped in
+ *  blocks of 3 called MDBLOCKs which occupy 58 bytes.  MDBLOCKs are
+ *  handled as follows:
+ *    . they are linked in a chain, initially empty
+ *    . when the first MD is required, an MDBLOCK is obtained via
+ *      xmgetblk() and put on the chain, and the first slot is allocated
+ *    . MDs are obtained from existing partially-used MDBLOCKS
+ *    . when an MDBLOCK is full, it is removed from the chain
+ *    . when an MD in a full MDBLOCK is freed, the MDBLOCK is put back
+ *      on the chain
+ *    . when the MDBLOCK is totally unused, it is put back on the normal
+ *      free chain
+ */
+MD *xmgetmd(void)
+{
+    MDBLOCK *mdb = mdbroot;
+    MD *md;
+    WORD i, avail;
+
+    if (!mdb)
+    {
+        mdb = MGET(MDBLOCK);
+        if (!mdb)
+            return NULL;
+
+        /* initialise new MDBLOCK */
+        mdb->mdb_next = NULL;
+        for (i = 0; i < MDS_PER_BLOCK; i++)
+            mdb->entry[i].index = -1;   /* unused */
+        mdbroot = mdb;
+        KDEBUG(("xmgetmd(): got new MDBLOCK at %p\n",mdb));
+    }
+
+    /*
+     * allocate MD from MDBLOCK
+     */
+    for (i = 0, avail = 0, md = NULL; i < MDS_PER_BLOCK; i++)
+    {
+        if (mdb->entry[i].index < 0)
+        {
+            if (!md)                /* not yet allocated */
+            {
+                mdb->entry[i].index = i;     
+                md = &mdb->entry[i].md;
+                KDEBUG(("xmgetmd(): got MD at %p\n",md));
+            }
+            else avail++;
+        }
+    }
+
+    if (!md)
+    {
+        KDEBUG(("xmgetmd(): MDBLOCK at %p is invalid, no free entries\n",mdb));
+        return NULL;
+    }
+
+    /*
+     * remove full MDBLOCK from mdb chain
+     */
+    if (avail == 0)
+    {
+        MDBLOCK *next = mdb->mdb_next;
+        mdb->mdb_next = NULL;       /* tidiness */
+        mdbroot = next;
+        KDEBUG(("xmgetmd(): removed MDBLOCK at %p from mdb chain\n",mdb));
+    }
+
+    return md;
+}
+
+
+/*
+ *  xmfremd - free an MD
+ */
+void xmfremd(MD *md)
+{
+    MDBLOCK *mdb;
+    MDEXT *entry;
+    WORD i, avail;
+
+    i = *(WORD *)(md+1);            /* word following MD */
+    if ((i < 0) || (i >= MDS_PER_BLOCK))
+    {
+        KDEBUG(("xmfremd(): MD at %p not freed, invalid index %d\n",md,i));
+        return;
+    }
+
+    entry = (MDEXT *)md - i;        /* point to first entry */
+    mdb = (MDBLOCK *)((char *)entry - sizeof(MDBLOCK *));
+
+    mdb->entry[i].index = -1;       /* mark as free */
+    KDEBUG(("xmfremd(): MD at %p freed\n",md));
+
+    for (i = 0, avail = 0; i < MDS_PER_BLOCK; i++)
+        if (mdb->entry[i].index < 0)
+            avail++;
+
+    switch(avail) {
+    case 3:
+        mdbroot = mdb->mdb_next;    /* remove from mdb chain */
+        mdb->mdb_next = NULL;
+        xmfreblk(mdb);              /* and put on free chain */
+        KDEBUG(("xmfremd(): MDBLOCK at %p now empty, moved to free chain\n",mdb));
+        break;
+    case 2:
+        break;
+    case 1:
+        mdb->mdb_next = mdbroot;    /* add to mdb chain */
+        mdbroot = mdb;
+        KDEBUG(("xmfremd(): MDBLOCK at %p now has free entry, moved to mdb chain\n",mdb));
+        break;
+    default:
+        KDEBUG(("xmfremd(): MDBLOCK at %p is invalid, %d free entries\n",mdb,avail));
+        break;
+    }
+}
+
+
+/*
  *  xmgetblk - get a block of memory from the o/s pool.
  *
- * First round up the size requested to a whole number of paragraphs
- * (where 1 paragraph = 16 bytes), and then try to get a block from 
- * the 'fast' list - a list of lists of blocks, where list[i] is a
- * list of blocks of size i paragraphs.  These lists are singly linked
- * and are deleted/removed in LIFO order from the root.  If there are
- * no free blocks on the desired list, we call getosm to get a block
- * from the os memory pool.
+ * First try to get a block from the 'fast' list, anchored by root[4],
+ * a list of blocks of size 64 bytes.  This list is singly linked and
+ * blocks are deleted/removed in LIFO order from the root.  If there
+ * are no free blocks on the list, we call getosm to get a block from
+ * the os memory pool.
  *
- * Note the special handling when we are unable to obtain memory for
- * a DND or OFD.
+ * If we cannot get memory for an MDBLOCK, we return NULL (the request
+ * will fail).  Otherwise we will attempt to free up DNDs to make space
+ * and if that fails, the system will be halted.
  *
  * Arguments:
- *  blksize: size of block required, in bytes
+ *  memtype: the type of request
  */
-void *xmgetblk(int blksize)
+void *xmgetblk(int memtype)
 {
     int i, j, w, *m, *q, **r;
 
-    i = MCELLSIZE(blksize);     /* convert to paragraphs */
-    w = i << 3;                 /* number of words */
-
-    /*
-     *  allocate block
-     */
-
-    /*  M01.01a.0708.01  */
-    if( i >= MAXQUICK )
+    if ((memtype < MEMTYPE_MDBLOCK) || (memtype > MEMTYPE_OFD))
     {
         dbggtblk++;
         return NULL;
     }
 
     /*
+     *  allocate block
+     */
+    i = 4;                          /* always from root[4] */
+    w = 32;                         /* number of words */
+
+    /*
      * we should execute the following loop a maximum of twice: the second
-     * time only if we're allocating a DND or OFD & no memory is available
+     * time only if we're allocating a DMD/DND/OFD & no memory is available
      */
     for (j = 0; ; j++)
     {
@@ -149,12 +289,12 @@ void *xmgetblk(int blksize)
             break;
         }
 
-        /* no memory available & not DND/OFD, that's (sort of) OK */
-        if ((blksize != sizeof(DND)) && (blksize != sizeof(OFD)))
+        /* no memory available for an MDBLOCK, that's (sort of) OK */
+        if (memtype == MEMTYPE_MDBLOCK)
             break;
 
         /*
-         * no memory for DND/OFD, try to get some
+         * no memory for DMD/DND/OFD, try to get some
          *
          * note defensive programming: if free_available_dnds() said it
          * worked, but we're here again, then it lied and we should quit
@@ -187,7 +327,8 @@ void xmfreblk(void *m)
     int i;
 
     i = *(((int *)m) - 1);
-    if ((i < 0) || (i >= MAXQUICK))
+
+    if (i != 4)
     {
         /*  bad index  */
         KDEBUG(("xmfreblk: bad index (0x%x), stack at 0x%p\n",i,&m));
@@ -214,6 +355,7 @@ void xmfreblk(void *m)
 void osmem_init(void)
 {
     osmlen = LENOSM;
+    mdbroot = NULL;
     dbgfreblk = 0;
     dbggtosm = 0;
     dbggtblk = 0;
