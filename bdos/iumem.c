@@ -12,9 +12,7 @@
  */
 
 
-
 /* #define ENABLE_KDEBUG */
-
 
 
 #include "config.h"
@@ -27,23 +25,17 @@
 /*
  *  STATIUMEM - cond comp; set to true to count calls to these routines
  */
+#define STATIUMEM   FALSE
 
-#define STATIUMEM       FALSE
-
-
-#if     STATIUMEM
-
-long    ccffit;
-long    ccfreeit;
-
+#if STATIUMEM
+long ccffit;
+long ccfreeit;
 #endif
 
 
-
-/**
+/*
  *  ffit - find first fit for requested memory in ospool
  */
-
 MD *ffit(long amount, MPB *mp)
 {
     MD *p,*q,*p1;              /* free list is composed of MD's */
@@ -62,18 +54,18 @@ MD *ffit(long amount, MPB *mp)
 #endif
     KDEBUG(("BDOS ffit: requested=%ld\n",amount));
 
-#if     STATIUMEM
-    ++ccffit ;
+#if STATIUMEM
+    ++ccffit;
 #endif
 
-    if( (q = mp->mp_rover) == 0  )      /*  get rotating pointer        */
+    if ((q = mp->mp_rover) == 0)        /*  get rotating pointer        */
     {
         KDEBUG(("BDOS ffit: null rover\n"));
-        return( 0 ) ;
+        return NULL;
     }
 
     maxval = 0;
-    maxflg = (amount == -1 ? TRUE : FALSE) ;
+    maxflg = (amount == -1L) ? TRUE : FALSE;
 
     /* Round the size to a multiple of 4 bytes to keep alignment.
        Alignment on long boundaries matters in FastRAM. */
@@ -84,12 +76,11 @@ MD *ffit(long amount, MPB *mp)
 
     do /* search the list for an MD with enough space */
     {
-
-        if( p == 0 )
+        if (p == 0)
         {
             /*  at end of list, wrap back to start  */
-            q = (MD *) &mp->mp_mfl ;    /*  q => mfl field  */
-            p = q->m_link ;             /*  p => 1st MD     */
+            q = (MD *) &mp->mp_mfl;     /*  q => mfl field  */
+            p = q->m_link;              /*  p => 1st MD     */
         }
 
         if ((!maxflg) && (p->m_length >= amount))
@@ -107,10 +98,10 @@ MD *ffit(long amount, MPB *mp)
                  *  Nicer Handling of This *
                  *        Situation       *
                  **************************/
-                if( (p1=xmgetmd()) == 0 )
+                if ((p1=xmgetmd()) == 0)
                 {
                     KDEBUG(("BDOS ffit: null MGET\n"));
-                    return(0);
+                    return NULL;
                 }
 
                 /*  init new MD  */
@@ -133,47 +124,45 @@ MD *ffit(long amount, MPB *mp)
 
             p->m_own = run;
 
-            mp->mp_rover =
-                (q == (MD *) &mp->mp_mfl ? q->m_link : q);
+            mp->mp_rover = (q == (MD *)&mp->mp_mfl) ? q->m_link : q;
 
             KDEBUG(("BDOS ffit: start=0x%08lx, length=%ld\n",(ULONG)p->m_start,p->m_length));
 
-            return(p);  /* got some */
+            return p;   /* got some */
         }
         else if (p->m_length > maxval)
             maxval = p->m_length;
 
-        p = ( q=p )->m_link;
+        p = (q = p)->m_link;
 
     } while (q != mp->mp_rover);
 
-    /*  return either the max, or 0 (error)  */
+    /*  return either the max, or NULL (error)  */
 
 #ifdef ENABLE_KDEBUG
-    if( maxflg )
+    if (maxflg)
         KDEBUG(("BDOS ffit: maxval=%ld\n",maxval));
     else
         KDEBUG(("BDOS ffit: Not enough contiguous memory\n"));
 #endif
-    return( maxflg ? (MD *) maxval : 0 ) ;
+    return maxflg ? (MD *)maxval : NULL;
 }
 
 
 /*
  *  freeit - Free up a memory descriptor
  */
-
 void freeit(MD *m, MPB *mp)
 {
     MD *p, *q;
 
-#if     STATIUMEM
-    ++ccfreeit ;
+#if STATIUMEM
+    ++ccfreeit;
 #endif
 
     q = 0;
 
-    for (p = mp->mp_mfl; p ; p = (q=p) -> m_link)
+    for (p = mp->mp_mfl; p; p = (q=p)-> m_link)
         if (m->m_start <= p->m_start)
             break;
 

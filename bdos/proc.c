@@ -66,7 +66,6 @@ static jmp_buf bakbuf;         /* longjmp buffer */
  * These violate the encapsulation of the memory internal structure.
  * Could perhaps better go in the memory part.
  */
-
 static MPB *find_mpb(void *addr);
 static void free_all_owned(PD *p, MPB *mpb);
 static void set_owner(void *addr, PD *p, MPB *mpb);
@@ -74,10 +73,10 @@ static void reserve_blocks(PD *pd, MPB *mpb);
 
 static MPB *find_mpb(void *addr)
 {
-    if((UBYTE *)addr >= start_stram && (UBYTE *)addr <= end_stram) {
+    if (((UBYTE *)addr >= start_stram) && ((UBYTE *)addr <= end_stram)) {
         return &pmd;
 #if CONF_WITH_ALT_RAM
-    } else if(has_alt_ram) {
+    } else if (has_alt_ram) {
         return &pmdalt;
 #endif
     } else {
@@ -110,7 +109,7 @@ static void free_all_owned(PD *p, MPB *mpb)
 {
     MD *m, **q;
 
-    for( m = *( q = &mpb->mp_mal ) ; m ; m = *q ) {
+    for (m = *(q = &mpb->mp_mal); m; m = *q) {
         if (m->m_own == p) {
             *q = m->m_link;
             freeit(m,mpb);
@@ -124,23 +123,22 @@ static void free_all_owned(PD *p, MPB *mpb)
 static void set_owner(void *addr, PD *p, MPB *mpb)
 {
     MD *m;
-    for( m = mpb->mp_mal ; m ; m = m->m_link ) {
-        if(m->m_start == (UBYTE *)addr) {
+    for (m = mpb->mp_mal; m; m = m->m_link) {
+        if (m->m_start == (UBYTE *)addr) {
             m->m_own = p;
             return;
         }
     }
 }
 
-/**
+/*
  * ixterm - terminate a process
  *
  * terminate process with PD 'r'.
  *
  * @r: PD of process to terminate
  */
-
-static void     ixterm( PD *r )
+static void ixterm(PD *r)
 {
     WORD h;
     WORD i;
@@ -151,8 +149,8 @@ static void     ixterm( PD *r )
 
     /* check the standard devices in both file tables  */
 
-    for( i = 0 ; i < NUMSTD ; i++ )
-        if( (h = r->p_uft[i]) > 0 )
+    for (i = 0; i < NUMSTD; i++)
+        if ((h = r->p_uft[i]) > 0)
             xclose(h);
 
     for (i = 0; i < OPNFILES; i++)
@@ -162,13 +160,13 @@ static void     ixterm( PD *r )
 
     /* decrement usage counts for current directories */
 
-    for( i = 0 ; i < NUMCURDIR ; i++ )
+    for (i = 0; i < NUMCURDIR; i++)
     {
-        if( (h = r->p_curdir[i]) != 0 )
+        if ((h = r->p_curdir[i]) != 0)
             decr_curdir_usage(h);
     }
 
-    /* free each item in the allocated list, that is owned by 'r' */
+    /* free each item in the allocated list that is owned by 'r' */
 
     free_all_owned(r, &pmd);
 #if CONF_WITH_ALT_RAM
@@ -184,21 +182,20 @@ static void     ixterm( PD *r )
  * counts bytes starting at 'env' up to and including the terminating
  * double null.
  */
-
-static  WORD envsize( char *env )
+static WORD envsize(char *env)
 {
     char *e;
     WORD cnt;
 
-    for( e = env, cnt = 0 ; !(*e == '\0' && *(e+1) == '\0') ; ++e, ++cnt )
+    for (e = env, cnt = 0; !(*e == '\0' && *(e+1) == '\0'); ++e, ++cnt)
         ;
 
-    return( cnt + 2 ) ;         /*  count terminating double null  */
+    return cnt + 2;         /*  count terminating double null  */
 }
 
 
-
-/** xexec - (p_exec - 0x4b) execute a new process
+/*
+ * xexec - (Pexec - 0x4b) execute a new process
  *
  * load&go(cmdlin,cmdtail), load/nogo(cmdlin,cmdtail), justgo(psp)
  * create psp - user receives a memory partition
@@ -233,9 +230,9 @@ long xexec(WORD flag, char *path, char *tail, char *env)
     case PE_RELOCATE:   /* internal use only, see bootstrap() in bios/bios.c */
         p = (PD *) tail;
         rc = kpgm_relocate(p, (long)path);
-        if(rc) {
+        if (rc) {
             KDEBUG(("BDOS xexec: kpgm_reloc returned %ld (0x%lx)\n",rc,rc));
-            return(rc);
+            return rc;
         }
 
         /* invalidate instruction cache for the TEXT segment only
@@ -244,23 +241,23 @@ long xexec(WORD flag, char *path, char *tail, char *env)
          */
         invalidate_instruction_cache( p+1, p->p_tlen);
 
-        return (long) p;
+        return (long)p;
 #endif
     case PE_BASEPAGE:           /* just create a basepage */
         path = (char *) 0L;     /* (same as basepage+flags with flags set to zero) */
         /* drop thru */
     case PE_BASEPAGEFLAGS:      /* create a basepage, respecting the flags */
         env_md = alloc_env(env);
-        if(env_md == NULL) {
+        if (env_md == NULL) {
             KDEBUG(("BDOS xexec: not enough memory!\n"));
-            return(ENSMEM);
+            return ENSMEM;
         }
         m = alloc_tpa((ULONG)path,sizeof(PD),&max);
 
         if (m == NULL) {    /* not even enough memory for basepage */
             freeit(env_md, &pmd);
             KDEBUG(("BDOS xexec: No memory for basepage\n"));
-            return(ENSMEM);
+            return ENSMEM;
         }
 
         p = (PD *) m->m_start;
@@ -273,7 +270,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
         p->p_flags = (ULONG)path;   /* set the flags */
         init_pd_files(p);
 
-        return (long) p;
+        return (long)p;
     case PE_GOTHENFREE:
         /* set the owner of the memory to be this process */
         p = (PD *) tail;
@@ -296,7 +293,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
     KDEBUG(("BDOS xexec: trying to find the command ...\n"));
     if (ixsfirst(path,0,0L)) {
         KDEBUG(("BDOS xexec: command %s not found!!!\n",path));
-        return(EFILNF);     /*  file not found      */
+        return EFILNF;      /*  file not found      */
     }
 
     /* load the header - if I/O error occurs now, the longjmp in rwabs will
@@ -304,16 +301,16 @@ long xexec(WORD flag, char *path, char *tail, char *env)
      * we haven't allocated anything yet.
      */
     rc = kpgmhdrld(path, &hdr, &fh);
-    if(rc) {
+    if (rc) {
         KDEBUG(("BDOS xexec: kpgmhdrld returned %ld (0x%lx)\n",rc,rc));
-        return(rc);
+        return rc;
     }
 
     /* allocate the environment first, always in ST RAM */
     env_md = alloc_env(env);
-    if ( env_md == NULL ) {
+    if (env_md == NULL) {
         KDEBUG(("BDOS xexec: not enough memory!\n"));
-        return(ENSMEM);
+        return ENSMEM;
     }
 
     /* allocate the basepage depending on memory policy */
@@ -324,7 +321,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
     if (m == NULL) {
         KDEBUG(("BDOS xexec: no memory for TPA\n"));
         freeit(env_md, &pmd);
-        return(ENSMEM);
+        return ENSMEM;
     }
 
     p = (PD *) m->m_start;
@@ -332,7 +329,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
     /* memory ownership - the owner is either the new process being created,
      * or the parent
      */
-    if(flag == PE_LOADGO) {
+    if (flag == PE_LOADGO) {
         m->m_own = env_md->m_own = p;
     } else {
         m->m_own = env_md->m_own = run;
@@ -351,7 +348,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
 
     /* we have now allocated memory, so we need to intercept longjmp. */
     memcpy(bakbuf, errbuf, sizeof(errbuf));
-    if ( setjmp(errbuf) ) {
+    if (setjmp(errbuf)) {
 
         KDEBUG(("Error and longjmp in xexec()!\n"));
 
@@ -367,7 +364,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
 
     /* now, load the rest of the program and perform relocation */
     rc = kpgmld(cur_p, fh, &hdr);
-    if ( rc ) {
+    if (rc) {
         KDEBUG(("BDOS xexec: kpgmld returned %ld (0x%lx)\n",rc,rc));
         /* free any memory allocated yet */
         freeit(cur_env_md, &pmd);
@@ -388,9 +385,9 @@ long xexec(WORD flag, char *path, char *tail, char *env)
      */
     invalidate_instruction_cache(((char *)cur_p) + sizeof(PD), hdr.h01_tlen);
 
-    if(flag != PE_LOAD)
+    if (flag != PE_LOAD)
         proc_go(cur_p);
-    return (long) cur_p;
+    return (long)cur_p;
 }
 
 /* initialize the structure fields */
@@ -410,7 +407,7 @@ static void init_pd_fields(PD *p, char *tail, long max, MD *env_md)
 
     /* copy tail */
     b = &p->p_cmdlin[0];
-    for( i = 0 ; (i < PDCLSIZE)  && (*tail) ; i++ )
+    for (i = 0; (i < PDCLSIZE) && (*tail); i++)
         *b++ = *tail++;
 
     *b++ = 0;
@@ -424,7 +421,7 @@ static void init_pd_files(PD *p)
     /* inherit standard files from me */
     for (i = 0; i < NUMSTD; i++) {
         WORD h = run->p_uft[i];
-        if ( h > 0 )
+        if (h > 0)
             ixforce(i, h, p);
         else
             p->p_uft[i] = h;
@@ -455,9 +452,8 @@ static MD *alloc_env(char *env)
 
     /* allocate it */
     env_md = ffit((long) size, &pmd);
-    if ( env_md == NULL ) {
+    if (env_md == NULL)
         return NULL;
-    }
 
     /* copy it */
     memcpy(env_md->m_start, env, size);
@@ -604,7 +600,7 @@ static void proc_go(PD *p)
 #endif
 
     /* the new process is the one to run */
-    run = (PD *) p;
+    run = (PD *)p;
 
     gouser();
 }
@@ -612,27 +608,25 @@ static void proc_go(PD *p)
 
 
 /*
- * x0term - (p_term0 - 0x00)Terminate Current Process
+ * x0term - (Pterm0) terminate current process
  *
  * terminates the calling process and returns to the parent process
- * without a return code
+ * with a return code of zero
  */
-
-void    x0term(void)
+void x0term(void)
 {
     xterm(0);
 }
 
 /*
- * xterm - terminate a process
+ * xterm - (Pterm) terminate current process
  *
  * terminate the current process and transfer control to the colling
  * process.  All files opened by the terminating process are closed.
  *
  * Function 0x4C        p_term
  */
-
-void    xterm(UWORD rc)
+void xterm(UWORD rc)
 {
     PD *p = run;
 
@@ -651,16 +645,15 @@ void    xterm(UWORD rc)
 
 
 /*
- * xtermres - Function 0x31   p_termres
+ * xtermres - Function 0x31 (Ptermres)
  */
-
-WORD    xtermres(long blkln, WORD rc)
+WORD xtermres(long blkln, WORD rc)
 {
     xsetblk(0,run,blkln);
 
     reserve_blocks(run, &pmd);
 #if CONF_WITH_ALT_RAM
-    if(has_alt_ram)
+    if (has_alt_ram)
         reserve_blocks(run, &pmdalt);
 #endif
     xterm(rc);
