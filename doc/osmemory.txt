@@ -39,7 +39,7 @@ complexity due to the reformatting required.
 
 2. When TOS requires memory for a DND or OFD, and os memory is exhausted,
 it halts with a message.  EmuTOS (as of March 2014) reclaims allocated
-(but currently unused) DNDs at this point, amnd only halts with a message
+(but currently unused) DNDs at this point, and only halts with a message
 if this fails.
 
 Roger Burrows
