@@ -143,43 +143,9 @@ static void kprintf_outc_coldfire_rs232(int c)
 
 static int vkprintf(const char *fmt, va_list ap)
 {
-#if CONF_WITH_UAE
-    if (has_uaelib) {
-        return doprintf(kprintf_outc_uae, fmt, ap);
-    }
-#endif
-
-#if DETECT_NATIVE_FEATURES
-    if (is_nfStdErr()) {
-        return doprintf(kprintf_outc_natfeat, fmt, ap);
-    }
-#endif
-
-#if STONX_NATIVE_PRINT
-    if (stonx_kprintf_available) {
-        return doprintf(kprintf_outc_stonx, fmt, ap);
-    }
-#endif
-
 #if CONSOLE_DEBUG_PRINT
     if (boot_status&CHARDEV_AVAILABLE) {    /* no console, no message */
         return doprintf(cprintf_outc, fmt, ap);
-    }
-#endif
-
-#if MIDI_DEBUG_PRINT
-    /* use midi port instead of other native debug capabilities */
-    if (boot_status&MIDI_AVAILABLE) {   /* no MIDI, no message */
-        int rc;
-        char *stacksave = NULL;
-
-        if (boot_status&DOS_AVAILABLE)  /* if Super() is available, */
-            if (!Super(1L))             /* check for user state.    */
-                stacksave = (char *)Super(0L);  /* if so, switch to super   */
-        rc = doprintf(kprintf_outc_midi, fmt, ap);
-        if (stacksave)                  /* if we switched, */
-            SuperToUser(stacksave);     /* switch back.    */
-        return rc;
     }
 #endif
 
@@ -215,6 +181,40 @@ static int vkprintf(const char *fmt, va_list ap)
 
 #if COLDFIRE_DEBUG_PRINT
     return doprintf(kprintf_outc_coldfire_rs232, fmt, ap);
+#endif
+
+#if MIDI_DEBUG_PRINT
+    /* use midi port instead of other native debug capabilities */
+    if (boot_status&MIDI_AVAILABLE) {   /* no MIDI, no message */
+        int rc;
+        char *stacksave = NULL;
+
+        if (boot_status&DOS_AVAILABLE)  /* if Super() is available, */
+            if (!Super(1L))             /* check for user state.    */
+                stacksave = (char *)Super(0L);  /* if so, switch to super   */
+        rc = doprintf(kprintf_outc_midi, fmt, ap);
+        if (stacksave)                  /* if we switched, */
+            SuperToUser(stacksave);     /* switch back.    */
+        return rc;
+    }
+#endif
+
+#if CONF_WITH_UAE
+    if (has_uaelib) {
+        return doprintf(kprintf_outc_uae, fmt, ap);
+    }
+#endif
+
+#if DETECT_NATIVE_FEATURES
+    if (is_nfStdErr()) {
+        return doprintf(kprintf_outc_natfeat, fmt, ap);
+    }
+#endif
+
+#if STONX_NATIVE_PRINT
+    if (stonx_kprintf_available) {
+        return doprintf(kprintf_outc_stonx, fmt, ap);
+    }
 #endif
 
     /* let us hope nobody is doing 'pretty-print' with kprintf by

@@ -1111,15 +1111,6 @@
 #endif
 
 /*
- * Set MIDI_DEBUG_PRINT to 1 to redirect debug prints to MIDI out.
- * This is useful for an emulator without any native debug print capabilities,
- * or for real hardware. This overrides previous debug print settings.
- */
-#ifndef MIDI_DEBUG_PRINT
-# define MIDI_DEBUG_PRINT 0
-#endif
-
-/*
  * Set COLDFIRE_DEBUG_PRINT to 1 to redirect debug prints to the ColdFire serial port
  */
 #ifndef COLDFIRE_DEBUG_PRINT
@@ -1130,8 +1121,17 @@
 # endif
 #endif
 
+/*
+ * Set MIDI_DEBUG_PRINT to 1 to redirect debug prints to MIDI out.
+ * This is useful for an emulator without any native debug print capabilities,
+ * or for real hardware. This overrides previous debug print settings.
+ */
+#ifndef MIDI_DEBUG_PRINT
+# define MIDI_DEBUG_PRINT 0
+#endif
+
 /* Determine if kprintf() is available */
-#if CONF_WITH_UAE || DETECT_NATIVE_FEATURES || STONX_NATIVE_PRINT || CONSOLE_DEBUG_PRINT || MIDI_DEBUG_PRINT || RS232_DEBUG_PRINT || SCC_DEBUG_PRINT || COLDFIRE_DEBUG_PRINT
+#if CONF_WITH_UAE || DETECT_NATIVE_FEATURES || STONX_NATIVE_PRINT || CONSOLE_DEBUG_PRINT || RS232_DEBUG_PRINT || SCC_DEBUG_PRINT || COLDFIRE_DEBUG_PRINT || MIDI_DEBUG_PRINT
 #  define HAS_KPRINTF 1
 # else
 #  define HAS_KPRINTF 0
@@ -1282,8 +1282,8 @@
 # endif
 #endif
 
-#if (CONSOLE_DEBUG_PRINT + MIDI_DEBUG_PRINT + RS232_DEBUG_PRINT + SCC_DEBUG_PRINT + COLDFIRE_DEBUG_PRINT) > 1
-# error "Only one of CONSOLE_DEBUG_PRINT, MIDI_DEBUG_PRINT, RS232_DEBUG_PRINT, SCC_DEBUG_PRINT or COLDFIRE_DEBUG_PRINT must be set to 1."
+#if (CONSOLE_DEBUG_PRINT + RS232_DEBUG_PRINT + SCC_DEBUG_PRINT + COLDFIRE_DEBUG_PRINT + MIDI_DEBUG_PRINT) > 1
+# error "Only one of CONSOLE_DEBUG_PRINT, RS232_DEBUG_PRINT, SCC_DEBUG_PRINT, COLDFIRE_DEBUG_PRINT or MIDI_DEBUG_PRINT must be set to 1."
 #endif
 
 #if !CONF_WITH_ACSI
