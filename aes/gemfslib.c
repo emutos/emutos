@@ -70,32 +70,39 @@ static void centre_title(LONG tree,WORD objnum)
 
 
 /*
- *  Routine to back off the end of a path string, stopping at the
- *  first backslash or colon encountered.  The second argument
- *  specifies the end of the string; if NULL, the end is determined
- *  via strlen().  If the scan is stopped by a colon, the routine
- *  inserts a backslash in the string immediately following the colon.
+ *  Routine to back off the end of a path string, stopping at either
+ *  the first backslash or at the colon preceding the drive specifier.
+ *  The second argument specifies the end of the string; if NULL, the
+ *  end is determined via strlen().  If the scan is stopped by a colon,
+ *  the routine inserts a backslash in the string immediately following
+ *  the colon.
  *
  *  Returns a pointer to the beginning of the string (if no colon or
  *  backslash found), or to the last backslash.
  */
 static BYTE *fs_back(BYTE *pstr, BYTE *pend)
 {
+    BYTE *p;
+
     if (!pend)
         pend = pstr + strlen(pstr);
 
     /* back off to last backslash (or colon) */
-    while ((*pend != ':') && (*pend != '\\') && (pend != pstr))
-        pend--;
-
-    /* if a colon, then insert a backslash */
-    if (*pend == ':')
+    for (p = pend; p != pstr; p--)
     {
-        pend++;
-        ins_char(pend, 0, '\\', LEN_ZPATH-3);
+        if (*p == '\\')
+            break;
+        if (*p == ':')
+        {
+            if (p == pstr+1)    /* X: at the start of the string */
+            {
+                ins_char(++p,0,'\\',LEN_ZPATH-3);
+                break;
+            }
+        }
     }
 
-    return pend;
+    return p;
 }
 
 
