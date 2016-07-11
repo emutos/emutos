@@ -161,6 +161,12 @@ static int vkprintf(const char *fmt, va_list ap)
     }
 #endif
 
+#if CONSOLE_DEBUG_PRINT
+    if (boot_status&CHARDEV_AVAILABLE) {    /* no console, no message */
+        return doprintf(cprintf_outc, fmt, ap);
+    }
+#endif
+
 #if MIDI_DEBUG_PRINT
     /* use midi port instead of other native debug capabilities */
     if (boot_status&MIDI_AVAILABLE) {   /* no MIDI, no message */
