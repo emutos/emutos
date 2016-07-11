@@ -22,7 +22,7 @@
  */
 
 #ifdef LOCALCONF
-#include "../localconf.h"
+# include "../localconf.h"
 #endif
 
 /*
@@ -908,7 +908,7 @@
  * Set CONF_WITH_PCGEM to 1 to support various PC-GEM-compatible AES functions
  */
 #ifndef CONF_WITH_PCGEM
- # define CONF_WITH_PCGEM 1
+# define CONF_WITH_PCGEM 1
 #endif
 
 /*
@@ -936,9 +936,9 @@
  */
 #ifndef CONF_WITH_RESET
 # if EMUTOS_LIVES_IN_RAM || defined(__mcoldfire__)
- # define CONF_WITH_RESET 0
+#  define CONF_WITH_RESET 0
 # else
- # define CONF_WITH_RESET 1
+#  define CONF_WITH_RESET 1
 # endif
 #endif
 
@@ -1107,7 +1107,7 @@
  * the MFP USART.
  */
 #ifndef SCC_DEBUG_PRINT
-#define SCC_DEBUG_PRINT 0
+# define SCC_DEBUG_PRINT 0
 #endif
 
 /*
@@ -1116,7 +1116,7 @@
  * or for real hardware. This overrides previous debug print settings.
  */
 #ifndef MIDI_DEBUG_PRINT
-#define MIDI_DEBUG_PRINT 0
+# define MIDI_DEBUG_PRINT 0
 #endif
 
 /*
