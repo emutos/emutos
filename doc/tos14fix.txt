@@ -73,33 +73,49 @@ File Selector
      Selector.  See documentation for "fsel_exinput()."
 008. FS provides 16 drive label buttons for easier drive              FIXED: commit 7cdac5
      selection.
-009. FS now handles <RETURN> differently on text editing: after       TO BE CHECKED
+009. FS now handles <RETURN> differently on text editing: after       FIXED: commit 462ed2
      editing a pathname, pressing <RETURM> enters the path and
      redisplays the FS.  After editing a filename, the FS exits.
-010. If the user passes in a path with a leading backslash, this      TO BE CHECKED
+010. If the user passes in a path with a leading backslash, this      FIXED: since at least 0.8.5
      path is appended to the default directory of the default
      drive internally, and files from the resulting directory are
      displayed.
+     (The following clarification is added by Roger Burrows)
+     This description is wrong.  Under TOS 1.04, if the path has
+     a leading backslash, it is appended internally to the default
+     drive; if it does NOT have a leading backslash, it is appended
+     internally to the default directory of the default drive.
 011. The static file allocation of 100 files per FS has been          FIXED: commit 4b53c9
      removed.  The AES will Malloc() memory for directories with
      large numbers of files.  If available memory is insufficient,
      fsel_input() will exit with an error code.
-012. FS now handles long pathnames.                                   TO BE CHECKED
+012. FS now handles long pathnames.                                   FIXED: commit bff77b
 013. FS now handles multiple "abort/continue" errors correctly.       TO BE CHECKED
 014. FS preserves current DTA buffer addresses.                       FIXED: commit b4246a
-015. FS preserves clip rectangles.                                    TO BE CHECKED
-016. FS preserves default directories.                                TO BE CHECKED
-017. If a diskette is removed when the file selector is called,       TO BE CHECKED
-     the system now handles "Cancel" on the resulting error dialog
+015. FS preserves clip rectangles.                                    BUG: does not preserve clip
+016. FS preserves default directories.                                FIXED: commit f29cf5
+017. If a diskette is removed when the file selector is called,       BUG: the selected drive is
+     the system now handles "Cancel" on the resulting error dialog    shown with an empty directory
      correctly.
-018. FS now handles colons in filenames, even though the colon        TO BE CHECKED
+     (The following clarification is added by Roger Burrows)
+     Under TOS 1.04, attempting to access an empty drive results
+     in "Drive X: is not responding".  Selecting "Cancel" causes
+     the original path to be redisplayed.
+018. FS now handles colons in filenames, even though the colon        FIXED: commit d843b7
      is NOT a legal filename character.
-019. FS no longer displays files that have the Hidden flag set.       TO BE CHECKED
-020. Sequence of the file selector redraw has been improved to        TO BE CHECKED
-      be more visually appealing.
-021. Clicking anywhere in the file display window reloads a           TO BE CHECKED
+019. FS no longer displays files that have the Hidden flag set.       FIXED: commit f29cf5
+020. Sequence of the file selector redraw has been improved to        COMMENT: EmuTOS redraw seems OK
+     be more visually appealing.
+021. Clicking anywhere in the file display window reloads a           FIXED: since at least 0.8.5
      directory without affecting the filename template in the
      PATH line.
+     (The following clarification is added by Roger Burrows)
+     There is a bug in this area of which the above is probably a
+     poor description.  In TOS 1.00, if you modify the file path
+     and click on the bar at the top of the file display window,
+     you get a redisplay with the new file path, and then you get
+     a second redisplay with the original file path.  TOS 1.04
+     does not do the second redisplay.
 022. Media errors no longer cause the FS to crash at the next         TO BE CHECKED
      critical error. (See "Context Switches")
 
@@ -536,8 +552,8 @@ Selecting Files
      selected files.  Clicking outside the window or clicking
      anywhere with <Shift> released will deselect all the selected
      files.
-091. By popular demand, selecting files in inactive windows by        COMMENT: this does *not* work in Atari TOS
-     holding down the right mouse button now works and is
+091. By popular demand, selecting files in inactive windows by        COMMENT: this does *not*
+     holding down the right mouse button now works and is             work in Atari TOS
      supported.
 
 
@@ -736,10 +752,10 @@ Ddelete()
 
 Folder Limits
 -------------
-124. The so-called "40-folder bug" is fixed.  There are still         TO BE CHECKED
-     limits, mainly on the depth of folders and the accumulated
-     depth of open files, but these limits are very far away and
-     can still be extended with "FOLDRXXX.PRG" which is widely
+124. The so-called "40-folder bug" is fixed.  There are still         FIXED: 
+     limits, mainly on the depth of folders and the accumulated       initial fix by commit 410326
+     depth of open files, but these limits are very far away and      main fix via commit 49d837
+     can still be extended with "FOLDRXXX.PRG" which is widely        further help via commit f54411
      available.  Also, a folder only takes up space when it is
      "active", not just when you've seen it.  See "OS Pool
      Discussion."
@@ -796,9 +812,9 @@ OS Pool
      effect that the pool has been exhausted, and that you need to
      use FOLDRXXX.PRG to enlarge it. It no longer gives incorrect
      results; nor does it damage disks.
-138. The OS Pool has been reduced to 11/20/85 size.  This may         COMMENT: Atari pool size is unknown, but
-     allow some programs to run that ran on 520STs with 11/20/85      appears to be about 6000 bytes in TOS 1.04.
-     ROMs but failed to run with Mega ROMs.                           EmuTOS uses 8000 bytes.
+138. The OS Pool has been reduced to 11/20/85 size.  This may         COMMENT: Atari pool size
+     allow some programs to run that ran on 520STs with 11/20/85      is 5600 bytes in TOS 1.04.
+     ROMs but failed to run with Mega ROMs.                           EmuTOS uses ~8000 bytes.
 
 
 Pexec()
