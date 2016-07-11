@@ -144,7 +144,9 @@ static void kprintf_outc_coldfire_rs232(int c)
 static int vkprintf(const char *fmt, va_list ap)
 {
 #if CONF_WITH_UAE
-    return doprintf(kprintf_outc_uae, fmt, ap);
+    if (has_uaelib) {
+        return doprintf(kprintf_outc_uae, fmt, ap);
+    }
 #endif
 
 #if DETECT_NATIVE_FEATURES

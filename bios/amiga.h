@@ -57,10 +57,16 @@ WORD amiga_setcolor(WORD colorNum, WORD color);
 void amiga_mouse_vbl(void);
 void amiga_clock_init(void);
 ULONG amiga_getdt(void);
+
 #if CONF_WITH_UAE
+typedef ULONG uaelib_demux_t(ULONG fnum, ...);
+extern uaelib_demux_t* uaelib_demux;
+#define has_uaelib (uaelib_demux != NULL)
+
 void amiga_uaelib_init(void);
 void kprintf_outc_uae(int c);
 #endif
+
 void amiga_shutdown(void);
 BOOL amiga_flop_detect_drive(WORD dev);
 WORD amiga_floprw(UBYTE *buf, WORD rw, WORD dev, WORD sect, WORD track, WORD side, WORD count);

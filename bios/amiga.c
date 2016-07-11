@@ -330,10 +330,7 @@ ULONG amiga_getdt(void)
 
 /* uaelib_demux() is the entry point */
 #define UAELIB_DEMUX_OFFSET 0xFF60
-typedef ULONG uaelib_demux_t(ULONG fnum, ...);
-static uaelib_demux_t* uaelib_demux = NULL;
-
-#define has_uaelib (uaelib_demux != NULL)
+uaelib_demux_t* uaelib_demux = NULL;
 
 static ULONG uaelib_GetVersion(void);
 
@@ -391,9 +388,6 @@ static char uae_debug_string[UAE_MAX_DEBUG_LENGTH + 1];
  * so we have to buffer the string until until \n */
 void kprintf_outc_uae(int c)
 {
-    if (!has_uaelib)
-        return;
-
     if (c == '\n')
     {
         /* Output the current string then clear the buffer */
