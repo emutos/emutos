@@ -74,7 +74,7 @@ File Selector
 008. FS provides 16 drive label buttons for easier drive              FIXED: commit 7cdac5
      selection.
 009. FS now handles <RETURN> differently on text editing: after       FIXED: commit 462ed2
-     editing a pathname, pressing <RETURM> enters the path and
+     editing a pathname, pressing <RETURN> enters the path and
      redisplays the FS.  After editing a filename, the FS exits.
 010. If the user passes in a path with a leading backslash, this      FIXED: since at least 0.8.5
      path is appended to the default directory of the default
