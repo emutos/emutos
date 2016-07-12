@@ -645,38 +645,40 @@ static void save_to_disk(void)
 {
     LONG ret, len;
     WNODE *w;
-    WORD fh;
+    WORD fh = -1;
     BYTE inf_file_name[sizeof(INF_FILE_NAME)];
+
+    /* make sure user really wants to save the desktop */
+    if (fun_alert(1, STSVINF, NULL) != 1)
+        return;
 
     strcpy(inf_file_name, INF_FILE_NAME);
     inf_file_name[0] += gl_stdrv;   /* Adjust drive letter  */
 
-    while(1)
+    ret = dos_create(inf_file_name, 0);
+    if (ret >= 0L)
     {
-        ret = dos_create(inf_file_name, 0);
-        if (ret >= 0L)
-        {
-            fh = (WORD) ret;
-            len = G.g_afsize - 1;
-            ret = dos_write(fh, len, gl_afile);
-            dos_close(fh);
-            if (ret == len)         /* if all ok, exit loop */
-                break;
-        }
-        if (fun_alert(1, STNOINF, NULL) == 2)
-            break;                  /* user cancelled */
+        fh = (WORD) ret;
+        len = G.g_afsize - 1;
+        ret = dos_write(fh, len, gl_afile);
+        dos_close(fh);
+        if (ret != len)             /* write error */
+            ret = -1L;
     }
+    if (ret < 0L)                   /* open error or write error */
+        fun_alert(1, STNOINF, NULL);
 
     /*
      * now update any open windows for the directory containing
-     * the saved file.  we always update, even if the user
-     * cancelled, since the file may have been created but not
-     * written successfully before the alert was issued.
+     * the saved file (as long as the file was created ok).
      */
-    del_fname(inf_file_name);       /* convert to pathname ending in *.* */
-    w = fold_wind(inf_file_name);   /* scan for matching windows */
-    if (w)                          /* got one:                          */
-        fun_rebld(w);               /* rebuild all matching open windows */
+    if (fh >= 0)                    /* file was created */
+    {
+        del_fname(inf_file_name);       /* convert to pathname ending in *.* */
+        w = fold_wind(inf_file_name);   /* scan for matching windows */
+        if (w)                          /* got one:                          */
+            fun_rebld(w);               /* rebuild all matching open windows */
+    }
 }
 
 
