@@ -392,7 +392,7 @@ DESKTOP.INF
 
 Dialog Boxes
 ------------
-059. Many dialogs are more concise.  This includes error dialogs      TO BE CHECKED
+059. Many dialogs are more concise.  This includes error dialogs      FIXED: commit f83c16
      like the one about "Your output device is not receiving
      data..." and others.
 060. Leading underscores in numeric fields of boxes have been         FIXED: commit 06f9c9
