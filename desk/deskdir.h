@@ -1,5 +1,5 @@
 /*
- * EmuTOS desktop
+ * EmuTOS desktop - header for deskdir.c
  *
  * Copyright (C) 2002-2016 The EmuTOS development team
  *
@@ -7,6 +7,18 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+/*
+ * typedefs
+ */
+typedef struct {    /* #files/#folders/total filesize of directory & its subdirectories */
+    WORD files;
+    WORD dirs;
+    LONG size;
+} DIRCOUNT;
+
+/*
+ * function prototypes
+ */
 void show_hide(WORD fmd, LONG tree);
 void draw_fld(LONG tree, WORD obj);
 BYTE *last_separator(BYTE *path);
@@ -18,5 +30,4 @@ WNODE *fold_wind(BYTE *path);
 WORD d_errmsg(WORD err);
 WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
             LONG tree, WORD *pfcnt, WORD *pdcnt);
-WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
-            WORD *pfcnt, WORD *pdcnt, LONG *psize);
+WORD dir_op(WORD op, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *count);

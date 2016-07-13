@@ -289,8 +289,7 @@ static WORD source_is_parent(BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path)
  */
 WORD fun_op(WORD op, PNODE *pspath, BYTE *pdest)
 {
-    WORD fcnt, dcnt;
-    LONG size;
+    DIRCOUNT count;
 
     switch(op)
     {
@@ -300,12 +299,10 @@ WORD fun_op(WORD op, PNODE *pspath, BYTE *pdest)
             return FALSE;
         /* drop thru */
     case OP_DELETE:
-        dir_op(OP_COUNT, pspath->p_spec, pspath->p_flist, pdest,
-                &fcnt, &dcnt, &size);        /* get count of source files */
-        if ((fcnt+dcnt) == 0)
+        dir_op(OP_COUNT, pspath, pdest, &count);    /* get count of source files */
+        if ((count.files+count.dirs) == 0)
             break;
-        dir_op(op, pspath->p_spec, pspath->p_flist, pdest,
-                &fcnt, &dcnt, &size);        /* do the operation     */
+        dir_op(op, pspath, pdest, &count);          /* do the operation     */
         return TRUE;
     }
 

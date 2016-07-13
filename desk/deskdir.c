@@ -844,13 +844,12 @@ static WORD d_dofoldren(BYTE *oldname, BYTE *newname)
  *  folders in the source path.  The selected files and folders are
  *  marked in the source file list.
  */
-WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
-            WORD *pfcnt, WORD *pdcnt, LONG *psize)
+WORD dir_op(WORD op, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *count)
 {
     LONG tree;
     FNODE *pf;
     WORD more, confirm;
-    BYTE *ptmpsrc, *ptmpdst;
+    BYTE *ptmpsrc, *ptmpdst, *psrc_path = pspath->p_spec;
     LONG lavail;
     BYTE srcpth[MAXPATHLEN], dstpth[MAXPATHLEN];
     OBJECT *obj;
@@ -923,8 +922,8 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
     if (tree)
     {
         centre_title(tree);
-        inf_numset(tree, CDFILES, *pfcnt);
-        inf_numset(tree, CDFOLDS, *pdcnt);
+        inf_numset(tree, CDFILES, count->files);
+        inf_numset(tree, CDFOLDS, count->dirs);
         show_hide(FMD_START, tree);
         ml_havebox = TRUE;
         if (confirm)
@@ -936,7 +935,7 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
         }
     }
 
-    for (pf = pflist; pf && more; pf = pf->f_next)
+    for (pf = pspath->p_flist; pf && more; pf = pf->f_next)
     {
         if (pf->f_obid == NIL)
             continue;
@@ -964,7 +963,7 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
 
             if (more)
                 more = (op==OP_RENAME) ? d_dofoldren(srcpth,dstpth) :
-                        d_doop(0, op, srcpth, dstpth, tree, pfcnt, pdcnt);
+                        d_doop(0, op, srcpth, dstpth, tree, &count->files, &count->dirs);
             continue;
         }
 
@@ -999,8 +998,8 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
 
         if (tree)
         {
-            *pfcnt -= 1;
-            inf_numset(tree, CDFILES, *pfcnt);
+            count->files -= 1;
+            inf_numset(tree, CDFILES, count->files);
             draw_fld(tree, CDFILES);
         }
     }
@@ -1008,9 +1007,9 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
     switch(op)
     {
     case OP_COUNT:
-        *pfcnt = G.g_nfiles;
-        *pdcnt = G.g_ndirs;
-        *psize = G.g_size;
+        count->files = G.g_nfiles;
+        count->dirs = G.g_ndirs;
+        count->size = G.g_size;
         break;
     case OP_DELETE:
     case OP_RENAME:
