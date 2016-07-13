@@ -7,6 +7,11 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#ifndef _DESKINS_H
+#define _DESKINS_H
+
 WORD is_installed(ANODE *pa);
 WORD ins_disk(ANODE *pa);
 WORD ins_app(BYTE *pfname, ANODE *pa);
+
+#endif  /* _DESKINS_H */

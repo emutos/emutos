@@ -5,6 +5,9 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#ifndef _DESKSUPP_H
+#define _DESKSUPP_H
+
 #define CTL_C   ('C'-0x40)
 #define CTL_Q   ('Q'-0x40)
 #define CTL_S   ('S'-0x40)
@@ -23,3 +26,5 @@ WORD do_open(WORD curr);
 WORD do_info(WORD curr);
 int do_format(WORD curr);
 void do_chkall(WORD redraw);
+
+#endif  /* _DESKSUPP_H */

@@ -17,4 +17,4 @@ WORD inf_disk(BYTE dr_id);
 WORD inf_pref(void);
 WORD opn_appl(BYTE *papname, BYTE *papparms, BYTE *pcmd, BYTE *ptail);
 
-#endif
+#endif  /* _DESKINF_H */

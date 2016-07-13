@@ -7,5 +7,9 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#ifndef _DESKGLOB_H
+#define _DESKGLOB_H
 
 extern GLOBES     G;
+
+#endif  /* _DESKGLOB_H */

@@ -7,6 +7,9 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#ifndef _DESK1_H
+#define _DESK1_H
+
 /*
  * types of close for fun_close()
  */
@@ -18,3 +21,5 @@ void true_closewnd(WNODE *pw);
 void fun_close(WNODE *pw, WORD closetype);
 void snap_disk(WORD x, WORD y, WORD *px, WORD *py);
 void desk1_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my, WORD keystate);
+
+#endif  /* _DESK1_H */

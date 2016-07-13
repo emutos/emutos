@@ -7,4 +7,9 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#ifndef _DESKRSRC_H
+#define _DESKRSRC_H
+
 BYTE *ini_str(WORD stnum);
+
+#endif  /* _DESKRSRC_H */

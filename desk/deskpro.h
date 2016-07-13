@@ -7,11 +7,11 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef DESKPRO_H
-#define DESKPRO_H
+#ifndef _DESKPRO_H
+#define _DESKPRO_H
 
 WORD pro_chdir(WORD drv, BYTE *ppath);
 WORD pro_run(WORD isgraf, WORD isover, WORD wh, WORD curr);
 WORD pro_exit(BYTE *pcmd, BYTE *ptail);
 
-#endif
+#endif  /* _DESKPRO_H */

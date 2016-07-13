@@ -7,8 +7,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef AESBIND_H
-#define AESBIND_H
+#ifndef _AESBIND_H
+#define _AESBIND_H
 #include "obdefs.h"
 
 #define END_UPDATE 0        /* for wind_update() */
@@ -106,4 +106,4 @@ WORD shel_put(void *pdata, WORD len);
 WORD shel_find(BYTE *ppath);
 WORD shel_envrn(LONG ppath, LONG psrch);
 
-#endif
+#endif  /* _AESBIND_H */

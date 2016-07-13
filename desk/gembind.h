@@ -21,6 +21,9 @@
 *       -------------------------------------------------------------
 */
 
+#ifndef _GEMBIND_H
+#define _GEMBIND_H
+
                                 /* Application Manager                  */
 #define APPL_INIT 10
 #define APPL_READ 11
@@ -541,3 +544,5 @@ extern LONG     addr_out[AO_SIZE];
 
 #define SH_LPCMD addr_in[0]
 #define SH_LPDIR addr_in[1]
+
+#endif  /* _GEMBIND_H */

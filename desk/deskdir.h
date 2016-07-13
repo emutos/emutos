@@ -7,6 +7,9 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#ifndef _DESKDIR_H
+#define _DESKDIR_H
+
 /*
  * typedefs
  */
@@ -31,3 +34,5 @@ WORD d_errmsg(WORD err);
 WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
             LONG tree, WORD *pfcnt, WORD *pdcnt);
 WORD dir_op(WORD op, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *count);
+
+#endif  /* _DESKDIR_H */

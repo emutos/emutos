@@ -7,6 +7,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#ifndef _DESKACT_H
+#define _DESKACT_H
 
 /* Prototypes: */
 WORD act_chg(WORD wh, OBJECT *tree, WORD root, WORD obj, GRECT *pc, UWORD chgvalue,
@@ -17,3 +19,5 @@ void act_bsclick(WORD wh, OBJECT *tree, WORD root, WORD mx, WORD my, WORD keysta
                  GRECT *pc, WORD dclick);
 WORD act_bdown(WORD wh, OBJECT *tree, WORD root, WORD *in_mx, WORD *in_my,
                WORD *keystate, GRECT *pc, WORD *pdobj);
+
+#endif  /* _DESKACT_H */

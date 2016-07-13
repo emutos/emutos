@@ -16,8 +16,8 @@
 *       -------------------------------------------------------------
 */
 
-#ifndef DESKAPP_H
-#define DESKAPP_H
+#ifndef _DESKAPP_H
+#define _DESKAPP_H
 #include "deskconf.h"
 
 #define AP_APPLOPEN 0
@@ -161,4 +161,4 @@ void app_blddesk(void);
 ANODE *app_afind(WORD isdesk, WORD atype, WORD obid, BYTE *pname, WORD *pisapp);
 
 
-#endif  /* DESKAPP_H */
+#endif  /* _DESKAPP_H */
