@@ -373,26 +373,28 @@ static void fun_desk2desk(WORD dobj, WORD keystate)
 
 void desk1_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my, WORD keystate)
 {
-    if (wh) /* Dragging something from window */
+    if (wh)
     {
-        if (dest_wh)
+        if (dest_wh)    /* dragging from window to window, */
+        {               /* e.g. copy/move files/folders    */
             fun_drag(wh, dest_wh, dobj, mx, my, keystate);
-        else
+        }
+        else            /* dragging from window to desktop */
         {
-            if (sobj == dobj)
+            if (sobj == dobj)   /* dropping onto desktop surface */
                 fun_alert(1, STNODRA1, NULL);
-            else
+            else                /* dropping onto desktop icon */
                 fun_win2desk(wh, dobj, keystate);
         }
     }
     else    /* Dragging something from desk */
     {
-        if (dest_wh)
-        {
+        if (dest_wh)    /* dragging from desktop to window,  */
+        {               /* e.g. copying a disk into a folder */
             fun_desk2win(dest_wh, dobj, keystate);
         }
-        else    /* Dragging from desk to desk */
-        {
+        else            /* dragging from desktop to desktop,   */
+        {               /* e.g. copying a disk to another disk */
             if (sobj != dobj)
                 fun_desk2desk(dobj, keystate);
         }
