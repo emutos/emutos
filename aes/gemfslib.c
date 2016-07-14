@@ -384,6 +384,12 @@ static WORD fs_newdir(BYTE *fpath, BYTE *pspec, LONG tree, WORD *pcount)
 /*
  *  sets wildcard mask from string
  *  if no mask, uses default *.* & adds it to string
+ *
+ *  note: although the mask ought to be no longer than LEN_ZFNAME bytes,
+ *  the user can enter a string of arbitrary length in the file selector
+ *  dialog.  we must preserve this for display and comparison purposes
+ *  (so path_changed() can detect a change properly).  therefore we allow
+ *  up to LEN_ZPATH bytes.
  */
 static void set_mask(BYTE *mask,BYTE *path)
 {
@@ -392,7 +398,7 @@ static void set_mask(BYTE *mask,BYTE *path)
     pend = fs_pspec(path, NULL);
     if (!*pend)                 /* if there's no mask, add one */
         strcpy(pend, "*.*");
-    strlcpy(mask, pend, LEN_ZFNAME);
+    strlcpy(mask, pend, LEN_ZPATH);
 }
 
 
@@ -482,7 +488,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
     WORD dclkret, cont, newlist, newsel, newdrive;
     BYTE *pstr;
     GRECT pt;
-    BYTE locstr[LEN_ZPATH+1], mask[LEN_ZFNAME+1], selname[LEN_FSNAME];
+    BYTE locstr[LEN_ZPATH+1], mask[LEN_ZPATH+1], selname[LEN_FSNAME];
     OBJECT *obj;
     TEDINFO *tedinfo;
 
