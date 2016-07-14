@@ -207,7 +207,6 @@ static void desk_all(WORD flags)
 ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp)
 {
     ANODE *pa;
-    BYTE  *pname;
     WNODE *pw;
     FNODE *pf;
 
@@ -216,11 +215,7 @@ ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp)
 
     if (!wh)        /* On desktop? */
     {
-        if (G.g_screen[item].ob_type == G_ICON)
-            pname = win_iname(item);
-        else
-            pname = "";
-        pa = app_afind(TRUE, -1, item, pname, pisapp);
+        pa = app_afind(TRUE, -1, item, NULL, NULL);
     }
     else
     {
