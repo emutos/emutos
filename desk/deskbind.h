@@ -16,6 +16,9 @@
 *       -------------------------------------------------------------
 */
 
+#ifndef _DESKBIND_H
+#define _DESKBIND_H
+
 #include "deskconf.h"
 #include "desk_rsc.h"           /* for RS_NTREE */
 #include "dta.h"
@@ -201,3 +204,5 @@ typedef struct
  */
         SCREENINFO      *g_screeninfo;
 } GLOBES;
+
+#endif  /* _DESKBIND_H */
