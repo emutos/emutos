@@ -236,8 +236,7 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD numpts,
     WORD   root, curr_wh, curr_root, curr_sel, dst_wh;
     WORD   l_mx, l_my;
     WORD   offx, offy;
-    WORD   down, button, keystate, junk;
-    FNODE  *pf;
+    WORD   down, button, keystate;
     GRECT  o, ln;
     ANODE  *pa;
     OBJECT *obj;
@@ -321,7 +320,7 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD numpts,
         obj = tree + *pdobj;
         if (!(obj->ob_state & SELECTED))
         {
-            pa = i_find(dst_wh, *pdobj, &pf, &junk);
+            pa = i_find(dst_wh, *pdobj, NULL, NULL);
             if (pa && ((pa->a_type == AT_ISFOLD) ||
                        (pa->a_type == AT_ISDISK) ||
                        (pa->a_type == AT_ISTRSH)))

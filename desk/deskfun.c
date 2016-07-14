@@ -325,7 +325,7 @@ WORD fun_op(WORD op, PNODE *pspath, BYTE *pdest)
  */
 void fun_drag(WORD src_wh, WORD dst_wh, WORD dst_ob, WORD dulx, WORD duly, WORD keystate)
 {
-    WORD  ret, junk, datype, op;
+    WORD  ret, datype, op;
     WNODE *psw, *pdw;
     ANODE *pda;
     FNODE *pdf;
@@ -339,7 +339,7 @@ void fun_drag(WORD src_wh, WORD dst_wh, WORD dst_ob, WORD dulx, WORD duly, WORD 
     if (!pdw)
         return;
 
-    pda = i_find(dst_wh, dst_ob, &pdf, &junk);
+    pda = i_find(dst_wh, dst_ob, &pdf, NULL);
     datype = (pda) ? pda->a_type : AT_ISFILE;
 
     /* set up default destination path name */

@@ -663,12 +663,12 @@ WORD do_open(WORD curr)
  */
 WORD do_info(WORD curr)
 {
-    WORD ret, junk;
+    WORD ret, drive;
     ANODE *pa;
     WNODE *pw;
     FNODE *pf;
 
-    pa = i_find(G.g_cwin, curr, &pf, &junk);
+    pa = i_find(G.g_cwin, curr, &pf, NULL);
     pw = win_find(G.g_cwin);
     if (!pw)
         return FALSE;
@@ -685,8 +685,8 @@ WORD do_info(WORD curr)
                 fun_rebld(pw);
             break;
         case AT_ISDISK:
-            junk = (get_iconblk_ptr(G.g_screen, curr)->ib_char) & 0xFF;
-            inf_disk(junk);
+            drive = (get_iconblk_ptr(G.g_screen, curr)->ib_char) & 0xFF;
+            inf_disk(drive);
             break;
         case AT_ISTRSH:
             fun_alert(1, STTRINFO, NULL);
@@ -703,12 +703,11 @@ WORD do_info(WORD curr)
  */
 int do_format(WORD curr)
 {
-    WORD junk, ret;
+    WORD ret;
     WORD foundit;
     int done;
     BYTE *p;
     ANODE *pa;
-    FNODE *pf;
     WORD drive_letter;
     BOOL isgraf; /* The format program is a graphical one */
 
@@ -718,7 +717,7 @@ int do_format(WORD curr)
      * check icon type (should be OK, since deskmain should have
      * disabled the menu item unless the selected icon is a floppy)
      */
-    pa = i_find(G.g_cwin, curr, &pf, &junk);
+    pa = i_find(G.g_cwin, curr, NULL, NULL);
 
     if (pa && (pa->a_type == AT_ISDISK) && (pa->a_aicon == IG_FLOPPY))
     {

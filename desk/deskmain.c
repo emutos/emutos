@@ -202,6 +202,12 @@ static void desk_all(WORD flags)
 /*
  *  Given an icon index, go find the ANODE which it represents
  *
+ *  . returns ptr to corresponding FNODE via arg3
+ *  . if checking a window (arg1 != 0), then return an indicator via arg4:
+ *      TRUE if the matching ANODE indicates the item is an application,
+ *      FALSE if it indicates the item is a data file for an application.
+ *  . arg3 and/or arg4 may be NULL to bypass returning the corresponding value
+ *
  *  returns NULL if no matching index
  */
 ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp)
@@ -209,9 +215,11 @@ ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp)
     ANODE *pa;
     WNODE *pw;
     FNODE *pf;
+    WORD isapp;
 
     pa = (ANODE *) NULL;
     pf = (FNODE *) NULL;
+    isapp = FALSE;
 
     if (!wh)        /* On desktop? */
     {
@@ -224,11 +232,15 @@ ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp)
         {
             pf = fpd_ofind(pw->w_path->p_flist, item);
             if (pf)
-                pa = app_afind(FALSE, (pf->f_attr&F_SUBDIR)?AT_ISFOLD:AT_ISFILE, -1, pf->f_name, pisapp);
+                pa = app_afind(FALSE, (pf->f_attr&F_SUBDIR)?AT_ISFOLD:AT_ISFILE, -1, pf->f_name, &isapp);
         }
     }
 
-    *ppf = pf;
+    if (ppf)
+        *ppf = pf;
+    
+    if (pisapp)
+        *pisapp = isapp;
 
     return pa;
 }
@@ -250,7 +262,7 @@ static void men_list(LONG mlist, const BYTE *dlist, WORD enable)
  */
 static void men_update(LONG tree)
 {
-    WORD item, nsel, *pjunk, isapp;
+    WORD item, nsel, isapp;
     const BYTE *pvalue;
     ANODE *appl;
 
@@ -270,7 +282,7 @@ static void men_update(LONG tree)
     nsel = 0;
     for (item = 0; (item=win_isel(G.g_screen, G.g_croot, item)) != 0; nsel++)
     {
-        appl = i_find(G.g_cwin, item, (FNODE **)(void*)&pjunk, &isapp);
+        appl = i_find(G.g_cwin, item, NULL, &isapp);
         if (!appl)
             continue;
         switch(appl->a_type)

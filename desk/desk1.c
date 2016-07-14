@@ -306,19 +306,18 @@ static void fun_desk2win(WORD wh, WORD dobj, WORD keystate)
 {
     WNODE *wn_dest;
     FNODE *fn_dest;
-    WORD sobj, copied, isapp;
-    FNODE *fn_src;
+    WORD sobj, copied;
     ANODE *an_src, *an_dest;
 
     wn_dest = win_find(wh);
     if (!wn_dest)
         return;
 
-    an_dest = i_find(wh, dobj, &fn_dest, &isapp);
+    an_dest = i_find(wh, dobj, &fn_dest, NULL);
     sobj = 0;
     while ((sobj = win_isel(G.g_screen, 1, sobj)))
     {
-        an_src = i_find(0, sobj, &fn_src, &isapp);
+        an_src = i_find(0, sobj, NULL, NULL);
         if (an_src && (an_src->a_type == AT_ISTRSH))
         {
             fun_alert(1, STNODRA2, NULL);
@@ -333,8 +332,7 @@ static void fun_desk2win(WORD wh, WORD dobj, WORD keystate)
 
 static void fun_desk2desk(WORD dobj, WORD keystate)
 {
-    WORD sobj,  isapp;
-    FNODE *fn;
+    WORD sobj;
     WORD cont;
     ANODE *source;
     ANODE *target;
@@ -348,7 +346,7 @@ static void fun_desk2desk(WORD dobj, WORD keystate)
     sobj  = 0;
     while ((sobj = win_isel(G.g_screen, 1, sobj)))
     {
-        source = i_find(0, sobj, &fn, &isapp);
+        source = i_find(0, sobj, NULL, NULL);
         if (!source || (source == target))
             continue;
 
