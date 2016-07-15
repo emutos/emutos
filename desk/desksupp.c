@@ -66,18 +66,21 @@ void desk_clear(WORD wh)
 {
     WNODE *pw;
     GRECT c;
+    WORD root = -1;
 
     /* get current size */
     wind_get(wh, WF_WXYWH, &c.g_x, &c.g_y, &c.g_w, &c.g_h);
 
-    /* find its tree of items */
-    pw = win_find(wh);
-    if (pw)
+    if (wh)         /* not the desktop */
     {
-        /* clear all selections */
-        act_allchg(wh, G.g_screen, pw->w_root, 0, &gl_rfull, &c,
-                    SELECTED, FALSE, TRUE);
+        pw = win_find(wh);  /* find its tree of items */
+        if (pw)
+            root = pw->w_root;
     }
+    else root = DROOT;
+
+    /* clear all selections */
+    act_allchg(wh, G.g_screen, root, 0, &gl_rfull, &c, SELECTED, FALSE, TRUE);
 }
 
 
