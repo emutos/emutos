@@ -844,7 +844,7 @@ static WORD d_dofoldren(BYTE *oldname, BYTE *newname)
  *  folders in the source path.  The selected files and folders are
  *  marked in the source file list.
  */
-WORD dir_op(WORD op, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *count)
+WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *count)
 {
     LONG tree;
     FNODE *pf;
@@ -933,6 +933,16 @@ WORD dir_op(WORD op, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *count)
             graf_mouse(HGLASS, NULL);
             more = inf_what(tree, CDOK, CDCNCL);
         }
+    }
+
+    /*
+     * if we're deleting a whole disk, we always get a special prompt
+     */
+    if ((op == OP_DELETE) && (icontype == AT_ISDISK))
+    {
+        graf_mouse(ARROW, NULL);
+        more = (fun_alert(2, STDELDIS, psrc_path) == 1) ? TRUE: FALSE;
+        graf_mouse(HGLASS, NULL);
     }
 
     for (pf = pspath->p_flist; pf && more; pf = pf->f_next)

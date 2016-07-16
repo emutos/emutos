@@ -33,6 +33,6 @@ WNODE *fold_wind(BYTE *path);
 WORD d_errmsg(WORD err);
 WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
             LONG tree, WORD *pfcnt, WORD *pdcnt);
-WORD dir_op(WORD op, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *count);
+WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *count);
 
 #endif  /* _DESKDIR_H */

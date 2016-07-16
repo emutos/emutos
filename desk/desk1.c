@@ -180,7 +180,7 @@ void snap_disk(WORD x, WORD y, WORD *px, WORD *py)
 }
 
 
-static WORD fun_file2desk(PNODE *pn_src, ANODE *an_dest, WORD dobj, WORD keystate)
+static WORD fun_file2desk(PNODE *pn_src, WORD icontype_src, ANODE *an_dest, WORD dobj, WORD keystate)
 {
     ICONBLK *dicon;
     WNODE *wn;
@@ -203,7 +203,7 @@ static WORD fun_file2desk(PNODE *pn_src, ANODE *an_dest, WORD dobj, WORD keystat
         }
     }
 
-    ret = fun_op(operation, pn_src, G.g_tmppth);
+    ret = fun_op(operation, icontype_src, pn_src, G.g_tmppth);
     if (ret == 0)
         return ret;         /* operation failed */
     if ((operation != OP_MOVE) && (operation != OP_COPY))
@@ -240,7 +240,7 @@ static WORD fun_file2win(PNODE *pn_src, BYTE  *spec, ANODE *an_dest, FNODE *fn_d
         strcat(p, "*.*");
     }
 
-    return fun_op(OP_COPY, pn_src, G.g_tmppth);
+    return fun_op(OP_COPY, -1, pn_src, G.g_tmppth);
 }
 
 
@@ -254,7 +254,7 @@ static void fun_win2desk(WORD wh, WORD obj, WORD keystate)
     if (!wn_src)
         return;
 
-    if (fun_file2desk(wn_src->w_path, an_dest, obj, keystate))
+    if (fun_file2desk(wn_src->w_path, -1, an_dest, obj, keystate))
         fun_rebld(wn_src);
 }
 
@@ -262,10 +262,11 @@ static void fun_win2desk(WORD wh, WORD obj, WORD keystate)
 static WORD fun_file2any(WORD sobj, WNODE *wn_dest, ANODE *an_dest, FNODE *fn_dest,
                   WORD dobj, WORD keystate)
 {
-    WORD okay = 0;
+    WORD icontype, okay = 0;
     FNODE *bp8;
     ICONBLK * ib_src;
     PNODE *pn_src;
+    ANODE *an_src;
 
     ib_src = (ICONBLK *)G.g_screen[sobj].ob_spec;
     pn_src = pn_open(ib_src->ib_char, "", "*", "*", F_SUBDIR);
@@ -290,7 +291,9 @@ static WORD fun_file2any(WORD sobj, WNODE *wn_dest, ANODE *an_dest, FNODE *fn_de
             }
             else    /* we are dragging a desktop item to another desktop item */
             {
-                okay = fun_file2desk(pn_src, an_dest, dobj, keystate);
+                an_src = i_find(0, sobj, NULL, NULL);
+                icontype = an_src ? an_src->a_type : -1;
+                okay = fun_file2desk(pn_src, icontype, an_dest, dobj, keystate);
             }
             G.g_screen->ob_state = 0;
         }
@@ -333,11 +336,8 @@ static void fun_desk2win(WORD wh, WORD dobj, WORD keystate)
 static void fun_desk2desk(WORD dobj, WORD keystate)
 {
     WORD sobj;
-    WORD cont;
     ANODE *source;
     ANODE *target;
-    ICONBLK * lpicon;
-    BYTE drive_letter;
 
     target = app_afind(TRUE, -1, dobj, NULL, NULL);
     if (!target)    /* "can't happen" */
@@ -349,21 +349,11 @@ static void fun_desk2desk(WORD dobj, WORD keystate)
         source = i_find(0, sobj, NULL, NULL);
         if (!source || (source == target))
             continue;
-
         if (source->a_type == AT_ISTRSH)
         {
             fun_alert(1, STNOSTAK, NULL);
             continue;
         }
-        cont = 1;
-        if (target->a_type == AT_ISTRSH)
-        {
-            lpicon = (ICONBLK *)(G.g_screen[sobj].ob_spec);
-            drive_letter = lpicon->ib_char & 0x0FF;
-            cont = fun_alert(2, STDELDIS, &drive_letter);
-        }
-        if (cont != 1)
-            continue;
         fun_file2any(sobj, NULL, target, NULL, dobj, keystate);
     }
 }

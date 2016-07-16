@@ -286,7 +286,7 @@ static WORD source_is_parent(BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path)
  *  path associated with 'pspath'.  'op' can be OP_DELETE, OP_COPY,
  *  OP_MOVE or -1 (see fun_file2desk() for the latter).
  */
-WORD fun_op(WORD op, PNODE *pspath, BYTE *pdest)
+WORD fun_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdest)
 {
     DIRCOUNT count;
 
@@ -298,10 +298,10 @@ WORD fun_op(WORD op, PNODE *pspath, BYTE *pdest)
             return FALSE;
         /* drop thru */
     case OP_DELETE:
-        dir_op(OP_COUNT, pspath, pdest, &count);    /* get count of source files */
+        dir_op(OP_COUNT, icontype, pspath, pdest, &count);  /* get count of source files */
         if ((count.files+count.dirs) == 0)
             break;
-        dir_op(op, pspath, pdest, &count);          /* do the operation     */
+        dir_op(op, icontype, pspath, pdest, &count);        /* do the operation     */
         return TRUE;
     }
 
@@ -348,7 +348,7 @@ void fun_drag(WORD src_wh, WORD dst_wh, WORD dst_ob, WORD dulx, WORD duly, WORD 
     if (datype == AT_ISFOLD)
         add_path(destpath, pdf->f_name);
 
-    ret = fun_op(op, psw->w_path, destpath);
+    ret = fun_op(op, -1, psw->w_path, destpath);
 
     if (ret)
     {
@@ -394,7 +394,7 @@ static WORD delete_disk(ANODE *pa)
         for (fn = pn->p_flist; fn; fn = fn->f_next)
             fn->f_obid = 0;
         G.g_screen->ob_state = SELECTED;
-        ret = fun_op(OP_DELETE, pn, NULL);
+        ret = fun_op(OP_DELETE, pa->a_type, pn, NULL);
         G.g_screen->ob_state = 0;   /* reset for safety */
     }
     pn_close(pn);
@@ -444,7 +444,7 @@ void fun_del(WORD sobj, WNODE *pdw)
      */
     if (pdw)
     {
-        ret = fun_op(OP_DELETE, pdw->w_path, NULL);
+        ret = fun_op(OP_DELETE, -1, pdw->w_path, NULL);
         if (ret)
             do_chkall(TRUE);
     }
