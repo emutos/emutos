@@ -412,9 +412,9 @@ static char rez_was_hacked;
  * done at the same time from C.
  */
 
-void screen_init(void)
+/* Initialize the video mode (address will be done later) */
+static void screen_init_mode(void)
 {
-    UBYTE *screen_start;
 #if CONF_WITH_ATARI_VIDEO
 #if CONF_WITH_VIDEL
     UWORD boot_resolution = FALCON_DEFAULT_BOOT;
@@ -533,6 +533,12 @@ void screen_init(void)
     sshiftmod = rez;
 
 #endif /* CONF_WITH_ATARI_VIDEO */
+}
+
+/* Initialize the video address (mode is already set) */
+static void screen_init_address(void)
+{
+    UBYTE *screen_start;
 
 #if CONF_VRAM_ADDRESS
     screen_start = (UBYTE *)CONF_VRAM_ADDRESS;
@@ -547,6 +553,7 @@ void screen_init(void)
     if (!(HAS_VIDEL || HAS_TT_SHIFTER))
         screen_start -= 0x300;
 #endif /* CONF_VRAM_ADDRESS */
+
     /* set new v_bas_ad */
     v_bas_ad = screen_start;
     KDEBUG(("v_bas_ad = 0x%08lx\n", (ULONG)v_bas_ad));
@@ -555,6 +562,13 @@ void screen_init(void)
 #endif
     /* correct physical address */
     setphys(screen_start);
+}
+
+/* Initialize the video mode and screen address */
+void screen_init(void)
+{
+    screen_init_mode();
+    screen_init_address();
     rez_was_hacked = FALSE; /* initial assumption */
 }
 
