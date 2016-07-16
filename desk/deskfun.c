@@ -371,13 +371,82 @@ void fun_drag(WORD src_wh, WORD dst_wh, WORD dst_ob, WORD dulx, WORD duly, WORD 
 }
 
 /*
+ * Function called to delete the contents of a disk
+ */
+static WORD delete_disk(ANODE *pa)
+{
+    PNODE *pn;
+    FNODE *fn;
+    WORD ret = 0;
+
+    pn = pn_open(pa->a_letter, "", "*", "*", F_SUBDIR);
+    if (pn == NULL)
+        return 0;
+
+    graf_mouse(HGLASS, NULL);
+    pn_active(pn);
+    if (pn->p_flist)
+    {
+        /*
+         * point all the FNODEs to the root, then set the root's
+         * SELECTED attribute; this is a cheap way of making dir_op()
+         * (called by fun_op()) think all the files are selected
+         */
+        for (fn = pn->p_flist; fn; fn = fn->f_next)
+            fn->f_obid = 0;
+        G.g_screen->ob_state = SELECTED;
+        ret = fun_op(OP_DELETE, pn, NULL);
+        G.g_screen->ob_state = 0;   /* reset for safety */
+    }
+    pn_close(pn);
+
+    return ret;
+}
+
+/*
  *  This routine is called when the 'Delete' menu item is selected
  */
-void fun_del(WNODE *pdw)
+void fun_del(WORD sobj, WNODE *pdw)
 {
+    ANODE *pa;
+    LONG files_deleted = 0L;
+    WORD disk_found = 0;
     WORD ret;
 
-    ret = fun_op(OP_DELETE, pdw->w_path, NULL);
-    if (ret)
-        do_chkall(TRUE);
+    /*
+     * if the item selected is on the desktop, there may be other desktop
+     * items that have been selected; make sure we process all of them
+     */
+    if ( (pa = i_find(0, sobj, NULL, NULL)) )
+    {
+        for ( ; sobj; sobj = win_isel(G.g_screen, DROOT, sobj))
+        {
+            pa = i_find(0,sobj,NULL,NULL);
+            if (!pa)
+                continue;
+            if (pa->a_type == AT_ISDISK)
+            {
+                disk_found++;
+                ret = delete_disk(pa);
+                files_deleted += ret;
+            }
+        }
+        if (disk_found)
+        {
+            desk_clear(0);
+            if (files_deleted)
+                do_chkall(TRUE);
+            return;
+        }
+    }
+
+    /*
+     * otherwise, process path associated with top window, if any
+     */
+    if (pdw)
+    {
+        ret = fun_op(OP_DELETE, pdw->w_path, NULL);
+        if (ret)
+            do_chkall(TRUE);
+    }
 }

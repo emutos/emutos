@@ -113,8 +113,8 @@ static const BYTE     ILL_ITEM[] = {L1ITEM, L2ITEM, L3ITEM, L4ITEM, L5ITEM, 0};
 static const BYTE     ILL_FILE[] = {FORMITEM,IDSKITEM,0};
 static const BYTE     ILL_DOCU[] = {FORMITEM,IDSKITEM,IAPPITEM,0};
 static const BYTE     ILL_FOLD[] = {FORMITEM,IDSKITEM,IAPPITEM,0};
-static const BYTE     ILL_FDSK[] = {DELTITEM,IAPPITEM,0};
-static const BYTE     ILL_HDSK[] = {FORMITEM,DELTITEM,IAPPITEM,0};
+static const BYTE     ILL_FDSK[] = {IAPPITEM,0};
+static const BYTE     ILL_HDSK[] = {FORMITEM,IAPPITEM,0};
 static const BYTE     ILL_NOSEL[] = {OPENITEM,SHOWITEM,FORMITEM,DELTITEM,
                                 IDSKITEM,IAPPITEM,0};
 static const BYTE     ILL_YSEL[] = {OPENITEM, IDSKITEM, FORMITEM, SHOWITEM, 0};
@@ -303,7 +303,6 @@ static void men_update(LONG tree)
         case AT_ISDISK:
             pvalue = (appl->a_aicon == IG_FLOPPY) ? ILL_FDSK : ILL_HDSK;
             can_iapp = FALSE;
-            can_del = FALSE;
             break;
         case AT_ISTRSH:                 /* Trash */
             pvalue = ILL_TRASH;
@@ -429,7 +428,7 @@ static WORD do_filemenu(WORD item)
         break;
     case DELTITEM:
         if (curr)
-            fun_del(pw);
+            fun_del(curr, pw);
         break;
     case FORMITEM:
         if (curr)
