@@ -337,7 +337,7 @@ static void fun_desk2desk(WORD dobj, WORD keystate)
     ANODE *source;
     ANODE *target;
     ICONBLK * lpicon;
-    WORD drive_letter;
+    BYTE drive_letter;
 
     target = app_afind(TRUE, -1, dobj, NULL, NULL);
     if (!target)    /* "can't happen" */

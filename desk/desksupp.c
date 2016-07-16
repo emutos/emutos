@@ -711,7 +711,7 @@ int do_format(WORD curr)
     int done;
     BYTE *p;
     ANODE *pa;
-    WORD drive_letter;
+    BYTE drive_letter;
     BOOL isgraf; /* The format program is a graphical one */
 
     done = 0;

@@ -47,19 +47,18 @@
 
 
 /*
- *  Routine to transfer a string that requires an integrated variable
- *  that is merged in.  The resultant alert is then displayed;
+ *  Issue an alert after merging in an optional character variable
  */
-WORD fun_alert(WORD defbut, WORD stnum, WORD *pwtemp)
+WORD fun_alert(WORD defbut, WORD stnum, BYTE *merge)
 {
     rsrc_gaddr(R_STRING, stnum, &G.a_alert);
-    if (pwtemp != (WORD *)0)
+    if (merge)
     {
-        strcpy(&G.g_2text[0], (char *)G.a_alert);
-        sprintf(&G.g_1text[0], &G.g_2text[0], *pwtemp);
+        strcpy(G.g_2text, (char *)G.a_alert);
+        sprintf(G.g_1text, G.g_2text, *merge);
         G.a_alert = (LONG)&G.g_1text[0];
     }
-    return( form_alert(defbut, G.a_alert) );
+    return form_alert(defbut, G.a_alert);
 }
 
 
