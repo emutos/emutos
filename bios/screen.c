@@ -29,6 +29,8 @@
 #include "vt52.h"
 #include "xbiosbind.h"
 #include "vectors.h"
+#include "country.h"
+#include "header.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif
@@ -406,6 +408,24 @@ WORD mask;
 
 static char rez_was_hacked;
 
+/* Get the default PAL/NTSC mode according to OS header.
+ * Returns TRUE for PAL 50 Hz, or FALSE for NTSC 60 Hz.
+ */
+static BOOL get_default_palmode(void)
+{
+    if (os_conf == OS_CONF_MULTILANG)
+    {
+        /* No country/mode specified in OS header.
+         * The mode is inferred from the COUNTRY Makefile variable. */
+        return OS_PAL;
+    }
+    else
+    {
+        /* Use the mode specified in OS header */
+        return os_conf & 0x0001;
+    }
+}
+
 /*
  * In the original TOS there used to be an early screen init,
  * before memory configuration. This is not used here, and all is
@@ -518,7 +538,8 @@ static void screen_init_mode(void)
     }
     else
     {
-        sync_mode = (os_conf&0x01)?0x02:0x00;
+        BOOL palmode = get_default_palmode();
+        sync_mode = palmode?0x02:0x00;
     }
     *(volatile BYTE *) SYNCMODE = sync_mode;
 
@@ -533,6 +554,7 @@ static void screen_init_mode(void)
     sshiftmod = rez;
 
 #endif /* CONF_WITH_ATARI_VIDEO */
+    MAYBE_UNUSED(get_default_palmode);
 }
 
 /* Initialize the video address (mode is already set) */

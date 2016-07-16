@@ -17,6 +17,7 @@
 #include "font.h"
 
 /* a list of country codes */
+#include "i18nconf.h"
 #include "ctrycodes.h"
 
 /* IDT flag 24 hour: 0 = 12am/pm or 1 = 24 hour */

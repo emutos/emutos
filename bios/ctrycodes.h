@@ -34,7 +34,6 @@
 #define COUNTRY_NL 14   /* Holland */
 #define COUNTRY_CZ 15   /* Czech Republic */
 #define COUNTRY_HU 16   /* Hungary */
-#define COUNTRY_ALL 127 /* special code for multilanguage support */
 
 /*
  * The following country codes were not defined by Atari.
@@ -46,3 +45,10 @@
  */
 #define COUNTRY_RU 19   /* Russia */
 #define COUNTRY_GR 31   /* Greece */
+
+/*
+ * Special value of os_conf to indicate that the display and keyboard languages
+ * will be read from the NVRAM. If the NVRAM is invalid, the default settings
+ * will be inferred from the COUNTRY Makefile variable.
+ */
+#define OS_CONF_MULTILANG 0xff

@@ -44,8 +44,8 @@ BEGIN {
     print "#ifndef HEADER_H"
     print "#define HEADER_H\n"
 
-    print "#include \"ctrycodes.h\""
-    print "#include \"i18nconf.h\"\n"
+    print "#include \"i18nconf.h\""
+    print "#include \"ctrycodes.h\"\n"
 
     print "/* The defines below must only be used in startup.S and comprimg.S."
     print " * Then the OS header variables must be used elsewhere."
@@ -65,13 +65,6 @@ BEGIN {
 
     print "/* the default country number */"
     print "#define OS_COUNTRY COUNTRY_" uccountry "\n"
-
-    print "/* the os_conf country number */"
-    print "#if CONF_MULTILANG"
-    print "#define OS_CONF COUNTRY_ALL"
-    print "#else"
-    print "#define OS_CONF OS_COUNTRY"
-    print "#endif\n"
 
     print "/* the PAL/NTSC flag */"
     if (uccountry == "US")

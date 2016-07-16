@@ -61,11 +61,27 @@ struct charset_fonts {
 long cookie_idt;
 long cookie_akp;
 
+/* Get the default country code according to OS header. */
+static int get_default_country(void)
+{
+    if (os_conf == OS_CONF_MULTILANG)
+    {
+        /* No country specified in OS header.
+         * Default to the value of the COUNTRY Makefile variable. */
+        return OS_COUNTRY;
+    }
+    else
+    {
+        /* Default to the country specified in OS header */
+        return os_conf >> 1;
+    }
+}
+
 #if CONF_MULTILANG
 
 static const struct country_record *get_country_record(int country_code)
 {
-    int default_country = os_conf >> 1; /* From the ROM header */
+    int default_country = get_default_country();
     int default_country_index = 0;
     int i;
 
@@ -121,21 +137,15 @@ static int get_charset_index(void)
 /*
  * initialise the _AKP cookie
  *
- * the default values are taken from os_conf; if os_conf specifies
- * COUNTRY_ALL (invalid in _AKP), we replace it with OS_COUNTRY
+ * the default values are taken from os_conf;
  *
  * if configured for multilanguage and NVRAM, and NVRAM is readable,
  * we override the defaults with the values from NVRAM
  */
 void detect_akp(void)
 {
-    int country = os_conf >> 1;
-    int keyboard;
-
-    if (country == COUNTRY_ALL)
-        country = OS_COUNTRY;
-
-    keyboard = country;
+    int country = get_default_country();
+    int keyboard = country;
 
 #if CONF_WITH_NVRAM && CONF_MULTILANG
     {
