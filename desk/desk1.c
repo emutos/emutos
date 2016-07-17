@@ -64,7 +64,7 @@ static void w_setpath(WNODE *pw, WORD drv, BYTE *path, BYTE *name, BYTE *ext)
     icx = rc.g_x + (rc.g_w / 2) - (G.g_wicon / 2);
     icy = rc.g_y + (rc.g_h / 2) - (G.g_hicon / 2);
     zoom_closed(0, pw->w_id, icx, icy);
-    do_fopen(pw, 0, drv, path, name, ext, FALSE, TRUE);
+    do_fopen(pw, 0, drv, path, name, ext, TRUE);
 }
 
 

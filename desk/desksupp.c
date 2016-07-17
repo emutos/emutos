@@ -566,11 +566,9 @@ static WORD do_dopen(WORD curr)
 
 /*
  *  Open a folder
- *
- *  chkall=TRUE if coming from do_chkall
  */
 void do_fopen(WNODE *pw, WORD curr, WORD drv, BYTE *ppath, BYTE *pname,
-              BYTE *pext, WORD chkall, WORD redraw)
+              BYTE *pext, WORD redraw)
 {
     GRECT t;
     WORD ok;
@@ -644,8 +642,7 @@ WORD do_open(WORD curr)
             {
                 strcat(&path[0], &pf->f_name[0]);
                 pw->w_cvrow = 0;        /* reset slider */
-                do_fopen(pw, curr, drv, &path[0], &name[0],
-                           &ext[0], FALSE, TRUE);
+                do_fopen(pw, curr, drv, &path[0], &name[0], &ext[0], TRUE);
             }
             break;
         case AT_ISDISK:
@@ -783,7 +780,7 @@ void do_chkall(WORD redraw)
         {
             fpd_parse(&pw->w_path->p_spec[0], &drv, &path[0],
                       &name[0], &ext[0]);
-            do_fopen(pw, 0, drv, &path[0], &name[0], &ext[0], TRUE, redraw);
+            do_fopen(pw, 0, drv, &path[0], &name[0], &ext[0], redraw);
         }
         else
         {
