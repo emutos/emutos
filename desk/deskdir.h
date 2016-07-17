@@ -31,8 +31,7 @@ void del_fname(BYTE *pstr);
 void add_path(BYTE *path, BYTE *new_name);
 WNODE *fold_wind(BYTE *path);
 WORD d_errmsg(WORD err);
-WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
-            LONG tree, WORD *pfcnt, WORD *pdcnt);
+WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path, LONG tree, DIRCOUNT *count);
 WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *count);
 
 #endif  /* _DESKDIR_H */

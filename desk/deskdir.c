@@ -585,8 +585,7 @@ static void update_modified_windows(BYTE *path,WORD length)
 /*
  *  Directory routine to DO an operation on an entire sub-directory
  */
-WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
-            LONG tree, WORD *pfcnt, WORD *pdcnt)
+WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path, LONG tree, DIRCOUNT *count)
 {
     BYTE *ptmp, *ptmpdst;
     DTA  *dta = &G.g_dtastk[level];
@@ -632,7 +631,7 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
             }
             if (tree)
             {
-                inf_numset(tree, CDFOLDS, --*pdcnt);
+                inf_numset(tree, CDFOLDS, --(count->dirs));
                 draw_fld(tree, CDFOLDS);
             }
             return more;
@@ -674,7 +673,7 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
                 }
                 if (more)
                 {
-                    more = d_doop(level+1,op,psrc_path,pdst_path,tree,pfcnt,pdcnt);
+                    more = d_doop(level+1,op,psrc_path,pdst_path,tree,count);
                     dos_sdta(dta);      /* must restore DTA address! */
                 }
                 sub_path(psrc_path);    /* restore the old paths */
@@ -715,7 +714,7 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path,
             restore_path(ptmp);     /* restore original source path */
         if (tree)
         {
-            inf_numset(tree, CDFILES, --*pfcnt);
+            inf_numset(tree, CDFILES, --(count->files));
             draw_fld(tree, CDFILES);
         }
         if (!more)
@@ -974,7 +973,7 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *co
 
             if (more)
                 more = (op==OP_RENAME) ? d_dofoldren(srcpth,dstpth) :
-                        d_doop(0, op, srcpth, dstpth, tree, &count->files, &count->dirs);
+                        d_doop(0, op, srcpth, dstpth, tree, count);
             continue;
         }
 

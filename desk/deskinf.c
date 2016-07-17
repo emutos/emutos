@@ -406,7 +406,7 @@ static WORD count_ffs(BYTE *path)
 {
     G.g_nfiles = G.g_ndirs = G.g_size = 0L;
 
-    return d_doop(0, OP_COUNT, path, path, 0L, NULL, NULL);
+    return d_doop(0, OP_COUNT, path, path, 0L, NULL);
 }
 
 
