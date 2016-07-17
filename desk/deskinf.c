@@ -559,12 +559,16 @@ WORD inf_disk(BYTE dr_id)
     srcpth[1] = ':';
     strcpy(srcpth+2, "\\*.*");
     more = count_ffs(srcpth);
-    graf_mouse(ARROW, NULL);
 
     if (!more)
+    {
+        graf_mouse(ARROW, NULL);
         return FALSE;
+    }
 
     dos_space(dr_id - 'A' + 1, &total, &avail);
+    graf_mouse(ARROW, NULL);
+
     if (!dos_label(dr_id - 'A' + 1, label))
         label[0] = '\0';
 
