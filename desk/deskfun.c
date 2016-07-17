@@ -398,6 +398,7 @@ static WORD delete_disk(ANODE *pa)
         G.g_screen->ob_state = 0;   /* reset for safety */
     }
     pn_close(pn);
+    graf_mouse(ARROW, NULL);
 
     return ret;
 }
