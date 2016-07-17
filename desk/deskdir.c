@@ -936,9 +936,10 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *co
     }
 
     /*
-     * if we're deleting a whole disk, we always get a special prompt
+     * if user says OK, but we're deleting a whole disk, we always
+     * get an additional special prompt
      */
-    if ((op == OP_DELETE) && (icontype == AT_ISDISK))
+    if (more && (op == OP_DELETE) && (icontype == AT_ISDISK))
     {
         graf_mouse(ARROW, NULL);
         more = (fun_alert(2, STDELDIS, psrc_path) == 1) ? TRUE: FALSE;
