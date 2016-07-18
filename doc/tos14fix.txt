@@ -94,8 +94,8 @@ File Selector
 014. FS preserves current DTA buffer addresses.                       FIXED: commit b4246a
 015. FS preserves clip rectangles.                                    BUG: does not preserve clip
 016. FS preserves default directories.                                FIXED: commit f29cf5
-017. If a diskette is removed when the file selector is called,       BUG: the selected drive is
-     the system now handles "Cancel" on the resulting error dialog    shown with an empty directory
+017. If a diskette is removed when the file selector is called,       FIXED: commit b5794e
+     the system now handles "Cancel" on the resulting error dialog
      correctly.
      (The following clarification is added by Roger Burrows)
      Under TOS 1.04, attempting to access an empty drive results
