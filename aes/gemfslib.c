@@ -31,6 +31,7 @@
 #include "optimize.h"
 #include "optimopt.h"
 #include "rectfunc.h"
+#include "gemerror.h"
 
 #include "string.h"
 #include "intmath.h"
@@ -146,6 +147,8 @@ static LONG fs_add(WORD thefile, LONG fs_index)
  *  Make a particular path the active path.  This involves
  *  reading its directory, initializing a file list, and filling
  *  out the information in the path node.  Then sort the files.
+ *
+ *  Returns FALSE iff error occurred
  */
 static WORD fs_active(BYTE *ppath, BYTE *pspec, WORD *pcount)
 {
@@ -167,6 +170,7 @@ static WORD fs_active(BYTE *ppath, BYTE *pspec, WORD *pcount)
     user_dta = dos_gdta();          /* remember user's DTA */
     dos_sdta(&D.g_dta);
     ret = dos_sfirst(allpath, F_SUBDIR);
+
     while (ret == 0)
     {
         /* if it is a real file or directory then save it and set
@@ -210,7 +214,13 @@ static WORD fs_active(BYTE *ppath, BYTE *pspec, WORD *pcount)
 
     gsx_mfset(ad_armice);
 
-    return TRUE;
+    if ((ret == EFILNF) || (ret == ENMFIL))
+        return TRUE;
+
+    if (!IS_BIOS_ERROR(ret))    /* if BDOS error, issue message via form_error(): */
+        fm_error(-ret-31);      /* (need to convert to 'MS-DOS error code')       */
+
+    return FALSE;
 }
 
 
@@ -354,7 +364,9 @@ static WORD fs_nscroll(LONG tree, WORD *psel, WORD curr, WORD count,
 
 /*
  *  Routine to call when a new directory has been specified.  This
- *  will activate the directory, format it, and display ir[0].
+ *  will activate the directory, format it, and display it.
+ *
+ *  Returns FALSE iff error occurred
  */
 static WORD fs_newdir(BYTE *fpath, BYTE *pspec, LONG tree, WORD *pcount)
 {
@@ -366,7 +378,9 @@ static WORD fs_newdir(BYTE *fpath, BYTE *pspec, LONG tree, WORD *pcount)
      * the names in the file selector scroll box
      */
     ob_draw(tree, FSDIRECT, MAX_DEPTH);
-    fs_active(fpath, pspec, pcount);
+    if (!fs_active(fpath, pspec, pcount))
+        return FALSE;
+
     fs_format(tree, 0, *pcount);
 
     obj = ((OBJECT *)tree) + FTITLE;    /* update FTITLE with ptr to mask */
@@ -488,7 +502,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
     WORD dclkret, cont, newlist, newsel, newdrive;
     BYTE *pstr;
     GRECT pt;
-    BYTE locstr[LEN_ZPATH+1], mask[LEN_ZPATH+1], selname[LEN_FSNAME];
+    BYTE locstr[LEN_ZPATH+1], locold[LEN_ZPATH+1], mask[LEN_ZPATH+1], selname[LEN_FSNAME];
     OBJECT *obj;
     TEDINFO *tedinfo;
 
@@ -521,6 +535,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
     g_fslist = (LONG *)(ad_fsnames+nm_files*LEN_FSNAME);
 
     strcpy(locstr, pipath);
+    strcpy(locold,locstr);
 
     /* init strings in form */
     tree = ad_fstree;
@@ -578,10 +593,20 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
             inf_sset(tree, FSDIRECT, locstr);
             pstr = fs_pspec(locstr, NULL);
             strcpy(pstr, mask);
-            fs_newdir(locstr, mask, tree, &count);
             curr = 0;
             sel = touchob = 0;
             newlist = FALSE;
+            if (!fs_newdir(locstr, mask, tree, &count)) /* error reading dir */
+            {
+                if (strcmp(locstr,locold) != 0)     /* path was changed */
+                {                                   /* so try to recover */
+                    strcpy(locstr,locold);
+                    select_drive(tree,get_drive(locstr),TRUE);
+                    newlist = TRUE;
+                }
+            }
+            else
+                strcpy(locold,locstr);
         }
 
         value = 0;
