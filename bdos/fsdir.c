@@ -447,9 +447,8 @@ long ixsfirst(char *name, WORD att, DTAINFO *addr)
 
     if ((long)(dn = findit(name,&s,0)) < 0) /* M01.01.1212.01 */
         return (long)dn;
-
-    if (dn == (DND*)NULL)                   /* M01.01.1214.01 */
-        return EFILNF;
+    if (!dn)
+        return EPTHNF;
 
     /* now scan for filename from start of directory */
 
