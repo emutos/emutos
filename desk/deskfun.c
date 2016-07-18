@@ -305,7 +305,6 @@ WORD fun_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdest)
         return TRUE;
     }
 
-    graf_mouse(ARROW, NULL);
     return FALSE;
 }
 
