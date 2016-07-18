@@ -91,8 +91,8 @@ long    ckdrv(int d)
     {       /*  drive has not been selected yet  */
         b = (BPB *) Getbpb(d);
 
-        if ( !(long)b )             /* M01.01.1007.01 */
-            return EDRIVE;
+        if (!b)
+            return (mask&drvrem) ? EPTHNF : EDRIVE;
 
         if ( (long)b < 0 ) /* M01.01.0915.02 */ /* M01.01.1007.01 */
             return( (long)b );
