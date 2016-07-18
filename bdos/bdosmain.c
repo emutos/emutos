@@ -82,13 +82,12 @@ static PD initial_basepage;
  * the function which corresponds to the function number, and a function
  * type.
  */
-
 #define FND struct _fnd
 FND
 {
-        long    (*fncall)();
-        UBYTE   stdio_typ;    /* Standard IO channel (highest bit must be set, too) */
-        UBYTE   wparms;       /* Amount of parameters in WORDs */
+    long  (*fncall)();
+    UBYTE stdio_typ;    /* Standard I/O channel (highest bit must be set, too) */
+    UBYTE wparms;       /* Size of parameters in WORDs */
 };
 
 
@@ -98,7 +97,6 @@ FND
  * Each entry is for an FND structure. The function 'ni' is used
  * as the address for functions not implemented.
  */
-
 static const FND funcs[] =
 {
 
@@ -241,27 +239,23 @@ static const FND funcs[] =
 #define MAX_FNCALL (ARRAY_SIZE(funcs) - 1)
 
 
-
 /*
  *  xgetver -
  *      return current version number
  */
-
 static long xgetver(void)
 {
-        return (long)GEMDOS_VERSION;
+    return (long)GEMDOS_VERSION;
 }
 
 
 /*
  *  ni -
  */
-
-static long    ni(void)
+static long ni(void)
 {
-        return(EINVFN);
+    return EINVFN;
 }
-
 
 
 /*
@@ -272,7 +266,9 @@ void    osinit(void)
 {
     /* take over the handling of TRAP #1 */
     Setexc(0x21, (long)enter);
-    /* intercept TRAP #2 only for xterm(), keeping the old value
+
+    /*
+     * intercept TRAP #2 only for xterm(), keeping the old value
      * so that our trap handler can call the old one
      */
     old_trap2 = (void(*)(void)) Setexc(0x22, (long)bdos_trap2);
@@ -303,18 +299,18 @@ void    osinit(void)
 }
 
 
-
 /*
  *  freetree -  free the directory node tree
  */
-
 static void freetree(DND *d)
 {
     DIRTBL_ENTRY *p;
     int i;
 
-    if (d->d_left) freetree(d->d_left);
-    if (d->d_right) freetree(d->d_right);
+    if (d->d_left)
+        freetree(d->d_left);
+    if (d->d_right)
+        freetree(d->d_right);
     if (d->d_ofd)
     {
         xmfreblk(d->d_ofd);
@@ -331,17 +327,18 @@ static void freetree(DND *d)
 }
 
 
-
 /*
  *  offree -
  */
-
 static void offree(DMD *d)
 {
     int i;
     OFD *f;
-    for (i=0; i < OPNFILES; i++)
-        if( ((long) (f = sft[i].f_ofd)) > 0L )
+
+    for (i = 0; i < OPNFILES; i++)
+    {
+        if (((long) (f = sft[i].f_ofd)) > 0L)
+        {
             if (f->o_dmd == d)
             {
                 xmfreblk(f);
@@ -349,40 +346,41 @@ static void offree(DMD *d)
                 sft[i].f_own = 0;
                 sft[i].f_use = 0;
             }
+        }
+    }
 }
 
 
 /*
  *  osif -
  */
-
-long    osif(int *pw)
+long osif(int *pw)
 {
-    char **pb,*pb2,*p,ctmp;
+    char **pb, *pb2, *p, ctmp;
     BPB *b;
     BCB *bx;
     DND *dn;
-    int typ,h,i,fn;
-    int num,max;
-    long rc,numl;
+    int typ, h, i, fn;
+    int num, max;
+    long rc, numl;
     const FND *f;
-
 
 restrt:
     fn = pw[0];
     if (fn > MAX_FNCALL)
-        return(EINVFN);
+        return EINVFN;
 
     KDEBUG(("BDOS (fn=0x%04x)\n",fn));
 
-    if ( setjmp(errbuf) )
+    if (setjmp(errbuf))
     {
         rc = errcode;
         /* hard error processing */
         KDEBUG(("Error code gotten from some longjmp(), back in osif(): %ld\n",rc));
 
         /* is this a media change ? */
-        if (rc == E_CHNG) {
+        if (rc == E_CHNG)
+        {
             /* first, out with the old stuff */
             dn = drvtbl[errdrv]->m_dtl;
             offree(drvtbl[errdrv]);
@@ -399,15 +397,16 @@ restrt:
 
             /* then, in with the new */
             b = (BPB *)Getbpb(errdrv);
-            if ( (long)b <= 0 ) {
+            if ((long)b <= 0)
+            {
                 drvsel &= ~(1L<<errdrv);
-                if ( (long)b )
-                    return( (long)b );
-                return(rc);
+                if (b)
+                    return (long)b;
+                return rc;
             }
 
-            if ( log_media(b,errdrv) )
-                return (ENSMEM);
+            if (log_media(b,errdrv))
+                return ENSMEM;
 
             rwerr = 0;
             errdrv = 0;
@@ -420,7 +419,7 @@ restrt:
             for (bx = bufl[i]; bx; bx = bx->b_link)
                 if (bx->b_bufdrv == errdrv)
                     bx->b_bufdrv = -1;
-        return(rc);
+        return rc;
     }
 
     f = &funcs[fn];
@@ -501,7 +500,7 @@ restrt:
         else if (h >= 0)
         {
             h = run->p_uft[h];
-            if ( h > 0)
+            if (h > 0)
                 numl = (long) sft[h-NUMSTD].f_ofd;
             else
                 numl = h;
@@ -510,7 +509,7 @@ restrt:
             numl = h;
 
         if (!numl)
-            return(EIHNDL); /* invalid handle: media change, etc */
+            return EIHNDL;  /* invalid handle: media change, etc */
 
         if (numl < 0)
         {       /* prn, aux, con */
@@ -519,8 +518,8 @@ restrt:
             num = numl;
 
             /*  check for valid handle  */ /* M01.01.0528.01 */
-            if( num < -3 )
-                return( EIHNDL ) ;
+            if (num < -3)
+                return EIHNDL;
 
             pb = (char **) &pw[4];
 
@@ -528,16 +527,16 @@ restrt:
 
             if (fn == GEMDOS_FREAD)     /* read */
             {
-                if (pw[2])      /* disallow HUGE reads      */
-                    return(0);
+                if (pw[2])              /* disallow HUGE reads      */
+                    return 0;
 
                 if (pw[3] == 1)
                 {
                     **pb = conin(HXFORM(num));
-                    return(1);
+                    return 1;
                 }
 
-                return(cgets(HXFORM(num),pw[3],*pb));
+                return cgets(HXFORM(num),pw[3],*pb);
             }
 
             if (fn == GEMDOS_FWRITE)    /* write */
@@ -548,11 +547,11 @@ restrt:
 
                 for (n = 0; n < count; n++)
                 {
-                    if( num == H_Console )
-                        tabout( HXFORM(num) , (unsigned char)*pb2++ ) ;
+                    if (num == H_Console)
+                        tabout(HXFORM(num), (unsigned char)*pb2++);
                     else
                     {           /* M01.01.1029.01 */
-                        if (Bconout( HXFORM(num), (unsigned char)*pb2++ ) == 0)
+                        if (Bconout(HXFORM(num), (unsigned char)*pb2++) == 0)
                             return n;
                     }
                 }
@@ -560,7 +559,7 @@ restrt:
                 return count;
             }
 
-            return(0);
+            return 0;
         }
     }
 
@@ -584,7 +583,7 @@ restrt:
 
     if (!rc)
     {
-        switch (f->wparms)
+        switch(f->wparms)
         {
         case 0:
             rc = (*f->fncall)();
@@ -621,5 +620,5 @@ restrt:
 
     KDEBUG(("BDOS returns: 0x%08lx\n",rc));
 
-    return(rc);
+    return rc;
 }
