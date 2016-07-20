@@ -92,7 +92,9 @@ File Selector
 012. FS now handles long pathnames.                                   FIXED: commit bff77b
 013. FS now handles multiple "abort/continue" errors correctly.       TO BE CHECKED
 014. FS preserves current DTA buffer addresses.                       FIXED: commit b4246a
-015. FS preserves clip rectangles.                                    BUG: does not preserve clip
+015. FS preserves clip rectangles.                                    COMMENT: the AES always uses its
+                                                                      own workstation when drawing, so
+                                                                      user clip rectangles are unchanged
 016. FS preserves default directories.                                FIXED: commit f29cf5
 017. If a diskette is removed when the file selector is called,       FIXED: commit b5794e
      the system now handles "Cancel" on the resulting error dialog
