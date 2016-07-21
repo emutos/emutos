@@ -455,9 +455,9 @@ Disk Open
 
 File Copy
 ---------
-072. When files are copied, the pointer now changes to a "busy        TO BE CHECKED
+072. When files are copied, the pointer now changes to a "busy        FIXED: commit f1217f
      bee" even if the Desktop is set to copy without confirmation.
-073. When copying files and an error occurs, the arrow now            TO BE CHECKED
+073. When copying files and an error occurs, the arrow now            BUG: arrow does not change
      becomes a busy bee when Retry is clicked.
 074. Files dragged to the border of a window whose first folder       FIXED: commit e5a3a8
      is not displayed are copied to the current directory of that
@@ -529,8 +529,8 @@ Name Conflicts
      conflicts.  If "Confirmation required for: File Overwrites"
      is set to "No", files will be overwritten without warning.
      If a folder name conflict occurs, a dialog appears regardless.
-087. Choosing "Skip" on a folder name conflict skips the entire       TO BE CHECKED
-     folder; choosing "Copy" begins copying files into the target
+087. Choosing "Skip" on a folder name conflict skips the entire       BUG: a folder name conflict
+     folder; choosing "Copy" begins copying files into the target     does not cause a prompt
      folder that caused the name conflict.
 
 
@@ -574,20 +574,22 @@ Show Info...
 
 Show Text File
 --------------
-095. Hitting <space> in the middle of a page makes the -More-         TO BE CHECKED
-     come 24 lines from the line being displayed when the key is
+095. Hitting <space> in the middle of a page makes the -More-         BUG: keys are ignored while
+     come 24 lines from the line being displayed when the key is      the screen is scrolling
      hit, rather than having the same effect as waiting for the
      -More- and then hitting <space>.
-096. d, D and ^D cause the -More- to come 1/2 page from the line      TO BE CHECKED
-     being displayed when the key is hit; <Return> makes it come
+096. d, D and ^D cause the -More- to come 1/2 page from the line      BUG: the various D keys are
+     being displayed when the key is hit; <Return> makes it come      ignored (and see #095)
      one line from the line being displayed when the key is hit.
-097. q, Q, ^C, and <Undo> cause the output to stop immediately.       TO BE CHECKED
-098. Line Wrap is not modified; if the VT-52 Emulator is in           TO BE CHECKED
+097. q, Q, ^C, and <Undo> cause the output to stop immediately.       BUG: <Undo> doesn't work
+098. Line Wrap is not modified; if the VT-52 Emulator is in           FIXED: commit 168713
      no-wrap mode, that's what you get.
-099. If a "Drive Not Responding" alert box is displayed when the      TO BE CHECKED
-     Desktop "Shows" a file, a message is printed to the screen:
-     "Could not find filename.ext".  Pressing any key returns to
-     the Desktop.
+099. If a "Drive Not Responding" alert box is displayed when the      BUG: after Cancel is selected
+     Desktop "Shows" a file, a message is printed to the screen:      in the alert, the system returns
+     "Could not find filename.ext".  Pressing any key returns to      to the desktop immediately: there
+     the Desktop.                                                     is no text message.
+     (The following clarification is added by Roger Burrows)
+     The actual message issued by TOS is "-File read error-"
 
 
 Time/Date Stamp
@@ -598,14 +600,14 @@ Time/Date Stamp
 
 Windows
 -------
-101. The desktop now opens the next window where the last window      TO BE CHECKED
+101. The desktop now opens the next window where the last window      FIXED: since at least 0.8.5
      was closed.
 102. The desktop shows as many files as possible inside each          FIXED: commit e7c1b3
      directory window.  The only limit is the amount of free
      memory in the system; this removes the old static file
      allocation limit of 400.
-103. All background windows are updated after a file copy, move,      TO BE CHECKED
-     delete, disk copy, or disk format operation.
+103. All background windows are updated after a file copy, move,      FIXED: sometime between
+     delete, disk copy, or disk format operation.                     0.9.3 and 0.9.4
 
 
 
