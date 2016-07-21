@@ -405,21 +405,21 @@ Disk Copy
 ---------
 061. Single-drive disk copies now require as few disk swaps as        MISSING FEATURE
      possible; all available memory is used as a copy buffer.
-062. When copying disks between drives A: and B:, with no disk        TO BE CHECKED
-     in source or destination, an error occurs.  "Cancel" now
-     returns the user to the Disk Copy Dialog.
-
+062. When copying disks between drives A: and B:, with no disk        COMMENT: for the disk copy feature,
+     in source or destination, an error occurs.  "Cancel" now         EmuTOS works like TOS3 rather than
+     returns the user to the Disk Copy Dialog.                        TOS 1.04: there is no special floppy
+                                                                      disk dialog.
 
 Disk Copy/Format
 ----------------
-063. Disk Copy and Disk Format have been combined into one dialog     MISSING FEATURE
-     box.  Whichever operation was chosen from the Desktop is the
+063. Disk Copy and Disk Format have been combined into one dialog     COMMENT: not applicable to EmuTOS
+     box.  Whichever operation was chosen from the Desktop is the     (see comment for #062)
      default in the box when it appears.  For example, if disk A:
      is dragged to disk B:, the Copy/Format box appears with
      "Copy" selected.  By clicking the "Format" button, the user
      can choose to format a disk.
-064. If users click Format from Copy, or vice versa, reasonable       MISSING FEATURE
-     defaults appear for the newly selected operation.
+064. If users click Format from Copy, or vice versa, reasonable       COMMENT: not applicable to EmuTOS
+     defaults appear for the newly selected operation.                (see comment for #062)
 
 
 Disk Directories
@@ -427,8 +427,8 @@ Disk Directories
 065. If you try to get a directory of a drive without a disk,         FIXED: commit 3a97a6
      'Cancel' now aborts the operation and returns you to the
      Desktop.
-066. Pressing <Esc> forces the Desktop to read the directory of       TO BE CHECKED
-     the topped window.  Before it would only do so if a media
+066. Pressing <Esc> forces the Desktop to read the directory of       BUG: Pressing <Esc> reads the
+     the topped window.  Before it would only do so if a media        directories of ALL open windows
      change had been detected.
 067. The Desktop now re-reads all open directories (instead of        TO BE CHECKED
      only those of drives A: and B:) after an operation which
