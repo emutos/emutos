@@ -90,7 +90,10 @@ File Selector
      large numbers of files.  If available memory is insufficient,
      fsel_input() will exit with an error code.
 012. FS now handles long pathnames.                                   FIXED: commit bff77b
-013. FS now handles multiple "abort/continue" errors correctly.       TO BE CHECKED
+013. FS now handles multiple "abort/continue" errors correctly.       COMMENT: works correctly since
+                                                                      commit 3a97a6 (implement critical
+                                                                      error handler); bug was impossible
+                                                                      before that.
 014. FS preserves current DTA buffer addresses.                       FIXED: commit b4246a
 015. FS preserves clip rectangles.                                    COMMENT: the AES always uses its
                                                                       own workstation when drawing, so
