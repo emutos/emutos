@@ -340,6 +340,9 @@ static void clear_screen(void)
 
 /*
  *  display a fixed-length buffer with screen paging
+ *
+ *  returns +1 if user interrupt or quit
+ *          0 otherwise
  */
 static WORD show_buf(const char *s,LONG len)
 {
@@ -352,7 +355,7 @@ static WORD show_buf(const char *s,LONG len)
     {
         if (dos_conis())
             if (user_input(-1))
-                return -1;
+                return 1;
 
         c = *s++;
         /* convert Un*x-style text to TOS-style */
@@ -378,7 +381,7 @@ static WORD show_buf(const char *s,LONG len)
                     if (user_input(response))
                     {
                         dos_conout('\r');
-                        return -1;
+                        return 1;
                     }
                 }
                 blank_line();               /* overwrite the pause msg */
@@ -426,16 +429,17 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
         if (rc <= 0L)
             break;
         rc = show_buf(iobuf,n);
-        if (rc < 0L)
+        if (rc > 0L)
             break;
     }
 
     dos_close(handle);
 
-    if (rc == 0L)
+    if (rc <= 0L)   /* not user quit */
     {
-        rsrc_gaddr(R_STRING,STEOF,(LONG *)&msg);
-        dos_conws(msg); /* "-End of file-" */
+        rsrc_gaddr(R_STRING,(rc==0L)?STEOF:STFRE,(LONG *)&msg);
+        blank_line();
+        dos_conws(msg); /* "-End of file-" or "-File read error-" */
         dos_rawcin();
     }
 
