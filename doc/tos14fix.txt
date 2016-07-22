@@ -380,7 +380,7 @@ Copy, Delete, Move
 
 Desk Accessories
 ----------------
-056. Desk Accessories can write any MN_SELECTED message to the        TO BE CHECKED
+056. Desk Accessories can write any MN_SELECTED message to the        FIXED: since at least 0.8.5
      Desktop.
 
 
@@ -542,7 +542,7 @@ Print Text File
 
 Running Applications
 --------------------
-089. Applications can be run from background windows; when the        TO BE CHECKED
+089. Applications can be run from background windows; when the        FIXED: since at least 0.8.5
      Desktop launches an application, it shel_write()s the full
      pathname of the application.
 
@@ -554,9 +554,14 @@ Selecting Files
      selected files.  Clicking outside the window or clicking
      anywhere with <Shift> released will deselect all the selected
      files.
-091. By popular demand, selecting files in inactive windows by        COMMENT: this does *not*
-     holding down the right mouse button now works and is             work in Atari TOS
+091. By popular demand, selecting files in inactive windows by        FIXED: since at least 0.8.5
+     holding down the right mouse button now works and is
      supported.
+     (The following clarification is added by Roger Burrows)
+     This is an imprecise description of the feature.  Files or
+     folders in an inactive window can be selected by holding
+     down the the right mouse button and *while the right mouse
+     button is down* using the normal mouse click/cursor actions.
 
 
 Show Info...
