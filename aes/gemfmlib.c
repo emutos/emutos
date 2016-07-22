@@ -40,6 +40,7 @@
 #include "geminit.h"
 #include "gemmnlib.h"
 #include "gemfmlib.h"
+#include "gemgsxif.h"
 #include "scancode.h"
 
 
@@ -405,7 +406,7 @@ WORD fm_show(WORD string, WORD *pwd, WORD level)
  */
 WORD eralert(WORD n, WORD d)
 {
-    WORD    ret, level;
+    WORD    level;
     WORD    drive_let;
     WORD    *pwd;
 
@@ -414,9 +415,12 @@ WORD eralert(WORD n, WORD d)
     level = ml_pwlv[n] & 0x00FF;
     pwd = (ml_pwlv[n] & 0xFF00) ? &drive_let : NULL;
 
-    ret = fm_show(ml_alrt[n], pwd, level);
+    if (fm_show(ml_alrt[n], pwd, level) == 1)
+        return FALSE;
 
-    return (ret != 1);
+    /* retry requested, we'll be busy again */
+    gsx_mfset(ad_hgmice);       /* set mouse to hourglass */
+    return TRUE;
 }
 
 
