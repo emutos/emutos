@@ -796,27 +796,18 @@ int do_format(WORD curr)
 
 
 /*
- *  Routine to check the all windows directory by doing a change
- *  disk/directory to it and redrawing the window
+ *  Routine to refresh the windows of all open desktop windows
  */
-void do_chkall(WORD redraw)
+void do_chkall(void)
 {
-    WORD drv;
-    BYTE path[LEN_ZPATH+1], name[LEN_ZNODE+1], ext[LEN_ZEXT+1];
     WNODE *pw;
 
     for (pw = G.g_wfirst; pw; pw = pw->w_next)
     {
         if (pw->w_id)
-        {
-            fpd_parse(&pw->w_path->p_spec[0], &drv, &path[0],
-                      &name[0], &ext[0]);
-            do_fopen(pw, 0, drv, &path[0], &name[0], &ext[0], redraw);
-        }
+            do_refresh(pw);
         else
-        {
             desk_verify(0, TRUE);
-        }
     }
 }
 

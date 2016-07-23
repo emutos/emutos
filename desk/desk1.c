@@ -97,7 +97,7 @@ void true_closewnd(WNODE *pw)
                     G.g_screen[pw->w_obid].ob_y);
     pn_close(pw->w_path);
     win_free(pw);
-    do_chkall(TRUE);
+    do_chkall();
 }
 
 

@@ -434,7 +434,7 @@ void fun_del(WORD sobj, WNODE *pdw)
         {
             desk_clear(0);
             if (files_deleted)
-                do_chkall(TRUE);
+                do_chkall();
             return;
         }
     }
@@ -446,6 +446,6 @@ void fun_del(WORD sobj, WNODE *pdw)
     {
         ret = fun_op(OP_DELETE, -1, pdw->w_path, NULL);
         if (ret)
-            do_chkall(TRUE);
+            do_chkall();
     }
 }
