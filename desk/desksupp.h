@@ -9,6 +9,7 @@
 #define _DESKSUPP_H
 
 #define CTL_C   ('C'-0x40)
+#define CTL_D   ('D'-0x40)
 #define CTL_Q   ('Q'-0x40)
 #define CTL_S   ('S'-0x40)
 

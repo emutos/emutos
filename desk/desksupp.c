@@ -400,6 +400,11 @@ static WORD show_buf(const char *s,LONG len)
                         linecount = 0L;
                         break;
                     }
+                    if ((response == 'D') || (response == 'd') || (response == CTL_D))
+                    {                       /* D, d, or ^D displays half a page */
+                        linecount = pagesize / 2;
+                        break;
+                    }
                     if (user_input(response))
                     {
                         dos_conout('\r');
