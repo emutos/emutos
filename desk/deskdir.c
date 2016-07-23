@@ -297,31 +297,6 @@ static void like_parent(BYTE *path, BYTE *new_name)
 
 
 /*
- *  See if these two paths represent the same folder.  The first
- *  path ends in \*.*, the second path ends with just the folder.
- */
-static WORD same_fold(BYTE *psrc, BYTE *pdst)
-{
-    WORD ret;
-    BYTE *lastslsh;
-
-    /* scan to lastslsh */
-    lastslsh = last_separator(psrc);
-
-    /* null it */
-    *lastslsh = '\0';
-
-    /* set ret TRUE iff they match */
-    ret = !strcmp(psrc, pdst);
-
-    /* restore it */
-    *lastslsh = '\\';
-
-    return ret;
-}
-
-
-/*
  *  Remove the file name from the end of a path and append an \*.*
  */
 void del_fname(BYTE *pstr)
@@ -731,11 +706,12 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path, LONG tree, DI
  *  Returns:
  *      1   path is OK (folder has been created if necessary)
  *      0   error, stop copying
+ *     -1   error, but allow more copying
  */
 static WORD output_path(WORD op,BYTE *srcpth, BYTE *dstpth)
 {
     BYTE ml_fsrc[LEN_ZFNAME], ml_fdst[LEN_ZFNAME], ml_fstr[LEN_ZFNAME];
-    WORD ret;
+    WORD ret, ob;
     LONG tree = G.a_trees[ADCPALER];
 
     while(1)
@@ -762,36 +738,31 @@ static WORD output_path(WORD op,BYTE *srcpth, BYTE *dstpth)
              */
             if (!folder_exists(dstpth))
                 return invalid_copy_msg();
-
-            /*
-             * the destination folder already exists ... this is OK
-             * as long as it's not exactly the same as the source!
-             */
-            if (!same_fold(srcpth, dstpth))
-                break;
         }
 
         /*
-         * either:
-         * (1) we are doing a move via rename, and the destination folder exists, or
-         * (2) we're trying to copy to ourselves
-         * in either case, we must get a new destination folder
+         * the destination folder exists: we try to get a new one
          */
         get_fname(dstpth, ml_fsrc);         /* extract current folder name */
-        ml_fdst[0] = '\0';                  /* pre-fill new folder name */
+        strcpy(ml_fdst,ml_fsrc);            /* pre-fill new folder name */
         inf_sset(tree, CACURRNA, ml_fsrc);  /* and put both in dialog */
         inf_sset(tree, CACOPYNA, ml_fdst);
 
-        if (do_namecon() != CAOK)       /* show dialog */
+        ob = do_namecon();              /* show dialog */
+        if (ob == CASTOP)               /* "Stop" button */
             return 0;
+        if (ob == CACNCL)               /* "Skip" button */
+            return -1;
 
         inf_sget(tree, CACOPYNA, ml_fdst);
         unfmt_str(ml_fdst, ml_fstr);    /* get new dest folder in ml_fstr */
-        if (ml_fstr[0] != '\0')         /* if it changed, update path */
+        if (strcmp(ml_fdst,ml_fsrc))    /* if it changed, update path */
         {
             del_fname(dstpth);
             add_fname(dstpth, ml_fstr);
         }
+        if (op != OP_RENAME)            /* if it's not move via rename, */
+            break;                      /* we're done                   */
     }
 
     strcat(dstpth, "\\*.*");        /* complete path */
@@ -971,7 +942,7 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *co
                 more = output_path(op,srcpth,dstpth);
             }
 
-            if (more)
+            if (more > 0)   /* no conflict, or user said OK */
                 more = (op==OP_RENAME) ? d_dofoldren(srcpth,dstpth) :
                         d_doop(0, op, srcpth, dstpth, tree, count);
             continue;
