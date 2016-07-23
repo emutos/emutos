@@ -430,8 +430,8 @@ Disk Directories
 065. If you try to get a directory of a drive without a disk,         FIXED: commit 3a97a6
      'Cancel' now aborts the operation and returns you to the
      Desktop.
-066. Pressing <Esc> forces the Desktop to read the directory of       BUG: Pressing <Esc> reads the
-     the topped window.  Before it would only do so if a media        directories of ALL open windows
+066. Pressing <Esc> forces the Desktop to read the directory of       FIXED: commit 47720e
+     the topped window.  Before it would only do so if a media
      change had been detected.
 067. The Desktop now re-reads all open directories (instead of        TO BE CHECKED
      only those of drives A: and B:) after an operation which
