@@ -460,7 +460,7 @@ File Copy
 ---------
 072. When files are copied, the pointer now changes to a "busy        FIXED: commit f1217f
      bee" even if the Desktop is set to copy without confirmation.
-073. When copying files and an error occurs, the arrow now            BUG: arrow does not change
+073. When copying files and an error occurs, the arrow now            FIXED: commit 08e044
      becomes a busy bee when Retry is clicked.
 074. Files dragged to the border of a window whose first folder       FIXED: commit e5a3a8
      is not displayed are copied to the current directory of that
@@ -582,20 +582,20 @@ Show Info...
 
 Show Text File
 --------------
-095. Hitting <space> in the middle of a page makes the -More-         BUG: keys are ignored while
-     come 24 lines from the line being displayed when the key is      the screen is scrolling
-     hit, rather than having the same effect as waiting for the
-     -More- and then hitting <space>.
-096. d, D and ^D cause the -More- to come 1/2 page from the line      BUG: the various D keys are
-     being displayed when the key is hit; <Return> makes it come      ignored (and see #095)
+095. Hitting <space> in the middle of a page makes the -More-         COMMENT: by design, EmuTOS
+     come 24 lines from the line being displayed when the key is      only actions the quit keys
+     hit, rather than having the same effect as waiting for the       (see #097) while the screen
+     -More- and then hitting <space>.                                 is scrolling.
+096. d, D and ^D cause the -More- to come 1/2 page from the line      FIXED: commit 2212d0
+     being displayed when the key is hit; <Return> makes it come
      one line from the line being displayed when the key is hit.
-097. q, Q, ^C, and <Undo> cause the output to stop immediately.       BUG: <Undo> doesn't work
+097. q, Q, ^C, and <Undo> cause the output to stop immediately.       FIXED: commit dd3c87
 098. Line Wrap is not modified; if the VT-52 Emulator is in           FIXED: commit 168713
      no-wrap mode, that's what you get.
-099. If a "Drive Not Responding" alert box is displayed when the      BUG: after Cancel is selected
-     Desktop "Shows" a file, a message is printed to the screen:      in the alert, the system returns
-     "Could not find filename.ext".  Pressing any key returns to      to the desktop immediately: there
-     the Desktop.                                                     is no text message.
+099. If a "Drive Not Responding" alert box is displayed when the      FIXED: commit 98cb8d
+     Desktop "Shows" a file, a message is printed to the screen:
+     "Could not find filename.ext".  Pressing any key returns to
+     the Desktop.
      (The following clarification is added by Roger Burrows)
      The actual message issued by TOS is "-File read error-"
 
