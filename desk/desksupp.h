@@ -27,5 +27,6 @@ WORD do_open(WORD curr);
 WORD do_info(WORD curr);
 int do_format(WORD curr);
 void do_chkall(WORD redraw);
+void do_refresh(WNODE *pw);
 
 #endif  /* _DESKSUPP_H */

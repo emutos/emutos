@@ -819,3 +819,19 @@ void do_chkall(WORD redraw)
         }
     }
 }
+
+/*
+ *  Routine to re-read and redisplay the directory associated with
+ *  the specified window
+ */
+void do_refresh(WNODE *pw)
+{
+    WORD drv;
+    BYTE path[LEN_ZPATH+1], name[LEN_ZNODE+1], ext[LEN_ZEXT+1];
+
+    if (!pw->w_id)      /* desktop */
+        return;
+
+    fpd_parse(pw->w_path->p_spec, &drv, path, name, ext);
+    do_fopen(pw, 0, drv, path, name, ext, TRUE);
+}

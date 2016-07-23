@@ -694,14 +694,17 @@ static void kbd_arrow(WORD type)
 
 static WORD hndl_kbd(WORD thechar)
 {
+    WNODE *pw;
     WORD done;
 
     done = FALSE;
 
     switch(thechar)
     {
-    case ESCAPE:        /* resort directory in window   */
-        do_chkall(TRUE);
+    case ESCAPE:        /* re-load top window's directory */
+        pw = win_ontop();
+        if (pw)
+            do_refresh(pw);
         break;
     case ALTA:          /* Options: Install App */
         if (can_iapp)       /* if it's ok to install app */
