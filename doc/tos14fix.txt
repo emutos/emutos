@@ -532,8 +532,8 @@ Name Conflicts
      conflicts.  If "Confirmation required for: File Overwrites"
      is set to "No", files will be overwritten without warning.
      If a folder name conflict occurs, a dialog appears regardless.
-087. Choosing "Skip" on a folder name conflict skips the entire       BUG: a folder name conflict
-     folder; choosing "Copy" begins copying files into the target     does not cause a prompt
+087. Choosing "Skip" on a folder name conflict skips the entire       FIXED: commit eb8b03
+     folder; choosing "Copy" begins copying files into the target
      folder that caused the name conflict.
 
 
