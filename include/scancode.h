@@ -22,6 +22,7 @@
 #define TAB                 0x0f09
 #define RETURN              0x1c0d
 #define DELETE              0x537f
+#define UNDO                0x6100
 #define ENTER               0x720d
 
 /*

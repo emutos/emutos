@@ -45,6 +45,7 @@
 #include "deskdir.h"
 #include "desksupp.h"
 #include "nls.h"
+#include "scancode.h"
 #include "kprint.h"
 
 
@@ -292,6 +293,26 @@ WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon, WORD drv,
  */
 
 /*
+ *  get key from keyboard
+ *
+ *  if ASCII (1-255), returns value in low-order byte, 0 in high-order byte
+ *  else returns scancode
+ */
+static WORD get_key(void)
+{
+    ULONG c;
+
+    c = dos_rawcin();
+
+    if (c & 0xff)           /* ASCII ? */
+        c &= 0xff;          /* yes, just return the ASCII value */
+    else
+        c >>= 8;            /* convert to scancode */
+
+    return (WORD)c;
+}
+
+/*
  *  check for flow control or quit (ctl-C/Q/q)
  *
  *  a +ve argument is the character to check
@@ -300,16 +321,16 @@ WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon, WORD drv,
 static WORD user_input(WORD c)
 {
     if (c < 0)
-        c = dos_rawcin() & 0xff;
+        c = get_key();
 
-    if ((c == CTL_C) || (c == 'Q') || (c == 'q'))   /* wants to quit */
+    if ((c == CTL_C) || (c == 'Q') || (c == 'q') || (c == UNDO))    /* wants to quit */
         return -1;
 
     if (c == CTL_S)         /* user wants to pause */
     {
         while(1)
         {
-            c = dos_rawcin() & 0xff;
+            c = get_key();
             if (c == CTL_C)
                 return -1;
             if (c == CTL_Q)
@@ -347,7 +368,8 @@ static void clear_screen(void)
 static WORD show_buf(const char *s,LONG len)
 {
     LONG n;
-    BYTE c, cprev = 0, response;
+    WORD response;
+    BYTE c, cprev = 0;
     BYTE *msg;
 
     n = len;
@@ -370,7 +392,7 @@ static WORD show_buf(const char *s,LONG len)
                 dos_conws(msg);             /* "-More-" */
                 while(1)
                 {
-                    response = dos_rawcin() & 0xff;
+                    response = get_key();
                     if (response == '\r')   /* CR displays the next line */
                         break;
                     if (response == ' ')    /* space displays the next page */
