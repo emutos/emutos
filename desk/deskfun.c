@@ -284,7 +284,7 @@ static WORD source_is_parent(BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path)
 /*
  *  Perform the operation 'op' on all the files & folders in the
  *  path associated with 'pspath'.  'op' can be OP_DELETE, OP_COPY,
- *  OP_MOVE or -1 (see fun_file2desk() for the latter).
+ *  OP_MOVE.
  */
 WORD fun_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdest)
 {

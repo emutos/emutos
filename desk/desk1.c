@@ -186,6 +186,9 @@ static WORD fun_file2desk(PNODE *pn_src, WORD icontype_src, ANODE *an_dest, WORD
     BYTE pathname[10];      /* must be long enough for X:\\*.* */
     WORD operation, ret;
 
+    pathname[1] = ':';      /* set up everything except drive letter */
+    strcpy(pathname+2, "\\*.*");
+
     operation = -1;
     if (an_dest)
     {
@@ -194,28 +197,28 @@ static WORD fun_file2desk(PNODE *pn_src, WORD icontype_src, ANODE *an_dest, WORD
         case AT_ISDISK:
             dicon = (ICONBLK *)G.g_screen[dobj].ob_spec;
             pathname[0] = dicon->ib_char & 0xFF;
-            pathname[1] = ':';
-            strcpy(pathname+2, "\\*.*");
             operation = (keystate&MODE_CTRL) ? OP_MOVE : OP_COPY;
             break;
         case AT_ISTRSH:
+            pathname[0] = pn_src->p_spec[0];
             operation = OP_DELETE;
             break;
         }
     }
 
-    ret = fun_op(operation, icontype_src, pn_src, pathname);
-    if (ret == 0)
-        return ret;         /* operation failed */
-    if ((operation != OP_MOVE) && (operation != OP_COPY))
-        return ret;         /* nothing more to do */
+    if (operation >= 0)
+        ret = fun_op(operation, icontype_src, pn_src, pathname);
+    else ret = FALSE;
 
-    /*
-     * rebuild any corresponding open windows
-     */
-    wn = fold_wind(pathname);
-    if (wn)
-        fun_rebld(wn);
+    if (ret)                /* operation succeeded */
+    {
+        /*
+         * rebuild any corresponding open windows
+         */
+        wn = fold_wind(pathname);
+        if (wn)
+            fun_rebld(wn);
+    }
 
     return ret;
 }
