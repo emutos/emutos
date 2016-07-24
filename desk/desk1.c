@@ -183,6 +183,7 @@ static WORD fun_file2desk(PNODE *pn_src, WORD icontype_src, ANODE *an_dest, WORD
 {
     ICONBLK *dicon;
     WNODE *wn;
+    BYTE pathname[10];      /* must be long enough for X:\\*.* */
     WORD operation, ret;
 
     operation = -1;
@@ -192,8 +193,9 @@ static WORD fun_file2desk(PNODE *pn_src, WORD icontype_src, ANODE *an_dest, WORD
         {
         case AT_ISDISK:
             dicon = (ICONBLK *)G.g_screen[dobj].ob_spec;
-            G.g_tmppth[0] = dicon->ib_char & 0xFF;
-            strcpy(G.g_tmppth + 1, ":\\*.*");
+            pathname[0] = dicon->ib_char & 0xFF;
+            pathname[1] = ':';
+            strcpy(pathname+2, "\\*.*");
             operation = (keystate&MODE_CTRL) ? OP_MOVE : OP_COPY;
             break;
         case AT_ISTRSH:
@@ -202,7 +204,7 @@ static WORD fun_file2desk(PNODE *pn_src, WORD icontype_src, ANODE *an_dest, WORD
         }
     }
 
-    ret = fun_op(operation, icontype_src, pn_src, G.g_tmppth);
+    ret = fun_op(operation, icontype_src, pn_src, pathname);
     if (ret == 0)
         return ret;         /* operation failed */
     if ((operation != OP_MOVE) && (operation != OP_COPY))
@@ -211,7 +213,7 @@ static WORD fun_file2desk(PNODE *pn_src, WORD icontype_src, ANODE *an_dest, WORD
     /*
      * rebuild any corresponding open windows
      */
-    wn = fold_wind(G.g_tmppth);
+    wn = fold_wind(pathname);
     if (wn)
         fun_rebld(wn);
 
@@ -222,10 +224,11 @@ static WORD fun_file2desk(PNODE *pn_src, WORD icontype_src, ANODE *an_dest, WORD
 static WORD fun_file2win(PNODE *pn_src, BYTE  *spec, ANODE *an_dest, FNODE *fn_dest)
 {
     BYTE *p;
+    BYTE pathname[MAXPATHLEN];
 
-    strcpy(G.g_tmppth, spec);
+    strcpy(pathname, spec);
 
-    p = strchr(G.g_tmppth, '*');
+    p = strchr(pathname, '*');
     if (p)
         *p = '\0';
 
@@ -239,7 +242,7 @@ static WORD fun_file2win(PNODE *pn_src, BYTE  *spec, ANODE *an_dest, FNODE *fn_d
         strcat(p, "*.*");
     }
 
-    return fun_op(OP_COPY, -1, pn_src, G.g_tmppth);
+    return fun_op(OP_COPY, -1, pn_src, pathname);
 }
 
 

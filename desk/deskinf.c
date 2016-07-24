@@ -300,14 +300,15 @@ static WORD dr_fnode(UWORD last_state, UWORD curr_state, WORD x, WORD y,
             WORD w, WORD h, LONG psfcb)
 {
     WORD len;
+    BYTE temp[LEN_FNODE];
 
     if ((last_state ^ curr_state) & SELECTED)
         bb_fill(MD_XOR, FIS_SOLID, IP_SOLID, x, y, w, h);
     else
     {
-        len = format_sfcb(psfcb, G.g_tmppth);   /* convert to text */
+        len = format_sfcb(psfcb, temp);     /* convert to text */
         gsx_attr(TRUE, MD_REPLACE, BLACK);
-        expand_string(intin, G.g_tmppth);
+        expand_string(intin, temp);
         gsx_tblt(IBM, x, y, len);
         gsx_attr(FALSE, MD_XOR, BLACK);
     }

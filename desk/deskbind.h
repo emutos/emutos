@@ -116,8 +116,6 @@ typedef struct
 /*GLOBAL*/ LONG         g_ndirs;
 /*GLOBAL*/ LONG         g_size;
 
-/*GLOBAL*/ BYTE         g_tmppth[82];
-
 /*GLOBAL*/ WORD         g_xyobpts[MAX_OBS * 2];
 
 /*GLOBAL*/ WORD         g_rmsg[8];

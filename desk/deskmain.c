@@ -986,6 +986,7 @@ static void cnx_get(void)
     WORD nw;
     WSAVE *pws;
     WNODE *pw;
+    BYTE pathname[LEN_ZPATH];
     BYTE fname[9];
     BYTE fext[4];
 
@@ -1032,14 +1033,14 @@ static void cnx_get(void)
             if ((pw = win_alloc(pws->obid_save)))
             {
                 pw->w_cvrow = pws->vsl_save;
-                fpd_parse(pws->pth_save, &drv, G.g_tmppth, fname, fext);
+                fpd_parse(pws->pth_save, &drv, pathname, fname, fext);
                 do_xyfix(&pws->x_save, &pws->y_save);
-                if (pro_chdir(drv, G.g_tmppth) < 0)
+                if (pro_chdir(drv, pathname) < 0)
                 {
                     win_free(pw);
                     continue;
                 }
-                do_diropen(pw, TRUE, pws->obid_save, drv, G.g_tmppth,
+                do_diropen(pw, TRUE, pws->obid_save, drv, pathname,
                             fname, fext, (GRECT *)pws, TRUE);
             }
 
