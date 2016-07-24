@@ -408,9 +408,7 @@ static WORD delete_disk(ANODE *pa)
 void fun_del(WORD sobj, WNODE *pdw)
 {
     ANODE *pa;
-    LONG files_deleted = 0L;
     WORD disk_found = 0;
-    WORD ret;
 
     /*
      * if the item selected is on the desktop, there may be other desktop
@@ -426,15 +424,13 @@ void fun_del(WORD sobj, WNODE *pdw)
             if (pa->a_type == AT_ISDISK)
             {
                 disk_found++;
-                ret = delete_disk(pa);
-                files_deleted += ret;
+                if (delete_disk(pa))
+                    do_refresh_drive(pa->a_letter);
             }
         }
         if (disk_found)
         {
             desk_clear(0);
-            if (files_deleted)
-                do_chkall();
             return;
         }
     }
@@ -444,8 +440,7 @@ void fun_del(WORD sobj, WNODE *pdw)
      */
     if (pdw)
     {
-        ret = fun_op(OP_DELETE, -1, pdw->w_path, NULL);
-        if (ret)
-            do_chkall();
+        if (fun_op(OP_DELETE, -1, pdw->w_path, NULL))
+            do_refresh_drive(pdw->w_path->p_spec[0]);
     }
 }
