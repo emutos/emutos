@@ -46,10 +46,7 @@ static void prt_line(int h, char *p);
 static void newline(int h, int startcol);
 static int backsp(int h, char *cbuf, int retlen, int col);
 
-#define UBWORD(x) (((int) x) & 0x00ff)
-
 #define   ctrlc  0x03
-#define   ctrle  0x05
 #define   ctrlq  0x11
 #define   ctrlr  0x12
 #define   ctrls  0x13
@@ -61,7 +58,7 @@ static int backsp(int h, char *cbuf, int retlen, int col);
 #define   tab     0x09
 #define   rub     0x7f
 #define   bs      0x08
-#define   space   0x20
+
 
 #define warmboot() xterm(-32)
 
