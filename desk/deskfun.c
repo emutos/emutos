@@ -405,9 +405,10 @@ static WORD delete_disk(ANODE *pa)
 /*
  *  This routine is called when the 'Delete' menu item is selected
  */
-void fun_del(WORD sobj, WNODE *pdw)
+void fun_del(WORD sobj)
 {
     ANODE *pa;
+    WNODE *pw;
     WORD disk_found = 0;
 
     /*
@@ -436,11 +437,13 @@ void fun_del(WORD sobj, WNODE *pdw)
     }
 
     /*
-     * otherwise, process path associated with top window, if any
+     * otherwise, process path associated with selected window icon, if any
      */
-    if (pdw)
+    pw = win_find(G.g_cwin);
+
+    if (pw)
     {
-        if (fun_op(OP_DELETE, -1, pdw->w_path, NULL))
-            do_refresh_drive(pdw->w_path->p_spec[0]);
+        if (fun_op(OP_DELETE, -1, pw->w_path, NULL))
+            do_refresh_drive(pw->w_path->p_spec[0]);
     }
 }

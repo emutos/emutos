@@ -428,7 +428,7 @@ static WORD do_filemenu(WORD item)
         break;
     case DELTITEM:
         if (curr)
-            fun_del(curr, pw);
+            fun_del(curr);
         break;
     case FORMITEM:
         if (curr)
