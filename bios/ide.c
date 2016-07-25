@@ -574,6 +574,8 @@ static int wait_for_not_BSY(volatile struct IDE *interface,LONG timeout)
 {
     LONG next = hz_200 + timeout;
 
+    KDEBUG(("wait_for_not_BSY(0x%08lx, %ld)\n", (ULONG)interface, timeout));
+
     DELAY_400NS;
     while(hz_200 < next) {
         if ((IDE_READ_ALT_STATUS() & IDE_STATUS_BSY) == 0)
@@ -603,6 +605,8 @@ static int wait_for_not_BSY_not_DRQ(volatile struct IDE *interface,LONG timeout)
  */
 static int ide_select_device(volatile struct IDE *interface,UWORD dev)
 {
+    KDEBUG(("ide_select_device(0x%08lx, %u)\n", (ULONG)interface, dev));
+
     if (wait_for_not_BSY_not_DRQ(interface,SHORT_TIMEOUT))
         return ERR;
 
@@ -619,6 +623,8 @@ static int ide_select_device(volatile struct IDE *interface,UWORD dev)
  */
 static void ide_rw_start(volatile struct IDE *interface,UWORD dev,ULONG sector,UWORD count,UBYTE cmd)
 {
+    KDEBUG(("ide_rw_start(0x%08lx, %u, %lu, %u, 0x%02x)\n", (ULONG)interface, dev, sector, count, cmd));
+
     IDE_WRITE_SECTOR_NUMBER_SECTOR_COUNT((sector & 0xff), (count & 0xff));
     IDE_WRITE_CYLINDER_HIGH_CYLINDER_LOW((UWORD)((sector & 0xffff00) >> 8));
     IDE_WRITE_COMMAND_HEAD(cmd,IDE_MODE_LBA|IDE_DEVICE(dev)|(UBYTE)((sector>>24)&0x0f));
@@ -655,11 +661,16 @@ static void ide_get_data(volatile struct IDE *interface,UBYTE *buffer,ULONG buff
     XFERWIDTH *p = (XFERWIDTH *)buffer;
     XFERWIDTH *end = (XFERWIDTH *)(buffer + bufferlen);
 
+    KDEBUG(("ide_get_data(0x%08lx, 0x%08lx, %lu, %d)\n", (ULONG)interface, (ULONG)buffer, bufferlen, need_byteswap));
+
     while (p < end)
         *p++ = interface->data;
 
     if (need_byteswap)
+    {
+        KDEBUG(("byteswap(0x%08lx, %lu)\n", (ULONG)buffer, bufferlen));
         byteswap(buffer,bufferlen);
+    }
 }
 
 /*
@@ -673,6 +684,8 @@ static LONG ide_read(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UWORD count,UB
     UBYTE status1, status2;
     LONG rc = 0L;
 
+    KDEBUG(("ide_read(0x%02x, %u, %u, %lu, %u, 0x%08lx, %d)\n", cmd, ifnum, dev, sector, count, (ULONG)buffer, need_byteswap));
+
     if (ide_select_device(interface,dev) < 0)
         return EREADF;
 
@@ -684,6 +697,7 @@ static LONG ide_read(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UWORD count,UB
      && (info->dev[dev].options & MULTIPLE_MODE_ACTIVE)) {
         cmd = IDE_CMD_READ_MULTIPLE;
         spi = info->dev[dev].spi;
+        KDEBUG(("spi=%u\n", spi));
     }
 
     ide_rw_start(interface,dev,sector,count,cmd);
@@ -759,6 +773,8 @@ static LONG ide_write(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UWORD count,U
     UWORD spi;
     UBYTE status1, status2;
     LONG rc = 0L;
+
+    KDEBUG(("ide_write(0x%02x, %u, %u, %lu, %u, 0x%08lx, %d)\n", cmd, ifnum, dev, sector, count, (ULONG)buffer, need_byteswap));
 
     if (ide_select_device(interface,dev) < 0)
         return EWRITF;
@@ -837,7 +853,7 @@ LONG ide_rw(WORD rw,LONG sector,WORD count,UBYTE *buf,WORD dev,BOOL need_byteswa
         ret = rw ? ide_write(IDE_CMD_WRITE_SECTOR,ifnum,dev,sector,numsecs,p,need_byteswap)
                 : ide_read(IDE_CMD_READ_SECTOR,ifnum,dev,sector,numsecs,p,need_byteswap);
         if (ret < 0) {
-            KDEBUG(("ide_rw(%d,%d,%d,%ld,%u,%p,%d) rc=%ld\n",
+            KDEBUG(("ide_rw(%d,%d,%d,%ld,%u,%p,%d) ret=%ld\n",
                     rw,ifnum,dev,sector,numsecs,p,need_byteswap,ret));
             if (clear_multiple_mode(ifnum,dev)) /* retry after multiple mode reset ? */
                 continue;                       /* yes, do so                        */
@@ -908,13 +924,15 @@ static LONG ide_identify(WORD dev)
     ifnum = dev / 2;    /* i.e. primary IDE, secondary IDE, ... */
     ifdev = dev & 1;    /* 0 or 1 */
 
+    KDEBUG(("ide_identify(%d [ifnum=%d ifdev=%d])\n", dev, ifnum, ifdev));
+
     if (ide_device_exists(dev)) {
         ret = ide_read(IDE_CMD_IDENTIFY_DEVICE,ifnum,ifdev,0L,1,
                        (UBYTE *)&identify,IDE_DATA_REGISTER_IS_BYTESWAPPED);
     } else ret = EUNDEV;
 
     if (ret < 0)
-        KDEBUG(("ide_identify(%d,%d) rc=%ld\n",ifnum,ifdev,ret));
+        KDEBUG(("ide_identify(%d [ifnum=%d ifdev=%d]) ret=%ld\n", dev, ifnum, ifdev, ret));
 
     return ret;
 }
