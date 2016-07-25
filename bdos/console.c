@@ -60,7 +60,7 @@ static int backsp(int h, char *cbuf, int retlen, int col);
 #define   bs      0x08
 
 
-#define warmboot() xterm(-32)
+#define terminate() xterm(-32)
 
 
 
@@ -133,7 +133,7 @@ static void conbrk(int h)
             c = (ch = Bconin(h)) & 0xFF;
             if ( c == ctrlc ) {
                 buflush(h);     /* flush BDOS & BIOS buffers */
-                warmboot();
+                terminate();
             }
 
             if ( c == ctrls )
@@ -321,7 +321,7 @@ long x8in(void)
     conbrk(h);
     ch = getch(h);
     if ((ch & 0xFF) == ctrlc) {
-        warmboot();
+        terminate();
     } else {
         return(ch);
     }
@@ -443,7 +443,7 @@ int cgets(int h, int maxlen, char *buf)
         case rub:
             retlen = backsp(h,buf,retlen,stcol);
             break;
-        case ctrlc: warmboot();
+        case ctrlc: terminate();
         case ctrlx:
             do retlen = backsp(h,buf,retlen,stcol);
             while (retlen);
