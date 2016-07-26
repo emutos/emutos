@@ -635,8 +635,9 @@ Cconrs()                                                              Status
 
 Cconws()
 --------
-106. Cconws() is faster than before when handle 1 is redirected       TO BE CHECKED
-     to a file.
+106. Cconws() is faster than before when handle 1 is redirected       BUG: compared to TOS 1.0,
+     to a file.                                                       EmuTOS is about 18% faster,
+                                                                      TOS 1.04 is about 1290% faster!
 
 
 Character I/O
@@ -648,16 +649,16 @@ Character I/O
 
 Control-S and Control-C Handling
 --------------------------------
-108. Console handling of ^S and ^C is consistent.  ^C during any      TO BE CHECKED
-     "cooked" input or output function (Cconin(), Cconout(),
+108. Console handling of ^S and ^C is consistent.  ^C during any      BUG: ^C does NOT interrupt
+     "cooked" input or output function (Cconin(), Cconout(),          Cconin()
      Cnecin(), Cconws(), Cconrs(), and Fread() from a console
      device) causes the current process to terminate.
 
 
 Standard Handles
 ----------------
-109. Closing a standard handle (0-5) causes it to revert to its       TO BE CHECKED
-     default BIOS device definition; previously this was
+109. Closing a standard handle (0-5) causes it to revert to its       BUG: file handle is reset
+     default BIOS device definition; previously this was              to 0, not default BIOS value
      undefined.  The normal way to deal with a standard handle
      is to Fdup() it to make a copy, Fforce() it to whatever you
      want, then Fforce() from the copy when you're done to revert
@@ -719,7 +720,7 @@ Fread() and Fwrite()
 
 Redirection
 -----------
-118. Redirection to the printer (handle 3, "PRN:") works              TO BE CHECKED
+118. Redirection to the printer (handle 3, "PRN:") works              FIXED: since at least 0.8.5
      correctly.  Previously, GEMDOS would make the BIOS call for
      input status on the printer device, which is not supported.
 
