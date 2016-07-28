@@ -873,8 +873,8 @@ FAT Search Code
 
 FATs (12 bit)
 -------------
-145. The 12-bit FAT code now deals with disks of up to 4096           TO BE CHECKED
-     clusters correctly.  Formerly, only 2048 clusters worked;
+145. The 12-bit FAT code now deals with disks of up to 4096           FIXED: sometime between
+     clusters correctly.  Formerly, only 2048 clusters worked;        0.8.5 and 0.8.6
      above that there were sign-extension problems.
 
 
