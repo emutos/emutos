@@ -835,8 +835,14 @@ Pexec()
 139. Pexec() handles exceptional cases correctly; it no longer        COMMENT: appears to be fixed
      causes bombs or leaves files open, and it releases memory
      correctly.
-140. Pexec() deals correctly with files having more than 32K of       TO BE CHECKED
+140. Pexec() deals correctly with files having more than 32K of       FIXED: since at least 0.8.5
      relocation information.
+     (The following clarification is added as a result of
+     investigations by Christian Zietz)
+     The TOS 1.0 bug that this appears to describe occurs when
+     there is more than 64K of relocation information; the net
+     result is that the length of relocation information used
+     is the actual amount modulo 64K.
 141. Pexec() Mode 6, 'Just Go, Then Free', has been added.  Mode      FIXED: commit 2362ac
      6 is similar to Mode 4, except memory ownership is changed
      to the child process; when the child terminates, GEMDOS
