@@ -22,12 +22,27 @@
 #include "console.h"
 #include "biosbind.h"
 
+
 /* The following data structures are used for the typeahead buffer */
 /* in each array, [0] is used for prn, [1] for aux, and [2] for con */
 static long glbkbchar[3][KBBUFSZ]; /* The actual typeahead buffer */
-int add[3];                     /*  index of add position, used from bdosmain.c */
-int remove[3];                  /*  index of remove position, used from bdosmain.c */
+static int add[3];                 /* index of add position */
+static int remove[3];              /* index of remove position */
 static int glbcolumn[3];
+
+
+/*
+ * default standard handles
+ */
+static const BYTE default_handle[NUMSTD] =
+{
+    H_Console,      /* stdin  = con: */
+    H_Console,      /* stdout = con: */
+    H_Aux,          /* stdaux = aux: */
+    H_Print,        /* stdprn = prn: */
+    H_Console,      /* Atari TOS redirects undefined ... */
+    H_Console       /* ... handles 4, 5 to con:          */
+};
 
 
 /*
@@ -62,6 +77,21 @@ static int backsp(int h, char *cbuf, int retlen, int col);
 #define bs      0x08
 
 #define terminate() xterm(-32)
+
+
+/*
+ * set up system initial standard handles 
+ */
+void stdhdl_init(void)
+{
+    WORD i;
+
+    for (i = 0; i < NUMSTD; i++)
+        run->p_uft[i] = default_handle[i];
+
+    /* initialise typeahead buffer values */
+    add[0] = remove[0] = add[1] = remove[1] = add[2] = remove[2] = 0;
+}
 
 
 /*

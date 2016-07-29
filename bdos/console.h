@@ -37,9 +37,7 @@
 
 
 
-extern  int     add[3];
-extern  int     remove[3];
-
+void stdhdl_init(void);
 long xconstat(void);
 long xconostat(void);
 long xprtostat(void);
