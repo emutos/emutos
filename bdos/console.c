@@ -23,12 +23,23 @@
 #include "biosbind.h"
 
 
-/* The following data structures are used for the typeahead buffer */
-/* in each array, [0] is used for prn, [1] for aux, and [2] for con */
-static long glbkbchar[3][KBBUFSZ]; /* The actual typeahead buffer */
-static int add[3];                 /* index of add position */
-static int remove[3];              /* index of remove position */
-static int glbcolumn[3];
+/*
+ * The following structure is used for the typeahead buffer
+ */
+typedef struct {
+    WORD add;                   /* index of add position */
+    WORD remove;                /* index of remove position */
+    WORD glbcolumn;             /* current screen column (zero-based) */
+    LONG glbkbchar[KBBUFSZ];    /* the actual typeahead buffer */
+} TYPEAHEAD;
+
+
+/*
+ * the actual typeahead buffers
+ *
+ * [0] is used for prn, [1] for aux, and [2] for con
+ */
+static TYPEAHEAD buffer[3];
 
 
 /*
@@ -48,10 +59,9 @@ static const BYTE default_handle[NUMSTD] =
 /*
  * forward declarations (internal prototypes)
  */
-static void buflush(int h);
+static void buflush(TYPEAHEAD *bufptr);
 static long constat(int h);
 static void conbrk(int h);
-static void buflush(int h);
 static void conout(int h, int ch);
 static void cookdout(int h, int ch);
 static long getch(int h);
@@ -84,13 +94,15 @@ static int backsp(int h, char *cbuf, int retlen, int col);
  */
 void stdhdl_init(void)
 {
+    TYPEAHEAD *bufptr;
     WORD i;
 
     for (i = 0; i < NUMSTD; i++)
         run->p_uft[i] = default_handle[i];
 
     /* initialise typeahead buffer values */
-    add[0] = remove[0] = add[1] = remove[1] = add[2] = remove[2] = 0;
+    for (i = 0, bufptr = buffer; i < 3; i++, bufptr++)
+        bufptr->add = bufptr->remove = 0;
 }
 
 
@@ -101,10 +113,14 @@ void stdhdl_init(void)
  */
 static long constat(int h)
 {
+    TYPEAHEAD *bufptr;
+
     if (h > 2)
         return 0;
 
-    return (add[h] > remove[h]) ? -1L : Bconstat(h);
+    bufptr = &buffer[h];
+
+    return (bufptr->add > bufptr->remove) ? -1L : Bconstat(h);
 }
 
 
@@ -160,15 +176,19 @@ long xauxostat(void)
  */
 static void conbrk(int h)
 {
+    TYPEAHEAD *bufptr;
     long ch;
     int stop, c;
 
     stop = 0;
     if (Bconstat(h)) {
+        bufptr = &buffer[h];
         do {
             c = (ch = Bconin(h)) & 0xFF;
             if (c == ctrlc) {
-                buflush(h);     /* flush BDOS & BIOS buffers */
+                /* comments for the following used to say: "flush BDOS
+                 * & BIOS buffers", but that wasn't (& isn't) true */
+                buflush(bufptr);    /* flush BDOS buffer */
                 terminate();
             }
 
@@ -177,12 +197,12 @@ static void conbrk(int h)
             else if (c == ctrlq)
                 stop = 0;
             else if (c == ctrlx) {
-                buflush(h);
-                glbkbchar[h][add[h]++ & KBBUFMASK] = ch;
+                buflush(bufptr);
+                bufptr->glbkbchar[bufptr->add++ & KBBUFMASK] = ch;
             }
             else {
-                if (add[h] < remove[h] + KBBUFSZ) {
-                    glbkbchar[h][add[h]++ & KBBUFMASK] = ch;
+                if (bufptr->add < bufptr->remove + KBBUFSZ) {
+                    bufptr->glbkbchar[bufptr->add++ & KBBUFMASK] = ch;
                 }
                 else {
                     Bconout(h, 7);
@@ -196,11 +216,11 @@ static void conbrk(int h)
 /*
  * buflush - flush BDOS type-ahead buffer
  *
- * @h - device handle
+ * bufptr - pointer to TYPEAHEAD structure
  */
-static void buflush(int h)
+static void buflush(TYPEAHEAD *bufptr)
 {
-    add[h] = remove[h] = 0;
+    bufptr->add = bufptr->remove = 0;
 }
 
 
@@ -211,14 +231,16 @@ static void buflush(int h)
  */
 static void conout(int h, int ch)
 {
+    TYPEAHEAD *bufptr = &buffer[h];
+
     conbrk(h);                  /* check for control-s break */
     Bconout(h,ch);              /* output character to console */
     if (ch >= ' ')
-        glbcolumn[h]++;         /* keep track of screen column */
+        bufptr->glbcolumn++;    /* keep track of screen column */
     else if (ch == cr)
-        glbcolumn[h] = 0;
+        bufptr->glbcolumn = 0;
     else if (ch == bs)
-        glbcolumn[h]--;
+        bufptr->glbcolumn--;
 }
 
 
@@ -240,10 +262,15 @@ long xtabout(int ch)
  */
 void tabout(int h, int ch)
 {
+    TYPEAHEAD *bufptr;
+
     if (ch == tab)
+    {
+        bufptr = &buffer[h];
         do {
             conout(h,' ');
-        } while (glbcolumn[h] & 7);
+        } while (bufptr->glbcolumn & 7);
+    }
     else
         conout(h,ch);
 }
@@ -294,12 +321,13 @@ long xprtout(int ch)
  */
 static long getch(int h)
 {
+    TYPEAHEAD *bufptr = &buffer[h];
     long temp;
 
-    if (add[h] > remove[h]) {
-        temp = glbkbchar[h][remove[h]++ & KBBUFMASK];
-        if (add[h] == remove[h])
-            buflush(h);
+    if (bufptr->add > bufptr->remove) {
+        temp = bufptr->glbkbchar[bufptr->remove++ & KBBUFMASK];
+        if (bufptr->add == bufptr->remove)
+            buflush(bufptr);
         return temp;
     }
 
@@ -425,6 +453,7 @@ static void newline(int h, int startcol)
 /* col is the starting console column */
 static int backsp(int h, char *cbuf, int retlen, int col)
 {
+    TYPEAHEAD *bufptr = &buffer[h];
     char ch;                    /* current character */
     int  i;
     char *p;                    /* character pointer */
@@ -444,7 +473,7 @@ static int backsp(int h, char *cbuf, int retlen, int col)
         else
             col += 1;
     }
-    while (glbcolumn[h] > col) {
+    while (bufptr->glbcolumn > col) {
         conout(h,bs);           /* backspace until we get to proper column */
         conout(h,' ');
         conout(h,bs);
@@ -468,10 +497,11 @@ void readline(char *p)
 /* h is special handle denoting device number */
 int cgets(int h, int maxlen, char *buf)
 {
+    TYPEAHEAD *bufptr = &buffer[h];
     char ch;
     int i, stcol, retlen;
 
-    stcol = glbcolumn[h];           /* set up starting column */
+    stcol = bufptr->glbcolumn;      /* set up starting column */
     for (retlen = 0; retlen < maxlen; ) {
         switch(ch = getch(h)) {
         case cr:
