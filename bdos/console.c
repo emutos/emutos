@@ -107,6 +107,15 @@ void stdhdl_init(void)
 
 
 /*
+ * return default handle for given standard handle
+ */
+BYTE get_default_handle(int stdh)
+{
+    return default_handle[stdh];
+}
+
+
+/*
  * constat - console status
  *
  * @h - device handle

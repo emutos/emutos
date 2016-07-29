@@ -38,6 +38,8 @@
 
 
 void stdhdl_init(void);
+BYTE get_default_handle(int stdh);
+
 long xconstat(void);
 long xconostat(void);
 long xprtostat(void);

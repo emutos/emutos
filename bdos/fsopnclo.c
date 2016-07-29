@@ -53,6 +53,7 @@
 #include "string.h"
 #include "mem.h"
 #include "time.h"
+#include "console.h"
 
 /* the following characters are disallowed in the name when creating
  * or renaming files or folders.  this is *mostly* the same list as
@@ -439,7 +440,7 @@ long xclose(int h)
     if ((h0 = h) < NUMSTD)
     {
         h = run->p_uft[h];
-        run->p_uft[h0] = 0;         /* mark std dev as not in use */
+        run->p_uft[h0] = get_default_handle(h0);    /* revert to default */
         if (h <= 0)                 /* M01.01.1023.01 */
             return E_OK;
     }
