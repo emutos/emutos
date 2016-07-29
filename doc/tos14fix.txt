@@ -657,8 +657,8 @@ Control-S and Control-C Handling
 
 Standard Handles
 ----------------
-109. Closing a standard handle (0-5) causes it to revert to its       BUG: file handle is reset
-     default BIOS device definition; previously this was              to 0, not default BIOS value
+109. Closing a standard handle (0-5) causes it to revert to its       FIXED: commit fdcaf7
+     default BIOS device definition; previously this was
      undefined.  The normal way to deal with a standard handle
      is to Fdup() it to make a copy, Fforce() it to whatever you
      want, then Fforce() from the copy when you're done to revert
@@ -668,8 +668,8 @@ Standard Handles
 
 Type-ahead
 ----------
-110. Console input type-ahead buffers are implemented correctly,      TO BE CHECKED
-     and no longer grow without bound into the surrounding memory.
+110. Console input type-ahead buffers are implemented correctly,      FIXED: since initial import
+     and no longer grow without bound into the surrounding memory.    (verified by code inspection)
 
 
 
