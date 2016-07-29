@@ -582,10 +582,11 @@ Show Info...
 
 Show Text File
 --------------
-095. Hitting <space> in the middle of a page makes the -More-         COMMENT: by design, EmuTOS
-     come 24 lines from the line being displayed when the key is      only actions the quit keys
-     hit, rather than having the same effect as waiting for the       (see #097) while the screen
-     -More- and then hitting <space>.                                 is scrolling.
+095. Hitting <space> in the middle of a page makes the -More-         COMMENT: by design, while
+     come 24 lines from the line being displayed when the key is      the screen is scrolling,
+     hit, rather than having the same effect as waiting for the       EmuTOS only actions the
+     -More- and then hitting <space>.                                 quit keys (see #097); other
+                                                                      keys are ignored.
 096. d, D and ^D cause the -More- to come 1/2 page from the line      FIXED: commit 2212d0
      being displayed when the key is hit; <Return> makes it come
      one line from the line being displayed when the key is hit.
