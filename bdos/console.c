@@ -181,11 +181,14 @@ static void conbrk(int h)
     int stop, c;
 
     stop = 0;
-    if (Bconstat(h)) {
+    if (Bconstat(h))
+    {
         bufptr = &buffer[h];
-        do {
+        do
+        {
             c = (ch = Bconin(h)) & 0xFF;
-            if (c == ctrlc) {
+            if (c == ctrlc)
+            {
                 /* comments for the following used to say: "flush BDOS
                  * & BIOS buffers", but that wasn't (& isn't) true */
                 buflush(bufptr);    /* flush BDOS buffer */
@@ -196,17 +199,17 @@ static void conbrk(int h)
                 stop = 1;
             else if (c == ctrlq)
                 stop = 0;
-            else if (c == ctrlx) {
+            else if (c == ctrlx)
+            {
                 buflush(bufptr);
                 bufptr->glbkbchar[bufptr->add++ & KBBUFMASK] = ch;
             }
-            else {
-                if (bufptr->add < bufptr->remove + KBBUFSZ) {
+            else
+            {
+                if (bufptr->add < bufptr->remove + KBBUFSZ)
                     bufptr->glbkbchar[bufptr->add++ & KBBUFMASK] = ch;
-                }
-                else {
+                else
                     Bconout(h, 7);
-                }
             }
         } while (stop);
     }
@@ -267,7 +270,8 @@ void tabout(int h, int ch)
     if (ch == tab)
     {
         bufptr = &buffer[h];
-        do {
+        do
+        {
             conout(h,' ');
         } while (bufptr->glbcolumn & 7);
     }
@@ -286,8 +290,10 @@ static void cookdout(int h, int ch)
 {
     if (ch == tab)
         tabout(h,ch);                       /* if tab, expand it   */
-    else {
-        if (ch < ' ') {
+    else
+    {
+        if (ch < ' ')
+        {
             conout(h,'^');                  /* handle control character */
             ch |= 0x40;
         }
@@ -324,7 +330,8 @@ static long getch(int h)
     TYPEAHEAD *bufptr = &buffer[h];
     long temp;
 
-    if (bufptr->add > bufptr->remove) {
+    if (bufptr->add > bufptr->remove)
+    {
         temp = bufptr->glbkbchar[bufptr->remove++ & KBBUFMASK];
         if (bufptr->add == bufptr->remove)
             buflush(bufptr);
@@ -380,9 +387,8 @@ long x8in(void)
     h = HXFORM(run->p_uft[0]);
     conbrk(h);
     ch = getch(h);
-    if ((ch & 0xFF) == ctrlc) {
+    if ((ch & 0xFF) == ctrlc)
         terminate();
-    }
 
     return ch;
 }
@@ -404,7 +410,8 @@ long rawconio(int parm)
 {
     int i;
 
-    if (parm == 0xFF) {
+    if (parm == 0xFF)
+    {
         i = HXFORM(run->p_uft[0]);
         return constat(i) ? getch(i) : 0L;
     }
@@ -442,7 +449,8 @@ static void newline(int h, int startcol)
 {
     conout(h,cr);                       /* go to new line */
     conout(h,lf);
-    while(startcol) {
+    while(startcol)
+    {
         conout(h,' ');
         startcol -= 1;          /* start output at starting column */
     }
@@ -462,9 +470,11 @@ static int backsp(int h, char *cbuf, int retlen, int col)
         --retlen;
     i = retlen;
     p = cbuf;
-    while(i--) {                /* calculate column position across entire char buffer */
+    while(i--)                  /* calculate column position across entire char buffer */
+    {
         ch = *p++;              /* get next char                */
-        if (ch == tab) {
+        if (ch == tab)
+        {
             col += 8;
             col &= ~7;          /* for tab, go to multiple of 8 */
         }
@@ -473,7 +483,8 @@ static int backsp(int h, char *cbuf, int retlen, int col)
         else
             col += 1;
     }
-    while (bufptr->glbcolumn > col) {
+    while (bufptr->glbcolumn > col)
+    {
         conout(h,bs);           /* backspace until we get to proper column */
         conout(h,' ');
         conout(h,bs);
@@ -502,8 +513,10 @@ int cgets(int h, int maxlen, char *buf)
     int i, stcol, retlen;
 
     stcol = bufptr->glbcolumn;      /* set up starting column */
-    for (retlen = 0; retlen < maxlen; ) {
-        switch(ch = getch(h)) {
+    for (retlen = 0; retlen < maxlen; )
+    {
+        switch(ch = getch(h))
+        {
         case cr:
         case lf:
             conout(h,cr);
@@ -515,7 +528,8 @@ int cgets(int h, int maxlen, char *buf)
         case ctrlc:
             terminate();
         case ctrlx:
-            do {
+            do
+            {
                 retlen = backsp(h,buf,retlen,stcol);
             } while(retlen);
             break;
