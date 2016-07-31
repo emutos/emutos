@@ -98,7 +98,6 @@ typedef struct
  */
 static const FND funcs[] =
 {
-
      { (long(*)()) x0term, 0, 0 }, /* 0x00 */
 
     /*
@@ -113,7 +112,7 @@ static const FND funcs[] =
     { xauxin,   0x82, 0 },   /* 0x03 */
     { xauxout,  0x82, 1 },   /* 0x04 */
     { xprtout,  0x83, 1 },   /* 0x05 */
-    { xrawio, 0, 1 },        /* 0x06 */
+    { xrawio,   0,    1 },   /* 0x06 */
     { xrawcin,  0x80, 0 },   /* 0x07 */
     { xnecin,   0x80, 0 },   /* 0x08 */
     { (long(*)()) xconws, 0x81, 2 }, /* 0x09 */
@@ -261,7 +260,7 @@ static long ni(void)
  *  osinit - the bios calls this routine to initialize the os
  */
 
-void    osinit(void)
+void osinit(void)
 {
     /* take over the handling of TRAP #1 */
     Setexc(0x21, (long)enter);
@@ -418,7 +417,7 @@ restrt:
     if (typ && fn && ((fn<12) || ((fn>=16) && (fn<=19)))) /* std funcs */
     {
         h = run->p_uft[typ & 0x7f];
-        if ( h > 0)
+        if (h > 0)
         { /* do std dev function from a file */
             switch(fn)
             {
@@ -438,7 +437,7 @@ restrt:
                 /*  M01.01.07  */
                 /*  write the char in the int at pw[1]  */
             rawout:
-                xwrite( h , 1L , ((char*) &pw[1])+1 ) ;
+                xwrite(h , 1L , ((char*) &pw[1])+1);
                 return 0; /* dummy */
 
             case 9:
@@ -450,7 +449,7 @@ restrt:
                 pb2 = *((char **) &pw[1]);
                 max = *pb2++;
                 p = pb2 + 1;
-                for (i = 0; max--; i++,p++)
+                for (i = 0; max--; i++, p++)
                 {
                     if (xread(h,1L,p) == 1)
                     {
@@ -464,14 +463,14 @@ restrt:
                         break;
                 }
                 *pb2 = i;
-                return(0);
+                return 0;
 
             case 11:
             case 16:
             case 17:
             case 18:
             case 19:
-                return(0xFF);
+                return 0xFF;
             }
         }
 
