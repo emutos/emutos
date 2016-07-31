@@ -257,9 +257,9 @@ static void conout(int h, int ch)
 
 
 /*
- * xtabout - Function 0x02 - console output with tab expansion
+ * xconout - Function 0x02 - console output with tab expansion
  */
-long xtabout(int ch)
+long xconout(int ch)
 {
     tabout(HXFORM(run->p_uft[1]),ch);
     return 1;
@@ -352,9 +352,9 @@ static long getch(int h)
 
 
 /*
- * x7in - Function 0x07 - Direct console input without echo
+ * xrawcin - Function 0x07 - Raw console input with no special key handling
  */
-long x7in(void)
+long xrawcin(void)
 {
     return getch(HXFORM(run->p_uft[0]));
 }
@@ -386,9 +386,9 @@ long xconin(void)
 
 
 /*
- * x8in - Function 0x08 - Console input without echo
+ * xnecin - Function 0x08 - Console input without echo
  */
-long x8in(void)
+long xnecin(void)
 {
     int h;
     long ch;
@@ -413,9 +413,9 @@ long xauxin(void)
 
 
 /*
- * rawconio - Function 0x06 - Raw console I/O
+ * xrawio - Function 0x06 - Raw console I/O
  */
-long rawconio(int parm)
+long xrawio(int parm)
 {
     int i;
 
@@ -431,9 +431,9 @@ long rawconio(int parm)
 
 
 /*
- * xprt_line - Function 0x09 - Print line up to nul with tab expansion
+ * xconws - Function 0x09 - Print line up to nul with tab expansion
  */
-void xprt_line(char *p)
+void xconws(char *p)
 {
     prt_line(HXFORM(run->p_uft[1]),p);
 }
@@ -504,11 +504,11 @@ static int backsp(int h, char *cbuf, int retlen, int col)
 
 
 /*
- * readline - Function 0x0A - Read console string into buffer
+ * xconrs - Function 0x0A - Read console string into buffer
  *
  * p - max length, return length, buffer space
  */
-void readline(char *p)
+void xconrs(char *p)
 {
     p[1] = cgets(HXFORM(run->p_uft[0]),(unsigned char)p[0],&p[2]);
 }

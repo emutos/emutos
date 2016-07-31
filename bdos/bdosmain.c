@@ -110,15 +110,15 @@ static const FND funcs[] =
      */
 
     { xconin,   0x80, 0 },   /* 0x01 */
-    { xtabout,  0x81, 1 },   /* 0x02 */
+    { xconout,  0x81, 1 },   /* 0x02 */
     { xauxin,   0x82, 0 },   /* 0x03 */
     { xauxout,  0x82, 1 },   /* 0x04 */
     { xprtout,  0x83, 1 },   /* 0x05 */
-    { rawconio, 0, 1 },      /* 0x06 */
-    { x7in,     0x80, 0 },   /* 0x07 */
-    { x8in,     0x80, 0 },   /* 0x08 */
-    { (long(*)()) xprt_line,  0x81, 2 }, /* 0x09 */
-    { (long(*)()) readline,   0x80, 2 }, /* 0x0A */
+    { xrawio, 0, 1 },        /* 0x06 */
+    { xrawcin,  0x80, 0 },   /* 0x07 */
+    { xnecin,   0x80, 0 },   /* 0x08 */
+    { (long(*)()) xconws, 0x81, 2 }, /* 0x09 */
+    { (long(*)()) xconrs, 0x80, 2 }, /* 0x0A */
     { xconstat, 0x80, 0 },   /* 0x0B */
 
     /*
