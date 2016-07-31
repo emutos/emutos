@@ -378,10 +378,15 @@ long conin(int h)
 long xconin(void)
 {
     int h;
+    long ch;
 
     h = HXFORM(run->p_uft[0]);
     conbrk(h);
-    return conin(h);
+    ch = conin(h);
+    if ((ch & 0xFF) == ctrlc)
+        terminate();
+
+    return ch;
 }
 
 
