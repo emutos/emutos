@@ -82,13 +82,12 @@ static PD initial_basepage;
  * the function which corresponds to the function number, and a function
  * type.
  */
-#define FND struct _fnd
-FND
+typedef struct
 {
     long  (*fncall)();
     UBYTE stdio_typ;    /* Standard I/O channel (highest bit must be set, too) */
     UBYTE wparms;       /* Size of parameters in WORDs */
-};
+} FND;
 
 
 /*
