@@ -418,34 +418,34 @@ restrt:
     {
         h = run->p_uft[typ & 0x7f];
         if (h > 0)
-        { /* do std dev function from a file */
+        {   /* handle standard device functions redirected to a file */
             switch(fn)
             {
-            case 6:
+            case 6:                 /* Crawio() */
                 if (pw[1] != 0xFF)
                     goto rawout;
-            case 1:
-            case 3:
-            case 7:
-            case 8:
+            case 1:                 /* Cconin() */
+            case 3:                 /* Cauxin() */
+            case 7:                 /* Crawcin() */
+            case 8:                 /* Cnecin() */
                 xread(h,1L,&ctmp);
                 return(ctmp);
 
-            case 2:
-            case 4:
-            case 5:
+            case 2:                 /* Cconout */
+            case 4:                 /* Cauxout() */
+            case 5:                 /* Cprnout() */
                 /*  M01.01.07  */
                 /*  write the char in the int at pw[1]  */
             rawout:
                 xwrite(h , 1L , ((char*) &pw[1])+1);
                 return 0; /* dummy */
 
-            case 9:
+            case 9:                 /* Cconws() */
                 pb2 = *((char **) &pw[1]);
                 while (*pb2) xwrite(h,1L,pb2++);
                 return 0; /* dummy */
 
-            case 10:
+            case 10:                /* Cconrs() */
                 pb2 = *((char **) &pw[1]);
                 max = *pb2++;
                 p = pb2 + 1;
@@ -465,11 +465,11 @@ restrt:
                 *pb2 = i;
                 return 0;
 
-            case 11:
-            case 16:
-            case 17:
-            case 18:
-            case 19:
+            case 11:                /* Cconis() */
+            case 16:                /* Cconos() */
+            case 17:                /* Cprnos() */
+            case 18:                /* Cauxis() */
+            case 19:                /* Cauxos() */
                 return 0xFF;
             }
         }
