@@ -76,6 +76,35 @@ static PD initial_basepage;
 
 
 /*
+ * SPECNAME - special name descriptor
+ *
+ * Each entry in the special name table (below) contains a special
+ * name with the corresponding handle
+ */
+typedef struct {
+    BYTE *name;
+    long handle;
+} SPECNAME;
+
+
+/*
+ * table of special names, used by Fopen()/Fcreate() to access
+ * a character device.  note that special names can be upper or
+ * lower case, but NOT mixed case.
+ */
+static const SPECNAME specname_table[] =
+{
+    { "CON:", 0x0000ffffL },
+    { "con:", 0x0000ffffL },
+    { "AUX:", 0x0000fffeL },
+    { "aux:", 0x0000fffeL },
+    { "PRN:", 0x0000fffdL },
+    { "prn:", 0x0000fffdL },
+};
+#define SN_ENTRIES  ARRAY_SIZE(specname_table)
+
+
+/*
  * FND - Function Descriptor
  *
  * Each entry in the function table (below) consists of the address of
@@ -555,19 +584,20 @@ restrt:
 
     /*
      * for Fopen(), Fcreate() we check for special names
-     *
-     * special names can be upper or lower case, but NOT mixed
      */
     rc = 0;
     if ((fn == GEMDOS_FOPEN) || (fn == GEMDOS_FCREATE)) /* open, create */
     {
+        const SPECNAME *entry;
         p = *((char **) &pw[1]);
-        if ((strcmp(p,"CON:") == 0) || (strcmp(p,"con:") == 0))
-            rc = 0xFFFFL;
-        else if ((strcmp(p,"AUX:") == 0) || (strcmp(p,"aux:") == 0))
-            rc = 0xFFFEL;
-        else if ((strcmp(p,"PRN:") == 0) || (strcmp(p,"prn:") == 0))
-            rc = 0xFFFDL;
+        for (i = 0, entry = specname_table; i < SN_ENTRIES; i++, entry++)
+        {
+            if (strcmp(p,entry->name) == 0)
+            {
+                rc = entry->handle;
+                break;
+            }
+        }
     }
 
     if (!rc)
