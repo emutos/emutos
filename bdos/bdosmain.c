@@ -67,6 +67,13 @@ static long xgetver(void);
 
 
 /*
+ *  MiNT-compatible EOF indicator for character
+ *  devices redirected to files
+ */
+#define EOF_INDICATOR   0x0000ff1aL
+
+
+/*
  * the basepage for the initial process
  *
  * this used to be obtained via MGET, but that was a bit pointless,
@@ -457,8 +464,13 @@ restrt:
             case 3:                 /* Cauxin() */
             case 7:                 /* Crawcin() */
             case 8:                 /* Cnecin() */
-                xread(h,1L,&ctmp);
-                return(ctmp);
+                /*
+                 * if an error occurs when reading the file, we handle it
+                 * the same way as MiNT (standard TOS returns garbage here)
+                 */
+                if (xread(h,1L,&ctmp) != 1L)
+                    return EOF_INDICATOR;
+                return ctmp;
 
             case 2:                 /* Cconout */
             case 4:                 /* Cauxout() */
