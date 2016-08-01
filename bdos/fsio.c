@@ -29,6 +29,28 @@ static void usrio(int rwflg, int num, long strt, char *ubuf, DMD *dm);
 
 
 /*
+ * eof - check for end of file
+ *
+ * returns  1   eof
+ *          0   not eof
+ *          <0  error
+ */
+long eof(int h)
+{
+    OFD *f;
+
+    f = getofd(h);
+    if (!f)
+        return EIHNDL;
+
+    if (f->o_bytnum >= f->o_fileln)
+        return 1;
+
+    return 0;
+}
+
+
+/*
  * xlseek - seek to byte position n on file with handle h
  *
  * Function 0x42        f_seek

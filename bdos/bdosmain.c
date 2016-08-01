@@ -495,11 +495,15 @@ restrt:
                 return 0;
 
             case 11:                /* Cconis() */
+            case 18:                /* Cauxis() */
+                if (eof(h))
+                    return 0L;
+                /* drop through */
+
             case 16:                /* Cconos() */
             case 17:                /* Cprnos() */
-            case 18:                /* Cauxis() */
             case 19:                /* Cauxos() */
-                return 0xFF;
+                return -1L;
             }
         }
 

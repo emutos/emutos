@@ -420,6 +420,9 @@ long xgetfree(long *buf, int drv);
  * in fsio.c
  */
 
+/* check for eof on file with handle h */
+long eof(int h);
+
 /* seek to byte position n on file with handle h */
 long xlseek(long n, int h, int flg);
 long ixlseek(OFD *p, long n);
