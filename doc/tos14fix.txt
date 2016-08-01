@@ -636,17 +636,15 @@ Cconrs()                                                              Status
 
 Cconws()
 --------
-106. Cconws() is faster than before when handle 1 is redirected       BUG: compared to TOS 1.0,
-     to a file.                                                       EmuTOS is about 18% faster,
-                                                                      TOS 1.04 is about 1290% faster!
+106. Cconws() is faster than before when handle 1 is redirected       FIXED: commit dc0e5e
+     to a file.
 
 
 Character I/O
 -------------
-107. Character I/O functions (including Crawio() and Cconout())       BUG: I/O status is definitely
-     work predictably when redirected.  In particular, input and      wrong when redirected. Crawio()
-     output status, and Cconout() work when redirected.               and Cconout() are yet to be
-                                                                      investigated.
+107. Character I/O functions (including Crawio() and Cconout())       FIXED: commit 8e42ae
+     work predictably when redirected.  In particular, input and
+     output status, and Cconout() work when redirected.
 
 
 Control-S and Control-C Handling
