@@ -471,7 +471,7 @@ restrt:
 
             case 9:                 /* Cconws() */
                 pb2 = *((char **) &pw[1]);
-                while (*pb2) xwrite(h,1L,pb2++);
+                xwrite(h,strlen(pb2),pb2);
                 return 0; /* dummy */
 
             case 10:                /* Cconrs() */
