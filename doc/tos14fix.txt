@@ -53,12 +53,20 @@ Context Switches
 
 Default Path
 ------------
-005. The Default Path when an application starts is not changed       TO BE CHECKED
-     by shel_write(), nor is it set when the AES shell runs an
-     application.  From the Desktop, the user selects the
+005. The Default Path when an application starts is not changed       COMMENT: EmuTOS uses the
+     by shel_write(), nor is it set when the AES shell runs an        TOS1.00/TOS3/TOS4 method,
+     application.  From the Desktop, the user selects the             not the TOS1.04/TOS2 method.
      "current path" by determining which window is topped when an
      application is launched.  The right mouse button can be used
      to set a different default path.
+     (The following clarification is added by Roger Burrows)
+     Thus if the topped window is displaying folder X:\YYY\ZZZ,
+     and you hold down the right mouse button & double click on
+     program PPP in folder A:\BBB\CCC, then, when PPP starts, the
+     current drive will be X & the current path will be \YYY\ZZZ.
+     NOTE: TOS 2 uses the same mechanism as TOS 1.04.  TOS3 & TOS4
+     revert to the TOS 1.00 mechanism: in the above example, the
+     current drive will be A & the current path will be \BBB\CCC.
 
 
 evnt_multi() and evnt_timer()
@@ -221,16 +229,19 @@ Windows
 
 Boot Sequence                                                         Status
 -------------                                                         ------
-036. The ROMs check the DMA port for bootable devices.  Each          TO BE CHECKED
-     device now gets a second chance if the first try at a boot
+036. The ROMs check the DMA port for bootable devices.  Each          COMMENT: EmuTOS always retries
+     device now gets a second chance if the first try at a boot       failing I/Os (currently once)
      sector returns an error.
 
 
 Disk Boot
 ---------
-037. Floppies are checked for "bootability" on warm and cold          TO BE CHECKED
-     starts, even if an autobooting hard disk is attached.
-     Before, this was done only on a cold boot.
+037. Floppies are checked for "bootability" on warm and cold          COMMENT: by design, EmuTOS
+     starts, even if an autobooting hard disk is attached.            uses the boot dev selected
+     Before, this was done only on a cold boot.                       at cold boot time: this allows
+                                                                      a boot dev selected via the
+                                                                      welcome screen to persist
+                                                                      across warm boots.
 
 
 Disk Formatting
@@ -265,8 +276,8 @@ Keyboard Reset
      <Control> and <Alternate> keys, and press "Delete" (below
      "Backspace").  This accomplishes the same thing as hitting
      the reset button.
-042. <Control><Alternate><Right Shift><Delete> causes a VERY cold     COMMENT: cold boot doesn't clear all RAM
-     boot.  It clears ALL of RAM (except about 64 bytes at the
+042. <Control><Alternate><Right Shift><Delete> causes a VERY cold     COMMENT: cold boot doesn't
+     boot.  It clears ALL of RAM (except about 64 bytes at the        clear all RAM
      bottom) and then jumps to the ROMs.  This is to get rid of
      reset-resident RAMdisks, reset-bailout vector stuff,
      packages, and miscellaneous system variables that are
@@ -311,8 +322,8 @@ BIOS Output-Status
 
 Floprate()
 ----------
-048. Floprate(), XBIOS function 41, checks or sets the seek rate      COMMENT: EmuTOS validates input
-     for a floppy drive.  This is new; the seek rate must be set
+048. Floprate(), XBIOS function 41, checks or sets the seek rate      COMMENT: EmuTOS validates
+     for a floppy drive.  This is new; the seek rate must be set      Floprate() input
      with (previously) undocumented variables on earlier versions
      of TOS.  In either case, valid seek rate byte values are:
      Value   Rate
@@ -469,10 +480,10 @@ File Copy
 
 Files
 -----
-075. Files which are both hidden and system or read-only will no      COMMENT: EmuTOS behaves the same
-     longer show up on the Desktop (or in the File Selector).         as Atari TOS, i.e. the files that
-                                                                      do not appear are hidden, system,
-                                                                      or hidden+system.
+075. Files which are both hidden and system or read-only will no      COMMENT: EmuTOS behaves the
+     longer show up on the Desktop (or in the File Selector).         same as Atari TOS, i.e. the
+                                                                      files that do not appear are
+                                                                      hidden, system, or hidden+system.
 
 File Move
 ---------
@@ -727,9 +738,9 @@ Redirection
 
 Sector Buffering
 ----------------
-119. Sector buffering in GEMDOS has been improved, and the user       TO BE CHECKED
-     can add buffers to the FAT/root directory list to improve
-     performance dramatically.  Old buffering was inefficient,
+119. Sector buffering in GEMDOS has been improved, and the user       COMMENT: supports CACHEnnn
+     can add buffers to the FAT/root directory list to improve        since commit caea5b; buffering
+     performance dramatically.  Old buffering was inefficient,        appears to be correct
      and (in one case) actually wrong.
 
 
@@ -747,8 +758,8 @@ GEMDOS Changes - Directory Functions
 ====================================
 Dcreate()
 ---------
-121. Dcreate() (mkdir) now detects and handles errors; it             TO BE CHECKED
-     recovers correctly from failures while creating a directory
+121. Dcreate() (mkdir) now detects and handles errors; it             COMMENT: appears to be
+     recovers correctly from failures while creating a directory      fixed in original import
      (such as write errors and disk-full errors), and does not
      partially build subdirectories.
 122. Attempting to Dcreate() a directory with the name of an          FIXED: commit 1af26d
