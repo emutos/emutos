@@ -68,26 +68,8 @@
 static long ixopen(char *name, int mod);
 static long opnfil(FCB *f, DND *dn, int mod);
 static long makopn(FCB *f, DND *dn, int h, int mod);
-static FTAB *sftsrch(int field, char *ptr);
+static FTAB *sftofdsrch(OFD *ofd);
 static void sftdel(FTAB *sftp);
-
-/*
-**  used in calls to sftsrch to distinguish which field we are matching on
-*/
-#define SFTOFD          0
-#define SFTOWNER        1
-
-/*
-**  SFTOFDSRCH - search sft for entry with matching OFD ptr
-**      call sftsrch with correct parms
-*/
-#define SFTOFDSRCH(o)   sftsrch( SFTOFD , (char *) o )
-
-/*
-**  SFTOWNSRCH - search sft for entry with matching PD
-**      call sftsrch with correct parms
-*/
-#define SFTOWNSRCH(p)   sftsrch( SFTOWN , (char *) p )
 
 
 /*
@@ -353,38 +335,21 @@ static long opnfil(FCB *f, DND *dn, int mod)
 
 
 /*
-**  sftosrch - search the sft for an entry with the specified OFD
+**  sftofdsrch - search the sft for an entry with the specified OFD
 **  returns:
 **      ptr to the matching sft, or
 **      NULL
 */
-
-/* field: which field to match on
- * ptr: ptr to match on
- */
-static FTAB *sftsrch(int field, char *ptr)
+static FTAB *sftofdsrch(OFD *ofd)
 {
     FTAB *sftp;     /* scan ptr for sft */
     int i;
-    OFD *ofd;
-    PD *pd ;
 
-    switch(field) {
-    case SFTOFD:
-        for (i = 0, sftp = sft, ofd = (OFD *) ptr;
-                        i < OPNFILES  &&  sftp->f_ofd != ofd; ++i, ++sftp)
-            ;
-        break;
-    case SFTOWNER:
-        for (i = 0, sftp = sft, pd = (PD *) ptr;
-                        i < OPNFILES  &&  sftp->f_own != pd; ++i, ++sftp )
-            ;
-        break;
-    default:
-        return NULL;
-    }
+    for (i = 0, sftp = sft; i < OPNFILES; i++, sftp++)
+        if (sftp->f_ofd == ofd)
+            return sftp;
 
-    return i >= OPNFILES ? NULL : sftp;     /* M01.01.1023.03 */
+    return NULL;
 }
 
 
@@ -408,7 +373,7 @@ static void sftdel(FTAB *sftp)
 
     /*  if no other sft entries with same OFD, delete ofd  */
 
-    if (SFTOFDSRCH(ofd) == NULL)            /* M01.01.1023.03 */
+    if (sftofdsrch(ofd) == NULL)
         xmfreblk((int *)ofd);
 }
 
