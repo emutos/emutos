@@ -246,7 +246,7 @@ static const FND funcs[] =
     { xlseek,   0x81, 4 },   /* 0x42 */
     { (long(*)()) xchmod, 0, 4 },  /* 0x43 */
     { (long(*)()) xmxalloc, 0, 3 }, /* 0x44 */
-    { dup,      0, 1 },      /* 0x45 */
+    { xdup,     0, 1 },      /* 0x45 */
     { xforce,   0, 2 },      /* 0x46 */
     { xgetdir,  0, 3 },      /* 0x47 */
     { (long(*)()) xmalloc,  0, 2 }, /* 0x48 */

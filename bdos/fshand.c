@@ -79,7 +79,7 @@ long ixforce(int std, int h, PD *p)
 
 
 /*
- * dup - 0x45, duplicate a file handle.
+ * xdup - 0x45, duplicate a file handle
  *
  * Arguments:
  *
@@ -90,7 +90,7 @@ long ixforce(int std, int h, PD *p)
  *     ENHNDL
  *
  */
-long dup(int h)
+long xdup(int h)
 {
     int i;
 

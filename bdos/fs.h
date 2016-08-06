@@ -369,7 +369,7 @@ long xforce(int std, int h);
 long ixforce(int std, int h, PD *p);
 
 /* duplicate a file handle. */
-long dup(int h);
+long xdup(int h);
 
 /*
  * in fsopnclo.c
