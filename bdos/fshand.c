@@ -36,8 +36,6 @@ long xforce(int std, int h)
 /*
  * ixforce - force a std handle to a non-std handle
  *
- * If the std handle is for an open non-char device, close it
- *
  * Arguments:
  *
  *  std - must be a standard handle
@@ -49,9 +47,6 @@ long ixforce(int std, int h, PD *p)
 
     if ((std < 0) || (std >= NUMSTD))   /* validate standard handle */
         return EIHNDL;
-
-    if (p->p_uft[std] > 0)
-        xclose(std);
 
     if (h < 0)                  /* if the non-std handle is a BIOS handle, */
         p->p_uft[std] = h;      /* just store it as-is in the PD table */
