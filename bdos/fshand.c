@@ -55,6 +55,9 @@ long ixforce(int std, int h, PD *p)
         if (h < NUMSTD)         /* validate the non-std handle */
             return EIHNDL;
 
+        if (!getofd(h))         /* check that the non-std handle exists */
+            return EIHNDL;
+
         /*
          * if the non-std handle is currently mapped to a BIOS handle,
          * store the BIOS handle in the PD table; otherwise store the
