@@ -217,9 +217,9 @@ wind_get()
 
 Windows
 -------
-035. When the user clicks in the scroll area of a window, AES         TO BE CHECKED
-     waits for a double click time before starting the scroll
-     repeat.  Single clicks only cause one message to be sent.
+035. When the user clicks in the scroll area of a window, AES         COMMENT: EmuTOS doesn't wait,
+     waits for a double click time before starting the scroll         so scrolls faster: surely this
+     repeat.  Single clicks only cause one message to be sent.        is better?
 
 
 
