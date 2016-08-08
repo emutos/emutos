@@ -366,7 +366,7 @@ WORD fm_dial(WORD fmd_type, GRECT *pt)
     case FMD_FINISH:
         /* update certain portion of the screen */
         w_drawdesk(pt);
-        w_update(0, pt, 0, FALSE, TRUE);
+        w_update(DESKWH, pt, DESKWH, FALSE, TRUE);
         break;
     }
 

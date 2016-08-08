@@ -51,8 +51,6 @@
 /*
  *  defines
  */
-#define DESKWH  0x0
-
 #define NUM_MWIN NUM_WIN
 
 #define XFULL   0
