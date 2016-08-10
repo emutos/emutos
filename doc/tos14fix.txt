@@ -135,14 +135,17 @@ File Selector
 
 form dial()
 -----------
-023. form_dial() now only forces the top window to be redrawn if      TO BE CHECKED
-     it falls inside the rectangle of the form_dial().
+023. form_dial() now only forces the top window to be redrawn if      COMMENT: unable to reproduce
+     it falls inside the rectangle of the form_dial().                this problem using TOS 1.00
 
 
 Menu Bar
 --------
-024. Toggling between True and False on the Menu Bar no longer        TO BE CHECKED
-     corrupts the semaphore.
+024. Toggling between True and False on the Menu Bar no longer        COMMENT: unable to reproduce
+     corrupts the semaphore.                                          any problem in this area using
+     (The following clarification is added by Roger Burrows)          TOS 1.00
+     It's not clear exactly what this means, or what the visible
+     result of the corrupted semaphore would be.
 025. The Menu Bar line is now redrawn in REPLACE mode, rather         COMMENT: EmuTOS draws the Menu Bar
      than XOR mode; this prevents the AES from "undrawing" a menu     line in TRANSPARENT mode, which is
      bar line already drawn by an application.                        the same as REPLACE for solid lines
