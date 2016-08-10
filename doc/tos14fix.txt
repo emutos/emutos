@@ -161,17 +161,17 @@ Menus
 
 Mouse Clicks
 ------------
-027. Mouse single click response has been improved for                TO BE CHECKED
-     applications which don't request double clicks.  Now,
-     applications which use only single click event reporting
-     will feel more responsive.
-
+027. Mouse single click response has been improved for                COMMENT: a simple test program
+     applications which don't request double clicks.  Now,            measured a 10% reduction in
+     applications which use only single click event reporting         response time between TOS 1.00
+     will feel more responsive.                                       & TOS 1.04, and a 60% reduction
+                                                                      between TOS 1.04 & EmuTOS
 
 Mouse Cursor
 ------------
-028. AES no longer accidentally restores a previously saved mouse     TO BE CHECKED
-     state in favor of the state set with graf_mouse().  This
-     behavior sometimes caused the cursor to remain a busy bee
+028. AES no longer accidentally restores a previously saved mouse     COMMENT: code inspection suggests
+     state in favor of the state set with graf_mouse().  This         that this is fixed, and no problems
+     behavior sometimes caused the cursor to remain a busy bee        have been reported in this area
      even after an application had set it to an arrow, or to
      leave "trails" in the menu bar.
 
