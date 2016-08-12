@@ -369,6 +369,21 @@ void fun_drag(WORD src_wh, WORD dst_wh, WORD dst_ob, WORD dulx, WORD duly, WORD 
 }
 
 /*
+ * Function called to redisplay appropriate windows when disk is deleted
+ */
+static void do_refresh_drive(WORD drive)
+{
+    WNODE *pw;
+
+    for (pw = G.g_wfirst; pw; pw = pw->w_next)
+    {
+        if (pw->w_id)
+            if (pw->w_path->p_spec[0] == drive)
+                do_refresh(pw);
+    }
+}
+
+/*
  * Function called to delete the contents of a disk
  */
 static WORD delete_disk(ANODE *pa)

@@ -810,20 +810,3 @@ void do_refresh(WNODE *pw)
     fpd_parse(pw->w_path->p_spec, &drv, path, name, ext);
     do_fopen(pw, 0, drv, path, name, ext, TRUE);
 }
-
-
-/*
- *  Routine to re-read and redisplay the directories in all windows
- *  associated with the specified drive letter
- */
-void do_refresh_drive(WORD drive)
-{
-    WNODE *pw;
-
-    for (pw = G.g_wfirst; pw; pw = pw->w_next)
-    {
-        if (pw->w_id)
-            if (pw->w_path->p_spec[0] == drive)
-                do_refresh(pw);
-    }
-}
