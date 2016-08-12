@@ -459,6 +459,6 @@ void fun_del(WORD sobj)
     if (pw)
     {
         if (fun_op(OP_DELETE, -1, pw->w_path, NULL))
-            do_refresh_drive(pw->w_path->p_spec[0]);
+            fun_rebld(pw);
     }
 }
