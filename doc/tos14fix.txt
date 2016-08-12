@@ -369,7 +369,7 @@ Aborting Operations                                                   Status
 
 Application Crash
 -----------------
-052. When recovering from an application crash, wind_update(FALSE)    TO BE CHECKED
+052. When recovering from an application crash, wind_update(FALSE)    FIXED: commit 21a18c
      is executed before going into the main event_multi() that
      waits for user interaction.  This is handled by the new
      wind_new() function.
@@ -447,7 +447,7 @@ Disk Directories
 066. Pressing <Esc> forces the Desktop to read the directory of       FIXED: commit 47720e
      the topped window.  Before it would only do so if a media
      change had been detected.
-067. The Desktop now re-reads all open directories (instead of        TO BE CHECKED
+067. The Desktop now re-reads all open directories (instead of        FIXED: since at least 0.8.5
      only those of drives A: and B:) after an operation which
      could change the directory information.
 
@@ -522,12 +522,12 @@ Installed Applications
 081. "Install Application" has a "Remove" button, and "Install"       FIXED: commit b74fe4
      is now the default.  This dialog is also used to choose
      Normal or Autorun status. (See "Autorun Applications")
-082. The default directory of an installed application is always      TO BE CHECKED
-     set to the directory of the document that invoked it, even
-     if the document is opened from a background window.
-083. Only the "filename.ext" is passed to the installed               TO BE CHECKED
-     application on its command line.  This fixed programs that
-     only expected 14 characters of command line.
+082. The default directory of an installed application is always      COMMENT: this will be configurable
+     set to the directory of the document that invoked it, even       when "Install application" is
+     if the document is opened from a background window.              updated.
+083. Only the "filename.ext" is passed to the installed               COMMENT: this will be configurable
+     application on its command line.  This fixed programs that       when "Install application" is
+     only expected 14 characters of command line.                     updated.
 
 
 Install Disk Drive
