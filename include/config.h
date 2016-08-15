@@ -790,6 +790,22 @@
 #endif
 
 /*
+ * CONF_LOGSEC_SIZE defines the maximum size of logical sectors that
+ * GEMDOS can handle, specified in bytes; however, if a larger value
+ * is found on a mounted drive during startup, that value will be used
+ * instead.
+ *
+ * The value *must* be a power of two between 512 and 16384 inclusive.
+ *
+ * Note that this is only significant if you use Atari-style FAT
+ * filesystems; DOS-style FAT filesystems always have a logical sector
+ * size of 512 bytes.
+ */
+#ifndef CONF_LOGSEC_SIZE
+# define CONF_LOGSEC_SIZE 512
+#endif
+
+/*
  * Set CONF_WITH_ASSERT to 1 to enable the assert() function
  */
 #ifndef CONF_WITH_ASSERT

@@ -145,7 +145,7 @@ static void pun_info_setup(void)
     pun_info.cookie = 0x41484449L; /* AHDI */
     pun_info.cookie_ptr = &pun_info.cookie;
     pun_info.version_num = 0x300;      /* AHDI v3.00 */
-    pun_info.max_sect_siz = max_size;
+    pun_info.max_sect_siz = (max_size > CONF_LOGSEC_SIZE) ? max_size : CONF_LOGSEC_SIZE;
 
     pun_ptr = &pun_info;
 
