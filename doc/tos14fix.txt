@@ -36,9 +36,9 @@ appl_init()                                                           Status
 
 Autorun Application
 -------------------
-002. When running an autorun application, the AES changes to its      MISSING FEATURE
+002. When running an autorun application, the AES changes to its      FIXED: commit ea209b
      directory.
-003. When an autorun application is active, AES gives accessories     MISSING FEATURE
+003. When an autorun application is active, AES gives accessories     FIXED: commit ea209b
      the same number of dispatch calls to initialize as they
      would have if the Desktop were starting up.
 
@@ -377,9 +377,9 @@ Application Crash
 
 Autorun Applications
 --------------------
-053. GEM programs can be autorun from disk.  This is set up           MISSING FEATURE
-     through the "Install Application" dialog, where the user can
-     select "Auto" (boot) status, then "Save Desktop".  The
+053. GEM programs can be autorun from disk.  This is set up           MISSING FEATURE (note that
+     through the "Install Application" dialog, where the user can     autorun *is* available via
+     select "Auto" (boot) status, then "Save Desktop".  The           manually editing EMUDESK.INF)
      autoboot application can also be uninstalled from this
      dialog.  The autoboot application can be either a "PRG" or
      a "TOS", but not a "TTP".
