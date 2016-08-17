@@ -502,13 +502,10 @@ static void sh_chgrf(SHELL *psh)
 
 static void sh_chdef(SHELL *psh)
 {
-    /* if we should exec the default command, then let it be
-     * known that it is a gem application
-     */
     psh->sh_isdef = FALSE;
     if (psh->sh_dodef)
     {
-        psh->sh_isdef = psh->sh_isgem = TRUE;
+        psh->sh_isdef = TRUE;
         if (psh->sh_cdir[1] == ':')
             dos_sdrv(psh->sh_cdir[0] - 'A');
         dos_chdir(psh->sh_cdir);
@@ -538,6 +535,7 @@ void aes_run_rom_program(PRG_ENTRY *entry)
 
 static void set_default_desktop(SHELL *psh)
 {
+    psh->sh_isgem = TRUE;
     strcpy(psh->sh_desk, DEF_DESKTOP);
     strcpy(psh->sh_cdir, D.s_cdir);
 }
@@ -617,13 +615,16 @@ static WORD sh_ldapp(SHELL *psh)
 }
 
 
-void sh_main(void)
+void sh_main(BOOL isgem)
 {
     WORD rc = 0;
     SHELL *psh;
 
     psh = &sh[rlr->p_pid];
     strcpy(sh_apdir, D.s_cdir);         /* initialize sh_apdir  */
+
+    /* set initial mode (can be character mode for autorun app) */
+    psh->sh_isgem = isgem;
 
     /* Set default DESKTOP if there isn't any yet */
     if (psh->sh_desk[0] == '\0')
@@ -635,7 +636,11 @@ void sh_main(void)
     do
     {
         sh_chdef(psh);
-        psh->sh_dodef = TRUE;           /* set up to run the desktop next */
+        /*
+         * set up to run the default app next; usually the desktop, but
+         * can be an autorun program the first time through this loop
+         */
+        psh->sh_dodef = TRUE;
         sh_chgrf(psh);                  /* set alpha/graphics mode */
 
         if (gl_shgem)

@@ -412,10 +412,15 @@ static void process_inf1(void)
  *      1. Determine the auto-run program to be started (from #Z).
  *      2. Set the double-click speed (from #E).  This is done here
  *         in case we have an auto-run program.
+ *
+ *  Returns:
+ *      TRUE if initial program is a GEM program (normal)
+ *      FALSE if initial program is character-mode (only if an autorun
+ *      entry exists, and it is for a character-mode program).
  */
-static void process_inf2(void)
+static BOOL process_inf2(void)
 {
-    WORD    env;
+    WORD    env, isgem = TRUE;
     char    *pcurr;
     BYTE    tmp;
 
@@ -434,7 +439,9 @@ static void process_inf2(void)
         else if (tmp == 'Z')        /* something like "#Z 01 C:\THING.APP@" */
         {
             BYTE *tmpptr1, *tmpptr2;
-            pcurr += 5;
+            pcurr += 2;
+            scan_2(pcurr, &isgem);  /* 00 => not GEM, otherwise GEM */
+            pcurr += 3;
             tmpptr1 = pcurr;
             while (*pcurr && (*pcurr != '@'))
                 ++pcurr;
@@ -446,6 +453,8 @@ static void process_inf2(void)
             ++pcurr;
         }
     }
+
+    return isgem ? TRUE : FALSE;
 }
 
 
@@ -479,6 +488,7 @@ void all_run(void)
 void run_accs_and_desktop(void)
 {
     WORD i;
+    BOOL isgem;
 
     /* load gem resource and fix it up before we go */
     gem_rsc_init();
@@ -525,13 +535,13 @@ void run_accs_and_desktop(void)
     wm_start();                     /* initialise window vars */
     fs_start();                     /* startup gem libs */
     sh_curdir(D.s_cdir);            /* remember current desktop directory */
-    process_inf2();                 /* process emudesk.inf part 2 */
+    isgem = process_inf2();         /* process emudesk.inf part 2 */
 
     dsptch();                       /* off we go !!! */
     all_run();                      /* let them run  */
 
     sh_init();                      /* init for shell loop */
-    sh_main();                      /* main shell loop */
+    sh_main(isgem);                 /* main shell loop */
 
     /* give back the tick   */
     disable_interrupts();

@@ -36,7 +36,7 @@ WORD sh_find(BYTE *pspec);
 void sh_rdef(BYTE *lpcmd, BYTE *lpdir);
 void sh_wdef(const BYTE *lpcmd, const BYTE *lpdir);
 
-void sh_main(void);
+void sh_main(BOOL isgem);
 
 typedef void PRG_ENTRY(void);   /* Program entry point type */
 void aes_run_rom_program(PRG_ENTRY *entry);
