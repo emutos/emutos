@@ -80,13 +80,14 @@ struct _applstr
 {
     ANODE *a_next;
     WORD a_flags;               /* see above for usage */
+    BYTE a_rsvd;                /* unused */
+    BYTE a_letter;              /* letter for icon */
     WORD a_type;                /* icon type (see above) */
     WORD a_obid;                /* object index */
     BYTE *a_pappl;              /* filename.ext of appplication */
     BYTE *a_pdata;              /* mask for data files */
     WORD a_aicon;               /* application icon # */
     WORD a_dicon;               /* data icon # */
-    WORD a_letter;              /* letter for icon */
     WORD a_xspot;               /* desired spot on desk */
     WORD a_yspot;               /* desired spot on desk */
 };

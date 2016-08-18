@@ -354,7 +354,7 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
             obj->ob_spec = (LONG)ib;
             memcpy(ib, &G.g_iblist[i_index], sizeof(ICONBLK));
             ib->ib_ptext = pstart->f_name;
-            ib->ib_char |= (0x00ff & pstart->f_pa->a_letter);
+            ib->ib_char |= pstart->f_pa->a_letter;
             break;
         }
         pstart = pstart->f_next;
