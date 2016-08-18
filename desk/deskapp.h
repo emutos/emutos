@@ -24,7 +24,7 @@
  * bit masks for the a_flags field in the ANODE
  */
 #define AF_ISCRYS 0x0001        /* is crystal (i.e. GEM) application */
-#define AF_ISGRAF 0x0002        /* is graphic appl. (always set when AF_ISCRYS is set) */
+/* #define AF_ISGRAF 0x0002        no longer used */
 #define AF_ISDESK 0x0004        /* requires desktop icon */
 #define AF_ISPARM 0x0008        /* requires input parameters (TTP or GTP) */
 

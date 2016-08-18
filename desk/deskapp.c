@@ -192,19 +192,19 @@ static BYTE *app_parse(BYTE *pcurr, ANODE *pa)
     {
     case 'T':                             /* Trash */
         pa->a_type  = AT_ISTRSH;
-        pa->a_flags = AF_ISCRYS | AF_ISGRAF | AF_ISDESK;
+        pa->a_flags = AF_ISCRYS | AF_ISDESK;
         break;
     case 'M':                             /* Storage Media        */
         pa->a_type = AT_ISDISK;
-        pa->a_flags = AF_ISCRYS | AF_ISGRAF | AF_ISDESK;
+        pa->a_flags = AF_ISCRYS | AF_ISDESK;
         break;
     case 'G':                             /* GEM App File         */
         pa->a_type = AT_ISFILE;
-        pa->a_flags = AF_ISCRYS | AF_ISGRAF;
+        pa->a_flags = AF_ISCRYS;
         break;
     case 'Y':                             /* GEM App needs parms  */
         pa->a_type = AT_ISFILE;
-        pa->a_flags = AF_ISCRYS | AF_ISGRAF | AF_ISPARM;
+        pa->a_flags = AF_ISCRYS | AF_ISPARM;
         break;
     case 'F':                             /* DOS File no parms    */
     case 'f':                             /* (backward compatibility)  */
@@ -758,7 +758,7 @@ void app_save(WORD todisk)
             type = 'M';
             break;
         case AT_ISFILE:
-            if ( (pa->a_flags & (AF_ISCRYS|AF_ISGRAF)) == (AF_ISCRYS|AF_ISGRAF) )
+            if (pa->a_flags & AF_ISCRYS)
                 type = (pa->a_flags & AF_ISPARM) ? 'Y' : 'G';
             else
                 type = (pa->a_flags & AF_ISPARM) ? 'P' : 'F';

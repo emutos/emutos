@@ -495,7 +495,7 @@ static WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, WORD drv,
     done = FALSE;
 
     /* set flags */
-    isgraf = pa->a_flags & AF_ISGRAF;
+    isgraf = pa->a_flags & AF_ISCRYS;
     isparm = pa->a_flags & AF_ISPARM;
     uninstalled = ( (*pa->a_pappl == '*') ||
                     (*pa->a_pappl == '?') ||

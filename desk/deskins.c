@@ -499,7 +499,7 @@ WORD ins_app(BYTE *pfname, ANODE *pa)
     nflag = 0;
     field = inf_gindex((LONG)tree, APGEM, 3);
     if (field == 0)
-        nflag = AF_ISCRYS | AF_ISGRAF;
+        nflag = AF_ISCRYS;
     if (field == 2)
         nflag = AF_ISPARM;
     tree[APGEM+field].ob_state = NORMAL;
