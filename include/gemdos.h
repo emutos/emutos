@@ -1,5 +1,5 @@
 /*
- * EmuTOS aes
+ * EmuTOS interface to GEMDOS
  *
  * Copyright (C) 2002-2016 The EmuTOS development team
  *

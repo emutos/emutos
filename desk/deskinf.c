@@ -25,13 +25,14 @@
 #include "obdefs.h"
 #include "gsxdefs.h"
 #include "dos.h"
+#include "gemdos.h"
+
 #include "deskapp.h"
 #include "deskfpd.h"
 #include "deskwin.h"
 #include "gembind.h"
 #include "deskbind.h"
 
-#include "../aes/gemdos.h"
 #include "../aes/optimize.h"
 #include "../aes/optimopt.h"
 #include "aesbind.h"

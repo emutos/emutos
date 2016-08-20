@@ -27,6 +27,8 @@
 #include "obdefs.h"
 #include "gsxdefs.h"
 #include "dos.h"
+#include "gemdos.h"
+
 #include "gembind.h"
 #include "deskapp.h"
 #include "deskfpd.h"
@@ -41,7 +43,6 @@
 #include "../bios/header.h"
 
 #include "../aes/optimize.h"
-#include "../aes/gemdos.h"
 #include "aesbind.h"
 #include "desksupp.h"
 #include "deskglob.h"

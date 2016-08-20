@@ -23,12 +23,13 @@
 #include "string.h"
 #include "obdefs.h"
 #include "gsxdefs.h"
+#include "gemdos.h"
+
 #include "deskapp.h"
 #include "deskfpd.h"
 #include "deskwin.h"
 #include "deskbind.h"
 
-#include "../aes/gemdos.h"
 #include "aesbind.h"
 #include "deskglob.h"
 #include "deskobj.h"

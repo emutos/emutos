@@ -22,13 +22,14 @@
 #include "config.h"
 #include "portab.h"
 #include "obdefs.h"
+#include "gemdos.h"
+
 #include "deskapp.h"
 #include "deskfpd.h"
 #include "deskwin.h"
 #include "dos.h"
 #include "deskbind.h"
 
-#include "../aes/gemdos.h"
 #include "../aes/optimopt.h"
 #include "deskrsrc.h"
 #include "deskglob.h"

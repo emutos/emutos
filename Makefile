@@ -207,8 +207,8 @@ bdos_src = bdosmain.c console.c fsbuf.c fsdir.c fsdrive.c fsfat.c fsglob.c \
 # source code in util/
 #
 
-util_src = doprintf.c intmath.c langs.c memmove.S memset.S miscasm.S nls.c \
-           nlsasm.S setjmp.S string.c stringasm.S
+util_src = doprintf.c gemdos.c intmath.c langs.c memmove.S memset.S miscasm.S \
+           nls.c nlsasm.S setjmp.S string.c stringasm.S
 
 #
 # source code in vdi/
@@ -232,7 +232,7 @@ vdi_src += endvdi.S
 #
 
 aes_src = gemasm.S gemstart.S gemdosif.S gemaplib.c gemasync.c gemctrl.c \
-          gemdisp.c gemdos.c gemevlib.c gemflag.c gemfmalt.c gemfmlib.c \
+          gemdisp.c gemevlib.c gemflag.c gemfmalt.c gemfmlib.c \
           gemfslib.c gemgraf.c gemgrlib.c gemgsxif.c geminit.c geminput.c \
           gemmnlib.c gemobed.c gemobjop.c gemoblib.c gempd.c gemqueue.c \
           gemrslib.c gemsclib.c gemshlib.c gemsuper.c gemwmlib.c gemwrect.c \
