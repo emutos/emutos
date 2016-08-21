@@ -200,6 +200,9 @@ static WORD fun_file2desk(PNODE *pn_src, WORD icontype_src, ANODE *an_dest, WORD
             operation = (keystate&MODE_CTRL) ? OP_MOVE : OP_COPY;
             break;
         case AT_ISTRSH:
+            if (icontype_src >= 0)      /* source is desktop icon */
+                if (wants_to_delete_files() == FALSE)
+                    return FALSE;       /* i.e. remove icons or cancel */
             pathname[0] = pn_src->p_spec[0];
             operation = OP_DELETE;
             break;

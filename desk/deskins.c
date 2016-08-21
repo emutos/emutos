@@ -3,9 +3,10 @@
 /*      merge source    5/27/87  - 5/28/87              mdf             */
 
 /*
- *      This module contains routines for two functions:
- *          . install disk
+ *      This module contains routines for three functions:
+ *          . install devices
  *          . install application
+ *          . remove desktop icons
  *
  *      Copyright 2002-2016 The EmuTOS development team
  *
@@ -46,6 +47,7 @@
 #include "deskfun.h"
 #include "deskrsrc.h"
 #include "deskdir.h"
+#include "deskmain.h"
 #include "icons.h"
 #include "desk1.h"
 #include "intmath.h"
@@ -503,4 +505,27 @@ WORD ins_app(BYTE *pfname, ANODE *pa)
     }
 
     return change;
+}
+
+/*
+ * remove desktop icons
+ */
+WORD rmv_icon(WORD sobj)
+{
+    ANODE *pa;
+    WORD icons_removed = 0;
+
+    for ( ; sobj; sobj = win_isel(G.g_screen, DROOT, sobj))
+    {
+        pa = i_find(0,sobj,NULL,NULL);
+        if (!pa)
+            continue;
+        if (pa->a_type == AT_ISDISK)
+        {
+            app_free(pa);
+            icons_removed++;
+        }
+    }
+
+    return icons_removed;
 }

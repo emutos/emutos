@@ -433,6 +433,8 @@ void fun_del(WORD sobj)
      */
     if ( (pa = i_find(0, sobj, NULL, NULL)) )
     {
+        if (wants_to_delete_files() == FALSE)   /* i.e. remove icons or cancel */
+            return;
         for ( ; sobj; sobj = win_isel(G.g_screen, DROOT, sobj))
         {
             pa = i_find(0,sobj,NULL,NULL);
@@ -462,4 +464,26 @@ void fun_del(WORD sobj)
         if (fun_op(OP_DELETE, -1, pw->w_path, NULL))
             fun_rebld(pw);
     }
+}
+
+/*
+ * prompt for delete files or remove icons
+ *
+ * if user selects Delete, returns TRUE
+ * if user selects Remove, sends a message to remove icons & returns FALSE
+ * else returns FALSE
+ */
+BOOL wants_to_delete_files(void)
+{
+    WORD ret;
+
+    ret = fun_alert(1,STRMVDEL,NULL);
+
+    if (ret == 2)       /* Delete */
+        return TRUE;
+
+    if (ret == 1)       /* Remove */
+        fun_msg(MN_SELECTED,OPTNMENU,RICNITEM,0,0,0);
+
+    return FALSE;       /* Remove or Cancel */
 }

@@ -111,14 +111,16 @@ static void    cnx_put(void);
 static WORD     ig_close;
 
 static const BYTE     ILL_ITEM[] = {L1ITEM, L2ITEM, L3ITEM, L4ITEM, L5ITEM, 0};
-static const BYTE     ILL_FILE[] = {FORMITEM,IDSKITEM,0};
-static const BYTE     ILL_DOCU[] = {FORMITEM,IDSKITEM,IAPPITEM,0};
-static const BYTE     ILL_FOLD[] = {FORMITEM,IDSKITEM,IAPPITEM,0};
+static const BYTE     ILL_FILE[] = {FORMITEM,IDSKITEM,RICNITEM,0};
+static const BYTE     ILL_DOCU[] = {FORMITEM,IDSKITEM,IAPPITEM,RICNITEM,0};
+static const BYTE     ILL_FOLD[] = {FORMITEM,IDSKITEM,IAPPITEM,RICNITEM,0};
 static const BYTE     ILL_FDSK[] = {IAPPITEM,0};
 static const BYTE     ILL_HDSK[] = {FORMITEM,IAPPITEM,0};
-static const BYTE     ILL_NOSEL[] = {OPENITEM,SHOWITEM,FORMITEM,DELTITEM,IAPPITEM,0};
+static const BYTE     ILL_NOSEL[] = {OPENITEM,SHOWITEM,FORMITEM,DELTITEM,
+                                IAPPITEM,RICNITEM,0};
 static const BYTE     ILL_YSEL[] = {OPENITEM, IDSKITEM, FORMITEM, SHOWITEM, 0};
-static const BYTE     ILL_TRASH[] = {OPENITEM,FORMITEM,DELTITEM,IDSKITEM,IAPPITEM,0};
+static const BYTE     ILL_TRASH[] = {OPENITEM,FORMITEM,DELTITEM,IDSKITEM,
+                                IAPPITEM,RICNITEM,0};
 static const BYTE     ILL_NOTOP[] = {NFOLITEM,CLOSITEM,CLSWITEM,0};
 static const BYTE     ILL_DESKTOP[] = {NFOLITEM,CLOSITEM,CLSWITEM,ICONITEM,
                                 NAMEITEM,DATEITEM,SIZEITEM,TYPEITEM,0};
@@ -552,6 +554,15 @@ static WORD do_optnmenu(WORD item)
         }
         if (rebld)
             desk_all(FALSE);
+        break;
+    case RICNITEM:
+        if (curr)
+            rebld = rmv_icon(curr);
+        if (rebld)
+        {
+            app_blddesk();
+            do_wredraw(0, G.g_xdesk, G.g_ydesk, G.g_wdesk, G.g_hdesk);
+        }
         break;
     case PREFITEM:
         if (inf_pref())

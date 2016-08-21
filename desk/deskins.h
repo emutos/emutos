@@ -13,5 +13,6 @@
 WORD is_installed(ANODE *pa);
 WORD ins_app(BYTE *pfname, ANODE *pa);
 WORD ins_devices(void);
+WORD rmv_icon(WORD sobj);
 
 #endif  /* _DESKINS_H */

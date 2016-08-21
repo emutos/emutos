@@ -17,5 +17,6 @@ WORD fun_mkdir(WNODE *pw_node);
 WORD fun_op(WORD op, WORD icontype_src, PNODE *pspath, BYTE *pdest);
 void fun_drag(WORD src_wh, WORD dst_wh, WORD dst_ob, WORD dulx, WORD duly, WORD keystate);
 void fun_del(WORD sobj);
+BOOL wants_to_delete_files(void);
 
 #endif
