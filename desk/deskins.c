@@ -28,6 +28,8 @@
 #include "portab.h"
 #include "obdefs.h"
 #include "gsxdefs.h"
+#include "gemdos.h"
+
 #include "deskapp.h"
 #include "deskfpd.h"
 #include "deskwin.h"
@@ -63,28 +65,6 @@ WORD is_installed(ANODE *pa)
 {
     return ( !((*pa->a_pappl == '*') || (*pa->a_pappl == '?') ||
                    (*pa->a_pappl == '\0')  ) );
-}
-
-
-/*
- *  Routine to find out if this icon is the last remaining disk icon on
- *  the screen.  We need to know this so that we can avoid removing it
- *  (which with the current semantics would make it impossible to install
- *  a new icon)
- */
-static WORD lastdisk(void)
-{
-    WORD  i;
-    ANODE *pa;
-
-    i = 0;
-    for (pa = G.g_ahead; pa; pa = pa->a_next)
-    {
-        if (pa->a_type == AT_ISDISK)
-            i++;
-    }
-
-    return (i < 2);
 }
 
 
@@ -149,116 +129,69 @@ static void ins_posdisk(WORD dx, WORD dy, WORD *pdx, WORD *pdy)
 
 
 /*
- *  Routine to find out if there is another icon with this letter already
- *  on the desktop.
+ *  Install icon for one drive
+ *
+ *  Returns -1 for error (couldn't allocate ANODE)
  */
-static ANODE *get_disk(WORD letter)
+static WORD install_drive(WORD drive)
 {
     ANODE *pa;
 
-    for (pa = G.g_ahead; pa; pa = pa->a_next)
+    pa = app_alloc(FALSE);
+    if (!pa)
     {
-        if ((pa->a_type == AT_ISDISK) && (pa->a_letter == letter))
-            return pa;
+        fun_alert(1, STAPGONE, NULL);
+        return -1;
     }
 
-    return NULL;
+    pa->a_flags = AF_ISCRYS | AF_ISDESK;
+    pa->a_rsvd = 0;
+    pa->a_letter = 'A' + drive;
+    pa->a_type = AT_ISDISK;
+    pa->a_obid = 0;     /* fixed up when deskmain() calls app_blddesk() */
+    sprintf(G.g_1text,"%s %c@",ini_str(STDISK),pa->a_letter);
+    scan_str(G.g_1text, &pa->a_pappl);  /* set up disk name */
+    scan_str("@", &pa->a_pdata);        /* points to empty string */
+    pa->a_aicon = (drive > 1) ? IG_HARD : IG_FLOPPY;
+    pa->a_dicon = NIL;
+    ins_posdisk(G.g_xdesk, G.g_ydesk, &pa->a_xspot, &pa->a_yspot);
+
+    return 0;
 }
 
 
-/************************************************************************/
-/* i n s _ d i s k                                                      */
-/************************************************************************/
-WORD ins_disk(ANODE *pa)
+/*
+ *  Install devices: installs an icon on the desktop for all
+ *  devices that do not currently have an icon
+ *
+ *  Returns count of drives successfully installed
+ */
+WORD ins_devices(void)
 {
-    OBJECT          *tree;
-    WORD            change, icon, flop, hard, fld;
-    BYTE            cletter[2], clabel[LEN_ZFNAME];
-    BYTE            nletter[2], nlabel[LEN_ZFNAME];
-    ANODE           *newpa;
+    ULONG drivebits, mask;
+    WORD drive, count;
+    ANODE *pa;
 
-    tree = (OBJECT *)G.a_trees[ADINSDIS];
+    drivebits = dos_sdrv(dos_gdrv());   /* all current devices */
 
-    change = FALSE;
-    cletter[0] = pa->a_letter;
-    cletter[1] = '\0';
-    strcpy(&clabel[0], pa->a_pappl);
+    /*
+     * scan ANODEs and zero out the bits for installed drives
+     */
+    for (pa = G.g_ahead; pa; pa = pa->a_next)
+        if (pa->a_type == AT_ISDISK)
+            drivebits &= ~(1<<(pa->a_letter-'A'));
 
-    inf_sset((LONG)tree, DRID, &cletter[0]);
-    inf_sset((LONG)tree, DRLABEL, &clabel[0]);
-
-    flop = (pa->a_aicon == IG_FLOPPY) ? SELECTED : NORMAL;
-    hard = (pa->a_aicon == IG_HARD) ? SELECTED : NORMAL;
-    tree[DRFLOPPY].ob_state = flop;
-    tree[DRHARD].ob_state = hard;
-    tree[DRREM].ob_state = lastdisk() ? DISABLED : NORMAL;
-
-    inf_show((LONG)tree, 0);
-
-    inf_sget((LONG)tree, DRID, &nletter[0]);
-    inf_sget((LONG)tree, DRLABEL, &nlabel[0]);
-    fld = inf_gindex((LONG)tree, DRINST, 3);      /* which exit button?   */
-    tree[DRINST+fld].ob_state = NORMAL;
-    icon = (tree[DRFLOPPY].ob_state & SELECTED) ? IG_FLOPPY : IG_HARD;
-    if (fld == 0)                   /* Install              */
+    for (drive = 0, mask = 1, count = 0; drive < BLKDEVNUM; drive++, mask <<= 1)
     {
-/* BugFix       */
-        if ( (cletter[0] != nletter[0]) && (nletter[0] != '\0') )
+        if (drivebits&mask)
         {
-            newpa = get_disk(nletter[0]);
-            if (!newpa)
-            {
-                newpa = app_alloc(FALSE);
-                if (newpa)
-                {
-                    newpa->a_flags = pa->a_flags;
-                    newpa->a_type = pa->a_type;
-                    newpa->a_obid = pa->a_obid;
-                    newpa->a_pappl = pa->a_pappl;
-                    scan_str("@", &newpa->a_pdata);
-                    newpa->a_aicon = pa->a_aicon;
-                    newpa->a_dicon = NIL;
-                    newpa->a_letter = nletter[0];
-                    ins_posdisk(pa->a_xspot, pa->a_yspot, &newpa->a_xspot, &newpa->a_yspot);
-                }
-                else
-                    fun_alert(1, STAPGONE, NULL);
-            }
-            if (newpa)
-                pa = newpa;
-            change = TRUE;
-        }
-
-        /* see if icon changed  */
-        if (pa->a_aicon != icon)
-        {
-            pa->a_aicon = icon;
-            change = TRUE;
-        }
-
-        /* see if label changed */
-/* BugFix       */
-        if ( (strcmp(&clabel[0], &nlabel[0])) && (nlabel[0] != '\0') )
-        {
-            nlabel[ strlen(&nlabel[0]) ] = '@';
-            scan_str(&nlabel[0], &pa->a_pappl);
-            change = TRUE;
-        }
-    } /* if INSTALL */
-    else if ( fld == 1 )                    /* Remove               */
-    {
-        /* find matching anode and delete it */
-        for (pa = G.g_ahead; pa; pa = pa->a_next)
-        {
-            if ((pa->a_aicon == icon) && (pa->a_letter == nletter[0]))
-            {
-                app_free(pa);
-                change = TRUE;
-            }
+            if (install_drive(drive) < 0)
+                break;
+            count++;
         }
     }
 
-    return change;
+    return count;
 }
 
 

@@ -11,7 +11,7 @@
 #define _DESKINS_H
 
 WORD is_installed(ANODE *pa);
-WORD ins_disk(ANODE *pa);
 WORD ins_app(BYTE *pfname, ANODE *pa);
+WORD ins_devices(void);
 
 #endif  /* _DESKINS_H */

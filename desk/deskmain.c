@@ -116,8 +116,7 @@ static const BYTE     ILL_DOCU[] = {FORMITEM,IDSKITEM,IAPPITEM,0};
 static const BYTE     ILL_FOLD[] = {FORMITEM,IDSKITEM,IAPPITEM,0};
 static const BYTE     ILL_FDSK[] = {IAPPITEM,0};
 static const BYTE     ILL_HDSK[] = {FORMITEM,IAPPITEM,0};
-static const BYTE     ILL_NOSEL[] = {OPENITEM,SHOWITEM,FORMITEM,DELTITEM,
-                                IDSKITEM,IAPPITEM,0};
+static const BYTE     ILL_NOSEL[] = {OPENITEM,SHOWITEM,FORMITEM,DELTITEM,IAPPITEM,0};
 static const BYTE     ILL_YSEL[] = {OPENITEM, IDSKITEM, FORMITEM, SHOWITEM, 0};
 static const BYTE     ILL_TRASH[] = {OPENITEM,FORMITEM,DELTITEM,IDSKITEM,IAPPITEM,0};
 static const BYTE     ILL_NOTOP[] = {NFOLITEM,CLOSITEM,CLSWITEM,0};
@@ -531,8 +530,7 @@ static WORD do_optnmenu(WORD item)
     switch(item)
     {
     case IDSKITEM:
-        if (pa)
-            rebld = ins_disk(pa);
+        rebld = ins_devices();
         if (rebld)
         {
             app_blddesk();
