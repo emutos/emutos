@@ -138,6 +138,10 @@ static void ins_posdisk(WORD dx, WORD dy, WORD *pdx, WORD *pdy)
 static WORD install_drive(WORD drive)
 {
     ANODE *pa;
+    WORD x, y;
+
+    /* find first available spot on desktop (before we alloc a new one) */
+    ins_posdisk(G.g_xdesk, G.g_ydesk, &x, &y);
 
     pa = app_alloc(FALSE);
     if (!pa)
@@ -156,7 +160,8 @@ static WORD install_drive(WORD drive)
     scan_str("@", &pa->a_pdata);        /* points to empty string */
     pa->a_aicon = (drive > 1) ? IG_HARD : IG_FLOPPY;
     pa->a_dicon = NIL;
-    ins_posdisk(G.g_xdesk, G.g_ydesk, &pa->a_xspot, &pa->a_yspot);
+    pa->a_xspot = x;
+    pa->a_yspot = y;
 
     return 0;
 }
