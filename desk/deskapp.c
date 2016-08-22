@@ -578,9 +578,12 @@ void app_start(void)
 
     for (pa = G.g_ahead; pa; pa = pa->a_next)
     {
-        x = pa->a_xspot * G.g_icw;
-        y = pa->a_yspot * G.g_ich + G.g_ydesk;
-        snap_disk(x, y, &pa->a_xspot, &pa->a_yspot);
+        if (pa->a_flags & AF_ISDESK)
+        {
+            x = pa->a_xspot * G.g_icw;
+            y = pa->a_yspot * G.g_ich + G.g_ydesk;
+            snap_disk(x, y, &pa->a_xspot, &pa->a_yspot);
+        }
     }
 
     xcent = (G.g_wicon - G.g_iblist[0].ib_wicon) / 2;
