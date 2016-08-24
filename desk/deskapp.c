@@ -168,22 +168,22 @@ extern BYTE *scan_2(BYTE *pcurr, WORD *pwd);
  *  Scans a string into a private buffer used for ANODE text (currently
  *  gl_buffer[]) and ups the string pointer for next time.
  *
- *  Leading spaces are ignored; the scan is terminated by @, #, or the
- *  null character.
+ *  Leading spaces are ignored; the scan is terminated by @, '\r', or
+ *  the null character.
  *
  *  Returns a pointer to the next character to scan: if the scan was
- *  terminated by an @, this is the character following the @; otherwise
- *  this is the terminating character (# or null).
+ *  terminated by @ or '\r', this is the following character; otherwise
+ *  this is the terminating character (null).
  */
 BYTE *scan_str(BYTE *pcurr, BYTE **ppstr)
 {
     while(*pcurr == ' ')
         pcurr++;
     *ppstr = G.g_pbuff;
-    while(*pcurr && (*pcurr != '#') && (*pcurr != '@'))
+    while(*pcurr && (*pcurr != '\r') && (*pcurr != '@'))
         *G.g_pbuff++ = *pcurr++;
     *G.g_pbuff++ = '\0';
-    if (*pcurr == '@')
+    if (*pcurr)
         pcurr++;
 
     return pcurr;
