@@ -165,20 +165,26 @@ extern BYTE *scan_2(BYTE *pcurr, WORD *pwd);
 
 
 /*
- *  Scan off spaces until a string is encountered.  An @ denotes
- *  a null string.  Copy the string into a string buffer until
- *  a @ is encountered.  This denotes the end of the string.  Advance
- *  pcurr past the last byte of the string.
+ *  Scans a string into a private buffer used for ANODE text (currently
+ *  gl_buffer[]) and ups the string pointer for next time.
+ *
+ *  Leading spaces are ignored; the scan is terminated by @, #, or the
+ *  null character.
+ *
+ *  Returns a pointer to the next character to scan: if the scan was
+ *  terminated by an @, this is the character following the @; otherwise
+ *  this is the terminating character (# or null).
  */
 BYTE *scan_str(BYTE *pcurr, BYTE **ppstr)
 {
     while(*pcurr == ' ')
         pcurr++;
     *ppstr = G.g_pbuff;
-    while(*pcurr != '@')
+    while(*pcurr && (*pcurr != '#') && (*pcurr != '@'))
         *G.g_pbuff++ = *pcurr++;
     *G.g_pbuff++ = '\0';
-    pcurr++;
+    if (*pcurr == '@')
+        pcurr++;
 
     return pcurr;
 }

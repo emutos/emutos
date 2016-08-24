@@ -155,9 +155,9 @@ static WORD install_drive(WORD drive)
     pa->a_letter = 'A' + drive;
     pa->a_type = AT_ISDISK;
     pa->a_obid = 0;     /* fixed up when deskmain() calls app_blddesk() */
-    sprintf(G.g_1text,"%s %c@",ini_str(STDISK),pa->a_letter);
+    sprintf(G.g_1text,"%s %c",ini_str(STDISK),pa->a_letter);
     scan_str(G.g_1text, &pa->a_pappl);  /* set up disk name */
-    scan_str("@", &pa->a_pdata);        /* points to empty string */
+    scan_str("", &pa->a_pdata);         /* points to empty string */
     pa->a_aicon = (drive > 1) ? IG_HARD : IG_FLOPPY;
     pa->a_dicon = NIL;
     snap_disk(x,y,&pa->a_xspot,&pa->a_yspot);
@@ -461,16 +461,13 @@ WORD ins_app(BYTE *pfname, ANODE *pa)
                     (strcmp(&ntypes[0], pa->a_pdata)) )
                 {
                     change = TRUE;
-                    ntypes[ strlen(&ntypes[0]) ] = '@';
                     scan_str(&ntypes[0], &newpa->a_pdata);
                 }
 
                 if (newpa != pa)
                 {
                     uninstalled = change = TRUE;
-                    strcpy(&ntypes[0], pfname);
-                    ntypes[ strlen(&ntypes[0]) ] = '@';
-                    scan_str(&ntypes[0], &newpa->a_pappl);
+                    scan_str(pfname, &newpa->a_pappl);
                     newpa->a_flags = nflag;
                     newpa->a_type = AT_ISFILE;
                     newpa->a_obid = NIL;
