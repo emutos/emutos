@@ -33,7 +33,6 @@
 #include "gembind.h"
 #include "deskbind.h"
 #include "../bios/videl.h"
-#include "../aes/gemsuper.h"
 #include "../aes/rectfunc.h"
 #include "../aes/optimize.h"
 #include "aesbind.h"
@@ -561,7 +560,8 @@ void app_start(void)
 
             pcurr = scan_2(pcurr, &envr);
             G.g_cnxsave.cs_confovwr = ( (envr & INF_E2_ALLOWOVW) == 0);
-            G.g_cnxsave.cs_mnuclick = gl_mnclick = ( (envr & INF_E2_MNUCLICK) != 0);
+            G.g_cnxsave.cs_mnuclick = ( (envr & INF_E2_MNUCLICK) != 0);
+            menu_click(G.g_cnxsave.cs_mnuclick, 1); /* tell system */
             if (envr & INF_E2_IDTDATE)
                 G.g_cnxsave.cs_datefmt = DATEFORM_IDT;
             else
