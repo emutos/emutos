@@ -11,7 +11,7 @@
 #define _DESKINS_H
 
 WORD is_installed(ANODE *pa);
-WORD ins_app(BYTE *pfname, ANODE *pa);
+WORD ins_app(WORD curr);
 WORD ins_devices(void);
 WORD rmv_icon(WORD sobj);
 

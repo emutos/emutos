@@ -55,11 +55,6 @@
 #include "kprint.h"
 
 
-#if HAVE_APPL_IBLKS
-static ICONBLK  gl_aib;
-static ICONBLK  gl_dib;
-#endif
-
 /*
  *  Routine to tell if an icon has an associated document type
  */
@@ -201,312 +196,182 @@ WORD ins_devices(void)
 }
 
 
-#if HAVE_APPL_IBLKS
-static void insa_icon(LONG tree, WORD obj, WORD nicon, ICONBLK *pic, BYTE *ptext)
+/*
+ * return pointer to start of last segment of path
+ * (assumed to be the filename)
+ */
+BYTE *filename_start(BYTE *path)
 {
-    OBJECT *objptr = (OBJECT *)tree + obj;
+    BYTE *start = path;
 
-    memcpy(pic, &G.g_iblist[nicon], sizeof(ICONBLK));
-    pic->ib_ptext = ptext;
-    objptr->ob_type = G_ICON;
-    objptr->ob_spec = (LONG)pic;
-}
-#endif
+    while (*path)
+        if (*path++ == '\\')
+            start = path;
 
-
-static void insa_elev(LONG tree, WORD nicon, WORD numics)
-{
-    WORD y, h, th;
-    const char *lp;
-    OBJECT *obj;
-
-    y = 0;
-    obj = (OBJECT *)tree + APFSVSLI;
-    th = h = obj->ob_height;
-    if (numics > 1)
-    {
-        h = mul_div(1, h, numics);
-        h = max((gl_hbox/2)+2, h);          /* min size elevator    */
-        y = mul_div(nicon, th-h, numics-1);
-    }
-
-    obj = (OBJECT *)tree + APFSVELE;
-    obj->ob_y = y;
-    obj->ob_height = h;
-
-#if HAVE_APPL_IBLKS
-    strcpy(&G.g_1text[0], ini_str(STAPPL));
-    insa_icon(tree, APF1NAME, IA_GENERIC+nicon, &gl_aib, &G.g_1text[0]);
-
-    strcpy(&G.g_2text[0], ini_str(STDOCU));
-    insa_icon(tree, APF2NAME, ID_GENERIC+nicon, &gl_dib, &G.g_2text[0]);
-
-    lp = icon_rs_fstr[nicon];
-#else
-    lp = ini_str(STNOTAVL);
-#endif
-
-    inf_sset(tree, APFTITLE, (BYTE *)lp );
+    return start;
 }
 
 
-static WORD insa_dial(LONG tree, WORD nicon, WORD numics)
+/*
+ * install application
+ */
+WORD ins_app(WORD curr)
 {
-    WORD firstslot, i;
-    WORD touchob, oicon, value;
-    WORD mx, my, kret, bret, cont;
-    BYTE   *pstr, doctype[4];
-    GRECT  pt;
-    OBJECT *obj;
+    ANODE *pa;
+    FNODE *pf;
+    WNODE *pw;
+    OBJECT *tree, *obj;
+    WORD change = 0;    /* -ve means cancel, 0 means no change, +ve means change */
+    WORD isapp, field, exitobj;
+    BOOL installed;
+    BYTE *pfname, *p, *q;
+    BYTE name[LEN_ZFNAME];
+    BYTE pathname[MAXPATHLEN];
 
-    /* draw the form */
-    show_hide(FMD_START, tree);
+    pa = i_find(G.g_cwin, curr, &pf, &isapp);
+    if (!pa)
+        return 0;
 
-    /* init for while loop by forcing initial fs_newdir call */
-    cont = TRUE;
-    while(cont)
+    installed = is_installed(pa);
+
+    /*
+     * first, get full path & name of application
+     */
+    if (installed)
     {
-        firstslot = 6;
-        for (i = 0; i < firstslot; i++)
-        {
-            pstr = &doctype[0];
-            inf_sget(tree, APDFTYPE+i, pstr);
-            if (*pstr == '\0')
-                firstslot = i;
-        }
-        touchob = form_do(tree, APDFTYPE+firstslot);
-        graf_mkstate(&mx, &my, &kret, &bret);
-
-        value = 0;
-        touchob &= 0x7fff;
-        switch(touchob)
-        {
-        case APINST:
-        case APREMV:
-        case APCNCL:
-            cont = FALSE;
-            break;
-        case APFUPARO:
-            value = -1;
-            break;
-        case APFDNARO:
-            value = 1;
-            break;
-        case APFSVSLI:
-/* BugFix       */
-            ob_actxywh(tree, APFSVELE, &pt);
-            pt.g_x -= 3;
-            pt.g_w += 6;
-            if (inside(mx, my, &pt))
-                goto dofelev;
-            value = (my <= pt.g_y) ? -1 : 1;
-            break;
-        case APFSVELE:
-dofelev:    wind_update(3);
-            ob_relxywh(tree, APFSVSLI, &pt);
-            pt.g_x += 3;
-            pt.g_w -= 6;
-            obj = (OBJECT *)tree + APFSVSLI;
-            obj->ob_x = pt.g_x;
-            obj->ob_width = pt.g_w;
-            value = graf_slidebox(tree, APFSVSLI, APFSVELE, TRUE);
-            pt.g_x -= 3;
-            pt.g_w += 6;
-            obj->ob_x = pt.g_x;
-            obj->ob_width = pt.g_w;
-            wind_update(2);
-            value = mul_div(value, numics-1, 1000) - nicon;
-            break;
-        }
-        if (value)
-        {
-            oicon = nicon;
-            nicon += value;
-            if (nicon < 0)
-                nicon = 0;
-            if (nicon >= numics)
-                nicon = numics - 1;
-            if (oicon != nicon)
-            {
-                insa_elev(tree, nicon, numics);
-                draw_fld(tree, APFTITLE);
-                draw_fld(tree, APFSVSLI);
-                draw_fld(tree, APFILEBO);
-            }
-        }
-    }
-
-    /* undraw the form */
-    show_hide(FMD_FINISH, tree);
-    return nicon;
-}
-
-
-static void insa_gtypes(LONG tree, BYTE *ptypes)
-{
-    WORD i, j;
-    BYTE *pstr, doctype[4];
-
-    j = 0;
-    *ptypes = '\0';
-    for (i = 0; i < 8; i++)
-    {
-        pstr = &doctype[0];
-        inf_sget(tree, APDFTYPE+i, pstr);
-        if (*pstr)
-        {
-            if (j != 0)
-                ptypes[j++] = ',';
-            strcpy(&ptypes[j], "*.*");
-            strcpy(&ptypes[j+2], pstr);
-            j += 2 + strlen(pstr);
-        }
-    }
-}
-
-
-static void insa_stypes(LONG tree, BYTE *pdata)
-{
-    WORD i;
-    BYTE *pstr, doctype[4];
-
-    for (i = 0; i < 8; i++)
-    {
-        pdata = scasb(pdata, '.');
-        if (*pdata == '.')
-            pdata++;
-        pstr = &doctype[0];
-        while ((*pdata) && (*pdata != ','))
-            *pstr++ = *pdata++;
-        *pstr = '\0';
-        inf_sset(tree, APDFTYPE+i, &doctype[0]);
-    }
-}
-
-
-
-/************************************************************************/
-/* i n s _ a p p                                                        */
-/************************************************************************/
-WORD ins_app(BYTE *pfname, ANODE *pa)
-{
-    OBJECT *tree;
-    ANODE *newpa;
-    BYTE pname[12];
-    BYTE ntypes[6*8];
-    WORD oicon, nicon;
-    WORD oflag, nflag;
-    WORD change, field;
-    WORD uninstalled, h;
-
-    tree = (OBJECT *)G.a_trees[ADINSAPP];
-
-    h = tree[APSCRLBA].ob_height;
-    tree[APFUPARO].ob_height = gl_hbox + 2;
-    tree[APFSVSLI].ob_y = gl_hbox + 2;
-    tree[APFSVSLI].ob_height = h - (2 * (gl_hbox + 2));
-    tree[APFDNARO].ob_y = h - (gl_hbox + 2);
-    tree[APFDNARO].ob_height = gl_hbox + 2;
-
-    uninstalled = !is_installed(pa);
-    tree[APREMV].ob_state = uninstalled ? DISABLED : NORMAL;
-
-    /* stuff in appl name */
-    fmt_str(pfname, &pname[0]);
-    inf_sset((LONG)tree, APNAME, &pname[0]);
-
-    /* stuff in docu types  */
-    insa_stypes((LONG)tree, pa->a_pdata);
-    oflag = pa->a_flags;
-    if (pa->a_flags & AF_ISCRYS)
-    {
-        field = APGEM;
+        p = pa->a_pappl;
+        q = filename_start(p);
+        pfname = q;
     }
     else
-        field = (pa->a_flags & AF_ISPARM) ? APPARMS : APDOS;
-    tree[field].ob_state = SELECTED;
-
-    if (pa->a_aicon == IA_GENERIC_ALT)
-        oicon = 0;
-    else oicon = pa->a_aicon - IA_GENERIC;
-
-    insa_elev((LONG)tree, oicon, gl_numics);
-    nicon = insa_dial((LONG)tree, oicon, gl_numics);
-    change = FALSE;
-
-    /* set type flags */
-    nflag = 0;
-    field = inf_gindex((LONG)tree, APGEM, 3);
-    if (field == 0)
-        nflag = AF_ISCRYS;
-    if (field == 2)
-        nflag = AF_ISPARM;
-    tree[APGEM+field].ob_state = NORMAL;
-
-    /* get button selection */
-    field = inf_gindex((LONG)tree, APINST, 3);
-    tree[APINST+field].ob_state = NORMAL;
-
-    if (field == 0)
     {
-        /* install the appl. if it's uninstalled or has new types */
-        insa_gtypes((LONG)tree, &ntypes[0]);
-        if (uninstalled || (strcmp(&ntypes[0], pa->a_pdata)))
-        {
-            newpa = (uninstalled) ? app_alloc(TRUE) : pa;
-
-            if (newpa)
-            {
-                if ( (uninstalled) ||
-                    (strcmp(&ntypes[0], pa->a_pdata)) )
-                {
-                    change = TRUE;
-                    scan_str(&ntypes[0], &newpa->a_pdata);
-                }
-
-                if (newpa != pa)
-                {
-                    uninstalled = change = TRUE;
-                    scan_str(pfname, &newpa->a_pappl);
-                    newpa->a_flags = nflag;
-                    newpa->a_type = AT_ISFILE;
-                    newpa->a_obid = NIL;
-                    newpa->a_letter = '\0';
-                    newpa->a_xspot = 0x0;
-                    newpa->a_yspot = 0x0;
-                }
-                pa = newpa;
-            }
-            else
-                fun_alert(1, STAPGONE, NULL);
-        }
-
-        /* see if icon changed or flags changed */
-        if (uninstalled || (oicon != nicon) || (oflag != nflag))
-        {
-            change = TRUE;
-#if HAVE_APPL_IBLKS
-            pa->a_aicon = nicon + IA_GENERIC;
-            pa->a_dicon = nicon + ID_GENERIC;
-#else
-            pa->a_aicon = IA_GENERIC_ALT;
-            pa->a_dicon = ID_GENERIC_ALT;
-#endif
-            pa->a_flags = nflag;
-        }
+        if (!isapp)     /* selected item appears to be a data file */
+            return 0;
+        pw = win_find(G.g_cwin);
+        p = pw->w_path->p_spec;
+        q = filename_start(p);
+        pfname = pf->f_name;
     }
-    else if (field == 1)
+    strlcpy(pathname,p,q-p+1);  /* copy pathname including trailing backslash */
+
+    /*
+     * deselect all objects
+     */
+    obj = tree = (OBJECT *)G.a_trees[ADINSAPP];
+    do {
+        obj->ob_state &= ~SELECTED;
+    } while(!(obj++->ob_flags&LASTOB));
+
+    /*
+     * disable not-yet-supported features
+     */
+    tree[APARGS].ob_state |= DISABLED;
+    tree[APFUNKEY].ob_state |= DISABLED;
+    tree[APAUTO].ob_state |= DISABLED;
+    tree[APDEFAPP].ob_state |= DISABLED;
+    tree[APPMFULL].ob_state |= DISABLED;
+
+    /*
+     * fill in dialog
+     */
+    fmt_str(pfname, name);
+    inf_sset((LONG)tree, APNAME, name);
+    inf_sset((LONG)tree, APARGS, "");       /* args not yet supported */
+    inf_sset((LONG)tree, APDOCTYP, installed ? pa->a_pdata+2 : "");
+    inf_sset((LONG)tree, APFUNKEY, "");     /* function key not yet supported */
+    tree[APNORM].ob_state |= SELECTED;      /* autorun not yet supported */
+
+    switch(pa->a_flags & (AF_ISCRYS|AF_ISPARM))
     {
-        /* remove installed app */
-        if (!uninstalled)
+    case AF_ISCRYS|AF_ISPARM:
+        field = APGTP;
+        break;
+    case AF_ISCRYS:
+        field = APGEM;
+        break;
+    case AF_ISPARM:
+        field = APTTP;
+        break;
+    default:
+        field = APTOS;
+    }
+    tree[field].ob_state |= SELECTED;
+
+    field = (pa->a_flags&AF_APPDIR) ? APDEFAPP : APDEFWIN;
+    tree[field].ob_state |= SELECTED;
+
+    field = (pa->a_flags&AF_ISFULL) ? APPMFULL : APPMFILE;
+    tree[field].ob_state |= SELECTED;
+
+    show_hide(FMD_START, (LONG)tree);
+    exitobj = form_do((LONG)tree, APARGS);
+    show_hide(FMD_FINISH, (LONG)tree);
+
+    switch(exitobj&0x7fff)
+    {
+    case APINSTAL:      /* (re)install an application */
+        if (!installed)
+            pa = app_alloc(TRUE);
+        if (!pa)
         {
-            app_free(pa);
-            change = TRUE;
+            fun_alert(1, STAPGONE, NULL);
+            change = -1;    /* don't try any more */
+            break;
         }
+        pa->a_flags = 0;
+        field = inf_gindex((LONG)tree, APTOS, APGTP-APTOS+1);
+        if (field & 1)
+            pa->a_flags |= AF_ISPARM;
+        if (field & 2)
+            pa->a_flags |= AF_ISCRYS;
+        /* a future update will decode the additional buttons */
+
+        pa->a_rsvd = 0; /* a future update will store the function key */
+
+        pa->a_letter = '\0';
+        pa->a_type = AT_ISFILE;
+        pa->a_obid = NIL;
+
+        if (!installed)
+        {
+            strcat(pathname,pfname);    /* build full pathname */
+            scan_str(pathname,&pa->a_pappl);
+        }
+
+        strcpy(name,"*.");
+        inf_sget((LONG)tree,APDOCTYP,name+2);
+        if (!installed || strcmp(name,pa->a_pdata)) /* doc type has changed */
+            scan_str(name,&pa->a_pdata);
+
+        /* a future update will store the args */
+
+#if HAVE_APPL_IBLKS
+        pa->a_aicon = IA_GENERIC;
+        pa->a_dicon = ID_GENERIC;
+#else
+        pa->a_aicon = IA_GENERIC_ALT;
+        pa->a_dicon = ID_GENERIC_ALT;
+#endif
+        pa->a_xspot = 0;
+        pa->a_yspot = 0;
+        change = 1;
+        break;
+    case APREMOVE:      /* remove an application */
+        if (!installed)     /* mustn't remove default ANODE for app type */
+            break;
+        app_free(pa);
+        change = 1;
+        break;
+    case APSKIP:        /* skip this application */
+        break;
+    case APCANCEL:      /* cancel further installs */
+        change = -1;
+        break;
     }
 
     return change;
 }
+
 
 /*
  * remove desktop icons

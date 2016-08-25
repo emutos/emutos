@@ -512,22 +512,13 @@ static WORD do_viewmenu(WORD item)
 
 static WORD do_optnmenu(WORD item)
 {
-    ANODE *pa;
     WORD done, rebld, curr;
-    FNODE *pf = NULL;
-    WORD isapp = FALSE;
     WORD newres, newmode;
-    BYTE *pstr;
-
-    pa = 0;
-    pstr = 0;
 
     done = FALSE;
     rebld = FALSE;
 
     curr = win_isel(G.g_screen, G.g_croot, 0);
-    if (curr)
-        pa = i_find(G.g_cwin, curr, &pf, &isapp);
 
     switch(item)
     {
@@ -540,17 +531,16 @@ static WORD do_optnmenu(WORD item)
         }
         break;
     case IAPPITEM:
-        if (pa)
+        curr = 0;
+        while( (curr = win_isel(G.g_screen, G.g_croot, curr)) )
         {
-            if (isapp)
-                pstr = &pf->f_name[0];
-            else if (is_installed(pa))
-                pstr = pa->a_pappl;
-            rebld = ins_app(pstr, pa);
-            rebld = TRUE;   /* WORKAROUND for bug that shows up with  */
-                            /* remove followed by cancel when icon is */
-                            /* partially covered by dialog.  Icon not */
-                            /* properly redrawn as deselected -- mdf  */
+            WORD change;
+
+            change = ins_app(curr);
+            if (change < 0) /* user cancelled */
+                break;
+            if (change > 0) /* install or remove */
+                rebld++;
         }
         if (rebld)
             desk_all(FALSE);
