@@ -500,12 +500,13 @@ static void sh_chgrf(SHELL *psh)
 }
 
 
-static void sh_chdef(SHELL *psh)
+static void sh_chdef(SHELL *psh,BOOL isgem)
 {
     psh->sh_isdef = FALSE;
     if (psh->sh_dodef)
     {
         psh->sh_isdef = TRUE;
+        psh->sh_isgem = isgem;  /* FALSE iff a character-mode autorun program */
         if (psh->sh_cdir[1] == ':')
             dos_sdrv(psh->sh_cdir[0] - 'A');
         dos_chdir(psh->sh_cdir);
@@ -545,7 +546,7 @@ static WORD sh_ldapp(SHELL *psh)
 {
     LONG ret;
 
-    KDEBUG(("sh_ldapp: Starting %s\n",D.s_cmd));
+    KDEBUG(("sh_ldapp: Starting %s, sh_isgem=%d\n",D.s_cmd,psh->sh_isgem));
     if (psh->sh_isdef && strcmp(D.s_cmd, DEF_DESKTOP) == 0)
     {
         /* Start the ROM desktop: */
@@ -617,9 +618,6 @@ void sh_main(BOOL isgem)
     psh = &sh[rlr->p_pid];
     strcpy(sh_apdir, D.s_cdir);         /* initialize sh_apdir  */
 
-    /* set initial mode (can be character mode for autorun app) */
-    psh->sh_isgem = isgem;
-
     /* Set default DESKTOP if there isn't any yet */
     if (psh->sh_desk[0] == '\0')
         set_default_desktop(psh);
@@ -629,12 +627,13 @@ void sh_main(BOOL isgem)
      */
     do
     {
-        sh_chdef(psh);
+        sh_chdef(psh,isgem);
         /*
-         * set up to run the default app next; usually the desktop, but
-         * can be an autorun program the first time through this loop
+         * set up to run the default app, i.e. the desktop, immediately
+         * after this one, and make sure it's started in graphics mode
          */
         psh->sh_dodef = TRUE;
+        isgem = TRUE;
         sh_chgrf(psh);                  /* set alpha/graphics mode */
 
         if (gl_shgem)
