@@ -628,7 +628,7 @@ void app_start(void)
 
 
 /*
- *  Reverse list when we write so that we can read it in naturally
+ *  Reverse the list of ANODEs
  */
 static void app_revit(void)
 {
@@ -756,7 +756,13 @@ void app_save(WORD todisk)
         pcurr += sprintf(pcurr," %s@\r\n",(*ptmp!='@')?ptmp:"");
     }
 
-    /* reverse ANODE list */
+    /*
+     * reverse the ANODE list before we write it.  this ensures
+     * that the generic ANODEs are written ahead of the ones
+     * created for installed applications.  when we read it back
+     * in, using app_alloc(TRUE) to allocate the ANODEs, the
+     * generic ANODEs will once again be at the end of the list.
+     */
     app_revit();
 
     /* save ANODE list */
@@ -862,6 +868,12 @@ void app_blddesk(void)
 
 /*
  *  Find the ANODE that is appropriate for this object
+ *  
+ *  This is called in essentially two ways:
+ *  1. to find objects on the desktop only:
+ *      isdesk = TRUE, atype = -1, pname = NULL, pisapp = NULL
+ *  2. to find any object:
+ *      isdesk = FALSE, obid = -1
  */
 ANODE *app_afind(WORD isdesk, WORD atype, WORD obid, BYTE *pname, WORD *pisapp)
 {

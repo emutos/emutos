@@ -275,7 +275,9 @@ static void win_ocalc(WNODE *pwin, WORD wfit, WORD hfit, FNODE **ppstart)
 
 
 /*
- *  Calculate a bunch of parameters dealing with a particular icon
+ *  Update two fields in the FNODE corresponding to a particular icon:
+ *      the ptr to the ANODE
+ *      the flag that indicates whether this is an application or not
  */
 static void win_icalc(FNODE *pfnode)
 {
