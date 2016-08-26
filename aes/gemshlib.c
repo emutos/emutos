@@ -600,12 +600,6 @@ static WORD sh_ldapp(SHELL *psh)
         if (wind_spb.sy_owner == rlr)   /* if he still owns screen*/
             unsync(&wind_spb);          /*   then take him off. */
 
-        /*
-         * in case the user crashed or left something screwed up,
-         * we always call wind_new() to do a general cleanup
-         */
-        wm_new();
-
         KDEBUG(("sh_ldapp: %s exited with rc=%ld\n",D.s_cmd,ret));
         return (ret<0L) ? AL08ERR : 0;
     }
