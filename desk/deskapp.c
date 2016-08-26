@@ -213,12 +213,10 @@ static BYTE *app_parse(BYTE *pcurr, ANODE *pa)
         pa->a_flags = AF_ISCRYS | AF_ISPARM;
         break;
     case 'F':                             /* DOS File no parms    */
-    case 'f':                             /* (backward compatibility)  */
         pa->a_type = AT_ISFILE;
         pa->a_flags = NONE;
         break;
     case 'P':                             /* DOS App needs parms  */
-    case 'p':                             /* (backward compatibility) */
         pa->a_type = AT_ISFILE;
         pa->a_flags = AF_ISPARM;
         break;
@@ -516,9 +514,7 @@ void app_start(void)
         case 'G':                       /* GEM Application      */
         case 'Y':                       /* GEM App. with parms  */
         case 'F':                       /* File (DOS w/o parms) */
-        case 'f':                       /*   use full memory    */
         case 'P':                       /* Parm (DOS w/ parms)  */
-        case 'p':                       /*   use full memory    */
         case 'D':                       /* Directory            */
             pa = app_alloc(TRUE);
             pcurr = app_parse(pcurr, pa);
