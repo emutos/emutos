@@ -52,6 +52,7 @@
 #include "desk1.h"
 #include "intmath.h"
 #include "deskins.h"
+#include "desksupp.h"
 #include "kprint.h"
 
 

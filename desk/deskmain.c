@@ -202,53 +202,6 @@ static void desk_all(WORD flags)
 
 
 /*
- *  Given an icon index, go find the ANODE which it represents
- *
- *  . returns ptr to corresponding FNODE via arg3
- *  . if checking a window (arg1 != 0), then return an indicator via arg4:
- *      TRUE if the matching ANODE indicates the item is an application,
- *      FALSE if it indicates the item is a data file for an application.
- *  . arg3 and/or arg4 may be NULL to bypass returning the corresponding value
- *
- *  returns NULL if no matching index
- */
-ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp)
-{
-    ANODE *pa;
-    WNODE *pw;
-    FNODE *pf;
-    WORD isapp;
-
-    pa = (ANODE *) NULL;
-    pf = (FNODE *) NULL;
-    isapp = FALSE;
-
-    if (!wh)        /* On desktop? */
-    {
-        pa = app_afind(TRUE, -1, item, NULL, NULL);
-    }
-    else
-    {
-        pw = win_find(wh);
-        if (pw)
-        {
-            pf = fpd_ofind(pw->w_path->p_flist, item);
-            if (pf)
-                pa = app_afind(FALSE, (pf->f_attr&F_SUBDIR)?AT_ISFOLD:AT_ISFILE, -1, pf->f_name, &isapp);
-        }
-    }
-
-    if (ppf)
-        *ppf = pf;
-    
-    if (pisapp)
-        *pisapp = isapp;
-
-    return pa;
-}
-
-
-/*
  *  Enable/Disable the menu items in dlist
  */
 static void men_list(LONG mlist, const BYTE *dlist, WORD enable)

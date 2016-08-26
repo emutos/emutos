@@ -27,5 +27,6 @@ WORD do_open(WORD curr);
 WORD do_info(WORD curr);
 int do_format(WORD curr);
 void do_refresh(WNODE *pw);
+ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp);
 
 #endif  /* _DESKSUPP_H */
