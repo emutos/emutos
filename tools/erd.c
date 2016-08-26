@@ -1491,11 +1491,7 @@ PRIVATE int write_include(FILE *fp,char *name)
     fprintf(fp,"#include \"string.h\"\n");
     fprintf(fp,"#include \"portab.h\"\n");
     fprintf(fp,"#include \"obdefs.h\"\n");
-#if defined(GEM_RSC) || defined(ICON_RSC)
-    fprintf(fp,"#include \"../desk/deskapp.h\"\n");
-#endif
 #ifdef GEM_RSC
-    fprintf(fp,"#include \"../desk/deskfpd.h\"\n");
     fprintf(fp,"#include \"../desk/deskmain.h\"\n");
     fprintf(fp,"#include \"gemrslib.h\"\n");
 #endif
