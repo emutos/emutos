@@ -884,7 +884,6 @@ ANODE *app_afind(WORD isdesk, WORD atype, WORD obid, BYTE *pspec, BYTE *pname, W
     {
         strcpy(pathname,pspec);                 /* build full pathname */
         strcpy(filename_start(pathname),pname);
-kprintf("pathname=%s\n",pathname);
     }
 
     for (pa = G.g_ahead; pa; pa = pa->a_next)
