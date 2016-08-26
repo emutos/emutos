@@ -145,7 +145,7 @@ void app_tran(WORD bi_num);
 void app_start(void);
 void app_save(WORD todisk);
 void app_blddesk(void);
-ANODE *app_afind(WORD isdesk, WORD atype, WORD obid, BYTE *pname, WORD *pisapp);
+ANODE *app_afind(WORD isdesk, WORD atype, WORD obid, BYTE *pspec, BYTE *pname, WORD *pisapp);
 
 
 #endif  /* _DESKAPP_H */

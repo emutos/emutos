@@ -257,7 +257,7 @@ static void fun_win2desk(WORD wh, WORD obj, WORD keystate)
     WNODE *wn_src;
     ANODE *an_dest;
 
-    an_dest = app_afind(TRUE, -1, obj, NULL, NULL);
+    an_dest = app_afind(TRUE, -1, obj, NULL, NULL, NULL);
     wn_src = win_find(wh);
     if (!wn_src)
         return;
@@ -347,7 +347,7 @@ static void fun_desk2desk(WORD dobj, WORD keystate)
     ANODE *source;
     ANODE *target;
 
-    target = app_afind(TRUE, -1, dobj, NULL, NULL);
+    target = app_afind(TRUE, -1, dobj, NULL, NULL, NULL);
     if (!target)    /* "can't happen" */
         return;
 

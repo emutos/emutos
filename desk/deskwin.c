@@ -279,10 +279,10 @@ static void win_ocalc(WNODE *pwin, WORD wfit, WORD hfit, FNODE **ppstart)
  *      the ptr to the ANODE
  *      the flag that indicates whether this is an application or not
  */
-static void win_icalc(FNODE *pfnode)
+static void win_icalc(FNODE *pfnode, WNODE *pwin)
 {
     pfnode->f_pa = app_afind(FALSE, (pfnode->f_attr&F_SUBDIR) ? AT_ISFOLD : AT_ISFILE,
-                            -1, &pfnode->f_name[0], &pfnode->f_isap);
+                            -1, pwin->w_path->p_spec, pfnode->f_name, &pfnode->f_isap);
 }
 
 
@@ -344,12 +344,12 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
             obj->ob_spec = (LONG)ub;
             ub->ub_code = &dr_code;
             ub->ub_parm = (LONG)&pstart->f_junk;
-            win_icalc(pstart);
+            win_icalc(pstart, pwin);
             break;
         case V_ICON:
             ib = &si->icon.block;
             obj->ob_type = G_ICON;
-            win_icalc(pstart);
+            win_icalc(pstart, pwin);
             i_index = (pstart->f_isap) ? pstart->f_pa->a_aicon :
                                             pstart->f_pa->a_dicon;
             si->icon.index = i_index;

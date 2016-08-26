@@ -837,7 +837,7 @@ ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp)
 
     if (!wh)        /* On desktop? */
     {
-        pa = app_afind(TRUE, -1, item, NULL, NULL);
+        pa = app_afind(TRUE, -1, item, NULL, NULL, NULL);
     }
     else
     {
@@ -846,7 +846,8 @@ ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp)
         {
             pf = fpd_ofind(pw->w_path->p_flist, item);
             if (pf)
-                pa = app_afind(FALSE, (pf->f_attr&F_SUBDIR)?AT_ISFOLD:AT_ISFILE, -1, pf->f_name, &isapp);
+                pa = app_afind(FALSE, (pf->f_attr&F_SUBDIR)?AT_ISFOLD:AT_ISFILE,
+                               -1, pw->w_path->p_spec, pf->f_name, &isapp);
         }
     }
 

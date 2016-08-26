@@ -42,6 +42,7 @@
 #include "deskglob.h"
 #include "deskmain.h"
 #include "deskdir.h"
+#include "deskins.h"
 #include "icons.h"
 #include "desk1.h"
 #include "xbiosbind.h"
@@ -864,16 +865,27 @@ void app_blddesk(void)
 
 /*
  *  Find the ANODE that is appropriate for this object
- *  
+ *
  *  This is called in essentially two ways:
  *  1. to find objects on the desktop only:
- *      isdesk = TRUE, atype = -1, pname = NULL, pisapp = NULL
+ *      isdesk = TRUE, atype = -1, pspec = NULL, pname = NULL, pisapp = NULL
  *  2. to find any object:
  *      isdesk = FALSE, obid = -1
+ *
+ *  It might be more obvious if we made this two functions ...
  */
-ANODE *app_afind(WORD isdesk, WORD atype, WORD obid, BYTE *pname, WORD *pisapp)
+ANODE *app_afind(WORD isdesk, WORD atype, WORD obid, BYTE *pspec, BYTE *pname, WORD *pisapp)
 {
     ANODE *pa;
+    WORD match;
+    BYTE pathname[MAXPATHLEN];
+
+    if (!isdesk)
+    {
+        strcpy(pathname,pspec);                 /* build full pathname */
+        strcpy(filename_start(pathname),pname);
+kprintf("pathname=%s\n",pathname);
+    }
 
     for (pa = G.g_ahead; pa; pa = pa->a_next)
     {
@@ -891,7 +903,10 @@ ANODE *app_afind(WORD isdesk, WORD atype, WORD obid, BYTE *pname, WORD *pisapp)
                     *pisapp = FALSE;
                     return pa;
                 }
-                if (wildcmp(pa->a_pappl, pname))
+                if ((pa->a_pappl[0] == '*') || (pa->a_pappl[0] == '?'))
+                    match = wildcmp(pa->a_pappl, pname);
+                else match = !strcmp(pa->a_pappl, pathname);
+                if (match)
                 {
                     *pisapp = TRUE;
                     return pa;
