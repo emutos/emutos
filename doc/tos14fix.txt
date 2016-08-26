@@ -369,7 +369,7 @@ Aborting Operations                                                   Status
 
 Application Crash
 -----------------
-052. When recovering from an application crash, wind_update(FALSE)    FIXED: commit 21a18c
+052. When recovering from an application crash, wind_update(FALSE)    FIXED: commit b758c1
      is executed before going into the main event_multi() that
      waits for user interaction.  This is handled by the new
      wind_new() function.
