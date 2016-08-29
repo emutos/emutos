@@ -238,82 +238,44 @@ WORD inf_what(LONG tree, WORD ok, WORD cncl)
 
 
 /*
- *  Routine to see if the test filename matches one of a set of
- *  comma delimited wildcard strings.  For example:
- *      pwld = "*.COM,*.EXE,*.BAT"
- *      ptst = "MYFILE.BAT"
+ *  Routine to see if the test filename matches a standard TOS
+ *  wildcard string.  For example:
+ *      pattern = "*.BAT"
+ *      filename = "MYFILE.BAT"
  */
-WORD wildcmp(BYTE *pwld, BYTE *ptst)
+WORD wildcmp(char *pattern,char *filename)
 {
-    BYTE    *pwild;
-    BYTE    *ptest;
+WORD i;
 
-    /* skip over *.*, and *.ext faster */
-    while(*pwld)
+    /*
+     * we process the name on pass1 and the extension on pass2
+     */
+    for (i = 0; i < 2; i++)
     {
-        ptest = ptst;
-        pwild = pwld;
-
-        /* move on to next set of wildcards */
-        pwld = scasb(pwld, ',');
-        if (*pwld)
-            pwld++;
-
-        /* start the checking */
-        if (pwild[0] == '*')
+        for ( ; *filename && (*filename != '.'); filename++)
         {
-            if (pwild[2] == '*')        /* "*.*" matches everything */
-                return TRUE;
-            else
+            if (*pattern == '*')
+                continue;
+            if ((*pattern == '?') || (*pattern == *filename))
             {
-                pwild = &pwild[2];
-                ptest = scasb(ptest, '.');
-                if (*ptest)
-                    ptest++;
+                pattern++;
+                continue;
             }
+            return FALSE;
         }
 
-        /* finish off comparison */
-        while(*ptest && *pwild && (*pwild != ','))
-        {
-            if (*pwild == '?')
-            {
-                pwild++;
-                if (*ptest != '.')
-                    ptest++;
-            }
-            else
-            {
-                if (*pwild == '*')
-                {
-                    if (*ptest != '.')
-                        ptest++;
-                    else
-                        pwild++;
-                }
-                else
-                {
-                    if (*ptest == *pwild)
-                    {
-                        pwild++;
-                        ptest++;
-                        }
-                    else
-                        break;
-                }
-            }
-        }
+        /* soak up any remaining wildcard pattern characters */
+        while((*pattern == '*') || (*pattern== '?'))
+            pattern++;
 
-        /* eat up remaining wildcard chars */
-        while((*pwild == '*') || (*pwild == '?') || (*pwild == '.'))
-            pwild++;
-
-        /* if no part of wildcard or test is left then it's a match */
-        if (((*pwild == '\0') || (*pwild == ',')) && !*ptest)
-            return TRUE;
+        /* filename is nul or '.', pattern is a real character or '.' */
+        if (*pattern == '.')
+            pattern++;
+        if (*filename == '.')
+            filename++;
     }
 
-    return FALSE;
+    return (*pattern == *filename);
 }
 
 
