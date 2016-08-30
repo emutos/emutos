@@ -198,6 +198,18 @@ WORD ins_devices(void)
 
 
 /*
+ * clear autorun flag on all ANODEs
+ */
+static void clear_all_autorun(void)
+{
+    ANODE *pa;
+
+    for (pa = G.g_ahead; pa; pa = pa->a_next)
+        pa->a_flags &= ~AF_AUTORUN;
+}
+
+
+/*
  * return pointer to start of last segment of path
  * (assumed to be the filename)
  */
@@ -268,7 +280,6 @@ WORD ins_app(WORD curr)
      */
     tree[APARGS].ob_state |= DISABLED;
     tree[APFUNKEY].ob_state |= DISABLED;
-    tree[APAUTO].ob_state |= DISABLED;
     tree[APDEFAPP].ob_state |= DISABLED;
     tree[APPMFULL].ob_state |= DISABLED;
 
@@ -280,7 +291,9 @@ WORD ins_app(WORD curr)
     inf_sset((LONG)tree, APARGS, "");       /* args not yet supported */
     inf_sset((LONG)tree, APDOCTYP, installed ? pa->a_pdata+2 : "");
     inf_sset((LONG)tree, APFUNKEY, "");     /* function key not yet supported */
-    tree[APNORM].ob_state |= SELECTED;      /* autorun not yet supported */
+
+    field = pa->a_flags & AF_AUTORUN ? APAUTO : APNORM;
+    tree[field].ob_state |= SELECTED;
 
     switch(pa->a_flags & (AF_ISCRYS|AF_ISPARM))
     {
@@ -325,6 +338,11 @@ WORD ins_app(WORD curr)
             pa->a_flags |= AF_ISPARM;
         if (field & 2)
             pa->a_flags |= AF_ISCRYS;
+        if (tree[APAUTO].ob_state & SELECTED)
+        {
+            clear_all_autorun();    /* only one autorun app is allowed */
+            pa->a_flags |= AF_AUTORUN;
+        }
         /* a future update will decode the additional buttons */
 
         pa->a_rsvd = 0; /* a future update will store the function key */

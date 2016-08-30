@@ -411,7 +411,7 @@ void app_start(void)
     WORD i, x, y;
     ANODE *pa;
     WSAVE *pws;
-    BYTE *pcurr, *ptmp;
+    BYTE *pcurr, *ptmp, *pauto = NULL;
     WORD envr, xcnt, ycnt, xcent, wincnt, dummy;
 
     /* remember start drive */
@@ -510,6 +510,9 @@ void app_start(void)
 
         switch(*pcurr)
         {
+        case 'Z':                       /* autorun: Z nn pathname@ */
+            pcurr = scan_str(pcurr+5,&pauto);   /* save pathname in buffer */
+            break;                              /* (a bit wasteful)        */
         case 'T':                       /* Trash */
         case 'M':                       /* Media (Hard/Floppy)  */
         case 'G':                       /* GEM Application      */
@@ -519,6 +522,16 @@ void app_start(void)
         case 'D':                       /* Directory            */
             pa = app_alloc(TRUE);
             pcurr = app_parse(pcurr, pa);
+            if ((*pcurr == 'T') || (*pcurr == 'M') || (*pcurr == 'D'))
+                break;
+            if (pauto)                  /* autorun exists & not yet merged */
+            {
+                if (strcmp(pauto,pa->a_pappl) == 0)
+                {
+                    pa->a_flags |= AF_AUTORUN;  /* it's this program */
+                    pauto = NULL;               /*  (and no other)   */
+                }
+            }
             break;
         case 'W':                       /* Window               */
             pcurr++;
@@ -704,6 +717,11 @@ void app_save(WORD todisk)
 
     memset(&gl_afile[0], 0, SIZE_AFILE);
     pcurr = &gl_afile[0];
+
+    /* save autorun (if any) as first line */
+    for (pa = G.g_ahead; pa; pa = pa->a_next)
+        if (pa->a_flags & AF_AUTORUN)
+            pcurr += sprintf(pcurr,"#Z %02X %s@\r\n",pa->a_flags&AF_ISCRYS,pa->a_pappl);
 
     /* save environment */
     env1 = (G.g_cnxsave.cs_view) ? INF_E1_VIEWTEXT : 0x00;

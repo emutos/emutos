@@ -29,6 +29,7 @@
 #define AF_ISPARM 0x0008        /* requires input parameters (TTP or GTP) */
 #define AF_APPDIR 0x0010        /* use application dir (else top window) */
 #define AF_ISFULL 0x0020        /* use full path (else filename only) */
+#define AF_AUTORUN 0x0080       /* this program is to be autorun */
 
 /*
  * values for the a_type field in the ANODE
