@@ -494,18 +494,36 @@ static WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, WORD drv,
                      BYTE *ppath, BYTE *pname)
 {
     WORD ret, done;
-    WORD isgraf, isparm, installed;
+    WORD isgraf, isparm, installed_datafile;
     BYTE *pcmd, *ptail;
+    BYTE app_path[MAXPATHLEN];
 
     done = FALSE;
 
     /* set flags */
     isgraf = pa->a_flags & AF_ISCRYS;
     isparm = pa->a_flags & AF_ISPARM;
-    installed = is_installed(pa);
+    installed_datafile = (is_installed(pa) && !isapp);
 
-    /* change current dir. to selected icon's */
-    pro_chdir(drv, ppath);
+    /*
+     * update the current directory.  if the application was selected
+     * via an extension that matches an installed application, and the
+     * application flags indicate it, we need to use the application
+     * directory.  otherwise, we just use the selected icon's directory.
+     */
+    if (installed_datafile && (pa->a_flags & AF_APPDIR))
+    {
+        BYTE *p;
+        dos_sdrv(pa->a_pappl[0]-'A');
+        strcpy(app_path,pa->a_pappl);   /* build path string */
+        p = filename_start(app_path);
+        *p = '\0';
+        dos_chdir(app_path);
+    }
+    else
+    {
+        pro_chdir(drv, ppath);
+    }
 
     /*
      * see if application was selected directly or a
@@ -515,14 +533,32 @@ static WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, WORD drv,
     G.g_cmd[0] = G.g_tail[1] = '\0';
     ret = TRUE;
 
-    if (installed && !isapp)
+    if (installed_datafile)
     {
-         /*
-          * the user has selected a file with an extension
-          * that matches an installed application
-          */
+        BYTE *p;
+        /*
+         * the user has selected a file with an extension that matches
+         * an installed application.  we set up to open the application,
+         * with a command tail based on the application flags.
+         */
         pcmd = pa->a_pappl;
-        ptail = pname;
+        ptail = G.g_tail + 1;
+        strcpy(ptail,pa->a_pargs);
+        p = ptail + strlen(ptail);
+
+        if (pa->a_flags & AF_ISFULL)
+        {
+            *p++ = drv;         /* build full path string */
+            *p++ = ':';
+            if (*ppath)
+            {
+                *p++ = '\\';
+                strcpy(p,ppath);
+                p += strlen(ppath);
+            }
+            *p++ = '\\';
+        }
+        strcpy(p,pname);        /* the filename always goes on the end */
     }
     else
     {

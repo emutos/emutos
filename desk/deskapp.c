@@ -75,6 +75,9 @@
                             /* 'E' byte 5 */
 #define INF_E5_NOSORT   0x80    /* 1 => do not sort folder contents (overrides INF_E1_SORTMASK) */
 
+                            /* application type entries (F/G/P/Y): first byte of 3-byte string */
+#define INF_AT_APPDIR   0x01    /* 1 => set current dir to app's dir (else to top window dir) */
+#define INF_AT_ISFULL   0x02    /* 1 => pass full path in args (else filename only) */
 
 GLOBAL WORD     gl_numics;
 GLOBAL WORD     gl_stdrv;
@@ -248,6 +251,16 @@ static BYTE *app_parse(BYTE *pcurr, ANODE *pa)
     }
     pcurr = scan_str(pcurr, &pa->a_pappl);
     pcurr = scan_str(pcurr, &pa->a_pdata);
+    if (*pcurr == ' ')          /* new format */
+    {
+        pcurr++;
+        if (*pcurr & INF_AT_APPDIR)
+            pa->a_flags |= AF_APPDIR;
+        if (*pcurr & INF_AT_ISFULL)
+            pa->a_flags |= AF_ISFULL;
+        pcurr += 3;
+    }
+    pcurr = scan_str(pcurr, &pa->a_pargs);
 
     return pcurr;
 }
@@ -808,8 +821,18 @@ void app_save(WORD todisk)
         pcurr += sprintf(pcurr," %02X %02X",pa->a_aicon&0x00ff,pa->a_dicon&0x00ff);
         if (pa->a_flags & AF_ISDESK)
             pcurr += sprintf(pcurr," %c",pa->a_letter?pa->a_letter:' ');
-        pcurr += sprintf(pcurr," %s@",pa->a_pappl);
-        pcurr += sprintf(pcurr," %s@\r\n",pa->a_pdata);
+        pcurr += sprintf(pcurr," %s@ %s@",pa->a_pappl,pa->a_pdata);
+        if (pa->a_type == AT_ISFILE)
+        {
+            type = 0;
+            if (pa->a_flags & AF_APPDIR)
+                type |= INF_AT_APPDIR;
+            if (pa->a_flags & AF_ISFULL)
+                type |= INF_AT_ISFULL;
+            pcurr += sprintf(pcurr," %X00 %s@",type,pa->a_pargs);
+        }
+        *pcurr++ = '\r';
+        *pcurr++ = '\n';
     }
     *pcurr++ = 0x1a;
     *pcurr++ = 0x0;

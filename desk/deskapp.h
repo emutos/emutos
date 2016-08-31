@@ -89,6 +89,7 @@ struct _applstr
     WORD a_obid;                /* object index */
     BYTE *a_pappl;              /* filename.ext of appplication */
     BYTE *a_pdata;              /* mask for data files */
+    BYTE *a_pargs;              /* arguments */
     WORD a_aicon;               /* application icon # */
     WORD a_dicon;               /* data icon # */
     WORD a_xspot;               /* desired spot on desk */

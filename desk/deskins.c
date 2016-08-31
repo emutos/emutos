@@ -278,17 +278,14 @@ WORD ins_app(WORD curr)
     /*
      * disable not-yet-supported features
      */
-    tree[APARGS].ob_state |= DISABLED;
     tree[APFUNKEY].ob_state |= DISABLED;
-    tree[APDEFAPP].ob_state |= DISABLED;
-    tree[APPMFULL].ob_state |= DISABLED;
 
     /*
      * fill in dialog
      */
     fmt_str(pfname, name);
     inf_sset((LONG)tree, APNAME, name);
-    inf_sset((LONG)tree, APARGS, "");       /* args not yet supported */
+    inf_sset((LONG)tree, APARGS, installed ? pa->a_pargs : "");
     inf_sset((LONG)tree, APDOCTYP, installed ? pa->a_pdata+2 : "");
     inf_sset((LONG)tree, APFUNKEY, "");     /* function key not yet supported */
 
@@ -338,12 +335,15 @@ WORD ins_app(WORD curr)
             pa->a_flags |= AF_ISPARM;
         if (field & 2)
             pa->a_flags |= AF_ISCRYS;
+        if (tree[APDEFAPP].ob_state & SELECTED)
+            pa->a_flags |= AF_APPDIR;
+        if (tree[APPMFULL].ob_state & SELECTED)
+            pa->a_flags |= AF_ISFULL;
         if (tree[APAUTO].ob_state & SELECTED)
         {
             clear_all_autorun();    /* only one autorun app is allowed */
             pa->a_flags |= AF_AUTORUN;
         }
-        /* a future update will decode the additional buttons */
 
         pa->a_rsvd = 0; /* a future update will store the function key */
 
@@ -362,7 +362,8 @@ WORD ins_app(WORD curr)
         if (!installed || strcmp(name,pa->a_pdata)) /* doc type has changed */
             scan_str(name,&pa->a_pdata);
 
-        /* a future update will store the args */
+        inf_sget((LONG)tree,APARGS,name);
+        scan_str(name,&pa->a_pargs);
 
 #if HAVE_APPL_IBLKS
         pa->a_aicon = IA_GENERIC;
