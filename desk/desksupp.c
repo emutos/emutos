@@ -486,6 +486,9 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
 
 /*
  *  Open an application
+ *
+ *  This is called via the Open item under the File menu, or when a
+ *  user double-clicks on an icon
  */
 static WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, WORD drv,
                      BYTE *ppath, BYTE *pname)
@@ -514,25 +517,40 @@ static WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, WORD drv,
 
     if (installed && !isapp)
     {
-        /* an installed document */
+         /*
+          * the user has selected a file with an extension
+          * that matches an installed application
+          */
         pcmd = pa->a_pappl;
         ptail = pname;
     }
     else
     {
         if (isapp)
-        {       /* DOS-based app. has been selected */
+        {
             if (isparm)
             {
+                /*
+                 * the user has selected a .TTP or .GTP application
+                 */
                 pcmd = &G.g_cmd[0];
                 ptail = &G.g_tail[1];
                 ret = opn_appl(pname, "\0", pcmd, ptail);
             }
             else
+            {
+                /*
+                 * the user has selected a .TOS/.APP/.PRG application
+                 */
                 pcmd = pname;
+            }
         }
         else
-        {       /* user double-clicked document */
+        {   
+            /*
+             * the user has selected a file with an extension which
+             * does not match any installed application
+             */
 #if CONF_WITH_SHOW_FILE
             ret = fun_alert(1, STSHOW, NULL);
             if (ret == 1)
@@ -547,13 +565,15 @@ static WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, WORD drv,
 #else
             fun_alert(1, STNOAPPL, NULL);
 #endif
-            ret = FALSE;
+            ret = FALSE;    /* don't run any application */
         }
     }
 
-    /* user wants to run another application */
     if (ret)
     {
+        /*
+         * the user wants to run an application
+         */
         if ((pcmd != &G.g_cmd[0]) && (pcmd != NULL))
             strcpy(&G.g_cmd[0], pcmd);
         if ((ptail != &G.g_tail[1]) && (ptail != NULL))
