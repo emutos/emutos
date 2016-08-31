@@ -50,7 +50,7 @@ static void pn_init(void)
         pn->p_next = pn + 1;
     pn->p_next = NULL;
 
-    G.g_pavail = &G.g_plist[0];
+    G.g_pavail = G.g_plist;
     G.g_phead = (PNODE *) NULL;
 }
 
@@ -276,7 +276,7 @@ PNODE *pn_open(WORD  drive, BYTE *path, BYTE *name, BYTE *ext, WORD attr)
     thepath = pn_alloc();
     if (thepath)
     {
-        if (fpd_bldspec(drive, path, name, ext, &thepath->p_spec[0]))
+        if (fpd_bldspec(drive, path, name, ext, thepath->p_spec))
         {
             thepath->p_attr = attr;
             return thepath;

@@ -133,7 +133,7 @@ void obj_init(void)
     obj->ob_next = NIL;         /* last object marker */
     G.g_screenfree = WOBS_START;
 
-    memcpy(&G.g_screen[ROOT], &gl_sampob[0], sizeof(OBJECT));
+    memcpy(&G.g_screen[ROOT], gl_sampob, sizeof(OBJECT));
     r_set((GRECT *)&G.g_screen[ROOT].ob_x, 0, 0, gl_width, gl_height);
 
     for (ii = 0, obj = G.g_screen+DROOT; ii < (NUM_WNODES+1); ii++, obj++)

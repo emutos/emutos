@@ -89,13 +89,13 @@ void fun_rebld(WNODE *pwin)
     graf_mouse(HGLASS, NULL);
 
     /* set up path to check against all windows*/
-    ptst = &pwin->w_path->p_spec[0];
+    ptst = pwin->w_path->p_spec;
 
     /* check all wnodes     */
     for (pwin = G.g_wfirst; pwin; pwin = pwin->w_next)
     {
         /* if opened and same path then rebuild */
-        if ( (pwin->w_id) && (strcmp(&pwin->w_path->p_spec[0], ptst)==0) )
+        if ( (pwin->w_id) && (strcmp(pwin->w_path->p_spec, ptst)==0) )
         {
             pn_active(pwin->w_path);
             desk_verify(pwin->w_id, TRUE);
@@ -124,7 +124,7 @@ WORD fun_mkdir(WNODE *pw_node)
     tree = G.a_trees[ADMKDBOX];
     pp_node = pw_node->w_path;
     ptmp = path;
-    strcpy(ptmp, &pp_node->p_spec[0]);
+    strcpy(ptmp, pp_node->p_spec);
 
     i = 0;
     while (*ptmp++)
@@ -266,7 +266,7 @@ static WORD source_is_parent(BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path)
                     if ( (pf->f_obid != NIL) &&
                         (G.g_screen[pf->f_obid].ob_state & SELECTED) &&
                         (pf->f_attr & F_SUBDIR) &&
-                        (!strcmp(&pf->f_name[0], tdst)) )
+                        (!strcmp(pf->f_name, tdst)) )
                     {
                         /* INVALID      */
                         fun_alert(1, STBADCOP, NULL);

@@ -198,13 +198,13 @@ static WORD gr_bwait(GRECT *po, WORD mx, WORD my, WORD numpts, WORD *xylnpts,
     gsx_attr(FALSE, MD_XOR, BLACK);
 
     /* draw old */
-    gr_plns(po->g_x, po->g_y, numpts, &xylnpts[0], numobs, &xyobpts[0]);
+    gr_plns(po->g_x, po->g_y, numpts, xylnpts, numobs, xyobpts);
 
     /* wait for change */
     down = gr_isdown(TRUE, mx, my, 2, 2, &ret[0], &ret[1], &ret[2], &ret[3]);
 
     /* erase old */
-    gr_plns(po->g_x, po->g_y, numpts, &xylnpts[0], numobs, &xyobpts[0]);
+    gr_plns(po->g_x, po->g_y, numpts, xylnpts, numobs, xyobpts);
 
     /* return exit event */
     return down;
@@ -247,14 +247,14 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD numpts,
     l_my = in_my;
 
     /* figure out extent of single polygon */
-    gr_extent(numpts, &xylnpts[0], &ln);
+    gr_extent(numpts, xylnpts, &ln);
 
     /* calc overall extent for use as bounds of motion */
-    gr_extent(numobs, &xyobpts[0], &o);
+    gr_extent(numobs, xyobpts, &o);
     o.g_w += ln.g_w;
     o.g_h += ln.g_h;
 
-    gr_obalign(numobs, o.g_x, o.g_y, &xyobpts[0]);
+    gr_obalign(numobs, o.g_x, o.g_y, xyobpts);
 
     offx = l_mx - o.g_x;
     offy = l_my - o.g_y;
@@ -269,8 +269,7 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD numpts,
         o.g_x = l_mx - offx;
         o.g_y = l_my - offy;
         rc_constrain(pc, &o);
-        down = gr_bwait(&o, l_mx, l_my,numpts, &xylnpts[0],
-                        numobs, &xyobpts[0]);
+        down = gr_bwait(&o, l_mx, l_my,numpts, xylnpts, numobs, xyobpts);
 
         graf_mkstate(&l_mx, &l_my, &button, &keystate);
         dst_wh = wind_find(l_mx, l_my);
@@ -618,19 +617,19 @@ WORD act_bdown(WORD wh, OBJECT *tree, WORD root, WORD *in_mx, WORD *in_my,
     {       /* drag icon(s) */
         if (tree[sobj].ob_state & SELECTED)
         {
-            gr_accobs(tree, root, &numobs, &G.g_xyobpts[0]);
+            gr_accobs(tree, root, &numobs, G.g_xyobpts);
             if (numobs)
             {
                 view = (root == DROOT) ? V_ICON : G.g_iview;
                 if (view == V_ICON)
                 {
                     numpts = G.g_nmicon;
-                    pxypts = &G.g_xyicon[0];
+                    pxypts = G.g_xyicon;
                 }
                 else
                 {
                     numpts = G.g_nmtext;
-                    pxypts = &G.g_xytext[0];
+                    pxypts = G.g_xytext;
                 }
                 gr_drgplns(l_mx, l_my, &gl_rfull, numpts, pxypts, numobs,
                             G.g_xyobpts, &dulx, &duly, &dst_wh, pdobj);

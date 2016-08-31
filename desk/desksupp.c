@@ -533,8 +533,8 @@ static WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, WORD drv,
                 /*
                  * the user has selected a .TTP or .GTP application
                  */
-                pcmd = &G.g_cmd[0];
-                ptail = &G.g_tail[1];
+                pcmd = G.g_cmd;
+                ptail = G.g_tail + 1;
                 ret = opn_appl(pname, "\0", pcmd, ptail);
             }
             else
@@ -574,10 +574,10 @@ static WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, WORD drv,
         /*
          * the user wants to run an application
          */
-        if ((pcmd != &G.g_cmd[0]) && (pcmd != NULL))
-            strcpy(&G.g_cmd[0], pcmd);
-        if ((ptail != &G.g_tail[1]) && (ptail != NULL))
-            strcpy(&G.g_tail[1], ptail);
+        if ((pcmd != G.g_cmd) && (pcmd != NULL))
+            strcpy(G.g_cmd, pcmd);
+        if ((ptail != G.g_tail+1) && (ptail != NULL))
+            strcpy(G.g_tail+1, ptail);
         done = pro_run(isgraf, 1, G.g_cwin, curr);
     }
 
@@ -675,25 +675,25 @@ WORD do_open(WORD curr)
     if (!pw)
         return FALSE;
     if (pf)
-        fpd_parse(&pw->w_path->p_spec[0],&drv,&path[0],&name[0],&ext[0]);
+        fpd_parse(pw->w_path->p_spec,&drv,path,name,ext);
 
     if (pa)
     {
         switch(pa->a_type)
         {
         case AT_ISFILE:
-            done = do_aopen(pa,isapp,curr,drv,&path[0],&pf->f_name[0]);
+            done = do_aopen(pa,isapp,curr,drv,path,pf->f_name);
             break;
         case AT_ISFOLD:
             if (path[0] != '\0')
-                strcat(&path[0], "\\");
+                strcat(path, "\\");
             if ((strlen(path) + strlen(pf->f_name)) >= (LEN_ZPATH-3))
                 fun_alert(1, STDEEPPA, NULL);
             else
             {
-                strcat(&path[0], &pf->f_name[0]);
+                strcat(path, pf->f_name);
                 pw->w_cvrow = 0;        /* reset slider */
-                do_fopen(pw, curr, drv, &path[0], &name[0], &ext[0], TRUE);
+                do_fopen(pw, curr, drv, path, name, ext, TRUE);
             }
             break;
         case AT_ISDISK:
@@ -731,7 +731,7 @@ WORD do_info(WORD curr)
         case AT_ISFOLD:
             /* drop thru */
         case AT_ISFILE:
-            ret = inf_file_folder(&pw->w_path->p_spec[0], pf);
+            ret = inf_file_folder(pw->w_path->p_spec, pf);
             if (ret)
                 fun_rebld(pw);
             break;

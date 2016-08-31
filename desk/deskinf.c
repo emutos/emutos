@@ -735,16 +735,16 @@ WORD opn_appl(BYTE *papname, BYTE *papparms, BYTE *pcmd, BYTE *ptail)
 
     tree = G.a_trees[ADOPENAP];
 
-    fmt_str(papname, &poname[0]);
-    inf_sset(tree, APPLNAME, &poname[0]);
+    fmt_str(papname, poname);
+    inf_sset(tree, APPLNAME, poname);
     inf_sset(tree, APPLPARM, papparms);
     inf_show(tree, APPLPARM);
 
     /* now find out what happened */
     if ( inf_what(tree, APPLOK, APPLCNCL) )
     {
-        inf_sget(tree, APPLNAME, &poname[0]);
-        unfmt_str(&poname[0], pcmd);
+        inf_sget(tree, APPLNAME, poname);
+        unfmt_str(poname, pcmd);
         inf_sget(tree, APPLPARM, ptail);
         return TRUE;
     }

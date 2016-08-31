@@ -417,12 +417,12 @@ void app_start(void)
     /* remember start drive */
     gl_stdrv = dos_gdrv();
 
-    G.g_pbuff = &gl_buffer[0];
+    G.g_pbuff = gl_buffer;
 
     for (i = NUM_ANODES - 2; i >= 0; i--)
         G.g_alist[i].a_next = &G.g_alist[i + 1];
     G.g_ahead = (ANODE *) NULL;
-    G.g_aavail = &G.g_alist[0];
+    G.g_aavail = G.g_alist;
     G.g_alist[NUM_ANODES - 1].a_next = (ANODE *) NULL;
 
     app_rdicon();
@@ -501,7 +501,7 @@ void app_start(void)
     }
 
     wincnt = 0;
-    pcurr = &gl_afile[0];
+    pcurr = gl_afile;
 
     while(*pcurr)
     {
@@ -549,7 +549,7 @@ void app_start(void)
                 pws->h_save *= gl_hchar;
 /* */
                 pcurr = scan_2(pcurr, &pws->obid_save);
-                ptmp = &pws->pth_save[0];
+                ptmp = pws->pth_save;
                 pcurr++;
                 while(*pcurr != '@')
                     *ptmp++ = *pcurr++;
@@ -713,8 +713,8 @@ void app_save(WORD todisk)
     ANODE *pa;
     WSAVE *pws;
 
-    memset(&gl_afile[0], 0, SIZE_AFILE);
-    pcurr = &gl_afile[0];
+    memset(gl_afile, 0, SIZE_AFILE);
+    pcurr = gl_afile;
 
     /* save autorun (if any) as first line */
     for (pa = G.g_ahead; pa; pa = pa->a_next)
@@ -818,7 +818,7 @@ void app_save(WORD todisk)
     app_revit();
 
     /* calculate size */
-    G.g_afsize = pcurr - &gl_afile[0];
+    G.g_afsize = pcurr - gl_afile;
 
     /* save in memory */
     shel_put(gl_afile, G.g_afsize);
