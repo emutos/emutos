@@ -45,6 +45,7 @@
 #include "desk1.h"
 #include "deskdir.h"
 #include "desksupp.h"
+#include "deskins.h"
 #include "nls.h"
 #include "scancode.h"
 #include "kprint.h"
@@ -490,7 +491,7 @@ static WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, WORD drv,
                      BYTE *ppath, BYTE *pname)
 {
     WORD ret, done;
-    WORD isgraf, isparm, uninstalled;
+    WORD isgraf, isparm, installed;
     BYTE *pcmd, *ptail;
 
     done = FALSE;
@@ -498,9 +499,7 @@ static WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, WORD drv,
     /* set flags */
     isgraf = pa->a_flags & AF_ISCRYS;
     isparm = pa->a_flags & AF_ISPARM;
-    uninstalled = ( (*pa->a_pappl == '*') ||
-                    (*pa->a_pappl == '?') ||
-                    (*pa->a_pappl == '\0') );
+    installed = is_installed(pa);
 
     /* change current dir. to selected icon's */
     pro_chdir(drv, ppath);
@@ -513,7 +512,7 @@ static WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, WORD drv,
     G.g_cmd[0] = G.g_tail[1] = '\0';
     ret = TRUE;
 
-    if (!uninstalled && !isapp)
+    if (installed && !isapp)
     {
         /* an installed document */
         pcmd = pa->a_pappl;
