@@ -522,10 +522,8 @@ void app_start(void)
         case 'D':                       /* Directory            */
             pa = app_alloc(TRUE);
             pcurr = app_parse(pcurr, pa);
-            if ((*pcurr == 'T') || (*pcurr == 'M') || (*pcurr == 'D'))
-                break;
-            if (pauto)                  /* autorun exists & not yet merged */
-            {
+            if ((pa->a_type == AT_ISFILE) && pauto)
+            {                           /* autorun exists & not yet merged */
                 if (strcmp(pauto,pa->a_pappl) == 0)
                 {
                     pa->a_flags |= AF_AUTORUN;  /* it's this program */
