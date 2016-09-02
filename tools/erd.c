@@ -171,6 +171,10 @@
  * v4.6     roger burrows, june/2015
  *          . add full decoding for ob_flags: use hex values for
  *            non-standard flags.
+ *
+ * v4.7     roger burrows, september/2016
+ *          . discontinue generation of freestring table for ICON_RSC
+ *          . add "Skip" to list of desktop shared strings
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -382,7 +386,7 @@ typedef struct {
   #define PROGRAM_NAME  "ird"
 #endif
 
-#define VERSION         "v4.6"
+#define VERSION         "v4.7"
 #define MAX_STRLEN      300         /* max size for internal string areas */
 #define NLS             "N_("       /* the macro used in EmuTOS for NLS support*/
 
@@ -479,6 +483,7 @@ LOCAL SHARED_ENTRY shared[] = {
     { "Remove", SHRT_MAX },
     { "Yes", SHRT_MAX },
     { "No", SHRT_MAX },
+    { "Skip", SHRT_MAX },
     { "Number of files: _____", SHRT_MAX },
     { "Number of folders: _____", SHRT_MAX }
 };
@@ -559,7 +564,7 @@ LOCAL int num_notrans = 0;
 /*
  *  other globals
  */
-LOCAL const char *copyright = PROGRAM_NAME " " VERSION " copyright (C) 2012-2015 by Roger Burrows\n"
+LOCAL const char *copyright = PROGRAM_NAME " " VERSION " copyright (C) 2012-2016 by Roger Burrows\n"
 "This program is licensed under the GNU General Public License.\n"
 "Please see LICENSE.TXT for details.\n";
 
@@ -1475,7 +1480,6 @@ PRIVATE int write_h_extern(FILE *fp)
     fprintf(fp,"extern void gem_rsc_fixit(void);\n\n");
 #endif
 #ifdef ICON_RSC
-    fprintf(fp,"extern const char * const %srs_fstr[];\n",prefix);
     fprintf(fp,"extern const ICONBLK %srs_iconblk[];\n\n",prefix);
 #endif
 
@@ -1888,6 +1892,16 @@ char temp[MAX_STRLEN];
 /*
  *  this creates the free string stuff for the .c file
  */
+#ifdef ICON_RSC
+PRIVATE int write_freestr(FILE *fp)
+{
+int length;
+
+    getlen(&length,"");         /* otherwise GCC complains */
+
+    return ferror(fp) ? -1 : 0; /* likewise */
+}
+#else
 PRIVATE int write_freestr(FILE *fp)
 {
 int i, j, n, nstring;
@@ -1899,10 +1913,6 @@ OFFSET *strptr;
 DEF_ENTRY *d;
 char temp[MAX_STRLEN];
 char *base = (char *)rschdr;
-
-#ifdef ICON_RSC
-    fprintf(fp,"#if CONF_WITH_DESKTOP_ICONS\n\n");
-#endif
 
     fprintf(fp,"const char * const %srs_fstr[] = {\n",prefix);
 
@@ -1934,16 +1944,11 @@ char *base = (char *)rschdr;
     }
     if (!first_time)
         fprintf(fp,"#endif\n");
-    fprintf(fp,"};\n");
-
-#ifdef ICON_RSC
-    fprintf(fp,"\n#endif /* CONF_WITH_DESKTOP_ICONS */\n");
-#endif
-
-    fprintf(fp,"\n\n");
+    fprintf(fp,"};\n\n\n");
 
     return ferror(fp) ? -1 : 0;
 }
+#endif
 
 /*
  *  this creates miscellaneous defines + the initialisation code in the .c file
