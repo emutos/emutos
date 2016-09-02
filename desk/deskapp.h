@@ -83,7 +83,7 @@ struct _applstr
 {
     ANODE *a_next;
     WORD a_flags;               /* see above for usage */
-    BYTE a_rsvd;                /* unused */
+    BYTE a_funkey;              /* associated function key: 0=none, else 0x01-0x14 */
     BYTE a_letter;              /* letter for icon */
     WORD a_type;                /* icon type (see above) */
     WORD a_obid;                /* object index */

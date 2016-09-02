@@ -147,7 +147,7 @@ static WORD install_drive(WORD drive)
     }
 
     pa->a_flags = AF_ISCRYS | AF_ISDESK;
-    pa->a_rsvd = 0;
+    pa->a_funkey = 0;
     pa->a_letter = 'A' + drive;
     pa->a_type = AT_ISDISK;
     pa->a_obid = 0;     /* fixed up when deskmain() calls app_blddesk() */
@@ -226,6 +226,77 @@ BYTE *filename_start(BYTE *path)
 
 
 /*
+ * convert ascii to WORD
+ *
+ * stops at nul byte or first non-decimal character
+ */
+static WORD atow(BYTE *s)
+{
+    WORD n = 0;
+
+    for ( ; *s; s++)
+    {
+        if ((*s >= '0') && (*s <= '9'))
+            n = (n * 10) + *s - '0';
+        else break;
+    }
+
+    return n;
+}
+
+
+/*
+ * get function key
+ *
+ * checks for invalid or duplicate function key and
+ * issues appropriate alert
+ *
+ * returns function key value (0 for none, -ve for error)
+ */
+static WORD get_funkey(OBJECT *tree,ANODE *pa,BOOL installed)
+{
+    ANODE *an;
+    WORD funkey;
+    BYTE fkey[3];
+
+    inf_sget((LONG)tree,APFUNKEY,fkey);
+    if (fkey[0] == '\0')                /* empty? */
+        return 0;
+
+    funkey = atow(fkey);
+    if (installed && (funkey == pa->a_funkey))  /* unchanged? */
+        return funkey;
+
+    /*
+     * this is a new ANODE, or the key has changed: validate it
+     */
+    if ((funkey < 1) || (funkey > 20))
+    {
+        fun_alert(1,STINVKEY,NULL);     /* invalid function key */
+        return -1;
+    }
+
+    /*
+     * we have a valid key, check against other ANODEs
+     */
+    for (an = G.g_ahead; an; an = an->a_next)
+    {
+        if (an == pa)
+            continue;
+        if (an->a_funkey == funkey)
+        {
+            if (fun_alert(1,STDUPKEY,NULL) != 1)    /* duplicate fun key */
+                return -1;
+            an->a_funkey = 0;
+            break;
+        }
+    }
+
+    return funkey;
+}
+
+
+/*
  * install application
  */
 WORD ins_app(WORD curr)
@@ -235,7 +306,7 @@ WORD ins_app(WORD curr)
     WNODE *pw;
     OBJECT *tree, *obj;
     WORD change = 0;    /* -ve means cancel, 0 means no change, +ve means change */
-    WORD isapp, field, exitobj;
+    WORD isapp, field, exitobj, funkey;
     BOOL installed;
     BYTE *pfname, *p, *q;
     BYTE name[LEN_ZFNAME];
@@ -276,18 +347,16 @@ WORD ins_app(WORD curr)
     } while(!(obj++->ob_flags&LASTOB));
 
     /*
-     * disable not-yet-supported features
-     */
-    tree[APFUNKEY].ob_state |= DISABLED;
-
-    /*
      * fill in dialog
      */
     fmt_str(pfname, name);
     inf_sset((LONG)tree, APNAME, name);
     inf_sset((LONG)tree, APARGS, installed ? pa->a_pargs : "");
     inf_sset((LONG)tree, APDOCTYP, installed ? pa->a_pdata+2 : "");
-    inf_sset((LONG)tree, APFUNKEY, "");     /* function key not yet supported */
+    if (pa->a_funkey)
+        sprintf(name, "%02d", pa->a_funkey);
+    else name[0] = '\0';
+    inf_sset((LONG)tree, APFUNKEY, installed ? name : "");
 
     field = pa->a_flags & AF_AUTORUN ? APAUTO : APNORM;
     tree[field].ob_state |= SELECTED;
@@ -315,79 +384,94 @@ WORD ins_app(WORD curr)
     tree[field].ob_state |= SELECTED;
 
     show_hide(FMD_START, (LONG)tree);
-    exitobj = form_do((LONG)tree, APARGS);
-    show_hide(FMD_FINISH, (LONG)tree);
-
-    switch(exitobj&0x7fff)
+    do
     {
-    case APINSTAL:      /* (re)install an application */
-        if (!installed)
-            pa = app_alloc(TRUE);
-        if (!pa)
+        exitobj = form_do((LONG)tree, APARGS);
+
+        switch(exitobj&0x7fff)
         {
-            fun_alert(1, STAPGONE, NULL);
-            change = -1;    /* don't try any more */
-            break;
-        }
-        pa->a_flags = 0;
-        field = inf_gindex((LONG)tree, APTOS, APGTP-APTOS+1);
-        if (field & 1)
-            pa->a_flags |= AF_ISPARM;
-        if (field & 2)
-            pa->a_flags |= AF_ISCRYS;
-        if (tree[APDEFAPP].ob_state & SELECTED)
-            pa->a_flags |= AF_APPDIR;
-        if (tree[APPMFULL].ob_state & SELECTED)
-            pa->a_flags |= AF_ISFULL;
-        if (tree[APAUTO].ob_state & SELECTED)
-        {
-            clear_all_autorun();    /* only one autorun app is allowed */
-            pa->a_flags |= AF_AUTORUN;
-        }
+        case APINSTAL:      /* (re)install an application */
+            if (!installed)
+                pa = app_alloc(TRUE);
+            if (!pa)
+            {
+                fun_alert(1, STAPGONE, NULL);
+                change = -1;        /* don't try any more */
+                break;
+            }
 
-        pa->a_rsvd = 0; /* a future update will store the function key */
+            funkey = get_funkey(tree,pa,installed);
+            if (funkey < 0)
+            {
+                inf_sset((LONG)tree, APFUNKEY, "");
+                tree[APINSTAL].ob_state &= ~SELECTED;
+                if (!installed)
+                    app_free(pa);
+                draw_dial((LONG)tree);
+                exitobj = -1;       /* request retry */
+                break;
+            }
+            pa->a_funkey = funkey;  /* now we can store it */
 
-        pa->a_letter = '\0';
-        pa->a_type = AT_ISFILE;
-        pa->a_obid = NIL;
+            pa->a_flags = 0;
+            field = inf_gindex((LONG)tree, APTOS, APGTP-APTOS+1);
+            if (field & 1)
+                pa->a_flags |= AF_ISPARM;
+            if (field & 2)
+                pa->a_flags |= AF_ISCRYS;
+            if (tree[APDEFAPP].ob_state & SELECTED)
+                pa->a_flags |= AF_APPDIR;
+            if (tree[APPMFULL].ob_state & SELECTED)
+                pa->a_flags |= AF_ISFULL;
+            if (tree[APAUTO].ob_state & SELECTED)
+            {
+                clear_all_autorun();    /* only one autorun app is allowed */
+                pa->a_flags |= AF_AUTORUN;
+            }
 
-        if (!installed)
-        {
-            strcat(pathname,pfname);    /* build full pathname */
-            scan_str(pathname,&pa->a_pappl);
-        }
+            pa->a_letter = '\0';
+            pa->a_type = AT_ISFILE;
+            pa->a_obid = NIL;
 
-        strcpy(name,"*.");
-        inf_sget((LONG)tree,APDOCTYP,name+2);
-        if (!installed || strcmp(name,pa->a_pdata)) /* doc type has changed */
-            scan_str(name,&pa->a_pdata);
+            if (!installed)
+            {
+                strcat(pathname,pfname);    /* build full pathname */
+                scan_str(pathname,&pa->a_pappl);
+            }
 
-        inf_sget((LONG)tree,APARGS,name);
-        scan_str(name,&pa->a_pargs);
+            strcpy(name,"*.");
+            inf_sget((LONG)tree,APDOCTYP,name+2);
+            if (!installed || strcmp(name,pa->a_pdata)) /* doc type has changed */
+                scan_str(name,&pa->a_pdata);
+
+            inf_sget((LONG)tree,APARGS,name);
+            scan_str(name,&pa->a_pargs);
 
 #if HAVE_APPL_IBLKS
-        pa->a_aicon = IA_GENERIC;
-        pa->a_dicon = ID_GENERIC;
+            pa->a_aicon = IA_GENERIC;
+            pa->a_dicon = ID_GENERIC;
 #else
-        pa->a_aicon = IA_GENERIC_ALT;
-        pa->a_dicon = ID_GENERIC_ALT;
+            pa->a_aicon = IA_GENERIC_ALT;
+            pa->a_dicon = ID_GENERIC_ALT;
 #endif
-        pa->a_xspot = 0;
-        pa->a_yspot = 0;
-        change = 1;
-        break;
-    case APREMOVE:      /* remove an application */
-        if (!installed)     /* mustn't remove default ANODE for app type */
+            pa->a_xspot = 0;
+            pa->a_yspot = 0;
+            change = 1;
             break;
-        app_free(pa);
-        change = 1;
-        break;
-    case APSKIP:        /* skip this application */
-        break;
-    case APCANCEL:      /* cancel further installs */
-        change = -1;
-        break;
-    }
+        case APREMOVE:      /* remove an application */
+            if (!installed)     /* mustn't remove default ANODE for app type */
+                break;
+            app_free(pa);
+            change = 1;
+            break;
+        case APSKIP:        /* skip this application */
+            break;
+        case APCANCEL:      /* cancel further installs */
+            change = -1;
+            break;
+        }
+    } while(exitobj == -1);
+    show_hide(FMD_FINISH, (LONG)tree);
 
     return change;
 }

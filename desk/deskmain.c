@@ -645,10 +645,36 @@ static void kbd_arrow(WORD type)
 }
 
 
+/*
+ * search ANODEs for matching function key and launch corresponding application
+ */
+static WORD process_funkey(WORD funkey)
+{
+    ANODE *pa;
+    BYTE pathname[MAXPATHLEN];
+    BYTE *pfname;
+
+    for (pa = G.g_ahead; pa; pa = pa->a_next)
+        if (pa->a_funkey == funkey)
+            break;
+
+    if (pa)
+    {
+        pfname = filename_start(pa->a_pappl);
+        /* copy pathname including trailing backslash */
+        strlcpy(pathname,pa->a_pappl,pfname-pa->a_pappl+1);
+        do_aopen(pa,1,-1,pathname,pfname);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+
 static WORD hndl_kbd(WORD thechar)
 {
     WNODE *pw;
-    WORD done;
+    WORD done, funkey;
 
     done = FALSE;
 
@@ -743,6 +769,16 @@ static WORD hndl_kbd(WORD thechar)
     case ARROW_RIGHT:
         kbd_arrow(WA_RTLINE);
         break;
+    default:
+        if ((thechar & 0xff) != 0)      /* can't be a function key */
+            break;
+        funkey = 0;
+        if ((thechar >= FUNKEY_01) && (thechar <= FUNKEY_10))
+            funkey = ((thechar-FUNKEY_01) >> 8) + 1;
+        else if ((thechar >= FUNKEY_11) && (thechar <= FUNKEY_20))
+            funkey = ((thechar-FUNKEY_11) >> 8) + 11;
+        if (funkey)
+            done = process_funkey(funkey);
     }
 
     men_update(G.a_trees[ADMENU]);      /* clean up menu info   */

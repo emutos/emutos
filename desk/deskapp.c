@@ -198,6 +198,8 @@ BYTE *scan_str(BYTE *pcurr, BYTE **ppstr)
  */
 static BYTE *app_parse(BYTE *pcurr, ANODE *pa)
 {
+    WORD temp;
+
     switch(*pcurr)
     {
     case 'T':                             /* Trash */
@@ -258,7 +260,9 @@ static BYTE *app_parse(BYTE *pcurr, ANODE *pa)
             pa->a_flags |= AF_APPDIR;
         if (*pcurr & INF_AT_ISFULL)
             pa->a_flags |= AF_ISFULL;
-        pcurr += 3;
+        pcurr = scan_2(pcurr+1, &temp);
+        pa->a_funkey = temp;
+        pcurr++;
     }
     pcurr = scan_str(pcurr, &pa->a_pargs);
 
@@ -829,7 +833,7 @@ void app_save(WORD todisk)
                 type |= INF_AT_APPDIR;
             if (pa->a_flags & AF_ISFULL)
                 type |= INF_AT_ISFULL;
-            pcurr += sprintf(pcurr," %X00 %s@",type,pa->a_pargs);
+            pcurr += sprintf(pcurr," %X%02X %s@",type,pa->a_funkey,pa->a_pargs);
         }
         *pcurr++ = '\r';
         *pcurr++ = '\n';

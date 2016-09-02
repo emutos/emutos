@@ -193,8 +193,9 @@ void do_wopen(WORD new_win, WORD wh, WORD curr, WORD x, WORD y, WORD w, WORD h)
     d.g_y += c.g_y;
     graf_growbox(d.g_x, d.g_y, d.g_w, d.g_h, x, y, w, h);
 
-    act_chg(G.g_cwin, G.g_screen, G.g_croot, curr, &c, SELECTED,
-            FALSE, TRUE, TRUE);
+    if (curr >= 0)              /* not being opened by function key */
+        act_chg(G.g_cwin, G.g_screen, G.g_croot, curr, &c, SELECTED, FALSE, TRUE, TRUE);
+
     if (new_win)
         wind_open(wh, x, y, w, h);
 
@@ -487,10 +488,10 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
 /*
  *  Open an application
  *
- *  This is called via the Open item under the File menu, or when a
- *  user double-clicks on an icon
+ *  This may be called via the Open item under the File menu, or by
+ *  double-clicking an icon, or via function key
  */
-static WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname)
+WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname)
 {
     WORD ret, done;
     WORD isgraf, isparm, installed_datafile;

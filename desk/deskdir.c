@@ -80,7 +80,7 @@ static WORD user_abort(void)
 /*
  *  Routine to DRAW a DIALog box centered on the screen
  */
-static void draw_dial(LONG tree)
+void draw_dial(LONG tree)
 {
     WORD xd, yd, wd, hd;
     OBJECT *obtree = (OBJECT *)tree;

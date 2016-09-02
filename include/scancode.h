@@ -38,4 +38,12 @@
 #define SHIFT_ARROW_LEFT    0x4b34
 #define SHIFT_ARROW_RIGHT   0x4d36
 
+/*
+ * function keys
+ */
+#define FUNKEY_01           0x3b00
+#define FUNKEY_10           0x4400
+#define FUNKEY_11           0x5400
+#define FUNKEY_20           0x5d00
+
 #endif /* _SCANCODE_H */
