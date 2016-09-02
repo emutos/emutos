@@ -255,9 +255,12 @@ static WORD fun_file2any(WORD sobj, WNODE *wn_dest, ANODE *an_dest, FNODE *fn_de
     ICONBLK * ib_src;
     PNODE *pn_src;
     ANODE *an_src;
+    BYTE path[10];
 
     ib_src = (ICONBLK *)G.g_screen[sobj].ob_spec;
-    pn_src = pn_open(ib_src->ib_char, "", "*", "*", F_SUBDIR);
+    build_root_path(path, ib_src->ib_char);
+    strcat(path,"*.*");
+    pn_src = pn_open(path, F_SUBDIR);
 
     if (pn_src)
     {

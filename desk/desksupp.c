@@ -235,24 +235,21 @@ WORD do_wfull(WORD wh)
 WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon,
                 BYTE *pathname, GRECT *pt, WORD redraw)
 {
-    WORD drv, ret;
+    WORD ret;
     PNODE *tmp;
-    BYTE ppath[LEN_ZPATH+1], pname[LEN_ZNODE+1], pext[LEN_ZEXT+1];
-
-    fpd_parse(pathname, &drv, ppath, pname, pext);
 
     /* convert to hourglass */
     graf_mouse(HGLASS, NULL);
 
     /* open a path node */
-    tmp = pn_open(drv, ppath, pname, pext, F_SUBDIR);
+    tmp = pn_open(pathname, F_SUBDIR);
     if (tmp == NULL)
     {
         graf_mouse(ARROW, NULL);
         return FALSE;
     }
-    else
-        pw->w_path = tmp;
+
+    pw->w_path = tmp;
 
     /* activate path by search and sort of directory */
     ret = pn_active(pw->w_path);
@@ -617,7 +614,7 @@ static WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pna
 /*
  *  Build root path for specified drive
  */
-static void build_root_path(BYTE *path,WORD drive)
+void build_root_path(BYTE *path,WORD drive)
 {
     BYTE *p = path;
 

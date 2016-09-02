@@ -65,116 +65,6 @@ void fpd_start(void)
 
 
 /*
- *  Build a filespec out of drive letter, a pointer to a path, a pointer
- *  to a filename, and a pointer to an extension
- */
-static WORD fpd_bldspec(WORD drive, BYTE *ppath, BYTE *pname, BYTE *pext, BYTE *pspec)
-{
-    int len = 0;
-
-    if (*pname)
-    {
-        len = strlen(pname) + 1;        /* allow for "\" */
-        if (*pext)
-            len += strlen(pext) + 1;    /* allow for "." */
-    }
-    if ((strlen(ppath) + len) >= (LEN_ZPATH-3))
-        return FALSE;
-
-    *pspec++ = drive;
-    *pspec++ = ':';
-    *pspec++ = '\\';
-    if (*ppath)
-    {
-        while(*ppath)
-            *pspec++ = *ppath++;
-        if (*pname)
-            *pspec++ = '\\';
-    }
-
-    if (*pname)
-    {
-        while(*pname)
-            *pspec++ = *pname++;
-        if (*pext)
-        {
-            *pspec++ = '.';
-            while(*pext)
-                *pspec++ = *pext++;
-        }
-    }
-    *pspec++ = '\0';
-
-    return TRUE;
-}
-
-
-/*
- *  Parse a filespec into its drive, path, name, and extension parts
- */
-void fpd_parse(BYTE *pspec, WORD *pdrv, BYTE *ppath, BYTE *pname, BYTE *pext)
-{
-    BYTE *pstart, *p1st, *plast, *pperiod;
-
-    pstart = pspec;
-
-    /* get the drive */
-    while(*pspec && (*pspec != ':'))
-        pspec++;
-    if (*pspec == ':')
-    {
-        pspec--;
-        *pdrv = (WORD) *pspec;
-        pspec++;
-        pspec++;
-        if (*pspec == '\\')
-            pspec++;
-    }
-    else
-    {
-        *pdrv = (WORD) (dos_gdrv() + 'A');
-        pspec = pstart;
-    }
-
-    /* scan for key bytes */
-    p1st = pspec;
-    plast = pspec;
-    pperiod = NULL;
-    while(*pspec)
-    {
-        if (*pspec == '\\')
-            plast = pspec;
-        if (*pspec == '.')
-            pperiod = pspec;
-        pspec++;
-    }
-    if (pperiod == NULL)
-        pperiod = pspec;
-
-    /* get the path */
-    while(p1st != plast)
-        *ppath++ = *p1st++;
-    *ppath = '\0';
-    if (*plast == '\\')
-        plast++;
-
-    /* get the name */
-    while(plast != pperiod)
-        *pname++ = *plast++;
-    *pname = '\0';
-
-    /* get the ext  */
-    if (*pperiod)
-    {
-        pperiod++;
-        while(pperiod != pspec)
-            *pext++ = *pperiod++;
-    }
-    *pext = '\0';
-}
-
-
-/*
  *  Find the file node that matches a particular object id
  */
 FNODE *fpd_ofind(FNODE *pf, WORD obj)
@@ -269,22 +159,20 @@ void pn_close(PNODE *thepath)
 /*
  *  Open a particular path
  */
-PNODE *pn_open(WORD  drive, BYTE *path, BYTE *name, BYTE *ext, WORD attr)
+PNODE *pn_open(BYTE *pathname, WORD attr)
 {
     PNODE *thepath;
 
-    thepath = pn_alloc();
-    if (thepath)
-    {
-        if (fpd_bldspec(drive, path, name, ext, thepath->p_spec))
-        {
-            thepath->p_attr = attr;
-            return thepath;
-        }
-        pn_close(thepath);  /* failed, free it up */
-    }
+    if (strlen(pathname) >= MAXPATHLEN)
+        return NULL;
 
-    return NULL;
+    thepath = pn_alloc();
+    if (!thepath)
+        return NULL;
+            
+    strcpy(thepath->p_spec,pathname);
+    thepath->p_attr = attr;
+    return thepath;
 }
 
 

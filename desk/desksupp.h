@@ -13,6 +13,7 @@
 #define CTL_Q   ('Q'-0x40)
 #define CTL_S   ('S'-0x40)
 
+void build_root_path(BYTE *path, WORD drive);
 void desk_clear(WORD wh);
 void desk_verify(WORD wh, WORD changed);
 void do_wredraw(WORD w_handle, WORD xc, WORD yc, WORD wc, WORD hc);

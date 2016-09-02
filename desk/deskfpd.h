@@ -77,10 +77,9 @@ struct _pathnode
 
 /* Prototypes: */
 void fpd_start(void);
-void fpd_parse(BYTE *pspec, WORD *pdrv, BYTE *ppath, BYTE *pname, BYTE *pext);
 FNODE *fpd_ofind(FNODE *pf, WORD obj);
 void pn_close(PNODE *thepath);
-PNODE *pn_open(WORD  drive, BYTE *path, BYTE *name, BYTE *ext, WORD attr);
+PNODE *pn_open(BYTE *pathname, WORD attr);
 FNODE *pn_sort(PNODE *pn);
 WORD pn_active(PNODE *thepath);
 

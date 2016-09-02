@@ -391,9 +391,12 @@ static WORD delete_disk(ANODE *pa)
 {
     PNODE *pn;
     FNODE *fn;
+    BYTE path[10];
     WORD ret = 0;
 
-    pn = pn_open(pa->a_letter, "", "*", "*", F_SUBDIR);
+    build_root_path(path, pa->a_letter);
+    strcat(path,"*.*");
+    pn = pn_open(path, F_SUBDIR);
     if (pn == NULL)
         return 0;
 
