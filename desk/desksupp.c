@@ -232,11 +232,14 @@ WORD do_wfull(WORD wh)
 /*
  *  Open a directory, it may be the root or a subdirectory
  */
-WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon, WORD drv,
-                BYTE *ppath, BYTE *pname, BYTE *pext, GRECT *pt, WORD redraw)
+WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon,
+                BYTE *pathname, GRECT *pt, WORD redraw)
 {
-    WORD ret;
+    WORD drv, ret;
     PNODE *tmp;
+    BYTE ppath[LEN_ZPATH+1], pname[LEN_ZNODE+1], pext[LEN_ZEXT+1];
+
+    fpd_parse(pathname, &drv, ppath, pname, pext);
 
     /* convert to hourglass */
     graf_mouse(HGLASS, NULL);
@@ -492,15 +495,12 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
  */
 static WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname)
 {
-    WORD ret, done, drv;
+    WORD ret, done;
     WORD isgraf, isparm, installed_datafile;
-    BYTE *pcmd, *ptail;
-    BYTE ppath[LEN_ZPATH], unused[LEN_ZFNAME];
+    BYTE *pcmd, *ptail, *p;
     BYTE app_path[MAXPATHLEN];
 
     done = FALSE;
-
-    fpd_parse(pathname,&drv,ppath,unused,unused);
 
     /* set flags */
     isgraf = pa->a_flags & AF_ISCRYS;
@@ -515,17 +515,15 @@ static WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pna
      */
     if (installed_datafile && (pa->a_flags & AF_APPDIR))
     {
-        BYTE *p;
-        dos_sdrv(pa->a_pappl[0]-'A');
-        strcpy(app_path,pa->a_pappl);   /* build path string */
-        p = filename_start(app_path);
-        *p = '\0';
-        dos_chdir(app_path);
+        strcpy(app_path,pa->a_pappl);
     }
     else
     {
-        pro_chdir(drv, ppath);
+        strcpy(app_path,pathname);
     }
+    p = filename_start(app_path);
+    *p = '\0';
+    set_default_path(app_path);
 
     /*
      * see if application was selected directly or a
@@ -550,15 +548,8 @@ static WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pna
 
         if (pa->a_flags & AF_ISFULL)
         {
-            *p++ = drv;         /* build full path string */
-            *p++ = ':';
-            if (*ppath)
-            {
-                *p++ = '\\';
-                strcpy(p,ppath);
-                p += strlen(ppath);
-            }
-            *p++ = '\\';
+            strcat(p,pathname); /* build full path string */
+            p = filename_start(p);
         }
         strcpy(p,pname);        /* the filename always goes on the end */
     }
@@ -624,6 +615,20 @@ static WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pna
 
 
 /*
+ *  Build root path for specified drive
+ */
+static void build_root_path(BYTE *path,WORD drive)
+{
+    BYTE *p = path;
+
+    *p++ = drive;
+    *p++= ':';
+    *p++ = '\\';
+    *p = '\0';
+}
+
+
+/*
  *  Open a disk
  */
 static WORD do_dopen(WORD curr)
@@ -631,15 +636,19 @@ static WORD do_dopen(WORD curr)
     WORD drv;
     WNODE *pw;
     ICONBLK *pib;
+    BYTE path[10];
 
     pib = (ICONBLK *) get_iconblk_ptr(G.g_screen, curr);
     pw = win_alloc(curr);
     if (pw)
     {
-        drv = (0x00ff & pib->ib_char);
-        if (pro_chdir(drv, "") == 0)
-            do_diropen(pw, TRUE, curr, drv, "", "*", "*",
-                        (GRECT *)&G.g_screen[pw->w_root].ob_x, TRUE);
+        drv = pib->ib_char & 0x00ff;
+        build_root_path(path,drv);
+        if (set_default_path(path) == 0)
+        {
+            strcat(path,"*.*");
+            do_diropen(pw, TRUE, curr, path, (GRECT *)&G.g_screen[pw->w_root].ob_x, TRUE);
+        }
         else
             win_free(pw);
     }
@@ -659,42 +668,35 @@ static WORD do_dopen(WORD curr)
 void do_fopen(WNODE *pw, WORD curr, BYTE *pathname, WORD redraw)
 {
     GRECT t;
-    WORD ok, drv;
-    BYTE ppath[LEN_ZPATH+1], pname[LEN_ZNODE+1], pext[LEN_ZEXT+1];
-    BYTE *pnew;
-    BYTE *pp;
+    BYTE app_path[MAXPATHLEN];
+    BYTE *p, tmp;
 
-    fpd_parse(pathname, &drv, ppath, pname, pext);
-
-    ok = TRUE;
-    pnew = ppath;
     wind_get(pw->w_id, WF_WXYWH, &t.g_x, &t.g_y, &t.g_w, &t.g_h);
 
-    if (pro_chdir(drv, "") < 0L)    /* drive (no longer) valid? */
+    build_root_path(app_path,pathname[0]);
+    if (set_default_path(app_path) < 0L)    /* drive (no longer) valid? */
     {
         true_closewnd(pw);
         return;
     }
-    if (pro_chdir(drv, ppath) == 0) /* if directory exists, */
-    {                               /* ensure all contents are displayed */
-        pname[0] = '*';
-        pname[1] = '\0';
-        pext[0] = '*';
-        pext[1] = '\0';
+
+    strcpy(app_path,pathname);
+    if (strlen(app_path) >= LEN_ZPATH)
+    {
+        fun_alert(1, STDEEPPA, NULL);
+        remove_one_level(app_path);         /* back up one level */
     }
+    
+    p = filename_start(app_path);
+    tmp = *p;
+    *p ='\0';
+    if (set_default_path(app_path) == 0)    /* if directory exists, */
+        strcat(app_path,"*.*");             /* ensure all contents are displayed */
+    else *p = tmp;
 
     pn_close(pw->w_path);
 
-    ok = do_diropen(pw, FALSE, curr, drv, pnew, pname, pext, &t, redraw);
-    if (!ok)
-    {
-        fun_alert(1, STDEEPPA, NULL);
-        /* back up one level    */
-        pp = last_separator(pnew);
-        *pp = '\0';
-        pro_chdir(drv,pnew);                  /* fixup current dir */
-        do_diropen(pw, FALSE, curr, drv, pnew, pname, pext, &t, redraw);
-    }
+    do_diropen(pw, FALSE, curr, app_path, &t, redraw);
 }
 
 
@@ -725,6 +727,31 @@ static BOOL add_one_level(BYTE *pathname,BYTE *folder)
     strcpy(p,filename);     /* & restore the filename          */
     return TRUE;
 }
+
+
+/*
+ *  Removes the lowest level of folder from a pathname, assumed
+ *  to be of the form:
+ *      D:\X\Y\Z\F.E
+ *  where X,Y,Z are folders and F.E is a filename.  In the above
+ *  example, this would change D:\X\Y\Z\F.E to D:\X\Y\F.E
+ */
+void remove_one_level(BYTE *pathname)
+{
+    BYTE *stop = pathname+2;    /* the first path separator */
+    BYTE *filename, *prev;
+
+    filename = filename_start(pathname);
+    if (filename-1 <= stop)     /* already at the root */
+        return;
+
+    for (prev = filename-2; prev >= stop; prev--)
+        if (*prev == '\\')
+            break;
+
+    strcpy(prev+1,filename);
+}
+
 
 /*
  *  Open an icon
@@ -939,4 +966,15 @@ ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp)
         *pisapp = isapp;
 
     return pa;
+}
+
+
+/*
+ *  Routine to change the default drive and directory
+ */
+WORD set_default_path(BYTE *path)
+{
+    dos_sdrv(path[0]-'A');
+
+    return (WORD)dos_chdir(path);
 }

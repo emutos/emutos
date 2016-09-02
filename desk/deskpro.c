@@ -38,20 +38,6 @@
 #include "kprint.h"
 
 
-WORD pro_chdir(WORD drv, BYTE *ppath)
-{
-    BYTE path[MAXPATHLEN];
-
-    /* change to directory that application is in */
-    dos_sdrv(drv - 'A');
-    path[0] = drv;
-    path[1] = ':';
-    path[2] = '\\';
-    strcpy(path+3, ppath);
-    return (WORD)dos_chdir(path);
-}
-
-
 static WORD pro_exec(WORD isgraf, WORD isover, BYTE *pcmd, BYTE *ptail)
 {
     WORD ret;

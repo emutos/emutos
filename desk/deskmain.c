@@ -935,13 +935,10 @@ static void cnx_get(void)
 {
     /* DESKTOP v1.2: This function is a lot more involved */
     /* because CNX_OPEN is no longer a separate function. */
-    WORD drv;
-    WORD nw;
+    WORD nw, ret;
     WSAVE *pws;
     WNODE *pw;
-    BYTE pathname[LEN_ZPATH];
-    BYTE fname[9];
-    BYTE fext[4];
+    BYTE *p, tmp;
 
     G.g_iview = (G.g_cnxsave.cs_view == 0) ? V_TEXT : V_ICON;
     do_viewmenu(ICONITEM);
@@ -986,17 +983,19 @@ static void cnx_get(void)
             if ((pw = win_alloc(pws->obid_save)))
             {
                 pw->w_cvrow = pws->vsl_save;
-                fpd_parse(pws->pth_save, &drv, pathname, fname, fext);
                 do_xyfix(&pws->x_save, &pws->y_save);
-                if (pro_chdir(drv, pathname) < 0)
+                p = filename_start(pws->pth_save);
+                tmp = *p;
+                *p = '\0';
+                ret = set_default_path(pws->pth_save);
+                *p = tmp;
+                if (ret < 0)
                 {
                     win_free(pw);
                     continue;
                 }
-                do_diropen(pw, TRUE, pws->obid_save, drv, pathname,
-                            fname, fext, (GRECT *)pws, TRUE);
+                do_diropen(pw, TRUE, pws->obid_save, pws->pth_save, (GRECT *)pws, TRUE);
             }
-
         }
     }
 

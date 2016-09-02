@@ -10,7 +10,6 @@
 #ifndef _DESKPRO_H
 #define _DESKPRO_H
 
-WORD pro_chdir(WORD drv, BYTE *ppath);
 WORD pro_run(WORD isgraf, WORD isover, WORD wh, WORD curr);
 WORD pro_exit(BYTE *pcmd, BYTE *ptail);
 
