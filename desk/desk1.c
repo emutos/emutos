@@ -37,6 +37,7 @@
 #include "../aes/rectfunc.h"
 #include "dos.h"
 #include "desk1.h"
+#include "deskins.h"
 #include "biosdefs.h"
 #include "kprint.h"
 
@@ -55,7 +56,7 @@ static void zoom_closed(WORD close, WORD w_id, WORD xicon, WORD yicon)
 }
 
 
-static void w_setpath(WNODE *pw, WORD drv, BYTE *path, BYTE *name, BYTE *ext)
+static void w_setpath(WNODE *pw, BYTE *pathname)
 {
     WORD icx, icy;
     GRECT rc;
@@ -64,27 +65,31 @@ static void w_setpath(WNODE *pw, WORD drv, BYTE *path, BYTE *name, BYTE *ext)
     icx = rc.g_x + (rc.g_w / 2) - (G.g_wicon / 2);
     icy = rc.g_y + (rc.g_h / 2) - (G.g_hicon / 2);
     zoom_closed(0, pw->w_id, icx, icy);
-    do_fopen(pw, 0, drv, path, name, ext, TRUE);
+    do_fopen(pw, 0, pathname, TRUE);
 }
 
 
 /*
- *  Removes the lowest level of folder from a path string, assumed
+ *  Removes the lowest level of folder from a pathname, assumed
  *  to be of the form:
- *      X\Y\Z
- *  If there is at least one path separator character, replaces the
- *  last one with a nul; otherwise, replaces the first character
- *  with a nul.  Somewhat similar to last_separator() [deskdir.c].
+ *      D:\X\Y\Z\F.E
+ *  where X,Y,Z are folders and F.E is a filename.  In the above
+ *  example, this would change D:\X\Y\Z\F.E to D:\X\Y\F.E
  */
-static void remove_one_level(BYTE *path)
+static void remove_one_level(BYTE *pathname)
 {
-    BYTE *last;
+    BYTE *stop = pathname+2;    /* the first path separator */
+    BYTE *filename, *prev;
 
-    for (last = path; *path; path++)
-        if (*path == '\\')
-            last = path;
+    filename = filename_start(pathname);
+    if (filename-1 <= stop)     /* already at the root */
+        return;
 
-    *last = '\0';
+    for (prev = filename-2; prev >= stop; prev--)
+        if (*prev == '\\')
+            break;
+
+    strcpy(prev+1,filename);
 }
 
 
@@ -105,10 +110,8 @@ void true_closewnd(WNODE *pw)
  */
 void fun_close(WNODE *pw, WORD closetype)
 {
-    BYTE ext[LEN_ZEXT+1];
-    BYTE name[LEN_ZNODE+1];
-    BYTE path[LEN_ZPATH+1];
-    WORD drv;
+    BYTE pathname[MAXPATHLEN];
+    BYTE *fname;
 
     if (!pw->w_path)
     {
@@ -126,19 +129,20 @@ void fun_close(WNODE *pw, WORD closetype)
      */
     if (closetype != CLOSE_WINDOW)
     {
-        fpd_parse(pw->w_path->p_spec,&drv,path,name,ext);
+        strcpy(pathname,pw->w_path->p_spec);
+        fname = filename_start(pathname);
         if (closetype == CLOSE_TO_ROOT)
-            path[0] = '\0';
-        else if (path[0] == '\0')
+            strcpy(pathname+3,fname);
+        else if (pathname+3 == fname)
             closetype = CLOSE_WINDOW;
         else    /* we need to go up one level */
-            remove_one_level(path);
+            remove_one_level(pathname);
     }
 
     if (closetype == CLOSE_WINDOW)
         true_closewnd(pw);
     else
-        w_setpath(pw,drv,path,name,ext);
+        w_setpath(pw,pathname);
 
     graf_mouse(ARROW, NULL);
 }

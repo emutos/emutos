@@ -490,15 +490,17 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
  *  This is called via the Open item under the File menu, or when a
  *  user double-clicks on an icon
  */
-static WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, WORD drv,
-                     BYTE *ppath, BYTE *pname)
+static WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname)
 {
-    WORD ret, done;
+    WORD ret, done, drv;
     WORD isgraf, isparm, installed_datafile;
     BYTE *pcmd, *ptail;
+    BYTE ppath[LEN_ZPATH], unused[LEN_ZFNAME];
     BYTE app_path[MAXPATHLEN];
 
     done = FALSE;
+
+    fpd_parse(pathname,&drv,ppath,unused,unused);
 
     /* set flags */
     isgraf = pa->a_flags & AF_ISCRYS;
@@ -654,13 +656,15 @@ static WORD do_dopen(WORD curr)
 /*
  *  Open a folder
  */
-void do_fopen(WNODE *pw, WORD curr, WORD drv, BYTE *ppath, BYTE *pname,
-              BYTE *pext, WORD redraw)
+void do_fopen(WNODE *pw, WORD curr, BYTE *pathname, WORD redraw)
 {
     GRECT t;
-    WORD ok;
+    WORD ok, drv;
+    BYTE ppath[LEN_ZPATH+1], pname[LEN_ZNODE+1], pext[LEN_ZEXT+1];
     BYTE *pnew;
     BYTE *pp;
+
+    fpd_parse(pathname, &drv, ppath, pname, pext);
 
     ok = TRUE;
     pnew = ppath;
@@ -673,8 +677,10 @@ void do_fopen(WNODE *pw, WORD curr, WORD drv, BYTE *ppath, BYTE *pname,
     }
     if (pro_chdir(drv, ppath) == 0) /* if directory exists, */
     {                               /* ensure all contents are displayed */
-        pname = "*";
-        pext  = "*";
+        pname[0] = '*';
+        pname[1] = '\0';
+        pext[0] = '*';
+        pext[1] = '\0';
     }
 
     pn_close(pw->w_path);
@@ -693,6 +699,34 @@ void do_fopen(WNODE *pw, WORD curr, WORD drv, BYTE *ppath, BYTE *pname,
 
 
 /*
+ *  Adds another folder to a pathname, assumed to be of the form:
+ *      D:\X\Y\F.E
+ *  where X,Y are folders and F.E is a filename.  In the above
+ *  example, if the folder to be added was Z, this would change
+ *  D:\X\Y\F.E to D:\X\Y\Z\F.E
+ *
+ *  returns FALSE iff the resulting pathname weould be too long
+ */
+static BOOL add_one_level(BYTE *pathname,BYTE *folder)
+{
+    WORD plen, flen;
+    BYTE filename[LEN_ZFNAME+1], *p;
+
+    plen = strlen(pathname);
+    flen = strlen(folder);
+    if (plen+flen+1 >= MAXPATHLEN)
+        return FALSE;
+
+    p = filename_start(pathname);
+    strcpy(filename,p);     /* save filename portion */
+    strcpy(p,folder);       /* & copy in folder      */
+    p += flen;
+    *p++ = '\\';            /* add the trailing path separator */
+    strcpy(p,filename);     /* & restore the filename          */
+    return TRUE;
+}
+
+/*
  *  Open an icon
  */
 WORD do_open(WORD curr)
@@ -701,8 +735,8 @@ WORD do_open(WORD curr)
     ANODE *pa;
     WNODE *pw;
     FNODE *pf;
-    WORD drv, isapp;
-    BYTE path[LEN_ZPATH+1], name[LEN_ZNODE+1], ext[LEN_ZEXT+1];
+    WORD isapp;
+    BYTE pathname[MAXPATHLEN];
 
     done = FALSE;
 
@@ -710,27 +744,23 @@ WORD do_open(WORD curr)
     pw = win_find(G.g_cwin);
     if (!pw)
         return FALSE;
-    if (pf)
-        fpd_parse(pw->w_path->p_spec,&drv,path,name,ext);
 
     if (pa)
     {
         switch(pa->a_type)
         {
         case AT_ISFILE:
-            done = do_aopen(pa,isapp,curr,drv,path,pf->f_name);
+            done = do_aopen(pa, isapp, curr, pw->w_path->p_spec, pf->f_name);
             break;
         case AT_ISFOLD:
-            if (path[0] != '\0')
-                strcat(path, "\\");
-            if ((strlen(path) + strlen(pf->f_name)) >= (LEN_ZPATH-3))
-                fun_alert(1, STDEEPPA, NULL);
-            else
+            strcpy(pathname, pw->w_path->p_spec);
+            if (add_one_level(pathname, pf->f_name))
             {
-                strcat(path, pf->f_name);
                 pw->w_cvrow = 0;        /* reset slider */
-                do_fopen(pw, curr, drv, path, name, ext, TRUE);
+                do_fopen(pw, curr, pathname, TRUE);
             }
+            else
+                fun_alert(1, STDEEPPA, NULL);
             break;
         case AT_ISDISK:
             do_dopen(curr);
@@ -857,14 +887,10 @@ int do_format(WORD curr)
  */
 void do_refresh(WNODE *pw)
 {
-    WORD drv;
-    BYTE path[LEN_ZPATH+1], name[LEN_ZNODE+1], ext[LEN_ZEXT+1];
-
     if (!pw->w_id)      /* desktop */
         return;
 
-    fpd_parse(pw->w_path->p_spec, &drv, path, name, ext);
-    do_fopen(pw, 0, drv, path, name, ext, TRUE);
+    do_fopen(pw, 0, pw->w_path->p_spec, TRUE);
 }
 
 
