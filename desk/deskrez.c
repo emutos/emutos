@@ -89,7 +89,7 @@ static const WORD falconmode_from_button[NUM_FALCON_BUTTONS] =
  */
 static int change_st_rez(WORD *newres)
 {
-    if (fun_alert(1,STRESOL,NULL) != 1)
+    if (fun_alert(1,STRESOL) != 1)
         return 0;
 
     *newres = Getrez() ? 0 : 1;

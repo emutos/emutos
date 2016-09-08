@@ -314,7 +314,7 @@ static void fun_desk2win(WORD wh, WORD dobj, WORD keystate)
         an_src = i_find(0, sobj, NULL, NULL);
         if (an_src && (an_src->a_type == AT_ISTRSH))
         {
-            fun_alert(1, STNODRA2, NULL);
+            fun_alert(1, STNODRA2);
             continue;
         }
         copied = fun_file2any(sobj, wn_dest, an_dest, fn_dest, dobj, keystate);
@@ -342,7 +342,7 @@ static void fun_desk2desk(WORD dobj, WORD keystate)
             continue;
         if (source->a_type == AT_ISTRSH)
         {
-            fun_alert(1, STNOSTAK, NULL);
+            fun_alert(1, STNOSTAK);
             continue;
         }
         fun_file2any(sobj, NULL, target, NULL, dobj, keystate);
@@ -361,7 +361,7 @@ void desk1_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my, W
         else            /* dragging from window to desktop */
         {
             if (sobj == dobj)   /* dropping onto desktop surface */
-                fun_alert(1, STNODRA1, NULL);
+                fun_alert(1, STNODRA1);
             else                /* dropping onto desktop icon */
                 fun_win2desk(wh, dobj, keystate);
         }

@@ -684,7 +684,7 @@ static void save_to_disk(void)
     BYTE inf_file_name[sizeof(INF_FILE_NAME)];
 
     /* make sure user really wants to save the desktop */
-    if (fun_alert(1, STSVINF, NULL) != 1)
+    if (fun_alert(1, STSVINF) != 1)
         return;
 
     strcpy(inf_file_name, INF_FILE_NAME);
@@ -701,7 +701,7 @@ static void save_to_disk(void)
             ret = -1L;
     }
     if (ret < 0L)                   /* open error or write error */
-        fun_alert(1, STNOINF, NULL);
+        fun_alert(1, STNOINF);
 
     /*
      * now update any open windows for the directory containing

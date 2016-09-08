@@ -70,7 +70,7 @@ static WORD user_abort(void)
     {
         rawin = dos_rawcin() & 0x00ff00ffL;
         if (rawin == 0x00610000L)   /* the Atari UNDO key */
-            rc = fun_alert(1, STABORT, NULL);
+            rc = fun_alert(1, STABORT);
     }
 
     return (rc==1) ? 1 : 0;
@@ -341,7 +341,7 @@ WORD d_errmsg(WORD err)
 
 static WORD invalid_copy_msg(void)
 {
-    fun_alert(1, STINVCPY, NULL);
+    fun_alert(1, STINVCPY);
     return FALSE;
 }
 
@@ -513,7 +513,7 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
         if (writelen != readlen)    /* disk full? */
         {
             graf_mouse(ARROW, NULL);
-            fun_alert(1, STDISKFU, NULL);
+            fun_alert(1, STDISKFU);
             graf_mouse(HGLASS, NULL);
             rc = -1;        /* indicate disk full error */
             break;
@@ -913,7 +913,7 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *co
     if (more && (op == OP_DELETE) && (icontype == AT_ISDISK))
     {
         graf_mouse(ARROW, NULL);
-        more = (fun_alert(2, STDELDIS, psrc_path) == 1) ? TRUE: FALSE;
+        more = (fun_alert_merge(2, STDELDIS, psrc_path[0]) == 1) ? TRUE: FALSE;
         graf_mouse(HGLASS, NULL);
     }
 

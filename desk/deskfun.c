@@ -48,17 +48,25 @@
 
 
 /*
- *  Issue an alert after merging in an optional character variable
+ *  Issue an alert
  */
-WORD fun_alert(WORD defbut, WORD stnum, BYTE *merge)
+WORD fun_alert(WORD defbut, WORD stnum)
 {
     rsrc_gaddr(R_STRING, stnum, &G.a_alert);
-    if (merge)
-    {
-        strcpy(G.g_2text, (char *)G.a_alert);
-        sprintf(G.g_1text, G.g_2text, *merge);
-        G.a_alert = (LONG)&G.g_1text[0];
-    }
+    return form_alert(defbut, G.a_alert);
+}
+
+
+/*
+ *  Issue an alert after merging in an optional character variable
+ */
+WORD fun_alert_merge(WORD defbut, WORD stnum, BYTE merge)
+{
+    rsrc_gaddr(R_STRING, stnum, &G.a_alert);
+    strcpy(G.g_2text, (char *)G.a_alert);
+    sprintf(G.g_1text, G.g_2text, merge);
+    G.a_alert = (LONG)&G.g_1text[0];
+
     return form_alert(defbut, G.a_alert);
 }
 
@@ -135,7 +143,7 @@ WORD fun_mkdir(WNODE *pw_node)
 
     if (i > MAX_LEVEL)
     {
-        fun_alert(1, STFO8DEE, NULL);
+        fun_alert(1, STFO8DEE);
         return FALSE;
     }
 
@@ -174,7 +182,7 @@ WORD fun_mkdir(WNODE *pw_node)
         restore_path(ptmp); /* restore original path */
         if (len >= LEN_ZPATH-3)
         {
-            fun_alert(1,STDEEPPA,NULL);
+            fun_alert(1,STDEEPPA);
             break;
         }
 
@@ -182,7 +190,7 @@ WORD fun_mkdir(WNODE *pw_node)
          * mkdir failed with a recoverable error:
          * prompt for Cancel or Retry
          */
-        if (fun_alert(2,STFOFAIL,NULL) == 1)    /* Cancel */
+        if (fun_alert(2,STFOFAIL) == 1)     /* Cancel */
             break;
     }
 
@@ -269,7 +277,7 @@ static WORD source_is_parent(BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path)
                         (!strcmp(pf->f_name, tdst)) )
                     {
                         /* INVALID      */
-                        fun_alert(1, STBADCOP, NULL);
+                        fun_alert(1, STBADCOP);
                         return TRUE;
                     }
                 }
@@ -480,7 +488,7 @@ BOOL wants_to_delete_files(void)
 {
     WORD ret;
 
-    ret = fun_alert(1,STRMVDEL,NULL);
+    ret = fun_alert(1,STRMVDEL);
 
     if (ret == 2)       /* Delete */
         return TRUE;

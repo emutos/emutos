@@ -142,7 +142,7 @@ static WORD install_drive(WORD drive)
     pa = app_alloc(FALSE);
     if (!pa)
     {
-        fun_alert(1, STAPGONE, NULL);
+        fun_alert(1, STAPGONE);
         return -1;
     }
 
@@ -272,7 +272,7 @@ static WORD get_funkey(OBJECT *tree,ANODE *pa,BOOL installed)
      */
     if ((funkey < 1) || (funkey > 20))
     {
-        fun_alert(1,STINVKEY,NULL);     /* invalid function key */
+        fun_alert(1,STINVKEY);          /* invalid function key */
         return -1;
     }
 
@@ -285,7 +285,7 @@ static WORD get_funkey(OBJECT *tree,ANODE *pa,BOOL installed)
             continue;
         if (an->a_funkey == funkey)
         {
-            if (fun_alert(1,STDUPKEY,NULL) != 1)    /* duplicate fun key */
+            if (fun_alert(1,STDUPKEY) != 1)     /* duplicate fun key */
                 return -1;
             an->a_funkey = 0;
             break;
@@ -395,7 +395,7 @@ WORD ins_app(WORD curr)
                 pa = app_alloc(TRUE);
             if (!pa)
             {
-                fun_alert(1, STAPGONE, NULL);
+                fun_alert(1, STAPGONE);
                 change = -1;        /* don't try any more */
                 break;
             }

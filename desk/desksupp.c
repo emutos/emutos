@@ -579,7 +579,7 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname)
              * does not match any installed application
              */
 #if CONF_WITH_SHOW_FILE
-            ret = fun_alert(1, STSHOW, NULL);
+            ret = fun_alert(1, STSHOW);
             if (ret == 1)
             {
                 char *iobuf = dos_alloc(IOBUFSIZE);
@@ -590,7 +590,7 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname)
                 }
             }
 #else
-            fun_alert(1, STNOAPPL, NULL);
+            fun_alert(1, STNOAPPL);
 #endif
             ret = FALSE;    /* don't run any application */
         }
@@ -652,7 +652,7 @@ static WORD do_dopen(WORD curr)
     }
     else
     {
-        fun_alert(1, STNOWIND, NULL);
+        fun_alert(1, STNOWIND);
     }
 
     return FALSE;
@@ -680,7 +680,7 @@ void do_fopen(WNODE *pw, WORD curr, BYTE *pathname, WORD redraw)
     strcpy(app_path,pathname);
     if (strlen(app_path) >= LEN_ZPATH)
     {
-        fun_alert(1, STDEEPPA, NULL);
+        fun_alert(1, STDEEPPA);
         remove_one_level(app_path);         /* back up one level */
     }
     
@@ -789,13 +789,13 @@ WORD do_open(WORD curr)
             do_fopen(pw, curr, pathname, TRUE);
         }
         else
-            fun_alert(1, STDEEPPA, NULL);
+            fun_alert(1, STDEEPPA);
         break;
     case AT_ISDISK:
         do_dopen(curr);
         break;
     case AT_ISTRSH:
-        fun_alert(1, STNOOPEN, NULL);
+        fun_alert(1, STNOOPEN);
         break;
     }
 
@@ -834,7 +834,7 @@ WORD do_info(WORD curr)
             inf_disk(drive);
             break;
         case AT_ISTRSH:
-            fun_alert(1, STTRINFO, NULL);
+            fun_alert(1, STTRINFO);
             break;
         }
     }
@@ -881,7 +881,7 @@ int do_format(WORD curr)
         }
         if (!foundit)
         {
-            fun_alert(1, STNOFRMT, NULL);
+            fun_alert(1, STNOFRMT);
             return 0;
         }
 
@@ -889,7 +889,7 @@ int do_format(WORD curr)
          * we have a formatter, ask user if we should run it
          */
         drive_letter = (get_iconblk_ptr(G.g_screen, curr)->ib_char) & 0xFF;
-        ret = fun_alert(2, STFORMAT, &drive_letter);
+        ret = fun_alert_merge(2, STFORMAT, drive_letter);
         if (ret != 1)
             return 0;
 
