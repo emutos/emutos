@@ -755,33 +755,28 @@ void remove_one_level(BYTE *pathname)
  */
 WORD do_open(WORD curr)
 {
-    WORD done;
     ANODE *pa;
-    WNODE *pw = NULL;   /* avoid bogus 'may be uninitialized' warning */
+    WNODE *pw;
     FNODE *pf;
     WORD isapp;
     BYTE pathname[MAXPATHLEN];
 
-    done = FALSE;
-
     pa = i_find(G.g_cwin, curr, &pf, &isapp);
-
     if (!pa)
         return FALSE;
-
-    if ((pa->a_type == AT_ISFILE) || (pa->a_type == AT_ISFOLD))
-    {
-        pw = win_find(G.g_cwin);
-        if (!pw)
-            return FALSE;
-    }
 
     switch(pa->a_type)
     {
     case AT_ISFILE:
-        done = do_aopen(pa, isapp, curr, pw->w_path->p_spec, pf->f_name);
-        break;
     case AT_ISFOLD:
+        pw = win_find(G.g_cwin);
+        if (!pw)
+            return FALSE;
+
+        if (pa->a_type == AT_ISFILE)
+            return do_aopen(pa, isapp, curr, pw->w_path->p_spec, pf->f_name);
+
+        /* handle opening a folder */
         strcpy(pathname, pw->w_path->p_spec);
         if (add_one_level(pathname, pf->f_name))
         {
@@ -799,7 +794,7 @@ WORD do_open(WORD curr)
         break;
     }
 
-    return done;
+    return FALSE;
 }
 
 
