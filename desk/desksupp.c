@@ -652,8 +652,7 @@ static WORD do_dopen(WORD curr)
     }
     else
     {
-        rsrc_gaddr(R_STRING, STNOWIND, &G.a_alert);
-        form_alert(1, G.a_alert);
+        fun_alert(1, STNOWIND, NULL);
     }
 
     return FALSE;
@@ -796,7 +795,7 @@ WORD do_open(WORD curr)
         do_dopen(curr);
         break;
     case AT_ISTRSH:
-        form_alert(1, (LONG)ini_str(STNOOPEN));
+        fun_alert(1, STNOOPEN, NULL);
         break;
     }
 
