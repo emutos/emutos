@@ -413,10 +413,7 @@ static WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
          * to tell the user: get i/p & o/p filenames and prefill dialog
          */
         get_fname(psrc_file, ml_fsrc);  /* get input filename */
-        if (samefile)                   /* don't prefill o/p if same file */
-            ml_fdst[0] = '\0';
-        else
-            get_fname(pdst_file, ml_fdst);
+        get_fname(pdst_file, ml_fdst);  /* get output filename */
         inf_sset(tree, CACURRNA, ml_fsrc);
         inf_sset(tree, CACOPYNA, ml_fdst);
 
@@ -446,7 +443,18 @@ static WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
          * the next iteration of this loop can check everything again
          */
         if (strcmp(old_dst,ml_fdst))
+        {
             ob = 0;
+            continue;
+        }
+
+        /*
+         * the user has said OK, and the destination is unchanged:
+         * if the user was trying to overwrite a file with itself,
+         * treat it as a skip
+         */
+        if (samefile)
+            return -1;
     }
 
     return 1;
