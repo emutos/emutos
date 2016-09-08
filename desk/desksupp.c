@@ -758,7 +758,7 @@ WORD do_open(WORD curr)
 {
     WORD done;
     ANODE *pa;
-    WNODE *pw;
+    WNODE *pw = NULL;   /* avoid bogus 'may be uninitialized' warning */
     FNODE *pf;
     WORD isapp;
     BYTE pathname[MAXPATHLEN];
@@ -766,34 +766,38 @@ WORD do_open(WORD curr)
     done = FALSE;
 
     pa = i_find(G.g_cwin, curr, &pf, &isapp);
-    pw = win_find(G.g_cwin);
-    if (!pw)
+
+    if (!pa)
         return FALSE;
 
-    if (pa)
+    if ((pa->a_type == AT_ISFILE) || (pa->a_type == AT_ISFOLD))
     {
-        switch(pa->a_type)
+        pw = win_find(G.g_cwin);
+        if (!pw)
+            return FALSE;
+    }
+
+    switch(pa->a_type)
+    {
+    case AT_ISFILE:
+        done = do_aopen(pa, isapp, curr, pw->w_path->p_spec, pf->f_name);
+        break;
+    case AT_ISFOLD:
+        strcpy(pathname, pw->w_path->p_spec);
+        if (add_one_level(pathname, pf->f_name))
         {
-        case AT_ISFILE:
-            done = do_aopen(pa, isapp, curr, pw->w_path->p_spec, pf->f_name);
-            break;
-        case AT_ISFOLD:
-            strcpy(pathname, pw->w_path->p_spec);
-            if (add_one_level(pathname, pf->f_name))
-            {
-                pw->w_cvrow = 0;        /* reset slider */
-                do_fopen(pw, curr, pathname, TRUE);
-            }
-            else
-                fun_alert(1, STDEEPPA, NULL);
-            break;
-        case AT_ISDISK:
-            do_dopen(curr);
-            break;
-        case AT_ISTRSH:
-            form_alert(1, (LONG)ini_str(STNOOPEN));
-            break;
+            pw->w_cvrow = 0;        /* reset slider */
+            do_fopen(pw, curr, pathname, TRUE);
         }
+        else
+            fun_alert(1, STDEEPPA, NULL);
+        break;
+    case AT_ISDISK:
+        do_dopen(curr);
+        break;
+    case AT_ISTRSH:
+        form_alert(1, (LONG)ini_str(STNOOPEN));
+        break;
     }
 
     return done;
