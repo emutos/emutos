@@ -1,5 +1,5 @@
 /*
- * intmath.c - misc integer math routines
+ * intmath.h - misc integer math routines
  *
  * Copyright (C) 2002-2014 by EmuTOS development team.
  *
@@ -8,6 +8,24 @@
  */
 
 ULONG Isqrt(ULONG x);
+
+/*
+ *  min(): return minimum of two values
+ */
+static __inline__
+WORD min(WORD a, WORD b)
+{
+    return (a < b) ? a : b;
+}
+
+/*
+ *  max(): return maximum of two values
+ */
+static __inline__
+WORD max(WORD a, WORD b)
+{
+    return (a > b) ? a : b;
+}
 
 /*
  * mul_div - signed integer multiply and divide

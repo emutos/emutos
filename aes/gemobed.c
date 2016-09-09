@@ -21,6 +21,7 @@
 #include "struct.h"
 #include "basepage.h"
 #include "obdefs.h"
+#include "intmath.h"
 #include "gemlib.h"
 #include "gem_rsc.h"
 
@@ -30,7 +31,6 @@
 #include "gemrslib.h"
 #include "optimize.h"
 #include "optimopt.h"
-#include "rectfunc.h"
 #include "gemobed.h"
 
 #include "string.h"

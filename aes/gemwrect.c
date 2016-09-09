@@ -18,13 +18,13 @@
 #include "struct.h"
 #include "basepage.h"
 #include "obdefs.h"
+#include "intmath.h"
 #include "gemlib.h"
 
 #include "gemobjop.h"
 #include "gemwmlib.h"
 #include "geminit.h"
 #include "optimize.h"
-#include "rectfunc.h"
 #include "gemwrect.h"
 
 

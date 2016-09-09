@@ -17,24 +17,6 @@ WORD rc_intersect(const GRECT *p1, GRECT *p2);
 void rc_union(const GRECT *p1, GRECT *p2);
 
 /*
- *  min(): return minimum of two values
- */
-static __inline__
-WORD min(WORD a, WORD b)
-{
-    return (a < b) ? a : b;
-}
-
-/*
- *  max(): return maximum of two values
- */
-static __inline__
-WORD max(WORD a, WORD b)
-{
-    return (a > b) ? a : b;
-}
-
-/*
  *  rc_copy(): copy source to destination rectangle
  */
 static __inline__

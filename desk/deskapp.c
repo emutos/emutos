@@ -24,6 +24,7 @@
 
 #include "portab.h"
 #include "obdefs.h"
+#include "intmath.h"
 #include "gsxdefs.h"
 #include "gemdos.h"
 
@@ -33,7 +34,6 @@
 #include "gembind.h"
 #include "deskbind.h"
 #include "../bios/videl.h"
-#include "../aes/rectfunc.h"
 #include "../aes/optimize.h"
 #include "aesbind.h"
 #include "deskrsrc.h"

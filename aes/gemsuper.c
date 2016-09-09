@@ -21,6 +21,7 @@
 #include "struct.h"
 #include "basepage.h"
 #include "obdefs.h"
+#include "intmath.h"
 #include "gemlib.h"
 #include "crysbind.h"
 #include "gem_rsc.h"
@@ -45,7 +46,6 @@
 #include "gemfmalt.h"
 #include "gemdosif.h"
 #include "gemasm.h"
-#include "rectfunc.h"
 
 #include "string.h"
 
