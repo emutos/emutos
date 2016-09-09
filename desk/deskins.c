@@ -35,7 +35,6 @@
 #include "deskfpd.h"
 #include "deskwin.h"
 #include "gembind.h"
-#include "../aes/gemoblib.h"
 #include "deskbind.h"
 
 #include "../aes/optimize.h"
