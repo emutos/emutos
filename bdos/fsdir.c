@@ -1104,6 +1104,9 @@ long xchdir(char *p)
     int olddir, newdir, dlog;
     const char *s;
 
+    if (contains_wildcard_characters(p))
+        return EPTHNF;
+
     if (p[1] == ':')
         dlog = toupper(p[0]) - 'A';
     else
