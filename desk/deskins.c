@@ -39,7 +39,6 @@
 #include "deskbind.h"
 
 #include "../aes/optimize.h"
-#include "../aes/optimopt.h"
 #include "aesbind.h"
 #include "deskglob.h"
 #include "deskinf.h"
