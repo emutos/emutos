@@ -23,6 +23,7 @@
 #include "portab.h"
 #include "obdefs.h"
 #include "gemdos.h"
+#include "optimopt.h"
 
 #include "deskapp.h"
 #include "deskfpd.h"
@@ -30,7 +31,6 @@
 #include "dos.h"
 #include "deskbind.h"
 
-#include "../aes/optimopt.h"
 #include "deskrsrc.h"
 #include "deskglob.h"
 
