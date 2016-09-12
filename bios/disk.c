@@ -420,66 +420,105 @@ static int atari_partition(UWORD unit,LONG *devices_available)
         /* follow DOS PTBL */
         int i;
 
-        KINFO((" MBR"));
+        /* offset to current extended boot record if != 0 */
+        u32 extended_offs = 0;
 
-        for (i = 0; i < 4; i++) {
-            u32 start, size;
-            u8 type = mbr->entry[i].type;
-            char pid[3];
+        /* start sector of first(!) extended boot record;
+         * this is required to traverse the list of linked extended partitions
+         */
+        u32 first_extended = 0;
+        /* start sector of next extended boot record */
+        u32 next_extended;
 
-            if (type == 0) {
-                KDEBUG((" empty partition entry ignored\n"));
-                continue;
+        do {
+            /* start sector of next extended boot record, if present */
+            next_extended = 0;
+
+            KINFO((" MBR at %lu", extended_offs));
+
+            for (i = 0; i < 4; i++) {
+                u32 start, size;
+                u8 type = mbr->entry[i].type;
+                char pid[3];
+
+                if (type == 0) {
+                    KDEBUG((" empty partition entry ignored\n"));
+                    continue;
+                }
+
+                pid[0] = 0;
+                pid[1] = 'D';
+                pid[2] = type;
+
+                start = mbr->entry[i].start;    /* little-endian */
+                swpl(start);
+
+                size = mbr->entry[i].size;      /* little-endian */
+                swpl(size);
+
+                if (size == 0UL) {
+                    KDEBUG((" entry for zero-length partition ignored\n"));
+                    continue;
+                }
+
+                KDEBUG(("DOS partition detected: start=%lu, size=%lu, type=$%02x\n",
+                        start, size, type));
+
+                switch(type) {
+                case 0x05:
+                case 0x0f:
+                    if (next_extended != 0) {
+                        KDEBUG((" more than one extended partition: ignored, not yet supported\n"));
+                    } else {
+                        /* extended partition found, will read partition table later
+                         * note that for the linked list of extended partitions,
+                         * the start sector in this case is always relative to the first(!)
+                         * extended boot record and not to the current one
+                         */
+                        next_extended = start + first_extended;
+                    }
+                    break;
+                case 0x0b:
+                case 0x0c:
+                case 0x83:      /* any Linux partition, including ext2 */
+                    /*
+                     * note that FAT32 & Linux partitions occupy drive letters,
+                     * but are not yet accessible to EmuTOS.  however, we allow
+                     * access via XHDI for MiNT's benefit.
+                     */
+                    KDEBUG((" %s partition: not yet supported\n",(type==0x83)?"Linux":"FAT32"));
+                    /* drop through */
+                case 0x01:
+                case 0x04:
+                case 0x06:
+                case 0x0e:
+                    if (add_partition(unit,devices_available,pid,start+extended_offs,size) < 0)
+                        return -1;
+                    KINFO((" $%02x", type));
+                    break;
+                default:
+                    KDEBUG((" unrecognised partition type: ignored\n"));
+                    break;
+                }
             }
 
-            pid[0] = 0;
-            pid[1] = 'D';
-            pid[2] = type;
+            KINFO(("\n"));
 
-            start = mbr->entry[i].start;    /* little-endian */
-            swpl(start);
+            /* read next extended boot record */
+            if (next_extended != 0) {
+                /* save offset of first extended partition to later traverse linked list */
+                if (first_extended == 0) {
+                    first_extended = next_extended;
+                }
 
-            size = mbr->entry[i].size;      /* little-endian */
-            swpl(size);
-
-            if (size == 0UL) {
-                KDEBUG((" entry for zero-length partition ignored\n"));
-                continue;
+                if (disk_rw(unit, RW_READ, next_extended, 1, sect)) {
+                    extended_offs = next_extended = 0; /* could not read table */
+                } else {
+                    extended_offs = next_extended;
+                }
             }
 
-            KDEBUG(("DOS partition detected: start=%lu, size=%lu, type=$%02x\n",
-                    start, size, type));
-
-            switch(type) {
-            case 0x05:
-            case 0x0f:
-                KDEBUG((" extended partition: ignored, not yet supported\n"));
-                break;
-            case 0x0b:
-            case 0x0c:
-            case 0x83:      /* any Linux partition, including ext2 */
-                /*
-                 * note that FAT32 & Linux partitions occupy drive letters,
-                 * but are not yet accessible to EmuTOS.  however, we allow
-                 * access via XHDI for MiNT's benefit.
-                 */
-                KDEBUG((" %s partition: not yet supported\n",(type==0x83)?"Linux":"FAT32"));
-                /* drop through */
-            case 0x01:
-            case 0x04:
-            case 0x06:
-            case 0x0e:
-                if (add_partition(unit,devices_available,pid,start,size) < 0)
-                    return -1;
-                KINFO((" $%02x", type));
-                break;
-            default:
-                KDEBUG((" unrecognised partition type: ignored\n"));
-                break;
-            }
-        }
-
-        KINFO(("\n"));
+        } while (next_extended != 0);
 
         return 1;
     }
