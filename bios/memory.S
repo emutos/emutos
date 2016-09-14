@@ -8,6 +8,7 @@
  *  PES  Petr Stehlik
  *  jfdn Jean-François DEL NERO
  *  VRI  Vincent Rivière
+ *  RFB  Roger Burrows
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -200,6 +201,87 @@ amiga_memconf_ret:
 #if CONF_WITH_FALCON_MMU
         tst.w   d0                      // is it Falcon MMU?
         bne     falcmemconf             // yes -> jump to Falcon mem routine
+#endif
+
+#if CONF_WITH_TT_MMU
+        move.l  #not_a_tt,0x08
+        tst.b   0xffff8400.w            // try to access the tt palette registers
+                                        // drop through if they exist ...
+// ===========================================================================
+// ==== memconf for TT =======================================================
+// ===========================================================================
+/*
+ * The following configurations are valid for ST-RAM in a TT, listed as
+ * total RAM (motherboard RAM + optional daughterboard RAM):
+ *  2MB (2MB + 0MB), 4MB (2MB + 2MB), 10MB (2MB + 8MB)
+ * [According to the TT rev B MCU functional description, it is also
+ * possible to have 8MB (8MB + 0MB) and 10MB (8MB + 2MB) configurations,
+ * but I have not seen this.]  When an 8MB board is present, it is always
+ * mapped to the first 8MB of memory.
+ *
+ * Systems with only 2MB boards require a memcntlr value of 0x05; systems
+ * with an 8MB board require a memcntlr value of 0x0a.  We detect which
+ * size of board is in low memory by assuming an 8MB board, then checking
+ * for different memory addresses mapping to the same physical address.
+ *
+ * rfb (sep/2016)
+ */
+        move.w  #0x0005,d6          // assume 2MB board
+        move.b  #0x0a,0xffff8001.w  // set memory controller for 8MB
+        moveq   #0,d0
+        move.l  d0,0x1008           // zero out test addresses
+        move.l  d0,0x100c
+        move.l  #0x25121642,d0      // write test value #1 to an address
+        move.l  d0,0x0008           //  that may be mapped into test address #1
+        cmp.l   0x1008,d0           // did test address #1 get updated?
+        bne.s   set_8MB             // no, must be an 8MB board
+        move.l  #0x14031879,d0      // yes, repeat with test value #2 to be sure
+        move.l  d0,0x000c
+        cmp.l   0x100c,d0           // did test address #2 get updated?
+        beq.s   set_2MB             // yes, use the 2MB memcntlr value
+set_8MB:
+        move.w  #0x000a,d6          // set 8MB memcntlr value
+set_2MB:
+        move.b  d6,0xffff8001.w     // update memcntlr
+
+/*
+ * We now need to size the actual memory present.  We test memory,
+ * starting at 128K and increasing by 128K each time.  For each area of
+ * memory, we start at the current address, and work downwards, storing
+ * a series of values; we then verify that the values have been stored
+ * correctly.  An invalid value (or a bus error when we try to access a
+ * memory location) causes us to stop and size the memory accordingly.
+ */
+        move.l  #tt_stramsize_done,0x08 // bus error means end of ram
+        move.w  #0xf769,d4          // d4.w = difference between adjacent stored values
+        move.l  #0x20000,d7         // d7 = address of first memory test zone
+                                    //  & gap between memory test zones
+        movea.l d7,a0               // a0 = address of current test zone
+next_zone:
+        movea.l a0,a1               // a1 -> memory being tested
+        move.w  d0,d2               // d2.w = test value
+        moveq   #32,d1              // d1.w = loop count-1
+store_mem:
+        move.w  d2,-(a1)            // store a value
+        add.w   d4,d2               // update the value for next time
+        dbra    d1,store_mem        // rinse & repeat
+                                // now check the values we stored
+        movea.l a0,a1               // a1 -> test area
+        moveq   #32,d1              // loop count
+check_mem:
+        cmp.w   -(a1),d0
+        bne.s   tt_stramsize_done   // miscompare, ram invalid, exit
+        clr.w   (a1)                // else zero it out
+        add.w   d4,d0               // update for next compare
+        dbra    d1,check_mem        // until we're done
+        adda.l  d7,a0               // point to next test area
+        bra.s   next_zone
+
+tt_stramsize_done:                  // bus error or bad ram
+        suba.l  d7,a0               // (a0 -> first zone that failed)
+        move.l  a0,d5               // d5 = st ram size
+        bra     memconf_done
+not_a_tt:
 #endif
 
 #if CONF_WITH_ST_MMU
