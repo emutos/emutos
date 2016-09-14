@@ -488,19 +488,21 @@ void app_start(void)
 
         /* Scan for valid drives: */
         drivemask = dos_sdrv(dos_gdrv());
-          for (i = 0; i < BLKDEVNUM; i++)
-                if (drivemask&(1L<<i))
-                {
-                    x = strlen(gl_afile);
-                    drive_x = icon_index % xcnt; /* x position */
-                    drive_y = icon_index / xcnt; /* y position */
-                    icon_type = (i > 1) ? 0 /* Hard disk */ : 1 /* Floppy */;
-                    drive_letter = 'A' + i;
-                    rsrc_gaddr(R_STRING, STDISK, (LONG *)&text);
-                    sprintf(gl_afile + x, "#M %02X %02X %02X FF %c %s %c@ @\r\n",
-                            drive_x, drive_y, icon_type, drive_letter, text, drive_letter);
-                    icon_index++;
-                }
+        for (i = 0; i < BLKDEVNUM; i++)
+        {
+            if (drivemask&(1L<<i))
+            {
+                x = strlen(gl_afile);
+                drive_x = icon_index % xcnt; /* x position */
+                drive_y = icon_index / xcnt; /* y position */
+                icon_type = (i > 1) ? 0 /* Hard disk */ : 1 /* Floppy */;
+                drive_letter = 'A' + i;
+                rsrc_gaddr(R_STRING, STDISK, (LONG *)&text);
+                sprintf(gl_afile + x, "#M %02X %02X %02X FF %c %s %c@ @\r\n",
+                        drive_x, drive_y, icon_type, drive_letter, text, drive_letter);
+                icon_index++;
+            }
+        }
 
         /* Copy core data part 2 */
         strcat(gl_afile, desk_inf_data2);
