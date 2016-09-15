@@ -415,7 +415,7 @@ long xsetdrv(int drv)
 
     drvmap = Drvmap();
 
-    if (drvmap & (1<<drv))
+    if (drvmap & (1L<<drv))
         run->p_curdrv = drv;
 
     return drvmap;

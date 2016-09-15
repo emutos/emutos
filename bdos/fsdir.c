@@ -1222,7 +1222,7 @@ long xgetdir(char *buf, int drv)
 
     drv = (drv == 0) ? run->p_curdrv : drv-1;
 
-    if (!(Drvmap() & (1<<drv)) || (ckdrv(drv) < 0))     /* M01.01.1031.01 */
+    if (!(Drvmap() & (1L<<drv)) || (ckdrv(drv) < 0))     /* M01.01.1031.01 */
     {
         *buf = 0;
         return EDRIVE;

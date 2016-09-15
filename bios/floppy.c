@@ -356,7 +356,7 @@ static void flop_add_drive(WORD dev)
 
     /* OS variables */
     nflops++;
-    drvbits |= (1 << dev);
+    drvbits |= (1L << dev);
 }
 
 static void flop_detect_drive(WORD dev)

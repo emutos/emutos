@@ -178,7 +178,7 @@ WORD ins_devices(void)
      */
     for (pa = G.g_ahead; pa; pa = pa->a_next)
         if (pa->a_type == AT_ISDISK)
-            drivebits &= ~(1<<(pa->a_letter-'A'));
+            drivebits &= ~(1L<<(pa->a_letter-'A'));
 
     for (drive = 0, mask = 1, count = 0; drive < BLKDEVNUM; drive++, mask <<= 1)
     {
