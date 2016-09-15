@@ -355,10 +355,10 @@ long xmaddalt(UBYTE *start, LONG size)
 
     /* if the new block is just after a free one, just extend it */
     for (p = pmdalt.mp_mfl; p; p = p->m_link) {
-        if (p->m_start + p->m_length == start)
+        if (p->m_start + p->m_length == start) {
             p->m_length += size;
-
-        return 0;
+            return 0;
+        }
     }
 
     md = xmgetmd();
