@@ -909,54 +909,57 @@ void app_blddesk(void)
 
 
 /*
- *  Find the ANODE that is appropriate for this object
- *
- *  This is called in essentially two ways:
- *  1. to find objects on the desktop only:
- *      isdesk = TRUE, atype = -1, pspec = NULL, pname = NULL, pisapp = NULL
- *  2. to find any object:
- *      isdesk = FALSE, obid = -1
- *
- *  It might be more obvious if we made this two functions ...
+ *  Find ANODE by object id
  */
-ANODE *app_afind(WORD isdesk, WORD atype, WORD obid, BYTE *pspec, BYTE *pname, WORD *pisapp)
+ANODE *app_afind_by_id(WORD obid)
+{
+    ANODE *pa;
+
+    for (pa = G.g_ahead; pa; pa = pa->a_next)
+    {
+        if (pa->a_obid == obid)
+            return pa;
+    }
+
+    return NULL;
+}
+
+
+/*
+ *  Find ANODE by name & type
+ *
+ *  Returns match type in *pisapp:
+ *      TRUE if name matches application name
+ *      FALSE if name matches data name
+ */
+ANODE *app_afind_by_name(WORD atype, BYTE *pspec, BYTE *pname, WORD *pisapp)
 {
     ANODE *pa;
     WORD match;
     BYTE pathname[MAXPATHLEN];
 
-    if (!isdesk)
-    {
-        strcpy(pathname,pspec);                 /* build full pathname */
-        strcpy(filename_start(pathname),pname);
-    }
+    strcpy(pathname,pspec);                 /* build full pathname */
+    strcpy(filename_start(pathname),pname);
 
     for (pa = G.g_ahead; pa; pa = pa->a_next)
     {
-        if (isdesk)
+        if ((pa->a_type == atype) && !(pa->a_flags & AF_ISDESK))
         {
-            if (pa->a_obid == obid)
-                return pa;
-        }
-        else
-        {
-            if ((pa->a_type == atype) && !(pa->a_flags & AF_ISDESK))
+            if (wildcmp(pa->a_pdata, pname))
             {
-                if (wildcmp(pa->a_pdata, pname))
-                {
-                    *pisapp = FALSE;
-                    return pa;
-                }
-                if ((pa->a_pappl[0] == '*') || (pa->a_pappl[0] == '?'))
-                    match = wildcmp(pa->a_pappl, pname);
-                else match = !strcmp(pa->a_pappl, pathname);
-                if (match)
-                {
-                    *pisapp = TRUE;
-                    return pa;
-                }
+                *pisapp = FALSE;
+                return pa;
+            }
+            if ((pa->a_pappl[0] == '*') || (pa->a_pappl[0] == '?'))
+                match = wildcmp(pa->a_pappl, pname);
+            else match = !strcmp(pa->a_pappl, pathname);
+            if (match)
+            {
+                *pisapp = TRUE;
+                return pa;
             }
         }
     }
+
     return NULL;
 }
