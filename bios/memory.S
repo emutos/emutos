@@ -596,20 +596,6 @@ stram_detected:
  */
         move.l  #0x1357BD13,d1          // _ramvalid magic
 
-#if CONF_WITH_FASTRAM
-        // We must set the FastRAM refresh rate before we use it.  The
-        // rate is set by writing a "don't care" value to an address in
-        // the range 0xffd00000-0xffd000ff; the low-order byte of the
-        // address sets the refresh rate (specifically the number of
-        // system clock cycles between each refresh request).  TT TOS
-        // uses the value 0xe0; so do we.
-        // NOTE: whether we actually have FastRAM or not, setting the
-        // value always causes a bus error, so we need to handle it.
-        move.l  #refresh_done,0x08      // bus error vector
-        move.w  #0x0000,0xffd000e0.l
-refresh_done:
-#endif
-
 #if !CONF_WITH_FASTRAM
         sub.l   a3, a3                  // _ramtop = 0
 #elif CONF_FASTRAM_SIZE
@@ -628,6 +614,18 @@ refresh_done:
         cmp.w   #20,d0                  // 68020 or better?
         blt     setramtop               // no -> skip the whole FastRAM stuff
 #endif
+
+        // We must set the FastRAM refresh rate before we use it.  The
+        // rate is set by writing a "don't care" value to an address in
+        // the range 0xffd00000-0xffd000ff; the low-order byte of the
+        // address sets the refresh rate (specifically the number of
+        // system clock cycles between each refresh request).  TT TOS
+        // uses the value 0xe0; so do we.
+        // NOTE: whether we actually have FastRAM or not, setting the
+        // value always causes a bus error, so we need to handle it.
+        move.l  #refresh_done,0x08      // bus error vector
+        move.w  #0x0000,0xffd000e0.l
+refresh_done:
 
         /* Can we access FastRAM region? */
         pea     0x1000400
