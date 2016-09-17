@@ -91,7 +91,7 @@ void fun_msg(WORD type, WORD w3, WORD w4, WORD w5, WORD w6, WORD w7)
  */
 void fun_rebld(WNODE *pwin)
 {
-    WORD x, y, w, h;
+    GRECT gr;
     BYTE *ptst;
 
     graf_mouse(HGLASS, NULL);
@@ -109,8 +109,8 @@ void fun_rebld(WNODE *pwin)
             desk_verify(pwin->w_id, TRUE);
             win_sinfo(pwin);
             wind_set(pwin->w_id, WF_INFO, pwin->w_info, 0, 0);
-            wind_get(pwin->w_id, WF_WXYWH, &x, &y, &w, &h);
-            fun_msg(WM_REDRAW, pwin->w_id, x, y, w, h);
+            wind_get_grect(pwin->w_id, WF_WXYWH, &gr);
+            fun_msg(WM_REDRAW, pwin->w_id, gr.g_x, gr.g_y, gr.g_w, gr.g_h);
         } /* if */
     } /* for */
 

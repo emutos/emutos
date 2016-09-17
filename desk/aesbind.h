@@ -87,7 +87,9 @@ WORD wind_open(WORD handle, WORD wx, WORD wy, WORD ww, WORD wh);
 WORD wind_close(WORD handle);
 WORD wind_delete(WORD handle);
 WORD wind_get(WORD w_handle, WORD w_field, WORD *pw1, WORD *pw2, WORD *pw3, WORD *pw4);
+WORD wind_get_grect(WORD w_handle, WORD w_field, GRECT *gr);
 WORD wind_set(WORD w_handle, WORD w_field, ...);
+WORD wind_set_grect(WORD w_handle, WORD w_field, const GRECT *gr);
 WORD wind_find(WORD mx, WORD my);
 WORD wind_update(WORD beg_update);
 WORD wind_calc(WORD wctype, UWORD kind, WORD x, WORD y, WORD w, WORD h,

@@ -558,7 +558,7 @@ static WORD hndl_button(WORD clicks, WORD mx, WORD my, WORD button, WORD keystat
 
     desk_verify(wh, FALSE);
 
-    wind_get(wh, WF_WXYWH, &c.g_x, &c.g_y, &c.g_w, &c.g_h);
+    wind_get_grect(wh, WF_WXYWH, &c);
 
     if (clicks == 1)
     {
@@ -792,7 +792,7 @@ WORD hndl_msg(void)
     WORD            done;
     WNODE           *pw;
     WORD            change, menu;
-    WORD            x,y,w,h;
+    GRECT           gr;
     WORD            cols, shrunk;
 
     done = change = menu = shrunk = FALSE;
@@ -868,22 +868,24 @@ WORD hndl_msg(void)
         pw = win_find(G.g_rmsg[3]);
         if (!pw)
             break;
-        x = G.g_rmsg[4];
-        y = G.g_rmsg[5];
-        do_xyfix(&x, &y);
-        wind_set(G.g_rmsg[3], WF_CXYWH, x, y, G.g_rmsg[6], G.g_rmsg[7]);
+        gr.g_x = G.g_rmsg[4];
+        gr.g_y = G.g_rmsg[5];
+        gr.g_w = G.g_rmsg[6];
+        gr.g_h = G.g_rmsg[7];
+        do_xyfix(&gr.g_x, &gr.g_y);
+        wind_set_grect(G.g_rmsg[3], WF_CXYWH, &gr);
         if (G.g_rmsg[0] == WM_SIZED)
         {
             cols = pw->w_pncol;
-            wind_get(G.g_rmsg[3], WF_PXYWH, &x, &y, &w, &h);
-            if ((G.g_rmsg[6] <= w) && (G.g_rmsg[7] <= h))
+            wind_get_grect(G.g_rmsg[3], WF_PXYWH, &gr);
+            if ((G.g_rmsg[6] <= gr.g_w) && (G.g_rmsg[7] <= gr.g_h))
                 shrunk = TRUE;
             desk_verify(G.g_rmsg[3], TRUE);   /* build window, update w_pncol */
         }
         else    /* WM_MOVED */
         {
-            wind_get(G.g_rmsg[3],WF_WXYWH, &x, &y, &w, &h);
-            r_set((GRECT *)(&G.g_screen[pw->w_root].ob_x), x, y, w, h);
+            wind_get_grect(G.g_rmsg[3],WF_WXYWH, &gr);
+            r_set((GRECT *)(&G.g_screen[pw->w_root].ob_x), gr.g_x, gr.g_y, gr.g_w, gr.g_h);
         }
         change = TRUE;
         break;
@@ -895,8 +897,8 @@ WORD hndl_msg(void)
      */
     if (shrunk && (pw->w_pncol != cols))
     {
-        wind_get(G.g_rmsg[3], WF_WXYWH, &x, &y, &w, &h);
-        fun_msg(WM_REDRAW, G.g_rmsg[3], x, y, w, h);
+        wind_get_grect(G.g_rmsg[3], WF_WXYWH, &gr);
+        fun_msg(WM_REDRAW, G.g_rmsg[3], gr.g_x, gr.g_y, gr.g_w, gr.g_h);
     }
 
     if (change)

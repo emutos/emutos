@@ -72,7 +72,7 @@ void desk_clear(WORD wh)
     WORD root = -1;
 
     /* get current size */
-    wind_get(wh, WF_WXYWH, &c.g_x, &c.g_y, &c.g_w, &c.g_h);
+    wind_get_grect(wh, WF_WXYWH, &c);
 
     if (wh)         /* not the desktop */
     {
@@ -93,7 +93,7 @@ void desk_clear(WORD wh)
 void desk_verify(WORD wh, WORD changed)
 {
     WNODE *pw;
-    WORD xc, yc, wc, hc;
+    GRECT clip;
 
     if (wh)
     {
@@ -103,8 +103,8 @@ void desk_verify(WORD wh, WORD changed)
         {
             if (changed)
             {
-                wind_get(wh, WF_WXYWH, &xc, &yc, &wc, &hc);
-                win_bldview(pw, xc, yc, wc, hc);
+                wind_get_grect(wh, WF_WXYWH, &clip);
+                win_bldview(pw, clip.g_x, clip.g_y, clip.g_w, clip.g_h);
             }
             G.g_croot = pw->w_root;
         }
@@ -137,12 +137,12 @@ void do_wredraw(WORD w_handle, WORD xc, WORD yc, WORD wc, WORD hc)
 
     graf_mouse(M_OFF, NULL);
 
-    wind_get(w_handle, WF_FIRSTXYWH, &t.g_x, &t.g_y, &t.g_w, &t.g_h);
+    wind_get_grect(w_handle, WF_FIRSTXYWH, &t);
     while(t.g_w && t.g_h)
     {
         if (rc_intersect(&clip_r, &t))
             objc_draw(G.g_screen, root, MAX_DEPTH, t.g_x, t.g_y, t.g_w, t.g_h);
-        wind_get(w_handle, WF_NEXTXYWH, &t.g_x, &t.g_y, &t.g_w, &t.g_h);
+        wind_get_grect(w_handle, WF_NEXTXYWH, &t);
     }
 
     graf_mouse(M_ON, NULL);
@@ -210,13 +210,13 @@ WORD do_wfull(WORD wh)
 {
     GRECT curr, prev, full;
 
-    wind_get(wh, WF_CXYWH, &curr.g_x, &curr.g_y, &curr.g_w, &curr.g_h);
-    wind_get(wh, WF_PXYWH, &prev.g_x, &prev.g_y, &prev.g_w, &prev.g_h);
-    wind_get(wh, WF_FXYWH, &full.g_x, &full.g_y, &full.g_w, &full.g_h);
+    wind_get_grect(wh, WF_CXYWH, &curr);
+    wind_get_grect(wh, WF_PXYWH, &prev);
+    wind_get_grect(wh, WF_FXYWH, &full);
 
     if (rc_equal(&curr, &full)) /* currently full, so shrink */
     {
-        wind_set(wh, WF_CXYWH, prev.g_x, prev.g_y, prev.g_w, prev.g_h);
+        wind_set_grect(wh, WF_CXYWH, &prev);
         graf_shrinkbox(prev.g_x, prev.g_y, prev.g_w, prev.g_h,
                         full.g_x, full.g_y, full.g_w, full.g_h);
         return 0;
@@ -224,7 +224,7 @@ WORD do_wfull(WORD wh)
 
     graf_growbox(curr.g_x, curr.g_y, curr.g_w, curr.g_h,
                 full.g_x, full.g_y, full.g_w, full.g_h);
-    wind_set(wh, WF_CXYWH, full.g_x, full.g_y, full.g_w, full.g_h);
+    wind_set_grect(wh, WF_CXYWH, &full);
 
     return 1;
 }
@@ -668,7 +668,7 @@ void do_fopen(WNODE *pw, WORD curr, BYTE *pathname, WORD redraw)
     BYTE app_path[MAXPATHLEN];
     BYTE *p, tmp;
 
-    wind_get(pw->w_id, WF_WXYWH, &t.g_x, &t.g_y, &t.g_w, &t.g_h);
+    wind_get_grect(pw->w_id, WF_WXYWH, &t);
 
     build_root_path(app_path,pathname[0]);
     if (set_default_path(app_path) < 0L)    /* drive (no longer) valid? */

@@ -864,6 +864,12 @@ WORD wind_get(WORD w_handle, WORD w_field, WORD *pw1, WORD *pw2, WORD *pw3, WORD
 }
 
 
+WORD wind_get_grect(WORD w_handle, WORD w_field, GRECT *gr)
+{
+    return wind_get(w_handle, w_field, &gr->g_x, &gr->g_y, &gr->g_w, &gr->g_h);
+}
+
+
 WORD wind_set(WORD w_handle, WORD w_field, WORD w2, WORD w3, WORD w4, WORD w5)
 {
     WM_HANDLE = w_handle;
@@ -873,6 +879,12 @@ WORD wind_set(WORD w_handle, WORD w_field, WORD w2, WORD w3, WORD w4, WORD w5)
     WM_IW = w4;
     WM_IH = w5;
     return gem_if(WIND_SET);
+}
+
+
+WORD wind_set_grect(WORD w_handle, WORD w_field, const GRECT *gr)
+{
+    return wind_set(w_handle, w_field, gr->g_x, gr->g_y, gr->g_w, gr->g_h);
 }
 
 

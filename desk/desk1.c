@@ -46,7 +46,7 @@ static void zoom_closed(WORD close, WORD w_id, WORD xicon, WORD yicon)
 {
     GRECT rc;
 
-    wind_get(w_id, WF_WXYWH, &rc.g_x, &rc.g_y, &rc.g_w, &rc.g_h);
+    wind_get_grect(w_id, WF_WXYWH, &rc);
 
     if (close)
         wind_close(w_id);
@@ -61,7 +61,7 @@ static void w_setpath(WNODE *pw, BYTE *pathname)
     WORD icx, icy;
     GRECT rc;
 
-    wind_get(pw->w_id,WF_WXYWH, &rc.g_x, &rc.g_y, &rc.g_w, &rc.g_h);
+    wind_get_grect(pw->w_id,WF_WXYWH, &rc);
     icx = rc.g_x + (rc.g_w / 2) - (G.g_wicon / 2);
     icy = rc.g_y + (rc.g_h / 2) - (G.g_hicon / 2);
     zoom_closed(0, pw->w_id, icx, icy);
@@ -73,7 +73,7 @@ void true_closewnd(WNODE *pw)
 {
     GRECT rc;
 
-    wind_get(pw->w_id,WF_WXYWH, &rc.g_x, &rc.g_y, &rc.g_w, &rc.g_h);
+    wind_get_grect(pw->w_id,WF_WXYWH, &rc);
     zoom_closed(1, pw->w_id, G.g_screen[pw->w_obid].ob_x,
                     G.g_screen[pw->w_obid].ob_y);
     pn_close(pw->w_path);

@@ -400,11 +400,11 @@ static void win_blt(WNODE *pw, WORD newcv)
     if (!delcv)
         return;
 
-    wind_get(pw->w_id, WF_WXYWH, &c.g_x, &c.g_y, &c.g_w, &c.g_h);
+    wind_get_grect(pw->w_id, WF_WXYWH, &c);
     win_bldview(pw, c.g_x, c.g_y, c.g_w, c.g_h);
 
     /* see if any part is off the screen */
-    wind_get(pw->w_id, WF_FIRSTXYWH, &t.g_x, &t.g_y, &t.g_w, &t.g_h);
+    wind_get_grect(pw->w_id, WF_FIRSTXYWH, &t);
     if (rc_equal(&c, &t))
     {
         /* blt as much as we can, adjust clip & draw the rest */
@@ -520,15 +520,15 @@ void win_srtall(void)
  */
 void win_bdall(void)
 {
-    WORD  xc, yc, wc, hc;
+    GRECT clip;
     WNODE *pw;
 
     for (pw = G.g_wfirst; pw; pw = pw->w_next)
     {
         if (pw->w_id != 0)
         {
-            wind_get(pw->w_id, WF_WXYWH, &xc, &yc, &wc, &hc);
-            win_bldview(pw, xc, yc, wc, hc);
+            wind_get_grect(pw->w_id, WF_WXYWH, &clip);
+            win_bldview(pw, clip.g_x, clip.g_y, clip.g_w, clip.g_h);
         }
     }
 }
@@ -539,7 +539,7 @@ void win_bdall(void)
  */
 void win_shwall(void)
 {
-    WORD  xc, yc, wc, hc;
+    GRECT clip;
     WORD  wh;
     WNODE *pw;
 
@@ -547,8 +547,8 @@ void win_shwall(void)
     {
         if ((wh=pw->w_id) != 0)     /* yes, assignment! */
         {
-            wind_get(wh, WF_WXYWH, &xc, &yc, &wc, &hc);
-            fun_msg(WM_REDRAW, wh, xc, yc, wc, hc);
+            wind_get_grect(wh, WF_WXYWH, &clip);
+            fun_msg(WM_REDRAW, wh, clip.g_x, clip.g_y, clip.g_w, clip.g_h);
         }
     }
 }
