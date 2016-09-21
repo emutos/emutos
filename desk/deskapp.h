@@ -53,7 +53,7 @@
 #define NUM_GEM_IBLKS (ID_GENERIC_ALT+1)
 
 /*
- * icon numbers available iff CONF_WITH_DESKTOP_ICONS is defined
+ * icon numbers available iff CONF_WITH_WINDOW_ICONS is defined
  */
 #define IA_GENERIC 8            /* the first application icon # */
 #define ID_GENERIC 40           /* the first document icon # */
@@ -65,7 +65,7 @@
 #define SIZE_AFILE  2048        /* size of buffer for EMUDESK.INF file */
 #define SIZE_BUFF   4096        /* size of buffer used to store ANODE text */
 
-#if CONF_WITH_DESKTOP_ICONS
+#if CONF_WITH_WINDOW_ICONS
 #define NUM_IBLKS 72
 #else
 #define NUM_IBLKS 8

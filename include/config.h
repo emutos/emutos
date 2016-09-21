@@ -184,8 +184,8 @@
 # ifndef CONF_WITH_ASSERT
 #  define CONF_WITH_ASSERT 0
 # endif
-# ifndef CONF_WITH_DESKTOP_ICONS
-#  define CONF_WITH_DESKTOP_ICONS 0
+# ifndef CONF_WITH_WINDOW_ICONS
+#  define CONF_WITH_WINDOW_ICONS 0
 # endif
 # ifndef CONF_WITH_PCGEM
 #  define CONF_WITH_PCGEM 0
@@ -923,10 +923,10 @@
 #endif
 
 /*
- * Set CONF_WITH_DESKTOP_ICONS to 1 to include all the desktop icons
+ * Set CONF_WITH_WINDOW_ICONS to 1 to include the icons for files & folders
  */
-#ifndef CONF_WITH_DESKTOP_ICONS
-# define CONF_WITH_DESKTOP_ICONS 1
+#ifndef CONF_WITH_WINDOW_ICONS
+# define CONF_WITH_WINDOW_ICONS 1
 #endif
 
 /*
