@@ -566,10 +566,7 @@ void act_bsclick(WORD wh, OBJECT *tree, WORD root, WORD mx, WORD my, WORD keysta
         }
         else
         {
-            if (state & SELECTED)
-                state &= ~SELECTED;
-            else
-                state |= SELECTED;
+            state ^= SELECTED;
         }
         act_chg(wh, tree, root, obj, pc, SELECTED,
                 state & SELECTED, TRUE, TRUE);
