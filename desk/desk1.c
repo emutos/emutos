@@ -309,7 +309,7 @@ static void fun_desk2win(WORD wh, WORD dobj, WORD keystate)
 
     an_dest = i_find(wh, dobj, &fn_dest, NULL);
     sobj = 0;
-    while ((sobj = win_isel(G.g_screen, 1, sobj)))
+    while ((sobj = win_isel(G.g_screen, DROOT, sobj)))
     {
         an_src = i_find(0, sobj, NULL, NULL);
         if (an_src && (an_src->a_type == AT_ISTRSH))
@@ -335,7 +335,7 @@ static void fun_desk2desk(WORD dobj, WORD keystate)
         return;
 
     sobj  = 0;
-    while ((sobj = win_isel(G.g_screen, 1, sobj)))
+    while ((sobj = win_isel(G.g_screen, DROOT, sobj)))
     {
         source = i_find(0, sobj, NULL, NULL);
         if (!source || (source == target))
