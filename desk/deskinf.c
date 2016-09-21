@@ -40,6 +40,7 @@
 #include "deskglob.h"
 #include "deskdir.h"
 #include "deskrsrc.h"
+#include "desksupp.h"
 #include "deskinf.h"
 #include "../bios/country.h"
 #include "kprint.h"
@@ -613,7 +614,7 @@ static WORD inf_which(OBJECT *tree, WORD baseobj, WORD numobj)
  */
 WORD inf_pref(void)
 {
-    OBJECT *tree, *obj;
+    OBJECT *tree;
     WORD oldtime, olddate;
     WORD sndefpref;
     WORD rbld;
@@ -622,10 +623,7 @@ WORD inf_pref(void)
     rbld = FALSE;
 
     /* first, deselect all objects */
-    obj = tree;
-    do {
-        obj->ob_state &= ~SELECTED;
-    } while(!(obj++->ob_flags&LASTOB));
+    deselect_all(tree);
 
     /* select buttons corresponding to current state */
     if (G.g_cdelepref)

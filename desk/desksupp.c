@@ -63,6 +63,18 @@ static WORD pagesize;
 
 
 /*
+ *  Deselect all objects in specified tree
+ */
+void deselect_all(OBJECT *tree)
+{
+    OBJECT *obj = tree;
+    do {
+        obj->ob_state &= ~SELECTED;
+    } while(!(obj++->ob_flags&LASTOB));
+}
+
+
+/*
  *  Clear out the selections for this particular window
  */
 void desk_clear(WORD wh)

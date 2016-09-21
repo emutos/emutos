@@ -301,7 +301,7 @@ WORD ins_app(WORD curr)
     ANODE *pa;
     FNODE *pf;
     WNODE *pw;
-    OBJECT *tree, *obj;
+    OBJECT *tree;
     WORD change = 0;    /* -ve means cancel, 0 means no change, +ve means change */
     WORD isapp, field, exitobj, funkey;
     BOOL installed;
@@ -338,10 +338,8 @@ WORD ins_app(WORD curr)
     /*
      * deselect all objects
      */
-    obj = tree = (OBJECT *)G.a_trees[ADINSAPP];
-    do {
-        obj->ob_state &= ~SELECTED;
-    } while(!(obj++->ob_flags&LASTOB));
+    tree = (OBJECT *)G.a_trees[ADINSAPP];
+    deselect_all(tree);
 
     /*
      * fill in dialog
