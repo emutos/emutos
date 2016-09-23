@@ -99,15 +99,19 @@ LONG bconout3(WORD dev, WORD c)
 
 /*==== MIDI xbios function =========================================*/
 
-/* cnt = number of bytes to send less one */
+/* cnt = number of bytes to send less one
+ *
+ * Note: this effectively treats the cnt argument as unsigned, just like
+ * Atari TOS does.
+ */
 void midiws(WORD cnt, LONG ptr)
 {
     UBYTE *p = (UBYTE *)ptr;
 
-    while(cnt-- >= 0)
+    do
     {
         bconout3(3, *p++);
-    }
+    } while(cnt--);
 }
 
 

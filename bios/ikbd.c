@@ -747,14 +747,20 @@ LONG bconout4(WORD dev, WORD c)
 }
 
 /* cnt = number of bytes to send less one
+ *
+ * Note: this effectively treats the cnt argument as unsigned, just like
+ * Atari TOS does.
+ *
  * Workaround: New Beat's 4kB Falcon demo "Blue" calls Ikbdws() with a
  * ridiculously small stack (sp == 0x22), so keep stack usage as small as
  * possible here.
  */
 void ikbdws(WORD cnt, const UBYTE *ptr)
 {
-    while (cnt-- >= 0)
+    do
+    {
         ikbd_writeb(*ptr++);
+    } while (cnt--);
 }
 
 /* send a byte to the IKBD - for general use */
