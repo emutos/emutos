@@ -288,7 +288,7 @@ static LONG xbios_a(UBYTE *buf, WORD *skew, WORD devno, WORD spt,
 static void xbios_c(WORD cnt, LONG ptr)
 {
     kprintf("XBIOS: Midiws(0x%04x, 0x%08lx)\n", cnt, ptr);
-    midiws(cnt, ptr);
+    midiws(cnt, (UBYTE *)ptr);
 }
 #endif
 

@@ -104,13 +104,11 @@ LONG bconout3(WORD dev, WORD c)
  * Note: this effectively treats the cnt argument as unsigned, just like
  * Atari TOS does.
  */
-void midiws(WORD cnt, LONG ptr)
+void midiws(WORD cnt, const UBYTE *ptr)
 {
-    UBYTE *p = (UBYTE *)ptr;
-
     do
     {
-        bconout3(3, *p++);
+        bconout3(3, *ptr++);
     } while(cnt--);
 }
 

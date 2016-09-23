@@ -25,6 +25,6 @@ extern LONG bcostat3(void);
 extern LONG bconout3(WORD dev, WORD c);
 
 /* some xbios functions */
-extern void midiws(WORD cnt, LONG ptr);
+extern void midiws(WORD cnt, const UBYTE *ptr);
 
 #endif /* MIDI_H */
