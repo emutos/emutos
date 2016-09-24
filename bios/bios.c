@@ -604,6 +604,7 @@ BOOL can_shutdown(void)
 
 void biosmain(void)
 {
+    BOOL show_initinfo;         /* TRUE if welcome screen must be displayed */
     BYTE *p;
 
     bios_init();                /* Initialize the BIOS */
@@ -626,15 +627,16 @@ void biosmain(void)
     if (first_boot)
         bootdev = blkdev_avail(DEFAULT_BOOTDEV) ? DEFAULT_BOOTDEV : FLOPPY_BOOTDEV;
 
-#if INITINFO_DURATION > 0
-#if ALWAYS_SHOW_INITINFO
-    /* No condition */ {
+#if INITINFO_DURATION == 0
+    show_initinfo = FALSE;
+#elif ALWAYS_SHOW_INITINFO
+    show_initinfo = TRUE;
 #else
-    if (first_boot) {
+    show_initinfo = first_boot;
 #endif
-        bootdev = initinfo();   /* show initial config information */
-    }
-#endif
+
+    if (show_initinfo)
+        bootdev = initinfo();   /* show the welcome screen */
 
     KDEBUG(("bootdev = %d\n", bootdev));
 
