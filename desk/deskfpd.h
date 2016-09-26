@@ -48,30 +48,30 @@
 typedef struct _filenode FNODE;
 struct _filenode
 {
-        FNODE           *f_next;
-        BYTE            f_junk;         /* to align on even boundaries  */
-        BYTE            f_attr;             /* NOTE: f_attr thru f_name[]  */
-        UWORD           f_time;             /*  MUST be the same size & in */
-        UWORD           f_date;             /*   the same sequence as the  */
-        LONG            f_size;             /*    corresponding items in   */
-        BYTE            f_name[LEN_ZFNAME]; /*     the DTA structure!      */
-        WORD            f_seq;          /* sequence within directory */
-        WORD            f_obid;
-        ANODE           *f_pa;
-        WORD            f_isap;
+    FNODE *f_next;
+    BYTE  f_junk;           /* to align on even boundaries  */
+    BYTE  f_attr;               /* NOTE: f_attr thru f_name[]  */
+    UWORD f_time;               /*  MUST be the same size & in */
+    UWORD f_date;               /*   the same sequence as the  */
+    LONG  f_size;               /*    corresponding items in   */
+    BYTE  f_name[LEN_ZFNAME];   /*     the DTA structure!      */
+    WORD  f_seq;            /* sequence within directory */
+    WORD  f_obid;           /* index into G.g_screen[] for this object */
+    ANODE *f_pa;            /* ANODE to get icon# from */
+    WORD  f_isap;           /* if TRUE, use a_aicon in ANODE, else use a_dicon */
 };
 
 
 typedef struct _pathnode PNODE;
 struct _pathnode
 {
-        PNODE           *p_next;
-        WORD            p_attr;     /* attribs used in Fsfirst() */
-        BYTE            p_spec[LEN_ZPATH];
-        FNODE           *p_fbase;   /* start of malloc'd fnodes */
-        FNODE           *p_flist;   /* linked list of fnodes */
-        WORD            p_count;    /* number of items (fnodes) */
-        LONG            p_size;     /* total size of items */
+    PNODE *p_next;
+    WORD  p_attr;           /* attribs used in Fsfirst() */
+    BYTE  p_spec[LEN_ZPATH];/* dir path containing the FNODEs below */
+    FNODE *p_fbase;         /* start of malloc'd fnodes */
+    FNODE *p_flist;         /* linked list of fnodes */
+    WORD  p_count;          /* number of items (fnodes) */
+    LONG  p_size;           /* total size of items */
 };
 
 
