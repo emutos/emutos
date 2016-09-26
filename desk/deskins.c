@@ -54,6 +54,12 @@
 
 
 /*
+ * used by insert_icon()
+ */
+static ICONBLK ib;
+
+
+/*
  *  Routine to tell if an icon has an associated document type
  */
 WORD is_installed(ANODE *pa)
@@ -472,6 +478,212 @@ WORD ins_app(WORD curr)
 }
 
 
+ /*
+ * insert icon into dialog
+ */
+static void insert_icon(OBJECT *tree, WORD obj, WORD nicon)
+{
+    OBJECT *objptr = tree + obj;
+    ICONBLK *ibptr = &ib;
+
+    memcpy(ibptr, &G.g_iblist[nicon], sizeof(ICONBLK));
+    ibptr->ib_ptext = "";
+    objptr->ob_type = G_ICON;
+    objptr->ob_spec = (LONG)ibptr;
+}
+
+
+/*
+ * install desktop icon
+ *
+ * returns:
+ *  >0  icon has been changed
+ *  0   icon not changed (user said skip)
+ *  <0  icon not changed (user said cancel)
+ */
+static WORD install_desktop_icon(ANODE *pa)
+{
+    OBJECT *tree;
+    BOOL icon_exists;
+    WORD exitobj, x, y;
+    WORD curr_icon, new_icon;
+    WORD change = 0;
+    BYTE curr_label[LEN_ZFNAME], new_label[LEN_ZFNAME];
+
+    /* find first available spot on desktop (before we alloc a new one) */
+    ins_posdisk(0, 0, &x, &y);
+
+    icon_exists = pa ? TRUE : FALSE;
+
+    /*
+     * deselect all objects & hide printer button
+     */
+    tree = (OBJECT *)G.a_trees[ADINSDSK];
+    deselect_all(tree);
+    tree[ID_PRINT].ob_flags |= HIDETREE;
+
+    /*
+     * fill in dialog
+     */
+    if (!icon_exists)
+    {
+        pa = app_alloc(TRUE);
+        if (!pa)
+        {
+            fun_alert(1, STAPGONE); /* can't install any more icons */
+            return -1;              /* don't try any more */
+        }
+        pa->a_flags = AF_ISDESK;
+        pa->a_funkey = 0;
+        pa->a_letter = '\0';
+        pa->a_type = AT_ISDISK;
+        pa->a_obid = 0;             /* filled in by app_blddesk() */
+        scan_str("", &pa->a_pappl);
+        scan_str("", &pa->a_pdata);
+        scan_str("", &pa->a_pargs);
+        pa->a_aicon = IG_HARD;
+        pa->a_dicon = NIL;
+        snap_disk(x,y,&pa->a_xspot,&pa->a_yspot);
+    }
+
+    switch(pa->a_type)
+    {
+    case AT_ISFILE:
+    case AT_ISFOLD:
+        /* TODO, as per TOS2 (when we support files & folders on the desktop):
+         *  disable ID_ID
+         *  disable all the buttons
+         */
+        break;
+    case AT_ISDISK:
+        curr_label[0] = pa->a_letter;
+        curr_label[1] = '\0';
+        inf_sset((LONG)tree, ID_ID, curr_label);
+        /* drop thru */
+    case AT_ISTRSH:
+        strcpy(curr_label, pa->a_pappl);
+        inf_sset((LONG)tree, ID_LABEL, pa->a_pappl);
+        if (pa->a_type == AT_ISDISK)
+            tree[ID_DRIVE].ob_state |= SELECTED;
+        else
+            tree[ID_TRASH].ob_state |= SELECTED;
+    }
+
+    curr_icon = pa->a_aicon;
+    if (curr_icon < 0)
+        curr_icon = 0;
+    else if (curr_icon > NUM_GEM_IBLKS-1)
+        curr_icon = NUM_GEM_IBLKS - 1;
+    new_icon = curr_icon;
+
+    insert_icon(tree, ID_ICON, curr_icon);
+
+    show_hide(FMD_START, (LONG)tree);
+    while(1)
+    {
+        exitobj = form_do((LONG)tree, ID_ID) & 0x7fff;
+
+        switch(exitobj)
+        {
+        case ID_UP:             /* handle button up */
+            new_icon = (curr_icon > 0) ? curr_icon-1 : 0;
+            break;
+        case ID_DOWN:           /* handle button down */
+            new_icon = (curr_icon < NUM_GEM_IBLKS-1) ? curr_icon+1 : NUM_GEM_IBLKS-1;
+            break;
+        case ID_OK:             /* (re)install an icon */
+            if (inf_gindex((LONG)tree, ID_DRIVE, 3) == 0)   /* only disks have a letter */
+            {
+                inf_sget((LONG)tree, ID_ID, new_label);
+                pa->a_letter = new_label[0];
+            }
+            else
+                pa->a_letter = '\0';
+            switch(inf_gindex((LONG)tree, ID_DRIVE,3))
+            {
+            case 0:
+                pa->a_type = AT_ISDISK;
+                break;
+            case 1:
+                pa->a_type = AT_ISTRSH;
+                break;
+            }
+            inf_sget((LONG)tree, ID_LABEL, new_label);
+            if (strcmp(curr_label, new_label))      /* if label changed, */
+                scan_str(new_label, &pa->a_pappl);  /* update it         */
+            pa->a_aicon = curr_icon;
+            change = 1;
+            break;
+        case ID_CNCL:           /* cancel further installs */
+            change = -1;
+            /* drop thru */
+        case ID_SKIP:           /* skip this application */
+            if (!icon_exists)       /* we allocated one */
+                app_free(pa);       /* so we need to free it */
+            break;
+        }
+        if ((exitobj != ID_UP) && (exitobj != ID_DOWN))
+            break;
+        tree[exitobj].ob_state &= ~SELECTED;
+
+        if (new_icon != curr_icon)
+        {
+            curr_icon = new_icon;
+            insert_icon(tree, ID_ICON, curr_icon);
+        }
+        draw_fld((LONG)tree, ID_IBOX);
+    }
+    show_hide(FMD_FINISH, (LONG)tree);
+
+    return change;
+}
+
+
+/*
+ * install icon on desktop or (in future) window
+ *
+ * returns:
+ *  >0      need to rebuild desktop
+ *  0       no need to rebuild display
+ *  <0      need to rebuild windows (future update)
+ */
+WORD ins_icon(WORD sobj)
+{
+    WORD rebuild = 0;
+    WORD rc;
+    ANODE *pa;
+
+    if (!sobj)              /* no icon selected */
+    {
+        if (install_desktop_icon(NULL) > 0)
+            return 1;
+        return 0;
+    }
+
+    /*
+     * handle one or more desktop icons
+     */
+    if ( (pa = i_find(0, sobj, NULL, NULL)) )
+    {
+        for ( ; sobj; sobj = win_isel(G.g_screen, DROOT, sobj))
+        {
+            pa = i_find(0, sobj, NULL, NULL);
+            if (pa)
+            {
+                rc = install_desktop_icon(pa);
+                if (rc > 0)
+                    rebuild++;
+                if (rc < 0)
+                    break;
+            }
+        }
+        return rebuild;
+    }
+
+    return rebuild;
+}
+
+
 /*
  * remove desktop icons
  */
@@ -485,7 +697,7 @@ WORD rmv_icon(WORD sobj)
         pa = i_find(0,sobj,NULL,NULL);
         if (!pa)
             continue;
-        if (pa->a_type == AT_ISDISK)
+        if ((pa->a_type == AT_ISDISK) || (pa->a_type == AT_ISTRSH))
         {
             app_free(pa);
             icons_removed++;

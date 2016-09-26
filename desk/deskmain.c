@@ -120,7 +120,7 @@ static const BYTE     ILL_NOSEL[] = {OPENITEM,SHOWITEM,FORMITEM,DELTITEM,
                                 IAPPITEM,RICNITEM,0};
 static const BYTE     ILL_YSEL[] = {OPENITEM, IDSKITEM, FORMITEM, SHOWITEM, 0};
 static const BYTE     ILL_TRASH[] = {OPENITEM,FORMITEM,DELTITEM,IDSKITEM,
-                                IAPPITEM,RICNITEM,0};
+                                IAPPITEM,0};
 static const BYTE     ILL_NOTOP[] = {NFOLITEM,CLOSITEM,CLSWITEM,0};
 static const BYTE     ILL_DESKTOP[] = {NFOLITEM,CLOSITEM,CLSWITEM,ICONITEM,
                                 NAMEITEM,DATEITEM,SIZEITEM,TYPEITEM,0};
@@ -497,6 +497,14 @@ static WORD do_optnmenu(WORD item)
         }
         if (rebld)
             desk_all(FALSE);
+        break;
+    case IICNITEM:
+        rebld = ins_icon(curr);
+        if (rebld > 0)
+        {
+            app_blddesk();
+            do_wredraw(0, G.g_xdesk, G.g_ydesk, G.g_wdesk, G.g_hdesk);
+        }
         break;
     case RICNITEM:
         if (curr)

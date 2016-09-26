@@ -175,6 +175,7 @@
  * v4.7     roger burrows, september/2016
  *          . discontinue generation of freestring table for ICON_RSC
  *          . add "Skip" to list of desktop shared strings
+ *          . update frstr_cond for the desktop resource
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -470,7 +471,7 @@ typedef struct {
 /*
  *  conditional wrapping control
  */
-LOCAL const CONDITIONAL frstr_cond = { "?", "#error \"Code generation error\"" };  /* no match, error if it does ... */
+LOCAL const CONDITIONAL frstr_cond = { "STICNTYP", "#ifndef TARGET_192" };
 LOCAL const CONDITIONAL other_cond = { "ADTTREZ", "#ifndef TARGET_192" };
 
 /*
