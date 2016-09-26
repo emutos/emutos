@@ -558,7 +558,7 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname)
 
         if (pa->a_flags & AF_ISFULL)
         {
-            strcat(p,pathname); /* build full path string */
+            strcpy(p,pathname); /* build full path string */
             p = filename_start(p);
         }
         strcpy(p,pname);        /* the filename always goes on the end */
