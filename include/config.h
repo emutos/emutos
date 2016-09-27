@@ -71,6 +71,9 @@
 # ifndef SDCLK_FREQUENCY_MHZ
 #  define SDCLK_FREQUENCY_MHZ 132UL
 # endif
+# ifndef CONF_WITH_TT_MMU
+#  define CONF_WITH_TT_MMU 0
+# endif
 # ifndef CONF_WITH_TT_MFP
 #  define CONF_WITH_TT_MFP 0
 # endif
