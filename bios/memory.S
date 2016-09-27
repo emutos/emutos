@@ -615,6 +615,7 @@ stram_detected:
         blt     setramtop               // no -> skip the whole FastRAM stuff
 #endif
 
+#if CONF_WITH_TT_MMU
         // We must set the FastRAM refresh rate before we use it.  The
         // rate is set by writing a "don't care" value to an address in
         // the range 0xffd00000-0xffd000ff; the low-order byte of the
@@ -626,6 +627,7 @@ stram_detected:
         move.l  #refresh_done,0x08      // bus error vector
         move.w  #0x0000,0xffd000e0.l
 refresh_done:
+#endif
 
         /* Can we access FastRAM region? */
         pea     0x1000400
