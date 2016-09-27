@@ -18,16 +18,14 @@ typedef volatile unsigned char vuint8;
 typedef volatile unsigned short vuint16;
 typedef volatile unsigned long vuint32;
 
-#if defined (MACHINE_FIREBEE) || CONF_WITH_BAS_MEMORY_MAP
-/* Either FireBee or M548X with BaS_gcc */
+#if CONF_WITH_BAS_MEMORY_MAP
 # define __MBAR ((vuint8*)0xff000000)
 # define __RAMBAR0 ((vuint8*)0xff100000)
 # define __VBR __RAMBAR0
-#elif defined(MACHINE_M548X)
+#else
+/* dBUG memory map */
 # define __MBAR ((vuint8*)0x10000000)
 # define __VBR ((vuint8*)0x00000000)
-#else
-# error Unknown ColdFire Machine
 #endif
 
 #define EXCEPTION_VECTOR(n) (*(void* volatile *)(__VBR + (n)*4))

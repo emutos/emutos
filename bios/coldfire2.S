@@ -16,17 +16,15 @@
 
 #include "asmdefs.h"
 
-#if defined(MACHINE_FIREBEE) || CONF_WITH_BAS_MEMORY_MAP
-/* Either FireBee or M548X with BaS_gcc */
+#if CONF_WITH_BAS_MEMORY_MAP
 # define __MBAR    0xff000000
 # define __RAMBAR0 0xff100000
 # define __RAMBAR1 0xff101000
-#elif defined(MACHINE_M548X)
+#else
+/* dBUG memory map */
 # define __MBAR    0x10000000
 # define __RAMBAR0 0x20000000
 # define __RAMBAR1 0x20001000
-#else
-# error Unknown ColdFire Machine
 #endif
 
         .globl  coldfire_startup
