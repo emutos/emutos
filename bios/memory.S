@@ -592,14 +592,17 @@ stram_detected:
         move.l  #0x1357BD13,d1          // _ramvalid magic
 
 #if !CONF_WITH_FASTRAM
+        // Fake FastRAM detection for no FastRAM
         sub.l   a3, a3                  // _ramtop = 0
-#elif CONF_FASTRAM_SIZE
-        // The size of the FastRAM is hardcoded: no real detection
-        move.l  #0x1000000+CONF_FASTRAM_SIZE,a3    // fixed ramtop
-#else
+        // Fall into fastram_detected
+#else // CONF_WITH_FASTRAM
         cmp.l   d1,d3                   // old _ramvalid valid ?
         beq     fastram_detected        // yes: skip detection
 
+#if CONF_FASTRAM_SIZE
+        // FastRAM detection for hardcoded FastRAM size
+        move.l  #0x1000000+CONF_FASTRAM_SIZE,a3    // fixed ramtop
+#else
         /* clear MB counter */
         moveq   #0, d6
 
@@ -671,7 +674,9 @@ setramtop:
         /* no FastRAM found */
         sub.l   a3, a3                  // _ramtop = 0
 alter:
-#endif /* CONF_FASTRAM_SIZE */
+#endif // !CONF_FASTRAM_SIZE
+
+#endif // CONF_WITH_FASTRAM
 
 /*
  * At this point:
