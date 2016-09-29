@@ -92,15 +92,6 @@ meminit:
 //   d3.l: old _ramvalid (#if CONF_WITH_FASTRAM)
 //   a3.l: old _ramtop (#if CONF_WITH_FASTRAM)
 memchk:
-#if CONF_STRAM_SIZE
-        // memchk for hardcoded ST-RAM size
-        moveq   #0, d6                  // fake memctrl
-        move.l  #CONF_STRAM_SIZE, d5    // _phystop
-#if CONF_WITH_FASTRAM
-        moveq   #0, d3                  // _ramvalid
-#endif
-
-#else // CONF_STRAM_SIZE
         // We must determine the ST-RAM settings in some way.
         // If EmuTOS lives in RAM, always assume that settings of previous OS
         // are correct, and never call memconf.
@@ -127,16 +118,15 @@ memchk:
 #endif // __mcoldfire__
 #endif // !EMUTOS_LIVES_IN_RAM
 
-        // Load old RAM settings into registers.
+        // The old RAM settings are valid, load them into registers.
         // They will stay in safe place in case we clear the sysvars.
         move.b  memctrl, d6
         move.l  _phystop, d5
+
 #if CONF_WITH_FASTRAM
         move.l  _ramvalid, d3
         move.l  _ramtop, a3
 #endif
-
-#endif // CONF_STRAM_SIZE
 
 // ===========================================================================
 // ==== The ST-RAM configuration is valid ====================================
@@ -191,7 +181,12 @@ memory_reused:
 //   d3.l: old _ramvalid (#if CONF_WITH_FASTRAM)
 //   a3.l: old _ramtop (#if CONF_WITH_FASTRAM)
 memconf:
-#ifdef MACHINE_AMIGA
+#if CONF_STRAM_SIZE
+        // memconf for hardcoded ST-RAM size
+        moveq   #0, d6                  // fake memctrl
+        move.l  #CONF_STRAM_SIZE, d5    // _phystop
+        // Fall into memconf_done
+#elif defined(MACHINE_AMIGA)
         lea     amiga_memconf_ret(pc),a6
         jmp     amiga_memconf
 amiga_memconf_ret:
