@@ -144,10 +144,7 @@ static WORD install_drive(WORD drive)
 
     pa = app_alloc(FALSE);
     if (!pa)
-    {
-        fun_alert(1, STAPGONE);
         return -1;
-    }
 
     pa->a_flags = AF_ISCRYS | AF_ISDESK;
     pa->a_funkey = 0;
@@ -396,7 +393,6 @@ WORD ins_app(WORD curr)
                 pa = app_alloc(TRUE);
             if (!pa)
             {
-                fun_alert(1, STAPGONE);
                 change = -1;        /* don't try any more */
                 break;
             }
@@ -529,10 +525,7 @@ static WORD install_desktop_icon(ANODE *pa)
     {
         pa = app_alloc(TRUE);
         if (!pa)
-        {
-            fun_alert(1, STAPGONE); /* can't install any more icons */
             return -1;              /* don't try any more */
-        }
         pa->a_flags = AF_ISDESK;
         pa->a_funkey = 0;
         pa->a_letter = '\0';

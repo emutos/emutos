@@ -113,6 +113,8 @@ static const char *desk_inf_data2 =
 
 /*
  *  Allocate an application object
+ *
+ *  Issues an alert if there are none available
  */
 ANODE *app_alloc(WORD tohead)
 {
@@ -136,6 +138,8 @@ ANODE *app_alloc(WORD tohead)
             pa->a_next = (ANODE *) NULL;
         }
     }
+    else
+        fun_alert(1, STAPGONE);
 
     return pa;
 }
@@ -540,6 +544,8 @@ void app_start(void)
         case 'P':                       /* Parm (DOS w/ parms)  */
         case 'D':                       /* Directory            */
             pa = app_alloc(TRUE);
+            if (!pa)                    /* paranoia */
+                return;
             pcurr = app_parse(pcurr, pa);
             if ((pa->a_type == AT_ISFILE) && pauto)
             {                           /* autorun exists & not yet merged */
