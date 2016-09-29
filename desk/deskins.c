@@ -156,7 +156,7 @@ static WORD install_drive(WORD drive)
     pa->a_obid = 0;     /* fixed up when deskmain() calls app_blddesk() */
     sprintf(G.g_1text,"%s %c",ini_str(STDISK),pa->a_letter);
     scan_str(G.g_1text, &pa->a_pappl);  /* set up disk name */
-    scan_str("", &pa->a_pdata);         /* points to empty string */
+    pa->a_pdata = "";                   /* point to empty string */
     pa->a_aicon = (drive > 1) ? IG_HARD : IG_FLOPPY;
     pa->a_dicon = NIL;
     snap_disk(x,y,&pa->a_xspot,&pa->a_yspot);
@@ -538,9 +538,9 @@ static WORD install_desktop_icon(ANODE *pa)
         pa->a_letter = '\0';
         pa->a_type = AT_ISDISK;
         pa->a_obid = 0;             /* filled in by app_blddesk() */
-        scan_str("", &pa->a_pappl);
-        scan_str("", &pa->a_pdata);
-        scan_str("", &pa->a_pargs);
+        pa->a_pappl = "";
+        pa->a_pdata = "";
+        pa->a_pargs = "";
         pa->a_aicon = IG_HARD;
         pa->a_dicon = NIL;
         snap_disk(x,y,&pa->a_xspot,&pa->a_yspot);
