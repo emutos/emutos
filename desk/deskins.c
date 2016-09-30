@@ -668,7 +668,10 @@ static void set_icon(ANODE *pa, WORD icon)
     pa->a_dicon = icon;
 
     if (is_executable(pa->a_pdata))
+    {
+        pa->a_flags |= AF_ISEXEC;
         pa->a_aicon = icon;     /* this marks it as an executable file */
+    }
 }
 
 
@@ -683,7 +686,7 @@ static ANODE *allocate_window_anode(WORD type)
     if (!pa)
         return NULL;
 
-    pa->a_flags = 0;
+    pa->a_flags = AF_WINDOW;
     pa->a_funkey = 0;
     pa->a_letter = '\0';
     pa->a_type = type;

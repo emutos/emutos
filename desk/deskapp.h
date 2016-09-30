@@ -23,6 +23,7 @@
 /*
  * bit masks for the a_flags field in the ANODE
  */
+                            /* flags applicable to installed applications */
 #define AF_ISCRYS 0x0001        /* is crystal (i.e. GEM) application */
 /* #define AF_ISGRAF 0x0002        no longer used */
 #define AF_ISDESK 0x0004        /* requires desktop icon */
@@ -30,6 +31,9 @@
 #define AF_APPDIR 0x0010        /* use application dir (else top window) */
 #define AF_ISFULL 0x0020        /* use full path (else filename only) */
 #define AF_AUTORUN 0x0080       /* this program is to be autorun */
+                            /* flags applicable to window icons */
+#define AF_ISEXEC 0x4000        /* this is an executable file */
+#define AF_WINDOW 0x8000        /* this is an anode for a window icon */
 
 /*
  * values for the a_type field in the ANODE
@@ -82,7 +86,7 @@ typedef struct _applstr ANODE;
 struct _applstr
 {
     ANODE *a_next;
-    WORD a_flags;               /* see above for usage */
+    UWORD a_flags;              /* see above for usage */
     BYTE a_funkey;              /* associated function key: 0=none, else 0x01-0x14 */
     BYTE a_letter;              /* letter for icon */
     WORD a_type;                /* icon type (see above) */

@@ -232,6 +232,15 @@ static BYTE *app_parse(BYTE *pcurr, ANODE *pa)
     case 'D':                             /* Directory (Folder)   */
         pa->a_type = AT_ISFOLD;
         break;
+#if CONF_WITH_WINDOW_ICONS
+    case 'I':                             /* Executable file      */
+        pa->a_flags = AF_ISEXEC;
+        /* drop thru */
+    case 'N':                             /* Non-executable file  */
+        pa->a_type = AT_ISFILE;
+        pa->a_flags |= AF_WINDOW;
+        break;
+#endif
     }
     pcurr++;
 
@@ -542,6 +551,10 @@ void app_start(void)
         case 'F':                       /* File (DOS w/o parms) */
         case 'P':                       /* Parm (DOS w/ parms)  */
         case 'D':                       /* Directory            */
+#if CONF_WITH_WINDOW_ICONS
+        case 'I':                       /* Executable file icon     */
+        case 'N':                       /* Non-executable file icon */
+#endif
             pa = app_alloc(TRUE);
             if (!pa)                    /* paranoia */
                 return;
@@ -811,6 +824,13 @@ void app_save(WORD todisk)
             type = 'M';
             break;
         case AT_ISFILE:
+#if CONF_WITH_WINDOW_ICONS
+            if (pa->a_flags & AF_WINDOW)
+            {
+                type = (pa->a_flags & AF_ISEXEC) ? 'I' : 'N';
+                break;
+            }
+#endif
             if (pa->a_flags & AF_ISCRYS)
                 type = (pa->a_flags & AF_ISPARM) ? 'Y' : 'G';
             else
