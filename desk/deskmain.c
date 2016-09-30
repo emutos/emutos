@@ -505,6 +505,13 @@ static WORD do_optnmenu(WORD item)
             app_blddesk();
             do_wredraw(0, G.g_xdesk, G.g_ydesk, G.g_wdesk, G.g_hdesk);
         }
+#if CONF_WITH_WINDOW_ICONS
+        else if (rebld < 0)
+        {
+            win_bdall();
+            win_shwall();
+        }
+#endif
         break;
     case RICNITEM:
         if (curr)

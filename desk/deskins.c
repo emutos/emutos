@@ -30,6 +30,7 @@
 #include "obdefs.h"
 #include "gsxdefs.h"
 #include "gemdos.h"
+#include "dos.h"
 
 #include "deskapp.h"
 #include "deskfpd.h"
@@ -632,24 +633,296 @@ static WORD install_desktop_icon(ANODE *pa)
 }
 
 
+#if CONF_WITH_WINDOW_ICONS
+
+#define NUM_EXTS    5
+static const BYTE *exec_ext[NUM_EXTS] = { "TOS", "TTP", "PRG", "APP", "GTP" };
+
 /*
- * install icon on desktop or (in future) window
+ * test if file is executable, based on extension
+ */
+static BOOL is_executable(BYTE *filename)
+{
+    WORD i, n;
+
+    n = strlen(filename);
+    if (n < 5)          /* must be at least A.XYZ */
+        return FALSE;
+
+    filename += n - 3;  /* point to start of extension */
+
+    for (i = 0; i < NUM_EXTS; i++)
+        if (strcmp(filename,exec_ext[i]) == 0)
+            return TRUE;
+
+    return FALSE;
+}
+
+
+/*
+ * set icon numbers into ANODE
+ */
+static void set_icon(ANODE *pa, WORD icon)
+{
+    pa->a_aicon = NIL;
+    pa->a_dicon = icon;
+
+    if (is_executable(pa->a_pdata))
+        pa->a_aicon = icon;     /* this marks it as an executable file */
+}
+
+
+/*
+ * allocate ANODE for window icon
+ */
+static ANODE *allocate_window_anode(WORD type)
+{
+    ANODE *pa;
+
+    pa = app_alloc(TRUE);
+    if (!pa)
+        return NULL;
+
+    pa->a_flags = 0;
+    pa->a_funkey = 0;
+    pa->a_letter = '\0';
+    pa->a_type = type;
+    pa->a_obid = 0;
+    pa->a_pappl = "";
+    pa->a_pdata = "";
+    pa->a_pargs = "";
+    pa->a_aicon = NIL;
+    pa->a_dicon = (type==AT_ISFOLD) ? IG_FOLDER : ID_GENERIC_ALT;
+    pa->a_xspot = 0;
+    pa->a_yspot = 0;
+
+    return pa;
+}
+
+
+/*
+ * install window icon
+ *
+ * returns:
+ *  >0  icon has been changed
+ *  0   icon not changed (user said skip)
+ *  <0  icon not changed (user said cancel)
+ */
+
+//FIXME: add I/N support to app_save(), app_start()
+
+static WORD install_window_icon(FNODE *pf)
+{
+    BOOL identical;
+    WORD edit_start, exitobj, dummy, type;
+    WORD new_icon, curr_icon;
+    WORD change = 0;
+    OBJECT *tree;
+    ANODE *pa;
+    BYTE curr_name[LEN_ZFNAME], new_name[LEN_ZFNAME], temp[LEN_ZFNAME];
+
+    /*
+     * deselect all objects
+     */
+    tree = (OBJECT *)G.a_trees[ADINSWIN];
+    deselect_all(tree);
+
+    /*
+     * initialise pointer to ANODE
+     */
+    pa = pf ? pf->f_pa : NULL;
+#if 0
+    if (pf)
+    {
+        pa = pf->f_pa;
+        generic = is_generic(pa);
+    }
+    if (generic)
+        pa = NULL;
+    if (!pa)
+    {
+        pa = app_alloc(TRUE);
+        if (!pa)
+            return -1;              /* don't try any more */
+        allocated = TRUE;
+        pa->a_flags = 0;
+        pa->a_funkey = 0;
+        pa->a_letter = '\0';
+        if (pf)
+            pa->a_type = (pf->f_attr&F_SUBDIR) ? AT_ISFOLD : AT_ISFILE;
+        else pa->a_type = AT_ISFILE;
+        pa->a_obid = 0;
+        pa->a_pappl = "";
+        pa->a_pdata = "";
+        pa->a_pargs = "";
+        pa->a_aicon = NIL;
+        pa->a_dicon = (pa->a_type==AT_ISFOLD) ? IG_FOLDER : ID_GENERIC_ALT;
+        pa->a_xspot = 0;
+        pa->a_yspot = 0;
+    }
+#endif
+
+    /*
+     * fill in dialog
+     */
+    if (pf)
+    {
+        /*
+         * handle existing FNODE:
+         *  the name is fixed & not editable
+         *  the file type (file or folder) is fixed & not changeable
+         */
+        strcpy(curr_name,pf->f_name);
+        tree[IW_NAME].ob_flags &= ~EDITABLE;
+        edit_start = 0;
+        if (pa->a_type == AT_ISFILE)
+            tree[IW_FILE].ob_state |= SELECTED;
+        else
+            tree[IW_FOLD].ob_state |= SELECTED;
+        tree[IW_FILE].ob_state |= DISABLED;
+        tree[IW_FOLD].ob_state |= DISABLED;
+    }
+    else
+    {
+        curr_name[0] = '\0';
+        tree[IW_NAME].ob_flags |= EDITABLE;
+        edit_start = IW_NAME;
+        tree[IW_FILE].ob_state |= SELECTED;
+        tree[IW_FILE].ob_state &= ~DISABLED;
+        tree[IW_FOLD].ob_state &= ~DISABLED;
+    }
+    fmt_str(curr_name, temp);
+    inf_sset((LONG)tree, IW_NAME, temp);
+
+    curr_icon = pa ? pa->a_dicon : 0;
+    if (curr_icon < 0)
+        curr_icon = 0;
+    else if (curr_icon > NUM_IBLKS-1)
+        curr_icon = NUM_IBLKS - 1;
+    new_icon = curr_icon;
+
+    insert_icon(tree, IW_ICON, curr_icon);
+
+    show_hide(FMD_START, (LONG)tree);
+    while(1)
+    {
+        exitobj = form_do((LONG)tree, edit_start) & 0x7fff;
+
+        switch(exitobj)
+        {
+        case IW_UP:             /* handle button up */
+            new_icon = (curr_icon > 0) ? curr_icon-1 : 0;
+            break;
+        case IW_DOWN:           /* handle button down */
+            new_icon = (curr_icon < NUM_IBLKS-1) ? curr_icon+1 : NUM_IBLKS-1;
+            break;
+        case IW_INST:           /* (re)install an icon */
+        case IW_REMV:           /* remove an icon */
+            inf_sget((LONG)tree, IW_NAME, temp);
+            unfmt_str(temp, new_name);
+            if (new_name[0] == '\0')    /* treat as skip */
+                break;
+
+            type = (tree[IW_FILE].ob_state & SELECTED) ? AT_ISFILE : AT_ISFOLD;
+            if (!pf)
+                pa = app_afind_by_name(type, "", new_name, &dummy);
+            else pa = pf->f_pa;
+
+            /* set flag if the names are exactly the same */
+            identical = !strcmp(pa->a_pdata,new_name);
+
+            if (exitobj == IW_INST)
+            {
+                if (!identical)
+                {
+                    pa = allocate_window_anode(type);
+                    if (!pa)
+                    {
+                        change = -1;    /* cancel further installs */
+                        break;
+                    }
+                    scan_str(new_name, &pa->a_pdata);
+                    KDEBUG(("Installed window icon for %s\n",pa->a_pdata));
+                }
+                set_icon(pa, curr_icon);
+            }
+            else        /* IW_REMV */
+            {
+                if (!identical)
+                {
+                    fun_alert(1,STNOMTCH);  /* no matching file type */
+                    break;
+                }
+                KDEBUG(("Removed window icon for %s\n",pa->a_pdata));
+                app_free(pa);
+            }
+            change = 1;
+            break;
+        case IW_CNCL:           /* cancel further installs */
+            change = -1;
+            /* drop thru */
+        case IW_SKIP:           /* skip this application */
+            break;
+        }
+        if ((exitobj != IW_UP) && (exitobj != IW_DOWN))
+            break;
+        tree[exitobj].ob_state &= ~SELECTED;
+
+        if (new_icon != curr_icon)
+        {
+            curr_icon = new_icon;
+            insert_icon(tree, IW_ICON, curr_icon);
+        }
+        draw_fld((LONG)tree, IW_IBOX);
+    }
+    show_hide(FMD_FINISH, (LONG)tree);
+
+    return change;
+}
+#endif
+
+
+/*
+ * install icon (desktop or window)
  *
  * returns:
  *  >0      need to rebuild desktop
  *  0       no need to rebuild display
- *  <0      need to rebuild windows (future update)
+ *  <0      need to rebuild windows
  */
 WORD ins_icon(WORD sobj)
 {
     WORD rebuild = 0;
     WORD rc;
     ANODE *pa;
+#if CONF_WITH_WINDOW_ICONS
+    WNODE *pw;
+    FNODE *pf;
+#endif
 
     if (!sobj)              /* no icon selected */
     {
+#if CONF_WITH_WINDOW_ICONS
+        WORD icon_type;
+
+        icon_type = fun_alert(1, STICNTYP);
+        switch(icon_type)
+        {
+        case 1:         /* desktop */
+            if (install_desktop_icon(NULL) > 0)
+                return 1;
+            break;
+        case 2:         /* window */
+            if (install_window_icon(NULL) > 0)
+                return -1;
+            break;
+        default:        /* cancel */
+            break;
+        }
+#else
         if (install_desktop_icon(NULL) > 0)
             return 1;
+#endif
         return 0;
     }
 
@@ -672,6 +945,28 @@ WORD ins_icon(WORD sobj)
         }
         return rebuild;
     }
+
+#if CONF_WITH_WINDOW_ICONS
+    /*
+     * handle one or more window icons
+     */
+    pw = win_find(G.g_cwin);    /* get WNODE for current window */
+    if (pw)
+    {
+        for (pf = pw->w_path->p_flist; pf; pf = pf->f_next)
+        {
+            if (pf->f_obid == NIL)
+                continue;
+            if (!(G.g_screen[pf->f_obid].ob_state & SELECTED))
+                continue;
+            rc = install_window_icon(pf);
+            if (rc > 0)
+                rebuild--;
+            if (rc < 0)
+                break;
+        }
+    }
+#endif
 
     return rebuild;
 }
