@@ -204,6 +204,8 @@ static BYTE *app_parse(BYTE *pcurr, ANODE *pa)
 {
     WORD temp;
 
+    pa->a_flags = 0;
+
     switch(*pcurr)
     {
     case 'T':                             /* Trash */
@@ -214,21 +216,18 @@ static BYTE *app_parse(BYTE *pcurr, ANODE *pa)
         pa->a_type = AT_ISDISK;
         pa->a_flags = AF_ISCRYS | AF_ISDESK;
         break;
-    case 'G':                             /* GEM App File         */
-        pa->a_type = AT_ISFILE;
-        pa->a_flags = AF_ISCRYS;
-        break;
     case 'Y':                             /* GEM App needs parms  */
-        pa->a_type = AT_ISFILE;
-        pa->a_flags = AF_ISCRYS | AF_ISPARM;
-        break;
-    case 'F':                             /* DOS File no parms    */
-        pa->a_type = AT_ISFILE;
-        pa->a_flags = NONE;
-        break;
-    case 'P':                             /* DOS App needs parms  */
-        pa->a_type = AT_ISFILE;
         pa->a_flags = AF_ISPARM;
+        /* drop thru */
+    case 'G':                             /* GEM App no parms     */
+        pa->a_type = AT_ISFILE;
+        pa->a_flags |= AF_ISCRYS;
+        break;
+    case 'P':                             /* TOS App needs parms  */
+        pa->a_flags = AF_ISPARM;
+        /* drop thru */
+    case 'F':                             /* TOS App no parms     */
+        pa->a_type = AT_ISFILE;
         break;
     case 'D':                             /* Directory (Folder)   */
         pa->a_type = AT_ISFOLD;
