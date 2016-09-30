@@ -137,7 +137,6 @@ typedef struct
 } CSAVE;
 
 
-extern WORD gl_numics;
 extern WORD gl_stdrv;
 
 

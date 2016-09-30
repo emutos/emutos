@@ -79,7 +79,6 @@
 #define INF_AT_APPDIR   0x01    /* 1 => set current dir to app's dir (else to top window dir) */
 #define INF_AT_ISFULL   0x02    /* 1 => pass full path in args (else filename only) */
 
-GLOBAL WORD     gl_numics;
 GLOBAL WORD     gl_stdrv;
 
 static char     *maskstart;
@@ -395,13 +394,6 @@ static void app_rdicon(void)
             copied[n] = 1;
         }
     }
-
-    /* the number of entries in the icon_rs_fstr[] array in icons.c */
-#if HAVE_APPL_IBLKS
-    gl_numics = LASTICON + 1;
-#else
-    gl_numics = 0;
-#endif
 
     /*
      * Fix up the ICONBLKs
