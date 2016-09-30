@@ -445,13 +445,8 @@ WORD ins_app(WORD curr)
             inf_sget((LONG)tree,APARGS,name);
             scan_str(name,&pa->a_pargs);
 
-#if HAVE_APPL_IBLKS
-            pa->a_aicon = IA_GENERIC;
-            pa->a_dicon = ID_GENERIC;
-#else
-            pa->a_aicon = IA_GENERIC_ALT;
-            pa->a_dicon = ID_GENERIC_ALT;
-#endif
+            pa->a_aicon = IG_APPL;
+            pa->a_dicon = IG_DOCU;
             pa->a_xspot = 0;
             pa->a_yspot = 0;
             change = 1;
@@ -695,7 +690,7 @@ static ANODE *allocate_window_anode(WORD type)
     pa->a_pdata = "";
     pa->a_pargs = "";
     pa->a_aicon = NIL;
-    pa->a_dicon = (type==AT_ISFOLD) ? IG_FOLDER : ID_GENERIC_ALT;
+    pa->a_dicon = (type==AT_ISFOLD) ? IG_FOLDER : IG_DOCU;
     pa->a_xspot = 0;
     pa->a_yspot = 0;
 

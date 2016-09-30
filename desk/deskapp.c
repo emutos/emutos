@@ -251,10 +251,10 @@ static BYTE *app_parse(BYTE *pcurr, ANODE *pa)
 
     pcurr = scan_2(pcurr, &pa->a_aicon);
     if (pa->a_aicon >= NUM_IBLKS)
-        pa->a_aicon = IA_GENERIC_ALT;
+        pa->a_aicon = IG_APPL;
     pcurr = scan_2(pcurr, &pa->a_dicon);
     if (pa->a_dicon >= NUM_IBLKS)
-        pa->a_dicon = ID_GENERIC_ALT;
+        pa->a_dicon = IG_DOCU;
     pcurr++;
 
     if (pa->a_flags & AF_ISDESK)

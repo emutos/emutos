@@ -52,15 +52,10 @@
 #define IG_TRASH  3             /* trash */
 #define IG_4RESV  4
 #define IG_5RESV  5
-#define IA_GENERIC_ALT 6        /* generic application icon */
-#define ID_GENERIC_ALT 7        /* generic document icon */
-#define NUM_GEM_IBLKS (ID_GENERIC_ALT+1)
+#define IG_APPL   6             /* generic application icon */
+#define IG_DOCU   7             /* generic document icon */
+#define NUM_GEM_IBLKS (IG_DOCU+1)
 
-/*
- * icon numbers available iff CONF_WITH_WINDOW_ICONS is defined
- */
-#define IA_GENERIC 8            /* the first application icon # */
-#define ID_GENERIC 40           /* the first document icon # */
 
 /*
  * configuration parameters
@@ -73,12 +68,6 @@
 #define NUM_IBLKS 72
 #else
 #define NUM_IBLKS 8
-#endif
-
-#if (NUM_IBLKS > NUM_GEM_IBLKS)
-#define HAVE_APPL_IBLKS 1
-#else
-#define HAVE_APPL_IBLKS 0
 #endif
 
 
