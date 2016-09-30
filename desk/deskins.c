@@ -708,9 +708,6 @@ static ANODE *allocate_window_anode(WORD type)
  *  0   icon not changed (user said skip)
  *  <0  icon not changed (user said cancel)
  */
-
-//FIXME: add I/N support to app_save(), app_start()
-
 static WORD install_window_icon(FNODE *pf)
 {
     BOOL identical;
@@ -731,36 +728,6 @@ static WORD install_window_icon(FNODE *pf)
      * initialise pointer to ANODE
      */
     pa = pf ? pf->f_pa : NULL;
-#if 0
-    if (pf)
-    {
-        pa = pf->f_pa;
-        generic = is_generic(pa);
-    }
-    if (generic)
-        pa = NULL;
-    if (!pa)
-    {
-        pa = app_alloc(TRUE);
-        if (!pa)
-            return -1;              /* don't try any more */
-        allocated = TRUE;
-        pa->a_flags = 0;
-        pa->a_funkey = 0;
-        pa->a_letter = '\0';
-        if (pf)
-            pa->a_type = (pf->f_attr&F_SUBDIR) ? AT_ISFOLD : AT_ISFILE;
-        else pa->a_type = AT_ISFILE;
-        pa->a_obid = 0;
-        pa->a_pappl = "";
-        pa->a_pdata = "";
-        pa->a_pargs = "";
-        pa->a_aicon = NIL;
-        pa->a_dicon = (pa->a_type==AT_ISFOLD) ? IG_FOLDER : ID_GENERIC_ALT;
-        pa->a_xspot = 0;
-        pa->a_yspot = 0;
-    }
-#endif
 
     /*
      * fill in dialog
