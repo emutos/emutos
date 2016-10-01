@@ -21,6 +21,7 @@
 #include "config.h"
 #include "portab.h"
 #include "obdefs.h"
+#include "rectfunc.h"
 #include "gsxdefs.h"
 #include "gembind.h"
 #include "deskapp.h"
@@ -28,7 +29,6 @@
 #include "deskwin.h"
 #include "deskbind.h"
 
-#include "../aes/rectfunc.h"
 #include "aesbind.h"
 #include "deskact.h"
 #include "deskglob.h"

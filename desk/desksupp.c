@@ -26,6 +26,7 @@
 #include "gsxdefs.h"
 #include "dos.h"
 #include "gemdos.h"
+#include "rectfunc.h"
 
 #include "gembind.h"
 #include "deskapp.h"
@@ -33,7 +34,6 @@
 #include "deskwin.h"
 #include "deskbind.h"
 
-#include "../aes/rectfunc.h"
 #include "aesbind.h"
 #include "deskact.h"
 #include "deskpro.h"
