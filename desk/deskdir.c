@@ -41,6 +41,7 @@
 #include "deskrsrc.h"
 #include "deskmain.h"
 #include "desk1.h"
+#include "deskinf.h"
 #include "deskdir.h"
 #include "gemerror.h"
 #include "kprint.h"

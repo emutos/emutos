@@ -14,7 +14,6 @@ WORD sound(WORD isfreq, WORD freq, WORD dura);
 void fmt_str(BYTE *instr, BYTE *outstr);
 void unfmt_str(BYTE *instr, BYTE *outstr);
 void inf_sset(LONG tree, WORD obj, BYTE *pstr);
-void inf_numset(LONG tree, WORD obj, ULONG value);
 void inf_sget(LONG tree, WORD obj, BYTE *pstr);
 WORD inf_gindex(LONG tree, WORD baseobj, WORD numobj);
 WORD inf_what(LONG tree, WORD ok, WORD cncl);

@@ -149,23 +149,6 @@ void unfmt_str(BYTE *instr, BYTE *outstr)
 
 
 /*
- *  Insert an unsigned long value into the te_ptext field of the TEDINFO
- *  structure for the specified object, truncating if necessary
- */
-void inf_numset(LONG tree, WORD obj, ULONG value)
-{
-    WORD len;
-    TEDINFO *ted;
-    OBJECT  *objptr = ((OBJECT *)tree) + obj;
-
-    ted = (TEDINFO *)objptr->ob_spec;
-    len = ted->te_txtlen - 1;
-
-    sprintf(ted->te_ptext,"%*.*lu",len,len,value);
-}
-
-
-/*
  *  Copies the specified string to the te_ptext field of the TEDINFO
  *  structure for (tree,object), truncating if necessary to fit
  */

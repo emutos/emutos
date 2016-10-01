@@ -14,6 +14,7 @@ WORD dr_code(PARMBLK *pparms);
 WORD inf_show(LONG tree, WORD start);
 WORD inf_file_folder(BYTE *ppath, FNODE *pf);
 WORD inf_disk(BYTE dr_id);
+void inf_numset(LONG tree, WORD obj, ULONG value);
 WORD inf_pref(void);
 WORD opn_appl(BYTE *papname, BYTE *papparms, BYTE *pcmd, BYTE *ptail);
 

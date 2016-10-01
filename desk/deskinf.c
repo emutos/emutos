@@ -366,6 +366,23 @@ static void inf_finish(LONG tree, WORD dl_ok)
 
 
 /*
+ *  Insert an unsigned long value into the te_ptext field of the TEDINFO
+ *  structure for the specified object, truncating if necessary
+ */
+void inf_numset(LONG tree, WORD obj, ULONG value)
+{
+    WORD len;
+    TEDINFO *ted;
+    OBJECT  *objptr = ((OBJECT *)tree) + obj;
+
+    ted = (TEDINFO *)objptr->ob_spec;
+    len = ted->te_txtlen - 1;
+
+    sprintf(ted->te_ptext,"%*.*lu",len,len,value);
+}
+
+
+/*
  * Routine to put number of files, folders and size into
  * a dialog box
  */
