@@ -27,6 +27,7 @@
 #include "dos.h"
 #include "gemdos.h"
 #include "optimopt.h"
+#include "optimize.h"
 
 #include "deskapp.h"
 #include "deskfpd.h"
@@ -34,7 +35,6 @@
 #include "gembind.h"
 #include "deskbind.h"
 
-#include "../aes/optimize.h"
 #include "aesbind.h"
 #include "deskmain.h"
 #include "deskglob.h"

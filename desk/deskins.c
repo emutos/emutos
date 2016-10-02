@@ -31,6 +31,7 @@
 #include "gsxdefs.h"
 #include "gemdos.h"
 #include "dos.h"
+#include "optimize.h"
 
 #include "deskapp.h"
 #include "deskfpd.h"
@@ -38,7 +39,6 @@
 #include "gembind.h"
 #include "deskbind.h"
 
-#include "../aes/optimize.h"
 #include "aesbind.h"
 #include "deskglob.h"
 #include "deskinf.h"

@@ -212,7 +212,7 @@ util_src = doprintf.c intmath.c langs.c memmove.S memset.S miscasm.S \
 
 # The functions in the following modules are used by the AES and EmuDesk
 ifeq ($(WITH_AES),1)
-util_src += gemdos.c optimopt.S rectfunc.c
+util_src += gemdos.c optimize.c optimopt.S rectfunc.c
 endif
 
 #
@@ -241,7 +241,7 @@ aes_src = gemasm.S gemstart.S gemdosif.S gemaplib.c gemasync.c gemctrl.c \
           gemfslib.c gemgraf.c gemgrlib.c gemgsxif.c geminit.c geminput.c \
           gemmnlib.c gemobed.c gemobjop.c gemoblib.c gempd.c gemqueue.c \
           gemrslib.c gemsclib.c gemshlib.c gemsuper.c gemwmlib.c gemwrect.c \
-          gsx2.c optimize.c gem_rsc.c
+          gsx2.c gem_rsc.c
 
 #
 # source code in desk/

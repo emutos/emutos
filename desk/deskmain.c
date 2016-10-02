@@ -28,6 +28,7 @@
 #include "gsxdefs.h"
 #include "dos.h"
 #include "gemdos.h"
+#include "optimize.h"
 
 #include "gembind.h"
 #include "deskapp.h"
@@ -42,7 +43,6 @@
 #include "version.h"
 #include "../bios/header.h"
 
-#include "../aes/optimize.h"
 #include "aesbind.h"
 #include "desksupp.h"
 #include "deskglob.h"

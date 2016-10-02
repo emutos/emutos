@@ -20,12 +20,6 @@
 #include "config.h"
 #include "portab.h"
 #include "obdefs.h"
-#include "struct.h"
-#include "gemlib.h"
-#include "geminit.h"
-#include "gemrslib.h"
-#include "rectfunc.h"
-#include "optimopt.h"
 #include "optimize.h"
 
 #include "string.h"

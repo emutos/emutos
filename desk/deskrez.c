@@ -21,8 +21,9 @@
 #include "aesbind.h"
 #include "gembind.h"
 #include "obdefs.h"
+#include "optimize.h"
+
 #include "deskrsrc.h"
-#include "../aes/optimize.h"
 #include "desk_rsc.h"
 #include "deskapp.h"
 #include "deskfpd.h"
