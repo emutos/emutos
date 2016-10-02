@@ -29,6 +29,4 @@ extern THEGLO   D;
 void all_run(void);
 void sh_deskf(WORD obj, LONG plong);
 
-BYTE *scan_2(BYTE *pcurr, WORD *pwd);
-
 #endif

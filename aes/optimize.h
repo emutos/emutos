@@ -17,6 +17,7 @@ void inf_sset(LONG tree, WORD obj, BYTE *pstr);
 void inf_sget(LONG tree, WORD obj, BYTE *pstr);
 WORD inf_gindex(LONG tree, WORD baseobj, WORD numobj);
 WORD inf_what(LONG tree, WORD ok, WORD cncl);
+BYTE *scan_2(BYTE *pcurr, WORD *pwd);
 WORD wildcmp(BYTE *pwld, BYTE *ptst);
 void ins_char(BYTE *str, WORD pos, BYTE chr, WORD tot_len);
 

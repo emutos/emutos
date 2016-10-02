@@ -166,10 +166,6 @@ void app_free(ANODE *pa)
 }
 
 
-/* We're using scan_2 from the AES sources: */
-extern BYTE *scan_2(BYTE *pcurr, WORD *pwd);
-
-
 /*
  *  Scans a string into a private buffer used for ANODE text (currently
  *  gl_buffer[]) and ups the string pointer for next time.

@@ -114,55 +114,6 @@ GLOBAL THEGLO   D;
 /* Prototypes: */
 extern void accdesk_start(void) NORETURN;   /* see gemstart.S */
 
-/*
- *  Convert a single hex ASCII digit to the corresponding decimal number
- *
- *  Note that this could be static, since it is used only within this
- *  module.  However, making it so will consume more code space in
- *  current versions of GCC, even with -Os optimisation
- */
-UBYTE hex_dig(BYTE achar)
-{
-    if ((achar >= '0') && (achar <= '9'))
-        return (achar - '0');
-
-    achar = toupper(achar);
-    if ((achar >= 'A') && (achar <= 'F'))
-        return (achar - 'A' + 10);
-
-    return 0;
-}
-
-
-/*
- *  Starting at the specified position within a string, skip over any
- *  leading spaces.  If the next non-space byte is '\r', stop scanning,
- *  set the scanned value to zero, and return a pointer to the '\r'.
- *
- *  Otherwise, convert the next two characters (assumed to be hex digits)
- *  into a value N.  If N is 0xff, set the scanned value to -1; otherwise
- *  set the scanned value to N.  In either case, return a pointer to the
- *  byte immediately following the two hex characters.
- */
-BYTE *scan_2(BYTE *pcurr, WORD *pwd)
-{
-    WORD temp = 0;
-
-    while(*pcurr == ' ')
-        pcurr++;
-
-    if (*pcurr != '\r')
-    {
-        temp = hex_dig(*pcurr++) << 4;
-        temp |= hex_dig(*pcurr++);
-        if (temp == 0x00ff)
-            temp = -1;
-        *pwd = temp;
-    }
-
-    return pcurr;
-}
-
 
 /*
  *  return size of global area
