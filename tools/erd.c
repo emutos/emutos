@@ -168,14 +168,17 @@
  *            as a result, frstr_cond is no longer used for any resource,
  *            and could be dropped along with its associated code.
  *
- * v4.6     roger burrows, june/2015
+ *  v4.6    roger burrows, june/2015
  *          . add full decoding for ob_flags: use hex values for
  *            non-standard flags.
  *
- * v4.7     roger burrows, september/2016
+ *  v4.7    roger burrows, october/2016
  *          . discontinue generation of freestring table for ICON_RSC
  *          . add "Skip" to list of desktop shared strings
  *          . update frstr_cond for the desktop resource
+ *          . add "GTP" to list of non-translatable desktop strings
+ *          . do not allow control characters in a string to trigger
+ *            translation (see copycheck())
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -497,6 +500,7 @@ LOCAL NOTRANS_ENTRY notrans[] = {
     { 0, "- EmuTOS -" },
     { 0, "http://" },
     { 0, "GEM" },
+    { 0, "GTP" },
     { 0, "TOS" },
     { 0, "TTP" },
     { 0, "am" },
@@ -2019,7 +2023,8 @@ int i;
     /* if _not_ no-translate, then see if we need to */
     if (!notranslate(src))
         for (i = 0, s = src; (i < len) && *s; i++, s++)
-            if (!isdigit((unsigned char)*s) && !ispunct((unsigned char)*s) && !isspace((unsigned char)*s))
+            if (!isdigit((unsigned char)*s) && !ispunct((unsigned char)*s)
+             && !isspace((unsigned char)*s) && !iscntrl((unsigned char)*s))
                 return 1;
 
     return 0;
