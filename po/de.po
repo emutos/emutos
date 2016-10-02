@@ -833,13 +833,13 @@ msgstr "[3]["
 "kopieren.][  OK  ]"
 
 #: desk/desk_rsc.c:1842
-msgid "[1]["
+msgid "[3]["
 "Invalid copy operation.][  OK  ]"
-msgstr "[2]["
+msgstr "[3]["
 "Ungültiger Kopiervorgang.][  OK  ]"
 
 #: desk/desk_rsc.c:1843
-msgid "[1]["
+msgid "[2]["
 "Abort this operation?][  Yes  |  No  ]"
 msgstr "[2]["
 "Vorgang abbrechen?][  Ja  |  Nein  ]"
@@ -884,7 +884,6 @@ msgstr "[1]["
 
 #: desk/desk_rsc.c:1860
 msgid "[3]["
-"|"
 "Cannot create EMUDESK.INF.][  OK  ]"
 msgstr "[3]["
 "EMUDESK.INF kann nicht|"
@@ -958,8 +957,7 @@ msgstr "[1]["
 "werden.][  OK  ]"
 
 #: desk/desk_rsc.c:1894
-msgid "[1]["
-"|"
+msgid "[2]["
 "Save Desktop?][  OK  |Cancel]"
 msgstr "[2]["
 "Desktop sichern?][  OK  |Abbruch]"
@@ -967,7 +965,7 @@ msgstr "[2]["
 #: desk/desk_rsc.c:1897
 msgid "[2]["
 "Do you want to remove icons|"
-"or delete files?][Remove|Delete|Cancel]"
+"or delete files?][Icons|Files|Cancel]"
 msgstr "[2]["
 "Sollen Icons entfernt|"
 "oder Dateien gelöscht|"
