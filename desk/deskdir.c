@@ -415,8 +415,8 @@ static WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
          */
         get_fname(psrc_file, ml_fsrc);  /* get input filename */
         get_fname(pdst_file, ml_fdst);  /* get output filename */
-        inf_sset(tree, CACURRNA, ml_fsrc);
-        inf_sset(tree, CACOPYNA, ml_fdst);
+        inf_sset((OBJECT *)tree, CACURRNA, ml_fsrc);
+        inf_sset((OBJECT *)tree, CACOPYNA, ml_fdst);
 
         /*
          * display dialog & get input
@@ -431,7 +431,7 @@ static WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
         /*
          * user says ok, so update destination filename
          */
-        inf_sget(tree, CACOPYNA, ml_fdst);
+        inf_sget((OBJECT *)tree, CACOPYNA, ml_fdst);
         unfmt_str(ml_fdst, ml_fstr);
         if (ml_fstr[0] != '\0')
         {
@@ -755,8 +755,8 @@ static WORD output_path(WORD op,BYTE *srcpth, BYTE *dstpth)
          */
         get_fname(dstpth, ml_fsrc);         /* extract current folder name */
         strcpy(ml_fdst,ml_fsrc);            /* pre-fill new folder name */
-        inf_sset(tree, CACURRNA, ml_fsrc);  /* and put both in dialog */
-        inf_sset(tree, CACOPYNA, ml_fdst);
+        inf_sset((OBJECT *)tree, CACURRNA, ml_fsrc);  /* and put both in dialog */
+        inf_sset((OBJECT *)tree, CACOPYNA, ml_fdst);
 
         ob = do_namecon();              /* show dialog */
         if (ob == CASTOP)               /* "Stop" button */
@@ -764,7 +764,7 @@ static WORD output_path(WORD op,BYTE *srcpth, BYTE *dstpth)
         if (ob == CACNCL)               /* "Skip" button */
             return -1;
 
-        inf_sget(tree, CACOPYNA, ml_fdst);
+        inf_sget((OBJECT *)tree, CACOPYNA, ml_fdst);
         unfmt_str(ml_fdst, ml_fstr);    /* get new dest folder in ml_fstr */
         if (strcmp(ml_fdst,ml_fsrc))    /* if it changed, update path */
         {

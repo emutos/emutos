@@ -146,11 +146,11 @@ void unfmt_str(BYTE *instr, BYTE *outstr)
  *  Copies the specified string to the te_ptext field of the TEDINFO
  *  structure for (tree,object), truncating if necessary to fit
  */
-void inf_sset(LONG tree, WORD obj, BYTE *pstr)
+void inf_sset(OBJECT *tree, WORD obj, BYTE *pstr)
 {
     BYTE    *text;
     TEDINFO *ted;
-    OBJECT  *objptr = ((OBJECT *)tree) + obj;
+    OBJECT  *objptr = tree + obj;
 
     ted = (TEDINFO *)objptr->ob_spec;
     text = (BYTE *)ted->te_ptext;
@@ -162,10 +162,10 @@ void inf_sset(LONG tree, WORD obj, BYTE *pstr)
  *  Copies the te_ptext field of the TEDINFO structure for (tree,object)
  *  to the specified string
  */
-void inf_sget(LONG tree, WORD obj, BYTE *pstr)
+void inf_sget(OBJECT *tree, WORD obj, BYTE *pstr)
 {
     TEDINFO *ted;
-    OBJECT  *objptr = ((OBJECT *)tree) + obj;
+    OBJECT  *objptr = tree + obj;
 
     ted = (TEDINFO *)objptr->ob_spec;
     strcpy(pstr, (BYTE *)ted->te_ptext);

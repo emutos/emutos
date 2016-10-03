@@ -150,13 +150,13 @@ WORD fun_mkdir(WNODE *pw_node)
     while(1)
     {
         fnew_name[0] = '\0';
-        inf_sset(tree, MKNAME, fnew_name);
+        inf_sset((OBJECT *)tree, MKNAME, fnew_name);
         show_hide(FMD_START, tree);
         form_do(tree, 0);
         if (inf_what(tree, MKOK, MKCNCL) == 0)
             break;
 
-        inf_sget(tree, MKNAME, fnew_name);
+        inf_sget((OBJECT *)tree, MKNAME, fnew_name);
         unfmt_str(fnew_name, unew_name);
 
         if (unew_name[0] == '\0')

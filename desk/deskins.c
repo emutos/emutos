@@ -260,7 +260,7 @@ static WORD get_funkey(OBJECT *tree,ANODE *pa,BOOL installed)
     WORD funkey;
     BYTE fkey[3];
 
-    inf_sget((LONG)tree,APFUNKEY,fkey);
+    inf_sget(tree,APFUNKEY,fkey);
     if (fkey[0] == '\0')                /* empty? */
         return 0;
 
@@ -349,13 +349,13 @@ WORD ins_app(WORD curr)
      * fill in dialog
      */
     fmt_str(pfname, name);
-    inf_sset((LONG)tree, APNAME, name);
-    inf_sset((LONG)tree, APARGS, installed ? pa->a_pargs : "");
-    inf_sset((LONG)tree, APDOCTYP, installed ? pa->a_pdata+2 : "");
+    inf_sset(tree, APNAME, name);
+    inf_sset(tree, APARGS, installed ? pa->a_pargs : "");
+    inf_sset(tree, APDOCTYP, installed ? pa->a_pdata+2 : "");
     if (pa->a_funkey)
         sprintf(name, "%02d", pa->a_funkey);
     else name[0] = '\0';
-    inf_sset((LONG)tree, APFUNKEY, installed ? name : "");
+    inf_sset(tree, APFUNKEY, installed ? name : "");
 
     field = pa->a_flags & AF_AUTORUN ? APAUTO : APNORM;
     tree[field].ob_state |= SELECTED;
@@ -401,7 +401,7 @@ WORD ins_app(WORD curr)
             funkey = get_funkey(tree,pa,installed);
             if (funkey < 0)
             {
-                inf_sset((LONG)tree, APFUNKEY, "");
+                inf_sset(tree, APFUNKEY, "");
                 tree[APINSTAL].ob_state &= ~SELECTED;
                 if (!installed)
                     app_free(pa);
@@ -438,11 +438,11 @@ WORD ins_app(WORD curr)
             }
 
             strcpy(name,"*.");
-            inf_sget((LONG)tree,APDOCTYP,name+2);
+            inf_sget(tree,APDOCTYP,name+2);
             if (!installed || strcmp(name,pa->a_pdata)) /* doc type has changed */
                 scan_str(name,&pa->a_pdata);
 
-            inf_sget((LONG)tree,APARGS,name);
+            inf_sget(tree,APARGS,name);
             scan_str(name,&pa->a_pargs);
 
             pa->a_aicon = IG_APPL;
@@ -547,11 +547,11 @@ static WORD install_desktop_icon(ANODE *pa)
     case AT_ISDISK:
         curr_label[0] = pa->a_letter;
         curr_label[1] = '\0';
-        inf_sset((LONG)tree, ID_ID, curr_label);
+        inf_sset(tree, ID_ID, curr_label);
         /* drop thru */
     case AT_ISTRSH:
         strcpy(curr_label, pa->a_pappl);
-        inf_sset((LONG)tree, ID_LABEL, pa->a_pappl);
+        inf_sset(tree, ID_LABEL, pa->a_pappl);
         if (pa->a_type == AT_ISDISK)
             tree[ID_DRIVE].ob_state |= SELECTED;
         else
@@ -583,7 +583,7 @@ static WORD install_desktop_icon(ANODE *pa)
         case ID_OK:             /* (re)install an icon */
             if (inf_gindex((LONG)tree, ID_DRIVE, 3) == 0)   /* only disks have a letter */
             {
-                inf_sget((LONG)tree, ID_ID, new_label);
+                inf_sget(tree, ID_ID, new_label);
                 pa->a_letter = new_label[0];
             }
             else
@@ -597,7 +597,7 @@ static WORD install_desktop_icon(ANODE *pa)
                 pa->a_type = AT_ISTRSH;
                 break;
             }
-            inf_sget((LONG)tree, ID_LABEL, new_label);
+            inf_sget(tree, ID_LABEL, new_label);
             if (strcmp(curr_label, new_label))      /* if label changed, */
                 scan_str(new_label, &pa->a_pappl);  /* update it         */
             pa->a_aicon = curr_icon;
@@ -757,7 +757,7 @@ static WORD install_window_icon(FNODE *pf)
         tree[IW_FOLD].ob_state &= ~DISABLED;
     }
     fmt_str(curr_name, temp);
-    inf_sset((LONG)tree, IW_NAME, temp);
+    inf_sset(tree, IW_NAME, temp);
 
     curr_icon = pa ? pa->a_dicon : 0;
     if (curr_icon < 0)
@@ -783,7 +783,7 @@ static WORD install_window_icon(FNODE *pf)
             break;
         case IW_INST:           /* (re)install an icon */
         case IW_REMV:           /* remove an icon */
-            inf_sget((LONG)tree, IW_NAME, temp);
+            inf_sget(tree, IW_NAME, temp);
             unfmt_str(temp, new_name);
             if (new_name[0] == '\0')    /* treat as skip */
                 break;

@@ -411,10 +411,10 @@ static void inf_dttm(LONG tree, FNODE *pf, WORD dl_dt, WORD dl_tm)
     BYTE str[11];
 
     fmt_date(pf->f_date, 1, str);   /* 4-digit year always */
-    inf_sset(tree, dl_dt, str);
+    inf_sset((OBJECT *)tree, dl_dt, str);
 
     fmt_time(pf->f_time, "%02d%02d%s", str);
-    inf_sset(tree, dl_tm, str);
+    inf_sset((OBJECT *)tree, dl_tm, str);
 }
 
 
@@ -476,15 +476,15 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
     {
         obj = (OBJECT *)tree + FFNUMFIL;
         obj->ob_state |= DISABLED;
-        inf_sset(tree,FFNUMFIL,"");
+        inf_sset((OBJECT *)tree,FFNUMFIL,"");
         obj = (OBJECT *)tree + FFNUMFOL;
         obj->ob_state |= DISABLED;
-        inf_sset(tree,FFNUMFOL,"");
+        inf_sset((OBJECT *)tree,FFNUMFOL,"");
         inf_numset(tree,FFSIZE,pf->f_size);
     }
 
     fmt_str(pf->f_name, poname);
-    inf_sset(tree, FFNAME, poname);
+    inf_sset((OBJECT *)tree, FFNAME, poname);
     inf_dttm(tree, pf, FFDATE, FFTIME);
 
     /*
@@ -516,7 +516,7 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
     graf_mouse(HGLASS, NULL);
 
     more = TRUE;
-    inf_sget(tree, FFNAME, pnname);
+    inf_sget((OBJECT *)tree, FFNAME, pnname);
 
     /* unformat the strings */
     unfmt_str(poname, srcpth+nmidx);
@@ -592,8 +592,8 @@ WORD inf_disk(BYTE dr_id)
     if (!dos_label(dr_id - 'A' + 1, label))
         label[0] = '\0';
 
-    inf_sset(tree, DIDRIVE, drive);
-    inf_sset(tree, DIVOLUME, label);
+    inf_sset((OBJECT *)tree, DIDRIVE, drive);
+    inf_sset((OBJECT *)tree, DIVOLUME, label);
 
     inf_fifosz(tree, DINFILES, DINFOLDS, DIUSED);
     inf_numset(tree, DIAVAIL, avail);
@@ -751,16 +751,16 @@ WORD opn_appl(BYTE *papname, BYTE *papparms, BYTE *pcmd, BYTE *ptail)
     tree = G.a_trees[ADOPENAP];
 
     fmt_str(papname, poname);
-    inf_sset(tree, APPLNAME, poname);
-    inf_sset(tree, APPLPARM, papparms);
+    inf_sset((OBJECT *)tree, APPLNAME, poname);
+    inf_sset((OBJECT *)tree, APPLPARM, papparms);
     inf_show(tree, APPLPARM);
 
     /* now find out what happened */
     if ( inf_what(tree, APPLOK, APPLCNCL) )
     {
-        inf_sget(tree, APPLNAME, poname);
+        inf_sget((OBJECT *)tree, APPLNAME, poname);
         unfmt_str(poname, pcmd);
-        inf_sget(tree, APPLPARM, ptail);
+        inf_sget((OBJECT *)tree, APPLPARM, ptail);
         return TRUE;
     }
     else

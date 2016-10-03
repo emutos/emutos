@@ -269,7 +269,7 @@ static void fs_format(LONG tree, WORD currtop, WORD count)
             name[0] = ' ';
             name[1] = '\0';
         }
-        inf_sset(tree, NAME_OFFSET+i, name);
+        inf_sset(treeptr, NAME_OFFSET+i, name);
         obj->ob_type = G_FBOXTEXT;
         obj->ob_state = NORMAL;
     }
@@ -548,13 +548,13 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
     obj = ((OBJECT *)tree) + FSDIRECT;
     tedinfo = (TEDINFO *)obj->ob_spec;
     ad_fpath = (BYTE *)tedinfo->te_ptext;
-    inf_sset(tree, FSDIRECT, locstr);
+    inf_sset((OBJECT *)tree, FSDIRECT, locstr);
 
     obj = ((OBJECT *)tree) + FSSELECT;
     tedinfo = (TEDINFO *)obj->ob_spec;
     ad_fname = (BYTE *)tedinfo->te_ptext;
     fmt_str(pisel, selname);            /* selname[] is without dot */
-    inf_sset(tree, FSSELECT, selname);
+    inf_sset((OBJECT *)tree, FSSELECT, selname);
 
     obj = ((OBJECT *)tree) + FSTITLE;
     obj->ob_spec = pilabel ? (LONG)pilabel : (LONG)rs_str(ITEMSLCT);
@@ -590,7 +590,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
             fs_sel(sel, NORMAL);
             if ((touchob == FSOK) || (touchob == FSCANCEL))
                 ob_change(tree, touchob, NORMAL, TRUE);
-            inf_sset(tree, FSDIRECT, locstr);
+            inf_sset((OBJECT *)tree, FSDIRECT, locstr);
             pstr = fs_pspec(locstr, NULL);
             strcpy(pstr, mask);
             curr = 0;
@@ -672,7 +672,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
                 fs_sel(sel, SELECTED);
             }
             /* get string and see if file or folder */
-            inf_sget(tree, touchob, selname);
+            inf_sget((OBJECT *)tree, touchob, selname);
             if (selname[0] == ' ')          /* a file was selected  */
             {                               /* copy to selection    */
                 newsel = TRUE;
@@ -733,7 +733,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
 
         if (newlist)
         {
-            inf_sset(tree, FSDIRECT, locstr);
+            inf_sset((OBJECT *)tree, FSDIRECT, locstr);
             set_mask(mask, locstr);             /* set mask */
             selname[1] = '\0';                  /* selected is empty */
             newsel = TRUE;
