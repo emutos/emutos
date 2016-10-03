@@ -405,7 +405,7 @@ WORD ins_app(WORD curr)
                 tree[APINSTAL].ob_state &= ~SELECTED;
                 if (!installed)
                     app_free(pa);
-                draw_dial((LONG)tree);
+                draw_dial(tree);
                 exitobj = -1;       /* request retry */
                 break;
             }
@@ -620,7 +620,7 @@ static WORD install_desktop_icon(ANODE *pa)
             curr_icon = new_icon;
             insert_icon(tree, ID_ICON, curr_icon);
         }
-        draw_fld((LONG)tree, ID_IBOX);
+        draw_fld(tree, ID_IBOX);
     }
     show_hide(FMD_FINISH, (LONG)tree);
 
@@ -838,7 +838,7 @@ static WORD install_window_icon(FNODE *pf)
             curr_icon = new_icon;
             insert_icon(tree, IW_ICON, curr_icon);
         }
-        draw_fld((LONG)tree, IW_IBOX);
+        draw_fld(tree, IW_IBOX);
     }
     show_hide(FMD_FINISH, (LONG)tree);
 

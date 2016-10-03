@@ -81,13 +81,12 @@ static WORD user_abort(void)
 /*
  *  Routine to DRAW a DIALog box centered on the screen
  */
-void draw_dial(LONG tree)
+void draw_dial(OBJECT *tree)
 {
     WORD xd, yd, wd, hd;
-    OBJECT *obtree = (OBJECT *)tree;
 
-    form_center(tree, &xd, &yd, &wd, &hd);
-    objc_draw(obtree, ROOT, MAX_DEPTH, xd, yd, wd, hd);
+    form_center((LONG)tree, &xd, &yd, &wd, &hd);
+    objc_draw(tree, ROOT, MAX_DEPTH, xd, yd, wd, hd);
 }
 
 
@@ -115,14 +114,14 @@ static WORD do_namecon(void)
 
     graf_mouse(ARROW, NULL);
     if (ml_havebox)
-        draw_dial(tree);
+        draw_dial((OBJECT *)tree);
     else
     {
         show_hide(FMD_START, tree);
         ml_havebox = TRUE;
     }
     form_do(tree, 0);
-    draw_dial(G.a_trees[ADCPYDEL]);
+    draw_dial((OBJECT *)G.a_trees[ADCPYDEL]);
     graf_mouse(HGLASS, NULL);
 
     ob = inf_gindex((OBJECT *)tree, CAOK, 3) + CAOK;
@@ -135,15 +134,14 @@ static WORD do_namecon(void)
 /*
  *  Draw a single field of a dialog box
  */
-void draw_fld(LONG tree, WORD obj)
+void draw_fld(OBJECT *tree, WORD obj)
 {
     GRECT t;
-    OBJECT *obtree = (OBJECT *)tree;
-    OBJECT *objptr = obtree + obj;
+    OBJECT *objptr = tree + obj;
 
     memcpy(&t,&objptr->ob_x,sizeof(GRECT));
-    objc_offset(obtree, obj, &t.g_x, &t.g_y);
-    objc_draw(obtree, obj, MAX_DEPTH, t.g_x, t.g_y, t.g_w, t.g_h);
+    objc_offset(tree, obj, &t.g_x, &t.g_y);
+    objc_draw(tree, obj, MAX_DEPTH, t.g_x, t.g_y, t.g_w, t.g_h);
 }
 
 
@@ -617,7 +615,7 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path, LONG tree, DI
             if (tree)
             {
                 inf_numset(tree, CDFOLDS, --(count->dirs));
-                draw_fld(tree, CDFOLDS);
+                draw_fld((OBJECT *)tree, CDFOLDS);
             }
             return more;
         }
@@ -700,7 +698,7 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path, LONG tree, DI
         if (tree)
         {
             inf_numset(tree, CDFILES, --(count->files));
-            draw_fld(tree, CDFILES);
+            draw_fld((OBJECT *)tree, CDFILES);
         }
         if (!more)
             break;
@@ -991,7 +989,7 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *co
         {
             count->files -= 1;
             inf_numset(tree, CDFILES, count->files);
-            draw_fld(tree, CDFILES);
+            draw_fld((OBJECT *)tree, CDFILES);
         }
     }
 
