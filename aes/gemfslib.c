@@ -761,7 +761,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
     fm_dial(FMD_FINISH, &gl_rfs);
 
     /* return exit button */
-    *pbutton = inf_what(tree, FSOK, FSCANCEL);
+    *pbutton = inf_what((OBJECT *)tree, FSOK, FSCANCEL);
     dos_free((LONG)ad_fsnames);
 
     return TRUE;

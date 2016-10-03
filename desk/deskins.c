@@ -412,7 +412,7 @@ WORD ins_app(WORD curr)
             pa->a_funkey = funkey;  /* now we can store it */
 
             pa->a_flags = 0;
-            field = inf_gindex((LONG)tree, APTOS, APGTP-APTOS+1);
+            field = inf_gindex(tree, APTOS, APGTP-APTOS+1);
             if (field & 1)
                 pa->a_flags |= AF_ISPARM;
             if (field & 2)
@@ -581,14 +581,14 @@ static WORD install_desktop_icon(ANODE *pa)
             new_icon = (curr_icon < NUM_GEM_IBLKS-1) ? curr_icon+1 : NUM_GEM_IBLKS-1;
             break;
         case ID_OK:             /* (re)install an icon */
-            if (inf_gindex((LONG)tree, ID_DRIVE, 3) == 0)   /* only disks have a letter */
+            if (inf_gindex(tree, ID_DRIVE, 3) == 0) /* only disks have a letter */
             {
                 inf_sget(tree, ID_ID, new_label);
                 pa->a_letter = new_label[0];
             }
             else
                 pa->a_letter = '\0';
-            switch(inf_gindex((LONG)tree, ID_DRIVE,3))
+            switch(inf_gindex(tree, ID_DRIVE,3))
             {
             case 0:
                 pa->a_type = AT_ISDISK;

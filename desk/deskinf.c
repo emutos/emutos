@@ -507,7 +507,7 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
         obj->ob_state = NORMAL;
 
     inf_show(tree, 0);
-    if (inf_what(tree, FFOK, FFCNCL) != 1)
+    if (inf_what((OBJECT *)tree, FFOK, FFCNCL) != 1)
         return FALSE;
 
     /*
@@ -704,12 +704,12 @@ WORD inf_pref(void)
     /* allow user to select preferences */
     inf_show((LONG)tree, 0);
 
-    if (inf_what((LONG)tree, SPOK, SPCNCL))
+    if (inf_what(tree, SPOK, SPCNCL))
     {
         G.g_cdelepref = inf_which(tree, SPCDYES, 2);
         G.g_ccopypref = inf_which(tree, SPCCYES, 2);
         G.g_covwrpref = inf_which(tree, SPCOWYES, 2);
-        G.g_cdclkpref = inf_gindex((LONG)tree, SPDC1, 5);
+        G.g_cdclkpref = inf_gindex(tree, SPDC1, 5);
         G.g_cdclkpref = evnt_dclick(G.g_cdclkpref, TRUE);
         G.g_cmclkpref = inf_which(tree, SPMNCLKY, 2);
         G.g_cmclkpref = menu_click(G.g_cmclkpref, TRUE);
@@ -756,7 +756,7 @@ WORD opn_appl(BYTE *papname, BYTE *papparms, BYTE *pcmd, BYTE *ptail)
     inf_show(tree, APPLPARM);
 
     /* now find out what happened */
-    if ( inf_what(tree, APPLOK, APPLCNCL) )
+    if ( inf_what((OBJECT *)tree, APPLOK, APPLCNCL) )
     {
         inf_sget((OBJECT *)tree, APPLNAME, poname);
         unfmt_str(poname, pcmd);

@@ -127,11 +127,11 @@ WORD oldres;
 
     inf_show(tree,ROOT);
 
-    if (inf_what(tree,TTREZOK,TTREZCAN) == 0)
+    if (inf_what((OBJECT *)tree,TTREZOK,TTREZCAN) == 0)
         return 0;
 
     /* look for button with SELECTED state */
-    i = inf_gindex(tree,TTREZSTL,NUM_TT_BUTTONS);
+    i = inf_gindex((OBJECT *)tree,TTREZSTL,NUM_TT_BUTTONS);
     if (i < 0)                  /* paranoia */
         return 0;
     if (i == selected)          /* no change */
@@ -190,11 +190,11 @@ WORD oldmode, oldbase, oldoptions;
 
     inf_show(tree,ROOT);
 
-    if (inf_what(tree,FREZOK,FREZCAN) == 0)
+    if (inf_what((OBJECT *)tree,FREZOK,FREZCAN) == 0)
         return 0;
 
     /* look for button with SELECTED state */
-    i = inf_gindex(tree,FREZLIST,NUM_FALCON_BUTTONS);
+    i = inf_gindex((OBJECT *)tree,FREZLIST,NUM_FALCON_BUTTONS);
     if (i < 0)                  /* paranoia */
         return 0;
     if (i == selected)          /* no change */

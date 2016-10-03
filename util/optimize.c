@@ -177,12 +177,12 @@ void inf_sget(OBJECT *tree, WORD obj, BYTE *pstr)
  *  for a SELECTED onject.  Returns the relative number of the first
  *  SELECTED object, or -1 if none of the objects is selected.
  */
-WORD inf_gindex(LONG tree, WORD baseobj, WORD numobj)
+WORD inf_gindex(OBJECT *tree, WORD baseobj, WORD numobj)
 {
     WORD    retobj;
     OBJECT  *objptr;
 
-    for (retobj = 0, objptr = ((OBJECT *)tree)+baseobj; retobj < numobj; retobj++, objptr++)
+    for (retobj = 0, objptr = tree+baseobj; retobj < numobj; retobj++, objptr++)
     {
         if (objptr->ob_state & SELECTED)
             return retobj;
@@ -196,7 +196,7 @@ WORD inf_gindex(LONG tree, WORD baseobj, WORD numobj)
  *  Return 0 if cancel was selected, 1 if okay was selected, -1 if
  *  nothing was selected
  */
-WORD inf_what(LONG tree, WORD ok, WORD cncl)
+WORD inf_what(OBJECT *tree, WORD ok, WORD cncl)
 {
     WORD    field;
     OBJECT  *objptr;
@@ -205,7 +205,7 @@ WORD inf_what(LONG tree, WORD ok, WORD cncl)
 
     if (field != -1)
     {
-        objptr = ((OBJECT *)tree) + ok + field;
+        objptr = tree + ok + field;
         objptr->ob_state = NORMAL;
         field = (field == 0);
     }

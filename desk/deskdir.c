@@ -125,7 +125,7 @@ static WORD do_namecon(void)
     draw_dial(G.a_trees[ADCPYDEL]);
     graf_mouse(HGLASS, NULL);
 
-    ob = inf_gindex(tree, CAOK, 3) + CAOK;
+    ob = inf_gindex((OBJECT *)tree, CAOK, 3) + CAOK;
     ((OBJECT *)tree+ob)->ob_state = NORMAL;
 
     return ob;
@@ -911,7 +911,7 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *co
             graf_mouse(ARROW, NULL);
             form_do(tree, 0);
             graf_mouse(HGLASS, NULL);
-            more = inf_what(tree, CDOK, CDCNCL);
+            more = inf_what((OBJECT *)tree, CDOK, CDCNCL);
         }
     }
 

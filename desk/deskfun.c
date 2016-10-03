@@ -153,7 +153,7 @@ WORD fun_mkdir(WNODE *pw_node)
         inf_sset((OBJECT *)tree, MKNAME, fnew_name);
         show_hide(FMD_START, tree);
         form_do(tree, 0);
-        if (inf_what(tree, MKOK, MKCNCL) == 0)
+        if (inf_what((OBJECT *)tree, MKOK, MKCNCL) == 0)
             break;
 
         inf_sget((OBJECT *)tree, MKNAME, fnew_name);
