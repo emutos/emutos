@@ -81,6 +81,7 @@ void *xmxalloc(long amount, int mode);
 #if CONF_WITH_ALT_RAM
 /* declare additional memory */
 long xmaddalt(UBYTE *start, long size);
+long total_alt_ram(void);
 #endif /* CONF_WITH_ALT_RAM */
 
 /* init user memory */

@@ -54,8 +54,9 @@ int early_cli;
 
 /*==== External declarations ==============================================*/
 
-/* mxalloc (defined in bdos/mem.h) */
-extern void *xmxalloc(long amount, int mode);
+#if CONF_WITH_ALT_RAM
+extern long total_alt_ram(void); /* in bdos/umem.c */
+#endif
 
 
 /*
@@ -195,7 +196,10 @@ WORD initinfo(void)
 #endif
     int i;
     WORD olddev = -1, dev = bootdev;
-    long altramsize = (long)xmxalloc(-1L, MX_TTRAM);
+    long stramsize = (long)phystop;
+#if CONF_WITH_ALT_RAM
+    long altramsize = total_alt_ram();
+#endif
     LONG hdd_available = blkdev_avail(HARDDISK_BOOTDEV);
 
     /*
@@ -208,8 +212,10 @@ WORD initinfo(void)
 #if CONF_WITH_AROS
     initinfo_height += 3;
 #endif
+#if CONF_WITH_ALT_RAM
     if (altramsize > 0)
         initinfo_height += 1;
+#endif
     if (hdd_available)
         initinfo_height += 1;
 
@@ -243,15 +249,17 @@ WORD initinfo(void)
 
     pair_start(_("Machine")); cprintf(machine_name()); pair_end();
 /*  pair_start(_("MMU available")); cprintf(_("No")); pair_end(); */
-    pair_start(_("Free ST-RAM"));
-        cprintf(_("%ld KB"), /* memtop-membot */ (long)xmxalloc(-1L, MX_STRAM) >> 10);
+    pair_start(_("ST-RAM"));
+        cprintf(_("%ld KB"), stramsize >> 10);
     pair_end();
 
+#if CONF_WITH_ALT_RAM
     if (altramsize > 0) {
-        pair_start(_("Free Alt-RAM"));
+        pair_start(_("Alt-RAM"));
         cprintf(_("%ld KB"), altramsize >> 10);
         pair_end();
     }
+#endif
 
     cprintf("\033j");       /* save current cursor position */
     cprint_devices(dev);

@@ -388,6 +388,23 @@ long xmaddalt(UBYTE *start, LONG size)
     return 0;
 }
 
+/* Get the total size of all Alt-RAM blocks */
+long total_alt_ram(void)
+{
+    long total = 0;
+    MD* md;
+
+    /* Add sum of free blocks */
+    for(md = pmdalt.mp_mfl; md; md = md->m_link)
+        total += md->m_length;
+
+    /* Add sum of allocated blocks */
+    for(md = pmdalt.mp_mal; md; md = md->m_link)
+        total += md->m_length;
+
+    return total;
+}
+
 #endif /* CONF_WITH_ALT_RAM */
 
 /*
