@@ -293,7 +293,7 @@ create_pagetable:
                 move.l  d6,a2                           //A2 = Base address of new page table
                 or.b    #2,d6                           //OR in %10 in the PDT field
                 move.l  d6,(a1,d5.l)                    //Store this descriptor in the pointer table (pointer level)
-                moveq   #(((~msk_4kpt_addr)+1)/4)-1,d7  //Size of page table / 4
+                moveq   #((((~msk_4kpt_addr)+1)&0xffffffff)/4)-1,d7  //Size of page table / 4
 .4kp_clr_pt:    clr.l   (a2)+                           //Make sure all descriptors in the new page table are invalidated
                 dbra    d7,.4kp_clr_pt
                 rts
@@ -317,7 +317,7 @@ create_pointertable:
                 move.l  d6,a1
                 or.b    #2,d6
                 move.l  d6,(a0,d4.l)
-                moveq   #(((~msk_pnttab_addr)+1)/4)-1,d7
+                moveq   #((((~msk_pnttab_addr)+1)&0xffffffff)/4)-1,d7
 
 .clr_pt:        clr.l   (a1)+
                 dbra    d7,.clr_pt
