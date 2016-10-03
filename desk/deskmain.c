@@ -319,7 +319,7 @@ static WORD do_deskmenu(WORD item)
         display_free_stack();
         tree = G.a_trees[ADDINFO];
         /* draw the form        */
-        show_hide(FMD_START, tree);
+        show_hide(FMD_START, (OBJECT *)tree);
         while(!done)
         {
             touchob = form_do(tree, 0);
@@ -340,7 +340,7 @@ static WORD do_deskmenu(WORD item)
         }
         obj = (OBJECT *)tree + DEOK;
         obj->ob_state = NORMAL;
-        show_hide(FMD_FINISH, tree);
+        show_hide(FMD_FINISH, (OBJECT *)tree);
         done = FALSE;
         break;
     }

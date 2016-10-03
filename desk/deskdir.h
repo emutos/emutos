@@ -22,7 +22,7 @@ typedef struct {    /* #files/#folders/total filesize of directory & its subdire
 /*
  * function prototypes
  */
-void show_hide(WORD fmd, LONG tree);
+void show_hide(WORD fmd, OBJECT *tree);
 void draw_fld(OBJECT *tree, WORD obj);
 void draw_dial(OBJECT *tree);
 BYTE *last_separator(BYTE *path);

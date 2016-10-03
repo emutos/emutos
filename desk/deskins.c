@@ -382,7 +382,7 @@ WORD ins_app(WORD curr)
     field = (pa->a_flags&AF_ISFULL) ? APPMFULL : APPMFILE;
     tree[field].ob_state |= SELECTED;
 
-    show_hide(FMD_START, (LONG)tree);
+    show_hide(FMD_START, tree);
     do
     {
         exitobj = form_do((LONG)tree, APARGS);
@@ -464,7 +464,7 @@ WORD ins_app(WORD curr)
             break;
         }
     } while(exitobj == -1);
-    show_hide(FMD_FINISH, (LONG)tree);
+    show_hide(FMD_FINISH, tree);
 
     return change;
 }
@@ -567,7 +567,7 @@ static WORD install_desktop_icon(ANODE *pa)
 
     insert_icon(tree, ID_ICON, curr_icon);
 
-    show_hide(FMD_START, (LONG)tree);
+    show_hide(FMD_START, tree);
     while(1)
     {
         exitobj = form_do((LONG)tree, ID_ID) & 0x7fff;
@@ -622,7 +622,7 @@ static WORD install_desktop_icon(ANODE *pa)
         }
         draw_fld(tree, ID_IBOX);
     }
-    show_hide(FMD_FINISH, (LONG)tree);
+    show_hide(FMD_FINISH, tree);
 
     return change;
 }
@@ -768,7 +768,7 @@ static WORD install_window_icon(FNODE *pf)
 
     insert_icon(tree, IW_ICON, curr_icon);
 
-    show_hide(FMD_START, (LONG)tree);
+    show_hide(FMD_START, tree);
     while(1)
     {
         exitobj = form_do((LONG)tree, edit_start) & 0x7fff;
@@ -840,7 +840,7 @@ static WORD install_window_icon(FNODE *pf)
         }
         draw_fld(tree, IW_IBOX);
     }
-    show_hide(FMD_FINISH, (LONG)tree);
+    show_hide(FMD_FINISH, tree);
 
     return change;
 }

@@ -151,7 +151,7 @@ WORD fun_mkdir(WNODE *pw_node)
     {
         fnew_name[0] = '\0';
         inf_sset((OBJECT *)tree, MKNAME, fnew_name);
-        show_hide(FMD_START, tree);
+        show_hide(FMD_START, (OBJECT *)tree);
         form_do(tree, 0);
         if (inf_what((OBJECT *)tree, MKOK, MKCNCL) == 0)
             break;
@@ -194,7 +194,7 @@ WORD fun_mkdir(WNODE *pw_node)
             break;
     }
 
-    show_hide(FMD_FINISH, tree);
+    show_hide(FMD_FINISH, (OBJECT *)tree);
     return TRUE;
 }
 

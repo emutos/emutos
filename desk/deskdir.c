@@ -90,15 +90,14 @@ void draw_dial(OBJECT *tree)
 }
 
 
-void show_hide(WORD fmd, LONG tree)
+void show_hide(WORD fmd, OBJECT *tree)
 {
     WORD xd, yd, wd, hd;
-    OBJECT *obtree = (OBJECT *)tree;
 
-    form_center(tree, &xd, &yd, &wd, &hd);
+    form_center((LONG)tree, &xd, &yd, &wd, &hd);
     form_dial(fmd, 0, 0, 0, 0, xd, yd, wd, hd);
     if (fmd == FMD_START)
-        objc_draw(obtree, ROOT, MAX_DEPTH, xd, yd, wd, hd);
+        objc_draw(tree, ROOT, MAX_DEPTH, xd, yd, wd, hd);
 }
 
 
@@ -117,7 +116,7 @@ static WORD do_namecon(void)
         draw_dial((OBJECT *)tree);
     else
     {
-        show_hide(FMD_START, tree);
+        show_hide(FMD_START, (OBJECT *)tree);
         ml_havebox = TRUE;
     }
     form_do(tree, 0);
@@ -902,7 +901,7 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *co
         centre_title(tree);
         inf_numset(tree, CDFILES, count->files);
         inf_numset(tree, CDFOLDS, count->dirs);
-        show_hide(FMD_START, tree);
+        show_hide(FMD_START, (OBJECT *)tree);
         ml_havebox = TRUE;
         if (confirm)
         {
@@ -1010,7 +1009,7 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *co
     }
 
     if (tree)
-        show_hide(FMD_FINISH, tree);
+        show_hide(FMD_FINISH, (OBJECT *)tree);
     graf_mouse(ARROW, NULL);
 
     return TRUE;
