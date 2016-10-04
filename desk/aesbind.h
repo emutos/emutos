@@ -55,7 +55,7 @@ WORD objc_offset(OBJECT *tree, WORD obj, WORD *poffx, WORD *poffy);
 WORD objc_change(OBJECT *tree, WORD drawob, WORD depth, WORD xc, WORD yc,
                  WORD wc, WORD hc, WORD newstate, WORD redraw);
 
-WORD form_do(LONG form, WORD start);
+WORD form_do(OBJECT *form, WORD start);
 WORD form_dial(WORD dtype, WORD ix, WORD iy, WORD iw, WORD ih,
                WORD x, WORD y, WORD w, WORD h);
 WORD form_alert(WORD defbut, LONG astring);

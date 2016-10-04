@@ -385,7 +385,7 @@ WORD ins_app(WORD curr)
     show_hide(FMD_START, tree);
     do
     {
-        exitobj = form_do((LONG)tree, APARGS);
+        exitobj = form_do(tree, APARGS);
 
         switch(exitobj&0x7fff)
         {
@@ -570,7 +570,7 @@ static WORD install_desktop_icon(ANODE *pa)
     show_hide(FMD_START, tree);
     while(1)
     {
-        exitobj = form_do((LONG)tree, ID_ID) & 0x7fff;
+        exitobj = form_do(tree, ID_ID) & 0x7fff;
 
         switch(exitobj)
         {
@@ -771,7 +771,7 @@ static WORD install_window_icon(FNODE *pf)
     show_hide(FMD_START, tree);
     while(1)
     {
-        exitobj = form_do((LONG)tree, edit_start) & 0x7fff;
+        exitobj = form_do(tree, edit_start) & 0x7fff;
 
         switch(exitobj)
         {

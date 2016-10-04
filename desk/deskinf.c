@@ -345,7 +345,7 @@ WORD inf_show(LONG tree, WORD start)
     form_center(tree, &xd, &yd, &wd, &hd);
     form_dial(FMD_START, 0, 0, 0, 0, xd, yd, wd, hd);
     objc_draw(obtree, ROOT, MAX_DEPTH, xd, yd, wd, hd);
-    form_do(tree, start);
+    form_do((OBJECT *)tree, start);
     form_dial(FMD_FINISH, 0, 0, 0, 0, xd, yd, wd, hd);
 
     return TRUE;

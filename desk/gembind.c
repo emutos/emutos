@@ -567,9 +567,9 @@ WORD objc_change(OBJECT *tree, WORD drawob, WORD depth, WORD xc, WORD yc,
 /*
  *  Form Manager
  */
-WORD form_do(LONG form, WORD start)
+WORD form_do(OBJECT *form, WORD start)
 {
-    FM_FORM = form;
+    FM_FORM = (LONG)form;
     FM_START = start;
     return gem_if(FORM_DO);
 }

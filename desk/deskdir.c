@@ -119,7 +119,7 @@ static WORD do_namecon(void)
         show_hide(FMD_START, (OBJECT *)tree);
         ml_havebox = TRUE;
     }
-    form_do(tree, 0);
+    form_do((OBJECT *)tree, 0);
     draw_dial((OBJECT *)G.a_trees[ADCPYDEL]);
     graf_mouse(HGLASS, NULL);
 
@@ -906,7 +906,7 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *co
         if (confirm)
         {
             graf_mouse(ARROW, NULL);
-            form_do(tree, 0);
+            form_do((OBJECT *)tree, 0);
             graf_mouse(HGLASS, NULL);
             more = inf_what((OBJECT *)tree, CDOK, CDCNCL);
         }

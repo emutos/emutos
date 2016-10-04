@@ -322,7 +322,7 @@ static WORD do_deskmenu(WORD item)
         show_hide(FMD_START, (OBJECT *)tree);
         while(!done)
         {
-            touchob = form_do(tree, 0);
+            touchob = form_do((OBJECT *)tree, 0);
             touchob &= 0x7fff;
             if (touchob == DEICON)
             {
