@@ -434,7 +434,7 @@ static WORD count_ffs(BYTE *path)
 /************************************************************************/
 WORD inf_file_folder(BYTE *ppath, FNODE *pf)
 {
-    LONG tree;
+    OBJECT *tree;
     WORD more, nmidx, title, ret;
     BYTE attr;
     BYTE srcpth[MAXPATHLEN];
@@ -442,11 +442,11 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
     BYTE poname[LEN_ZFNAME], pnname[LEN_ZFNAME];
     OBJECT *obj;
 
-    tree = G.a_trees[ADFFINFO];
+    tree = (OBJECT *)G.a_trees[ADFFINFO];
     title = (pf->f_attr & F_SUBDIR) ? STFOINFO : STFIINFO;
-    obj = (OBJECT *)tree + FFTITLE;
+    obj = tree + FFTITLE;
     obj->ob_spec = (LONG) ini_str(title);
-    centre_title(tree);
+    centre_title((LONG)tree);
 
     strcpy(srcpth, ppath);
     strcpy(dstpth, ppath);
@@ -469,27 +469,27 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
         if (!more)
             return FALSE;
 
-        inf_fifosz((OBJECT *)tree, FFNUMFIL, FFNUMFOL, FFSIZE);
+        inf_fifosz(tree, FFNUMFIL, FFNUMFOL, FFSIZE);
     }
     else
     {
-        obj = (OBJECT *)tree + FFNUMFIL;
+        obj = tree + FFNUMFIL;
         obj->ob_state |= DISABLED;
-        inf_sset((OBJECT *)tree,FFNUMFIL,"");
-        obj = (OBJECT *)tree + FFNUMFOL;
+        inf_sset(tree,FFNUMFIL,"");
+        obj = tree + FFNUMFOL;
         obj->ob_state |= DISABLED;
-        inf_sset((OBJECT *)tree,FFNUMFOL,"");
-        inf_numset((OBJECT *)tree,FFSIZE,pf->f_size);
+        inf_sset(tree,FFNUMFOL,"");
+        inf_numset(tree,FFSIZE,pf->f_size);
     }
 
     fmt_str(pf->f_name, poname);
-    inf_sset((OBJECT *)tree, FFNAME, poname);
-    inf_dttm((OBJECT *)tree, pf, FFDATE, FFTIME);
+    inf_sset(tree, FFNAME, poname);
+    inf_dttm(tree, pf, FFDATE, FFTIME);
 
     /*
      * initialise the attributes display
      */
-    obj = (OBJECT *)tree + FFRONLY;
+    obj = tree + FFRONLY;
     if (pf->f_attr & F_SUBDIR)
         obj->ob_state = DISABLED;
     else if (pf->f_attr & F_RDONLY)
@@ -497,7 +497,7 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
     else
         obj->ob_state = NORMAL;
 
-    obj = (OBJECT *)tree + FFRWRITE;
+    obj = tree + FFRWRITE;
     if (pf->f_attr & F_SUBDIR)
         obj->ob_state = DISABLED;
     else if (!(pf->f_attr & F_RDONLY))
@@ -505,8 +505,8 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
     else
         obj->ob_state = NORMAL;
 
-    inf_show((OBJECT *)tree, 0);
-    if (inf_what((OBJECT *)tree, FFOK, FFCNCL) != 1)
+    inf_show(tree, 0);
+    if (inf_what(tree, FFOK, FFCNCL) != 1)
         return FALSE;
 
     /*
@@ -515,7 +515,7 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
     graf_mouse(HGLASS, NULL);
 
     more = TRUE;
-    inf_sget((OBJECT *)tree, FFNAME, pnname);
+    inf_sget(tree, FFNAME, pnname);
 
     /* unformat the strings */
     unfmt_str(poname, srcpth+nmidx);
@@ -538,7 +538,7 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
     if (!(pf->f_attr & F_SUBDIR) && more)
     {
         attr = pf->f_attr;
-        obj = (OBJECT *)tree + FFRONLY;
+        obj = tree + FFRONLY;
         if (obj->ob_state & SELECTED)
             attr |= F_RDONLY;
         else
@@ -562,7 +562,7 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
 /************************************************************************/
 WORD inf_disk(BYTE dr_id)
 {
-    LONG tree;
+    OBJECT *tree;
     LONG total, avail;
     WORD more;
     BYTE srcpth[MAXPATHLEN];
@@ -570,7 +570,7 @@ WORD inf_disk(BYTE dr_id)
     BYTE drive[2];
 
     graf_mouse(HGLASS, NULL);
-    tree = G.a_trees[ADDISKIN];
+    tree = (OBJECT *)G.a_trees[ADDISKIN];
 
     drive[0] = dr_id;
     drive[1] = '\0';
@@ -591,13 +591,13 @@ WORD inf_disk(BYTE dr_id)
     if (!dos_label(dr_id - 'A' + 1, label))
         label[0] = '\0';
 
-    inf_sset((OBJECT *)tree, DIDRIVE, drive);
-    inf_sset((OBJECT *)tree, DIVOLUME, label);
+    inf_sset(tree, DIDRIVE, drive);
+    inf_sset(tree, DIVOLUME, label);
 
-    inf_fifosz((OBJECT *)tree, DINFILES, DINFOLDS, DIUSED);
-    inf_numset((OBJECT *)tree, DIAVAIL, avail);
+    inf_fifosz(tree, DINFILES, DINFOLDS, DIUSED);
+    inf_numset(tree, DIAVAIL, avail);
 
-    inf_finish((OBJECT *)tree, DIOK);
+    inf_finish(tree, DIOK);
 
     return TRUE;
 }
@@ -744,22 +744,22 @@ WORD inf_pref(void)
  */
 WORD opn_appl(BYTE *papname, BYTE *papparms, BYTE *pcmd, BYTE *ptail)
 {
-    LONG tree;
+    OBJECT *tree;
     BYTE poname[LEN_ZFNAME];
 
-    tree = G.a_trees[ADOPENAP];
+    tree = (OBJECT *)G.a_trees[ADOPENAP];
 
     fmt_str(papname, poname);
-    inf_sset((OBJECT *)tree, APPLNAME, poname);
-    inf_sset((OBJECT *)tree, APPLPARM, papparms);
-    inf_show((OBJECT *)tree, APPLPARM);
+    inf_sset(tree, APPLNAME, poname);
+    inf_sset(tree, APPLPARM, papparms);
+    inf_show(tree, APPLPARM);
 
     /* now find out what happened */
-    if ( inf_what((OBJECT *)tree, APPLOK, APPLCNCL) )
+    if ( inf_what(tree, APPLOK, APPLCNCL) )
     {
-        inf_sget((OBJECT *)tree, APPLNAME, poname);
+        inf_sget(tree, APPLNAME, poname);
         unfmt_str(poname, pcmd);
-        inf_sget((OBJECT *)tree, APPLPARM, ptail);
+        inf_sget(tree, APPLPARM, ptail);
         return TRUE;
     }
     else
