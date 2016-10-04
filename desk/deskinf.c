@@ -385,35 +385,35 @@ void inf_numset(OBJECT *tree, WORD obj, ULONG value)
  * Routine to put number of files, folders and size into
  * a dialog box
  */
-static void inf_fifosz(LONG tree, WORD dl_fi, WORD dl_fo, WORD dl_sz)
+static void inf_fifosz(OBJECT *tree, WORD dl_fi, WORD dl_fo, WORD dl_sz)
 {
     OBJECT *obj;
 
     G.g_ndirs--;    /* reproduce TOS's folder count in this situation */
 
-    obj = (OBJECT *)tree + dl_fi;
+    obj = tree + dl_fi;
     obj->ob_state &= ~DISABLED;
-    inf_numset((OBJECT *)tree, dl_fi, G.g_nfiles);
+    inf_numset(tree, dl_fi, G.g_nfiles);
 
-    obj = (OBJECT *)tree + dl_fo;
+    obj = tree + dl_fo;
     obj->ob_state &= ~DISABLED;
-    inf_numset((OBJECT *)tree, dl_fo, G.g_ndirs);
+    inf_numset(tree, dl_fo, G.g_ndirs);
 
-    obj = (OBJECT *)tree + dl_sz;
+    obj = tree + dl_sz;
     obj->ob_state &= ~DISABLED;
-    inf_numset((OBJECT *)tree, dl_sz, G.g_size);
+    inf_numset(tree, dl_sz, G.g_size);
 }
 
 
-static void inf_dttm(LONG tree, FNODE *pf, WORD dl_dt, WORD dl_tm)
+static void inf_dttm(OBJECT *tree, FNODE *pf, WORD dl_dt, WORD dl_tm)
 {
     BYTE str[11];
 
     fmt_date(pf->f_date, 1, str);   /* 4-digit year always */
-    inf_sset((OBJECT *)tree, dl_dt, str);
+    inf_sset(tree, dl_dt, str);
 
     fmt_time(pf->f_time, "%02d%02d%s", str);
-    inf_sset((OBJECT *)tree, dl_tm, str);
+    inf_sset(tree, dl_tm, str);
 }
 
 
@@ -469,7 +469,7 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
         if (!more)
             return FALSE;
 
-        inf_fifosz(tree, FFNUMFIL, FFNUMFOL, FFSIZE);
+        inf_fifosz((OBJECT *)tree, FFNUMFIL, FFNUMFOL, FFSIZE);
     }
     else
     {
@@ -484,7 +484,7 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
 
     fmt_str(pf->f_name, poname);
     inf_sset((OBJECT *)tree, FFNAME, poname);
-    inf_dttm(tree, pf, FFDATE, FFTIME);
+    inf_dttm((OBJECT *)tree, pf, FFDATE, FFTIME);
 
     /*
      * initialise the attributes display
@@ -594,7 +594,7 @@ WORD inf_disk(BYTE dr_id)
     inf_sset((OBJECT *)tree, DIDRIVE, drive);
     inf_sset((OBJECT *)tree, DIVOLUME, label);
 
-    inf_fifosz(tree, DINFILES, DINFOLDS, DIUSED);
+    inf_fifosz((OBJECT *)tree, DINFILES, DINFOLDS, DIUSED);
     inf_numset((OBJECT *)tree, DIAVAIL, avail);
 
     inf_finish((OBJECT *)tree, DIOK);
