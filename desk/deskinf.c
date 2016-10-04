@@ -368,11 +368,11 @@ static void inf_finish(OBJECT *tree, WORD dl_ok)
  *  Insert an unsigned long value into the te_ptext field of the TEDINFO
  *  structure for the specified object, truncating if necessary
  */
-void inf_numset(LONG tree, WORD obj, ULONG value)
+void inf_numset(OBJECT *tree, WORD obj, ULONG value)
 {
     WORD len;
     TEDINFO *ted;
-    OBJECT  *objptr = ((OBJECT *)tree) + obj;
+    OBJECT  *objptr = tree + obj;
 
     ted = (TEDINFO *)objptr->ob_spec;
     len = ted->te_txtlen - 1;
@@ -393,15 +393,15 @@ static void inf_fifosz(LONG tree, WORD dl_fi, WORD dl_fo, WORD dl_sz)
 
     obj = (OBJECT *)tree + dl_fi;
     obj->ob_state &= ~DISABLED;
-    inf_numset(tree, dl_fi, G.g_nfiles);
+    inf_numset((OBJECT *)tree, dl_fi, G.g_nfiles);
 
     obj = (OBJECT *)tree + dl_fo;
     obj->ob_state &= ~DISABLED;
-    inf_numset(tree, dl_fo, G.g_ndirs);
+    inf_numset((OBJECT *)tree, dl_fo, G.g_ndirs);
 
     obj = (OBJECT *)tree + dl_sz;
     obj->ob_state &= ~DISABLED;
-    inf_numset(tree, dl_sz, G.g_size);
+    inf_numset((OBJECT *)tree, dl_sz, G.g_size);
 }
 
 
@@ -479,7 +479,7 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
         obj = (OBJECT *)tree + FFNUMFOL;
         obj->ob_state |= DISABLED;
         inf_sset((OBJECT *)tree,FFNUMFOL,"");
-        inf_numset(tree,FFSIZE,pf->f_size);
+        inf_numset((OBJECT *)tree,FFSIZE,pf->f_size);
     }
 
     fmt_str(pf->f_name, poname);
@@ -595,7 +595,7 @@ WORD inf_disk(BYTE dr_id)
     inf_sset((OBJECT *)tree, DIVOLUME, label);
 
     inf_fifosz(tree, DINFILES, DINFOLDS, DIUSED);
-    inf_numset(tree, DIAVAIL, avail);
+    inf_numset((OBJECT *)tree, DIAVAIL, avail);
 
     inf_finish((OBJECT *)tree, DIOK);
 

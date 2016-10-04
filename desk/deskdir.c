@@ -613,7 +613,7 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path, LONG tree, DI
             }
             if (tree)
             {
-                inf_numset(tree, CDFOLDS, --(count->dirs));
+                inf_numset((OBJECT *)tree, CDFOLDS, --(count->dirs));
                 draw_fld((OBJECT *)tree, CDFOLDS);
             }
             return more;
@@ -696,7 +696,7 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path, LONG tree, DI
             restore_path(ptmp);     /* restore original source path */
         if (tree)
         {
-            inf_numset(tree, CDFILES, --(count->files));
+            inf_numset((OBJECT *)tree, CDFILES, --(count->files));
             draw_fld((OBJECT *)tree, CDFILES);
         }
         if (!more)
@@ -899,8 +899,8 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *co
     if (tree)
     {
         centre_title(tree);
-        inf_numset(tree, CDFILES, count->files);
-        inf_numset(tree, CDFOLDS, count->dirs);
+        inf_numset((OBJECT *)tree, CDFILES, count->files);
+        inf_numset((OBJECT *)tree, CDFOLDS, count->dirs);
         show_hide(FMD_START, (OBJECT *)tree);
         ml_havebox = TRUE;
         if (confirm)
@@ -987,7 +987,7 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *co
         if (tree)
         {
             count->files -= 1;
-            inf_numset(tree, CDFILES, count->files);
+            inf_numset((OBJECT *)tree, CDFILES, count->files);
             draw_fld((OBJECT *)tree, CDFILES);
         }
     }
