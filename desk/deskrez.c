@@ -125,7 +125,7 @@ WORD oldres;
         else obj->ob_state &= ~SELECTED;
     }
 
-    inf_show(tree,ROOT);
+    inf_show((OBJECT *)tree,ROOT);
 
     if (inf_what((OBJECT *)tree,TTREZOK,TTREZCAN) == 0)
         return 0;
@@ -188,7 +188,7 @@ WORD oldmode, oldbase, oldoptions;
         else obj->ob_state &= ~SELECTED;
     }
 
-    inf_show(tree,ROOT);
+    inf_show((OBJECT *)tree,ROOT);
 
     if (inf_what((OBJECT *)tree,FREZOK,FREZCAN) == 0)
         return 0;

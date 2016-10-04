@@ -337,15 +337,14 @@ WORD dr_code(PARMBLK *pparms)
 /*
  * Put up dialog box & call form_do
  */
-WORD inf_show(LONG tree, WORD start)
+WORD inf_show(OBJECT *tree, WORD start)
 {
     WORD   xd, yd, wd, hd;
-    OBJECT *obtree = (OBJECT *)tree;
 
-    form_center(tree, &xd, &yd, &wd, &hd);
+    form_center((LONG)tree, &xd, &yd, &wd, &hd);
     form_dial(FMD_START, 0, 0, 0, 0, xd, yd, wd, hd);
-    objc_draw(obtree, ROOT, MAX_DEPTH, xd, yd, wd, hd);
-    form_do((OBJECT *)tree, start);
+    objc_draw(tree, ROOT, MAX_DEPTH, xd, yd, wd, hd);
+    form_do(tree, start);
     form_dial(FMD_FINISH, 0, 0, 0, 0, xd, yd, wd, hd);
 
     return TRUE;
@@ -355,12 +354,12 @@ WORD inf_show(LONG tree, WORD start)
 /*
  * Routine for finishing off a simple ok-only dialog box
  */
-static void inf_finish(LONG tree, WORD dl_ok)
+static void inf_finish(OBJECT *tree, WORD dl_ok)
 {
     OBJECT *obj;
 
     inf_show(tree, 0);
-    obj = (OBJECT *)tree + dl_ok;
+    obj = tree + dl_ok;
     obj->ob_state = NORMAL;
 }
 
@@ -506,7 +505,7 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
     else
         obj->ob_state = NORMAL;
 
-    inf_show(tree, 0);
+    inf_show((OBJECT *)tree, 0);
     if (inf_what((OBJECT *)tree, FFOK, FFCNCL) != 1)
         return FALSE;
 
@@ -598,7 +597,7 @@ WORD inf_disk(BYTE dr_id)
     inf_fifosz(tree, DINFILES, DINFOLDS, DIUSED);
     inf_numset(tree, DIAVAIL, avail);
 
-    inf_finish(tree, DIOK);
+    inf_finish((OBJECT *)tree, DIOK);
 
     return TRUE;
 }
@@ -702,7 +701,7 @@ WORD inf_pref(void)
     olddate = G.g_cdateform;
 
     /* allow user to select preferences */
-    inf_show((LONG)tree, 0);
+    inf_show(tree, 0);
 
     if (inf_what(tree, SPOK, SPCNCL))
     {
@@ -753,7 +752,7 @@ WORD opn_appl(BYTE *papname, BYTE *papparms, BYTE *pcmd, BYTE *ptail)
     fmt_str(papname, poname);
     inf_sset((OBJECT *)tree, APPLNAME, poname);
     inf_sset((OBJECT *)tree, APPLPARM, papparms);
-    inf_show(tree, APPLPARM);
+    inf_show((OBJECT *)tree, APPLPARM);
 
     /* now find out what happened */
     if ( inf_what((OBJECT *)tree, APPLOK, APPLCNCL) )
