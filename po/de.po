@@ -262,7 +262,7 @@ msgstr "Ja"
 msgid "No"
 msgstr "Nein"
 
-#: desk/desk_rsc.c:33 desk/desk_rsc.c:93 desk/desk_rsc.c:153
+#: desk/desk_rsc.c:33 desk/desk_rsc.c:93 desk/desk_rsc.c:153 desk/desk_rsc.c:159
 msgid "Name: ________.___"
 msgstr "Name: ________.___"
 
@@ -299,28 +299,24 @@ msgid "Icon identifier: _:"
 msgstr "Icon Kennung: _:"
 
 #: desk/desk_rsc.c:108
-msgid "       Icon label: ____________"
-msgstr "    Icon-Titel: ____________"
+msgid "Icon label: ____________"
+msgstr "Icon-Titel: ____________"
 
 #: desk/desk_rsc.c:113
 msgid "Application name: ________.___"
 msgstr "Anwendungsname: ________.___"
 
 #: desk/desk_rsc.c:118
-msgid "       Arguments: ___________"
-msgstr "       Argumente: ___________"
+msgid "Arguments: ___________"
+msgstr "Argumente: ___________"
 
 #: desk/desk_rsc.c:123
-msgid "   Document type: ___"
-msgstr "   Dokumenttyp: ___"
+msgid "Document type: ___"
+msgstr "Dokumenttyp: ___"
 
 #: desk/desk_rsc.c:128
-msgid "      Install as: F__"
-msgstr " Installieren als: F__"
-
-#: desk/desk_rsc.c:159
-msgid "       Name: ________.___"
-msgstr "       Name: ________.___"
+msgid "Install as: F__"
+msgstr "Installieren als: F__"
 
 #: desk/desk_rsc.c:143
 msgid "Current name: ________.___"
@@ -563,8 +559,8 @@ msgid "Window"
 msgstr "Fenster"
 
 #: desk/desk_rsc.c:1010
-msgid "  Parameter:"
-msgstr "  Parameter:"
+msgid "Parameter:"
+msgstr "Parameter:"
 
 #: desk/desk_rsc.c:1022
 msgid "Full path"
