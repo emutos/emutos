@@ -191,7 +191,7 @@ static void lmc1992_init(void)
     write_microwire(LMC1992_COMMAND(LMC1992_FUNCTION_INPUT_SELECT, LMC1992_INPUT_1));
 }
 
-void falcon_dmasound_init(void)
+static void falcon_dmasound_init(void)
 {
     /*
      * connect DMA playback to DAC (headphone/speaker)
