@@ -19,6 +19,7 @@ extern void linea_rect(void);     /* called only from linea.S */
 extern void linea_hline(void);    /* called only from linea.S */
 extern void linea_polygon(void);  /* called only from linea.S */
 extern void linea_line(void);     /* called only from linea.S */
+extern void linea_fill(void);     /* called only from linea.S */
 
 
 #define ABS(x) ((x) >= 0 ? (x) : -(x))
