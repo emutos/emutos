@@ -1506,7 +1506,7 @@ WORD deskmain(void)
     do_wredraw(0, G.g_xdesk, G.g_ydesk, G.g_wdesk, G.g_hdesk);
 
     /* Take over the desktop */
-    wind_set(0, WF_NEWDESK, G.g_screen, TRUE, FALSE);
+    wind_set(0, WF_NEWDESK, G.g_screen, 1, 0);
 
     /* set up current parms */
     desk_verify(0, FALSE);
