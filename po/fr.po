@@ -504,7 +504,7 @@ msgstr "INSTALLER ICÔNE DE BUREAU"
 
 #: desk/desk_rsc.c:809
 msgid "Icon type:"
-msgstr "Icône:"
+msgstr "Type:"
 
 #: desk/desk_rsc.c:821
 msgid "Drive"
