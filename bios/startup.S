@@ -142,6 +142,16 @@ _main:
         // but it matters for software reset
         move    #0x2700,sr
 
+#if CONF_WITH_TT_MMU
+        // TT TOS does the following even before reset; it is
+        // apparently required for correct floppy functioning
+        // when EmuTOS is ROM-resident (report by Ingo Uhlemann).
+        // It _should_ be harmless on all Atari systems; it has
+        // been tested (via emutos.prg) on ST/TT/Falcon.
+        move.w  #0x0100,0xffff8606.w    // toggle the ACSI DMA write bit
+        move.w  #0x0000,0xffff8606.w
+#endif
+
 #ifdef MACHINE_AMIGA
         // It is *mandatory* to call this as soon as possible,
         // to do early initialization of the Amiga hardware.
