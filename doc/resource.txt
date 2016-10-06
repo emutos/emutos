@@ -57,6 +57,23 @@ this does not help, increasing or decreasing the length of affected
 pre-aligned strings by 1 byte should fix the problem.
 
 
+An example of how to use the object alignment bits
+==================================================
+Suppose you have two or more objects (in the same box) that contain a
+common feature (e.g. a colon).  You want to align that feature (i.e.
+you want to make it appear at the same x-offset within the box), but
+the text string that appears in front of that feature varies in length
+for different languages.
+
+First, mark each object as right-aligned.  Then, for each object, let:
+    s = starting x offset
+    w = width (assumed to be large enough for all languages)
+    t = text length
+    f = offset from start of text to alignment feature
+The feature should be aligned in all languages if the value of (s+w-t+f)
+is the same for all the objects.
+
+
 Tips on using a resource editor with the current EmuTOS resources
 =================================================================
 1. Atari TOS and most resource editors support a maximum of 30 or 31
