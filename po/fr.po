@@ -287,11 +287,11 @@ msgid "Bytes available: __________"
 msgstr "Octets libres: __________"
 
 #: desk/desk_rsc.c:103
-msgid "Icon identifier: _:"
+msgid "Identifier: _:"
 msgstr "Lettre: _:"
 
 #: desk/desk_rsc.c:108
-msgid "Icon label: ____________"
+msgid "Label: ____________"
 msgstr "Libellé: ____________"
 
 #: desk/desk_rsc.c:113
@@ -503,7 +503,7 @@ msgid "INSTALL DESKTOP ICON"
 msgstr "INSTALLER ICÔNE DE BUREAU"
 
 #: desk/desk_rsc.c:809
-msgid "Icon type:"
+msgid "Type:"
 msgstr "Type:"
 
 #: desk/desk_rsc.c:821
@@ -519,7 +519,7 @@ msgid "Printer"
 msgstr "Imprimante"
 
 #: desk/desk_rsc.c:863 desk/desk_rsc.c:1746
-msgid "Icon shape:"
+msgid "Shape:"
 msgstr "Forme:"
 
 #: desk/desk_rsc.c:896

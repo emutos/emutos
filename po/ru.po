@@ -284,11 +284,11 @@ msgid "Bytes available: __________"
 msgstr "Байт свободно: __________"
 
 #: desk/desk_rsc.c:103
-msgid "Icon identifier: _:"
+msgid "Identifier: _:"
 msgstr "Буква иконки диска: _:"
 
 #: desk/desk_rsc.c:108
-msgid "Icon label: ____________"
+msgid "Label: ____________"
 msgstr "Имя иконки: ____________"
 
 #: desk/desk_rsc.c:113
@@ -500,7 +500,7 @@ msgid "INSTALL DESKTOP ICON"
 msgstr "УСТАНОВИТЬ ИКОНКУ ДЕСКТОПА"
 
 #: desk/desk_rsc.c:809
-msgid "Icon type:"
+msgid "Type:"
 msgstr "Тип иконки:"
 
 
@@ -517,7 +517,7 @@ msgid "Printer"
 msgstr "Принтер"
 
 #: desk/desk_rsc.c:863 desk/desk_rsc.c:1746
-msgid "Icon shape:"
+msgid "Shape:"
 msgstr "Тип иконки:"
 
 #: desk/desk_rsc.c:896

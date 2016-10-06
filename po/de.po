@@ -295,11 +295,11 @@ msgid "Bytes available: __________"
 msgstr "Bytes frei: __________"
 
 #: desk/desk_rsc.c:103
-msgid "Icon identifier: _:"
+msgid "Identifier: _:"
 msgstr "Icon Kennung: _:"
 
 #: desk/desk_rsc.c:108
-msgid "Icon label: ____________"
+msgid "Label: ____________"
 msgstr "Icon-Titel: ____________"
 
 #: desk/desk_rsc.c:113
@@ -511,7 +511,7 @@ msgid "INSTALL DESKTOP ICON"
 msgstr "DESKTOP ICON INSTALLIEREN"
 
 #: desk/desk_rsc.c:809
-msgid "Icon type:"
+msgid "Type:"
 msgstr "Icon-Typ:"
 
 #: desk/desk_rsc.c:821
@@ -527,7 +527,7 @@ msgid "Printer"
 msgstr "Drucker"
 
 #: desk/desk_rsc.c:863 desk/desk_rsc.c:1746
-msgid "Icon shape:"
+msgid "Shape:"
 msgstr "Icon Form:"
 
 #: desk/desk_rsc.c:896
