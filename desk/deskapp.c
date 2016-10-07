@@ -92,7 +92,15 @@ static BYTE     gl_buffer[SIZE_BUFF];
  * the disk, we create one dynamically from three sources:
  *  desk_inf_data1 below, for the #E and #W lines
  *  the drivemask, for #M lines
- *  desk_inf_data2 below, for the remaining lines
+ *  desk_inf_data2 below, for most of the remaining lines
+ * The #T line is added at the end.
+ *
+ * NOTES re desk_inf_data2:
+ *  1. the icon numbers MUST correspond to those in deskapp.h & the
+ *     icon.rsc file itself.
+ *  2. the first 'F' entry (for *.*) exists for compatibility between
+ *     versions of EmuTOS up to 0.9.6 and versions from 0.9.7 on; it is
+ *     not otherwise necessary.
  */
 static const char *desk_inf_data1 =
     "#E 1A 61\r\n"                      /* INF_E1_DEFAULT and INF_E2_DEFAULT */
@@ -101,13 +109,14 @@ static const char *desk_inf_data1 =
     "#W 00 00 02 0A 26 0C 00 @\r\n"
     "#W 00 00 02 0D 26 0C 00 @\r\n";
 static const char *desk_inf_data2 =
-    "#F FF 28 @ *.*@\r\n"
-    "#D FF 02 @ *.*@\r\n"
-    "#Y 08 FF *.GTP@ @\r\n"
-    "#G 08 FF *.APP@ @\r\n"
-    "#G 08 FF *.PRG@ @\r\n"
-    "#P 08 FF *.TTP@ @\r\n"
-    "#F 08 FF *.TOS@ @\r\n";
+    "#F FF 07 @ *.*@\r\n"               /* 07 = IG_DOCU => document (see note above) */
+    "#N FF 07 @ *.*@\r\n"               /* 07 = IG_DOCU => document */
+    "#D FF 02 @ *.*@\r\n"               /* 02 = IG_FOLDER => folder */
+    "#Y 06 FF *.GTP@ @\r\n"             /* 06 = IG_APPL => application */
+    "#G 06 FF *.APP@ @\r\n"
+    "#G 06 FF *.PRG@ @\r\n"
+    "#P 06 FF *.TTP@ @\r\n"
+    "#F 06 FF *.TOS@ @\r\n";
 
 
 /*
@@ -227,7 +236,6 @@ static BYTE *app_parse(BYTE *pcurr, ANODE *pa)
     case 'D':                             /* Directory (Folder)   */
         pa->a_type = AT_ISFOLD;
         break;
-#if CONF_WITH_WINDOW_ICONS
     case 'I':                             /* Executable file      */
         pa->a_flags = AF_ISEXEC;
         /* drop thru */
@@ -235,7 +243,6 @@ static BYTE *app_parse(BYTE *pcurr, ANODE *pa)
         pa->a_type = AT_ISFILE;
         pa->a_flags |= AF_WINDOW;
         break;
-#endif
     }
     pcurr++;
 
@@ -539,10 +546,8 @@ void app_start(void)
         case 'F':                       /* File (DOS w/o parms) */
         case 'P':                       /* Parm (DOS w/ parms)  */
         case 'D':                       /* Directory            */
-#if CONF_WITH_WINDOW_ICONS
         case 'I':                       /* Executable file icon     */
         case 'N':                       /* Non-executable file icon */
-#endif
             pa = app_alloc(TRUE);
             if (!pa)                    /* paranoia */
                 return;
@@ -812,13 +817,11 @@ void app_save(WORD todisk)
             type = 'M';
             break;
         case AT_ISFILE:
-#if CONF_WITH_WINDOW_ICONS
             if (pa->a_flags & AF_WINDOW)
             {
                 type = (pa->a_flags & AF_ISEXEC) ? 'I' : 'N';
                 break;
             }
-#endif
             if (pa->a_flags & AF_ISCRYS)
                 type = (pa->a_flags & AF_ISPARM) ? 'Y' : 'G';
             else

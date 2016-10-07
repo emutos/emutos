@@ -22,11 +22,14 @@
 #include "portab.h"
 #include "string.h"
 #include "intmath.h"
+#include "obdefs.h"
+#include "gsxdefs.h"
+#include "biosdefs.h"
+#include "dos.h"
+
 #include "deskapp.h"
 #include "deskfpd.h"
 #include "gembind.h"
-#include "obdefs.h"
-#include "gsxdefs.h"
 #include "deskwin.h"
 #include "deskdir.h"
 #include "deskbind.h"
@@ -35,10 +38,8 @@
 #include "desksupp.h"
 #include "deskfun.h"
 #include "deskmain.h"
-#include "dos.h"
 #include "desk1.h"
 #include "deskins.h"
-#include "biosdefs.h"
 #include "kprint.h"
 
 

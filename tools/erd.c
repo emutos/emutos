@@ -1363,7 +1363,10 @@ short old_tree = -1;
     for (i = 0, d = def; i < num_defs; i++, d++) {
         if ((d->type == DEF_ALERT) || (d->type == DEF_FREESTR))
             break;
-#ifndef ICON_RSC
+#ifdef ICON_RSC
+        if (d->type == DEF_OBJECT)
+            fprintf(fp,"#define %-16s%d\n",d->name,d->obj);
+#else
         if (d->tree != old_tree)
             fprintf(fp,"\n");
         if (d->conditional && first_time) {
