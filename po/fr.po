@@ -243,7 +243,7 @@ msgstr "Installer"
 
 #: desk/desk_rsc.c:24
 msgid "Remove"
-msgstr "Retirer"
+msgstr "Supprimer"
 
 #: desk/desk_rsc.c:25
 msgid "Yes"
@@ -520,7 +520,7 @@ msgstr "Imprimante"
 
 #: desk/desk_rsc.c:863 desk/desk_rsc.c:1746
 msgid "Shape:"
-msgstr "Forme:"
+msgstr "Icône:"
 
 #: desk/desk_rsc.c:896
 msgid "INSTALL APPLICATION"
@@ -696,7 +696,7 @@ msgstr "INSTALLER ICÔNES DE FENÊTRE"
 
 #: desk/desk_rsc.c:1698
 msgid "File type:"
-msgstr "Type:"
+msgstr "Type d'objet:"
 
 #: desk/desk_rsc.c:1710
 msgid "Folder"
