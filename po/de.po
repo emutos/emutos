@@ -296,11 +296,11 @@ msgstr "Bytes frei: __________"
 
 #: desk/desk_rsc.c:103
 msgid "Identifier: _:"
-msgstr "Icon Kennung: _:"
+msgstr "Kennung: _:"
 
 #: desk/desk_rsc.c:108
 msgid "Label: ____________"
-msgstr "Icon-Titel: ____________"
+msgstr "Beschriftung: ____________"
 
 #: desk/desk_rsc.c:113
 msgid "Application name: ________.___"
@@ -512,7 +512,7 @@ msgstr "DESKTOP ICON INSTALLIEREN"
 
 #: desk/desk_rsc.c:809
 msgid "Type:"
-msgstr "Icon-Typ:"
+msgstr "Typ:"
 
 #: desk/desk_rsc.c:821
 msgid "Drive"
