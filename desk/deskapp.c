@@ -856,7 +856,6 @@ void app_save(WORD todisk)
         *pcurr++ = '\r';
         *pcurr++ = '\n';
     }
-    *pcurr++ = 0x1a;
     *pcurr++ = 0x0;
 
     /* reverse list back */
