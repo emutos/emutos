@@ -85,7 +85,7 @@ void draw_dial(OBJECT *tree)
 {
     WORD xd, yd, wd, hd;
 
-    form_center((LONG)tree, &xd, &yd, &wd, &hd);
+    form_center(tree, &xd, &yd, &wd, &hd);
     objc_draw(tree, ROOT, MAX_DEPTH, xd, yd, wd, hd);
 }
 
@@ -94,7 +94,7 @@ void show_hide(WORD fmd, OBJECT *tree)
 {
     WORD xd, yd, wd, hd;
 
-    form_center((LONG)tree, &xd, &yd, &wd, &hd);
+    form_center(tree, &xd, &yd, &wd, &hd);
     form_dial(fmd, 0, 0, 0, 0, xd, yd, wd, hd);
     if (fmd == FMD_START)
         objc_draw(tree, ROOT, MAX_DEPTH, xd, yd, wd, hd);
@@ -898,7 +898,7 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *co
 
     if (tree)
     {
-        centre_title(tree);
+        centre_title((OBJECT *)tree);
         inf_numset((OBJECT *)tree, CDFILES, count->files);
         inf_numset((OBJECT *)tree, CDFOLDS, count->dirs);
         show_hide(FMD_START, (OBJECT *)tree);

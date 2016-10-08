@@ -341,7 +341,7 @@ WORD inf_show(OBJECT *tree, WORD start)
 {
     WORD   xd, yd, wd, hd;
 
-    form_center((LONG)tree, &xd, &yd, &wd, &hd);
+    form_center(tree, &xd, &yd, &wd, &hd);
     form_dial(FMD_START, 0, 0, 0, 0, xd, yd, wd, hd);
     objc_draw(tree, ROOT, MAX_DEPTH, xd, yd, wd, hd);
     form_do(tree, start);
@@ -446,7 +446,7 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
     title = (pf->f_attr & F_SUBDIR) ? STFOINFO : STFIINFO;
     obj = tree + FFTITLE;
     obj->ob_spec = (LONG) ini_str(title);
-    centre_title((LONG)tree);
+    centre_title(tree);
 
     strcpy(srcpth, ppath);
     strcpy(dstpth, ppath);

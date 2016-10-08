@@ -1338,12 +1338,11 @@ static void align_objects(OBJECT *obj_array, int nobj)
  *  If object 1 of a tree is a G_STRING and its y position equals
  *  one character height, we assume it's the title.
  */
-void centre_title(LONG tree)
+void centre_title(OBJECT *root)
 {
-    OBJECT *root, *title;
+    OBJECT *title;
     WORD len;
 
-    root = (OBJECT *)tree;
     title = root + 1;
 
     if ((title->ob_type == G_STRING) && (title->ob_y == gl_hchar))
@@ -1456,7 +1455,7 @@ WORD deskmain(void)
     for (ii = 0; ii < RS_NTREE; ii++)
     {
         rsrc_gaddr(R_TREE, ii, &G.a_trees[ii]);
-        centre_title(G.a_trees[ii]);
+        centre_title((OBJECT *)G.a_trees[ii]);
     }
 
     for (ii = 0; ii < RS_NBB; ii++) /* initialize bit images */

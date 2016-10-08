@@ -606,9 +606,9 @@ WORD form_error(WORD errnum)
 }
 
 
-WORD form_center(LONG tree, WORD *pcx, WORD *pcy, WORD *pcw, WORD *pch)
+WORD form_center(OBJECT *tree, WORD *pcx, WORD *pcy, WORD *pcw, WORD *pch)
 {
-    FM_FORM = tree;
+    FM_FORM = (LONG)tree;
     gem_if(FORM_CENTER);
     *pcx = FM_XC;
     *pcy = FM_YC;

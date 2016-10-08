@@ -60,7 +60,7 @@ WORD form_dial(WORD dtype, WORD ix, WORD iy, WORD iw, WORD ih,
                WORD x, WORD y, WORD w, WORD h);
 WORD form_alert(WORD defbut, LONG astring);
 WORD form_error(WORD errnum);
-WORD form_center(LONG tree, WORD *pcx, WORD *pcy, WORD *pcw, WORD *pch);
+WORD form_center(OBJECT *tree, WORD *pcx, WORD *pcy, WORD *pcw, WORD *pch);
 
 
 WORD graf_rubbox(WORD xorigin, WORD yorigin, WORD wmin, WORD hmin,
