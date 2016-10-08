@@ -285,11 +285,11 @@ msgstr "Байт свободно: __________"
 
 #: desk/desk_rsc.c:103
 msgid "Identifier: _:"
-msgstr "Буква иконки диска: _:"
+msgstr "Буква диска: _:"
 
 #: desk/desk_rsc.c:108
 msgid "Label: ____________"
-msgstr "Имя иконки: ____________"
+msgstr "Имя: ____________"
 
 #: desk/desk_rsc.c:113
 msgid "Application name: ________.___"
@@ -501,8 +501,7 @@ msgstr "УСТАНОВИТЬ ИКОНКУ ДЕСКТОПА"
 
 #: desk/desk_rsc.c:809
 msgid "Type:"
-msgstr "Тип иконки:"
-
+msgstr "Тип:"
 
 #: desk/desk_rsc.c:821
 msgid "Drive"
@@ -518,7 +517,7 @@ msgstr "Принтер"
 
 #: desk/desk_rsc.c:863 desk/desk_rsc.c:1746
 msgid "Shape:"
-msgstr "Тип иконки:"
+msgstr "Рисунок:"
 
 #: desk/desk_rsc.c:896
 msgid "INSTALL APPLICATION"
