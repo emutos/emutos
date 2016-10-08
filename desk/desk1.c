@@ -126,18 +126,13 @@ void fun_close(WNODE *pw, WORD closetype)
 
 
 /* Align drive icon on a grid */
-void snap_disk(WORD x, WORD y, WORD *px, WORD *py)
+void snap_disk(WORD x, WORD y, WORD *px, WORD *py, WORD sxoff, WORD syoff)
 {
-    WORD xgrid, ygrid, icw, ich, xoff, yoff;
+    WORD xgrid, ygrid, icw, ich;
 
     icw  = G.g_icw;
-    xgrid  = x / icw;
-    xoff = x % icw;
-
-    if (xoff <= (icw / 2))
-        *px = xgrid * icw;
-    else
-        *px = (xgrid+1)*icw;
+    xgrid  = (x - sxoff + (icw / 2)) / icw;
+    *px = xgrid * icw;
 
     *px = min(gl_width - icw, *px);
     if (*px < (gl_width / 2))
@@ -145,13 +140,8 @@ void snap_disk(WORD x, WORD y, WORD *px, WORD *py)
 
     y -= G.g_ydesk;
     ich = G.g_ich;
-    ygrid  = y / G.g_ich;
-    yoff = y % G.g_ich;
-
-    if (yoff <= (ich / 2))
-        *py = ygrid * ich;
-    else
-        *py = (ygrid+1) * ich;
+    ygrid  = (y - syoff + (ich / 2)) / ich;
+    *py = ygrid * ich;
 
     *py = min(G.g_hdesk - ich, *py);
     if (*py < (G.g_hdesk / 2))

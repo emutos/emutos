@@ -19,7 +19,7 @@
 
 void true_closewnd(WNODE *pw);
 void fun_close(WNODE *pw, WORD closetype);
-void snap_disk(WORD x, WORD y, WORD *px, WORD *py);
+void snap_disk(WORD x, WORD y, WORD *px, WORD *py, WORD sxoff, WORD syoff);
 void desk1_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my, WORD keystate);
 
 #endif  /* _DESK1_H */

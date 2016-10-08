@@ -157,7 +157,7 @@ static WORD install_drive(WORD drive)
     pa->a_pdata = "";                   /* point to empty string */
     pa->a_aicon = (drive > 1) ? IG_HARD : IG_FLOPPY;
     pa->a_dicon = NIL;
-    snap_disk(x,y,&pa->a_xspot,&pa->a_yspot);
+    snap_disk(x,y,&pa->a_xspot,&pa->a_yspot, 0, 0);
 
     return 0;
 }
@@ -532,7 +532,7 @@ static WORD install_desktop_icon(ANODE *pa)
         pa->a_pargs = "";
         pa->a_aicon = IG_HARD;
         pa->a_dicon = NIL;
-        snap_disk(x,y,&pa->a_xspot,&pa->a_yspot);
+        snap_disk(x,y,&pa->a_xspot,&pa->a_yspot, 0, 0);
     }
 
     switch(pa->a_type)

@@ -103,7 +103,7 @@ static void gr_accobs(OBJECT *tree, WORD root, WORD *pnum, WORD *pxypts)
 }
 
 
-static void move_drvicon(OBJECT *tree, WORD root, WORD x, WORD y, WORD *pts)
+static void move_drvicon(OBJECT *tree, WORD root, WORD x, WORD y, WORD *pts, WORD sxoff, WORD syoff)
 {
     ANODE *an_disk;
     WORD objcnt;
@@ -120,7 +120,7 @@ static void move_drvicon(OBJECT *tree, WORD root, WORD x, WORD y, WORD *pts)
             oldy = tree[obj].ob_y;
 
             snap_disk(x + pts[2 * objcnt], y + pts[2 * objcnt + 1],
-                                &tree[obj].ob_x, &tree[obj].ob_y);
+                                &tree[obj].ob_x, &tree[obj].ob_y, sxoff, syoff);
 
             for (an_disk = G.g_ahead; an_disk; an_disk = an_disk->a_next)
             {
@@ -641,7 +641,8 @@ WORD act_bdown(WORD wh, OBJECT *tree, WORD root, WORD *in_mx, WORD *in_my,
                 {
                     if (wh == 0 && (*pdobj == root)) /* Dragging from desktop */
                     {
-                        move_drvicon(tree, root, dulx, duly, G.g_xyobpts);
+                        move_drvicon(tree, root, dulx, duly, G.g_xyobpts,
+                            *in_mx % G.g_icw, (*in_my - G.g_ydesk) % G.g_ich);
                         dst_wh = NIL;
                     }
                 }
