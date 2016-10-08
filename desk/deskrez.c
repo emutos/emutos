@@ -105,8 +105,7 @@ static int change_st_rez(WORD *newres)
  */
 static int change_tt_rez(WORD *newres)
 {
-LONG tree;
-OBJECT *obj;
+OBJECT *tree, *obj;
 int i, selected;
 WORD oldres;
 
@@ -118,20 +117,20 @@ WORD oldres;
     selected = i;
 
     /* set up dialog & display */
-    tree = G.a_trees[ADTTREZ];
-    for (i = 0, obj = (OBJECT *)tree+TTREZSTL; i < NUM_TT_BUTTONS; i++, obj++) {
+    tree = (OBJECT *)G.a_trees[ADTTREZ];
+    for (i = 0, obj = tree+TTREZSTL; i < NUM_TT_BUTTONS; i++, obj++) {
         if (i == selected)
             obj->ob_state |= SELECTED;
         else obj->ob_state &= ~SELECTED;
     }
 
-    inf_show((OBJECT *)tree,ROOT);
+    inf_show(tree,ROOT);
 
-    if (inf_what((OBJECT *)tree,TTREZOK,TTREZCAN) == 0)
+    if (inf_what(tree,TTREZOK,TTREZCAN) == 0)
         return 0;
 
     /* look for button with SELECTED state */
-    i = inf_gindex((OBJECT *)tree,TTREZSTL,NUM_TT_BUTTONS);
+    i = inf_gindex(tree,TTREZSTL,NUM_TT_BUTTONS);
     if (i < 0)                  /* paranoia */
         return 0;
     if (i == selected)          /* no change */
@@ -151,8 +150,7 @@ WORD oldres;
  */
 static int change_falcon_rez(WORD *newres,WORD *newmode)
 {
-LONG tree;
-OBJECT *obj;
+OBJECT *tree, *obj;
 int i, selected;
 WORD oldmode, oldbase, oldoptions;
 
@@ -168,18 +166,18 @@ WORD oldmode, oldbase, oldoptions;
     selected = i;
 
     /* set up dialog & display */
-    tree = G.a_trees[ADFALREZ];
+    tree = (OBJECT *)G.a_trees[ADFALREZ];
 
     if (VgetMonitor() != MON_VGA) { /* fix up rez descriptions if not VGA */
-        for (i = 0, obj = (OBJECT *)tree+FREZNAME; i < 4; i++, obj++)
+        for (i = 0, obj = tree+FREZNAME; i < 4; i++, obj++)
             rsrc_gaddr(R_STRING,STREZ1+i,&obj->ob_spec);
     }
 
     /* FIXME: change the next 2 lines when we have TrueColor support in VDI */
-    obj = (OBJECT *)tree+FREZTEXT;  /* this hides the "TC" header text */
+    obj = tree + FREZTEXT;          /* this hides the "TC" header text */
     obj->ob_flags |= HIDETREE;
 
-    for (i = 0, obj = (OBJECT *)tree+FREZLIST; i < NUM_FALCON_BUTTONS; i++, obj++) {
+    for (i = 0, obj = tree+FREZLIST; i < NUM_FALCON_BUTTONS; i++, obj++) {
         /* FIXME: change the next 2 lines when we have TrueColor support in VDI */
         if ((falconmode_from_button[i]&VIDEL_BPPMASK) > VIDEL_8BPP)
             obj->ob_flags |= HIDETREE;
@@ -188,13 +186,13 @@ WORD oldmode, oldbase, oldoptions;
         else obj->ob_state &= ~SELECTED;
     }
 
-    inf_show((OBJECT *)tree,ROOT);
+    inf_show(tree,ROOT);
 
-    if (inf_what((OBJECT *)tree,FREZOK,FREZCAN) == 0)
+    if (inf_what(tree,FREZOK,FREZCAN) == 0)
         return 0;
 
     /* look for button with SELECTED state */
-    i = inf_gindex((OBJECT *)tree,FREZLIST,NUM_FALCON_BUTTONS);
+    i = inf_gindex(tree,FREZLIST,NUM_FALCON_BUTTONS);
     if (i < 0)                  /* paranoia */
         return 0;
     if (i == selected)          /* no change */
