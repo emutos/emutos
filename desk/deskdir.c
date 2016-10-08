@@ -108,23 +108,23 @@ void show_hide(WORD fmd, OBJECT *tree)
  */
 static WORD do_namecon(void)
 {
-    LONG tree = G.a_trees[ADCPALER];
+    OBJECT *tree = (OBJECT *)G.a_trees[ADCPALER];
     WORD ob;
 
     graf_mouse(ARROW, NULL);
     if (ml_havebox)
-        draw_dial((OBJECT *)tree);
+        draw_dial(tree);
     else
     {
-        show_hide(FMD_START, (OBJECT *)tree);
+        show_hide(FMD_START, tree);
         ml_havebox = TRUE;
     }
-    form_do((OBJECT *)tree, 0);
+    form_do(tree, 0);
     draw_dial((OBJECT *)G.a_trees[ADCPYDEL]);
     graf_mouse(HGLASS, NULL);
 
-    ob = inf_gindex((OBJECT *)tree, CAOK, 3) + CAOK;
-    ((OBJECT *)tree+ob)->ob_state = NORMAL;
+    ob = inf_gindex(tree, CAOK, 3) + CAOK;
+    (tree+ob)->ob_state = NORMAL;
 
     return ob;
 }
@@ -369,7 +369,7 @@ static WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
 {
     WORD fh, ob = 0, samefile;
     LONG ret;
-    LONG tree = G.a_trees[ADCPALER];
+    OBJECT *tree = (OBJECT *)G.a_trees[ADCPALER];
     BYTE ml_fsrc[LEN_ZFNAME], ml_fdst[LEN_ZFNAME], ml_fstr[LEN_ZFNAME];
     BYTE old_dst[LEN_ZFNAME];
 
@@ -412,8 +412,8 @@ static WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
          */
         get_fname(psrc_file, ml_fsrc);  /* get input filename */
         get_fname(pdst_file, ml_fdst);  /* get output filename */
-        inf_sset((OBJECT *)tree, CACURRNA, ml_fsrc);
-        inf_sset((OBJECT *)tree, CACOPYNA, ml_fdst);
+        inf_sset(tree, CACURRNA, ml_fsrc);
+        inf_sset(tree, CACOPYNA, ml_fdst);
 
         /*
          * display dialog & get input
@@ -428,7 +428,7 @@ static WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
         /*
          * user says ok, so update destination filename
          */
-        inf_sget((OBJECT *)tree, CACOPYNA, ml_fdst);
+        inf_sget(tree, CACOPYNA, ml_fdst);
         unfmt_str(ml_fdst, ml_fstr);
         if (ml_fstr[0] != '\0')
         {
@@ -567,7 +567,7 @@ static void update_modified_windows(BYTE *path,WORD length)
 /*
  *  Directory routine to DO an operation on an entire sub-directory
  */
-WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path, LONG tree, DIRCOUNT *count)
+WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path, OBJECT *tree, DIRCOUNT *count)
 {
     BYTE *ptmp, *ptmpdst;
     DTA  *dta = &G.g_dtastk[level];
@@ -613,8 +613,8 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path, LONG tree, DI
             }
             if (tree)
             {
-                inf_numset((OBJECT *)tree, CDFOLDS, --(count->dirs));
-                draw_fld((OBJECT *)tree, CDFOLDS);
+                inf_numset(tree, CDFOLDS, --(count->dirs));
+                draw_fld(tree, CDFOLDS);
             }
             return more;
         }
@@ -696,8 +696,8 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path, LONG tree, DI
             restore_path(ptmp);     /* restore original source path */
         if (tree)
         {
-            inf_numset((OBJECT *)tree, CDFILES, --(count->files));
-            draw_fld((OBJECT *)tree, CDFILES);
+            inf_numset(tree, CDFILES, --(count->files));
+            draw_fld(tree, CDFILES);
         }
         if (!more)
             break;
@@ -719,7 +719,7 @@ static WORD output_path(WORD op,BYTE *srcpth, BYTE *dstpth)
 {
     BYTE ml_fsrc[LEN_ZFNAME], ml_fdst[LEN_ZFNAME], ml_fstr[LEN_ZFNAME];
     WORD ret, ob;
-    LONG tree = G.a_trees[ADCPALER];
+    OBJECT *tree = (OBJECT *)G.a_trees[ADCPALER];
 
     while(1)
     {
@@ -752,8 +752,8 @@ static WORD output_path(WORD op,BYTE *srcpth, BYTE *dstpth)
          */
         get_fname(dstpth, ml_fsrc);         /* extract current folder name */
         strcpy(ml_fdst,ml_fsrc);            /* pre-fill new folder name */
-        inf_sset((OBJECT *)tree, CACURRNA, ml_fsrc);  /* and put both in dialog */
-        inf_sset((OBJECT *)tree, CACOPYNA, ml_fdst);
+        inf_sset(tree, CACURRNA, ml_fsrc);  /* and put both in dialog */
+        inf_sset(tree, CACOPYNA, ml_fdst);
 
         ob = do_namecon();              /* show dialog */
         if (ob == CASTOP)               /* "Stop" button */
@@ -761,7 +761,7 @@ static WORD output_path(WORD op,BYTE *srcpth, BYTE *dstpth)
         if (ob == CACNCL)               /* "Skip" button */
             return -1;
 
-        inf_sget((OBJECT *)tree, CACOPYNA, ml_fdst);
+        inf_sget(tree, CACOPYNA, ml_fdst);
         unfmt_str(ml_fdst, ml_fstr);    /* get new dest folder in ml_fstr */
         if (strcmp(ml_fdst,ml_fsrc))    /* if it changed, update path */
         {
@@ -823,13 +823,12 @@ static WORD d_dofoldren(BYTE *oldname, BYTE *newname)
  */
 WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *count)
 {
-    LONG tree;
+    OBJECT *tree, *obj;
     FNODE *pf;
     WORD more, confirm;
     BYTE *ptmpsrc, *ptmpdst, *psrc_path = pspath->p_spec;
     LONG lavail;
     BYTE srcpth[MAXPATHLEN], dstpth[MAXPATHLEN];
-    OBJECT *obj;
 
     graf_mouse(HGLASS, NULL);
 
@@ -842,11 +841,11 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *co
         op = OP_RENAME;
     }
 
-    tree = 0L;
+    tree = NULL;
     if (op != OP_COUNT)
     {
-        tree = G.a_trees[ADCPYDEL];
-        obj = (OBJECT *)tree + CDTITLE;
+        tree = (OBJECT *)G.a_trees[ADCPYDEL];
+        obj = tree + CDTITLE;
     }
 
     switch(op)
@@ -898,17 +897,17 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *co
 
     if (tree)
     {
-        centre_title((OBJECT *)tree);
-        inf_numset((OBJECT *)tree, CDFILES, count->files);
-        inf_numset((OBJECT *)tree, CDFOLDS, count->dirs);
-        show_hide(FMD_START, (OBJECT *)tree);
+        centre_title(tree);
+        inf_numset(tree, CDFILES, count->files);
+        inf_numset(tree, CDFOLDS, count->dirs);
+        show_hide(FMD_START, tree);
         ml_havebox = TRUE;
         if (confirm)
         {
             graf_mouse(ARROW, NULL);
-            form_do((OBJECT *)tree, 0);
+            form_do(tree, 0);
             graf_mouse(HGLASS, NULL);
-            more = inf_what((OBJECT *)tree, CDOK, CDCNCL);
+            more = inf_what(tree, CDOK, CDCNCL);
         }
     }
 
@@ -987,8 +986,8 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *co
         if (tree)
         {
             count->files -= 1;
-            inf_numset((OBJECT *)tree, CDFILES, count->files);
-            draw_fld((OBJECT *)tree, CDFILES);
+            inf_numset(tree, CDFILES, count->files);
+            draw_fld(tree, CDFILES);
         }
     }
 
@@ -1009,7 +1008,7 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *co
     }
 
     if (tree)
-        show_hide(FMD_FINISH, (OBJECT *)tree);
+        show_hide(FMD_FINISH, tree);
     graf_mouse(ARROW, NULL);
 
     return TRUE;

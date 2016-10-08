@@ -309,20 +309,19 @@ static void men_update(LONG tree)
 static WORD do_deskmenu(WORD item)
 {
     WORD done, touchob;
-    LONG tree;
-    OBJECT *obj;
+    OBJECT *tree, *obj;
 
     done = FALSE;
     switch(item)
     {
     case ABOUITEM:
         display_free_stack();
-        tree = G.a_trees[ADDINFO];
+        tree = (OBJECT *)G.a_trees[ADDINFO];
         /* draw the form        */
-        show_hide(FMD_START, (OBJECT *)tree);
+        show_hide(FMD_START, tree);
         while(!done)
         {
-            touchob = form_do((OBJECT *)tree, 0);
+            touchob = form_do(tree, 0);
             touchob &= 0x7fff;
             if (touchob == DEICON)
             {
@@ -338,9 +337,9 @@ static WORD do_deskmenu(WORD item)
             else
                 done = TRUE;
         }
-        obj = (OBJECT *)tree + DEOK;
+        obj = tree + DEOK;
         obj->ob_state = NORMAL;
-        show_hide(FMD_FINISH, (OBJECT *)tree);
+        show_hide(FMD_FINISH, tree);
         done = FALSE;
         break;
     }

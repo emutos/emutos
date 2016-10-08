@@ -124,12 +124,12 @@ void fun_rebld(WNODE *pwin)
 WORD fun_mkdir(WNODE *pw_node)
 {
     PNODE *pp_node;
-    LONG  tree;
+    OBJECT *tree;
     WORD  i, len, err;
     BYTE  fnew_name[LEN_ZFNAME], unew_name[LEN_ZFNAME], *ptmp;
     BYTE  path[MAXPATHLEN];
 
-    tree = G.a_trees[ADMKDBOX];
+    tree = (OBJECT *)G.a_trees[ADMKDBOX];
     pp_node = pw_node->w_path;
     ptmp = path;
     strcpy(ptmp, pp_node->p_spec);
@@ -150,13 +150,13 @@ WORD fun_mkdir(WNODE *pw_node)
     while(1)
     {
         fnew_name[0] = '\0';
-        inf_sset((OBJECT *)tree, MKNAME, fnew_name);
-        show_hide(FMD_START, (OBJECT *)tree);
-        form_do((OBJECT *)tree, 0);
-        if (inf_what((OBJECT *)tree, MKOK, MKCNCL) == 0)
+        inf_sset(tree, MKNAME, fnew_name);
+        show_hide(FMD_START, tree);
+        form_do(tree, 0);
+        if (inf_what(tree, MKOK, MKCNCL) == 0)
             break;
 
-        inf_sget((OBJECT *)tree, MKNAME, fnew_name);
+        inf_sget(tree, MKNAME, fnew_name);
         unfmt_str(fnew_name, unew_name);
 
         if (unew_name[0] == '\0')
@@ -194,7 +194,7 @@ WORD fun_mkdir(WNODE *pw_node)
             break;
     }
 
-    show_hide(FMD_FINISH, (OBJECT *)tree);
+    show_hide(FMD_FINISH, tree);
     return TRUE;
 }
 
