@@ -500,7 +500,7 @@ static WORD install_desktop_icon(ANODE *pa)
     WORD exitobj, x, y;
     WORD curr_icon, new_icon;
     WORD change = 0;
-    BYTE curr_label[LEN_ZFNAME], new_label[LEN_ZFNAME];
+    BYTE curr_label[LEN_ZFNAME], new_label[LEN_ZFNAME], id[2];
 
     /* find first available spot on desktop (before we alloc a new one) */
     ins_posdisk(0, 0, &x, &y);
@@ -535,6 +535,8 @@ static WORD install_desktop_icon(ANODE *pa)
         snap_disk(x,y,&pa->a_xspot,&pa->a_yspot, 0, 0);
     }
 
+    id[0] = id[1] = '\0';
+
     switch(pa->a_type)
     {
     case AT_ISFILE:
@@ -545,11 +547,10 @@ static WORD install_desktop_icon(ANODE *pa)
          */
         break;
     case AT_ISDISK:
-        curr_label[0] = pa->a_letter;
-        curr_label[1] = '\0';
-        inf_sset(tree, ID_ID, curr_label);
+        id[0] = pa->a_letter;
         /* drop thru */
     case AT_ISTRSH:
+        inf_sset(tree, ID_ID, id);
         strcpy(curr_label, pa->a_pappl);
         inf_sset(tree, ID_LABEL, pa->a_pappl);
         if (pa->a_type == AT_ISDISK)
@@ -587,8 +588,8 @@ static WORD install_desktop_icon(ANODE *pa)
         case ID_OK:             /* (re)install an icon */
             if (inf_gindex(tree, ID_DRIVE, 3) == 0) /* only disks have a letter */
             {
-                inf_sget(tree, ID_ID, new_label);
-                pa->a_letter = new_label[0];
+                inf_sget(tree, ID_ID, id);
+                pa->a_letter = id[0];
             }
             else
                 pa->a_letter = '\0';
