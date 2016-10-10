@@ -20,6 +20,14 @@ msgstr ""
 msgid "GEMDOS drives"
 msgstr "Unità GEMDOS"
 
+#: bios/initinfo.c:193
+msgid "MB"
+msgstr "MB"
+
+#: bios/initinfo.c:197
+msgid "KB"
+msgstr "KB"
+
 #: bios/initinfo.c:240
 msgid "EmuTOS Version"
 msgstr "Versione"
@@ -31,10 +39,6 @@ msgstr "Tipo CPU"
 #: bios/initinfo.c:250
 msgid "Machine"
 msgstr "Macchina"
-
-#: bios/initinfo.c:253 bios/initinfo.c:259
-msgid "%ld KB"
-msgstr "%ld KB"
 
 #: bios/initinfo.c:267
 msgid "Boot time"

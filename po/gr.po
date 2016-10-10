@@ -33,6 +33,14 @@ msgstr "’¦ ©ç©«ž£˜ §ášà©œ!"
 msgid "GEMDOS drives"
 msgstr "Drives «¦¬ GEMDOS"
 
+#: bios/initinfo.c:193
+msgid "MB"
+msgstr "MB"
+
+#: bios/initinfo.c:197
+msgid "KB"
+msgstr "KB"
+
 #: bios/initinfo.c:232
 msgid "EmuTOS Version"
 msgstr "EmuTOS Version"
@@ -48,10 +56,6 @@ msgstr "“§¦¢¦š ©«ãª"
 #: bios/initinfo.c:244
 msgid "Free ST-RAM"
 msgstr "„¢œçŸœ¨ž ST-RAM"
-
-#: bios/initinfo.c:245 bios/initinfo.c:250
-msgid "%ld KB"
-msgstr "%ld KB"
 
 #: bios/initinfo.c:249
 msgid "Free Alt-RAM"

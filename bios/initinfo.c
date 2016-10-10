@@ -182,6 +182,26 @@ static void cprint_devices(WORD dev)
 }
 
 /*
+ * display a size in bytes with best multiple unit
+ */
+static void cprintf_bytesize(ULONG bytes)
+{
+    const char *unit;
+    ULONG value;
+
+    if (bytes % (1024UL * 1024UL) == 0) {
+        unit = _("MB");
+        value = bytes / (1024UL * 1024UL);
+    }
+    else {
+        unit = _("KB");
+        value = bytes / 1024UL;
+    }
+
+    cprintf("%lu %s", value, unit);
+}
+
+/*
  * initinfo - Show initial configuration at startup
  *
  * returns the selected boot device
@@ -249,15 +269,11 @@ WORD initinfo(void)
 
     pair_start(_("Machine")); cprintf(machine_name()); pair_end();
 /*  pair_start(_("MMU available")); cprintf(_("No")); pair_end(); */
-    pair_start("ST-RAM");
-        cprintf(_("%ld KB"), stramsize >> 10);
-    pair_end();
+    pair_start("ST-RAM"); cprintf_bytesize(stramsize); pair_end();
 
 #if CONF_WITH_ALT_RAM
     if (altramsize > 0) {
-        pair_start("Alt-RAM");
-        cprintf(_("%ld KB"), altramsize >> 10);
-        pair_end();
+        pair_start("Alt-RAM"); cprintf_bytesize(altramsize); pair_end();
     }
 #endif
 

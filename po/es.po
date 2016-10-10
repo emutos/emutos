@@ -20,6 +20,14 @@ msgstr ""
 msgid "GEMDOS drives"
 msgstr "Unidades GEMDOS"
 
+#: bios/initinfo.c:193
+msgid "MB"
+msgstr "MB"
+
+#: bios/initinfo.c:197
+msgid "KB"
+msgstr "KB"
+
 #: bios/initinfo.c:232
 msgid "EmuTOS Version"
 msgstr "EmuTOS Versión"
@@ -35,10 +43,6 @@ msgstr "Máquina"
 #: bios/initinfo.c:244
 msgid "Free ST-RAM"
 msgstr "ST RAM disponible"
-
-#: bios/initinfo.c:245 bios/initinfo.c:250
-msgid "%ld KB"
-msgstr "%ld KB"
 
 #: bios/initinfo.c:249
 msgid "Free Alt-RAM"
