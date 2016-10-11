@@ -57,6 +57,13 @@
 #define IG_DOCU   7             /* generic document icon */
 #define NUM_GEM_IBLKS (IG_DOCU+1)
 
+/*
+ * the following values are saved in EMUDESK.INF by EmuTOS 0.9.6 &
+ * earlier.  app_parse() converts them to the standard values.
+ */
+#define IG_APPL_REV0    8       /* application icon */
+#define IG_DOCU_REV0    40      /* document icon */
+
 
 /*
  * configuration parameters

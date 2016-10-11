@@ -265,6 +265,17 @@ static BYTE *app_parse(BYTE *pcurr, ANODE *pa)
         pa->a_dicon = IG_DOCU;
     pcurr++;
 
+    /*
+     * convert icon numbers in EMUDESK.INF revision 0
+     */
+    if (inf_rev_level == 0)
+    {
+        if (pa->a_aicon == IG_APPL_REV0)
+            pa->a_aicon = IG_APPL;
+        if (pa->a_dicon == IG_DOCU_REV0)
+            pa->a_dicon = IG_DOCU;
+    }
+
     if (pa->a_flags & AF_ISDESK)
     {
         pa->a_letter = (*pcurr == ' ') ? '\0' : *pcurr;
