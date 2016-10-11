@@ -156,10 +156,10 @@ typedef struct
 
 /*GLOBAL*/ WORD         g_icw;
 /*GLOBAL*/ WORD         g_ich;
-/*GLOBAL*/ WORD         g_nmicon;
-/*GLOBAL*/ WORD         g_nmtext;
-/*GLOBAL*/ WORD         g_xyicon[18];
-/*GLOBAL*/ WORD         g_xytext[18];
+/*GLOBAL*/ WORD         g_nmicon;               /* number of points in g_xyicon[] */
+/*GLOBAL*/ WORD         g_nmtext;               /* number of points in g_xytext[] */
+/*GLOBAL*/ WORD         g_xyicon[18];           /* outline for dragging file as icon */
+/*GLOBAL*/ WORD         g_xytext[18];           /* outline for dragging file as text */
 
 /*GLOBAL*/ WORD         g_wicon;
 /*GLOBAL*/ WORD         g_hicon;

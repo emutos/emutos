@@ -651,8 +651,9 @@ void app_start(void)
         }
     }
 
+    /* set up outlines for dragging files displayed as icons */
+    G.g_nmicon = 9;     /* number of points */
     xcent = (G.g_wicon - G.g_iblist[0].ib_wicon) / 2;
-    G.g_nmicon = 9;
     G.g_xyicon[0] = xcent;
     G.g_xyicon[1] = 0;
     G.g_xyicon[2] = xcent;
@@ -672,7 +673,8 @@ void app_start(void)
     G.g_xyicon[16] = xcent;
     G.g_xyicon[17] = 0;
 
-    G.g_nmtext = 5;
+    /* set up outlines for dragging files displayed as text */
+    G.g_nmtext = 5;     /* number of points */
     G.g_xytext[0] = 0;
     G.g_xytext[1] = 0;
     G.g_xytext[2] = gl_wchar * 12;
