@@ -134,9 +134,6 @@ typedef struct
 } CSAVE;
 
 
-extern WORD gl_stdrv;
-
-
 /*
  * Function prototypes
  */

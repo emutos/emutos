@@ -81,7 +81,7 @@
 
 #define INF_REV_LEVEL   0x01    /* revision level when creating EMUDESK.INF */
 
-GLOBAL WORD     gl_stdrv;
+static WORD     gl_stdrv;
 
 static WORD     inf_rev_level;  /* revision level of current EMUDESK.INF */
 
