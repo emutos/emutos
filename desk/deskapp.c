@@ -50,6 +50,13 @@
 
 
 /*
+ *  width of drag box (in characters) when dragging a file displayed as text
+ *  (the same as Atari TOS 2/3/4)
+ */
+#define DRAG_BOX_WIDTH  (2 + LEN_ZNODE + 1 + LEN_ZEXT)
+
+
+/*
  *  the following bit masks apply to EMUDESK.INF
  */
                             /* 'E' byte 1 */
@@ -677,9 +684,9 @@ void app_start(void)
     G.g_nmtext = 5;     /* number of points */
     G.g_xytext[0] = 0;
     G.g_xytext[1] = 0;
-    G.g_xytext[2] = gl_wchar * 12;
+    G.g_xytext[2] = gl_wchar * DRAG_BOX_WIDTH;
     G.g_xytext[3] = 0;
-    G.g_xytext[4] = gl_wchar * 12;
+    G.g_xytext[4] = gl_wchar * DRAG_BOX_WIDTH;
     G.g_xytext[5] = gl_hchar;
     G.g_xytext[6] = 0;
     G.g_xytext[7] = gl_hchar;
