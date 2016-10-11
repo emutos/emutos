@@ -79,7 +79,11 @@
 #define INF_AT_APPDIR   0x01    /* 1 => set current dir to app's dir (else to top window dir) */
 #define INF_AT_ISFULL   0x02    /* 1 => pass full path in args (else filename only) */
 
+#define INF_REV_LEVEL   0x01    /* revision level when creating EMUDESK.INF */
+
 GLOBAL WORD     gl_stdrv;
+
+static WORD     inf_rev_level;  /* revision level of current EMUDESK.INF */
 
 static char     *maskstart;
 static char     *datastart;
@@ -90,7 +94,7 @@ static BYTE     gl_buffer[SIZE_BUFF];
 
 /* When we can't get EMUDESK.INF via shel_get() or by reading from
  * the disk, we create one dynamically from three sources:
- *  desk_inf_data1 below, for the #E and #W lines
+ *  desk_inf_data1 below, for the #R, #E and #W lines
  *  the drivemask, for #M lines
  *  desk_inf_data2 below, for most of the remaining lines
  * The #T line is added at the end.
@@ -103,6 +107,7 @@ static BYTE     gl_buffer[SIZE_BUFF];
  *     not otherwise necessary.
  */
 static const char *desk_inf_data1 =
+    "#R 01\r\n"                         /* INF_REV_LEVEL */
     "#E 1A 61\r\n"                      /* INF_E1_DEFAULT and INF_E2_DEFAULT */
     "#W 00 00 02 06 26 0C 00 @\r\n"
     "#W 00 00 02 08 26 0C 00 @\r\n"
@@ -527,6 +532,7 @@ void app_start(void)
     }
 
     wincnt = 0;
+    inf_rev_level = 0;
     pcurr = gl_afile;
 
     while(*pcurr)
@@ -536,6 +542,10 @@ void app_start(void)
 
         switch(*pcurr)
         {
+        case 'R':                       /* revision level */
+            pcurr++;
+            pcurr = scan_2(pcurr,&inf_rev_level);
+            break;
         case 'Z':                       /* autorun: Z nn pathname@ */
             pcurr = scan_str(pcurr+5,&pauto);   /* save pathname in buffer */
             break;                              /* (a bit wasteful)        */
@@ -746,7 +756,10 @@ void app_save(WORD todisk)
     memset(gl_afile, 0, SIZE_AFILE);
     pcurr = gl_afile;
 
-    /* save autorun (if any) as first line */
+    /* save revision level */
+    pcurr += sprintf(pcurr,"#R %02X\r\n",INF_REV_LEVEL);
+
+    /* save autorun (if any) */
     for (pa = G.g_ahead; pa; pa = pa->a_next)
         if (pa->a_flags & AF_AUTORUN)
             pcurr += sprintf(pcurr,"#Z %02X %s@\r\n",pa->a_flags&AF_ISCRYS,pa->a_pappl);
