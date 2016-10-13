@@ -461,7 +461,7 @@ msgstr "Версия"
 
 #: desk/desk_rsc.c:665
 msgid "Copyright Ѕ 2001-"
-msgstr "Copyright Ѕ 2001-"
+msgstr "Copyright (C) 2001-"
 
 #: desk/desk_rsc.c:677
 msgid "The EmuTOS development team"
@@ -473,15 +473,15 @@ msgstr "Основано на 'GPL'-исходниках"
 
 #: desk/desk_rsc.c:701
 msgid "Ѕ 1987 Digital Research, Inc."
-msgstr "Ѕ 1987 Digital Research, Inc."
+msgstr "(C) 1987 Digital Research, Inc."
 
 #: desk/desk_rsc.c:707
 msgid "Ѕ 1999 Caldera Thin Clients, Inc."
-msgstr "Ѕ 1999 Caldera Thin Clients, Inc."
+msgstr "(C) 1999 Caldera Thin Clients, Inc."
 
 #: desk/desk_rsc.c:713
 msgid "Ѕ 2001 Lineo, Inc."
-msgstr "Ѕ 2001 Lineo, Inc."
+msgstr "(C) 2001 Lineo, Inc."
 
 #: desk/desk_rsc.c:719
 msgid "EmuTOS is distributed under the GPL"
