@@ -28,39 +28,39 @@ msgstr "Mo"
 msgid "KB"
 msgstr "Ko"
 
-#: bios/initinfo.c:240
+#: bios/initinfo.c:260
 msgid "EmuTOS Version"
 msgstr "EmuTOS version"
 
-#: bios/initinfo.c:242
+#: bios/initinfo.c:262
 msgid "CPU type"
 msgstr "Type de CPU"
 
-#: bios/initinfo.c:250
+#: bios/initinfo.c:270
 msgid "Machine"
 msgstr "Machine"
 
-#: bios/initinfo.c:267
+#: bios/initinfo.c:283
 msgid "Boot time"
 msgstr "Date et heure"
 
-#: bios/initinfo.c:273
+#: bios/initinfo.c:289
 msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "Touche CTRL => pas d'AUTO/ACC"
 
-#: bios/initinfo.c:276
+#: bios/initinfo.c:292
 msgid "Hold <Alternate> to skip HDD boot"
 msgstr "Touche ALT => pas de disque dur"
 
-#: bios/initinfo.c:279
+#: bios/initinfo.c:295
 msgid "Press key 'X' to boot from X:"
 msgstr "Tapez 'X' pour démarrer depuis X:"
 
-#: bios/initinfo.c:282
+#: bios/initinfo.c:298
 msgid "Press <Esc> to run an early console"
 msgstr "Tapez <Esc> pour lancer la console"
 
-#: bios/initinfo.c:293
+#: bios/initinfo.c:309
 msgid " Hold <Shift> to pause this screen "
 msgstr " <Shift> pour maintenir cet écran "
 
@@ -506,9 +506,9 @@ msgstr "Paramètres:"
 msgid "INSTALL DESKTOP ICON"
 msgstr "INSTALLER ICÔNE DE BUREAU"
 
-#: desk/desk_rsc.c:809
-msgid "Type:"
-msgstr "Type:"
+#: desk/desk_rsc.c:809 desk/desk_rsc.c:1698
+msgid "Item type:"
+msgstr "Type d'objet:"
 
 #: desk/desk_rsc.c:821
 msgid "Drive"
@@ -523,7 +523,7 @@ msgid "Printer"
 msgstr "Imprimante"
 
 #: desk/desk_rsc.c:863 desk/desk_rsc.c:1746
-msgid "Shape:"
+msgid "Icon:"
 msgstr "Icône:"
 
 #: desk/desk_rsc.c:896
@@ -587,16 +587,16 @@ msgid "SET PREFERENCES"
 msgstr "PRÉFÉRENCES"
 
 #: desk/desk_rsc.c:1190
-msgid "Confirm deletes?"
-msgstr "Confirmer effacement ?"
+msgid "Confirm deletes:"
+msgstr "Confirmer effacement:"
 
 #: desk/desk_rsc.c:1214
-msgid "Confirm copies?"
-msgstr "Confirmer copie ?"
+msgid "Confirm copies:"
+msgstr "Confirmer copie:"
 
 #: desk/desk_rsc.c:1238
-msgid "Confirm overwrites?"
-msgstr "Confirmer écrasement ?"
+msgid "Confirm overwrites:"
+msgstr "Confirmer écrasement:"
 
 #: desk/desk_rsc.c:1262
 msgid "Double-click speed:"
@@ -695,12 +695,8 @@ msgid "ST Compatible"
 msgstr "Compatible ST"
 
 #: desk/desk_rsc.c:1686
-msgid "INSTALL WINDOW ICONS"
-msgstr "INSTALLER ICÔNES DE FENÊTRE"
-
-#: desk/desk_rsc.c:1698
-msgid "File type:"
-msgstr "Type d'objet:"
+msgid "INSTALL WINDOW ICON"
+msgstr "INSTALLER ICÔNE DE FENÊTRE"
 
 #: desk/desk_rsc.c:1710
 msgid "Folder"
