@@ -79,6 +79,10 @@
 
 typedef unsigned char uchar;
 
+typedef int bool;
+#define false 0
+#define true 1
+
 /*
  * errors
  */
@@ -933,7 +937,7 @@ parse_c_action pca_xgettext[] = { {
   pca_xgettext_other,
 } };
 
-static int print_canon(FILE *, const char *, const char *);
+static int print_canon(FILE *, const char *, const char *, bool);
 
 /* pcati - Parse C Action Translate Info */
 typedef struct pcati {
@@ -961,7 +965,7 @@ static void pca_translate_gstring(void *this, str *s, char *fname, int lineno)
     }
   }
   p->conv(t);  /* convert the string, be it a translation or the original */
-  print_canon(p->f, t, NULL);
+  print_canon(p->f, t, NULL, true);
   free(t);
 }
 
@@ -971,7 +975,7 @@ static void pca_translate_string(void *this, str *s)
   char *t;
 
   t = s_detach(s);
-  print_canon(p->f, t, NULL);
+  print_canon(p->f, t, NULL, true);
   free(t);
 }
 
@@ -1444,7 +1448,8 @@ static void print_alert_warning(int code,char *lang,char *key)
 
 #define CANON_GEM_ALERT 1
 
-static int print_canon(FILE *f, const char *t, const char *prefix)
+static int print_canon(FILE *f, const char *t, const char *prefix,
+    int encode_extended_ascii)
 {
   unsigned a;
   int translate = 0;
@@ -1530,7 +1535,7 @@ static int print_canon(FILE *f, const char *t, const char *prefix)
 #endif /* CANON_GEM_ALERT */
     default:
       a = ((unsigned)(*t))&0xFF;
-      if (a < ' ') {
+      if ((a < ' ' || a == 0x7f) || (encode_extended_ascii && a >= 128)) {
         /* control character */
         fprintf(f, "\\%03o", a);
       } else {
@@ -1622,9 +1627,9 @@ static void print_po_file(FILE *f, oh *o)
       prefix = "";
     }
     fprintf(f, "%smsgid ", prefix);
-    print_canon(f, e->msgid.key, prefix);
+    print_canon(f, e->msgid.key, prefix, true);
     fprintf(f, "\n%smsgstr ", prefix);
-    print_canon(f, e->msgstr, prefix);
+    print_canon(f, e->msgstr, prefix, false);
     fputs("\n\n", f);
   }
 }
@@ -2032,7 +2037,7 @@ static void make(void)
       sprintf(tmp, "nls_key_%d", j);
       eref->msgstr = xstrdup(tmp);
       fprintf(f, "static const char %s [] = ", tmp);
-      print_canon(f, eref->msgid.key, "  ");
+      print_canon(f, eref->msgid.key, "  ", true);
       fprintf(f, ";\n");
       numref++;
     }
@@ -2111,7 +2116,7 @@ static void make(void)
         nn = da_len(th[j]);
         for(ii = 0 ; ii < nn ; ii+=2) {
           fprintf(f, "  %s, ", (char *) da_nth(th[j],ii));
-          rc = print_canon(f, da_nth(th[j],ii+1), "    ");
+          rc = print_canon(f, da_nth(th[j],ii+1), "    ", true);
           if (rc < 0)
             print_alert_warning(rc,lang,da_nth(th[j],ii));
           fprintf(f, ",\n");

@@ -455,7 +455,7 @@ msgid "Version"
 msgstr "Verze"
 
 #: desk/desk_rsc.c:665
-msgid "Copyright ½ 2001-"
+msgid "Copyright \275 2001-"
 msgstr "Copyright (C) 2001-"
 
 #: desk/desk_rsc.c:677
@@ -467,15 +467,15 @@ msgid "Based on 'GPLed' sources"
 msgstr "Zalo¾eno na 'GPL' zdrojích"
 
 #: desk/desk_rsc.c:701
-msgid "½ 1987 Digital Research, Inc."
+msgid "\275 1987 Digital Research, Inc."
 msgstr "(C) 1987 Digital Research, Inc."
 
 #: desk/desk_rsc.c:707
-msgid "½ 1999 Caldera Thin Clients, Inc."
+msgid "\275 1999 Caldera Thin Clients, Inc."
 msgstr "(C) 1999 Caldera Thin Clients, Inc."
 
 #: desk/desk_rsc.c:713
-msgid "½ 2001 Lineo, Inc."
+msgid "\275 2001 Lineo, Inc."
 msgstr "(C) 2001 Lineo, Inc."
 
 #: desk/desk_rsc.c:719

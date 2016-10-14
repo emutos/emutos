@@ -475,7 +475,7 @@ msgid "Version"
 msgstr "Î°õ¶©û"
 
 #: desk/desk_rsc.c:675
-msgid "Copyright Ω 2001-"
+msgid "Copyright \275 2001-"
 msgstr "Copyright Ω 2001-"
 
 #: desk/desk_rsc.c:681
@@ -487,15 +487,15 @@ msgid "Based on 'GPLed' sources"
 msgstr "Åò©†©£‚§¶† ©ú GPL source"
 
 #: desk/desk_rsc.c:705
-msgid "Ω 1987 Digital Research, Inc."
+msgid "\275 1987 Digital Research, Inc."
 msgstr "Ω 1987 Digital Research, Inc."
 
 #: desk/desk_rsc.c:711
-msgid "Ω 1999 Caldera Thin Clients, Inc."
+msgid "\275 1999 Caldera Thin Clients, Inc."
 msgstr "Ω 1999 Caldera Thin Clients, Inc."
 
 #: desk/desk_rsc.c:717
-msgid "Ω 2001 Lineo, Inc."
+msgid "\275 2001 Lineo, Inc."
 msgstr "Ω 2001 Lineo, Inc."
 
 #: desk/desk_rsc.c:723
