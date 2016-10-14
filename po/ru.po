@@ -27,39 +27,39 @@ msgstr "МБ"
 msgid "KB"
 msgstr "КБ"
 
-#: bios/initinfo.c:240
+#: bios/initinfo.c:260
 msgid "EmuTOS Version"
 msgstr "Версия EmuTOS"
 
-#: bios/initinfo.c:242
+#: bios/initinfo.c:262
 msgid "CPU type"
 msgstr "Тип CPU"
 
-#: bios/initinfo.c:250
+#: bios/initinfo.c:270
 msgid "Machine"
 msgstr "Компьютер"
 
-#: bios/initinfo.c:267
+#: bios/initinfo.c:283
 msgid "Boot time"
 msgstr "Время загрузки"
 
-#: bios/initinfo.c:273
+#: bios/initinfo.c:289
 msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "Удерж.нажатой <Ctrl>-без AUTO/ACC"
 
-#: bios/initinfo.c:276
+#: bios/initinfo.c:292
 msgid "Hold <Alternate> to skip HDD boot"
 msgstr "Удерж.нажатой <Alt>-без HDD загрузки"
 
-#: bios/initinfo.c:279
+#: bios/initinfo.c:295
 msgid "Press key 'X' to boot from X:"
 msgstr "Нажмите клавишу 'X' для загрузки с диска X:"
 
-#: bios/initinfo.c:282
+#: bios/initinfo.c:298
 msgid "Press <Esc> to run an early console"
 msgstr "Нажмите <Esc> для запуска предыдущей консоли"
 
-#: bios/initinfo.c:293
+#: bios/initinfo.c:309
 msgid " Hold <Shift> to pause this screen "
 msgstr "Удерж.нажатой <Shift> для паузы"
 
@@ -503,8 +503,8 @@ msgstr "Параметры:"
 msgid "INSTALL DESKTOP ICON"
 msgstr "УСТАНОВИТЬ ИКОНКУ ДЕСКТОПА"
 
-#: desk/desk_rsc.c:809
-msgid "Type:"
+#: desk/desk_rsc.c:809 desk/desk_rsc.c:1698
+msgid "Item type:"
 msgstr "Тип:"
 
 #: desk/desk_rsc.c:821
@@ -520,8 +520,8 @@ msgid "Printer"
 msgstr "Принтер"
 
 #: desk/desk_rsc.c:863 desk/desk_rsc.c:1746
-msgid "Shape:"
-msgstr "Рисунок:"
+msgid "Icon:"
+msgstr "Иконка:"
 
 #: desk/desk_rsc.c:896
 msgid "INSTALL APPLICATION"
@@ -584,16 +584,16 @@ msgid "SET PREFERENCES"
 msgstr "НАСТРОЙКИ"
 
 #: desk/desk_rsc.c:1190
-msgid "Confirm deletes?"
-msgstr "Подтверждать удаление?"
+msgid "Confirm deletes:"
+msgstr "Подтверждать удаление"
 
 #: desk/desk_rsc.c:1214
-msgid "Confirm copies?"
-msgstr "Подтверждать копирование?"
+msgid "Confirm copies:"
+msgstr "Подтверждать копирование"
 
 #: desk/desk_rsc.c:1238
-msgid "Confirm overwrites?"
-msgstr "Подтверждать перезапись?"
+msgid "Confirm overwrites:"
+msgstr "Подтверждать перезапись"
 
 #: desk/desk_rsc.c:1262
 msgid "Double-click speed:"
@@ -692,12 +692,8 @@ msgid "ST Compatible"
 msgstr "ST-совместимое"
 
 #: desk/desk_rsc.c:1686
-msgid "INSTALL WINDOW ICONS"
-msgstr "УСТАНОВИТЬ ИКОНКИ ОКНА"
-
-#: desk/desk_rsc.c:1698
-msgid "File type:"
-msgstr "Тип файла:"
+msgid "INSTALL WINDOW ICON"
+msgstr "УСТАНОВИТЬ ИКОНКУ ОКНА"
 
 #: desk/desk_rsc.c:1710
 msgid "Folder"
@@ -1334,3 +1330,4 @@ msgstr "неверное количество аргументов"
 #: cli/cmdutil.c:105
 msgid "error code "
 msgstr "код ошибки "
+
