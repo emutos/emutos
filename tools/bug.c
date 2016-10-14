@@ -408,7 +408,7 @@ static oh * o_new(void)
 
 static void o_free(oh *o)
 {
-  (void)o;
+  UNUSED(o);
   /* TODO */
 }
 
@@ -921,14 +921,14 @@ static void pca_xgettext_gstring(void *this, str *s, char *fname, int lineno)
 
 static void pca_xgettext_string(void *this, str *s)
 {
-  (void)this;
+  UNUSED(this);
   s_free(s);
 }
 
 static void pca_xgettext_other(void *this, int c)
 {
-  (void)this;
-  (void)c;
+  UNUSED(this);
+  UNUSED(c);
 }
 
 parse_c_action pca_xgettext[] = { {
@@ -953,8 +953,8 @@ static void pca_translate_gstring(void *this, str *s, char *fname, int lineno)
   char *t;
   poe *e;
 
-  (void)fname;
-  (void)lineno;
+  UNUSED(fname);
+  UNUSED(lineno);
 
   t = s_detach(s);
   e = o_find(p->o, t);
@@ -1887,7 +1887,7 @@ static void latin1_to_atarist(char *s)
 
 static void converter_noop(char *s)
 {
-  (void)s;
+  UNUSED(s);
 }
 
 typedef void(*converter_t)(char *);
