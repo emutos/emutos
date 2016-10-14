@@ -30,39 +30,39 @@ msgstr "MB"
 msgid "KB"
 msgstr "KB"
 
-#: bios/initinfo.c:240
+#: bios/initinfo.c:260
 msgid "EmuTOS Version"
 msgstr "EmuTOS verze"
 
-#: bios/initinfo.c:242
+#: bios/initinfo.c:262
 msgid "CPU type"
 msgstr "Typ CPU"
 
-#: bios/initinfo.c:250
+#: bios/initinfo.c:270
 msgid "Machine"
 msgstr "Poèítaè"
 
-#: bios/initinfo.c:267
+#: bios/initinfo.c:283
 msgid "Boot time"
 msgstr "Èas startu"
 
-#: bios/initinfo.c:273
+#: bios/initinfo.c:289
 msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "Podr¾ <Ctrl> a pøeskoè AUTO/ACC"
 
-#: bios/initinfo.c:276
+#: bios/initinfo.c:292
 msgid "Hold <Alternate> to skip HDD boot"
 msgstr "Podr¾ <Alt> k pøeskoèení HDD"
 
-#: bios/initinfo.c:279
+#: bios/initinfo.c:295
 msgid "Press key 'X' to boot from X:"
 msgstr "Pro start z disku X: stisknìte klávesu 'X'."
 
-#: bios/initinfo.c:282
+#: bios/initinfo.c:298
 msgid "Press <Esc> to run an early console"
 msgstr "Pro spu¹tìní brzké konzole stisknìte <Esc>."
 
-#: bios/initinfo.c:293
+#: bios/initinfo.c:309
 msgid " Hold <Shift> to pause this screen "
 msgstr " Podr¾ <Shift> pro pauzu obrazovky "
 
@@ -498,9 +498,9 @@ msgstr "Parametry:"
 msgid "INSTALL DESKTOP ICON"
 msgstr "INSTALOVAT IKONU NA PLOCHU"
 
-#: desk/desk_rsc.c:809
-msgid "Type:"
-msgstr "Typ:"
+#: desk/desk_rsc.c:809 desk/desk_rsc.c:1698
+msgid "Item type:"
+msgstr "Typ polo¾ky:"
 
 #: desk/desk_rsc.c:821
 msgid "Drive"
@@ -515,8 +515,8 @@ msgid "Printer"
 msgstr "Tiskárna"
 
 #: desk/desk_rsc.c:863 desk/desk_rsc.c:1746
-msgid "Shape:"
-msgstr "Tvar:"
+msgid "Icon:"
+msgstr "Ikona:"
 
 #: desk/desk_rsc.c:896
 msgid "INSTALL APPLICATION"
@@ -583,16 +583,16 @@ msgid "SET PREFERENCES"
 msgstr "NASTAVENÍ"
 
 #: desk/desk_rsc.c:1190
-msgid "Confirm deletes?"
-msgstr "Potvrdit mazání?"
+msgid "Confirm deletes:"
+msgstr "Potvrzovat mazání?"
 
 #: desk/desk_rsc.c:1214
-msgid "Confirm copies?"
-msgstr "Potvrdit kopírování?"
+msgid "Confirm copies:"
+msgstr "Potvrzovat kopírování?"
 
 #: desk/desk_rsc.c:1238
-msgid "Confirm overwrites?"
-msgstr "Potvrdit pøepis?"
+msgid "Confirm overwrites:"
+msgstr "Potvrzovat pøepis?"
 
 #: desk/desk_rsc.c:1262
 msgid "Double-click speed:"
@@ -691,12 +691,8 @@ msgid "ST Compatible"
 msgstr "ST kompatibilní"
 
 #: desk/desk_rsc.c:1686
-msgid "INSTALL WINDOW ICONS"
+msgid "INSTALL WINDOW ICON"
 msgstr "INSTALOVAT IKONU OKNA"
-
-#: desk/desk_rsc.c:1698
-msgid "File type:"
-msgstr "Typ souboru:"
 
 #: desk/desk_rsc.c:1710
 msgid "Folder"
