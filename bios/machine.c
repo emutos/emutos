@@ -330,7 +330,7 @@ static void setvalue_frb(void)
 #endif
 
 #if CONF_WITH_MONSTER
-	need_frb |= has_monster;
+    need_frb |= has_monster;
 #endif
 
     if (need_frb)
