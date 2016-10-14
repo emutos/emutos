@@ -28,39 +28,39 @@ msgstr "MB"
 msgid "KB"
 msgstr "KB"
 
-#: bios/initinfo.c:240
+#: bios/initinfo.c:260
 msgid "EmuTOS Version"
 msgstr "Versione"
 
-#: bios/initinfo.c:242
+#: bios/initinfo.c:262
 msgid "CPU type"
 msgstr "Tipo CPU"
 
-#: bios/initinfo.c:250
+#: bios/initinfo.c:270
 msgid "Machine"
 msgstr "Macchina"
 
-#: bios/initinfo.c:267
+#: bios/initinfo.c:283
 msgid "Boot time"
 msgstr "Ora avvio"
 
-#: bios/initinfo.c:273
+#: bios/initinfo.c:289
 msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "Tieni <CTRL> per saltare AUTO/ACC"
 
-#: bios/initinfo.c:276
+#: bios/initinfo.c:292
 msgid "Hold <Alternate> to skip HDD boot"
 msgstr "Tieni <ALT> per salto avvio da HDD"
 
-#: bios/initinfo.c:279
+#: bios/initinfo.c:295
 msgid "Press key 'X' to boot from X:"
 msgstr "Premi tasto 'X' per avvio da X:"
 
-#: bios/initinfo.c:282
+#: bios/initinfo.c:298
 msgid "Press <Esc> to run an early console"
 msgstr "Premi <Esc> per avvio early console"
 
-#: bios/initinfo.c:293
+#: bios/initinfo.c:309
 msgid " Hold <Shift> to pause this screen "
 msgstr " Tieni <Shift> per pausa schermo "
 
@@ -503,9 +503,9 @@ msgstr "Parametri:"
 msgid "INSTALL DESKTOP ICON"
 msgstr "INSTALLA ICONA SCRIVANIA"
 
-#: desk/desk_rsc.c:809
-msgid "Type:"
-msgstr "Tipo:"
+#: desk/desk_rsc.c:809 desk/desk_rsc.c:1698
+msgid "Item type:"
+msgstr "Tipo elemento:"
 
 #: desk/desk_rsc.c:821
 msgid "Drive"
@@ -520,8 +520,8 @@ msgid "Printer"
 msgstr "Stampante"
 
 #: desk/desk_rsc.c:863 desk/desk_rsc.c:1746
-msgid "Shape:"
-msgstr "Forma:"
+msgid "Icon:"
+msgstr "Icona:"
 
 #: desk/desk_rsc.c:896
 msgid "INSTALL APPLICATION"
@@ -584,16 +584,16 @@ msgid "SET PREFERENCES"
 msgstr "IMPOSTA PREFERENZE"
 
 #: desk/desk_rsc.c:1190
-msgid "Confirm deletes?"
-msgstr "Conferma cancellazione?"
+msgid "Confirm deletes:"
+msgstr "Conferma cancellazione:"
 
 #: desk/desk_rsc.c:1214
-msgid "Confirm copies?"
-msgstr "Conferma copia?"
+msgid "Confirm copies:"
+msgstr "Conferma copie:"
 
 #: desk/desk_rsc.c:1238
-msgid "Confirm overwrites?"
-msgstr "Conferma sovrascrittura?"
+msgid "Confirm overwrites:"
+msgstr "Conferma sovrascrittura:"
 
 #: desk/desk_rsc.c:1262
 msgid "Double-click speed:"
@@ -692,12 +692,8 @@ msgid "ST Compatible"
 msgstr "ST Compatibile"
 
 #: desk/desk_rsc.c:1686
-msgid "INSTALL WINDOW ICONS"
-msgstr "INSTALLA ICONE FINESTRA"
-
-#: desk/desk_rsc.c:1698
-msgid "File type:"
-msgstr "Tipo file:"
+msgid "INSTALL WINDOW ICON"
+msgstr "INSTALLA ICONA FINESTRA"
 
 #: desk/desk_rsc.c:1710
 msgid "Folder"
@@ -1330,3 +1326,4 @@ msgstr "numero errato di argomenti"
 #: cli/cmdutil.c:105
 msgid "error code "
 msgstr "codice errore "
+
