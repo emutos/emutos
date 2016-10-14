@@ -317,6 +317,11 @@ static void flexcan_dump_registers(void)
 
     KDEBUG(("coldfire_init_flexcan()\n"));
 
+    /* Enable the CAN1 clock in the PLL.
+     * Even if all clocks are enabled by default at power-on, BaS_gcc might
+     * have disabled the unused ones to reduce power consumption. */
+    MCF_CLOCK_SPCR |= MCF_CLOCK_SPCR_CAN1EN;
+
     /* Reset FlexCAN 1. This matters on warm boot, to clear errors, etc. */
     MCF_CAN_CANMCR1 = MCF_CAN_CANMCR_SOFTRST;
     while (MCF_CAN_CANMCR1 & MCF_CAN_CANMCR_SOFTRST); /* Wait */

@@ -2402,6 +2402,31 @@ typedef volatile unsigned long vuint32;
 
 /*********************************************************************
 *
+* Clock Module (CLOCK)
+*
+*********************************************************************/
+
+/* Register read/write macros */
+#define MCF_CLOCK_SPCR                       (*(vuint32*)(&__MBAR[0x300]))
+
+/* Bit definitions and macros for MCF_CLOCK_SPCR */
+#define MCF_CLOCK_SPCR_MEMEN                 (0x1)
+#define MCF_CLOCK_SPCR_PCIEN                 (0x2)
+#define MCF_CLOCK_SPCR_FBEN                  (0x4)
+#define MCF_CLOCK_SPCR_CAN0EN                (0x8)
+#define MCF_CLOCK_SPCR_DMAEN                 (0x10)
+#define MCF_CLOCK_SPCR_FEC0EN                (0x20)
+#define MCF_CLOCK_SPCR_FEC1EN                (0x40)
+#define MCF_CLOCK_SPCR_USBEN                 (0x80)
+#define MCF_CLOCK_SPCR_PSCEN                 (0x200)
+#define MCF_CLOCK_SPCR_CAN1EN                (0x800)
+#define MCF_CLOCK_SPCR_CRYENA                (0x1000)
+#define MCF_CLOCK_SPCR_CRYENB                (0x2000)
+#define MCF_CLOCK_SPCR_COREN                 (0x4000)
+#define MCF_CLOCK_SPCR_PLLK                  (0x80000000)
+
+/*********************************************************************
+*
 * M548X specific defines
 *
 *********************************************************************/
