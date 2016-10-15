@@ -30,39 +30,39 @@ msgstr "MB"
 msgid "KB"
 msgstr "KB"
 
-#: bios/initinfo.c:240
+#: bios/initinfo.c:260
 msgid "EmuTOS Version"
 msgstr "EmuTOS versio"
 
-#: bios/initinfo.c:242
+#: bios/initinfo.c:262
 msgid "CPU type"
 msgstr "CPU-tyyppi"
 
-#: bios/initinfo.c:250
+#: bios/initinfo.c:270
 msgid "Machine"
 msgstr "Kone"
 
-#: bios/initinfo.c:267
+#: bios/initinfo.c:283
 msgid "Boot time"
 msgstr "Käynnistysaika"
 
-#: bios/initinfo.c:273
+#: bios/initinfo.c:289
 msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "<Cntrl> pohjassa = ohita AUTO/ACC"
 
-#: bios/initinfo.c:276
+#: bios/initinfo.c:292
 msgid "Hold <Alternate> to skip HDD boot"
 msgstr "<Alt> pohjassa = ohita kovalevy"
 
-#: bios/initinfo.c:279
+#: bios/initinfo.c:295
 msgid "Press key 'X' to boot from X:"
 msgstr "Käynnistys asemalta X: -> paina 'X'"
 
-#: bios/initinfo.c:282
+#: bios/initinfo.c:298
 msgid "Press <Esc> to run an early console"
 msgstr "Käynnistyskonsoli -> paina <Esc>"
 
-#: bios/initinfo.c:293
+#: bios/initinfo.c:309
 msgid " Hold <Shift> to pause this screen "
 msgstr "Pysäytä ruutu <Shift> näppäimellä "
 
@@ -105,77 +105,63 @@ msgid "Cancel"
 msgstr "Kumoa"
 
 #: aes/gem_rsc.c:694
-msgid ""
-"[1]["
+msgid "[1]["
 "The disk in drive %c: is|"
 "physically write-protected.][Cancel|Retry]"
-msgstr ""
-"[1]["
+msgstr "[1]["
 "Levy asemassa %c: on|"
 "kirjoitussuojattu.][Kumoa|Uudestaan]"
 
 #: aes/gem_rsc.c:697
-msgid ""
-"[2]["
+msgid "[2]["
 "Drive %c: is not responding.|"
 "Please check the disk drive,|"
 "or insert a disk.][Cancel|Retry]"
-msgstr ""
-"[2]["
+msgstr "[2]["
 "%c: asema ei vastaa.|"
 "Tarkista asema,|"
 " tai anna levyke.][Kumoa|Uudestaan]"
 
 #: aes/gem_rsc.c:702
-msgid ""
-"[1]["
+msgid "[1]["
 "Data on the disk in drive %c:|"
 "may be damaged.][Cancel|Retry]"
-msgstr ""
-"[1]["
+msgstr "[1]["
 "Levyn tiedot asemassa %c:|"
 "saattavat olla vioittuneet.][Kumoa|Uudestaan]"
 
 #: aes/gem_rsc.c:705
-msgid ""
-"[2]["
+msgid "[2]["
 "This application cannot read|"
 "data on the disk in drive %c:.][Cancel|Retry]"
-msgstr ""
-"[2]["
+msgstr "[2]["
 "Sovellus ei pysty lukemaan|"
 "tietoja levyltä %c: asemassa.][Kumoa|Uudestaan]"
 
 #: aes/gem_rsc.c:708
-msgid ""
-"[1]["
+msgid "[1]["
 "Your output device is not|"
 "receiving data.][Cancel|Retry]"
-msgstr ""
-"[1]["
+msgstr "[1]["
 "Tulostuslaitteesi ei|"
 "vastaanota tietoja.][Kumoa|Uudestaan]"
 
 #: aes/gem_rsc.c:711
-msgid ""
-"[3]["
+msgid "[3]["
 "An error has occurred in GEM.|"
 "Please contact the EmuTOS|"
 "Development Team.][Cancel]"
-msgstr ""
-"[3]["
+msgstr "[3]["
 "GEM-virhe.|"
 "Ota yhteyttä EmuTOS-|"
 "kehitystiimiin.][Kumoa]"
 
 #: aes/gem_rsc.c:716
-msgid ""
-"[2]["
+msgid "[2]["
 "This application cannot|"
 "find the folder or file|"
 "you just tried to access.][  OK  ]"
-msgstr ""
-"[2]["
+msgstr "[2]["
 "Sovellus ei löydä|"
 "kansiota tai tiedostoa,|"
 "jota yritit käyttää.][  OK  ]"
@@ -246,6 +232,10 @@ msgstr "Kansioita: _____"
 #: desk/desk_rsc.c:19
 msgid "Number of files: _____"
 msgstr "Tiedostoja: _____"
+
+#: desk/desk_rsc.c:22
+msgid "Skip"
+msgstr "Ohita"
 
 #: desk/desk_rsc.c:23
 msgid "Install"
@@ -512,8 +502,8 @@ msgstr "Parametrit:"
 msgid "INSTALL DESKTOP ICON"
 msgstr "ASENNA IKONI TYÖPÖYDÄLLE"
 
-#: desk/desk_rsc.c:809
-msgid "Type:"
+#: desk/desk_rsc.c:809 desk/desk_rsc.c:1698
+msgid "Item type:"
 msgstr "Tyyppi:"
 
 #: desk/desk_rsc.c:821
@@ -529,8 +519,8 @@ msgid "Printer"
 msgstr "Tulostin"
 
 #: desk/desk_rsc.c:863 desk/desk_rsc.c:1746
-msgid "Shape:"
-msgstr "Muoto:"
+msgid "Icon:"
+msgstr "Ikoni:"
 
 #: desk/desk_rsc.c:896
 msgid "INSTALL APPLICATION"
@@ -580,10 +570,6 @@ msgstr "Tiedostonimi"
 msgid "NAME CONFLICT DURING COPY"
 msgstr "NIMIKONFLIKTI KOPIOINNIN AIKANA"
 
-#: desk/desk_rsc.c:22
-msgid "Skip"
-msgstr "Ohita"
-
 #: desk/desk_rsc.c:1136
 msgid "Stop"
 msgstr "Pysäytä"
@@ -597,15 +583,15 @@ msgid "SET PREFERENCES"
 msgstr "MÄÄRITÄ ASETUKSET"
 
 #: desk/desk_rsc.c:1190
-msgid "Confirm deletes?"
+msgid "Confirm deletes:"
 msgstr "Vahvista poisto:"
 
 #: desk/desk_rsc.c:1214
-msgid "Confirm copies?"
+msgid "Confirm copies:"
 msgstr "Vahvista kopiointi:"
 
 #: desk/desk_rsc.c:1238
-msgid "Confirm overwrites?"
+msgid "Confirm overwrites:"
 msgstr "Vahvista ylikirjoitus:"
 
 #: desk/desk_rsc.c:1262
@@ -705,12 +691,8 @@ msgid "ST Compatible"
 msgstr "ST yhteensopiva"
 
 #: desk/desk_rsc.c:1686
-msgid "INSTALL WINDOW ICONS"
-msgstr "ASENNA IKKUNAIKONIT"
-
-#: desk/desk_rsc.c:1698
-msgid "File type:"
-msgstr "Tiedostotyyppi:"
+msgid "INSTALL WINDOW ICON"
+msgstr "ASENNA IKKUNAIKONI"
 
 #: desk/desk_rsc.c:1710
 msgid "Folder"
@@ -793,14 +775,12 @@ msgstr "[1]["
 "määritetty sovellusta.][  OK  ]"
 
 #: desk/desk_rsc.c:1822
-msgid ""
-"[1]["
+msgid "[1]["
 "The GEM Desktop has no more|"
 "windows.  Please close a|"
 "window that you are not|"
 "using.][  OK  ]"
-msgstr ""
-"[1]["
+msgstr "[1]["
 "Työpöydälle ei voi avata|"
 "useampia ikkunoita.  Sulje|"
 "jokin ikkunoista, joita et|"
@@ -815,14 +795,12 @@ msgstr "[3]["
 "ohjelmaa ei löydy.][  OK  ]"
 
 #: desk/desk_rsc.c:1832
-msgid ""
-"[3]["
+msgid "[3]["
 "Formatting will ERASE all|"
 "the data on the disk in|"
 "drive %c:.  Click on OK|"
 "if you want to proceed.][  OK  |Cancel]"
-msgstr ""
-"[3]["
+msgstr "[3]["
 "Alustus POISTAA kaikki|"
 "tiedot levyllä %c:.  Valitse|"
 "OK, jos haluat jatkaa.][  OK  |Kumoa]"
@@ -848,23 +826,19 @@ msgstr "[2]["
 "Peru operaatio?][ Kyllä |  Ei  ]"
 
 #: desk/desk_rsc.c:1844
-msgid ""
-"[2]["
+msgid "[2]["
 "Do you want to delete all|"
 "the files on drive %c: ?][Yes| No ]"
-msgstr ""
-"[2]["
+msgstr "[2]["
 "Haluatko poistaa kaikki|"
 "tiedostot %c: asemalta?][Kyllä| Ei ]"
 
 #: desk/desk_rsc.c:1847
-msgid ""
-"[1]["
+msgid "[1]["
 "Sorry, the desktop cannot|"
 "install any more icons|"
 "or applications.][  OK  ]"
-msgstr ""
-"[1]["
+msgstr "[1]["
 "Valitettavasti työpöydälle|"
 "ei voi asentaa enempää|"
 "ikoneita tai sovelluksia.][  OK  ]"
@@ -880,21 +854,17 @@ msgstr "[2]["
 "nimeä.][Kumoa|Uudestaan]"
 
 #: desk/desk_rsc.c:1857
-msgid ""
-"[1]["
+msgid "[1]["
 "This disk does not have enough|"
 "room for this operation.][  OK  ]"
-msgstr ""
-"[1]["
+msgstr "[1]["
 "Tällä levyllä ei ole riittävästi|"
 "tilaa pyydetylle toiminnolle.][  OK  ]"
 
 #: desk/desk_rsc.c:1860
-msgid ""
-"[3]["
+msgid "[3]["
 "Cannot create EMUDESK.INF.][  OK  ]"
-msgstr ""
-"[3]["
+msgstr "[3]["
 "EMUDESK.INF tiedoston|"
 "luonti epäonnistui.][  OK  ]"
 
@@ -919,107 +889,85 @@ msgstr "[3]["
 "hakemiston/tiedoston luontiin.][  OK  ]"
 
 #: desk/desk_rsc.c:1873
-msgid ""
-"[1]["
+msgid "[1]["
 "You cannot open the trash|"
 "can icon into a window.][  OK  ]"
-msgstr ""
-"[1]["
+msgstr "[1]["
 "Roskis ei ole aukaistava.][  OK  ]"
 
 #: desk/desk_rsc.c:1876
-msgid ""
-"[1]["
+msgid "[1]["
 "The trash can is used to|"
 "permanently delete files|"
 "or folders.][  OK  ]"
-msgstr ""
-"[1]["
+msgstr "[1]["
 "Roskis on tiedostojen ja|"
 "kansioiden pysyvää|"
 "tuhoamista varten.][  OK  ]"
 
 #: desk/desk_rsc.c:1881
-msgid ""
-"[1]["
+msgid "[1]["
 "You cannot drag applications,|"
 "files or folders onto the|"
 "Desktop.][  OK  ]"
-msgstr ""
-"[1]["
+msgstr "[1]["
 "Tiedostoja tai kansioita|"
 "ei voi vetää työpöydälle.][  OK  ]"
 
 #: desk/desk_rsc.c:1886
-msgid ""
-"[1]["
+msgid "[1]["
 "You cannot drag the trash can|"
 "icon into a window.][  OK  ]"
-msgstr ""
-"[1]["
+msgstr "[1]["
 "Roskista ei voi siirtää|"
 "ikkunaan.][  OK  ]"
 
 #: desk/desk_rsc.c:1889
-msgid ""
-"[1]["
+msgid "[1]["
 "You cannot place this|"
 "icon over another icon.][  OK  ]"
-msgstr ""
-"[1]["
+msgstr "[1]["
 "Ikonia ei voi sijoittaa|"
 "toisen päälle.][  OK  ]"
 
 #: desk/desk_rsc.c:1892
-msgid ""
-"[2]["
+msgid "[2]["
 "Save Desktop?][  OK  |Cancel]"
-msgstr ""
-"[2]["
+msgstr "[2]["
 "Tallenna työpöytä?][  OK  |Kumoa]"
 
 #: desk/desk_rsc.c:1893
-msgid ""
-"[2]["
+msgid "[2]["
 "Do you want to remove icons|"
 "or delete files?][Icons|Files|Cancel]"
-msgstr ""
-"[2]["
+msgstr "[2]["
 "Haluatko poistaa ikoneja|"
 "vai tiedostoja?][Ikoneja|Tiedostoja|Kumoa]"
 
 #: desk/desk_rsc.c:1896
-msgid ""
-"[1]["
+msgid "[1]["
 "Invalid function key value.][  OK  ]"
-msgstr ""
-"[1]["
+msgstr "[1]["
 "Funktionäppäin ei käy.][  OK  ]"
 
 #: desk/desk_rsc.c:1897
-msgid ""
-"[2]["
+msgid "[2]["
 "Function key already assigned.|"
 "Do you want to reassign it?][  OK  |Cancel]"
-msgstr ""
-"[2]["
+msgstr "[2]["
 "Funktionäppäin on jo käytössä.|"
 "Haluatko vaihtaa sen?][  OK  |Kumoa]"
 
 #: desk/desk_rsc.c:1901
-msgid ""
-"[1]["
+msgid "[1]["
 "Please select icon type.][Desktop|Window|Cancel]"
-msgstr ""
-"[1]["
+msgstr "[1]["
 "Valitse ikonityyppi.][Työpöytä|Ikkuna|Kumoa]"
 
 #: desk/desk_rsc.c:1902
-msgid ""
-"[1]["
+msgid "[1]["
 "No matching file type.][  OK  ]"
-msgstr ""
-"[1]["
+msgstr "[1]["
 "Ei vastaavia|"
 "tiedostotyyppejä.][  OK  ]"
 
