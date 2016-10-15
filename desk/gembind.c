@@ -737,7 +737,6 @@ WORD graf_watchbox(LONG tree, WORD obj, UWORD instate, UWORD outstate)
     GR_OUTSTATE = outstate;
     return gem_if(GRAF_WATCHBOX);
 }
-*/
 
 
 WORD graf_slidebox(LONG tree, WORD parent, WORD obj, WORD isvert)
@@ -748,6 +747,7 @@ WORD graf_slidebox(LONG tree, WORD parent, WORD obj, WORD isvert)
     GR_ISVERT = isvert;
     return gem_if(GRAF_SLIDEBOX);
 }
+*/
 
 
 WORD graf_handle(WORD *pwchar, WORD *phchar, WORD *pwbox, WORD *phbox)
