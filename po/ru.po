@@ -176,7 +176,7 @@ msgstr "[1]["
 "ресурсов для открытия нового|"
 "документа. Чтобы освободить|"
 "ресурсы, закройте|"
-"всененужные документы.][  ОК  ]"
+"все ненужные документы.][  ОК  ]"
 
 #: aes/gem_rsc.c:730
 msgid "[1]["
@@ -425,7 +425,7 @@ msgstr "  Удалить иконку десктопа"
 
 #: desk/desk_rsc.c:458
 msgid "----------------------------"
-msgstr "----------------------------"
+msgstr "-----------------------------"
 
 #: desk/desk_rsc.c:464
 msgid "  Set preferences..."
@@ -433,11 +433,11 @@ msgstr "  Настройки..."
 
 #: desk/desk_rsc.c:470
 msgid "  Save desktop...        \007V"
-msgstr "  Сохранить десктоп...        \007V"
+msgstr "  Сохранить десктоп...    \007V"
 
 #: desk/desk_rsc.c:476
 msgid "  Change resolution...   \007C"
-msgstr "  Изменить разрешение...   \007C"
+msgstr "  Изменить разрешение...  \007C"
 
 #: desk/desk_rsc.c:533
 msgid "Attribute:"
@@ -521,7 +521,7 @@ msgstr "Принтер"
 
 #: desk/desk_rsc.c:863 desk/desk_rsc.c:1746
 msgid "Icon:"
-msgstr "Иконка:"
+msgstr "Рисунок:"
 
 #: desk/desk_rsc.c:896
 msgid "INSTALL APPLICATION"
@@ -597,7 +597,7 @@ msgstr "Подтверждать перезапись"
 
 #: desk/desk_rsc.c:1262
 msgid "Double-click speed:"
-msgstr "Скорость дв. нажатия:"
+msgstr "Скорость дв. нажатия"
 
 #: desk/desk_rsc.c:1310
 msgid "Click"
@@ -609,11 +609,11 @@ msgstr "Ненажатие"
 
 #: desk/desk_rsc.c:1322
 msgid "To drop down menus:"
-msgstr "К выпадающим меню:"
+msgstr "К выпадающим меню"
 
 #: desk/desk_rsc.c:1328
 msgid "Sound effects:"
-msgstr "Звуковые эффекты:"
+msgstr "Звуковые эффекты"
 
 #: desk/desk_rsc.c:1340
 msgid "On"
@@ -625,7 +625,7 @@ msgstr "Выкл"
 
 #: desk/desk_rsc.c:1352
 msgid "Time format:"
-msgstr "Формат времени:"
+msgstr "Формат времени"
 
 #: desk/desk_rsc.c:1364 desk/desk_rsc.c:1394
 msgid "Default"
@@ -641,7 +641,7 @@ msgstr "24Ч"
 
 #: desk/desk_rsc.c:1382
 msgid "Date format:"
-msgstr "Формат даты:"
+msgstr "Формат даты"
 
 #: desk/desk_rsc.c:1400
 msgid "MDY"
