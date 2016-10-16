@@ -232,37 +232,37 @@ WORD appl_exit(void)
 
 
 /* unused
-WORD appl_write(WORD rwid, WORD length, LONG pbuff)
+WORD appl_write(WORD rwid, WORD length, const void *pbuff)
 {
     AP_RWID = rwid;
     AP_LENGTH = length;
-    AP_PBUFF = pbuff;
+    AP_PBUFF = (LONG)pbuff;
     return gem_if(APPL_WRITE);
 }
 */
 
 /* unused
-WORD appl_read(WORD rwid, WORD length, LONG pbuff)
+WORD appl_read(WORD rwid, WORD length, void *pbuff)
 {
     AP_RWID = rwid;
     AP_LENGTH = length;
-    AP_PBUFF = pbuff;
+    AP_PBUFF = (LONG)pbuff;
     return gem_if(APPL_READ);
 }
 */
 
 /* unused
-WORD appl_find(LONG pname)
+WORD appl_find(const BYTE *pname)
 {
-    AP_PNAME = pname;
+    AP_PNAME = (LONG)pname;
     return gem_if(APPL_FIND);
 }
 */
 
 /* unused
-WORD appl_tplay(LONG tbuffer, WORD tlength, WORD tscale)
+WORD appl_tplay(const EVNTREC *tbuffer, WORD tlength, WORD tscale)
 {
-    AP_TBUFFER = tbuffer;
+    AP_TBUFFER = (LONG)tbuffer;
     AP_TLENGTH = tlength;
     AP_TSCALE = tscale;
     return gem_if(APPL_TPLAY);
@@ -270,9 +270,9 @@ WORD appl_tplay(LONG tbuffer, WORD tlength, WORD tscale)
 */
 
 /* unused
-WORD appl_trecord(LONG tbuffer, WORD tlength)
+WORD appl_trecord(EVNTREC *tbuffer, WORD tlength)
 {
-    AP_TBUFFER = tbuffer;
+    AP_TBUFFER = (LONG)tbuffer;
     AP_TLENGTH = tlength;
     return gem_if(APPL_TRECORD);
 }
@@ -325,9 +325,9 @@ WORD evnt_mouse(WORD flags, WORD x, WORD y, WORD width, WORD height,
 
 
 /* unused
-WORD evnt_mesag(LONG pbuff)
+WORD evnt_mesag(WORD *pbuff)
 {
-    ME_PBUFF = pbuff;
+    ME_PBUFF = (LONG)pbuff;
     return gem_if(EVNT_MESAG);
 }
 */
@@ -429,21 +429,21 @@ WORD menu_tnormal(LONG tree, WORD titlenum, WORD normalit)
 
 
 /* unused
-WORD menu_text(LONG tree, WORD inum, LONG ptext)
+WORD menu_text(OBJECT *tree, WORD inum, const BYTE *ptext)
 {
-    MM_ITREE = tree;
+    MM_ITREE = (LONG)tree;
     ITEM_NUM = inum;
-    MM_PTEXT = ptext;
+    MM_PTEXT = (LONG) ptext;
     return gem_if(MENU_TEXT);
 }
 */
 
 
 /* unused
-WORD menu_register(WORD pid, LONG pstr)
+WORD menu_register(WORD pid, const BYTE *pstr)
 {
     MM_PID = pid;
-    MM_PSTR = pstr;
+    MM_PSTR = (LONG)pstr;
     return gem_if(MENU_REGISTER);
 }
 */
@@ -479,9 +479,9 @@ WORD objc_add(OBJECT *tree, WORD parent, WORD child)
 
 
 /* unused
-WORD objc_delete(LONG tree, WORD delob)
+WORD objc_delete(OBJECT *tree, WORD delob)
 {
-    OB_TREE = tree;
+    OB_TREE = (LONG)tree;
     OB_DELOB = delob;
     return gem_if(OBJC_DELETE);
 }
@@ -534,9 +534,9 @@ WORD objc_offset(OBJECT *tree, WORD obj, WORD *poffx, WORD *poffy)
 
 
 /* unused
-WORD objc_edit(LONG tree, WORD obj, WORD inchar, WORD *idx, WORD kind)
+WORD objc_edit(OBJECT *tree, WORD obj, WORD inchar, WORD *idx, WORD kind)
 {
-    OB_TREE = tree;
+    OB_TREE = (LONG)tree;
     OB_OBJ = obj;
     OB_CHAR = inchar;
     OB_IDX = *idx;
@@ -619,10 +619,10 @@ WORD form_center(OBJECT *tree, WORD *pcx, WORD *pcy, WORD *pcw, WORD *pch)
 
 
 /* unused
-WORD form_keybd(LONG form, WORD obj, WORD nxt_obj, WORD thechar,
+WORD form_keybd(OBJECT *form, WORD obj, WORD nxt_obj, WORD thechar,
                 WORD *pnxt_obj, WORD *pchar)
 {
-    FM_FORM = form;
+    FM_FORM = (LONG)form;
     FM_OBJ = obj;
     FM_INXTOB = nxt_obj;
     FM_ICHAR = thechar;
@@ -635,9 +635,9 @@ WORD form_keybd(LONG form, WORD obj, WORD nxt_obj, WORD thechar,
 
 
 /* unused
-WORD form_button(LONG form, WORD obj, WORD clks, WORD *pnxt_obj)
+WORD form_button(OBJECT *form, WORD obj, WORD clks, WORD *pnxt_obj)
 {
-    FM_FORM = form;
+    FM_FORM = (LONG)form;
     FM_OBJ = obj;
     FM_CLKS = clks;
     gem_if(FORM_BUTTON);
@@ -729,9 +729,9 @@ WORD graf_shrinkbox(WORD orgx, WORD orgy, WORD orgw, WORD orgh,
 
 
 /* unused
-WORD graf_watchbox(LONG tree, WORD obj, UWORD instate, UWORD outstate)
+WORD graf_watchbox(OBJECT *tree, WORD obj, UWORD instate, UWORD outstate)
 {
-    GR_TREE = tree;
+    GR_TREE = (LONG)tree;
     GR_OBJ = obj;
     GR_INSTATE = instate;
     GR_OUTSTATE = outstate;
@@ -739,9 +739,9 @@ WORD graf_watchbox(LONG tree, WORD obj, UWORD instate, UWORD outstate)
 }
 
 
-WORD graf_slidebox(LONG tree, WORD parent, WORD obj, WORD isvert)
+WORD graf_slidebox(OBJECT *tree, WORD parent, WORD obj, WORD isvert)
 {
-    GR_TREE = tree;
+    GR_TREE = (LONG)tree;
     GR_PARENT = parent;
     GR_OBJ = obj;
     GR_ISVERT = isvert;
@@ -783,28 +783,28 @@ void graf_mkstate(WORD *pmx, WORD *pmy, WORD *pmstate, WORD *pkstate)
  *  Scrap Manager
  */
 /* unused
-WORD scrp_read(LONG pscrap)
+WORD scrp_read(BYTE *pscrap)
 {
-    SC_PATH = pscrap;
+    SC_PATH = (LONG)pscrap;
     return gem_if(SCRP_READ);
 }
 
-
-WORD scrp_write(LONG pscrap)
+WORD scrp_write(const BYTE *pscrap)
 {
-    SC_PATH = pscrap;
+    SC_PATH = (LONG)pscrap;
     return gem_if(SCRP_WRITE);
 }
 */
+
 
 /*
  *  File Selector Manager
  */
 /* unused
-WORD fsel_input(LONG pipath, LONG pisel, WORD *pbutton)
+WORD fsel_input(BYTE *pipath, BYTE *pisel, WORD *pbutton)
 {
-    FS_IPATH = pipath;
-    FS_ISEL = pisel;
+    FS_IPATH = (LONG)pipath;
+    FS_ISEL = (LONG)pisel;
     gem_if(FSEL_INPUT);
     *pbutton = FS_BUTTON;
     return (WORD)RET_CODE;
@@ -925,9 +925,9 @@ WORD wind_calc(WORD wctype, UWORD kind, WORD x, WORD y, WORD w, WORD h,
  *  Resource Manager
  */
 /* unused
-WORD rsrc_load(LONG rsname)
+WORD rsrc_load(const BYTE *rsname)
 {
-    RS_PFNAME = rsname;
+    RS_PFNAME = (LONG)rsname;
     return gem_if(RSRC_LOAD);
 }
 */
@@ -945,23 +945,23 @@ WORD rsrc_free(void)
  *
  * Note: We fake this call in deskmain.c when desktop is in ROM
  *
-WORD rsrc_gaddr(WORD rstype, WORD rsid, LONG *paddr)
+WORD rsrc_gaddr(WORD rstype, WORD rsid, void **paddr)
 {
     RS_TYPE = rstype;
     RS_INDEX = rsid;
     gem_if(RSRC_GADDR);
-    *paddr = RS_OUTADDR;
+    *paddr = (void *)RS_OUTADDR;
     return (WORD)RET_CODE;
 }
 */
 
 
 /* unused
-WORD rsrc_saddr(WORD rstype, WORD rsid, LONG lngval)
+WORD rsrc_saddr(WORD rstype, WORD rsid, void *lngval)
 {
     RS_TYPE = rstype;
     RS_INDEX = rsid;
-    RS_INADDR = lngval;
+    RS_INADDR = (LONG)lngval;
     return gem_if(RSRC_SADDR);
 }
 */
@@ -979,10 +979,10 @@ WORD rsrc_obfix(LONG tree, WORD obj)
  *  Shell Manager
  */
 /* unused
-WORD shel_read(LONG pcmd, LONG ptail)
+WORD shel_read(BYTE *pcmd, BYTE *ptail)
 {
-    SH_PCMD = pcmd;
-    SH_PTAIL = ptail;
+    SH_PCMD = (LONG)pcmd;
+    SH_PTAIL = (LONG)ptail;
     return gem_if(SHEL_READ);
 }
 */
@@ -1023,29 +1023,29 @@ WORD shel_find(BYTE *ppath)
 
 
 /* unused
-WORD shel_envrn(LONG ppath, LONG psrch)
+WORD shel_envrn(BYTE *ppath, const BYTE *psrch)
 {
-    SH_PATH = ppath;
-    SH_SRCH = psrch;
+    SH_PATH = (LONG)ppath;
+    SH_SRCH = (LONG)psrch;
     return gem_if(SHEL_ENVRN);
 }
 */
 
 
 /* unused
-WORD shel_rdef(LONG lpcmd, LONG lpdir)
+WORD shel_rdef(BYTE *lpcmd, BYTE *lpdir)
 {
-    SH_LPCMD = lpcmd;
-    SH_LPDIR = lpdir;
+    SH_LPCMD = (LONG)lpcmd;
+    SH_LPDIR = (LONG)lpdir;
     return gem_if(SHEL_RDEF);
 }
 */
 
 /* unused
-WORD shel_wdef(LONG lpcmd, LONG lpdir)
+WORD shel_wdef(BYTE *lpcmd, BYTE *lpdir)
 {
-    SH_LPCMD = lpcmd;
-    SH_LPDIR = lpdir;
+    SH_LPCMD = (LONG)lpcmd;
+    SH_LPDIR = (LONG)lpdir;
     return gem_if(SHEL_WDEF);
 }
 */
