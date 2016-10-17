@@ -225,7 +225,7 @@ static void men_update(LONG tree)
 
     /* enable all items */
     for (item = OPENITEM; item <= PREFITEM; item++)
-        menu_ienable(tree, item, TRUE);
+        menu_ienable(tree, item, 1);
 
     can_iapp = TRUE;
     can_show = TRUE;
@@ -296,11 +296,11 @@ static void men_update(LONG tree)
 #if CONF_WITH_SHUTDOWN
     menu_ienable(tree, QUITITEM, can_shutdown());
 #else
-    menu_ienable(tree, QUITITEM, FALSE);
+    menu_ienable(tree, QUITITEM, 0);
 #endif
 
 #if WITH_CLI == 0
-    menu_ienable(tree, CLIITEM, FALSE);
+    menu_ienable(tree, CLIITEM, 0);
 #endif
 
 }
@@ -449,9 +449,9 @@ static WORD do_viewmenu(WORD item)
     }
     if (newsort != G.g_isort)
     {
-        menu_icheck(G.a_trees[ADMENU], G.g_csortitem, FALSE);
+        menu_icheck(G.a_trees[ADMENU], G.g_csortitem, 0);
         G.g_csortitem = item;
-        menu_icheck(G.a_trees[ADMENU], item, TRUE);
+        menu_icheck(G.a_trees[ADMENU], item, 1);
         rc |= SORT_HAS_CHANGED;
     }
 
@@ -633,7 +633,7 @@ static WORD hndl_menu(WORD title, WORD item)
         break;
     }
 
-    menu_tnormal(G.a_trees[ADMENU], title, TRUE);
+    menu_tnormal(G.a_trees[ADMENU], title, 1);
 
     return done;
 }
@@ -702,57 +702,57 @@ static WORD hndl_kbd(WORD thechar)
     case ALTA:          /* Options: Install App */
         if (can_iapp)       /* if it's ok to install app */
         {
-            menu_tnormal(G.a_trees[ADMENU], OPTNMENU, FALSE);
+            menu_tnormal(G.a_trees[ADMENU], OPTNMENU, 0);
             done = hndl_menu(OPTNMENU, IAPPITEM);
         }
         break;
     case ALTC:          /* Options: Change resolution */
         if (!can_change_resolution)
             break;
-        menu_tnormal(G.a_trees[ADMENU], OPTNMENU, FALSE);
+        menu_tnormal(G.a_trees[ADMENU], OPTNMENU, 0);
         done = hndl_menu(OPTNMENU, RESITEM);
         break;
     case ALTD:          /* File: Delete */
         if (can_del)        /* if it's ok to delete */
         {
-            menu_tnormal(G.a_trees[ADMENU], FILEMENU, FALSE);
+            menu_tnormal(G.a_trees[ADMENU], FILEMENU, 0);
             done = hndl_menu(FILEMENU, DELTITEM);
         }
         break;
     case ALTI:          /* File: Info/Rename */
         if (can_show)       /* if it's ok to show */
         {
-            menu_tnormal(G.a_trees[ADMENU], FILEMENU, FALSE);
+            menu_tnormal(G.a_trees[ADMENU], FILEMENU, 0);
             done = hndl_menu(FILEMENU, SHOWITEM);
         }
         break;
     case ALTN:          /* View: Sort by Name */
-        menu_tnormal(G.a_trees[ADMENU], VIEWMENU, FALSE);
+        menu_tnormal(G.a_trees[ADMENU], VIEWMENU, 0);
         done = hndl_menu(VIEWMENU, NAMEITEM);
         break;
     case ALTP:          /* View: Sort by Type */
-        menu_tnormal(G.a_trees[ADMENU], VIEWMENU, FALSE);
+        menu_tnormal(G.a_trees[ADMENU], VIEWMENU, 0);
         done = hndl_menu(VIEWMENU, TYPEITEM);
         break;
     case ALTS:          /* View: Show as Text/Icons */
-        menu_tnormal(G.a_trees[ADMENU], VIEWMENU, FALSE);
+        menu_tnormal(G.a_trees[ADMENU], VIEWMENU, 0);
         done = hndl_menu(VIEWMENU, ICONITEM);
         break;
     case ALTT:          /* View: Sort by Date */
-        menu_tnormal(G.a_trees[ADMENU], VIEWMENU, FALSE);
+        menu_tnormal(G.a_trees[ADMENU], VIEWMENU, 0);
         done = hndl_menu(VIEWMENU, DATEITEM);
         break;
     case ALTV:          /* Options: Save Desktop */
-        menu_tnormal(G.a_trees[ADMENU], OPTNMENU, FALSE);
+        menu_tnormal(G.a_trees[ADMENU], OPTNMENU, 0);
         done = hndl_menu(OPTNMENU, SAVEITEM);
         break;
     case ALTZ:          /* View: Sort by Size */
-        menu_tnormal(G.a_trees[ADMENU], VIEWMENU, FALSE);
+        menu_tnormal(G.a_trees[ADMENU], VIEWMENU, 0);
         done = hndl_menu(VIEWMENU, SIZEITEM);
         break;
 #if WITH_CLI != 0
     case CNTLZ:         /* Start EmuCON */
-        menu_tnormal(G.a_trees[ADMENU], FILEMENU, FALSE);
+        menu_tnormal(G.a_trees[ADMENU], FILEMENU, 0);
         done = hndl_menu(FILEMENU, CLIITEM);
         break;
 #endif
@@ -760,7 +760,7 @@ static WORD hndl_kbd(WORD thechar)
     case CNTLQ:         /* Shutdown */
         if (can_shutdown())
         {
-            menu_tnormal(G.a_trees[ADMENU], FILEMENU, FALSE);
+            menu_tnormal(G.a_trees[ADMENU], FILEMENU, 0);
             done = hndl_menu(FILEMENU, QUITITEM);
         }
         break;
@@ -1486,7 +1486,7 @@ WORD deskmain(void)
     /* show menu */
     desk_verify(0, FALSE);                  /* should this be here  */
     wind_update(BEG_UPDATE);
-    menu_bar(G.a_trees[ADMENU], TRUE);
+    menu_bar(G.a_trees[ADMENU], 1);
     wind_update(END_UPDATE);
 
     /* establish menu items */
@@ -1494,7 +1494,7 @@ WORD deskmain(void)
     menu_text(G.a_trees[ADMENU], ICONITEM, ad_ptext);
 
     G.g_csortitem = NAMEITEM;
-    menu_icheck(G.a_trees[ADMENU], G.g_csortitem, TRUE);
+    menu_icheck(G.a_trees[ADMENU], G.g_csortitem, 1);
 
     menu_ienable(G.a_trees[ADMENU], RESITEM, can_change_resolution);
 
@@ -1569,7 +1569,7 @@ WORD deskmain(void)
     app_save(FALSE);
 
     /* turn off the menu bar */
-    menu_bar(0x0L, FALSE);
+    menu_bar(0x0L, 0);
 
     /* exit the gem AES */
     appl_exit();
