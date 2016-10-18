@@ -135,7 +135,7 @@ typedef struct
 
 /*GLOBAL*/ BYTE         *a_alert;
 
-/*GLOBAL*/ LONG         a_trees[RS_NTREE];
+/*GLOBAL*/ OBJECT       *a_trees[RS_NTREE];     /* ptrs to dialog trees */
 
 /*GLOBAL*/ WORD         g_croot;                /* current pseudo root  */
 

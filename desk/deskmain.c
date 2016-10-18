@@ -316,7 +316,7 @@ static WORD do_deskmenu(WORD item)
     {
     case ABOUITEM:
         display_free_stack();
-        tree = (OBJECT *)G.a_trees[ADDINFO];
+        tree = G.a_trees[ADDINFO];
         /* draw the form        */
         show_hide(FMD_START, tree);
         while(!done)
@@ -444,14 +444,14 @@ static WORD do_viewmenu(WORD item)
     {
         G.g_iview = newview;
         ptext = (newview == V_TEXT) ? ad_picon : ad_ptext;
-        menu_text((OBJECT *)G.a_trees[ADMENU], ICONITEM, ptext);
+        menu_text(G.a_trees[ADMENU], ICONITEM, ptext);
         rc |= VIEW_HAS_CHANGED;
     }
     if (newsort != G.g_isort)
     {
-        menu_icheck((OBJECT *)G.a_trees[ADMENU], G.g_csortitem, 0);
+        menu_icheck(G.a_trees[ADMENU], G.g_csortitem, 0);
         G.g_csortitem = item;
-        menu_icheck((OBJECT *)G.a_trees[ADMENU], item, 1);
+        menu_icheck(G.a_trees[ADMENU], item, 1);
         rc |= SORT_HAS_CHANGED;
     }
 
@@ -603,7 +603,7 @@ static WORD hndl_button(WORD clicks, WORD mx, WORD my, WORD button, WORD keystat
         done = do_filemenu(OPENITEM);
     }
 
-    men_update(G.a_trees[ADMENU]);
+    men_update((LONG)G.a_trees[ADMENU]);
 
     return done;
 }
@@ -633,7 +633,7 @@ static WORD hndl_menu(WORD title, WORD item)
         break;
     }
 
-    menu_tnormal((OBJECT *)G.a_trees[ADMENU], title, 1);
+    menu_tnormal(G.a_trees[ADMENU], title, 1);
 
     return done;
 }
@@ -802,11 +802,11 @@ static WORD hndl_kbd(WORD thechar)
      */
     if (title >= 0)
     {
-        menu_tnormal((OBJECT *)G.a_trees[ADMENU], title, 0);
+        menu_tnormal(G.a_trees[ADMENU], title, 0);
         done = hndl_menu(title, item);
     }
 
-    men_update(G.a_trees[ADMENU]);      /* clean up menu info   */
+    men_update((LONG)G.a_trees[ADMENU]);    /* clean up menu info   */
 
     return done;
 }
@@ -932,7 +932,7 @@ WORD hndl_msg(void)
     G.g_rmsg[0] = 0;
 
     if (!menu)
-        men_update(G.a_trees[ADMENU]);
+        men_update((LONG)G.a_trees[ADMENU]);
 
     return done;
 }
@@ -1465,7 +1465,7 @@ WORD deskmain(void)
     for (ii = 0; ii < RS_NTREE; ii++)
     {
         rsrc_gaddr(R_TREE, ii, (void **)&G.a_trees[ii]);
-        centre_title((OBJECT *)G.a_trees[ii]);
+        centre_title(G.a_trees[ii]);
     }
 
     for (ii = 0; ii < RS_NBB; ii++) /* initialize bit images */
@@ -1497,17 +1497,17 @@ WORD deskmain(void)
     /* show menu */
     desk_verify(0, FALSE);                  /* should this be here  */
     wind_update(BEG_UPDATE);
-    menu_bar((OBJECT *)G.a_trees[ADMENU], 1);
+    menu_bar(G.a_trees[ADMENU], 1);
     wind_update(END_UPDATE);
 
     /* establish menu items */
     G.g_iview = V_ICON;
-    menu_text((OBJECT *)G.a_trees[ADMENU], ICONITEM, ad_ptext);
+    menu_text(G.a_trees[ADMENU], ICONITEM, ad_ptext);
 
     G.g_csortitem = NAMEITEM;
-    menu_icheck((OBJECT *)G.a_trees[ADMENU], G.g_csortitem, 1);
+    menu_icheck(G.a_trees[ADMENU], G.g_csortitem, 1);
 
-    menu_ienable((OBJECT *)G.a_trees[ADMENU], RESITEM, can_change_resolution);
+    menu_ienable(G.a_trees[ADMENU], RESITEM, can_change_resolution);
 
     /* initialize desktop and its objects */
     app_blddesk();
@@ -1526,7 +1526,7 @@ WORD deskmain(void)
     wind_update(BEG_UPDATE);
     cnx_get();
     wind_update(END_UPDATE);
-    men_update(G.a_trees[ADMENU]);
+    men_update((LONG)G.a_trees[ADMENU]);
 
     /* get ready for main loop */
     flags = MU_BUTTON | MU_MESAG | MU_KEYBD;

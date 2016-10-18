@@ -342,7 +342,7 @@ WORD ins_app(WORD curr)
     /*
      * deselect all objects
      */
-    tree = (OBJECT *)G.a_trees[ADINSAPP];
+    tree = G.a_trees[ADINSAPP];
     deselect_all(tree);
 
     /*
@@ -510,7 +510,7 @@ static WORD install_desktop_icon(ANODE *pa)
     /*
      * deselect all objects & hide printer button
      */
-    tree = (OBJECT *)G.a_trees[ADINSDSK];
+    tree = G.a_trees[ADINSDSK];
     deselect_all(tree);
     tree[ID_PRINT].ob_flags |= HIDETREE;
 
@@ -724,7 +724,7 @@ static WORD install_window_icon(FNODE *pf)
     /*
      * deselect all objects
      */
-    tree = (OBJECT *)G.a_trees[ADINSWIN];
+    tree = G.a_trees[ADINSWIN];
     deselect_all(tree);
 
     /*

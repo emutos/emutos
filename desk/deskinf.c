@@ -442,7 +442,7 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
     BYTE poname[LEN_ZFNAME], pnname[LEN_ZFNAME];
     OBJECT *obj;
 
-    tree = (OBJECT *)G.a_trees[ADFFINFO];
+    tree = G.a_trees[ADFFINFO];
     title = (pf->f_attr & F_SUBDIR) ? STFOINFO : STFIINFO;
     obj = tree + FFTITLE;
     obj->ob_spec = (LONG) ini_str(title);
@@ -570,7 +570,7 @@ WORD inf_disk(BYTE dr_id)
     BYTE drive[2];
 
     graf_mouse(HGLASS, NULL);
-    tree = (OBJECT *)G.a_trees[ADDISKIN];
+    tree = G.a_trees[ADDISKIN];
 
     drive[0] = dr_id;
     drive[1] = '\0';
@@ -635,7 +635,7 @@ WORD inf_pref(void)
     WORD sndefpref;
     WORD rbld;
 
-    tree = (OBJECT *)G.a_trees[ADSETPRE];
+    tree = G.a_trees[ADSETPRE];
     rbld = FALSE;
 
     /* first, deselect all objects */
@@ -747,7 +747,7 @@ WORD opn_appl(BYTE *papname, BYTE *papparms, BYTE *pcmd, BYTE *ptail)
     OBJECT *tree;
     BYTE poname[LEN_ZFNAME];
 
-    tree = (OBJECT *)G.a_trees[ADOPENAP];
+    tree = G.a_trees[ADOPENAP];
 
     fmt_str(papname, poname);
     inf_sset(tree, APPLNAME, poname);

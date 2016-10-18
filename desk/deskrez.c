@@ -117,7 +117,7 @@ WORD oldres;
     selected = i;
 
     /* set up dialog & display */
-    tree = (OBJECT *)G.a_trees[ADTTREZ];
+    tree = G.a_trees[ADTTREZ];
     for (i = 0, obj = tree+TTREZSTL; i < NUM_TT_BUTTONS; i++, obj++) {
         if (i == selected)
             obj->ob_state |= SELECTED;
@@ -166,7 +166,7 @@ WORD oldmode, oldbase, oldoptions;
     selected = i;
 
     /* set up dialog & display */
-    tree = (OBJECT *)G.a_trees[ADFALREZ];
+    tree = G.a_trees[ADFALREZ];
 
     if (VgetMonitor() != MON_VGA) { /* fix up rez descriptions if not VGA */
         for (i = 0, obj = tree+FREZNAME; i < 4; i++, obj++)

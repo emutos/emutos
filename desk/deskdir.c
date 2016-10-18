@@ -108,7 +108,7 @@ void show_hide(WORD fmd, OBJECT *tree)
  */
 static WORD do_namecon(void)
 {
-    OBJECT *tree = (OBJECT *)G.a_trees[ADCPALER];
+    OBJECT *tree = G.a_trees[ADCPALER];
     WORD ob;
 
     graf_mouse(ARROW, NULL);
@@ -120,7 +120,7 @@ static WORD do_namecon(void)
         ml_havebox = TRUE;
     }
     form_do(tree, 0);
-    draw_dial((OBJECT *)G.a_trees[ADCPYDEL]);
+    draw_dial(G.a_trees[ADCPYDEL]);
     graf_mouse(HGLASS, NULL);
 
     ob = inf_gindex(tree, CAOK, 3) + CAOK;
@@ -369,7 +369,7 @@ static WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
 {
     WORD fh, ob = 0, samefile;
     LONG ret;
-    OBJECT *tree = (OBJECT *)G.a_trees[ADCPALER];
+    OBJECT *tree = G.a_trees[ADCPALER];
     BYTE ml_fsrc[LEN_ZFNAME], ml_fdst[LEN_ZFNAME], ml_fstr[LEN_ZFNAME];
     BYTE old_dst[LEN_ZFNAME];
 
@@ -719,7 +719,7 @@ static WORD output_path(WORD op,BYTE *srcpth, BYTE *dstpth)
 {
     BYTE ml_fsrc[LEN_ZFNAME], ml_fdst[LEN_ZFNAME], ml_fstr[LEN_ZFNAME];
     WORD ret, ob;
-    OBJECT *tree = (OBJECT *)G.a_trees[ADCPALER];
+    OBJECT *tree = G.a_trees[ADCPALER];
 
     while(1)
     {
@@ -844,7 +844,7 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *co
     tree = NULL;
     if (op != OP_COUNT)
     {
-        tree = (OBJECT *)G.a_trees[ADCPYDEL];
+        tree = G.a_trees[ADCPYDEL];
         obj = tree + CDTITLE;
     }
 

@@ -129,7 +129,7 @@ WORD fun_mkdir(WNODE *pw_node)
     BYTE  fnew_name[LEN_ZFNAME], unew_name[LEN_ZFNAME], *ptmp;
     BYTE  path[MAXPATHLEN];
 
-    tree = (OBJECT *)G.a_trees[ADMKDBOX];
+    tree = G.a_trees[ADMKDBOX];
     pp_node = pw_node->w_path;
     ptmp = path;
     strcpy(ptmp, pp_node->p_spec);

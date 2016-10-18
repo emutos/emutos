@@ -457,7 +457,7 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
      * set up for text output
      */
     graf_mouse(M_OFF, NULL);
-    menu_bar((OBJECT *)G.a_trees[ADMENU],0);
+    menu_bar(G.a_trees[ADMENU],0);
     wind_update(BEG_UPDATE);
     form_dial(FMD_START, 0,0,0,0, 0,0,scr_width,scr_height);
     clear_screen();
@@ -491,7 +491,7 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
     clear_screen();     /* neatness */
     form_dial(FMD_FINISH, 0,0,0,0, 0,0,scr_width,scr_height);
     wind_update(END_UPDATE);
-    menu_bar((OBJECT *)G.a_trees[ADMENU],1);
+    menu_bar(G.a_trees[ADMENU],1);
     graf_mouse(M_ON, NULL);
 }
 #endif
