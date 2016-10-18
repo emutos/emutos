@@ -689,6 +689,7 @@ static WORD hndl_kbd(WORD thechar)
 {
     WNODE *pw;
     WORD done, funkey;
+    WORD title = -1, item;
 
     done = FALSE;
 
@@ -702,66 +703,67 @@ static WORD hndl_kbd(WORD thechar)
     case ALTA:          /* Options: Install App */
         if (can_iapp)       /* if it's ok to install app */
         {
-            menu_tnormal(G.a_trees[ADMENU], OPTNMENU, 0);
-            done = hndl_menu(OPTNMENU, IAPPITEM);
+            title = OPTNMENU;
+            item = IAPPITEM;
         }
         break;
     case ALTC:          /* Options: Change resolution */
-        if (!can_change_resolution)
-            break;
-        menu_tnormal(G.a_trees[ADMENU], OPTNMENU, 0);
-        done = hndl_menu(OPTNMENU, RESITEM);
+        if (can_change_resolution)
+        {
+            title = OPTNMENU;
+            item = RESITEM;
+        }
         break;
     case ALTD:          /* File: Delete */
         if (can_del)        /* if it's ok to delete */
         {
-            menu_tnormal(G.a_trees[ADMENU], FILEMENU, 0);
-            done = hndl_menu(FILEMENU, DELTITEM);
+            title = FILEMENU;
+            item = DELTITEM;
         }
         break;
     case ALTI:          /* File: Info/Rename */
         if (can_show)       /* if it's ok to show */
         {
-            menu_tnormal(G.a_trees[ADMENU], FILEMENU, 0);
-            done = hndl_menu(FILEMENU, SHOWITEM);
+            title = FILEMENU;
+            item = SHOWITEM;
         }
         break;
     case ALTN:          /* View: Sort by Name */
-        menu_tnormal(G.a_trees[ADMENU], VIEWMENU, 0);
-        done = hndl_menu(VIEWMENU, NAMEITEM);
+        title = VIEWMENU;
+        item = NAMEITEM;
         break;
     case ALTP:          /* View: Sort by Type */
-        menu_tnormal(G.a_trees[ADMENU], VIEWMENU, 0);
-        done = hndl_menu(VIEWMENU, TYPEITEM);
+        title = VIEWMENU;
+        item = TYPEITEM;
         break;
     case ALTS:          /* View: Show as Text/Icons */
-        menu_tnormal(G.a_trees[ADMENU], VIEWMENU, 0);
-        done = hndl_menu(VIEWMENU, ICONITEM);
+        title = VIEWMENU;
+        item = ICONITEM;
         break;
     case ALTT:          /* View: Sort by Date */
-        menu_tnormal(G.a_trees[ADMENU], VIEWMENU, 0);
-        done = hndl_menu(VIEWMENU, DATEITEM);
+        title = VIEWMENU;
+        item = DATEITEM;
         break;
     case ALTV:          /* Options: Save Desktop */
-        menu_tnormal(G.a_trees[ADMENU], OPTNMENU, 0);
-        done = hndl_menu(OPTNMENU, SAVEITEM);
+        title = OPTNMENU;
+        item = SAVEITEM;
         break;
     case ALTZ:          /* View: Sort by Size */
-        menu_tnormal(G.a_trees[ADMENU], VIEWMENU, 0);
-        done = hndl_menu(VIEWMENU, SIZEITEM);
+        title = VIEWMENU;
+        item = SIZEITEM;
         break;
 #if WITH_CLI != 0
     case CNTLZ:         /* Start EmuCON */
-        menu_tnormal(G.a_trees[ADMENU], FILEMENU, 0);
-        done = hndl_menu(FILEMENU, CLIITEM);
+        title = FILEMENU;
+        item = CLIITEM;
         break;
 #endif
 #if CONF_WITH_SHUTDOWN
     case CNTLQ:         /* Shutdown */
         if (can_shutdown())
         {
-            menu_tnormal(G.a_trees[ADMENU], FILEMENU, 0);
-            done = hndl_menu(FILEMENU, QUITITEM);
+            title = FILEMENU;
+            item = QUITITEM;
         }
         break;
 #endif
@@ -793,6 +795,15 @@ static WORD hndl_kbd(WORD thechar)
             funkey = ((thechar-FUNKEY_11) >> 8) + 11;
         if (funkey)
             done = process_funkey(funkey);
+    }
+
+    /*
+     * actually handle shortcuts
+     */
+    if (title >= 0)
+    {
+        menu_tnormal(G.a_trees[ADMENU], title, 0);
+        done = hndl_menu(title, item);
     }
 
     men_update(G.a_trees[ADMENU]);      /* clean up menu info   */
