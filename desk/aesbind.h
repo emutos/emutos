@@ -84,7 +84,7 @@ WORD objc_change(OBJECT *tree, WORD drawob, WORD depth, WORD xc, WORD yc,
 WORD form_do(OBJECT *form, WORD start);
 WORD form_dial(WORD dtype, WORD ix, WORD iy, WORD iw, WORD ih,
                WORD x, WORD y, WORD w, WORD h);
-WORD form_alert(WORD defbut, LONG astring);
+WORD form_alert(WORD defbut, const BYTE *astring);
 WORD form_error(WORD errnum);
 WORD form_center(OBJECT *tree, WORD *pcx, WORD *pcy, WORD *pcw, WORD *pch);
 /* 

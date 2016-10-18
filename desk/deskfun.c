@@ -53,7 +53,7 @@
 WORD fun_alert(WORD defbut, WORD stnum)
 {
     rsrc_gaddr(R_STRING, stnum, &G.a_alert);
-    return form_alert(defbut, G.a_alert);
+    return form_alert(defbut, (BYTE *)G.a_alert);
 }
 
 
@@ -67,7 +67,7 @@ WORD fun_alert_merge(WORD defbut, WORD stnum, BYTE merge)
     sprintf(G.g_1text, G.g_2text, merge);
     G.a_alert = (LONG)&G.g_1text[0];
 
-    return form_alert(defbut, G.a_alert);
+    return form_alert(defbut, (BYTE *)G.a_alert);
 }
 
 

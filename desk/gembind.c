@@ -591,10 +591,10 @@ WORD form_dial(WORD dtype, WORD ix, WORD iy, WORD iw, WORD ih,
 }
 
 
-WORD form_alert(WORD defbut, LONG astring)
+WORD form_alert(WORD defbut, const BYTE *astring)
 {
     FM_DEFBUT = defbut;
-    FM_ASTRING = astring;
+    FM_ASTRING = (LONG)astring;
     return gem_if(FORM_ALERT);
 }
 
