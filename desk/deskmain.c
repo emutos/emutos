@@ -204,10 +204,10 @@ static void desk_all(WORD flags)
 /*
  *  Enable/Disable the menu items in dlist
  */
-static void men_list(LONG mlist, const BYTE *dlist, WORD enable)
+static void men_list(OBJECT *mlist, const BYTE *dlist, WORD enable)
 {
     while (*dlist)
-        menu_ienable((OBJECT *)mlist, *dlist++, enable);
+        menu_ienable(mlist, *dlist++, enable);
 }
 
 
@@ -215,7 +215,7 @@ static void men_list(LONG mlist, const BYTE *dlist, WORD enable)
  *  Based on current selected icons, figure out which menu items
  *  should be selected (deselected)
  */
-static void men_update(LONG tree)
+static void men_update(OBJECT *tree)
 {
     WORD item, nsel, isapp;
     const BYTE *pvalue;
@@ -225,7 +225,7 @@ static void men_update(LONG tree)
 
     /* enable all items */
     for (item = OPENITEM; item <= PREFITEM; item++)
-        menu_ienable((OBJECT *)tree, item, 1);
+        menu_ienable(tree, item, 1);
 
     can_iapp = TRUE;
     can_show = TRUE;
@@ -294,13 +294,13 @@ static void men_update(LONG tree)
     }
 
 #if CONF_WITH_SHUTDOWN
-    menu_ienable((OBJECT *)tree, QUITITEM, can_shutdown());
+    menu_ienable(tree, QUITITEM, can_shutdown());
 #else
-    menu_ienable((OBJECT *)tree, QUITITEM, 0);
+    menu_ienable(tree, QUITITEM, 0);
 #endif
 
 #if WITH_CLI == 0
-    menu_ienable((OBJECT *)tree, CLIITEM, 0);
+    menu_ienable(tree, CLIITEM, 0);
 #endif
 
 }
@@ -603,7 +603,7 @@ static WORD hndl_button(WORD clicks, WORD mx, WORD my, WORD button, WORD keystat
         done = do_filemenu(OPENITEM);
     }
 
-    men_update((LONG)G.a_trees[ADMENU]);
+    men_update(G.a_trees[ADMENU]);
 
     return done;
 }
@@ -806,7 +806,7 @@ static WORD hndl_kbd(WORD thechar)
         done = hndl_menu(title, item);
     }
 
-    men_update((LONG)G.a_trees[ADMENU]);    /* clean up menu info   */
+    men_update(G.a_trees[ADMENU]);      /* clean up menu info   */
 
     return done;
 }
@@ -932,7 +932,7 @@ WORD hndl_msg(void)
     G.g_rmsg[0] = 0;
 
     if (!menu)
-        men_update((LONG)G.a_trees[ADMENU]);
+        men_update(G.a_trees[ADMENU]);
 
     return done;
 }
@@ -1526,7 +1526,7 @@ WORD deskmain(void)
     wind_update(BEG_UPDATE);
     cnx_get();
     wind_update(END_UPDATE);
-    men_update((LONG)G.a_trees[ADMENU]);
+    men_update(G.a_trees[ADMENU]);
 
     /* get ready for main loop */
     flags = MU_BUTTON | MU_MESAG | MU_KEYBD;
