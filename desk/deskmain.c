@@ -1397,7 +1397,7 @@ static void desk_xlate_fix(void)
     /* Fix objects coordinates: */
     for(i = 0 ; i < RS_NOBS ; i++)
     {
-        rsrc_obfix((LONG) desk_rs_obj, i);
+        rsrc_obfix(desk_rs_obj, i);
     }
 
     /* translate and fix TEDINFO strings */

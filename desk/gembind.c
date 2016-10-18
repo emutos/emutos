@@ -967,9 +967,9 @@ WORD rsrc_saddr(WORD rstype, WORD rsid, void *lngval)
 */
 
 
-WORD rsrc_obfix(LONG tree, WORD obj)
+WORD rsrc_obfix(OBJECT *tree, WORD obj)
 {
-    RS_TREE = tree;
+    RS_TREE = (LONG)tree;
     RS_OBJ = obj;
     return gem_if(RSRC_OBFIX);
 }

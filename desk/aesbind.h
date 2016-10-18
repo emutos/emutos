@@ -162,7 +162,7 @@ WORD rsrc_gaddr(WORD rstype, WORD rsid, void **paddr);  /* see deskmain.c */
 /*
 WORD rsrc_saddr(WORD rstype, WORD rsid, void *lngval);
 */
-WORD rsrc_obfix(LONG tree, WORD obj);
+WORD rsrc_obfix(OBJECT *tree, WORD obj);
 
 
 /*
