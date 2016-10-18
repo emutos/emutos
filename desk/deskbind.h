@@ -133,7 +133,7 @@ typedef struct
 /*GLOBAL*/ BYTE         g_cmd[128];
 /*GLOBAL*/ BYTE         g_tail[128];
 
-/*GLOBAL*/ LONG         a_alert;
+/*GLOBAL*/ BYTE         *a_alert;
 
 /*GLOBAL*/ LONG         a_trees[RS_NTREE];
 

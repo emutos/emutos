@@ -619,7 +619,7 @@ void win_sinfo(WNODE *pwin)
 
     pn = pwin->w_path;
     rsrc_gaddr(R_STRING, STINFOST, (LONG *)&G.a_alert);
-    strlencpy(G.g_1text, (char *)G.a_alert);
+    strlencpy(G.g_1text, G.a_alert);
 
     sprintf(pwin->w_info, G.g_1text, pn->p_size, pn->p_count);
 }
