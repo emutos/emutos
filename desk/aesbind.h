@@ -53,10 +53,10 @@ WORD evnt_mesag(WORD *pbuff);
 /*
  *  Menu Manager
  */
-WORD menu_bar(LONG tree, WORD showit);
-WORD menu_icheck(LONG tree, WORD itemnum, WORD checkit);
-WORD menu_ienable(LONG tree, WORD itemnum, WORD enableit);
-WORD menu_tnormal(LONG tree, WORD titlenum, WORD normalit);
+WORD menu_bar(OBJECT *tree, WORD showit);
+WORD menu_icheck(OBJECT *tree, WORD itemnum, WORD checkit);
+WORD menu_ienable(OBJECT *tree, WORD itemnum, WORD enableit);
+WORD menu_tnormal(OBJECT *tree, WORD titlenum, WORD normalit);
 /* WORD menu_text(OBJECT *tree, WORD inum, const BYTE *ptext); */
 /* WORD menu_register(WORD pid, const BYTE *pstr); */
 /* WORD menu_unregister(WORD mid); */

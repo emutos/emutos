@@ -393,35 +393,35 @@ WORD evnt_dclick(WORD rate, WORD setit)
 /*
  *  Menu Manager
  */
-WORD menu_bar(LONG tree, WORD showit)
+WORD menu_bar(OBJECT *tree, WORD showit)
 {
-    MM_ITREE = tree;
+    MM_ITREE = (LONG)tree;
     SHOW_IT = showit;
     return gem_if(MENU_BAR);
 }
 
 
-WORD menu_icheck(LONG tree, WORD itemnum, WORD checkit)
+WORD menu_icheck(OBJECT *tree, WORD itemnum, WORD checkit)
 {
-    MM_ITREE = tree;
+    MM_ITREE = (LONG)tree;
     ITEM_NUM = itemnum;
     CHECK_IT = checkit;
     return gem_if(MENU_ICHECK);
 }
 
 
-WORD menu_ienable(LONG tree, WORD itemnum, WORD enableit)
+WORD menu_ienable(OBJECT *tree, WORD itemnum, WORD enableit)
 {
-    MM_ITREE = tree;
+    MM_ITREE = (LONG)tree;
     ITEM_NUM = itemnum;
     ENABLE_IT = enableit;
     return gem_if(MENU_IENABLE);
 }
 
 
-WORD menu_tnormal(LONG tree, WORD titlenum, WORD normalit)
+WORD menu_tnormal(OBJECT *tree, WORD titlenum, WORD normalit)
 {
-    MM_ITREE = tree;
+    MM_ITREE = (LONG)tree;
     TITLE_NUM = titlenum;
     NORMAL_IT = normalit;
     return gem_if(MENU_TNORMAL);

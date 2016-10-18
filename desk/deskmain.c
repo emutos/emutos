@@ -60,7 +60,7 @@
 #include "scancode.h"
 
 #define abs(x) ( (x) < 0 ? -(x) : (x) )
-#define menu_text(tree,inum,ptext) (((OBJECT *)(tree)+(inum))->ob_spec = ptext)
+#define menu_text(tree,inum,ptext) (((tree)+(inum))->ob_spec = ptext)
 
 /* BugFix       */
                                         /* keyboard shortcuts & others  */
@@ -207,7 +207,7 @@ static void desk_all(WORD flags)
 static void men_list(LONG mlist, const BYTE *dlist, WORD enable)
 {
     while (*dlist)
-        menu_ienable(mlist, *dlist++, enable);
+        menu_ienable((OBJECT *)mlist, *dlist++, enable);
 }
 
 
@@ -225,7 +225,7 @@ static void men_update(LONG tree)
 
     /* enable all items */
     for (item = OPENITEM; item <= PREFITEM; item++)
-        menu_ienable(tree, item, 1);
+        menu_ienable((OBJECT *)tree, item, 1);
 
     can_iapp = TRUE;
     can_show = TRUE;
@@ -294,13 +294,13 @@ static void men_update(LONG tree)
     }
 
 #if CONF_WITH_SHUTDOWN
-    menu_ienable(tree, QUITITEM, can_shutdown());
+    menu_ienable((OBJECT *)tree, QUITITEM, can_shutdown());
 #else
-    menu_ienable(tree, QUITITEM, 0);
+    menu_ienable((OBJECT *)tree, QUITITEM, 0);
 #endif
 
 #if WITH_CLI == 0
-    menu_ienable(tree, CLIITEM, 0);
+    menu_ienable((OBJECT *)tree, CLIITEM, 0);
 #endif
 
 }
@@ -444,14 +444,14 @@ static WORD do_viewmenu(WORD item)
     {
         G.g_iview = newview;
         ptext = (newview == V_TEXT) ? ad_picon : ad_ptext;
-        menu_text(G.a_trees[ADMENU], ICONITEM, ptext);
+        menu_text((OBJECT *)G.a_trees[ADMENU], ICONITEM, ptext);
         rc |= VIEW_HAS_CHANGED;
     }
     if (newsort != G.g_isort)
     {
-        menu_icheck(G.a_trees[ADMENU], G.g_csortitem, 0);
+        menu_icheck((OBJECT *)G.a_trees[ADMENU], G.g_csortitem, 0);
         G.g_csortitem = item;
-        menu_icheck(G.a_trees[ADMENU], item, 1);
+        menu_icheck((OBJECT *)G.a_trees[ADMENU], item, 1);
         rc |= SORT_HAS_CHANGED;
     }
 
@@ -633,7 +633,7 @@ static WORD hndl_menu(WORD title, WORD item)
         break;
     }
 
-    menu_tnormal(G.a_trees[ADMENU], title, 1);
+    menu_tnormal((OBJECT *)G.a_trees[ADMENU], title, 1);
 
     return done;
 }
@@ -802,7 +802,7 @@ static WORD hndl_kbd(WORD thechar)
      */
     if (title >= 0)
     {
-        menu_tnormal(G.a_trees[ADMENU], title, 0);
+        menu_tnormal((OBJECT *)G.a_trees[ADMENU], title, 0);
         done = hndl_menu(title, item);
     }
 
@@ -1497,17 +1497,17 @@ WORD deskmain(void)
     /* show menu */
     desk_verify(0, FALSE);                  /* should this be here  */
     wind_update(BEG_UPDATE);
-    menu_bar(G.a_trees[ADMENU], 1);
+    menu_bar((OBJECT *)G.a_trees[ADMENU], 1);
     wind_update(END_UPDATE);
 
     /* establish menu items */
     G.g_iview = V_ICON;
-    menu_text(G.a_trees[ADMENU], ICONITEM, ad_ptext);
+    menu_text((OBJECT *)G.a_trees[ADMENU], ICONITEM, ad_ptext);
 
     G.g_csortitem = NAMEITEM;
-    menu_icheck(G.a_trees[ADMENU], G.g_csortitem, 1);
+    menu_icheck((OBJECT *)G.a_trees[ADMENU], G.g_csortitem, 1);
 
-    menu_ienable(G.a_trees[ADMENU], RESITEM, can_change_resolution);
+    menu_ienable((OBJECT *)G.a_trees[ADMENU], RESITEM, can_change_resolution);
 
     /* initialize desktop and its objects */
     app_blddesk();
@@ -1580,7 +1580,7 @@ WORD deskmain(void)
     app_save(FALSE);
 
     /* turn off the menu bar */
-    menu_bar(0x0L, 0);
+    menu_bar(NULL, 0);
 
     /* exit the gem AES */
     appl_exit();
