@@ -1411,18 +1411,18 @@ static void desk_xlate_fix(void)
 }
 
 /* Fake a rsrc_gaddr for the ROM desktop: */
-WORD rsrc_gaddr(WORD rstype, WORD rsid, LONG *paddr)
+WORD rsrc_gaddr(WORD rstype, WORD rsid, void **paddr)
 {
     switch(rstype)
     {
     case R_TREE:
-        *paddr = (LONG) desk_rs_trees[rsid];
+        *paddr = desk_rs_trees[rsid];
         break;
     case R_BITBLK:
-        *paddr = (LONG) &desk_rs_bitblk[rsid];
+        *paddr = (void **)&desk_rs_bitblk[rsid];
         break;
     case R_STRING:
-        *paddr = (LONG) gettext( desk_rs_fstr[rsid] );
+        *paddr = (void **)gettext( desk_rs_fstr[rsid] );
         break;
     default:
         KDEBUG(("FIXME: unsupported (faked) rsrc_gaddr type!\n"));
@@ -1464,7 +1464,7 @@ WORD deskmain(void)
     /* initialize menus and dialogs */
     for (ii = 0; ii < RS_NTREE; ii++)
     {
-        rsrc_gaddr(R_TREE, ii, &G.a_trees[ii]);
+        rsrc_gaddr(R_TREE, ii, (void **)&G.a_trees[ii]);
         centre_title((OBJECT *)G.a_trees[ii]);
     }
 
@@ -1473,8 +1473,8 @@ WORD deskmain(void)
         app_tran(ii);
     }
 
-    rsrc_gaddr(R_STRING, STASTEXT, &ad_ptext);
-    rsrc_gaddr(R_STRING, STASICON, &ad_picon);
+    rsrc_gaddr(R_STRING, STASTEXT, (void **)&ad_ptext);
+    rsrc_gaddr(R_STRING, STASICON, (void **)&ad_picon);
 
     /* These strings are used by dr_code.  We can't get to the
      * resource in dr_code because that would reenter AES, so we

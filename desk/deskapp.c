@@ -309,12 +309,12 @@ static BYTE *app_parse(BYTE *pcurr, ANODE *pa)
 
 void app_tran(WORD bi_num)
 {
-    LONG lpbi;
+    BITBLK *pbi;
     BITBLK lb;
 
-    rsrc_gaddr(R_BITBLK, bi_num, &lpbi);
+    rsrc_gaddr(R_BITBLK, bi_num, (void **)&pbi);
 
-    memcpy(&lb, (BITBLK *)lpbi, sizeof(BITBLK));
+    memcpy(&lb, pbi, sizeof(BITBLK));
 
     gsx_trans(lb.bi_pdata, lb.bi_wb, lb.bi_pdata, lb.bi_wb, lb.bi_hl);
 }
@@ -527,7 +527,7 @@ void app_start(void)
                 drive_y = icon_index / xcnt; /* y position */
                 icon_type = (i > 1) ? 0 /* Hard disk */ : 1 /* Floppy */;
                 drive_letter = 'A' + i;
-                rsrc_gaddr(R_STRING, STDISK, (LONG *)&text);
+                rsrc_gaddr(R_STRING, STDISK, (void **)&text);
                 sprintf(gl_afile + x, "#M %02X %02X %02X FF %c %s %c@ @\r\n",
                         drive_x, drive_y, icon_type, drive_letter, text, drive_letter);
                 icon_index++;
@@ -543,7 +543,7 @@ void app_start(void)
         trash_y = ycnt-1;       /* Bottom */
         if (drive_y >= trash_y) /* if the last drive icon overflows over */
             trash_x = xcnt-1;   /*  the trash row, force trash to right  */
-        rsrc_gaddr(R_STRING, STTRASH, (LONG *)&text);
+        rsrc_gaddr(R_STRING, STTRASH, (void **)&text);
         sprintf(gl_afile + x, "#T %02X %02X 03 FF   %s@ @\r\n",
                 trash_x, trash_y, text);
         G.g_afsize = strlen(gl_afile);
