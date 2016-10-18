@@ -412,7 +412,7 @@ msgstr "  Asenna ikoni..."
 
 #: desk/desk_rsc.c:440
 msgid "  Install application... \007A"
-msgstr "  Asenna sovellus... \007A"
+msgstr "  Asenna sovellus...    \007A"
 
 #: desk/desk_rsc.c:446
 msgid "  Install devices"
@@ -424,7 +424,7 @@ msgstr "  Poista ikoni työpöydältä"
 
 #: desk/desk_rsc.c:458
 msgid "----------------------------"
-msgstr "----------------------------"
+msgstr "---------------------------"
 
 #: desk/desk_rsc.c:464
 msgid "  Set preferences..."
@@ -432,11 +432,11 @@ msgstr "  Määritä asetukset..."
 
 #: desk/desk_rsc.c:470
 msgid "  Save desktop...        \007V"
-msgstr "  Tallenna työpoytä...        \007V"
+msgstr "  Tallenna työpoytä...  \007V"
 
 #: desk/desk_rsc.c:476
 msgid "  Change resolution...   \007C"
-msgstr "  Vaihda tarkkuutta...   \007C"
+msgstr "  Vaihda tarkkuutta...  \007C"
 
 #: desk/desk_rsc.c:533
 msgid "Attribute:"
@@ -528,15 +528,15 @@ msgstr "ASENNA SOVELLUS"
 
 #: desk/desk_rsc.c:926
 msgid "Boot status:"
-msgstr "Käynnistystila:"
+msgstr "Käynnistys:"
 
 #: desk/desk_rsc.c:938
 msgid "Auto"
-msgstr "Automaattinen"
+msgstr "Bootissa"
 
 #: desk/desk_rsc.c:944
 msgid "Normal"
-msgstr "Normaali"
+msgstr "Käyttäjä"
 
 #: desk/desk_rsc.c:950
 msgid "Application type:"
@@ -564,7 +564,7 @@ msgstr "Koko polku"
 
 #: desk/desk_rsc.c:1028
 msgid "File name"
-msgstr "Tiedostonimi"
+msgstr "Vain nimi"
 
 #: desk/desk_rsc.c:1106
 msgid "NAME CONFLICT DURING COPY"
