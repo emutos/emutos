@@ -377,13 +377,13 @@ Application Crash
 
 Autorun Applications
 --------------------
-053. GEM programs can be autorun from disk.  This is set up           MISSING FEATURE (note that
-     through the "Install Application" dialog, where the user can     autorun *is* available via
-     select "Auto" (boot) status, then "Save Desktop".  The           manually editing EMUDESK.INF)
+053. GEM programs can be autorun from disk.  This is set up           FIXED: commit a471b3
+     through the "Install Application" dialog, where the user can
+     select "Auto" (boot) status, then "Save Desktop".  The
      autoboot application can also be uninstalled from this
      dialog.  The autoboot application can be either a "PRG" or
      a "TOS", but not a "TTP".
-054. Selecting a new Autorun Application will replace the             MISSING FEATURE
+054. Selecting a new Autorun Application will replace the             FIXED: commit a471b3
      previous one.
 
 
