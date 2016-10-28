@@ -148,7 +148,7 @@ exit:
  */
 
 _detect_fpu:
-        move.l  a2,-(sp)
+        movem.l d2/a2,-(sp)
         move.l  sp,a0           // save the ssp
         moveq   #0,d0           // assume no FPU
         move.l  (0x2c).w,a1     // save the Line-F vector
@@ -169,13 +169,13 @@ _detect_fpu:
         cmpi.w  #60,d1          // enable FPU on 68060 before the check
         bmi.s   no60
 
-        MOVEC_PCR_D0            // get revision number etc
-        swap    d0
-        cmp.w   #0x0431,d0      // "broken" 68LC/EC060
+        MOVEC_PCR_D2            // get revision number etc
+        swap    d2
+        cmp.w   #0x0431,d2      // "broken" 68LC/EC060
         beq.s   no60
-        swap    d0
-        bclr    #0x01,d0
-        MOVEC_D0_PCR            // clear DFP (the disable-FPU bit)
+        swap    d2
+        bclr    #0x01,d2
+        MOVEC_D2_PCR            // clear DFP (the disable-FPU bit)
 
 no60:   FNOP
         clr.l   -(sp)           // push NULL frame
@@ -208,7 +208,7 @@ fexit:  move.l  a1,(0x2c).w     // restore Line-F
         move.l  a0,sp
         nop                     // flush pipelines
         swap    d0
-        move.l  (sp)+,a2
+        movem.l (sp)+,d2/a2
         rts
 
 #endif /* __mcoldfire__ */
