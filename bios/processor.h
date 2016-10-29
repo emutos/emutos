@@ -99,4 +99,8 @@ extern LONG mcpu;
 extern LONG fputype;
 extern WORD longframe;
 
+#if CONF_WITH_APOLLO_CORE
+extern BOOL is_apollo_core;
+#endif
+
 #endif /* PROCESSOR_H */

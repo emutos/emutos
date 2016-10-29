@@ -32,6 +32,9 @@
         .globl  _fputype
         .globl  _detect_cpu
         .globl  _detect_fpu
+#if CONF_WITH_APOLLO_CORE
+        .globl  _is_apollo_core
+#endif
 
         .extern _longframe              // If not 0, use long stack frames
         .extern _setup_68030_pmmu
@@ -102,6 +105,18 @@ _detect_cpu:
 
 x040:   moveq   #40,d0          // assume 68040
         MOVEC_PCR_D1            // attempt to access the PCR
+
+#if CONF_WITH_APOLLO_CORE
+        swap    d1
+        cmp.w   #0x0440,d1      // Apollo Core 68080 identifier
+        bne.s   x060
+
+// Apollo Core 68080
+        moveq   #40,d0          // force 68040 detection
+        move.w  #1,_is_apollo_core
+        bra.s   exit
+#endif
+x060:
         moveq   #60,d0          // no fault -> this is 68060
 exit:
         move.l  a3,(0xf4).w     // restore stuff and exit
@@ -512,6 +527,10 @@ _mcpu:          .ds.l   1
 _mcpu_subtype:  .ds.w   1
 _fputype:       .ds.l   1
 temp:           .ds.l   1
+#endif
+
+#if CONF_WITH_APOLLO_CORE
+_is_apollo_core:    .ds.w   1
 #endif
 
 

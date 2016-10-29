@@ -38,6 +38,9 @@
  * Defaults for the ARAnyM target
  */
 #ifdef MACHINE_ARANYM
+# ifndef CONF_WITH_APOLLO_CORE
+#  define CONF_WITH_APOLLO_CORE 0
+# endif
 # ifndef CONF_WITH_IKBD_CLOCK
 #  define CONF_WITH_IKBD_CLOCK 0
 # endif
@@ -129,6 +132,9 @@
 # endif
 # ifndef DETECT_NATIVE_FEATURES
 #  define DETECT_NATIVE_FEATURES 0
+# endif
+# ifndef CONF_WITH_APOLLO_CORE
+#  define CONF_WITH_APOLLO_CORE 0
 # endif
 # ifndef CONF_WITH_TT_MMU
 #  define CONF_WITH_TT_MMU 0
@@ -224,6 +230,9 @@
 # ifndef DETECT_NATIVE_FEATURES
 #  define DETECT_NATIVE_FEATURES 0
 # endif
+# ifndef CONF_WITH_APOLLO_CORE
+#  define CONF_WITH_APOLLO_CORE 0
+# endif
 # ifndef CONF_WITH_TT_MFP
 #  define CONF_WITH_TT_MFP 0
 # endif
@@ -253,6 +262,9 @@
 #ifdef TARGET_COMPR_STUB
 # ifndef DETECT_NATIVE_FEATURES
 #  define DETECT_NATIVE_FEATURES 0
+# endif
+# ifndef CONF_WITH_APOLLO_CORE
+#  define CONF_WITH_APOLLO_CORE 0
 # endif
 # ifndef CONF_WITH_68030_PMMU
 #  define CONF_WITH_68030_PMMU 0
@@ -496,6 +508,17 @@
  */
 #ifndef DIAGNOSTIC_CARTRIDGE
 # define DIAGNOSTIC_CARTRIDGE 0
+#endif
+
+/*
+ * Set CONF_WITH_APOLLO_CORE to 1 to enable support for Apollo Core 68080 CPU
+ */
+#ifndef CONF_WITH_APOLLO_CORE
+# ifdef __mcoldfire__
+#  define CONF_WITH_APOLLO_CORE 0
+# else
+#  define CONF_WITH_APOLLO_CORE 1
+# endif
 #endif
 
 /*

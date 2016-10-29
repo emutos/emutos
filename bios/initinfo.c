@@ -263,7 +263,12 @@ WORD initinfo(void)
 #ifdef __mcoldfire__
     cprintf("ColdFire V4e");
 #else
-    cprintf("m680%02ld", mcpu);
+# if CONF_WITH_APOLLO_CORE
+    if (is_apollo_core)
+        cprintf("Apollo Core 68080");
+    else
+# endif
+        cprintf("m680%02ld", mcpu);
 #endif
     pair_end();
 
