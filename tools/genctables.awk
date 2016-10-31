@@ -93,7 +93,7 @@ END {
         print "#include \"keyb_" tolower(keyb) ".h\""
         print "#endif"
     }
-    print "\nstatic const struct keytbl *keytables[] = {"
+    print "\nstatic const struct keytbl *const keytables[] = {"
     for(keyb in needkeybs) {
         print "#if CONF_MULTILANG || CONF_KEYB == KEYB_" keyb
         print "    &keytbl_" tolower(keyb) ","

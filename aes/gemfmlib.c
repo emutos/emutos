@@ -73,9 +73,9 @@ static BYTE     alert_str[256]; /* must be long enough for longest alert in gem.
  *
  * These arrays must be synchronized with "err_tbl" in gemdosif.S.
  */
-static WORD     ml_alrt[] =
+static WORD     const ml_alrt[] =
                 {AL00CRT,AL01CRT,AL02CRT,AL03CRT,AL04CRT,AL05CRT};
-static WORD     ml_pwlv[] =
+static WORD     const ml_pwlv[] =
                 {0x0102,0x0102,0x0102,0x0101,0x0002,0x0001};
 
 

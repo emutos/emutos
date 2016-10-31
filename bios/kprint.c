@@ -267,7 +267,7 @@ void doassert(const char *file, long line, const char *func, const char *text)
 /*==== dopanic - display information found in 0x380 and halt ======*/
 
 
-static const char *exc_messages[] = {
+static const char *const exc_messages[] = {
     "", /* Reset: Initial SSP */
     "", /* Reset: Initial PC */
 #ifdef __mcoldfire__
