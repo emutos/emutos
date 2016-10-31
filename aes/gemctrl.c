@@ -119,7 +119,6 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
     WORD    kind;
     WORD    cpt, message;
     LONG    tree;
-    OBJECT  *obj;
 
     message = 0;
     x = y = w = h = 0;
@@ -207,18 +206,6 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
         case W_HELEV:
         case W_VELEV:
 doelev:     message = (cpt == W_HELEV) ? WM_HSLID : WM_VSLID;
-            ob_relxywh(tree, cpt - 1, &pt);
-            obj = ((OBJECT *)tree) + cpt - 1;
-            if ( message == WM_VSLID )
-            {
-                obj->ob_x = pt.g_x;
-                obj->ob_width = pt.g_w;
-            }
-            else
-            {
-                obj->ob_y = pt.g_y;
-                obj->ob_height = pt.g_h;
-            }
             x = gr_slidebox(gl_awind, cpt - 1, cpt, (cpt == W_VELEV));
             /* slide is 1 less than elev    */
             break;
