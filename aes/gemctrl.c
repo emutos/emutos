@@ -154,7 +154,8 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
         case W_NAME:
             if ( kind & MOVER )
             {
-                r_set(&f, 0, gl_hbox, 10000, 10000);
+                /* prevent the mover gadget from being moved completely offscreen */
+                r_set(&f, 0, gl_hbox, gl_rscreen.g_w + w - gl_wbox - 6, 10000);
                 gr_dragbox(w, h, x, y, &f, &x, &y);
                 message = WM_MOVED;
             }
