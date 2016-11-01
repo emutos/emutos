@@ -59,18 +59,20 @@ static WORD gl_tmpmoff;
 
 /*
  * array used to convert from window object # to window message code
+ *
+ * the first entry maps to the up arrow object
  */
 static const WORD gl_wa[] =
 {
-        WA_UPLINE,
-        WA_DNLINE,
-        WA_UPPAGE,
-        WA_DNPAGE,
-        0x0,
-        WA_LFLINE,
-        WA_RTLINE,
-        WA_LFPAGE,
-        WA_RTPAGE
+        WA_UPLINE,      /* W_UPARROW */
+        WA_DNLINE,      /* W_DNARROW */
+        WA_UPPAGE,      /* W_VSLIDE */
+        WA_DNPAGE,      /* W_VELEV */
+        0x0,            /* W_HBAR */
+        WA_LFLINE,      /* W_LFARROW */
+        WA_RTLINE,      /* W_RTARROW */
+        WA_LFPAGE,      /* W_HSLIDE */
+        WA_RTPAGE       /* W_HELEV */
 };
 
 
@@ -176,25 +178,20 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
         case W_HSLIDE:
         case W_VSLIDE:
             ob_actxywh(tree, cpt + 1, &pt);
-            if ( cpt == W_HSLIDE )
+            if (inside(mx, my, &pt))
             {
-                if ( inside(mx, my, &pt) )
-                {
-                    cpt = W_HELEV;
-                    goto doelev;
-                }
-                                                /* fix up for index     */
-                                                /*   into gl_wa         */
+                cpt = (cpt==W_HSLIDE) ? W_HELEV : W_VELEV;
+                goto doelev;
+            }
+
+            /* fix up cpt for index into gl_wa[] */
+            if (cpt == W_HSLIDE)
+            {
                 if ( !(mx < pt.g_x) )
                     cpt += 1;
             }
             else
             {
-                if ( inside(mx, my, &pt) )
-                {
-                    cpt = W_VELEV;
-                    goto doelev;
-                }
                 if ( !(my < pt.g_y) )
                     cpt += 1;
             }
@@ -204,6 +201,7 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
         case W_LFARROW:
         case W_RTARROW:
             message = WM_ARROWED;
+            x = gl_wa[cpt - W_UPARROW];
             break;
         case W_HELEV:
         case W_VELEV:
@@ -212,9 +210,6 @@ doelev:     message = (cpt == W_HELEV) ? WM_HSLID : WM_VSLID;
             /* slide is 1 less than elev    */
             break;
         }
-
-        if (message == WM_ARROWED)
-            x = gl_wa[cpt - W_UPARROW];
     }
     else
     {
