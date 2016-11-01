@@ -115,6 +115,7 @@ static void perform_untop(WORD wh)
 static void hctl_window(WORD w_handle, WORD mx, WORD my)
 {
     GRECT   t, f, pt;
+    WINDOW  *pwin = &D.w_win[w_handle];
     WORD    x, y, w, h;
     WORD    kind;
     WORD    cpt, message;
@@ -124,7 +125,7 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
     x = y = w = h = 0;
 
     if ( (w_handle == gl_wtop) ||
-       ( (D.w_win[w_handle].w_flags & VF_SUBWIN) && (D.w_win[gl_wtop].w_flags & VF_SUBWIN) )  )
+       ( (pwin->w_flags & VF_SUBWIN) && (D.w_win[gl_wtop].w_flags & VF_SUBWIN) )  )
     {
         /*
          * went down on active window so handle control points
@@ -134,7 +135,7 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
         cpt = ob_find(gl_awind, 0, 10, mx, my);
         w_getsize(WS_CURR, w_handle, &t);
         r_get(&t, &x, &y, &w, &h);
-        kind = D.w_win[w_handle].w_kind;
+        kind = pwin->w_kind;
         switch(cpt)
         {
         case W_CLOSER:
@@ -223,7 +224,7 @@ doelev:     message = (cpt == W_HELEV) ? WM_HSLID : WM_VSLID;
          */
         message = WM_TOPPED;
     }
-    ct_msgup(message, D.w_win[w_handle].w_owner, w_handle, x, y, w, h);
+    ct_msgup(message, pwin->w_owner, w_handle, x, y, w, h);
 }
 
 
