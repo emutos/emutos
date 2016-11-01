@@ -155,7 +155,7 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
             if ( kind & MOVER )
             {
                 /* prevent the mover gadget from being moved completely offscreen */
-                r_set(&f, 0, gl_hbox, gl_rscreen.g_w + w - gl_wbox - 6, 10000);
+                r_set(&f, 0, gl_hbox, gl_rscreen.g_w + w - gl_wbox - 6, MAX_COORDINATE);
                 gr_dragbox(w, h, x, y, &f, &x, &y);
                 message = WM_MOVED;
             }

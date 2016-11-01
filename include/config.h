@@ -1244,6 +1244,12 @@
 #define MAXPATHLEN (LEN_ZPATH+LEN_ZFNAME+1) /* convenient shorthand */
 
 /*
+ * Maximum coordinate supported (must fit in WORD)
+ */
+#define MAX_COORDINATE  (10000)         /* arbitrary, could be 32767 */
+
+
+/*
  * Sanity checks
  */
 

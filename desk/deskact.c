@@ -146,7 +146,7 @@ static void gr_extent(WORD numpts, WORD *xylnpts, GRECT *pt)
     WORD i, j;
     WORD lx, ly, gx, gy;
 
-    lx = ly = 10000;
+    lx = ly = MAX_COORDINATE;
     gx = gy = 0;
     for (i = 0; i < numpts; i++)
     {
