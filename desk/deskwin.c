@@ -473,7 +473,6 @@ void win_arrow(WORD wh, WORD arrow_type)
     WNODE *pw;
     WORD  newcv;
 
-    newcv = 0;
     pw = win_find(wh);
     if (!pw)
         return;
@@ -492,6 +491,8 @@ void win_arrow(WORD wh, WORD arrow_type)
     case WA_DNLINE:
         newcv = pw->w_cvrow + 1;
         break;
+    default:
+        return;     /* ignore WA_LFPAGE, WA_RTPAGE, WA_LFLINE, WA_RTLINE */
     }
     win_blt(pw, newcv);
 }
