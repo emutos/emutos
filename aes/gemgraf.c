@@ -442,6 +442,10 @@ void gsx_start(void)
     gl_wbox = (gl_hbox * gl_ws.ws_hpixel) / gl_ws.ws_wpixel;
     if (gl_wbox < gl_wchar + 4)
         gl_wbox = gl_wchar + 4;
+
+    KDEBUG(("gsx_start(): gl_wchar=%d, gl_hchar=%d, gl_wbox=%d, gl_hbox=%d\n",
+            gl_wchar, gl_hchar, gl_wbox, gl_hbox));
+
     g_vsl_type(7);
     g_vsl_width(1);
     g_vsl_udsty(0xffff);
