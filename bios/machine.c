@@ -629,17 +629,17 @@ static const char * guess_machine_name(void)
     switch(cookie_mch) {
     case MCH_ST:
         if (HAS_MEGARTC)
-            return "MegaST";
+            return "Atari Mega ST";
         else
-            return "ST";
+            return "Atari ST";
     case MCH_STE:
-        return "STe";
+        return "Atari STe";
     case MCH_MSTE:
-        return "MegaSTe";
+        return "Atari Mega STe";
     case MCH_TT:
-        return "TT";
+        return "Atari TT";
     case MCH_FALCON:
-        return "Falcon";
+        return "Atari Falcon";
     default:
         return "unknown";
     }
