@@ -268,7 +268,7 @@ WORD initinfo(void)
         cprintf("Apollo Core 68080");
     else
 # endif
-        cprintf("m680%02ld", mcpu);
+        cprintf("M680%02ld", mcpu);
 #endif
     pair_end();
 
