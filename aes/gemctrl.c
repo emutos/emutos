@@ -119,7 +119,6 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
     GRECT   t, f, pt;
     WINDOW  *pwin = &D.w_win[w_handle];
     WORD    x, y, w, h;
-    WORD    wmul, hmul;
     WORD    kind;
     WORD    cpt, message;
     LONG    tree;
@@ -172,9 +171,7 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
                 t.g_y -= y;
                 t.g_w -= w;
                 t.g_h -= h;
-                wmul = (kind & (LFARROW | RTARROW | HSLIDE)) ? 7 : 2;
-                hmul = (kind & (UPARROW | DNARROW | VSLIDE)) ? 7 : 3;
-                gr_rubwind(x, y, wmul * gl_wbox, hmul * gl_hbox, &t, &w, &h);
+                gr_rubwind(x, y, 7 * gl_wbox, 7 * gl_hbox, &t, &w, &h);
                 message = WM_SIZED;
             }
             break;
