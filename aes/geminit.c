@@ -100,8 +100,6 @@ GLOBAL BYTE     gl_logdrv;
 GLOBAL AESPD    *rlr, *drl, *nrl;
 GLOBAL EVB      *eul, *dlr, *zlr;
 
-GLOBAL LONG     elinkoff;
-
 GLOBAL BYTE     indisp;
 
 GLOBAL WORD     fpt, fph, fpcnt;                /* forkq tail, head,    */
@@ -560,8 +558,6 @@ void gem_main(void)
     gl_recd = FALSE;
     gl_rlen = 0;
     gl_rbuf = NULL;
-
-    elinkoff = (BYTE *) &(D.g_int[0].a_evb[0].e_link) - (BYTE *) &(D.g_int[0].a_evb[0]);
 
     /* link up all the evb's to the event unused list */
     eul = NULL;

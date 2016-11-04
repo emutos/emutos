@@ -25,8 +25,6 @@ extern AESPD    *rlr;
 extern AESPD    *drl, *nrl;
 extern EVB      *eul, *dlr, *zlr;
 
-extern LONG     elinkoff;
-
 /* In Dispatch - a byte whose value is zero when not in function
  * dsptch, and 1 when between dsptch ... switchto function calls
  */

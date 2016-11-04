@@ -502,7 +502,7 @@ void adelay(EVB *e, LONG c)
     }
 
     e->e_flag |= EVDELAY;
-    q = (EVB *) ((BYTE *) &dlr - elinkoff);
+    q = (EVB *) ((BYTE *) &dlr - offsetof(EVB, e_link));
     for (p = dlr; p; p = (q = p) -> e_link)
     {
         if (c <= (LONG) p->e_parm)
