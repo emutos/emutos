@@ -366,7 +366,7 @@ static void setvalue_fdc(void)
 #endif /* CONF_WITH_FDC */
 
 #if CONF_WITH_ARANYM
-static const char *aranym_name = "ARAnyM";
+static const char aranym_name[] = "ARAnyM";
 int is_aranym;
 
 static void aranym_machine_detect(void)
