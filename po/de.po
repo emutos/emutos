@@ -16,59 +16,47 @@ msgid ""
 msgstr ""
 "System angehalten!\n"
 
-#: bios/initinfo.c:168
+#: bios/initinfo.c:169
 msgid "GEMDOS drives"
 msgstr "GEMDOS-Laufwerke"
 
-#: bios/initinfo.c:193
-msgid "MB"
-msgstr "MB"
-
-#: bios/initinfo.c:197
-msgid "KB"
-msgstr "KB"
-
-#: bios/initinfo.c:234
+#: bios/initinfo.c:240
 msgid "EmuTOS Version"
 msgstr "EmuTOS Version"
 
-#: bios/initinfo.c:236
+#: bios/initinfo.c:242
 msgid "CPU type"
 msgstr "CPU-Typ"
 
-#: bios/initinfo.c:244
+#: bios/initinfo.c:250
 msgid "Machine"
 msgstr "Rechner"
 
-#: bios/initinfo.c:246
-msgid "Free ST-RAM"
-msgstr "Freies ST-RAM"
+#: bios/initinfo.c:253 bios/initinfo.c:259
+msgid "%ld KB"
+msgstr "%ld KB"
 
-#: bios/initinfo.c:251
-msgid "Free Alt-RAM"
-msgstr "Freies Alt-RAM"
-
-#: bios/initinfo.c:259
+#: bios/initinfo.c:267
 msgid "Boot time"
 msgstr "Boot-Zeit"
 
-#: bios/initinfo.c:265
+#: bios/initinfo.c:273
 msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "Halte <Strg> = ohne AUTO/ACC"
 
-#: bios/initinfo.c:268
+#: bios/initinfo.c:276
 msgid "Hold <Alternate> to skip HDD boot"
 msgstr "Halte <Alt> = keine Harddisk"
 
-#: bios/initinfo.c:271
+#: bios/initinfo.c:279
 msgid "Press key 'X' to boot from X:"
 msgstr "Drücke 'X' um von Laufwerk X: zu booten"
 
-#: bios/initinfo.c:274
+#: bios/initinfo.c:282
 msgid "Press <Esc> to run an early console"
 msgstr "Drücke <Esc> für die Textkonsole"
 
-#: bios/initinfo.c:285
+#: bios/initinfo.c:293
 msgid " Hold <Shift> to pause this screen "
 msgstr " Für Pause <Shift> gedrückt halten "
 
@@ -266,7 +254,8 @@ msgstr "Ja"
 msgid "No"
 msgstr "Nein"
 
-#: desk/desk_rsc.c:33 desk/desk_rsc.c:93 desk/desk_rsc.c:153 desk/desk_rsc.c:159
+#: desk/desk_rsc.c:33 desk/desk_rsc.c:93 desk/desk_rsc.c:153
+#: desk/desk_rsc.c:159
 msgid "Name: ________.___"
 msgstr "Name: ________.___"
 
@@ -471,7 +460,7 @@ msgid "Version"
 msgstr "Version"
 
 #: desk/desk_rsc.c:665
-msgid "Copyright \275 2001-"
+msgid "Copyright ½ 2001-"
 msgstr "Copyright © 2001-"
 
 #: desk/desk_rsc.c:677
@@ -483,15 +472,15 @@ msgid "Based on 'GPLed' sources"
 msgstr "Basierend auf Quellen von"
 
 #: desk/desk_rsc.c:701
-msgid "\275 1987 Digital Research, Inc."
+msgid "½ 1987 Digital Research, Inc."
 msgstr "© 1987 Digital Research, Inc."
 
 #: desk/desk_rsc.c:707
-msgid "\275 1999 Caldera Thin Clients, Inc."
+msgid "½ 1999 Caldera Thin Clients, Inc."
 msgstr "© 1999 Caldera Thin Clients, Inc."
 
 #: desk/desk_rsc.c:713
-msgid "\275 2001 Lineo, Inc."
+msgid "½ 2001 Lineo, Inc."
 msgstr "© 2001 Lineo, Inc."
 
 #: desk/desk_rsc.c:719
@@ -889,7 +878,7 @@ msgstr "[3]["
 "EMUDESK.INF kann nicht|"
 "angelegt werden][  OK  ]"
 
-#: desk/desk_rsc.c:1863
+#: desk/desk_rsc.c:1861
 msgid "[3]["
 "You cannot create or|"
 "access a folder this far|"
@@ -899,7 +888,7 @@ msgstr "[3]["
 "kein neuer Ordner erstellt|"
 "werden.][  OK  ]"
 
-#: desk/desk_rsc.c:1868
+#: desk/desk_rsc.c:1866
 msgid "[3]["
 "You cannot create or access|"
 "a file or folder with that|"
@@ -911,7 +900,7 @@ msgstr "[3]["
 "geöffnet werden, da der|"
 "Pfadname zu lang ist.][  OK  ]"
 
-#: desk/desk_rsc.c:1875
+#: desk/desk_rsc.c:1873
 msgid "[1]["
 "You cannot open the trash|"
 "can icon into a window.][  OK  ]"
@@ -919,7 +908,7 @@ msgstr "[1]["
 "Der Mülleimer kann nicht|"
 "geöffnet werden.][  OK  ]"
 
-#: desk/desk_rsc.c:1878
+#: desk/desk_rsc.c:1876
 msgid "[1]["
 "The trash can is used to|"
 "permanently delete files|"
@@ -929,7 +918,7 @@ msgstr "[1]["
 "verschoben werden, um sie|"
 "endgültig zu löschen.][  OK  ]"
 
-#: desk/desk_rsc.c:1883
+#: desk/desk_rsc.c:1881
 msgid "[1]["
 "You cannot drag applications,|"
 "files or folders onto the|"
@@ -939,7 +928,7 @@ msgstr "[1]["
 "können nicht auf dem Desktop|"
 "abgelegt werden.][  OK  ]"
 
-#: desk/desk_rsc.c:1888
+#: desk/desk_rsc.c:1886
 msgid "[1]["
 "You cannot drag the trash can|"
 "icon into a window.][  OK  ]"
@@ -947,7 +936,7 @@ msgstr "[1]["
 "Der Mülleimer kann nicht in|"
 "einem Fenster abgelegt werden.][  OK  ]"
 
-#: desk/desk_rsc.c:1891
+#: desk/desk_rsc.c:1889
 msgid "[1]["
 "You cannot place this|"
 "icon over another icon.][  OK  ]"
@@ -956,13 +945,13 @@ msgstr "[1]["
 "einem anderen Symbol abgelegt|"
 "werden.][  OK  ]"
 
-#: desk/desk_rsc.c:1894
+#: desk/desk_rsc.c:1892
 msgid "[2]["
 "Save Desktop?][  OK  |Cancel]"
 msgstr "[2]["
 "Desktop sichern?][  OK  |Abbruch]"
 
-#: desk/desk_rsc.c:1897
+#: desk/desk_rsc.c:1893
 msgid "[2]["
 "Do you want to remove icons|"
 "or delete files?][Icons|Files|Cancel]"
@@ -971,14 +960,14 @@ msgstr "[2]["
 "oder Dateien gelöscht|"
 "werden?][Icons|Dateien|Abbruch]"
 
-#: desk/desk_rsc.c:1900
+#: desk/desk_rsc.c:1896
 msgid "[1]["
 "Invalid function key value.][  OK  ]"
 msgstr "[1]["
 "Ungültige Wert für|"
 "Funktionstaste.][  OK  ]"
 
-#: desk/desk_rsc.c:1901
+#: desk/desk_rsc.c:1897
 msgid "[2]["
 "Function key already assigned.|"
 "Do you want to reassign it?][  OK  |Cancel]"
@@ -986,13 +975,13 @@ msgstr "[2]["
 "Funktionstaste wurde schon|"
 "zugewiesen. Neu zuordnen?][  OK  |Abbruch]"
 
-#: desk/desk_rsc.c:1905
+#: desk/desk_rsc.c:1901
 msgid "[1]["
 "Please select icon type.][Desktop|Window|Cancel]"
 msgstr "[2]["
 "Bitte Icontyp wählen.][Desktop|Fenster|Abbruch]"
 
-#: desk/desk_rsc.c:1906
+#: desk/desk_rsc.c:1902
 msgid "[1]["
 "No matching file type.][  OK  ]"
 msgstr "[1]["
