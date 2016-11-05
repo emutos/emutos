@@ -169,7 +169,7 @@ PNODE *pn_open(BYTE *pathname, WORD attr)
     thepath = pn_alloc();
     if (!thepath)
         return NULL;
-            
+
     strcpy(thepath->p_spec,pathname);
     thepath->p_attr = attr;
     return thepath;

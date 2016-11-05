@@ -180,7 +180,7 @@ typedef struct sh_struct
                                 /*  if FALSE, running a normal application. */
     WORD sh_isgem;              /* TRUE if the application to be run is a GEM */
                                 /*  application; FALSE if character-mode      */
-    BYTE sh_desk[LEN_ZFNAME];   /* the name of the default startup app */ 
+    BYTE sh_desk[LEN_ZFNAME];   /* the name of the default startup app */
     BYTE sh_cdir[LEN_ZPATH];    /* the current directory for the default startup app */
 } SHELL;
 

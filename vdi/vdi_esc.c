@@ -151,7 +151,7 @@ static void escfn11(Vwk * vwk)
     /* send string via VT-52 terminal emulation */
     out[0] = '\033';
     out[1] = 'Y';
-    out[2] = 0x20 + INTIN[0] - 1;   /* zero-based */ 
+    out[2] = 0x20 + INTIN[0] - 1;   /* zero-based */
     out[3] = 0x20 + INTIN[1] - 1;
     out[4] = '\0';
     trap1(wntstr, out);

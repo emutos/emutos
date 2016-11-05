@@ -161,7 +161,7 @@ MD *xmgetmd(void)
         {
             if (!md)                /* not yet allocated */
             {
-                mdb->entry[i].index = i;     
+                mdb->entry[i].index = i;
                 md = &mdb->entry[i].md;
                 KDEBUG(("xmgetmd(): got MD at %p\n",md));
             }

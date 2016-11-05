@@ -585,7 +585,7 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname)
             }
         }
         else
-        {   
+        {
             /*
              * the user has selected a file with an extension which
              * does not match any installed application
@@ -695,7 +695,7 @@ void do_fopen(WNODE *pw, WORD curr, BYTE *pathname, WORD redraw)
         fun_alert(1, STDEEPPA);
         remove_one_level(app_path);         /* back up one level */
     }
-    
+
     p = filename_start(app_path);
     tmp = *p;
     *p ='\0';
@@ -969,7 +969,7 @@ ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp)
 
     if (ppf)
         *ppf = pf;
-    
+
     if (pisapp)
         *pisapp = isapp;
 

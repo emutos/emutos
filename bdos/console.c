@@ -90,7 +90,7 @@ static int backsp(int h, char *cbuf, int retlen, int col);
 
 
 /*
- * set up system initial standard handles 
+ * set up system initial standard handles
  */
 void stdhdl_init(void)
 {
