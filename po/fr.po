@@ -36,31 +36,31 @@ msgstr "EmuTOS version"
 msgid "CPU type"
 msgstr "Type de CPU"
 
-#: bios/initinfo.c:270
+#: bios/initinfo.c:275
 msgid "Machine"
 msgstr "Machine"
 
-#: bios/initinfo.c:283
+#: bios/initinfo.c:288
 msgid "Boot time"
 msgstr "Date et heure"
 
-#: bios/initinfo.c:289
+#: bios/initinfo.c:294
 msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "Touche CTRL => pas d'AUTO/ACC"
 
-#: bios/initinfo.c:292
+#: bios/initinfo.c:297
 msgid "Hold <Alternate> to skip HDD boot"
 msgstr "Touche ALT => pas de disque dur"
 
-#: bios/initinfo.c:295
+#: bios/initinfo.c:300
 msgid "Press key 'X' to boot from X:"
 msgstr "Tapez 'X' pour démarrer depuis X:"
 
-#: bios/initinfo.c:298
+#: bios/initinfo.c:303
 msgid "Press <Esc> to run an early console"
 msgstr "Tapez <Esc> pour lancer la console"
 
-#: bios/initinfo.c:309
+#: bios/initinfo.c:314
 msgid " Hold <Shift> to pause this screen "
 msgstr " <Shift> pour maintenir cet écran "
 

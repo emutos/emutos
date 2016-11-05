@@ -36,31 +36,31 @@ msgstr "Versione"
 msgid "CPU type"
 msgstr "Tipo CPU"
 
-#: bios/initinfo.c:270
+#: bios/initinfo.c:275
 msgid "Machine"
 msgstr "Macchina"
 
-#: bios/initinfo.c:283
+#: bios/initinfo.c:288
 msgid "Boot time"
 msgstr "Ora avvio"
 
-#: bios/initinfo.c:289
+#: bios/initinfo.c:294
 msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "Tieni <CTRL> per saltare AUTO/ACC"
 
-#: bios/initinfo.c:292
+#: bios/initinfo.c:297
 msgid "Hold <Alternate> to skip HDD boot"
 msgstr "Tieni <ALT> per salto avvio da HDD"
 
-#: bios/initinfo.c:295
+#: bios/initinfo.c:300
 msgid "Press key 'X' to boot from X:"
 msgstr "Premi tasto 'X' per avvio da X:"
 
-#: bios/initinfo.c:298
+#: bios/initinfo.c:303
 msgid "Press <Esc> to run an early console"
 msgstr "Premi <Esc> per avvio early console"
 
-#: bios/initinfo.c:309
+#: bios/initinfo.c:314
 msgid " Hold <Shift> to pause this screen "
 msgstr " Tieni <Shift> per pausa schermo "
 
@@ -327,13 +327,13 @@ msgstr " Scrivania "
 msgid " File "
 msgstr " File "
 
-#: desk/desk_rsc.c:236
-msgid " Options "
-msgstr " Opzioni "
-
 #: desk/desk_rsc.c:230
 msgid " View "
 msgstr " Visione "
+
+#: desk/desk_rsc.c:236
+msgid " Options "
+msgstr " Opzioni "
 
 #: desk/desk_rsc.c:254
 msgid "  Desktop info..."

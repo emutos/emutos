@@ -38,31 +38,31 @@ msgstr "EmuTOS verze"
 msgid "CPU type"
 msgstr "Typ CPU"
 
-#: bios/initinfo.c:270
+#: bios/initinfo.c:275
 msgid "Machine"
 msgstr "Poèítaè"
 
-#: bios/initinfo.c:283
+#: bios/initinfo.c:288
 msgid "Boot time"
 msgstr "Èas startu"
 
-#: bios/initinfo.c:289
+#: bios/initinfo.c:294
 msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "Podr¾ <Ctrl> a pøeskoè AUTO/ACC"
 
-#: bios/initinfo.c:292
+#: bios/initinfo.c:297
 msgid "Hold <Alternate> to skip HDD boot"
 msgstr "Podr¾ <Alt> k pøeskoèení HDD"
 
-#: bios/initinfo.c:295
+#: bios/initinfo.c:300
 msgid "Press key 'X' to boot from X:"
 msgstr "Pro start z disku X: stisknìte klávesu 'X'."
 
-#: bios/initinfo.c:298
+#: bios/initinfo.c:303
 msgid "Press <Esc> to run an early console"
 msgstr "Pro spu¹tìní brzké konzole stisknìte <Esc>."
 
-#: bios/initinfo.c:309
+#: bios/initinfo.c:314
 msgid " Hold <Shift> to pause this screen "
 msgstr " Podr¾ <Shift> pro pauzu obrazovky "
 
@@ -232,6 +232,10 @@ msgstr "Poèet adresáøù: _____"
 #: desk/desk_rsc.c:19
 msgid "Number of files: _____"
 msgstr "Poèet souborù: _____"
+
+#: desk/desk_rsc.c:22
+msgid "Skip"
+msgstr "Pøeskoèit"
 
 #: desk/desk_rsc.c:23
 msgid "Install"
@@ -565,10 +569,6 @@ msgstr "Jméno souboru"
 #: desk/desk_rsc.c:1106
 msgid "NAME CONFLICT DURING COPY"
 msgstr "KONFLIKT JMEN BÌHEM KOPÍROVÁNÍ"
-
-#: desk/desk_rsc.c:22
-msgid "Skip"
-msgstr "Pøeskoèit"
 
 #: desk/desk_rsc.c:1136
 msgid "Stop"

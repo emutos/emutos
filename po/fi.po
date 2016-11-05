@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Last-Translator: Eero Tamminen <oak@helsinkinet.fi>\n"
-"Language-Team: Finnish <kde-i18n-doc@kde.org>\n"
+"Language-Team: Finnish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -38,31 +38,31 @@ msgstr "EmuTOS versio"
 msgid "CPU type"
 msgstr "CPU-tyyppi"
 
-#: bios/initinfo.c:270
+#: bios/initinfo.c:275
 msgid "Machine"
 msgstr "Kone"
 
-#: bios/initinfo.c:283
+#: bios/initinfo.c:288
 msgid "Boot time"
 msgstr "Käynnistysaika"
 
-#: bios/initinfo.c:289
+#: bios/initinfo.c:294
 msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "<Cntrl> pohjassa = ohita AUTO/ACC"
 
-#: bios/initinfo.c:292
+#: bios/initinfo.c:297
 msgid "Hold <Alternate> to skip HDD boot"
 msgstr "<Alt> pohjassa = ohita kovalevy"
 
-#: bios/initinfo.c:295
+#: bios/initinfo.c:300
 msgid "Press key 'X' to boot from X:"
 msgstr "Käynnistys asemalta X: -> paina 'X'"
 
-#: bios/initinfo.c:298
+#: bios/initinfo.c:303
 msgid "Press <Esc> to run an early console"
 msgstr "Käynnistyskonsoli -> paina <Esc>"
 
-#: bios/initinfo.c:309
+#: bios/initinfo.c:314
 msgid " Hold <Shift> to pause this screen "
 msgstr "Pysäytä ruutu <Shift> näppäimellä "
 
