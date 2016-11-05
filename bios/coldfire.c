@@ -311,7 +311,7 @@ static void flexcan_dump_registers(void)
  * Message buffer 0 is configured to transfer messages.
  * Message buffer 15 is configured to receive messages.
  */
- void coldfire_init_flexcan(void)
+void coldfire_init_flexcan(void)
 {
     int i;
 
