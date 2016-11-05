@@ -78,11 +78,6 @@
 #define WF_HSLSIZ   15
 #define WF_VSLSIZ   16
 #define WF_SCREEN   17
-#define WF_TATTRB   18
-#define WF_SIZTOP   19
-
-#define WA_SUBWIN   0x01        /* window attributes    */
-#define WA_KEEPWIN  0x02
 
 
 GLOBAL LONG desk_tree[NUM_PDS]; /* list of object trees for the desktop */
@@ -1246,9 +1241,6 @@ void wm_get(WORD w_handle, WORD w_field, WORD *poutwds)
     case WF_SCREEN:
         gsx_mret((LONG *)poutwds, (LONG *)(poutwds+2));
         break;
-    case WF_TATTRB:
-        poutwds[0] = D.w_win[w_handle].w_flags >> 3;
-        break;
     }
 
     if (which != -1)
@@ -1329,9 +1321,6 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
     case WF_INFO:
         which = W_INFO;
         break;
-    case WF_SIZTOP:
-        ob_order(gl_wtree, w_handle, NIL);
-        /* fall thru    */
     case WF_CXYWH:
         draw_change(w_handle, (GRECT *)pinwds);
         break;
@@ -1365,16 +1354,6 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
         break;
     case WF_VSLIDE:
         pwin->w_vslide = pinwds[0];
-        break;
-    case WF_TATTRB:
-        if (pinwds[0] & WA_SUBWIN)
-            pwin->w_flags |= VF_SUBWIN;
-        else
-            pwin->w_flags &= ~VF_SUBWIN;
-        if (pinwds[0] & WA_KEEPWIN)
-            pwin->w_flags |= VF_KEEPWIN;
-        else
-            pwin->w_flags &= ~VF_KEEPWIN;
         break;
     }
 

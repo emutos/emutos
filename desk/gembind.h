@@ -432,13 +432,7 @@ extern LONG     addr_out[AO_SIZE];
 #define WF_HSLSIZ 15
 #define WF_VSLSIZ 16
 #define WF_SCREEN 17
-#define WF_TATTRB 18
-#define WF_SIZTOP 19
                                                 /* arrow message        */
-
-#define WA_SUBWIN 1
-#define WA_KEEPWIN 2
-
 #define WA_UPPAGE 0
 #define WA_DNPAGE 1
 #define WA_UPLINE 2
