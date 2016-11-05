@@ -1,7 +1,7 @@
 /*
  * country.h - _AKP, _IDT and country-dependant configuration
  *
- * Copyright (C) 2001-2015 The EmuTOS development team
+ * Copyright (C) 2001-2016 The EmuTOS development team
  *
  * Authors:
  *  LVL     Laurent Vogel

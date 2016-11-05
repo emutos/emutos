@@ -1,7 +1,7 @@
 /*
  * setjmp.S - EmuTOS's own copy of an ANSI standard feature
  *
- * Copyright (C) 2002-2015 The EmuTOS development team
+ * Copyright (C) 2002-2016 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
