@@ -113,14 +113,14 @@ static BYTE     gl_buffer[SIZE_BUFF];
  *     versions of EmuTOS up to 0.9.6 and versions from 0.9.7 on; it is
  *     not otherwise necessary.
  */
-static char const desk_inf_data1[] =
+static const char desk_inf_data1[] =
     "#R 01\r\n"                         /* INF_REV_LEVEL */
     "#E 1A 61\r\n"                      /* INF_E1_DEFAULT and INF_E2_DEFAULT */
     "#W 00 00 02 06 26 0C 00 @\r\n"
     "#W 00 00 02 08 26 0C 00 @\r\n"
     "#W 00 00 02 0A 26 0C 00 @\r\n"
     "#W 00 00 02 0D 26 0C 00 @\r\n";
-static char const desk_inf_data2[] =
+static const char desk_inf_data2[] =
     "#F FF 07 @ *.*@\r\n"               /* 07 = IG_DOCU => document (see note above) */
     "#N FF 07 @ *.*@\r\n"               /* 07 = IG_DOCU => document */
     "#D FF 02 @ *.*@\r\n"               /* 02 = IG_FOLDER => folder */

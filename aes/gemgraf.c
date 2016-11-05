@@ -149,8 +149,8 @@ WORD gsx_chkclip(GRECT *pt)
 
 static void gsx_xline(WORD ptscount, WORD *ppoints)
 {
-    static WORD const hztltbl[2] = { 0x5555, 0xaaaa };
-    static WORD const verttbl[4] = { 0x5555, 0xaaaa, 0xaaaa, 0x5555 };
+    static const WORD hztltbl[2] = { 0x5555, 0xaaaa };
+    static const WORD verttbl[4] = { 0x5555, 0xaaaa, 0xaaaa, 0x5555 };
     WORD    *linexy, i;
     WORD    st;
 
