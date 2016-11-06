@@ -100,7 +100,7 @@ TOCLEAN := *~ */*~ $(CORE) *.tmp
 # This includes targets not using $(CC) and targets recursively invoking $(MAKE).
 #
 
-NODEP :=
+NODEP := %.c %.h %.pot
 
 #
 # compilation flags
