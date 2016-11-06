@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "System angehalten!\n"
 
-#: bios/initinfo.c:168
+#: bios/initinfo.c:169
 msgid "GEMDOS drives"
 msgstr "GEMDOS-Laufwerke"
 
@@ -28,47 +28,39 @@ msgstr "MB"
 msgid "KB"
 msgstr "KB"
 
-#: bios/initinfo.c:234
+#: bios/initinfo.c:260
 msgid "EmuTOS Version"
 msgstr "EmuTOS Version"
 
-#: bios/initinfo.c:236
+#: bios/initinfo.c:262
 msgid "CPU type"
 msgstr "CPU-Typ"
 
-#: bios/initinfo.c:244
+#: bios/initinfo.c:275
 msgid "Machine"
 msgstr "Rechner"
 
-#: bios/initinfo.c:246
-msgid "Free ST-RAM"
-msgstr "Freies ST-RAM"
-
-#: bios/initinfo.c:251
-msgid "Free Alt-RAM"
-msgstr "Freies Alt-RAM"
-
-#: bios/initinfo.c:259
+#: bios/initinfo.c:288
 msgid "Boot time"
 msgstr "Boot-Zeit"
 
-#: bios/initinfo.c:265
+#: bios/initinfo.c:294
 msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "Halte <Strg> = ohne AUTO/ACC"
 
-#: bios/initinfo.c:268
+#: bios/initinfo.c:297
 msgid "Hold <Alternate> to skip HDD boot"
 msgstr "Halte <Alt> = keine Harddisk"
 
-#: bios/initinfo.c:271
+#: bios/initinfo.c:300
 msgid "Press key 'X' to boot from X:"
 msgstr "Drücke 'X' um von Laufwerk X: zu booten"
 
-#: bios/initinfo.c:274
+#: bios/initinfo.c:303
 msgid "Press <Esc> to run an early console"
 msgstr "Drücke <Esc> für die Textkonsole"
 
-#: bios/initinfo.c:285
+#: bios/initinfo.c:314
 msgid " Hold <Shift> to pause this screen "
 msgstr " Für Pause <Shift> gedrückt halten "
 
@@ -266,7 +258,8 @@ msgstr "Ja"
 msgid "No"
 msgstr "Nein"
 
-#: desk/desk_rsc.c:33 desk/desk_rsc.c:93 desk/desk_rsc.c:153 desk/desk_rsc.c:159
+#: desk/desk_rsc.c:33 desk/desk_rsc.c:93 desk/desk_rsc.c:153
+#: desk/desk_rsc.c:159
 msgid "Name: ________.___"
 msgstr "Name: ________.___"
 
@@ -514,9 +507,9 @@ msgstr "Parameter:"
 msgid "INSTALL DESKTOP ICON"
 msgstr "DESKTOP ICON INSTALLIEREN"
 
-#: desk/desk_rsc.c:809
-msgid "Type:"
-msgstr "Typ:"
+#: desk/desk_rsc.c:809 desk/desk_rsc.c:1698
+msgid "Item type:"
+msgstr "Item-Typ:"
 
 #: desk/desk_rsc.c:821
 msgid "Drive"
@@ -531,8 +524,8 @@ msgid "Printer"
 msgstr "Drucker"
 
 #: desk/desk_rsc.c:863 desk/desk_rsc.c:1746
-msgid "Shape:"
-msgstr "Icon Form:"
+msgid "Icon:"
+msgstr "Icon:"
 
 #: desk/desk_rsc.c:896
 msgid "INSTALL APPLICATION"
@@ -595,16 +588,16 @@ msgid "SET PREFERENCES"
 msgstr "VOREINSTELLUNGEN"
 
 #: desk/desk_rsc.c:1190
-msgid "Confirm deletes?"
-msgstr "Löschbestätigung?"
+msgid "Confirm deletes:"
+msgstr "Löschbestätigung:"
 
 #: desk/desk_rsc.c:1214
-msgid "Confirm copies?"
-msgstr "Kopierbestätigung?"
+msgid "Confirm copies:"
+msgstr "Kopierbestätigung:"
 
 #: desk/desk_rsc.c:1238
-msgid "Confirm overwrites?"
-msgstr "Überschreibbestätigung?"
+msgid "Confirm overwrites:"
+msgstr "Überschreibbestätigung:"
 
 #: desk/desk_rsc.c:1262
 msgid "Double-click speed:"
@@ -703,12 +696,8 @@ msgid "ST Compatible"
 msgstr "ST kompatibel"
 
 #: desk/desk_rsc.c:1686
-msgid "INSTALL WINDOW ICONS"
+msgid "INSTALL WINDOW ICON"
 msgstr "FENSTERICON INSTALLIEREN"
-
-#: desk/desk_rsc.c:1698
-msgid "File type:"
-msgstr "Dateityp:"
 
 #: desk/desk_rsc.c:1710
 msgid "Folder"
@@ -889,7 +878,7 @@ msgstr "[3]["
 "EMUDESK.INF kann nicht|"
 "angelegt werden][  OK  ]"
 
-#: desk/desk_rsc.c:1863
+#: desk/desk_rsc.c:1861
 msgid "[3]["
 "You cannot create or|"
 "access a folder this far|"
@@ -899,7 +888,7 @@ msgstr "[3]["
 "kein neuer Ordner erstellt|"
 "werden.][  OK  ]"
 
-#: desk/desk_rsc.c:1868
+#: desk/desk_rsc.c:1866
 msgid "[3]["
 "You cannot create or access|"
 "a file or folder with that|"
@@ -911,7 +900,7 @@ msgstr "[3]["
 "geöffnet werden, da der|"
 "Pfadname zu lang ist.][  OK  ]"
 
-#: desk/desk_rsc.c:1875
+#: desk/desk_rsc.c:1873
 msgid "[1]["
 "You cannot open the trash|"
 "can icon into a window.][  OK  ]"
@@ -919,7 +908,7 @@ msgstr "[1]["
 "Der Mülleimer kann nicht|"
 "geöffnet werden.][  OK  ]"
 
-#: desk/desk_rsc.c:1878
+#: desk/desk_rsc.c:1876
 msgid "[1]["
 "The trash can is used to|"
 "permanently delete files|"
@@ -929,7 +918,7 @@ msgstr "[1]["
 "verschoben werden, um sie|"
 "endgültig zu löschen.][  OK  ]"
 
-#: desk/desk_rsc.c:1883
+#: desk/desk_rsc.c:1881
 msgid "[1]["
 "You cannot drag applications,|"
 "files or folders onto the|"
@@ -939,7 +928,7 @@ msgstr "[1]["
 "können nicht auf dem Desktop|"
 "abgelegt werden.][  OK  ]"
 
-#: desk/desk_rsc.c:1888
+#: desk/desk_rsc.c:1886
 msgid "[1]["
 "You cannot drag the trash can|"
 "icon into a window.][  OK  ]"
@@ -947,7 +936,7 @@ msgstr "[1]["
 "Der Mülleimer kann nicht in|"
 "einem Fenster abgelegt werden.][  OK  ]"
 
-#: desk/desk_rsc.c:1891
+#: desk/desk_rsc.c:1889
 msgid "[1]["
 "You cannot place this|"
 "icon over another icon.][  OK  ]"
@@ -956,13 +945,13 @@ msgstr "[1]["
 "einem anderen Symbol abgelegt|"
 "werden.][  OK  ]"
 
-#: desk/desk_rsc.c:1894
+#: desk/desk_rsc.c:1892
 msgid "[2]["
 "Save Desktop?][  OK  |Cancel]"
 msgstr "[2]["
 "Desktop sichern?][  OK  |Abbruch]"
 
-#: desk/desk_rsc.c:1897
+#: desk/desk_rsc.c:1893
 msgid "[2]["
 "Do you want to remove icons|"
 "or delete files?][Icons|Files|Cancel]"
@@ -971,14 +960,14 @@ msgstr "[2]["
 "oder Dateien gelöscht|"
 "werden?][Icons|Dateien|Abbruch]"
 
-#: desk/desk_rsc.c:1900
+#: desk/desk_rsc.c:1896
 msgid "[1]["
 "Invalid function key value.][  OK  ]"
 msgstr "[1]["
 "Ungültige Wert für|"
 "Funktionstaste.][  OK  ]"
 
-#: desk/desk_rsc.c:1901
+#: desk/desk_rsc.c:1897
 msgid "[2]["
 "Function key already assigned.|"
 "Do you want to reassign it?][  OK  |Cancel]"
@@ -986,13 +975,13 @@ msgstr "[2]["
 "Funktionstaste wurde schon|"
 "zugewiesen. Neu zuordnen?][  OK  |Abbruch]"
 
-#: desk/desk_rsc.c:1905
+#: desk/desk_rsc.c:1901
 msgid "[1]["
 "Please select icon type.][Desktop|Window|Cancel]"
 msgstr "[2]["
 "Bitte Icontyp wählen.][Desktop|Fenster|Abbruch]"
 
-#: desk/desk_rsc.c:1906
+#: desk/desk_rsc.c:1902
 msgid "[1]["
 "No matching file type.][  OK  ]"
 msgstr "[1]["
