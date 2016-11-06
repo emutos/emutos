@@ -97,7 +97,7 @@ TOCLEAN := *~ */*~ $(CORE) *.tmp
 #
 # NODEP will accumulate the names of the targets which does not need to include
 # makefile.dep, to avoid rebuilding that file when not necessary.
-# This includes targets not using $(CC) and targets recrsively invoking $(MAKE).
+# This includes targets not using $(CC) and targets recursively invoking $(MAKE).
 #
 
 NODEP :=
