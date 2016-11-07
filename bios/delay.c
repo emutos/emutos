@@ -22,6 +22,7 @@
 /*
  * initial 1 millisecond delay loop values
  */
+#define LOOPS_68080         38125   /* Apollo Core timing measured on Amiga */
 #define LOOPS_68060         110000  /* 68060 timing assumes 110MHz for safety */
 #define LOOPS_68030         3800    /* 68030 timing assumes 32MHz */
 #define LOOPS_68000         760     /* 68000 timing assumes 16MHz */
@@ -54,16 +55,23 @@ void init_delay(void)
 #if defined (MACHINE_FIREBEE) || defined (MACHINE_M548X)
     loopcount_1_msec = SDCLK_FREQUENCY_MHZ * 1000;
 #else
-    switch((int)mcpu) {
-    case 60:
-        loopcount_1_msec = LOOPS_68060;
-        break;
-    case 40:
-    case 30:                /* assumes 68030 */
-        loopcount_1_msec = LOOPS_68030;
-        break;
-    default:                /* assumes 68000 */
-        loopcount_1_msec = LOOPS_68000;
+# if CONF_WITH_APOLLO_CORE
+    if (is_apollo_core)
+        loopcount_1_msec = LOOPS_68080;
+    else
+# endif
+    {
+        switch((int)mcpu) {
+        case 60:
+            loopcount_1_msec = LOOPS_68060;
+            break;
+        case 40:
+        case 30:            /* assumes 68030 */
+            loopcount_1_msec = LOOPS_68030;
+            break;
+        default:            /* assumes 68000 */
+            loopcount_1_msec = LOOPS_68000;
+        }
     }
 #endif
 }
