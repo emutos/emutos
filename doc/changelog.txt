@@ -6319,3 +6319,64 @@ Other changes:
 - VDI: improve performance of cursor display routine
 - VDI: rewrite vr_trnfm() to fix bugs and save space
 - Lots of source code cleanup and minor bug fixes
+
+
+CHANGES BETWEEN RELEASE 0.9.6 AND RELEASE 0.9.7
+
+Major changes:
+- AES: fix bug: the file selector modified the DTA pointer
+- AES: rewrite wildcmp() to fix bug
+- BDOS: fix GEMDOS standard handle numbers
+- BDOS: rewrite Fsfirst/Fsnext to fix design problem
+- BDOS: set archive flag when file is created/modified
+- BDOS: use single pool for all internal memory requests
+- BIOS: add support for Eiffel on CAN bus
+- BIOS: add support for MonSTer board
+- BIOS: add support for extended MBR partitions
+- BIOS: configure & size ST-RAM on TT
+- BIOS: fix values returned by VgetRGB()/vq_color()
+- EmuCON2: provide a standalone version of EmuCON2
+- EmuDesk: allow disk delete via desktop File menu item
+- EmuDesk: fix desktop icon drag and drop positioning
+- EmuDesk: implement desktop 'Install devices'
+- EmuDesk: implement desktop 'Install icon'
+- EmuDesk: implement desktop 'Remove desktop icon'
+- EmuDesk: make desktop shift-click behave the same as TOS
+- EmuDesk: prompt if folder name conflict during move/copy
+- EmuDesk: rewrite 'Install application'
+- General: make many desktop and AES dialogs more concise
+- General: preliminary support for Apollo Core 68080
+- VDI: fix rectangle drawing errors
+
+Other changes:
+- AES: allow autorun program to start in character mode
+- AES: fix bug when File Selector accesses empty drive
+- AES: fix loop in file selector if filemask is too long
+- BDOS: fix I/O status for redirected character devices
+- BDOS: fix date stamp in . and .. directory entries
+- BDOS: fix return code for Fsfirst()
+- BDOS: make EmuTOS respect user-assigned FRB
+- BDOS: make ctl-C interrupt Cconin
+- BDOS: return EOF indicator on redirected char devices
+- BDOS: validate attribute bits passed to Fattrib()
+- BDOS: validate handles for Fseek()/Fread()/Fwrite()/Fdatime()
+- BIOS: add Norwegian & Swedish keyboard support
+- BIOS: add _5MS cookie on non-Atari hardware
+- BIOS: add support for byte-swapped IDE cable
+- BIOS: allow configuration of max logical sector size
+- BIOS: fix VDI->hardware colour calculation
+- BIOS: fix os_conf value and usage in multilanguage ROMs
+- BIOS: improve performance of Rwabs() on floppy disks
+- BIOS: make Ikbdws()/Midiws() handle 'cnt' like Atari TOS
+- BIOS: set density for read/write/format of HD floppies
+- EmuDesk: allow 'Too many windows' alert to be issued
+- EmuDesk: always issue extra alert if deleting entire disk
+- EmuDesk: always keep part of the mover gadget onscreen
+- EmuDesk: avoid unnecessary window refreshes
+- EmuDesk: handle name conflict during copy like Atari TOS
+- EmuDesk: support additional keys during "Show file"
+- General: display total RAM on welcome screen
+- General: fix _drvbits tests for drives > P
+- VDI: fix bug: v_bar() draws perimeter wrongly
+- VDI: fix vq_curaddress(), vs_curaddress()
+- Lots of source code cleanup and minor bug fixes
