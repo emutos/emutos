@@ -186,7 +186,7 @@ typedef struct sh_struct
 
 
 #define CMDTAILSIZE 128         /* architectural */
-#if (MAXPATHLEN > CMDTAILSIZE)
+#if MAXPATHLEN > CMDTAILSIZE
   #define WORKAREASIZE  MAXPATHLEN
 #else
   #define WORKAREASIZE  CMDTAILSIZE

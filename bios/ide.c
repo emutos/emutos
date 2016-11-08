@@ -130,7 +130,7 @@ struct IDE
 #endif /* MACHINE_M548X */
 
 /* the data register is naturally byteswapped on some hardware */
-#if (defined(MACHINE_AMIGA) || CONF_WITH_TWISTED_IDE)
+#if defined(MACHINE_AMIGA) || CONF_WITH_TWISTED_IDE
 #define IDE_DATA_REGISTER_IS_BYTESWAPPED 1
 #else
 #define IDE_DATA_REGISTER_IS_BYTESWAPPED 0
@@ -297,7 +297,7 @@ static int wait_for_not_BSY(volatile struct IDE *interface,LONG timeout);
  * we do not check for the FireBee, since there are always exactly
  * two interfaces, or for non-Atari hardware.
  */
-#if (CONF_ATARI_HARDWARE && !defined(MACHINE_FIREBEE))
+#if CONF_ATARI_HARDWARE && !defined(MACHINE_FIREBEE)
 
 /* used by duplicate interface detection logic */
 #define SECNUM_MAGIC    0xcc
