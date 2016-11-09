@@ -6330,11 +6330,13 @@ Major changes:
 - BDOS: rewrite Fsfirst/Fsnext to fix design problem
 - BDOS: set archive flag when file is created/modified
 - BDOS: use single pool for all internal memory requests
-- BIOS: add support for Eiffel on CAN bus
-- BIOS: add support for MonSTer board
 - BIOS: add support for extended MBR partitions
+- BIOS: add support for MonSTer board
 - BIOS: configure & size ST-RAM on TT
+- BIOS: add support for Eiffel on CAN bus
 - BIOS: fix values returned by VgetRGB()/vq_color()
+- BIOS: add _5MS cookie to support FreeMiNT on non-Atari hardware
+- BIOS: add support for Apollo Core 68080
 - EmuCON2: provide a standalone version of EmuCON2
 - EmuDesk: allow disk delete via desktop File menu item
 - EmuDesk: fix desktop icon drag and drop positioning
@@ -6345,7 +6347,6 @@ Major changes:
 - EmuDesk: prompt if folder name conflict during move/copy
 - EmuDesk: rewrite 'Install application'
 - General: make many desktop and AES dialogs more concise
-- General: preliminary support for Apollo Core 68080
 - VDI: fix rectangle drawing errors
 
 Other changes:
@@ -6361,20 +6362,23 @@ Other changes:
 - BDOS: validate attribute bits passed to Fattrib()
 - BDOS: validate handles for Fseek()/Fread()/Fwrite()/Fdatime()
 - BIOS: add Norwegian & Swedish keyboard support
-- BIOS: add _5MS cookie on non-Atari hardware
-- BIOS: add support for byte-swapped IDE cable
+- BIOS: add support for byte-swapped IDE cable (disabled by default)
 - BIOS: allow configuration of max logical sector size
 - BIOS: fix VDI->hardware colour calculation
 - BIOS: fix os_conf value and usage in multilanguage ROMs
 - BIOS: improve performance of Rwabs() on floppy disks
 - BIOS: make Ikbdws()/Midiws() handle 'cnt' like Atari TOS
 - BIOS: set density for read/write/format of HD floppies
+- BIOS: fix boot on Amiga with 68000 CPU
+- BIOS: fix RAM size with BaS_gcc on ColdFire EVB
+- BIOS: fix _FPU cookie for 68060 without FPU
 - EmuDesk: allow 'Too many windows' alert to be issued
 - EmuDesk: always issue extra alert if deleting entire disk
 - EmuDesk: always keep part of the mover gadget onscreen
 - EmuDesk: avoid unnecessary window refreshes
 - EmuDesk: handle name conflict during copy like Atari TOS
 - EmuDesk: support additional keys during "Show file"
+- EmuDesk: add copyright year in EmuDesk about dialog
 - General: display total RAM on welcome screen
 - General: fix _drvbits tests for drives > P
 - VDI: fix bug: v_bar() draws perimeter wrongly
