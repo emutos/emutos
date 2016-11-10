@@ -46,19 +46,26 @@ UBYTE *end_stram;
  * static functions
  */
 #ifdef ENABLE_KDEBUG
-static void dump_md_list(char *title,MD *m)
+#define MAX_MDS 100     /* for loop detection */
+static void dump_md_list(char *title,MD *md)
 {
-    int i;
+    MD *m;
+    int i, n;
 
-    kprintf("| %s = %p {\n|   ", title, m);
-    i = 0;
-    for (i = 0; m; i++, m = m->m_link) {
-        if (i >= 3) {
+    for (n = 0, m = md; m && (n < MAX_MDS); m = m->m_link)
+        n++;
+
+    kprintf("| %s (%d entries) = %p {\n|   ", title, n, md);
+
+    for (i = 0, n = 0, m = md; m && (n < MAX_MDS); i++, n++, m = m->m_link) {
+        if (i >= 2) {
             kprintf("\n|   ");
             i = 0;
         }
-        kprintf("[0x%06lx, 0x%06lx], ", (ULONG)m->m_start, m->m_length);
+        kprintf("0x%06lx[0x%06lx,0x%06lx], ", (ULONG)m, (ULONG)m->m_start, m->m_length);
     }
+    if (n >= MAX_MDS)
+        kprintf("\n|   *** Probable loop in MD list");
     kprintf("\n| }\n");
 }
 
@@ -69,10 +76,13 @@ static void dump_mem_map(void)
     dump_md_list("std alloc", pmd.mp_mal);
     kprintf("| std rover = %p\n", pmd.mp_rover);
 #if CONF_WITH_ALT_RAM
-    kprintf("| ----------------------\n");
-    dump_md_list("alt free ", pmdalt.mp_mfl);
-    dump_md_list("alt alloc", pmdalt.mp_mal);
-    kprintf("| alt rover = %p\n", pmdalt.mp_rover);
+    if (has_alt_ram)
+    {
+        kprintf("| ----------------------\n");
+        dump_md_list("alt free ", pmdalt.mp_mfl);
+        dump_md_list("alt alloc", pmdalt.mp_mal);
+        kprintf("| alt rover = %p\n", pmdalt.mp_rover);
+    }
 #endif
     kprintf("===/mem_dump==========================\n");
 }
@@ -130,6 +140,7 @@ long xmfree(void *addr)
 
     *q = p->m_link;
     freeit(p,mpb);
+    dump_mem_map();
 
     return E_OK;
 }
@@ -204,6 +215,7 @@ long xsetblk(int n, void *blk, long len)
     m->m_length = p->m_length - len;
     p->m_length = len;
     freeit(m,mpb);
+    dump_mem_map();
 
     return E_OK;
 }
