@@ -46,26 +46,26 @@ UBYTE *end_stram;
  * static functions
  */
 #ifdef ENABLE_KDEBUG
-#define MAX_MDS 100     /* for loop detection */
+#define MAX_MD_COUNT    1000    /* for loop detection */
+#define MAX_MD_LIST     20      /* for dump */
 static void dump_md_list(char *title,MD *md)
 {
     MD *m;
     int i, n;
 
-    for (n = 0, m = md; m && (n < MAX_MDS); m = m->m_link)
+    for (n = 0, m = md; m && (n < MAX_MD_COUNT); m = m->m_link)
         n++;
 
-    kprintf("| %s (%d entries) = %p {\n|   ", title, n, md);
+    kprintf("| %s (%s%d entries) = %p {\n|   ",
+            title, (n>=MAX_MD_COUNT)? "over ": "", n, md);
 
-    for (i = 0, n = 0, m = md; m && (n < MAX_MDS); i++, n++, m = m->m_link) {
+    for (i = 0, n = 0, m = md; m && (n < MAX_MD_LIST); i++, n++, m = m->m_link) {
         if (i >= 2) {
             kprintf("\n|   ");
             i = 0;
         }
         kprintf("0x%06lx[0x%06lx,0x%06lx], ", (ULONG)m, (ULONG)m->m_start, m->m_length);
     }
-    if (n >= MAX_MDS)
-        kprintf("\n|   *** Probable loop in MD list");
     kprintf("\n| }\n");
 }
 
