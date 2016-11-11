@@ -662,6 +662,6 @@ void sh_main(BOOL isgem)
 
     } while(psh->sh_doexec && !gl_changerez);
 
-        if (gl_shgem)                   /* if graphics mode,     */
-          sh_toalpha();                 /*  switch back to alpha */
+    if (gl_shgem)                       /* if graphics mode,     */
+        sh_toalpha();                   /*  switch back to alpha */
 }
