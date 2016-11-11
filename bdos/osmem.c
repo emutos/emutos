@@ -117,6 +117,41 @@ static WORD *getosm(WORD n)
 
 
 /*
+ *  unlink_mdblock - unlinks an MDBLOCK from the mdb chain
+ *
+ *  returns -1 iff the MDBLOCK is not on the mdb chain
+ */
+static WORD unlink_mdblock(MDBLOCK *mdb)
+{
+    MDBLOCK *prev, *next;
+
+    next = mdb->mdb_next;
+    mdb->mdb_next = NULL;   /* neatness */
+
+    if (mdb == mdbroot)     /* first on mdb chain? */
+    {
+        mdbroot = next;     /* yes, just point root to next */
+        return 0;
+    }
+
+    /*
+     * find previous MDBLOCK
+     */
+    for (prev = mdbroot; prev; prev = prev->mdb_next)
+    {
+        if (prev->mdb_next == mdb)
+        {
+            prev->mdb_next = next; /* just snip it out */
+            return 0;
+        }
+    }
+
+    KDEBUG(("unlink_mdblock(): cannot unlink MDBLOCK at %p, not on mdb chain\n",mdb));
+    return -1;
+}
+
+
+/*
  *  xmgetmd - get an MD
  *
  *  To create a single pool for all osmem requests, MDs are grouped in
@@ -180,10 +215,9 @@ MD *xmgetmd(void)
      */
     if (avail == 0)
     {
-        MDBLOCK *next = mdb->mdb_next;
-        mdb->mdb_next = NULL;       /* tidiness */
-        mdbroot = next;
-        KDEBUG(("xmgetmd(): removed MDBLOCK at %p from mdb chain\n",mdb));
+        KDEBUG(("xmgetmd(): MDBLOCK at %p is now full\n",mdb));
+        if (unlink_mdblock(mdb) == 0)
+            KDEBUG(("xmgetmd(): removed MDBLOCK at %p from mdb chain\n",mdb));
     }
 
     return md;
@@ -217,16 +251,18 @@ void xmfremd(MD *md)
             avail++;
 
     switch(avail) {
-    case 3:
-        mdbroot = mdb->mdb_next;    /* remove from mdb chain */
-        mdb->mdb_next = NULL;
-        xmfreblk(mdb);              /* and put on free chain */
-        KDEBUG(("xmfremd(): MDBLOCK at %p now empty, moved to free chain\n",mdb));
+    case 3:             /* remove from mdb chain & put on free chain */
+        KDEBUG(("xmfremd(): MDBLOCK at %p is now empty\n",mdb));
+        if (unlink_mdblock(mdb) == 0)
+        {
+            xmfreblk(mdb);          /* move to free chain */
+            KDEBUG(("xmfremd(): MDBLOCK at %p moved to free chain\n",mdb));
+        }
         break;
     case 2:
         break;
-    case 1:
-        mdb->mdb_next = mdbroot;    /* add to mdb chain */
+    case 1:             /* add to mdb chain */
+        mdb->mdb_next = mdbroot;
         mdbroot = mdb;
         KDEBUG(("xmfremd(): MDBLOCK at %p now has free entry, moved to mdb chain\n",mdb));
         break;
