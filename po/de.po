@@ -72,7 +72,7 @@ msgstr ""
 "\n"
 "*** Taste um fortzufahren ***"
 
-#: bdos/osmem.c:305
+#: bdos/osmem.c:341
 msgid ""
 "\033EOut of internal memory.\n"
 "Use FOLDR100.PRG to get more.\n"
@@ -543,6 +543,10 @@ msgstr "Auto"
 msgid "Normal"
 msgstr "Normal"
 
+#: desk/desk_rsc.c:950
+msgid "Application type:"
+msgstr "Anwendungs-Typen:"
+
 #: desk/desk_rsc.c:986
 msgid "Default dir:"
 msgstr "Standardverzeichnis:"
@@ -566,10 +570,6 @@ msgstr "Voller Pfad"
 #: desk/desk_rsc.c:1028
 msgid "File name"
 msgstr "Dateiname"
-
-#: desk/desk_rsc.c:950
-msgid "Application type:"
-msgstr "Anwendungs-Typen:"
 
 #: desk/desk_rsc.c:1106
 msgid "NAME CONFLICT DURING COPY"
@@ -1338,3 +1338,4 @@ msgstr "Falsche Zahl von Parametern"
 #: cli/cmdutil.c:105
 msgid "error code "
 msgstr "Fehlercode "
+

@@ -71,7 +71,7 @@ msgstr ""
 "\n"
 "*** Нажмите любую клавишу для продолжения ***"
 
-#: bdos/osmem.c:305
+#: bdos/osmem.c:341
 msgid ""
 "\033EOut of internal memory.\n"
 "Use FOLDR100.PRG to get more.\n"
