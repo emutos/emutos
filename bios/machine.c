@@ -172,10 +172,15 @@ int has_monster;
 
 static void detect_monster(void)
 {
-    if (cookie_mch == MCH_ST || cookie_mch == MCH_STE || cookie_mch == MCH_MSTE)
-        has_monster = check_read_byte(MONSTER_REG);
+    if (IS_ARANYM)
+    {
+        /* The auto-detection currently crashes ARAnyM-JIT. */
+        has_monster = 0;
+    }
     else
-        has_monster = FALSE;
+    {
+        has_monster = check_read_byte(MONSTER_REG);
+    }
 
     KDEBUG(("has_monster = %d\n", has_monster));
 }
@@ -381,6 +386,10 @@ static void aranym_machine_detect(void)
 }
 #endif
 
+/* Detect optional hardware and fill has_* variables accordingly.
+ * Those detection routines must *NOT* rely on cookies,
+ * because cookies are initialized later.
+ */
 void machine_detect(void)
 {
 #if CONF_WITH_ARANYM
