@@ -7,15 +7,15 @@ if possible add a line telling in which version it did run.
   system              |  ok?  | who |   date      |  details
   --------------------+-------+-----+-------------+----------------
   Emulators           |       |     |             |
-  ARAnyM 1.0.2        |  yes  | VRI | 21 May 2016 |
-  Hatari v1.9.0       |  yes  | VRI | 21 May 2016 |
+  ARAnyM 1.0.2        |  yes  | VRI | 12 Nov 2016 |
+  Hatari v2.0.0       |  yes  | VRI | 12 Nov 2016 |
   Pacifist v0.48      |  yes  | LVL | winter 2001 |
   STonX 0.6.7.6       |  yes  | THH | 14 Nov 2008 |
   STonC v0.8.1        |  yes  | LVL |  9 Feb 2003 |
-  STeem SSE 3.8.1     |  yes  | VRI | 21 May 2016 |
+  STeem SSE 3.8.2     |  yes  | VRI | 12 Nov 2016 |
   TOSBox 1.10a        |   no  |  ?  |  < Sep 2002 |
   WinSTon V0.1r2      |   no  |  ?  |  < Sep 2002 |
-  WinUAE 3.2.2        |  yes  | VRI | 21 May 2016 |
+  WinUAE 3.3.0        |  yes  | VRI | 12 Nov 2016 |
   --------------------+-------+-----+-------------+----------------
   Atari & compatibles |       |     |             |
   ST                  |  yes  | RFB | 20 Feb 2014 | only RAMTOS tested
@@ -28,15 +28,19 @@ if possible add a line telling in which version it did run.
   --------------------+-------+-----+-------------+----------------
   Other systems       |       |     |             |
   Amiga Blizzard 1260 |  yes  | (3) |    Aug 2012 | tested with BlizKick
+  Amiga 500 + Vampire |  yes  | (6) |    Nov 2016 |
+  Amiga 600 + Vampire |  yes  | (7) |    Nov 2016 | IDE not working
   Amiga 1000          |  yes  | (4) |    Jul 2012 |
-  FireBee             |  yes  | VRI | 21 May 2016 |
-  M5484LITE           |  yes  | VRI | 21 May 2016 |
+  FireBee             |  yes  | VRI | 12 Nov 2016 |
+  M5484LITE           |  yes  | VRI | 12 Nov 2016 |
 
   (1) reported by Jean-François Del Nero
   (2) reported to LVL by Frédéric Pécourt
   (3) reported by Michaël Gibs
   (4) reported by amiman99
   (5) reported by Markus Fröschle
+  (6) reported by Simo Koivukoski
+  (7) reported by Flype
 
 Now let's talk about the different subsystems, and what is implemented.
 NOTE: the information in the following table may be somewhat dated.  For
