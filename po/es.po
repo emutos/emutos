@@ -163,7 +163,7 @@ msgid "[2]["
 "find the folder or file|"
 "you just tried to access.][  OK  ]"
 msgstr "[2]["
-"Esta aplicaciÓn no puede|"
+"Esta aplicación no puede|"
 "encontrar la carpeta o fichero|"
 "que intenta acceder.][  OK  ]"
 
@@ -416,7 +416,7 @@ msgstr "  Instalar icono..."
 
 #: desk/desk_rsc.c:440
 msgid "  Install application... \007A"
-msgstr "  Instalar aplicaciÓn... \007A"
+msgstr "  Instalar aplicación...     \007A"
 
 #: desk/desk_rsc.c:446
 msgid "  Install devices"
@@ -428,7 +428,7 @@ msgstr "  Eliminar icono del Escritorio"
 
 #: desk/desk_rsc.c:458
 msgid "----------------------------"
-msgstr "----------------------------"
+msgstr "--------------------------------"
 
 #: desk/desk_rsc.c:464
 msgid "  Set preferences..."
@@ -436,11 +436,11 @@ msgstr "  Establecer preferencias..."
 
 #: desk/desk_rsc.c:470
 msgid "  Save desktop...        \007V"
-msgstr "  Salvar Escritorio...        \007V"
+msgstr "  Salvar Escritorio...       \007V"
 
 #: desk/desk_rsc.c:476
 msgid "  Change resolution...   \007C"
-msgstr "  Cambiar resoluciÓn...   \007C"
+msgstr "  Cambiar resolución...      \007C"
 
 #: desk/desk_rsc.c:533
 msgid "Attribute:"

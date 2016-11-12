@@ -432,11 +432,11 @@ msgstr "  Nastavení..."
 
 #: desk/desk_rsc.c:470
 msgid "  Save desktop...        \007V"
-msgstr "  Ulo¾it plochu...        \007V"
+msgstr "  Ulo¾it plochu...       \007V"
 
 #: desk/desk_rsc.c:476
 msgid "  Change resolution...   \007C"
-msgstr "  Zmìnit rozli¹ení...   \007C"
+msgstr "  Zmìnit rozli¹ení...    \007C"
 
 #: desk/desk_rsc.c:533
 msgid "Attribute:"

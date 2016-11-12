@@ -425,7 +425,7 @@ msgstr "  Rimuovi icona scrivania"
 
 #: desk/desk_rsc.c:458
 msgid "----------------------------"
-msgstr "----------------------------"
+msgstr "------------------------------"
 
 #: desk/desk_rsc.c:464
 msgid "  Set preferences..."
@@ -433,11 +433,11 @@ msgstr "  Imposta preferenze..."
 
 #: desk/desk_rsc.c:470
 msgid "  Save desktop...        \007V"
-msgstr "  Salva scrivania...     \007V"
+msgstr "  Salva scrivania...       \007V"
 
 #: desk/desk_rsc.c:476
 msgid "  Change resolution...   \007C"
-msgstr "  Cambia risoluzione...  \007C"
+msgstr "  Cambia risoluzione...    \007C"
 
 #: desk/desk_rsc.c:533
 msgid "Attribute:"
