@@ -50,6 +50,7 @@ Vincent Rivière (VRI) <vincent.riviere at freesbee.fr>
 - Initial IDE driver
 - Amiga support
 - ColdFire Evaluation Boards support
+- Apollo Core 68080 support
 - French translation update
 - Various bug fixes and cleanups
 
@@ -196,3 +197,7 @@ Christian Zietz <czietz at gmx.net>
 Jo Even Skarstein (joska at online.no)
 - Support for Norwegian & Swedish keyboards
 - Support for MonSTer add-on board
+
+Thorsten Otto (admin at tho-otto.de)
+- Make EmuTOS more compatible with Atari TOS in several areas
+- Miscellaneous source code cleanup
