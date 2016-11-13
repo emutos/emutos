@@ -201,3 +201,6 @@ Jo Even Skarstein (joska at online.no)
 Thorsten Otto (admin at tho-otto.de)
 - Make EmuTOS more compatible with Atari TOS in several areas
 - Miscellaneous source code cleanup
+
+Gunnar von Boehn, Philippe Flype and Simo Koivukoski
+- Apollo Core 68080 and Amiga support

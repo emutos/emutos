@@ -23,7 +23,10 @@ boot straight to BaS_gcc, and dBUG will not be available anymore.
 Requirements:
 - An RS-232 connection between the EVB and a controlling computer.
 - On the computer, an ANSI terminal emulator connected to the RS-232 port.
-- Optional: a CompactFlash card with a FAT16 partition.
+
+Optional supported hardware:
+- a CompactFlash card with a FAT16 partition.
+- PS/2 keyboard connected through an Eiffel/CAN adapter.
 
 To use the CompactFlash card, you need to have programmed the CPLD
 (programmable component) on your board. You need to contact Logic PD
@@ -52,8 +55,8 @@ Press Control+Z to return to EmuCON.
 
 Restrictions:
 
-- No graphical display, no keyboard, no mouse.
-Only text I/O through an RS/232 terminal.
+- No graphical display.
+Only text I/O through an RS/232 terminal or PS/2 keyboard
 
 - Support for ColdFire TOS programs only. 680x0 programs will not work.
 

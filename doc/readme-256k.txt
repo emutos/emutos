@@ -9,10 +9,6 @@ Note: Extra hardware is autodetected.
 
 These ROMs will work fine on Hatari with any hardware combination.
 
-Note: There is a bug in special Hatari 1.9.0 variants which prevents IDE
-working in some conditions. If you experience trouble, select 68030 CPU and
-disable the "Cycle exact" option.
-
 Each ROM contains a single language:
 
 etos256cz.img - Czech (PAL)
