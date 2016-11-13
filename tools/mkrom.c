@@ -159,7 +159,7 @@ static size_t get_file_size(FILE* file, const char* filename)
     }
 
     /* Restore the initial file position */
-    err = fseek(file, 0, initial_pos);
+    err = fseek(file, initial_pos, SEEK_SET);
     if (err != 0)
     {
         fprintf(stderr, "%s: %s: %s\n", g_argv0, filename, strerror(errno));
