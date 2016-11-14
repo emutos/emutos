@@ -564,7 +564,7 @@ msgstr "Plná cesta"
 
 #: desk/desk_rsc.c:1028
 msgid "File name"
-msgstr "Jméno souboru"
+msgstr "Jen jméno"
 
 #: desk/desk_rsc.c:1106
 msgid "NAME CONFLICT DURING COPY"
@@ -584,15 +584,15 @@ msgstr "NASTAVENÍ"
 
 #: desk/desk_rsc.c:1190
 msgid "Confirm deletes:"
-msgstr "Potvrzovat mazání?"
+msgstr "Potvrzovat mazání:"
 
 #: desk/desk_rsc.c:1214
 msgid "Confirm copies:"
-msgstr "Potvrzovat kopírování?"
+msgstr "Potvrzovat kopírování:"
 
 #: desk/desk_rsc.c:1238
 msgid "Confirm overwrites:"
-msgstr "Potvrzovat pøepis?"
+msgstr "Potvrzovat pøepsání:"
 
 #: desk/desk_rsc.c:1262
 msgid "Double-click speed:"
@@ -600,7 +600,7 @@ msgstr "Rychlost dvojkliku:"
 
 #: desk/desk_rsc.c:1310
 msgid "Click"
-msgstr "Kliknout"
+msgstr "Klik"
 
 #: desk/desk_rsc.c:1316
 msgid "No click"
