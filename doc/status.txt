@@ -18,12 +18,12 @@ if possible add a line telling in which version it did run.
   WinUAE 3.3.0        |  yes  | VRI | 12 Nov 2016 |
   --------------------+-------+-----+-------------+----------------
   Atari & compatibles |       |     |             |
-  ST                  |  yes  | RFB | 20 Feb 2014 | only RAMTOS tested
-  Mega ST             |  yes  | RFB | 16 Apr 2016 | only RAMTOS tested
-  STe                 |  yes  | (1) | 22 Sep 2013 |
+  ST                  |  yes  | (1) |  5 Nov 2016 |
+  Mega ST             |  yes  | RFB | 13 Nov 2016 | only PRG tested
+  STe                 |  yes  | RFB | 13 Nov 2016 | only PRG tested
   Mega STe            |  yes  | (2) | 26 Jun 2004 | only RAMTOS tested
-  TT030               |  yes  | RFB |    Mar 2016 | SCSI not yet supported
-  Falcon030           |  yes  | RFB | 21 Feb 2014 | only RAMTOS tested
+  TT030               |  yes  | RFB | 13 Nov 2016 | SCSI not yet supported
+  Falcon030           |  yes  | RFB | 13 Nov 2016 | only PRG tested
   Suska III-C (2K15B) |  yes  | (5) | 23 Apr 2016 |
   --------------------+-------+-----+-------------+----------------
   Other systems       |       |     |             |
@@ -34,7 +34,7 @@ if possible add a line telling in which version it did run.
   FireBee             |  yes  | VRI | 12 Nov 2016 |
   M5484LITE           |  yes  | VRI | 12 Nov 2016 |
 
-  (1) reported by Jean-François Del Nero
+  (1) reported by Christian Zietz
   (2) reported to LVL by Frédéric Pécourt
   (3) reported by Michaël Gibs
   (4) reported by amiman99
@@ -61,22 +61,22 @@ T tested and working on an emulator or real hardware
  Hardware initialization
  ----------------------------------------------------------------------------
 
- t CPU setting, tested on:
-   68000 (real & emu), 68030 (real & emu), 68040 (emu), V4e (real)
- X FPU (detected, is any initialization needed?)
+ T CPU setting, tested on:
+   68000 (real & emu), 68030 (real & emu), 68040 (emu), 68080 (real), V4e (real)
+ T FPU
  T 68030 MMU and cache initialization
  T Memory controller (both ST and Falcon)
  T DMA controller
  T WD 1772 / AJAX Floppy disk controller
- T MFP
+ T MFP, MFP#2
  T PSG
  T ST shifter
- t STe shifter
- t TT shifter
+ T STe shifter
+ T TT shifter
  T VIDEL
  T ACIAs, IKBD protocol
  t MegaST Real-Time Clock  (set clock not tested)
- t NVRAM (including RTC)
+ T NVRAM (including RTC)
  - Blitter
  T Microwire
  t DMA sound
@@ -93,10 +93,10 @@ T tested and working on an emulator or real hardware
  ----------------------------------------------------------------------------
 
  T configure memory
- X execute reset routine
+ T execute reset routine
  T detect monitor type
  T detect graphics resolution
- t detect processor type, FPU type and hardware features
+ T detect processor type, FPU type and hardware features
  T setup a cookie jar with system cookies
    ...
  T init floppy drives
@@ -112,16 +112,16 @@ T tested and working on an emulator or real hardware
  BIOS devices
  ----------------------------------------------------------------------------
 
- > 0 PRN: parallel port
- > 1 AUX: default serial port
+ t 0 PRN: parallel port
+ t 1 AUX: default serial port
  T 2 CON: console (screen)
- t 3 MIDI
+ T 3 MIDI
  T 4 IKBD
  T 5 raw screen
  T 6 ST-compatible serial port
  T 7 SCC channel B
- - 8 TT-MFP serial port
- > 9 SCC channel A
+ T 8 TT-MFP serial port
+ T 9 SCC channel A
 
 
  ACIA interrupt handlers
@@ -159,96 +159,96 @@ T tested and working on an emulator or real hardware
 All XBIOS versions:
  X 0x00 Initmous
  - 0x01 Ssbrk           (useless - will not be implemented)
- X 0x02 Physbase
- X 0x03 Logbase
- X 0x04 Getrez
- X 0x05 Setscreen
- X 0x06 Setpalette
- X 0x07 Setcolor
- X 0x08 Floprd
- X 0x09 Flopwr
- X 0x0a Flopfmt
+ T 0x02 Physbase
+ T 0x03 Logbase
+ T 0x04 Getrez
+ T 0x05 Setscreen
+ T 0x06 Setpalette
+ T 0x07 Setcolor
+ T 0x08 Floprd
+ T 0x09 Flopwr
+ T 0x0a Flopfmt
  - 0x0b Dbmsg           (useless - will not be implemented)
- X 0x0c Midiws
+ T 0x0c Midiws
  X 0x0d Mfpint
  X 0x0e Iorec
- X 0x0f Rsconf
- X 0x10 Keytbl
- X 0x11 Random
- X 0x12 Protobt
- X 0x13 Flopver
+ T 0x0f Rsconf
+ T 0x10 Keytbl
+ T 0x11 Random
+ T 0x12 Protobt
+ T 0x13 Flopver
  - 0x14 Scrdmp
  T 0x15 Cursconf
- X 0x16 Settime
- X 0x17 Gettime
- X 0x18 Bioskeys
- X 0x19 Ikbdws
- X 0x1a Jdisint
- X 0x1b Jenabint
- X 0x1c Giaccess
- X 0x1d Offgibit
- X 0x1e Ongibit
- X 0x1f Xbtimer
- X 0x20 Dosound
+ T 0x16 Settime
+ T 0x17 Gettime
+ T 0x18 Bioskeys
+ T 0x19 Ikbdws
+ T 0x1a Jdisint
+ T 0x1b Jenabint
+ T 0x1c Giaccess
+ T 0x1d Offgibit
+ T 0x1e Ongibit
+ T 0x1f Xbtimer
+ T 0x20 Dosound
  - 0x21 Setprt          (useless - will not be implemented)
  X 0x22 Kbdvbase
- X 0x23 Kbrate
+ T 0x23 Kbrate
  - 0x24 Prtblk          (useless - will not be implemented)
- X 0x25 Vsync
- X 0x26 Supexec
+ T 0x25 Vsync
+ T 0x26 Supexec
  - 0x27 Puntaes         (useless - will not be implemented)
 
 TOS v1.02:
- X 0x29 Floprate
+ T 0x29 Floprate
  t 0x40 Blitmode
 
 TOS v2.0:
- X 0x2a DMAread
- X 0x2b DMAwrite
+ t 0x2a DMAread
+ t 0x2b DMAwrite
  t 0x2c Bconmap
 
 TOS v3.00:
- X 0x2e NVMaccess
+ T 0x2e NVMaccess
 
- X 0x50 EsetShift       (for TT shifter only)
- X 0x51 EgetShift       (for TT shifter only)
- X 0x52 EsetBank        (for TT shifter only)
- X 0x53 EsetColor       (for TT shifter only)
- X 0x54 EsetPalette     (for TT shifter only)
- X 0x55 EgetPalette     (for TT shifter only)
- X 0x56 EsetGray        (for TT shifter only)
- X 0x57 EsetSmear       (for TT shifter only)
+ t 0x50 EsetShift       (for TT shifter only)
+ t 0x51 EgetShift       (for TT shifter only)
+ t 0x52 EsetBank        (for TT shifter only)
+ t 0x53 EsetColor       (for TT shifter only)
+ t 0x54 EsetPalette     (for TT shifter only)
+ t 0x55 EgetPalette     (for TT shifter only)
+ t 0x56 EsetGray        (for TT shifter only)
+ t 0x57 EsetSmear       (for TT shifter only)
 
 TOS v4.00:
- X 0x58 Vsetmode        (for Falcon Videl only)
- X 0x59 Vmontype        (for Falcon Videl only)
- X 0x5a VsetSync        (for Falcon Videl only)
- X 0x5b VgetSize        (for Falcon Videl only)
+ t 0x58 Vsetmode        (for Falcon Videl only)
+ t 0x59 Vmontype        (for Falcon Videl only)
+ t 0x5a VsetSync        (for Falcon Videl only)
+ t 0x5b VgetSize        (for Falcon Videl only)
 
- X 0x5d VsetRGB         (for Falcon Videl only)
- X 0x5e VgetRGB         (for Falcon Videl only)
+ t 0x5d VsetRGB         (for Falcon Videl only)
+ t 0x5e VgetRGB         (for Falcon Videl only)
 
  - 0x96 VsetMask        (for Falcon Videl only)
 
 2nd bit in _SND is set:
  t 0x80 LockSnd
  t 0x81 UnlockSnd
- X 0x82 Soundcmd
- X 0x83 Setbuffer
- X 0x84 Setmode
- X 0x85 Settracks
- X 0x86 Setmontracks
- X 0x87 Setinterrupt
- X 0x8c Sndstatus
+ t 0x82 Soundcmd
+ t 0x83 Setbuffer
+ t 0x84 Setmode
+ t 0x85 Settracks
+ t 0x86 Setmontracks
+ t 0x87 Setinterrupt
+ t 0x8c Sndstatus
 
 3rd bit in _SND is set:
- X 0x88 Buffoper
- X 0x8a Gpio
- > 0x8b Devconnect
- X 0x8d Buffptr
+ t 0x88 Buffoper
+ t 0x8a Gpio
+ t 0x8b Devconnect
+ t 0x8d Buffptr
 
 3&4 bits in _SND are set:
- X 0x89 Dsptristate
+ t 0x89 Dsptristate
 
 5th bit in _SND is set:
  - 0x60-0x7F, 32 Dsp_* functions
@@ -258,72 +258,72 @@ TOS v4.00:
  ----------------------------------------------------------------------------
 
 All GEMDOS versions:
- X 0x00 Pterm0
- X 0x01 Cconin
- X 0x02 Cconout
- X 0x03 Cauxin
- X 0x04 Cauxout
- X 0x05 Cprnout
- X 0x06 Crawio
- X 0x07 Crawin
- X 0x08 Cnecin
- X 0x09 Cconws
- X 0x0a Cconrs
- X 0x0b Cconis
+ T 0x00 Pterm0
+ T 0x01 Cconin
+ T 0x02 Cconout
+ T 0x03 Cauxin
+ T 0x04 Cauxout
+ T 0x05 Cprnout
+ T 0x06 Crawio
+ T 0x07 Crawin
+ T 0x08 Cnecin
+ T 0x09 Cconws
+ T 0x0a Cconrs
+ T 0x0b Cconis
 
- X 0x0e Dsetdrv
+ T 0x0e Dsetdrv
 
- X 0x10 Cconos
- X 0x11 Cprnos
- X 0x12 Cauxis
- X 0x13 Cauxos
+ T 0x10 Cconos
+ T 0x11 Cprnos
+ T 0x12 Cauxis
+ T 0x13 Cauxos
 
- X 0x19 Dgetdrv
- X 0x1a Fsetdta
+ T 0x19 Dgetdrv
+ T 0x1a Fsetdta
 
- X 0x20 Super
+ T 0x20 Super
 
- X 0x2a Tgetdate
- X 0x2b Tsetdate
- X 0x2c Tgettime
- X 0x2d Tsettime
+ T 0x2a Tgetdate
+ T 0x2b Tsetdate
+ T 0x2c Tgettime
+ T 0x2d Tsettime
 
- X 0x2f Fgetdta
- X 0x30 Sversion
- X 0x31 Ptermres
+ T 0x2f Fgetdta
+ T 0x30 Sversion
+ T 0x31 Ptermres
 
- X 0x36 Dfree
+ T 0x36 Dfree
 
- X 0x39 Dcreate
- X 0x3a Ddelete
- X 0x3b Dsetpath
- X 0x3c Fcreate
- X 0x3d Fopen
- X 0x3e Fclose
- X 0x3f Fread
- X 0x40 Fwrite
- X 0x41 Fdelete
- X 0x42 Fseek
- X 0x43 Fattrib
+ T 0x39 Dcreate
+ T 0x3a Ddelete
+ T 0x3b Dsetpath
+ T 0x3c Fcreate
+ T 0x3d Fopen
+ T 0x3e Fclose
+ T 0x3f Fread
+ T 0x40 Fwrite
+ T 0x41 Fdelete
+ T 0x42 Fseek
+ T 0x43 Fattrib
 
- X 0x45 Fdup
- X 0x46 Fforce
- X 0x47 Dgetpath
- X 0x48 Malloc
- X 0x49 Mfree
- X 0x4a Mshrink
- X 0x4b Pexec
- X 0x4c Pterm
+ T 0x45 Fdup
+ T 0x46 Fforce
+ T 0x47 Dgetpath
+ T 0x48 Malloc
+ T 0x49 Mfree
+ T 0x4a Mshrink
+ T 0x4b Pexec
+ T 0x4c Pterm
 
- X 0x4e Fsfirst
- X 0x4f Fsnext
+ T 0x4e Fsfirst
+ T 0x4f Fsnext
 
- X 0x56 Frename
- X 0x57 Fdatime
+ T 0x56 Frename
+ T 0x57 Fdatime
 
 GEMDOS v0.19 (TOS v2):
- X 0x14 Maddalt
- X 0x44 Mxalloc
+ T 0x14 Maddalt
+ T 0x44 Mxalloc
  (and Pexec mode 6)
 
 

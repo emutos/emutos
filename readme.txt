@@ -3,7 +3,7 @@ Vincent Rivière's GCC 4.6.4 cross-compiler.  The custom tools used in
 the build process were built with native GCC 4.8.4.
 
 The source package and other binary packages are available at:
-http://sourceforge.net/projects/emutos/files/emutos/0.9.6/
+http://sourceforge.net/projects/emutos/files/emutos/0.9.7/
 
 If you want to read more about EmuTOS, please take a look at these files:
 
@@ -32,6 +32,7 @@ doc/nls.txt           - How to add a native language or use one
 doc/osmemory.txt      - All about OS internal memory in EmuTOS
 doc/reschange.txt     - How resolution change works in the desktop
 doc/resource.txt      - Modifying resources in EmuTOS
+doc/tos14fix.txt      - Lists bugs fixed by TOS 1.04 & their status in EmuTOS
 
 The following documents are principally of historical interest only:
 
