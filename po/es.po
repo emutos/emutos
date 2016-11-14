@@ -100,7 +100,7 @@ msgstr "OK"
 
 #: aes/gem_rsc.c:596 desk/desk_rsc.c:21
 msgid "Cancel"
-msgstr "CANCELAR"
+msgstr "Cancelar"
 
 #: aes/gem_rsc.c:694
 msgid "[1]["
@@ -300,7 +300,7 @@ msgstr "Etiqueta: ____________"
 
 #: desk/desk_rsc.c:113
 msgid "Application name: ________.___"
-msgstr "Nombre de la aplicación: ________.___"
+msgstr "Nombre: ________.___"
 
 #: desk/desk_rsc.c:118
 msgid "Arguments: ___________"
@@ -532,7 +532,7 @@ msgstr "INSTALAR APLICACIÓN"
 
 #: desk/desk_rsc.c:926
 msgid "Boot status:"
-msgstr "Estatus de arranque"
+msgstr "Arranque:"
 
 #: desk/desk_rsc.c:938
 msgid "Auto"
@@ -548,7 +548,7 @@ msgstr "Tipo de aplicación:"
 
 #: desk/desk_rsc.c:986
 msgid "Default dir:"
-msgstr "Directorio defecto:"
+msgstr "Directorio:"
 
 #: desk/desk_rsc.c:998
 msgid "Application"
@@ -560,15 +560,15 @@ msgstr "Ventana"
 
 #: desk/desk_rsc.c:1010
 msgid "Parameter:"
-msgstr "Parámetro"
+msgstr "Parámetro:"
 
 #: desk/desk_rsc.c:1022
 msgid "Full path"
-msgstr "Ruta completa"
+msgstr "Ruta"
 
 #: desk/desk_rsc.c:1028
 msgid "File name"
-msgstr "Nombre del fichero"
+msgstr "Nombre"
 
 #: desk/desk_rsc.c:1106
 msgid "NAME CONFLICT DURING COPY"
