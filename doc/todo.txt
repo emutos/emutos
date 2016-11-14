@@ -13,7 +13,6 @@ BIOS/XBIOS
 - let EmuTOS set up correct MMU tree on 68040 (?)
 
 BDOS (GEMDOS)
-- should hitting control-c terminate the current process? if so, how?
 - move mem-only routines out of proc.c into umem.c or iumem.c
 
 Internationalization
