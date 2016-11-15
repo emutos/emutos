@@ -641,7 +641,7 @@ msgstr "’ç§¦ª ®¨æ¤¦¬:"
 
 #: desk/desk_rsc.c:1364 desk/desk_rsc.c:1394
 msgid "Default"
-msgstr "¨¦œ§ ¢¦šã"
+msgstr "Default"
 
 #: desk/desk_rsc.c:1370
 msgid "12H"
