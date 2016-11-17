@@ -30,8 +30,8 @@ MAKEFLAGS = --no-print-directory
 # EmuTOS version
 #
 
-#VERSION = $(shell date +%Y%m%d)
-VERSION = 0.9.7
+VERSION = $(shell date +%Y%m%d)
+#VERSION = 0.9.7
 
 #
 # the country. should be a lowercase two-letter code as found in
