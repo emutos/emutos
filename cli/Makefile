@@ -7,10 +7,12 @@
 # option any later version.  See doc/license.txt for details.
 #
 
+include ../version.mk
+
 TARGET = emucon2.tos
 LIBS = -nostartfiles -nostdlib -lgcc
 CC = m68k-atari-mint-gcc
-CPPFLAGS = -I../include -DUSE_STATIC_INLINES=0 -DSTANDALONE_CONSOLE
+CPPFLAGS = -I../include -DUSE_STATIC_INLINES=0 -DSTANDALONE_CONSOLE -DVERSION='"$(VERSION)"'
 CFLAGS = $(CPPFLAGS) -mshort -Os -Wall -Wundef -Wold-style-definition
 
 .PHONY: default all clean

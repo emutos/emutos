@@ -58,7 +58,7 @@ ULONG n;
 
     clear_screen();
     enable_cursor();
-    messagenl(_("Welcome to EmuCON2"));
+    message(_("Welcome to EmuCON2 version ")); messagenl(VERSION);
     messagenl(_("Type HELP for builtin commands"));
     messagenl("");
 
