@@ -197,8 +197,10 @@ void gsx_pline(WORD offx, WORD offy, WORD cnt, const WORD *pts)
  */
 void gsx_cline(UWORD x1, UWORD y1, UWORD x2, UWORD y2)
 {
+    WORD pxy[4] = { x1, y1, x2, y2 };
+
     gsx_moff();
-    g_v_pline(2, (WORD*)&x1);
+    g_v_pline(2, pxy);
     gsx_mon();
 }
 
