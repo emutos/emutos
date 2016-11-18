@@ -12,7 +12,7 @@ include ../version.mk
 TARGET = emucon2.tos
 LIBS = -nostartfiles -nostdlib -lgcc
 CC = m68k-atari-mint-gcc
-CPPFLAGS = -I../include -DUSE_STATIC_INLINES=0 -DSTANDALONE_CONSOLE -DVERSION='"$(VERSION)"'
+CPPFLAGS = -I../include -DUSE_STATIC_INLINES=0 -DSTANDALONE_CONSOLE
 CFLAGS = $(CPPFLAGS) -mshort -Os -Wall -Wundef -Wold-style-definition
 
 .PHONY: default all clean
@@ -20,7 +20,7 @@ CFLAGS = $(CPPFLAGS) -mshort -Os -Wall -Wundef -Wold-style-definition
 default: $(TARGET)
 all: default
 
-OBJECTS = cmdasm.o cmdmain.o cmdedit.o cmdexec.o cmdint.o cmdparse.o cmdutil.o
+OBJECTS = cmdasm.o cmdmain.o cmdedit.o cmdexec.o cmdint.o cmdparse.o cmdutil.o version.o
 HEADERS = cmd.h
 
 %.o: %.c $(HEADERS)
@@ -35,5 +35,24 @@ $(TARGET): $(OBJECTS)
 	$(CC) $(OBJECTS) -Wall $(LIBS) -s -o $@
 
 clean:
-	-rm -f *.o
+	-rm -f *.o version.c
 	-rm -f $(TARGET)
+
+#
+# version string
+#
+
+TOCLEAN += obj/*.c
+
+# This temporary file is always generated
+version2.c:
+	@echo '/* Generated from Makefile */' > $@
+	@echo 'const char version[] = "$(VERSION)";' >> $@
+
+# If the official version file is different than the temporary one, update it
+version.c: version2.c
+	@if ! cmp -s $@ $< ; then \
+	  echo '# Updating $@ with VERSION=$(VERSION)' ; \
+	  cp $< $@ ; \
+	fi ; \
+	rm $<

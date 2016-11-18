@@ -22,6 +22,7 @@
  *      no input redirection or pipes
  */
 #include "cmd.h"
+#include <version.h>
 
 /*
  *  global variables
@@ -58,7 +59,7 @@ ULONG n;
 
     clear_screen();
     enable_cursor();
-    message(_("Welcome to EmuCON2 version ")); messagenl(VERSION);
+    message(_("Welcome to EmuCON2 version ")); messagenl(version);
     messagenl(_("Type HELP for builtin commands"));
     messagenl("");
 
