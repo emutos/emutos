@@ -361,6 +361,16 @@
 
 #define GR_ISVERT int_in[2]
 
+#define ARROW             0
+#define TEXT_CRSR         1
+#define HOURGLASS         2
+#define POINT_HAND        3
+#define FLAT_HAND         4
+#define THIN_CROSS        5
+#define THICK_CROSS       6
+#define OUTLN_CROSS       7
+
+#define USER_DEF 255
 #define M_OFF 256
 #define M_ON 257
 

@@ -293,7 +293,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         ret = gl_handle;
         break;
     case GRAF_MOUSE:
-        if (GR_MNUMBER > 255)
+        if (GR_MNUMBER > USER_DEF)
         {
             if (GR_MNUMBER == M_OFF)
                 gsx_moff();
@@ -302,28 +302,28 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         }
         else
         {
-            if (GR_MNUMBER != 255)
+            if (GR_MNUMBER != USER_DEF)
             {
                 switch(GR_MNUMBER) {
-                case 1:
+                case TEXT_CRSR:
                     mouse = MICE01;
                     break;
-                case 2:
+                case HOURGLASS:
                     mouse = MICE02;
                     break;
-                case 3:
+                case POINT_HAND:
                     mouse = MICE03;
                     break;
-                case 4:
+                case FLAT_HAND:
                     mouse = MICE04;
                     break;
-                case 5:
+                case THIN_CROSS:
                     mouse = MICE05;
                     break;
-                case 6:
+                case THICK_CROSS:
                     mouse = MICE06;
                     break;
-                case 7:
+                case OUTLN_CROSS:
                     mouse = MICE07;
                     break;
                 default:
