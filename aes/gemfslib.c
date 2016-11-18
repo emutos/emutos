@@ -158,7 +158,7 @@ static WORD fs_active(BYTE *ppath, BYTE *pspec, WORD *pcount)
     BYTE *fname, allpath[LEN_ZPATH+1];
     DTA *user_dta;
 
-    gsx_mfset(ad_hgmice);
+    set_mouse_to_hourglass();
 
     thefile = 0L;
     fs_index = 0L;
@@ -212,7 +212,7 @@ static WORD fs_active(BYTE *ppath, BYTE *pspec, WORD *pcount)
         }
     }
 
-    gsx_mfset(ad_armice);
+    set_mouse_to_arrow();
 
     if ((ret == EFILNF) || (ret == ENMFIL))
         return TRUE;

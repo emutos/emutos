@@ -199,7 +199,7 @@ void sh_tographic(void)
     gsx_sclip(&gl_rscreen); /* set initial clip rectangle */
     gsx_malloc();           /* allocate screen space */
     ratinit();              /* start up the mouse */
-    gsx_mfset(ad_hgmice);   /* put mouse to hourglass */
+    set_mouse_to_hourglass();/* put mouse to hourglass */
 }
 
 
@@ -209,7 +209,7 @@ void sh_tographic(void)
  */
 static void sh_toalpha(void)
 {
-    gsx_mfset(ad_armice);   /* put mouse to arrow */
+    set_mouse_to_arrow();   /* put mouse to arrow */
 
     /*
      * give back the error handler since ours is graphic

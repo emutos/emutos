@@ -288,7 +288,7 @@ void ct_mouse(WORD grabit)
         wm_update(TRUE);
         gl_ctmown = TRUE;
         gl_mowner = rlr;
-        gsx_mfset(ad_armice);
+        set_mouse_to_arrow();
         gl_tmpmoff = gl_moff;
         if (gl_tmpmoff)
             ratinit();

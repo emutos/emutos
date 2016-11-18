@@ -13,8 +13,6 @@
 
 #define DEF_DESKTOP "EMUDESK"   /* default desktop */
 
-extern MFORM    *ad_armice;
-extern MFORM    *ad_hgmice;
 extern BYTE     *ad_envrn;
 
 extern MFORM    gl_mouse;
@@ -27,6 +25,8 @@ extern THEGLO   D;
 
 
 void all_run(void);
+void set_mouse_to_arrow(void);
+void set_mouse_to_hourglass(void);
 void sh_deskf(WORD obj, LONG plong);
 
 #endif

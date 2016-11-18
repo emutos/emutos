@@ -214,7 +214,7 @@ void ap_exit(void)
     mn_clsda();
     if (rlr->p_qindex)
         ap_rdwr(MU_MESAG, rlr, rlr->p_qindex, (LONG)D.g_valstr);
-    gsx_mfset(ad_armice);
+    set_mouse_to_arrow();
     wm_update(FALSE);
     all_run();
     rlr->p_flags &= ~AP_OPEN;   /* say appl_exit() is done */

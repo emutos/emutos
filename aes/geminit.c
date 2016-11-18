@@ -90,8 +90,6 @@ GLOBAL const GEM_MUPB ui_mupb =
 GLOBAL WORD     totpds;
 GLOBAL WORD     num_accs;
 
-GLOBAL MFORM    *ad_armice;
-GLOBAL MFORM    *ad_hgmice;
 GLOBAL BYTE     *ad_envrn;              /* initialized in GEMSTART      */
 
 GLOBAL MFORM    gl_mouse;
@@ -136,6 +134,24 @@ LONG init_p0_stkptr(void)
     u->u_spsuper = &u->u_supstk + 1;
 
     return (char *)u->u_spsuper - (char *)u;
+}
+
+
+/*
+ *  set mouse pointer to arrow shape
+ */
+void set_mouse_to_arrow(void)
+{
+    gsx_mfset((MFORM *)rs_bitblk[MICE00].bi_pdata);
+}
+
+
+/*
+ *  set mouse pointer to hourglass shape
+ */
+void set_mouse_to_hourglass(void)
+{
+    gsx_mfset((MFORM *)rs_bitblk[MICE02].bi_pdata);
 }
 
 
@@ -441,10 +457,6 @@ void run_accs_and_desktop(void)
 
     /* load gem resource and fix it up before we go */
     gem_rsc_init();
-
-    /* get mice forms */
-    ad_armice = (MFORM *)rs_bitblk[MICE00].bi_pdata;
-    ad_hgmice = (MFORM *)rs_bitblk[MICE02].bi_pdata;
 
     /* init button stuff */
     gl_btrue = 0x0;

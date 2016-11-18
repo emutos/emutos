@@ -419,7 +419,7 @@ WORD eralert(WORD n, WORD d)
         return FALSE;
 
     /* retry requested, we'll be busy again */
-    gsx_mfset(ad_hgmice);       /* set mouse to hourglass */
+    set_mouse_to_hourglass();   /* set mouse to hourglass */
     return TRUE;
 }
 

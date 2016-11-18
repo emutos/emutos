@@ -282,7 +282,7 @@ WORD fm_alert(WORD defbut, LONG palstr)
     /* init tree pointer    */
     tree = (LONG) rs_trees[DIALERT];
 
-    gsx_mfset(ad_armice);
+    set_mouse_to_arrow();
 
     fm_parse(tree, palstr, &inm, &nummsg, &mlenmsg, &numbut, &mlenbut);
     fm_build(tree, (inm != 0), nummsg, mlenmsg, numbut, mlenbut);
