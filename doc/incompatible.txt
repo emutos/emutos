@@ -114,3 +114,17 @@ line-A routine to get the address of a variable reflecting the internal
 state of the mouse cursor.  This is done with the same code used in
 "Ramses" (see above).  This also fails on EmuTOS, resulting in another
 bus error.  There may be more accesses to undocumented variables.
+
+Program: STSpeech v2.0
+----------------------
+Error: panics due to stack corruption
+
+Bug analysis:
+The program installs a custom Timer A interrupt handler, and calls the
+XBIOS from it.  If the Timer A interrupt happens to occur just when an
+unrelated BIOS/XBIOS call is manipulating _savptr (saving registers),
+then the nested XBIOS call inside the Timer A handler will trash that
+BIOS/XBIOS save area, possibly modifying the stack pointer. In the
+"Hitchhiker's Guide to the BIOS", Atari documented a workaround for this,
+but STSpeech does not use it.  Because this problem is timing-dependent,
+it does not show up on Atari TOS or some versions of EmuTOS.
