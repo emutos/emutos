@@ -645,12 +645,16 @@ WORD get_monitor_type(void)
 /* calculate initial VRAM size based on video hardware */
 static ULONG initial_vram_size(void)
 {
+#ifdef MACHINE_AMIGA
+    return amiga_initial_vram_size();
+#else
     if (HAS_VIDEL)
         return FALCON_VRAM_SIZE;
     else if (HAS_TT_SHIFTER)
         return TT_VRAM_SIZE;
     else
         return ST_VRAM_SIZE;
+#endif
 }
 
 /* Settings for the different video modes */
@@ -685,7 +689,7 @@ static void shifter_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *v
     *vt_rez = video_mode[vmode].vt_rez;
 }
 
-void screen_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *vt_rez)
+static void atari_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *vt_rez)
 {
 #if CONF_WITH_VIDEL
     if (has_videl) {
@@ -695,6 +699,17 @@ void screen_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *vt_rez)
     {
         shifter_get_current_mode_info(planes, hz_rez, vt_rez);
     }
+}
+
+void screen_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *vt_rez)
+{
+    MAYBE_UNUSED(atari_get_current_mode_info);
+
+#ifdef MACHINE_AMIGA
+    amiga_get_current_mode_info(planes, hz_rez, vt_rez);
+#else
+    atari_get_current_mode_info(planes, hz_rez, vt_rez);
+#endif
 }
 
 /* returns 'standard' pixel sizes */

@@ -42,6 +42,9 @@ struct IDE
 #define ide_interface ((volatile struct IDE*)0x00da0000)
 
 extern const UBYTE scancode_atari_from_amiga[128];
+extern UWORD amiga_screen_width;
+extern UWORD amiga_screen_width_in_bytes;
+extern UWORD amiga_screen_height;
 extern const UBYTE *amiga_screenbase;
 extern UWORD copper_list[8];
 extern int has_gayle;
@@ -50,7 +53,9 @@ void amiga_machine_detect(void);
 #if CONF_WITH_ALT_RAM
 void amiga_add_alt_ram(void);
 #endif
+ULONG amiga_initial_vram_size(void);
 void amiga_screen_init(void);
+void amiga_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *vt_rez);
 void amiga_setphys(const UBYTE *addr);
 const UBYTE *amiga_physbase(void);
 WORD amiga_setcolor(WORD colorNum, WORD color);

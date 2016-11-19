@@ -225,7 +225,9 @@ _amiga_vbl:
         tst.w   0xdff004                // VPOSR: Test bit 15 = LOF bit
         jmi     setcopper               // LOF = 1, odd field: start at line 1
 
-        add.l   #80,d0                  // LOF = 0, even field: start at line 2
+        moveq   #0,d1
+        move.w  _amiga_screen_width_in_bytes,d1
+        add.l   d1,d0                   // LOF = 0, even field: start at line 2
 
 setcopper:
         move.w  d0,_copper_list+10      // BPL1PTL

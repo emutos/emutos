@@ -21,6 +21,7 @@
 #include "processor.h"
 #include "gemerror.h"
 #include "ikbd.h"               /* for call_mousevec() */
+#include "screen.h"
 
 #if CONF_WITH_AROS
 #include "aros.h"
@@ -135,24 +136,91 @@ void amiga_add_alt_ram(void)
 /* Screen                                                                     */
 /******************************************************************************/
 
+UWORD amiga_screen_width;
+UWORD amiga_screen_width_in_bytes;
+UWORD amiga_screen_height;
 const UBYTE *amiga_screenbase;
 UWORD copper_list[8];
 
-void amiga_screen_init(void)
+ULONG amiga_initial_vram_size(void)
 {
-    sshiftmod = 0x02; /* We emulate the ST-High monochrome video mode */
+    return 640UL * 512 / 8;
+}
 
-    *(volatile UWORD*)0xdff100 = 0x9204; /* BPLCON0: Hires, one bit-plane, interlaced */
-    *(volatile UWORD*)0xdff102 = 0;      /* BPLCON1: Horizontal scroll value 0 */
-    *(volatile UWORD*)0xdff108 = 80;     /* BPL1MOD: Modulo = line width in interlaced mode */
-    *(volatile UWORD*)0xdff092 = 0x003c; /* DDFSTRT: Data-fetch start for hires */
-    *(volatile UWORD*)0xdff094 = 0x00d4; /* DDFSTOP: Data-fetch stop for hires*/
-    *(volatile UWORD*)0xdff08e = 0x4881; /* DIWSTRT: Set display window start */
-    *(volatile UWORD*)0xdff090 = 0x10c1; /* DIWSTOP: Set display window stop */
+static void amiga_set_videomode(UWORD width, UWORD height)
+{
+    UWORD lowres_height = height;
+    UWORD bplcon0 = 0x1200; /* 1 bit-plane, COLOR ON */
+    UWORD bpl1mod = 0; /* Modulo */
+    UWORD ddfstrt = 0x0038; /* Data-fetch start for low resolution */
+    UWORD ddfstop = 0x00d0; /* Data-fetch stop for low resolution */
+    UWORD hstart = 0x81; /* Display window horizontal start */
+    UWORD hstop = 0xc1; /* Display window horizontal stop */
+    UWORD vstart; /* Display window vertical start */
+    UWORD vstop; /* Display window vertical stop */
+    UWORD diwstrt; /* Display window start */
+    UWORD diwstop; /* Display window stop */
+
+    amiga_screen_width = width;
+    amiga_screen_width_in_bytes = width / 8;
+    amiga_screen_height = height;
+
+    if (width >= 640)
+    {
+        bplcon0 |= 0x8000; /* HIRES */
+        ddfstrt = 0x003c;
+        ddfstop = 0x00d4;
+    }
+
+    if (height >= 400)
+    {
+        bplcon0 |= 0x0004; /* LACE */
+        bpl1mod = amiga_screen_width_in_bytes;
+        lowres_height = height / 2;
+    }
+
+    vstart = 44 + (256 / 2) - (lowres_height / 2);
+    vstop = vstart + lowres_height;
+    vstop = (UBYTE)(((WORD)vstop) - 0x100); /* Normalize value */
+
+    diwstrt = (vstart << 8) | hstart;
+    diwstop = (vstop << 8) | hstop;
+
+    KINFO(("BPLCON0 = 0x%04x\n", bplcon0));
+    KINFO(("BPL1MOD = 0x%04x\n", bpl1mod));
+    KINFO(("DDFSTRT = 0x%04x\n", ddfstrt));
+    KINFO(("DDFSTOP = 0x%04x\n", ddfstop));
+    KINFO(("DIWSTRT = 0x%04x\n", diwstrt));
+    KINFO(("DIWSTOP = 0x%04x\n", diwstop));
+
+    *(volatile UWORD*)0xdff100 = bplcon0; /* BPLCON0: Bit Plane Control */
+    *(volatile UWORD*)0xdff102 = 0;       /* BPLCON1: Horizontal scroll value 0 */
+    *(volatile UWORD*)0xdff108 = bpl1mod; /* BPL1MOD: Modulo = line width in interlaced mode */
+    *(volatile UWORD*)0xdff092 = ddfstrt; /* DDFSTRT: Data-fetch start */
+    *(volatile UWORD*)0xdff094 = ddfstop; /* DDFSTOP: Data-fetch stop */
+    *(volatile UWORD*)0xdff08e = diwstrt; /* DIWSTRT: Set display window start */
+    *(volatile UWORD*)0xdff090 = diwstop; /* DIWSTOP: Set display window stop */
 
     /* Set up color registers */
     *(volatile UWORD*)0xdff180 = 0x0fff; /* COLOR00: Background color = white */
     *(volatile UWORD*)0xdff182 = 0x0000; /* COLOR01: Foreground color = black */
+
+    if (width == 640 && height == 400)
+        sshiftmod = ST_HIGH;
+    else
+        sshiftmod = FALCON_REZ;
+}
+
+void amiga_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *vt_rez)
+{
+    *planes = 1;
+    *hz_rez = amiga_screen_width;
+    *vt_rez = amiga_screen_height;
+}
+
+void amiga_screen_init(void)
+{
+    amiga_set_videomode(640, 400);
 
     /* The VBL will update the Copper list below with any new value
      * of amiga_screenbase, eventually adjusted for interlace.
