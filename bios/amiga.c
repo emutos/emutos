@@ -86,8 +86,8 @@ void amiga_screen_init(void)
     *(volatile UWORD*)0xdff108 = 80;     /* BPL1MOD: Modulo = line width in interlaced mode */
     *(volatile UWORD*)0xdff092 = 0x003c; /* DDFSTRT: Data-fetch start for hires */
     *(volatile UWORD*)0xdff094 = 0x00d4; /* DDFSTOP: Data-fetch stop for hires*/
-    *(volatile UWORD*)0xdff08e = 0x2c81; /* DIWSTRT: Set display window start */
-    *(volatile UWORD*)0xdff090 = 0xf4c1; /* DIWSTOP: Set display window stop */
+    *(volatile UWORD*)0xdff08e = 0x4881; /* DIWSTRT: Set display window start */
+    *(volatile UWORD*)0xdff090 = 0x10c1; /* DIWSTOP: Set display window stop */
 
     /* Set up color registers */
     *(volatile UWORD*)0xdff180 = 0x0fff; /* COLOR00: Background color = white */
