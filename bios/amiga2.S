@@ -213,21 +213,21 @@ nolong:
 
         .globl  _amiga_vbl
 _amiga_vbl:
-        //move.w  #0x00f0,0xdff180        // Background color = green
         movem.l d0-d1/a0-a1,-(sp)
 
-        move.w  0xdff01e,d0             // intreq
-        btst    #5,d0                   // interrupt vbl ?
+        move.w  0xdff01e,d0             // INTREQR
+        btst    #5,d0                   // VBL interrupt?
         jbeq    amivblend
 
         move.l  _amiga_screenbase,d0    // Video Base address
-        tst.w   0xdff004                // Test bit 15 = LOF bit
-        jpl     vl1                     // LOF = 0, even lines, no change
+
+        tst.w   0xdff004                // VPOSR: Test bit 15 = LOF bit
+        jpl     setcopper               // LOF = 0, even lines, no change
 
         // Odd field: start at the second line
         add.l   #80,d0
 
-vl1:
+setcopper:
         move.w  d0,_copper_list+6       // BPL1PTL
         swap    d0
         move.w  d0,_copper_list+2       // BPL1PTH
@@ -237,7 +237,7 @@ vl1:
         .extern _amiga_mouse_vbl
         jbsr    _amiga_mouse_vbl        // Poll the mouse
 
-        move.w  #0x0020,0xdff09c        // Intreq = interrupt processed.
+        move.w  #0x0020,0xdff09c        // INTREQ: Clear VBL interrupt
         move.w  #0x0020,0xdff09c        // Twice for compatibility
 
 amivblend:

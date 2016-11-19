@@ -81,18 +81,17 @@ void amiga_screen_init(void)
 {
     sshiftmod = 0x02; /* We emulate the ST-High monochrome video mode */
 
-    *(volatile UWORD*)0xdff100 = 0x9204; /* Hires, one bit-plane, interlaced */
-    *(volatile UWORD*)0xdff102 = 0;      /* Horizontal scroll value 0 */
-    *(volatile UWORD*)0xdff108 = 80;     /* Modulo = 80 for odd bit-planes */
-    *(volatile UWORD*)0xdff10a = 80;     /* Ditto for even bit-planes */
-    *(volatile UWORD*)0xdff092 = 0x003c; /* Set data-fetch start for hires */
-    *(volatile UWORD*)0xdff094 = 0x00d4; /* Set data-fetch stop */
-    *(volatile UWORD*)0xdff08e = 0x2c81; /* Set display window start */
-    *(volatile UWORD*)0xdff090 = 0xf4c1; /* Set display window stop */
+    *(volatile UWORD*)0xdff100 = 0x9204; /* BPLCON0: Hires, one bit-plane, interlaced */
+    *(volatile UWORD*)0xdff102 = 0;      /* BPLCON1: Horizontal scroll value 0 */
+    *(volatile UWORD*)0xdff108 = 80;     /* BPL1MOD: Modulo = line width in interlaced mode */
+    *(volatile UWORD*)0xdff092 = 0x003c; /* DDFSTRT: Data-fetch start for hires */
+    *(volatile UWORD*)0xdff094 = 0x00d4; /* DDFSTOP: Data-fetch stop for hires*/
+    *(volatile UWORD*)0xdff08e = 0x2c81; /* DIWSTRT: Set display window start */
+    *(volatile UWORD*)0xdff090 = 0xf4c1; /* DIWSTOP: Set display window stop */
 
     /* Set up color registers */
-    *(volatile UWORD*)0xdff180 = 0x0fff; /* Background color = white */
-    *(volatile UWORD*)0xdff182 = 0x0000; /* Foreground color = black */
+    *(volatile UWORD*)0xdff180 = 0x0fff; /* COLOR00: Background color = white */
+    *(volatile UWORD*)0xdff182 = 0x0000; /* COLOR01: Foreground color = black */
 
     /* Set up the Copper list (must be in ST-RAM) */
     copper_list[0] = 0x0e0; /* BPL1PTH */
@@ -111,7 +110,7 @@ void amiga_screen_init(void)
     *(volatile UWORD*)0xdff09a = 0xc020; /* INTENA Set Master and VBL bits */
 
     /* Start the DMA */
-    *(volatile UWORD*)0xdff096 = DMAF_SETCLR | DMAF_COPPER | DMAF_RASTER | DMAF_MASTER;
+    *(volatile UWORD*)0xdff096 = DMAF_SETCLR | DMAF_COPPER | DMAF_RASTER | DMAF_MASTER; /* DMACON */
 }
 
 void amiga_setphys(const UBYTE *addr)
