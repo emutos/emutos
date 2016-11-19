@@ -222,15 +222,14 @@ _amiga_vbl:
         move.l  _amiga_screenbase,d0    // Video Base address
 
         tst.w   0xdff004                // VPOSR: Test bit 15 = LOF bit
-        jpl     setcopper               // LOF = 0, even lines, no change
+        jmi     setcopper               // LOF = 1, odd field: start at line 1
 
-        // Odd field: start at the second line
-        add.l   #80,d0
+        add.l   #80,d0                  // LOF = 0, even field: start at line 2
 
 setcopper:
-        move.w  d0,_copper_list+6       // BPL1PTL
+        move.w  d0,_copper_list+10      // BPL1PTL
         swap    d0
-        move.w  d0,_copper_list+2       // BPL1PTH
+        move.w  d0,_copper_list+6       // BPL1PTH
 
         jbsr    _int_vbl                // Call the standard VBL handler
 

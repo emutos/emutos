@@ -43,7 +43,7 @@ struct IDE
 
 extern const UBYTE scancode_atari_from_amiga[128];
 extern const UBYTE *amiga_screenbase;
-extern UWORD copper_list[6];
+extern UWORD copper_list[8];
 extern int has_gayle;
 
 void amiga_machine_detect(void);

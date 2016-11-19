@@ -75,7 +75,7 @@ void amiga_add_alt_ram(void)
 /******************************************************************************/
 
 const UBYTE *amiga_screenbase;
-UWORD copper_list[6];
+UWORD copper_list[8];
 
 void amiga_screen_init(void)
 {
@@ -93,13 +93,30 @@ void amiga_screen_init(void)
     *(volatile UWORD*)0xdff180 = 0x0fff; /* COLOR00: Background color = white */
     *(volatile UWORD*)0xdff182 = 0x0000; /* COLOR01: Foreground color = black */
 
+    /* The VBL will update the Copper list below with any new value
+     * of amiga_screenbase, eventually adjusted for interlace.
+     * It is *mandatory* to reset BPL1PTH/BPL1PTL on each VBL.
+     * It could have been done manually in the VBL interrupt handler, but in
+     * that case the display would be wrong when interrupts are turned off.
+     * On the other hand, with a Copper list, the bitplane pointer is always
+     * reset correctly, even if the CPU interrupts are turned off.
+     * The only remaining issue is that the interlaced fields are not
+     * properly switched when interrupts are turned off. It is a minor issue,
+     * as this should normally not happen for a long time. And even in that
+     * case, displayed texts are still readable, even if a bit distorted.
+     * The Copper list waits a few lines at the top to give the VBL interrupt
+     * handler enough time to update it.
+     */
+
     /* Set up the Copper list (must be in ST-RAM) */
-    copper_list[0] = 0x0e0; /* BPL1PTH */
-    copper_list[1] = ((ULONG)amiga_screenbase & 0xffff0000) >> 16;
-    copper_list[2] = 0x0e2; /* BPL1PTL */
-    copper_list[3] = ((ULONG)amiga_screenbase & 0x0000ffff);
-    copper_list[4] = 0xffff; /* End of      */
-    copper_list[5] = 0xfffe; /* Copper list */
+    copper_list[0] = 0x0a01; /* Wait line 10 to give time to the VBL routine */
+    copper_list[1] = 0xff00; /* Vertical wait only */
+    copper_list[2] = 0x0e0; /* BPL1PTH */
+    copper_list[3] = ((ULONG)amiga_screenbase & 0xffff0000) >> 16;
+    copper_list[4] = 0x0e2; /* BPL1PTL */
+    copper_list[5] = ((ULONG)amiga_screenbase & 0x0000ffff);
+    copper_list[6] = 0xffff; /* End of      */
+    copper_list[7] = 0xfffe; /* Copper list */
 
     /* Initialize the Copper */
     *(UWORD* volatile *)0xdff080 = copper_list; /* COP1LCH */
