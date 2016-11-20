@@ -4,8 +4,8 @@ Common AES/VDI/Line-A bugs:
   - In PixArt v4.52, buttons on windowed image load dialog
     work only randomly.
   - In "Patience", all the dialogs (quit, start new game) show
-    the button selected last time still as selected and it needs
-    to be unselected to use the dialog.
+    the button that was selected last time, as still selected,
+    and it needs to be unselected to use the dialog.
   - In "Bombs", it's pretty random whether mouse clicks go through
     to the window, mostly they don't.
 - Because EmuTOS doesn't take outline into account in text extents

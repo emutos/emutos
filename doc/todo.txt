@@ -4,8 +4,7 @@ General
   because certain files (e.g. bdosmain.c) deliberately omit parameter lists.
 
 BIOS/XBIOS
-- implement missing XBIOS calls
-  (e.g. the Blitter, Falcon DSP functions)
+- implement missing XBIOS calls (e.g. the Blitter, Falcon DSP functions)
 - reduce the number of 'extern' in .c files
 - check that RAM disks work
 - misc. TODOs in floppy.c
@@ -23,6 +22,7 @@ VDI
   the internal calculations of increase in x direction, like in original TOS.
 
 AES
+- Implement AES v3.x functions (TOS v3 menu functions and v4 3D look)
 
 DESK
 - Add a dialog for configuring the NVRAM (keyboard, languages, ...)

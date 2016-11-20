@@ -127,4 +127,5 @@ then the nested XBIOS call inside the Timer A handler will trash that
 BIOS/XBIOS save area, possibly modifying the stack pointer. In the
 "Hitchhiker's Guide to the BIOS", Atari documented a workaround for this,
 but STSpeech does not use it.  Because this problem is timing-dependent,
-it does not show up on Atari TOS or some versions of EmuTOS.
+it does not show up on Atari TOS, and only shows up in EmuTOS if BigDOS
+is installed (BigDOS issues many XBIOS calls).

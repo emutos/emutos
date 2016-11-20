@@ -200,7 +200,7 @@ All XBIOS versions:
 
 TOS v1.02:
  T 0x29 Floprate
- t 0x40 Blitmode
+ t 0x40 Blitmode        (partial, just returns H/W status)
 
 TOS v2.0:
  t 0x2a DMAread
