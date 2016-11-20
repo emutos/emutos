@@ -56,7 +56,6 @@
  *      declarations used by the show_file() code
  */
 #define IOBUFSIZE   16384L
-LONG get_deskwh(void);
 static LONG linecount;
 static WORD pagesize;
 #endif
@@ -462,7 +461,7 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
     form_dial(FMD_START, 0,0,0,0, 0,0,scr_width,scr_height);
     clear_screen();
 
-    pagesize = get_deskwh() & 0xffff;
+    pagesize = (G.g_ydesk+G.g_hdesk)/gl_hchar - 1;
     linecount = 0L;
 
     while(1)

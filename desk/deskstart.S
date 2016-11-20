@@ -15,7 +15,6 @@
 
         .globl  _deskstart
         .globl  _gem
-        .globl  _get_deskwh
 #if CONF_DEBUG_DESK_STACK
         .globl  _deskstackbottom
 #endif
@@ -62,20 +61,6 @@ _gem:
         move.w  #0xc8,d0
         trap    #2
         rts
-
-
-#if CONF_WITH_SHOW_FILE
-_get_deskwh:
-        move.l  a2,-(sp)                // not scratch for gcc
-#ifdef __mcoldfire__
-        .dc.w   0xa920                  // lineA init
-#else
-        .dc.w   0xa000                  // lineA init
-#endif
-        move.l  -44(a0),d0              // v_cel_mx/v_cel_my
-        movea.l (sp)+,a2
-        rts
-#endif
 
 
 .bss
