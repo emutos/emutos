@@ -49,7 +49,6 @@
 #define MIN_NM_FILES 100L           /*  ... if memory is tight */
 
 
-static LONG ad_fstree;
 static GRECT gl_rfs;
 
 static const BYTE gl_fsobj[4] = {FTITLE, FILEBOX, SCRLBAR, 0x0};
@@ -60,15 +59,11 @@ static LONG nm_files;       /* total number of slots in g_fslist[] */
 
 
 /*
- *  Start up the file selector by initializing the fs_tree
+ *  initialise the file selector
  */
 void fs_start(void)
 {
-    OBJECT *tree;
-
-    tree = rs_trees[FSELECTR];
-    ad_fstree = (LONG)tree;
-    ob_center((LONG)tree, &gl_rfs);
+    ob_center((LONG)rs_trees[FSELECTR], &gl_rfs);
 }
 
 
@@ -310,7 +305,7 @@ static void fs_format(LONG tree, WORD currtop, WORD count)
 static void fs_sel(WORD sel, WORD state)
 {
     if (sel)
-        ob_change(ad_fstree, F1NAME + sel - 1, state, TRUE);
+        ob_change((LONG)rs_trees[FSELECTR], F1NAME + sel - 1, state, TRUE);
 }
 
 
@@ -469,7 +464,7 @@ static WORD path_changed(char *path)
     OBJECT *obj;
     TEDINFO *ted;
 
-    obj = ((OBJECT *)ad_fstree) + FSDIRECT;
+    obj = rs_trees[FSELECTR] + FSDIRECT;
     ted = (TEDINFO *)obj->ob_spec;
 
     if (strncmp(path,(BYTE *)ted->te_ptext,ted->te_txtlen-1))
@@ -552,7 +547,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
     strcpy(locold,locstr);
 
     /* init strings in form */
-    tree = ad_fstree;
+    tree = (LONG)rs_trees[FSELECTR];
     obj = ((OBJECT *)tree) + FTITLE;
     tedinfo = (TEDINFO *)obj->ob_spec;
     ad_ftitle = (BYTE *)tedinfo->te_ptext;
