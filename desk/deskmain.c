@@ -36,7 +36,6 @@
 #include "deskwin.h"
 #include "deskbind.h"
 
-#include "../bios/lineavars.h"
 #include "../bios/screen.h"
 #include "../bios/videl.h"
 #include "nls.h"
@@ -1170,7 +1169,7 @@ static void adjust_menu(OBJECT *obj_array)
 
     int i;  /* index in the menu bar */
     int j;  /* index in the array of pull downs */
-    int width = (v_hz_rez >> 3);    /* screen width in chars */
+    int width = (G.g_wdesk >> 3);   /* screen width in chars */
     int n, x;
     OBJECT *menu = OBJ(0);
     OBJECT *mbar = OBJ(OBJ(menu->ob_head)->ob_head);
