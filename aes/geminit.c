@@ -41,7 +41,6 @@
 #include "gempd.h"
 #include "gemdisp.h"
 #include "gemrslib.h"
-#include "gemobed.h"
 #include "gemdos.h"
 #include "gemgraf.h"
 #include "gemevlib.h"
@@ -184,19 +183,6 @@ static AESPD *iprocess(BYTE *pname, PFVOID routine)
 
     /* create process to execute it */
     return pstart(routine, pname, ldaddr);
-}
-
-
-/*
- *  Start up the file selector by initializing the fs_tree
- */
-static void fs_start(void)
-{
-    OBJECT *tree;
-
-    tree = rs_trees[FSELECTR];
-    ad_fstree = (LONG)tree;
-    ob_center((LONG)tree, &gl_rfs);
 }
 
 

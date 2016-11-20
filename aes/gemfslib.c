@@ -32,6 +32,7 @@
 #include "optimopt.h"
 #include "rectfunc.h"
 #include "gemerror.h"
+#include "gemobed.h"
 
 #include "string.h"
 #include "intmath.h"
@@ -48,14 +49,27 @@
 #define MIN_NM_FILES 100L           /*  ... if memory is tight */
 
 
-GLOBAL LONG ad_fstree;
-GLOBAL GRECT gl_rfs;
+static LONG ad_fstree;
+static GRECT gl_rfs;
 
 static const BYTE gl_fsobj[4] = {FTITLE, FILEBOX, SCRLBAR, 0x0};
 
 static BYTE *ad_fsnames;    /* holds filenames in currently-displayed directory */
 static LONG *g_fslist;      /* offsets of filenames within ad_fsnames */
 static LONG nm_files;       /* total number of slots in g_fslist[] */
+
+
+/*
+ *  Start up the file selector by initializing the fs_tree
+ */
+void fs_start(void)
+{
+    OBJECT *tree;
+
+    tree = rs_trees[FSELECTR];
+    ad_fstree = (LONG)tree;
+    ob_center((LONG)tree, &gl_rfs);
+}
 
 
 /*
