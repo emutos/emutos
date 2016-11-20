@@ -25,7 +25,7 @@
 #include "obdefs.h"
 #include "gembind.h"
 #include "kprint.h"
-
+#include <stdarg.h>
 
 #define CTRL_CNT        3
 
@@ -870,14 +870,19 @@ WORD wind_get_grect(WORD w_handle, WORD w_field, GRECT *gr)
 }
 
 
-WORD wind_set(WORD w_handle, WORD w_field, WORD w2, WORD w3, WORD w4, WORD w5)
+WORD wind_set(WORD w_handle, WORD w_field, ...) /* WORD w2, WORD w3, WORD w4, WORD w5) */
 {
+    va_list ap;
+
+    va_start(ap, w_field);
+
     WM_HANDLE = w_handle;
     WM_WFIELD = w_field;
-    WM_IX = w2;
-    WM_IY = w3;
-    WM_IW = w4;
-    WM_IH = w5;
+    WM_IX = va_arg(ap, int);
+    WM_IY = va_arg(ap, int);
+    WM_IW = va_arg(ap, int);
+    WM_IH = va_arg(ap, int);
+    va_end(ap);
     return gem_if(WIND_SET);
 }
 
