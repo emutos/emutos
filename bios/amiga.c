@@ -440,6 +440,15 @@ void amiga_shutdown(void)
 #endif
 }
 
+BOOL amiga_can_shutdown(void)
+{
+#if CONF_WITH_UAE
+    return has_uaelib;
+#else
+    return FALSE;
+#endif
+}
+
 /******************************************************************************/
 /* Floppy                                                                     */
 /******************************************************************************/

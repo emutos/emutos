@@ -586,8 +586,10 @@ BOOL can_shutdown(void)
         return TRUE;
 #endif
 
-#if defined(MACHINE_FIREBEE) || defined (MACHINE_AMIGA)
+#ifdef MACHINE_FIREBEE
     return TRUE;
+#elif defined(MACHINE_AMIGA)
+    return amiga_can_shutdown();
 #else
     return FALSE;
 #endif
