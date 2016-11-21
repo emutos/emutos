@@ -1056,7 +1056,8 @@ static void cnx_get(void)
                     win_free(pw);
                     continue;
                 }
-                do_diropen(pw, TRUE, pws->obid_save, pws->pth_save, (GRECT *)pws, TRUE);
+                if (!do_diropen(pw, TRUE, pws->obid_save, pws->pth_save, (GRECT *)pws, TRUE))
+                    win_free(pw);
             }
         }
     }

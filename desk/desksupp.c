@@ -656,7 +656,8 @@ static WORD do_dopen(WORD curr)
         if (set_default_path(path) == 0)
         {
             strcat(path,"*.*");
-            do_diropen(pw, TRUE, curr, path, (GRECT *)&G.g_screen[pw->w_root].ob_x, TRUE);
+            if (!do_diropen(pw, TRUE, curr, path, (GRECT *)&G.g_screen[pw->w_root].ob_x, TRUE))
+                win_free(pw);
         }
         else
             win_free(pw);
