@@ -243,15 +243,28 @@ WORD do_wfull(WORD wh)
 
 /*
  *  Open a directory, it may be the root or a subdirectory
+ *
+ *  Note that we currently force the filename specification in the
+ *  pathname to *.*
  */
 WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon,
                 BYTE *pathname, GRECT *pt, WORD redraw)
 {
     WORD ret;
+    BYTE *p;
     PNODE *tmp;
 
     /* convert to hourglass */
     graf_mouse(HGLASS, NULL);
+
+    p = filename_start(pathname);
+    *p = '\0';
+    if (set_default_path(pathname) != 0)
+    {
+        graf_mouse(ARROW, NULL);
+        return FALSE;
+    }
+    strcpy(p,"*.*");
 
     /* open a path node */
     tmp = pn_open(pathname, F_SUBDIR);
@@ -653,13 +666,8 @@ static WORD do_dopen(WORD curr)
     {
         drv = pib->ib_char & 0x00ff;
         build_root_path(path,drv);
-        if (set_default_path(path) == 0)
-        {
-            strcat(path,"*.*");
-            if (!do_diropen(pw, TRUE, curr, path, (GRECT *)&G.g_screen[pw->w_root].ob_x, TRUE))
-                win_free(pw);
-        }
-        else
+        strcpy(path+3,"*.*");
+        if (!do_diropen(pw, TRUE, curr, path, (GRECT *)&G.g_screen[pw->w_root].ob_x, TRUE))
             win_free(pw);
     }
     else
@@ -678,7 +686,6 @@ void do_fopen(WNODE *pw, WORD curr, BYTE *pathname, WORD redraw)
 {
     GRECT t;
     BYTE app_path[MAXPATHLEN];
-    BYTE *p, tmp;
 
     wind_get_grect(pw->w_id, WF_WXYWH, &t);
 
@@ -695,13 +702,6 @@ void do_fopen(WNODE *pw, WORD curr, BYTE *pathname, WORD redraw)
         fun_alert(1, STDEEPPA);
         remove_one_level(app_path);         /* back up one level */
     }
-
-    p = filename_start(app_path);
-    tmp = *p;
-    *p ='\0';
-    if (set_default_path(app_path) == 0)    /* if directory exists, */
-        strcat(app_path,"*.*");             /* ensure all contents are displayed */
-    else *p = tmp;
 
     pn_close(pw->w_path);
 
