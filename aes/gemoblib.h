@@ -10,8 +10,6 @@
 #ifndef GEMOBLIB_H
 #define GEMOBLIB_H
 
-extern BITBLK   bi;
-
 void ob_format(WORD just, BYTE *raw_str, BYTE *tmpl_str, BYTE *fmt_str);
 void ob_draw(LONG tree, WORD obj, WORD depth);
 WORD ob_find(LONG tree, WORD currobj, WORD depth, WORD mx, WORD my);

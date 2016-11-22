@@ -440,6 +440,7 @@ void run_accs_and_desktop(void)
 {
     WORD i;
     BOOL isgem;
+    BITBLK bi;
 
     /* load gem resource and fix it up before we go */
     gem_rsc_init();
@@ -457,7 +458,7 @@ void run_accs_and_desktop(void)
 
     /* fix up icons */
     for (i = 0; i < 3; i++) {
-        memcpy(&bi, &rs_bitblk[NOTEBB+i], sizeof(BITBLK));
+        bi = rs_bitblk[NOTEBB+i];
         gsx_trans(bi.bi_pdata, bi.bi_wb, bi.bi_pdata, bi.bi_wb, bi.bi_hl);
     }
 

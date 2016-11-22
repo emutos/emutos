@@ -41,11 +41,6 @@
 #define g_vsf_color( x )          gsx_1code(S_FILL_COLOR, x)
 
 
-GLOBAL BITBLK   bi;
-static ICONBLK  ib;
-
-
-
 /*
  *  Routine to find the x,y offset of a particular object relative
  *  to the physical screen.  This involves accumulating the offsets
@@ -189,6 +184,8 @@ static void  just_draw(LONG tree, WORD obj, WORD sx, WORD sy)
     BYTE ch;
     GRECT t, c;
     TEDINFO edblk;
+    BITBLK bi;
+    ICONBLK ib;
 
     ch = ob_sst(tree, obj, &spec, &state, &obtype, &flags, &t, &th);
 
@@ -305,13 +302,13 @@ static void  just_draw(LONG tree, WORD obj, WORD sx, WORD sy)
             gr_inside(&t, -tmpth);
             break;
         case G_IMAGE:
-            memcpy(&bi, (BITBLK *)spec, sizeof(BITBLK));
+            bi = *((BITBLK *)spec);
             gsx_blt(bi.bi_pdata, bi.bi_x, bi.bi_y, bi.bi_wb,
                     0x0L, t.g_x, t.g_y, gl_width/8, bi.bi_wb * 8,
                     bi.bi_hl, MD_TRANS, bi.bi_color, WHITE);
             break;
         case G_ICON:
-            memcpy(&ib, (ICONBLK *)spec, sizeof(ICONBLK));
+            ib = *((ICONBLK *)spec);
             ib.ib_xicon += t.g_x;
             ib.ib_yicon += t.g_y;
             ib.ib_xtext += t.g_x;
