@@ -291,9 +291,9 @@ WORD ob_edit(LONG tree, WORD obj, WORD in_char, WORD *idx, WORD kind)
     ob_getsp(tree, obj, &edblk);
 
     /* copy passed in strings to local strings */
-    strcpy(D.g_tmpstr, (char *) edblk.te_ptmplt);
-    strcpy(D.g_rawstr, (char *) edblk.te_ptext);
-    len = ii = strlencpy(D.g_valstr, (char *) edblk.te_pvalid);
+    strcpy(D.g_tmpstr, edblk.te_ptmplt);
+    strcpy(D.g_rawstr, edblk.te_ptext);
+    len = ii = strlencpy(D.g_valstr, edblk.te_pvalid);
 
     /* expand out valid str */
     while ((ii > 0) && (len < edblk.te_tmplen))
@@ -386,7 +386,7 @@ WORD ob_edit(LONG tree, WORD obj, WORD in_char, WORD *idx, WORD kind)
             break;
         }   /* switch(in_char) */
 
-        strcpy((char *) edblk.te_ptext,D.g_rawstr);
+        strcpy(edblk.te_ptext, D.g_rawstr);
         if (!no_redraw)
         {
             ob_format(edblk.te_just, D.g_rawstr, D.g_tmpstr, D.g_fmtstr);
