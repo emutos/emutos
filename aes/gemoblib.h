@@ -10,7 +10,6 @@
 #ifndef GEMOBLIB_H
 #define GEMOBLIB_H
 
-extern TEDINFO  edblk;
 extern BITBLK   bi;
 
 void ob_format(WORD just, BYTE *raw_str, BYTE *tmpl_str, BYTE *fmt_str);

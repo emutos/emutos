@@ -41,7 +41,6 @@
 #define g_vsf_color( x )          gsx_1code(S_FILL_COLOR, x)
 
 
-GLOBAL TEDINFO  edblk;
 GLOBAL BITBLK   bi;
 static ICONBLK  ib;
 
@@ -189,6 +188,7 @@ static void  just_draw(LONG tree, WORD obj, WORD sx, WORD sy)
     WORD tmpx, tmpy, tmpth;
     BYTE ch;
     GRECT t, c;
+    TEDINFO edblk;
 
     ch = ob_sst(tree, obj, &spec, &state, &obtype, &flags, &t, &th);
 

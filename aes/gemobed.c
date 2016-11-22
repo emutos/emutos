@@ -37,6 +37,7 @@
 #include "scancode.h"
 
 
+static TEDINFO  edblk;
 
 
 static void ob_getsp(LONG tree, WORD obj, TEDINFO *pted)
