@@ -476,12 +476,11 @@ WORD ins_app(WORD curr)
 static void insert_icon(OBJECT *tree, WORD obj, WORD nicon)
 {
     OBJECT *objptr = tree + obj;
-    ICONBLK *ibptr = &ib;
 
-    memcpy(ibptr, &G.g_iblist[nicon], sizeof(ICONBLK));
-    ibptr->ib_ptext = "";
+    ib = G.g_iblist[nicon];
+    ib.ib_ptext = "";
     objptr->ob_type = G_ICON;
-    objptr->ob_spec = (LONG)ibptr;
+    objptr->ob_spec = (LONG)&ib;
 }
 
 

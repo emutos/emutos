@@ -235,7 +235,7 @@ static WORD format_sfcb(LONG psfcb, BYTE *pfmt)
      */
     wide = USE_WIDE_FORMAT();
 
-    memcpy(&sf, (SFCB *)psfcb, sizeof(SFCB));
+    sf = *(SFCB *)psfcb;
     pdst = pfmt;
 
     /*
