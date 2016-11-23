@@ -124,6 +124,24 @@ static const BYTE     ILL_NOTOP[] = {NFOLITEM,CLOSITEM,CLSWITEM,0};
 static const BYTE     ILL_DESKTOP[] = {NFOLITEM,CLOSITEM,CLSWITEM,ICONITEM,
                                 NAMEITEM,DATEITEM,SIZEITEM,TYPEITEM,0};
 
+/*
+ * table to map the keyboard arrow character to the corresponding
+ * value to put in msg[3] of the WM_ARROWED msg
+ *
+ * the table consists of pairs of values: { scancode, value }
+ */
+static const WORD arrow_table[] =
+{
+    SHIFT_ARROW_UP, WA_UPPAGE,
+    SHIFT_ARROW_DOWN, WA_DNPAGE,
+    ARROW_UP, WA_UPLINE,
+    ARROW_DOWN, WA_DNLINE,
+    ARROW_LEFT, WA_LFLINE,
+    ARROW_RIGHT, WA_RTLINE,
+    0
+};
+
+
 #if CONF_WITH_EASTER_EGG
 /* easter egg */
 static const WORD  freq[]=
@@ -659,9 +677,31 @@ static void kbd_arrow(WORD type)
 
 
 /*
+ * check for arrow key & handle appropriately
+ *
+ * return TRUE iff matching key found & processed
+ */
+static BOOL check_arrow_key(WORD thechar)
+{
+    const WORD *p;
+
+    for (p = arrow_table; *p; p += 2)
+    {
+        if (*p == thechar)
+        {
+            kbd_arrow(*(p+1));
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+
+/*
  * search ANODEs for matching function key and launch corresponding application
  */
-static WORD process_funkey(WORD funkey)
+static BOOL process_funkey(WORD funkey)
 {
     ANODE *pa;
     BYTE pathname[MAXPATHLEN];
@@ -684,13 +724,36 @@ static WORD process_funkey(WORD funkey)
 }
 
 
+/*
+ * check for function key & handle appropriately
+ *
+ * return TRUE iff matching key found & processed
+ */
+static BOOL check_function_key(WORD thechar)
+{
+    WORD funkey;
+
+    if ((thechar >= FUNKEY_01) && (thechar <= FUNKEY_10))
+        funkey = ((thechar-FUNKEY_01) >> 8) + 1;
+    else if ((thechar >= FUNKEY_11) && (thechar <= FUNKEY_20))
+        funkey = ((thechar-FUNKEY_11) >> 8) + 11;
+    else return FALSE;
+
+    return process_funkey(funkey);
+}
+
+
 static WORD hndl_kbd(WORD thechar)
 {
     WNODE *pw;
-    WORD done, funkey;
+    WORD done = FALSE;
     WORD title = -1, item;
 
-    done = FALSE;
+    if (check_arrow_key(thechar))
+        return done;
+
+    if (check_function_key(thechar))
+        return done;
 
     switch(thechar)
     {
@@ -766,34 +829,6 @@ static WORD hndl_kbd(WORD thechar)
         }
         break;
 #endif
-    case SHIFT_ARROW_UP:
-        kbd_arrow(WA_UPPAGE);
-        break;
-    case SHIFT_ARROW_DOWN:
-        kbd_arrow(WA_DNPAGE);
-        break;
-    case ARROW_UP:
-        kbd_arrow(WA_UPLINE);
-        break;
-    case ARROW_DOWN:
-        kbd_arrow(WA_DNLINE);
-        break;
-    case ARROW_LEFT:
-        kbd_arrow(WA_LFLINE);
-        break;
-    case ARROW_RIGHT:
-        kbd_arrow(WA_RTLINE);
-        break;
-    default:
-        if ((thechar & 0xff) != 0)      /* can't be a function key */
-            break;
-        funkey = 0;
-        if ((thechar >= FUNKEY_01) && (thechar <= FUNKEY_10))
-            funkey = ((thechar-FUNKEY_01) >> 8) + 1;
-        else if ((thechar >= FUNKEY_11) && (thechar <= FUNKEY_20))
-            funkey = ((thechar-FUNKEY_11) >> 8) + 11;
-        if (funkey)
-            done = process_funkey(funkey);
     }
 
     /*
