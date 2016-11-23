@@ -78,7 +78,7 @@ WORD ap_init(void)
 /*
  *  APplication READ or WRITE
  */
-void ap_rdwr(WORD code, AESPD *p, WORD length, LONG pbuff)
+WORD ap_rdwr(WORD code, AESPD *p, WORD length, LONG pbuff)
 {
     QPB     m;
 
@@ -90,14 +90,14 @@ void ap_rdwr(WORD code, AESPD *p, WORD length, LONG pbuff)
     {
         memcpy((void *)pbuff, p->p_qaddr, p->p_qindex);
         p->p_qindex = 0;
+        return 0;
     }
-    else
-    {
-        m.qpb_ppd = p;
-        m.qpb_cnt = length;
-        m.qpb_buf = pbuff;
-        ev_block(code, (LONG)&m);
-    }
+
+    m.qpb_ppd = p;
+    m.qpb_cnt = length;
+    m.qpb_buf = pbuff;
+
+    return ev_block(code, (LONG)&m);
 }
 
 
