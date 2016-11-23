@@ -550,7 +550,7 @@ void amouse(EVB *e, LONG pmo)
 {
     MOBLK   mob;
 
-    memcpy(&mob, (MOBLK *)pmo, sizeof(MOBLK));
+    mob = *(MOBLK *)pmo;
 
     /* if already in (or out) of rectangle, signal immediately */
     if ((rlr == gl_mowner) && in_mrect(&mob))

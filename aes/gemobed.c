@@ -48,7 +48,7 @@ static void ob_getsp(LONG tree, WORD obj, TEDINFO *pted)
     spec = objptr->ob_spec;
     if (objptr->ob_flags & INDIRECT)
         spec = *((LONG *)spec);
-    memcpy(pted, (TEDINFO *)spec, sizeof(TEDINFO));
+    *pted = *(TEDINFO *)spec;   /* return TEDINFO */
 }
 
 

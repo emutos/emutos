@@ -125,7 +125,7 @@ void ap_tplay(FPD *pbuff,WORD length,WORD scale)
 
     for (i = 0; i < length; i++) {
         /* get an event to play */
-        memcpy(&f,pbuff,sizeof(FPD));
+        f = *pbuff;
         pbuff++;
 
         /* convert to form suitable for forkq */

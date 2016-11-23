@@ -1101,8 +1101,8 @@ void wm_start(void)
     gl_newdesk = 0x0L;
 
     /* init tedinfo parts of title and info lines */
-    memcpy(&gl_aname, &gl_asamp, sizeof(TEDINFO));
-    memcpy(&gl_ainfo, &gl_asamp, sizeof(TEDINFO));
+    gl_aname = gl_asamp;
+    gl_ainfo = gl_asamp;
     gl_aname.te_just = TE_CNTR;
     W_ACTIVE[W_NAME].ob_spec = (LONG)&gl_aname;
     W_ACTIVE[W_INFO].ob_spec = (LONG)&gl_ainfo;
