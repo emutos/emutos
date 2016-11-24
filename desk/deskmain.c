@@ -58,24 +58,19 @@
 #include "deskmain.h"
 #include "scancode.h"
 
+/* structure pointed to by return value from Keytbl() */
+typedef struct {
+    UBYTE *normal;
+    UBYTE *shift;
+    UBYTE *caps;
+} KEYTAB;
+
 #define abs(x) ( (x) < 0 ? -(x) : (x) )
 #define menu_text(tree,inum,ptext) (((tree)+(inum))->ob_spec = ptext)
 
-/* BugFix       */
-                                        /* keyboard shortcuts & others  */
-#define ALTA 0x1E00                     /* Configure App                */
-#define ALTC 0x2E00                     /* Change resolution            */
-#define ALTD 0x2000                     /* Delete                       */
-#define ALTI 0x1700                     /* Info/Rename                  */
-#define ALTN 0x3100                     /* Sort by Name                 */
-#define ALTP 0x1900                     /* Sort by Type                 */
-#define ALTS 0x1F00                     /* Show as Text/Icons           */
-#define ALTT 0x1400                     /* Sort by Date                 */
-#define ALTV 0x2F00                     /* Save Desktop                 */
-#define ALTZ 0x2C00                     /* Sort by Size                 */
-#define CNTLU 0x1615                    /* To Output                    */
-#define CNTLZ 0x2c1a                    /* Execute CLI                  */
-#define CNTLQ 0x1011                    /* Exit To Dos                  */
+
+#define CTL_Z   ('Z'-0x40)
+#define ESC     0x1b
 
 
 /*
@@ -141,6 +136,27 @@ static const WORD arrow_table[] =
     0
 };
 
+
+/*
+ * table to map the letter corresponding to the scancode from an alt-key,
+ * to the corresponding menu title & menu item values
+ *
+ * the table consists of triplets: { letter, title, item }
+ */
+static const UBYTE altkey_table[] =
+{
+    'A', OPTNMENU, IAPPITEM,    /* Options: Alt-A => Install App */
+    'C', OPTNMENU, RESITEM,     /* Options: Alt-C => Change resolution */
+    'D', FILEMENU, DELTITEM,    /* File: Alt-D => Delete */
+    'I', FILEMENU, SHOWITEM,    /* File: Alt-I => Info/Rename */
+    'N', VIEWMENU, NAMEITEM,    /* View: Alt-N => Sort by Name */
+    'P', VIEWMENU, TYPEITEM,    /* View: Alt-P => Sort by Type */
+    'S', VIEWMENU, ICONITEM,    /* View: Alt-S => Show as Text/Icons */
+    'T', VIEWMENU, DATEITEM,    /* View: Alt-T => Sort by Date */
+    'V', OPTNMENU, SAVEITEM,    /* Options: Alt-V => Save Desktop */
+    'Z', VIEWMENU, SIZEITEM,    /* View: Alt-Z => Sort by Size */
+    0
+};
 
 #if CONF_WITH_EASTER_EGG
 /* easter egg */
@@ -720,12 +736,97 @@ static BOOL check_function_key(WORD thechar)
 }
 
 
+/*
+ * lookup ascii shortcut
+ *
+ * if found, returns menu title & updates 'item'
+ * otherwise returns -1
+ */
+static WORD lookup_ascii_shortcut(WORD ascii, WORD *itemptr)
+{
+    OBJECT *tree = G.a_trees[ADMENU];
+    WORD title = -1, item = -1;
+
+    switch(ascii)
+    {
+#if WITH_CLI != 0
+    case CTL_Z:         /* Start EmuCON */
+        title = FILEMENU;
+        item = CLIITEM;
+        break;
+#endif
+#if CONF_WITH_SHUTDOWN
+    case CTL_Q:         /* Shutdown */
+        title = FILEMENU;
+        item = QUITITEM;
+        break;
+#endif
+    }
+
+    if (item < 0)       /* not found */
+        return -1;
+
+    /* if disabled, treat as not found */
+    if (tree[item].ob_state&DISABLED)
+        return -1;
+
+    *itemptr = item;
+    return title;
+}
+
+
+/*
+ * lookup alt-key shortcut
+ *
+ * if found, returns menu title & updates 'item'
+ * otherwise returns -1
+ */
+static WORD lookup_altkey_shortcut(WORD scancode, WORD *itemptr)
+{
+    KEYTAB *keytab;
+    const UBYTE *p;
+    OBJECT *tree = G.a_trees[ADMENU];
+    WORD altkey, title = -1, item = -1;
+
+    keytab = (KEYTAB *)Keytbl(-1, -1, -1);
+    altkey = keytab->shift[scancode];
+
+    for (p = altkey_table; *p; p += 3)
+    {
+        if (*p == altkey)
+        {
+            title = *(p+1);
+            item = *(p+2);
+            break;
+        }
+    }
+
+    if (item < 0)       /* not found */
+        return -1;
+
+    /* if disabled, treat as not found */
+    if (tree[item].ob_state&DISABLED)
+        return -1;
+
+    *itemptr = item;
+    return title;
+}
+
+
 static WORD hndl_kbd(WORD thechar)
 {
     WNODE *pw;
-    OBJECT *tree = G.a_trees[ADMENU];
-    WORD done = FALSE;
+    WORD done = FALSE, ascii;
     WORD title = -1, item;
+
+    ascii = thechar & 0x00ff;
+    if (ascii == ESC)   /* refresh window */
+    {
+        pw = win_ontop();
+        if (pw)
+            do_refresh(pw);
+        return done;
+    }
 
     if (check_arrow_key(thechar))
         return done;
@@ -733,81 +834,10 @@ static WORD hndl_kbd(WORD thechar)
     if (check_function_key(thechar))
         return done;
 
-    switch(thechar)
-    {
-    case ESCAPE:        /* re-load top window's directory */
-        pw = win_ontop();
-        if (pw)
-            do_refresh(pw);
-        break;
-    case ALTA:          /* Options: Install App */
-        if (!(tree[IAPPITEM].ob_state&DISABLED))
-        {
-            title = OPTNMENU;
-            item = IAPPITEM;
-        }
-        break;
-    case ALTC:          /* Options: Change resolution */
-        if (!(tree[RESITEM].ob_state&DISABLED))
-        {
-            title = OPTNMENU;
-            item = RESITEM;
-        }
-        break;
-    case ALTD:          /* File: Delete */
-        if (!(tree[DELTITEM].ob_state&DISABLED))
-        {
-            title = FILEMENU;
-            item = DELTITEM;
-        }
-        break;
-    case ALTI:          /* File: Info/Rename */
-        if (!(tree[SHOWITEM].ob_state&DISABLED))
-        {
-            title = FILEMENU;
-            item = SHOWITEM;
-        }
-        break;
-    case ALTN:          /* View: Sort by Name */
-        title = VIEWMENU;
-        item = NAMEITEM;
-        break;
-    case ALTP:          /* View: Sort by Type */
-        title = VIEWMENU;
-        item = TYPEITEM;
-        break;
-    case ALTS:          /* View: Show as Text/Icons */
-        title = VIEWMENU;
-        item = ICONITEM;
-        break;
-    case ALTT:          /* View: Sort by Date */
-        title = VIEWMENU;
-        item = DATEITEM;
-        break;
-    case ALTV:          /* Options: Save Desktop */
-        title = OPTNMENU;
-        item = SAVEITEM;
-        break;
-    case ALTZ:          /* View: Sort by Size */
-        title = VIEWMENU;
-        item = SIZEITEM;
-        break;
-#if WITH_CLI != 0
-    case CNTLZ:         /* Start EmuCON */
-        title = FILEMENU;
-        item = CLIITEM;
-        break;
-#endif
-#if CONF_WITH_SHUTDOWN
-    case CNTLQ:         /* Shutdown */
-        if (!(tree[QUITITEM].ob_state&DISABLED))
-        {
-            title = FILEMENU;
-            item = QUITITEM;
-        }
-        break;
-#endif
-    }
+    if (ascii)          /* normal ASCII character (ctl-Z etc) ? */
+        title = lookup_ascii_shortcut(ascii,&item);
+    else                /* alt-key */
+        title = lookup_altkey_shortcut(thechar>>8,&item);
 
     /*
      * actually handle shortcuts
