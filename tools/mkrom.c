@@ -236,6 +236,40 @@ static int copy_stream(FILE* infile, const char* infilename,
     return 1;
 }
 
+/* Append a file into a stream, and pad it with zeros */
+static int append_and_pad(FILE* infile, const char* infilename,
+                          FILE* outfile, const char* outfilename,
+                          size_t target_size, size_t *psource_size)
+{
+    size_t free_size;
+    int ret; /* boolean return value: 0 == error, 1 == OK */
+
+    /* Get the input file size */
+    *psource_size = get_file_size(infile, infilename);
+    if (*psource_size == SIZE_ERROR)
+        return 0;
+
+    /* Check if the input file size is not too big */
+    if (*psource_size > target_size)
+    {
+        fprintf(stderr, "%s: %s is too big: %lu extra bytes\n", g_argv0, infilename, (unsigned long)(*psource_size - target_size));
+        return 0;
+    }
+
+    /* Copy the input file */
+    ret = copy_stream(infile, infilename, outfile, outfilename, *psource_size);
+    if (!ret)
+        return ret;
+
+    /* Pad with zeros */
+    free_size = target_size - *psource_size;
+    ret = write_byte_block(outfile, outfilename, 0, free_size);
+    if (!ret)
+        return ret;
+
+    return 1;
+}
+
 /* Copy and pad with zeros up to target_size */
 static int cmd_pad(FILE* infile, const char* infilename,
                    FILE* outfile, const char* outfilename,
@@ -247,29 +281,11 @@ static int cmd_pad(FILE* infile, const char* infilename,
 
     printf("# Padding %s to %ld KB image into %s\n", infilename, ((long)target_size) / 1024, outfilename);
 
-    /* Get the input file size */
-    source_size = get_file_size(infile, infilename);
-    if (source_size == SIZE_ERROR)
-        return 0;
-
-    /* Check if the input file size is not too big */
-    if (source_size > target_size)
-    {
-        fprintf(stderr, "%s: %s is too big: %lu extra bytes\n", g_argv0, infilename, (unsigned long)(source_size - target_size));
-        return 0;
-    }
-
-    /* Copy the input file */
-    ret = copy_stream(infile, infilename, outfile, outfilename, source_size);
+    ret = append_and_pad(infile, infilename, outfile, outfilename, target_size, &source_size);
     if (!ret)
         return ret;
 
-    /* Pad with zeros */
     free_size = target_size - source_size;
-    ret = write_byte_block(outfile, outfilename, 0, free_size);
-    if (!ret)
-        return ret;
-
     printf("# %s done (%lu bytes free)\n", outfilename, (unsigned long)free_size);
 
     return 1;
