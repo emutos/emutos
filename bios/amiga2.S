@@ -36,6 +36,7 @@ delay:  subq.l  #1,D0                   // Delay loop.
         move.w  d0,0x9a(a0)             // Disable all interrupts.
         move.w  d0,0x9c(a0)             // Clear all pending interrupts.
         move.w  d0,0x96(a0)             // Disable all DMA.
+        bclr.b  #7,0xdaa000             // Disable Gayle interrupts (IDE)
 
         jmp     (a6)                    // Return
 
