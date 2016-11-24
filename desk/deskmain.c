@@ -161,11 +161,6 @@ static const WORD  dura[]=
 static LONG     ad_ptext;
 static LONG     ad_picon;
 
-static WORD     can_iapp;               /* TRUE if INSAPP enabled       */
-static WORD     can_show;               /* TRUE if SHOWITEM enabled     */
-static WORD     can_del;                /* TRUE if DELITEM enabled      */
-
-
 static int can_change_resolution;
 
 static void detect_features(void)
@@ -244,10 +239,6 @@ static void men_update(OBJECT *tree)
     for (item = OPENITEM; item <= PREFITEM; item++)
         menu_ienable(tree, item, 1);
 
-    can_iapp = TRUE;
-    can_show = TRUE;
-    can_del = TRUE;
-
     /* disable some items */
     men_list(tree, ILL_ITEM, FALSE);
 
@@ -263,22 +254,16 @@ static void men_update(OBJECT *tree)
             if (isapp || is_installed(appl))
                 pvalue = ILL_FILE;
             else
-            {
                 pvalue = ILL_DOCU;
-                can_iapp = FALSE;
-            }
             break;
         case AT_ISFOLD:
             pvalue = ILL_FOLD;
-            can_iapp = FALSE;
             break;
         case AT_ISDISK:
             pvalue = (appl->a_aicon == IG_FLOPPY) ? ILL_FDSK : ILL_HDSK;
-            can_iapp = FALSE;
             break;
         case AT_ISTRSH:                 /* Trash */
             pvalue = ILL_TRASH;
-            can_del = FALSE;
             break;
         }
         men_list(tree, pvalue, FALSE);       /* disable certain items */
@@ -296,17 +281,9 @@ static void men_update(OBJECT *tree)
     if (nsel != 1)
     {
         if (nsel)
-        {
             pvalue = ILL_YSEL;
-            can_show = FALSE;
-        }
         else
-        {
             pvalue = ILL_NOSEL;
-            can_show = FALSE;
-            can_del = FALSE;
-            can_iapp = FALSE;
-        }
         men_list(tree, pvalue, FALSE);
     }
 
@@ -746,6 +723,7 @@ static BOOL check_function_key(WORD thechar)
 static WORD hndl_kbd(WORD thechar)
 {
     WNODE *pw;
+    OBJECT *tree = G.a_trees[ADMENU];
     WORD done = FALSE;
     WORD title = -1, item;
 
@@ -763,28 +741,28 @@ static WORD hndl_kbd(WORD thechar)
             do_refresh(pw);
         break;
     case ALTA:          /* Options: Install App */
-        if (can_iapp)       /* if it's ok to install app */
+        if (!(tree[IAPPITEM].ob_state&DISABLED))
         {
             title = OPTNMENU;
             item = IAPPITEM;
         }
         break;
     case ALTC:          /* Options: Change resolution */
-        if (can_change_resolution)
+        if (!(tree[RESITEM].ob_state&DISABLED))
         {
             title = OPTNMENU;
             item = RESITEM;
         }
         break;
     case ALTD:          /* File: Delete */
-        if (can_del)        /* if it's ok to delete */
+        if (!(tree[DELTITEM].ob_state&DISABLED))
         {
             title = FILEMENU;
             item = DELTITEM;
         }
         break;
     case ALTI:          /* File: Info/Rename */
-        if (can_show)       /* if it's ok to show */
+        if (!(tree[SHOWITEM].ob_state&DISABLED))
         {
             title = FILEMENU;
             item = SHOWITEM;
@@ -822,7 +800,7 @@ static WORD hndl_kbd(WORD thechar)
 #endif
 #if CONF_WITH_SHUTDOWN
     case CNTLQ:         /* Shutdown */
-        if (can_shutdown())
+        if (!(tree[QUITITEM].ob_state&DISABLED))
         {
             title = FILEMENU;
             item = QUITITEM;
