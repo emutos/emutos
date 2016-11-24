@@ -28,7 +28,7 @@
 /*
  * Determine if this EmuTOS is built for ROM or RAM.
  */
-#if defined(TARGET_PRG) || defined(TARGET_FLOPPY) || defined(TARGET_COMPRESSED_ROM)
+#if defined(TARGET_PRG) || defined(TARGET_FLOPPY) || defined(TARGET_COMPRESSED_ROM) || defined(TARGET_AMIGA_FLOPPY)
 #  define EMUTOS_LIVES_IN_RAM 1
 # else
 #  define EMUTOS_LIVES_IN_RAM 0
@@ -290,6 +290,13 @@
  * Defaults for the Amiga ROM target.
  */
 #ifdef TARGET_AMIGA_ROM
+# define MACHINE_AMIGA
+#endif
+
+/*
+ * Defaults for the Amiga floppy target.
+ */
+#ifdef TARGET_AMIGA_FLOPPY
 # define MACHINE_AMIGA
 #endif
 

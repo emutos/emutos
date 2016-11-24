@@ -34,7 +34,8 @@ typedef enum
     CMD_PAD,
     CMD_STC,
     CMD_AMIGA,
-    CMD_AMIGA_KICKDISK
+    CMD_AMIGA_KICKDISK,
+    CMD_AMIGA_FLOPPY
 } CMD_TYPE;
 
 /* Global variables */
@@ -531,9 +532,103 @@ static int cmd_amiga_kickdisk(FILE* infile, const char* infilename,
     return 1;
 }
 
+/* Amiga boot floppy */
+static int cmd_amiga_floppy(FILE* bootfile, const char* bootfilename,
+                            FILE* ramtosfile, const char* ramtosfilename,
+                            FILE* outfile, const char* outfilename)
+{
+    int ret; /* boolean return value: 0 == error, 1 == OK */
+    size_t bootblock_size = 1024;
+    size_t floppy_size = 880 * 1024;
+    size_t max_ramtos_size = floppy_size - bootblock_size;
+    size_t boot_size;
+    size_t ramtos_size;
+    size_t free_size;
+    uint32_t checksum;
+    uint32_t big_endian_long;
+    int err; /* Seek error */
+    size_t nwrite;
+
+    printf("# Padding %s and %s to Amiga boot floppy into %s\n", bootfilename, ramtosfilename, outfilename);
+
+    /* Append and pad boot */
+    ret = append_and_pad(bootfile, bootfilename, outfile, outfilename, bootblock_size, &boot_size);
+    if (!ret)
+        return ret;
+
+    /* Append and pad ramtos */
+    ret = append_and_pad(ramtosfile, ramtosfilename, outfile, outfilename, max_ramtos_size, &ramtos_size);
+    if (!ret)
+        return ret;
+    free_size = max_ramtos_size - ramtos_size;
+
+    /* Seek to the ramtos size location (must match amigaboot.S ramtos_size) */
+    err = fseek(outfile, 14, SEEK_SET);
+    if (err != 0)
+    {
+        fprintf(stderr, "%s: %s: %s\n", g_argv0, outfilename, strerror(errno));
+        return 0;
+    }
+
+    /* Write the ramtos size */
+    write_big_endian_long(&big_endian_long, ramtos_size);
+    nwrite = fwrite(&big_endian_long, 1, sizeof big_endian_long, outfile);
+    if (nwrite != sizeof big_endian_long)
+    {
+        fprintf(stderr, "%s: %s: %s\n", g_argv0, outfilename, strerror(errno));
+        return 0;
+    }
+
+    /* Compute the adequate bootblock checksum fixup */
+    ret = compute_amiga_checksum(outfile, outfilename, bootblock_size, &checksum);
+    if (!ret)
+        return ret;
+#if DBG_MKROM
+    printf("# checksum before fixup = 0x%08lx\n", (unsigned long)checksum);
+#endif
+
+    /* Seek to the checksum location */
+    err = fseek(outfile, 4, SEEK_SET);
+    if (err != 0)
+    {
+        fprintf(stderr, "%s: %s: %s\n", g_argv0, outfilename, strerror(errno));
+        return 0;
+    }
+
+    /* Write the checksum fixup */
+    write_big_endian_long(&big_endian_long, 0xffffffff - checksum);
+    nwrite = fwrite(&big_endian_long, 1, sizeof big_endian_long, outfile);
+    if (nwrite != sizeof big_endian_long)
+    {
+        fprintf(stderr, "%s: %s: %s\n", g_argv0, outfilename, strerror(errno));
+        return 0;
+    }
+
+#if DBG_MKROM
+    ret = compute_amiga_checksum(outfile, outfilename, bootblock_size, &checksum);
+    if (!ret)
+        return ret;
+    printf("# checksum  after fixup = 0x%08lx\n", (unsigned long)checksum);
+#endif
+
+    /* Seek to end of bootblock */
+    err = fseek(outfile, bootblock_size, SEEK_SET);
+    if (err != 0)
+    {
+        fprintf(stderr, "%s: %s: %s\n", g_argv0, outfilename, strerror(errno));
+        return 0;
+    }
+
+    printf("# %s done (%lu bytes free)\n", outfilename, (unsigned long)free_size);
+
+    return 1;
+}
+
 /* Main program */
 int main(int argc, char* argv[])
 {
+    const char* bootfilename = NULL;
+    FILE* bootfile = NULL;
     const char* infilename;
     FILE* infile;
     const char* outfilename;
@@ -576,6 +671,14 @@ int main(int argc, char* argv[])
         infilename = argv[2];
         outfilename = argv[3];
     }
+    else if (argc == 5 && !strcmp(argv[1], "amiga-floppy"))
+    {
+        op = CMD_AMIGA_FLOPPY;
+        bootfilename = argv[2];
+        infilename = argv[3];
+        outfilename = argv[4];
+        outmode = "w+b"; /* Computing the checksum requires read/write */
+    }
     else
     {
         fprintf(stderr, "usage:\n");
@@ -591,6 +694,17 @@ int main(int argc, char* argv[])
         fprintf(stderr, "  # Amiga 1000 Kickstart disk\n");
         fprintf(stderr, "  %s amiga-kickdisk <sourcerom> <destination>\n", g_argv0);
         return 1;
+    }
+
+    /* Open the boot file (if present) */
+    if (bootfilename)
+    {
+        bootfile = fopen(bootfilename, "rb");
+        if (bootfile == NULL)
+        {
+            fprintf(stderr, "%s: %s: %s\n", g_argv0, bootfilename, strerror(errno));
+            return 1;
+        }
     }
 
     /* Open the source file */
@@ -627,6 +741,10 @@ int main(int argc, char* argv[])
             ret = cmd_amiga_kickdisk(infile, infilename, outfile, outfilename);
         break;
 
+        case CMD_AMIGA_FLOPPY:
+            ret = cmd_amiga_floppy(bootfile, bootfilename, infile, infilename, outfile, outfilename);
+        break;
+
         default:
             abort(); /* Should not happen */
         break;
@@ -655,6 +773,17 @@ int main(int argc, char* argv[])
     {
         fprintf(stderr, "%s: %s: %s\n", g_argv0, infilename, strerror(errno));
         return 1;
+    }
+
+    /* Close the boot file (if present) */
+    if (bootfilename)
+    {
+        err = fclose(bootfile);
+        if (err != 0)
+        {
+            fprintf(stderr, "%s: %s: %s\n", g_argv0, bootfilename, strerror(errno));
+            return 1;
+        }
     }
 
     return 0;

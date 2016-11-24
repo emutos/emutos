@@ -355,6 +355,7 @@ help:
 	@echo "firebee-prg emutos.prg, a RAM tos for the FireBee"
 	@echo "amiga   $(ROM_AMIGA), EmuTOS ROM for Amiga hardware"
 	@echo "amigakd $(AMIGA_KICKDISK), EmuTOS as Amiga 1000 Kickstart disk"
+	@echo "amigaflop $(EMUTOS_ADF), EmuTOS RAM as Amiga boot floppy"
 	@echo "m548x-dbug $(SREC_M548X_DBUG), EmuTOS-RAM for dBUG on ColdFire Evaluation Boards"
 	@echo "m548x-bas  $(SREC_M548X_BAS), EmuTOS for BaS_gcc on ColdFire Evaluation Boards"
 	@echo "prg     emutos.prg, a RAM tos"
@@ -713,6 +714,27 @@ bootsect.img : obj/bootsect.o obj/bootram.o
 NODEP += mkflop
 mkflop : tools/mkflop.c
 	$(NATIVECC) $< -o $@
+
+#
+# amigaflop
+#
+
+EMUTOS_ADF = emutos.adf
+
+.PHONY: amigaflop
+NODEP += amigaflop
+amigaflop: UNIQUE = $(COUNTRY)
+amigaflop:
+	$(MAKE) DEF='-DTARGET_AMIGA_FLOPPY $(AMIGA_DEFS)' UNIQUE=$(UNIQUE) $(EMUTOS_ADF)
+	@MEMBOT=$$($(SHELL_GET_MEMBOT_RAMTOS_MAP));\
+	echo "# RAM used: $$(($$MEMBOT)) bytes"
+
+$(EMUTOS_ADF): OPTFLAGS = $(SMALL_OPTFLAGS)
+$(EMUTOS_ADF): amigaboot.img ramtos.img mkrom
+	./mkrom amiga-floppy amigaboot.img ramtos.img $@
+
+amigaboot.img: obj/amigaboot.o obj/bootram.o
+	$(LD) $+ -Wl,--oformat,binary -o $@
 
 #
 # Misc utilities
