@@ -38,6 +38,13 @@
 #define CIAAPRA *(volatile UBYTE*)0xbfe001
 #define POTGO *(volatile UWORD*)0xdff034
 #define POTGOR *(volatile UWORD*)0xdff016 /* = POTINP */
+#define INTENAR *(volatile UWORD*)0xdff01c
+#define INTENA  *(volatile UWORD*)0xdff09a
+
+/* Gayle registers */
+#define GAYLE_ID *(volatile BYTE*)0xde1000
+#define INTENA_MIRROR *(volatile UWORD*)0xde109a
+#define FAT_GARY_TIMEOUT *(volatile BYTE*)0xde0000
 
 /******************************************************************************/
 /* Machine detection                                                          */
@@ -45,14 +52,68 @@
 
 int has_gayle;
 
+/* Detect A600 / A1200 Gayle chip.
+ * Freely inspired from AROS ReadGayle().
+ */
+static void detect_gayle(void)
+{
+    UWORD save_intena;
+    UBYTE gayle_id;
+    int i;
+
+    has_gayle = 0;
+
+    /* Check if 0xde1000 is a mirror of 0xdff000 custom chips */
+    save_intena = INTENAR;
+    INTENA_MIRROR = 0x7fff; /* Disable interrupts using mirror */
+    if (INTENAR == 0)
+    {
+        /* Interrupts have been disabled. Maybe mirror of INTENA. */
+        INTENA_MIRROR = 0x8001; /* Enable TBE interrupt */
+        if (INTENAR != 0)
+        {
+            /* Interrupt was enabled. This is an INTENA mirror. */
+            /* Restore interrupts */
+            INTENA = 0x7fff;
+            INTENA = 0x8000 | save_intena;
+
+            /* So this is not a Gayle */
+            return;
+        }
+    }
+
+    /* On A300, we must clear the Fat Gary Timeout register
+     * to avoid reading a bogus 0x80 Gayle ID */
+    UNUSED(FAT_GARY_TIMEOUT);
+
+    gayle_id = 0;
+    GAYLE_ID = 0; /* Reset ID register */
+    for (i = 0; i < 8; i++)
+    {
+        gayle_id <<= 1;
+        gayle_id |= (GAYLE_ID & 0x80) ? 1 : 0;
+    }
+
+    if (gayle_id == 0 || gayle_id == 0xff)
+    {
+        /* Bogus ID */
+        return;
+    }
+
+    /* Gayle ID should be 0xd0 on ECS, or 0xd1 on AGA */
+    KDEBUG(("gayle_id = 0x%02x\n", gayle_id));
+
+    has_gayle = 1;
+}
+
 void amiga_machine_detect(void)
 {
+    detect_gayle();
+    KDEBUG(("has_gayle = %d\n", has_gayle));
+
 #if CONF_WITH_AROS
     aros_machine_detect();
-#else
-    has_gayle = (mcpu >= 20);
 #endif
-    KDEBUG(("has_gayle = %d\n", has_gayle));
 }
 
 #if CONF_WITH_ALT_RAM

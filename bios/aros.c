@@ -27,7 +27,6 @@
 
 /* The following functions are defined in aros2.S */
 ULONG MemoryTest(void *address, void *endAddress, ULONG blockSize);
-ULONG ReadGayle(void);
 
 /******************************************************************************/
 /* Compatibility macros and types                                             */
@@ -93,9 +92,6 @@ void aros_machine_detect(void)
     /* Do we have a 32-bit address bus? */
     if (MemoryTest((APTR)0x08000000, (APTR)0x08000000, 0x00100000) == 0)
         SysBase->AttnFlags |= AFF_ADDR32;
-
-    /* Do we have Gayle? */
-    has_gayle = ReadGayle() > 0;
 }
 
 #if CONF_WITH_ALT_RAM
