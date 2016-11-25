@@ -501,7 +501,7 @@ cart:
 TOCLEAN += *.rom
 
 ROM_AMIGA = emutos-amiga.rom
-AMIGA_DEFS = -DMACHINE_AMIGA
+AMIGA_DEFS =
 
 # AROS support is disabled by default due to license issues
 AROS = 0
@@ -515,7 +515,7 @@ NODEP += amiga
 amiga: UNIQUE = $(COUNTRY)
 amiga:
 	@echo "# Building Amiga EmuTOS into $(ROM_AMIGA)"
-	$(MAKE) DEF='$(AMIGA_DEFS)' UNIQUE=$(UNIQUE) $(ROM_AMIGA)
+	$(MAKE) DEF='-DTARGET_AMIGA_ROM $(AMIGA_DEFS)' UNIQUE=$(UNIQUE) $(ROM_AMIGA)
 	@MEMBOT=$$($(SHELL_GET_MEMBOT_EMUTOS_MAP));\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS162))) bytes more than TOS 1.62)"
 

@@ -287,7 +287,14 @@
 #endif
 
 /*
- * Defaults for the Amiga target.
+ * Defaults for the Amiga ROM target.
+ */
+#ifdef TARGET_AMIGA_ROM
+# define MACHINE_AMIGA
+#endif
+
+/*
+ * Defaults for the Amiga machine.
  */
 #ifdef MACHINE_AMIGA
 # ifndef CONF_ATARI_HARDWARE
