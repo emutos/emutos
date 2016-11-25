@@ -69,7 +69,6 @@ typedef struct {
 #define menu_text(tree,inum,ptext) (((tree)+(inum))->ob_spec = ptext)
 
 
-#define CTL_Z   ('Z'-0x40)
 #define ESC     0x1b
 
 
@@ -136,27 +135,6 @@ static const WORD arrow_table[] =
     0
 };
 
-
-/*
- * table to map the letter corresponding to the scancode from an alt-key,
- * to the corresponding menu title & menu item values
- *
- * the table consists of triplets: { letter, title, item }
- */
-static const UBYTE altkey_table[] =
-{
-    'A', OPTNMENU, IAPPITEM,    /* Options: Alt-A => Install App */
-    'C', OPTNMENU, RESITEM,     /* Options: Alt-C => Change resolution */
-    'D', FILEMENU, DELTITEM,    /* File: Alt-D => Delete */
-    'I', FILEMENU, SHOWITEM,    /* File: Alt-I => Info/Rename */
-    'N', VIEWMENU, NAMEITEM,    /* View: Alt-N => Sort by Name */
-    'P', VIEWMENU, TYPEITEM,    /* View: Alt-P => Sort by Type */
-    'S', VIEWMENU, ICONITEM,    /* View: Alt-S => Show as Text/Icons */
-    'T', VIEWMENU, DATEITEM,    /* View: Alt-T => Sort by Date */
-    'V', OPTNMENU, SAVEITEM,    /* Options: Alt-V => Save Desktop */
-    'Z', VIEWMENU, SIZEITEM,    /* View: Alt-Z => Sort by Size */
-    0
-};
 
 #if CONF_WITH_EASTER_EGG
 /* easter egg */
@@ -737,6 +715,59 @@ static BOOL check_function_key(WORD thechar)
 
 
 /*
+ *  Scan desk menu for matching shortcut
+ *
+ *  Overview:
+ *  A menu tree has two sides, sometimes referred to as BAR and DROPDOWNS.
+ *  The BAR side contains objects corresponding to the menu titles; the
+ *  DROPDOWNS side contains the menu item objects.
+ *
+ *  We scan down both sides of the menu tree at the same time.  On the
+ *  items side, we scan each G_STRING menu item for the specified shortcut.
+ *  If a match is found, the object numbers for title and item are
+ *  returned.  If there is no match, -1 is returned.
+ *
+ *  Examples:
+ *      to scan for ctl-X: set 'type' to '^', 'shortcut' to 'X'
+ *      to scan for alt-Y: set 'type' to 0x07, 'shortcut' to 'Y'
+ */
+static WORD scan_menu(BYTE type, BYTE shortcut, WORD *itemptr)
+{
+    OBJECT *tree = G.a_trees[ADMENU];
+    OBJECT *obj;
+    BYTE *text, *p;
+    WORD title_root, item_root, title, item;
+
+    title_root = tree[tree[ROOT].ob_head].ob_head;
+    item_root = tree[tree[ROOT].ob_tail].ob_head;
+
+    for (title = tree[title_root].ob_head; title != title_root;
+                    title = tree[title].ob_next, item_root = tree[item_root].ob_next)
+    {
+        for (item = tree[item_root].ob_head; item != item_root; item = tree[item].ob_next)
+        {
+            obj = &tree[item];
+            if (obj->ob_state & DISABLED)               /* ignore disabled items */
+                continue;
+            if ((obj->ob_type & 0x00ff) != G_STRING)    /* all items are strings */
+                continue;
+            text = (BYTE *)obj->ob_spec;
+            p = strchr(text,type);                      /* look for marker */
+            if (!p)
+                continue;
+            if (*(p+1) == shortcut)
+            {
+                *itemptr = item;
+                return title;
+            }
+        }
+    }
+
+    return -1;
+}
+
+
+/*
  * lookup ascii shortcut
  *
  * if found, returns menu title & updates 'item'
@@ -744,34 +775,10 @@ static BOOL check_function_key(WORD thechar)
  */
 static WORD lookup_ascii_shortcut(WORD ascii, WORD *itemptr)
 {
-    OBJECT *tree = G.a_trees[ADMENU];
-    WORD title = -1, item = -1;
-
-    switch(ascii)
-    {
-#if WITH_CLI != 0
-    case CTL_Z:         /* Start EmuCON */
-        title = FILEMENU;
-        item = CLIITEM;
-        break;
-#endif
-#if CONF_WITH_SHUTDOWN
-    case CTL_Q:         /* Shutdown */
-        title = FILEMENU;
-        item = QUITITEM;
-        break;
-#endif
-    }
-
-    if (item < 0)       /* not found */
+    if (ascii >= 0x20)      /* we only handle control characters */
         return -1;
 
-    /* if disabled, treat as not found */
-    if (tree[item].ob_state&DISABLED)
-        return -1;
-
-    *itemptr = item;
-    return title;
+    return scan_menu('^', ascii|0x40, itemptr);
 }
 
 
@@ -784,32 +791,12 @@ static WORD lookup_ascii_shortcut(WORD ascii, WORD *itemptr)
 static WORD lookup_altkey_shortcut(WORD scancode, WORD *itemptr)
 {
     KEYTAB *keytab;
-    const UBYTE *p;
-    OBJECT *tree = G.a_trees[ADMENU];
-    WORD altkey, title = -1, item = -1;
+    WORD altkey;
 
     keytab = (KEYTAB *)Keytbl(-1, -1, -1);
     altkey = keytab->shift[scancode];
 
-    for (p = altkey_table; *p; p += 3)
-    {
-        if (*p == altkey)
-        {
-            title = *(p+1);
-            item = *(p+2);
-            break;
-        }
-    }
-
-    if (item < 0)       /* not found */
-        return -1;
-
-    /* if disabled, treat as not found */
-    if (tree[item].ob_state&DISABLED)
-        return -1;
-
-    *itemptr = item;
-    return title;
+    return scan_menu(0x07, altkey, itemptr);
 }
 
 
