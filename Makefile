@@ -515,11 +515,10 @@ NODEP += amiga
 amiga: UNIQUE = $(COUNTRY)
 amiga:
 	@echo "# Building Amiga EmuTOS into $(ROM_AMIGA)"
-	$(MAKE) UNIQUE=$(UNIQUE) $(ROM_AMIGA)
+	$(MAKE) DEF='$(AMIGA_DEFS)' UNIQUE=$(UNIQUE) $(ROM_AMIGA)
 	@MEMBOT=$$($(SHELL_GET_MEMBOT_EMUTOS_MAP));\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS162))) bytes more than TOS 1.62)"
 
-$(ROM_AMIGA): override DEF += $(AMIGA_DEFS)
 $(ROM_AMIGA): VMA = 0x00fc0000
 $(ROM_AMIGA): emutos.img mkrom
 	./mkrom amiga $< $(ROM_AMIGA)
