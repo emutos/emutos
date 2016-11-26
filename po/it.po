@@ -529,7 +529,7 @@ msgstr "INSTALLA APPLICAZIONE"
 
 #: desk/desk_rsc.c:926
 msgid "Boot status:"
-msgstr "Stato avvio"
+msgstr "Stato avvio:"
 
 #: desk/desk_rsc.c:938
 msgid "Auto"
@@ -561,7 +561,7 @@ msgstr "Parametro:"
 
 #: desk/desk_rsc.c:1022
 msgid "Full path"
-msgstr "Percorso completo"
+msgstr "Percorso"
 
 #: desk/desk_rsc.c:1028
 msgid "File name"
