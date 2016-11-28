@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: bios/bios.c:696
+#: bios/bios.c:698
 msgid ""
 "System halted!\n"
 msgstr ""
@@ -549,7 +549,7 @@ msgstr "Anwendungs-Typen:"
 
 #: desk/desk_rsc.c:986
 msgid "Default dir:"
-msgstr "Standardverzeichnis:"
+msgstr "Startordner:"
 
 #: desk/desk_rsc.c:998
 msgid "Application"
@@ -1251,15 +1251,15 @@ msgstr "EINGABE um weiter zu machen ..."
 msgid "--More--"
 msgstr "--Mehr--"
 
-#: cli/cmdmain.c:61
-msgid "Welcome to EmuCON2"
-msgstr "Willkommen bei EmuCON2"
-
 #: cli/cmdmain.c:62
+msgid "Welcome to EmuCON2 version "
+msgstr "Willkommen bei EmuCON2 Version "
+
+#: cli/cmdmain.c:63
 msgid "Type HELP for builtin commands"
 msgstr "HELP zeigt Hilfe zu eingebauten Kommandos"
 
-#: cli/cmdmain.c:81
+#: cli/cmdmain.c:82
 msgid "warning: no history buffers"
 msgstr "Warnung: Keine Verlaufsspeicher"
 
@@ -1338,4 +1338,3 @@ msgstr "Falsche Zahl von Parametern"
 #: cli/cmdutil.c:105
 msgid "error code "
 msgstr "Fehlercode "
-
