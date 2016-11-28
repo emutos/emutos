@@ -1,6 +1,6 @@
-EmuTOS - Amiga version
+EmuTOS - Amiga ROM version
 
-This EmuTOS version runs on Amiga hardware.
+This EmuTOS version is a ROM for Amiga hardware.
 
 emutos-amiga.rom - English ROM
 emutos-kickdisk.adf - English Amiga 1000 Kickstart disk

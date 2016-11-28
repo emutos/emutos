@@ -136,21 +136,21 @@ release-firebee:
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_FIREBEE).zip $(RELEASE_FIREBEE)
 	rm -r $(RELEASE_DIR)/$(RELEASE_FIREBEE)
 
-.PHONY: release-amiga
-NODEP += release-amiga
-RELEASE_AMIGA = emutos-amiga-$(VERSION)
-release-amiga:
+.PHONY: release-amiga-rom
+NODEP += release-amiga-rom
+RELEASE_AMIGA_ROM = emutos-amiga-rom-$(VERSION)
+release-amiga-rom:
 	$(MAKE) clean
 	$(MAKE) amigakd
-	mkdir $(RELEASE_DIR)/$(RELEASE_AMIGA)
-	cp $(ROM_AMIGA) $(RELEASE_DIR)/$(RELEASE_AMIGA)
-	cp $(AMIGA_KICKDISK) $(RELEASE_DIR)/$(RELEASE_AMIGA)
-	cat doc/readme-amiga.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_AMIGA)/readme.txt
-	mkdir $(RELEASE_DIR)/$(RELEASE_AMIGA)/doc
-	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_AMIGA)/doc
-	find $(RELEASE_DIR)/$(RELEASE_AMIGA) -name '*.txt' -exec unix2dos '{}' ';'
-	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_AMIGA).zip $(RELEASE_AMIGA)
-	rm -r $(RELEASE_DIR)/$(RELEASE_AMIGA)
+	mkdir $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)
+	cp $(ROM_AMIGA) $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)
+	cp $(AMIGA_KICKDISK) $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)
+	cat doc/readme-amiga-rom.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)/readme.txt
+	mkdir $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)/doc
+	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)/doc
+	find $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM) -name '*.txt' -exec unix2dos '{}' ';'
+	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_AMIGA_ROM).zip $(RELEASE_AMIGA_ROM)
+	rm -r $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)
 
 .PHONY: release-m548x-dbug
 NODEP += release-m548x-dbug
@@ -230,7 +230,7 @@ release-emucon:
 NODEP += release
 release: distclean release-clean release-mkdir \
   release-src release-512k release-256k release-192k release-cartridge \
-  release-aranym release-firebee release-amiga release-m548x-dbug \
+  release-aranym release-firebee release-amiga-rom release-m548x-dbug \
   release-m548x-bas release-prg release-floppy release-emucon
 	$(MAKE) clean
 	@echo '# Packages successfully generated inside $(RELEASE_DIR)'
