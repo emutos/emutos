@@ -626,104 +626,124 @@ static WORD inf_which(OBJECT *tree, WORD baseobj, WORD numobj)
 
 
 /*
- * Handle preferences dialog
+ * Handle preferences dialogs
  */
 WORD inf_pref(void)
 {
-    OBJECT *tree;
+    OBJECT *tree1 = G.a_trees[ADSETPRE];
+    OBJECT *tree2 = G.a_trees[ADSETPR2];
     WORD oldtime, olddate;
     WORD sndefpref;
-    WORD rbld;
+    WORD button;
 
-    tree = G.a_trees[ADSETPRE];
-    rbld = FALSE;
+    /*
+     * handle dialog 1
+     */
 
     /* first, deselect all objects */
-    deselect_all(tree);
+    deselect_all(tree1);
 
     /* select buttons corresponding to current state */
     if (G.g_cdelepref)
-        tree[SPCDYES].ob_state |= SELECTED;
+        tree1[SPCDYES].ob_state |= SELECTED;
     else
-        tree[SPCDNO].ob_state |= SELECTED;
+        tree1[SPCDNO].ob_state |= SELECTED;
 
     if (G.g_ccopypref)
-        tree[SPCCYES].ob_state |= SELECTED;
+        tree1[SPCCYES].ob_state |= SELECTED;
     else
-        tree[SPCCNO].ob_state |= SELECTED;
+        tree1[SPCCNO].ob_state |= SELECTED;
 
     if (G.g_covwrpref)
-        tree[SPCOWYES].ob_state |= SELECTED;
+        tree1[SPCOWYES].ob_state |= SELECTED;
     else
-        tree[SPCOWNO].ob_state |= SELECTED;
-
-    G.g_cdclkpref = evnt_dclick(0, FALSE);
-    tree[SPDC1+G.g_cdclkpref].ob_state |= SELECTED;
-
-    if (G.g_cmclkpref)
-        tree[SPMNCLKY].ob_state |= SELECTED;
-    else
-        tree[SPMNCLKN].ob_state |= SELECTED;
+        tree1[SPCOWNO].ob_state |= SELECTED;
 
     sndefpref = !sound(FALSE, 0xFFFF, 0);
     if (sndefpref)
-        tree[SPSEYES].ob_state |= SELECTED;
+        tree1[SPSEYES].ob_state |= SELECTED;
     else
-        tree[SPSENO].ob_state |= SELECTED;
-
-    switch(G.g_ctimeform)
-    {
-    case TIMEFORM_12H:
-        tree[SPTF12HR].ob_state |= SELECTED;
-        break;
-    case TIMEFORM_24H:
-        tree[SPTF24HR].ob_state |= SELECTED;
-        break;
-    default:
-        tree[SPTF_DEF].ob_state |= SELECTED;
-        break;
-    }
-
-    switch(G.g_cdateform)
-    {
-    case DATEFORM_MDY:
-        tree[SPDFMMDD].ob_state |= SELECTED;
-        break;
-    case DATEFORM_DMY:
-        tree[SPDFDDMM].ob_state |= SELECTED;
-        break;
-    default:
-        tree[SPDF_DEF].ob_state |= SELECTED;
-        break;
-    }
-
-    oldtime = G.g_ctimeform;    /* remember current formats */
-    olddate = G.g_cdateform;
+        tree1[SPSENO].ob_state |= SELECTED;
 
     /* allow user to select preferences */
-    inf_show(tree, 0);
+    inf_show(tree1, 0);
+    button = inf_what(tree1,SPOK,SPCNCL);
 
-    if (inf_what(tree, SPOK, SPCNCL))
+    /*
+     * handle dialog 2 if necessary
+     */
+    if (button < 0)         /* user selected More */
     {
-        G.g_cdelepref = inf_which(tree, SPCDYES, 2);
-        G.g_ccopypref = inf_which(tree, SPCCYES, 2);
-        G.g_covwrpref = inf_which(tree, SPCOWYES, 2);
-        G.g_cdclkpref = inf_gindex(tree, SPDC1, 5);
-        G.g_cdclkpref = evnt_dclick(G.g_cdclkpref, TRUE);
-        G.g_cmclkpref = inf_which(tree, SPMNCLKY, 2);
-        G.g_cmclkpref = menu_click(G.g_cmclkpref, TRUE);
-        sndefpref = inf_which(tree, SPSEYES, 2);
+        tree2 = G.a_trees[ADSETPR2];
+
+        /* first, deselect all objects */
+        deselect_all(tree2);
+
+        G.g_cdclkpref = evnt_dclick(0, FALSE);
+        tree2[SPDC1+G.g_cdclkpref].ob_state |= SELECTED;
+
+        if (G.g_cmclkpref)
+            tree2[SPMNCLKY].ob_state |= SELECTED;
+        else
+            tree2[SPMNCLKN].ob_state |= SELECTED;
+
+        switch(G.g_ctimeform)
+        {
+        case TIMEFORM_12H:
+            tree2[SPTF12HR].ob_state |= SELECTED;
+            break;
+        case TIMEFORM_24H:
+            tree2[SPTF24HR].ob_state |= SELECTED;
+            break;
+        default:
+            tree2[SPTF_DEF].ob_state |= SELECTED;
+            break;
+        }
+
+        switch(G.g_cdateform)
+        {
+        case DATEFORM_MDY:
+            tree2[SPDFMMDD].ob_state |= SELECTED;
+            break;
+        case DATEFORM_DMY:
+            tree2[SPDFDDMM].ob_state |= SELECTED;
+            break;
+        default:
+            tree2[SPDF_DEF].ob_state |= SELECTED;
+            break;
+        }
+
+        /* allow user to select preferences */
+        inf_show(tree2, 0);
+        button = inf_what(tree2, SPOK2, SPCNCL2);
+    }
+
+    if (button)
+    {
+        G.g_cdelepref = inf_which(tree1, SPCDYES, 2);
+        G.g_ccopypref = inf_which(tree1, SPCCYES, 2);
+        G.g_covwrpref = inf_which(tree1, SPCOWYES, 2);
+        sndefpref = inf_which(tree1, SPSEYES, 2);
         sound(FALSE, !sndefpref, 0);
+
+        G.g_cdclkpref = inf_gindex(tree2, SPDC1, 5);
+        G.g_cdclkpref = evnt_dclick(G.g_cdclkpref, TRUE);
+        G.g_cmclkpref = inf_which(tree2, SPMNCLKY, 2);
+        G.g_cmclkpref = menu_click(G.g_cmclkpref, TRUE);
+
         /*
          * the following assumes that the buttons are in the
          * left-to-right order: default, 12hour, 24hour
          */
-        G.g_ctimeform = inf_which(tree, SPTF_DEF, 3);
+        oldtime = G.g_ctimeform;
+        G.g_ctimeform = inf_which(tree2, SPTF_DEF, 3);
+
         /*
          * the following assumes that the buttons are in the
          * left-to-right order: default, mmddyy, ddmmyy
          */
-        G.g_cdateform = inf_which(tree, SPDF_DEF, 3);
+        olddate = G.g_cdateform;
+        G.g_cdateform = inf_which(tree2, SPDF_DEF, 3);
 
         /*
          * if the current view is as text, and the date or time
@@ -732,10 +752,10 @@ WORD inf_pref(void)
          */
         if (G.g_iview == V_TEXT)
             if ((G.g_ctimeform != oldtime) || (G.g_cdateform != olddate))
-                rbld = TRUE;
+                return TRUE;
     }
 
-    return rbld;
+    return FALSE;
 }
 
 
