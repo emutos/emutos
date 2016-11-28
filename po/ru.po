@@ -529,7 +529,7 @@ msgstr "УСТАНОВИТЬ ПРОГРАММУ"
 
 #: desk/desk_rsc.c:926
 msgid "Boot status:"
-msgstr "Загрузочный статус:"
+msgstr "Статус загрузки:"
 
 #: desk/desk_rsc.c:938
 msgid "Auto"
@@ -545,15 +545,15 @@ msgstr "Типы программ:"
 
 #: desk/desk_rsc.c:986
 msgid "Default dir:"
-msgstr "Папка по умолчанию:"
+msgstr "Папка запуска:"
 
 #: desk/desk_rsc.c:998
 msgid "Application"
-msgstr "Программа"
+msgstr "Программы"
 
 #: desk/desk_rsc.c:1004
 msgid "Window"
-msgstr "Окно"
+msgstr "Текущая"
 
 #: desk/desk_rsc.c:1010
 msgid "Parameter:"
@@ -561,7 +561,7 @@ msgstr "Параметр:"
 
 #: desk/desk_rsc.c:1022
 msgid "Full path"
-msgstr "Полный путь"
+msgstr "ПолныйПуть"
 
 #: desk/desk_rsc.c:1028
 msgid "File name"
