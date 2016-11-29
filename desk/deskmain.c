@@ -73,6 +73,14 @@ typedef struct {
 
 
 /*
+ * the following will always be true unless unlikely changes occur
+ * in the desk menu
+ */
+#define TITLE_ROOT      (DESKMENU-1)
+#define ITEM_ROOT       (ABOUITEM-1)
+
+
+/*
  * flags for communication between do_viewmenu(), desk_all()
  */
 #define VIEW_HAS_CHANGED    0x0001
@@ -738,8 +746,8 @@ static WORD scan_menu(BYTE type, BYTE shortcut, WORD *itemptr)
     BYTE *text, *p;
     WORD title_root, item_root, title, item;
 
-    title_root = tree[tree[ROOT].ob_head].ob_head;
-    item_root = tree[tree[ROOT].ob_tail].ob_head;
+    title_root = TITLE_ROOT;
+    item_root = ITEM_ROOT;
 
     for (title = tree[title_root].ob_head; title != title_root;
                     title = tree[title].ob_next, item_root = tree[item_root].ob_next)
