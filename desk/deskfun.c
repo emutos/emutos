@@ -52,7 +52,7 @@
  */
 WORD fun_alert(WORD defbut, WORD stnum)
 {
-    rsrc_gaddr(R_STRING, stnum, (void **)&G.a_alert);
+    rsrc_gaddr_rom(R_STRING, stnum, (void **)&G.a_alert);
     return form_alert(defbut, G.a_alert);
 }
 
@@ -62,7 +62,7 @@ WORD fun_alert(WORD defbut, WORD stnum)
  */
 WORD fun_alert_merge(WORD defbut, WORD stnum, BYTE merge)
 {
-    rsrc_gaddr(R_STRING, stnum, (void **)&G.a_alert);
+    rsrc_gaddr_rom(R_STRING, stnum, (void **)&G.a_alert);
     strcpy(G.g_2text, G.a_alert);
     sprintf(G.g_1text, G.g_2text, merge);
     G.a_alert = G.g_1text;

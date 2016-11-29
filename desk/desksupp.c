@@ -415,7 +415,7 @@ static WORD show_buf(const char *s,LONG len)
         {
             if (++linecount >= pagesize)
             {
-                rsrc_gaddr(R_STRING,STMORE,(void **)&msg);
+                rsrc_gaddr_rom(R_STRING,STMORE,(void **)&msg);
                 dos_conws(msg);             /* "-More-" */
                 while(1)
                 {
@@ -491,7 +491,7 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
 
     if (rc <= 0L)   /* not user quit */
     {
-        rsrc_gaddr(R_STRING,(rc==0L)?STEOF:STFRE,(void **)&msg);
+        rsrc_gaddr_rom(R_STRING,(rc==0L)?STEOF:STFRE,(void **)&msg);
         blank_line();
         dos_conws(msg); /* "-End of file-" or "-File read error-" */
         dos_rawcin();

@@ -157,12 +157,11 @@ WORD wind_calc(WORD wctype, UWORD kind, WORD x, WORD y, WORD w, WORD h,
 /*
 WORD rsrc_load(const BYTE *rsname);
 WORD rsrc_free(void);
-*/
-WORD rsrc_gaddr(WORD rstype, WORD rsid, void **paddr);  /* see deskmain.c */
-/*
+WORD rsrc_gaddr(WORD rstype, WORD rsid, void **paddr);
 WORD rsrc_saddr(WORD rstype, WORD rsid, void *lngval);
 */
 WORD rsrc_obfix(OBJECT *tree, WORD obj);
+WORD rsrc_gaddr_rom(WORD rstype, WORD rsid, void **paddr);  /* see deskmain.c */
 
 
 /*

@@ -1438,7 +1438,7 @@ static void desk_xlate_fix(void)
 }
 
 /* Fake a rsrc_gaddr for the ROM desktop: */
-WORD rsrc_gaddr(WORD rstype, WORD rsid, void **paddr)
+WORD rsrc_gaddr_rom(WORD rstype, WORD rsid, void **paddr)
 {
     switch(rstype)
     {
@@ -1452,7 +1452,7 @@ WORD rsrc_gaddr(WORD rstype, WORD rsid, void **paddr)
         *paddr = (void **)gettext( desk_rs_fstr[rsid] );
         break;
     default:
-        KDEBUG(("FIXME: unsupported (faked) rsrc_gaddr type!\n"));
+        KDEBUG(("rsrc_gaddr_rom(): unsupported resource type!\n"));
         return FALSE;
     }
 
@@ -1491,7 +1491,7 @@ WORD deskmain(void)
     /* initialize menus and dialogs */
     for (ii = 0; ii < RS_NTREE; ii++)
     {
-        rsrc_gaddr(R_TREE, ii, (void **)&G.a_trees[ii]);
+        rsrc_gaddr_rom(R_TREE, ii, (void **)&G.a_trees[ii]);
         centre_title(G.a_trees[ii]);
     }
 
@@ -1500,8 +1500,8 @@ WORD deskmain(void)
         app_tran(ii);
     }
 
-    rsrc_gaddr(R_STRING, STASTEXT, (void **)&ad_ptext);
-    rsrc_gaddr(R_STRING, STASICON, (void **)&ad_picon);
+    rsrc_gaddr_rom(R_STRING, STASTEXT, (void **)&ad_ptext);
+    rsrc_gaddr_rom(R_STRING, STASICON, (void **)&ad_picon);
 
     /* These strings are used by dr_code.  We can't get to the
      * resource in dr_code because that would reenter AES, so we

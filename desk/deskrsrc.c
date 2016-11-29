@@ -32,6 +32,6 @@ BYTE *ini_str(WORD stnum)
 {
     BYTE *str;
 
-    rsrc_gaddr(R_STRING, stnum, (void **)&str);
+    rsrc_gaddr_rom(R_STRING, stnum, (void **)&str);
     return str;
 }
