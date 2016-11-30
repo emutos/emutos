@@ -21,6 +21,7 @@
 #include "struct.h"
 #include "basepage.h"
 #include "obdefs.h"
+#include "rsdefs.h"
 #include "gemlib.h"
 #include "gem_rsc.h"
 
@@ -36,7 +37,7 @@
 /*
  * defines & typedefs
  */
-                                    /* these must agree with rshdr */
+                                    /* these must agree with RSHDR (see rsdefs.h) */
 #define RT_VRSN     0
 #define RT_OB       1
 #define RT_TEDINFO  2
@@ -55,31 +56,6 @@
 #define R_NSTRING   15
 #define R_IMAGES    16
 
-typedef struct rshdr
-{
-    WORD    rsh_vrsn;       /* must be same order as RT_xxx */
-    WORD    rsh_object;
-    WORD    rsh_tedinfo;
-    WORD    rsh_iconblk;    /* list of ICONBLKS             */
-    WORD    rsh_bitblk;
-    WORD    rsh_frstr;
-    WORD    rsh_string;
-    WORD    rsh_imdata;     /* image data                   */
-    WORD    rsh_frimg;
-    WORD    rsh_trindex;
-    WORD    rsh_nobs;       /* counts of various structs    */
-    WORD    rsh_ntree;
-    WORD    rsh_nted;
-    WORD    rsh_nib;
-    WORD    rsh_nbb;
-    WORD    rsh_nstring;
-    WORD    rsh_nimages;
-    WORD    rsh_rssize;     /* total bytes in resource      */
-} RSHDR;
-
-/* definitions for rsh_vrsn */
-#define NEW_FORMAT_RSC  0x0004          /* this bit set indicates a new-format */
-                                        /* resource file (not yet supported)   */
 
 /* type definitions for use by an application when calling      */
 /*  rsrc_gaddr and rsrc_saddr                                   */
