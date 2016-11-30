@@ -36,9 +36,6 @@
 /*
  * defines & typedefs
  */
-#define RMODE_RD    0
-#define SMODE       0               /* seek mode is absolute offset */
-
                                     /* these must agree with rshdr */
 #define RT_VRSN     0
 #define RT_OB       1
@@ -440,7 +437,7 @@ static WORD rs_readit(AESGLOBAL *pglobal,UWORD fd)
         return FALSE;
 
     /* read it all in */
-    if (dos_lseek(fd, SMODE, 0x0L) < 0L)
+    if (dos_lseek(fd, 0, 0x0L) < 0L)    /* mode 0: absolute offset */
         return FALSE;
     if (dos_read(fd, rslsize, (void *)rs_hdr.base) != rslsize)
         return FALSE;           /* error or short read */
@@ -496,7 +493,7 @@ WORD rs_load(AESGLOBAL *pglobal, LONG rsfname)
     if (!sh_find(tmprsfname))
         return FALSE;
 
-    dosrc = dos_open((BYTE *)tmprsfname,RMODE_RD);
+    dosrc = dos_open((BYTE *)tmprsfname,0); /* mode 0: read only */
     if (dosrc < 0L)
         return FALSE;
     fd = (UWORD)dosrc;
