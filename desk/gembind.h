@@ -135,21 +135,18 @@ extern LONG     addr_out[AO_SIZE];
 
 #define RET_CODE int_out[0]
                                         /* application lib parameters   */
-#define AP_VERSION global[0]
-#define AP_COUNT global[1]
-#define AP_ID global[2]
-#define AP_LOPRIVATE global[3]
-#define AP_HIPRIVATE global[4]
-#define AP_LOPNAME global[5]            /* long ptr. to tree base in rsc*/
-#define AP_HIPNAME global[6]
-#define AP_LO1RESV global[7]            /* long address of memory alloc.*/
-#define AP_HI1RESV global[8]
-#define AP_LO2RESV global[9]            /* length of memory allocated   */
-#define AP_HI2RESV global[10]           /* colors available on screen   */
-#define AP_LO3RESV global[11]
-#define AP_HI3RESV global[12]
-#define AP_LO4RESV global[13]
-#define AP_HI4RESV global[14]
+                                        /* AES global array */
+#define AP_VERSION global[0]                /* AES version */
+#define AP_COUNT   global[1]                /* max # of concurrent applications */
+#define AP_ID      global[2]                /* application id */
+#define AP_PRIVATE (*(LONG *)&global[3])    /* for application use */
+#define AP_PTREE   (*(BYTE **)&global[5])   /* ptr to array of tree addresses */
+                                        /* the following usage is not advertised */
+#define AP_1RESV   (*(BYTE **)&global[7])   /* address of rsc file in memory */
+#define AP_2RESV0  global[9]                /* length of rsc file */
+#define AP_2RESV1  global[10]               /* # of colour planes on screen */
+#define AP_3RESV   (*(BYTE **)&global[11])  /* ptr to AES global area D (struct THEGLO) */
+#define AP_4RESV   (*(LONG *)&global[13])   /* used in AES 4.00 */
 
 #define AP_GLSIZE int_out[1]
 

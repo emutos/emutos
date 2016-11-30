@@ -11,15 +11,17 @@
 #define GEMRSLIB_H
 
 typedef struct aesglobal {
-    WORD ap_version;
-    WORD ap_count;
-    WORD ap_id;
-    LONG ap_private;
-    LONG ap_ptree;
-    LONG ap_1resv;
-    UWORD ap_2resv[2];
-    LONG ap_3resv;
-    LONG ap_4resv;
+    WORD ap_version;                /* AES version */
+    WORD ap_count;                  /* max # of concurrent applications */
+    WORD ap_id;                     /* application id */
+    LONG ap_private;                /* for use by application */
+    LONG ap_ptree;                  /* pointer to array of tree addresses */
+                                /* the following are not advertised to applications */
+    LONG ap_1resv;                  /* address of rsc file in memory */
+    UWORD ap_2resv[2];              /* [0] = length of rsc file */
+                                    /* [1] = # of colour planes on screen */
+    LONG ap_3resv;                  /* ptr to AES global area D (struct THEGLO) */
+    LONG ap_4resv;                  /* reserved for use in AES 4.00 */
 } AESGLOBAL;
 
 void rs_obfix(LONG tree, WORD curob);

@@ -127,22 +127,6 @@
 /*
  * application lib parameters
  */
-#define AP_VERSION global[0]
-#define AP_COUNT global[1]
-#define AP_ID global[2]
-#define AP_LOPRIVATE global[3]
-#define AP_HIPRIVATE global[4]
-#define AP_LOPNAME global[5]            /* long ptr. to tree base in rsc*/
-#define AP_HIPNAME global[6]
-#define AP_LO1RESV global[7]            /* long address of memory alloc.*/
-#define AP_HI1RESV global[8]
-#define AP_LO2RESV global[9]            /* length of memory allocated   */
-#define AP_HI2RESV global[10]           /* colors available on screen   */
-#define AP_LO3RESV global[11]
-#define AP_HI3RESV global[12]
-#define AP_LO4RESV global[13]
-#define AP_HI4RESV global[14]
-
 #define AP_GLSIZE int_out[1]
 
 #define AP_RWID int_in[0]
