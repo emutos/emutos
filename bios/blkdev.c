@@ -199,22 +199,20 @@ static void bus_init(void)
  */
 LONG blkdev_boot(void)
 {
-    LONG mode = kbshift(-1);
-    KDEBUG(("mode = %08lx\n",mode));
     KDEBUG(("drvbits = %08lx\n",drvbits));
 
     /*
-     * if the user is leaning on the <Alt> key, we set the
+     * if the user decided to skip hard drive boot, we set the
      * boot device to floppy A:
      */
-    if (mode & MODE_ALT)
+    if (bootflags & BOOTFLAG_SKIP_HDD_BOOT)
         bootdev = FLOPPY_BOOTDEV;
 
     /*
-     * if the user is leaning on the <Control> key, we don't
+     * if the user decided to skip AUTO programs, we don't
      * attempt to execute the bootsector
      */
-    if (mode & MODE_CTRL)
+    if (bootflags & BOOTFLAG_SKIP_AUTO_ACC)
         return 0;
 
 #ifdef DISABLE_HD_BOOT

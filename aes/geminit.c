@@ -33,6 +33,7 @@
 #include "../bios/screen.h"
 #include "../bios/videl.h"
 #include "biosbind.h"
+#include "biosext.h"
 
 #include "gemgsxif.h"
 #include "gemdosif.h"
@@ -221,8 +222,8 @@ static WORD count_accs(void)
 {
     WORD i, rc;
 
-    /* if Control is held down, skip loading of accessories */
-    if ((Kbshift(-1) & MODE_CTRL))
+    /* if the user decided to skip loading accessories, then do so */
+    if (bootflags & BOOTFLAG_SKIP_AUTO_ACC)
         return 0;
 
     strcpy(D.g_work,"*.ACC");

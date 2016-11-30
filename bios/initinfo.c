@@ -220,6 +220,7 @@ WORD initinfo(void)
     long altramsize = total_alt_ram();
 #endif
     LONG hdd_available = blkdev_avail(HARDDISK_BOOTDEV);
+    LONG shiftbits;
 
     /*
      * If additional info lines are going to be printed in specific cases,
@@ -331,7 +332,6 @@ WORD initinfo(void)
     {
         /* Wait until timeout or keypress */
         long end = hz_200 + INITINFO_DURATION * 200UL;
-        LONG shiftbits;
 
         olddev = dev;
 
@@ -382,6 +382,12 @@ WORD initinfo(void)
          */
         cprint_devices(dev);
     }
+
+    if (shiftbits & MODE_ALT)
+        bootflags |= BOOTFLAG_SKIP_HDD_BOOT;
+
+    if (shiftbits & MODE_CTRL)
+        bootflags |= BOOTFLAG_SKIP_AUTO_ACC;
 
     KDEBUG(("bootflags = 0x%02x\n", bootflags));
 

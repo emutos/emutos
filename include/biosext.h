@@ -13,6 +13,8 @@
 /* Boot flags */
 extern UBYTE bootflags;
 #define BOOTFLAG_EARLY_CLI     0x01
+#define BOOTFLAG_SKIP_HDD_BOOT 0x02
+#define BOOTFLAG_SKIP_AUTO_ACC 0x04
 
 void invalidate_instruction_cache(void *start, long size);
 

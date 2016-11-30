@@ -535,7 +535,8 @@ static void autoexec(void)
     } dta;
     WORD err;
 
-    if (kbshift(-1) & MODE_CTRL)        /* check if Control is held down */
+    /* check if the user does not want to run AUTO programs */
+    if (bootflags & BOOTFLAG_SKIP_AUTO_ACC)
         return;
 
     bootstrap();                        /* try to boot the new OS kernel directly */
