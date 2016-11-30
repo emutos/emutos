@@ -32,6 +32,7 @@
 #include "machine.h"
 #include "processor.h"
 #include "xbiosbind.h"
+#include "biosext.h"
 #include "version.h"
 
 #include "initinfo.h"
@@ -40,8 +41,6 @@
 #ifdef ENABLE_KDEBUG
 #include "lineavars.h"
 #endif
-
-int early_cli;
 
 #if FULL_INITINFO
 
@@ -366,7 +365,7 @@ WORD initinfo(void)
             c = toupper(c);
 #if WITH_CLI
             if (c == 0x1b) {
-                early_cli = 1;
+                bootflags |= BOOTFLAG_EARLY_CLI;
             } else
 #endif
             {
@@ -383,6 +382,8 @@ WORD initinfo(void)
          */
         cprint_devices(dev);
     }
+
+    KDEBUG(("bootflags = 0x%02x\n", bootflags));
 
     /*
      * on exit, restore (pop) cursor position (neatness), then

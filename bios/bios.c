@@ -102,6 +102,9 @@ static BYTE default_env[ENV_SIZE];  /* default environment area */
 /* used by kprintf() */
 WORD boot_status;               /* see kprint.h for bit flags */
 
+/* Boot flags */
+UBYTE bootflags;
+
 /* Non-Atari hardware vectors */
 #if !CONF_WITH_MFP
 void (*vector_5ms)(void);       /* 200 Hz system timer */
@@ -663,7 +666,7 @@ void biosmain(void)
     *p = '\0';                          /* terminate with double nul */
 
 #if WITH_CLI
-    if (early_cli) {            /* run an early console */
+    if (bootflags & BOOTFLAG_EARLY_CLI) {   /* run an early console */
         PD *pd = (PD *) trap1_pexec(PE_BASEPAGE, "", "", default_env);
         pd->p_tbase = (LONG) coma_start;
         pd->p_tlen = pd->p_dlen = pd->p_blen = 0;

@@ -10,6 +10,10 @@
 #ifndef BIOSEXT_H
 #define BIOSEXT_H
 
+/* Boot flags */
+extern UBYTE bootflags;
+#define BOOTFLAG_EARLY_CLI     0x01
+
 void invalidate_instruction_cache(void *start, long size);
 
 #if CONF_WITH_SHUTDOWN
