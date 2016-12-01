@@ -14,6 +14,21 @@
 #ifndef VIDEL_H
 #define VIDEL_H
 
+/* bit settings for Falcon videomodes */
+#define VIDEL_VALID    0x01ff           /* the only bits allowed in a videomode */
+#define VIDEL_VERTICAL 0x0100           /* if set, use interlace (TV), double line (VGA) */
+#define VIDEL_COMPAT   0x0080           /* ST-compatible if set */
+#define VIDEL_OVERSCAN 0x0040           /* overscan if set (not used with VGA) */
+#define VIDEL_PAL      0x0020           /* PAL if set; otherwise NTSC */
+#define VIDEL_VGA      0x0010           /* VGA if set; otherwise TV */
+#define VIDEL_80COL    0x0008           /* 80-column mode if set; otherwise 40 */
+#define VIDEL_BPPMASK  0x0007           /* mask for bits/pixel encoding */
+#define VIDEL_1BPP          0               /* 2 colours */
+#define VIDEL_2BPP          1               /* 4 colours */
+#define VIDEL_4BPP          2               /* 16 colours */
+#define VIDEL_8BPP          3               /* 256 colours */
+#define VIDEL_TRUECOLOR     4               /* 65536 colours */
+
 #if CONF_WITH_VIDEL
 
 #include "portab.h"
@@ -38,21 +53,6 @@
 #define FRGB_LTYELLOW  0xaaaa0000
 #define FRGB_WHITE     0xffff00ff
 
-/* bit settings for Falcon videomodes */
-#define VIDEL_VALID    0x01ff           /* the only bits allowed in a videomode */
-#define VIDEL_VERTICAL 0x0100           /* if set, use interlace (TV), double line (VGA) */
-#define VIDEL_COMPAT   0x0080           /* ST-compatible if set */
-#define VIDEL_OVERSCAN 0x0040           /* overscan if set (not used with VGA) */
-#define VIDEL_PAL      0x0020           /* PAL if set; otherwise NTSC */
-#define VIDEL_VGA      0x0010           /* VGA if set; otherwise TV */
-#define VIDEL_80COL    0x0008           /* 80-column mode if set; otherwise 40 */
-#define VIDEL_BPPMASK  0x0007           /* mask for bits/pixel encoding */
-#define VIDEL_1BPP          0               /* 2 colours */
-#define VIDEL_2BPP          1               /* 4 colours */
-#define VIDEL_4BPP          2               /* 16 colours */
-#define VIDEL_8BPP          3               /* 256 colours */
-#define VIDEL_TRUECOLOR     4               /* 65536 colours */
-
 /* test for VDI support of videomode */
 #define VALID_VDI_BPP(mode) ((mode&VIDEL_BPPMASK)<=VIDEL_8BPP)
 
@@ -60,8 +60,6 @@
 #define FALCON_ST_HIGH      (VIDEL_COMPAT|VIDEL_VGA|VIDEL_80COL|VIDEL_1BPP)
 
 #define FALCON_DEFAULT_BOOT (VIDEL_VERTICAL|VIDEL_80COL|VIDEL_4BPP) /* 640x480x16 colours, TV, NTSC */
-
-#define FALCON_REZ     3    /* used as a Falcon indicator */
 
 typedef struct {
     WORD vmode;         /* video mode (-1 => end marker) */

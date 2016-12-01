@@ -43,10 +43,6 @@
 
 #define TT_DUOCHROME_INVERT 0x0002      /* inversion bit in TT h/w palette reg 0 */
 
-/* misc routines */
-WORD check_moderez(WORD moderez);
-void initialise_palette_registers(WORD rez,WORD mode);
-
 /* hardware dependant xbios routines */
 
 WORD esetshift(WORD mode);
@@ -105,12 +101,17 @@ WORD esetsmear(WORD mode);
 #define ST_HIGH        2
 #define ST_MEDIUM      1
 #define ST_LOW         0
+#define FALCON_REZ     3    /* used as a Falcon indicator */
 
 /* monitor types (from VgetMonitor()) */
 #define MON_MONO       0    /* ST monochrome */
 #define MON_COLOR      1    /* ST colour */
 #define MON_VGA        2    /* VGA */
 #define MON_TV         3    /* TV via RF modulator */
+
+/* misc routines */
+WORD check_moderez(WORD moderez);
+void initialise_palette_registers(WORD rez,WORD mode);
 
 /* determine monitor type, ... */
 void screen_init(void);
