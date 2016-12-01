@@ -760,6 +760,22 @@ static void save_to_disk(void)
 
 
 /*
+ * Get video mode to store into EMUDESK.INF
+ */
+static WORD desk_get_videomode(void)
+{
+    WORD mode;
+
+#if CONF_WITH_VIDEL
+    mode = get_videl_mode();
+    if (!mode)                      /* i.e. not videl */
+#endif
+        mode = 0xff00 | Getrez();
+
+    return mode;
+}
+
+/*
  *  Save the current state of all the desktop options/icons/windows
  *  etc to memory and, optionally, to a file called EMUDESK.INF
  */
@@ -810,11 +826,7 @@ void app_save(WORD todisk)
         break;
     }
     env2 |= sound(FALSE, 0xFFFF, 0)  ? 0x00 : INF_E2_SOUND;
-#if CONF_WITH_VIDEL
-    mode = get_videl_mode();
-    if (!mode)                      /* i.e. not videl */
-#endif
-        mode = 0xff00 | Getrez();
+    mode = desk_get_videomode();
     env5 = (G.g_cnxsave.cs_sort == CS_NOSORT) ? INF_E5_NOSORT : 0;
     pcurr += sprintf(pcurr,"#E %02X %02X %02X %02X %02X\r\n",
                     env1,env2,(mode>>8)&0x00ff,mode&0x00ff,env5);
