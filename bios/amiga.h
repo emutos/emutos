@@ -55,10 +55,13 @@ void amiga_add_alt_ram(void);
 #endif
 ULONG amiga_initial_vram_size(void);
 void amiga_screen_init(void);
+WORD amiga_check_moderez(WORD moderez);
 void amiga_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *vt_rez);
 void amiga_setphys(const UBYTE *addr);
 const UBYTE *amiga_physbase(void);
 WORD amiga_setcolor(WORD colorNum, WORD color);
+void amiga_setrez(WORD rez, WORD videlmode);
+WORD amiga_vgetmode(void);
 void amiga_mouse_vbl(void);
 void amiga_clock_init(void);
 ULONG amiga_getdt(void);

@@ -362,6 +362,10 @@ WORD check_moderez(WORD moderez)
     if (!rez_changeable())
         return 0;
 
+#ifdef MACHINE_AMIGA
+    return amiga_check_moderez(moderez);
+#endif
+
 #if CONF_WITH_VIDEL
     if (has_videl)
         return videl_check_moderez(moderez);
@@ -615,6 +619,10 @@ int rez_changeable(void)
     if (rez_was_hacked)
         return FALSE;
 
+#ifdef MACHINE_AMIGA
+    return TRUE;
+#endif
+
 #if CONF_WITH_VIDEL
     if (has_videl)  /* can't change if real ST monochrome monitor */
         return (VgetMonitor() != MON_MONO);
@@ -729,6 +737,9 @@ static __inline__ void get_std_pixel_size(WORD *width,WORD *height)
  */
 void get_pixel_size(WORD *width,WORD *height)
 {
+#ifdef MACHINE_AMIGA
+    get_std_pixel_size(width,height);
+#else
     if (HAS_VIDEL || HAS_TT_SHIFTER)
         get_std_pixel_size(width,height);
     else
@@ -741,6 +752,7 @@ void get_pixel_size(WORD *width,WORD *height)
         else *width = 338;          /* ST low */
         *height = 372;
     }
+#endif
 }
 
 #if CONF_WITH_ATARI_VIDEO
@@ -932,7 +944,9 @@ void setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
         /* Wait for the end of display to avoid the plane-shift bug on ST */
         vsync();
 
-#if CONF_WITH_ATARI_VIDEO
+#ifdef MACHINE_AMIGA
+        amiga_setrez(rez, videlmode);
+#elif CONF_WITH_ATARI_VIDEO
         atari_setrez(rez, videlmode);
 #endif
 

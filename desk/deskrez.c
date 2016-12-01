@@ -38,6 +38,7 @@
 #include "../bios/machine.h"    /* for has_videl etc */
 #include "../bios/screen.h"
 #include "../bios/videl.h"
+#include "../bios/amiga.h"
 #include "kprint.h"
 
 
@@ -207,6 +208,69 @@ WORD oldmode, oldbase, oldoptions;
 }
 #endif
 
+#ifdef MACHINE_AMIGA
+/* This assumes that inside ADAMIREZ dialog, buttons are sorted
+ * left to right then top to bottom. */
+static const WORD amigamode_from_button[] =
+{
+    VIDEL_PAL|VIDEL_1BPP|VIDEL_80COL|VIDEL_VERTICAL,    /* 640x512 */
+    VIDEL_PAL|VIDEL_1BPP|VIDEL_80COL,                   /* 640x256 */
+    VIDEL_PAL|VIDEL_1BPP|VIDEL_VERTICAL,                /* 320x512 */
+    VIDEL_PAL|VIDEL_1BPP,                               /* 320x256 */
+    VIDEL_VGA|VIDEL_1BPP|VIDEL_80COL,                   /* 640x480 */
+    VIDEL_VGA|VIDEL_1BPP|VIDEL_80COL|VIDEL_VERTICAL,    /* 640x240 */
+    VIDEL_VGA|VIDEL_1BPP,                               /* 320x480 */
+    VIDEL_VGA|VIDEL_1BPP|VIDEL_VERTICAL,                /* 320x240 */
+    -1, /* Falcon label*/
+    VIDEL_1BPP|VIDEL_80COL,                             /* 640x200 */
+    VIDEL_1BPP|VIDEL_VERTICAL,                          /* 320x400 */
+    VIDEL_1BPP,                                         /* 320x200 */
+    -1, /* ST label */
+    VIDEL_COMPAT|VIDEL_1BPP|VIDEL_80COL|VIDEL_VERTICAL, /* 640x400 */
+};
+#define NUM_AMIGA_BUTTONS ARRAY_SIZE(amigamode_from_button)
+
+static int change_amiga_rez(WORD *newres,WORD *newmode)
+{
+OBJECT *tree, *obj;
+int i, selected;
+WORD oldmode;
+
+    oldmode = amiga_vgetmode();
+
+    for (i = 0; i < NUM_AMIGA_BUTTONS; i++)
+        if (oldmode == amigamode_from_button[i])
+            break;
+    selected = i;
+
+    /* set up dialog & display */
+    tree = G.a_trees[ADAMIREZ];
+
+    for (i = 0, obj = tree+AMIREZ0; i < NUM_AMIGA_BUTTONS; i++, obj++) {
+        if (i == selected)
+            obj->ob_state |= SELECTED;
+        else obj->ob_state &= ~SELECTED;
+    }
+
+    inf_show(tree,ROOT);
+
+    if (inf_what(tree,AMREZOK,AMREZCAN) == 0)
+        return 0;
+
+    /* look for button with SELECTED state */
+    i = inf_gindex(tree,AMIREZ0,NUM_AMIGA_BUTTONS);
+    if (i < 0)                  /* paranoia */
+        return 0;
+    if (i == selected)          /* no change */
+        return 0;
+
+    *newres = FALCON_REZ;
+    *newmode = amigamode_from_button[i];
+
+    return 1;
+}
+#endif
+
 /*
  *  change_resolution(): change desktop resolution
  *
@@ -220,6 +284,10 @@ WORD oldmode, oldbase, oldoptions;
  */
 int change_resolution(WORD *newres,WORD *newmode)
 {
+#ifdef MACHINE_AMIGA
+    return change_amiga_rez(newres,newmode);
+#endif
+
 #if CONF_WITH_VIDEL
     if (has_videl)
         return change_falcon_rez(newres,newmode);

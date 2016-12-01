@@ -35,6 +35,7 @@
 #include "gembind.h"
 #include "deskbind.h"
 #include "../bios/videl.h"
+#include "../bios/amiga.h"
 #include "aesbind.h"
 #include "deskrsrc.h"
 #include "deskfun.h"
@@ -766,11 +767,17 @@ static WORD desk_get_videomode(void)
 {
     WORD mode;
 
+#ifdef MACHINE_AMIGA
+    mode = amiga_vgetmode();
+#else
+
 #if CONF_WITH_VIDEL
     mode = get_videl_mode();
     if (!mode)                      /* i.e. not videl */
 #endif
         mode = 0xff00 | Getrez();
+
+#endif /* MACHINE_AMIGA */
 
     return mode;
 }

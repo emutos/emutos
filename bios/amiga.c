@@ -22,6 +22,7 @@
 #include "gemerror.h"
 #include "ikbd.h"               /* for call_mousevec() */
 #include "screen.h"
+#include "videl.h"
 
 #if CONF_WITH_AROS
 #include "aros.h"
@@ -211,6 +212,21 @@ static void amiga_set_videomode(UWORD width, UWORD height)
         sshiftmod = FALCON_REZ;
 }
 
+WORD amiga_check_moderez(WORD moderez)
+{
+    WORD current_mode, return_mode;
+
+    if (moderez == 0xff02) /* ST High */
+        moderez = VIDEL_COMPAT|VIDEL_1BPP|VIDEL_80COL|VIDEL_VERTICAL;
+
+    if (moderez < 0)                /* ignore other ST video modes */
+        return 0;
+
+    current_mode = amiga_vgetmode();
+    return_mode = moderez;          /* assume always valid */
+    return (return_mode==current_mode)?0:return_mode;
+}
+
 void amiga_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *vt_rez)
 {
     *planes = 1;
@@ -278,6 +294,50 @@ WORD amiga_setcolor(WORD colorNum, WORD color)
         return 0x777;
     else
         return 0x000;
+}
+
+void amiga_setrez(WORD rez, WORD videlmode)
+{
+    UWORD width, height;
+
+    /* Currently, we only support monochrome video modes */
+    if ((videlmode & VIDEL_BPPMASK) != VIDEL_1BPP)
+        return;
+
+    width = (videlmode & VIDEL_80COL) ? 640 : 320;
+
+    if (videlmode & VIDEL_VGA)
+        height = (videlmode & VIDEL_VERTICAL) ? 240 : 480;
+    else if (videlmode & VIDEL_PAL)
+        height = (videlmode & VIDEL_VERTICAL) ? 512 : 256;
+    else
+        height = (videlmode & VIDEL_VERTICAL) ? 400 : 200;
+
+    amiga_set_videomode(width, height);
+}
+
+WORD amiga_vgetmode(void)
+{
+    WORD mode = VIDEL_1BPP;
+
+    if (amiga_screen_width >= 640)
+        mode |= VIDEL_80COL;
+
+    if (amiga_screen_height == 240)
+        mode |= VIDEL_VGA | VIDEL_VERTICAL;
+    else if (amiga_screen_height == 480)
+        mode |= VIDEL_VGA;
+    else if (amiga_screen_height == 512)
+        mode |= VIDEL_PAL | VIDEL_VERTICAL;
+    else if (amiga_screen_height == 256)
+        mode |= VIDEL_PAL;
+    else if (amiga_screen_height == 400)
+        mode |= VIDEL_VERTICAL;
+
+    if (amiga_screen_width == 640 && amiga_screen_height == 400)
+        mode |= VIDEL_COMPAT;
+
+    return mode;
 }
 
 /******************************************************************************/
