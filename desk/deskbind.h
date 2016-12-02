@@ -152,7 +152,6 @@ typedef struct
 /*GLOBAL*/ WORD         g_cdateform;            /* curr. date format    */
 
 /*GLOBAL*/ BYTE         g_1text[256];
-/*GLOBAL*/ BYTE         g_2text[256];
 
 /*GLOBAL*/ WORD         g_icw;
 /*GLOBAL*/ WORD         g_ich;

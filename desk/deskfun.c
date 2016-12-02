@@ -63,11 +63,9 @@ WORD fun_alert(WORD defbut, WORD stnum)
 WORD fun_alert_merge(WORD defbut, WORD stnum, BYTE merge)
 {
     rsrc_gaddr_rom(R_STRING, stnum, (void **)&G.a_alert);
-    strcpy(G.g_2text, G.a_alert);
-    sprintf(G.g_1text, G.g_2text, merge);
-    G.a_alert = G.g_1text;
+    sprintf(G.g_1text, G.a_alert, merge);
 
-    return form_alert(defbut, G.a_alert);
+    return form_alert(defbut, G.g_1text);
 }
 
 
