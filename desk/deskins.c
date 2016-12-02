@@ -766,8 +766,8 @@ static WORD install_window_icon(FNODE *pf)
     curr_icon = pa ? pa->a_dicon : 0;
     if (curr_icon < 0)
         curr_icon = 0;
-    else if (curr_icon > NUM_IBLKS-1)
-        curr_icon = NUM_IBLKS - 1;
+    else if (curr_icon > BUILTIN_IBLKS-1)
+        curr_icon = BUILTIN_IBLKS - 1;
     new_icon = curr_icon;
 
     insert_icon(tree, IW_ICON, curr_icon);
@@ -785,7 +785,7 @@ static WORD install_window_icon(FNODE *pf)
                 new_icon = IG_TRASH;
             break;
         case IW_DOWN:           /* handle button down */
-            new_icon = (curr_icon < NUM_IBLKS-1) ? curr_icon+1 : NUM_IBLKS-1;
+            new_icon = (curr_icon < BUILTIN_IBLKS-1) ? curr_icon+1 : BUILTIN_IBLKS-1;
             if (new_icon == IG_4RESV)   /* skip unused */
                 new_icon = IG_APPL;
             break;
