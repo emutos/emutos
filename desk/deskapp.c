@@ -336,12 +336,20 @@ static void app_rdicon(void)
     char copied[BUILTIN_IBLKS];
     char *p;
     WORD *addr;
+    void *allocmem;
     LONG temp;
     WORD i, j, n, iwb, ih;
     WORD num_mask, num_data, num_wds, num_bytes;
 
     /*
-     * First, we copy the ICONBLKs to the g_iblist[] array:
+     * Allocate memory for ICONBLKs and pointers to untranslated masks
+     */
+    allocmem = dos_alloc(BUILTIN_IBLKS*(sizeof(ICONBLK)+sizeof(UWORD *)));
+    G.g_iblist = allocmem;
+    G.g_origmask = allocmem + (BUILTIN_IBLKS * sizeof(ICONBLK));
+
+    /*
+     * Next, we copy the ICONBLKs to the g_iblist[] array:
      *  g_iblist[] points to the transformed data/transformed mask
      *  & is referenced by act_chkobj() in deskact.c, insa_icon()
      *  in deskins.c, and win_bldview() in deskwin.c
