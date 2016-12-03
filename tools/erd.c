@@ -179,6 +179,10 @@
  *          . add "GTP" to list of non-translatable desktop strings
  *          . do not allow control characters in a string to trigger
  *            translation (see copycheck())
+ *
+ *  v4.8    roger burrows, december/2016
+ *          . add exact match option to the no-translate table
+ *          . do not generate the text strings in ICONBLKs for ICON_RSC
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -452,6 +456,7 @@ typedef struct {
  *  no-translate prefixes
  */
 typedef struct {
+    short exact;                    /* non-zero => exact match, not prefix match */
     short length;                   /* length of prefix */
     char *string;                   /* prefix string */
 } NOTRANS_ENTRY;
@@ -494,24 +499,25 @@ LOCAL SHARED_ENTRY shared[] = {
 LOCAL int num_shared = ARRAY_SIZE(shared);
 
 /*
- *  table of string prefixes for text that should not be translated
+ *  table of strings (complete or prefixes) for text that should not be translated
  */
 LOCAL NOTRANS_ENTRY notrans[] = {
-    { 0, "- EmuTOS -" },
-    { 0, "http://" },
-    { 0, "GEM" },
-    { 0, "GTP" },
-    { 0, "TOS" },
-    { 0, "TTP" },
-    { 0, "am" },
-    { 0, "pm" },
-    { 0, "TC" },
-    { 0, "640 x " },
-    { 0, "640x" },
-    { 0, "320 x " },
-    { 0, "320x" },
-    { 0, "Amiga" },
-    { 0, "Falcon" }
+    { 0, 0, "- EmuTOS -" },
+    { 0, 0, "http://" },
+    { 0, 0, "640 x " },
+    { 0, 0, "640x" },
+    { 0, 0, "320 x " },
+    { 0, 0, "320x" },
+    { 1, 0, "TC" },
+    { 1, 0, "GEM" },
+    { 1, 0, "GTP" },
+    { 1, 0, "TOS" },
+    { 1, 0, "TTP" },
+    { 1, 0, "am" },
+    { 1, 0, "pm" },
+    { 1, 0, "Amiga" },
+    { 1, 0, "Falcon" },
+    { 1, 0, "ST" }
 };
 LOCAL int num_notrans = ARRAY_SIZE(notrans);
 #endif
@@ -537,8 +543,8 @@ LOCAL int num_shared = ARRAY_SIZE(shared);
  *  table of string prefixes for text that should not be translated
  */
 LOCAL NOTRANS_ENTRY notrans[] = {
-    { 0, "__________________" },
-    { 0, "xF" },
+    { 0, 0, "__________________" },
+    { 0, 0, "xF" },
 };
 LOCAL int num_notrans = ARRAY_SIZE(notrans);
 #endif
@@ -1699,7 +1705,11 @@ char *base = (char *)rschdr;
         if (i == conditional_iconblk_start)
             fprintf(fp,"\n%s\n",other_cond.string);
         iconchar = get_short(&iconblk->ib_char);
+#ifdef ICON_RSC
+        temp[0] = '\0';     /* no string generation for ICONBLKs */
+#else
         copyfix(temp,base+get_offset(&iconblk->ib_ptext),MAX_STRLEN-1);
+#endif
         fprintf(fp,"    { (WORD *)rs_iconmask%d, (WORD *)rs_icondata%d, \"%s\", %s,\n",
                 (mmap[i]==-1)?i:mmap[i],(dmap[i]==-1)?i:dmap[i],
                 temp,decode_ib_char(iconchar));
@@ -2090,12 +2100,15 @@ NOTRANS_ENTRY *e;
  */
 PRIVATE int notranslate(char *text)
 {
-int i;
+int i, rc;
 NOTRANS_ENTRY *e;
 
     for (i = 0, e = notrans; i < num_notrans; i++, e++)
-        if (strncmp(text,e->string,e->length) == 0)
+    {
+        rc = e->exact ? strcmp(text,e->string) : strncmp(text,e->string,e->length);
+        if (rc == 0)
             return 1;
+    }
 
     return 0;
 }
