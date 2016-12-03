@@ -507,7 +507,11 @@ LOCAL NOTRANS_ENTRY notrans[] = {
     { 0, "pm" },
     { 0, "TC" },
     { 0, "640 x " },
-    { 0, "320 x " }
+    { 0, "640x" },
+    { 0, "320 x " },
+    { 0, "320x" },
+    { 0, "Amiga" },
+    { 0, "Falcon" }
 };
 LOCAL int num_notrans = ARRAY_SIZE(notrans);
 #endif
