@@ -576,13 +576,9 @@ static WORD install_desktop_icon(ANODE *pa)
         {
         case ID_UP:             /* handle button up */
             new_icon = (curr_icon > 0) ? curr_icon-1 : 0;
-            if (new_icon == IG_5RESV)   /* skip unused */
-                new_icon = IG_TRASH;
             break;
         case ID_DOWN:           /* handle button down */
             new_icon = (curr_icon < NUM_GEM_IBLKS-1) ? curr_icon+1 : NUM_GEM_IBLKS-1;
-            if (new_icon == IG_4RESV)   /* skip unused */
-                new_icon = IG_APPL;
             break;
         case ID_OK:             /* (re)install an icon */
             if (inf_gindex(tree, ID_DRIVE, 3) == 0) /* only disks have a letter */
@@ -781,13 +777,9 @@ static WORD install_window_icon(FNODE *pf)
         {
         case IW_UP:             /* handle button up */
             new_icon = (curr_icon > 0) ? curr_icon-1 : 0;
-            if (new_icon == IG_5RESV)   /* skip unused */
-                new_icon = IG_TRASH;
             break;
         case IW_DOWN:           /* handle button down */
             new_icon = (curr_icon < BUILTIN_IBLKS-1) ? curr_icon+1 : BUILTIN_IBLKS-1;
-            if (new_icon == IG_4RESV)   /* skip unused */
-                new_icon = IG_APPL;
             break;
         case IW_INST:           /* (re)install an icon */
         case IW_REMV:           /* remove an icon */

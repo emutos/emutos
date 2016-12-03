@@ -51,8 +51,8 @@
 #define IG_FLOPPY 1             /* floppy drive */
 #define IG_FOLDER 2             /* folder */
 #define IG_TRASH  3             /* trash */
-#define IG_4RESV  4
-#define IG_5RESV  5
+#define IG_PRINT  4             /* printer */
+#define IG_REMOV  5             /* removable disk */
 #define IG_APPL   6             /* generic application icon */
 #define IG_DOCU   7             /* generic document icon */
 #define NUM_GEM_IBLKS (IG_DOCU+1)
