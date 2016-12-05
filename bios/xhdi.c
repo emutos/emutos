@@ -109,7 +109,7 @@ static long XHInqDev2(UWORD drv, UWORD *major, UWORD *minor, ULONG *start,
         *start = pstart;
 
     myBPB = (BPB *)blkdev_getbpb(drv);
-    if (bpb)
+    if (bpb && myBPB)
         memcpy(bpb, myBPB, sizeof(BPB));
 
     if (blocks)
