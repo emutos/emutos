@@ -561,8 +561,8 @@ static WORD install_desktop_icon(ANODE *pa)
     curr_icon = pa->a_aicon;
     if (curr_icon < 0)
         curr_icon = 0;
-    else if (curr_icon > NUM_GEM_IBLKS-1)
-        curr_icon = NUM_GEM_IBLKS - 1;
+    else if (curr_icon > G.g_numiblks-1)
+        curr_icon = G.g_numiblks - 1;
     new_icon = curr_icon;
 
     insert_icon(tree, ID_ICON, curr_icon);
@@ -578,7 +578,7 @@ static WORD install_desktop_icon(ANODE *pa)
             new_icon = (curr_icon > 0) ? curr_icon-1 : 0;
             break;
         case ID_DOWN:           /* handle button down */
-            new_icon = (curr_icon < NUM_GEM_IBLKS-1) ? curr_icon+1 : NUM_GEM_IBLKS-1;
+            new_icon = (curr_icon < G.g_numiblks-1) ? curr_icon+1 : G.g_numiblks-1;
             break;
         case ID_OK:             /* (re)install an icon */
             if (inf_gindex(tree, ID_DRIVE, 3) == 0) /* only disks have a letter */
@@ -762,8 +762,8 @@ static WORD install_window_icon(FNODE *pf)
     curr_icon = pa ? pa->a_dicon : 0;
     if (curr_icon < 0)
         curr_icon = 0;
-    else if (curr_icon > BUILTIN_IBLKS-1)
-        curr_icon = BUILTIN_IBLKS - 1;
+    else if (curr_icon > G.g_numiblks-1)
+        curr_icon = G.g_numiblks - 1;
     new_icon = curr_icon;
 
     insert_icon(tree, IW_ICON, curr_icon);
@@ -779,7 +779,7 @@ static WORD install_window_icon(FNODE *pf)
             new_icon = (curr_icon > 0) ? curr_icon-1 : 0;
             break;
         case IW_DOWN:           /* handle button down */
-            new_icon = (curr_icon < BUILTIN_IBLKS-1) ? curr_icon+1 : BUILTIN_IBLKS-1;
+            new_icon = (curr_icon < G.g_numiblks-1) ? curr_icon+1 : G.g_numiblks-1;
             break;
         case IW_INST:           /* (re)install an icon */
         case IW_REMV:           /* remove an icon */

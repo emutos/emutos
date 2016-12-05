@@ -929,21 +929,17 @@ WORD wind_calc(WORD wctype, UWORD kind, WORD x, WORD y, WORD w, WORD h,
 /*
  *  Resource Manager
  */
-/* unused
 WORD rsrc_load(const BYTE *rsname)
 {
     RS_PFNAME = (LONG)rsname;
     return gem_if(RSRC_LOAD);
 }
-*/
 
 
-/* unused
 WORD rsrc_free(void)
 {
     return gem_if(RSRC_FREE);
 }
-*/
 
 
 /* unused

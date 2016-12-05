@@ -72,11 +72,7 @@
 #define SIZE_AFILE  2048        /* size of buffer for EMUDESK.INF file */
 #define SIZE_BUFF   4096        /* size of buffer used to store ANODE text */
 
-#if CONF_WITH_WINDOW_ICONS
-#define BUILTIN_IBLKS   (NUM_GEM_IBLKS+ICON_END)
-#else
 #define BUILTIN_IBLKS   (NUM_GEM_IBLKS)
-#endif
 
 
 typedef struct _applstr ANODE;

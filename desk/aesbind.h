@@ -154,9 +154,9 @@ WORD wind_calc(WORD wctype, UWORD kind, WORD x, WORD y, WORD w, WORD h,
 /*
  *  Resource Manager
  */
-/*
 WORD rsrc_load(const BYTE *rsname);
 WORD rsrc_free(void);
+/*
 WORD rsrc_gaddr(WORD rstype, WORD rsid, void **paddr);
 WORD rsrc_saddr(WORD rstype, WORD rsid, void *lngval);
 */

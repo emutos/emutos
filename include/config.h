@@ -1247,6 +1247,7 @@
 
 #define BLKDEVNUM 26                    /* number of block devices supported: A: ... Z: */
 #define INF_FILE_NAME "A:\\EMUDESK.INF" /* path to saved desktop file */
+#define ICON_RSC_NAME "A:\\EMUICON.RSC" /* path to user icon file */
 
 /*
  * Maximum lengths for pathname, filename, and filename components

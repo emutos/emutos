@@ -24,6 +24,7 @@
 
 #include "portab.h"
 #include "obdefs.h"
+#include "rsdefs.h"
 #include "intmath.h"
 #include "gsxdefs.h"
 #include "gemdos.h"
@@ -55,6 +56,17 @@
  *  (the same as Atari TOS 2/3/4)
  */
 #define DRAG_BOX_WIDTH  (2 + LEN_ZNODE + 1 + LEN_ZEXT)
+
+
+/*
+ *  maximum number of different desktop icons
+ *
+ *  this is limited by the lesser of:
+ *  . the 2 hex digits used to store the icon number in EMUDESK.INF
+ *  . the maximum size of an old-style .RSC file (if we assume that every
+ *    ICONBLK has a unique data & mask, this gives a limit of 225)
+ */
+#define MAX_ICONS       256
 
 
 /*
@@ -92,9 +104,6 @@
 static WORD     gl_stdrv;
 
 static WORD     inf_rev_level;  /* revision level of current EMUDESK.INF */
-
-static char     *maskstart;
-static char     *datastart;
 
 static BYTE     gl_afile[SIZE_AFILE];
 static BYTE     gl_buffer[SIZE_BUFF];
@@ -266,10 +275,10 @@ static BYTE *app_parse(BYTE *pcurr, ANODE *pa)
     }
 
     pcurr = scan_2(pcurr, &pa->a_aicon);
-    if (pa->a_aicon >= BUILTIN_IBLKS)
+    if (pa->a_aicon >= G.g_numiblks)
         pa->a_aicon = IG_APPL;
     pcurr = scan_2(pcurr, &pa->a_dicon);
-    if (pa->a_dicon >= BUILTIN_IBLKS)
+    if (pa->a_dicon >= G.g_numiblks)
         pa->a_dicon = IG_DOCU;
     pcurr++;
 
@@ -321,6 +330,173 @@ void app_tran(WORD bi_num)
 }
 
 
+/*
+ * set up ICONBLK stuff - all the hard work is done here
+ *
+ * returns -1 iff insufficient memory
+ */
+static WORD setup_iconblks(const ICONBLK *ibstart, WORD count)
+{
+    BYTE *maskstart, *datastart;
+    void *allocmem;
+    char *p;
+    WORD i, iwb, ih;
+    LONG num_bytes, offset;
+
+    /*
+     * Calculate the icon width and size in bytes.  We assume that the width
+     * in pixels is a multiple of 8, and that all icons have the same width &
+     * height as the first
+     */
+    iwb = ibstart->ib_wicon / 8;
+    ih = ibstart->ib_hicon;
+    num_bytes = iwb * ih;
+
+    /*
+     * Allocate memory for:
+     *  ICONBLKs
+     *  pointers to untranslated masks
+     *  icon masks
+     *  icon data
+     */
+    allocmem = dos_alloc(count*(sizeof(ICONBLK)+sizeof(UWORD *)+2*num_bytes));
+    if (!allocmem)
+    {
+        KDEBUG(("insufficient memory for %d desktop icons\n",count));
+        return -1;
+    }
+
+    G.g_iblist = allocmem;
+    allocmem += count * sizeof(ICONBLK);
+    G.g_origmask = allocmem;
+    allocmem += count * sizeof(UWORD *);
+    maskstart = allocmem;
+    allocmem += count * num_bytes;
+    datastart = allocmem;
+
+    /* initialise the count of ICONBLKs */
+    G.g_numiblks = count;
+
+    /*
+     * Next, we copy the ICONBLKs to the g_iblist[] array:
+     *  g_iblist[] points to the transformed data/transformed mask
+     *  & is referenced by act_chkobj() in deskact.c, insa_icon()
+     *  in deskins.c, and win_bldview() in deskwin.c
+     */
+    memcpy(G.g_iblist, ibstart, count*sizeof(ICONBLK));
+
+    /*
+     * Then we initialise g_origmask[]:
+     *  g_origmask[i] points to the untransformed mask & is
+     *  referenced by act_chkobj() in deskact.c
+     */
+    for (i = 0; i < count; i++)
+        G.g_origmask[i] = (UWORD *)ibstart[i].ib_pmask;
+
+    /*
+     * Copy the icons' mask/data
+     */
+    for (i = 0, p = maskstart; i < count; i++, p += num_bytes)
+        memcpy(p, ibstart[i].ib_pmask, num_bytes);
+    for (i = 0, p = datastart; i < count; i++, p += num_bytes)
+        memcpy(p, ibstart[i].ib_pdata, num_bytes);
+
+    /*
+     * Fix up the ICONBLKs
+     */
+    for (i = 0, offset = 0; i < count; i++, offset += num_bytes)
+    {
+        G.g_iblist[i].ib_pmask = (WORD *)(maskstart + offset);
+        G.g_iblist[i].ib_pdata = (WORD *)(datastart + offset);
+        G.g_iblist[i].ib_char &= 0xff00;    /* strip any existing char */
+        G.g_iblist[i].ib_ytext = ih;
+        G.g_iblist[i].ib_wtext = 12 * gl_wschar;
+        G.g_iblist[i].ib_htext = gl_hschar + 2;
+    }
+
+    /*
+     * Finally we do the transforms
+     */
+    for (i = 0, p = maskstart; i < count; i++, p += num_bytes)
+        gsx_trans((LONG)p, iwb, (LONG)p, iwb, ih);
+    for (i = 0, p = datastart; i < count; i++, p += num_bytes)
+        gsx_trans((LONG)p, iwb, (LONG)p, iwb, ih);
+
+    return 0;
+}
+
+/*
+ * try to load icons from user-supplied resource
+ */
+static WORD load_user_icons(void)
+{
+    RSHDR *hdr;
+    ICONBLK *ibptr;
+    BYTE *origmask;     /* points to original masks of loaded ICONBLKs */
+    char *p;
+    WORD i, n, rc, w, h, masksize;
+    BYTE icon_rsc_name[sizeof(ICON_RSC_NAME)];
+
+    /*
+     * determine the number of icons in the user's icon resource
+     */
+    strcpy(icon_rsc_name, ICON_RSC_NAME);
+    icon_rsc_name[0] += gl_stdrv;   /* Adjust drive letter  */
+    if (!rsrc_load(icon_rsc_name))
+    {
+        KDEBUG(("can't load user desktop icons from %s\n",icon_rsc_name));
+        return -1;
+    }
+
+    hdr = (RSHDR *)(AP_1RESV);
+    if (hdr->rsh_nib < BUILTIN_IBLKS)   /* must have at least the minimum set */
+    {
+        KDEBUG(("too few user desktop icons (%d)\n",hdr->rsh_nib));
+        rsrc_free();
+        return -1;
+    }
+    n = min(hdr->rsh_nib,MAX_ICONS);    /* clamp count */
+
+    /* get pointer to start of ICONBLKs in the resource
+     * and validate their size
+     */
+    ibptr = (ICONBLK *)((char *)hdr + hdr->rsh_iconblk);
+    w = ibptr->ib_wicon;
+    h = ibptr->ib_hicon;
+    if ((w != icon_rs_iconblk[0].ib_wicon) || (h != icon_rs_iconblk[0].ib_hicon))
+    {
+        KDEBUG(("wrong size user desktop icons (%dx%d)\n",w,h));
+        rsrc_free();
+        return -1;
+    }
+
+    /*
+     * copy the original icon masks for the loaded icons &
+     * update the ptrs in the ICONBLKs to point to the copies
+     */
+    masksize = w * h / 8;
+    origmask = dos_alloc((LONG)n*masksize);
+    if (!origmask)
+    {
+        KDEBUG(("insufficient memory for icon masks for %d user desktop icons\n",n));
+        rsrc_free();
+        return -1;
+    }
+
+    for (i = 0, p = origmask; i < n; i++, p += masksize)
+    {
+        memcpy(p, ibptr[i].ib_pmask, masksize);
+        ibptr[i].ib_pmask = (WORD *)p;
+    }
+
+    rc = setup_iconblks(ibptr, n);
+
+    rsrc_free();
+
+    return rc;
+}
+
+
 /************************************************************************/
 /* a p p _ r d i c o n                                                  */
 /************************************************************************/
@@ -330,84 +506,20 @@ void app_tran(WORD bi_num)
    file now. Hope there aren't too much faults in this new version of this
    function. See icons.c, too.  - THH
    Note 2: this function was greatly rewritten in 2012 to use "real" ICONBLKs
-   in icons.c, so that they can be generated by a resource editor - RFB */
-static void app_rdicon(void)
+   in icons.c, so that they can be generated by a resource editor - RFB
+   Note 3: as of december 2016, EmuTOS now loads icons from the resource
+   EMUICON.RSC in the root of the boot drive; if this is not available,
+   it falls back to a minimal built-in set - RFB
+*/
+static WORD app_rdicon(void)
 {
-    char *p;
-    void *allocmem;
-    LONG offset;
-    WORD i, iwb, ih;
-    LONG num_bytes;
-
     /*
-     * Calculate the icon width and size in bytes.  We assume that the width
-     * in pixels is a multiple of 8, and that all icons have the same width &
-     * height as the first
+     * try to load user icons; if that fails, use builtin
      */
-    iwb = icon_rs_iconblk[0].ib_wicon / 8;
-    ih = icon_rs_iconblk[0].ib_hicon;
-    num_bytes = iwb * ih;
+    if (load_user_icons() < 0)
+        return setup_iconblks(icon_rs_iconblk, BUILTIN_IBLKS);
 
-    /*
-     * Allocate memory for:
-     *  ICONBLKs
-     *  pointers to untranslated masks
-     *  icon masks
-     *  icon data
-     * FIXME: we should check that memory is allocated successfully
-     */
-    allocmem = dos_alloc(BUILTIN_IBLKS*(sizeof(ICONBLK)+sizeof(UWORD *)+2*num_bytes));
-    G.g_iblist = allocmem;
-    allocmem += BUILTIN_IBLKS * sizeof(ICONBLK);
-    G.g_origmask = allocmem;
-    allocmem += BUILTIN_IBLKS * sizeof(UWORD *);
-    maskstart = allocmem;
-    allocmem += BUILTIN_IBLKS * num_bytes;
-    datastart = allocmem;
-
-    /*
-     * Next, we copy the ICONBLKs to the g_iblist[] array:
-     *  g_iblist[] points to the transformed data/transformed mask
-     *  & is referenced by act_chkobj() in deskact.c, insa_icon()
-     *  in deskins.c, and win_bldview() in deskwin.c
-     */
-    memcpy(G.g_iblist, icon_rs_iconblk, BUILTIN_IBLKS*sizeof(ICONBLK));
-
-    /*
-     * Then we initialise g_origmask[]:
-     *  g_origmask[i] points to the untransformed mask & is
-     *  referenced by act_chkobj() in deskact.c
-     */
-    for (i = 0; i < BUILTIN_IBLKS; i++)
-        G.g_origmask[i] = (UWORD *)icon_rs_iconblk[i].ib_pmask;
-
-    /*
-     * Copy the icons' mask/data
-     */
-    for (i = 0, p = maskstart; i < BUILTIN_IBLKS; i++, p += num_bytes)
-        memcpy(p, icon_rs_iconblk[i].ib_pmask, num_bytes);
-    for (i = 0, p = datastart; i < BUILTIN_IBLKS; i++, p += num_bytes)
-        memcpy(p, icon_rs_iconblk[i].ib_pdata, num_bytes);
-
-    /*
-     * Fix up the ICONBLKs
-     */
-    for (i = 0, offset = 0; i < BUILTIN_IBLKS; i++, offset += num_bytes)
-    {
-        G.g_iblist[i].ib_pmask = (WORD *)(maskstart + offset);
-        G.g_iblist[i].ib_pdata = (WORD *)(datastart + offset);
-        G.g_iblist[i].ib_ytext = ih;
-        G.g_iblist[i].ib_wtext = 12 * gl_wschar;
-        G.g_iblist[i].ib_htext = gl_hschar + 2;
-    }
-
-    /*
-     * Finally we do the transforms
-     */
-    for (i = 0, p = maskstart; i < BUILTIN_IBLKS; i++, p += num_bytes)
-        gsx_trans((LONG)p, iwb, (LONG)p, iwb, ih);
-    for (i = 0, p = datastart; i < BUILTIN_IBLKS; i++, p += num_bytes)
-        gsx_trans((LONG)p, iwb, (LONG)p, iwb, ih);
+    return 0;
 }
 
 
@@ -435,6 +547,9 @@ void app_start(void)
     G.g_aavail = G.g_alist;
     G.g_alist[NUM_ANODES - 1].a_next = (ANODE *) NULL;
 
+    /*
+     * the following may in theory fail due to lack of memory: what should we do?
+     */
     app_rdicon();
 
     G.g_wicon = (12 * gl_wschar) + (2 * G.g_iblist[0].ib_xtext);

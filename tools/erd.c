@@ -555,7 +555,7 @@ LOCAL int num_notrans = ARRAY_SIZE(notrans);
  *  conditional wrapping control
  */
 LOCAL const CONDITIONAL frstr_cond = { "?", "#error \"Code generation error\"" };  /* no match, error if it does ... */
-LOCAL const CONDITIONAL other_cond = { "APPS", "#if CONF_WITH_WINDOW_ICONS" };
+LOCAL const CONDITIONAL other_cond = { "APPS", "#if 0" };
 
 /*
  *  table of complete strings that will have a shared data item
