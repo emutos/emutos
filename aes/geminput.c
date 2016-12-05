@@ -102,7 +102,7 @@ static WORD chk_ctrl(WORD mx, WORD my)
     {
         if ((D.w_win[gl_wtop].w_flags & VF_SUBWIN) &&
             (D.w_win[wh].w_flags & VF_SUBWIN) &&
-            inside(mx, my, (GRECT *)&D.w_win[wh].w_xwork))
+            inside(mx, my, &D.w_win[wh].w_work))
             return 1;
         else
             return -1;

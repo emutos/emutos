@@ -205,6 +205,7 @@ static void w_setup(AESPD *ppd, WORD w_handle, WORD kind)
 static GRECT *w_getxptr(WORD which, WORD w_handle)
 {
     /* FIXME: Probably remove the GRECT typecasts in this function */
+    WINDOW *pwin = &D.w_win[w_handle];
 
     switch(which)
     {
@@ -212,11 +213,11 @@ static GRECT *w_getxptr(WORD which, WORD w_handle)
     case WS_TRUE:
         return (GRECT *)&W_TREE[w_handle].ob_x;
     case WS_PREV:
-        return (GRECT *)&D.w_win[w_handle].w_xprev;
+        return &pwin->w_prev;
     case WS_WORK:
-        return (GRECT *)&D.w_win[w_handle].w_xwork;
+        return &pwin->w_work;
     case WS_FULL:
-        return (GRECT *)&D.w_win[w_handle].w_xfull;
+        return &pwin->w_full;
     }
 
     return NULL;
