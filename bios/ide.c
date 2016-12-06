@@ -663,13 +663,16 @@ static void ide_get_data(volatile struct IDE *interface,UBYTE *buffer,ULONG buff
 
     KDEBUG(("ide_get_data(0x%08lx, 0x%08lx, %lu, %d)\n", (ULONG)interface, (ULONG)buffer, bufferlen, need_byteswap));
 
-    while (p < end)
-        *p++ = interface->data;
-
-    if (need_byteswap)
-    {
-        KDEBUG(("byteswap(0x%08lx, %lu)\n", (ULONG)buffer, bufferlen));
-        byteswap(buffer,bufferlen);
+    if (need_byteswap) {
+        while (p < end) {
+            XFERWIDTH temp;
+            temp = interface->data;
+            xferswap(temp);
+            *p++ = temp;
+        }
+    } else {
+        while (p < end)
+            *p++ = interface->data;
     }
 }
 
