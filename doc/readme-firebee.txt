@@ -5,6 +5,10 @@ http://firebee.org/
 
 emutosfb.s19 - Multilanguage
 
+The following optional files are also supplied:
+emuicon.rsc - contains additional icons for the desktop
+emuicon.def - definition file for the above
+
 The default language is English.
 Other supported languages are:
 - Czech

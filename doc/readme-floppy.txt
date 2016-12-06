@@ -19,6 +19,10 @@ emutossg.st - Swiss German (PAL)
 emutosuk.st - English (PAL)
 emutosus.st - English (NTSC)
 
+The following optional files are also supplied:
+emuicon.rsc - contains additional icons for the desktop
+emuicon.def - definition file for the above
+
 Notes:
 - these versions are compatible with any Atari hardware (except the FireBee)
 - TT and Falcon 030 are supported

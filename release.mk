@@ -52,6 +52,8 @@ release-512k:
 	$(MAKE) 512
 	mkdir $(RELEASE_DIR)/$(RELEASE_512K)
 	cp etos512k.img etos512k.sym $(RELEASE_DIR)/$(RELEASE_512K)
+	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_512K)/emuicon.def
+	cp desk/icon.rsc $(RELEASE_DIR)/$(RELEASE_512K)/emuicon.rsc
 	cat doc/readme-512k.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_512K)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_512K)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_512K)/doc
@@ -67,6 +69,8 @@ release-256k:
 	$(MAKE) all256
 	mkdir $(RELEASE_DIR)/$(RELEASE_256K)
 	cp etos256*.img $(RELEASE_DIR)/$(RELEASE_256K)
+	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_256K)/emuicon.def
+	cp desk/icon.rsc $(RELEASE_DIR)/$(RELEASE_256K)/emuicon.rsc
 	cat doc/readme-256k.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_256K)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_256K)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_256K)/doc
@@ -82,6 +86,8 @@ release-192k:
 	$(MAKE) all192
 	mkdir $(RELEASE_DIR)/$(RELEASE_192K)
 	cp etos192*.img $(RELEASE_DIR)/$(RELEASE_192K)
+	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_192K)/emuicon.def
+	cp desk/icon.rsc $(RELEASE_DIR)/$(RELEASE_192K)/emuicon.rsc
 	cat doc/readme-192k.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_192K)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_192K)/doc
 	find $(RELEASE_DIR)/$(RELEASE_192K) -name '*.txt' -exec unix2dos '{}' ';'
@@ -114,6 +120,8 @@ release-aranym:
 	$(MAKE) aranym
 	mkdir $(RELEASE_DIR)/$(RELEASE_ARANYM)
 	cp $(ROM_ARANYM) $(RELEASE_DIR)/$(RELEASE_ARANYM)
+	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_ARANYM)/emuicon.def
+	cp desk/icon.rsc $(RELEASE_DIR)/$(RELEASE_ARANYM)/emuicon.rsc
 	cat doc/readme-aranym.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_ARANYM)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_ARANYM)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_ARANYM)/doc
@@ -129,6 +137,8 @@ release-firebee:
 	$(MAKE) firebee
 	mkdir $(RELEASE_DIR)/$(RELEASE_FIREBEE)
 	cp $(SREC_FIREBEE) $(RELEASE_DIR)/$(RELEASE_FIREBEE)
+	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_FIREBEE)/emuicon.def
+	cp desk/icon.rsc $(RELEASE_DIR)/$(RELEASE_FIREBEE)/emuicon.rsc
 	cat doc/readme-firebee.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_FIREBEE)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_FIREBEE)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_FIREBEE)/doc
@@ -145,6 +155,8 @@ release-amiga-rom:
 	mkdir $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)
 	cp $(ROM_AMIGA) $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)
 	cp $(AMIGA_KICKDISK) $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)
+	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)/emuicon.def
+	cp desk/icon.rsc $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)/emuicon.rsc
 	cat doc/readme-amiga-rom.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)/doc
@@ -160,6 +172,8 @@ release-amiga-floppy:
 	$(MAKE) amigaflop
 	mkdir $(RELEASE_DIR)/$(RELEASE_AMIGA_FLOPPY)
 	cp $(EMUTOS_ADF) $(RELEASE_DIR)/$(RELEASE_AMIGA_FLOPPY)
+	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_AMIGA_FLOPPY)/emuicon.def
+	cp desk/icon.rsc $(RELEASE_DIR)/$(RELEASE_AMIGA_FLOPPY)/emuicon.rsc
 	cat doc/readme-amiga-floppy.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_AMIGA_FLOPPY)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_AMIGA_FLOPPY)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_AMIGA_FLOPPY)/doc
@@ -205,6 +219,8 @@ release-prg:
 	$(MAKE) allprg
 	mkdir $(RELEASE_DIR)/$(RELEASE_PRG)
 	cp emutos*.prg $(RELEASE_DIR)/$(RELEASE_PRG)
+	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_PRG)/emuicon.def
+	cp desk/icon.rsc $(RELEASE_DIR)/$(RELEASE_PRG)/emuicon.rsc
 	cat doc/readme-prg.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_PRG)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_PRG)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_PRG)/doc
@@ -220,6 +236,8 @@ release-floppy:
 	$(MAKE) allflop
 	mkdir $(RELEASE_DIR)/$(RELEASE_FLOPPY)
 	cp emutos*.st $(RELEASE_DIR)/$(RELEASE_FLOPPY)
+	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_FLOPPY)/emuicon.def
+	cp desk/icon.rsc $(RELEASE_DIR)/$(RELEASE_FLOPPY)/emuicon.rsc
 	cat doc/readme-floppy.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_FLOPPY)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_FLOPPY)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_FLOPPY)/doc

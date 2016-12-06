@@ -25,6 +25,10 @@ etos256sg.img - Swiss German (PAL)
 etos256us.img - English (NTSC)
 etos256uk.img - English (PAL)
 
+The following optional files are also supplied:
+emuicon.rsc - contains additional icons for the desktop
+emuicon.def - definition file for the above
+
 Note that selecting Norwegian/Swedish currently sets the language to English,
 but the keyboard layout to Norwegian/Swedish.
 

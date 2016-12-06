@@ -15,6 +15,10 @@ need to use a smaller EmuTOS image.
 etos512k.img - Multilanguage
 etos512k.sym - Symbol address information for Hatari debugger and profiler
 
+The following optional files are also supplied:
+emuicon.rsc - contains additional icons for the desktop
+emuicon.def - definition file for the above
+
 Additional information on debugging EmuTOS and its software compatibility
 is included with Hatari:
 http://hg.tuxfamily.org/mercurialroot/hatari/hatari/raw-file/tip/doc/emutos.txt

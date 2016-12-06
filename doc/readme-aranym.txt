@@ -5,6 +5,10 @@ http://aranym.org/
 
 emutos-aranym.img - Multilanguage
 
+The following optional files are also supplied:
+emuicon.rsc - contains additional icons for the desktop
+emuicon.def - definition file for the above
+
 The default language is English.
 Other languages can be used by setting the NVRAM appropriately.
 
