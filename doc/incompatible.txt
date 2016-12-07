@@ -33,7 +33,7 @@ Program: Cameleon
 Error 1: program exits immediately when 'Start game' is selected.
 
 Bug analysis:
-The program requires an STe.  In order to determine whether its's
+The program requires an STe.  In order to determine whether it is
 running on an STe, it checks the contents of location 0x995 (hardcoded).
 On Atari TOS, this is where TOS initialisation happens to store the _MCH
 cookie but this is *not* how Atari says you should locate it (and it's
@@ -129,3 +129,20 @@ BIOS/XBIOS save area, possibly modifying the stack pointer. In the
 but STSpeech does not use it.  Because this problem is timing-dependent,
 it does not show up on Atari TOS, and only shows up in EmuTOS if BigDOS
 is installed (BigDOS issues many XBIOS calls).
+
+Program: Protracker (Equinox version)
+-------------------------------------
+Error: crash when "DISK OP." button is selected
+
+Bug analysis:
+The program relies on a TOS-specific code sequence, as follows:
+1. it searches the ROM (pointed to by location 4) for the first word
+   equal to 0x47e
+2. when found, it uses the longword immediately before as a pointer to
+   an address; in TOS2, this is a pointer to the mediachange handler
+3. it stores the long at offset 0x1c from that address in its data
+   segment; in TOS2, this is a pointer to (I think) two bytes of
+   status for the floppy drives
+Subsequently, when "DISK OP." is selected, the stored long is used as a
+pointer.  In TOS2, the value stored is $4216; in EmuTOS, it's zero,
+resulting in a crash.
