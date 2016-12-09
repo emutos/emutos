@@ -13,6 +13,7 @@ doc/authors.txt       - A list of the authors of EmuTOS
 doc/bugs.txt          - Currently known bugs
 doc/changelog.txt     - A list of changes: detailed up to and including
                         version 0.9.4; summarised for subsequent versions
+doc/emudesk.txt       - A brief guide to the newer features of the desktop
 doc/license.txt       - The FSF General Public License for EmuTOS
 doc/license_aros.txt  - The AROS Public License for certain Amiga source
                         code distributed as part of EmuTOS source

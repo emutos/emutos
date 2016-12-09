@@ -130,8 +130,8 @@ but STSpeech does not use it.  Because this problem is timing-dependent,
 it does not show up on Atari TOS, and only shows up in EmuTOS if BigDOS
 is installed (BigDOS issues many XBIOS calls).
 
-Program: Protracker (Equinox version)
--------------------------------------
+Program: Protracker v2 STE (Equinox version)
+--------------------------------------------
 Error: crash when "DISK OP." button is selected
 
 Bug analysis:
