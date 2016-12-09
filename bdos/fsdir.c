@@ -1211,6 +1211,9 @@ void decr_curdir_usage(int n)
  *
  *  Function 0x47   d_getpath
  *
+ *  Note that we deliberately do not check for mediachange on removable
+ *  drives - this is the same behaviour as Atari TOS
+ *
  *  Error returns:
  *                  EDRIVE
  */
@@ -1222,7 +1225,7 @@ long xgetdir(char *buf, int drv)
 
     drv = (drv == 0) ? run->p_curdrv : drv-1;
 
-    if (!(Drvmap() & (1L<<drv)) || (ckdrv(drv) < 0))     /* M01.01.1031.01 */
+    if (!(Drvmap() & (1L<<drv)) || (ckdrv(drv, FALSE) < 0))     /* M01.01.1031.01 */
     {
         *buf = 0;
         return EDRIVE;
@@ -1692,7 +1695,7 @@ static DND *dcrack(const char **np)
         d = run->p_curdrv;      /*    assume default            */
 
     /* M01.01.1212.01 */
-    if ((l = ckdrv(d)) < 0)     /*  check for valid drive & log */
+    if ((l=ckdrv(d, TRUE)) < 0) /*  check for valid drive & log */
         return (DND *)l;        /*    in.  abort if error       */
 
     /*

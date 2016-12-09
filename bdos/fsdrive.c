@@ -66,6 +66,7 @@ LONG    drvrem;
  *
  *  Arguments:
  *    d - has this drive been accessed, or had a media change
+ *    checkrem - TRUE iff we should check removable media for mediachange
  *
  *
  *      returns:
@@ -74,7 +75,7 @@ LONG    drvrem;
  *          EINTRN  if no room in dirtbl
  *          drive nbr if success.
  */
-long ckdrv(int d)
+long ckdrv(int d, BOOL checkrem)
 {
     int curdir;
     LONG mask;
@@ -99,7 +100,7 @@ long ckdrv(int d)
 
         drvsel |= mask;
     }
-    else if (mask & drvrem)     /* handle removable media */
+    else if (checkrem && (mask & drvrem))   /* handle removable media */
     {
         if (Mediach(d))
         {

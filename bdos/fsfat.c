@@ -257,7 +257,7 @@ long xgetfree(long *buf, int drv)
 
     drv = (drv ? drv-1 : run->p_curdrv);
 
-    if ((n = ckdrv(drv)) < 0)
+    if ((n = ckdrv(drv, TRUE)) < 0)
         return ERR;
 
     dm = drvtbl[n];
