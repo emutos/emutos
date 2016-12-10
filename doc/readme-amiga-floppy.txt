@@ -32,7 +32,7 @@ Supported Amiga hardware features:
 - Mouse
 - A600/A1200 IDE interface
 - Battery backed up clock (MSM6242B and RF5C01A)
-- Floppy drives (*)
+- Floppy drives
 
 Supported Atari features:
 - ST-RAM
@@ -41,7 +41,7 @@ Supported Atari features:
 - Mouse
 - IDE hard disk (with EmuTOS internal driver)
 - XBIOS hardware clock
-- ST floppy disks (only 9 sectors, 720 KB, read-only) (*)
+- ST floppy disks (only 9 sectors, 720 KB, read-only)
 
 Unsupported Amiga hardware features:
 - FastRAM (supported by EmuTOS ROM only) (*)

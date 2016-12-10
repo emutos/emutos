@@ -23,6 +23,9 @@
 #include "ikbd.h"               /* for call_mousevec() */
 #include "screen.h"
 #include "videl.h"
+#include "delay.h"
+#include "asm.h"
+#include "string.h"
 
 #if CONF_WITH_AROS
 #include "aros.h"
@@ -130,6 +133,18 @@
 #define AUD2EN   (1U << 2)
 #define AUD1EN   (1U << 1)
 #define AUD0EN   (1U << 0)
+
+/* ADKCON bits */
+#define PRECOMP1 (1U << 14)
+#define PRECOMP0 (1U << 13)
+#define MFMPREC  (1U << 12)
+#define WORDSYNC (1U << 10)
+#define MSBSYNC  (1U << 9)
+#define FAST     (1U << 8)
+
+/* DSKLEN bits */
+#define DK_DMAEN (1U << 15)
+#define DK_WRITE (1U << 14)
 
 /******************************************************************************/
 /* Machine detection                                                          */
@@ -725,22 +740,590 @@ BOOL amiga_can_shutdown(void)
 /* Floppy                                                                     */
 /******************************************************************************/
 
-BOOL amiga_flop_detect_drive(WORD dev)
+/* Parts of this code were inspired by AROS trackdisk device */
+
+static ULONG delay3ms;
+static ULONG delay15ms;
+static ULONG delay18ms;
+
+#define DELAY_STEP() delay_loop(delay3ms)
+#define DELAY_SETTLE() delay_loop(delay15ms)
+#define DELAY_SET_STEP_DIRECTION() delay_loop(delay18ms)
+
+#define TIMEOUT_MOTORON 500 /* milliseconds */
+#define TIMEOUT_DSKBLK 1000 /* milliseconds */
+
+#define SECTOR_SIZE 512 /* Size of a sector, in bytes */
+#define MFM_TRACK_SIZE 13630 /* Size of an MFM encoded track, in bytes */
+#define MAGIC_MFM_SYNC_MARK 0x4489 /* MFM value for bit synchronization */
+#define MAX_TRACKS 80 /* Typical value for most floppies */
+#define MAX_SECTORS 11 /* Typical values on ST are 9, 10, or even 11 */
+
+static WORD curdev; /* Currently selected floppy drive */
+static WORD curtrack[2]; /* Current track, for each drive */
+static WORD curside[2]; /* Current side, for each drive */
+static UWORD mfm_track[MFM_TRACK_SIZE / 2]; /* MFM-encoded track buffer */
+static UBYTE sectors[MAX_SECTORS][SECTOR_SIZE]; /* Decoded sector data */
+static BOOL sectors_decoded = FALSE; /* TRUE if sectors[][] is valid */
+static UWORD crc_ccitt_table[256]; /* Precomputed CRC table */
+
+static void make_crc_ccitt_table(void);
+
+/* Initialize floppy driver */
+void amiga_floppy_init(void)
 {
-#if CONF_WITH_AROS
-    return aros_flop_detect_drive(dev);
-#else
-    return FALSE;
-#endif
+    delay3ms = loopcount_1_msec * 3;
+    delay15ms = loopcount_1_msec * 15;
+    delay18ms = loopcount_1_msec * 18;
+
+    make_crc_ccitt_table(); /* Will be used to check track consistency */
+
+    /* Set /RDY /TK0 /WPRO /CHNG pins as input */
+    CIAADDRA &= ~(0x20 | 0x10 | 0x08 | 0x04);
+
+    /* Set /MTR /SEL3 /SEL2 /SEL1 /SEL0 /SIDE DIR /STEP as output */
+    CIABDDRB = 0xff; /* Set all pins as output */
+    CIABPRB = 0xff; /* And disable all */
+
+    /* Disable precompensation and MSBSYNC */
+    ADKCON = CLRBITS | PRECOMP1 | PRECOMP0 | MSBSYNC;
+
+    /* Enable MFM precompensation, DSKSYNC, MFM microseconds */
+    ADKCON = SETBITS | MFMPREC | WORDSYNC | FAST;
+
+    /* Synchronize DMA on this word */
+    DSKSYNC = MAGIC_MFM_SYNC_MARK;
+
+    /* Enable disk DMA */
+    DMACON = SETBITS | DSKEN;
 }
 
+/* Select a single floppy drive for further operation */
+static void amiga_floppy_select(WORD dev)
+{
+    /* Set Motor On flag. It will be taken in account on next selection. */
+    CIABPRB &= ~0x80;
+
+    /* Select the drive. This also turns motor on. */
+    CIABPRB &= ~((dev == 0) ? 0x08 : 0x10);
+
+    /* Remember the current drive */
+    curdev = dev;
+}
+
+/* Deselect all floppy drives */
+static void amiga_floppy_deselect(void)
+{
+    /* Deselect all drives */
+    CIABPRB |= 0x08 | 0x10 | 0x20 | 0x40;
+
+    /* Clear Motor On flag. It will be taken in account on next selection. */
+    CIABPRB |= 0x80;
+
+    /* Select the drive. This also turns motor off. */
+    CIABPRB &= ~((curdev == 0) ? 0x08 : 0x10);
+
+    /* Deselect all drives */
+    CIABPRB |= 0x08 | 0x10 | 0x20 | 0x40;
+}
+
+/* Select a floppy side */
+static void amiga_floppy_set_side(WORD side)
+{
+    if (side == 0)
+        CIABPRB |= 0x04;
+    else
+        CIABPRB &= ~0x04;
+
+    /* Remember the current side */
+    curside[curdev] = side;
+}
+
+/* Determine if the head is on track 0 */
+static BOOL amiga_floppy_is_track_zero(void)
+{
+    return !(CIAAPRA & 0x10);
+}
+
+/* Set step direction: 0 = forward, 1 = backward */
+static void amiga_floppy_set_step_direction(WORD dir)
+{
+    WORD prevdir = (CIABPRB & 0x02);
+
+    if (!prevdir && dir)
+    {
+        /* Backward */
+        CIABPRB |= 0x02;
+        DELAY_SET_STEP_DIRECTION();
+    }
+    else if (prevdir && !dir)
+    {
+        /* Forward */
+        CIABPRB &= ~0x02;
+        DELAY_SET_STEP_DIRECTION();
+    }
+}
+
+/* Move the head to next track in current direction */
+static void amiga_floppy_step(void)
+{
+    /* Pulse DSKSTEP bit to initiate step */
+    CIABPRB &= ~0x01;
+    CIABPRB |= 0x01;
+
+    /* This delay is supposed to be enough for the step to succeed */
+    DELAY_STEP();
+
+    /* Adjust current track number depending on current step direction */
+    curtrack[curdev] += (CIABPRB & 0x02) ? -1 : 1;
+}
+
+/* Recalibrate drive to resynchronize track counter */
+static BOOL amiga_floppy_recalibrate(void)
+{
+    int steps = 0;
+
+    /* If the drive is already on track 0, step forward */
+    if (amiga_floppy_is_track_zero())
+    {
+        amiga_floppy_set_step_direction(0);
+        amiga_floppy_step();
+    }
+
+    /* Step backward until track 0 */
+    amiga_floppy_set_step_direction(1);
+    while (!amiga_floppy_is_track_zero())
+    {
+        amiga_floppy_step();
+        steps++;
+
+        if (steps >= MAX_TRACKS + 15)
+        {
+            /* Step does not work, there is no drive */
+            return FALSE;
+        }
+    }
+
+    /* We are on track 0 */
+    curtrack[curdev] = 0;
+
+    /* Wait for the head to stabilize */
+    DELAY_SETTLE();
+
+    /* The drive works fine */
+    return TRUE;
+}
+
+/* Detect a floppy drive */
+BOOL amiga_flop_detect_drive(WORD dev)
+{
+    BOOL ret;
+
+    /* If recalibrate succeeds, we can assume that a drive is present */
+    amiga_floppy_select(dev);
+    ret = amiga_floppy_recalibrate();
+    amiga_floppy_deselect();
+
+    return ret;
+}
+
+/* Seek to an arbitrary track */
+static WORD amiga_floppy_seek(WORD track)
+{
+    WORD offset = track - curtrack[curdev];
+
+    if (offset == 0)
+        return E_OK;
+
+    amiga_floppy_set_step_direction(offset < 0);
+
+    /* Step until expected track */
+    while (curtrack[curdev] != track)
+        amiga_floppy_step();
+
+    /* Wait for the head to stabilize */
+    DELAY_SETTLE();
+
+    return E_OK;
+}
+
+/* Return TRUE if the motor timed out during switch on */
+static BOOL timeout_motoron(void)
+{
+    LONG next = hz_200 + (TIMEOUT_MOTORON / 5);
+
+    while (hz_200 < next)
+    {
+        if (!(CIAAPRA & 0x20)) /* Motor on? */
+            return FALSE;
+    }
+
+    return TRUE;
+}
+
+/* Return TRUE if the disk DMA timed out */
+static BOOL timeout_dskblk(void)
+{
+    LONG next = hz_200 + (TIMEOUT_DSKBLK / 5);
+
+    while (hz_200 < next)
+    {
+        if (INTREQR & DSKBLK)
+            return FALSE;
+    }
+
+    return TRUE;
+}
+
+/*
+ * Read the current raw track into the MFM track cache
+ * Output: mfm_track
+ */
+static WORD amiga_floppy_read_raw_track(void)
+{
+    UWORD dsklen;
+
+    /* The motor should have been switched on when the drive was selected */
+    if (timeout_motoron())
+        return EDRVNR;
+
+    KDEBUG(("DMA start...\n"));
+
+    /* Set DMA address */
+    DSKPTH = mfm_track;
+
+    /* Start DMA read */
+    dsklen = DK_DMAEN | (MFM_TRACK_SIZE / 2); /* Read + size in words */
+    DSKLEN = dsklen;
+    DSKLEN = dsklen; /* Twice for actual start */
+
+    /* Wait for DSKBLK interrupt */
+    if (timeout_dskblk())
+    {
+        KDEBUG(("error: DMA timed out\n"));
+        return EREADF;
+    }
+
+    /* Stop DMA */
+    DSKLEN = 0;
+
+    /* Clear DSKBLK interrupt */
+    INTREQ = CLRBITS | DSKBLK;
+
+    KDEBUG(("DMA end\n"));
+
+    /* This is important if the data cache is activated in Chip RAM */
+    invalidate_data_cache(mfm_track, MFM_TRACK_SIZE);
+
+    return E_OK;
+}
+
+/*
+ * Accurate documentation about CRC-CCITT can be found there:
+ * http://jlgconsult.pagesperso-orange.fr/Atari/diskette/diskette_en.htm#FDC_CRC_Computation
+ * http://www.atari-forum.com/viewtopic.php?p=9497#p9497
+ */
+
+/* Precompute a CRC-CCITT table */
+static void make_crc_ccitt_table(void)
+{
+    UWORD w;
+    int i, j;
+
+    for (i = 0; i < 256; i++)
+    {
+        w = i << 8;
+
+        for (j = 0; j < 8; j++)
+            w = (w << 1) ^ ((w & 0x8000) ? 0x1021 : 0);
+
+        crc_ccitt_table[i] = w;
+    }
+}
+
+/* Get the CRC-CCITT of a buffer, with initial value */
+static UWORD get_crc_ccitt_next(const void *buffer, UWORD length, UWORD crc)
+{
+    const UBYTE *p = (const UBYTE*)buffer;
+
+    while (length-- > 0)
+        crc = (crc << 8) ^ crc_ccitt_table[(crc >> 8) ^ *p++];
+
+    return crc;
+}
+
+/* Get the CRC-CCITT of a buffer */
+static UWORD get_crc_ccitt(const void *buffer, UWORD length)
+{
+    return get_crc_ccitt_next(buffer, length, 0xffff);
+}
+
+/*
+ * Decode a single MFM byte, and increment the pointer.
+ * Rules:
+ * - each bit is encoded as 2 bits
+ * - 1 is encoded as 01
+ * - 0 is encoded as 10 if following a 0
+ * - 0 is encoded as 00 if following a 1
+ * Basically, first bit is a useless filler, second bit is the data bit.
+ *
+ * Documentation:
+ * http://jlgconsult.pagesperso-orange.fr/Atari/diskette/diskette_en.htm#MFM_Address_Marks
+ * https://en.wikipedia.org/wiki/Modified_Frequency_Modulation
+ */
+static UBYTE decode_mfm(const UWORD **ppmfm)
+{
+    UWORD mfm = *(*ppmfm)++; /* MFM encoded byte, as word */
+    UBYTE out = 0; /* Decoded byte */
+    UBYTE bit;
+
+    /* For each bit of the byte, starting from LSB */
+    for (bit = 0; bit < 8; bit++)
+    {
+        /* Make room for the new bit in bit 7 */
+        out >>= 1;
+
+        /* Bit 0 of MFM is the value */
+        if (mfm & 1)
+            out |= 0x80;
+
+        /* Bit 1 of MFM is a filler. Skip both. */
+        mfm >>= 2;
+    }
+
+    return out;
+}
+
+/*
+ * Decode a whole MFM-encoded ST/PC track.
+ * Input: mfm_track
+ * Output: sectors, sectors_decoded
+ *
+ * Documentation:
+ * http://jlgconsult.pagesperso-orange.fr/Atari/diskette/diskette_en.htm#Atari_Double_Density_Diskette_Format
+ * http://bitsavers.trailing-edge.com/pdf/ibm/floppy/GA21-9182-4_Diskette_General_Information_Manual_Aug79.pdf
+ */
+static WORD amiga_floppy_decode_track(void)
+{
+    WORD err = E_OK;
+    const UWORD *raw = mfm_track;
+    const UWORD *rawend = mfm_track + ARRAY_SIZE(mfm_track);
+    const int spt = 9; /* Sectors per track. FIXME: should be read from BPB */
+    int sector = -1; /* Current sector */
+    ULONG sectorbits = 0; /* Bit field for each sector read */
+    UBYTE tmp[8]; /* Temporary buffer to compute CRC */
+    UWORD datacrc; /* Partial CRC of Data Field */
+
+    /* Pre-compute the CRC of Data Field header */
+    tmp[0] = tmp[1] = tmp[2] = 0xa1; /* 3 sync bytes */
+    tmp[3] = 0xfb; /* AM2 */
+    datacrc = get_crc_ccitt(tmp, 4);
+
+    /* While all sector data has not been read */
+    while (sectorbits != (1 << spt) - 1)
+    {
+        UBYTE address_mark;
+        UWORD crc, expected_crc;
+
+        /* Find next sync mark */
+        while (raw < rawend && *raw != MAGIC_MFM_SYNC_MARK)
+            raw++;
+
+        /* Skip multiple sync marks */
+        while (raw < rawend && *raw == MAGIC_MFM_SYNC_MARK)
+            raw++;
+
+        if (raw >= rawend)
+        {
+            KDEBUG(("error: next sync mark not found\n"));
+            err = ESECNF;
+            goto end;
+        }
+
+        /* Decode the address mark */
+        address_mark = decode_mfm(&raw);
+
+        if (address_mark == 0xfe) /* AM1 */
+        {
+            /* This is an ID Field (sector header) */
+            UBYTE cylinder, head, size;
+
+            /* Ensure that the ID Field has been fully read */
+            if (raw >= rawend - 6)
+            {
+                KDEBUG(("error: truncated ID Field\n"));
+                err = ESECNF;
+                goto end;
+            }
+
+            cylinder = decode_mfm(&raw);
+            head = decode_mfm(&raw);
+            sector = decode_mfm(&raw);
+            size = decode_mfm(&raw);
+            crc = (decode_mfm(&raw) << 8) | decode_mfm(&raw);
+
+            /* Compute the CRC of the ID Field */
+            tmp[0] = tmp[1] = tmp[2] = 0xa1; /* 3 sync bytes */
+            tmp[3] = address_mark;
+            tmp[4] = cylinder;
+            tmp[5] = head;
+            tmp[6] = sector;
+            tmp[7] = size;
+            expected_crc = get_crc_ccitt(tmp, 8);
+
+            /* Check ID Field integrity */
+            if (crc != expected_crc)
+            {
+                KDEBUG(("error: sector %d: invalid header CRC\n", sector));
+                err = E_CRC;
+                goto end;
+            }
+
+            /* Check sector metadata */
+            if (cylinder != curtrack[curdev]
+                || head != curside[curdev]
+                || size != 2
+                || sector < 1
+                || sector > spt)
+            {
+                KDEBUG(("error: invalid header: cylinder=%d head=%d sector=%d size=%d\n",
+                    cylinder, head, sector, size));
+                err = ESECNF;
+                goto end;
+            }
+        }
+        else if (address_mark == 0xfb) /* AM2 */
+        {
+            /* This is a Data Field (sector data) */
+            UBYTE *data;
+            int i;
+
+            /* If no ID Field has been read, just ignore the Data Field.
+             * It will be repeated at the end of the track, anyway. */
+            if (sector < 0)
+                continue;
+
+            /* Ensure that the Data Field has been fully read */
+            if (raw >= rawend - (SECTOR_SIZE + 2))
+            {
+                KDEBUG(("error: truncated Data Field\n"));
+                err = ESECNF;
+                goto end;
+            }
+
+            /* Decode sector data */
+            data = sectors[sector - 1];
+            for (i = 0; i < SECTOR_SIZE; i++)
+                data[i] = decode_mfm(&raw);
+            crc = (decode_mfm(&raw) << 8) | decode_mfm(&raw);
+
+            /* Check data integrity */
+            expected_crc = get_crc_ccitt_next(data, SECTOR_SIZE, datacrc);
+            if (crc != expected_crc)
+            {
+                KDEBUG(("error: sector %d: invalid data CRC\n", sector));
+                err = E_CRC;
+                goto end;
+            }
+
+            KDEBUG(("sector %d read OK\n", sector));
+
+            /* Mark sector as read */
+            sectorbits |= 1 << (sector - 1);
+            sector = -1;
+        }
+        else
+        {
+            /* Unknown address mark */
+            KDEBUG(("error: unknown address mark: 0x%08x\n", address_mark));
+            err = ESECNF;
+            goto end;
+        }
+    }
+
+end:
+    if (err == E_OK)
+        sectors_decoded = TRUE;
+
+    return err;
+}
+
+/*
+ * Read a whole track into track cache.
+ * Input: mfm_track
+ * Output: mfm_track, sectors, sectors_decoded
+ */
+static WORD amiga_floppy_read_track(WORD dev, WORD track, WORD side)
+{
+    WORD ret;
+
+    KDEBUG(("amiga_floppy_read_track() dev=%d track=%d side=%d\n",
+        dev, track, side));
+
+    /* Invalidate current track cache */
+    sectors_decoded = FALSE;
+
+    /* Select device and side */
+    amiga_floppy_select(dev);
+    amiga_floppy_set_side(side);
+
+    /* Seek to requested track */
+    KDEBUG(("amiga_floppy_seek(%d)...\n", track));
+    ret = amiga_floppy_seek(track);
+    KDEBUG(("amiga_floppy_seek(%d) ret=%d\n", track, ret));
+    if (ret != E_OK)
+        goto exit;
+
+    /* Read raw track data */
+    KDEBUG(("amiga_floppy_read_raw_track()...\n"));
+    ret = amiga_floppy_read_raw_track();
+    KDEBUG(("amiga_floppy_read_raw_track() ret=%d\n", ret));
+    if (ret != E_OK)
+        goto exit;
+
+    /* Decode all sectors of the track */
+    ret = amiga_floppy_decode_track();
+    KDEBUG(("amiga_floppy_decode_track() ret=%d\n", ret));
+
+exit:
+    amiga_floppy_deselect();
+    return ret;
+}
+
+/* Read some sectors from a track */
+static WORD amiga_floppy_read(UBYTE *buf, WORD dev, WORD track, WORD side, WORD sect, WORD count)
+{
+    WORD ret;
+
+    KDEBUG(("amiga_floppy_read() buf=0x%08lx dev=%d track=%d side=%d sect=%d count=%d\n",
+        (ULONG)buf, dev, track, side, sect, count));
+
+    /* Amiga hardware needs to read a whole track */
+    if (sectors_decoded && dev == curdev && track == curtrack[curdev] && side == curside[curdev])
+    {
+        KDEBUG(("use cached track data dev=%d track=%d side=%d\n",
+            dev, track, side));
+    }
+    else
+    {
+        ret = amiga_floppy_read_track(dev, track, side);
+        if (ret != E_OK)
+            return ret;
+    }
+
+    /* Copy sector data to user-supplied buffer */
+    memcpy(buf, &sectors[sect - 1], SECTOR_SIZE * count);
+
+    return E_OK;
+}
+
+/* Amiga implementation of floprw() */
 WORD amiga_floprw(UBYTE *buf, WORD rw, WORD dev, WORD sect, WORD track, WORD side, WORD count)
 {
-#if CONF_WITH_AROS
-    return aros_floprw(buf, rw, dev, sect, track, side, count);
-#else
-    return EUNDEV;
-#endif
+    if (rw & 1)
+        return EWRITF; /* Write not supported */
+    else
+        return amiga_floppy_read(buf, dev, track, side, sect, count);
 }
 
 #endif /* MACHINE_AMIGA */

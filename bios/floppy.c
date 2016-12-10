@@ -293,6 +293,9 @@ void flop_hdv_init(void)
 
     /* by default, there is no floppy drive */
     nflops = 0;
+#ifdef MACHINE_AMIGA
+    amiga_floppy_init();
+#endif
     flop_init(0);
     flop_init(1);
 

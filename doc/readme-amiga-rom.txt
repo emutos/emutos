@@ -41,7 +41,7 @@ Supported Amiga hardware features:
 - A600/A1200 IDE interface
 - Battery backed up clock (MSM6242B and RF5C01A)
 - Zorro II/III Fast RAM, Slow RAM, A3000/A4000 motherboard RAM (*)
-- Floppy drives (*)
+- Floppy drives
 
 Supported Atari features:
 - ST-RAM
@@ -51,7 +51,7 @@ Supported Atari features:
 - IDE hard disk (with EmuTOS internal driver)
 - XBIOS hardware clock
 - Alt-RAM (*)
-- ST floppy disks (only 9 sectors, 720 KB, read-only) (*)
+- ST floppy disks (only 9 sectors, 720 KB, read-only)
 
 Unsupported Atari features:
 - Color video modes
