@@ -30,23 +30,106 @@
 
 #ifdef MACHINE_AMIGA
 
-/* DMA register bits */
-#define DMAF_SETCLR             0x8000
-#define DMAF_COPPER             0x0080
-#define DMAF_RASTER             0x0100
-#define DMAF_MASTER             0x0200
-
+/* Custom registers */
 #define JOY0DAT *(volatile UWORD*)0xdff00a
-#define CIAAPRA *(volatile UBYTE*)0xbfe001
-#define POTGO *(volatile UWORD*)0xdff034
-#define POTGOR *(volatile UWORD*)0xdff016 /* = POTINP */
+#define ADKCONR *(volatile UWORD*)0xdff010
+#define POTGOR  *(volatile UWORD*)0xdff016 /* = POTINP */
+#define DSKBYTR *(volatile UWORD*)0xdff01a
 #define INTENAR *(volatile UWORD*)0xdff01c
+#define INTREQR *(volatile UWORD*)0xdff01e
+#define DSKPTH  *(void* volatile*)0xdff020
+#define DSKLEN  *(volatile UWORD*)0xdff024
+#define POTGO   *(volatile UWORD*)0xdff034
+#define DSKSYNC *(volatile UWORD*)0xdff07e
+#define COP1LCH *(UWORD* volatile*)0xdff080
+#define COPJMP1 *(volatile UWORD*)0xdff088
+#define DIWSTRT *(volatile UWORD*)0xdff08e
+#define DIWSTOP *(volatile UWORD*)0xdff090
+#define DDFSTRT *(volatile UWORD*)0xdff092
+#define DDFSTOP *(volatile UWORD*)0xdff094
+#define DMACON  *(volatile UWORD*)0xdff096
 #define INTENA  *(volatile UWORD*)0xdff09a
+#define INTREQ  *(volatile UWORD*)0xdff09c
+#define ADKCON  *(volatile UWORD*)0xdff09e
+#define BPLCON0 *(volatile UWORD*)0xdff100
+#define BPLCON1 *(volatile UWORD*)0xdff102
+#define BPL1MOD *(volatile UWORD*)0xdff108
+#define COLOR00 *(volatile UWORD*)0xdff180
+#define COLOR01 *(volatile UWORD*)0xdff182
+
+/* CIA A registers */
+#define CIAAPRA    *(volatile UBYTE*)0xbfe001
+#define CIAAPRB    *(volatile UBYTE*)0xbfe101
+#define CIAADDRA   *(volatile UBYTE*)0xbfe201
+#define CIAADDRB   *(volatile UBYTE*)0xbfe301
+#define CIAATALO   *(volatile UBYTE*)0xbfe401
+#define CIAATAHI   *(volatile UBYTE*)0xbfe501
+#define CIAATBLO   *(volatile UBYTE*)0xbfe601
+#define CIAATBHI   *(volatile UBYTE*)0xbfe701
+#define CIAATODLO  *(volatile UBYTE*)0xbfe801
+#define CIAATODMID *(volatile UBYTE*)0xbfe901
+#define CIAATODHI  *(volatile UBYTE*)0xbfea01
+#define CIAASDR    *(volatile UBYTE*)0xbfec01
+#define CIAAICR    *(volatile UBYTE*)0xbfed01
+#define CIAACRA    *(volatile UBYTE*)0xbfee01
+#define CIAACRB    *(volatile UBYTE*)0xbfef01
+
+/* CIA B registers */
+#define CIABPRA    *(volatile UBYTE*)0xbfd000
+#define CIABPRB    *(volatile UBYTE*)0xbfd100
+#define CIABDDRA   *(volatile UBYTE*)0xbfd200
+#define CIABDDRB   *(volatile UBYTE*)0xbfd300
+#define CIABTALO   *(volatile UBYTE*)0xbfd400
+#define CIABTAHI   *(volatile UBYTE*)0xbfd500
+#define CIABTBLO   *(volatile UBYTE*)0xbfd600
+#define CIABTBHI   *(volatile UBYTE*)0xbfd700
+#define CIABTODLO  *(volatile UBYTE*)0xbfd800
+#define CIABTODMID *(volatile UBYTE*)0xbfd900
+#define CIABTODHI  *(volatile UBYTE*)0xbfda00
+#define CIABSDR    *(volatile UBYTE*)0xbfdc00
+#define CIABICR    *(volatile UBYTE*)0xbfdd00
+#define CIABCRA    *(volatile UBYTE*)0xbfde00
+#define CIABCRB    *(volatile UBYTE*)0xbfdf00
 
 /* Gayle registers */
 #define GAYLE_ID *(volatile BYTE*)0xde1000
 #define INTENA_MIRROR *(volatile UWORD*)0xde109a
 #define FAT_GARY_TIMEOUT *(volatile BYTE*)0xde0000
+
+/* Generic Set/Clear bit */
+#define SETBITS  (1U << 15)
+#define CLRBITS  (0U << 15)
+
+/* INTREQ / INTENA flags */
+#define INTEN    (1U << 14)
+#define EXTER    (1U << 13)
+#define DSKSYN   (1U << 12)
+#define RBF      (1U << 11)
+#define AUD3     (1U << 10)
+#define AUD2     (1U << 9)
+#define AUD1     (1U << 8)
+#define AUD0     (1U << 7)
+#define BLIT     (1U << 6)
+#define VERTB    (1U << 5)
+#define PORTS    (1U << 3)
+#define SOFT     (1U << 2)
+#define DSKBLK   (1U << 1)
+#define TBE      (1U << 0)
+
+/* DMACON bits */
+#define BBUSY    (1U << 14)
+#define BZERO    (1U << 13)
+#define BLTPRI   (1U << 10)
+#define DMAEN    (1U << 9)
+#define BPLEN    (1U << 8)
+#define COPEN    (1U << 7)
+#define BLTEN    (1U << 6)
+#define SPREN    (1U << 5)
+#define DSKEN    (1U << 4)
+#define AUD3EN   (1U << 3)
+#define AUD2EN   (1U << 2)
+#define AUD1EN   (1U << 1)
+#define AUD0EN   (1U << 0)
 
 /******************************************************************************/
 /* Machine detection                                                          */
@@ -67,17 +150,17 @@ static void detect_gayle(void)
 
     /* Check if 0xde1000 is a mirror of 0xdff000 custom chips */
     save_intena = INTENAR;
-    INTENA_MIRROR = 0x7fff; /* Disable interrupts using mirror */
+    INTENA_MIRROR = ~SETBITS; /* Disable interrupts using mirror */
     if (INTENAR == 0)
     {
         /* Interrupts have been disabled. Maybe mirror of INTENA. */
-        INTENA_MIRROR = 0x8001; /* Enable TBE interrupt */
+        INTENA_MIRROR = SETBITS | TBE; /* Enable TBE interrupt */
         if (INTENAR != 0)
         {
             /* Interrupt was enabled. This is an INTENA mirror. */
             /* Restore interrupts */
-            INTENA = 0x7fff;
-            INTENA = 0x8000 | save_intena;
+            INTENA = ~SETBITS;
+            INTENA = SETBITS | save_intena;
 
             /* So this is not a Gayle */
             return;
@@ -194,17 +277,17 @@ static void amiga_set_videomode(UWORD width, UWORD height)
     KINFO(("DIWSTRT = 0x%04x\n", diwstrt));
     KINFO(("DIWSTOP = 0x%04x\n", diwstop));
 
-    *(volatile UWORD*)0xdff100 = bplcon0; /* BPLCON0: Bit Plane Control */
-    *(volatile UWORD*)0xdff102 = 0;       /* BPLCON1: Horizontal scroll value 0 */
-    *(volatile UWORD*)0xdff108 = bpl1mod; /* BPL1MOD: Modulo = line width in interlaced mode */
-    *(volatile UWORD*)0xdff092 = ddfstrt; /* DDFSTRT: Data-fetch start */
-    *(volatile UWORD*)0xdff094 = ddfstop; /* DDFSTOP: Data-fetch stop */
-    *(volatile UWORD*)0xdff08e = diwstrt; /* DIWSTRT: Set display window start */
-    *(volatile UWORD*)0xdff090 = diwstop; /* DIWSTOP: Set display window stop */
+    BPLCON0 = bplcon0; /* Bit Plane Control */
+    BPLCON1 = 0;       /* Horizontal scroll value 0 */
+    BPL1MOD = bpl1mod; /* Modulo = line width in interlaced mode */
+    DDFSTRT = ddfstrt; /* Data-fetch start */
+    DDFSTOP = ddfstop; /* Data-fetch stop */
+    DIWSTRT = diwstrt; /* Set display window start */
+    DIWSTOP = diwstop; /* Set display window stop */
 
     /* Set up color registers */
-    *(volatile UWORD*)0xdff180 = 0x0fff; /* COLOR00: Background color = white */
-    *(volatile UWORD*)0xdff182 = 0x0000; /* COLOR01: Foreground color = black */
+    COLOR00 = 0x0fff; /* Background color = white */
+    COLOR01 = 0x0000; /* Foreground color = black */
 
     if (width == 640 && height == 400)
         sshiftmod = ST_HIGH;
@@ -264,15 +347,15 @@ void amiga_screen_init(void)
     copper_list[7] = 0xfffe; /* Copper list */
 
     /* Initialize the Copper */
-    *(UWORD* volatile *)0xdff080 = copper_list; /* COP1LCH */
-    *(volatile UWORD*)0xdff088 = 0;             /* COPJMP1 */
+    COP1LCH = copper_list;
+    COPJMP1 = 0;
 
-    /* VBL interrupt */
+    /* Enable VBL interrupt */
     VEC_LEVEL3 = amiga_vbl;
-    *(volatile UWORD*)0xdff09a = 0xc020; /* INTENA Set Master and VBL bits */
+    INTENA = SETBITS | INTEN | VERTB;
 
-    /* Start the DMA */
-    *(volatile UWORD*)0xdff096 = DMAF_SETCLR | DMAF_COPPER | DMAF_RASTER | DMAF_MASTER; /* DMACON */
+    /* Start the DMA, with bit plane and Copper */
+    DMACON = SETBITS | COPEN | BPLEN | DMAEN;
 }
 
 void amiga_setphys(const UBYTE *addr)
