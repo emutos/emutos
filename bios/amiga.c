@@ -1075,22 +1075,21 @@ static UWORD get_crc_ccitt(const void *buffer, UWORD length)
 static UBYTE decode_mfm(const UWORD **ppmfm)
 {
     UWORD mfm = *(*ppmfm)++; /* MFM encoded byte, as word */
-    UBYTE out = 0; /* Decoded byte */
-    UBYTE bit;
+    WORD counter; /* DBF counter */
+    UBYTE out; /* Decoded byte */
 
-    /* For each bit of the byte, starting from LSB */
-    for (bit = 0; bit < 8; bit++)
-    {
-        /* Make room for the new bit in bit 7 */
-        out >>= 1;
-
-        /* Bit 0 of MFM is the value */
-        if (mfm & 1)
-            out |= 0x80;
-
-        /* Bit 1 of MFM is a filler. Skip both. */
-        mfm >>= 2;
-    }
+    __asm__
+    (
+        "moveq   #7,%1\n"
+        "1:\n\t"
+        "add.w   %2,%2\n\t"
+        "addx.w  %2,%2\n\t"
+        "addx.b  %0,%0\n\t"
+        "dbf     %1,1b"
+    : "=&d"(out), "=&d"(counter)
+    : "d"(mfm)
+    :
+    );
 
     return out;
 }
