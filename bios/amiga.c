@@ -1321,7 +1321,7 @@ static WORD amiga_floppy_read(UBYTE *buf, WORD dev, WORD track, WORD side, WORD 
 WORD amiga_floprw(UBYTE *buf, WORD rw, WORD dev, WORD sect, WORD track, WORD side, WORD count)
 {
     if (rw & 1)
-        return EWRITF; /* Write not supported */
+        return EWRPRO; /* Write not supported */
     else
         return amiga_floppy_read(buf, dev, track, side, sect, count);
 }
