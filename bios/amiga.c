@@ -1235,7 +1235,7 @@ static WORD amiga_floppy_decode_track(void)
         else
         {
             /* Unknown address mark */
-            KDEBUG(("error: unknown address mark: 0x%08x\n", address_mark));
+            KDEBUG(("error: unknown address mark: 0x%02x\n", address_mark));
             err = ESECNF;
             goto end;
         }
