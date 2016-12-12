@@ -1106,7 +1106,6 @@ static UBYTE decode_mfm(const UWORD **ppmfm)
  */
 static WORD amiga_floppy_decode_track(void)
 {
-    WORD err = E_OK;
     const UWORD *raw = mfm_track;
     const UWORD *rawend = mfm_track + ARRAY_SIZE(mfm_track);
     const int spt = 9; /* Sectors per track. FIXME: should be read from BPB */
@@ -1137,8 +1136,7 @@ static WORD amiga_floppy_decode_track(void)
         if (raw >= rawend)
         {
             KDEBUG(("error: next sync mark not found\n"));
-            err = ESECNF;
-            goto end;
+            return ESECNF;
         }
 
         /* Decode the address mark */
@@ -1153,8 +1151,7 @@ static WORD amiga_floppy_decode_track(void)
             if (raw >= rawend - 6)
             {
                 KDEBUG(("error: truncated ID Field\n"));
-                err = ESECNF;
-                goto end;
+                return ESECNF;
             }
 
             cylinder = decode_mfm(&raw);
@@ -1176,8 +1173,7 @@ static WORD amiga_floppy_decode_track(void)
             if (crc != expected_crc)
             {
                 KDEBUG(("error: sector %d: invalid header CRC\n", sector));
-                err = E_CRC;
-                goto end;
+                return E_CRC;
             }
 
             /* Check sector metadata */
@@ -1189,8 +1185,7 @@ static WORD amiga_floppy_decode_track(void)
             {
                 KDEBUG(("error: invalid header: cylinder=%d head=%d sector=%d size=%d\n",
                     cylinder, head, sector, size));
-                err = ESECNF;
-                goto end;
+                return ESECNF;
             }
         }
         else if (address_mark == 0xfb) /* AM2 */
@@ -1208,8 +1203,7 @@ static WORD amiga_floppy_decode_track(void)
             if (raw >= rawend - (SECTOR_SIZE + 2))
             {
                 KDEBUG(("error: truncated Data Field\n"));
-                err = ESECNF;
-                goto end;
+                return ESECNF;
             }
 
             /* Decode sector data */
@@ -1223,8 +1217,7 @@ static WORD amiga_floppy_decode_track(void)
             if (crc != expected_crc)
             {
                 KDEBUG(("error: sector %d: invalid data CRC\n", sector));
-                err = E_CRC;
-                goto end;
+                return E_CRC;
             }
 
             KDEBUG(("sector %d read OK\n", sector));
@@ -1237,16 +1230,13 @@ static WORD amiga_floppy_decode_track(void)
         {
             /* Unknown address mark */
             KDEBUG(("error: unknown address mark: 0x%02x\n", address_mark));
-            err = ESECNF;
-            goto end;
+            return ESECNF;
         }
     }
 
-end:
-    if (err == E_OK)
-        sectors_decoded = TRUE;
+    sectors_decoded = TRUE;
 
-    return err;
+    return E_OK;
 }
 
 /*
