@@ -1113,6 +1113,9 @@ static WORD amiga_floppy_decode_track(void)
     ULONG sectorbits = 0; /* Bit field for each sector read */
     UBYTE tmp[8]; /* Temporary buffer to compute CRC */
     UWORD datacrc; /* Partial CRC of Data Field */
+#ifdef ENABLE_KDEBUG
+    ULONG hz_start = hz_200;
+#endif
 
     /* Pre-compute the CRC of Data Field header */
     tmp[0] = tmp[1] = tmp[2] = 0xa1; /* 3 sync bytes */
@@ -1235,6 +1238,8 @@ static WORD amiga_floppy_decode_track(void)
     }
 
     sectors_decoded = TRUE;
+
+    KDEBUG(("track decode time = %lu ms\n", (hz_200 - hz_start) * 5));
 
     return E_OK;
 }
