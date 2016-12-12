@@ -1001,6 +1001,7 @@ static WORD amiga_floppy_read_raw_track(void)
     if (timeout_dskblk())
     {
         KDEBUG(("error: DMA timed out\n"));
+        DSKLEN = 0; /* Stop DMA */
         return EREADF;
     }
 
