@@ -229,6 +229,9 @@ static void fun_win2desk(WORD wh, WORD obj, WORD keystate)
     ANODE *an_dest;
 
     an_dest = app_afind_by_id(obj);
+    if (!an_dest)   /* "can't happen" */
+        return;
+
     wn_src = win_find(wh);
     if (!wn_src)
         return;
