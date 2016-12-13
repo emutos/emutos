@@ -497,7 +497,12 @@ save_spsuper:
 save_spcriterr:
         .ds.l    1              // save area for stack ptr on entry
 
-        .ds.w   512             // private stack, has about 50 words spare
+/*
+ *  the following private stack used to be 512 words, but that wasn't
+ *  enough in all cases after some updates around nov/2016 increased
+ *  just_draw()'s stack usage slightly.
+ */
+        .ds.w   768             // private stack
 criterr_stack:
 
 /*
