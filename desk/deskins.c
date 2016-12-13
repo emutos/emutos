@@ -793,6 +793,12 @@ static WORD install_window_icon(FNODE *pf)
                 pa = app_afind_by_name(type, "", new_name, &dummy);
             else pa = pf->f_pa;
 
+            if (!pa)                /* can't happen ... */
+            {
+                KDEBUG(("Null anode ptr for window icon, skipping\n"));
+                break;                  /* treat as skip */
+            }
+
             /* set flag if the names are exactly the same */
             identical = !strcmp(pa->a_pdata,new_name);
 

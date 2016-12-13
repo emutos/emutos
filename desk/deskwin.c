@@ -294,6 +294,7 @@ static void win_icalc(FNODE *pfnode, WNODE *pwin)
 void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
 {
     FNODE *pstart;
+    ANODE *anode;
     WORD  obid;
     WORD  r_cnt, c_cnt;
     WORD  o_wfit, o_hfit;       /* object grid */
@@ -350,13 +351,23 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
             ib = &si->icon.block;
             obj->ob_type = G_ICON;
             win_icalc(pstart, pwin);
-            i_index = (pstart->f_isap) ? pstart->f_pa->a_aicon :
-                                            pstart->f_pa->a_dicon;
+            anode = pstart->f_pa;
+            if (anode)
+                i_index = (pstart->f_isap) ? anode->a_aicon : anode->a_dicon;
+            else
+            {
+                KDEBUG(("win_bldview(): NULL anode, using defaults\n"));
+                if (pstart->f_attr&F_SUBDIR)
+                    i_index = IG_FOLDER;
+                else
+                    i_index = (pstart->f_isap) ? IG_APPL : IG_DOCU;
+            }
             si->icon.index = i_index;
             obj->ob_spec = (LONG)ib;
             memcpy(ib, &G.g_iblist[i_index], sizeof(ICONBLK));
             ib->ib_ptext = pstart->f_name;
-            ib->ib_char |= pstart->f_pa->a_letter;
+            if (anode)
+                ib->ib_char |= anode->a_letter;
             break;
         }
         pstart = pstart->f_next;
