@@ -17,7 +17,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-/*#define ENABLE_KDEBUG*/
+/* #define ENABLE_KDEBUG */
 
 #include "config.h"
 #include "portab.h"
@@ -386,7 +386,7 @@ static void bios_init(void)
     /* add TT-RAM that was detected in memory.S */
     if (ramtop != NULL)
     {
-        KDEBUG(("xmaddalt()\n"));
+        KDEBUG(("xmaddalt(): ramtop=%p\n",ramtop));
         xmaddalt(FASTRAM_START, ramtop - FASTRAM_START);
     }
 #endif
