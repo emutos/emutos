@@ -229,6 +229,7 @@ static WORD format_sfcb(LONG psfcb, BYTE *pfmt)
     BYTE *pdst, *psrc;
     WORD i;
     BOOL wide;
+    BYTE indicator;
 
     /*
      * determine if we should use the wide format
@@ -239,9 +240,14 @@ static WORD format_sfcb(LONG psfcb, BYTE *pfmt)
     pdst = pfmt;
 
     /*
-     * folder indicator
+     * folder or read-only indicator
      */
-    *pdst++ = (sf.sfcb_attr & F_SUBDIR) ? 0x07 : ' ';
+    if (sf.sfcb_attr & F_SUBDIR)
+        indicator = 0x07;
+    else if (sf.sfcb_attr & F_RDONLY)
+        indicator = 0x7f;
+    else indicator = ' ';
+    *pdst++ = indicator;
     if (wide)
         *pdst++ = ' ';
 
