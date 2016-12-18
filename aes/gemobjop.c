@@ -80,7 +80,7 @@ void everyobj(LONG tree, WORD this, WORD last, EVERYOBJ_CALLBACK routine,
 {
     WORD    tmp1;
     WORD    depth;
-    WORD    x[8], y[8];
+    WORD    x[MAX_DEPTH], y[MAX_DEPTH];
     OBJECT  *obj;
 
     x[0] = startx;
