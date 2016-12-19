@@ -28,10 +28,8 @@
         .globl  _flush_data_cache
         .globl  _invalidate_data_cache
         .globl  _mcpu
-        .globl  _mcpu_subtype
         .globl  _fputype
         .globl  _detect_cpu
-        .globl  _detect_fpu
 #if CONF_WITH_APOLLO_CORE
         .globl  _is_apollo_core
 #endif
