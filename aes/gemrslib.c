@@ -167,7 +167,7 @@ static RSCITEM get_sub(WORD rsindex, WORD rtype, WORD rsize)
     offset = rs_hdr.wordptr[rtype];
 
     /* get base of objects and then index in */
-    return (RSCITEM)(rs_hdr.base + offset + (LONG)rsize * rsindex);
+    return (RSCITEM)(rs_hdr.base + offset + (UWORD)rsize * (UWORD)rsindex);
 }
 
 
