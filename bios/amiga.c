@@ -285,12 +285,12 @@ static void amiga_set_videomode(UWORD width, UWORD height)
     diwstrt = (vstart << 8) | hstart;
     diwstop = (vstop << 8) | hstop;
 
-    KINFO(("BPLCON0 = 0x%04x\n", bplcon0));
-    KINFO(("BPL1MOD = 0x%04x\n", bpl1mod));
-    KINFO(("DDFSTRT = 0x%04x\n", ddfstrt));
-    KINFO(("DDFSTOP = 0x%04x\n", ddfstop));
-    KINFO(("DIWSTRT = 0x%04x\n", diwstrt));
-    KINFO(("DIWSTOP = 0x%04x\n", diwstop));
+    KDEBUG(("BPLCON0 = 0x%04x\n", bplcon0));
+    KDEBUG(("BPL1MOD = 0x%04x\n", bpl1mod));
+    KDEBUG(("DDFSTRT = 0x%04x\n", ddfstrt));
+    KDEBUG(("DDFSTOP = 0x%04x\n", ddfstop));
+    KDEBUG(("DIWSTRT = 0x%04x\n", diwstrt));
+    KDEBUG(("DIWSTOP = 0x%04x\n", diwstop));
 
     BPLCON0 = bplcon0; /* Bit Plane Control */
     BPLCON1 = 0;       /* Horizontal scroll value 0 */
