@@ -661,7 +661,7 @@ pi_not30:
 
         // 68040 only, invalidate the line holding the opcode only
         nop
-        .dc.w   0xf488                  // cinvl   ic,(a0)
+        CINVL_IC_A0                     // cinvl   ic,(a0)
         nop
 
 pi_next:

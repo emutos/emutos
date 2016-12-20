@@ -56,6 +56,7 @@
 #define FRESTORE_SP_PLUS    .dc.w 0xf35f            /* 6888X, 68040-68060 */
 
 #define CINVA_IC            .dc.w 0xf498            /* 68040 */
+#define CINVL_IC_A0         .dc.w 0xf488            /* 68040 */
 
 /* ELF toolchain support */
 #ifdef ELF_TOOLCHAIN
