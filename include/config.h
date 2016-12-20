@@ -74,6 +74,9 @@
 # ifndef SDCLK_FREQUENCY_MHZ
 #  define SDCLK_FREQUENCY_MHZ 132UL
 # endif
+# ifndef CONF_WITH_ADVANCED_CPU
+#  #define CONF_WITH_ADVANCED_CPU 0
+# endif
 # ifndef CONF_WITH_TT_MMU
 #  define CONF_WITH_TT_MMU 0
 # endif
@@ -132,6 +135,9 @@
 # endif
 # ifndef DETECT_NATIVE_FEATURES
 #  define DETECT_NATIVE_FEATURES 0
+# endif
+# ifndef CONF_WITH_ADVANCED_CPU
+#  define CONF_WITH_ADVANCED_CPU 0
 # endif
 # ifndef CONF_WITH_APOLLO_CORE
 #  define CONF_WITH_APOLLO_CORE 0
@@ -522,6 +528,13 @@
  */
 #ifndef DIAGNOSTIC_CARTRIDGE
 # define DIAGNOSTIC_CARTRIDGE 0
+#endif
+
+/*
+ * Set CONF_WITH_ADVANCED_CPU to 1 to enable support for 68010-68060
+ */
+#ifndef CONF_WITH_ADVANCED_CPU
+# define CONF_WITH_ADVANCED_CPU 1
 #endif
 
 /*
@@ -1277,6 +1290,15 @@
 #if !DETECT_NATIVE_FEATURES
 # if CONF_WITH_ARANYM
 #  error "CONF_WITH_ARANYM requires DETECT_NATIVE_FEATURES."
+# endif
+#endif
+
+#if !CONF_WITH_ADVANCED_CPU
+# if CONF_WITH_68030_PMMU
+#  error "CONF_WITH_68030_PMMU requires CONF_WITH_ADVANCED_CPU."
+# endif
+# if CONF_WITH_APOLLO_CORE
+#  error "CONF_WITH_APOLLO_CORE requires CONF_WITH_ADVANCED_CPU."
 # endif
 #endif
 

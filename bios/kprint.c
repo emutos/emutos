@@ -358,6 +358,7 @@ void dopanic(const char *fmt, ...)
                  s->misc, s->opcode);
         kcprintf("addr=%08lx sr=%04x pc=%08lx\n",
                  s->address, s->sr, s->pc);
+#if CONF_WITH_ADVANCED_CPU
     } else if (mcpu == 10 && (proc_enum == 2 || proc_enum == 3)) {
         /* 68010 Bus or Address Error */
         struct {
@@ -448,6 +449,7 @@ void dopanic(const char *fmt, ...)
                  s->format_word);
         kcprintf("addr=%08lx sr=%04x pc=%08lx\n",
                  s->address, s->sr, s->pc);
+#endif  /* CONF_WITH_ADVANCED_CPU */
     } else if (proc_enum < ARRAY_SIZE(exc_messages)) {
         struct {
             WORD sr;

@@ -61,6 +61,7 @@
  */
 
 _detect_cpu:
+#if CONF_WITH_ADVANCED_CPU
         movem.l  d2/a2-a3,-(sp)
 
 // intercept possible exceptions
@@ -123,6 +124,9 @@ exit:
         move.l  a0,sp
         nop                     // flush pipelines
         movem.l  (sp)+,d2/a2-a3
+#else
+        moveq   #0,d0           // say it's a 68000
+#endif /* CONF_WITH_ADVANCED_CPU */
         rts
 
 
@@ -242,6 +246,7 @@ _processor_init:
         clr.w   d0
         swap    d0
         move.l  d0,_mcpu            // & type
+#if CONF_WITH_ADVANCED_CPU
         beq     m68000
 
 
@@ -327,6 +332,7 @@ pi_chk040:
 #endif /* __mcoldfire__ */
 
 pi_done:
+#endif /* CONF_WITH_ADVANCED_CPU */
         rts
 
 /*
@@ -365,6 +371,7 @@ _invalidate_instruction_cache:
         lea     cpushl_bc,a1    // flush/invalidate both caches
         bra.s   cpushl_loop
 #else
+#if CONF_WITH_ADVANCED_CPU
         cmpi.b  #30,_mcpu+3
         bne.s   ii_not30
         MOVEC_CACR_D0                   // get current cacr
@@ -379,6 +386,7 @@ ii_not30:
         CINVA_IC                // invalidate the instruction cache
         nop
 ii_done:
+#endif /* CONF_WITH_ADVANCED_CPU */
         rts
 #endif
 
@@ -399,6 +407,7 @@ _flush_data_cache:
         lea     cpushl_dc,a1    // flush/invalidate data cache
         bra.s   cpushl_loop
 #else
+#if CONF_WITH_ADVANCED_CPU
 //
 // 68030 data caches are always write-through, so no action is necessary
 //
@@ -407,6 +416,7 @@ _flush_data_cache:
 // that the cache would be write-through if enabled; but in any case it
 // is disabled.  so no action is necessary.
 //
+#endif
         rts
 #endif
 
@@ -424,6 +434,7 @@ _invalidate_data_cache:
         lea     cpushl_dc,a1    // flush/invalidate data cache
         // drop into cpushl_loop
 #else
+#if CONF_WITH_ADVANCED_CPU
         cmpi.b  #30,_mcpu+3
         bne.s   ic_not30
         MOVEC_CACR_D0                   // get current cacr
@@ -440,6 +451,7 @@ ic_not30:
 //
 
 ic_done:
+#endif /* CONF_WITH_ADVANCED_CPU */
         rts
 #endif
 

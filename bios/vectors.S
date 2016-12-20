@@ -642,6 +642,7 @@ _int_priv:
 
         ori.w   #0x200,(a0)             // make it MOVE CCR,XX
 
+#if CONF_WITH_ADVANCED_CPU
         cmpi.b  #30,_mcpu+3
         bne.s   pi_not30
 
@@ -664,6 +665,7 @@ pi_not30:
         nop
 
 pi_next:
+#endif
         movem.l (sp)+,d0/a0
         rte
 
