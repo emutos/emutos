@@ -26,6 +26,7 @@
 #include "delay.h"
 #include "asm.h"
 #include "string.h"
+#include "disk.h"
 
 #if CONF_WITH_AROS
 #include "aros.h"
@@ -845,6 +846,12 @@ static BOOL amiga_floppy_is_track_zero(void)
     return !(CIAAPRA & 0x10);
 }
 
+/* Determine if the floppy has been removed or changed */
+static BOOL amiga_floppy_has_disk_changed(void)
+{
+    return !(CIAAPRA & 0x04); /* DSKCHANGE */
+}
+
 /* Set step direction: 0 = forward, 1 = backward */
 static void amiga_floppy_set_step_direction(WORD dir)
 {
@@ -882,6 +889,11 @@ static void amiga_floppy_step(void)
 static BOOL amiga_floppy_recalibrate(void)
 {
     int steps = 0;
+
+    KDEBUG(("amiga_floppy_recalibrate()\n"));
+
+    /* Invalidate current track cache */
+    sectors_decoded = FALSE;
 
     /* If the drive is already on track 0, step forward */
     if (amiga_floppy_is_track_zero())
@@ -1258,8 +1270,7 @@ static WORD amiga_floppy_read_track(WORD dev, WORD track, WORD side)
     /* Invalidate current track cache */
     sectors_decoded = FALSE;
 
-    /* Select device and side */
-    amiga_floppy_select(dev);
+    /* Select side */
     amiga_floppy_set_side(side);
 
     /* Seek to requested track */
@@ -1267,21 +1278,19 @@ static WORD amiga_floppy_read_track(WORD dev, WORD track, WORD side)
     ret = amiga_floppy_seek(track);
     KDEBUG(("amiga_floppy_seek(%d) ret=%d\n", track, ret));
     if (ret != E_OK)
-        goto exit;
+        return ret;
 
     /* Read raw track data */
     KDEBUG(("amiga_floppy_read_raw_track()...\n"));
     ret = amiga_floppy_read_raw_track();
     KDEBUG(("amiga_floppy_read_raw_track() ret=%d\n", ret));
     if (ret != E_OK)
-        goto exit;
+        return ret;
 
     /* Decode all sectors of the track */
     ret = amiga_floppy_decode_track();
     KDEBUG(("amiga_floppy_decode_track() ret=%d\n", ret));
 
-exit:
-    amiga_floppy_deselect();
     return ret;
 }
 
@@ -1315,10 +1324,40 @@ static WORD amiga_floppy_read(UBYTE *buf, WORD dev, WORD track, WORD side, WORD 
 /* Amiga implementation of floprw() */
 WORD amiga_floprw(UBYTE *buf, WORD rw, WORD dev, WORD sect, WORD track, WORD side, WORD count)
 {
+    WORD ret;
+
+    amiga_floppy_select(dev);
+
+    if (amiga_floppy_has_disk_changed())
+    {
+        /* Recalibrate the drive */
+        if (!amiga_floppy_recalibrate())
+        {
+            ret = EDRVNR;
+            goto exit;
+        }
+    }
+
     if (rw & 1)
-        return EWRPRO; /* Write not supported */
+        ret = EWRPRO; /* Write not supported */
     else
-        return amiga_floppy_read(buf, dev, track, side, sect, count);
+        ret = amiga_floppy_read(buf, dev, track, side, sect, count);
+
+exit:
+    amiga_floppy_deselect();
+    return ret;
+}
+
+/* Amiga implementation of flop_mediach() */
+LONG amiga_flop_mediach(WORD dev)
+{
+    LONG ret;
+
+    amiga_floppy_select(dev);
+    ret = amiga_floppy_has_disk_changed() ? MEDIACHANGE : MEDIANOCHANGE;
+    amiga_floppy_deselect();
+
+    return ret;
 }
 
 #endif /* MACHINE_AMIGA */

@@ -409,6 +409,10 @@ LONG flop_mediach(WORD dev)
 
     KDEBUG(("flop_mediach(%d)\n",dev));
 
+#ifdef MACHINE_AMIGA
+    return amiga_flop_mediach(dev);
+#endif
+
 #if CONF_WITH_FDC
     {
     struct flop_info *fi = &finfo[dev];
