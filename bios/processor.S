@@ -144,6 +144,7 @@ exit:
  * is present:
  *
  * 0x00000000, no FPU
+ * 0x00010000, memory mapped 68881 (SFP004)
  * 0x00020000, 68881 or 68882
  * 0x00040000, 68881 for sure
  * 0x00060000, 68882 for sure
@@ -165,6 +166,7 @@ exit:
  */
 
 _detect_fpu:
+#if CONF_WITH_ADVANCED_CPU
         movem.l d2/a2,-(sp)
         move.l  sp,a0           // save the ssp
         moveq   #0,d0           // assume no FPU
@@ -226,6 +228,26 @@ fexit:  move.l  a1,(0x2c).w     // restore Line-F
         nop                     // flush pipelines
         swap    d0
         movem.l (sp)+,d2/a2
+
+#else
+        // handle only 68000 (with possible SFP004)
+        moveq   #0,d0           // assume no FPU
+
+#if CONF_WITH_SFP004
+        move.l  sp,a0           // save the ssp
+        move.l  (0x08).w,a1     // save the bus error vector
+        move.l  #nosfp,d1
+        move.l  d1,(0x08).w     // install temporary bus error vector
+        nop                     // flush pipelines
+        tst.w   0xfffffa40.w    // CIR
+        moveq   #0x01,d0        // memory mapped FPU
+nosfp:  move.l  a1,(0x08).w     // restore bus error
+        move.l  a0,sp
+        nop                     // flush pipelines
+        swap    d0
+#endif
+
+#endif /* CONF_WITH_ADVANCED_CPU */
         rts
 
 #endif /* __mcoldfire__ */
