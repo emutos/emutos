@@ -75,7 +75,7 @@
 #  define SDCLK_FREQUENCY_MHZ 132UL
 # endif
 # ifndef CONF_WITH_ADVANCED_CPU
-#  #define CONF_WITH_ADVANCED_CPU 0
+#  define CONF_WITH_ADVANCED_CPU 0
 # endif
 # ifndef CONF_WITH_TT_MMU
 #  define CONF_WITH_TT_MMU 0
