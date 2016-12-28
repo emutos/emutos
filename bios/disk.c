@@ -385,9 +385,6 @@ static int atari_partition(UWORD unit,LONG *devices_available)
     int part_fmt = 0; /* 0:unknown, 1:AHDI, 2:ICD/Supra */
 #endif
 
-    /* reset the sector buffer content */
-    bzero(&physsect, sizeof(physsect));
-
     if (disk_rw(unit, RW_READ, 0, 1, sect))
         return -1;
 
@@ -579,9 +576,6 @@ static int atari_partition(UWORD unit,LONG *devices_available)
         KINFO((" XGM<"));
         partsect = extensect = pi->st;
         while (1) {
-            /* reset the sector buffer content */
-            bzero(&physsect2, sizeof(physsect2));
-
             if (disk_rw(unit, RW_READ, partsect, 1, physsect2.sect)) {
                 KINFO((" block %ld read failed\n", partsect));
                 return 0;
