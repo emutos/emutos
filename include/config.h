@@ -269,6 +269,9 @@
 # ifndef DETECT_NATIVE_FEATURES
 #  define DETECT_NATIVE_FEATURES 0
 # endif
+# ifndef CONF_WITH_ADVANCED_CPU
+#  define CONF_WITH_ADVANCED_CPU 0
+# endif
 # ifndef CONF_WITH_APOLLO_CORE
 #  define CONF_WITH_APOLLO_CORE 0
 # endif
