@@ -534,8 +534,8 @@ memconf_done:
  * d7.b = _first_boot
  * d5.l = new phystop
  * d6.b = new memctrl
- * d3.l = old _ramvalid
- * a3.l = old _ramtop (if old _ramvalid was valid)
+ * d3.l = old _ramvalid (#if CONF_WITH_FASTRAM)
+ * a3.l = old _ramtop (#if CONF_WITH_FASTRAM)
  */
 stram_detected:
         // The previous temporary stack pointer may have moved
@@ -582,13 +582,13 @@ stram_detected:
 // ===========================================================================
 // ==== TT-RAM (FastRAM) detection (PES) =====================================
 // ===========================================================================
-/*
- * This alternate RAM begins at 16MB boundary ($1000000)
- *
- * Inputs (#if CONF_WITH_FASTRAM):
- *   d3.l: old _ramvalid
- *   a3.l: old _ramtop (if old _ramvalid was valid)
- */
+//
+// This alternate RAM begins at 16MB boundary ($1000000)
+//
+// Inputs (#if CONF_WITH_FASTRAM):
+//   d3.l: old _ramvalid (#if CONF_WITH_FASTRAM)
+//   a3.l: old _ramtop (#if CONF_WITH_FASTRAM)
+
         move.l  #0x1357BD13,d1          // _ramvalid magic
 
 #if !CONF_WITH_FASTRAM
@@ -682,6 +682,7 @@ alter:
  * At this point:
  *   a3.l = new _ramtop
  *   d1.l = _ramvalid magic
+ *   d7.b = _first_boot
  */
 fastram_detected:
         // Write FastRAM settings into system variables (in ST-RAM)
@@ -702,7 +703,7 @@ any_boot:
         // Remember if this is a first boot or not
         move.b  d7, _first_boot
 
-        jmp     memdone                 // config done -> return to startup.s
+        jmp     memdone                 // config done -> return to startup.S
 
 // ===========================================================================
 // ==== Below are utility functions ==========================================
