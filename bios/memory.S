@@ -22,6 +22,9 @@
 #if CONF_WITH_ADVANCED_CPU && !defined(__mcoldfire__)
         .globl  _detect_32bit_address_bus
 #endif
+#if CONF_WITH_TT_MMU
+        .globl  _init_tt_fastram
+#endif
 
 // ==== References ===========================================================
 
@@ -617,17 +620,7 @@ stram_detected:
 #endif
 
 #if CONF_WITH_TT_MMU
-        // We must set the FastRAM refresh rate before we use it.  The
-        // rate is set by writing a "don't care" value to an address in
-        // the range 0xffd00000-0xffd000ff; the low-order byte of the
-        // address sets the refresh rate (specifically the number of
-        // system clock cycles between each refresh request).  TT TOS
-        // uses the value 0xe0; so do we.
-        // NOTE: whether we actually have FastRAM or not, setting the
-        // value always causes a bus error, so we need to handle it.
-        move.l  #refresh_done,0x08      // bus error vector
-        move.w  #0x0000,0xffd000e0.l
-refresh_done:
+        bsr     _init_tt_fastram
 #endif
 
         /* Can we access FastRAM region? */
@@ -749,6 +742,26 @@ _detect_32bit_address_bus:
 
 bus_detected:
         move.l  a1,sp                   // Restore sp in case of exception
+        rts
+
+#endif
+
+#if CONF_WITH_TT_MMU
+
+_init_tt_fastram:
+        // We must set the FastRAM refresh rate before we use it.  The
+        // rate is set by writing a "don't care" value to an address in
+        // the range 0xffd00000-0xffd000ff; the low-order byte of the
+        // address sets the refresh rate (specifically the number of
+        // system clock cycles between each refresh request).  TT TOS
+        // uses the value 0xe0; so do we.
+        // NOTE: whether we actually have FastRAM or not, setting the
+        // value always causes a bus error, so we need to handle it.
+        move.l  sp,a0                   // Save sp before exception
+        move.l  #refresh_done,0x08      // Bus Error will just return
+        clr.w   0xffd000e0              // Set FastRAM refresh rate
+refresh_done:
+        move.l  a0,sp                   // Restore sp after exception
         rts
 
 #endif

@@ -21,4 +21,10 @@ BOOL detect_32bit_address_bus(void);
 
 #endif /* CONF_WITH_ADVANCED_CPU && !defined(__mcoldfire__) */
 
+#if CONF_WITH_TT_MMU
+
+void init_tt_fastram(void);
+
+#endif /* CONF_WITH_TT_MMU */
+
 #endif /* MEMORY_H */
