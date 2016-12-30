@@ -27,6 +27,6 @@ void init_tt_fastram(void);
 
 #endif /* CONF_WITH_TT_MMU */
 
-void fastram_init(void);
+void altram_init(void);
 
 #endif /* MEMORY_H */

@@ -387,42 +387,11 @@ static void bios_init(void)
     }
 #endif
 
-    /* Initialize TT-like FastRAM.
+    /* Initialize all Alt-RAM.
      * This always intializes the FastRAM system variables,
      * even if there is no FastRAM. */
-    KDEBUG(("fastram_init()\n"));
-    fastram_init();
-
-#if CONF_WITH_ALT_RAM
-
-#if CONF_WITH_MONSTER
-    /* Add MonSTer alt-RAM detected in machine.c */
-    if (has_monster)
-    {
-        /* Dummy read from MonSTer register to initiate write sequence. */
-        unsigned short monster_reg = *(volatile unsigned short *)MONSTER_REG;
-
-        /* Only enable 6Mb when on a Mega STE due to address conflict with
-           VME bus. Todo: This should be made configurable. */
-        if (has_vme)
-            monster_reg = 6;
-        else
-            monster_reg = 8;
-
-        /* Register write sequence: read - write - write */
-        *(volatile unsigned short *)MONSTER_REG = monster_reg;
-        *(volatile unsigned short *)MONSTER_REG = monster_reg;
-        KDEBUG(("xmaddalt()\n"));
-        xmaddalt((UBYTE *)0x400000L, monster_reg*0x100000L);
-    }
-#endif
-
-#ifdef MACHINE_AMIGA
-    KDEBUG(("amiga_add_alt_ram()\n"));
-    amiga_add_alt_ram();
-#endif
-
-#endif /* CONF_WITH_ALT_RAM */
+    KDEBUG(("altram_init()\n"));
+    altram_init();
 
     KDEBUG(("bios_init() end\n"));
 }
