@@ -362,6 +362,12 @@ static void bios_init(void)
     KDEBUG(("after osinit()\n"));
     boot_status |= DOS_AVAILABLE;   /* track progress */
 
+    /* Initialize all Alt-RAM.
+     * This always intializes the FastRAM system variables,
+     * even if there is no FastRAM. */
+    KDEBUG(("altram_init()\n"));
+    altram_init();
+
     /* Enable VBL processing */
     vblsem = 1;
 
@@ -386,12 +392,6 @@ static void bios_init(void)
         }
     }
 #endif
-
-    /* Initialize all Alt-RAM.
-     * This always intializes the FastRAM system variables,
-     * even if there is no FastRAM. */
-    KDEBUG(("altram_init()\n"));
-    altram_init();
 
     KDEBUG(("bios_init() end\n"));
 }
