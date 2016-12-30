@@ -29,7 +29,6 @@
         .globl  _invalidate_data_cache
         .globl  _mcpu
         .globl  _fputype
-        .globl  _detect_cpu
 #if CONF_WITH_APOLLO_CORE
         .globl  _is_apollo_core
 #endif

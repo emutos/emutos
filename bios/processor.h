@@ -87,8 +87,6 @@
 #ifndef PROCESSOR_H
 #define PROCESSOR_H
 
-long detect_cpu(void);
-
 extern void processor_init(void);
 /* invalidate_instruction_cache() is declared in include/biosext.h */
 extern void instruction_cache_kludge(void *start,long size);

@@ -387,16 +387,13 @@ static void bios_init(void)
     }
 #endif
 
-#if CONF_WITH_ALT_RAM
+    /* Initialize TT-like FastRAM.
+     * This always intializes the FastRAM system variables,
+     * even if there is no FastRAM. */
+    KDEBUG(("fastram_init()\n"));
+    fastram_init();
 
-#if CONF_WITH_FASTRAM
-    /* add TT-RAM that was detected in memory.S */
-    if (ramtop != NULL)
-    {
-        KDEBUG(("xmaddalt(): ramtop=%p\n",ramtop));
-        xmaddalt(FASTRAM_START, ramtop - FASTRAM_START);
-    }
-#endif
+#if CONF_WITH_ALT_RAM
 
 #if CONF_WITH_MONSTER
     /* Add MonSTer alt-RAM detected in machine.c */

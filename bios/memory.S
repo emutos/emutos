@@ -32,9 +32,8 @@
         .extern _warm_magic
         .extern _stktop
 
-        // functions for detecting hardware and CPU type
+        // functions for detecting hardware
         .extern _check_read_byte
-        .extern _detect_cpu
         .extern _bzero
 
         // ST-RAM settings
@@ -61,7 +60,7 @@ meminit:
 
 /*
  * The caller (either startup.S or comprimg.S) needs to have initialized sp
- * with a temporary supervisor stack (jsr _check_read_byte/_detect_cpu)
+ * with a temporary supervisor stack (for i.e. jsr _check_read_byte)
  * The stack will be overwritten and lost during clearing of memory
  */
 
@@ -585,104 +584,12 @@ stram_detected:
         move.l  d1, (a0)                // Next boot will not be a first boot
 #endif
 
-// ===========================================================================
-// ==== TT-RAM (FastRAM) detection (PES) =====================================
-// ===========================================================================
-//
-// This alternate RAM begins at 16MB boundary ($1000000)
-//
-// Inputs (#if CONF_WITH_FASTRAM):
-//   d3.l: old _ramvalid (#if CONF_WITH_FASTRAM)
-//   a3.l: old _ramtop (#if CONF_WITH_FASTRAM)
-
-        move.l  #0x1357BD13,d1          // _ramvalid magic
-
-#if !CONF_WITH_FASTRAM
-        // Fake FastRAM detection for no FastRAM
-        sub.l   a3, a3                  // _ramtop = 0
-        // Fall into fastram_detected
-#else // CONF_WITH_FASTRAM
-        cmp.l   d1,d3                   // old _ramvalid valid ?
-        beq     fastram_detected        // yes: skip detection
-
-#if CONF_FASTRAM_SIZE
-        // FastRAM detection for hardcoded FastRAM size
-        move.l  #0x1000000+CONF_FASTRAM_SIZE,a3    // fixed ramtop
-#else
-        /* clear MB counter */
-        moveq   #0, d6
-
-#ifndef __mcoldfire__
-        /* test CPU - FastRAM is possible on 68020+ (32-bit address space) */
-        jsr     _detect_cpu
-        cmp.w   #20,d0                  // 68020 or better?
-        blt     setramtop               // no -> skip the whole FastRAM stuff
-#endif
-
-#if CONF_WITH_TT_MMU
-        bsr     _init_tt_fastram
-#endif
-
-        /* Can we access FastRAM region? */
-        pea     0x1000400
-        jsr     _check_read_byte
-        addq.l  #4,sp
-        tst.w   d0
-        beq     setramtop
-
-#ifndef __mcoldfire__
-        /* Skip FastRAM detection if we only have a 24-bit address bus */
-        bsr     _detect_32bit_address_bus
-        tst.w   d0
-        beq     setramtop               // 24-bit addresses, no FastRAM
-#endif
-
-        /* No wrap around detected, let's scan for FastRAM: */
-        lea     0x1000000, a3           // start from 16MB boundary
-        move.l  #1024*1024, d3          // test by blocks of 1MB size
-loop:
-        lea     -1(a3,d3.l), a0         // last byte of current megabyte
-
-        // Currently, the BDOS memory management functions handle sizes
-        // as signed long integers. So limit detection to the positive range.
-        // We thereby limit FastRAM support to 2032 MB.
-        // This should be enough for most cases, anyway.
-        move.l  a0,d0
-        bmi.s   setramtop
-
-        pea     (a0)
-        jsr     _check_read_byte
-        addq.l  #4,sp
-        tst.w   d0
-        beq.s   setramtop
-        addq.l  #1, d6
-        add.l   d3, a3
-        bra.s   loop
-
-setramtop:
-        /* test MB counter */
-        tst.l   d6
-        bne.s   alter
-
-        /* no FastRAM found */
-        sub.l   a3, a3                  // _ramtop = 0
-alter:
-#endif // !CONF_FASTRAM_SIZE
-
-#endif // CONF_WITH_FASTRAM
-
-/*
- * At this point:
- *   a3.l = new _ramtop
- *   d1.l = _ramvalid magic
- *   d7.b = _first_boot
- */
-fastram_detected:
-        // Write FastRAM settings into system variables (in ST-RAM)
-        // Note that, like TOS 1.06 or TOS 2.06, we always set _ramvalid
-        // as valid even if _ramtop is 0.
+#if CONF_WITH_FASTRAM
+        // After clearing sysvars, restore old FastRAM settings.
+        // They will be used later for FastRAM initialization.
         move.l  a3, _ramtop             // set ramtop to size of found memory
-        move.l  d1, _ramvalid
+        move.l  d3, _ramvalid
+#endif
 
 // ===========================================================================
 // ==== This part is executed on any boot (first boot or reset) ==============
