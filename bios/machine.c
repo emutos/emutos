@@ -38,6 +38,10 @@
 #include "amiga.h"
 #endif
 
+#if CONF_WITH_ADVANCED_CPU && !defined(__mcoldfire__)
+UBYTE is_bus32; /* 1 if address bus is 32-bit, 0 if it is 24-bit */
+#endif
+
 long cookie_vdo;
 #if CONF_WITH_FDC
 long cookie_fdc;

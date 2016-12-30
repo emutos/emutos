@@ -19,6 +19,9 @@
 // ==== Definitions ==========================================================
 
         .globl  meminit                 // memory initialization
+#if CONF_WITH_ADVANCED_CPU && !defined(__mcoldfire__)
+        .globl  _detect_32bit_address_bus
+#endif
 
 // ==== References ===========================================================
 
@@ -634,15 +637,12 @@ refresh_done:
         tst.w   d0
         beq     setramtop
 
-        /* Check whether we are really on a 32 bit machine or if we wrap around: */
-        lea     0x400.w,a0
-        lea     0x1000400,a3
-        move.l  #0x12345678,d0
-        move.l  d0,(a0)
-        clr.l   (a3)
-        cmp.l   (a0),d0                 // Value destroyed => Wrap around?
-        bne     setramtop               // yes, skip fast ram check
-        clr.l   (a0)
+#ifndef __mcoldfire__
+        /* Skip FastRAM detection if we only have a 24-bit address bus */
+        bsr     _detect_32bit_address_bus
+        tst.w   d0
+        beq     setramtop               // 24-bit addresses, no FastRAM
+#endif
 
         /* No wrap around detected, let's scan for FastRAM: */
         lea     0x1000000, a3           // start from 16MB boundary
@@ -717,3 +717,38 @@ call_bzero_a0_a1:
         jsr     _bzero
         addq.l  #8,sp
         rts
+
+#if CONF_WITH_ADVANCED_CPU && !defined(__mcoldfire__)
+
+// Detect 32-bit address bus
+// Returns:
+//   d0.w = 1 if 32-bit, or 0 if 24-bit
+// Clobbers:
+//   - Exception Vectors
+_detect_32bit_address_bus:
+        // If we are on a 32-bit address bus without FastRAM,
+        // then the detection will cause a Bus Error.
+        move.l  sp,a1                   // Save sp before exception
+        move.l  #bus_detected,0x08      // Bus Error will just return
+        moveq   #1,d0                   // Assume 32-bit by default
+
+        lea     0x0000000c.w,a0         // Test address is Address Error vector
+
+        move.l  #0x12345678,d1          // First test value
+        move.l  d1,(a0)                 // Write test value to 24-bit address
+        cmp.l   0x0100000c,d1           // Did value appear on 32-bit mirror?
+        bne.s   bus_detected            // No, we are on 32-bit bus
+
+        // Test again in case where the mirror already had the test value
+        not.l   d1                      // Second test value
+        move.l  d1,(a0)                 // Write test value to 24-bit address
+        cmp.l   0x0100000c,d1           // Did value appear on 32-bit mirror?
+        bne.s   bus_detected            // No, we have a 32-bit address bus
+
+        moveq   #0,d0                   // Yes, we have a 24-bit address bus
+
+bus_detected:
+        move.l  a1,sp                   // Restore sp in case of exception
+        rts
+
+#endif

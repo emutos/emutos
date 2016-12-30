@@ -57,6 +57,7 @@
 #include "natfeat.h"
 #include "delay.h"
 #include "biosbind.h"
+#include "memory.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif
@@ -204,6 +205,12 @@ static void bios_init(void)
     /* Initialize the processor */
     KDEBUG(("processor_init()\n"));
     processor_init();   /* Set CPU type, longframe and FPU type */
+
+#if CONF_WITH_ADVANCED_CPU && !defined(__mcoldfire__)
+    is_bus32 = (UBYTE)detect_32bit_address_bus();
+#endif
+    KDEBUG(("Address Bus width is %d-bit\n", IS_BUS32 ? 32 : 24));
+
     KDEBUG(("vecs_init()\n"));
     vecs_init();        /* setup all exception vectors (above) */
     KDEBUG(("init_delay()\n"));

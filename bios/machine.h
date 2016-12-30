@@ -156,6 +156,17 @@ extern int has_dip_switches;
  * functions
  */
 
+/* address bus width */
+#if defined(__mcoldfire__)
+  #define IS_BUS32 1
+#elif CONF_WITH_ADVANCED_CPU
+BOOL detect_32bit_address_bus(void);
+extern UBYTE is_bus32;
+  #define IS_BUS32 is_bus32
+#else
+  #define IS_BUS32 0
+#endif
+
 /* detect the available hardware */
 void machine_detect(void);
 
