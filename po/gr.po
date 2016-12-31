@@ -400,20 +400,20 @@ msgid "-------------------"
 msgstr "--------------------------------"
 
 #: desk/desk_rsc.c:398
-msgid "  Sort by name  \007N"
-msgstr "  ’˜¥ ¤æ£ž©ž ¡˜«á æ¤¦£˜      \007N"
+msgid "  Sort by name"
+msgstr "  ’˜¥ ¤æ£ž©ž ¡˜«á æ¤¦£˜"
 
 #: desk/desk_rsc.c:404
-msgid "  Sort by type  \007P"
-msgstr "  ’˜¥ ¤æ£ž©ž ¡˜«á «ç§¦       \007P"
+msgid "  Sort by type"
+msgstr "  ’˜¥ ¤æ£ž©ž ¡˜«á «ç§¦"
 
 #: desk/desk_rsc.c:410
-msgid "  Sort by size  \007Z"
-msgstr "  ’˜¥ ¤æ£ž©ž ¡˜«á £âšœŸ¦ª    \007Z"
+msgid "  Sort by size"
+msgstr "  ’˜¥ ¤æ£ž©ž ¡˜«á £âšœŸ¦ª"
 
 #: desk/desk_rsc.c:416
-msgid "  Sort by date  \007T"
-msgstr "  ’˜¥ ¤æ£ž©ž ¡˜«á ž£œ¨¦£ž¤å˜ \007T"
+msgid "  Sort by date"
+msgstr "  ’˜¥ ¤æ£ž©ž ¡˜«á ž£œ¨¦£ž¤å˜"
 
 #: desk/desk_rsc.c:422
 msgid "  No sort"

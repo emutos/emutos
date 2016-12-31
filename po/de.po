@@ -392,20 +392,20 @@ msgid "-------------------"
 msgstr "----------------"
 
 #: desk/desk_rsc.c:398
-msgid "  Sort by name  \007N"
-msgstr "  nach Namen \007N"
+msgid "  Sort by name"
+msgstr "  nach Namen"
 
 #: desk/desk_rsc.c:404
-msgid "  Sort by type  \007P"
-msgstr "  nach Typ   \007P"
+msgid "  Sort by type"
+msgstr "  nach Typ"
 
 #: desk/desk_rsc.c:410
-msgid "  Sort by size  \007Z"
-msgstr "  nach Größe \007Z"
+msgid "  Sort by size"
+msgstr "  nach Größe"
 
 #: desk/desk_rsc.c:416
-msgid "  Sort by date  \007T"
-msgstr "  nach Datum \007T"
+msgid "  Sort by date"
+msgstr "  nach Datum"
 
 #: desk/desk_rsc.c:422
 msgid "  No sort"

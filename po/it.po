@@ -388,20 +388,20 @@ msgid "-------------------"
 msgstr "--------------------"
 
 #: desk/desk_rsc.c:398
-msgid "  Sort by name  \007N"
-msgstr "  Per nome       \007N"
+msgid "  Sort by name"
+msgstr "  Per nome"
 
 #: desk/desk_rsc.c:404
-msgid "  Sort by type  \007P"
-msgstr "  Per tipo       \007P"
+msgid "  Sort by type"
+msgstr "  Per tipo"
 
 #: desk/desk_rsc.c:410
-msgid "  Sort by size  \007Z"
-msgstr "  Per dimensioni \007Z"
+msgid "  Sort by size"
+msgstr "  Per dimensioni"
 
 #: desk/desk_rsc.c:416
-msgid "  Sort by date  \007T"
-msgstr "  Per data       \007T"
+msgid "  Sort by date"
+msgstr "  Per data"
 
 #: desk/desk_rsc.c:422
 msgid "  No sort"

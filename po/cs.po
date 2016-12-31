@@ -387,20 +387,20 @@ msgid "-------------------"
 msgstr "---------------------"
 
 #: desk/desk_rsc.c:398
-msgid "  Sort by name  \007N"
-msgstr "  Podle jména     \007N"
+msgid "  Sort by name"
+msgstr "  Podle jména"
 
 #: desk/desk_rsc.c:404
-msgid "  Sort by type  \007P"
-msgstr "  Podle typu      \007P"
+msgid "  Sort by type"
+msgstr "  Podle typu"
 
 #: desk/desk_rsc.c:410
-msgid "  Sort by size  \007Z"
-msgstr "  Podle velikosti \007Z"
+msgid "  Sort by size"
+msgstr "  Podle velikosti"
 
 #: desk/desk_rsc.c:416
-msgid "  Sort by date  \007T"
-msgstr "  Podle data      \007T"
+msgid "  Sort by date"
+msgstr "  Podle data"
 
 #: desk/desk_rsc.c:422
 msgid "  No sort"

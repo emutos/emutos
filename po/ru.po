@@ -388,20 +388,20 @@ msgid "-------------------"
 msgstr "----------------------------"
 
 #: desk/desk_rsc.c:398
-msgid "  Sort by name  \007N"
-msgstr "  Сортировать по имени   \007N"
+msgid "  Sort by name"
+msgstr "  Сортировать по имени"
 
 #: desk/desk_rsc.c:404
-msgid "  Sort by type  \007P"
-msgstr "  Сортировать по типу    \007P"
+msgid "  Sort by type"
+msgstr "  Сортировать по типу"
 
 #: desk/desk_rsc.c:410
-msgid "  Sort by size  \007Z"
-msgstr "  Сортировать по размеру \007Z"
+msgid "  Sort by size"
+msgstr "  Сортировать по размеру"
 
 #: desk/desk_rsc.c:416
-msgid "  Sort by date  \007T"
-msgstr "  Сортировать по дате    \007T"
+msgid "  Sort by date"
+msgstr "  Сортировать по дате"
 
 #: desk/desk_rsc.c:422
 msgid "  No sort"
