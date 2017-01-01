@@ -664,9 +664,14 @@ _init_tt_fastram:
         // uses the value 0xe0; so do we.
         // NOTE: whether we actually have FastRAM or not, setting the
         // value always causes a bus error, so we need to handle it.
+        // NOTE2: We use the "move.w #0" instruction because "clr.w" oddly
+        // generates a useless read cycle on plain 68000. That might matter
+        // regarding to this very specific refresh rate function. Even if TT
+        // computers are supposed to be equipped with 68030 which is not subject
+        // to this 68000-specific oddity, we stay on the safe side.
         move.l  sp,a0                   // Save sp before exception
         move.l  #refresh_done,0x08      // Bus Error will just return
-        clr.w   0xffd000e0              // Set FastRAM refresh rate
+        move.w  #0,0xffd000e0           // Set FastRAM refresh rate
 refresh_done:
         move.l  a0,sp                   // Restore sp after exception
         rts
