@@ -347,8 +347,8 @@ msgid "  Open"
 msgstr "  Avaa"
 
 #: desk/desk_rsc.c:314
-msgid "  Info/Rename...  \007I"
-msgstr "  Näytä tiedot...  \007I"
+msgid "  Info/Rename...  ^I"
+msgstr "  Näytä tiedot...  ^I"
 
 #: desk/desk_rsc.c:320 desk/desk_rsc.c:344 desk/desk_rsc.c:362
 msgid "---------------------"
@@ -367,8 +367,8 @@ msgid "  Close window"
 msgstr "  Sulje ikkuna"
 
 #: desk/desk_rsc.c:350
-msgid "  Delete...       \007D"
-msgstr "  Poista...        \007D"
+msgid "  Delete...       ^D"
+msgstr "  Poista...        ^D"
 
 #: desk/desk_rsc.c:356
 msgid "  Format..."
@@ -384,7 +384,7 @@ msgstr "  Pysäytä systeemi ^Q"
 
 #: desk/desk_rsc.c:392
 msgid "-------------------"
-msgstr "-------------------"
+msgstr "----------------"
 
 #: desk/desk_rsc.c:398
 msgid "  Sort by name"
@@ -411,8 +411,8 @@ msgid "  Install icon..."
 msgstr "  Asenna ikoni..."
 
 #: desk/desk_rsc.c:440
-msgid "  Install application... \007A"
-msgstr "  Asenna sovellus...    \007A"
+msgid "  Install application..."
+msgstr "  Asenna sovellus..."
 
 #: desk/desk_rsc.c:446
 msgid "  Install devices"
@@ -423,7 +423,7 @@ msgid "  Remove desktop icon"
 msgstr "  Poista ikoni työpöydältä"
 
 #: desk/desk_rsc.c:458
-msgid "----------------------------"
+msgid "--------------------------"
 msgstr "---------------------------"
 
 #: desk/desk_rsc.c:464
@@ -431,12 +431,12 @@ msgid "  Set preferences..."
 msgstr "  Määritä asetukset..."
 
 #: desk/desk_rsc.c:470
-msgid "  Save desktop...        \007V"
-msgstr "  Tallenna työpoytä...  \007V"
+msgid "  Save desktop...      ^S"
+msgstr "  Tallenna työpoytä...  ^S"
 
 #: desk/desk_rsc.c:476
-msgid "  Change resolution...   \007C"
-msgstr "  Vaihda tarkkuutta...  \007C"
+msgid "  Change resolution... ^R"
+msgstr "  Vaihda tarkkuutta...  ^R"
 
 #: desk/desk_rsc.c:533
 msgid "Attribute:"
@@ -707,12 +707,12 @@ msgid "%ld bytes used in %d items."
 msgstr "%ld tavua käytetty %d tiedostoon."
 
 #: desk/desk_rsc.c:1799
-msgid "  Show as icons \007S"
-msgstr "  Ikoneina      \007S"
+msgid "  Show as icons ^T"
+msgstr "  Ikoneina   ^T"
 
 #: desk/desk_rsc.c:1800
-msgid "  Show as text  \007S"
-msgstr "  Tekstinä      \007S"
+msgid "  Show as text  ^T"
+msgstr "  Tekstinä   ^T"
 
 #: desk/desk_rsc.c:1801
 msgid "FILE INFORMATION"

@@ -360,8 +360,8 @@ msgid "  Open"
 msgstr "  ê¤¦ š£˜"
 
 #: desk/desk_rsc.c:314
-msgid "  Info/Rename...  \007I"
-msgstr "  ¢¨¦­¦¨åœª/‹œ«¦¤¦£˜©å˜ \007I"
+msgid "  Info/Rename...  ^I"
+msgstr "  ¢¨¦­¦¨åœª/‹œ«¦¤¦£˜©å˜ ^I"
 
 #: desk/desk_rsc.c:320 desk/desk_rsc.c:344 desk/desk_rsc.c:362
 msgid "---------------------"
@@ -380,8 +380,8 @@ msgid "  Close window"
 msgstr "  ‰¢œå© £¦ §˜¨˜Ÿç¨¦¬"
 
 #: desk/desk_rsc.c:350
-msgid "  Delete...       \007D"
-msgstr "  ‘™ã© £¦...              \007D"
+msgid "  Delete...       ^D"
+msgstr "  ‘™ã© £¦...              ^D"
 
 #: desk/desk_rsc.c:356
 msgid "  Format..."
@@ -397,7 +397,7 @@ msgstr "  Shutdown                ^Q"
 
 #: desk/desk_rsc.c:392
 msgid "-------------------"
-msgstr "--------------------------------"
+msgstr "-----------------------------"
 
 #: desk/desk_rsc.c:398
 msgid "  Sort by name"
@@ -424,8 +424,8 @@ msgid "  Install icon..."
 msgstr "  „š¡˜«á©«˜© œ ¡¦¤ ›å¦¬..."
 
 #: desk/desk_rsc.c:440
-msgid "  Install application... \007A"
-msgstr "  „š¡˜«á©«˜© œ­˜¨¦£¦šãª... \007A"
+msgid "  Install application..."
+msgstr "  „š¡˜«á©«˜© œ­˜¨¦£¦šãª..."
 
 #: desk/desk_rsc.c:446
 msgid "  Install devices"
@@ -436,20 +436,20 @@ msgid "  Remove desktop icon"
 msgstr "  ƒ ˜š¨˜­ã œ ¡¦¤ ›å¦¬"
 
 #: desk/desk_rsc.c:458
-msgid "----------------------------"
-msgstr "-------------------------------"
+msgid "--------------------------"
+msgstr "----------------------------"
 
 #: desk/desk_rsc.c:464
 msgid "  Set preferences..."
 msgstr "  ¨¦« £ã©œ ª..."
 
 #: desk/desk_rsc.c:470
-msgid "  Save desktop...        \007V"
-msgstr "  €§¦Ÿã¡œ¬© desktop...     \007V"
+msgid "  Save desktop...      ^S"
+msgstr "  €§¦Ÿã¡œ¬© desktop...  ^S"
 
 #: desk/desk_rsc.c:476
-msgid "  Change resolution...   \007C"
-msgstr "  €¢¢˜šã ˜¤á¢¬©ª...        \007C"
+msgid "  Change resolution... ^R"
+msgstr "  €¢¢˜šã ˜¤á¢¬©ª...     ^R"
 
 #: desk/desk_rsc.c:533
 msgid "Attribute:"
@@ -720,12 +720,12 @@ msgid "%ld bytes used in %d items."
 msgstr "%ld bytes ®¨© £¦§¦ ¦ç¤«˜  ©œ %d ˜¨®œå˜."
 
 #: desk/desk_rsc.c:1799
-msgid "  Show as icons \007S"
-msgstr "  „£­á¤ © àª œ ¡¦¤å› ˜      \007S"
+msgid "  Show as icons ^T"
+msgstr "  „£­á¤ © àª œ ¡¦¤å› ˜   ^T"
 
 #: desk/desk_rsc.c:1800
-msgid "  Show as text  \007S"
-msgstr "  „£­á¤ © àª ¡œå£œ¤¦        \007S"
+msgid "  Show as text  ^T"
+msgstr "  „£­á¤ © àª ¡œå£œ¤¦     ^T"
 
 #: desk/desk_rsc.c:1801
 msgid "FILE INFORMATION"

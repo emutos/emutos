@@ -348,8 +348,8 @@ msgid "  Open"
 msgstr "  Apri"
 
 #: desk/desk_rsc.c:314
-msgid "  Info/Rename...  \007I"
-msgstr "  Info/Rinomina...  \007I"
+msgid "  Info/Rename...  ^I"
+msgstr "  Info/Rinomina...  ^I"
 
 #: desk/desk_rsc.c:320 desk/desk_rsc.c:344 desk/desk_rsc.c:362
 msgid "---------------------"
@@ -368,8 +368,8 @@ msgid "  Close window"
 msgstr "  Chiudi finestra"
 
 #: desk/desk_rsc.c:350
-msgid "  Delete...       \007D"
-msgstr "  Cancella...       \007D"
+msgid "  Delete...       ^D"
+msgstr "  Cancella...       ^D"
 
 #: desk/desk_rsc.c:356
 msgid "  Format..."
@@ -412,8 +412,8 @@ msgid "  Install icon..."
 msgstr "  Installa icona..."
 
 #: desk/desk_rsc.c:440
-msgid "  Install application... \007A"
-msgstr "  Installa applicazione... \007A"
+msgid "  Install application..."
+msgstr "  Installa applicazione..."
 
 #: desk/desk_rsc.c:446
 msgid "  Install devices"
@@ -424,20 +424,20 @@ msgid "  Remove desktop icon"
 msgstr "  Rimuovi icona scrivania"
 
 #: desk/desk_rsc.c:458
-msgid "----------------------------"
-msgstr "------------------------------"
+msgid "--------------------------"
+msgstr "---------------------------"
 
 #: desk/desk_rsc.c:464
 msgid "  Set preferences..."
 msgstr "  Imposta preferenze..."
 
 #: desk/desk_rsc.c:470
-msgid "  Save desktop...        \007V"
-msgstr "  Salva scrivania...       \007V"
+msgid "  Save desktop...      ^S"
+msgstr "  Salva scrivania...    ^S"
 
 #: desk/desk_rsc.c:476
-msgid "  Change resolution...   \007C"
-msgstr "  Cambia risoluzione...    \007C"
+msgid "  Change resolution... ^R"
+msgstr "  Cambia risoluzione... ^R"
 
 #: desk/desk_rsc.c:533
 msgid "Attribute:"
@@ -708,12 +708,12 @@ msgid "%ld bytes used in %d items."
 msgstr "%ld byte usati in %d oggetti."
 
 #: desk/desk_rsc.c:1799
-msgid "  Show as icons \007S"
-msgstr "  Formato icona  \007S"
+msgid "  Show as icons ^T"
+msgstr "  Formato icona  ^T"
 
 #: desk/desk_rsc.c:1800
-msgid "  Show as text  \007S"
-msgstr "  Formato testo  \007S"
+msgid "  Show as text  ^T"
+msgstr "  Formato testo  ^T"
 
 #: desk/desk_rsc.c:1801
 msgid "FILE INFORMATION"

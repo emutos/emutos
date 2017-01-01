@@ -352,8 +352,8 @@ msgid "  Open"
 msgstr "  Öffnen"
 
 #: desk/desk_rsc.c:314
-msgid "  Info/Rename...  \007I"
-msgstr "  Info/Ändern...   \007I"
+msgid "  Info/Rename...  ^I"
+msgstr "  Info/Ändern...   ^I"
 
 #: desk/desk_rsc.c:320 desk/desk_rsc.c:344 desk/desk_rsc.c:362
 msgid "---------------------"
@@ -372,8 +372,8 @@ msgid "  Close window"
 msgstr "  Schließe Fenster"
 
 #: desk/desk_rsc.c:350
-msgid "  Delete...       \007D"
-msgstr "  Löschen...       \007D"
+msgid "  Delete...       ^D"
+msgstr "  Löschen...       ^D"
 
 #: desk/desk_rsc.c:356
 msgid "  Format..."
@@ -416,8 +416,8 @@ msgid "  Install icon..."
 msgstr "  Icon anmelden..."
 
 #: desk/desk_rsc.c:440
-msgid "  Install application... \007A"
-msgstr "  Anwendung anmelden... \007A"
+msgid "  Install application..."
+msgstr "  Anwendung anmelden..."
 
 #: desk/desk_rsc.c:446
 msgid "  Install devices"
@@ -428,7 +428,7 @@ msgid "  Remove desktop icon"
 msgstr "  Desktopicon löschen"
 
 #: desk/desk_rsc.c:458
-msgid "----------------------------"
+msgid "--------------------------"
 msgstr "---------------------------"
 
 #: desk/desk_rsc.c:464
@@ -436,12 +436,12 @@ msgid "  Set preferences..."
 msgstr "  Voreinstellungen..."
 
 #: desk/desk_rsc.c:470
-msgid "  Save desktop...        \007V"
-msgstr "  Desktop sichern...    \007V"
+msgid "  Save desktop...      ^S"
+msgstr "  Desktop sichern...    ^S"
 
 #: desk/desk_rsc.c:476
-msgid "  Change resolution...   \007C"
-msgstr "  Auflösung wechseln... \007C"
+msgid "  Change resolution... ^R"
+msgstr "  Auflösung wechseln... ^R"
 
 #: desk/desk_rsc.c:533
 msgid "Attribute:"
@@ -712,12 +712,12 @@ msgid "%ld bytes used in %d items."
 msgstr "%ld Bytes in %d Dateien."
 
 #: desk/desk_rsc.c:1799
-msgid "  Show as icons \007S"
-msgstr "  Als Icons  \007S"
+msgid "  Show as icons ^T"
+msgstr "  Als Icons  ^T"
 
 #: desk/desk_rsc.c:1800
-msgid "  Show as text  \007S"
-msgstr "  Als Text   \007S"
+msgid "  Show as text  ^T"
+msgstr "  Als Text   ^T"
 
 #: desk/desk_rsc.c:1801
 msgid "FILE INFORMATION"
