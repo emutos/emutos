@@ -341,7 +341,7 @@
 #  define CONF_STRAM_SIZE 14*1024*1024
 # endif
 # ifndef CONF_FASTRAM_SIZE
-#  define CONF_FASTRAM_SIZE 48*1024*1024
+#  define CONF_FASTRAM_SIZE 48UL*1024*1024
 # endif
 # ifndef CONF_WITH_IDE
 #  define CONF_WITH_IDE 1
