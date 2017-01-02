@@ -143,7 +143,7 @@ WNODE *win_alloc(WORD obid)
         G.g_wcnt++;
         pw = &G.g_wlist[wob-2];
         pw->w_flags = 0x0;
-        pw->w_obid = obid;    /* DESKTOP v1.2 */
+        pw->w_obid = obid;    /* if -ve, the complement of the drive letter */
         pw->w_root = wob;
         pw->w_cvrow = 0x0;
         pw->w_pncol = (pt->g_w  - gl_wchar) / G.g_iwspc;

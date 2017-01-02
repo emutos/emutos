@@ -723,6 +723,34 @@ static BOOL check_function_key(WORD thechar)
 
 
 /*
+ * check for alt-A to alt-Z & handle appropriately
+ *
+ * return TRUE iff matching drive found & processed
+ */
+static BOOL check_alt_letter_key(WORD thechar)
+{
+    KEYTAB *keytab;
+    WORD drive;
+
+    keytab = (KEYTAB *)Keytbl(-1, -1, -1);
+    drive = keytab->shift[thechar>>8];
+
+    if ((drive >= 'A') && (drive <= 'Z'))
+    {
+        ULONG drivebits = dos_sdrv(dos_gdrv()); /* all current devices */
+
+        if (drivebits & (1L<<(drive-'A')))
+        {
+            do_dopen(-drive);   /* -ve indicates drive letter rather than obid */
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+
+/*
  *  Scan desk menu for matching shortcut
  *
  *  Overview:
@@ -790,24 +818,6 @@ static WORD lookup_ascii_shortcut(WORD ascii, WORD *itemptr)
 }
 
 
-/*
- * lookup alt-key shortcut
- *
- * if found, returns menu title & updates 'item'
- * otherwise returns -1
- */
-static WORD lookup_altkey_shortcut(WORD scancode, WORD *itemptr)
-{
-    KEYTAB *keytab;
-    WORD altkey;
-
-    keytab = (KEYTAB *)Keytbl(-1, -1, -1);
-    altkey = keytab->shift[scancode];
-
-    return scan_menu(0x07, altkey, itemptr);
-}
-
-
 static WORD hndl_kbd(WORD thechar)
 {
     WNODE *pw;
@@ -829,10 +839,11 @@ static WORD hndl_kbd(WORD thechar)
     if (check_function_key(thechar))
         return done;
 
-    if (ascii)          /* normal ASCII character (ctl-Z etc) ? */
-        title = lookup_ascii_shortcut(ascii,&item);
-    else                /* alt-key */
-        title = lookup_altkey_shortcut(thechar>>8,&item);
+    if (check_alt_letter_key(thechar))
+        return done;
+
+    /* else normal ASCII character (ctl-Z etc) */
+    title = lookup_ascii_shortcut(ascii,&item);
 
     /*
      * actually handle shortcuts

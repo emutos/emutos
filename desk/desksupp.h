@@ -24,6 +24,7 @@ WORD do_wfull(WORD wh);
 WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon,
                 BYTE *pathname, GRECT *pt, WORD redraw);
 WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname);
+WORD do_dopen(WORD curr);
 void do_fopen(WNODE *pw, WORD curr, BYTE *pathname, WORD redraw);
 WORD do_open(WORD curr);
 WORD do_info(WORD curr);

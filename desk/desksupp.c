@@ -190,22 +190,28 @@ void do_xyfix(WORD *px, WORD *py)
 }
 
 
+/*
+ * open a window, normally corresponding to a disk drive icon on the desktop
+ *
+ * if curr < 0, there is no corresponding screen object, so we do not
+ * do the zoom effect & we do not try to reset the object state
+ */
 void do_wopen(WORD new_win, WORD wh, WORD curr, WORD x, WORD y, WORD w, WORD h)
 {
     GRECT c;
     GRECT d;
 
     do_xyfix(&x, &y);
-    get_xywh(G.g_screen, G.g_croot, &c.g_x, &c.g_y, &c.g_w, &c.g_h);
 
-    /* Zooming box effect */
-    get_xywh(G.g_screen, curr, &d.g_x, &d.g_y, &d.g_w, &d.g_h);
-    d.g_x += c.g_x;
-    d.g_y += c.g_y;
-    graf_growbox(d.g_x, d.g_y, d.g_w, d.g_h, x, y, w, h);
-
-    if (curr >= 0)              /* not being opened by function key */
+    if (curr >= 0)
+    {
+        get_xywh(G.g_screen, G.g_croot, &c.g_x, &c.g_y, &c.g_w, &c.g_h);
+        get_xywh(G.g_screen, curr, &d.g_x, &d.g_y, &d.g_w, &d.g_h);
+        d.g_x += c.g_x;
+        d.g_y += c.g_y;
+        graf_growbox(d.g_x, d.g_y, d.g_w, d.g_h, x, y, w, h);
         act_chg(G.g_cwin, G.g_screen, G.g_croot, curr, &c, SELECTED, FALSE, TRUE, TRUE);
+    }
 
     if (new_win)
         wind_open(wh, x, y, w, h);
@@ -652,19 +658,28 @@ void build_root_path(BYTE *path,WORD drive)
 
 /*
  *  Open a disk
+ *
+ *  if curr >= 0, it is a screen object id; the disk letter will be
+ *  derived from the iconblk.
+ *  if curr < 0, it is a negative disk letter
  */
-static WORD do_dopen(WORD curr)
+WORD do_dopen(WORD curr)
 {
     WORD drv;
     WNODE *pw;
     ICONBLK *pib;
     BYTE path[10];
 
-    pib = (ICONBLK *) get_iconblk_ptr(G.g_screen, curr);
+    if (curr >= 0)
+    {
+        pib = (ICONBLK *) get_iconblk_ptr(G.g_screen, curr);
+        drv = pib->ib_char & 0x00ff;
+    }
+    else drv = -curr;
+
     pw = win_alloc(curr);
     if (pw)
     {
-        drv = pib->ib_char & 0x00ff;
         build_root_path(path,drv);
         strcpy(path+3,"*.*");
         if (!do_diropen(pw, TRUE, curr, path, (GRECT *)&G.g_screen[pw->w_root].ob_x, TRUE))

@@ -3,16 +3,20 @@ A brief user's guide to the newer features of EmuDesk, the EmuTOS desktop
 
 The current version of EmuDesk is based on the TOS 1 desktop, but with
 many improvements inspired by the TOS 2/3/4 desktop, including:
+
+1) new menu items
     . install icon
     . install application
     . install devices
     . remove desktop icon
-    . user-assignable icons
 Due to space limitations, the implementation of the above is somewhat
-restricted in the 192K ROMs (see the detailed descriptions below).
-Except for user-assignable icons, if you make any changes to the desktop
-using the above features, you must save the desktop to preserve the
-changes.
+restricted in the 192K ROMs (see the detailed descriptions below).  If
+you make any changes to the desktop using the above features, you must
+save the desktop to preserve the changes.
+
+2) other new features
+        . user-assignable icons
+        . open disk window via keyboard shortcut
 
 
 Install icon
@@ -178,3 +182,17 @@ Also shipped is the corresponding EMUICON.DEF file for use by a resource
 editor.  You should be aware that each icon consumes about 400 bytes of
 RAM, so if you are short of memory, avoid putting too many icons in
 EMUICON.RSC.
+
+
+Open disk window via keyboard shortcut
+======================================
+You may now use a keyboard shortcut to display the root directory of a
+drive in a new window.  To display drive X, hold the Alt key down and
+type X, e.g. Alt-C displays drive C, Alt-D displays drive D, and so on.
+As in TOS2/3/4, these shortcuts are permanently assigned and cannot be
+changed by the user.
+
+NOTE: unlike TOS2/3/4, shortcuts with the Ctrl modifier do NOT update
+the drive assigned to the currently topped window; instead, they are
+assigned to menu item shortcuts.  At the moment, these assignments are
+also permanent.
