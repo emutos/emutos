@@ -210,16 +210,35 @@ void app_free(ANODE *pa)
  */
 BYTE *scan_str(BYTE *pcurr, BYTE **ppstr)
 {
-    while(*pcurr == ' ')
-        pcurr++;
-    *ppstr = G.g_pbuff;
-    while(*pcurr && (*pcurr != '\r') && (*pcurr != '@'))
-        *G.g_pbuff++ = *pcurr++;
-    *G.g_pbuff++ = '\0';
-    if (*pcurr)
+    BYTE *dest = G.g_pbuff;
+    BYTE *end = gl_buffer + SIZE_BUFF - 1;
+
+    *ppstr = dest;              /* return ptr to start of string in buffer */
+
+    while(*pcurr == ' ')        /* skip over leading spaces */
         pcurr++;
 
-    return pcurr;
+    for ( ; *pcurr; pcurr++)    /* copy string */
+    {
+        /* check for end markers */
+        if ((*pcurr == '\r') || (*pcurr == '@'))
+        {
+            pcurr++;
+            break;
+        }
+        /* check for buffer overflow */
+        if (dest < end)
+            *dest++ = *pcurr;
+    }
+    *dest = '\0';               /* terminate copy */
+
+    if (dest < end)
+        dest++;
+    else
+        KDEBUG(("scan_str(): ANODE string buffer is too small\n"));
+    G.g_pbuff = dest;           /* update buffer ptr for next time */
+
+    return pcurr;               /* next input character */
 }
 
 
