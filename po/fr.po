@@ -347,8 +347,8 @@ msgid "--------------------"
 msgstr "--------------------"
 
 #: desk/desk_rsc.c:308
-msgid "  Open"
-msgstr "  Ouvrir"
+msgid "  Open            ^O"
+msgstr "  Ouvrir             ^O"
 
 #: desk/desk_rsc.c:314
 msgid "  Info/Rename...  ^I"
@@ -359,16 +359,16 @@ msgid "---------------------"
 msgstr "------------------------"
 
 #: desk/desk_rsc.c:326
-msgid "  New Folder..."
-msgstr "  Nouveau dossier..."
+msgid "  New Folder...   ^N"
+msgstr "  Nouveau dossier... ^N"
 
 #: desk/desk_rsc.c:332
-msgid "  Close"
-msgstr "  Fermer"
+msgid "  Close           ^U"
+msgstr "  Fermer             ^U"
 
 #: desk/desk_rsc.c:338
-msgid "  Close window"
-msgstr "  Fermer la fenêtre"
+msgid "  Close window    ^W"
+msgstr "  Fermer la fenêtre  ^W"
 
 #: desk/desk_rsc.c:350
 msgid "  Delete...       ^D"

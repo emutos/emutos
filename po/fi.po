@@ -343,8 +343,8 @@ msgid "--------------------"
 msgstr "--------------------"
 
 #: desk/desk_rsc.c:308
-msgid "  Open"
-msgstr "  Avaa"
+msgid "  Open            ^O"
+msgstr "  Avaa             ^O"
 
 #: desk/desk_rsc.c:314
 msgid "  Info/Rename...  ^I"
@@ -355,16 +355,16 @@ msgid "---------------------"
 msgstr "----------------------"
 
 #: desk/desk_rsc.c:326
-msgid "  New Folder..."
-msgstr "  Uusi kansio..."
+msgid "  New Folder...   ^N"
+msgstr "  Uusi kansio...   ^N"
 
 #: desk/desk_rsc.c:332
-msgid "  Close"
-msgstr "  Sulje"
+msgid "  Close           ^U"
+msgstr "  Sulje            ^U"
 
 #: desk/desk_rsc.c:338
-msgid "  Close window"
-msgstr "  Sulje ikkuna"
+msgid "  Close window    ^W"
+msgstr "  Sulje ikkuna     ^W"
 
 #: desk/desk_rsc.c:350
 msgid "  Delete...       ^D"
