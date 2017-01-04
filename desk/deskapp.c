@@ -106,7 +106,7 @@ static WORD     gl_stdrv;
 static WORD     inf_rev_level;  /* revision level of current EMUDESK.INF */
 
 static BYTE     gl_afile[SIZE_AFILE];
-static BYTE     gl_buffer[SIZE_BUFF];
+static BYTE     *gl_buffer;
 
 
 /* When we can't get EMUDESK.INF via shel_get() or by reading from
@@ -558,6 +558,11 @@ void app_start(void)
     /* remember start drive */
     gl_stdrv = dos_gdrv();
 
+    /*
+     * allocate buffer for ANODE text
+     * this may in theory fail due to lack of memory: what should we do?
+     */
+    gl_buffer = dos_alloc(SIZE_BUFF);
     G.g_pbuff = gl_buffer;
 
     for (i = NUM_ANODES - 2; i >= 0; i--)
