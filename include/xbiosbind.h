@@ -271,11 +271,11 @@ static __inline__ short xbios_w_llwwwww(int op,
     register long retval __asm__("d0");
 
     __asm__ volatile (
+        "move.w  %8,-(sp)\n\t"
         "move.w  %7,-(sp)\n\t"
         "move.w  %6,-(sp)\n\t"
         "move.w  %5,-(sp)\n\t"
         "move.w  %4,-(sp)\n\t"
-        "move.w  %3,-(sp)\n\t"
         "move.l  %3,-(sp)\n\t"
         "move.l  %2,-(sp)\n\t"
         "move.w  %1,-(sp)\n\t"
