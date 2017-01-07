@@ -22,6 +22,8 @@
 #include "xhdi.h"
 #include "processor.h"
 #include "natfeat.h"
+#include "tosvars.h"
+#include "mfp.h"
 #include "ide.h"
 #include "acsi.h"
 #include "sd.h"
@@ -220,6 +222,12 @@ LONG disk_mediach(UWORD unit)
         return MEDIANOCHANGE;
     }
 #endif
+
+    /*
+     * if less than half a second since last access, assume no mediachange
+     */
+    if (hz_200 < units[unit].last_access + CLOCKS_PER_SEC/2)
+        return MEDIANOCHANGE;
 
     /* get bus and relative device */
     bus = GET_BUS(major);

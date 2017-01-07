@@ -406,6 +406,7 @@ static void flop_detect_drive(WORD dev)
 LONG flop_mediach(WORD dev)
 {
     struct fat16_bs *bootsec = (struct fat16_bs *) dskbufp;
+    int unit;
 
     KDEBUG(("flop_mediach(%d)\n",dev));
 
@@ -446,6 +447,13 @@ LONG flop_mediach(WORD dev)
 
     }
 #endif
+
+    /*
+     * if less than half a second since last access, assume no mediachange
+     */
+    unit = blkdev[dev].unit;
+    if (hz_200 < units[unit].last_access + CLOCKS_PER_SEC/2)
+        return MEDIANOCHANGE;
 
     /*
      * the current status was set, as was the latch.  we might have

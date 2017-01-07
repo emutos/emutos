@@ -616,26 +616,22 @@ static LONG blkdev_mediach(WORD dev)
     if ((dev < 0 ) || (dev >= BLKDEVNUM) || !b->valid)
         return EUNDEV;  /* unknown device */
 
-    switch(b->mediachange) {
-    case MEDIANOCHANGE:
-        /* if less than half a second since last access, assume no mediachange */
-        if (hz_200 < units[unit].last_access + CLOCKS_PER_SEC/2)
-            break;                  /* will return no change */
-        /* drop through */
-    case MEDIAMAYCHANGE:
-        do {
-            ret = (dev<NUMFLOPPIES) ? flop_mediach(dev) : disk_mediach(unit);
-            if (ret < 0L)
-                ret = call_etv_critic((WORD)ret,dev);
-        } while(ret == CRITIC_RETRY_REQUEST);
-        if (ret < 0L)
-            return ret;
-        if (ret != MEDIANOCHANGE) { /* if media (may have) changed, mark physical unit */
-            units[unit].status |= UNIT_CHANGED;
-            b->mediachange = ret;
-        }
-        break;
     /* if we've already marked the drive as MEDIACHANGE, don't change it */
+    if (b->mediachange == MEDIACHANGE)
+        return b->mediachange;
+
+    do {
+        ret = (dev<NUMFLOPPIES) ? flop_mediach(dev) : disk_mediach(unit);
+        if (ret < 0L)
+            ret = call_etv_critic((WORD)ret,dev);
+    } while(ret == CRITIC_RETRY_REQUEST);
+    if (ret < 0L)
+        return ret;
+
+    /* if media (may have) changed, mark physical unit */
+    if (ret != MEDIANOCHANGE) {
+        units[unit].status |= UNIT_CHANGED;
+        b->mediachange = ret;
     }
 
     return b->mediachange;
