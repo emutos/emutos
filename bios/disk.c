@@ -107,7 +107,9 @@ static void disk_init_one(UWORD unit,LONG *devices_available)
     }
 
     punit->valid = 1;
+#if CONF_WITH_IDE
     punit->byteswap = 0;
+#endif
     punit->size = blocks;
     punit->psshift = shift;
     punit->last_access = 0;
@@ -368,13 +370,47 @@ static ULONG check_for_no_partitions(UBYTE *sect)
 
 
 #define MAXPHYSSECTSIZE 512
-union
+typedef union
 {
     u8 sect[MAXPHYSSECTSIZE];
     struct rootsector rs;
     MBR mbr;
-} physsect, physsect2;
+} PHYSSECT;
 
+PHYSSECT physsect, physsect2;
+
+#if CONF_WITH_IDE
+
+/*
+ * This function is only used during byteswap detection.
+ * Subsequent byteswap will be performed by the IDE driver itself.
+ */
+static void byteswap(UBYTE *buffer, ULONG size)
+{
+    UWORD *p;
+
+    for (p = (UWORD *)buffer; p < (UWORD *)(buffer+size); p++)
+        swpw(*p);
+}
+
+static void maybe_fix_byteswap(UWORD unit, PHYSSECT *pphyssect)
+{
+    u8* sect = pphyssect->sect;
+    MBR *mbr = &pphyssect->mbr;
+
+    if (mbr->bootsig == 0xaa55)
+    {
+        KINFO(("DOS MBR byteswapped signature detected: enabling byteswap\n"));
+
+        /* Fix loaded physical sector */
+        byteswap(sect, SECTOR_SIZE);
+
+        /* Enable byteswap in the IDE driver for subsequent access */
+        units[unit].byteswap = 1;
+    }
+}
+
+#endif /* CONF_WITH_IDE */
 
 /*
  * scans for Atari partitions on unit and adds them to blkdev array
@@ -398,16 +434,11 @@ static int atari_partition(UWORD unit,LONG *devices_available)
 
     KINFO(("%cd%c: ","ashf????"[major>>3],'a'+(major&0x07)));
 
-    /* check for DOS byteswapped master boot record.
-     * this is enabled on IDE units only,
-     * because other media do not suffer from that problem.
-     */
-    if (IS_IDE_DEVICE(major) && mbr->bootsig == 0xaa55) {
-        KINFO(("DOS MBR byteswapped signature detected: enabling byteswap\n"));
-        units[unit].byteswap = 1; /* byteswap required for whole disk */
-        /* swap bytes in the loaded boot sector */
-        byteswap(sect,SECTOR_SIZE);
-    }
+#if CONF_WITH_IDE
+    /* IDE drives may be byteswapped if partitioned on foreign hardware */
+    if (IS_IDE_DEVICE(major))
+        maybe_fix_byteswap(unit, &physsect);
+#endif /* CONF_WITH_IDE */
 
     /* check for DOS disk without partitions */
     if (mbr->bootsig == 0x55aa) {
@@ -851,12 +882,4 @@ LONG DMAwrite(LONG sector, WORD count, const UBYTE *buf, WORD major)
     UWORD unit = NUMFLOPPIES + major;
 
     return disk_rw(unit, RW_WRITE, sector, count, CONST_CAST(UBYTE *, buf));
-}
-
-void byteswap(UBYTE *buffer, ULONG size)
-{
-    UWORD *p;
-
-    for (p = (UWORD *)buffer; p < (UWORD *)(buffer+size); p++)
-        swpw(*p);
 }

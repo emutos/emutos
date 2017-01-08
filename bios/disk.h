@@ -71,7 +71,9 @@
 struct _unit
 {
     BYTE    valid;          /* unit valid */
+#if CONF_WITH_IDE
     BYTE    byteswap;       /* unit is byteswapped */
+#endif
     ULONG   size;           /* number of physical sectors */
     WORD    psshift;        /* shift left amount to convert sectors to bytes */
     LONG    last_access;    /* used in mediach only */
@@ -102,6 +104,5 @@ extern LONG DMAwrite(LONG sector, WORD count, const UBYTE *buf, WORD major);
 void disk_init_all(void);
 LONG disk_mediach(UWORD unit);
 void disk_rescan(UWORD unit);
-void byteswap(UBYTE *buffer, ULONG size);
 
 #endif /* DISK_H */

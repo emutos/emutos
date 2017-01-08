@@ -342,7 +342,9 @@ static void flop_add_drive(WORD dev)
 
     /* Physical block device */
     units[dev].valid = 1;
+#if CONF_WITH_IDE
     units[dev].byteswap = 0;        /* floppies are never byteswapped */
+#endif
     units[dev].psshift = get_shift(SECTOR_SIZE);
     units[dev].size = 0;            /* unknown size */
     units[dev].last_access = 0;     /* never accessed */
