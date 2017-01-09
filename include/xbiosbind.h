@@ -26,7 +26,7 @@
 #define Setcolor(a,b) xbios_w_ww(7,a,b)
 #define Floprd(a,b,c,d,e,f,g) xbios_w_llwwwww(8,a,b,c,d,e,f,g)
 #define Flopwr(a,b,c,d,e,f,g) xbios_w_llwwwww(9,a,b,c,d,e,f,g)
-/*#define Flopfmt(a,b,c,d,e,f,g,h,i) xbios_w_llwwwwwlw(10,a,b,c,d,e,f,g,h,i)*/
+#define Flopfmt(a,b,c,d,e,f,g,h,i) xbios_w_llwwwwwlw(10,a,b,c,d,e,f,g,h,i)
 #define Midiws(a,b) xbios_v_wl(12,a,b)
 #define Mfpint(a,b) xbios_v_wl(13,a,b)
 #define Iorec(a) xbios_l_w(14,a)
@@ -61,6 +61,9 @@
 #define VgetMonitor() xbios_w_v(89)
 #define VsetRGB(a,b,c) xbios_v_wwl(93,a,b,c)
 #define VgetRGB(a,b,c) xbios_v_wwl(94,a,b,c)
+
+#define FLOPFMT_MAGIC   0x87654321UL
+
 
 /*
  *
@@ -284,6 +287,32 @@ static __inline__ short xbios_w_llwwwww(int op,
          : "=r"(retval)
          : "nr"(op), "ir"(a), "ir"(b), "nr"(c), "nr"(d), "nr"(e), "nr"(f),
            "nr"(g)
+         : "d1", "d2", "a0", "a1", "a2", "memory", "cc"
+        );
+    return retval;
+}
+
+static __inline__ short xbios_w_llwwwwwlw(int op,
+    long a, long b, short c, short d, short e, short f, short g, long h, short i)
+{
+    register long retval __asm__("d0");
+
+    __asm__ volatile (
+        "move.w  %10,-(sp)\n\t"
+        "move.l  %9,-(sp)\n\t"
+        "move.w  %8,-(sp)\n\t"
+        "move.w  %7,-(sp)\n\t"
+        "move.w  %6,-(sp)\n\t"
+        "move.w  %5,-(sp)\n\t"
+        "move.w  %4,-(sp)\n\t"
+        "move.l  %3,-(sp)\n\t"
+        "move.l  %2,-(sp)\n\t"
+        "move.w  %1,-(sp)\n\t"
+        "trap    #14\n\t"
+        "lea     26(sp),sp"
+         : "=r"(retval)
+         : "nr"(op), "ir"(a), "ir"(b), "nr"(c), "nr"(d), "nr"(e), "nr"(f),
+           "nr"(g), "ir"(h), "nr"(i)
          : "d1", "d2", "a0", "a1", "a2", "memory", "cc"
         );
     return retval;

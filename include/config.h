@@ -65,6 +65,9 @@
 # ifndef CONF_WITH_MONSTER
 #  define CONF_WITH_MONSTER 0
 # endif
+# ifndef CONF_WITH_FORMAT
+#  define CONF_WITH_FORMAT 0
+# endif
 #endif
 
 /*
@@ -118,6 +121,9 @@
 # endif
 # ifndef CONF_WITH_MONSTER
 #  define CONF_WITH_MONSTER 0
+# endif
+# ifndef CONF_WITH_FORMAT
+#  define CONF_WITH_FORMAT 0
 # endif
 #endif
 
@@ -217,6 +223,9 @@
 # ifndef CONF_WITH_68040_PMMU
 #  define CONF_WITH_68040_PMMU 0
 # endif
+# ifndef CONF_WITH_FORMAT
+#  define CONF_WITH_FORMAT 0
+# endif
 # ifndef CONF_WITH_SHUTDOWN
 #  define CONF_WITH_SHUTDOWN 0
 # endif
@@ -254,11 +263,17 @@
 # ifndef CONF_WITH_ASSERT
 #  define CONF_WITH_ASSERT 0
 # endif
+# ifndef CONF_WITH_FORMAT
+#  define CONF_WITH_FORMAT 0
+# endif
 # ifndef CONF_WITH_SHUTDOWN
 #  define CONF_WITH_SHUTDOWN 0
 # endif
 # ifndef CONF_WITH_MONSTER
 #  define CONF_WITH_MONSTER 0
+# endif
+# ifndef CONF_WITH_FORMAT
+#  define CONF_WITH_FORMAT 0
 # endif
 #endif
 
@@ -422,6 +437,9 @@
 # endif
 # ifndef CONF_WITH_FDC
 #  define CONF_WITH_FDC 0
+# endif
+# ifndef CONF_WITH_FORMAT
+#  define CONF_WITH_FORMAT 0
 # endif
 # ifndef CONF_WITH_ACSI
 #  define CONF_WITH_ACSI 0
@@ -1007,6 +1025,13 @@
  */
 #ifndef CONF_WITH_VDI_EXTENSIONS
 # define CONF_WITH_VDI_EXTENSIONS 1
+#endif
+
+/*
+ * Set CONF_WITH_FORMAT to 1 to support formatting floppy diskettes in EmuDesk
+ */
+#ifndef CONF_WITH_FORMAT
+# define CONF_WITH_FORMAT 1
 #endif
 
 /*

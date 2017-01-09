@@ -28,7 +28,7 @@ WORD do_dopen(WORD curr);
 void do_fopen(WNODE *pw, WORD curr, BYTE *pathname, WORD redraw);
 WORD do_open(WORD curr);
 WORD do_info(WORD curr);
-int do_format(WORD curr);
+void do_format(void);
 void do_refresh(WNODE *pw);
 ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp);
 void remove_one_level(BYTE *pathname);

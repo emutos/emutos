@@ -123,7 +123,17 @@ LONG call_etv_critic(WORD error,WORD device);   /* in vectors.S */
 #define BDM_WP_HARD            0x20    /* write-protected partition */
 
 
-/* unified block device identificator - partially stolen from MiNT, hehe */
+/*
+ * unified block device identificator - partially stolen from MiNT, hehe
+ *
+ * The 'forcechange' byte is used to force EmuTOS to recognise a media
+ * change when logical sector zero is written to.
+ *  . it is set by blkdev_rwabs(), and cleared by blkdev_getbpb()
+ *  . if it is set on entry to blkdev_rwabs(), the latter returns E_CHNG
+ *  . if it is set on entry to blkdev_mediach(), the latter returns MEDIACHANGE
+ * This provides the same function as the 'mediach' routine documented by
+ * Atari in the Rainbow TOS Release Notes.
+ */
 
 struct _blkdev
 {
@@ -134,6 +144,7 @@ struct _blkdev
     UBYTE       mediachange;    /* current mediachange status */
     BPB         bpb;
     GEOMETRY    geometry;       /* this should probably belong to units */
+    UBYTE       forcechange;    /* see above for description */
     UBYTE       serial[3];      /* the serial number taken from the bootsector */
     UBYTE       serial2[4];     /* serial number 2 (MSDOS) from the bootsector */
     int         unit;           /* 0,1 = floppies, 2-9 = ACSI, 10-17 = SCSI, */

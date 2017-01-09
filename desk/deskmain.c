@@ -112,15 +112,15 @@ static void    cnx_put(void);
 static WORD     ig_close;
 
 static const BYTE     ILL_ITEM[] = {L1ITEM, L2ITEM, L3ITEM, L4ITEM, L5ITEM, 0};
-static const BYTE     ILL_FILE[] = {FORMITEM,IDSKITEM,RICNITEM,0};
-static const BYTE     ILL_DOCU[] = {FORMITEM,IDSKITEM,IAPPITEM,RICNITEM,0};
-static const BYTE     ILL_FOLD[] = {FORMITEM,IDSKITEM,IAPPITEM,RICNITEM,0};
+static const BYTE     ILL_FILE[] = {IDSKITEM,RICNITEM,0};
+static const BYTE     ILL_DOCU[] = {IDSKITEM,IAPPITEM,RICNITEM,0};
+static const BYTE     ILL_FOLD[] = {IDSKITEM,IAPPITEM,RICNITEM,0};
 static const BYTE     ILL_FDSK[] = {IAPPITEM,0};
-static const BYTE     ILL_HDSK[] = {FORMITEM,IAPPITEM,0};
-static const BYTE     ILL_NOSEL[] = {OPENITEM,SHOWITEM,FORMITEM,DELTITEM,
+static const BYTE     ILL_HDSK[] = {IAPPITEM,0};
+static const BYTE     ILL_NOSEL[] = {OPENITEM,SHOWITEM,DELTITEM,
                                 IAPPITEM,RICNITEM,0};
-static const BYTE     ILL_YSEL[] = {OPENITEM, IDSKITEM, FORMITEM, SHOWITEM, 0};
-static const BYTE     ILL_TRASH[] = {OPENITEM,FORMITEM,DELTITEM,IDSKITEM,
+static const BYTE     ILL_YSEL[] = {OPENITEM, IDSKITEM, SHOWITEM, 0};
+static const BYTE     ILL_TRASH[] = {OPENITEM,DELTITEM,IDSKITEM,
                                 IAPPITEM,0};
 static const BYTE     ILL_NOTOP[] = {NFOLITEM,CLOSITEM,CLSWITEM,0};
 static const BYTE     ILL_DESKTOP[] = {NFOLITEM,CLOSITEM,CLSWITEM,ICONITEM,
@@ -289,6 +289,10 @@ static void men_update(OBJECT *tree)
         men_list(tree, pvalue, FALSE);
     }
 
+#if !CONF_WITH_FORMAT
+    menu_ienable(tree, FORMITEM, 0);
+#endif
+
 #if CONF_WITH_SHUTDOWN
     menu_ienable(tree, QUITITEM, can_shutdown());
 #else
@@ -380,10 +384,12 @@ static WORD do_filemenu(WORD item)
         if (curr)
             fun_del(curr);
         break;
+
+#if CONF_WITH_FORMAT
     case FORMITEM:
-        if (curr)
-            done = do_format(curr);
+        do_format();
         break;
+#endif
 
 #if WITH_CLI != 0
     case CLIITEM:                         /* Start EmuCON */

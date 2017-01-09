@@ -378,6 +378,15 @@ static LONG blkdev_rwabs(WORD rw, UBYTE *buf, WORD cnt, WORD recnr, WORD dev, LO
         if (blkdev[dev].bpb.recsiz == 0)/* invalid BPB, e.g. FAT32 or ext2 */
             return ESECNF;              /* (this is an XHDI convention)    */
 
+        /*
+         * the following is used to ensure that altering logical
+         * sector zero causes a media change to be detected
+         */
+        if (blkdev[dev].forcechange)
+            return E_CHNG;
+        if ((rw & RW_WRITE) && (lrecnr == 0))
+            blkdev[dev].forcechange = TRUE;
+
         /* convert logical sectors to physical ones */
         sectors = blkdev[dev].bpb.recsiz >> units[blkdev[dev].unit].psshift;
         lcount *= sectors;
@@ -504,6 +513,7 @@ LONG blkdev_getbpb(WORD dev)
         return 0L;  /* unknown device */
 
     bdev->mediachange = MEDIANOCHANGE;      /* reset now */
+    bdev->forcechange = FALSE;
     bdev->bpb.recsiz = 0;                   /* default to invalid BPB */
 
     /*
@@ -619,6 +629,13 @@ static LONG blkdev_mediach(WORD dev)
     /* if we've already marked the drive as MEDIACHANGE, don't change it */
     if (b->mediachange == MEDIACHANGE)
         return b->mediachange;
+
+    /*
+     * if a mediachange has been forced, we return the same status
+     * until Gepbpb() is called
+     */
+    if (blkdev[dev].forcechange)
+        return MEDIACHANGE;
 
     do {
         ret = (dev<NUMFLOPPIES) ? flop_mediach(dev) : disk_mediach(unit);

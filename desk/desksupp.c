@@ -27,6 +27,10 @@
 #include "dos.h"
 #include "gemdos.h"
 #include "rectfunc.h"
+#include "optimize.h"
+#include "biosbind.h"
+#include "biosdefs.h"
+#include "xbiosbind.h"
 
 #include "gembind.h"
 #include "deskapp.h"
@@ -48,8 +52,31 @@
 #include "deskins.h"
 #include "nls.h"
 #include "scancode.h"
+#include "../bios/machine.h"
 #include "kprint.h"
 
+
+#if CONF_WITH_FORMAT
+/*
+ *      declarations used by the do_format() code
+ */
+#define MAXTRACK        80
+#define FMTBUFLEN       12500       /* sufficient for HD */
+#define VIRGIN          0xe5e5
+#define RANDOM_SERIAL   0x01000000L
+#define WRITESEC        0x03        /* no media change detection */
+#define FA_VOL          0x08        /* volume label attribute */
+#define SECTOR_SIZE     512L
+
+static const WORD std_skewtab[] =
+ { 1, 2, 3, 4, 5, 6, 7, 8, 9,
+   1, 2, 3, 4, 5, 6, 7, 8, 9 };
+
+static const WORD hd_skewtab[] =
+ { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+   1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18 };
+
+#endif
 
 #if CONF_WITH_SHOW_FILE
 /*
@@ -865,70 +892,230 @@ WORD do_info(WORD curr)
 }
 
 
+#if CONF_WITH_FORMAT
 /*
- *  Format the currently selected disk
+ *  Write boot sector
  */
-int do_format(WORD curr)
+static WORD write_boot(BYTE *buf, WORD disktype, WORD drive)
 {
-    WORD ret;
-    WORD foundit;
-    int done;
-    BYTE *p;
-    ANODE *pa;
-    BYTE drive_letter;
-    BOOL isgraf; /* The format program is a graphical one */
+    Protobt((LONG)buf, RANDOM_SERIAL, disktype, 0);
+    *buf = 0xe9;        /* DOS compatibility */
 
-    done = 0;
+    return Rwabs(WRITESEC, (LONG)buf, 1, 0, drive, 0);
+}
+
+/*
+ *  Initialise starting sectors of floppy disk (boot sector, FATs, root dir)
+ */
+static WORD init_start(BYTE *buf, WORD disktype, WORD drive, BYTE *label)
+{
+    BPB *bpb;
+    BYTE *p;
 
     /*
-     * check icon type (should be OK, since deskmain should have
-     * disabled the menu item unless the selected icon is a floppy)
+     * write boot so we can do a Getbpb()
      */
-    pa = i_find(G.g_cwin, curr, NULL, NULL);
+    if (write_boot(buf, disktype, drive) < 0)
+        return -1;
 
-    if (pa && (pa->a_type == AT_ISDISK) && (pa->a_aicon == IG_FLOPPY))
+    bpb = (BPB *)Getbpb(drive);
+
+    /*
+     * write FATs
+     */
+    memset(buf, 0x00, bpb->fsiz*SECTOR_SIZE);
+    buf[0] = 0xf9;
+    buf[1] = 0xff;
+    buf[2] = 0xff;
+    if (Rwabs(WRITESEC, (LONG)buf, bpb->fsiz, 1, drive, 0))
+        return -1;
+    if (Rwabs(WRITESEC, (LONG)buf, bpb->fsiz, 1+bpb->fsiz, drive, 0))
+        return -1;
+
+    /*
+     * write root dir, including label if present
+     */
+    memset(buf, 0x00, bpb->rdlen*SECTOR_SIZE);
+    if (label[0])
     {
-        /*
-         * it's a floppy disk: check if a formatter is available
-         * we prefer a graphical one
-         */
-        strcpy(G.g_cmd, "FORMAT.PRG");
-        isgraf = TRUE;
-        foundit = shel_find(G.g_cmd);
-        if (!foundit)
-        {
-            strcpy(G.g_cmd, "FORMAT.TTP");
-            isgraf = FALSE;
-            foundit = shel_find(G.g_cmd);
-        }
-        if (!foundit)
-        {
-            fun_alert(1, STNOFRMT);
-            return 0;
-        }
+        memset(buf, ' ', 11);
+        for (p = buf; *label; )
+            *p++ = *label++;
+        buf[11] = FA_VOL;
+    }
+    if (Rwabs(WRITESEC, (LONG)buf, bpb->rdlen, 1+bpb->fsiz*2, drive, 0))
+        return -1;
 
-        /*
-         * we have a formatter, ask user if we should run it
-         */
-        drive_letter = (get_iconblk_ptr(G.g_screen, curr)->ib_char) & 0xFF;
-        ret = fun_alert_merge(2, STFORMAT, drive_letter);
-        if (ret != 1)
-            return 0;
+    /*
+     * rewrite boot to force mediachange to be set
+     */
+    if (write_boot(buf, disktype, drive) < 0)
+        return -1;
 
-        /*
-         * user says OK
-         */
-        p = G.g_tail + 1;       /* set up command tail */
-        *p++ = drive_letter;
-        *p++ = ':';
-        *p = '\0';
+    return 0;
+}
 
-        pro_run(isgraf, 1, G.g_cwin, curr);
-        done = 1;
+/*
+ *  Do the real formatting work
+ */
+static WORD format_floppy(OBJECT *tree, WORD max_width, WORD incr)
+{
+    BYTE *buf, label[LEN_ZFNAME];
+    const WORD *skewtab;
+    WORD drive, numsides, disktype, spt, trackskew;
+    WORD track, side, skewindex;
+    WORD width, rc;
+
+    drive = inf_gindex(tree, FMT_DRVA, 2);
+    numsides = 2;       /* default to double sided */
+    disktype = 3;       /* for Protobt() */
+    spt = 9;
+    skewtab = std_skewtab;
+    trackskew = 2;
+
+    switch(inf_gindex(tree, FMT_SS, 3))
+    {
+    case 0:             /* single sided */
+        numsides = 1;
+        disktype = 2;
+        trackskew = 3;  /* skew between tracks */
+        break;
+    case 2:             /* high density */
+        disktype = 4;
+        spt = 18;
+        skewtab = hd_skewtab;
+        trackskew = 3;
     }
 
-    return done;
+    buf = dos_alloc(FMTBUFLEN);
+    if (!buf)           //FIXME: should issue an alert here
+        return -1;
+
+    tree[FMT_BAR].ob_width = 0;
+    tree[FMT_BAR].ob_spec = 0x00FF1121L;
+
+    graf_mouse(HGLASS,NULL);    /* say we're busy */
+
+    for (track = 0, rc = 0, skewindex = 0; (track < MAXTRACK) & !rc; track++)
+    {
+        for (side = 0; (side < numsides) & !rc; side++)
+        {
+            skewindex -= trackskew;
+            if (skewindex < 0)
+                skewindex += spt;
+
+            while((rc=Flopfmt((LONG)buf, (LONG)&skewtab[skewindex],
+                        drive, spt, track, side, -1, FLOPFMT_MAGIC, VIRGIN)))
+            {
+                graf_mouse(ARROW,NULL);
+                rc = fun_alert(3, STFMTERR);
+                if (rc == 2)
+                    break;
+                graf_mouse(HGLASS,NULL);    /* say we're busy again */
+            }
+        }
+        /* update progress bar */
+        width = tree[FMT_BAR].ob_width + incr;
+        if (width > max_width)
+            width = max_width;
+        tree[FMT_BAR].ob_width = width;
+        draw_fld(tree,FMT_BAR);
+    }
+
+    inf_sget(tree, FMTLABEL, label);
+
+    if (rc == 0)
+        rc = init_start(buf, disktype, drive, label);
+
+    graf_mouse(ARROW,NULL);     /* no longer busy */
+    dos_free((LONG)buf);
+
+    return rc;
 }
+
+/*
+ *  Format a floppy disk
+ */
+void do_format(void)
+{
+    OBJECT *tree, *obj;
+    LONG total, avail;
+    WORD i, drivebits, drive;
+    WORD exitobj, rc;
+    WORD max_width, incr;
+
+    tree = G.a_trees[ADFORMAT];
+
+    /*
+     * disable the button(s) for nonexistent drives
+     * and set the default drive
+     */
+    drivebits = dos_sdrv(dos_gdrv()) & 0x0003;  /* floppy devices */
+    drive = -1;
+    for (i = 0, obj = &tree[FMT_DRVA]; i < 2; i++, obj++, drivebits >>= 1)
+    {
+        if (!(drivebits & 0x0001))
+        {
+            obj->ob_state &= ~SELECTED;
+            obj->ob_state |= DISABLED;
+        }
+        else if (drive < 0)
+        {
+            obj->ob_state |= SELECTED;
+            drive = i;
+        }
+    }
+    if (drive < 0)                          /* if no floppy drives, */
+        tree[FMT_OK].ob_state |= DISABLED;  /* disallow OK response */
+
+    tree[FMT_CNCL].ob_state &= ~SELECTED;
+
+    /*
+     * adjust the initial default formatting option, hiding
+     * the high density option if not available
+     */
+    if ((cookie_fdc>>24) == 0)
+    {
+        if (tree[FMT_HD].ob_state & SELECTED)   /* first time */
+        {
+            tree[FMT_HD].ob_state &= ~SELECTED;
+            tree[FMT_HD].ob_flags |= HIDETREE;
+            tree[FMT_DS].ob_state |= SELECTED;
+        }
+    }
+
+    /*
+     * fix up the progress bar width, increment & fill pattern
+     */
+    incr = tree[FMT_BAR].ob_width / MAXTRACK;
+    max_width = incr * MAXTRACK;
+    tree[FMT_BAR].ob_width = max_width;
+    tree[FMT_BAR].ob_spec = 0x00FF1101L;
+
+    /*
+     * do the actual work
+     */
+    do {
+        show_hide(FMD_START, tree);
+        exitobj = form_do(tree, FMTLABEL) & 0x7fff;
+        if (exitobj == FMT_OK)
+            rc = format_floppy(tree, max_width, incr);
+        else
+            rc = -1;
+        show_hide(FMD_FINISH, tree);
+
+        if (rc == 0)
+        {
+            dos_space(drive + 1, &total, &avail);
+            if (fun_alert_long(1, STFMTINF, avail) == 2)
+                rc = -1;
+        }
+        tree[FMT_BAR].ob_width = max_width;     /* reset to starting values */
+        tree[FMT_BAR].ob_spec = 0x00FF1101L;
+        tree[FMT_OK].ob_state &= ~SELECTED;
+    } while (rc == 0);
+}
+#endif
 
 
 /*

@@ -69,6 +69,18 @@ WORD fun_alert_merge(WORD defbut, WORD stnum, BYTE merge)
 }
 
 
+/*
+ *  Issue an alert after merging in a long variable
+ */
+WORD fun_alert_long(WORD defbut, WORD stnum, LONG merge)
+{
+    rsrc_gaddr_rom(R_STRING, stnum, (void **)&G.a_alert);
+    sprintf(G.g_1text, G.a_alert, merge);
+
+    return form_alert(defbut, G.g_1text);
+}
+
+
 void fun_msg(WORD type, WORD w3, WORD w4, WORD w5, WORD w6, WORD w7)
 {
     /* keep DESKTOP messages internal to DESKTOP -- no AES call     */
