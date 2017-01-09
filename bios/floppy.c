@@ -861,11 +861,21 @@ LONG flopfmt(UBYTE *buf, WORD *skew, WORD dev, WORD spt,
     if (err)
         return err;
 
-    /* verify sectors and store bad sector numbers in buf */
-    err = flopver((WORD *)buf, 0L, dev, 1, track, side, spt);
-    if (err || (*(WORD *)buf != 0))
-        return EBADSF;
+    /*
+     * verify sectors and store bad sector numbers in buf
+     *
+     * we speed things up for the normal case by attempting to read a
+     * track at a time; if that fails, we call flopver to do it slowly
+     * and build a bad sector list
+     */
+    if (floprw(buf, RW_READ, dev, 1, track, side, spt))
+    {
+        err = flopver((WORD *)buf, 0L, dev, 1, track, side, spt);
+        if (err || (*(WORD *)buf != 0))
+            return EBADSF;
+    }
 
+    *(WORD *)buf = 0;   /* safety first */
     return 0;
 }
 
