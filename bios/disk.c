@@ -425,6 +425,7 @@ static int atari_partition(UWORD unit,LONG *devices_available)
     u32 extensect;
     u32 hd_size;
     int major = unit - NUMFLOPPIES;
+    MAYBE_UNUSED(major);
 #ifdef ICD_PARTS
     int part_fmt = 0; /* 0:unknown, 1:AHDI, 2:ICD/Supra */
 #endif
