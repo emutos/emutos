@@ -425,10 +425,10 @@ static int atari_partition(UWORD unit,LONG *devices_available)
     u32 extensect;
     u32 hd_size;
     int major = unit - NUMFLOPPIES;
-    MAYBE_UNUSED(major);
 #ifdef ICD_PARTS
     int part_fmt = 0; /* 0:unknown, 1:AHDI, 2:ICD/Supra */
 #endif
+    MAYBE_UNUSED(major);
 
     if (disk_rw(unit, RW_READ, 0, 1, sect))
         return -1;
