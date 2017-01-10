@@ -1106,6 +1106,7 @@ void do_format(void)
 
         if (rc == 0)
         {
+            drive = (tree[FMT_DRVA].ob_state & SELECTED) ? 0 : 1;
             dos_space(drive + 1, &total, &avail);
             if (fun_alert_long(1, STFMTINF, avail) == 2)
                 rc = -1;
