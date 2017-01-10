@@ -1047,26 +1047,57 @@ void do_format(void)
     tree = G.a_trees[ADFORMAT];
 
     /*
-     * disable the button(s) for nonexistent drives
-     * and set the default drive
+     * enable button(s) for existent drives, disable for non-existent
      */
     drivebits = dos_sdrv(dos_gdrv()) & 0x0003;  /* floppy devices */
-    drive = -1;
     for (i = 0, obj = &tree[FMT_DRVA]; i < 2; i++, obj++, drivebits >>= 1)
     {
-        if (!(drivebits & 0x0001))
+        if (drivebits & 0x0001)
+        {
+            obj->ob_state &= ~DISABLED;
+        }
+        else
         {
             obj->ob_state &= ~SELECTED;
             obj->ob_state |= DISABLED;
         }
-        else if (drive < 0)
+    }
+
+    /*
+     * if a drive is currently selected, don't change it
+     */
+    drive = -1;
+    for (i = 0, obj = &tree[FMT_DRVA]; i < 2; i++, obj++)
+    {
+        if (obj->ob_state & SELECTED)
         {
-            obj->ob_state |= SELECTED;
             drive = i;
+            break;
         }
     }
-    if (drive < 0)                          /* if no floppy drives, */
-        tree[FMT_OK].ob_state |= DISABLED;  /* disallow OK response */
+    
+    /*
+     * if NO drive was previously selected, select the first enabled one
+     */
+    if (drive < 0)
+    {
+        for (i = 0, obj = &tree[FMT_DRVA]; i < 2; i++, obj++)
+        {
+            if (!(obj->ob_state & DISABLED))
+            {
+                drive = i;
+                break;
+            }
+        }
+        if (drive >= 0)
+            obj->ob_state |= SELECTED;
+    }
+
+    /*
+     * if there are no enabled drives, disallow OK
+     */
+    if (drive < 0)
+        tree[FMT_OK].ob_state |= DISABLED;
 
     tree[FMT_CNCL].ob_state &= ~SELECTED;
 
