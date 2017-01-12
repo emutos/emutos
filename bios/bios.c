@@ -850,7 +850,7 @@ LONG lrwabs(WORD r_w, UBYTE *adr, WORD numb, WORD first, WORD drive, LONG lfirst
 static LONG bios_4(WORD r_w, UBYTE *adr, WORD numb, WORD first, WORD drive, LONG lfirst)
 {
     LONG ret;
-    KDEBUG(("BIOS rwabs(rw = %d, addr = 0x%08lx, count = 0x%04x, "
+    KDEBUG(("BIOS rwabs(rw = %d, addr = %p, count = 0x%04x, "
             "sect = 0x%04x, dev = 0x%04x, lsect = 0x%08lx)",
             r_w, adr, numb, first, drive, lfirst));
     ret = lrwabs(r_w, adr, numb, first, drive, lfirst);

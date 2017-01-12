@@ -94,7 +94,7 @@ void blkdev_init(void)
 {
     /* set the block buffer pointer to reserved memory */
     dskbufp = diskbuf;
-    KDEBUG(("diskbuf = %08lx\n",(long)dskbufp));
+    KDEBUG(("diskbuf = %p\n",dskbufp));
 
     /* setup booting related vectors */
     hdv_boot    = blkdev_hdv_boot;
@@ -358,8 +358,8 @@ static LONG blkdev_rwabs(WORD rw, UBYTE *buf, WORD cnt, WORD recnr, WORD dev, LO
     UBYTE *bufstart = buf;
     GEOMETRY *geo;
 
-    KDEBUG(("rwabs(rw=%d, buf=%ld, count=%ld, recnr=%u, dev=%d, lrecnr=%ld)\n",
-            rw,(ULONG)buf,lcount,recnr,dev,lrecnr));
+    KDEBUG(("rwabs(rw=%d, buf=%p, count=%ld, recnr=%u, dev=%d, lrecnr=%ld)\n",
+            rw,buf,lcount,recnr,dev,lrecnr));
 
     if (recnr != -1)            /* if long offset not used */
         lrecnr = (UWORD)recnr;  /* recnr as unsigned to enable 16-bit recn */
