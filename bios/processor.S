@@ -85,12 +85,12 @@ _detect_cpu:
 
         MOVEC_CACR_D1           // d1 = get cache control register
         move.l  d1,d2           // hold a copy for later
-        ori.w   #0x8100,d1      // enable '030 data and '040 instr. caches
+        ori.w   #0x0101,d1      // enable '020 instr. and '030 data caches
         MOVEC_D1_CACR           // set new cache controls from d1
         MOVEC_CACR_D1           //   & read it back again to check
         MOVEC_D2_CACR           // restore original CACR
-        tst.w   d1              // if 15th bit was set, this is a 68040+
-        bmi.s   x040
+        btst    #0,d1           // if '020 instr. cache was not enabled, this is a 68040+
+        beq.s   x040
         moveq   #20,d0          // assume 68020
         btst    #8,d1           // check if 68030 data cache was enabled
         beq.s   exit            // a zero here means no data cache, i.e. 68020
@@ -105,9 +105,8 @@ x040:   moveq   #40,d0          // assume 68040
         MOVEC_PCR_D1            // attempt to access the PCR
 
 #if CONF_WITH_APOLLO_CORE
-        swap    d1
-        cmp.w   #0x0440,d1      // Apollo Core 68080 identifier
-        bne.s   x060
+        moveq   #60,d0          // assume 68060
+        ADDIWL_0_A0             // check for addiw.l instruction
 
 // Apollo Core 68080
         moveq   #40,d0          // force 68040 detection

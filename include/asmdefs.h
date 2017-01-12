@@ -58,6 +58,8 @@
 #define CINVA_IC            .dc.w 0xf498            /* 68040 */
 #define CINVL_IC_A0         .dc.w 0xf488            /* 68040 */
 
+#define ADDIWL_0_A0         .dc.l 0x06d00000        /* 68080 */
+
 /* ELF toolchain support */
 #ifdef ELF_TOOLCHAIN
 #define DEFINE_FUNCTION_ALIAS(alias, impl) .globl alias; alias:; jmp impl
