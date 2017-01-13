@@ -147,6 +147,6 @@ void getmpb(MPB * mpb)
     bmem_allowed = 0; /* BIOS memory handling not allowed past this point */
 #endif
 
-    mpb->mp_mfl = mpb->mp_rover = &themd;   /* free list/rover set to init MD */
-    mpb->mp_mal = (MD *)0;                /* allocated list set to NULL */
+    mpb->mp_mfl = &themd;       /* free list set to initial MD */
+    mpb->mp_mal = NULL;         /* allocated list empty */
 }

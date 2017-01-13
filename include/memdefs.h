@@ -45,7 +45,7 @@ struct _mpb
 {
         MD      *mp_mfl;    /* memory free list */
         MD      *mp_mal;    /* memory allocated list */
-        MD      *mp_rover;  /* roving pointer */
+        MD      *mp_rover;  /* roving pointer - no longer used */
 };
 
 #endif  /* _MEMDEFS_H */

@@ -74,14 +74,12 @@ static void dump_mem_map(void)
     kprintf("===mem_dump==========================\n");
     dump_md_list("std free ", pmd.mp_mfl);
     dump_md_list("std alloc", pmd.mp_mal);
-    kprintf("| std rover = %p\n", pmd.mp_rover);
 #if CONF_WITH_ALT_RAM
     if (has_alt_ram)
     {
         kprintf("| ----------------------\n");
         dump_md_list("alt free ", pmdalt.mp_mfl);
         dump_md_list("alt alloc", pmdalt.mp_mal);
-        kprintf("| alt rover = %p\n", pmdalt.mp_rover);
     }
 #endif
     kprintf("===/mem_dump==========================\n");
@@ -386,14 +384,11 @@ long xmaddalt(UBYTE *start, LONG size)
          */
         p = pmdalt.mp_mfl;
         pmdalt.mp_mfl = md;
-        if (pmdalt.mp_rover == p)
-            pmdalt.mp_rover = md;
         md->m_link = p;
     } else {
         md->m_link = NULL;
         pmdalt.mp_mfl = md;
         pmdalt.mp_mal = NULL;
-        pmdalt.mp_rover = md;
         has_alt_ram = 1;
     }
 
