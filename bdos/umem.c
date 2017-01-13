@@ -193,10 +193,17 @@ long xsetblk(int n, void *blk, long len)
     KDEBUG(("BDOS xsetblk: new length=%ld\n",len));
 
     /*
-     * If the caller is not shrinking the block size, then abort.
+     * Check new length.
      */
     if (p->m_length < len)
         return EGSBF;
+    if (p->m_length == len)     /* nothing to do */
+        return E_OK;
+    if (len == 0)               /* just like Mfree() */
+    {
+        freeit(p,mpb);
+        return E_OK;
+    }
 
     /*
      * Create a memory descriptor for the freed portion of memory.
