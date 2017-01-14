@@ -141,17 +141,7 @@ MD *ffit(long amount, MPB *mp)
  */
 void freeit(MD *m, MPB *mp)
 {
-    MD *p, *q;
-
-#if STATIUMEM
-    ++ccfreeit;
-#endif
-
-    q = 0;
-
-    for (p = mp->mp_mfl; p; p = (q=p)-> m_link)
-        if (m->m_start <= p->m_start)
-            break;
+    MD *p, *q, *f;
 
 #ifdef ENABLE_KDEBUG
     if (mp == &pmd)
@@ -163,29 +153,69 @@ void freeit(MD *m, MPB *mp)
     else
         KDEBUG(("BDOS freeit: mp=%p\n",mp));
 #endif
-    KDEBUG(("BDOS freeit: start=0x%08lx, length=%ld\n",(ULONG)m->m_start,m->m_length));
+    KDEBUG(("BDOS freeit: start=%p, length=%ld\n",m->m_start,m->m_length));
 
-    m->m_link = p;
+#if STATIUMEM
+    ++ccfreeit;
+#endif
 
+    /*
+     * first, find it in the allocated list
+     */
+    for (p = mp->mp_mal, q = NULL; p; q = p, p = p->m_link)
+        if (m->m_start == p->m_start)
+            break;
+
+    if (!p)
+    {
+        KDEBUG(("BDOS freeit: invalid MD address %p\n",m));
+        return;
+    }
+
+    /*
+     * snip it out
+     */
     if (q)
-        q->m_link = m;
+        q->m_link = p->m_link;
     else
-        mp->mp_mfl = m;
+        mp->mp_mal = p->m_link;
 
-    if (p)
-        if (m->m_start + m->m_length == p->m_start)
+    /*
+     * find where to add it to the free list
+     * (the free list is maintained in ascending sequence)
+     *
+     * p -> MD to be added
+     */
+    for (f = mp->mp_mfl, q = NULL; f; q = f, f = f-> m_link)
+        if (p->m_start <= f->m_start)
+            break;
+
+    /*
+     * insert it
+     */
+    p->m_link = f;          /* f -> next higher block */
+    if (q)
+        q->m_link = p;
+    else
+        mp->mp_mfl = p;
+
+    /*
+     * finally, coalesce free blocks if possible
+     */
+    if (f)
+        if (p->m_start + p->m_length == f->m_start)
         { /* join to higher neighbor */
-            m->m_length += p->m_length;
-            m->m_link = p->m_link;
-            xmfremd(p);
+            p->m_length += f->m_length;
+            p->m_link = f->m_link;
+            xmfremd(f);
         }
 
     if (q)
-        if (q->m_start + q->m_length == m->m_start)
+        if (q->m_start + q->m_length == p->m_start)
         { /* join to lower neighbor */
-            q->m_length += m->m_length;
-            q->m_link = m->m_link;
-            xmfremd(m);
+            q->m_length += p->m_length;
+            q->m_link = p->m_link;
+            xmfremd(p);
         }
 }
 

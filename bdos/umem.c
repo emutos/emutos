@@ -136,7 +136,6 @@ long xmfree(void *addr)
     if (!p)
         return EIMBA;
 
-    *q = p->m_link;
     freeit(p,mpb);
     dump_mem_map();
 
