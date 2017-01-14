@@ -68,9 +68,9 @@
 /*
  * configuration parameters
  */
-#define NUM_ANODES  64          /* # of application nodes */
+#define NUM_ANODES  64L         /* # of application nodes */
+#define SIZE_BUFF   4096L       /* size of buffer used to store ANODE text */
 #define SIZE_AFILE  2048        /* size of buffer for EMUDESK.INF file */
-#define SIZE_BUFF   4096        /* size of buffer used to store ANODE text */
 
 #define BUILTIN_IBLKS   (NUM_GEM_IBLKS)
 

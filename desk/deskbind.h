@@ -164,11 +164,11 @@ typedef struct
 /*GLOBAL*/ WORD         g_hicon;
 
 /*GLOBAL*/ LONG         g_afsize;
-/*GLOBAL*/ BYTE         *g_pbuff;
-/*GLOBAL*/ ANODE        g_alist[NUM_ANODES];
 
-/*GLOBAL*/ ANODE        *g_aavail;
-/*GLOBAL*/ ANODE        *g_ahead;
+/*GLOBAL*/ BYTE         *g_pbuff;               /* pointer to text buffer used by ANODEs */
+/*GLOBAL*/ ANODE        *g_alist;               /* pointer to ANODE array */
+/*GLOBAL*/ ANODE        *g_aavail;              /* pointer to chain of free ANODEs */
+/*GLOBAL*/ ANODE        *g_ahead;               /* pointer to chain of allocated ANODEs */
 
 /*GLOBAL*/ WORD         g_numiblks;             /* number of icon blocks */
 /*GLOBAL*/ UWORD        **g_origmask;           /* ptr to array of ptrs to untransformed icon mask */

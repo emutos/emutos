@@ -516,6 +516,41 @@ static WORD load_user_icons(void)
 }
 
 
+/*
+ *  Initialise everything related to ANODEs
+ *
+ *  Returns -1 for failure (lack of memory)
+ */
+static WORD initialise_anodes(void)
+{
+    WORD i;
+
+    /*
+     * allocate buffer for ANODE text
+     */
+    G.g_pbuff = gl_buffer = dos_alloc(SIZE_BUFF);
+    if (!gl_buffer)
+        return -1;
+
+    /*
+     * allocate space for ANODEs, chain the ANODEs together,
+     * and set up the pointers
+     */
+    G.g_alist = dos_alloc(NUM_ANODES*sizeof(ANODE));
+    if (!G.g_alist)
+        return -1;
+
+    for (i = 0; i < NUM_ANODES-1; i++)
+        G.g_alist[i].a_next = &G.g_alist[i+1];
+    G.g_alist[i].a_next = (ANODE *) NULL;
+
+    G.g_ahead = (ANODE *) NULL;
+    G.g_aavail = G.g_alist;
+
+    return 0;
+}
+
+
 /************************************************************************/
 /* a p p _ r d i c o n                                                  */
 /************************************************************************/
@@ -558,18 +593,9 @@ void app_start(void)
     /* remember start drive */
     gl_stdrv = dos_gdrv();
 
-    /*
-     * allocate buffer for ANODE text
-     * this may in theory fail due to lack of memory: what should we do?
-     */
-    gl_buffer = dos_alloc(SIZE_BUFF);
-    G.g_pbuff = gl_buffer;
-
-    for (i = NUM_ANODES - 2; i >= 0; i--)
-        G.g_alist[i].a_next = &G.g_alist[i + 1];
-    G.g_ahead = (ANODE *) NULL;
-    G.g_aavail = G.g_alist;
-    G.g_alist[NUM_ANODES - 1].a_next = (ANODE *) NULL;
+    /* initialise the ANODE stuff */
+    /* FIXME: handle out-of-memory */
+    initialise_anodes();
 
     /*
      * the following may in theory fail due to lack of memory: what should we do?
