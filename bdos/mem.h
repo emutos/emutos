@@ -95,6 +95,8 @@ void umem_init(void);
 MD *ffit(long amount, MPB *mp);
 /* Free up a memory descriptor */
 void freeit(MD *m, MPB *mp);
+/* shrink a memory descriptor */
+WORD shrinkit(MD *m, MPB *mp, LONG newlen);
 
 
 #endif /* MEM_H */

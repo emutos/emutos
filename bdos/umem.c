@@ -154,7 +154,7 @@ long xmfree(void *addr)
  */
 long xsetblk(int n, void *blk, long len)
 {
-    MD *m,*p;
+    MD *p;
     MPB *mpb;
 
     KDEBUG(("BDOS: Mshrink(0x%08lx,%ld)\n",(long)blk,len));
@@ -206,20 +206,11 @@ long xsetblk(int n, void *blk, long len)
     }
 
     /*
-     * Create a memory descriptor for the freed portion of memory.
+     * Shrink the existing MD & create a new one for the freed portion of memory.
      */
-    m = xmgetmd();
+    if (shrinkit(p,mpb,len) < 0)
+        return ERR;
 
-#ifdef ENABLE_KDEBUG
-    /* what if 0? */
-    if (m == 0)
-        panic("umem.c/xsetblk: Null Return From MGET\n");
-#endif
-
-    m->m_start = p->m_start + len;
-    m->m_length = p->m_length - len;
-    p->m_length = len;
-    freeit(m,mpb);
     dump_mem_map();
 
     return E_OK;

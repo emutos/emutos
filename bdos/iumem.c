@@ -188,3 +188,46 @@ void freeit(MD *m, MPB *mp)
             xmfremd(m);
         }
 }
+
+
+/*
+ *  shrinkit - Shrink a memory descriptor
+ */
+WORD shrinkit(MD *m, MPB *mp, LONG newlen)
+{
+    MD *f, *p, *q;
+
+    /*
+     * Create a memory descriptor for the freed portion of memory.
+     */
+    f = xmgetmd();
+    if (!f)
+    {
+        KDEBUG(("BDOS shrinkit: not enough OS memory for new MD\n"));
+        return -1;
+    }
+
+    f->m_start = m->m_start + newlen;
+    f->m_length = m->m_length - newlen;
+
+    /*
+     * Add it to the free list.
+     */
+    for (p = mp->mp_mfl, q = NULL; p; q = p, p = p->m_link)
+        if (f->m_start <= p->m_start)
+            break;
+
+    f->m_link = p;
+
+    if (q)
+        q->m_link = f;
+    else
+        mp->mp_mfl = f;
+
+    /*
+     * Update existing memory descriptor.
+     */
+    m->m_length = newlen;
+
+    return 0;
+}
