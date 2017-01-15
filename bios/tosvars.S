@@ -103,6 +103,7 @@
         .globl  _pmmutree
 #endif
         .globl  sysvars_end
+        .globl  _stkbot
         .globl  _stktop
         .globl  _shifty
         .globl  _first_boot
@@ -237,7 +238,9 @@ sysvars_end:
 // BIOS internal stack
 // Be sure to keep it under bssstart to avoid clearing it
 // when clearing the BSS segment.
-stkbot:         .ds.b   2048
+// As this area is never cleared, util/amigaboot.S will use it to trasfer
+// the Alt-RAM region list to ramtos.
+_stkbot:        .ds.b   2048
 _stktop:
 
 // memory past this address will be cleared on startup or on reset.

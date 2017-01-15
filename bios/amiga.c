@@ -32,6 +32,8 @@
 #include "aros.h"
 #endif
 
+extern long xmaddalt(UBYTE *start, long size); /* found in bdos/mem.h */
+
 #ifdef MACHINE_AMIGA
 
 /* Custom registers */
@@ -225,7 +227,20 @@ void amiga_machine_detect(void)
 
 void amiga_add_alt_ram(void)
 {
-#if CONF_WITH_AROS
+#if EMUTOS_LIVES_IN_RAM
+    const ULONG *p;
+
+    /* The list of Alt-RAM regions has been saved to the BIOS stack
+     * by util/amigaboot.S */
+
+    for (p = (const ULONG *)stkbot; *p; p += 2)
+    {
+        UBYTE *address = (UBYTE *)p[0];
+        ULONG size = p[1];
+        KDEBUG(("xmaddalt(%p, %lu)\n", address, size));
+        xmaddalt(address, size);
+    }
+#elif CONF_WITH_AROS
     aros_add_alt_ram();
 #endif
 }

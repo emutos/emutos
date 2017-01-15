@@ -22,6 +22,7 @@
 
 // AllocMem/AvailMem flags
 #define MEMF_CHIP  0x00000002
+#define MEMF_FAST  0x00000004
 #define MEMF_TOTAL 0x00080000 // Since Kickstart 2.0
 
 // Trackdisk Device defines
@@ -62,7 +63,8 @@ bootmain:
 
 // Detect Chip RAM size ////////////////////////////////////////////////////////
 
-        // Get total amount of Chip RAM
+        // Get total amount of Chip RAM, to be used as ST-RAM
+        // FIXME: This also mistakenly detects WinUAE's 32-bit chip RAM
         move.l  #MEMF_CHIP+MEMF_TOTAL,d1
         jsr     _LVOAvailMem(a6)
 
@@ -79,16 +81,21 @@ bootmain:
         add.l   #511,d2
         andi.l  #-512,d2
 
-        // Allocate a temporary buffer for ramtos
+        // Allocate a temporary buffer for ramtos + Alt-RAM regions table
         move.l  d2,d0                       // Buffer size
+        add.l   #20*8,d0                    // Add space for 20 Alt-RAM regions
         moveq   #MEMF_CHIP,d1               // Attributes
         // FIXME: should allow any kind of RAM for temporary buffer
         jsr     _LVOAllocMem(a6)
 
         tst.l   d0                          // Address returned?
-        beq.s   error                       // No
+        jbeq    error                       // No
 
         move.l  d0,a4                       // Save buffer address
+
+        // Determine the address of our temporary Alt-RAM regions list
+        move.l  a4,a3                       // ramtos buffer address
+        add.l   d2,a3                       // + size = Alt-RAM regions list
 
 // Load ramtos /////////////////////////////////////////////////////////////////
 
@@ -101,7 +108,48 @@ bootmain:
         jsr     _LVODoIO(a6)
 
         tst.l   d0                          // Error?
-        bne.s   error                       // Yes
+        jbne    error                       // Yes
+
+// Detect Alt-RAM //////////////////////////////////////////////////////////////
+// This code is inspired from Linux bootstrap
+// http://lxr.free-electrons.com/source/arch/m68k/boot/amiga/bootstrap.c?v=2.0.40
+
+        move.l  a3,a1                       // Temporary Alt-RAM region list
+
+        // Unscrupulously examine Exec's private data to detect Alt-RAM
+        lea     322(a6),a0                  // MemList
+
+next_memheader:
+        move.l  (a0),d0                     // Next MemHeader?
+        beq.s   endaltram                   // No
+
+        move.l  d0,a0                       // MemHeader
+
+        move.l  20(a0),d0                   // Region start address
+        andi.l  #-64*1024,d0                // Round to lower 64 KB boundary
+
+        // If this region starts at address 0, it is the ST-RAM. Skip it.
+        beq.s   next_memheader
+
+        move.w  14(a0),d1                   // mh_Attributes
+        andi.w  #MEMF_CHIP+MEMF_FAST,d1     // Only allow this memory type
+
+        // Skip unknown memory type (such as bogus MemHeader at end of list)
+        beq.s   next_memheader
+
+        // Store this region in temporary Alt-RAM region list
+        move.l  d0,(a1)+                    // Store region start address
+        move.l  24(a0),d1                   // Region end address
+        add.l   #64*1024-1,d1               // Round to next 64 KB boundary
+        andi.l  #-64*1024,d1
+        sub.l   d0,d1                       // Subtract start to get size
+        move.l  d1,(a1)+                    // Store region size
+
+        bra.s   next_memheader
+
+endaltram:
+        // Terminate temporary Alt-RAM region list with NULL pointer
+        clr.l   (a1)
 
 // Leave AmigaOS ///////////////////////////////////////////////////////////////
 
@@ -127,6 +175,14 @@ bootmain:
         // Set TT-RAM size
         clr.l   0x5a4.w                     // _ramtop: No TT-RAM
         move.l  #0x1357bd13,0x5a8.w         // Validate _ramvalid
+
+        // Transfer the Alt-RAM region list to ramtos using BIOS stack buffer.
+        // It is the only low memory area not cleared on ramtos boot.
+        // This list will be read later by amiga_add_alt_ram().
+        lea     0x800.w,a0                  // _stkbot
+copyaltram:
+        move.l  (a3)+,(a0)+                 // Copy list until NULL
+        bne.s   copyaltram
 
         // Boot ramtos
         clr.l   -(sp)                       // CPU = 68000
