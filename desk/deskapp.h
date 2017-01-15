@@ -133,7 +133,7 @@ typedef struct
 /*
  * Function prototypes
  */
-ANODE *app_alloc(WORD tohead);
+ANODE *app_alloc(void);
 void app_free(ANODE *pa);
 BYTE *scan_str(BYTE *pcurr, BYTE **ppstr);
 void app_tran(WORD bi_num);

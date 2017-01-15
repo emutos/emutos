@@ -146,27 +146,16 @@ static const char desk_inf_data2[] =
  *
  *  Issues an alert if there are none available
  */
-ANODE *app_alloc(WORD tohead)
+ANODE *app_alloc(void)
 {
-    ANODE *pa, *ptmpa;
+    ANODE *pa;
 
     pa = G.g_aavail;
     if (pa)
     {
         G.g_aavail = pa->a_next;
-        if (tohead || !G.g_ahead)
-        {
-            pa->a_next = G.g_ahead;
-            G.g_ahead = pa;
-        }
-        else
-        {
-            ptmpa = G.g_ahead;
-            while(ptmpa->a_next)
-                ptmpa = ptmpa->a_next;
-            ptmpa->a_next = pa;
-            pa->a_next = (ANODE *) NULL;
-        }
+        pa->a_next = G.g_ahead;
+        G.g_ahead = pa;
     }
     else
         fun_alert(1, STAPGONE);
@@ -704,7 +693,7 @@ void app_start(void)
         case 'D':                       /* Directory            */
         case 'I':                       /* Executable file icon     */
         case 'N':                       /* Non-executable file icon */
-            pa = app_alloc(TRUE);
+            pa = app_alloc();
             if (!pa)                    /* paranoia */
                 return;
             pcurr = app_parse(pcurr, pa);
@@ -973,7 +962,7 @@ void app_save(WORD todisk)
      * reverse the ANODE list before we write it.  this ensures
      * that the generic ANODEs are written ahead of the ones
      * created for installed applications.  when we read it back
-     * in, using app_alloc(TRUE) to allocate the ANODEs, the
+     * in, using app_alloc() to allocate the ANODEs, the
      * generic ANODEs will once again be at the end of the list.
      */
     app_revit();

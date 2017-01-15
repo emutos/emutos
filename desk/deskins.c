@@ -143,7 +143,7 @@ static WORD install_drive(WORD drive)
     /* find first available spot on desktop (before we alloc a new one) */
     ins_posdisk(0, 0, &x, &y);
 
-    pa = app_alloc(FALSE);
+    pa = app_alloc();
     if (!pa)
         return -1;
 
@@ -391,7 +391,7 @@ WORD ins_app(WORD curr)
         {
         case APINSTAL:      /* (re)install an application */
             if (!installed)
-                pa = app_alloc(TRUE);
+                pa = app_alloc();
             if (!pa)
             {
                 change = -1;        /* don't try any more */
@@ -518,7 +518,7 @@ static WORD install_desktop_icon(ANODE *pa)
      */
     if (!icon_exists)
     {
-        pa = app_alloc(TRUE);
+        pa = app_alloc();
         if (!pa)
             return -1;              /* don't try any more */
         pa->a_flags = AF_ISDESK;
@@ -677,7 +677,7 @@ static ANODE *allocate_window_anode(WORD type)
 {
     ANODE *pa;
 
-    pa = app_alloc(TRUE);
+    pa = app_alloc();
     if (!pa)
         return NULL;
 
