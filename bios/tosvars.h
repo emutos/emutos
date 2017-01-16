@@ -85,10 +85,10 @@ extern UBYTE _endgembss[];  /* end of GEM BSS */
 extern UBYTE *membot;
 extern UBYTE *memtop;
 
-#define FASTRAM_START ((UBYTE *)0x01000000)
-extern UBYTE *ramtop;     /* top of fastram */
+#define TTRAM_START ((UBYTE *)0x01000000)
+extern UBYTE *ramtop;     /* top of TT-RAM, or NULL if no TT-RAM is present */
 #define RAMVALID_MAGIC 0x1357BD13
-extern LONG ramvalid;     /* indicates if fastram is present */
+extern LONG ramvalid;     /* if equal to RAMVALID_MAGIC, then ramtop is valid */
 
 extern LONG os_magic;     /* if == 0x87654321, means that GEM is present */
 

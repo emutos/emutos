@@ -26,63 +26,63 @@
 
 extern long xmaddalt(UBYTE *start, long size); /* found in bdos/mem.h */
 
-#if CONF_WITH_FASTRAM
+#if CONF_WITH_TTRAM
 
-/* Detect hardware FastRAM size */
-static ULONG detect_fastram_size(void)
+/* Detect hardware TT-RAM size */
+static ULONG detect_ttram_size(void)
 {
-#if CONF_FASTRAM_SIZE
-    /* Fixed-size FastRAM */
-    return CONF_FASTRAM_SIZE;
+#if CONF_TTRAM_SIZE
+    /* Fixed-size TT-RAM */
+    return CONF_TTRAM_SIZE;
 #else
     UBYTE *addr;
 
-    /* By design, TT-like FastRAM is always in 32-bit address space */
+    /* By design, TT-RAM is always in 32-bit address space */
     if (!IS_BUS32)
         return 0;
 
 #if CONF_WITH_TT_MMU
     if (cookie_mch == MCH_TT)
     {
-        /* On TT, FastRAM requires special refresh rate initialization */
-        init_tt_fastram();
+        /* On TT, TT-RAM requires special refresh rate initialization */
+        init_ttram();
     }
 #endif /* CONF_WITH_TT_MMU */
 
-    /* Detect FastRAM size. Assume that the size is always a multiple of 1 MB.
-     * Try to read the last byte of each FastRAM megabyte. If it does not cause
-     * a Bus Error, assume that that megabyte is valid FastRAM.
-     * We artificially limit FastRAM detection to positive addresses to avoid
+    /* Detect TT-RAM size. Assume that the size is always a multiple of 1 MB.
+     * Try to read the last byte of each TT-RAM megabyte. If it does not cause
+     * a Bus Error, assume that that megabyte is valid TT-RAM.
+     * We artificially limit TT-RAM detection to positive addresses to avoid
      * shocking BDOS. */
-    for (addr = FASTRAM_START + 1024UL*1024 - 1;
+    for (addr = TTRAM_START + 1024UL*1024 - 1;
         (long)addr > 0; addr += 1024UL*1024)
     {
         if (!check_read_byte((long)addr))
             break;
     }
 
-    /* Valid FastRAM stops at the beginning of current megabyte */
-    return ((ULONG)addr & 0xfff00000) - (ULONG)FASTRAM_START;
-#endif /* !CONF_FASTRAM_SIZE */
+    /* Valid TT-RAM stops at the beginning of current megabyte */
+    return ((ULONG)addr & 0xfff00000) - (ULONG)TTRAM_START;
+#endif /* !CONF_TTRAM_SIZE */
 }
 
-#endif /* CONF_WITH_FASTRAM */
+#endif /* CONF_WITH_TTRAM */
 
-/* TT-like FastRAM: Detect, initialize and add to BDOS */
-static void fastram_init(void)
+/* TT-RAM: Detect, initialize and add to BDOS */
+static void ttram_init(void)
 {
-#if CONF_WITH_FASTRAM
+#if CONF_WITH_TTRAM
     if (ramvalid == RAMVALID_MAGIC)
     {
-        /* Previous FastRAM settings were valid. Just trust them blindly. */
+        /* Previous TT-RAM settings were valid. Just trust them blindly. */
     }
     else
     {
-        /* Previous FastRAM settings were invalid, detect them now. */
-        ULONG fastram_size = detect_fastram_size();
+        /* Previous TT-RAM settings were invalid, detect them now. */
+        ULONG ttram_size = detect_ttram_size();
 
-        if (fastram_size)
-            ramtop = FASTRAM_START + fastram_size;
+        if (ttram_size)
+            ramtop = TTRAM_START + ttram_size;
         else
             ramtop = NULL;
 
@@ -90,26 +90,26 @@ static void fastram_init(void)
         ramvalid = RAMVALID_MAGIC;
     }
 #else
-    /* Force no FastRAM */
+    /* Force no TT-RAM */
     ramtop = NULL;
     ramvalid = RAMVALID_MAGIC;
 #endif
 
-    KDEBUG(("fastram_init(): ramtop=%p\n", ramtop));
+    KDEBUG(("ttram_init(): ramtop=%p\n", ramtop));
 
-#if CONF_WITH_FASTRAM
-    /* Add eventual FastRAM to BDOS pool */
+#if CONF_WITH_TTRAM
+    /* Add eventual TT-RAM to BDOS pool */
     if (ramtop != NULL)
-        xmaddalt(FASTRAM_START, ramtop - FASTRAM_START);
+        xmaddalt(TTRAM_START, ramtop - TTRAM_START);
 #endif
 }
 
 /* Detect and initialize all Alt-RAM */
 void altram_init(void)
 {
-    /* Always intialize the FastRAM system variables */
-    KDEBUG(("fastram_init()\n"));
-    fastram_init();
+    /* Always intialize the TT-RAM system variables */
+    KDEBUG(("ttram_init()\n"));
+    ttram_init();
 
 #if CONF_WITH_ALT_RAM
 

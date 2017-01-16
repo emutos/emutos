@@ -185,7 +185,7 @@ long xsetblk(int n, void *blk, long len)
 
     /*
      * Round the size to a multiple of 4 bytes to keep alignment.
-     * Alignment on long boundaries matters in FastRAM.
+     * Alignment on long boundaries is faster in FastRAM.
      */
     len = (len + 3) & ~3;
 

@@ -79,7 +79,7 @@ MD *ffit(long amount, MPB *mp)
 
     /*
      * round the size up to a multiple of 4 bytes to keep alignment;
-     * alignment on long boundaries matters in FastRAM
+     * alignment on long boundaries is faster in FastRAM
      */
     amount = (amount + 3) & ~3;
 

@@ -333,8 +333,8 @@ static void setvalue_frb(void)
 {
     BOOL need_frb = FALSE; /* Required only if the system has Alt RAM */
 
-#if CONF_WITH_FASTRAM
-    /* Standard Atari TT-RAM may be present */
+#if CONF_WITH_TTRAM
+    /* We need FRB if TT-RAM is present */
     need_frb = (ramtop != NULL);
 #endif
 

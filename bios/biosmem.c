@@ -122,7 +122,7 @@ UBYTE *balloc(LONG size)
 #endif
 
     /* Round the size to a multiple of 4 bytes to keep alignment.
-     * Alignment on long boundaries matters in FastRAM. */
+     * Alignment on long boundaries is faster in FastRAM. */
     size = (size + 3) & ~3;
 
     if(themd.m_length < size) {

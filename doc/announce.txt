@@ -160,7 +160,7 @@ This is the currently supported Atari hardware:
 - FPU detection
 - 68030 MMU and cache
 - Memory controller (both ST and Falcon)
-- TT FastRAM
+- TT-RAM
 - Monitor type detection (mono, RGB or VGA)
 - DMA controller
 - WD 1772 / AJAX Floppy disk controller

@@ -210,8 +210,8 @@ _bcostat_vec:   .ds.l   8       // 8 pointers to output-status routines
 _bconout_vec:   .ds.l   8       // 8 pointers to output routines
 _longframe:     .ds.w   1       // if not 0, then not 68000 - use long stack frames
 _p_cookies:     .ds.l   1       // pointer to cookie jar
-_ramtop:        .ds.l   1       // pointer to end of FastRam
-_ramvalid:      .ds.l   1       // validates ramtop if $1357BD13
+_ramtop:        .ds.l   1       // top of TT-RAM, or NULL if no TT-RAM is present
+_ramvalid:      .ds.l   1       // if equal to RAMVALID_MAGIC, then ramtop is valid
 _bell_hook:     .ds.l   1       // pointer to routine for system bell
 _kcl_hook:      .ds.l   1       // pointer to routine for system keyclick
         .org 0x5b4

@@ -160,8 +160,8 @@
 # ifndef CONF_WITH_MONSTER
 #  define CONF_WITH_MONSTER 0
 # endif
-# ifndef CONF_WITH_FASTRAM
-#  define CONF_WITH_FASTRAM 0
+# ifndef CONF_WITH_TTRAM
+#  define CONF_WITH_TTRAM 0
 # endif
 # ifndef CONF_WITH_TT_MFP
 #  define CONF_WITH_TT_MFP 0
@@ -299,8 +299,8 @@
 # ifndef CONF_WITH_FALCON_MMU
 #  define CONF_WITH_FALCON_MMU 0
 # endif
-# ifndef CONF_WITH_FASTRAM
-#  define CONF_WITH_FASTRAM 0
+# ifndef CONF_WITH_TTRAM
+#  define CONF_WITH_TTRAM 0
 # endif
 # ifndef CONF_WITH_SFP004
 #  define CONF_WITH_SFP004 0
@@ -355,8 +355,8 @@
 # ifndef CONF_STRAM_SIZE
 #  define CONF_STRAM_SIZE 14*1024*1024
 # endif
-# ifndef CONF_FASTRAM_SIZE
-#  define CONF_FASTRAM_SIZE 48UL*1024*1024
+# ifndef CONF_TTRAM_SIZE
+#  define CONF_TTRAM_SIZE 48UL*1024*1024
 # endif
 # ifndef CONF_WITH_IDE
 #  define CONF_WITH_IDE 1
@@ -402,8 +402,8 @@
 # ifndef CONF_WITH_FRB
 #  define CONF_WITH_FRB 0
 # endif
-# if !(defined(CONF_WITH_FASTRAM) || defined(CONF_FASTRAM_SIZE))
-#  define CONF_WITH_FASTRAM 0
+# if !(defined(CONF_WITH_TTRAM) || defined(CONF_TTRAM_SIZE))
+#  define CONF_WITH_TTRAM 0
 # endif
 # ifndef CONF_WITH_MFP
 #  define CONF_WITH_MFP 0
@@ -613,18 +613,18 @@
 #endif
 
 /*
- * Set CONF_WITH_FASTRAM to 1 to enable detection and usage of FastRAM (TT-RAM)
+ * Set CONF_WITH_TTRAM to 1 to enable detection and usage of TT-RAM
  */
-#ifndef CONF_WITH_FASTRAM
-# define CONF_WITH_FASTRAM 1
+#ifndef CONF_WITH_TTRAM
+# define CONF_WITH_TTRAM 1
 #endif
 
 /*
- * Define CONF_FASTRAM_SIZE to the actual size of the FastRAM, in bytes.
- * If set to 0, the amount of FastRAM will be autodetected.
+ * Define CONF_TTRAM_SIZE to the actual size of the TT-RAM, in bytes.
+ * If set to 0, the amount of TT-RAM will be autodetected.
  */
-#ifndef CONF_FASTRAM_SIZE
-# define CONF_FASTRAM_SIZE 0
+#ifndef CONF_TTRAM_SIZE
+# define CONF_TTRAM_SIZE 0
 #endif
 
 /*
@@ -800,7 +800,7 @@
 
 /*
  * CONF_VRAM_ADDRESS allows the video ram address to be set to a fixed
- * location, outside ST-RAM or FastRam. This allows the use of custom
+ * location, outside ST-RAM or Alt-RAM. This allows the use of custom
  * graphic cards.  Set to 0 to allocate the video ram in ST-RAM as usual.
  */
 #ifndef CONF_VRAM_ADDRESS
@@ -1337,14 +1337,14 @@
 #endif
 
 #if !CONF_WITH_ALT_RAM
-# if CONF_WITH_FASTRAM
-#  error "CONF_WITH_FASTRAM requires CONF_WITH_ALT_RAM."
+# if CONF_WITH_TTRAM
+#  error "CONF_WITH_TTRAM requires CONF_WITH_ALT_RAM."
 # endif
 #endif
 
-#if !CONF_WITH_FASTRAM
-# if CONF_FASTRAM_SIZE != 0
-#  error "CONF_FASTRAM_SIZE != 0 requires CONF_WITH_FASTRAM."
+#if !CONF_WITH_TTRAM
+# if CONF_TTRAM_SIZE != 0
+#  error "CONF_TTRAM_SIZE != 0 requires CONF_WITH_TTRAM."
 # endif
 #endif
 

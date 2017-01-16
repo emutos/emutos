@@ -23,7 +23,7 @@ BOOL detect_32bit_address_bus(void);
 
 #if CONF_WITH_TT_MMU
 
-void init_tt_fastram(void);
+void init_ttram(void);
 
 #endif /* CONF_WITH_TT_MMU */
 

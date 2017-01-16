@@ -23,7 +23,7 @@
         .globl  _detect_32bit_address_bus
 #endif
 #if CONF_WITH_TT_MMU
-        .globl  _init_tt_fastram
+        .globl  _init_ttram
 #endif
 
 // ==== References ===========================================================
@@ -43,7 +43,7 @@
         .extern memval2
         .extern memval3
 
-        // FastRAM settings
+        // TT-RAM settings
         .extern _ramtop
         .extern _ramvalid
 
@@ -94,8 +94,8 @@ meminit:
 // Outputs:
 //   d6.b: old memctrl
 //   d5.l: old _phystop
-//   d3.l: old _ramvalid (#if CONF_WITH_FASTRAM)
-//   a3.l: old _ramtop (#if CONF_WITH_FASTRAM)
+//   d3.l: old _ramvalid (#if CONF_WITH_TTRAM)
+//   a3.l: old _ramtop (#if CONF_WITH_TTRAM)
 memchk:
         // We must determine the ST-RAM settings in some way.
         // If EmuTOS lives in RAM, always assume that settings of previous OS
@@ -128,7 +128,7 @@ memchk:
         move.b  memctrl, d6
         move.l  _phystop, d5
 
-#if CONF_WITH_FASTRAM
+#if CONF_WITH_TTRAM
         move.l  _ramvalid, d3
         move.l  _ramtop, a3
 #endif
@@ -140,8 +140,8 @@ memchk:
 //   d0.w: 1 = Falcon MMU, 0 = ST/TT MMU
 //   d6.b: old memctrl
 //   d5.l: old _phystop
-//   d3.l: old _ramvalid (#if CONF_WITH_FASTRAM)
-//   a3.l: old _ramtop (#if CONF_WITH_FASTRAM)
+//   d3.l: old _ramvalid (#if CONF_WITH_TTRAM)
+//   a3.l: old _ramtop (#if CONF_WITH_TTRAM)
 // Outputs:
 //   d7.b: _first_boot (autodetected)
 
@@ -183,8 +183,8 @@ memory_reused:
 //   d5.l: detected end of the ST-RAM, to put into _phystop.
 //   d7.b: _first_boot (always 1 after memconf)
 // Must be preserved:
-//   d3.l: old _ramvalid (#if CONF_WITH_FASTRAM)
-//   a3.l: old _ramtop (#if CONF_WITH_FASTRAM)
+//   d3.l: old _ramvalid (#if CONF_WITH_TTRAM)
+//   a3.l: old _ramtop (#if CONF_WITH_TTRAM)
 memconf:
 #if CONF_STRAM_SIZE
         // memconf for hardcoded ST-RAM size
@@ -520,8 +520,8 @@ less16:
 memconf_done:
         // Since the memory was not valid, this is a first boot
         moveq   #1, d7                  // _first_boot = TRUE
-#if CONF_WITH_FASTRAM
-        // Since the ST-RAM was invalid, FastRAM settings were also invalid
+#if CONF_WITH_TTRAM
+        // Since the ST-RAM was invalid, TT-RAM settings were also invalid
         moveq   #0, d3                  // _ramvalid
 #endif
 
@@ -539,8 +539,8 @@ memconf_done:
  * d7.b = _first_boot
  * d5.l = new phystop
  * d6.b = new memctrl
- * d3.l = old _ramvalid (#if CONF_WITH_FASTRAM)
- * a3.l = old _ramtop (#if CONF_WITH_FASTRAM)
+ * d3.l = old _ramvalid (#if CONF_WITH_TTRAM)
+ * a3.l = old _ramtop (#if CONF_WITH_TTRAM)
  */
 stram_detected:
         // The previous temporary stack pointer may have moved
@@ -584,9 +584,9 @@ stram_detected:
         move.l  d1, (a0)                // Next boot will not be a first boot
 #endif
 
-#if CONF_WITH_FASTRAM
-        // After clearing sysvars, restore old FastRAM settings.
-        // They will be used later for FastRAM initialization.
+#if CONF_WITH_TTRAM
+        // After clearing sysvars, restore old TT-RAM settings.
+        // They will be used later for TT-RAM initialization.
         move.l  a3, _ramtop             // set ramtop to size of found memory
         move.l  d3, _ramvalid
 #endif
@@ -626,8 +626,6 @@ call_bzero_a0_a1:
 // Clobbers:
 //   - Exception Vectors
 _detect_32bit_address_bus:
-        // If we are on a 32-bit address bus without FastRAM,
-        // then the detection will cause a Bus Error.
         move.l  sp,a1                   // Save sp before exception
         move.l  #bus_detected,0x08      // Bus Error will just return
         moveq   #1,d0                   // Assume 32-bit by default
@@ -636,6 +634,8 @@ _detect_32bit_address_bus:
 
         move.l  #0x12345678,d1          // First test value
         move.l  d1,(a0)                 // Write test value to 24-bit address
+        // If we are on Atari hardware with 32-bit address bus but without
+        // TT-RAM, then the instruction below will cause a Bus Error.
         cmp.l   0x0100000c,d1           // Did value appear on 32-bit mirror?
         bne.s   bus_detected            // No, we are on 32-bit bus
 
@@ -655,14 +655,14 @@ bus_detected:
 
 #if CONF_WITH_TT_MMU
 
-_init_tt_fastram:
-        // We must set the FastRAM refresh rate before we use it.  The
+_init_ttram:
+        // We must set the TT-RAM refresh rate before we use it.  The
         // rate is set by writing a "don't care" value to an address in
         // the range 0xffd00000-0xffd000ff; the low-order byte of the
         // address sets the refresh rate (specifically the number of
         // system clock cycles between each refresh request).  TT TOS
         // uses the value 0xe0; so do we.
-        // NOTE: whether we actually have FastRAM or not, setting the
+        // NOTE: whether we actually have TT-RAM or not, setting the
         // value always causes a bus error, so we need to handle it.
         // NOTE2: We use the "move.w #0" instruction because "clr.w" oddly
         // generates a useless read cycle on plain 68000. That might matter
@@ -671,7 +671,7 @@ _init_tt_fastram:
         // to this 68000-specific oddity, we stay on the safe side.
         move.l  sp,a0                   // Save sp before exception
         move.l  #refresh_done,0x08      // Bus Error will just return
-        move.w  #0,0xffd000e0           // Set FastRAM refresh rate
+        move.w  #0,0xffd000e0           // Set TT-RAM refresh rate
 refresh_done:
         move.l  a0,sp                   // Restore sp after exception
         rts
