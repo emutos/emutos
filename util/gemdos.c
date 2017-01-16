@@ -52,6 +52,7 @@ extern LONG gemdos();
 #define X_UNLINK 0x41
 #define X_LSEEK 0x42
 #define X_CHMOD 0x43
+#define X_MXALLOC 0x44
 #define X_GETDIR 0x47
 #define X_MALLOC 0x48
 #define X_MFREE 0x49
@@ -61,6 +62,10 @@ extern LONG gemdos();
 #define X_SNEXT 0x4F
 #define X_RENAME 0x56
 #define X_GSDTOF 0x57
+
+
+/* values for Mxalloc() mode: (defined in mem.h) */
+#define MX_STRAM        0
 
 
 
@@ -297,18 +302,17 @@ WORD dos_rmdir(BYTE *path)
 }
 
 
+/* allocate in ST RAM only */
 void *dos_alloc(LONG nbytes)
 {
-    return (void *)gemdos(X_MALLOC,nbytes);
+    return (void *)gemdos(X_MXALLOC,nbytes,MX_STRAM);
 }
 
 
-/*
- *  Returns the amount of memory available in bytes
- */
+/* get max size of available RAM in ST RAM only */
 LONG dos_avail(void)
 {
-    return gemdos(X_MALLOC,-1L);
+    return gemdos(X_MXALLOC,-1L,MX_STRAM);
 }
 
 
