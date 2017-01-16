@@ -861,7 +861,7 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *co
         break;
     case OP_COPY:
     case OP_MOVE:
-        lavail = dos_avail() - 0x400;   /* allow safety margin */
+        lavail = dos_avail_stram() - 0x400; /* allow safety margin */
         if (lavail < 0L)
         {
             form_error(E_NOMEMORY);     /* let user know */
@@ -880,7 +880,7 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *co
         if (lavail >= MAX_CLUS_SIZE)
             copylen = lavail & ~(MAX_CLUS_SIZE-1);
         else copylen = lavail;
-        copybuf = dos_alloc(copylen);
+        copybuf = dos_alloc_stram(copylen);
         /* drop thru */
     case OP_RENAME:
         confirm = G.g_ccopypref;

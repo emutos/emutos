@@ -534,7 +534,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
      */
     for (nm_files = MAX_NM_FILES; nm_files >= MIN_NM_FILES; nm_files /= 2)
     {
-        ad_fsnames = dos_alloc(nm_files*(LEN_FSNAME+sizeof(BYTE *)));
+        ad_fsnames = dos_alloc_stram(nm_files*(LEN_FSNAME+sizeof(BYTE *)));
         if (ad_fsnames)
             break;
     }

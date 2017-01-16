@@ -408,7 +408,7 @@ static WORD rs_readit(AESGLOBAL *pglobal,UWORD fd)
 
     /* get size of resource & allocate memory */
     rslsize = hdr_buff.rsh_rssize;
-    rs_hdr.base = (LONG)dos_alloc(rslsize);
+    rs_hdr.base = (LONG)dos_alloc_stram(rslsize);
     if (!rs_hdr.base)
         return FALSE;
 

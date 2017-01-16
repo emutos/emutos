@@ -40,8 +40,8 @@ void dos_space(WORD drv, LONG *ptotal, LONG *pavail);
 WORD dos_rename(BYTE *p1, BYTE *p2);
 WORD dos_rmdir(BYTE *path);
 
-void *dos_alloc(LONG nbytes);
-LONG dos_avail(void);
+void *dos_alloc_stram(LONG nbytes);
+LONG dos_avail_stram(void);
 WORD dos_free(LONG maddr);
 WORD dos_shrink(void *maddr, LONG length);
 

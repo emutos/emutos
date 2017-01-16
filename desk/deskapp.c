@@ -367,7 +367,7 @@ static WORD setup_iconblks(const ICONBLK *ibstart, WORD count)
      *  icon masks
      *  icon data
      */
-    allocmem = dos_alloc(count*(sizeof(ICONBLK)+sizeof(UWORD *)+2*num_bytes));
+    allocmem = dos_alloc_stram(count*(sizeof(ICONBLK)+sizeof(UWORD *)+2*num_bytes));
     if (!allocmem)
     {
         KDEBUG(("insufficient memory for %d desktop icons\n",count));
@@ -483,7 +483,7 @@ static WORD load_user_icons(void)
      * update the ptrs in the ICONBLKs to point to the copies
      */
     masksize = w * h / 8;
-    origmask = dos_alloc((LONG)n*masksize);
+    origmask = dos_alloc_stram((LONG)n*masksize);
     if (!origmask)
     {
         KDEBUG(("insufficient memory for icon masks for %d user desktop icons\n",n));
@@ -517,7 +517,7 @@ static WORD initialise_anodes(void)
     /*
      * allocate buffer for ANODE text
      */
-    G.g_pbuff = gl_buffer = dos_alloc(SIZE_BUFF);
+    G.g_pbuff = gl_buffer = dos_alloc_stram(SIZE_BUFF);
     if (!gl_buffer)
         return -1;
 
@@ -525,7 +525,7 @@ static WORD initialise_anodes(void)
      * allocate space for ANODEs, chain the ANODEs together,
      * and set up the pointers
      */
-    G.g_alist = dos_alloc(NUM_ANODES*sizeof(ANODE));
+    G.g_alist = dos_alloc_stram(NUM_ANODES*sizeof(ANODE));
     if (!G.g_alist)
         return -1;
 

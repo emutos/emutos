@@ -303,14 +303,14 @@ WORD dos_rmdir(BYTE *path)
 
 
 /* allocate in ST RAM only */
-void *dos_alloc(LONG nbytes)
+void *dos_alloc_stram(LONG nbytes)
 {
     return (void *)gemdos(X_MXALLOC,nbytes,MX_STRAM);
 }
 
 
 /* get max size of available RAM in ST RAM only */
-LONG dos_avail(void)
+LONG dos_avail_stram(void)
 {
     return gemdos(X_MXALLOC,-1L,MX_STRAM);
 }

@@ -251,7 +251,7 @@ FNODE *pn_sort(PNODE *pn)
     /*
      * malloc & build index array
      */
-    ml_pfndx = dos_alloc(pn->p_count*sizeof(FNODE *));
+    ml_pfndx = dos_alloc_stram(pn->p_count*sizeof(FNODE *));
     if (!ml_pfndx)              /* no space, can't sort */
         return pn->p_flist;
 
@@ -301,11 +301,11 @@ WORD pn_active(PNODE *pn)
 
     fl_free(pn);                    /* free any existing filenodes */
 
-    maxmem = dos_avail();           /* allocate max possible memory */
+    maxmem = dos_avail_stram();     /* allocate max possible memory */
     if (maxmem < sizeof(FNODE))
         return E_NOMEMORY;
 
-    pn->p_fbase = dos_alloc(maxmem);
+    pn->p_fbase = dos_alloc_stram(maxmem);
     maxcount = maxmem / sizeof(FNODE);
 
     fn = pn->p_fbase;

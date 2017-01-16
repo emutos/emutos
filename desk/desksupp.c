@@ -639,7 +639,7 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname)
             ret = fun_alert(1, STSHOW);
             if (ret == 1)
             {
-                char *iobuf = dos_alloc(IOBUFSIZE);
+                char *iobuf = dos_alloc_stram(IOBUFSIZE);
                 if (iobuf)
                 {
                     show_file(pname, IOBUFSIZE, iobuf);
@@ -987,7 +987,7 @@ static WORD format_floppy(OBJECT *tree, WORD max_width, WORD incr)
         trackskew = 3;
     }
 
-    buf = dos_alloc(FMTBUFLEN);
+    buf = dos_alloc_stram(FMTBUFLEN);
     if (!buf)           //FIXME: should issue an alert here
         return -1;
 
