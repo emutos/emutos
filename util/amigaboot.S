@@ -60,6 +60,8 @@ bootmain:
 
         move.l  a1,a5                       // Save I/O request pointer
 
+// Detect Chip RAM size ////////////////////////////////////////////////////////
+
         // Get total amount of Chip RAM
         move.l  #MEMF_CHIP+MEMF_TOTAL,d1
         jsr     _LVOAvailMem(a6)
@@ -69,6 +71,8 @@ bootmain:
         andi.l  #-256*1024,d0
 
         move.l  d0,d7                       // Save total amount of Chip RAM
+
+// Allocate temporary buffer ///////////////////////////////////////////////////
 
         // Round ramtos size to next sector boundary
         move.l  ramtos_size(pc),d2
@@ -86,6 +90,8 @@ bootmain:
 
         move.l  d0,a4                       // Save buffer address
 
+// Load ramtos /////////////////////////////////////////////////////////////////
+
         // Load ramtos into temporary buffer
         move.l  a5,a1                       // I/O request pointer
         move.w  #CMD_READ,io_Command(a1)    // Read
@@ -96,6 +102,8 @@ bootmain:
 
         tst.l   d0                          // Error?
         bne.s   error                       // Yes
+
+// Leave AmigaOS ///////////////////////////////////////////////////////////////
 
         // Switch to Supervisor mode
         jsr     _LVOSuperState(a6)
