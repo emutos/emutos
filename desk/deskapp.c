@@ -528,6 +528,7 @@ static WORD initialise_anodes(void)
     G.g_alist = dos_alloc_stram(NUM_ANODES*sizeof(ANODE));
     if (!G.g_alist)
         return -1;
+    memset(G.g_alist,0x00,NUM_ANODES*sizeof(ANODE));
 
     for (i = 0; i < NUM_ANODES-1; i++)
         G.g_alist[i].a_next = &G.g_alist[i+1];
