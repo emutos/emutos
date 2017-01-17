@@ -23,7 +23,7 @@
         .globl  _detect_32bit_address_bus
 #endif
 #if CONF_WITH_TT_MMU
-        .globl  _init_ttram
+        .globl  _set_ttram_refresh_rate
 #endif
 
 // ==== References ===========================================================
@@ -655,7 +655,7 @@ bus_detected:
 
 #if CONF_WITH_TT_MMU
 
-_init_ttram:
+_set_ttram_refresh_rate:
         // We must set the TT-RAM refresh rate before we use it.  The
         // rate is set by writing a "don't care" value to an address in
         // the range 0xffd00000-0xffd000ff; the low-order byte of the

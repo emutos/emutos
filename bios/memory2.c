@@ -45,7 +45,7 @@ static ULONG detect_ttram_size(void)
     if (cookie_mch == MCH_TT)
     {
         /* On TT, TT-RAM requires special refresh rate initialization */
-        init_ttram();
+        set_ttram_refresh_rate();
     }
 #endif /* CONF_WITH_TT_MMU */
 
