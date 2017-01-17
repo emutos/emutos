@@ -27,6 +27,12 @@ void set_ttram_refresh_rate(void);
 
 #endif /* CONF_WITH_TT_MMU */
 
+void ttram_detect(void);
+
+#if CONF_WITH_ALT_RAM
+
 void altram_init(void);
+
+#endif /* CONF_WITH_ALT_RAM */
 
 #endif /* MEMORY_H */

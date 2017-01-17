@@ -68,8 +68,8 @@ static ULONG detect_ttram_size(void)
 
 #endif /* CONF_WITH_TTRAM */
 
-/* TT-RAM: Detect, initialize and add to BDOS */
-static void ttram_init(void)
+/* Detect TT-RAM and set ramtom/ramvalid */
+void ttram_detect(void)
 {
 #if CONF_WITH_TTRAM
     if (ramvalid == RAMVALID_MAGIC)
@@ -95,23 +95,19 @@ static void ttram_init(void)
     ramvalid = RAMVALID_MAGIC;
 #endif
 
-    KDEBUG(("ttram_init(): ramtop=%p\n", ramtop));
+    KDEBUG(("ttram_detect(): ramtop=%p\n", ramtop));
+}
 
+#if CONF_WITH_ALT_RAM
+
+/* Initialize all Alt-RAM */
+void altram_init(void)
+{
 #if CONF_WITH_TTRAM
     /* Add eventual TT-RAM to BDOS pool */
     if (ramtop != NULL)
         xmaddalt(TTRAM_START, ramtop - TTRAM_START);
 #endif
-}
-
-/* Detect and initialize all Alt-RAM */
-void altram_init(void)
-{
-    /* Always intialize the TT-RAM system variables */
-    KDEBUG(("ttram_init()\n"));
-    ttram_init();
-
-#if CONF_WITH_ALT_RAM
 
 #if CONF_WITH_MONSTER
     /* Add MonSTer alt-RAM detected in machine.c */
@@ -139,6 +135,6 @@ void altram_init(void)
     KDEBUG(("amiga_add_alt_ram()\n"));
     amiga_add_alt_ram();
 #endif
+}
 
 #endif /* CONF_WITH_ALT_RAM */
-}

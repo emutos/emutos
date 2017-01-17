@@ -33,6 +33,7 @@
 #include "delay.h"
 #include "mfp.h"
 #include "scc.h"
+#include "memory.h"
 #include "coldfire.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
@@ -402,6 +403,11 @@ void machine_detect(void)
 #ifdef MACHINE_AMIGA
     amiga_machine_detect();
 #endif
+
+    /* Detect TT-RAM and set up ramtom/ramvalid */
+    KDEBUG(("ttram_detect()\n"));
+    ttram_detect();
+
     detect_video();
     detect_serial_ports();
 #if CONF_WITH_VME

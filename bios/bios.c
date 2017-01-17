@@ -362,11 +362,11 @@ static void bios_init(void)
     KDEBUG(("after osinit()\n"));
     boot_status |= DOS_AVAILABLE;   /* track progress */
 
-    /* Initialize all Alt-RAM.
-     * This always intializes the TT-RAM system variables,
-     * even if there is no TT-RAM. */
+#if CONF_WITH_ALT_RAM
+    /* Add Alt-RAM to BDOS pool */
     KDEBUG(("altram_init()\n"));
     altram_init();
+#endif
 
     /* Enable VBL processing */
     vblsem = 1;
