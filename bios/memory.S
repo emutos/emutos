@@ -72,7 +72,7 @@ meminit:
         addq.l  #4, sp
 
         tst.w   d0                      // is it Falcon MMU?
-        beq     memchk                  // no -> skip 0xffff8007 test
+        beq.s   not_a_falcon            // no -> skip 0xffff8007 test
 
         bset    #MEMINIT_BIT_FALCON_MMU, d7
 
@@ -85,8 +85,19 @@ meminit:
         bset    #6, 0xffff8007.w        // seen in TOS 4.04
 #endif
         beq     memconf                 // not sure what 6th bit means
+        bra     memchk
 #endif // !EMUTOS_LIVES_IN_RAM
 
+not_a_falcon:
+#endif /* CONF_WITH_FALCON_MMU */
+
+#if CONF_WITH_TT_MMU
+        /* Detect if this is a TT.
+         * Assume we have a TT MMU if we have a TT Shifter */
+        move.l  #not_a_tt,0x08          // bus error vector
+        tst.b   0xffff8400.w            // try to access the tt palette registers
+        bset    #MEMINIT_BIT_TT_MMU, d7
+not_a_tt:
 #endif /* CONF_WITH_FALCON_MMU */
 
 // ===========================================================================
@@ -202,12 +213,12 @@ amiga_memconf_ret:
 #endif
 
 #if CONF_WITH_TT_MMU
-        move.l  #not_a_tt,0x08
-        tst.b   0xffff8400.w            // try to access the tt palette registers
-                                        // drop through if they exist ...
 // ===========================================================================
 // ==== memconf for TT =======================================================
 // ===========================================================================
+
+        btst    #MEMINIT_BIT_TT_MMU, d7 // is it TT MMU?
+        beq     after_tt_memconf        // no -> skip TT memconf
 /*
  * The following configurations are valid for ST-RAM in a TT, listed as
  * total RAM (motherboard RAM + optional daughterboard RAM):
@@ -299,7 +310,7 @@ tt_stramsize_done:                  // bus error or bad ram
 refresh_done:
 
         bra     memconf_done
-not_a_tt:
+after_tt_memconf:
 #endif
 
 #if CONF_WITH_ST_MMU

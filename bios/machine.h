@@ -58,6 +58,12 @@ extern long cookie_akp;
 # define HAS_FALCON_MMU 0
 #endif
 
+#if CONF_WITH_TT_MMU
+# define HAS_TT_MMU (meminit_flags & MEMINIT_TT_MMU)
+#else
+# define HAS_TT_MMU 0
+#endif
+
 #if CONF_WITH_ARANYM
 extern int is_aranym;
   #define IS_ARANYM is_aranym
