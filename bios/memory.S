@@ -23,9 +23,6 @@
 #if CONF_WITH_ADVANCED_CPU && !defined(__mcoldfire__)
         .globl  _detect_32bit_address_bus
 #endif
-#if CONF_WITH_TT_MMU
-        .globl  _set_ttram_refresh_rate
-#endif
 
 // ==== References ===========================================================
 
@@ -281,6 +278,26 @@ check_mem:
 tt_stramsize_done:                  // bus error or bad ram
         suba.l  d7,a0               // (a0 -> first zone that failed)
         move.l  a0,d5               // d5 = st ram size
+
+        // While we are at it, initialize the TT-RAM hardware.
+        // Actual size of TT-RAM will be detected later in detect_ttram_size().
+        // We must set the TT-RAM refresh rate before we use it.  The
+        // rate is set by writing a "don't care" value to an address in
+        // the range 0xffd00000-0xffd000ff; the low-order byte of the
+        // address sets the refresh rate (specifically the number of
+        // system clock cycles between each refresh request).  TT TOS
+        // uses the value 0xe0; so do we.
+        // NOTE: whether we actually have TT-RAM or not, setting the
+        // value always causes a bus error, so we need to handle it.
+        // NOTE2: We use the "move.w #0" instruction because "clr.w" oddly
+        // generates a useless read cycle on plain 68000. That might matter
+        // regarding to this very specific refresh rate function. Even if TT
+        // computers are supposed to be equipped with 68030 which is not subject
+        // to this 68000-specific oddity, we stay on the safe side.
+        move.l  #refresh_done,0x08      // bus error vector
+        move.w  #0,0xffd000e0           // Set TT-RAM refresh rate
+refresh_done:
+
         bra     memconf_done
 not_a_tt:
 #endif
@@ -650,31 +667,6 @@ _detect_32bit_address_bus:
 
 bus_detected:
         move.l  a1,sp                   // Restore sp in case of exception
-        rts
-
-#endif
-
-#if CONF_WITH_TT_MMU
-
-_set_ttram_refresh_rate:
-        // We must set the TT-RAM refresh rate before we use it.  The
-        // rate is set by writing a "don't care" value to an address in
-        // the range 0xffd00000-0xffd000ff; the low-order byte of the
-        // address sets the refresh rate (specifically the number of
-        // system clock cycles between each refresh request).  TT TOS
-        // uses the value 0xe0; so do we.
-        // NOTE: whether we actually have TT-RAM or not, setting the
-        // value always causes a bus error, so we need to handle it.
-        // NOTE2: We use the "move.w #0" instruction because "clr.w" oddly
-        // generates a useless read cycle on plain 68000. That might matter
-        // regarding to this very specific refresh rate function. Even if TT
-        // computers are supposed to be equipped with 68030 which is not subject
-        // to this 68000-specific oddity, we stay on the safe side.
-        move.l  sp,a0                   // Save sp before exception
-        move.l  #refresh_done,0x08      // Bus Error will just return
-        move.w  #0,0xffd000e0           // Set TT-RAM refresh rate
-refresh_done:
-        move.l  a0,sp                   // Restore sp after exception
         rts
 
 #endif

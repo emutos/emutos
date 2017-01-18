@@ -42,14 +42,8 @@ static ULONG detect_ttram_size(void)
     if (!IS_BUS32)
         return 0;
 
-#if CONF_WITH_TT_MMU
-    /* FIXME: This should only be done on TT, but we don't know yet if we are
-     * running on TT or not. Anyway, this is harmless on other hardware. */
-    {
-        /* On TT, TT-RAM requires special refresh rate initialization */
-        set_ttram_refresh_rate();
-    }
-#endif /* CONF_WITH_TT_MMU */
+    /* Special note for TT: we can safely use the TT-RAM here, as the refresh
+     * rate has already been set in memconf(). */
 
     /* Detect TT-RAM size. Assume that the size is always a multiple of 1 MB.
      * Try to read the last byte of each TT-RAM megabyte. If it does not cause
