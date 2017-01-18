@@ -18,7 +18,6 @@
 #include "tosvars.h"
 #include "kprint.h"
 #include "machine.h"
-#include "cookie.h"
 #include "vectors.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
@@ -42,7 +41,8 @@ static ULONG detect_ttram_size(void)
         return 0;
 
 #if CONF_WITH_TT_MMU
-    if (cookie_mch == MCH_TT)
+    /* FIXME: This should only be done on TT, but we don't know yet if we are
+     * running on TT or not. Anyway, this is harmless on other hardware. */
     {
         /* On TT, TT-RAM requires special refresh rate initialization */
         set_ttram_refresh_rate();
