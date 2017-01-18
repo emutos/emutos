@@ -77,6 +77,8 @@ meminit:
         tst.w   d0                      // is it Falcon MMU?
         beq     memchk                  // no -> skip 0xffff8007 test
 
+        bset    #MEMINIT_BIT_FALCON_MMU, d7
+
 #if !EMUTOS_LIVES_IN_RAM
         /* Initialize and test Falcon MMU ??? */
 #ifdef __mcoldfire__
@@ -94,7 +96,7 @@ meminit:
 // ==== memchk - Check if old memory config can be used ======================
 // ===========================================================================
 // Inputs:
-//   d0.w: 1 = Falcon MMU, 0 = ST/TT MMU
+//   d7.b: _meminit_flags (input/output)
 // Outputs:
 //   d6.b: old memctrl
 //   d5.l: old _phystop
@@ -141,16 +143,14 @@ memchk:
 // ==== The ST-RAM configuration is valid ====================================
 // ===========================================================================
 // Inputs:
-//   d0.w: 1 = Falcon MMU, 0 = ST/TT MMU
+//   d7.b: _meminit_flags (input/output)
 //   d6.b: old memctrl
 //   d5.l: old _phystop
 //   d3.l: old _ramvalid (#if CONF_WITH_TTRAM)
 //   a3.l: old _ramtop (#if CONF_WITH_TTRAM)
-// Outputs:
-//   d7.b: _meminit_flags
 
 #if CONF_WITH_FALCON_MMU
-        tst.w   d0                      // is it Falcon MMU?
+        btst    #MEMINIT_BIT_FALCON_MMU, d7 // is it Falcon MMU?
         bne.s   memory_reused           // yes -> skip memctrl init
 #endif
 
@@ -179,11 +179,10 @@ memory_reused:
 // ==== memconf - Detect RAM and configure the memory controller =============
 // ===========================================================================
 // Inputs:
-//   d0.w: 1 = Falcon MMU, 0 = ST/TT MMU
+//   d7.b: _meminit_flags (input/output)
 // Outputs:
 //   d6.b: new value of 0xffff8001 (maybe fake), to put into memctrl.
 //   d5.l: detected end of the ST-RAM, to put into _phystop.
-//   d7.b: _meminit_flags
 // Must be preserved:
 //   d3.l: old _ramvalid (#if CONF_WITH_TTRAM)
 //   a3.l: old _ramtop (#if CONF_WITH_TTRAM)
@@ -201,7 +200,7 @@ amiga_memconf_ret:
 #else /* ST/TT/Falcon memconf */
 
 #if CONF_WITH_FALCON_MMU
-        tst.w   d0                      // is it Falcon MMU?
+        btst    #MEMINIT_BIT_FALCON_MMU, d7 // is it Falcon MMU?
         bne     falcmemconf             // yes -> jump to Falcon mem routine
 #endif
 
