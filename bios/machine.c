@@ -52,9 +52,6 @@ long cookie_mch;
 #if CONF_WITH_DIP_SWITCHES
 long cookie_swi;
 #endif
-#if CONF_WITH_FRB
-static UBYTE *cookie_frb;   /* _initial_ value in the _FRB cookie */
-#endif
 
 
 /*
@@ -328,9 +325,13 @@ static void setvalue_snd(void)
 
 #if CONF_WITH_FRB
 
-/* FRB */
+/*
+ * FRB (FastRAM Buffer)
+ * This needs to be set up after TT-RAM detection,
+ * and before BDOS RAM initialization.
+ */
 
-static void setvalue_frb(void)
+static void add_cookie_frb(void)
 {
     BOOL need_frb = FALSE; /* Required only if the system has Alt RAM */
 
@@ -345,10 +346,10 @@ static void setvalue_frb(void)
 
     if (need_frb)
     {
-        cookie_frb = balloc(64 * 1024UL);
+        UBYTE *cookie_frb = balloc(64 * 1024UL);
+        cookie_add(COOKIE_FRB, (long)cookie_frb);
+        KDEBUG(("cookie_frb = %p\n", cookie_frb));
     }
-
-    KDEBUG(("cookie_frb = 0x%08lx\n", (ULONG)cookie_frb));
 }
 
 #endif /* CONF_WITH_FRB */
@@ -565,12 +566,9 @@ void fill_cookie_jar(void)
      * points to a 64k buffer that may be used by DMA device drivers to
      * transfer memory between alternative RAM and ST RAM for DMA operations.
      */
-    setvalue_frb();
-    if (cookie_frb)
-    {
-        cookie_add(COOKIE_FRB, (long)cookie_frb);
-    }
-#endif /* CONF_WITH_FRB */
+    KDEBUG(("add_cookie_frb()\n"));
+    add_cookie_frb();
+#endif
 
     /* _FLK  The presence of this cookie indicates that file and record
      * locking extensions to GEMDOS exist. The value field is a version
