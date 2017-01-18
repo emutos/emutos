@@ -25,6 +25,8 @@
 
 extern long xmaddalt(UBYTE *start, long size); /* found in bdos/mem.h */
 
+UBYTE meminit_flags;
+
 #if CONF_WITH_TTRAM
 
 /* Detect hardware TT-RAM size */

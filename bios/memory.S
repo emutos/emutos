@@ -15,6 +15,7 @@
  */
 
 #include "asmdefs.h"
+#include "memory.h"
 
 // ==== Definitions ==========================================================
 
@@ -63,6 +64,9 @@ meminit:
  * with a temporary supervisor stack (for i.e. jsr _check_read_byte)
  * The stack will be overwritten and lost during clearing of memory
  */
+
+        /* We will accumulate meminit_flags in this register */
+        moveq   #0, d7                  // _meminit_flags = 0
 
 #if CONF_WITH_FALCON_MMU
         /* detect if this is a Falcon by reading $ff8282 register */
@@ -143,7 +147,7 @@ memchk:
 //   d3.l: old _ramvalid (#if CONF_WITH_TTRAM)
 //   a3.l: old _ramtop (#if CONF_WITH_TTRAM)
 // Outputs:
-//   d7.b: _first_boot (autodetected)
+//   d7.b: _meminit_flags
 
 #if CONF_WITH_FALCON_MMU
         tst.w   d0                      // is it Falcon MMU?
@@ -155,9 +159,6 @@ memchk:
 #endif
 
 memory_reused:
-        // If the memory is reused, this is not a first boot
-        moveq   #0, d7                  // _first_boot = FALSE
-
 #if CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF
         // If _warm_magic == WARM_MAGIC, this is explicitly not a first boot
         lea     _warm_magic, a0
@@ -166,7 +167,8 @@ memory_reused:
         beq.s   .warm_magic_done        // Indeed, this is not a first boot
 
         // _warm_magic != WARM_MAGIC: this is a first boot
-        moveq   #1, d7                  // _first_boot = TRUE
+        bset    #MEMINIT_BIT_FIRST_BOOT, d7
+
 .warm_magic_done:
 #endif
         bra     stram_detected
@@ -181,7 +183,7 @@ memory_reused:
 // Outputs:
 //   d6.b: new value of 0xffff8001 (maybe fake), to put into memctrl.
 //   d5.l: detected end of the ST-RAM, to put into _phystop.
-//   d7.b: _first_boot (always 1 after memconf)
+//   d7.b: _meminit_flags
 // Must be preserved:
 //   d3.l: old _ramvalid (#if CONF_WITH_TTRAM)
 //   a3.l: old _ramtop (#if CONF_WITH_TTRAM)
@@ -519,7 +521,7 @@ less16:
 
 memconf_done:
         // Since the memory was not valid, this is a first boot
-        moveq   #1, d7                  // _first_boot = TRUE
+        bset    #MEMINIT_BIT_FIRST_BOOT, d7
 #if CONF_WITH_TTRAM
         // Since the ST-RAM was invalid, TT-RAM settings were also invalid
         moveq   #0, d3                  // _ramvalid
@@ -536,7 +538,7 @@ memconf_done:
  * - The MMU has been properly initalized
  * - The ST-RAM is ready to be used
  *
- * d7.b = _first_boot
+ * d7.b = _meminit_flags
  * d5.l = new phystop
  * d6.b = new memctrl
  * d3.l = old _ramvalid (#if CONF_WITH_TTRAM)
@@ -600,8 +602,8 @@ any_boot:
         move.l  #__end, a1
         bsr     call_bzero_a0_a1
 
-        // Remember if this is a first boot or not
-        move.b  d7, _first_boot
+        // Save the meminit_flags into BSS
+        move.b  d7, _meminit_flags
 
         jmp     memdone                 // config done -> return to startup.S
 

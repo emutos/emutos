@@ -143,6 +143,5 @@ extern ULONG warm_magic;
 #endif
 
 extern UBYTE stkbot[]; /* BIOS internal stack */
-extern UBYTE first_boot; /* 1 if this is the first boot, otherwise 0 */
 
 #endif /* TOSVARS_H */

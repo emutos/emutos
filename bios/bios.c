@@ -603,7 +603,7 @@ void biosmain(void)
      * this allows a boot device that was selected via the welcome
      * screen to persist across warm boots.
      */
-    if (first_boot)
+    if (FIRST_BOOT)
         bootdev = blkdev_avail(DEFAULT_BOOTDEV) ? DEFAULT_BOOTDEV : FLOPPY_BOOTDEV;
 
 #if INITINFO_DURATION == 0
@@ -611,7 +611,7 @@ void biosmain(void)
 #elif ALWAYS_SHOW_INITINFO
     show_initinfo = TRUE;
 #else
-    show_initinfo = first_boot;
+    show_initinfo = FIRST_BOOT;
 #endif
 
     if (show_initinfo)

@@ -13,6 +13,8 @@
 #ifndef MACHINE_H
 #define MACHINE_H
 
+#include "memory.h"
+
 /*
  * hardware registers
  */
@@ -46,6 +48,9 @@ extern long cookie_akp;
 /*
  * these are != 0 if the feature is present
  */
+
+/* Convenience macro to test if first boot. See MEMINIT_BIT_FIRST_BOOT. */
+#define FIRST_BOOT (meminit_flags & MEMINIT_FIRST_BOOT)
 
 #if CONF_WITH_ARANYM
 extern int is_aranym;

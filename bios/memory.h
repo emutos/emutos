@@ -13,6 +13,16 @@
 #ifndef MEMORY_H
 #define MEMORY_H
 
+/* Bit definitions for meminit_flags */
+
+#define MEMINIT_BIT_FIRST_BOOT 0
+/* If this bit is set, this means it is the first time that this EmuTOS
+ * instance is run. This is always true for a cold boot from ROM. This is
+ * always false for a reset. If EmuTOS lives in RAM, it is only true the first
+ * time it is run. */
+
+#ifndef ASM_SOURCE
+
 #include "portab.h"
 
 #if CONF_WITH_ADVANCED_CPU && !defined(__mcoldfire__)
@@ -34,5 +44,11 @@ void ttram_detect(void);
 void altram_init(void);
 
 #endif /* CONF_WITH_ALT_RAM */
+
+/* These flags will be set up early by meminit() */
+extern UBYTE meminit_flags;
+#define MEMINIT_FIRST_BOOT (1 << MEMINIT_BIT_FIRST_BOOT)
+
+#endif /* ASM_SOURCE */
 
 #endif /* MEMORY_H */

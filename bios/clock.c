@@ -1053,7 +1053,7 @@ void clock_init(void)
         /* The IKBD clock is lost at power off, and has bogus values at
          * power on.  So initialize it to the default date/time at startup.
          */
-        if (first_boot)
+        if (FIRST_BOOT)
             isetdt(DEFAULT_DATETIME);
     }
 #endif /* CONF_WITH_IKBD_CLOCK */
