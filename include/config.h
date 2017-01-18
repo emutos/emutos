@@ -53,6 +53,12 @@
 # ifndef CONF_WITH_TT_MFP
 #  define CONF_WITH_TT_MFP 0
 # endif
+# ifndef CONF_WITH_STE_SHIFTER
+#  define CONF_WITH_STE_SHIFTER 0
+# endif
+# ifndef CONF_WITH_TT_SHIFTER
+#  define CONF_WITH_TT_SHIFTER 0
+# endif
 # ifndef CONF_WITH_MEGARTC
 #  define CONF_WITH_MEGARTC 0
 # endif
@@ -85,6 +91,12 @@
 # endif
 # ifndef CONF_WITH_TT_MFP
 #  define CONF_WITH_TT_MFP 0
+# endif
+# ifndef CONF_WITH_STE_SHIFTER
+#  define CONF_WITH_STE_SHIFTER 0
+# endif
+# ifndef CONF_WITH_TT_SHIFTER
+#  define CONF_WITH_TT_SHIFTER 0
 # endif
 # ifndef CONF_WITH_SCC
 #  define CONF_WITH_SCC 0
