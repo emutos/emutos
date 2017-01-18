@@ -23,6 +23,7 @@
 #include "mem.h"
 #include "gemerror.h"
 #include "biosbind.h"
+#include "xbiosbind.h"
 #include "kprint.h"
 
 
@@ -319,6 +320,31 @@ ret:
     dump_mem_map();
 
     return ret_value;
+}
+
+/*
+ *  srealloc - Function 0x15 (Srealloc)
+ *
+ *  This function (undocumented by Atari) was introduced in Falcon TOS.
+ *  It has two functions:
+ *  'len' < 0:  returns the maximum amount of memory that could be used
+ *              for the screen; on standard Atari systems, this is the
+ *              largest chunk of free memory in ST RAM
+ *  'len' >= 0: allocate a block of memory of size 'len' for the screen
+ *              and returns a pointer to it; the memory will be owned by
+ *              the boot process
+ *
+ *  at this time, this implementation is provided for compatibility
+ *  purposes only, since we always allocate enough memory for any type
+ *  of screen during the boot process.
+ */
+extern UBYTE *v_bas_ad;
+void *srealloc(long amount)
+{
+    if (amount < 0L)
+        return xmxalloc(-1L, MX_STRAM);
+
+    return (void *)Physbase();
 }
 
 #if CONF_WITH_ALT_RAM

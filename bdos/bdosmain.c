@@ -186,7 +186,7 @@ static const FND funcs[] =
 #else
     { ni,       0, 0 },      /* 0x14 */
 #endif
-    { ni,       0, 0 },
+    { (long(*)()) srealloc, 0, 2 }, /* 0x15 */
     { ni,       0, 0 },
     { ni,       0, 0 },
     { ni,       0, 0 },

@@ -70,6 +70,8 @@ long xmfree(void *addr);
 long xsetblk(int n, void *blk, long len);
 /* mxalloc */
 void *xmxalloc(long amount, int mode);
+/* srealloc */
+void *srealloc(long amount);
 
 /* supported values for Mxalloc mode: */
 #define MX_STRAM 0
