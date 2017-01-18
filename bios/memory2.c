@@ -110,7 +110,7 @@ void altram_init(void)
 #endif
 
 #if CONF_WITH_MONSTER
-    /* Add MonSTer alt-RAM detected in machine.c */
+    /* Add MonSTer Alt-RAM detected in machine.c */
     if (has_monster)
     {
         /* Dummy read from MonSTer register to initiate write sequence. */

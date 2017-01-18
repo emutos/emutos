@@ -333,7 +333,7 @@ static void setvalue_snd(void)
 
 static void add_cookie_frb(void)
 {
-    BOOL need_frb = FALSE; /* Required only if the system has Alt RAM */
+    BOOL need_frb = FALSE; /* Required only if the system has Alt-RAM */
 
 #if CONF_WITH_TTRAM
     /* We need FRB if TT-RAM is present */

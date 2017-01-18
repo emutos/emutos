@@ -819,12 +819,12 @@ static void add_slow_ram(void)
 
 void aros_add_alt_ram(void)
 {
-    /* Add the slowest RAM first to put it at the end of the Alt RAM pool */
+    /* Add the slowest RAM first to put it at the end of the Alt-RAM pool */
     add_slow_ram();
 
     MAYBE_UNUSED(ExpansionInit);
 #if !EMUTOS_LIVES_IN_RAM
-    /* Configure Zorro II / Zorro III boards and find the Alt RAM */
+    /* Configure Zorro II / Zorro III boards and find the Alt-RAM */
     ExpansionInit(ExpansionBase);
 #endif
 }
