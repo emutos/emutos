@@ -259,11 +259,11 @@ set_2MB:
         movea.l d7,a0               // a0 = address of current test zone
 next_zone:
         movea.l a0,a1               // a1 -> memory being tested
-        move.w  d0,d2               // d2.w = test value
+        move.w  d0,d5               // d5.w = test value
         moveq   #32,d1              // d1.w = loop count-1
 store_mem:
-        move.w  d2,-(a1)            // store a value
-        add.w   d4,d2               // update the value for next time
+        move.w  d5,-(a1)            // store a value
+        add.w   d4,d5               // update the value for next time
         dbra    d1,store_mem        // rinse & repeat
                                 // now check the values we stored
         movea.l a0,a1               // a1 -> test area
