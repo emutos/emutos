@@ -117,19 +117,12 @@ LONG acsi_rw(WORD rw, LONG sector, WORD count, UBYTE *buf, WORD dev)
             cnt = count;
 
 #if CONF_WITH_FRB
-        if (buf >= phystop) {
-            tmp_buf = get_frb_cookie();
-            if (tmp_buf == NULL) {
-                KDEBUG(("acsi.c: FRB is missing\n"));
-                return -1L;
-            }
-            /* proper FRB lock (TODO) */
-            need_frb = 1;
-        } else
+        tmp_buf = get_stram_disk_buffer(buf);
+        /* proper FRB lock (TODO) */
+#else
+        tmp_buf = buf;
 #endif
-        {
-            tmp_buf = buf;
-        }
+        need_frb = (tmp_buf != buf);
 
         if(rw && need_frb) {
             memcpy(tmp_buf, buf, (LONG)cnt * SECTOR_SIZE);
