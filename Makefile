@@ -127,10 +127,11 @@ VMA_STANDARD = 0x00e00000
 VMA_192 = 0x00fc0000
 VMA = $(VMA_STANDARD)
 LIBS = -lgcc
-LDFLAGS = -Wl,-T,emutos.ld,-Ttext=$(VMA)
+LDFLAGS = -Wl,-T,obj/emutospp.ld,-Ttext=$(VMA)
 
 # C compiler
 CC = $(TOOLCHAIN_PREFIX)gcc
+CPP = $(CC) -E
 ifeq (1,$(COLDFIRE))
 CPUFLAGS = -mcpu=5475
 else
@@ -161,7 +162,7 @@ endif
 DEFINES = $(LOCALCONF) -DWITH_AES=$(WITH_AES) -DWITH_CLI=$(WITH_CLI) $(DEF)
 CFLAGS = $(MULTILIBFLAGS) $(TOOLCHAIN_CFLAGS) $(OPTFLAGS) $(OTHERFLAGS) $(WARNFLAGS) $(INC) $(DEFINES)
 
-CPPFLAGS = $(INC)
+CPPFLAGS = $(CFLAGS)
 
 # The objdump utility (disassembler)
 OBJDUMP = $(TOOLCHAIN_PREFIX)objdump
@@ -382,13 +383,22 @@ version:
 	@echo '$(VERSION)'
 
 #
+# Preprocess the linker script, to allow #include, #define, #if, etc.
+#
+
+TOCLEAN += obj/*.ld
+
+obj/emutospp.ld: emutos.ld
+	$(CPP) $(CPPFLAGS) -P -x c $< -o $@
+
+#
 # the maps must be built at the same time as the images, to enable
 # one generic target to deal with all edited disassembly.
 #
 
 TOCLEAN += *.img *.map
 
-emutos.img emutos.map: $(OBJECTS) emutos.ld Makefile
+emutos.img emutos.map: $(OBJECTS) obj/emutospp.ld Makefile
 	$(LD) $(CORE_OBJ) $(LIBS) $(OPTIONAL_OBJ) $(LIBS) $(LDFLAGS) -Wl,-Map,emutos.map -o emutos.img
 	@if [ $$(($$(awk '/^\.data /{print $$3}' emutos.map))) -gt 0 ]; then \
 	  echo "### Warning: The DATA segment is not empty."; \
@@ -630,7 +640,7 @@ COMPROBJ = obj/compr-tosvars.o obj/compr-comprimg.o obj/compr-memory.o \
 # ROM stub for compressed ROM image
 compr.img compr.map: OPTFLAGS = $(SMALL_OPTFLAGS)
 compr.img compr.map: override DEF += -DTARGET_COMPR_STUB
-compr.img compr.map: $(COMPROBJ) emutos.ld Makefile
+compr.img compr.map: $(COMPROBJ) obj/emutospp.ld Makefile
 	$(LD) $(COMPROBJ) $(LIBS) $(LDFLAGS) -Wl,-Map,compr.map -o compr.img
 
 # Compressed ROM: stub + ramtos

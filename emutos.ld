@@ -10,6 +10,10 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+/* Note: this linker script is preprocessed,
+ * to allow #include, #define, #if, etc. */
+#include "include/config.h"
+
 /* Create a plain binary ROM, without any header */
 OUTPUT_FORMAT(binary)
 
