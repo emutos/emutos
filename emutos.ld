@@ -17,6 +17,12 @@
 /* Create a plain binary ROM, without any header */
 OUTPUT_FORMAT(binary)
 
+/*
+ * The system variables have fixed addresses,
+ * they live in the 0x380-0x800 region.
+ */
+#include "tosvars.ld"
+
 SECTIONS
 {
   /* The TEXT segment is mapped at the beginning of the ROM.
@@ -43,11 +49,10 @@ SECTIONS
     __edata = .;
   }
 
-  /* The BSS segment starts at the beginning of the RAM.
-   * It includes the processor Exception Vector Table,
-   * system variables, and private variables.
+  /* By default, the BSS segment starts just after the system variables,
+   * at the bottom of the ST-RAM.
    */
-  .bss 0x00000000:
+  .bss sysvars_end :
   {
     *(.bss COMMON)
     __end = .;

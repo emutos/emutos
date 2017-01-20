@@ -20,7 +20,7 @@
 #include "tosvars.h"
 
 
-extern MD themd;            /* BIOS memory descriptor (from tosvars.S) */
+extern MD themd;            /* BIOS memory descriptor */
 
 #if DBG_BALLOC
 static int bmem_allowed;
