@@ -946,20 +946,14 @@ static WORD floprw(UBYTE *userbuf, WORD rw, WORD dev,
         return err;
     }
 
-    iobuf = userbuf;    /* by default, we do i/o directly into the user buffer */
+#if CONF_WITH_FRB
+    iobuf = get_stram_disk_buffer(userbuf);
+#else
+    iobuf = userbuf;
+#endif
 
 #if CONF_WITH_FRB
-    if (userbuf >= phystop) {
-        /*
-         * The buffer provided by the user is outside ST-RAM, but floprw()
-         * needs to use DMA, so we must use the intermediate _FRB buffer.
-         */
-        iobuf = get_frb_cookie();
-        if (!iobuf)
-        {
-            KDEBUG(("floprw() error: can't DMA to Alt-RAM\n"));
-            return ERR;
-        }
+    if (iobuf != userbuf) {
         if (rw == RW_WRITE)
             memcpy(iobuf, userbuf, buflen);
     }
