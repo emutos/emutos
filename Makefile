@@ -177,8 +177,8 @@ NATIVECC = gcc -ansi -pedantic $(WARNFLAGS) -W $(BUILD_TOOLS_OPTFLAGS)
 # source code in bios/
 #
 
-# The 2 sources below must be the first to be linked
-bios_src = startup.S tosvars.S
+# The source below must be the first to be linked
+bios_src = startup.S
 
 # Other BIOS sources can be put in any order
 bios_src +=  memory.S processor.S vectors.S aciavecs.S bios.c xbios.c acsi.c \
