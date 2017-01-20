@@ -237,7 +237,7 @@ sysvars_end:
 // BIOS internal stack
 // Be sure to keep it under bssstart to avoid clearing it
 // when clearing the BSS segment.
-// As this area is never cleared, util/amigaboot.S will use it to trasfer
+// As this area is never cleared, util/amigaboot.S will use it to transfer
 // the Alt-RAM region list to ramtos.
 _stkbot:        .ds.b   2048
 _stktop:
