@@ -5,6 +5,7 @@
  *
  * Authors:
  *  LVL    Laurent Vogel
+ *  VRI    Vincent Rivière
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -100,17 +101,21 @@ void bmem_init(void)
 
 
 /*
- * balloc - simple BIOS memory allocation
+ * Allocate an ST-RAM buffer.
+ * This is only allowed before BDOS is initialized.
+ *   size: requested size of buffer, in bytes
+ *   top: TRUE to get a block at top of memory, FALSE for bottom.
  */
-UBYTE *balloc(ULONG size)
+UBYTE *balloc_stram(ULONG size, BOOL top)
 {
     UBYTE *ret;
 
-    KDEBUG(("before balloc: membot=%p, memtop=%p\n", membot, memtop));
+    KDEBUG(("before balloc_stram: membot=%p, memtop=%p\n", membot, memtop));
+    KDEBUG(("balloc_stram(%lu, %d)\n", size, top));
 
 #if DBG_BALLOC
     if (!bmem_allowed)
-        panic("balloc(%lu) at wrong time\n", size);
+        panic("balloc_stram(%lu) at wrong time\n", size);
 #endif
 
     /* Round the size to a multiple of 4 bytes to keep alignment.
@@ -118,13 +123,23 @@ UBYTE *balloc(ULONG size)
     size = (size + 3) & ~3;
 
     if (memtop - membot < size)
-        panic("balloc(%lu): not enough memory\n", size);
+        panic("balloc_stram(%lu): not enough memory\n", size);
 
-    /* Allocate the new buffer at the bottom of the ST-RAM */
-    ret = membot;
-    membot += size;
+    if (top)
+    {
+        /* Allocate the new buffer at the top of the ST-RAM */
+        memtop -= size;
+        ret = memtop;
+    }
+    else
+    {
+        /* Allocate the new buffer at the bottom of the ST-RAM */
+        ret = membot;
+        membot += size;
+    }
 
-    KDEBUG((" after balloc: membot=%p, memtop=%p\n", membot, memtop));
+    KDEBUG(("balloc_stram(%lu, %d) returns %p\n", size, top, ret));
+    KDEBUG((" after balloc_stram: membot=%p, memtop=%p\n", membot, memtop));
 
     return ret;
 }

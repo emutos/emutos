@@ -346,7 +346,7 @@ static void add_cookie_frb(void)
 
     if (need_frb)
     {
-        UBYTE *cookie_frb = balloc(64 * 1024UL);
+        UBYTE *cookie_frb = balloc_stram(64 * 1024UL, FALSE);
         cookie_add(COOKIE_FRB, (long)cookie_frb);
         KDEBUG(("cookie_frb = %p\n", cookie_frb));
     }
