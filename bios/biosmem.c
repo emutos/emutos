@@ -20,7 +20,7 @@
 #include "tosvars.h"
 
 #if DBG_BALLOC
-static int bmem_allowed;
+static BOOL bmem_allowed;
 #endif
 
 /*
@@ -55,13 +55,13 @@ static int bmem_allowed;
  */
 void bmem_init(void)
 {
-    KDEBUG(("_etext     = 0x%08lx\n", (LONG)_etext));
-    KDEBUG(("_edata     = 0x%08lx\n", (LONG)_edata));
-    KDEBUG(("_endvdibss = 0x%08lx\n", (LONG)_endvdibss));
+    KDEBUG(("_etext     = %p\n", _etext));
+    KDEBUG(("_edata     = %p\n", _edata));
+    KDEBUG(("_endvdibss = %p\n", _endvdibss));
 #if WITH_AES
-    KDEBUG(("_endgembss = 0x%08lx\n", (LONG)_endgembss));
+    KDEBUG(("_endgembss = %p\n", _endgembss));
 #endif
-    KDEBUG(("_end       = 0x%08lx\n", (LONG)_end));
+    KDEBUG(("_end       = %p\n", _end));
 
     /* Start of available ST-RAM */
 #if EMUTOS_LIVES_IN_RAM
@@ -80,7 +80,7 @@ void bmem_init(void)
     end_os = _end;
 #endif
     membot = end_os;
-    KDEBUG(("membot     = 0x%08lx\n", (LONG)membot));
+    KDEBUG(("membot     = %p\n", membot));
 
     /* End of available ST-RAM */
 #if CONF_VRAM_ADDRESS
@@ -90,10 +90,10 @@ void bmem_init(void)
     /* Available ST-RAM ends at the screen start */
     memtop = v_bas_ad;
 #endif
-    KDEBUG(("memtop     = 0x%08lx\n", (LONG)memtop));
+    KDEBUG(("memtop     = %p\n", memtop));
 
 #if DBG_BALLOC
-    bmem_allowed = 1;
+    bmem_allowed = TRUE;
 #endif
 }
 
@@ -102,29 +102,29 @@ void bmem_init(void)
 /*
  * balloc - simple BIOS memory allocation
  */
-UBYTE *balloc(LONG size)
+UBYTE *balloc(ULONG size)
 {
     UBYTE *ret;
 
+    KDEBUG(("before balloc: membot=%p, memtop=%p\n", membot, memtop));
+
 #if DBG_BALLOC
-    if(!bmem_allowed) {
-        panic("balloc(%ld) at wrong time\n", size);
-    }
+    if (!bmem_allowed)
+        panic("balloc(%lu) at wrong time\n", size);
 #endif
 
     /* Round the size to a multiple of 4 bytes to keep alignment.
      * Alignment on long boundaries is faster in FastRAM. */
     size = (size + 3) & ~3;
 
-    if(memtop - membot < size) {
-        panic("balloc(%ld): no memory\n", size);
-    }
+    if (memtop - membot < size)
+        panic("balloc(%lu): not enough memory\n", size);
 
     /* Allocate the new buffer at the bottom of the ST-RAM */
     ret = membot;
     membot += size;
 
-    KDEBUG(("after balloc: membot=%p, memtop=%p\n", membot, memtop));
+    KDEBUG((" after balloc: membot=%p, memtop=%p\n", membot, memtop));
 
     return ret;
 }
@@ -134,7 +134,7 @@ extern MD themd;                /* BIOS memory descriptor */
 void getmpb(MPB * mpb)
 {
 #if DBG_BALLOC
-    bmem_allowed = 0; /* BIOS memory handling not allowed past this point */
+    bmem_allowed = FALSE; /* BIOS memory handling not allowed past this point */
 #endif
 
     /* Fill out the first memory descriptor */

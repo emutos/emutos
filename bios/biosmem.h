@@ -17,7 +17,7 @@
 
 /* Prototypes */
 void bmem_init(void);
-UBYTE *balloc(long size);
+UBYTE *balloc(ULONG size);
 
 /* BIOS function */
 
