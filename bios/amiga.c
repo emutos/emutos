@@ -772,7 +772,7 @@ static ULONG delay18ms;
 #define TIMEOUT_DSKBLK 1000 /* milliseconds */
 
 #define SECTOR_SIZE 512 /* Size of a sector, in bytes */
-#define MFM_TRACK_SIZE 13630 /* Size of an MFM encoded track, in bytes */
+#define MFM_TRACK_SIZE 13630UL /* Size of an MFM encoded track, in bytes */
 #define MAGIC_MFM_SYNC_MARK 0x4489 /* MFM value for bit synchronization */
 #define MAX_TRACKS 80 /* Typical value for most floppies */
 #define MAX_SECTORS 11 /* Typical values on ST are 9, 10, or even 11 */
@@ -780,7 +780,7 @@ static ULONG delay18ms;
 static WORD curdev; /* Currently selected floppy drive */
 static WORD curtrack[2]; /* Current track, for each drive */
 static WORD curside[2]; /* Current side, for each drive */
-static UWORD mfm_track[MFM_TRACK_SIZE / 2]; /* MFM-encoded track buffer */
+static UWORD *mfm_track; /* MFM-encoded track buffer */
 static UBYTE sectors[MAX_SECTORS][SECTOR_SIZE]; /* Decoded sector data */
 static BOOL sectors_decoded = FALSE; /* TRUE if sectors[][] is valid */
 static UWORD crc_ccitt_table[256]; /* Precomputed CRC table */
@@ -793,6 +793,10 @@ void amiga_floppy_init(void)
     delay3ms = loopcount_1_msec * 3;
     delay15ms = loopcount_1_msec * 15;
     delay18ms = loopcount_1_msec * 18;
+
+    /* The track buffer will be used by DMA so it requires Chip RAM */
+    mfm_track = (UWORD *)balloc_stram(MFM_TRACK_SIZE, FALSE);
+    KDEBUG(("mfm_track = %p, size = %lu\n", mfm_track, MFM_TRACK_SIZE));
 
     make_crc_ccitt_table(); /* Will be used to check track consistency */
 
@@ -1135,7 +1139,7 @@ static UBYTE decode_mfm(const UWORD **ppmfm)
 static WORD amiga_floppy_decode_track(void)
 {
     const UWORD *raw = mfm_track;
-    const UWORD *rawend = mfm_track + ARRAY_SIZE(mfm_track);
+    const UWORD *rawend = (UWORD *)((ULONG)mfm_track + MFM_TRACK_SIZE);
     const int spt = 9; /* Sectors per track. FIXME: should be read from BPB */
     int sector = -1; /* Current sector */
     ULONG sectorbits = 0; /* Bit field for each sector read */
