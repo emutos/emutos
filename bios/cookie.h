@@ -18,8 +18,6 @@ struct cookie {
         long value;
 };
 
-#define CJAR (* (struct cookie **) 0x5a0)
-
 /*
  * Some relevant tag values
  * cookies will also exist in variables, defined in bios/machine.c

@@ -14,7 +14,7 @@
 #include "portab.h"
 #include "cookie.h"
 #include "processor.h"
-
+#include "tosvars.h"
 #include "kprint.h"
 
 /* the default cookie jar, in the bss */
@@ -26,13 +26,13 @@ void cookie_init(void)
     dflt_jar[0].tag = 0;
     dflt_jar[0].value = ARRAY_SIZE(dflt_jar);
 
-    CJAR = dflt_jar;
+    p_cookies = (LONG *)dflt_jar;
 }
 
 void cookie_add(long tag, long value)
 {
     long n, count;
-    struct cookie *jar = CJAR;
+    struct cookie *jar = (struct cookie *)p_cookies;
 
     assert(jar != NULL);
 
@@ -64,7 +64,7 @@ UBYTE *get_frb_cookie(void)
 {
     struct cookie *jar;
 
-    for (jar = CJAR; jar->tag; jar++)
+    for (jar = (struct cookie *)p_cookies; jar->tag; jar++)
         if (jar->tag == COOKIE_FRB)
             return (UBYTE *)(jar->value);
 
