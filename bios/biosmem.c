@@ -19,9 +19,6 @@
 #include "kprint.h"
 #include "tosvars.h"
 
-
-extern MD themd;            /* BIOS memory descriptor */
-
 #if DBG_BALLOC
 static int bmem_allowed;
 #endif
@@ -95,12 +92,6 @@ void bmem_init(void)
 #endif
     KDEBUG(("memtop     = 0x%08lx\n", (LONG)memtop));
 
-    /* Fill out the first memory descriptor */
-    themd.m_link = (MD*) 0;     /* no next memory descriptor */
-    themd.m_start = membot;
-    themd.m_length = memtop - themd.m_start;
-    themd.m_own = (PD*) 0;      /* no owner's process descriptor */
-
 #if DBG_BALLOC
     bmem_allowed = 1;
 #endif
@@ -125,27 +116,32 @@ UBYTE *balloc(LONG size)
      * Alignment on long boundaries is faster in FastRAM. */
     size = (size + 3) & ~3;
 
-    if(themd.m_length < size) {
+    if(memtop - membot < size) {
         panic("balloc(%ld): no memory\n", size);
     }
 
-    ret = themd.m_start;
+    /* Allocate the new buffer at the bottom of the ST-RAM */
+    ret = membot;
+    membot += size;
 
-    /* subtract needed memory from initial MD */
-    themd.m_length -= size;
-    themd.m_start += size;
-
-    KDEBUG(("BIOS: getmpb m_start = 0x%08lx, m_length = 0x%08lx\n",
-             (ULONG) themd.m_start, themd.m_length));
+    KDEBUG(("after balloc: membot=%p, memtop=%p\n", membot, memtop));
 
     return ret;
 }
+
+extern MD themd;                /* BIOS memory descriptor */
 
 void getmpb(MPB * mpb)
 {
 #if DBG_BALLOC
     bmem_allowed = 0; /* BIOS memory handling not allowed past this point */
 #endif
+
+    /* Fill out the first memory descriptor */
+    themd.m_link = NULL;        /* no next memory descriptor */
+    themd.m_start = membot;
+    themd.m_length = memtop - themd.m_start;
+    themd.m_own = NULL;         /* no owner's process descriptor */
 
     mpb->mp_mfl = &themd;       /* free list set to initial MD */
     mpb->mp_mal = NULL;         /* allocated list empty */
