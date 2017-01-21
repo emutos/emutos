@@ -222,13 +222,13 @@ static void bios_init(void)
     KDEBUG(("machine_init()\n"));
     machine_init();     /* initialise machine-specific stuff */
 
+    /* Initialize the BIOS memory management */
+    KDEBUG(("bmem_init()\n"));
+    bmem_init();
+
     /* Initialize the screen */
     KDEBUG(("screen_init()\n"));
     screen_init();      /* detect monitor type, ... */
-
-    /* Initialize the BIOS memory management */
-    KDEBUG(("bmem_init()\n"));
-    bmem_init();        /* this must be done after screen_init() */
 
     KDEBUG(("cookie_init()\n"));
     cookie_init();      /* sets a cookie jar */

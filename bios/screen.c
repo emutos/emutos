@@ -31,6 +31,7 @@
 #include "vectors.h"
 #include "country.h"
 #include "header.h"
+#include "biosmem.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif
@@ -564,25 +565,21 @@ static void screen_init_mode(void)
 /* Initialize the video address (mode is already set) */
 static void screen_init_address(void)
 {
+    ULONG vram_size;
     UBYTE *screen_start;
 
 #if CONF_VRAM_ADDRESS
+    UNUSED(vram_size);
     screen_start = (UBYTE *)CONF_VRAM_ADDRESS;
 #else
+    vram_size = initial_vram_size();
     /* videoram is placed just below the phystop */
-    screen_start = phystop - initial_vram_size();
-    /* round down to 256 byte boundary */
-    screen_start = (UBYTE *)((ULONG)screen_start & 0x00ffff00);
-    /* Original TOS leaves a gap of 768 bytes between screen ram and phys_top...
-     * ... we normally don't need that, but some old software relies on that fact,
-     * so we use this gap, too. */
-    if (!(HAS_VIDEL || HAS_TT_SHIFTER))
-        screen_start -= 0x300;
+    screen_start = balloc_stram(vram_size, TRUE);
 #endif /* CONF_VRAM_ADDRESS */
 
     /* set new v_bas_ad */
     v_bas_ad = screen_start;
-    KDEBUG(("v_bas_ad = 0x%08lx\n", (ULONG)v_bas_ad));
+    KDEBUG(("v_bas_ad = %p, vram_size = %ld\n", v_bas_ad, vram_size));
 #ifdef MACHINE_AMIGA
     amiga_screen_init();
 #endif
@@ -661,7 +658,10 @@ static ULONG initial_vram_size(void)
     else if (HAS_TT_SHIFTER)
         return TT_VRAM_SIZE;
     else
-        return ST_VRAM_SIZE;
+    {
+        /* ST TOS rounds the VRAM size to upper kilobyte, so we do. */
+        return (ST_VRAM_SIZE + 1023) & -1024;
+    }
 #endif
 }
 

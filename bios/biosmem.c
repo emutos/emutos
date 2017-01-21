@@ -84,13 +84,8 @@ void bmem_init(void)
     KDEBUG(("membot     = %p\n", membot));
 
     /* End of available ST-RAM */
-#if CONF_VRAM_ADDRESS
-    /* Available ST-RAM ends at the physical ST-RAM end */
+    /* The screen buffer will be allocated later */
     memtop = phystop;
-#else
-    /* Available ST-RAM ends at the screen start */
-    memtop = v_bas_ad;
-#endif
     KDEBUG(("memtop     = %p\n", memtop));
 
 #if DBG_BALLOC
