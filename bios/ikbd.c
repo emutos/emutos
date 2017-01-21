@@ -66,6 +66,8 @@ static WORD convert_scancode(UBYTE *scancodeptr);
  *  alt-insert, alt-home => mouse buttons
  *  alt-arrowkeys: mouse movement
  */
+#define KEY_HELP    0x62
+#define KEY_DELETE  0x53
 #define KEY_INSERT  0X52
 #define KEY_HOME    0X47
 #define KEY_UPARROW 0x48
@@ -237,8 +239,13 @@ void push_ascii_ikbdiorec(UBYTE ascii)
 static BOOL is_mouse_key(WORD key)
 {
     switch(key) {
+#ifdef MACHINE_AMIGA
+    case KEY_DELETE:
+    case KEY_HELP:
+#else
     case KEY_INSERT:
     case KEY_HOME:
+#endif
     case KEY_UPARROW:
     case KEY_DNARROW:
     case KEY_LTARROW:
@@ -293,10 +300,18 @@ static BOOL handle_mouse_mode(WORD newkey)
     distance = (shifty&MODE_SHIFT) ? 1 : 8;
 
     switch(newkey) {
+#ifdef MACHINE_AMIGA
+    case KEY_DELETE:
+#else
     case KEY_INSERT:
+#endif
         mouse_packet[0] |= LEFT_BUTTON_DOWN;
         break;
+#ifdef MACHINE_AMIGA
+    case KEY_HELP:
+#else
     case KEY_HOME:
+#endif
         mouse_packet[0] |= RIGHT_BUTTON_DOWN;
         break;
     case KEY_UPARROW:
