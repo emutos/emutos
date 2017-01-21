@@ -933,10 +933,6 @@ static WORD floprw(UBYTE *userbuf, WORD rw, WORD dev,
     err = amiga_floprw(userbuf, rw, dev, sect, track, side, count);
     units[dev].last_access = hz_200;
 #elif CONF_WITH_FDC
-    /* flush data cache here so that memory is current */
-    if (rw == RW_WRITE)
-        flush_data_cache(userbuf,buflen);
-
     floplock(dev);
 
     select(dev, side);
@@ -964,6 +960,10 @@ static WORD floprw(UBYTE *userbuf, WORD rw, WORD dev,
      * (none required) is OK.  otherwise, we don't know at this point.
      */
     density_ok = (drivetype==DD_DRIVE) ? TRUE : FALSE;
+
+    /* flush data cache here so that memory is current */
+    if (rw == RW_WRITE)
+        flush_data_cache(iobuf,buflen);
 
     iobufptr = iobuf;
     while(count--) {
