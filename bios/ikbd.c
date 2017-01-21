@@ -659,6 +659,14 @@ void kbd_int(UBYTE scancode)
                 goto push_value;
             }
             break;
+#ifdef MACHINE_AMIGA
+        case KEY_CAPS:
+            if (conterm & 1) {
+                keyclick(KEY_CAPS);
+            }
+            shifty &= ~MODE_CAPS;       /* clear bit */
+            break;
+#endif
         default:                    /* non-modifier keys: */
             kb_ticks = 0;               /*  stop key repeat */
         }
@@ -687,7 +695,11 @@ void kbd_int(UBYTE scancode)
         if (conterm & 1) {
             keyclick(KEY_CAPS);
         }
+#ifdef MACHINE_AMIGA
+        shifty |= MODE_CAPS;    /* set bit */
+#else
         shifty ^= MODE_CAPS;    /* toggle bit */
+#endif
         break;
     default:
         modifier = FALSE;
