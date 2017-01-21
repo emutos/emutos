@@ -230,9 +230,10 @@ _amiga_vbl:
         add.l   d1,d0                   // LOF = 0, even field: start at line 2
 
 setcopper:
-        move.w  d0,_copper_list+10      // BPL1PTL
+        move.l  _copper_list,a0
+        move.w  d0,10(a0)               // BPL1PTL
         swap    d0
-        move.w  d0,_copper_list+6       // BPL1PTH
+        move.w  d0,6(a0)                // BPL1PTH
 
         jbsr    _int_vbl                // Call the standard VBL handler
 

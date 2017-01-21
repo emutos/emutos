@@ -27,6 +27,7 @@
 #include "asm.h"
 #include "string.h"
 #include "disk.h"
+#include "biosmem.h"
 
 #if CONF_WITH_AROS
 #include "aros.h"
@@ -255,7 +256,7 @@ UWORD amiga_screen_width;
 UWORD amiga_screen_width_in_bytes;
 UWORD amiga_screen_height;
 const UBYTE *amiga_screenbase;
-UWORD copper_list[8];
+UWORD *copper_list;
 
 ULONG amiga_initial_vram_size(void)
 {
@@ -368,6 +369,7 @@ void amiga_screen_init(void)
      */
 
     /* Set up the Copper list (must be in ST-RAM) */
+    copper_list = (UWORD *)balloc_stram(sizeof(UWORD) * 8, FALSE);
     copper_list[0] = 0x0a01; /* Wait line 10 to give time to the VBL routine */
     copper_list[1] = 0xff00; /* Vertical wait only */
     copper_list[2] = 0x0e0; /* BPL1PTH */

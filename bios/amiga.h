@@ -46,7 +46,7 @@ extern UWORD amiga_screen_width;
 extern UWORD amiga_screen_width_in_bytes;
 extern UWORD amiga_screen_height;
 extern const UBYTE *amiga_screenbase;
-extern UWORD copper_list[8];
+extern UWORD *copper_list;
 extern int has_gayle;
 
 void amiga_machine_detect(void);
