@@ -1037,6 +1037,19 @@ char name[MAXLEN_HRD+1], *p;
 }
 
 /*
+ *  read a big endian short
+ */
+PRIVATE short fget_big_endian_short(FILE *fp)
+{
+SHORT s;
+
+    s.hi = fgetc(fp);
+    s.lo = fgetc(fp);
+
+    return get_short(&s);
+}
+
+/*
  *  load a .DEF/.RSD definition file
  */
 PRIVATE int load_def(FILE *fp)
@@ -1053,7 +1066,7 @@ struct {
 } entry;
 char temp[9];
 
-    n = (fgetc(fp)<<8) | fgetc(fp);     /* number of entries (big-endian) */
+    n = fget_big_endian_short(fp);      /* number of entries (big-endian) */
     if (n < 0)
         return -1;
 
@@ -1088,6 +1101,19 @@ char temp[9];
 }
 
 /*
+ *  read a little endian short
+ */
+PRIVATE short fget_little_endian_short(FILE *fp)
+{
+SHORT s;
+
+    s.lo = fgetc(fp);
+    s.hi = fgetc(fp);
+
+    return get_short(&s);
+}
+
+/*
  *  load a .DFN definition file
  */
 PRIVATE int load_dfn(FILE *fp)
@@ -1104,7 +1130,7 @@ struct {
 } entry;
 char temp[9];
 
-    n = fgetc(fp) | (fgetc(fp)<<8);     /* number of entries (little-endian) */
+    n = fget_little_endian_short(fp);   /* number of entries (little-endian) */
     if (n < 0)
         return -1;
 
