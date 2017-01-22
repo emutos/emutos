@@ -220,7 +220,7 @@ char *p = s;
 char ampm;
 unsigned char date_sep;
 
-    date_sep = idt_value & 0xff;            /* date separator */
+    date_sep = LOBYTE(idt_value);           /* date separator */
     if ((date_sep < 0x20) || (date_sep > 0x7f))
         date_sep = DEFAULT_DT_SEPARATOR;    /* default if all else fails */
 
@@ -228,7 +228,7 @@ unsigned char date_sep;
     month = (date>>5) & 0x0f;
     day = date & 0x1f;
 
-    switch((idt_value>>8)&0x03) {
+    switch(HIBYTE(idt_value)&0x03) {
     case _IDT_MDY:
         p = conv2(p,month);
         *p++ = date_sep;

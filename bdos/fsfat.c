@@ -91,7 +91,7 @@ void clfix(CLNO cl, CLNO link, DMD *dm)
     *(UBYTE *)buf++ = f >> 8;
     if (spans)
         buf = getrec(recnum+1,dm->m_fatofd,1);
-    *(UBYTE *)buf = f & 0xff;
+    *(UBYTE *)buf = LOBYTE(f);
 }
 
 

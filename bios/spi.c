@@ -184,5 +184,5 @@ ULONG temp;
 
     MCF_DSPI_DSR = 0xffffffffL;                 /* clear status register */
 
-    return (UBYTE)(temp & 0xff);
+    return LOBYTE(temp);
 }

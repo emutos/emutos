@@ -164,7 +164,7 @@ cputc(WORD ch)
     }
 
     /* based on our state goto the correct stub routine */
-    (*con_state)(ch & 0xff);
+    (*con_state)(LOBYTE(ch));
 }
 
 

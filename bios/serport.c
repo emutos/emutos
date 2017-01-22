@@ -425,8 +425,8 @@ static ULONG rsconf_scc(PORT *port,WORD baud, WORD ctrl, WORD ucr, WORD rsr, WOR
         WORD tc;
         rs232iorecptr->baudrate = baud;
         tc = scc_timeconst[baud];
-        write_scc(port,12,tc&0xff);
-        write_scc(port,13,(tc>>8)&0xff);
+        write_scc(port,12,LOBYTE(tc));
+        write_scc(port,13,HIBYTE(tc));
     }
 
     /*
@@ -549,11 +549,11 @@ ULONG reset_recovery_loops;
 
     /* initialise channel A */
     for (p = SCC_init_string; *p >= 0; p++)
-        write_scc(&scc->portA,(*p>>8)&0xff,*p&0xff);
+        write_scc(&scc->portA,HIBYTE(*p),LOBYTE(*p));
 
     /* initialise channel B */
     for (p = SCC_init_string; *p >= 0; p++)
-        write_scc(&scc->portB,(*p>>8)&0xff,*p&0xff);
+        write_scc(&scc->portB,HIBYTE(*p),LOBYTE(*p));
 }
 #endif  /* CONF_WITH_SCC */
 

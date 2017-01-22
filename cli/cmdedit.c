@@ -57,7 +57,7 @@ char prompt[] = "X:>";
             continue;
 
         /* if any other non-ASCII key, ignore */
-        c = charcode & 0xff;
+        c = LOBYTE(charcode);
         if (!c)
             continue;
 

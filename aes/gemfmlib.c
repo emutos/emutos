@@ -412,8 +412,8 @@ WORD eralert(WORD n, WORD d)
 
     drive_let = 'A' + d;
 
-    level = ml_pwlv[n] & 0x00FF;
-    pwd = (ml_pwlv[n] & 0xFF00) ? &drive_let : NULL;
+    level = LOBYTE(ml_pwlv[n]);
+    pwd = HIBYTE(ml_pwlv[n]) ? &drive_let : NULL;
 
     if (fm_show(ml_alrt[n], pwd, level) == 1)
         return FALSE;

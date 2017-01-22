@@ -658,8 +658,8 @@ void protobt(UBYTE *buf, LONG serial, WORD type, WORD exec)
 
     b->cksum[0] = b->cksum[1] = 0;
     cksum = 0x1234 - compute_cksum((const UWORD *)b);
-    b->cksum[0] = cksum>>8;
-    b->cksum[1] = cksum;
+    b->cksum[0] = HIBYTE(cksum);
+    b->cksum[1] = LOBYTE(cksum);
     if (!exec)
         b->cksum[1]++;
 }

@@ -237,7 +237,7 @@ static void detect_dip_switches(void)
 
 static void setvalue_swi(void)
 {
-    cookie_swi = (*(volatile UWORD *)DIP_SWITCHES)>>8;
+    cookie_swi = HIBYTE(*(volatile UWORD *)DIP_SWITCHES);
     KDEBUG(("cookie_swi = 0x%08lx\n", cookie_swi));
 }
 

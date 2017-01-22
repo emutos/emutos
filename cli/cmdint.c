@@ -384,10 +384,10 @@ WORD rate = -1, delay = -1, height = -1;
             old = Kbrate(-1,-1);
             outputnl(_("Status for CON:"));
             output(_("  Keyboard delay: "));
-            convulong(buf,(old>>8)&0x00ff,3,' ');
+            convulong(buf,HIBYTE(old),3,' ');
             outputnl(buf);
             output(_("  Keyboard rate:  "));
-            convulong(buf,old&0x00ff,3,' ');
+            convulong(buf,LOBYTE(old),3,' ');
             outputnl(buf);
             output(_("  Line height:    "));
             convulong(buf,getht(),3,' ');
@@ -864,7 +864,7 @@ char c;
 
     message(_("CR to continue ..."));
     while(1) {
-        c = conin() & 0xff;
+        c = LOBYTE(conin());
         if (c == '\r') {
             rc = 0;
             break;
@@ -1033,7 +1033,7 @@ PRIVATE char getyn(void)
 char c;
 
     message(" (y/N)?");
-    c = (conin() & 0xff) | 0x20;
+    c = LOBYTE(conin()) | 0x20;
     message("\r\n");
 
     return c;
@@ -1094,7 +1094,7 @@ char c, cprev = 0, response;
                 if (++linecount >= screen_rows-1) {
                     message(_("--More--"));
                     while(1) {
-                        response = conin() & 0xff;
+                        response = LOBYTE(conin());
                         if (response == '\r')   /* CR displays the next line */
                             break;
                         if (response == ' ') {  /* space displays the next page */
@@ -1131,7 +1131,7 @@ PRIVATE WORD user_break(void)
 {
 char c;
 
-    c = conin() & 0xff;
+    c = LOBYTE(conin());
     if (c == CTL_C)         /* user wants to interrupt */
         return -1;
 
@@ -1147,14 +1147,14 @@ char c;
 PRIVATE WORD user_input(WORD c)
 {
     if (c < 0)
-        c = conin() & 0xff;
+        c = LOBYTE(conin());
 
     if ((c == CTL_C) || (c == 'Q') || (c == 'q'))   /* wants to quit */
         return -1;
 
     if (c == CTL_S) {       /* user wants to pause */
         while(1) {
-            c = conin() & 0xff;
+            c = LOBYTE(conin());
             if (c == CTL_C)
                 return -1;
             if (c == CTL_Q)

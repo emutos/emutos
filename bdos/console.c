@@ -195,7 +195,7 @@ static void conbrk(int h)
         bufptr = &buffer[h];
         do
         {
-            c = (ch = Bconin(h)) & 0xFF;
+            c = LOBYTE(ch = Bconin(h));
             if (c == ctrlc)
             {
                 /* comments for the following used to say: "flush BDOS
@@ -383,7 +383,7 @@ long xconin(void)
     h = HXFORM(run->p_uft[0]);
     conbrk(h);
     ch = conin(h);
-    if ((ch & 0xFF) == ctrlc)
+    if (LOBYTE(ch) == ctrlc)
         terminate();
 
     return ch;
@@ -401,7 +401,7 @@ long xnecin(void)
     h = HXFORM(run->p_uft[0]);
     conbrk(h);
     ch = getch(h);
-    if ((ch & 0xFF) == ctrlc)
+    if (LOBYTE(ch) == ctrlc)
         terminate();
 
     return ch;

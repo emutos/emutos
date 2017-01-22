@@ -653,7 +653,7 @@ void kbd_int(UBYTE scancode)
         case KEY_ALT:
             shifty &= ~MODE_ALT;        /* clear bit */
             if (kb_altnum >= 0) {
-                ascii = kb_altnum & 0xFF;
+                ascii = LOBYTE(kb_altnum);
                 kb_altnum = -1;
                 kb_ticks = 0;           /* stop key repeat */
                 goto push_value;
@@ -806,8 +806,8 @@ void ikbd_writeb(UBYTE b)
 /* send a word to the IKBD as two bytes - for general use */
 void ikbd_writew(WORD w)
 {
-    ikbd_writeb(w>>8);
-    ikbd_writeb(w&0xff);
+    ikbd_writeb(HIBYTE(w));
+    ikbd_writeb(LOBYTE(w));
 }
 
 /* Read a byte from the IKBD.

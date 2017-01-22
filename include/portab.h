@@ -104,6 +104,8 @@ typedef void (*PFVOID)(void);
 #define MAKE_ULONG(hi,lo) (((ULONG)(UWORD)(hi) << 16) | (UWORD)(lo))
 #define LOWORD(x) ((UWORD)(ULONG)(x))
 #define HIWORD(x) ((UWORD)((ULONG)(x) >> 16))
+#define LOBYTE(x) ((UBYTE)(UWORD)(x))
+#define HIBYTE(x) ((UBYTE)((UWORD)(x) >> 8))
 
 /*
  * The following ARRAY_SIZE() macro is taken from Linux kernel sources.

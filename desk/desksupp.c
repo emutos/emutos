@@ -879,7 +879,7 @@ WORD do_info(WORD curr)
                 fun_rebld(pw);
             break;
         case AT_ISDISK:
-            drive = (get_iconblk_ptr(G.g_screen, curr)->ib_char) & 0xFF;
+            drive = LOBYTE(get_iconblk_ptr(G.g_screen, curr)->ib_char);
             inf_disk(drive);
             break;
         case AT_ISTRSH:

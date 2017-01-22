@@ -162,7 +162,7 @@ static WORD fun_file2desk(PNODE *pn_src, WORD icontype_src, ANODE *an_dest, WORD
         {
         case AT_ISDISK:
             dicon = (ICONBLK *)G.g_screen[dobj].ob_spec;
-            pathname[0] = dicon->ib_char & 0xFF;
+            pathname[0] = LOBYTE(dicon->ib_char);
             operation = (keystate&MODE_CTRL) ? OP_MOVE : OP_COPY;
             break;
         case AT_ISTRSH:

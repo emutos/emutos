@@ -945,7 +945,7 @@ void app_save(WORD todisk)
     mode = desk_get_videomode();
     env5 = (G.g_cnxsave.cs_sort == CS_NOSORT) ? INF_E5_NOSORT : 0;
     pcurr += sprintf(pcurr,"#E %02X %02X %02X %02X %02X\r\n",
-                    env1,env2,(mode>>8)&0x00ff,mode&0x00ff,env5);
+                    env1,env2,HIBYTE(mode),LOBYTE(mode),env5);
 
     /* save windows */
     for (i = 0; i < NUM_WNODES; i++)

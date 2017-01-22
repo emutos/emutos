@@ -113,7 +113,7 @@ struct IDE
 #define IDE_WRITE_SECTOR_NUMBER_SECTOR_COUNT(a,b) \
     { interface->sector_number = a; interface->sector_count = b; }
 #define IDE_WRITE_CYLINDER_HIGH_CYLINDER_LOW(a) \
-    { interface->cylinder_high = (a)>>8; interface->cylinder_low = (a)&0xff; }
+    { interface->cylinder_high = HIBYTE(a); interface->cylinder_low = LOBYTE(a); }
 #define IDE_WRITE_COMMAND_HEAD(a,b) \
     { interface->head = b; interface->command = a; }
 #define IDE_WRITE_CONTROL(a)    interface->control = a
@@ -625,7 +625,7 @@ static void ide_rw_start(volatile struct IDE *interface,UWORD dev,ULONG sector,U
 {
     KDEBUG(("ide_rw_start(0x%08lx, %u, %lu, %u, 0x%02x)\n", (ULONG)interface, dev, sector, count, cmd));
 
-    IDE_WRITE_SECTOR_NUMBER_SECTOR_COUNT((sector & 0xff), (count & 0xff));
+    IDE_WRITE_SECTOR_NUMBER_SECTOR_COUNT(LOBYTE(sector), LOBYTE(count));
     IDE_WRITE_CYLINDER_HIGH_CYLINDER_LOW((UWORD)((sector & 0xffff00) >> 8));
     IDE_WRITE_COMMAND_HEAD(cmd,IDE_MODE_LBA|IDE_DEVICE(dev)|(UBYTE)((sector>>24)&0x0f));
 }
@@ -903,7 +903,7 @@ static void set_multiple_mode(WORD dev,UWORD multi_io)
     if (!(multi_io & 0x8000))
         return;
 
-    spi = multi_io & 0xff;
+    spi = LOBYTE(multi_io);
     if (spi < 2)        /* 0 => not supported (ATA 2 & earlier) */
         return;         /* 1 => no benefit in using it          */
 

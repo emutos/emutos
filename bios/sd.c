@@ -811,7 +811,7 @@ ULONG pattern;
         /* right-adjust to put code into bits 4-0 */
         pattern >>= 27;
 
-        return (UBYTE)(pattern & 0xff);
+        return LOBYTE(pattern);
 }
 
 /*

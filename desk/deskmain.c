@@ -738,11 +738,11 @@ static BOOL check_alt_letter_key(WORD thechar)
     KEYTAB *keytab;
     WORD drive;
 
-    if (thechar&0xff)           /* not an alt key */
+    if (LOBYTE(thechar))        /* not an alt key */
         return FALSE;
 
     keytab = (KEYTAB *)Keytbl(-1, -1, -1);
-    drive = keytab->shift[thechar>>8];
+    drive = keytab->shift[HIBYTE(thechar)];
 
     if ((drive >= 'A') && (drive <= 'Z'))
     {

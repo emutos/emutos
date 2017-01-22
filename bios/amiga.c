@@ -494,8 +494,8 @@ static BOOL oldMouseSet;
 void amiga_mouse_vbl(void)
 {
     UWORD data = JOY0DAT;
-    BYTE mouseX = (data & 0x00ff);
-    BYTE mouseY = (data & 0xff00) >> 8;
+    BYTE mouseX = LOBYTE(data);
+    BYTE mouseY = HIBYTE(data);
     BOOL button1 = (CIAAPRA & 0x40) == 0;
     BOOL button2 = (POTGOR & 0x0400) == 0;
 

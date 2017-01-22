@@ -102,13 +102,13 @@ static const struct country_record *get_country_record(int country_code)
 /* Get the country code used for display: fonts and language */
 static int get_current_country_display(void)
 {
-    return (cookie_akp >> 8) & 0xff;
+    return HIBYTE(cookie_akp);
 }
 
 /* Get the country code used for input: keyboard layout */
 static int get_current_country_input(void)
 {
-    return cookie_akp & 0xff;
+    return LOBYTE(cookie_akp);
 }
 
 static int get_kbd_index(void)
