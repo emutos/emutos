@@ -390,7 +390,6 @@ zero:   .dc.l   0
         .globl  _stkbot
         .globl  _stktop
         .globl  bssstart
-        .globl  _shifty
 
 // BIOS internal stack
 // Be sure to keep it under bssstart to avoid clearing it
@@ -402,9 +401,3 @@ _stktop:
 
 // memory past this address will be cleared on startup or on reset.
 bssstart:
-
-// Note: _shifty was moved here to ensure that it lies within the first 32K
-// of memory.  This is not required by the architecture, but GFA Basic
-// assumes that it is half-word addressable, and may crash the system
-// otherwise.
-_shifty:        .ds.b   1       // reflects the status up/down of mode keys

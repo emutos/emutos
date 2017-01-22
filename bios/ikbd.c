@@ -894,6 +894,8 @@ void kbd_init(void)
     conterm = 7;       /* keyclick and autorepeat on by default */
     conterm |= 0x8;    /* add Kbshift state to Bconin value */
 
+    shifty = 0;        /* initial state of modifiers */
+
     mouse_packet[0] = 0;    /* not doing mouse emulation */
 
     bioskeys();
