@@ -373,9 +373,9 @@ void amiga_screen_init(void)
     copper_list[0] = 0x0a01; /* Wait line 10 to give time to the VBL routine */
     copper_list[1] = 0xff00; /* Vertical wait only */
     copper_list[2] = 0x0e0; /* BPL1PTH */
-    copper_list[3] = ((ULONG)amiga_screenbase & 0xffff0000) >> 16;
+    copper_list[3] = HIWORD(amiga_screenbase);
     copper_list[4] = 0x0e2; /* BPL1PTL */
-    copper_list[5] = ((ULONG)amiga_screenbase & 0x0000ffff);
+    copper_list[5] = LOWORD(amiga_screenbase);
     copper_list[6] = 0xffff; /* End of      */
     copper_list[7] = 0xfffe; /* Copper list */
 

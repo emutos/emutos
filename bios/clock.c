@@ -311,8 +311,8 @@ static void icdsetdt(ULONG dt)
 {
     struct icdclkreg clkregs;
 
-    icdsetdate(&clkregs,dt>>16);
-    icdsettime(&clkregs,dt);
+    icdsetdate(&clkregs,HIWORD(dt));
+    icdsettime(&clkregs,LOWORD(dt));
     icdsetregs(&clkregs);
 }
 
@@ -758,8 +758,8 @@ static void msetdt(ULONG dt)
 {
     struct myclkreg clkregs;
 
-    mdosetdate(&clkregs,dt>>16);
-    mdosettime(&clkregs,dt);
+    mdosetdate(&clkregs,HIWORD(dt));
+    mdosettime(&clkregs,LOWORD(dt));
     msetregs(&clkregs);
 }
 
@@ -984,8 +984,8 @@ static ULONG igetdt(void)
 
 static void isetdt(ULONG dt)
 {
-    idosetdate(dt>>16);
-    idosettime(dt);
+    idosetdate(HIWORD(dt));
+    idosettime(LOWORD(dt));
     isetregs();
 }
 
@@ -1066,8 +1066,8 @@ extern UWORD current_time, current_date; /* From bdos/time.c */
 void settime(LONG time)
 {
     /* Update GEMDOS time and date */
-    current_time = time & 0xffff;
-    current_date = (time >> 16) & 0xffff;
+    current_time = LOWORD(time);
+    current_date = HIWORD(time);
 
     if (FALSE)
     {

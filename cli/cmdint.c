@@ -632,7 +632,7 @@ char *iobuf, *p;
             rc = Fopen(name,0);
             if (rc < 0L)
                 break;
-            handle = (WORD) (rc & 0xffff);
+            handle = LOWORD(rc);
             linecount = 0L;
             do {
                 n = rc = Fread(handle,bufsize,iobuf);
@@ -738,14 +738,14 @@ LONG bufsize, n, rc;
         rc = Fopen(inname,0);
         if (rc < 0L)
             break;
-        in = (WORD) (rc & 0xffff);
+        in = LOWORD(rc);
 
         rc = Fcreate(outname,0);
         if (rc < 0L) {
             Fclose(in);
             break;
         }
-        out = (WORD) (rc & 0xffff);
+        out = LOWORD(rc);
 
         do {
             /* allow user to interrupt during file copy/move */

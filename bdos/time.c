@@ -166,8 +166,8 @@ void time_init(void)
 {
     ULONG dt = Gettime();
 
-    current_date = (dt >> 16) & 0xffff;
-    current_time = dt & 0xffff;
+    current_date = HIWORD(dt);
+    current_time = LOWORD(dt);
 
     etv_timer = tikfrk;
 }

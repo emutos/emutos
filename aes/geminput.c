@@ -281,8 +281,8 @@ void evremove(EVB *e, UWORD ret)
 
 void kchange(LONG fdata)
 {
-    UWORD ch = (UWORD)(fdata>>16);
-    WORD kstat = (UWORD)fdata;
+    UWORD ch = HIWORD(fdata);
+    WORD kstat = LOWORD(fdata);
 
     kstate = kstat;
     if (ch)
@@ -321,8 +321,8 @@ static void chkown(void)
 
 void bchange(LONG fdata)
 {
-    WORD new = (UWORD)(fdata>>16);
-    WORD clicks = (UWORD)fdata;
+    WORD new = HIWORD(fdata);
+    WORD clicks = LOWORD(fdata);
 
     /* see if this button event causes an ownership change to or from ctrlmgr */
     if (!gl_ctmown && (new == MB_DOWN) && (button == 0))
@@ -353,8 +353,8 @@ WORD downorup(WORD new, LONG buparm)
 
 void mchange(LONG fdata)
 {
-    WORD rx = (UWORD)(fdata>>16);
-    WORD ry = (UWORD)fdata;
+    WORD rx = HIWORD(fdata);
+    WORD ry = LOWORD(fdata);
 
     /* zero out button wait if mouse moves more than a little */
     if (gl_bdely &&
@@ -420,10 +420,10 @@ static WORD inorout(EVB *e, WORD rx, WORD ry)
 
     /* in or out of specified rectangle */
     mo.m_out = ((e->e_flag & EVMOUT) != 0);
-    mo.m_x = (UWORD)(e->e_parm>>16);
-    mo.m_y = (UWORD)e->e_parm;
-    mo.m_w = (UWORD)(e->e_return>>16);
-    mo.m_h = (UWORD)e->e_return;
+    mo.m_x = HIWORD(e->e_parm);
+    mo.m_y = LOWORD(e->e_parm);
+    mo.m_w = HIWORD(e->e_return);
+    mo.m_h = LOWORD(e->e_return);
 
     /* FIXME: The following GRECT*-typecast is not very nice */
     return (mo.m_out != inside(rx, ry, (GRECT *)&mo.m_x));
@@ -454,7 +454,7 @@ static void post_mb(WORD ismouse, EVB *elist, WORD parm1, WORD parm2)
                  * decrement counting semaphore if one of the multi-click
                  * guys was satisfied
                  */
-                clicks = (UWORD)(e->e_parm>>16) & 0x00ff;
+                clicks = LOBYTE((HIWORD(e->e_parm)));
                 if (clicks > 1)
                     gl_bpend--;
                 evremove(e, (parm2 > clicks) ? clicks : parm2);
@@ -537,7 +537,7 @@ void abutton(EVB *e, LONG p)
          * increment counting semaphore to show someone cares
          * about multiple clicks
          */
-        bclicks = (UWORD)(p>>16) & 0x00ff;
+        bclicks = LOBYTE(HIWORD(p));
         if (bclicks > 1)
             gl_bpend++;
         e->e_parm = p;

@@ -70,8 +70,8 @@ ULONG n;
         idt_value = DEFAULT_DT_FORMAT;      /* if not found, make sure it's initialised properly */
 
     n = getwh();                            /* get max cell number for x and y */
-    screen_cols = (n >> 16) + 1;
-    screen_rows = (n & 0xffff) + 1;
+    screen_cols = HIWORD(n) + 1;
+    screen_rows = LOWORD(n) + 1;
     linesize = screen_cols + 1 - 3;         /* allow for trailing NUL and prompt */
 
     linewrap = 0;
