@@ -110,7 +110,7 @@ static UWORD compute_sum(void)
         sum += *data_reg;
     }
 
-    return (~sum << 8) | sum;
+    return MAKE_UWORD(~sum, sum);
 }
 
 /*

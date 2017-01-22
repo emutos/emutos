@@ -64,7 +64,7 @@ static WORD hd_boot_read(void);
 static UWORD getiword(UBYTE *addr)
 {
     UWORD value;
-    value = (((UWORD)addr[1])<<8) + addr[0];
+    value = MAKE_UWORD(addr[1], addr[0]);
     return value;
 }
 
@@ -579,7 +579,7 @@ LONG blkdev_getbpb(WORD dev)
     tmp = getiword(b->sec);
     /* handle DOS-style disks (512-byte logical sectors) >= 32MB */
     if (tmp == 0L)
-        tmp = ((ULONG)getiword(b16->sec2+2)<<16) + getiword(b16->sec2);
+        tmp = MAKE_ULONG(getiword(b16->sec2+2), getiword(b16->sec2));
     tmp = (tmp - bdev->bpb.datrec) / b->spc;
     if (tmp > MAX_FAT16_CLUSTERS)           /* FAT32 - unsupported */
         return 0L;

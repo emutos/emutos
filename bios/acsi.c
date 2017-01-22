@@ -407,7 +407,7 @@ static int send_command(UBYTE *inputcdb,WORD cdblen,WORD rw,WORD dev,WORD cnt,UW
  */
 static void dma_send_byte(UBYTE data, UWORD control)
 {
-    ACSIDMA->datacontrol = (((ULONG)data) << 16) | control;
+    ACSIDMA->datacontrol = MAKE_ULONG(data, control);
 }
 
 

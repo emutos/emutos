@@ -65,8 +65,8 @@ static void signal(EVB *e)
 void azombie(EVB *e, UWORD ret)
 {
     /* must be called with dispatching off */
-    e->e_return = ((LONG)button<<16) | ret;
-    e->e_parm = ((LONG)xrat<<16) | (UWORD)yrat;
+    e->e_return = MAKE_ULONG(button, ret);
+    e->e_parm = MAKE_ULONG(xrat, yrat);
 
     e->e_link = zlr;
     if (zlr)

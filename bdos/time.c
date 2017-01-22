@@ -122,7 +122,7 @@ long xsetdate(UWORD d)
     current_date = d;                   /* ok, assign that value to date */
 
     /* tell bios about new date */
-    Settime((((ULONG)current_date)<<16)|((ULONG)current_time));
+    Settime(MAKE_ULONG(current_date, current_time));
 
     return E_OK;
 }
@@ -152,7 +152,7 @@ long xsettime(UWORD t)
     current_time = t;
 
     /* tell bios about new time */
-    Settime((((ULONG)current_date)<<16)|((ULONG)current_time));
+    Settime(MAKE_ULONG(current_date, current_time));
 
     return E_OK;
 }

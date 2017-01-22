@@ -299,8 +299,8 @@ static void amiga_set_videomode(UWORD width, UWORD height)
     vstop = vstart + lowres_height;
     vstop = (UBYTE)(((WORD)vstop) - 0x100); /* Normalize value */
 
-    diwstrt = (vstart << 8) | hstart;
-    diwstop = (vstop << 8) | hstop;
+    diwstrt = MAKE_UWORD(vstart, hstart);
+    diwstop = MAKE_UWORD(vstop, hstop);
 
     KDEBUG(("BPLCON0 = 0x%04x\n", bplcon0));
     KDEBUG(("BPL1MOD = 0x%04x\n", bpl1mod));
@@ -536,7 +536,7 @@ void amiga_mouse_vbl(void)
 
 /* Date/Time to use when the hardware clock is not set.
  * We use the OS creation date at 00:00:00 */
-#define DEFAULT_DATETIME ((ULONG)os_dosdate << 16)
+#define DEFAULT_DATETIME MAKE_ULONG(os_dosdate, 0)
 
 #define BATTCLOCK ((volatile UBYTE*)0x00dc0000)
 
@@ -644,7 +644,7 @@ ULONG amiga_getdt(void)
     if (amiga_clock_type == AMIGA_CLOCK_NONE)
         return DEFAULT_DATETIME;
 
-    return (((ULONG) amiga_dogetdate()) << 16) | amiga_dogettime();
+    return MAKE_ULONG(amiga_dogetdate(), amiga_dogettime());
 }
 
 #if CONF_WITH_UAE

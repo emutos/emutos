@@ -334,7 +334,7 @@ static void process_inf1(void)
 
             pcurr = scan_2(pcurr, &env1);
             pcurr = scan_2(pcurr, &env2);
-            mode = (env1 << 8) | (env2 & 0x00ff);
+            mode = MAKE_UWORD(env1, env2);
             mode = check_moderez(mode);
             if (mode == 0)              /* no change required */
                 break;

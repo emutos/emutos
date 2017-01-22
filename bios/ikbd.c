@@ -219,7 +219,7 @@ void push_ascii_ikbdiorec(UBYTE ascii)
             mode = MODE_CTRL;
     }
 
-    value = ((ULONG)scancode << 16) | ascii;
+    value = MAKE_ULONG(scancode, ascii);
 
     if (conterm & 0x8)
         value |= (ULONG)mode << 24;
@@ -378,7 +378,7 @@ static PFVOID kb_last_ikbdsys; /* ikbdsys when kb_last_key was set */
 
 WORD kbrate(WORD initial, WORD repeat)
 {
-    WORD ret = (kb_initial << 8) | (kb_repeat & 0xFF);
+    WORD ret = MAKE_UWORD(kb_initial, kb_repeat);
 
     if (initial >= 0)
         kb_initial = initial & 0x00ff;

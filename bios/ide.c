@@ -123,9 +123,9 @@ struct IDE
 #define IDE_READ_ALT_STATUS()   interface->control
 #define IDE_READ_ERROR()        interface->features
 #define IDE_READ_SECTOR_NUMBER_SECTOR_COUNT() \
-    ((interface->sector_number<<8) | interface->sector_count)
+    MAKE_UWORD(interface->sector_number, interface->sector_count)
 #define IDE_READ_CYLINDER_HIGH_CYLINDER_LOW() \
-    ((interface->cylinder_high<<8) | interface->cylinder_low)
+    MAKE_UWORD(interface->cylinder_high, interface->cylinder_low)
 
 #endif /* MACHINE_M548X */
 
@@ -328,7 +328,7 @@ static void set_interface_magic(WORD ifnum)
 static int check_interface_magic(WORD ifnum)
 {
     volatile struct IDE *interface = ide_interface + ifnum;
-    UWORD numcnt = ((SECNUM_MAGIC + ifnum) << 8) | (SECCNT_MAGIC + ifnum);
+    UWORD numcnt = MAKE_UWORD(SECNUM_MAGIC + ifnum, SECCNT_MAGIC + ifnum);
 
     if (IDE_READ_SECTOR_NUMBER_SECTOR_COUNT() == numcnt)
         return 1;
@@ -953,8 +953,8 @@ LONG ide_ioctl(WORD dev,UWORD ctrl,void *arg)
     case GET_DISKINFO:
         ret = ide_identify(dev);    /* reads into identify structure */
         if (ret >= 0) {
-            info[0] = (((ULONG)identify.numsecs_lba28[1]) << 16)
-                        + identify.numsecs_lba28[0];
+            info[0] = MAKE_ULONG(identify.numsecs_lba28[1],
+                        identify.numsecs_lba28[0]);
             info[1] = SECTOR_SIZE;  /* note: could be different under ATAPI 7 */
             ret = E_OK;
         }

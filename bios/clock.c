@@ -37,7 +37,7 @@
 /* Date/Time to use when the hardware clock is not set.
  * We use the OS creation date at 00:00:00
  */
-#define DEFAULT_DATETIME ((ULONG)os_dosdate << 16)
+#define DEFAULT_DATETIME MAKE_ULONG(os_dosdate, 0)
 
 #if CONF_WITH_ICDRTC
 
@@ -304,7 +304,7 @@ static ULONG icdgetdt(void)
 
     icdgetregs(&clkregs);
 
-    return (((ULONG) icdgetdate(&clkregs)) << 16) | icdgettime(&clkregs);
+    return MAKE_ULONG(icdgetdate(&clkregs), icdgettime(&clkregs));
 }
 
 static void icdsetdt(ULONG dt)
@@ -751,7 +751,7 @@ static ULONG mgetdt(void)
 
     mgetregs(&clkregs);
 
-    return (((ULONG) mdogetdate(&clkregs)) << 16) | mdogettime(&clkregs);
+    return MAKE_ULONG(mdogetdate(&clkregs), mdogettime(&clkregs));
 }
 
 static void msetdt(ULONG dt)
@@ -849,7 +849,7 @@ static UWORD ndogetdate(void)
 
 static ULONG ngetdt(void)
 {
-    return (((ULONG) ndogetdate()) << 16) | ndogettime();
+    return MAKE_ULONG(ndogetdate(), ndogettime());
 }
 
 static void nsetdt(ULONG dt)
@@ -979,7 +979,7 @@ static ULONG igetdt(void)
 {
     igetregs();
 
-    return (((ULONG)idogetdate()) << 16) | idogettime();
+    return MAKE_ULONG(idogetdate(), idogettime());
 }
 
 static void isetdt(ULONG dt)

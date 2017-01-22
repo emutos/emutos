@@ -144,12 +144,12 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         ap_rdwr(MU_MESAG, rlr, 16, ME_PBUFF);
         break;
     case EVNT_TIMER:
-        ev_timer(((LONG)T_HICOUNT<<16) | (UWORD)T_LOCOUNT);
+        ev_timer(MAKE_ULONG(T_HICOUNT, T_LOCOUNT));
         break;
     case EVNT_MULTI:
         aestrace("evnt_multi()");
         if (MU_FLAGS & MU_TIMER)
-            maddr = ((LONG)MT_HICOUNT<<16) | (UWORD)MT_LOCOUNT;
+            maddr = MAKE_ULONG(MT_HICOUNT, MT_LOCOUNT);
         buparm = combine_cms(MB_CLICKS,MB_MASK,MB_STATE);
         ret = ev_multi(MU_FLAGS, (MOBLK *)&MMO1_FLAGS, (MOBLK *)&MMO2_FLAGS,
                         maddr, buparm, MME_PBUFF, &EV_MX);

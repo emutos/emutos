@@ -162,7 +162,7 @@ void detect_akp(void)
     }
 #endif
 
-    cookie_akp = (country << 8) | keyboard;
+    cookie_akp = MAKE_UWORD(country, keyboard);
 }
 
 void detect_idt(void)
@@ -174,7 +174,7 @@ void detect_idt(void)
     err = nvmaccess(0, 8, 2, buf);
     if (err == 0)
     {
-        cookie_idt = (buf[0] << 8) | buf[1];
+        cookie_idt = MAKE_UWORD(buf[0], buf[1]);
     }
     else
 #endif

@@ -561,8 +561,8 @@ void amouse(EVB *e, LONG pmo)
             e->e_flag |= EVMOUT;
         else
             e->e_flag &= ~EVMOUT;
-        e->e_parm = ((LONG)mob.m_x<<16) | (UWORD)mob.m_y;
-        e->e_return = ((LONG)mob.m_w<<16) | (UWORD)mob.m_h;
+        e->e_parm = MAKE_ULONG(mob.m_x, mob.m_y);
+        e->e_return = MAKE_ULONG(mob.m_w, mob.m_h);
         evinsert(e, &rlr->p_cda->c_msleep );
     }
 }
