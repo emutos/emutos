@@ -619,10 +619,18 @@ static UWORD amiga_dogetdate(void)
     KDEBUG(("amiga_dogetdate() %02d/%02d/%02d\n", years, months, days));
 
     /* Y2K fix */
-    if (years >= 80)
+    if (years >= 78) /* AmigaOS epoch */
         years += 1900;
     else
         years += 2000;
+
+    /* On A500+ with bad battery, the date is set to 1978/01/01 */
+
+    if (years < 1980)
+    {
+        /* This date can't be represented in BDOS format. */
+        return DEFAULT_DATETIME >> 16;
+    }
 
     date = (days & 0x1F)
         | ((months & 0xF) << 5)
