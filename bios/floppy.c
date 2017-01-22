@@ -200,7 +200,7 @@ static void falcon_wait(void);
  * state of the write-protect status bit.  finfo[].wplatch is a latched copy
  * of wpstatus.  see "handling of media change" below for more details.
  *
- * the flock variable in tosvars.s is used as following :
+ * the flock system variable is used as following :
  * - floppy.c will set it before accessing to the DMA/FDC, and
  *   clear it at the end.
  * - acsi.c will set it before accessing to the DMA bus, and
