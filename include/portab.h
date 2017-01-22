@@ -100,7 +100,7 @@ typedef void (*PFVOID)(void);
  *  Macros
  */
 
-#define MAKE_UWORD(hi,lo) (((UWORD)(BYTE)(hi) << 8) | (BYTE)(lo))
+#define MAKE_UWORD(hi,lo) (((UWORD)(UBYTE)(hi) << 8) | (UBYTE)(lo))
 #define MAKE_ULONG(hi,lo) (((ULONG)(UWORD)(hi) << 16) | (UWORD)(lo))
 
 /*
