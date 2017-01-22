@@ -1135,6 +1135,14 @@ static UBYTE decode_mfm(const UWORD **ppmfm)
     return out;
 }
 
+/* Decode 2 MFM bytes as a single big endian word */
+static UWORD decode_mfm_word(const UWORD **ppmfm)
+{
+    UBYTE hi = decode_mfm(ppmfm);
+    UBYTE lo = decode_mfm(ppmfm);
+    return MAKE_UWORD(hi, lo);
+}
+
 /*
  * Decode a whole MFM-encoded ST/PC track.
  * Input: mfm_track
@@ -1201,7 +1209,7 @@ static WORD amiga_floppy_decode_track(void)
             head = decode_mfm(&raw);
             sector = decode_mfm(&raw);
             size = decode_mfm(&raw);
-            crc = (decode_mfm(&raw) << 8) | decode_mfm(&raw);
+            crc = decode_mfm_word(&raw);
 
             /* Compute the CRC of the ID Field */
             tmp[0] = tmp[1] = tmp[2] = 0xa1; /* 3 sync bytes */
@@ -1253,7 +1261,7 @@ static WORD amiga_floppy_decode_track(void)
             data = sectors[sector - 1];
             for (i = 0; i < SECTOR_SIZE; i++)
                 data[i] = decode_mfm(&raw);
-            crc = (decode_mfm(&raw) << 8) | decode_mfm(&raw);
+            crc = decode_mfm_word(&raw);
 
             /* Check data integrity */
             expected_crc = get_crc_ccitt_next(data, SECTOR_SIZE, datacrc);
