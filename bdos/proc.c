@@ -107,15 +107,12 @@ static void reserve_blocks(PD *p, MPB *mpb)
 /* free each item in the allocated list, that is owned by 'p' */
 static void free_all_owned(PD *p, MPB *mpb)
 {
-    MD *m, **q;
+    MD *m, *next;
 
-    for (m = *(q = &mpb->mp_mal); m; m = *q) {
-        if (m->m_own == p) {
-            *q = m->m_link;
+    for (m = mpb->mp_mal; m; m = next) {
+        next = m->m_link;
+        if (m->m_own == p)
             freeit(m,mpb);
-        } else {
-            q = &m->m_link;
-        }
     }
 }
 
