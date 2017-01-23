@@ -87,7 +87,7 @@ LOCALCONF =
 endif
 
 #
-# TOCLEAN will accumulate over thie Makefile the names of files to remove
+# TOCLEAN will accumulate over the Makefile the names of files to remove
 # when doing make clean; temporary Makefile files are *.tmp
 #
 
