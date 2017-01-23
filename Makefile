@@ -1245,6 +1245,9 @@ include release.mk
 # file dependencies (makefile.dep)
 #
 
+ALL_UTIL_SRC = $(wildcard util/*.[cS])
+DEP_SRC = $(sort $(SRC) $(ALL_UTIL_SRC))
+
 .PHONY: depend
 NODEP += depend
 depend: makefile.dep
@@ -1252,7 +1255,7 @@ depend: makefile.dep
 TOCLEAN += makefile.dep
 NODEP += makefile.dep
 makefile.dep: util/langs.c bios/header.h bios/ctables.h include/i18nconf.h
-	$(CC) $(MULTILIBFLAGS) $(TOOLCHAIN_CFLAGS) -MM $(INC) $(DEF) $(SRC) | sed -e '/:/s,^,obj/,' >makefile.dep
+	$(CC) $(MULTILIBFLAGS) $(TOOLCHAIN_CFLAGS) -MM $(INC) $(DEF) $(DEP_SRC) | sed -e '/:/s,^,obj/,' >makefile.dep
 
 # Do not include or rebuild makefile.dep for the targets listed in NODEP
 # as well as the default target (currently "help").
