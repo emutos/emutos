@@ -1316,6 +1316,14 @@
  */
 #define MAX_COORDINATE  (10000)         /* arbitrary, could be 32767 */
 
+/*
+ * Useful macros for both assembler and C
+ */
+
+#if EMUTOS_LIVES_IN_RAM
+/* Offset of a ramtos TEXT symbol defined in obj/ramtos.h */
+#define OFFSETOF(x) (x - ADR_TEXT)
+#endif
 
 /*
  * Sanity checks

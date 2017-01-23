@@ -32,6 +32,7 @@ SECTIONS
   .text :
   {
     CREATE_OBJECT_SYMBOLS
+    __text = .;
     *(.text)
     *(.rodata .rodata.*)
     __etext = .;

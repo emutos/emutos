@@ -91,7 +91,7 @@ endif
 # when doing make clean; temporary Makefile files are *.tmp
 #
 
-TOCLEAN := *~ */*~ $(CORE) *.tmp
+TOCLEAN := *~ */*~ $(CORE) *.tmp obj/*.h
 
 #
 # NODEP will accumulate the names of the targets which does not need to include
@@ -284,6 +284,11 @@ FUNCTION_SHELL_GET_SYMBOL_ADDRESS = awk '/ $(1)( |$$)/{print $$1}' $(2)
 # We can guess its value from the map file
 SHELL_GET_MEMBOT_EMUTOS_MAP = $(call FUNCTION_SHELL_GET_SYMBOL_ADDRESS,__end,emutos.map)
 SHELL_GET_MEMBOT_RAMTOS_MAP = $(call FUNCTION_SHELL_GET_SYMBOL_ADDRESS,__edata,ramtos.map)
+
+# Function to get the address of a symbol into a Makefile variable
+# $(1) = symbol name
+# $(2) = map file name
+SYMADDR = $(shell $(call FUNCTION_SHELL_GET_SYMBOL_ADDRESS,$(1),$(2)))
 
 # The following reference values have been gathered from major TOS versions
 MEMBOT_TOS102 = 0x0000ca00
@@ -610,6 +615,13 @@ ramtos.img ramtos.map: emutos-ram
 	@echo '# Second pass to build ramtos.img with TEXT and DATA just after the BSS'
 	$(LD) $(CORE_OBJ) $(LIBS) $(OPTIONAL_OBJ) $(LIBS) $(LDFLAGS) -Wl,-Map,ramtos.map -o ramtos.img
 
+obj/ramtos.h: ramtos.map
+	@echo '# Generating $@'
+	@echo -e \
+'/* Generated from $< */\n'\
+'#define ADR_TEXT $(call SYMADDR,__text,$<)\n'\
+>$@
+
 #
 # emutos.prg
 #
@@ -622,6 +634,7 @@ prg: $(EMUTOS_PRG)
 	@MEMBOT=$$($(SHELL_GET_MEMBOT_RAMTOS_MAP));\
 	echo "# RAM used: $$(($$MEMBOT)) bytes"
 
+obj/boot.o: obj/ramtos.h
 # incbin dependencies are not automatically detected
 obj/ramtos.o: ramtos.img
 
@@ -641,6 +654,8 @@ obj/compr-%.o : %.S
 
 COMPROBJ = obj/compr-tosvars.o obj/compr-comprimg.o obj/compr-memory.o \
            obj/compr-processor.o obj/compr-memset.o obj/compr-uncompr.o
+
+obj/compr-comprimg.o: obj/ramtos.h
 
 # ROM stub for compressed ROM image
 compr.img compr.map: OPTFLAGS = $(SMALL_OPTFLAGS)
@@ -726,6 +741,8 @@ $(EMUTOS_ST): mkflop bootsect.img ramtos.img
 bootsect.img : obj/bootsect.o obj/bootram.o
 	$(LD) $+ -Wl,--oformat,binary -o $@
 
+obj/bootsect.o: obj/ramtos.h
+
 NODEP += mkflop
 mkflop : tools/mkflop.c
 	$(NATIVECC) $< -o $@
@@ -750,6 +767,8 @@ $(EMUTOS_ADF): amigaboot.img ramtos.img mkrom
 
 amigaboot.img: obj/amigaboot.o obj/bootram.o
 	$(LD) $+ -Wl,--oformat,binary -o $@
+
+obj/amigaboot.o: obj/ramtos.h
 
 #
 # Misc utilities

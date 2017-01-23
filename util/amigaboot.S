@@ -10,6 +10,13 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#include "asmdefs.h"
+
+#ifndef GENERATING_DEPENDENCIES
+/* Defines generated from ramtos.map */
+#include "../obj/ramtos.h"
+#endif
+
 /******************************************************************************/
 /* AmigaOS defines                                                            */
 /******************************************************************************/

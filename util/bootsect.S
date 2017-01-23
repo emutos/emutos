@@ -18,6 +18,11 @@
 
 #include "asmdefs.h"
 
+#ifndef GENERATING_DEPENDENCIES
+/* Defines generated from ramtos.map */
+#include "../obj/ramtos.h"
+#endif
+
         .extern _bootram
 
 #define BOOTDEV 0x446

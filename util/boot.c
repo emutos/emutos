@@ -16,6 +16,11 @@
 #include <osbind.h>
 #include <stdlib.h>
 
+#ifndef GENERATING_DEPENDENCIES
+/* Defines generated from ramtos.map */
+#include "../obj/ramtos.h"
+#endif
+
 #define DBG_BOOT 0
 
 /* last part of the loader is in util/bootram.S */

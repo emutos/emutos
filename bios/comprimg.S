@@ -15,6 +15,11 @@
 #include "asmdefs.h"
 #include "header.h"
 
+#ifndef GENERATING_DEPENDENCIES
+/* Defines generated from ramtos.map */
+#include "../obj/ramtos.h"
+#endif
+
         .globl  _main           // OS entry point
 
         .extern __end
