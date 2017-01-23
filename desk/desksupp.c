@@ -637,8 +637,9 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname)
              */
 #if CONF_WITH_SHOW_FILE
             ret = fun_alert(1, STSHOW);
-            if (ret == 1)
+            if (ret == 1)   /* user said "Show" */
             {
+                /* allocate in ST RAM to avoid extra copying for floppy/ACSI i/o */
                 char *iobuf = dos_alloc_stram(IOBUFSIZE);
                 if (iobuf)
                 {

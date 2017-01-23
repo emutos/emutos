@@ -41,7 +41,9 @@ WORD dos_rename(BYTE *p1, BYTE *p2);
 WORD dos_rmdir(BYTE *path);
 
 void *dos_alloc_stram(LONG nbytes);
+void *dos_alloc_anyram(LONG nbytes);
 LONG dos_avail_stram(void);
+LONG dos_avail_anyram(void);
 WORD dos_free(LONG maddr);
 WORD dos_shrink(void *maddr, LONG length);
 

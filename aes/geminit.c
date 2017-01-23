@@ -540,7 +540,7 @@ void gem_main(void)
 
     D.g_acc = NULL;
     if (num_accs)
-        D.g_acc = dos_alloc_stram(num_accs*sizeof(AESPROCESS));
+        D.g_acc = dos_alloc_anyram(num_accs*sizeof(AESPROCESS));
     if (D.g_acc)
         memset(D.g_acc,0x00,num_accs*sizeof(AESPROCESS));
     else num_accs = 0;

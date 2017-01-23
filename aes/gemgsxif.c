@@ -140,7 +140,7 @@ void gsx_malloc(void)
     ULONG   mlen;
 
     mlen = gsx_mcalc();                     /* need side effects now     */
-    gl_tmp.fd_addr = (LONG)dos_alloc_stram(mlen);
+    gl_tmp.fd_addr = (LONG)dos_alloc_anyram(mlen);
 }
 
 

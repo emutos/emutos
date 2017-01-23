@@ -406,7 +406,7 @@ static WORD rs_readit(AESGLOBAL *pglobal,UWORD fd)
     if (dos_read(fd, sizeof(hdr_buff), &hdr_buff) != sizeof(hdr_buff))
         return FALSE;           /* error or short read */
 
-    /* get size of resource & allocate memory */
+    /* get size of resource & allocate memory (in ST RAM because we're reading into it) */
     rslsize = hdr_buff.rsh_rssize;
     rs_hdr.base = (LONG)dos_alloc_stram(rslsize);
     if (!rs_hdr.base)

@@ -77,7 +77,7 @@ static WORD sob_malloc(void)
      * available memory, or MIN_WOBS, whichever is greater.  In practice,
      * this should not be a restriction.
      */
-    mem = dos_avail_stram();
+    mem = dos_avail_anyram();
     limit = mem / (20*(sizeof(OBJECT)+sizeof(SCREENINFO)));
     if (limit < MIN_WOBS)
         limit = MIN_WOBS;
@@ -87,7 +87,7 @@ static WORD sob_malloc(void)
     num_obs += WOBS_START;      /* allow for root, desktop, windows */
     mem = num_obs * (sizeof(OBJECT)+sizeof(SCREENINFO));
 
-    p = dos_alloc_stram(mem);
+    p = dos_alloc_anyram(mem);
     if (!p)
         panic("sob_malloc(%ld): no memory\n",mem);
 

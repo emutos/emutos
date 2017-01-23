@@ -876,6 +876,8 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *co
          * cluster size.  in this case, we set 'copylen' to the largest
          * multiple that fits in available memory.  if we have less
          * than 32K available, we just set it as large as possible.
+         * we always allocate in ST RAM to avoid extra copying via
+         * the FRB for ACSI & floppy I/O.
          */
         if (lavail >= MAX_CLUS_SIZE)
             copylen = lavail & ~(MAX_CLUS_SIZE-1);

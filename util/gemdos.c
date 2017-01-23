@@ -66,6 +66,7 @@ extern LONG gemdos();
 
 /* values for Mxalloc() mode: (defined in mem.h) */
 #define MX_STRAM        0
+#define MX_PREFTTRAM    3
 
 
 
@@ -313,6 +314,20 @@ void *dos_alloc_stram(LONG nbytes)
 LONG dos_avail_stram(void)
 {
     return gemdos(X_MXALLOC,-1L,MX_STRAM);
+}
+
+
+/* allocate in Alt-RAM (e.g. TT RAM) if possible, otherwise ST RAM */
+void *dos_alloc_anyram(LONG nbytes)
+{
+    return (void *)gemdos(X_MXALLOC,nbytes,MX_PREFTTRAM);
+}
+
+
+/* get max size of available RAM in TT RAM or ST RAM */
+LONG dos_avail_anyram(void)
+{
+    return gemdos(X_MXALLOC,-1L,MX_PREFTTRAM);
 }
 
 

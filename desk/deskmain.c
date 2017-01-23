@@ -1187,7 +1187,7 @@ void xlate_fix_tedinfo(TEDINFO *tedinfo, int nted)
             len += count_chars((char *) tedinfo[i].te_ptmplt, '_') + 2;
         }
     }
-    tedinfptr = dos_alloc_stram(len);   /* Get memory */
+    tedinfptr = dos_alloc_anyram(len);   /* Get memory */
     for (i = 0; i < nted; i++)
     {
         if (tedinfo[i].te_ptext == 0)
