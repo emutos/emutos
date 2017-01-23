@@ -596,16 +596,9 @@ m548x-bas:
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 
 #
-# emutos.prg
+# ramtos.img is a variant of EmuTOS running in RAM instead of ROM.
+# It needs to be loaded into RAM by some loader. We support several ones.
 #
-
-EMUTOS_PRG = emutos$(UNIQUE).prg
-TOCLEAN += emutos*.prg
-
-.PHONY: prg
-prg: $(EMUTOS_PRG)
-	@MEMBOT=$$($(SHELL_GET_MEMBOT_RAMTOS_MAP));\
-	echo "# RAM used: $$(($$MEMBOT)) bytes"
 
 .PHONY: emutos-ram
 emutos-ram:
@@ -616,6 +609,18 @@ ramtos.img ramtos.map: VMA = $(shell $(SHELL_GET_MEMBOT_EMUTOS_MAP))
 ramtos.img ramtos.map: emutos-ram
 	@echo '# Second pass to build ramtos.img with TEXT and DATA just after the BSS'
 	$(LD) $(CORE_OBJ) $(LIBS) $(OPTIONAL_OBJ) $(LIBS) $(LDFLAGS) -Wl,-Map,ramtos.map -o ramtos.img
+
+#
+# emutos.prg
+#
+
+EMUTOS_PRG = emutos$(UNIQUE).prg
+TOCLEAN += emutos*.prg
+
+.PHONY: prg
+prg: $(EMUTOS_PRG)
+	@MEMBOT=$$($(SHELL_GET_MEMBOT_RAMTOS_MAP));\
+	echo "# RAM used: $$(($$MEMBOT)) bytes"
 
 # incbin dependencies are not automatically detected
 obj/ramtos.o: ramtos.img
