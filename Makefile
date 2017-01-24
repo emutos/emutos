@@ -189,7 +189,7 @@ bios_src +=  memory.S processor.S vectors.S aciavecs.S bios.c xbios.c acsi.c \
              parport.c screen.c serport.c sound.c videl.c vt52.c xhdi.c \
              pmmu030.c 68040_pmmu.S \
              amiga.c amiga2.S aros.c aros2.S \
-             delay.c delayasm.S sd.c memory2.c
+             delay.c delayasm.S sd.c memory2.c bootparams.c
 
 ifeq (1,$(COLDFIRE))
   bios_src += coldfire.c coldfire2.S spi.c
@@ -620,6 +620,7 @@ obj/ramtos.h: ramtos.map
 	@echo -en \
 '/* Generated from $< */\n'\
 '#define ADR_TEXT $(call SYMADDR,__text,$<)\n'\
+'#define ADR_ALTRAM_REGIONS $(call SYMADDR,_altram_regions,$<)\n'\
 >$@
 
 #

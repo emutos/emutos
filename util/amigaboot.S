@@ -88,9 +88,8 @@ bootmain:
         add.l   #511,d2
         andi.l  #-512,d2
 
-        // Allocate a temporary buffer for ramtos + Alt-RAM regions table
+        // Allocate a temporary buffer for ramtos
         move.l  d2,d0                       // Buffer size
-        add.l   #20*8,d0                    // Add space for 20 Alt-RAM regions
         moveq   #MEMF_CHIP,d1               // Attributes
         // FIXME: should allow any kind of RAM for temporary buffer
         jsr     _LVOAllocMem(a6)
@@ -99,10 +98,6 @@ bootmain:
         jbeq    error                       // No
 
         move.l  d0,a4                       // Save buffer address
-
-        // Determine the address of our temporary Alt-RAM regions list
-        move.l  a4,a3                       // ramtos buffer address
-        add.l   d2,a3                       // + size = Alt-RAM regions list
 
 // Load ramtos /////////////////////////////////////////////////////////////////
 
@@ -121,7 +116,8 @@ bootmain:
 // This code is inspired from Linux bootstrap
 // http://lxr.free-electrons.com/source/arch/m68k/boot/amiga/bootstrap.c?v=2.0.40
 
-        move.l  a3,a1                       // Temporary Alt-RAM region list
+        move.l  a4,a1                       // Buffer
+        adda.l  #OFFSETOF(ADR_ALTRAM_REGIONS),a1    // Alt-RAM region list
 
         // Unscrupulously examine Exec's private data to detect Alt-RAM
         lea     322(a6),a0                  // MemList
@@ -144,7 +140,7 @@ next_memheader:
         // Skip unknown memory type (such as bogus MemHeader at end of list)
         beq.s   next_memheader
 
-        // Store this region in temporary Alt-RAM region list
+        // Store this region in the Alt-RAM region list
         move.l  d0,(a1)+                    // Store region start address
         move.l  24(a0),d1                   // Region end address
         add.l   #64*1024-1,d1               // Round to next 64 KB boundary
@@ -155,7 +151,7 @@ next_memheader:
         bra.s   next_memheader
 
 endaltram:
-        // Terminate temporary Alt-RAM region list with NULL pointer
+        // Terminate the Alt-RAM region list with NULL pointer
         clr.l   (a1)
 
 // Leave AmigaOS ///////////////////////////////////////////////////////////////
@@ -182,14 +178,6 @@ endaltram:
         // Set TT-RAM size
         clr.l   0x5a4.w                     // _ramtop: No TT-RAM
         move.l  #0x1357bd13,0x5a8.w         // Validate _ramvalid
-
-        // Transfer the Alt-RAM region list to ramtos using BIOS stack buffer.
-        // It is the only low memory area not cleared on ramtos boot.
-        // This list will be read later by amiga_add_alt_ram().
-        lea     0x800.w,a0                  // _stkbot
-copyaltram:
-        move.l  (a3)+,(a0)+                 // Copy list until NULL
-        bne.s   copyaltram
 
         // Boot ramtos
         clr.l   -(sp)                       // CPU = 68000

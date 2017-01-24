@@ -142,6 +142,4 @@ extern struct kbdvecs kbdvecs;
 extern ULONG warm_magic;
 #endif
 
-extern UBYTE stkbot[]; /* BIOS internal stack */
-
 #endif /* TOSVARS_H */

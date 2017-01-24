@@ -28,6 +28,7 @@
 #include "string.h"
 #include "disk.h"
 #include "biosmem.h"
+#include "bootparams.h"
 
 #if CONF_WITH_AROS
 #include "aros.h"
@@ -229,15 +230,13 @@ void amiga_machine_detect(void)
 void amiga_add_alt_ram(void)
 {
 #if EMUTOS_LIVES_IN_RAM
-    const ULONG *p;
+    int i;
 
-    /* The list of Alt-RAM regions has been saved to the BIOS stack
-     * by util/amigaboot.S */
-
-    for (p = (const ULONG *)stkbot; *p; p += 2)
+    /* The list of Alt-RAM regions has been provided by the ramtos loader */
+    for (i = 0; i < MAX_ALTRAM_REGIONS && altram_regions[i].address; i++)
     {
-        UBYTE *address = (UBYTE *)p[0];
-        ULONG size = p[1];
+        UBYTE *address = altram_regions[i].address;
+        ULONG size = altram_regions[i].size;
         KDEBUG(("xmaddalt(%p, %lu)\n", address, size));
         xmaddalt(address, size);
     }
