@@ -127,7 +127,7 @@ _kcl_hook       = 0x5b0;        /* pointer to routine for system keyclick */
 _shifty         = 0x6f8;        /* reflects the status up/down of mode keys */
 
 #if CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF
-                                /* any location below bssstart is ok */
+                                /* any location not cleared on reset is ok */
 _warm_magic     = 0x6fc;        /* set to WARM_MAGIC if next boot must not */
                                 /* be considered as a first boot (reset) */
 #endif

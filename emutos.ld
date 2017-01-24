@@ -55,7 +55,9 @@ SECTIONS
    */
   .bss sysvars_end :
   {
+    __bss = .;
     *(.bss COMMON)
+    __ebss = .;
     __end = .;
   }
 

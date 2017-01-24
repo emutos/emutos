@@ -48,8 +48,8 @@
         // Overall memory map
         .extern sysvars_start // start of system variables
         .extern sysvars_end   // end of system variables
-        .extern bssstart      // end of documented low memory tosvars
-        .extern __end         // end of BSS segment
+        .extern bssstart      // start of BSS segment to be cleared
+        .extern __ebss        // end of BSS segment
 
 // ===========================================================================
 // ==== meminit - Reuse or detect RAM settings, then initialize RAM areas ====
@@ -624,9 +624,10 @@ stram_detected:
 // ==== This part is executed on any boot (first boot or reset) ==============
 // ===========================================================================
 any_boot:
-        // Clear the BSS
+        // Clear the major part of the BSS segment.
+        // This explicitly avoids to clear our stack so bzero() can return.
         move.l  #bssstart, a0
-        move.l  #__end, a1
+        move.l  #__ebss, a1
         bsr     call_bzero_a0_a1
 
         // Save the meminit_flags into BSS

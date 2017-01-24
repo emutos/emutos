@@ -385,17 +385,18 @@ zero:   .dc.l   0
         .bss
 
 // This is the very beginning of the EmuTOS BSS segment.
-// It usually starts at 0x800, just after the system variables.
+// It may be located anywhere, either in ST-RAM or Alt-RAM.
 
         .globl  _stkbot
         .globl  _stktop
         .globl  bssstart
 
-// BIOS internal stack
-// Be sure to keep it under bssstart to avoid clearing it
-// when clearing the BSS segment.
-// As this area is never cleared, util/amigaboot.S will use it to transfer
-// the Alt-RAM region list to ramtos.
+// This area is located between __bss and bssstart.
+// It will *not* be cleared on startup or reset.
+
+// BIOS internal stack. It is not cleared for 2 reasons:
+// - clearing a stack is useless
+// - bzero() must not clear its own stack when clearing the BSS
 _stkbot:        .ds.b   2048
 _stktop:
 
