@@ -616,8 +616,8 @@ ramtos.img ramtos.map: emutos-ram
 	$(LD) $(CORE_OBJ) $(LIBS) $(OPTIONAL_OBJ) $(LIBS) $(LDFLAGS) -Wl,-Map,ramtos.map -o ramtos.img
 
 obj/ramtos.h: ramtos.map
-	@echo '# Generating $@'
-	@echo -e \
+	@echo '# Generating $@ with ADR_TEXT=$(call SYMADDR,__text,$<)'
+	@echo -en \
 '/* Generated from $< */\n'\
 '#define ADR_TEXT $(call SYMADDR,__text,$<)\n'\
 >$@
