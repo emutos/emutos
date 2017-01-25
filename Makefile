@@ -288,7 +288,8 @@ SHELL_GET_MEMBOT_RAMTOS_MAP = $(call FUNCTION_SHELL_GET_SYMBOL_ADDRESS,__end_os_
 # Function to get the address of a symbol into a Makefile variable
 # $(1) = symbol name
 # $(2) = map file name
-SYMADDR = $(shell $(call FUNCTION_SHELL_GET_SYMBOL_ADDRESS,$(1),$(2)))
+MAKE_SYMADDR = $(shell $(call FUNCTION_SHELL_GET_SYMBOL_ADDRESS,$(1),$(2)))
+
 
 # The following reference values have been gathered from major TOS versions
 MEMBOT_TOS102 = 0x0000ca00
@@ -616,11 +617,11 @@ ramtos.img ramtos.map: emutos-ram
 	$(LD) $(CORE_OBJ) $(LIBS) $(OPTIONAL_OBJ) $(LIBS) $(LDFLAGS) -Wl,-Map,ramtos.map -o ramtos.img
 
 obj/ramtos.h: ramtos.map
-	@echo '# Generating $@ with ADR_TEXT=$(call SYMADDR,__text,$<)'
+	@echo '# Generating $@ with ADR_TEXT=$(call MAKE_SYMADDR,__text,$<)'
 	@echo -en \
 '/* Generated from $< */\n'\
-'#define ADR_TEXT $(call SYMADDR,__text,$<)\n'\
-'#define ADR_ALTRAM_REGIONS $(call SYMADDR,_altram_regions,$<)\n'\
+'#define ADR_TEXT $(call MAKE_SYMADDR,__text,$<)\n'\
+'#define ADR_ALTRAM_REGIONS $(call MAKE_SYMADDR,_altram_regions,$<)\n'\
 >$@
 
 #
