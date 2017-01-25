@@ -278,7 +278,7 @@ desk_copts =
 #
 
 # Shell command to get the address of a symbol
-FUNCTION_SHELL_GET_SYMBOL_ADDRESS = awk '/ $(1)( |$$)/{print $$1}' $(2)
+FUNCTION_SHELL_GET_SYMBOL_ADDRESS = awk '/^ *0x[^ ]* *$(1)( |$$)/{print $$1}' $(2)
 
 # membot (LONG at 0x432) is the bottom of the free RAM
 # We can guess its value from the map file
