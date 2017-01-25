@@ -93,7 +93,7 @@ Tips on using a resource editor with the current EmuTOS resources
    conditionally, you should add it at the end.  If you want it to
    be always compiled, you *must* add it before the start of the
    conditionally-compiled items; this is currently specified as ADTTREZ
-   for dialogs, STNOOPEN for free strings/alerts.
+   for dialogs, STICNTYP for free strings/alerts.
 
 
 erd/grd/ird: the EmuTOS Resource Decompilers
