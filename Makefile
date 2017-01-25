@@ -565,7 +565,7 @@ amigakd: amiga
 
 TOCLEAN += *.s19
 SRECFILE = emutos.s19
-LMA = $(VMA)
+LMA = $(error LMA must be set)
 
 $(SRECFILE): emutos.img
 	$(OBJCOPY) -I binary -O srec --change-addresses $(LMA) $< $(SRECFILE)
@@ -593,7 +593,7 @@ NODEP += m548x-dbug
 m548x-dbug: UNIQUE = $(COUNTRY)
 m548x-dbug:
 	@echo "# Building M548x dBUG EmuTOS in $(SREC_M548X_DBUG)"
-	$(MAKE) COLDFIRE=1 DEF='-DMACHINE_M548X' UNIQUE=$(UNIQUE) SRECFILE=$(SREC_M548X_DBUG) $(SREC_M548X_DBUG)
+	$(MAKE) COLDFIRE=1 DEF='-DMACHINE_M548X' UNIQUE=$(UNIQUE) LMA=0x00e00000 SRECFILE=$(SREC_M548X_DBUG) $(SREC_M548X_DBUG)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 
