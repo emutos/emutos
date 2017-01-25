@@ -17,12 +17,17 @@
  #define _(a) a
  #define N_(a) a
  #define gettext(a) a
+ typedef unsigned char   UBYTE;
  typedef short int       WORD;
  typedef unsigned short  UWORD;
  typedef long            LONG;
  typedef unsigned long   ULONG;
  #define MAXPATHLEN      256
  #define BLKDEVNUM       26
+ #define LOWORD(x) ((UWORD)(ULONG)(x))
+ #define HIWORD(x) ((UWORD)((ULONG)(x) >> 16))
+ #define LOBYTE(x) ((UBYTE)(UWORD)(x))
+ #define HIBYTE(x) ((UBYTE)((UWORD)(x) >> 8))
 #endif
 
 
