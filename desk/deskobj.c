@@ -89,7 +89,10 @@ static WORD sob_malloc(void)
 
     p = dos_alloc_anyram(mem);
     if (!p)
-        panic("sob_malloc(%ld): no memory\n",mem);
+    {
+        KDEBUG(("insufficient memory for %ld screen objects\n",num_obs));
+        nomem_alert();          /* halt and catch fire */
+    }
 
     G.g_screen = (OBJECT *)p;
     G.g_screeninfo = (SCREENINFO *)(G.g_screen+num_obs);

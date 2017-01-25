@@ -142,5 +142,6 @@ void app_save(WORD todisk);
 void app_blddesk(void);
 ANODE *app_afind_by_id(WORD obid);
 ANODE *app_afind_by_name(WORD atype, BYTE *pspec, BYTE *pname, WORD *pisapp);
+void nomem_alert(void);
 
 #endif  /* _DESKAPP_H */

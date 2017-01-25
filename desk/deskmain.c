@@ -1188,6 +1188,12 @@ void xlate_fix_tedinfo(TEDINFO *tedinfo, int nted)
         }
     }
     tedinfptr = dos_alloc_anyram(len);   /* Get memory */
+    if (!tedinfptr)
+    {
+        KDEBUG(("insufficient memory for TEDINFO strings (need %ld bytes)\n",len));
+        nomem_alert();          /* infinite loop */
+    }
+
     for (i = 0; i < nted; i++)
     {
         if (tedinfo[i].te_ptext == 0)

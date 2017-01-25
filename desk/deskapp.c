@@ -142,6 +142,16 @@ static const char desk_inf_data2[] =
 
 
 /*
+ *  Issue the desktop "out of memory" alert in an infinite loop
+ */
+void nomem_alert(void)
+{
+    while(1)
+        fun_alert(1,STNOMEM);
+}
+
+
+/*
  *  Allocate an application object
  *
  *  Issues an alert if there are none available
@@ -519,7 +529,10 @@ static WORD initialise_anodes(void)
      */
     G.g_pbuff = gl_buffer = dos_alloc_anyram(SIZE_BUFF);
     if (!gl_buffer)
+    {
+        KDEBUG(("insufficient memory for anode text buffer (need %ld bytes)\n",SIZE_BUFF));
         return -1;
+    }
 
     /*
      * allocate space for ANODEs, chain the ANODEs together,
@@ -527,7 +540,10 @@ static WORD initialise_anodes(void)
      */
     G.g_alist = dos_alloc_anyram(NUM_ANODES*sizeof(ANODE));
     if (!G.g_alist)
+    {
+        KDEBUG(("insufficient memory for %d anodes\n",NUM_ANODES));
         return -1;
+    }
     memset(G.g_alist,0x00,NUM_ANODES*sizeof(ANODE));
 
     for (i = 0; i < NUM_ANODES-1; i++)
@@ -584,13 +600,18 @@ void app_start(void)
     gl_stdrv = dos_gdrv();
 
     /* initialise the ANODE stuff */
-    /* FIXME: handle out-of-memory */
-    initialise_anodes();
+    if (initialise_anodes() < 0)
+    {
+        /* initialize_anodes() has already issued a KDEBUG() */
+        nomem_alert();          /* infinite loop */
+    }
 
-    /*
-     * the following may in theory fail due to lack of memory: what should we do?
-     */
-    app_rdicon();
+    /* load the user or builtin icons */
+    if (app_rdicon() < 0)
+    {
+        /* app_rdicon() has already issued a KDEBUG() */
+        nomem_alert();          /* infinite loop */
+    }
 
     G.g_wicon = (12 * gl_wschar) + (2 * G.g_iblist[0].ib_xtext);
     G.g_hicon = G.g_iblist[0].ib_hicon + gl_hschar + 2;
