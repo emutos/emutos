@@ -56,24 +56,28 @@ static BOOL bmem_allowed;
  */
 void bmem_init(void)
 {
-    KDEBUG(("_etext     = %p\n", _etext));
-    KDEBUG(("_edata     = %p\n", _edata));
-    KDEBUG(("_endvdibss = %p\n", _endvdibss));
+    KDEBUG(("Memory map before balloc() adjustments:\n"));
+    KDEBUG(("        _text = %p\n", _text));
+    KDEBUG(("       _etext = %p\n", _etext));
+    KDEBUG(("        _data = %p\n", _data));
+    KDEBUG(("       _edata = %p\n", _edata));
+    KDEBUG(("         _bss = %p\n", _bss));
+    KDEBUG(("   _endvdibss = %p\n", _endvdibss));
 #if WITH_AES
-    KDEBUG(("_endgembss = %p\n", _endgembss));
+    KDEBUG(("   _endgembss = %p\n", _endgembss));
 #endif
-    KDEBUG(("_ebss      = %p\n", _ebss));
+    KDEBUG(("        _ebss = %p\n", _ebss));
     KDEBUG(("_end_os_stram = %p\n", _end_os_stram));
 
     /* Start of available ST-RAM */
     end_os = _end_os_stram;
     membot = end_os;
-    KDEBUG(("membot     = %p\n", membot));
+    KDEBUG(("       membot = %p\n", membot));
 
     /* End of available ST-RAM */
     /* The screen buffer will be allocated later */
     memtop = phystop;
-    KDEBUG(("memtop     = %p\n", memtop));
+    KDEBUG(("       memtop = %p\n", memtop));
 
 #if DBG_BALLOC
     bmem_allowed = TRUE;
@@ -133,6 +137,9 @@ void getmpb(MPB * mpb)
 #if DBG_BALLOC
     bmem_allowed = FALSE; /* BIOS memory handling not allowed past this point */
 #endif
+    KDEBUG(("Memory map after balloc() adjustments:\n"));
+    KDEBUG(("       membot = %p\n", membot));
+    KDEBUG(("       memtop = %p\n", memtop));
 
     /* Fill out the first memory descriptor */
     themd.m_link = NULL;        /* no next memory descriptor */

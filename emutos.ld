@@ -46,6 +46,7 @@ SECTIONS
    */
   .data :
   {
+    __data = .;
     *(.data)
     __edata = .;
   }

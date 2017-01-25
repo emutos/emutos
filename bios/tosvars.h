@@ -73,9 +73,12 @@ extern void (*exec_os)(void) NORETURN;
 extern UBYTE *end_os;
 
 /* these symbols are automatically created by ld */
-extern UBYTE _etext[];    /* end of text */
-extern UBYTE _edata[];    /* end of data */
-extern UBYTE _ebss[];     /* end of bss + comm sections */
+extern UBYTE _text[];     /* start of TEXT segment */
+extern UBYTE _etext[];    /* end of TEXT segment */
+extern UBYTE _data[];     /* start of DATA segment */
+extern UBYTE _edata[];    /* end of DATA segment */
+extern UBYTE _bss[];      /* start of BSS segment */
+extern UBYTE _ebss[];     /* end of BSS segment */
 extern UBYTE _end_os_stram[]; /* end of the RAM used by the OS in ST-RAM */
 
 extern UBYTE _endvdibss[];  /* end of VDI BSS */
