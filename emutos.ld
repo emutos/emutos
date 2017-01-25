@@ -69,4 +69,14 @@ SECTIONS
     *(.comment)
     *(.debug*)
   }
+
+  /* Determine the last ST-RAM address used by the OS TEXT and BSS.
+   * We deliberately avoid to assign the same symbol several times here
+   * to avoid multiple matches with FUNCTION_SHELL_GET_SYMBOL_ADDRESS.
+   * We take the maximum of sysvars_end, __edata and __ebss,
+   * while staying in ST-RAM.
+   */
+  __end_os_stram_candidate_1 = sysvars_end;
+  __end_os_stram_candidate_2 = (__edata > __end_os_stram_candidate_1 && __edata < 0x00e00000) ? __edata : __end_os_stram_candidate_1;
+  __end_os_stram = (__ebss > __end_os_stram_candidate_2 && __ebss < 0x00e00000) ? __ebss : __end_os_stram_candidate_2;
 }

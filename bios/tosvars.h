@@ -75,6 +75,7 @@ extern UBYTE *end_os;
 /* these symbols are automatically created by ld */
 extern UBYTE _etext[];    /* end of text */
 extern UBYTE _edata[];    /* end of data */
+extern UBYTE _end_os_stram[]; /* end of the RAM used by the OS in ST-RAM */
 extern UBYTE _end[];      /* end of bss + comm sections */
 
 extern UBYTE _endvdibss[];  /* end of VDI BSS */
