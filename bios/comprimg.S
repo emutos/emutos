@@ -22,7 +22,6 @@
 
         .globl  _main           // OS entry point
 
-        .extern __end
         .extern resvalid
         .extern resvector
         .extern _stktop

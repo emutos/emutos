@@ -58,7 +58,6 @@ SECTIONS
     __bss = .;
     *(.bss COMMON)
     __ebss = .;
-    __end = .;
   }
 
   /* Discard the following ELF sections.

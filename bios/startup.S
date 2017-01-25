@@ -38,7 +38,6 @@
         .extern _biosmain     // BIOS C entry point
 
         // Overall memory map
-        .extern __end         // end of bss + comm sections (ld generated)
         .extern __etext       // end of text section
         .extern __edata       // end of data section
         .extern __endvdibss   // end of VDI BSS

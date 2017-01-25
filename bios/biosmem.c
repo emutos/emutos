@@ -62,8 +62,8 @@ void bmem_init(void)
 #if WITH_AES
     KDEBUG(("_endgembss = %p\n", _endgembss));
 #endif
+    KDEBUG(("_ebss      = %p\n", _ebss));
     KDEBUG(("_end_os_stram = %p\n", _end_os_stram));
-    KDEBUG(("_end       = %p\n", _end));
 
     /* Start of available ST-RAM */
     end_os = _end_os_stram;
