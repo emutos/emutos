@@ -386,18 +386,7 @@ zero:   .dc.l   0
 // This is the very beginning of the EmuTOS BSS segment.
 // It may be located anywhere, either in ST-RAM or Alt-RAM.
 
-        .globl  _stkbot
-        .globl  _stktop
         .globl  bssstart
-
-// This area is located between __bss and bssstart.
-// It will *not* be cleared on startup or reset.
-
-// BIOS internal stack. It is not cleared for 2 reasons:
-// - clearing a stack is useless
-// - bzero() must not clear its own stack when clearing the BSS
-_stkbot:        .ds.b   2048
-_stktop:
 
 // memory past this address will be cleared on startup or on reset.
 bssstart:

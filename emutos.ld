@@ -88,6 +88,16 @@ SECTIONS
     __edata = .;
   } >REGION_READ_ONLY
 
+  /* This section is the internal BIOS stack.
+   * It will *not* be cleared on startup or reset.
+   */
+  .stack :
+  {
+    _stkbot = .;
+    . += 2K;
+    _stktop = .;
+  } >REGION_READ_WRITE
+
   /* The BSS segment contains uninitialized global variables.
    * It will be cleared by the startup code.
    */
