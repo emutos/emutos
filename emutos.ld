@@ -14,7 +14,7 @@
  * to allow #include, #define, #if, etc. */
 #include "include/config.h"
 
-/* Create a plain binary ROM, without any header */
+/* Create a plain binary file, without any header */
 OUTPUT_FORMAT(binary)
 
 /*
@@ -39,15 +39,14 @@ OUTPUT_FORMAT(binary)
 #endif
 
 /* Memory regions of a typical Atari computer.
- * Only start addresses matter.
- * Lengths just need to be large enough.
+ * Only start addresses matter. Lengths just need to be large enough.
  */
 MEMORY
 {
   rom : ORIGIN = ROM_ORIGIN, LENGTH = ROM_LENGTH
   sysvars : ORIGIN = 0x00000000, LENGTH = sysvars_end
   stram : ORIGIN = LENGTH(sysvars), LENGTH = 512K - LENGTH(sysvars)
-  fastram : ORIGIN = 0x01000000, LENGTH = 1M
+  ttram : ORIGIN = 0x01000000, LENGTH = 1M
 }
 
 /* Region used as read/write memory */
@@ -64,16 +63,15 @@ MEMORY
 
 SECTIONS
 {
-  /* The TEXT segment is mapped at the beginning of the ROM.
-   * The starting address will be specified on the linker command-line
-   * with -Ttext=...
+  /* The TEXT segment contains EmuTOS executable code and read-only data.
+   * It is always read-only, so it can safely live in ROM.
    */
   .text :
   {
     CREATE_OBJECT_SYMBOLS
     __text = .;
     *(.text)
-    *(.rodata .rodata.*)
+    *(.rodata .rodata.*) /* Only present in ELF objects */
     __etext = .;
   } >REGION_READ_ONLY
 
@@ -90,8 +88,8 @@ SECTIONS
     __edata = .;
   } >REGION_READ_ONLY
 
-  /* By default, the BSS segment starts just after the system variables,
-   * at the bottom of the ST-RAM.
+  /* The BSS segment contains uninitialized global variables.
+   * It will be cleared by the startup code.
    */
   .bss :
   {
