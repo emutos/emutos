@@ -413,6 +413,9 @@ emutos.img emutos.map: $(OBJECTS) obj/emutospp.ld Makefile
 	  echo "### Warning: The DATA segment is not empty."; \
 	  echo "### Please examine emutos.map and use \"const\" where appropriate."; \
 	fi
+	@echo "# TEXT=$(call SHELL_SYMADDR,__text,emutos.map)"\
+" BSS=$(call SHELL_SYMADDR,__bss,emutos.map)"\
+" MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map)"
 
 #
 # 128kB Image
