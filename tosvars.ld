@@ -114,18 +114,6 @@ _kcl_hook       = 0x5b0;        /* pointer to routine for system keyclick */
  * and will be accessible in supervisor mode only.
  */
 
-/*
- * Workaround for bug in GFA Basic 3.51 startup.
- * Theoretically, we are allowed to put the shifty variable anywhere, then
- * programs may access it through the pointer present in OSHEADER.
- * However, by mistake the GFA only reads the low word of that pointer,
- * and sign-extends it to get the whole address. Consequently, this can
- * only be correct if shifty is located in the first 32K of memory.
- * GFA accesses this variable in supervisor mode, so there is no problem
- * putting it in the free sysvars area.
- */
-_shifty         = 0x6f8;        /* reflects the status up/down of mode keys */
-
 #if CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF
                                 /* any location not cleared on reset is ok */
 _warm_magic     = 0x6fc;        /* set to WARM_MAGIC if next boot must not */

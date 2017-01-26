@@ -63,6 +63,31 @@ MEMORY
 
 SECTIONS
 {
+  /* This section is located as low as possible in ST-RAM.
+   * Variables requiring very low addresses, while being accessible
+   * from user mode, can be put here.
+   * Warning: this area is not cleared at startup.
+   */
+  .lowstram :
+  {
+    /* Workaround for bug in GFA Basic 3.51 startup.
+     * Theoretically, we are allowed to put the shifty variable anywhere,
+     * then programs may access it through the pointer present in
+     * OSHEADER. However, by mistake the GFA only reads the low word of
+     * that pointer, and sign-extends it to get the whole address.
+     * Consequently, this can only be correct if shifty is located in the
+     * first 32K of memory.
+     * TOS puts this variable in a region accessible in user mode, so we
+     * do.
+     */
+    _shifty = .; /* reflects the status up/down of mode keys */
+    . += 1; /* UBYTE */
+    ASSERT(ABSOLUTE(_shifty) < 0x8000, "error: bad _shifty address");
+
+    /* Be sure to align this section size */
+    . = ALIGN(4);
+  } >stram
+
   /* The TEXT segment contains EmuTOS executable code and read-only data.
    * It is always read-only, so it can safely live in ROM.
    */
