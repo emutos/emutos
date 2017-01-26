@@ -376,17 +376,3 @@ cartover:
 
         .even   // Mandatory in ELF section .rodata
 zero:   .dc.l   0
-
-// ===========================================================================
-// ==== BSS segment ==========================================================
-// ===========================================================================
-
-        .bss
-
-// This is the very beginning of the EmuTOS BSS segment.
-// It may be located anywhere, either in ST-RAM or Alt-RAM.
-
-        .globl  bssstart
-
-// memory past this address will be cleared on startup or on reset.
-bssstart:

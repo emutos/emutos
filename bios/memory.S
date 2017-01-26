@@ -48,7 +48,7 @@
         // Overall memory map
         .extern sysvars_start // start of system variables
         .extern sysvars_end   // end of system variables
-        .extern bssstart      // start of BSS segment to be cleared
+        .extern __bss         // start of BSS segment
         .extern __ebss        // end of BSS segment
 
 // ===========================================================================
@@ -626,7 +626,7 @@ stram_detected:
 any_boot:
         // Clear the major part of the BSS segment.
         // This explicitly avoids to clear our stack so bzero() can return.
-        move.l  #bssstart, a0
+        move.l  #__bss, a0
         move.l  #__ebss, a1
         bsr     call_bzero_a0_a1
 
