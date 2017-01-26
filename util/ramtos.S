@@ -1,5 +1,5 @@
 /*
- * ramtos.S - embedded ramtos.img
+ * ramtos.S - embedded emutos.img
  *
  * Copyright (C) 2016 The EmuTOS development team
  *
@@ -19,6 +19,6 @@
 
         .balign 4
 _ramtos:
-        .incbin "ramtos.img"
+        .incbin "emutos.img"
         .balign 4
 _end_ramtos:

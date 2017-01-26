@@ -17,7 +17,7 @@
 #include <stdlib.h>
 
 #ifndef GENERATING_DEPENDENCIES
-/* Defines generated from ramtos.map */
+/* Defines generated from emutos.map */
 #include "../obj/ramtos.h"
 #endif
 
@@ -26,7 +26,7 @@
 /* last part of the loader is in util/bootram.S */
 extern void bootram(const UBYTE *src, ULONG size, ULONG cpu) NORETURN;
 
-/* ramtos.img is embedded in util/ramtos.S */
+/* emutos.img is embedded in util/ramtos.S */
 extern const UBYTE ramtos[];
 extern const UBYTE end_ramtos[];
 

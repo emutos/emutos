@@ -12,14 +12,14 @@
  */
 
 /*
- * This bootsector loads ramtos.img into a Malloc()'ed buffer.
+ * This bootsector loads emutos.img into a Malloc()'ed buffer.
  * Then it boots it using bootram().
  */
 
 #include "asmdefs.h"
 
 #ifndef GENERATING_DEPENDENCIES
-/* Defines generated from ramtos.map */
+/* Defines generated from emutos.map */
 #include "../obj/ramtos.h"
 #endif
 

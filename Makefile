@@ -605,22 +605,12 @@ m548x-bas:
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 
 #
-# ramtos.img is a variant of EmuTOS running in RAM instead of ROM.
-# It needs to be loaded into RAM by some loader. We support several ones.
+# Special variants of EmuTOS running in RAM instead of ROM.
+# In this case, emutos.img needs to be loaded into RAM by some loader.
 #
 
-# Weird multiple-output rule to avoid building emutos.img twice
-# when using parallel make (make -j). See hints there:
-# https://www.gnu.org/software/automake/manual/html_node/Multiple-Outputs.html
-
-ramtos.img: emutos.img
-	cp emutos.img ramtos.img
-	cp emutos.map ramtos.map
-
-ramtos.map: ramtos.img
-
-obj/ramtos.h: ramtos.map
-	@echo '# Generating $@ with ADR_TEXT=$(call MAKE_SYMADDR,__text,$<)'
+obj/ramtos.h: emutos.map
+	@echo '# Generating $@'
 	@echo -en \
 '/* Generated from $< */\n'\
 '#define ADR_TEXT $(call MAKE_SYMADDR,__text,$<)\n'\
@@ -636,12 +626,12 @@ TOCLEAN += emutos*.prg
 
 .PHONY: prg
 prg: $(EMUTOS_PRG)
-	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,ramtos.map);\
+	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes"
 
 obj/boot.o: obj/ramtos.h
 # incbin dependencies are not automatically detected
-obj/ramtos.o: ramtos.img
+obj/ramtos.o: emutos.img
 
 $(EMUTOS_PRG): override DEF += -DTARGET_PRG
 $(EMUTOS_PRG): OPTFLAGS = $(SMALL_OPTFLAGS)
@@ -672,8 +662,8 @@ compr.img compr.map: $(COMPROBJ) obj/emutospp.ld Makefile
 .PHONY: etoscpr.img
 etoscpr.img: OPTFLAGS = $(SMALL_OPTFLAGS)
 etoscpr.img: compr.img compr
-	$(MAKE) DEF='-DTARGET_COMPRESSED_ROM' OPTFLAGS=$(OPTFLAGS) UNIQUE=$(UNIQUE) ramtos.img
-	./compr --rom compr.img ramtos.img $@
+	$(MAKE) DEF='-DTARGET_COMPRESSED_ROM' OPTFLAGS=$(OPTFLAGS) UNIQUE=$(UNIQUE) emutos.img
+	./compr --rom compr.img emutos.img $@
 
 # 256k compressed ROM (intermediate target)
 ecpr256k.img: ROMSIZE = 256
@@ -729,7 +719,7 @@ NODEP += flop
 flop: UNIQUE = $(COUNTRY)
 flop:
 	$(MAKE) UNIQUE=$(UNIQUE) $(EMUTOS_ST)
-	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,ramtos.map);\
+	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes"
 
 .PHONY: fd0
@@ -739,8 +729,8 @@ fd0: flop
 
 $(EMUTOS_ST): override DEF += -DTARGET_FLOPPY
 $(EMUTOS_ST): OPTFLAGS = $(SMALL_OPTFLAGS)
-$(EMUTOS_ST): mkflop bootsect.img ramtos.img
-	./mkflop bootsect.img ramtos.img $@
+$(EMUTOS_ST): mkflop bootsect.img emutos.img
+	./mkflop bootsect.img emutos.img $@
 
 bootsect.img : obj/bootsect.o obj/bootram.o
 	$(LD) $+ -Wl,--oformat,binary -o $@
@@ -762,12 +752,12 @@ NODEP += amigaflop
 amigaflop: UNIQUE = $(COUNTRY)
 amigaflop:
 	$(MAKE) DEF='-DTARGET_AMIGA_FLOPPY $(AMIGA_DEFS)' UNIQUE=$(UNIQUE) $(EMUTOS_ADF)
-	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,ramtos.map);\
+	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes"
 
 $(EMUTOS_ADF): OPTFLAGS = $(SMALL_OPTFLAGS)
-$(EMUTOS_ADF): amigaboot.img ramtos.img mkrom
-	./mkrom amiga-floppy amigaboot.img ramtos.img $@
+$(EMUTOS_ADF): amigaboot.img emutos.img mkrom
+	./mkrom amiga-floppy amigaboot.img emutos.img $@
 
 amigaboot.img: obj/amigaboot.o obj/bootram.o
 	$(LD) $+ -Wl,--oformat,binary -o $@
@@ -923,7 +913,7 @@ TOCLEAN += */*.tr.c
 
 ifneq (,$(UNIQUE))
 ifneq (us,$(ETOSLANG))
-emutos.img ramtos.img: $(TRANS_SRC)
+emutos.img: $(TRANS_SRC)
 
 %.tr.c : %.c po/$(ETOSLANG).po bug po/LINGUAS obj/country
 	./bug translate $(ETOSLANG) $<

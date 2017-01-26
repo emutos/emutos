@@ -13,7 +13,7 @@
 
 /*
  * this tool will create a simple auto-booting FAT12 floppy
- * called emutos.st from bootsect.img and ramtos.img.
+ * called emutos.st from bootsect.img and emutos.img.
  */
 
 #include <stdio.h>
@@ -393,7 +393,7 @@ int main(int argc, char *argv[])
 
     if (argc != 4)
     {
-        fprintf(stderr, "usage: %s <bootsect.img> <ramtos.img> <floppy.st>\n",argv[0]);
+        fprintf(stderr, "usage: %s <bootsect.img> <emutos.img> <floppy.st>\n",argv[0]);
         exit(EXIT_FAILURE);
     }
 

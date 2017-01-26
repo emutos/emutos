@@ -13,7 +13,7 @@
 #include "asmdefs.h"
 
 #ifndef GENERATING_DEPENDENCIES
-/* Defines generated from ramtos.map */
+/* Defines generated from emutos.map */
 #include "../obj/ramtos.h"
 #endif
 

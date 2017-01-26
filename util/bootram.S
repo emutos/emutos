@@ -24,7 +24,7 @@
 /*
  * void bootram(const UBYTE *src, ULONG size, ULONG cpu);
  *
- * Copy ramtos.img from a temporary buffer to its hardcoded location,
+ * Copy emutos.img from a temporary buffer to its hardcoded location,
  * then run it.
  * The temporary ramtos starts at 'src', for 'size' bytes.
  * 'cpu' is 0 for 68000, 30 for 68030, etc.
@@ -94,7 +94,7 @@ boot:
         // very early, even before clearing sysvars.
         clr.l   0x426.w         // resvalid
 
-        // Copy ramtos.img to its final destination
+        // Copy emutos.img to its final destination
         move.l  a4,a2           // src
         move.l  a5,a3           // dest
         move.l  d4,d2           // size
