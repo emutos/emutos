@@ -123,11 +123,8 @@ INDENT = indent -kr
 
 # Linker with relocation information and binary output (image)
 LD = $(CC) $(MULTILIBFLAGS) -nostartfiles -nostdlib
-VMA_STANDARD = 0x00e00000
-VMA_192 = 0x00fc0000
-VMA = $(VMA_STANDARD)
 LIBS = -lgcc
-LDFLAGS = -Wl,-T,obj/emutospp.ld,-Ttext=$(VMA)
+LDFLAGS = -Wl,-T,obj/emutospp.ld
 
 # C compiler
 CC = $(TOOLCHAIN_PREFIX)gcc
@@ -357,9 +354,9 @@ help:
 	@echo "------  -------"
 	@echo "help    this help message"
 	@echo "version display the EmuTOS version"
-	@echo "192     $(ROM_192), EmuTOS ROM padded to size 192 KB (starting at $(VMA_192))"
-	@echo "256     $(ROM_256), EmuTOS ROM padded to size 256 KB (starting at $(VMA_STANDARD))"
-	@echo "512     $(ROM_512), EmuTOS ROM padded to size 512 KB (starting at $(VMA_STANDARD))"
+	@echo "192     $(ROM_192), EmuTOS ROM padded to size 192 KB"
+	@echo "256     $(ROM_256), EmuTOS ROM padded to size 256 KB"
+	@echo "512     $(ROM_512), EmuTOS ROM padded to size 512 KB"
 	@echo "aranym  $(ROM_ARANYM), suitable for ARAnyM"
 	@echo "firebee $(SREC_FIREBEE), to be flashed on the FireBee"
 	@echo "firebee-prg emutos.prg, a RAM tos for the FireBee"
@@ -443,7 +440,6 @@ NODEP += 192
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS102))) bytes more than TOS 1.02)"
 
 $(ROM_192): ROMSIZE = 192
-$(ROM_192): VMA = $(VMA_192)
 $(ROM_192): emutos.img mkrom
 	./mkrom pad $(ROMSIZE)k $< $(ROM_192)
 
@@ -512,7 +508,7 @@ NODEP += cart
 cart: OPTFLAGS = $(SMALL_OPTFLAGS)
 cart:
 	@echo "# Building Diagnostic Cartridge EmuTOS into $(ROM_CARTRIDGE)"
-	$(MAKE) OPTFLAGS=$(OPTFLAGS) DEF='-DTARGET_CART' UNIQUE=$(COUNTRY) WITH_AES=0 VMA=0x00fa0000 ROM_128=$(ROM_CARTRIDGE) $(ROM_CARTRIDGE)
+	$(MAKE) OPTFLAGS=$(OPTFLAGS) DEF='-DTARGET_CART' UNIQUE=$(COUNTRY) WITH_AES=0 ROM_128=$(ROM_CARTRIDGE) $(ROM_CARTRIDGE)
 	./mkrom stc emutos.img emutos.stc
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS102))) bytes more than TOS 1.02)"
@@ -542,7 +538,6 @@ amiga:
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS162))) bytes more than TOS 1.62)"
 
-$(ROM_AMIGA): VMA = 0x00fc0000
 $(ROM_AMIGA): emutos.img mkrom
 	./mkrom amiga $< $(ROM_AMIGA)
 
@@ -612,15 +607,15 @@ m548x-bas:
 # It needs to be loaded into RAM by some loader. We support several ones.
 #
 
-.PHONY: emutos-ram
-emutos-ram:
-	@echo '# First pass to build emutos.map and determine the end of the BSS'
-	$(MAKE) emutos.map DEF='$(DEF)' OPTFLAGS=$(OPTFLAGS)
+# Weird multiple-output rule to avoid building emutos.img twice
+# when using parallel make (make -j). See hints there:
+# https://www.gnu.org/software/automake/manual/html_node/Multiple-Outputs.html
 
-ramtos.img ramtos.map: VMA = $(shell $(SHELL_GET_MEMBOT_EMUTOS_MAP))
-ramtos.img ramtos.map: emutos-ram
-	@echo '# Second pass to build ramtos.img with TEXT and DATA just after the BSS'
-	$(LD) $(CORE_OBJ) $(LIBS) $(OPTIONAL_OBJ) $(LIBS) $(LDFLAGS) -Wl,-Map,ramtos.map -o ramtos.img
+ramtos.img: emutos.img
+	cp emutos.img ramtos.img
+	cp emutos.map ramtos.map
+
+ramtos.map: ramtos.img
 
 obj/ramtos.h: ramtos.map
 	@echo '# Generating $@ with ADR_TEXT=$(call MAKE_SYMADDR,__text,$<)'
@@ -685,7 +680,6 @@ ecpr256k.img: etoscpr.img mkrom
 
 # 192k compressed ROM (intermediate target)
 ecpr192k.img: ROMSIZE = 192
-ecpr192k.img: VMA = $(VMA_192)
 ecpr192k.img: etoscpr.img mkrom
 	./mkrom pad $(ROMSIZE)k $< $@
 
