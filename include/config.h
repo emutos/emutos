@@ -618,6 +618,15 @@
 #endif
 
 /*
+ * Set CONF_WITH_STATIC_ALT_RAM to 1 to put EmuTOS static data in Alt-RAM.
+ * This can only work if the main Alt-RAM address is known at compile time.
+ * The actual Alt-RAM region is described in emutos.ld.
+ */
+#ifndef CONF_WITH_STATIC_ALT_RAM
+# define CONF_WITH_STATIC_ALT_RAM 0
+#endif
+
+/*
  * Set CONF_WITH_FRB to 1 to automatically enable the _FRB cookie when required
  */
 #ifndef CONF_WITH_FRB
@@ -1353,6 +1362,12 @@
 #if !CONF_WITH_YM2149
 # if CONF_WITH_FDC
 #  error "CONF_WITH_FDC requires CONF_WITH_YM2149."
+# endif
+#endif
+
+#if !CONF_WITH_ALT_RAM
+# if CONF_WITH_STATIC_ALT_RAM
+#  error "CONF_WITH_STATIC_ALT_RAM requires CONF_WITH_ALT_RAM."
 # endif
 #endif
 

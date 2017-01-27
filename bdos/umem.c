@@ -25,6 +25,7 @@
 #include "biosbind.h"
 #include "xbiosbind.h"
 #include "kprint.h"
+#include "../bios/tosvars.h"
 
 
 /*
@@ -394,6 +395,16 @@ long xmaddalt(UBYTE *start, LONG size)
         }
     }
 
+#if CONF_WITH_STATIC_ALT_RAM
+    if (start == _static_altram_start && _static_altram_end > _static_altram_start)
+    {
+        /* This region is used by EmuTOS static data.
+         * Keep the lower part safe, and only add the upper part to the pool */
+        start = _static_altram_end;
+        size -= _static_altram_end - _static_altram_start;
+    }
+#endif
+
     md = xmgetmd();
     if (md == NULL)
         return ENSMEM;
@@ -423,6 +434,11 @@ long total_alt_ram(void)
 {
     long total = 0;
     MD* md;
+
+#if CONF_WITH_STATIC_ALT_RAM
+    /* Add size of static Alt-RAM area */
+    total += _static_altram_end - _static_altram_start;
+#endif
 
     /* Add sum of free blocks */
     for(md = pmdalt.mp_mfl; md; md = md->m_link)

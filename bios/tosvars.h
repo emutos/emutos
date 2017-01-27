@@ -81,6 +81,12 @@ extern UBYTE _bss[];      /* start of BSS segment */
 extern UBYTE _ebss[];     /* end of BSS segment */
 extern UBYTE _end_os_stram[]; /* end of the RAM used by the OS in ST-RAM */
 
+#if CONF_WITH_STATIC_ALT_RAM
+/* Static Alt-RAM is the area used by static data (BSS and maybe TEXT) */
+extern UBYTE _static_altram_start[];
+extern UBYTE _static_altram_end[];
+#endif
+
 extern UBYTE _endvdibss[];  /* end of VDI BSS */
 #if WITH_AES
 extern UBYTE _endgembss[];  /* end of GEM BSS */

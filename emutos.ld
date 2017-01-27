@@ -46,14 +46,25 @@ MEMORY
     rom : ORIGIN = ROM_ORIGIN, LENGTH = ROM_LENGTH
     sysvars : ORIGIN = 0x00000000, LENGTH = 0x800
     stram : ORIGIN = LENGTH(sysvars), LENGTH = 512K - LENGTH(sysvars)
-    ttram : ORIGIN = 0x01000000, LENGTH = 1M
+#if CONF_WITH_STATIC_ALT_RAM
+# ifdef MACHINE_AMIGA
+    //altram : ORIGIN = 0x40000000, LENGTH = 1M /* WinUAE */
+    altram : ORIGIN = 0x08000000, LENGTH = 1M /* Vampire V2 */
+# else
+    altram : ORIGIN = 0x01000000, LENGTH = 1M
+# endif
+#endif
 }
 
 /* Global symbols */
 sysvars_end = ORIGIN(sysvars) + LENGTH(sysvars);
 
 /* Region used as read/write memory */
-#define REGION_RAM stram
+#if CONF_WITH_STATIC_ALT_RAM
+# define REGION_RAM altram
+#else
+# define REGION_RAM stram
+#endif
 
 /* Regions used by EmuTOS sections */
 #if EMUTOS_LIVES_IN_RAM
@@ -90,6 +101,14 @@ SECTIONS
         /* Be sure to align this section size */
         . = ALIGN(4);
     } >stram
+
+#if CONF_WITH_STATIC_ALT_RAM
+    /* First section in static Alt-RAM */
+    .first_altram :
+    {
+        __static_altram_start = .;
+    } >altram
+#endif
 
     /* The TEXT segment contains EmuTOS executable code and read-only data.
      * It is always read-only, so it can safely live in ROM.
@@ -144,6 +163,14 @@ SECTIONS
     {
         __end_os_stram = .;
     } >stram
+
+#if CONF_WITH_STATIC_ALT_RAM
+    /* Last section in static Alt-RAM */
+    .last_altram :
+    {
+        __static_altram_end = .;
+    } >altram
+#endif
 
     /* Discard the following ELF sections.
      * Some of them may be present in ELF libgcc.a.
