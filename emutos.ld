@@ -44,10 +44,13 @@ OUTPUT_FORMAT(binary)
 MEMORY
 {
     rom : ORIGIN = ROM_ORIGIN, LENGTH = ROM_LENGTH
-    sysvars : ORIGIN = 0x00000000, LENGTH = sysvars_end
+    sysvars : ORIGIN = 0x00000000, LENGTH = 0x800
     stram : ORIGIN = LENGTH(sysvars), LENGTH = 512K - LENGTH(sysvars)
     ttram : ORIGIN = 0x01000000, LENGTH = 1M
 }
+
+/* Global symbols */
+sysvars_end = ORIGIN(sysvars) + LENGTH(sysvars);
 
 /* Region used as read/write memory */
 #define REGION_RAM stram

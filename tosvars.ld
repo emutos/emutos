@@ -125,6 +125,5 @@ _pmmutree       = PMMUTREE_ADDRESS_68030;   /* for pmmu tree on 68030 */
 #endif
 
 /*
- * Starting from this address, the ST-RAM is accessible in user mode.
+ * The sysvars region ends at 0x800.
  */
-sysvars_end = 0x800;
