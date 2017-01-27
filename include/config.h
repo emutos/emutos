@@ -28,7 +28,7 @@
 /*
  * Determine if this EmuTOS is built for ROM or RAM.
  */
-#if defined(TARGET_PRG) || defined(TARGET_FLOPPY) || defined(TARGET_COMPRESSED_ROM) || defined(TARGET_AMIGA_FLOPPY)
+#if defined(TARGET_PRG) || defined(TARGET_FLOPPY) || defined(TARGET_COMPRESSED_ROM) || defined(TARGET_AMIGA_FLOPPY) || defined(TARGET_AMIGA_FLOPPY_VAMPIRE)
 #  define EMUTOS_LIVES_IN_RAM 1
 # else
 #  define EMUTOS_LIVES_IN_RAM 0
@@ -330,10 +330,19 @@
 #endif
 
 /*
- * Defaults for the Amiga floppy target.
+ * Defaults for Amiga floppy targets.
  */
-#ifdef TARGET_AMIGA_FLOPPY
+#if defined(TARGET_AMIGA_FLOPPY) || defined(TARGET_AMIGA_FLOPPY_VAMPIRE)
 # define MACHINE_AMIGA
+#endif
+
+/*
+ * Defaults for special Amiga floppy for Vampire V2 boards.
+ */
+#ifdef TARGET_AMIGA_FLOPPY_VAMPIRE
+# ifndef CONF_WITH_STATIC_ALT_RAM
+#  define CONF_WITH_STATIC_ALT_RAM 1
+# endif
 #endif
 
 /*

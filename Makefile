@@ -755,6 +755,14 @@ amigaflop:
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes"
 
+.PHONY: amigaflopvampire
+NODEP += amigaflopvampire
+amigaflopvampire: UNIQUE = $(COUNTRY)
+amigaflopvampire:
+	$(MAKE) CPUFLAGS='-m68040' DEF='-DTARGET_AMIGA_FLOPPY_VAMPIRE $(AMIGA_DEFS)' UNIQUE=$(UNIQUE) $(EMUTOS_ADF)
+	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
+	echo "# RAM used: $$(($$MEMBOT)) bytes"
+
 $(EMUTOS_ADF): OPTFLAGS = $(SMALL_OPTFLAGS)
 $(EMUTOS_ADF): amigaboot.img emutos.img mkrom
 	./mkrom amiga-floppy amigaboot.img emutos.img $@
