@@ -210,13 +210,13 @@
 #endif
 #ifdef GEM_RSC
   #ifdef RSC_CHOSEN
-    #error "Conflicting preprocessor defines"
+    #error Conflicting preprocessor defines
   #endif
   #define RSC_CHOSEN
 #endif
 #ifdef ICON_RSC
   #ifdef RSC_CHOSEN
-    #error "Conflicting preprocessor defines"
+    #error Conflicting preprocessor defines
   #endif
   #define RSC_CHOSEN
 #endif
@@ -527,8 +527,8 @@ LOCAL int num_notrans = ARRAY_SIZE(notrans);
 /*
  *  conditional wrapping control
  */
-LOCAL const CONDITIONAL frstr_cond = { "?", "#error \"Code generation error\"" };  /* no match, error if it does ... */
-LOCAL const CONDITIONAL other_cond = { "?", "#error \"Code generation error\"" };  /* likewise */
+LOCAL const CONDITIONAL frstr_cond = { "?", "#error Code generation error" };  /* no match, error if it does ... */
+LOCAL const CONDITIONAL other_cond = { "?", "#error Code generation error" };  /* likewise */
 
 /*
  *  table of complete strings that will have a shared data item
@@ -554,7 +554,7 @@ LOCAL int num_notrans = ARRAY_SIZE(notrans);
 /*
  *  conditional wrapping control
  */
-LOCAL const CONDITIONAL frstr_cond = { "?", "#error \"Code generation error\"" };  /* no match, error if it does ... */
+LOCAL const CONDITIONAL frstr_cond = { "?", "#error Code generation error" };  /* no match, error if it does ... */
 LOCAL const CONDITIONAL other_cond = { "APPS", "#if 0" };
 
 /*

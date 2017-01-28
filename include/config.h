@@ -1350,134 +1350,134 @@
 
 #if EMUTOS_LIVES_IN_RAM
 # if DIAGNOSTIC_CARTRIDGE
-#  error "DIAGNOSTIC_CARTRIDGE is incompatible with EMUTOS_LIVES_IN_RAM."
+#  error DIAGNOSTIC_CARTRIDGE is incompatible with EMUTOS_LIVES_IN_RAM.
 # endif
 #endif
 
 #if !DETECT_NATIVE_FEATURES
 # if CONF_WITH_ARANYM
-#  error "CONF_WITH_ARANYM requires DETECT_NATIVE_FEATURES."
+#  error CONF_WITH_ARANYM requires DETECT_NATIVE_FEATURES.
 # endif
 #endif
 
 #if !CONF_WITH_ADVANCED_CPU
 # if CONF_WITH_68030_PMMU
-#  error "CONF_WITH_68030_PMMU requires CONF_WITH_ADVANCED_CPU."
+#  error CONF_WITH_68030_PMMU requires CONF_WITH_ADVANCED_CPU.
 # endif
 # if CONF_WITH_APOLLO_CORE
-#  error "CONF_WITH_APOLLO_CORE requires CONF_WITH_ADVANCED_CPU."
+#  error CONF_WITH_APOLLO_CORE requires CONF_WITH_ADVANCED_CPU.
 # endif
 #endif
 
 #if !CONF_WITH_YM2149
 # if CONF_WITH_FDC
-#  error "CONF_WITH_FDC requires CONF_WITH_YM2149."
+#  error CONF_WITH_FDC requires CONF_WITH_YM2149.
 # endif
 #endif
 
 #if !CONF_WITH_ALT_RAM
 # if CONF_WITH_STATIC_ALT_RAM
-#  error "CONF_WITH_STATIC_ALT_RAM requires CONF_WITH_ALT_RAM."
+#  error CONF_WITH_STATIC_ALT_RAM requires CONF_WITH_ALT_RAM.
 # endif
 #endif
 
 #ifndef STATIC_ALT_RAM_ADDRESS
 # if CONF_WITH_STATIC_ALT_RAM
-#  error "CONF_WITH_STATIC_ALT_RAM requires STATIC_ALT_RAM_ADDRESS."
+#  error CONF_WITH_STATIC_ALT_RAM requires STATIC_ALT_RAM_ADDRESS.
 # endif
 #endif
 
 #if !CONF_WITH_ALT_RAM
 # if CONF_WITH_TTRAM
-#  error "CONF_WITH_TTRAM requires CONF_WITH_ALT_RAM."
+#  error CONF_WITH_TTRAM requires CONF_WITH_ALT_RAM.
 # endif
 #endif
 
 #if !CONF_WITH_TTRAM
 # if CONF_TTRAM_SIZE != 0
-#  error "CONF_TTRAM_SIZE != 0 requires CONF_WITH_TTRAM."
+#  error CONF_TTRAM_SIZE != 0 requires CONF_WITH_TTRAM.
 # endif
 #endif
 
 #if !CONF_WITH_MFP
 # if CONF_WITH_MFP_RS232
-#  error "CONF_WITH_MFP_RS232 requires CONF_WITH_MFP."
+#  error CONF_WITH_MFP_RS232 requires CONF_WITH_MFP.
 # endif
 # if CONF_WITH_PRINTER_PORT
-#  error "CONF_WITH_PRINTER_PORT requires CONF_WITH_MFP."
+#  error CONF_WITH_PRINTER_PORT requires CONF_WITH_MFP.
 # endif
 # if CONF_WITH_FDC
-#  error "CONF_WITH_FDC requires CONF_WITH_MFP."
+#  error CONF_WITH_FDC requires CONF_WITH_MFP.
 # endif
 # if CONF_WITH_IKBD_ACIA
-#  error "CONF_WITH_IKBD_ACIA requires CONF_WITH_MFP."
+#  error CONF_WITH_IKBD_ACIA requires CONF_WITH_MFP.
 # endif
 # if CONF_WITH_MIDI_ACIA
-#  error "CONF_WITH_MIDI_ACIA requires CONF_WITH_MFP."
+#  error CONF_WITH_MIDI_ACIA requires CONF_WITH_MFP.
 # endif
 #endif
 
 #if !CONF_WITH_ATARI_VIDEO
 # if CONF_WITH_STE_SHIFTER
-#  error "CONF_WITH_STE_SHIFTER requires CONF_WITH_ATARI_VIDEO."
+#  error CONF_WITH_STE_SHIFTER requires CONF_WITH_ATARI_VIDEO.
 # endif
 # if CONF_WITH_TT_SHIFTER
-#  error "CONF_WITH_TT_SHIFTER requires CONF_WITH_ATARI_VIDEO."
+#  error CONF_WITH_TT_SHIFTER requires CONF_WITH_ATARI_VIDEO.
 # endif
 # if CONF_WITH_VIDEL
-#  error "CONF_WITH_VIDEL requires CONF_WITH_ATARI_VIDEO."
+#  error CONF_WITH_VIDEL requires CONF_WITH_ATARI_VIDEO.
 # endif
 #endif
 
 #if !CONF_WITH_SCC
 # if SCC_DEBUG_PRINT
-#  error "SCC_DEBUG_PRINT requires CONF_WITH_SCC."
+#  error SCC_DEBUG_PRINT requires CONF_WITH_SCC.
 # endif
 #endif
 
 #if !CONF_WITH_COLDFIRE_RS232
 # if COLDFIRE_DEBUG_PRINT
-#  error "COLDFIRE_DEBUG_PRINT requires CONF_WITH_COLDFIRE_RS232."
+#  error COLDFIRE_DEBUG_PRINT requires CONF_WITH_COLDFIRE_RS232.
 # endif
 #endif
 
 #if !CONF_SERIAL_CONSOLE
 # if CONF_SERIAL_CONSOLE_ANSI
-#  error "CONF_SERIAL_CONSOLE_ANSI requires CONF_SERIAL_CONSOLE."
+#  error CONF_SERIAL_CONSOLE_ANSI requires CONF_SERIAL_CONSOLE.
 # endif
 #endif
 
 #if !defined(__mcoldfire__)
 # if CONF_WITH_BAS_MEMORY_MAP
-#  error "CONF_WITH_BAS_MEMORY_MAP requires a ColdFire CPU."
+#  error CONF_WITH_BAS_MEMORY_MAP requires a ColdFire CPU.
 # endif
 # if CONF_WITH_FLEXCAN
-#  error "CONF_WITH_FLEXCAN requires a ColdFire CPU."
+#  error CONF_WITH_FLEXCAN requires a ColdFire CPU.
 # endif
 #endif
 
 #ifndef MACHINE_AMIGA
 # if CONF_WITH_UAE
-#  error "CONF_WITH_UAE requires MACHINE_AMIGA."
+#  error CONF_WITH_UAE requires MACHINE_AMIGA.
 # endif
 # if CONF_WITH_AROS
-#  error "CONF_WITH_AROS requires MACHINE_AMIGA."
+#  error CONF_WITH_AROS requires MACHINE_AMIGA.
 # endif
 #endif
 
 #if (CONSOLE_DEBUG_PRINT + RS232_DEBUG_PRINT + SCC_DEBUG_PRINT + COLDFIRE_DEBUG_PRINT + MIDI_DEBUG_PRINT) > 1
-# error "Only one of CONSOLE_DEBUG_PRINT, RS232_DEBUG_PRINT, SCC_DEBUG_PRINT, COLDFIRE_DEBUG_PRINT or MIDI_DEBUG_PRINT must be set to 1."
+# error Only one of CONSOLE_DEBUG_PRINT, RS232_DEBUG_PRINT, SCC_DEBUG_PRINT, COLDFIRE_DEBUG_PRINT or MIDI_DEBUG_PRINT must be set to 1.
 #endif
 
 #if !CONF_WITH_ACSI
 # if CONF_WITH_ICDRTC
-#  error "CONF_WITH_ICDRTC requires CONF_WITH_ACSI"
+#  error CONF_WITH_ICDRTC requires CONF_WITH_ACSI
 # endif
 #endif
 
 #if !CONF_WITH_DMASOUND
 # if CONF_WITH_XBIOS_SOUND
-#  error "CONF_WITH_XBIOS_SOUND requires CONF_WITH_DMASOUND."
+#  error CONF_WITH_XBIOS_SOUND requires CONF_WITH_DMASOUND.
 # endif
 #endif
 
