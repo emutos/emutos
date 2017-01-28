@@ -366,6 +366,7 @@ help:
 	@echo "amigaflop $(EMUTOS_ADF), EmuTOS RAM as Amiga boot floppy"
 	@echo "m548x-dbug $(SREC_M548X_DBUG), EmuTOS-RAM for dBUG on ColdFire Evaluation Boards"
 	@echo "m548x-bas  $(SREC_M548X_BAS), EmuTOS for BaS_gcc on ColdFire Evaluation Boards"
+	@echo "m548x-prg  emutos.prg, a RAM tos for ColdFire Evaluation Boards with BaS_gcc"
 	@echo "prg     emutos.prg, a RAM tos"
 	@echo "flop    $(EMUTOS_ST), a bootable floppy with RAM tos"
 	@echo "all192  all 192 KB images"
@@ -584,6 +585,13 @@ firebee-prg: OPTFLAGS = $(STANDARD_OPTFLAGS)
 firebee-prg:
 	@echo "# Building FireBee $(EMUTOS_PRG)"
 	$(MAKE) COLDFIRE=1 CPUFLAGS='-mcpu=5474' DEF='-DMACHINE_FIREBEE' OPTFLAGS=$(OPTFLAGS) prg
+
+.PHONY: m548x-prg
+NODEP += m548x-prg
+m548x-prg: OPTFLAGS = $(STANDARD_OPTFLAGS)
+m548x-prg:
+	@echo "# Building m548x $(EMUTOS_PRG)"
+	$(MAKE) COLDFIRE=1 CPUFLAGS='-mcpu=5474' DEF='-DMACHINE_M548X -DCONF_WITH_BAS_MEMORY_MAP=1' OPTFLAGS=$(OPTFLAGS) prg
 
 SREC_M548X_DBUG = emutos-m548x-dbug.s19
 .PHONY: m548x-dbug
