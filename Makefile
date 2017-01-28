@@ -786,7 +786,7 @@ amigaflop:
 .PHONY: amigaflopvampire
 NODEP += amigaflopvampire
 amigaflopvampire: UNIQUE = $(COUNTRY)
-amigaflopvampire: override DEF += -DTARGET_AMIGA_FLOPPY_VAMPIRE $(AMIGA_DEFS)
+amigaflopvampire: override DEF += -DCONF_WITH_STATIC_ALT_RAM=1 $(AMIGA_DEFS)
 amigaflopvampire: CPUFLAGS = -m68040
 amigaflopvampire:
 	$(MAKE) CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' UNIQUE=$(UNIQUE) $(EMUTOS_ADF)
