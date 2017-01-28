@@ -353,22 +353,6 @@ cartover:
         rts
 #endif /* CONF_WITH_CARTRIDGE */
 
-/* ELF toolchain support */
-#ifdef ELF_TOOLCHAIN
-/* Our code is compiled with -fleading-underscore, so the references to
- * external libraries will include a leading underscore.
- * However, libgcc was not compiled with that option, so its symbols do not
- * start with a leading underscore.
- * So we need to define leading-underscore aliases
- * to the no-leading-underscore functions in libgcc.
- */
-        ELF_LIB_REF(__mulsi3)
-        ELF_LIB_REF(__divsi3)
-        ELF_LIB_REF(__udivsi3)
-        ELF_LIB_REF(__modsi3)
-        ELF_LIB_REF(__umodsi3)
-#endif
-
 // ===========================================================================
 // ==== Read-only data =======================================================
 // ===========================================================================

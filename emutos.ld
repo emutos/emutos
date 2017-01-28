@@ -181,3 +181,19 @@ SECTIONS
         *(.debug*)
     }
 }
+
+#ifdef ELF_TOOLCHAIN
+/* Our code is compiled with -fleading-underscore, so the references to external
+ * libraries will include a leading underscore. However, libgcc was not compiled
+ * with that option, so its symbols do not start with a leading underscore. So
+ * we need to define leading-underscore aliases to the no-leading-underscore
+ * functions in libgcc.
+ */
+#define DEFINE_SYMBOL_ALIAS(alias, impl) EXTERN(impl) PROVIDE(alias = impl);
+#define ELF_LIB_REF(symbol) DEFINE_SYMBOL_ALIAS(_##symbol, symbol)
+ELF_LIB_REF(__mulsi3)
+ELF_LIB_REF(__divsi3)
+ELF_LIB_REF(__modsi3)
+ELF_LIB_REF(__udivsi3)
+ELF_LIB_REF(__umodsi3)
+#endif

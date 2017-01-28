@@ -60,12 +60,6 @@
 
 #define ADDIWL_0_A0         .dc.l 0x06d00000        /* 68080 */
 
-/* ELF toolchain support */
-#ifdef ELF_TOOLCHAIN
-#define DEFINE_FUNCTION_ALIAS(alias, impl) .globl alias; alias:; jmp impl
-#define ELF_LIB_REF(f) DEFINE_FUNCTION_ALIAS(_##f, f)
-#endif
-
 /* Read-only data section */
 #ifdef ELF_TOOLCHAIN
 /* ELF objects have real support for .rodata */
