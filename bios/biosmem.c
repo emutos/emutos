@@ -28,31 +28,24 @@ static BOOL bmem_allowed;
  * bmem_init - initialize some memory related variables
  *
  * when TOS is in ROM, the ST RAM is used thus:
- *   0        400   end                         v_bas_ad   phystop
- *   +---------+-----+------------------------------+--------+
- *   | vectors | BSS | Transient Program Area (TPA) | screen |
- *   +---------+-----+------------------------------+--------+
+ *   0        400       800   end                         v_bas_ad   phystop
+ *   +---------+---------+-----+------------------------------+--------+
+ *   | vectors | sysvars | BSS | Transient Program Area (TPA) | screen |
+ *   +---------+---------+-----+------------------------------+--------+
  * when it is in RAM, the memory map is:
- *   0        400   end       _edata            v_bas_ad   phystop
- *   +---------+-----+-----------+------------------+--------+
- *   | vectors | BSS | TEXT+DATA |       TPA        | screen |
- *   +---------+-----+-----------+------------------+--------+
+ *   0        400       800        _edata end             v_bas_ad   phystop
+ *   +---------+---------+-----------+-----+------------------+--------+
+ *   | vectors | sysvars | TEXT+DATA | BSS |       TPA        | screen |
+ *   +---------+---------+-----------+-----+------------------+--------+
  *
  * variables and symbols:
- *   BYTE end[]      set by GNU LD: end of BSS
- *   BYTE _etext[]   set by GNU LD: end of TEXT segment
- *   BYTE _edata[]   set by GNU LD: end of DATA segment
- *   LONG end_os     TOS variable in 0x4fa: start of the TPA
+ *   BYTE _etext[]   set by emutos.ld: end of TEXT segment
+ *   BYTE _edata[]   set by emutos.ld: end of DATA segment
+ *   BYTE _bss[]     set by emutos.ld: end of BSS segment
+ *   LONG end_os     TOS variable in 0x4fa: end of OS static variables
  *   LONG membot     TOS variable in 0x432: bottom of TPA
  *   LONG memtop     TOS variable in 0x436: top of TPA
- *   LONG phystop    TOS variable in 0x43a: top of ST RAM
- *
- * For unknown reasons, it is reported that in the first RAM TOS membot
- * and end_os id have different values. Here in EmuTOS we will always
- * have:
- *   membot = end_os = start of TPA
- *   memtop = end of TPA
- *
+ *   LONG phystop    TOS variable in 0x43a: top of ST-RAM
  */
 void bmem_init(void)
 {
@@ -61,6 +54,8 @@ void bmem_init(void)
     KDEBUG(("       _etext = %p\n", _etext));
     KDEBUG(("        _data = %p\n", _data));
     KDEBUG(("       _edata = %p\n", _edata));
+    KDEBUG(("       stkbot = %p\n", stkbot));
+    KDEBUG(("       stktop = %p\n", stktop));
     KDEBUG(("         _bss = %p\n", _bss));
     KDEBUG(("   _endvdibss = %p\n", _endvdibss));
 #if WITH_AES
@@ -78,6 +73,11 @@ void bmem_init(void)
     /* The screen buffer will be allocated later */
     memtop = phystop;
     KDEBUG(("       memtop = %p\n", memtop));
+
+#if CONF_WITH_STATIC_ALT_RAM
+    KDEBUG(("_static_altram_start = %p\n", _static_altram_start));
+    KDEBUG(("  _static_altram_end = %p\n", _static_altram_end));
+#endif
 
 #if DBG_BALLOC
     bmem_allowed = TRUE;
