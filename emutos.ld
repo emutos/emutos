@@ -45,7 +45,7 @@ MEMORY
 {
     rom : ORIGIN = ROM_ORIGIN, LENGTH = ROM_LENGTH
     sysvars : ORIGIN = 0x00000000, LENGTH = 0x800
-    stram : ORIGIN = LENGTH(sysvars), LENGTH = 512K - LENGTH(sysvars)
+    stram : ORIGIN = LENGTH(sysvars), LENGTH = 1M - LENGTH(sysvars)
 #if CONF_WITH_STATIC_ALT_RAM
 # ifdef MACHINE_AMIGA
     //altram : ORIGIN = 0x40000000, LENGTH = 1M /* WinUAE */
