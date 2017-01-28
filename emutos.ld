@@ -26,17 +26,19 @@ OUTPUT_FORMAT(binary)
 /* The ROM address depends on the target */
 #if defined (MACHINE_AMIGA)
 # define ROM_ORIGIN 0x00fc0000
-# define ROM_LENGTH 256K
 #elif defined (TARGET_CART)
 # define ROM_ORIGIN 0x00fa0000
-# define ROM_LENGTH 128K
 #elif defined (TARGET_192)
 # define ROM_ORIGIN 0x00fc0000
-# define ROM_LENGTH 192K
 #else
 # define ROM_ORIGIN 0x00e00000
-# define ROM_LENGTH 1M /* Maximum size before I/O area */
 #endif
+
+/* Always assume there is a lot of ROM space, so the link will always succeed.
+ * Then our padding tool will eventually report an overflow, with a better
+ * diagnostic message than the linker.
+ */
+# define ROM_LENGTH 1M /* Maximum size before I/O area */
 
 /* Memory regions of a typical Atari computer.
  * Only start addresses matter. Lengths just need to be large enough.
