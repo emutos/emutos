@@ -360,6 +360,7 @@ help:
 	@echo "amiga   $(ROM_AMIGA), EmuTOS ROM for Amiga hardware"
 	@echo "amigakd $(AMIGA_KICKDISK), EmuTOS as Amiga 1000 Kickstart disk"
 	@echo "amigaflop $(EMUTOS_ADF), EmuTOS RAM as Amiga boot floppy"
+	@echo "amigaflopvampire $(EMUTOS_ADF), EmuTOS RAM as Amiga boot floppy optimized for Vampire V2"
 	@echo "m548x-dbug $(SREC_M548X_DBUG), EmuTOS-RAM for dBUG on ColdFire Evaluation Boards"
 	@echo "m548x-bas  $(SREC_M548X_BAS), EmuTOS for BaS_gcc on ColdFire Evaluation Boards"
 	@echo "m548x-prg  emutos.prg, a RAM tos for ColdFire Evaluation Boards with BaS_gcc"
