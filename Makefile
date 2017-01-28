@@ -125,6 +125,7 @@ INDENT = indent -kr
 LD = $(CC) $(MULTILIBFLAGS) -nostartfiles -nostdlib
 LIBS = -lgcc
 LDFLAGS = -Wl,-T,obj/emutospp.ld
+PCREL_LDFLAGS = -Wl,--oformat=binary,-Ttext=0,--entry=0
 
 # C compiler
 CC = $(TOOLCHAIN_PREFIX)gcc
@@ -733,7 +734,7 @@ $(EMUTOS_ST): mkflop bootsect.img emutos.img
 	./mkflop bootsect.img emutos.img $@
 
 bootsect.img : obj/bootsect.o obj/bootram.o
-	$(LD) $+ -Wl,--oformat=binary -o $@
+	$(LD) $+ $(PCREL_LDFLAGS) -o $@
 
 obj/bootsect.o: obj/ramtos.h
 
@@ -768,7 +769,7 @@ $(EMUTOS_ADF): amigaboot.img emutos.img mkrom
 	./mkrom amiga-floppy amigaboot.img emutos.img $@
 
 amigaboot.img: obj/amigaboot.o obj/bootram.o
-	$(LD) $+ -Wl,--oformat=binary -o $@
+	$(LD) $+ $(PCREL_LDFLAGS) -o $@
 
 obj/amigaboot.o: obj/ramtos.h
 
