@@ -438,8 +438,9 @@ ROM_192 = etos192$(UNIQUE).img
 NODEP += 192
 192: UNIQUE = $(COUNTRY)
 192: OPTFLAGS = $(SMALL_OPTFLAGS)
+192: override DEF += -DTARGET_192
 192:
-	$(MAKE) DEF='-DTARGET_192' OPTFLAGS=$(OPTFLAGS) WITH_CLI=0 UNIQUE=$(UNIQUE) ROM_192=$(ROM_192) $(ROM_192)
+	$(MAKE) DEF='$(DEF)' OPTFLAGS=$(OPTFLAGS) WITH_CLI=0 UNIQUE=$(UNIQUE) ROM_192=$(ROM_192) $(ROM_192)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS102))) bytes more than TOS 1.02)"
 
@@ -457,8 +458,9 @@ ROM_256 = etos256$(UNIQUE).img
 NODEP += 256
 256: UNIQUE = $(COUNTRY)
 256: OPTFLAGS = $(SMALL_OPTFLAGS)
+256: override DEF += -DTARGET_256
 256:
-	$(MAKE) DEF='-DTARGET_256' OPTFLAGS=$(OPTFLAGS) UNIQUE=$(UNIQUE) ROM_256=$(ROM_256) $(ROM_256)
+	$(MAKE) DEF='$(DEF)' OPTFLAGS=$(OPTFLAGS) UNIQUE=$(UNIQUE) ROM_256=$(ROM_256) $(ROM_256)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS162))) bytes more than TOS 1.62)"
 
@@ -474,7 +476,7 @@ ROM_512 = etos512k.img
 SYMFILE = $(addsuffix .sym,$(basename $(ROM_512)))
 
 .PHONY: 512
-512: DEF = -DTARGET_512
+512: override DEF += -DTARGET_512
 512: $(ROM_512) $(SYMFILE)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
@@ -494,9 +496,10 @@ ROM_ARANYM = emutos-aranym.img
 
 .PHONY: aranym
 NODEP += aranym
+aranym: override DEF += -DMACHINE_ARANYM
 aranym:
 	@echo "# Building ARAnyM EmuTOS into $(ROM_ARANYM)"
-	$(MAKE) CPUFLAGS='-m68040' DEF='-DMACHINE_ARANYM' ROM_512=$(ROM_ARANYM) $(ROM_ARANYM)
+	$(MAKE) CPUFLAGS='-m68040' DEF='$(DEF)' ROM_512=$(ROM_ARANYM) $(ROM_ARANYM)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 
@@ -510,9 +513,10 @@ ROM_CARTRIDGE = etoscart.img
 .PHONY: cart
 NODEP += cart
 cart: OPTFLAGS = $(SMALL_OPTFLAGS)
+cart: override DEF += -DTARGET_CART
 cart:
 	@echo "# Building Diagnostic Cartridge EmuTOS into $(ROM_CARTRIDGE)"
-	$(MAKE) OPTFLAGS=$(OPTFLAGS) DEF='-DTARGET_CART' UNIQUE=$(COUNTRY) WITH_AES=0 ROM_128=$(ROM_CARTRIDGE) $(ROM_CARTRIDGE)
+	$(MAKE) OPTFLAGS=$(OPTFLAGS) DEF='$(DEF)' UNIQUE=$(COUNTRY) WITH_AES=0 ROM_128=$(ROM_CARTRIDGE) $(ROM_CARTRIDGE)
 	./mkrom stc emutos.img emutos.stc
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS102))) bytes more than TOS 1.02)"
@@ -536,9 +540,10 @@ endif
 .PHONY: amiga
 NODEP += amiga
 amiga: UNIQUE = $(COUNTRY)
+amiga: override DEF += -DTARGET_AMIGA_ROM $(AMIGA_DEFS)
 amiga:
 	@echo "# Building Amiga EmuTOS into $(ROM_AMIGA)"
-	$(MAKE) DEF='-DTARGET_AMIGA_ROM $(AMIGA_DEFS)' UNIQUE=$(UNIQUE) $(ROM_AMIGA)
+	$(MAKE) DEF='$(DEF)' UNIQUE=$(UNIQUE) $(ROM_AMIGA)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS162))) bytes more than TOS 1.62)"
 
@@ -573,33 +578,37 @@ SREC_FIREBEE = emutosfb.s19
 
 .PHONY: firebee
 NODEP += firebee
+firebee: override DEF += -DMACHINE_FIREBEE
 firebee:
 	@echo "# Building FireBee EmuTOS into $(SREC_FIREBEE)"
-	$(MAKE) COLDFIRE=1 CPUFLAGS='-mcpu=5474' DEF='-DMACHINE_FIREBEE' LMA=0xe0600000 SRECFILE=$(SREC_FIREBEE) $(SREC_FIREBEE)
+	$(MAKE) COLDFIRE=1 CPUFLAGS='-mcpu=5474' DEF='$(DEF)' LMA=0xe0600000 SRECFILE=$(SREC_FIREBEE) $(SREC_FIREBEE)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 
 .PHONY: firebee-prg
 NODEP += firebee-prg
 firebee-prg: OPTFLAGS = $(STANDARD_OPTFLAGS)
+firebee-prg: override DEF += -DMACHINE_FIREBEE
 firebee-prg:
 	@echo "# Building FireBee $(EMUTOS_PRG)"
-	$(MAKE) COLDFIRE=1 CPUFLAGS='-mcpu=5474' DEF='-DMACHINE_FIREBEE' OPTFLAGS=$(OPTFLAGS) prg
+	$(MAKE) COLDFIRE=1 CPUFLAGS='-mcpu=5474' DEF='$(DEF)' OPTFLAGS=$(OPTFLAGS) prg
 
 .PHONY: m548x-prg
 NODEP += m548x-prg
 m548x-prg: OPTFLAGS = $(STANDARD_OPTFLAGS)
+m548x-prg: override DEF += -DMACHINE_M548X -DCONF_WITH_BAS_MEMORY_MAP=1
 m548x-prg:
 	@echo "# Building m548x $(EMUTOS_PRG)"
-	$(MAKE) COLDFIRE=1 CPUFLAGS='-mcpu=5474' DEF='-DMACHINE_M548X -DCONF_WITH_BAS_MEMORY_MAP=1' OPTFLAGS=$(OPTFLAGS) prg
+	$(MAKE) COLDFIRE=1 CPUFLAGS='-mcpu=5474' DEF='$(DEF)' OPTFLAGS=$(OPTFLAGS) prg
 
 SREC_M548X_DBUG = emutos-m548x-dbug.s19
 .PHONY: m548x-dbug
 NODEP += m548x-dbug
 m548x-dbug: UNIQUE = $(COUNTRY)
+m548x-dbug: override DEF += -DMACHINE_M548X
 m548x-dbug:
 	@echo "# Building M548x dBUG EmuTOS in $(SREC_M548X_DBUG)"
-	$(MAKE) COLDFIRE=1 DEF='-DMACHINE_M548X' UNIQUE=$(UNIQUE) LMA=0x00e00000 SRECFILE=$(SREC_M548X_DBUG) $(SREC_M548X_DBUG)
+	$(MAKE) COLDFIRE=1 DEF='$(DEF)' UNIQUE=$(UNIQUE) LMA=0x00e00000 SRECFILE=$(SREC_M548X_DBUG) $(SREC_M548X_DBUG)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 
@@ -607,9 +616,10 @@ SREC_M548X_BAS = emutos-m548x-bas.s19
 .PHONY: m548x-bas
 NODEP += m548x-bas
 m548x-bas: UNIQUE = $(COUNTRY)
+m548x-bas: override DEF += -DMACHINE_M548X -DCONF_WITH_BAS_MEMORY_MAP=1
 m548x-bas:
 	@echo "# Building M548x BaS_gcc EmuTOS in $(SREC_M548X_BAS)"
-	$(MAKE) COLDFIRE=1 DEF='-DMACHINE_M548X -DCONF_WITH_BAS_MEMORY_MAP=1' LMA=0xe0100000 UNIQUE=$(UNIQUE) SRECFILE=$(SREC_M548X_BAS) $(SREC_M548X_BAS)
+	$(MAKE) COLDFIRE=1 DEF='$(DEF)' LMA=0xe0100000 UNIQUE=$(UNIQUE) SRECFILE=$(SREC_M548X_BAS) $(SREC_M548X_BAS)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 
@@ -670,8 +680,9 @@ compr.img compr.map: $(COMPROBJ) obj/emutospp.ld Makefile
 # Compressed ROM: stub + ramtos
 .PHONY: etoscpr.img
 etoscpr.img: OPTFLAGS = $(SMALL_OPTFLAGS)
+etoscpr.img: override DEF += -DTARGET_COMPRESSED_ROM
 etoscpr.img: compr.img compr
-	$(MAKE) DEF='-DTARGET_COMPRESSED_ROM' OPTFLAGS=$(OPTFLAGS) UNIQUE=$(UNIQUE) emutos.img
+	$(MAKE) DEF='$(DEF)' OPTFLAGS=$(OPTFLAGS) UNIQUE=$(UNIQUE) emutos.img
 	./compr --rom compr.img emutos.img $@
 
 # 256k compressed ROM (intermediate target)
@@ -759,16 +770,18 @@ EMUTOS_ADF = emutos.adf
 .PHONY: amigaflop
 NODEP += amigaflop
 amigaflop: UNIQUE = $(COUNTRY)
+amigaflop: override DEF += -DTARGET_AMIGA_FLOPPY $(AMIGA_DEFS)
 amigaflop:
-	$(MAKE) DEF='-DTARGET_AMIGA_FLOPPY $(AMIGA_DEFS)' UNIQUE=$(UNIQUE) $(EMUTOS_ADF)
+	$(MAKE) DEF='$(DEF)' UNIQUE=$(UNIQUE) $(EMUTOS_ADF)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes"
 
 .PHONY: amigaflopvampire
 NODEP += amigaflopvampire
 amigaflopvampire: UNIQUE = $(COUNTRY)
+amigaflopvampire: override DEF += -DTARGET_AMIGA_FLOPPY_VAMPIRE $(AMIGA_DEFS)
 amigaflopvampire:
-	$(MAKE) CPUFLAGS='-m68040' DEF='-DTARGET_AMIGA_FLOPPY_VAMPIRE $(AMIGA_DEFS)' UNIQUE=$(UNIQUE) $(EMUTOS_ADF)
+	$(MAKE) CPUFLAGS='-m68040' DEF='$(DEF)' UNIQUE=$(UNIQUE) $(EMUTOS_ADF)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes"
 
