@@ -405,7 +405,7 @@ obj/emutospp.ld: emutos.ld include/config.h tosvars.ld
 TOCLEAN += *.img *.map
 
 emutos.img: $(OBJECTS) obj/emutospp.ld Makefile
-	$(LD) $(CORE_OBJ) $(LIBS) $(OPTIONAL_OBJ) $(LIBS) $(LDFLAGS) -Wl,-Map,emutos.map -o emutos.img
+	$(LD) $(CORE_OBJ) $(LIBS) $(OPTIONAL_OBJ) $(LIBS) $(LDFLAGS) -Wl,-Map=emutos.map -o emutos.img
 	@if [ $$(($$(awk '/^\.data /{print $$3}' emutos.map))) -gt 0 ]; then \
 	  echo "### Warning: The DATA segment is not empty."; \
 	  echo "### Please examine emutos.map and use \"const\" where appropriate."; \
@@ -656,7 +656,7 @@ obj/compr-comprimg.o: obj/ramtos.h
 compr.img compr.map: OPTFLAGS = $(SMALL_OPTFLAGS)
 compr.img compr.map: override DEF += -DTARGET_COMPR_STUB
 compr.img compr.map: $(COMPROBJ) obj/emutospp.ld Makefile
-	$(LD) $(COMPROBJ) $(LIBS) $(LDFLAGS) -Wl,-Map,compr.map -o compr.img
+	$(LD) $(COMPROBJ) $(LIBS) $(LDFLAGS) -Wl,-Map=compr.map -o compr.img
 
 # Compressed ROM: stub + ramtos
 .PHONY: etoscpr.img
@@ -733,7 +733,7 @@ $(EMUTOS_ST): mkflop bootsect.img emutos.img
 	./mkflop bootsect.img emutos.img $@
 
 bootsect.img : obj/bootsect.o obj/bootram.o
-	$(LD) $+ -Wl,--oformat,binary -o $@
+	$(LD) $+ -Wl,--oformat=binary -o $@
 
 obj/bootsect.o: obj/ramtos.h
 
@@ -768,7 +768,7 @@ $(EMUTOS_ADF): amigaboot.img emutos.img mkrom
 	./mkrom amiga-floppy amigaboot.img emutos.img $@
 
 amigaboot.img: obj/amigaboot.o obj/bootram.o
-	$(LD) $+ -Wl,--oformat,binary -o $@
+	$(LD) $+ -Wl,--oformat=binary -o $@
 
 obj/amigaboot.o: obj/ramtos.h
 
