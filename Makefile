@@ -779,19 +779,15 @@ NODEP += amigaflop
 amigaflop: UNIQUE = $(COUNTRY)
 amigaflop: override DEF += -DTARGET_AMIGA_FLOPPY $(AMIGA_DEFS)
 amigaflop:
-	$(MAKE) DEF='$(DEF)' UNIQUE=$(UNIQUE) $(EMUTOS_ADF)
+	$(MAKE) CPUFLAGS=$(CPUFLAGS) DEF='$(DEF)' UNIQUE=$(UNIQUE) $(EMUTOS_ADF)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes"
 
 .PHONY: amigaflopvampire
 NODEP += amigaflopvampire
-amigaflopvampire: UNIQUE = $(COUNTRY)
 amigaflopvampire: override DEF += -DCONF_WITH_STATIC_ALT_RAM=1 $(AMIGA_DEFS)
 amigaflopvampire: CPUFLAGS = -m68040
-amigaflopvampire:
-	$(MAKE) CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' UNIQUE=$(UNIQUE) $(EMUTOS_ADF)
-	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
-	echo "# RAM used: $$(($$MEMBOT)) bytes"
+amigaflopvampire: amigaflop
 
 $(EMUTOS_ADF): OPTFLAGS = $(SMALL_OPTFLAGS)
 $(EMUTOS_ADF): amigaboot.img emutos.img mkrom
