@@ -130,11 +130,7 @@ PCREL_LDFLAGS = -Wl,--oformat=binary,-Ttext=0,--entry=0
 # C compiler
 CC = $(TOOLCHAIN_PREFIX)gcc
 CPP = $(CC) -E
-ifeq (1,$(COLDFIRE))
-CPUFLAGS = -mcpu=5475
-else
 CPUFLAGS = -m68000
-endif
 MULTILIBFLAGS = $(CPUFLAGS) -mshort
 INC = -Iinclude
 OTHERFLAGS = -fomit-frame-pointer -fno-common
@@ -497,9 +493,10 @@ ROM_ARANYM = emutos-aranym.img
 .PHONY: aranym
 NODEP += aranym
 aranym: override DEF += -DMACHINE_ARANYM
+aranym: CPUFLAGS = -m68040
 aranym:
 	@echo "# Building ARAnyM EmuTOS into $(ROM_ARANYM)"
-	$(MAKE) CPUFLAGS='-m68040' DEF='$(DEF)' ROM_512=$(ROM_ARANYM) $(ROM_ARANYM)
+	$(MAKE) CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' ROM_512=$(ROM_ARANYM) $(ROM_ARANYM)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 
@@ -574,14 +571,16 @@ LMA = $(error LMA must be set)
 $(SRECFILE): emutos.img
 	$(OBJCOPY) -I binary -O srec --change-addresses $(LMA) $< $(SRECFILE)
 
+CPUFLAGS_FIREBEE = -mcpu=5474
 SREC_FIREBEE = emutosfb.s19
 
 .PHONY: firebee
 NODEP += firebee
 firebee: override DEF += -DMACHINE_FIREBEE
+firebee: CPUFLAGS = $(CPUFLAGS_FIREBEE)
 firebee:
 	@echo "# Building FireBee EmuTOS into $(SREC_FIREBEE)"
-	$(MAKE) COLDFIRE=1 CPUFLAGS='-mcpu=5474' DEF='$(DEF)' LMA=0xe0600000 SRECFILE=$(SREC_FIREBEE) $(SREC_FIREBEE)
+	$(MAKE) COLDFIRE=1 CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' LMA=0xe0600000 SRECFILE=$(SREC_FIREBEE) $(SREC_FIREBEE)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 
@@ -589,26 +588,31 @@ firebee:
 NODEP += firebee-prg
 firebee-prg: OPTFLAGS = $(STANDARD_OPTFLAGS)
 firebee-prg: override DEF += -DMACHINE_FIREBEE
+firebee-prg: CPUFLAGS = $(CPUFLAGS_FIREBEE)
 firebee-prg:
 	@echo "# Building FireBee $(EMUTOS_PRG)"
-	$(MAKE) COLDFIRE=1 CPUFLAGS='-mcpu=5474' DEF='$(DEF)' OPTFLAGS=$(OPTFLAGS) prg
+	$(MAKE) COLDFIRE=1 CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' OPTFLAGS=$(OPTFLAGS) prg
+
+CPUFLAGS_M548X = -mcpu=5475
 
 .PHONY: m548x-prg
 NODEP += m548x-prg
 m548x-prg: OPTFLAGS = $(STANDARD_OPTFLAGS)
 m548x-prg: override DEF += -DMACHINE_M548X -DCONF_WITH_BAS_MEMORY_MAP=1
+m548x-prg: CPUFLAGS = $(CPUFLAGS_M548X)
 m548x-prg:
 	@echo "# Building m548x $(EMUTOS_PRG)"
-	$(MAKE) COLDFIRE=1 CPUFLAGS='-mcpu=5474' DEF='$(DEF)' OPTFLAGS=$(OPTFLAGS) prg
+	$(MAKE) COLDFIRE=1 CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' OPTFLAGS=$(OPTFLAGS) prg
 
 SREC_M548X_DBUG = emutos-m548x-dbug.s19
 .PHONY: m548x-dbug
 NODEP += m548x-dbug
 m548x-dbug: UNIQUE = $(COUNTRY)
 m548x-dbug: override DEF += -DMACHINE_M548X
+m548x-dbug: CPUFLAGS = $(CPUFLAGS_M548X)
 m548x-dbug:
 	@echo "# Building M548x dBUG EmuTOS in $(SREC_M548X_DBUG)"
-	$(MAKE) COLDFIRE=1 DEF='$(DEF)' UNIQUE=$(UNIQUE) LMA=0x00e00000 SRECFILE=$(SREC_M548X_DBUG) $(SREC_M548X_DBUG)
+	$(MAKE) COLDFIRE=1 CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' UNIQUE=$(UNIQUE) LMA=0x00e00000 SRECFILE=$(SREC_M548X_DBUG) $(SREC_M548X_DBUG)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 
@@ -617,9 +621,10 @@ SREC_M548X_BAS = emutos-m548x-bas.s19
 NODEP += m548x-bas
 m548x-bas: UNIQUE = $(COUNTRY)
 m548x-bas: override DEF += -DMACHINE_M548X -DCONF_WITH_BAS_MEMORY_MAP=1
+m548x-bas: CPUFLAGS = $(CPUFLAGS_M548X)
 m548x-bas:
 	@echo "# Building M548x BaS_gcc EmuTOS in $(SREC_M548X_BAS)"
-	$(MAKE) COLDFIRE=1 DEF='$(DEF)' LMA=0xe0100000 UNIQUE=$(UNIQUE) SRECFILE=$(SREC_M548X_BAS) $(SREC_M548X_BAS)
+	$(MAKE) COLDFIRE=1 CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' UNIQUE=$(UNIQUE) LMA=0xe0100000 SRECFILE=$(SREC_M548X_BAS) $(SREC_M548X_BAS)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 
@@ -780,8 +785,9 @@ amigaflop:
 NODEP += amigaflopvampire
 amigaflopvampire: UNIQUE = $(COUNTRY)
 amigaflopvampire: override DEF += -DTARGET_AMIGA_FLOPPY_VAMPIRE $(AMIGA_DEFS)
+amigaflopvampire: CPUFLAGS = -m68040
 amigaflopvampire:
-	$(MAKE) CPUFLAGS='-m68040' DEF='$(DEF)' UNIQUE=$(UNIQUE) $(EMUTOS_ADF)
+	$(MAKE) CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' UNIQUE=$(UNIQUE) $(EMUTOS_ADF)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes"
 
