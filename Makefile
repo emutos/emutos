@@ -612,7 +612,7 @@ m548x-bas:
 
 obj/ramtos.h: emutos.map
 	@echo '# Generating $@'
-	@echo -en \
+	@printf \
 '/* Generated from $< */\n'\
 '#define ADR_TEXT $(call MAKE_SYMADDR,__text,$<)\n'\
 '#define ADR_ALTRAM_REGIONS $(call MAKE_SYMADDR,_altram_regions,$<)\n'\
