@@ -790,6 +790,13 @@ amigaflopvampire: override DEF += -DSTATIC_ALT_RAM_ADDRESS=0x08000000 $(AMIGA_DE
 amigaflopvampire: CPUFLAGS = -m68040
 amigaflopvampire: amigaflop
 
+# Convenient target to test amigaflopvampire on WinUAE
+.PHONY: amigaflopwinuae
+NODEP += amigaflopwinuae
+amigaflopwinuae: override DEF += -DSTATIC_ALT_RAM_ADDRESS=0x40000000 $(AMIGA_DEFS)
+amigaflopwinuae: CPUFLAGS = -m68040
+amigaflopwinuae: amigaflop
+
 $(EMUTOS_ADF): OPTFLAGS = $(SMALL_OPTFLAGS)
 $(EMUTOS_ADF): amigaboot.img emutos.img mkrom
 	./mkrom amiga-floppy amigaboot.img emutos.img $@
