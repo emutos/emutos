@@ -786,7 +786,7 @@ amigaflop:
 
 .PHONY: amigaflopvampire
 NODEP += amigaflopvampire
-amigaflopvampire: override DEF += -DCONF_WITH_STATIC_ALT_RAM=1 $(AMIGA_DEFS)
+amigaflopvampire: override DEF += -DSTATIC_ALT_RAM_ADDRESS=0x08000000 $(AMIGA_DEFS)
 amigaflopvampire: CPUFLAGS = -m68040
 amigaflopvampire: amigaflop
 

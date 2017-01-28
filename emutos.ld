@@ -48,13 +48,8 @@ MEMORY
     rom : ORIGIN = ROM_ORIGIN, LENGTH = ROM_LENGTH
     sysvars : ORIGIN = 0x00000000, LENGTH = 0x800
     stram : ORIGIN = LENGTH(sysvars), LENGTH = 1M - LENGTH(sysvars)
-#if CONF_WITH_STATIC_ALT_RAM
-# ifdef MACHINE_AMIGA
-    //altram : ORIGIN = 0x40000000, LENGTH = 1M /* WinUAE */
-    altram : ORIGIN = 0x08000000, LENGTH = 1M /* Vampire V2 */
-# else
-    altram : ORIGIN = 0x01000000, LENGTH = 1M
-# endif
+#ifdef STATIC_ALT_RAM_ADDRESS
+    altram : ORIGIN = STATIC_ALT_RAM_ADDRESS, LENGTH = 1M
 #endif
 }
 

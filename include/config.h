@@ -35,6 +35,16 @@
 #endif
 
 /*
+ * Determine if we use static Alt-RAM.
+ */
+#ifdef STATIC_ALT_RAM_ADDRESS
+# ifdef CONF_WITH_STATIC_ALT_RAM
+#  error CONF_WITH_STATIC_ALT_RAM must not be manually set. Define STATIC_ALT_RAM_ADDRESS instead.
+# endif
+# define CONF_WITH_STATIC_ALT_RAM 1
+#endif
+
+/*
  * Defaults for the ARAnyM target
  */
 #ifdef MACHINE_ARANYM
@@ -1368,6 +1378,12 @@
 #if !CONF_WITH_ALT_RAM
 # if CONF_WITH_STATIC_ALT_RAM
 #  error "CONF_WITH_STATIC_ALT_RAM requires CONF_WITH_ALT_RAM."
+# endif
+#endif
+
+#ifndef STATIC_ALT_RAM_ADDRESS
+# if CONF_WITH_STATIC_ALT_RAM
+#  error "CONF_WITH_STATIC_ALT_RAM requires STATIC_ALT_RAM_ADDRESS."
 # endif
 #endif
 
