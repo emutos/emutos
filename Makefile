@@ -394,7 +394,7 @@ version:
 
 TOCLEAN += obj/*.ld
 
-obj/emutospp.ld: emutos.ld tosvars.ld
+obj/emutospp.ld: emutos.ld include/config.h tosvars.ld
 	$(CPP) $(CPPFLAGS) -P -x c $< -o $@
 
 #
