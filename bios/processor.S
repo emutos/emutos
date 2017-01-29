@@ -317,18 +317,27 @@ init_cacr:
         bra.s   pi_done
 
 pi_chk040:
-        cmp.b   #40,_mcpu+3
-        bne.s   pi_done
+        move.l  #0x8000,d0      // set 040 CACR value: IE
+        cmpi.b  #40,_mcpu+3
+        beq.s   m68040
+        move.l  #0x808000,d0    // set 060 CACR value: EBC and EIC
+        cmpi.b  #60,_mcpu+3
+        beq.s   m68060
+        bra.s   pi_done
 
+m68040:
 #if CONF_WITH_68040_PMMU
         jsr     setup_68040_pmmu
-#else
-// On a 68040 only, clear the instruction cache then activate it;
-// the data cache remains disabled.
+        bra.s   pi_done
+#endif /* CONF_WITH_68040_PMMU */
+
+m68060:
+// On a 68040 (if we're not using the PMMU) or a 68060 (always, at the moment),
+// clear the instruction cache then activate it; on the 68060, we also enable
+// the branch cache.  The data cache remains disabled.
         nop
         CINVA_IC                // invalidate the instruction cache
         nop
-        move.l  #0x8000,d0
         MOVEC_D0_CACR           // enable instruction cache
 
         // Instruction Transparent Translation Registers (ITTRs):
@@ -347,7 +356,6 @@ pi_chk040:
         MOVEC_D0_DTT0           // set up DTTR0
         moveq.l #0,d0
         MOVEC_D0_DTT1           // and DTTR1
-#endif /* CONF_WITH_68040_PMMU */
 
 #endif /* __mcoldfire__ */
 
@@ -401,7 +409,11 @@ _invalidate_instruction_cache:
 
 ii_not30:
         cmp.b   #40,_mcpu+3
-        bne     ii_done
+        beq.s   ii_inval
+        cmpi.b  #60,_mcpu+3
+        bne.s   ii_done
+
+ii_inval:
         nop
         CINVA_IC                // invalidate the instruction cache
         nop

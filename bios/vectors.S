@@ -656,10 +656,13 @@ _int_priv:
         bra.s   pi_next
 
 pi_not30:
-        cmp.b   #40,_mcpu+3
-        bne     pi_next
+        cmpi.b  #40,_mcpu+3
+        beq.s   pi_inval
+        cmpi.b  #60,_mcpu+3
+        bne.s   pi_next
 
-        // 68040 only, invalidate the line holding the opcode only
+        // on 68040 and 68060, invalidate the line holding the opcode only
+pi_inval:
         nop
         CINVL_IC_A0                     // cinvl   ic,(a0)
         nop
