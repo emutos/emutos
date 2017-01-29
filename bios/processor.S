@@ -317,10 +317,10 @@ init_cacr:
         bra.s   pi_done
 
 pi_chk040:
-        move.l  #0x8000,d0      // set 040 CACR value: IE
+        move.l  #0x80008000,d1  // set 040 CACR value: DE and IE
         cmpi.b  #40,_mcpu+3
         beq.s   m68040
-        move.l  #0x808000,d0    // set 060 CACR value: EBC and EIC
+        move.l  #0x80808000,d1  // set 060 CACR value: EDC, EBC and EIC
         cmpi.b  #60,_mcpu+3
         beq.s   m68060
         bra.s   pi_done
@@ -332,30 +332,38 @@ m68040:
 #endif /* CONF_WITH_68040_PMMU */
 
 m68060:
-// On a 68040 (if we're not using the PMMU) or a 68060 (always, at the moment),
-// clear the instruction cache then activate it; on the 68060, we also enable
-// the branch cache.  The data cache remains disabled.
-        nop
-        CINVA_IC                // invalidate the instruction cache
-        nop
-        MOVEC_D0_CACR           // enable instruction cache
+//
+// On a 68040 (if not using the PMMU) or a 68060 (always, at the moment):
+//   disable the PMMU (it might be enabled if we're running as a PRG)
+//   set up the TTRs
+//   clear the caches
+//   enable the caches (on the 68060, we also enable the branch cache)
+//
+
+        moveq   #0,d0
+        MOVEC_D0_TC             // disable translation
 
         // Instruction Transparent Translation Registers (ITTRs):
-        // all addresses (bits 23-16), enabled (bit 15), both user and
-        // supervisor (bits 14-13), cachable+write-through (bits 6-5)
+        //  ITTR 0: all addresses, cachable/write-through, user & supervisor
+        //  ITTR 1: disabled
         move.l  #0x00ffe000,d0
         MOVEC_D0_ITT0           // set up ITTR 0
-        moveq.l #0,d0
+        moveq   #0,d0
         MOVEC_D0_ITT1           // and ITTR1
 
-        // The Transparent Translation Registers are setup (even if the cache
-        // and the MMU are disabled) to ensure serialized access ("Without
-        // serialization, the IU pipeline allows read accesses to occur
-        // before completion of a write-back for a previous instruction.")
-        move.l  #0x00ffe040,d0
+        // Data Transparent Translation Registers (DTTRs):
+        //  DTTR 0: all addresses, cache-inhibited/precise, supervisor mode
+        //  DTTR 1: all addresses, cache-enabled/write-through, user mode
+        move.l  #0x00ffa040,d0
         MOVEC_D0_DTT0           // set up DTTR0
-        moveq.l #0,d0
+        move.l  #0x00ff8000,d0
         MOVEC_D0_DTT1           // and DTTR1
+
+        nop
+        CINVA_BC                // invalidate the caches
+        nop
+        move.l  d1,d0           // recover the enable value
+        MOVEC_D0_CACR           // enable the caches
 
 #endif /* __mcoldfire__ */
 
@@ -443,10 +451,9 @@ _flush_data_cache:
 //
 // 68030 data caches are always write-through, so no action is necessary
 //
-// 68040 data caches are either write-through or copyback, depending on
-// how the system is set up.  at this time, the data TTRs are set up so
-// that the cache would be write-through if enabled; but in any case it
-// is disabled.  so no action is necessary.
+// 68040/68060 data caches are either write-through or copyback, depending
+// on how the system is set up.  at this time, the data TTRs are set up so
+// that the cache is write-through, so no action is necessary here either.
 //
 #endif
         rts
@@ -472,16 +479,17 @@ _invalidate_data_cache:
         MOVEC_CACR_D0                   // get current cacr
         ori.w   #0x0800,d0              // set CD bit
         MOVEC_D0_CACR                   // clear data cache
-        //bra.s   ic_done
+        bra.s   ic_done
 ic_not30:
-        //cmpi.b  #40,_mcpu+3
-        //bne.s   ic_done
-//
-// at this time, the data cache is disabled on 68040, so we have
-// nothing to do.  if the data cache is enabled in the future, we
-// should issue a "cinva dc" here.
-//
+        cmpi.b  #40,_mcpu+3
+        beq.s   ic_inval
+        cmpi.b  #60,_mcpu+3
+        bne.s   ic_done
 
+ic_inval:
+        nop
+        CINVA_DC                // invalidate the data cache
+        nop
 ic_done:
 #endif /* CONF_WITH_ADVANCED_CPU */
         rts
