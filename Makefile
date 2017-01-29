@@ -413,8 +413,6 @@ emutos.img: $(OBJECTS) obj/emutospp.ld Makefile
 " BSS=$(call SHELL_SYMADDR,__bss,emutos.map)"\
 " MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map)"
 
-emutos.map: emutos.img
-
 #
 # 128kB Image
 #
@@ -636,12 +634,12 @@ m548x-bas:
 # In this case, emutos.img needs to be loaded into RAM by some loader.
 #
 
-obj/ramtos.h: emutos.map
+obj/ramtos.h: emutos.img
 	@echo '# Generating $@'
 	@printf \
-'/* Generated from $< */\n'\
-'#define ADR_TEXT $(call MAKE_SYMADDR,__text,$<)\n'\
-'#define ADR_ALTRAM_REGIONS $(call MAKE_SYMADDR,_altram_regions,$<)\n'\
+'/* Generated from emutos.map */\n'\
+'#define ADR_TEXT $(call MAKE_SYMADDR,__text,emutos.map)\n'\
+'#define ADR_ALTRAM_REGIONS $(call MAKE_SYMADDR,_altram_regions,emutos.map)\n'\
 >$@
 
 #
@@ -1123,8 +1121,8 @@ show: dsm.txt
 
 TOCLEAN += *.sym
 
-%.sym: emutos.map tools/map2sym.sh
-	$(SHELL) tools/map2sym.sh $< >$@
+%.sym: emutos.img tools/map2sym.sh
+	$(SHELL) tools/map2sym.sh emutos.map >$@
 
 #
 # indent - indents the files except when there are warnings
