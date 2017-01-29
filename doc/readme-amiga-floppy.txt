@@ -3,6 +3,7 @@ EmuTOS - Amiga floppy version
 This EmuTOS version is a boot floppy for Amiga.
 
 emutos.adf - English Amiga boot floppy
+emutos-vampire.adf - Same floppy, optimized for Vampire V2 accelerators
 
 The following optional files are also supplied:
 emuicon.rsc - contains additional icons for the desktop
@@ -21,12 +22,10 @@ To be clear:
 AmigaOS is only used to load EmuTOS into RAM. Then EmuTOS completely takes
 over the machine, and AmigaOS is no more available until reboot.
 
-The (*) in the following lists indicates support disabled by default.
-See below for the details.
-
 Supported Amiga hardware features:
 - Any CPU from 68000 to 68060, including Apollo Core 68080
 - Chip RAM
+- FastRAM
 - Monochrome, interlaced 640x400 video mode
 - Keyboard
 - Mouse
@@ -43,25 +42,15 @@ Supported Atari features:
 - XBIOS hardware clock
 - ST floppy disks (only 9 sectors, 720 KB, read-only)
 
-Unsupported Amiga hardware features:
-- FastRAM (supported by EmuTOS ROM only) (*)
-
 Unsupported Atari features:
 - Color video modes
 - Sound
 
-This floppy image has been built using:
+Special features of emutos-vampire.adf:
+- Optimized for 68040 (best option for Apollo Core 68080)
+- EmuTOS itself runs in FastRAM, for best performance
+
+These floppy images have been built using:
 make amigaflop
-
-(*) This additional hardware support is provided by sources imported
-from the AROS project. Unfortunately, due to AROS and GPL licenses
-incompatibility, this support is disabled in the official EmuTOS
-binaries.
-
-You can enable full AROS support by rebuilding EmuTOS from sources using:
-make amigaflop AROS=1
-
-Personal usage of the resulting binary will be fully allowed.
-However, due to the licensing issue, redistribution of such binary
-is strictly forbidden.
+make amigaflopvampire
 
