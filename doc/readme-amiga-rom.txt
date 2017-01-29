@@ -72,3 +72,6 @@ Personal usage of the resulting binary will be fully allowed.
 However, due to the licensing issue, redistribution of such binary
 is strictly forbidden.
 
+Note: Alt-RAM support is available without AROS support with the EmuTOS floppy
+for Amiga. See the emutos-amiga-floppy-*.zip archive.
+
