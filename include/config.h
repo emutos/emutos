@@ -371,6 +371,9 @@
 # ifndef SDCLK_FREQUENCY_MHZ
 #  define SDCLK_FREQUENCY_MHZ 100UL
 # endif
+# ifndef CONF_WITH_ADVANCED_CPU
+#  define CONF_WITH_ADVANCED_CPU 0
+# endif
 # ifndef CONF_ATARI_HARDWARE
 #  define CONF_ATARI_HARDWARE 0
 # endif
