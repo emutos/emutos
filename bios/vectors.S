@@ -30,6 +30,9 @@
         .globl  _int_timerc
         .globl  _int_illegal
         .globl  _int_priv
+#if CONF_WITH_ADVANCED_CPU
+        .globl  _int_unimpint
+#endif
         .globl  _just_rts
         .globl  _just_rte
         .globl  _bell
@@ -117,6 +120,7 @@ set_uvec:
  */
 
 deflt_vec_table:
+buserr_vec:
         bsr.s   any_vec         // vector 2
         bsr.s   any_vec
 illg_vec:
@@ -178,6 +182,7 @@ priv_vec:
         bsr.s   any_vec
         bsr.s   any_vec
         bsr.s   any_vec         // vector 60
+unimp_vec:
         bsr.s   any_vec
         bsr.s   any_vec
         bsr.s   any_vec
@@ -677,6 +682,367 @@ pi_back:
         bra     priv_vec                // go directly to our panic handler
 
 #endif /* __mcoldfire__ */
+
+
+
+#if CONF_WITH_ADVANCED_CPU
+
+// ==== Trap 61 - unimplemented integer instruction entry point =============
+
+/*
+ * _int_unimpint - unimplemented integer instruction handler
+ *
+ * Only relevant for 68060s: certain instructions that were implemented
+ * in earlier processors are no longer implemented, but raise this exception
+ * instead.
+ *
+ * The only such instruction generally relevant for Atari systems is movep,
+ * and the following code emulates that instruction.  An interrupt for any
+ * of the other instructions in this category just raises a panic.
+ */
+
+/* defines for local stack usage */
+#define SIZE_VARS   72
+#define UI_VARS     -SIZE_VARS
+
+#define UI_OPWORD   UI_VARS+0       /* opcode */
+#define UI_EXTWORD  UI_VARS+2       /* extension word */
+                                    /* we have 4 bytes available here */
+#define UI_DREGS    UI_VARS+8       /* must be contiguous with UI_AREGS */
+#define UI_AREGS    UI_VARS+40      /* must end at the end of the local frame */
+
+#define UI_A6       UI_AREGS+(6*4)
+#define UI_A7       UI_AREGS+(7*4)
+
+#define UI_ISR      4               /* offsets to input exception frame after link */
+#define UI_IPC      6
+#define UI_IVOFF    10
+#define UI_FRMEND   12
+#define UI_F4_SR    -4              /* offsets to fields in faked fmt4 stack frame */
+#define UI_F4_PC    -2              /* (these overlap the above, so be careful!) */
+#define UI_F4_VOFF  2
+#define UI_F4_ADDR  4
+#define UI_F4_FSLW  8
+
+/*
+ * If the movep accesses an invalid memory address, we create a fake fmt4 exception
+ * frame so we report the error as an access error.  The fmt4 frame includes a Fault
+ * Status Long Word (FSLW).  The following values are returned by us (modified to
+ * 'Supervisor code' as appropriate).
+ */
+#define FSLW_WRITE  0x00A10001  /* Write, Byte access, Normal, User code, Software emulation */
+#define FSLW_READ   0x01210001  /* Read, Byte access, Normal, User code, Software emulation */
+
+_int_unimpint:
+        move.l  a0,-(sp)                    // save a0 temporarily
+        move.l  6(sp),a0                    // a0 -> instruction causing interrupt
+        btst.b  #0,(a0)                     // quick test for movep
+        movea.l (sp)+,a0                    // restore a0, sp (does not change cc)
+        beq     unimp_vec                   // not movep, go to panic handler
+        link    a6,#-SIZE_VARS              // reserve stack space
+        movem.l d0-d7/a0-a5,UI_DREGS(a6)    // save d0-d7, a0-a5
+        move.l  (a6),UI_A6(a6)              // save a6
+
+        /* get value of a7 that interrupted program saw */
+        btst    #5,UI_ISR(a6)               // supervisor mode?
+        bne.s   supmode                     // yes, branch
+        move    usp,a0
+        bra.s   save_a7
+
+supmode:
+        lea     UI_FRMEND(a6),a0
+
+save_a7:
+        move.l  a0,UI_A7(a6)                // save a7
+        movea.l UI_IPC(a6),a0               // a0 -> pc
+        move.l  (a0),d0                     // get instruction
+        move.l  d0,UI_OPWORD(a6)            // store instruction on stack
+        addq.l  #4,UI_IPC(a6)               // update pc to point to next instruction
+
+        bsr     emulate_movep
+
+        movem.l UI_DREGS(a6),d0-d7/a0-a5    // restore regs from stack
+                                            // note we can't have changed sp/usp
+        move.l  UI_A6(a6),(a6)
+        unlk    a6
+        rte
+
+/*
+ *  emulate_movep: emulate movep instruction
+ *
+ *  there are 4 cases:
+ *      movep.w Dx,(d,Ay)   register-to-memory word
+ *      movep.l Dx,(d,Ay)   register-to-memory long
+ *      movep.w (d,Ay),Dx   memory-to-register word
+ *      movep.l (d,Ay),Dx   memory-to-register long
+ */
+emulate_movep:
+        move.w  UI_OPWORD(a6),d1            // get opcode
+        move.b  d1,d0
+        andi.w  #0x0007,d0                  // isolate Ay index
+        lsl.w   #2,d0                       // convert to offset
+        movea.l UI_AREGS(a6,d0.w),a0        // retrieve Ay into a0
+        adda.w  UI_EXTWORD(a6),a0           // add displacement
+
+        btst    #7,d1                       // check for memory-to-register
+        beq     mem2reg
+
+        /* handle register-to-memory: fetch Dx, write to memory */
+
+        move.w  d1,d0
+        rol.w   #7,d0
+        andi.w  #0x0007,d0                  // isolate Dx index
+        lsl.w   #2,d0                       // convert to offset
+        move.l  UI_DREGS(a6,d0.w),d0        // retrieve Dx into d0
+        btst    #6,d1                       // word or long ?
+        beq.s   r2m_word                    // branch if word
+
+        /* handle register-to-memory long */
+
+        move.l  d0,d3                       // use d3 as data source
+        movea.l a0,a3                       // use a3 as address ptr
+        rol.l   #8,d3                       // write byte 0
+        move.l  d3,d0
+        bsr     movep_write_byte
+        tst.l   d1
+        bne     movep_write_err
+
+        addq.w  #2,a3                       // write byte 1
+        movea.l a3,a0
+        rol.l   #8,d3
+        move.l  d3,d0
+        bsr     movep_write_byte
+        tst.l   d1
+        bne.s   movep_write_err
+
+        addq.w  #2,a3                       // write byte 2
+        movea.l a3,a0
+        rol.l   #8,d3
+        move.l  d3,d0
+        bsr     movep_write_byte
+        tst.l   d1
+        bne.s   movep_write_err
+
+        addq.w  #2,a3                       // write byte 3
+        movea.l a3,a0
+        rol.l   #8,d3
+        move.l  d3,d0
+        bsr     movep_write_byte
+        tst.l   d1
+        bne.s   movep_write_err
+        rts
+
+        /* handle register-to-memory word */
+r2m_word:
+        move.l  d0,d3                       // use d3 as data source
+        movea.l a0,a3                       // use a3 as address ptr
+        lsr.w   #8,d0                       // write byte 0
+        bsr     movep_write_byte
+        tst.l   d1
+        bne.s   movep_write_err
+
+        addq.w  #2,a3                       // write byte 1
+        movea.l a3,a0
+        move.l  d3,d0
+        bsr     movep_write_byte
+        tst.l   d1
+        bne.s   movep_write_err
+        rts
+
+/*
+ * write byte in d0 to memory pointed to by a0
+ *
+ * if accessible, d1 = 0
+ * if inaccessible, d1 = 1
+ *
+ * clobbers a1, a2, d1, d2
+ */
+movep_write_byte:
+        btst    #5,UI_ISR(a6)               // supervisor mode?
+        bne.s   mwb_sup                     // yes, branch
+        bsr     movep_check_prot            // check for protected areas in user mode
+        tst.l   d1
+        bne     mwb_exit
+mwb_sup:
+        move.l  sp,d2                       // save sp in d2
+        move.l  (8).w,a2                    // old bus error vector in a2
+        lea     mwb_berr.w(pc),a1
+        move.l  a1,(8).w                    // update bus error vector
+        moveq   #1,d1                       // set error flag
+
+        nop                                 // flush pipeline
+        move.b   d0,(a0)                    // write byte
+        nop                                 // flush pipeline
+
+        moveq   #0,d1                       // clear error flag
+mwb_berr:
+        move.l  a2,(8).w                    // restore saved values
+        move.l  d2,sp
+mwb_exit:
+        rts
+
+movep_write_err:
+        move.l  a3,a0
+        move.l  #FSLW_WRITE,d0
+        bra     movep_err_exit
+
+/*
+ * handle memory-to-register: read memory, accumulate in Dx */
+ */
+mem2reg:
+        btst    #6,d1                       // word or long?
+        beq.s   m2r_word                    // branch if word
+
+        /* handle memory-to-register long */
+
+        movea.l a0,a3                       // use a3 as address ptr
+        bsr     movep_read_byte             // read byte 0
+        tst.l   d1
+        bne     movep_read_err
+        move.l  d0,d3                       // use d3 to accumulate register
+
+        addq.w  #2,a3                       // read byte 1
+        movea.l a3,a0
+        bsr     movep_read_byte
+        tst.l   d1
+        bne     movep_read_err
+        lsl.w   #8,d3
+        move.b  d0,d3
+
+        addq.w  #2,a3                       // read byte 2
+        movea.l a3,a0
+        bsr     movep_read_byte
+        tst.l   d1
+        bne     movep_read_err
+        lsl.l   #8,d3
+        move.b  d0,d3
+
+        addq.w  #2,a3                       // read byte 3
+        movea.l a3,a0
+        bsr     movep_read_byte
+        tst.l   d1
+        bne.s   movep_read_err
+        lsl.l   #8,d3
+        move.b  d0,d3
+
+        move.b  UI_OPWORD(a6),d0
+        lsr.b   #1,d0
+        andi.w  #0x0007,d0                  // isolate Dx index
+        lsl.w   #2,d0                       // convert to offset
+        move.l  d3,UI_DREGS(a6,d0.w)        // and update Dx
+        rts
+
+        /* handle memory-to-register word */
+m2r_word:
+        movea.l a0,a3                       // use a3 as address ptr
+        bsr     movep_read_byte             // read byte 0
+        tst.l   d1
+        bne.s   movep_read_err
+        move.l  d0,d3                       // use d3 to accumulate register
+
+        addq.w  #2,a3                       // read byte 1
+        movea.l a3,a0
+        bsr     movep_read_byte
+        tst.l   d1
+        bne.s   movep_read_err
+        lsl.w   #8,d3
+        move.b  d0,d3
+
+        move.b  UI_OPWORD(a6),d0
+        lsr.b   #1,d0
+        andi.w  #0x0007,d0                  // isolate Dx index
+        lsl.w   #2,d0                       // convert to offset
+        move.w  d3,UI_DREGS+2(a6,d0.w)      // and update Dx.w
+        rts
+
+/*
+ * read byte pointed to by a0
+ *
+ * if accessible, d1 = 0, value in d0
+ * if inaccessible, d1 = 1
+ *
+ * clobbers a1, a2, d1, d2
+ */
+movep_read_byte:
+        btst    #5,UI_ISR(a6)               // supervisor mode?
+        bne.s   mrb_sup                     // yes, branch
+        bsr     movep_check_prot            // check for protected areas in user mode
+        tst.l   d1
+        bne.s   mrb_exit
+mrb_sup:
+        move.l  sp,d2                       // save sp in d2
+        move.l  (8).w,a2                    // old bus error vector in a2
+        lea     mrb_berr.w(pc),a1
+        move.l  a1,(8).w                    // update bus error vector
+        moveq   #1,d1                       // set error flag
+
+        nop                                 // flush pipeline
+        move.b   (a0),d0                    // read byte
+        nop                                 // flush pipeline
+
+        moveq   #0,d1                       // clear error flag
+mrb_berr:
+        move.l  a2,(8).w                    // restore saved values
+        move.l  d2,sp
+mrb_exit:
+        rts
+
+/* handle read error */
+movep_read_err:
+        move.l  a3,a0
+        move.l  #FSLW_READ,d0
+                                            // drop through
+/*
+ * exit for read/write errors
+ *
+ * a0 = fault address
+ * d0 = FSLW
+ *
+ * we move fields around so that we end up with a format 4 exception frame
+ * on the stack, starting 8 bytes lower than the original format 0 frame
+ */
+movep_err_exit:
+        /* convert the fmt0 exception frame to a fmt4 */
+        move.w  UI_ISR(a6),UI_F4_SR(a6)
+        move.l  UI_IPC(a6),UI_F4_PC(a6)
+        move.w  #0x4008,UI_F4_VOFF(a6)
+        move.l  a0,UI_F4_ADDR(a6)
+        move.l  d0,UI_F4_FSLW(a6)
+        btst.b  #5,UI_F4_SR(a6)             // supervisor mode?
+        beq.s   mee_restore                 // no, branch
+        bset.b  #2,UI_F4_FSLW+1(a6)         // set TM2 bit (Supervisor code) in FSLW
+mee_restore:
+        lea     UI_DREGS(a6),sp
+        movem.l (sp)+,d0-d7/a0-a6           // restore d0-d7, a0-a6
+                                            // (end up with sp correct)
+        bra     buserr_vec                  // & pretend we got a standard bus error
+
+/*
+ * check if trying to access a protected area in user mode
+ *
+ * a0 -> area to access
+ *
+ * if ok, returns d1 = 0
+ * if not allowed, returns d1 = 1
+ */
+movep_check_prot:
+        cmpa.l  #0x800,a0                   // $0-$7ff is protected
+        bcs.b   mcp_err
+        cmpa.l  #0x00f00000,a0              // $800-$efffff is not protected
+        bcs.b   mcp_ok
+        cmpa.l  #0x01000000,a0              // $f00000-$ffffff is protected
+        bcs.b   mcp_err
+        cmpa.l  #0xff000000,a0              // $1000000-$feffffff is not protected
+        bcs.b   mcp_ok
+                                            // $ff000000-$ffffffff is protected
+mcp_err:
+        moveq.l #1,d1                       // set error flag
+        rts
+mcp_ok:
+        moveq.l #0,d1                       // clear error flag
+        rts
+
+#endif  /* CONF_WITH_ADVANCED_CPU */
 
 
 // ==== Trap 13 - BIOS entry point ==========================================

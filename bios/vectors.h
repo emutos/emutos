@@ -49,6 +49,7 @@ long check_read_byte(long);
 extern LONG default_etv_critic(WORD err,WORD dev);
 extern void int_illegal(void);
 extern void int_priv(void);
+extern void int_unimpint(void);
 
 extern WORD trap_save_area[];
 
@@ -68,6 +69,7 @@ extern WORD trap_save_area[];
 #define VEC_TRAP2   (*(volatile PFVOID*)0x88) /* TRAP #2 exception vector */
 #define VEC_TRAP13  (*(volatile PFVOID*)0xb4) /* TRAP #13 exception vector */
 #define VEC_TRAP14  (*(volatile PFVOID*)0xb8) /* TRAP #14 exception vector */
+#define VEC_UNIMPINT (*(volatile PFVOID*)0xf4) /* unimplemented integer instruction exception vector */
 
 /* MFP interrupt vectors */
 #define VEC_MFP6   (*(volatile PFVOID*)0x118) /* MFP level 6 interrupt vector */

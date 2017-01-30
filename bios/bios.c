@@ -175,6 +175,15 @@ static void vecs_init(void)
         VEC_ILLEGAL = int_illegal;
     }
 #endif
+#if CONF_WITH_ADVANCED_CPU
+    /* On the 68060, instructions that were implemented in earlier
+     * processors but not in the 68060 cause this trap to be taken,
+     * for the purposes of emulation. The only instruction currently
+     * emulated is movep; fortunately this is both the simplest and
+     * commonest.
+     */
+    VEC_UNIMPINT = int_unimpint;
+#endif
 }
 
 
