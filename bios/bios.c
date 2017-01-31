@@ -215,7 +215,7 @@ static void bios_init(void)
     KDEBUG(("processor_init()\n"));
     processor_init();   /* Set CPU type, longframe and FPU type */
 
-#if CONF_WITH_ADVANCED_CPU && !defined(__mcoldfire__)
+#if CONF_WITH_ADVANCED_CPU
     is_bus32 = (UBYTE)detect_32bit_address_bus();
 #endif
     KDEBUG(("Address Bus width is %d-bit\n", IS_BUS32 ? 32 : 24));

@@ -93,9 +93,6 @@
 # ifndef SDCLK_FREQUENCY_MHZ
 #  define SDCLK_FREQUENCY_MHZ 132UL
 # endif
-# ifndef CONF_WITH_ADVANCED_CPU
-#  define CONF_WITH_ADVANCED_CPU 0
-# endif
 # ifndef CONF_WITH_TT_MMU
 #  define CONF_WITH_TT_MMU 0
 # endif
@@ -371,9 +368,6 @@
 # ifndef SDCLK_FREQUENCY_MHZ
 #  define SDCLK_FREQUENCY_MHZ 100UL
 # endif
-# ifndef CONF_WITH_ADVANCED_CPU
-#  define CONF_WITH_ADVANCED_CPU 0
-# endif
 # ifndef CONF_ATARI_HARDWARE
 #  define CONF_ATARI_HARDWARE 0
 # endif
@@ -580,7 +574,11 @@
  * Set CONF_WITH_ADVANCED_CPU to 1 to enable support for 68010-68060
  */
 #ifndef CONF_WITH_ADVANCED_CPU
-# define CONF_WITH_ADVANCED_CPU 1
+# ifdef __mcoldfire__
+#  define CONF_WITH_ADVANCED_CPU 0
+# else
+#  define CONF_WITH_ADVANCED_CPU 1
+# endif
 #endif
 
 /*

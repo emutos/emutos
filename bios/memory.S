@@ -20,7 +20,7 @@
 // ==== Definitions ==========================================================
 
         .globl  meminit                 // memory initialization
-#if CONF_WITH_ADVANCED_CPU && !defined(__mcoldfire__)
+#if CONF_WITH_ADVANCED_CPU
         .globl  _detect_32bit_address_bus
 #endif
 
@@ -648,7 +648,7 @@ call_bzero_a0_a1:
         addq.l  #8,sp
         rts
 
-#if CONF_WITH_ADVANCED_CPU && !defined(__mcoldfire__)
+#if CONF_WITH_ADVANCED_CPU
 
 // Detect 32-bit address bus
 // Returns:
