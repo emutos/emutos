@@ -283,8 +283,7 @@ void xmfremd(MD *md)
  * the os memory pool.
  *
  * If we cannot get memory for an MDBLOCK, we return NULL (the request
- * will fail).  Otherwise we will attempt to free up DNDs to make space
- * and if that fails, the system will be halted.
+ * will fail).  Otherwise the system will be halted.
  *
  * Arguments:
  *  memtype: the type of request
@@ -305,51 +304,31 @@ void *xmgetblk(WORD memtype)
     i = 4;                          /* always from root[4] */
     w = 32;                         /* number of words */
 
-    /*
-     * we should execute the following loop a maximum of twice: the second
-     * time only if we're allocating a DMD/DND/OFD & no memory is available
-     */
-    for (j = 0; ; j++)
+    if ( *(r = &root[i]) )          /* there is an item on the free list */
     {
-        if ( *(r = &root[i]) )      /* there is an item on the free list */
-        {
-            m = *r;                 /* get first item on list   */
-            *r = *((WORD **) m);    /* root points to next item */
-            break;
-        }
+        m = *r;                     /* get first item on list   */
+        *r = *((WORD **) m);        /* root points to next item */
+    }
+    else if ( (m = getosm(w+1)) )   /* nothing on free list, try pool */
+    {                               /* (include size of control word) */
+        *m++ = i;                   /* put size in control word */
+    }
 
-        /* nothing on free list, try pool */
-        if ( (m = getosm(w+1)) )    /* include size of control word */
-        {
-            *m++ = i;               /* put size in control word */
-            break;
-        }
-
-        /* no memory available for an MDBLOCK, that's (sort of) OK */
-        if (memtype == MEMTYPE_MDBLOCK)
-            break;
-
-        /*
-         * no memory for DMD/DND/OFD, try to get some
-         *
-         * note defensive programming: if free_available_dnds() said it
-         * worked, but we're here again, then it lied and we should quit
-         * to avoid an infinite loop
-         */
-        if ((j >= 2) || (free_available_dnds() == 0))
+    if (!m)                         /* out of osmem */
+    {
+        if (memtype != MEMTYPE_MDBLOCK) /* no memory for DMD/DND/OFD, give up */
         {
             kcprintf(_("\033EOut of internal memory.\nUse FOLDR100.PRG to get more.\nSystem halted!\n"));
-            halt();                         /*  halt system                  */
+            halt();                     /*  halt system */
         }
+        return NULL;                /* Malloc() etc will fail */
     }
 
     /*
      *  zero out the block
      */
-
-    if ( (q = m) )
-        for (j = 0; j < w; j++)
-            *q++ = 0;
+    for (j = 0, q = m; j < w; j++)
+        *q++ = 0;
 
     return m;
 }
