@@ -67,10 +67,16 @@ void true_closewnd(WNODE *pw)
     wind_get_grect(pw->w_id,WF_WXYWH, &rc);
     wind_close(pw->w_id);
 
-    icx = G.g_screen[pw->w_obid].ob_x;
-    icy = G.g_screen[pw->w_obid].ob_y;
-    graf_shrinkbox(icx, icy, G.g_wicon, G.g_hicon,
-                    rc.g_x, rc.g_y, rc.g_w, rc.g_h);
+    /*
+     * only do the shrinkbox effect if there is a matching icon
+     */
+    if (pw->w_obid > 0)
+    {
+        icx = G.g_screen[pw->w_obid].ob_x;
+        icy = G.g_screen[pw->w_obid].ob_y;
+        graf_shrinkbox(icx, icy, G.g_wicon, G.g_hicon,
+                        rc.g_x, rc.g_y, rc.g_w, rc.g_h);
+    }
 
     pn_close(pw->w_path);
     win_free(pw);

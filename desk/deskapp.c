@@ -745,9 +745,8 @@ void app_start(void)
                 pcurr = scan_2(pcurr, &pws->h_save);
                 pws->h_save *= gl_hchar;
 /* */
-                pcurr = scan_2(pcurr, &pws->obid_save);
+                pcurr += 4;             /* skip no-longer-used field */
                 ptmp = pws->pth_save;
-                pcurr++;
                 while(*pcurr != '@')
                     *ptmp++ = *pcurr++;
                 *ptmp = '\0';
@@ -976,7 +975,7 @@ void app_save(WORD todisk)
         pcurr += sprintf(pcurr,"#W %02X %02X %02X %02X %02X %02X %02X",
                         0,pws->vsl_save,pws->x_save/gl_wchar,
                         pws->y_save/gl_hchar,pws->w_save/gl_wchar,
-                        pws->h_save/gl_hchar,pws->obid_save);
+                        pws->h_save/gl_hchar,0);
         pcurr += sprintf(pcurr," %s@\r\n",(*ptmp!='@')?ptmp:"");
     }
 

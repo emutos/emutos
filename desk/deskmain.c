@@ -52,6 +52,7 @@
 #include "deskfun.h"
 #include "deskpro.h"
 #include "deskact.h"
+#include "deskobj.h"
 #include "desk1.h"
 #include "deskrez.h"
 #include "kprint.h"
@@ -1029,7 +1030,6 @@ static void cnx_put(void)
 
     for (i = 0, pws = &G.g_cnxsave.cs_wnode[NUM_WNODES-1]; i < unused; i++, pws--)
     {
-        pws->obid_save = 0;
         pws->pth_save[0] = 0;
     }
 
@@ -1044,7 +1044,6 @@ static void cnx_put(void)
         wind_get(pw->w_id,WF_CXYWH,&pws->x_save,&pws->y_save,&pws->w_save,&pws->h_save);
         do_xyfix(&pws->x_save,&pws->y_save);
         pws->vsl_save  = pw->w_cvrow;
-        pws->obid_save = pw->w_obid;
         strcpy(pws->pth_save,pw->w_path->p_spec);
         pws--;
     }
@@ -1099,11 +1098,13 @@ static void cnx_get(void)
 
         if (pws->pth_save[0])
         {
-            if ((pw = win_alloc(pws->obid_save)))
+            WORD obid = obj_get_obid(pws->pth_save[0]);
+
+            if ((pw = win_alloc(obid)))
             {
                 pw->w_cvrow = pws->vsl_save;
                 do_xyfix(&pws->x_save, &pws->y_save);
-                if (!do_diropen(pw, TRUE, pws->obid_save, pws->pth_save, (GRECT *)pws, TRUE))
+                if (!do_diropen(pw, TRUE, obid, pws->pth_save, (GRECT *)pws, TRUE))
                     win_free(pw);
             }
         }

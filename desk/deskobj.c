@@ -238,3 +238,24 @@ WORD obj_ialloc(WORD wparent, WORD x, WORD y, WORD w, WORD h)
 
     return 0;
 }
+
+
+/*
+ *  Return the object number of the icon on the desktop corresponding
+ *  to the specified drive.
+ *
+ *  Returns 0 if no match
+ */
+WORD obj_get_obid(WORD drive)
+{
+    WORD objnum;
+
+    for (objnum = G.g_screen[DROOT].ob_head; objnum >= 0; objnum = G.g_screen[objnum].ob_next)
+    {
+        if (G.g_screen[objnum].ob_type == G_ICON)
+            if (LOBYTE(G.g_screeninfo[objnum].icon.block.ib_char) == drive)
+                return objnum;
+    }
+
+    return 0;
+}

@@ -50,6 +50,7 @@
 #include "deskdir.h"
 #include "desksupp.h"
 #include "deskins.h"
+#include "deskobj.h"
 #include "nls.h"
 #include "scancode.h"
 #include "../bios/machine.h"
@@ -220,7 +221,7 @@ void do_xyfix(WORD *px, WORD *py)
 /*
  * open a window, normally corresponding to a disk drive icon on the desktop
  *
- * if curr < 0, there is no corresponding screen object, so we do not
+ * if curr == 0, there is no corresponding screen object, so we do not
  * do the zoom effect & we do not try to reset the object state
  */
 void do_wopen(WORD new_win, WORD wh, WORD curr, WORD x, WORD y, WORD w, WORD h)
@@ -230,12 +231,10 @@ void do_wopen(WORD new_win, WORD wh, WORD curr, WORD x, WORD y, WORD w, WORD h)
 
     do_xyfix(&x, &y);
 
-    if (curr >= 0)
+    if (curr > 0)
     {
         get_xywh(G.g_screen, G.g_croot, &c.g_x, &c.g_y, &c.g_w, &c.g_h);
         get_xywh(G.g_screen, curr, &d.g_x, &d.g_y, &d.g_w, &d.g_h);
-        d.g_x += c.g_x;
-        d.g_y += c.g_y;
         graf_growbox(d.g_x, d.g_y, d.g_w, d.g_h, x, y, w, h);
         act_chg(G.g_cwin, G.g_screen, G.g_croot, curr, &c, SELECTED, FALSE, TRUE, TRUE);
     }
@@ -323,13 +322,10 @@ WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon,
     wind_set(pw->w_id, WF_INFO, pw->w_info, 0, 0);
 
     /* do actual wind_open  */
-    if (curr_icon)
-    {
-        do_wopen(new_win, pw->w_id, curr_icon,
-                    pt->g_x, pt->g_y, pt->g_w, pt->g_h);
-        if (new_win)
-            win_top(pw);
-    }
+    do_wopen(new_win, pw->w_id, curr_icon,
+                pt->g_x, pt->g_y, pt->g_w, pt->g_h);
+    if (new_win)
+        win_top(pw);
 
     /*
      * verify contents of window's object list
@@ -702,7 +698,11 @@ WORD do_dopen(WORD curr)
         pib = (ICONBLK *) get_iconblk_ptr(G.g_screen, curr);
         drv = pib->ib_char & 0x00ff;
     }
-    else drv = -curr;
+    else
+    {
+        drv = -curr;
+        curr = obj_get_obid(drv);
+    }
 
     pw = win_alloc(curr);
     if (pw)

@@ -104,7 +104,6 @@ typedef struct
     WORD w_save;
     WORD h_save;
     WORD vsl_save;              /* vertical slider position */
-    WORD obid_save;             /* currently-selected object */
     BYTE pth_save[LEN_ZPATH];
 } WSAVE;
 
