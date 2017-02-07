@@ -410,6 +410,8 @@ emutos.img: $(OBJECTS) obj/emutospp.ld Makefile
 	  echo "### Please examine emutos.map and use \"const\" where appropriate."; \
 	fi
 	@echo "# TEXT=$(call SHELL_SYMADDR,__text,emutos.map)"\
+" LOWSTRAM=$(call SHELL_SYMADDR,__low_stram_start,emutos.map)"\
+" STKBOT=$(call SHELL_SYMADDR,_stkbot,emutos.map)"\
 " BSS=$(call SHELL_SYMADDR,__bss,emutos.map)"\
 " MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map)"
 

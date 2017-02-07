@@ -81,6 +81,8 @@ SECTIONS
      */
     .lowstram :
     {
+        __low_stram_start = .;
+
         /* Workaround for bug in GFA Basic 3.51 startup.
          * Theoretically, we are allowed to put the shifty variable anywhere,
          * then programs may access it through the pointer present in
@@ -97,6 +99,8 @@ SECTIONS
 
         /* Be sure to align this section size */
         . = ALIGN(4);
+
+        __low_stram_end = .;
     } >stram
 
 #if CONF_WITH_STATIC_ALT_RAM
