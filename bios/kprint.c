@@ -540,6 +540,7 @@ void dopanic(const char *fmt, ...)
         bconin2();
     cprintf(_("\n*** Press any key to continue ***"));
     bconin2();
+    cprintf("\n");
 
     savptr = (LONG) trap_save_area; /* in case running program has altered it */
 
