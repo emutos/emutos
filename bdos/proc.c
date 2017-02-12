@@ -43,7 +43,7 @@ static WORD envsize( char *env );
 static void init_pd_fields(PD *p, char *tail, long max, char *envptr);
 static void init_pd_files(PD *p);
 static MD *alloc_env(char *v);
-static MD *alloc_tpa(ULONG flags,LONG needed,LONG *avail);
+static UBYTE *alloc_tpa(ULONG flags,LONG needed,LONG *avail);
 static void proc_go(PD *p);
 
 /*
@@ -211,14 +211,13 @@ static WORD envsize(char *env)
  * variable `foo' might be clobbered by `longjmp' or `vfork'
  */
 static PD *cur_p;
-static MD *cur_m;
 static MD *cur_env_md;
 
 long xexec(WORD flag, char *path, char *tail, char *env)
 {
     PD *p;
     PGMHDR01 hdr;
-    MD *m, *env_md;
+    MD *env_md;
     LONG rc;
     long max, needed;
     FH fh;
@@ -253,15 +252,13 @@ long xexec(WORD flag, char *path, char *tail, char *env)
             KDEBUG(("BDOS xexec: not enough memory!\n"));
             return ENSMEM;
         }
-        m = alloc_tpa((ULONG)path,sizeof(PD),&max);
+        p = (PD *)alloc_tpa((ULONG)path,sizeof(PD),&max);
 
-        if (m == NULL) {    /* not even enough memory for basepage */
+        if (p == NULL) {    /* not even enough memory for basepage */
             freeit(env_md, &pmd);
             KDEBUG(("BDOS xexec: No memory for basepage\n"));
             return ENSMEM;
         }
-
-        p = (PD *) m->m_start;
 
         /* memory ownership */
         set_owner(p, run);
@@ -317,16 +314,14 @@ long xexec(WORD flag, char *path, char *tail, char *env)
 
     /* allocate the basepage depending on memory policy */
     needed = hdr.h01_tlen + hdr.h01_dlen + hdr.h01_blen + sizeof(PD);
-    m = alloc_tpa(hdr.h01_flags,needed,&max);
+    p = (PD *)alloc_tpa(hdr.h01_flags,needed,&max);
 
     /* if failed, free env_md and return */
-    if (m == NULL) {
+    if (p == NULL) {
         KDEBUG(("BDOS xexec: no memory for TPA\n"));
         freeit(env_md, &pmd);
         return ENSMEM;
     }
-
-    p = (PD *) m->m_start;
 
     /* memory ownership - the owner is either the new process being created,
      * or the parent
@@ -347,7 +342,6 @@ long xexec(WORD flag, char *path, char *tail, char *env)
 
     /* use static variable to avoid the obscure longjmp warning */
     cur_p = p;
-    cur_m = m;
     cur_env_md = env_md;
 
     /* we have now allocated memory, so we need to intercept longjmp. */
@@ -358,7 +352,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
 
         /* free any memory allocated yet */
         freeit(cur_env_md, &pmd);
-        freeit(cur_m, find_mpb(cur_m->m_start));
+        xmfree(cur_p);
 
         /* we still have to jump back to bdosmain.c so that the proper error
          * handling can occur.
@@ -372,7 +366,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
         KDEBUG(("BDOS xexec: kpgmld returned %ld (0x%lx)\n",rc,rc));
         /* free any memory allocated yet */
         freeit(cur_env_md, &pmd);
-        freeit(cur_m, find_mpb(cur_m->m_start));
+        xmfree(cur_p);
 
         return rc;
     }
@@ -489,11 +483,12 @@ static MD *alloc_env(char *env)
  * Reference: TT030 TOS Release Notes, Third Edition, 6 September 1991,
  * pages 29-30.
  *
- * returns: ptr to MD of allocated memory (NULL => failed)
+ * returns: ptr to allocated memory (NULL => failed)
  *          updates 'avail' with the size of allocated memory
  */
-static MD *alloc_tpa(ULONG flags,LONG needed,LONG *avail)
+static UBYTE *alloc_tpa(ULONG flags,LONG needed,LONG *avail)
 {
+    MD *md;
     LONG st_ram_size;
     BOOL st_ram_available = FALSE;
 
@@ -520,14 +515,16 @@ static MD *alloc_tpa(ULONG flags,LONG needed,LONG *avail)
 
         if (alt_ram_available) {
             *avail = alt_ram_size;
-            return ffit(alt_ram_size, &pmdalt);
+            md = ffit(alt_ram_size, &pmdalt);
+            return md->m_start;
         }
     }
 #endif
 
     if (st_ram_available) {
         *avail = st_ram_size;
-        return ffit(st_ram_size, &pmd);
+        md = ffit(st_ram_size, &pmd);
+        return md->m_start;
     }
 
     return NULL;
