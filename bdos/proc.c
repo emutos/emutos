@@ -40,7 +40,7 @@
 
 static void ixterm( PD *r );
 static WORD envsize( char *env );
-static void init_pd_fields(PD *p, char *tail, long max, MD *env_md);
+static void init_pd_fields(PD *p, char *tail, long max, char *envptr);
 static void init_pd_files(PD *p);
 static MD *alloc_env(char *v);
 static MD *alloc_tpa(ULONG flags,LONG needed,LONG *avail);
@@ -263,7 +263,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
         m->m_own = env_md->m_own = run;
 
         /* initialize the PD */
-        init_pd_fields(p, tail, max, env_md);
+        init_pd_fields(p, tail, max, (char *)env_md->m_start);
         p->p_flags = (ULONG)path;   /* set the flags */
         init_pd_files(p);
 
@@ -333,7 +333,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
     }
 
     /* initialize the fields in the PD structure */
-    init_pd_fields(p, tail, max, env_md);
+    init_pd_fields(p, tail, max, (char *)env_md->m_start);
 
     /* set the flags (must be done after init_pd) */
     p->p_flags = hdr.h01_flags;
@@ -388,7 +388,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
 }
 
 /* initialize the structure fields */
-static void init_pd_fields(PD *p, char *tail, long max, MD *env_md)
+static void init_pd_fields(PD *p, char *tail, long max, char *envptr)
 {
     int i;
     char *b;
@@ -400,7 +400,7 @@ static void init_pd_fields(PD *p, char *tail, long max, MD *env_md)
     p->p_lowtpa = (long) p;                /*  M01.01.06   */
     p->p_hitpa  = (long) p  +  max;        /*  M01.01.06   */
     p->p_xdta = (DTA *) p->p_cmdlin;       /* default p_xdta is p_cmdlin */
-    p->p_env = (char *) env_md->m_start;
+    p->p_env = envptr;
 
     /* copy tail */
     b = &p->p_cmdlin[0];
