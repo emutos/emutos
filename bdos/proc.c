@@ -42,7 +42,7 @@ static void ixterm( PD *r );
 static WORD envsize( char *env );
 static void init_pd_fields(PD *p, char *tail, long max, char *envptr);
 static void init_pd_files(PD *p);
-static char *alloc_env(char *v);
+static char *alloc_env(ULONG flags, char *v);
 static UBYTE *alloc_tpa(ULONG flags,LONG needed,LONG *avail);
 static void proc_go(PD *p);
 
@@ -217,6 +217,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
     PD *p;
     PGMHDR01 hdr;
     char *env_ptr;
+    ULONG hdrflags;
     LONG rc;
     long max, needed;
     FH fh;
@@ -246,9 +247,10 @@ long xexec(WORD flag, char *path, char *tail, char *env)
         path = (char *) 0L;     /* (same as basepage+flags with flags set to zero) */
         /* drop thru */
     case PE_BASEPAGEFLAGS:      /* create a basepage, respecting the flags */
-        env_ptr = alloc_env(env);
+        hdrflags = (ULONG)path;
+        env_ptr = alloc_env(hdrflags, env);
         if (env_ptr == NULL) {
-            KDEBUG(("BDOS xexec: not enough memory!\n"));
+            KDEBUG(("BDOS xexec: no memory for environment\n"));
             return ENSMEM;
         }
         p = (PD *)alloc_tpa((ULONG)path,sizeof(PD),&max);
@@ -304,10 +306,10 @@ long xexec(WORD flag, char *path, char *tail, char *env)
         return rc;
     }
 
-    /* allocate the environment first, always in ST RAM */
-    env_ptr = alloc_env(env);
+    /* allocate the environment first, depending on memory policy */
+    env_ptr = alloc_env(hdr.h01_flags, env);
     if (env_ptr == NULL) {
-        KDEBUG(("BDOS xexec: not enough memory!\n"));
+        KDEBUG(("BDOS xexec: no memory for environment\n"));
         return ENSMEM;
     }
 
@@ -435,10 +437,10 @@ static void init_pd_files(PD *p)
     p->p_curdrv = run->p_curdrv;
 }
 
-/* allocate the environment, always in ST RAM */
-static char *alloc_env(char *env)
+/* allocate the environment, in ST RAM or alternate RAM, according to the header flags */
+static char *alloc_env(ULONG flags, char *env)
 {
-    MD *env_md;
+    char *new_env;
     int size;
 
     /* determine the env size */
@@ -447,14 +449,13 @@ static char *alloc_env(char *env)
     size = (envsize(env) + 1) & ~1;  /* must be even */
 
     /* allocate it */
-    env_md = ffit((long) size, &pmd);
-    if (env_md == NULL)
-        return NULL;
+    new_env = xmxalloc(size, (flags&PF_TTRAMLOAD) ? MX_PREFTTRAM : MX_STRAM);
+    if (new_env)
+    {
+        memcpy(new_env, env, size);     /* copy it */
+    }
 
-    /* copy it */
-    memcpy(env_md->m_start, env, size);
-
-    return (char *)env_md->m_start;
+    return new_env;
 }
 
 /*
