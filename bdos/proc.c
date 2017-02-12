@@ -214,7 +214,7 @@ static PD *cur_p;
 
 long xexec(WORD flag, char *path, char *tail, char *env)
 {
-    PD *p;
+    PD *p, *owner;
     PGMHDR01 hdr;
     char *env_ptr;
     ULONG hdrflags;
@@ -327,13 +327,9 @@ long xexec(WORD flag, char *path, char *tail, char *env)
     /* memory ownership - the owner is either the new process being created,
      * or the parent
      */
-    if (flag == PE_LOADGO) {
-        set_owner(p, p);
-        set_owner(env_ptr, p);
-    } else {
-        set_owner(p, run);
-        set_owner(env_ptr, run);
-    }
+    owner = (flag == PE_LOADGO) ? p : run;
+    set_owner(p, owner);
+    set_owner(env_ptr, owner);
 
     /* initialize the fields in the PD structure */
     init_pd_fields(p, tail, max, env_ptr);
