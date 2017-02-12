@@ -42,7 +42,7 @@ static void ixterm( PD *r );
 static WORD envsize( char *env );
 static void init_pd_fields(PD *p, char *tail, long max, char *envptr);
 static void init_pd_files(PD *p);
-static MD *alloc_env(char *v);
+static char *alloc_env(char *v);
 static UBYTE *alloc_tpa(ULONG flags,LONG needed,LONG *avail);
 static void proc_go(PD *p);
 
@@ -211,13 +211,12 @@ static WORD envsize(char *env)
  * variable `foo' might be clobbered by `longjmp' or `vfork'
  */
 static PD *cur_p;
-static MD *cur_env_md;
 
 long xexec(WORD flag, char *path, char *tail, char *env)
 {
     PD *p;
     PGMHDR01 hdr;
-    MD *env_md;
+    char *env_ptr;
     LONG rc;
     long max, needed;
     FH fh;
@@ -247,25 +246,25 @@ long xexec(WORD flag, char *path, char *tail, char *env)
         path = (char *) 0L;     /* (same as basepage+flags with flags set to zero) */
         /* drop thru */
     case PE_BASEPAGEFLAGS:      /* create a basepage, respecting the flags */
-        env_md = alloc_env(env);
-        if (env_md == NULL) {
+        env_ptr = alloc_env(env);
+        if (env_ptr == NULL) {
             KDEBUG(("BDOS xexec: not enough memory!\n"));
             return ENSMEM;
         }
         p = (PD *)alloc_tpa((ULONG)path,sizeof(PD),&max);
 
         if (p == NULL) {    /* not even enough memory for basepage */
-            freeit(env_md, &pmd);
+            xmfree(env_ptr);
             KDEBUG(("BDOS xexec: No memory for basepage\n"));
             return ENSMEM;
         }
 
         /* memory ownership */
         set_owner(p, run);
-        set_owner(env_md->m_start, run);
+        set_owner(env_ptr, run);
 
         /* initialize the PD */
-        init_pd_fields(p, tail, max, (char *)env_md->m_start);
+        init_pd_fields(p, tail, max, env_ptr);
         p->p_flags = (ULONG)path;   /* set the flags */
         init_pd_files(p);
 
@@ -306,8 +305,8 @@ long xexec(WORD flag, char *path, char *tail, char *env)
     }
 
     /* allocate the environment first, always in ST RAM */
-    env_md = alloc_env(env);
-    if (env_md == NULL) {
+    env_ptr = alloc_env(env);
+    if (env_ptr == NULL) {
         KDEBUG(("BDOS xexec: not enough memory!\n"));
         return ENSMEM;
     }
@@ -316,10 +315,10 @@ long xexec(WORD flag, char *path, char *tail, char *env)
     needed = hdr.h01_tlen + hdr.h01_dlen + hdr.h01_blen + sizeof(PD);
     p = (PD *)alloc_tpa(hdr.h01_flags,needed,&max);
 
-    /* if failed, free env_md and return */
+    /* if failed, free env_ptr and return */
     if (p == NULL) {
         KDEBUG(("BDOS xexec: no memory for TPA\n"));
-        freeit(env_md, &pmd);
+        xmfree(env_ptr);
         return ENSMEM;
     }
 
@@ -328,21 +327,20 @@ long xexec(WORD flag, char *path, char *tail, char *env)
      */
     if (flag == PE_LOADGO) {
         set_owner(p, p);
-        set_owner(env_md->m_start, p);
+        set_owner(env_ptr, p);
     } else {
         set_owner(p, run);
-        set_owner(env_md->m_start, run);
+        set_owner(env_ptr, run);
     }
 
     /* initialize the fields in the PD structure */
-    init_pd_fields(p, tail, max, (char *)env_md->m_start);
+    init_pd_fields(p, tail, max, env_ptr);
 
     /* set the flags (must be done after init_pd) */
     p->p_flags = hdr.h01_flags;
 
     /* use static variable to avoid the obscure longjmp warning */
     cur_p = p;
-    cur_env_md = env_md;
 
     /* we have now allocated memory, so we need to intercept longjmp. */
     memcpy(bakbuf, errbuf, sizeof(errbuf));
@@ -351,7 +349,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
         KDEBUG(("Error and longjmp in xexec()!\n"));
 
         /* free any memory allocated yet */
-        freeit(cur_env_md, &pmd);
+        xmfree(cur_p->p_env);
         xmfree(cur_p);
 
         /* we still have to jump back to bdosmain.c so that the proper error
@@ -365,7 +363,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
     if (rc) {
         KDEBUG(("BDOS xexec: kpgmld returned %ld (0x%lx)\n",rc,rc));
         /* free any memory allocated yet */
-        freeit(cur_env_md, &pmd);
+        xmfree(cur_p->p_env);
         xmfree(cur_p);
 
         return rc;
@@ -438,7 +436,7 @@ static void init_pd_files(PD *p)
 }
 
 /* allocate the environment, always in ST RAM */
-static MD *alloc_env(char *env)
+static char *alloc_env(char *env)
 {
     MD *env_md;
     int size;
@@ -456,7 +454,7 @@ static MD *alloc_env(char *env)
     /* copy it */
     memcpy(env_md->m_start, env, size);
 
-    return env_md;
+    return (char *)env_md->m_start;
 }
 
 /*
