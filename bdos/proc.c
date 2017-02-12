@@ -264,7 +264,8 @@ long xexec(WORD flag, char *path, char *tail, char *env)
         p = (PD *) m->m_start;
 
         /* memory ownership */
-        m->m_own = env_md->m_own = run;
+        set_owner(p, run);
+        set_owner(env_md->m_start, run);
 
         /* initialize the PD */
         init_pd_fields(p, tail, max, (char *)env_md->m_start);
@@ -331,9 +332,11 @@ long xexec(WORD flag, char *path, char *tail, char *env)
      * or the parent
      */
     if (flag == PE_LOADGO) {
-        m->m_own = env_md->m_own = p;
+        set_owner(p, p);
+        set_owner(env_md->m_start, p);
     } else {
-        m->m_own = env_md->m_own = run;
+        set_owner(p, run);
+        set_owner(env_md->m_start, run);
     }
 
     /* initialize the fields in the PD structure */
