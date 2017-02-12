@@ -68,7 +68,7 @@ static jmp_buf bakbuf;         /* longjmp buffer */
  */
 static MPB *find_mpb(void *addr);
 static void free_all_owned(PD *p, MPB *mpb);
-static void set_owner(void *addr, PD *p, MPB *mpb);
+static void set_owner(void *addr, PD *p);
 static void reserve_blocks(PD *pd, MPB *mpb);
 
 static MPB *find_mpb(void *addr)
@@ -117,9 +117,13 @@ static void free_all_owned(PD *p, MPB *mpb)
 }
 
 /* change the memory owner based on the block address */
-static void set_owner(void *addr, PD *p, MPB *mpb)
+static void set_owner(void *addr, PD *p)
 {
     MD *m;
+    MPB *mpb;
+
+    mpb = find_mpb(addr);
+
     for (m = mpb->mp_mal; m; m = m->m_link) {
         if (m->m_start == (UBYTE *)addr) {
             m->m_own = p;
@@ -271,8 +275,8 @@ long xexec(WORD flag, char *path, char *tail, char *env)
     case PE_GOTHENFREE:
         /* set the owner of the memory to be this process */
         p = (PD *) tail;
-        set_owner(p, p, find_mpb(p));
-        set_owner(p->p_env, p, find_mpb(p->p_env));
+        set_owner(p, p);
+        set_owner(p->p_env, p);
         /* fall through */
     case PE_GO:
         p = (PD *) tail;
