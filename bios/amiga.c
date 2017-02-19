@@ -456,6 +456,178 @@ WORD amiga_vgetmode(void)
 }
 
 /******************************************************************************/
+/* IKBD                                                                       */
+/* Documentation: https://www.kernel.org/doc/Documentation/input/atarikbd.txt */
+/* FIXME: Algorithms implemented here are incomplete and approximative.       */
+/******************************************************************************/
+
+static BOOL mouse_events_disabled; /* Negative name due to lack of DATA segment */
+static BOOL joysticks_events_disabled; /* Negative name due to lack of DATA segment */
+static BOOL port0_joystick_mode;
+
+void amiga_ikbd_writeb(UBYTE b)
+{
+    static UBYTE buffer[6];
+    static UBYTE *p;
+    static UWORD remaining;
+    static UWORD load;
+
+    KDEBUG(("amiga_ikbd_writeb 0x%02x\n", b));
+
+    /* Special command MEMORY LOAD in progress */
+    if (load > 0)
+    {
+        /* Not implemented: just skip data bytes */
+        load--;
+
+        if (load == 0)
+            KDEBUG(("IKBD command MEMORY LOAD done.\n"));
+
+        return;
+    }
+
+    /* As we have no DATA segment, initialize variables now */
+    if (p == NULL)
+        p = buffer;
+
+    /* Store byte in command buffer */
+    *p++ = b;
+
+    if (remaining == 0)
+    {
+        /* First byte of command */
+        switch (b)
+        {
+        case 0x80: /* RESET */
+        case 0x07: /* SET MOUSE BUTTON ACTION */
+        case 0x17: /* SET JOYSTICK MONITORING */
+            remaining = 1;
+        break;
+
+        case 0x0a: /* SET MOUSE KEYCODE MOSE */
+        case 0x0b: /* SET MOUSE THRESHOLD */
+        case 0x0c: /* SET MOUSE SCALE */
+        case 0x21: /* MEMORY READ */
+        case 0x22: /* CONTROLLER EXECUTE */
+            remaining = 2;
+        break;
+
+        case 0x20: /* MEMORY LOAD */
+            remaining = 3;
+        break;
+
+        case 0x09: /* SET ABSOLUTE MOUSE POSITIONING */
+            remaining = 4;
+        break;
+
+        case 0x0e: /* LOAD MOUSE POSITION */
+            remaining = 5;
+        break;
+
+        case 0x19: /* SET JOYSTICK KEYCODE MODE */
+        case 0x1b: /* TIME-OF-DAY CLOCK SET */
+            remaining = 6;
+        break;
+        }
+    }
+    else
+    {
+        /* Additional byte of command */
+        remaining--;
+
+        /* Special command MEMORY LOAD */
+        if (remaining == 0 && buffer[0] == 0x20)
+        {
+            UWORD adr = MAKE_UWORD(buffer[1], buffer[2]);
+            UBYTE n = buffer[3];
+
+            MAYBE_UNUSED(adr);
+            KDEBUG(("IKBD command MEMORY LOAD %u bytes to 0x%04x...\n", n, adr));
+            load = n;
+
+            return;
+        }
+    }
+
+    /* If the command requires additional bytes, wait for them */
+    if (remaining > 0)
+        return;
+
+    KDEBUG(("IKBD command 0x%02x completely received\n", buffer[0]));
+
+    /* Now the command is complete */
+    p = buffer; /* For next command */
+
+    /* Special command RESET */
+    if (buffer[0] == 0x80 && buffer[1] == 0x01)
+    {
+        KDEBUG(("IKBD command RESET\n"));
+        mouse_events_disabled = FALSE;
+        joysticks_events_disabled = FALSE;
+        port0_joystick_mode = FALSE;
+        return;
+    }
+
+    /* Determine function of port 0 */
+    switch (buffer[0])
+    {
+    /* Any mouse command disables joystick 0 */
+    case 0x07: /* SET MOUSE BUTTON ACTION */
+    case 0x08: /* SET RELATIVE MOUSE POSITION REPORTING */
+    case 0x09: /* SET ABSOLUTE MOUSE POSITIONING */
+    case 0x0a: /* SET MOUSE KEYCODE MODE */
+    case 0x0b: /* SET MOUSE THRESHOLD */
+    case 0x0c: /* SET MOUSE SCALE */
+    case 0x0d: /* INTERROGATE MOUSE POSITION */
+    case 0x0e: /* LOAD MOUSE POSITION */
+    case 0x0f: /* SET Y=0 AT BOTTOM */
+    case 0x10: /* SET Y=0 AT TOP */
+    case 0x12: /* DISABLE MOUSE */
+        port0_joystick_mode = FALSE;
+    break;
+
+    /* Any joystick command enables joystick 0 */
+    case 0x14: /* SET JOYSTICK EVENT REPORTING */
+    case 0x15: /* SET JOYSTICK INTERROGATION MODE */
+    case 0x16: /* JOYSTICK INTERROGATE */
+    case 0x17: /* SET JOYSTICK MONITORING */
+    case 0x18: /* SET FIRE BUTTON MONITORING */
+    case 0x19: /* SET JOYSTICK KEYCODE MODE */
+    case 0x1a: /* DISABLE JOYSTICKS */
+        port0_joystick_mode = TRUE;
+    break;
+    }
+
+    /* Enable/Disable mouse and joysticks events */
+    switch (buffer[0])
+    {
+    case 0x12: /* DISABLE MOUSE */
+        mouse_events_disabled = TRUE;
+    break;
+
+    case 0x08: /* SET RELATIVE MOUSE POSITION REPORTING */
+    case 0x09: /* SET ABSOLUTE MOUSE POSITIONING */
+    case 0x0a: /* SET MOUSE KEYCODE MODE */
+        mouse_events_disabled = FALSE;
+    break;
+
+    case 0x1a: /* DISABLE JOYSTICKS */
+        joysticks_events_disabled = TRUE;
+    break;
+
+    case 0x14: /* SET JOYSTICK EVENT REPORTING */
+    case 0x15: /* SET JOYSTICK INTERROGATION MODE */
+    case 0x17: /* SET JOYSTICK MONITORING */
+    case 0x18: /* SET FIRE BUTTON MONITORING */
+    case 0x19: /* SET JOYSTICK KEYCODE MODE */
+        joysticks_events_disabled = FALSE;
+    break;
+    }
+
+    /* FIXME: Implement all commands */
+}
+
+/******************************************************************************/
 /* Keyboard                                                                   */
 /******************************************************************************/
 
@@ -492,11 +664,18 @@ static BOOL oldMouseSet;
 
 static void amiga_mouse_vbl(void)
 {
-    UWORD data = JOY0DAT;
-    BYTE mouseX = LOBYTE(data);
-    BYTE mouseY = HIBYTE(data);
-    BOOL button1 = (CIAAPRA & 0x40) == 0;
-    BOOL button2 = (POTGOR & 0x0400) == 0;
+    UWORD data;
+    BYTE mouseX, mouseY;
+    BOOL button1, button2;
+
+    if (mouse_events_disabled || port0_joystick_mode)
+        return;
+
+    data = JOY0DAT;
+    mouseX = LOBYTE(data);
+    mouseY = HIBYTE(data);
+    button1 = (CIAAPRA & 0x40) == 0;
+    button2 = (POTGOR & 0x0400) == 0;
 
     if (!oldMouseSet)
     {

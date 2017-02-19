@@ -40,6 +40,9 @@
 #include "delay.h"
 #include "bios.h"
 #include "coldfire.h"
+#ifdef MACHINE_AMIGA
+#include "amiga.h"
+#endif
 
 
 /* forward declarations */
@@ -800,6 +803,8 @@ void ikbd_writeb(UBYTE b)
     ikbd_acia.data = b;
 #elif CONF_WITH_FLEXCAN
     coldfire_flexcan_ikbd_writeb(b);
+#elif defined (MACHINE_AMIGA)
+    amiga_ikbd_writeb(b);
 #endif
 }
 
