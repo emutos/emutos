@@ -237,8 +237,8 @@ setcopper:
 
         jbsr    _int_vbl                // Call the standard VBL handler
 
-        .extern _amiga_mouse_vbl
-        jbsr    _amiga_mouse_vbl        // Poll the mouse
+        .extern _amiga_extra_vbl
+        jbsr    _amiga_extra_vbl        // Call extra VBL handler
 
         move.w  #0x0020,0xdff09c        // INTREQ: Clear VBL interrupt
         move.w  #0x0020,0xdff09c        // Twice for compatibility

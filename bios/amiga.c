@@ -490,7 +490,7 @@ static BOOL oldButton1;
 static BOOL oldButton2;
 static BOOL oldMouseSet;
 
-void amiga_mouse_vbl(void)
+static void amiga_mouse_vbl(void)
 {
     UWORD data = JOY0DAT;
     BYTE mouseX = LOBYTE(data);
@@ -527,6 +527,15 @@ void amiga_mouse_vbl(void)
     oldButton1 = button1;
     oldButton2 = button2;
     oldMouseSet = TRUE;
+}
+
+/******************************************************************************/
+/* Extra VBL                                                                  */
+/******************************************************************************/
+
+void amiga_extra_vbl(void)
+{
+    amiga_mouse_vbl();
 }
 
 /******************************************************************************/
