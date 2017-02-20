@@ -29,8 +29,8 @@
         .globl  _invalidate_data_cache
         .globl  _mcpu
         .globl  _fputype
-#if CONF_WITH_APOLLO_CORE
-        .globl  _is_apollo_core
+#if CONF_WITH_APOLLO_68080
+        .globl  _is_apollo_68080
 #endif
 
         .extern _longframe              // If not 0, use long stack frames
@@ -104,13 +104,13 @@ _detect_cpu:
 x040:   moveq   #40,d0          // assume 68040
         MOVEC_PCR_D1            // attempt to access the PCR
 
-#if CONF_WITH_APOLLO_CORE
+#if CONF_WITH_APOLLO_68080
         moveq   #60,d0          // assume 68060
         ADDIWL_0_A0             // check for addiw.l instruction
 
-// Apollo Core 68080
+// Apollo 68080
         moveq   #40,d0          // force 68040 detection
-        move.w  #1,_is_apollo_core
+        move.w  #1,_is_apollo_68080
         bra.s   exit
 #endif
 x060:
@@ -579,8 +579,8 @@ _fputype:       .ds.l   1
 temp:           .ds.l   1
 #endif
 
-#if CONF_WITH_APOLLO_CORE
-_is_apollo_core:    .ds.w   1
+#if CONF_WITH_APOLLO_68080
+_is_apollo_68080:   .ds.w   1
 #endif
 
 

@@ -48,8 +48,8 @@
  * Defaults for the ARAnyM target
  */
 #ifdef MACHINE_ARANYM
-# ifndef CONF_WITH_APOLLO_CORE
-#  define CONF_WITH_APOLLO_CORE 0
+# ifndef CONF_WITH_APOLLO_68080
+#  define CONF_WITH_APOLLO_68080 0
 # endif
 # ifndef CONF_WITH_IKBD_CLOCK
 #  define CONF_WITH_IKBD_CLOCK 0
@@ -164,8 +164,8 @@
 # ifndef CONF_WITH_ADVANCED_CPU
 #  define CONF_WITH_ADVANCED_CPU 0
 # endif
-# ifndef CONF_WITH_APOLLO_CORE
-#  define CONF_WITH_APOLLO_CORE 0
+# ifndef CONF_WITH_APOLLO_68080
+#  define CONF_WITH_APOLLO_68080 0
 # endif
 # ifndef CONF_WITH_TT_MMU
 #  define CONF_WITH_TT_MMU 0
@@ -264,8 +264,8 @@
 # ifndef DETECT_NATIVE_FEATURES
 #  define DETECT_NATIVE_FEATURES 0
 # endif
-# ifndef CONF_WITH_APOLLO_CORE
-#  define CONF_WITH_APOLLO_CORE 0
+# ifndef CONF_WITH_APOLLO_68080
+#  define CONF_WITH_APOLLO_68080 0
 # endif
 # ifndef CONF_WITH_TT_MFP
 #  define CONF_WITH_TT_MFP 0
@@ -306,8 +306,8 @@
 # ifndef CONF_WITH_ADVANCED_CPU
 #  define CONF_WITH_ADVANCED_CPU 0
 # endif
-# ifndef CONF_WITH_APOLLO_CORE
-#  define CONF_WITH_APOLLO_CORE 0
+# ifndef CONF_WITH_APOLLO_68080
+#  define CONF_WITH_APOLLO_68080 0
 # endif
 # ifndef CONF_WITH_68030_PMMU
 #  define CONF_WITH_68030_PMMU 0
@@ -582,13 +582,13 @@
 #endif
 
 /*
- * Set CONF_WITH_APOLLO_CORE to 1 to enable support for Apollo Core 68080 CPU
+ * Set CONF_WITH_APOLLO_68080 to 1 to enable support for Apollo 68080 CPU
  */
-#ifndef CONF_WITH_APOLLO_CORE
+#ifndef CONF_WITH_APOLLO_68080
 # ifdef __mcoldfire__
-#  define CONF_WITH_APOLLO_CORE 0
+#  define CONF_WITH_APOLLO_68080 0
 # else
-#  define CONF_WITH_APOLLO_CORE 1
+#  define CONF_WITH_APOLLO_68080 1
 # endif
 #endif
 
@@ -1365,8 +1365,8 @@
 # if CONF_WITH_68030_PMMU
 #  error CONF_WITH_68030_PMMU requires CONF_WITH_ADVANCED_CPU.
 # endif
-# if CONF_WITH_APOLLO_CORE
-#  error CONF_WITH_APOLLO_CORE requires CONF_WITH_ADVANCED_CPU.
+# if CONF_WITH_APOLLO_68080
+#  error CONF_WITH_APOLLO_68080 requires CONF_WITH_ADVANCED_CPU.
 # endif
 #endif
 
