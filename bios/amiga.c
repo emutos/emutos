@@ -40,6 +40,7 @@ extern long xmaddalt(UBYTE *start, long size); /* found in bdos/mem.h */
 
 /* Custom registers */
 #define JOY0DAT *(volatile UWORD*)0xdff00a
+#define JOY1DAT *(volatile UWORD*)0xdff00c
 #define ADKCONR *(volatile UWORD*)0xdff010
 #define POTGOR  *(volatile UWORD*)0xdff016 /* = POTINP */
 #define DSKBYTR *(volatile UWORD*)0xdff01a
@@ -715,12 +716,100 @@ static void amiga_mouse_vbl(void)
 }
 
 /******************************************************************************/
+/* Joysticks                                                                  */
+/******************************************************************************/
+
+#define JOY_X0 0x0001
+#define JOY_X1 0x0002
+#define JOY_Y0 0x0100
+#define JOY_Y1 0x0200
+
+static UBYTE amiga_read_joystick(int joynum)
+{
+    UWORD dat;
+    BOOL x0, x1, y0, y1;
+    BOOL button1, right, left, down, up;
+    UBYTE ikbdval;
+
+    /* Read raw Amiga data */
+    if (joynum == 1)
+    {
+        button1 = !(CIAAPRA & 0x80);
+        dat = JOY1DAT;
+    }
+    else
+    {
+        button1 = !(CIAAPRA & 0x40);
+        dat = JOY0DAT;
+    }
+
+    x0 = !!(dat & JOY_X0);
+    x1 = !!(dat & JOY_X1);
+    y0 = !!(dat & JOY_Y0);
+    y1 = !!(dat & JOY_Y1);
+
+    /* Interpret Amiga data */
+    up = y1 != y0;
+    left = y1;
+    down = x1 != x0;
+    right = x1;
+
+    /* Convert to IKBD value */
+    ikbdval =
+        (button1 ? 0x80 : 0)
+      | (right ? 0x08 : 0)
+      | (left ? 0x04 : 0)
+      | (down ? 0x02 : 0)
+      | (up ? 0x01 : 0);
+
+    return ikbdval;
+}
+
+static UBYTE oldJoy1;
+static UBYTE oldJoy0;
+
+static void amiga_joystick_vbl(void)
+{
+    UBYTE joy1, joy0;
+    UBYTE packet[3];
+
+    if (joysticks_events_disabled)
+        return;
+
+    joy1 = amiga_read_joystick(1);
+    if (joy1 != oldJoy1)
+    {
+        KDEBUG(("joy1 = 0x%02x\n", joy1));
+        packet[0] = 0xff;
+        packet[1] = oldJoy0;
+        packet[2] = joy1;
+        call_joyvec(packet);
+        oldJoy1 = joy1;
+    }
+
+    if (port0_joystick_mode)
+    {
+        joy0 = amiga_read_joystick(0);
+        if (joy0 != oldJoy0)
+        {
+            KDEBUG(("joy0 = 0x%02x\n", joy0));
+            packet[0] = 0xfe;
+            packet[1] = joy0;
+            packet[2] = oldJoy1;
+            call_joyvec(packet);
+            oldJoy0 = joy0;
+        }
+    }
+}
+
+/******************************************************************************/
 /* Extra VBL                                                                  */
 /******************************************************************************/
 
 void amiga_extra_vbl(void)
 {
     amiga_mouse_vbl();
+    amiga_joystick_vbl();
 }
 
 /******************************************************************************/

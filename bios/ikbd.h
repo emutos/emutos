@@ -118,5 +118,8 @@ extern void push_ascii_ikbdiorec(UBYTE ascii);
 
 /* the following is in aciavecs.S */
 extern void call_mousevec(UBYTE *packet);
+#ifdef MACHINE_AMIGA
+extern void call_joyvec(UBYTE *packet);
+#endif
 
 #endif /* IKBD_H */
