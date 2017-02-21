@@ -50,7 +50,7 @@ Vincent Rivière (VRI) <vincent.riviere at freesbee.fr>
 - Initial IDE driver
 - Amiga support
 - ColdFire Evaluation Boards support
-- Apollo Core 68080 support
+- Apollo 68080 support
 - French translation update
 - Various bug fixes and cleanups
 
@@ -203,4 +203,4 @@ Thorsten Otto (admin at tho-otto.de)
 - Miscellaneous source code cleanup
 
 Gunnar von Boehn, Philippe Flype and Simo Koivukoski
-- Apollo Core 68080 and Amiga support
+- Apollo 68080 and Amiga support

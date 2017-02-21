@@ -33,7 +33,7 @@ The (*) in the following lists indicates support disabled by default.
 See below for the details.
 
 Supported Amiga hardware features:
-- Any CPU from 68000 to 68060, including Apollo Core 68080
+- Any CPU from 68000 to 68060, including Apollo 68080
 - Chip RAM
 - Monochrome, interlaced 640x400 video mode
 - Keyboard

@@ -23,7 +23,7 @@ AmigaOS is only used to load EmuTOS into RAM. Then EmuTOS completely takes
 over the machine, and AmigaOS is no more available until reboot.
 
 Supported Amiga hardware features:
-- Any CPU from 68000 to 68060, including Apollo Core 68080
+- Any CPU from 68000 to 68060, including Apollo 68080
 - Chip RAM
 - FastRAM
 - Monochrome, interlaced 640x400 video mode
@@ -47,7 +47,7 @@ Unsupported Atari features:
 - Sound
 
 Special features of emutos-vampire.adf:
-- Optimized for 68040 (best option for Apollo Core 68080)
+- Optimized for 68040 (best option for Apollo 68080)
 - EmuTOS itself runs in FastRAM, for best performance
 
 These floppy images have been built using:
