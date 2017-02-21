@@ -62,6 +62,7 @@ const UBYTE *amiga_physbase(void);
 WORD amiga_setcolor(WORD colorNum, WORD color);
 void amiga_setrez(WORD rez, WORD videlmode);
 WORD amiga_vgetmode(void);
+void amiga_kbd_init(void);
 void amiga_ikbd_writeb(UBYTE b);
 void amiga_extra_vbl(void);
 void amiga_clock_init(void);

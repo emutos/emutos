@@ -465,6 +465,15 @@ static BOOL mouse_events_disabled; /* Negative name due to lack of DATA segment 
 static BOOL joysticks_events_disabled; /* Negative name due to lack of DATA segment */
 static BOOL port0_joystick_mode;
 
+void amiga_kbd_init(void)
+{
+    /* Set mouse/joystick button 1 as input */
+    CIAADDRA &= ~(0x80 | 0x40);
+
+    /* Set mouse/joystick button 2 as input */
+    POTGO = 0xff00;
+}
+
 void amiga_ikbd_writeb(UBYTE b)
 {
     static UBYTE buffer[6];
@@ -677,14 +686,11 @@ static void amiga_mouse_vbl(void)
     button1 = (CIAAPRA & 0x40) == 0;
     button2 = (POTGOR & 0x0400) == 0;
 
-    if (!oldMouseSet)
-    {
-        POTGO = POTGOR | 0x0500;
-    }
-    else if (mouseX != oldMouseX
+    if (oldMouseSet &&
+        (mouseX != oldMouseX
        || mouseY != oldMouseY
        || button1 != oldButton1
-       || button2 != oldButton2)
+       || button2 != oldButton2))
     {
         UBYTE packet[3];
         packet[0] = 0xf8;

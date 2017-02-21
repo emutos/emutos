@@ -872,6 +872,10 @@ void kbd_init(void)
     coldfire_init_flexcan();
 #endif
 
+#ifdef MACHINE_AMIGA
+    amiga_kbd_init();
+#endif
+
     /* initialize the IKBD */
     ikbd_writeb(0x80);            /* Reset */
     ikbd_writeb(0x01);
