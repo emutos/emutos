@@ -210,9 +210,9 @@ Development snapshots allow you to test the current development progress:
 
     http://sourceforge.net/projects/emutos/files/snapshots/
 
-The latest sources are always available from our Git server at:
+The latest sources are always available on GitHub:
 
-    http://sourceforge.net/p/emutos/code/
+    https://github.com/emutos/emutos
 
 If you are just curious or would like to help us develop this nice little
 OS, you are invited to subscribe to our mailing list for developers at:
