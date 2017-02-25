@@ -1,16 +1,20 @@
 /*
  * dumpkbd.c : dump the TOS keyboard tables into a KEYTBL.TBL file format
  *
- * Copyright (C) 2001-2016 The EmuTOS development team
+ * Copyright (C) 2001-2017 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  */
 
+#define USE_STATIC_INLINES 0
+
 #include <osbind.h>
 #include <stdarg.h>
 #include "doprintf.h"
 #include "string.h"
+
+#define ARRAY_SIZE(array) ((int)(sizeof(array)/sizeof(array[0])))
 
 /*
  * fake stdio stuff
@@ -82,7 +86,7 @@ FILE * fopen(const char *fname, const char *mode)
         }
     }
     if(m == -1) return 0;
-    if(stdio_fileno > ARRAY_SIZE(stdio_files) return 0;
+    if(stdio_fileno > ARRAY_SIZE(stdio_files)) return 0;
     f = &stdio_files[stdio_fileno++];
     f->f = Fopen(fname, m);
     if(m == 1 && f->f == -33) f->f = Fcreate(fname, 0);
@@ -103,8 +107,6 @@ FILE * fopen(const char *fname, const char *mode)
 #define free(_p) Mfree(_p)
 #define EXIT_FAILURE 1
 #define NULL ((void *)0)
-
-#define ARRAY_SIZE(array) ((int)(sizeof(array)/sizeof(array[0])))
 
 /*
  *
