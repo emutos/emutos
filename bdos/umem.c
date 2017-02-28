@@ -133,7 +133,7 @@ void *xmalloc(long amount)
  */
 long xmfree(void *addr)
 {
-    MD *p,**q;
+    MD *p;
     MPB *mpb;
 
     KDEBUG(("BDOS: Mfree(%p)\n",addr));
@@ -144,8 +144,8 @@ long xmfree(void *addr)
 
     KDEBUG(("BDOS Mfree: mpb=%s\n",(mpb==&pmd)?"pmd":"pmdalt"));
 
-    for (p = *(q = &mpb->mp_mal); p; p = *(q = &p->m_link))
-        if ((UBYTE *)addr == p->m_start)
+    for (p = mpb->mp_mal; p; p = p->m_link)
+        if (addr == p->m_start)
             break;
 
     if (!p)
