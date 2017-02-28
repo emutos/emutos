@@ -66,24 +66,8 @@ static jmp_buf bakbuf;         /* longjmp buffer */
  * These violate the encapsulation of the memory internal structure.
  * Could perhaps better go in the memory part.
  */
-static MPB *find_mpb(void *addr);
 static void free_all_owned(PD *p, MPB *mpb);
-static void set_owner(void *addr, PD *p);
 static void reserve_blocks(PD *pd, MPB *mpb);
-
-static MPB *find_mpb(void *addr)
-{
-    if (((UBYTE *)addr >= start_stram) && ((UBYTE *)addr <= end_stram)) {
-        return &pmd;
-#if CONF_WITH_ALT_RAM
-    } else if (has_alt_ram) {
-        return &pmdalt;
-#endif
-    } else {
-        /* returning NULL would mean check for NULL in all mpb functions */
-        return &pmd;
-    }
-}
 
 /* reserve blocks, i.e. remove them from the allocated list
  *
@@ -113,22 +97,6 @@ static void free_all_owned(PD *p, MPB *mpb)
         next = m->m_link;
         if (m->m_own == p)
             freeit(m,mpb);
-    }
-}
-
-/* change the memory owner based on the block address */
-static void set_owner(void *addr, PD *p)
-{
-    MD *m;
-    MPB *mpb;
-
-    mpb = find_mpb(addr);
-
-    for (m = mpb->mp_mal; m; m = m->m_link) {
-        if (m->m_start == (UBYTE *)addr) {
-            m->m_own = p;
-            return;
-        }
     }
 }
 

@@ -28,12 +28,6 @@ extern  MPB     pmdalt;  /* the memory pool for the alternative ram (TT-RAM or o
 extern  int     has_alt_ram; /* 1 if alternative RAM has been declared to BDOS */
 #endif
 
-/*
- * these should be internal
- */
-
-extern UBYTE *start_stram;
-extern UBYTE *end_stram;
 
 /*
  * in osmem.c
@@ -88,6 +82,10 @@ long total_alt_ram(void);
 
 /* init user memory */
 void umem_init(void);
+
+/* set memory ownership */
+void set_owner(void *addr, PD *p);
+
 
 /*
  * in iumem.c

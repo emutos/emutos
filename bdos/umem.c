@@ -40,8 +40,8 @@ int has_alt_ram;
 
 /* internal variables */
 
-UBYTE *start_stram;
-UBYTE *end_stram;
+static UBYTE *start_stram;
+static UBYTE *end_stram;
 
 
 /*
@@ -90,6 +90,19 @@ static void dump_mem_map(void)
 #define dump_mem_map()
 #endif
 
+static MPB *find_mpb(void *addr)
+{
+    if (((UBYTE *)addr >= start_stram) && ((UBYTE *)addr <= end_stram)) {
+        return &pmd;
+#if CONF_WITH_ALT_RAM
+    } else if (has_alt_ram) {
+        return &pmdalt;
+#endif
+    } else {
+        /* returning NULL would mean check for NULL in all mpb functions */
+        return &pmd;
+    }
+}
 
 
 /*
@@ -471,4 +484,22 @@ void umem_init(void)
     /* there is no known alternative RAM initially */
     has_alt_ram = 0;
 #endif
+}
+
+/*
+ * change the memory owner based on the block address
+ */
+void set_owner(void *addr, PD *p)
+{
+    MD *m;
+    MPB *mpb;
+
+    mpb = find_mpb(addr);
+
+    for (m = mpb->mp_mal; m; m = m->m_link) {
+        if (m->m_start == (UBYTE *)addr) {
+            m->m_own = p;
+            return;
+        }
+    }
 }
