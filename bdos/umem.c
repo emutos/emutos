@@ -136,13 +136,13 @@ long xmfree(void *addr)
     MD *p,**q;
     MPB *mpb;
 
-    KDEBUG(("BDOS: Mfree(0x%08lx)\n",(ULONG)addr));
+    KDEBUG(("BDOS: Mfree(%p)\n",addr));
 
     mpb = find_mpb(addr);
     if (!mpb)
         return EIMBA;
 
-    KDEBUG(("BDOS Mfree: mpb=%s\n",(mpb==pmd)?"pmd","pmdalt"));
+    KDEBUG(("BDOS Mfree: mpb=%s\n",(mpb==&pmd)?"pmd":"pmdalt"));
 
     for (p = *(q = &mpb->mp_mal); p; p = *(q = &p->m_link))
         if ((UBYTE *)addr == p->m_start)
@@ -171,13 +171,13 @@ long xsetblk(int n, void *blk, long len)
     MD *p;
     MPB *mpb;
 
-    KDEBUG(("BDOS: Mshrink(0x%08lx,%ld)\n",(long)blk,len));
+    KDEBUG(("BDOS: Mshrink(%p,%ld)\n",blk,len));
 
     mpb = find_mpb(blk);
     if (!mpb)
         return EIMBA;
 
-    KDEBUG(("BDOS Mshrink: mpb=%s\n",(mpb==pmd)?"pmd","pmdalt"));
+    KDEBUG(("BDOS Mshrink: mpb=%s\n",(mpb==&pmd)?"pmd":"pmdalt"));
 
     /*
      * Traverse the list of memory descriptors looking for this block.
@@ -198,7 +198,7 @@ long xsetblk(int n, void *blk, long len)
      */
     len = (len + 3) & ~3;
 
-    KDEBUG(("BDOS xsetblk: new length=%ld\n",len));
+    KDEBUG(("BDOS Mshrink: new length=%ld\n",len));
 
     /*
      * Check new length.
@@ -232,7 +232,7 @@ void *xmxalloc(long amount, int mode)
     MD *m;
     void *ret_value;
 
-    KDEBUG(("BDOS: xmxalloc(%ld,0x%04x)\n",amount,mode));
+    KDEBUG(("BDOS: Mxalloc(%ld,0x%04x)\n",amount,mode));
 
     mode &= MX_MODEMASK;    /* ignore unsupported bits */
 
@@ -324,7 +324,7 @@ void *xmxalloc(long amount, int mode)
     }
 
 ret:
-    KDEBUG(("BDOS xmxalloc: returns 0x%08lx\n",(ULONG)ret_value));
+    KDEBUG(("BDOS Mxalloc: returns 0x%08lx\n",(ULONG)ret_value));
     dump_mem_map();
 
     return ret_value;
@@ -474,6 +474,8 @@ void umem_init(void)
     /* derive the addresses, assuming the MPB is in clean state */
     start_stram = pmd.mp_mfl->m_start;
     end_stram = start_stram + pmd.mp_mfl->m_length;
+    KDEBUG(("umem_init(): start_stram=%p, end_stram=%p\n",start_stram,end_stram));
+
 #if CONF_WITH_ALT_RAM
     /* there is no known alternative RAM initially */
     has_alt_ram = 0;
