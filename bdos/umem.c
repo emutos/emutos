@@ -90,6 +90,11 @@ static void dump_mem_map(void)
 #define dump_mem_map()
 #endif
 
+/*
+ * find the mpb corresponding to the memory address
+ *
+ * returns NULL if not found
+ */
 static MPB *find_mpb(void *addr)
 {
     if (((UBYTE *)addr >= start_stram) && ((UBYTE *)addr <= end_stram)) {
@@ -98,10 +103,9 @@ static MPB *find_mpb(void *addr)
     } else if (has_alt_ram) {
         return &pmdalt;
 #endif
-    } else {
-        /* returning NULL would mean check for NULL in all mpb functions */
-        return &pmd;
     }
+    
+    return NULL;
 }
 
 
@@ -134,15 +138,11 @@ long xmfree(void *addr)
 
     KDEBUG(("BDOS: Mfree(0x%08lx)\n",(ULONG)addr));
 
-    if (((UBYTE *)addr >= start_stram) && ((UBYTE *)addr <= end_stram)) {
-        mpb = &pmd;
-#if CONF_WITH_ALT_RAM
-    } else if (has_alt_ram) {
-        mpb = &pmdalt;
-#endif
-    } else {
+    mpb = find_mpb(addr);
+    if (!mpb)
         return EIMBA;
-    }
+
+    KDEBUG(("BDOS Mfree: mpb=%s\n",(mpb==pmd)?"pmd","pmdalt"));
 
     for (p = *(q = &mpb->mp_mal); p; p = *(q = &p->m_link))
         if ((UBYTE *)addr == p->m_start)
@@ -173,17 +173,11 @@ long xsetblk(int n, void *blk, long len)
 
     KDEBUG(("BDOS: Mshrink(0x%08lx,%ld)\n",(long)blk,len));
 
-    if (((UBYTE*)blk >= start_stram) && ((UBYTE*)blk <= end_stram)) {
-        mpb = &pmd;
-        KDEBUG(("BDOS xsetblk: mpb=&pmd\n"));
-#if CONF_WITH_ALT_RAM
-    } else if (has_alt_ram) {
-        mpb = &pmdalt;
-        KDEBUG(("BDOS xsetblk: mpb=&pmdalt\n"));
-#endif /* CONF_WITH_ALT_RAM */
-    } else {
+    mpb = find_mpb(blk);
+    if (!mpb)
         return EIMBA;
-    }
+
+    KDEBUG(("BDOS Mshrink: mpb=%s\n",(mpb==pmd)?"pmd","pmdalt"));
 
     /*
      * Traverse the list of memory descriptors looking for this block.
@@ -495,6 +489,9 @@ void set_owner(void *addr, PD *p)
     MPB *mpb;
 
     mpb = find_mpb(addr);
+
+    if (!mpb)       /* block address was invalid */
+        return;
 
     for (m = mpb->mp_mal; m; m = m->m_link) {
         if (m->m_start == (UBYTE *)addr) {
