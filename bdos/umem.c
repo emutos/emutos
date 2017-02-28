@@ -97,7 +97,7 @@ static void dump_mem_map(void)
  */
 static MPB *find_mpb(void *addr)
 {
-    if (((UBYTE *)addr >= start_stram) && ((UBYTE *)addr <= end_stram)) {
+    if (((UBYTE *)addr >= start_stram) && ((UBYTE *)addr < end_stram)) {
         return &pmd;
 #if CONF_WITH_ALT_RAM
     } else if (has_alt_ram) {
