@@ -75,6 +75,7 @@ _ui_start:
         clr.l  -(sp)
         move.w  #0x20,-(sp)
         trap    #1                      // Switch to supervisor mode
+        addq.l  #6,sp
         move.l  d0,old_gem_ssp
 
         // ad_envrn = the pointer to the environ string
