@@ -119,10 +119,8 @@ long xsetdate(UWORD d)
      || (day > nday[curmo]))            /* variable days/month */
         return ERR;
 
-    current_date = d;                   /* ok, assign that value to date */
-
-    /* tell bios about new date */
-    Settime(MAKE_ULONG(current_date, current_time));
+    /* tell bios about new date: it will update current_date for us */
+    Settime(MAKE_ULONG(d, current_time));
 
     return E_OK;
 }
@@ -149,10 +147,8 @@ long xsettime(UWORD t)
      || ((t & HRS_BM) >= (24 << HRS_SHIFT)))/* 24 hours per day */
         return ERR;
 
-    current_time = t;
-
-    /* tell bios about new time */
-    Settime(MAKE_ULONG(current_date, current_time));
+    /* tell bios about new time: it will update current_time for us */
+    Settime(MAKE_ULONG(current_date, t));
 
     return E_OK;
 }
