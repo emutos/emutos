@@ -179,7 +179,7 @@ void time_init(void)
 
 static void tikfrk(int n)
 {
-    int curmo;
+    int curmo, newday;
     const BYTE *nday;
 
 /*  uptime += n; */
@@ -215,9 +215,12 @@ static void tikfrk(int n)
     curmo = (current_date & MTH_BM) >> MTH_SHIFT;
 
     current_time = 0;
-    current_date++;
-    if ((current_date & DAY_BM) <= nday[curmo])
+    newday = (current_date & DAY_BM) + 1;
+    if (newday <= nday[curmo])
+    {
+        current_date++;
         return;
+    }
 
     /* handle month rollover */
 
