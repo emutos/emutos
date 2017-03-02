@@ -47,7 +47,6 @@
 #include "deskdir.h"
 #include "deskmain.h"
 #include "icons.h"
-#include "desk1.h"
 #include "intmath.h"
 #include "deskins.h"
 #include "desksupp.h"
@@ -89,6 +88,33 @@ static WORD grid_free(WORD x,WORD y)
     }
 
     return TRUE;
+}
+
+
+/*
+ *  Align drive icon on a grid
+ */
+void snap_disk(WORD x, WORD y, WORD *px, WORD *py, WORD sxoff, WORD syoff)
+{
+    WORD xgrid, ygrid, icw, ich;
+
+    icw  = G.g_icw;
+    xgrid  = (x - sxoff + (icw / 2)) / icw;
+    *px = xgrid * icw;
+
+    *px = min(gl_width - icw, *px);
+    if (*px < (gl_width / 2))
+        *px += (gl_width % icw);
+
+    y -= G.g_ydesk;
+    ich = G.g_ich;
+    ygrid  = (y - syoff + (ich / 2)) / ich;
+    *py = ygrid * ich;
+
+    *py = min(G.g_hdesk - ich, *py);
+    if (*py < (G.g_hdesk / 2))
+        *py += (G.g_hdesk % ich);
+    *py += G.g_ydesk;
 }
 
 

@@ -53,7 +53,6 @@
 #include "deskpro.h"
 #include "deskact.h"
 #include "deskobj.h"
-#include "desk1.h"
 #include "deskrez.h"
 #include "kprint.h"
 #include "deskmain.h"

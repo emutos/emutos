@@ -46,7 +46,6 @@
 #include "deskdir.h"
 #include "deskins.h"
 #include "icons.h"
-#include "desk1.h"
 #include "xbiosbind.h"
 #include "kprint.h"
 

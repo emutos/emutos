@@ -16,5 +16,6 @@ WORD ins_app(WORD curr);
 WORD ins_devices(void);
 WORD ins_icon(WORD sobj);
 WORD rmv_icon(WORD sobj);
+void snap_disk(WORD x, WORD y, WORD *px, WORD *py, WORD sxoff, WORD syoff);
 
 #endif  /* _DESKINS_H */

@@ -46,7 +46,6 @@
 #include "deskrsrc.h"
 #include "deskmain.h"
 #include "deskglob.h"
-#include "desk1.h"
 #include "deskdir.h"
 #include "desksupp.h"
 #include "deskins.h"
