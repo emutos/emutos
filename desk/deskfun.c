@@ -349,7 +349,7 @@ static void w_setpath(WNODE *pw, BYTE *pathname)
 }
 
 
-void fun_full_close(WNODE *pw)
+static void fun_full_close(WNODE *pw)
 {
     WORD icx, icy;
     GRECT rc;
@@ -426,7 +426,7 @@ void fun_close(WNODE *pw, WORD closetype)
  *  or destination is the desktop.  Therefore 'datype' can ONLY be
  *  AT_ISFILE or AT_ISFOLD.
  */
-void fun_win2win(WORD src_wh, WORD dst_wh, WORD dst_ob, WORD dulx, WORD duly, WORD keystate)
+static void fun_win2win(WORD src_wh, WORD dst_wh, WORD dst_ob, WORD dulx, WORD duly, WORD keystate)
 {
     WORD  ret, datype, op;
     WNODE *psw, *pdw;
