@@ -17,9 +17,9 @@
 #define CLOSE_WINDOW    1       /* close window entirely */
 #define CLOSE_TO_ROOT   2       /* display root folder in window */
 
-void true_closewnd(WNODE *pw);
+void fun_full_close(WNODE *pw);
 void fun_close(WNODE *pw, WORD closetype);
 void snap_disk(WORD x, WORD y, WORD *px, WORD *py, WORD sxoff, WORD syoff);
-void desk1_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my, WORD keystate);
+void fun_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my, WORD keystate);
 
 #endif  /* _DESK1_H */

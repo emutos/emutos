@@ -59,7 +59,7 @@ static void w_setpath(WNODE *pw, BYTE *pathname)
 }
 
 
-void true_closewnd(WNODE *pw)
+void fun_full_close(WNODE *pw)
 {
     WORD icx, icy;
     GRECT rc;
@@ -118,7 +118,7 @@ void fun_close(WNODE *pw, WORD closetype)
     }
 
     if (closetype == CLOSE_WINDOW)
-        true_closewnd(pw);
+        fun_full_close(pw);
     else
         w_setpath(pw,pathname);
 
@@ -345,7 +345,7 @@ static void fun_desk2desk(WORD dobj, WORD keystate)
 }
 
 
-void desk1_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my, WORD keystate)
+void fun_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my, WORD keystate)
 {
     if (wh)
     {

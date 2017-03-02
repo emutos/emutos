@@ -734,7 +734,7 @@ void do_fopen(WNODE *pw, WORD curr, BYTE *pathname, WORD redraw)
     build_root_path(app_path,pathname[0]);
     if (set_default_path(app_path) < 0L)    /* drive (no longer) valid? */
     {
-        true_closewnd(pw);
+        fun_full_close(pw);
         return;
     }
 
