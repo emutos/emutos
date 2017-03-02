@@ -243,7 +243,7 @@ aes_src = gemasm.S gemstart.S gemdosif.S gemaplib.c gemasync.c gemctrl.c \
 
 desk_src = deskstart.S deskmain.c gembind.c deskact.c deskapp.c deskdir.c \
            deskfpd.c deskfun.c deskglob.c deskinf.c deskins.c deskobj.c \
-           deskpro.c deskrez.c deskrsrc.c desksupp.c deskwin.c desk1.c \
+           deskpro.c deskrez.c deskrsrc.c desksupp.c deskwin.c \
            desk_rsc.c icons.c
 
 # The source below must be the last GEM one
