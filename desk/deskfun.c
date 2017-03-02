@@ -340,7 +340,7 @@ WORD fun_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdest)
  *  or destination is the desktop.  Therefore 'datype' can ONLY be
  *  AT_ISFILE or AT_ISFOLD.
  */
-void fun_drag(WORD src_wh, WORD dst_wh, WORD dst_ob, WORD dulx, WORD duly, WORD keystate)
+void fun_win2win(WORD src_wh, WORD dst_wh, WORD dst_ob, WORD dulx, WORD duly, WORD keystate)
 {
     WORD  ret, datype, op;
     WNODE *psw, *pdw;

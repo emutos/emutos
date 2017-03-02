@@ -351,7 +351,7 @@ void desk1_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my, W
     {
         if (dest_wh)    /* dragging from window to window, */
         {               /* e.g. copy/move files/folders    */
-            fun_drag(wh, dest_wh, dobj, mx, my, keystate);
+            fun_win2win(wh, dest_wh, dobj, mx, my, keystate);
         }
         else            /* dragging from window to desktop */
         {
