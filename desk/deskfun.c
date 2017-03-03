@@ -668,7 +668,7 @@ static void fun_desk2desk(WORD dobj, WORD keystate)
 }
 
 
-void fun_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD keystate)
+void fun_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my, WORD keystate)
 {
     if (wh)
     {
