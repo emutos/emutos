@@ -21,7 +21,7 @@ WORD fun_alert(WORD defbut, WORD stnum);
 WORD fun_alert_merge(WORD defbut, WORD stnum, BYTE merge);
 WORD fun_alert_long(WORD defbut, WORD stnum, LONG merge);
 void fun_close(WNODE *pw, WORD closetype);
-void fun_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my, WORD keystate);
+void fun_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD keystate);
 void fun_msg(WORD type, WORD w3, WORD w4, WORD w5, WORD w6, WORD w7);
 void fun_rebld(WNODE *pwin);
 WORD fun_mkdir(WNODE *pw_node);

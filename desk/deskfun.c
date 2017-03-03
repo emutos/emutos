@@ -426,7 +426,7 @@ void fun_close(WNODE *pw, WORD closetype)
  *  or destination is the desktop.  Therefore 'datype' can ONLY be
  *  AT_ISFILE or AT_ISFOLD.
  */
-static void fun_win2win(WORD src_wh, WORD dst_wh, WORD dst_ob, WORD dulx, WORD duly, WORD keystate)
+static void fun_win2win(WORD src_wh, WORD dst_wh, WORD dst_ob, WORD keystate)
 {
     WORD  ret, datype, op;
     WNODE *psw, *pdw;
@@ -668,13 +668,13 @@ static void fun_desk2desk(WORD dobj, WORD keystate)
 }
 
 
-void fun_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my, WORD keystate)
+void fun_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD keystate)
 {
     if (wh)
     {
         if (dest_wh)    /* dragging from window to window, */
         {               /* e.g. copy/move files/folders    */
-            fun_win2win(wh, dest_wh, dobj, mx, my, keystate);
+            fun_win2win(wh, dest_wh, dobj, keystate);
         }
         else            /* dragging from window to desktop */
         {
