@@ -34,10 +34,7 @@
 typedef struct moblk
 {
     WORD m_out;
-    WORD m_x;
-    WORD m_y;
-    WORD m_w;
-    WORD m_h;
+    GRECT m_gr;
 } MOBLK;
 
 

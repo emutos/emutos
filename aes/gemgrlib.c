@@ -52,10 +52,10 @@ static WORD gr_stilldn(WORD out, WORD x, WORD y, WORD w, WORD h)
     dsptch();
 
     tmpmoblk.m_out = out;
-    tmpmoblk.m_x = x;
-    tmpmoblk.m_y = y;
-    tmpmoblk.m_w = w;
-    tmpmoblk.m_h = h;
+    tmpmoblk.m_gr.g_x = x;
+    tmpmoblk.m_gr.g_y = y;
+    tmpmoblk.m_gr.g_w = w;
+    tmpmoblk.m_gr.g_h = h;
 
     which = ev_multi(MU_KEYBD | MU_BUTTON | MU_M1, &tmpmoblk,
                     NULL, 0x0L, 0x0001ff00L, 0x0L, rets);

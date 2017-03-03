@@ -187,7 +187,7 @@ static void menu_fixup(void)
  */
 static void rect_change(LONG tree, MOBLK *prmob, WORD iob, WORD x)
 {
-    ob_actxywh(tree, iob, (GRECT *)&prmob->m_x);
+    ob_actxywh(tree, iob, &prmob->m_gr);
     prmob->m_out = x;
 }
 
@@ -472,7 +472,7 @@ void mn_bar(LONG tree, WORD showit, WORD pid)
         menu_fixup();
         obj = ((OBJECT *)tree) + 1;
         obj->ob_width = gl_width - obj->ob_x;
-        ob_actxywh(gl_mntree, THEACTIVE, (GRECT *)&gl_ctwait.m_x);
+        ob_actxywh(gl_mntree, THEACTIVE, &gl_ctwait.m_gr);
         gsx_sclip(&gl_rzero);
         ob_draw(gl_mntree, THEBAR, MAX_DEPTH);
         gsx_cline(0, gl_hbox - 1, gl_width - 1, gl_hbox - 1);
@@ -480,7 +480,7 @@ void mn_bar(LONG tree, WORD showit, WORD pid)
     else
     {
         menu_tree[pid] = gl_mntree = 0x0L;
-        rc_copy(&gl_rmenu, (GRECT *)&gl_ctwait.m_x);
+        rc_copy(&gl_rmenu, &gl_ctwait.m_gr);
     }
 
     /* make ctlmgr fix up the size of rect it's waiting for by sending fake key */

@@ -75,7 +75,7 @@ static void post_mb(WORD ismouse, EVB *elist, WORD parm1, WORD parm2);
  */
 UWORD in_mrect(MOBLK *pmo)
 {
-    return (pmo->m_out != inside(xrat, yrat, (GRECT *)&pmo->m_x));
+    return (pmo->m_out != inside(xrat, yrat, &pmo->m_gr));
 }
 
 
@@ -420,13 +420,12 @@ static WORD inorout(EVB *e, WORD rx, WORD ry)
 
     /* in or out of specified rectangle */
     mo.m_out = ((e->e_flag & EVMOUT) != 0);
-    mo.m_x = HIWORD(e->e_parm);
-    mo.m_y = LOWORD(e->e_parm);
-    mo.m_w = HIWORD(e->e_return);
-    mo.m_h = LOWORD(e->e_return);
+    mo.m_gr.g_x = HIWORD(e->e_parm);
+    mo.m_gr.g_y = LOWORD(e->e_parm);
+    mo.m_gr.g_w = HIWORD(e->e_return);
+    mo.m_gr.g_h = LOWORD(e->e_return);
 
-    /* FIXME: The following GRECT*-typecast is not very nice */
-    return (mo.m_out != inside(rx, ry, (GRECT *)&mo.m_x));
+    return (mo.m_out != inside(rx, ry, &mo.m_gr));
 }
 
 /*
@@ -561,8 +560,8 @@ void amouse(EVB *e, LONG pmo)
             e->e_flag |= EVMOUT;
         else
             e->e_flag &= ~EVMOUT;
-        e->e_parm = MAKE_ULONG(mob.m_x, mob.m_y);
-        e->e_return = MAKE_ULONG(mob.m_w, mob.m_h);
+        e->e_parm = MAKE_ULONG(mob.m_gr.g_x, mob.m_gr.g_y);
+        e->e_return = MAKE_ULONG(mob.m_gr.g_w, mob.m_gr.g_h);
         evinsert(e, &rlr->p_cda->c_msleep );
     }
 }

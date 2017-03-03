@@ -321,7 +321,7 @@ void ctlmgr(void)
      * set defaults for multi wait
      */
     gl_ctwait.m_out = FALSE;
-    rc_copy(&gl_rmenu, (GRECT *)&gl_ctwait.m_x);
+    rc_copy(&gl_rmenu, &gl_ctwait.m_gr);
     while(TRUE)
     {
         /* fix up ctrl rect */

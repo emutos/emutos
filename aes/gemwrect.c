@@ -70,28 +70,28 @@ static ORECT *mkpiece(WORD tlrb, ORECT *new, ORECT *old)
     rl->o_link = old;
 
     /* do common calcs */
-    rl->o_x = old->o_x;
-    rl->o_w = old->o_w;
-    rl->o_y = max(old->o_y, new->o_y);
-    rl->o_h = min(old->o_y + old->o_h, new->o_y + new->o_h) - rl->o_y;
+    rl->o_gr.g_x = old->o_gr.g_x;
+    rl->o_gr.g_w = old->o_gr.g_w;
+    rl->o_gr.g_y = max(old->o_gr.g_y, new->o_gr.g_y);
+    rl->o_gr.g_h = min(old->o_gr.g_y + old->o_gr.g_h, new->o_gr.g_y + new->o_gr.g_h) - rl->o_gr.g_y;
 
     /* use override calcs */
     switch(tlrb)
     {
     case TOP:
-        rl->o_y = old->o_y;
-        rl->o_h = new->o_y - old->o_y;
+        rl->o_gr.g_y = old->o_gr.g_y;
+        rl->o_gr.g_h = new->o_gr.g_y - old->o_gr.g_y;
         break;
     case LEFT:
-        rl->o_w = new->o_x - old->o_x;
+        rl->o_gr.g_w = new->o_gr.g_x - old->o_gr.g_x;
         break;
     case RIGHT:
-        rl->o_x = new->o_x + new->o_w;
-        rl->o_w = (old->o_x + old->o_w) - (new->o_x + new->o_w);
+        rl->o_gr.g_x = new->o_gr.g_x + new->o_gr.g_w;
+        rl->o_gr.g_w = (old->o_gr.g_x + old->o_gr.g_w) - (new->o_gr.g_x + new->o_gr.g_w);
         break;
     case BOTTOM:
-        rl->o_y = new->o_y + new->o_h;
-        rl->o_h = (old->o_y + old->o_h) - (new->o_y + new->o_h);
+        rl->o_gr.g_y = new->o_gr.g_y + new->o_gr.g_h;
+        rl->o_gr.g_h = (old->o_gr.g_y + old->o_gr.g_h) - (new->o_gr.g_y + new->o_gr.g_h);
         break;
     }
 
@@ -105,16 +105,16 @@ static ORECT *brkrct(ORECT *new, ORECT *r, ORECT *p)
     WORD    have_piece[4];
 
     /* break up rectangle r based on new, adding new orects to list p */
-    if ((new->o_x < r->o_x + r->o_w) &&
-        (new->o_x + new->o_w > r->o_x) &&
-        (new->o_y < r->o_y + r->o_h) &&
-        (new->o_y + new->o_h > r->o_y))
+    if ((new->o_gr.g_x < r->o_gr.g_x + r->o_gr.g_w) &&
+        (new->o_gr.g_x + new->o_gr.g_w > r->o_gr.g_x) &&
+        (new->o_gr.g_y < r->o_gr.g_y + r->o_gr.g_h) &&
+        (new->o_gr.g_y + new->o_gr.g_h > r->o_gr.g_y))
     {
         /* there was overlap so we need new rectangles */
-        have_piece[TOP] = (new->o_y > r->o_y);
-        have_piece[LEFT] = (new->o_x > r->o_x);
-        have_piece[RIGHT] = ((new->o_x + new->o_w) < (r->o_x + r->o_w));
-        have_piece[BOTTOM] = ((new->o_y + new->o_h) < (r->o_y + r->o_h));
+        have_piece[TOP] = (new->o_gr.g_y > r->o_gr.g_y);
+        have_piece[LEFT] = (new->o_gr.g_x > r->o_gr.g_x);
+        have_piece[RIGHT] = ((new->o_gr.g_x + new->o_gr.g_w) < (r->o_gr.g_x + r->o_gr.g_w));
+        have_piece[BOTTOM] = ((new->o_gr.g_y + new->o_gr.g_h) < (r->o_gr.g_y + r->o_gr.g_h));
 
         for (i = 0; i < 4; i++)
         {
@@ -188,8 +188,8 @@ void newrect(LONG tree, WORD wh)
     pwin->w_flags &= ~VF_BROKEN;
 
     /* if no size then return */
-    w_getsize(WS_TRUE, wh, (GRECT *)&gl_mkrect.o_x);
-    if (!(gl_mkrect.o_w && gl_mkrect.o_h))
+    w_getsize(WS_TRUE, wh, &gl_mkrect.o_gr);
+    if (!(gl_mkrect.o_gr.g_w && gl_mkrect.o_gr.g_h))
         return;
 
     /* init. a global orect for use during mkrect calls */
@@ -201,6 +201,6 @@ void newrect(LONG tree, WORD wh)
     /* get an orect in this window's list */
     new = get_orect();
     new->o_link  = NULL;
-    w_getsize(WS_TRUE, wh, (GRECT *)&new->o_x);
+    w_getsize(WS_TRUE, wh, &new->o_gr);
     pwin->w_rlist = new;
 }

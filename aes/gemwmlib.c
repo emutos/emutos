@@ -284,10 +284,7 @@ static void do_walk(WORD wh, LONG tree, WORD obj, WORD depth, GRECT *pc)
     /* walk owner rectangle list */
     for (po = D.w_win[wh].w_rlist; po; po = po->o_link)
     {
-        t.g_x = po->o_x;
-        t.g_y = po->o_y;
-        t.g_w = po->o_w;
-        t.g_h = po->o_h;
+        rc_copy(&po->o_gr, &t);
         /* intersect owner rectangle with clip rectangles */
         if (rc_intersect(pc, &t))
         {
@@ -522,7 +519,10 @@ void w_bldactive(WORD w_handle)
     gl_aname.te_just = TE_CNTR;
     issub = (pw->w_flags & VF_SUBWIN) && (D.w_win[gl_wtop].w_flags & VF_SUBWIN);
     w_getsize(WS_CURR, w_handle, &t);
-    rc_copy(&t, (GRECT *)&W_ACTIVE[W_BOX].ob_x); /* FIXME: typecast */
+    W_ACTIVE[W_BOX].ob_x = t.g_x;
+    W_ACTIVE[W_BOX].ob_y = t.g_y;
+    W_ACTIVE[W_BOX].ob_width = t.g_w;
+    W_ACTIVE[W_BOX].ob_height = t.g_h;
     offx = t.g_x;
     offy = t.g_y;
 
@@ -634,15 +634,12 @@ static WORD w_union(ORECT *po, GRECT *pt)
     if (!po)
         return FALSE;
 
-    pt->g_x = po->o_x;
-    pt->g_y = po->o_y;
-    pt->g_w = po->o_w;
-    pt->g_h = po->o_h;
+    rc_copy(&po->o_gr, pt);
 
     po = po->o_link;
     while (po)
     {
-        rc_union((GRECT *)&po->o_x, pt);  /* FIXME: typecast */
+        rc_union(&po->o_gr, pt);
         po = po->o_link;
     }
 
@@ -867,7 +864,7 @@ static void draw_change(WORD w_handle, GRECT *pt)
 
     /* set new sizes */
     w_setsize(WS_CURR, w_handle, pt);
-    pw = (GRECT *) w_getxptr(WS_WORK, w_handle);
+    pw = w_getxptr(WS_WORK, w_handle);
     wm_calc(WC_WORK, D.w_win[w_handle].w_kind,
                 pt->g_x, pt->g_y, pt->g_w, pt->g_h,
                 &pw->g_x, &pw->g_y, &pw->g_w, &pw->g_h);
@@ -1024,22 +1021,18 @@ static void draw_change(WORD w_handle, GRECT *pt)
  *  Walk down ORECT list looking for the next rect that still has
  *  size when clipped with the passed in clip rectangle
  */
-static void w_owns(WINDOW *pwin, ORECT *po, GRECT *pt, WORD *poutwds)
+static void w_owns(WINDOW *pwin, ORECT *po, GRECT *pt, GRECT *poutwds)
 {
     while (po)
     {
-        poutwds[0] = po->o_x;
-        poutwds[1] = po->o_y;
-        poutwds[2] = po->o_w;
-        poutwds[3] = po->o_h;
+        rc_copy(&po->o_gr, poutwds);
         pwin->w_rnext = po = po->o_link;
-        /* FIXME: GRECT typecasting again */
-        if ((rc_intersect(pt, (GRECT *)poutwds)) &&
-            (rc_intersect(&gl_rfull, (GRECT *)poutwds)))
+        if ((rc_intersect(pt, poutwds)) &&
+            (rc_intersect(&gl_rfull, poutwds)))
             return;
     }
 
-    poutwds[2] = poutwds[3] = 0;
+    poutwds->g_w = poutwds->g_h = 0;
 }
 
 
@@ -1085,10 +1078,7 @@ void wm_start(void)
     /* init rectangle list */
     D.w_win[0].w_rlist = po = get_orect();
     po->o_link = NULL;
-    po->o_x = XFULL;
-    po->o_y = YFULL;
-    po->o_w = WFULL;
-    po->o_h = HFULL;
+    r_set(&po->o_gr, XFULL, YFULL, WFULL, HFULL);
     w_setup(ppd, DESKWH, NONE);
     w_setsize(WS_CURR, DESKWH, &gl_rscreen);
     w_setsize(WS_PREV, DESKWH, &gl_rscreen);
@@ -1239,7 +1229,8 @@ void wm_get(WORD w_handle, WORD w_field, WORD *poutwds)
     case WF_NEXTXYWH:
         w_getsize(WS_WORK, w_handle, &t);
         po = (w_field == WF_FIRSTXYWH) ? pwin->w_rlist : pwin->w_rnext;
-        w_owns(pwin, po, &t, poutwds);
+        /* FIXME: GRECT typecasting again */
+        w_owns(pwin, po, &t, (GRECT *)poutwds);
         break;
     case WF_SCREEN:
         gsx_mret((LONG *)poutwds, (LONG *)(poutwds+2));

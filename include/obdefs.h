@@ -141,15 +141,6 @@ typedef struct
         WORD            ob_height;      /* height of obj                */
 } OBJECT;
 
-typedef struct _ORECT
-{
-        struct _ORECT *o_link;
-        WORD    o_x;
-        WORD    o_y;
-        WORD    o_w;
-        WORD    o_h;
-} ORECT;
-
 typedef struct
 {
         WORD    g_x;
@@ -157,6 +148,12 @@ typedef struct
         WORD    g_w;
         WORD    g_h;
 } GRECT;
+
+typedef struct _ORECT
+{
+        struct _ORECT *o_link;
+        GRECT   o_gr;
+} ORECT;
 
 typedef struct
 {
