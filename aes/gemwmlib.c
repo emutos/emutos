@@ -1024,7 +1024,7 @@ static void draw_change(WORD w_handle, GRECT *pt)
  *  Walk down ORECT list looking for the next rect that still has
  *  size when clipped with the passed in clip rectangle
  */
-static void w_owns(WORD w_handle, ORECT *po, GRECT *pt, WORD *poutwds)
+static void w_owns(WINDOW *pwin, ORECT *po, GRECT *pt, WORD *poutwds)
 {
     while (po)
     {
@@ -1032,7 +1032,7 @@ static void w_owns(WORD w_handle, ORECT *po, GRECT *pt, WORD *poutwds)
         poutwds[1] = po->o_y;
         poutwds[2] = po->o_w;
         poutwds[3] = po->o_h;
-        D.w_win[w_handle].w_rnext = po = po->o_link;
+        pwin->w_rnext = po = po->o_link;
         /* FIXME: GRECT typecasting again */
         if ((rc_intersect(pt, (GRECT *)poutwds)) &&
             (rc_intersect(&gl_rfull, (GRECT *)poutwds)))
@@ -1202,6 +1202,8 @@ void wm_get(WORD w_handle, WORD w_field, WORD *poutwds)
     WORD    which;
     GRECT   t;
     ORECT   *po;
+    WINDOW  *pwin;
+    pwin = &D.w_win[w_handle];
 
     which = -1;
     switch(w_field)
@@ -1219,16 +1221,16 @@ void wm_get(WORD w_handle, WORD w_field, WORD *poutwds)
         which = WS_FULL;
         break;
     case WF_HSLIDE:
-        poutwds[0] = D.w_win[w_handle].w_hslide;
+        poutwds[0] = pwin->w_hslide;
         break;
     case WF_VSLIDE:
-        poutwds[0] = D.w_win[w_handle].w_vslide;
+        poutwds[0] = pwin->w_vslide;
         break;
     case WF_HSLSIZ:
-        poutwds[0] = D.w_win[w_handle].w_hslsiz;
+        poutwds[0] = pwin->w_hslsiz;
         break;
     case WF_VSLSIZ:
-        poutwds[0] = D.w_win[w_handle].w_vslsiz;
+        poutwds[0] = pwin->w_vslsiz;
         break;
     case WF_TOP:
         poutwds[0] = w_top();
@@ -1236,8 +1238,8 @@ void wm_get(WORD w_handle, WORD w_field, WORD *poutwds)
     case WF_FIRSTXYWH:
     case WF_NEXTXYWH:
         w_getsize(WS_WORK, w_handle, &t);
-        po = (w_field == WF_FIRSTXYWH) ? D.w_win[w_handle].w_rlist : D.w_win[w_handle].w_rnext;
-        w_owns(w_handle, po, &t, poutwds);
+        po = (w_field == WF_FIRSTXYWH) ? pwin->w_rlist : pwin->w_rnext;
+        w_owns(pwin, po, &t, poutwds);
         break;
     case WF_SCREEN:
         gsx_mret((LONG *)poutwds, (LONG *)(poutwds+2));
