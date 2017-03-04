@@ -99,6 +99,13 @@ void ttram_detect(void)
 /* Initialize all Alt-RAM */
 void altram_init(void)
 {
+#ifdef STATIC_ALT_RAM_SIZE
+    KDEBUG(("xmaddalt() static adr=%p size=%ld\n",
+        (UBYTE *)STATIC_ALT_RAM_ADDRESS, STATIC_ALT_RAM_SIZE));
+    xmaddalt((UBYTE *)STATIC_ALT_RAM_ADDRESS, STATIC_ALT_RAM_SIZE);
+    return;
+#endif
+
 #if CONF_WITH_TTRAM
     /* Add eventual TT-RAM to BDOS pool */
     if (ramtop != NULL)
