@@ -173,7 +173,7 @@ static WORD install_drive(WORD drive)
     if (!pa)
         return -1;
 
-    pa->a_flags = AF_ISCRYS | AF_ISDESK;
+    pa->a_flags = AF_ISDESK;
     pa->a_funkey = 0;
     pa->a_letter = 'A' + drive;
     pa->a_type = AT_ISDISK;

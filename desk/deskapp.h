@@ -25,7 +25,7 @@
  * bit masks for the a_flags field in the ANODE
  */
                             /* flags applicable to installed applications */
-#define AF_ISCRYS 0x0001        /* is crystal (i.e. GEM) application */
+#define AF_ISCRYS 0x0001        /* is GEM application: only relevant for a_type==AT_ISFILE */
 /* #define AF_ISGRAF 0x0002        no longer used */
 #define AF_ISDESK 0x0004        /* requires desktop icon */
 #define AF_ISPARM 0x0008        /* requires input parameters (TTP or GTP) */

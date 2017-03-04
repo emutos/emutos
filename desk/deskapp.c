@@ -253,11 +253,11 @@ static BYTE *app_parse(BYTE *pcurr, ANODE *pa)
     {
     case 'T':                             /* Trash */
         pa->a_type  = AT_ISTRSH;
-        pa->a_flags = AF_ISCRYS | AF_ISDESK;
+        pa->a_flags = AF_ISDESK;
         break;
     case 'M':                             /* Storage Media        */
         pa->a_type = AT_ISDISK;
-        pa->a_flags = AF_ISCRYS | AF_ISDESK;
+        pa->a_flags = AF_ISDESK;
         break;
     case 'Y':                             /* GEM App needs parms  */
         pa->a_flags = AF_ISPARM;
