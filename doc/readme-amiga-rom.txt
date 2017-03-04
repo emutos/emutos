@@ -4,6 +4,7 @@ This EmuTOS version is a ROM for Amiga hardware.
 
 emutos-amiga.rom - English ROM
 emutos-kickdisk.adf - English Amiga 1000 Kickstart disk
+emutos-vampire.rom - English ROM optimized for Vampire V2 accelerators
 
 The following optional files are also supplied:
 emuicon.rsc - contains additional icons for the desktop
@@ -41,6 +42,7 @@ Supported Amiga hardware features:
 - A600/A1200 IDE interface
 - Battery backed up clock (MSM6242B and RF5C01A)
 - Zorro II/III Fast RAM, Slow RAM, A3000/A4000 motherboard RAM (*)
+- Vampire V2 FastRAM
 - Floppy drives
 
 Supported Atari features:
@@ -50,7 +52,7 @@ Supported Atari features:
 - Mouse
 - IDE hard disk (with EmuTOS internal driver)
 - XBIOS hardware clock
-- Alt-RAM (*)
+- Alt-RAM
 - ST floppy disks (only 9 sectors, 720 KB, read-only)
 
 Unsupported Atari features:
@@ -59,6 +61,9 @@ Unsupported Atari features:
 
 This ROM image has been built using:
 make amiga
+
+The Vampire V2 ROM image has been built using:
+make amigavampire
 
 (*) This additional hardware support is provided by sources imported
 from the AROS project. Unfortunately, due to AROS and GPL licenses
