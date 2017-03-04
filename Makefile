@@ -358,6 +358,7 @@ help:
 	@echo "firebee $(SREC_FIREBEE), to be flashed on the FireBee"
 	@echo "firebee-prg emutos.prg, a RAM tos for the FireBee"
 	@echo "amiga   $(ROM_AMIGA), EmuTOS ROM for Amiga hardware"
+	@echo "amigavampire $(VAMPIRE_ROM_AMIGA), EmuTOS ROM for Amiga optimized for Vampire V2"
 	@echo "amigakd $(AMIGA_KICKDISK), EmuTOS as Amiga 1000 Kickstart disk"
 	@echo "amigaflop $(EMUTOS_ADF), EmuTOS RAM as Amiga boot floppy"
 	@echo "amigaflopvampire $(EMUTOS_VAMPIRE_ADF), EmuTOS RAM as Amiga boot floppy optimized for Vampire V2"
@@ -543,12 +544,25 @@ amiga: UNIQUE = $(COUNTRY)
 amiga: override DEF += -DTARGET_AMIGA_ROM $(AMIGA_DEFS)
 amiga:
 	@echo "# Building Amiga EmuTOS into $(ROM_AMIGA)"
-	$(MAKE) DEF='$(DEF)' UNIQUE=$(UNIQUE) $(ROM_AMIGA)
+	$(MAKE) CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' UNIQUE=$(UNIQUE) ROM_AMIGA=$(ROM_AMIGA) $(ROM_AMIGA)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS162))) bytes more than TOS 1.62)"
 
 $(ROM_AMIGA): emutos.img mkrom
 	./mkrom amiga $< $(ROM_AMIGA)
+
+# Special Amiga ROM optimized for Vampire V2
+
+VAMPIRE_CPUFLAGS = -m68040
+VAMPIRE_DEF = -DSTATIC_ALT_RAM_ADDRESS=0x08000000 -DSTATIC_ALT_RAM_SIZE=127UL*1024*1024
+VAMPIRE_ROM_AMIGA = emutos-vampire.rom
+
+.PHONY: amigavampire
+NODEP += amigavampire
+amigavampire: CPUFLAGS = $(VAMPIRE_CPUFLAGS)
+amigavampire: override DEF += $(VAMPIRE_DEF)
+amigavampire: ROM_AMIGA = $(VAMPIRE_ROM_AMIGA)
+amigavampire: amiga
 
 #
 # Amiga Kickstart disk image for Amiga 1000
