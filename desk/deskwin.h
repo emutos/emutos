@@ -36,6 +36,11 @@
 #define LEN_FNODE   48
 
 
+/*
+ * the number of the object within G.g_screen[] that is the root
+ * of the desktop itself (the desktop is a window that receives
+ * special treatment within the code)
+ */
 #define DROOT 1
 
 

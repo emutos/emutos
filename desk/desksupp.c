@@ -147,7 +147,7 @@ void desk_verify(WORD wh, WORD changed)
             G.g_croot = pw->w_root;
         }
     }
-    else G.g_croot = 1;         /* DESK v1.2: The Desktop */
+    else G.g_croot = DROOT;     /* DESK v1.2: The Desktop */
 
     G.g_cwin = wh;
     G.g_wlastsel = wh;
@@ -165,7 +165,8 @@ void do_wredraw(WORD w_handle, WORD xc, WORD yc, WORD wc, WORD hc)
     clip_r.g_y = yc;
     clip_r.g_w = wc;
     clip_r.g_h = hc;
-    root = 1;
+
+    root = DROOT;
     if (w_handle != 0)
     {
         pw = win_find(w_handle);
