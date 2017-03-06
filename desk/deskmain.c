@@ -481,7 +481,6 @@ static WORD do_optnmenu(WORD item)
         if (rebld)
         {
             app_blddesk();
-            do_wredraw(0, G.g_xdesk, G.g_ydesk, G.g_wdesk, G.g_hdesk);
         }
         break;
     case IAPPITEM:
@@ -504,7 +503,6 @@ static WORD do_optnmenu(WORD item)
         if (rebld > 0)
         {
             app_blddesk();
-            do_wredraw(0, G.g_xdesk, G.g_ydesk, G.g_wdesk, G.g_hdesk);
         }
 #if CONF_WITH_WINDOW_ICONS
         else if (rebld < 0)
@@ -520,7 +518,6 @@ static WORD do_optnmenu(WORD item)
         if (rebld)
         {
             app_blddesk();
-            do_wredraw(0, G.g_xdesk, G.g_ydesk, G.g_wdesk, G.g_hdesk);
         }
         break;
     case PREFITEM:
@@ -1564,8 +1561,6 @@ WORD deskmain(void)
 
     /* initialize desktop and its objects */
     app_blddesk();
-
-    do_wredraw(0, G.g_xdesk, G.g_ydesk, G.g_wdesk, G.g_hdesk);
 
     /* Take over the desktop */
     wind_set(0, WF_NEWDESK, G.g_screen, 1, 0);

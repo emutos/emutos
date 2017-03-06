@@ -1053,7 +1053,7 @@ void app_save(WORD todisk)
 
 
 /*
- *  Build the desktop list of objects based on this current application list
+ *  Build and redraw the desktop list of objects
  */
 void app_blddesk(void)
 {
@@ -1099,6 +1099,7 @@ void app_blddesk(void)
             pic->ib_char |= pa->a_letter;
         }
     }
+    do_wredraw(0, G.g_xdesk, G.g_ydesk, G.g_wdesk, G.g_hdesk);
 }
 
 
