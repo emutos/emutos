@@ -131,7 +131,7 @@ struct IDE
 #endif /* MACHINE_M548X */
 
 /* the data register is naturally byteswapped on some hardware */
-#if defined(MACHINE_AMIGA) || CONF_WITH_TWISTED_IDE
+#if defined(MACHINE_AMIGA)
 #define IDE_DATA_REGISTER_IS_BYTESWAPPED 1
 #else
 #define IDE_DATA_REGISTER_IS_BYTESWAPPED 0
@@ -166,10 +166,7 @@ struct IDE
 #if !IDE_32BIT_XFER
     UBYTE filler02[2];
 #endif
-#if !CONF_WITH_TWISTED_IDE
-    /* on IDE interfaces with twisted/byte-swapped cable, registers are shifted by one byte */
     UBYTE filler04;
-#endif
     UBYTE features; /* Read: error */
     UBYTE filler06[3];
     UBYTE sector_count;
@@ -186,9 +183,6 @@ struct IDE
     UBYTE filler1e[27];
     UBYTE control;  /* Read: Alternate status */
     UBYTE filler3a[6];
-#if CONF_WITH_TWISTED_IDE
-    UBYTE filler3f;
-#endif
 };
 
 #define ide_interface           ((volatile struct IDE *)0xfff00000)
@@ -242,6 +236,8 @@ struct IFINFO {
         UBYTE options;
         UBYTE spi;          /* # sectors transferred between interrupts */
     } dev[2];
+    volatile struct IDE *base_address;
+    BOOL twisted_cable;
 };
 
 #define DEVTYPE_NONE    0               /* for 'type' */
@@ -310,7 +306,7 @@ static int wait_for_not_BSY(volatile struct IDE *interface,LONG timeout);
  */
 static void set_interface_magic(WORD ifnum)
 {
-    volatile struct IDE *interface = ide_interface + ifnum;
+    volatile struct IDE *interface = ifinfo[ifnum].base_address;
     UBYTE secnum = SECNUM_MAGIC + ifnum;
     UBYTE seccnt = SECCNT_MAGIC + ifnum;
 
@@ -328,7 +324,7 @@ static void set_interface_magic(WORD ifnum)
  */
 static int check_interface_magic(WORD ifnum)
 {
-    volatile struct IDE *interface = ide_interface + ifnum;
+    volatile struct IDE *interface = ifinfo[ifnum].base_address;
     UWORD numcnt = MAKE_UWORD(SECNUM_MAGIC + ifnum, SECCNT_MAGIC + ifnum);
 
     if (IDE_READ_SECTOR_NUMBER_SECTOR_COUNT() == numcnt)
@@ -343,7 +339,7 @@ static int check_interface_magic(WORD ifnum)
  */
 static int ide_interface_exists(WORD ifnum)
 {
-    volatile struct IDE *interface = ide_interface + ifnum;
+    volatile struct IDE *interface = ifinfo[ifnum].base_address;
     int rc = 0;             /* assume it doesn't exist */
 
     if (check_read_byte((long)&interface->command)) {
@@ -355,14 +351,32 @@ static int ide_interface_exists(WORD ifnum)
         */
         if (ifnum == 0) {
             set_interface_magic(0);
-            rc = 1;
+            if (!check_interface_magic(0)) {
+                /*
+                 * if magic can't be read back, then assume twisted cable,
+                 * hence, interface base address needs to be offset by 1
+                 */
+                ifinfo[ifnum].base_address = (volatile struct IDE *)(((ULONG)ifinfo[ifnum].base_address)-1);
+                ifinfo[ifnum].twisted_cable = TRUE;
+                set_interface_magic(0);
+            }
+            rc = check_interface_magic(0);
         } else {
             set_interface_magic(ifnum);
+            if (!check_interface_magic(ifnum)) {
+                /*
+                 * if magic can't be read back, then assume twisted cable,
+                 * hence, interface base address needs to be offset by 1
+                 */
+                ifinfo[ifnum].base_address = (volatile struct IDE *)(((ULONG)ifinfo[ifnum].base_address)-1);
+                ifinfo[ifnum].twisted_cable = TRUE;
+                set_interface_magic(ifnum);
+            }
             rc = check_interface_magic(0);
         }
     }
 
-    KDEBUG(("ide interface %d %s",ifnum,rc?"exists":"not present"));
+    KDEBUG(("ide interface %d %s %s",ifnum,rc?"exists":"not present",ifinfo[ifnum].twisted_cable?"(twisted cable)":""));
 
     return rc;
 }
@@ -370,6 +384,17 @@ static int ide_interface_exists(WORD ifnum)
 
 void detect_ide(void)
 {
+    int i, bitmask;
+
+    MAYBE_UNUSED(bitmask);
+
+    for (i = 0; i < NUM_IDE_INTERFACES; i++)
+    {
+        /* initialize base addresses for IDE interface */
+        ifinfo[i].base_address = ide_interface + i;
+        ifinfo[i].twisted_cable = FALSE;
+    }
+
 #ifdef MACHINE_AMIGA
     has_ide = has_gayle ? 0x01 : 0x00;
 #elif defined(MACHINE_M548X)
@@ -377,8 +402,6 @@ void detect_ide(void)
 #elif defined(MACHINE_FIREBEE)
     has_ide = 0x03;
 #elif CONF_ATARI_HARDWARE
-    int i, bitmask;
-
     /*
      * we initialise this early, because ide_interface_exists() calls
      * set_interface_magic(), which uses it (via the DELAY_400NS macro).
@@ -472,7 +495,7 @@ static int wait_for_signature(volatile struct IDE *interface,LONG timeout)
 
 static void ide_reset(UWORD ifnum)
 {
-    volatile struct IDE *interface = ide_interface + ifnum;
+    volatile struct IDE *interface = ifinfo[ifnum].base_address;
     struct IFINFO *info = ifinfo + ifnum;
     int err;
 
@@ -524,7 +547,7 @@ static UBYTE ide_decode_type(UBYTE status,UWORD signature)
 
 static void ide_detect_devices(UWORD ifnum)
 {
-    volatile struct IDE *interface = ide_interface + ifnum;
+    volatile struct IDE *interface = ifinfo[ifnum].base_address;
     struct IFINFO *info = ifinfo + ifnum;
     UBYTE status;
     UWORD signature;
@@ -644,7 +667,7 @@ static void ide_rw_start(volatile struct IDE *interface,UWORD dev,ULONG sector,U
  */
 static LONG ide_nodata(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UWORD count)
 {
-    volatile struct IDE *interface = ide_interface + ifnum;
+    volatile struct IDE *interface = ifinfo[ifnum].base_address;
     UBYTE status;
 
     if (ide_select_device(interface,dev) < 0)
@@ -720,7 +743,7 @@ static void ide_get_data(volatile struct IDE *interface,UBYTE *buffer,ULONG buff
  */
 static LONG ide_read(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UWORD count,UBYTE *buffer,BOOL need_byteswap)
 {
-    volatile struct IDE *interface = ide_interface + ifnum;
+    volatile struct IDE *interface = ifinfo[ifnum].base_address;
     struct IFINFO *info = ifinfo + ifnum;
     UWORD spi;
     UBYTE status1, status2;
@@ -762,9 +785,15 @@ static LONG ide_read(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UWORD count,UB
         xferlen = (ULONG)numsecs * SECTOR_SIZE;
 
         rc = E_OK;
-        if (status1 & IDE_STATUS_DRQ)
-            ide_get_data(interface,buffer,xferlen,need_byteswap);
-        else rc = EREADF;
+        if (status1 & IDE_STATUS_DRQ) {
+            if (info->twisted_cable) {
+                ide_get_data((volatile struct IDE *)(((ULONG)interface)+1),buffer,xferlen,need_byteswap);
+            } else {
+                ide_get_data(interface,buffer,xferlen,need_byteswap);
+            }
+        } else {
+            rc = EREADF;
+        }
         if (status1 & (IDE_STATUS_DF | IDE_STATUS_ERR))
             rc = EREADF;
 
@@ -810,7 +839,7 @@ static void ide_put_data(volatile struct IDE *interface,UBYTE *buffer,ULONG buff
  */
 static LONG ide_write(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UWORD count,UBYTE *buffer,BOOL need_byteswap)
 {
-    volatile struct IDE *interface = ide_interface + ifnum;
+    volatile struct IDE *interface = ifinfo[ifnum].base_address;
     struct IFINFO *info = ifinfo + ifnum;
     UWORD spi;
     UBYTE status1, status2;
@@ -849,9 +878,15 @@ static LONG ide_write(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UWORD count,U
 
         rc = E_OK;
         status1 = IDE_READ_STATUS();    /* status, clear pending interrupt */
-        if (status1 & IDE_STATUS_DRQ)
-            ide_put_data(interface,buffer,xferlen,need_byteswap);
-        else rc = EWRITF;
+        if (status1 & IDE_STATUS_DRQ) {
+            if (info->twisted_cable) {
+                ide_put_data((volatile struct IDE *)(((ULONG)interface)+1),buffer,xferlen,need_byteswap);
+            } else {
+                ide_put_data(interface,buffer,xferlen,need_byteswap);
+            }
+        } else {
+            rc = EWRITF;
+        }
         if (status1 & (IDE_STATUS_DF|IDE_STATUS_ERR))
             rc = EWRITF;
 
@@ -917,7 +952,7 @@ LONG ide_rw(WORD rw,LONG sector,WORD count,UBYTE *buf,WORD dev,BOOL need_byteswa
  */
 static WORD clear_multiple_mode(UWORD ifnum,UWORD dev)
 {
-    volatile struct IDE *interface = ide_interface + ifnum;
+    volatile struct IDE *interface = ifinfo[ifnum].base_address;
     struct IFINFO *info = ifinfo + ifnum;
 
     MAYBE_UNUSED(interface);
@@ -968,9 +1003,10 @@ static LONG ide_identify(WORD dev)
 
     KDEBUG(("ide_identify(%d [ifnum=%d ifdev=%d])\n", dev, ifnum, ifdev));
 
+    /* with twisted cable the response of IDENTIFY_DEVICE will be byte-swapped */
     if (ide_device_exists(dev)) {
-        ret = ide_read(IDE_CMD_IDENTIFY_DEVICE,ifnum,ifdev,0L,1,
-                       (UBYTE *)&identify,IDE_DATA_REGISTER_IS_BYTESWAPPED);
+        ret = ide_read(IDE_CMD_IDENTIFY_DEVICE,ifnum,ifdev,0L,1,(UBYTE *)&identify,
+                       ifinfo[ifnum].twisted_cable || IDE_DATA_REGISTER_IS_BYTESWAPPED);
     } else ret = EUNDEV;
 
     if (ret < 0)
