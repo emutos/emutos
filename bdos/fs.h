@@ -219,8 +219,8 @@ struct _dnd         /* directory node descriptor */
 /*
  * bit usage in d_flag
  */
-#define DND_LOCKED  0x8000  /* DND may not be scavenged         */
-                            /* (see makdnd() in fsdir.c)        */
+#define DND_LOCKED  0x8000  /* DND may not be scavenged (see     */
+                            /* free_available_dnds() in fsdir.c) */
 
 
 
@@ -454,6 +454,7 @@ FCB *scan(DND *dnd, const char *n, WORD att, LONG *posp);
 int incr_curdir_usage(DND *dnd);
 void decr_curdir_usage(int index);
 OFD *makofd(DND *p);
+WORD free_available_dnds(void);
 
 
 /*

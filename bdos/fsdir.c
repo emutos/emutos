@@ -163,6 +163,11 @@ static BOOL is_subdir(const char *s1,DND *dn1, DND *dn2);
  */
 static const char dots[22] = ".          ";
 
+/*
+ *  counter used by free_available_dnds()
+ */
+static LONG freed_dnds, freed_ofds; /* count of DNDs & OFDs made available */
+
 
 /*
  *  namlen - parameter points to a character string of 11 bytes max
@@ -1904,7 +1909,15 @@ OFD *makofd(DND *p)
 {
     OFD *f;
 
+    /*
+     * if we run out of memory when allocating the OFD, xmgetblk()
+     * will run free_available_dnds() behind our backs.  we mustn't
+     * let it free up the DND for which we're allocating an OFD!
+     * so we lock the DND first.
+     */
+    p->d_flag |= DND_LOCKED;    /* can't let this DND be scavenged! */
     f = MGET(OFD);              /* MGET(OFD) only returns if it succeeds */
+    p->d_flag &= ~DND_LOCKED;   /* ok, we're safe again */
 
     p->d_ofd = f;       /* update pointer in DND */
 
@@ -1918,4 +1931,127 @@ OFD *makofd(DND *p)
     f->o_dmd = p->d_drv;
 
     return f;
+}
+
+
+/*
+ * function used by free_available_dnds()
+ */
+static void process_dnd_tree(DND *dndstart)
+{
+    DND *dnd, *prev;
+    DIRTBL_ENTRY *dt;
+    WORD i;
+
+    /*
+     * follow the sibling chain
+     */
+    for (dnd = dndstart, prev = NULL; dnd; dnd = dnd->d_right) {
+        /*
+         * if child exists, first process the tree based on that child
+         */
+        if (dnd->d_left)
+            process_dnd_tree(dnd->d_left);
+
+        /*
+         * check again, since above we may have freed up the entire child tree
+         */
+        if (dnd->d_left) {
+            KDEBUG(("DND at %p has children\n",dnd));
+            prev = dnd;
+            continue;
+        }
+
+        /*
+         * no children - but are there open files?
+         */
+        if (dnd->d_files) {     /* open files in this directory, can't free DND */
+            KDEBUG(("DND at %p has open files\n",dnd));
+            prev = dnd;
+            continue;
+        }
+
+        /*
+         * no open files - but is this anyone's current dir?
+         */
+        for (i = 1, dt = dirtbl+1; i < NCURDIR; i++, dt++)
+            if (dt->use && (dt->dnd == dnd))
+                break;
+        if (i < NCURDIR) {      /* it's someone's current directory */
+            KDEBUG(("DND at %p is a current directory\n",dnd));
+            prev = dnd;
+            continue;
+        }
+
+        /*
+         * not current - but are we at the root?
+         */
+        if (!dnd->d_parent) {
+            KDEBUG(("DND at %p is a root directory\n",dnd));
+            prev = dnd;
+            continue;
+        }
+
+        /*
+         * not at the root - but are we locked?
+         */
+        if (dnd->d_flag&DND_LOCKED) {
+            KDEBUG(("DND at %p is locked\n",dnd));
+            prev = dnd;
+            continue;
+        }
+
+        /*
+         * we've got a freeable DND
+         *
+         * if there was a previous sibling, link it to the next
+         * else point the parent to the next & say there's no previous
+         */
+        if (prev) {
+            prev->d_right = dnd->d_right;
+        } else {
+            dnd->d_parent->d_left = dnd->d_right;
+            prev = NULL;
+        }
+
+        /*
+         * now we can free up the DND and any associated OFD
+         */
+        if (dnd->d_ofd) {
+            xmfreblk(dnd->d_ofd);
+            freed_ofds++;
+        }
+        xmfreblk(dnd);
+        freed_dnds++;
+    }
+}
+
+
+/*
+ * the following routine is called (by xmgetblk() in osmem.c) when we
+ * cannot get memory for a DND or OFD.  it calls process_dnd_tree() to
+ * free up DNDs that are not absolutely required (this is the same idea
+ * as the "scavenge" procedure in makdnd() above).
+ */
+WORD free_available_dnds(void)
+{
+    DMD *dmd;
+    WORD i;
+
+    KDEBUG(("free_available_dnds() called\n"));
+    freed_dnds = freed_ofds = 0L;
+
+    /*
+     * process all DMDs
+     */
+    for (i = 0; i < BLKDEVNUM; i++) {
+        dmd = drvtbl[i];
+        if (!dmd)
+            continue;
+        if (dmd->m_dtl)
+            process_dnd_tree(dmd->m_dtl);
+    }
+
+    KDEBUG(("freed %ld DNDs, %ld OFDs\n",freed_dnds,freed_ofds));
+    return freed_dnds+freed_ofds;
 }
