@@ -242,12 +242,46 @@ retcl:
 }
 
 
+/*
+ * countfree16 - fast scan of FAT16 filesystem to count free clusters
+ */
+static CLNO countfree16(DMD *dm)
+{
+    int recnum, offset;
+    CLNO free, clnum;
+    char *buf;
+
+    for (clnum = 2, free = 0; clnum < dm->m_numcl+2; )
+    {
+        /*
+         * get the next FAT record
+         */
+        recnum = (clnum * sizeof(CLNO)) >> dm->m_rblog;
+        offset = (clnum * sizeof(CLNO)) & dm->m_rbm;
+        buf = getrec(recnum, dm->m_fatofd, 0);
+
+        /*
+         * scan the FAT record, counting free slots
+         */
+        for ( ; (offset < dm->m_recsiz) && (clnum < (dm->m_numcl+2)); offset += sizeof(CLNO), clnum++)
+        {
+            if (*(CLNO *)(buf+offset) == 0)
+                free++;
+        }
+    }
+
+    return free;
+}
+
+
 /*      Function 0x36   d_free
                 get disk free space data into buffer *
         Error returns
                 ERR
 
-        Last modified   SCC     15 May 85
+        The code is optimised for 16-bit FATs.  The 12-bit case is more
+        complex, since the entry for a cluster can span logical records,
+        and therefore we do it the old, slow way.
 */
 long xgetfree(long *buf, int drv)
 {
@@ -261,10 +295,17 @@ long xgetfree(long *buf, int drv)
         return ERR;
 
     dm = drvtbl[n];
-    free = 0;
-    for (i = 0; i < dm->m_numcl; i++)
-        if (!getrealcl(i+2,dm))     /* cluster numbers start at 2 */
-            free++;
+    if (dm->m_16)
+    {
+        free = countfree16(dm);
+    }
+    else
+    {
+        free = 0;
+        for (i = 0; i < dm->m_numcl; i++)
+            if (!getrealcl(i+2,dm))     /* cluster numbers start at 2 */
+                free++;
+    }
 
     *buf++ = (long)(free);
     *buf++ = (long)(dm->m_numcl);
