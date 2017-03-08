@@ -42,6 +42,7 @@
 #include "deskmain.h"
 #include "deskinf.h"
 #include "deskdir.h"
+#include "deskins.h"
 #include "gemerror.h"
 #include "kprint.h"
 
@@ -167,8 +168,7 @@ BYTE *last_separator(BYTE *path)
  */
 void add_path(BYTE *path, BYTE *new_name)
 {
-    while (*path != '*')
-        path++;
+    path = filename_start(path);
     strcpy(path, new_name);
     strcat(path, "\\*.*");
 }
@@ -199,8 +199,7 @@ static void sub_path(BYTE *path)
  */
 BYTE *add_fname(BYTE *path, BYTE *new_name)
 {
-    while (*path != '*')
-        path++;
+    path = filename_start(path);
 
     return strcpy(path, new_name);
 }
