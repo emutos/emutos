@@ -45,5 +45,6 @@
 
 
 /* in bdos/bdosmain.c */
-extern void osinit(void);
+extern void osinit_before_xmaddalt(void);
+extern void osinit_after_xmaddalt(void);
 extern long osif(int *pw);

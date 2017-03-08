@@ -366,16 +366,20 @@ static void bios_init(void)
     exec_os = NULL;
 #endif
 
-    KDEBUG(("osinit()\n"));
-    osinit();                   /* initialize BDOS */
-    KDEBUG(("after osinit()\n"));
-    boot_status |= DOS_AVAILABLE;   /* track progress */
+    KDEBUG(("osinit_before_xmaddalt()\n"));
+    osinit_before_xmaddalt();   /* initialize BDOS (part 1) */
+    KDEBUG(("after osinit_before_xmaddalt()\n"));
 
 #if CONF_WITH_ALT_RAM
     /* Add Alt-RAM to BDOS pool */
     KDEBUG(("altram_init()\n"));
     altram_init();
 #endif
+
+    KDEBUG(("osinit_after_xmaddalt()\n"));
+    osinit_after_xmaddalt();    /* initialize BDOS (part 2) */
+    KDEBUG(("after osinit_after_xmaddalt()\n"));
+    boot_status |= DOS_AVAILABLE;   /* track progress */
 
     /* Enable VBL processing */
     vblsem = 1;

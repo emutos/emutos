@@ -296,7 +296,7 @@ static long ni(void)
  *  osinit - the bios calls this routine to initialize the os
  */
 
-void osinit(void)
+void osinit_before_xmaddalt(void)
 {
     /* take over the handling of TRAP #1 */
     Setexc(0x21, (long)enter);
@@ -309,7 +309,12 @@ void osinit(void)
 
     osmem_init();
     umem_init();
+}
 
+/* BIOS may call xmaddalt() between those two calls */
+
+void osinit_after_xmaddalt(void)
+{
     /* Set up initial process. Required by Malloc() */
     run = &initial_basepage;
     run->p_flags = PF_STANDARD;
