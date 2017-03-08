@@ -310,11 +310,12 @@ void osinit(void)
     osmem_init();
     umem_init();
 
+    /* Set up initial process. Required by Malloc() */
+    run = &initial_basepage;
+
     bufl_init();    /* initialize BDOS buffer list, now Malloc is available */
 
     time_init();
-
-    run = &initial_basepage;
 
     KDEBUG(("BDOS: address of basepage = %p\n", run));
 

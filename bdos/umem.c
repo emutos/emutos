@@ -116,6 +116,8 @@ void *xmalloc(long amount)
 {
     void *rc;
 
+    assert(run != NULL);
+
     if (run->p_flags & PF_TTRAMMEM) {
         /* allocate TT RAM, or ST RAM if not enough TT RAM */
         rc = xmxalloc(amount, MX_PREFTTRAM);
