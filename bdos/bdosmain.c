@@ -312,6 +312,7 @@ void osinit(void)
 
     /* Set up initial process. Required by Malloc() */
     run = &initial_basepage;
+    run->p_flags = PF_STANDARD;
 
     bufl_init();    /* initialize BDOS buffer list, now Malloc is available */
 
