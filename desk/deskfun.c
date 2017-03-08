@@ -529,9 +529,7 @@ static WORD fun_file2win(PNODE *pn_src, BYTE  *spec, ANODE *an_dest, FNODE *fn_d
 
     strcpy(pathname, spec);
 
-    p = strchr(pathname, '*');
-    if (p)
-        *p = '\0';
+    p = filename_start(pathname);
 
     if (an_dest && an_dest->a_type == AT_ISFOLD)
     {
@@ -540,7 +538,7 @@ static WORD fun_file2win(PNODE *pn_src, BYTE  *spec, ANODE *an_dest, FNODE *fn_d
     }
     else
     {
-        strcat(p, "*.*");
+        strcpy(p, "*.*");
     }
 
     return fun_op(OP_COPY, -1, pn_src, pathname);
