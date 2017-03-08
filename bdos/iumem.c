@@ -77,6 +77,9 @@ MD *ffit(long amount, MPB *mp)
         return (MD *)maxval;
     }
 
+    if (mp == &pmd)
+        KDEBUG(("Malloc(%lu) from ST-RAM\n", amount));
+
     /*
      * round the size up to a multiple of 4 bytes to keep alignment;
      * alignment on long boundaries is faster in FastRAM
