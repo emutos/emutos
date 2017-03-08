@@ -66,6 +66,7 @@ struct _pd
 #define PF_FASTLOAD     0x0001
 #define PF_TTRAMLOAD    0x0002
 #define PF_TTRAMMEM     0x0004
+#define PF_STANDARD     (PF_FASTLOAD | PF_TTRAMLOAD | PF_TTRAMMEM)
 
 extern PD *run; /* Pointer to the basepage of the current process */
 

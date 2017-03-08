@@ -526,7 +526,7 @@ void aes_run_rom_program(PRG_ENTRY *entry)
     PD *pd;     /* this is the BDOS PD structure, not the AESPD */
 
     /* Create a basepage with the standard Pexec() */
-    pd = (PD *) trap1_pexec(PE_BASEPAGE, NULL, "", NULL);
+    pd = (PD *) trap1_pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, "", NULL);
     pd->p_tbase = (LONG) entry;
 
     /* Run the program with dos_exec() for AES reentrancy issues */

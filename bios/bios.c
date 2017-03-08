@@ -419,7 +419,7 @@ static void bootstrap(void)
     nf_getbootstrap_args(args, sizeof(args));
 
     /* allocate space */
-    pd = (PD *) trap1_pexec(PE_BASEPAGE, "mint.prg", args, default_env);
+    pd = (PD *) trap1_pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, args, default_env);
 
     /* get the TOS executable from the emulator */
     length = nf_bootstrap( (char*)pd->p_lowtpa + sizeof(PD), (long)pd->p_hitpa - pd->p_lowtpa);
@@ -650,7 +650,7 @@ void biosmain(void)
 
 #if WITH_CLI
     if (bootflags & BOOTFLAG_EARLY_CLI) {   /* run an early console */
-        PD *pd = (PD *) trap1_pexec(PE_BASEPAGE, "", "", default_env);
+        PD *pd = (PD *) trap1_pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, "", default_env);
         pd->p_tbase = (LONG) coma_start;
         pd->p_tlen = pd->p_dlen = pd->p_blen = 0;
         trap1_pexec(PE_GOTHENFREE, "", pd, "");
@@ -667,7 +667,7 @@ void biosmain(void)
     } else if (exec_os) {
         /* start the default (ROM) shell */
         PD *pd;
-        pd = (PD *) trap1_pexec(PE_BASEPAGE, "", "", default_env);
+        pd = (PD *) trap1_pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, "", default_env);
         pd->p_tbase = (LONG) exec_os;
         pd->p_tlen = pd->p_dlen = pd->p_blen = 0;
         trap1_pexec(PE_GO, "", pd, "");
