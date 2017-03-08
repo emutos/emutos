@@ -42,6 +42,7 @@
 #include "deskrsrc.h"
 #include "desksupp.h"
 #include "deskinf.h"
+#include "deskins.h"
 #include "../bios/country.h"
 #include "kprint.h"
 
@@ -456,9 +457,7 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
 
     strcpy(srcpth, ppath);
     strcpy(dstpth, ppath);
-    nmidx = 0;
-    while (srcpth[nmidx] != '*')
-        nmidx++;
+    nmidx = filename_start(srcpth) - srcpth;
 
     /*
      * for folders, count the contents & insert the values in the
