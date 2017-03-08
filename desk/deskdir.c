@@ -862,7 +862,11 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *co
         if (lavail >= MAX_CLUS_SIZE)
             copylen = lavail & ~(MAX_CLUS_SIZE-1);
         else copylen = lavail;
+#if CONF_PREFER_STRAM_DISK_BUFFERS
         copybuf = dos_alloc_stram(copylen);
+#else
+        copybuf = dos_alloc_anyram(copylen);
+#endif
         /* drop thru */
     case OP_RENAME:
         confirm = G.g_ccopypref;

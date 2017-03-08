@@ -1188,6 +1188,18 @@
 #endif
 
 /*
+ * Set CONF_PREFER_STRAM_DISK_BUFFERS to 1 if disk buffers are more efficient
+ * when located in ST-RAM (i.e. for floppy/ACSI DMA transfers).
+ */
+#ifndef CONF_PREFER_STRAM_DISK_BUFFERS
+# if CONF_ATARI_HARDWARE
+#  define CONF_PREFER_STRAM_DISK_BUFFERS 1
+# else
+#  define CONF_PREFER_STRAM_DISK_BUFFERS 0
+# endif
+#endif
+
+/*
  * Set STONX_NATIVE_PRINT to 1 if your emulator provides a STonX-like
  * native_print() function, i.e. if the code:
  *   .dc.w 0xa0ff
