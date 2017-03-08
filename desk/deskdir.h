@@ -25,7 +25,6 @@ typedef struct {    /* #files/#folders/total filesize of directory & its subdire
 void show_hide(WORD fmd, OBJECT *tree);
 void draw_fld(OBJECT *tree, WORD obj);
 void draw_dial(OBJECT *tree);
-BYTE *last_separator(BYTE *path);
 BYTE *add_fname(BYTE *path, BYTE *new_name);
 void restore_path(BYTE *target);
 void del_fname(BYTE *pstr);

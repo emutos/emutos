@@ -145,24 +145,6 @@ void draw_fld(OBJECT *tree, WORD obj)
 
 
 /*
- *  Scans the specified path string & returns pointer to last
- *  path separator (i.e. backslash)
- *
- *  If a separator isn't found, returns pointer to end of string.
- */
-BYTE *last_separator(BYTE *path)
-{
-    BYTE *last = NULL;
-
-    for ( ; *path; path++)
-        if (*path == '\\')
-            last = path;
-
-    return last ? last : path;
-}
-
-
-/*
  *  Add a new directory name to the end of an existing path.  This
  *  includes appending a \*.*.
  */
@@ -179,11 +161,11 @@ void add_path(BYTE *path, BYTE *new_name)
  */
 static void sub_path(BYTE *path)
 {
-    /* scan to last slash   */
-    path = last_separator(path);
+    /* scan to last segment in path */
+    path = filename_start(path);
 
-    /* now skip to previous directory in path */
-    path--;
+    /* now back up to previous directory in path */
+    path -= 2;
     while (*path != '\\')
         path--;
 
@@ -268,7 +250,7 @@ static void like_parent(BYTE *path, BYTE *new_name)
     pstart = path;
 
     /* scan to lastslsh */
-    lastslsh = path = last_separator(path);
+    lastslsh = path = filename_start(path) - 1;
 
     /* back up to next to last slash if it exists */
     path--;
@@ -294,11 +276,11 @@ static void like_parent(BYTE *path, BYTE *new_name)
 
 
 /*
- *  Remove the file name from the end of a path and append an \*.*
+ *  Remove the file name from the end of a path and append an *.*
  */
 void del_fname(BYTE *pstr)
 {
-    strcpy(last_separator(pstr), "\\*.*");
+    strcpy(filename_start(pstr), "*.*");
 }
 
 
@@ -313,7 +295,7 @@ static void get_fname(BYTE *pstr, BYTE *newstr)
 {
     BYTE ml_ftmp[LEN_ZFNAME];
 
-    strcpy(ml_ftmp, last_separator(pstr)+1);
+    strcpy(ml_ftmp, filename_start(pstr));
     fmt_str(ml_ftmp, newstr);
 }
 
@@ -591,7 +573,7 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path, OBJECT *tree,
                 break;
             case OP_DELETE:
             case OP_MOVE:
-                ptmp = last_separator(psrc_path);
+                ptmp = filename_start(psrc_path) - 1;
                 *ptmp = '\0';
                 ret = dos_rmdir(psrc_path);
                 strcpy(ptmp, "\\*.*");
@@ -805,9 +787,9 @@ static WORD d_dofoldren(BYTE *oldname, BYTE *newname)
 {
     BYTE *p;
 
-    p = last_separator(oldname);    /* remove trailing wildcards */
+    p = filename_start(oldname) - 1;    /* remove trailing wildcards */
     *p = '\0';
-    p = last_separator(newname);
+    p = filename_start(newname) - 1;
     *p = '\0';
 
     return d_dofileren(oldname,newname);
