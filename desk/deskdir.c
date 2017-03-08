@@ -261,7 +261,7 @@ static void like_parent(BYTE *path, BYTE *new_name)
     if (*path == '\\')
         lastfold = path + 1;
     else
-        lastfold = 0;
+        lastfold = NULL;
 
     if (lastfold)
     {
