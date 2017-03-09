@@ -743,13 +743,16 @@ static WORD output_path(WORD op,BYTE *srcpth, BYTE *dstpth)
 
         inf_sget(tree, CACOPYNA, ml_fdst);
         unfmt_str(ml_fdst, ml_fstr);    /* get new dest folder in ml_fstr */
-        if (strcmp(ml_fdst,ml_fsrc))    /* if it changed, update path */
-        {
-            del_fname(dstpth);
-            add_fname(dstpth, ml_fstr);
-        }
-        if (op != OP_RENAME)            /* if it's not move via rename, */
-            break;                      /* we're done                   */
+        del_fname(dstpth);              /* & update destination path      */
+        add_fname(dstpth, ml_fstr);     /* (it may not have changed)      */
+
+        /*
+         * if it's not move via rename, and the destination path has not
+         * changed, we're done (we'll copy/move into the existing path);
+         * otherwise we loop to check the updated destination path
+         */
+        if ((op != OP_RENAME) && (strcmp(ml_fdst,ml_fsrc) == 0))
+            break;
     }
 
     strcat(dstpth, "\\*.*");        /* complete path */
