@@ -938,8 +938,14 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *co
             }
 
             if (more > 0)   /* no conflict, or user said OK */
-                more = (op==OP_RENAME) ? d_dofoldren(srcpth,dstpth) :
-                        d_doop(0, op, srcpth, dstpth, tree, count);
+            {
+                if (((op == OP_COPY) || (op == OP_MOVE))
+                 && (strcmp(srcpth,dstpth) == 0))
+                    ;       /* do nothing for copy/move to self */
+                else
+                    more = (op==OP_RENAME) ? d_dofoldren(srcpth,dstpth) :
+                            d_doop(0, op, srcpth, dstpth, tree, count);
+            }
             continue;
         }
 
