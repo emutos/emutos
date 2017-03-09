@@ -863,29 +863,29 @@ WORD do_info(WORD curr)
     FNODE *pf;
 
     pa = i_find(G.g_cwin, curr, &pf, NULL);
-    pw = win_find(G.g_cwin);
-    if (!pw)
+    if (!pa)
         return FALSE;
 
-    if (pa)
+    switch(pa->a_type)
     {
-        switch(pa->a_type)
+    case AT_ISFOLD:
+        /* drop thru */
+    case AT_ISFILE:
+        pw = win_find(G.g_cwin);
+        if (pw)
         {
-        case AT_ISFOLD:
-            /* drop thru */
-        case AT_ISFILE:
             ret = inf_file_folder(pw->w_path->p_spec, pf);
             if (ret)
                 fun_rebld(pw);
-            break;
-        case AT_ISDISK:
-            drive = LOBYTE(get_iconblk_ptr(G.g_screen, curr)->ib_char);
-            inf_disk(drive);
-            break;
-        case AT_ISTRSH:
-            fun_alert(1, STTRINFO);
-            break;
         }
+        break;
+    case AT_ISDISK:
+        drive = LOBYTE(get_iconblk_ptr(G.g_screen, curr)->ib_char);
+        inf_disk(drive);
+        break;
+    case AT_ISTRSH:
+        fun_alert(1, STTRINFO);
+        break;
     }
 
     return FALSE;
