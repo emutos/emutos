@@ -253,6 +253,9 @@ TOS v4.00:
 5th bit in _SND is set:
  - 0x60-0x7F, 32 Dsp_* functions
 
+TOS v4 extended XBIOS functionality:
+ - 16-bit Videl resolution setting
+
 
  GEMDOS Functions
  ----------------------------------------------------------------------------
@@ -468,6 +471,9 @@ GEMDOS v0.19 (TOS v2):
  -      v_write_meta
  -      vm_filename
 
+TOS v4 extended VDI functionality:
+ -      16-bit support for graphics functions (for now, use fVDI)
+
 
  AES functions
  ----------------------------------------------------------------------------
@@ -560,3 +566,12 @@ AES v3.30 (TOS > v3.06):
 
 AES v3.40 (TOS >= v4):
  -      objc_sysvar            (3D look)
+
+TOS v4 extended AES functionality:
+ -      RSC file color icon support
+
+
+ Misc desktop functions
+ ----------------------------------------------------------------------------
+
+ - Cartridge file system support  (useless - will not be implemented)

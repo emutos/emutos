@@ -5,6 +5,7 @@ prevent them from running properly with EmuTOS, and whose problem has
 been definitively identified.  It is mainly intended to prevent these
 programs from being added to 'bugs.txt' in the future.
 
+
 Program: STOS games
 -------------------
 Error: joystick and/or keyboard input doesn't work.
@@ -12,8 +13,36 @@ Error: joystick and/or keyboard input doesn't work.
 Bug analysis:
 STOS Basic compiler routines check for input using undocumented and
 TOS-specific locations.  Programs using these routines work only with
-specific TOS versions, and not with EmuTOS.  STOS fixer may be used to
-fix these programs.
+specific TOS versions, and not with EmuTOS.
+
+Workaround:
+Use version of the game that has been fixed to work with modern TOS
+versions.
+
+
+Program: old game using fixed addresses
+---------------------------------------
+Error: panic during game startup.
+
+Bug analysis:
+Several old, floppy-only games load their data into fixed memory
+addresses, which won't work when EmuTOS has loaded something else
+there.  This can be detected by tracing programs' OS calls with Hatari
+(--trace os_all) and checking the used addresses. For example, Gods
+game demo (on ST Format cover disk) overwrites itself with its game
+data because of this, and crashes.
+
+Workarounds:
+Issue with Gods demo and few other games, can be worked around by
+using special high-RAM build of EmuTOS, that uses higher RAM addresses
+for loading programs and memory allocations: make 512 UNIQUE=uk
+DEF="-DSTATIC_ALT_RAM_ADDRESS=0x00080000 -DCONF_WITH_FRB=0"
+
+However, this doesn't help with programs which also expect
+undocumented, OS internal functions and variables to be at certain
+locations. Best workaround is using a version of the game that has
+been fixed to work from HD and with modern TOS versions.
+
 
 Program: Awele v1.01
 --------------------
@@ -27,6 +56,10 @@ malloc() returns the pointer in A0, the WinDOM code assumes it is in D0.
 As a result, an area of low memory is pointed to, which is overwritten
 during Awele execution.  At program termination, the palette is restored
 from the overwritten area, resulting in the error seen.
+
+Workaround:
+Use v1.02 of the game.
+
 
 Program: Cameleon
 -----------------
@@ -47,6 +80,7 @@ system call.  Subsequently, the supervisor stack overwrites the program's
 user stack.  On exit, the user stack pointer is restored and during this
 a corrupted value is loaded into the SR, causing a trace excpetion.
 
+
 Program: (VDI) Invaders and Anduril
 -----------------------------------
 Error: keys to move an object are ignored (in Invaders, the '-' key; in
@@ -59,6 +93,7 @@ returned by Kbdvbase(), and used that to read the keyboard.  This was
 never documented by Atari, but was apparently true for all versions of
 TOS 1.  However it is not true for TOS 2, 3, or 4 (or EmuTOS).
 
+
 Program: Ramses
 ---------------
 Error: panic
@@ -69,6 +104,7 @@ vectors in a2.  It gets the address of _v_hide_c, then starts doing
 undocumented things with the bytes of the actual routine:
     https://sourceforge.net/p/emutos/mailman/message/30605378/
 
+
 Program: STVidPlay
 ------------------
 Error: "Error in getting file location"
@@ -78,6 +114,7 @@ Program looks for a specific 2-byte sequence in the hard disk driver
 code pointed to by hdv_rw ($476).  If it doesn't find that sequence
 within bytes 6-48 (or thereabouts) of the start of the driver, it
 gives the error message.
+
 
 Program: Cubase Lite
 --------------------
@@ -90,6 +127,7 @@ function in an undocumented way, which crashes on EmuTOS.  (Somebody
 could write a loader or TSR to change the etv_timer function so that
 Cubase will not crash.)
 
+
 Program: Reservoir Gods games (Bugger, Bunion, SkyFall, Sworm)
 --------------------------------------------------------------
 Error: panic
@@ -97,8 +135,11 @@ Error: panic
 Bug analysis:
 Games use an undocumented TOS4 vector for keyboard input instead of
 accessing kbdvec correctly.  This causes EmuTOS to panic.
+
+Workaround:
 This can be worked around with the following hack.prg:
 	http://sourceforge.net/mailarchive/message.php?msg_id=26841274
+
 
 Program: OMIKRON.BASIC V3.01 (interpreter)
 ------------------------------------------
@@ -115,6 +156,7 @@ state of the mouse cursor.  This is done with the same code used in
 "Ramses" (see above).  This also fails on EmuTOS, resulting in another
 bus error.  There may be more accesses to undocumented variables.
 
+
 Program: STSpeech v2.0
 ----------------------
 Error: panics due to stack corruption
@@ -126,9 +168,14 @@ unrelated BIOS/XBIOS call is manipulating _savptr (saving registers),
 then the nested XBIOS call inside the Timer A handler will trash that
 BIOS/XBIOS save area, possibly modifying the stack pointer. In the
 "Hitchhiker's Guide to the BIOS", Atari documented a workaround for this,
-but STSpeech does not use it.  Because this problem is timing-dependent,
-it does not show up on Atari TOS, and only shows up in EmuTOS if BigDOS
-is installed (BigDOS issues many XBIOS calls).
+but STSpeech does not use it.
+
+Workaround:
+Because this problem is timing-dependent, it does not show up on Atari
+TOS, and only shows up in EmuTOS if BigDOS is installed (BigDOS issues
+many XBIOS calls).  Use program without BigDOS, or anything else doing
+a lot of XBIOS calls.
+
 
 Program: Protracker v2 STE (Equinox version)
 --------------------------------------------
