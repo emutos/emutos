@@ -98,6 +98,8 @@ void win_start(void)
     obj_init();         /* must be called *after* win_view(), because it uses */
                         /*  G.g_iwspc/G.g_ihspc which are set by win_view()   */
 
+    G.g_wdesktop.w_flags = WN_DESKTOP;  /* mark as special pseudo-window */
+
     for (i = 0, G.g_wfirst = pw = G.g_wlist; i < NUM_WNODES; i++, pw++)
     {
         pw->w_next = pw + 1;
@@ -170,6 +172,9 @@ WNODE *win_alloc(WORD obid)
 WNODE *win_find(WORD wh)
 {
     WNODE *pw;
+
+    if (wh == 0)            /* the desktop */
+        return &G.g_wdesktop;
 
     for (pw = G.g_wfirst; pw; pw = pw->w_next)
     {

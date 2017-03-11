@@ -44,6 +44,15 @@
 #define DROOT 1
 
 
+/*
+ * flags in w_flags below
+ */
+#define WN_DESKTOP      0x01                /* the desktop pseudo-window */
+
+
+/*
+ * the structure used by the desktop to manage its windows
+ */
 typedef struct _windnode WNODE;
 struct _windnode
 {
