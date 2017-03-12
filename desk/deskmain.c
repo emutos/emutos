@@ -111,6 +111,28 @@ static void    cnx_put(void);
 /* BugFix       */
 static WORD     ig_close;
 
+/*
+ * arrays used by men_update() to enable/disable menu items according
+ * to the state of the desktop.  men_update() initially enables every
+ * menu item, then calls men_list() (possibly several times).  each
+ * call to men_list() enables or disables every item in a given array.
+ *
+ * detailed usage:
+ *  there is one array of items to enable:
+ *      ILL_DESKTOP[]   enabled if there is an open window
+ *  and many arrays of items to disable:
+ *      ILL_ITEM[]      always disabled
+ *      ILL_NOTOP[]     disabled if there are no open windows
+ *      ILL NOSEL[]     disabled if there are no icons selected
+ *      ILL_YSEL[]      disabled if two or more icons are selected
+ *      ILL_FDSK[]      disabled if a floppy disk icon is selected
+ *      ILL_HDSK[]      disabled if a hard disk icon is selected
+ *      ILL_FILE[]      disabled if an executable file, or a non-executable
+ *                       file with an associated application, is selected
+ *      ILL_DOCU[]      disabled if a normal non-executable file is selected
+ *      ILL_FOLD[]      disabled if a folder is selected
+ *      ILL_TRASH[]     disabled if the trash can is selected
+ */
 static const BYTE     ILL_ITEM[] = {L1ITEM, L2ITEM, L3ITEM, L4ITEM, L5ITEM, 0};
 static const BYTE     ILL_FILE[] = {IDSKITEM,RICNITEM,0};
 static const BYTE     ILL_DOCU[] = {IDSKITEM,IAPPITEM,RICNITEM,0};
