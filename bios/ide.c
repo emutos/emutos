@@ -35,6 +35,7 @@
 #include "machine.h"
 #include "cookie.h"
 #include "coldfire.h"
+#include "processor.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif
@@ -413,6 +414,14 @@ void ide_init(void)
 
     delay400ns = loopcount_1_msec / 2500;
     delay5us = loopcount_1_msec / 200;
+
+#if CONF_WITH_APOLLO_68080
+    if (is_apollo_68080)
+    {
+        /* Enable Fast IDE (PIO mode 6) */
+        *(volatile UWORD *)0x00dd1020 = 0x8000;
+    }
+#endif
 
     /* detect devices */
     for (i = 0, bitmask = 1; i < NUM_IDE_INTERFACES; i++, bitmask <<= 1)
