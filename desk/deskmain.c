@@ -295,13 +295,9 @@ static void men_update(void)
     }
 
     if (win_ontop())
-        pvalue = ILL_OPENWIN;
+        men_list(tree, ILL_OPENWIN, TRUE);
     else
-        pvalue = ILL_NOWIN;
-    if (pvalue == ILL_OPENWIN)
-        men_list(tree, pvalue, TRUE);
-    else
-        men_list(tree, pvalue, FALSE);
+        men_list(tree, ILL_NOWIN, FALSE);
 
     if (nsel != 1)
     {
