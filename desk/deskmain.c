@@ -119,12 +119,12 @@ static WORD     ig_close;
  *
  * detailed usage:
  *  there is one array of items to enable:
- *      ILL_DESKTOP[]   enabled if there is an open window
+ *      ILL_OPENWIN[]   enabled if there is an open window
  *  and many arrays of items to disable:
  *      ILL_ITEM[]      always disabled
- *      ILL_NOTOP[]     disabled if there are no open windows
+ *      ILL_NOWIN[]     disabled if there are no open windows
  *      ILL NOSEL[]     disabled if there are no icons selected
- *      ILL_YSEL[]      disabled if two or more icons are selected
+ *      ILL_MULTSEL[]   disabled if two or more icons are selected
  *      ILL_FDSK[]      disabled if a floppy disk icon is selected
  *      ILL_HDSK[]      disabled if a hard disk icon is selected
  *      ILL_FILE[]      disabled if an executable file, or a non-executable
@@ -141,11 +141,11 @@ static const BYTE     ILL_FDSK[] = {IAPPITEM,0};
 static const BYTE     ILL_HDSK[] = {IAPPITEM,0};
 static const BYTE     ILL_NOSEL[] = {OPENITEM,SHOWITEM,DELTITEM,
                                 IAPPITEM,RICNITEM,0};
-static const BYTE     ILL_YSEL[] = {OPENITEM, IDSKITEM, SHOWITEM, 0};
+static const BYTE     ILL_MULTSEL[] = {OPENITEM, IDSKITEM, SHOWITEM, 0};
 static const BYTE     ILL_TRASH[] = {OPENITEM,DELTITEM,IDSKITEM,
                                 IAPPITEM,0};
-static const BYTE     ILL_NOTOP[] = {NFOLITEM,CLOSITEM,CLSWITEM,0};
-static const BYTE     ILL_DESKTOP[] = {NFOLITEM,CLOSITEM,CLSWITEM,ICONITEM,
+static const BYTE     ILL_NOWIN[] = {NFOLITEM,CLOSITEM,CLSWITEM,0};
+static const BYTE     ILL_OPENWIN[] = {NFOLITEM,CLOSITEM,CLSWITEM,ICONITEM,
                                 NAMEITEM,DATEITEM,SIZEITEM,TYPEITEM,0};
 
 /*
@@ -295,10 +295,10 @@ static void men_update(void)
     }
 
     if (win_ontop())
-        pvalue = ILL_DESKTOP;
+        pvalue = ILL_OPENWIN;
     else
-        pvalue = ILL_NOTOP;
-    if (pvalue == ILL_DESKTOP)
+        pvalue = ILL_NOWIN;
+    if (pvalue == ILL_OPENWIN)
         men_list(tree, pvalue, TRUE);
     else
         men_list(tree, pvalue, FALSE);
@@ -306,7 +306,7 @@ static void men_update(void)
     if (nsel != 1)
     {
         if (nsel)
-            pvalue = ILL_YSEL;
+            pvalue = ILL_MULTSEL;
         else
             pvalue = ILL_NOSEL;
         men_list(tree, pvalue, FALSE);
