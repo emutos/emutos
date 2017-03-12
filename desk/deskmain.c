@@ -229,11 +229,12 @@ static void men_list(OBJECT *mlist, const BYTE *dlist, WORD enable)
  *  Based on current selected icons, figure out which menu items
  *  should be selected (deselected)
  */
-static void men_update(OBJECT *tree)
+static void men_update(void)
 {
     WORD item, nsel, isapp;
     const BYTE *pvalue;
     ANODE *appl;
+    OBJECT *tree = G.a_trees[ADMENU];
 
     pvalue = 0;
 
@@ -602,7 +603,7 @@ static WORD hndl_button(WORD clicks, WORD mx, WORD my, WORD button, WORD keystat
         done = do_filemenu(OPENITEM);
     }
 
-    men_update(G.a_trees[ADMENU]);
+    men_update();
 
     return done;
 }
@@ -860,7 +861,7 @@ static WORD hndl_kbd(WORD thechar)
         done = hndl_menu(title, item);
     }
 
-    men_update(G.a_trees[ADMENU]);      /* clean up menu info   */
+    men_update();       /* clean up menu info   */
 
     return done;
 }
@@ -986,7 +987,7 @@ WORD hndl_msg(void)
     G.g_rmsg[0] = 0;
 
     if (!menu)
-        men_update(G.a_trees[ADMENU]);
+        men_update();
 
     return done;
 }
@@ -1574,7 +1575,7 @@ WORD deskmain(void)
     wind_update(BEG_UPDATE);
     cnx_get();
     wind_update(END_UPDATE);
-    men_update(G.a_trees[ADMENU]);
+    men_update();
 
     /* get ready for main loop */
     flags = MU_BUTTON | MU_MESAG | MU_KEYBD;
