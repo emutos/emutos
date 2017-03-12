@@ -749,6 +749,7 @@ static BOOL check_alt_letter_key(WORD thechar)
         if (drivebits & (1L<<(drive-'A')))
         {
             do_dopen(-drive);   /* -ve indicates drive letter rather than obid */
+            men_update();       /* must update menu items */
             return TRUE;
         }
     }
