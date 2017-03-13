@@ -662,6 +662,28 @@ static LONG ide_nodata(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UWORD count)
     return E_OK;
 }
 
+#if CONF_WITH_APOLLO_68080
+/* Apollo IDE data register can be read (but not written) using 32-bit access */
+static void ide_get_data_32(volatile struct IDE *interface,UBYTE *buffer,ULONG bufferlen,int need_byteswap)
+{
+    ULONG *p = (ULONG *)buffer;
+    ULONG *end = (ULONG *)(buffer + bufferlen);
+    volatile ULONG_ALIAS *pdatareg = (volatile ULONG_ALIAS *)&interface->data;
+
+    if (need_byteswap) {
+        while (p < end) {
+            ULONG temp;
+            temp = *pdatareg;
+            swpw2(temp);
+            *p++ = temp;
+        }
+    } else {
+        while (p < end)
+            *p++ = *pdatareg;
+    }
+}
+#endif /* CONF_WITH_APOLLO_68080 */
+
 /*
  * get data from IDE device
  */
@@ -671,6 +693,14 @@ static void ide_get_data(volatile struct IDE *interface,UBYTE *buffer,ULONG buff
     XFERWIDTH *end = (XFERWIDTH *)(buffer + bufferlen);
 
     KDEBUG(("ide_get_data(0x%08lx, 0x%08lx, %lu, %d)\n", (ULONG)interface, (ULONG)buffer, bufferlen, need_byteswap));
+
+#if CONF_WITH_APOLLO_68080
+    if (is_apollo_68080)
+    {
+        ide_get_data_32(interface, buffer, bufferlen, need_byteswap);
+        return;
+    }
+#endif
 
     if (need_byteswap) {
         while (p < end) {
