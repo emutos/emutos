@@ -283,6 +283,16 @@ static BYTE *app_parse(BYTE *pcurr, ANODE *pa)
         pa->a_type = AT_ISFILE;
         pa->a_flags |= AF_WINDOW;
         break;
+#if CONF_WITH_DESKTOP_SHORTCUTS
+    case 'X':                           /* File shortcut on desktop */
+        pa->a_type = AT_ISFILE;
+        pa->a_flags = AF_ISDESK;
+        break;
+    case 'V':                           /* Directory shortcut on desktop */
+        pa->a_type = AT_ISFOLD;
+        pa->a_flags = AF_ISDESK;
+        break;
+#endif
     }
     pcurr++;
 
@@ -715,6 +725,10 @@ void app_start(void)
         case 'D':                       /* Directory            */
         case 'I':                       /* Executable file icon     */
         case 'N':                       /* Non-executable file icon */
+#if CONF_WITH_DESKTOP_SHORTCUTS
+        case 'X':                       /* File shortcut on desktop */
+        case 'V':                       /* Directory shortcut on desktop */
+#endif
             pa = app_alloc();
             if (!pa)                    /* paranoia */
                 return;
@@ -997,18 +1011,27 @@ void app_save(WORD todisk)
             type = 'M';
             break;
         case AT_ISFILE:
-            if (pa->a_flags & AF_WINDOW)
-            {
-                type = (pa->a_flags & AF_ISEXEC) ? 'I' : 'N';
-                break;
-            }
-            if (pa->a_flags & AF_ISCRYS)
-                type = (pa->a_flags & AF_ISPARM) ? 'Y' : 'G';
+#if CONF_WITH_DESKTOP_SHORTCUTS
+            if (pa->a_flags & AF_ISDESK)
+                type = 'X';
             else
-                type = (pa->a_flags & AF_ISPARM) ? 'P' : 'F';
+#endif
+            {
+                if (pa->a_flags & AF_WINDOW)
+                    type = (pa->a_flags & AF_ISEXEC) ? 'I' : 'N';
+                else if (pa->a_flags & AF_ISCRYS)
+                    type = (pa->a_flags & AF_ISPARM) ? 'Y' : 'G';
+                else
+                    type = (pa->a_flags & AF_ISPARM) ? 'P' : 'F';
+            }
             break;
         case AT_ISFOLD:
-            type = 'D';
+#if CONF_WITH_DESKTOP_SHORTCUTS
+            if (pa->a_flags & AF_ISDESK)
+                type = 'V';
+            else
+#endif
+                type = 'D';
             break;
         case AT_ISTRSH:     /* Trash */
             type = 'T';
@@ -1024,7 +1047,7 @@ void app_save(WORD todisk)
         if (pa->a_flags & AF_ISDESK)
             pcurr += sprintf(pcurr," %c",pa->a_letter?pa->a_letter:' ');
         pcurr += sprintf(pcurr," %s@ %s@",pa->a_pappl,pa->a_pdata);
-        if (pa->a_type == AT_ISFILE)
+        if ((pa->a_type == AT_ISFILE) && !(pa->a_flags & AF_ISDESK))
         {
             type = 0;
             if (pa->a_flags & AF_APPDIR)
@@ -1058,7 +1081,7 @@ void app_save(WORD todisk)
  */
 void app_blddesk(void)
 {
-    WORD obid;
+    WORD obid, icon;
     ANODE *pa;
     OBJECT *pob;
     SCREENINFO *si;
@@ -1085,16 +1108,19 @@ void app_blddesk(void)
             /* remember it */
             pa->a_obid = obid;
 
+            /* choose appropriate icon */
+            icon = (pa->a_aicon < 0) ? pa->a_dicon : pa->a_aicon;
+
             /* build object */
             pob = &G.g_screen[obid];
             pob->ob_state = NORMAL;
             pob->ob_flags = NONE;
             pob->ob_type = G_ICON;
             si = &G.g_screeninfo[obid];
-            si->icon.index = pa->a_aicon;
+            si->icon.index = icon;
             pic = &si->icon.block;
             pob->ob_spec = (LONG)pic;
-            memcpy(pic, &G.g_iblist[pa->a_aicon], sizeof(ICONBLK));
+            memcpy(pic, &G.g_iblist[icon], sizeof(ICONBLK));
             pic->ib_xicon = ((G.g_wicon - pic->ib_wicon) / 2);
             pic->ib_ptext = pa->a_pappl;
             pic->ib_char |= pa->a_letter;

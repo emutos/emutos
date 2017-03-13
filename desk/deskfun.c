@@ -571,11 +571,23 @@ static WORD fun_file2any(WORD sobj, WNODE *wn_dest, ANODE *an_dest, FNODE *fn_de
     ICONBLK * ib_src;
     PNODE *pn_src;
     ANODE *an_src;
-    BYTE path[10];
+    BYTE path[MAXPATHLEN];
 
-    ib_src = (ICONBLK *)G.g_screen[sobj].ob_spec;
-    build_root_path(path, ib_src->ib_char);
-    strcat(path,"*.*");
+    an_src = i_find(0, sobj, NULL, NULL);
+
+#if CONF_WITH_DESKTOP_SHORTCUTS
+    if ((an_src->a_type == AT_ISFILE) || (an_src->a_type == AT_ISFOLD))
+    {
+        strcpy(path, an_src->a_pdata);
+    }
+    else
+#endif
+    {
+        ib_src = (ICONBLK *)G.g_screen[sobj].ob_spec;
+        build_root_path(path, ib_src->ib_char);
+        strcat(path,"*.*");
+    }
+
     pn_src = pn_open(path, F_SUBDIR);
 
     if (pn_src)
@@ -598,7 +610,6 @@ static WORD fun_file2any(WORD sobj, WNODE *wn_dest, ANODE *an_dest, FNODE *fn_de
             }
             else    /* we are dragging a desktop item to another desktop item */
             {
-                an_src = i_find(0, sobj, NULL, NULL);
                 icontype = an_src ? an_src->a_type : -1;
                 okay = fun_file2desk(pn_src, icontype, an_dest, dobj, keystate);
             }
@@ -677,7 +688,13 @@ void fun_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my, WOR
         else            /* dragging from window to desktop */
         {
             if (sobj == dobj)   /* dropping onto desktop surface */
+            {
+#if CONF_WITH_DESKTOP_SHORTCUTS
+                ins_shortcut(wh, mx, my);
+#else
                 fun_alert(1, STNODRA1);
+#endif
+            }
             else                /* dropping onto desktop icon */
                 fun_win2desk(wh, dobj, keystate);
         }

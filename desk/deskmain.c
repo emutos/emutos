@@ -292,6 +292,11 @@ static void men_update(void)
             break;
         }
         men_list(tree, pvalue, FALSE);       /* disable certain items */
+#if CONF_WITH_DESKTOP_SHORTCUTS
+        /* allow "Remove icon" for icons on the desktop */
+        if (appl->a_flags & AF_ISDESK)
+            menu_ienable(tree, RICNITEM, TRUE);
+#endif
     }
 
     if (win_ontop())

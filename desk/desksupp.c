@@ -56,6 +56,9 @@
 #include "kprint.h"
 
 
+#define ALLFILES    (F_SUBDIR|F_SYSTEM|F_HIDDEN)
+
+
 #if CONF_WITH_FORMAT
 /*
  *      declarations used by the do_format() code
@@ -306,6 +309,21 @@ WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon,
         return FALSE;
     }
 
+#if CONF_WITH_DESKTOP_SHORTCUTS
+    /* handle opening directory on the desktop */
+    if (pw->w_flags&WN_DESKTOP)
+    {
+        pw = win_alloc(curr_icon);
+        if (!pw)
+        {
+            graf_mouse(ARROW, NULL);
+            fun_alert(1, STNOWIND);
+            return FALSE;
+        }
+        pt = (GRECT *)&G.g_screen[pw->w_root].ob_x;
+    }
+#endif
+
     pw->w_path = tmp;
 
     /* activate path by search and sort of directory */
@@ -553,6 +571,23 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname)
 
     done = FALSE;
 
+#if CONF_WITH_DESKTOP_SHORTCUTS
+    /*
+     * if this is a desktop shortcut, look for corresponding installed
+     * application and, if there is one, use its ANODE instead.
+     *
+     * note that app_afind_by_name() only updates 'isapp' if an
+     * application is found, so it is safe to pass a pointer to it.
+     */
+    if (pa->a_flags & AF_ISDESK)
+    {
+        ANODE *tmp;
+        tmp = app_afind_by_name(AT_ISFILE, pathname, pname, &isapp);
+        if (tmp)
+            pa = tmp;
+    }
+#endif
+
     /* set flags */
     isgraf = pa->a_flags & AF_ISCRYS;
     isparm = pa->a_flags & AF_ISPARM;
@@ -745,9 +780,10 @@ void do_fopen(WNODE *pw, WORD curr, BYTE *pathname, WORD redraw)
         remove_one_level(app_path);         /* back up one level */
     }
 
-    pn_close(pw->w_path);
+    if (!(pw->w_flags&WN_DESKTOP))          /* folder in window, not on desktop */
+        pn_close(pw->w_path);
 
-    do_diropen(pw, FALSE, curr, app_path, &t, redraw);
+    do_diropen(pw, (pw->w_flags&WN_DESKTOP)?TRUE:FALSE, curr, app_path, &t, redraw);
 }
 
 
@@ -814,6 +850,11 @@ WORD do_open(WORD curr)
     FNODE *pf;
     WORD isapp;
     BYTE pathname[MAXPATHLEN];
+    BYTE filename[LEN_ZFNAME];
+    BYTE *pathptr, *fileptr;
+
+    MAYBE_UNUSED(pathname);
+    MAYBE_UNUSED(filename);
 
     pa = i_find(G.g_cwin, curr, &pf, &isapp);
     if (!pa)
@@ -827,15 +868,31 @@ WORD do_open(WORD curr)
         if (!pw)
             return FALSE;
 
+#if CONF_WITH_DESKTOP_SHORTCUTS
+        if (pa->a_flags & AF_ISDESK)
+        {
+            BYTE *p = filename_start(pa->a_pdata);
+            strlcpy(pathname, pa->a_pdata, p - pa->a_pdata);
+            strcat(pathname, "\\*.*");
+            strcpy(filename, p);
+            pathptr = pathname;
+            fileptr = filename;
+        }
+        else
+#endif
+        {
+            pathptr = pw->w_path->p_spec;
+            fileptr = pf->f_name;
+        }
+
         if (pa->a_type == AT_ISFILE)
-            return do_aopen(pa, isapp, curr, pw->w_path->p_spec, pf->f_name);
+            return do_aopen(pa, isapp, curr, pathptr, fileptr);
 
         /* handle opening a folder */
-        strcpy(pathname, pw->w_path->p_spec);
-        if (add_one_level(pathname, pf->f_name))
+        if (add_one_level(pathptr, fileptr))
         {
             pw->w_cvrow = 0;        /* reset slider */
-            do_fopen(pw, curr, pathname, TRUE);
+            do_fopen(pw, curr, pathptr, TRUE);
         }
         else
             fun_alert(1, STDEEPPA);
@@ -861,6 +918,10 @@ WORD do_info(WORD curr)
     ANODE *pa;
     WNODE *pw;
     FNODE *pf;
+    BYTE pathname[MAXPATHLEN];
+    BYTE *pathptr;
+
+    MAYBE_UNUSED(pathname);
 
     pa = i_find(G.g_cwin, curr, &pf, NULL);
     if (!pa)
@@ -874,8 +935,30 @@ WORD do_info(WORD curr)
         pw = win_find(G.g_cwin);
         if (pw)
         {
-            ret = inf_file_folder(pw->w_path->p_spec, pf);
-            if (ret)
+#if CONF_WITH_DESKTOP_SHORTCUTS
+            if (pa->a_flags & AF_ISDESK)
+            {
+                FNODE fn;
+                DTA *dta;
+
+                dta = dos_gdta();
+                dos_sdta(&G.g_wdta);
+                if (dos_sfirst(pa->a_pdata, ALLFILES) != 0)
+                    break;
+                pf = &fn;
+                memcpy(&pf->f_junk, &G.g_wdta.d_reserved[20], 23);
+                dos_sdta(dta);
+                strcpy(pathname, pa->a_pdata);
+                strcpy(filename_start(pathname),"*.*");
+                pathptr = pathname;
+            }
+            else
+#endif
+            {
+                pathptr = pw->w_path->p_spec;
+            }
+            ret = inf_file_folder(pathptr, pf);
+            if (ret && !(pa->a_flags&AF_ISDESK))
                 fun_rebld(pw);
         }
         break;
@@ -1188,6 +1271,9 @@ ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp)
     if (!wh)        /* On desktop? */
     {
         pa = app_afind_by_id(item);
+        if (pa)
+            if (pa->a_type == AT_ISFILE)
+                isapp = (pa->a_aicon < 0) ? FALSE : TRUE;
     }
     else
     {

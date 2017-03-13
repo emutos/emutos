@@ -227,6 +227,9 @@
 # ifndef CONF_WITH_WINDOW_ICONS
 #  define CONF_WITH_WINDOW_ICONS 0
 # endif
+# ifndef CONF_WITH_DESKTOP_SHORTCUTS
+#  define CONF_WITH_DESKTOP_SHORTCUTS 0
+# endif
 # ifndef CONF_WITH_PCGEM
 #  define CONF_WITH_PCGEM 0
 # endif
@@ -1036,6 +1039,14 @@
  */
 #ifndef CONF_WITH_WINDOW_ICONS
 # define CONF_WITH_WINDOW_ICONS 1
+#endif
+
+/*
+ * Set CONF_WITH_DESKTOP_SHORTCUTS to 1 to allow files & folders to be
+ * installed on the desktop as shortcuts
+ */
+#ifndef CONF_WITH_DESKTOP_SHORTCUTS
+# define CONF_WITH_DESKTOP_SHORTCUTS 1
 #endif
 
 /*

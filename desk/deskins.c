@@ -64,8 +64,13 @@ static ICONBLK ib;
  */
 WORD is_installed(ANODE *pa)
 {
-    return ( !((*pa->a_pappl == '*') || (*pa->a_pappl == '?') ||
-                   (*pa->a_pappl == '\0')  ) );
+#if CONF_WITH_DESKTOP_SHORTCUTS
+    if (pa->a_flags & AF_ISDESK)
+        return FALSE;
+#endif
+    if ((*pa->a_pappl == '*') || (*pa->a_pappl == '?') || (*pa->a_pappl == '\0'))
+        return FALSE;
+    return TRUE;
 }
 
 
@@ -524,6 +529,7 @@ static WORD install_desktop_icon(ANODE *pa)
     BOOL icon_exists;
     WORD exitobj, x, y;
     WORD curr_icon, new_icon;
+    WORD start_fld = ID_ID;
     WORD change = 0;
     BYTE curr_label[LEN_ZFNAME], new_label[LEN_ZFNAME], id[2];
 
@@ -566,25 +572,38 @@ static WORD install_desktop_icon(ANODE *pa)
     {
     case AT_ISFILE:
     case AT_ISFOLD:
-        /* TODO, as per TOS2 (when we support files & folders on the desktop):
-         *  disable ID_ID
-         *  disable all the buttons
+#if CONF_WITH_DESKTOP_SHORTCUTS
+        /*
+         * for desktop file/folder icons, only label & shape can be changed
          */
+        tree[ID_ID].ob_state |= DISABLED;
+        tree[ID_DRIVE].ob_state |= DISABLED;
+        tree[ID_TRASH].ob_state |= DISABLED;
+        start_fld = ID_LABEL;
+#endif
         break;
     case AT_ISDISK:
         id[0] = pa->a_letter;
         /* drop thru */
     case AT_ISTRSH:
         inf_sset(tree, ID_ID, id);
-        strcpy(curr_label, pa->a_pappl);
-        inf_sset(tree, ID_LABEL, pa->a_pappl);
         if (pa->a_type == AT_ISDISK)
             tree[ID_DRIVE].ob_state |= SELECTED;
         else
             tree[ID_TRASH].ob_state |= SELECTED;
+#if CONF_WITH_DESKTOP_SHORTCUTS
+        /*
+         * for desktop disk/trash icons, anything can be changed
+         */
+        tree[ID_ID].ob_state &= ~DISABLED;
+        tree[ID_DRIVE].ob_state &= ~DISABLED;
+        tree[ID_TRASH].ob_state &= ~DISABLED;
+#endif
     }
+    strcpy(curr_label, pa->a_pappl);
+    inf_sset(tree, ID_LABEL, pa->a_pappl);
 
-    curr_icon = pa->a_aicon;
+    curr_icon = (pa->a_aicon < 0) ? pa->a_dicon : pa->a_aicon;
     if (curr_icon < 0)
         curr_icon = 0;
     else if (curr_icon > G.g_numiblks-1)
@@ -596,7 +615,7 @@ static WORD install_desktop_icon(ANODE *pa)
     show_hide(FMD_START, tree);
     while(1)
     {
-        exitobj = form_do(tree, ID_ID) & 0x7fff;
+        exitobj = form_do(tree, start_fld) & 0x7fff;
 
         switch(exitobj)
         {
@@ -626,7 +645,10 @@ static WORD install_desktop_icon(ANODE *pa)
             inf_sget(tree, ID_LABEL, new_label);
             if (strcmp(curr_label, new_label))      /* if label changed, */
                 scan_str(new_label, &pa->a_pappl);  /* update it         */
-            pa->a_aicon = curr_icon;
+            if (pa->a_aicon < 0)
+                pa->a_dicon = curr_icon;
+            else
+                pa->a_aicon = curr_icon;
             change = 1;
             break;
         case ID_CNCL:           /* cancel further installs */
@@ -982,7 +1004,7 @@ WORD rmv_icon(WORD sobj)
         pa = i_find(0,sobj,NULL,NULL);
         if (!pa)
             continue;
-        if ((pa->a_type == AT_ISDISK) || (pa->a_type == AT_ISTRSH))
+        if (pa->a_flags & AF_ISDESK)
         {
             app_free(pa);
             icons_removed++;
@@ -991,3 +1013,66 @@ WORD rmv_icon(WORD sobj)
 
     return icons_removed;
 }
+
+#if CONF_WITH_DESKTOP_SHORTCUTS
+/*
+ * install desktop shortcut
+ */
+void ins_shortcut(WORD wh, WORD mx, WORD my)
+{
+    BYTE pathname[MAXPATHLEN], *p, *q;
+    WORD sobj, x, y;
+    ANODE *pa, *newpa;
+    FNODE *pf;
+    WNODE *pw;
+
+    /*
+     * put the first icon on the grid where the user wanted
+     */
+    snap_disk(mx, my, &x, &y, 0, 0);
+
+    /*
+     * install each selected icon on desktop
+     */
+    sobj = 0;
+    while ((sobj = win_isel(G.g_screen, G.g_croot, sobj)))
+    {
+        pa = i_find(wh, sobj, &pf, NULL);   /* get ANODE of source */
+        if (!pa)
+            continue;
+        pw = win_find(wh);                  /* get WNODE of source */
+        if (!pw)
+            continue;
+        newpa = app_alloc();                /* ok, so create new ANODE */
+        if (!newpa)
+            break;
+
+        /*
+         * build the full pathname
+         */
+        p = pw->w_path->p_spec;
+        q = filename_start(p);
+        strlcpy(pathname,p,q-p+1);  /* copy pathname including trailing backslash */
+        strcat(pathname,pf->f_name);
+
+        /*
+         * set up the new ANODE
+         */
+        newpa->a_flags = (pa->a_flags & ~AF_WINDOW) | AF_ISDESK;
+        newpa->a_funkey = 0;
+        newpa->a_letter = '\0';
+        newpa->a_type = pa->a_type;
+        newpa->a_obid = 0;          /* filled in by app_blddesk() */
+        scan_str(pf->f_name,&newpa->a_pappl);   /* store name */
+        scan_str(pathname,&newpa->a_pdata);     /* store full path */
+        newpa->a_pargs = "";
+        newpa->a_aicon = pa->a_aicon;
+        newpa->a_dicon = pa->a_dicon;
+        newpa->a_xspot = x;
+        newpa->a_yspot = y;
+        ins_posdisk(x, y, &x, &y);  /* update position for next icon */
+    }
+
+    app_blddesk();
+}
+#endif
