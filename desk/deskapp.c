@@ -898,7 +898,7 @@ static void save_to_disk(void)
         del_fname(inf_file_name);       /* convert to pathname ending in *.* */
         w = fold_wind(inf_file_name);   /* scan for matching windows */
         if (w)                          /* got one:                          */
-            fun_rebld(w);               /* rebuild all matching open windows */
+            fun_rebld(w->w_path->p_spec);/* rebuild all matching open windows */
     }
 }
 

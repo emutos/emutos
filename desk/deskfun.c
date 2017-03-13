@@ -99,17 +99,14 @@ void fun_msg(WORD type, WORD w3, WORD w4, WORD w5, WORD w6, WORD w7)
 
 
 /*
- *  Rebuild window path and pflist
+ *  Rebuild any windows with matching path
  */
-void fun_rebld(WNODE *pwin)
+void fun_rebld(BYTE *ptst)
 {
     GRECT gr;
-    BYTE *ptst;
+    WNODE *pwin;
 
     graf_mouse(HGLASS, NULL);
-
-    /* set up path to check against all windows*/
-    ptst = pwin->w_path->p_spec;
 
     /* check all wnodes     */
     for (pwin = G.g_wfirst; pwin; pwin = pwin->w_next)
@@ -178,7 +175,7 @@ WORD fun_mkdir(WNODE *pw_node)
         err = dos_mkdir(path);
         if (err == 0)       /* mkdir succeeded */
         {
-            fun_rebld(pw_node);
+            fun_rebld(pw_node->w_path->p_spec);
             break;
         }
 
@@ -459,8 +456,8 @@ static void fun_win2win(WORD src_wh, WORD dst_wh, WORD dst_ob, WORD keystate)
         if (src_wh != dst_wh)
             desk_clear(src_wh);
         if (op == OP_MOVE)
-            fun_rebld(psw);
-        fun_rebld(pdw);
+            fun_rebld(psw->w_path->p_spec);
+        fun_rebld(pdw->w_path->p_spec);
         /*
          * if we copied into a folder, we must check to see if it's
          * open in a window and, if so, redraw it too
@@ -468,7 +465,7 @@ static void fun_win2win(WORD src_wh, WORD dst_wh, WORD dst_ob, WORD keystate)
         if (datype == AT_ISFOLD) {
             pdw = fold_wind(destpath);
             if (pdw)
-                fun_rebld(pdw);
+                fun_rebld(pdw->w_path->p_spec);
         }
     }
 }
@@ -515,7 +512,7 @@ static WORD fun_file2desk(PNODE *pn_src, WORD icontype_src, ANODE *an_dest, WORD
          */
         wn = fold_wind(pathname);
         if (wn)
-            fun_rebld(wn);
+            fun_rebld(wn->w_path->p_spec);
     }
 
     return ret;
@@ -559,7 +556,7 @@ static void fun_win2desk(WORD wh, WORD obj, WORD keystate)
         return;
 
     if (fun_file2desk(wn_src->w_path, -1, an_dest, obj, keystate))
-        fun_rebld(wn_src);
+        fun_rebld(wn_src->w_path->p_spec);
 }
 
 
@@ -646,7 +643,7 @@ static void fun_desk2win(WORD wh, WORD dobj, WORD keystate)
         }
         copied = fun_file2any(sobj, wn_dest, an_dest, fn_dest, dobj, keystate);
         if (copied)
-            fun_rebld(wn_dest);
+            fun_rebld(wn_dest->w_path->p_spec);
     }
 }
 
@@ -814,7 +811,7 @@ void fun_del(WORD sobj)
     if (pw)
     {
         if (fun_op(OP_DELETE, -1, pw->w_path, NULL))
-            fun_rebld(pw);
+            fun_rebld(pw->w_path->p_spec);
     }
 }
 
