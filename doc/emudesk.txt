@@ -15,8 +15,11 @@ you make any changes to the desktop using the above features, you must
 save the desktop to preserve the changes.
 
 2) other new features
-        . user-assignable icons
-        . open disk window via keyboard shortcut
+    . user-assignable icons
+    . open disk window via keyboard shortcut
+    . desktop shortcuts
+Due to space limitations, desktop shortcuts are not available in the
+192K ROMs.  Desktop shortcuts are preserved when you save the desktop.
 
 
 Install icon
@@ -196,3 +199,19 @@ NOTE: unlike TOS2/3/4, shortcuts with the Ctrl modifier do NOT update
 the drive assigned to the currently topped window; instead, they are
 assigned to menu item shortcuts.  At the moment, these assignments are
 also permanent.
+
+
+Desktop shortcuts
+=================
+You may now drag a file or folder to the desktop to create a desktop icon
+that is a shortcut to the original file/folder: manipulating the icon
+will have the same effect as manipulating the original file or folder.
+For example, it may be opened, copied, or moved or deleted; it may have
+an "Info/rename" performed on it.  Currently, by design, the shortcut is
+NOT updated automatically if the original file or folder is moved or
+deleted.
+
+The name and shape of the shortcut icon itself may be modified by the
+"Install icon" menu item; this does not change the name of the file or
+folder that the icon points to.  The shortcut icon may be deleted by the
+"Remove icon" menu item.
