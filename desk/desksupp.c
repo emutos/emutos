@@ -958,7 +958,7 @@ WORD do_info(WORD curr)
                 pathptr = pw->w_path->p_spec;
             }
             ret = inf_file_folder(pathptr, pf);
-            if (ret && !(pa->a_flags&AF_ISDESK))
+            if (ret)
                 fun_rebld(pathptr);
         }
         break;
