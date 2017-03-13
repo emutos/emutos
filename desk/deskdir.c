@@ -198,26 +198,6 @@ void restore_path(BYTE *target)
 
 
 /*
- *  Check if path is associated with an open window
- *
- *  If so, returns pointer to first matching window; otherwise returns NULL
- */
-WNODE *fold_wind(BYTE *path)
-{
-    WNODE *pwin;
-
-    for (pwin = G.g_wfirst; pwin; pwin = pwin->w_next)
-    {
-        if (pwin->w_id)
-            if (strcmp(pwin->w_path->p_spec, path) == 0)
-                return pwin;
-    }
-
-    return NULL;
-}
-
-
-/*
  *  test if specified folder exists
  */
 static WORD folder_exists(BYTE *path)

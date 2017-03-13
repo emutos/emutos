@@ -865,7 +865,6 @@ static void app_revit(void)
 static void save_to_disk(void)
 {
     LONG ret, len;
-    WNODE *w;
     WORD fh = -1;
     BYTE inf_file_name[sizeof(INF_FILE_NAME)];
 
@@ -895,10 +894,8 @@ static void save_to_disk(void)
      */
     if (fh >= 0)                    /* file was created */
     {
-        del_fname(inf_file_name);       /* convert to pathname ending in *.* */
-        w = fold_wind(inf_file_name);   /* scan for matching windows */
-        if (w)                          /* got one:                          */
-            fun_rebld(w->w_path->p_spec);/* rebuild all matching open windows */
+        del_fname(inf_file_name);   /* convert to pathname ending in *.* */
+        fun_rebld(inf_file_name);   /* rebuild all matching open windows */
     }
 }
 

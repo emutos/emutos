@@ -459,14 +459,11 @@ static void fun_win2win(WORD src_wh, WORD dst_wh, WORD dst_ob, WORD keystate)
             fun_rebld(psw->w_path->p_spec);
         fun_rebld(pdw->w_path->p_spec);
         /*
-         * if we copied into a folder, we must check to see if it's
-         * open in a window and, if so, redraw it too
+         * if we copied into a folder, we must redraw any windows with
+         * a matching path
          */
-        if (datype == AT_ISFOLD) {
-            pdw = fold_wind(destpath);
-            if (pdw)
-                fun_rebld(pdw->w_path->p_spec);
-        }
+        if (datype == AT_ISFOLD)
+            fun_rebld(destpath);
     }
 }
 
@@ -474,7 +471,6 @@ static void fun_win2win(WORD src_wh, WORD dst_wh, WORD dst_ob, WORD keystate)
 static WORD fun_file2desk(PNODE *pn_src, WORD icontype_src, ANODE *an_dest, WORD dobj, WORD keystate)
 {
     ICONBLK *dicon;
-    WNODE *wn;
     BYTE pathname[10];      /* must be long enough for X:\\*.* */
     WORD operation, ret;
 
@@ -505,15 +501,11 @@ static WORD fun_file2desk(PNODE *pn_src, WORD icontype_src, ANODE *an_dest, WORD
         ret = fun_op(operation, icontype_src, pn_src, pathname);
     else ret = FALSE;
 
-    if (ret)                /* operation succeeded */
-    {
-        /*
-         * rebuild any corresponding open windows
-         */
-        wn = fold_wind(pathname);
-        if (wn)
-            fun_rebld(wn->w_path->p_spec);
-    }
+    /*
+     * if operation succeeded, rebuild any corresponding open windows
+     */
+    if (ret)
+        fun_rebld(pathname);
 
     return ret;
 }

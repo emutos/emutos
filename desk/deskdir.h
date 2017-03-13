@@ -29,7 +29,6 @@ BYTE *add_fname(BYTE *path, BYTE *new_name);
 void restore_path(BYTE *target);
 void del_fname(BYTE *pstr);
 void add_path(BYTE *path, BYTE *new_name);
-WNODE *fold_wind(BYTE *path);
 WORD d_errmsg(WORD err);
 WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path, OBJECT *tree, DIRCOUNT *count);
 WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *count);

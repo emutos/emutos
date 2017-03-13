@@ -959,7 +959,7 @@ WORD do_info(WORD curr)
             }
             ret = inf_file_folder(pathptr, pf);
             if (ret && !(pa->a_flags&AF_ISDESK))
-                fun_rebld(pw->w_path->p_spec);
+                fun_rebld(pathptr);
         }
         break;
     case AT_ISDISK:
