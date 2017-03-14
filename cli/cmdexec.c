@@ -111,7 +111,8 @@ WORD i, len;
  */
 PRIVATE WORD check_user_path(char *path,const char *name)
 {
-char temp[MAXPATHLEN], *p;
+char temp[MAXPATHLEN];
+const char *p;
 
     for (p = user_path; *p; ) {
         if (get_path_component(&p,temp) == 0)
