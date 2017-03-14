@@ -1006,7 +1006,7 @@ static LONG ide_identify(WORD dev)
     /* with twisted cable the response of IDENTIFY_DEVICE will be byte-swapped */
     if (ide_device_exists(dev)) {
         ret = ide_read(IDE_CMD_IDENTIFY_DEVICE,ifnum,ifdev,0L,1,(UBYTE *)&identify,
-                       ifinfo[ifnum].twisted_cable || IDE_DATA_REGISTER_IS_BYTESWAPPED);
+                       ifinfo[ifnum].twisted_cable != IDE_DATA_REGISTER_IS_BYTESWAPPED);
     } else ret = EUNDEV;
 
     if (ret < 0)
