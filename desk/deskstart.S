@@ -56,13 +56,6 @@ fill:
         trap    #1                      // Pterm
 
 
-_gem:
-        move.l  4(sp),d1
-        move.w  #0xc8,d0
-        trap    #2
-        rts
-
-
 .bss
 
 

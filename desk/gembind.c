@@ -30,141 +30,26 @@
 #define CTRL_CNT        3
 
 
-static const BYTE ctrl_cnts[] =
-{
-/* Application Manager          */
-        0, 1, 0,                        /* func 010             */
-        2, 1, 1,                        /* func 011             */
-        2, 1, 1,                        /* func 012             */
-        0, 1, 1,                        /* func 013             */
-        2, 1, 1,                        /* func 014             */
-        1, 1, 1,                        /* func 015             */
-        2, 1, 0,                        /* func 016             */
-        0, 0, 0,                        /* func 017             */
-        0, 0, 0,                        /* func 018             */
-        0, 1, 0,                        /* func 019             */
-/* Event Manager                */
-        0, 1, 0,                        /* func 020             */
-        3, 5, 0,                        /* func 021             */
-        5, 5, 0,                        /* func 022             */
-        0, 1, 1,                        /* func 023             */
-        2, 1, 0,                        /* func 024             */
-        16, 7, 1,                       /* func 025             */
-        2, 1, 0,                        /* func 026             */
-        0, 0, 0,                        /* func 027             */
-        0, 0, 0,                        /* func 028             */
-        0, 0, 0,                        /* func 029             */
-/* Menu Manager                 */
-        1, 1, 1,                        /* func 030             */
-        2, 1, 1,                        /* func 031             */
-        2, 1, 1,                        /* func 032             */
-        2, 1, 1,                        /* func 033             */
-        1, 1, 2,                        /* func 034             */
-        1, 1, 1,                        /* func 035             */
-        1, 1, 0,                        /* func 036             */
-        2, 1, 0,                        /* func 037             */
-        0, 0, 0,                        /* func 038             */
-        0, 0, 0,                        /* func 039             */
-/* Object Manager               */
-        2, 1, 1,                        /* func 040             */
-        1, 1, 1,                        /* func 041             */
-        6, 1, 1,                        /* func 042             */
-        4, 1, 1,                        /* func 043             */
-        1, 3, 1,                        /* func 044             */
-        2, 1, 1,                        /* func 045             */
-        4, 2, 1,                        /* func 046             */
-        8, 1, 1,                        /* func 047             */
-        0, 0, 0,                        /* func 048             */
-        0, 0, 0,                        /* func 049             */
-/* Form Manager                 */
-        1, 1, 1,                        /* func 050             */
-        9, 1, 1,                        /* func 051             */
-        1, 1, 1,                        /* func 052             */
-        1, 1, 0,                        /* func 053             */
-        0, 5, 1,                        /* func 054             */
-        3, 3, 1,                        /* func 055             */
-        2, 2, 1,                        /* func 056             */
-        0, 0, 0,                        /* func 057             */
-        0, 0, 0,                        /* func 058             */
-        0, 0, 0,                        /* func 059             */
-/* Process Manager              */
-        2, 2, 2,                        /* func 060             */
-        3, 1, 2,                        /* func 061             */
-        1, 1, 0,                        /* func 062             */
-        1, 3, 0,                        /* func 063             */
-        0, 0, 1,                        /* func 064             */
-        0, 0, 0,                        /* func 065             */
-        1, 1, 0,                        /* func 066             */
-        1, 1, 0,                        /* func 067             */
-        0, 0, 0,                        /* func 068             */
-        0, 0, 0,                        /* func 069             */
-/* Graphics Manager             */
-        4, 3, 0,                        /* func 070             */
-        8, 3, 0,                        /* func 071             */
-        6, 1, 0,                        /* func 072             */
-        8, 1, 0,                        /* func 073             */
-        8, 1, 0,                        /* func 074             */
-        4, 1, 1,                        /* func 075             */
-        3, 1, 1,                        /* func 076             */
-        0, 5, 0,                        /* func 077             */
-        1, 1, 1,                        /* func 078             */
-        0, 5, 0,                        /* func 079             */
-/* Scrap Manager                */
-        0, 1, 1,                        /* func 080             */
-        0, 1, 1,                        /* func 081             */
-        0, 0, 0,                        /* func 082             */
-        0, 0, 0,                        /* func 083             */
-        0, 0, 0,                        /* func 084             */
-        0, 0, 0,                        /* func 085             */
-        0, 0, 0,                        /* func 086             */
-        0, 0, 0,                        /* func 087             */
-        0, 0, 0,                        /* func 088             */
-        0, 0, 0,                        /* func 089             */
-/* File Selector Manager        */
-        0, 2, 2,                        /* func 090             */
-        0, 0, 0,                        /* func 091             */
-        0, 0, 0,                        /* func 092             */
-        0, 0, 0,                        /* func 093             */
-        0, 0, 0,                        /* func 094             */
-        0, 0, 0,                        /* func 095             */
-        0, 0, 0,                        /* func 096             */
-        0, 0, 0,                        /* func 097             */
-        0, 0, 0,                        /* func 098             */
-        0, 0, 0,                        /* func 099             */
-/* Window Manager               */
-        5, 1, 0,                        /* func 100             */
-        5, 1, 0,                        /* func 101             */
-        1, 1, 0,                        /* func 102             */
-        1, 1, 0,                        /* func 103             */
-        2, 5, 0,                        /* func 104             */
-        6, 1, 0,                        /* func 105             */
-        2, 1, 0,                        /* func 106             */
-        1, 1, 0,                        /* func 107             */
-        6, 5, 0,                        /* func 108             */
-        0, 0, 0,                        /* func 109             */
-/* Resource Manager             */
-        0, 1, 1,                        /* func 110             */
-        0, 1, 0,                        /* func 111             */
-        2, 1, 0,                        /* func 112             */
-        2, 1, 1,                        /* func 113             */
-        1, 1, 1,                        /* func 114             */
-        0, 0, 0,                        /* func 115             */
-        0, 0, 0,                        /* func 116             */
-        0, 0, 0,                        /* func 117             */
-        0, 0, 0,                        /* func 118             */
-        0, 0, 0,                        /* func 119             */
-/* Shell Manager                */
-        0, 1, 2,                        /* func 120             */
-        3, 1, 2,                        /* func 121             */
-        1, 1, 1,                        /* func 122             */
-        1, 1, 1,                        /* func 123             */
-        0, 1, 1,                        /* func 124             */
-        0, 1, 2,                        /* func 125             */
-        0, 1, 2,                        /* func 126             */
-        0, 1, 2                         /* func 127             */
-};
-
-
+/*
+ * opcode ranges from 10 - 127
+ * nintin ranges from 0 - 16 (I_SIZE)
+ * nintout ranges from 0 - 7 (O_SIZE)
+ * naddrin ranges from 0 - 2 (AI_SIZE)
+ * so we need:
+ *  - 7 bits for the opcode
+ *  - 5 bits for nintin
+ *  - 3 bits for nintout
+ *  - 2 bits for naddrin
+ * That would make 17 bits. To fit it in 16 bits,
+ * we handle evnt_multi separately (the only function
+ * with 16 input parameters)
+ */
+#define AES_CTRL_CODE(op, nintin, nintout, naddrin) \
+	((((op) - 10) << 9) | \
+	 ((nintin) << 5) | \
+	 ((nintout) << 2) | \
+	 (naddrin))
+ 
 typedef struct gemblkstr
 {
         UWORD           *gb_pcontrol;
@@ -174,9 +59,6 @@ typedef struct gemblkstr
         LONG            *gb_padrin;
         LONG            *gb_padrout;
 } GEMBLK;
-
-
-extern WORD             gem(GEMBLK *gb);    /* in deskstart.S */
 
 
 static GEMBLK           gb;
@@ -190,21 +72,34 @@ static LONG             addr_out[AO_SIZE];
 
 
 
-
-
-static WORD gem_if(WORD opcode)
+static __inline__ void gem(void)
 {
-    WORD i;
-    const BYTE *pctrl;
+	register long pb __asm__("d1") = (long)&gb;
+    __asm__ volatile (
+        "move.w  %1,d0\n\t"
+        "trap    #2\n\t"
+         :
+         : "r"(pb), "i"(200)
+         : "d0", "d2", "a0", "a1", "a2", "memory", "cc"
+        );
+}
 
-    control[0] = opcode;
 
-    pctrl = &ctrl_cnts[(opcode - 10) * 3];
-    for (i = 1; i <= CTRL_CNT; i++)
-        control[i] = *pctrl++;
+static void gem_if0(UWORD ctrlcode)
+{
+	UWORD *pc = control;
+	
+    *pc++ = (ctrlcode >> 9) + 10;
+	*pc++ = (ctrlcode >> 5) & 0x0f;
+	*pc++ = (ctrlcode >> 2) & 0x07;
+	*pc = ctrlcode & 0x03;
+}
 
-    gem(&gb);
 
+static WORD gem_if(UWORD ctrlcode)
+{
+	gem_if0(ctrlcode);
+    gem();
     return (WORD)RET_CODE;
 }
 
@@ -220,14 +115,13 @@ WORD appl_init(void)
     gb.gb_pintout = int_out;
     gb.gb_padrin = addr_in;
     gb.gb_padrout = addr_out;
-    return gem_if(APPL_INIT);
+    return gem_if(AES_CTRL_CODE(APPL_INIT, 0, 1, 0));
 }
 
 
 WORD appl_exit(void)
 {
-    gem_if(APPL_EXIT);
-    return TRUE;
+    return gem_if(AES_CTRL_CODE(APPL_EXIT, 0, 1, 0));
 }
 
 
@@ -237,7 +131,7 @@ WORD appl_write(WORD rwid, WORD length, const void *pbuff)
     AP_RWID = rwid;
     AP_LENGTH = length;
     AP_PBUFF = (LONG)pbuff;
-    return gem_if(APPL_WRITE);
+    return gem_if(AES_CTRL_CODE(APPL_WRITE, 2, 1, 1));
 }
 */
 
@@ -247,7 +141,7 @@ WORD appl_read(WORD rwid, WORD length, void *pbuff)
     AP_RWID = rwid;
     AP_LENGTH = length;
     AP_PBUFF = (LONG)pbuff;
-    return gem_if(APPL_READ);
+    return gem_if(AES_CTRL_CODE(APPL_READ, 2, 1, 1));
 }
 */
 
@@ -255,7 +149,7 @@ WORD appl_read(WORD rwid, WORD length, void *pbuff)
 WORD appl_find(const BYTE *pname)
 {
     AP_PNAME = (LONG)pname;
-    return gem_if(APPL_FIND);
+    return gem_if(AES_CTRL_CODE(APPL_FIND, 0, 1, 1));
 }
 */
 
@@ -265,7 +159,7 @@ WORD appl_tplay(const EVNTREC *tbuffer, WORD tlength, WORD tscale)
     AP_TBUFFER = (LONG)tbuffer;
     AP_TLENGTH = tlength;
     AP_TSCALE = tscale;
-    return gem_if(APPL_TPLAY);
+    return gem_if(AES_CTRL_CODE(APPL_TPLAY, 2, 1, 1));
 }
 */
 
@@ -274,7 +168,7 @@ WORD appl_trecord(EVNTREC *tbuffer, WORD tlength)
 {
     AP_TBUFFER = (LONG)tbuffer;
     AP_TLENGTH = tlength;
-    return gem_if(APPL_TRECORD);
+    return gem_if(AES_CTRL_CODE(APPL_TRECORD, 1, 1, 1));
 }
 */
 
@@ -285,7 +179,7 @@ WORD appl_trecord(EVNTREC *tbuffer, WORD tlength)
 /* unused
 UWORD evnt_keybd(void)
 {
-    return (UWORD)gem_if(EVNT_KEYBD);
+    return (UWORD)gem_if(AES_CTRL_CODE(EVNT_KEYBD, 0, 1, 0));
 }
 */
 
@@ -296,7 +190,7 @@ WORD evnt_button(WORD clicks, UWORD mask, UWORD state,
     B_CLICKS = clicks;
     B_MASK = mask;
     B_STATE = state;
-    gem_if(EVNT_BUTTON);
+    gem_if(AES_CTRL_CODE(EVNT_BUTTON, 3, 5, 0));
     *pmx = EV_MX;
     *pmy = EV_MY;
     *pmb = EV_MB;
@@ -314,7 +208,7 @@ WORD evnt_mouse(WORD flags, WORD x, WORD y, WORD width, WORD height,
     MO_Y = y;
     MO_WIDTH = width;
     MO_HEIGHT = height;
-    gem_if(EVNT_MOUSE);
+    gem_if(AES_CTRL_CODE(EVNT_MOUSE, 5, 5, 0));
     *pmx = EV_MX;
     *pmy = EV_MY;
     *pmb = EV_MB;
@@ -328,7 +222,7 @@ WORD evnt_mouse(WORD flags, WORD x, WORD y, WORD width, WORD height,
 WORD evnt_mesag(WORD *pbuff)
 {
     ME_PBUFF = (LONG)pbuff;
-    return gem_if(EVNT_MESAG);
+    return gem_if(AES_CTRL_CODE(EVNT_MESAG, 0, 1, 1));
 }
 */
 
@@ -337,7 +231,7 @@ WORD evnt_timer(UWORD locnt, UWORD hicnt)
 {
     T_LOCOUNT = locnt;
     T_HICOUNT = hicnt;
-    return gem_if(EVNT_TIMER);
+    return gem_if(AES_CTRL_CODE(EVNT_TIMER, 2, 1, 0));
 }
 
 
@@ -370,8 +264,10 @@ WORD evnt_multi(UWORD flags, UWORD bclk, UWORD bmsk, UWORD bst,
     MT_LOCOUNT = tlc;
     MT_HICOUNT = thc;
 
-    gem_if(EVNT_MULTI);
-
+    gem_if0(AES_CTRL_CODE(EVNT_MULTI, 0, 7, 1));
+	control[1] = 16;
+	gem();
+	
     *pmx = EV_MX;
     *pmy = EV_MY;
     *pmb = EV_MB;
@@ -386,7 +282,7 @@ WORD evnt_dclick(WORD rate, WORD setit)
 {
     EV_DCRATE = rate;
     EV_DCSETIT = setit;
-    return gem_if(EVNT_DCLICK);
+    return gem_if(AES_CTRL_CODE(EVNT_DCLICK, 2, 1, 0));
 }
 
 
@@ -397,7 +293,7 @@ WORD menu_bar(OBJECT *tree, WORD showit)
 {
     MM_ITREE = (LONG)tree;
     SHOW_IT = showit;
-    return gem_if(MENU_BAR);
+    return gem_if(AES_CTRL_CODE(MENU_BAR, 1, 1, 1));
 }
 
 
@@ -406,7 +302,7 @@ WORD menu_icheck(OBJECT *tree, WORD itemnum, WORD checkit)
     MM_ITREE = (LONG)tree;
     ITEM_NUM = itemnum;
     CHECK_IT = checkit;
-    return gem_if(MENU_ICHECK);
+    return gem_if(AES_CTRL_CODE(MENU_ICHECK, 2, 1, 1));
 }
 
 
@@ -415,7 +311,7 @@ WORD menu_ienable(OBJECT *tree, WORD itemnum, WORD enableit)
     MM_ITREE = (LONG)tree;
     ITEM_NUM = itemnum;
     ENABLE_IT = enableit;
-    return gem_if(MENU_IENABLE);
+    return gem_if(AES_CTRL_CODE(MENU_IENABLE, 2, 1, 1));
 }
 
 
@@ -424,7 +320,7 @@ WORD menu_tnormal(OBJECT *tree, WORD titlenum, WORD normalit)
     MM_ITREE = (LONG)tree;
     TITLE_NUM = titlenum;
     NORMAL_IT = normalit;
-    return gem_if(MENU_TNORMAL);
+    return gem_if(AES_CTRL_CODE(MENU_TNORMAL, 2, 1, 1));
 }
 
 
@@ -434,7 +330,7 @@ WORD menu_text(OBJECT *tree, WORD inum, const BYTE *ptext)
     MM_ITREE = (LONG)tree;
     ITEM_NUM = inum;
     MM_PTEXT = (LONG) ptext;
-    return gem_if(MENU_TEXT);
+    return gem_if(AES_CTRL_CODE(MENU_TEXT, 1, 1, 2));
 }
 */
 
@@ -444,7 +340,7 @@ WORD menu_register(WORD pid, const BYTE *pstr)
 {
     MM_PID = pid;
     MM_PSTR = (LONG)pstr;
-    return gem_if(MENU_REGISTER);
+    return gem_if(AES_CTRL_CODE(MENU_REGISTER, 1, 1, 1));
 }
 */
 
@@ -453,7 +349,7 @@ WORD menu_register(WORD pid, const BYTE *pstr)
 WORD menu_unregister(WORD mid)
 {
     MM_MID = mid;
-    return gem_if(MENU_UNREGISTER);
+    return gem_if(AES_CTRL_CODE(MENU_UNREGISTER, 1, 1, 0));
 }
 */
 
@@ -462,7 +358,7 @@ WORD menu_click(WORD click, WORD setit)
 {
     MN_CLICK = click;
     MN_SETIT = setit;
-    return gem_if(MENU_CLICK);
+    return gem_if(AES_CTRL_CODE(MENU_CLICK, 2, 1, 0));
 }
 
 
@@ -474,7 +370,7 @@ WORD objc_add(OBJECT *tree, WORD parent, WORD child)
     OB_TREE = (LONG)tree;
     OB_PARENT = parent;
     OB_CHILD = child;
-    return gem_if(OBJC_ADD);
+    return gem_if(AES_CTRL_CODE(OBJC_ADD, 2, 1, 1));
 }
 
 
@@ -483,7 +379,7 @@ WORD objc_delete(OBJECT *tree, WORD delob)
 {
     OB_TREE = (LONG)tree;
     OB_DELOB = delob;
-    return gem_if(OBJC_DELETE);
+    return gem_if(AES_CTRL_CODE(OBJC_DELETE, 1, 1, 1));
 }
 */
 
@@ -498,7 +394,7 @@ WORD objc_draw(OBJECT *tree, WORD drawob, WORD depth, WORD xc, WORD yc,
     OB_YCLIP = yc;
     OB_WCLIP = wc;
     OB_HCLIP = hc;
-    return gem_if(OBJC_DRAW);
+    return gem_if(AES_CTRL_CODE(OBJC_DRAW, 6, 1, 1));
 }
 
 
@@ -509,7 +405,18 @@ WORD objc_find(OBJECT *tree, WORD startob, WORD depth, WORD mx, WORD my)
     OB_DEPTH = depth;
     OB_MX = mx;
     OB_MY = my;
-    return gem_if(OBJC_FIND);
+    return gem_if(AES_CTRL_CODE(OBJC_FIND, 4, 1, 1));
+}
+
+
+WORD objc_offset(OBJECT *tree, WORD obj, WORD *poffx, WORD *poffy)
+{
+    OB_TREE = (LONG)tree;
+    OB_OBJ = obj;
+    gem_if(AES_CTRL_CODE(OBJC_OFFSET, 1, 3, 1));
+    *poffx = OB_XOFF;
+    *poffy = OB_YOFF;
+    return (WORD)RET_CODE;
 }
 
 
@@ -518,18 +425,7 @@ WORD objc_order(OBJECT *tree, WORD mov_obj, WORD newpos)
     OB_TREE = (LONG)tree;
     OB_OBJ = mov_obj;
     OB_NEWPOS = newpos;
-    return gem_if(OBJC_ORDER);
-}
-
-
-WORD objc_offset(OBJECT *tree, WORD obj, WORD *poffx, WORD *poffy)
-{
-    OB_TREE = (LONG)tree;
-    OB_OBJ = obj;
-    gem_if(OBJC_OFFSET);
-    *poffx = OB_XOFF;
-    *poffy = OB_YOFF;
-    return (WORD)RET_CODE;
+    return gem_if(AES_CTRL_CODE(OBJC_ORDER, 2, 1, 1));
 }
 
 
@@ -541,7 +437,7 @@ WORD objc_edit(OBJECT *tree, WORD obj, WORD inchar, WORD *idx, WORD kind)
     OB_CHAR = inchar;
     OB_IDX = *idx;
     OB_KIND = kind;
-    gem_if(OBJC_EDIT);
+    gem_if(AES_CTRL_CODE(OBJC_EDIT, 4, 2, 1));
     *idx = OB_ODX;
     return (WORD)RET_CODE;
 }
@@ -560,7 +456,7 @@ WORD objc_change(OBJECT *tree, WORD drawob, WORD depth, WORD xc, WORD yc,
     OB_HCLIP = hc;
     OB_NEWSTATE = newstate;
     OB_REDRAW = redraw;
-    return gem_if(OBJC_CHANGE);
+    return gem_if(AES_CTRL_CODE(OBJC_CHANGE, 8, 1, 1));
 }
 
 
@@ -571,7 +467,7 @@ WORD form_do(OBJECT *form, WORD start)
 {
     FM_FORM = (LONG)form;
     FM_START = start;
-    return gem_if(FORM_DO);
+    return gem_if(AES_CTRL_CODE(FORM_DO, 1, 1, 1));
 }
 
 
@@ -587,7 +483,7 @@ WORD form_dial(WORD dtype, WORD ix, WORD iy, WORD iw, WORD ih,
     FM_Y = y;
     FM_W = w;
     FM_H = h;
-    return gem_if(FORM_DIAL);
+    return gem_if(AES_CTRL_CODE(FORM_DIAL, 9, 1, 0));
 }
 
 
@@ -595,21 +491,21 @@ WORD form_alert(WORD defbut, const BYTE *astring)
 {
     FM_DEFBUT = defbut;
     FM_ASTRING = (LONG)astring;
-    return gem_if(FORM_ALERT);
+    return gem_if(AES_CTRL_CODE(FORM_ALERT, 1, 1, 1));
 }
 
 
 WORD form_error(WORD errnum)
 {
     FM_ERRNUM = errnum;
-    return gem_if(FORM_ERROR);
+    return gem_if(AES_CTRL_CODE(FORM_ERROR, 1, 1, 0));
 }
 
 
 WORD form_center(OBJECT *tree, WORD *pcx, WORD *pcy, WORD *pcw, WORD *pch)
 {
     FM_FORM = (LONG)tree;
-    gem_if(FORM_CENTER);
+    gem_if(AES_CTRL_CODE(FORM_CENTER, 0, 5, 1));
     *pcx = FM_XC;
     *pcy = FM_YC;
     *pcw = FM_WC;
@@ -626,7 +522,7 @@ WORD form_keybd(OBJECT *form, WORD obj, WORD nxt_obj, WORD thechar,
     FM_OBJ = obj;
     FM_INXTOB = nxt_obj;
     FM_ICHAR = thechar;
-    gem_if(FORM_KEYBD);
+    gem_if(AES_CTRL_CODE(FORM_KEYBD, 3, 3, 1));
     *pnxt_obj = FM_ONXTOB;
     *pchar = FM_OCHAR;
     return (WORD)RET_CODE;
@@ -640,7 +536,7 @@ WORD form_button(OBJECT *form, WORD obj, WORD clks, WORD *pnxt_obj)
     FM_FORM = (LONG)form;
     FM_OBJ = obj;
     FM_CLKS = clks;
-    gem_if(FORM_BUTTON);
+    gem_if(AES_CTRL_CODE(FORM_BUTTON, 2, 2, 1));
     *pnxt_obj = FM_ONXTOB;
     return (WORD)RET_CODE;
 }
@@ -657,7 +553,7 @@ WORD graf_rubbox(WORD xorigin, WORD yorigin, WORD wmin, WORD hmin,
     GR_I2 = yorigin;
     GR_I3 = wmin;
     GR_I4 = hmin;
-    gem_if(GRAF_RUBBOX);
+    gem_if(AES_CTRL_CODE(GRAF_RUBBOX, 4, 3, 0));
     *pwend = GR_O1;
     *phend = GR_O2;
     return (WORD)RET_CODE;
@@ -676,7 +572,7 @@ WORD graf_dragbox(WORD w, WORD h, WORD sx, WORD sy, WORD xc, WORD yc,
     GR_I6 = yc;
     GR_I7 = wc;
     GR_I8 = hc;
-    gem_if(GRAF_DRAGBOX);
+    gem_if(AES_CTRL_CODE(GRAF_DRAGBOX, 8, 3, 0));
     *pdx = GR_O1;
     *pdy = GR_O2;
     return (WORD)RET_CODE;
@@ -693,7 +589,7 @@ WORD graf_mbox(WORD w, WORD h, WORD srcx, WORD srcy, WORD dstx, WORD dsty)
     GR_I4 = srcy;
     GR_I5 = dstx;
     GR_I6 = dsty;
-    return gem_if(GRAF_MBOX);
+    return gem_if(AES_CTRL_CODE(GRAF_MBOX, 6, 1, 0));
 }
 */
 
@@ -709,7 +605,7 @@ WORD graf_growbox(WORD orgx, WORD orgy, WORD orgw, WORD orgh,
     GR_I6 = y;
     GR_I7 = w;
     GR_I8 = h;
-    return gem_if(GRAF_GROWBOX);
+    return gem_if(AES_CTRL_CODE(GRAF_GROWBOX, 8, 1, 0));
 }
 
 
@@ -724,7 +620,7 @@ WORD graf_shrinkbox(WORD orgx, WORD orgy, WORD orgw, WORD orgh,
     GR_I6 = y;
     GR_I7 = w;
     GR_I8 = h;
-    return gem_if(GRAF_SHRINKBOX);
+    return gem_if(AES_CTRL_CODE(GRAF_SHRINKBOX, 8, 1, 0));
 }
 
 
@@ -735,7 +631,7 @@ WORD graf_watchbox(OBJECT *tree, WORD obj, UWORD instate, UWORD outstate)
     GR_OBJ = obj;
     GR_INSTATE = instate;
     GR_OUTSTATE = outstate;
-    return gem_if(GRAF_WATCHBOX);
+    return gem_if(AES_CTRL_CODE(GRAF_WATCHBOX, 4, 1, 1));
 }
 
 
@@ -745,14 +641,14 @@ WORD graf_slidebox(OBJECT *tree, WORD parent, WORD obj, WORD isvert)
     GR_PARENT = parent;
     GR_OBJ = obj;
     GR_ISVERT = isvert;
-    return gem_if(GRAF_SLIDEBOX);
+    return gem_if(AES_CTRL_CODE(GRAF_SLIDEBOX, 3, 1, 1));
 }
 */
 
 
 WORD graf_handle(WORD *pwchar, WORD *phchar, WORD *pwbox, WORD *phbox)
 {
-    gem_if(GRAF_HANDLE);
+    gem_if(AES_CTRL_CODE(GRAF_HANDLE, 0, 5, 0));
     *pwchar = GR_WCHAR ;
     *phchar = GR_HCHAR;
     *pwbox = GR_WBOX;
@@ -765,13 +661,13 @@ WORD graf_mouse(WORD m_number, void *m_addr)
 {
     GR_MNUMBER = m_number;
     GR_MADDR = (LONG)m_addr;
-    return gem_if(GRAF_MOUSE);
+    return gem_if(AES_CTRL_CODE(GRAF_MOUSE, 1, 1, 1));
 }
 
 
 void graf_mkstate(WORD *pmx, WORD *pmy, WORD *pmstate, WORD *pkstate)
 {
-    gem_if(GRAF_MKSTATE);
+    gem_if(AES_CTRL_CODE(GRAF_MKSTATE, 0, 5, 0));
     *pmx = GR_MX;
     *pmy = GR_MY;
     *pmstate = GR_MSTATE;
@@ -786,13 +682,13 @@ void graf_mkstate(WORD *pmx, WORD *pmy, WORD *pmstate, WORD *pkstate)
 WORD scrp_read(BYTE *pscrap)
 {
     SC_PATH = (LONG)pscrap;
-    return gem_if(SCRP_READ);
+    return gem_if(AES_CTRL_CODE(SCRP_READ, 0, 1, 1));
 }
 
 WORD scrp_write(const BYTE *pscrap)
 {
     SC_PATH = (LONG)pscrap;
-    return gem_if(SCRP_WRITE);
+    return gem_if(AES_CTRL_CODE(SCRP_WRITE, 0, 1, 1));
 }
 */
 
@@ -805,7 +701,7 @@ WORD fsel_input(BYTE *pipath, BYTE *pisel, WORD *pbutton)
 {
     FS_IPATH = (LONG)pipath;
     FS_ISEL = (LONG)pisel;
-    gem_if(FSEL_INPUT);
+    gem_if(AES_CTRL_CODE(FSEL_INPUT, 0, 2, 2));
     *pbutton = FS_BUTTON;
     return (WORD)RET_CODE;
 }
@@ -822,7 +718,7 @@ WORD wind_create(UWORD kind, WORD wx, WORD wy, WORD ww, WORD wh)
     WM_WY = wy;
     WM_WW = ww;
     WM_WH = wh;
-    return gem_if(WIND_CREATE);
+    return gem_if(AES_CTRL_CODE(WIND_CREATE, 5, 1, 0));
 }
 
 
@@ -833,21 +729,21 @@ WORD wind_open(WORD handle, WORD wx, WORD wy, WORD ww, WORD wh)
     WM_WY = wy;
     WM_WW = ww;
     WM_WH = wh;
-    return gem_if(WIND_OPEN);
+    return gem_if(AES_CTRL_CODE(WIND_OPEN, 5, 1, 0));
 }
 
 
 WORD wind_close(WORD handle)
 {
     WM_HANDLE = handle;
-    return gem_if(WIND_CLOSE);
+    return gem_if(AES_CTRL_CODE(WIND_CLOSE, 1, 1, 0));
 }
 
 
 WORD wind_delete(WORD handle)
 {
     WM_HANDLE = handle;
-    return gem_if(WIND_DELETE);
+    return gem_if(AES_CTRL_CODE(WIND_DELETE, 1, 1, 0));
 }
 
 
@@ -855,7 +751,7 @@ WORD wind_get(WORD w_handle, WORD w_field, WORD *pw1, WORD *pw2, WORD *pw3, WORD
 {
     WM_HANDLE = w_handle;
     WM_WFIELD = w_field;
-    gem_if(WIND_GET);
+    gem_if(AES_CTRL_CODE(WIND_GET, 2, 5, 0));
     *pw1 = WM_OX;
     *pw2 = WM_OY;
     *pw3 = WM_OW;
@@ -883,7 +779,7 @@ WORD wind_set(WORD w_handle, WORD w_field, ...) /* WORD w2, WORD w3, WORD w4, WO
     WM_IW = va_arg(ap, int);
     WM_IH = va_arg(ap, int);
     va_end(ap);
-    return gem_if(WIND_SET);
+    return gem_if(AES_CTRL_CODE(WIND_SET, 6, 1, 0));
 }
 
 
@@ -897,14 +793,14 @@ WORD wind_find(WORD mx, WORD my)
 {
     WM_MX = mx;
     WM_MY = my;
-    return gem_if(WIND_FIND);
+    return gem_if(AES_CTRL_CODE(WIND_FIND, 2, 1, 0));
 }
 
 
 WORD wind_update(WORD beg_update)
 {
     WM_BEGUP = beg_update;
-    return gem_if(WIND_UPDATE);
+    return gem_if(AES_CTRL_CODE(WIND_UPDATE, 1, 1, 0));
 }
 
 
@@ -917,7 +813,7 @@ WORD wind_calc(WORD wctype, UWORD kind, WORD x, WORD y, WORD w, WORD h,
     WM_WCIY = y;
     WM_WCIW = w;
     WM_WCIH = h;
-    gem_if(WIND_CALC);
+    gem_if(AES_CTRL_CODE(WIND_CALC, 6, 5, 0));
     *px = WM_WCOX;
     *py = WM_WCOY;
     *pw = WM_WCOW;
@@ -925,6 +821,12 @@ WORD wind_calc(WORD wctype, UWORD kind, WORD x, WORD y, WORD w, WORD h,
     return (WORD)RET_CODE;
 }
 
+/* unused
+WORD wind_new(void)
+{
+    return gem_if(AES_CTRL_CODE(WIND_NEW, 0, 1, 0));
+}
+*/
 
 /*
  *  Resource Manager
@@ -932,13 +834,13 @@ WORD wind_calc(WORD wctype, UWORD kind, WORD x, WORD y, WORD w, WORD h,
 WORD rsrc_load(const BYTE *rsname)
 {
     RS_PFNAME = (LONG)rsname;
-    return gem_if(RSRC_LOAD);
+    return gem_if(AES_CTRL_CODE(RSRC_LOAD, 0, 1, 1));
 }
 
 
 WORD rsrc_free(void)
 {
-    return gem_if(RSRC_FREE);
+    return gem_if(AES_CTRL_CODE(RSRC_FREE, 0, 1, 0));
 }
 
 
@@ -950,7 +852,7 @@ WORD rsrc_gaddr(WORD rstype, WORD rsid, void **paddr)
 {
     RS_TYPE = rstype;
     RS_INDEX = rsid;
-    gem_if(RSRC_GADDR);
+    gem_if(AES_CTRL_CODE(RSRC_GADDR, 2, 1, 0));
     *paddr = (void *)RS_OUTADDR;
     return (WORD)RET_CODE;
 }
@@ -963,7 +865,7 @@ WORD rsrc_saddr(WORD rstype, WORD rsid, void *lngval)
     RS_TYPE = rstype;
     RS_INDEX = rsid;
     RS_INADDR = (LONG)lngval;
-    return gem_if(RSRC_SADDR);
+    return gem_if(AES_CTRL_CODE(RSRC_SADDR, 2, 1, 1));
 }
 */
 
@@ -972,8 +874,17 @@ WORD rsrc_obfix(OBJECT *tree, WORD obj)
 {
     RS_TREE = (LONG)tree;
     RS_OBJ = obj;
-    return gem_if(RSRC_OBFIX);
+    return gem_if(AES_CTRL_CODE(RSRC_OBFIX, 1, 1, 1));
 }
+
+
+/* unused
+WORD rsrc_rcfix(RSHDR *hdr)
+{
+    RS_HEADER = (LONG)hdr;
+    return gem_if(AES_CTRL_CODE(RSRC_RCFIX, 0, 1, 1));
+}
+*/
 
 
 /*
@@ -984,7 +895,7 @@ WORD shel_read(BYTE *pcmd, BYTE *ptail)
 {
     SH_PCMD = (LONG)pcmd;
     SH_PTAIL = (LONG)ptail;
-    return gem_if(SHEL_READ);
+    return gem_if(AES_CTRL_CODE(SHEL_READ, 0, 1, 2));
 }
 */
 
@@ -996,7 +907,7 @@ WORD shel_write(WORD doex, WORD isgr, WORD iscr, BYTE *pcmd, BYTE *ptail)
     SH_ISCR = iscr;
     SH_PCMD = (LONG)pcmd;
     SH_PTAIL = (LONG)ptail;
-    return gem_if(SHEL_WRITE);
+    return gem_if(AES_CTRL_CODE(SHEL_WRITE, 3, 1, 2));
 }
 
 
@@ -1004,7 +915,7 @@ WORD shel_get(void *pbuffer, WORD len)
 {
     SH_PBUFFER = (LONG)pbuffer;
     SH_LEN = len;
-    return gem_if(SHEL_GET);
+    return gem_if(AES_CTRL_CODE(SHEL_GET, 1, 1, 1));
 }
 
 
@@ -1012,14 +923,14 @@ WORD shel_put(void *pdata, WORD len)
 {
     SH_PDATA = (LONG)pdata;
     SH_LEN = len;
-    return gem_if(SHEL_PUT);
+    return gem_if(AES_CTRL_CODE(SHEL_PUT, 1, 1, 1));
 }
 
 
 WORD shel_find(BYTE *ppath)
 {
     SH_PATH = (LONG)ppath;
-    return gem_if(SHEL_FIND);
+    return gem_if(AES_CTRL_CODE(SHEL_FIND, 0, 1, 1));
 }
 
 
@@ -1028,7 +939,7 @@ WORD shel_envrn(BYTE *ppath, const BYTE *psrch)
 {
     SH_PATH = (LONG)ppath;
     SH_SRCH = (LONG)psrch;
-    return gem_if(SHEL_ENVRN);
+    return gem_if(AES_CTRL_CODE(SHEL_ENVRN, 0, 1, 2));
 }
 */
 
@@ -1038,7 +949,7 @@ WORD shel_rdef(BYTE *lpcmd, BYTE *lpdir)
 {
     SH_LPCMD = (LONG)lpcmd;
     SH_LPDIR = (LONG)lpdir;
-    return gem_if(SHEL_RDEF);
+    return gem_if(AES_CTRL_CODE(SHEL_RDEF, 0, 1, 2));
 }
 */
 
@@ -1047,6 +958,6 @@ WORD shel_wdef(BYTE *lpcmd, BYTE *lpdir)
 {
     SH_LPCMD = (LONG)lpcmd;
     SH_LPDIR = (LONG)lpdir;
-    return gem_if(SHEL_WDEF);
+    return gem_if(AES_CTRL_CODE(SHEL_WDEF, 0, 1, 2));
 }
 */
