@@ -132,16 +132,16 @@ struct IDE
 
 /* the data register is naturally byteswapped on some hardware */
 #if defined(MACHINE_AMIGA)
-#define IDE_DATA_REGISTER_IS_BYTESWAPPED 1
+#define IDE_DATA_REGISTER_IS_BYTESWAPPED TRUE
 #else
-#define IDE_DATA_REGISTER_IS_BYTESWAPPED 0
+#define IDE_DATA_REGISTER_IS_BYTESWAPPED FALSE
 #endif
 
 /* set the following to 1 to use 32-bit data transfer */
 #if CONF_ATARI_HARDWARE
-#define IDE_32BIT_XFER 1
+#define IDE_32BIT_XFER TRUE
 #else
-#define IDE_32BIT_XFER 0
+#define IDE_32BIT_XFER FALSE
 #endif
 
 #if IDE_32BIT_XFER
