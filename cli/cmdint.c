@@ -41,7 +41,7 @@ PRIVATE LONG outputbuf(const char *s,LONG len,WORD paging);
 PRIVATE LONG output_files(WORD argc,char **argv,WORD paging);
 PRIVATE void padname(char *buf,const char *name);
 PRIVATE LONG pathout(void);
-PRIVATE void show_line(const char *title,ULONG n);
+PRIVATE void show_line(const char *title,ULONG n,ULONG clsize);
 PRIVATE WORD user_break(void);
 PRIVATE WORD user_input(WORD c);
 
@@ -561,13 +561,13 @@ char id[] = "X:";
         output(_("Allocation info for drive "));
         id[0] = drive + 'A';
         outputnl(id);
-        show_line(_("  Size (bytes):   "),info[1]*bpc);
-        show_line(_("  Bytes used:     "),(info[1]-info[0])*bpc);
-        show_line(_("  Bytes free:     "),info[0]*bpc);
-        show_line(_("  Total clusters: "),info[1]);
-        show_line(_("  Free clusters:  "),info[0]);
-        show_line(_("  Sectors/cluster:"),info[3]);
-        show_line(_("  Bytes/sector:   "),info[2]);
+        show_line(_("  Size (bytes):   "),info[1],bpc);
+        show_line(_("  Bytes used:     "),(info[1]-info[0]),bpc);
+        show_line(_("  Bytes free:     "),info[0],bpc);
+        show_line(_("  Total clusters: "),info[1],1);
+        show_line(_("  Free clusters:  "),info[0],1);
+        show_line(_("  Sectors/cluster:"),info[3],1);
+        show_line(_("  Bytes/sector:   "),info[2],1);
     }
 
     return rc;
@@ -1039,13 +1039,52 @@ char c;
     return c;
 }
 
-PRIVATE void show_line(const char *title,ULONG n)
+PRIVATE void show_line(const char *title,ULONG n,ULONG clsize)
 {
 char buf[20];
+register int shift = 0;
+const char *suff;
 
+    if (clsize > 1)
+    {
+        while (!(clsize & 1))
+        {
+            clsize >>= 1;
+            shift++;
+        }
+        if (n != 0)
+        {
+            while (!(n & 1))
+            {
+                n >>= 1;
+                shift++;
+            }
+        }
+    }
+    if (shift >= 40)
+    {
+        suff = " TB";
+        shift -= 40;
+    } else if (shift >= 30)
+    {
+        suff = " GB";
+        shift -= 30;
+    } else if (shift >= 20)
+    {
+        suff = " MB";
+        shift -= 20;
+    } else if (shift >= 10)
+    {
+        suff = " KB";
+        shift -= 10;
+    } else
+    {
+        suff = "";
+    }
     output(title);
-    convulong(buf,n,10,' ');
-    outputnl(buf);
+    convulong(buf,(n * clsize) << shift,10,' ');
+    output(buf);
+    outputnl(suff);
 }
 
 /*
