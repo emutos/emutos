@@ -78,7 +78,7 @@ static const BYTE ctrl_cnts[] =
         0, 0, 0,                        /* func 049             */
 /* Form Manager                 */
         1, 1, 1,                        /* func 050             */
-        9, 1, 1,                        /* func 051             */
+        9, 1, 0,                        /* func 051             */
         1, 1, 1,                        /* func 052             */
         1, 1, 0,                        /* func 053             */
         0, 5, 1,                        /* func 054             */
@@ -88,14 +88,14 @@ static const BYTE ctrl_cnts[] =
         0, 0, 0,                        /* func 058             */
         0, 0, 0,                        /* func 059             */
 /* Process Manager              */
-        2, 2, 2,                        /* func 060             */
-        3, 1, 2,                        /* func 061             */
-        1, 1, 0,                        /* func 062             */
-        1, 3, 0,                        /* func 063             */
-        0, 0, 1,                        /* func 064             */
+        0, 0, 0,                        /* func 060             */
+        0, 0, 0,                        /* func 061             */
+        0, 0, 0,                        /* func 062             */
+        0, 0, 0,                        /* func 063             */
+        0, 0, 0,                        /* func 064             */
         0, 0, 0,                        /* func 065             */
-        1, 1, 0,                        /* func 066             */
-        1, 1, 0,                        /* func 067             */
+        0, 0, 0,                        /* func 066             */
+        0, 0, 0,                        /* func 067             */
         0, 0, 0,                        /* func 068             */
         0, 0, 0,                        /* func 069             */
 /* Graphics Manager             */
