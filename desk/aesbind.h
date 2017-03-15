@@ -132,6 +132,9 @@ WORD scrp_write(const BYTE *pscrap);
 /*
 WORD fsel_input(BYTE *pipath, BYTE *pisel, WORD *pbutton);
 */
+#if CONF_WITH_DESKTOP_SHORTCUTS
+WORD fsel_exinput(BYTE *pipath, BYTE *pisel, WORD *pbutton, const BYTE *title);
+#endif
 
 
 /*

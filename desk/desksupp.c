@@ -31,6 +31,7 @@
 #include "biosbind.h"
 #include "biosdefs.h"
 #include "xbiosbind.h"
+#include "gemerror.h"
 
 #include "gembind.h"
 #include "deskapp.h"
@@ -276,6 +277,68 @@ WORD do_wfull(WORD wh)
 }
 
 
+#if CONF_WITH_DESKTOP_SHORTCUTS
+/*
+ *  test if specified file exists
+ *
+ *  returns ptr to DTA if it exists, else NULL
+ */
+static DTA *file_exists(BYTE *path, BYTE *name)
+{
+    DTA *dta;
+    WORD rc;
+    BYTE fullname[MAXPATHLEN];
+
+    strcpy(fullname, path);
+    if (name)
+        strcpy(filename_start(fullname),name);
+    dta = dos_gdta();
+    dos_sdta(&G.g_wdta);
+    rc = dos_sfirst(fullname, ALLFILES);
+    dos_sdta(dta);
+
+    return rc ? NULL : &G.g_wdta;
+}
+
+
+/*
+ *  Prompt to Remove or Locate a shortcut
+ */
+static void remove_locate_shortcut(WORD curr)
+{
+    WORD rc, button;
+    ANODE *pa;
+    BYTE path[MAXPATHLEN];
+    BYTE fname[LEN_ZFNAME], *p;
+
+    pa = app_afind_by_id(curr);
+    if (!pa)        /* can't happen */
+        return;
+
+    rc = fun_alert_string(1, STRMVLOC, filename_start(pa->a_pdata));
+    switch(rc)
+    {
+    case 1:             /* Remove */
+        app_free(pa);
+        app_blddesk();
+        break;
+    case 2:             /* Locate */
+        build_root_path(path, 'A'+G.g_stdrv);
+        fname[0] = '\0';
+        rc = fsel_exinput(path, fname, &button, _("Locate item"));
+        if ((rc == 0) || (button == 0))
+            break;
+        p = filename_start(path);
+        if (pa->a_type == AT_ISFILE)
+            strcpy(p, fname);
+        else
+            *(p-1) = '\0';
+        scan_str(path,&pa->a_pdata);
+    }
+}
+#endif
+
+
 /*
  *  Open a directory, it may be the root or a subdirectory
  *
@@ -294,8 +357,14 @@ WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon,
 
     p = filename_start(pathname);
     *p = '\0';
-    if (set_default_path(pathname) != 0)
+    ret = set_default_path(pathname);
+    if (ret != 0)
     {
+#if CONF_WITH_DESKTOP_SHORTCUTS
+        /* handle renamed target of shortcut */
+        if ((pw->w_flags&WN_DESKTOP) && (ret == EPTHNF))
+            remove_locate_shortcut(curr_icon);
+#endif
         graf_mouse(ARROW, NULL);
         return FALSE;
     }
@@ -573,8 +642,9 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname)
 
 #if CONF_WITH_DESKTOP_SHORTCUTS
     /*
-     * if this is a desktop shortcut, look for corresponding installed
-     * application and, if there is one, use its ANODE instead.
+     * if this is a desktop shortcut, first make sure that the file
+     * exists.  then look for a corresponding installed application
+     * and, if there is one, use its ANODE instead.
      *
      * note that app_afind_by_name() only updates 'isapp' if an
      * application is found, so it is safe to pass a pointer to it.
@@ -582,6 +652,12 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname)
     if (pa->a_flags & AF_ISDESK)
     {
         ANODE *tmp;
+
+        if (!file_exists(pathname, pname))
+        {
+            remove_locate_shortcut(curr);
+            return done;
+        }
         tmp = app_afind_by_name(AT_ISFILE, pathname, pname, &isapp);
         if (tmp)
             pa = tmp;
@@ -794,15 +870,22 @@ void do_fopen(WNODE *pw, WORD curr, BYTE *pathname, WORD redraw)
  *  example, if the folder to be added was Z, this would change
  *  D:\X\Y\F.E to D:\X\Y\Z\F.E
  *
- *  returns FALSE iff the resulting pathname weould be too long
+ *  Note: if the folder to be added is an empty string, we do nothing.
+ *  This situation occurs when building the path string for a desktop
+ *  shortcut that points to the root folder.
+ *
+ *  returns FALSE iff the resulting pathname would be too long
  */
 static BOOL add_one_level(BYTE *pathname,BYTE *folder)
 {
     WORD plen, flen;
     BYTE filename[LEN_ZFNAME+1], *p;
 
-    plen = strlen(pathname);
     flen = strlen(folder);
+    if (flen == 0)
+        return TRUE;
+
+    plen = strlen(pathname);
     if (plen+flen+1 >= MAXPATHLEN)
         return FALSE;
 
@@ -872,9 +955,18 @@ WORD do_open(WORD curr)
         if (pa->a_flags & AF_ISDESK)
         {
             BYTE *p = filename_start(pa->a_pdata);
-            strlcpy(pathname, pa->a_pdata, p - pa->a_pdata);
+            /* check for root folder */
+            if ((pa->a_type == AT_ISFOLD) && (p == pa->a_pdata))
+            {
+                strcpy(pathname, pa->a_pdata);
+                filename[0] = '\0';
+            }
+            else
+            {
+                strlcpy(pathname, pa->a_pdata, p - pa->a_pdata);
+                strcpy(filename, p);
+            }
             strcat(pathname, "\\*.*");
-            strcpy(filename, p);
             pathptr = pathname;
             fileptr = filename;
         }
@@ -917,10 +1009,11 @@ WORD do_info(WORD curr)
     WORD ret, drive;
     ANODE *pa;
     WNODE *pw;
-    FNODE *pf;
+    FNODE fn, *pf;
     BYTE pathname[MAXPATHLEN];
     BYTE *pathptr;
 
+    MAYBE_UNUSED(fn);
     MAYBE_UNUSED(pathname);
 
     pa = i_find(G.g_cwin, curr, &pf, NULL);
@@ -938,16 +1031,17 @@ WORD do_info(WORD curr)
 #if CONF_WITH_DESKTOP_SHORTCUTS
             if (pa->a_flags & AF_ISDESK)
             {
-                FNODE fn;
                 DTA *dta;
 
-                dta = dos_gdta();
-                dos_sdta(&G.g_wdta);
-                if (dos_sfirst(pa->a_pdata, ALLFILES) != 0)
+                dta = file_exists(pa->a_pdata, NULL);
+                if (!dta)
+                {
+                    remove_locate_shortcut(curr);
                     break;
+                }
+
                 pf = &fn;
-                memcpy(&pf->f_junk, &G.g_wdta.d_reserved[20], 23);
-                dos_sdta(dta);
+                memcpy(&pf->f_junk, &dta->d_reserved[20], 23);
                 strcpy(pathname, pa->a_pdata);
                 strcpy(filename_start(pathname),"*.*");
                 pathptr = pathname;

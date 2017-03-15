@@ -214,4 +214,12 @@ deleted.
 The name and shape of the shortcut icon itself may be modified by the
 "Install icon" menu item; this does not change the name of the file or
 folder that the icon points to.  The shortcut icon may be deleted by the
-"Remove icon" menu item.
+"Remove icon" menu item.  To preserve shortcut information across boots,
+you must save the desktop.
+
+If you open a desktop shortcut that points to a file or folder that no
+longer exists, an alert will be issued, giving you the choice of removing
+the shortcut, locating the desired file or folder, or cancelling the
+action.  If you choose locate, a file selector will be displayed to
+allow you to choose the desired file or folder, and the shortcut will be
+updated with the new information.

@@ -83,6 +83,7 @@
 #define SCRP_PUT 82
                                 /* File Selector Manager                */
 #define FSEL_INPUT 90
+#define FSEL_EXINPUT 91
                                 /* Window Manager                       */
 #define WIND_CREATE 100
 #define WIND_OPEN 101
@@ -114,7 +115,7 @@
 #define G_SIZE 15
 #define I_SIZE 16
 #define O_SIZE 7
-#define AI_SIZE 2
+#define AI_SIZE 3
 #define AO_SIZE 1
 
 /*
@@ -391,6 +392,7 @@ extern LONG     addr_out[AO_SIZE];
 
 #define FS_IPATH addr_in[0]
 #define FS_ISEL addr_in[1]
+#define FS_TITLE addr_in[2]
 
 #define FS_BUTTON int_out[1]
                                         /* window library parameters    */

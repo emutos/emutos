@@ -122,7 +122,7 @@ static const BYTE ctrl_cnts[] =
         0, 0, 0,                        /* func 089             */
 /* File Selector Manager        */
         0, 2, 2,                        /* func 090             */
-        0, 0, 0,                        /* func 091             */
+        0, 2, 3,                        /* func 091             */
         0, 0, 0,                        /* func 092             */
         0, 0, 0,                        /* func 093             */
         0, 0, 0,                        /* func 094             */
@@ -810,6 +810,19 @@ WORD fsel_input(BYTE *pipath, BYTE *pisel, WORD *pbutton)
     return (WORD)RET_CODE;
 }
 */
+
+
+#if CONF_WITH_DESKTOP_SHORTCUTS
+WORD fsel_exinput(BYTE *pipath, BYTE *pisel, WORD *pbutton, const BYTE *title)
+{
+    FS_IPATH = (LONG)pipath;
+    FS_ISEL = (LONG)pisel;
+    FS_TITLE = (LONG)title;
+    gem_if(FSEL_EXINPUT);
+    *pbutton = FS_BUTTON;
+    return (WORD)RET_CODE;
+}
+#endif
 
 
 /*
