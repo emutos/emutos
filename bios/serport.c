@@ -24,6 +24,9 @@
 #include "string.h"
 #include "tosvars.h"
 #include "coldfire.h"
+#ifdef MACHINE_AMIGA
+#include "amiga.h"
+#endif
 
 /*
  * defines
@@ -712,7 +715,13 @@ void init_serport(void)
         init_scc();
 #endif
 
+#ifdef MACHINE_AMIGA
+    amiga_rs232_init();
+#endif
+
+#if !CONF_SERIAL_IKBD
     (*rsconfptr)(B9600, 0, 0x88, 1, 1, 0);
+#endif
 }
 
 LONG bconmap(WORD dev)

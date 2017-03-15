@@ -87,6 +87,9 @@ struct keytbl {
   WORD features;
 };
 
+/* Baud rate used by Atari keyboards */
+#define IKBD_BAUD 7812
+
 /* initialise the ikbd */
 extern void kbd_init(void);
 
@@ -121,7 +124,7 @@ extern void call_mousevec(UBYTE *packet);
 #ifdef MACHINE_AMIGA
 extern void call_joyvec(UBYTE *packet);
 #endif
-#if CONF_WITH_FLEXCAN
+#if CONF_WITH_FLEXCAN || CONF_SERIAL_IKBD
 void call_ikbdraw(UBYTE b);
 #endif
 

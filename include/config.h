@@ -1179,6 +1179,14 @@
 #endif
 
 /*
+ * Set CONF_SERIAL_IKBD to 1 to allow IKBD keyboard/mouse/joysticks to be
+ * plugged on the serial port.
+ */
+#ifndef CONF_SERIAL_IKBD
+# define CONF_SERIAL_IKBD 0
+#endif
+
+/*
  * Set CONF_WITH_BAS_MEMORY_MAP to 1 if EmuTOS is intended to run
  * over the BaS (either on the FireBee or on the M548x with BaS_gcc).
  */

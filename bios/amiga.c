@@ -43,11 +43,14 @@ extern long xmaddalt(UBYTE *start, long size); /* found in bdos/mem.h */
 #define JOY1DAT *(volatile UWORD*)0xdff00c
 #define ADKCONR *(volatile UWORD*)0xdff010
 #define POTGOR  *(volatile UWORD*)0xdff016 /* = POTINP */
+#define SERDATR *(volatile UWORD*)0xdff018
 #define DSKBYTR *(volatile UWORD*)0xdff01a
 #define INTENAR *(volatile UWORD*)0xdff01c
 #define INTREQR *(volatile UWORD*)0xdff01e
 #define DSKPTH  *(void* volatile*)0xdff020
 #define DSKLEN  *(volatile UWORD*)0xdff024
+#define SERDAT  *(volatile UWORD*)0xdff030
+#define SERPER  *(volatile UWORD*)0xdff032
 #define POTGO   *(volatile UWORD*)0xdff034
 #define DSKSYNC *(volatile UWORD*)0xdff07e
 #define COP1LCH *(UWORD* volatile*)0xdff080
@@ -475,7 +478,9 @@ void amiga_kbd_init(void)
     POTGO = 0xff00;
 }
 
-void amiga_ikbd_writeb(UBYTE b)
+#if !CONF_SERIAL_IKBD
+
+static void amiga_ikbd_simulate_writeb(UBYTE b)
 {
     static UBYTE buffer[6];
     static UBYTE *p;
@@ -635,6 +640,17 @@ void amiga_ikbd_writeb(UBYTE b)
     }
 
     /* FIXME: Implement all commands */
+}
+
+#endif /* !CONF_SERIAL_IKBD */
+
+void amiga_ikbd_writeb(UBYTE b)
+{
+#if CONF_SERIAL_IKBD
+    amiga_rs232_writeb(b);
+#else
+    amiga_ikbd_simulate_writeb(b);
+#endif
 }
 
 /******************************************************************************/
@@ -1677,6 +1693,54 @@ LONG amiga_flop_mediach(WORD dev)
     amiga_floppy_deselect();
 
     return ret;
+}
+
+/******************************************************************************/
+/* RS-232                                                                     */
+/******************************************************************************/
+
+#define SERPER_8BIT 0x0000
+#define SERPER_9BIT 0x8000
+
+#define SERPER_DIVIDEND_NTSC 3579545UL
+#define SERPER_DIVIDEND_PAL  3546895UL
+
+#define SERPER_BAUD(baud) ((SERPER_DIVIDEND_PAL / (baud)) - 1)
+
+#define SERDAT_TBE 0x2000 /* Transmit Buffer Empty */
+
+void amiga_rs232_init(void)
+{
+#if CONF_SERIAL_IKBD
+    SERPER = SERPER_8BIT | SERPER_BAUD(IKBD_BAUD);
+    VEC_LEVEL5 = amiga_int_5;
+    INTENA = SETBITS | RBF; /* Enable RBF interrupt */
+#endif
+}
+
+BOOL amiga_rs232_can_write(void)
+{
+    return SERDATR & SERDAT_TBE;
+}
+
+void amiga_rs232_writeb(UBYTE b)
+{
+    while (!amiga_rs232_can_write())
+    {
+        /* Wait */
+    }
+
+    /* Send the byte */
+    SERDAT = 0x0100 | b;
+}
+
+void amiga_rs232_rbf_interrupt(void)
+{
+#if CONF_SERIAL_IKBD
+    UWORD serdat = SERDATR;
+    UBYTE ikbdbyte = LOBYTE(serdat);
+    call_ikbdraw(ikbdbyte);
+#endif
 }
 
 #endif /* MACHINE_AMIGA */

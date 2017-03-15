@@ -207,6 +207,29 @@ nolong:
         jmp     (a0)                    // Call the 200 Hz system timer
 
 /******************************************************************************/
+/* Interrupt 5: RS-232 interrupt                                              */
+/******************************************************************************/
+
+/* Interrupt 5 handler */
+
+        .globl _amiga_int_5
+_amiga_int_5:
+        movem.l d0-d1/a0-a1,-(sp)
+
+        move.w  0xdff01e,d0             // INTREQR
+        btst    #11,d0                  // RBF interrupt?
+        jeq     amiga_int_5_end
+
+        jbsr    _amiga_rs232_rbf_interrupt
+
+        move.w  #0x0800,0xdff09c        // INTREQ = interrupt processed.
+        move.w  #0x0800,0xdff09c        // twice for compatibility
+
+amiga_int_5_end:
+        movem.l (sp)+,d0-d1/a0-a1
+        rte
+
+/******************************************************************************/
 /* VBL interrupt                                                              */
 /******************************************************************************/
 

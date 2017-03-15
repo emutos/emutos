@@ -85,10 +85,16 @@ BOOL amiga_flop_detect_drive(WORD dev);
 WORD amiga_floprw(UBYTE *buf, WORD rw, WORD dev, WORD sect, WORD track, WORD side, WORD count);
 LONG amiga_flop_mediach(WORD dev);
 
+void amiga_rs232_init(void);
+BOOL amiga_rs232_can_write(void);
+void amiga_rs232_writeb(UBYTE b);
+void amiga_rs232_rbf_interrupt(void);
+
 /* The following functions are defined in amiga2.S */
 
 void amiga_init_keyboard_interrupt(void);
 void amiga_vbl(void);
+void amiga_int_5(void);
 
 #endif /* MACHINE_AMIGA */
 
