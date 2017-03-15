@@ -89,6 +89,8 @@ typedef struct
 /*GLOBAL*/ PNODE        *g_pavail;
 /*GLOBAL*/ PNODE        *g_phead;
 
+/*GLOBAL*/ WORD         g_stdrv;                /* start drive */
+
 /*GLOBAL*/ DTA          g_wdta;
 
 /*GLOBAL*/ WNODE        g_wdesktop;             /* the desktop pseudo-window */

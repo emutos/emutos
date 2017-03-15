@@ -101,8 +101,6 @@
 
 #define INF_REV_LEVEL   0x01    /* revision level when creating EMUDESK.INF */
 
-static WORD     gl_stdrv;
-
 static WORD     inf_rev_level;  /* revision level of current EMUDESK.INF */
 
 static BYTE     gl_afile[SIZE_AFILE];
@@ -469,7 +467,7 @@ static WORD load_user_icons(void)
      * determine the number of icons in the user's icon resource
      */
     strcpy(icon_rsc_name, ICON_RSC_NAME);
-    icon_rsc_name[0] += gl_stdrv;   /* Adjust drive letter  */
+    icon_rsc_name[0] += G.g_stdrv;  /* Adjust drive letter  */
     if (!rsrc_load(icon_rsc_name))
     {
         KDEBUG(("can't load user desktop icons from %s\n",icon_rsc_name));
@@ -607,7 +605,7 @@ void app_start(void)
     WORD envr, xcnt, ycnt, xcent, wincnt, dummy;
 
     /* remember start drive */
-    gl_stdrv = dos_gdrv();
+    G.g_stdrv = dos_gdrv();
 
     /* initialise the ANODE stuff */
     if (initialise_anodes() < 0)
@@ -639,7 +637,7 @@ void app_start(void)
         WORD fh;
         char inf_file_name[16];
         strcpy(inf_file_name, INF_FILE_NAME);
-        inf_file_name[0] += gl_stdrv;         /* Adjust drive letter  */
+        inf_file_name[0] += G.g_stdrv;      /* Adjust drive letter  */
         ret = dos_open(inf_file_name, 0x0);
         if (ret >= 0L)
         {
@@ -873,7 +871,7 @@ static void save_to_disk(void)
         return;
 
     strcpy(inf_file_name, INF_FILE_NAME);
-    inf_file_name[0] += gl_stdrv;   /* Adjust drive letter  */
+    inf_file_name[0] += G.g_stdrv;  /* Adjust drive letter  */
 
     ret = dos_create(inf_file_name, 0);
     if (ret >= 0L)
