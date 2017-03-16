@@ -80,7 +80,6 @@
                                 /* Scrap Manager                        */
 #define SCRP_READ 80
 #define SCRP_WRITE 81
-#define SCRP_PUT 82
                                 /* File Selector Manager                */
 #define FSEL_INPUT 90
 #define FSEL_EXINPUT 91
