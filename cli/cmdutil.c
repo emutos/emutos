@@ -305,9 +305,10 @@ unsigned char date_sep;
  *      1   arg is normal
  *      0   no more args
  */
-WORD get_path_component(char **pp,char *dest)
+WORD get_path_component(const char **pp,char *dest)
 {
-char *p, *q = dest;
+const char *p;
+char *q = dest;
 
     /*
      *  look for start of next component

@@ -433,13 +433,14 @@ PRIVATE LONG run_mv(WORD argc,char **argv)
 
 PRIVATE LONG run_path(WORD argc,char **argv)
 {
-char temp[MAXPATHLEN], *p;
+char temp[MAXPATHLEN];
+const char *p;
 LONG rc = 0L;
 
     if (argc == 1) {
         p = user_path;
         if (!*p)
-            p = (char *)_("(empty)");
+            p = _("(empty)");
         message(" ");
         messagenl(p);
         return 0L;
