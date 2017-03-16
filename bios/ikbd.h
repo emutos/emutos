@@ -121,5 +121,8 @@ extern void call_mousevec(UBYTE *packet);
 #ifdef MACHINE_AMIGA
 extern void call_joyvec(UBYTE *packet);
 #endif
+#if CONF_WITH_FLEXCAN
+void call_ikbdraw(UBYTE b);
+#endif
 
 #endif /* IKBD_H */

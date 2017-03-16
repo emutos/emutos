@@ -120,10 +120,4 @@ _coldfire_int_57:
         movem.l (sp),d0-d1/a0-a1
         lea     16(sp),sp
         rte
-
-/* Call ikbdraw from C */
-        .globl  _call_ikbdraw
-_call_ikbdraw:
-        mvz.b   5(sp),d0                // raw IKBD byte
-        jbra    ikbdraw
 #endif

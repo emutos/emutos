@@ -527,6 +527,20 @@ _call_mousevec:
 #endif
         rts
 
+#if CONF_WITH_FLEXCAN
+
+/******************************************************************************/
+/* Call ikbdraw from C                                                        */
+/******************************************************************************/
+
+        .globl  _call_ikbdraw
+_call_ikbdraw:
+        moveq   #0,d0
+        move.b  5(sp),d0                // raw IKBD byte
+        jbra    ikbdraw
+
+#endif /* CONF_WITH_FLEXCAN */
+
 #ifdef MACHINE_AMIGA
 
 /******************************************************************************/
