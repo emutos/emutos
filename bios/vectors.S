@@ -435,19 +435,11 @@ vbl_queue_loop:
         move.l  (a0)+,a1
         cmp.l   #0,a1
         beq     vbl_queue_next
-#ifdef __mcoldfire__
         move.l  a0,-(sp)
         move.l  d0,-(sp)
-#else
-        movem.l d0/a0,-(sp)
-#endif
         jsr     (a1)
-#ifdef __mcoldfire__
         move.l  (sp)+,d0
         move.l  (sp)+,a0
-#else
-        movem.l (sp)+,d0/a0
-#endif
 vbl_queue_next:
 #ifdef __mcoldfire__
         subq.l  #1,d0
@@ -575,23 +567,15 @@ timerc_end:
  */
 _call_etv_critic:
         move.l  4(sp),d0            // d0 is error code || device
-#ifdef __mcoldfire__
         move.l  a2,-(sp)            // save regs
         move.l  d2,-(sp)
-#else
-        movem.l d2/a2,-(sp)         // save regs
-#endif
         move.l  d0,-(sp)            // error code || device to stack
         moveq.l #-1,d0              // set default return code like TOS does
         movea.l _etv_critic,a0
         jsr     (a0)                // call handler
         addq.l  #4,sp               // fixup stack
-#ifdef __mcoldfire__
         move.l  (sp)+,d2            // restore regs
         move.l  (sp)+,a2
-#else
-        movem.l (sp)+,d2/a2         // restore regs
-#endif
         rts
 /*
  * (2) The default character-mode critical error handler
@@ -1245,19 +1229,11 @@ _just_rte:
 
 _protect_v:
         move.l   4(sp),a0
-#ifdef __mcoldfire__
         move.l   a2,-(sp)
         move.l   d2,-(sp)
-#else
-        movem.l  d2/a2,-(sp)
-#endif
         jsr      (a0)
-#ifdef __mcoldfire__
         move.l   (sp)+,d2
         move.l   (sp)+,a2
-#else
-        movem.l  (sp)+,d2/a2
-#endif
         rts
 
 /*
@@ -1267,21 +1243,13 @@ _protect_v:
 _protect_w:
         move.l   4(sp),a0
         move.w   8(sp),d0
-#ifdef __mcoldfire__
         move.l   a2,-(sp)
         move.l   d2,-(sp)
-#else
-        movem.l  d2/a2,-(sp)
-#endif
         move.w   d0,-(sp)
         jsr      (a0)
         addq.l   #2,sp
-#ifdef __mcoldfire__
         move.l   (sp)+,d2
         move.l   (sp)+,a2
-#else
-        movem.l  (sp)+,d2/a2
-#endif
         rts
 
 /*
@@ -1291,21 +1259,13 @@ _protect_w:
 _protect_ww:
         move.l   4(sp),a0
         move.l   8(sp),d0
-#ifdef __mcoldfire__
         move.l   a2,-(sp)
         move.l   d2,-(sp)
-#else
-        movem.l  d2/a2,-(sp)
-#endif
         move.l   d0,-(sp)
         jsr      (a0)
         addq.l   #4,sp
-#ifdef __mcoldfire__
         move.l   (sp)+,d2
         move.l   (sp)+,a2
-#else
-        movem.l  (sp)+,d2/a2
-#endif
         rts
 
 
@@ -1315,44 +1275,31 @@ _protect_ww:
 
 _protect_wlwwwl:
         movem.l  8(sp),d0-d1/a0-a1
-#ifdef __mcoldfire__
         move.l   a2,-(sp)
         move.l   d2,-(sp)
+#ifdef __mcoldfire__
         lea      -16(sp),sp
         movem.l  d0-d1/a0-a1,(sp)
 #else
-        movem.l  d2/a2,-(sp)
         movem.l  d0-d1/a0-a1,-(sp)
 #endif
         move.l   28(sp),a0
         jsr      (a0)
         lea      16(sp),sp
-#ifdef __mcoldfire__
         move.l   (sp)+,d2
         move.l   (sp)+,a2
-#else
-        movem.l  (sp)+,d2/a2
-#endif
         rts
 
 
 /* Compendium says that the scancode is supplied in register d0. */
 _keyclick:
         move.w   4(sp),d0
-#ifdef __mcoldfire__
         move.l   a2,-(sp)
         move.l   d2,-(sp)
-#else
-        movem.l  d2/a2,-(sp)
-#endif
         move.l   _kcl_hook,a0
         jsr      (a0)
-#ifdef __mcoldfire__
         move.l   (sp)+,d2
         move.l   (sp)+,a2
-#else
-        movem.l  (sp)+,d2/a2
-#endif
         rts
 
 // ==== Variables ============================================================
