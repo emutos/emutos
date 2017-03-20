@@ -1078,7 +1078,7 @@ static WORD write_boot(BYTE *buf, WORD disktype, WORD drive)
     Protobt((LONG)buf, RANDOM_SERIAL, disktype, 0);
     *buf = 0xe9;        /* DOS compatibility */
 
-    return Rwabs(WRITESEC, (LONG)buf, 1, 0, drive, 0);
+    return Flopwr((LONG)buf, 0L, drive, 1, 0, 0, 1);
 }
 
 /*
