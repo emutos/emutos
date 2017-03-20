@@ -303,6 +303,9 @@ static int wait_for_not_BSY(volatile struct IDE *interface,LONG timeout);
 /*
  * set a special value in the sector number/count registers of
  * device 0 in the specified interface
+ *
+ * we wait a max time for BSY to drop since this is called during
+ * initialisation, which can be invoked by power-on/reset
  */
 static void set_interface_magic(WORD ifnum)
 {
@@ -311,6 +314,7 @@ static void set_interface_magic(WORD ifnum)
     UBYTE seccnt = SECCNT_MAGIC + ifnum;
 
     IDE_WRITE_CONTROL(IDE_CONTROL_nIEN);/* no interrupts please */
+    wait_for_not_BSY(interface,LONG_TIMEOUT);
     IDE_WRITE_HEAD(IDE_DEVICE(0));
     DELAY_400NS;
     IDE_WRITE_SECTOR_NUMBER_SECTOR_COUNT(secnum,seccnt);
@@ -334,47 +338,33 @@ static int check_interface_magic(WORD ifnum)
 }
 
 /*
- * determine if interface really exists, allowing
- * for incomplete hardware address decoding
+ * determine if a specific interface really exists, allowing for
+ * incomplete hardware address decoding and twisted cables
+ *
+ * method:
+ * 1. write a magic number (dependent on the interface number) to
+ *    the sector number/count registers
+ * 2. read it back & check that it matches; if it does, goto (4)
+ * 3. otherwise we assume a twisted cable, adjust the interface
+ *    base address, and write the number again
+ * 4. check if the interface 0 magic number has been changed; if
+ *    so, this is a ghost interface & we reject it
  */
 static int ide_interface_exists(WORD ifnum)
 {
-    volatile struct IDE *interface = ifinfo[ifnum].base_address;
     int rc = 0;             /* assume it doesn't exist */
 
-    if (check_read_byte((long)&interface->command)) {
+    set_interface_magic(ifnum);
+    if (!check_interface_magic(ifnum)) {
         /*
-        * if this is the first one, we know it's real, and
-        * we seed the sector number/count with a special value.
-        * for subsequent interfaces, we write sector number/count
-        * and check if the interface 0 values were modified
+        * if magic can't be read back, then assume twisted cable,
+        * hence, interface base address needs to be offset by 1
         */
-        if (ifnum == 0) {
-            set_interface_magic(0);
-            if (!check_interface_magic(0)) {
-                /*
-                 * if magic can't be read back, then assume twisted cable,
-                 * hence, interface base address needs to be offset by 1
-                 */
-                ifinfo[ifnum].base_address = (volatile struct IDE *)(((ULONG)ifinfo[ifnum].base_address)-1);
-                ifinfo[ifnum].twisted_cable = TRUE;
-                set_interface_magic(0);
-            }
-            rc = check_interface_magic(0);
-        } else {
-            set_interface_magic(ifnum);
-            if (!check_interface_magic(ifnum)) {
-                /*
-                 * if magic can't be read back, then assume twisted cable,
-                 * hence, interface base address needs to be offset by 1
-                 */
-                ifinfo[ifnum].base_address = (volatile struct IDE *)(((ULONG)ifinfo[ifnum].base_address)-1);
-                ifinfo[ifnum].twisted_cable = TRUE;
-                set_interface_magic(ifnum);
-            }
-            rc = check_interface_magic(0);
-        }
+        ifinfo[ifnum].base_address = (volatile struct IDE *)(((ULONG)ifinfo[ifnum].base_address)-1);
+        ifinfo[ifnum].twisted_cable = TRUE;
+        set_interface_magic(ifnum);
     }
+    rc = check_interface_magic(0);
 
     KDEBUG(("ide interface %d %s %s",ifnum,rc?"exists":"not present",ifinfo[ifnum].twisted_cable?"(twisted cable)":""));
 
@@ -402,17 +392,15 @@ void detect_ide(void)
 #elif defined(MACHINE_FIREBEE)
     has_ide = 0x03;
 #elif CONF_ATARI_HARDWARE
-    /*
-     * we initialise this early, because ide_interface_exists() calls
-     * set_interface_magic(), which uses it (via the DELAY_400NS macro).
-     * at this point, the delay values will be the default ones, not
-     * the calibrated ones (see init_delay() in delay.c)
-     */
-    delay400ns = loopcount_1_msec / 2500;
 
+    /*
+     * see if the IDE registers for possible interfaces are accessible.
+     * note that we may detect multiple interfaces if the IDE adaptor has
+     * incomplete address decoding.  this is resolved later in ide_init().
+     */
     for (i = 0, bitmask = 1, has_ide = 0; i < NUM_IDE_INTERFACES; i++, bitmask <<= 1)
     {
-        if (ide_interface_exists(i))
+        if (check_read_byte((long)&ifinfo[i].base_address->command))
             has_ide |= bitmask;
 
         if (IS_ARANYM)
@@ -425,11 +413,17 @@ void detect_ide(void)
     has_ide = 0x00;
 #endif
 
-    KDEBUG(("has_ide = 0x%02x\n",has_ide));
+    KDEBUG(("detect_ide(): has_ide = 0x%02x\n",has_ide));
 }
 
 /*
  * perform any one-time initialisation required
+ *
+ * for Atari hardware, this includes rejection of 'ghost' interfaces
+ * (due to incomplete address decoding), and detection of twisted cables
+ *
+ * this is called late on in bios initialisation, so delay calibration
+ * has already been done, and the system timer is running
  */
 void ide_init(void)
 {
@@ -438,12 +432,25 @@ void ide_init(void)
     delay400ns = loopcount_1_msec / 2500;
     delay5us = loopcount_1_msec / 200;
 
+    if (!has_ide)
+        return;
+
 #if CONF_WITH_APOLLO_68080
     if (is_apollo_68080)
     {
         /* Enable Fast IDE (PIO mode 6) */
         *(volatile UWORD *)0x00dd1020 = 0x8000;
     }
+#endif
+
+#if CONF_ATARI_HARDWARE && !defined(MACHINE_FIREBEE)
+    /* reject 'ghost' interfaces & detect twisted cables */
+    for (i = 0, bitmask = 1; i < NUM_IDE_INTERFACES; i++, bitmask <<= 1)
+        if (has_ide&bitmask)
+            if (!ide_interface_exists(i))
+                has_ide &= ~bitmask;
+
+    KDEBUG(("ide_init(): has_ide = 0x%02x\n",has_ide));
 #endif
 
     /* detect devices */
