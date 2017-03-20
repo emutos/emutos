@@ -1133,6 +1133,19 @@ static WORD init_start(BYTE *buf, WORD disktype, WORD drive, BYTE *label)
 }
 
 /*
+ *  Issue alert & return TRUE iff user wants to retry
+ */
+static BOOL retry_format(void)
+{
+    graf_mouse(ARROW,NULL);
+    if (fun_alert(3, STFMTERR) == 2)
+        return FALSE;
+    graf_mouse(HGLASS,NULL);    /* say we're busy again */
+
+    return TRUE;
+}
+
+/*
  *  Do the real formatting work
  */
 static WORD format_floppy(OBJECT *tree, WORD max_width, WORD incr)
@@ -1184,11 +1197,8 @@ static WORD format_floppy(OBJECT *tree, WORD max_width, WORD incr)
             while((rc=Flopfmt((LONG)buf, (LONG)&skewtab[skewindex],
                         drive, spt, track, side, -1, FLOPFMT_MAGIC, VIRGIN)))
             {
-                graf_mouse(ARROW,NULL);
-                rc = fun_alert(3, STFMTERR);
-                if (rc == 2)
-                    break;
-                graf_mouse(HGLASS,NULL);    /* say we're busy again */
+                if (!retry_format())
+                    break;              /* rc will still be set */
             }
         }
         /* update progress bar */
@@ -1202,7 +1212,11 @@ static WORD format_floppy(OBJECT *tree, WORD max_width, WORD incr)
     inf_sget(tree, FMTLABEL, label);
 
     if (rc == 0)
-        rc = init_start(buf, disktype, drive, label);
+        while((rc=init_start(buf, disktype, drive, label)))
+        {
+            if (!retry_format())
+                break;                  /* rc will still be set */
+        }
 
     graf_mouse(ARROW,NULL);     /* no longer busy */
     dos_free((LONG)buf);
