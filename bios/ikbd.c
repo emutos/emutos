@@ -616,8 +616,9 @@ void kbd_int(UBYTE scancode)
     KDEBUG(("Key-scancode: 0x%02x, key-shift bits: 0x%02x\n", scancode, shifty));
 
     /* keyboard warm/cold reset */
-    if ((scancode == 0x53)  /* Del key and shifty is Alt+Ctrl but not LShift */
+    if ((scancode == KEY_DELETE)
         && ((shifty & (MODE_ALT|MODE_CTRL|MODE_LSHIFT)) == (MODE_ALT|MODE_CTRL))) {
+        /* Del key and shifty is Alt+Ctrl but not LShift */
         if (shifty & MODE_RSHIFT) {
             /* Ctrl+Alt+RShift+Del means cold reset */
             cold_reset();
