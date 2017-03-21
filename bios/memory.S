@@ -577,7 +577,7 @@ stram_detected:
         // After that, normal stack usage is allowed.
         lea     _stktop, sp
 
-        tst.b   d7                      // first boot ?
+        btst    #MEMINIT_BIT_FIRST_BOOT, d7 // first boot ?
         beq     any_boot                // no: skip first boot initialization
 
 // ===========================================================================
