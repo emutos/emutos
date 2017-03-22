@@ -512,16 +512,27 @@ LONG blkdev_getbpb(WORD dev)
     if ((dev < 0 ) || (dev >= BLKDEVNUM) || !bdev->valid)
         return 0L;  /* unknown device */
 
+    unit = bdev->unit;
+
     bdev->mediachange = MEDIANOCHANGE;      /* reset now */
     bdev->forcechange = FALSE;
-    bdev->bpb.recsiz = 0;                   /* default to invalid BPB */
+    /*
+     * set XHDI's "invalid BPB" indicator for non-floppy units
+     * only, since they are the ones that might have a FAT32 or
+     * ext2 filesystem.
+     *
+     * for floppies, we set the real size, since (a) we know it;
+     * (b) it is used by blkdev_rwabs() to convert logical sector
+     * numbers to physical; and (c) blkdev_rwabs() may be called
+     * before blkdev_getbpb() actually reads the value.
+     */
+    bdev->bpb.recsiz = (unit < NUMFLOPPIES) ? SECTOR_SIZE : 0;
 
     /*
      * before we can build the BPB, we need to locate the bootsector.
      * if we're on a removable non-floppy unit, this may have moved
      * since last time, so we handle this first.
      */
-    unit = bdev->unit;
     if ((unit >= NUMFLOPPIES) && (units[unit].features & UNIT_REMOVABLE))
         disk_mediach(unit);     /* check for change & rescan partitions if so */
 
@@ -582,7 +593,10 @@ LONG blkdev_getbpb(WORD dev)
         tmp = MAKE_ULONG(getiword(b16->sec2+2), getiword(b16->sec2));
     tmp = (tmp - bdev->bpb.datrec) / b->spc;
     if (tmp > MAX_FAT16_CLUSTERS)           /* FAT32 - unsupported */
+    {
+        bdev->bpb.recsiz = 0;               /* mark it for XHDI */
         return 0L;
+    }
     bdev->bpb.numcl = tmp;
 
     /*

@@ -358,6 +358,7 @@ static void flop_add_drive(WORD dev)
     blkdev[dev].geometry.sides = 2; /* default geometry of 3.5" DD */
     blkdev[dev].geometry.spt = 9;
     blkdev[dev].unit = dev;
+    blkdev[dev].bpb.recsiz = SECTOR_SIZE;
 
     /* OS variables */
     nflops++;
