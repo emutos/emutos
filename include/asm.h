@@ -54,6 +54,32 @@ extern long trap1_pexec(short mode, const char * path,
 extern void stop_until_interrupt(void);
 
 /*
+ * Push/Pop registers from stack, with ColdFire support.
+ * This is intended to be used inside inline assembly.
+ * Borrowed from MiNTLib:
+ * https://github.com/freemint/mintlib/blob/master/include/compiler.h
+ */
+#ifdef __mcoldfire__
+
+#define PUSH_SP(regs,size)              \
+    "lea     -" #size "(sp),sp\n\t"     \
+    "movem.l " regs ",(sp)\n\t"
+
+#define POP_SP(regs,size)               \
+    "movem.l (sp)," regs "\n\t"         \
+    "lea     " #size "(sp),sp\n\t"
+
+#else
+
+#define PUSH_SP(regs,size)              \
+    "movem.l " regs ",-(sp)\n\t"
+
+#define POP_SP(regs,size)               \
+    "movem.l (sp)+," regs "\n\t"
+
+#endif
+
+/*
  * WORD swpw(WORD val);
  *   swap endianess of val, 16 bits only.
  */
