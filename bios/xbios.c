@@ -732,11 +732,25 @@ static void xbios_25(void)
  * BIOS or GEMDOS calls. This function is meant to allow programs
  * to hack hardware and protected locations without having to fiddle
  * with GEMDOS get/set supervisor mode call.
+ * There is no rule regarding to which registers might be clobbered by the user
+ * function. For safety, we assume it can clobber all of them.
  */
 
 static LONG supexec(LONG codeptr)
 {
-    return ((LONG(*)(void))codeptr)();
+    register LONG retval __asm__("d0");
+
+    __asm__ volatile
+    (
+        "move.l  %1,a0\n\t"
+        "jsr     (a0)"
+    : "=r"(retval)
+    : "g"(codeptr)
+    : "d1", "d2", "d3", "d4", "d5", "d6", "d7",
+      "a0", "a1", "a2", "a3", "a4", "a5", "a6", "memory", "cc"
+    );
+
+    return retval;
 }
 
 #if DBG_XBIOS
