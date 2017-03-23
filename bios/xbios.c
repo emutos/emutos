@@ -743,11 +743,12 @@ static LONG supexec(LONG codeptr)
     __asm__ volatile
     (
         "move.l  %1,a0\n\t"
-        "jsr     (a0)"
+        PUSH_SP("d2-d7/a2-a6", 44)
+        "jsr     (a0)\n\t"
+        POP_SP("d2-d7/a2-a6", 44)
     : "=r"(retval)
     : "g"(codeptr)
-    : "d1", "d2", "d3", "d4", "d5", "d6", "d7",
-      "a0", "a1", "a2", "a3", "a4", "a5", "a6", "memory", "cc"
+    : "d1", "a0", "a1", "memory", "cc"
     );
 
     return retval;
