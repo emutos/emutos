@@ -137,7 +137,7 @@ aes_restart:
         addq.l  #6,sp
 
         // Pterm0()
-        move.l  #0,-(sp)
+        clr.w   -(sp)
         trap    #1
 
 
@@ -154,7 +154,7 @@ _accdesk_start:
         addi.l  #256,d0
         move.l  d0,-(sp)                // Mshrink()
         move.l  a5,-(sp)
-        move.w  #0,-(sp)
+        clr.w   -(sp)
         move.w  #0x4a,-(sp)
         trap    #1
         lea     12(sp),sp

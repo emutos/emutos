@@ -30,7 +30,7 @@ _coma_start:
         addi.l  #256,d0
         move.l  d0,-(sp)                // Mshrink()
         move.l  a5,-(sp)
-        move.w  #0,-(sp)
+        clr.w   -(sp)
         move.w  #74,-(sp)
         trap    #1
         lea     12(sp),sp
