@@ -55,30 +55,7 @@ fill:
         clr.w   -(sp)
         trap    #1                      // Pterm
 
-
-_gem:
-        move.l  4(sp),d1
-        move.w  #0xc8,d0
-//
-// GCC only uses d0-d1/a0-a1 for work registers, so expects d2/a2 to
-// be preserved across the trap.  However, someone could hook into
-// the trap and not preserve them, so we must do it ourselves.
-//
-// Note: when saving/restoring two registers on the stack, using move.l
-// instead of movem.l takes the same code space, and is faster for both
-// 68000 & 68030, as well as being ColdFire-compatible.
-//
-        move.l   a2,-(sp)
-        move.l   d2,-(sp)
-        trap    #2
-        move.l   (sp)+,d2
-        move.l   (sp)+,a2
-        rts
-
-
 .bss
-
-
 
 // Space for the Stack:
 _deskstackbottom:

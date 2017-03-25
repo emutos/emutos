@@ -60,10 +60,6 @@ typedef struct gemblkstr
         LONG            *gb_padrout;
 } GEMBLK;
 
-
-extern WORD             gem(GEMBLK *gb);    /* in deskstart.S */
-
-
 static GEMBLK           gb;
 
 static UWORD            control[C_SIZE];
@@ -73,7 +69,22 @@ static UWORD            int_out[O_SIZE];
 static LONG             addr_in[AI_SIZE];
 static LONG             addr_out[AO_SIZE];
 
+static __inline__ WORD gem(GEMBLK *gb)
+{
+    register WORD retval __asm__("d0");
 
+    __asm__ volatile
+    (
+        "move.l  %1,d1\n\t"
+        "move.w  #200,d0\n\t" /* AES opcode */
+        "trap    #2"
+    : "=r"(retval)
+    : "g"(gb)
+    : "d1", "d2", "a0", "a1", "a2", "memory", "cc"
+    );
+
+    return retval;
+}
 
 static void gem_if0(UWORD ctrlcode)
 {
