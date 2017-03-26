@@ -19,7 +19,6 @@
         .globl  _switchto
 
         .extern _rlr
-        .extern _back
         .extern _indisp
         .extern _disp
 
@@ -61,8 +60,8 @@ _psetup:
 
 /*
  * gotopgm(void)
- * launches the top of rlr list, as if called from within function
- * back( basepage * )
+ * launches the top of rlr list
+ *
  * This is the entry point for accessory processes.
  * It is called in supervisor mode, on the private AES stack of the new
  * accessory process. Its responsibility is to go to the start of the
@@ -76,17 +75,6 @@ _gotopgm:
         movea.l _rlr,a0
         movea.l PD_UDA(a0),a2
         movea.l PD_LDADDR(a0),a0        // The basepage must stay in a0
-
-        // set the user stack to the top of BSS for this process
-        movea.l P_BBASE(a0),a1
-        adda.l  P_BLEN(a0),a1
-        // ??? adda.l  0x20(a0),a1  why add P_XDTA also ???
-
-        // push basepage and return address
-        // FIXME: Are we clobbering the end of the BSS segment ?
-        move.l  a0,-(a1)
-        move.l  #_back,-(a1)
-        move.l  a1,usp
 
         // *** WARNING ***
         // We are currently on the top of the private stack for the
