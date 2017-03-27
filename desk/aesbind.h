@@ -173,7 +173,7 @@ WORD rsrc_gaddr_rom(WORD rstype, WORD rsid, void **paddr);  /* see deskmain.c */
 /* WORD shel_read(BYTE *pcmd, BYTE *ptail); */
 WORD shel_write(WORD doex, WORD isgr, WORD iscr, BYTE *pcmd, BYTE *ptail);
 WORD shel_get(void *pbuffer, WORD len);
-WORD shel_put(void *pdata, WORD len);
+WORD shel_put(const void *pdata, WORD len);
 WORD shel_find(BYTE *ppath);
 /*
 WORD shel_envrn(BYTE *ppath, const BYTE *psrch);

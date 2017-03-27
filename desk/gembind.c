@@ -69,11 +69,11 @@ static UWORD            int_out[O_SIZE];
 static LONG             addr_in[AI_SIZE];
 static LONG             addr_out[AO_SIZE];
 
-static __inline__ WORD gem(GEMBLK *gb)
+static __inline__ WORD gem(const GEMBLK *gb)
 {
     register WORD retval __asm__("d0");
     register WORD opcode __asm__("d0") = 200; /* AES */
-    register GEMBLK *gbreg __asm__("d1") = gb;
+    register const GEMBLK *gbreg __asm__("d1") = gb;
 
     __asm__ volatile
     (
@@ -933,7 +933,7 @@ WORD shel_get(void *pbuffer, WORD len)
 }
 
 
-WORD shel_put(void *pdata, WORD len)
+WORD shel_put(const void *pdata, WORD len)
 {
     SH_PDATA = (LONG)pdata;
     SH_LEN = len;
