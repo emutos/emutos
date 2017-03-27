@@ -1060,27 +1060,17 @@ long xrename(int n, char *p1, char *p2)
     }
 
     /*
-     * if we're renaming a directory with an existing DND, make
-     * sure that:
-     *  1. if it's a cross-directory rename, we move the DND
-     *  2. we always update the name field in the DND
+     * if we're renaming a directory with an existing DND, we
+     * free it to make sure we don't leave stale data around
      */
     if (att&FA_SUBDIR) {
         DND *dnd;
         char s[LEN_ZFNAME];
-
         unpackit(s1,s);         /* s[] = old name for getdnd() lookup */
         dnd = getdnd(s,dn1);
         if (dnd) {
-            unpackit(s2,s);     /* s[] = new name for DND update */
-            if (strtcl1 != strtcl2) {   /* cross-directory */
-                snipdnd(dnd);   /* snip DND out of the old chain */
-                dnd->d_right = dn2->d_left; /* insert in the new */
-                dn2->d_left = dnd;
-            }
-            KDEBUG(("xrename() DND name '%s\\%s' => '%s\\%s'\n",
-                    dn1->d_name,dnd->d_name,dn2->d_name,s));
-            memcpy(dnd->d_name,s,11);
+            KDEBUG(("xrename(): delete existing DND @ %p\n",dnd));
+            freednd(dnd);
         }
     }
 
