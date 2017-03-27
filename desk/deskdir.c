@@ -668,6 +668,41 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path, OBJECT *tree,
 
 
 /*
+ *      Prompt for new name (updates dstpth with new name)
+ *
+ *      Returns:
+ *          2   OK, and name has changed
+ *          1   OK, and name hasn't changed
+ *          0   STOP
+ *          -1  SKIP
+ */
+static WORD get_new_name(BYTE *dstpth)
+{
+    BYTE ml_fsrc[LEN_ZFNAME], ml_fdst[LEN_ZFNAME], str[LEN_ZFNAME];
+    OBJECT *tree = G.a_trees[ADCPALER];
+    WORD ob;
+
+    get_fname(dstpth, ml_fsrc);         /* extract current folder name */
+    strcpy(ml_fdst,ml_fsrc);            /* pre-fill new folder name */
+    inf_sset(tree, CACURRNA, ml_fsrc);  /* and put both in dialog */
+    inf_sset(tree, CACOPYNA, ml_fdst);
+
+    ob = do_namecon();                  /* show dialog */
+    if (ob == CASTOP)                   /* "Stop" button */
+        return 0;
+    if (ob == CACNCL)                   /* "Skip" button */
+        return -1;
+
+    inf_sget(tree, CACOPYNA, ml_fdst);
+    unfmt_str(ml_fdst, str);            /* get new dest folder in str */
+    del_fname(dstpth);                  /* & update destination path  */
+    add_fname(dstpth, str);             /* (it may not have changed)  */
+
+    return strcmp(ml_fdst,ml_fsrc) ? 2 : 1;
+}
+
+
+/*
  *      Determines output path as required by dir_op()
  *
  *  Returns:
@@ -677,9 +712,7 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path, OBJECT *tree,
  */
 static WORD output_path(WORD op,BYTE *srcpth, BYTE *dstpth)
 {
-    BYTE ml_fsrc[LEN_ZFNAME], ml_fdst[LEN_ZFNAME], ml_fstr[LEN_ZFNAME];
-    WORD ret, ob;
-    OBJECT *tree = G.a_trees[ADCPALER];
+    WORD ret;
 
     while(1)
     {
@@ -710,28 +743,16 @@ static WORD output_path(WORD op,BYTE *srcpth, BYTE *dstpth)
         /*
          * the destination folder exists: we try to get a new one
          */
-        get_fname(dstpth, ml_fsrc);         /* extract current folder name */
-        strcpy(ml_fdst,ml_fsrc);            /* pre-fill new folder name */
-        inf_sset(tree, CACURRNA, ml_fsrc);  /* and put both in dialog */
-        inf_sset(tree, CACOPYNA, ml_fdst);
-
-        ob = do_namecon();              /* show dialog */
-        if (ob == CASTOP)               /* "Stop" button */
-            return 0;
-        if (ob == CACNCL)               /* "Skip" button */
-            return -1;
-
-        inf_sget(tree, CACOPYNA, ml_fdst);
-        unfmt_str(ml_fdst, ml_fstr);    /* get new dest folder in ml_fstr */
-        del_fname(dstpth);              /* & update destination path      */
-        add_fname(dstpth, ml_fstr);     /* (it may not have changed)      */
+        ret = get_new_name(dstpth);
+        if (ret <= 0)
+            return ret;
 
         /*
          * if it's not move via rename, and the destination path has not
          * changed, we're done (we'll copy/move into the existing path);
          * otherwise we loop to check the updated destination path
          */
-        if ((op != OP_RENAME) && (strcmp(ml_fdst,ml_fsrc) == 0))
+        if ((op != OP_RENAME) && (ret == 1))
             break;
     }
 
