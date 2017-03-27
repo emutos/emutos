@@ -198,9 +198,9 @@ void restore_path(BYTE *target)
 
 
 /*
- *  test if specified folder exists
+ *  test if specified file/folder exists
  */
-static WORD folder_exists(BYTE *path)
+static WORD item_exists(BYTE *path, BOOL is_folder)
 {
     BYTE *p;
     DTA *dta;
@@ -208,10 +208,14 @@ static WORD folder_exists(BYTE *path)
 
     dta = dos_gdta();
     dos_sdta(&G.g_wdta);
-    p = path + strlen(path);        /* point to end of path */
-    strcpy(p, "\\*.*");
-    rc = dos_sfirst(path, ALLFILES);/* check if folder exists */
-    *p = '\0';
+    if (is_folder)
+    {
+        p = path + strlen(path);    /* point to end of path */
+        strcpy(p, "\\*.*");
+    }
+    rc = dos_sfirst(path, ALLFILES);/* check if item exists */
+    if (is_folder)
+        *p = '\0';
     dos_sdta(dta);
 
     return !rc;
@@ -608,7 +612,7 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path, OBJECT *tree,
                     {
                         if (ret != EACCDN)
                             more = d_errmsg(ret);
-                        else if (!folder_exists(pdst_path))
+                        else if (!item_exists(pdst_path, TRUE))
                             more = invalid_copy_msg();
                     }
                     strcat(pdst_path, "\\*.*");
@@ -721,7 +725,7 @@ static WORD output_path(WORD op,BYTE *srcpth, BYTE *dstpth)
          */
         if (op == OP_RENAME)
         {
-            if (!folder_exists(dstpth))
+            if (!item_exists(dstpth, TRUE))
                 break;
         }
         else
@@ -736,7 +740,7 @@ static WORD output_path(WORD op,BYTE *srcpth, BYTE *dstpth)
              * we cannot create the folder: either it already exists
              * or there is insufficient space (e.g. in root dir)
              */
-            if (!folder_exists(dstpth))
+            if (!item_exists(dstpth, TRUE))
                 return invalid_copy_msg();
         }
 
@@ -765,22 +769,35 @@ static WORD output_path(WORD op,BYTE *srcpth, BYTE *dstpth)
 /*
  *      Routine to do file rename for dir_op()
  */
-static WORD d_dofileren(BYTE *oldname, BYTE *newname)
+static WORD d_dofileren(BYTE *oldname, BYTE *newname, BOOL is_folder)
 {
     WORD ret;
 
-    ret = dos_rename(oldname,newname);
-    if (ret == 0)                   /* rename ok */
-        return TRUE;
+    while(1)
+    {
+        ret = dos_rename(oldname,newname);
+        if (ret == 0)               /* rename ok */
+            return TRUE;
 
-    if (ret != EACCDN)              /* some strange problem */
-        return d_errmsg(ret);
+        if (ret != EACCDN)          /* some strange problem */
+            return d_errmsg(ret);
 
-    /*
-     * we cannot rename the file/folder: either it already exists
-     * or there is insufficient space (e.g. in root dir)
-     */
-    return invalid_copy_msg();
+        /*
+         * we cannot rename the file/folder: either it already exists
+         * or there is insufficient space (e.g. in root dir)
+         */
+        if (!item_exists(newname,is_folder))
+            return invalid_copy_msg();
+
+        /*
+         * we cannot rename because the file/folder exists, so
+         * prompt for new name
+         */
+        if (get_new_name(newname) <= 0)
+            break;
+    }
+
+    return FALSE;
 }
 
 
@@ -796,7 +813,7 @@ static WORD d_dofoldren(BYTE *oldname, BYTE *newname)
     p = filename_start(newname) - 1;
     *p = '\0';
 
-    return d_dofileren(oldname,newname);
+    return d_dofileren(oldname,newname,TRUE);
 }
 
 
@@ -968,7 +985,7 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *co
         case OP_MOVE:
         case OP_RENAME:
             ptmpdst = add_fname(dstpth, pf->f_name);
-            more = (op==OP_RENAME) ? d_dofileren(srcpth,dstpth) :
+            more = (op==OP_RENAME) ? d_dofileren(srcpth,dstpth,FALSE) :
                     d_dofcopy(srcpth, dstpth, pf->f_time, pf->f_date, pf->f_attr);
             restore_path(ptmpdst);  /* restore original dest path */
             /* if moving, delete original only if copy was ok */
