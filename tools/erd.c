@@ -183,6 +183,9 @@
  *  v4.8    roger burrows, december/2016
  *          . add exact match option to the no-translate table
  *          . do not generate the text strings in ICONBLKs for ICON_RSC
+ *
+ *  v4.9    roger burrows, march/2017
+ *          . treat all single-character strings as non-translatable
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -2062,6 +2065,10 @@ char *s;
 int i;
 
     copyfix(dest,src,len);
+
+    /* single-character strings are not translated */
+    if (strlen(src) <= 1)
+        return 0;
 
     /* if _not_ no-translate, then see if we need to */
     if (!notranslate(src))
