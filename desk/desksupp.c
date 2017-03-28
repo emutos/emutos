@@ -325,7 +325,8 @@ static void remove_locate_shortcut(WORD curr)
     case 2:             /* Locate */
         build_root_path(path, 'A'+G.g_stdrv);
         fname[0] = '\0';
-        rc = fsel_exinput(path, fname, &button, _("Locate item"));
+        rsrc_gaddr_rom(R_STRING, STLOCATE, (void **)&p);
+        rc = fsel_exinput(path, fname, &button, p);
         if ((rc == 0) || (button == 0))
             break;
         p = filename_start(path);
