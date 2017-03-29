@@ -272,8 +272,8 @@ msgid "Time: __:__ __"
 msgstr "Время: __:__ __"
 
 #: desk/desk_rsc.c:63
-msgid "Drive identifier: _:"
-msgstr "Идентификатор диска: _:"
+msgid "Drive identifier:     _"
+msgstr "Идентификатор диска:     _"
 
 #: desk/desk_rsc.c:68
 msgid "Disk label: ________.___"

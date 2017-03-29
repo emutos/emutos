@@ -271,8 +271,8 @@ msgid "Time: __:__ __"
 msgstr "Aika: __:__ __"
 
 #: desk/desk_rsc.c:63
-msgid "Drive identifier: _:"
-msgstr "Aseman tunnus: _:"
+msgid "Drive identifier:     _"
+msgstr "Aseman tunnus:     _"
 
 #: desk/desk_rsc.c:68
 msgid "Disk label: ________.___"

@@ -276,8 +276,8 @@ msgid "Time: __:__ __"
 msgstr "Zeit: __:__ __"
 
 #: desk/desk_rsc.c:63
-msgid "Drive identifier: _:"
-msgstr "Laufwerkskennung: _:"
+msgid "Drive identifier:     _"
+msgstr "Laufwerkskennung:     _"
 
 #: desk/desk_rsc.c:68
 msgid "Disk label: ________.___"

@@ -275,7 +275,7 @@ msgid "Time: __:__ __"
 msgstr "Hora: __:__ __"
 
 #: desk/desk_rsc.c:63
-msgid "Drive identifier: _:"
+msgid "Drive identifier:     _"
 msgstr "Identificador del dispositivo: _"
 
 #: desk/desk_rsc.c:68
