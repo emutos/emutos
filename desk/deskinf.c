@@ -597,7 +597,8 @@ WORD inf_disk(BYTE dr_id)
         label[0] = '\0';
 
     inf_sset(tree, DIDRIVE, drive);
-    inf_sset(tree, DIVOLUME, label);
+    fmt_str(label, srcpth);
+    inf_sset(tree, DIVOLUME, srcpth);
 
     inf_fifosz(tree, DINFILES, DINFOLDS, DIUSED);
     inf_numset(tree, DIAVAIL, avail);
