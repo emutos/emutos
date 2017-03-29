@@ -1831,12 +1831,7 @@ static void makbuf(FCB *f, DTAINFO *dt)
     dt->dt_fileln = f->f_fileln;
     swpl(dt->dt_fileln);
 
-    if (f->f_attrib & FA_VOL) {
-        memcpy(&dt->dt_fname[0], &f->f_name[0], 11);
-        dt->dt_fname[11] = '\0';
-    } else {
-        packit(&f->f_name[0],&dt->dt_fname[0]);
-    }
+    packit(f->f_name,dt->dt_fname);
 }
 
 
