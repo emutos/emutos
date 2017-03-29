@@ -290,7 +290,7 @@ static void fs_format(LONG tree, WORD currtop, WORD count)
     if (count > NM_NAMES)
     {
         h = mul_div(NM_NAMES, h, count);
-        h = max(gl_hbox/2, h);          /* min size elevator */
+        h = max(gl_hbox, h);            /* min size elevator */
         y = mul_div(currtop, th-h, count-NM_NAMES);
     }
     obj = treeptr + FSVELEV;
