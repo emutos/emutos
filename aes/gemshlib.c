@@ -28,6 +28,7 @@
 #include "basepage.h"
 #include "pd.h"
 #include "dos.h"
+#include "gemerror.h"
 #include "aespub.h"
 #include "gemlib.h"
 #include "gem_rsc.h"
@@ -617,7 +618,19 @@ static WORD sh_ldapp(SHELL *psh)
             wm_new();
 
         KDEBUG(("sh_ldapp: %s exited with rc=%ld\n",D.s_cmd,ret));
-        return (ret<0L) ? AL08ERR : 0;
+        switch(ret)
+        {
+        case EFILNF:
+        case EPTHNF:
+            ret = AL18ERR;      /* "This application cannot find ..." */
+            break;
+        default:
+            if (ret < 0L)
+                ret = AL08ERR;  /* "There is not enough memory ..." */
+            else
+                ret = 0L;
+        }
+        return ret;
     }
 
     set_default_desktop(psh);   /* ensure something valid will run */
