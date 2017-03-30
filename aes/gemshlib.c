@@ -566,7 +566,14 @@ static WORD sh_ldapp(SHELL *psh)
     }
 #endif
 
-    if (sh_find(D.s_cmd))
+    /*
+     * we are now going to run a normal application, possibly via
+     * autorun.  if it's being run via autorun, sh_isdef will be TRUE,
+     * and we should *not* invoke sh_find().  otherwise we do, and
+     * only attempt to run the application if it's found.
+     */
+    ret = (psh->sh_isdef) ? 1 : sh_find(D.s_cmd);
+    if (ret)
     {
         /* Run a normal application: */
         sh_show(D.s_cmd);
