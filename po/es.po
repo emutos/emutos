@@ -786,6 +786,10 @@ msgstr "-Final de fichero-"
 msgid "-File read error-"
 msgstr "-Error de lectura-"
 
+#: desk/desk_rsc.c:2068
+msgid "Locate item"
+msgstr "Localizar objeto"
+
 #: desk/desk_rsc.c:2069
 msgid "[2]["
 "Switch resolution?][Yes|No]"
