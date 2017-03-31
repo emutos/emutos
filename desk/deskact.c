@@ -585,7 +585,8 @@ WORD act_bdown(WORD wh, OBJECT *tree, WORD root, WORD *in_mx, WORD *in_my,
     WORD sobj;
     WORD numobs, button;
     WORD dst_wh;
-    WORD l_mx, l_my, l_mw, l_mh, dulx = -1, duly = -1, offx, offy;
+    WORD l_mx, l_my, l_mw, l_mh;
+    WORD dulx = -1, duly = -1, offx = 0, offy = 0;
     WORD numpts, *pxypts, view;
     GRECT m;
 
@@ -653,7 +654,7 @@ WORD act_bdown(WORD wh, OBJECT *tree, WORD root, WORD *in_mx, WORD *in_my,
     evnt_button(0x01, 0x01, 0x00, &l_mx, &l_my, &button, keystate);
 
     /* return keystate to caller */
-    *in_mx = dulx;                  /* pass back the dest. x,y */
-    *in_my = duly;
+    *in_mx = dulx - offx;           /* pass back the adjusted dest. x,y */
+    *in_my = duly - offy;
     return dst_wh;
 }
