@@ -63,7 +63,23 @@ static LONG nm_files;       /* total number of slots in g_fslist[] */
  */
 void fs_start(void)
 {
-    ob_center((LONG)rs_trees[FSELECTR], &gl_rfs);
+    OBJECT *tree = rs_trees[FSELECTR];
+    WORD diff;
+
+    ob_center((LONG)tree, &gl_rfs);
+
+    /*
+     * for cosmetic reasons, we make the vertical slider width equal to
+     * the standard box width in the current resolution.  since the FTITLE
+     * object overhangs the vertical slider, we must adjust its width too.
+     */
+    diff = tree[SCRLBAR].ob_width - gl_wbox;
+    tree[FTITLE].ob_width -= diff;
+    tree[SCRLBAR].ob_width = gl_wbox;
+    tree[FUPAROW].ob_width = gl_wbox;
+    tree[FDNAROW].ob_width = gl_wbox;
+    tree[FSVSLID].ob_width = gl_wbox;
+    tree[FSVELEV].ob_width = gl_wbox;
 }
 
 
