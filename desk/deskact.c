@@ -227,9 +227,9 @@ static void gr_obalign(WORD numobs, WORD x, WORD y, WORD *xyobpts)
 /*
  *  This routine is used to drag a list of polylines
  */
-static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD numpts,
-                   WORD *xylnpts, WORD numobs, WORD *xyobpts,
-                   WORD *pdulx, WORD *pduly, WORD *pdwh, WORD *pdobj)
+static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc,
+            WORD numpts, WORD *xylnpts, WORD numobs, WORD *xyobpts,
+            WORD *pdulx, WORD *pduly, WORD *poffx, WORD *poffy, WORD *pdwh, WORD *pdobj)
 {
     OBJECT *tree, *curr_tree;
     WNODE  *pw;
@@ -340,6 +340,8 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD numpts,
 
     *pdulx = l_mx;              /* pass back dest. x,y  */
     *pduly = l_my;
+    *poffx = offx;              /* and offsets */
+    *poffy = offy;
     *pdwh = dst_wh;
     graf_mouse(ARROW, NULL);
 }
@@ -583,7 +585,7 @@ WORD act_bdown(WORD wh, OBJECT *tree, WORD root, WORD *in_mx, WORD *in_my,
     WORD sobj;
     WORD numobs, button;
     WORD dst_wh;
-    WORD l_mx, l_my, l_mw, l_mh, dulx = -1, duly = -1;
+    WORD l_mx, l_my, l_mw, l_mh, dulx = -1, duly = -1, offx, offy;
     WORD numpts, *pxypts, view;
     GRECT m;
 
@@ -628,9 +630,8 @@ WORD act_bdown(WORD wh, OBJECT *tree, WORD root, WORD *in_mx, WORD *in_my,
                     numpts = G.g_nmtext;
                     pxypts = G.g_xytext;
                 }
-                gr_drgplns(l_mx, l_my, &gl_rfull, numpts, pxypts, numobs,
-                            G.g_xyobpts, &dulx, &duly, &dst_wh, pdobj);
-
+                gr_drgplns(l_mx, l_my, &gl_rfull, numpts, pxypts, numobs, G.g_xyobpts,
+                            &dulx, &duly, &offx, &offy, &dst_wh, pdobj);
                 if (dst_wh)
                 {
                     /* cancel drag if it ends up in same window over itself */
@@ -641,8 +642,7 @@ WORD act_bdown(WORD wh, OBJECT *tree, WORD root, WORD *in_mx, WORD *in_my,
                 {
                     if (wh == 0 && (*pdobj == root)) /* Dragging from desktop */
                     {
-                        move_drvicon(tree, root, dulx, duly, G.g_xyobpts,
-                            *in_mx % G.g_icw, (*in_my - G.g_ydesk) % G.g_ich);
+                        move_drvicon(tree, root, dulx, duly, G.g_xyobpts, offx, offy);
                         dst_wh = NIL;
                     }
                 }
