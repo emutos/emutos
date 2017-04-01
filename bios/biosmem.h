@@ -15,6 +15,13 @@
 
 #include "memdefs.h"
 
+/*
+ * sizes of disk buffers allocated via balloc_stram()
+ */
+#define DSKBUF_SIZE     (2 * SECTOR_SIZE)   /* pointed to by dskbufp */
+#define FRB_SIZE        (64 * 1024UL)       /* pointed to by _FRB cookie */
+
+
 /* Prototypes */
 void bmem_init(void);
 UBYTE *balloc_stram(ULONG size, BOOL top);
