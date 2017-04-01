@@ -31,6 +31,8 @@
 #include "ide.h"
 #include "sd.h"
 #include "biosext.h"
+#include "biosmem.h"
+
 
 /*
  * undefine the following to enable booting from hard disk.
@@ -44,8 +46,6 @@
  */
 
 BLKDEV blkdev[BLKDEVNUM];
-
-static UBYTE diskbuf[2*SECTOR_SIZE];    /* buffer for 2 sectors */
 
 static PUN_INFO pun_info;
 
@@ -92,8 +92,8 @@ UWORD compute_cksum(const UWORD *buf)
 
 void blkdev_init(void)
 {
-    /* set the block buffer pointer to reserved memory */
-    dskbufp = diskbuf;
+    /* allocate low memory for the block buffer */
+    dskbufp = balloc_stram(2 * SECTOR_SIZE, FALSE);
     KDEBUG(("diskbuf = %p\n",dskbufp));
 
     /* setup booting related vectors */
