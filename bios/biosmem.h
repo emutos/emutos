@@ -21,6 +21,7 @@
 #define DSKBUF_SECS     2
 #define DSKBUF_SIZE     (DSKBUF_SECS * SECTOR_SIZE) /* pointed to by dskbufp */
 #define FRB_SIZE        (64 * 1024UL)       /* pointed to by _FRB cookie */
+#define FRB_SECS        (FRB_SIZE / SECTOR_SIZE)
 
 
 /* Prototypes */

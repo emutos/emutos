@@ -27,6 +27,7 @@
 #include "asm.h"
 #include "cookie.h"
 #include "delay.h"
+#include "biosmem.h"
 
 #if CONF_WITH_ACSI
 
@@ -99,50 +100,56 @@ void acsi_init(void)
 
 LONG acsi_rw(WORD rw, LONG sector, WORD count, UBYTE *buf, WORD dev)
 {
-    int need_frb = 0;
+    WORD maxsecs_per_io = 128;  /* default, should probably be 255 */
+    BOOL use_tmpbuf = FALSE;
     int retry;
     int err = 0;
-    UBYTE *tmp_buf;
+    UBYTE *p, *tmp_buf = NULL;
 
     rw &= RW_RW;    /* we just care about read or write for now */
 
-    /* read by chunks of at most 0x80 sectors.
-     * (0x80 * 512 bytes will fit in the 64 KB buffer _FRB, and numsecs
-     * must fit in a byte anyway.)
+    /*
+     * the ACSI hardware requires that the buffer be word-aligned and
+     * located in ST-RAM.  if it isn't, we use an intermediate buffer:
+     * the FRB (if available) or dskbufp.
      */
+    if (((LONG)buf & 1L) || (buf >= phystop)) {
+#if CONF_WITH_FRB
+        tmp_buf = get_frb_cookie();
+        if (maxsecs_per_io > FRB_SECS)
+            maxsecs_per_io = FRB_SECS;
+#endif
+        if (!tmp_buf) {
+            tmp_buf = dskbufp;
+            if (maxsecs_per_io > DSKBUF_SECS)
+                maxsecs_per_io = DSKBUF_SECS;
+        }
+        use_tmpbuf = TRUE;
+    }
+
     while(count > 0) {
         WORD numsecs;
 
-        numsecs = 0x80;
-        if(numsecs > count)
-            numsecs = count;
+        numsecs = (count>maxsecs_per_io) ? maxsecs_per_io : count;
 
-#if CONF_WITH_FRB
-        tmp_buf = get_stram_disk_buffer(buf);
-        /* proper FRB lock (TODO) */
-#else
-        tmp_buf = buf;
-#endif
-        need_frb = (tmp_buf != buf);
+        p = use_tmpbuf ? tmp_buf : buf;
+        if (rw && use_tmpbuf)
+            memcpy(p, buf, (LONG)numsecs * SECTOR_SIZE);
 
-        if(rw && need_frb) {
-            memcpy(tmp_buf, buf, (LONG)numsecs * SECTOR_SIZE);
+        for (retry = 0; retry < 2; retry++) {
+            err = do_acsi_rw(rw, sector, numsecs, p, dev);
+            if (err == 0)
+                break;
         }
-        for(retry = 0; retry < 2 ; retry++) {
-            err = do_acsi_rw(rw, sector, numsecs, tmp_buf, dev);
-            if(err == 0) break;
-        }
-        if((!rw) && need_frb) {
-            memcpy(buf, tmp_buf, (LONG)numsecs * SECTOR_SIZE);
-        }
-        if(need_frb) {
-            /* proper FRB unlock (TODO) */
-        }
-        if(err) {
+
+        if (err) {
             KDEBUG(("acsi.c: %s error %d\n",rw?"write":"read",err));
             KDEBUG(("        dev=%d,sector=%ld,numsecs=%d\n",dev,sector,numsecs));
             return err;
         }
+
+        if (!rw && use_tmpbuf)
+            memcpy(buf, p, (LONG)numsecs * SECTOR_SIZE);
 
         count -= numsecs;
         buf += (LONG)numsecs * SECTOR_SIZE;
