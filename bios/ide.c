@@ -36,6 +36,7 @@
 #include "cookie.h"
 #include "coldfire.h"
 #include "processor.h"
+#include "biosmem.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif
@@ -919,6 +920,8 @@ LONG ide_rw(WORD rw,LONG sector,WORD count,UBYTE *buf,WORD dev,BOOL need_byteswa
 {
     UBYTE *p = buf;
     UWORD ifnum;
+    WORD maxsecs_per_io = MAXSECS_PER_IO;
+    BOOL use_tmpbuf = FALSE;
     LONG ret;
 
     if (!ide_device_exists(dev))
@@ -929,11 +932,30 @@ LONG ide_rw(WORD rw,LONG sector,WORD count,UBYTE *buf,WORD dev,BOOL need_byteswa
 
     rw &= RW_RW;    /* we just care about read or write for now */
 
+    /*
+     * because ide_read()/ide_write() access the buffer with word (or long)
+     * moves, we must use an intermediate buffer if the user buffer is not
+     * word-aligned, and the processor is a 68000 or 68010
+     */
+#ifndef __mcoldfire__
+    if (((LONG)buf & 1L) && (mcpu < 20))
+    {
+        if (maxsecs_per_io > DSKBUF_SECS)
+            maxsecs_per_io = DSKBUF_SECS;
+        use_tmpbuf = TRUE;
+    }
+#endif
+
     while (count > 0)
     {
         UWORD numsecs;
 
-        numsecs = (count>MAXSECS_PER_IO) ? MAXSECS_PER_IO : count;
+        numsecs = (count>maxsecs_per_io) ? maxsecs_per_io : count;
+
+        p = use_tmpbuf ? dskbufp : buf;
+        if (rw && use_tmpbuf)
+            memcpy(p,buf,(LONG)numsecs*SECTOR_SIZE);
+
         ret = rw ? ide_write(IDE_CMD_WRITE_SECTOR,ifnum,dev,sector,numsecs,p,need_byteswap)
                 : ide_read(IDE_CMD_READ_SECTOR,ifnum,dev,sector,numsecs,p,need_byteswap);
         if (ret < 0) {
@@ -944,7 +966,10 @@ LONG ide_rw(WORD rw,LONG sector,WORD count,UBYTE *buf,WORD dev,BOOL need_byteswa
             return ret;
         }
 
-        p += (ULONG)numsecs*SECTOR_SIZE;
+        if (!rw && use_tmpbuf)
+            memcpy(buf,p,(LONG)numsecs*SECTOR_SIZE);
+
+        buf += (ULONG)numsecs*SECTOR_SIZE;
         sector += numsecs;
         count -= numsecs;
     }

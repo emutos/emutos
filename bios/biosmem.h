@@ -18,7 +18,8 @@
 /*
  * sizes of disk buffers allocated via balloc_stram()
  */
-#define DSKBUF_SIZE     (2 * SECTOR_SIZE)   /* pointed to by dskbufp */
+#define DSKBUF_SECS     2
+#define DSKBUF_SIZE     (DSKBUF_SECS * SECTOR_SIZE) /* pointed to by dskbufp */
 #define FRB_SIZE        (64 * 1024UL)       /* pointed to by _FRB cookie */
 
 
