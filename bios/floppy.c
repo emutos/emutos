@@ -913,12 +913,11 @@ static WORD floprw(UBYTE *userbuf, WORD rw, WORD dev,
 {
     WORD err;
 #if CONF_WITH_FDC
-    BOOL density_ok;
+    BOOL density_ok, use_tmpbuf = FALSE;
     WORD retry;
     WORD status;
     WORD cmd;
-    UBYTE *iobuf, *iobufptr;
-    LONG buflen = (LONG)count * SECTOR_SIZE;
+    UBYTE *tmpbuf, *iobufptr;
 #endif
 
     if (!IS_VALID_FLOPPY_DEVICE(dev))
@@ -943,18 +942,16 @@ static WORD floprw(UBYTE *userbuf, WORD rw, WORD dev,
         return err;
     }
 
-#if CONF_WITH_FRB
-    iobuf = get_stram_disk_buffer(userbuf);
-#else
-    iobuf = userbuf;
-#endif
-
-#if CONF_WITH_FRB
-    if (iobuf != userbuf) {
-        if (rw == RW_WRITE)
-            memcpy(iobuf, userbuf, buflen);
-    }
-#endif
+    /*
+     * the floppy hardware requires that the buffer be word-aligned and
+     * located in ST-RAM.  if it isn't, we get an intermediate buffer.
+     * since we only do one sector at a time, we don't care about the
+     * buffer size.
+     */
+    if (((LONG)userbuf & 1L) || (userbuf >= phystop)) {
+        tmpbuf = dskbufp;
+        use_tmpbuf = TRUE;
+     }
 
     /*
      * if the drive is double-density, then we know the density setting
@@ -962,12 +959,15 @@ static WORD floprw(UBYTE *userbuf, WORD rw, WORD dev,
      */
     density_ok = (drivetype==DD_DRIVE) ? TRUE : FALSE;
 
-    /* flush data cache here so that memory is current */
-    if (rw == RW_WRITE)
-        flush_data_cache(iobuf,buflen);
+    /* if writing, flush data cache here so that memory is current */
+    if (rw)
+        flush_data_cache(userbuf, (LONG)count * SECTOR_SIZE);
 
-    iobufptr = iobuf;
     while(count--) {
+        iobufptr = use_tmpbuf ? tmpbuf : userbuf;
+        if (rw && use_tmpbuf)
+            memcpy(iobufptr, userbuf, SECTOR_SIZE);
+
         for (retry = 0; retry < 2; retry++) {
             set_fdc_reg(FDC_SR, sect);
             set_dma_addr(iobufptr);
@@ -1013,27 +1013,20 @@ static WORD floprw(UBYTE *userbuf, WORD rw, WORD dev,
         /* If there was an error, don't read any more sectors */
         if (err)
             break;
+
+        /* invalidate data cache if we've read into memory */
+        if (!rw)
+            invalidate_data_cache(iobufptr, SECTOR_SIZE);
+
+        if (!rw && use_tmpbuf)
+            memcpy(userbuf, iobufptr, SECTOR_SIZE);
+
         /* Otherwise carry on sequentially */
-        iobufptr += SECTOR_SIZE;
+        userbuf += SECTOR_SIZE;
         sect++;
     }
 
     flopunlk();
-
-    /* invalidate data cache if we've read into memory */
-    if (rw == RW_READ)
-        invalidate_data_cache(iobuf,buflen);
-
-#if CONF_WITH_FRB
-    /*
-     * If we're using the intermediate _FRB buffer for reading,
-     * we need to copy the date to the user area.
-     */
-    if (iobuf != userbuf) {
-        if (rw == RW_READ)
-            memcpy(userbuf, iobuf, buflen);
-    }
-#endif
 
 #else
     err = EUNDEV;

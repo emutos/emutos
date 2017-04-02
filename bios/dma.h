@@ -63,8 +63,4 @@ struct dma {
 
 void set_dma_addr(UBYTE *addr);
 
-#if CONF_WITH_FRB
-UBYTE *get_stram_disk_buffer(UBYTE *userbuf);
-#endif
-
 #endif /* DMA_H */
