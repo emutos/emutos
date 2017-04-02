@@ -99,7 +99,6 @@ void acsi_init(void)
 
 LONG acsi_rw(WORD rw, LONG sector, WORD count, UBYTE *buf, WORD dev)
 {
-    int cnt;
     int need_frb = 0;
     int retry;
     int err = 0;
@@ -108,13 +107,15 @@ LONG acsi_rw(WORD rw, LONG sector, WORD count, UBYTE *buf, WORD dev)
     rw &= RW_RW;    /* we just care about read or write for now */
 
     /* read by chunks of at most 0x80 sectors.
-     * (0x80 * 512 bytes will fit in the 64 KB buffer _FRB, and cnt
+     * (0x80 * 512 bytes will fit in the 64 KB buffer _FRB, and numsecs
      * must fit in a byte anyway.)
      */
     while(count > 0) {
-        cnt = 0x80;
-        if(cnt > count)
-            cnt = count;
+        WORD numsecs;
+
+        numsecs = 0x80;
+        if(numsecs > count)
+            numsecs = count;
 
 #if CONF_WITH_FRB
         tmp_buf = get_stram_disk_buffer(buf);
@@ -125,27 +126,27 @@ LONG acsi_rw(WORD rw, LONG sector, WORD count, UBYTE *buf, WORD dev)
         need_frb = (tmp_buf != buf);
 
         if(rw && need_frb) {
-            memcpy(tmp_buf, buf, (LONG)cnt * SECTOR_SIZE);
+            memcpy(tmp_buf, buf, (LONG)numsecs * SECTOR_SIZE);
         }
         for(retry = 0; retry < 2 ; retry++) {
-            err = do_acsi_rw(rw, sector, cnt, tmp_buf, dev);
+            err = do_acsi_rw(rw, sector, numsecs, tmp_buf, dev);
             if(err == 0) break;
         }
         if((!rw) && need_frb) {
-            memcpy(buf, tmp_buf, (LONG)cnt * SECTOR_SIZE);
+            memcpy(buf, tmp_buf, (LONG)numsecs * SECTOR_SIZE);
         }
         if(need_frb) {
             /* proper FRB unlock (TODO) */
         }
         if(err) {
             KDEBUG(("acsi.c: %s error %d\n",rw?"write":"read",err));
-            KDEBUG(("        dev=%d,sector=%ld,cnt=%d\n",dev,sector,cnt));
+            KDEBUG(("        dev=%d,sector=%ld,numsecs=%d\n",dev,sector,numsecs));
             return err;
         }
 
-        count -= cnt;
-        buf += (LONG)cnt * SECTOR_SIZE;
-        sector += cnt;
+        count -= numsecs;
+        buf += (LONG)numsecs * SECTOR_SIZE;
+        sector += numsecs;
     }
     return 0;
 }
