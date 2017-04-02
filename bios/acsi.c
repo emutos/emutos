@@ -192,20 +192,12 @@ LONG acsi_ioctl(UWORD dev, UWORD ctrl, void *arg)
 static LONG acsi_capacity(WORD dev, ULONG *info)
 {
     UBYTE cdb[10];
-    UBYTE stackbuffer[16];  /* data returned by Read Capacity */
-    UBYTE* iobuf;
     int status;
-
-#if CONF_WITH_FRB
-    iobuf = get_stram_disk_buffer(stackbuffer);
-#else
-    iobuf = stackbuffer;
-#endif
 
     acsi_begin();
 
-    /* load DMA base address */
-    set_dma_addr(iobuf);
+    /* load DMA base address -> internal disk buffer */
+    set_dma_addr(dskbufp);
 
     cdb[0] = 0x25;          /* set up Read Capacity cdb */
     memset(cdb+1,0x00,9);
@@ -213,10 +205,10 @@ static LONG acsi_capacity(WORD dev, ULONG *info)
 
     acsi_end();
 
-    invalidate_data_cache(iobuf,sizeof(ULONG)*4);
+    invalidate_data_cache(dskbufp,sizeof(ULONG)*4);
 
     if (status == 0) {
-        const ULONG *data = (const ULONG *)iobuf;
+        const ULONG *data = (const ULONG *)dskbufp;
         info[0] = data[0] + 1;  /* data[0] is number of last sector */
         info[1] = data[1];
     }
