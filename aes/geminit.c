@@ -258,6 +258,11 @@ void sh_deskf(WORD obj, LONG plong)
     OBJECT *tree;
 
     tree = rs_trees[DESKTOP];
+
+    /*
+     * set height of root DESKTOP object to screen height
+     */
+    tree[0].ob_height = gl_rscreen.g_h;
     *(LONG *)plong = tree[obj].ob_spec;
 }
 

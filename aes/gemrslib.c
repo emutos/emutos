@@ -104,8 +104,7 @@ static char    free_str[256];   /* must be long enough for longest freestring in
 
 /*
  *  Fix up a character position, from offset,row/col to a pixel value.
- *  If width is 80 then convert to full screen width.  If height is 25
- *  then convert to full screen height.  Is this correct??
+ *  If width is 80 then convert to full screen width.
  */
 static void fix_chpos(WORD *pfix, WORD offset)
 {
@@ -131,10 +130,7 @@ static void fix_chpos(WORD *pfix, WORD offset)
             cpos *= gl_wchar;
         break;
     case 3:
-        if (cpos == 25)
-            cpos = gl_height;
-        else
-            cpos *= gl_hchar;
+        cpos *= gl_hchar;
         break;
     }
 
