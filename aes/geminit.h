@@ -27,6 +27,5 @@ extern THEGLO   D;
 void all_run(void);
 void set_mouse_to_arrow(void);
 void set_mouse_to_hourglass(void);
-void sh_deskf(WORD obj, LONG plong);
 
 #endif

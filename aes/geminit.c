@@ -253,28 +253,18 @@ static void load_accs(WORD n)
 }
 
 
-void sh_deskf(WORD obj, LONG plong)
+static void sh_init(void)
 {
-    OBJECT *tree;
-
-    tree = rs_trees[DESKTOP];
+    SHELL   *psh;
+    OBJECT *tree = rs_trees[DESKTOP];
 
     /*
      * set height of root DESKTOP object to screen height
      */
-    tree[0].ob_height = gl_rscreen.g_h;
-}
-
-
-static void sh_init(void)
-{
-    SHELL   *psh;
-
-    psh = sh;
-
-    sh_deskf(2, 0L);
+    tree[ROOT].ob_height = gl_rscreen.g_h;
 
     /* set defaults */
+    psh = sh;
     psh->sh_doexec = psh->sh_dodef = gl_shgem = psh->sh_isgem = TRUE;
 }
 
