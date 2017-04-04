@@ -66,8 +66,6 @@ static BYTE sh_apdir[LEN_ZPATH];        /* holds directory of applications to be
                                         /* to parent's on return from exec.      */
 GLOBAL BYTE *ad_stail;
 
-GLOBAL LONG ad_pfile;
-
 GLOBAL WORD gl_shgem;
 
 /*
@@ -227,14 +225,16 @@ static void sh_toalpha(void)
 
 static void sh_draw(const BYTE *lcmd, WORD start, WORD depth)
 {
-    LONG tree;
+    OBJECT *tree;
+    TEDINFO *ted;
 
     if (gl_shgem)
     {
-        tree = (LONG)rs_trees[DESKTOP];
+        tree = rs_trees[DESKTOP];
         gsx_sclip(&gl_rscreen);
-        *(LONG *)ad_pfile = (LONG)lcmd;
-        ob_draw(tree, start, depth);
+        ted = (TEDINFO *)tree[2].ob_spec;
+        ted->te_ptext = (BYTE *)lcmd;   /* text string displayed in menu bar */
+        ob_draw((LONG)tree, start, depth);
     }
 }
 

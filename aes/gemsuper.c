@@ -97,7 +97,8 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         pglobal->ap_version = AES_VERSION;  /* version number     */
         pglobal->ap_count = 1;              /* # concurrent procs */
         pglobal->ap_id = rlr->p_pid;
-        sh_deskf(0, (LONG)&pglobal->ap_private);
+        tree = rs_trees[DESKTOP];
+        pglobal->ap_private = tree[ROOT].ob_spec;
         pglobal->ap_2resv[1] = gl_nplanes;
         pglobal->ap_3resv = (LONG)&D;
 

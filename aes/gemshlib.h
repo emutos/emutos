@@ -14,8 +14,6 @@ extern SHELL    sh[];
 
 extern BYTE     *ad_stail;
 
-extern LONG     ad_pfile;
-
 extern WORD     gl_shgem;
 
 extern WORD     gl_changerez;

@@ -263,7 +263,6 @@ void sh_deskf(WORD obj, LONG plong)
      * set height of root DESKTOP object to screen height
      */
     tree[0].ob_height = gl_rscreen.g_h;
-    *(LONG *)plong = tree[obj].ob_spec;
 }
 
 
@@ -273,7 +272,7 @@ static void sh_init(void)
 
     psh = sh;
 
-    sh_deskf(2, (LONG)&ad_pfile);
+    sh_deskf(2, 0L);
 
     /* set defaults */
     psh->sh_doexec = psh->sh_dodef = gl_shgem = psh->sh_isgem = TRUE;
