@@ -273,7 +273,7 @@ msgstr "î¤¦£˜: ________.___"
 
 #: desk/desk_rsc.c:38
 msgid "Size: __________"
-msgstr "‹âšœŸ¦ª: _________"
+msgstr "‹âšœŸ¦ª: __________"
 
 #: desk/desk_rsc.c:43
 msgid "Date: __________"
