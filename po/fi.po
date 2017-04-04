@@ -48,7 +48,7 @@ msgstr "Käynnistysaika"
 
 #: bios/initinfo.c:294
 msgid "Hold <Control> to skip AUTO/ACC"
-msgstr "<Cntrl> pohjassa = ohita AUTO/ACC"
+msgstr "<Ctrl> pohjassa = ohita AUTO/ACC"
 
 #: bios/initinfo.c:297
 msgid "Hold <Alternate> to skip HDD boot"
@@ -120,7 +120,7 @@ msgid "[2]["
 msgstr "[2]["
 "%c: asema ei vastaa.|"
 "Tarkista asema,|"
-" tai anna levyke.][Kumoa|Uudestaan]"
+"tai anna levyke.][Kumoa|Uudestaan]"
 
 #: aes/gem_rsc.c:702
 msgid "[1]["
@@ -424,7 +424,7 @@ msgstr "  Asenna laitteet"
 
 #: desk/desk_rsc.c:457
 msgid "  Remove desktop icon"
-msgstr "  Poista ikoni työpöydältä"
+msgstr "  Poista ikoni"
 
 #: desk/desk_rsc.c:463
 msgid "--------------------------"
@@ -588,7 +588,7 @@ msgstr "MÄÄRITÄ ASETUKSET"
 
 #: desk/desk_rsc.c:1195
 msgid "Confirm deletes:"
-msgstr "Vahvista poisto:"
+msgstr "Vahvista poistot:"
 
 #: desk/desk_rsc.c:1219
 msgid "Confirm copies:"
@@ -728,7 +728,7 @@ msgstr "Kaksipuolinen"
 
 #: desk/desk_rsc.c:2000
 msgid "High density"
-msgstr "Korkeatiheyksinen (HD)"
+msgstr "Korkeatiheyksinen"
 
 #: desk/desk_rsc.c:2049
 msgid "%ld bytes used in %d items."
@@ -910,8 +910,8 @@ msgid "[1]["
 "permanently delete files|"
 "or folders.][  OK  ]"
 msgstr "[1]["
-"Roskis on tiedostojen ja|"
-"kansioiden pysyvää|"
+"Roskis on tiedostojen|"
+"ja kansioiden pysyvää|"
 "tuhoamista varten.][  OK  ]"
 
 #: desk/desk_rsc.c:2123
@@ -950,8 +950,8 @@ msgid "[2]["
 "Do you want to remove icons|"
 "or delete files?][Icons|Files|Cancel]"
 msgstr "[2]["
-"Haluatko poistaa ikoneja|"
-"vai tiedostoja?][Ikoneja|Tiedostoja|Kumoa]"
+"Haluatko poistaa ikoneita|"
+"tai poistaa tiedostoja?][Ikoneita|Tiedostoja|Kumoa]"
 
 #: desk/desk_rsc.c:2138
 msgid "[1]["
