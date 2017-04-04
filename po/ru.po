@@ -261,7 +261,7 @@ msgstr "Имя: ________.___"
 
 #: desk/desk_rsc.c:38
 msgid "Size: __________"
-msgstr "Размер: ________"
+msgstr "Размер: __________"
 
 #: desk/desk_rsc.c:43
 msgid "Date: __________"
