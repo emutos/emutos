@@ -232,7 +232,7 @@ static void sh_draw(const BYTE *lcmd, WORD start, WORD depth)
     {
         tree = rs_trees[DESKTOP];
         gsx_sclip(&gl_rscreen);
-        ted = (TEDINFO *)tree[2].ob_spec;
+        ted = (TEDINFO *)tree[DTNAME].ob_spec;
         ted->te_ptext = (BYTE *)lcmd;   /* text string displayed in menu bar */
         ob_draw((LONG)tree, start, depth);
     }
