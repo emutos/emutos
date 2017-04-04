@@ -1102,9 +1102,32 @@ static void parse_c_file(char *fname, parse_c_action *pca, void *this)
 
 
 /*
+ * determine "underscore length"
+ *
+ * the "underscore length" for a string is the length of the first substring
+ * that starts with an underscore and contains only underscores and periods.
+ * this is designed to catch simple typos that translators might make when
+ * translating tedinfo strings.
+ */
+static int underscore_length(char *s)
+{
+    int len = 0;
+
+    for ( ; *s; s++)
+        if (*s == '_')
+            break;
+
+    for ( ; *s; s++, len++)
+        if ((*s != '_') && (*s != '.'))
+            break;
+
+    return len;
+}
+
+
+/*
  * parse po files
  */
-
 
 static void parse_po_file(char *fname, oh *o, int ignore_ae)
 {
@@ -1290,6 +1313,9 @@ static void parse_po_file(char *fname, oh *o, int ignore_ae)
     } else {
       e = poe_new(s_detach(msgid));
       e->msgstr = s_detach(msgstr);
+      if (strlen(e->msgstr))    /* really translating */
+        if (underscore_length(e->msgid.key) != underscore_length(e->msgstr))
+          warn("%s: underscores appear invalid for translation of '%s'",fname,e->msgid.key);
       if(refstr) {
         e->refstr = s_detach(refstr);
         refstr = 0;
