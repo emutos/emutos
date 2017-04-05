@@ -611,22 +611,6 @@ msgstr "„§ ™œ™˜åà© ˜¤« š¨˜­é¤"
 msgid "Confirm overwrites:"
 msgstr "„§ ™œ™˜åà© "
 
-#: desk/desk_rsc.c:1324
-msgid "Double-click speed:"
-msgstr "’˜®ç««˜ › §¢¦ç ¡¢å¡:"
-
-#: desk/desk_rsc.c:1378
-msgid "Click"
-msgstr "‰¢å¡"
-
-#: desk/desk_rsc.c:1384
-msgid "No click"
-msgstr "•à¨åª ¡¢å¡"
-
-#: desk/desk_rsc.c:1366
-msgid "To drop down menus:"
-msgstr "‚ ˜ «¦ £œ¤¦ç:"
-
 #: desk/desk_rsc.c:1267
 msgid "Sound effects:"
 msgstr "†®« ¡á œ­â:"
@@ -638,6 +622,26 @@ msgstr "Œ˜ "
 #: desk/desk_rsc.c:1285
 msgid "Off"
 msgstr "î® "
+
+#: desk/desk_rsc.c:1291
+msgid "More preferences"
+msgstr "œ¨ ©©æ«œ¨œª §¨¦« £ã©œ ª"
+
+#: desk/desk_rsc.c:1324
+msgid "Double-click speed:"
+msgstr "’˜®ç««˜ › §¢¦ç ¡¢å¡:"
+
+#: desk/desk_rsc.c:1366
+msgid "To drop down menus:"
+msgstr "‚ ˜ «¦ £œ¤¦ç:"
+
+#: desk/desk_rsc.c:1378
+msgid "Click"
+msgstr "‰¢å¡"
+
+#: desk/desk_rsc.c:1384
+msgid "No click"
+msgstr "•à¨åª ¡¢å¡"
 
 #: desk/desk_rsc.c:1390
 msgid "Time format:"
@@ -746,6 +750,10 @@ msgstr "%ld bytes ®¨© £¦§¦ ¦ç¤«˜  ©œ %d ˜¨®œå˜."
 #: desk/desk_rsc.c:2050
 msgid "  Show as icons ^T"
 msgstr "  „£­á¤ © àª œ ¡¦¤å› ˜   ^T"
+
+#: desk/desk_rsc.c:2068
+msgid "Locate item"
+msgstr "„¤«¦§ ©£æª ˜¤« ¡œ £â¤¦¬"
 
 #: desk/desk_rsc.c:391 desk/desk_rsc.c:2051
 msgid "  Show as text  ^T"
@@ -998,11 +1006,12 @@ msgstr "€¤œ§˜¨¡ãª £¤ã£ š ˜|"
 msgid "[2]["
 "%s not found.|"
 "Do you want to remove the|"
-"icon or locate the file?][Remove|Locate|Cancel]"
-msgstr "’¦ %s ›œ¤ ™¨âŸ¡œ.|"
+"icon or locate the item?][Remove|Locate|Cancel]"
+msgstr "[2]["
+"’¦ %s ›œ¤ ™¨âŸ¡œ.|"
 "‡â¢œ«œ ¤˜ ˜­˜ ¨â©œ«œ «¦|"
-"œ ¡¦¤å› ¦ ã ¤˜œ¤«¦§å©œ«œ|"
-"«¦ ˜¨®œå¦;][€­˜å¨œ©|„¤«¦§ ©£æª|€¡ç¨à©]" 
+"œ ¡¦¤å› ¦ ã ¤˜ œ¤«¦§å©œ«œ «¦|"
+"˜¤« ¡œå£œ¤¦;][€­˜å¨œ©|„¤«¦§ ©£æª|€¡ç¨¦]"
 
 #: desk/desk_rsc.c:2153
 msgid "[1]["
