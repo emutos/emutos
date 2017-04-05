@@ -599,22 +599,6 @@ msgstr "Conferma copie:"
 msgid "Confirm overwrites:"
 msgstr "Conferma sovrascrittura:"
 
-#: desk/desk_rsc.c:1324
-msgid "Double-click speed:"
-msgstr "Velocità doppio click:"
-
-#: desk/desk_rsc.c:1378
-msgid "Click"
-msgstr "Click"
-
-#: desk/desk_rsc.c:1384
-msgid "No click"
-msgstr "No click"
-
-#: desk/desk_rsc.c:1366
-msgid "To drop down menus:"
-msgstr "Apertura del menu:"
-
 #: desk/desk_rsc.c:1267
 msgid "Sound effects:"
 msgstr "Effetti sonori:"
@@ -630,6 +614,22 @@ msgstr "No"
 #: desk/desk_rsc.c:1291
 msgid "More preferences"
 msgstr "Altre preferenze"
+
+#: desk/desk_rsc.c:1324
+msgid "Double-click speed:"
+msgstr "Velocità doppio click:"
+
+#: desk/desk_rsc.c:1378
+msgid "Click"
+msgstr "Click"
+
+#: desk/desk_rsc.c:1384
+msgid "No click"
+msgstr "No click"
+
+#: desk/desk_rsc.c:1366
+msgid "To drop down menus:"
+msgstr "Apertura del menu:"
 
 #: desk/desk_rsc.c:1390
 msgid "Time format:"
@@ -782,6 +782,10 @@ msgstr "-Fine del file-"
 #: desk/desk_rsc.c:2067
 msgid "-File read error-"
 msgstr "-Errore lettura file-"
+
+#: desk/desk_rsc.c:2068
+msgid "Locate item"
+msgstr "Localizza oggetto"
 
 #: desk/desk_rsc.c:2069
 msgid "[2]["
@@ -980,6 +984,16 @@ msgstr "[3]["
 "Memoria insufficiente|"
 "per inizializzare EmuDesk.|"
 "Devi riavviare.][OK]"
+
+#: desk/desk_rsc.c:2147
+msgid "[2]["
+"%s not found.|"
+"Do you want to remove the|"
+"icon or locate the item?][Remove|Locate|Cancel]"
+msgstr "[2]["
+"%s non trovato.|"
+"Vuoi rimuovere l'icona|"
+"o localizzare l'oggetto?][Rimuovi|Localizza|Annulla]"
 
 #: desk/desk_rsc.c:2153
 msgid "[1]["
