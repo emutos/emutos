@@ -48,6 +48,7 @@
 #include "desksupp.h"
 #include "icons.h"
 #include "xbiosbind.h"
+#include "biosext.h"
 #include "kprint.h"
 
 
@@ -462,6 +463,10 @@ static WORD load_user_icons(void)
     char *p;
     WORD i, n, rc, w, h, masksize;
     BYTE icon_rsc_name[sizeof(ICON_RSC_NAME)];
+
+    /* Do not load user icons if Control was held on startup */
+    if (bootflags & BOOTFLAG_SKIP_AUTO_ACC)
+        return -1;
 
     /*
      * determine the number of icons in the user's icon resource
