@@ -636,7 +636,8 @@ void app_start(void)
     G.g_ich = G.g_hdesk / ycnt;             /* height */
 
     shel_get(gl_afile, SIZE_AFILE);
-    if (gl_afile[0] != '#')                 /* invalid signature    */
+    if (!(bootflags & BOOTFLAG_SKIP_AUTO_ACC)
+        && gl_afile[0] != '#')              /* invalid signature    */
     {                                       /*   so read from disk  */
         LONG ret;
         WORD fh;
