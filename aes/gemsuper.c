@@ -494,7 +494,7 @@ WORD super(WORD cx, AESPB *pcrys_blk)
     if (cx == 200)
         xif(pcrys_blk);
 
-    if ((dspcnt++ % 8) == 0 || cx == 201)
+    if ((++dspcnt % 8) == 0 || cx == 201)
         dsptch();
 
     return 0;
