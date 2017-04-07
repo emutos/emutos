@@ -598,22 +598,6 @@ msgstr "Potvrzovat kopírování:"
 msgid "Confirm overwrites:"
 msgstr "Potvrzovat pøepsání:"
 
-#: desk/desk_rsc.c:1324
-msgid "Double-click speed:"
-msgstr "Rychlost dvojkliku:"
-
-#: desk/desk_rsc.c:1378
-msgid "Click"
-msgstr "Klik"
-
-#: desk/desk_rsc.c:1384
-msgid "No click"
-msgstr "Ukázat"
-
-#: desk/desk_rsc.c:1366
-msgid "To drop down menus:"
-msgstr "Rozbalení nabídky:"
-
 #: desk/desk_rsc.c:1267
 msgid "Sound effects:"
 msgstr "Zvukové efekty:"
@@ -629,6 +613,22 @@ msgstr "Ne"
 #: desk/desk_rsc.c:1291
 msgid "More preferences"
 msgstr "Více nastavení"
+
+#: desk/desk_rsc.c:1324
+msgid "Double-click speed:"
+msgstr "Rychlost dvojkliku:"
+
+#: desk/desk_rsc.c:1378
+msgid "Click"
+msgstr "Klik"
+
+#: desk/desk_rsc.c:1384
+msgid "No click"
+msgstr "Ukázat"
+
+#: desk/desk_rsc.c:1366
+msgid "To drop down menus:"
+msgstr "Rozbalení nabídky:"
 
 #: desk/desk_rsc.c:1390
 msgid "Time format:"
@@ -781,6 +781,10 @@ msgstr "-Konec souboru-"
 #: desk/desk_rsc.c:2067
 msgid "-File read error-"
 msgstr "-Chyba ètení souboru-"
+
+#: desk/desk_rsc.c:2068
+msgid "Locate item"
+msgstr "Vyhledat polo¾ku"
 
 #: desk/desk_rsc.c:2069
 msgid "[2]["
@@ -979,6 +983,16 @@ msgstr "[3]["
 "Nedostatek pamìti|"
 "k inicializaci EmuDesku.|"
 "Nutno restartovat.][OK]"
+
+#: desk/desk_rsc.c:2147
+msgid "[2]["
+"%s not found.|"
+"Do you want to remove the|"
+"icon or locate the item?][Remove|Locate|Cancel]"
+msgstr "[2]["
+"%s nebyl nalezen.|"
+"Chcete odstranit ikonu|"
+"nebo vyhledat polo¾ku?][Odstranit|Vyhledat|Zru¹it]"
 
 #: desk/desk_rsc.c:2153
 msgid "[1]["
