@@ -224,7 +224,7 @@ msgstr "[3]["
 
 #: aes/gem_rsc.c:749
 msgid "ITEM SELECTOR"
-msgstr "Выбор устройств"
+msgstr "ВЫБОР УСТРОЙСТВ"
 
 #: desk/desk_rsc.c:18
 msgid "Number of folders: _____"
@@ -293,7 +293,7 @@ msgstr "Буква диска: _:"
 
 #: desk/desk_rsc.c:108
 msgid "Label: ____________"
-msgstr "Имя: ____________"
+msgstr "Метка: ____________"
 
 #: desk/desk_rsc.c:113
 msgid "Application name: ________.___"
@@ -533,7 +533,7 @@ msgstr "УСТАНОВИТЬ ПРОГРАММУ"
 
 #: desk/desk_rsc.c:931
 msgid "Boot status:"
-msgstr "Статус загрузки:"
+msgstr " Статус загрузки:"
 
 #: desk/desk_rsc.c:943
 msgid "Auto"
@@ -599,6 +599,18 @@ msgstr "Подтверждать копирование"
 msgid "Confirm overwrites:"
 msgstr "Подтверждать перезапись"
 
+#: desk/desk_rsc.c:1267
+msgid "Sound effects:"
+msgstr "Звуковые эффекты"
+
+#: desk/desk_rsc.c:1279
+msgid "On"
+msgstr "Вкл"
+
+#: desk/desk_rsc.c:1285
+msgid "Off"
+msgstr "Выкл"
+
 #: desk/desk_rsc.c:1291
 msgid "More preferences"
 msgstr "Больше настроек"
@@ -618,18 +630,6 @@ msgstr "Ненажатие"
 #: desk/desk_rsc.c:1366
 msgid "To drop down menus:"
 msgstr "К выпадающим меню"
-
-#: desk/desk_rsc.c:1267
-msgid "Sound effects:"
-msgstr "Звуковые эффекты"
-
-#: desk/desk_rsc.c:1279
-msgid "On"
-msgstr "Вкл"
-
-#: desk/desk_rsc.c:1285
-msgid "Off"
-msgstr "Выкл"
 
 #: desk/desk_rsc.c:1390
 msgid "Time format:"
@@ -782,6 +782,10 @@ msgstr "-Конец файла-"
 #: desk/desk_rsc.c:2067
 msgid "-File read error-"
 msgstr "-Ошибка чтения файла-"
+
+#: desk/desk_rsc.c:2068
+msgid "Locate item"
+msgstr "Найти объект"
 
 #: desk/desk_rsc.c:2069
 msgid "[2]["
@@ -964,14 +968,15 @@ msgstr "[2]["
 msgid "[1]["
 "Invalid function key value.][  OK  ]"
 msgstr "[1]["
-"Неверная функциональная клввиша.][  ОК ]"
+"Неверная функциональная|"
+"клавиша.][  ОК  ]"
 
 #: desk/desk_rsc.c:2139
 msgid "[2]["
 "Function key already assigned.|"
 "Do you want to reassign it?][  OK  |Cancel]"
 msgstr "[2]["
-"Функциональная клвиша уже|"
+"Функциональная клавиша уже|"
 "назначена. Хотите ее|"
 "переназначить?][  ОК  |Отмена]"
 
@@ -986,11 +991,22 @@ msgstr "[3]["
 "Вы должны перезагрузить|"
 "компьютер.][ОК]"
 
+#: desk/desk_rsc.c:2147
+msgid "[2]["
+"%s not found.|"
+"Do you want to remove the|"
+"icon or locate the item?][Remove|Locate|Cancel]"
+msgstr "[2]["
+"%s не найден.|"
+"Вы хотите удалить ярлык|"
+"или найти объект?][Удалить|Найти|Отмена]"
+
 #: desk/desk_rsc.c:2153
 msgid "[1]["
 "Please select icon type.][Desktop|Window|Cancel]"
 msgstr "[1]["
-"Пожалуйта выберите тип иконки.][Десктоп|Окно|Отмена]"
+"Пожалуйста выберите тип|"
+"иконки.][Десктоп|Окно|Отмена]"
 
 #: desk/desk_rsc.c:2154
 msgid "[1]["
@@ -1004,9 +1020,10 @@ msgid "[3]["
 "disk may be write-protected|"
 "or unusable.][Retry|Abort]"
 msgstr "[3]["
-"Ошика форматирования. Целевой|"
-"диск может быть защищен от|"
-"записи или поврежден.][Повтор|Отмена]"
+"Ошибка форматирования.|"
+"Целевой диск может быть|"
+"защищен от записи или его|" 
+"нельзя использовать.][Повтор|Отмена]"
 
 #: desk/desk_rsc.c:2160
 msgid "[1]["
@@ -1038,7 +1055,7 @@ msgstr "<mode> определяет новые атрибут(ы):"
 
 #: cli/cmdint.c:81
 msgid "r=read-only  h=hidden  s=system  -=none"
-msgstr "r=rтлкчтение  h=скрытый  s=системный  -=нет"
+msgstr "r=ТлкЧтение  h=скрытый  s=системный  -=нет"
 
 #: cli/cmdint.c:83
 msgid "Clear screen"
@@ -1070,15 +1087,15 @@ msgstr "Выйти из EmuCON2"
 
 #: cli/cmdint.c:94
 msgid "Get help about <cmd> or list available commands"
-msgstr "Помощь по <cmd> или список возможных комманд"
+msgstr "Помощь по <cmd> или список возможных команд"
 
 #: cli/cmdint.c:95
 msgid "Use HELP ALL for help on all commands"
-msgstr "Наберите HELP ALL для помощи по всем коммандам"
+msgstr "Наберите HELP ALL для помощи по всем командам"
 
 #: cli/cmdint.c:96
 msgid "Use HELP EDIT for help on line editing"
-msgstr "Наберите HELP EDIT для помощи о редактировании строки"
+msgstr "Наберите HELP EDIT для помощи по редактированию строк"
 
 #: cli/cmdint.c:98
 msgid "List files (default terse, horizontal)"
@@ -1286,7 +1303,7 @@ msgstr "Добро пожаловать в EmuCON2 версия "
 
 #: cli/cmdmain.c:63
 msgid "Type HELP for builtin commands"
-msgstr "Введите HELP для списка команд"
+msgstr "Введите HELP для списка внутренних команд"
 
 #: cli/cmdmain.c:82
 msgid "warning: no history buffers"
