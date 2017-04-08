@@ -989,6 +989,16 @@ msgstr "[3]["
 "para inicializar EmuDesk.|"
 "Debe reiniciar.][OK]"
 
+#: desk/desk_rsc.c:2147
+msgid "[2]["
+"%s not found.|"
+"Do you want to remove the|"
+"icon or locate the item?][Remove|Locate|Cancel]"
+msgstr "[2]["
+"%s no encontrado.|"
+"Quiere quitar el icono|"
+"o localizar el elemento?][Quitar|Localizar|Cancelar]"
+
 #: desk/desk_rsc.c:2153
 msgid "[1]["
 "Please select icon type.][Desktop|Window|Cancel]"
