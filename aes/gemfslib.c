@@ -483,7 +483,7 @@ static WORD path_changed(char *path)
     obj = rs_trees[FSELECTR] + FSDIRECT;
     ted = (TEDINFO *)obj->ob_spec;
 
-    if (strncmp(path,(BYTE *)ted->te_ptext,ted->te_txtlen-1))
+    if (strncmp(path,ted->te_ptext,ted->te_txtlen-1))
         return 1;
 
     return 0;
@@ -566,18 +566,18 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
     tree = (LONG)rs_trees[FSELECTR];
     obj = ((OBJECT *)tree) + FTITLE;
     tedinfo = (TEDINFO *)obj->ob_spec;
-    ad_ftitle = (BYTE *)tedinfo->te_ptext;
+    ad_ftitle = tedinfo->te_ptext;
     set_mask(mask, locstr);             /* save caller's mask */
     strcpy(ad_ftitle, mask);            /*  & copy to title line */
 
     obj = ((OBJECT *)tree) + FSDIRECT;
     tedinfo = (TEDINFO *)obj->ob_spec;
-    ad_fpath = (BYTE *)tedinfo->te_ptext;
+    ad_fpath = tedinfo->te_ptext;
     inf_sset((OBJECT *)tree, FSDIRECT, locstr);
 
     obj = ((OBJECT *)tree) + FSSELECT;
     tedinfo = (TEDINFO *)obj->ob_spec;
-    ad_fname = (BYTE *)tedinfo->te_ptext;
+    ad_fname = tedinfo->te_ptext;
     fmt_str(pisel, selname);            /* selname[] is without dot */
     inf_sset((OBJECT *)tree, FSSELECT, selname);
 

@@ -320,9 +320,9 @@ static void fix_tedinfo(void)
     {
         item = get_addr(R_TEDINFO, ii);
         if (fix_ptr(R_TEPTEXT, ii))
-            item.ted->te_txtlen = strlen((char *)item.ted->te_ptext) + 1;
+            item.ted->te_txtlen = strlen(item.ted->te_ptext) + 1;
         if (fix_ptr(R_TEPTMPLT, ii))
-            item.ted->te_tmplen = strlen((char *)item.ted->te_ptmplt) + 1;
+            item.ted->te_tmplen = strlen(item.ted->te_ptmplt) + 1;
         fix_ptr(R_TEPVALID, ii);
     }
 }

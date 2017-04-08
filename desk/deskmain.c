@@ -1208,7 +1208,7 @@ void xlate_fix_tedinfo(TEDINFO *tedinfo, int nted)
             /* Count number of '_' in strings
              * ( +2 for @ at the beginning, and \0 at the end )
              */
-            len += count_chars((char *) tedinfo[i].te_ptmplt, '_') + 2;
+            len += count_chars(tedinfo[i].te_ptmplt, '_') + 2;
         }
     }
     tedinfptr = dos_alloc_anyram(len);   /* Get memory */
@@ -1224,7 +1224,7 @@ void xlate_fix_tedinfo(TEDINFO *tedinfo, int nted)
         {
             tedinfo[i].te_ptext = tedinfptr;
             *tedinfptr++ = '@'; /* First character of uninitialized string */
-            len = count_chars((char *) tedinfo[i].te_ptmplt, '_');
+            len = count_chars(tedinfo[i].te_ptmplt, '_');
             for (j = 0; j < len; j++)
             {
                 *tedinfptr++ = '_';     /* Set other characters to '_' */

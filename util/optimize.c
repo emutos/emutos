@@ -153,7 +153,7 @@ void inf_sset(OBJECT *tree, WORD obj, BYTE *pstr)
     OBJECT  *objptr = tree + obj;
 
     ted = (TEDINFO *)objptr->ob_spec;
-    text = (BYTE *)ted->te_ptext;
+    text = ted->te_ptext;
     strlcpy(text,pstr,ted->te_txtlen);
 }
 
@@ -168,7 +168,7 @@ void inf_sget(OBJECT *tree, WORD obj, BYTE *pstr)
     OBJECT  *objptr = tree + obj;
 
     ted = (TEDINFO *)objptr->ob_spec;
-    strcpy(pstr, (BYTE *)ted->te_ptext);
+    strcpy(pstr, ted->te_ptext);
 }
 
 
