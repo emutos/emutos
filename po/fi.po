@@ -598,6 +598,18 @@ msgstr "Vahvista kopiointi:"
 msgid "Confirm overwrites:"
 msgstr "Vahvista ylikirjoitus:"
 
+#: desk/desk_rsc.c:1267
+msgid "Sound effects:"
+msgstr "Ääniefektit:"
+
+#: desk/desk_rsc.c:1279
+msgid "On"
+msgstr "Päällä"
+
+#: desk/desk_rsc.c:1285
+msgid "Off"
+msgstr "Pois"
+
 #: desk/desk_rsc.c:1291
 msgid "More preferences"
 msgstr "Lisäasetukset"
@@ -617,18 +629,6 @@ msgstr "Siirry"
 #: desk/desk_rsc.c:1366
 msgid "To drop down menus:"
 msgstr "Menujen aukaisu:"
-
-#: desk/desk_rsc.c:1267
-msgid "Sound effects:"
-msgstr "Ääniefektit:"
-
-#: desk/desk_rsc.c:1279
-msgid "On"
-msgstr "Päällä"
-
-#: desk/desk_rsc.c:1285
-msgid "Off"
-msgstr "Pois"
 
 #: desk/desk_rsc.c:1390
 msgid "Time format:"
@@ -781,6 +781,10 @@ msgstr "-Tiedoston loppu-"
 #: desk/desk_rsc.c:2067
 msgid "-File read error-"
 msgstr "-Tiedoston lukuvirhe-"
+
+#: desk/desk_rsc.c:2068
+msgid "Locate item"
+msgstr "Etsi kohde"
 
 #: desk/desk_rsc.c:2069
 msgid "[2]["
@@ -976,6 +980,16 @@ msgstr "[3]["
 "Ei riittävästi muistia|"
 "EmuDeskin alustamiseen.|"
 "Uudelleenkäynnistä!][OK]"
+
+#: desk/desk_rsc.c:2147
+msgid "[2]["
+"%s not found.|"
+"Do you want to remove the|"
+"icon or locate the item?][Remove|Locate|Cancel]"
+msgstr "[2]["
+"%s ei löydy.|"
+"Haluatko poistaa ikonin|"
+"tai etsiä sen kohdetta?][Poista|Etsi|Kumoa]"
 
 #: desk/desk_rsc.c:2153
 msgid "[1]["
