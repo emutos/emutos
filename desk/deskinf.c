@@ -648,6 +648,7 @@ WORD inf_pref(void)
 
     /* first, deselect all objects */
     deselect_all(tree1);
+    deselect_all(tree2);
 
     /* select buttons corresponding to current state */
     if (G.g_cdelepref)
@@ -671,6 +672,41 @@ WORD inf_pref(void)
     else
         tree1[SPSENO].ob_state |= SELECTED;
 
+    /* select buttons corresponding to current state of more preferences */
+    G.g_cdclkpref = evnt_dclick(0, FALSE);
+    tree2[SPDC1+G.g_cdclkpref].ob_state |= SELECTED;
+
+    if (G.g_cmclkpref)
+        tree2[SPMNCLKY].ob_state |= SELECTED;
+    else
+        tree2[SPMNCLKN].ob_state |= SELECTED;
+
+    switch(G.g_ctimeform)
+    {
+    case TIMEFORM_12H:
+        tree2[SPTF12HR].ob_state |= SELECTED;
+        break;
+    case TIMEFORM_24H:
+        tree2[SPTF24HR].ob_state |= SELECTED;
+        break;
+    default:
+        tree2[SPTF_DEF].ob_state |= SELECTED;
+        break;
+    }
+
+    switch(G.g_cdateform)
+    {
+    case DATEFORM_MDY:
+        tree2[SPDFMMDD].ob_state |= SELECTED;
+        break;
+    case DATEFORM_DMY:
+        tree2[SPDFDDMM].ob_state |= SELECTED;
+        break;
+    default:
+        tree2[SPDF_DEF].ob_state |= SELECTED;
+        break;
+    }
+
     /* allow user to select preferences */
     inf_show(tree1, 0);
     button = inf_what(tree1,SPOK,SPCNCL);
@@ -680,45 +716,6 @@ WORD inf_pref(void)
      */
     if (button < 0)         /* user selected More */
     {
-        tree2 = G.a_trees[ADSETPR2];
-
-        /* first, deselect all objects */
-        deselect_all(tree2);
-
-        G.g_cdclkpref = evnt_dclick(0, FALSE);
-        tree2[SPDC1+G.g_cdclkpref].ob_state |= SELECTED;
-
-        if (G.g_cmclkpref)
-            tree2[SPMNCLKY].ob_state |= SELECTED;
-        else
-            tree2[SPMNCLKN].ob_state |= SELECTED;
-
-        switch(G.g_ctimeform)
-        {
-        case TIMEFORM_12H:
-            tree2[SPTF12HR].ob_state |= SELECTED;
-            break;
-        case TIMEFORM_24H:
-            tree2[SPTF24HR].ob_state |= SELECTED;
-            break;
-        default:
-            tree2[SPTF_DEF].ob_state |= SELECTED;
-            break;
-        }
-
-        switch(G.g_cdateform)
-        {
-        case DATEFORM_MDY:
-            tree2[SPDFMMDD].ob_state |= SELECTED;
-            break;
-        case DATEFORM_DMY:
-            tree2[SPDFDDMM].ob_state |= SELECTED;
-            break;
-        default:
-            tree2[SPDF_DEF].ob_state |= SELECTED;
-            break;
-        }
-
         /* allow user to select preferences */
         inf_show(tree2, 0);
         button = inf_what(tree2, SPOK2, SPCNCL2);
