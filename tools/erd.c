@@ -1,7 +1,7 @@
 /*
  *  erd: the EmuTOS Resource Decompiler
  *
- *  Copyright 2012-2016 Roger Burrows
+ *  Copyright 2012-2017 Roger Burrows
  *
  *  This program is licensed under the GNU General Public License.
  *  Please see LICENSE.TXT for details.
@@ -184,8 +184,9 @@
  *          . add exact match option to the no-translate table
  *          . do not generate the text strings in ICONBLKs for ICON_RSC
  *
- *  v4.9    roger burrows, march/2017
+ *  v4.9    roger burrows, april/2017
  *          . treat all single-character strings as non-translatable
+ *          . don't generate unnecessary casts in write_c_epilogue() output
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -397,7 +398,7 @@ typedef struct {
   #define PROGRAM_NAME  "ird"
 #endif
 
-#define VERSION         "v4.7"
+#define VERSION         "v4.9"
 #define MAX_STRLEN      300         /* max size for internal string areas */
 #define NLS             "N_("       /* the macro used in EmuTOS for NLS support*/
 
