@@ -603,22 +603,6 @@ msgstr "Kopierbestätigung:"
 msgid "Confirm overwrites:"
 msgstr "Überschreibbestätigung:"
 
-#: desk/desk_rsc.c:1324
-msgid "Double-click speed:"
-msgstr "Doppelklickrate:"
-
-#: desk/desk_rsc.c:1378
-msgid "Click"
-msgstr "Klick"
-
-#: desk/desk_rsc.c:1384
-msgid "No click"
-msgstr "Kein Klick"
-
-#: desk/desk_rsc.c:1366
-msgid "To drop down menus:"
-msgstr "Menüs anzeigen bei:"
-
 #: desk/desk_rsc.c:1267
 msgid "Sound effects:"
 msgstr "Sound-Effekte:"
@@ -634,6 +618,22 @@ msgstr "Aus"
 #: desk/desk_rsc.c:1291
 msgid "More preferences"
 msgstr "Weitere Einstellungen"
+
+#: desk/desk_rsc.c:1324
+msgid "Double-click speed:"
+msgstr "Doppelklickrate:"
+
+#: desk/desk_rsc.c:1378
+msgid "Click"
+msgstr "Klick"
+
+#: desk/desk_rsc.c:1384
+msgid "No click"
+msgstr "Kein Klick"
+
+#: desk/desk_rsc.c:1366
+msgid "To drop down menus:"
+msgstr "Menüs anzeigen bei:"
 
 #: desk/desk_rsc.c:1390
 msgid "Time format:"
