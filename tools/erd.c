@@ -2030,9 +2030,9 @@ PRIVATE int write_c_epilogue(FILE *fp)
     fprintf(fp,"    /* translate and fix TEDINFO strings */\n");
     fprintf(fp,"    xlate_fix_tedinfo(%srs_tedinfo, RS_NTED);\n\n",prefix);
     fprintf(fp,"    /* The first three TEDINFOs don't use a '@' as first character: */\n");
-    fprintf(fp,"    *(char *)rs_tedinfo[0].te_ptext = '_';\n");
-    fprintf(fp,"    *(char *)rs_tedinfo[1].te_ptext = '_';\n");
-    fprintf(fp,"    *(char *)rs_tedinfo[2].te_ptext = 0;\n");
+    fprintf(fp,"    *rs_tedinfo[0].te_ptext = '_';\n");
+    fprintf(fp,"    *rs_tedinfo[1].te_ptext = '_';\n");
+    fprintf(fp,"    *rs_tedinfo[2].te_ptext = 0;\n");
     fprintf(fp,"}\n\n\n");
 
     fprintf(fp,"void gem_rsc_fixit(void)\n");
