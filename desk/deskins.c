@@ -1021,7 +1021,7 @@ WORD rmv_icon(WORD sobj)
 void ins_shortcut(WORD wh, WORD mx, WORD my)
 {
     BYTE pathname[MAXPATHLEN], *p, *q;
-    WORD sobj, x, y;
+    WORD sobj, x, y, dummy;
     ANODE *pa, *newpa;
     FNODE *pf;
     WNODE *pw;
@@ -1071,6 +1071,16 @@ void ins_shortcut(WORD wh, WORD mx, WORD my)
         newpa->a_xspot = x;
         newpa->a_yspot = y;
         ins_posdisk(x, y, &x, &y);  /* update position for next icon */
+        /*
+         * override the default icon with an installed icon (if it exists)
+         */
+        pa = app_afind_by_name((pf->f_attr&F_SUBDIR)?AT_ISFOLD:AT_ISFILE,
+                        AF_ISDESK, pw->w_path->p_spec, pf->f_name, &dummy);
+        if (pa)                     /* paranoia */
+        {
+            newpa->a_aicon = pa->a_aicon;
+            newpa->a_dicon = pa->a_dicon;
+        }
     }
 
     app_blddesk();
