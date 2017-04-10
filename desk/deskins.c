@@ -838,7 +838,7 @@ static WORD install_window_icon(FNODE *pf)
 
             type = (tree[IW_FILE].ob_state & SELECTED) ? AT_ISFILE : AT_ISFOLD;
             if (!pf)
-                pa = app_afind_by_name(type, "", new_name, &dummy);
+                pa = app_afind_by_name(type, AF_ISDESK, "", new_name, &dummy);
             else pa = pf->f_pa;
 
             if (!pa)                /* can't happen ... */

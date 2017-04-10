@@ -666,7 +666,7 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname)
             remove_locate_shortcut(curr);
             return done;
         }
-        tmp = app_afind_by_name(AT_ISFILE, pathname, pname, &isapp);
+        tmp = app_afind_by_name(AT_ISFILE, AF_ISDESK|AF_WINDOW, pathname, pname, &isapp);
         if (tmp)
             pa = tmp;
     }
@@ -1399,7 +1399,7 @@ ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp)
             pf = fpd_ofind(pw->w_path->p_flist, item);
             if (pf)
                 pa = app_afind_by_name((pf->f_attr&F_SUBDIR)?AT_ISFOLD:AT_ISFILE,
-                                        pw->w_path->p_spec, pf->f_name, &isapp);
+                            AF_ISDESK|AF_WINDOW, pw->w_path->p_spec, pf->f_name, &isapp);
         }
     }
 

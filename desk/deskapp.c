@@ -1151,11 +1151,14 @@ ANODE *app_afind_by_id(WORD obid)
 /*
  *  Find ANODE by name & type
  *
+ *  Note: ANODEs with a flag bit matching the 'ignore' parameter are
+ *  ignored during the search. 
+ *
  *  Returns match type in *pisapp:
  *      TRUE if name matches application name
  *      FALSE if name matches data name
  */
-ANODE *app_afind_by_name(WORD atype, BYTE *pspec, BYTE *pname, WORD *pisapp)
+ANODE *app_afind_by_name(WORD atype, WORD ignore, BYTE *pspec, BYTE *pname, WORD *pisapp)
 {
     ANODE *pa;
     WORD match;
@@ -1166,7 +1169,9 @@ ANODE *app_afind_by_name(WORD atype, BYTE *pspec, BYTE *pname, WORD *pisapp)
 
     for (pa = G.g_ahead; pa; pa = pa->a_next)
     {
-        if ((pa->a_type == atype) && !(pa->a_flags & AF_ISDESK))
+        if (pa->a_flags & ignore)
+            continue;
+        if (pa->a_type == atype)
         {
             if (wildcmp(pa->a_pdata, pname))
             {
