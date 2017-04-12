@@ -1,7 +1,7 @@
 /*
  * blkdev.h - bios block devices
  *
- * Copyright (C) 2001-2016 The EmuTOS development team
+ * Copyright (C) 2001-2017 The EmuTOS development team
  *
  * Authors:
  *  MAD   Martin Doering

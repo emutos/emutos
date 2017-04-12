@@ -1,7 +1,7 @@
 /*
  * mkrom.c - Create an EmuTOS ROM image
  *
- * Copyright (C) 2012-2016 The EmuTOS development team
+ * Copyright (C) 2012-2017 The EmuTOS development team
  *
  * Authors:
  *  VRI   Vincent Rivière

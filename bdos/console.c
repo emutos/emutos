@@ -2,7 +2,7 @@
  * console.c - GEMDOS console system
  *
  * Copyright (C) 2001 Lineo, Inc.
- * Copyright (C) 2016 The EmuTOS development team
+ * Copyright (C) 2016-2017 The EmuTOS development team
  *
  * Authors:
  *  JSL   Jason S. Loveman

@@ -2,7 +2,7 @@
  * console.c - vt52 like screen handling routines
  *
  *
- * Copyright (C) 2013-2016 The EmuTOS development team
+ * Copyright (C) 2013-2017 The EmuTOS development team
  * Copyright (C) 2004 Martin Doering
  *
  * Authors:

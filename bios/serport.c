@@ -3,7 +3,7 @@
  *
  * This file exists to centralise the handling of serial port hardware.
  *
- * Copyright (C) 2013-2016 The EmuTOS development team
+ * Copyright (C) 2013-2017 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows

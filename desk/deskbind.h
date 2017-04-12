@@ -3,7 +3,7 @@
 /*      for 2.3                 9/25/87                 mdf             */
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2016 The EmuTOS development team
+*                 2002-2017 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.

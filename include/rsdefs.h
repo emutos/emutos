@@ -1,7 +1,7 @@
 /*
  * rsdefs.h - RSC file definitions
  *
- * Copyright (C) 2016 The EmuTOS development team
+ * Copyright (C) 2016-2017 The EmuTOS development team
  *
  * Authors:
  *  RFB   Roger Burrows

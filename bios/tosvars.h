@@ -1,7 +1,7 @@
 /*
  * tosvars.h - name of low-memory variables
  *
- * Copyright (C) 2001-2016 The EmuTOS development team
+ * Copyright (C) 2001-2017 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
