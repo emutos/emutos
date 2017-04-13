@@ -285,17 +285,11 @@
 # ifndef CONF_WITH_ASSERT
 #  define CONF_WITH_ASSERT 0
 # endif
-# ifndef CONF_WITH_FORMAT
-#  define CONF_WITH_FORMAT 0
-# endif
 # ifndef CONF_WITH_SHUTDOWN
 #  define CONF_WITH_SHUTDOWN 0
 # endif
 # ifndef CONF_WITH_MONSTER
 #  define CONF_WITH_MONSTER 0
-# endif
-# ifndef CONF_WITH_FORMAT
-#  define CONF_WITH_FORMAT 0
 # endif
 #endif
 
