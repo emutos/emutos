@@ -1241,7 +1241,7 @@ gitready: expand crlf
 # Standalone EmuCON
 #
 
-TOCLEAN += cli/*.o cli/*.tos
+TOCLEAN += cli/version.c cli/*.o cli/*.tos
 
 #
 # local Makefile
