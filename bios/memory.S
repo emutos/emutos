@@ -624,8 +624,9 @@ stram_detected:
 // ==== This part is executed on any boot (first boot or reset) ==============
 // ===========================================================================
 any_boot:
-        // Clear the major part of the BSS segment.
-        // This explicitly avoids to clear our stack so bzero() can return.
+        // Clear the BSS segment.
+        // Our stack is explicitly set outside the BSS, so this is safe:
+        // bzero() will be able to return.
         move.l  #__bss, a0
         move.l  #__ebss, a1
         bsr     call_bzero_a0_a1
