@@ -360,7 +360,7 @@ WORD initinfo(void)
 
         /* if a non-modifier key was pressed, examine it */
         if (bconstat2()) {
-            int c = 0xFF & bconin2();
+            int c = LOBYTE(bconin2());
 
             c = toupper(c);
 #if WITH_CLI
