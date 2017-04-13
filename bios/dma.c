@@ -10,9 +10,6 @@
 #include "config.h"
 #include "portab.h"
 #include "dma.h"
-#include "tosvars.h"
-#include "cookie.h"
-#include "kprint.h"
 
 void set_dma_addr(UBYTE *addr)
 {
