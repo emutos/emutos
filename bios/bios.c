@@ -591,7 +591,7 @@ BOOL can_shutdown(void)
  * biosmain - c part of the bios init code
  *
  * Print some status messages
- * exec the user interface (shell or aes)
+ * exec the user interface (shell or AES)
  */
 
 void biosmain(void)

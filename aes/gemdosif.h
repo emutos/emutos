@@ -1,5 +1,5 @@
 /*
- * EmuTOS aes: functions and variables implemened in gemdosif.S
+ * EmuTOS AES: functions and variables implemened in gemdosif.S
  *
  * Copyright (C) 2002-2016 The EmuTOS development team
  *

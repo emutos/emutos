@@ -1,5 +1,5 @@
 /*
- * EmuTOS aes
+ * EmuTOS AES
  *
  * Copyright (C) 2002-2015 The EmuTOS development team
  *

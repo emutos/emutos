@@ -79,7 +79,7 @@ _enable_interrupts:
  *
  * called when entering graphics mode to run a graphics application
  * after a character mode application (which may have stepped on the
- * aes trap and/or the critical error vector)
+ * AES trap and/or the critical error vector)
  */
 _retake:
 #ifdef __mcoldfire__
