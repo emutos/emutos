@@ -42,8 +42,6 @@ clean:
 # version string
 #
 
-TOCLEAN += obj/*.c
-
 # This temporary file is always generated
 version2.c:
 	@echo '/* Generated from Makefile */' > $@
