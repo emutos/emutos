@@ -387,6 +387,10 @@ msgstr "  Esegui EmuCON     ^Z"
 msgid "  Shutdown        ^Q"
 msgstr "  Arresta sistema   ^Q"
 
+#: desk/desk_rsc.c:391 desk/desk_rsc.c:2051
+msgid "  Show as text  ^T"
+msgstr "  Formato testo  ^T"
+
 #: desk/desk_rsc.c:397
 msgid "-------------------"
 msgstr "--------------------"
@@ -619,6 +623,10 @@ msgstr "Altre preferenze"
 msgid "Double-click speed:"
 msgstr "Velocità doppio click:"
 
+#: desk/desk_rsc.c:1366
+msgid "To drop down menus:"
+msgstr "Apertura del menu:"
+
 #: desk/desk_rsc.c:1378
 msgid "Click"
 msgstr "Click"
@@ -626,10 +634,6 @@ msgstr "Click"
 #: desk/desk_rsc.c:1384
 msgid "No click"
 msgstr "No click"
-
-#: desk/desk_rsc.c:1366
-msgid "To drop down menus:"
-msgstr "Apertura del menu:"
 
 #: desk/desk_rsc.c:1390
 msgid "Time format:"
@@ -738,10 +742,6 @@ msgstr "%ld byte usati in %d oggetti."
 #: desk/desk_rsc.c:2050
 msgid "  Show as icons ^T"
 msgstr "  Formato icona  ^T"
-
-#: desk/desk_rsc.c:391 desk/desk_rsc.c:2051
-msgid "  Show as text  ^T"
-msgstr "  Formato testo  ^T"
 
 #: desk/desk_rsc.c:2052
 msgid "FILE INFORMATION"
@@ -975,7 +975,7 @@ msgstr "[2]["
 "Tasto funzione già assegnato.|"
 "Vuoi riassegnarlo?][  OK  |Annulla]"
 
-#: desk/desk_rsc.c:2141
+#: desk/desk_rsc.c:2142
 msgid "[3]["
 "Not enough memory to|"
 "initialise EmuDesk.|"
@@ -1017,7 +1017,7 @@ msgstr "[3]["
 "destinazione è protetto alla|"
 "scrittura o non è impiegabile.][Riprova|Annulla]"
 
-#: desk/desk_rsc.c:2159
+#: desk/desk_rsc.c:2160
 msgid "[1]["
 "This disk has %ld bytes|"
 "available to the user.][ Continue | Quit ]"

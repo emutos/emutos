@@ -386,6 +386,10 @@ msgstr "  Spustit EmuCON  ^Z"
 msgid "  Shutdown        ^Q"
 msgstr "  Vypnout         ^Q"
 
+#: desk/desk_rsc.c:391 desk/desk_rsc.c:2051
+msgid "  Show as text  ^T"
+msgstr "  Jako text    ^T"
+
 #: desk/desk_rsc.c:397
 msgid "-------------------"
 msgstr "------------------"
@@ -618,6 +622,10 @@ msgstr "Více nastavení"
 msgid "Double-click speed:"
 msgstr "Rychlost dvojkliku:"
 
+#: desk/desk_rsc.c:1366
+msgid "To drop down menus:"
+msgstr "Rozbalení nabídky:"
+
 #: desk/desk_rsc.c:1378
 msgid "Click"
 msgstr "Klik"
@@ -625,10 +633,6 @@ msgstr "Klik"
 #: desk/desk_rsc.c:1384
 msgid "No click"
 msgstr "Ukázat"
-
-#: desk/desk_rsc.c:1366
-msgid "To drop down menus:"
-msgstr "Rozbalení nabídky:"
 
 #: desk/desk_rsc.c:1390
 msgid "Time format:"
@@ -737,10 +741,6 @@ msgstr "%ld bytù v %d polo¾kách."
 #: desk/desk_rsc.c:2050
 msgid "  Show as icons ^T"
 msgstr "  Jako ikony   ^T"
-
-#: desk/desk_rsc.c:391 desk/desk_rsc.c:2051
-msgid "  Show as text  ^T"
-msgstr "  Jako text    ^T"
 
 #: desk/desk_rsc.c:2052
 msgid "FILE INFORMATION"

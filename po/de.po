@@ -391,6 +391,10 @@ msgstr "  Starte EmuCON    ^Z"
 msgid "  Shutdown        ^Q"
 msgstr "  Stoppe System    ^Q"
 
+#: desk/desk_rsc.c:391 desk/desk_rsc.c:2051
+msgid "  Show as text  ^T"
+msgstr "  Als Text   ^T"
+
 #: desk/desk_rsc.c:397
 msgid "-------------------"
 msgstr "----------------"
@@ -623,6 +627,10 @@ msgstr "Weitere Einstellungen"
 msgid "Double-click speed:"
 msgstr "Doppelklickrate:"
 
+#: desk/desk_rsc.c:1366
+msgid "To drop down menus:"
+msgstr "Menüs anzeigen bei:"
+
 #: desk/desk_rsc.c:1378
 msgid "Click"
 msgstr "Klick"
@@ -630,10 +638,6 @@ msgstr "Klick"
 #: desk/desk_rsc.c:1384
 msgid "No click"
 msgstr "Kein Klick"
-
-#: desk/desk_rsc.c:1366
-msgid "To drop down menus:"
-msgstr "Menüs anzeigen bei:"
 
 #: desk/desk_rsc.c:1390
 msgid "Time format:"
@@ -742,10 +746,6 @@ msgstr "%ld Bytes in %d Dateien."
 #: desk/desk_rsc.c:2050
 msgid "  Show as icons ^T"
 msgstr "  Als Icons  ^T"
-
-#: desk/desk_rsc.c:391 desk/desk_rsc.c:2051
-msgid "  Show as text  ^T"
-msgstr "  Als Text   ^T"
 
 #: desk/desk_rsc.c:2052
 msgid "FILE INFORMATION"
@@ -1005,8 +1005,7 @@ msgid "[2]["
 msgstr "[2]["
 "Kann %s nicht finden.|"
 "Soll das Icon gelöscht werden|"
-"oder wollen Sie danach suchen?]"
-"[Löschen|Suchen|Abbruch]"
+"oder wollen Sie danach suchen?][Löschen|Suchen|Abbruch]"
 
 #: desk/desk_rsc.c:2153
 msgid "[1]["
@@ -1390,3 +1389,4 @@ msgstr "Falsche Zahl von Parametern"
 #: cli/cmdutil.c:105
 msgid "error code "
 msgstr "Fehlercode "
+

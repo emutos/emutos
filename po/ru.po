@@ -387,6 +387,10 @@ msgstr "  Запустить EmuCON      ^Z"
 msgid "  Shutdown        ^Q"
 msgstr "  Выключить             ^Q"
 
+#: desk/desk_rsc.c:391 desk/desk_rsc.c:2051
+msgid "  Show as text  ^T"
+msgstr "  Показать как текст  ^T"
+
 #: desk/desk_rsc.c:397
 msgid "-------------------"
 msgstr "-------------------------"
@@ -619,6 +623,10 @@ msgstr "Больше настроек"
 msgid "Double-click speed:"
 msgstr "Скорость дв. нажатия"
 
+#: desk/desk_rsc.c:1366
+msgid "To drop down menus:"
+msgstr "К выпадающим меню"
+
 #: desk/desk_rsc.c:1378
 msgid "Click"
 msgstr "Нажатие"
@@ -626,10 +634,6 @@ msgstr "Нажатие"
 #: desk/desk_rsc.c:1384
 msgid "No click"
 msgstr "Ненажатие"
-
-#: desk/desk_rsc.c:1366
-msgid "To drop down menus:"
-msgstr "К выпадающим меню"
 
 #: desk/desk_rsc.c:1390
 msgid "Time format:"
@@ -738,10 +742,6 @@ msgstr "%ld байт используется в %d объектах."
 #: desk/desk_rsc.c:2050
 msgid "  Show as icons ^T"
 msgstr "  Показать как иконки ^T"
-
-#: desk/desk_rsc.c:391 desk/desk_rsc.c:2051
-msgid "  Show as text  ^T"
-msgstr "  Показать как текст  ^T"
 
 #: desk/desk_rsc.c:2052
 msgid "FILE INFORMATION"
@@ -1022,7 +1022,7 @@ msgid "[3]["
 msgstr "[3]["
 "Ошибка форматирования.|"
 "Целевой диск может быть|"
-"защищен от записи или его|" 
+"защищен от записи или его|"
 "нельзя использовать.][Повтор|Отмена]"
 
 #: desk/desk_rsc.c:2160

@@ -386,6 +386,10 @@ msgstr "  Käynnistä EmuCON ^Z"
 msgid "  Shutdown        ^Q"
 msgstr "  Pysäytä systeemi ^Q"
 
+#: desk/desk_rsc.c:391 desk/desk_rsc.c:2051
+msgid "  Show as text  ^T"
+msgstr "  Tekstinä   ^T"
+
 #: desk/desk_rsc.c:397
 msgid "-------------------"
 msgstr "----------------"
@@ -618,6 +622,10 @@ msgstr "Lisäasetukset"
 msgid "Double-click speed:"
 msgstr "Tuplaklikkausnopeus:"
 
+#: desk/desk_rsc.c:1366
+msgid "To drop down menus:"
+msgstr "Menujen aukaisu:"
+
 #: desk/desk_rsc.c:1378
 msgid "Click"
 msgstr "Klikkaa"
@@ -625,10 +633,6 @@ msgstr "Klikkaa"
 #: desk/desk_rsc.c:1384
 msgid "No click"
 msgstr "Siirry"
-
-#: desk/desk_rsc.c:1366
-msgid "To drop down menus:"
-msgstr "Menujen aukaisu:"
 
 #: desk/desk_rsc.c:1390
 msgid "Time format:"
@@ -737,10 +741,6 @@ msgstr "%ld tavua käytetty %d tiedostoon."
 #: desk/desk_rsc.c:2050
 msgid "  Show as icons ^T"
 msgstr "  Ikoneina   ^T"
-
-#: desk/desk_rsc.c:391 desk/desk_rsc.c:2051
-msgid "  Show as text  ^T"
-msgstr "  Tekstinä   ^T"
 
 #: desk/desk_rsc.c:2052
 msgid "FILE INFORMATION"

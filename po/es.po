@@ -390,6 +390,10 @@ msgstr "  Ejecutar EmuCON   ^Z"
 msgid "  Shutdown        ^Q"
 msgstr "  Cerrar sistema    ^Q"
 
+#: desk/desk_rsc.c:391 desk/desk_rsc.c:2051
+msgid "  Show as text  ^T"
+msgstr "  Mostrar como texto  ^T"
+
 #: desk/desk_rsc.c:397
 msgid "-------------------"
 msgstr "-------------------------"
@@ -622,6 +626,10 @@ msgstr "Más preferencias"
 msgid "Double-click speed:"
 msgstr "Velocidad de click:"
 
+#: desk/desk_rsc.c:1366
+msgid "To drop down menus:"
+msgstr "Para desplegar menús"
+
 #: desk/desk_rsc.c:1378
 msgid "Click"
 msgstr "Click"
@@ -629,10 +637,6 @@ msgstr "Click"
 #: desk/desk_rsc.c:1384
 msgid "No click"
 msgstr "No Click"
-
-#: desk/desk_rsc.c:1366
-msgid "To drop down menus:"
-msgstr "Para desplegar menús"
 
 #: desk/desk_rsc.c:1390
 msgid "Time format:"
@@ -741,10 +745,6 @@ msgstr "%ld Bytes en %d elementos."
 #: desk/desk_rsc.c:2050
 msgid "  Show as icons ^T"
 msgstr "  Mostrar como iconos ^T"
-
-#: desk/desk_rsc.c:391 desk/desk_rsc.c:2051
-msgid "  Show as text  ^T"
-msgstr "  Mostrar como texto  ^T"
 
 #: desk/desk_rsc.c:2052
 msgid "FILE INFORMATION"

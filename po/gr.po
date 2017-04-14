@@ -399,6 +399,10 @@ msgstr "  „¡«â¢œ© EmuCON         ^Z"
 msgid "  Shutdown        ^Q"
 msgstr "  Shutdown                ^Q"
 
+#: desk/desk_rsc.c:391 desk/desk_rsc.c:2051
+msgid "  Show as text  ^T"
+msgstr "  „£­á¤ © àª ¡œå£œ¤¦     ^T"
+
 #: desk/desk_rsc.c:397
 msgid "-------------------"
 msgstr "-----------------------------"
@@ -751,14 +755,6 @@ msgstr "%ld bytes ®¨© £¦§¦ ¦ç¤«˜  ©œ %d ˜¨®œå˜."
 msgid "  Show as icons ^T"
 msgstr "  „£­á¤ © àª œ ¡¦¤å› ˜   ^T"
 
-#: desk/desk_rsc.c:2068
-msgid "Locate item"
-msgstr "„¤«¦§ ©£æª ˜¤« ¡œ £â¤¦¬"
-
-#: desk/desk_rsc.c:391 desk/desk_rsc.c:2051
-msgid "  Show as text  ^T"
-msgstr "  „£­á¤ © àª ¡œå£œ¤¦     ^T"
-
 #: desk/desk_rsc.c:2052
 msgid "FILE INFORMATION"
 msgstr "Š†”ˆ„‘ €•„ˆ“"
@@ -798,6 +794,10 @@ msgstr "-’â¢¦ª €¨®œå¦¬-"
 #: desk/desk_rsc.c:2067
 msgid "-File read error-"
 msgstr "-‘­á¢£˜ ˜¤áš¤à©ª ˜¨®œå¦¬-"
+
+#: desk/desk_rsc.c:2068
+msgid "Locate item"
+msgstr "„¤«¦§ ©£æª ˜¤« ¡œ £â¤¦¬"
 
 #: desk/desk_rsc.c:2069
 msgid "[2]["
