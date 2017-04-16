@@ -888,7 +888,7 @@ msgid "[3]["
 "Cannot create EMUDESK.INF.][  OK  ]"
 msgstr "[3]["
 "EMUDESK.INF kann nicht|"
-"angelegt werden][  OK  ]"
+"angelegt werden.][  OK  ]"
 
 #: desk/desk_rsc.c:2103
 msgid "[3]["
