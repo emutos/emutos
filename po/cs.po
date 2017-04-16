@@ -815,8 +815,7 @@ msgid "[1]["
 msgstr "[1]["
 "GEM desktop nemá více oken.|"
 "Prosím zavøete okno,|"
-"co nepou¾íváte|"
-"[  OK  ]"
+"co nepou¾íváte.][  OK  ]"
 
 #: desk/desk_rsc.c:2081
 msgid "[3]["
