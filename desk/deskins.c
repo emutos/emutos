@@ -363,10 +363,22 @@ WORD ins_app(WORD curr)
     {
         if (!isapp)     /* selected item appears to be a data file */
             return 0;
-        pw = win_find(G.g_cwin);
-        p = pw->w_path->p_spec;
-        q = filename_start(p);
-        pfname = pf->f_name;
+#if CONF_WITH_DESKTOP_SHORTCUTS
+        /* special handling for desktop shortcuts */
+        if (pa->a_flags & AF_ISDESK)
+        {
+            p = pa->a_pdata;
+            q = filename_start(p);
+            pfname = pa->a_pappl;
+        }
+        else
+#endif
+        {
+            pw = win_find(G.g_cwin);
+            p = pw->w_path->p_spec;
+            q = filename_start(p);
+            pfname = pf->f_name;
+        }
     }
     strlcpy(pathname,p,q-p+1);  /* copy pathname including trailing backslash */
 
