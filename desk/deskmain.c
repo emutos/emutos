@@ -709,7 +709,7 @@ static BOOL check_arrow_key(WORD thechar)
 /*
  * search ANODEs for matching function key and launch corresponding application
  */
-static BOOL process_funkey(WORD funkey)
+static WORD process_funkey(WORD funkey)
 {
     ANODE *pa;
     BYTE pathname[MAXPATHLEN];
@@ -724,20 +724,22 @@ static BOOL process_funkey(WORD funkey)
         pfname = filename_start(pa->a_pappl);
         /* copy pathname including trailing backslash */
         strlcpy(pathname,pa->a_pappl,pfname-pa->a_pappl+1);
-        do_aopen(pa,1,-1,pathname,pfname);
-        return TRUE;
+        return do_aopen(pa,1,-1,pathname,pfname);
     }
 
-    return FALSE;
+    return -1;
 }
 
 
 /*
  * check for function key & handle appropriately
  *
- * return TRUE iff matching key found & processed
+ * returns:
+ *  -1  key not a function key, or matching function key not found
+ *  0   non-graphics program launched
+ *  1   graphics program launched
  */
-static BOOL check_function_key(WORD thechar)
+static WORD check_function_key(WORD thechar)
 {
     WORD funkey;
 
@@ -745,7 +747,7 @@ static BOOL check_function_key(WORD thechar)
         funkey = ((thechar-FUNKEY_01) >> 8) + 1;
     else if ((thechar >= FUNKEY_11) && (thechar <= FUNKEY_20))
         funkey = ((thechar-FUNKEY_11) >> 8) + 11;
-    else return FALSE;
+    else return -1;
 
     return process_funkey(funkey);
 }
@@ -854,7 +856,7 @@ static WORD lookup_ascii_shortcut(WORD ascii, WORD *itemptr)
 static WORD hndl_kbd(WORD thechar)
 {
     WNODE *pw;
-    WORD done = FALSE, ascii;
+    WORD done, ascii;
     WORD title = -1, item;
 
     ascii = thechar & 0x00ff;
@@ -863,17 +865,18 @@ static WORD hndl_kbd(WORD thechar)
         pw = win_ontop();
         if (pw)
             do_refresh(pw);
-        return done;
+        return FALSE;
     }
 
     if (check_arrow_key(thechar))
-        return done;
+        return FALSE;
 
-    if (check_function_key(thechar))
+    done = check_function_key(thechar);
+    if (done >= 0)
         return done;
 
     if (check_alt_letter_key(thechar))
-        return done;
+        return FALSE;
 
     /* else normal ASCII character (ctl-Z etc) */
     title = lookup_ascii_shortcut(ascii,&item);
@@ -881,6 +884,7 @@ static WORD hndl_kbd(WORD thechar)
     /*
      * actually handle shortcuts
      */
+    done = FALSE;
     if (title >= 0)
     {
         menu_tnormal(G.a_trees[ADMENU], title, 0);
