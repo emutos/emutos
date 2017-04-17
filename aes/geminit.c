@@ -391,7 +391,13 @@ static BOOL process_inf2(void)
             tmpptr2 = sh_name(tmpptr1);
             *(tmpptr2-1) = 0;
             KDEBUG(("Found #Z entry in EMUDESK.INF: path=%s, prg=%s\n",tmpptr1,tmpptr2));
-            sh_wdef(tmpptr2, tmpptr1);
+
+            if (!(bootflags & BOOTFLAG_SKIP_AUTO_ACC))
+            {
+                /* run autorun program */
+                sh_wdef(tmpptr2, tmpptr1);
+            }
+
             ++pcurr;
         }
     }
