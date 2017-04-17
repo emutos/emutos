@@ -512,7 +512,7 @@ msgstr "Paramètres:"
 
 #: desk/desk_rsc.c:796
 msgid "INSTALL DESKTOP ICON"
-msgstr "INSTALLER ICÔNE DE BUREAU"
+msgstr "INSTALLER ICONE DE BUREAU"
 
 #: desk/desk_rsc.c:814 desk/desk_rsc.c:1736
 msgid "Item type:"
@@ -708,7 +708,7 @@ msgstr "Compatible ST"
 
 #: desk/desk_rsc.c:1724
 msgid "INSTALL WINDOW ICON"
-msgstr "INSTALLER ICÔNE DE FENÊTRE"
+msgstr "INSTALLER ICONE DE FENETRE"
 
 #: desk/desk_rsc.c:1748
 msgid "Folder"
