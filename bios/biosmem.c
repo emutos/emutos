@@ -122,6 +122,9 @@ UBYTE *balloc_stram(ULONG size, BOOL top)
         /* Allocate the new buffer at the bottom of the ST-RAM */
         ret = membot;
         membot += size;
+
+        /* Rule: Update end_os whenever membot changes */
+        end_os = membot;
     }
 
     KDEBUG(("balloc_stram(%lu, %d) returns %p\n", size, top, ret));
