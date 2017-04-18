@@ -72,6 +72,9 @@
 # ifndef CONF_WITH_MEGARTC
 #  define CONF_WITH_MEGARTC 0
 # endif
+# ifndef CONF_WITH_VME
+#  define CONF_WITH_VME 0
+# endif
 # ifndef CONF_WITH_SFP004
 #  define CONF_WITH_SFP004 0
 # endif

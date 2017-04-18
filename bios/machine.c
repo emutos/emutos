@@ -412,7 +412,8 @@ void machine_detect(void)
     detect_video();
     detect_serial_ports();
 #if CONF_WITH_VME
-    detect_vme();
+    if (!IS_ARANYM)
+        detect_vme();
 #endif
 #if CONF_WITH_MEGARTC
     detect_megartc();
