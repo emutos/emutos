@@ -416,7 +416,8 @@ void machine_detect(void)
         detect_vme();
 #endif
 #if CONF_WITH_MEGARTC
-    detect_megartc();
+    if (!IS_ARANYM)
+        detect_megartc();
     KDEBUG(("has_megartc = %d\n", has_megartc));
 #endif /* CONF_WITH_MEGARTC */
 #if CONF_WITH_ICDRTC
