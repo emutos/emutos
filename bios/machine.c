@@ -68,13 +68,6 @@ int has_tt_shifter;
 int has_videl;
 #endif
 
-#if CONF_WITH_TT_MFP
-int has_tt_mfp;
-#endif
-#if CONF_WITH_SCC
-int has_scc;
-#endif
-
 /*
  * Tests video capabilities (STEnhanced Shifter, TT Shifter and VIDEL)
  */
@@ -123,27 +116,41 @@ static void detect_video(void)
 #endif
 }
 
-/*
- * detect SCC (Falcon and TT) and second MFP (TT only)
- */
-static void detect_serial_ports(void)
-{
 #if CONF_WITH_TT_MFP
+
+int has_tt_mfp;
+
+/*
+ * detect second MFP (TT only)
+ */
+static void detect_tt_mfp(void)
+{
     has_tt_mfp = 0;
     if (check_read_byte((LONG)TT_MFP_BASE+1))
         has_tt_mfp = 1;
 
     KDEBUG(("has_tt_mfp = %d\n", has_tt_mfp));
-#endif
+}
+
+#endif /* CONF_WITH_TT_MFP */
 
 #if CONF_WITH_SCC
+
+int has_scc;
+
+/*
+ * detect SCC (Falcon and TT)
+ */
+static void detect_scc(void)
+{
     has_scc = 0;
     if (check_read_byte(SCC_BASE))
         has_scc = 1;
 
     KDEBUG(("has_scc = %d\n", has_scc));
-#endif
 }
+
+#endif /* CONF_WITH_SCC */
 
 #if CONF_WITH_VME
 
@@ -410,7 +417,12 @@ void machine_detect(void)
     ttram_detect();
 
     detect_video();
-    detect_serial_ports();
+#if CONF_WITH_TT_MFP
+    detect_tt_mfp();
+#endif
+#if CONF_WITH_SCC
+    detect_scc();
+#endif
 #if CONF_WITH_VME
     if (!IS_ARANYM)
         detect_vme();
