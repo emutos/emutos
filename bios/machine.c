@@ -418,10 +418,12 @@ void machine_detect(void)
 
     detect_video();
 #if CONF_WITH_TT_MFP
-    detect_tt_mfp();
+    if (!IS_ARANYM)
+        detect_tt_mfp();
 #endif
 #if CONF_WITH_SCC
-    detect_scc();
+    if (!IS_ARANYM)
+        detect_scc();
 #endif
 #if CONF_WITH_VME
     if (!IS_ARANYM)
