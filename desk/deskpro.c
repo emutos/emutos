@@ -40,11 +40,24 @@
 
 static WORD pro_exec(WORD isgraf, WORD isover, BYTE *pcmd, BYTE *ptail)
 {
-    WORD ret;
+    WORD drive, ret;
+    BYTE *p, pathname[MAXPATHLEN];
+
+    /*
+     * build full pathname, just like TOS 1.04 & later
+     */
+    drive = dos_gdrv();
+    p = pathname;
+    *p++ = 'A' + drive;
+    *p++ = ':';
+    dos_gdir(drive+1, p);
+    p = pathname + strlen(pathname);
+    *p++ = '\\';
+    strcpy(p, pcmd);
 
     graf_mouse(HGLASS, NULL);
 
-    ret = shel_write(TRUE, isgraf, isover, pcmd, ptail);
+    ret = shel_write(TRUE, isgraf, isover, pathname, ptail);
     if (!ret)
         graf_mouse(ARROW, NULL);
     return ret;
