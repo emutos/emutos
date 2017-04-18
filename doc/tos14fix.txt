@@ -559,7 +559,7 @@ Print Text File
 
 Running Applications
 --------------------
-089. Applications can be run from background windows; when the        FIXED: since at least 0.8.5
+089. Applications can be run from background windows; when the        FIXED: commit 0ce47d
      Desktop launches an application, it shel_write()s the full
      pathname of the application.
 
