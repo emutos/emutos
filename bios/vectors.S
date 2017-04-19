@@ -1161,13 +1161,18 @@ _check_read_byte:
         moveq   #0,d0
         nop                                     // flush pipeline
 
+        jsr     dummy_jit_workaround
         move.l  4(sp),a0
+        jsr     dummy_jit_workaround
         tst.b   (a0)
+        jsr     dummy_jit_workaround
         nop                                     // flush pipeline
 
         moveq   #0x01,d0        // passed
 
-berr:   move.l  a1,(8).w
+berr:
+        jsr     dummy_jit_workaround
+        move.l  a1,(8).w
         move.l  d1,sp
         nop
 
@@ -1197,6 +1202,7 @@ msgcrb:
  * _just_rts - just a dummy
  */
 
+dummy_jit_workaround:
 _just_rts:
         rts
 
