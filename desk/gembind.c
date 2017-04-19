@@ -49,7 +49,7 @@
      ((CHECK_RANGE(nintin, 0, 15)) << 5) | \
      ((CHECK_RANGE(nintout, 0, 7)) << 2) | \
      (CHECK_RANGE(naddrin, 0, 3)))
- 
+
 typedef struct gemblkstr
 {
         UWORD           *gb_pcontrol;

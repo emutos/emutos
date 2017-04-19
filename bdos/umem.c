@@ -104,7 +104,7 @@ static MPB *find_mpb(void *addr)
         return &pmdalt;
 #endif
     }
-    
+
     return NULL;
 }
 

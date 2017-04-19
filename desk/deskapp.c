@@ -1152,7 +1152,7 @@ ANODE *app_afind_by_id(WORD obid)
  *  Find ANODE by name & type
  *
  *  Note: ANODEs with a flag bit matching the 'ignore' parameter are
- *  ignored during the search. 
+ *  ignored during the search.
  *
  *  Returns match type in *pisapp:
  *      TRUE if name matches application name

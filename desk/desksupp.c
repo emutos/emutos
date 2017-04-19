@@ -1274,7 +1274,7 @@ void do_format(void)
             break;
         }
     }
-    
+
     /*
      * if NO drive was previously selected, select the first enabled one
      */

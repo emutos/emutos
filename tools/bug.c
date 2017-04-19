@@ -2177,7 +2177,7 @@ static const struct lang_info lang_%s = { \"%s\", msg_%s };\n", t, t, t);
   fprintf(f, "const struct lang_info * const langs[] = {\n");
   for(i = 0 ; i < n ; i++) {
     t = da_nth(langs, i);
-    fprintf(f, "  &lang_%s, \n", t);
+    fprintf(f, "  &lang_%s,\n", t);
   }
   fprintf(f, "  0,\n};\n\n#endif /* CONF_WITH_NLS */\n");
   fclose(f);
