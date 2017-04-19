@@ -1161,18 +1161,14 @@ _check_read_byte:
         moveq   #0,d0
         nop                                     // flush pipeline
 
-        jsr     dummy_jit_workaround
         move.l  4(sp),a0
-        jsr     dummy_jit_workaround
-        tst.b   (a0)
-        jsr     dummy_jit_workaround
+        jbsr    buggy_jit_save_registers_before_bus_error
+        tst.b   (a0)            // this may cause a Bus Error
         nop                                     // flush pipeline
 
         moveq   #0x01,d0        // passed
 
-berr:
-        jsr     dummy_jit_workaround
-        move.l  a1,(8).w
+berr:   move.l  a1,(8).w
         move.l  d1,sp
         nop
 
@@ -1202,7 +1198,7 @@ msgcrb:
  * _just_rts - just a dummy
  */
 
-dummy_jit_workaround:
+buggy_jit_save_registers_before_bus_error:
 _just_rts:
         rts
 
