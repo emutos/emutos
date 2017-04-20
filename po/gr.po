@@ -43,7 +43,7 @@ msgstr "KB"
 
 #: bios/initinfo.c:260
 msgid "EmuTOS Version"
-msgstr "EmuTOS Version"
+msgstr "ë¡›¦© EmuTOS"
 
 #: bios/initinfo.c:262
 msgid "CPU type"
@@ -55,7 +55,7 @@ msgstr "“§¦¢¦š ©«ãª"
 
 #: bios/initinfo.c:288
 msgid "Boot time"
-msgstr "ğ¨˜ «¦¬ boot"
+msgstr "ğ¨˜ œ¡¡å¤©ª"
 
 #: bios/initinfo.c:294
 msgid "Hold <Control> to skip AUTO/ACC"
@@ -174,7 +174,7 @@ msgid "[2]["
 "find the folder or file|"
 "you just tried to access.][  OK  ]"
 msgstr "[2]["
-"† œ­˜¨£¦šã ›œ¤ £§¦¨œå ¤˜|"
+"† œ­˜¨£¦šã ›œ¤ ™¨ã¡œ|"
 "«¦ ­á¡œ¢¦ ã «¦ ˜¨®œå¦ §¦¬|"
 "§¨¦©§˜Ÿã©˜«œ ¤˜ ˜¤¦å¥œ«œ][  OK  ]"
 
@@ -373,7 +373,7 @@ msgstr "-----------------------------"
 
 #: desk/desk_rsc.c:331
 msgid "  New Folder...   ^N"
-msgstr "  Nâ¦ª ”á¡ª¢¦ª...         ^N"
+msgstr "  Nâ¦ª ”á¡œ¢¦ª...         ^N"
 
 #: desk/desk_rsc.c:337
 msgid "  Close           ^U"
@@ -385,11 +385,11 @@ msgstr "  ‰¢œå© £¦ §˜¨˜Ÿç¨¦¬      ^W"
 
 #: desk/desk_rsc.c:355
 msgid "  Delete...       ^D"
-msgstr "  ‘™ã© £¦...              ^D"
+msgstr "  ƒ ˜š¨˜­ã...             ^D"
 
 #: desk/desk_rsc.c:361
 msgid "  Format..."
-msgstr "  Format..."
+msgstr "  ƒ ˜£æ¨­à©..."
 
 #: desk/desk_rsc.c:373
 msgid "  Execute EmuCON  ^Z"
@@ -397,7 +397,7 @@ msgstr "  „¡«â¢œ© EmuCON         ^Z"
 
 #: desk/desk_rsc.c:379
 msgid "  Shutdown        ^Q"
-msgstr "  Shutdown                ^Q"
+msgstr "  ’œ¨£˜« ©£æª             ^Q"
 
 #: desk/desk_rsc.c:391 desk/desk_rsc.c:2051
 msgid "  Show as text  ^T"
@@ -433,7 +433,7 @@ msgstr "  „š¡˜«á©«˜© œ ¡¦¤ ›å¦¬..."
 
 #: desk/desk_rsc.c:445
 msgid "  Install application..."
-msgstr "  „š¡˜«á©«˜© œ­˜¨¦£¦šãª..."
+msgstr "  „š¡˜«á©«˜© œ­˜¨£¦šãª..."
 
 #: desk/desk_rsc.c:451
 msgid "  Install devices"
@@ -485,11 +485,11 @@ msgstr "Copyright ½ 2001-"
 
 #: desk/desk_rsc.c:682
 msgid "The EmuTOS development team"
-msgstr "’¤ ¦£á›˜ ˜¤á§«¬¥ª «¦¬ EmuTOS"
+msgstr "† ¦£á›˜ ˜¤á§«¬¥ª «¦¬ EmuTOS"
 
 #: desk/desk_rsc.c:694
 msgid "Based on 'GPLed' sources"
-msgstr "˜© ©£â¤¦  ©œ GPL source"
+msgstr "˜© ©£â¤¦ ©œ GPL source"
 
 #: desk/desk_rsc.c:706
 msgid "\275 1987 Digital Research, Inc."
@@ -505,7 +505,7 @@ msgstr "½ 2001 Lineo, Inc."
 
 #: desk/desk_rsc.c:724
 msgid "EmuTOS is distributed under the GPL"
-msgstr "’¦ EmuTOS › ˜¤â£œ«˜  ¬§æ «¦ GPL"
+msgstr "’¦ EmuTOS › ˜¤â£œ«˜  ¬§æ « GPL"
 
 #: desk/desk_rsc.c:730
 msgid "See doc\\license.txt for details"
@@ -525,7 +525,7 @@ msgstr "„‚‰€’€‘’€‘† „ˆ‰Œˆƒˆ“"
 
 #: desk/desk_rsc.c:814 desk/desk_rsc.c:1736
 msgid "Item type:"
-msgstr "’ç§¦ª ˜¤« ¡œ £â¤¦¬:"
+msgstr "’ç§¦ª:"
 
 #: desk/desk_rsc.c:826
 msgid "Drive"
@@ -533,7 +533,7 @@ msgstr "ƒå©¡¦ª"
 
 #: desk/desk_rsc.c:832
 msgid "Trash can"
-msgstr "‰á›¦ª ˜§¦¨¨ £á«à¤"
+msgstr "‰á›¦ª ˜§¦¨/«à¤"
 
 #: desk/desk_rsc.c:838
 msgid "Printer"
@@ -581,7 +581,7 @@ msgstr "˜¨á£œ«¨¦ª:"
 
 #: desk/desk_rsc.c:1027
 msgid "Full path"
-msgstr "¢ã¨ª › ˜›¨¦£ã"
+msgstr "ƒ ˜›¨¦£ã"
 
 #: desk/desk_rsc.c:1033
 msgid "File name"
@@ -649,11 +649,11 @@ msgstr "•à¨åª ¡¢å¡"
 
 #: desk/desk_rsc.c:1390
 msgid "Time format:"
-msgstr "’ç§¦ª ®¨æ¤¦¬:"
+msgstr "‹¦¨­ã é¨˜ª:"
 
 #: desk/desk_rsc.c:1402 desk/desk_rsc.c:1432
 msgid "Default"
-msgstr "Default"
+msgstr "¨¦œ§ ¢¦šã"
 
 #: desk/desk_rsc.c:1408
 msgid "12H"
@@ -665,7 +665,7 @@ msgstr "24—"
 
 #: desk/desk_rsc.c:1420
 msgid "Date format:"
-msgstr "’ç§¦ª £œ¨¦£¤å˜ª:"
+msgstr "‹¦¨­ã £œ¨¦£¤å˜ª:"
 
 #: desk/desk_rsc.c:1438
 msgid "MDY"
