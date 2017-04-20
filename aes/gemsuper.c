@@ -142,6 +142,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         break;
     case EVNT_MESAG:
         aestrace("evnt_mesag()");
+        rlr->p_flags |= AP_MESAG;
         ap_rdwr(MU_MESAG, rlr, 16, ME_PBUFF);
         break;
     case EVNT_TIMER:
@@ -149,6 +150,8 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         break;
     case EVNT_MULTI:
         aestrace("evnt_multi()");
+        if (MU_FLAGS & MU_MESAG)
+            rlr->p_flags |= AP_MESAG;
         if (MU_FLAGS & MU_TIMER)
             maddr = MAKE_ULONG(MT_HICOUNT, MT_LOCOUNT);
         buparm = combine_cms(MB_CLICKS,MB_MASK,MB_STATE);

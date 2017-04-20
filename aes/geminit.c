@@ -74,6 +74,7 @@ extern void gem_main(void); /* called only from gemstart.S */
 #define INF_SIZE   300                  /* size of buffer used by sh_rdinf() */
                                         /*  for start of EMUDESK.INF file    */
 
+#define WAIT_TIMEOUT 5                  /* see wait_for_accs() */
 
 static BYTE     infbuf[INF_SIZE+1];     /* used to read part of EMUDESK.INF */
 static BYTE     acc_name[NUM_ACCS][LEN_ZFNAME]; /* used by count_accs()/ldaccs() */
@@ -425,6 +426,58 @@ void all_run(void)
 
 
 /*
+ * this waits until all the desk accessories have a bit set in the AES
+ * p_flags field matching the bitmask argument.
+ *
+ * it is currently used with the following bitmask values:
+ *  AP_MESAG
+ *    . This bit indicates that the accessory has issued at least one
+ *      wait for a message (either via evnt_mesag() or evnt_multi()).
+ *      The accessory is not necessarily currently waiting, but there
+ *      should always be a wait for a message, since accessories have
+ *      to handle AC_OPEN/AC_CLOSE messages.
+ *    . It's assumed that the accessory will have completed initialisation
+ *      before issuing the wait, but if it hasn't this code will not
+ *      make things worse.
+ *    . This instance is called after the accessories have been loaded,
+ *      before starting the desktop (or an autorun program, if present).
+ *      This will cause any memory allocated during initialisation (by
+ *      e.g. v_opnvwk()) to be owned by the AES, and thus the memory
+ *      will not be freed by termination of the desktop/autorun program.
+ */
+static void wait_for_accs(WORD bitmask)
+{
+    AESPD *pd;
+    WORD n, pid;
+
+    /*
+     * as a precaution against infinite loops, we set a count timeout.
+     * in limited testing, the maximum number of loops actually used
+     * was 2.
+     */
+    for (n = 0; n < WAIT_TIMEOUT; n++)
+    {
+        /* let everybody run */
+        all_run();
+
+        /*
+         * check the AESPDs for all the DAs (pid 0 & 1 are system)
+         */
+        for (pid = 2; ; pid++)
+        {
+            pd = fpdnm(NULL, pid);
+            if (!pd)                    /* no more DAs: they must */
+                return;                 /*  all have the bit set  */
+
+            if (!(pd->p_flags&bitmask)) /* bit not set, so we  */
+                break;                  /* must go round again */
+        }
+    }
+    KDEBUG(("wait_for_accs(): %s took too long\n",pd->p_name));
+}
+
+
+/*
  *  This function is called from accdesk_start (in gemstart.S) which
  *  is itself called from gem_main() below.
  *
@@ -483,7 +536,7 @@ void run_accs_and_desktop(void)
     isgem = process_inf2();         /* process emudesk.inf part 2 */
 
     dsptch();                       /* off we go !!! */
-    all_run();                      /* let them run  */
+    wait_for_accs(AP_MESAG);        /* wait until DAs have initialised */
 
     sh_init();                      /* init for shell loop */
     sh_main(isgem);                 /* main shell loop */
