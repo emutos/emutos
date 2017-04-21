@@ -1,5 +1,5 @@
 #
-# Makefile - Makefile fragment for building releases
+# release.mk - Makefile fragment for building releases
 #
 # Copyright (C) 2011-2017 The EmuTOS development team.
 #
