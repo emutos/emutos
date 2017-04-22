@@ -45,20 +45,21 @@ Roger Burrows (RFB) <rfburrows at ymail.com>
 
 Vincent Rivière (VRI) <vincent.riviere at freesbee.fr>
 - Many improvements to the build and configuration process
+- Moved project from cvs to git, and from sourceforge to github
 - Patches for compiling with GCC 4.x
 - ColdFire CPU and FireBee support
 - Initial IDE driver
+- Big improvements to FastRAM/Alt-RAM handling
 - Amiga support
+- Aranym workarounds for check_read_byte()/Aranym-JIT problem
 - ColdFire Evaluation Boards support
 - Apollo 68080 support
-- French translation update
 - Various bug fixes and cleanups
 
 Thomas Huth (THH) <huth at users.berlios.de>
 - Lots of bugfixes all over the place
 - Integration and maintenance of the AES and GEM-Desktop
 - XBIOS DMA sound functions
-- German translation update
 
 Petr Stehlik (PES) <pstehlik at sophics.cz>
 - BIOS disk interface, BDOS filesystem
@@ -76,17 +77,41 @@ Martin Doering (MAD) <mdoering at users.sourceforge.net>
 - Virtually everything not modified later by the others
 
 
+Thanks to all current and previous translators, who have helped us keep
+EmuTOS multi-lingual:
+
+- Czech translation
+    Bohdan Milar <milarb at volny.cz>
+    Pavel Salač <salac.pavel at gmail.com>
+    Jan Krupka <krupkaj at centrum.cz>
+
+- Finnish translation
+    Eero Tamminen
+
+- French translation
+    Vincent Rivière
+
+- German translation
+    Thomas Huth
+
+- Greek translation
+    George Nakos
+    Christos Tziotzis <ctziotzis at gmail.com>
+
+- Italian translation
+    Lodovico Zanier <lvc958 at libero.it>
+
+- Spanish translation
+    Gabriel Huertas
+    David Gálvez <dgalvez75 at gmail.com>
+    Jordi Mestres Ruiz <ataristfan at gmail.com>
+
+- Russian translation
+    Dima Sobolev <avtandil33 at gmail.com>
+
+
 Thanks also to all mailing list contributors for their help, and
 especially:
-
-Bohdan Milar <milarb at volny.cz>
-- Czech translation
-
-Gabriel Huertas
-- Spanish translation
-
-George Nakos
-- Greek translation
 
 Stanislav Opichal (SOP) <opichals at seznam.cz>
 - FreeMiNT kernel bootstrap via BOOTSTRAP NatFeat
@@ -113,8 +138,8 @@ Patrice Mandin and Markus Oberhumer
 Eero Tamminen
 - Many bug reports, extensive testing, testcases supply
 - Many documentation updates
+- Finnish keyboard mapping
 - Hatari debug symbols
-- Finnish translation and keyboard mapping
 - Static source analysis and cleanup
 - Line-A implementation
 
@@ -131,9 +156,6 @@ David Savinkoff
 - Bug fixes for the BIOS parallel port code
 - Other various bugfixes
 
-Dima Sobolev <avtandil33 at gmail.com>
-- Russian translation
-
 Olivier Landemarre <olivier.landemarre at free.fr>
 - Renamed internal VDI functions to avoid name conflicts
 
@@ -142,18 +164,8 @@ Jean-François Del Nero <jeanfrancoisdelnero at free.fr>
 - Tested the EmuTOS ROM on real STe hardware
 - Various bugfixes
 
-Lodovico Zanier <lvc958 at libero.it>
-- Italian translation
-
-Pavel Salač <salac.pavel at gmail.com>
-- Czech translation update
-
 David Gálvez <dgalvez75 at gmail.com>
-- Spanish translation update
 - XHNewCookie() implementation
-
-Christos Tziotzis <ctziotzis at gmail.com>
-- Greek translation update
 
 Fredi Aschwanden <mcs at kingx.com>
 and all the ACP team
@@ -185,14 +197,14 @@ Hampa Hug
 
 Markus Fröschle
 - Tests on the FireBee and BaS_gcc support
-- Fix GEM bugs
-
-Jan Krupka <krupkaj at centrum.cz>
-- Czech translation update
+- Fix various AES & VDI bugs
 
 Christian Zietz <czietz at gmx.net>
 - Fix floppy/ACSI bug
 - Fix memory detection to support STs as well as STes
+- Support for extended MBR partitions
+- Add IDE 'twisted cable' support
+- Miscellaneous bug fixes
 
 Jo Even Skarstein (joska at online.no)
 - Support for Norwegian & Swedish keyboards
@@ -200,6 +212,8 @@ Jo Even Skarstein (joska at online.no)
 
 Thorsten Otto (admin at tho-otto.de)
 - Make EmuTOS more compatible with Atari TOS in several areas
+- Add check_read_byte() workaround for Aranym-JIT
+- Miscellaneous bug fixes
 - Miscellaneous source code cleanup
 
 Gunnar von Boehn, Philippe Flype and Simo Koivukoski
