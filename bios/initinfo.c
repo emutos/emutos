@@ -205,7 +205,7 @@ static void cprintf_bytesize(ULONG bytes)
  *
  * returns the selected boot device
  */
-WORD initinfo(void)
+WORD initinfo(ULONG *pshiftbits)
 {
     int screen_height = v_cel_my + 1;
     int initinfo_height = 19; /* Define ENABLE_KDEBUG to guess correct value */
@@ -220,7 +220,7 @@ WORD initinfo(void)
     long altramsize = total_alt_ram();
 #endif
     LONG hdd_available = blkdev_avail(HARDDISK_BOOTDEV);
-    LONG shiftbits;
+    ULONG shiftbits;
 
     /*
      * If additional info lines are going to be printed in specific cases,
@@ -383,14 +383,6 @@ WORD initinfo(void)
         cprint_devices(dev);
     }
 
-    if (shiftbits & MODE_ALT)
-        bootflags |= BOOTFLAG_SKIP_HDD_BOOT;
-
-    if (shiftbits & MODE_CTRL)
-        bootflags |= BOOTFLAG_SKIP_AUTO_ACC;
-
-    KDEBUG(("bootflags = 0x%02x\n", bootflags));
-
     /*
      * on exit, restore (pop) cursor position (neatness), then
      * clear screen so that subsequent text displays are clean
@@ -402,6 +394,7 @@ WORD initinfo(void)
     cprintf("\033k\033E");
 #endif
 
+    *pshiftbits = shiftbits;
     return dev;
 }
 
@@ -409,10 +402,11 @@ WORD initinfo(void)
 #else    /* FULL_INITINFO */
 
 
-WORD initinfo(void)
+WORD initinfo(ULONG *pshiftbits)
 {
     cprintf("EmuTOS Version %s\r\n", version);
 
+    *pshiftbits = kbshift(-1);
     return bootdev;
 }
 

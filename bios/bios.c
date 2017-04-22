@@ -598,6 +598,7 @@ void biosmain(void)
 {
     BOOL show_initinfo;         /* TRUE if welcome screen must be displayed */
     BYTE *p;
+    ULONG shiftbits;
 
     bios_init();                /* Initialize the BIOS */
 
@@ -628,9 +629,19 @@ void biosmain(void)
 #endif
 
     if (show_initinfo)
-        bootdev = initinfo();   /* show the welcome screen */
+        bootdev = initinfo(&shiftbits); /* show the welcome screen */
+    else
+        shiftbits = kbshift(-1);
 
     KDEBUG(("bootdev = %d\n", bootdev));
+
+    if (shiftbits & MODE_ALT)
+        bootflags |= BOOTFLAG_SKIP_HDD_BOOT;
+
+    if (shiftbits & MODE_CTRL)
+        bootflags |= BOOTFLAG_SKIP_AUTO_ACC;
+
+    KDEBUG(("bootflags = 0x%02x\n", bootflags));
 
     /* boot eventually from a block device (floppy or harddisk) */
     blkdev_boot();
