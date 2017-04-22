@@ -45,13 +45,13 @@ Roger Burrows (RFB) <rfburrows at ymail.com>
 
 Vincent Rivière (VRI) <vincent.riviere at freesbee.fr>
 - Many improvements to the build and configuration process
-- Moved project from cvs to git, and from sourceforge to github
+- Moved project from CVS to Git, and from SourceForge to GitHub
 - Patches for compiling with GCC 4.x
 - ColdFire CPU and FireBee support
 - Initial IDE driver
 - Big improvements to FastRAM/Alt-RAM handling
 - Amiga support
-- Aranym workarounds for check_read_byte()/Aranym-JIT problem
+- ARAnyM workarounds for check_read_byte()/ARAnyM-JIT problem
 - ColdFire Evaluation Boards support
 - Apollo 68080 support
 - Various bug fixes and cleanups
@@ -212,7 +212,7 @@ Jo Even Skarstein (joska at online.no)
 
 Thorsten Otto (admin at tho-otto.de)
 - Make EmuTOS more compatible with Atari TOS in several areas
-- Add check_read_byte() workaround for Aranym-JIT
+- Add check_read_byte() workaround for ARAnyM-JIT
 - Miscellaneous bug fixes
 - Miscellaneous source code cleanup
 
