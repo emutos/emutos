@@ -700,7 +700,7 @@ msgstr "Matala"
 
 #: desk/desk_rsc.c:1697
 msgid "ST Compatible"
-msgstr "ST yhteensopiva"
+msgstr "ST tarkkuudet"
 
 #: desk/desk_rsc.c:1724
 msgid "INSTALL WINDOW ICON"
