@@ -392,11 +392,11 @@ msgstr "  Arrêter            ^Q"
 
 #: desk/desk_rsc.c:391 desk/desk_rsc.c:2051
 msgid "  Show as text  ^T"
-msgstr "  Voir comme texte  ^T"
+msgstr "  Voir comme texte ^T"
 
 #: desk/desk_rsc.c:397
 msgid "-------------------"
-msgstr "-----------------------"
+msgstr "----------------------"
 
 #: desk/desk_rsc.c:403
 msgid "  Sort by name"
