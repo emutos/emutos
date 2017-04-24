@@ -533,7 +533,7 @@ msgstr "ƒå©¡¦ª"
 
 #: desk/desk_rsc.c:832
 msgid "Trash can"
-msgstr "‰á›¦ª ˜§¦¨/«à¤"
+msgstr "‰á›¦ª"
 
 #: desk/desk_rsc.c:838
 msgid "Printer"
@@ -865,7 +865,7 @@ msgid "[1]["
 "install any more icons|"
 "or applications.][  OK  ]"
 msgstr "[1]["
-"Š¬§¦ç£˜©«œ, the desktop ›œ¤|"
+"Š¬§¦ç£˜©«œ, «¦ desktop ›œ¤|"
 "£§¦¨œå ¤˜ œš¡˜«˜©«ã©œ  á¢¢˜|"
 "œ ¡¦¤å› ˜ ã œ­˜¨£¦šâª.][  OK  ]"
 
