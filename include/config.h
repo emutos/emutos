@@ -847,7 +847,7 @@
  * You must also enable CONF_WITH_ACSI.
  */
 # ifndef CONF_WITH_ICDRTC
-#  define CONF_WITH_ICDRTC CONF_WITH_ACSI
+#  define CONF_WITH_ICDRTC 0
 # endif
 
 /*
