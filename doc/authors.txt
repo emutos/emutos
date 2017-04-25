@@ -22,7 +22,7 @@ Minor borrowed stuff:
 - some low-level hardware stuff comes from the Linux kernel;
 
 While the main Amiga support was written from scratch by the EmuTOS team,
-some advanced code (FastRAM and floppy support) has been borrowed from the
+some advanced code (FastRAM support for ROM versions) has been borrowed from the
 AROS project. Due to license incompatibilities, that code is shipped in the
 source archive, but not compiled into the official binaries.
 
@@ -51,7 +51,6 @@ Vincent Rivière (VRI) <vincent.riviere at freesbee.fr>
 - Initial IDE driver
 - Big improvements to FastRAM/Alt-RAM handling
 - Amiga support
-- ARAnyM workarounds for check_read_byte()/ARAnyM-JIT problem
 - ColdFire Evaluation Boards support
 - Apollo 68080 support
 - Various bug fixes and cleanups
@@ -64,7 +63,6 @@ Thomas Huth (THH) <huth at users.berlios.de>
 Petr Stehlik (PES) <pstehlik at sophics.cz>
 - BIOS disk interface, BDOS filesystem
 - Falcon and ARAnyM support
-- Czech translation update
 
 Laurent Vogel (LVL) <lvl at club-internet.fr>
 - Original ST hardware (MFP, ACIA, parport, sound, floppy, ACSI)
@@ -82,6 +80,7 @@ EmuTOS multi-lingual:
 
 - Czech translation
     Bohdan Milar <milarb at volny.cz>
+    Petr Stehlik <pstehlik at sophics.cz>
     Pavel Salač <salac.pavel at gmail.com>
     Jan Krupka <krupkaj at centrum.cz>
 
@@ -89,6 +88,7 @@ EmuTOS multi-lingual:
     Eero Tamminen
 
 - French translation
+    Laurent Vogel
     Vincent Rivière
 
 - German translation
@@ -163,6 +163,7 @@ Jean-François Del Nero <jeanfrancoisdelnero at free.fr>
 - Improved memory detection on cold boot
 - Tested the EmuTOS ROM on real STe hardware
 - Various bugfixes
+- Invaluable HxC Floppy Emulator for tests on real hardware
 
 David Gálvez <dgalvez75 at gmail.com>
 - XHNewCookie() implementation
@@ -200,6 +201,7 @@ Markus Fröschle
 - Fix various AES & VDI bugs
 
 Christian Zietz <czietz at gmx.net>
+- ROM tests on real STe hardware
 - Fix floppy/ACSI bug
 - Fix memory detection to support STs as well as STes
 - Support for extended MBR partitions
@@ -216,5 +218,18 @@ Thorsten Otto (admin at tho-otto.de)
 - Miscellaneous bug fixes
 - Miscellaneous source code cleanup
 
-Gunnar von Boehn, Philippe Flype and Simo Koivukoski
+Apollo Team: Gunnar von Boehn, Philippe Flype, Simo Koivukoski,
+pisklak, guibrush, TuKo, and all other members...
 - Apollo 68080 and Amiga support
+
+Steven Seagal
+- Steem SSE support
+
+Stefan Niestegge
+- ROM tests on real hardware: STe, Falcon and Amiga 600
+
+Ingo Uhlemann
+- ROM tests on real TT hardware
+
+Stefan Haubenthal
+- EmuTOS packaging on Aminet: http://aminet.net/package/misc/emu/emutos

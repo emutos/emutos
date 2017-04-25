@@ -19,6 +19,7 @@ the FireBee. You can download it there:
 http://www.atariforge.org/gf/project/firebee/frs/?action=FrsReleaseBrowse&frs_package_id=19
 Then you can flash the file m5484lite/bas.s19. Beware, after that, your EVB will
 boot straight to BaS_gcc, and dBUG will not be available anymore.
+Of course, you can always reflash dBUG afterwards.
 
 Requirements:
 - An RS-232 connection between the EVB and a controlling computer.

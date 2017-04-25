@@ -187,7 +187,7 @@ Currently unsupported hardware features:
 - SCSI
 
 EmuTOS is also available on some non-Atari hardware:
-- Amiga (WinUAE, Amiga 1000, Amiga 1200 with Blizzard 1260)
+- Amiga (floppy or ROM for any Amiga, including MapROM support)
 - ColdFire Evaluation Boards (M5484LITE, M5485EVB)
 
 

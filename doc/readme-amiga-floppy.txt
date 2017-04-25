@@ -22,6 +22,10 @@ To be clear:
 AmigaOS is only used to load EmuTOS into RAM. Then EmuTOS completely takes
 over the machine, and AmigaOS is no more available until reboot.
 
+Unlike the Amiga EmuTOS ROM, these floppies are full-featured by default.
+They are the easiest way to test EmuTOS on real hardware.
+Floppy emulators such as HxC and Gotek are supported, and even recommended.
+
 Supported Amiga hardware features:
 - Any CPU from 68000 to 68060, including Apollo 68080
 - Chip RAM

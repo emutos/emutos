@@ -28,7 +28,8 @@ EmuTOS for Amiga has been successfully tested on:
 - WinUAE emulator, with any hardware and CPU combination
 - Amiga 1000, using emutos-kickdisk.adf instead of the Kickstart floppy
 - Amiga 1200 with Blizzard 1260 accelerator board, using BlizKick
-- Amiga 500 with Vampire 500 V2 accelerator board
+- Amiga 600, as ROM replacement
+- Amiga 500 with Vampire V2 accelerator board and experimental MapROM feature
 
 The (*) in the following lists indicates support disabled by default.
 See below for the details.
