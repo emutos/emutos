@@ -553,7 +553,7 @@ void trapaes_debug_exit(void)
 
     recommended = (top - min_pointer) + 512; /* Heuristic */
 
-    kprintf("AES exit  rlr=0x%08lx bottom=0x%08lx current=0x%08lx top=0x%08lx free=%ld, used=%ld, max_usage=%ld, recommended STACK_SIZE=%ld\n",
+    kprintf("AES exit  rlr=0x%08lx bottom=0x%08lx current=0x%08lx top=0x%08lx free=%ld, used=%ld, max_usage=%ld, recommended AES_STACK_SIZE=%ld\n",
         (ULONG)rlr, (ULONG)bottom, (ULONG)current, (ULONG)top, current - bottom, used, max_usage, recommended/4);
 }
 
