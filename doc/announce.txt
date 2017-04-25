@@ -84,7 +84,7 @@ Other changes:
 - Lots of source code cleanup and minor bug fixes
 
 
-For a detailed list of changes, refer to the git repository.
+For a detailed list of changes, refer to the Git repository.
 
 
 
