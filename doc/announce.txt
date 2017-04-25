@@ -155,7 +155,7 @@ to have it running on top of EmuTOS.
 
 This is the currently supported Atari hardware:
 
-- CPU support for m68000, m68010, m68020, m68030, m68040, m68060,
+- CPU support for M68000, M68010, M68020, M68030, M68040, M68060,
                   ColdFire V4e, and Apollo 68080
 - FPU detection
 - 68030 MMU and cache
