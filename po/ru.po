@@ -151,8 +151,8 @@ msgid "[3]["
 "Development Team.][Cancel]"
 msgstr "[3]["
 "Ошибка GEM.|"
-"Обратитесь в Команду|"
-"Разработчиков EmuTOS.][Отмена]"
+"Обратитесь в команду|"
+"разработчиков EmuTOS.][Отмена]"
 
 #: aes/gem_rsc.c:716
 msgid "[2]["
@@ -593,19 +593,19 @@ msgstr "НАСТРОЙКИ"
 
 #: desk/desk_rsc.c:1195
 msgid "Confirm deletes:"
-msgstr "Подтверждать удаление"
+msgstr "Подтверждать удаление:"
 
 #: desk/desk_rsc.c:1219
 msgid "Confirm copies:"
-msgstr "Подтверждать копирование"
+msgstr "Подтверждать копирование:"
 
 #: desk/desk_rsc.c:1243
 msgid "Confirm overwrites:"
-msgstr "Подтверждать перезапись"
+msgstr "Подтверждать перезапись:"
 
 #: desk/desk_rsc.c:1267
 msgid "Sound effects:"
-msgstr "Звуковые эффекты"
+msgstr "Звуковые эффекты:"
 
 #: desk/desk_rsc.c:1279
 msgid "On"
@@ -621,11 +621,11 @@ msgstr "Больше настроек"
 
 #: desk/desk_rsc.c:1324
 msgid "Double-click speed:"
-msgstr "Скорость дв. нажатия"
+msgstr "Скорость дв. нажатия:"
 
 #: desk/desk_rsc.c:1366
 msgid "To drop down menus:"
-msgstr "К выпадающим меню"
+msgstr "К выпадающим меню:"
 
 #: desk/desk_rsc.c:1378
 msgid "Click"
@@ -637,7 +637,7 @@ msgstr "Ненажатие"
 
 #: desk/desk_rsc.c:1390
 msgid "Time format:"
-msgstr "Формат времени"
+msgstr "Формат времени:"
 
 #: desk/desk_rsc.c:1402 desk/desk_rsc.c:1432
 msgid "Default"
@@ -653,7 +653,7 @@ msgstr "24Ч"
 
 #: desk/desk_rsc.c:1420
 msgid "Date format:"
-msgstr "Формат даты"
+msgstr "Формат даты:"
 
 #: desk/desk_rsc.c:1438
 msgid "MDY"
@@ -733,7 +733,7 @@ msgstr "Двусторонняя"
 
 #: desk/desk_rsc.c:2000
 msgid "High density"
-msgstr "Высокая плотн."
+msgstr "Высокая плотность"
 
 #: desk/desk_rsc.c:2049
 msgid "%ld bytes used in %d items."
