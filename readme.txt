@@ -3,7 +3,7 @@ Vincent Rivière's GCC 4.6.4 cross-compiler.  The custom tools used in
 the build process were built with native GCC 4.8.4.
 
 The source package and other binary packages are available at:
-http://sourceforge.net/projects/emutos/files/emutos/0.9.7/
+http://sourceforge.net/projects/emutos/files/emutos/0.9.8/
 
 If you want to read more about EmuTOS, please take a look at these files:
 

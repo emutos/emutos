@@ -6384,3 +6384,58 @@ Other changes:
 - VDI: fix bug: v_bar() draws perimeter wrongly
 - VDI: fix vq_curaddress(), vs_curaddress()
 - Lots of source code cleanup and minor bug fixes
+
+
+CHANGES BETWEEN RELEASE 0.9.7 AND RELEASE 0.9.8
+
+Major changes:
+- Amiga: New boot floppy target
+- Amiga: Rewrite floppy routines
+- Amiga: Support multiple video modes
+- BIOS: Autodetect IDE interface with twisted cable at run-time
+- EmuDesk: Add support for desktop shortcuts
+- EmuDesk: Add support for formatting floppies
+- EmuDesk: Add support for user-assignable desktop icons
+
+Other changes:
+- AES: Adjust file selector scroll bar width according to resolution
+- AES: Allocate Alt-RAM instead of ST-RAM where possible
+- AES: Do not use shel_find() to find autorun program
+- AES: Fix bug in rsrc_load() that affected PixArt4
+- AES: Fix error message if autorun program is not found
+- AES: Fix possible data corruption when launching accessories
+- AES: Increase min height of slider in file selector
+- Amiga: Add support for IKBD keyboard/mouse/joysticks on RS-232
+- Amiga: Fix interlaced display with fast CPU
+- Amiga: Add target to build ROM optimized for Vampire V2
+- Amiga: Add XBIOS joystick support
+- Amiga: Improve IDE performance on Vampire V2
+- Amiga: Improve IDE support
+- Amiga: Add proper floppy media change support
+- BDOS: Allow environment to be allocated in Alt-RAM
+- BDOS: Fix bug in updating date when month rolls over
+- BDOS: Fix Fsfirst(): wrong name format in DTA for label
+- BDOS: Speed up Dfree() for 16-bit FATs
+- BIOS: Add movep emulation for 68060
+- BIOS: Enable data cache on 68040 & 68060
+- BIOS: Enable instruction & branch caches on 68060
+- BIOS: Fix ACSI bug: non-word-aligned transfers failed
+- BIOS: Fix bug in IDE detection of slower devices
+- BIOS: Fix crash with unaligned IDE R/W buffer on 68000
+- BIOS: Fix floppy bug: non-word-aligned I/Os failed
+- BIOS: Improve IDE performance
+- BIOS: Improve mediachange detection
+- Coldfire: Add RAM TOS target for Coldfire Evaluation Boards
+- EmuDesk: Add documentation for new features
+- EmuDesk: Add read-only indicator for show-as-text display
+- EmuDesk: Allocate Alt-RAM instead of ST-RAM where possible
+- EmuDesk: Fix various bugs in desktop copy/move
+- EmuDesk: Handle desktop move/copy of folder to itself
+- EmuDesk: Holding Control at startup now bypasses all initialisation files
+- EmuDesk: Lookup desktop shortcuts directly in menu
+- EmuDesk: Make alt-X open the root of X in a window
+- EmuDesk: Make desktop keyboard shortcuts use Ctrl modifier
+- EmuDesk: Make desktop shortcut keys work for all keyboards
+- EmuDesk: Split preferences dialog to allow longer text
+- General: Allow EmuTOS static RAM to be allocated in Alt-RAM
+- The usual source code cleanup and minor bug fixes

@@ -3,7 +3,7 @@ Dear Atari Community!
 
 We are happy to announce a new public release of EmuTOS:
 
-EmuTOS 0.9.7 -- November 17, 2016
+EmuTOS 0.9.8 -- April 26, 2017
 
 
 
@@ -19,69 +19,59 @@ General Public License (GPL).
 
 
 
-CHANGES SINCE RELEASE 0.9.6
+CHANGES SINCE RELEASE 0.9.7
 
 Major changes:
-- BIOS: add support for extended MBR partitions
-- BIOS: add support for MonSTer board
-- BIOS: configure & size ST-RAM on TT
-- BIOS: add support for Eiffel on CAN bus on ColdFire EVB
-- BIOS: add _5MS cookie to support FreeMiNT on non-Atari hardware
-- BIOS: add support for Apollo Core 68080
-- BDOS: set archive flag when file is created/modified
-- EmuDesk: allow disk delete via desktop File menu item
-- EmuDesk: implement desktop 'Install devices'
-- EmuDesk: implement desktop 'Install icon'
-- EmuDesk: implement desktop 'Remove desktop icon'
-- EmuDesk: rewrite 'Install application'
-- EmuCON2: provide a standalone version of EmuCON2
+- Amiga: New boot floppy target
+- Amiga: Rewrite floppy routines
+- Amiga: Support multiple video modes
+- BIOS: Autodetect IDE interface with twisted cable at run-time
+- EmuDesk: Add support for desktop shortcuts
+- EmuDesk: Add support for formatting floppies
+- EmuDesk: Add support for user-assignable desktop icons
 
 Other changes:
-- AES: allow autorun program to start in character mode
-- AES: fix bug when File Selector accesses empty drive
-- AES: fix loop in file selector if filemask is too long
-- AES: fix bug: the file selector modified the DTA pointer
-- AES: rewrite wildcmp() to fix bug
-- BDOS: fix GEMDOS standard handle numbers
-- BDOS: rewrite Fsfirst/Fsnext to fix design problem
-- BDOS: use single pool for all internal memory requests
-- BDOS: fix I/O status for redirected character devices
-- BDOS: fix date stamp in . and .. directory entries
-- BDOS: fix return code for Fsfirst()
-- BDOS: make EmuTOS respect user-assigned FRB
-- BDOS: make ctl-C interrupt Cconin
-- BDOS: return EOF indicator on redirected char devices
-- BDOS: validate attribute bits passed to Fattrib()
-- BDOS: validate handles for Fseek()/Fread()/Fwrite()/Fdatime()
-- BIOS: add Norwegian & Swedish keyboard support
-- BIOS: add support for byte-swapped IDE cable (disabled by default)
-- BIOS: allow configuration of max logical sector size
-- BIOS: fix VDI->hardware colour calculation
-- BIOS: fix os_conf value and usage in multilanguage ROMs
-- BIOS: improve performance of Rwabs() on floppy disks
-- BIOS: make Ikbdws()/Midiws() handle 'cnt' like Atari TOS
-- BIOS: set density for read/write/format of HD floppies
-- BIOS: fix boot on Amiga with 68000 CPU
-- BIOS: fix RAM size with BaS_gcc on ColdFire EVB
-- BIOS: fix _FPU cookie for 68060 without FPU
-- BIOS: fix values returned by VgetRGB()/vq_color()
-- EmuDesk: make desktop shift-click behave the same as TOS
-- EmuDesk: prompt if folder name conflict during move/copy
-- EmuDesk: make many desktop and AES dialogs more concise
-- EmuDesk: fix desktop icon drag and drop positioning
-- EmuDesk: allow 'Too many windows' alert to be issued
-- EmuDesk: always issue extra alert if deleting entire disk
-- EmuDesk: always keep part of the mover gadget onscreen
-- EmuDesk: avoid unnecessary window refreshes
-- EmuDesk: handle name conflict during copy like Atari TOS
-- EmuDesk: support additional keys during "Show file"
-- EmuDesk: add copyright year in EmuDesk about dialog
-- General: display total RAM on welcome screen
-- General: fix _drvbits tests for drives > P
-- VDI: fix rectangle drawing errors
-- VDI: fix bug: v_bar() draws perimeter wrongly
-- VDI: fix vq_curaddress(), vs_curaddress()
-- Lots of source code cleanup and minor bug fixes
+- AES: Adjust file selector scroll bar width according to resolution
+- AES: Allocate Alt-RAM instead of ST-RAM where possible
+- AES: Do not use shel_find() to find autorun program
+- AES: Fix bug in rsrc_load() that affected PixArt4
+- AES: Fix error message if autorun program is not found
+- AES: Fix possible data corruption when launching accessories
+- AES: Increase min height of slider in file selector
+- Amiga: Add support for IKBD keyboard/mouse/joysticks on RS-232
+- Amiga: Fix interlaced display with fast CPU
+- Amiga: Add target to build ROM optimized for Vampire V2
+- Amiga: Add XBIOS joystick support
+- Amiga: Improve IDE performance on Vampire V2
+- Amiga: Improve IDE support
+- Amiga: Add proper floppy media change support
+- BDOS: Allow environment to be allocated in Alt-RAM
+- BDOS: Fix bug in updating date when month rolls over
+- BDOS: Fix Fsfirst(): wrong name format in DTA for label
+- BDOS: Speed up Dfree() for 16-bit FATs
+- BIOS: Add movep emulation for 68060
+- BIOS: Enable data cache on 68040 & 68060
+- BIOS: Enable instruction & branch caches on 68060
+- BIOS: Fix ACSI bug: non-word-aligned transfers failed
+- BIOS: Fix bug in IDE detection of slower devices
+- BIOS: Fix crash with unaligned IDE R/W buffer on 68000
+- BIOS: Fix floppy bug: non-word-aligned I/Os failed
+- BIOS: Improve IDE performance
+- BIOS: Improve mediachange detection
+- Coldfire: Add RAM TOS target for Coldfire Evaluation Boards
+- EmuDesk: Add documentation for new features
+- EmuDesk: Add read-only indicator for show-as-text display
+- EmuDesk: Allocate Alt-RAM instead of ST-RAM where possible
+- EmuDesk: Fix various bugs in desktop copy/move
+- EmuDesk: Handle desktop move/copy of folder to itself
+- EmuDesk: Holding Control at startup now bypasses all initialisation files
+- EmuDesk: Lookup desktop shortcuts directly in menu
+- EmuDesk: Make alt-X open the root of X in a window
+- EmuDesk: Make desktop keyboard shortcuts use Ctrl modifier
+- EmuDesk: Make desktop shortcut keys work for all keyboards
+- EmuDesk: Split preferences dialog to allow longer text
+- General: Allow EmuTOS static RAM to be allocated in Alt-RAM
+- The usual source code cleanup and minor bug fixes
 
 
 For a detailed list of changes, refer to the Git repository.
