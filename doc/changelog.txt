@@ -6425,7 +6425,7 @@ Other changes:
 - BIOS: Fix floppy bug: non-word-aligned I/Os failed
 - BIOS: Improve IDE performance
 - BIOS: Improve mediachange detection
-- Coldfire: Add RAM TOS target for Coldfire Evaluation Boards
+- ColdFire: Add RAM TOS target for ColdFire Evaluation Boards
 - EmuDesk: Add documentation for new features
 - EmuDesk: Add read-only indicator for show-as-text display
 - EmuDesk: Allocate Alt-RAM instead of ST-RAM where possible
