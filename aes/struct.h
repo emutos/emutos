@@ -110,7 +110,7 @@ struct aespd                    /* process descriptor           */
         WORD    p_pid;          /* 1C */
         WORD    p_stat;         /* 1E */
 
-        EVSPEC  p_evbits;       /* 20  event bits in use    */
+        EVSPEC  p_unused;       /* 20  was p_evbits (remnant of old code) */
         EVSPEC  p_evwait;       /* 22  event wait mask      */
         EVSPEC  p_evflg;        /* 24  event flags          */
 

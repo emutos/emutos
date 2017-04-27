@@ -146,9 +146,8 @@ EVSPEC iasync(WORD afunc, LONG aparm)
     e->e_flag = 0;
     e->e_pred = 0;
 
-    /* find a free bit in the mask */
+    /* update mask */
     e->e_mask = afunc;
-    rlr->p_evbits |= e->e_mask;
 
     switch(afunc)
     {
@@ -196,7 +195,6 @@ UWORD apret(EVSPEC mask)
         p->e_link->e_pred = p->e_pred;
 
     q->e_nextp = p->e_nextp;
-    rlr->p_evbits &= ~mask;
     rlr->p_evwait &= ~mask;
     rlr->p_evflg &= ~mask;
 
@@ -228,7 +226,6 @@ EVSPEC acancel(EVSPEC m)
             {
                 q->e_nextp = p->e_nextp;
                 takeoff(p);
-                rlr->p_evbits &= ~p->e_mask;
                 rlr->p_evwait &= ~p->e_mask;
                 p = q;              /* continue traversal    */
             }
