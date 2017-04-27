@@ -444,8 +444,18 @@ void all_run(void)
  *      This will cause any memory allocated during initialisation (by
  *      e.g. v_opnvwk()) to be owned by the AES, and thus the memory
  *      will not be freed by termination of the desktop/autorun program.
+ *  AP_ACCLOSE
+ *    . This bit indicates that the accessory has received an AC_CLOSE
+ *      (either via evnt_mesag() or evnt_multi()).
+ *    . This instance is called in appl_exit() after sending the AC_CLOSE
+ *      messages to all DAs, to block until the messages have actually
+ *      been received by the DAs.  This ensures that the DAs have a chance
+ *      to close properly, before the application exits, freeing its memory
+ *      which includes any memory allocated by the DAs during the life of
+ *      the application.  This provides the same function that is described
+ *      in the TT TOS Release Notes.
  */
-static void wait_for_accs(WORD bitmask)
+void wait_for_accs(WORD bitmask)
 {
     AESPD *pd;
     WORD n, pid;

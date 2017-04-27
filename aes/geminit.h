@@ -27,5 +27,6 @@ extern THEGLO   D;
 void all_run(void);
 void set_mouse_to_arrow(void);
 void set_mouse_to_hourglass(void);
+void wait_for_accs(WORD bitmask);
 
 #endif

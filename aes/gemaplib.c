@@ -212,6 +212,7 @@ void ap_exit(void)
 {
     wm_update(TRUE);
     mn_clsda();
+    wait_for_accs(AP_ACCLOSE);  /* block until all DAs have seen AC_CLOSE */
     if (rlr->p_qindex)
         ap_rdwr(MU_MESAG, rlr, rlr->p_qindex, (LONG)D.g_valstr);
     set_mouse_to_arrow();

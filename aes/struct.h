@@ -96,6 +96,7 @@ EVB             /* event block structure */
 /* p_flags */
 #define AP_OPEN     0x0001      /* application is between appl_init() & appl_exit() */
 #define AP_MESAG    0x0002      /* application has waited for a message */
+#define AP_ACCLOSE  0x0004      /* application has seen an AC_CLOSE message */
 
 struct aespd                    /* process descriptor           */
 {
