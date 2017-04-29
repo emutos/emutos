@@ -265,16 +265,13 @@ static void fix_trindex(void)
 {
     WORD ii;
     RSCITEM item;
-    OBJECT *root;
 
     item = get_sub(0, RT_TRINDEX, sizeof(LONG) );
     rs_global->ap_ptree = item.base;
 
     for (ii = rs_hdr.wordptr[R_NTREE]-1; ii >= 0; ii--)
     {
-        root = (OBJECT *)fix_long((RSCITEM)(item.lptr+ii));
-        if ((root->ob_state == OUTLINED) && (root->ob_type == G_BOX))
-            root->ob_state = SHADOWED;
+        fix_long((RSCITEM)(item.lptr+ii));
     }
 }
 
