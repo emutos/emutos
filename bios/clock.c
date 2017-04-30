@@ -995,6 +995,16 @@ static void isetdt(ULONG dt)
 
 void clock_init(void)
 {
+    /*
+     * the following bypasses a bug in Hatari 2.0, which causes the ICD RTC
+     * to be detected incorrectly when detect_icdrtc() is called early on
+     * in initialisation
+     */
+#if CONF_WITH_ICDRTC
+    if (has_icdrtc)
+        detect_icdrtc();
+#endif
+
     if (FALSE)
     {
         /* Dummy case for conditional compilation */
