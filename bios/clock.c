@@ -100,12 +100,12 @@ void detect_icdrtc(void)
 {
     has_icdrtc = 0;
 
+    loopcount_1_usec = loopcount_1_msec / 1000;
+
     if (icd_clock_begin())
         has_icdrtc = 1;
 
     icd_clock_end();
-
-    loopcount_1_usec = loopcount_1_msec / 1000;
 }
 
 /*==== ICD RTC internal functions =========================================*/
