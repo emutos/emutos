@@ -1157,25 +1157,35 @@ static int count_chars(char *str, char c)
 }
 
 /*
- *  The xlate_ functions below are also used by the GEM rsc in aes/gem_rsc.c
+ *  The xlate_obj_array() & xlate_fix_tedinfo() functions below are also
+ *  used by the GEM rsc in aes/gem_rsc.c
  */
 
 /* Translates the strings in an OBJECT array */
 void xlate_obj_array(OBJECT *obj_array, int nobj)
 {
     OBJECT *obj;
+    BYTE **str;
 
     for (obj = obj_array; --nobj >= 0; obj++) {
         switch(obj->ob_type)
         {
+#if 0
+        /*
+         * at the moment, there are no G_TEXT or G_BOXTEXT items in the
+         * EmuTOS resources.  note that, if they are added, erd will have
+         * to be updated too.
+         */
         case G_TEXT:
         case G_BOXTEXT:
+            str = & ((TEDINFO *)obj->ob_spec)->te_ptext;
+            *str = (BYTE *)gettext(*str);
+            break;
+#endif
         case G_FTEXT:
         case G_FBOXTEXT:
-            {
-                BYTE **str = & ((TEDINFO *)obj->ob_spec)->te_ptmplt;
-                *str = (BYTE *)gettext(*str);
-            }
+            str = & ((TEDINFO *)obj->ob_spec)->te_ptmplt;
+            *str = (BYTE *)gettext(*str);
             break;
         case G_STRING:
         case G_BUTTON:
@@ -1188,20 +1198,13 @@ void xlate_obj_array(OBJECT *obj_array, int nobj)
     }
 }
 
-/* Translates and fixes the TEDINFO strings */
+/* Fixes the TEDINFO strings */
 void xlate_fix_tedinfo(TEDINFO *tedinfo, int nted)
 {
     int i = 0;
     long len;
     int j;
     char *tedinfptr;
-
-    /* translate strings in TEDINFO */
-    for (i = 0; i < nted; i++)
-    {
-        TEDINFO *ted = &tedinfo[i];
-        ted->te_ptmplt = (BYTE *)gettext(ted->te_ptmplt);
-    }
 
     /* Fix TEDINFO strings: */
     len = 0;
