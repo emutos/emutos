@@ -20,7 +20,7 @@ extern GRECT    gl_normwin;
 
 
 void xlate_obj_array(OBJECT *obj_array, int nobj);
-void xlate_fix_tedinfo(TEDINFO *tedinfo, int nted);
+void fix_tedinfo(TEDINFO *tedinfo, int nted);
 WORD hndl_msg(void);
 WORD deskmain(void);
 void centre_title(OBJECT *tree);

@@ -1157,7 +1157,7 @@ static int count_chars(char *str, char c)
 }
 
 /*
- *  The xlate_obj_array() & xlate_fix_tedinfo() functions below are also
+ *  The xlate_obj_array() & fix_tedinfo() functions below are also
  *  used by the GEM rsc in aes/gem_rsc.c
  */
 
@@ -1199,7 +1199,7 @@ void xlate_obj_array(OBJECT *obj_array, int nobj)
 }
 
 /* Fixes the TEDINFO strings */
-void xlate_fix_tedinfo(TEDINFO *tedinfo, int nted)
+void fix_tedinfo(TEDINFO *tedinfo, int nted)
 {
     int i = 0;
     long len;
@@ -1484,8 +1484,8 @@ static void desk_xlate_fix(void)
         rsrc_obfix(desk_rs_obj, i);
     }
 
-    /* translate and fix TEDINFO strings */
-    xlate_fix_tedinfo(desk_rs_tedinfo, RS_NTED);
+    /* Fix TEDINFO strings */
+    fix_tedinfo(desk_rs_tedinfo, RS_NTED);
 
     /*
      * perform special object alignment - this must be done after

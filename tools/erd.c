@@ -2028,8 +2028,8 @@ PRIVATE int write_c_epilogue(FILE *fp)
     fprintf(fp,"    memcpy(%srs_tedinfo, %srs_tedinfo_rom, RS_NTED*sizeof(TEDINFO));\n\n",prefix,prefix);
     fprintf(fp,"    /* translate strings in objects */\n");
     fprintf(fp,"    xlate_obj_array(%srs_obj, RS_NOBS);\n\n",prefix);
-    fprintf(fp,"    /* translate and fix TEDINFO strings */\n");
-    fprintf(fp,"    xlate_fix_tedinfo(%srs_tedinfo, RS_NTED);\n\n",prefix);
+    fprintf(fp,"    /* fix TEDINFO strings */\n");
+    fprintf(fp,"    fix_tedinfo(%srs_tedinfo, RS_NTED);\n\n",prefix);
     fprintf(fp,"    /* The first three TEDINFOs don't use a '@' as first character: */\n");
     fprintf(fp,"    *rs_tedinfo[0].te_ptext = '_';\n");
     fprintf(fp,"    *rs_tedinfo[1].te_ptext = '_';\n");
