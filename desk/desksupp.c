@@ -699,8 +699,8 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname)
      * see if application was selected directly or a
      * data file with an associated primary application
      */
-    pcmd = ptail = NULL;
     G.g_cmd[0] = G.g_tail[1] = '\0';
+    ptail = G.g_tail + 1;   /* arguments go here */
     ret = TRUE;
 
     if (installed_datafile)
@@ -712,7 +712,6 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname)
          * with a command tail based on the application flags.
          */
         pcmd = pa->a_pappl;
-        ptail = G.g_tail + 1;
         strcpy(ptail,pa->a_pargs);
         p = ptail + strlen(ptail);
 
@@ -727,21 +726,13 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname)
     {
         if (isapp)
         {
+            pcmd = pname;
             if (isparm)
             {
                 /*
                  * the user has selected a .TTP or .GTP application
                  */
-                pcmd = G.g_cmd;
-                ptail = G.g_tail + 1;
-                ret = opn_appl(pname, "\0", pcmd, ptail);
-            }
-            else
-            {
-                /*
-                 * the user has selected a .TOS/.APP/.PRG application
-                 */
-                pcmd = pname;
+                ret = opn_appl(pname, ptail);
             }
         }
         else
@@ -773,10 +764,7 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname)
         /*
          * the user wants to run an application
          */
-        if ((pcmd != G.g_cmd) && (pcmd != NULL))
-            strcpy(G.g_cmd, pcmd);
-        if ((ptail != G.g_tail+1) && (ptail != NULL))
-            strcpy(G.g_tail+1, ptail);
+        strcpy(G.g_cmd, pcmd);  /* G.g_tail+1 is already set up */
         done = pro_run(isgraf, 1, G.g_cwin, curr);
     }
 

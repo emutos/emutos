@@ -765,7 +765,7 @@ WORD inf_pref(void)
 /*
  *       Open application icon
  */
-WORD opn_appl(BYTE *papname, BYTE *papparms, BYTE *pcmd, BYTE *ptail)
+WORD opn_appl(BYTE *papname, BYTE *ptail)
 {
     OBJECT *tree;
     BYTE poname[LEN_ZFNAME];
@@ -774,17 +774,15 @@ WORD opn_appl(BYTE *papname, BYTE *papparms, BYTE *pcmd, BYTE *ptail)
 
     fmt_str(papname, poname);
     inf_sset(tree, APPLNAME, poname);
-    inf_sset(tree, APPLPARM, papparms);
+    inf_sset(tree, APPLPARM, "");
     inf_show(tree, APPLPARM);
 
     /* now find out what happened */
     if ( inf_what(tree, APPLOK, APPLCNCL) )
     {
-        inf_sget(tree, APPLNAME, poname);
-        unfmt_str(poname, pcmd);
         inf_sget(tree, APPLPARM, ptail);
         return TRUE;
     }
-    else
-        return FALSE;
+
+    return FALSE;
 }
