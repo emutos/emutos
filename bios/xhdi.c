@@ -33,11 +33,19 @@
 typedef long (*XHDI_HANDLER)(UWORD opcode, ...);
 static XHDI_HANDLER next_handler; /* Next handler installed by XHNewCookie() */
 
+static ULONG XHDI_drvmap;
+
 /*---Functions ---*/
 
 void create_XHDI_cookie(void)
 {
     cookie_add(COOKIE_XHDI, (long)xhdi_vec);
+}
+
+void init_XHDI_drvmap(void)
+{
+    /* Currently, floppy drives can't be accessed through XHDI. */
+    XHDI_drvmap = blkdev_drvmap() & ~0x03UL;
 }
 
 static UWORD XHGetVersion(void)
@@ -55,10 +63,7 @@ static UWORD XHGetVersion(void)
 
 static ULONG XHDrvMap(void)
 {
-    ULONG drvmap = blkdev_drvmap();
-
-    /* Currently, floppy drives can't be accessed through XHDI. */
-    drvmap &= ~0x03;
+    ULONG drvmap = XHDI_drvmap;
 
     if (next_handler)
         drvmap |= next_handler(XHDRVMAP);

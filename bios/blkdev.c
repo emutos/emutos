@@ -32,6 +32,7 @@
 #include "sd.h"
 #include "biosext.h"
 #include "biosmem.h"
+#include "xhdi.h"
 
 
 /*
@@ -172,6 +173,10 @@ static void blkdev_hdv_init(void)
     bus_init();
 
     disk_init_all();    /* Detect hard disk partitions */
+
+#if CONF_WITH_XHDI
+    init_XHDI_drvmap(); /* remember drives that we control */
+#endif
 
     pun_info_setup();
 }
