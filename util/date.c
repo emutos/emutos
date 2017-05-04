@@ -15,7 +15,7 @@
 #include "doprintf.h"
 
 
-void putchar(int c)
+void boncout_outc(int c)
 {
   if(c == '\n') {
     Bconout(2,'\r');
@@ -28,7 +28,7 @@ int printf(const char *fmt, ...)
   int n;
   va_list ap;
   va_start(ap, fmt);
-  n = doprintf(putchar, fmt, ap);
+  n = doprintf(boncout_outc, fmt, ap);
   va_end(ap);
   return n;
 }
