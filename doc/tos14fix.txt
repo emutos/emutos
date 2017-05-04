@@ -559,10 +559,10 @@ Print Text File
 
 Running Applications
 --------------------
-089. Applications can be run from background windows; when the        NOT YET FIXED: commit 0ce47d0
-     Desktop launches an application, it shel_write()s the full       was supposed to fix this, but
-     pathname of the application.                                     did not handle the special case 
-                                                                      of running EMUCON.
+089. Applications can be run from background windows; when the        FIXED: commit 9c1120c
+     Desktop launches an application, it shel_write()s the full
+     pathname of the application.
+
 
 Selecting Files
 ---------------
