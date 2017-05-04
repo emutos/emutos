@@ -726,7 +726,6 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname)
     {
         if (isapp)
         {
-            pcmd = pname;
             if (isparm)
             {
                 /*
@@ -734,6 +733,8 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname)
                  */
                 ret = opn_appl(pname, ptail);
             }
+            strcat(app_path, pname);    /* build full pathname for pro_run() */
+            pcmd = app_path;
         }
         else
         {
