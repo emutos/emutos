@@ -57,9 +57,11 @@
 meminit:
 
 /*
- * The caller (startup.S) needs to have initialized sp
- * with a temporary supervisor stack (for i.e. jsr _check_read_byte)
- * The stack will be overwritten and lost during clearing of memory
+ * Exception vectors must point to actual RAM, so exceptions can be used for
+ * detection. Furthermore, sp must have been initialized to a valid temporary
+ * stack, so we can call subroutines here. This temporary stack may be
+ * destroyed by the memory detection mechanism, so we can't store long living
+ * data on it.
  */
 
         /* We will accumulate meminit_flags in this register */
