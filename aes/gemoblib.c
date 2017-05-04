@@ -150,6 +150,24 @@ void ob_format(WORD just, BYTE *raw_str, BYTE *tmpl_str, BYTE *fmt_str)
 }
 
 
+static __inline__ WORD call_usercode(USERBLK *ub, PARMBLK *pb)
+{
+    register WORD (*ub_code)(PARMBLK *parmblock) __asm__("a0") = ub->ub_code;
+    register WORD retvalue __asm__("d0");
+
+    __asm__ volatile
+    (
+        "move.l  %2,-(sp)\n\t"
+        "jsr     (%1)\n\t"
+        "addq.l  #4,sp\n\t"
+    : "=r"(retvalue)
+    : "a"(ub_code), "g"(pb)
+    : "d1", "d2", "a1", "a2", "memory", "cc"
+    );
+    return retvalue;
+}
+
+
 /*
  *  Routine to load up and call a user-defined object draw or change
  *  routine.
@@ -168,7 +186,7 @@ static WORD ob_user(LONG tree, WORD obj, GRECT *pt, LONG spec,
     gsx_gclip((GRECT *)&pb.pb_xc);      /* FIXME: ditto */
     pb.pb_parm = ub->ub_parm;
 
-    return ub->ub_code(&pb);
+    return call_usercode(ub, &pb);
 }
 
 
