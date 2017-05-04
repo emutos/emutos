@@ -60,7 +60,7 @@ WORD pro_run(WORD isgraf, WORD isover, WORD wh, WORD curr)
     WORD ret, len;
 
     G.g_tail[0] = len = strlen(&G.g_tail[1]);
-    G.g_tail[len+1] = 0x0D;
+    G.g_tail[len+2] = 0x0D;     /* follows the nul byte, just like Atari TOS */
     ret = pro_exec(isgraf, isover, G.g_cmd, G.g_tail);
 
     if (wh != -1)
