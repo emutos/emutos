@@ -57,7 +57,7 @@
 meminit:
 
 /*
- * The caller (either startup.S or comprimg.S) needs to have initialized sp
+ * The caller (startup.S) needs to have initialized sp
  * with a temporary supervisor stack (for i.e. jsr _check_read_byte)
  * The stack will be overwritten and lost during clearing of memory
  */

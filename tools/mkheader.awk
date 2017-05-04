@@ -47,7 +47,7 @@ BEGIN {
     print "#include \"i18nconf.h\""
     print "#include \"ctrycodes.h\"\n"
 
-    print "/* The defines below must only be used in startup.S and comprimg.S."
+    print "/* The defines below must only be used in startup.S."
     print " * Then the OS header variables must be used elsewhere."
     print " * This allows tools like tos-lang-change to patch the ROM header afterwards."
     print " */\n"

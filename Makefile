@@ -680,76 +680,6 @@ $(EMUTOS_PRG): obj/minicrt.o obj/boot.o obj/bootram.o obj/ramtos.o
 	$(LD) $+ -lgcc -o $@ -s
 
 #
-# compressed ROM image
-#
-
-# The following hack allows to build the shared sources with different
-# preprocessor defines
-obj/compr-%.o : %.S
-	$(CC) $(SFILE_FLAGS) -c $< -o $@
-
-COMPROBJ = obj/compr-tosvars.o obj/compr-comprimg.o obj/compr-memory.o \
-           obj/compr-processor.o obj/compr-memset.o obj/compr-uncompr.o
-
-obj/compr-comprimg.o: obj/ramtos.h
-
-# ROM stub for compressed ROM image
-compr.img compr.map: OPTFLAGS = $(SMALL_OPTFLAGS)
-compr.img compr.map: override DEF += -DTARGET_COMPR_STUB
-compr.img compr.map: $(COMPROBJ) obj/emutospp.ld Makefile
-	$(LD) $(COMPROBJ) $(LIBS) $(LDFLAGS) -Wl,-Map=compr.map -o compr.img
-
-# Compressed ROM: stub + ramtos
-.PHONY: etoscpr.img
-etoscpr.img: OPTFLAGS = $(SMALL_OPTFLAGS)
-etoscpr.img: override DEF += -DTARGET_COMPRESSED_ROM
-etoscpr.img: compr.img compr
-	$(MAKE) DEF='$(DEF)' OPTFLAGS=$(OPTFLAGS) UNIQUE=$(UNIQUE) emutos.img
-	./compr --rom compr.img emutos.img $@
-
-# 256k compressed ROM (intermediate target)
-ecpr256k.img: ROMSIZE = 256
-ecpr256k.img: etoscpr.img mkrom
-	./mkrom pad $(ROMSIZE)k $< $@
-
-# 192k compressed ROM (intermediate target)
-ecpr192k.img: ROMSIZE = 192
-ecpr192k.img: etoscpr.img mkrom
-	./mkrom pad $(ROMSIZE)k $< $@
-
-# 256k compressed ROM (main target)
-.PHONY: 256c
-NODEP += 256c
-256c: UNIQUE = $(COUNTRY)
-256c:
-	$(MAKE) UNIQUE=$(UNIQUE) ecpr256k.img
-
-# 192k compressed ROM (main target)
-.PHONY: 192c
-NODEP += 192c
-192c: UNIQUE = $(COUNTRY)
-192c:
-	$(MAKE) UNIQUE=$(UNIQUE) ecpr192k.img
-
-# Compression tool
-NODEP += compr
-compr: tools/compr.c
-	$(NATIVECC) $< -o $@
-
-# Decompression tool
-NODEP += uncompr
-uncompr: tools/uncompr.c
-	$(NATIVECC) $< -o $@
-
-# Compression test
-.PHONY: comprtest
-NODEP += comprtest
-comprtest: compr uncompr
-	$(SHELL) tools/comprtst.sh
-
-TOCLEAN += compr uncompr
-
-#
 # flop
 #
 
@@ -896,7 +826,7 @@ mkrom: tools/mkrom.c
 # test target to build all tools
 .PHONY: tools
 NODEP += tools
-tools: bug compr erd mkflop mkrom tos-lang-change tounix uncompr
+tools: bug erd mkflop mkrom tos-lang-change tounix
 
 # user tool, not needed in EmuTOS building
 TOCLEAN += tos-lang-change

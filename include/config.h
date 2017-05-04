@@ -28,7 +28,7 @@
 /*
  * Determine if this EmuTOS is built for ROM or RAM.
  */
-#if defined(TARGET_PRG) || defined(TARGET_FLOPPY) || defined(TARGET_COMPRESSED_ROM) || defined(TARGET_AMIGA_FLOPPY)
+#if defined(TARGET_PRG) || defined(TARGET_FLOPPY) || defined(TARGET_AMIGA_FLOPPY)
 #  define EMUTOS_LIVES_IN_RAM 1
 # else
 #  define EMUTOS_LIVES_IN_RAM 0
@@ -293,39 +293,6 @@
 # endif
 # ifndef CONF_WITH_SHUTDOWN
 #  define CONF_WITH_SHUTDOWN 0
-# endif
-# ifndef CONF_WITH_MONSTER
-#  define CONF_WITH_MONSTER 0
-# endif
-#endif
-
-/*
- * Defaults for the ROM stub used to load compressed ROM images.
- */
-#ifdef TARGET_COMPR_STUB
-# ifndef DETECT_NATIVE_FEATURES
-#  define DETECT_NATIVE_FEATURES 0
-# endif
-# ifndef CONF_WITH_ADVANCED_CPU
-#  define CONF_WITH_ADVANCED_CPU 0
-# endif
-# ifndef CONF_WITH_APOLLO_68080
-#  define CONF_WITH_APOLLO_68080 0
-# endif
-# ifndef CONF_WITH_68030_PMMU
-#  define CONF_WITH_68030_PMMU 0
-# endif
-# ifndef CONF_WITH_TT_MMU
-#  define CONF_WITH_TT_MMU 0
-# endif
-# ifndef CONF_WITH_FALCON_MMU
-#  define CONF_WITH_FALCON_MMU 0
-# endif
-# ifndef CONF_WITH_TTRAM
-#  define CONF_WITH_TTRAM 0
-# endif
-# ifndef CONF_WITH_SFP004
-#  define CONF_WITH_SFP004 0
 # endif
 # ifndef CONF_WITH_MONSTER
 #  define CONF_WITH_MONSTER 0
