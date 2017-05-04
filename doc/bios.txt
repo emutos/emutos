@@ -2179,7 +2179,7 @@
          copy the current vectors to the new array  (clearing  any
          new, unused entries), and update 'vblqueue' and 'nvbls'.
 
-         Deferred VBI handlers should return with  RTS,  _n_o_t  RTE.
+         Deferred VBI handlers should return with  RTS,  _not_  RTE.
          They may use any registers except the user stack-pointer.
 
          Applications are responsible for cleaning up  vbl-vectors
