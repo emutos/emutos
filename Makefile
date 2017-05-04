@@ -826,7 +826,7 @@ mkrom: tools/mkrom.c
 # test target to build all tools
 .PHONY: tools
 NODEP += tools
-tools: bug erd mkflop mkrom tos-lang-change tounix
+tools: bug erd mkflop mkrom tos-lang-change
 
 # user tool, not needed in EmuTOS building
 TOCLEAN += tos-lang-change
@@ -1124,8 +1124,6 @@ indent:
 # gitready
 #
 
-TOCLEAN += tounix
-
 EXPAND_FILES = $(wildcard */*.[chS] */*.awk)
 EXPAND_NOFILES = vdi/vdi_tblit_cf.S
 
@@ -1138,23 +1136,10 @@ expand:
 		mv expand.tmp $$i; \
 	done
 
-NODEP += tounix
-tounix: tools/tounix.c
-	$(NATIVECC) $< -o $@
-
-# LVL - I checked that both on Linux and Cygwin passing more than 10000
-# arguments on the command line works fine. On other systems it might be
-# necessary to adopt another technique, for example using an find | xargs
-# approach like that below:
-#
-# HERE = $(shell pwd)
-# crlf:	tounix
-#     find . -name .git -prune -or -not -name '*~' | xargs $(HERE)/tounix
-
 .PHONY: crlf
 NODEP += crlf
-crlf: tounix
-	./$< * bios/* bdos/* cli/* doc/* util/* tools/* po/* include/* aes/* desk/* vdi/*
+crlf:
+	find -type f '!' -path './.git/*' '!' -name '*.rsc' '!' -name '*.def' | xargs dos2unix
 
 # Check the sources charset (no automatic fix)
 .PHONY: charset
