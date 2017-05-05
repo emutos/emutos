@@ -417,7 +417,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         ret = rs_saddr(pglobal, RS_TYPE, RS_INDEX, RS_INADDR);
         break;
     case RSRC_OBFIX:
-        rs_obfix(RS_TREE, RS_OBJ);
+        rs_obfix((OBJECT *)RS_TREE, RS_OBJ);
         break;
 
     /* Shell Manager */

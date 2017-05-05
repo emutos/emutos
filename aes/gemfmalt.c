@@ -313,7 +313,7 @@ WORD fm_alert(WORD defbut, LONG palstr)
 
     /* convert to pixels    */
     for (i = 0; i < NUM_ALOBJS; i++)
-        rs_obfix(tree, i);
+        rs_obfix((OBJECT *)tree, i);
 
     /* fix up icon, 32x32   */
     obj->ob_type = G_IMAGE;

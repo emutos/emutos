@@ -24,7 +24,7 @@ typedef struct aesglobal {
     LONG ap_4resv;                  /* reserved for use in AES 4.00 */
 } AESGLOBAL;
 
-void rs_obfix(LONG tree, WORD curob);
+void rs_obfix(OBJECT *tree, WORD curob);
 BYTE *rs_str(UWORD stnum);
 WORD rs_free(AESGLOBAL *pglobal);
 WORD rs_gaddr(AESGLOBAL *pglobal, UWORD rtype, UWORD rindex, LONG *rsaddr);

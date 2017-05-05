@@ -142,14 +142,13 @@ static void fix_chpos(WORD *pfix, WORD offset)
 /************************************************************************/
 /* rs_obfix                                                             */
 /************************************************************************/
-void rs_obfix(LONG tree, WORD curob)
+void rs_obfix(OBJECT *tree, WORD curob)
 {
     WORD offset;
-    OBJECT *obj = (OBJECT *)tree + curob;
     WORD *p;
 
     /* set X,Y,W,H */
-    p = &obj->ob_x;
+    p = &tree[curob].ob_x;
 
     for (offset=0; offset<4; offset++)
         fix_chpos(p+offset, offset);
@@ -285,7 +284,7 @@ static void fix_objects(void)
     for (ii = rs_hdr.wordptr[R_NOBS]-1; ii >= 0; ii--)
     {
         item = get_addr(R_OBJECT, ii);
-        rs_obfix(item.base, 0);
+        rs_obfix(item.obj, 0);
         obtype = item.obj->ob_type & 0x00ff;
         if ((obtype != G_BOX) && (obtype != G_IBOX) && (obtype != G_BOXCHAR))
             fix_long((RSCITEM)(&item.obj->ob_spec));

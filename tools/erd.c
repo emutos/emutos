@@ -2041,7 +2041,7 @@ PRIVATE int write_c_epilogue(FILE *fp)
     fprintf(fp,"    int i;\n");
     fprintf(fp,"    OBJECT *tree, *p;\n\n");
     fprintf(fp,"    for(i = 0; i < RS_NOBS; i++)\n");
-    fprintf(fp,"        rs_obfix((LONG)%srs_obj, i);\n\n",prefix);
+    fprintf(fp,"        rs_obfix(%srs_obj, i);\n\n",prefix);
     fprintf(fp,"    /*\n");
     fprintf(fp,"     * Set up message & button buffers for form_alert().\n");
     fprintf(fp,"     * We must do this *after* the object fixup has been done!\n");
