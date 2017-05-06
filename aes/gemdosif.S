@@ -21,7 +21,6 @@
         .globl  _unset_aestrap
         .globl  _set_aestrap
         .globl  _aestrap_intercepted
-        .globl  _back
         .globl  _far_mcha
         .globl  _aes_wheel
         .globl  _far_bcha
