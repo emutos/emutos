@@ -99,7 +99,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         pglobal->ap_id = rlr->p_pid;
         tree = rs_trees[DESKTOP];
         pglobal->ap_private = tree[ROOT].ob_spec;
-        pglobal->ap_2resv[1] = gl_nplanes;
+        pglobal->ap_planes = gl_nplanes;
         pglobal->ap_3resv = (LONG)&D;
 
         /* reset dispatcher count to let the app run a while */

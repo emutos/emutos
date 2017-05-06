@@ -330,7 +330,7 @@ static void fix_tedinfo(void)
 static void rs_sglobe(AESGLOBAL *pglobal)
 {
     rs_global = pglobal;
-    rs_hdr.base = rs_global->ap_1resv;
+    rs_hdr.base = rs_global->ap_rscmem;
 }
 
 
@@ -341,7 +341,7 @@ WORD rs_free(AESGLOBAL *pglobal)
 {
     rs_global = pglobal;
 
-    return !dos_free(rs_global->ap_1resv);
+    return !dos_free(rs_global->ap_rscmem);
 }
 
 
@@ -412,8 +412,8 @@ static WORD rs_readit(AESGLOBAL *pglobal,UWORD fd)
 
     /* init global */
     rs_global = pglobal;
-    rs_global->ap_1resv = rs_hdr.base;
-    rs_global->ap_2resv[0] = rslsize;
+    rs_global->ap_rscmem = rs_hdr.base;
+    rs_global->ap_rsclen = rslsize;
 
     /*
      * transfer RT_TRINDEX to global and turn all offsets from

@@ -17,9 +17,9 @@ typedef struct aesglobal {
     LONG ap_private;                /* for use by application */
     LONG ap_ptree;                  /* pointer to array of tree addresses */
                                 /* the following are not advertised to applications */
-    LONG ap_1resv;                  /* address of rsc file in memory */
-    UWORD ap_2resv[2];              /* [0] = length of rsc file */
-                                    /* [1] = # of colour planes on screen */
+    LONG ap_rscmem;                 /* address of rsc file in memory */
+    UWORD ap_rsclen;                /* length of rsc file */
+    WORD ap_planes;                 /* # of colour planes on screen */
     LONG ap_3resv;                  /* ptr to AES global area D (struct THEGLO) */
     LONG ap_4resv;                  /* reserved for use in AES 4.00 */
 } AESGLOBAL;
