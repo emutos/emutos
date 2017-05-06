@@ -296,7 +296,7 @@ static void fix_nptrs(WORD cnt, WORD type)
 {
     WORD i;
 
-    for (i = cnt; i >= 0; i--)
+    for (i = 0; i < cnt; i++)
         fix_long(get_addr(type, i));
 }
 
@@ -421,13 +421,13 @@ static WORD rs_readit(AESGLOBAL *pglobal,UWORD fd)
      */
     fix_trindex();
     fix_tedinfo();
-    ibcnt = rs_hdr.wordptr[R_NICON]-1;
+    ibcnt = rs_hdr.wordptr[R_NICON];
     fix_nptrs(ibcnt, R_IBPMASK);
     fix_nptrs(ibcnt, R_IBPDATA);
     fix_nptrs(ibcnt, R_IBPTEXT);
-    fix_nptrs(rs_hdr.wordptr[R_NBITBLK]-1, R_BIPDATA);
-    fix_nptrs(rs_hdr.wordptr[R_NSTRING]-1, R_FRSTR);
-    fix_nptrs(rs_hdr.wordptr[R_IMAGES]-1, R_FRIMG);
+    fix_nptrs(rs_hdr.wordptr[R_NBITBLK], R_BIPDATA);
+    fix_nptrs(rs_hdr.wordptr[R_NSTRING], R_FRSTR);
+    fix_nptrs(rs_hdr.wordptr[R_IMAGES], R_FRIMG);
 
     return TRUE;
 }
