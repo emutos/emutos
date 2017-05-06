@@ -295,7 +295,7 @@ static void fix_tedinfo(void)
 static void rs_sglobe(AESGLOBAL *pglobal)
 {
     rs_global = pglobal;
-    rs_hdr = (RSHDR *)rs_global->ap_rscmem;
+    rs_hdr = rs_global->ap_rscmem;
 }
 
 
@@ -306,7 +306,7 @@ WORD rs_free(AESGLOBAL *pglobal)
 {
     rs_global = pglobal;
 
-    return !dos_free(rs_global->ap_rscmem);
+    return !dos_free((LONG)rs_global->ap_rscmem);
 }
 
 
@@ -378,7 +378,7 @@ static WORD rs_readit(AESGLOBAL *pglobal,UWORD fd)
 
     /* init global */
     rs_global = pglobal;
-    rs_global->ap_rscmem = (LONG)rs_hdr;
+    rs_global->ap_rscmem = rs_hdr;
     rs_global->ap_rsclen = rslsize;
 
     /*

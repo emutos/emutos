@@ -10,6 +10,8 @@
 #ifndef GEMRSLIB_H
 #define GEMRSLIB_H
 
+#include "rsdefs.h"                 /* for RSHDR */
+
 typedef struct aesglobal {
     WORD ap_version;                /* AES version */
     WORD ap_count;                  /* max # of concurrent applications */
@@ -17,7 +19,7 @@ typedef struct aesglobal {
     LONG ap_private;                /* for use by application */
     LONG ap_ptree;                  /* pointer to array of tree addresses */
                                 /* the following are not advertised to applications */
-    LONG ap_rscmem;                 /* address of rsc file in memory */
+    RSHDR *ap_rscmem;               /* address of rsc file in memory */
     UWORD ap_rsclen;                /* length of rsc file */
     WORD ap_planes;                 /* # of colour planes on screen */
     LONG ap_3resv;                  /* ptr to AES global area D (struct THEGLO) */
