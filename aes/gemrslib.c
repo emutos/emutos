@@ -244,7 +244,7 @@ static RSCITEM get_addr(UWORD rstype, UWORD rsindex)
 } /* get_addr() */
 
 
-static LONG fix_long(RSCITEM item)
+static BOOL fix_long(RSCITEM item)
 {
     LONG lngval;
 
@@ -253,10 +253,10 @@ static LONG fix_long(RSCITEM item)
     {
         lngval += rs_hdr.base;
         *item.lptr = lngval;
-        return lngval;
+        return TRUE;
     }
 
-    return 0L;
+    return FALSE;
 }
 
 
@@ -301,9 +301,9 @@ static void fix_nptrs(WORD cnt, WORD type)
 }
 
 
-static WORD fix_ptr(WORD type, WORD index)
+static BOOL fix_ptr(WORD type, WORD index)
 {
-    return (fix_long(get_addr(type, index)) != 0L);
+    return fix_long(get_addr(type, index));
 }
 
 
