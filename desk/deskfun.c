@@ -71,6 +71,7 @@ WORD fun_alert_merge(WORD defbut, WORD stnum, BYTE merge)
 }
 
 
+#if CONF_WITH_FORMAT
 /*
  *  Issue an alert after merging in a long variable
  */
@@ -81,8 +82,10 @@ WORD fun_alert_long(WORD defbut, WORD stnum, LONG merge)
 
     return form_alert(defbut, G.g_1text);
 }
+#endif
 
 
+#if CONF_WITH_DESKTOP_SHORTCUTS
 /*
  *  Issue an alert after merging in a string
  */
@@ -93,6 +96,7 @@ WORD fun_alert_string(WORD defbut, WORD stnum, BYTE *merge)
 
     return form_alert(defbut, G.g_1text);
 }
+#endif
 
 
 void fun_msg(WORD type, WORD w3, WORD w4, WORD w5, WORD w6, WORD w7)

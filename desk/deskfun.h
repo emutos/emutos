@@ -19,8 +19,15 @@
 
 WORD fun_alert(WORD defbut, WORD stnum);
 WORD fun_alert_merge(WORD defbut, WORD stnum, BYTE merge);
+
+#if CONF_WITH_FORMAT
 WORD fun_alert_long(WORD defbut, WORD stnum, LONG merge);
+#endif
+
+#if CONF_WITH_DESKTOP_SHORTCUTS
 WORD fun_alert_string(WORD defbut, WORD stnum, BYTE *merge);
+#endif
+
 void fun_close(WNODE *pw, WORD closetype);
 void fun_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my, WORD keystate);
 void fun_msg(WORD type, WORD w3, WORD w4, WORD w5, WORD w6, WORD w7);
