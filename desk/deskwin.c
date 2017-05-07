@@ -593,24 +593,6 @@ WORD win_isel(OBJECT olist[], WORD root, WORD curr)
 
 
 /*
- *  Return pointer to this icon's name.  It will always be an icon that
- *  is on the desktop.
- */
-BYTE *win_iname(WORD curr)
-{
-    ICONBLK *pib;
-    BYTE    *ptext;
-
-    assert(G.g_screen[curr].ob_type == G_ICON);
-
-    pib = (ICONBLK *)G.g_screen[curr].ob_spec;
-    ptext = pib->ib_ptext;
-
-    return ptext;
-}
-
-
-/*
  *  Set the name and information lines of a particular window
  */
 void win_sname(WNODE *pw)

@@ -94,7 +94,6 @@ void win_srtall(void);
 void win_bdall(void);
 void win_shwall(void);
 WORD win_isel(OBJECT olist[], WORD root, WORD curr);
-BYTE *win_iname(WORD curr);
 void win_sname(WNODE *pw);
 void win_sinfo(WNODE *pwin);
 
