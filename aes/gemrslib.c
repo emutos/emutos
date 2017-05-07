@@ -221,7 +221,7 @@ static void fix_trindex(void)
     ptreebase = (LONG *)get_sub(R_TREE, rs_hdr->rsh_trindex, sizeof(LONG));
     rs_global->ap_ptree = (OBJECT **)ptreebase;
 
-    for (ii = rs_hdr->rsh_ntree-1; ii >= 0; ii--)
+    for (ii = 0; ii < rs_hdr->rsh_ntree; ii++)
     {
         fix_long(ptreebase+ii);
     }
@@ -234,7 +234,7 @@ static void fix_objects(void)
     WORD obtype;
     OBJECT *obj;
 
-    for (ii = rs_hdr->rsh_nobs-1; ii >= 0; ii--)
+    for (ii = 0; ii < rs_hdr->rsh_nobs; ii++)
     {
         obj = (OBJECT *)get_addr(R_OBJECT, ii);
         rs_obfix(obj, 0);
@@ -265,7 +265,7 @@ static void fix_tedinfo(void)
     WORD ii;
     TEDINFO *ted;
 
-    for (ii = rs_hdr->rsh_nted-1; ii >= 0; ii--)
+    for (ii = 0; ii < rs_hdr->rsh_nted; ii++)
     {
         ted = (TEDINFO *)get_addr(R_TEDINFO, ii);
         if (fix_ptr(R_TEPTEXT, ii))
