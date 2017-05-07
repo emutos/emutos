@@ -43,7 +43,7 @@ static void setphys(const UBYTE *addr);
 
 /* Define palette */
 
-static const WORD dflt_palette[] = {
+static const UWORD dflt_palette[] = {
     RGB_WHITE, RGB_RED, RGB_GREEN, RGB_YELLOW,
     RGB_BLUE, RGB_MAGENTA, RGB_CYAN, RGB_LTGRAY,
     RGB_GRAY, RGB_LTRED, RGB_LTGREEN, RGB_LTYELLOW,
@@ -53,9 +53,9 @@ static const WORD dflt_palette[] = {
 /*
  * Initialise ST(e) palette registers
  */
-static void initialise_ste_palette(WORD mask)
+static void initialise_ste_palette(UWORD mask)
 {
-    volatile WORD *col_regs = (WORD *) ST_PALETTE_REGS;
+    volatile UWORD *col_regs = (UWORD *) ST_PALETTE_REGS;
     int i;
 
     for (i = 0; i < 16; i++)
@@ -67,7 +67,7 @@ static void initialise_ste_palette(WORD mask)
  */
 static void fixup_ste_palette(WORD rez)
 {
-    volatile WORD *col_regs = (WORD *) ST_PALETTE_REGS;
+    volatile UWORD *col_regs = (UWORD *) ST_PALETTE_REGS;
 
     if (rez == ST_MEDIUM)
         col_regs[3] = col_regs[15];
@@ -120,7 +120,7 @@ static WORD shifter_get_monitor_type(void)
 
 #if CONF_WITH_TT_SHIFTER
 
-static const WORD tt_dflt_palette[] = {
+static const UWORD tt_dflt_palette[] = {
  TTRGB_WHITE, TTRGB_RED, TTRGB_GREEN, TTRGB_YELLOW,
  TTRGB_BLUE, TTRGB_MAGENTA, TTRGB_CYAN, TTRGB_LTGRAY,
  TTRGB_GRAY, TTRGB_LTRED, TTRGB_LTGREEN, TTRGB_LTYELLOW,
@@ -215,10 +215,10 @@ WORD esetbank(WORD bank)
 /*
  * Read/modify TT palette colour entry
  */
-WORD esetcolor(WORD index,WORD color)
+WORD esetcolor(WORD index,UWORD color)
 {
-    volatile WORD *ttcol_regs = (WORD *) TT_PALETTE_REGS;
-    WORD oldcolor;
+    volatile UWORD *ttcol_regs = (UWORD *) TT_PALETTE_REGS;
+    UWORD oldcolor;
 
     if (!has_tt_shifter)
         return 0x53;    /* unimplemented xbios call: return function # */
@@ -240,7 +240,7 @@ WORD esetcolor(WORD index,WORD color)
  * which is the de facto TOS standard for unimplemented xbios functions.
  * Therefore internally we make it return a WORD.
  */
-WORD esetpalette(WORD index,WORD count,WORD *rgb)
+WORD esetpalette(WORD index,WORD count,UWORD *rgb)
 {
     volatile WORD *ttcolour;
 
@@ -265,7 +265,7 @@ WORD esetpalette(WORD index,WORD count,WORD *rgb)
  *
  * See the comments for esetpalette() above
  */
-WORD egetpalette(WORD index,WORD count,WORD *rgb)
+WORD egetpalette(WORD index,WORD count,UWORD *rgb)
 {
     volatile WORD *ttcolour;
 
@@ -331,7 +331,7 @@ WORD esetsmear(WORD mode)
  */
 static void initialise_tt_palette(WORD rez)
 {
-    volatile WORD *ttcol_regs = (WORD *) TT_PALETTE_REGS;
+    volatile UWORD *ttcol_regs = (UWORD *) TT_PALETTE_REGS;
     int i;
 
     for (i = 0; i < 256; i++)
@@ -386,7 +386,7 @@ WORD check_moderez(WORD moderez)
 void initialise_palette_registers(WORD rez,WORD mode)
 {
 #if CONF_WITH_ATARI_VIDEO
-WORD mask;
+UWORD mask;
 
     if (HAS_VIDEL || HAS_TT_SHIFTER || HAS_STE_SHIFTER)
         mask = 0x0fff;
@@ -967,7 +967,7 @@ void setpalette(LONG palettePtr)
 {
 #ifdef ENABLE_KDEBUG
     int i, max;
-    WORD *p = (WORD *)palettePtr;
+    UWORD *p = (UWORD *)palettePtr;
     max = getrez() == 0 ? 15 : getrez() == 1 ? 3 : 1;
     KDEBUG(("Setpalette("));
     for(i = 0 ; i <= max ; i++) {
@@ -977,7 +977,7 @@ void setpalette(LONG palettePtr)
     KDEBUG((")\n"));
 #endif
     /* next VBL will do this */
-    colorptr = (WORD *) palettePtr;
+    colorptr = (UWORD *) palettePtr;
 }
 
 /*

@@ -48,9 +48,9 @@
 WORD esetshift(WORD mode);
 WORD egetshift(void);
 WORD esetbank(WORD bank);
-WORD esetcolor(WORD index,WORD color);
-WORD esetpalette(WORD index,WORD count,WORD *rgb);
-WORD egetpalette(WORD index,WORD count,WORD *rgb);
+WORD esetcolor(WORD index,UWORD color);
+WORD esetpalette(WORD index,WORD count,UWORD *rgb);
+WORD egetpalette(WORD index,WORD count,UWORD *rgb);
 WORD esetgray(WORD mode);
 WORD esetsmear(WORD mode);
 

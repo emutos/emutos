@@ -98,7 +98,7 @@ static const LONG videl_dflt_palette[] = {
 };
 
 GLOBAL LONG falcon_shadow_palette[256];   /* real Falcon does this, used by vectors.S */
-static WORD ste_shadow_palette[16];
+static UWORD ste_shadow_palette[16];
 
 #define MON_ALL     -1  /* code used in VMODE_ENTRY for match on mode only */
 
@@ -613,7 +613,7 @@ LONG vgetsize(WORD mode)
  * convert from Falcon palette format to STe palette format
  */
 #define falc2ste(a) ((((a)>>1)&0x08)|(((a)>>5)&0x07))
-static void convert2ste(WORD *ste,LONG *falcon)
+static void convert2ste(UWORD *ste,LONG *falcon)
 {
     union {
         LONG l;
@@ -704,7 +704,7 @@ WORD vsetrgb(WORD index,WORD count,LONG *rgb)
         return 0; /* OK */
     }
 
-    colorptr = (limit==256) ? (WORD *)0x01L : (WORD *)((LONG)falcon_shadow_palette|0x01L);
+    colorptr = (limit==256) ? (UWORD *)0x01L : (UWORD *)((LONG)falcon_shadow_palette|0x01L);
 
     return 0; /* OK */
 }
@@ -719,7 +719,8 @@ WORD vgetrgb(WORD index,WORD count,LONG *rgb)
         LONG l;
         UBYTE b[4];
     } u;
-    WORD limit, mode, value;
+    WORD limit, mode;
+    UWORD value;
 
     if (!has_videl)
         return 0x5e;    /* unimplemented xbios call: return function # */
@@ -738,7 +739,7 @@ WORD vgetrgb(WORD index,WORD count,LONG *rgb)
      * values derived from the STe palette
      */
     if (use_ste_palette(mode)) {
-        WORD *ste_shadow = ste_shadow_palette + index;
+        UWORD *ste_shadow = ste_shadow_palette + index;
         u.l = 0;
         while(count--) {
             value = *ste_shadow++;
@@ -834,7 +835,7 @@ void videl_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *vt_rez)
  */
 void initialise_falcon_palette(WORD mode)
 {
-    volatile WORD *col_regs = (WORD *) ST_PALETTE_REGS;
+    volatile UWORD *col_regs = (UWORD *) ST_PALETTE_REGS;
     volatile LONG *fcol_regs = (LONG *) FALCON_PALETTE_REGS;
     int i, limit;
 

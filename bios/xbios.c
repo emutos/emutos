@@ -883,12 +883,12 @@ static WORD xbios_53(WORD index, WORD color)
     kprintf("XBIOS: EsetColor\n");
     return esetcolor(index, color);
 }
-static void xbios_54(WORD index,WORD count,WORD *rgb)
+static void xbios_54(WORD index,WORD count,UWORD *rgb)
 {
     kprintf("XBIOS: EsetPalette\n");
     esetpalette(index, count, rgb);
 }
-static void xbios_55(WORD index, WORD count, WORD *rgb)
+static void xbios_55(WORD index, WORD count, UWORD *rgb)
 {
     kprintf("XBIOS: EgetPalette\n");
     egetpalette(index, count, rgb);
