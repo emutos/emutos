@@ -23,5 +23,6 @@
 #include "deskfpd.h"
 #include "deskwin.h"
 #include "deskbind.h"
+#include "deskglob.h"
 
 GLOBAL GLOBES           G;

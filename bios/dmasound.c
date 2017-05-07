@@ -21,6 +21,7 @@
 #include "gemerror.h"
 #include "delay.h"
 #include "asm.h"
+#include "machine.h"
 
 #if CONF_WITH_DMASOUND
 
