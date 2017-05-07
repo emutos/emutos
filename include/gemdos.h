@@ -12,11 +12,14 @@
 
 WORD pgmld(WORD handle, BYTE *pname, LONG **ldaddr);
 
+#if CONF_WITH_SHOW_FILE
 void dos_conout(WORD ch);
+void dos_conws(const char *str);
+#endif
+
 LONG dos_rawcin(void);
 WORD dos_conis(void);
 WORD dos_gdrv(void);
-void dos_conws(const char *str);
 void dos_sdta(void *ldta);
 void *dos_gdta(void);
 WORD dos_sfirst(BYTE *pspec, WORD attr);
