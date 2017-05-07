@@ -90,7 +90,10 @@ extern UNIT units[];
 
 /* physical disk functions */
 
+#if CONF_WITH_XHDI
 LONG disk_inquire(UWORD unit, ULONG *blocksize, ULONG *deviceflags, char *productname, UWORD stringlen);
+#endif
+
 LONG disk_get_capacity(UWORD unit, ULONG *blocks, ULONG *blocksize);
 LONG disk_rw(UWORD unit, UWORD rw, ULONG sector, UWORD count, UBYTE *buf);
 

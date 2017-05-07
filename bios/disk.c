@@ -744,6 +744,7 @@ static LONG internal_inquire(UWORD unit, ULONG *blocksize, ULONG *deviceflags, c
     return 0;
 }
 
+#if CONF_WITH_XHDI
 /* Get unit information, whatever low-level driver is used. */
 LONG disk_inquire(UWORD unit, ULONG *blocksize, ULONG *deviceflags, char *productname, UWORD stringlen)
 {
@@ -755,6 +756,7 @@ LONG disk_inquire(UWORD unit, ULONG *blocksize, ULONG *deviceflags, char *produc
 
     return internal_inquire(unit, blocksize, deviceflags, productname, stringlen);
 }
+#endif /* CONF_WITH_XHDI */
 
 /* Get unit capacity */
 LONG disk_get_capacity(UWORD unit, ULONG *blocks, ULONG *blocksize)
