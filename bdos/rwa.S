@@ -123,7 +123,6 @@
 
         .globl  _termuser
         .globl  _gouser
-        .globl  _oscall
         .globl  _enter
         .globl  _old_trap2
         .globl  _bdos_trap2
@@ -369,19 +368,6 @@ x20_inq:
         subq.l  #1,d0           // return -1L for sup mode
 xi_exit:
         bra     fix_rte
-
-//==== call dosjr from within itself (or from linked-in shell) ===============
-
-_oscall:
-        link    a6,#0
-        move.l  a0,-(sp)
-        lea     8(a6),a0
-        move.l  a0,-(sp)
-        jsr     _osif
-        addq.l  #4,sp
-        move.l  (sp)+,a0
-        unlk    a6
-        rts
 
 //==== fix_trap - make exception stack frame look like a 68000 frame =========
 

@@ -43,7 +43,6 @@
  */
 
 extern long xsuper(long);
-extern long oscall(int, ...);
 
 extern void enter(void);
 extern void bdos_trap2(void);
