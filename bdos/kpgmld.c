@@ -281,6 +281,7 @@ static LONG pgfix01(void *lastcp, LONG nrelbytes, PGMINFO *pi)
 }
 
 
+#if DETECT_NATIVE_FEATURES
 LONG kpgm_relocate(PD *p, long length)
 {
     BYTE    *cp;
@@ -362,3 +363,4 @@ LONG kpgm_relocate(PD *p, long length)
 
     return 0;
 }
+#endif

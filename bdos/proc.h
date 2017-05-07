@@ -34,7 +34,10 @@ WORD xtermres(long blkln, WORD rc);
 
 LONG kpgmhdrld(char *s, PGMHDR01 *hd, FH *h);
 LONG kpgmld(PD *p, FH h, PGMHDR01 *hd);
+
+#if DETECT_NATIVE_FEATURES
 LONG kpgm_relocate( PD *p, long length); /* SOP */
+#endif
 
 /*
  * in rwa.S
