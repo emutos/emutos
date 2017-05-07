@@ -736,7 +736,7 @@ static void xbios_25(void)
  * function. For safety, we assume it can clobber all of them.
  */
 
-static LONG supexec(LONG codeptr)
+static LONG supexec(PFLONG codeptr)
 {
     register LONG retval __asm__("d0");
 
@@ -755,9 +755,9 @@ static LONG supexec(LONG codeptr)
 }
 
 #if DBG_XBIOS
-static LONG xbios_26(LONG codeptr)
+static LONG xbios_26(PFLONG codeptr)
 {
-    kprintf("XBIOS: Supexec(%p)\n", (void *)codeptr);
+    kprintf("XBIOS: Supexec(%p)\n", codeptr);
     return supexec(codeptr);
 }
 #endif
