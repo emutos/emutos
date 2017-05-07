@@ -385,7 +385,7 @@ static ULONG xbios_f(WORD speed, WORD flowctl, WORD ucr, WORD rsr, WORD tsr, WOR
  */
 
 #if DBG_XBIOS
-static LONG xbios_10(UBYTE* unshift, UBYTE* shift, UBYTE* capslock)
+static LONG xbios_10(const UBYTE* unshift, const UBYTE* shift, const UBYTE* capslock)
 {
     kprintf("XBIOS: Keytbl(%p, %p, %p)\n",
             unshift, shift, capslock);

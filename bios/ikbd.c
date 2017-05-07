@@ -93,7 +93,7 @@ UBYTE mouse_packet[3];                  /* passed to mousevec() */
 
 static struct keytbl current_keytbl;
 
-LONG keytbl(UBYTE* norm, UBYTE* shft, UBYTE* caps)
+LONG keytbl(const UBYTE* norm, const UBYTE* shft, const UBYTE* caps)
 {
     if (norm != (UBYTE*)-1) {
         current_keytbl.norm = norm;

@@ -107,7 +107,7 @@ extern LONG bconout4(WORD dev, WORD c);
 extern LONG kbshift(WORD flag);
 
 /* some xbios functions */
-extern LONG keytbl(UBYTE* norm, UBYTE* shft, UBYTE* caps);
+extern LONG keytbl(const UBYTE* norm, const UBYTE* shft, const UBYTE* caps);
 extern WORD kbrate(WORD initial, WORD repeat);
 extern void bioskeys(void);
 
