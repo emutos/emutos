@@ -1183,9 +1183,9 @@ static WORD format_floppy(OBJECT *tree, WORD max_width, WORD incr)
 
     graf_mouse(HGLASS,NULL);    /* say we're busy */
 
-    for (track = 0, rc = 0, skewindex = 0; (track < MAXTRACK) & !rc; track++)
+    for (track = 0, rc = 0, skewindex = 0; (track < MAXTRACK) && !rc; track++)
     {
-        for (side = 0; (side < numsides) & !rc; side++)
+        for (side = 0; (side < numsides) && !rc; side++)
         {
             skewindex -= trackskew;
             if (skewindex < 0)
