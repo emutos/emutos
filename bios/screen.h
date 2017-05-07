@@ -127,7 +127,7 @@ const UBYTE *physbase(void);
 UBYTE *logbase(void);
 WORD getrez(void);
 void setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode);
-void setpalette(LONG palettePtr);
+void setpalette(const UWORD *palettePtr);
 WORD setcolor(WORD colorNum, WORD color);
 void vsync(void);
 

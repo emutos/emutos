@@ -144,9 +144,9 @@ static void xbios_5(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmod
  */
 
 #if DBG_XBIOS
-static void xbios_6(LONG palettePtr)
+static void xbios_6(const UWORD *palettePtr)
 {
-    kprintf("XBIOS: SetPalette(%p)\n", (UWORD *)palettePtr);
+    kprintf("XBIOS: SetPalette(%p)\n", palettePtr);
     setpalette(palettePtr);
 }
 #endif

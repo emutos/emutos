@@ -963,21 +963,20 @@ void setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
     }
 }
 
-void setpalette(LONG palettePtr)
+void setpalette(const UWORD *palettePtr)
 {
 #ifdef ENABLE_KDEBUG
     int i, max;
-    UWORD *p = (UWORD *)palettePtr;
     max = getrez() == 0 ? 15 : getrez() == 1 ? 3 : 1;
     KDEBUG(("Setpalette("));
     for(i = 0 ; i <= max ; i++) {
-        KDEBUG(("%03x", p[i]));
+        KDEBUG(("%03x", palettePtr[i]));
         if(i < 15) KDEBUG((" "));
     }
     KDEBUG((")\n"));
 #endif
     /* next VBL will do this */
-    colorptr = (UWORD *) palettePtr;
+    colorptr = palettePtr;
 }
 
 /*

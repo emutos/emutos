@@ -36,7 +36,7 @@ extern WORD cmdload;
 
 extern UBYTE *v_bas_ad;
 
-extern UWORD *colorptr;
+extern const UWORD *colorptr;
 extern UBYTE *screenpt;
 extern BYTE sshiftmod;
 extern BYTE defshiftmod;
