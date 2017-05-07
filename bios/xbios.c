@@ -929,12 +929,12 @@ static LONG xbios_5b(WORD mode)
     kprintf("XBIOS: VgetSize\n");
     return vgetsize(mode);
 }
-static void xbios_5d(WORD index,WORD count,LONG *rgb)
+static void xbios_5d(WORD index,WORD count,const ULONG *rgb)
 {
     kprintf("XBIOS: VsetRGB\n");
     vsetrgb(index,count,rgb);
 }
-static void xbios_5e(WORD index,WORD count,LONG *rgb)
+static void xbios_5e(WORD index,WORD count,ULONG *rgb)
 {
     kprintf("XBIOS: VgetRGB\n");
     vgetrgb(index,count,rgb);

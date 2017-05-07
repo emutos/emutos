@@ -30,7 +30,7 @@
 
 #if CONF_WITH_VIDEL
 
-static const LONG videl_dflt_palette[] = {
+static const ULONG videl_dflt_palette[] = {
     FRGB_WHITE, FRGB_RED, FRGB_GREEN, FRGB_YELLOW,
     FRGB_BLUE, FRGB_MAGENTA, FRGB_CYAN, FRGB_LTGRAY,
     FRGB_GRAY, FRGB_LTRED, FRGB_LTGREEN, FRGB_LTYELLOW,
@@ -97,7 +97,7 @@ static const LONG videl_dflt_palette[] = {
     0x44210000, 0x44110000, FRGB_WHITE, FRGB_BLACK
 };
 
-GLOBAL LONG falcon_shadow_palette[256];   /* real Falcon does this, used by vectors.S */
+GLOBAL ULONG falcon_shadow_palette[256];   /* real Falcon does this, used by vectors.S */
 static UWORD ste_shadow_palette[16];
 
 #define MON_ALL     -1  /* code used in VMODE_ENTRY for match on mode only */
@@ -613,7 +613,7 @@ LONG vgetsize(WORD mode)
  * convert from Falcon palette format to STe palette format
  */
 #define falc2ste(a) ((((a)>>1)&0x08)|(((a)>>5)&0x07))
-static void convert2ste(UWORD *ste,LONG *falcon)
+static void convert2ste(UWORD *ste,const ULONG *falcon)
 {
     union {
         LONG l;
@@ -659,9 +659,10 @@ static int use_ste_palette(WORD videomode)
  * address | 0x01      load first 16 Falcon palette regs from address
  *       0 | 0x01      load 256 Falcon palette regs from falcon_shadow_palette[]
  */
-WORD vsetrgb(WORD index,WORD count,LONG *rgb)
+WORD vsetrgb(WORD index,WORD count,const ULONG *rgb)
 {
-    LONG *shadow, *source;
+    ULONG *shadow;
+    const ULONG *source;
     union {
         LONG l;
         UBYTE b[4];
@@ -712,9 +713,9 @@ WORD vsetrgb(WORD index,WORD count,LONG *rgb)
 /*
  * get palette registers
  */
-WORD vgetrgb(WORD index,WORD count,LONG *rgb)
+WORD vgetrgb(WORD index,WORD count,ULONG *rgb)
 {
-    LONG *shadow;
+    ULONG *shadow;
     union {
         LONG l;
         UBYTE b[4];

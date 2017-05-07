@@ -86,8 +86,8 @@ WORD vsetmode(WORD mode);
 WORD vmontype(void);
 WORD vsetsync(WORD external);
 LONG vgetsize(WORD mode);
-WORD vsetrgb(WORD index,WORD count,LONG *rgb);
-WORD vgetrgb(WORD index,WORD count,LONG *rgb);
+WORD vsetrgb(WORD index,WORD count,const ULONG *rgb);
+WORD vgetrgb(WORD index,WORD count,ULONG *rgb);
 
 /* misc routines */
 WORD get_videl_mode(void);
