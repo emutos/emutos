@@ -42,8 +42,6 @@
  * in rwa.S
  */
 
-extern long xsuper(long);
-
 extern void enter(void);
 extern void bdos_trap2(void);
 extern void (*old_trap2)(void);

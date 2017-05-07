@@ -126,7 +126,6 @@
         .globl  _enter
         .globl  _old_trap2
         .globl  _bdos_trap2
-        .globl  _xsuper
 
 // ==== References ===========================================================
 
@@ -290,13 +289,6 @@ fstrt:
 
 //==== function 0x20 handler - toggle/inquire processor/stack state ==========
 
-//msg_super:
-//      .ascii "BDOS: xsuper - switching to supervisor mode ...\n\0"
-//      .even
-_xsuper:
-//      pea msg_super
-//      bsr _kprint
-//      addq #4,sp
 x20_usr:                        // user mode entry point
         move.l  2(a0),d1        // get parameter
         beq     xu_0            // already have new SSP from
