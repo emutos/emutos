@@ -1062,24 +1062,6 @@ static LONG bios_b(WORD flag)
 #endif
 
 
-/*
- * bios_unimpl
- *
- * ASM function _bios_unimpl will call bios_do_unimpl(WORD number);
- * with the function number passed as parameter.
- */
-
-LONG bios_do_unimpl(WORD number)
-{
-    KINFO(("unimplemented BIOS function 0x%02x\n", number));
-    return number;
-}
-
-extern LONG bios_unimpl(void);
-
-
-
-
 /**
  * bios_vecs - the table of bios command vectors.
  */

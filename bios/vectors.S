@@ -19,7 +19,6 @@
         .globl  _gemtrap        // call VDI/AES
         .globl  _biostrap       // call BIOS from C
         .globl  _xbiostrap      // call XBIOS from C
-        .globl  _bios_unimpl
         .globl  _xbios_unimpl
 
         .globl  _check_read_byte
@@ -1129,12 +1128,6 @@ bx_nolong2:
  * These functions are called indirectly, ONLY from biosxbios.
  * The requested BIOS/XBIOS function number is in d0.
  */
-
-_bios_unimpl:
-       move.w   d0,-(sp)
-       jsr      _bios_do_unimpl
-       addq.l   #2,sp
-       rts
 
 _xbios_unimpl:
        move.w   d0,-(sp)
