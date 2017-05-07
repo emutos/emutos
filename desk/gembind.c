@@ -941,11 +941,13 @@ WORD shel_put(const void *pdata, WORD len)
 }
 
 
+/* unused
 WORD shel_find(BYTE *ppath)
 {
     SH_PATH = (LONG)ppath;
     return gem_if(AES_CTRL_CODE(SHEL_FIND, 0, 1, 1));
 }
+*/
 
 
 /* unused
