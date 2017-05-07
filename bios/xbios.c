@@ -545,10 +545,10 @@ static void xbios_18(void)
  */
 
 #if DBG_XBIOS
-static void xbios_19(WORD cnt, LONG ptr)
+static void xbios_19(WORD cnt, const UBYTE *ptr)
 {
     kprintf("XBIOS: Ikbdws(0x%04x, %p)\n", cnt, (UBYTE *)ptr);
-    ikbdws(cnt, (UBYTE*) ptr);
+    ikbdws(cnt, ptr);
 }
 #endif
 
