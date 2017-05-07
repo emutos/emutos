@@ -17,7 +17,7 @@ typedef struct aesglobal {
     WORD ap_count;                  /* max # of concurrent applications */
     WORD ap_id;                     /* application id */
     LONG ap_private;                /* for use by application */
-    LONG ap_ptree;                  /* pointer to array of tree addresses */
+    OBJECT **ap_ptree;              /* pointer to array of tree addresses */
                                 /* the following are not advertised to applications */
     RSHDR *ap_rscmem;               /* address of rsc file in memory */
     UWORD ap_rsclen;                /* length of rsc file */

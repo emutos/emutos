@@ -60,16 +60,6 @@
 #define R_FRIMG     16              /* gets addr of ptr to free images      */
 
 
-typedef union {
-    LONG    base;
-    LONG    *lptr;
-    WORD    **wpp;
-    BYTE    **bpp;
-    OBJECT  *obj;
-    TEDINFO *ted;
-    ICONBLK *iblk;
-} RSCITEM;
-
 
 /*******  LOCALS  **********************/
 
@@ -132,27 +122,28 @@ void rs_obfix(OBJECT *tree, WORD curob)
 }
 
 
-static RSCITEM get_sub(UWORD rsindex, UWORD offset, UWORD rsize)
+static void *get_sub(UWORD rsindex, UWORD offset, UWORD rsize)
 {
     /* get base of objects and then index in */
-    return (RSCITEM)((LONG)rs_hdr + offset + rsize * rsindex);
+    return (char *)rs_hdr + offset + rsize * rsindex;
 }
 
 
 /*
  *  return address of given type and index, INTERNAL ROUTINE
  */
-static RSCITEM get_addr(UWORD rstype, UWORD rsindex)
+static void *get_addr(UWORD rstype, UWORD rsindex)
 {
-    RSCITEM item;
     WORD size;
     UWORD offset;
+    OBJECT *obj;
+    TEDINFO *tedinfo;
+    ICONBLK *iconblk;
 
     switch(rstype)
     {
     case R_TREE:
-        item.base = rs_global->ap_ptree;
-        return (RSCITEM)(item.lptr[rsindex]);
+        return rs_global->ap_ptree[rsindex];
     case R_OBJECT:
         offset = rs_hdr->rsh_object;
         size = sizeof(OBJECT);
@@ -173,26 +164,24 @@ static RSCITEM get_addr(UWORD rstype, UWORD rsindex)
         size = sizeof(BITBLK);
         break;
     case R_OBSPEC:
-        item = get_addr(R_OBJECT, rsindex);
-        return (RSCITEM)(&item.obj->ob_spec);
+        obj = (OBJECT *)get_addr(R_OBJECT, rsindex);
+        return &obj->ob_spec;
     case R_TEPTMPLT:
-        item = get_addr(R_TEDINFO, rsindex);
-        return (RSCITEM)(&item.ted->te_ptmplt);
     case R_TEPVALID:
-        item = get_addr(R_TEDINFO, rsindex);
-        return (RSCITEM)(&item.ted->te_pvalid);
+        tedinfo = (TEDINFO *)get_addr(R_TEDINFO, rsindex);
+        if (rstype == R_TEPTMPLT)
+            return &tedinfo->te_ptmplt;
+        return &tedinfo->te_pvalid;
     case R_IBPDATA:
-        item = get_addr(R_ICONBLK, rsindex);
-        return (RSCITEM)(&item.iblk->ib_pdata);
     case R_IBPTEXT:
-        item = get_addr(R_ICONBLK, rsindex);
-        return (RSCITEM)(&item.iblk->ib_ptext);
+        iconblk = (ICONBLK *)get_addr(R_ICONBLK, rsindex);
+        if (rstype == R_IBPDATA)
+            return &iconblk->ib_pdata;
+        return &iconblk->ib_ptext;
     case R_STRING:
-        item = get_sub(rsindex, rs_hdr->rsh_frstr, sizeof(LONG));
-        return (RSCITEM)(*item.lptr);
+        return *((void **)get_sub(rsindex, rs_hdr->rsh_frstr, sizeof(LONG)));
     case R_IMAGEDATA:
-        item = get_sub(rsindex, rs_hdr->rsh_frimg, sizeof(LONG));
-        return (RSCITEM)(*item.lptr);
+        return *((void **)get_sub(rsindex, rs_hdr->rsh_frimg, sizeof(LONG)));
     case R_FRSTR:
         offset = rs_hdr->rsh_frstr;
         size = sizeof(LONG);
@@ -202,22 +191,21 @@ static RSCITEM get_addr(UWORD rstype, UWORD rsindex)
         size = sizeof(LONG);
         break;
     default:
-        return (RSCITEM)-1L;
+        return (void *)-1L;
     }
 
     return get_sub(rsindex, offset, size);
 } /* get_addr() */
 
 
-static BOOL fix_long(RSCITEM item)
+static BOOL fix_long(LONG *plong)
 {
     LONG lngval;
 
-    lngval = *item.lptr;
+    lngval = *plong;
     if (lngval != -1L)
     {
-        lngval += (LONG)rs_hdr;
-        *item.lptr = lngval;
+        *plong = (LONG)rs_hdr + lngval;
         return TRUE;
     }
 
@@ -228,14 +216,14 @@ static BOOL fix_long(RSCITEM item)
 static void fix_trindex(void)
 {
     WORD ii;
-    RSCITEM item;
+    LONG *ptreebase;
 
-    item = get_sub(0, rs_hdr->rsh_trindex, sizeof(LONG));
-    rs_global->ap_ptree = item.base;
+    ptreebase = (LONG *)get_sub(R_TREE, rs_hdr->rsh_trindex, sizeof(LONG));
+    rs_global->ap_ptree = (OBJECT **)ptreebase;
 
     for (ii = rs_hdr->rsh_ntree-1; ii >= 0; ii--)
     {
-        fix_long((RSCITEM)(item.lptr+ii));
+        fix_long(ptreebase+ii);
     }
 }
 
@@ -244,15 +232,15 @@ static void fix_objects(void)
 {
     WORD ii;
     WORD obtype;
-    RSCITEM item;
+    OBJECT *obj;
 
     for (ii = rs_hdr->rsh_nobs-1; ii >= 0; ii--)
     {
-        item = get_addr(R_OBJECT, ii);
-        rs_obfix(item.obj, 0);
-        obtype = item.obj->ob_type & 0x00ff;
+        obj = (OBJECT *)get_addr(R_OBJECT, ii);
+        rs_obfix(obj, 0);
+        obtype = obj->ob_type & 0x00ff;
         if ((obtype != G_BOX) && (obtype != G_IBOX) && (obtype != G_BOXCHAR))
-            fix_long((RSCITEM)(&item.obj->ob_spec));
+            fix_long(&obj->ob_spec);
     }
 }
 
@@ -275,15 +263,15 @@ static BOOL fix_ptr(WORD type, WORD index)
 static void fix_tedinfo(void)
 {
     WORD ii;
-    RSCITEM item;
+    TEDINFO *ted;
 
     for (ii = rs_hdr->rsh_nted-1; ii >= 0; ii--)
     {
-        item = get_addr(R_TEDINFO, ii);
+        ted = (TEDINFO *)get_addr(R_TEDINFO, ii);
         if (fix_ptr(R_TEPTEXT, ii))
-            item.ted->te_txtlen = strlen(item.ted->te_ptext) + 1;
+            ted->te_txtlen = strlen(ted->te_ptext) + 1;
         if (fix_ptr(R_TEPTMPLT, ii))
-            item.ted->te_tmplen = strlen(item.ted->te_ptmplt) + 1;
+            ted->te_tmplen = strlen(ted->te_ptmplt) + 1;
         fix_ptr(R_TEPVALID, ii);
     }
 }
@@ -316,13 +304,9 @@ WORD rs_free(AESGLOBAL *pglobal)
  */
 WORD rs_gaddr(AESGLOBAL *pglobal, UWORD rtype, UWORD rindex, LONG *rsaddr)
 {
-    RSCITEM item;
-
     rs_sglobe(pglobal);
 
-    item = get_addr(rtype, rindex);
-    *rsaddr = item.base;
-
+    *rsaddr = (LONG)get_addr(rtype, rindex);
     return (*rsaddr != -1L);
 }
 
@@ -333,14 +317,14 @@ WORD rs_gaddr(AESGLOBAL *pglobal, UWORD rtype, UWORD rindex, LONG *rsaddr)
  */
 WORD rs_saddr(AESGLOBAL *pglobal, UWORD rtype, UWORD rindex, LONG rsaddr)
 {
-    RSCITEM item;
+    LONG *psubstruct;
 
     rs_sglobe(pglobal);
 
-    item = get_addr(rtype, rindex);
-    if (item.base != -1L)
+    psubstruct = (LONG *)get_addr(rtype, rindex);
+    if (psubstruct != (LONG *)-1L)
     {
-        *item.lptr = rsaddr;
+        *psubstruct = rsaddr;
         return TRUE;
     }
 
