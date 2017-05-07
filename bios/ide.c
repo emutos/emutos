@@ -614,7 +614,7 @@ static int wait_for_not_BSY(volatile struct IDE *interface,LONG timeout)
 {
     LONG next = hz_200 + timeout;
 
-    KDEBUG(("wait_for_not_BSY(0x%08lx, %ld)\n", (ULONG)interface, timeout));
+    KDEBUG(("wait_for_not_BSY(%p, %ld)\n", interface, timeout));
 
     DELAY_400NS;
     while(hz_200 < next) {
@@ -645,7 +645,7 @@ static int wait_for_not_BSY_not_DRQ(volatile struct IDE *interface,LONG timeout)
  */
 static int ide_select_device(volatile struct IDE *interface,UWORD dev)
 {
-    KDEBUG(("ide_select_device(0x%08lx, %u)\n", (ULONG)interface, dev));
+    KDEBUG(("ide_select_device(%p, %u)\n", interface, dev));
 
     if (wait_for_not_BSY_not_DRQ(interface,SHORT_TIMEOUT))
         return ERR;
@@ -663,7 +663,7 @@ static int ide_select_device(volatile struct IDE *interface,UWORD dev)
  */
 static void ide_rw_start(volatile struct IDE *interface,UWORD dev,ULONG sector,UWORD count,UBYTE cmd)
 {
-    KDEBUG(("ide_rw_start(0x%08lx, %u, %lu, %u, 0x%02x)\n", (ULONG)interface, dev, sector, count, cmd));
+    KDEBUG(("ide_rw_start(%p, %u, %lu, %u, 0x%02x)\n", interface, dev, sector, count, cmd));
 
     IDE_WRITE_SECTOR_NUMBER_SECTOR_COUNT(LOBYTE(sector), LOBYTE(count));
     IDE_WRITE_CYLINDER_HIGH_CYLINDER_LOW((UWORD)((sector & 0xffff00) >> 8));
@@ -723,7 +723,7 @@ static void ide_get_data(volatile struct IDE *interface,UBYTE *buffer,ULONG buff
     XFERWIDTH *p = (XFERWIDTH *)buffer;
     XFERWIDTH *end = (XFERWIDTH *)(buffer + bufferlen);
 
-    KDEBUG(("ide_get_data(0x%08lx, 0x%08lx, %lu, %d)\n", (ULONG)interface, (ULONG)buffer, bufferlen, need_byteswap));
+    KDEBUG(("ide_get_data(%p, %p, %lu, %d)\n", interface, buffer, bufferlen, need_byteswap));
 
 #if CONF_WITH_APOLLO_68080
     if (is_apollo_68080)
@@ -757,7 +757,7 @@ static LONG ide_read(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UWORD count,UB
     UBYTE status1, status2;
     LONG rc = 0L;
 
-    KDEBUG(("ide_read(0x%02x, %u, %u, %lu, %u, 0x%08lx, %d)\n", cmd, ifnum, dev, sector, count, (ULONG)buffer, need_byteswap));
+    KDEBUG(("ide_read(0x%02x, %u, %u, %lu, %u, %p, %d)\n", cmd, ifnum, dev, sector, count, buffer, need_byteswap));
 
     if (ide_select_device(interface,dev) < 0)
         return EREADF;
@@ -853,7 +853,7 @@ static LONG ide_write(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UWORD count,U
     UBYTE status1, status2;
     LONG rc = 0L;
 
-    KDEBUG(("ide_write(0x%02x, %u, %u, %lu, %u, 0x%08lx, %d)\n", cmd, ifnum, dev, sector, count, (ULONG)buffer, need_byteswap));
+    KDEBUG(("ide_write(0x%02x, %u, %u, %lu, %u, %p, %d)\n", cmd, ifnum, dev, sector, count, buffer, need_byteswap));
 
     if (ide_select_device(interface,dev) < 0)
         return EWRITF;

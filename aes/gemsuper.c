@@ -524,8 +524,8 @@ void trapaes_debug_enter(void)
     UBYTE* current = (UBYTE*)rlr->p_uda->u_spsuper;
     UBYTE* top = bottom + sizeof rlr->p_uda->u_super;
 
-    kprintf("AES enter rlr=0x%08lx bottom=0x%08lx current=0x%08lx top=0x%08lx free=%ld\n",
-        (ULONG)rlr, (ULONG)bottom, (ULONG)current, (ULONG)top, current - bottom);
+    kprintf("AES enter rlr=%p bottom=%p current=%p top=%p free=%ld\n",
+        rlr, bottom, current, top, current - bottom);
 
     if (!min_pointer)
         min_pointer = top;
@@ -557,8 +557,8 @@ void trapaes_debug_exit(void)
 
     recommended = (top - min_pointer) + 512; /* Heuristic */
 
-    kprintf("AES exit  rlr=0x%08lx bottom=0x%08lx current=0x%08lx top=0x%08lx free=%ld, used=%ld, max_usage=%ld, recommended AES_STACK_SIZE=%ld\n",
-        (ULONG)rlr, (ULONG)bottom, (ULONG)current, (ULONG)top, current - bottom, used, max_usage, recommended/4);
+    kprintf("AES exit  rlr=%p bottom=%p current=%p top=%p free=%ld, used=%ld, max_usage=%ld, recommended AES_STACK_SIZE=%ld\n",
+        rlr, bottom, current, top, current - bottom, used, max_usage, recommended/4);
 }
 
 #endif /* CONF_DEBUG_AES_STACK */

@@ -252,8 +252,8 @@ do_blit(blit * blt)
     KDEBUG(("X D INC %d\n",blt->dst_x_inc));
     KDEBUG(("Y D INC %d\n",blt->dst_y_inc));
     KDEBUG(("ENDMASK 0x%04x-%04x-%04x\n",(UWORD)blt->end_1,(UWORD)blt->end_2,(UWORD)blt->end_3));
-    KDEBUG(("S_ADDR  0x%08lx\n",blt->src_addr));
-    KDEBUG(("D_ADDR  0x%08lx\n",blt->dst_addr));
+    KDEBUG(("S_ADDR  %p\n",(UWORD *)blt->src_addr));
+    KDEBUG(("D_ADDR  %p\n",(UWORD *)blt->dst_addr));
     KDEBUG(("HOP %d, OP %d\n",blt->hop&0x03,blt->op&0x0f));
     KDEBUG(("NFSR=%d,FXSR=%d,SKEW=%d\n",
             (blt->skew&NFSR)!=0,(blt->skew&FXSR)!=0,(blt->skew & SKEW)));

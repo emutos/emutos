@@ -127,8 +127,8 @@ static WORD xbios_4(void)
 #if DBG_XBIOS
 static void xbios_5(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
 {
-    kprintf("XBIOS: SetScreen(log = 0x%08lx, phys = 0x%08lx, rez = 0x%04x)\n",
-           (ULONG)logLoc, (ULONG)physLoc, rez);
+    kprintf("XBIOS: SetScreen(log = %p, phys = %p, rez = 0x%04x)\n",
+           logLoc, physLoc, rez);
     setscreen(logLoc, physLoc, rez, videlmode);
 }
 #endif
@@ -146,7 +146,7 @@ static void xbios_5(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmod
 #if DBG_XBIOS
 static void xbios_6(LONG palettePtr)
 {
-    kprintf("XBIOS: SetPalette(0x%08lx)\n", palettePtr);
+    kprintf("XBIOS: SetPalette(%p)\n", (UWORD *)palettePtr);
     setpalette(palettePtr);
 }
 #endif
@@ -287,7 +287,7 @@ static LONG xbios_a(UBYTE *buf, WORD *skew, WORD devno, WORD spt,
 #if DBG_XBIOS
 static void xbios_c(WORD cnt, LONG ptr)
 {
-    kprintf("XBIOS: Midiws(0x%04x, 0x%08lx)\n", cnt, ptr);
+    kprintf("XBIOS: Midiws(0x%04x, %p)\n", cnt, (UBYTE *)ptr);
     midiws(cnt, (UBYTE *)ptr);
 }
 #endif
@@ -387,8 +387,8 @@ static ULONG xbios_f(WORD speed, WORD flowctl, WORD ucr, WORD rsr, WORD tsr, WOR
 #if DBG_XBIOS
 static LONG xbios_10(UBYTE* unshift, UBYTE* shift, UBYTE* capslock)
 {
-    kprintf("XBIOS: Keytbl(0x%08lx, 0x%08lx, 0x%08lx)\n",
-            (LONG)unshift, (LONG)shift, (LONG)capslock);
+    kprintf("XBIOS: Keytbl(%p, %p, %p)\n",
+            unshift, shift, capslock);
     return keytbl(unshift, shift, capslock);
 }
 #endif
@@ -547,7 +547,7 @@ static void xbios_18(void)
 #if DBG_XBIOS
 static void xbios_19(WORD cnt, LONG ptr)
 {
-    kprintf("XBIOS: Ikbdws(0x%04x, 0x%08lx)\n", cnt, ptr);
+    kprintf("XBIOS: Ikbdws(0x%04x, %p)\n", cnt, (UBYTE *)ptr);
     ikbdws(cnt, (UBYTE*) ptr);
 }
 #endif
@@ -757,7 +757,7 @@ static LONG supexec(LONG codeptr)
 #if DBG_XBIOS
 static LONG xbios_26(LONG codeptr)
 {
-    kprintf("XBIOS: Supexec(0x%08lx)\n", codeptr);
+    kprintf("XBIOS: Supexec(%p)\n", (void *)codeptr);
     return supexec(codeptr);
 }
 #endif

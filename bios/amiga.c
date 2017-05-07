@@ -396,7 +396,7 @@ void amiga_screen_init(void)
 
 void amiga_setphys(const UBYTE *addr)
 {
-    KDEBUG(("amiga_setphys(0x%08lx)\n", (ULONG)addr));
+    KDEBUG(("amiga_setphys(%p)\n", addr));
     amiga_screenbase = addr;
 }
 
@@ -1634,8 +1634,8 @@ static WORD amiga_floppy_read(UBYTE *buf, WORD dev, WORD track, WORD side, WORD 
 {
     WORD ret;
 
-    KDEBUG(("amiga_floppy_read() buf=0x%08lx dev=%d track=%d side=%d sect=%d count=%d\n",
-        (ULONG)buf, dev, track, side, sect, count));
+    KDEBUG(("amiga_floppy_read() buf=%p dev=%d track=%d side=%d sect=%d count=%d\n",
+        buf, dev, track, side, sect, count));
 
     /* Amiga hardware needs to read a whole track */
     if (sectors_decoded && dev == curdev && track == curtrack[curdev] && side == curside[curdev])

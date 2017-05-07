@@ -893,7 +893,7 @@ const UBYTE *physbase(void)
 
 static void setphys(const UBYTE *addr)
 {
-    KDEBUG(("setphys(0x%08lx)\n", (ULONG)addr));
+    KDEBUG(("setphys(%p)\n", addr));
 
 #ifdef MACHINE_AMIGA
     amiga_setphys(addr);
@@ -935,7 +935,7 @@ void setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
 {
     if (logLoc != (UBYTE *)-1) {
         v_bas_ad = logLoc;
-        KDEBUG(("v_bas_ad = 0x%08lx\n", (ULONG)v_bas_ad));
+        KDEBUG(("v_bas_ad = %p\n", v_bas_ad));
     }
     if (physLoc != (UBYTE *)-1) {
         setphys(physLoc);

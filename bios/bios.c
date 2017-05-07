@@ -906,7 +906,7 @@ LONG setexc(WORD num, LONG vector)
 static LONG bios_5(WORD num, LONG vector)
 {
     LONG ret = setexc(num, vector);
-    KDEBUG(("Bios 5: Setexc(num = 0x%x, vector = 0x%08lx)\n", num, vector));
+    KDEBUG(("Bios 5: Setexc(num = 0x%x, vector = %p)\n", num, (void*)vector));
     return ret;
 }
 #endif
