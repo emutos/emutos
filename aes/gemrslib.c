@@ -428,9 +428,6 @@ WORD rs_load(AESGLOBAL *pglobal, LONG rsfname)
 /* Get a string from the GEM-RSC */
 BYTE *rs_str(UWORD stnum)
 {
-    LONG ad_string;
-
-    ad_string = (LONG) gettext(rs_fstr[stnum]);
-    strcpy(free_str, (char *)ad_string);
+    strcpy(free_str, gettext(rs_fstr[stnum]));
     return free_str;
 }
