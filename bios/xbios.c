@@ -285,10 +285,10 @@ static LONG xbios_a(UBYTE *buf, WORD *skew, WORD devno, WORD spt,
  */
 
 #if DBG_XBIOS
-static void xbios_c(WORD cnt, LONG ptr)
+static void xbios_c(WORD cnt, const UBYTE *ptr)
 {
     kprintf("XBIOS: Midiws(0x%04x, %p)\n", cnt, (UBYTE *)ptr);
-    midiws(cnt, (UBYTE *)ptr);
+    midiws(cnt, ptr);
 }
 #endif
 
