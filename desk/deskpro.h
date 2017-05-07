@@ -11,6 +11,9 @@
 #define _DESKPRO_H
 
 WORD pro_run(WORD isgraf, WORD isover, WORD wh, WORD curr);
+
+#if CONF_WITH_SHUTDOWN
 WORD pro_exit(BYTE *pcmd, BYTE *ptail);
+#endif
 
 #endif  /* _DESKPRO_H */

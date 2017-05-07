@@ -70,6 +70,7 @@ WORD pro_run(WORD isgraf, WORD isover, WORD wh, WORD curr)
 }
 
 
+#if CONF_WITH_SHUTDOWN
 WORD pro_exit(BYTE *pcmd, BYTE *ptail)
 {
     WORD ret;
@@ -77,3 +78,4 @@ WORD pro_exit(BYTE *pcmd, BYTE *ptail)
     ret = shel_write(0, FALSE, 1, pcmd, ptail);
     return ret;
 }
+#endif
