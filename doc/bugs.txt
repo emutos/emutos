@@ -29,22 +29,14 @@ Video problems:
   screen and mouse acceleration are messed up: EmuTOS exception restore
   is missing videomode & mouse reset.
 
-Atari TT / TOS v3 compatibility bugs:
-- PixArt v4.52 issues:
-  - None of the selected Tools (selected from window that opens from
-    Modules -> Tools) has any effect on the loaded image.
-  - Text for the last item in the "Options" menu isn't visible and
-    going over that item inverts the whole menu, not just that item.
-
 Atari Falcon / TOS v4 compatibility bugs:
 - EmuTOS doesn't update mouse clip rect or limits when Falcon program
   changes resolution with VsetScreen(). If one doesn't start Chainz,
   Jewelz or Sweety Things games from large enough (640x480 VGA)
   resolution, mouse is constrained in them to upper left corner of
   screen.
-- Escape Paint icons don't show in image operations window, their place
-  in toolbar window is inverted on mouse-over, image names show in
-  image list window only on highlight and some UI elements flicker.
+- Escape Paint icons don't show in image operations window and their
+  place in toolbar window is inverted on mouse click.
 - Falcon FalcAMP button icons aren't visible as EmuTOS doesn't support
   new style RSC files with CICONs.
 
