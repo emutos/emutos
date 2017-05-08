@@ -14,7 +14,6 @@
 #define DESKSTACKSIZE   2048    /* in bytes: must be multiple of 4 */
 
         .globl  _deskstart
-        .globl  _gem
 #if CONF_DEBUG_DESK_STACK
         .globl  _deskstackbottom
 #endif
