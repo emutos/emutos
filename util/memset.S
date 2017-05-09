@@ -32,7 +32,7 @@ _bzero:
         move.l   8(sp),d0
         move.l   d7,-(sp)
         moveq    #0,d7
-        bra      memset
+        bra.s    memset
 //
 // void *memset(void *address, short c, unsigned long size)
 // fills with byte c, returns the given address.
@@ -61,9 +61,9 @@ memset:
         btst     #0,d1
         beq.s    even
         move.b   d7,(a0)+
-        sub.l    #1,d0
+        subq.l   #1,d0
 even:
-        move.l   #63,d1                //
+        moveq.l  #63,d1                //
         cmp.l    d1,d0                 //
         ble      zero4                 // count < 64
 #ifdef __mcoldfire__
@@ -107,7 +107,7 @@ end256:
         subq.l   #1,d0
         bpl.s    loop256               // decrement count, test and loop
         move.l   d1,d0                 // remainder becomes new count
-        beq      done                  // more? no.
+        beq.s    done                  // more? no.
 #ifdef __mcoldfire__
         and.l    #0x3F,d1              // + count mod 64
         lsr.l    #6,d0                 // + count div 64
