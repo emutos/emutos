@@ -104,12 +104,8 @@ loop256:
         lea      256(a0),a0
 #endif
 end256:
-#ifdef __mcoldfire__
         subq.l   #1,d0
         bpl.s    loop256               // decrement count, test and loop
-#else
-        dbra     d0,loop256            // decrement count, test and loop
-#endif
         move.l   d1,d0                 // remainder becomes new count
         beq      done                  // more? no.
 #ifdef __mcoldfire__
