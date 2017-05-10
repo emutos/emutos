@@ -57,7 +57,6 @@ extern WORD super(WORD cx, AESPB *pcrys_blk);   /* called only from gemdosif.S *
 
 GLOBAL WORD     gl_mnclick;
 
-static WORD     dspcnt;
 static LONG     ad_rso;
 
 
@@ -101,9 +100,6 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         pglobal->ap_private = tree[ROOT].ob_spec;
         pglobal->ap_planes = gl_nplanes;
         pglobal->ap_3resv = (LONG)&D;
-
-        /* reset dispatcher count to let the app run a while */
-        dspcnt = 0;
         ret = ap_init();
         break;
     case APPL_READ:
@@ -498,11 +494,14 @@ static void xif(AESPB *pcrys_blk)
  */
 WORD super(WORD cx, AESPB *pcrys_blk)
 {
-    if (cx == 200)
+    switch(cx)
+    {
+    case 200:
         xif(pcrys_blk);
-
-    if ((++dspcnt % 8) == 0 || cx == 201)
+        /* drop thru */
+    case 201:           /* undocumented TOS feature */
         dsptch();
+    }
 
     return 0;
 }
