@@ -15,7 +15,7 @@
 /*
  *  inside(): determine if x,y is in rectangle
  */
-UWORD inside(WORD x, WORD y, const GRECT *pt)
+BOOL inside(WORD x, WORD y, const GRECT *pt)
 {
     if ((x >= pt->g_x) && (y >= pt->g_y) &&
         (x < pt->g_x+pt->g_w) && (y < pt->g_y+pt->g_h))

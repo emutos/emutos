@@ -10,7 +10,7 @@
 #ifndef RECTFUNC_H
 #define RECTFUNC_H
 
-UWORD inside(WORD x, WORD y, const GRECT *pt);
+BOOL inside(WORD x, WORD y, const GRECT *pt);
 void rc_constrain(const GRECT *pc, GRECT *pt);
 WORD rc_equal(const GRECT *p1, const GRECT *p2);
 WORD rc_intersect(const GRECT *p1, GRECT *p2);
