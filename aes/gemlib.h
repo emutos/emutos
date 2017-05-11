@@ -33,7 +33,7 @@
 
 typedef struct moblk
 {
-    WORD m_out;
+    BOOL m_out;
     GRECT m_gr;
 } MOBLK;
 
