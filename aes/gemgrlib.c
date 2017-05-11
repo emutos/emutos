@@ -43,7 +43,7 @@
  *  the mouse is down.  Block until the mouse moves into or out of the
  *  specified rectangle.
  */
-static WORD gr_stilldn(WORD out, WORD x, WORD y, WORD w, WORD h)
+static BOOL gr_stilldn(BOOL out, WORD x, WORD y, WORD w, WORD h)
 {
     WORD    rets[6];
     MOBLK   tmpmoblk;
@@ -160,10 +160,10 @@ static void gr_draw(WORD have2box, GRECT *po, GRECT *poff)
 }
 
 
-static WORD gr_wait(GRECT *po, GRECT *poff)
+static BOOL gr_wait(GRECT *po, GRECT *poff)
 {
     WORD have2box;
-    WORD down;
+    BOOL down;
 
     have2box = !rc_equal(&gl_rzero, poff);
 
@@ -193,7 +193,7 @@ static WORD gr_wait(GRECT *po, GRECT *poff)
 void gr_rubwind(WORD xorigin, WORD yorigin, WORD wmin, WORD hmin,
                 GRECT *poff, WORD *pwend, WORD *phend)
 {
-    WORD    down;
+    BOOL    down;
     GRECT   o;
 
     wm_update(TRUE);
@@ -237,7 +237,8 @@ void gr_rubbox(WORD xorigin, WORD yorigin, WORD wmin, WORD hmin,
 void gr_dragbox(WORD w, WORD h, WORD sx, WORD sy, GRECT *pc,
                 WORD *pdx, WORD *pdy)
 {
-    WORD    offx, offy, down;
+    WORD    offx, offy;
+    BOOL    down;
     GRECT   o;
 
     wm_update(TRUE);
@@ -329,7 +330,7 @@ void gr_shrinkbox(GRECT *po, GRECT *pt)
 
 WORD gr_watchbox(LONG tree, WORD obj, WORD instate, WORD outstate)
 {
-    WORD    out;
+    BOOL    out;
     WORD    state;
     GRECT   t;
 
