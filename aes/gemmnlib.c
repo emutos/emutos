@@ -185,7 +185,7 @@ static void menu_fixup(void)
 /*
  *  Change a mouse-wait rectangle based on an object's size
  */
-static void rect_change(LONG tree, MOBLK *prmob, WORD iob, WORD x)
+static void rect_change(LONG tree, MOBLK *prmob, WORD iob, BOOL x)
 {
     ob_actxywh(tree, iob, &prmob->m_gr);
     prmob->m_out = x;
@@ -300,7 +300,8 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
     WORD    cur_title, last_title;
     UWORD   ev_which;
     MOBLK   p1mor, p2mor;
-    WORD    menu_state, theval;
+    WORD    menu_state;
+    BOOL    theval;
     WORD    rets[6];
     OBJECT  *obj;
 
