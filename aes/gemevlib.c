@@ -43,7 +43,7 @@ WORD    gl_ticktime;
  */
 static void ev_rets(WORD rets[])
 {
-    if (mtrans)
+    if (mtrans > 1)
     {
         rets[0] = pr_xrat;
         rets[1] = pr_yrat;
