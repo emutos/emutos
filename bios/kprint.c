@@ -319,6 +319,8 @@ void dopanic(const char *fmt, ...)
         vkcprintf(fmt, ap);
         va_end(ap);
 
+        pc = s->pc;
+
         kcprintf("pc=%08lx\n",
                  s->pc);
 #ifdef __mcoldfire__
