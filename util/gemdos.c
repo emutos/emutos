@@ -23,11 +23,7 @@
 #include "dta.h"
 
 
-/*
- *  K&R prototype to avoid prototype mismatch warnings
- *  with different arguments.
- */
-extern LONG gemdos();
+extern LONG gemdos(short, ...);
 
 
 #define X_TABOUT 0x02
