@@ -598,7 +598,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
 
     /* set clip and start form fill-in by drawing the form */
     gsx_sclip(&gl_rfs);
-    fm_dial(FMD_START, &gl_rfs);
+    fm_dial(FMD_START, &gl_rcenter, &gl_rfs);
     ob_draw(tree, ROOT, 2);
 
     /* init for while loop by forcing initial fs_newdir call */
@@ -783,7 +783,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
     strcpy(pisel, selname);
 
     /* start the redraw */
-    fm_dial(FMD_FINISH, &gl_rfs);
+    fm_dial(FMD_FINISH, &gl_rcenter, &gl_rfs);
 
     /* return exit button */
     *pbutton = inf_what((OBJECT *)tree, FSOK, FSCANCEL);

@@ -354,7 +354,7 @@ WORD fm_do(LONG tree, WORD start_fld)
  *  Form DIALogue routine to handle visual effects of drawing and
  *  undrawing a dialogue
  */
-WORD fm_dial(WORD fmd_type, GRECT *pt)
+WORD fm_dial(WORD fmd_type, GRECT *pi, GRECT *pt)
 {
     /* adjust tree position */
     gsx_sclip(&gl_rscreen);
@@ -362,6 +362,12 @@ WORD fm_dial(WORD fmd_type, GRECT *pt)
     {
     case FMD_START:
         /* grab screen sync or some other mutual exclusion method */
+        break;
+    case FMD_GROW:
+        gr_growbox(pi, pt);
+        break;
+    case FMD_SHRINK:
+        gr_shrinkbox(pi, pt);
         break;
     case FMD_FINISH:
         /* update certain portion of the screen */
