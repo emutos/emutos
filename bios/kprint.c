@@ -516,6 +516,9 @@ void dopanic(const char *fmt, ...)
     }
 #endif
 
+    /* set proc_enum as TOS does */
+    proc_enum = (proc_enum << 24) | (pc & 0xffffffL);
+
     /* improve display in ST Low */
     start = (v_cel_mx == 39) ? "" : " ";
     wrap = v_stat_0 & M_CEOL;       /* remember line wrap status */
