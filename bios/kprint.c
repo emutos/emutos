@@ -273,8 +273,8 @@ void doassert(const char *file, long line, const char *func, const char *text)
 
 #endif /* CONF_WITH_ASSERT */
 
-/*==== dopanic - display information found in 0x380 and halt ======*/
 
+/*==== dopanic - display information found in 0x380 and attempt to recover ======*/
 
 static const char *const exc_messages[] = {
     "", /* Reset: Initial SSP */
