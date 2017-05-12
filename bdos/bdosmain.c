@@ -383,7 +383,7 @@ static void offree(DMD *d)
 /*
  *  osif -
  */
-long osif(int *pw)
+long osif(short *pw)
 {
     char **pb, *pb2, *p, ctmp;
     BPB *b;
