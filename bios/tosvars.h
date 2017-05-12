@@ -25,7 +25,7 @@ extern LONG proc_dregs[];
 extern LONG proc_aregs[];
 extern LONG proc_enum;
 extern LONG proc_usp;
-extern WORD proc_stk[];
+extern UWORD proc_stk[];
 
 extern LONG memvalid;
 extern LONG memval2;

@@ -36,6 +36,7 @@
 #endif
 
 #define DISPLAY_INSTRUCTION_AT_PC   0   /* set to 1 for extra info from dopanic() */
+#define DISPLAY_STACK               0   /* set to 1 for extra info from dopanic() */
 
 #if STONX_NATIVE_PRINT
 
@@ -300,6 +301,9 @@ void dopanic(const char *fmt, ...)
     LONG pc = 0;
     BOOL wrap;
     BYTE *start;
+    UWORD sr;
+
+    MAYBE_UNUSED(sr);
 
     /* hide cursor, new line, new line */
     cprintf("\033f\033v\n\n");
@@ -320,6 +324,7 @@ void dopanic(const char *fmt, ...)
         va_end(ap);
 
         pc = s->pc;
+        sr = 0x2700; /* was already set in panic(); too late to get original value */
 
         kcprintf("pc=%08lx\n",
                  s->pc);
@@ -333,6 +338,7 @@ void dopanic(const char *fmt, ...)
         } *s = (void *)proc_stk;
 
         pc = s->pc;
+        sr = s->sr;
 
         if (proc_enum >= 2 && proc_enum < ARRAY_SIZE(exc_messages)) {
             kcprintf("Panic: %s\n",
@@ -362,6 +368,7 @@ void dopanic(const char *fmt, ...)
         } *s = (void *)proc_stk;
 
         pc = s->pc;
+        sr = s->sr;
 
         kcprintf("Panic: %s\n",
                  exc_messages[proc_enum]);
@@ -388,6 +395,7 @@ void dopanic(const char *fmt, ...)
         } *s = (void *)proc_stk;
 
         pc = s->pc;
+        sr = s->sr;
 
         kcprintf("Panic: %s\n",
                  exc_messages[proc_enum]);
@@ -414,6 +422,7 @@ void dopanic(const char *fmt, ...)
         } *s = (void *)proc_stk;
 
         pc = s->pc;
+        sr = s->sr;
 
         kcprintf("Panic: %s\n",
                  exc_messages[proc_enum]);
@@ -435,6 +444,7 @@ void dopanic(const char *fmt, ...)
         } *s = (void *)proc_stk;
 
         pc = s->pc;
+        sr = s->sr;
 
         kcprintf("Panic: %s\n",
                  exc_messages[proc_enum]);
@@ -453,6 +463,7 @@ void dopanic(const char *fmt, ...)
         } *s = (void *)proc_stk;
 
         pc = s->pc;
+        sr = s->sr;
 
         kcprintf("Panic: %s\n",
                  exc_messages[proc_enum]);
@@ -468,6 +479,7 @@ void dopanic(const char *fmt, ...)
         } *s = (void *)proc_stk;
 
         pc = s->pc;
+        sr = s->sr;
 
         kcprintf("Panic: %s\n",
                  exc_messages[proc_enum]);
@@ -480,6 +492,7 @@ void dopanic(const char *fmt, ...)
         } *s = (void *)proc_stk;
 
         pc = s->pc;
+        sr = s->sr;
 
         kcprintf("Panic: Exception number %d\n",
                  (int) proc_enum);
@@ -518,6 +531,29 @@ void dopanic(const char *fmt, ...)
              start, proc_aregs[4], proc_aregs[5], proc_aregs[6], proc_aregs[7]);
     kcprintf(" USP:%s%08lx\n\n",
              start,proc_usp);
+
+#if DISPLAY_STACK
+    kcprintf("Stack: %04x %04x %04x %04x\n",
+             proc_stk[0], proc_stk[1], proc_stk[2], proc_stk[3]);
+    kcprintf("       %04x %04x %04x %04x\n",
+             proc_stk[4], proc_stk[5], proc_stk[6], proc_stk[7]);
+    kcprintf("       %04x %04x %04x %04x\n",
+             proc_stk[8], proc_stk[9], proc_stk[10], proc_stk[11]);
+    kcprintf("       %04x %04x %04x %04x\n\n",
+             proc_stk[12], proc_stk[13], proc_stk[14], proc_stk[15]);
+    if (!(sr & 0x2000) && ((proc_usp & 1) == 0))
+    {
+    	const UWORD *user_stk = (const UWORD *)proc_usp;
+        kcprintf("USP  : %04x %04x %04x %04x\n",
+                 user_stk[0], user_stk[1], user_stk[2], user_stk[3]);
+        kcprintf("       %04x %04x %04x %04x\n",
+                 user_stk[4], user_stk[5], user_stk[6], user_stk[7]);
+        kcprintf("       %04x %04x %04x %04x\n",
+                 user_stk[8], user_stk[9], user_stk[10], user_stk[11]);
+        kcprintf("       %04x %04x %04x %04x\n\n",
+                 user_stk[12], user_stk[13], user_stk[14], user_stk[15]);
+    }
+#endif
 
     if (wrap)
         v_stat_0 |= M_CEOL;         /* restore line wrap status */
