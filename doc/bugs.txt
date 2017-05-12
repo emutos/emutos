@@ -1,13 +1,7 @@
-Common AES/VDI/Line-A bugs:
-- Drag-and-drop does not work in the freeware GEM game "Hotshot checkers".
-- Mouse buttons don't work properly in several GEM programs:
-  - In PixArt v4.52, buttons on windowed image load dialog
-    work only randomly.
-  - In "Patience", all the dialogs (quit, start new game) show
-    the button that was selected last time, as still selected,
-    and it needs to be unselected to use the dialog.
-  - In "Bombs", it's pretty random whether mouse clicks go through
-    to the window, mostly they don't.
+AES/VDI/Line-A bugs:
+- In "Patience" game, all the dialogs (quit, start new game)
+  show the button that was selected last time, as still selected,
+  and it needs to be unselected to use the dialog.
 - Because EmuTOS doesn't take outline into account in text extents
   calculation, the right side of outline characters are clipped
   e.g. in "LaserChess", "Diamond miner" & "Minigolf" games,
@@ -53,31 +47,25 @@ Problems that also occur in Atari TOS:
   part of the circle that joins the end segment to the previous one.
 
 Links to programs listed above:
-- Bombs:
-  http://www.umich.edu/~archive/atari/Games/Puzzle/bombs.arc
 - Chainz, Jewelz, Sweety Things:
   http://paradize.final-memory.org/games.shtml
 - Escape Paint:
   http://www.pouet.net/prod.php?which=25328
 - FalcAMP:
   http://deunstg.free.fr/sct1/falcamp/
-- Hotshot checkers:
-  http://www.umich.edu/~archive/atari/Games/Board/hotshot.arc
 - Japlish:
   http://www.ntrautanen.fi/marko/arkisto.atari.org/sivut/menu_pelit.htm
 - Minigolf (GFA):
   http://koti.mbnet.fi/tammat/src/minigolf.tar.gz
 - Patience (older version):
   http://www.umich.edu/~archive/atari/Games/Cards/patience.lzh
-- PixArt4:
-  http://www.1632systems.co.uk/www/html/Product/pixart.htm
 - Sherlock:
   http://www.umich.edu/~archive/atari/Games/Adventure/sherlock.arc
 - Swing:
   http://www.pouet.net/prod.php?which=52370
 - The Ultimate Minesweeper:
   http://www.pouet.net/prod.php?which=28904
-- Zodiax:
-  http://christophe.bray.free.fr/informatique/falcon/falcon_jeux3.htm#Zodiax
+- Spectrum512:
+  http://www.atarimania.com/utility-atari-st-spectrum-512_22312.html
 
 (Links missing to: mathmaze, laserchess, diamondminer.)
