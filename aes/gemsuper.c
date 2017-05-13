@@ -177,8 +177,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
                 !ENABLE_IT, ((ITEM_NUM & 0x8000) != 0x0), FALSE);
         break;
     case MENU_TNORMAL:
-        if (gl_mntree == menu_tree[rlr->p_pid])
-            do_chg(MM_ITREE, TITLE_NUM, SELECTED, !NORMAL_IT, TRUE, TRUE);
+        do_chg(MM_ITREE, TITLE_NUM, SELECTED, !NORMAL_IT, TRUE, TRUE);
         break;
     case MENU_TEXT:
         tree = (OBJECT *)MM_ITREE;
