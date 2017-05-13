@@ -117,7 +117,15 @@ static const SPECNAME specname_table[] =
  */
 typedef struct
 {
-    long  (*fncall)();
+    union {
+        long  (*v)(void);
+        long  (*w)(short);
+        long  (*ww)(short, short);
+        long  (*www)(short, short, short);
+        long  (*wwww)(short, short, short, short);
+        long  (*wwwww)(short, short, short, short, short);
+        long  (*wwwwwww)(short, short, short, short, short, short, short);
+    } fncall;
     UBYTE stdio_typ;    /* Standard I/O channel (highest bit must be set, too) */
     UBYTE wparms;       /* Size of parameters in WORDs */
 } FND;
@@ -126,12 +134,15 @@ typedef struct
 /*
  * funcs - table of os functions, indexed by function number
  *
- * Each entry is for an FND structure. The function 'ni' is used
+ * Each entry is for an FND structure. NI is used
  * as the address for functions not implemented.
  */
 static const FND funcs[] =
 {
-     { (long(*)()) x0term, 0, 0 }, /* 0x00 */
+#define F(x) { (PFLONG)(x) }
+#define NI F(ni)
+
+     { F(x0term), 0, 0 },       /* 0x00 */
 
     /*
      * console functions
@@ -140,17 +151,17 @@ static const FND funcs[] =
      * 0x80 is std in, 0x81 is stdout, 0x82 is stdaux, 0x83 stdprn
      */
 
-    { xconin,   0x80, 0 },   /* 0x01 */
-    { xconout,  0x81, 1 },   /* 0x02 */
-    { xauxin,   0x82, 0 },   /* 0x03 */
-    { xauxout,  0x82, 1 },   /* 0x04 */
-    { xprtout,  0x83, 1 },   /* 0x05 */
-    { xrawio,   0,    1 },   /* 0x06 */
-    { xrawcin,  0x80, 0 },   /* 0x07 */
-    { xnecin,   0x80, 0 },   /* 0x08 */
-    { (long(*)()) xconws, 0x81, 2 }, /* 0x09 */
-    { (long(*)()) xconrs, 0x80, 2 }, /* 0x0A */
-    { xconstat, 0x80, 0 },   /* 0x0B */
+    { F(xconin),   0x80, 0 },   /* 0x01 */
+    { F(xconout),  0x81, 1 },   /* 0x02 */
+    { F(xauxin),   0x82, 0 },   /* 0x03 */
+    { F(xauxout),  0x82, 1 },   /* 0x04 */
+    { F(xprtout),  0x83, 1 },   /* 0x05 */
+    { F(xrawio),   0,    1 },   /* 0x06 */
+    { F(xrawcin),  0x80, 0 },   /* 0x07 */
+    { F(xnecin),   0x80, 0 },   /* 0x08 */
+    { F(xconws),   0x81, 2 },   /* 0x09 */
+    { F(xconrs),   0x80, 2 },   /* 0x0A */
+    { F(xconstat), 0x80, 0 },   /* 0x0B */
 
     /*
      * disk functions
@@ -160,12 +171,12 @@ static const FND funcs[] =
      * as usual.
      */
 
-    { ni,       0, 0 },
-    { ni,       0, 0 },
+    { NI, 0, 0 },
+    { NI, 0, 0 },
 
-    { xsetdrv,  0, 1 },      /* 0x0E */
+    { F(xsetdrv),  0, 1 },      /* 0x0E */
 
-    { ni,       0, 0 },
+    { NI, 0, 0 },
 
     /*
      * extended console functions
@@ -173,99 +184,101 @@ static const FND funcs[] =
      * Here the 0x80 flag indicates std file used, as above
      */
 
-    { xconostat, 0x81, 0 },  /* 0x10 */
-    { xprtostat, 0x83, 0 },  /* 0x11 */
-    { xauxistat, 0x82, 0 },  /* 0x12 */
-    { xauxostat, 0x82, 0 },  /* 0x13 */
+    { F(xconostat), 0x81, 0 },  /* 0x10 */
+    { F(xprtostat), 0x83, 0 },  /* 0x11 */
+    { F(xauxistat), 0x82, 0 },  /* 0x12 */
+    { F(xauxostat), 0x82, 0 },  /* 0x13 */
 
 #if CONF_WITH_ALT_RAM
-    { xmaddalt, 0, 4 },      /* 0x14 */
+    { F(xmaddalt),  0, 4 },     /* 0x14 */
 #else
-    { ni,       0, 0 },      /* 0x14 */
+    { NI, 0, 0 },               /* 0x14 */
 #endif
-    { (long(*)()) srealloc, 0, 2 }, /* 0x15 */
-    { ni,       0, 0 },
-    { ni,       0, 0 },
-    { ni,       0, 0 },
+    { F(srealloc),  0, 2 },     /* 0x15 */
+    { NI, 0, 0 },
+    { NI, 0, 0 },
+    { NI, 0, 0 },
 
-    { xgetdrv,  0, 0 },      /* 0x19 */
-    { (long(*)()) xsetdta, 0, 2 }, /* 0x1A */
+    { F(xgetdrv),  0, 0 },      /* 0x19 */
+    { F(xsetdta),  0, 2 },      /* 0x1A */
 
-    { ni,       0, 0 },
-    { ni,       0, 0 },
-    { ni,       0, 0 },
-    { ni,       0, 0 },
-    { ni,       0, 0 },
+    { NI, 0, 0 },
+    { NI, 0, 0 },
+    { NI, 0, 0 },
+    { NI, 0, 0 },
+    { NI, 0, 0 },
 
     /* xgsps */
 
-    { ni,       0, 0 },      /* 0x20 */
-    { ni,       0, 0 },
-    { ni,       0, 0 },
-    { ni,       0, 0 },
-    { ni,       0, 0 },
-    { ni,       0, 0 },
-    { ni,       0, 0 },
-    { ni,       0, 0 },
-    { ni,       0, 0 },
-    { ni,       0, 0 },
+    { NI, 0, 0 },               /* 0x20 */
+    { NI, 0, 0 },
+    { NI, 0, 0 },
+    { NI, 0, 0 },
+    { NI, 0, 0 },
+    { NI, 0, 0 },
+    { NI, 0, 0 },
+    { NI, 0, 0 },
+    { NI, 0, 0 },
+    { NI, 0, 0 },
 
-    { xgetdate, 0, 0 },      /* 0x2A */
-    { (long(*)()) xsetdate, 0, 1 }, /* 0x2B */
-    { xgettime, 0, 0 },      /* 0x2C */
-    { (long(*)()) xsettime, 0, 1 }, /* 0x2D */
+    { F(xgetdate), 0, 0 },      /* 0x2A */
+    { F(xsetdate), 0, 1 },      /* 0x2B */
+    { F(xgettime), 0, 0 },      /* 0x2C */
+    { F(xsettime), 0, 1 },      /* 0x2D */
 
-    { ni,       0, 0 },
+    { NI, 0, 0 },
 
-    { (long(*)()) xgetdta, 0, 0 }, /* 0x2F */
-    { xgetver,  0, 0 },      /* 0x30 */
-    { (long(*)()) xtermres, 0, 3 }, /* 0x31 */
+    { F(xgetdta),  0, 0 },      /* 0x2F */
+    { F(xgetver),  0, 0 },      /* 0x30 */
+    { F(xtermres), 0, 3 },      /* 0x31 */
 
-    { ni,       0, 0 },
-    { ni,       0, 0 },
-    { ni,       0, 0 },
-    { ni,       0, 0 },
+    { NI, 0, 0 },
+    { NI, 0, 0 },
+    { NI, 0, 0 },
+    { NI, 0, 0 },
 
-    { xgetfree, 0, 3 },      /* 0x36 */
+    { F(xgetfree), 0, 3 },      /* 0x36 */
 
-    { ni,       0, 0 },
-    { ni,       0, 0 },
+    { NI, 0, 0 },
+    { NI, 0, 0 },
 
-    { xmkdir,   0, 2 },      /* 0x39 */
-    { xrmdir,   0, 2 },      /* 0x3A */
-    { xchdir,   0, 2 },      /* 0x3B */
-    { (long(*)()) xcreat, 0, 3 },  /* 0x3C */
-    { xopen,    0, 3 },      /* 0x3D */
-    { xclose,   0, 1 },      /* 0x3E - will handle its own redirection */
-    { xread,    0x82, 5 },   /* 0x3F */
-    { xwrite,   0x82, 5 },   /* 0x40 */
-    { xunlink,  0, 2 },      /* 0x41 */
-    { xlseek,   0x81, 4 },   /* 0x42 */
-    { (long(*)()) xchmod, 0, 4 },  /* 0x43 */
-    { (long(*)()) xmxalloc, 0, 3 }, /* 0x44 */
-    { xdup,     0, 1 },      /* 0x45 */
-    { xforce,   0, 2 },      /* 0x46 */
-    { xgetdir,  0, 3 },      /* 0x47 */
-    { (long(*)()) xmalloc,  0, 2 }, /* 0x48 */
-    { xmfree,   0, 2 },      /* 0x49 */
-    { xsetblk,  0, 5 },      /* 0x4A */
-    { (long(*)()) xexec, 0, 7 },   /* 0x4B */
-    { (long(*)()) xterm, 0, 1 },   /* 0x4C */
+    { F(xmkdir),   0, 2 },      /* 0x39 */
+    { F(xrmdir),   0, 2 },      /* 0x3A */
+    { F(xchdir),   0, 2 },      /* 0x3B */
+    { F(xcreat),   0, 3 },      /* 0x3C */
+    { F(xopen),    0, 3 },      /* 0x3D */
+    { F(xclose),   0, 1 },      /* 0x3E - will handle its own redirection */
+    { F(xread),    0x82, 5 },   /* 0x3F */
+    { F(xwrite),   0x82, 5 },   /* 0x40 */
+    { F(xunlink),  0, 2 },      /* 0x41 */
+    { F(xlseek),   0x81, 4 },   /* 0x42 */
+    { F(xchmod),   0, 4 },      /* 0x43 */
+    { F(xmxalloc), 0, 3 },      /* 0x44 */
+    { F(xdup),     0, 1 },      /* 0x45 */
+    { F(xforce),   0, 2 },      /* 0x46 */
+    { F(xgetdir),  0, 3 },      /* 0x47 */
+    { F(xmalloc),  0, 2 },      /* 0x48 */
+    { F(xmfree),   0, 2 },      /* 0x49 */
+    { F(xsetblk),  0, 5 },      /* 0x4A */
+    { F(xexec),    0, 7 },      /* 0x4B */
+    { F(xterm),    0, 1 },      /* 0x4C */
 
-    { ni,       0, 0 },
+    { NI, 0, 0 },
 
-    { xsfirst,  0, 3 },      /* 0x4E */
-    { xsnext,   0, 0 },      /* 0x4F */
+    { F(xsfirst),  0, 3 },      /* 0x4E */
+    { F(xsnext),   0, 0 },      /* 0x4F */
 
-    { ni,       0, 0 },    /* 0x50 */
-    { ni,       0, 0 },
-    { ni,       0, 0 },
-    { ni,       0, 0 },
-    { ni,       0, 0 },
-    { ni,       0, 0 },
+    { NI, 0, 0 },               /* 0x50 */
+    { NI, 0, 0 },
+    { NI, 0, 0 },
+    { NI, 0, 0 },
+    { NI, 0, 0 },
+    { NI, 0, 0 },
 
-    { xrename,  0, 5 },    /* 0x56 */
-    { xgsdtof,  0, 4 }       /* 0x57 */
+    { F(xrename),  0, 5 },      /* 0x56 */
+    { F(xgsdtof),  0, 4 }       /* 0x57 */
+#undef F
+#undef NI
 };
 #define MAX_FNCALL (ARRAY_SIZE(funcs) - 1)
 
@@ -625,31 +638,31 @@ restrt:
         switch(f->wparms)
         {
         case 0:
-            rc = (*f->fncall)();
+            rc = (*f->fncall.v)();
             break;
 
         case 1:
-            rc = (*f->fncall)(pw[1]);
+            rc = (*f->fncall.w)(pw[1]);
             break;
 
         case 2:
-            rc = (*f->fncall)(pw[1],pw[2]);
+            rc = (*f->fncall.ww)(pw[1],pw[2]);
             break;
 
         case 3:
-            rc = (*f->fncall)(pw[1],pw[2],pw[3]);
+            rc = (*f->fncall.www)(pw[1],pw[2],pw[3]);
             break;
 
         case 4:
-            rc = (*f->fncall)(pw[1],pw[2],pw[3],pw[4]);
+            rc = (*f->fncall.wwww)(pw[1],pw[2],pw[3],pw[4]);
             break;
 
         case 5:
-            rc = (*f->fncall)(pw[1],pw[2],pw[3],pw[4],pw[5]);
+            rc = (*f->fncall.wwwww)(pw[1],pw[2],pw[3],pw[4],pw[5]);
             break;
 
         case 7:
-            rc = (*f->fncall)(pw[1],pw[2],pw[3],pw[4],pw[5],pw[6],pw[7]);
+            rc = (*f->fncall.wwwwwww)(pw[1],pw[2],pw[3],pw[4],pw[5],pw[6],pw[7]);
             break;
 
         default:
