@@ -217,11 +217,11 @@ WORD inf_what(OBJECT *tree, WORD ok, WORD cncl)
 /*
  *  Convert a single hex ASCII digit to the corresponding decimal number
  *
- *  Note that this could be static, since it is used only within this
- *  module.  However, making it so will consume more code space in
- *  current versions of GCC, even with -Os optimisation
+ *  The noinline attribute is used because otherwise current versions
+ *  of GCC will inline the code, and consume more code space, even
+ *  with -Os optimisation.
  */
-UBYTE hex_dig(BYTE achar)
+static __attribute__((noinline)) UBYTE hex_dig(BYTE achar)
 {
     if ((achar >= '0') && (achar <= '9'))
         return (achar - '0');
