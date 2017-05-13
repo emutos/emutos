@@ -546,7 +546,7 @@ void dopanic(const char *fmt, ...)
              proc_stk[12], proc_stk[13], proc_stk[14], proc_stk[15]);
     if (!(sr & 0x2000) && ((proc_usp & 1) == 0))
     {
-    	const UWORD *user_stk = (const UWORD *)proc_usp;
+        const UWORD *user_stk = (const UWORD *)proc_usp;
         kcprintf("USP  : %04x %04x %04x %04x\n",
                  user_stk[0], user_stk[1], user_stk[2], user_stk[3]);
         kcprintf("       %04x %04x %04x %04x\n",
