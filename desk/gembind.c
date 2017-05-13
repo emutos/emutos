@@ -24,6 +24,7 @@
 #include "portab.h"
 #include "obdefs.h"
 #include "gembind.h"
+#include "aesbind.h"
 #include "kprint.h"
 #include <stdarg.h>
 
