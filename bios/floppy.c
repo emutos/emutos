@@ -335,30 +335,33 @@ WORD flop_boot_read(void)
 
 static void flop_add_drive(WORD dev)
 {
+    UNIT *u = &units[dev];
+    BLKDEV *b = &blkdev[dev];
+
 #if CONF_WITH_FDC
     /* FDC floppy device */
     finfo[dev].cur_track = 0;
 #endif
 
     /* Physical block device */
-    units[dev].valid = 1;
+    u->valid = 1;
 #if CONF_WITH_IDE
-    units[dev].byteswap = 0;        /* floppies are never byteswapped */
+    u->byteswap = 0;            /* floppies are never byteswapped */
 #endif
-    units[dev].psshift = get_shift(SECTOR_SIZE);
-    units[dev].size = 0;            /* unknown size */
-    units[dev].last_access = 0;     /* never accessed */
-    units[dev].features = UNIT_REMOVABLE;
+    u->psshift = get_shift(SECTOR_SIZE);
+    u->size = 0;                /* unknown size */
+    u->last_access = 0;         /* never accessed */
+    u->features = UNIT_REMOVABLE;
 
     /* Logical block device */
-    blkdev[dev].flags = DEVICE_VALID;
-    blkdev[dev].mediachange = MEDIACHANGE;
-    blkdev[dev].start = 0;
-    blkdev[dev].size = 0;           /* unknown size */
-    blkdev[dev].geometry.sides = 2; /* default geometry of 3.5" DD */
-    blkdev[dev].geometry.spt = 9;
-    blkdev[dev].unit = dev;
-    blkdev[dev].bpb.recsiz = SECTOR_SIZE;
+    b->flags = DEVICE_VALID;
+    b->mediachange = MEDIACHANGE;
+    b->start = 0;
+    b->size = 0;                /* unknown size */
+    b->geometry.sides = 2;      /* default geometry of 3.5" DD */
+    b->geometry.spt = 9;
+    b->unit = dev;
+    b->bpb.recsiz = SECTOR_SIZE;
 
     /* OS variables */
     nflops++;
