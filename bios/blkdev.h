@@ -124,6 +124,12 @@ LONG call_etv_critic(WORD error,WORD device);   /* in vectors.S */
 
 
 /*
+ * bit flag usage in 'flags' member of BLKDEV (see below)
+ */
+#define DEVICE_VALID    0x01    /* device valid */
+
+
+/*
  * unified block device identificator - partially stolen from MiNT, hehe
  *
  * The 'forcechange' byte is used to force EmuTOS to recognise a media
@@ -140,7 +146,7 @@ struct _blkdev
     char        id[4];          /* XHDI partition id (GEM, BGM, RAW, \0D6, ...) */
     ULONG       start;          /* physical start sector */
     ULONG       size;           /* physical sectors */
-    UBYTE       valid;          /* device valid */
+    UBYTE       flags;          /* general flag byte (see above for definitions) */
     UBYTE       mediachange;    /* current mediachange status */
     BPB         bpb;
     GEOMETRY    geometry;       /* this should probably belong to units */

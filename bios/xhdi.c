@@ -97,7 +97,7 @@ static long XHInqDev2(UWORD drv, UWORD *major, UWORD *minor, ULONG *start,
             return ret;
     }
 
-    if (drv >= BLKDEVNUM || !blkdev[drv].valid)
+    if (drv >= BLKDEVNUM || !(blkdev[drv].flags&DEVICE_VALID))
         return EDRIVE;
 
     if (major)
@@ -193,7 +193,7 @@ static long XHInqDriver(UWORD bios_device, char *name, char *version, char *comp
             return ret;
     }
 
-    if (bios_device >= BLKDEVNUM || !blkdev[bios_device].valid)
+    if (bios_device >= BLKDEVNUM || !(blkdev[bios_device].flags&DEVICE_VALID))
         return EDRIVE;
 
     if (disk_inquire(blkdev[bios_device].unit, NULL, NULL, NULL, 0) == EUNDEV)

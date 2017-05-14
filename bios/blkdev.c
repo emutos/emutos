@@ -330,7 +330,7 @@ int add_partition(UWORD unit, LONG *devices_available, char id[], ULONG start, U
     b->start = start;
     b->size  = size;
 
-    b->valid = 1;
+    b->flags = DEVICE_VALID;
     b->mediachange = MEDIANOCHANGE;
     b->unit  = unit;
 
@@ -377,7 +377,7 @@ static LONG blkdev_rwabs(WORD rw, UBYTE *buf, WORD cnt, WORD recnr, WORD dev, LO
      */
     if (! (rw & RW_NOTRANSLATE)) {      /* logical */
         int sectors;
-        if ((dev < 0 ) || (dev >= BLKDEVNUM) || !blkdev[dev].valid)
+        if ((dev < 0 ) || (dev >= BLKDEVNUM) || !(blkdev[dev].flags&DEVICE_VALID))
             return EUNDEV;  /* unknown device */
 
         if (blkdev[dev].bpb.recsiz == 0)/* invalid BPB, e.g. FAT32 or ext2 */
@@ -514,7 +514,7 @@ LONG blkdev_getbpb(WORD dev)
 
     KDEBUG(("blkdev_getbpb(%d)\n",dev));
 
-    if ((dev < 0 ) || (dev >= BLKDEVNUM) || !bdev->valid)
+    if ((dev < 0 ) || (dev >= BLKDEVNUM) || !(bdev->flags&DEVICE_VALID))
         return 0L;  /* unknown device */
 
     unit = bdev->unit;
@@ -642,7 +642,7 @@ static LONG blkdev_mediach(WORD dev)
     UWORD unit = b->unit;
     LONG ret;
 
-    if ((dev < 0 ) || (dev >= BLKDEVNUM) || !b->valid)
+    if ((dev < 0 ) || (dev >= BLKDEVNUM) || !(b->flags&DEVICE_VALID))
         return EUNDEV;  /* unknown device */
 
     /* if we've already marked the drive as MEDIACHANGE, don't change it */

@@ -183,7 +183,7 @@ void disk_init_all(void)
 
     /* update bitmaps */
     for (i = 0, bitmask = 1L, b = blkdev; i < BLKDEVNUM; i++, bitmask <<= 1, b++) {
-        if (b->valid) {
+        if (b->flags&DEVICE_VALID) {
             units[b->unit].drivemap |= bitmask;
             if (units[b->unit].features&UNIT_REMOVABLE)
                 drvrem |= bitmask;
