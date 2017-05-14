@@ -354,7 +354,7 @@ static void flop_add_drive(WORD dev)
     u->features = UNIT_REMOVABLE;
 
     /* Logical block device */
-    b->flags = DEVICE_VALID;
+    b->flags = DEVICE_VALID | GETBPB_ALLOWED;
     b->mediachange = MEDIACHANGE;
     b->start = 0;
     b->size = 0;                /* unknown size */

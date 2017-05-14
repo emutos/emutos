@@ -302,6 +302,31 @@ static int next_logical(LONG *devices_available)
     return -1;
 }
 
+ /*
+ * getbpb_allowed - check if partition type supports GetBPB
+ */
+static BOOL getbpb_allowed(char *id)
+{
+    /* check for Atari-style partitions */
+    if ((strcmp(id,"BGM") == 0) || (strcmp(id,"GEM") == 0))
+        return TRUE;
+
+    /* check for certain DOS-style partitions */
+    if ((id[0] == '\0') && (id[1] == 'D'))
+    {
+        switch(id[2])
+        {
+        case 0x01:
+        case 0x04:
+        case 0x06:
+        case 0x0e:
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
 /*
  * Add a partition's details to the device's partition description.
  */
@@ -333,6 +358,10 @@ int add_partition(UWORD unit, LONG *devices_available, char id[], ULONG start, U
     b->flags = DEVICE_VALID;
     b->mediachange = MEDIANOCHANGE;
     b->unit  = unit;
+
+    /* flag partitions that support GetBPB() */
+    if (getbpb_allowed(id))
+        b->flags |= GETBPB_ALLOWED;
 
     /* make just GEM/BGM partitions visible to applications */
 /*
@@ -540,6 +569,10 @@ LONG blkdev_getbpb(WORD dev)
      */
     if ((unit >= NUMFLOPPIES) && (units[unit].features & UNIT_REMOVABLE))
         disk_mediach(unit);     /* check for change & rescan partitions if so */
+
+    /* check if this device supports GetBPB() */
+    if (!(bdev->flags & GETBPB_ALLOWED))
+        return 0L;              /* no can do */
 
     /* now we can read the bootsector using the physical mode */
     do {

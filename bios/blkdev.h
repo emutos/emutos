@@ -127,6 +127,7 @@ LONG call_etv_critic(WORD error,WORD device);   /* in vectors.S */
  * bit flag usage in 'flags' member of BLKDEV (see below)
  */
 #define DEVICE_VALID    0x01    /* device valid */
+#define GETBPB_ALLOWED  0x02    /* this device supports GetBPB() */
 
 
 /*
