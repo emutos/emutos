@@ -692,7 +692,7 @@ void fun_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my, WOR
         }
         else            /* dragging from window to desktop */
         {
-            if (sobj == dobj)   /* dropping onto desktop surface */
+            if (dobj == DROOT)  /* dropping onto desktop surface */
             {
 #if CONF_WITH_DESKTOP_SHORTCUTS
                 ins_shortcut(wh, mx, my);
@@ -712,8 +712,7 @@ void fun_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my, WOR
         }
         else            /* dragging from desktop to desktop,   */
         {               /* e.g. copying a disk to another disk */
-            if (sobj != dobj)
-                fun_desk2desk(dobj, keystate);
+            fun_desk2desk(dobj, keystate);
         }
     }
 }

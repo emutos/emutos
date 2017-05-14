@@ -585,8 +585,6 @@ static WORD hndl_button(WORD clicks, WORD mx, WORD my, WORD button, WORD keystat
     WORD done, junk;
     GRECT c;
     WORD wh, dobj, dest_wh;
-    WORD root;
-    WNODE *wn;
 
     done = FALSE;
 
@@ -610,14 +608,7 @@ static WORD hndl_button(WORD clicks, WORD mx, WORD my, WORD button, WORD keystat
                                 &keystate, &c, &dobj);
             if (dest_wh != NIL)
             {
-                root = 1;
-                if (dest_wh != 0)
-                {
-                    wn = win_find(dest_wh);
-                    if (wn)
-                        root = wn->w_root;
-                }
-                fun_drag(wh, dest_wh, root, dobj, mx, my, keystate);
+                fun_drag(wh, dest_wh, 0, dobj, mx, my, keystate);
                 desk_clear(wh);
             }
         }
