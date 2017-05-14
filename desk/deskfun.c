@@ -487,7 +487,7 @@ static void fun_win2win(WORD src_wh, WORD dst_wh, WORD dst_ob, WORD keystate)
 static WORD fun_file2desk(PNODE *pn_src, WORD icontype_src, ANODE *an_dest, WORD dobj, WORD keystate)
 {
     ICONBLK *dicon;
-    BYTE pathname[10];      /* must be long enough for X:\\*.* */
+    BYTE pathname[MAXPATHLEN];
     WORD operation, ret;
 
     pathname[1] = ':';      /* set up everything except drive letter */
@@ -498,6 +498,15 @@ static WORD fun_file2desk(PNODE *pn_src, WORD icontype_src, ANODE *an_dest, WORD
     {
         switch(an_dest->a_type)
         {
+#if CONF_WITH_DESKTOP_SHORTCUTS
+        case AT_ISFILE:     /* TODO: dropping file on icon - launch file */
+            break;
+        case AT_ISFOLD:     /* dropping file on folder - copy or move */
+            strcpy(pathname,an_dest->a_pdata);
+            strcat(pathname,"\\*.*");
+            operation = (keystate&MODE_CTRL) ? OP_MOVE : OP_COPY;
+            break;
+#endif
         case AT_ISDISK:
             dicon = (ICONBLK *)G.g_screen[dobj].ob_spec;
             pathname[0] = LOBYTE(dicon->ib_char);
