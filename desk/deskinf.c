@@ -29,15 +29,14 @@
 #include "optimopt.h"
 #include "optimize.h"
 
+#include "deskbind.h"
+#include "deskglob.h"
 #include "deskapp.h"
 #include "deskfpd.h"
 #include "deskwin.h"
 #include "gembind.h"
-#include "deskbind.h"
-
 #include "aesbind.h"
 #include "deskmain.h"
-#include "deskglob.h"
 #include "deskdir.h"
 #include "deskrsrc.h"
 #include "desksupp.h"

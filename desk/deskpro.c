@@ -26,13 +26,12 @@
 #include "obdefs.h"
 #include "gemdos.h"
 
+#include "deskbind.h"
+#include "deskglob.h"
 #include "deskapp.h"
 #include "deskfpd.h"
 #include "deskwin.h"
-#include "deskbind.h"
-
 #include "aesbind.h"
-#include "deskglob.h"
 #include "desksupp.h"
 #include "deskpro.h"
 #include "kprint.h"

@@ -22,6 +22,9 @@
 #include "deskconf.h"
 #include "desk_rsc.h"           /* for RS_NTREE */
 #include "dta.h"
+#include "deskapp.h"
+#include "deskfpd.h"
+#include "deskwin.h"
 
 #define ARROW   0
 #define HGLASS  2

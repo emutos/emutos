@@ -33,14 +33,13 @@
 #include "dos.h"
 #include "optimize.h"
 
+#include "deskbind.h"
+#include "deskglob.h"
 #include "deskapp.h"
 #include "deskfpd.h"
 #include "deskwin.h"
 #include "gembind.h"
-#include "deskbind.h"
-
 #include "aesbind.h"
-#include "deskglob.h"
 #include "deskinf.h"
 #include "deskfun.h"
 #include "deskrsrc.h"

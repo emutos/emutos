@@ -30,11 +30,12 @@
 #include "gemdos.h"
 #include "optimize.h"
 
+#include "deskbind.h"
+#include "deskglob.h"
 #include "gembind.h"
 #include "deskapp.h"
 #include "deskfpd.h"
 #include "deskwin.h"
-#include "deskbind.h"
 
 #include "../bios/screen.h"
 #include "../bios/videl.h"
@@ -44,7 +45,6 @@
 
 #include "aesbind.h"
 #include "desksupp.h"
-#include "deskglob.h"
 #include "deskins.h"
 #include "deskinf.h"
 #include "deskdir.h"

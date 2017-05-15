@@ -23,15 +23,15 @@
 #include "obdefs.h"
 #include "rectfunc.h"
 #include "gsxdefs.h"
+
+#include "deskbind.h"
+#include "deskglob.h"
 #include "gembind.h"
 #include "deskapp.h"
 #include "deskfpd.h"
 #include "deskwin.h"
-#include "deskbind.h"
-
 #include "aesbind.h"
 #include "deskact.h"
-#include "deskglob.h"
 #include "deskmain.h"
 #include "desksupp.h"
 #include "deskins.h"

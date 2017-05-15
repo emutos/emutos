@@ -25,14 +25,13 @@
 #include "gemdos.h"
 #include "optimopt.h"
 
+#include "deskbind.h"
+#include "deskglob.h"
 #include "deskapp.h"
 #include "deskfpd.h"
 #include "deskwin.h"
 #include "dos.h"
-#include "deskbind.h"
-
 #include "deskrsrc.h"
-#include "deskglob.h"
 
 #include "string.h"
 #include "kprint.h"
