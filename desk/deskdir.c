@@ -930,9 +930,7 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *co
 
     for (pf = pspath->p_flist; pf && more; pf = pf->f_next)
     {
-        if (pf->f_obid == NIL)
-            continue;
-        if (!(G.g_screen[pf->f_obid].ob_state & SELECTED))
+        if (!fnode_is_selected(pf))
             continue;
         if (op != OP_COUNT)
             if (user_abort())

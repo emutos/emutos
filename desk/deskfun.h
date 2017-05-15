@@ -37,4 +37,15 @@ WORD fun_op(WORD op, WORD icontype_src, PNODE *pspath, BYTE *pdest);
 void fun_del(WORD sobj);
 BOOL wants_to_delete_files(void);
 
+/*
+ * test if file in FNODE is selected
+ */
+static __inline__ BOOL fnode_is_selected(FNODE *fn)
+{
+    if ((fn->f_obid != NIL) && (G.g_screen[fn->f_obid].ob_state & SELECTED))
+        return TRUE;
+
+    return FALSE;
+}
+
 #endif

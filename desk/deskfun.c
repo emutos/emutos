@@ -295,8 +295,7 @@ static WORD source_is_parent(BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path)
                 for (pf = pflist; pf; pf = pf->f_next)
                 {
                     /* exit if same subdir  */
-                    if ( (pf->f_obid != NIL) &&
-                        (G.g_screen[pf->f_obid].ob_state & SELECTED) &&
+                    if ( fnode_is_selected(pf) &&
                         (pf->f_attr & F_SUBDIR) &&
                         (!strcmp(pf->f_name, tdst)) )
                     {

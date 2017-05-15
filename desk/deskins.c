@@ -985,9 +985,7 @@ WORD ins_icon(WORD sobj)
     {
         for (pf = pw->w_path->p_flist; pf; pf = pf->f_next)
         {
-            if (pf->f_obid == NIL)
-                continue;
-            if (!(G.g_screen[pf->f_obid].ob_state & SELECTED))
+            if (!fnode_is_selected(pf))
                 continue;
             rc = install_window_icon(pf);
             if (rc > 0)
