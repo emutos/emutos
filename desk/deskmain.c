@@ -608,7 +608,7 @@ static WORD hndl_button(WORD clicks, WORD mx, WORD my, WORD button, WORD keystat
                                 &keystate, &c, &dobj);
             if (dest_wh != NIL)
             {
-                fun_drag(wh, dest_wh, 0, dobj, mx, my, keystate);
+                done = fun_drag(wh, dest_wh, 0, dobj, mx, my, keystate);
                 desk_clear(wh);
             }
         }

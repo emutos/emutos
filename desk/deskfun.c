@@ -40,6 +40,7 @@
 #include "deskdir.h"
 #include "deskfun.h"
 #include "deskins.h"
+#include "deskpro.h"
 #include "biosdefs.h"
 
 #include "string.h"
@@ -47,6 +48,16 @@
 #include "kprint.h"
 
 
+/*
+ * the following global is initialised to FALSE in fun_drag().
+ * it will be set to TRUE by file2desk() (called indirectly by
+ * fun_drag()) when a file has been dropped onto a desktop icon
+ * representing an executable program.
+ *
+ * the global is returned by fun_drag(), and if TRUE, the desktop
+ * will subsequently exit to allow the program to run.
+ */
+static BOOL exit_desktop;
 
 /*
  *  Issue an alert
@@ -497,7 +508,31 @@ static WORD fun_file2desk(PNODE *pn_src, WORD icontype_src, ANODE *an_dest, WORD
         switch(an_dest->a_type)
         {
 #if CONF_WITH_DESKTOP_SHORTCUTS
-        case AT_ISFILE:     /* TODO: dropping file on icon - launch file */
+        FNODE *fn;
+
+        case AT_ISFILE:     /* dropping something onto a file */
+            if (an_dest->a_aicon < 0)       /* is target a program? */
+                break;                      /* no, do nothing */
+
+            /* look for the first (or only) selected file */
+            for (fn = pn_src->p_flist; fn; fn = fn->f_next)
+            {
+                if (fnode_is_selected(fn))
+                    break;
+            }
+            if (!fn)                        /* "can't happen" */
+                break;
+
+            /* build the full pathname to pass to the target program */
+            strcpy(pathname,pn_src->p_spec);
+            add_fname(pathname,fn->f_name);
+
+            /* set globals used by pro_run() */
+            strcpy(G.g_cmd,an_dest->a_pdata);
+            strcpy(G.g_tail+1,pathname);
+
+            /* set global so desktop will exit if pro_run() succeeds */
+            exit_desktop = pro_run(an_dest->a_flags&AF_ISCRYS, 1, -1, -1);
             break;
         case AT_ISFOLD:     /* dropping file on folder - copy or move */
             strcpy(pathname,an_dest->a_pdata);
@@ -689,8 +724,10 @@ static void fun_desk2desk(WORD dobj, WORD keystate)
 }
 
 
-void fun_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my, WORD keystate)
+BOOL fun_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my, WORD keystate)
 {
+    exit_desktop = FALSE;   /* may be set to TRUE by fun_file2desk() */
+
     if (wh)
     {
         if (dest_wh)    /* dragging from window to window, */
@@ -722,6 +759,8 @@ void fun_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my, WOR
             fun_desk2desk(dobj, keystate);
         }
     }
+
+    return exit_desktop;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
