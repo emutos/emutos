@@ -217,20 +217,15 @@ WORD inf_what(OBJECT *tree, WORD ok, WORD cncl)
 /*
  *  Convert a single hex ASCII digit to the corresponding decimal number
  *
- *  The noinline attribute is used because otherwise current versions
- *  of GCC will inline the code, and consume more code space, even
- *  with -Os optimisation.
+ *  Validation of input has been given up in order to minimize the size of the
+ *  generated code enough to making inlining it result in smaller total code size.
  */
-static __attribute__((noinline)) UBYTE hex_dig(BYTE achar)
+static UBYTE hex_dig(BYTE achar)
 {
-    if ((achar >= '0') && (achar <= '9'))
-        return (achar - '0');
+    if (achar >= 'A')
+        achar += 9;
 
-    achar = toupper(achar);
-    if ((achar >= 'A') && (achar <= 'F'))
-        return (achar - 'A' + 10);
-
-    return 0;
+    return achar & 0x0f;
 }
 
 
