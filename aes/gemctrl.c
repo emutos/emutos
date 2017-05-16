@@ -250,7 +250,7 @@ static void hctl_rect(void)
                 {
                     item -= 3;
                     mn_getownid(&owner,&item,item); /* get accessory owner & menu id */
-                    do_chg(gl_mntree, title, SELECTED, FALSE, TRUE, TRUE);
+                    do_chg((OBJECT *)gl_mntree, title, SELECTED, FALSE, TRUE, TRUE);
 
                     if (gl_wtop >= 0)
                         perform_untop(gl_wtop);

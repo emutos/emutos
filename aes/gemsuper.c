@@ -165,19 +165,19 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
     /* Menu Manager */
     case MENU_BAR:
         if (gl_mnppd == rlr || gl_mnppd == NULL)
-            mn_bar(MM_ITREE, SHOW_IT, rlr->p_pid);
+            mn_bar((OBJECT *)MM_ITREE, SHOW_IT, rlr->p_pid);
         else
             menu_tree[rlr->p_pid] = (SHOW_IT) ? MM_ITREE : 0x0L;
         break;
     case MENU_ICHECK:
-        do_chg(MM_ITREE, ITEM_NUM, CHECKED, CHECK_IT, FALSE, FALSE);
+        do_chg((OBJECT *)MM_ITREE, ITEM_NUM, CHECKED, CHECK_IT, FALSE, FALSE);
         break;
     case MENU_IENABLE:
-        do_chg(MM_ITREE, (ITEM_NUM & 0x7fff), DISABLED,
+        do_chg((OBJECT *)MM_ITREE, (ITEM_NUM & 0x7fff), DISABLED,
                 !ENABLE_IT, ((ITEM_NUM & 0x8000) != 0x0), FALSE);
         break;
     case MENU_TNORMAL:
-        do_chg(MM_ITREE, TITLE_NUM, SELECTED, !NORMAL_IT, TRUE, TRUE);
+        do_chg((OBJECT *)MM_ITREE, TITLE_NUM, SELECTED, !NORMAL_IT, TRUE, TRUE);
         break;
     case MENU_TEXT:
         tree = (OBJECT *)MM_ITREE;

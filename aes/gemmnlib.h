@@ -19,11 +19,11 @@ extern LONG     menu_tree[];
 extern WORD     gl_dabox;
 
 
-UWORD do_chg(LONG tree, WORD iitem, UWORD chgvalue,
+UWORD do_chg(OBJECT *tree, WORD iitem, UWORD chgvalue,
              WORD dochg, WORD dodraw, WORD chkdisabled);
 WORD mn_do(WORD *ptitle, WORD *pitem);
 
-void mn_bar(LONG tree, WORD showit, WORD pid);
+void mn_bar(OBJECT *tree, WORD showit, WORD pid);
 void mn_clsda(void);
 void mn_init(void);
 WORD mn_register(WORD pid, LONG pstr);

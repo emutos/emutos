@@ -83,13 +83,13 @@ static OBJECT   M_DESK[3+NUM_ACCS];
 static LONG     gl_datree;
 
 
-static WORD menu_sub(LONG *ptree, WORD ititle)
+static WORD menu_sub(OBJECT **ptree, WORD ititle)
 {
     OBJECT  *tree;
     WORD    themenus, imenu;
     WORD    i;
 
-    tree = (OBJECT *)*ptree;
+    tree = *ptree;
     themenus = (tree+THESCREEN)->ob_tail;
 
     /* correlate title # to menu subtree # */
@@ -102,7 +102,7 @@ static WORD menu_sub(LONG *ptree, WORD ititle)
     /* special case desk acc */
     if (imenu == gl_dabox)
     {
-        *ptree = gl_datree;
+        *ptree = (OBJECT *)gl_datree;
         imenu = 0;
     }
 
@@ -185,9 +185,9 @@ static void menu_fixup(void)
 /*
  *  Change a mouse-wait rectangle based on an object's size
  */
-static void rect_change(LONG tree, MOBLK *prmob, WORD iob, BOOL x)
+static void rect_change(OBJECT *tree, MOBLK *prmob, WORD iob, BOOL x)
 {
-    ob_actxywh(tree, iob, &prmob->m_gr);
+    ob_actxywh((LONG)tree, iob, &prmob->m_gr);
     prmob->m_out = x;
 }
 
@@ -199,7 +199,7 @@ static void rect_change(LONG tree, MOBLK *prmob, WORD iob, BOOL x)
  *  parameter is set.  The object will be drawn with its new state only
  *  if the dodraw parameter is set.
  */
-UWORD do_chg(LONG tree, WORD iitem, UWORD chgvalue,
+UWORD do_chg(OBJECT *tree, WORD iitem, UWORD chgvalue,
              WORD dochg, WORD dodraw, WORD chkdisabled)
 /* tree:         tree that holds item */
 /* iitem:        item to affect       */
@@ -211,7 +211,7 @@ UWORD do_chg(LONG tree, WORD iitem, UWORD chgvalue,
     UWORD   curr_state;
     OBJECT  *obj;
 
-    obj = ((OBJECT *)tree) + iitem;
+    obj = tree + iitem;
     curr_state = obj->ob_state;
     if (chkdisabled && (curr_state & DISABLED) )
         return FALSE;
@@ -224,7 +224,7 @@ UWORD do_chg(LONG tree, WORD iitem, UWORD chgvalue,
     if (dodraw)
         gsx_sclip(&gl_rzero);
 
-    ob_change(tree, iitem, curr_state, dodraw);
+    ob_change((LONG)tree, iitem, curr_state, dodraw);
     return TRUE;
 }
 
@@ -233,7 +233,7 @@ UWORD do_chg(LONG tree, WORD iitem, UWORD chgvalue,
  *  Routine to set and reset values of certain items if they
  *  are not the current item
  */
-static WORD menu_set(LONG tree, WORD last_item, WORD cur_item, WORD setit)
+static WORD menu_set(OBJECT *tree, WORD last_item, WORD cur_item, WORD setit)
 {
     if ((last_item != NIL) && (last_item != cur_item))
     {
@@ -249,13 +249,13 @@ static WORD menu_set(LONG tree, WORD last_item, WORD cur_item, WORD setit)
  *  menu tree.  This involves BLTing out and back the data that was
  *  underneath the menu before it was pulled down.
  */
-static void menu_sr(WORD saveit, LONG tree, WORD imenu)
+static void menu_sr(WORD saveit, OBJECT *tree, WORD imenu)
 {
     GRECT   t;
 
     /* do the blit to save or restore */
     gsx_sclip(&gl_rzero);
-    ob_actxywh(tree, imenu, &t);
+    ob_actxywh((LONG)tree, imenu, &t);
     t.g_x -= MTH;
     t.g_w += 2*MTH;
     t.g_h += 2*MTH;
@@ -272,19 +272,19 @@ static void menu_sr(WORD saveit, LONG tree, WORD imenu)
  */
 static WORD menu_down(WORD ititle)
 {
-    LONG    tree;
+    OBJECT  *tree;
     WORD    imenu;
 
-    tree = gl_mntree;
+    tree = (OBJECT *)gl_mntree;
     imenu = menu_sub(&tree, ititle);
 
     /* draw title selected */
-    if (do_chg(gl_mntree, ititle, SELECTED, TRUE, TRUE, TRUE))
+    if (do_chg((OBJECT *)gl_mntree, ititle, SELECTED, TRUE, TRUE, TRUE))
     {
         /* save area underneath the menu */
         menu_sr(TRUE, tree, imenu);
         /* draw all items in menu */
-        ob_draw(tree, imenu, MAX_DEPTH);
+        ob_draw((LONG)tree, imenu, MAX_DEPTH);
     }
 
     return imenu;
@@ -293,8 +293,8 @@ static WORD menu_down(WORD ititle)
 
 WORD mn_do(WORD *ptitle, WORD *pitem)
 {
-    LONG    tree;
-    LONG    buparm, cur_tree, last_tree;
+    OBJECT  *tree, *cur_tree, *last_tree;
+    LONG    buparm;
     WORD    mnu_flags, done;
     WORD    cur_menu, cur_item, last_item;
     WORD    cur_title, last_title;
@@ -315,7 +315,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
     done = FALSE;
     buparm = 0x00010101L;
     cur_title = cur_menu = cur_item = NIL;
-    cur_tree = tree = gl_mntree;
+    cur_tree = tree = (OBJECT *)gl_mntree;
 
     while (!done)
     {
@@ -335,7 +335,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
             last_item = cur_menu;
             theval = FALSE;
             if (last_item == 0)
-                last_tree = gl_datree;
+                last_tree = (OBJECT *)gl_datree;
             break;
         case OUTITEM:
             last_tree = cur_tree;
@@ -377,7 +377,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
             last_title = cur_title;
             last_item = cur_item;
             /* see if over the bar  */
-            cur_title = ob_find( tree, THEACTIVE, 1, rets[0], rets[1]);
+            cur_title = ob_find((LONG)tree, THEACTIVE, 1, rets[0], rets[1]);
             if ((cur_title != NIL) && (cur_title != THEACTIVE))
             {
                 menu_state = OUTTITLE;
@@ -400,12 +400,12 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
                 }
                 else
                 {
-                    cur_item = ob_find(cur_tree, cur_menu, 1, rets[0], rets[1]);
+                    cur_item = ob_find((LONG)cur_tree, cur_menu, 1, rets[0], rets[1]);
                     if (cur_item != NIL)
                         menu_state = OUTITEM;
                     else
                     {
-                        obj = ((OBJECT *)tree) + cur_title;
+                        obj = tree + cur_title;
                         if (obj->ob_state & DISABLED)
                         {
                             menu_state = INBAR;
@@ -427,7 +427,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
             {
                 cur_menu = menu_down(cur_title);
                 /* special case desk acc */
-                cur_tree = (cur_menu == 0) ? gl_datree : gl_mntree;
+                cur_tree = (OBJECT *)((cur_menu == 0) ? gl_datree : gl_mntree);
             }
             /* hilite new item */
             menu_set(cur_tree, cur_item, last_item, TRUE);
@@ -459,7 +459,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
  *  off so that this operation will be as fast as possible.  The
  *  global variable gl_mntree is also set or reset.
  */
-void mn_bar(LONG tree, WORD showit, WORD pid)
+void mn_bar(OBJECT *tree, WORD showit, WORD pid)
 {
     AESPD   *p;
     OBJECT  *obj;
@@ -469,9 +469,9 @@ void mn_bar(LONG tree, WORD showit, WORD pid)
     if (showit)
     {
         gl_mnppd = p;
-        menu_tree[pid] = gl_mntree = tree;
+        menu_tree[pid] = gl_mntree = (LONG)tree;
         menu_fixup();
-        obj = ((OBJECT *)tree) + 1;
+        obj = tree + 1;
         obj->ob_width = gl_width - obj->ob_x;
         ob_actxywh(gl_mntree, THEACTIVE, &gl_ctwait.m_gr);
         gsx_sclip(&gl_rzero);

@@ -817,7 +817,7 @@ static void w_setmen(WORD pid)
 
     npid = menu_tree[pid] ? pid : 0;
     if (gl_mntree != menu_tree[npid])
-        mn_bar(menu_tree[npid], TRUE, npid);
+        mn_bar((OBJECT *)menu_tree[npid], TRUE, npid);
 
     npid = desk_tree[pid] ? pid : 0;
     if (gl_newdesk != desk_tree[npid])
