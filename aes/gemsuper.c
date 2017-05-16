@@ -283,10 +283,10 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         gr_shrinkbox((GRECT *)&GR_I1, (GRECT *)&GR_I5);
         break;
     case GRAF_WATCHBOX:
-        ret = gr_watchbox(GR_TREE, GR_OBJ, GR_INSTATE, GR_OUTSTATE);
+        ret = gr_watchbox((OBJECT *)GR_TREE, GR_OBJ, GR_INSTATE, GR_OUTSTATE);
         break;
     case GRAF_SLIDEBOX:
-        ret = gr_slidebox(GR_TREE, GR_PARENT, GR_OBJ, GR_ISVERT);
+        ret = gr_slidebox((OBJECT *)GR_TREE, GR_PARENT, GR_OBJ, GR_ISVERT);
         break;
     case GRAF_HANDLE:
         GR_WCHAR = gl_wchar;

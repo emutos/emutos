@@ -249,7 +249,7 @@ WORD fm_button(LONG tree, WORD new_obj, WORD clks, WORD *pnew_obj)
         }
         else
         {   /* turn on new object   */
-            if (gr_watchbox(tree, new_obj, state^SELECTED, state))
+            if (gr_watchbox((OBJECT *)tree, new_obj, state^SELECTED, state))
                 state ^= SELECTED;
         }
         /* if not touchexit then wait for button up */

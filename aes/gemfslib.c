@@ -666,7 +666,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
             /* drop through */
         case FSVELEV:
             fm_own(TRUE);
-            value = gr_slidebox(tree, FSVSLID, FSVELEV, TRUE);
+            value = gr_slidebox((OBJECT *)tree, FSVSLID, FSVELEV, TRUE);
             fm_own(FALSE);
             value = curr - mul_div(value, count-NM_NAMES, 1000);
             if (value >= 0)

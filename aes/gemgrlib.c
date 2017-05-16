@@ -328,20 +328,20 @@ void gr_shrinkbox(GRECT *po, GRECT *pt)
 }
 
 
-WORD gr_watchbox(LONG tree, WORD obj, WORD instate, WORD outstate)
+WORD gr_watchbox(OBJECT *tree, WORD obj, WORD instate, WORD outstate)
 {
     BOOL    out;
     WORD    state;
     GRECT   t;
 
     gsx_sclip(&gl_rscreen);
-    ob_actxywh(tree, obj, &t);
+    ob_actxywh((LONG)tree, obj, &t);
 
     out = FALSE;
     do
     {
         state = (out) ? outstate : instate;
-        ob_change(tree, obj, state, TRUE);
+        ob_change((LONG)tree, obj, state, TRUE);
         out = !out;
     } while (gr_stilldn(out, t.g_x, t.g_y, t.g_w, t.g_h));
 
@@ -349,13 +349,13 @@ WORD gr_watchbox(LONG tree, WORD obj, WORD instate, WORD outstate)
 }
 
 
-WORD gr_slidebox(LONG tree, WORD parent, WORD obj, WORD isvert)
+WORD gr_slidebox(OBJECT *tree, WORD parent, WORD obj, WORD isvert)
 {
     GRECT   t, c;
     WORD    divnd, divis;
 
-    ob_actxywh(tree, parent, &c);
-    ob_relxywh(tree, obj, &t);
+    ob_actxywh((LONG)tree, parent, &c);
+    ob_relxywh((LONG)tree, obj, &t);
     gr_dragbox(t.g_w, t.g_h, t.g_x + c.g_x, t.g_y + c.g_y,
                 &c, &t.g_x, &t.g_y);
 
