@@ -86,9 +86,9 @@ void fs_start(void)
 /*
  *  centre specified G_STRING in the root object
  */
-static void centre_title(LONG tree,WORD objnum)
+static void centre_title(OBJECT *tree,WORD objnum)
 {
-    OBJECT *root = (OBJECT *)tree;
+    OBJECT *root = tree;
     OBJECT *str = root+objnum;
 
     str->ob_x = (root->ob_width - strlen((BYTE *)str->ob_spec)*gl_wchar) / 2;
@@ -272,12 +272,12 @@ static WORD fs_1scroll(WORD curr, WORD count, WORD touchob)
  *  based on the current scrolled position, and point at them
  *  with the sub-tree of G_STRINGs that makes up the window box.
  */
-static void fs_format(LONG tree, WORD currtop, WORD count)
+static void fs_format(OBJECT *tree, WORD currtop, WORD count)
 {
     WORD i, cnt;
     WORD y, h, th;
     BYTE   *p, name[LEN_FSNAME];
-    OBJECT *obj, *treeptr = (OBJECT *)tree;
+    OBJECT *obj, *treeptr = tree;
 
     /* build in real text strings */
     cnt = min(NM_NAMES, count - currtop);
@@ -329,7 +329,7 @@ static void fs_sel(WORD sel, WORD state)
  *  Routine to handle scrolling the directory window a certain number
  *  of file names.
  */
-static WORD fs_nscroll(LONG tree, WORD *psel, WORD curr, WORD count,
+static WORD fs_nscroll(OBJECT *tree, WORD *psel, WORD curr, WORD count,
                        WORD touchob, WORD n)
 {
     WORD i, newcurr, diffcurr;
@@ -350,7 +350,7 @@ static WORD fs_nscroll(LONG tree, WORD *psel, WORD curr, WORD count,
         *psel = 0;
         fs_format(tree, curr, count);
         gsx_gclip(&r[1]);
-        ob_actxywh(tree, F1NAME, r);
+        ob_actxywh((LONG)tree, F1NAME, r);
 
         if ((neg = (diffcurr < 0)) != 0)
             diffcurr = -diffcurr;
@@ -379,7 +379,7 @@ static WORD fs_nscroll(LONG tree, WORD *psel, WORD curr, WORD count,
         for (i = 0; i < 2; i++)
         {
             gsx_sclip(&r[i]);
-            ob_draw(tree, ((i) ? FSVSLID : FILEBOX), MAX_DEPTH);
+            ob_draw((LONG)tree, ((i) ? FSVSLID : FILEBOX), MAX_DEPTH);
         }
     }
 
@@ -393,7 +393,7 @@ static WORD fs_nscroll(LONG tree, WORD *psel, WORD curr, WORD count,
  *
  *  Returns FALSE iff error occurred
  */
-static WORD fs_newdir(BYTE *fpath, BYTE *pspec, LONG tree, WORD *pcount)
+static WORD fs_newdir(BYTE *fpath, BYTE *pspec, OBJECT *tree, WORD *pcount)
 {
     const BYTE *ptmp;
     OBJECT *obj;
@@ -402,7 +402,7 @@ static WORD fs_newdir(BYTE *fpath, BYTE *pspec, LONG tree, WORD *pcount)
     /* load the filenames matching pspec, sort them, and insert
      * the names in the file selector scroll box
      */
-    ob_draw(tree, FSDIRECT, MAX_DEPTH);
+    ob_draw((LONG)tree, FSDIRECT, MAX_DEPTH);
     if (!fs_active(fpath, pspec, pcount))
         return FALSE;
 
@@ -414,7 +414,7 @@ static WORD fs_newdir(BYTE *fpath, BYTE *pspec, LONG tree, WORD *pcount)
 
     ptmp = gl_fsobj;            /* redraw file selector objects */
     while(*ptmp)
-        ob_draw(tree, *ptmp++, MAX_DEPTH);
+        ob_draw((LONG)tree, *ptmp++, MAX_DEPTH);
 
     return TRUE;
 }
@@ -446,10 +446,10 @@ static void set_mask(BYTE *mask,BYTE *path)
  *  and all others as deselected.  Optionally, if the selected
  *  drive has changed, the affected drive buttons are redrawn.
  */
-static void select_drive(LONG treeaddr, WORD drive, WORD redraw)
+static void select_drive(OBJECT *treeaddr, WORD drive, WORD redraw)
 {
     WORD i, olddrive = -1;
-    OBJECT *obj, *start = (OBJECT *)treeaddr+DRIVE_OFFSET;
+    OBJECT *obj, *start = treeaddr+DRIVE_OFFSET;
 
     for (i = 0, obj = start; i < NM_DRIVES; i++, obj++)
     {
@@ -464,8 +464,8 @@ static void select_drive(LONG treeaddr, WORD drive, WORD redraw)
     if (redraw && (drive != olddrive))
     {
         if (olddrive >= 0)
-            ob_draw(treeaddr,olddrive+DRIVE_OFFSET,MAX_DEPTH);
-        ob_draw(treeaddr,drive+DRIVE_OFFSET,MAX_DEPTH);
+            ob_draw((LONG)treeaddr,olddrive+DRIVE_OFFSET,MAX_DEPTH);
+        ob_draw((LONG)treeaddr,drive+DRIVE_OFFSET,MAX_DEPTH);
     }
 }
 
@@ -520,7 +520,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
     WORD touchob, value, fnum;
     WORD curr, count, sel;
     WORD mx, my;
-    LONG tree;
+    OBJECT *tree;
     ULONG bitmask;
     BYTE *ad_fpath, *ad_fname, *ad_ftitle;
     WORD drive;
@@ -563,30 +563,30 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
     strcpy(locold,locstr);
 
     /* init strings in form */
-    tree = (LONG)rs_trees[FSELECTR];
-    obj = ((OBJECT *)tree) + FTITLE;
+    tree = rs_trees[FSELECTR];
+    obj = tree + FTITLE;
     tedinfo = (TEDINFO *)obj->ob_spec;
     ad_ftitle = tedinfo->te_ptext;
     set_mask(mask, locstr);             /* save caller's mask */
     strcpy(ad_ftitle, mask);            /*  & copy to title line */
 
-    obj = ((OBJECT *)tree) + FSDIRECT;
+    obj = tree + FSDIRECT;
     tedinfo = (TEDINFO *)obj->ob_spec;
     ad_fpath = tedinfo->te_ptext;
-    inf_sset((OBJECT *)tree, FSDIRECT, locstr);
+    inf_sset(tree, FSDIRECT, locstr);
 
-    obj = ((OBJECT *)tree) + FSSELECT;
+    obj = tree + FSSELECT;
     tedinfo = (TEDINFO *)obj->ob_spec;
     ad_fname = tedinfo->te_ptext;
     fmt_str(pisel, selname);            /* selname[] is without dot */
-    inf_sset((OBJECT *)tree, FSSELECT, selname);
+    inf_sset(tree, FSSELECT, selname);
 
-    obj = ((OBJECT *)tree) + FSTITLE;
+    obj = tree + FSTITLE;
     obj->ob_spec = pilabel ? (LONG)pilabel : (LONG)rs_str(ITEMSLCT);
     centre_title(tree,FSTITLE);
 
     /* set drive buttons */
-    obj = ((OBJECT *)tree) + DRIVE_OFFSET;
+    obj = tree + DRIVE_OFFSET;
     for (drive = 0, bitmask = 1; drive < NM_DRIVES; drive++, bitmask <<= 1, obj++)
     {
         if (drvbits & bitmask)
@@ -599,7 +599,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
     /* set clip and start form fill-in by drawing the form */
     gsx_sclip(&gl_rfs);
     fm_dial(FMD_START, &gl_rcenter, &gl_rfs);
-    ob_draw(tree, ROOT, 2);
+    ob_draw((LONG)tree, ROOT, 2);
 
     /* init for while loop by forcing initial fs_newdir call */
     sel = 0;
@@ -607,15 +607,15 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
     cont = newlist = TRUE;
     while(cont)
     {
-        touchob = (newlist) ? 0x0 : fm_do((OBJECT *)tree, FSSELECT);
+        touchob = (newlist) ? 0x0 : fm_do(tree, FSSELECT);
         gsx_mxmy(&mx, &my);
 
         if (newlist)
         {
             fs_sel(sel, NORMAL);
             if ((touchob == FSOK) || (touchob == FSCANCEL))
-                ob_change(tree, touchob, NORMAL, TRUE);
-            inf_sset((OBJECT *)tree, FSDIRECT, locstr);
+                ob_change((LONG)tree, touchob, NORMAL, TRUE);
+            inf_sset(tree, FSDIRECT, locstr);
             pstr = fs_pspec(locstr, NULL);
             strcpy(pstr, mask);
             curr = 0;
@@ -641,7 +641,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
         case FSOK:
             if (path_changed(locstr))   /* just like TOS, if user has edited */
             {                           /*  the mask, 'OK' does not exit     */
-                ob_change(tree,FSOK,NORMAL,TRUE);  /* (so deselect the button) */
+                ob_change((LONG)tree,FSOK,NORMAL,TRUE);  /* (so deselect the button) */
                 break;
             }
         case FSCANCEL:
@@ -652,7 +652,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
             value = 1;
             break;
         case FSVSLID:
-            ob_actxywh(tree, FSVELEV, &pt);
+            ob_actxywh((LONG)tree, FSVELEV, &pt);
             /* anemic slidebars
                 pt.g_x -= 3;
                 pt.g_w += 6;
@@ -666,7 +666,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
             /* drop through */
         case FSVELEV:
             fm_own(TRUE);
-            value = gr_slidebox((OBJECT *)tree, FSVSLID, FSVELEV, TRUE);
+            value = gr_slidebox(tree, FSVSLID, FSVELEV, TRUE);
             fm_own(FALSE);
             value = curr - mul_div(value, count-NM_NAMES, 1000);
             if (value >= 0)
@@ -697,7 +697,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
                 fs_sel(sel, SELECTED);
             }
             /* get string and see if file or folder */
-            inf_sget((OBJECT *)tree, touchob, selname);
+            inf_sget(tree, touchob, selname);
             if (selname[0] == ' ')          /* a file was selected  */
             {                               /* copy to selection    */
                 newsel = TRUE;
@@ -732,7 +732,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
                 break;
             if (path_changed(locstr))       /* like TOS, if user edited mask, */
                 break;                      /*  ignore drive change           */
-            obj = ((OBJECT *)tree) + touchob;
+            obj = tree + touchob;
             if (obj->ob_state & DISABLED)           /* non-existent drive */
                 break;
             sprintf(locstr,"%c:\\%s",'A'+drive,mask);
@@ -758,7 +758,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
 
         if (newlist)
         {
-            inf_sset((OBJECT *)tree, FSDIRECT, locstr);
+            inf_sset(tree, FSDIRECT, locstr);
             set_mask(mask, locstr);             /* set mask */
             selname[1] = '\0';                  /* selected is empty */
             newsel = TRUE;
@@ -767,9 +767,9 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
         if (newsel)
         {
             strcpy(ad_fname, selname + 1);
-            ob_draw(tree, FSSELECT, MAX_DEPTH);
+            ob_draw((LONG)tree, FSSELECT, MAX_DEPTH);
             if (!cont)
-                ob_change(tree, FSOK, SELECTED, TRUE);
+                ob_change((LONG)tree, FSOK, SELECTED, TRUE);
             newsel = FALSE;
         }
 
@@ -786,7 +786,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
     fm_dial(FMD_FINISH, &gl_rcenter, &gl_rfs);
 
     /* return exit button */
-    *pbutton = inf_what((OBJECT *)tree, FSOK, FSCANCEL);
+    *pbutton = inf_what(tree, FSOK, FSCANCEL);
     dos_free((LONG)ad_fsnames);
 
     return TRUE;
