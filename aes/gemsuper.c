@@ -241,7 +241,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
 
     /* Form Manager */
     case FORM_DO:
-        ret = fm_do(FM_FORM, FM_START);
+        ret = fm_do((OBJECT *)FM_FORM, FM_START);
         break;
     case FORM_DIAL:
         ret = fm_dial(FM_TYPE, (GRECT *)&FM_IX, (GRECT *)&FM_X);
@@ -259,11 +259,11 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         gsx_sclip(&gl_rfull);
         FM_OCHAR = FM_ICHAR;
         FM_ONXTOB = FM_INXTOB;
-        ret = fm_keybd(FM_FORM, FM_OBJ, &FM_OCHAR, &FM_ONXTOB);
+        ret = fm_keybd((OBJECT *)FM_FORM, FM_OBJ, &FM_OCHAR, &FM_ONXTOB);
         break;
     case FORM_BUTTON:
         gsx_sclip(&gl_rfull);
-        ret = fm_button(FM_FORM, FM_OBJ, FM_CLKS, &FM_ONXTOB);
+        ret = fm_button((OBJECT *)FM_FORM, FM_OBJ, FM_CLKS, &FM_ONXTOB);
         break;
 
     /* Graphics Manager */

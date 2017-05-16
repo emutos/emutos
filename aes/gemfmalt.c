@@ -338,7 +338,7 @@ WORD fm_alert(WORD defbut, LONG palstr)
     ct_mouse(TRUE);
 
     /* let user pick button */
-    i = fm_do(tree, 0);
+    i = fm_do((OBJECT *)tree, 0);
 
     /* turn off mouse if necessary */
     ct_mouse(FALSE);

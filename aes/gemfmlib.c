@@ -112,7 +112,7 @@ void fm_own(WORD beg_ownit)
  *  Routine to find the next editable text field, or a field that
  *  is marked as a default return field.
  */
-static WORD find_obj(LONG tree, WORD start_obj, WORD which)
+static WORD find_obj(OBJECT *tree, WORD start_obj, WORD which)
 {
     WORD obj, flag, state, inc;
     WORD            theflag;
@@ -135,7 +135,7 @@ static WORD find_obj(LONG tree, WORD start_obj, WORD which)
 
     while (obj >= 0)
     {
-        state = ob_fs(tree, obj, &theflag);
+        state = ob_fs((LONG)tree, obj, &theflag);
         if (!(theflag & HIDETREE) && !(state & DISABLED))
         {
             if (theflag & flag)
@@ -151,7 +151,7 @@ static WORD find_obj(LONG tree, WORD start_obj, WORD which)
 }
 
 
-static WORD fm_inifld(LONG tree, WORD start_fld)
+static WORD fm_inifld(OBJECT *tree, WORD start_fld)
 {
     /* position cursor on the starting field */
     if (start_fld == 0)
@@ -161,7 +161,7 @@ static WORD fm_inifld(LONG tree, WORD start_fld)
 }
 
 
-WORD fm_keybd(LONG tree, WORD obj, WORD *pchar, WORD *pnew_obj)
+WORD fm_keybd(OBJECT *tree, WORD obj, WORD *pchar, WORD *pnew_obj)
 {
     WORD    direction;
 
@@ -189,8 +189,8 @@ WORD fm_keybd(LONG tree, WORD obj, WORD *pchar, WORD *pnew_obj)
         *pnew_obj = find_obj(tree, obj, direction);
         if ((direction == DEFLT) && (*pnew_obj != 0))
         {
-            OBJECT *objptr = ((OBJECT *)tree) + *pnew_obj;
-            ob_change(tree, *pnew_obj, objptr->ob_state | SELECTED, TRUE);
+            OBJECT *objptr = tree + *pnew_obj;
+            ob_change((LONG)tree, *pnew_obj, objptr->ob_state | SELECTED, TRUE);
             return FALSE;
         }
     }
@@ -199,7 +199,7 @@ WORD fm_keybd(LONG tree, WORD obj, WORD *pchar, WORD *pnew_obj)
 }
 
 
-WORD fm_button(LONG tree, WORD new_obj, WORD clks, WORD *pnew_obj)
+WORD fm_button(OBJECT *tree, WORD new_obj, WORD clks, WORD *pnew_obj)
 {
     WORD    tobj;
     WORD    orword;
@@ -211,7 +211,7 @@ WORD fm_button(LONG tree, WORD new_obj, WORD clks, WORD *pnew_obj)
     cont = TRUE;
     orword = 0;
 
-    state = ob_fs(tree, new_obj, &flags);
+    state = ob_fs((LONG)tree, new_obj, &flags);
 
     /* handle touchexit case: if double click, then set high bit */
     if (flags & TOUCHEXIT)
@@ -228,12 +228,12 @@ WORD fm_button(LONG tree, WORD new_obj, WORD clks, WORD *pnew_obj)
         if (flags & RBUTTON)
         {
             /* check siblings to find and turn off the old RBUTTON */
-            parent = get_par(tree, new_obj, &junk);
-            objptr = ((OBJECT *)tree) + parent;
+            parent = get_par((LONG)tree, new_obj, &junk);
+            objptr = tree + parent;
             tobj = objptr->ob_head;
             while (tobj != parent)
             {
-                tstate = ob_fs(tree, tobj, &tflags);
+                tstate = ob_fs((LONG)tree, tobj, &tflags);
                 if ((tflags & RBUTTON) &&
                     ((tstate & SELECTED) || (tobj == new_obj)))
                 {
@@ -241,15 +241,15 @@ WORD fm_button(LONG tree, WORD new_obj, WORD clks, WORD *pnew_obj)
                         state = tstate |= SELECTED;
                     else
                         tstate &= ~SELECTED;
-                    ob_change(tree, tobj, tstate, TRUE);
+                    ob_change((LONG)tree, tobj, tstate, TRUE);
                 }
-                objptr = ((OBJECT *)tree) + tobj;
+                objptr = tree + tobj;
                 tobj = objptr->ob_next;
             }
         }
         else
         {   /* turn on new object   */
-            if (gr_watchbox((OBJECT *)tree, new_obj, state^SELECTED, state))
+            if (gr_watchbox(tree, new_obj, state^SELECTED, state))
                 state ^= SELECTED;
         }
         /* if not touchexit then wait for button up */
@@ -277,7 +277,7 @@ WORD fm_button(LONG tree, WORD new_obj, WORD clks, WORD *pnew_obj)
  *  form.  The cursor is placed at the starting field.  This routine
  *  returns the object that caused the exit to occur
  */
-WORD fm_do(LONG tree, WORD start_fld)
+WORD fm_do(OBJECT *tree, WORD start_fld)
 {
     WORD    edit_obj;
     WORD    next_obj;
@@ -307,7 +307,7 @@ WORD fm_do(LONG tree, WORD start_fld)
         {
             edit_obj = next_obj;
             next_obj = 0;
-            ob_edit(tree, edit_obj, 0, &idx, EDINIT);
+            ob_edit((LONG)tree, edit_obj, 0, &idx, EDINIT);
         }
         /* wait for mouse or key */
         which = ev_multi(MU_KEYBD | MU_BUTTON, NULL, NULL,
@@ -318,13 +318,13 @@ WORD fm_do(LONG tree, WORD start_fld)
         {
             cont = fm_keybd(tree, edit_obj, &rets[4], &next_obj);
             if (rets[4])
-              ob_edit(tree, edit_obj, rets[4], &idx, EDCHAR);
+              ob_edit((LONG)tree, edit_obj, rets[4], &idx, EDCHAR);
         }
 
         /* handle button event */
         if (which & MU_BUTTON)
         {
-            next_obj = ob_find(tree, ROOT, MAX_DEPTH, rets[0], rets[1]);
+            next_obj = ob_find((LONG)tree, ROOT, MAX_DEPTH, rets[0], rets[1]);
             if (next_obj == NIL)
             {
                 sound(TRUE, 440, 2);
@@ -338,7 +338,7 @@ WORD fm_do(LONG tree, WORD start_fld)
         if (!cont ||
             ((next_obj != 0) && (next_obj != edit_obj)))
         {
-            ob_edit(tree, edit_obj, 0, &idx, EDEND);
+            ob_edit((LONG)tree, edit_obj, 0, &idx, EDEND);
         }
     }
 

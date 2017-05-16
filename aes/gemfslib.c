@@ -607,7 +607,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
     cont = newlist = TRUE;
     while(cont)
     {
-        touchob = (newlist) ? 0x0 : fm_do(tree, FSSELECT);
+        touchob = (newlist) ? 0x0 : fm_do((OBJECT *)tree, FSSELECT);
         gsx_mxmy(&mx, &my);
 
         if (newlist)
