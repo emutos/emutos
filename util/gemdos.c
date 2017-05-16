@@ -329,7 +329,7 @@ LONG dos_avail_anyram(void)
 }
 
 
-WORD dos_free(LONG maddr)
+WORD dos_free(void *maddr)
 {
     return gemdos(X_MFREE,maddr);
 }

@@ -147,7 +147,7 @@ void gsx_malloc(void)
 
 void gsx_mfree(void)
 {
-    dos_free(gl_tmp.fd_addr);
+    dos_free((void *)gl_tmp.fd_addr);
 }
 
 

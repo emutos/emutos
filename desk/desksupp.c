@@ -749,7 +749,7 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname)
                 if (iobuf)
                 {
                     show_file(pname, IOBUFSIZE, iobuf);
-                    dos_free((LONG)iobuf);
+                    dos_free(iobuf);
                 }
             }
 #else
@@ -1215,7 +1215,7 @@ static WORD format_floppy(OBJECT *tree, WORD max_width, WORD incr)
         }
 
     graf_mouse(ARROW,NULL);     /* no longer busy */
-    dos_free((LONG)buf);
+    dos_free(buf);
 
     return rc;
 }

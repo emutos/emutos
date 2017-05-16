@@ -294,7 +294,7 @@ WORD rs_free(AESGLOBAL *pglobal)
 {
     rs_global = pglobal;
 
-    return !dos_free((LONG)rs_global->ap_rscmem);
+    return !dos_free(rs_global->ap_rscmem);
 }
 
 

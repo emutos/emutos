@@ -787,7 +787,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
 
     /* return exit button */
     *pbutton = inf_what(tree, FSOK, FSCANCEL);
-    dos_free((LONG)ad_fsnames);
+    dos_free(ad_fsnames);
 
     return TRUE;
 }

@@ -690,5 +690,5 @@ void gem_main(void)
     enable_interrupts();
 
     if (D.g_acc)
-        dos_free((LONG)D.g_acc);
+        dos_free(D.g_acc);
 }

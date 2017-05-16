@@ -1013,7 +1013,7 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *co
         break;
     case OP_COPY:
     case OP_MOVE:
-        dos_free((LONG)copybuf);
+        dos_free(copybuf);
         break;
     }
 
