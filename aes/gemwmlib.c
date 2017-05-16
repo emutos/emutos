@@ -622,7 +622,7 @@ void ap_sendmsg(WORD ap_msg[], WORD type, AESPD *towhom,
     ap_msg[5] = w5;
     ap_msg[6] = w6;
     ap_msg[7] = w7;
-    ap_rdwr(MU_SDMSG, towhom, 16, (LONG)ap_msg);
+    ap_rdwr(MU_SDMSG, towhom, 16, ap_msg);
 }
 
 

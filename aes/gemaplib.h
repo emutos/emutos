@@ -16,8 +16,8 @@ extern WORD     gl_rlen;
 extern FPD      *gl_rbuf;
 
 WORD ap_init(void);
-WORD ap_rdwr(WORD code, AESPD *p, WORD length, LONG pbuff);
-WORD ap_find(LONG pname);
+WORD ap_rdwr(WORD code, AESPD *p, WORD length, WORD *pbuff);
+WORD ap_find(BYTE *pname);
 void ap_tplay(FPD *pbuff, WORD length, WORD scale);
 WORD ap_trecd(FPD *pbuff, WORD length);
 void ap_exit(void);

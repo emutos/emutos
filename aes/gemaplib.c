@@ -78,7 +78,7 @@ WORD ap_init(void)
 /*
  *  APplication READ or WRITE
  */
-WORD ap_rdwr(WORD code, AESPD *p, WORD length, LONG pbuff)
+WORD ap_rdwr(WORD code, AESPD *p, WORD length, WORD *pbuff)
 {
     QPB     m;
 
@@ -88,14 +88,14 @@ WORD ap_rdwr(WORD code, AESPD *p, WORD length, LONG pbuff)
      */
     if ((code == MU_MESAG) && (p->p_qindex == length) && (length == 16))
     {
-        memcpy((void *)pbuff, p->p_qaddr, p->p_qindex);
+        memcpy(pbuff, p->p_qaddr, p->p_qindex);
         p->p_qindex = 0;
         return 0;
     }
 
     m.qpb_ppd = p;
     m.qpb_cnt = length;
-    m.qpb_buf = pbuff;
+    m.qpb_buf = (LONG)pbuff;
 
     return ev_block(code, (LONG)&m);
 }
@@ -104,11 +104,11 @@ WORD ap_rdwr(WORD code, AESPD *p, WORD length, LONG pbuff)
 /*
  *  APplication FIND
  */
-WORD ap_find(LONG pname)
+WORD ap_find(BYTE *pname)
 {
     AESPD  *p;
 
-    p = fpdnm((BYTE *)pname, 0);
+    p = fpdnm(pname, 0);
     return p ? p->p_pid : -1;
 }
 
@@ -214,7 +214,7 @@ void ap_exit(void)
     mn_clsda();
     wait_for_accs(AP_ACCLOSE);  /* block until all DAs have seen AC_CLOSE */
     if (rlr->p_qindex)
-        ap_rdwr(MU_MESAG, rlr, rlr->p_qindex, (LONG)D.g_valstr);
+        ap_rdwr(MU_MESAG, rlr, rlr->p_qindex, (WORD *)D.g_valstr);
     set_mouse_to_arrow();
     wm_update(FALSE);
     all_run();

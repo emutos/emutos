@@ -188,7 +188,7 @@ WORD ev_multi(WORD flags, MOBLK *pmo1, MOBLK *pmo2, LONG tmcount,
     {
         if (rlr->p_qindex > 0)
         {
-            ap_rdwr(MU_MESAG, rlr, 16, mebuff);
+            ap_rdwr(MU_MESAG, rlr, 16, (WORD *)mebuff);
             what |= MU_MESAG;
         }
     }

@@ -105,10 +105,10 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
     case APPL_READ:
     case APPL_WRITE:
         ap_rdwr(opcode == APPL_READ ? MU_MESAG : MU_SDMSG,
-                fpdnm(NULL, AP_RWID), AP_LENGTH, AP_PBUFF);
+                fpdnm(NULL, AP_RWID), AP_LENGTH, (WORD *)AP_PBUFF);
         break;
     case APPL_FIND:
-        ret = ap_find(AP_PNAME);
+        ret = ap_find((BYTE *)AP_PNAME);
         break;
     case APPL_TPLAY:
         ap_tplay((FPD *)AP_TBUFFER, AP_TLENGTH, AP_TSCALE);
@@ -139,7 +139,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
     case EVNT_MESAG:
         aestrace("evnt_mesag()");
         rlr->p_flags |= AP_MESAG;
-        ap_rdwr(MU_MESAG, rlr, 16, ME_PBUFF);
+        ap_rdwr(MU_MESAG, rlr, 16, (WORD *)ME_PBUFF);
         if (*(WORD *)ME_PBUFF == AC_CLOSE)
             rlr->p_flags |= AP_ACCLOSE;
         break;
