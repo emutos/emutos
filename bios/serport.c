@@ -78,20 +78,23 @@ EXT_IOREC *rs232iorecptr;
 BCONMAP bconmap_root;
 #endif
 
+
+/* Simple helper macro tp fill in the default iorec structs */
+#define MAKE_EXT_IOREC(ibuf, obuf) { \
+    { ibuf, RS232_BUFSIZE, 0, 0, RS232_BUFSIZE/4, 3*RS232_BUFSIZE/4 }, \
+    { obuf, RS232_BUFSIZE, 0, 0, RS232_BUFSIZE/4, 3*RS232_BUFSIZE/4 }, \
+    B9600, FLOW_CTRL_NONE, 0x88, 0xff, 0xea }
+
 /*
  * local variables
  */
-static EXT_IOREC iorec1;
 static UBYTE ibuf1[RS232_BUFSIZE], obuf1[RS232_BUFSIZE];
-static const EXT_IOREC iorec_init = {
-    { NULL, RS232_BUFSIZE, 0, 0, RS232_BUFSIZE/4, 3*RS232_BUFSIZE/4 },
-    { NULL, RS232_BUFSIZE, 0, 0, RS232_BUFSIZE/4, 3*RS232_BUFSIZE/4 },
-    B9600, FLOW_CTRL_NONE, 0x88, 0xff, 0xea };
+static EXT_IOREC iorec1 = MAKE_EXT_IOREC(ibuf1, obuf1);
 
 #if BCONMAP_AVAILABLE
 static MAPTAB maptable[4];
 
-static EXT_IOREC iorec_dummy;
+static EXT_IOREC iorec_dummy = MAKE_EXT_IOREC(NULL, NULL);
 static const MAPTAB maptable_dummy =
     { char_dummy, char_dummy, char_dummy, charout_dummy, rsconf_dummy, &iorec_dummy };
 static const MAPTAB maptable_mfp =
@@ -100,9 +103,10 @@ static const MAPTAB maptable_mfp =
 
 #if CONF_WITH_SCC
 ULONG recovery_loops;
-static EXT_IOREC iorecA, iorecB;
 static UBYTE ibufA[RS232_BUFSIZE], obufA[RS232_BUFSIZE];
 static UBYTE ibufB[RS232_BUFSIZE], obufB[RS232_BUFSIZE];
+static EXT_IOREC iorecA = MAKE_EXT_IOREC(ibufA, obufA);
+static EXT_IOREC iorecB = MAKE_EXT_IOREC(ibufB, obufB);
 static const MAPTAB maptable_port_a =
     { bconstatA, bconinA, bcostatA, bconoutA, rsconfA, &iorecA };
 static const MAPTAB maptable_port_b =
@@ -110,8 +114,8 @@ static const MAPTAB maptable_port_b =
 #endif  /* CONF_WITH_SCC */
 
 #if CONF_WITH_TT_MFP
-static EXT_IOREC iorecTT;
 static UBYTE ibufTT[RS232_BUFSIZE], obufTT[RS232_BUFSIZE];
+static EXT_IOREC iorecTT = MAKE_EXT_IOREC(ibufTT, obufTT);
 static const MAPTAB maptable_mfp_tt =
     { bconstatTT, bconinTT, bcostatTT, bconoutTT, rsconfTT, &iorecTT };
 #endif  /* CONF_WITH_TT_MFP */
@@ -679,34 +683,18 @@ static void init_bconmap(void)
  */
 void init_serport(void)
 {
-    /* initialisation for device 1 */
-    memcpy(&iorec1,&iorec_init,sizeof(EXT_IOREC));
-    iorec1.in.buf = ibuf1;
-    iorec1.out.buf = obuf1;
-
+    /* initialisation for device 1*/
     rs232iorecptr = &iorec1;
     rsconfptr = rsconf1;
 
     /* initialisation for other devices if required */
-#if CONF_WITH_SCC
-    memcpy(&iorecA,&iorec_init,sizeof(EXT_IOREC));
-    iorecA.in.buf = ibufA;
-    iorecA.out.buf = obufA;
-    memcpy(&iorecB,&iorec_init,sizeof(EXT_IOREC));
-    iorecB.in.buf = ibufB;
-    iorecB.out.buf = obufB;
-#endif  /* CONF_WITH_SCC */
 
 #if CONF_WITH_TT_MFP
-    memcpy(&iorecTT,&iorec_init,sizeof(EXT_IOREC));
-    iorecTT.in.buf = ibufTT;
-    iorecTT.out.buf = obufTT;
     if (has_tt_mfp)
         rsconfTT(B9600, 0, 0x88, 1, 1, 0);  /* set default initial values for TT MFP */
 #endif  /* CONF_WITH_TT_MFP */
 
 #if BCONMAP_AVAILABLE
-    memcpy(&iorec_dummy,&iorec_init,sizeof(EXT_IOREC));
     init_bconmap();
 #endif
 
