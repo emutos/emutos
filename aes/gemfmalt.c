@@ -141,10 +141,10 @@ static char *fm_strbrk(OBJECT *start,WORD maxnum,WORD maxlen,char *alert,
  *          pnumbut     number of buttons
  *          plenbut     length of biggest button
  */
-static void fm_parse(LONG tree, LONG palstr, WORD *picnum, WORD *pnummsg,
+static void fm_parse(OBJECT *tree, LONG palstr, WORD *picnum, WORD *pnummsg,
                          WORD *plenmsg, WORD *pnumbut, WORD *plenbut)
 {
-    OBJECT *obj = (OBJECT *)tree;
+    OBJECT *obj = tree;
     char *alert = (char *)palstr;
 
     *picnum = alert[1] - '0';
@@ -172,7 +172,7 @@ static void fm_parse(LONG tree, LONG palstr, WORD *picnum, WORD *pnummsg,
  *      numbut          number of buttons
  *      mlenbut         length of biggest button
  */
-static void fm_build(LONG tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
+static void fm_build(OBJECT *tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
                      WORD numbut, WORD mlenbut)
 {
     WORD i, hicon, allbut;
@@ -237,33 +237,33 @@ static void fm_build(LONG tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
     al.g_h = max(bt.g_y+bt.g_h,ic.g_y+ic.g_h) + 1 + INTER_HSPACE;
 
     /* init. root object    */
-    ob_setxywh(tree, ROOT, &al);
-    for (i = 0, obj = (OBJECT *)tree; i < NUM_ALOBJS; i++, obj++)
+    ob_setxywh((LONG)tree, ROOT, &al);
+    for (i = 0, obj = tree; i < NUM_ALOBJS; i++, obj++)
           obj->ob_next = obj->ob_head = obj->ob_tail = -1;
 
     /* add icon object      */
     if (haveicon)
     {
-        ob_setxywh(tree, 1, &ic);
-        ob_add(tree, ROOT, 1);
+        ob_setxywh((LONG)tree, 1, &ic);
+        ob_add((LONG)tree, ROOT, 1);
     }
 
     /* add msg objects      */
     for (i = 0; i < nummsg; i++)
     {
-        ob_setxywh(tree, MSGOFF+i, &ms);
+        ob_setxywh((LONG)tree, MSGOFF+i, &ms);
         ms.g_y++;
-        ob_add(tree, ROOT, MSGOFF+i);
+        ob_add((LONG)tree, ROOT, MSGOFF+i);
     }
 
     /* add button objects with 1 space between them  */
-    for (i = 0, obj = ((OBJECT *)tree)+BUTOFF; i < numbut; i++, obj++)
+    for (i = 0, obj = tree+BUTOFF; i < numbut; i++, obj++)
     {
         obj->ob_flags = SELECTABLE | EXIT;
         obj->ob_state = NORMAL;
-        ob_setxywh(tree, BUTOFF+i, &bt);
+        ob_setxywh((LONG)tree, BUTOFF+i, &bt);
         bt.g_x += mlenbut + 2;
-        ob_add(tree, ROOT, BUTOFF+i);
+        ob_add((LONG)tree, ROOT, BUTOFF+i);
     }
 
     /* set last object flag */
@@ -275,12 +275,12 @@ WORD fm_alert(WORD defbut, LONG palstr)
 {
     WORD i;
     WORD inm, nummsg, mlenmsg, numbut, mlenbut, image;
-    LONG tree;
+    OBJECT *tree;
     GRECT d, t;
     OBJECT *obj;
 
     /* init tree pointer    */
-    tree = (LONG) rs_trees[DIALERT];
+    tree = rs_trees[DIALERT];
 
     set_mouse_to_arrow();
 
@@ -289,11 +289,11 @@ WORD fm_alert(WORD defbut, LONG palstr)
 
     if (defbut)
     {
-        obj = ((OBJECT *)tree) + BUTOFF + defbut - 1;
+        obj = tree + BUTOFF + defbut - 1;
         obj->ob_flags |= DEFAULT;
     }
 
-    obj = ((OBJECT *)tree) + 1;
+    obj = tree + 1;
 
     if (inm != 0)
     {
@@ -313,14 +313,14 @@ WORD fm_alert(WORD defbut, LONG palstr)
 
     /* convert to pixels    */
     for (i = 0; i < NUM_ALOBJS; i++)
-        rs_obfix((OBJECT *)tree, i);
+        rs_obfix(tree, i);
 
     /* fix up icon, 32x32   */
     obj->ob_type = G_IMAGE;
     obj->ob_width = obj->ob_height = 32;
 
     /* center tree on screen*/
-    ob_center(tree, &d);
+    ob_center((LONG)tree, &d);
 
     /* Fix 2003-09-25: Limit drawing to the screen! */
     rc_intersect(&gl_rscreen, &d);
@@ -332,13 +332,13 @@ WORD fm_alert(WORD defbut, LONG palstr)
 
     /* draw the alert       */
     gsx_sclip(&d);
-    ob_draw(tree, ROOT, MAX_DEPTH);
+    ob_draw((LONG)tree, ROOT, MAX_DEPTH);
 
     /* turn on the mouse    */
     ct_mouse(TRUE);
 
     /* let user pick button */
-    i = fm_do((OBJECT *)tree, 0);
+    i = fm_do(tree, 0);
 
     /* turn off mouse if necessary */
     ct_mouse(FALSE);
