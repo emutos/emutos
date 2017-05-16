@@ -358,7 +358,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
 
         /* wait for something */
         rets[5] = 0;
-        ev_which = ev_multi(mnu_flags, &p1mor, &p2mor, 0x0L, buparm, 0x0L, rets);
+        ev_which = ev_multi(mnu_flags, &p1mor, &p2mor, 0x0L, buparm, NULL, rets);
 
         /* if it's a button and not in a title then done, else flip state */
         if (ev_which & MU_BUTTON)

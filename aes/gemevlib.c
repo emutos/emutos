@@ -123,7 +123,7 @@ void ev_timer(LONG count)
  *  Do a multi-wait on the specified events
  */
 WORD ev_multi(WORD flags, MOBLK *pmo1, MOBLK *pmo2, LONG tmcount,
-              LONG buparm, LONG mebuff, WORD prets[])
+              LONG buparm, WORD *mebuff, WORD prets[])
 {
     QPB     m;
     EVSPEC  which;
@@ -188,7 +188,7 @@ WORD ev_multi(WORD flags, MOBLK *pmo1, MOBLK *pmo2, LONG tmcount,
     {
         if (rlr->p_qindex > 0)
         {
-            ap_rdwr(MU_MESAG, rlr, 16, (WORD *)mebuff);
+            ap_rdwr(MU_MESAG, rlr, 16, mebuff);
             what |= MU_MESAG;
         }
     }
@@ -212,7 +212,7 @@ WORD ev_multi(WORD flags, MOBLK *pmo1, MOBLK *pmo2, LONG tmcount,
         {
             m.qpb_ppd = rlr;
             m.qpb_cnt = 16;
-            m.qpb_buf = mebuff;
+            m.qpb_buf = (LONG)mebuff;
             iasync(MU_MESAG, (LONG)&m);
         }
         /* wait for timer */

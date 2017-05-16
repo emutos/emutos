@@ -346,7 +346,7 @@ void ctlmgr(void)
             if ( gl_mntree != 0x0L )    /* only wait on bar when there  */
                 ev_which |= MU_M1;      /* is a menu                    */
             ev_which = ev_multi(ev_which, &gl_ctwait, &gl_ctwait,
-                                0x0L, 0x0001ff01L, 0x0L, rets);
+                                0x0L, 0x0001ff01L, NULL, rets);
         }
 
         ct_mouse(TRUE);                 /* grab screen sink     */

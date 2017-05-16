@@ -311,7 +311,7 @@ WORD fm_do(LONG tree, WORD start_fld)
         }
         /* wait for mouse or key */
         which = ev_multi(MU_KEYBD | MU_BUTTON, NULL, NULL,
-                         0x0L, 0x0002ff01L, 0x0L, rets);
+                         0x0L, 0x0002ff01L, NULL, rets);
 
         /* handle keyboard event */
         if (which & MU_KEYBD)
