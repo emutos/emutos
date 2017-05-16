@@ -90,7 +90,6 @@ Git-related targets
 
 depend      generates dependencies
 clean       cleans all generated files
-distclean   as clean + deletes also some temporary editor files
 gitready    ensure the files have a proper, canonic, format for Git
 checkindent try 'indent' without altering the files
 indent      indent all files - never done yet :-(

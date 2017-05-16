@@ -1167,19 +1167,13 @@ include local.mk
 endif
 
 #
-# clean and distclean
-# (distclean is called before creating a source archive)
+# clean
 #
 
 .PHONY: clean
 NODEP += clean
 clean:
 	rm -f $(TOCLEAN)
-
-.PHONY: distclean
-NODEP += distclean
-distclean: clean
-	rm -f '.#'* */'.#'*
 
 #
 # ColdFire autoconverted sources.
