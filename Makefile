@@ -406,12 +406,10 @@ TOCLEAN += *.img *.map
 
 emutos.img: $(OBJECTS) obj/emutospp.ld Makefile
 	$(LD) $(CORE_OBJ) $(LIBS) $(OPTIONAL_OBJ) $(LIBS) $(LDFLAGS) -Wl,-Map=emutos.map -o emutos.img
-	@if [ $$(($$(awk '/^\.data /{print $$3}' emutos.map))) -gt 0 ]; then \
-	  echo "### Warning: The DATA segment is not empty."; \
-	  echo "### Please examine emutos.map and use \"const\" where appropriate."; \
-	fi
 	@echo "# TEXT=$(call SHELL_SYMADDR,__text,emutos.map)"\
+" DATA_LMA=$(call SHELL_SYMADDR,__data_lma,emutos.map)"\
 " LOWSTRAM=$(call SHELL_SYMADDR,__low_stram_start,emutos.map)"\
+" DATA=$(call SHELL_SYMADDR,__data,emutos.map)"\
 " BSS=$(call SHELL_SYMADDR,__bss,emutos.map)"\
 " STKBOT=$(call SHELL_SYMADDR,_stkbot,emutos.map)"\
 " MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map)"

@@ -123,18 +123,24 @@ SECTIONS
         __etext = .;
     } >REGION_READ_ONLY
 
-    /* FIXME: Our DATA segment is currently read-only.
-     * It currently lives in the ROM, just after the TEXT segment.
-     * This means that initialized global variables can't be modified.
-     * Since a read-only DATA segment is useless, we try to keep it empty by
-     * making all initialized variables const, so they go to the TEXT segment.
+    /* The DATA segment needs to be located in RAM so we can modify the
+     * variables stored there, but we need to store the initial values in ROM.
+     * This can be achieved by setting the Load Memory Address to be in ROM,
+     * but the Virtual Memory Address in RAM.
+     *
+     * The contents will be copied from the load address to the runtime address
+     * by the startup code.
      */
     .data :
     {
+        __data_lma = LOADADDR(.data);
         __data = .;
         *(.data)
         __edata = .;
-    } >REGION_READ_ONLY
+    } >REGION_READ_WRITE
+#if !EMUTOS_LIVES_IN_RAM
+      AT>REGION_READ_ONLY
+#endif
 
     /* The BSS segment contains uninitialized global variables.
      * It will be cleared by the startup code.
@@ -145,6 +151,12 @@ SECTIONS
         *(.bss COMMON)
         __ebss = .;
     } >REGION_READ_WRITE
+#if !EMUTOS_LIVES_IN_RAM
+      /* Looks like we need to reset the load address back to be the same as
+       * the VMA after changing it once.
+       */
+      AT>REGION_READ_WRITE
+#endif
 
     /* This section is the internal BIOS stack.
      * It will *not* be cleared on startup or reset.

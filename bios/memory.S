@@ -33,6 +33,7 @@
         // functions for detecting hardware
         .extern _check_read_byte
         .extern _bzero
+        .extern _memcpy
 
         // ST-RAM settings
         .extern memctrl
@@ -50,6 +51,9 @@
         .extern sysvars_end   // end of system variables
         .extern __bss         // start of BSS segment
         .extern __ebss        // end of BSS segment
+        .extern __data_lma    // location of data segment data in ROM
+        .extern __data        // start of DATA segment in RAM
+        .extern __edata       // end of DATA segment in RAM
 
 // ===========================================================================
 // ==== meminit - Reuse or detect RAM settings, then initialize RAM areas ====
@@ -632,6 +636,19 @@ any_boot:
         move.l  #__bss, a0
         move.l  #__ebss, a1
         bsr     call_bzero_a0_a1
+
+#if !EMUTOS_LIVES_IN_RAM
+        // Initialize the DATA segment in RAM from the copy in ROM
+        move.l  #__data, a0
+        move.l  #__edata, a1
+        sub.l   a0, a1
+        move.l  a1,-(sp)    // length
+        move.l  #__data_lma, a1
+        move.l  a1,-(sp)    // src
+        move.l  a0,-(sp)    // dst
+        jsr     _memcpy
+        lea     12(sp),sp
+#endif
 
         // Save the meminit_flags into BSS
         move.b  d7, _meminit_flags
