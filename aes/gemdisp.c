@@ -178,11 +178,8 @@ static void schedule(void)
     /* run through lists until someone is on the rlr
      * or the fork list
      */
-    do
+    for (;;)
     {
-#if USE_STOP_INSN_TO_FREE_HOST_CPU
-        stop_until_interrupt();
-#endif
         /* poll the keyboard    */
         chkkbd();
         /* now move drl processes to rlr */
@@ -192,7 +189,12 @@ static void schedule(void)
             disp_act(p);
         }
         /* check if there is something to run */
-    } while (!rlr && !fpcnt);
+        if (rlr || fpcnt)
+            break;
+#if USE_STOP_INSN_TO_FREE_HOST_CPU
+        stop_until_interrupt();
+#endif
+    }
 }
 
 
