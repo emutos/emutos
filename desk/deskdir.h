@@ -14,8 +14,8 @@
  * typedefs
  */
 typedef struct {    /* #files/#folders/total filesize of directory & its subdirectories */
-    WORD files;
-    WORD dirs;
+    LONG files;
+    LONG dirs;
     LONG size;
 } DIRCOUNT;
 
