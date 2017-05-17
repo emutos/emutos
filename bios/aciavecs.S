@@ -105,40 +105,54 @@ midiibufbuf:    .ds.b   0x80
 // ==== IORECS =============================================================
 // Table of input-output records for kbd in, midi in
 
+        .data
+        .even
 _ikbdiorec:
-ikbdibuf:       .ds.l   1
-ikbdibufsz:     .ds.w   1
-ikbdibufhd:     .ds.w   1
-ikbdibuftl:     .ds.w   1
-ikbdibuflo:     .ds.w   1
-ikbdibufhi:     .ds.w   1
+ikbdibuf:       .dc.l   ikbdibufbuf
+ikbdibufsz:     .dc.w   0x100
+ikbdibufhd:     .dc.w   0
+ikbdibuftl:     .dc.w   0
+ikbdibuflo:     .dc.w   0x40
+ikbdibufhi:     .dc.w   0xC0
 _midiiorec:
-midiibuf:       .ds.l   1
-midiibufsz:     .ds.w   1
-midiibufhd:     .ds.w   1
-midiibuftl:     .ds.w   1
-midiibuflo:     .ds.w   1
-midiibufhi:     .ds.w   1
-
+midiibuf:       .dc.l   midiibufbuf
+midiibufsz:     .dc.w   0x80
+midiibufhd:     .dc.w   0
+midiibuftl:     .dc.w   0
+midiibuflo:     .dc.w   0x20
+midiibufhi:     .dc.w   0x60
 
 // ==== KBDVBASE =============================================================
 // This is now the table of routines for managing midi and keyboard data
 // in packets from IKBD (shown by a0 and 4(sp))
 
-_mousexvec:     .ds.l   1       // mouse-routine for additional buttons
-kbdvec:         .ds.l   1       // must be right before _kbdvecs
+_mousexvec:     .dc.l   _just_rts       // mouse-routine for additional buttons
+kbdvec:         .dc.l   _kbdvec         // must be right before _kbdvecs
 _kbdvecs:
-midivec:        .ds.l   1       // MIDI input
-vkbderr:        .ds.l   1       // keyboard error
-vmiderr:        .ds.l   1       // MIDI-Error
-statvec:        .ds.l   1       // IKBD-Status
-mousevec:       .ds.l   1       // mouse-routine
-clockvec:       .ds.l   1       // time-routine
-joyvec:         .ds.l   1       // joystick-routinee
-midisys:        .ds.l   1       // MIDI-systemvector
-ikbdsys:        .ds.l   1       // IKBD-systemvector
-ikbdstate:      .ds.b   1       // action to take upon packet completion
-kbdlength:      .ds.b   1       // number of bytes remaining in current packet
+midivec:        .dc.l   _midivec        // MIDI input
+vkbderr:        .dc.l   _just_rts       // keyboard error
+vmiderr:        .dc.l   _just_rts       // MIDI-Error
+statvec:        .dc.l   _just_rts       // IKBD-Status
+mousevec:       .dc.l   _just_rts       // mouse-routine
+#if CONF_WITH_IKBD_CLOCK
+                                        // time-routine
+clockvec:       .dc.l   _clockvec       // in bios/clock.c
+#else
+clockvec:       .dc.l   _just_rts
+#endif
+joyvec:         .dc.l   _just_rts       // joystick-routine
+#if CONF_WITH_MIDI_ACIA
+midisys:        .dc.l   _midisys        // MIDI-systemvector
+#else
+midisys:        .dc.l   _just_rts
+#endif
+#if CONF_WITH_IKBD_ACIA
+ikbdsys:        .dc.l   _ikbdsys        // IKBD-systemvector
+#else
+ikbdsys:        .dc.l   _just_rts
+#endif
+ikbdstate:      .dc.b   0       // action to take upon packet completion
+kbdlength:      .dc.b   0       // number of bytes remaining in current packet
         .even
 
 
@@ -146,62 +160,9 @@ kbdlength:      .ds.b   1       // number of bytes remaining in current packet
         .text
 
 _init_acia_vecs:
-        // initialize the kbdvecs structure
-        lea     _just_rts,a0            // dummy vector
-        lea     _kbdvecs,a1
-        move.l  a0,_mousexvec-_kbdvecs(a1)
-#ifdef __mcoldfire__
-        move.l  #_kbdvec,d0
-        move.l  d0,kbdvec-_kbdvecs(a1)
-#else
-        move.l  #_kbdvec,kbdvec-_kbdvecs(a1)
-#endif
-#ifdef __mcoldfire__
-        move.l  #_midivec,d0
-        move.l  d0,midivec-_kbdvecs(a1)
-#else
-        move.l  #_midivec,midivec-_kbdvecs(a1)
-#endif
-        move.l  a0,vkbderr-_kbdvecs(a1)
-        move.l  a0,vmiderr-_kbdvecs(a1)
-        move.l  a0,statvec-_kbdvecs(a1)
-        move.l  a0,mousevec-_kbdvecs(a1)
-#if CONF_WITH_IKBD_CLOCK
-#ifdef __mcoldfire__
-        move.l  #_clockvec,d0                        // in bios/clock.c
-        move.l  d0,clockvec-_kbdvecs(a1)
-#else
-        move.l  #_clockvec,clockvec-_kbdvecs(a1)     // in bios/clock.c
-#endif
-#endif /* CONF_WITH_IKBD_CLOCK */
-        move.l  a0,joyvec-_kbdvecs(a1)
-#if CONF_WITH_MIDI_ACIA
-#ifdef __mcoldfire__
-        move.l  #_midisys,d0
-        move.l  d0,midisys-_kbdvecs(a1)
-#else
-        move.l  #_midisys,midisys-_kbdvecs(a1)
-#endif
-#endif /* CONF_WITH_MIDI_ACIA */
-#if CONF_WITH_IKBD_ACIA
-#ifdef __mcoldfire__
-        move.l  #_ikbdsys,d0
-        move.l  d0,ikbdsys-_kbdvecs(a1)
-#else
-        move.l  #_ikbdsys,ikbdsys-_kbdvecs(a1)
-#endif
-#endif /* CONF_WITH_IKBD_ACIA */
-
-        // initialize the iorecs
-        pea     iorec_table_end-iorec_table
-        pea     iorec_table
-        pea     _ikbdiorec
-        jsr     _memmove
-        lea     12(sp),sp
 
         // initialize IKBD-related variables
         moveq.l #0,d0
-        move.b  d0,ikbdstate
         move.b  d0,joybuf+1
         move.b  d0,joybuf+2
 
@@ -217,20 +178,6 @@ _init_acia_vecs:
         jsr     _amiga_init_keyboard_interrupt
 #endif
         rts
-
-        // FIXME: The iorec stuff should go into the .data segment (if
-        // EmuTOS had a functional one) instead of copying the following to
-        // the .bss segment at run time.
-        SECTION_RODATA
-        .even   // Mandatory in ELF section .rodata
-iorec_table:
-        //         sz, hd, tl,   lo, hi
-        .dc.l   ikbdibufbuf
-        .dc.w   0x100,  0,  0, 0x40, 0xC0
-        .dc.l   midiibufbuf
-        .dc.w    0x80,  0,  0, 0x20, 0x60
-iorec_table_end:
-        .text
 
 #if CONF_WITH_IKBD_ACIA || CONF_WITH_MIDI_ACIA
 
