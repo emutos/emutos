@@ -371,9 +371,9 @@ static BOOL handle_mouse_mode(WORD newkey)
  * - interrupt routines do not modify kb_initial and kb_repeat.
  */
 
-static WORD kb_initial;
-static WORD kb_repeat;
-static WORD kb_ticks;
+static WORD kb_initial = 25;
+static WORD kb_repeat = 5;
+static WORD kb_ticks = 0;
 static UBYTE kb_last_shifty;
 static UBYTE kb_last_scancode;
 static ULONG kb_last_key;
@@ -474,14 +474,14 @@ void kb_timerc_int(void)
 /*=== interrupt routine support ===================================*/
 
 /* the number of the current dead key if any, else -1. */
-static int kb_dead;
+static int kb_dead = -1;       /* not in a dead key sequence */
 
 /* the decimal number collected in an alt_keypad sequence, or -1 */
-static int kb_altnum;
+static int kb_altnum = -1;     /* not in an alt-numeric sequence */
 
 /* a boolean value, non-zero iff the scancode lookup table has been switched */
 /* (this can only happen for keyboards with the DUAL_KEYBOARD feature)       */
-static UBYTE kb_switched;
+static UBYTE kb_switched = 0;  /* not switched initially */
 
 /*
  * convert a scancode to an ascii character
@@ -891,15 +891,6 @@ void kbd_init(void)
     ikbd_version = ikbd_readb(); /* Usually 0xf1, or 0xf0 for antique STs */
     KDEBUG(("ikbd_version = 0x%02x\n", ikbd_version));
     UNUSED(ikbd_version);
-
-    /* initialize the key repeat stuff */
-    kb_ticks = 0;
-    kb_initial = 25;
-    kb_repeat = 5;
-
-    kb_dead = -1;      /* not in a dead key sequence */
-    kb_altnum = -1;    /* not in an alt-numeric sequence */
-    kb_switched = 0;   /* not switched initially */
 
     conterm = 7;       /* keyclick and autorepeat on by default */
     conterm |= 0x8;    /* add Kbshift state to Bconin value */
