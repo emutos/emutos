@@ -21,7 +21,7 @@ UWORD ob_fs(LONG tree, WORD ob, WORD *pflag);
 void ob_actxywh(OBJECT *tree, WORD obj, GRECT *pt);
 void ob_relxywh(LONG tree, WORD obj, GRECT *pt);
 void ob_setxywh(LONG tree, WORD obj, GRECT *pt);
-void ob_offset(LONG tree, WORD obj, WORD *pxoff, WORD *pyoff);
+void ob_offset(OBJECT *tree, WORD obj, WORD *pxoff, WORD *pyoff);
 
 
 #endif

@@ -46,17 +46,17 @@
  *  to the physical screen.  This involves accumulating the offsets
  *  of all the object's parents up to and including the root.
  */
-void ob_offset(LONG tree, WORD obj, WORD *pxoff, WORD *pyoff)
+void ob_offset(OBJECT *tree, WORD obj, WORD *pxoff, WORD *pyoff)
 {
     WORD   junk;
-    OBJECT *treeptr = (OBJECT *)tree;
+    OBJECT *treeptr = tree;
 
     *pxoff = *pyoff = 0;
     do
     {
         *pxoff += (treeptr+obj)->ob_x;  /* add in current object's offsets */
         *pyoff += (treeptr+obj)->ob_y;
-        obj = get_par(tree, obj, &junk);/* then get parent */
+        obj = get_par((LONG)tree, obj, &junk);/* then get parent */
     } while (obj != NIL);
 }
 
@@ -79,7 +79,7 @@ void ob_actxywh(OBJECT *tree, WORD obj, GRECT *pt)
 {
     OBJECT *objptr = tree + obj;
 
-    ob_offset((LONG)tree, obj, &pt->g_x, &pt->g_y);
+    ob_offset(tree, obj, &pt->g_x, &pt->g_y);
     pt->g_w = objptr->ob_width;
     pt->g_h = objptr->ob_height;
 }
@@ -429,7 +429,7 @@ void ob_draw(OBJECT *tree, WORD obj, WORD depth)
     pobj = get_par((LONG)tree, obj, &last);
 
     if (pobj != NIL)
-        ob_offset((LONG)tree, pobj, &sx, &sy);
+        ob_offset(tree, pobj, &sx, &sy);
     else
         sx = sy = 0;
 
@@ -696,7 +696,7 @@ void ob_change(LONG tree, WORD obj, UWORD new_state, WORD redraw)
 
     if (redraw)
     {
-        ob_offset(tree, obj, &t.g_x, &t.g_y);
+        ob_offset((OBJECT *)tree, obj, &t.g_x, &t.g_y);
 
         gsx_moff();
 

@@ -221,7 +221,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         ret = ob_find((OBJECT *)OB_TREE, OB_STARTOB, OB_DEPTH, OB_MX, OB_MY);
         break;
     case OBJC_OFFSET:
-        ob_offset(OB_TREE, OB_OBJ, &OB_XOFF, &OB_YOFF);
+        ob_offset((OBJECT *)OB_TREE, OB_OBJ, &OB_XOFF, &OB_YOFF);
         break;
     case OBJC_ORDER:
         ob_order((OBJECT *)OB_TREE, OB_OBJ, OB_NEWPOS);
