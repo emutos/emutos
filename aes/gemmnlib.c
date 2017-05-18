@@ -223,7 +223,7 @@ UWORD do_chg(OBJECT *tree, WORD iitem, UWORD chgvalue,
     if (dodraw)
         gsx_sclip(&gl_rzero);
 
-    ob_change((LONG)tree, iitem, curr_state, dodraw);
+    ob_change(tree, iitem, curr_state, dodraw);
     return TRUE;
 }
 

@@ -16,7 +16,7 @@ WORD ob_find(OBJECT *tree, WORD currobj, WORD depth, WORD mx, WORD my);
 void ob_add(OBJECT *tree, WORD parent, WORD child);
 WORD ob_delete(OBJECT *tree, WORD obj);
 void ob_order(OBJECT *tree, WORD mov_obj, WORD new_pos);
-void ob_change(LONG tree, WORD obj, UWORD new_state, WORD redraw);
+void ob_change(OBJECT *tree, WORD obj, UWORD new_state, WORD redraw);
 UWORD ob_fs(LONG tree, WORD ob, WORD *pflag);
 void ob_actxywh(OBJECT *tree, WORD obj, GRECT *pt);
 void ob_relxywh(LONG tree, WORD obj, GRECT *pt);

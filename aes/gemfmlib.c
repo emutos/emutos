@@ -190,7 +190,7 @@ WORD fm_keybd(OBJECT *tree, WORD obj, WORD *pchar, WORD *pnew_obj)
         if ((direction == DEFLT) && (*pnew_obj != 0))
         {
             OBJECT *objptr = tree + *pnew_obj;
-            ob_change((LONG)tree, *pnew_obj, objptr->ob_state | SELECTED, TRUE);
+            ob_change(tree, *pnew_obj, objptr->ob_state | SELECTED, TRUE);
             return FALSE;
         }
     }
@@ -241,7 +241,7 @@ WORD fm_button(OBJECT *tree, WORD new_obj, WORD clks, WORD *pnew_obj)
                         state = tstate |= SELECTED;
                     else
                         tstate &= ~SELECTED;
-                    ob_change((LONG)tree, tobj, tstate, TRUE);
+                    ob_change(tree, tobj, tstate, TRUE);
                 }
                 objptr = tree + tobj;
                 tobj = objptr->ob_next;

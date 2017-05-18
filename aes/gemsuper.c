@@ -233,7 +233,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         break;
     case OBJC_CHANGE:
         gsx_sclip((GRECT *)&OB_XCLIP);
-        ob_change(OB_TREE, OB_DRAWOB, OB_NEWSTATE, OB_REDRAW);
+        ob_change((OBJECT *)OB_TREE, OB_DRAWOB, OB_NEWSTATE, OB_REDRAW);
         break;
 
     /* Form Manager */

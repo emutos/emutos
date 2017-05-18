@@ -321,7 +321,7 @@ static void fs_format(OBJECT *tree, WORD currtop, WORD count)
 static void fs_sel(WORD sel, WORD state)
 {
     if (sel)
-        ob_change((LONG)rs_trees[FSELECTR], F1NAME + sel - 1, state, TRUE);
+        ob_change(rs_trees[FSELECTR], F1NAME + sel - 1, state, TRUE);
 }
 
 
@@ -614,7 +614,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
         {
             fs_sel(sel, NORMAL);
             if ((touchob == FSOK) || (touchob == FSCANCEL))
-                ob_change((LONG)tree, touchob, NORMAL, TRUE);
+                ob_change(tree, touchob, NORMAL, TRUE);
             inf_sset(tree, FSDIRECT, locstr);
             pstr = fs_pspec(locstr, NULL);
             strcpy(pstr, mask);
@@ -641,7 +641,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
         case FSOK:
             if (path_changed(locstr))   /* just like TOS, if user has edited */
             {                           /*  the mask, 'OK' does not exit     */
-                ob_change((LONG)tree,FSOK,NORMAL,TRUE);  /* (so deselect the button) */
+                ob_change(tree,FSOK,NORMAL,TRUE);/* (so deselect the button) */
                 break;
             }
         case FSCANCEL:
@@ -769,7 +769,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
             strcpy(ad_fname, selname + 1);
             ob_draw(tree, FSSELECT, MAX_DEPTH);
             if (!cont)
-                ob_change((LONG)tree, FSOK, SELECTED, TRUE);
+                ob_change(tree, FSOK, SELECTED, TRUE);
             newsel = FALSE;
         }
 

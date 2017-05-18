@@ -678,7 +678,7 @@ void ob_order(OBJECT *tree, WORD mov_obj, WORD new_pos)
  *  Routine to change the state of an object and redraw that
  *  object using the current clip rectangle.
  */
-void ob_change(LONG tree, WORD obj, UWORD new_state, WORD redraw)
+void ob_change(OBJECT *tree, WORD obj, UWORD new_state, WORD redraw)
 {
     WORD flags, obtype, th;
     GRECT t;
@@ -686,17 +686,17 @@ void ob_change(LONG tree, WORD obj, UWORD new_state, WORD redraw)
     LONG spec;
     OBJECT *objptr;
 
-    ob_sst(tree, obj, &spec, (WORD*)&curr_state, &obtype, &flags, &t, &th);
+    ob_sst((LONG)tree, obj, &spec, (WORD*)&curr_state, &obtype, &flags, &t, &th);
 
     if ((curr_state == new_state) || (spec == -1L))
         return;
 
-    objptr = ((OBJECT *)tree) + obj;
+    objptr = tree + obj;
     objptr->ob_state = new_state;
 
     if (redraw)
     {
-        ob_offset((OBJECT *)tree, obj, &t.g_x, &t.g_y);
+        ob_offset(tree, obj, &t.g_x, &t.g_y);
 
         gsx_moff();
 
@@ -704,7 +704,7 @@ void ob_change(LONG tree, WORD obj, UWORD new_state, WORD redraw)
 
         if (obtype == G_USERDEF)
         {
-            ob_user(tree, obj, &t, spec, curr_state, new_state);
+            ob_user((LONG)tree, obj, &t, spec, curr_state, new_state);
             redraw = FALSE;
         }
         else
@@ -719,7 +719,7 @@ void ob_change(LONG tree, WORD obj, UWORD new_state, WORD redraw)
         }
 
         if (redraw)
-            just_draw(tree, obj, t.g_x, t.g_y);
+            just_draw((LONG)tree, obj, t.g_x, t.g_y);
 
         gsx_mon();
     }

@@ -152,7 +152,7 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
             if ( gr_watchbox(gl_awind, cpt, SELECTED, NORMAL) )
             {
                 message = (cpt == W_CLOSER) ? WM_CLOSED : WM_FULLED;
-                ob_change((LONG)gl_awind, cpt, NORMAL, TRUE);
+                ob_change(gl_awind, cpt, NORMAL, TRUE);
             }
             break;
         case W_NAME:

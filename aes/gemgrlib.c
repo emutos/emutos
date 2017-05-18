@@ -341,7 +341,7 @@ WORD gr_watchbox(OBJECT *tree, WORD obj, WORD instate, WORD outstate)
     do
     {
         state = (out) ? outstate : instate;
-        ob_change((LONG)tree, obj, state, TRUE);
+        ob_change(tree, obj, state, TRUE);
         out = !out;
     } while (gr_stilldn(out, t.g_x, t.g_y, t.g_w, t.g_h));
 
