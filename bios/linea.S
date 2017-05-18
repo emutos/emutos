@@ -82,7 +82,7 @@ _int_linea:
         and.w   #0xFFF,d0       /* Keep only the function number */
 #endif
         cmp.w   #nb_linea,d0
-        bhs.s   wrong_linea
+        jhs     wrong_linea
 
 #if DBG_LINEA
 #ifdef __mcoldfire__

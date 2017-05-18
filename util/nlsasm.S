@@ -43,14 +43,14 @@ _gettext_init:
 
 _gettext:
         tst.l   _nls_hash
-        bne     empty
+        jne     empty
         move.l  4(sp),d0
         rts
 empty:
 /* check for empty string - often used in RSC - must return original address */
         move.l  4(sp),a0
         tst.b   (a0)
-        bne     next
+        jne     next
         move.l  a0,d0
         rts
 next:
@@ -77,15 +77,15 @@ rh_try:
         move.l  (a0)+,d1
         beq     rh_not_found
         cmp.l   d1,a1
-        beq     rh_found
+        jeq     rh_found
         addq.l  #4,a0
 #ifdef __mcoldfire__
         subq.l  #1,d0
-        bpl.s   rh_try
+        jpl     rh_try
 #else
         dbra    d0,rh_try
 #endif
-        bra     rh_not_found
+        jra     rh_not_found
 rh_found:
         move.l  (a0)+,d0
         rts
@@ -99,7 +99,7 @@ rh_not_found:
 #else
         move.w  d0,d1
 #endif
-        bra     hash_next
+        jra     hash_next
 hash_loop:
 #ifdef __mcoldfire__
         move.w  d0,a1
@@ -139,19 +139,19 @@ hash_next:
         move.l  (a0,d0.w),a0
         cmp     #0,a0
 #endif
-        bne     search
+        jne     search
 // not in hash, return original string
 not_found:
         move.l  4(sp),d0
 #if USE_RAM_HASH
-        jmp     store_ram_hash
+        jra     store_ram_hash
 #else
         rts
 #endif
 
 search:
         move.l  (a0)+,d1
-        beq     not_found
+        jeq     not_found
 #ifdef __mcoldfire__
         move.l  a0,a1
         move.l  d1,a0
@@ -162,17 +162,17 @@ search:
         move.l  4(sp),a1
 strcmp:
         move.b  (a0)+,d0
-        beq     strend
+        jeq     strend
         cmp.b   (a1)+,d0
-        beq     strcmp
+        jeq     strcmp
 // the strings differ, next
 strneq:
         move.l  d1,a0
         addq.l  #4,a0
-        bra     search
+        jra     search
 strend:
         tst.b   (a1)
-        bne     strneq
+        jne     strneq
 // strings are equal, return next string
         move.l  d1,a0
         move.l  (a0),d0
@@ -198,16 +198,16 @@ store_ram_hash:
         move.l  #10,d0
 srh_try:
         tst.l   (a0)
-        beq     srh_free_slot
+        jeq     srh_free_slot
         addq.l  #8,a0
 #ifdef __mcoldfire__
         subq.l  #1,d0
-        bpl.s   srh_try
+        jpl     srh_try
 #else
         dbra    d0,srh_try
 #endif
 // no room in ram hash
-        bra     srh_end
+        jra     srh_end
 srh_free_slot:
         move.l  4(sp),(a0)+
         move.l  a1,(a0)

@@ -77,7 +77,7 @@ haltloop:
         stop    #0x2700
         // only an NMI could theroretically wake up the CPU here
 #endif
-        bra.s   haltloop
+        jra     haltloop
 
 /* void kill_program(void)
  * try to terminate via Pterm(); if Pterm() returns here (!),

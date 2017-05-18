@@ -72,12 +72,12 @@ start:
 
         move.l  0x44e,a4        // _v_bas_ad: logical screen pointer
         cmp.l   #0x00018000,a4  // are we running with floppy TOS loader?
-        bne.s   malloc          // no, use Malloc()
+        jne     malloc          // no, use Malloc()
 
         // We are running on the loader for floppy TOS
         // Our temporary buffer will start just after the screen
         lea     32000(a4),a4
-        bra.s   read
+        jra     read
 
 malloc:
         /* Malloc() ramtos buffer */
@@ -88,7 +88,7 @@ malloc:
         addq.l  #6,sp
 
         tst.l   d0
-        beq.s   fail
+        jeq     fail
 
         move.l  d0,a4           // temporary ramtos buffer
 
@@ -112,23 +112,23 @@ read:
         trap    #13
         lea     14(sp),sp
         tst.w   d0
-        bne.s   fail
+        jne     fail
 
         /* get the value of the _CPU cookie */
 
         moveq   #0,d0           // default value: 68000
         move.l  0x5a0.w,d1      // _p_cookies
-        beq.s   cpudone         // no cookie jar
+        jeq     cpudone         // no cookie jar
 
         move.l  d1,a0           // current cookie pointer
 
 nextcookie:
         move.l  (a0)+,d0        // cookie name
-        beq.s   cpudone         // end of cookie jar
+        jeq     cpudone         // end of cookie jar
         move.l  (a0)+,d1        // cookie value
 
         cmp.l   #0x5f435055,d0  // _CPU cookie?
-        bne.s   nextcookie      // no
+        jne     nextcookie      // no
 
         move.l  d1,d0           // yes: keep value
 cpudone:

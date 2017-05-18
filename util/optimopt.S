@@ -29,9 +29,9 @@ _scasb:
         move.w  8(sp),d1
 scasb_loop:
         move.b  (a0)+,d0
-        beq     scasb_end
+        jeq     scasb_end
         cmp.b   d1,d0
-        bne     scasb_loop
+        jne     scasb_loop
 scasb_end:
         subq.l  #1,a0
         move.l  a0,d0
@@ -54,7 +54,7 @@ _expand_string:
 copy_loop:
         move.b  (a0)+,d1        // 68000: 8 cycles
         move.w  d1,(a1)+        // 8 cycles
-        bne.b   copy_loop       // 10 cycles when taken
+        jne     copy_loop       // 10 cycles when taken
         sub.l   d0,a0
         move.l  a0,d0
         subq.l  #1,d0           // d0.l = length

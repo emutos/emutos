@@ -42,7 +42,7 @@ msk_4kpd_paddr  = 0b11111111111111111111000000000000
                 .text
 
 setup_68040_pmmu:
-                bsr     turn_off_all
+                jbsr    turn_off_all
 
                 lea     mmu_tree,a1
                 move.l  a1,d0
@@ -50,10 +50,10 @@ setup_68040_pmmu:
                 and.l   #msk_rootp_addr,d0
                 move.l  d0,root_table
 
-                bsr     mmusetup
-                bcc     error_terminate
+                jbsr    mmusetup
+                jcc     error_terminate
 
-                bsr     mmu_start
+                jbsr    mmu_start
                 moveq   #0,d0
                 rts
 
@@ -142,24 +142,24 @@ make_mmu_tree:
                 move.l  #0x00000000,d1          // physical
                 move.l  #14*1024*1024,d2        // size
                 move.l  #c_writetrough<<d_cache_pos,d3  // flags
-                bsr     create_table
-                bcc     .error
+                jbsr    create_table
+                jcc     .error
 
                 // TOS ROM
                 move.l  #0x00e00000,d0          // logical
                 move.l  #0x00e00000,d1          // physical
                 move.l  #1024*1024,d2           // size
                 move.l  #c_precise<<d_cache_pos,d3      // flags
-                bsr     create_table
-                bcc     .error
+                jbsr    create_table
+                jcc     .error
 
                 // I/O space
                 move.l  #0x00f00000,d0          // logical
                 move.l  #0x00f00000,d1          // physical
                 move.l  #1024*1024,d2           // size
                 move.l  #c_precise<<d_cache_pos,d3      // flags
-                bsr     create_table
-                bcc     .error
+                jbsr    create_table
+                jcc     .error
 
                 // TT RAM (64 MB, TODO: exact number)
                 move.l  #0x01000000,d0          // logical
@@ -168,16 +168,16 @@ make_mmu_tree:
                 move.l  _ramtop,d2
                 sub.l   d0,d2
                 move.l  #c_copyback<<d_cache_pos,d3     // flags
-                bsr     create_table
-                bcc     .error
+                jbsr    create_table
+                jcc     .error
 
                 // I/O space (shadow)
                 move.l  #0xfff00000,d0          // logical
                 move.l  #0x00f00000,d1          // physical
                 move.l  #1024*1024,d2           // size
                 move.l  #c_precise<<d_cache_pos,d3      // flags
-                bsr     create_table
-                bcc     .error
+                jbsr    create_table
+                jcc     .error
 
                 or.b    #1,ccr
                 rts
@@ -214,9 +214,9 @@ create_table:   movem.l d0-a6,-(sp)
         //Check if the descriptor is valid (or resident).
                 move.b  d6,d7
                 and.b   #2,d7                   //Check udp field.
-                bne.s   .pnttab_there           //This descriptor is valid
+                jne     .pnttab_there           //This descriptor is valid
         //The pointer table has to be created..
-                bsr     create_pointertable
+                jbsr    create_pointertable
 
         //The root descriptor is the base address of the pointer table.
         //Now get the pointer table descriptor, using the index in D5
@@ -228,9 +228,9 @@ create_table:   movem.l d0-a6,-(sp)
         //yet exist if not valid.
                 move.b  d6,d7
                 and.b   #2,d7
-                bne.s   .pagtab_there
+                jne     .pagtab_there
         //Create new page table
-                bsr     create_pagetable
+                jbsr    create_pagetable
 
         //The pointer table descriptor contains the base address of the page table we need.
 .pagtab_there:
@@ -247,7 +247,7 @@ create_table:   movem.l d0-a6,-(sp)
                 and.l   #0b11111100,d6          //Mask out the index
                 move.l  (a2,d6.l),d4            //Get page descriptor
                 and.b   #3,d4                   //Is this descriptor already used?
-                bne.s   .overlap_error          //Yes, we can't allow that.
+                jne     .overlap_error          //Yes, we can't allow that.
 
         //Now we can setup this page descriptor to point to the desired physical address
         //and OR in the desired descriptor bits/modes (cache mode and such)
@@ -262,7 +262,7 @@ create_table:   movem.l d0-a6,-(sp)
                 add.l   #1024*4,d0              //Next logical address
                 add.l   #1024*4,d1              //Next physical address
                 sub.l   #1024*4,d2              //Block of memory covered by this page
-                bhi     .create_more            //There's more, just loop
+                jhi     .create_more            //There's more, just loop
 
 .ok_done:       movem.l (sp)+,d0-a6
                 or.b    #1,ccr
@@ -284,7 +284,7 @@ create_pagetable:
 
         //Create 4k page table
 .4kp:           and.l   #~msk_4kpt_addr,d6              //Already on a "size of 4K page-table" boundary?
-                beq.s   .4kp_nf_ok                      //Yes
+                jeq     .4kp_nf_ok                      //Yes
                 add.l   #(~msk_4kpt_addr)+1,d7          //Add size of page table..
                 and.l   #msk_4kpt_addr,d7               //..then align to size of pagetable.
 .4kp_nf_ok:     move.l  d7,d6                           //D6 = Base address of new page table
@@ -307,7 +307,7 @@ create_pointertable:
                 move.l  next_free,d7                            //Get next free location
                 move.l  d7,d6
                 and.l   #~msk_pnttab_addr,d6                    //Already on 512 byte boundary?
-                beq.s   .nf_ok                                  //yes
+                jeq     .nf_ok                                  //yes
         //Fix address to next whole 512 byte boudary
                 add.l   #(~msk_pnttab_addr)+1,d7
                 and.l   #msk_pnttab_addr,d7

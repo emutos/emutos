@@ -142,7 +142,7 @@
 
 _bdos_trap2:
         tst.w   d0
-        beq     oterm
+        jeq     oterm
 
         move.l  _old_trap2,-(sp)
         rts
@@ -167,10 +167,10 @@ _old_trap2:
 //==== _enter - Front end of TRAP #1 handler =================================
 
 _enter:
-        bsr     fix_trap
+        jbsr    fix_trap
 
         btst.b  #5,(sp)         // are we in supervisor mode?
-        bne     enter_sup       // yes, go check sup stack
+        jne     enter_sup       // yes, go check sup stack
 
         move.l  usp,a0          // no, check user stack
 #ifdef __mcoldfire__
@@ -179,9 +179,9 @@ _enter:
 #else
         cmp.w   #0x20,(a0)      // toggle/inquire state?
 #endif
-        beq     x20_usr         // yes, go perform function
+        jeq     x20_usr         // yes, go perform function
 
-        bra     enter_2
+        jra     enter_2
 
 enter_sup:
                                 // next line is 68000 specific
@@ -191,7 +191,7 @@ enter_sup:
 #else
         cmp.w   #0x20,6(sp)     // toggle/inquire state?
 #endif
-        beq     x20_sup         // yes, go perform function
+        jeq     x20_sup         // yes, go perform function
 
 enter_2:
         move.l  a6,-(sp)        // save temporarily so we can use it
@@ -201,7 +201,7 @@ enter_2:
         move.w  (sp)+,d0        // status reg
         move.l  (sp)+,a4        // retadd
         btst    #13,d0          // if he is in system state, use his stack
-        bne     systk
+        jne     systk
         move.l  usp,a5          // a5 -> user stack
 #ifdef __mcoldfire__
         lea     -40(a5),a5
@@ -217,7 +217,7 @@ enter_2:
 // now switch to fs stack
         move.l  #fstrt,sp
         lea     50(a5),a0
-        bra     callos
+        jra     callos
 // he was using his own ssp
 systk:
 #ifdef __mcoldfire__
@@ -257,18 +257,18 @@ ggusr:  move.l  P_A7SAVE(a5),a6 // stack pointer (maybe usp, maybe ssp)
         movem.l (a6)+,d1-d7/a0-a2
 #endif
         btst    #13,d0
-        bne     retsys          // a6 is (user-supplied) system stack
+        jne     retsys          // a6 is (user-supplied) system stack
         move.l  a4,sp
         move.l  a6,usp
 gousr:  move.l  a3,-(sp)
         move    d0,-(sp)
         movem.l P_REGSAVE(a5),d0/a3-a6
 
-        bra     fix_rte
+        jra     fix_rte
 
 retsys: move.l  a6,sp
         move.l  a4,usp
-        bra     gousr
+        jra     gousr
 
         // attempting to fix a problem where return codes provided by
         // xterm [ 0x4C ] aren't correctly passed back to the parent.
@@ -276,7 +276,7 @@ retsys: move.l  a6,sp
         // aug 2005, RCL
 _termuser:
         move.l  _run,a5
-        bra     ggusr
+        jra     ggusr
 
         .bss
         .even
@@ -291,11 +291,11 @@ fstrt:
 
 x20_usr:                        // user mode entry point
         move.l  2(a0),d1        // get parameter
-        beq     xu_0            // already have new SSP from
+        jeq     xu_0            // already have new SSP from
                                 // old USP, go handle 0L entry
 
         subq.l  #1,d1           // check for +1L entry
-        beq     x20_inq         // go handle inquiry
+        jeq     x20_inq         // go handle inquiry
 
         move.l  2(a0),a0        // get new SSP from parameter
 xu_0:
@@ -320,10 +320,10 @@ xu_0:
 
 x20_sup:
         move.l  8(sp),d1        // get parameter
-        beq     xs_0            // go handle 0L entry
+        jeq     xs_0            // go handle 0L entry
 
         subq.l  #1,d1           // check for +1L entry
-        beq     x20_inq         // go handle inquiry
+        jeq     x20_inq         // go handle inquiry
 
         move.l  8(sp),a1        // point to new SSP
         move.w  (sp)+,d0        // pop SR
@@ -331,15 +331,15 @@ x20_sup:
         move.w  d0,-(a1)        // push SR
         move.l  usp,a0          // get USP
         cmpa.l  a0,sp           // already at old USP?
-        beq     xs_usp          // don't play with stack
+        jeq     xs_usp          // don't play with stack
 
         move.l  (sp)+,-(a0)     // transport func # and parm
         move.l  a1,sp           // update SSP
-        bra     xs_exit
+        jra     xs_exit
 
 xs_usp:
         move.l  a1,sp           // update SSP
-        bra     xs_scram
+        jra     xs_scram
 
 xs_0:
         move.l  sp,a0           // create USP
@@ -349,17 +349,17 @@ xs_exit:
 xs_scram:
         bclr.b  #5,(sp)         // set user mode
 
-        bra     fix_rte
+        jra     fix_rte
 
 // gemdos(20) inquiry mode entry point
 
 x20_inq:
         moveq.l #0,d0           // return 0L for user mode
         btst.b  #5,(sp)         // supervisor mode?
-        beq     xi_exit         // no, user mode
+        jeq     xi_exit         // no, user mode
         subq.l  #1,d0           // return -1L for sup mode
 xi_exit:
-        bra     fix_rte
+        jra     fix_rte
 
 //==== fix_trap - make exception stack frame look like a 68000 frame =========
 
@@ -367,7 +367,7 @@ fix_trap:
 #ifdef __mcoldfire__
         move.w  4(sp),d0        // Format/Vector Word
         andi.l  #0x3000,d0      // Keep the filler bits
-        beq.s   ft_cf_nofiller
+        jeq     ft_cf_nofiller
 
         // Assume a 2-byte filler after the exception frame
         move.w  10(sp),12(sp)   // lsw of return address of TRAP
@@ -383,7 +383,7 @@ ft_cf_nofiller:
         addq.l  #2,sp           // discard the Format/Vector Word
 #else
         tst.w   _longframe.w    // check processor type
-        beq     ft_exit
+        jeq     ft_exit
 
         move.w  8(sp),10(sp)    // lsw of return address of TRAP
         move.w  6(sp),8(sp)     // msw of return address of TRAP
@@ -404,7 +404,7 @@ fix_rte:
         move.w  #0x4084,-(sp)   // store a fake Format/Vector Word
 #else
         tst.w   _longframe.w    // check processor type
-        beq     fr_exit
+        jeq     fr_exit
 
         subq.l  #2,sp           // reserve a hole on top of the stack
         move.w  2(sp),(sp)      // move SR

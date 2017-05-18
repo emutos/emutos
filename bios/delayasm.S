@@ -61,7 +61,7 @@ _run_calibration:
         move.l  4(a7),d0            //loopcount
 cal_loop:                           //just like asm.h inline function
         subq.l  #1,d0
-        bpl.b   cal_loop
+        jpl     cal_loop
 
         move.l  intcount,d0         //d0 = interrupt count
         move.l  d0,intsave          //save it

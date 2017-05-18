@@ -104,7 +104,7 @@ call_err:
  */
 _giveerr:
         move.l  save_etv_critic,d0
-        bra     call_err
+        jra     call_err
 
 /*
  * install the GEM critical error handler
@@ -115,10 +115,10 @@ _takeerr:
         moveq   #0,d0
         move.w  d0,_enable_ceh      // initialise flag for _criterr_handler
         moveq   #-1,d0
-        bsr     call_err            // get current error vector
+        jbsr    call_err            // get current error vector
         move.l  d0,save_etv_critic  //  & save it locally
         move.l  #criterr_handler,d0 // set new vector
-        bra     call_err
+        jra     call_err
 
 /*
  * default critical error handler in graphics mode
@@ -141,7 +141,7 @@ _takeerr:
  */
 criterr_handler:
         tst.w   _enable_ceh         // should we invoke form_alert?
-        bne.b   normal              // yes
+        jne     normal              // yes
         move.l  save_etv_critic,a0  // else go to old handler
         jmp     (a0)
 normal:
@@ -155,10 +155,10 @@ normal:
 #else
         move.l  UDA_SPSUPER(a0),save_spsuper
 #endif
-        jsr     _disable_interrupts // stack switch must be atomic
+        jbsr    _disable_interrupts // stack switch must be atomic
         move.l  sp,save_spcriterr
         lea     criterr_stack,sp
-        jsr     _enable_interrupts
+        jbsr    _enable_interrupts
 #ifdef __mcoldfire__
         lea     -36(sp),sp
         movem.l d3-d7/a3-a6,(sp)    // save regs on temp stack
@@ -168,14 +168,14 @@ normal:
         movea.l #err_tbl,a1
         suba.l  a0,a0               // assume zeroth entry (error -1)
         move.w  d0,-(sp)            // save original error code on stack
-        beq     alert_lookup        // zero, go do lookup
+        jeq     alert_lookup        // zero, go do lookup
 #ifdef __mcoldfire__
         not.l   d0                  // ones complement error code
 #else
         not.w   d0                  // ones complement error code
 #endif
         cmpi.w  #err_tbl_last,d0    // outside table?
-        bgt     alert_lookup        // yes, assume zeroth entry
+        jgt     alert_lookup        // yes, assume zeroth entry
         movea.w d0,a0               // else a0 = lookup table index
 alert_lookup:
         move.b  0(a0,a1.l),d0       // convert error code to alert number
@@ -186,7 +186,7 @@ alert_lookup:
         move.w  (sp)+,d1            // recover original error code
         ext.l   d1
         tst.w   d0                  // did user say Cancel?
-        beq     no_retry            // yes, branch
+        jeq     no_retry            // yes, branch
         move.l  #0x00010000,d1      // else set special retry request value
 no_retry:
         move.l  d1,d0               // set return code
@@ -213,11 +213,11 @@ no_retry:
 // **** Trap entry: ****
 _aestrap:
         tst.w   d0
-        beq.s   _back
+        jeq     _back
         cmpi.w  #0xC8,d0
-        beq.s   trapaes
+        jeq     trapaes
         cmpi.w  #0xC9,d0
-        beq.s   trapaes
+        jeq     trapaes
         move.l  savetrap2,-(sp)
         rts
 
@@ -236,7 +236,7 @@ trapaes:
         lea     16(sp),sp
 #endif
 
-        bsr     _disable_interrupts     // mask out interrupts
+        jbsr    _disable_interrupts     // mask out interrupts
         move.l  usp,a0
 #ifdef __mcoldfire__
         lea     -56(a0),a0
@@ -252,7 +252,7 @@ trapaes:
         move.l  a0,UDA_SPUSER(a6)
         move.l  sp,UDA_OLDSPSUPER(a6)
         movea.l UDA_SPSUPER(a6),sp
-        bsr     _enable_interrupts      // restore interrupt mask
+        jbsr    _enable_interrupts      // restore interrupt mask
 
         move.l  d1,-(sp)                // addr of parameter
         move.w  d0,-(sp)                // 200 or 201
@@ -260,7 +260,7 @@ trapaes:
         addq.l  #6,sp                   // restore stack pointer
 
 supret:                                 // return from gementry
-        bsr     _disable_interrupts     // mask out interrupts
+        jbsr    _disable_interrupts     // mask out interrupts
 
         movea.l _rlr,a0
         movea.l PD_UDA(a0),a0
@@ -276,7 +276,7 @@ supret:                                 // return from gementry
         movem.l (a0)+,d1-d7/a0-a6
 #endif
         move.l  a0,usp
-        bsr     _enable_interrupts      // restore interrupt mask
+        jbsr    _enable_interrupts      // restore interrupt mask
 
 #if CONF_DEBUG_AES_STACK
         lea     -16(sp),sp
@@ -317,9 +317,9 @@ _aestrap_intercepted:
         moveq   #1,d0           // assume it's intercepted
         movea.l 0x88,a0
         cmpa.l  _os_beg,a0
-        bcs.s   done
+        jcs     done
         cmpa.l  #__etext,a0
-        bcc.s   done
+        jcc     done
         moveq   #0,d0
 done:
         rts
@@ -419,10 +419,10 @@ _tikcod:
         move.l  sp,tstksave
         lea     tstack,sp
         tst.l   _CMP_TICK
-        beq     L2234
+        jeq     L2234
         addq.l  #1,_NUM_TICK
         subq.l  #1,_CMP_TICK
-        bne     L2234
+        jne     L2234
 
         move.l  _NUM_TICK,-(sp)
         move.l  #_tchange,-(sp)

@@ -10,7 +10,7 @@
 |                   All Rights Reserved Worldwide                       #
 |                                                                       #
 |########################################################################
-| Translated on Fri May 19 01:52:44 2017 by version 2.6.0 of PortAsm translator
+| Translated on Fri May 19 01:54:48 2017 by version 2.6.0 of PortAsm translator
 | PortAsm Licence Number #3250
 | Target assembler:    Gnu 'gas'
 |
@@ -915,7 +915,7 @@ scrn_blt:
       move.w   (-104,%a6),%d0          | [558 MI]
       jmi      upda_dst                | [559]
 
-      jsr      concat                  | [561]
+      jbsr     concat                  | [561]
 
 
 

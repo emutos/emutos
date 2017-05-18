@@ -74,14 +74,14 @@ _GSX_ENTRY:
 
 /* Validate the number of entries in user's PTSIN array. */
         move.w  d0,-(sp)        // save number of PTSIN entries from CONTRL[1]
-        beq.b   size_intin      // for number of vertices = 0
-        bpl.b   size_ptsin      // for number of vertices > 0
+        jeq     size_intin      // for number of vertices = 0
+        jpl     size_ptsin      // for number of vertices > 0
         clr.w   W_1(a0)         // for number of vertices < 0
 //                              // set user's CONTRL[1] to 0
-        bra.b   size_intin
+        jra     size_intin
 size_ptsin:
         cmpi.w  #ptsin_max,d0   // # of user vertices > # of allowable vertices?
-        ble.b   ptsin_ok        // for user vertices =< # of allowable vertices
+        jle     ptsin_ok        // for user vertices =< # of allowable vertices
         move.w  #ptsin_max,d0   // user vertices > # of allowable vertices
         move.w  d0,W_1(a0)      // put max # of vertices in user's CONTRL[1]
 ptsin_ok:
@@ -90,7 +90,7 @@ save_ptsin:
         move.l  (a4)+,(a3)+     // save x,y coordinate pair
 #ifdef __mcoldfire__
         subq.l  #1,d0
-        bpl.s   save_ptsin      // point to next x,y coordinate pair
+        jpl     save_ptsin      // point to next x,y coordinate pair
 #else
         dbra    d0,save_ptsin   // point to next x,y coordinate pair
 #endif
@@ -98,7 +98,7 @@ save_ptsin:
 /* Validate number of entries in user's INTIN array. */
 size_intin:
         move.w  d1,-(sp)        // save number of INTIN entries from CONTRL[3]
-        bpl.b   intin_ok        // for user entries > 0
+        jpl     intin_ok        // for user entries > 0
         clr.w   W_3(a0)         // put 0 entries in user's CONTRL[3]
 
 intin_ok:
@@ -187,9 +187,9 @@ intin_ok:
 scrn_clip:
         lea.l   _DEV_TAB,a0     // get address of device table
         tst.w   d0              // is new x-coordinate < 0?
-        bge     cl_xmax         // nope - check if greater than maximum value
+        jge     cl_xmax         // nope - check if greater than maximum value
         clr.w   d0              // yes - set it to 0
-        bra     cl_y            // now clip the y-coordinate
+        jra     cl_y            // now clip the y-coordinate
 
 /*
  *      If the new x-coordinate is greater than the maximum value then the
@@ -198,7 +198,7 @@ scrn_clip:
  */
 cl_xmax:
         cmp.w   (a0),d0         // is new x-coordinate > maximum value?
-        ble     cl_y            // nope - go clip the y-coordinate
+        jle     cl_y            // nope - go clip the y-coordinate
         move.w  (a0),d0         // yes - set it to the maximum value
 /*
  *      If the new y-coordinate is less than 0 then the cursor will be
@@ -206,7 +206,7 @@ cl_xmax:
  */
 cl_y:
         tst.w   d1              // is new y-coordinate < 0?
-        bge     cl_ymax         // nope - check if greater than maximum value
+        jge     cl_ymax         // nope - check if greater than maximum value
         clr.w   d1              // yes - set it to 0
         rts
 
@@ -217,7 +217,7 @@ cl_y:
  */
 cl_ymax:
         cmp.w   2(a0),d1        // is new y-coordinate > maximum value?
-        ble     cl_done         // nope - done
+        jle     cl_done         // nope - done
         move.w  2(a0),d1        // yes - set it to the maximum value
 cl_done:
         rts
@@ -233,7 +233,7 @@ cl_done:
 
 _mouse_int:
         tst.b   _mouse_flag     // If we are in a show/hide operation
-        bne     ms_exit         // just exit.
+        jne     ms_exit         // just exit.
 
 #ifdef __mcoldfire__
         lea     -60(sp),sp
@@ -251,7 +251,7 @@ _mouse_int:
 #endif
         cmp.b   #0xf8, d1       // relative mouse packet header?
 
-        bne     ms_done
+        jne     ms_done
 
 #ifdef __mcoldfire__
         and.l   #3, d0          // isolate mouse buttons
@@ -260,7 +260,7 @@ _mouse_int:
         and.w   #3, d0          // isolate mouse buttons
         lsr.b   #1, d0          // left button pressed?
 #endif
-        bcc     no_left         // no
+        jcc     no_left         // no
         bset    #1, d0          // set bit 0 for left button
 
 no_left:
@@ -272,7 +272,7 @@ no_left:
         and.w   #3,d1           // mask out state codes bits 6,7
 #endif
         cmp.b   d1,d0           // has button state changed
-        beq     xy_update       // no go test x,y change
+        jeq     xy_update       // no go test x,y change
 
         lea     _MOUSE_BT,a1
         move.w  (a1),d2
@@ -308,13 +308,13 @@ no_left:
 xy_update:
 #ifdef __mcoldfire__
         tst.b   1(a0)           // get new relative x pos
-        bne.s   new_coord       // just check for movement
+        jne     new_coord       // just check for movement
         tst.b   2(a0)           // get new relative y pos
-        bne.s   new_coord       // just check for movement
+        jne     new_coord       // just check for movement
 #else
         move.b  1(a0), d0       // get new relative x pos
         or.b    2(a0), d0       // get new relative y pos
-        bne     new_coord       // just check for movement
+        jne     new_coord       // just check for movement
 #endif
 
 #ifdef __mcoldfire__
@@ -323,7 +323,7 @@ xy_update:
 #else
         bclr.b  #5, _cur_ms_stat // no motion clear motion status
 #endif
-        bra     ms_done         // no change done bye-bye
+        jra     ms_done         // no change done bye-bye
 
 new_coord:
 #ifdef __mcoldfire__
@@ -360,12 +360,12 @@ new_coord:
         add.w   d3, d1          // d1 contains new x coordinate
 #endif
 
-        bsr     scrn_clip
+        jbsr    scrn_clip
 
         move.l  _user_mot,a1    // get user routine address
         jsr     (a1)            // call user to modify x,y
 
-        bsr     scrn_clip
+        jbsr    scrn_clip
 
         move.w  d0,_GCURX       // save new X location
         move.w  d1,_GCURY       // save new y location
@@ -410,12 +410,12 @@ wheel_check:
         move.b  (a0)+,d0
         cmp.b   (a1)+,d0
 #ifdef __mcoldfire__
-        bne.s    wheel_exit
+        jne      wheel_exit
         subq.l   #1,%d1
-        bpl      wheel_check
+        jpl      wheel_check
 #else
         dbne    d1,wheel_check
-        bne     wheel_exit
+        jne     wheel_exit
 #endif
 
 #ifdef __mcoldfire__
@@ -426,9 +426,9 @@ wheel_check:
         move.b  (a0)+,d0
         sub.b   #0x59,d0
 #endif
-        bmi     wheel_exit
+        jmi     wheel_exit
         cmp.b   #3,d0
-        bhi     wheel_exit
+        jhi     wheel_exit
 
         move.w  d0,d1
 #ifdef __mcoldfire__
@@ -502,7 +502,7 @@ wheel_ikbd_packet:
 
 _mov_cur:
         tst.w   _HIDE_CNT       // is the cursor hidden?
-        bne     mov_cur1        // yes - don't draw it now
+        jne     mov_cur1        // yes - don't draw it now
 
 /*
  * The cursor is not currently hidden.  Save the new coordinates for the
