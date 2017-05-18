@@ -270,7 +270,7 @@ _processor_init:
         beq     m68000
 
 
-        move.w  #1,_longframe   // this is a 68010 or later
+        move.w  #1,_longframe.w // this is a 68010 or later
 m68000:
         jsr     _detect_fpu
         move.l  d0,_fputype

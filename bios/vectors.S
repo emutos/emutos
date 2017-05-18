@@ -314,7 +314,7 @@ is_ipl:
  */
 
 _int_vbl:
-        addq.l  #1, _frclock            // increase num of happened ints
+        addq.l  #1, _frclock.w          // increase num of happened ints
 #ifdef __mcoldfire__
         move.l  d0, -(sp)               // ColdFire specific
         moveq   #0, d0
@@ -332,7 +332,7 @@ _int_vbl:
 #else
         movem.l d0-d7/a0-a6, -(sp)      // save registers
 #endif
-        addq.l  #1, _vbclock            // count number of VBL interrupts
+        addq.l  #1, _vbclock.w          // count number of VBL interrupts
 
         // TODO: Check for monitor switching on normal ST(E) here,
         // and jump to _swv_vec if necessary...
@@ -349,10 +349,10 @@ _int_vbl:
 //  address with flag set    load 16 Falcon palette registers from address
 //     0 with flag set       load 256 Falcon palette registers from
 //                             _falcon_shadow_palette
-        move.l  _colorptr,d0
+        move.l  _colorptr.w,d0
         beq     vbl_no_palette
         // load new color palette
-        clr.l   _colorptr
+        clr.l   _colorptr.w
         lea     0xffff8240.w,a1             // ST(e) hardware palette registers
         moveq   #7,d1                       // count/2 - 1 (we move longwords)
         bclr    #0,d0                       // test & clear Falcon indicator
@@ -379,9 +379,9 @@ vbl_palette_loop:
 vbl_no_palette:
 
         // set new video address
-        move.l  _screenpt,d0
+        move.l  _screenpt.w,d0
         beq     vbl_no_screenpt
-        move.l  d0,_v_bas_ad
+        move.l  d0,_v_bas_ad.w
 #if CONF_WITH_VIDEL
         tst.w   _has_videl
         bne.s   set_video_low
@@ -422,14 +422,14 @@ vbl_no_screenpt:
 #ifdef __mcoldfire__
         moveq   #0,d0
 #endif
-        move.w  _nvbls,d0
+        move.w  _nvbls.w,d0
         beq     vbl_no_queue
 #ifdef __mcoldfire__
         sub.l   #1,d0
 #else
         sub.w   #1,d0
 #endif
-        move.l  _vblqueue,a0
+        move.l  _vblqueue.w,a0
 vbl_queue_loop:
         move.l  (a0)+,a1
         cmp.l   #0,a1
@@ -481,7 +481,7 @@ vbl_end:
 #define REAL_TIMER_C_HANDLER (CONF_WITH_MFP && !CONF_COLDFIRE_TIMER_C)
 
 _int_timerc:
-        addq.l  #1, _hz_200             // increment 200 Hz counter
+        addq.l  #1, _hz_200.w           // increment 200 Hz counter
 
 #ifdef __mcoldfire__
         // Save early ColdFire registers
@@ -519,8 +519,8 @@ _int_timerc:
         jsr     _sndirq
 #endif
 
-        move.w  _timer_ms, -(sp)
-        move.l  _etv_timer, a0
+        move.w  _timer_ms.w, -(sp)
+        move.l  _etv_timer.w, a0
         jsr     (a0)                    // jump to etv_timer routine
         addq.l  #2, sp                  // correct stack
 
@@ -570,7 +570,7 @@ _call_etv_critic:
         move.l  d2,-(sp)
         move.l  d0,-(sp)            // error code || device to stack
         moveq.l #-1,d0              // set default return code like TOS does
-        movea.l _etv_critic,a0
+        movea.l _etv_critic.w,a0
         jsr     (a0)                // call handler
         addq.l  #4,sp               // fixup stack
         move.l  (sp)+,d2            // restore regs
@@ -1045,7 +1045,7 @@ _xbiostrap:
 // ==== Trap 13+14 handler ==================================================
 
 biosxbios:
-        move.l  _savptr, a1
+        move.l  _savptr.w, a1
 #ifdef __mcoldfire__
         move.w  (sp)+,d0        // Format/Vector Word
         andi.l  #0x3000,d0      // Keep the filler bits
@@ -1067,7 +1067,7 @@ bx_cf_nofiller:
         move.w  d0,-(a1)        // and save in save_area
         move.l  (sp)+,-(a1)     // save return address
 
-        tst.w   _longframe      // Check processor type
+        tst.w   _longframe.w    // Check processor type
         beq.s   bx_nolongframe  // ...when we support CPU >=68000
         move.w  (sp)+,-(a1)
 #endif
@@ -1079,7 +1079,7 @@ bx_nolongframe:
 #else
         movem.l d3-d7/a3-a7, -(a1)      // regs, including stack pointer
 #endif
-        move.l  a1, _savptr
+        move.l  a1, _savptr.w
 
         btst    #13,d0          // were we in user mode?
         bne     bx_sp_ok        // yes, the sp already points to the arguments
@@ -1097,7 +1097,7 @@ bx_sp_ok:
         jsr     (a0)            // go do it and then come back
 
 bx_ret_exc:
-        move.l  _savptr, a1
+        move.l  _savptr.w, a1
 #ifdef __mcoldfire__
         movem.l (a1), d3-d7/a3-a7       // Get regs back, including sp
         lea     40(a1), a1
@@ -1110,7 +1110,7 @@ bx_ret_exc:
         move.w  (a1)+,-(sp)     // sr
         move.w  #0x40B4,-(sp)   // store a fake Format/Vector Word
 #else
-        tst.w   _longframe      // Check longframe again: Is CPU >= 68000?
+        tst.w   _longframe.w    // Check longframe again: Is CPU >= 68000?
         beq.s   bx_nolong2
         move.w  (a1)+,-(sp)
 
@@ -1118,7 +1118,7 @@ bx_nolong2:
         move.l  (a1)+,-(sp)
         move.w  (a1)+,-(sp)
 #endif
-        move.l  a1, _savptr
+        move.l  a1, _savptr.w
         rte                     // return with return value in D0
 
 
@@ -1291,7 +1291,7 @@ _keyclick:
         move.w   4(sp),d0
         move.l   a2,-(sp)
         move.l   d2,-(sp)
-        move.l   _kcl_hook,a0
+        move.l   _kcl_hook.w,a0
         jsr      (a0)
         move.l   (sp)+,d2
         move.l   (sp)+,a2

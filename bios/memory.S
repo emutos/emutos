@@ -121,32 +121,32 @@ memchk:
         // EmuTOS lives in ROM, we must check if the RAM is valid
 #ifdef __mcoldfire__
         move.l  #0x752019f3, d1
-        cmp.l   memvalid, d1            // magic in memvalid ?
+        cmp.l   memvalid.w, d1          // magic in memvalid ?
         bne     memconf                 // no -> config memory
         move.l  #0x237698aa, d1
-        cmp.l   memval2, d1             // magic in memval2 ?
+        cmp.l   memval2.w, d1           // magic in memval2 ?
         bne     memconf                 // no -> config memory
         move.l  #0x5555aaaa, d1
-        cmp.l   memval3, d1             // magic in memval3 ?
+        cmp.l   memval3.w, d1           // magic in memval3 ?
         bne     memconf                 // no -> config memory
 #else
-        cmp.l   #0x752019f3, memvalid   // magic in memvalid ?
+        cmp.l   #0x752019f3, memvalid.w // magic in memvalid ?
         bne     memconf                 // no -> config memory
-        cmp.l   #0x237698aa, memval2    // magic in memval2 ?
+        cmp.l   #0x237698aa, memval2.w  // magic in memval2 ?
         bne     memconf                 // no -> config memory
-        cmp.l   #0x5555aaaa, memval3    // magic in memval3 ? (TOS >= 1.2)
+        cmp.l   #0x5555aaaa, memval3.w  // magic in memval3 ? (TOS >= 1.2)
         bne     memconf                 // no -> config memory
 #endif // __mcoldfire__
 #endif // !EMUTOS_LIVES_IN_RAM
 
         // The old RAM settings are valid, load them into registers.
         // They will stay in safe place in case we clear the sysvars.
-        move.b  memctrl, d6
-        move.l  _phystop, d5
+        move.b  memctrl.w, d6
+        move.l  _phystop.w, d5
 
 #if CONF_WITH_TTRAM
-        move.l  _ramvalid, d3
-        move.l  _ramtop, a3
+        move.l  _ramvalid.w, d3
+        move.l  _ramtop.w, a3
 #endif
 
 // ===========================================================================
@@ -592,21 +592,21 @@ stram_detected:
         bsr     call_bzero_a0_a1
 
         /* Store the ST-RAM parameters in the ST-RAM itself */
-        move.b  d6, memctrl             // set copy of hw memory config
-        move.l  d5, _phystop            // highest address as phystop
+        move.b  d6, memctrl.w           // set copy of hw memory config
+        move.l  d5, _phystop.w          // highest address as phystop
 
         /* Make ST-RAM configuration valid */
 #ifdef __mcoldfire__
-        lea     memvalid, a0
+        lea     memvalid.w, a0
         move.l  #0x752019f3, (a0)       // set memvalid to ok
-        lea     memval2, a0
+        lea     memval2.w, a0
         move.l  #0x237698aa, (a0)       // set memval2 to ok
-        lea     memval3, a0
+        lea     memval3.w, a0
         move.l  #0x5555aaaa, (a0)       // set memval3 to ok
 #else
-        move.l  #0x752019f3, memvalid   // set memvalid to ok
-        move.l  #0x237698aa, memval2    // set memval2 to ok
-        move.l  #0x5555aaaa, memval3    // set memval3 to ok
+        move.l  #0x752019f3, memvalid.w // set memvalid to ok
+        move.l  #0x237698aa, memval2.w  // set memval2 to ok
+        move.l  #0x5555aaaa, memval3.w  // set memval3 to ok
 #endif
 
 #if CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF
@@ -618,8 +618,8 @@ stram_detected:
 #if CONF_WITH_TTRAM
         // After clearing sysvars, restore old TT-RAM settings.
         // They will be used later for TT-RAM initialization.
-        move.l  a3, _ramtop             // set ramtop to size of found memory
-        move.l  d3, _ramvalid
+        move.l  a3, _ramtop.w           // set ramtop to size of found memory
+        move.l  d3, _ramvalid.w
 #endif
 
 // ===========================================================================

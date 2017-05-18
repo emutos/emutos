@@ -965,7 +965,7 @@ scrn_blt:
 //
 //  d1.w is screen offset of destination
 //
-        move.l  _v_bas_ad,a1
+        move.l  _v_bas_ad.w,a1
         adda.l  d1,a1                   // screen dest. addr. for x,y coordinate
 
         move.l  a1,dform(a6)            // save character destination address

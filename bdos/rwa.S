@@ -382,7 +382,7 @@ ft_cf_nofiller:
         move.w  (sp),2(sp)      // msw of return address of BSR
         addq.l  #2,sp           // discard the Format/Vector Word
 #else
-        tst.w   _longframe      // check processor type
+        tst.w   _longframe.w    // check processor type
         beq     ft_exit
 
         move.w  8(sp),10(sp)    // lsw of return address of TRAP
@@ -403,7 +403,7 @@ fix_rte:
 #ifdef __mcoldfire__
         move.w  #0x4084,-(sp)   // store a fake Format/Vector Word
 #else
-        tst.w   _longframe      // check processor type
+        tst.w   _longframe.w    // check processor type
         beq     fr_exit
 
         subq.l  #2,sp           // reserve a hole on top of the stack

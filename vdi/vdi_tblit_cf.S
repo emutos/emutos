@@ -10,7 +10,7 @@
 |                   All Rights Reserved Worldwide                       #
 |                                                                       #
 |########################################################################
-| Translated on Sun Mar 27 00:31:44 2016 by version 2.6.0 of PortAsm translator
+| Translated on Thu May 18 05:59:52 2017 by version 2.6.0 of PortAsm translator
 | PortAsm Licence Number #3250
 | Target assembler:    Gnu 'gas'
 |
@@ -919,7 +919,7 @@ scrn_blt:
 
 
 
-      movea.l  _v_bas_ad,%a1           | [565]
+      movea.l  (_v_bas_ad).w,%a1       | [565]
       adda.l   %d1,%a1                 | [566]
 
       move.l   %a1,(-14,%a6)           | [568]
