@@ -10,7 +10,7 @@
 |                   All Rights Reserved Worldwide                       #
 |                                                                       #
 |########################################################################
-| Translated on Fri May 19 00:55:21 2017 by version 2.6.0 of PortAsm translator
+| Translated on Fri May 19 01:52:44 2017 by version 2.6.0 of PortAsm translator
 | PortAsm Licence Number #3250
 | Target assembler:    Gnu 'gas'
 |
@@ -910,10 +910,10 @@ scrn_blt:
 	move.w   %d1,%d7
 	subq.l   #1,%d7
 	move.w   %d7,%d1
-      bmi.b    upda_dst                | [556]
+      jmi      upda_dst                | [556]
 
       move.w   (-104,%a6),%d0          | [558 MI]
-      bmi.b    upda_dst                | [559]
+      jmi      upda_dst                | [559]
 
       jsr      concat                  | [561]
 
@@ -1056,7 +1056,7 @@ norm_blt:
 	sub.l    %d3,%d5
 	move.w   %d5,%d1
       move.w   %d1,%d0                 | [649 PL]
-      bpl.b    do_rot                  | [650]
+      jpl      do_rot                  | [650]
 
 
 
@@ -1134,7 +1134,7 @@ get_mask:
 
 
       cmp.w    #0x10,%d0               | [689 HI]
-      bhi.b    doub_des                | [690]
+      jhi      doub_des                | [690]
 
 
 
@@ -1349,7 +1349,7 @@ not_sngl:
 |;;   cmpi.w    #0x10,-20(a6)          | [832 LS]
 	move.w   (-20,%a6),%d1
 	cmp.w    #0x10,%d1
-      bls.b    wrt_char                | [833]
+      jls      wrt_char                | [833]
 
       tst.w    (-42,%a6)               | [835 LT]
       jlt      chng_left               | [836]
@@ -1435,7 +1435,7 @@ sgl_1st_scan:
 
 
       move.w   (-42,%a6),%d1           | [889 MI]
-      bmi.b    left_rol                | [890]
+      jmi      left_rol                | [890]
       lsr.l    %d1,%d0                 | [891]
       jra      end_ro                  | [892]
 left_rol:
@@ -1487,7 +1487,7 @@ dbl_1st_scan:
 
 
       move.w   (-42,%a6),%d1           | [929 MI]
-      bmi.b    dbleft                  | [930]
+      jmi      dbleft                  | [930]
       lsr.l    %d1,%d0                 | [931]
       jra      dblendr                 | [932]
 dbleft:
@@ -2069,7 +2069,7 @@ thk01:
       move.w   %d6,(-34,%a6)           | [1245]
 thk00:
       tst.w    (-28,%a6)               | [1247 MI]
-      bmi.b    thk0                    | [1248]
+      jmi      thk0                    | [1248]
       cmp.w    (-36,%a6),%d6           | [1249 CC]
       jcc      thk0                    | [1250]
 |;;   and.w     d6,d0                  | [1251]
@@ -2176,7 +2176,7 @@ thknopwf:
 	move.w   (-30,%a6),%d5
 	subq.l   #1,%d5
 	move.w   %d5,(-30,%a6)
-      bmi.b    thk3                    | [1312]
+      jmi      thk3                    | [1312]
       jeq      thk4                    | [1313]
 
 |;;   subq.w    #1,-30(a6)             | [1315 NE]
@@ -2211,7 +2211,7 @@ thk5:
 	lea      -4(%a7),%a7
 	movem.l  %d0,(%a7)
       tst.w    (-80,%a6)               | [1330 MI]
-      bmi.b    thk6                    | [1331]
+      jmi      thk6                    | [1331]
       move.w   (-28,%a6),%d5           | [1332]
 |;;   addq.w    #2,d5                  | [1333]
 	addq.l   #2,%d5
@@ -2384,7 +2384,7 @@ skewop:
       move.w   %d2,(-38,%a6)           | [1408 EQ]
       jeq      nxt_word                | [1409]
       move.w   (-42,%a6),%d0           | [1410 MI]
-      bmi.b    dec_rol                 | [1411]
+      jmi      dec_rol                 | [1411]
 ror_add:
 |;;   addq.w    #1,d0                  | [1413]
 	move.w   %d0,%d3
@@ -2456,7 +2456,7 @@ skewopw:
       jcc      do_shift                | [1453]
 
       tst.w    (-42,%a6)               | [1455 MI]
-      bmi      mlt_left                | [1456]
+      jmi      mlt_left                | [1456]
       jra      mlt_rite                | [1457]
 do_shift:
 |;;   ori       #0x10,ccr              | [1459 X]
@@ -2508,7 +2508,7 @@ no_rota:
       move.w   %d1,(-38,%a6)           | [1480]
 
       tst.w    %d0                     | [1482 MI]
-      bmi.b    wdec_rol                | [1483]
+      jmi      wdec_rol                | [1483]
 |;;   addq.w    #1,-42(a6)             | [1484]
 	move.w   (-42,%a6),%d6
 	addq.l   #1,%d6
@@ -3107,7 +3107,7 @@ noline1:
 	movem.l  (%a7),%d0/%d4
 	lea      16(%a7),%a7
       tst.l    %d7                     | [1765 MI]
-      bmi.b    rep_ylop                | [1766]
+      jmi      rep_ylop                | [1766]
 y_dwn_lp:
 |***	SAVE	d0-d2	***
 	lea      -12(%a7),%a7
@@ -3212,7 +3212,7 @@ repwidcl:
 	move.w   %d4,%d3
 nrepdoub:
       tst.l    %d7                     | [1794 PL]
-      bpl.b    nrpndoub                | [1795]
+      jpl      nrpndoub                | [1795]
 |;;   addq.w    #1,d3                  | [1796]
 	move.w   %d3,%d4
 	addq.l   #1,%d4
@@ -3313,7 +3313,7 @@ reploop:
 
 repnor:
       tst.l    %d7                     | [1853 MI]
-      bmi.b    repnorup                | [1854]
+      jmi      repnorup                | [1854]
 |;;   add.w     d2,d7                  | [1855 CC]
 	and.l    #0xffff,%d2
 	move.w   %d7,%d1
@@ -3376,7 +3376,7 @@ nrepnor:
       moveq.l  #0,%d0                  | [1884]
 o_no_rep:
       tst.l    %d7                     | [1886 PL]
-      bpl.b    incsrc                  | [1887]
+      jpl      incsrc                  | [1887]
 
 
 |;;   or.w      d4,d0                  | [1890]
