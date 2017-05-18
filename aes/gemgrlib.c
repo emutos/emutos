@@ -335,7 +335,7 @@ WORD gr_watchbox(OBJECT *tree, WORD obj, WORD instate, WORD outstate)
     GRECT   t;
 
     gsx_sclip(&gl_rscreen);
-    ob_actxywh((LONG)tree, obj, &t);
+    ob_actxywh(tree, obj, &t);
 
     out = FALSE;
     do
@@ -354,7 +354,7 @@ WORD gr_slidebox(OBJECT *tree, WORD parent, WORD obj, WORD isvert)
     GRECT   t, c;
     WORD    divnd, divis;
 
-    ob_actxywh((LONG)tree, parent, &c);
+    ob_actxywh(tree, parent, &c);
     ob_relxywh((LONG)tree, obj, &t);
     gr_dragbox(t.g_w, t.g_h, t.g_x + c.g_x, t.g_y + c.g_y,
                 &c, &t.g_x, &t.g_y);

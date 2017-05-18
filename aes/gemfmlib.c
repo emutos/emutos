@@ -324,7 +324,7 @@ WORD fm_do(OBJECT *tree, WORD start_fld)
         /* handle button event */
         if (which & MU_BUTTON)
         {
-            next_obj = ob_find((LONG)tree, ROOT, MAX_DEPTH, rets[0], rets[1]);
+            next_obj = ob_find(tree, ROOT, MAX_DEPTH, rets[0], rets[1]);
             if (next_obj == NIL)
             {
                 sound(TRUE, 440, 2);

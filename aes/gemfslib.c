@@ -350,7 +350,7 @@ static WORD fs_nscroll(OBJECT *tree, WORD *psel, WORD curr, WORD count,
         *psel = 0;
         fs_format(tree, curr, count);
         gsx_gclip(&r[1]);
-        ob_actxywh((LONG)tree, F1NAME, r);
+        ob_actxywh(tree, F1NAME, r);
 
         if ((neg = (diffcurr < 0)) != 0)
             diffcurr = -diffcurr;
@@ -652,7 +652,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
             value = 1;
             break;
         case FSVSLID:
-            ob_actxywh((LONG)tree, FSVELEV, &pt);
+            ob_actxywh(tree, FSVELEV, &pt);
             /* anemic slidebars
                 pt.g_x -= 3;
                 pt.g_w += 6;

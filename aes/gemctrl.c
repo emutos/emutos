@@ -135,7 +135,7 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
          */
         w_bldactive(w_handle);
         tree = gl_awind;
-        cpt = ob_find((LONG)gl_awind, 0, 10, mx, my);
+        cpt = ob_find(gl_awind, 0, 10, mx, my);
         w_getsize(WS_CURR, w_handle, &t);
         r_get(&t, &x, &y, &w, &h);
         kind = pwin->w_kind;
@@ -184,7 +184,7 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
             break;
         case W_HSLIDE:
         case W_VSLIDE:
-            ob_actxywh((LONG)tree, cpt + 1, &pt);
+            ob_actxywh(tree, cpt + 1, &pt);
             if (inside(mx, my, &pt))
             {
                 cpt = (cpt==W_HSLIDE) ? W_HELEV : W_VELEV;

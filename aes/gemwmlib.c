@@ -1337,7 +1337,7 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
 
 WORD wm_find(WORD x, WORD y)
 {
-    return ob_find((LONG)gl_wtree, 0, 2, x, y);
+    return ob_find(gl_wtree, 0, 2, x, y);
 }
 
 

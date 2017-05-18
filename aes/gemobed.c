@@ -123,7 +123,7 @@ static void pxl_rect(OBJECT *tree, WORD obj, WORD ch_pos, GRECT *pt)
 {
     GRECT   o;
 
-    ob_actxywh((LONG)tree, obj, &o);
+    ob_actxywh(tree, obj, &o);
     gr_just(edblk.te_just, edblk.te_font, edblk.te_ptmplt,
                 o.g_w, o.g_h, &o);
 

@@ -75,11 +75,11 @@ void ob_relxywh(LONG tree, WORD obj, GRECT *pt)
 /*
  *  ob_actxywh: fill GRECT with x/y/w/h of object (absolute x/y)
  */
-void ob_actxywh(LONG tree, WORD obj, GRECT *pt)
+void ob_actxywh(OBJECT *tree, WORD obj, GRECT *pt)
 {
-    OBJECT *objptr = ((OBJECT *)tree) + obj;
+    OBJECT *objptr = tree + obj;
 
-    ob_offset(tree, obj, &pt->g_x, &pt->g_y);
+    ob_offset((LONG)tree, obj, &pt->g_x, &pt->g_y);
     pt->g_w = objptr->ob_width;
     pt->g_h = objptr->ob_height;
 }
@@ -476,7 +476,7 @@ static WORD get_prev(OBJECT *tree, WORD parent, WORD obj)
  *  walk down the tree, limited by the depth parameter, and find
  *  the last object the mx,my location was over.
  */
-WORD ob_find(LONG tree, WORD currobj, WORD depth, WORD mx, WORD my)
+WORD ob_find(OBJECT *tree, WORD currobj, WORD depth, WORD mx, WORD my)
 {
     WORD lastfound;
     WORD dosibs, done, junk;
@@ -490,7 +490,7 @@ WORD ob_find(LONG tree, WORD currobj, WORD depth, WORD mx, WORD my)
         r_set(&o, 0, 0, 0, 0);
     else
     {
-        parent = get_par(tree, currobj, &junk);
+        parent = get_par((LONG)tree, currobj, &junk);
         ob_actxywh(tree, parent, &o);
     }
 
@@ -502,7 +502,7 @@ WORD ob_find(LONG tree, WORD currobj, WORD depth, WORD mx, WORD my)
         /*
          * if inside this obj, might be inside a child, so check
          */
-        ob_relxywh(tree, currobj, &t);
+        ob_relxywh((LONG)tree, currobj, &t);
         t.g_x += o.g_x;
         t.g_y += o.g_y;
 

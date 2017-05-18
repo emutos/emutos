@@ -133,7 +133,7 @@ static void menu_fixup(void)
     pob->ob_type = G_BOX;
     pob->ob_state = pob->ob_flags = 0x0;
     pob->ob_spec = 0x00FF1100L;
-    ob_actxywh((LONG)tree, gl_dabox, (GRECT *)&pob->ob_x);
+    ob_actxywh(tree, gl_dabox, (GRECT *)&pob->ob_x);
 
     cnt = (D.g_accreg) ? (2 + D.g_accreg) : 1;
 
@@ -186,7 +186,7 @@ static void menu_fixup(void)
  */
 static void rect_change(OBJECT *tree, MOBLK *prmob, WORD iob, BOOL x)
 {
-    ob_actxywh((LONG)tree, iob, &prmob->m_gr);
+    ob_actxywh(tree, iob, &prmob->m_gr);
     prmob->m_out = x;
 }
 
@@ -254,7 +254,7 @@ static void menu_sr(WORD saveit, OBJECT *tree, WORD imenu)
 
     /* do the blit to save or restore */
     gsx_sclip(&gl_rzero);
-    ob_actxywh((LONG)tree, imenu, &t);
+    ob_actxywh(tree, imenu, &t);
     t.g_x -= MTH;
     t.g_w += 2*MTH;
     t.g_h += 2*MTH;
@@ -376,7 +376,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
             last_title = cur_title;
             last_item = cur_item;
             /* see if over the bar  */
-            cur_title = ob_find((LONG)tree, THEACTIVE, 1, rets[0], rets[1]);
+            cur_title = ob_find(tree, THEACTIVE, 1, rets[0], rets[1]);
             if ((cur_title != NIL) && (cur_title != THEACTIVE))
             {
                 menu_state = OUTTITLE;
@@ -399,7 +399,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
                 }
                 else
                 {
-                    cur_item = ob_find((LONG)cur_tree, cur_menu, 1, rets[0], rets[1]);
+                    cur_item = ob_find(cur_tree, cur_menu, 1, rets[0], rets[1]);
                     if (cur_item != NIL)
                         menu_state = OUTITEM;
                     else
@@ -472,7 +472,7 @@ void mn_bar(OBJECT *tree, WORD showit)
         menu_fixup();
         obj = tree + 1;
         obj->ob_width = gl_width - obj->ob_x;
-        ob_actxywh((LONG)gl_mntree, THEACTIVE, &gl_ctwait.m_gr);
+        ob_actxywh(gl_mntree, THEACTIVE, &gl_ctwait.m_gr);
         gsx_sclip(&gl_rzero);
         ob_draw(gl_mntree, THEBAR, MAX_DEPTH);
         gsx_cline(0, gl_hbox - 1, gl_width - 1, gl_hbox - 1);
