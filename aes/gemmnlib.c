@@ -114,16 +114,16 @@ static void menu_fixup(void)
     OBJECT  *pob, *obj;
     GRECT   t;
     WORD    themenus, i, cnt, st;
-    LONG    tree;
+    OBJECT  *tree;
 
-    if ((tree=(LONG)gl_mntree) == 0L)
+    if ((tree=gl_mntree) == NULL)
         return;
 
     w_nilit(3 + NUM_ACCS, M_DESK);
 
-    obj = ((OBJECT *)tree) + THESCREEN;
+    obj = tree + THESCREEN;
     themenus = obj->ob_tail;
-    obj = ((OBJECT *)tree) + themenus;
+    obj = tree + themenus;
     gl_dabox = obj->ob_head;
 
     pob = &M_DESK[ROOT];
@@ -133,7 +133,7 @@ static void menu_fixup(void)
     pob->ob_type = G_BOX;
     pob->ob_state = pob->ob_flags = 0x0;
     pob->ob_spec = 0x00FF1100L;
-    ob_actxywh(tree, gl_dabox, (GRECT *)&pob->ob_x);
+    ob_actxywh((LONG)tree, gl_dabox, (GRECT *)&pob->ob_x);
 
     cnt = (D.g_accreg) ? (2 + D.g_accreg) : 1;
 
@@ -142,8 +142,8 @@ static void menu_fixup(void)
     pob->ob_tail = cnt;
 
     /* build up desk items  */
-    ob_relxywh(tree, gl_dabox + 1, &t);
-    for (i = 1, st = 0, obj = ((OBJECT *)tree)+gl_dabox+1; i <= cnt; i++, obj++)
+    ob_relxywh((LONG)tree, gl_dabox + 1, &t);
+    for (i = 1, st = 0, obj = tree+gl_dabox+1; i <= cnt; i++, obj++)
     {
         pob = &M_DESK[i];
         pob->ob_next = i+1;
