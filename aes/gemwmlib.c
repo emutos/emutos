@@ -80,15 +80,11 @@
 #define WF_SCREEN   17
 
 
-GLOBAL LONG desk_tree[NUM_PDS]; /* list of object trees for the desktop */
-                                /*  background pattern                  */
-
 GLOBAL WORD     gl_wtop;
 GLOBAL LONG     gl_awind;
 
 static LONG gl_newdesk;         /* current desktop background pattern */
 static WORD gl_newroot;         /* current object within gl_newdesk   */
-static WORD desk_root[NUM_PDS]; /* starting object to draw within desk_tree */
 
 static OBJECT W_TREE[NUM_MWIN];
 static OBJECT W_ACTIVE[NUM_ELEM];
@@ -811,36 +807,6 @@ void w_update(WORD bottom, GRECT *pt, WORD top, WORD moved, WORD usetrue)
 }
 
 
-static void w_setmen(WORD pid)
-{
-    WORD    npid;
-
-    npid = menu_tree[pid] ? pid : 0;
-    if (gl_mntree != menu_tree[npid])
-        mn_bar((OBJECT *)menu_tree[npid], TRUE, npid);
-
-    npid = desk_tree[pid] ? pid : 0;
-    if (gl_newdesk != desk_tree[npid])
-    {
-        gl_newdesk = desk_tree[npid];
-        gl_newroot = desk_root[npid];
-        w_drawdesk(&gl_rscreen);
-    }
-}
-
-
-/*
- *  Routine to draw menu of top most window as the current menu bar
- */
-static void w_menufix(void)
-{
-    WORD    pid;
-
-    pid = D.w_win[w_top()].w_owner->p_pid;
-    w_setmen(pid);
-}
-
-
 /*
  *  Draw the tree of windows given a major change in some window.  It
  *  may have been sized, moved, fulled, topped, or closed.  An attempt
@@ -875,10 +841,6 @@ static void draw_change(WORD w_handle, GRECT *pt)
     /* remember oldtop & set new one */
     oldtop = gl_wtop;
     gl_wtop = W_TREE[ROOT].ob_tail;
-
-    /* if top has changed then change menu */
-    if (gl_wtop != oldtop)
-        w_menufix();
 
     /* set ctrl rect and mouse owner */
     w_setactive();
@@ -1334,8 +1296,8 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
         break;
     case WF_NEWDESK:
         pwin->w_owner = rlr;
-        desk_tree[rlr->p_pid] = gl_newdesk = *(LONG *) pinwds;
-        desk_root[rlr->p_pid] = gl_newroot = pinwds[2];
+        gl_newdesk = *(LONG *) pinwds;
+        gl_newroot = pinwds[2];
         break;
     case WF_HSLSIZ:
         pwin->w_hslsiz = pinwds[0];

@@ -74,7 +74,6 @@ GLOBAL AESPD    *gl_mnppd;
 
 static AESPD    *desk_ppd[NUM_ACCS];
 static WORD     acc_display[NUM_ACCS];
-GLOBAL LONG     menu_tree[NUM_PDS];
 
 GLOBAL WORD     gl_dabox;
 
@@ -459,17 +458,17 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
  *  off so that this operation will be as fast as possible.  The
  *  global variable gl_mntree is also set or reset.
  */
-void mn_bar(OBJECT *tree, WORD showit, WORD pid)
+void mn_bar(OBJECT *tree, WORD showit)
 {
     AESPD   *p;
     OBJECT  *obj;
 
-    p = fpdnm(NULL, pid);
+    p = fpdnm(NULL, rlr->p_pid);
 
     if (showit)
     {
         gl_mnppd = p;
-        menu_tree[pid] = gl_mntree = (LONG)tree;
+        gl_mntree = (LONG)tree;
         menu_fixup();
         obj = tree + 1;
         obj->ob_width = gl_width - obj->ob_x;
@@ -480,7 +479,7 @@ void mn_bar(OBJECT *tree, WORD showit, WORD pid)
     }
     else
     {
-        menu_tree[pid] = gl_mntree = 0x0L;
+        gl_mntree = 0x0L;
         rc_copy(&gl_rmenu, &gl_ctwait.m_gr);
     }
 

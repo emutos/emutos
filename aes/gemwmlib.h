@@ -12,7 +12,6 @@
 
 #define DESKWH  0       /* window handle for desktop */
 
-extern LONG     desk_tree[];
 extern WORD     gl_wtop;
 extern LONG     gl_awind;
 

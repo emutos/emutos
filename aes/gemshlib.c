@@ -671,14 +671,11 @@ void sh_main(BOOL isgem)
         }
 
         sh_draw(D.s_cmd, 0, 0);         /* redraw the desktop   */
-        desk_tree[rlr->p_pid] = 0x0L;   /* clear his desk field */
 
         if (rc)                         /* display alert for most recent error */
             fm_show(rc, NULL, 1);
 
         rc = sh_ldapp(psh);             /* run the desktop/console/app */
-
-        desk_tree[rlr->p_pid] = 0x0L;   /* clear his desk field */
 
     } while(psh->sh_doexec && !gl_changerez);
 

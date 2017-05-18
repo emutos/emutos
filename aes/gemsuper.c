@@ -164,10 +164,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
 
     /* Menu Manager */
     case MENU_BAR:
-        if (gl_mnppd == rlr || gl_mnppd == NULL)
-            mn_bar((OBJECT *)MM_ITREE, SHOW_IT, rlr->p_pid);
-        else
-            menu_tree[rlr->p_pid] = (SHOW_IT) ? MM_ITREE : 0x0L;
+        mn_bar((OBJECT *)MM_ITREE, SHOW_IT);
         break;
     case MENU_ICHECK:
         do_chg((OBJECT *)MM_ITREE, ITEM_NUM, CHECKED, CHECK_IT, FALSE, FALSE);
