@@ -408,7 +408,7 @@ static WORD fs_newdir(BYTE *fpath, BYTE *pspec, OBJECT *tree, WORD *pcount)
 
     fs_format(tree, 0, *pcount);
 
-    obj = ((OBJECT *)tree) + FTITLE;    /* update FTITLE with ptr to mask */
+    obj = tree + FTITLE;        /* update FTITLE with ptr to mask */
     tedinfo = (TEDINFO *)obj->ob_spec;
     tedinfo->te_ptext = pspec;
 
