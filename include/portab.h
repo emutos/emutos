@@ -149,6 +149,13 @@ typedef void (*PFVOID)(void);
  */
 #define CONST_CAST(type, expr) ((type)(expr))
 
+/* This is grammatically equivalent to a call to a function which does nothing.
+ * It is useful as placeholder in conditional macros, when there is nothing to
+ * do. So such macros can safely be called in if / else / while / for contexts,
+ * without any potential side effects regarding to the grammar.
+ */
+#define NULL_FUNCTION() do { } while (0)
+
 /*
  * Workarounds for the GCC strict aliasing rule
  */

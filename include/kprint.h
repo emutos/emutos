@@ -49,7 +49,7 @@ extern int kcprintf(const char *fmt, ...) PRINTF_STYLE;
 extern void doassert(const char *, long, const char *, const char *);
 #define assert(a) if(!(a)) { doassert(__FILE__, __LINE__, __FUNCTION__, #a); }
 #else
-#define assert(a) do { } while (0)
+#define assert(a) NULL_FUNCTION()
 #endif
 
 /* KINFO(()) outputs to the debugger, if kprintf() is available */
