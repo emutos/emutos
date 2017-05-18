@@ -122,7 +122,7 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
     WORD    wm, hm;
     WORD    kind;
     WORD    cpt, message;
-    LONG    tree;
+    OBJECT  *tree;
 
     message = 0;
     x = y = w = h = 0;
@@ -135,7 +135,7 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
          */
         w_bldactive(w_handle);
         tree = gl_awind;
-        cpt = ob_find(gl_awind, 0, 10, mx, my);
+        cpt = ob_find((LONG)gl_awind, 0, 10, mx, my);
         w_getsize(WS_CURR, w_handle, &t);
         r_get(&t, &x, &y, &w, &h);
         kind = pwin->w_kind;
@@ -149,10 +149,10 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
             }
             /* else fall thru */
         case W_FULLER:
-            if ( gr_watchbox((OBJECT *)gl_awind, cpt, SELECTED, NORMAL) )
+            if ( gr_watchbox(gl_awind, cpt, SELECTED, NORMAL) )
             {
                 message = (cpt == W_CLOSER) ? WM_CLOSED : WM_FULLED;
-                ob_change(gl_awind, cpt, NORMAL, TRUE);
+                ob_change((LONG)gl_awind, cpt, NORMAL, TRUE);
             }
             break;
         case W_NAME:
@@ -184,7 +184,7 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
             break;
         case W_HSLIDE:
         case W_VSLIDE:
-            ob_actxywh(tree, cpt + 1, &pt);
+            ob_actxywh((LONG)tree, cpt + 1, &pt);
             if (inside(mx, my, &pt))
             {
                 cpt = (cpt==W_HSLIDE) ? W_HELEV : W_VELEV;
@@ -213,7 +213,7 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
         case W_HELEV:
         case W_VELEV:
 doelev:     message = (cpt == W_HELEV) ? WM_HSLID : WM_VSLID;
-            x = gr_slidebox((OBJECT *)gl_awind, cpt - 1, cpt, (cpt == W_VELEV));
+            x = gr_slidebox(gl_awind, cpt - 1, cpt, (cpt == W_VELEV));
             /* slide is 1 less than elev    */
             break;
         }

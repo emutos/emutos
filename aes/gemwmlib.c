@@ -81,9 +81,9 @@
 
 
 GLOBAL WORD     gl_wtop;
-GLOBAL LONG     gl_awind;
+GLOBAL OBJECT   *gl_awind;
 
-static LONG gl_newdesk;         /* current desktop background pattern */
+static OBJECT *gl_newdesk;      /* current desktop background pattern */
 static WORD gl_newroot;         /* current object within gl_newdesk   */
 
 static OBJECT W_TREE[NUM_MWIN];
@@ -146,7 +146,7 @@ static const TEDINFO gl_asamp =
 
 static WORD wind_msg[8];
 
-static LONG gl_wtree;
+static OBJECT *gl_wtree;
 
 
 
@@ -263,7 +263,7 @@ static void w_hvassign(WORD isvert, WORD parent, WORD obj, WORD vx, WORD vy,
 /*
  *  Walk the list and draw the parts of the window tree owned by this window
  */
-static void do_walk(WORD wh, LONG tree, WORD obj, WORD depth, GRECT *pc)
+static void do_walk(WORD wh, OBJECT *tree, WORD obj, WORD depth, GRECT *pc)
 {
     ORECT   *po;
     GRECT   t;
@@ -286,7 +286,7 @@ static void do_walk(WORD wh, LONG tree, WORD obj, WORD depth, GRECT *pc)
         {
             /* set clip and draw */
             gsx_sclip(&t);
-            ob_draw(tree, obj, depth);
+            ob_draw((LONG)tree, obj, depth);
         }
     }
 }
@@ -297,7 +297,7 @@ static void do_walk(WORD wh, LONG tree, WORD obj, WORD depth, GRECT *pc)
  */
 void w_drawdesk(GRECT *pc)
 {
-    LONG    tree;
+    OBJECT  *tree;
     WORD    depth;
     WORD    root;
     GRECT   pt;
@@ -836,7 +836,7 @@ static void draw_change(WORD w_handle, GRECT *pt)
                 &pw->g_x, &pw->g_y, &pw->g_w, &pw->g_h);
 
     /* update rectangle lists */
-    everyobj(gl_wtree, ROOT, NIL, (EVERYOBJ_CALLBACK)newrect, 0, 0, MAX_DEPTH);
+    everyobj((LONG)gl_wtree, ROOT, NIL, (EVERYOBJ_CALLBACK)newrect, 0, 0, MAX_DEPTH);
 
     /* remember oldtop & set new one */
     oldtop = gl_wtop;
@@ -1049,9 +1049,9 @@ void wm_start(void)
 
     /* init global variables */
     gl_wtop = NIL;
-    gl_wtree = (LONG)&W_TREE[ROOT];
-    gl_awind = (LONG)W_ACTIVE;
-    gl_newdesk = 0x0L;
+    gl_wtree = &W_TREE[ROOT];
+    gl_awind = W_ACTIVE;
+    gl_newdesk = NULL;
 
     /* init tedinfo parts of title and info lines */
     gl_aname = gl_asamp;
@@ -1101,7 +1101,7 @@ static void wm_opcl(WORD wh, GRECT *pt, WORD isadd)
     }
     else
     {
-        ob_delete(gl_wtree, wh);
+        ob_delete((LONG)gl_wtree, wh);
         D.w_win[wh].w_flags &= ~VF_INTREE;
     }
     draw_change(wh, &t);
@@ -1136,7 +1136,7 @@ void wm_close(WORD w_handle)
  */
 void wm_delete(WORD w_handle)
 {
-    newrect(gl_wtree, w_handle);        /* give back recs. */
+    newrect((LONG)gl_wtree, w_handle);      /* give back recs. */
     w_setsize(WS_CURR, w_handle, &gl_rscreen);
     w_setsize(WS_PREV, w_handle, &gl_rscreen);
     w_setsize(WS_FULL, w_handle, &gl_rfull);
@@ -1233,7 +1233,7 @@ static void wm_mktop(WORD w_handle)
 
     if (w_handle != gl_wtop)
     {
-        ob_order(gl_wtree, w_handle, NIL);
+        ob_order((LONG)gl_wtree, w_handle, NIL);
         w_getsize(WS_PREV, w_handle, &p);
         w_getsize(WS_CURR, w_handle, &t);
         draw_change(w_handle, &t);
@@ -1296,7 +1296,7 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
         break;
     case WF_NEWDESK:
         pwin->w_owner = rlr;
-        gl_newdesk = *(LONG *) pinwds;
+        gl_newdesk = *(OBJECT **) pinwds;
         gl_newroot = pinwds[2];
         break;
     case WF_HSLSIZ:
@@ -1337,7 +1337,7 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
 
 WORD wm_find(WORD x, WORD y)
 {
-    return ob_find(gl_wtree, 0, 2, x, y);
+    return ob_find((LONG)gl_wtree, 0, 2, x, y);
 }
 
 
