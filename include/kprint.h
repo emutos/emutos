@@ -56,14 +56,14 @@ extern void doassert(const char *, long, const char *, const char *);
 #if HAS_KPRINTF
 #define KINFO(args) kprintf args
 #else
-#define KINFO(args)
+#define KINFO(args) NULL_FUNCTION()
 #endif
 
 /* KDEBUG(()) may call KINFO(()) when locally enabled */
 #ifdef ENABLE_KDEBUG
 #define KDEBUG(args) KINFO(args)
 #else
-#define KDEBUG(args)
+#define KDEBUG(args) NULL_FUNCTION()
 #endif
 
 /* functions below implemented in panicasm.S */
