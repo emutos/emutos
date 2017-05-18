@@ -79,7 +79,7 @@ GLOBAL WORD     gl_dabox;
 
 static OBJECT   M_DESK[3+NUM_ACCS];
 
-static LONG     gl_datree;
+static OBJECT   *gl_datree;
 
 
 static WORD menu_sub(OBJECT **ptree, WORD ititle)
@@ -101,7 +101,7 @@ static WORD menu_sub(OBJECT **ptree, WORD ititle)
     /* special case desk acc */
     if (imenu == gl_dabox)
     {
-        *ptree = (OBJECT *)gl_datree;
+        *ptree = gl_datree;
         imenu = 0;
     }
 
@@ -127,7 +127,7 @@ static void menu_fixup(void)
     gl_dabox = obj->ob_head;
 
     pob = &M_DESK[ROOT];
-    gl_datree = (LONG)pob;
+    gl_datree = pob;
 
     /* fix up desk root */
     pob->ob_type = G_BOX;
@@ -334,7 +334,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
             last_item = cur_menu;
             theval = FALSE;
             if (last_item == 0)
-                last_tree = (OBJECT *)gl_datree;
+                last_tree = gl_datree;
             break;
         case OUTITEM:
             last_tree = cur_tree;
@@ -426,7 +426,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
             {
                 cur_menu = menu_down(cur_title);
                 /* special case desk acc */
-                cur_tree = (cur_menu == 0) ? (OBJECT *)gl_datree : gl_mntree;
+                cur_tree = (cur_menu == 0) ? gl_datree : gl_mntree;
             }
             /* hilite new item */
             menu_set(cur_tree, cur_item, last_item, TRUE);
