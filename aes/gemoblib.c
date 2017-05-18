@@ -421,20 +421,20 @@ static void  just_draw(LONG tree, WORD obj, WORD sx, WORD sy)
 /*
  *  Object draw routine that walks tree and draws appropriate objects.
  */
-void ob_draw(LONG tree, WORD obj, WORD depth)
+void ob_draw(OBJECT *tree, WORD obj, WORD depth)
 {
     WORD last, pobj;
     WORD sx, sy;
 
-    pobj = get_par(tree, obj, &last);
+    pobj = get_par((LONG)tree, obj, &last);
 
     if (pobj != NIL)
-        ob_offset(tree, pobj, &sx, &sy);
+        ob_offset((LONG)tree, pobj, &sx, &sy);
     else
         sx = sy = 0;
 
     gsx_moff();
-    everyobj(tree, obj, last, just_draw, sx, sy, depth);
+    everyobj((LONG)tree, obj, last, just_draw, sx, sy, depth);
     gsx_mon();
 }
 

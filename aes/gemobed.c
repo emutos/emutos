@@ -157,7 +157,7 @@ static void curfld(OBJECT *tree, WORD obj, WORD new_pos, WORD dist)
 
     /* redraw the field */
     if (dist)
-        ob_draw((LONG)tree, obj, 0);
+        ob_draw(tree, obj, 0);
     else
         gsx_cline(t.g_x, t.g_y, t.g_x, t.g_y+t.g_h-1);
 

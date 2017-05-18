@@ -286,7 +286,7 @@ static void do_walk(WORD wh, OBJECT *tree, WORD obj, WORD depth, GRECT *pc)
         {
             /* set clip and draw */
             gsx_sclip(&t);
-            ob_draw((LONG)tree, obj, depth);
+            ob_draw(tree, obj, depth);
         }
     }
 }

@@ -215,7 +215,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         break;
     case OBJC_DRAW:
         gsx_sclip((GRECT *)&OB_XCLIP);
-        ob_draw(OB_TREE, OB_DRAWOB, OB_DEPTH);
+        ob_draw((OBJECT *)OB_TREE, OB_DRAWOB, OB_DEPTH);
         break;
     case OBJC_FIND:
         ret = ob_find(OB_TREE, OB_STARTOB, OB_DEPTH, OB_MX, OB_MY);

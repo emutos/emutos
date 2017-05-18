@@ -283,7 +283,7 @@ static WORD menu_down(WORD ititle)
         /* save area underneath the menu */
         menu_sr(TRUE, tree, imenu);
         /* draw all items in menu */
-        ob_draw((LONG)tree, imenu, MAX_DEPTH);
+        ob_draw(tree, imenu, MAX_DEPTH);
     }
 
     return imenu;
@@ -474,7 +474,7 @@ void mn_bar(OBJECT *tree, WORD showit)
         obj->ob_width = gl_width - obj->ob_x;
         ob_actxywh((LONG)gl_mntree, THEACTIVE, &gl_ctwait.m_gr);
         gsx_sclip(&gl_rzero);
-        ob_draw((LONG)gl_mntree, THEBAR, MAX_DEPTH);
+        ob_draw(gl_mntree, THEBAR, MAX_DEPTH);
         gsx_cline(0, gl_hbox - 1, gl_width - 1, gl_hbox - 1);
     }
     else

@@ -234,7 +234,7 @@ static void sh_draw(const BYTE *lcmd, WORD start, WORD depth)
         gsx_sclip(&gl_rscreen);
         ted = (TEDINFO *)tree[DTNAME].ob_spec;
         ted->te_ptext = (BYTE *)lcmd;   /* text string displayed in menu bar */
-        ob_draw((LONG)tree, start, depth);
+        ob_draw(tree, start, depth);
     }
 }
 

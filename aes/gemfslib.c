@@ -379,7 +379,7 @@ static WORD fs_nscroll(OBJECT *tree, WORD *psel, WORD curr, WORD count,
         for (i = 0; i < 2; i++)
         {
             gsx_sclip(&r[i]);
-            ob_draw((LONG)tree, ((i) ? FSVSLID : FILEBOX), MAX_DEPTH);
+            ob_draw(tree, ((i) ? FSVSLID : FILEBOX), MAX_DEPTH);
         }
     }
 
@@ -402,7 +402,7 @@ static WORD fs_newdir(BYTE *fpath, BYTE *pspec, OBJECT *tree, WORD *pcount)
     /* load the filenames matching pspec, sort them, and insert
      * the names in the file selector scroll box
      */
-    ob_draw((LONG)tree, FSDIRECT, MAX_DEPTH);
+    ob_draw(tree, FSDIRECT, MAX_DEPTH);
     if (!fs_active(fpath, pspec, pcount))
         return FALSE;
 
@@ -414,7 +414,7 @@ static WORD fs_newdir(BYTE *fpath, BYTE *pspec, OBJECT *tree, WORD *pcount)
 
     ptmp = gl_fsobj;            /* redraw file selector objects */
     while(*ptmp)
-        ob_draw((LONG)tree, *ptmp++, MAX_DEPTH);
+        ob_draw(tree, *ptmp++, MAX_DEPTH);
 
     return TRUE;
 }
@@ -464,8 +464,8 @@ static void select_drive(OBJECT *treeaddr, WORD drive, WORD redraw)
     if (redraw && (drive != olddrive))
     {
         if (olddrive >= 0)
-            ob_draw((LONG)treeaddr,olddrive+DRIVE_OFFSET,MAX_DEPTH);
-        ob_draw((LONG)treeaddr,drive+DRIVE_OFFSET,MAX_DEPTH);
+            ob_draw(treeaddr,olddrive+DRIVE_OFFSET,MAX_DEPTH);
+        ob_draw(treeaddr,drive+DRIVE_OFFSET,MAX_DEPTH);
     }
 }
 
@@ -599,7 +599,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
     /* set clip and start form fill-in by drawing the form */
     gsx_sclip(&gl_rfs);
     fm_dial(FMD_START, &gl_rcenter, &gl_rfs);
-    ob_draw((LONG)tree, ROOT, 2);
+    ob_draw(tree, ROOT, 2);
 
     /* init for while loop by forcing initial fs_newdir call */
     sel = 0;
@@ -767,7 +767,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
         if (newsel)
         {
             strcpy(ad_fname, selname + 1);
-            ob_draw((LONG)tree, FSSELECT, MAX_DEPTH);
+            ob_draw(tree, FSSELECT, MAX_DEPTH);
             if (!cont)
                 ob_change((LONG)tree, FSOK, SELECTED, TRUE);
             newsel = FALSE;

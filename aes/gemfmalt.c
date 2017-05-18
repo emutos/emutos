@@ -332,7 +332,7 @@ WORD fm_alert(WORD defbut, LONG palstr)
 
     /* draw the alert       */
     gsx_sclip(&d);
-    ob_draw((LONG)tree, ROOT, MAX_DEPTH);
+    ob_draw(tree, ROOT, MAX_DEPTH);
 
     /* turn on the mouse    */
     ct_mouse(TRUE);
