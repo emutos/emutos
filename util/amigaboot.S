@@ -95,7 +95,7 @@ bootmain:
         jsr     _LVOAllocMem(a6)
 
         tst.l   d0                          // Address returned?
-        jbeq    error                       // No
+        jeq     error                       // No
 
         move.l  d0,a4                       // Save buffer address
 
@@ -110,7 +110,7 @@ bootmain:
         jsr     _LVODoIO(a6)
 
         tst.l   d0                          // Error?
-        jbne    error                       // Yes
+        jne     error                       // Yes
 
 // Detect Alt-RAM //////////////////////////////////////////////////////////////
 // This code is inspired from Linux bootstrap

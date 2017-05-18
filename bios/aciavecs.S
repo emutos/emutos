@@ -537,7 +537,7 @@ _call_mousevec:
 _call_ikbdraw:
         moveq   #0,d0
         move.b  5(sp),d0                // raw IKBD byte
-        jbra    ikbdraw
+        jra     ikbdraw
 
 #endif /* CONF_WITH_FLEXCAN || CONF_SERIAL_IKBD */
 
