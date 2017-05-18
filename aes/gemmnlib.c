@@ -69,7 +69,7 @@
                         /* moves        -> 5  , -> 3         , -> 2     */
 
 
-GLOBAL LONG     gl_mntree;
+GLOBAL OBJECT   *gl_mntree;
 GLOBAL AESPD    *gl_mnppd;
 
 static AESPD    *desk_ppd[NUM_ACCS];
@@ -116,7 +116,7 @@ static void menu_fixup(void)
     WORD    themenus, i, cnt, st;
     LONG    tree;
 
-    if ((tree=gl_mntree) == 0L)
+    if ((tree=(LONG)gl_mntree) == 0L)
         return;
 
     w_nilit(3 + NUM_ACCS, M_DESK);
@@ -274,11 +274,11 @@ static WORD menu_down(WORD ititle)
     OBJECT  *tree;
     WORD    imenu;
 
-    tree = (OBJECT *)gl_mntree;
+    tree = gl_mntree;
     imenu = menu_sub(&tree, ititle);
 
     /* draw title selected */
-    if (do_chg((OBJECT *)gl_mntree, ititle, SELECTED, TRUE, TRUE, TRUE))
+    if (do_chg(gl_mntree, ititle, SELECTED, TRUE, TRUE, TRUE))
     {
         /* save area underneath the menu */
         menu_sr(TRUE, tree, imenu);
@@ -314,7 +314,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
     done = FALSE;
     buparm = 0x00010101L;
     cur_title = cur_menu = cur_item = NIL;
-    cur_tree = tree = (OBJECT *)gl_mntree;
+    cur_tree = tree = gl_mntree;
 
     while (!done)
     {
@@ -426,7 +426,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
             {
                 cur_menu = menu_down(cur_title);
                 /* special case desk acc */
-                cur_tree = (OBJECT *)((cur_menu == 0) ? gl_datree : gl_mntree);
+                cur_tree = (cur_menu == 0) ? (OBJECT *)gl_datree : gl_mntree;
             }
             /* hilite new item */
             menu_set(cur_tree, cur_item, last_item, TRUE);
@@ -468,18 +468,18 @@ void mn_bar(OBJECT *tree, WORD showit)
     if (showit)
     {
         gl_mnppd = p;
-        gl_mntree = (LONG)tree;
+        gl_mntree = tree;
         menu_fixup();
         obj = tree + 1;
         obj->ob_width = gl_width - obj->ob_x;
-        ob_actxywh(gl_mntree, THEACTIVE, &gl_ctwait.m_gr);
+        ob_actxywh((LONG)gl_mntree, THEACTIVE, &gl_ctwait.m_gr);
         gsx_sclip(&gl_rzero);
-        ob_draw(gl_mntree, THEBAR, MAX_DEPTH);
+        ob_draw((LONG)gl_mntree, THEBAR, MAX_DEPTH);
         gsx_cline(0, gl_hbox - 1, gl_width - 1, gl_hbox - 1);
     }
     else
     {
-        gl_mntree = 0x0L;
+        gl_mntree = NULL;
         rc_copy(&gl_rmenu, &gl_ctwait.m_gr);
     }
 

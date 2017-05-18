@@ -54,7 +54,7 @@ WORD     ml_ocnt;    /* Needs to be 0 initially! */
 
 
 /* Local variables: */
-static LONG     ml_mnhold;
+static OBJECT   *ml_mnhold;
 static GRECT    ml_ctrl;
 static AESPD    *ml_pmown;
 static BYTE     alert_str[256]; /* must be long enough for longest alert in gem.rsc */
@@ -88,7 +88,7 @@ void fm_own(WORD beg_ownit)
         if (ml_ocnt == 0)
         {
             ml_mnhold = gl_mntree;
-            gl_mntree = 0x0L;
+            gl_mntree = NULL;
             get_ctrl(&ml_ctrl);
             get_mown(&ml_pmown);
             ct_chgown(rlr, &gl_rscreen);

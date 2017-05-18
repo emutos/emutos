@@ -11,7 +11,7 @@
 #define GEMMNLIB_H
 
 
-extern LONG     gl_mntree;
+extern OBJECT   *gl_mntree;
 extern AESPD    *gl_mnppd;
 
 extern WORD     gl_dabox;

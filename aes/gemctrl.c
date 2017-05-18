@@ -236,7 +236,7 @@ static void hctl_rect(void)
     WORD    mesag;
     AESPD   *owner;
 
-    if ( gl_mntree != 0x0L )
+    if ( gl_mntree )
     {
         mesag = 0;
         if ( mn_do(&title, &item) )
@@ -250,7 +250,7 @@ static void hctl_rect(void)
                 {
                     item -= 3;
                     mn_getownid(&owner,&item,item); /* get accessory owner & menu id */
-                    do_chg((OBJECT *)gl_mntree, title, SELECTED, FALSE, TRUE, TRUE);
+                    do_chg(gl_mntree, title, SELECTED, FALSE, TRUE, TRUE);
 
                     if (gl_wtop >= 0)
                         perform_untop(gl_wtop);
@@ -343,7 +343,7 @@ void ctlmgr(void)
         else
         {
             ev_which = MU_KEYBD | MU_BUTTON;
-            if ( gl_mntree != 0x0L )    /* only wait on bar when there  */
+            if ( gl_mntree )            /* only wait on bar when there  */
                 ev_which |= MU_M1;      /* is a menu                    */
             ev_which = ev_multi(ev_which, &gl_ctwait, &gl_ctwait,
                                 0x0L, 0x0001ff01L, NULL, rets);
