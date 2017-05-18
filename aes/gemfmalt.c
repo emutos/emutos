@@ -245,7 +245,7 @@ static void fm_build(OBJECT *tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
     if (haveicon)
     {
         ob_setxywh((LONG)tree, 1, &ic);
-        ob_add((LONG)tree, ROOT, 1);
+        ob_add(tree, ROOT, 1);
     }
 
     /* add msg objects      */
@@ -253,7 +253,7 @@ static void fm_build(OBJECT *tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
     {
         ob_setxywh((LONG)tree, MSGOFF+i, &ms);
         ms.g_y++;
-        ob_add((LONG)tree, ROOT, MSGOFF+i);
+        ob_add(tree, ROOT, MSGOFF+i);
     }
 
     /* add button objects with 1 space between them  */
@@ -263,7 +263,7 @@ static void fm_build(OBJECT *tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
         obj->ob_state = NORMAL;
         ob_setxywh((LONG)tree, BUTOFF+i, &bt);
         bt.g_x += mlenbut + 2;
-        ob_add((LONG)tree, ROOT, BUTOFF+i);
+        ob_add(tree, ROOT, BUTOFF+i);
     }
 
     /* set last object flag */

@@ -1101,7 +1101,7 @@ static void wm_opcl(WORD wh, GRECT *pt, WORD isadd)
     }
     else
     {
-        ob_delete((LONG)gl_wtree, wh);
+        ob_delete(gl_wtree, wh);
         D.w_win[wh].w_flags &= ~VF_INTREE;
     }
     draw_change(wh, &t);
@@ -1233,7 +1233,7 @@ static void wm_mktop(WORD w_handle)
 
     if (w_handle != gl_wtop)
     {
-        ob_order((LONG)gl_wtree, w_handle, NIL);
+        ob_order(gl_wtree, w_handle, NIL);
         w_getsize(WS_PREV, w_handle, &p);
         w_getsize(WS_CURR, w_handle, &t);
         draw_change(w_handle, &t);

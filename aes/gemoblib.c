@@ -446,10 +446,10 @@ void ob_draw(LONG tree, WORD obj, WORD depth)
  *  us.  If we are the first child or we have no parent then
  *  return NIL.
  */
-static WORD get_prev(LONG tree, WORD parent, WORD obj)
+static WORD get_prev(OBJECT *tree, WORD parent, WORD obj)
 {
     WORD nobj, pobj;
-    OBJECT *treeptr = (OBJECT *)tree;
+    OBJECT *treeptr = tree;
 
     pobj = (treeptr+parent)->ob_head;
     if (pobj == obj)
@@ -528,7 +528,7 @@ WORD ob_find(LONG tree, WORD currobj, WORD depth, WORD mx, WORD my)
         {
             if (dosibs && (lastfound != NIL))
             {
-                currobj = get_prev(tree, lastfound, currobj);
+                currobj = get_prev((OBJECT *)tree, lastfound, currobj);
                 if (currobj == NIL)
                     done = TRUE;
             }
@@ -549,10 +549,10 @@ WORD ob_find(LONG tree, WORD currobj, WORD depth, WORD mx, WORD my)
  *  is added at the end of the parent's current sibling list.
  *  It is also initialized.
  */
-void ob_add(LONG tree, WORD parent, WORD child)
+void ob_add(OBJECT *tree, WORD parent, WORD child)
 {
     WORD lastkid;
-    OBJECT *treeptr = (OBJECT *)tree;
+    OBJECT *treeptr = tree;
     OBJECT *parentptr;
 
     if ((parent != NIL) && (child != NIL))
@@ -575,17 +575,17 @@ void ob_add(LONG tree, WORD parent, WORD child)
 /*
  *  Routine to delete an object from the tree.
  */
-WORD ob_delete(LONG tree, WORD obj)
+WORD ob_delete(OBJECT *tree, WORD obj)
 {
     WORD parent;
     WORD prev, nextsib;
-    OBJECT *treeptr = (OBJECT *)tree;
+    OBJECT *treeptr = tree;
     OBJECT *parentptr, *prevptr;
 
     if (obj == ROOT)
         return 0;           /* can't delete the root object! */
 
-    parent = get_par(tree, obj, &nextsib);
+    parent = get_par((LONG)tree, obj, &nextsib);
 
     parentptr = treeptr + parent;
 
@@ -628,17 +628,17 @@ WORD ob_delete(LONG tree, WORD obj)
  *  siblings in the tree.  0 is the head of the list and NIL
  *  is the tail of the list.
  */
-void ob_order(LONG tree, WORD mov_obj, WORD new_pos)
+void ob_order(OBJECT *tree, WORD mov_obj, WORD new_pos)
 {
     WORD parent;
     WORD chg_obj, ii, junk;
-    OBJECT *treeptr = (OBJECT *)tree;
+    OBJECT *treeptr = tree;
     OBJECT *parentptr, *movptr, *chgptr;
 
     if (mov_obj == ROOT)
         return;
 
-    parent = get_par(tree, mov_obj, &junk);
+    parent = get_par((LONG)tree, mov_obj, &junk);
     parentptr = treeptr + parent;
     movptr = treeptr + mov_obj;
 

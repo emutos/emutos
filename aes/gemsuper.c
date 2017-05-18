@@ -208,10 +208,10 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
 
     /* Object Manager */
     case OBJC_ADD:
-        ob_add(OB_TREE, OB_PARENT, OB_CHILD);
+        ob_add((OBJECT *)OB_TREE, OB_PARENT, OB_CHILD);
         break;
     case OBJC_DELETE:
-        ret = ob_delete(OB_TREE, OB_DELOB);
+        ret = ob_delete((OBJECT *)OB_TREE, OB_DELOB);
         break;
     case OBJC_DRAW:
         gsx_sclip((GRECT *)&OB_XCLIP);
@@ -224,7 +224,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         ob_offset(OB_TREE, OB_OBJ, &OB_XOFF, &OB_YOFF);
         break;
     case OBJC_ORDER:
-        ob_order(OB_TREE, OB_OBJ, OB_NEWPOS);
+        ob_order((OBJECT *)OB_TREE, OB_OBJ, OB_NEWPOS);
         break;
     case OBJC_EDIT:
         gsx_sclip(&gl_rfull);
