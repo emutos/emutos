@@ -66,7 +66,7 @@ void fs_start(void)
     OBJECT *tree = rs_trees[FSELECTR];
     WORD diff;
 
-    ob_center((LONG)tree, &gl_rfs);
+    ob_center(tree, &gl_rfs);
 
     /*
      * for cosmetic reasons, we make the vertical slider width equal to

@@ -229,7 +229,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
     case OBJC_EDIT:
         gsx_sclip(&gl_rfull);
         OB_ODX = OB_IDX;
-        ret = ob_edit(OB_TREE, OB_OBJ, OB_CHAR, &OB_ODX, OB_KIND);
+        ret = ob_edit((OBJECT *)OB_TREE, OB_OBJ, OB_CHAR, &OB_ODX, OB_KIND);
         break;
     case OBJC_CHANGE:
         gsx_sclip((GRECT *)&OB_XCLIP);
@@ -250,7 +250,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         ret = fm_error(FM_ERRNUM);
         break;
     case FORM_CENTER:
-        ob_center(FM_FORM, (GRECT *)&FM_XC);
+        ob_center((OBJECT *)FM_FORM, (GRECT *)&FM_XC);
         break;
     case FORM_KEYBD:
         gsx_sclip(&gl_rfull);

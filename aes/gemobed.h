@@ -10,9 +10,9 @@
 #ifndef GEMOBED_H
 #define GEMOBED_H
 
-void ob_center(LONG tree, GRECT *pt);
+void ob_center(OBJECT *tree, GRECT *pt);
 
-WORD ob_edit(LONG tree, WORD obj, WORD in_char, WORD *idx, WORD kind);
+WORD ob_edit(OBJECT *tree, WORD obj, WORD in_char, WORD *idx, WORD kind);
 
 
 #endif

@@ -320,7 +320,7 @@ WORD fm_alert(WORD defbut, LONG palstr)
     obj->ob_width = obj->ob_height = 32;
 
     /* center tree on screen*/
-    ob_center((LONG)tree, &d);
+    ob_center(tree, &d);
 
     /* Fix 2003-09-25: Limit drawing to the screen! */
     rc_intersect(&gl_rscreen, &d);

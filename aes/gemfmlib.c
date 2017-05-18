@@ -307,7 +307,7 @@ WORD fm_do(OBJECT *tree, WORD start_fld)
         {
             edit_obj = next_obj;
             next_obj = 0;
-            ob_edit((LONG)tree, edit_obj, 0, &idx, EDINIT);
+            ob_edit(tree, edit_obj, 0, &idx, EDINIT);
         }
         /* wait for mouse or key */
         which = ev_multi(MU_KEYBD | MU_BUTTON, NULL, NULL,
@@ -318,7 +318,7 @@ WORD fm_do(OBJECT *tree, WORD start_fld)
         {
             cont = fm_keybd(tree, edit_obj, &rets[4], &next_obj);
             if (rets[4])
-              ob_edit((LONG)tree, edit_obj, rets[4], &idx, EDCHAR);
+              ob_edit(tree, edit_obj, rets[4], &idx, EDCHAR);
         }
 
         /* handle button event */
@@ -338,7 +338,7 @@ WORD fm_do(OBJECT *tree, WORD start_fld)
         if (!cont ||
             ((next_obj != 0) && (next_obj != edit_obj)))
         {
-            ob_edit((LONG)tree, edit_obj, 0, &idx, EDEND);
+            ob_edit(tree, edit_obj, 0, &idx, EDEND);
         }
     }
 
