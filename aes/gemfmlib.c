@@ -228,7 +228,7 @@ WORD fm_button(OBJECT *tree, WORD new_obj, WORD clks, WORD *pnew_obj)
         if (flags & RBUTTON)
         {
             /* check siblings to find and turn off the old RBUTTON */
-            parent = get_par((LONG)tree, new_obj, &junk);
+            parent = get_par(tree, new_obj, &junk);
             objptr = tree + parent;
             tobj = objptr->ob_head;
             while (tobj != parent)

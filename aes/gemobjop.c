@@ -24,11 +24,11 @@
 #include "gemobjop.h"
 
 
-BYTE ob_sst(LONG tree, WORD obj, LONG *pspec, WORD *pstate, WORD *ptype,
+BYTE ob_sst(OBJECT *tree, WORD obj, LONG *pspec, WORD *pstate, WORD *ptype,
             WORD *pflags, GRECT *pt, WORD *pth)
 {
     WORD    th;
-    OBJECT  *objptr = ((OBJECT *)tree) + obj;
+    OBJECT  *objptr = tree + obj;
     TEDINFO *ted;
 
     pt->g_w = objptr->ob_width;
@@ -75,7 +75,7 @@ BYTE ob_sst(LONG tree, WORD obj, LONG *pspec, WORD *pstate, WORD *ptype,
 }
 
 
-void everyobj(LONG tree, WORD this, WORD last, EVERYOBJ_CALLBACK routine,
+void everyobj(OBJECT *tree, WORD this, WORD last, EVERYOBJ_CALLBACK routine,
               WORD startx, WORD starty, WORD maxdep)
 {
     WORD    tmp1;
@@ -96,7 +96,7 @@ child:
         return;
 
     /* do this object */
-    obj = ((OBJECT *)tree) + this;
+    obj = tree + this;
     x[depth] = x[depth-1] + obj->ob_x;
     y[depth] = y[depth-1] + obj->ob_y;
     (*routine)(tree, this, x[depth], y[depth]);
@@ -118,7 +118,7 @@ sibling:
      * if this is the root (which has no parent),
      *  or it is the last then stop else...
      */
-    obj = ((OBJECT *)tree) + this;
+    obj = tree + this;
     tmp1 = obj->ob_next;
     if ((tmp1 == last) || (this == ROOT))
         return;
@@ -126,7 +126,7 @@ sibling:
      * if this object has a sibling that is not his parent,
      * then move to him and do him and his kids
      */
-    obj = ((OBJECT *)tree) + tmp1;
+    obj = tree + tmp1;
     if (obj->ob_tail != this)
     {
         this = tmp1;
@@ -146,7 +146,7 @@ sibling:
  * Also have this routine return the immediate next object of
  * this object.
  */
-WORD get_par(LONG tree, WORD obj, WORD *pnobj)
+WORD get_par(OBJECT *tree, WORD obj, WORD *pnobj)
 {
     WORD    pobj = NIL, nobj = NIL;
     OBJECT  *objptr, *pobjptr;
@@ -155,13 +155,13 @@ WORD get_par(LONG tree, WORD obj, WORD *pnobj)
     {
         while(1)
         {
-            objptr = ((OBJECT *)tree) + obj;
+            objptr = tree + obj;
             pobj = objptr->ob_next;
             if (nobj == NIL)        /* first time */
                 nobj = pobj;
             if (pobj < ROOT)
                 break;
-            pobjptr = ((OBJECT *)tree) + pobj;
+            pobjptr = tree + pobj;
             if ( pobjptr->ob_tail == obj )
                 break;
             obj = pobj;

@@ -56,7 +56,7 @@ void ob_offset(OBJECT *tree, WORD obj, WORD *pxoff, WORD *pyoff)
     {
         *pxoff += (treeptr+obj)->ob_x;  /* add in current object's offsets */
         *pyoff += (treeptr+obj)->ob_y;
-        obj = get_par((LONG)tree, obj, &junk);/* then get parent */
+        obj = get_par(tree, obj, &junk);/* then get parent */
     } while (obj != NIL);
 }
 
@@ -205,7 +205,7 @@ static void  just_draw(LONG tree, WORD obj, WORD sx, WORD sy)
     BITBLK bi;
     ICONBLK ib;
 
-    ch = ob_sst(tree, obj, &spec, &state, &obtype, &flags, &t, &th);
+    ch = ob_sst((OBJECT *)tree, obj, &spec, &state, &obtype, &flags, &t, &th);
 
     if ((flags & HIDETREE) || (spec == -1L))
         return;
@@ -426,7 +426,7 @@ void ob_draw(OBJECT *tree, WORD obj, WORD depth)
     WORD last, pobj;
     WORD sx, sy;
 
-    pobj = get_par((LONG)tree, obj, &last);
+    pobj = get_par(tree, obj, &last);
 
     if (pobj != NIL)
         ob_offset(tree, pobj, &sx, &sy);
@@ -434,7 +434,7 @@ void ob_draw(OBJECT *tree, WORD obj, WORD depth)
         sx = sy = 0;
 
     gsx_moff();
-    everyobj((LONG)tree, obj, last, just_draw, sx, sy, depth);
+    everyobj(tree, obj, last, just_draw, sx, sy, depth);
     gsx_mon();
 }
 
@@ -490,7 +490,7 @@ WORD ob_find(OBJECT *tree, WORD currobj, WORD depth, WORD mx, WORD my)
         r_set(&o, 0, 0, 0, 0);
     else
     {
-        parent = get_par((LONG)tree, currobj, &junk);
+        parent = get_par(tree, currobj, &junk);
         ob_actxywh(tree, parent, &o);
     }
 
@@ -585,7 +585,7 @@ WORD ob_delete(OBJECT *tree, WORD obj)
     if (obj == ROOT)
         return 0;           /* can't delete the root object! */
 
-    parent = get_par((LONG)tree, obj, &nextsib);
+    parent = get_par(tree, obj, &nextsib);
 
     parentptr = treeptr + parent;
 
@@ -638,7 +638,7 @@ void ob_order(OBJECT *tree, WORD mov_obj, WORD new_pos)
     if (mov_obj == ROOT)
         return;
 
-    parent = get_par((LONG)tree, mov_obj, &junk);
+    parent = get_par(tree, mov_obj, &junk);
     parentptr = treeptr + parent;
     movptr = treeptr + mov_obj;
 
@@ -686,7 +686,7 @@ void ob_change(OBJECT *tree, WORD obj, UWORD new_state, WORD redraw)
     LONG spec;
     OBJECT *objptr;
 
-    ob_sst((LONG)tree, obj, &spec, (WORD*)&curr_state, &obtype, &flags, &t, &th);
+    ob_sst(tree, obj, &spec, (WORD*)&curr_state, &obtype, &flags, &t, &th);
 
     if ((curr_state == new_state) || (spec == -1L))
         return;

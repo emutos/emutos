@@ -836,7 +836,7 @@ static void draw_change(WORD w_handle, GRECT *pt)
                 &pw->g_x, &pw->g_y, &pw->g_w, &pw->g_h);
 
     /* update rectangle lists */
-    everyobj((LONG)gl_wtree, ROOT, NIL, (EVERYOBJ_CALLBACK)newrect, 0, 0, MAX_DEPTH);
+    everyobj(gl_wtree, ROOT, NIL, (EVERYOBJ_CALLBACK)newrect, 0, 0, MAX_DEPTH);
 
     /* remember oldtop & set new one */
     oldtop = gl_wtop;

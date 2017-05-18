@@ -196,7 +196,7 @@ void newrect(LONG tree, WORD wh)
     gl_mkrect.o_link = NULL;
 
     /* break other window's rects with our current rect */
-    everyobj(tree, ROOT, wh, (EVERYOBJ_CALLBACK)mkrect, 0, 0, MAX_DEPTH);
+    everyobj((OBJECT *)tree, ROOT, wh, (EVERYOBJ_CALLBACK)mkrect, 0, 0, MAX_DEPTH);
 
     /* get an orect in this window's list */
     new = get_orect();
