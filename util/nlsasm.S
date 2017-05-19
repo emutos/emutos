@@ -75,7 +75,7 @@ next:
         move.l  #10,d0
 rh_try:
         move.l  (a0)+,d1
-        beq     rh_not_found
+        jeq     rh_not_found
         cmp.l   d1,a1
         jeq     rh_found
         addq.l  #4,a0
@@ -114,7 +114,7 @@ hash_loop:
 #endif
 hash_next:
         move.b  (a0)+,d1
-        bne     hash_loop
+        jne     hash_loop
         move.w  d0,d1
 #ifdef __mcoldfire__
         move.w  d1,a1

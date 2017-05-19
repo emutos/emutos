@@ -208,7 +208,7 @@ int_acia_loop:
 #endif
         lea     0xfffffa00.w,a1
         btst.b  #4,0x1(a1)                // while still interrupting
-        beq     int_acia_loop
+        jeq     int_acia_loop
         bclr.b  #6,0x11(a1)               // clear in service bit
 
         // restore scratch regs

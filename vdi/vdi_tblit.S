@@ -2296,7 +2296,7 @@ y_no_drw:
 rep_ylop:
         add.w   d2,d6
         jcc     y_no_rep
-        bsr     yloop
+        jbsr    yloop
 y_no_rep:
         jbsr    yloop
         adda.w  d7,a0

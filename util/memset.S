@@ -52,7 +52,7 @@ _memset:
         swap     d7
         move.w   d0,d7
         move.l   14(sp),d0
-        ble      end
+        jle      end
 
 // at this point, a0=block, d7=pattern, d0=size, (sp)=saved d7
 // and we do not read the stack args any more.

@@ -260,19 +260,19 @@ _processor_init:
 #ifdef __mcoldfire__
         // On ColdFire, the caches are enabled by the pre-OS
 #else
-        jsr     _detect_cpu
+        jbsr    _detect_cpu
         swap    d0
         move.w  d0,_mcpu_subtype    // save processor subtype
         clr.w   d0
         swap    d0
         move.l  d0,_mcpu            // & type
 #if CONF_WITH_ADVANCED_CPU
-        beq     m68000
+        jeq     m68000
 
 
         move.w  #1,_longframe.w // this is a 68010 or later
 m68000:
-        jsr     _detect_fpu
+        jbsr    _detect_fpu
         move.l  d0,_fputype
 
         cmpi.b  #30,_mcpu+3
