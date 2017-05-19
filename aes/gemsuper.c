@@ -57,7 +57,7 @@ extern WORD super(WORD cx, AESPB *pcrys_blk);   /* called only from gemdosif.S *
 
 GLOBAL WORD     gl_mnclick;
 
-static LONG     ad_rso;
+static void     *ad_rso;
 
 
 
@@ -397,7 +397,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
 
     /* Resource Manager */
     case RSRC_LOAD:
-        ret = rs_load(pglobal, RS_PFNAME);
+        ret = rs_load(pglobal, (BYTE *)RS_PFNAME);
         break;
     case RSRC_FREE:
         ret = rs_free(pglobal);
@@ -406,7 +406,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         ret = rs_gaddr(pglobal, RS_TYPE, RS_INDEX, &ad_rso);
         break;
     case RSRC_SADDR:
-        ret = rs_saddr(pglobal, RS_TYPE, RS_INDEX, RS_INADDR);
+        ret = rs_saddr(pglobal, RS_TYPE, RS_INDEX, (void *)RS_INADDR);
         break;
     case RSRC_OBFIX:
         rs_obfix((OBJECT *)RS_TREE, RS_OBJ);
@@ -480,7 +480,7 @@ static void xif(AESPB *pcrys_blk)
     if (OUT_LEN)
         memcpy(pcrys_blk->intout, int_out, OUT_LEN*sizeof(WORD));
     if (OP_CODE == RSRC_GADDR)
-        pcrys_blk->addrout[0] = ad_rso;
+        pcrys_blk->addrout[0] = (LONG)ad_rso;
 }
 
 
