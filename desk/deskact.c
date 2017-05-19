@@ -320,9 +320,7 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc,
         if (!(obj->ob_state & SELECTED))
         {
             pa = i_find(dst_wh, *pdobj, NULL, NULL);
-            if (pa && ((pa->a_type == AT_ISFOLD) ||
-                       (pa->a_type == AT_ISDISK) ||
-                       (pa->a_type == AT_ISTRSH)))
+            if (pa)
             {
                 curr_wh = dst_wh;
                 curr_tree = tree;
