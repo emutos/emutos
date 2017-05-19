@@ -507,7 +507,7 @@ static UBYTE *alloc_tpa(ULONG flags,LONG needed,LONG *avail)
  *   move.l  (a6)+,a3        // retadd
  *   movem.l (a6)+,d1-d7/a0-a2
  *   btst    #13,d0
- *   bne     retsys          // a6 is (user-supplied) system stack
+ *   jne     retsys          // a6 is (user-supplied) system stack
  *   move.l  a4,sp
  *   move.l  a6,usp
  * gousr:

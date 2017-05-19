@@ -426,7 +426,7 @@ fl_l2r_lf:
 
         dbra    d5,i1_l2r_lf    // do another INNER LOOP cycle             (10)/14
 
-////////        bra     f2_flush        // fall through to f2_flush                     10
+////////        jra     f2_flush        // fall through to f2_flush                     10
 
 
 

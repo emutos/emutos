@@ -310,7 +310,7 @@ xu_0:
         move.l  sp,d0           // set return value (old SSP)
         move.l  a0,sp           // set new SSP
 
-        bra     fix_rte
+        jra     fix_rte
 
 
 
