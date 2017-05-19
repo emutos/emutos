@@ -181,7 +181,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         strcpy((char *)tree[ITEM_NUM].ob_spec,(char *)MM_PTEXT);
         break;
     case MENU_REGISTER:
-        ret = mn_register(MM_PID, MM_PSTR);
+        ret = mn_register(MM_PID, (BYTE *)MM_PSTR);
         break;
     case MENU_UNREGISTER:
 #if CONF_WITH_PCGEM
