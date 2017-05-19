@@ -64,9 +64,9 @@ void ob_offset(OBJECT *tree, WORD obj, WORD *pxoff, WORD *pyoff)
 /*
  *  ob_relxywh: fill GRECT with x/y/w/h from object (relative x/y)
  */
-void ob_relxywh(LONG tree, WORD obj, GRECT *pt)
+void ob_relxywh(OBJECT *tree, WORD obj, GRECT *pt)
 {
-    OBJECT *objptr = ((OBJECT *)tree) + obj;
+    OBJECT *objptr = tree + obj;
 
     memcpy(pt, &objptr->ob_x, sizeof(GRECT));
 }
@@ -88,9 +88,9 @@ void ob_actxywh(OBJECT *tree, WORD obj, GRECT *pt)
 /*
  * ob_setxywh: copy values from GRECT into object
  */
-void ob_setxywh(LONG tree, WORD obj, GRECT *pt)
+void ob_setxywh(OBJECT *tree, WORD obj, GRECT *pt)
 {
-    OBJECT *objptr = ((OBJECT *)tree) + obj;
+    OBJECT *objptr = tree + obj;
 
     memcpy(&objptr->ob_x, pt, sizeof(GRECT));
 }
@@ -502,7 +502,7 @@ WORD ob_find(OBJECT *tree, WORD currobj, WORD depth, WORD mx, WORD my)
         /*
          * if inside this obj, might be inside a child, so check
          */
-        ob_relxywh((LONG)tree, currobj, &t);
+        ob_relxywh(tree, currobj, &t);
         t.g_x += o.g_x;
         t.g_y += o.g_y;
 

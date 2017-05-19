@@ -12,6 +12,6 @@
 
 void or_start(void);
 ORECT *get_orect(void);
-void newrect(LONG tree, WORD wh);
+void newrect(OBJECT *tree, WORD wh);
 
 #endif

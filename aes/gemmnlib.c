@@ -142,7 +142,7 @@ static void menu_fixup(void)
     pob->ob_tail = cnt;
 
     /* build up desk items  */
-    ob_relxywh((LONG)tree, gl_dabox + 1, &t);
+    ob_relxywh(tree, gl_dabox + 1, &t);
     for (i = 1, st = 0, obj = tree+gl_dabox+1; i <= cnt; i++, obj++)
     {
         pob = &M_DESK[i];

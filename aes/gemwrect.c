@@ -134,7 +134,7 @@ static ORECT *brkrct(ORECT *new, ORECT *r, ORECT *p)
 
 
 /* tree = place holder for everyobj */
-static void mkrect(LONG tree, WORD wh)
+static void mkrect(OBJECT *tree, WORD wh)
 {
     WINDOW  *pwin;
     ORECT   *new;
@@ -163,7 +163,7 @@ static void mkrect(LONG tree, WORD wh)
 }
 
 
-void newrect(LONG tree, WORD wh)
+void newrect(OBJECT *tree, WORD wh)
 {
     WINDOW  *pwin;
     ORECT   *r, *new;
@@ -196,7 +196,7 @@ void newrect(LONG tree, WORD wh)
     gl_mkrect.o_link = NULL;
 
     /* break other window's rects with our current rect */
-    everyobj((OBJECT *)tree, ROOT, wh, (EVERYOBJ_CALLBACK)mkrect, 0, 0, MAX_DEPTH);
+    everyobj(tree, ROOT, wh, (EVERYOBJ_CALLBACK)mkrect, 0, 0, MAX_DEPTH);
 
     /* get an orect in this window's list */
     new = get_orect();

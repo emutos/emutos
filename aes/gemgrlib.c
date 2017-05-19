@@ -355,7 +355,7 @@ WORD gr_slidebox(OBJECT *tree, WORD parent, WORD obj, WORD isvert)
     WORD    divnd, divis;
 
     ob_actxywh(tree, parent, &c);
-    ob_relxywh((LONG)tree, obj, &t);
+    ob_relxywh(tree, obj, &t);
     gr_dragbox(t.g_w, t.g_h, t.g_x + c.g_x, t.g_y + c.g_y,
                 &c, &t.g_x, &t.g_y);
 

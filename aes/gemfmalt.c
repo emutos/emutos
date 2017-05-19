@@ -237,21 +237,21 @@ static void fm_build(OBJECT *tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
     al.g_h = max(bt.g_y+bt.g_h,ic.g_y+ic.g_h) + 1 + INTER_HSPACE;
 
     /* init. root object    */
-    ob_setxywh((LONG)tree, ROOT, &al);
+    ob_setxywh(tree, ROOT, &al);
     for (i = 0, obj = tree; i < NUM_ALOBJS; i++, obj++)
           obj->ob_next = obj->ob_head = obj->ob_tail = -1;
 
     /* add icon object      */
     if (haveicon)
     {
-        ob_setxywh((LONG)tree, 1, &ic);
+        ob_setxywh(tree, 1, &ic);
         ob_add(tree, ROOT, 1);
     }
 
     /* add msg objects      */
     for (i = 0; i < nummsg; i++)
     {
-        ob_setxywh((LONG)tree, MSGOFF+i, &ms);
+        ob_setxywh(tree, MSGOFF+i, &ms);
         ms.g_y++;
         ob_add(tree, ROOT, MSGOFF+i);
     }
@@ -261,7 +261,7 @@ static void fm_build(OBJECT *tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
     {
         obj->ob_flags = SELECTABLE | EXIT;
         obj->ob_state = NORMAL;
-        ob_setxywh((LONG)tree, BUTOFF+i, &bt);
+        ob_setxywh(tree, BUTOFF+i, &bt);
         bt.g_x += mlenbut + 2;
         ob_add(tree, ROOT, BUTOFF+i);
     }

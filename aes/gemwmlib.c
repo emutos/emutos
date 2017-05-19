@@ -1136,7 +1136,7 @@ void wm_close(WORD w_handle)
  */
 void wm_delete(WORD w_handle)
 {
-    newrect((LONG)gl_wtree, w_handle);      /* give back recs. */
+    newrect(gl_wtree, w_handle);      /* give back recs. */
     w_setsize(WS_CURR, w_handle, &gl_rscreen);
     w_setsize(WS_PREV, w_handle, &gl_rscreen);
     w_setsize(WS_FULL, w_handle, &gl_rfull);
