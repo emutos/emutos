@@ -509,6 +509,7 @@ static WORD fun_file2desk(PNODE *pn_src, WORD icontype_src, ANODE *an_dest, WORD
         {
 #if CONF_WITH_DESKTOP_SHORTCUTS
         FNODE *fn;
+        BYTE tail[MAXPATHLEN];
 
         case AT_ISFILE:     /* dropping something onto a file */
             if (an_dest->a_aicon < 0)       /* is target a program? */
@@ -523,16 +524,16 @@ static WORD fun_file2desk(PNODE *pn_src, WORD icontype_src, ANODE *an_dest, WORD
             if (!fn)                        /* "can't happen" */
                 break;
 
-            /* build the full pathname to pass to the target program */
-            strcpy(pathname,pn_src->p_spec);
-            add_fname(pathname,fn->f_name);
+            /* build pathname for do_aopen() */
+            strcpy(pathname,an_dest->a_pdata);
+            strcpy(filename_start(pathname),"*.*");
 
-            /* set globals used by pro_run() */
-            strcpy(G.g_cmd,an_dest->a_pdata);
-            strcpy(G.g_tail+1,pathname);
+            /* build the full tail to pass to the target program */
+            strcpy(tail,pn_src->p_spec);
+            add_fname(tail,fn->f_name);
 
-            /* set global so desktop will exit if pro_run() succeeds */
-            exit_desktop = pro_run(an_dest->a_flags&AF_ISCRYS, 1, -1, -1);
+            /* set global so desktop will exit if do_aopen() succeeds */
+            exit_desktop = do_aopen(an_dest, 1, dobj, pathname, an_dest->a_pappl, tail);
             break;
         case AT_ISFOLD:     /* dropping file on folder - copy or move */
             strcpy(pathname,an_dest->a_pdata);

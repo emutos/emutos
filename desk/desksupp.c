@@ -636,9 +636,10 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
  *  Open an application
  *
  *  This may be called via the Open item under the File menu, or by
- *  double-clicking an icon, or via function key
+ *  double-clicking an icon, or by pressing a function key, or by
+ *  dropping a file on to a desktop shortcut for a program
  */
-WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname)
+WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname, BYTE *tail)
 {
     WORD ret, done;
     WORD isgraf, isparm, installed_datafile;
@@ -725,10 +726,21 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname)
     {
         if (isapp)
         {
+#if CONF_WITH_DESKTOP_SHORTCUTS
+            if (tail)
+            {
+                /*
+                 * the user has dropped a file on to an application,
+                 * so we already know the tail to pass
+                 */
+                strcpy(ptail, tail);
+            } else
+#endif
             if (isparm)
             {
                 /*
-                 * the user has selected a .TTP or .GTP application
+                 * the user has selected a .TTP or .GTP application,
+                 * so we need to prompt for the parameters to pass
                  */
                 ret = opn_appl(pname, ptail);
             }
@@ -974,7 +986,7 @@ WORD do_open(WORD curr)
         }
 
         if (pa->a_type == AT_ISFILE)
-            return do_aopen(pa, isapp, curr, pathptr, fileptr);
+            return do_aopen(pa, isapp, curr, pathptr, fileptr, NULL);
 
         /* handle opening a folder */
         if (add_one_level(pathptr, fileptr))

@@ -715,7 +715,7 @@ static WORD process_funkey(WORD funkey)
         pfname = filename_start(pa->a_pappl);
         /* copy pathname including trailing backslash */
         strlcpy(pathname,pa->a_pappl,pfname-pa->a_pappl+1);
-        return do_aopen(pa,1,-1,pathname,pfname);
+        return do_aopen(pa,1,-1,pathname,pfname,NULL);
     }
 
     return -1;
