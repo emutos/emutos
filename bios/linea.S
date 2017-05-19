@@ -52,11 +52,11 @@
 
 // ==== Line-A handler ===============================
 _int_linea:
-       /* save regs as they are needed if this is sprite un/draw */
-       move.w d0,_sprite_x
-       move.w d1,_sprite_y
-       move.l a0,_sprite_def
-       move.l a2,_sprite_sav
+        /* save regs as they are needed if this is sprite un/draw */
+        move.w d0,_sprite_x
+        move.w d1,_sprite_y
+        move.l a0,_sprite_def
+        move.l a2,_sprite_sav
 #ifdef __mcoldfire__
         move.l  4(sp),a0        /* Get the opcode address */
 #else

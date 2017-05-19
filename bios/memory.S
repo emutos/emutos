@@ -464,7 +464,7 @@ check_test_pattern_loop:
         cmpa.l  a0,a1                   // at the end of the pattern ?
         jne     check_test_pattern_loop
 end_check_test_pattern:
-        jmp (a5)                        // return
+        jmp     (a5)                    // return
 
 detect_extra_stram:
         /* Now detect if there is some extra ST-RAM installed */
