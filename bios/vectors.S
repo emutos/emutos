@@ -870,7 +870,7 @@ movep_write_err:
         jra     movep_err_exit
 
 /*
- * handle memory-to-register: read memory, accumulate in Dx */
+ * handle memory-to-register: read memory, accumulate in Dx
  */
 mem2reg:
         btst    #6,d1                       // word or long?
