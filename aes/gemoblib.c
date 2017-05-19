@@ -506,7 +506,7 @@ WORD ob_find(OBJECT *tree, WORD currobj, WORD depth, WORD mx, WORD my)
         t.g_x += o.g_x;
         t.g_y += o.g_y;
 
-        objptr = ((OBJECT *)tree) + currobj;
+        objptr = tree + currobj;
         flags = objptr->ob_flags;
         if ( (inside(mx, my, &t)) && (!(flags & HIDETREE)) )
         {
@@ -528,7 +528,7 @@ WORD ob_find(OBJECT *tree, WORD currobj, WORD depth, WORD mx, WORD my)
         {
             if (dosibs && (lastfound != NIL))
             {
-                currobj = get_prev((OBJECT *)tree, lastfound, currobj);
+                currobj = get_prev(tree, lastfound, currobj);
                 if (currobj == NIL)
                     done = TRUE;
             }
