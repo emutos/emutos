@@ -217,6 +217,15 @@ folder that the icon points to.  The shortcut icon may be deleted by the
 "Remove icon" menu item.  To preserve shortcut information across boots,
 you must save the desktop.
 
+You may drag a file or folder to a desktop shortcut, with the following
+results:
+. dragging documents to a desktop shortcut for a folder will copy (or
+  move, if the control key is held down) them to the folder
+. dragging documents to a desktop shortcut for a program will launch the
+  program, passing the full pathname of the first document
+. dragging documents to a desktop shortcut for a non-executable file will
+  do nothing
+
 If you open a desktop shortcut that points to a file or folder that no
 longer exists, an alert will be issued, giving you the choice of removing
 the shortcut, locating the desired file or folder, or cancelling the
