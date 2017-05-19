@@ -159,7 +159,7 @@ void chkkbd(void)
         if (achar && (gl_mowner->p_cda->c_q.c_cnt >= KBD_SIZE))
         {
             achar = 0x0;                        /* buffer overrun       */
-            sound(TRUE, 880, 2);
+            sound(880, 2);
         }
         if (achar || (kstat != kstate))
         {

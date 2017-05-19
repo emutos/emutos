@@ -25,29 +25,23 @@
 #include "string.h"
 #include "xbiosbind.h"
 
+static WORD snd_disabled = FALSE;
 
 /*
  *  sound() - an internal routine used by the AES and desktop
  *
- *  This routine has two functions:
- *  1. play a sound (iff isfreq==TRUE)
+ *  Plays a short sound.
  *      'freq' is the frequency in Hz; must be > 0
  *      'dura' is the duration in ~250msec units: must be < 32
- *  2. enable/disable sound playing by this function (iff isfreq==FALSE)
- *      'freq' is the control:
- *          -1 => do nothing
- *           0 => enable
- *           otherwise disable
- *      'dura' is not used
- *
- *  in both cases, the function returns the current disabled state, as
- *  set previously (0 => enabled, otherwise disabled)
+
+ *  The function returns the current disabled state, as
+ *  set previously using disable_sound() (0 => enabled, otherwise disabled)
  */
-WORD sound(WORD isfreq, WORD freq, WORD dura)
+WORD sound(WORD freq, WORD dura)
 {
     /* The sound buffer that will be passed to Dosound later.
-    * only the frequency and envelope hi parts need to be modified dynamically.
-    */
+     * only the frequency and envelope hi parts need to be modified dynamically.
+     */
     static UBYTE snddat[] = {
         0,      0,          /* channel A pitch lo */
         1,      0,          /* channel A pitch hi */
@@ -58,26 +52,35 @@ WORD sound(WORD isfreq, WORD freq, WORD dura)
         13,     9,          /* envelope type: \____ */
         0xFF,   0,          /* end of buffer */
     };
-    static WORD disabled;
 
-    if (isfreq)     /* Play a sound? */
-    {
-        if (disabled)
-            return 1;
+    if (snd_disabled)
+        return 1;
 
-        snddat[1]  = (125000L / freq);       /* channel A pitch lo */
-        snddat[3]  = (125000L / freq) >> 8;  /* channel A pitch hi */
-        snddat[11] = dura * 8;               /* envelope hi */
+    snddat[1]  = (125000L / freq);       /* channel A pitch lo */
+    snddat[3]  = (125000L / freq) >> 8;  /* channel A pitch hi */
+    snddat[11] = dura * 8;               /* envelope hi */
 
-        Dosound((LONG)snddat);
-    }
-    else            /* else enable/disable sound */
-    {
-        if (freq != -1)
-            disabled = freq;
-    }
+    Dosound((LONG)snddat);
 
-    return disabled;
+    return snd_disabled;
+}
+
+/*
+ *  disable_sound - an internal routine used by the AES and desktop
+ *  enable/disable sound playing by the sound() function above.
+ *      control:
+ *          -1 : inquire current state
+ *           0 : enable
+ *           other values : disable
+ *
+ *  The function returns the current disabled state.
+ */
+WORD disable_sound(WORD control)
+{
+    if (control != -1)
+        snd_disabled = control;
+
+    return control;
 }
 
 

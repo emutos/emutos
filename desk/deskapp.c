@@ -792,7 +792,7 @@ void app_start(void)
                 G.g_cnxsave.cs_timefmt = TIMEFORM_IDT;
             else
                 G.g_cnxsave.cs_timefmt = (envr & INF_E2_24HCLOCK) ? TIMEFORM_24H : TIMEFORM_12H;
-            sound(FALSE, !(envr & INF_E2_SOUND), 0);
+            disable_sound(!(envr & INF_E2_SOUND));
 
             pcurr = scan_2(pcurr, &dummy);  /* skip video stuff */
             pcurr = scan_2(pcurr, &dummy);
@@ -976,7 +976,7 @@ void app_save(WORD todisk)
         env2 |= INF_E2_24HCLOCK;
         break;
     }
-    env2 |= sound(FALSE, 0xFFFF, 0)  ? 0x00 : INF_E2_SOUND;
+    env2 |= disable_sound(0xFFFF) ? 0x00 : INF_E2_SOUND;
     mode = desk_get_videomode();
     env5 = (G.g_cnxsave.cs_sort == CS_NOSORT) ? INF_E5_NOSORT : 0;
     pcurr += sprintf(pcurr,"#E %02X %02X %02X %02X %02X\r\n",

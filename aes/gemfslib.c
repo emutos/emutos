@@ -213,7 +213,7 @@ static WORD fs_active(BYTE *ppath, BYTE *pspec, WORD *pcount)
 
         if (thefile >= nm_files)    /* too many files */
         {
-            sound(TRUE, 660, 4);
+            sound(660, 4);
             break;
         }
     }
