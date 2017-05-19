@@ -31,7 +31,6 @@ void gsx_wsclear(void);
 void ratinit(void);
 void ratexit(void);
 void gsx_init(void);
-void gsx_exec(LONG pcspec, WORD segenv, LONG pcmdln, LONG pfcb1, LONG pfcb2);
 void gsx_graphic(WORD tographic);
 void bb_save(GRECT *ps);
 void bb_restore(GRECT *pr);
