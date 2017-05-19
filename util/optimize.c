@@ -37,7 +37,7 @@ static WORD snd_disabled = FALSE;
  *  The function returns the current disabled state, as
  *  set previously using disable_sound() (0 => enabled, otherwise disabled)
  */
-WORD sound(WORD freq, WORD dura)
+void sound(WORD freq, WORD dura)
 {
     /* The sound buffer that will be passed to Dosound later.
      * only the frequency and envelope hi parts need to be modified dynamically.
@@ -54,15 +54,13 @@ WORD sound(WORD freq, WORD dura)
     };
 
     if (snd_disabled)
-        return 1;
+        return;
 
     snddat[1]  = (125000L / freq);       /* channel A pitch lo */
     snddat[3]  = (125000L / freq) >> 8;  /* channel A pitch hi */
     snddat[11] = dura * 8;               /* envelope hi */
 
     Dosound((LONG)snddat);
-
-    return snd_disabled;
 }
 
 /*

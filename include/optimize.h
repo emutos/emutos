@@ -10,7 +10,7 @@
 #ifndef OPTIMIZE_H
 #define OPTIMIZE_H
 
-WORD sound(WORD freq, WORD dura);
+void sound(WORD freq, WORD dura);
 WORD disable_sound(WORD control);
 void fmt_str(BYTE *instr, BYTE *outstr);
 void unfmt_str(BYTE *instr, BYTE *outstr);
