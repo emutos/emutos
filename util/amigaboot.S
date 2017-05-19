@@ -95,7 +95,7 @@ bootmain:
         jsr     _LVOAllocMem(a6)
 
         tst.l   d0                          // Address returned?
-        jbeq    error                       // No
+        jeq     error                       // No
 
         move.l  d0,a4                       // Save buffer address
 
@@ -110,7 +110,7 @@ bootmain:
         jsr     _LVODoIO(a6)
 
         tst.l   d0                          // Error?
-        jbne    error                       // Yes
+        jne     error                       // Yes
 
 // Detect Alt-RAM //////////////////////////////////////////////////////////////
 // This code is inspired from Linux bootstrap
@@ -124,7 +124,7 @@ bootmain:
 
 next_memheader:
         move.l  (a0),d0                     // Next MemHeader?
-        beq.s   endaltram                   // No
+        jeq     endaltram                   // No
 
         move.l  d0,a0                       // MemHeader
 
@@ -132,13 +132,13 @@ next_memheader:
         andi.l  #-64*1024,d0                // Round to lower 64 KB boundary
 
         // If this region starts at address 0, it is the ST-RAM. Skip it.
-        beq.s   next_memheader
+        jeq     next_memheader
 
         move.w  14(a0),d1                   // mh_Attributes
         andi.w  #MEMF_CHIP+MEMF_FAST,d1     // Only allow this memory type
 
         // Skip unknown memory type (such as bogus MemHeader at end of list)
-        beq.s   next_memheader
+        jeq     next_memheader
 
         // Store this region in the Alt-RAM region list
         move.l  d0,(a1)+                    // Store region start address
@@ -148,7 +148,7 @@ next_memheader:
         sub.l   d0,d1                       // Subtract start to get size
         move.l  d1,(a1)+                    // Store region size
 
-        bra.s   next_memheader
+        jra     next_memheader
 
 endaltram:
         // Terminate the Alt-RAM region list with NULL pointer

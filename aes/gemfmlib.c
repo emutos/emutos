@@ -54,7 +54,7 @@ WORD     ml_ocnt;    /* Needs to be 0 initially! */
 
 
 /* Local variables: */
-static LONG     ml_mnhold;
+static OBJECT   *ml_mnhold;
 static GRECT    ml_ctrl;
 static AESPD    *ml_pmown;
 static BYTE     alert_str[256]; /* must be long enough for longest alert in gem.rsc */
@@ -88,7 +88,7 @@ void fm_own(WORD beg_ownit)
         if (ml_ocnt == 0)
         {
             ml_mnhold = gl_mntree;
-            gl_mntree = 0x0L;
+            gl_mntree = NULL;
             get_ctrl(&ml_ctrl);
             get_mown(&ml_pmown);
             ct_chgown(rlr, &gl_rscreen);
@@ -135,7 +135,7 @@ static WORD find_obj(OBJECT *tree, WORD start_obj, WORD which)
 
     while (obj >= 0)
     {
-        state = ob_fs((LONG)tree, obj, &theflag);
+        state = ob_fs(tree, obj, &theflag);
         if (!(theflag & HIDETREE) && !(state & DISABLED))
         {
             if (theflag & flag)
@@ -190,7 +190,7 @@ WORD fm_keybd(OBJECT *tree, WORD obj, WORD *pchar, WORD *pnew_obj)
         if ((direction == DEFLT) && (*pnew_obj != 0))
         {
             OBJECT *objptr = tree + *pnew_obj;
-            ob_change((LONG)tree, *pnew_obj, objptr->ob_state | SELECTED, TRUE);
+            ob_change(tree, *pnew_obj, objptr->ob_state | SELECTED, TRUE);
             return FALSE;
         }
     }
@@ -211,7 +211,7 @@ WORD fm_button(OBJECT *tree, WORD new_obj, WORD clks, WORD *pnew_obj)
     cont = TRUE;
     orword = 0;
 
-    state = ob_fs((LONG)tree, new_obj, &flags);
+    state = ob_fs(tree, new_obj, &flags);
 
     /* handle touchexit case: if double click, then set high bit */
     if (flags & TOUCHEXIT)
@@ -228,12 +228,12 @@ WORD fm_button(OBJECT *tree, WORD new_obj, WORD clks, WORD *pnew_obj)
         if (flags & RBUTTON)
         {
             /* check siblings to find and turn off the old RBUTTON */
-            parent = get_par((LONG)tree, new_obj, &junk);
+            parent = get_par(tree, new_obj, &junk);
             objptr = tree + parent;
             tobj = objptr->ob_head;
             while (tobj != parent)
             {
-                tstate = ob_fs((LONG)tree, tobj, &tflags);
+                tstate = ob_fs(tree, tobj, &tflags);
                 if ((tflags & RBUTTON) &&
                     ((tstate & SELECTED) || (tobj == new_obj)))
                 {
@@ -241,7 +241,7 @@ WORD fm_button(OBJECT *tree, WORD new_obj, WORD clks, WORD *pnew_obj)
                         state = tstate |= SELECTED;
                     else
                         tstate &= ~SELECTED;
-                    ob_change((LONG)tree, tobj, tstate, TRUE);
+                    ob_change(tree, tobj, tstate, TRUE);
                 }
                 objptr = tree + tobj;
                 tobj = objptr->ob_next;
@@ -307,7 +307,7 @@ WORD fm_do(OBJECT *tree, WORD start_fld)
         {
             edit_obj = next_obj;
             next_obj = 0;
-            ob_edit((LONG)tree, edit_obj, 0, &idx, EDINIT);
+            ob_edit(tree, edit_obj, 0, &idx, EDINIT);
         }
         /* wait for mouse or key */
         which = ev_multi(MU_KEYBD | MU_BUTTON, NULL, NULL,
@@ -318,13 +318,13 @@ WORD fm_do(OBJECT *tree, WORD start_fld)
         {
             cont = fm_keybd(tree, edit_obj, &rets[4], &next_obj);
             if (rets[4])
-              ob_edit((LONG)tree, edit_obj, rets[4], &idx, EDCHAR);
+              ob_edit(tree, edit_obj, rets[4], &idx, EDCHAR);
         }
 
         /* handle button event */
         if (which & MU_BUTTON)
         {
-            next_obj = ob_find((LONG)tree, ROOT, MAX_DEPTH, rets[0], rets[1]);
+            next_obj = ob_find(tree, ROOT, MAX_DEPTH, rets[0], rets[1]);
             if (next_obj == NIL)
             {
                 sound(TRUE, 440, 2);
@@ -338,7 +338,7 @@ WORD fm_do(OBJECT *tree, WORD start_fld)
         if (!cont ||
             ((next_obj != 0) && (next_obj != edit_obj)))
         {
-            ob_edit((LONG)tree, edit_obj, 0, &idx, EDEND);
+            ob_edit(tree, edit_obj, 0, &idx, EDEND);
         }
     }
 
@@ -394,7 +394,7 @@ WORD fm_show(WORD string, WORD *pwd, WORD level)
         ad_alert = alert_str;
     }
 
-    return fm_alert(level, (LONG)ad_alert);
+    return fm_alert(level, ad_alert);
 }
 
 

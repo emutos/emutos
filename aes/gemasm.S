@@ -122,7 +122,7 @@ _gotopgm:
 
 _dsptch:
         tst.b   _indisp
-        beq     savestate
+        jeq     savestate
         rts
 
 savestate:

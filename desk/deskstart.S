@@ -46,7 +46,7 @@ _deskstart:
 fill:
         move.l  d0,(a0)+
         cmpa.l  a0,a1
-        bge.b   fill
+        jge     fill
 #endif
 
         jsr     _deskmain               // Run the desktop

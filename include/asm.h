@@ -271,7 +271,7 @@ __extension__                                      \
     __asm__ volatile                        \
     ("0:\n\t"                               \
      "subq.l #1,%0\n\t"                     \
-     "bpl.b  0b"                            \
+     "jpl    0b"                            \
     :                   /* outputs */       \
     : "d"(_count)       /* inputs  */       \
     : "cc", "memory"    /* clobbered */     \

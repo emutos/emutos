@@ -128,7 +128,7 @@ aes_restart:
         // Check for resolution change - if so start over again
         move.w  _gl_changerez,d0
         tst.w   d0
-        bne     aes_restart
+        jne     aes_restart
 
         // Super() to go back to user mode
         move.l  old_gem_ssp,-(sp)

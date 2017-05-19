@@ -40,10 +40,10 @@
 static TEDINFO  edblk;
 
 
-static void ob_getsp(LONG tree, WORD obj, TEDINFO *pted)
+static void ob_getsp(OBJECT *tree, WORD obj, TEDINFO *pted)
 {
     LONG    spec;
-    OBJECT  *objptr = ((OBJECT *)tree) + obj;
+    OBJECT  *objptr = tree + obj;
 
     spec = objptr->ob_spec;
     if (objptr->ob_flags & INDIRECT)
@@ -52,10 +52,10 @@ static void ob_getsp(LONG tree, WORD obj, TEDINFO *pted)
 }
 
 
-void ob_center(LONG tree, GRECT *pt)
+void ob_center(OBJECT *tree, GRECT *pt)
 {
     WORD    xd, yd, wd, hd;
-    OBJECT  *root = (OBJECT *)tree;
+    OBJECT  *root = tree;
 
     wd = root->ob_width;
     hd = root->ob_height;
@@ -119,7 +119,7 @@ static WORD find_pos(BYTE *str, WORD pos)
 }
 
 
-static void pxl_rect(LONG tree, WORD obj, WORD ch_pos, GRECT *pt)
+static void pxl_rect(OBJECT *tree, WORD obj, WORD ch_pos, GRECT *pt)
 {
     GRECT   o;
 
@@ -137,7 +137,7 @@ static void pxl_rect(LONG tree, WORD obj, WORD ch_pos, GRECT *pt)
 /*
  *  Routine to redraw the cursor or the field being edited
  */
-static void curfld(LONG tree, WORD obj, WORD new_pos, WORD dist)
+static void curfld(OBJECT *tree, WORD obj, WORD new_pos, WORD dist)
 {
     GRECT   oc, t;
 
@@ -278,7 +278,7 @@ static WORD ob_delit(WORD idx)
 }
 
 
-WORD ob_edit(LONG tree, WORD obj, WORD in_char, WORD *idx, WORD kind)
+WORD ob_edit(OBJECT *tree, WORD obj, WORD in_char, WORD *idx, WORD kind)
 {
     WORD    pos, len;
     WORD    ii, no_redraw, start, finish, nstart, nfinish;

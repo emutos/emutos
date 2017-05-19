@@ -1200,18 +1200,25 @@ vdi/%_preprocessed.s: vdi/%.S
 NODEP += $(GENERATED_COLDFIRE_SOURCES)
 vdi/%_cf.S: vdi/%_preprocessed.s
 	cd $(<D) && $(PORTASM) $(PORTASMFLAGS) -o $(@F) $(<F)
+	dos2unix $@
 	sed -i $@ \
 		-e "s:\.section\t.bss,.*:.bss:g" \
 		-e "s:\( \|\t\)bsr\(  \|\..\):\1jbsr :g" \
-		-e "s:\( \|\t\)bra\(  \|\..\):\1jbra :g" \
-		-e "s:\( \|\t\)beq\(  \|\..\):\1jbeq :g" \
-		-e "s:\( \|\t\)bne\(  \|\..\):\1jbne :g" \
-		-e "s:\( \|\t\)bgt\(  \|\..\):\1jbgt :g" \
-		-e "s:\( \|\t\)bge\(  \|\..\):\1jbge :g" \
-		-e "s:\( \|\t\)blt\(  \|\..\):\1jblt :g" \
-		-e "s:\( \|\t\)ble\(  \|\..\):\1jble :g" \
-		-e "s:\( \|\t\)bcc\(  \|\..\):\1jbcc :g" \
-		-e "s:\( \|\t\)bcs\(  \|\..\):\1jbcs :g" \
+		-e "s:\( \|\t\)bra\(  \|\..\):\1jra  :g" \
+		-e "s:\( \|\t\)beq\(  \|\..\):\1jeq  :g" \
+		-e "s:\( \|\t\)bne\(  \|\..\):\1jne  :g" \
+		-e "s:\( \|\t\)bgt\(  \|\..\):\1jgt  :g" \
+		-e "s:\( \|\t\)bge\(  \|\..\):\1jge  :g" \
+		-e "s:\( \|\t\)blt\(  \|\..\):\1jlt  :g" \
+		-e "s:\( \|\t\)ble\(  \|\..\):\1jle  :g" \
+		-e "s:\( \|\t\)bcc\(  \|\..\):\1jcc  :g" \
+		-e "s:\( \|\t\)bcs\(  \|\..\):\1jcs  :g" \
+		-e "s:\( \|\t\)bpl\(  \|\..\):\1jpl  :g" \
+		-e "s:\( \|\t\)bmi\(  \|\..\):\1jmi  :g" \
+		-e "s:\( \|\t\)bhi\(  \|\..\):\1jhi  :g" \
+		-e "s:\( \|\t\)blo\(  \|\..\):\1jlo  :g" \
+		-e "s:\( \|\t\)bhs\(  \|\..\):\1jhs  :g" \
+		-e "s:\( \|\t\)bls\(  \|\..\):\1jls  :g" \
 		-e "s:\( \|,\)0(%:\1(%:g"
 
 #

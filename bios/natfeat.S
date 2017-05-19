@@ -49,7 +49,7 @@ _detect_native_features:
         .dc.w   0x7300              // Jump to NATFEAT_ID
 #endif
         tst.l   d0
-        beq.s   fail_natfeat
+        jeq     fail_natfeat
         moveq   #1,d0               // NatFeats detected
 
 fail_natfeat:

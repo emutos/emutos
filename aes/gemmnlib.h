@@ -11,10 +11,8 @@
 #define GEMMNLIB_H
 
 
-extern LONG     gl_mntree;
+extern OBJECT   *gl_mntree;
 extern AESPD    *gl_mnppd;
-
-extern LONG     menu_tree[];
 
 extern WORD     gl_dabox;
 
@@ -23,10 +21,10 @@ UWORD do_chg(OBJECT *tree, WORD iitem, UWORD chgvalue,
              WORD dochg, WORD dodraw, WORD chkdisabled);
 WORD mn_do(WORD *ptitle, WORD *pitem);
 
-void mn_bar(OBJECT *tree, WORD showit, WORD pid);
+void mn_bar(OBJECT *tree, WORD showit);
 void mn_clsda(void);
 void mn_init(void);
-WORD mn_register(WORD pid, LONG pstr);
+WORD mn_register(WORD pid, BYTE *pstr);
 void mn_unregister(WORD da_id);
 void mn_getownid(AESPD **owner,WORD *id,WORD item);
 

@@ -32,7 +32,7 @@ _bzero:
         move.l   8(sp),d0
         move.l   d7,-(sp)
         moveq    #0,d7
-        bra.s    memset
+        jra      memset
 //
 // void *memset(void *address, short c, unsigned long size)
 // fills with byte c, returns the given address.
@@ -59,13 +59,13 @@ _memset:
 memset:
         move.l   a0,d1
         btst     #0,d1
-        beq.s    even
+        jeq      even
         move.b   d7,(a0)+
         subq.l   #1,d0
 even:
         moveq.l  #63,d1                //
         cmp.l    d1,d0                 //
-        ble      zero4                 // count < 64
+        jle      zero4                 // count < 64
 #ifdef __mcoldfire__
         lea      -36(a7),a7
         movem.l  d2-d6/a2-a5,(a7)      // save regs for movem use
@@ -84,7 +84,7 @@ even:
         move.l   d7,a5
         move.b   d0,d1                 // count mod 256
         lsr.l    #8,d0                 // count div 256
-        bra.s    end256
+        jra      end256
 loop256:
         lea      256(a0),a0
 #ifdef __mcoldfire__
@@ -105,9 +105,9 @@ loop256:
 #endif
 end256:
         subq.l   #1,d0
-        bpl.s    loop256               // decrement count, test and loop
+        jpl      loop256               // decrement count, test and loop
         move.l   d1,d0                 // remainder becomes new count
-        beq.s    done                  // more? no.
+        jeq      done                  // more? no.
 #ifdef __mcoldfire__
         and.l    #0x3F,d1              // + count mod 64
         lsr.l    #6,d0                 // + count div 64
@@ -115,7 +115,7 @@ end256:
         and.b    #0x3F,d1              // + count mod 64
         lsr.b    #6,d0                 // + count div 64
 #endif
-        bra.s    end64
+        jra      end64
 done:
 #ifdef __mcoldfire__
         movem.l  (a7),d2-d6/a2-a5      // restore regs for movem use
@@ -123,7 +123,7 @@ done:
 #else
         movem.l  (a7)+,d2-d6/a2-a5     // restore regs for movem use
 #endif
-        bra.s    end
+        jra      end
 loop64:
         movem.l  d2-d7/a4-a5,(a0)      // fill 8x4 bytes
         movem.l  d2-d7/a4-a5,32(a0)    // fill 8x4 bytes
@@ -131,7 +131,7 @@ loop64:
 end64:
 #ifdef __mcoldfire__
         subq.l   #1,d0
-        bpl.s    loop64                // decrement count, test and loop
+        jpl      loop64                // decrement count, test and loop
         movem.l  (a7),d2-d6/a2-a5      // restore regs for movem use
         lea      36(a7),a7
 #else
@@ -149,24 +149,24 @@ zero4:
         and.b    #3,d1                 // +
         lsr.b    #2,d0                 // +
 #endif
-        bra.s    end4
+        jra      end4
 loop4:
         move.l   d7,(a0)+
 end4:
 #ifdef __mcoldfire__
         subq.l   #1,d0
-        bpl.s    loop4                 // decrement count, test and loop
+        jpl      loop4                 // decrement count, test and loop
 #else
         dbra     d0,loop4              // decrement count, test and loop
 #endif
         move.l   d1,d0                 // remainder becomes new count
-        bra.s    end1
+        jra      end1
 loop1:
         move.b   d7,(a0)+
 end1:
 #ifdef __mcoldfire__
         subq.l   #1,d0
-        bpl.s    loop1                 // decrement count, test and loop
+        jpl      loop1                 // decrement count, test and loop
 #else
         dbra     d0,loop1              // decrement count, test and loop
 #endif

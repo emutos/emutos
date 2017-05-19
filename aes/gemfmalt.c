@@ -141,11 +141,11 @@ static char *fm_strbrk(OBJECT *start,WORD maxnum,WORD maxlen,char *alert,
  *          pnumbut     number of buttons
  *          plenbut     length of biggest button
  */
-static void fm_parse(OBJECT *tree, LONG palstr, WORD *picnum, WORD *pnummsg,
+static void fm_parse(OBJECT *tree, BYTE *palstr, WORD *picnum, WORD *pnummsg,
                          WORD *plenmsg, WORD *pnumbut, WORD *plenbut)
 {
     OBJECT *obj = tree;
-    char *alert = (char *)palstr;
+    BYTE *alert = palstr;
 
     *picnum = alert[1] - '0';
 
@@ -237,23 +237,23 @@ static void fm_build(OBJECT *tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
     al.g_h = max(bt.g_y+bt.g_h,ic.g_y+ic.g_h) + 1 + INTER_HSPACE;
 
     /* init. root object    */
-    ob_setxywh((LONG)tree, ROOT, &al);
+    ob_setxywh(tree, ROOT, &al);
     for (i = 0, obj = tree; i < NUM_ALOBJS; i++, obj++)
           obj->ob_next = obj->ob_head = obj->ob_tail = -1;
 
     /* add icon object      */
     if (haveicon)
     {
-        ob_setxywh((LONG)tree, 1, &ic);
-        ob_add((LONG)tree, ROOT, 1);
+        ob_setxywh(tree, 1, &ic);
+        ob_add(tree, ROOT, 1);
     }
 
     /* add msg objects      */
     for (i = 0; i < nummsg; i++)
     {
-        ob_setxywh((LONG)tree, MSGOFF+i, &ms);
+        ob_setxywh(tree, MSGOFF+i, &ms);
         ms.g_y++;
-        ob_add((LONG)tree, ROOT, MSGOFF+i);
+        ob_add(tree, ROOT, MSGOFF+i);
     }
 
     /* add button objects with 1 space between them  */
@@ -261,9 +261,9 @@ static void fm_build(OBJECT *tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
     {
         obj->ob_flags = SELECTABLE | EXIT;
         obj->ob_state = NORMAL;
-        ob_setxywh((LONG)tree, BUTOFF+i, &bt);
+        ob_setxywh(tree, BUTOFF+i, &bt);
         bt.g_x += mlenbut + 2;
-        ob_add((LONG)tree, ROOT, BUTOFF+i);
+        ob_add(tree, ROOT, BUTOFF+i);
     }
 
     /* set last object flag */
@@ -271,7 +271,7 @@ static void fm_build(OBJECT *tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
 }
 
 
-WORD fm_alert(WORD defbut, LONG palstr)
+WORD fm_alert(WORD defbut, BYTE *palstr)
 {
     WORD i;
     WORD inm, nummsg, mlenmsg, numbut, mlenbut, image;
@@ -320,7 +320,7 @@ WORD fm_alert(WORD defbut, LONG palstr)
     obj->ob_width = obj->ob_height = 32;
 
     /* center tree on screen*/
-    ob_center((LONG)tree, &d);
+    ob_center(tree, &d);
 
     /* Fix 2003-09-25: Limit drawing to the screen! */
     rc_intersect(&gl_rscreen, &d);
@@ -332,7 +332,7 @@ WORD fm_alert(WORD defbut, LONG palstr)
 
     /* draw the alert       */
     gsx_sclip(&d);
-    ob_draw((LONG)tree, ROOT, MAX_DEPTH);
+    ob_draw(tree, ROOT, MAX_DEPTH);
 
     /* turn on the mouse    */
     ct_mouse(TRUE);

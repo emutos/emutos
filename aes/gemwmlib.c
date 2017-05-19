@@ -80,15 +80,11 @@
 #define WF_SCREEN   17
 
 
-GLOBAL LONG desk_tree[NUM_PDS]; /* list of object trees for the desktop */
-                                /*  background pattern                  */
-
 GLOBAL WORD     gl_wtop;
-GLOBAL LONG     gl_awind;
+GLOBAL OBJECT   *gl_awind;
 
-static LONG gl_newdesk;         /* current desktop background pattern */
+static OBJECT *gl_newdesk;      /* current desktop background pattern */
 static WORD gl_newroot;         /* current object within gl_newdesk   */
-static WORD desk_root[NUM_PDS]; /* starting object to draw within desk_tree */
 
 static OBJECT W_TREE[NUM_MWIN];
 static OBJECT W_ACTIVE[NUM_ELEM];
@@ -150,7 +146,7 @@ static const TEDINFO gl_asamp =
 
 static WORD wind_msg[8];
 
-static LONG gl_wtree;
+static OBJECT *gl_wtree;
 
 
 
@@ -267,7 +263,7 @@ static void w_hvassign(WORD isvert, WORD parent, WORD obj, WORD vx, WORD vy,
 /*
  *  Walk the list and draw the parts of the window tree owned by this window
  */
-static void do_walk(WORD wh, LONG tree, WORD obj, WORD depth, GRECT *pc)
+static void do_walk(WORD wh, OBJECT *tree, WORD obj, WORD depth, GRECT *pc)
 {
     ORECT   *po;
     GRECT   t;
@@ -301,7 +297,7 @@ static void do_walk(WORD wh, LONG tree, WORD obj, WORD depth, GRECT *pc)
  */
 void w_drawdesk(GRECT *pc)
 {
-    LONG    tree;
+    OBJECT  *tree;
     WORD    depth;
     WORD    root;
     GRECT   pt;
@@ -811,36 +807,6 @@ void w_update(WORD bottom, GRECT *pt, WORD top, WORD moved, WORD usetrue)
 }
 
 
-static void w_setmen(WORD pid)
-{
-    WORD    npid;
-
-    npid = menu_tree[pid] ? pid : 0;
-    if (gl_mntree != menu_tree[npid])
-        mn_bar((OBJECT *)menu_tree[npid], TRUE, npid);
-
-    npid = desk_tree[pid] ? pid : 0;
-    if (gl_newdesk != desk_tree[npid])
-    {
-        gl_newdesk = desk_tree[npid];
-        gl_newroot = desk_root[npid];
-        w_drawdesk(&gl_rscreen);
-    }
-}
-
-
-/*
- *  Routine to draw menu of top most window as the current menu bar
- */
-static void w_menufix(void)
-{
-    WORD    pid;
-
-    pid = D.w_win[w_top()].w_owner->p_pid;
-    w_setmen(pid);
-}
-
-
 /*
  *  Draw the tree of windows given a major change in some window.  It
  *  may have been sized, moved, fulled, topped, or closed.  An attempt
@@ -875,10 +841,6 @@ static void draw_change(WORD w_handle, GRECT *pt)
     /* remember oldtop & set new one */
     oldtop = gl_wtop;
     gl_wtop = W_TREE[ROOT].ob_tail;
-
-    /* if top has changed then change menu */
-    if (gl_wtop != oldtop)
-        w_menufix();
 
     /* set ctrl rect and mouse owner */
     w_setactive();
@@ -1087,9 +1049,9 @@ void wm_start(void)
 
     /* init global variables */
     gl_wtop = NIL;
-    gl_wtree = (LONG)&W_TREE[ROOT];
-    gl_awind = (LONG)W_ACTIVE;
-    gl_newdesk = 0x0L;
+    gl_wtree = &W_TREE[ROOT];
+    gl_awind = W_ACTIVE;
+    gl_newdesk = NULL;
 
     /* init tedinfo parts of title and info lines */
     gl_aname = gl_asamp;
@@ -1174,7 +1136,7 @@ void wm_close(WORD w_handle)
  */
 void wm_delete(WORD w_handle)
 {
-    newrect(gl_wtree, w_handle);        /* give back recs. */
+    newrect(gl_wtree, w_handle);      /* give back recs. */
     w_setsize(WS_CURR, w_handle, &gl_rscreen);
     w_setsize(WS_PREV, w_handle, &gl_rscreen);
     w_setsize(WS_FULL, w_handle, &gl_rfull);
@@ -1334,8 +1296,8 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
         break;
     case WF_NEWDESK:
         pwin->w_owner = rlr;
-        desk_tree[rlr->p_pid] = gl_newdesk = *(LONG *) pinwds;
-        desk_root[rlr->p_pid] = gl_newroot = pinwds[2];
+        gl_newdesk = *(OBJECT **) pinwds;
+        gl_newroot = pinwds[2];
         break;
     case WF_HSLSIZ:
         pwin->w_hslsiz = pinwds[0];

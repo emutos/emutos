@@ -22,7 +22,7 @@
 amiga_startup:
         move.l  #0x020000,D0
 delay:  subq.l  #1,D0                   // Delay loop.
-        jbgt    delay
+        jgt     delay
 
         // Set up port A on the first CIA (8520-A).
 
@@ -65,7 +65,7 @@ checkmem:
 checkmore:
         lea     0x1000(a0),a0           // Increment current location by 4K.
         cmp.l   a0,a1                   // See if upper bound reached.
-        jbls   exitcheck                // If so, exit from the loop.
+        jls    exitcheck                // If so, exit from the loop.
         move.l  d0,(a0)                 // Write the signature into memory.
 
         // Longword 0 of the block being checked was initially cleared to
@@ -76,9 +76,9 @@ checkmore:
         // signature value would read back correctly.
 
         tst.l   (a2)                    // Check location 0.
-        jbne    exitcheck               // Exit if signature appears there.
+        jne     exitcheck               // Exit if signature appears there.
         cmp.l   (a0),d0                 // See if signature can be read back.
-        jbeq    checkmore               // If successful, go check more memory.
+        jeq     checkmore               // If successful, go check more memory.
 
 exitcheck:
         move.l  a0,d5                   // this is phystop - the end of RAM
@@ -140,13 +140,13 @@ amiga_int_2_end:
 
 amiga_int_ciaa:
         btst    #3,d2
-        jbeq    tst_ciaa_timerb
+        jeq     tst_ciaa_timerb
 
         jbsr    _amiga_int_ciaa_serial
 
 tst_ciaa_timerb:
         btst    #1,d2
-        jbeq    amiga_int_ciaa_end
+        jeq     amiga_int_ciaa_end
 
         jbsr    _amiga_int_ciaa_timer_b
 
@@ -173,7 +173,7 @@ _amiga_int_ciaa_serial:
         // Wait for timer expired
 wait_kbd_ack:
         btst.b  #0,0xbfed01             // Wait for CIAA A Timer A interrupt flag
-        jbeq    wait_kbd_ack
+        jeq     wait_kbd_ack
 
         // End acknowledge on CNT pin
         andi.b  #~0b01000000,0xbfee01   // SPMODE = 0
@@ -194,7 +194,7 @@ _amiga_int_ciaa_timer_b:
 // Call vector_5ms. The return address is already on the stack.
 // As it will return with RTE, we must setup a proper stack frame
         tst.w   _longframe              // CPU > 68000, long stack frame?
-        jbeq    nolong
+        jeq     nolong
 
         subq.l  #2,sp                   // Make room for additional word
         move.l  2(sp),(sp)              // Move return address
@@ -241,7 +241,7 @@ _amiga_vbl:
 
         move.w  0xdff01e,d0             // INTREQR
         btst    #5,d0                   // VBL interrupt?
-        jbeq    amivblend
+        jeq     amivblend
 
         move.l  _amiga_screenbase,d0    // Video Base address
 

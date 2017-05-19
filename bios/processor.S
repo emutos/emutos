@@ -90,14 +90,14 @@ _detect_cpu:
         MOVEC_CACR_D1           //   & read it back again to check
         MOVEC_D2_CACR           // restore original CACR
         btst    #0,d1           // if '020 instr. cache was not enabled, this is a 68040+
-        beq.s   x040
+        jeq     x040
         moveq   #20,d0          // assume 68020
         btst    #8,d1           // check if 68030 data cache was enabled
-        beq.s   exit            // a zero here means no data cache, i.e. 68020
+        jeq     exit            // a zero here means no data cache, i.e. 68020
         move.l  #0x0001001e,d0  // data cache enabled means 68030 - assume 68ec030
         PMOVE_FROM_TC(temp)     // try to access the TC register
         moveq   #30,d0          // no fault -> this is a 68030
-        bra.s   exit
+        jra     exit
 
 // 68040 or 68060
 
@@ -111,7 +111,7 @@ x040:   moveq   #40,d0          // assume 68040
 // Apollo 68080
         moveq   #40,d0          // force 68040 detection
         move.w  #1,_is_apollo_68080
-        bra.s   exit
+        jra     exit
 #endif
 x060:
         moveq   #60,d0          // no fault -> this is 68060
@@ -178,18 +178,18 @@ _detect_fpu:
         move.l  _mcpu,d1        // check if 68000 or 68010
         cmpi.w  #20,d1
 #if CONF_WITH_SFP004
-        bmi.s   sfp
+        jmi     sfp
 #else
-        bmi.s   fexit
+        jmi     fexit
 #endif
 
         cmpi.w  #60,d1          // enable FPU on 68060 before the check
-        bmi.s   no60
+        jmi     no60
 
         MOVEC_PCR_D2            // get revision number etc
         swap    d2
         cmp.w   #0x0431,d2      // "broken" 68LC/EC060
-        beq.s   no60
+        jeq     no60
         swap    d2
         bclr    #0x01,d2
         MOVEC_D2_PCR            // clear DFP (the disable-FPU bit)
@@ -204,18 +204,18 @@ no60:   FNOP
 
         moveq   #0x10,d0        // assume 68060 FPU (cookie 0x00100000)
         cmpi.w  #60,d1          // d1 is loaded above the FPU code
-        beq.s   fexit
+        jeq     fexit
         moveq   #0x08,d0        // if not 060, maybe 040 (cookie 0x00080000)
         cmpi.w  #40,d1
-        beq.s   fexit
+        jeq     fexit
         moveq   #0x06,d0        // if neither, maybe a 68882 (0x00060000)
         move.b  1(sp),d1        // get offset to last long of IDLE frame
         cmpi.b  #0x38,d1        // is it a 68882?
-        beq.s   fexit           // yes, branch
+        jeq     fexit           // yes, branch
         moveq   #0x04,d0        // must be 68881
 
 #if CONF_WITH_SFP004
-        bra.s   fexit
+        jra     fexit
 sfp:    tst.w   0xfffffa40.w    // CIR
         moveq   #0x01,d0        // memory mapped FPU
 #endif
@@ -270,13 +270,13 @@ _processor_init:
         beq     m68000
 
 
-        move.w  #1,_longframe   // this is a 68010 or later
+        move.w  #1,_longframe.w // this is a 68010 or later
 m68000:
         jsr     _detect_fpu
         move.l  d0,_fputype
 
         cmpi.b  #30,_mcpu+3
-        bne.s   pi_chk040
+        jne     pi_chk040
 
 // We're running on a 68030 or a 68ec030
 
@@ -285,13 +285,13 @@ m68000:
 // User would like a PMMU tree, so see if it's possible
 
         tst.w   _mcpu_subtype   // check for full 68030
-        beq.s   m68030
+        jeq     m68030
 
 // On a 68ec030, we enable just the instruction cache, since we can't
 // set up a proper PMMU tree to avoid caching the I/O address area
 
         move.l  #0x00000011,d0  // set IBE and EI only
-        bra.s   init_cacr
+        jra     init_cacr
 
 // On a full 68030, if a PMMU tree is wanted, we must set it up before
 // enabling the data cache.  The PMMU tree will ensure that caching is
@@ -314,21 +314,21 @@ m68030:
 
 init_cacr:
         MOVEC_D0_CACR
-        bra.s   pi_done
+        jra     pi_done
 
 pi_chk040:
         move.l  #0x80008000,d1  // set 040 CACR value: DE and IE
         cmpi.b  #40,_mcpu+3
-        beq.s   m68040
+        jeq     m68040
         move.l  #0x80808000,d1  // set 060 CACR value: EDC, EBC and EIC
         cmpi.b  #60,_mcpu+3
-        beq.s   m68060
-        bra.s   pi_done
+        jeq     m68060
+        jra     pi_done
 
 m68040:
 #if CONF_WITH_68040_PMMU
         jsr     setup_68040_pmmu
-        bra.s   pi_done
+        jra     pi_done
 #endif /* CONF_WITH_68040_PMMU */
 
 m68060:
@@ -405,21 +405,21 @@ _instruction_cache_kludge:
 _invalidate_instruction_cache:
 #ifdef __mcoldfire__
         lea     cpushl_bc,a1    // flush/invalidate both caches
-        bra.s   cpushl_loop
+        jra     cpushl_loop
 #else
 #if CONF_WITH_ADVANCED_CPU
         cmpi.b  #30,_mcpu+3
-        bne.s   ii_not30
+        jne     ii_not30
         MOVEC_CACR_D0                   // get current cacr
         ori.b   #0x08,d0                // set the CI bit
         MOVEC_D0_CACR                   // clear the whole i-cache
-        bra.s   ii_done
+        jra     ii_done
 
 ii_not30:
         cmp.b   #40,_mcpu+3
-        beq.s   ii_inval
+        jeq     ii_inval
         cmpi.b  #60,_mcpu+3
-        bne.s   ii_done
+        jne     ii_done
 
 ii_inval:
         nop
@@ -445,7 +445,7 @@ ii_done:
 _flush_data_cache:
 #ifdef __mcoldfire__
         lea     cpushl_dc,a1    // flush/invalidate data cache
-        bra.s   cpushl_loop
+        jra     cpushl_loop
 #else
 #if CONF_WITH_ADVANCED_CPU
 //
@@ -475,16 +475,16 @@ _invalidate_data_cache:
 #else
 #if CONF_WITH_ADVANCED_CPU
         cmpi.b  #30,_mcpu+3
-        bne.s   ic_not30
+        jne     ic_not30
         MOVEC_CACR_D0                   // get current cacr
         ori.w   #0x0800,d0              // set CD bit
         MOVEC_D0_CACR                   // clear data cache
-        bra.s   ic_done
+        jra     ic_done
 ic_not30:
         cmpi.b  #40,_mcpu+3
-        beq.s   ic_inval
+        jeq     ic_inval
         cmpi.b  #60,_mcpu+3
-        bne.s   ic_done
+        jne     ic_done
 
 ic_inval:
         nop
@@ -527,13 +527,13 @@ setloop:
         lea     0x0010(a0),a0   // increment set index by 1
         addq.l  #1,d1           // increment set counter
         cmpi.l  #512,d1         // are sets for this way done?
-        bne.s   setloop
+        jne     setloop
 
         moveq.l #0,d1           // set counter to zero again
         addq.l  #1,d0           // increment to next way
         move.l  d0,a0           // set = 0, way = d0
         cmpi.l  #4,d0           // flushed all the ways?
-        bne.s   setloop
+        jne     setloop
 
         rts
 

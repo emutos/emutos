@@ -232,7 +232,7 @@ int_acia_loop:
 
 _midisys:
         move.b  midi_acia_stat,d0
-        bpl     midirts                 // not interrupting
+        jpl     midirts                 // not interrupting
         // TODO (?): check errors (buffer full ?)
         move.b  midi_acia_data,d0
         move.l  midivec,a0
@@ -254,10 +254,10 @@ _midivec:
         addq.w  #1,d1
 #endif
         cmp.w   midiibufsz,d1
-        blt     1f
+        jlt     1f
         moveq   #0,d1
 1:      cmp.w   midiibufhd,d1
-        beq     1f
+        jeq     1f
         movea.l midiibuf,a0             // must use ptr, user may have changed it
 #ifdef __mcoldfire__
         move.b  d0,0(a0,d1.l)
@@ -315,7 +315,7 @@ _ikbdsys:
         moveq   #0,d0
         move.b  ikbd_acia_stat,d1
         move.b  d1,d0
-        bpl     just_rts                // not interrupting
+        jpl     just_rts                // not interrupting
         // TODO (?): check errors (buffer full ?)
         move.b  ikbd_acia_data,d0
         // Fall into ikbdraw
@@ -327,9 +327,9 @@ _ikbdsys:
         .globl  ikbdraw
 ikbdraw:
         tst.b   ikbdstate       // inside a multi-byte packet?
-        bne     in_packet       // ikbdstate != 0 => go and add to the packet
+        jne     in_packet       // ikbdstate != 0 => go and add to the packet
         cmp.w   #0xf6,d0        // is byte a packet header?
-        bcc     begin_packet    // byte >= 0xf6 => go begin receiving a packet
+        jcc     begin_packet    // byte >= 0xf6 => go begin receiving a packet
         move.l  kbdvec,a0       // ordinary key byte in d0. jump in vector
         jmp     (a0)            // stack is clean: no need to jsr.
 
@@ -368,7 +368,7 @@ in_packet:
         move.b  kbdlength,d0
         subq.l  #1,d0
         move.b  d0,kbdlength
-        beq     got_packet
+        jeq     got_packet
         moveq   #0,d0
         move.w  kbdindex,d0
         addq.l  #1,d0
@@ -376,7 +376,7 @@ in_packet:
 #else
         move.b  d0,0(a0,d1.w)
         sub.b   #1,kbdlength
-        beq     got_packet
+        jeq     got_packet
         addq.w  #1,kbdindex
 #endif
         rts
@@ -408,17 +408,17 @@ action_table:
 kbd_status:
         addq.l  #1,a0
         move.l  statvec,a1
-        bra     kbd_jump_vec
+        jra     kbd_jump_vec
 kbd_abs_mouse:
         addq.l  #1,a0
 kbd_rel_mouse:
         move.l  mousevec,a1
-        bra     kbd_jump_vec
+        jra     kbd_jump_vec
 #ifdef CONF_WITH_IKBD_CLOCK
 kbd_clock:
         addq.l  #1,a0
         move.l  clockvec,a1
-        bra     kbd_jump_vec
+        jra     kbd_jump_vec
 #endif
 
 // Joystick support is special. The buffer passed to routine joyvec
@@ -431,12 +431,12 @@ kbd_joys:
         move.b  (a0)+,(a1)+
         move.b  (a0),(a1)
         subq.l  #2,a1
-        bra     joy_next
+        jra     joy_next
 kbd_joy0:
         lea     joybuf,a1
         move.b  (a0)+,(a1)
         move.b  (a0),1(a1)
-        bra     joy_next
+        jra     joy_next
 kbd_joy1:
         lea     joybuf,a1
         move.b  (a0)+,(a1)
@@ -484,7 +484,7 @@ _call_mousevec:
 _call_ikbdraw:
         moveq   #0,d0
         move.b  5(sp),d0                // raw IKBD byte
-        jbra    ikbdraw
+        jra     ikbdraw
 
 #endif /* CONF_WITH_FLEXCAN || CONF_SERIAL_IKBD */
 

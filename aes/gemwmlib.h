@@ -12,9 +12,8 @@
 
 #define DESKWH  0       /* window handle for desktop */
 
-extern LONG     desk_tree[];
 extern WORD     gl_wtop;
-extern LONG     gl_awind;
+extern OBJECT   *gl_awind;
 
 void w_nilit(WORD num, OBJECT olist[]);
 void w_getsize(WORD which, WORD w_handle, GRECT *pt);

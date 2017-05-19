@@ -77,7 +77,7 @@ haltloop:
         stop    #0x2700
         // only an NMI could theroretically wake up the CPU here
 #endif
-        bra.s   haltloop
+        jra     haltloop
 
 /* void kill_program(void)
  * try to terminate via Pterm(); if Pterm() returns here (!),
@@ -102,8 +102,8 @@ _warm_reset:
  * are really pushed to the RAM. Next OS may use different cache settings.
  */
 _cold_reset:
-        clr.l   resvalid        // Don't allow jump to reset vector in startup.S
-        clr.l   resvector
+        clr.l   resvalid.w      // Don't allow jump to reset vector in startup.S
+        clr.l   resvector.w
 #if CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF
         clr.l   _warm_magic     // Next boot will be a first boot
 #endif

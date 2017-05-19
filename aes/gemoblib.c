@@ -46,10 +46,10 @@
  *  to the physical screen.  This involves accumulating the offsets
  *  of all the object's parents up to and including the root.
  */
-void ob_offset(LONG tree, WORD obj, WORD *pxoff, WORD *pyoff)
+void ob_offset(OBJECT *tree, WORD obj, WORD *pxoff, WORD *pyoff)
 {
     WORD   junk;
-    OBJECT *treeptr = (OBJECT *)tree;
+    OBJECT *treeptr = tree;
 
     *pxoff = *pyoff = 0;
     do
@@ -64,9 +64,9 @@ void ob_offset(LONG tree, WORD obj, WORD *pxoff, WORD *pyoff)
 /*
  *  ob_relxywh: fill GRECT with x/y/w/h from object (relative x/y)
  */
-void ob_relxywh(LONG tree, WORD obj, GRECT *pt)
+void ob_relxywh(OBJECT *tree, WORD obj, GRECT *pt)
 {
-    OBJECT *objptr = ((OBJECT *)tree) + obj;
+    OBJECT *objptr = tree + obj;
 
     memcpy(pt, &objptr->ob_x, sizeof(GRECT));
 }
@@ -75,9 +75,9 @@ void ob_relxywh(LONG tree, WORD obj, GRECT *pt)
 /*
  *  ob_actxywh: fill GRECT with x/y/w/h of object (absolute x/y)
  */
-void ob_actxywh(LONG tree, WORD obj, GRECT *pt)
+void ob_actxywh(OBJECT *tree, WORD obj, GRECT *pt)
 {
-    OBJECT *objptr = ((OBJECT *)tree) + obj;
+    OBJECT *objptr = tree + obj;
 
     ob_offset(tree, obj, &pt->g_x, &pt->g_y);
     pt->g_w = objptr->ob_width;
@@ -88,9 +88,9 @@ void ob_actxywh(LONG tree, WORD obj, GRECT *pt)
 /*
  * ob_setxywh: copy values from GRECT into object
  */
-void ob_setxywh(LONG tree, WORD obj, GRECT *pt)
+void ob_setxywh(OBJECT *tree, WORD obj, GRECT *pt)
 {
-    OBJECT *objptr = ((OBJECT *)tree) + obj;
+    OBJECT *objptr = tree + obj;
 
     memcpy(&objptr->ob_x, pt, sizeof(GRECT));
 }
@@ -172,13 +172,13 @@ static __inline__ WORD call_usercode(USERBLK *ub, PARMBLK *pb)
  *  Routine to load up and call a user-defined object draw or change
  *  routine.
  */
-static WORD ob_user(LONG tree, WORD obj, GRECT *pt, LONG spec,
+static WORD ob_user(OBJECT *tree, WORD obj, GRECT *pt, LONG spec,
                     WORD curr_state, WORD new_state)
 {
     PARMBLK pb;
     USERBLK *ub = (USERBLK *)spec;
 
-    pb.pb_tree = tree;
+    pb.pb_tree = (LONG)tree;
     pb.pb_obj = obj;
     pb.pb_prevstate = curr_state;
     pb.pb_currstate = new_state;
@@ -193,7 +193,7 @@ static WORD ob_user(LONG tree, WORD obj, GRECT *pt, LONG spec,
 /*
  *  Routine to draw an object from an object tree.
  */
-static void  just_draw(LONG tree, WORD obj, WORD sx, WORD sy)
+static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
 {
     WORD bcol, tcol, ipat, icol, tmode, th;
     WORD state, obtype, len, flags;
@@ -421,7 +421,7 @@ static void  just_draw(LONG tree, WORD obj, WORD sx, WORD sy)
 /*
  *  Object draw routine that walks tree and draws appropriate objects.
  */
-void ob_draw(LONG tree, WORD obj, WORD depth)
+void ob_draw(OBJECT *tree, WORD obj, WORD depth)
 {
     WORD last, pobj;
     WORD sx, sy;
@@ -446,10 +446,10 @@ void ob_draw(LONG tree, WORD obj, WORD depth)
  *  us.  If we are the first child or we have no parent then
  *  return NIL.
  */
-static WORD get_prev(LONG tree, WORD parent, WORD obj)
+static WORD get_prev(OBJECT *tree, WORD parent, WORD obj)
 {
     WORD nobj, pobj;
-    OBJECT *treeptr = (OBJECT *)tree;
+    OBJECT *treeptr = tree;
 
     pobj = (treeptr+parent)->ob_head;
     if (pobj == obj)
@@ -476,7 +476,7 @@ static WORD get_prev(LONG tree, WORD parent, WORD obj)
  *  walk down the tree, limited by the depth parameter, and find
  *  the last object the mx,my location was over.
  */
-WORD ob_find(LONG tree, WORD currobj, WORD depth, WORD mx, WORD my)
+WORD ob_find(OBJECT *tree, WORD currobj, WORD depth, WORD mx, WORD my)
 {
     WORD lastfound;
     WORD dosibs, done, junk;
@@ -506,7 +506,7 @@ WORD ob_find(LONG tree, WORD currobj, WORD depth, WORD mx, WORD my)
         t.g_x += o.g_x;
         t.g_y += o.g_y;
 
-        objptr = ((OBJECT *)tree) + currobj;
+        objptr = tree + currobj;
         flags = objptr->ob_flags;
         if ( (inside(mx, my, &t)) && (!(flags & HIDETREE)) )
         {
@@ -549,10 +549,10 @@ WORD ob_find(LONG tree, WORD currobj, WORD depth, WORD mx, WORD my)
  *  is added at the end of the parent's current sibling list.
  *  It is also initialized.
  */
-void ob_add(LONG tree, WORD parent, WORD child)
+void ob_add(OBJECT *tree, WORD parent, WORD child)
 {
     WORD lastkid;
-    OBJECT *treeptr = (OBJECT *)tree;
+    OBJECT *treeptr = tree;
     OBJECT *parentptr;
 
     if ((parent != NIL) && (child != NIL))
@@ -575,11 +575,11 @@ void ob_add(LONG tree, WORD parent, WORD child)
 /*
  *  Routine to delete an object from the tree.
  */
-WORD ob_delete(LONG tree, WORD obj)
+WORD ob_delete(OBJECT *tree, WORD obj)
 {
     WORD parent;
     WORD prev, nextsib;
-    OBJECT *treeptr = (OBJECT *)tree;
+    OBJECT *treeptr = tree;
     OBJECT *parentptr, *prevptr;
 
     if (obj == ROOT)
@@ -628,11 +628,11 @@ WORD ob_delete(LONG tree, WORD obj)
  *  siblings in the tree.  0 is the head of the list and NIL
  *  is the tail of the list.
  */
-void ob_order(LONG tree, WORD mov_obj, WORD new_pos)
+void ob_order(OBJECT *tree, WORD mov_obj, WORD new_pos)
 {
     WORD parent;
     WORD chg_obj, ii, junk;
-    OBJECT *treeptr = (OBJECT *)tree;
+    OBJECT *treeptr = tree;
     OBJECT *parentptr, *movptr, *chgptr;
 
     if (mov_obj == ROOT)
@@ -678,7 +678,7 @@ void ob_order(LONG tree, WORD mov_obj, WORD new_pos)
  *  Routine to change the state of an object and redraw that
  *  object using the current clip rectangle.
  */
-void ob_change(LONG tree, WORD obj, UWORD new_state, WORD redraw)
+void ob_change(OBJECT *tree, WORD obj, UWORD new_state, WORD redraw)
 {
     WORD flags, obtype, th;
     GRECT t;
@@ -691,7 +691,7 @@ void ob_change(LONG tree, WORD obj, UWORD new_state, WORD redraw)
     if ((curr_state == new_state) || (spec == -1L))
         return;
 
-    objptr = ((OBJECT *)tree) + obj;
+    objptr = tree + obj;
     objptr->ob_state = new_state;
 
     if (redraw)
@@ -726,9 +726,9 @@ void ob_change(LONG tree, WORD obj, UWORD new_state, WORD redraw)
 }
 
 
-UWORD ob_fs(LONG tree, WORD obj, WORD *pflag)
+UWORD ob_fs(OBJECT *tree, WORD obj, WORD *pflag)
 {
-    OBJECT *objptr = ((OBJECT *)tree) + obj;
+    OBJECT *objptr = tree + obj;
 
     *pflag = objptr->ob_flags;
     return objptr->ob_state;

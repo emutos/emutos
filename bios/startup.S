@@ -201,7 +201,7 @@ vbr_ok:
         tst.w   0xffff8006.w   // magic: must access this before & after the reset
         reset                  // reset all hardware
         tst.w   0xffff8006.w   // remaining magic
-        bra.b   main_after_reset_instruction
+        jra     main_after_reset_instruction
 #endif /* CONF_ATARI_HARDWARE */
 
 not_falcon:
@@ -227,7 +227,7 @@ coldfire_startup_ret:
 #else
         cmp.l   #0xfa52235f, cart_base  // magic - is cartridge present?
 #endif
-        bne     nodiag                  // no -> go on
+        jne     nodiag                  // no -> go on
         lea     nodiag(pc), a6          // save return address
         jmp     cart_base+4             // execute diagnostig cartridge
 nodiag:
@@ -252,7 +252,7 @@ cache_done:
         PMOVE_TO_TTR1(zero)
         move.l  #mmu_done,0x2c     // since PMOVE_TO_TC doesn't exist on a 68ec030,
         PMOVE_TO_TC(zero)          //  we're done if we get a lineF exception ...
-        bra.b   mmu_done
+        jra     mmu_done
 not_68030:
         move.l  #mmu_done,0x10     // if a MOVEC causes an exception, we're done
         moveq   #0,d0
@@ -271,16 +271,16 @@ mmu_done:
 
 resetvec:
 #ifdef __mcoldfire__
-       move.l   resvalid, d0
+       move.l   resvalid.w, d0
        cmpi.l   #0x31415926, d0         // Jump to resetvector?
 #else
-       cmpi.l   #0x31415926, resvalid   // Jump to resetvector?
+       cmpi.l   #0x31415926, resvalid.w // Jump to resetvector?
 #endif
-       bne.s    noreset                 // No --> noreset
-       move.l   resvector, d0           // Yes: old resvec to d0
-       beq.s    noreset                 // Address null? Yes --> noreset
+       jne      noreset                 // No --> noreset
+       move.l   resvector.w, d0         // Yes: old resvec to d0
+       jeq      noreset                 // Address null? Yes --> noreset
        btst     #0, d0                  // Address odd ?
-       bne.s    noreset                 // Yes --> noreset
+       jne      noreset                 // Yes --> noreset
        movea.l  d0, a0                  // resvec
        lea      resetvec(pc), a6        // save return address
        // Note: the return address intentionally points to the resvalid test.
@@ -324,10 +324,10 @@ _run_cartridge_applications:
 #else
         cmp.l   #0xABCDEF42, (a0)+      // is cartridge present?
 #endif
-        bne     cartover                // no -> cartover
+        jne     cartover                // no -> cartover
 testtype:
         btst    d0, 4(a0)               // What type?
-        beq     nextapp
+        jeq     nextapp
 
 #ifdef __mcoldfire__
         lea     -60(sp), sp
@@ -348,7 +348,7 @@ testtype:
 nextapp:
         tst.l   (a0)                    // another application?
         move.l  (a0), a0
-        bne     testtype
+        jne     testtype
 cartover:
         rts
 #endif /* CONF_WITH_CARTRIDGE */

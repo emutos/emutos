@@ -66,7 +66,7 @@ void fs_start(void)
     OBJECT *tree = rs_trees[FSELECTR];
     WORD diff;
 
-    ob_center((LONG)tree, &gl_rfs);
+    ob_center(tree, &gl_rfs);
 
     /*
      * for cosmetic reasons, we make the vertical slider width equal to
@@ -321,7 +321,7 @@ static void fs_format(OBJECT *tree, WORD currtop, WORD count)
 static void fs_sel(WORD sel, WORD state)
 {
     if (sel)
-        ob_change((LONG)rs_trees[FSELECTR], F1NAME + sel - 1, state, TRUE);
+        ob_change(rs_trees[FSELECTR], F1NAME + sel - 1, state, TRUE);
 }
 
 
@@ -350,7 +350,7 @@ static WORD fs_nscroll(OBJECT *tree, WORD *psel, WORD curr, WORD count,
         *psel = 0;
         fs_format(tree, curr, count);
         gsx_gclip(&r[1]);
-        ob_actxywh((LONG)tree, F1NAME, r);
+        ob_actxywh(tree, F1NAME, r);
 
         if ((neg = (diffcurr < 0)) != 0)
             diffcurr = -diffcurr;
@@ -379,7 +379,7 @@ static WORD fs_nscroll(OBJECT *tree, WORD *psel, WORD curr, WORD count,
         for (i = 0; i < 2; i++)
         {
             gsx_sclip(&r[i]);
-            ob_draw((LONG)tree, ((i) ? FSVSLID : FILEBOX), MAX_DEPTH);
+            ob_draw(tree, ((i) ? FSVSLID : FILEBOX), MAX_DEPTH);
         }
     }
 
@@ -402,19 +402,19 @@ static WORD fs_newdir(BYTE *fpath, BYTE *pspec, OBJECT *tree, WORD *pcount)
     /* load the filenames matching pspec, sort them, and insert
      * the names in the file selector scroll box
      */
-    ob_draw((LONG)tree, FSDIRECT, MAX_DEPTH);
+    ob_draw(tree, FSDIRECT, MAX_DEPTH);
     if (!fs_active(fpath, pspec, pcount))
         return FALSE;
 
     fs_format(tree, 0, *pcount);
 
-    obj = ((OBJECT *)tree) + FTITLE;    /* update FTITLE with ptr to mask */
+    obj = tree + FTITLE;        /* update FTITLE with ptr to mask */
     tedinfo = (TEDINFO *)obj->ob_spec;
     tedinfo->te_ptext = pspec;
 
     ptmp = gl_fsobj;            /* redraw file selector objects */
     while(*ptmp)
-        ob_draw((LONG)tree, *ptmp++, MAX_DEPTH);
+        ob_draw(tree, *ptmp++, MAX_DEPTH);
 
     return TRUE;
 }
@@ -464,8 +464,8 @@ static void select_drive(OBJECT *treeaddr, WORD drive, WORD redraw)
     if (redraw && (drive != olddrive))
     {
         if (olddrive >= 0)
-            ob_draw((LONG)treeaddr,olddrive+DRIVE_OFFSET,MAX_DEPTH);
-        ob_draw((LONG)treeaddr,drive+DRIVE_OFFSET,MAX_DEPTH);
+            ob_draw(treeaddr,olddrive+DRIVE_OFFSET,MAX_DEPTH);
+        ob_draw(treeaddr,drive+DRIVE_OFFSET,MAX_DEPTH);
     }
 }
 
@@ -599,7 +599,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
     /* set clip and start form fill-in by drawing the form */
     gsx_sclip(&gl_rfs);
     fm_dial(FMD_START, &gl_rcenter, &gl_rfs);
-    ob_draw((LONG)tree, ROOT, 2);
+    ob_draw(tree, ROOT, 2);
 
     /* init for while loop by forcing initial fs_newdir call */
     sel = 0;
@@ -614,7 +614,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
         {
             fs_sel(sel, NORMAL);
             if ((touchob == FSOK) || (touchob == FSCANCEL))
-                ob_change((LONG)tree, touchob, NORMAL, TRUE);
+                ob_change(tree, touchob, NORMAL, TRUE);
             inf_sset(tree, FSDIRECT, locstr);
             pstr = fs_pspec(locstr, NULL);
             strcpy(pstr, mask);
@@ -641,7 +641,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
         case FSOK:
             if (path_changed(locstr))   /* just like TOS, if user has edited */
             {                           /*  the mask, 'OK' does not exit     */
-                ob_change((LONG)tree,FSOK,NORMAL,TRUE);  /* (so deselect the button) */
+                ob_change(tree,FSOK,NORMAL,TRUE);/* (so deselect the button) */
                 break;
             }
         case FSCANCEL:
@@ -652,7 +652,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
             value = 1;
             break;
         case FSVSLID:
-            ob_actxywh((LONG)tree, FSVELEV, &pt);
+            ob_actxywh(tree, FSVELEV, &pt);
             /* anemic slidebars
                 pt.g_x -= 3;
                 pt.g_w += 6;
@@ -767,9 +767,9 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
         if (newsel)
         {
             strcpy(ad_fname, selname + 1);
-            ob_draw((LONG)tree, FSSELECT, MAX_DEPTH);
+            ob_draw(tree, FSSELECT, MAX_DEPTH);
             if (!cont)
-                ob_change((LONG)tree, FSOK, SELECTED, TRUE);
+                ob_change(tree, FSOK, SELECTED, TRUE);
             newsel = FALSE;
         }
 

@@ -35,7 +35,7 @@ ULONG MemoryTest(void *address, void *endAddress, ULONG blockSize);
 #if DBG_AROS
 #define D(x) do { x; } while (0)
 #else
-#define D(x) do { } while (0)
+#define D(x) NULL_FUNCTION()
 #endif
 
 #define bug kprintf

@@ -480,9 +480,9 @@ _text_blt:
         move.w  _scrpt2,a0              //use big buffer
         move.w  DELY(a6),d3
         tst.w   _DOUBLE                 //doubling?
-        bne.b   adr_dbl                 //br if no
+        jne     adr_dbl                 //br if no
         move.w  DELX(a6),d1
-        bra.b   adr_nodb
+        jra     adr_nodb
 //
 //  added 5 mar 85
 //
@@ -499,14 +499,14 @@ adr_dbl:
         move.w  _XACC_DDA,d4            //get xacc_dda to d4
         move.w  _DDA_INC,d0             //dda_inc to d0
         moveq.l #0,d1                   //d1 = 0
-        bra.b   clc_n_su
+        jra     clc_n_su
 doub_wid:
         add.w   d0,d4
-        bcc.b   no_db_wd
+        jcc     no_db_wd
         addq.w  #1,d1
 no_db_wd:
         btst.b  #0,_T_SCLSTS+1
-        beq.b   clc_n_su
+        jeq     clc_n_su
         addq.w  #1,d1
 clc_n_su:
         dbra    d2,doub_wid
@@ -520,7 +520,7 @@ clc_n_su:
 //      lsl.w   d3                      //we'll double in y (_DELY)
 //
         tst.w   CHUP(a6)                //is character rotated?
-        bne.b   adr_nodb                //for a rotated character
+        jne     adr_nodb                //for a rotated character
 //
 //  No character rotation
 //
@@ -533,18 +533,18 @@ adr_nodb:
         move.w  _R_OFF,d7
         clr.w   smear(a6)               //in case no thicken init
         btst.b  #THICKEN,STYLE+1(a6)
-        beq.b   adr_notk
+        jeq     adr_notk
         move.w  _WEIGHT,d4
-        bne.b   adr_th1
+        jne     adr_th1
         and.w   #0xFFFF-THICKM,STYLE(a6)        //cancel thicken if WEIGHT=0
 adr_th1:
         tst.w   _MONO_STATUS                // 26-Feb skip source expand
-        bne.b   adr_notk                // 26-Feb if monospaced font
+        jne     adr_notk                // 26-Feb if monospaced font
 
         add.w   d4,d1                   //we'll smear this amount (DELX=DELX+WEIGHT)
 adr_notk:
         btst.b  #SKEW,STYLE+1(a6)               //skewin'?
-        beq.b   chk_addr                //skip DELX adjust if not
+        jeq     chk_addr                //skip DELX adjust if not
 
         add.w   d6,d1                   //DELX = DELX + L_OFF + R_OFF
         add.w   d7,d1                   //width increases
@@ -557,26 +557,26 @@ adr_notk:
 //
 chk_addr:
         move.w  CHUP(a6),d4             //get rotate degree-tenths
-        beq.b   chk_clip                //skip rotate adjust if not rotating
+        jeq     chk_clip                //skip rotate adjust if not rotating
         move.w  #_scrpt1,buffb(a6)      //use the small buffer
         subi.w  #1800,d4                //convert rotation to 3 position flag
         move.w  d4,chup_flag(a6)        //90 = -900, 180 = 0, 270 = 180
-        beq.b   add180                  //for 180 degree rotation
-        bgt.b   add270                  //for 270 degree rotation
+        jeq     add180                  //for 180 degree rotation
+        jgt     add270                  //for 270 degree rotation
 //
 //  90 degree rotation
 //
         sub.w   d1,d2                   //move up by DELX
         move.w  d2,DESTY(a6)            //DESTY = DESTY - DELX
         exg     d1,d3                   //DELX <-> DELY (swap x & y to check clipping)
-        bra.b   chk_clip
+        jra     chk_clip
 //
 //  180 degree rotation
 //
 add180:
         sub.w   d1,d0                   //DESTX = DESTX-DELX(move right by DELX)
         move.w  d0,DESTX(a6)
-        bra.b   chk_clip
+        jra     chk_clip
 //
 //  270 degree rotation
 //
@@ -595,7 +595,7 @@ add270:
 chk_clip:
         moveq.l #0,d5                   //clear x clip flag (assume no clip)
         move.w  _CLIP,-(a1)             //clip required?
-        beq.b   clp_done                //no, skip over clip-stuff
+        jeq     clp_done                //no, skip over clip-stuff
         move.w  _XMN_CLIP,-(a1)
         move.w  _YMN_CLIP,-(a1)
         move.w  _XMX_CLIP,-(a1)
@@ -604,52 +604,52 @@ chk_clip:
 //  y -coord clip check..
 //
         cmp.w   YMN_CLI(a6),d2          //top edge >= Y-MIN?
-        bge.b   chk_ymx                 //br if so, min ok
+        jge     chk_ymx                 //br if so, min ok
 //
 //  partially above clip window, check if totally above..
 //
         add.w   d3,d2                   //DESTY = DESTY + DELY
         cmp.w   YMN_CLI(a6),d2          //bottom edge > Y-MIN?
-        bgt.b   chk_xmn                 //br to x check if so, still got a piece in window
-        bra.w   upda_dst                //else, skip further ado & exit, its gone
+        jgt     chk_xmn                 //br to x check if so, still got a piece in window
+        jra     upda_dst                //else, skip further ado & exit, its gone
 chk_ymx:
         cmp.w   YMX_CLI(a6),d2          //top edge > Y-MAX?
-        bgt.w   upda_dst                //br to exit if so, its totally off window
+        jgt     upda_dst                //br to exit if so, its totally off window
 
         add.w   d3,d2                   //DESTY = DESTY + DELY
         subq.w  #1,d2                   //DESTY 0 based
         sub.w   YMX_CLI(a6),d2          //bottom edge <= Y-MAX
-        ble.b   chk_xmn                 //br if so, y-coord wholly within window
+        jle     chk_xmn                 //br if so, y-coord wholly within window
 //
 //  partial clipping of bottom portion..
 //
         andi.w  #1,d2                   //clipping odd # of lines?
-        beq.b   chk_xmn                 //br if even
+        jeq     chk_xmn                 //br if even
         btst.b  #OUTLINE,STYLE+1(a6)    //skip adjust if outlining
-        bne.b   chk_xmn
+        jne     chk_xmn
         rol.w   SKEWMAS(a6)             //odd kinda skew mask alignment
 //
 //  x - coord clip check..
 //
 chk_xmn:
         cmp.w   XMN_CLI(a6),d0          //left edge >= X-MIN?
-        bge.b   chk_xmx                 //br if so, go check X-MAX
+        jge     chk_xmx                 //br if so, go check X-MAX
 //
 //  partially to left of clip window, check if totally left..
 //
         add.w   d1,d0                   //DESTX = DESTX + DELX
         not.w   d5                      //must clip in x
         cmp.w   XMN_CLI(a6),d0          //right edge > X-MIN?
-        bgt.b   clp_done                //br if so, some stuff still in window
-        bra.w   upda_dst                //else, totally off screen, exit
+        jgt     clp_done                //br if so, some stuff still in window
+        jra     upda_dst                //else, totally off screen, exit
 chk_xmx:
         cmp.w   XMX_CLI(a6),d0          //left edge > X-MAX?
-        bgt.w   upda_dst                //br to exit if so, its totally off window
+        jgt     upda_dst                //br to exit if so, its totally off window
 
         add.w   d1,d0                   //DESTX = DESTX + DELX
         subq.w  #1,d0                   //DESTX 0 based
         cmp.w   XMX_CLI(a6),d0          //right edge <= X-MAX?
-        ble.b   clp_done                //br if so, no x-clip
+        jle     clp_done                //br if so, no x-clip
         not.w   d5                      //clip we must
 //
 //  clip check done..
@@ -663,21 +663,21 @@ clp_done:
 chk_skw:
         move.w  STYLE(a6),d1
         andi.w  #SKEWM+THICKM+OUTLINEM,d1 //skew, thicken, or outline special effects
-        beq     chk_rota                //br if not, skip preblt into buffer
+        jeq     chk_rota                //br if not, skip preblt into buffer
 //
 //  thicken or skew or outline in effect..
 //
 chk_chup:
         tst.w   CHUP(a6)                //we may have to preblt into buffer
-        bne.b   preblt                  //br to preblt if rotation in effect
+        jne     preblt                  //br to preblt if rotation in effect
 
         btst    #SKEW,d1                //skew bit set in STYLE?
-        beq.b   preskew                 //br if not, skip x-clip test
+        jeq     preskew                 //br if not, skip x-clip test
         tst.w   d5                      //did we clip in x
-        bne.b   preblt                  //br to preblt if yes
+        jne     preblt                  //br to preblt if yes
 preskew:
         btst    #OUTLINE,d1             //outlining?
-        beq     chk_rota                //br if not, no preblt
+        jeq     chk_rota                //br if not, no preblt
 
 /////////////////////////////////////////////////////////////////////////
 //  Copy the font character into the character buffer. Then manipulate //
@@ -707,15 +707,15 @@ preblt:
         move.w  _WEIGHT,d1              // thicken amount
         add.w   d6,d7                   // d7 = L_OFF + R_OFF
         tst.w   _DOUBLE                 // doubling?
-        beq.b   full_wt                 // br if no
+        jeq     full_wt                 // br if no
         lsr.w   #1,d1                   // only thicken by half the regular amount
-        bne.b   ful_wtok                // 26 Feb
+        jne     ful_wtok                // 26 Feb
         addq.w  #1,d1                   // 26 Feb if thickness = 0 then make = 1
 ful_wtok:
         lsr.w   #1,d7
 full_wt:
         btst.b  #THICKEN,STYLE+1(a6)    // smear?
-        beq.b   no_smear                // br if no
+        jeq     no_smear                // br if no
 
         add.w   d1,d0                   // add adjusted WEIGHT to DELX
         move.w  d1,smear(a6)            // save smear
@@ -725,9 +725,9 @@ no_smear:
         move.w  DELY(a6),d1
         move.w  STYLE(a6),d2
         btst    #OUTLINE,d2             // check for outline mode
-        beq.b   no_out
+        jeq     no_out
         tst.w   _DOUBLE                 // doubling too?
-        bne.b   no_out                  // br if yes, outline after doubling
+        jne     no_out                  // br if yes, outline after doubling
 
         addq.w  #3,d0                   // add 3 pixels to delx (1 left, 2 right)
         addq.w  #1,tddad(a6)            // make leftmost column blank
@@ -750,9 +750,9 @@ no_out:
         adda.w  buffa(a6),a1            // use this logical buffer
         move.l  a1,sform(a6)            // this will be new source address
         btst    #OUTLINE,d2
-        bne.b   do_clear
+        jne     do_clear
         btst    #SKEW,d2
-        beq.b   no_clear
+        jeq     no_clear
 do_clear:
 //  clear buffer first..
         movea.l a1,a2
@@ -766,9 +766,9 @@ replp:
         dbra    d3,replp
 
         btst    #OUTLINE,d2
-        beq.b   no_clear
+        jeq     no_clear
         tst.w   _DOUBLE
-        bne.b   no_clear
+        jne     no_clear
 
         subq.w  #3,width(a6)
         subq.w  #1,DELX(a6)
@@ -791,7 +791,7 @@ no_clear:
         move.w  #2,nextwrd(a6)          // plane offset is 2
         andi.w  #SKEWM+THICKM,STYLE(a6) // only do thicken & skew
 
-        bsr     norm_blt                // blt source into buffer
+        jbsr    norm_blt                // blt source into buffer
 
         move.w  tmp_style(a6),STYLE(a6)
         move.w  _WRT_MODE,WRT_MOD(a6)
@@ -803,14 +803,14 @@ no_mode:
 //  outline additions
 //
         btst.b  #OUTLINE,STYLE+1(a6)    // check outline
-        beq.b   skip_out                // br to skip outline code
+        jeq     skip_out                // br to skip outline code
         tst.w   _DOUBLE
-        bne.b   skip_out
+        jne     skip_out
 
         movea.l sform(a6),a0            // get starting address of character
         ext.l   d7
         add.l   d7,sform(a6)            // use 2nd down for buffer top (top is temp buf)
-        bsr     outlin                  // outline buffer please
+        jbsr    outlin                  // outline buffer please
 skip_out:
 //
 //  end additions
@@ -825,15 +825,15 @@ skip_out:
 //
 chk_rota:
         tst.w   CHUP(a6)
-        beq.b   chk_db
+        jeq     chk_db
 
-        bsr     rotation                // perform rotation if 90, 180, or 270
+        jbsr    rotation                // perform rotation if 90, 180, or 270
 
 chk_db:
         tst.w   _DOUBLE
-        beq.b   do_clip
+        jeq     do_clip
 
-        bsr     replicat                // double if DOUBLE nonzero
+        jbsr    replicat                // double if DOUBLE nonzero
 
 ///////////////////////////////////////////////////////////
 //  clipping                                             //
@@ -843,16 +843,16 @@ chk_db:
 
 do_clip:
         btst.b  #THICKEN,STYLE+1(a6)
-        beq.b   no_thik
+        jeq     no_thik
         move.w  _WEIGHT,d0
         tst.w   _MONO_STATUS                // 26 Feb
-        bne.b   do_cl_nt                // 26 Feb
+        jne     do_cl_nt                // 26 Feb
         add.w   d0,DELX(a6)
 do_cl_nt:
         move.w  d0,smear(a6)
 no_thik:
         tst.w   CLIP(a6)                // clip requested?
-        bne.b   clip_adjust             // yes
+        jne     clip_adjust             // yes
         clr.w   XMN_CLI(a6)             // otherwise we set up to clip to screen
         clr.w   YMN_CLI(a6)
         move.w  _DEV_TAB,XMX_CLI(a6)
@@ -861,10 +861,10 @@ no_thik:
 clip_adjust:
         move.w  DESTY(a6),d0
         cmp.w   YMN_CLI(a6),d0
-        bge.b   ymn_fine
+        jge     ymn_fine
         add.w   DELY(a6),d0
         cmp.w   YMN_CLI(a6),d0
-        ble.w   upda_dst
+        jle     upda_dst
 mn_clipy:
         sub.w   YMN_CLI(a6),d0
         move.w  DELY(a6),d1
@@ -875,22 +875,22 @@ mn_clipy:
         move.w  d0,DESTY(a6)
 ymn_fine:
         cmp.w   YMX_CLI(a6),d0
-        bgt.w   upda_dst
+        jgt     upda_dst
 mx_clipy:
         add.w   DELY(a6),d0
         subq.w  #1,d0           // make 0 relative
         cmp.w   YMX_CLI(a6),d0
-        ble.b   ymx_fine
+        jle     ymx_fine
 //clip y
         sub.w   YMX_CLI(a6),d0
         sub.w   d0,DELY(a6)
 ymx_fine:
         move.w  DESTX(a6),d0
         cmp.w   XMN_CLI(a6),d0
-        bge.b   xmn_fine
+        jge     xmn_fine
         add.w   DELX(a6),d0
         cmp.w   XMN_CLI(a6),d0
-        ble     upda_dst
+        jle     upda_dst
 //clip x
 mn_clipx:
         sub.w   XMN_CLI(a6),d0
@@ -902,17 +902,17 @@ mn_clipx:
         move.w  d0,DESTX(a6)
 xmn_fine:
         cmp.w   XMX_CLI(a6),d0
-        bgt     upda_dst
+        jgt     upda_dst
 mx_clipx:
         add.w   DELX(a6),d0
         subq.w  #1,d0           // make 0 relative
         cmp.w   XMX_CLI(a6),d0
-        ble     scrn_blt
+        jle     scrn_blt
 //clip x
         sub.w   XMX_CLI(a6),d0
         sub.w   d0,DELX(a6)
 
-        bra     scrn_blt
+        jra     scrn_blt
 
 
 
@@ -956,16 +956,16 @@ scrn_blt:
         move.w  DESTY(a6),d1
         add.w   DELY(a6),d1
         subq.w  #1,d1                   // we draw from bottom up
-        bmi.b   upda_dst                // don't draw if outside screen area!
+        jmi     upda_dst                // don't draw if outside screen area!
 
         move.w  DESTX(a6),d0
-        bmi.b   upda_dst                // don't draw if outside screen area!
+        jmi     upda_dst                // don't draw if outside screen area!
 
-        jsr     concat                  // get memory address & dot address
+        jbsr    concat                  // get memory address & dot address
 //
 //  d1.w is screen offset of destination
 //
-        move.l  _v_bas_ad,a1
+        move.l  _v_bas_ad.w,a1
         adda.l  d1,a1                   // screen dest. addr. for x,y coordinate
 
         move.l  a1,dform(a6)            // save character destination address
@@ -975,13 +975,13 @@ scrn_blt:
         neg.w   d0
         move.w  d0,d_next(a6)
 
-        bsr     norm_blt
+        jbsr    norm_blt
 
 upda_dst:
         move.w  _DELX,d1
 
         tst.w   _DOUBLE                 // set up dest address
-        beq.b   upda_ndb
+        jeq     upda_ndb
 //
 // added 5 mar 85
 //
@@ -989,7 +989,7 @@ upda_dst:
         move.w  tmp_dely(a6),d3         // get actual char height
 
         tst.w   swap_tmps(a6)           // are we swapped
-        beq.b   upda_ndb                // if yes swap back rjg 4/14/85
+        jeq     upda_ndb                // if yes swap back rjg 4/14/85
         exg     d1, d3
 //
 // end additions// following instruction deleted...
@@ -998,24 +998,24 @@ upda_dst:
 //
 upda_ndb:
         btst.b  #THICKEN,_STYLE+1
-        beq.b   upda_ntk
+        jeq     upda_ntk
         tst.w   _MONO_STATUS                // 26 Feb
-        bne.b   upda_ntk                // 26 Feb
+        jne     upda_ntk                // 26 Feb
         add.w   _WEIGHT,d1              // we smeared this amount
 upda_ntk:
         tst.w   CHUP(a6)
-        bgt.b   ck90
+        jgt     ck90
         add.w   d1,_DESTX               //move left by DELX
-        bra.b   blt_done
+        jra     blt_done
 ck90:
         tst.w   chup_flag(a6)
-        beq.b   ck180
-        bgt.b   ck270
+        jeq     ck180
+        jgt     ck270
         sub.w   d1,_DESTY               // move up by DELX
-        bra.b   blt_done
+        jra     blt_done
 ck180:
         sub.w   d1,_DESTX               // move right by DELX
-        bra.b   blt_done
+        jra     blt_done
 ck270:
         add.w   d1,_DESTY               // move down by DELX
 blt_done:
@@ -1068,7 +1068,7 @@ norm_blt:
         move.w  tddad(a6),d1            // get destination offset
         sub.w   tsdad(a6),d1            // subtract source offset -> d1
         move.w  d1,d0                   // copy to d0
-        bpl.b   do_rot                  // br if tsdad =< tddad & rotate right
+        jpl     do_rot                  // br if tsdad =< tddad & rotate right
 //
 //  rotate left
 //
@@ -1108,7 +1108,7 @@ get_mask:
 //  end bug fix
 
         cmpi.w  #0x10,d0                // more than a word?
-        bhi.b   doub_des                // br if bx => 0x10, needs more than 1 word
+        jhi     doub_des                // br if bx => 0x10, needs more than 1 word
 //
 //  Fits in one word
 //
@@ -1118,7 +1118,7 @@ get_mask:
         and.w   d1,left_msk(a6)         // put the two masks together
 
         moveq.l #-4,d7                  // set blttype flag
-        bra.b   msk_done                // exit mask stuff
+        jra     msk_done                // exit mask stuff
 //
 //  Two fringe masks needed..
 //
@@ -1127,27 +1127,27 @@ doub_des:
         lsr.w   #4,d1                   // divide by 16
         subq.w  #1,d1
         move.w  d1,d3                   // number of words to write for middle
-        bne.b   mlt_dest                // br if # of words is non-zero
+        jne     mlt_dest                // br if # of words is non-zero
 //
 //  # of middle words is zero
 //
         move.w  tsdad(a6),d1
         add.w   width(a6),d1
         cmpi.w  #0x20,d1
-        bcc.b   mlt_dest                // br if source fits in two words too
+        jcc     mlt_dest                // br if source fits in two words too
         moveq.l #0,d7                   // set blttype flag for double
-        bra.b   do_ritem
+        jra     do_ritem
 
 mlt_dest:
         tst.w   shif_cnt(a6)            // check sign of shift count
-        blt.b   mltleft
+        jlt     mltleft
         moveq.l #4,d7
-        bra.b   do_ritem
+        jra     do_ritem
 mltleft:
         moveq.l #8,d7
 do_ritem:
         andi.w  #0x000F,d0
-        bne.b   not_null
+        jne     not_null
         subq.w  #1,d3                   // last word is full so its a fringe
         moveq.l #0x10,d0
 not_null:
@@ -1161,12 +1161,12 @@ msk_done:
         move.w  d4,rite_msk(a6)
         addq.w  #2,d3
         cmp.w   d2,d4
-        bcs.b   msk0
+        jcs     msk0
         addq.w  #1,d3
 msk0:
         move.w  d3,src_wthk(a6)
         move.w  d3,src_wrd(a6)
-        bra.w   plane_loop
+        jra     plane_loop
 
 ////////////////////////////////////
 //  writing mode mapping tables:  //
@@ -1214,10 +1214,10 @@ plane_loop:
 //  Do special effects..
 //
         move.w  STYLE(a6),d0            // special effects mask
-        beq.w   wrt_char
+        jeq     wrt_char
 
         btst.l  #LIGHT,d0
-        beq.b   no_lite
+        jeq     no_lite
 //
 //  Light special effect..
 //
@@ -1233,7 +1233,7 @@ plane_loop:
 
 no_lite:
         btst.l  #THICKEN,d0
-        beq.b   no_thick
+        jeq     no_thick
 //
 //  Thicken special effect..
 //
@@ -1250,7 +1250,7 @@ no_lite:
 
 no_thick:
         btst.l  #SKEW,d0
-        beq.b   wrt_char
+        jeq     wrt_char
 //
 //  Skew special effect..
 //
@@ -1259,19 +1259,19 @@ no_thick:
         lea.l   skewop,a5
 
         tst.w   blt_flag(a6)
-        bgt.b   wrt_char
-        beq.b   not_sngl
+        jgt     wrt_char
+        jeq     not_sngl
         clr.w   dest_wrd(a6)
         moveq.l #0,d7
-        bra.b   chng_blt
+        jra     chng_blt
 not_sngl:
         cmpi.w  #0x10,width(a6)
-        bls.b   wrt_char                // br if source is at most two words
+        jls     wrt_char                // br if source is at most two words
 
         tst.w   shif_cnt(a6)
-        blt.b   chng_left               // br if mlt_rite assumption correct
+        jlt     chng_left               // br if mlt_rite assumption correct
         moveq.l #4,d7
-        bra.b   chng_blt
+        jra     chng_blt
 chng_left:
         moveq.l #8,d7
 chng_blt:
@@ -1279,7 +1279,7 @@ chng_blt:
 
 wrt_char:
         move.w  blt_flag(a6),d7
-        ble.b   set_chr_hgt
+        jle     set_chr_hgt
         movea.l a2,a5
         move.w  d_next(a6),d5
 set_chr_hgt:
@@ -1290,14 +1290,14 @@ set_chr_hgt:
         jmp     (a2)                    // do the fastest one
 next_plane:
         subq.w  #1,nbrplane(a6)         // decrement plane count
-        ble.b   no_more_planes          // loop for next plane
+        jle     no_more_planes          // loop for next plane
         movea.l sform(a6),a0
         movea.l dform(a6),a1
         addq.l  #2,a1                   // advance destination plane
         move.l  a1,dform(a6)            // save dest. starting address
         btst.b  #SKEW,STYLE+1(a6)       // only skew screws up other planes
-        beq.w   plane_loop              // br to short init if not skew
-        bra.w   norm_blt                // else, do big init
+        jeq     plane_loop              // br to short init if not skew
+        jra     norm_blt                // else, do big init
 no_more_planes:
         rts
 blttype:
@@ -1311,7 +1311,7 @@ sgl_loop:
         move.w  s_next(a6),d6
         move.w  d_next(a6),d7
         lea.l   sgl_rtn,a3
-        bra.b   sgl_1st_scan
+        jra     sgl_1st_scan
 
 sgl_lp:
         adda.w  d6,a0                   // get to next line above in font
@@ -1330,9 +1330,9 @@ sgl_1st_scan:
 #endif
 
         move.w  shif_cnt(a6),d1
-        bmi.b   left_rol
+        jmi     left_rol
         lsr.l   d1,d0
-        bra.b   end_ro
+        jra     end_ro
 left_rol:
         lsl.l   d1,d0
 end_ro:
@@ -1345,7 +1345,7 @@ end_ro:
 sgl_rtn:
         move.w  d1,(a1)                 //store the result
         dbra    d3,sgl_lp               //do next scan line of character
-        bra.w   next_plane
+        jra     next_plane
 
 ///////////////////////
 //  Double loop - destination is two words      //
@@ -1357,7 +1357,7 @@ dbl_loop:
         lea.l   dbl_2wrd,a2
         move.l  a2,d5
         lea.l   dbl_1wrd,a3
-        bra.b   dbl_1st_scan
+        jra     dbl_1st_scan
 
 dbl_lp:
         adda.w  d6,a0           //get to next line above in font
@@ -1377,9 +1377,9 @@ dbl_1st_scan:
 #endif
 
         move.w  shif_cnt(a6),d1
-        bmi.b   dbleft
+        jmi     dbleft
         lsr.l   d1,d0                   //align source & destination
-        bra.b   dblendr
+        jra     dblendr
 dbleft:
         lsl.l   d1,d0
 dblendr:
@@ -1407,7 +1407,7 @@ dbl_2wrd:
         move.w  d1,(a1,a2.w)            //save the result
 
         dbra    d3,dbl_lp               //do next scan line of character
-        bra.w   next_plane
+        jra     next_plane
 
 /////////////////////////
 //    Multi - Left     //
@@ -1422,7 +1422,7 @@ left_loop:
         rol.w   lite_msk(a6)
 
         btst.b  #SKEW,STYLE+1(a6)
-        bne.w   skewopw
+        jne     skewopw
 mlt_left:
         move.l  a0,d6
         move.l  a1,d7
@@ -1488,7 +1488,7 @@ word_lef:
         move.w  (a1),d4                 //get another destination word
 
         subq.w  #1,wrd_cnt(a6)          //decrement inner loop count
-        blt.b   lef_don                 //br if we have to mask the last word
+        jlt     lef_don                 //br if we have to mask the last word
 
         jmp     (a4)                    //call specialw
 
@@ -1496,7 +1496,7 @@ lft_wrds:
         move.w  d1,(a1)                 //store the result
         adda.w  nextwrd(a6),a1          //advance destination to next word
 
-        bra.b   word_lef                //go for more
+        jra     word_lef                //go for more
 
 lef_don:
         move.w  rite_msk(a6),d2         //load the mask we need
@@ -1508,7 +1508,7 @@ lft_rfrng:
         move.w  d1,(a1)                 //store the result
 
         dbra    d3,left_loop            //decrement # of lines to move
-        bra.w   next_plane
+        jra     next_plane
 
 /////////////////////////
 //   Multi - right     //
@@ -1523,7 +1523,7 @@ rite_loop:
         rol.w   lite_msk(a6)
 
         btst.b  #SKEW,STYLE+1(a6)
-        bne.w   skewopw
+        jne     skewopw
 mlt_rite:
         move.l  a0,d6
         move.l  a1,d7
@@ -1580,7 +1580,7 @@ word_rit:
         move.w  (a1),d4                 //get another destination word
 
         subq.w  #1,wrd_cnt(a6)          //decrement inner loop count
-        blt.b   rite_don                //br if we have to mask the last word
+        jlt     rite_don                //br if we have to mask the last word
 
         jmp     (a4)                    //call specialw
 
@@ -1588,7 +1588,7 @@ rgt_wrds:
         move.w  d1,(a1)                 //store the result
         adda.w  nextwrd(a6),a1          //advance destination to next word
 
-        bra.b   word_rit                //go for more
+        jra     word_rit                //go for more
 
 rite_don:
         move.w  rite_msk(a6),d2         //load the mask we need
@@ -1600,7 +1600,7 @@ rgt_rfrng:
         move.w  d1,(a1)                 //store the result
 
         dbra    d3,rite_loop            //decrement # of lines to move
-        bra.w   next_plane
+        jra     next_plane
 
 ///////////////////////////////////////////////////
 //      Writing Mode Operations using fringe mask //
@@ -1704,20 +1704,20 @@ thknop:
         and.w   d2,d1
         move.w  thk_msk(a6),d6
         btst.b  #0,skew_msk+1(a6)       //was a skew performed?
-        beq.b   thk00                   //br if not
+        jeq     thk00                   //br if not
         ori.b   #0x10,ccr
         roxr.w  #1,d6
-        bcc.b   thk01
+        jcc     thk01
         move.w  #0x8000,d6
 thk01:
         move.w  d6,thk_msk(a6)
 thk00:
         tst.w   dest_wrd(a6)
-        bmi.b   thk0
+        jmi     thk0
         cmp.w   rite_msk(a6),d6
-        bcc.b   thk0
+        jcc     thk0
         and.w   d6,d0
-        bra.b   thk1
+        jra     thk1
 thk0:
         clr.w   d0
         and.w   d6,d1
@@ -1765,7 +1765,7 @@ thkoplp:
 thknopw:
         movem.l d5-d6,-(sp)
         subq.w  #1,src_wrd(a6)
-        bne.b   thk2
+        jne     thk2
         and.w   thk_msk(a6),d1
 thk2:
         move.w  smear(a6),d6
@@ -1804,46 +1804,46 @@ thknopwf:
         movem.l d5-d7,-(sp)
         move.w  thk_msk(a6),d6
         subq.w  #1,src_wrd(a6)
-        bmi.b   thk3
-        beq.b   thk4
+        jmi     thk3
+        jeq     thk4
 //  starting left fringe, do left mask only
         subq.w  #1,src_wrd(a6)
-        bne.b   thk11
+        jne     thk11
         and.w   d6,d1
 thk11:
         and.w   left_msk(a6),d1
-        bra.b   thk7
+        jra     thk7
 //  right fringe, source data invalid, erase..
 thk3:
         clr.w   d1
-        bra.b   thk5
+        jra     thk5
 //  right fringe, source data AND'd with source mask..
 thk4:
         and.w   d6,d1
 //  compute mask & count for next line..
 thk5:
         tst.w   skew_msk(a6)
-        bmi.b   thk6
+        jmi     thk6
         move.w  dest_wrd(a6),d5
         addq.w  #2,d5
         move.w  rite_msk(a6),d7
         ori.b   #0x10,ccr
         roxr.w  #1,d7
-        bcc.b   thk33
+        jcc     thk33
         move.w  #0x8000,d7
         addq.w  #1,d5
 thk33:
         cmpi.w  #1,left_msk(a6)
-        bne.b   thk34
+        jne     thk34
         subq.w  #1,d5
 thk34:
         ori.b   #0x10,ccr
         roxr.w  #1,d6
-        bcc.b   thk31
+        jcc     thk31
         move.w  #0x8000,d6
 thk31:
         cmp.w   d6,d7
-        bcs.b   thk35
+        jcs     thk35
         addq.w  #1,d5
 thk35:
         move.w  d6,thk_msk(a6)
@@ -1915,7 +1915,7 @@ liteopwf:
 //
 skewop:
         rol.w   skew_msk(a6)
-        bcc.b   no_shift
+        jcc     no_shift
 
         swap    d1
         move.w  d0,d1                   //pack source words into long one (d1)
@@ -1927,9 +1927,9 @@ skewop:
         move.w  d2,rite_msk(a6)
         swap    d2                      //unpack mask words
         move.w  d2,left_msk(a6)
-        beq.b   nxt_word
+        jeq     nxt_word
         move.w  shif_cnt(a6),d0
-        bmi.b   dec_rol
+        jmi     dec_rol
 ror_add:
         addq.w  #1,d0
 new_shif:
@@ -1942,12 +1942,12 @@ no_shift:
 
 dec_rol:
         tst.b   d0
-        beq.b   begn_ror
+        jeq     begn_ror
         subq.w  #1,d0
-        bra.b   new_shif
+        jra     new_shif
 begn_ror:
         clr.w   d0
-        bra.b   ror_add
+        jra     ror_add
 //
 //  we crossed a word boundary..
 //
@@ -1962,7 +1962,7 @@ nxt_word:
         sub.w   shif_cnt(a6),d0
         ori.w   #0x8000,d0
         move.w  d0,shif_cnt(a6)
-        bra.b   no_shift
+        jra     no_shift
 
 /////////////////////////////////////////////////////////////////////////
 //    special effect SKEW for words                                     //
@@ -1971,18 +1971,18 @@ nxt_word:
 
 skewopw:
         rol.w   skew_msk(a6)
-        bcc.b   do_shift
+        jcc     do_shift
 
         tst.w   shif_cnt(a6)
-        bmi     mlt_left
-        bra     mlt_rite
+        jmi     mlt_left
+        jra     mlt_rite
 do_shift:
         ori     #0x10,ccr                       //set x bit
         roxr.w  rota_msk(a6)                    //one more bit into next word
 
         move.w  rite_msk(a6),d0
         cmpi.w  #0xFFFF,d0                      //if mask is full on
-        beq.b   inc_rite
+        jeq     inc_rite
 
         ori     #0x10,ccr                       //set x bit
         roxr.w  #1,d0                           //rotate in a 1
@@ -1991,32 +1991,32 @@ do_shift:
 do_left:
         move.w  shif_cnt(a6),d0
         tst.b   d0
-        bne.b   no_rota
+        jne     no_rota
         move.w  #0x8000,rota_msk(a6)            //these are the bits that are good
 no_rota:
         move.w  left_msk(a6),d1
         lsr.w   #1,d1                           //rotate in a 0
-        beq.b   wnxt_wrd                        //br if mask inoperative, inc addr
+        jeq     wnxt_wrd                        //br if mask inoperative, inc addr
 
         move.w  d1,left_msk(a6)
 
         tst.w   d0
-        bmi.b   wdec_rol
+        jmi     wdec_rol
         addq.w  #1,shif_cnt(a6)
-        bra     mlt_rite
+        jra     mlt_rite
 wdec_rol:
         tst.b   d0
-        beq.b   set_msk
+        jeq     set_msk
         subq.w  #1,shif_cnt(a6)                 //do 1 less rol
-        bra     mlt_left
+        jra     mlt_left
 set_msk:
         move.w  #1,shif_cnt(a6)
-        bra     mlt_rite
+        jra     mlt_rite
 
 inc_rite:
         addq.w  #1,dest_wrd(a6)                 //spilled out of a word to get here
         move.w  #0x8000,rite_msk(a6)
-        bra.b   do_left                         //go back & finish up
+        jra     do_left                         //go back & finish up
 
 wnxt_wrd:
         move.w  #0xFFFF,left_msk(a6)            //ran out of word
@@ -2029,7 +2029,7 @@ wnxt_wrd:
         ori.w   #0x8000,d2
         move.w  d2,shif_cnt(a6)
 
-        bra     mlt_left
+        jra     mlt_left
 
 /////////////////////////
 //      rotation in 90 degree increments        //
@@ -2053,9 +2053,9 @@ rotation:
         move.w  s_next(a6),d2           //cx=d2
 
         tst.w   chup_flag(a6)           //determine character rotation
-        beq     upsd_dwn
+        jeq     upsd_dwn
 rot90:
-        blt.b   top_src
+        jlt     top_src
         neg.w   s_next(a6)              //go up 1 line
         subq.w  #1,d1
         add.w   d1,d0                   //start at bottom
@@ -2071,7 +2071,7 @@ top_src:
         adda.w  buffb(a6),a1
 
         tst.w   chup_flag(a6)           //determine if 90 or 270 rotation
-        bgt.b   top_dwn                 //
+        jgt     top_dwn                 //
         neg.w   d_next(a6)              //bottom working up
         move.w  DELX(a6),d1             //DELX is the height
         subq.w  #1,d1
@@ -2088,18 +2088,18 @@ top_dwn:
         move.w  s_next(a6),d6
         movea.l a0,a2
         movea.l a1,a3
-        bra.b   rot_nsrc
+        jra     rot_nsrc
 rot_ylp:
         move.w  height(a6),d1           //d1=cx'
-        bra.b   rot_srt
+        jra     rot_srt
 rot_xlp:
         move.w  (a0),d7
         and.w   d3,d7
-        beq.b   rot_nor
+        jeq     rot_nor
         or.w    d4,d0
 rot_nor:
         ror.w   d5,d4
-        bcc.b   rot_isrc
+        jcc     rot_isrc
 rot_ndst:
         move.w  d0,(a1)+
         moveq.l #0,d0
@@ -2114,7 +2114,7 @@ rot_srt:
         movea.l a3,a1
         move.w  a4,d4
         ror.w   d5,d3
-        bcc.b   rnew_src
+        jcc     rnew_src
         addq.l  #2,a2
 rnew_src:
         movea.l a2,a0
@@ -2136,7 +2136,7 @@ rot_done:
 
         move.w  d_next(a6),d0
         tst.w   chup_flag(a6)
-        bgt.b   rot_nneg
+        jgt     rot_nneg
         neg.w   d0
 rot_nneg:
         move.w  d0,s_next(a6)
@@ -2166,7 +2166,7 @@ upsd_dwn:
         add.w   buffb(a6),d0
         movea.l _scrtchp,a1
         adda.w  d0,a1                   //a1 -> last word in form
-        bra.b   strtflip
+        jra     strtflip
 upsd_lp:
         movea.l a0,a2                   //use a2 as working source
         move.w  d2,d3                   //copy words per line to temp
@@ -2231,7 +2231,7 @@ replicat:
         adda.w  _scrpt2,a1              //dest ptr
 
         btst    #OUTLINE,STYLE+1(a6)    //outline after double?
-        beq.b   noline                  //br if not
+        jeq     noline                  //br if not
 //
 //  outlining, expand buffer size all around perimeter
 //
@@ -2262,7 +2262,7 @@ oklear1:
 oklear3:
         move.w  d6,-(a2)
         dbra    d5,oklear3
-        bra.b   noline1
+        jra     noline1
 
 noline:
         lsr.w   #3,d1
@@ -2284,21 +2284,21 @@ noline1:
         subq.w  #1,d5
         move.w  #32767,d6
         tst.l   d7
-        bmi.b   rep_ylop
+        jmi     rep_ylop
 y_dwn_lp:
         add.w   d2,d6
-        bcc.b   y_no_drw
-        bsr     yloop
+        jcc     y_no_drw
+        jbsr     yloop
 y_no_drw:
         adda.w  d7,a0
         dbra    d5,y_dwn_lp
-        bra.b   y_rep_don
+        jra     y_rep_don
 rep_ylop:
         add.w   d2,d6
-        bcc.b   y_no_rep
+        jcc     y_no_rep
         bsr     yloop
 y_no_rep:
-        bsr     yloop
+        jbsr    yloop
         adda.w  d7,a0
         dbra    d5,rep_ylop
 y_rep_don:
@@ -2309,11 +2309,11 @@ y_rep_don:
         moveq.l #0,d3
 repwidcl:
         add.w   d0,d1
-        bcc.b   nrepdoub
+        jcc     nrepdoub
         addq.w  #1,d3
 nrepdoub:
         tst.l   d7
-        bpl.b   nrpndoub
+        jpl     nrpndoub
         addq.w  #1,d3
 nrpndoub:
         dbra    d2,repwidcl
@@ -2328,24 +2328,24 @@ nrpndoub:
 //  this don't work with arbitrary scale of text
 //
 //      andi.w  #SKEWM,dest_wrd(a6)     //did we skew-preblt before doubling?
-//      bne     skpreb                  //br to preblt_skew adjust if so
+//      jne     skpreb                  //br to preblt_skew adjust if so
 //
 //
 repexit1:
         btst    #OUTLINE,STYLE+1(a6)
-        beq.b   repexit2
+        jeq     repexit2
         move.l  _scrtchp,a0
         adda.w  _scrpt2,a0
         move.w  d1,d7
         lea     2(a0,d7.w),a1
-        bsr     outlin1
+        jbsr    outlin1
         move.w  _scrpt2,d0
         add.w   d_next(a6),d0
         move.w  #15,_SOURCEX
-        bra     repexit3
+        jra     repexit3
 repexit2:
         move.w  _scrpt2,d0
-        bra     repexit
+        jra     repexit
 //
 /////////////////////////////
 //
@@ -2387,60 +2387,60 @@ yloop:
         subq.w  #1,d5                           //adjust for dbra
 
         move.w  _XACC_DDA,d7
-        bra.b   nextsrc
+        jra     nextsrc
 innerlp:
         ror.w   #1,d3
-        bcc.b   reploop
+        jcc     reploop
 nextsrc:
         movea.w (a0)+,a2
 reploop:
         move.w  a2,d6
         and.w   d3,d6
-        bne.b   nrepnor
+        jne     nrepnor
 
 //--6 mar --V
 repnor:
         tst.l   d7
-        bmi.b   repnorup
+        jmi     repnorup
         add.w   d2,d7
-        bcc.b   incsrc
-        bra.b   ordone
+        jcc     incsrc
+        jra     ordone
 repnorup:
         add.w   d2,d7
-        bcc.b   ordone
+        jcc     ordone
 //--6 mar --^
 
         ror.w   #1,d4
 
 //--6 mar --V
-        bcc.b   ordone
+        jcc     ordone
         move.w  d0,(a1)+
         moveq.l #0,d0
 //--6 mar --^
 
-        bra.b   ordone
+        jra     ordone
 nrepnor:
 
 //--6 mar --V
         add.w   d2,d7
-        bcc.b   o_no_rep
+        jcc     o_no_rep
 //--6 mar --^
 
         or.w    d4,d0
         ror.w   #1,d4
 //--6 mar --V
-        bcc.b   o_no_rep
+        jcc     o_no_rep
         move.w  d0,(a1)+
         moveq.l #0,d0
 o_no_rep:
         tst.l   d7
-        bpl.b   incsrc
+        jpl     incsrc
 //--6 mar --^
 
         or.w    d4,d0
 ordone:
         ror.w   #1,d4
-        bcc.b   incsrc
+        jcc     incsrc
 nextdst:
         move.w  d0,(a1)+
         moveq.l #0,d0
@@ -2548,7 +2548,7 @@ out_loop:
         movea.l a2,a1
         adda.w  s_next(a6),a2
         cmpi.w  #1,d6
-        bne.b   srt_lin
+        jne     srt_lin
         movea.l a1,a2
 srt_lin:
         dbra    d6,out_edge

@@ -302,12 +302,12 @@ WORD rs_free(AESGLOBAL *pglobal)
  *  Get a particular ADDRess out of a resource file that has been
  *  loaded into memory
  */
-WORD rs_gaddr(AESGLOBAL *pglobal, UWORD rtype, UWORD rindex, LONG *rsaddr)
+WORD rs_gaddr(AESGLOBAL *pglobal, UWORD rtype, UWORD rindex, void **rsaddr)
 {
     rs_sglobe(pglobal);
 
-    *rsaddr = (LONG)get_addr(rtype, rindex);
-    return (*rsaddr != -1L);
+    *rsaddr = get_addr(rtype, rindex);
+    return (*rsaddr != (void *)-1L);
 }
 
 
@@ -315,14 +315,14 @@ WORD rs_gaddr(AESGLOBAL *pglobal, UWORD rtype, UWORD rindex, LONG *rsaddr)
  *  Set a particular ADDRess in a resource file that has been
  *  loaded into memory
  */
-WORD rs_saddr(AESGLOBAL *pglobal, UWORD rtype, UWORD rindex, LONG rsaddr)
+WORD rs_saddr(AESGLOBAL *pglobal, UWORD rtype, UWORD rindex, void *rsaddr)
 {
-    LONG *psubstruct;
+    void **psubstruct;
 
     rs_sglobe(pglobal);
 
-    psubstruct = (LONG *)get_addr(rtype, rindex);
-    if (psubstruct != (LONG *)-1L)
+    psubstruct = (void **)get_addr(rtype, rindex);
+    if (psubstruct != (void **)-1L)
     {
         *psubstruct = rsaddr;
         return TRUE;
@@ -398,7 +398,7 @@ void rs_fixit(AESGLOBAL *pglobal)
 /*
  *  rs_load: the rsrc_load() implementation
  */
-WORD rs_load(AESGLOBAL *pglobal, LONG rsfname)
+WORD rs_load(AESGLOBAL *pglobal, BYTE *rsfname)
 {
     LONG  dosrc;
     WORD  ret;
@@ -407,7 +407,7 @@ WORD rs_load(AESGLOBAL *pglobal, LONG rsfname)
     /*
      * use shel_find() to get resource location
      */
-    strcpy(tmprsfname,(char *)rsfname);
+    strcpy(tmprsfname,rsfname);
     if (!sh_find(tmprsfname))
         return FALSE;
 

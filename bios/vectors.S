@@ -86,7 +86,7 @@ set_vec:
         add.l   #2, a0
 #ifdef __mcoldfire__
         subq.l  #1, d0
-        bpl.s   set_vec
+        jpl     set_vec
 #else
         dbra    d0, set_vec
 #endif
@@ -102,7 +102,7 @@ set_uvec:
         move.l  a0, (a1)+
 #ifdef __mcoldfire__
         subq.l  #1, d0
-        bpl.s   set_uvec
+        jpl     set_uvec
 #else
         dbra    d0, set_uvec
 #endif
@@ -249,16 +249,16 @@ any_vec:
 
 _gemtrap:
         cmp.w   #0x73,d0                // VDI call?
-        bne     no_vdi
+        jne     no_vdi
         jsr     _GSX_ENTRY
         rte
 
 no_vdi:
         cmp.w   #0xfffe,d0              // vq_gdos call?
-        beq     what_gdos
+        jeq     what_gdos
 
         cmp.w   #0xffff,d0              // query for jsr:able address?
-        beq     query
+        jeq     query
 
         rte
 
@@ -287,7 +287,7 @@ _int_hbl:
         moveq   #0, d0
         move.w  6(sp), d0       // get status register from stack
         and.l   #0x0700, d0     // isolate just IPL-mask from sr
-        bne     is_ipl          // if IPL is nonzero, then end
+        jne     is_ipl          // if IPL is nonzero, then end
         move.w  6(sp), d0
         or.l    #0x0300, d0     // else set IPL3 in status register
         move.w  d0, 6(sp)
@@ -297,7 +297,7 @@ is_ipl:
         move.w  d0, -(sp)       // save d0
         move.w  2(sp), d0       // get status register from stack
         and.w   #0x0700, d0     // isolate just IPL-mask from sr
-        bne     is_ipl          // if IPL is nonzero, then end
+        jne     is_ipl          // if IPL is nonzero, then end
         or.w    #0x0300, 2(sp)  // else set IPL3 in status register
 is_ipl:
         move.w  (sp)+, d0       // restore d0
@@ -314,7 +314,7 @@ is_ipl:
  */
 
 _int_vbl:
-        addq.l  #1, _frclock            // increase num of happened ints
+        addq.l  #1, _frclock.w          // increase num of happened ints
 #ifdef __mcoldfire__
         move.l  d0, -(sp)               // ColdFire specific
         moveq   #0, d0
@@ -324,7 +324,7 @@ _int_vbl:
 #else
         subq.w  #1, _vblsem             // check vbl semaphore
 #endif
-        bmi     vbl_end                 // if VBl routine disabled -> end
+        jmi     vbl_end                 // if VBl routine disabled -> end
 
 #ifdef __mcoldfire__
         lea     -56(sp), sp
@@ -332,7 +332,7 @@ _int_vbl:
 #else
         movem.l d0-d7/a0-a6, -(sp)      // save registers
 #endif
-        addq.l  #1, _vbclock            // count number of VBL interrupts
+        addq.l  #1, _vbclock.w          // count number of VBL interrupts
 
         // TODO: Check for monitor switching on normal ST(E) here,
         // and jump to _swv_vec if necessary...
@@ -349,20 +349,20 @@ _int_vbl:
 //  address with flag set    load 16 Falcon palette registers from address
 //     0 with flag set       load 256 Falcon palette registers from
 //                             _falcon_shadow_palette
-        move.l  _colorptr,d0
-        beq     vbl_no_palette
+        move.l  _colorptr.w,d0
+        jeq     vbl_no_palette
         // load new color palette
-        clr.l   _colorptr
+        clr.l   _colorptr.w
         lea     0xffff8240.w,a1             // ST(e) hardware palette registers
         moveq   #7,d1                       // count/2 - 1 (we move longwords)
         bclr    #0,d0                       // test & clear Falcon indicator
 #if CONF_WITH_VIDEL
-        beq.s   docopy                      // wasn't set, so update STe regs
+        jeq     docopy                      // wasn't set, so update STe regs
         // load Falcon color palette
         lea     0xffff9800.w,a1             // Falcon palette registers
         moveq   #15,d1                      // assume 16 only
         tst.l   d0                          // source address specified?
-        bne.s   docopy                      // yes, go update 16
+        jne     docopy                      // yes, go update 16
         move.l  #_falcon_shadow_palette,d0  // else set source address
         move.l  #255,d1                     //  & prepare to update 256
 docopy:
@@ -372,30 +372,30 @@ vbl_palette_loop:
         move.l  (a0)+,(a1)+
 #ifdef __mcoldfire__
         subq.l  #1,d1
-        bpl.s   vbl_palette_loop
+        jpl     vbl_palette_loop
 #else
         dbra    d1,vbl_palette_loop
 #endif
 vbl_no_palette:
 
         // set new video address
-        move.l  _screenpt,d0
-        beq     vbl_no_screenpt
-        move.l  d0,_v_bas_ad
+        move.l  _screenpt.w,d0
+        jeq     vbl_no_screenpt
+        move.l  d0,_v_bas_ad.w
 #if CONF_WITH_VIDEL
         tst.w   _has_videl
-        bne.s   set_video_low
+        jne     set_video_low
 #endif
 #if CONF_WITH_TT_SHIFTER
         tst.w   _has_tt_shifter
-        bne.s   set_video_low
+        jne     set_video_low
 #endif
 #if CONF_WITH_STE_SHIFTER
         tst.w   _has_ste_shifter
-        bne.s   set_video_low
+        jne     set_video_low
 #endif
 #if CONF_WITH_VIDEL || CONF_WITH_TT_SHIFTER || CONF_WITH_STE_SHIFTER
-        bra.s   st_shifter
+        jra     st_shifter
 set_video_low:
         move.b  d0,0xffff820d.w
 st_shifter:
@@ -422,18 +422,18 @@ vbl_no_screenpt:
 #ifdef __mcoldfire__
         moveq   #0,d0
 #endif
-        move.w  _nvbls,d0
-        beq     vbl_no_queue
+        move.w  _nvbls.w,d0
+        jeq     vbl_no_queue
 #ifdef __mcoldfire__
         sub.l   #1,d0
 #else
         sub.w   #1,d0
 #endif
-        move.l  _vblqueue,a0
+        move.l  _vblqueue.w,a0
 vbl_queue_loop:
         move.l  (a0)+,a1
         cmp.l   #0,a1
-        beq     vbl_queue_next
+        jeq     vbl_queue_next
         move.l  a0,-(sp)
         move.l  d0,-(sp)
         jsr     (a1)
@@ -442,7 +442,7 @@ vbl_queue_loop:
 vbl_queue_next:
 #ifdef __mcoldfire__
         subq.l  #1,d0
-        bpl.s   vbl_queue_loop
+        jpl     vbl_queue_loop
 #else
         dbra    d0,vbl_queue_loop
 #endif
@@ -481,7 +481,7 @@ vbl_end:
 #define REAL_TIMER_C_HANDLER (CONF_WITH_MFP && !CONF_COLDFIRE_TIMER_C)
 
 _int_timerc:
-        addq.l  #1, _hz_200             // increment 200 Hz counter
+        addq.l  #1, _hz_200.w           // increment 200 Hz counter
 
 #ifdef __mcoldfire__
         // Save early ColdFire registers
@@ -497,10 +497,10 @@ _int_timerc:
         lsl.l   #1,d0                   // check for 4th call
         swap    d0
         move.w  d0,(a0)
-        bpl     timerc_end
+        jpl     timerc_end
 #else
         rol.w   _timer_c_sieve          // check for 4th call
-        bpl     timerc_end
+        jpl     timerc_end
 #endif
 
 #ifdef __mcoldfire__
@@ -519,8 +519,8 @@ _int_timerc:
         jsr     _sndirq
 #endif
 
-        move.w  _timer_ms, -(sp)
-        move.l  _etv_timer, a0
+        move.w  _timer_ms.w, -(sp)
+        move.l  _etv_timer.w, a0
         jsr     (a0)                    // jump to etv_timer routine
         addq.l  #2, sp                  // correct stack
 
@@ -570,7 +570,7 @@ _call_etv_critic:
         move.l  d2,-(sp)
         move.l  d0,-(sp)            // error code || device to stack
         moveq.l #-1,d0              // set default return code like TOS does
-        movea.l _etv_critic,a0
+        movea.l _etv_critic.w,a0
         jsr     (a0)                // call handler
         addq.l  #4,sp               // fixup stack
         move.l  (sp)+,d2            // restore regs
@@ -601,7 +601,7 @@ _int_illegal:
         move.w  (a0),d0                 // the offending instruction
         andi.w  #0xffc0,d0              // isolate move from CCR opcode
         cmpi.w  #0x42c0,d0              // we don't care where "To" was
-        bne     ii_back                 // Not a MOVE CCR,XX instruction
+        jne     ii_back                 // Not a MOVE CCR,XX instruction
 
         andi.w  #0xfdff,(a0)            // make it MOVE SR,XX
         movem.l (sp)+,d0/a0
@@ -609,7 +609,7 @@ _int_illegal:
 
 ii_back:
         movem.l (sp)+,d0/a0
-        bra     illg_vec                // go directly to our panic handler
+        jra     illg_vec                // go directly to our panic handler
 
 
 
@@ -626,13 +626,13 @@ _int_priv:
         move.w  (a0),d0                 // the offending instruction
         andi.w  #0xffc0,d0              // isolate move from SR opcode
         cmpi.w  #0x40c0,d0              // we don't care where "To" was
-        bne     pi_back                 // Not a MOVE SR,XX instruction
+        jne     pi_back                 // Not a MOVE SR,XX instruction
 
         ori.w   #0x200,(a0)             // make it MOVE CCR,XX
 
 #if CONF_WITH_ADVANCED_CPU
         cmpi.b  #30,_mcpu+3
-        bne.s   pi_not30
+        jne     pi_not30
 
         // on 68030, invalidate the i-cache line we just modified
         move.l  a0,d0                   // get full address
@@ -641,13 +641,13 @@ _int_priv:
         MOVEC_CACR_D0                   // get current cacr
         ori.b   #0x04,d0                // set the CEI bit
         MOVEC_D0_CACR                   // invalidate the line
-        bra.s   pi_next
+        jra     pi_next
 
 pi_not30:
         cmpi.b  #40,_mcpu+3
-        beq.s   pi_inval
+        jeq     pi_inval
         cmpi.b  #60,_mcpu+3
-        bne.s   pi_next
+        jne     pi_next
 
         // on 68040 and 68060, invalidate the line holding the opcode only
 pi_inval:
@@ -662,7 +662,7 @@ pi_next:
 
 pi_back:
         movem.l (sp)+,d0/a0
-        bra     priv_vec                // go directly to our panic handler
+        jra     priv_vec                // go directly to our panic handler
 
 #endif /* __mcoldfire__ */
 
@@ -721,16 +721,16 @@ _int_unimpint:
         move.l  6(sp),a0                    // a0 -> instruction causing interrupt
         btst.b  #0,(a0)                     // quick test for movep
         movea.l (sp)+,a0                    // restore a0, sp (does not change cc)
-        beq     unimp_vec                   // not movep, go to panic handler
+        jeq     unimp_vec                   // not movep, go to panic handler
         link    a6,#-SIZE_VARS              // reserve stack space
         movem.l d0-d7/a0-a5,UI_DREGS(a6)    // save d0-d7, a0-a5
         move.l  (a6),UI_A6(a6)              // save a6
 
         /* get value of a7 that interrupted program saw */
         btst    #5,UI_ISR(a6)               // supervisor mode?
-        bne.s   supmode                     // yes, branch
+        jne     supmode                     // yes, branch
         move    usp,a0
-        bra.s   save_a7
+        jra     save_a7
 
 supmode:
         lea     UI_FRMEND(a6),a0
@@ -742,7 +742,7 @@ save_a7:
         move.l  d0,UI_OPWORD(a6)            // store instruction on stack
         addq.l  #4,UI_IPC(a6)               // update pc to point to next instruction
 
-        bsr     emulate_movep
+        jbsr    emulate_movep
 
         movem.l UI_DREGS(a6),d0-d7/a0-a5    // restore regs from stack
                                             // note we can't have changed sp/usp
@@ -768,7 +768,7 @@ emulate_movep:
         adda.w  UI_EXTWORD(a6),a0           // add displacement
 
         btst    #7,d1                       // check for memory-to-register
-        beq     mem2reg
+        jeq     mem2reg
 
         /* handle register-to-memory: fetch Dx, write to memory */
 
@@ -778,7 +778,7 @@ emulate_movep:
         lsl.w   #2,d0                       // convert to offset
         move.l  UI_DREGS(a6,d0.w),d0        // retrieve Dx into d0
         btst    #6,d1                       // word or long ?
-        beq.s   r2m_word                    // branch if word
+        jeq     r2m_word                    // branch if word
 
         /* handle register-to-memory long */
 
@@ -786,33 +786,33 @@ emulate_movep:
         movea.l a0,a3                       // use a3 as address ptr
         rol.l   #8,d3                       // write byte 0
         move.l  d3,d0
-        bsr     movep_write_byte
+        jbsr    movep_write_byte
         tst.l   d1
-        bne     movep_write_err
+        jne     movep_write_err
 
         addq.w  #2,a3                       // write byte 1
         movea.l a3,a0
         rol.l   #8,d3
         move.l  d3,d0
-        bsr     movep_write_byte
+        jbsr    movep_write_byte
         tst.l   d1
-        bne.s   movep_write_err
+        jne     movep_write_err
 
         addq.w  #2,a3                       // write byte 2
         movea.l a3,a0
         rol.l   #8,d3
         move.l  d3,d0
-        bsr     movep_write_byte
+        jbsr    movep_write_byte
         tst.l   d1
-        bne.s   movep_write_err
+        jne     movep_write_err
 
         addq.w  #2,a3                       // write byte 3
         movea.l a3,a0
         rol.l   #8,d3
         move.l  d3,d0
-        bsr     movep_write_byte
+        jbsr    movep_write_byte
         tst.l   d1
-        bne.s   movep_write_err
+        jne     movep_write_err
         rts
 
         /* handle register-to-memory word */
@@ -820,16 +820,16 @@ r2m_word:
         move.l  d0,d3                       // use d3 as data source
         movea.l a0,a3                       // use a3 as address ptr
         lsr.w   #8,d0                       // write byte 0
-        bsr     movep_write_byte
+        jbsr    movep_write_byte
         tst.l   d1
-        bne.s   movep_write_err
+        jne     movep_write_err
 
         addq.w  #2,a3                       // write byte 1
         movea.l a3,a0
         move.l  d3,d0
-        bsr     movep_write_byte
+        jbsr    movep_write_byte
         tst.l   d1
-        bne.s   movep_write_err
+        jne     movep_write_err
         rts
 
 /*
@@ -842,10 +842,10 @@ r2m_word:
  */
 movep_write_byte:
         btst    #5,UI_ISR(a6)               // supervisor mode?
-        bne.s   mwb_sup                     // yes, branch
-        bsr     movep_check_prot            // check for protected areas in user mode
+        jne     mwb_sup                     // yes, branch
+        jbsr    movep_check_prot            // check for protected areas in user mode
         tst.l   d1
-        bne     mwb_exit
+        jne     mwb_exit
 mwb_sup:
         move.l  sp,d2                       // save sp in d2
         move.l  (8).w,a2                    // old bus error vector in a2
@@ -867,44 +867,44 @@ mwb_exit:
 movep_write_err:
         move.l  a3,a0
         move.l  #FSLW_WRITE,d0
-        bra     movep_err_exit
+        jra     movep_err_exit
 
 /*
- * handle memory-to-register: read memory, accumulate in Dx */
+ * handle memory-to-register: read memory, accumulate in Dx
  */
 mem2reg:
         btst    #6,d1                       // word or long?
-        beq.s   m2r_word                    // branch if word
+        jeq     m2r_word                    // branch if word
 
         /* handle memory-to-register long */
 
         movea.l a0,a3                       // use a3 as address ptr
-        bsr     movep_read_byte             // read byte 0
+        jbsr    movep_read_byte             // read byte 0
         tst.l   d1
-        bne     movep_read_err
+        jne     movep_read_err
         move.l  d0,d3                       // use d3 to accumulate register
 
         addq.w  #2,a3                       // read byte 1
         movea.l a3,a0
-        bsr     movep_read_byte
+        jbsr    movep_read_byte
         tst.l   d1
-        bne     movep_read_err
+        jne     movep_read_err
         lsl.w   #8,d3
         move.b  d0,d3
 
         addq.w  #2,a3                       // read byte 2
         movea.l a3,a0
-        bsr     movep_read_byte
+        jbsr    movep_read_byte
         tst.l   d1
-        bne     movep_read_err
+        jne     movep_read_err
         lsl.l   #8,d3
         move.b  d0,d3
 
         addq.w  #2,a3                       // read byte 3
         movea.l a3,a0
-        bsr     movep_read_byte
+        jbsr    movep_read_byte
         tst.l   d1
-        bne.s   movep_read_err
+        jne     movep_read_err
         lsl.l   #8,d3
         move.b  d0,d3
 
@@ -918,16 +918,16 @@ mem2reg:
         /* handle memory-to-register word */
 m2r_word:
         movea.l a0,a3                       // use a3 as address ptr
-        bsr     movep_read_byte             // read byte 0
+        jbsr    movep_read_byte             // read byte 0
         tst.l   d1
-        bne.s   movep_read_err
+        jne     movep_read_err
         move.l  d0,d3                       // use d3 to accumulate register
 
         addq.w  #2,a3                       // read byte 1
         movea.l a3,a0
-        bsr     movep_read_byte
+        jbsr    movep_read_byte
         tst.l   d1
-        bne.s   movep_read_err
+        jne     movep_read_err
         lsl.w   #8,d3
         move.b  d0,d3
 
@@ -948,10 +948,10 @@ m2r_word:
  */
 movep_read_byte:
         btst    #5,UI_ISR(a6)               // supervisor mode?
-        bne.s   mrb_sup                     // yes, branch
-        bsr     movep_check_prot            // check for protected areas in user mode
+        jne     mrb_sup                     // yes, branch
+        jbsr    movep_check_prot            // check for protected areas in user mode
         tst.l   d1
-        bne.s   mrb_exit
+        jne     mrb_exit
 mrb_sup:
         move.l  sp,d2                       // save sp in d2
         move.l  (8).w,a2                    // old bus error vector in a2
@@ -992,13 +992,13 @@ movep_err_exit:
         move.l  a0,UI_F4_ADDR(a6)
         move.l  d0,UI_F4_FSLW(a6)
         btst.b  #5,UI_F4_SR(a6)             // supervisor mode?
-        beq.s   mee_restore                 // no, branch
+        jeq     mee_restore                 // no, branch
         bset.b  #2,UI_F4_FSLW+1(a6)         // set TM2 bit (Supervisor code) in FSLW
 mee_restore:
         lea     UI_DREGS(a6),sp
         movem.l (sp)+,d0-d7/a0-a6           // restore d0-d7, a0-a6
                                             // (end up with sp correct)
-        bra     buserr_vec                  // & pretend we got a standard bus error
+        jra     buserr_vec                  // & pretend we got a standard bus error
 
 /*
  * check if trying to access a protected area in user mode
@@ -1010,13 +1010,13 @@ mee_restore:
  */
 movep_check_prot:
         cmpa.l  #0x800,a0                   // $0-$7ff is protected
-        bcs.b   mcp_err
+        jcs     mcp_err
         cmpa.l  #0x00f00000,a0              // $800-$efffff is not protected
-        bcs.b   mcp_ok
+        jcs     mcp_ok
         cmpa.l  #0x01000000,a0              // $f00000-$ffffff is protected
-        bcs.b   mcp_err
+        jcs     mcp_err
         cmpa.l  #0xff000000,a0              // $1000000-$feffffff is not protected
-        bcs.b   mcp_ok
+        jcs     mcp_ok
                                             // $ff000000-$ffffffff is protected
 mcp_err:
         moveq.l #1,d1                       // set error flag
@@ -1033,7 +1033,7 @@ mcp_ok:
 _biostrap:
         move.w  _bios_ent,d1
         lea     _bios_vecs,a0
-        bra.s   biosxbios
+        jra     biosxbios
 
 // ==== Trap 14 - XBIOS entry point =========================================
 
@@ -1045,18 +1045,18 @@ _xbiostrap:
 // ==== Trap 13+14 handler ==================================================
 
 biosxbios:
-        move.l  _savptr, a1
+        move.l  _savptr.w, a1
 #ifdef __mcoldfire__
         move.w  (sp)+,d0        // Format/Vector Word
         andi.l  #0x3000,d0      // Keep the filler bits
-        beq.s   bx_cf_nofiller
+        jeq     bx_cf_nofiller
 
         // Assume a 2-byte filler after the exception frame
         move.w  (sp)+,d0        // Status register -> d0
         move.w  d0,-(a1)        // and save in save_area
         move.l  (sp)+,-(a1)     // save return address
         addq.l  #2,sp           // discard the filler word
-        bra.s   bx_nolongframe
+        jra     bx_nolongframe
 
 bx_cf_nofiller:
         move.w  (sp)+,d0        // Status register -> d0
@@ -1067,8 +1067,8 @@ bx_cf_nofiller:
         move.w  d0,-(a1)        // and save in save_area
         move.l  (sp)+,-(a1)     // save return address
 
-        tst.w   _longframe      // Check processor type
-        beq.s   bx_nolongframe  // ...when we support CPU >=68000
+        tst.w   _longframe.w    // Check processor type
+        jeq     bx_nolongframe  // ...when we support CPU >=68000
         move.w  (sp)+,-(a1)
 #endif
 
@@ -1079,16 +1079,16 @@ bx_nolongframe:
 #else
         movem.l d3-d7/a3-a7, -(a1)      // regs, including stack pointer
 #endif
-        move.l  a1, _savptr
+        move.l  a1, _savptr.w
 
         btst    #13,d0          // were we in user mode?
-        bne     bx_sp_ok        // yes, the sp already points to the arguments
+        jne     bx_sp_ok        // yes, the sp already points to the arguments
         move.l  usp,sp          // no, the arguments were on the user stack
 bx_sp_ok:
         moveq   #0,d0           // clear d0 (use d0 like the original TOS)
         move.w  (sp)+,d0        // remove the function number from stack
         cmp.w   d1,d0           // Higher than highest number?
-        bhs.s   bx_ret_exc
+        jhs     bx_ret_exc
         move.l  d0,d1           // if not implemented, returns the func number
         add.l   d1,d1           // indirection function table is 1 LW per
         add.l   d1,d1           // so multiply function number by 4
@@ -1097,7 +1097,7 @@ bx_sp_ok:
         jsr     (a0)            // go do it and then come back
 
 bx_ret_exc:
-        move.l  _savptr, a1
+        move.l  _savptr.w, a1
 #ifdef __mcoldfire__
         movem.l (a1), d3-d7/a3-a7       // Get regs back, including sp
         lea     40(a1), a1
@@ -1110,15 +1110,15 @@ bx_ret_exc:
         move.w  (a1)+,-(sp)     // sr
         move.w  #0x40B4,-(sp)   // store a fake Format/Vector Word
 #else
-        tst.w   _longframe      // Check longframe again: Is CPU >= 68000?
-        beq.s   bx_nolong2
+        tst.w   _longframe.w    // Check longframe again: Is CPU >= 68000?
+        jeq     bx_nolong2
         move.w  (a1)+,-(sp)
 
 bx_nolong2:
         move.l  (a1)+,-(sp)
         move.w  (a1)+,-(sp)
 #endif
-        move.l  a1, _savptr
+        move.l  a1, _savptr.w
         rte                     // return with return value in D0
 
 
@@ -1291,7 +1291,7 @@ _keyclick:
         move.w   4(sp),d0
         move.l   a2,-(sp)
         move.l   d2,-(sp)
-        move.l   _kcl_hook,a0
+        move.l   _kcl_hook.w,a0
         jsr      (a0)
         move.l   (sp)+,d2
         move.l   (sp)+,a2

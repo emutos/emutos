@@ -355,7 +355,7 @@ f2_r2l_rt:
         move.w  (a0),d0         // d0(15:00) <- last SOURCE word                         8
         ror.l   d4,d0           // d0(31:16) <- alligned SRC: new|old         8-24
 
-        bra     f2_flush        // send fringe to DESTINATION                   10
+        jra     f2_flush        // send fringe to DESTINATION                   10
 
 
 
@@ -368,7 +368,7 @@ f2_r2l_lf:
         move.w  (a0),d0         // d0(15:00) <- last SOURCE word                         8
         rol.l   d4,d0           // d0(15:00) <- alligned SRC: new|old         8-24
 
-        bra     f2_out          // send fringe to DESTINATION                   10
+        jra     f2_out          // send fringe to DESTINATION                   10
 
 
 
@@ -383,7 +383,7 @@ f2_l2r_rt:
 
         ror.l   d4,d0           // d0(15:00) <- alligned SRC: old|new         8-24
 
-        bra     f2_out          // send fringe to DESTINATION                   10
+        jra     f2_out          // send fringe to DESTINATION                   10
 
 
 
@@ -398,7 +398,7 @@ f2_l2r_lf:
 
         rol.l   d4,d0           // d0(31:16) <- alligned SRC left fringe              8-24
 
-        bra     f2_flush        // send fringe to DESTINATION                   10
+        jra     f2_flush        // send fringe to DESTINATION                   10
 
 
 
@@ -410,17 +410,17 @@ f2_l2r_lf:
 fl_r2l_rt:
 
         dbra    d5,i1_r2l_rt    // do another INNER LOOP cycle             (10)/14
-        bra     f2_flush        //                                              10
+        jra     f2_flush        //                                              10
 
 fl_r2l_lf:
 
         dbra    d5,i1_r2l_lf    // do another INNER LOOP cycle             (10)/14
-        bra     f2_flush        //                                              10
+        jra     f2_flush        //                                              10
 
 fl_l2r_rt:
 
         dbra    d5,i1_l2r_rt    // do another INNER LOOP cycle             (10)/14
-        bra     f2_flush        //                                              10
+        jra     f2_flush        //                                              10
 
 fl_l2r_lf:
 
@@ -454,7 +454,7 @@ f2_update:
 
         swap    d5              // access row counter                            4
         subq.w  #1,d5           // decrement row counter                                 4
-        beq     f2_end          //                                          (10)/8
+        jeq     f2_end          //                                          (10)/8
         swap    d5              //                                               4
 
         adda.w  SRC_WR(a6),a0   // a0 -> last word of next line: SRC            16
@@ -494,7 +494,7 @@ f2_drt: swap    d6              // d6(15:00) <- 1st fringe mask                 
 f1_drt:
         swap    d5              //                                               4
         subq.w  #1,d5           // decrement row counter                                 4
-        beq     f2_end          //                                          (10)/8
+        jeq     f2_end          //                                          (10)/8
         swap    d5              //                                               4
 
         adda.w  DST_WR(a6),a1   // a1 -> initial word of next line: DST         16
@@ -560,7 +560,7 @@ f2op_00:
         not.w   d6              // D' <- 0
         and.w   d6,(a1)
         not.w   d6
-        bra     f2_drt          // //%&0x@!
+        jra     f2_drt          // //%&0x@!
 
 
 
@@ -588,7 +588,7 @@ f2op_01:
         or.w    d6,d0
         not.w   d6
         and.w   d0,(a1)
-        bra     f2_rtn
+        jra     f2_rtn
 
 
 
@@ -614,7 +614,7 @@ f2op_02:
         and.w   d6,d0
         or.w    d0,(a1)         // D' <- not {[not S] or D}
         eor.w   d6,(a1)
-        bra     f2_rtn
+        jra     f2_rtn
 
 
 
@@ -641,7 +641,7 @@ f2op_03:
         and.w   d6,d0
         eor.w   d1,d0
         move.w  d0,(a1)
-        bra     f2_rtn
+        jra     f2_rtn
 
 
         and.w   d7,d0           // S and P                                       4
@@ -664,7 +664,7 @@ f2op_04:
         and.w   d6,d0
         not.w   d0
         and.w   d0,(a1)
-        bra     f2_rtn
+        jra     f2_rtn
 
 
 
@@ -691,7 +691,7 @@ f1op_06:
 f2op_06:
         and.w   d6,d0
         eor.w   d0,(a1)
-        bra     f2_rtn
+        jra     f2_rtn
 
 
 
@@ -714,7 +714,7 @@ f1op_07:
 f2op_07:
         and.w   d6,d0
         or.w    d0,(a1)
-        bra     f2_rtn
+        jra     f2_rtn
 
 
         and.w   d7,d0           // S and P                                       4
@@ -737,7 +737,7 @@ f2op_08:
         and.w   d6,d0
         or.w    d0,(a1)
         eor.w   d6,(a1)
-        bra     f2_rtn
+        jra     f2_rtn
 
 
         and.w   d7,d0           // S and P                                       4
@@ -760,7 +760,7 @@ f2op_09:
         and.w   d6,d0
         eor.w   d0,(a1)
         eor.w   d6,(a1)
-        bra     f2_rtn
+        jra     f2_rtn
 
 
         and.w   d7,d0           // S and P                                       4
@@ -780,7 +780,7 @@ f1op_10:
         and.w   d7,d0           // S and P                                       4
 f2op_10:
         eor.w   d6,(a1)
-        bra     f2_drt          // %0x#@//!
+        jra     f2_drt          // %0x#@//!
 
 
 
@@ -804,7 +804,7 @@ f2op_11:
         eor.w   d6,(a1)
         and.w   d6,d0
         or.w    d0,(a1)
-        bra     f2_rtn
+        jra     f2_rtn
 
 
 
@@ -828,7 +828,7 @@ f2op_12:
         or.w    d6,(a1)
         and.w   d6,d0
         eor.w   d0,(a1)
-        bra     f2_rtn
+        jra     f2_rtn
 
 
         and.w   d7,d0           // S and P                                       4
@@ -851,7 +851,7 @@ f2op_13:
         not.w   d0
         and.w   d6,d0
         or.w    d0,(a1)
-        bra     f2_rtn
+        jra     f2_rtn
 
 
         and.w   d7,d0           // S and P                                       4
@@ -876,7 +876,7 @@ f2op_14:
         eor.w   d6,(a1)
         and.w   d6,d0
         or.w    d0,(a1)
-        bra     f2_rtn
+        jra     f2_rtn
 
 
 
@@ -895,7 +895,7 @@ f1op_15:
         and.w   d7,d0           // S and P                                       4
 f2op_15:
         or.w    d6,(a1)
-        bra     f2_drt          // %0x#@*!
+        jra     f2_drt          // %0x#@*!
 
 
 
@@ -923,7 +923,7 @@ _bit_blt:
         move.l  D_FORM(a6),a1           // a1 -> start of dest.  form (0,0)
         move.l  _PTSIN,a2               // a2 -> PTSIN array
 
-        bsr.s   bit_blt
+        jbsr    bit_blt
 
         movem.l (sp)+,d2-d7/a2-a6
         rts
@@ -964,19 +964,19 @@ bit_blt:
         sub.w   d6,d5                   // d5 <- # source words - # destination words
 
         sub.w   d3,d1                   // d1 <- (Sxmin mod 16) - (Dxmin mod 16)
-        bne     std_blt                 // if Xmin src mod 16 = Xmin dst mod 16 ...
+        jne     std_blt                 // if Xmin src mod 16 = Xmin dst mod 16 ...
 
         tst.l   FG_COL(a6)              // and fore and background colors are both 0 ...
-        bne     std_blt
+        jne     std_blt
         cmpi.b  #03,OP_TAB+00(a6)       // and D'<- S is the logic operation
 
-        bne     std_blt
+        jne     std_blt
 
         move.w  d4,d7                   // and both source and destination occupy
         add.w   d6,d7                   // three or more words apiece ...
 
         cmpi.w  #4,d7
-        bcc     word_blt                // do the special word aligned blt
+        jcc     word_blt                // do the special word aligned blt
 
 
 std_blt:
@@ -1027,15 +1027,15 @@ std_blt:
 //   set logical shift direction
 
         tst.w   d4
-        bgt     act_shift               // Smod16 - Dmod16 > 0 => logical left shift
-        beq     start_addr              // zero is special case (pure left rotate)
+        jgt     act_shift               // Smod16 - Dmod16 > 0 => logical left shift
+        jeq     start_addr              // zero is special case (pure left rotate)
 
         neg.w   d4                      // d4 <- positive shift value
         addq.w  #1,d5                   // Smod16 - Dmod16 < 0 => logical right shift
 
 act_shift:
         cmpi.w  #8,d4
-        blt     start_addr
+        jlt     start_addr
 
         addq.w  #2,d5                   // actual shift is opposite direction
         neg.w   d4                      // from logical shift direction
@@ -1049,7 +1049,7 @@ start_addr:
 
         move.w  S_XMIN(a6),d0           // compute address of destination block
         move.w  S_YMIN(a6),d1
-        bsr     s_xy2addr               // a0 -> start of block
+        jbsr    s_xy2addr               // a0 -> start of block
 
         mulu    S_NXWD(a6),d7           // d7 <- row width offset (source)
         sub.w   d3,d7                   // d7 <- SRC_WR (for r2l xfer)
@@ -1058,18 +1058,18 @@ start_addr:
         move.w  D_XMIN(a6),d0           // compute address of destination block
         move.w  D_YMIN(a6),d1
         move.w  d1,P_INDX(a6)           // save destination Y for pattern index
-        bsr     d_xy2addr               // a1 -> start of block
+        jbsr    d_xy2addr               // a1 -> start of block
 
         mulu    D_NXWD(a6),d6           // d6 <- row width offset (destination)
 
         sub.w   d3,d6                   // d6 <- DST_WR (row width-form wrap: r2l xfer)
 
         cmp.l   a1,a0                   // a0 -> start of source block
-        bhi     t2b_l2r                 // SRC addr > DST addr  =>  t2b/l2r
-        bne     b2t_r2l                 // SRC addr < DST addr  =>  b2t/r2l
+        jhi     t2b_l2r                 // SRC addr > DST addr  =>  t2b/l2r
+        jne     b2t_r2l                 // SRC addr < DST addr  =>  b2t/r2l
 
         tst.w   d2                      // position within word => xfer direction
-        bge     t2b_l2r                 // t2b/l2r when source addr = destination addr
+        jge     t2b_l2r                 // t2b/l2r when source addr = destination addr
 
 
 b2t_r2l:
@@ -1078,16 +1078,16 @@ b2t_r2l:
 
         move.w  S_XMAX(a6),d0           // compute address of source low right corner
         move.w  S_YMAX(a6),d1
-        bsr     s_xy2addr               // a0 -> end of source block
+        jbsr    s_xy2addr               // a0 -> end of source block
 
         move.w  D_XMAX(a6),d0           // compute address of dest low right corner
         move.w  D_YMAX(a6),d1
         move.w  d1,P_INDX(a6)           // save destination Y for pattern index
-        bsr     d_xy2addr               // a1 -> end of destination block
+        jbsr    d_xy2addr               // a1 -> end of destination block
 
         neg.w   P_NXLN(a6)              // reverse direction of pattern traversal
 
-        bra     big_fringe
+        jra     big_fringe
 
 
 t2b_l2r:
@@ -1101,7 +1101,7 @@ big_fringe:
         move.w  d7,SRC_WR(a6)           // source wrap
         move.w  d6,DST_WR(a6)           // destination wrap
 
-        bsr     get_fringe
+        jbsr    get_fringe
 
 //
 //  Without expanding jump tables and adding duplicate code to BLTFRAG.S
@@ -1112,7 +1112,7 @@ big_fringe:
         move.w  D_NXWD(a6),d3           // d3 <- destination increment
 
         btst.l  #2,d5                   // r2l case => swap fringes
-        beq     save_addr               // and negate inter word increments
+        jeq     save_addr               // and negate inter word increments
 
         swap    d6
 
@@ -1130,7 +1130,7 @@ save_addr:
         move.l  frag_tab+00(pc,d5.w),a4 // a4 <- thread from update frag to 1st fringe
 
         tst.w   INNER_CT(a6)            // INNER_CT = -1  =>  Destination is
-        bge     pre_flight              // only one word wide. (a special case)
+        jge     pre_flight              // only one word wide. (a special case)
 
         move.l  d6,d0
         swap    d0
@@ -1139,14 +1139,14 @@ save_addr:
         lea     f2_update,a3            // a3 <- thread that bypasses 2nd fringe
 
         btst.l  #6,d5
-        bne     pre_flight              // skip if source is 2 words wide
+        jne     pre_flight              // skip if source is 2 words wide
 
         lsr.w   #1,d5                   // entries are 4 bytes wide
 
         andi.w  #0xC,d5
 
         move.l  solo_tab(pc,d5.w),a4    // a4 <- thread from update frag to 1st fringe
-        bra     pre_flight
+        jra     pre_flight
 
 
 solo_tab:
@@ -1190,13 +1190,13 @@ frag_tab:
 pre_flight:
 
         tst.l   P_ADDR(a6)              // pattern and source ?
-        beq     next_plane              // no pattern if pointer is null
+        jeq     next_plane              // no pattern if pointer is null
 
         lea     p1_update,a5            // a4 -> pattern controller
         exg     a5,a4                   // a5 -> first fringe
 
         move.w  P_NXLN(a6),d0           // set up initial pattern line index value:
-        bge     first_index
+        jge     first_index
 
         neg     d0
 
@@ -1225,10 +1225,10 @@ next_plane:
 
         move.l  #0x8421,d1              // logic ops 15,10,5, and 0 are special cases ($8421=%1000010000100001)
         btst    d0,d1                   // where operation is performed directly upon
-        bne     unary_blt               // the destination independent of the source
+        jne     unary_blt               // the destination independent of the source
 
         tst.l   P_ADDR(a6)              // skip this stuff if no pattern
-        beq     do_the_blt
+        jeq     do_the_blt
         subq.w  #2,a2                   // addr. of (pattern & source) entry for
 //                                      // logic operation
 
@@ -1242,7 +1242,7 @@ do_the_blt:
 np_cont:
 
         subq.w  #1,PLANE_CT(a6)
-        beq     quit_blt
+        jeq     quit_blt
 
         move.l  S_ADDR(a6),a0           // a0 -> next source plane
 
@@ -1257,12 +1257,12 @@ np_cont:
         move.l  a1,D_ADDR(a6)
 
         move.l  P_ADDR(a6),d0           // update pattern plane base pointer
-        beq     next_plane              // if pointer isn't null
+        jeq     next_plane              // if pointer isn't null
 
         move.l  d0,a2
         add.w   P_NXPL(a6),a2
         move.l  a2,P_ADDR(a6)
-        bra     next_plane
+        jra     next_plane
 
 quit_blt:
         rts
@@ -1277,7 +1277,7 @@ unary_blt:
         lea     f2_dst,a3               // a3 <- logic op return thread (width >1)
         tst.w   d5                      // different thread if width =1
 
-        bge     call_unary
+        jge     call_unary
 
         lea     f1_drt,a3               // a3 <- logic op return thread (width =1)
 
@@ -1286,7 +1286,7 @@ call_unary:
         jsr     (a4)
 
         movem.l (sp)+,a3-a4
-        bra     np_cont
+        jra     np_cont
 
 
 //   get fringe masks for right and left sides
@@ -1435,19 +1435,19 @@ word_blt:
 
         move.w  S_XMIN(a6),d0           // compute address of destination block
         move.w  S_YMIN(a6),d1
-        bsr     s_xy2addr               // a0 -> start of source block
+        jbsr    s_xy2addr               // a0 -> start of source block
 
         sub.w   d3,d4                   // d4 <- SRC_WR (r2l)
 
         move.w  D_XMIN(a6),d0           // compute address of source block
         move.w  D_YMIN(a6),d1
-        bsr     d_xy2addr               // a1 -> start of destination block
+        jbsr    d_xy2addr               // a1 -> start of destination block
 
         sub.w   d3,d6                   // d6 <- DST_WR (r2l)
 
 
         cmp.l   a1,a0                   // which address is larger: source or dest
-        bcc     l2r_t2b                 // select direction based on order of addresses
+        jcc     l2r_t2b                 // select direction based on order of addresses
 
 
 //
@@ -1457,22 +1457,22 @@ word_blt:
 //  larger than the destination starting address. The intent is not to alter
 //  the source area before it is copied to the destination area.
 //
-        bcc     l2r_t2b                 // select direction based on order of addresses
+        jcc     l2r_t2b                 // select direction based on order of addresses
 
 r2l_b2t:
 
         move.w  S_XMAX(a6),d0           // compute address of source low right corner
         move.w  S_YMAX(a6),d1
-        bsr     s_xy2addr               // a0 -> end of source block
+        jbsr    s_xy2addr               // a0 -> end of source block
 
         move.w  D_XMAX(a6),d0           // compute address of dest low right corner
         move.w  D_YMAX(a6),d1
-        bsr     d_xy2addr               // a1 -> end of destination block
+        jbsr    d_xy2addr               // a1 -> end of destination block
 
         neg.w   d5                      // d2 <- next word increment (r2l source)
         neg.w   d7                      // d5 <- next word increment (r2l destination)
 
-        bra     set_fringe
+        jra     set_fringe
 
 l2r_t2b:
 
@@ -1487,10 +1487,10 @@ set_fringe:
         move.w  d4,a4                   // source wrap       (SRC_WR)
         move.w  d6,a5                   // destination wrap  (DST_WR)
 
-        bsr     get_fringe
+        jbsr    get_fringe
 
         tst.w   d2                      // d2<0 => r2l. swap masks
-        bpl     fringe_ok
+        jpl     fringe_ok
 
         swap    d6
 
@@ -1505,7 +1505,7 @@ fringe_ok:
 
         move.w  PLANE_CT(a6),d4
 
-        bra     sc_plane
+        jra     sc_plane
 
 
 //  fast word aligned blt. general case: multiple planes

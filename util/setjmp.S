@@ -32,7 +32,7 @@ _setjmp:
 _longjmp:
         move.l  4(sp),a0
         move.w  8(sp),d0
-        beq     nonzero
+        jeq     nonzero
         moveq   #1,d0
 nonzero:
         move.l  (a0)+,d1

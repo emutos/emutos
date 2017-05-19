@@ -55,7 +55,7 @@ _bootram:
         // so it can be run from its current location.
         lea     endboot(pc),a1
         cmp.l   a1,a5           // compare dest to end of boot routine
-        bhs.s   boot            // already safe place
+        jhs     boot            // already safe place
 
         move.l  a5,a0           // dest
         add.l   d4,a0           // + size
@@ -65,7 +65,7 @@ _bootram:
         // so it can be run from its current location.
         lea     boot(pc),a1
         cmp.l   a1,a0           // compare end of dest to begin of boot routine
-        bls.s   boot            // already safe place
+        jls     boot            // already safe place
 
         // The boot routine is going to be overwritten by ramtos copy.
         // Move it after both the destination buffer and the source buffer.
@@ -74,7 +74,7 @@ _bootram:
         add.l   d4,a1           // + size
 
         cmp.l   a0,a1           // compare end of src to end of dest
-        bhs.s   copyboot        // end of src is the highest address
+        jhs     copyboot        // end of src is the highest address
 
         move.l  a0,a1           // end of dest is the highest address
 
@@ -83,7 +83,7 @@ copyboot:
         move.l  a1,a3           // dest boot
         moveq   #((endboot-boot)+3)&-4,d2   // size boot rounded to next long
         move.l  a3,a6           // return to destination
-        bra.s   copy_a2_a3_d2_sync_caches
+        jra     copy_a2_a3_d2_sync_caches
 
 boot:
         // This boot is a first boot
@@ -109,7 +109,7 @@ boot:
  */
 copy_a2_a3_d2_sync_caches:
         cmp.l   a2,a3
-        bhi.s   bcopy_backwards
+        jhi     bcopy_backwards
 
         lsr.l   #2,d2
         subq.l  #1,d2
@@ -117,13 +117,13 @@ bcopy:
         move.l  (a2)+,(a3)+
 #ifdef __mcoldfire__
         subq.l  #1,d2
-        bpl.s   bcopy
+        jpl     bcopy
 #else
         dbra    d2,bcopy
         sub.l   #0x10000,d2
-        bhi.s   bcopy
+        jhi     bcopy
 #endif
-        bra.s   sync_caches
+        jra     sync_caches
 
 bcopy_backwards:
         add.l   d2,a2   // after last source long
@@ -134,11 +134,11 @@ bcopy2:
         move.l  -(a2),-(a3)
 #ifdef __mcoldfire__
         subq.l  #1,d2
-        bpl.s   bcopy2
+        jpl     bcopy2
 #else
         dbra    d2,bcopy2
         sub.l   #0x10000,d2
-        bhi.s   bcopy2
+        jhi     bcopy2
 #endif
 
 sync_caches:
@@ -170,17 +170,17 @@ setloop:
         add.l   #0x0010,a0      // increment set index by 1
         addq.l  #1,d1           // increment set counter
         cmpi.l  #512,d1         // are sets for this way done?
-        bne.s   setloop
+        jne     setloop
 
         moveq.l #0,d1           // set counter to zero again
         addq.l  #1,d0           // increment to next way
         move.l  d0,a0           // set = 0, way = d0
         cmpi.l  #4,d0           // flushed all the ways?
-        bne.s   setloop
+        jne     setloop
 #else
         moveq   #30,d0
         cmp.l   d0,d5
-        bne.s   not68030
+        jne     not68030
         MOVEC_CACR_D0
         ori.b   #0x08,d0        // invalidate instruction cache
         MOVEC_D0_CACR

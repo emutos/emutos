@@ -70,3 +70,7 @@
 /* a.out objects have no .rodata section, default to .text */
 #define SECTION_RODATA .text
 #endif
+
+/* Pseudo-ops not yet understood by gas */
+#define jhs jcc
+#define jlo jcs

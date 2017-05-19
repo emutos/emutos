@@ -69,18 +69,17 @@
                         /* moves        -> 5  , -> 3         , -> 2     */
 
 
-GLOBAL LONG     gl_mntree;
+GLOBAL OBJECT   *gl_mntree;
 GLOBAL AESPD    *gl_mnppd;
 
 static AESPD    *desk_ppd[NUM_ACCS];
 static WORD     acc_display[NUM_ACCS];
-GLOBAL LONG     menu_tree[NUM_PDS];
 
 GLOBAL WORD     gl_dabox;
 
 static OBJECT   M_DESK[3+NUM_ACCS];
 
-static LONG     gl_datree;
+static OBJECT   *gl_datree;
 
 
 static WORD menu_sub(OBJECT **ptree, WORD ititle)
@@ -102,7 +101,7 @@ static WORD menu_sub(OBJECT **ptree, WORD ititle)
     /* special case desk acc */
     if (imenu == gl_dabox)
     {
-        *ptree = (OBJECT *)gl_datree;
+        *ptree = gl_datree;
         imenu = 0;
     }
 
@@ -115,20 +114,20 @@ static void menu_fixup(void)
     OBJECT  *pob, *obj;
     GRECT   t;
     WORD    themenus, i, cnt, st;
-    LONG    tree;
+    OBJECT  *tree;
 
-    if ((tree=gl_mntree) == 0L)
+    if ((tree=gl_mntree) == NULL)
         return;
 
     w_nilit(3 + NUM_ACCS, M_DESK);
 
-    obj = ((OBJECT *)tree) + THESCREEN;
+    obj = tree + THESCREEN;
     themenus = obj->ob_tail;
-    obj = ((OBJECT *)tree) + themenus;
+    obj = tree + themenus;
     gl_dabox = obj->ob_head;
 
     pob = &M_DESK[ROOT];
-    gl_datree = (LONG)pob;
+    gl_datree = pob;
 
     /* fix up desk root */
     pob->ob_type = G_BOX;
@@ -144,7 +143,7 @@ static void menu_fixup(void)
 
     /* build up desk items  */
     ob_relxywh(tree, gl_dabox + 1, &t);
-    for (i = 1, st = 0, obj = ((OBJECT *)tree)+gl_dabox+1; i <= cnt; i++, obj++)
+    for (i = 1, st = 0, obj = tree+gl_dabox+1; i <= cnt; i++, obj++)
     {
         pob = &M_DESK[i];
         pob->ob_next = i+1;
@@ -187,7 +186,7 @@ static void menu_fixup(void)
  */
 static void rect_change(OBJECT *tree, MOBLK *prmob, WORD iob, BOOL x)
 {
-    ob_actxywh((LONG)tree, iob, &prmob->m_gr);
+    ob_actxywh(tree, iob, &prmob->m_gr);
     prmob->m_out = x;
 }
 
@@ -224,7 +223,7 @@ UWORD do_chg(OBJECT *tree, WORD iitem, UWORD chgvalue,
     if (dodraw)
         gsx_sclip(&gl_rzero);
 
-    ob_change((LONG)tree, iitem, curr_state, dodraw);
+    ob_change(tree, iitem, curr_state, dodraw);
     return TRUE;
 }
 
@@ -255,7 +254,7 @@ static void menu_sr(WORD saveit, OBJECT *tree, WORD imenu)
 
     /* do the blit to save or restore */
     gsx_sclip(&gl_rzero);
-    ob_actxywh((LONG)tree, imenu, &t);
+    ob_actxywh(tree, imenu, &t);
     t.g_x -= MTH;
     t.g_w += 2*MTH;
     t.g_h += 2*MTH;
@@ -275,16 +274,16 @@ static WORD menu_down(WORD ititle)
     OBJECT  *tree;
     WORD    imenu;
 
-    tree = (OBJECT *)gl_mntree;
+    tree = gl_mntree;
     imenu = menu_sub(&tree, ititle);
 
     /* draw title selected */
-    if (do_chg((OBJECT *)gl_mntree, ititle, SELECTED, TRUE, TRUE, TRUE))
+    if (do_chg(gl_mntree, ititle, SELECTED, TRUE, TRUE, TRUE))
     {
         /* save area underneath the menu */
         menu_sr(TRUE, tree, imenu);
         /* draw all items in menu */
-        ob_draw((LONG)tree, imenu, MAX_DEPTH);
+        ob_draw(tree, imenu, MAX_DEPTH);
     }
 
     return imenu;
@@ -315,7 +314,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
     done = FALSE;
     buparm = 0x00010101L;
     cur_title = cur_menu = cur_item = NIL;
-    cur_tree = tree = (OBJECT *)gl_mntree;
+    cur_tree = tree = gl_mntree;
 
     while (!done)
     {
@@ -335,7 +334,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
             last_item = cur_menu;
             theval = FALSE;
             if (last_item == 0)
-                last_tree = (OBJECT *)gl_datree;
+                last_tree = gl_datree;
             break;
         case OUTITEM:
             last_tree = cur_tree;
@@ -377,7 +376,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
             last_title = cur_title;
             last_item = cur_item;
             /* see if over the bar  */
-            cur_title = ob_find((LONG)tree, THEACTIVE, 1, rets[0], rets[1]);
+            cur_title = ob_find(tree, THEACTIVE, 1, rets[0], rets[1]);
             if ((cur_title != NIL) && (cur_title != THEACTIVE))
             {
                 menu_state = OUTTITLE;
@@ -400,7 +399,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
                 }
                 else
                 {
-                    cur_item = ob_find((LONG)cur_tree, cur_menu, 1, rets[0], rets[1]);
+                    cur_item = ob_find(cur_tree, cur_menu, 1, rets[0], rets[1]);
                     if (cur_item != NIL)
                         menu_state = OUTITEM;
                     else
@@ -427,7 +426,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
             {
                 cur_menu = menu_down(cur_title);
                 /* special case desk acc */
-                cur_tree = (OBJECT *)((cur_menu == 0) ? gl_datree : gl_mntree);
+                cur_tree = (cur_menu == 0) ? gl_datree : gl_mntree;
             }
             /* hilite new item */
             menu_set(cur_tree, cur_item, last_item, TRUE);
@@ -459,17 +458,17 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
  *  off so that this operation will be as fast as possible.  The
  *  global variable gl_mntree is also set or reset.
  */
-void mn_bar(OBJECT *tree, WORD showit, WORD pid)
+void mn_bar(OBJECT *tree, WORD showit)
 {
     AESPD   *p;
     OBJECT  *obj;
 
-    p = fpdnm(NULL, pid);
+    p = fpdnm(NULL, rlr->p_pid);
 
     if (showit)
     {
         gl_mnppd = p;
-        menu_tree[pid] = gl_mntree = (LONG)tree;
+        gl_mntree = tree;
         menu_fixup();
         obj = tree + 1;
         obj->ob_width = gl_width - obj->ob_x;
@@ -480,7 +479,7 @@ void mn_bar(OBJECT *tree, WORD showit, WORD pid)
     }
     else
     {
-        menu_tree[pid] = gl_mntree = 0x0L;
+        gl_mntree = NULL;
         rc_copy(&gl_rmenu, &gl_ctwait.m_gr);
     }
 
@@ -533,7 +532,7 @@ static void build_menuid_lookup(void)
  *  Routine to register a desk accessory item on the menu bar.  The
  *  return value is the object index of the menu item that was added.
  */
-WORD mn_register(WORD pid, LONG pstr)
+WORD mn_register(WORD pid, BYTE *pstr)
 {
     WORD    openda;
 
@@ -552,7 +551,7 @@ WORD mn_register(WORD pid, LONG pstr)
             openda = NUM_ACCS - 1;      /* kludge - fixup, it might survive */
         }
         desk_ppd[openda] = rlr;
-        D.g_acctitle[openda] = (BYTE *)pstr;    /* save pointer, like Atari TOS */
+        D.g_acctitle[openda] = pstr;    /* save pointer, like Atari TOS */
 
         menu_fixup();
         build_menuid_lookup();

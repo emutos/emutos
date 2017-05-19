@@ -57,7 +57,7 @@ extern WORD super(WORD cx, AESPB *pcrys_blk);   /* called only from gemdosif.S *
 
 GLOBAL WORD     gl_mnclick;
 
-static LONG     ad_rso;
+static void     *ad_rso;
 
 
 
@@ -164,10 +164,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
 
     /* Menu Manager */
     case MENU_BAR:
-        if (gl_mnppd == rlr || gl_mnppd == NULL)
-            mn_bar((OBJECT *)MM_ITREE, SHOW_IT, rlr->p_pid);
-        else
-            menu_tree[rlr->p_pid] = (SHOW_IT) ? MM_ITREE : 0x0L;
+        mn_bar((OBJECT *)MM_ITREE, SHOW_IT);
         break;
     case MENU_ICHECK:
         do_chg((OBJECT *)MM_ITREE, ITEM_NUM, CHECKED, CHECK_IT, FALSE, FALSE);
@@ -184,7 +181,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         strcpy((char *)tree[ITEM_NUM].ob_spec,(char *)MM_PTEXT);
         break;
     case MENU_REGISTER:
-        ret = mn_register(MM_PID, MM_PSTR);
+        ret = mn_register(MM_PID, (BYTE *)MM_PSTR);
         break;
     case MENU_UNREGISTER:
 #if CONF_WITH_PCGEM
@@ -211,32 +208,32 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
 
     /* Object Manager */
     case OBJC_ADD:
-        ob_add(OB_TREE, OB_PARENT, OB_CHILD);
+        ob_add((OBJECT *)OB_TREE, OB_PARENT, OB_CHILD);
         break;
     case OBJC_DELETE:
-        ret = ob_delete(OB_TREE, OB_DELOB);
+        ret = ob_delete((OBJECT *)OB_TREE, OB_DELOB);
         break;
     case OBJC_DRAW:
         gsx_sclip((GRECT *)&OB_XCLIP);
-        ob_draw(OB_TREE, OB_DRAWOB, OB_DEPTH);
+        ob_draw((OBJECT *)OB_TREE, OB_DRAWOB, OB_DEPTH);
         break;
     case OBJC_FIND:
-        ret = ob_find(OB_TREE, OB_STARTOB, OB_DEPTH, OB_MX, OB_MY);
+        ret = ob_find((OBJECT *)OB_TREE, OB_STARTOB, OB_DEPTH, OB_MX, OB_MY);
         break;
     case OBJC_OFFSET:
-        ob_offset(OB_TREE, OB_OBJ, &OB_XOFF, &OB_YOFF);
+        ob_offset((OBJECT *)OB_TREE, OB_OBJ, &OB_XOFF, &OB_YOFF);
         break;
     case OBJC_ORDER:
-        ob_order(OB_TREE, OB_OBJ, OB_NEWPOS);
+        ob_order((OBJECT *)OB_TREE, OB_OBJ, OB_NEWPOS);
         break;
     case OBJC_EDIT:
         gsx_sclip(&gl_rfull);
         OB_ODX = OB_IDX;
-        ret = ob_edit(OB_TREE, OB_OBJ, OB_CHAR, &OB_ODX, OB_KIND);
+        ret = ob_edit((OBJECT *)OB_TREE, OB_OBJ, OB_CHAR, &OB_ODX, OB_KIND);
         break;
     case OBJC_CHANGE:
         gsx_sclip((GRECT *)&OB_XCLIP);
-        ob_change(OB_TREE, OB_DRAWOB, OB_NEWSTATE, OB_REDRAW);
+        ob_change((OBJECT *)OB_TREE, OB_DRAWOB, OB_NEWSTATE, OB_REDRAW);
         break;
 
     /* Form Manager */
@@ -247,13 +244,13 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         ret = fm_dial(FM_TYPE, (GRECT *)&FM_IX, (GRECT *)&FM_X);
         break;
     case FORM_ALERT:
-        ret = fm_alert(FM_DEFBUT, FM_ASTRING);
+        ret = fm_alert(FM_DEFBUT, (BYTE *)FM_ASTRING);
         break;
     case FORM_ERROR:
         ret = fm_error(FM_ERRNUM);
         break;
     case FORM_CENTER:
-        ob_center(FM_FORM, (GRECT *)&FM_XC);
+        ob_center((OBJECT *)FM_FORM, (GRECT *)&FM_XC);
         break;
     case FORM_KEYBD:
         gsx_sclip(&gl_rfull);
@@ -400,7 +397,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
 
     /* Resource Manager */
     case RSRC_LOAD:
-        ret = rs_load(pglobal, RS_PFNAME);
+        ret = rs_load(pglobal, (BYTE *)RS_PFNAME);
         break;
     case RSRC_FREE:
         ret = rs_free(pglobal);
@@ -409,7 +406,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         ret = rs_gaddr(pglobal, RS_TYPE, RS_INDEX, &ad_rso);
         break;
     case RSRC_SADDR:
-        ret = rs_saddr(pglobal, RS_TYPE, RS_INDEX, RS_INADDR);
+        ret = rs_saddr(pglobal, RS_TYPE, RS_INDEX, (void *)RS_INADDR);
         break;
     case RSRC_OBFIX:
         rs_obfix((OBJECT *)RS_TREE, RS_OBJ);
@@ -483,7 +480,7 @@ static void xif(AESPB *pcrys_blk)
     if (OUT_LEN)
         memcpy(pcrys_blk->intout, int_out, OUT_LEN*sizeof(WORD));
     if (OP_CODE == RSRC_GADDR)
-        pcrys_blk->addrout[0] = ad_rso;
+        pcrys_blk->addrout[0] = (LONG)ad_rso;
 }
 
 
