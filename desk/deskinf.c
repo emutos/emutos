@@ -47,22 +47,6 @@
 
 
 /*
- * NOTE: this structure is used to access a subset of the fields
- * in the FNODE structure, so the fields MUST be the same size and
- * sequence as those in the FNODE structure!
- */
-typedef struct sfcb
-{
-    BYTE sfcb_junk;
-    BYTE sfcb_attr;
-    WORD sfcb_time;
-    WORD sfcb_date;
-    LONG sfcb_size;
-    BYTE sfcb_name[LEN_ZFNAME];
-} SFCB;
-
-
-/*
  * Routine to format DOS style time
  *
  *  15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
@@ -187,7 +171,7 @@ static BYTE *fmt_date(UWORD date, BOOL fourdigit, BYTE *pdate)
 
 
 /*
- * Routine to format sfcb_size into an 8- or 11-byte field,
+ * Routine to format f_size into an 8- or 11-byte field,
  * depending on the current screen width
  *
  * Note: files larger than 9999999 bytes will be displayed
@@ -223,9 +207,9 @@ static BYTE *fmt_size(LONG size, BOOL wide, BYTE *psize)
 }
 
 
-static WORD format_sfcb(LONG psfcb, BYTE *pfmt)
+static WORD format_fnode(LONG pfnode, BYTE *pfmt)
 {
-    SFCB sf;
+    FNODE *pf;
     BYTE *pdst, *psrc;
     WORD i;
     BOOL wide;
@@ -236,15 +220,15 @@ static WORD format_sfcb(LONG psfcb, BYTE *pfmt)
      */
     wide = USE_WIDE_FORMAT();
 
-    sf = *(SFCB *)psfcb;
+    pf = (FNODE *)pfnode;
     pdst = pfmt;
 
     /*
      * folder or read-only indicator
      */
-    if (sf.sfcb_attr & F_SUBDIR)
+    if (pf->f_attr & F_SUBDIR)
         indicator = 0x07;
-    else if (sf.sfcb_attr & F_RDONLY)
+    else if (pf->f_attr & F_RDONLY)
         indicator = 0x7f;
     else indicator = ' ';
     *pdst++ = indicator;
@@ -254,7 +238,7 @@ static WORD format_sfcb(LONG psfcb, BYTE *pfmt)
     /*
      * name and extension
      */
-    for (i = 0, psrc = sf.sfcb_name; *psrc; i++)
+    for (i = 0, psrc = pf->f_name; *psrc; i++)
     {
         if (*psrc == '.')
         {
@@ -273,7 +257,7 @@ static WORD format_sfcb(LONG psfcb, BYTE *pfmt)
     /*
      * size
      */
-    if (sf.sfcb_attr & F_SUBDIR)
+    if (pf->f_attr & F_SUBDIR)
     {
         WORD n = wide ? 11 : 8;
         while(n--)
@@ -281,7 +265,7 @@ static WORD format_sfcb(LONG psfcb, BYTE *pfmt)
     }
     else
     {
-        pdst = fmt_size(sf.sfcb_size, wide, pdst);
+        pdst = fmt_size(pf->f_size, wide, pdst);
     }
 
     /*
@@ -294,18 +278,18 @@ static WORD format_sfcb(LONG psfcb, BYTE *pfmt)
     *pdst++ = ' ';
     if (wide)
         *pdst++ = ' ';
-    pdst = fmt_date(sf.sfcb_date, wide, pdst);
+    pdst = fmt_date(pf->f_date, wide, pdst);
     *pdst++ = ' ';
     if (wide)
         *pdst++ = ' ';
-    pdst = fmt_time(sf.sfcb_time, wide?"%02d:%02d %s":"%02d:%02d%s", pdst);
+    pdst = fmt_time(pf->f_time, wide?"%02d:%02d %s":"%02d:%02d%s", pdst);
 
     return (pdst-pfmt);
 }
 
 
 static WORD dr_fnode(UWORD last_state, UWORD curr_state, WORD x, WORD y,
-            WORD w, WORD h, LONG psfcb)
+            WORD w, WORD h, LONG fnode)
 {
     WORD len;
     BYTE temp[LEN_FNODE];
@@ -314,7 +298,7 @@ static WORD dr_fnode(UWORD last_state, UWORD curr_state, WORD x, WORD y,
         bb_fill(MD_XOR, FIS_SOLID, IP_SOLID, x, y, w, h);
     else
     {
-        len = format_sfcb(psfcb, temp);     /* convert to text */
+        len = format_fnode(fnode, temp);    /* convert to text */
         gsx_attr(TRUE, MD_REPLACE, BLACK);
         expand_string(intin, temp);
         gsx_tblt(IBM, x, y, len);
