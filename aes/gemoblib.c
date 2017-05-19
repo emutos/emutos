@@ -172,13 +172,13 @@ static __inline__ WORD call_usercode(USERBLK *ub, PARMBLK *pb)
  *  Routine to load up and call a user-defined object draw or change
  *  routine.
  */
-static WORD ob_user(LONG tree, WORD obj, GRECT *pt, LONG spec,
+static WORD ob_user(OBJECT *tree, WORD obj, GRECT *pt, LONG spec,
                     WORD curr_state, WORD new_state)
 {
     PARMBLK pb;
     USERBLK *ub = (USERBLK *)spec;
 
-    pb.pb_tree = tree;
+    pb.pb_tree = (LONG)tree;
     pb.pb_obj = obj;
     pb.pb_prevstate = curr_state;
     pb.pb_currstate = new_state;
@@ -193,7 +193,7 @@ static WORD ob_user(LONG tree, WORD obj, GRECT *pt, LONG spec,
 /*
  *  Routine to draw an object from an object tree.
  */
-static void  just_draw(LONG tree, WORD obj, WORD sx, WORD sy)
+static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
 {
     WORD bcol, tcol, ipat, icol, tmode, th;
     WORD state, obtype, len, flags;
@@ -205,7 +205,7 @@ static void  just_draw(LONG tree, WORD obj, WORD sx, WORD sy)
     BITBLK bi;
     ICONBLK ib;
 
-    ch = ob_sst((OBJECT *)tree, obj, &spec, &state, &obtype, &flags, &t, &th);
+    ch = ob_sst(tree, obj, &spec, &state, &obtype, &flags, &t, &th);
 
     if ((flags & HIDETREE) || (spec == -1L))
         return;
@@ -704,7 +704,7 @@ void ob_change(OBJECT *tree, WORD obj, UWORD new_state, WORD redraw)
 
         if (obtype == G_USERDEF)
         {
-            ob_user((LONG)tree, obj, &t, spec, curr_state, new_state);
+            ob_user(tree, obj, &t, spec, curr_state, new_state);
             redraw = FALSE;
         }
         else
@@ -719,16 +719,16 @@ void ob_change(OBJECT *tree, WORD obj, UWORD new_state, WORD redraw)
         }
 
         if (redraw)
-            just_draw((LONG)tree, obj, t.g_x, t.g_y);
+            just_draw(tree, obj, t.g_x, t.g_y);
 
         gsx_mon();
     }
 }
 
 
-UWORD ob_fs(LONG tree, WORD obj, WORD *pflag)
+UWORD ob_fs(OBJECT *tree, WORD obj, WORD *pflag)
 {
-    OBJECT *objptr = ((OBJECT *)tree) + obj;
+    OBJECT *objptr = tree + obj;
 
     *pflag = objptr->ob_flags;
     return objptr->ob_state;

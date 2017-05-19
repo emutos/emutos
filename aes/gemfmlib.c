@@ -135,7 +135,7 @@ static WORD find_obj(OBJECT *tree, WORD start_obj, WORD which)
 
     while (obj >= 0)
     {
-        state = ob_fs((LONG)tree, obj, &theflag);
+        state = ob_fs(tree, obj, &theflag);
         if (!(theflag & HIDETREE) && !(state & DISABLED))
         {
             if (theflag & flag)
@@ -211,7 +211,7 @@ WORD fm_button(OBJECT *tree, WORD new_obj, WORD clks, WORD *pnew_obj)
     cont = TRUE;
     orword = 0;
 
-    state = ob_fs((LONG)tree, new_obj, &flags);
+    state = ob_fs(tree, new_obj, &flags);
 
     /* handle touchexit case: if double click, then set high bit */
     if (flags & TOUCHEXIT)
@@ -233,7 +233,7 @@ WORD fm_button(OBJECT *tree, WORD new_obj, WORD clks, WORD *pnew_obj)
             tobj = objptr->ob_head;
             while (tobj != parent)
             {
-                tstate = ob_fs((LONG)tree, tobj, &tflags);
+                tstate = ob_fs(tree, tobj, &tflags);
                 if ((tflags & RBUTTON) &&
                     ((tstate & SELECTED) || (tobj == new_obj)))
                 {
