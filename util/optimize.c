@@ -45,7 +45,19 @@
  */
 WORD sound(WORD isfreq, WORD freq, WORD dura)
 {
-    static UBYTE snddat[16];
+    /* The sound buffer that will be passed to Dosound later.
+    * only the frequency and envelope hi parts need to be modified dynamically.
+    */
+    static UBYTE snddat[] = {
+        0,      0,          /* channel A pitch lo */
+        1,      0,          /* channel A pitch hi */
+        7,      0xFE,       /* no sound or noise except channel A */
+        8,      0x10,       /* channel A amplitude: envelope */
+        11,     0,          /* envelope lo */
+        12,     0,          /* envelope hi */
+        13,     9,          /* envelope type: \____ */
+        0xFF,   0,          /* end of buffer */
+    };
     static WORD disabled;
 
     if (isfreq)     /* Play a sound? */
@@ -53,14 +65,9 @@ WORD sound(WORD isfreq, WORD freq, WORD dura)
         if (disabled)
             return 1;
 
-        snddat[0] = 0;  snddat[1] = (125000L / freq);       /* channel A pitch lo */
-        snddat[2] = 1;  snddat[3] = (125000L / freq) >> 8;  /* channel A pitch hi */
-        snddat[4] = 7;  snddat[5] = (isfreq ? 0xFE : 0xFF);
-        snddat[6] = 8;  snddat[7] = 0x10;                   /* amplitude: envelop */
-        snddat[8] = 11;  snddat[9] = 0;                     /* envelope lo */
-        snddat[10] = 12;  snddat[11] = dura * 8;            /* envelope hi */
-        snddat[12] = 13;  snddat[13] = 9;                   /* envelope type */
-        snddat[14] = 0xFF;  snddat[15] = 0;
+        snddat[1]  = (125000L / freq);       /* channel A pitch lo */
+        snddat[3]  = (125000L / freq) >> 8;  /* channel A pitch hi */
+        snddat[11] = dura * 8;               /* envelope hi */
 
         Dosound((LONG)snddat);
     }
