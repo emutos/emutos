@@ -38,6 +38,7 @@ typedef struct {
  * the actual typeahead buffers
  *
  * [0] is used for prn, [1] for aux, and [2] for con
+ * Note: Stored in BSS segment so all elements will be initialized to zero.
  */
 static TYPEAHEAD buffer[3];
 
@@ -94,15 +95,10 @@ static int backsp(int h, char *cbuf, int retlen, int col);
  */
 void stdhdl_init(void)
 {
-    TYPEAHEAD *bufptr;
     WORD i;
 
     for (i = 0; i < NUMSTD; i++)
         run->p_uft[i] = default_handle[i];
-
-    /* initialise typeahead buffer values */
-    for (i = 0, bufptr = buffer; i < 3; i++, bufptr++)
-        bufptr->add = bufptr->remove = 0;
 }
 
 
