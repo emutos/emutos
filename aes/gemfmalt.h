@@ -10,6 +10,6 @@
 #ifndef GEMFMALT_H
 #define GEMFMALT_H
 
-WORD fm_alert(WORD defbut, LONG palstr);
+WORD fm_alert(WORD defbut, BYTE *palstr);
 
 #endif

@@ -244,7 +244,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         ret = fm_dial(FM_TYPE, (GRECT *)&FM_IX, (GRECT *)&FM_X);
         break;
     case FORM_ALERT:
-        ret = fm_alert(FM_DEFBUT, FM_ASTRING);
+        ret = fm_alert(FM_DEFBUT, (BYTE *)FM_ASTRING);
         break;
     case FORM_ERROR:
         ret = fm_error(FM_ERRNUM);

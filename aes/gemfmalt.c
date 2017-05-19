@@ -141,11 +141,11 @@ static char *fm_strbrk(OBJECT *start,WORD maxnum,WORD maxlen,char *alert,
  *          pnumbut     number of buttons
  *          plenbut     length of biggest button
  */
-static void fm_parse(OBJECT *tree, LONG palstr, WORD *picnum, WORD *pnummsg,
+static void fm_parse(OBJECT *tree, BYTE *palstr, WORD *picnum, WORD *pnummsg,
                          WORD *plenmsg, WORD *pnumbut, WORD *plenbut)
 {
     OBJECT *obj = tree;
-    char *alert = (char *)palstr;
+    BYTE *alert = palstr;
 
     *picnum = alert[1] - '0';
 
@@ -271,7 +271,7 @@ static void fm_build(OBJECT *tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
 }
 
 
-WORD fm_alert(WORD defbut, LONG palstr)
+WORD fm_alert(WORD defbut, BYTE *palstr)
 {
     WORD i;
     WORD inm, nummsg, mlenmsg, numbut, mlenbut, image;

@@ -394,7 +394,7 @@ WORD fm_show(WORD string, WORD *pwd, WORD level)
         ad_alert = alert_str;
     }
 
-    return fm_alert(level, (LONG)ad_alert);
+    return fm_alert(level, ad_alert);
 }
 
 
