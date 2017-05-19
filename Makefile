@@ -535,16 +535,16 @@ AMIGA_DEFS =
 AROS = 0
 ifeq (1,$(AROS))
 AMIGA_DEFS += -DCONF_WITH_AROS=1
-OPTFLAGS = $(SMALL_OPTFLAGS)
 endif
 
 .PHONY: amiga
 NODEP += amiga
 amiga: UNIQUE = $(COUNTRY)
+amiga: OPTFLAGS = $(SMALL_OPTFLAGS)
 amiga: override DEF += -DTARGET_AMIGA_ROM $(AMIGA_DEFS)
 amiga:
 	@echo "# Building Amiga EmuTOS into $(ROM_AMIGA)"
-	$(MAKE) CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' UNIQUE=$(UNIQUE) ROM_AMIGA=$(ROM_AMIGA) $(ROM_AMIGA)
+	$(MAKE) CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' OPTFLAGS=$(OPTFLAGS) UNIQUE=$(UNIQUE) ROM_AMIGA=$(ROM_AMIGA) $(ROM_AMIGA)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS162))) bytes more than TOS 1.62)"
 
