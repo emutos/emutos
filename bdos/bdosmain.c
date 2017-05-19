@@ -317,7 +317,6 @@ void osinit_before_xmaddalt(void)
      */
     old_trap2 = (void(*)(void)) Setexc(0x22, (long)bdos_trap2);
 
-    osmem_init();
     umem_init();
 }
 
