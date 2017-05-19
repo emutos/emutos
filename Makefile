@@ -722,9 +722,10 @@ EMUTOS_ADF = emutos.adf
 .PHONY: amigaflop
 NODEP += amigaflop
 amigaflop: UNIQUE = $(COUNTRY)
+amigaflop: OPTFLAGS = $(SMALL_OPTFLAGS)
 amigaflop: override DEF += -DTARGET_AMIGA_FLOPPY $(AMIGA_DEFS)
 amigaflop:
-	$(MAKE) CPUFLAGS=$(CPUFLAGS) DEF='$(DEF)' UNIQUE=$(UNIQUE) EMUTOS_ADF=$(EMUTOS_ADF) $(EMUTOS_ADF)
+	$(MAKE) CPUFLAGS=$(CPUFLAGS) DEF='$(DEF)' OPTFLAGS=$(OPTFLAGS) UNIQUE=$(UNIQUE) EMUTOS_ADF=$(EMUTOS_ADF) $(EMUTOS_ADF)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes"
 
@@ -744,7 +745,6 @@ amigaflopwinuae: override DEF += -DSTATIC_ALT_RAM_ADDRESS=0x40000000 $(AMIGA_DEF
 amigaflopwinuae: CPUFLAGS = -m68040
 amigaflopwinuae: amigaflop
 
-$(EMUTOS_ADF): OPTFLAGS = $(SMALL_OPTFLAGS)
 $(EMUTOS_ADF): amigaboot.img emutos.img mkrom
 	./mkrom amiga-floppy amigaboot.img emutos.img $@
 
