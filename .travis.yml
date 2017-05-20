@@ -8,6 +8,9 @@ dist: trusty
 sudo: required
 
 before_install:
+  # Install our SSH key pair
+  - .travis/install_ssh_id.sh
+  - unset SSH_ID
   # Register third-party APT repositories
   - sudo .travis/register_apt_repositories.sh
   # Install additional packages
@@ -27,3 +30,11 @@ script:
   - make clean
   - make release VERSION=$VERSION
   - ls -l release-archives
+
+deploy:
+  skip_cleanup: true
+  provider: script
+  script: .travis/deploy.sh
+  on:
+    repo: emutos/emutos
+    branch: master
