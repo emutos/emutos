@@ -42,7 +42,7 @@ release-src:
 	find $(RELEASE_DIR)/$(RELEASE_SRC) -type d -exec chmod 755 '{}' ';'
 	find $(RELEASE_DIR)/$(RELEASE_SRC) -type f -exec chmod 644 '{}' ';'
 	find $(RELEASE_DIR)/$(RELEASE_SRC) -type f -name '*.sh' -exec chmod 755 '{}' ';'
-	tar -C $(RELEASE_DIR) --owner=0 --group=0 -zcvf $(RELEASE_DIR)/$(RELEASE_SRC).tar.gz $(RELEASE_SRC)
+	tar -C $(RELEASE_DIR) --owner=0 --group=0 -zcf $(RELEASE_DIR)/$(RELEASE_SRC).tar.gz $(RELEASE_SRC)
 	rm -r $(RELEASE_DIR)/$(RELEASE_SRC)
 
 .PHONY: release-512k
