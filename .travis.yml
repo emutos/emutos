@@ -1,0 +1,29 @@
+# EmuTOS build script for Travis CI
+# This will automatically be run on every push to GitHub
+# Build History: https://travis-ci.org/emutos/emutos/builds/
+
+language: c
+os: linux
+dist: trusty
+sudo: required
+
+before_install:
+  # Register third-party APT repositories
+  - sudo .travis/register_apt_repositories.sh
+  # Install additional packages
+  - sudo apt-get install -y cross-mint-essential dos2unix
+  # Display packages versions
+  - git --version
+  - make --version
+  - ld --version
+  - gcc --version
+  - m68k-atari-mint-ld --version
+  - m68k-atari-mint-gcc --version
+  - tar --version
+  - unix2dos --version
+
+script:
+  - export VERSION=$(date +%Y%m%d)-$(git rev-parse --short $TRAVIS_COMMIT)
+  - make clean
+  - make release VERSION=$VERSION
+  - ls -l release-archives
