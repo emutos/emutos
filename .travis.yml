@@ -30,7 +30,7 @@ script:
   - make clean
   - make release VERSION=$VERSION
   # Add README.txt
-  - .travis/generate-readme.sh >release-archives/README.txt
+  - .travis/generate-readme.sh >release-archives/README.md
   # Display resulting tree
   - ls -l release-archives
 
