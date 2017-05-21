@@ -30,11 +30,7 @@ script:
   - make clean
   - make release VERSION=$VERSION
   # Add README.txt
-  - LOG_RANGE=$(echo $TRAVIS_COMMIT_RANGE | sed -n 's/\.\.\./../p')
-  - echo "Built by Travis CI:" >release-archives/README.txt
-  - echo "https://travis-ci.org/emutos/emutos/builds/$TRAVIS_BUILD_ID" >>release-archives/README.txt
-  - echo >>release-archives/README.txt
-  - git log --name-status $LOG_RANGE -- >>release-archives/README.txt
+  - .travis/generate-readme.sh >release-archives/README.txt
   # Display resulting tree
   - ls -l release-archives
 
