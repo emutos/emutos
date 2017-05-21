@@ -26,7 +26,7 @@ before_install:
   - unix2dos --version
 
 script:
-  - export VERSION=$(date +%Y%m%d)-$(git rev-parse --short $TRAVIS_COMMIT)
+  - export VERSION=$(date -u +%Y%m%d-%H%M%S)-$(git rev-parse --short $TRAVIS_COMMIT)
   - make clean
   - make release VERSION=$VERSION
   # Add README.txt
