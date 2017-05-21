@@ -1459,8 +1459,10 @@ static void desk_xlate_fix(void)
     /* slightly adjust the about box for a timestamp build */
     if (version[1] != '.')
     {
-        objlabel->ob_spec = (LONG) "";  /* remove the word "Version" */
-        objversion->ob_x -= 6;          /* and move the start of the string */
+        objlabel->ob_flags |= HIDETREE;   /* hide the word "Version" */
+        objversion->ob_x = 0;             /* and enlarge the version object */
+        objversion->ob_width = 40;
+        objversion->ob_flags |= CENTRE_ALIGNED;
     }
 
     /* insert the version number */
