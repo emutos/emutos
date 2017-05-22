@@ -4,7 +4,8 @@
 
 echo "These binaries have been produced by"
 echo "[Travis CI Build #$TRAVIS_BUILD_NUMBER](https://travis-ci.org/emutos/emutos/builds/$TRAVIS_BUILD_ID)"
-echo "for [commits $TRAVIS_COMMIT_RANGE](https://github.com/emutos/emutos/compare/$TRAVIS_COMMIT_RANGE)."
+echo "for commits [$TRAVIS_COMMIT_RANGE](https://github.com/emutos/emutos/compare/$TRAVIS_COMMIT_RANGE)."
+echo
 
 # The variable TRAVIS_COMMIT_RANGE includes 3 dots, which is suitable for
 # "git diff". But as we are going to use "git log", we need 2 dots instead.
