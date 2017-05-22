@@ -64,7 +64,7 @@ static ULONG detect_ttram_size(void)
 
 #endif /* CONF_WITH_TTRAM */
 
-/* Detect TT-RAM and set ramtom/ramvalid */
+/* Detect TT-RAM and set ramtop/ramvalid */
 void ttram_detect(void)
 {
 #if CONF_WITH_TTRAM

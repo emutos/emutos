@@ -412,7 +412,7 @@ void machine_detect(void)
     amiga_machine_detect();
 #endif
 
-    /* Detect TT-RAM and set up ramtom/ramvalid */
+    /* Detect TT-RAM and set up ramtop/ramvalid */
     KDEBUG(("ttram_detect()\n"));
     ttram_detect();
 
