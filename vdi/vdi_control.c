@@ -411,12 +411,12 @@ void vdi_v_opnwk(Vwk * vwk)
 
     init_colors();              /* Initialize palette etc. */
 
-    text_init(vwk);             /* initialize the SIZ_TAB info */
+    text_init();                /* initialize the SIZ_TAB info */
 
     init_wk(vwk);
 
-    timer_init(vwk);
-    vdimouse_init(vwk);         /* initialize mouse */
+    timer_init();
+    vdimouse_init();            /* initialize mouse */
     esc_init(vwk);              /* enter graphics mode */
 }
 
@@ -435,8 +435,8 @@ void vdi_v_clswk(Vwk * vwk)
         } while ((vwk = next_work));
     }
 
-    timer_exit(vwk);
-    vdimouse_exit(vwk);                 /* deinitialize mouse */
+    timer_exit();
+    vdimouse_exit();                    /* deinitialize mouse */
     esc_exit(vwk);                      /* back to console mode */
 }
 

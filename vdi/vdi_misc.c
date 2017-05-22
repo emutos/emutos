@@ -145,7 +145,7 @@ static void do_nothing_int(int u)
  * initially set timer vector to dummy, save old vector
  */
 
-void timer_init(Vwk * vwk)
+void timer_init(void)
 {
     WORD old_sr;
 
@@ -169,7 +169,7 @@ void timer_init(Vwk * vwk)
  * reactivate the old saved vector
  */
 
-void timer_exit(Vwk * vwk)
+void timer_exit(void)
 {
     WORD old_sr;
 

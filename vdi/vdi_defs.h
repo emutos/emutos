@@ -263,14 +263,14 @@ void abline (const Line * line, const WORD wrt_mode, UWORD color);
 void contourfill(const VwkAttrib * attr, const VwkClip *clip);
 
 /* initialization of subsystems */
-void text_init(Vwk *);
+void text_init(void);
 void text_init2(Vwk *);
-void timer_init(Vwk *);
-void vdimouse_init(Vwk *);
+void timer_init(void);
+void vdimouse_init(void);
 void esc_init(Vwk *);
 
-void vdimouse_exit(Vwk *);
-void timer_exit(Vwk *);
+void vdimouse_exit(void);
+void timer_exit(void);
 void esc_exit(Vwk *);
 
 /* all VDI functions */

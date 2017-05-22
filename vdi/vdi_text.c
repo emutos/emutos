@@ -349,7 +349,7 @@ void text_init2(Vwk * vwk)
     DEV_TAB[10] = vwk->num_fonts;
 }
 
-void text_init(Vwk * vwk)
+void text_init(void)
 {
     WORD i, j;
     WORD id_save, cell_height;
