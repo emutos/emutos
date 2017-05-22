@@ -178,7 +178,7 @@ static WORD ob_user(OBJECT *tree, WORD obj, GRECT *pt, LONG spec,
     PARMBLK pb;
     USERBLK *ub = (USERBLK *)spec;
 
-    pb.pb_tree = (LONG)tree;
+    pb.pb_tree = tree;
     pb.pb_obj = obj;
     pb.pb_prevstate = curr_state;
     pb.pb_currstate = new_state;

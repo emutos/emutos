@@ -208,7 +208,7 @@ typedef struct
 
 typedef struct _PARMBLK
 {
-        LONG    pb_tree;
+        OBJECT  *pb_tree;
         WORD    pb_obj;
         WORD    pb_prevstate;
         WORD    pb_currstate;
