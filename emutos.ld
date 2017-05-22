@@ -47,7 +47,7 @@ MEMORY
 {
     rom : ORIGIN = ROM_ORIGIN, LENGTH = ROM_LENGTH
     sysvars : ORIGIN = 0x00000000, LENGTH = 0x800
-    stram : ORIGIN = LENGTH(sysvars), LENGTH = 1M - LENGTH(sysvars)
+    stram : ORIGIN = LENGTH(sysvars), LENGTH = 14M - LENGTH(sysvars)
 #ifdef STATIC_ALT_RAM_ADDRESS
     altram : ORIGIN = STATIC_ALT_RAM_ADDRESS, LENGTH = 1M
 #endif
