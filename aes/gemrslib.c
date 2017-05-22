@@ -139,28 +139,29 @@ static void *get_addr(UWORD rstype, UWORD rsindex)
     OBJECT *obj;
     TEDINFO *tedinfo;
     ICONBLK *iconblk;
+    RSHDR *hdr = rs_hdr;
 
     switch(rstype)
     {
     case R_TREE:
         return rs_global->ap_ptree[rsindex];
     case R_OBJECT:
-        offset = rs_hdr->rsh_object;
+        offset = hdr->rsh_object;
         size = sizeof(OBJECT);
         break;
     case R_TEDINFO:
     case R_TEPTEXT: /* same, because te_ptext is first field of TEDINFO */
-        offset = rs_hdr->rsh_tedinfo;
+        offset = hdr->rsh_tedinfo;
         size = sizeof(TEDINFO);
         break;
     case R_ICONBLK:
     case R_IBPMASK: /* same, because ib_pmask is first field of ICONBLK */
-        offset = rs_hdr->rsh_iconblk;
+        offset = hdr->rsh_iconblk;
         size = sizeof(ICONBLK);
         break;
     case R_BITBLK:
     case R_BIPDATA: /* same, because bi_pdata is first field of BITBLK */
-        offset = rs_hdr->rsh_bitblk;
+        offset = hdr->rsh_bitblk;
         size = sizeof(BITBLK);
         break;
     case R_OBSPEC:
@@ -179,15 +180,15 @@ static void *get_addr(UWORD rstype, UWORD rsindex)
             return &iconblk->ib_pdata;
         return &iconblk->ib_ptext;
     case R_STRING:
-        return *((void **)get_sub(rsindex, rs_hdr->rsh_frstr, sizeof(LONG)));
+        return *((void **)get_sub(rsindex, hdr->rsh_frstr, sizeof(LONG)));
     case R_IMAGEDATA:
-        return *((void **)get_sub(rsindex, rs_hdr->rsh_frimg, sizeof(LONG)));
+        return *((void **)get_sub(rsindex, hdr->rsh_frimg, sizeof(LONG)));
     case R_FRSTR:
-        offset = rs_hdr->rsh_frstr;
+        offset = hdr->rsh_frstr;
         size = sizeof(LONG);
         break;
     case R_FRIMG:
-        offset = rs_hdr->rsh_frimg;
+        offset = hdr->rsh_frimg;
         size = sizeof(LONG);
         break;
     default:
