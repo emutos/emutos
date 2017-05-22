@@ -962,9 +962,9 @@ static void pca_translate_gstring(void *this, str *s, char *fname, int lineno)
     if (e->msgstr[0]) { /* if the translation isn't empty, use it instead */
       free(t);
       t = xstrdup(e->msgstr);
+      p->conv(t);  /* convert the string */
     }
   }
-  p->conv(t);  /* convert the string, be it a translation or the original */
   print_canon(p->f, t, NULL, true);
   free(t);
 }
