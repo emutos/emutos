@@ -1863,6 +1863,10 @@ static const char * get_canon_cset_name(const char *name)
  */
 
 static const unsigned char i2a[] = {
+     0,   0,     0,    0,    0,    0,   0,    0,
+     0,   0,     0,    0,    0,    0,   0,    0,
+     0,   0,     0,    0,    0,    0,   0,    0,
+     0,   0,     0,    0,    0,    0,   0,    0,
   /*     ¡     ¢     £     ¤     ¥     ¦     § */
   ' ' , 0xad, 0x9b, 0x9c,    0, 0x9d, '|', 0xdd,
   /* ¨   ©     ª     «     ¬     ­     ®     ¯ */
@@ -1895,8 +1899,8 @@ static void latin1_to_atarist(char *s)
   int warned = 0;
 
   while((c = (((unsigned) (*s)) & 0xFF))){
-    if(c >= 0xa0) {
-      c = i2a[c - 0xa0];
+    if(c >= 0x80) {
+      c = i2a[c - 0x80];
       if(c == 0) {
         c = '?';
         if(!warned) {
