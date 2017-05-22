@@ -1858,6 +1858,34 @@ static const char * get_canon_cset_name(const char *name)
  * charset conversion
  */
 
+static struct {
+    unsigned char latin1;
+    unsigned char ascii;
+} const replacements[] = {
+    { 0x00a0, ' ' },    /* NO-BREAK SPACE */
+    { 0x00a6, '|' },    /* BROKEN BAR */
+    { 0x00ad, '-' },    /* SOFT HYPHEN */
+    { 0x00c1, 'A' },    /* A' LATIN CAPITAL LETTER A WITH ACUTE */
+    { 0x00c2, 'A' },    /* A^ LATIN CAPITAL LETTER A WITH CIRCUMFLEX */
+    { 0x00c8, 'E' },    /* E` LATIN CAPITAL LETTER E WITH GRAVE */
+    { 0x00ca, 'E' },    /* E^ LATIN CAPITAL LETTER E WITH CIRCUMFLEX */
+    { 0x00cb, 'E' },    /* E" LATIN CAPITAL LETTER E WITH DIAERESIS */
+    { 0x00cc, 'I' },    /* I` LATIN CAPITAL LETTER I WITH GRAVE */
+    { 0x00cd, 'I' },    /* I' LATIN CAPITAL LETTER I WITH ACUTE */
+    { 0x00ce, 'I' },    /* I^ LATIN CAPITAL LETTER I WITH CIRCUMFLEX */
+    { 0x00cf, 'I' },    /* I" LATIN CAPITAL LETTER I WITH DIAERESIS */
+    { 0x00d2, 'O' },    /* O` LATIN CAPITAL LETTER O WITH GRAVE */
+    { 0x00d3, 'O' },    /* O' LATIN CAPITAL LETTER O WITH ACUTE */
+    { 0x00d4, 'O' },    /* O^ LATIN CAPITAL LETTER O WITH CIRCUMFLEX */
+    { 0x00d7, 'x' },    /* MULTIPLICATION SIGN */
+    { 0x00d9, 'U' },    /* U` LATIN CAPITAL LETTER U WITH GRAVE */
+    { 0x00da, 'U' },    /* U' LATIN CAPITAL LETTER U WITH ACUTE */
+    { 0x00db, 'U' },    /* U^ LATIN CAPITAL LETTER U WITH CIRCUMFLEX */
+    { 0x00dd, 'Y' },    /* Y` LATIN CAPITAL LETTER Y WITH ACUTE */
+    { 0x00fd, 'y' },    /* Y' LATIN SMALL LETTER Y WITH ACUTE */
+    { 0x0000, '?' }
+};
+
 /*
  * iso_to_atari : convert in situ iso latin 1 to atari ST encoding
  */
@@ -1868,21 +1896,21 @@ static const unsigned char i2a[] = {
      0,   0,     0,    0,    0,    0,   0,    0,
      0,   0,     0,    0,    0,    0,   0,    0,
   /*     ¡     ¢     £     ¤     ¥     ¦     § */
-  ' ' , 0xad, 0x9b, 0x9c,    0, 0x9d, '|', 0xdd,
+     0, 0xad, 0x9b, 0x9c,    0, 0x9d,   0, 0xdd,
   /* ¨   ©     ª     «     ¬     ­     ®     ¯ */
-  0xb9, 0xbd, 0xa6, 0xae, 0xaa,  '-', 0xbe, 0xff,
+  0xb9, 0xbd, 0xa6, 0xae, 0xaa,    0, 0xbe, 0xff,
   /* °   ±     ²     ³     ´     µ     ¶     · */
   0xf8, 0xf1, 0xfd, 0xfe, 0xba, 0xe6, 0xbc,  0,
   /* ¸   ¹     º     »     ¼     ½     ¾     ¿ */
-  '?' , '?',  0xa7, 0xaf, 0xac, 0xab,    0, 0xa8,
+     0,   0,  0xa7, 0xaf, 0xac, 0xab,    0, 0xa8,
   /* À   Á     Â     Ã     Ä     Å     Æ     Ç */
-  0xb6, 'A',   'A', 0xB7, 0x8e, 0x8f, 0x92, 0x80,
+  0xb6,   0,     0, 0xB7, 0x8e, 0x8f, 0x92, 0x80,
   /* È   É     Ê     Ë     Ì     Í     Î     Ï */
-  'E' , 0x90,  'E',  'E',  'I',  'I',  'I',  'I',
+     0, 0x90,    0,    0,    0,    0,    0,    0,
   /* Ð   Ñ     Ò     Ó     Ô     Õ     Ö     × */
-  0   , 0xa5,  'O',  'O',  'O', 0xb8, 0x99,  'x',
+  0   , 0xa5,    0,    0,    0, 0xb8, 0x99,    0,
   /* Ø   Ù     Ú     Û     Ü     Ý     Þ     ß */
-  0xb2, 'U' ,  'U',  'U', 0x9a,  'Y',   0,  0x9e,
+  0xb2,   0 ,    0,    0, 0x9a,    0,   0,  0x9e,
   /* à   á     â     ã     ä     å     æ     ç */
   0x85, 0xa0, 0x83, 0xb0, 0x84, 0x86, 0x91, 0x87,
   /* è   é     ê     ë     ì     í     î     ï */
@@ -1890,25 +1918,43 @@ static const unsigned char i2a[] = {
   /* ð   ñ     ò     ó     ô     õ     ö     ÷ */
   0   , 0xa4, 0x95, 0xa2, 0x93, 0xb1, 0x94, 0xf6,
   /* ø   ù     ú     û     ü     ý     þ     ÿ */
-  0xb3, 0x97, 0xa3, 0x96, 0x81,  'y',  0,   0x98,
+  0xb3, 0x97, 0xa3, 0x96, 0x81,    0,    0, 0x98,
 };
 
 static void latin1_to_atarist(char *s)
 {
-  unsigned c;
+  unsigned char c, newc;
   int warned = 0;
+  int i;
 
-  while((c = (((unsigned) (*s)) & 0xFF))){
+  while((c = (unsigned char) (*s) & 0xff) != 0){
     if(c >= 0x80) {
-      c = i2a[c - 0x80];
-      if(c == 0) {
-        c = '?';
+      newc = i2a[c - 0x80];
+      if(newc == 0) {
+        for (i = 0; replacements[i].latin1 != 0 && replacements[i].latin1 != c; i++)
+          ;
+        newc = replacements[i].ascii;
         if(!warned) {
-          warn("untranslatable character '%c'", *s);
+          const char *tmp = s;
+          fprintf(stderr, "Warning: untranslatable character $%02x in ", c);
+          /*
+           * assume a console in utf-8 mode; printing a latin1 string usually won't work
+           */
+          while ((c = (unsigned char) (*tmp) & 0xff) != 0){
+            if (c >= 0x80)
+            {
+              putc(((c >> 6) & 0x03) | 0xc0, stderr);
+              putc((c & 0x3f) | 0x80, stderr);
+            } else {
+              putc(c, stderr);
+            }
+            tmp++;
+          }
+          fprintf(stderr, ", using '%c' instead\n", newc);
           warned = 1;
         }
       }
-      *s = c;
+      *s = newc;
     }
     s++;
   }
