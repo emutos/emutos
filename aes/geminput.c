@@ -504,19 +504,19 @@ void adelay(EVB *e, LONG c)
     q = (EVB *) ((BYTE *) &dlr - offsetof(EVB, e_link));
     for (p = dlr; p; p = (q = p) -> e_link)
     {
-        if (c <= (LONG) p->e_parm)
+        if (c <= p->e_parm)
             break;
-        c -= (LONG) p->e_parm;
+        c -= p->e_parm;
     }
     e->e_pred = q;
     q->e_link = e;
-    e->e_parm = (LONG) c;
+    e->e_parm = c;
     e->e_link = p;
     if (p)
     {
-        c = (LONG) p->e_parm - c;
+        c = p->e_parm - c;
         p->e_pred = e;
-        p->e_parm = (LONG) c;
+        p->e_parm = c;
     }
     enable_interrupts();
 }

@@ -105,9 +105,9 @@ static void takeoff(EVB *p)
         p->e_link->e_pred = p->e_pred;
         if (p->e_flag & EVDELAY)
         {
-            c = (LONG) p->e_link->e_parm;
-            c += (LONG) p->e_parm;
-            p->e_link->e_parm = (LONG) c;
+            c = p->e_link->e_parm;
+            c += p->e_parm;
+            p->e_link->e_parm = c;
         }
     }
     p->e_nextp = eul;
