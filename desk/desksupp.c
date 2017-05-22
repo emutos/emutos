@@ -224,8 +224,21 @@ void do_xyfix(WORD *px, WORD *py)
 /*
  * open a window, normally corresponding to a disk drive icon on the desktop
  *
- * if curr == 0, there is no corresponding screen object, so we do not
- * do the zoom effect & we do not try to reset the object state
+ * if curr == 0, there is no 'source' screen object from which the new
+ * object is coming, so we do not do the zoom effect & we do not try to
+ * reset the object state.
+ *
+ * if curr != 0, there *is* a source object: we always do the zoom effect,
+ * and change the object state, but we only redraw the object when we are
+ * opening a new window.  otherwise, we must be showing the new data in
+ * an existing window: the FNODE for the 'source' object has already been
+ * freed via pn_close(), but would be needed for the redraw because:
+ *  . in text mode, a redraw will cause the userdef code for text display
+ *    to access the FNODE corresponding to the source object
+ *  . in icon mode, a redraw will use the name from the FNODE as the icon
+ *    name.
+ * if we did allow a redraw, at best the display would show the wrong
+ * values (or garbage) briefly; at worst, the desktop would crash.
  */
 void do_wopen(WORD new_win, WORD wh, WORD curr, WORD x, WORD y, WORD w, WORD h)
 {
@@ -246,7 +259,7 @@ void do_wopen(WORD new_win, WORD wh, WORD curr, WORD x, WORD y, WORD w, WORD h)
         }
 
         graf_growbox(d.g_x, d.g_y, d.g_w, d.g_h, x, y, w, h);
-        act_chg(G.g_cwin, G.g_screen, G.g_croot, curr, &c, SELECTED, FALSE, TRUE, TRUE);
+        act_chg(G.g_cwin, G.g_screen, G.g_croot, curr, &c, SELECTED, FALSE, new_win?TRUE:FALSE, TRUE);
     }
 
     if (new_win)
