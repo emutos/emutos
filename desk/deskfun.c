@@ -396,6 +396,30 @@ static void fun_full_close(WNODE *pw)
 
 
 /*
+ *  Removes the lowest level of folder from a pathname, assumed
+ *  to be of the form:
+ *      D:\X\Y\Z\F.E
+ *  where X,Y,Z are folders and F.E is a filename.  In the above
+ *  example, this would change D:\X\Y\Z\F.E to D:\X\Y\F.E
+ */
+static void remove_one_level(BYTE *pathname)
+{
+    BYTE *stop = pathname+2;    /* the first path separator */
+    BYTE *filename, *prev;
+
+    filename = filename_start(pathname);
+    if (filename-1 <= stop)     /* already at the root */
+        return;
+
+    for (prev = filename-2; prev >= stop; prev--)
+        if (*prev == '\\')
+            break;
+
+    strcpy(prev+1,filename);
+}
+
+
+/*
  * full or partial close of desktop window
  */
 void fun_close(WNODE *pw, WORD closetype)

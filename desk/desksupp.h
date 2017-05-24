@@ -31,7 +31,6 @@ WORD do_info(WORD curr);
 void do_format(void);
 void do_refresh(WNODE *pw);
 ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp);
-void remove_one_level(BYTE *pathname);
 WORD set_default_path(BYTE *path);
 
 #endif  /* _DESKSUPP_H */
