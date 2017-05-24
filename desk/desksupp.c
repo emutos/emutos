@@ -371,6 +371,9 @@ WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon,
     WORD ret;
     BYTE *p;
     PNODE *tmp;
+    WNODE *newpw = NULL;
+
+    MAYBE_UNUSED(newpw);
 
     /* convert to hourglass */
     graf_mouse(HGLASS, NULL);
@@ -390,28 +393,34 @@ WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon,
     }
     strcpy(p,"*.*");
 
-    /* open a path node */
-    tmp = pn_open(pathname, F_SUBDIR);
-    if (tmp == NULL)
-    {
-        graf_mouse(ARROW, NULL);
-        return FALSE;
-    }
-
 #if CONF_WITH_DESKTOP_SHORTCUTS
     /* handle opening directory on the desktop */
     if (pw->w_flags&WN_DESKTOP)
     {
-        pw = win_alloc(curr_icon);
-        if (!pw)
+        newpw = win_alloc(curr_icon);
+        if (!newpw)
         {
             graf_mouse(ARROW, NULL);
             fun_alert(1, STNOWIND);
             return FALSE;
         }
-        pt = (GRECT *)&G.g_screen[pw->w_root].ob_x;
+        pt = (GRECT *)&G.g_screen[newpw->w_root].ob_x;
     }
 #endif
+
+    /* open a path node */
+    tmp = pn_open(pathname, F_SUBDIR);
+    if (tmp == NULL)    /* program bug - there is one PNODE for every WNODE */
+    {
+        KDEBUG(("No path node available for window\n"));
+        if (newpw)              /* we allocated a new WNODE above */
+            win_free(newpw);
+        graf_mouse(ARROW, NULL);
+        return FALSE;
+    }
+
+    if (newpw)
+        pw = newpw;
 
     pw->w_path = tmp;
 
