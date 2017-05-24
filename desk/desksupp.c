@@ -964,10 +964,6 @@ WORD do_open(WORD curr)
     WORD isapp;
     BYTE pathname[MAXPATHLEN];
     BYTE filename[LEN_ZFNAME];
-    BYTE *pathptr, *fileptr;
-
-    MAYBE_UNUSED(pathname);
-    MAYBE_UNUSED(filename);
 
     pa = i_find(G.g_cwin, curr, &pf, &isapp);
     if (!pa)
@@ -997,24 +993,22 @@ WORD do_open(WORD curr)
                 strcpy(filename, p);
             }
             strcat(pathname, "\\*.*");
-            pathptr = pathname;
-            fileptr = filename;
         }
         else
 #endif
         {
-            pathptr = pw->w_path->p_spec;
-            fileptr = pf->f_name;
+            strcpy(pathname, pw->w_path->p_spec);
+            strcpy(filename, pf->f_name);
         }
 
         if (pa->a_type == AT_ISFILE)
-            return do_aopen(pa, isapp, curr, pathptr, fileptr, NULL);
+            return do_aopen(pa, isapp, curr, pathname, filename, NULL);
 
         /* handle opening a folder */
-        if (add_one_level(pathptr, fileptr))
+        if (add_one_level(pathname, filename))
         {
             pw->w_cvrow = 0;        /* reset slider */
-            do_fopen(pw, curr, pathptr, TRUE);
+            do_fopen(pw, curr, pathname, TRUE);
         }
         else
             fun_alert(1, STDEEPPA);
