@@ -879,16 +879,16 @@ void do_fopen(WNODE *pw, WORD curr, BYTE *pathname, WORD redraw)
         return;
     }
 
-    strcpy(app_path,pathname);
-    if (strlen(app_path) >= LEN_ZPATH)
+    if (strlen(pathname) >= LEN_ZPATH)
     {
         fun_alert(1, STDEEPPA);
-        remove_one_level(app_path);         /* back up one level */
+        return;
     }
 
     if (!(pw->w_flags&WN_DESKTOP))          /* folder in window, not on desktop */
         pn_close(pw->w_path);
 
+    strcpy(app_path, pathname);
     do_diropen(pw, (pw->w_flags&WN_DESKTOP)?TRUE:FALSE, curr, app_path, &t, redraw);
 }
 
