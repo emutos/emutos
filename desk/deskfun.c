@@ -462,6 +462,31 @@ void fun_close(WNODE *pw, WORD closetype)
 }
 
 
+#if CONF_WITH_DESKTOP_SHORTCUTS
+/*
+ * builds the full pathname corresponding to the first selected file
+ * in the specified PNODE
+ *
+ * returns FALSE if no file is selected (probable program bug)
+ */
+static BOOL build_selected_path(PNODE *pn, BYTE *pathname)
+{
+    FNODE *fn;
+
+    for (fn = pn->p_flist; fn; fn = fn->f_next)
+    {
+        if (fnode_is_selected(fn))
+            break;
+    }
+    if (!fn)
+        return FALSE;
+
+    strcpy(pathname,pn->p_spec);
+    add_fname(pathname,fn->f_name);
+    return TRUE;
+}
+#endif
+
 
 /*
  *  Routine to call when several icons have been dragged from a
@@ -532,29 +557,19 @@ static WORD fun_file2desk(PNODE *pn_src, WORD icontype_src, ANODE *an_dest, WORD
         switch(an_dest->a_type)
         {
 #if CONF_WITH_DESKTOP_SHORTCUTS
-        FNODE *fn;
         BYTE tail[MAXPATHLEN];
 
         case AT_ISFILE:     /* dropping something onto a file */
             if (an_dest->a_aicon < 0)       /* is target a program? */
                 break;                      /* no, do nothing */
 
-            /* look for the first (or only) selected file */
-            for (fn = pn_src->p_flist; fn; fn = fn->f_next)
-            {
-                if (fnode_is_selected(fn))
-                    break;
-            }
-            if (!fn)                        /* "can't happen" */
+            /* build the full tail to pass to the target program */
+            if (!build_selected_path(pn_src,tail))
                 break;
 
             /* build pathname for do_aopen() */
             strcpy(pathname,an_dest->a_pdata);
             strcpy(filename_start(pathname),"*.*");
-
-            /* build the full tail to pass to the target program */
-            strcpy(tail,pn_src->p_spec);
-            add_fname(tail,fn->f_name);
 
             /* set global so desktop will exit if do_aopen() succeeds */
             exit_desktop = do_aopen(an_dest, 1, dobj, pathname, an_dest->a_pappl, tail);
