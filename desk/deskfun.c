@@ -462,7 +462,6 @@ void fun_close(WNODE *pw, WORD closetype)
 }
 
 
-#if CONF_WITH_DESKTOP_SHORTCUTS
 /*
  * builds the full pathname corresponding to the first selected file
  * in the specified PNODE
@@ -485,7 +484,6 @@ static BOOL build_selected_path(PNODE *pn, BYTE *pathname)
     add_fname(pathname,fn->f_name);
     return TRUE;
 }
-#endif
 
 
 /*
@@ -493,9 +491,11 @@ static BOOL build_selected_path(PNODE *pn, BYTE *pathname)
  *  window to another window (it might be the same window) and
  *  dropped on a particular icon or open space.
  *
- *  Note that, for DESK1, this is NEVER called if either the source
- *  or destination is the desktop.  Therefore 'datype' can ONLY be
- *  AT_ISFILE or AT_ISFOLD.
+ *  This can be invoked when copying/moving files, or when launching
+ *  a program via drag-and-drop.
+ *
+ *  Note that this is NEVER called if either the source or destination
+ *  is the desktop.  Thus 'datype' can ONLY be AT_ISFILE or AT_ISFOLD.
  */
 static void fun_win2win(WORD src_wh, WORD dst_wh, WORD dst_ob, WORD keystate)
 {
@@ -514,7 +514,24 @@ static void fun_win2win(WORD src_wh, WORD dst_wh, WORD dst_ob, WORD keystate)
         return;
 
     pda = i_find(dst_wh, dst_ob, &pdf, NULL);
-    datype = (pda) ? pda->a_type : AT_ISFILE;
+
+    if (pda)
+    {
+        if (pda->a_aicon >= 0)      /* dropping file on to an application */
+        {
+            if (build_selected_path(psw->w_path, destpath))
+            {
+                /* set global so desktop will exit if do_aopen() succeeds */
+                exit_desktop = do_aopen(pda, 1, dst_ob, pdw->w_path->p_spec, pdf->f_name, destpath);
+                return;
+            }
+        }
+        datype = pda->a_type;
+    }
+    else
+    {
+        datype = AT_ISFILE;
+    }
 
     /* set up default destination path name */
     strcpy(destpath, pdw->w_path->p_spec);
