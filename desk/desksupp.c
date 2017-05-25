@@ -828,7 +828,7 @@ WORD do_dopen(WORD curr)
 void do_fopen(WNODE *pw, WORD curr, BYTE *pathname, WORD redraw)
 {
     GRECT t;
-    WORD new_win;
+    WORD junk, keystate, new_win = FALSE;
     BYTE app_path[MAXPATHLEN];
 
     wind_get_grect(pw->w_id, WF_WXYWH, &t);
@@ -862,10 +862,22 @@ void do_fopen(WNODE *pw, WORD curr, BYTE *pathname, WORD redraw)
             return;
         }
         strcpy(p,"*.*");
+        new_win = TRUE;
+    }
+    else
+#endif
+    {
+        graf_mkstate(&junk, &junk, &junk, &keystate);
+        if (keystate & MODE_ALT)
+            new_win = TRUE;
+    }
 
-        /*
-         * handle opening directory on the desktop
-         */
+    /*
+     * if we are opening a folder on the desktop, or holding down the Alt
+     * key when opening a folder in a window, we need to create a new window
+     */
+    if (new_win)
+    {
         pw = win_alloc(curr);
         if (!pw)
         {
@@ -873,14 +885,10 @@ void do_fopen(WNODE *pw, WORD curr, BYTE *pathname, WORD redraw)
             return;
         }
         rc_copy((GRECT *)&G.g_screen[pw->w_root].ob_x,&t);
-
-        new_win = TRUE;
     }
     else
-#endif
     {
         pn_close(pw->w_path);
-        new_win = FALSE;
     }
 
     if (!do_diropen(pw, new_win, curr, app_path, &t, redraw))
