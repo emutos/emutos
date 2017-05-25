@@ -369,59 +369,19 @@ WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon,
                 BYTE *pathname, GRECT *pt, WORD redraw)
 {
     WORD ret;
-    BYTE *p;
     PNODE *tmp;
-    WNODE *newpw = NULL;
-
-    MAYBE_UNUSED(newpw);
 
     /* convert to hourglass */
     graf_mouse(HGLASS, NULL);
-
-    p = filename_start(pathname);
-    *p = '\0';
-    ret = set_default_path(pathname);
-    if (ret != 0)
-    {
-#if CONF_WITH_DESKTOP_SHORTCUTS
-        /* handle renamed target of shortcut */
-        if ((pw->w_flags&WN_DESKTOP) && (ret == EPTHNF))
-            remove_locate_shortcut(curr_icon);
-#endif
-        graf_mouse(ARROW, NULL);
-        return FALSE;
-    }
-    strcpy(p,"*.*");
-
-#if CONF_WITH_DESKTOP_SHORTCUTS
-    /* handle opening directory on the desktop */
-    if (pw->w_flags&WN_DESKTOP)
-    {
-        newpw = win_alloc(curr_icon);
-        if (!newpw)
-        {
-            graf_mouse(ARROW, NULL);
-            fun_alert(1, STNOWIND);
-            return FALSE;
-        }
-        pt = (GRECT *)&G.g_screen[newpw->w_root].ob_x;
-    }
-#endif
 
     /* open a path node */
     tmp = pn_open(pathname, F_SUBDIR);
     if (tmp == NULL)    /* program bug - there is one PNODE for every WNODE */
     {
         KDEBUG(("No path node available for window\n"));
-        if (newpw)              /* we allocated a new WNODE above */
-            win_free(newpw);
         graf_mouse(ARROW, NULL);
         return FALSE;
     }
-
-    if (newpw)
-        pw = newpw;
-
     pw->w_path = tmp;
 
     /* activate path by search and sort of directory */
@@ -868,6 +828,7 @@ WORD do_dopen(WORD curr)
 void do_fopen(WNODE *pw, WORD curr, BYTE *pathname, WORD redraw)
 {
     GRECT t;
+    WORD new_win;
     BYTE app_path[MAXPATHLEN];
 
     wind_get_grect(pw->w_id, WF_WXYWH, &t);
@@ -885,11 +846,48 @@ void do_fopen(WNODE *pw, WORD curr, BYTE *pathname, WORD redraw)
         return;
     }
 
-    if (!(pw->w_flags&WN_DESKTOP))          /* folder in window, not on desktop */
-        pn_close(pw->w_path);
-
     strcpy(app_path, pathname);
-    do_diropen(pw, (pw->w_flags&WN_DESKTOP)?TRUE:FALSE, curr, app_path, &t, redraw);
+
+#if CONF_WITH_DESKTOP_SHORTCUTS
+    if (pw->w_flags & WN_DESKTOP)
+    {
+        /*
+         * handle renamed target of shortcut
+         */
+        BYTE *p = filename_start(app_path);
+        *p = '\0';
+        if (set_default_path(app_path) == EPTHNF)
+        {
+            remove_locate_shortcut(curr);
+            return;
+        }
+        strcpy(p,"*.*");
+
+        /*
+         * handle opening directory on the desktop
+         */
+        pw = win_alloc(curr);
+        if (!pw)
+        {
+            fun_alert(1, STNOWIND);
+            return;
+        }
+        rc_copy((GRECT *)&G.g_screen[pw->w_root].ob_x,&t);
+
+        new_win = TRUE;
+    }
+    else
+#endif
+    {
+        pn_close(pw->w_path);
+        new_win = FALSE;
+    }
+
+    if (!do_diropen(pw, new_win, curr, app_path, &t, redraw))
+    {
+        if (new_win)
+            win_free(pw);
+    }
 }
 
 
