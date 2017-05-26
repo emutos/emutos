@@ -324,7 +324,7 @@ void w_drawdesk(GRECT *pc)
 }
 
 
-static void w_cpwalk(WORD wh, WORD obj, WORD depth, WORD usetrue)
+static void w_cpwalk(WORD wh, WORD obj, WORD depth, BOOL usetrue)
 {
     GRECT   c;
 
@@ -350,7 +350,7 @@ static void w_strchg(WORD w_handle, WORD obj, BYTE *pstring)
     else
         gl_ainfo.te_ptext = D.w_win[w_handle].w_pinfo = pstring;
 
-    w_cpwalk(w_handle, obj, MAX_DEPTH, 1);
+    w_cpwalk(w_handle, obj, MAX_DEPTH, TRUE);
 }
 
 
@@ -712,7 +712,7 @@ static WORD w_move(WORD w_handle, WORD *pstop, GRECT *prc)
                 d.g_x--;
                 d.g_w = 1;
                 gsx_sclip(&d);
-                w_cpwalk(gl_wtop, 0, 0, 0);
+                w_cpwalk(gl_wtop, 0, 0, FALSE);
             }
         }
         pc = &s;
@@ -844,7 +844,7 @@ static void draw_change(WORD w_handle, GRECT *pt)
             /* draw oldtop covered with deactivated borders */
             if (oldtop != NIL)
             {
-                w_cpwalk(oldtop, 0, MAX_DEPTH, 1);
+                w_cpwalk(oldtop, 0, MAX_DEPTH, TRUE);
                 clrold = !(D.w_win[oldtop].w_flags & VF_BROKEN);
             }
             else
@@ -856,7 +856,7 @@ static void draw_change(WORD w_handle, GRECT *pt)
              */
             if (clrold && wasclr)
             {
-                w_cpwalk(gl_wtop, 0, MAX_DEPTH, 1);
+                w_cpwalk(gl_wtop, 0, MAX_DEPTH, TRUE);
                 return;
             }
         }
@@ -867,7 +867,7 @@ static void draw_change(WORD w_handle, GRECT *pt)
             if ((pt->g_w <= c.g_w) && (pt->g_h <= c.g_h))
             {
                 stop = w_handle;
-                w_cpwalk(gl_wtop, 0, MAX_DEPTH, 1);
+                w_cpwalk(gl_wtop, 0, MAX_DEPTH, TRUE);
                 moved = TRUE;
             }
 
@@ -931,7 +931,7 @@ static void draw_change(WORD w_handle, GRECT *pt)
                 /* only an open if prev size was zero */
                 w_getsize(WS_PREV, gl_wtop, &pprev);
                 if (rc_equal(&pprev, &gl_rzero))
-                    w_cpwalk(oldtop, 0, MAX_DEPTH, 1);
+                    w_cpwalk(oldtop, 0, MAX_DEPTH, TRUE);
             }
         }
     }
