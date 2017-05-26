@@ -343,18 +343,6 @@ static void w_cpwalk(WORD wh, WORD obj, WORD depth, WORD usetrue)
 }
 
 
-/*
- *  Build an active window and draw the all parts of it but clip these
- *  parts with the owner rectangles and the passed in clip rectangle
- */
-static void w_clipdraw(WORD wh, WORD obj, WORD depth, WORD usetrue)
-{
-    //FIXME: eliminate this function
-    /* build active tree */
-    w_cpwalk(wh, obj, depth, usetrue);
-}
-
-
 static void w_strchg(WORD w_handle, WORD obj, BYTE *pstring)
 {
     if (obj == W_NAME)
@@ -362,7 +350,7 @@ static void w_strchg(WORD w_handle, WORD obj, BYTE *pstring)
     else
           gl_ainfo.te_ptext = D.w_win[w_handle].w_pinfo = pstring;
 
-    w_clipdraw(w_handle, obj, MAX_DEPTH, 1);
+    w_cpwalk(w_handle, obj, MAX_DEPTH, 1);
 }
 
 
@@ -724,7 +712,7 @@ static WORD w_move(WORD w_handle, WORD *pstop, GRECT *prc)
                 d.g_x--;
                 d.g_w = 1;
                 gsx_sclip(&d);
-                w_clipdraw(gl_wtop, 0, 0, 0);
+                w_cpwalk(gl_wtop, 0, 0, 0);
             }
         }
         pc = &s;
@@ -856,7 +844,7 @@ static void draw_change(WORD w_handle, GRECT *pt)
             /* draw oldtop covered with deactivated borders */
             if (oldtop != NIL)
             {
-                w_clipdraw(oldtop, 0, MAX_DEPTH, 2);
+                w_cpwalk(oldtop, 0, MAX_DEPTH, 1);
                 clrold = !(D.w_win[oldtop].w_flags & VF_BROKEN);
             }
             else
@@ -868,7 +856,7 @@ static void draw_change(WORD w_handle, GRECT *pt)
              */
             if (clrold && wasclr)
             {
-                w_clipdraw(gl_wtop, 0, MAX_DEPTH, 1);
+                w_cpwalk(gl_wtop, 0, MAX_DEPTH, 1);
                 return;
             }
         }
@@ -879,7 +867,7 @@ static void draw_change(WORD w_handle, GRECT *pt)
             if ((pt->g_w <= c.g_w) && (pt->g_h <= c.g_h))
             {
                 stop = w_handle;
-                w_clipdraw(gl_wtop, 0, MAX_DEPTH, 2);
+                w_cpwalk(gl_wtop, 0, MAX_DEPTH, 1);
                 moved = TRUE;
             }
 
@@ -943,7 +931,7 @@ static void draw_change(WORD w_handle, GRECT *pt)
                 /* only an open if prev size was zero */
                 w_getsize(WS_PREV, gl_wtop, &pprev);
                 if (rc_equal(&pprev, &gl_rzero))
-                    w_clipdraw(oldtop, 0, MAX_DEPTH, 2);
+                    w_cpwalk(oldtop, 0, MAX_DEPTH, 1);
             }
         }
     }
