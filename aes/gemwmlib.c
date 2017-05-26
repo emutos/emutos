@@ -735,7 +735,7 @@ static WORD w_move(WORD w_handle, WORD *pstop, GRECT *prc)
  *  first window drawn, just do the insides, since DRAW_CHANGE has already
  *  drawn the outside borders.
  */
-void w_update(WORD bottom, GRECT *pt, WORD top, WORD moved, WORD usetrue)
+void w_update(WORD bottom, GRECT *pt, WORD top, BOOL moved, BOOL usetrue)
 {
     WORD   i, ni;
     WORD   done;
@@ -793,8 +793,8 @@ static void draw_change(WORD w_handle, GRECT *pt)
 {
     GRECT   c, pprev;
     GRECT   *pw;
-    WORD    start;
-    WORD    stop, moved;
+    WORD    start, stop;
+    BOOL    moved;
     WORD    oldtop, clrold, wasclr;
 
     wasclr = !(D.w_win[w_handle].w_flags & VF_BROKEN);
