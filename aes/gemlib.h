@@ -78,7 +78,6 @@ typedef struct moblk
 #define VF_INUSE    0x0001
 #define VF_BROKEN   0x0002
 #define VF_INTREE   0x0004
-#define VF_SUBWIN   0x0008
 
 
 typedef struct window

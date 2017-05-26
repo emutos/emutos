@@ -100,12 +100,7 @@ static WORD chk_ctrl(WORD mx, WORD my)
     wh = wm_find(mx, my);
     if (wh)
     {
-        if ((D.w_win[gl_wtop].w_flags & VF_SUBWIN) &&
-            (D.w_win[wh].w_flags & VF_SUBWIN) &&
-            inside(mx, my, &D.w_win[wh].w_work))
-            return 1;
-        else
-            return -1;
+        return -1;
     }
     else
         return 0;

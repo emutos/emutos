@@ -349,20 +349,7 @@ static void w_cpwalk(WORD wh, WORD obj, WORD depth, WORD usetrue)
  */
 static void w_clipdraw(WORD wh, WORD obj, WORD depth, WORD usetrue)
 {
-    WORD    i;
-
-    if ((usetrue == 2) || (usetrue == 0))
-    {
-        for (i = W_TREE[ROOT].ob_head; i > ROOT; i = W_TREE[i].ob_next)
-        {
-            if ((i != wh) &&
-                (D.w_win[i].w_owner == D.w_win[wh].w_owner) &&
-                (D.w_win[i].w_flags & VF_SUBWIN) &&
-                (D.w_win[wh].w_flags & VF_SUBWIN))
-                w_cpwalk(i, obj, depth, TRUE);
-        }
-    }
-
+    //FIXME: eliminate this function
     /* build active tree */
     w_cpwalk(wh, obj, depth, usetrue);
 }
@@ -491,7 +478,7 @@ void w_setactive(void)
 
 void w_bldactive(WORD w_handle)
 {
-    WORD    istop, issub;
+    WORD    istop;
     WORD    kind;
     WORD    havevbar;
     WORD    havehbar;
@@ -513,7 +500,7 @@ void w_bldactive(WORD w_handle)
     gl_aname.te_ptext = pw->w_pname;
     gl_ainfo.te_ptext = pw->w_pinfo;
     gl_aname.te_just = TE_CNTR;
-    issub = (pw->w_flags & VF_SUBWIN) && (D.w_win[gl_wtop].w_flags & VF_SUBWIN);
+
     w_getsize(WS_CURR, w_handle, &t);
     W_ACTIVE[W_BOX].ob_x = t.g_x;
     W_ACTIVE[W_BOX].ob_y = t.g_y;
@@ -528,13 +515,13 @@ void w_bldactive(WORD w_handle)
     {
         w_adjust(W_BOX, W_TITLE, t.g_x, t.g_y, t.g_w, gl_hbox);
         tempw = t.g_w;
-        if ((kind & CLOSER) && (istop||issub))
+        if ((kind & CLOSER) && istop)
         {
             w_adjust(W_TITLE, W_CLOSER, t.g_x, t.g_y, gl_wbox, gl_hbox);
             t.g_x += gl_wbox;
             tempw -= gl_wbox;
         }
-        if ((kind & FULLER) && (istop||issub))
+        if ((kind & FULLER) && istop)
         {
             tempw -= gl_wbox;
             w_adjust(W_TITLE, W_FULLER, t.g_x+tempw, t.g_y, gl_wbox, gl_hbox);
@@ -542,10 +529,10 @@ void w_bldactive(WORD w_handle)
         if (kind & NAME)
         {
             w_adjust(W_TITLE, W_NAME, t.g_x, t.g_y, tempw, gl_hbox);
-            W_ACTIVE[W_NAME].ob_state = (istop || issub) ? NORMAL : DISABLED;
+            W_ACTIVE[W_NAME].ob_state = istop ? NORMAL : DISABLED;
 
             /* comment out following line to enable pattern in window title */
-            gl_aname.te_color = (istop && !issub) ? WTS_FG : WTN_FG;
+            gl_aname.te_color = istop ? WTS_FG : WTN_FG;
         }
         t.g_x = 0;
         t.g_y += (gl_hbox - 1);
@@ -585,7 +572,7 @@ void w_bldactive(WORD w_handle)
     if (havevbar)
     {
         t.g_x += t.g_w;
-        w_bldbar(kind, istop || issub, W_VBAR, pw->w_vslide, pw->w_vslsiz,
+        w_bldbar(kind, istop, W_VBAR, pw->w_vslide, pw->w_vslsiz,
                     t.g_x, 0, t.g_w+2, t.g_h+2);
     }
 
@@ -593,7 +580,7 @@ void w_bldactive(WORD w_handle)
     if (havehbar)
     {
         t.g_y += t.g_h;
-        w_bldbar(kind, istop || issub, W_HBAR, pw->w_hslide, pw->w_hslsiz,
+        w_bldbar(kind, istop, W_HBAR, pw->w_hslide, pw->w_hslsiz,
                     0, t.g_y, t.g_w+2, t.g_h+2);
     }
 
@@ -820,7 +807,7 @@ static void draw_change(WORD w_handle, GRECT *pt)
     GRECT   *pw;
     WORD    start;
     WORD    stop, moved;
-    WORD    oldtop, clrold, diffbord, wasclr;
+    WORD    oldtop, clrold, wasclr;
 
     wasclr = !(D.w_win[w_handle].w_flags & VF_BROKEN);
 
@@ -866,15 +853,10 @@ static void draw_change(WORD w_handle, GRECT *pt)
             if ((w_handle != W_TREE[ROOT].ob_tail) || (w_handle == oldtop))
                 return;
 
-            /* say if borders will change */
-            diffbord = !((D.w_win[oldtop].w_flags & VF_SUBWIN) &&
-                          (D.w_win[gl_wtop].w_flags & VF_SUBWIN));
-
             /* draw oldtop covered with deactivated borders */
             if (oldtop != NIL)
             {
-                if (diffbord)
-                    w_clipdraw(oldtop, 0, MAX_DEPTH, 2);
+                w_clipdraw(oldtop, 0, MAX_DEPTH, 2);
                 clrold = !(D.w_win[oldtop].w_flags & VF_BROKEN);
             }
             else
@@ -1250,7 +1232,7 @@ static void wm_mktop(WORD w_handle)
 
 void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
 {
-    WORD    which, liketop, i;
+    WORD    which, liketop;
     WORD    wbar;
     WORD    osl, osz, nsl, nsz;
     GRECT   t;
@@ -1268,7 +1250,7 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
         pinwds[0] = max(-1, pinwds[0]);
         pinwds[0] = min(1000, pinwds[0]);
     }
-    liketop = (w_handle == gl_wtop) || (pwin->w_flags & VF_SUBWIN);
+    liketop = (w_handle == gl_wtop);
     switch(w_field)
     {
     case WF_NAME:
@@ -1283,14 +1265,6 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
     case WF_TOP:
         if (w_handle != gl_wtop)
         {
-            for (i = W_TREE[ROOT].ob_head; i > ROOT; i = W_TREE[i].ob_next)
-            {
-                if ((i != w_handle)
-                 && (D.w_win[i].w_owner == rlr)
-                 && (D.w_win[i].w_flags & VF_SUBWIN)
-                 && (pwin->w_flags & VF_SUBWIN))
-                    wm_mktop(i);
-            }
             wm_mktop(w_handle);
         }
         break;
@@ -1317,7 +1291,7 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
     {
         w_bldactive(w_handle);
         wm_gsizes(w_field, &nsl, &nsz);
-        if ((osl != nsl) || (osz != nsz) || (pwin->w_flags & VF_SUBWIN))
+        if ((osl != nsl) || (osz != nsz))
         {
             w_getsize(WS_TRUE, w_handle, &t);
             do_walk(w_handle, gl_awind, wbar + 3, MAX_DEPTH, &t);
