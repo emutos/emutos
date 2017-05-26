@@ -1217,7 +1217,7 @@ static void wm_mktop(WORD w_handle)
 
 void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
 {
-    WORD    which, liketop;
+    WORD    which;
     WORD    wbar;
     WORD    osl, osz, nsl, nsz;
     GRECT   t;
@@ -1235,7 +1235,7 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
         pinwds[0] = max(-1, pinwds[0]);
         pinwds[0] = min(1000, pinwds[0]);
     }
-    liketop = (w_handle == gl_wtop);
+
     switch(w_field)
     {
     case WF_NAME:
@@ -1272,7 +1272,7 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
         break;
     }
 
-    if (wbar && liketop)
+    if (wbar && (w_handle == gl_wtop))
     {
         w_bldactive(w_handle);
         wm_gsizes(w_field, &nsl, &nsz);
