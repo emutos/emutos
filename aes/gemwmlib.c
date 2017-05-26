@@ -334,8 +334,8 @@ static void w_cpwalk(WORD wh, WORD obj, WORD depth, WORD usetrue)
     else
     {
         gsx_gclip(&c);      /* use global clip */
-          c.g_w += 2;       /* add in drop shadow   */
-          c.g_h += 2;
+        c.g_w += 2;         /* add in drop shadow   */
+        c.g_h += 2;
     }
 
     w_bldactive(wh);
@@ -348,7 +348,7 @@ static void w_strchg(WORD w_handle, WORD obj, BYTE *pstring)
     if (obj == W_NAME)
         gl_aname.te_ptext = D.w_win[w_handle].w_pname = pstring;
     else
-          gl_ainfo.te_ptext = D.w_win[w_handle].w_pinfo = pstring;
+        gl_ainfo.te_ptext = D.w_win[w_handle].w_pinfo = pstring;
 
     w_cpwalk(w_handle, obj, MAX_DEPTH, 1);
 }
