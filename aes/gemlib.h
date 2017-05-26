@@ -79,7 +79,7 @@ typedef struct moblk
 #define VF_BROKEN   0x0002
 #define VF_INTREE   0x0004
 #define VF_SUBWIN   0x0008
-#define VF_KEEPWIN  0x0010
+
 
 typedef struct window
 {
