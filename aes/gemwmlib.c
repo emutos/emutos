@@ -1201,14 +1201,11 @@ static void wm_mktop(WORD w_handle)
 {
     GRECT   t, p;
 
-    if (w_handle != gl_wtop)
-    {
-        ob_order(gl_wtree, w_handle, NIL);
-        w_getsize(WS_PREV, w_handle, &p);
-        w_getsize(WS_CURR, w_handle, &t);
-        draw_change(w_handle, &t);
-        w_setsize(WS_PREV, w_handle, &p);
-    }
+    ob_order(gl_wtree, w_handle, NIL);
+    w_getsize(WS_PREV, w_handle, &p);
+    w_getsize(WS_CURR, w_handle, &t);
+    draw_change(w_handle, &t);
+    w_setsize(WS_PREV, w_handle, &p);
 }
 
 
