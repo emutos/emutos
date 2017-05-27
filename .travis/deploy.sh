@@ -31,7 +31,7 @@ SSH_HOST=frs.sourceforge.net
 SSH_PATH=/home/pfs/p/$SF_PROJECT/$SF_SUBDIR
 
 echo "Deploying $LOCAL_DIRNAME to $SSH_HOST:$SSH_PATH/$REMOTE_DIRNAME"
-echo "See result at https://sourceforge.net/projects/$SF_PROJECT/files/$SF_DIR/
+echo "See result at https://sourceforge.net/projects/$SF_PROJECT/files/$SF_DIR/$REMOTE_DIRNAME/
 echo '$ lftp'
 cat << EOF | tee /dev/stderr | lftp
 open sftp://$SSH_USER:@$SSH_HOST$SSH_PATH
