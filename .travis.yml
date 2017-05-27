@@ -14,7 +14,7 @@ before_install:
   # Register third-party APT repositories
   - sudo .travis/register_apt_repositories.sh
   # Install additional packages
-  - sudo apt-get install -y cross-mint-essential dos2unix
+  - sudo apt-get install -y cross-mint-essential dos2unix lftp
   # Display packages versions
   - git --version
   - make --version
@@ -24,6 +24,7 @@ before_install:
   - m68k-atari-mint-gcc --version
   - tar --version
   - unix2dos --version
+  - lftp --version
 
 script:
   - export VERSION=$(date -u +%Y%m%d-%H%M%S)-$(git rev-parse --short $TRAVIS_COMMIT)
