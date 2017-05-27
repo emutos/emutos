@@ -19,9 +19,16 @@ fi
 
 LOCAL_DIRNAME=release-archives
 REMOTE_DIRNAME=$VERSION
-SSH_USER=vriviere,emutos
+
+# SourceForge variables
+SF_PROJECT=emutos
+SF_USER=vriviere
+SF_DIR=travis
+
+# SSH variables for SourceForge
+SSH_USER=$SF_USER,$SF_PROJECT
 SSH_HOST=frs.sourceforge.net
-SSH_PATH=/home/pfs/p/emutos/travis
+SSH_PATH=/home/pfs/p/$SF_PROJECT/$SF_SUBDIR
 
 echo "Deploying $LOCAL_DIRNAME to $SSH_HOST:$SSH_PATH/$REMOTE_DIRNAME"
 echo '$ lftp'
