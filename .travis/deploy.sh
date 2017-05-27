@@ -28,4 +28,6 @@ echo '$ lftp'
 cat << EOF | tee /dev/stderr | lftp
 open sftp://$SSH_USER:@$SSH_HOST$SSH_PATH
 mirror -R $LOCAL_DIRNAME $REMOTE_DIRNAME
+ls | .travis/generate-purge.sh >purge.lftp
+source purge.lftp
 EOF
