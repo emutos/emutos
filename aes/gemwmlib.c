@@ -1216,10 +1216,23 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
 
     pwin = &D.w_win[w_handle];
     wbar = wm_gsizes(w_field, &osl, &osz);
-    if (wbar)
+
+    /*
+     * validate input
+     */
+    switch(w_field)
     {
-        pinwds[0] = max(-1, pinwds[0]);
-        pinwds[0] = min(1000, pinwds[0]);
+    case WF_HSLSIZ:
+    case WF_VSLSIZ:
+        if (pinwds[0] == -1)    /* means "use default size" */
+            break;
+        /* drop thru */
+    case WF_HSLIDE:
+    case WF_VSLIDE:
+        if (pinwds[0] < 1)
+            pinwds[0] = 1;
+        else if (pinwds[0] > 1000)
+            pinwds[0] = 1000;
     }
 
     switch(w_field)
