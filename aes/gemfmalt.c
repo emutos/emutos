@@ -326,7 +326,7 @@ WORD fm_alert(WORD defbut, BYTE *palstr)
     rc_intersect(&gl_rscreen, &d);
 
     /* save screen underneath the alert    */
-    wm_update(TRUE);
+    wm_update(BEG_UPDATE);
     gsx_gclip(&t);
     bb_save(&d);
 
@@ -347,7 +347,7 @@ WORD fm_alert(WORD defbut, BYTE *palstr)
     gsx_sclip(&d);
     bb_restore(&d);
     gsx_sclip(&t);
-    wm_update(FALSE);
+    wm_update(END_UPDATE);
 
     /* return selection     */
     return i - BUTOFF + 1;

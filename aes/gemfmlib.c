@@ -84,7 +84,7 @@ void fm_own(WORD beg_ownit)
 {
     if (beg_ownit)
     {
-        wm_update(TRUE);
+        wm_update(BEG_UPDATE);
         if (ml_ocnt == 0)
         {
             ml_mnhold = gl_mntree;
@@ -103,7 +103,7 @@ void fm_own(WORD beg_ownit)
             ct_chgown(ml_pmown, &ml_ctrl);
             gl_mntree = ml_mnhold;
         }
-        wm_update(FALSE);
+        wm_update(END_UPDATE);
     }
 }
 

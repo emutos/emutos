@@ -284,7 +284,7 @@ void ct_mouse(WORD grabit)
 {
     if (grabit)
     {
-        wm_update(TRUE);
+        wm_update(BEG_UPDATE);
         gl_ctmown = TRUE;
         gl_mowner = rlr;
         set_mouse_to_arrow();
@@ -299,7 +299,7 @@ void ct_mouse(WORD grabit)
         gl_moff = gl_tmpmoff;
         gsx_mfset(&gl_mouse);
         gl_ctmown = FALSE;
-        wm_update(FALSE);
+        wm_update(END_UPDATE);
     }
 }
 

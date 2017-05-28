@@ -1051,7 +1051,7 @@ static void wm_opcl(WORD wh, GRECT *pt, WORD isadd)
     GRECT   t;
 
     rc_copy(pt, &t);
-    wm_update(TRUE);
+    wm_update(BEG_UPDATE);
     if (isadd)
     {
         D.w_win[wh].w_flags |= VF_INTREE;
@@ -1065,7 +1065,7 @@ static void wm_opcl(WORD wh, GRECT *pt, WORD isadd)
     draw_change(wh, &t);
     if (isadd)
         w_setsize(WS_PREV, wh, pt);
-    wm_update(FALSE);
+    wm_update(END_UPDATE);
 }
 
 
@@ -1188,7 +1188,7 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
     WORD    gadget = -1;
     WINDOW  *pwin;
 
-    wm_update(TRUE);        /* grab the window sync */
+    wm_update(BEG_UPDATE);      /* grab the window sync */
 
     pwin = &D.w_win[w_handle];
 
@@ -1255,7 +1255,7 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
     if (gadget && (w_handle == gl_wtop))
         w_cpwalk(w_handle, gadget, MAX_DEPTH, TRUE);
 
-    wm_update(FALSE);       /* give up the sync */
+    wm_update(END_UPDATE);      /* give up the sync */
 }
 
 
@@ -1348,9 +1348,9 @@ void wm_new(void)
 
     /* Remove locks: */
     while(ml_ocnt > 0)
-        wm_update(2);                   /* END_MCTRL */
+        wm_update(END_MCTRL);
     while(wind_spb.sy_tas > 0)
-        wm_update(0);                   /* END_UPDATE */
+        wm_update(END_UPDATE);
 
     /* Delete windows: */
     for (wh = 1; wh < NUM_WIN; wh++)

@@ -420,8 +420,8 @@ void all_run(void)
         dsptch();
     }
     /* then get in the wait line */
-    wm_update(TRUE);
-    wm_update(FALSE);
+    wm_update(BEG_UPDATE);
+    wm_update(END_UPDATE);
 }
 
 

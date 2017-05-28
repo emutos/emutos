@@ -152,6 +152,12 @@ typedef struct window
 #define WA_LFLINE 6
 #define WA_RTLINE 7
 
+                                /* wind_update()        */
+#define END_UPDATE 0
+#define BEG_UPDATE 1
+#define END_MCTRL  2
+#define BEG_MCTRL  3
+
 
 typedef struct sh_struct
 {
