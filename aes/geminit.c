@@ -519,7 +519,7 @@ void run_accs_and_desktop(void)
     /* fix up icons */
     for (i = 0; i < 3; i++) {
         bi = rs_bitblk[NOTEBB+i];
-        gsx_trans(bi.bi_pdata, bi.bi_wb, bi.bi_pdata, bi.bi_wb, bi.bi_hl);
+        gsx_trans((void *)bi.bi_pdata, bi.bi_wb, (void *)bi.bi_pdata, bi.bi_wb, bi.bi_hl);
     }
 
     /* take the critical err handler int. */

@@ -353,7 +353,7 @@ void app_tran(WORD bi_num)
 
     lb = *pbi;
 
-    gsx_trans(lb.bi_pdata, lb.bi_wb, lb.bi_pdata, lb.bi_wb, lb.bi_hl);
+    gsx_trans((void *)lb.bi_pdata, lb.bi_wb, (void *)lb.bi_pdata, lb.bi_wb, lb.bi_hl);
 }
 
 
@@ -445,9 +445,9 @@ static WORD setup_iconblks(const ICONBLK *ibstart, WORD count)
      * Finally we do the transforms
      */
     for (i = 0, p = maskstart; i < count; i++, p += num_bytes)
-        gsx_trans((LONG)p, iwb, (LONG)p, iwb, ih);
+        gsx_trans(p, iwb, p, iwb, ih);
     for (i = 0, p = datastart; i < count; i++, p += num_bytes)
-        gsx_trans((LONG)p, iwb, (LONG)p, iwb, ih);
+        gsx_trans(p, iwb, p, iwb, ih);
 
     return 0;
 }
