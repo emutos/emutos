@@ -1162,26 +1162,6 @@ void wm_get(WORD w_handle, WORD w_field, WORD *poutwds)
 }
 
 
-static WORD wm_gsizes(WORD w_field, WORD *psl, WORD *psz)
-{
-    if ((w_field == WF_HSLSIZ) || (w_field == WF_HSLIDE))
-    {
-        *psl = W_ACTIVE[W_HELEV].ob_x;
-        *psz = W_ACTIVE[W_HELEV].ob_width;
-        return W_HBAR;
-    }
-
-    if ((w_field == WF_VSLSIZ) || (w_field == WF_VSLIDE))
-    {
-        *psl = W_ACTIVE[W_VELEV].ob_y;
-        *psz = W_ACTIVE[W_VELEV].ob_height;
-        return W_VBAR;
-    }
-
-    return 0;
-}
-
-
 /*
  *  Routine to top a window and then make the right redraws happen
  */
@@ -1205,17 +1185,12 @@ static void wm_mktop(WORD w_handle)
 
 void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
 {
-    WORD    wbar;
-    WORD    osl, osz, nsl, nsz;
-    GRECT   t;
+    WORD    gadget = -1;
     WINDOW  *pwin;
-
-    osl = osz = nsl = nsz = 0;
 
     wm_update(TRUE);        /* grab the window sync */
 
     pwin = &D.w_win[w_handle];
-    wbar = wm_gsizes(w_field, &osl, &osz);
 
     /*
      * validate input
@@ -1239,11 +1214,11 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
     {
     case WF_NAME:
         gl_aname.te_ptext = pwin->w_pname = *(BYTE **)pinwds;
-        w_cpwalk(w_handle, W_NAME, MAX_DEPTH, TRUE);
+        gadget = W_NAME;
         break;
     case WF_INFO:
         gl_ainfo.te_ptext = pwin->w_pinfo = *(BYTE **)pinwds;
-        w_cpwalk(w_handle, W_INFO, MAX_DEPTH, TRUE);
+        gadget = W_INFO;
         break;
     case WF_CXYWH:
         draw_change(w_handle, (GRECT *)pinwds);
@@ -1261,28 +1236,24 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
         break;
     case WF_HSLSIZ:
         pwin->w_hslsiz = pinwds[0];
+        gadget = W_HSLIDE;
         break;
     case WF_VSLSIZ:
         pwin->w_vslsiz = pinwds[0];
+        gadget = W_VSLIDE;
         break;
     case WF_HSLIDE:
         pwin->w_hslide = pinwds[0];
+        gadget = W_HSLIDE;
         break;
     case WF_VSLIDE:
         pwin->w_vslide = pinwds[0];
+        gadget = W_VSLIDE;
         break;
     }
 
-    if (wbar && (w_handle == gl_wtop))
-    {
-        w_bldactive(w_handle);
-        wm_gsizes(w_field, &nsl, &nsz);
-        if ((osl != nsl) || (osz != nsz))
-        {
-            w_getsize(WS_TRUE, w_handle, &t);
-            do_walk(w_handle, gl_awind, wbar + 3, MAX_DEPTH, &t);
-        }
-    }
+    if (gadget && (w_handle == gl_wtop))
+        w_cpwalk(w_handle, gadget, MAX_DEPTH, TRUE);
 
     wm_update(FALSE);       /* give up the sync */
 }
