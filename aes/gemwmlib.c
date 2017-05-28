@@ -343,17 +343,6 @@ static void w_cpwalk(WORD wh, WORD obj, WORD depth, BOOL usetrue)
 }
 
 
-static void w_strchg(WORD w_handle, WORD obj, BYTE *pstring)
-{
-    if (obj == W_NAME)
-        gl_aname.te_ptext = D.w_win[w_handle].w_pname = pstring;
-    else
-        gl_ainfo.te_ptext = D.w_win[w_handle].w_pinfo = pstring;
-
-    w_cpwalk(w_handle, obj, MAX_DEPTH, TRUE);
-}
-
-
 static void w_barcalc(WORD isvert, WORD space, WORD sl_value, WORD sl_size,
                       WORD min_sld, GRECT *ptv, GRECT *pth)
 {
@@ -1217,14 +1206,12 @@ static void wm_mktop(WORD w_handle)
 
 void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
 {
-    WORD    which;
     WORD    wbar;
     WORD    osl, osz, nsl, nsz;
     GRECT   t;
     WINDOW  *pwin;
 
     osl = osz = nsl = nsz = 0;
-    which = -1;
 
     wm_update(TRUE);        /* grab the window sync */
 
@@ -1239,10 +1226,12 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
     switch(w_field)
     {
     case WF_NAME:
-        which = W_NAME;
+        gl_aname.te_ptext = pwin->w_pname = *(BYTE **)pinwds;
+        w_cpwalk(w_handle, W_NAME, MAX_DEPTH, TRUE);
         break;
     case WF_INFO:
-        which = W_INFO;
+        gl_ainfo.te_ptext = pwin->w_pinfo = *(BYTE **)pinwds;
+        w_cpwalk(w_handle, W_INFO, MAX_DEPTH, TRUE);
         break;
     case WF_CXYWH:
         draw_change(w_handle, (GRECT *)pinwds);
@@ -1282,9 +1271,6 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
             do_walk(w_handle, gl_awind, wbar + 3, MAX_DEPTH, &t);
         }
     }
-
-    if (which != -1)
-        w_strchg(w_handle, which, *(BYTE **)pinwds);
 
     wm_update(FALSE);       /* give up the sync */
 }
