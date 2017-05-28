@@ -135,7 +135,7 @@ void gsx_gclip(GRECT *pt);
 void gsx_sclip(const GRECT *pt);
 void gsx_pline(WORD offx, WORD offy, WORD cnt, const WORD *pts);
 void gsx_attr(UWORD text, UWORD mode, UWORD color);
-void gsx_fix(FDB *pfd, LONG theaddr, WORD wb, WORD h);
+void gsx_fix(FDB *pfd, void *theaddr, WORD wb, WORD h);
 void bb_screen(WORD scrule, WORD scsx, WORD scsy, WORD scdx, WORD scdy, WORD scw, WORD sch);
 void gsx_trans(LONG saddr, UWORD swb, LONG daddr, UWORD dwb, UWORD h);
 void gsx_start(void);

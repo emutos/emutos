@@ -120,7 +120,7 @@ static ULONG gsx_mcalc(void)
 {
     LONG mem;
 
-    gsx_fix(&gl_tmp, 0x0L, 0, 0);           /* store screen info    */
+    gsx_fix(&gl_tmp, NULL, 0, 0);           /* store screen info    */
     gl_mlen = memsize(gl_tmp.fd_wdwidth,gl_tmp.fd_h,gl_tmp.fd_nplanes) / 4;
 
     if (gl_mlen < MIN_MENU_BUFFER_SIZE)
@@ -343,7 +343,7 @@ static void bb_set(WORD sx, WORD sy, WORD sw, WORD sh, WORD *pts1, WORD *pts2,
     pts2[2] = sw - 1;
     pts2[3] = sh - 1 ;
 
-    gsx_fix(pfd, 0L, 0, 0);
+    gsx_fix(pfd, NULL, 0, 0);
     vro_cpyfm(S_ONLY, ptsin, psrc, pdst);
     gsx_mon();
 }

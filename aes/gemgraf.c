@@ -34,7 +34,7 @@
 #include "rectfunc.h"
 #include "kprint.h"
 
-#define ORGADDR 0x0L
+#define ORGADDR NULL
 
                                                 /* in GSXBIND.C         */
 #define g_vsf_interior( x )       gsx_1code(S_FILL_STYLE, x)
@@ -335,7 +335,7 @@ void gsx_xcbox(GRECT *pt)
 /*
  *  Routine to fix up the MFDB of a particular raster form
  */
-void gsx_fix(FDB *pfd, LONG theaddr, WORD wb, WORD h)
+void gsx_fix(FDB *pfd, void *theaddr, WORD wb, WORD h)
 {
     if (theaddr == ORGADDR)
     {
@@ -352,7 +352,7 @@ void gsx_fix(FDB *pfd, LONG theaddr, WORD wb, WORD h)
         pfd->fd_nplanes = 1;
     }
     pfd->fd_stand = FALSE;
-    pfd->fd_addr = (void *)theaddr;
+    pfd->fd_addr = theaddr;
 }
 
 
@@ -363,8 +363,8 @@ void gsx_blt(LONG saddr, UWORD sx, UWORD sy, UWORD swb,
              LONG daddr, UWORD dx, UWORD dy, UWORD dwb, UWORD w, UWORD h,
              UWORD rule, WORD fgcolor, WORD bgcolor)
 {
-    gsx_fix(&gl_src, saddr, swb, h);
-    gsx_fix(&gl_dst, daddr, dwb, h);
+    gsx_fix(&gl_src, (void *)saddr, swb, h);
+    gsx_fix(&gl_dst, (void *)daddr, dwb, h);
 
     gsx_moff();
     ptsin[0] = sx;
@@ -400,11 +400,11 @@ void bb_screen(WORD scrule, WORD scsx, WORD scsy, WORD scdx, WORD scdy,
  */
 void gsx_trans(LONG saddr, UWORD swb, LONG daddr, UWORD dwb, UWORD h)
 {
-    gsx_fix(&gl_src, saddr, swb, h);
+    gsx_fix(&gl_src, (void *)saddr, swb, h);
     gl_src.fd_stand = TRUE;
     gl_src.fd_nplanes = 1;
 
-    gsx_fix(&gl_dst, daddr, dwb, h);
+    gsx_fix(&gl_dst, (void *)daddr, dwb, h);
     vrn_trnfm(&gl_src, &gl_dst);
 }
 
@@ -464,7 +464,7 @@ void gsx_start(void)
  */
 void bb_fill(WORD mode, WORD fis, WORD patt, WORD hx, WORD hy, WORD hw, WORD hh)
 {
-    gsx_fix(&gl_dst, 0x0L, 0, 0);
+    gsx_fix(&gl_dst, NULL, 0, 0);
     ptsin[0] = hx;
     ptsin[1] = hy;
     ptsin[2] = hx + hw - 1;
