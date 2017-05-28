@@ -75,9 +75,9 @@ typedef struct moblk
 
 /*      WINDLIB.H       05/05/84 - 01/26/85     Lee Lorenzen            */
 
-#define VF_INUSE    0x0001
-#define VF_BROKEN   0x0002
-#define VF_INTREE   0x0004
+#define VF_INUSE    0x0001      /* the window has been created */
+#define VF_BROKEN   0x0002      /* the window is overlapped, can't be blitted */
+#define VF_INTREE   0x0004      /* the window is currently open */
 
 
 typedef struct window
