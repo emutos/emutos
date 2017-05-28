@@ -16,8 +16,8 @@ WORD gsx_chkclip(GRECT *pt);
 void gsx_cline(UWORD x1, UWORD y1, UWORD x2, UWORD y2);
 void gsx_xbox(GRECT *pt);
 void gsx_xcbox(GRECT *pt);
-void gsx_blt(LONG saddr, UWORD sx, UWORD sy, UWORD swb,
-             LONG daddr, UWORD dx, UWORD dy, UWORD dwb, UWORD w, UWORD h,
+void gsx_blt(void *saddr, UWORD sx, UWORD sy, UWORD swb,
+             void *daddr, UWORD dx, UWORD dy, UWORD dwb, UWORD w, UWORD h,
              UWORD rule, WORD fgcolor, WORD bgcolor);
 
 void gr_inside(GRECT *pt, WORD th);

@@ -321,8 +321,8 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
             break;
         case G_IMAGE:
             bi = *((BITBLK *)spec);
-            gsx_blt(bi.bi_pdata, bi.bi_x, bi.bi_y, bi.bi_wb,
-                    0x0L, t.g_x, t.g_y, gl_width/8, bi.bi_wb * 8,
+            gsx_blt((void *)bi.bi_pdata, bi.bi_x, bi.bi_y, bi.bi_wb,
+                    NULL, t.g_x, t.g_y, gl_width/8, bi.bi_wb * 8,
                     bi.bi_hl, MD_TRANS, bi.bi_color, WHITE);
             break;
         case G_ICON:
