@@ -1821,7 +1821,7 @@ char *base = (char *)rschdr;
     for (i = 0; i < nbb; i++, bitblk++) {
         if (i == conditional_bitblk_start)
             fprintf(fp,"%s\n",other_cond.string);
-        fprintf(fp,"    { (LONG) rs_bitblk%d, %d, %d, %d, %d, %d },\n",
+        fprintf(fp,"    { (void *)rs_bitblk%d, %d, %d, %d, %d, %d },\n",
                 (map[i]==-1)?i:map[i],get_short(&bitblk->bi_wb),
                 get_short(&bitblk->bi_hl),get_short(&bitblk->bi_x),
                 get_short(&bitblk->bi_y),get_short(&bitblk->bi_color));

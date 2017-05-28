@@ -190,7 +190,7 @@ typedef struct
 
 typedef struct
 {
-        LONG    bi_pdata;               /* ptr to bit forms data        */
+        void    *bi_pdata;              /* ptr to bit forms data        */
         WORD    bi_wb;                  /* width of form in bytes       */
         WORD    bi_hl;                  /* height in lines              */
         WORD    bi_x;                   /* source x in bit form         */

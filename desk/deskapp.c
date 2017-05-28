@@ -353,7 +353,7 @@ void app_tran(WORD bi_num)
 
     lb = *pbi;
 
-    gsx_trans((void *)lb.bi_pdata, lb.bi_wb, (void *)lb.bi_pdata, lb.bi_wb, lb.bi_hl);
+    gsx_trans(lb.bi_pdata, lb.bi_wb, lb.bi_pdata, lb.bi_wb, lb.bi_hl);
 }
 
 

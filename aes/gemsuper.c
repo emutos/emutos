@@ -330,7 +330,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
                     mouse = MICE00;
                     break;
                 }
-                maddr = rs_bitblk[mouse].bi_pdata;
+                maddr = (LONG)rs_bitblk[mouse].bi_pdata;
             }
             else
                 maddr = GR_MADDR;
