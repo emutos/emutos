@@ -352,7 +352,7 @@ void gsx_fix(FDB *pfd, LONG theaddr, WORD wb, WORD h)
         pfd->fd_nplanes = 1;
     }
     pfd->fd_stand = FALSE;
-    pfd->fd_addr = theaddr;
+    pfd->fd_addr = (void *)theaddr;
 }
 
 

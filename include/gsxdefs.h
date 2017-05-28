@@ -64,7 +64,7 @@ typedef struct wsstr
 
 typedef struct fdbstr
 {
-        LONG            fd_addr;
+        void           *fd_addr;
         WORD            fd_w;
         WORD            fd_h;
         WORD            fd_wdwidth;
