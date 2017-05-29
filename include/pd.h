@@ -32,8 +32,8 @@ typedef struct _pd PD;
 struct _pd
 {
 /* 0x00 */
-    LONG    p_lowtpa;       /* pointer to start of TPA */
-    LONG    p_hitpa;        /* pointer to end of TPA+1 */
+    BYTE    *p_lowtpa;      /* pointer to start of TPA */
+    BYTE    *p_hitpa;       /* pointer to end of TPA+1 */
     LONG    p_tbase;        /* pointer to base of text segment */
     LONG    p_tlen;         /* length of text segment */
 /* 0x10 */

@@ -292,7 +292,7 @@ LONG kpgm_relocate(PD *p, long length)
     PGMHDR01 *hd;
     UWORD   abs_flag;
 
-    KDEBUG(("BDOS kpgm_relocate: lotpa=0x%lx hitpa=0x%lx len=0x%lx\n",p->p_lowtpa,p->p_hitpa,length));
+    KDEBUG(("BDOS kpgm_relocate: lotpa=%p hitpa=%p len=0x%lx\n",p->p_lowtpa,p->p_hitpa,length));
 
     hd = (PGMHDR01*)(((char*)(p+1)) + 2);
     pi = &pinfo;
