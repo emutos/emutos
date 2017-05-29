@@ -666,7 +666,7 @@ void biosmain(void)
 #if WITH_CLI
     if (bootflags & BOOTFLAG_EARLY_CLI) {   /* run an early console */
         PD *pd = (PD *) trap1_pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, "", default_env);
-        pd->p_tbase = (LONG) coma_start;
+        pd->p_tbase = (BYTE *) coma_start;
         pd->p_tlen = pd->p_dlen = pd->p_blen = 0;
         trap1_pexec(PE_GOTHENFREE, "", pd, "");
     }
@@ -683,7 +683,7 @@ void biosmain(void)
         /* start the default (ROM) shell */
         PD *pd;
         pd = (PD *) trap1_pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, "", default_env);
-        pd->p_tbase = (LONG) exec_os;
+        pd->p_tbase = (BYTE *) exec_os;
         pd->p_tlen = pd->p_dlen = pd->p_blen = 0;
         trap1_pexec(PE_GO, "", pd, "");
     }

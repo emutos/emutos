@@ -34,12 +34,12 @@ struct _pd
 /* 0x00 */
     BYTE    *p_lowtpa;      /* pointer to start of TPA */
     BYTE    *p_hitpa;       /* pointer to end of TPA+1 */
-    LONG    p_tbase;        /* pointer to base of text segment */
+    BYTE    *p_tbase;       /* pointer to base of text segment */
     LONG    p_tlen;         /* length of text segment */
 /* 0x10 */
-    LONG    p_dbase;        /* pointer to base of data segment */
+    BYTE    *p_dbase;       /* pointer to base of data segment */
     LONG    p_dlen;         /* length of data segment */
-    LONG    p_bbase;        /* pointer to base of bss segment */
+    BYTE    *p_bbase;       /* pointer to base of bss segment */
     LONG    p_blen;         /* length of bss segment */
 /* 0x20 */
     DTA     *p_xdta;

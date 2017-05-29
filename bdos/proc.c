@@ -537,7 +537,7 @@ static void proc_go(PD *p)
 
     sp->basepage = p;      /* the stack contains the basepage */
 
-    sp->retaddr = p->p_tbase;    /* return address a3 is text start */
+    sp->retaddr = (long)p->p_tbase; /* return address a3 is text start */
     sp->sr = get_sr() & 0x0700;  /* the process will start in user mode, same IPL */
 
     /* the other stack is the supervisor stack */
@@ -559,8 +559,8 @@ static void proc_go(PD *p)
             sp->fill[i] = 0;
     }
     p->p_areg[6-3] = (long) sp;    /* a6 to hold a copy of the stack */
-    p->p_areg[5-3] = p->p_dbase;   /* a5 to point to the DATA segt */
-    p->p_areg[4-3] = p->p_bbase;   /* a4 to point to the BSS segt */
+    p->p_areg[5-3] = (long)p->p_dbase;  /* a5 to point to the DATA segt */
+    p->p_areg[4-3] = (long)p->p_bbase;  /* a4 to point to the BSS segt */
 #endif
 
     /* the new process is the one to run */

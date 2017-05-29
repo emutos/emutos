@@ -565,10 +565,10 @@ void dopanic(const char *fmt, ...)
     {
         kcprintf("basepage=%08lx\n",
                  (ULONG)run);
-        kcprintf("text=%08lx data=%08lx bss=%08lx\n",
+        kcprintf("text=%p data=%p bss=%p\n",
                  run->p_tbase, run->p_dbase, run->p_bbase);
-        if (pc && (pc >= (BYTE *)run->p_tbase) && (pc < (BYTE *)run->p_tbase + run->p_tlen))
-            kcprintf("Crash at text+%08lx\n", pc - (BYTE *)run->p_tbase);
+        if (pc && (pc >= run->p_tbase) && (pc < run->p_tbase + run->p_tlen))
+            kcprintf("Crash at text+%08lx\n", pc - run->p_tbase);
     }
 
     /* allow interrupts so we get keypresses */
