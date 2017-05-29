@@ -54,7 +54,7 @@ void bufl_init(void)
     LONG n;
 
     n = sizeof(BCB) + pun_ptr->max_sect_siz;
-    p = (char *)xmalloc(2L*NUMBUFS*n);
+    p = xmalloc(2L*NUMBUFS*n);
     if (!p)
         panic("bufl_init(%ld): no memory\n",2L*NUMBUFS*n);
 
