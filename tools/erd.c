@@ -1664,6 +1664,7 @@ char temp[MAX_STRLEN];
 int *mmap, *dmap;
 ICONBLK *iconblk;
 char *base = (char *)rschdr;
+int wicon, hicon, w, h;
 
     nib = rsh.nib;
     if (nib == 0)
@@ -1707,17 +1708,33 @@ char *base = (char *)rschdr;
     /*
      * then we create the actual icon mask/data arrays
      */
+    wicon = hicon = 0;
     for (i = 0; i < nib; i++, iconblk++) {
+        w = get_short(&iconblk->ib_wicon);
+        h = get_short(&iconblk->ib_hicon);
+#ifdef ICON_RSC
+        if (i != 0 && w != wicon)
+            fprintf(stderr, "error: width %d of icon %d is different than width %d\n", w, i, wicon);
+        if (i != 0 && h != hicon)
+            fprintf(stderr, "error: height %d of icon %d is different than height %d\n", h, i, hicon);
+        if (i != 0 && (w != wicon || h != hicon))
+            error("mismatch in icon dimensions", NULL);
+#endif
+        if (i == 0)
+        {
+            wicon = w;
+            hicon = h;
+        }
         if (i == conditional_iconblk_start)
             fprintf(fp,"%s\n",other_cond.string);
         if (mmap[i] < 0) {      /* only create icon mask for an "unmapped" icon */
-            n = get_short(&iconblk->ib_hicon) * get_short(&iconblk->ib_wicon) / 16;
+            n = h * w / 16;
             fprintf(fp,"static const WORD rs_iconmask%d[] = {\n",i);    /* output mask */
             write_data(fp,n,(USHORT *)(base+get_offset(&iconblk->ib_pmask)));
             fprintf(fp,"};\n\n");
         }
         if (dmap[i] < 0) {      /* only create icon data for an "unmapped" icon */
-            n = get_short(&iconblk->ib_hicon) * get_short(&iconblk->ib_wicon) / 16;
+            n = h * w / 16;
             fprintf(fp,"static const WORD rs_icondata%d[] = {\n",i);    /* output data */
             write_data(fp,n,(USHORT *)(base+get_offset(&iconblk->ib_pdata)));
             fprintf(fp,"};\n\n");
