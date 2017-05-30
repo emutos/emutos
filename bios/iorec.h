@@ -17,9 +17,9 @@
 
 /*==== Structs ============================================================*/
 
-#define IOREC struct iorec
+typedef struct iorec IOREC;
 
-IOREC {
+struct iorec {
   UBYTE *buf;           /* input buffer */
   WORD size;            /* buffer size */
   WORD head;            /* head index */
