@@ -20,12 +20,12 @@
 #include "config.h"                     /* for AES_STACK_SIZE */
 
 typedef struct aespd   AESPD;           /* process descriptor           */
-#define UDA     struct uda              /* user stack data area         */
-#define CDA     struct cdastr           /* console data area structure  */
-#define QPB     struct qpb              /* queue parameter block        */
-#define EVB     struct evb              /* event block                  */
-#define CQUEUE  struct cqueue           /* console kbd queue            */
-#define SPB     struct spb              /* sync parameter block         */
+typedef struct uda     UDA;             /* user stack data area         */
+typedef struct cdastr  CDA;             /* console data area structure  */
+typedef struct qpb     QPB;             /* queue parameter block        */
+typedef struct evb     EVB;             /* event block                  */
+typedef struct cqueue  CQUEUE;          /* console kbd queue            */
+typedef struct spb     SPB;             /* sync parameter block         */
 typedef struct fpd     FPD;             /* fork process descriptor      */
 
 typedef UWORD   EVSPEC;
@@ -36,7 +36,7 @@ typedef UWORD   EVSPEC;
 #define QUEUE_SIZE 128
 #define NFORKS 32
 
-CQUEUE
+struct cqueue               /* console keyboard queue */
 {
         WORD    c_buff[KBD_SIZE];
         WORD    c_front;
@@ -48,7 +48,7 @@ CQUEUE
 #define C_KOWNER 0x0001
 #define C_MOWNER 0x0002
 
-CDA
+struct cdastr               /* console data area */
 {
         UWORD   c_flags;
         EVB     *c_iiowait;     /* waiting for input            */
@@ -58,7 +58,7 @@ CDA
 };
 
 
-UDA
+struct uda                  /* user stack data area */
 {
         WORD    u_insuper;              /*   0  in supervisor flag       */
         ULONG   u_regs[15];             /*   2  d0-d7, a0-a6             */
@@ -75,7 +75,7 @@ UDA
 #define EVDELAY  0x0004         /* event is delay event */
 #define EVMOUT   0x0008         /* event flag for mouse wait outside of rect*/
 
-EVB             /* event block structure */
+struct evb                  /* event block */
 {
         EVB     *e_nextp;       /* link to next event on PD event list */
         EVB     *e_link;        /* link to next block on event chain */
@@ -98,7 +98,7 @@ EVB             /* event block structure */
 #define AP_MESAG    0x0002      /* application has waited for a message */
 #define AP_ACCLOSE  0x0004      /* application has seen an AC_CLOSE message */
 
-struct aespd                    /* process descriptor           */
+struct aespd                /* process descriptor */
 {
         AESPD   *p_link;        /*  0 */
         AESPD   *p_thread;      /*  4 */
@@ -127,15 +127,14 @@ struct aespd                    /* process descriptor           */
 };
 
 
-
-QPB
+struct qpb                  /* queue parameter block */
 {
         AESPD   *qpb_ppd;
         WORD    qpb_cnt;
         LONG    qpb_buf;
 } ;
 
-SPB
+struct spb                  /* sync parameter block */
 {
         WORD    sy_tas;
         AESPD   *sy_owner;
@@ -144,7 +143,7 @@ SPB
 
 typedef void (*FCODE)(LONG fdata);      /* pointer to function used by forkq() */
 
-struct fpd
+struct fpd                  /* fork process descriptor */
 {
         FCODE   f_code;
         LONG    f_data;
