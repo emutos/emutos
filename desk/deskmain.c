@@ -66,7 +66,7 @@ typedef struct {
 } KEYTAB;
 
 #define abs(x) ( (x) < 0 ? -(x) : (x) )
-#define menu_text(tree,inum,ptext) (((tree)+(inum))->ob_spec = ptext)
+#define menu_text(tree,inum,ptext) (((tree)+(inum))->ob_spec = (LONG)ptext)
 
 
 #define ESC     0x1b
@@ -182,8 +182,8 @@ static const WORD  dura[]=
 #endif
 
 
-static LONG     ad_ptext;
-static LONG     ad_picon;
+static BYTE *ad_ptext;
+static BYTE *ad_picon;
 
 static int can_change_resolution;
 
@@ -442,7 +442,7 @@ static WORD do_filemenu(WORD item)
 static WORD do_viewmenu(WORD item)
 {
     WORD newview, newsort, rc = 0;
-    LONG ptext;
+    BYTE *ptext;
 
     newview = G.g_iview;
     newsort = G.g_isort;
