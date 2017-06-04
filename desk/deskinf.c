@@ -116,7 +116,8 @@ static BYTE *fmt_date(UWORD date, BOOL fourdigit, BYTE *pdate)
 {
     WORD dd, mm, yy;
     WORD var1, var2, var3;
-    char tmp, separator = DATEFORM_SEP;
+    UBYTE tmp;
+    char separator = DATEFORM_SEP;
     WORD format;
 
     yy = 1980 + ((date >> 9) & 0x007f);
