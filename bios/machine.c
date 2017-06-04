@@ -100,7 +100,7 @@ static void detect_video(void)
 #if CONF_WITH_TT_SHIFTER
     /* test if we have a TT Shifter by testing for TT color palette */
     has_tt_shifter = 0;
-    if (check_read_byte(TT_PALETTE_REGS))
+    if (check_read_byte((long)TT_PALETTE_REGS))
         has_tt_shifter = 1;
 
     KDEBUG(("has_tt_shifter = %d\n", has_tt_shifter));

@@ -217,16 +217,15 @@ WORD esetbank(WORD bank)
  */
 WORD esetcolor(WORD index,UWORD color)
 {
-    volatile UWORD *ttcol_regs = (UWORD *) TT_PALETTE_REGS;
     UWORD oldcolor;
 
     if (!has_tt_shifter)
         return 0x53;    /* unimplemented xbios call: return function # */
 
     index &= 0xff;                  /* force valid index number */
-    oldcolor = ttcol_regs[index] & TT_PALETTE_BITMASK;
+    oldcolor = TT_PALETTE_REGS[index] & TT_PALETTE_BITMASK;
     if ((WORD)color >= 0)
-        ttcol_regs[index] = color & TT_PALETTE_BITMASK;
+        TT_PALETTE_REGS[index] = color & TT_PALETTE_BITMASK;
 
     return oldcolor;
 }
@@ -242,7 +241,7 @@ WORD esetcolor(WORD index,UWORD color)
  */
 WORD esetpalette(WORD index,WORD count,UWORD *rgb)
 {
-    volatile WORD *ttcolour;
+    volatile UWORD *ttcolour;
 
     if (!has_tt_shifter)
         return 0x54;    /* unimplemented xbios call: return function # */
@@ -252,7 +251,7 @@ WORD esetpalette(WORD index,WORD count,UWORD *rgb)
     if ((index+count) > 256)
         count = 256 - index;    /* force valid count */
 
-    ttcolour = (WORD *)TT_PALETTE_REGS + index;
+    ttcolour = &TT_PALETTE_REGS[index];
     while(count--)
         *ttcolour++ = *rgb++ & TT_PALETTE_BITMASK;
 
@@ -267,7 +266,7 @@ WORD esetpalette(WORD index,WORD count,UWORD *rgb)
  */
 WORD egetpalette(WORD index,WORD count,UWORD *rgb)
 {
-    volatile WORD *ttcolour;
+    volatile UWORD *ttcolour;
 
     if (!has_tt_shifter)
         return 0x55;    /* unimplemented xbios call: return function # */
@@ -277,7 +276,7 @@ WORD egetpalette(WORD index,WORD count,UWORD *rgb)
     if ((index+count) > 256)
         count = 256 - index;    /* force valid count */
 
-    ttcolour = (WORD *)TT_PALETTE_REGS + index;
+    ttcolour = &TT_PALETTE_REGS[index];
     while(count--)
         *rgb++ = *ttcolour++ & TT_PALETTE_BITMASK;
 
@@ -331,14 +330,15 @@ WORD esetsmear(WORD mode)
  */
 static void initialise_tt_palette(WORD rez)
 {
-    volatile UWORD *ttcol_regs = (UWORD *) TT_PALETTE_REGS;
     int i;
 
     for (i = 0; i < 256; i++)
-        ttcol_regs[i] = tt_dflt_palette[i];
+        TT_PALETTE_REGS[i] = tt_dflt_palette[i];
 
-    if (rez == TT_HIGH)
-        ttcol_regs[1] = ttcol_regs[15]; /* col_regs[1] is updated by h/w */
+    if (rez == TT_HIGH) {
+        /* TT_PALETTE_REGS[1] is updated by h/w */
+        TT_PALETTE_REGS[1] = TT_PALETTE_REGS[15];
+    }
 }
 
 #endif /* CONF_WITH_TT_SHIFTER */

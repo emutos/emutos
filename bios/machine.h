@@ -20,7 +20,7 @@
  */
 #define FALCON_BUS_CTL      0xffff8007UL
 #define FALCON_HHT          0xffff8282UL
-#define TT_PALETTE_REGS     0xffff8400UL
+#define TT_PALETTE_REGS     ((volatile UWORD *)0xffff8400UL)
 #define BLITTER_CONFIG1     0xffff8a3cUL
 #define SCC_BASE            0xffff8c80UL
 #define SYS_INT_MASK        0xffff8e01UL
