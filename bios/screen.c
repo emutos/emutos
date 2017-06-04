@@ -225,7 +225,7 @@ WORD esetcolor(WORD index,UWORD color)
 
     index &= 0xff;                  /* force valid index number */
     oldcolor = ttcol_regs[index] & TT_PALETTE_BITMASK;
-    if (color >= 0)
+    if ((WORD)color >= 0)
         ttcol_regs[index] = color & TT_PALETTE_BITMASK;
 
     return oldcolor;
