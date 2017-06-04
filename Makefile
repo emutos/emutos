@@ -141,7 +141,7 @@ SMALL_OPTFLAGS = -Os
 BUILD_TOOLS_OPTFLAGS = -O
 OPTFLAGS = $(STANDARD_OPTFLAGS)
 
-WARNFLAGS = -Wall -Wundef
+WARNFLAGS = -Wall -Wundef -Wtype-limits
 #-Wshadow -Wmissing-prototypes -Wstrict-prototypes
 #-Werror
 
