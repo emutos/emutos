@@ -554,7 +554,7 @@ static WORD initialise_anodes(void)
     G.g_alist = dos_alloc_anyram(NUM_ANODES*sizeof(ANODE));
     if (!G.g_alist)
     {
-        KDEBUG(("insufficient memory for %d anodes\n",NUM_ANODES));
+        KDEBUG(("insufficient memory for %ld anodes\n",NUM_ANODES));
         return -1;
     }
     memset(G.g_alist,0x00,NUM_ANODES*sizeof(ANODE));

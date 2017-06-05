@@ -529,7 +529,7 @@ static void proc_go(PD *p)
 {
     struct gouser_stack *sp;
 
-    KDEBUG(("BDOS xexec: trying to load (and execute) a process on 0x%lx...\n",p->p_tbase));
+    KDEBUG(("BDOS xexec: trying to load (and execute) a process on %p ...\n",p->p_tbase));
     p->p_parent = run;
 
     /* create a stack at the end of the TPA */
