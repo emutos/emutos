@@ -130,7 +130,7 @@ static BYTE *fmt_date(UWORD date, BOOL fourdigit, BYTE *pdate)
     {
     case DATEFORM_IDT:
         tmp = cookie_idt & IDT_SMASK;   /* separator */
-        if ((tmp >= 0x20) && (tmp <= 0x7f))
+        if (tmp)
             separator = tmp;
         format = cookie_idt&IDT_DMASK;
         break;
