@@ -1087,12 +1087,10 @@ void app_blddesk(void)
     OBJECT *pob;
     SCREENINFO *si;
     ICONBLK *pic;
-    LONG *ptr;
 
     /* free all this window's kids and set size  */
     obj_wfree(DROOT, 0, 0, gl_width, gl_height);
-    ptr = (LONG *)&global[3];
-    G.g_screen[DROOT].ob_spec = *ptr;
+    G.g_screen[DROOT].ob_spec = AP_PRIVATE;
 
     for(pa = G.g_ahead; pa; pa = pa->a_next)
     {
