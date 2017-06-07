@@ -18,4 +18,8 @@ void inf_numset(OBJECT *tree, WORD obj, ULONG value);
 WORD inf_pref(void);
 WORD opn_appl(BYTE *papname, BYTE *ptail);
 
+#if CONF_WITH_BACKGROUNDS
+BOOL inf_backgrounds(void);
+#endif
+
 #endif  /* _DESKINF_H */

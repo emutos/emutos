@@ -47,6 +47,12 @@
 
 
 /*
+ * Border flags for 'SAMPLE' object in 'Set background' dialog:
+ * outside border, thickness=1, border colour black, text black.
+ */
+#define SAMPLE_BORDER_FLAGS 0x00ff1100L
+
+/*
  * Routine to format DOS style time
  *
  *  15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
@@ -300,7 +306,7 @@ static WORD dr_fnode(UWORD last_state, UWORD curr_state, WORD x, WORD y,
     else
     {
         len = format_fnode(fnode, temp);    /* convert to text */
-        gsx_attr(TRUE, MD_REPLACE, BLACK);
+        gsx_attr(TRUE, MD_TRANS, BLACK);
         expand_string(intin, temp);
         gsx_tblt(IBM, x, y, len);
         gsx_attr(FALSE, MD_XOR, BLACK);
@@ -744,6 +750,109 @@ WORD inf_pref(void)
 
     return FALSE;
 }
+
+
+#if CONF_WITH_BACKGROUNDS
+/*
+ *      Handle background pattern/colour configuration dialog
+ */
+BOOL inf_backgrounds(void)
+{
+    OBJECT *tree, *obj;
+    WORD ret;
+    LONG curdesk, curwin;
+    WORD i, index, unused;
+
+    /* set pattern/colour index and first unused colour */
+    switch(gl_nplanes)
+    {
+    case 1:
+        index = 0;
+        unused = 2;
+        break;
+    case 2:
+        index = 1;
+        unused = 4;
+        break;
+    default:
+        index = 2;
+        unused = 16;
+        break;
+    }
+
+    tree = G.a_trees[ADBKGND];
+
+    /* hide colours that are not available in the current resolution */
+    for (i = unused, obj = tree+COLOR0+unused; i < 16; i++, obj++)
+        obj->ob_flags |= HIDETREE;
+
+    /* set the initially-displayed background pattern */
+    curdesk = G.g_screen[DROOT].ob_spec;
+    curwin = G.g_screen[DROOT+1].ob_spec;
+    tree[SAMPLE].ob_spec = ((tree[DESKPREF].ob_state & SELECTED) ? curdesk : curwin)
+                            | SAMPLE_BORDER_FLAGS;
+
+    /* handle the dialog */
+    show_hide(FMD_START, tree);
+
+    while(1)
+    {
+        draw_fld(tree, SAMPLE);
+        ret = form_do(tree, ROOT);
+
+        if ((ret == SCOK) || (ret == SCCANCEL))
+        {
+            tree[ret].ob_state &= ~SELECTED;
+            break;
+        }
+
+        if (ret == DESKPREF)
+            tree[SAMPLE].ob_spec = curdesk;
+        else if (ret == WINPREF)
+            tree[SAMPLE].ob_spec = curwin;
+        else if ((ret >= PATTERN0) && (ret <= PATTERN7))
+        {
+            tree[SAMPLE].ob_spec &= ~FILLPAT_MASK;
+            tree[SAMPLE].ob_spec |= tree[ret].ob_spec & FILLPAT_MASK;
+        }
+        else if ((ret >= COLOR0) && (ret <= COLOR15))
+        {
+            tree[SAMPLE].ob_spec &= ~FILLCOL_MASK;
+            tree[SAMPLE].ob_spec |= tree[ret].ob_spec & FILLCOL_MASK;
+        }
+
+        if (tree[DESKPREF].ob_state & SELECTED)
+            curdesk = tree[SAMPLE].ob_spec;
+        else
+            curwin = tree[SAMPLE].ob_spec;
+    }
+
+    show_hide(FMD_FINISH, tree);
+
+    /* handle dialog exit */
+    if (ret == SCOK)
+    {
+        /* check for desktop background change */
+        if (G.g_screen[DROOT].ob_spec != curdesk)
+        {
+            G.g_patcol[index].desktop = curdesk & 0xff;
+            G.g_screen[DROOT].ob_spec = curdesk;
+            do_wredraw(0, G.g_xdesk, G.g_ydesk, G.g_wdesk, G.g_hdesk);
+        }
+
+        /* check for window background change */
+        if (G.g_screen[DROOT+1].ob_spec != curwin)
+        {
+            G.g_patcol[index].window = curwin & 0xff;
+            for (i = DROOT+1, tree = G.g_screen+i; i < WOBS_START; i++, tree++)
+                tree->ob_spec = curwin;
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+#endif
 
 
 /*

@@ -83,6 +83,21 @@ typedef union
 } SCREENINFO;
 
 
+#if CONF_WITH_BACKGROUNDS
+/*
+ * the following structure is used in GLOBES to store the current
+ * background pattern/colour values for the desktop & windows, for
+ * a resolution with a given number of planes.  note that only the
+ * low-order byte is used.
+ */
+typedef struct
+{
+    WORD desktop;       /* for desktop background */
+    WORD window;        /* for window backgrounds */
+} PATCOL;
+#endif
+
+
 /*
  * The desktop global data area
  */
@@ -181,6 +196,15 @@ typedef struct
 /*GLOBAL*/ ICONBLK      *g_iblist;              /* ptr to array of icon blocks */
 
 /*GLOBAL*/ CSAVE        g_cnxsave;
+
+#if CONF_WITH_BACKGROUNDS
+/* Default pattern/colour for desktop/windows:
+ * [0] applies to 1-plane (ST high, TT high)
+ * [1] applies to 2-plane (ST medium)
+ * [2] applies to everything else
+ */
+        PATCOL          g_patcol[3];
+#endif
 
 /* Number of first free item object within g_screen[]; free objects
  * are chained via ob_next.

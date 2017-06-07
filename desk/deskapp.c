@@ -71,6 +71,12 @@
 
 
 /*
+ *  standard ob_spec value for desktop/window border & text colours
+ */
+#define BORDER_TEXT_COLOURS ((BLACK << 12) | (BLACK << 8))
+
+
+/*
  *  the following bit masks apply to EMUDESK.INF
  */
                             /* 'E' byte 1 */
@@ -96,6 +102,14 @@
                             /* 'E' byte 5 */
 #define INF_E5_NOSORT   0x80    /* 1 => do not sort folder contents (overrides INF_E1_SORTMASK) */
 
+                            /* 'Q' bytes 1-6 (default desktop/window pattern/colour values) */
+#define INF_Q1_DEFAULT  (IP_4PATT << 4) | BLACK     /* desktop, 1 plane */
+#define INF_Q2_DEFAULT  (IP_4PATT << 4) | WHITE     /* window, 1 plane */
+#define INF_Q3_DEFAULT  (IP_4PATT << 4) | GREEN     /* desktop, 2 planes */
+#define INF_Q4_DEFAULT  (IP_4PATT << 4) | WHITE     /* window, 2 planes */
+#define INF_Q5_DEFAULT  (IP_4PATT << 4) | GREEN     /* desktop, >2 planes */
+#define INF_Q6_DEFAULT  (IP_4PATT << 4) | WHITE     /* window, >2 planes */
+
                             /* application type entries (F/G/P/Y): first byte of 3-byte string */
 #define INF_AT_APPDIR   0x01    /* 1 => set current dir to app's dir (else to top window dir) */
 #define INF_AT_ISFULL   0x02    /* 1 => pass full path in args (else filename only) */
@@ -110,7 +124,7 @@ static BYTE     *gl_buffer;
 
 /* When we can't get EMUDESK.INF via shel_get() or by reading from
  * the disk, we create one dynamically from three sources:
- *  desk_inf_data1 below, for the #R, #E and #W lines
+ *  desk_inf_data1 below, for the #R, #E, #Q and #W lines
  *  the drivemask, for #M lines
  *  desk_inf_data2 below, for most of the remaining lines
  * The #T line is added at the end.
@@ -125,6 +139,9 @@ static BYTE     *gl_buffer;
 static const char desk_inf_data1[] =
     "#R 01\r\n"                         /* INF_REV_LEVEL */
     "#E 1A 61\r\n"                      /* INF_E1_DEFAULT and INF_E2_DEFAULT */
+#if CONF_WITH_BACKGROUNDS
+    "#Q 41 40 43 40 43 40\r\n"          /* INF_Q1_DEFAULT -> INF_Q6_DEFAULT */
+#endif
     "#W 00 00 02 06 26 0C 00 @\r\n"
     "#W 00 00 02 08 26 0C 00 @\r\n"
     "#W 00 00 02 0A 26 0C 00 @\r\n"
@@ -635,6 +652,19 @@ void app_start(void)
     ycnt = G.g_hdesk / (G.g_hicon+MIN_HINT);/* icon count */
     G.g_ich = G.g_hdesk / ycnt;             /* height */
 
+#if CONF_WITH_BACKGROUNDS
+    /*
+     * set up the default background pattern/colours, in case
+     * we have an old saved EMUDESK.INF (without a 'Q' line)
+     */
+    G.g_patcol[0].desktop = INF_Q1_DEFAULT;
+    G.g_patcol[0].window = INF_Q2_DEFAULT;
+    G.g_patcol[1].desktop = INF_Q3_DEFAULT;
+    G.g_patcol[1].window = INF_Q4_DEFAULT;
+    G.g_patcol[2].desktop = INF_Q5_DEFAULT;
+    G.g_patcol[2].window = INF_Q6_DEFAULT;
+#endif
+
     shel_get(gl_afile, SIZE_AFILE);
     if (!(bootflags & BOOTFLAG_SKIP_AUTO_ACC)
         && gl_afile[0] != '#')              /* invalid signature    */
@@ -801,6 +831,16 @@ void app_start(void)
             if (envr & INF_E5_NOSORT)
                 G.g_cnxsave.cs_sort = CS_NOSORT;
             break;
+#if CONF_WITH_BACKGROUNDS
+        case 'Q':                       /* desktop/window pattern/colour */
+            pcurr++;
+            for (i = 0; i < 3; i++)
+            {
+                pcurr = scan_2(pcurr, &G.g_patcol[i].desktop);
+                pcurr = scan_2(pcurr, &G.g_patcol[i].window);
+            }
+            break;
+#endif
         }
     }
 
@@ -982,6 +1022,14 @@ void app_save(WORD todisk)
     pcurr += sprintf(pcurr,"#E %02X %02X %02X %02X %02X\r\n",
                     env1,env2,HIBYTE(mode),LOBYTE(mode),env5);
 
+#if CONF_WITH_BACKGROUNDS
+    /* save desktop/window colour/patterns */
+    pcurr += sprintf(pcurr,"#Q %02X %02X %02X %02X %02X %02X\r\n",
+                    G.g_patcol[0].desktop,G.g_patcol[0].window,
+                    G.g_patcol[1].desktop,G.g_patcol[1].window,
+                    G.g_patcol[2].desktop,G.g_patcol[2].window);
+#endif
+
     /* save windows */
     for (i = 0; i < NUM_WNODES; i++)
     {
@@ -1078,6 +1126,37 @@ void app_save(WORD todisk)
 
 
 /*
+ *  Set desktop (& window) background pattern/colour
+ */
+static void set_background(void)
+{
+#if CONF_WITH_BACKGROUNDS
+    int i, n;
+    OBJECT *tree;
+
+    switch(gl_nplanes)
+    {
+    case 1:
+        n = 0;
+        break;
+    case 2:
+        n = 1;
+        break;
+    default:
+        n = 2;
+        break;
+    }
+
+    for (i = DROOT+1, tree = G.g_screen+i; i < WOBS_START; i++, tree++)
+        tree->ob_spec = G.g_patcol[n].window | BORDER_TEXT_COLOURS;
+    G.g_screen[DROOT].ob_spec = G.g_patcol[n].desktop | BORDER_TEXT_COLOURS;
+#else
+    G.g_screen[DROOT].ob_spec = AP_PRIVATE;
+#endif
+}
+
+
+/*
  *  Build and redraw the desktop list of objects
  */
 void app_blddesk(void)
@@ -1090,7 +1169,9 @@ void app_blddesk(void)
 
     /* free all this window's kids and set size  */
     obj_wfree(DROOT, 0, 0, gl_width, gl_height);
-    G.g_screen[DROOT].ob_spec = AP_PRIVATE;
+
+    /* set background pattern/colours */
+    set_background();
 
     for(pa = G.g_ahead; pa; pa = pa->a_next)
     {

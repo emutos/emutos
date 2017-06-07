@@ -236,6 +236,9 @@
 # ifndef CONF_WITH_DESKTOP_SHORTCUTS
 #  define CONF_WITH_DESKTOP_SHORTCUTS 0
 # endif
+# ifndef CONF_WITH_BACKGROUNDS
+#  define CONF_WITH_BACKGROUNDS 0
+# endif
 # ifndef CONF_WITH_PCGEM
 #  define CONF_WITH_PCGEM 0
 # endif
@@ -1006,6 +1009,14 @@
  */
 #ifndef CONF_WITH_DESKTOP_SHORTCUTS
 # define CONF_WITH_DESKTOP_SHORTCUTS 1
+#endif
+
+/*
+ * Set CONF_WITH_BACKGROUNDS to 1 to allow the background pattern/colour
+ * of the desktop & windows to be configured
+ */
+#ifndef CONF_WITH_BACKGROUNDS
+# define CONF_WITH_BACKGROUNDS 1
 #endif
 
 /*

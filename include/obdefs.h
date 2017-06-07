@@ -126,6 +126,10 @@
 #define LYELLOW 14
 #define LMAGENTA 15
 
+                                                /* obspec colour word masks */
+#define FILLPAT_MASK    0x00000070L
+#define FILLCOL_MASK    0x0000000fL
+
 typedef struct
 {
         WORD            ob_next;        /* -> object's next sibling     */

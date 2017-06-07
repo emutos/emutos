@@ -85,6 +85,7 @@ typedef struct {
  */
 #define VIEW_HAS_CHANGED    0x0001
 #define SORT_HAS_CHANGED    0x0002
+#define BACKGROUND_HAS_CHANGED  0x0004
 
 
 /*
@@ -230,7 +231,7 @@ static void desk_all(WORD flags)
     desk_wait(TRUE);
     if (flags & SORT_HAS_CHANGED)
         win_srtall();
-    if (flags)          /* either sort or view has changed */
+    if (flags & (VIEW_HAS_CHANGED|SORT_HAS_CHANGED))
         win_bdall();
     win_shwall();
     desk_wait(FALSE);
@@ -327,6 +328,9 @@ static void men_update(void)
     menu_ienable(tree, CLIITEM, 0);
 #endif
 
+#if !CONF_WITH_BACKGROUNDS
+    menu_ienable(tree, BACKGRND, 0);
+#endif
 }
 
 
@@ -466,6 +470,12 @@ static WORD do_viewmenu(WORD item)
     case NSRTITEM:
         newsort = S_NSRT;
         break;
+#if CONF_WITH_BACKGROUNDS
+    case BACKGRND:
+        if (inf_backgrounds())
+            rc |= BACKGROUND_HAS_CHANGED;
+        break;
+#endif
     }
 
     if (newview != G.g_iview)
@@ -483,7 +493,7 @@ static WORD do_viewmenu(WORD item)
         rc |= SORT_HAS_CHANGED;
     }
 
-    if (rc)
+    if (rc & (VIEW_HAS_CHANGED|SORT_HAS_CHANGED))
         win_view(newview, newsort);
 
     return rc;
@@ -641,8 +651,8 @@ static WORD hndl_menu(WORD title, WORD item)
     case VIEWMENU:
         done = FALSE;
         rc = do_viewmenu(item);
-        if (rc)             /* if sort and/or view has changed,  */
-            desk_all(rc);   /* rebuild all windows appropriately */
+        if (rc)             /* if sort, view, or background has changed, */
+            desk_all(rc);   /* rebuild/show all windows as appropriate   */
         break;
     case OPTNMENU:
         done = do_optnmenu(item);
