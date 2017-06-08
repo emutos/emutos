@@ -52,6 +52,17 @@
                       UPARROW | DNARROW | VSLIDE | LFARROW | RTARROW | HSLIDE)
 #define START_VIEW   V_ICON
 
+/*
+ * Specify the initial ob_state for icon objects in a window.  If the
+ * background colour is *not* configurable, it is always white, and
+ * setting the ob_state to WHITEBAK is valid.  It reduces the number of
+ * blits & rectangle fills, and provides (marginally) better performance.
+ */
+#ifdef CONF_WITH_BACKGROUNDS
+#define INITIAL_ICON_STATE  0
+#else
+#define INITIAL_ICON_STATE  WHITEBAK
+#endif
 
 void win_view(WORD vtype, WORD isort)
 {
@@ -340,7 +351,7 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
 
         /* build object */
         obj = &G.g_screen[obid];
-        obj->ob_state = WHITEBAK /*| DRAW3D*/;
+        obj->ob_state = INITIAL_ICON_STATE;
         obj->ob_flags = 0x00;
         si = &G.g_screeninfo[obid];
         switch(G.g_iview)
