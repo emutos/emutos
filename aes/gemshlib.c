@@ -551,7 +551,6 @@ static WORD sh_ldapp(SHELL *psh)
     if (psh->sh_isdef && strcmp(D.s_cmd, DEF_DESKTOP) == 0)
     {
         /* Start the ROM desktop: */
-        sh_show(D.s_cmd);
         p_nameit(rlr, sh_name(D.s_cmd));
         p_setappdir(rlr, D.s_cmd);
         aes_run_rom_program(deskstart);
