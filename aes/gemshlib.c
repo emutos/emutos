@@ -54,6 +54,12 @@
 
 #include "gemshlib.h"
 
+/*
+ * clear screen value for ob_spec:
+ * white border, white text, hollow pattern, white fill
+ */
+#define CLEAR_SCREEN    ((WHITE<<12) | (WHITE<< 8) | (IP_HOLLOW<<4) | WHITE)
+
 #define SIZE_AFILE 2048                 /* size of AES shell buffer: must   */
                                         /*  agree with #define in deskapp.h */
 
@@ -223,16 +229,22 @@ static void sh_toalpha(void)
 }
 
 
-static void sh_draw(const BYTE *lcmd, WORD start, WORD depth)
+static void sh_draw(const BYTE *lcmd, WORD start, BOOL clear)
 {
     OBJECT *tree;
     TEDINFO *ted;
+    LONG spec;
 
     tree = rs_trees[DESKTOP];
     gsx_sclip(&gl_rscreen);
     ted = (TEDINFO *)tree[DTNAME].ob_spec;
     ted->te_ptext = (BYTE *)lcmd;   /* text string displayed in menu bar */
-    ob_draw(tree, start, depth);
+
+    spec = tree[ROOT].ob_spec;
+    if (clear)
+        tree[ROOT].ob_spec = CLEAR_SCREEN;  /* white desktop screen */
+    ob_draw(tree, start, 0);
+    tree[ROOT].ob_spec = spec;
 }
 
 
@@ -243,8 +255,8 @@ static void sh_show(const BYTE *lcmd)
     if (!gl_shgem)
         return;
 
-    for (i = 1; i < 3; i++)
-        sh_draw(lcmd, i, 0);
+    for (i = 0; i < 3; i++)
+        sh_draw(lcmd, i, FALSE);
 }
 
 
@@ -551,6 +563,7 @@ static WORD sh_ldapp(SHELL *psh)
     if (psh->sh_isdef && strcmp(D.s_cmd, DEF_DESKTOP) == 0)
     {
         /* Start the ROM desktop: */
+        sh_draw(D.s_cmd, ROOT, TRUE);   /* clear the screen */
         p_nameit(rlr, sh_name(D.s_cmd));
         p_setappdir(rlr, D.s_cmd);
         aes_run_rom_program(deskstart);
@@ -667,7 +680,7 @@ void sh_main(BOOL isgem)
         {
             wm_start();
             ratinit();
-            sh_draw(D.s_cmd, 0, 0);     /* redraw the desktop   */
+            sh_draw(D.s_cmd, ROOT, TRUE);   /* clear the screen */
         }
 
         if (rc)                         /* display alert for most recent error */
