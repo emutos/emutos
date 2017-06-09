@@ -228,20 +228,20 @@ static void sh_draw(const BYTE *lcmd, WORD start, WORD depth)
     OBJECT *tree;
     TEDINFO *ted;
 
-    if (gl_shgem)
-    {
-        tree = rs_trees[DESKTOP];
-        gsx_sclip(&gl_rscreen);
-        ted = (TEDINFO *)tree[DTNAME].ob_spec;
-        ted->te_ptext = (BYTE *)lcmd;   /* text string displayed in menu bar */
-        ob_draw(tree, start, depth);
-    }
+    tree = rs_trees[DESKTOP];
+    gsx_sclip(&gl_rscreen);
+    ted = (TEDINFO *)tree[DTNAME].ob_spec;
+    ted->te_ptext = (BYTE *)lcmd;   /* text string displayed in menu bar */
+    ob_draw(tree, start, depth);
 }
 
 
 static void sh_show(const BYTE *lcmd)
 {
     WORD i;
+
+    if (!gl_shgem)
+        return;
 
     for (i = 1; i < 3; i++)
         sh_draw(lcmd, i, 0);
@@ -667,9 +667,8 @@ void sh_main(BOOL isgem)
         {
             wm_start();
             ratinit();
+            sh_draw(D.s_cmd, 0, 0);     /* redraw the desktop   */
         }
-
-        sh_draw(D.s_cmd, 0, 0);         /* redraw the desktop   */
 
         if (rc)                         /* display alert for most recent error */
             fm_show(rc, NULL, 1);
