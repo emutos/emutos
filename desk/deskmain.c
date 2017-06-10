@@ -122,7 +122,6 @@ static WORD     ig_close;
  *  there is one array of items to enable:
  *      ILL_OPENWIN[]   enabled if there is an open window
  *  and many arrays of items to disable:
- *      ILL_ITEM[]      always disabled
  *      ILL_NOWIN[]     disabled if there are no open windows
  *      ILL NOSEL[]     disabled if there are no icons selected
  *      ILL_MULTSEL[]   disabled if two or more icons are selected
@@ -134,7 +133,6 @@ static WORD     ig_close;
  *      ILL_FOLD[]      disabled if a folder is selected
  *      ILL_TRASH[]     disabled if the trash can is selected
  */
-static const BYTE     ILL_ITEM[] = {L1ITEM, L2ITEM, L3ITEM, L4ITEM, L5ITEM, 0};
 static const BYTE     ILL_FILE[] = {IDSKITEM,RICNITEM,0};
 static const BYTE     ILL_DOCU[] = {IDSKITEM,IAPPITEM,RICNITEM,0};
 static const BYTE     ILL_FOLD[] = {IDSKITEM,IAPPITEM,RICNITEM,0};
@@ -258,15 +256,25 @@ static void men_update(void)
     const BYTE *pvalue;
     ANODE *appl;
     OBJECT *tree = G.a_trees[ADMENU];
+    OBJECT *obj;
 
     pvalue = 0;
 
-    /* enable all items */
-    for (item = OPENITEM; item <= PREFITEM; item++)
-        menu_ienable(tree, item, 1);
-
-    /* disable some items */
-    men_list(tree, ILL_ITEM, FALSE);
+    /*
+     * disable separator strings, enable remaining menu items
+     */
+    for (obj = tree+OPENITEM; ; obj++)
+    {
+        if (obj->ob_type == G_STRING)
+        {
+            if (*(BYTE *)obj->ob_spec == '-')   /* must be a separator */
+                obj->ob_state |= DISABLED;
+            else
+                obj->ob_state &= ~DISABLED;
+        }
+        if (obj->ob_flags & LASTOB)
+            break;
+    }
 
     nsel = 0;
     for (item = 0; (item=win_isel(G.g_screen, G.g_croot, item)) != 0; nsel++)
