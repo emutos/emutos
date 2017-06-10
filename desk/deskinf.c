@@ -47,7 +47,7 @@
 
 
 /*
- * Border flags for 'SAMPLE' object in 'Set background' dialog:
+ * Border flags for 'BGSAMPLE' object in 'Set background' dialog:
  * outside border, thickness=1, border colour black, text black.
  */
 #define SAMPLE_BORDER_FLAGS 0x00ff1100L
@@ -783,13 +783,13 @@ BOOL inf_backgrounds(void)
     tree = G.a_trees[ADBKGND];
 
     /* hide colours that are not available in the current resolution */
-    for (i = unused, obj = tree+COLOR0+unused; i < 16; i++, obj++)
+    for (i = unused, obj = tree+BGCOL0+unused; i < 16; i++, obj++)
         obj->ob_flags |= HIDETREE;
 
     /* set the initially-displayed background pattern */
     curdesk = G.g_screen[DROOT].ob_spec;
     curwin = G.g_screen[DROOT+1].ob_spec;
-    tree[SAMPLE].ob_spec = ((tree[DESKPREF].ob_state & SELECTED) ? curdesk : curwin)
+    tree[BGSAMPLE].ob_spec = ((tree[BGDESK].ob_state & SELECTED) ? curdesk : curwin)
                             | SAMPLE_BORDER_FLAGS;
 
     /* handle the dialog */
@@ -797,40 +797,40 @@ BOOL inf_backgrounds(void)
 
     while(1)
     {
-        draw_fld(tree, SAMPLE);
+        draw_fld(tree, BGSAMPLE);
         ret = form_do(tree, ROOT);
 
-        if ((ret == SCOK) || (ret == SCCANCEL))
+        if ((ret == BGOK) || (ret == BGCANCEL))
         {
             tree[ret].ob_state &= ~SELECTED;
             break;
         }
 
-        if (ret == DESKPREF)
-            tree[SAMPLE].ob_spec = curdesk;
-        else if (ret == WINPREF)
-            tree[SAMPLE].ob_spec = curwin;
-        else if ((ret >= PATTERN0) && (ret <= PATTERN7))
+        if (ret == BGDESK)
+            tree[BGSAMPLE].ob_spec = curdesk;
+        else if (ret == BGWIN)
+            tree[BGSAMPLE].ob_spec = curwin;
+        else if ((ret >= BGPAT0) && (ret <= BGPAT7))
         {
-            tree[SAMPLE].ob_spec &= ~FILLPAT_MASK;
-            tree[SAMPLE].ob_spec |= tree[ret].ob_spec & FILLPAT_MASK;
+            tree[BGSAMPLE].ob_spec &= ~FILLPAT_MASK;
+            tree[BGSAMPLE].ob_spec |= tree[ret].ob_spec & FILLPAT_MASK;
         }
-        else if ((ret >= COLOR0) && (ret <= COLOR15))
+        else if ((ret >= BGCOL0) && (ret <= BGCOL15))
         {
-            tree[SAMPLE].ob_spec &= ~FILLCOL_MASK;
-            tree[SAMPLE].ob_spec |= tree[ret].ob_spec & FILLCOL_MASK;
+            tree[BGSAMPLE].ob_spec &= ~FILLCOL_MASK;
+            tree[BGSAMPLE].ob_spec |= tree[ret].ob_spec & FILLCOL_MASK;
         }
 
-        if (tree[DESKPREF].ob_state & SELECTED)
-            curdesk = tree[SAMPLE].ob_spec;
+        if (tree[BGDESK].ob_state & SELECTED)
+            curdesk = tree[BGSAMPLE].ob_spec;
         else
-            curwin = tree[SAMPLE].ob_spec;
+            curwin = tree[BGSAMPLE].ob_spec;
     }
 
     show_hide(FMD_FINISH, tree);
 
     /* handle dialog exit */
-    if (ret == SCOK)
+    if (ret == BGOK)
     {
         /* check for desktop background change */
         if (G.g_screen[DROOT].ob_spec != curdesk)
