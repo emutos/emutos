@@ -616,7 +616,7 @@ void win_sname(WNODE *pw)
     pdst = pw->w_name;
 
     *pdst++ = ' ';
-    while (*psrc && (*psrc != '*'))
+    while (*psrc)
         *pdst++ = *psrc++;
     *pdst++ = ' ';
     *pdst = '\0';
