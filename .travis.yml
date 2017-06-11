@@ -27,6 +27,9 @@ before_install:
   - lftp --version
 
 script:
+  # Set FIXED_TRAVIS_COMMIT_RANGE
+  - . .travis/fix_travis_commit_range.sh
+  # Build binaries
   - export VERSION=$(date -u +%Y%m%d-%H%M%S)-$(git rev-parse --short $TRAVIS_COMMIT)
   - make clean
   - make release VERSION=$VERSION
