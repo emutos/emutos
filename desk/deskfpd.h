@@ -79,7 +79,7 @@ struct _pathnode
 void fpd_start(void);
 FNODE *fpd_ofind(FNODE *pf, WORD obj);
 void pn_close(PNODE *thepath);
-PNODE *pn_open(BYTE *pathname, WORD attr);
+PNODE *pn_open(BYTE *pathname);
 FNODE *pn_sort(PNODE *pn);
 WORD pn_active(PNODE *thepath);
 

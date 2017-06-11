@@ -375,7 +375,7 @@ WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon,
     graf_mouse(HGLASS, NULL);
 
     /* open a path node */
-    tmp = pn_open(pathname, F_SUBDIR);
+    tmp = pn_open(pathname);
     if (tmp == NULL)    /* program bug - there is one PNODE for every WNODE */
     {
         KDEBUG(("No path node available for window\n"));

@@ -692,7 +692,7 @@ static WORD fun_file2any(WORD sobj, WNODE *wn_dest, ANODE *an_dest, FNODE *fn_de
         strcat(path,"*.*");
     }
 
-    pn_src = pn_open(path, F_SUBDIR);
+    pn_src = pn_open(path);
 
     if (pn_src)
     {
@@ -852,7 +852,7 @@ static WORD delete_disk(ANODE *pa)
 
     build_root_path(path, pa->a_letter);
     strcat(path,"*.*");
-    pn = pn_open(path, F_SUBDIR);
+    pn = pn_open(path);
     if (pn == NULL)
         return 0;
 

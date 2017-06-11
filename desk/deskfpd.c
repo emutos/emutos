@@ -158,7 +158,7 @@ void pn_close(PNODE *thepath)
 /*
  *  Open a particular path
  */
-PNODE *pn_open(BYTE *pathname, WORD attr)
+PNODE *pn_open(BYTE *pathname)
 {
     PNODE *thepath;
 
@@ -170,7 +170,7 @@ PNODE *pn_open(BYTE *pathname, WORD attr)
         return NULL;
 
     strcpy(thepath->p_spec,pathname);
-    thepath->p_attr = attr;
+    thepath->p_attr = F_SUBDIR;
     return thepath;
 }
 
