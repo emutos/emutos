@@ -132,6 +132,7 @@ static WORD     ig_close;
  *      ILL_DOCU[]      disabled if a normal non-executable file is selected
  *      ILL_FOLD[]      disabled if a folder is selected
  *      ILL_TRASH[]     disabled if the trash can is selected
+ *      ILL_ALWAYS[]    always disabled (contents vary according to configuration)
  */
 static const BYTE     ILL_FILE[] = {IDSKITEM,RICNITEM,0};
 static const BYTE     ILL_DOCU[] = {IDSKITEM,IAPPITEM,RICNITEM,0};
@@ -146,6 +147,23 @@ static const BYTE     ILL_TRASH[] = {OPENITEM,DELTITEM,IDSKITEM,
 static const BYTE     ILL_NOWIN[] = {NFOLITEM,CLOSITEM,CLSWITEM,MASKITEM,0};
 static const BYTE     ILL_OPENWIN[] = {SHOWITEM,NFOLITEM,CLOSITEM,CLSWITEM,MASKITEM,
                                 ICONITEM,NAMEITEM,DATEITEM,SIZEITEM,TYPEITEM,0};
+static const BYTE ILL_ALWAYS[] = {
+#if !CONF_WITH_FORMAT
+    FORMITEM,
+#endif
+#if !CONF_WITH_SHUTDOWN
+    QUITITEM,
+#endif
+#if WITH_CLI == 0
+    CLIITEM,
+#endif
+#if !CONF_WITH_BACKGROUNDS
+    BACKGRND,
+#endif
+#if !CONF_WITH_FILEMASK
+    MASKITEM,
+#endif
+    0 };
 
 /*
  * table to map the keyboard arrow character to the corresponding
@@ -322,26 +340,10 @@ static void men_update(void)
         men_list(tree, pvalue, FALSE);
     }
 
-#if !CONF_WITH_FORMAT
-    menu_ienable(tree, FORMITEM, 0);
-#endif
+    men_list(tree, ILL_ALWAYS, FALSE);
 
 #if CONF_WITH_SHUTDOWN
     menu_ienable(tree, QUITITEM, can_shutdown());
-#else
-    menu_ienable(tree, QUITITEM, 0);
-#endif
-
-#if WITH_CLI == 0
-    menu_ienable(tree, CLIITEM, 0);
-#endif
-
-#if !CONF_WITH_BACKGROUNDS
-    menu_ienable(tree, BACKGRND, 0);
-#endif
-
-#if !CONF_WITH_FILEMASK
-    menu_ienable(tree, MASKITEM, 0);
 #endif
 }
 
