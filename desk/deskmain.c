@@ -134,19 +134,17 @@ static WORD     ig_close;
  *      ILL_TRASH[]     disabled if the trash can is selected
  *      ILL_ALWAYS[]    always disabled (contents vary according to configuration)
  */
-static const BYTE     ILL_FILE[] = {IDSKITEM,RICNITEM,0};
-static const BYTE     ILL_DOCU[] = {IDSKITEM,IAPPITEM,RICNITEM,0};
-static const BYTE     ILL_FOLD[] = {IDSKITEM,IAPPITEM,RICNITEM,0};
-static const BYTE     ILL_FDSK[] = {IAPPITEM,0};
-static const BYTE     ILL_HDSK[] = {IAPPITEM,0};
-static const BYTE     ILL_NOSEL[] = {OPENITEM,DELTITEM,
-                                IAPPITEM,RICNITEM,0};
-static const BYTE     ILL_MULTSEL[] = {OPENITEM, IDSKITEM, SHOWITEM, 0};
-static const BYTE     ILL_TRASH[] = {OPENITEM,DELTITEM,IDSKITEM,
-                                IAPPITEM,0};
-static const BYTE     ILL_NOWIN[] = {NFOLITEM,CLOSITEM,CLSWITEM,MASKITEM,0};
-static const BYTE     ILL_OPENWIN[] = {SHOWITEM,NFOLITEM,CLOSITEM,CLSWITEM,MASKITEM,
-                                ICONITEM,NAMEITEM,DATEITEM,SIZEITEM,TYPEITEM,0};
+static const BYTE ILL_FILE[] =  { IDSKITEM, RICNITEM, 0 };
+static const BYTE ILL_DOCU[] =  { IDSKITEM, IAPPITEM, RICNITEM, 0 };
+static const BYTE ILL_FOLD[] =  { IDSKITEM, IAPPITEM, RICNITEM, 0 };
+static const BYTE ILL_FDSK[] =  { IAPPITEM, 0 };
+static const BYTE ILL_HDSK[] =  { IAPPITEM, 0 };
+static const BYTE ILL_NOSEL[] = { OPENITEM, DELTITEM, IAPPITEM, RICNITEM, 0 };
+static const BYTE ILL_MULTSEL[] = { OPENITEM, IDSKITEM, SHOWITEM, 0 };
+static const BYTE ILL_TRASH[] = { OPENITEM, DELTITEM, IDSKITEM, IAPPITEM, 0 };
+static const BYTE ILL_NOWIN[] = { NFOLITEM, CLOSITEM, CLSWITEM, MASKITEM, 0 };
+static const BYTE ILL_OPENWIN[] = { SHOWITEM, NFOLITEM, CLOSITEM, CLSWITEM, MASKITEM,
+                                ICONITEM, NAMEITEM, DATEITEM, SIZEITEM, TYPEITEM, 0 };
 static const BYTE ILL_ALWAYS[] = {
 #if !CONF_WITH_FORMAT
     FORMITEM,
