@@ -239,6 +239,9 @@
 # ifndef CONF_WITH_BACKGROUNDS
 #  define CONF_WITH_BACKGROUNDS 0
 # endif
+# ifndef CONF_WITH_FILEMASK
+#  define CONF_WITH_FILEMASK 0
+# endif
 # ifndef CONF_WITH_PCGEM
 #  define CONF_WITH_PCGEM 0
 # endif
@@ -1017,6 +1020,14 @@
  */
 #ifndef CONF_WITH_BACKGROUNDS
 # define CONF_WITH_BACKGROUNDS 1
+#endif
+
+/*
+ * Set CONF_WITH_FILEMASK to 1 to allow the filemask used for desktop
+ * windows to be configured
+ */
+#ifndef CONF_WITH_FILEMASK
+# define CONF_WITH_FILEMASK 1
 #endif
 
 /*

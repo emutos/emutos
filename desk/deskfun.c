@@ -153,6 +153,44 @@ void fun_rebld(BYTE *ptst)
 } /* fun_rebld */
 
 
+#if CONF_WITH_FILEMASK
+/*
+ *  Routine to update the file mask for the current window
+ */
+void fun_mask(WNODE *pw)
+{
+    BYTE *maskptr, filemask[LEN_ZFNAME];
+    OBJECT *tree;
+
+    tree = G.a_trees[ADFMASK];
+
+    /*
+     * get current filemask & insert in dialog
+     */
+    maskptr = filename_start(pw->w_path->p_spec);
+    fmt_str(maskptr, filemask);
+    inf_sset(tree, FMMASK, filemask);
+
+    /*
+     * get user input
+     */
+    show_hide(FMD_START, tree);
+    form_do(tree, 0);
+    show_hide(FMD_FINISH, tree);
+
+    /*
+     * if 'OK', extract filemask from dialog, update pnode/display
+     */
+    if (inf_what(tree, FMOK, FMCANCEL) == 1)
+    {
+        inf_sget(tree, FMMASK, filemask);
+        unfmt_str(filemask, maskptr);
+        do_refresh(pw);
+    }
+}
+#endif
+
+
 /*
  *  Routine that creates a new directory in the specified window/path
  */

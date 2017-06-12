@@ -23,12 +23,15 @@
 #include "portab.h"
 #include "obdefs.h"
 #include "gemdos.h"
+#include "optimize.h"
 #include "optimopt.h"
 
 #include "deskbind.h"
 #include "deskglob.h"
 #include "deskapp.h"
+#include "deskdir.h"
 #include "deskfpd.h"
+#include "deskins.h"
 #include "deskwin.h"
 #include "dos.h"
 #include "deskrsrc.h"
@@ -297,6 +300,10 @@ WORD pn_active(PNODE *pn)
     FNODE *fn, *prev;
     LONG maxmem, maxcount, size = 0L;
     WORD count, ret;
+#if CONF_WITH_FILEMASK
+    BYTE search[MAXPATHLEN];
+    BYTE *match;
+#endif
 
     fl_free(pn);                    /* free any existing filenodes */
 
@@ -312,8 +319,24 @@ WORD pn_active(PNODE *pn)
 
     dos_sdta(&G.g_wdta);
 
+#if CONF_WITH_FILEMASK
+    /*
+     * we cannot use the pathnode specification as-is, because the filenode
+     * list must include all folders, not just the ones that match p_spec.
+     * so we use a file mask of *.* and do the wildcard matching ourselves.
+     */
+    strcpy(search, pn->p_spec);
+    del_fname(search);                  /* change search filespec to *.* */
+    match = filename_start(pn->p_spec); /* match filespec is unaltered */
+    for (ret = dos_sfirst(search, pn->p_attr), count = 0; (ret == 0) && (count < maxcount); ret = dos_snext())
+    {
+        if (G.g_wdta.d_attrib != F_SUBDIR)  /* skip *files* that don't match */
+            if (!wildcmp(match, G.g_wdta.d_fname))
+                continue;
+#else
     for (ret = dos_sfirst(pn->p_spec,pn->p_attr), count = 0; (ret == 0) && (count < maxcount); ret = dos_snext())
     {
+#endif
         if (G.g_wdta.d_fname[0] == '.') /* skip "." & ".." entries */
             continue;
         memcpy(&fn->f_junk, &G.g_wdta.d_reserved[20], 23);

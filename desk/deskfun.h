@@ -28,6 +28,10 @@ WORD fun_alert_long(WORD defbut, WORD stnum, LONG merge);
 WORD fun_alert_string(WORD defbut, WORD stnum, BYTE *merge);
 #endif
 
+#if CONF_WITH_FILEMASK
+void fun_mask(WNODE *pw);
+#endif
+
 void fun_close(WNODE *pw, WORD closetype);
 BOOL fun_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my, WORD keystate);
 void fun_msg(WORD type, WORD w3, WORD w4, WORD w5, WORD w6, WORD w7);

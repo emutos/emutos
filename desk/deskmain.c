@@ -143,9 +143,9 @@ static const BYTE     ILL_NOSEL[] = {OPENITEM,DELTITEM,
 static const BYTE     ILL_MULTSEL[] = {OPENITEM, IDSKITEM, SHOWITEM, 0};
 static const BYTE     ILL_TRASH[] = {OPENITEM,DELTITEM,IDSKITEM,
                                 IAPPITEM,0};
-static const BYTE     ILL_NOWIN[] = {NFOLITEM,CLOSITEM,CLSWITEM,0};
-static const BYTE     ILL_OPENWIN[] = {SHOWITEM,NFOLITEM,CLOSITEM,CLSWITEM,ICONITEM,
-                                NAMEITEM,DATEITEM,SIZEITEM,TYPEITEM,0};
+static const BYTE     ILL_NOWIN[] = {NFOLITEM,CLOSITEM,CLSWITEM,MASKITEM,0};
+static const BYTE     ILL_OPENWIN[] = {SHOWITEM,NFOLITEM,CLOSITEM,CLSWITEM,MASKITEM,
+                                ICONITEM,NAMEITEM,DATEITEM,SIZEITEM,TYPEITEM,0};
 
 /*
  * table to map the keyboard arrow character to the corresponding
@@ -339,6 +339,10 @@ static void men_update(void)
 #if !CONF_WITH_BACKGROUNDS
     menu_ienable(tree, BACKGRND, 0);
 #endif
+
+#if !CONF_WITH_FILEMASK
+    menu_ienable(tree, MASKITEM, 0);
+#endif
 }
 
 
@@ -418,6 +422,12 @@ static WORD do_filemenu(WORD item)
         if (pw)
             fun_close(pw, CLOSE_WINDOW);
         break;
+#if CONF_WITH_FILEMASK
+    case MASKITEM:
+        if (pw)
+            fun_mask(pw);
+        break;
+#endif
     case DELTITEM:
         if (curr)
             fun_del(curr);
