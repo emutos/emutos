@@ -8,6 +8,7 @@
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  */
+
 #include "config.h"
 #include "portab.h"
 #include "intmath.h"
@@ -462,10 +463,16 @@ void linea_rect(void)
  */
 void linea_hline(void)
 {
-    WORD clip = CLIP, y2 = Y2;
-    CLIP = 0; Y2 = Y1;
-    linea_rect();
-    CLIP = clip; Y2 = y2;
+    VwkAttrib attr;
+    Rect line;
+
+    line.x1 = X1;
+    line.x2 = X2;
+    line.y1 = Y1;
+    line.y2 = Y1;
+
+    lineA2Attrib(&attr);
+    draw_rect_common(&attr, &line);
 }
 
 
