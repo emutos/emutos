@@ -41,32 +41,6 @@
 
 
 /*
- *  Initialize the list of pnodes
- */
-static void pn_init(void)
-{
-    WORD i;
-    PNODE *pn;
-
-    for (i = 0, pn = G.g_plist; i < NUM_PNODES-1; i++, pn++)
-        pn->p_next = pn + 1;
-    pn->p_next = NULL;
-
-    G.g_pavail = G.g_plist;
-    G.g_phead = (PNODE *) NULL;
-}
-
-
-/*
- *  Start up by initializing global variables
- */
-void fpd_start(void)
-{
-    pn_init();
-}
-
-
-/*
  *  Find the file node that matches a particular object id
  */
 FNODE *fpd_ofind(FNODE *pf, WORD obj)
@@ -100,80 +74,37 @@ static void fl_free(PNODE *pn)
 
 
 /*
- *  Allocate a path node
- */
-static PNODE *pn_alloc(void)
-{
-    PNODE *thepath;
-
-    if (G.g_pavail)
-    {
-        /* get us off the avail list */
-        thepath = G.g_pavail;
-        G.g_pavail = G.g_pavail->p_next;
-
-        /* put us on the active list */
-        thepath->p_next = G.g_phead;
-        G.g_phead = thepath;
-
-        /* init. and return */
-        thepath->p_flist = (FNODE *) NULL;
-        return thepath;
-    }
-
-    return NULL;
-}
-
-
-/*
- *  Free a path node
- */
-static void pn_free(PNODE *thepath)
-{
-    PNODE *pp;
-
-    /* free our file list */
-    fl_free(thepath);
-
-    /* if first in list, unlink by changing phead
-     * else by finding and changing our previous guy
-     */
-    pp = (PNODE *) &G.g_phead;
-    while(pp->p_next != thepath)
-        pp = pp->p_next;
-    pp->p_next = thepath->p_next;
-
-    /* put us on the avail list */
-    thepath->p_next = G.g_pavail;
-    G.g_pavail = thepath;
-}
-
-
-/*
  *  Close a particular path
  */
 void pn_close(PNODE *thepath)
 {
-    pn_free(thepath);
+    /* free our file list */
+    fl_free(thepath);
 }
 
 
 /*
  *  Open a particular path
  */
-PNODE *pn_open(BYTE *pathname)
+PNODE *pn_open(BYTE *pathname, WNODE *pw)
 {
     PNODE *thepath;
 
     if (strlen(pathname) >= MAXPATHLEN)
         return NULL;
 
-    thepath = pn_alloc();
-    if (!thepath)
-        return NULL;
+    /*
+     * if not associated with a specific window, use the PNODE in the
+     * desktop pseudo-window.  this happens for e.g. disk->disk copy
+     */
+    if (!pw)
+        pw = &G.g_wdesktop;
 
+    thepath = &pw->w_pnode;
+    thepath->p_flist = NULL;    /* file list starts empty */
     strcpy(thepath->p_spec,pathname);
     thepath->p_attr = F_SUBDIR;
+
     return thepath;
 }
 

@@ -408,7 +408,7 @@ static WORD do_filemenu(WORD item)
         if (curr)
             do_info(curr);
         else if (pw)
-            inf_disk(pw->w_path->p_spec[0]);
+            inf_disk(pw->w_pnode.p_spec[0]);
         break;
     case NFOLITEM:
         if (pw)
@@ -1090,7 +1090,7 @@ static void cnx_put(void)
         wind_get(pw->w_id,WF_CXYWH,&pws->x_save,&pws->y_save,&pws->w_save,&pws->h_save);
         do_xyfix(&pws->x_save,&pws->y_save);
         pws->vsl_save  = pw->w_cvrow;
-        strcpy(pws->pth_save,pw->w_path->p_spec);
+        strcpy(pws->pth_save,pw->w_pnode.p_spec);
         pws--;
     }
 }
@@ -1595,9 +1595,6 @@ WORD deskmain(void)
 
     /* initialize windows */
     win_start();
-
-    /* initialize folders, paths, and drives */
-    fpd_start();
 
     /* show menu */
     desk_verify(0, FALSE);                  /* should this be here  */

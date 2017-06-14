@@ -369,23 +369,20 @@ WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon,
                 BYTE *pathname, GRECT *pt, WORD redraw)
 {
     WORD ret;
-    PNODE *tmp;
 
     /* convert to hourglass */
     graf_mouse(HGLASS, NULL);
 
     /* open a path node */
-    tmp = pn_open(pathname);
-    if (tmp == NULL)    /* program bug - there is one PNODE for every WNODE */
+    if (!pn_open(pathname, pw)) /* pathname is too long */
     {
-        KDEBUG(("No path node available for window\n"));
+        KDEBUG(("Pathname is too long\n"));
         graf_mouse(ARROW, NULL);
         return FALSE;
     }
-    pw->w_path = tmp;
 
     /* activate path by search and sort of directory */
-    ret = pn_active(pw->w_path);
+    ret = pn_active(&pw->w_pnode);
     if (ret != E_NOFILES)
     {
         /* some error condition */
@@ -888,7 +885,7 @@ void do_fopen(WNODE *pw, WORD curr, BYTE *pathname, WORD redraw)
     }
     else
     {
-        pn_close(pw->w_path);
+        pn_close(&pw->w_pnode);
     }
 
     if (!do_diropen(pw, new_win, curr, app_path, &t, redraw))
@@ -979,7 +976,7 @@ WORD do_open(WORD curr)
         else
 #endif
         {
-            strcpy(pathname, pw->w_path->p_spec);
+            strcpy(pathname, pw->w_pnode.p_spec);
             strcpy(filename, pf->f_name);
         }
 
@@ -1055,7 +1052,7 @@ WORD do_info(WORD curr)
             else
 #endif
             {
-                pathptr = pw->w_path->p_spec;
+                pathptr = pw->w_pnode.p_spec;
             }
             ret = inf_file_folder(pathptr, pf);
             if (ret)
@@ -1356,7 +1353,7 @@ void do_refresh(WNODE *pw)
     if (!pw->w_id)      /* desktop */
         return;
 
-    do_fopen(pw, 0, pw->w_path->p_spec, TRUE);
+    do_fopen(pw, 0, pw->w_pnode.p_spec, TRUE);
 }
 
 
@@ -1394,10 +1391,10 @@ ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp)
         pw = win_find(wh);
         if (pw)
         {
-            pf = fpd_ofind(pw->w_path->p_flist, item);
+            pf = fpd_ofind(pw->w_pnode.p_flist, item);
             if (pf)
                 pa = app_afind_by_name((pf->f_attr&F_SUBDIR)?AT_ISFOLD:AT_ISFILE,
-                            AF_ISDESK|AF_WINDOW, pw->w_path->p_spec, pf->f_name, &isapp);
+                            AF_ISDESK|AF_WINDOW, pw->w_pnode.p_spec, pf->f_name, &isapp);
         }
     }
 

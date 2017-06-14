@@ -521,7 +521,7 @@ static void update_modified_windows(BYTE *path,WORD length)
     for (pwin = G.g_wfirst; pwin; pwin = pwin->w_next)
     {
        if (pwin->w_id)
-            if (strncmp(pwin->w_path->p_spec,path,length) == 0)
+            if (strncmp(pwin->w_pnode.p_spec,path,length) == 0)
                 fun_close(pwin,CLOSE_TO_ROOT);
     }
 }

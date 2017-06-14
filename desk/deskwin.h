@@ -67,7 +67,7 @@ struct _windnode
         WORD            w_pncol;                /* physical # of cols   */
         WORD            w_pnrow;                /* physical # of rows   */
         WORD            w_vnrow;                /* virtual # of rows    */
-        PNODE           *w_path;
+        PNODE           w_pnode;                /* now embedded         */
         BYTE            w_name[LEN_ZPATH+2];    /* allow for leading & trailing spaces */
 /*
  * the following array must be large enough to hold the sprintf-formatted

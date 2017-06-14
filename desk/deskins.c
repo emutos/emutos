@@ -374,7 +374,7 @@ WORD ins_app(WORD curr)
 #endif
         {
             pw = win_find(G.g_cwin);
-            p = pw->w_path->p_spec;
+            p = pw->w_pnode.p_spec;
             q = filename_start(p);
             pfname = pf->f_name;
         }
@@ -983,7 +983,7 @@ WORD ins_icon(WORD sobj)
     pw = win_find(G.g_cwin);    /* get WNODE for current window */
     if (pw)
     {
-        for (pf = pw->w_path->p_flist; pf; pf = pf->f_next)
+        for (pf = pw->w_pnode.p_flist; pf; pf = pf->f_next)
         {
             if (!fnode_is_selected(pf))
                 continue;
@@ -1059,7 +1059,7 @@ void ins_shortcut(WORD wh, WORD mx, WORD my)
         /*
          * build the full pathname
          */
-        p = pw->w_path->p_spec;
+        p = pw->w_pnode.p_spec;
         q = filename_start(p);
         strlcpy(pathname,p,q-p+1);  /* copy pathname including trailing backslash */
         strcat(pathname,pf->f_name);
@@ -1084,7 +1084,7 @@ void ins_shortcut(WORD wh, WORD mx, WORD my)
          * override the default icon with an installed icon (if it exists)
          */
         pa = app_afind_by_name((pf->f_attr&F_SUBDIR)?AT_ISFOLD:AT_ISFILE,
-                        AF_ISDESK, pw->w_path->p_spec, pf->f_name, &dummy);
+                        AF_ISDESK, pw->w_pnode.p_spec, pf->f_name, &dummy);
         if (pa)                     /* paranoia */
         {
             newpa->a_aicon = pa->a_aicon;

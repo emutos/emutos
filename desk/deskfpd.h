@@ -65,7 +65,6 @@ struct _filenode
 typedef struct _pathnode PNODE;
 struct _pathnode
 {
-    PNODE *p_next;
     WORD  p_attr;           /* attribs used in Fsfirst() */
     BYTE  p_spec[LEN_ZPATH];/* dir path containing the FNODEs below */
     FNODE *p_fbase;         /* start of malloc'd fnodes */
@@ -75,11 +74,13 @@ struct _pathnode
 };
 
 
+typedef struct _windnode WNODE; /* see deskwin.h */
+
+
 /* Prototypes: */
-void fpd_start(void);
 FNODE *fpd_ofind(FNODE *pf, WORD obj);
 void pn_close(PNODE *thepath);
-PNODE *pn_open(BYTE *pathname);
+PNODE *pn_open(BYTE *pathname, WNODE *pw);
 FNODE *pn_sort(PNODE *pn);
 WORD pn_active(PNODE *thepath);
 

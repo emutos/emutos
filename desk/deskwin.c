@@ -262,7 +262,7 @@ static void win_ocalc(WNODE *pwin, WORD wfit, WORD hfit, FNODE **ppstart)
      * number of files in virtual file space
      */
     cnt = 0;
-    for (pf = pwin->w_path->p_flist; pf; pf = pf->f_next)
+    for (pf = pwin->w_pnode.p_flist; pf; pf = pf->f_next)
     {
         pf->f_obid = NIL;
         cnt++;
@@ -284,7 +284,7 @@ static void win_ocalc(WNODE *pwin, WORD wfit, WORD hfit, FNODE **ppstart)
      * & column, calculate the start and stop files
      */
     start = pwin->w_cvrow * pwin->w_pncol;
-    pf = pwin->w_path->p_flist;
+    pf = pwin->w_pnode.p_flist;
     while (start-- && pf)
         pf = pf->f_next;
     *ppstart = pf;
@@ -299,7 +299,7 @@ static void win_ocalc(WNODE *pwin, WORD wfit, WORD hfit, FNODE **ppstart)
 static void win_icalc(FNODE *pfnode, WNODE *pwin)
 {
     pfnode->f_pa = app_afind_by_name((pfnode->f_attr&F_SUBDIR) ? AT_ISFOLD : AT_ISFILE,
-                        AF_ISDESK, pwin->w_path->p_spec, pfnode->f_name, &pfnode->f_isap);
+                        AF_ISDESK, pwin->w_pnode.p_spec, pfnode->f_name, &pfnode->f_isap);
 }
 
 
@@ -538,7 +538,7 @@ void win_srtall(void)
         if (pw->w_id != 0)
         {
             pw->w_cvrow = 0;        /* reset slider         */
-            pw->w_path->p_flist = pn_sort(pw->w_path);
+            pw->w_pnode.p_flist = pn_sort(&pw->w_pnode);
         }
     }
 }
@@ -612,7 +612,7 @@ void win_sname(WNODE *pw)
     BYTE *psrc;
     BYTE *pdst;
 
-    psrc = pw->w_path->p_spec;
+    psrc = pw->w_pnode.p_spec;
     pdst = pw->w_name;
 
     *pdst++ = ' ';
@@ -628,7 +628,7 @@ void win_sinfo(WNODE *pwin)
 {
     PNODE *pn;
 
-    pn = pwin->w_path;
+    pn = &pwin->w_pnode;
     rsrc_gaddr_rom(R_STRING, STINFOST, (void **)&G.a_alert);
     strlencpy(G.g_1text, G.a_alert);
 
