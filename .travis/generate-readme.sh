@@ -15,5 +15,6 @@ echo
 # Generate log as preformatted text with hyperlinks
 git log --name-status $FIXED_TRAVIS_COMMIT_RANGE -- | sed \
   -e 's|.*|``&``  |' \
+  -e 's|[a-z]\+://[^ `]*|``\[&\](&)``|g' \
   -e 's|commit \([0-9a-z]\+\)|commit`` \[\1\](https://github.com/emutos/emutos/commit/\1)``|g' \
   -e 's|````||g'
