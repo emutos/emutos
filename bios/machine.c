@@ -201,10 +201,11 @@ static void detect_monster(void)
 /* blitter */
 
 int has_blitter;
+int blitter_is_enabled;
 
 static void detect_blitter(void)
 {
-    has_blitter = 0;
+    has_blitter = blitter_is_enabled = 0;
 
     if (check_read_byte(BLITTER_CONFIG1))
         has_blitter = 1;

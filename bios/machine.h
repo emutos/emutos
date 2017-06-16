@@ -144,6 +144,7 @@ extern int has_nvram;     /* in nvram.c */
 
 #if CONF_WITH_BLITTER
 extern int has_blitter;
+extern int blitter_is_enabled;
   #define HAS_BLITTER has_blitter
 #else
   #define HAS_BLITTER 0
