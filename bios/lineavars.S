@@ -217,11 +217,10 @@ _v_bytes_lin:   .ds.w   1       // -2   byte per screen line
                 .globl  _INTOUT
                 .globl  _PTSOUT
 
-                .globl  _fg_bp
-                .globl  _FG_BP_1
-                .globl  _FG_BP_2
-                .globl  _FG_BP_3
-                .globl  _FG_BP_4
+                .globl  _COLBIT0
+                .globl  _COLBIT1
+                .globl  _COLBIT2
+                .globl  _COLBIT3
 
                 .globl  _X1
                 .globl  _X2
@@ -288,11 +287,10 @@ _PTSOUT:        .ds.l   1               // +20  ptr to the PTSOUT array.
 //      as an array (to allow post-increment addressing).  They must be contiguous!!
 // ===========================================================================
 
-_fg_bp:
-_FG_BP_1:       .ds.w   1               // foreground bit_plane #1 value.
-_FG_BP_2:       .ds.w   1               // foreground bit_plane #2 value.
-_FG_BP_3:       .ds.w   1               // foreground bit_plane #3 value.
-_FG_BP_4:       .ds.w   1               // foreground bit_plane #4 value.
+_COLBIT0:       .ds.w   1               // colour bit value for plane 0
+_COLBIT1:       .ds.w   1               // colour bit value for plane 1
+_COLBIT2:       .ds.w   1               // colour bit value for plane 2
+_COLBIT3:       .ds.w   1               // colour bit value for plane 3
 
 _LSTLIN:        .ds.w   1               // 0 => not last line of polyline.
 _LN_MASK:       .ds.w   1               // line style mask.

@@ -56,7 +56,7 @@ extern UWORD v_bytes_lin;       /* width of line in bytes */
 /* Line-drawing related variables */
 extern WORD X1, Y1, X2, Y2;     /* coordinates for end points */
 extern WORD WRT_MODE;           /* write mode */
-extern WORD FG_BP_1, FG_BP_2, FG_BP_3, FG_BP_4; /* colour bit values for planes 0-3 */
+extern WORD COLBIT0, COLBIT1, COLBIT2, COLBIT3; /* colour bit values for planes 0-3 */
 extern WORD CLIP;               /* clipping flag */
 extern WORD XMN_CLIP, XMX_CLIP, YMN_CLIP, YMX_CLIP; /* clipping rectangle */
 extern UWORD *PATPTR;           /* fill pattern pointer */

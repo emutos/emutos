@@ -389,16 +389,16 @@ static UWORD linea_color(void)
      * especially addq.w instead of ori.w
      */
 
-    if (FG_BP_1 != 0)
+    if (COLBIT0 != 0)
         color += 1;
 
-    if (FG_BP_2 != 0)
+    if (COLBIT1 != 0)
         color += 2;
 
-    if (FG_BP_3 != 0)
+    if (COLBIT2 != 0)
         color += 4;
 
-    if (FG_BP_4 != 0)
+    if (COLBIT3 != 0)
         color += 8;
 
     return color;
