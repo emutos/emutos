@@ -379,15 +379,6 @@ static __inline__ void horzline(const Vwk * vwk, Line * line)
 
 
 /*
- * global Line-A variables from lineavars.S
- */
-extern WORD X1, Y1, X2, Y2, WRT_MODE;
-extern WORD FG_BP_1, FG_BP_2, FG_BP_3, FG_BP_4;
-extern WORD CLIP, XMN_CLIP, XMX_CLIP, YMN_CLIP, YMX_CLIP;
-extern UWORD *PATPTR, PATMSK;
-
-
-/*
  * compose color for draw_rect_common & abline from line-A variables
  */
 static UWORD linea_color(void)
