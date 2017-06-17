@@ -55,8 +55,8 @@ extern WORD TEXT_FG;
 extern WORD font_count;         /* Number of fonts in driver */
 extern WORD deftxbuf[];         /* Default text scratch buffer */
 extern const WORD scrtsiz;      /* Default offset to large text buffer */
-extern WORD scrpt2;             /* Offset to large text buffer */
-extern WORD *scrtchp;           /* Pointer to text scratch buffer */
+extern WORD SCRPT2;             /* Offset to large text buffer */
+extern WORD *SCRTCHP;           /* Pointer to text scratch buffer */
 
 extern Fonthead fon6x6;         /* See bios/fntxxx.c */
 extern Fonthead fon8x8;         /* See bios/fntxxx.c */
@@ -108,8 +108,8 @@ void vdi_v_gtext(Vwk * vwk)
     YMX_CLIP = vwk->ymx_clip;
     STYLE = vwk->style;
     CHUP = vwk->chup;
-    scrpt2 = vwk->scrpt2;
-    scrtchp = vwk->scrtchp;
+    SCRPT2 = vwk->scrpt2;
+    SCRTCHP = vwk->scrtchp;
 
     count = CONTRL[3];
     if (count > 0) {

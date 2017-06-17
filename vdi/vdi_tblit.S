@@ -185,8 +185,8 @@
         .extern _YMN_CLIP,_YMX_CLIP
         .extern _XACC_DDA
         .extern _DDA_INC
-        .extern _scrpt2
-        .extern _scrtchp
+        .extern _SCRPT2
+        .extern _SCRTCHP
         .extern _shift_offset
 
 
@@ -323,16 +323,16 @@
 //                                                  // small + large buffer
 
 /////////////////////////////////////////////////////////////////////////
-//  _text_blt expects variables scratchp & scrpt2 to be                 //
+//  _text_blt expects variables SCRTCHP & SCRPT2 to be                  //
 //           initialized as follows:                                    //
 //                                                                      //
-//   _scrtchp:  is a long word pointer to the base of a buffer with at  //
+//   _SCRTCHP:  is a long word pointer to the base of a buffer with at  //
 //              least buf_siz bytes available for scratch use           //
 //                                                                      //
-//   _scrpt2:   is a word offset within the buffer partitioning it into //
+//   _SCRPT2:   is a word offset within the buffer partitioning it into //
 //              a small and a large segment. Should be set to cel_siz   //
 //                                                                      //
-//      NOTE: _scrtchp & _scrpt2 must be initialized to an even pointer //
+//      NOTE: _SCRTCHP & _SCRPT2 must be initialized to an even pointer //
 //               even offset respectively                               //
 /////////////////////////////////////////////////////////////////////////
 
@@ -477,7 +477,7 @@ _text_blt:
         move.w  _DESTY,-(a1)
         move.w  _CHUP,-(a1)
 
-        move.w  _scrpt2,a0              //use big buffer
+        move.w  _SCRPT2,a0              //use big buffer
         move.w  DELY(a6),d3
         tst.w   _DOUBLE                 //doubling?
         jne     adr_dbl                 //br if no
@@ -746,7 +746,7 @@ no_out:
         neg.w   d0
         subq.w  #1,d1                   // start of bottom line
         mulu    d1,d0
-        movea.l _scrtchp,a1
+        movea.l _SCRTCHP,a1
         adda.w  buffa(a6),a1            // use this logical buffer
         move.l  a1,sform(a6)            // this will be new source address
         btst    #OUTLINE,d2
@@ -2067,7 +2067,7 @@ top_src:
         lsl.w   d5,d0
         addq.w  #2,d0                   //form width is height / 8 + 1
         move.w  d0,d_next(a6)
-        movea.l _scrtchp,a1
+        movea.l _SCRTCHP,a1
         adda.w  buffb(a6),a1
 
         tst.w   chup_flag(a6)           //determine if 90 or 270 rotation
@@ -2144,7 +2144,7 @@ rot_nneg:
 repexit:
         clr.w   _SOURCEX
 repexit3:
-        movea.l _scrtchp,a2
+        movea.l _SCRTCHP,a2
         adda.w  d0,a2
         move.l  a2,sform(a6)
         clr.w   _SOURCEY
@@ -2164,7 +2164,7 @@ upsd_dwn:
         subq.w  #1,d2                   //for dbra, my sweetie
         mulu    d1,d0                   //d0 pts to bottom of new form
         add.w   buffb(a6),d0
-        movea.l _scrtchp,a1
+        movea.l _SCRTCHP,a1
         adda.w  d0,a1                   //a1 -> last word in form
         jra     strtflip
 upsd_lp:
@@ -2187,7 +2187,7 @@ strtflip:
         dbra    d1,upsd_lp
 
         move.w  d_next(a6),s_next(a6)
-        movea.l _scrtchp,a1
+        movea.l _SCRTCHP,a1
         adda.w  buffb(a6),a1
         move.l  a1,sform(a6)
         move.w  _SOURCEX,d0
@@ -2227,8 +2227,8 @@ replicat:
 
         move.w  d2,height(a6)           //# of rows to duplicate
         move.w  d1,width(a6)
-        move.l  _scrtchp,a1
-        adda.w  _scrpt2,a1              //dest ptr
+        move.l  _SCRTCHP,a1
+        adda.w  _SCRPT2,a1              //dest ptr
 
         btst    #OUTLINE,STYLE+1(a6)    //outline after double?
         jeq     noline                  //br if not
@@ -2334,17 +2334,17 @@ nrpndoub:
 repexit1:
         btst    #OUTLINE,STYLE+1(a6)
         jeq     repexit2
-        move.l  _scrtchp,a0
-        adda.w  _scrpt2,a0
+        move.l  _SCRTCHP,a0
+        adda.w  _SCRPT2,a0
         move.w  d1,d7
         lea     2(a0,d7.w),a1
         jbsr    outlin1
-        move.w  _scrpt2,d0
+        move.w  _SCRPT2,d0
         add.w   d_next(a6),d0
         move.w  #15,_SOURCEX
         jra     repexit3
 repexit2:
-        move.w  _scrpt2,d0
+        move.w  _SCRPT2,d0
         jra     repexit
 //
 /////////////////////////////

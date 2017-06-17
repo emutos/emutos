@@ -10,7 +10,7 @@
 |                   All Rights Reserved Worldwide                       #
 |                                                                       #
 |########################################################################
-| Translated on Fri May 19 01:54:48 2017 by version 2.6.0 of PortAsm translator
+| Translated on Sat Jun 17 18:33:58 2017 by version 2.6.0 of PortAsm translator
 | PortAsm Licence Number #3250
 | Target assembler:    Gnu 'gas'
 |
@@ -114,10 +114,10 @@
 	.extern	_XACC_DDA
 |;;           .extern _DDA_INC         | [46]
 	.extern	_DDA_INC
-|;;           .extern _scrpt2          | [47]
-	.extern	_scrpt2
-|;;           .extern _scrtchp         | [48]
-	.extern	_scrtchp
+|;;           .extern _SCRPT2          | [47]
+	.extern	_SCRPT2
+|;;           .extern _SCRTCHP         | [48]
+	.extern	_SCRTCHP
 |;;           .extern _shift_offset    | [49]
 	.extern	_shift_offset
 
@@ -186,7 +186,7 @@ _text_blt:
       move.w   _DESTY,-(%a1)           | [98]
       move.w   _CHUP,-(%a1)            | [99]
 
-      movea.w  _scrpt2,%a0             | [101]
+      movea.w  _SCRPT2,%a0             | [101]
       move.w   (-106,%a6),%d3          | [102]
       tst.w    _DOUBLE                 | [103 NE]
       jne      adr_dbl                 | [104]
@@ -587,7 +587,7 @@ no_out:
 	subq.l   #1,%d4
 |;;   mulu      d1,d0                  | [353]
 	mulu.w   %d4,%d0
-      movea.l  _scrtchp,%a1            | [354]
+      movea.l  _SCRTCHP,%a1            | [354]
 |;;   adda.w    -2(a6),a1              | [355]
 	mvs.w    (-2,%a6),%d3
 	adda.l   %d3,%a1
@@ -2616,7 +2616,7 @@ top_src:
 |;;   addq.w    #2,d0                  | [1547]
 	addq.l   #2,%d0
       move.w   %d0,(-18,%a6)           | [1548]
-      movea.l  _scrtchp,%a1            | [1549]
+      movea.l  _SCRTCHP,%a1            | [1549]
 |;;   adda.w    -4(a6),a1              | [1550]
 	mvs.w    (-4,%a6),%d4
 	adda.l   %d4,%a1
@@ -2780,7 +2780,7 @@ repexit3:
 |***	SAVE	d1	***
 	lea      -4(%a7),%a7
 	movem.l  %d1,(%a7)
-      movea.l  _scrtchp,%a2            | [1626]
+      movea.l  _SCRTCHP,%a2            | [1626]
 |;;   adda.w    d0,a2                  | [1627]
 	mvs.w    %d0,%d1
 	adda.l   %d1,%a2
@@ -2817,7 +2817,7 @@ upsd_dwn:
 	mvz.w    (-4,%a6),%d4
 	ori.l    #0xffff0000,%d6
 	add.l    %d4,%d6
-      movea.l  _scrtchp,%a1            | [1646]
+      movea.l  _SCRTCHP,%a1            | [1646]
 |;;   adda.w    d0,a1                  | [1647]
 	ext.l    %d6
 	adda.l   %d6,%a1
@@ -2905,7 +2905,7 @@ strtflip:
 	move     %d7,%CCR
 
       move.w   (-18,%a6),(-16,%a6)     | [1668]
-      movea.l  _scrtchp,%a1            | [1669]
+      movea.l  _SCRTCHP,%a1            | [1669]
 |;;   adda.w    -4(a6),a1              | [1670]
 	mvs.w    (-4,%a6),%d5
 	adda.l   %d5,%a1
@@ -2975,9 +2975,9 @@ replicat:
 
       move.w   %d2,(-22,%a6)           | [1707]
       move.w   %d1,(-20,%a6)           | [1708]
-      movea.l  _scrtchp,%a1            | [1709]
-|;;   adda.w    _scrpt2,a1             | [1710]
-	mvs.w    _scrpt2,%d0
+      movea.l  _SCRTCHP,%a1            | [1709]
+|;;   adda.w    _SCRPT2,a1             | [1710]
+	mvs.w    _SCRPT2,%d0
 	adda.l   %d0,%a1
 
       btst     #4,(-96+1,%a6)          | [1712 EQ]
@@ -3241,9 +3241,9 @@ nrpndoub:
 repexit1:
       btst     #4,(-96+1,%a6)          | [1814 EQ]
       jeq      repexit2                | [1815]
-      movea.l  _scrtchp,%a0            | [1816]
-|;;   adda.w    _scrpt2,a0             | [1817]
-	mvs.w    _scrpt2,%d0
+      movea.l  _SCRTCHP,%a0            | [1816]
+|;;   adda.w    _SCRPT2,a0             | [1817]
+	mvs.w    _SCRPT2,%d0
 	adda.l   %d0,%a0
       move.w   %d1,%d7                 | [1818]
 |;;   lea       2(a0,d7.w),a1          | [1819]
@@ -3256,7 +3256,7 @@ repexit1:
 |***	SAVE	d1-d2	***
 	lea      -8(%a7),%a7
 	movem.l  %d1-%d2,(%a7)
-      move.w   _scrpt2,%d0             | [1821]
+      move.w   _SCRPT2,%d0             | [1821]
 |;;   add.w     -18(a6),d0             | [1822]
 	move.w   %d0,%d2
 	move.w   (-18,%a6),%d1
@@ -3270,7 +3270,7 @@ repexit1:
 	lea      8(%a7),%a7
       jra      repexit3                | [1824]
 repexit2:
-      move.w   _scrpt2,%d0             | [1826]
+      move.w   _SCRPT2,%d0             | [1826]
 |***	RESTORE	d4-d6	***
 	movem.l  (%a7),%d4-%d6
 	lea      12(%a7),%a7
