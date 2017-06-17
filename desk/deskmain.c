@@ -161,6 +161,9 @@ static const BYTE ILL_ALWAYS[] = {
 #if !CONF_WITH_FILEMASK
     MASKITEM,
 #endif
+#if !CONF_WITH_BLITTER
+    BLITITEM,
+#endif
     0 };
 
 /*
@@ -201,10 +204,12 @@ static BYTE *ad_ptext;
 static BYTE *ad_picon;
 
 static int can_change_resolution;
+static int blitter_is_present;
 
 static void detect_features(void)
 {
     can_change_resolution = rez_changeable();
+    blitter_is_present = Blitmode(-1) & 0x0002;
 }
 
 
@@ -342,6 +347,15 @@ static void men_update(void)
 
 #if CONF_WITH_SHUTDOWN
     menu_ienable(tree, QUITITEM, can_shutdown());
+#endif
+#if CONF_WITH_BLITTER
+    if (blitter_is_present)
+    {
+        menu_ienable(tree, BLITITEM, TRUE);
+        menu_icheck(tree, BLITITEM, G.g_blitter);
+    }
+    else
+        menu_ienable(tree, BLITITEM, FALSE);
 #endif
 }
 
@@ -602,6 +616,15 @@ static WORD do_optnmenu(WORD item)
             done = TRUE;
         }
         break;
+#if CONF_WITH_BLITTER
+    case BLITITEM:
+#if 0               //FIXME: commented out until some blitter code is added
+        G.g_blitter = !G.g_blitter;
+        menu_icheck(G.a_trees[ADMENU], BLITITEM, G.g_blitter);  /* flip blit mode */
+        Blitmode(G.g_blitter);
+#endif
+        break;
+#endif
     }
 
     return done;
@@ -1064,6 +1087,7 @@ static void cnx_put(void)
     G.g_cnxsave.cs_mnuclick = G.g_cmclkpref;
     G.g_cnxsave.cs_timefmt = G.g_ctimeform;
     G.g_cnxsave.cs_datefmt = G.g_cdateform;
+    G.g_cnxsave.cs_blitter = G.g_blitter;
 
     /*
      * first, count the unused slots & initialise them
@@ -1114,6 +1138,7 @@ static void cnx_get(void)
     G.g_cmclkpref = G.g_cnxsave.cs_mnuclick;
     G.g_ctimeform = G.g_cnxsave.cs_timefmt;
     G.g_cdateform = G.g_cnxsave.cs_datefmt;
+    G.g_blitter   = G.g_cnxsave.cs_blitter;
     G.g_cdclkpref = evnt_dclick(G.g_cdclkpref, TRUE);
     G.g_cmclkpref = menu_click(G.g_cmclkpref, TRUE);
 
@@ -1610,6 +1635,13 @@ WORD deskmain(void)
     menu_icheck(G.a_trees[ADMENU], G.g_csortitem, 1);
 
     menu_ienable(G.a_trees[ADMENU], RESITEM, can_change_resolution);
+
+    if (blitter_is_present)
+    {
+        menu_ienable(G.a_trees[ADMENU], BLITITEM, 1);
+        menu_icheck(G.a_trees[ADMENU], BLITITEM, G.g_blitter);
+        Blitmode(G.g_blitter?1:0);
+    }
 
     /* initialize desktop and its objects */
     app_blddesk();

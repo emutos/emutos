@@ -167,6 +167,7 @@ typedef struct
 /*GLOBAL*/ WORD         g_cmclkpref;            /* curr. menu click     */
 /*GLOBAL*/ WORD         g_ctimeform;            /* curr. time format    */
 /*GLOBAL*/ WORD         g_cdateform;            /* curr. date format    */
+/*GLOBAL*/ WORD         g_blitter;              /* curr. blitter enable */
 
 /*GLOBAL*/ BYTE         g_1text[256];
 

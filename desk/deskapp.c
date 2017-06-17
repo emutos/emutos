@@ -88,6 +88,7 @@
 #define INF_E1_DEFAULT  (INF_E1_CONFDEL|INF_E1_CONFCPY|2)   /* default if no .INF */
 
                             /* 'E' byte 2 */
+#define INF_E2_BLITTER  0x80    /* 1 => blitter is enabled */
 #define INF_E2_IDTDATE  0x40    /* 1 => get date format from _IDT (ignore INF_E2_DAYMONTH bit) */
 #define INF_E2_IDTTIME  0x20    /* 1 => get time format from _IDT (ignore INF_E2_24HCLOCK bit) */
 #define INF_E2_ALLOWOVW 0x10    /* 1 => allow overwrites (yes, it's backwards) */
@@ -811,6 +812,7 @@ void app_start(void)
             G.g_cnxsave.cs_dblclick = envr & INF_E1_DCMASK;
 
             pcurr = scan_2(pcurr, &envr);
+            G.g_cnxsave.cs_blitter = ( (envr & INF_E2_BLITTER) != 0);
             G.g_cnxsave.cs_confovwr = ( (envr & INF_E2_ALLOWOVW) == 0);
             G.g_cnxsave.cs_mnuclick = ( (envr & INF_E2_MNUCLICK) != 0);
             menu_click(G.g_cnxsave.cs_mnuclick, 1); /* tell system */
@@ -996,7 +998,8 @@ void app_save(WORD todisk)
     env1 |= (G.g_cnxsave.cs_confdel) ? INF_E1_CONFDEL : 0x00;
     env1 |= (G.g_cnxsave.cs_confcpy) ? INF_E1_CONFCPY : 0x00;
     env1 |= G.g_cnxsave.cs_dblclick & INF_E1_DCMASK;
-    env2 = (G.g_cnxsave.cs_confovwr) ? 0x00 : INF_E2_ALLOWOVW;
+    env2 = (G.g_cnxsave.cs_blitter) ? INF_E2_BLITTER : 0x00;
+    env2 |= (G.g_cnxsave.cs_confovwr) ? 0x00 : INF_E2_ALLOWOVW;
     env2 |= (G.g_cnxsave.cs_mnuclick) ? INF_E2_MNUCLICK : 0x00;
     switch(G.g_cnxsave.cs_datefmt)
     {

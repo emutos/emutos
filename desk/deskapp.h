@@ -125,6 +125,7 @@ typedef struct
     BYTE cs_mnuclick;           /* Drop down menu click mode */
     BYTE cs_timefmt;            /* Time format */
     BYTE cs_datefmt;            /* Date format */
+    BYTE cs_blitter;            /* Blitter enabled */
     WSAVE cs_wnode[NUM_WNODES]; /* window save info */
 } CSAVE;
 
