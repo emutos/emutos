@@ -1080,7 +1080,7 @@ put_pix(void)
     /* co-ordinates can wrap, but cannot write outside screen,
      * alternatively this could check against v_bas_ad+vram_size()
      */
-    if (addr < (UWORD*)v_bas_ad || addr >= get_start_addr(v_hz_rez, v_vt_rez)) {
+    if (addr < (UWORD*)v_bas_ad || addr >= get_start_addr(V_REZ_HZ, V_REZ_VT)) {
         return;
     }
     color = INTIN[0];           /* device dependent encoded color bits */

@@ -84,7 +84,7 @@ void font_set_default(WORD cellheight)
         font = &fon8x16;
         break;
     default:
-        if (v_vt_rez < 400)
+        if (V_REZ_VT < 400)
             font = &fon8x8;
         else
             font = &fon8x16;
@@ -92,8 +92,8 @@ void font_set_default(WORD cellheight)
 
     v_cel_ht = font->form_height;
     v_cel_wr = v_lin_wr * font->form_height;
-    v_cel_mx = (v_hz_rez / font->max_cell_width) - 1;
-    v_cel_my = (v_vt_rez / font->form_height) - 1;
+    v_cel_mx = (V_REZ_HZ / font->max_cell_width) - 1;
+    v_cel_my = (V_REZ_VT / font->form_height) - 1;
 
     v_fnt_wr = font->form_width;
     v_fnt_st = font->first_ade;

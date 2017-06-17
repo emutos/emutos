@@ -385,8 +385,8 @@ void vdi_v_opnwk(Vwk * vwk)
     }
 
     /* Copy data from linea variables */
-    DEV_TAB[0] = v_hz_rez-1;
-    DEV_TAB[1] = v_vt_rez-1;
+    DEV_TAB[0] = V_REZ_HZ-1;
+    DEV_TAB[1] = V_REZ_VT-1;
     INQ_TAB[4] = v_planes;
 
     /* get pixel sizes for use by routines in vdi_gdp.c & vdi_line.c */
@@ -453,7 +453,7 @@ void vdi_v_clrwk(Vwk * vwk)
     ULONG size;
 
     /* Calculate screen size */
-    size = (ULONG)v_lin_wr * v_vt_rez;
+    size = (ULONG)v_lin_wr * V_REZ_VT;
 
     /* clear the screen */
     memset(v_bas_ad, 0, size);

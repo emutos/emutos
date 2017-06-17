@@ -369,7 +369,7 @@ void text_init(void)
     id_save = fon6x6.font_id;
 
     def_font = NULL;
-    cell_height = (v_vt_rez >= 400) ? 16 : 8;   /* to select among default fonts */
+    cell_height = (V_REZ_VT >= 400) ? 16 : 8;   /* to select among default fonts */
 
     chain_ptr = font_ring;
     i = 0;

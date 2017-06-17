@@ -49,9 +49,9 @@ extern UWORD v_cel_mx;          /* number of columns - 1 */
 extern UWORD v_cel_my;          /* number of rows - 1 */
 extern UWORD v_cur_cx;          /* current cursor column */
 extern UWORD v_cur_cy;          /* current cursor row */
-extern UWORD v_hz_rez;          /* screen horizontal resolution */
-extern UWORD v_vt_rez;          /* screen vertical resolution */
-extern UWORD v_bytes_lin;       /* width of line in bytes */
+extern UWORD V_REZ_HZ;          /* screen horizontal resolution */
+extern UWORD V_REZ_VT;          /* screen vertical resolution */
+extern UWORD BYTES_LIN;         /* width of line in bytes */
 
 /* Line-drawing related variables */
 extern WORD X1, Y1, X2, Y2;     /* coordinates for end points */

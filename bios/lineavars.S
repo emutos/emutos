@@ -62,11 +62,11 @@
                 .globl  _v_fnt_nd
                 .globl  _v_fnt_st
                 .globl  _v_fnt_wr
-                .globl  _v_hz_rez
+                .globl  _V_REZ_HZ
                 .globl  _v_off_ad
                 .globl  _v_stat_0
-                .globl  _v_vt_rez
-                .globl  _v_bytes_lin
+                .globl  _V_REZ_VT
+                .globl  _BYTES_LIN
                 .globl  _GCURX
                 .globl  _GCURY
                 .globl  _HIDE_CNT
@@ -195,12 +195,12 @@ _v_fnt_ad:      .ds.l   1       // -22  pointer to current monospace font
 _v_fnt_nd:      .ds.w   1       // -18  ascii code of last cell in font
 _v_fnt_st:      .ds.w   1       // -16  ascii code of first cell in font
 _v_fnt_wr:      .ds.w   1       // -14  font cell wrap
-_v_hz_rez:      .ds.w   1       // -12  horizontal resolution in pixels
+_V_REZ_HZ:      .ds.w   1       // -12  horizontal resolution in pixels
 _v_off_ad:      .ds.l   1       // -10  pointer to font offset table
 _v_stat_0:      .ds.b   1       // -6   video cell system status (was in words)
                 .ds.b   1       //      dummy
-_v_vt_rez:      .ds.w   1       // -4   vertical resolution in pixels
-_v_bytes_lin:   .ds.w   1       // -2   byte per screen line
+_V_REZ_VT:      .ds.w   1       // -4   vertical resolution in pixels
+_BYTES_LIN:     .ds.w   1       // -2   byte per screen line
 
 
 
