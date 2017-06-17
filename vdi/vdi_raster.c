@@ -964,7 +964,7 @@ void linea_raster(void)
 
     raster.clipper = NULL;
     raster.clip = 0;
-    raster.multifill = multifill;
+    raster.multifill = MFILL;
     raster.transparent = COPYTRAN;
 
     cpy_raster(&raster, &vdi_info);

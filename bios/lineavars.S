@@ -234,8 +234,8 @@ _v_bytes_lin:   .ds.w   1       // -2   byte per screen line
                 .globl  _v_planes
                 .globl  _v_lin_wr
 
-                .globl  _patptr
-                .globl  _patmsk
+                .globl  _PATPTR
+                .globl  _PATMSK
 
                 .globl  _CLIP
                 .globl  _XMN_CLIP
@@ -243,7 +243,7 @@ _v_bytes_lin:   .ds.w   1       // -2   byte per screen line
                 .globl  _YMN_CLIP
                 .globl  _YMX_CLIP
 
-                .globl  _multifill
+                .globl  _MFILL
                 .globl  _XACC_DDA
                 .globl  _DDA_INC
                 .globl  _T_SCLSTS
@@ -303,9 +303,9 @@ _X1:            .ds.w   1               // _X1 coordinate for squares
 _Y1:            .ds.w   1               // _Y1 coordinate for squares
 _X2:            .ds.w   1               // _X2 coordinate for squares
 _Y2:            .ds.w   1               // _Y2 coordinate for squares
-_patptr:        .ds.l   1               // fill pattern pointer
-_patmsk:        .ds.w   1               // fill pattern "mask" (line count)
-_multifill:     .ds.w   1               // multi-plane fill flag. (0 => 1 plane)
+_PATPTR:        .ds.l   1               // fill pattern pointer
+_PATMSK:        .ds.w   1               // fill pattern "mask" (line count)
+_MFILL:         .ds.w   1               // multi-plane fill flag. (0 => 1 plane)
 
 _CLIP:          .ds.w   1               // clipping flag.
 _XMN_CLIP:      .ds.w   1               // x minimum clipping value.

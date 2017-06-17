@@ -384,7 +384,7 @@ static __inline__ void horzline(const Vwk * vwk, Line * line)
 extern WORD X1, Y1, X2, Y2, WRT_MODE;
 extern WORD FG_BP_1, FG_BP_2, FG_BP_3, FG_BP_4;
 extern WORD CLIP, XMN_CLIP, XMX_CLIP, YMN_CLIP, YMX_CLIP;
-extern UWORD *patptr, patmsk;
+extern UWORD *PATPTR, PATMSK;
 
 
 /*
@@ -421,9 +421,9 @@ static void lineA2Attrib(VwkAttrib *attr)
 {
     attr->clip = CLIP;      /* only used by polygon drawing */
     attr->multifill = 0;    /* only raster copy supports multi-plane patterns */
-    if (patptr) {
-        attr->patmsk = patmsk;
-        attr->patptr = patptr;
+    if (PATPTR) {
+        attr->patmsk = PATMSK;
+        attr->patptr = PATPTR;
     } else {
         /* pattern is always needed for draw_rect_common, default to solid */
         attr->patmsk = 0;

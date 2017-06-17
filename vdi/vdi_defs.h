@@ -202,7 +202,7 @@ extern WORD TERM_CH;
 
 /* Line-A Bit-Blt / Copy raster form variables */
 extern WORD COPYTRAN;
-extern WORD multifill;
+extern WORD MFILL;
 
 /* referenced by Line-A flood fill */
 extern Vwk *CUR_WORK;           /* pointer to currently-open virtual workstation */
