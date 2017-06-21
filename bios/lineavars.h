@@ -61,6 +61,7 @@ extern WORD CLIP;               /* clipping flag */
 extern WORD XMN_CLIP, XMX_CLIP, YMN_CLIP, YMX_CLIP; /* clipping rectangle */
 extern UWORD *PATPTR;           /* fill pattern pointer */
 extern UWORD PATMSK;            /* pattern mask */
+extern WORD MFILL;              /* multiplane fill flag */
 
 extern void linea_init(void);   /* initialize variables */
 

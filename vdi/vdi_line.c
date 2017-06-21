@@ -14,6 +14,7 @@
 #include "intmath.h"
 #include "vdi_defs.h"
 #include "../bios/lineavars.h"
+#include "../bios/blitter.h"
 
 
 extern void linea_rect(void);     /* called only from linea.S */
@@ -456,6 +457,11 @@ void linea_hline(void)
 {
     VwkAttrib attr;
     Rect line;
+
+#if CONF_WITH_BLITTER
+    if (blitter_hline())    /* if the blitter version ran, */
+        return;             /* we're done                  */
+#endif
 
     line.x1 = X1;
     line.x2 = X2;
