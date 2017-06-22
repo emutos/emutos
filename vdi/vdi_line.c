@@ -411,7 +411,6 @@ static UWORD linea_color(void)
 static void lineA2Attrib(VwkAttrib *attr)
 {
     attr->clip = CLIP;      /* only used by polygon drawing */
-    attr->multifill = 0;    /* only raster copy supports multi-plane patterns */
     if (PATPTR) {
         attr->patmsk = PATMSK;
         attr->patptr = PATPTR;
@@ -445,6 +444,7 @@ void linea_rect(void)
     line.y2 = Y2;
 
     lineA2Attrib(&attr);
+    attr.multifill = MFILL;         /* linea5 supports MFILL */
     draw_rect_common(&attr, &line);
 }
 
@@ -463,6 +463,7 @@ void linea_hline(void)
     line.y2 = Y1;
 
     lineA2Attrib(&attr);
+    attr.multifill = MFILL;         /* linea4 supports MFILL */
     draw_rect_common(&attr, &line);
 }
 
@@ -478,6 +479,7 @@ void linea_polygon(void)
     VwkAttrib attr;
 
     lineA2Attrib(&attr);
+    attr.multifill = 0;         /* linea6 does not support MFILL */
     if (CLIP) {
         /* clc_flit does only X-clipping */
         clipper.xmn_clip = XMN_CLIP;
@@ -499,6 +501,7 @@ void linea_fill(void)
     VwkClip clipper;
     VwkAttrib attr;
     lineA2Attrib(&attr);
+    attr.multifill = 0;         /* lineaf does not support MFILL */
     attr.color = CUR_WORK->fill_color;
     if (CLIP) {
         clipper.xmn_clip = XMN_CLIP;
