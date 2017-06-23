@@ -869,7 +869,7 @@
 #endif
 
 /*
- * Set CONF_WITH_BLITTER to 1 to enable minimal Blitmode() support
+ * Set CONF_WITH_BLITTER to 1 to enable blitter support
  */
 #ifndef CONF_WITH_BLITTER
 # define CONF_WITH_BLITTER 1
