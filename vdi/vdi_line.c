@@ -39,6 +39,11 @@ typedef struct
 } BLITPARM;
 
 /*
+ * bit mask for 'standard' values of patmsk
+ */
+#define STD_PATMSKS ((1<<15) | (1<<7) | (1<<3) | (1<<1) | (1<<0))
+
+/*
  * blitter ops for draw/nodraw cases for wrt_mode 0-3
  */
 const UBYTE op_draw[] = { 0x03, 0x07, 0x06, 0x0d };
@@ -248,6 +253,89 @@ static BOOL blit_hline(const VwkAttrib *attr, const Rect *rect, BLITPARM *b)
 
     return TRUE;
 }
+
+
+/*
+ * blit_rect_common: blitter version of draw_rect_common
+ *
+ * Please refer to draw_rect_common for further information
+ */
+BOOL blit_rect_common(const VwkAttrib *attr, const Rect *rect, BLITPARM *b)
+{
+    const UWORD patmsk = attr->patmsk;
+    const UWORD *patptr = attr->patptr;
+    UWORD color = attr->color;
+    const WORD ycount = rect->y2 - rect->y1 + 1;
+    UWORD *screen_addr = b->addr;
+    UBYTE status;
+    int i, plane;
+
+    /*
+     * the following blitter code works for 'standard' values of patmsk
+     * (i.e. 0, 1, 3, 7, or 15).  if we have a non-standard value, we
+     * handle it via the non-blitter code.
+     */
+    if ((patmsk >= 16) || ((STD_PATMSKS && (1<<patmsk)) == 0))
+        return FALSE;
+
+    /*
+     * flush the data cache to ensure that the screen memory is current
+     */
+    flush_data_cache(b->addr, v_lin_wr*ycount);
+
+    BLITTER->src_x_incr = 0;
+    BLITTER->endmask_1 = b->leftmask;
+    BLITTER->endmask_2 = 0xffff;
+    BLITTER->endmask_3 = b->rightmask;
+    BLITTER->dst_x_incr = v_planes * sizeof(WORD);
+    BLITTER->dst_y_incr = v_lin_wr - (v_planes*sizeof(WORD)*(b->width-1));
+    BLITTER->x_count = b->width;
+    status = BUSY | (rect->y1 & LINENO);    /* NOHOG mode */
+    BLITTER->skew = 0;
+
+    if (!attr->multifill)       /* only need to init halftone once */
+    {
+        for (i = 0; i < 16; i++)
+            BLITTER->halftone[i] = patptr[i & patmsk];
+    }
+
+    for (plane = 0; plane < v_planes; plane++, color >>= 1)
+    {
+        if (attr->multifill)    /* need to init halftone each time */
+        {
+            for (i = 0; i < 16; i++)
+                BLITTER->halftone[i] = patptr[i & patmsk];
+            patptr += 16;
+        }
+        BLITTER->dst_addr = screen_addr++;
+        BLITTER->y_count = ycount;
+        BLITTER->hop = HOP_HALFTONE_ONLY;
+        BLITTER->op = (color & 1) ? op_draw[attr->wrt_mode]: op_nodraw[attr->wrt_mode];
+
+        /*
+         * we run the blitter in the Atari-recommended way: use no-HOG mode,
+         * and manually restart the blitter until it's done.
+         */
+        BLITTER->status = status;
+        __asm__ __volatile__(
+        "lea    0xFFFF8A3C,a0\n\t"
+        "0:\n\t"
+        "tas    (a0)\n\t"
+        "nop\n\t"
+        "jbmi   0b\n\t"
+        :
+        :
+        : "a0", "memory", "cc"
+        );
+    }
+
+    /*
+     * invalidate any cached screen data
+     */
+    invalidate_data_cache(b->addr, v_lin_wr*ycount);
+
+    return TRUE;
+}
 #endif
 
 
@@ -301,12 +389,18 @@ void draw_rect_common(const VwkAttrib *attr, const Rect *rect)
         b.rightmask = rightmask;
         b.width = width;
         b.addr = addr;
+
         /*
          * special handling for common horizontal line case
          */
         if (rect->y1 == rect->y2)
         {
             if (blit_hline(attr, rect, &b))         /* if it ran ok, */
+                return;                             /* we're done    */
+        }
+        else
+        {
+            if (blit_rect_common(attr, rect, &b))   /* if it ran ok, */
                 return;                             /* we're done    */
         }
     }
