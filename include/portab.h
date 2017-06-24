@@ -178,4 +178,25 @@ typedef ULONG ULONG_ALIAS MAY_ALIAS;
 typedef LONG LONG_ALIAS MAY_ALIAS;
 typedef BYTE *BYTEPTR_ALIAS MAY_ALIAS;
 
+/*
+ * GCC 7 needs special care to avoid warning when using switch/case fallthrough:
+ * warning: this statement may fall through
+ * This warning is generated when -Wimplicit-fallthrough is enabled, which is
+ * the case when compiling with -Wextra (a.k.a -W).
+ *
+ * See documentation of -Wimplicit-fallthrough
+ * https://gcc.gnu.org/onlinedocs/gcc-7.1.0/gcc/Warning-Options.html#index-Wimplicit-fallthrough
+ * https://developers.redhat.com/blog/2017/03/10/wimplicit-fallthrough-in-gcc-7/
+ *
+ * Special comments such as -fallthrough can be put just before a switch label
+ * to disable the warning. But this does not work if there is a #endif between
+ * both.
+ * To avoid any ambiguity, we use the explicit FALLTHROUGH macro.
+ */
+#if __GNUC_PREREQ(7, 1)
+# define FALLTHROUGH __attribute__ ((fallthrough))
+#else
+# define FALLTHROUGH NULL_FUNCTION()
+#endif
+
 #endif /* PORTAB_H */

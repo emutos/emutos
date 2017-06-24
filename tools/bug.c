@@ -1541,7 +1541,7 @@ static int print_canon(FILE *f, const char *t, const char *prefix,
           rc = err;
         line_start = t + 1;
       }
-      /* fallthrough */
+      FALLTHROUGH;
     case ']':
       if(gem_alert) {
         gem_alert = 0;
@@ -1556,7 +1556,7 @@ static int print_canon(FILE *f, const char *t, const char *prefix,
         if ((err=alert_check(line_start, t, 0)) < 0)
           rc = err;
       }
-      /* fallthrough */
+      FALLTHROUGH;
 #endif /* CANON_GEM_ALERT */
     default:
       a = ((unsigned)(*t))&0xFF;
