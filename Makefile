@@ -272,7 +272,7 @@ desk_copts =
 #
 
 # Shell command to get the address of a symbol
-FUNCTION_SHELL_GET_SYMBOL_ADDRESS = awk '/^ *0x[^ ]* *$(1)( |$$)/{print $$1}' $(2)
+FUNCTION_SHELL_GET_SYMBOL_ADDRESS = printf 0x%08x $$(awk '/^ *0x[^ ]* *$(1)( |$$)/{print $$1}' $(2))
 
 # Function to get the address of a symbol into a Makefile variable
 # $(1) = symbol name
