@@ -618,11 +618,9 @@ static WORD do_optnmenu(WORD item)
         break;
 #if CONF_WITH_BLITTER
     case BLITITEM:
-#if 0               //FIXME: commented out until some blitter code is added
         G.g_blitter = !G.g_blitter;
         menu_icheck(G.a_trees[ADMENU], BLITITEM, G.g_blitter);  /* flip blit mode */
         Blitmode(G.g_blitter);
-#endif
         break;
 #endif
     }
