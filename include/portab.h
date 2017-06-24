@@ -126,8 +126,11 @@ typedef void (*PFVOID)(void);
  * Note that the name of this macro is misleading:
  * it actually produces a compilation bug when the parameter is *not zero*
  * However, when the parameter is zero, it evaluates as 0, hence the name.
+ *
+ * Additional "int dummy" added by VRI to avoid warning "struct has no named
+ * members" when compiling with -pedantic.
  */
-#define BUILD_BUG_ON_ZERO(e) (sizeof(struct { int:-!!(e); }))
+#define BUILD_BUG_ON_ZERO(e) (sizeof(struct { int:-!!(e); int dummy; }) & 0)
 
 #if __GNUC_PREREQ(3, 3)
 /* &a[0] degrades to a pointer: a different type from an array */
