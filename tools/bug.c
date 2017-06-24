@@ -54,6 +54,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <time.h>
+#include "../include/portab.h"
 
 #define VERSION "0.2e"
 
@@ -70,8 +71,6 @@
 #define LANGS_C  "util/langs.c"
 
 #define HERE fprintf(stderr, "%s:%d\n", __FUNCTION__, __LINE__);
-#define UNUSED(x) (void)(x) /* Unused variable */
-#define ARRAY_SIZE(array) ((int)(sizeof(array)/sizeof(array[0])))
 
 /*
  * typedefs

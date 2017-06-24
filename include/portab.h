@@ -9,9 +9,10 @@
  */
 
 /*
- * I guess now this file is just badly named. it just contains
- * common macros that were so often in the code that we just have
- * to keep them here.
+ * Warning: This header is included by both EmuTOS code (compiled with
+ * cross-compiler) and native tools such as "bug" (compiled with native
+ * compiler). So it must *not* assume that we are compiling for 68000,
+ * or that pointers are 32-bit.
  */
 
 #ifndef PORTAB_H
