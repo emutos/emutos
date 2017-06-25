@@ -446,23 +446,21 @@ bit_blt (void)
 
     /* setting of skew flags */
 
-    /* QUALIFIERS   ACTIONS   BITBLT DIRECTION: LEFT -> RIGHT */
-
-    /* equal Sx&F> */
-    /* spans Dx&F FXSR NFSR */
-
-    /* 0     0     0    1 |..ssssssssssssss|ssssssssssssss..|   */
-    /*   |......dddddddddd|dddddddddddddddd|dd..............|   */
-
-    /* 0     1      1  0 */
-    /*   |......ssssssssss|ssssssssssssssss|ss..............|   */
-    /*   |..dddddddddddddd|dddddddddddddd..|   */
-
-    /* 1     0     0    0 |..ssssssssssssss|ssssssssssssss..|   */
-    /*   |...ddddddddddddd|ddddddddddddddd.|   */
-
-    /* 1     1     1    1 |...sssssssssssss|sssssssssssssss.|   */
-    /*   |..dddddddddddddd|dddddddddddddd..|   */
+    /* QUALIFIERS   ACTIONS   BITBLT DIRECTION: LEFT -> RIGHT
+     * equal Sx&F>
+     * spans Dx&F FXSR NFSR
+     * 0     0      0    1  |..ssssssssssssss|ssssssssssssss..|
+     *                      |......dddddddddd|dddddddddddddddd|dd..............|
+     *
+     * 0     1      1    0  |......ssssssssss|ssssssssssssssss|ss..............|
+     *                      |..dddddddddddddd|dddddddddddddd..|
+     *
+     * 1     0      0    0  |..ssssssssssssss|ssssssssssssss..|
+     *                      |...ddddddddddddd|ddddddddddddddd.|
+     *
+     * 1     1      1    1  |...sssssssssssss|sssssssssssssss.|
+     *                      |..dddddddddddddd|dddddddddddddd..|
+     */
 
 #define mSkewFXSR    0x80
 #define mSkewNFSR    0x40
@@ -470,8 +468,8 @@ bit_blt (void)
     const UBYTE skew_flags [8] = {
         mSkewNFSR,              /* Source span < Destination span */
         mSkewFXSR,              /* Source span > Destination span */
-        0,                      /* Spans equal Shift Source right */
-        mSkewNFSR+mSkewFXSR,    /* Spans equal Shift Source left */
+        0,                      /* Spans equal, Shift Source right */
+        mSkewNFSR+mSkewFXSR,    /* Spans equal, Shift Source left */
 
         /* When Destination span is but a single word ... */
         0,                      /* Implies a Source span of no words */
