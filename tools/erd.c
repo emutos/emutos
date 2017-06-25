@@ -1664,7 +1664,10 @@ char temp[MAX_STRLEN];
 int *mmap, *dmap;
 ICONBLK *iconblk;
 char *base = (char *)rschdr;
-int wicon, hicon, w, h;
+int w, h;
+#ifdef ICON_RSC
+int wicon = 0, hicon = 0;
+#endif
 
     nib = rsh.nib;
     if (nib == 0)
@@ -1708,7 +1711,6 @@ int wicon, hicon, w, h;
     /*
      * then we create the actual icon mask/data arrays
      */
-    wicon = hicon = 0;
     for (i = 0; i < nib; i++, iconblk++) {
         w = get_short(&iconblk->ib_wicon);
         h = get_short(&iconblk->ib_hicon);
@@ -1719,12 +1721,12 @@ int wicon, hicon, w, h;
             fprintf(stderr, "error: height %d of icon %d is different than height %d\n", h, i, hicon);
         if (i != 0 && (w != wicon || h != hicon))
             error("mismatch in icon dimensions", NULL);
-#endif
         if (i == 0)
         {
             wicon = w;
             hicon = h;
         }
+#endif
         if (i == conditional_iconblk_start)
             fprintf(fp,"%s\n",other_cond.string);
         if (mmap[i] < 0) {      /* only create icon mask for an "unmapped" icon */
