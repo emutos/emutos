@@ -25,6 +25,12 @@
 #define    F1OP       8 // Offset of f1op_xx from mode_xx fragment
 #define    F2OP      22 // Offset of f2op_xx from mode_xx fragment
 
+// The following is the length of the instruction sequence that performs
+// the (source AND pattern) operation prior to mode_xx/f1op_xx/f2op_xx
+// code fragments
+#define SAP         2   // the size of 'and.w d7,d0' in 68K assembler
+
+
 /* Frame parameters - just for copyfrm.S and bitblt.S */
 
 #define FRAME_LEN   76
@@ -539,13 +545,16 @@ f1_drt:
 
 //  NOTE: all "f1op_xx" fragments are offset F1OP from "mode_xx" fragments
 //        all "f2op_xx" fragments are offset F2OP from "mode_xx" fragments
+//        every "mode_xx"/"f1op_xx"/"f2op_xx" fragment is preceded by an
+//         'S and P' fragment at negative offset SAP
 
 
         and.w   d7,d0           // S and P                                       4
 mode_00:
         clr.w   (a1)            // D' <- S=0                                    12
         jmp     (a3)            //                                               8
-        nop                     // Must be here to make fixed length block
+
+        .org    mode_00+F1OP-SAP
         and.w   d7,d0           // S and P                                       4
 f1op_00:
         not.w   d6              // D' <- 0                                       4
@@ -553,8 +562,7 @@ f1op_00:
         not.w   d6              //                                               4
         jmp     (a3)            //                                               8
 
-        .ds.w   2
-
+        .org    mode_00+F2OP-SAP
         and.w   d7,d0           // S and P                                       4
 f2op_00:
         not.w   d6              // D' <- 0
@@ -570,8 +578,7 @@ mode_01:
         and.w   d0,(a1)         // D' <- S and D                                12
         jmp     (a3)            //                                               8
 
-        .ds.w   1
-
+        .org    mode_01+F1OP-SAP
         and.w   d7,d0           // S and P                                       4
 f1op_01:
         not.w   d6
@@ -580,8 +587,7 @@ f1op_01:
         and.w   d0,(a1)
         jmp     (a3)
 
-        .ds.w   1
-
+        .org    mode_01+F2OP-SAP
         and.w   d7,d0           // S and P                                       4
 f2op_01:
         not.w   d6
@@ -598,6 +604,7 @@ mode_02:
         and.w   d0,(a1)         //                                              12
         jmp     (a3)            //                                               8
 
+        .org    mode_02+F1OP-SAP
         and.w   d7,d0           // S and P                                       4
 f1op_02:
         not.w   d0
@@ -606,8 +613,7 @@ f1op_02:
         eor.w   d6,(a1)
         jmp     (a3)
 
-        .ds.w   1
-
+        .org    mode_02+F2OP-SAP
         and.w   d7,d0           // S and P                                       4
 f2op_02:
         not.w   d0
@@ -623,8 +629,7 @@ mode_03:
         move.w  d0,(a1)         // D' <- S                                       8
         jmp     (a3)            //                                               8
 
-        .ds.w   1
-
+        .org    mode_03+F1OP-SAP
         and.w   d7,d0           // S and P                                       4
 f1op_03:
         move.w  (a1),d1         // D' <- S
@@ -634,6 +639,7 @@ f1op_03:
         move.w  d0,(a1)
         jmp     (a3)
 
+        .org    mode_03+F2OP-SAP
         and.w   d7,d0           // S and P                                       4
 f2op_03:
         move.w  (a1),d1         // D' <- S
@@ -650,6 +656,7 @@ mode_04:
         and.w   d0,(a1)         //                                              12
         jmp     (a3)            //                                               8
 
+        .org    mode_04+F1OP-SAP
         and.w   d7,d0           // S and P                                       4
 f1op_04:
         and.w   d6,d0
@@ -657,8 +664,7 @@ f1op_04:
         and.w   d0,(a1)
         jmp     (a3)
 
-        .ds.w   2
-
+        .org    mode_04+F2OP-SAP
         and.w   d7,d0           // S and P                                       4
 f2op_04:
         and.w   d6,d0
@@ -677,16 +683,14 @@ mode_06:
         eor.w   d0,(a1)         // D' <- S xor D                                12
         jmp     (a3)            //                                               8
 
-        .ds.w   1
-
+        .org    mode_06+F1OP-SAP
         and.w   d7,d0           // S and P                                       4
 f1op_06:
         and.w   d6,d0
         eor.w   d0,(a1)
         jmp     (a3)
 
-        .ds.w   3
-
+        .org    mode_06+F2OP-SAP
         and.w   d7,d0           // S and P                                       4
 f2op_06:
         and.w   d6,d0
@@ -700,16 +704,14 @@ mode_07:
         or.w    d0,(a1)         // D' <- S or D                                 12
         jmp     (a3)            //                                               8
 
-        .ds.w   1
-
+        .org    mode_07+F1OP-SAP
         and.w   d7,d0           // S and P                                       4
 f1op_07:
         and.w   d6,d0
         or.w    d0,(a1)
         jmp     (a3)
 
-        .ds.w   3
-
+        .org    mode_07+F2OP-SAP
         and.w   d7,d0           // S and P                                       4
 f2op_07:
         and.w   d6,d0
@@ -723,6 +725,7 @@ mode_08:
         not.w   (a1)            //                                              12
         jmp     (a3)            //                                               8
 
+        .org    mode_08+F1OP-SAP
         and.w   d7,d0           // S and P                                       4
 f1op_08:
         and.w   d6,d0
@@ -730,8 +733,7 @@ f1op_08:
         eor.w   d6,(a1)
         jmp     (a3)
 
-        .ds.w   2
-
+        .org    mode_08+F2OP-SAP
         and.w   d7,d0           // S and P                                       4
 f2op_08:
         and.w   d6,d0
@@ -746,6 +748,7 @@ mode_09:
         eor.w   d0,(a1)         //                                              12
         jmp     (a3)            //                                               8
 
+        .org    mode_09+F1OP-SAP
         and.w   d7,d0           // S and P                                       4
 f1op_09:
         and.w   d6,d0
@@ -753,8 +756,7 @@ f1op_09:
         eor.w   d6,(a1)
         jmp     (a3)
 
-        .ds.w   2
-
+        .org    mode_09+F2OP-SAP
         and.w   d7,d0           // S and P                                       4
 f2op_09:
         and.w   d6,d0
@@ -768,15 +770,13 @@ mode_10:
         not.w   (a1)            // D' <- not D                                  12
         jmp     (a3)            //                                               8
 
-        .ds.w   1
-
+        .org    mode_10+F1OP-SAP
         and.w   d7,d0           // S and P                                       4
 f1op_10:
         eor.w   d6,(a1)
         jmp     (a3)
 
-        .ds.w   4
-
+        .org    mode_10+F2OP-SAP
         and.w   d7,d0           // S and P                                       4
 f2op_10:
         eor.w   d6,(a1)
@@ -790,6 +790,7 @@ mode_11:
         or.w    d0,(a1)         //                                              12
         jmp     (a3)            //                                               8
 
+        .org    mode_11+F1OP-SAP
         and.w   d7,d0           // S and P                                       4
 f1op_11:
         eor.w   d6,(a1)
@@ -797,8 +798,7 @@ f1op_11:
         or.w    d0,(a1)
         jmp     (a3)
 
-        .ds.w   2
-
+        .org    mode_11+F2OP-SAP
         and.w   d7,d0           // S and P                                       4
 f2op_11:
         eor.w   d6,(a1)
@@ -814,6 +814,7 @@ mode_12:
         move.w  d0,(a1)         //                                               8
         jmp     (a3)            //                                               8
 
+        .org    mode_12+F1OP-SAP
         and.w   d7,d0           // S and P                                       4
 f1op_12:
         or.w    d6,(a1)
@@ -821,8 +822,7 @@ f1op_12:
         eor.w   d0,(a1)
         jmp     (a3)
 
-        .ds.w   2
-
+        .org    mode_12+F2OP-SAP
         and.w   d7,d0           // S and P                                       4
 f2op_12:
         or.w    d6,(a1)
@@ -837,6 +837,7 @@ mode_13:
         or.w    d0,(a1)         //                                              12
         jmp     (a3)            //                                               8
 
+        .org    mode_13+F1OP-SAP
         and.w   d7,d0           // S and P                                       4
 f1op_13:
         not.w   d0
@@ -844,8 +845,7 @@ f1op_13:
         or.w    d0,(a1)
         jmp     (a3)
 
-        .ds.w   2
-
+        .org    mode_13+F2OP-SAP
         and.w   d7,d0           // S and P                                       4
 f2op_13:
         not.w   d0
@@ -860,6 +860,7 @@ mode_14:
         not.w   (a1)            //                                              12
         jmp     (a3)            //                                               8
 
+        .org    mode_14+F1OP-SAP
         and.w   d7,d0           // S and P                                       4
 f1op_14:
         not.w   d0              // D' <- [not S] and [not D]
@@ -868,8 +869,7 @@ f1op_14:
         or.w    d0,(a1)
         jmp     (a3)
 
-        .ds.w   1
-
+        .org    mode_14+F2OP-SAP
         and.w   d7,d0           // S and P                                       4
 f2op_14:
         not.w   d0              // D' <- [not S] and [not D]
@@ -885,13 +885,13 @@ mode_15:
         move.w  #0xFFFF,(a1)    // D' <- S=1                                    12
         jmp     (a3)            //                                               8
 
+        .org    mode_15+F1OP-SAP
         and.w   d7,d0           // S and P                                       4
 f1op_15:
         or.w    d6,(a1)
         jmp     (a3)
 
-        .ds.w   4
-
+        .org    mode_15+F2OP-SAP
         and.w   d7,d0           // S and P                                       4
 f2op_15:
         or.w    d6,(a1)
@@ -1229,7 +1229,7 @@ next_plane:
 
         tst.l   P_ADDR(a6)              // skip this stuff if no pattern
         jeq     do_the_blt
-        subq.w  #2,a2                   // addr. of (pattern & source) entry for
+        subq.w  #SAP,a2                 // addr. of (pattern & source) entry for
 //                                      // logic operation
 
         move.w  P_INDX(a6),d7           // d7(31:16) <- initial pattern line index
