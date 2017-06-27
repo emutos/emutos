@@ -237,7 +237,8 @@ do_blit(blit * blt)
 {
     ULONG   blt_src_in;
     UWORD   blt_src_out, blt_dst_in, blt_dst_out, mask_out;
-    int  xc, yc, last, first;
+    int     last, first;
+    UWORD   xc;
 
     KDEBUG(("do_blit(): Start\n"));
     /*
@@ -258,19 +259,14 @@ do_blit(blit * blt)
     KDEBUG(("NFSR=%d,FXSR=%d,SKEW=%d\n",
             (blt->skew&NFSR)!=0,(blt->skew&FXSR)!=0,(blt->skew & SKEW)));
 
-    if (blt->x_cnt == 0) blt->x_cnt = 65535;
-    if (blt->y_cnt == 0) blt->y_cnt = 65535;
-
-    xc = 0;
-    yc = blt->y_cnt;
-    while (yc-- > 0) {
+    do {
         xc = blt->x_cnt;
         first = 1;
         blt_src_in = 0;
         /* next line to get rid of obnoxious compiler warnings */
         blt_src_out = blt_dst_out = 0;
-        while (xc-- > 0) {
-            last = (xc == 0);
+        do {
+            last = (xc == 1);
             /* read source into blt_src_in */
             if (blt->src_x_inc >= 0) {
                 if (first && (blt->skew & FXSR)) {
@@ -373,13 +369,12 @@ do_blit(blit * blt)
                 blt->dst_addr += blt->dst_x_inc;
             }
             first = 0;
-        }
+        } while(--xc != 0);
         blt->status = (blt->status + ((blt->dst_y_inc >= 0) ? 1 : 15)) & 0xef;
         blt->src_addr += blt->src_y_inc;
         blt->dst_addr += blt->dst_y_inc;
-    }
+    } while(--blt->y_cnt != 0);
     /* blt->status &= ~BUSY; */
-    blt->y_cnt = 0;
 }
 
 /*
