@@ -232,6 +232,10 @@ struct blit {
     /* BYTE           ready; */
 };
 
+/*
+ * the following is a modified version of a blitter emulator, with the HOP
+ * processing removed since it is always called with a HOP value of 2 (source)
+ */
 static void
 do_blit(blit * blt)
 {
@@ -377,14 +381,6 @@ do_blit(blit * blt)
     /* blt->status &= ~BUSY; */
 }
 
-/*
- * endmask data
- *
- * a bit means:
- *
- *   0: Destination
- *   1: Source <<< Invert right end mask data >>>
- */
 
 /* TiTLE: BLiT_iT */
 
