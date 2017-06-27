@@ -267,8 +267,6 @@ do_blit(blit * blt)
         xc = blt->x_cnt;
         first = 1;
         blt_src_in = 0;
-        /* next line to get rid of obnoxious compiler warnings */
-        blt_src_out = blt_dst_out = 0;
         do {
             last = (xc == 1);
             /* read source into blt_src_in */
