@@ -380,24 +380,23 @@ do_blit(blit * blt)
 }
 
 
-/* TiTLE: BLiT_iT */
+/*
+ * bit_blt()
+ *
+ * Purpose:
+ * Transfer a rectangular block of pixels located at an arbitrary X,Y
+ * position in the source memory form to another arbitrary X,Y position
+ * in the destination memory form, using replace mode (boolean operator 3).
+ *
+ * In:
+ *  blit_info   pointer to 34 byte input parameter block
+ *
+ * Note: This is a translation of the original assembler code in the Atari
+ * blitter document, with the addition that source and destination are
+ * allowed to overlap.  Original source code comments are mostly preserved.
+ */
 
-/* PuRPoSE: */
-/* Transfer a rectangular block of pixels located at an */
-/* arbitrary X,Y position in the source memory form to */
-/* another arbitrary X,Y position in the destination memory */
-/* form using replace mode (boolean operator 3). */
-/* The source and destination rectangles should not overlap. */
-
-/* iN: */
-/* a4 pointer to 34 byte input parameter block */
-
-/* Note: This routine must be executed in supervisor mode as */
-/* access is made to hardware registers in the protected region */
-/* of the memory map. */
-
-
-/* I n p u t p a r a m e t e r b l o c k o f f s e t s */
+/* I n p u t   p a r a m e t e r   b l o c k   o f f s e t s */
 
 #define SRC_FORM  0 /* Base address of source memory form .l: */
 #define SRC_NXWD  4 /* Offset between words in source plane .w: */
@@ -509,7 +508,7 @@ bit_blt (void)
     /* d4<- number of words in dst line */
     blt->x_cnt = d_span + 1;            /* set value in BLiTTER */
 
-    /* Endmasks derived from source Xmin mod 16 and source Xmax mod 16 */
+    /* Endmasks derived from dst Xmin mod 16 and dst Xmax mod 16 */
     lendmask=0xffff>>(d_xmin%16);
     rendmask=~(0x7fff>>(d_xmax%16));
 
