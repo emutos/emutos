@@ -501,7 +501,7 @@ bit_blt (void)
     d_xmax_off = d_xmax >> 4;           /* d3<- word offset to dst Xmax */
     d_span = d_xmax_off - d_xmin_off;   /* d3<- dst span - 1 */
 
-    /* the last discriminator is the */
+                                        /* the last discriminator is the */
     if ( d_span == s_span ) {           /* equality of src and dst spans */
         skew_idx |= 0x0002;             /* d6[bit1]:1 => equal spans */
     }
@@ -549,9 +549,9 @@ bit_blt (void)
         blt->src_y_inc = -(blit_info->s_nxln - blit_info->s_nxwd * s_span);
         blt->dst_y_inc = -(blit_info->d_nxln - blit_info->d_nxwd * d_span);
 
-        blt->end_1 = rendmask;          /* left end mask */
-        blt->end_2 = 0xFFFF;            /* center end mask */
-        blt->end_3 = lendmask;          /* right end mask */
+        blt->end_1 = rendmask;          /* first write mask */
+        blt->end_2 = 0xFFFF;            /* center mask */
+        blt->end_3 = lendmask;          /* last write mask */
 
         /* we start at maximum, d7<- Dst Xmax mod16 - Src Xmax mod16 */
         skew = (d_xmax & 0x0f) - (s_xmax & 0x0f);
@@ -567,9 +567,9 @@ bit_blt (void)
         blt->src_y_inc = blit_info->s_nxln - blit_info->s_nxwd * s_span;
         blt->dst_y_inc = blit_info->d_nxln - blit_info->d_nxwd * d_span;
 
-        blt->end_1 = lendmask;          /* left end mask */
-        blt->end_2 = 0xFFFF;            /* center end mask */
-        blt->end_3 = rendmask;          /* right end mask */
+        blt->end_1 = lendmask;          /* first write mask */
+        blt->end_2 = 0xFFFF;            /* center mask */
+        blt->end_3 = rendmask;          /* last write mask */
 
         /* d7<- Dst Xmin mod16 - Src Xmin mod16 */
         skew = (d_xmin & 0x0f) - (s_xmin & 0x0f);
