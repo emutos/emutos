@@ -513,16 +513,6 @@ bit_blt (void)
     lendmask=0xffff>>(d_xmin%16);
     rendmask=~(0x7fff>>(d_xmax%16));
 
-    /* does destination just span a single word? */
-    if ( !d_span ) {
-        /* merge both end masks into Endmask1. */
-        lendmask &= rendmask;           /* d4<- single word end mask */
-        /* VRI: This C implementation incorrectly handles the special case    */
-        /* of a single word destination, so I comment out the following line. */
-        //skew_idx |= 0x0004;             /* d6[bit2]:1 => single word dst */
-        /* The other end masks will be ignored by the BLiTTER */
-    }
-
     /* Calculate starting addresses */
     s_addr = (ULONG)blit_info->s_form
         + (ULONG)blit_info->s_ymin * (ULONG)blit_info->s_nxln
@@ -577,6 +567,17 @@ bit_blt (void)
             skew_idx |= 0x0001;         /* d6[bit0]<- alignment flag */
 
     }
+
+    /* does destination just span a single word? */
+    if ( !d_span ) {
+        /* merge both end masks into Endmask1. */
+        blt->end_1 &= blt->end_3;       /* single word end mask */
+        /* VRI: This C implementation incorrectly handles the special case    */
+        /* of a single word destination, so I comment out the following line. */
+        //skew_idx |= 0x0004;             /* d6[bit2]:1 => single word dst */
+        /* The other end masks will be ignored by the BLiTTER */
+    }
+
     /*
      * The low nibble of the difference in Source and Destination alignment
      * is the skew value.  Use the skew flag index to reference FXSR and
