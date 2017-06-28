@@ -117,6 +117,9 @@
 # ifndef CONF_WITH_MEGARTC
 #  define CONF_WITH_MEGARTC 0
 # endif
+# ifndef CONF_WITH_BLITTER
+#  define CONF_WITH_BLITTER 0
+# endif
 # ifndef CONF_WITH_SFP004
 #  define CONF_WITH_SFP004 0
 # endif
