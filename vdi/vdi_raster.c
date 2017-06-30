@@ -434,36 +434,48 @@ bit_blt (void)
 
     /* setting of skew flags */
 
-    /* QUALIFIERS   ACTIONS   BITBLT DIRECTION: LEFT -> RIGHT
-     * equal Sx&F>
-     * spans Dx&F FXSR NFSR
-     * 0     0      0    1  |..ssssssssssssss|ssssssssssssss..|
-     *                      |......dddddddddd|dddddddddddddddd|dd..............|
+    /* ---QUALIFIERS--- -ACTIONS-
+     * dirn equal Sx&F>
+     * L->R spans Dx&F  FXSR NFSR
+     *  0     0     0     0    1  |..ssssssssssssss|ssssssssssssss..|
+     *                            |......dddddddddd|dddddddddddddddd|dd..............|
      *
-     * 0     1      1    0  |......ssssssssss|ssssssssssssssss|ss..............|
-     *                      |..dddddddddddddd|dddddddddddddd..|
+     *  0     0     1     1    0  |......ssssssssss|ssssssssssssssss|ss..............|
+     *                            |..dddddddddddddd|dddddddddddddd..|
      *
-     * 1     0      0    0  |..ssssssssssssss|ssssssssssssss..|
-     *                      |...ddddddddddddd|ddddddddddddddd.|
+     *  0     1     0     1    1  |..ssssssssssssss|ssssssssssssss..|
+     *                            |...ddddddddddddd|ddddddddddddddd.|
      *
-     * 1     1      1    1  |...sssssssssssss|sssssssssssssss.|
-     *                      |..dddddddddddddd|dddddddddddddd..|
+     *  0     1     1     0    0  |...sssssssssssss|sssssssssssssss.|
+     *                            |..dddddddddddddd|dddddddddddddd..|
+     *
+     *  1     0     0     0    1  |..ssssssssssssss|ssssssssssssss..|
+     *                            |......dddddddddd|dddddddddddddddd|dd..............|
+     *
+     *  1     0     1     1    0  |......ssssssssss|ssssssssssssssss|ss..............|
+     *                            |..dddddddddddddd|dddddddddddddd..|
+     *
+     *  1     1     0     0    0  |..ssssssssssssss|ssssssssssssss..|
+     *                            |...ddddddddddddd|ddddddddddddddd.|
+     *
+     *  1     1     1     1    1  |...sssssssssssss|sssssssssssssss.|
+     *                            |..dddddddddddddd|dddddddddddddd..|
      */
 
 #define mSkewFXSR    0x80
 #define mSkewNFSR    0x40
 
     const UBYTE skew_flags [8] = {
+                            /* for blit direction Right->Left */
+        mSkewNFSR,              /* Source span < Destination span */
+        mSkewFXSR,              /* Source span > Destination span */
+        mSkewNFSR+mSkewFXSR,    /* Spans equal, Shift Source right */
+        0,                      /* Spans equal, Shift Source left */
+                            /* for blit direction Left->Right */
         mSkewNFSR,              /* Source span < Destination span */
         mSkewFXSR,              /* Source span > Destination span */
         0,                      /* Spans equal, Shift Source right */
         mSkewNFSR+mSkewFXSR,    /* Spans equal, Shift Source left */
-
-        /* When Destination span is but a single word ... */
-        0,                      /* Implies a Source span of no words */
-        mSkewFXSR,              /* Source span of two words */
-        0,                      /* Skew flags aren't set if Source and */
-        0                       /* Destination spans are both one word */
     };
 
     /* Calculate Xmax coordinates from Xmin coordinates and width */
@@ -472,23 +484,28 @@ bit_blt (void)
     d_xmin = blit_info->d_xmin;               /* d2<- dst Xmin */
     d_xmax = d_xmin + blit_info->b_wd - 1;    /* d3<- dst Xmax=dstXmin+width-1 */
 
-    /* Skew value is (destination Xmin mod 16 - source Xmin mod 16) */
-    /* && 0x000F.  Three discriminators are used to determine the */
-    /* states of FXSR and NFSR flags: */
-
-    /* bit 0     0: Source Xmin mod 16 =< Destination Xmin mod 16 */
-    /*           1: Source Xmin mod 16 >  Destination Xmin mod 16 */
-
-    /* bit 1     0: SrcXmax/16-SrcXmin/16 <> DstXmax/16-DstXmin/16 */
-    /*                       Source span      Destination span */
-    /*           1: SrcXmax/16-SrcXmin/16 == DstXmax/16-DstXmin/16 */
-
-    /* bit 2     0: multiple word Destination span */
-    /*           1: single word Destination span */
-
-    /* These flags form an offset into a skew flag table yielding */
-    /* correct FXSR and NFSR flag states for the given source and */
-    /* destination alignments */
+    /*
+     * Skew value is (destination Xmin mod 16 - source Xmin mod 16) && 0x000F.
+     * Three main discriminators are used to determine the states of the skew
+     * flags (FXSR and NFSR):
+     * 
+     * bit 0     0: Source Xmin mod 16 =< Destination Xmin mod 16
+     *           1: Source Xmin mod 16 >  Destination Xmin mod 16
+     *
+     * bit 1     0: SrcXmax/16-SrcXmin/16 <> DstXmax/16-DstXmin/16
+     *                       Source span      Destination span
+     *           1: SrcXmax/16-SrcXmin/16 == DstXmax/16-DstXmin/16
+     *
+     * bit 2     0: Blit direction is from Right to Left
+     *           1: Blit direction is from Left to Right
+     *
+     * These form an offset into a skew flag table yielding FXSR and NFSR flag
+     * states for the given source and destination alignments.
+     *
+     * NOTE: this table lookup is overridden for the special case when both
+     * the source & destination widths are one, and the skew is 0.  For this
+     * case, the FXSR flag alone is always set.
+     */
 
     skew_idx = 0x0000;                  /* default */
 
@@ -511,6 +528,11 @@ bit_blt (void)
     /* Endmasks derived from dst Xmin mod 16 and dst Xmax mod 16 */
     lendmask=0xffff>>(d_xmin%16);
     rendmask=~(0x7fff>>(d_xmax%16));
+
+    /* d7<- Dst Xmin mod16 - Src Xmin mod16 */
+    skew = (d_xmin & 0x0f) - (s_xmin & 0x0f);
+    if (skew < 0 )
+        skew_idx |= 0x0001;             /* d6[bit0]<- alignment flag */
 
     /* Calculate starting addresses */
     s_addr = (ULONG)blit_info->s_form
@@ -541,11 +563,6 @@ bit_blt (void)
         blt->end_1 = rendmask;          /* first write mask */
         blt->end_2 = 0xFFFF;            /* center mask */
         blt->end_3 = lendmask;          /* last write mask */
-
-        /* we start at maximum, d7<- Dst Xmax mod16 - Src Xmax mod16 */
-        skew = (d_xmax & 0x0f) - (s_xmax & 0x0f);
-        if (skew >= 0 )
-            skew_idx |= 0x0001;         /* d6[bit0]<- alignment flag */
     }
     else {
         /* offset between consecutive words in planes */
@@ -560,29 +577,29 @@ bit_blt (void)
         blt->end_2 = 0xFFFF;            /* center mask */
         blt->end_3 = rendmask;          /* last write mask */
 
-        /* d7<- Dst Xmin mod16 - Src Xmin mod16 */
-        skew = (d_xmin & 0x0f) - (s_xmin & 0x0f);
-        if (skew < 0 )
-            skew_idx |= 0x0001;         /* d6[bit0]<- alignment flag */
-
+        skew_idx |= 0x0004;             /* blitting left->right */
     }
 
     /* does destination just span a single word? */
     if ( !d_span ) {
         /* merge both end masks into Endmask1. */
         blt->end_1 &= blt->end_3;       /* single word end mask */
-        /* VRI: This C implementation incorrectly handles the special case    */
-        /* of a single word destination, so I comment out the following line. */
-        //skew_idx |= 0x0004;             /* d6[bit2]:1 => single word dst */
         /* The other end masks will be ignored by the BLiTTER */
     }
 
     /*
-     * The low nibble of the difference in Source and Destination alignment
-     * is the skew value.  Use the skew flag index to reference FXSR and
-     * NFSR states in skew flag table.
+     * The low nybble of the difference in Source and Destination alignment
+     * is the skew value.  If the skew value is 0 and both the source &
+     * destination widths are 1, use a flag of FXSR only and force the
+     * source x inc to 0; otherwise, use the skew flag index to obtain
+     * FXSR and NFSR values from the skew flag table.
      */
-    blt->skew = (skew & 0x0f) | skew_flags[skew_idx];
+    if (!s_span && !d_span && !skew) {
+        blt->skew = mSkewFXSR;
+        blt->src_x_inc = 0;
+    } else {
+        blt->skew = (skew & 0x0f) | skew_flags[skew_idx];
+    }
 
     /* BLiTTER REGISTER MASKS */
 #define mHOP_Source  0x02
