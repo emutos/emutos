@@ -203,7 +203,7 @@ void vdi_vr_trnfm(Vwk * vwk)
 
 #if ASM_BLIT
 
-extern void bit_blt(void);
+extern void fast_bit_blt(void);
 
 #else
 
@@ -915,7 +915,11 @@ cpy_raster(struct raster_t *raster, struct blit_frame *info)
 
     /* call assembly blit routine or C-implementation */
     blit_info = info;
+#if ASM_BLIT
+    fast_bit_blt();
+#else
     bit_blt();
+#endif
 }
 
 /*
@@ -985,5 +989,9 @@ void linea_blit(struct blit_frame *info)
     info->d_xmax = info->d_xmin + info->b_wd - 1;
     info->d_ymax = info->d_ymin + info->b_ht - 1;
     blit_info = info;
+#if ASM_BLIT
+    fast_bit_blt();
+#else
     bit_blt();
+#endif
 }

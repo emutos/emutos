@@ -15,7 +15,7 @@
 
 
 
-        .globl  _bit_blt
+        .globl  _fast_bit_blt
 
         .extern _blit_info
         .extern _PTSIN
@@ -900,13 +900,13 @@ f2op_15:
 
 
 //
-// _bit_blt - wrapper for bit_blt
+// _fast_bit_blt - wrapper for bit_blt
 //
 // It emulates the link opcode by adding the FRAME_LEN onto the a6
 // register. That way the rest of the assembler stuff can stay, as
 // it is for now - some of it is also used for text blitting.
 
-_bit_blt:
+_fast_bit_blt:
         // A wrapper, so save and set up registers
         movem.l d2-d7/a2-a6,-(sp)
 
