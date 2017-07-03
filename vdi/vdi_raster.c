@@ -553,7 +553,7 @@ bit_blt (void)
      * Skew value is (destination Xmin mod 16 - source Xmin mod 16) && 0x000F.
      * Three main discriminators are used to determine the states of the skew
      * flags (FXSR and NFSR):
-     * 
+     *
      * bit 0     0: Source Xmin mod 16 =< Destination Xmin mod 16
      *           1: Source Xmin mod 16 >  Destination Xmin mod 16
      *
