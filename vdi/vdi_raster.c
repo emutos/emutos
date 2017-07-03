@@ -18,9 +18,9 @@
 #include "kprint.h"
 
 #ifdef __mcoldfire__
-#define ASM_BLIT 0      /* the assembler routine does not support ColdFire. */
+#define ASM_BLIT_IS_AVAILABLE   0   /* assembler routine does not support ColdFire */
 #else
-#define ASM_BLIT 1      /* use m68k assembler bit_blt routine. */
+#define ASM_BLIT_IS_AVAILABLE   1   /* may use m68k assembler fast_bit_blt routine */
 #endif
 
 /* bitblt modes */
@@ -201,7 +201,7 @@ void vdi_vr_trnfm(Vwk * vwk)
 }
 
 
-#if ASM_BLIT
+#if ASM_BLIT_IS_AVAILABLE
 
 extern void fast_bit_blt(void);
 
@@ -624,7 +624,7 @@ bit_blt (void)
         d_addr += blit_info->d_nxpl;          /* a1-> start of next dst plane   */
     }
 }
-#endif   /* ASM_BLIT */
+#endif   /* ASM_BLIT_IS_AVAILABLE */
 
 
 /* common settings needed both by VDI and line-A raster
@@ -915,7 +915,7 @@ cpy_raster(struct raster_t *raster, struct blit_frame *info)
 
     /* call assembly blit routine or C-implementation */
     blit_info = info;
-#if ASM_BLIT
+#if ASM_BLIT_IS_AVAILABLE
     fast_bit_blt();
 #else
     bit_blt();
@@ -989,7 +989,7 @@ void linea_blit(struct blit_frame *info)
     info->d_xmax = info->d_xmin + info->b_wd - 1;
     info->d_ymax = info->d_ymin + info->b_ht - 1;
     blit_info = info;
-#if ASM_BLIT
+#if ASM_BLIT_IS_AVAILABLE
     fast_bit_blt();
 #else
     bit_blt();
