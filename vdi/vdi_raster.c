@@ -23,6 +23,80 @@
 #define ASM_BLIT_IS_AVAILABLE   1   /* may use m68k assembler fast_bit_blt routine */
 #endif
 
+
+#if !ASM_BLIT_IS_AVAILABLE
+#define FXSR    0x80
+#define NFSR    0x40
+#define SKEW    0x0f
+#define BUSY    0x80
+#define HOG     0x40
+#define SMUDGE  0x20
+#define LINENO  0x0f
+
+#define GetMemW(addr) ((ULONG)*(UWORD*)(addr))
+#define SetMemW(addr, val) *(UWORD*)(addr) = val
+
+/* blitter registers */
+typedef struct blit blit;
+struct blit {
+    UWORD          halftone[16];
+    WORD           src_x_inc, src_y_inc;
+    ULONG          src_addr;
+    WORD           end_1, end_2, end_3;
+    WORD           dst_x_inc, dst_y_inc;
+    ULONG          dst_addr;
+    UWORD          x_cnt, y_cnt;
+    BYTE           hop, op, status, skew;
+};
+
+/* setting of skew flags */
+
+/* ---QUALIFIERS--- -ACTIONS-
+ * dirn equal Sx&F>
+ * L->R spans Dx&F  FXSR NFSR
+ *  0     0     0     0    1  |..ssssssssssssss|ssssssssssssss..|
+ *                            |......dddddddddd|dddddddddddddddd|dd..............|
+ *
+ *  0     0     1     1    0  |......ssssssssss|ssssssssssssssss|ss..............|
+ *                            |..dddddddddddddd|dddddddddddddd..|
+ *
+ *  0     1     0     1    1  |..ssssssssssssss|ssssssssssssss..|
+ *                            |...ddddddddddddd|ddddddddddddddd.|
+ *
+ *  0     1     1     0    0  |...sssssssssssss|sssssssssssssss.|
+ *                            |..dddddddddddddd|dddddddddddddd..|
+ *
+ *  1     0     0     0    1  |..ssssssssssssss|ssssssssssssss..|
+ *                            |......dddddddddd|dddddddddddddddd|dd..............|
+ *
+ *  1     0     1     1    0  |......ssssssssss|ssssssssssssssss|ss..............|
+ *                            |..dddddddddddddd|dddddddddddddd..|
+ *
+ *  1     1     0     0    0  |..ssssssssssssss|ssssssssssssss..|
+ *                            |...ddddddddddddd|ddddddddddddddd.|
+ *
+ *  1     1     1     1    1  |...sssssssssssss|sssssssssssssss.|
+ *                            |..dddddddddddddd|dddddddddddddd..|
+ */
+
+#define mSkewFXSR    0x80
+#define mSkewNFSR    0x40
+
+static const UBYTE skew_flags[8] = {
+                        /* for blit direction Right->Left */
+    mSkewNFSR,              /* Source span < Destination span */
+    mSkewFXSR,              /* Source span > Destination span */
+    mSkewNFSR+mSkewFXSR,    /* Spans equal, Shift Source right */
+    0,                      /* Spans equal, Shift Source left */
+                        /* for blit direction Left->Right */
+    mSkewNFSR,              /* Source span < Destination span */
+    mSkewFXSR,              /* Source span > Destination span */
+    0,                      /* Spans equal, Shift Source right */
+    mSkewNFSR+mSkewFXSR     /* Spans equal, Shift Source left */
+};
+#endif
+
+
 /* bitblt modes */
 #define BM_ALL_WHITE   0
 #define BM_S_AND_D     1
@@ -206,31 +280,6 @@ void vdi_vr_trnfm(Vwk * vwk)
 extern void fast_bit_blt(void);
 
 #else
-
-#define FXSR    0x80
-#define NFSR    0x40
-#define SKEW    0x0f
-#define BUSY    0x80
-#define HOG     0x40
-#define SMUDGE  0x20
-#define LINENO  0x0f
-
-#define GetMemW(addr) ((ULONG)*(UWORD*)(addr))
-#define SetMemW(addr, val) *(UWORD*)(addr) = val
-
-/* blitter registers */
-typedef struct blit blit;
-struct blit {
-    UWORD          halftone[16];
-    WORD           src_x_inc, src_y_inc;
-    ULONG          src_addr;
-    WORD           end_1, end_2, end_3;
-    WORD           dst_x_inc, dst_y_inc;
-    ULONG          dst_addr;
-    UWORD          x_cnt, y_cnt;
-    BYTE           hop, op, status, skew;
-    /* BYTE           ready; */
-};
 
 /*
  * the following is a modified version of a blitter emulator, with the HOP
@@ -431,52 +480,6 @@ bit_blt (void)
 
     /* a5-> BLiTTER register block */
     blit * blt = &blitter;
-
-    /* setting of skew flags */
-
-    /* ---QUALIFIERS--- -ACTIONS-
-     * dirn equal Sx&F>
-     * L->R spans Dx&F  FXSR NFSR
-     *  0     0     0     0    1  |..ssssssssssssss|ssssssssssssss..|
-     *                            |......dddddddddd|dddddddddddddddd|dd..............|
-     *
-     *  0     0     1     1    0  |......ssssssssss|ssssssssssssssss|ss..............|
-     *                            |..dddddddddddddd|dddddddddddddd..|
-     *
-     *  0     1     0     1    1  |..ssssssssssssss|ssssssssssssss..|
-     *                            |...ddddddddddddd|ddddddddddddddd.|
-     *
-     *  0     1     1     0    0  |...sssssssssssss|sssssssssssssss.|
-     *                            |..dddddddddddddd|dddddddddddddd..|
-     *
-     *  1     0     0     0    1  |..ssssssssssssss|ssssssssssssss..|
-     *                            |......dddddddddd|dddddddddddddddd|dd..............|
-     *
-     *  1     0     1     1    0  |......ssssssssss|ssssssssssssssss|ss..............|
-     *                            |..dddddddddddddd|dddddddddddddd..|
-     *
-     *  1     1     0     0    0  |..ssssssssssssss|ssssssssssssss..|
-     *                            |...ddddddddddddd|ddddddddddddddd.|
-     *
-     *  1     1     1     1    1  |...sssssssssssss|sssssssssssssss.|
-     *                            |..dddddddddddddd|dddddddddddddd..|
-     */
-
-#define mSkewFXSR    0x80
-#define mSkewNFSR    0x40
-
-    const UBYTE skew_flags [8] = {
-                            /* for blit direction Right->Left */
-        mSkewNFSR,              /* Source span < Destination span */
-        mSkewFXSR,              /* Source span > Destination span */
-        mSkewNFSR+mSkewFXSR,    /* Spans equal, Shift Source right */
-        0,                      /* Spans equal, Shift Source left */
-                            /* for blit direction Left->Right */
-        mSkewNFSR,              /* Source span < Destination span */
-        mSkewFXSR,              /* Source span > Destination span */
-        0,                      /* Spans equal, Shift Source right */
-        mSkewNFSR+mSkewFXSR,    /* Spans equal, Shift Source left */
-    };
 
     /* Calculate Xmax coordinates from Xmin coordinates and width */
     s_xmin = blit_info->s_xmin;               /* d0<- src Xmin */
