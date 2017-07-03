@@ -13,8 +13,11 @@
 #include "config.h"
 #include "portab.h"
 #include "vdi_defs.h"
+#include "blitter.h"
 #include "../bios/lineavars.h"
 #include "../bios/tosvars.h"
+#include "../bios/machine.h"    /* for blitter-related items */
+#include "../bios/processor.h"  /* for cache control routines */
 #include "kprint.h"
 
 #ifdef __mcoldfire__
@@ -24,7 +27,7 @@
 #endif
 
 
-#if !ASM_BLIT_IS_AVAILABLE
+#if CONF_WITH_BLITTER || !ASM_BLIT_IS_AVAILABLE
 #define FXSR    0x80
 #define NFSR    0x40
 #define SKEW    0x0f
@@ -184,6 +187,7 @@ typedef struct {
 
 extern void linea_blit(struct blit_frame *info); /* called only from linea.S */
 extern void linea_raster(void); /* called only from linea.S */
+extern void fast_bit_blt(void); /* in vdi_blit.S */
 
 
 /* holds VDI internal info for bit_blt() */
@@ -275,12 +279,67 @@ void vdi_vr_trnfm(Vwk * vwk)
 }
 
 
-#if ASM_BLIT_IS_AVAILABLE
+#if CONF_WITH_BLITTER
+/*
+ * blitter_do_blit()
+ *
+ * Interface to hardware blitter for raster functions
+ */
+static void
+blitter_do_blit(blit *blt)
+{
+    LONG length;
+    /*
+     * since the blitter doesn't see the data cache, and we may be in
+     * copyback mode (e.g. the FireBee), we must flush the data cache
+     * first to ensure that the memory is current.  we strictly do not
+     * need to calculate the length, since the current cache control
+     * routines ignore it & act on the whole cache anyway.
+     */
+    length = (blt->y_cnt * blt->dst_y_inc) + (blt->x_cnt * blt->dst_x_inc);
+    flush_data_cache((void *)blt->dst_addr,length);
 
-extern void fast_bit_blt(void);
+    BLITTER->src_x_incr = blt->src_x_inc;
+    BLITTER->src_y_incr = blt->src_y_inc;
+    BLITTER->src_addr = (UWORD *)blt->src_addr;
+    BLITTER->endmask_1 = blt->end_1;
+    BLITTER->endmask_2 = blt->end_2;
+    BLITTER->endmask_3 = blt->end_3;
+    BLITTER->dst_x_incr = blt->dst_x_inc;
+    BLITTER->dst_y_incr = blt->dst_y_inc;
+    BLITTER->dst_addr = (UWORD *)blt->dst_addr;
+    BLITTER->x_count = blt->x_cnt;
+    BLITTER->y_count = blt->y_cnt;
+    BLITTER->op = blt->op;
+    BLITTER->hop = blt->hop;
+    BLITTER->skew = blt->skew;
 
-#else
+    /*
+     * we run the blitter in the Atari-recommended way: use no-HOG mode,
+     * and manually restart the blitter until it's done.
+     */
+    BLITTER->status = BUSY;     /* no-HOG mode */
+    __asm__ __volatile__(
+    "lea    0xFFFF8A3C,a0\n\t"
+    "0:\n\t"
+    "tas    (a0)\n\t"
+    "nop\n\t"
+    "jbmi   0b\n\t"
+    :
+    :
+    : "a0", "memory", "cc"
+    );
 
+    /*
+     * we've modified data behind the cpu's back, so we must
+     * invalidate any cached data.
+     */
+    invalidate_data_cache((void *)blt->dst_addr,length);
+}
+#endif
+
+
+#if CONF_WITH_BLITTER || !ASM_BLIT_IS_AVAILABLE
 /*
  * the following is a modified version of a blitter emulator, with the HOP
  * processing removed since it is always called with a HOP value of 2 (source)
@@ -436,6 +495,9 @@ do_blit(blit * blt)
  * Transfer a rectangular block of pixels located at an arbitrary X,Y
  * position in the source memory form to another arbitrary X,Y position
  * in the destination memory form, using replace mode (boolean operator 3).
+ * This is used on ColdFire (where fast_bit_blt() is not available) or if
+ * configuring with the blitter on a 68K system, since fast_bit_blt() does
+ * not provide an interface to the hardware.
  *
  * In:
  *  blit_info   pointer to 34 byte input parameter block
@@ -621,13 +683,22 @@ bit_blt (void)
         op_tabidx |= (blit_info->bg_col>>plane) & 0x0001;
         blt->op = blit_info->op_tab[op_tabidx] & 0x000f;
 
-        do_blit(blt);
+#if CONF_WITH_BLITTER
+        if (blitter_is_enabled)
+        {
+            blitter_do_blit(blt);
+        }
+        else
+#endif
+        {
+            do_blit(blt);
+        }
 
         s_addr += blit_info->s_nxpl;          /* a0-> start of next src plane   */
         d_addr += blit_info->d_nxpl;          /* a1-> start of next dst plane   */
     }
 }
-#endif   /* ASM_BLIT_IS_AVAILABLE */
+#endif
 
 
 /* common settings needed both by VDI and line-A raster
@@ -916,10 +987,25 @@ cpy_raster(struct raster_t *raster, struct blit_frame *info)
         }
     }
 
-    /* call assembly blit routine or C-implementation */
+    /*
+     * call assembler blit routine or C-implementation.  we call the
+     * assembler version if we're not on ColdFire and either
+     * (a) the blitter isn't configured, or
+     * (b) it's configured but not available.
+     */
     blit_info = info;
+
 #if ASM_BLIT_IS_AVAILABLE
-    fast_bit_blt();
+#if CONF_WITH_BLITTER
+    if (blitter_is_enabled)
+    {
+        bit_blt();
+    }
+    else
+#endif
+    {
+        fast_bit_blt();
+    }
 #else
     bit_blt();
 #endif
@@ -992,8 +1078,24 @@ void linea_blit(struct blit_frame *info)
     info->d_xmax = info->d_xmin + info->b_wd - 1;
     info->d_ymax = info->d_ymin + info->b_ht - 1;
     blit_info = info;
+
+    /*
+     * call assembler blit routine or C-implementation.  we call the
+     * assembler version if we're not on ColdFire and either
+     * (a) the blitter isn't configured, or
+     * (b) it's configured but not available.
+     */
 #if ASM_BLIT_IS_AVAILABLE
-    fast_bit_blt();
+#if CONF_WITH_BLITTER
+    if (blitter_is_enabled)
+    {
+        bit_blt();
+    }
+    else
+#endif
+    {
+        fast_bit_blt();
+    }
 #else
     bit_blt();
 #endif
