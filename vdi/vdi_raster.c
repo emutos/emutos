@@ -187,8 +187,9 @@ typedef struct {
 
 extern void linea_blit(struct blit_frame *info); /* called only from linea.S */
 extern void linea_raster(void); /* called only from linea.S */
+#if ASM_BLIT_IS_AVAILABLE
 extern void fast_bit_blt(void); /* in vdi_blit.S */
-
+#endif
 
 /* holds VDI internal info for bit_blt() */
 static struct blit_frame vdi_info;
@@ -339,7 +340,7 @@ blitter_do_blit(blit *blt)
 #endif
 
 
-#if CONF_WITH_BLITTER || !ASM_BLIT_IS_AVAILABLE
+#if !ASM_BLIT_IS_AVAILABLE
 /*
  * the following is a modified version of a blitter emulator, with the HOP
  * processing removed since it is always called with a HOP value of 2 (source)
@@ -486,8 +487,10 @@ do_blit(blit * blt)
     } while(--blt->y_cnt != 0);
     /* blt->status &= ~BUSY; */
 }
+#endif
 
 
+#if CONF_WITH_BLITTER || !ASM_BLIT_IS_AVAILABLE
 /*
  * bit_blt()
  *
@@ -683,6 +686,14 @@ bit_blt (void)
         op_tabidx |= (blit_info->bg_col>>plane) & 0x0001;
         blt->op = blit_info->op_tab[op_tabidx] & 0x000f;
 
+        /*
+         * We can only be here if either:
+         * (a) we are on ColdFire (ASM_BLIT_IS_AVAILABLE is 0): the
+         *     hardware blitter may or may not be enabled, or
+         * (b) we are on 68K (ASM_BLIT_IS_AVAILABLE is 1): the
+         *     hardware blitter must be enabled to get here.
+         */
+#if !ASM_BLIT_IS_AVAILABLE
 #if CONF_WITH_BLITTER
         if (blitter_is_enabled)
         {
@@ -693,6 +704,9 @@ bit_blt (void)
         {
             do_blit(blt);
         }
+#else
+        blitter_do_blit(blt);
+#endif
 
         s_addr += blit_info->s_nxpl;          /* a0-> start of next src plane   */
         d_addr += blit_info->d_nxpl;          /* a1-> start of next dst plane   */
