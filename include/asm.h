@@ -190,6 +190,40 @@ static __inline__ void swpcopyw(const UWORD* src, UWORD* dest)
 
 
 /*
+ * rolw1(WORD x);
+ *  rotates x leftwards by 1 bit
+ */
+#ifdef __mcoldfire__
+#define rolw1(x)    x=(x>>15)|(x<<1)
+#else
+#define rolw1(x)	                \
+    __asm__ volatile                \
+    ("rol.w #1,%1"                  \
+    : "=d"(x)       /* outputs */   \
+    : "0"(x)        /* inputs */    \
+    : "cc"          /* clobbered */ \
+    )
+#endif
+
+
+/*
+ * rorw1(WORD x);
+ *  rotates x rightwards by 1 bit
+ */
+#ifdef __mcoldfire__
+#define rorw1(x)    x=(x>>1)|(x<<15)
+#else
+#define rorw1(x)	                \
+    __asm__ volatile                \
+    ("ror.w #1,%1"                  \
+    : "=d" (x)      /* outputs */   \
+    : "0" (x)       /* inputs */    \
+    : "cc"          /* clobbered */ \
+    )
+#endif
+
+
+/*
  * Warning: The following macros use "memory" in the clobber list,
  * even if the memory is not modified. On ColdFire, this is necessary
  * to prevent these instructions being reordered by the compiler.

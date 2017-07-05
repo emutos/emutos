@@ -12,6 +12,7 @@
 #include "config.h"
 #include "portab.h"
 #include "intmath.h"
+#include "asm.h"
 #include "vdi_defs.h"
 #include "blitter.h"
 #include "../bios/lineavars.h"
@@ -1447,10 +1448,10 @@ void abline (const Line * line, WORD wrt_mode, UWORD color)
             case 3:              /* reverse transparent  */
                 if (color & 0x0001) {
                     for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
-                        linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                        rolw1(linemask);        /* get next bit of line style */
                         if (linemask&0x0001)
                             *addr &= ~bit;
-                        bit = bit >> 1| bit << 15;
+                        rorw1(bit);
                         if (bit&0x8000)
                             addr += xinc;
                         eps += e1;
@@ -1461,10 +1462,10 @@ void abline (const Line * line, WORD wrt_mode, UWORD color)
                     }
                 } else {
                     for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
-                        linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                        rolw1(linemask);        /* get next bit of line style */
                         if (linemask&0x0001)
                             *addr |= bit;
-                        bit = bit >> 1| bit << 15;
+                        rorw1(bit);
                         if (bit&0x8000)
                             addr += xinc;
                         eps += e1;
@@ -1477,10 +1478,10 @@ void abline (const Line * line, WORD wrt_mode, UWORD color)
                 break;
             case 2:              /* xor */
                 for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
-                    linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                    rolw1(linemask);        /* get next bit of line style */
                     if (linemask&0x0001)
                         *addr ^= bit;
-                    bit = bit >> 1| bit << 15;
+                    rorw1(bit);
                     if (bit&0x8000)
                         addr += xinc;
                     eps += e1;
@@ -1493,10 +1494,10 @@ void abline (const Line * line, WORD wrt_mode, UWORD color)
             case 1:              /* or */
                 if (color & 0x0001) {
                     for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
-                        linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                        rolw1(linemask);        /* get next bit of line style */
                         if (linemask&0x0001)
                             *addr |= bit;
-                        bit = bit >> 1| bit << 15;
+                        rorw1(bit);
                         if (bit&0x8000)
                             addr += xinc;
                         eps += e1;
@@ -1507,10 +1508,10 @@ void abline (const Line * line, WORD wrt_mode, UWORD color)
                     }
                 } else {
                     for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
-                        linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                        rolw1(linemask);        /* get next bit of line style */
                         if (linemask&0x0001)
                             *addr &= ~bit;
-                        bit = bit >> 1| bit << 15;
+                        rorw1(bit);
                         if (bit&0x8000)
                             addr += xinc;
                         eps += e1;
@@ -1524,12 +1525,12 @@ void abline (const Line * line, WORD wrt_mode, UWORD color)
             case 0:              /* rep */
                 if (color & 0x0001) {
                     for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
-                        linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                        rolw1(linemask);        /* get next bit of line style */
                         if (linemask&0x0001)
                             *addr |= bit;
                         else
                             *addr &= ~bit;
-                        bit = bit >> 1| bit << 15;
+                        rorw1(bit);
                         if (bit&0x8000)
                             addr += xinc;
                         eps += e1;
@@ -1541,9 +1542,9 @@ void abline (const Line * line, WORD wrt_mode, UWORD color)
                 }
                 else {
                     for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
-                        linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                        rolw1(linemask);        /* get next bit of line style */
                         *addr &= ~bit;
-                        bit = bit >> 1| bit << 15;
+                        rorw1(bit);
                         if (bit&0x8000)
                             addr += xinc;
                         eps += e1;
@@ -1563,28 +1564,28 @@ void abline (const Line * line, WORD wrt_mode, UWORD color)
             case 3:              /* reverse transparent */
                 if (color & 0x0001) {
                     for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
-                        linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                        rolw1(linemask);        /* get next bit of line style */
                         if (linemask&0x0001)
                             *addr &= ~bit;
                         addr += yinc;
                         eps += e1;
                         if (eps >= 0 ) {
                             eps -= e2;
-                            bit = bit >> 1| bit << 15;
+                            rorw1(bit);
                             if (bit&0x8000)
                                 addr += xinc;
                         }
                     }
                 } else {
                     for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
-                        linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                        rolw1(linemask);        /* get next bit of line style */
                         if (linemask&0x0001)
                             *addr |= bit;
                         addr += yinc;
                         eps += e1;
                         if (eps >= 0 ) {
                             eps -= e2;
-                            bit = bit >> 1| bit << 15;
+                            rorw1(bit);
                             if (bit&0x8000)
                                 addr += xinc;
                         }
@@ -1593,14 +1594,14 @@ void abline (const Line * line, WORD wrt_mode, UWORD color)
                 break;
             case 2:              /* xor */
                 for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
-                    linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                    rolw1(linemask);        /* get next bit of line style */
                     if (linemask&0x0001)
                         *addr ^= bit;
                     addr += yinc;
                     eps += e1;
                     if (eps >= 0 ) {
                         eps -= e2;
-                        bit = bit >> 1| bit << 15;
+                        rorw1(bit);
                         if (bit&0x8000)
                             addr += xinc;
                     }
@@ -1609,28 +1610,28 @@ void abline (const Line * line, WORD wrt_mode, UWORD color)
             case 1:              /* or */
                 if (color & 0x0001) {
                     for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
-                        linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                        rolw1(linemask);        /* get next bit of line style */
                         if (linemask&0x0001)
                             *addr |= bit;
                         addr += yinc;
                         eps += e1;
                         if (eps >= 0 ) {
                             eps -= e2;
-                            bit = bit >> 1| bit << 15;
+                            rorw1(bit);
                             if (bit&0x8000)
                                 addr += xinc;
                         }
                     }
                 } else {
                     for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
-                        linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                        rolw1(linemask);        /* get next bit of line style */
                         if (linemask&0x0001)
                             *addr &= ~bit;
                         addr += yinc;
                         eps += e1;
                         if (eps >= 0 ) {
                             eps -= e2;
-                            bit = bit >> 1| bit << 15;
+                            rorw1(bit);
                             if (bit&0x8000)
                                 addr += xinc;
                         }
@@ -1640,7 +1641,7 @@ void abline (const Line * line, WORD wrt_mode, UWORD color)
             case 0:              /* rep */
                 if (color & 0x0001) {
                     for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
-                        linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                        rolw1(linemask);        /* get next bit of line style */
                         if (linemask&0x0001)
                             *addr |= bit;
                         else
@@ -1649,7 +1650,7 @@ void abline (const Line * line, WORD wrt_mode, UWORD color)
                         eps += e1;
                         if (eps >= 0 ) {
                             eps -= e2;
-                            bit = bit >> 1| bit << 15;
+                            rorw1(bit);
                             if (bit&0x8000)
                                 addr += xinc;
                         }
@@ -1657,13 +1658,13 @@ void abline (const Line * line, WORD wrt_mode, UWORD color)
                 }
                 else {
                     for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
-                        linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                        rolw1(linemask);        /* get next bit of line style */
                         *addr &= ~bit;
                         addr += yinc;
                         eps += e1;
                         if (eps >= 0 ) {
                             eps -= e2;
-                            bit = bit >> 1| bit << 15;
+                            rorw1(bit);
                             if (bit&0x8000)
                                 addr += xinc;
                         }
