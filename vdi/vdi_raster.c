@@ -611,7 +611,8 @@ bit_blt (void)
         + (ULONG)d_xmin_off * (ULONG)blit_info->d_nxwd;
 
     /* if (just_screen && (s_addr < d_addr)) { */
-    if (s_addr < d_addr) {
+    if ((s_addr < d_addr)
+     || ((s_addr == d_addr) && (skew >= 0))) {
         /* start from lower right corner, so add width+length */
         s_addr = (ULONG)blit_info->s_form
             + (ULONG)blit_info->s_ymax * (ULONG)blit_info->s_nxln
