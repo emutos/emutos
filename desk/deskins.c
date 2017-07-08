@@ -347,6 +347,37 @@ WORD ins_app(WORD curr)
     if (!pa)
         return 0;
 
+#if CONF_WITH_DESKTOP_SHORTCUTS
+    /*
+     * here we handle the case of installing an application identified by
+     * a desktop shortcut.  we need to determine if this application is
+     * already installed, i.e. if there already exists a non-shortcut ANODE
+     * for this application.
+     *
+     * if so, we change the ANODE pointer to point to it, and continue as
+     * though the user has selected the application in a desktop window.
+     *
+     * if not, we handle first-time installation later below.
+     */
+    if (G.g_cwin == 0)  /* we're on the desktop, so this is a shortcut icon */
+    {
+        ANODE *temppa;
+
+        strcpy(pathname,pa->a_pdata);   /* get path for app_afind_by_name() */
+        p = filename_start(pathname);
+        *p = '\0';
+        temppa = app_afind_by_name(AT_ISFILE,AF_ISDESK|AF_WINDOW,pathname,pa->a_pappl,&isapp);
+        if (temppa)
+        {
+            if (strcmp(temppa->a_pappl,pa->a_pdata) == 0)
+            {
+                pa = temppa;
+                KDEBUG(("Found installed app anode for desktop shortcut\n"));
+            }
+        }        
+    }
+#endif
+
     installed = is_installed(pa);
 
     /*
@@ -363,7 +394,10 @@ WORD ins_app(WORD curr)
         if (!isapp)     /* selected item appears to be a data file */
             return 0;
 #if CONF_WITH_DESKTOP_SHORTCUTS
-        /* special handling for desktop shortcuts */
+        /*
+         * handle install application for a desktop shortcut when there
+         * is no existing 'install application' anode
+         */
         if (pa->a_flags & AF_ISDESK)
         {
             p = pa->a_pdata;
