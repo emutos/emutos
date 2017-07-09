@@ -83,8 +83,8 @@ typedef struct mform
         WORD    mf_nplanes;
         WORD    mf_fg;
         WORD    mf_bg;
-        WORD    mf_mask[16];
-        WORD    mf_data[16];
+        UWORD   mf_mask[16];
+        UWORD   mf_data[16];
 } MFORM;
 
 extern WORD     gl_width;
