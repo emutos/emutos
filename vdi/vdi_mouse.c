@@ -58,10 +58,6 @@ extern void mov_cur(void);      /* user button vector */
 /* global line-A storage area for mouse form definition */
 extern Mcdb mouse_cdb;
 
-extern WORD HIDE_CNT;
-extern WORD MOUSE_BT;
-extern WORD GCURX, GCURY;
-
 
 /* FIXME: should go to linea variables */
 void     (*user_wheel)(void);   /* user provided mouse wheel vector */
