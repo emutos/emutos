@@ -139,6 +139,15 @@ LONG init_p0_stkptr(void)
 
 
 /*
+ *  return pointer to default mouse form
+ */
+MFORM *default_mform(void)
+{
+    return (MFORM *)rs_bitblk[MICE00].bi_pdata;
+}
+
+
+/*
  *  set mouse pointer to arrow shape
  */
 void set_mouse_to_arrow(void)

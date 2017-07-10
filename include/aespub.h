@@ -14,10 +14,15 @@
 #define AESPUB_H
 
 #include "portab.h"
+#include "obdefs.h"
+#include "gsxdefs.h"
 
 #define PATH_ENV    "PATH="     /* PATH environment variable */
 
 /* AES entry point */
 void ui_start(void) NORETURN;   /* found in aes/gemstart.S */
+
+/* returns default mouse form */
+MFORM *default_mform(void);
 
 #endif /* AESPUB_H */
