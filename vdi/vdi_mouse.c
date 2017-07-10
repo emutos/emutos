@@ -15,6 +15,8 @@
 #include "portab.h"
 #include "asm.h"
 #include "xbiosbind.h"
+#include "obdefs.h"
+#include "gsxdefs.h"
 #include "vdi_defs.h"
 #include "../bios/tosvars.h"
 #include "../bios/lineavars.h"
@@ -40,8 +42,7 @@ struct Mcdb_ {
         WORD    planes;
         WORD    bg_col;
         WORD    fg_col;
-        UWORD   mask[16];
-        UWORD   data[16];
+        UWORD   maskdata[32];   /* mask & data are interleaved */
 };
 
 /* prototypes */
@@ -69,7 +70,7 @@ PFVOID old_statvec;             /* original IKBD status packet routine */
 
 
 /* Default Mouse Cursor Definition */
-static const Mcdb arrow_cdb = {
+static const MFORM arrow_mform = {
     1, 0, 1, 0, 1,
     /* background definition */
     {
@@ -408,10 +409,10 @@ void vdi_vex_wheelv(Vwk * vwk)
 
 
 
-/* copies src mouse form to dst, constrains hotspot
+/* copies src mouse form to dst mouse sprite, constrains hotspot
  * position & colors and maps colors
  */
-static void set_mouse_form (const Mcdb *src, Mcdb * dst)
+static void set_mouse_form(const MFORM *src, Mcdb *dst)
 {
     int i;
     WORD col;
@@ -422,20 +423,20 @@ static void set_mouse_form (const Mcdb *src, Mcdb * dst)
     mouse_flag += 1;            /* disable updates while redefining cursor */
 
     /* save x-offset of mouse hot spot */
-    dst->xhot = src->xhot & 0x000f;
+    dst->xhot = src->mf_xhot & 0x000f;
 
     /* save y-offset of mouse hot spot */
-    dst->yhot = src->yhot & 0x000f;
+    dst->yhot = src->mf_yhot & 0x000f;
 
     /* is background color index too high? */
-    col = src->bg_col;
+    col = src->mf_bg;
     if (col >= DEV_TAB[13]) {
         col = 1;               /* yes - default to 1 */
     }
     dst->bg_col = MAP_COL[col];
 
     /* is foreground color index too high? */
-    col = src->fg_col;
+    col = src->mf_fg;
     if (col >= DEV_TAB[13]) {
         col = 1;               /* yes - default to 1 */
     }
@@ -450,9 +451,9 @@ static void set_mouse_form (const Mcdb *src, Mcdb * dst)
      */
 
     /* copy the data to the global mouse definition table */
-    gmdt = dst->mask;
-    mask = src->mask;
-    data = src->data;
+    gmdt = dst->maskdata;
+    mask = src->mf_mask;
+    data = src->mf_data;
     for (i = 15; i >= 0; i--) {
         *gmdt++ = *mask++;              /* get next word of mask */
         *gmdt++ = *data++;              /* get next word of data */
@@ -482,7 +483,7 @@ static void set_mouse_form (const Mcdb *src, Mcdb * dst)
  */
 void vdi_vsc_form(Vwk * vwk)
 {
-    set_mouse_form((const Mcdb *)INTIN, &mouse_cdb);
+    set_mouse_form((const MFORM *)INTIN, &mouse_cdb);
 }
 
 
@@ -556,7 +557,7 @@ void vdimouse_init(void)
     user_wheel = do_nothing;
 
     /* Move in the default mouse form (presently the arrow) */
-    set_mouse_form(&arrow_cdb, &mouse_cdb);
+    set_mouse_form(&arrow_mform, &mouse_cdb);
 
     MOUSE_BT = 0;               /* clear the mouse button state */
     cur_ms_stat = 0;            /* clear the mouse status */
@@ -775,7 +776,7 @@ static void cur_display (Mcdb *sprite, MCS *mcs, WORD x, WORD y)
     /*
      * clip y axis
      */
-    mask_start = sprite->mask;  /* MASK/FORM for cursor */
+    mask_start = sprite->maskdata;  /* MASK/DATA for cursor */
     if (y < 0) {            /* clip top */
         row_count = y + 16;
         mask_start -= y << 1;   /* point to first visible row of MASK/FORM */
