@@ -35,6 +35,7 @@
 #include "biosbind.h"
 #include "biosext.h"
 
+#include "crysbind.h"
 #include "gemgsxif.h"
 #include "gemdosif.h"
 #include "gemctrl.h"
@@ -71,6 +72,8 @@ extern void gem_main(void); /* called only from gemstart.S */
 
 #define ROPEN 0
 
+#define NUM_MOUSE_CURSORS   8
+
 #define INF_SIZE   300                  /* size of buffer used by sh_rdinf() */
                                         /*  for start of EMUDESK.INF file    */
 
@@ -92,6 +95,8 @@ GLOBAL WORD     totpds;
 GLOBAL WORD     num_accs;
 
 GLOBAL BYTE     *ad_envrn;              /* initialized in GEMSTART      */
+
+GLOBAL MFORM    *mouse_cursor[NUM_MOUSE_CURSORS];
 
 GLOBAL MFORM    gl_mouse;
 GLOBAL BYTE     gl_logdrv;
@@ -143,7 +148,7 @@ LONG init_p0_stkptr(void)
  */
 MFORM *default_mform(void)
 {
-    return (MFORM *)rs_bitblk[MICE00].bi_pdata;
+    return mouse_cursor[ARROW];
 }
 
 
@@ -152,7 +157,7 @@ MFORM *default_mform(void)
  */
 void set_mouse_to_arrow(void)
 {
-    gsx_mfset((MFORM *)rs_bitblk[MICE00].bi_pdata);
+    gsx_mfset(mouse_cursor[ARROW]);
 }
 
 
@@ -161,7 +166,7 @@ void set_mouse_to_arrow(void)
  */
 void set_mouse_to_hourglass(void)
 {
-    gsx_mfset((MFORM *)rs_bitblk[MICE02].bi_pdata);
+    gsx_mfset(mouse_cursor[HOURGLASS]);
 }
 
 
@@ -417,6 +422,18 @@ static BOOL process_inf2(void)
 
 
 /*
+ *  Set up table of pointers to mouse cursors
+ */
+static void setup_mouse_cursors(void)
+{
+    WORD i;
+
+    for (i = 0; i < NUM_MOUSE_CURSORS; i++)
+        mouse_cursor[i] = (MFORM *)rs_bitblk[MICE00+i].bi_pdata;
+}
+
+
+/*
  *  Give everyone a chance to run, at least once
  */
 void all_run(void)
@@ -513,6 +530,7 @@ void run_accs_and_desktop(void)
 
     /* load gem resource and fix it up before we go */
     gem_rsc_init();
+    setup_mouse_cursors();
 
     /* init button stuff */
     gl_btrue = 0x0;

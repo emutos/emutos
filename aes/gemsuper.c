@@ -304,33 +304,11 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         {
             if (GR_MNUMBER != USER_DEF)
             {
-                switch(GR_MNUMBER) {
-                case TEXT_CRSR:
-                    mouse = MICE01;
-                    break;
-                case HOURGLASS:
-                    mouse = MICE02;
-                    break;
-                case POINT_HAND:
-                    mouse = MICE03;
-                    break;
-                case FLAT_HAND:
-                    mouse = MICE04;
-                    break;
-                case THIN_CROSS:
-                    mouse = MICE05;
-                    break;
-                case THICK_CROSS:
-                    mouse = MICE06;
-                    break;
-                case OUTLN_CROSS:
-                    mouse = MICE07;
-                    break;
-                default:
-                    mouse = MICE00;
-                    break;
-                }
-                maddr = (LONG)rs_bitblk[mouse].bi_pdata;
+                if ((GR_MNUMBER < ARROW) || (GR_MNUMBER > OUTLN_CROSS))
+                    mouse = ARROW;
+                else
+                    mouse = GR_MNUMBER;
+                maddr = (LONG)mouse_cursor[mouse];
             }
             else
                 maddr = GR_MADDR;
