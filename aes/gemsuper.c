@@ -80,12 +80,13 @@ static void aestrace(const char* message)
 
 static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_in[], WORD int_out[], LONG addr_in[])
 {
-    LONG    maddr, buparm;
+    LONG    count, buparm;
+    MFORM   *maddr;
     OBJECT  *tree;
     WORD    mouse, ret;
     WORD    unsupported = FALSE;
 
-    maddr = 0;
+    count = 0L;
     ret = TRUE;
 
     switch(opcode)
@@ -151,10 +152,10 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         if (MU_FLAGS & MU_MESAG)
             rlr->p_flags |= AP_MESAG;
         if (MU_FLAGS & MU_TIMER)
-            maddr = MAKE_ULONG(MT_HICOUNT, MT_LOCOUNT);
+            count = MAKE_ULONG(MT_HICOUNT, MT_LOCOUNT);
         buparm = combine_cms(MB_CLICKS,MB_MASK,MB_STATE);
         ret = ev_multi(MU_FLAGS, (MOBLK *)&MMO1_FLAGS, (MOBLK *)&MMO2_FLAGS,
-                        maddr, buparm, (WORD *)MME_PBUFF, &EV_MX);
+                        count, buparm, (WORD *)MME_PBUFF, &EV_MX);
         if ((ret & MU_MESAG) && (*(WORD *)MME_PBUFF == AC_CLOSE))
             rlr->p_flags |= AP_ACCLOSE;
         break;
@@ -299,21 +300,19 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
                 gsx_moff();
             if (GR_MNUMBER == M_ON)
                 gsx_mon();
+            break;
+        }
+        if (GR_MNUMBER != USER_DEF)
+        {
+            if ((GR_MNUMBER < ARROW) || (GR_MNUMBER > OUTLN_CROSS))
+                mouse = ARROW;
+            else
+                mouse = GR_MNUMBER;
+            maddr = mouse_cursor[mouse];
         }
         else
-        {
-            if (GR_MNUMBER != USER_DEF)
-            {
-                if ((GR_MNUMBER < ARROW) || (GR_MNUMBER > OUTLN_CROSS))
-                    mouse = ARROW;
-                else
-                    mouse = GR_MNUMBER;
-                maddr = (LONG)mouse_cursor[mouse];
-            }
-            else
-                maddr = GR_MADDR;
-            gsx_mfset((MFORM *)maddr);
-        }
+            maddr = (MFORM *)GR_MADDR;
+        gsx_mfset(maddr);
         break;
     case GRAF_MKSTATE:
         gr_mkstate(&GR_MX, &GR_MY, &GR_MSTATE, &GR_KSTATE);
