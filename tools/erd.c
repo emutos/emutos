@@ -628,11 +628,12 @@ LOCAL int conditional_bitblk_start;
 LOCAL int conditional_iconblk_start;
 
 /*
- *  the following control generation of trees and objects
- *  (the generated icon C file does not contain either)
+ *  the following control generation of trees, objects and freestrings
+ *  (the generated icon C file does not contain any of these)
  */
 LOCAL int generate_trees = 1;
 LOCAL int generate_objects = 1;
+LOCAL int generate_freestrings = 1;
 
 /*
  *  table for decoding ob_flags
@@ -831,6 +832,7 @@ int n;
 
 #ifdef ICON_RSC
     generate_trees = generate_objects = 0;  /* the generated C file has neither */
+    generate_freestrings = 0;
 #endif
 
     /*
@@ -1963,16 +1965,6 @@ char temp[MAX_STRLEN];
 /*
  *  this creates the free string stuff for the .c file
  */
-#ifdef ICON_RSC
-PRIVATE int write_freestr(FILE *fp)
-{
-int length;
-
-    getlen(&length,"");         /* otherwise GCC complains */
-
-    return ferror(fp) ? -1 : 0; /* likewise */
-}
-#else
 PRIVATE int write_freestr(FILE *fp)
 {
 int i, j, n, nstring;
@@ -1984,6 +1976,9 @@ OFFSET *strptr;
 DEF_ENTRY *d;
 char temp[MAX_STRLEN];
 char *base = (char *)rschdr;
+
+    if (!generate_freestrings)
+        return 0;
 
     fprintf(fp,"const char * const %srs_fstr[] = {\n",prefix);
 
@@ -2019,7 +2014,7 @@ char *base = (char *)rschdr;
 
     return ferror(fp) ? -1 : 0;
 }
-#endif
+
 
 /*
  *  this creates miscellaneous defines + the initialisation code in the .c file
