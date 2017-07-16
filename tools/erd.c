@@ -187,6 +187,10 @@
  *  v4.9    roger burrows, april/2017
  *          . treat all single-character strings as non-translatable
  *          . don't generate unnecessary casts in write_c_epilogue() output
+ *
+ *  v5.0    roger burrows, july/2017
+ *          . add support for mform (mouse cursor) resource generation
+ *            (performed if preprocessor symbol MFORM_RSC is #defined)
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -224,6 +228,12 @@
   #endif
   #define RSC_CHOSEN
 #endif
+#ifdef MFORM_RSC
+  #ifdef RSC_CHOSEN
+    #error Conflicting preprocessor defines
+  #endif
+  #define RSC_CHOSEN
+#endif
 #ifndef RSC_CHOSEN
   #define DESK_RSC
 #endif
@@ -238,6 +248,7 @@
 #define RSD             "rsd"
 #define MAXLEN_HRD      16          /* max length of name allowed in HRD entry */
 #define MAX_SUBSTR      5           /* maximum number of "substrings" in a free string (see getlen()) */
+#define MFORM_SIZE      74          /* stored as BITBLK data in a resource */
 
 /*
  *  our version of standard AES stuff, with changes to accommodate
@@ -397,8 +408,11 @@ typedef struct {
 #ifdef ICON_RSC
   #define PROGRAM_NAME  "ird"
 #endif
+#ifdef MFORM_RSC
+  #define PROGRAM_NAME  "mrd"
+#endif
 
-#define VERSION         "v4.9"
+#define VERSION         "v5.0"
 #define MAX_STRLEN      300         /* max size for internal string areas */
 #define NLS             "N_("       /* the macro used in EmuTOS for NLS support*/
 
@@ -575,6 +589,27 @@ LOCAL int num_notrans = 0;
 #endif
 
 
+#ifdef MFORM_RSC
+/*
+ *  conditional wrapping control
+ */
+LOCAL const CONDITIONAL frstr_cond = { "?", "#error Code generation error" };  /* no match, error if it does ... */
+LOCAL const CONDITIONAL other_cond = { "?", "#error Code generation error" };  /* likewise */
+
+/*
+ *  table of complete strings that will have a shared data item
+ */
+LOCAL SHARED_ENTRY shared[1];     /* dummy */
+LOCAL int num_shared = 0;
+
+/*
+ *  table of string prefixes for text that should not be translated
+ */
+LOCAL NOTRANS_ENTRY notrans[1];   /* dummy */
+LOCAL int num_notrans = 0;
+#endif
+
+
 /*
  *  END OF PROGRAM PARAMETERS
  */
@@ -583,7 +618,7 @@ LOCAL int num_notrans = 0;
 /*
  *  other globals
  */
-LOCAL const char *copyright = PROGRAM_NAME " " VERSION " copyright (C) 2012-2016 by Roger Burrows\n"
+LOCAL const char *copyright = PROGRAM_NAME " " VERSION " copyright (C) 2012-2017 by Roger Burrows\n"
 "This program is licensed under the GNU General Public License.\n"
 "Please see LICENSE.TXT for details.\n";
 
@@ -692,7 +727,9 @@ PRIVATE int all_dashes(char *string);
 PRIVATE int cmp_def(const void *a,const void *b);
 PRIVATE int cmp_shared(const void *a,const void *b);
 PRIVATE int compare_data(ICONBLK *b1,ICONBLK *b2);
+#ifndef MFORM_RSC
 PRIVATE int compare_images(BITBLK *b1,BITBLK *b2);
+#endif
 PRIVATE int compare_mask(ICONBLK *b1,ICONBLK *b2);
 PRIVATE void convert_header(RSHDR *hdr);
 PRIVATE short convert_def_type(int deftype);
@@ -830,7 +867,7 @@ int n;
      */
     mark_conditional();
 
-#ifdef ICON_RSC
+#if defined(ICON_RSC) || defined(MFORM_RSC)
     generate_trees = generate_objects = 0;  /* the generated C file has neither */
     generate_freestrings = 0;
 #endif
@@ -1442,7 +1479,7 @@ short old_tree = -1;
         fprintf(fp,"#endif\n");
     fprintf(fp,"\n");
 
-#ifndef ICON_RSC
+#if !defined(ICON_RSC) && !defined(MFORM_RSC)
     /*
      * then bitblks & free images
      */
@@ -1532,6 +1569,9 @@ PRIVATE int write_h_extern(FILE *fp)
 #ifdef ICON_RSC
     fprintf(fp,"extern const ICONBLK %srs_iconblk[];\n\n",prefix);
 #endif
+#ifdef MFORM_RSC
+    fprintf(fp,"extern const MFORM * const %srs_data[];\n\n",prefix);
+#endif
 
     return ferror(fp) ? -1 : 0;
 }
@@ -1548,6 +1588,9 @@ PRIVATE int write_include(FILE *fp,char *name)
 #ifdef GEM_RSC
     fprintf(fp,"#include \"../desk/deskmain.h\"\n");
     fprintf(fp,"#include \"gemrslib.h\"\n");
+#endif
+#ifdef MFORM_RSC
+    fprintf(fp,"#include \"gsxdefs.h\"\n");
 #endif
     fprintf(fp,"#include \"%s.h\"\n",name);
     fprintf(fp,"#include \"nls.h\"\n\n");
@@ -1785,7 +1828,57 @@ int wicon = 0, hicon = 0;
 
 /*
  *  this creates the BITBLK stuff for the .c file
+ *  (or, in the case of mrd, the MFORM data)
  */
+#ifdef MFORM_RSC
+PRIVATE int write_bitblk(FILE *fp)
+{
+int i, n, nbb;
+SHORT *w;
+BITBLK *bitblk;
+char *base = (char *)rschdr;
+
+    nbb = rsh.nbb;
+    if (nbb == 0)
+        return 0;
+
+    bitblk = (BITBLK *)(base + rsh.bitblk);
+
+    /*
+     * here we create the actual MFORMs
+     */
+    for (i = 0; i < nbb; i++, bitblk++) {
+        n = get_short(&bitblk->bi_hl) * get_short(&bitblk->bi_wb) / 2;
+        if (n * sizeof(USHORT) != MFORM_SIZE)
+            error("BITBLK data is not an MFORM",NULL);
+        w = (SHORT *)(base+get_offset(&bitblk->bi_pdata));
+        fprintf(fp,"static const MFORM rs_mform%d = {\n",i);
+        fprintf(fp,"    %d, %d, %d, %d, %d,\n",
+                get_short(w),get_short(w+1),get_short(w+2),
+                get_short(w+3),get_short(w+4));
+        fprintf(fp,"    {\n");
+        write_data(fp,16,(USHORT *)(w+5));
+        fprintf(fp,"    },\n");
+        fprintf(fp,"    {\n");
+        write_data(fp,16,(USHORT *)(w+21));
+        fprintf(fp,"    }\n");
+        fprintf(fp,"};\n\n");
+    }
+    fprintf(fp,"\n");
+
+    /*
+     * finally we create the array of pointers to MFORMs
+     */
+    fprintf(fp,"const MFORM * const %srs_data[] = {\n",prefix);
+    bitblk = (BITBLK *)(base + rsh.bitblk);
+    for (i = 0; i < nbb; i++, bitblk++) {
+        fprintf(fp,"    &rs_mform%d,\n",i);
+    }
+    fprintf(fp,"};\n\n\n");
+
+    return ferror(fp) ? -1 : 0;
+}
+#else
 PRIVATE int write_bitblk(FILE *fp)
 {
 int i, j, n, nbb;
@@ -1855,6 +1948,7 @@ char *base = (char *)rschdr;
 
     return ferror(fp) ? -1 : 0;
 }
+#endif
 
 /*
  *  this creates the OBJECT stuff for the .c file
@@ -2496,6 +2590,7 @@ char *p;
     *(p+1) = '\0';
 }
 
+#ifndef MFORM_RSC
 /*
  *  compare images, return 0 iff identical size & image data
  */
@@ -2521,6 +2616,7 @@ char *base = (char *)rschdr;
 
     return 0;
 }
+#endif
 
 /*
  *  compare icon mask, return 0 iff identical size & mask

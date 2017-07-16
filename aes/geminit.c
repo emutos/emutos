@@ -27,7 +27,9 @@
 #include "struct.h"
 #include "basepage.h"
 #include "gemlib.h"
+#include "gsxdefs.h"
 #include "gem_rsc.h"
+#include "mforms.h"
 #include "dos.h"
 #include "xbiosbind.h"
 #include "../bios/screen.h"
@@ -422,14 +424,14 @@ static BOOL process_inf2(void)
 
 
 /*
- *  Set up table of pointers to mouse cursors
+ *  Set up RAM array of pointers to mouse cursors
  */
 static void setup_mouse_cursors(void)
 {
     WORD i;
 
     for (i = 0; i < NUM_MOUSE_CURSORS; i++)
-        mouse_cursor[i] = (MFORM *)rs_bitblk[MICE00+i].bi_pdata;
+        mouse_cursor[i] = (MFORM *)mform_rs_data[i];
 }
 
 

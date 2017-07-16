@@ -235,7 +235,7 @@ aes_src = gemasm.S gemstart.S gemdosif.S gemaplib.c gemasync.c gemctrl.c \
           gemfslib.c gemgraf.c gemgrlib.c gemgsxif.c geminit.c geminput.c \
           gemmnlib.c gemobed.c gemobjop.c gemoblib.c gempd.c gemqueue.c \
           gemrslib.c gemsclib.c gemshlib.c gemsuper.c gemwmlib.c gemwrect.c \
-          gsx2.c gem_rsc.c
+          gsx2.c gem_rsc.c mforms.c
 
 #
 # source code in desk/
@@ -788,15 +788,17 @@ po/messages.pot: bug po/POTFILES.in $(shell grep -v '^#' po/POTFILES.in)
 # Resource support
 #
 
-TOCLEAN += erd grd ird
+TOCLEAN += erd grd ird mrd
 
-NODEP += erd grd ird
+NODEP += erd grd ird mrd
 erd: tools/erd.c
 	$(NATIVECC) $< -o $@
 grd: tools/erd.c
 	$(NATIVECC) -DGEM_RSC $< -o grd
 ird: tools/erd.c
 	$(NATIVECC) -DICON_RSC $< -o ird
+mrd: tools/erd.c
+	$(NATIVECC) -DMFORM_RSC $< -o mrd
 
 DESKRSC_BASE = desk/desktop
 DESKRSCGEN_BASE = desk/desk_rsc
@@ -804,7 +806,10 @@ GEMRSC_BASE = aes/gem
 GEMRSCGEN_BASE = aes/gem_rsc
 ICONRSC_BASE = desk/icon
 ICONRSCGEN_BASE = desk/icons
-TOCLEAN += $(DESKRSCGEN_BASE).c $(DESKRSCGEN_BASE).h $(GEMRSCGEN_BASE).c $(GEMRSCGEN_BASE).h $(ICONRSCGEN_BASE).c $(ICONRSCGEN_BASE).h
+MFORMRSC_BASE = aes/mform
+MFORMRSCGEN_BASE = aes/mforms
+TOCLEAN += $(DESKRSCGEN_BASE).c $(DESKRSCGEN_BASE).h $(GEMRSCGEN_BASE).c $(GEMRSCGEN_BASE).h
+TOCLEAN += $(ICONRSCGEN_BASE).c $(ICONRSCGEN_BASE).h $(MFORMRSCGEN_BASE).c $(MFORMRSCGEN_BASE).h
 
 $(DESKRSCGEN_BASE).c $(DESKRSCGEN_BASE).h: erd $(DESKRSC_BASE).rsc $(DESKRSC_BASE).def
 	./erd -pdesk $(DESKRSC_BASE) $(DESKRSCGEN_BASE)
@@ -812,6 +817,8 @@ $(GEMRSCGEN_BASE).c $(GEMRSCGEN_BASE).h: grd $(GEMRSC_BASE).rsc $(GEMRSC_BASE).d
 	./grd $(GEMRSC_BASE) $(GEMRSCGEN_BASE)
 $(ICONRSCGEN_BASE).c $(ICONRSCGEN_BASE).h: ird $(ICONRSC_BASE).rsc $(ICONRSC_BASE).def
 	./ird -picon $(ICONRSC_BASE) $(ICONRSCGEN_BASE)
+$(MFORMRSCGEN_BASE).c $(MFORMRSCGEN_BASE).h: mrd $(MFORMRSC_BASE).rsc $(MFORMRSC_BASE).def
+	./mrd -pmform $(MFORMRSC_BASE) $(MFORMRSCGEN_BASE)
 
 #
 # Special ROM support
@@ -1242,7 +1249,7 @@ depend: makefile.dep
 
 TOCLEAN += makefile.dep
 NODEP += makefile.dep
-makefile.dep: util/langs.c bios/header.h bios/ctables.h include/i18nconf.h desk/icons.c
+makefile.dep: util/langs.c bios/header.h bios/ctables.h include/i18nconf.h desk/icons.c aes/mforms.c
 	$(CC) $(MULTILIBFLAGS) $(TOOLCHAIN_CFLAGS) -MM $(INC) $(DEF) -DGENERATING_DEPENDENCIES $(DEP_SRC) | sed -e '/:/s,^,obj/,' >makefile.dep
 
 # Do not include or rebuild makefile.dep for the targets listed in NODEP

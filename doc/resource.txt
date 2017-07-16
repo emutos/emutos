@@ -7,7 +7,7 @@ in resource files rather than C source code; the desktop uses both
 desktop.rsc/desktop.def & icon.rsc/icon.def, and AES/GEM uses
 gem.rsc/gem.def.  Changes are made "offline" with a standard resource
 editor, and the changed file(s) replace the existing ones.  The make
-process uses special-purpose resource decompilers erd, grd, and ird
+process uses special-purpose resource decompilers erd, grd, ird, and mrd
 (see below) to convert the .rsc/.def files into C source code which is
 then compiled into the EmuTOS image(s).  All the resource decompilers
 are built from the same source code, with some compile-time and
@@ -96,15 +96,15 @@ Tips on using a resource editor with the current EmuTOS resources
    for dialogs, STICNTYP for free strings/alerts.
 
 
-erd/grd/ird: the EmuTOS Resource Decompilers
-============================================
+erd/grd/ird/mrd: the EmuTOS Resource Decompilers
+================================================
 These programs are compiled from the same source code; grd is generated
-iff the preprocessor symbol GEM_RSC is defined, and ird iff the symbol
-ICON_RSC is defined.  They decompile the various resource files into .c
-and .h files, which are input to the EmuTOS make process.  The programs
-are similar to a general-purpose resource decompiler, but have a number
-of EmuTOS-specific additions/changes, as well as a number of deliberate
-omissions.
+iff the preprocessor symbol GEM_RSC is defined, ird iff the symbol
+ICON_RSC is defined, and mrd iff the symbol MFORM_RSC is defined.
+They decompile the various resource files into .c and .h files, which
+are input to the EmuTOS make process.  The programs are similar to a
+general-purpose resource decompiler, but have a number of EmuTOS-specific
+additions/changes, as well as a number of deliberate omissions.
 
 EmuTOS-specific features
 ------------------------
@@ -160,10 +160,13 @@ EmuTOS-specific features
    copies the OBJECT and TEDINFO arrays from initialised variables
    (which will be located in ROM) to globally-visible arrays, located
    in RAM.  This allows modification of OBJECTs and TEDINFOs.
+5. The mouse-form resource decompiler (mrd) decompiles the pseudo-BITBLKs
+   use to store mouse cursors directly into MFORM data.  The BITBLKs
+   themselves are not generated.
 
 Program omissions
 -----------------
-The programs does not handle CICONBLKs or USERDEFs, since they are not
+The programs do not handle CICONBLKs or USERDEFs, since they are not
 currently found in the resource.  If they are added to the resource
 later, it should be easy to add the appropriate code to the decompiler.
 
@@ -173,7 +176,7 @@ The programs are invoked from the shell/commandline by:
     <program> [-d] [-p<prefix>] [-v] <RSCfile> <Cfile>
 
 where:
-    <program>   is erd, grd or ird
+    <program>   is erd, grd, ird, or mrd
     -d          requests debugging output
     -p          specifies the prefix to apply to the names of all
                 globally-visible generated data items
@@ -206,3 +209,4 @@ Notes:
       erd       -pdesk
       grd       (no prefix)
       ird       -picon
+      mrd       -pmform
