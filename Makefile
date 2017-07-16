@@ -1242,7 +1242,7 @@ depend: makefile.dep
 
 TOCLEAN += makefile.dep
 NODEP += makefile.dep
-makefile.dep: util/langs.c bios/header.h bios/ctables.h include/i18nconf.h
+makefile.dep: util/langs.c bios/header.h bios/ctables.h include/i18nconf.h desk/icons.c
 	$(CC) $(MULTILIBFLAGS) $(TOOLCHAIN_CFLAGS) -MM $(INC) $(DEF) -DGENERATING_DEPENDENCIES $(DEP_SRC) | sed -e '/:/s,^,obj/,' >makefile.dep
 
 # Do not include or rebuild makefile.dep for the targets listed in NODEP
