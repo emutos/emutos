@@ -45,8 +45,3 @@ deploy:
   on:
     repo: emutos/emutos
     branch: master
-
-notifications:
-  email:
-    recipients:
-      - emutos-devel@lists.sourceforge.net
