@@ -76,6 +76,12 @@ extern void gem_main(void); /* called only from gemstart.S */
 
 #define NUM_MOUSE_CURSORS   8
 
+#if CONF_WITH_LOADABLE_CURSORS
+#define CURSOR_RSC_SIZE     1024
+#define CURSOR_WIDTH        2           /* in BITBLK */
+#define CURSOR_HEIGHT       37
+#endif
+
 #define INF_SIZE   300                  /* size of buffer used by sh_rdinf() */
                                         /*  for start of EMUDESK.INF file    */
 
@@ -417,15 +423,82 @@ static BOOL process_inf2(void)
 }
 
 
+#if CONF_WITH_LOADABLE_CURSORS
+/*
+ *  Copy mouse cursors from buffered RSC file
+ */
+static WORD load_mouse_cursors(BYTE *buf)
+{
+    RSHDR *hdr = (RSHDR *)buf;
+    BITBLK *bb;
+    WORD i;
+
+    /*
+     * perform a little validation
+     */
+    if (hdr->rsh_nbb != NUM_MOUSE_CURSORS)
+    {
+        KDEBUG(("Wrong number of mouse cursors (%d)\n",hdr->rsh_nbb));
+        return -1;
+    }
+    if (hdr->rsh_rssize > CURSOR_RSC_SIZE)
+    {
+        KDEBUG(("Mouse cursor file is too big (%d bytes)\n",hdr->rsh_rssize));
+        return -1;
+    }
+    for (i = 0, bb = (BITBLK *)(buf+hdr->rsh_bitblk); i < NUM_MOUSE_CURSORS; i++, bb++)
+    {
+        if ((bb->bi_wb != CURSOR_WIDTH) || (bb->bi_hl != CURSOR_HEIGHT))
+        {
+            KDEBUG(("Invalid mouse cursor dimensions (%dx%d)\n",bb->bi_wb,bb->bi_hl));
+            return -1;
+        }
+    }
+
+    /*
+     * load the pointers
+     */
+    for (i = 0, bb = (BITBLK *)(buf+hdr->rsh_bitblk); i < NUM_MOUSE_CURSORS; i++, bb++)
+        mouse_cursor[i] = (MFORM *)(buf+(LONG)bb->bi_pdata);
+
+    return 0;
+}
+#endif
+
+
 /*
  *  Set up RAM array of pointers to mouse cursors
  */
 static void setup_mouse_cursors(void)
 {
     WORD i;
+#if CONF_WITH_LOADABLE_CURSORS
+    LONG rc;
+    BYTE *buf;
+#endif
 
     for (i = 0; i < NUM_MOUSE_CURSORS; i++)
         mouse_cursor[i] = (MFORM *)mform_rs_data[i];
+
+#if CONF_WITH_LOADABLE_CURSORS
+    /* Do not load user cursors if Control was held on startup */
+    if (bootflags & BOOTFLAG_SKIP_AUTO_ACC)
+        return;
+
+    /*
+     * update pointers to point to user-supplied versions, if available
+     */
+    buf = dos_alloc_anyram(CURSOR_RSC_SIZE);
+    if (!buf)
+        return;
+
+    rc = readfile(CURSOR_RSC_NAME, CURSOR_RSC_SIZE, buf);
+    if (rc >= 0)
+        rc = load_mouse_cursors(buf);
+
+    if (rc < 0)     /* load failed */
+        dos_free(buf);
+#endif
 }
 
 

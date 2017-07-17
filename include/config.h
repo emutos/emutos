@@ -1034,6 +1034,17 @@
 #endif
 
 /*
+ * Set CONF_WITH_LOADABLE_CURSORS to 1 to allow mouse cursors to
+ * be loaded from the file specified by CURSOR_RSC_NAME
+ */
+#ifndef CONF_WITH_LOADABLE_CURSORS
+# define CONF_WITH_LOADABLE_CURSORS 1
+#endif
+#if CONF_WITH_LOADABLE_CURSORS
+# define CURSOR_RSC_NAME "A:\\EMUCURS.RSC"  /* path to user cursor file */
+#endif
+
+/*
  * Set CONF_WITH_EASTER_EGG to 1 to include the EmuDesk Easter Egg
  */
 #ifndef CONF_WITH_EASTER_EGG
