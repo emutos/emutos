@@ -649,6 +649,7 @@ static void cur_display_clip(WORD op,Mcdb *sprite,MCS *mcs,UWORD *mask_start,UWO
 {
     WORD dst_inc, plane;
     UWORD cdb_fg, cdb_bg;
+    UWORD cdb_mask;             /* for checking cdb_bg/cdb_fg */
     UWORD *addr, *save;
 
     dst_inc = v_lin_wr >> 1;    /* calculate number of words in a scan line */
@@ -660,10 +661,9 @@ static void cur_display_clip(WORD op,Mcdb *sprite,MCS *mcs,UWORD *mask_start,UWO
     cdb_fg = sprite->fg_col;    /* get mouse foreground color bits */
 
     /* plane controller, draw cursor in each graphic plane */
-    for (plane = v_planes - 1; plane >= 0; plane--) {
+    for (plane = v_planes - 1, cdb_mask = 0x0001; plane >= 0; plane--) {
         WORD row;
         UWORD *src, *dst;
-        UWORD cdb_mask = 0x01;  /* for checking cdb_bg/cdb_fg */
 
         /* setup the things we need for each plane again */
         src = mask_start;               /* calculated mask data begin */
@@ -747,6 +747,7 @@ static void cur_display (Mcdb *sprite, MCS *mcs, WORD x, WORD y)
     int row_count, plane, inc, op, dst_inc;
     UWORD * addr, * mask_start;
     UWORD shft, cdb_fg, cdb_bg;
+    UWORD cdb_mask;             /* for checking cdb_bg/cdb_fg */
     ULONG *save;
 
     x -= sprite->xhot;          /* x = left side of destination block */
@@ -820,10 +821,9 @@ static void cur_display (Mcdb *sprite, MCS *mcs, WORD x, WORD y)
     cdb_fg = sprite->fg_col;    /* get mouse foreground color bits */
 
     /* plane controller, draw cursor in each graphic plane */
-    for (plane = v_planes - 1; plane >= 0; plane--) {
+    for (plane = v_planes - 1, cdb_mask = 0x0001; plane >= 0; plane--) {
         int row;
         UWORD * src, * dst;
-        UWORD cdb_mask = 0x01;  /* for checking cdb_bg/cdb_fg */
 
         /* setup the things we need for each plane again */
         src = mask_start;               /* calculated mask data begin */
