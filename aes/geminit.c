@@ -287,35 +287,29 @@ static void sh_init(void)
 
 
 /*
- *  Routine to read in the start of the emudesk.inf file,
- *  expected to contain the #E and #Z lines.
+ *  Routine to read in the start of a file
+ *
+ *  returns: >=0  number of bytes read
+ *           < 0  error code from dos_open()/dos_read()
  */
-static void sh_rdinf(void)
+static LONG readfile(BYTE *filename, LONG count, BYTE *buf)
 {
     WORD    fh;
-    LONG    size, ret;
-    char    *pfile;
+    LONG    ret;
     char    tmpstr[MAX_LEN];
 
-    infbuf[0] = 0;
+    strcpy(tmpstr, filename);
+    tmpstr[0] += dos_gdrv();            /* set the drive letter */
 
-    strcpy(tmpstr, INF_FILE_NAME);
-    pfile = tmpstr;
-    *pfile += dos_gdrv();                   /* set the drive        */
+    ret = dos_open(tmpstr, ROPEN);
+    if (ret >= 0L)
+    {
+        fh = (WORD)ret;
+        ret = dos_read(fh, count, buf);
+        dos_close(fh);
+    }
 
-    ret = dos_open(pfile, ROPEN);
-    if (ret < 0L)
-        return;
-    fh = (WORD)ret;
-
-    /* NOTA BENE: all required info MUST be within INF_SIZE
-     * bytes from the beginning of the file
-     */
-    size = dos_read(fh, INF_SIZE, infbuf);
-    dos_close(fh);
-    if (size < 0L)      /* if read error, force empty buffer */
-        size = 0L;
-    infbuf[size] = 0;
+    return ret;
 }
 
 
@@ -591,9 +585,16 @@ void run_accs_and_desktop(void)
 
 void gem_main(void)
 {
+    LONG    n;
     WORD    i;
 
-    sh_rdinf();                 /* get start of emudesk.inf */
+    /* read in first part of emudesk.inf */
+    n = readfile(INF_FILE_NAME, INF_SIZE, infbuf);
+
+    if (n < 0L)
+        n = 0L;
+    infbuf[n] = '\0';           /* terminate input data */
+
     if (!gl_changerez)          /* can't be here because of rez change,       */
         process_inf1();         /*  so see if .inf says we need to change rez */
 
