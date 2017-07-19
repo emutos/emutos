@@ -361,12 +361,13 @@ static WORD bit_on(WORD x, WORD y, UWORD *raster, WORD bwidth)
 
 
 /*
- *  Check to see over which part of the object the mouse has been
- *  clicked.  If the type of object is an icon, then use the icon mask
- *  to determine if the icon was actually selected.
+ *  Check to see if the mouse has been clicked over an object.
  *
- *  If the current view is by text strings then use the name portion
- *  of the text string.
+ *  If the current view is by icon, then check the areas occupied by the
+ *  icon graphic and the icon text to determine if the icon was selected.
+ *
+ *  If the current view is by text, then use the name portion of the text
+ *  string.
  */
 static WORD act_chkobj(OBJECT *tree, WORD root, WORD obj, WORD mx, WORD my, WORD w, WORD h)
 {
@@ -395,13 +396,6 @@ static WORD act_chkobj(OBJECT *tree, WORD root, WORD obj, WORD mx, WORD my, WORD
         {
             if (!rc_intersect((GRECT *)&ib->ib_xicon, &m))
                 return root;
-            else
-            {
-                if (!bit_on(m.g_x - ib->ib_xicon + (w / 2),
-                            m.g_y - ib->ib_yicon + (h / 2),
-                            G.g_origmask[icon], ib->ib_wicon/8))
-                    return root;
-            }
         }
         break;
     }

@@ -189,7 +189,6 @@ typedef struct
 /*GLOBAL*/ ANODE        *g_ahead;               /* pointer to chain of allocated ANODEs */
 
 /*GLOBAL*/ WORD         g_numiblks;             /* number of icon blocks */
-/*GLOBAL*/ UWORD        **g_origmask;           /* ptr to array of ptrs to untransformed icon mask */
 /*GLOBAL*/ ICONBLK      *g_iblist;              /* ptr to array of icon blocks */
 
 /*GLOBAL*/ CSAVE        g_cnxsave;

@@ -400,11 +400,10 @@ static WORD setup_iconblks(const ICONBLK *ibstart, WORD count)
     /*
      * Allocate memory for:
      *  ICONBLKs
-     *  pointers to untranslated masks
      *  icon masks
      *  icon data
      */
-    allocmem = dos_alloc_anyram(count*(sizeof(ICONBLK)+sizeof(UWORD *)+2*num_bytes));
+    allocmem = dos_alloc_anyram(count*(sizeof(ICONBLK)+2*num_bytes));
     if (!allocmem)
     {
         KDEBUG(("insufficient memory for %d desktop icons\n",count));
@@ -413,8 +412,6 @@ static WORD setup_iconblks(const ICONBLK *ibstart, WORD count)
 
     G.g_iblist = allocmem;
     allocmem += count * sizeof(ICONBLK);
-    G.g_origmask = allocmem;
-    allocmem += count * sizeof(UWORD *);
     maskstart = allocmem;
     allocmem += count * num_bytes;
     datastart = allocmem;
@@ -429,14 +426,6 @@ static WORD setup_iconblks(const ICONBLK *ibstart, WORD count)
      *  in deskins.c, and win_bldview() in deskwin.c
      */
     memcpy(G.g_iblist, ibstart, count*sizeof(ICONBLK));
-
-    /*
-     * Then we initialise g_origmask[]:
-     *  g_origmask[i] points to the untransformed mask & is
-     *  referenced by act_chkobj() in deskact.c
-     */
-    for (i = 0; i < count; i++)
-        G.g_origmask[i] = (UWORD *)ibstart[i].ib_pmask;
 
     /*
      * Copy the icons' mask/data
