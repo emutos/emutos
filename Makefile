@@ -87,11 +87,20 @@ LOCALCONF =
 endif
 
 #
+# GEN_SRC will accumulate the all the generated source files.
+# Consequences for such files are:
+# - they are automatically built before generating makefile.dep
+# - they are automatically deleted on make clean
+#
+
+GEN_SRC =
+
+#
 # TOCLEAN will accumulate over the Makefile the names of files to remove
 # when doing make clean; temporary Makefile files are *.tmp
 #
 
-TOCLEAN := *~ */*~ $(CORE) *.tmp obj/*.h
+TOCLEAN = *~ */*~ $(CORE) *.tmp obj/*.h $(GEN_SRC)
 
 #
 # NODEP will accumulate the names of the targets which does not need to include
@@ -772,7 +781,8 @@ dumpkbd.prg: obj/minicrt.o obj/memmove.o obj/dumpkbd.o obj/doprintf.o \
 
 POFILES = $(wildcard po/*.po)
 
-TOCLEAN += bug util/langs.c po/messages.pot
+GEN_SRC += util/langs.c
+TOCLEAN += bug po/messages.pot
 
 NODEP += bug
 bug: tools/bug.c
@@ -808,8 +818,8 @@ ICONRSC_BASE = desk/icon
 ICONRSCGEN_BASE = desk/icons
 MFORMRSC_BASE = aes/mform
 MFORMRSCGEN_BASE = aes/mforms
-TOCLEAN += $(DESKRSCGEN_BASE).c $(DESKRSCGEN_BASE).h $(GEMRSCGEN_BASE).c $(GEMRSCGEN_BASE).h
-TOCLEAN += $(ICONRSCGEN_BASE).c $(ICONRSCGEN_BASE).h $(MFORMRSCGEN_BASE).c $(MFORMRSCGEN_BASE).h
+GEN_SRC += $(DESKRSCGEN_BASE).c $(DESKRSCGEN_BASE).h $(GEMRSCGEN_BASE).c $(GEMRSCGEN_BASE).h
+GEN_SRC += $(ICONRSCGEN_BASE).c $(ICONRSCGEN_BASE).h $(MFORMRSCGEN_BASE).c $(MFORMRSCGEN_BASE).h
 
 $(DESKRSCGEN_BASE).c $(DESKRSCGEN_BASE).h: erd $(DESKRSC_BASE).rsc $(DESKRSC_BASE).def
 	./erd -pdesk $(DESKRSC_BASE) $(DESKRSCGEN_BASE)
@@ -958,7 +968,7 @@ obj/country: always-execute-recipe
 # - explicit dependencies can force rebuilding files that include it
 #
 
-TOCLEAN += include/i18nconf.h
+GEN_SRC += include/i18nconf.h
 
 ifneq (,$(UNIQUE))
 include/i18nconf.h: obj/country
@@ -983,7 +993,7 @@ endif
 # included in bios/country.c
 #
 
-TOCLEAN += bios/ctables.h
+GEN_SRC += bios/ctables.h
 
 bios/ctables.h: country.mk tools/genctables.awk
 	awk -f tools/genctables.awk < country.mk > $@
@@ -992,7 +1002,7 @@ bios/ctables.h: country.mk tools/genctables.awk
 # OS header
 #
 
-TOCLEAN += bios/header.h
+GEN_SRC += bios/header.h
 
 bios/header.h: tools/mkheader.awk obj/country
 	awk -f tools/mkheader.awk $(COUNTRY) > $@
@@ -1025,7 +1035,7 @@ obj/%.o : %.S
 # version string
 #
 
-TOCLEAN += obj/*.c
+GEN_SRC += obj/version.c
 
 # This temporary file is always generated
 obj/version2.c:
@@ -1249,7 +1259,12 @@ depend: makefile.dep
 
 TOCLEAN += makefile.dep
 NODEP += makefile.dep
-makefile.dep: util/langs.c bios/header.h bios/ctables.h include/i18nconf.h desk/icons.c aes/mforms.c
+# Theoretically, makefile.dep should depend on $(DEP_SRC). But in that case,
+# makefile.dep would be rebuilt every time a single source is modified, even
+# for trivial changes. This would be useless in most cases. As a pragmatic
+# workaround, makefile.dep only depends on generated sources, which ensures
+# they are always created first.
+makefile.dep: $(GEN_SRC)
 	$(CC) $(MULTILIBFLAGS) $(TOOLCHAIN_CFLAGS) -MM $(INC) $(DEF) -DGENERATING_DEPENDENCIES $(DEP_SRC) | sed -e '/:/s,^,obj/,' >makefile.dep
 
 # Do not include or rebuild makefile.dep for the targets listed in NODEP
