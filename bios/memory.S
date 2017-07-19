@@ -69,13 +69,8 @@ meminit:
 
 #if CONF_WITH_FALCON_MMU
         /* detect if this is a Falcon by reading $ff8282 register */
-        pea     0xffff8282.w
-        jsr     _check_read_byte
-        addq.l  #4, sp
-
-        tst.w   d0                      // is it Falcon MMU?
-        jeq     not_a_falcon            // no -> skip 0xffff8007 test
-
+        move.l  #not_a_falcon,0x08
+        tst.b   0xffff8282.w
         bset    #MEMINIT_BIT_FALCON_MMU, d7
 
 #if !EMUTOS_LIVES_IN_RAM
