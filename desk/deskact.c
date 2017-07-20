@@ -346,21 +346,6 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc,
 
 
 /*
- *  See if the bit at x,y in a raster form is on or off
- */
-static WORD bit_on(WORD x, WORD y, UWORD *raster, WORD bwidth)
-{
-    WORD  windex;
-    UWORD tmpw;
-
-    windex = (bwidth * y / 2) + (x / 16);
-    tmpw = raster[windex];
-    tmpw = (tmpw >> (15 - (x % 16)) ) & 0x0001;
-    return tmpw;
-}
-
-
-/*
  *  Check to see if the mouse has been clicked over an object.
  *
  *  If the current view is by icon, then check the areas occupied by the
