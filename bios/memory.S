@@ -69,7 +69,8 @@ meminit:
 
 #if CONF_WITH_FALCON_MMU
         /* detect if this is a Falcon by reading $ff8282 register */
-        move.l  #not_a_falcon,0x08
+        lea     not_a_falcon(pc), a0
+        move.l  a0, 0x08.w
         tst.b   0xffff8282.w
         bset    #MEMINIT_BIT_FALCON_MMU, d7
 
