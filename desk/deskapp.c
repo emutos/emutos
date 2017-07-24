@@ -71,6 +71,12 @@
 
 
 /*
+ *  maximum allowed text width for icons (excluding trailing null)
+ */
+#define MAX_ICONTEXT_WIDTH  12
+
+
+/*
  *  standard ob_spec value for desktop/window border & text colours
  */
 #define BORDER_TEXT_COLOURS ((BLACK << 12) | (BLACK << 8))
@@ -444,7 +450,7 @@ static WORD setup_iconblks(const ICONBLK *ibstart, WORD count)
         G.g_iblist[i].ib_pdata = (WORD *)(datastart + offset);
         G.g_iblist[i].ib_char &= 0xff00;    /* strip any existing char */
         G.g_iblist[i].ib_ytext = ih;
-        G.g_iblist[i].ib_wtext = 12 * gl_wschar;
+        G.g_iblist[i].ib_wtext = MAX_ICONTEXT_WIDTH * gl_wschar;
         G.g_iblist[i].ib_htext = gl_hschar + 2;
     }
 
@@ -638,7 +644,7 @@ void app_start(void)
         nomem_alert();          /* infinite loop */
     }
 
-    G.g_wicon = (12 * gl_wschar) + (2 * G.g_iblist[0].ib_xtext);
+    G.g_wicon = (MAX_ICONTEXT_WIDTH * gl_wschar) + (2 * G.g_iblist[0].ib_xtext);
     G.g_hicon = G.g_iblist[0].ib_hicon + gl_hschar + 2;
 
     xcnt = G.g_wdesk / (G.g_wicon+MIN_WINT);/* icon count */
