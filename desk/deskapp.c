@@ -472,9 +472,7 @@ static WORD load_user_icons(void)
 {
     RSHDR *hdr;
     ICONBLK *ibptr, *ib;
-    BYTE *origmask;     /* points to original masks of loaded ICONBLKs */
-    char *p;
-    WORD i, n, rc, w, h, masksize;
+    WORD i, n, rc, w, h;
     BYTE icon_rsc_name[sizeof(ICON_RSC_NAME)];
 
     /* Do not load user icons if Control was held on startup */
@@ -517,25 +515,6 @@ static WORD load_user_icons(void)
             rsrc_free();
             return -1;
         }
-    }
-
-    /*
-     * copy the original icon masks for the loaded icons &
-     * update the ptrs in the ICONBLKs to point to the copies
-     */
-    masksize = w * h / 8;
-    origmask = dos_alloc_anyram((LONG)n*masksize);
-    if (!origmask)
-    {
-        KDEBUG(("insufficient memory for icon masks for %d user desktop icons\n",n));
-        rsrc_free();
-        return -1;
-    }
-
-    for (i = 0, p = origmask; i < n; i++, p += masksize)
-    {
-        memcpy(p, ibptr[i].ib_pmask, masksize);
-        ibptr[i].ib_pmask = (WORD *)p;
     }
 
     rc = setup_iconblks(ibptr, n);
