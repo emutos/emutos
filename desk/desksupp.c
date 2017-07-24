@@ -110,10 +110,7 @@ void desk_clear(WORD wh)
 {
     WNODE *pw;
     GRECT c;
-    WORD root = -1;
-
-    /* get current size */
-    wind_get_grect(wh, WF_WXYWH, &c);
+    WORD root = DROOT;
 
     if (wh)         /* not the desktop */
     {
@@ -121,7 +118,17 @@ void desk_clear(WORD wh)
         if (pw)
             root = pw->w_root;
     }
-    else root = DROOT;
+
+    /*
+     * if 'root' is still DROOT, then either the 'window' is the desktop
+     * (wh==0), or something is wrong with the window setup.  to handle
+     * the latter case, we force the handle to 0 anyway for safety.
+     */
+    if (root == DROOT)
+        wh = 0;
+
+    /* get current size */
+    wind_get_grect(wh, WF_WXYWH, &c);
 
     /* clear all selections */
     act_allchg(wh, G.g_screen, root, 0, &gl_rfull, &c, SELECTED, FALSE, TRUE);
