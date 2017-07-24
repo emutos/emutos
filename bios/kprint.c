@@ -326,8 +326,8 @@ void dopanic(const char *fmt, ...)
         pc = s->pc;
         sr = 0x2700; /* was already set in panic(); too late to get original value */
 
-        kcprintf("pc=%p\n",
-                 s->pc);
+        kcprintf("pc=%08lx\n",
+                 (ULONG)s->pc);
 #ifdef __mcoldfire__
     } else {
         /* On ColdFire, the exception frame is the same for all exceptions. */
@@ -353,8 +353,8 @@ void dopanic(const char *fmt, ...)
                  (s->format_word & 0xf000) >> 12,
                  (s->format_word & 0x03fc) >> 2,
                  (s->format_word & 0x0c00) >> 8 | (s->format_word & 0x0003));
-        kcprintf("sr=%04x pc=%p\n",
-                 s->sr, s->pc);
+        kcprintf("sr=%04x pc=%08lx\n",
+                 s->sr, (ULONG)s->pc);
     }
 #else
     } else if (mcpu == 0 && (proc_enum == 2 || proc_enum == 3)) {
@@ -374,8 +374,8 @@ void dopanic(const char *fmt, ...)
                  exc_messages[proc_enum]);
         kcprintf("misc=%04x opcode=%04x\n",
                  s->misc, s->opcode);
-        kcprintf("addr=%08lx sr=%04x pc=%p\n",
-                 s->address, s->sr, s->pc);
+        kcprintf("addr=%08lx sr=%04x pc=%08lx\n",
+                 s->address, s->sr, (ULONG)s->pc);
 #if CONF_WITH_ADVANCED_CPU
     } else if (mcpu == 10 && (proc_enum == 2 || proc_enum == 3)) {
         /* 68010 Bus or Address Error */
@@ -401,8 +401,8 @@ void dopanic(const char *fmt, ...)
                  exc_messages[proc_enum]);
         kcprintf("fw=%04x ssw=%04x\n",
                  s->format_word, s->special_status_word);
-        kcprintf("addr=%08lx sr=%04x pc=%p\n",
-                 s->fault_address, s->sr, s->pc);
+        kcprintf("addr=%08lx sr=%04x pc=%08lx\n",
+                 s->fault_address, s->sr, (ULONG)s->pc);
     } else if ((mcpu == 20 || mcpu == 30) && (proc_enum == 2 || proc_enum == 3)) {
         /* 68020/68030 Bus or Address Error */
         struct {
@@ -428,8 +428,8 @@ void dopanic(const char *fmt, ...)
                  exc_messages[proc_enum]);
         kcprintf("fw=%04x ir=%04x ssr=%04x\n",
                  s->format_word, s->internal_register, s->special_status_register);
-        kcprintf("addr=%08lx sr=%04x pc=%p\n",
-                 s->data_cycle_fault_address, s->sr, s->pc);
+        kcprintf("addr=%08lx sr=%04x pc=%08lx\n",
+                 s->data_cycle_fault_address, s->sr, (ULONG)s->pc);
     } else if (mcpu == 40 && proc_enum == 2) {
         /* 68040 Bus Error */
         struct {
@@ -450,8 +450,8 @@ void dopanic(const char *fmt, ...)
                  exc_messages[proc_enum]);
         kcprintf("fw=%04x ea=%08lx ssw=%04x\n",
                  s->format_word, s->effective_address, s->special_status_word);
-        kcprintf("addr=%08lx sr=%04x pc=%p\n",
-                 s->fault_address, s->sr, s->pc);
+        kcprintf("addr=%08lx sr=%04x pc=%08lx\n",
+                 s->fault_address, s->sr, (ULONG)s->pc);
     } else if ((mcpu == 40 && proc_enum == 3)
                || (mcpu == 60 && (proc_enum == 2 || proc_enum == 3))) {
         /* 68040 Address Error, or 68060 Bus or Address Error */
@@ -469,8 +469,8 @@ void dopanic(const char *fmt, ...)
                  exc_messages[proc_enum]);
         kcprintf("fw=%04x\n",
                  s->format_word);
-        kcprintf("addr=%08lx sr=%04x pc=%p\n",
-                 s->address, s->sr, s->pc);
+        kcprintf("addr=%08lx sr=%04x pc=%08lx\n",
+                 s->address, s->sr, (ULONG)s->pc);
 #endif  /* CONF_WITH_ADVANCED_CPU */
     } else if (proc_enum < ARRAY_SIZE(exc_messages)) {
         struct {
@@ -483,8 +483,8 @@ void dopanic(const char *fmt, ...)
 
         kcprintf("Panic: %s\n",
                  exc_messages[proc_enum]);
-        kcprintf("sr=%04x pc=%p\n",
-                 s->sr, s->pc);
+        kcprintf("sr=%04x pc=%08lx\n",
+                 s->sr, (ULONG)s->pc);
     } else {
         struct {
             WORD sr;
@@ -496,8 +496,8 @@ void dopanic(const char *fmt, ...)
 
         kcprintf("Panic: Exception number %d\n",
                  (int) proc_enum);
-        kcprintf("sr=%04x pc=%p\n",
-                 s->sr, s->pc);
+        kcprintf("sr=%04x pc=%08lx\n",
+                 s->sr, (ULONG)s->pc);
     }
 #endif
 #if DISPLAY_INSTRUCTION_AT_PC
@@ -565,8 +565,8 @@ void dopanic(const char *fmt, ...)
     {
         kcprintf("basepage=%08lx\n",
                  (ULONG)run);
-        kcprintf("text=%p data=%p bss=%p\n",
-                 run->p_tbase, run->p_dbase, run->p_bbase);
+        kcprintf("text=%08lx data=%08lx bss=%08lx\n",
+                 (ULONG)run->p_tbase, (ULONG)run->p_dbase, (ULONG)run->p_bbase);
         if (pc && (pc >= run->p_tbase) && (pc < run->p_tbase + run->p_tlen))
             kcprintf("Crash at text+%08lx\n", pc - run->p_tbase);
     }
