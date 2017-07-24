@@ -448,6 +448,7 @@ static WORD setup_iconblks(const ICONBLK *ibstart, WORD count)
     {
         G.g_iblist[i].ib_pmask = (WORD *)(maskstart + offset);
         G.g_iblist[i].ib_pdata = (WORD *)(datastart + offset);
+        G.g_iblist[i].ib_ptext = "";        /* precautionary */
         G.g_iblist[i].ib_char &= 0xff00;    /* strip any existing char */
         G.g_iblist[i].ib_ytext = ih;
         G.g_iblist[i].ib_wtext = MAX_ICONTEXT_WIDTH * gl_wschar;
