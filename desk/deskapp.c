@@ -465,7 +465,7 @@ static WORD setup_iconblks(const ICONBLK *ibstart, WORD count)
 static WORD load_user_icons(void)
 {
     RSHDR *hdr;
-    ICONBLK *ibptr;
+    ICONBLK *ibptr, *ib;
     BYTE *origmask;     /* points to original masks of loaded ICONBLKs */
     char *p;
     WORD i, n, rc, w, h, masksize;
@@ -499,13 +499,18 @@ static WORD load_user_icons(void)
      * and validate their size
      */
     ibptr = (ICONBLK *)((char *)hdr + hdr->rsh_iconblk);
-    w = ibptr->ib_wicon;
-    h = ibptr->ib_hicon;
-    if ((w != icon_rs_iconblk[0].ib_wicon) || (h != icon_rs_iconblk[0].ib_hicon))
+    w = icon_rs_iconblk[0].ib_wicon;    /* width/height from builtin */
+    h = icon_rs_iconblk[0].ib_hicon;
+
+    for (i = 0, ib = ibptr; i < n; i++, ib++)
     {
-        KDEBUG(("wrong size user desktop icons (%dx%d)\n",w,h));
-        rsrc_free();
-        return -1;
+        if ((ib->ib_wicon != w) || (ib->ib_hicon != h))
+        {
+            KDEBUG(("user desktop icon %d has wrong size (%dx%d)\n",
+                    i,ib->ib_wicon,ib->ib_hicon));
+            rsrc_free();
+            return -1;
+        }
     }
 
     /*
