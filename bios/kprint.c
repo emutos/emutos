@@ -298,7 +298,7 @@ static const char *const exc_messages[] = {
 
 void dopanic(const char *fmt, ...)
 {
-    UBYTE *pc = NULL;
+    UWORD *pc = NULL;
     BOOL wrap;
     const char *start;
     UWORD sr;
@@ -315,7 +315,7 @@ void dopanic(const char *fmt, ...)
     }
     if (proc_enum == 0) { /* Call to panic(const char *fmt, ...) */
         struct {
-            UBYTE *pc;
+            UWORD *pc;
         } *s = (void *)proc_stk;
 
         va_list ap;
@@ -334,7 +334,7 @@ void dopanic(const char *fmt, ...)
         struct {
             UWORD format_word;
             UWORD sr;
-            UBYTE *pc;
+            UWORD *pc;
         } *s = (void *)proc_stk;
 
         pc = s->pc;
@@ -364,7 +364,7 @@ void dopanic(const char *fmt, ...)
             UBYTE *address;
             UWORD opcode;
             UWORD sr;
-            UBYTE *pc;
+            UWORD *pc;
         } *s = (void *)proc_stk;
 
         pc = s->pc;
@@ -381,7 +381,7 @@ void dopanic(const char *fmt, ...)
         /* 68010 Bus or Address Error */
         struct {
             UWORD sr;
-            UBYTE *pc;
+            UWORD *pc;
             UWORD format_word;
             UWORD special_status_word;
             UBYTE *fault_address;
@@ -407,7 +407,7 @@ void dopanic(const char *fmt, ...)
         /* 68020/68030 Bus or Address Error */
         struct {
             UWORD sr;
-            UBYTE *pc;
+            UWORD *pc;
             UWORD format_word;
             UWORD internal_register;
             UWORD special_status_register;
@@ -434,7 +434,7 @@ void dopanic(const char *fmt, ...)
         /* 68040 Bus Error */
         struct {
             UWORD sr;
-            UBYTE *pc;
+            UWORD *pc;
             UWORD format_word;
             UBYTE *effective_address;
             UWORD special_status_word;
@@ -457,7 +457,7 @@ void dopanic(const char *fmt, ...)
         /* 68040 Address Error, or 68060 Bus or Address Error */
         struct {
             UWORD sr;
-            UBYTE *pc;
+            UWORD *pc;
             UWORD format_word;
             UBYTE *address;
         } *s = (void *)proc_stk;
@@ -475,7 +475,7 @@ void dopanic(const char *fmt, ...)
     } else if (proc_enum < ARRAY_SIZE(exc_messages)) {
         struct {
             UWORD sr;
-            UBYTE *pc;
+            UWORD *pc;
         } *s = (void *)proc_stk;
 
         pc = s->pc;
@@ -488,7 +488,7 @@ void dopanic(const char *fmt, ...)
     } else {
         struct {
             UWORD sr;
-            UBYTE *pc;
+            UWORD *pc;
         } *s = (void *)proc_stk;
 
         pc = s->pc;
@@ -507,12 +507,10 @@ void dopanic(const char *fmt, ...)
      * (a) it is probably only useful for illegal instruction exceptions
      * (b) it could cause a recursive error
      */
-    if (((LONG)pc & 1) == 0)    /* precaution if running on 68000 */
+    if (((ULONG)pc & 1) == 0)   /* precaution if running on 68000 */
     {
-        WORD *instr = (WORD *)pc;
-
-        kcprintf("Instruction at PC=%04x %04x %04x\n",
-                 *instr, *(instr+1), *(instr+2));
+        kcprintf("Instruction at PC: %04x %04x %04x\n",
+                 pc[0], pc[1], pc[2]);
     }
 #endif
 
@@ -567,8 +565,8 @@ void dopanic(const char *fmt, ...)
                  (ULONG)run);
         kcprintf("text=%08lx data=%08lx bss=%08lx\n",
                  (ULONG)run->p_tbase, (ULONG)run->p_dbase, (ULONG)run->p_bbase);
-        if (pc && (pc >= (UBYTE *)run->p_tbase) && (pc < (UBYTE *)run->p_tbase + run->p_tlen))
-            kcprintf("Crash at text+%08lx\n", pc - (UBYTE *)run->p_tbase);
+        if (pc && (pc >= (UWORD *)run->p_tbase) && (pc < (UWORD *)run->p_tbase + run->p_tlen))
+            kcprintf("Crash at text+%08lx\n", pc - (UWORD *)run->p_tbase);
     }
 
     /* allow interrupts so we get keypresses */
