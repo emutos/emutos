@@ -430,6 +430,12 @@ static void fun_full_close(WNODE *pw)
 
     pn_close(&pw->w_pnode);
     win_free(pw);
+
+    /*
+     * update current window etc
+     */
+    pw = win_ontop();
+    desk_verify(pw ? pw->w_id : 0, FALSE);
 }
 
 
