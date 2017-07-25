@@ -988,7 +988,6 @@ WORD hndl_msg(void)
             wind_set(G.g_rmsg[3], WF_TOP, 0, 0, 0, 0);
             win_top(pw);
             desk_verify(pw->w_id, FALSE);
-            G.g_wlastsel = pw->w_id;
             change = TRUE;
         }
         break;
