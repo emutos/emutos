@@ -125,8 +125,9 @@ os_dummy:
  * The following considerations have been taken into account:
  * 1. for unknown reasons, real Falcons need an access to location $ffff8006
  *    before and after the reset instruction
- * 2. in order to run the same code on systems without a register at $ffff8006,
- *    the bus error vector must be intercepted prior to #1
+ * 2. on some non-Falcon systems (some STs and some or all TTs), accessing
+ *    $ffff8006 causes a bus error; therefore the bus error vector must be
+ *    intercepted prior to #1
  * 3. since non-68000 systems use the VBR to point to the start of the exception
  *    vectors, the VBR must be zeroed prior to #2 via MOVEC
  * 4. in order to run the same code on 68000 systems (which don't have MOVEC),
