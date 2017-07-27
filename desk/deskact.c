@@ -425,10 +425,7 @@ WORD act_chg(WORD wh, OBJECT *tree, WORD root, WORD obj, GRECT *pc, UWORD chgval
     /* get it updated on screen */
     if (old_state != curr_state)
     {
-        /* change it without drawing */
-        objc_change(tree, obj, 0, pc->g_x, pc->g_y, pc->g_w, pc->g_h,
-                    curr_state, FALSE);
-
+        tree[obj].ob_state = curr_state;
         /*
          * clip to uncovered portion of desktop or window
          * and the object's extent

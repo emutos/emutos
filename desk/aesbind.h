@@ -73,9 +73,11 @@ WORD objc_draw(OBJECT *tree, WORD drawob, WORD depth, WORD xc, WORD yc,
 WORD objc_find(OBJECT *tree, WORD startob, WORD depth, WORD mx, WORD my);
 WORD objc_order(OBJECT *tree, WORD mov_obj, WORD newpos);
 WORD objc_offset(OBJECT *tree, WORD obj, WORD *poffx, WORD *poffy);
-/* WORD objc_edit(OBJECT *tree, WORD obj, WORD inchar, WORD *idx, WORD kind); */
+/* 
+WORD objc_edit(OBJECT *tree, WORD obj, WORD inchar, WORD *idx, WORD kind);
 WORD objc_change(OBJECT *tree, WORD drawob, WORD depth, WORD xc, WORD yc,
                  WORD wc, WORD hc, WORD newstate, WORD redraw);
+*/
 
 
 /*
