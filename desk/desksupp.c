@@ -249,14 +249,12 @@ void do_xyfix(WORD *px, WORD *py)
  */
 void do_wopen(WORD new_win, WORD wh, WORD curr, WORD x, WORD y, WORD w, WORD h)
 {
-    GRECT c;
     GRECT d;
 
     do_xyfix(&x, &y);
 
     if (curr > 0)
     {
-        get_xywh(G.g_screen, G.g_croot, &c.g_x, &c.g_y, &c.g_w, &c.g_h);
         get_xywh(G.g_screen, curr, &d.g_x, &d.g_y, &d.g_w, &d.g_h);
 
         if (!new_win)   /* no new window: window-relative coordinates */
@@ -266,7 +264,7 @@ void do_wopen(WORD new_win, WORD wh, WORD curr, WORD x, WORD y, WORD w, WORD h)
         }
 
         graf_growbox(d.g_x, d.g_y, d.g_w, d.g_h, x, y, w, h);
-        act_chg(G.g_cwin, G.g_screen, G.g_croot, curr, &c, SELECTED, FALSE, new_win?TRUE:FALSE, TRUE);
+        act_chg(G.g_cwin, G.g_screen, G.g_croot, curr, &gl_rfull, SELECTED, FALSE, new_win?TRUE:FALSE, TRUE);
     }
 
     if (new_win)
