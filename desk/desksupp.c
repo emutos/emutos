@@ -818,7 +818,10 @@ WORD do_dopen(WORD curr)
         build_root_path(path,drv);
         strcpy(path+3,"*.*");
         if (!do_diropen(pw, TRUE, curr, path, (GRECT *)&G.g_screen[pw->w_root].ob_x, TRUE))
+        {
             win_free(pw);
+            act_chg(0, G.g_screen, DROOT, curr, &gl_rfull, SELECTED, FALSE, TRUE, TRUE);
+        }
     }
     else
     {
