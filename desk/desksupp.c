@@ -390,9 +390,12 @@ WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon,
 
     /* activate path by search and sort of directory */
     ret = pn_active(&pw->w_pnode);
-    if (ret != E_NOFILES)
+    if (ret < 0)    /* error reading directory */
     {
-        /* some error condition */
+        KDEBUG(("Error reading directory %s\n",pathname));
+        pn_close(&pw->w_pnode);
+        graf_mouse(ARROW, NULL);
+        return FALSE;
     }
 
     /* set new name and info lines for window */

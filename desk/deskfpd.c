@@ -25,6 +25,7 @@
 #include "gemdos.h"
 #include "optimize.h"
 #include "optimopt.h"
+#include "gemerror.h"
 
 #include "deskbind.h"
 #include "deskglob.h"
@@ -225,6 +226,10 @@ FNODE *pn_sort(PNODE *pn)
 
 /*
  *  Build the filenode list for the specified pathnode
+ *
+ *  returns 0   0 or more files found without error
+ *          <0  error (other than ENMFIL) returned by dos_sfirst()/dos_snext()
+ *              (e.g. when attempting to open a floppy drive with no disk)
  */
 WORD pn_active(PNODE *pn)
 {
@@ -284,11 +289,12 @@ WORD pn_active(PNODE *pn)
     {
         dos_free(pn->p_fbase);
         pn->p_fbase = NULL;
-        return 0;
     }
-    dos_shrink(pn->p_fbase,count*sizeof(FNODE));
+    else
+    {
+        dos_shrink(pn->p_fbase,count*sizeof(FNODE));
+        pn->p_flist = pn_sort(pn);
+    }
 
-    pn->p_flist = pn_sort(pn);
-
-    return 0;   /* TODO: return error if error occurred? */
+    return (ret==ENMFIL) ? 0 : ret;
 }
