@@ -139,7 +139,7 @@ static const BYTE ILL_DOCU[] =  { IDSKITEM, IAPPITEM, RICNITEM, 0 };
 static const BYTE ILL_FOLD[] =  { IDSKITEM, IAPPITEM, RICNITEM, 0 };
 static const BYTE ILL_FDSK[] =  { IAPPITEM, 0 };
 static const BYTE ILL_HDSK[] =  { IAPPITEM, 0 };
-static const BYTE ILL_NOSEL[] = { OPENITEM, DELTITEM, IAPPITEM, RICNITEM, 0 };
+static const BYTE ILL_NOSEL[] = { OPENITEM, SHOWITEM, DELTITEM, IAPPITEM, RICNITEM, 0 };
 static const BYTE ILL_MULTSEL[] = { OPENITEM, IDSKITEM, SHOWITEM, 0 };
 static const BYTE ILL_TRASH[] = { OPENITEM, DELTITEM, IDSKITEM, IAPPITEM, 0 };
 static const BYTE ILL_NOWIN[] = { NFOLITEM, CLOSITEM, CLSWITEM, MASKITEM, 0 };
@@ -329,11 +329,6 @@ static void men_update(void)
 #endif
     }
 
-    if (win_ontop())
-        men_list(tree, ILL_OPENWIN, TRUE);
-    else
-        men_list(tree, ILL_NOWIN, FALSE);
-
     if (nsel != 1)
     {
         if (nsel)
@@ -342,6 +337,11 @@ static void men_update(void)
             pvalue = ILL_NOSEL;
         men_list(tree, pvalue, FALSE);
     }
+
+    if (win_ontop())
+        men_list(tree, ILL_OPENWIN, TRUE);
+    else
+        men_list(tree, ILL_NOWIN, FALSE);
 
     men_list(tree, ILL_ALWAYS, FALSE);
 
