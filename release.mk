@@ -53,6 +53,8 @@ release-512k:
 	$(MAKE) 512
 	mkdir $(RELEASE_DIR)/$(RELEASE_512K)
 	cp etos512k.img etos512k.sym $(RELEASE_DIR)/$(RELEASE_512K)
+	cp aes/mform.def $(RELEASE_DIR)/$(RELEASE_512K)/emucurs.def
+	cp aes/mform.rsc $(RELEASE_DIR)/$(RELEASE_512K)/emucurs.rsc
 	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_512K)/emuicon.def
 	cp desk/icon.rsc $(RELEASE_DIR)/$(RELEASE_512K)/emuicon.rsc
 	cat doc/readme-512k.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_512K)/readme.txt
@@ -70,6 +72,8 @@ release-256k:
 	$(MAKE) all256
 	mkdir $(RELEASE_DIR)/$(RELEASE_256K)
 	cp etos256*.img $(RELEASE_DIR)/$(RELEASE_256K)
+	cp aes/mform.def $(RELEASE_DIR)/$(RELEASE_256K)/emucurs.def
+	cp aes/mform.rsc $(RELEASE_DIR)/$(RELEASE_256K)/emucurs.rsc
 	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_256K)/emuicon.def
 	cp desk/icon.rsc $(RELEASE_DIR)/$(RELEASE_256K)/emuicon.rsc
 	cat doc/readme-256k.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_256K)/readme.txt
@@ -87,6 +91,8 @@ release-192k:
 	$(MAKE) all192
 	mkdir $(RELEASE_DIR)/$(RELEASE_192K)
 	cp etos192*.img $(RELEASE_DIR)/$(RELEASE_192K)
+	cp aes/mform.def $(RELEASE_DIR)/$(RELEASE_192K)/emucurs.def
+	cp aes/mform.rsc $(RELEASE_DIR)/$(RELEASE_192K)/emucurs.rsc
 	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_192K)/emuicon.def
 	cp desk/icon.rsc $(RELEASE_DIR)/$(RELEASE_192K)/emuicon.rsc
 	cat doc/readme-192k.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_192K)/readme.txt
@@ -121,6 +127,8 @@ release-aranym:
 	$(MAKE) aranym
 	mkdir $(RELEASE_DIR)/$(RELEASE_ARANYM)
 	cp $(ROM_ARANYM) $(RELEASE_DIR)/$(RELEASE_ARANYM)
+	cp aes/mform.def $(RELEASE_DIR)/$(RELEASE_ARANYM)/emucurs.def
+	cp aes/mform.rsc $(RELEASE_DIR)/$(RELEASE_ARANYM)/emucurs.rsc
 	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_ARANYM)/emuicon.def
 	cp desk/icon.rsc $(RELEASE_DIR)/$(RELEASE_ARANYM)/emuicon.rsc
 	cat doc/readme-aranym.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_ARANYM)/readme.txt
@@ -138,6 +146,8 @@ release-firebee:
 	$(MAKE) firebee
 	mkdir $(RELEASE_DIR)/$(RELEASE_FIREBEE)
 	cp $(SREC_FIREBEE) $(RELEASE_DIR)/$(RELEASE_FIREBEE)
+	cp aes/mform.def $(RELEASE_DIR)/$(RELEASE_FIREBEE)/emucurs.def
+	cp aes/mform.rsc $(RELEASE_DIR)/$(RELEASE_FIREBEE)/emucurs.rsc
 	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_FIREBEE)/emuicon.def
 	cp desk/icon.rsc $(RELEASE_DIR)/$(RELEASE_FIREBEE)/emuicon.rsc
 	cat doc/readme-firebee.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_FIREBEE)/readme.txt
@@ -159,6 +169,8 @@ release-amiga-rom:
 	$(MAKE) clean
 	$(MAKE) amigavampire
 	cp $(VAMPIRE_ROM_AMIGA) $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)
+	cp aes/mform.def $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)/emucurs.def
+	cp aes/mform.rsc $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)/emucurs.rsc
 	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)/emuicon.def
 	cp desk/icon.rsc $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)/emuicon.rsc
 	cat doc/readme-amiga-rom.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)/readme.txt
@@ -179,6 +191,8 @@ release-amiga-floppy:
 	$(MAKE) clean
 	$(MAKE) amigaflopvampire
 	cp $(EMUTOS_VAMPIRE_ADF) $(RELEASE_DIR)/$(RELEASE_AMIGA_FLOPPY)
+	cp aes/mform.def $(RELEASE_DIR)/$(RELEASE_AMIGA_FLOPPY)/emucurs.def
+	cp aes/mform.rsc $(RELEASE_DIR)/$(RELEASE_AMIGA_FLOPPY)/emucurs.rsc
 	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_AMIGA_FLOPPY)/emuicon.def
 	cp desk/icon.rsc $(RELEASE_DIR)/$(RELEASE_AMIGA_FLOPPY)/emuicon.rsc
 	cat doc/readme-amiga-floppy.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_AMIGA_FLOPPY)/readme.txt
@@ -226,6 +240,8 @@ release-prg:
 	$(MAKE) allprg
 	mkdir $(RELEASE_DIR)/$(RELEASE_PRG)
 	cp emutos*.prg $(RELEASE_DIR)/$(RELEASE_PRG)
+	cp aes/mform.def $(RELEASE_DIR)/$(RELEASE_PRG)/emucurs.def
+	cp aes/mform.rsc $(RELEASE_DIR)/$(RELEASE_PRG)/emucurs.rsc
 	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_PRG)/emuicon.def
 	cp desk/icon.rsc $(RELEASE_DIR)/$(RELEASE_PRG)/emuicon.rsc
 	cat doc/readme-prg.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_PRG)/readme.txt
@@ -243,6 +259,8 @@ release-floppy:
 	$(MAKE) allflop
 	mkdir $(RELEASE_DIR)/$(RELEASE_FLOPPY)
 	cp emutos*.st $(RELEASE_DIR)/$(RELEASE_FLOPPY)
+	cp aes/mform.def $(RELEASE_DIR)/$(RELEASE_FLOPPY)/emucurs.def
+	cp aes/mform.rsc $(RELEASE_DIR)/$(RELEASE_FLOPPY)/emucurs.rsc
 	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_FLOPPY)/emuicon.def
 	cp desk/icon.rsc $(RELEASE_DIR)/$(RELEASE_FLOPPY)/emuicon.rsc
 	cat doc/readme-floppy.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_FLOPPY)/readme.txt

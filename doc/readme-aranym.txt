@@ -6,6 +6,8 @@ http://aranym.org/
 emutos-aranym.img - Multilanguage
 
 The following optional files are also supplied:
+emucurs.rsc - modifiable mouse cursors for the AES/desktop
+emucurs.def - definition file for the above
 emuicon.rsc - contains additional icons for the desktop
 emuicon.def - definition file for the above
 

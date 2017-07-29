@@ -7,6 +7,8 @@ emutos-kickdisk.adf - English Amiga 1000 Kickstart disk
 emutos-vampire.rom - English ROM optimized for Vampire V2 accelerators
 
 The following optional files are also supplied:
+emucurs.rsc - modifiable mouse cursors for the AES/desktop
+emucurs.def - definition file for the above
 emuicon.rsc - contains additional icons for the desktop
 emuicon.def - definition file for the above
 
