@@ -183,7 +183,7 @@ desktop display.
 A default EMUICON.RSC file (currently containing 41 icons) is shipped
 with the release; the first 8 icons are the same as the builtin ones.
 Also shipped is the corresponding EMUICON.DEF file for use by a resource
-editor.  You should be aware that each icon consumes about 400 bytes of
+editor.  You should be aware that each icon consumes about 300 bytes of
 RAM, so if you are short of memory, avoid putting too many icons in
 EMUICON.RSC.
 
