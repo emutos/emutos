@@ -17,6 +17,6 @@ WORD ins_devices(void);
 WORD ins_icon(WORD sobj);
 void ins_shortcut(WORD wh, WORD mx, WORD my);
 WORD rmv_icon(WORD sobj);
-void snap_disk(WORD x, WORD y, WORD *px, WORD *py, WORD sxoff, WORD syoff);
+void snap_icon(WORD x, WORD y, WORD *px, WORD *py, WORD sxoff, WORD syoff);
 
 #endif  /* _DESKINS_H */

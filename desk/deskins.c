@@ -104,7 +104,7 @@ static WORD grid_free(WORD x,WORD y)
  *  returns:
  *      px/py: 'snapped' upper left of target icon position
  */
-void snap_disk(WORD x, WORD y, WORD *px, WORD *py, WORD sxoff, WORD syoff)
+void snap_icon(WORD x, WORD y, WORD *px, WORD *py, WORD sxoff, WORD syoff)
 {
     WORD xgrid, ygrid, icw, ich;
     WORD columns, rows, spare_pixels;
@@ -210,7 +210,7 @@ static WORD install_drive(WORD drive)
     pa->a_pdata = "";                   /* point to empty string */
     pa->a_aicon = (drive > 1) ? IG_HARD : IG_FLOPPY;
     pa->a_dicon = NIL;
-    snap_disk(x,y,&pa->a_xspot,&pa->a_yspot, 0, 0);
+    snap_icon(x,y,&pa->a_xspot,&pa->a_yspot, 0, 0);
 
     return 0;
 }
@@ -631,7 +631,7 @@ static WORD install_desktop_icon(ANODE *pa)
         pa->a_pargs = "";
         pa->a_aicon = IG_HARD;
         pa->a_dicon = NIL;
-        snap_disk(x,y,&pa->a_xspot,&pa->a_yspot, 0, 0);
+        snap_icon(x,y,&pa->a_xspot,&pa->a_yspot, 0, 0);
     }
 
     id[0] = id[1] = '\0';
@@ -1095,7 +1095,7 @@ void ins_shortcut(WORD wh, WORD mx, WORD my)
     /*
      * put the first icon on the grid where the user wanted
      */
-    snap_disk(mx, my, &x, &y, 0, 0);
+    snap_icon(mx, my, &x, &y, 0, 0);
 
     /*
      * install each selected icon on desktop

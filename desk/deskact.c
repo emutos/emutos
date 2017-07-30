@@ -119,7 +119,7 @@ static void move_drvicon(OBJECT *tree, WORD root, WORD x, WORD y, WORD *pts, WOR
             oldx = tree[obj].ob_x;
             oldy = tree[obj].ob_y;
 
-            snap_disk(x + pts[2 * objcnt], y + pts[2 * objcnt + 1],
+            snap_icon(x + pts[2 * objcnt], y + pts[2 * objcnt + 1],
                                 &tree[obj].ob_x, &tree[obj].ob_y, sxoff, syoff);
 
             for (an_disk = G.g_ahead; an_disk; an_disk = an_disk->a_next)

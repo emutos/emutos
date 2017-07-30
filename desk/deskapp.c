@@ -832,7 +832,7 @@ void app_start(void)
         {
             x = pa->a_xspot * G.g_icw;
             y = pa->a_yspot * G.g_ich + G.g_ydesk;
-            snap_disk(x, y, &pa->a_xspot, &pa->a_yspot, 0, 0);
+            snap_icon(x, y, &pa->a_xspot, &pa->a_yspot, 0, 0);
         }
     }
 
