@@ -96,28 +96,51 @@ static WORD grid_free(WORD x,WORD y)
 
 
 /*
- *  Align drive icon on a grid
+ *  Align icon on a grid
+ *
+ *  input:
+ *      x/y: mouse cursor location
+ *      sxoff/syoff: offset of cursor from upper left of target icon position
+ *  returns:
+ *      px/py: 'snapped' upper left of target icon position
  */
 void snap_disk(WORD x, WORD y, WORD *px, WORD *py, WORD sxoff, WORD syoff)
 {
     WORD xgrid, ygrid, icw, ich;
+    WORD columns, rows, spare_pixels;
 
+    /*
+     * Determine:
+     * (1) the number of columns that can fit, and
+     * (2) the total number of spare pixels that should be distributed
+     *     evenly between the columns
+     * Then determine the x grid position corresponding to x/sxoff
+     * and convert it to pixels
+     */
     icw  = G.g_icw;
-    xgrid  = (x - sxoff + (icw / 2)) / icw;
-    *px = xgrid * icw;
+    columns = G.g_wdesk / icw;
+    spare_pixels = G.g_wdesk - (columns * icw);
 
-    *px = min(gl_width - icw, *px);
-    if (*px < (gl_width / 2))
-        *px += (gl_width % icw);
+    xgrid = (x - sxoff + (icw / 2)) / icw;  /* x grid position */
+    xgrid = min(xgrid, columns-1);          /* clamp it for safety */
+    *px = (xgrid * icw) + (spare_pixels / columns);
+
+    /*
+     * Determine:
+     * (1) the number of rows that can fit, and
+     * (2) the total number of spare pixels that should be distributed
+     *     evenly between the rows
+     * Then determine the y grid position corresponding to y/syoff
+     * and convert it to pixels
+     */
+    ich = G.g_ich;
+    rows = G.g_hdesk / ich;
+    spare_pixels = G.g_hdesk - (rows * ich);
 
     y -= G.g_ydesk;
-    ich = G.g_ich;
-    ygrid  = (y - syoff + (ich / 2)) / ich;
-    *py = ygrid * ich;
-
-    *py = min(G.g_hdesk - ich, *py);
-    if (*py < (G.g_hdesk / 2))
-        *py += (G.g_hdesk % ich);
+    ygrid  = (y - syoff + (ich / 2)) / ich; /* y grid position */
+    ygrid = min(ygrid, rows-1);             /* clamp it for safety */
+    *py = (ygrid * ich) + (spare_pixels / rows);
     *py += G.g_ydesk;
 }
 
