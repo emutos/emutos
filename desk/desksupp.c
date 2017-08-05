@@ -665,14 +665,20 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname, BYT
     installed_datafile = (is_installed(pa) && !isapp);
 
     /*
-     * update the current directory.  if the application was selected
-     * via an extension that matches an installed application, and the
-     * application flags indicate it, we need to use the application
-     * directory.  otherwise, we just use the selected icon's directory.
+     * update the current directory
      */
-    if (installed_datafile && (pa->a_flags & AF_APPDIR))
+    if (is_installed(pa))
     {
-        strcpy(app_path,pa->a_pappl);
+        WNODE *pw;
+        /*
+         * if the application flags specify 'top window' and one exists,
+         * we use it; otherwise we use the application directory
+         */
+        pw = win_ontop();
+        if (!(pa->a_flags & AF_APPDIR) && pw)
+            strcpy(app_path,pw->w_pnode.p_spec);
+        else
+            strcpy(app_path,pa->a_pappl);
     }
     else
     {
@@ -711,6 +717,10 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname, BYT
     }
     else
     {
+        /* build full pathname for pro_run() or show_file() */
+        strcpy(app_path, pathname);
+        p = filename_start(app_path);
+        strcpy(p, pname);
         if (isapp)
         {
 #if CONF_WITH_DESKTOP_SHORTCUTS
@@ -731,7 +741,6 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname, BYT
                  */
                 ret = opn_appl(pname, ptail);
             }
-            strcat(app_path, pname);    /* build full pathname for pro_run() */
             pcmd = app_path;
         }
         else
@@ -747,7 +756,8 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname, BYT
                 char *iobuf = dos_alloc_anyram(IOBUFSIZE);
                 if (iobuf)
                 {
-                    show_file(pname, IOBUFSIZE, iobuf);
+
+                    show_file(app_path, IOBUFSIZE, iobuf);
                     dos_free(iobuf);
                 }
             }
