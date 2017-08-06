@@ -5,11 +5,13 @@ The current version of EmuDesk is based on the TOS 1 desktop, but with
 many improvements inspired by the TOS 2/3/4 desktop, including:
 
 1) new menu items
+    . set file mask
     . install icon
     . install application
     . install devices
     . remove desktop icon
     . desktop configuration
+    . blitter
 Due to space limitations, the implementation of the above is somewhat
 restricted in the 192K ROMs (see the detailed descriptions below).  If
 you make any changes to the desktop using the above features, you must
@@ -22,6 +24,18 @@ save the desktop to preserve the changes.
     . desktop shortcuts
 Due to space limitations, desktop shortcuts are not available in the
 192K ROMs.  Desktop shortcuts are preserved when you save the desktop.
+
+
+Set file mask
+=============
+192K ROMs:
+This is not available.
+
+Other ROMs:
+This is used to change the file mask of the currently-topped window, to
+control which files are displayed within the window.  Note that folders
+are always displayed; the mask affects the display of files only.  The
+default file mask when a window is opened is "*.*"
 
 
 Install icon
@@ -164,6 +178,12 @@ It allows you to specify the default directory and input parameter for
 all applications that are not installed applications.  See "Install
 application" above, under 'Default dir' and 'Parameter', for further
 information about these options.
+
+
+Blitter
+=======
+This item allows you to enable or disable the use of the blitter by the
+desktop.  The item is greyed-out if the system does not have a blitter.
 
 
 User-assignable icons
