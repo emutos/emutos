@@ -856,6 +856,40 @@ BOOL inf_backgrounds(void)
 
 
 /*
+ *      Handle desktop configuration dialog
+ */
+void inf_conf(void)
+{
+    OBJECT *tree = G.a_trees[ADDESKCF];
+    WORD button;
+
+    /* first, deselect all objects */
+    deselect_all(tree);
+
+    /* select buttons corresponding to current state */
+    if (G.g_appdir)
+        tree[DCDEFAPP].ob_state |= SELECTED;
+    else
+        tree[DCDEFWIN].ob_state |= SELECTED;
+
+    if (G.g_fullpath)
+        tree[DCPMFULL].ob_state |= SELECTED;
+    else
+        tree[DCPMFILE].ob_state |= SELECTED;
+
+    /* allow user to select preferences */
+    inf_show(tree, 0);
+    button = inf_what(tree, DCOK, DC_CNCL);
+
+    if (button)
+    {
+        G.g_appdir = inf_which(tree, DCDEFAPP, 2);
+        G.g_fullpath = inf_which(tree, DCPMFULL, 2);
+    }
+}
+
+
+/*
  *       Open application icon
  */
 WORD opn_appl(BYTE *papname, BYTE *ptail)

@@ -628,6 +628,7 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
  */
 WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname, BYTE *tail)
 {
+    WNODE *pw;
     WORD ret, done;
     WORD isgraf, isparm, installed_datafile;
     BYTE *pcmd, *ptail, *p;
@@ -663,27 +664,34 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname, BYT
     isgraf = pa->a_flags & AF_ISCRYS;
     isparm = pa->a_flags & AF_ISPARM;
     installed_datafile = (is_installed(pa) && !isapp);
+    pw = win_ontop();
 
     /*
      * update the current directory
      */
     if (is_installed(pa))
     {
-        WNODE *pw;
         /*
          * if the application flags specify 'top window' and one exists,
          * we use it; otherwise we use the application directory
          */
-        pw = win_ontop();
         if (!(pa->a_flags & AF_APPDIR) && pw)
-            strcpy(app_path,pw->w_pnode.p_spec);
+            p = pw->w_pnode.p_spec;
         else
-            strcpy(app_path,pa->a_pappl);
+            p = pa->a_pappl;
     }
     else
     {
-        strcpy(app_path,pathname);
+        /*
+         * if the desktop config flags specify 'top window' and one exists,
+         * we use it; otherwise we use the application directory
+         */
+        if (!G.g_appdir && pw)
+            p = pw->w_pnode.p_spec;
+        else
+            p = pathname;
     }
+    strcpy(app_path, p);
     p = filename_start(app_path);
     *p = '\0';
     set_default_path(app_path);

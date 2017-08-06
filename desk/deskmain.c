@@ -598,6 +598,9 @@ static WORD do_optnmenu(WORD item)
         app_save(TRUE);
         desk_wait(FALSE);
         break;
+    case CONFITEM:
+        inf_conf();
+        break;
     case RESITEM:
         rebld = change_resolution(&newres,&newmode);
         if (rebld == 1)
@@ -1085,6 +1088,8 @@ static void cnx_put(void)
     G.g_cnxsave.cs_timefmt = G.g_ctimeform;
     G.g_cnxsave.cs_datefmt = G.g_cdateform;
     G.g_cnxsave.cs_blitter = G.g_blitter;
+    G.g_cnxsave.cs_appdir = G.g_appdir;
+    G.g_cnxsave.cs_fullpath = G.g_fullpath;
 
     /*
      * first, count the unused slots & initialise them
@@ -1136,6 +1141,8 @@ static void cnx_get(void)
     G.g_ctimeform = G.g_cnxsave.cs_timefmt;
     G.g_cdateform = G.g_cnxsave.cs_datefmt;
     G.g_blitter   = G.g_cnxsave.cs_blitter;
+    G.g_appdir    = G.g_cnxsave.cs_appdir;
+    G.g_fullpath  = G.g_cnxsave.cs_fullpath;
     G.g_cdclkpref = evnt_dclick(G.g_cdclkpref, TRUE);
     G.g_cmclkpref = menu_click(G.g_cmclkpref, TRUE);
 

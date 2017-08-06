@@ -9,6 +9,7 @@ many improvements inspired by the TOS 2/3/4 desktop, including:
     . install application
     . install devices
     . remove desktop icon
+    . desktop configuration
 Due to space limitations, the implementation of the above is somewhat
 restricted in the 192K ROMs (see the detailed descriptions below).  If
 you make any changes to the desktop using the above features, you must
@@ -154,6 +155,15 @@ Remove desktop icon
 ===================
 This is used to remove a disk or trash icon.  Highlight the icon you
 wish to remove, and click on "Remove desktop icon".
+
+
+Desktop configuration
+=====================
+This is a simplified version of the corresponding Atari TOS menu item.
+It allows you to specify the default directory and input parameter for
+all applications that are not installed applications.  See "Install
+application" above, under 'Default dir' and 'Parameter', for further
+information about these options.
 
 
 User-assignable icons

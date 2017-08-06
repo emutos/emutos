@@ -159,6 +159,7 @@ typedef struct
 /*GLOBAL*/ WORD         g_cwin;                 /* current window #     */
 /*GLOBAL*/ WORD         g_wlastsel;             /* window holding last  */
                                                 /*   selection          */
+                                            /* current desktop preference values */
 /*GLOBAL*/ WORD         g_csortitem;            /* curr. sort item chked*/
 /*GLOBAL*/ WORD         g_ccopypref;            /* curr. copy pref.     */
 /*GLOBAL*/ WORD         g_cdelepref;            /* curr. delete pref.   */
@@ -168,6 +169,8 @@ typedef struct
 /*GLOBAL*/ WORD         g_ctimeform;            /* curr. time format    */
 /*GLOBAL*/ WORD         g_cdateform;            /* curr. date format    */
 /*GLOBAL*/ WORD         g_blitter;              /* curr. blitter enable */
+/*GLOBAL*/ WORD         g_appdir;               /* default dir is application dir */
+/*GLOBAL*/ WORD         g_fullpath;             /* use full path for parameter */
 
 /*GLOBAL*/ BYTE         g_1text[256];
 
