@@ -173,6 +173,10 @@ wish to remove, and click on "Remove desktop icon".
 
 Desktop configuration
 =====================
+192K ROMs:
+This is not available.
+
+Other ROMs:
 This is a simplified version of the corresponding Atari TOS menu item.
 It allows you to specify the default directory and input parameter for
 all applications that are not installed applications.  See "Install

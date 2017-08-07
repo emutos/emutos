@@ -11,7 +11,6 @@
 #define _DESKINF_H
 
 WORD dr_code(PARMBLK *pparms);
-void inf_conf(void);
 WORD inf_show(OBJECT *tree, WORD start);
 WORD inf_file_folder(BYTE *ppath, FNODE *pf);
 WORD inf_disk(BYTE dr_id);
@@ -21,6 +20,10 @@ WORD opn_appl(BYTE *papname, BYTE *ptail);
 
 #if CONF_WITH_BACKGROUNDS
 BOOL inf_backgrounds(void);
+#endif
+
+#if CONF_WITH_DESKTOP_CONFIG
+void inf_conf(void);
 #endif
 
 #endif  /* _DESKINF_H */

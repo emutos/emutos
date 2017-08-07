@@ -519,12 +519,14 @@ static BOOL build_selected_path(PNODE *pn, BYTE *pathname)
     if (!fn)
         return FALSE;
 
+#if CONF_WITH_DESKTOP_CONFIG
     if (G.g_fullpath)
     {
         strcpy(pathname,pn->p_spec);
         add_fname(pathname,fn->f_name);
     }
     else
+#endif
     {
         strcpy(pathname,fn->f_name);
     }

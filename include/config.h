@@ -245,6 +245,9 @@
 # ifndef CONF_WITH_FILEMASK
 #  define CONF_WITH_FILEMASK 0
 # endif
+# ifndef CONF_WITH_DESKTOP_CONFIG
+#  define CONF_WITH_DESKTOP_CONFIG 0
+# endif
 # ifndef CONF_WITH_PCGEM
 #  define CONF_WITH_PCGEM 0
 # endif
@@ -1031,6 +1034,14 @@
  */
 #ifndef CONF_WITH_FILEMASK
 # define CONF_WITH_FILEMASK 1
+#endif
+
+/*
+ * Set CONF_WITH_DESKTOP_CONFIG to 1 to enable the 'Desktop configuration'
+ * dialog
+ */
+#ifndef CONF_WITH_DESKTOP_CONFIG
+# define CONF_WITH_DESKTOP_CONFIG 1
 #endif
 
 /*

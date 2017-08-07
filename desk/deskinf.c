@@ -855,6 +855,7 @@ BOOL inf_backgrounds(void)
 #endif
 
 
+#if CONF_WITH_DESKTOP_CONFIG
 /*
  *      Handle desktop configuration dialog
  */
@@ -887,6 +888,7 @@ void inf_conf(void)
         G.g_fullpath = inf_which(tree, DCPMFULL, 2);
     }
 }
+#endif
 
 
 /*

@@ -815,8 +815,10 @@ void app_start(void)
             pcurr = scan_2(pcurr, &envr);
             if (envr & INF_E5_NOSORT)
                 G.g_cnxsave.cs_sort = CS_NOSORT;
+#if CONF_WITH_DESKTOP_CONFIG
             G.g_cnxsave.cs_appdir = ((envr & INF_E5_APPDIR) != 0);
             G.g_cnxsave.cs_fullpath = ((envr & INF_E5_ISFULL) != 0);
+#endif
             break;
 #if CONF_WITH_BACKGROUNDS
         case 'Q':                       /* desktop/window pattern/colour */
@@ -1007,8 +1009,10 @@ void app_save(WORD todisk)
     env2 |= sound(FALSE, 0xFFFF, 0)  ? 0x00 : INF_E2_SOUND;
     mode = desk_get_videomode();
     env5 = (G.g_cnxsave.cs_sort == CS_NOSORT) ? INF_E5_NOSORT : 0;
+#if CONF_WITH_DESKTOP_CONFIG
     env5 |= G.g_cnxsave.cs_appdir ? INF_E5_APPDIR : 0;
     env5 |= G.g_cnxsave.cs_fullpath ? INF_E5_ISFULL : 0;
+#endif
     pcurr += sprintf(pcurr,"#E %02X %02X %02X %02X %02X\r\n",
                     env1,env2,HIBYTE(mode),LOBYTE(mode),env5);
 
