@@ -798,9 +798,9 @@ po/messages.pot: bug po/POTFILES.in $(shell grep -v '^#' po/POTFILES.in)
 # Resource support
 #
 
-TOCLEAN += erd grd ird mrd
+TOCLEAN += erd grd ird mrd draft temp.rsc temp.def
 
-NODEP += erd grd ird mrd
+NODEP += erd grd ird mrd draft
 erd: tools/erd.c
 	$(NATIVECC) $< -o $@
 grd: tools/erd.c
@@ -809,6 +809,8 @@ ird: tools/erd.c
 	$(NATIVECC) -DICON_RSC $< -o ird
 mrd: tools/erd.c
 	$(NATIVECC) -DMFORM_RSC $< -o mrd
+draft: tools/draft.c
+	$(NATIVECC) $(LOCALCONF) $(DEF) $< -o $@
 
 DESKRSC_BASE = desk/desktop
 DESKRSCGEN_BASE = desk/desk_rsc
@@ -821,8 +823,9 @@ MFORMRSCGEN_BASE = aes/mforms
 GEN_SRC += $(DESKRSCGEN_BASE).c $(DESKRSCGEN_BASE).h $(GEMRSCGEN_BASE).c $(GEMRSCGEN_BASE).h
 GEN_SRC += $(ICONRSCGEN_BASE).c $(ICONRSCGEN_BASE).h $(MFORMRSCGEN_BASE).c $(MFORMRSCGEN_BASE).h
 
-$(DESKRSCGEN_BASE).c $(DESKRSCGEN_BASE).h: erd $(DESKRSC_BASE).rsc $(DESKRSC_BASE).def
-	./erd -pdesk $(DESKRSC_BASE) $(DESKRSCGEN_BASE)
+$(DESKRSCGEN_BASE).c $(DESKRSCGEN_BASE).h: draft erd $(DESKRSC_BASE).rsc $(DESKRSC_BASE).def
+	./draft $(DESKRSC_BASE) temp
+	./erd -pdesk temp $(DESKRSCGEN_BASE)
 $(GEMRSCGEN_BASE).c $(GEMRSCGEN_BASE).h: grd $(GEMRSC_BASE).rsc $(GEMRSC_BASE).def
 	./grd $(GEMRSC_BASE) $(GEMRSCGEN_BASE)
 $(ICONRSCGEN_BASE).c $(ICONRSCGEN_BASE).h: ird $(ICONRSC_BASE).rsc $(ICONRSC_BASE).def
@@ -843,7 +846,7 @@ mkrom: tools/mkrom.c
 # test target to build all tools
 .PHONY: tools
 NODEP += tools
-tools: bug erd mkflop mkrom tos-lang-change
+tools: bug draft erd mkflop mkrom tos-lang-change
 
 # user tool, not needed in EmuTOS building
 TOCLEAN += tos-lang-change

@@ -46,19 +46,6 @@
  *  strings.  It also contains externs for the structures in the .c file
  *  that are to be globally-visible.
  *
- *  In order to save space in the generated resource file when compiling
- *  for the 192K ROM images, the generated code for certain items is
- *  surrounded by a #ifdef/#endif wrapper.  This is based on two pairs
- *  of program-supplied values:
- *      . a starting free string name & conditional compilation string
- *      . a starting tree name & conditional compilation string.
- *  All free strings with numbers greater than or equal to the number
- *  of the starting free string are wrapped.  Trees are treated in a
- *  similar fashion.  Objects/tedinfos/bitblks/iconblks that appear only
- *  in wrapped trees will also be wrapped.  Note that, at this time, this
- *  process does NOT extend to the images pointed to by bitblks/iconblks,
- *  but this could be added with some extra work.
- *
  *  In order to save space in the generated resource file for all ROMs,
  *  the following additional steps are taken:
  *    . duplicate image data is automatically eliminated; multiple
@@ -191,6 +178,9 @@
  *  v5.0    roger burrows, july/2017
  *          . add support for mform (mouse cursor) resource generation
  *            (performed if preprocessor symbol MFORM_RSC is #defined)
+ *
+ *  v5.1    roger burrows, august/2017
+ *          . drop TARGET_192 conditional wrapping for desktop version
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -412,7 +402,7 @@ typedef struct {
   #define PROGRAM_NAME  "mrd"
 #endif
 
-#define VERSION         "v5.0"
+#define VERSION         "v5.1"
 #define MAX_STRLEN      300         /* max size for internal string areas */
 #define NLS             "N_("       /* the macro used in EmuTOS for NLS support*/
 
@@ -496,9 +486,11 @@ typedef struct {
 #ifdef DESK_RSC
 /*
  *  conditional wrapping control
+ *
+ *  not used since the introduction of the 'draft' resource preprocessor
  */
-LOCAL const CONDITIONAL frstr_cond = { "STICNTYP", "#ifndef TARGET_192" };
-LOCAL const CONDITIONAL other_cond = { "ADTTREZ", "#ifndef TARGET_192" };
+LOCAL const CONDITIONAL frstr_cond = { "?", "#error Code generation error" };  /* no match, error if it does ... */
+LOCAL const CONDITIONAL other_cond = { "?", "#error Code generation error" };  /* likewise */
 
 /*
  *  table of complete strings that will have a shared data item
