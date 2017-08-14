@@ -1488,12 +1488,12 @@
 # endif
 #endif
 
-#if !defined(__mcoldfire__)
+#if !defined(MACHINE_FIREBEE) && !defined(MACHINE_M548X)
 # if CONF_WITH_BAS_MEMORY_MAP
-#  error CONF_WITH_BAS_MEMORY_MAP requires a ColdFire CPU.
+#  error CONF_WITH_BAS_MEMORY_MAP requires MACHINE_FIREBEE or MACHINE_M548X.
 # endif
 # if CONF_WITH_FLEXCAN
-#  error CONF_WITH_FLEXCAN requires a ColdFire CPU.
+#  error CONF_WITH_FLEXCAN requires MACHINE_FIREBEE or MACHINE_M548X.
 # endif
 #endif
 
