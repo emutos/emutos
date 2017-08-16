@@ -517,7 +517,7 @@ int i;
     trindex = (OFFSET *)((char *)rschdr_in+rsh_in.trindex) + tree;
     if (debug)
         printf("removing tree# %d from tree index\n",tree);
-    memcpy(trindex,trindex+1,(rsh_in.ntree-tree-1)*sizeof(OFFSET));
+    memmove(trindex,trindex+1,(rsh_in.ntree-tree-1)*sizeof(OFFSET));
     rsh_in.ntree--;
 
     /*
@@ -530,7 +530,7 @@ int i;
         if (d2->tree != tree)
             break;
     }
-    memcpy(d,d2,(num_defs-i)*sizeof(DEF_ENTRY));
+    memmove(d,d2,(num_defs-i)*sizeof(DEF_ENTRY));
     if (debug)
         printf("deleting entries %d-%d (tree# %d)\n",entry,i-1,tree);
     num_defs -= i-entry;
@@ -558,7 +558,7 @@ int i;
     freestr = (OFFSET *)((char *)rschdr_in+rsh_in.frstr) + obj;
     if (debug)
         printf("removing obj# %d from free string index\n",obj);
-    memcpy(freestr,freestr+1,(rsh_in.nstring-obj-1)*sizeof(OFFSET));
+    memmove(freestr,freestr+1,(rsh_in.nstring-obj-1)*sizeof(OFFSET));
     rsh_in.nstring--;
 
     /*
@@ -566,7 +566,7 @@ int i;
      */
     if (debug)
         printf("deleting DEF entry %d (obj# %d)\n",entry,obj);
-    memcpy(d,d+1,(num_defs-entry-1)*sizeof(DEF_ENTRY));
+    memmove(d,d+1,(num_defs-entry-1)*sizeof(DEF_ENTRY));
     num_defs--;
 
     /*
