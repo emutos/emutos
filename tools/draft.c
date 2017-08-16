@@ -429,7 +429,7 @@ int n;
     }
 
     if (verbose)
-        fputs(copyright,stderr);        /* announce us ... */
+        puts(copyright);            /* announce us ... */
 
     if (argc-optind != 2)
         usage("incorrect number of arguments");
@@ -1650,8 +1650,8 @@ PRIVATE void error(char *s,char *t)
 PRIVATE void usage(char *s)
 {
     if (*s)
-        fprintf(stderr,"%s %s: %s\n",PROGRAM_NAME,VERSION,s);
-    fprintf(stderr,"usage: %s [-d] [-v] <rsc_in> <rsc_out>\n",PROGRAM_NAME);
+        printf("%s %s: %s\n",PROGRAM_NAME,VERSION,s);
+    printf("usage: %s [-d] [-v] <rsc_in> <rsc_out>\n",PROGRAM_NAME);
 
     exit(2);
 }
