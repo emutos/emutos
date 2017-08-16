@@ -1114,8 +1114,6 @@ unsigned short frimg_datalen = 0, image_datalen = 0;
     for (i = 0, p = (OFFSET *)((char *)in+rshin->frstr); i < rshin->nstring; i++, p++)
     {
         offset = get_offset(p);
-        if (offset == 0)        /* free string has been removed */
-            continue;
         rshout->nstring++;
         frstr_textlen += strlen((char *)in+offset) + 1;
     }
