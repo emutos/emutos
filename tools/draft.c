@@ -517,7 +517,7 @@ int i;
     trindex = (OFFSET *)((char *)rschdr_in+rsh_in.trindex) + tree;
     if (debug)
         printf("removing tree# %d from tree index\n",tree);
-    memcpy(trindex,trindex+1,(rsh_in.ntree-tree-1)*sizeof(trindex));
+    memcpy(trindex,trindex+1,(rsh_in.ntree-tree-1)*sizeof(OFFSET));
     rsh_in.ntree--;
 
     /*
@@ -558,7 +558,7 @@ int i;
     freestr = (OFFSET *)((char *)rschdr_in+rsh_in.frstr) + obj;
     if (debug)
         printf("removing obj# %d from free string index\n",obj);
-    memcpy(freestr,freestr+1,(rsh_in.nstring-obj-1)*sizeof(freestr));
+    memcpy(freestr,freestr+1,(rsh_in.nstring-obj-1)*sizeof(OFFSET));
     rsh_in.nstring--;
 
     /*
@@ -1140,16 +1140,16 @@ unsigned short frimg_datalen = 0, image_datalen = 0;
 #endif
 
     rshout->trindex = sizeof(RSHDR);
-    rshout->object = rshout->trindex + rshout->ntree * sizeof(long);
+    rshout->object = rshout->trindex + rshout->ntree * sizeof(OFFSET);
     rshout->tedinfo = rshout->object + rshout->nobs * sizeof(OBJECT);
     rshout->iconblk = rshout->tedinfo + rshout->nted * sizeof(TEDINFO);
     rshout->bitblk = rshout->iconblk + rshout->nib * sizeof(ICONBLK);
     rshout->frstr = rshout->bitblk + rshout->nbb * sizeof(BITBLK);
-    rshout->string = rshout->frstr + rshout->nstring * sizeof(long) + frstr_textlen;
+    rshout->string = rshout->frstr + rshout->nstring * sizeof(OFFSET) + frstr_textlen;
     rshout->frimg = rshout->string + string_textlen;
     if (rshout->nimages)        /* align to word if table present */
         rshout->frimg = (rshout->frimg + 1) & ~1;
-    rshout->imdata = rshout->frimg + rshout->nimages * sizeof(long);
+    rshout->imdata = rshout->frimg + rshout->nimages * sizeof(OFFSET);
     rshout->rssize = rshout->imdata + image_datalen + frimg_datalen;
 }
 
@@ -1260,7 +1260,7 @@ int i;
 
     indexin = (OFFSET *)((char *)in + rshin->frstr);
     indexout = (OFFSET *)((char *)out + rshout->frstr);
-    stringout = (char *)out + rshout->frstr + rshout->nstring * sizeof(long);
+    stringout = (char *)out + rshout->frstr + rshout->nstring * sizeof(OFFSET);
     for (i = 0; i < rshin->nstring; i++, indexin++)
     {
         offset = get_offset(indexin);
