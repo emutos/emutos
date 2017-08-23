@@ -1,7 +1,4 @@
 AES/VDI/Line-A bugs:
-- In "Patience" game, all the dialogs (quit, start new game)
-  show the button that was selected last time, as still selected,
-  and it needs to be unselected to use the dialog.
 - Because EmuTOS doesn't take outline into account in text extents
   calculation, the right side of outline characters are clipped
   e.g. in "LaserChess", "Diamond miner" & "Minigolf" games,
@@ -57,8 +54,6 @@ Links to programs listed above:
   http://www.ntrautanen.fi/marko/arkisto.atari.org/sivut/menu_pelit.htm
 - Minigolf (GFA):
   http://koti.mbnet.fi/tammat/src/minigolf.tar.gz
-- Patience (older version):
-  http://www.umich.edu/~archive/atari/Games/Cards/patience.lzh
 - Sherlock:
   http://www.umich.edu/~archive/atari/Games/Adventure/sherlock.arc
 - Swing:
