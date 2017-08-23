@@ -8,7 +8,8 @@
  *
  *
  *  This program is designed to delete tree(s) and/or free string(s)
- *  and/or alert(s) from a resource file.
+ *  and/or alert(s) from a resource file.  As of v1.1, it also deletes
+ *  menu items.
  *
  *  Syntax: draft [-d] [-v] <RSCin> <RSCout>
  *
@@ -30,8 +31,8 @@
  *      .DFN        slightly simplified version of .DEF/.RSD, with flag
  *                  values in a different sequence
  *
- *  It then deletes the trees/alerts/free strings specified in the
- *  compiled-in exclude_items[] array.
+ *  It then deletes the trees/alerts/free strings/menu items specified
+ *  in the compiled-in exclude_items[] array.
  *
  *  Finally, it writes the files <RSCout>.rsc and <RSCout>.def
  *
@@ -41,15 +42,16 @@
  *  v1.0    roger burrows, august/2017
  *          initial release, based on erd v4.2
  *
+ *  v1.1    roger burrows, august/2017
+ *          . add support for menu item deletion
  */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #ifndef ATARI
 #include <getopt.h>
-#endif
 #include "../include/config.h"
-
+#endif
 
 #define LOCAL   static  /* comment out for LatticeC debugging */
 #define PRIVATE static
@@ -100,6 +102,8 @@
 #define     FL3DBAK         0x0400
 #define     FL3DACT         0x0600
 #define SUBMENU         0x0800
+
+#define NIL             -1
 
 typedef struct          /* big-endian short */
 {
@@ -218,7 +222,7 @@ typedef struct
  *  our own defines & structures
  */
 #define PROGRAM_NAME    "draft"
-#define VERSION         "v1.0"
+#define VERSION         "v1.1"
 #define MAX_STRLEN      300         /* max size for internal string areas */
 
 #define OFFSET(item,base)    ((char *)item-(char *)base)
@@ -374,6 +378,7 @@ PRIVATE void convert_header(RSHDR *hdr);
 PRIVATE short convert_def_type(int deftype);
 PRIVATE short convert_dfn_type(int dfntype,int dfnind);
 PRIVATE void delete_freestr(int entry);
+PRIVATE void delete_menuitem(int entry);
 PRIVATE void delete_resource_item(char *name);
 PRIVATE void delete_tree(int entry);
 PRIVATE void display_defs(char *msg,int entries);
@@ -389,7 +394,9 @@ PRIVATE int load_hrd(FILE *fp);
 PRIVATE RSHDR *load_rsc(char *path);
 PRIVATE FILE *openfile(char *name,char *ext,char *mode);
 PRIVATE void put_offset(OFFSET *p,unsigned long n);
+PRIVATE void put_short(SHORT *p,short n);
 PRIVATE void put_ushort(USHORT *p,unsigned short n);
+PRIVATE void snip_item(OBJECT *tree,OBJECT *parent,OBJECT *item);
 PRIVATE void sort_def_table(int n);
 PRIVATE char *strdup(const char *string);
 PRIVATE void usage(char *s);
@@ -397,6 +404,7 @@ PRIVATE int write_def_file(char *name,char *ext);
 PRIVATE int write_rsc_file(char *name,char *ext);
 
 
+#ifndef ATARI
 /*
  *  max(): return maximum of two values
  */
@@ -405,6 +413,7 @@ short max(short a, short b)
 {
     return (a > b) ? a : b;
 }
+#endif
 
 
 int main(int argc,char *argv[])
@@ -579,6 +588,156 @@ int i;
     }
 }
 
+/*
+ *  logically remove item from tree
+ */
+PRIVATE void snip_item(OBJECT *tree,OBJECT *parent,OBJECT *item)
+{
+short item_num = item-tree;
+short next = get_short(&item->ob_next);
+short head = get_short(&parent->ob_head);
+short prev, temp;
+
+    /*
+     * handle item if at head of parent's list
+     */
+    if (head == item_num)
+    {
+        if (get_short(&parent->ob_tail) == item_num)
+        {
+            /* removing only child */
+            next = NIL;
+            put_short(&parent->ob_tail,NIL);
+        }
+        put_short(&parent->ob_head,next);
+        return;
+    }
+
+    /*
+     * handle item elsewhere:
+     * find previous item and link it to next
+     */
+    for (prev = head; ; prev = temp)
+    {
+        temp = get_short(&(tree+prev)->ob_next);
+        if (temp == item_num)
+            break;
+    }
+    put_short(&(tree+prev)->ob_next,next);
+    if (get_short(&parent->ob_tail) == item_num)
+    {
+        /* removing item at tail of list */
+        put_short(&parent->ob_tail,prev);
+    }
+}
+
+PRIVATE void delete_menuitem(int entry)
+{
+OFFSET *trindex;
+OBJECT *item, *parent, *tree, *obj;
+DEF_ENTRY *d = &def[entry], *d2;
+short curr, prev;
+short delta, y, ysave, n;
+int i, num_objs;
+
+    if (debug)
+        printf("removing obj# %d from tree# %d\n",d->obj,d->tree);
+
+    /*
+     * validate the menu item
+     */
+    trindex = (OFFSET *)((char *)rschdr_in+rsh_in.trindex) + d->tree;
+    tree = (OBJECT *)((char *)rschdr_in+get_offset(trindex));
+    item = tree + d->obj;
+    if (get_ushort(&item->ob_type) != G_STRING)
+        error("menu item is not a string:",d->name);
+    if ((get_short(&item->ob_head) != NIL) || (get_short(&item->ob_tail) != NIL))
+        error("menu item has children:",d->name);
+    if (get_short(&item->ob_next) == NIL)
+        error("menu item is root:",d->name);
+
+    /*
+     * find the parent (the enclosing box) & adjust its height
+     */
+    for (prev = d->obj; ; prev = curr)
+    {
+        curr = get_short(&(tree+prev)->ob_next);
+        if (get_short(&(tree+curr)->ob_tail) == prev)
+            break;
+    }
+    parent = tree + curr;
+    delta = get_short(&item->ob_height);
+    put_short(&parent->ob_height,get_short(&parent->ob_height) - delta);
+
+    /*
+     * all of the menu items below the one being deleted must be displayed
+     * one line higher than before on the screen
+     *
+     * we accomplish that by adjusting the y position of all children whose
+     * y position is greater than that of the item being deleted
+     */
+    ysave = get_short(&item->ob_y);
+    for (curr = get_short(&parent->ob_head); ; curr = get_short(&obj->ob_next))
+    {
+        obj = tree + curr;
+        y = get_short(&obj->ob_y);
+        if (y > ysave)
+            put_short(&obj->ob_y,y-delta);
+        if (curr == get_short(&parent->ob_tail))
+            break;
+    }
+
+    /*
+     * snip the menu item out of the tree logically
+     */
+    snip_item(tree,parent,item);
+
+    /*
+     * we now have a one-integer gap in the object number sequence,
+     * corresponding to the menu item that we are deleting
+     *
+     * we fix this by decrementing all next/head/tail numbers (within the
+     * objects of the menu tree) that have a value greater than the gap
+     */
+    num_objs = (get_offset(trindex+1)-get_offset(trindex)) / sizeof(OBJECT);
+    for (i = 0, obj = tree; i < num_objs; i++, obj++)
+    {
+        n = get_short(&obj->ob_next);
+        if (n > d->obj)
+            put_short(&obj->ob_next,n-1);
+
+        n = get_short(&obj->ob_head);
+        if (n > d->obj)
+            put_short(&obj->ob_head,n-1);
+
+        n = get_short(&obj->ob_tail);
+        if (n > d->obj)
+            put_short(&obj->ob_tail,n-1);
+    }
+
+    /*
+     * then we update the DEF entries for the menu tree correspondingly
+     */
+    for (i = entry+1, d2 = d+1; (i < num_defs) && (d2->tree == d->tree); i++, d2++)
+        d2->obj--;
+
+    /*
+     * now we delete the object itself and the corresponding DEF entry
+     */
+    n = item - (OBJECT *)((char *)rschdr_in+rsh_in.object);
+    memmove(item,item+1,(rsh_in.nobs-n-1)*sizeof(OBJECT));
+    rsh_in.nobs--;
+    memmove(d,d+1,(num_defs-entry-1)*sizeof(DEF_ENTRY));
+    num_defs--;
+
+    /*
+     * finally(!) we update the tree index entries for all tree numbers
+     * above the current one, since all their objects have moved down one
+     */
+    for (i = d->tree+1, trindex++; i < rsh_in.ntree; i++, trindex++)
+        put_offset(trindex,get_offset(trindex)-sizeof(OBJECT));
+}
+
 PRIVATE void delete_resource_item(char *name)
 {
 DEF_ENTRY *d;
@@ -605,8 +764,15 @@ int i;
                 delete_freestr(d-def);
                 return;
                 break;
+            case DEF_OBJECT:
+                if (def[d->tree].type == DEF_MENU)
+                {
+                    delete_menuitem(d-def);
+                    return;
+                }
+                /* drop thru */
             default:
-                error("not a tree / alert / free string:",name);
+                error("not a tree / alert / free string / menu item:",name);
             }
             break;
         }
@@ -1591,6 +1757,15 @@ PRIVATE unsigned short get_ushort(USHORT *p)
 PRIVATE unsigned long get_offset(OFFSET *p)
 {
     return (p->b1<<24) | (p->b2<<16) | (p->b3<<8) | p->b4;
+}
+
+/*
+ * convert short to big-endian
+ */
+PRIVATE void put_short(SHORT *p,short n)
+{
+    p->hi = (n>>8) & 0xff;
+    p->lo = n & 0xff;
 }
 
 /*
