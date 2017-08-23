@@ -344,6 +344,12 @@ char *exclude_items[] =
 #if !defined(MACHINE_AMIGA)
     "ADAMIREZ",
 #endif
+#if !WITH_CLI
+    "CLIITEM",
+#endif
+#if !WITH_CLI && !CONF_WITH_SHUTDOWN
+    "SEP_FL2",
+#endif
     NULL                            /* end marker */
 };
 

@@ -132,7 +132,6 @@ static WORD     ig_close;
  *      ILL_DOCU[]      disabled if a normal non-executable file is selected
  *      ILL_FOLD[]      disabled if a folder is selected
  *      ILL_TRASH[]     disabled if the trash can is selected
- *      ILL_ALWAYS[]    always disabled (contents vary according to configuration)
  */
 static const BYTE ILL_FILE[] =  { IDSKITEM, RICNITEM, 0 };
 static const BYTE ILL_DOCU[] =  { IDSKITEM, IAPPITEM, RICNITEM, 0 };
@@ -153,11 +152,6 @@ static const BYTE ILL_OPENWIN[] = {
     ICONITEM, NAMEITEM, DATEITEM, SIZEITEM, TYPEITEM,
 #if CONF_WITH_FILEMASK
     MASKITEM,
-#endif
-    0 };
-static const BYTE ILL_ALWAYS[] = {
-#if WITH_CLI == 0
-    CLIITEM,
 #endif
     0 };
 
@@ -337,8 +331,6 @@ static void men_update(void)
         men_list(tree, ILL_OPENWIN, TRUE);
     else
         men_list(tree, ILL_NOWIN, FALSE);
-
-    men_list(tree, ILL_ALWAYS, FALSE);
 
 #if CONF_WITH_SHUTDOWN
     menu_ienable(tree, QUITITEM, can_shutdown());
