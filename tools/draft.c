@@ -287,9 +287,16 @@ typedef struct
 char *exclude_items[] =
 {
 #if !CONF_WITH_BACKGROUNDS
+    "BACKGRND",
+    "SEP_VW1",
     "ADBKGND",
 #endif
+#if !CONF_WITH_BLITTER
+    "BLITITEM",
+    "SEP_OP1",
+#endif
 #if !CONF_WITH_DESKTOP_CONFIG
+    "CONFITEM",
     "ADDESKCF",
 #endif
 #if !CONF_WITH_DESKTOP_SHORTCUTS
@@ -299,9 +306,11 @@ char *exclude_items[] =
     "STNODRA1",
 #endif
 #if !CONF_WITH_FILEMASK
+    "MASKITEM",
     "ADFMASK",
 #endif
 #if !CONF_WITH_FORMAT
+    "FORMITEM",
     "ADFORMAT",
     "STFMTERR",
     "STFMTINF",
@@ -313,6 +322,9 @@ char *exclude_items[] =
     "STSHOW",
 #else
     "STNOAPPL",
+#endif
+#if !CONF_WITH_SHUTDOWN
+    "QUITITEM",
 #endif
 #if !CONF_WITH_TT_SHIFTER
     "ADTTREZ",
