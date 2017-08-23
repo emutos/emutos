@@ -27,7 +27,7 @@ output of draft rather than the full resource.  This extra step is
 currently only required for the desktop resource.
 
 *IMPORTANT*
-If you add a tree (dialog), alert or free string to the desktop
+If you add a tree (dialog), alert, free string, or menu item to the desktop
 resource, and the new item is dependent on a configuration option, you
 should update the exclude_items[] array in tools/draft.c so that draft
 can exclude the new item where appropriate.
