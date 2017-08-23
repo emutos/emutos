@@ -1641,12 +1641,14 @@ WORD deskmain(void)
 
     menu_ienable(G.a_trees[ADMENU], RESITEM, can_change_resolution);
 
+#if CONF_WITH_BLITTER
     if (blitter_is_present)
     {
         menu_ienable(G.a_trees[ADMENU], BLITITEM, 1);
         menu_icheck(G.a_trees[ADMENU], BLITITEM, G.g_blitter);
         Blitmode(G.g_blitter?1:0);
     }
+#endif
 
     /* initialize desktop and its objects */
     app_blddesk();
