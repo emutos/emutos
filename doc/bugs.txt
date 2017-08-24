@@ -21,11 +21,6 @@ Video problems:
   is missing videomode & mouse reset.
 
 Atari Falcon / TOS v4 compatibility bugs:
-- EmuTOS doesn't update mouse clip rect or limits when Falcon program
-  changes resolution with VsetScreen(). If one doesn't start Chainz,
-  Jewelz or Sweety Things games from large enough (640x480 VGA)
-  resolution, mouse is constrained in them to upper left corner of
-  screen.
 - Escape Paint icons don't show in image operations window and their
   place in toolbar window is inverted on mouse click.
 - Falcon FalcAMP button icons aren't visible as EmuTOS doesn't support
