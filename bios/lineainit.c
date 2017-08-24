@@ -46,6 +46,13 @@ void linea_init(void)
 
     mcs_ptr = (v_planes <= 4) ? &mouse_cursor_save : &ext_mouse_cursor_save;
 
+    /*
+     * this is a convenient place to update the workstation xres/yres which
+     * may have been changed by a Setscreen()
+     */
+    DEV_TAB[0] = V_REZ_HZ - 1;
+    DEV_TAB[1] = V_REZ_VT - 1;
+
 #if DBG_LINEA
     kprintf("planes: %d\n", v_planes);
     kprintf("lin_wr: %d\n", v_lin_wr);

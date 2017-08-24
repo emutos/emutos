@@ -53,6 +53,8 @@ extern UWORD V_REZ_HZ;          /* screen horizontal resolution */
 extern UWORD V_REZ_VT;          /* screen vertical resolution */
 extern UWORD BYTES_LIN;         /* width of line in bytes */
 
+extern WORD DEV_TAB[];          /* intout array for open workstation */
+
 /* Line-drawing related variables */
 extern WORD X1, Y1, X2, Y2;     /* coordinates for end points */
 extern WORD WRT_MODE;           /* write mode */
