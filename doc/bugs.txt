@@ -4,8 +4,6 @@ AES/VDI/Line-A bugs:
   e.g. in "LaserChess", "Diamond miner" & "Minigolf" games,
   and in vditext tester:
   http://sourceforge.net/mailarchive/message.php?msg_id=29276993
-- Game result texts in "Sherlock" game are positioned wrong,
-  they overlap vertically.
 - Thick arcs going partly outside of screen have incorrectly
   drawn pixels at top of screen in vdiline tester.
 - In "MathMaze" and "The Ultimate Minesweeper", game win and score
@@ -43,8 +41,6 @@ Links to programs listed above:
   http://www.ntrautanen.fi/marko/arkisto.atari.org/sivut/menu_pelit.htm
 - Minigolf (GFA):
   http://koti.mbnet.fi/tammat/src/minigolf.tar.gz
-- Sherlock:
-  http://www.umich.edu/~archive/atari/Games/Adventure/sherlock.arc
 - Swing:
   http://www.pouet.net/prod.php?which=52370
 - The Ultimate Minesweeper:
