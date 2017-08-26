@@ -26,10 +26,6 @@ Atari Falcon / TOS v4 compatibility bugs:
 - Falcon FalcAMP button icons aren't visible as EmuTOS doesn't support
   new style RSC files with CICONs.
 
-Other problems:
-- Spectrum512 drawing program gives address error on XBios Kbdvbase()
-  return value handling.
-
 Problems that also occur in Atari TOS:
 - VDI: when drawing a wide polyline with squared ends and more than one
   segment, if the width of the line is greater than twice the length of
@@ -39,8 +35,6 @@ Problems that also occur in Atari TOS:
   part of the circle that joins the end segment to the previous one.
 
 Links to programs listed above:
-- Chainz, Jewelz, Sweety Things:
-  http://paradize.final-memory.org/games.shtml
 - Escape Paint:
   http://www.pouet.net/prod.php?which=25328
 - FalcAMP:
@@ -55,7 +49,5 @@ Links to programs listed above:
   http://www.pouet.net/prod.php?which=52370
 - The Ultimate Minesweeper:
   http://www.pouet.net/prod.php?which=28904
-- Spectrum512:
-  http://www.atarimania.com/utility-atari-st-spectrum-512_22312.html
 
 (Links missing to: mathmaze, laserchess, diamondminer.)
