@@ -206,5 +206,5 @@ The program relies on a TOS-specific code sequence, as follows:
 2. when found, it uses the word immediately following as an index to
    generate an address, and starts searching at that address for a
    word containing a value of 0x8606
-Under EmuTOS, the address generated is is a nonsense address which
-happens to be odd, causing an immediate address error.
+Under EmuTOS, the address generated is a nonsense address which happens
+to be odd, causing an immediate address error.
