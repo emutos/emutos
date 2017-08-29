@@ -63,7 +63,7 @@ extern Fonthead fon8x8;         /* See bios/fntxxx.c */
 extern Fonthead fon8x16;        /* See bios/fntxxx.c */
 
 /* Local variables */
-static WORD width, height;      /* extent of string set in vdi_vqt_extent()   */
+static WORD width, height;      /* extent of string set in calc_width_height() */
 static WORD wordx, wordy;       /* add this to each space for interword */
 static WORD rmword;             /* the number of pixels left over   */
 static WORD rmwordx, rmwordy;   /* add this to use up remainder     */
@@ -76,6 +76,45 @@ static WORD rmcharx, rmchary;   /* add this to use up remainder     */
 static void make_header(Vwk * vwk);
 static UWORD clc_dda(Vwk * vwk, UWORD act, UWORD req);
 
+UWORD act_siz(Vwk * vwk, UWORD top);    /* called also from vdi_tblit.S */
+
+/*
+ * calculates width & height of text string
+ *
+ * values are saved in static variables 'width', 'height'
+ */
+static void calc_width_height(Vwk *vwk, WORD cnt, WORD *str)
+{
+    const Fonthead *fnt_ptr = vwk->cur_font;
+    WORD table_start = fnt_ptr->first_ade;
+    WORD i, chr;
+
+    width = 0;
+    height = fnt_ptr->top + fnt_ptr->bottom + 1;    /* handles scaled fonts */
+
+    for (i = 0; i < cnt; i++) {
+        chr = *str++ - table_start;
+        width += fnt_ptr->off_table[chr + 1] - fnt_ptr->off_table[chr];
+    }
+
+    if (vwk->scaled) {
+        if (vwk->dda_inc == 0xFFFF)
+            width *= 2;
+        else
+            width = act_siz(vwk, width);
+    }
+
+    if ((vwk->style & F_THICKEN) && !(fnt_ptr->flags & F_MONOSPACE))
+        width += cnt * fnt_ptr->thicken;
+
+    if (vwk->style & F_SKEW)
+        width += fnt_ptr->left_offset + fnt_ptr->right_offset;
+
+    if (vwk->style & F_OUTLINE) {
+        width += cnt * 2;       /* outlining adds 2 pixels all around */
+        height += 2;
+    }
+}
 
 void vdi_v_gtext(Vwk * vwk)
 {
@@ -86,8 +125,6 @@ void vdi_v_gtext(Vwk * vwk)
     WORD tx1, tx2, ty1, ty2;
     WORD delh=0, delv=0;
     WORD d1, d2;
-    WORD extent[8];
-    WORD *old_ptr;
     WORD justified;
 
     WORD temp;
@@ -110,6 +147,8 @@ void vdi_v_gtext(Vwk * vwk)
     CHUP = vwk->chup;
     SCRPT2 = vwk->scrpt2;
     SCRTCHP = vwk->scrtchp;
+
+    CONTRL[2] = 0;      /* # points in PTSOUT */
 
     count = CONTRL[3];
     if (count > 0) {
@@ -141,22 +180,14 @@ void vdi_v_gtext(Vwk * vwk)
             delh = 0;
             break;
         case 1:
-            if (!justified) {   /* width set if GDP */
-                old_ptr = PTSOUT;
-                PTSOUT = extent;
-                vdi_vqt_extent(vwk);
-                PTSOUT = old_ptr;
-                CONTRL[2] = 0;
+            if (!justified) {   /* width already set if GDP */
+                calc_width_height(vwk, count, INTIN);
             }
             delh = width / 2;
             break;
         case 2:
-            if (!justified) {   /* width set if GDP */
-                old_ptr = PTSOUT;
-                PTSOUT = extent;
-                vdi_vqt_extent(vwk);
-                PTSOUT = old_ptr;
-                CONTRL[2] = 0;
+            if (!justified) {   /* width already set if GDP */
+                calc_width_height(vwk, count, INTIN);
             }
             delh = width;
             break;
@@ -475,8 +506,6 @@ void vdi_vst_height(Vwk * vwk)
 }
 
 
-extern UWORD act_siz(Vwk * vwk, UWORD top); /* called also from vdi_tblit.S */
-
 /*
  * act_siz - Actual sizer routine
  *
@@ -781,43 +810,7 @@ void vdi_vqt_attributes(Vwk * vwk)
 
 void vdi_vqt_extent(Vwk * vwk)
 {
-    WORD i, chr, table_start;
-    WORD *pointer;
-    const Fonthead *fnt_ptr;
-
-    WORD cnt;
-
-    fnt_ptr = vwk->cur_font;
-    pointer = INTIN;
-
-    width = 0;
-    table_start = fnt_ptr->first_ade;
-    cnt = CONTRL[3];
-
-    for (i = 0; i < cnt; i++) {
-        chr = *pointer++ - table_start;
-        width += fnt_ptr->off_table[chr + 1] - fnt_ptr->off_table[chr];
-    }
-
-    if (vwk->scaled) {
-        if (vwk->dda_inc == 0xFFFF)
-            width *= 2;
-        else
-            width = act_siz(vwk, width);
-    }
-
-    if ((vwk->style & F_THICKEN) && !(fnt_ptr->flags & F_MONOSPACE))
-        width += cnt * fnt_ptr->thicken;
-
-    if (vwk->style & F_SKEW)
-        width += fnt_ptr->left_offset + fnt_ptr->right_offset;
-
-    height = fnt_ptr->top + fnt_ptr->bottom + 1;    /* handles scaled fonts */
-
-    if (vwk->style & F_OUTLINE) {
-        width += cnt * 2;       /* outlining adds 2 pixels all around */
-        height += 2;
-    }
+    calc_width_height(vwk, CONTRL[3], INTIN);   /* output values in static variables */
 
     CONTRL[2] = 4;
 
@@ -977,12 +970,12 @@ void d_justified(Vwk * vwk)
     WORD spaces;
     WORD expand, sav_cnt;
     WORD interword, interchar;
-    WORD cnt, *old_intin, *old_ptsout, extent[8], max_x;
+    WORD cnt, *old_intin, max_x;
     WORD i, direction, delword, delchar;
     WORD *pointer;
 
     pointer = (CONTRL + 3);
-    sav_cnt = *pointer;     /* so we can modify CONTRL[3] for vdi_vqt_extent() */
+    sav_cnt = *pointer;     /* so we can modify CONTRL[3] for vdi_v_gtext() */
     cnt = *pointer = sav_cnt - 2;
 
     pointer = INTIN;
@@ -991,15 +984,12 @@ void d_justified(Vwk * vwk)
 
     old_intin = INTIN;
     INTIN = pointer;
-    old_ptsout = PTSOUT;
-    PTSOUT = extent;
 
     for (i = 0, spaces = 0; i < cnt; i++)
         if (*(pointer++) == ' ')
             spaces++;
 
-    vdi_vqt_extent(vwk);
-    CONTRL[2] = 0;
+    calc_width_height(vwk, cnt, INTIN);
 
     max_x = PTSIN[2];
 
@@ -1105,7 +1095,6 @@ void d_justified(Vwk * vwk)
     vdi_v_gtext(vwk);
 
     CONTRL[3] = sav_cnt;    /* restore original value for neatness */
-    PTSOUT = old_ptsout;
     INTIN = old_intin;
 }
 
