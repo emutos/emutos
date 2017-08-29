@@ -245,7 +245,7 @@ Vwk * get_vwk_by_handle(WORD);
 UWORD * get_start_addr(const WORD x, const WORD y);
 void set_LN_MASK(Vwk *vwk);
 void st_fl_ptr(Vwk *);
-void d_justified(Vwk *);
+void gdp_justified(Vwk *);
 
 /* drawing primitives */
 void draw_pline(Vwk * vwk);

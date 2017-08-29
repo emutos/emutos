@@ -965,7 +965,7 @@ void vdi_vqt_fontinfo(Vwk * vwk)
 }
 
 
-void d_justified(Vwk * vwk)
+void gdp_justified(Vwk * vwk)
 {
     WORD spaces;
     WORD expand, sav_cnt;

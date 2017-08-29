@@ -263,7 +263,7 @@ void vdi_v_gdp(Vwk * vwk)
         break;
 
     case 10:         /* GDP Justified Text */
-        d_justified(vwk);
+        gdp_justified(vwk);
         break;
 #if HAVE_BEZIER
     case 13:         /* GDP Bezier */
