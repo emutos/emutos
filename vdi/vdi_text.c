@@ -242,7 +242,7 @@ void vdi_v_gtext(Vwk * vwk)
 
             /* If the character is out of range for this font make it a ? */
             if ((temp < fnt_ptr->first_ade) || (temp > fnt_ptr->last_ade))
-                temp = 63;
+                temp = '?';
             temp -= fnt_ptr->first_ade;
 
             SOURCEX = fnt_ptr->off_table[temp];
@@ -263,7 +263,7 @@ void vdi_v_gtext(Vwk * vwk)
                     DESTY += rmchary;
                     rmchar--;
                 }
-                if (INTIN[j] == 32) {
+                if (INTIN[j] == ' ') {
                     DESTX += wordx;
                     DESTY += wordy;
                     if (rmword) {
@@ -995,7 +995,7 @@ void d_justified(Vwk * vwk)
     PTSOUT = extent;
 
     for (i = 0, spaces = 0; i < cnt; i++)
-        if (*(pointer++) == 32)
+        if (*(pointer++) == ' ')
             spaces++;
 
     vdi_vqt_extent(vwk);
