@@ -116,9 +116,8 @@ static void calc_width_height(Vwk *vwk, WORD cnt, WORD *str)
     }
 }
 
-void vdi_v_gtext(Vwk * vwk)
+static void output_text(Vwk *vwk, WORD count, WORD *str)
 {
-    WORD count;
     WORD i, j;
     WORD startx=0, starty=0;
     WORD xfact=0, yfact=0;
@@ -150,7 +149,6 @@ void vdi_v_gtext(Vwk * vwk)
 
     CONTRL[2] = 0;      /* # points in PTSOUT */
 
-    count = CONTRL[3];
     if (count > 0) {
 
         fnt_ptr = vwk->cur_font;     /* Get current font pointer in register */
@@ -181,13 +179,13 @@ void vdi_v_gtext(Vwk * vwk)
             break;
         case 1:
             if (!justified) {   /* width already set if GDP */
-                calc_width_height(vwk, count, INTIN);
+                calc_width_height(vwk, count, str);
             }
             delh = width / 2;
             break;
         case 2:
             if (!justified) {   /* width already set if GDP */
-                calc_width_height(vwk, count, INTIN);
+                calc_width_height(vwk, count, str);
             }
             delh = width;
             break;
@@ -269,7 +267,7 @@ void vdi_v_gtext(Vwk * vwk)
 
         for (j = 0; j < count; j++) {
 
-            temp = INTIN[j];
+            temp = str[j];
 
             /* If the character is out of range for this font make it a ? */
             if ((temp < fnt_ptr->first_ade) || (temp > fnt_ptr->last_ade))
@@ -294,7 +292,7 @@ void vdi_v_gtext(Vwk * vwk)
                     DESTY += rmchary;
                     rmchar--;
                 }
-                if (INTIN[j] == ' ') {
+                if (str[j] == ' ') {
                     DESTX += wordx;
                     DESTY += wordy;
                     if (rmword) {
@@ -359,7 +357,10 @@ void vdi_v_gtext(Vwk * vwk)
     }
 }
 
-
+void vdi_v_gtext(Vwk * vwk)
+{
+    output_text(vwk, CONTRL[3], INTIN);
+}
 
 void text_init2(Vwk * vwk)
 {
@@ -968,28 +969,24 @@ void vdi_vqt_fontinfo(Vwk * vwk)
 void gdp_justified(Vwk * vwk)
 {
     WORD spaces;
-    WORD expand, sav_cnt;
+    WORD expand;
     WORD interword, interchar;
-    WORD cnt, *old_intin, max_x;
+    WORD cnt, max_x;
     WORD i, direction, delword, delchar;
-    WORD *pointer;
+    WORD *pointer, *str;
 
-    pointer = (CONTRL + 3);
-    sav_cnt = *pointer;     /* so we can modify CONTRL[3] for vdi_v_gtext() */
-    cnt = *pointer = sav_cnt - 2;
+    cnt = CONTRL[3] - 2;
 
     pointer = INTIN;
     interword = *pointer++;
     interchar = *pointer++;
-
-    old_intin = INTIN;
-    INTIN = pointer;
+    str = pointer;
 
     for (i = 0, spaces = 0; i < cnt; i++)
         if (*(pointer++) == ' ')
             spaces++;
 
-    calc_width_height(vwk, cnt, INTIN);
+    calc_width_height(vwk, cnt, str);
 
     max_x = PTSIN[2];
 
@@ -1092,10 +1089,7 @@ void gdp_justified(Vwk * vwk)
 
     width = max_x;
 
-    vdi_v_gtext(vwk);
-
-    CONTRL[3] = sav_cnt;    /* restore original value for neatness */
-    INTIN = old_intin;
+    output_text(vwk, cnt, str);
 }
 
 
