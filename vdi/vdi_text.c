@@ -133,8 +133,13 @@ static void output_text(Vwk *vwk, WORD count, WORD *str)
     WORD justified;
 
     WORD temp;
-    const Fonthead *fnt_ptr = NULL;
-    Point * point = NULL;
+    const Fonthead *fnt_ptr;
+    Point * point;
+
+    CONTRL[2] = 0;      /* # points in PTSOUT */
+
+    if (count <= 0)     /* quick out for unlikely occurrence */
+        return;
 
     /* some data copying for the assembler part */
     DDA_INC = vwk->dda_inc;
@@ -153,212 +158,207 @@ static void output_text(Vwk *vwk, WORD count, WORD *str)
     SCRPT2 = vwk->scrpt2;
     SCRTCHP = vwk->scrtchp;
 
-    CONTRL[2] = 0;      /* # points in PTSOUT */
+    fnt_ptr = vwk->cur_font;     /* Get current font pointer in register */
 
-    if (count > 0) {
+    justified = (CONTRL[0] == 11);
 
-        fnt_ptr = vwk->cur_font;     /* Get current font pointer in register */
+    if (vwk->style & F_THICKEN)
+        WEIGHT = fnt_ptr->thicken;
 
-        justified = (CONTRL[0] == 11);
+    if (vwk->style & F_LIGHT)
+        LITEMASK = fnt_ptr->lighten;
 
-        if (vwk->style & F_THICKEN)
-            WEIGHT = fnt_ptr->thicken;
+    if (vwk->style & F_SKEW) {
+        L_OFF = fnt_ptr->left_offset;
+        R_OFF = fnt_ptr->right_offset;
+        SKEWMASK = fnt_ptr->skew;
+    } else {
+        L_OFF = 0;
+        R_OFF = 0;
+    }
 
-        if (vwk->style & F_LIGHT)
-            LITEMASK = fnt_ptr->lighten;
+    FBASE = fnt_ptr->dat_table;
+    FWIDTH = fnt_ptr->form_width;
 
-        if (vwk->style & F_SKEW) {
-            L_OFF = fnt_ptr->left_offset;
-            R_OFF = fnt_ptr->right_offset;
-            SKEWMASK = fnt_ptr->skew;
-        } else {
-            L_OFF = 0;
-            R_OFF = 0;
+    switch(vwk->h_align) {
+    case 0:
+        delh = 0;
+        break;
+    case 1:
+        if (!justified) {   /* width already set if GDP */
+            calc_width_height(vwk, count, str);
         }
-
-        FBASE = fnt_ptr->dat_table;
-        FWIDTH = fnt_ptr->form_width;
-
-        switch (vwk->h_align) {
-        case 0:
-            delh = 0;
-            break;
-        case 1:
-            if (!justified) {   /* width already set if GDP */
-                calc_width_height(vwk, count, str);
-            }
-            delh = width / 2;
-            break;
-        case 2:
-            if (!justified) {   /* width already set if GDP */
-                calc_width_height(vwk, count, str);
-            }
-            delh = width;
-            break;
+        delh = width / 2;
+        break;
+    case 2:
+        if (!justified) {   /* width already set if GDP */
+            calc_width_height(vwk, count, str);
         }
+        delh = width;
+        break;
+    }
 
-        if (vwk->style & F_SKEW) {
-            d1 = fnt_ptr->left_offset;
-            d2 = fnt_ptr->right_offset;
-        } else {
-            d1 = 0;
-            d2 = 0;
-        }
+    if (vwk->style & F_SKEW) {
+        d1 = fnt_ptr->left_offset;
+        d2 = fnt_ptr->right_offset;
+    } else {
+        d1 = 0;
+        d2 = 0;
+    }
 
-        switch (vwk->v_align) {
-        case 0:
-            delv = fnt_ptr->top;
-            delh += d1;
-            break;
-        case 1:
-            delv = fnt_ptr->top - fnt_ptr->half;
-            delh += (fnt_ptr->half * d2) / fnt_ptr->top;
-            break;
-        case 2:
-            delv = fnt_ptr->top - fnt_ptr->ascent;
-            delh += (fnt_ptr->ascent * d2) / fnt_ptr->top;
-            break;
-        case 3:
-            delv = fnt_ptr->top + fnt_ptr->bottom;
-            break;
-        case 4:
-            delv = fnt_ptr->top + fnt_ptr->descent;
-            delh += (fnt_ptr->descent * d1) / fnt_ptr->bottom;
-            break;
-        case 5:
-            delv = 0;
-            delh += d1 + d2;
-            break;
-        }
+    switch(vwk->v_align) {
+    case 0:
+        delv = fnt_ptr->top;
+        delh += d1;
+        break;
+    case 1:
+        delv = fnt_ptr->top - fnt_ptr->half;
+        delh += (fnt_ptr->half * d2) / fnt_ptr->top;
+        break;
+    case 2:
+        delv = fnt_ptr->top - fnt_ptr->ascent;
+        delh += (fnt_ptr->ascent * d2) / fnt_ptr->top;
+        break;
+    case 3:
+        delv = fnt_ptr->top + fnt_ptr->bottom;
+        break;
+    case 4:
+        delv = fnt_ptr->top + fnt_ptr->descent;
+        delh += (fnt_ptr->descent * d1) / fnt_ptr->bottom;
+        break;
+    case 5:
+        delv = 0;
+        delh += d1 + d2;
+        break;
+    }
 
-        point = (Point*)PTSIN;
-        switch (vwk->chup) {
-        case 0:
-            DESTX = point->x - delh;
-            DESTY = point->y - delv;
-            startx = DESTX;
-            starty = DESTY + fnt_ptr->top + fnt_ptr->ul_size + 1;
-            xfact = 0;
-            yfact = 1;
-            break;
-        case 900:
-            DESTX = point->x - delv;
-            DESTY = point->y + delh;
-            startx = DESTX + fnt_ptr->top + fnt_ptr->ul_size + 1;
-            starty = DESTY;
-            xfact = 1;
-            yfact = 0;
-            break;
-        case 1800:
-            DESTX = point->x + delh;
-            DESTY = point->y - ((fnt_ptr->top + fnt_ptr->bottom) - delv);
-            startx = DESTX;
-            starty = (DESTY + fnt_ptr->bottom) - (fnt_ptr->ul_size + 1);
-            xfact = 0;
-            yfact = -1;
-            break;
-        case 2700:
-            DESTX = point->x - ((fnt_ptr->top + fnt_ptr->bottom) - delv);
-            DESTY = point->y - delh;
-            starty = DESTY;
-            startx = (DESTX + fnt_ptr->bottom) - (fnt_ptr->ul_size + 1);
-            xfact = -1;
-            yfact = 0;
-            break;
-        }
+    point = (Point*)PTSIN;
+    switch(vwk->chup) {
+    case 0:
+        DESTX = point->x - delh;
+        DESTY = point->y - delv;
+        startx = DESTX;
+        starty = DESTY + fnt_ptr->top + fnt_ptr->ul_size + 1;
+        xfact = 0;
+        yfact = 1;
+        break;
+    case 900:
+        DESTX = point->x - delv;
+        DESTY = point->y + delh;
+        startx = DESTX + fnt_ptr->top + fnt_ptr->ul_size + 1;
+        starty = DESTY;
+        xfact = 1;
+        yfact = 0;
+        break;
+    case 1800:
+        DESTX = point->x + delh;
+        DESTY = point->y - ((fnt_ptr->top + fnt_ptr->bottom) - delv);
+        startx = DESTX;
+        starty = (DESTY + fnt_ptr->bottom) - (fnt_ptr->ul_size + 1);
+        xfact = 0;
+        yfact = -1;
+        break;
+    case 2700:
+        DESTX = point->x - ((fnt_ptr->top + fnt_ptr->bottom) - delv);
+        DESTY = point->y - delh;
+        starty = DESTY;
+        startx = (DESTX + fnt_ptr->bottom) - (fnt_ptr->ul_size + 1);
+        xfact = -1;
+        yfact = 0;
+        break;
+    }
 
-        TEXT_FG = vwk->text_color;
+    TEXT_FG = vwk->text_color;
+    DELY = fnt_ptr->form_height;
+    XACC_DDA = 32767;   /* init the horizontal dda */
+
+    for (j = 0; j < count; j++) {
+
+        temp = str[j];
+
+        /* If the character is out of range for this font make it a ? */
+        if ((temp < fnt_ptr->first_ade) || (temp > fnt_ptr->last_ade))
+            temp = '?';
+        temp -= fnt_ptr->first_ade;
+
+        SOURCEX = fnt_ptr->off_table[temp];
+        DELX = fnt_ptr->off_table[temp + 1] - SOURCEX;
+
+        SOURCEY = 0;
         DELY = fnt_ptr->form_height;
-        XACC_DDA = 32767;   /* init the horizontal dda */
 
-        for (j = 0; j < count; j++) {
+        text_blt(vwk);
 
-            temp = str[j];
+        fnt_ptr = vwk->cur_font;     /* restore reg var */
 
-            /* If the character is out of range for this font make it a ? */
-            if ((temp < fnt_ptr->first_ade) || (temp > fnt_ptr->last_ade))
-                temp = '?';
-            temp -= fnt_ptr->first_ade;
-
-            SOURCEX = fnt_ptr->off_table[temp];
-            DELX = fnt_ptr->off_table[temp + 1] - SOURCEX;
-
-            SOURCEY = 0;
-            DELY = fnt_ptr->form_height;
-
-            text_blt(vwk);
-
-            fnt_ptr = vwk->cur_font;     /* restore reg var */
-
-            if (justified) {
-                DESTX += charx;
-                DESTY += chary;
-                if (rmchar) {
-                    DESTX += rmcharx;
-                    DESTY += rmchary;
-                    rmchar--;
-                }
-                if (str[j] == ' ') {
-                    DESTX += wordx;
-                    DESTY += wordy;
-                    if (rmword) {
-                        DESTX += rmwordx;
-                        DESTY += rmwordy;
-                        rmword--;
-                    }
+        if (justified) {
+            DESTX += charx;
+            DESTY += chary;
+            if (rmchar) {
+                DESTX += rmcharx;
+                DESTY += rmchary;
+                rmchar--;
+            }
+            if (str[j] == ' ') {
+                DESTX += wordx;
+                DESTY += wordy;
+                if (rmword) {
+                    DESTX += rmwordx;
+                    DESTY += rmwordy;
+                    rmword--;
                 }
             }
-            /* end if justified */
-            if (fnt_ptr->flags & F_HORZ_OFF)
-                DESTX += fnt_ptr->hor_table[temp];
+        }
+        /* end if justified */
+        if (fnt_ptr->flags & F_HORZ_OFF)
+            DESTX += fnt_ptr->hor_table[temp];
 
-        }                   /* for j */
+    }                   /* for j */
 
-        if (vwk->style & F_UNDER) {
-            Line * line = (Line*)PTSIN;
-            line->x1 = startx;
-            line->y1 = starty;
+    if (vwk->style & F_UNDER) {
+        Line * line = (Line*)PTSIN;
+        line->x1 = startx;
+        line->y1 = starty;
 
-            if (vwk->chup % 1800 == 0) {
-                line->x2 = DESTX;
-                line->y2 = line->y1;
-            } else {
-                line->x2 = line->x1;
-                line->y2 = DESTY;
-            }
-            if (vwk->style & F_LIGHT)
-                LN_MASK = vwk->cur_font->lighten;
-            else
-                LN_MASK = 0xffff;
+        if (vwk->chup % 1800 == 0) {
+            line->x2 = DESTX;
+            line->y2 = line->y1;
+        } else {
+            line->x2 = line->x1;
+            line->y2 = DESTY;
+        }
+        if (vwk->style & F_LIGHT)
+            LN_MASK = vwk->cur_font->lighten;
+        else
+            LN_MASK = 0xffff;
 
-            count = vwk->cur_font->ul_size;
-            for (i = 0; i < count; i++) {
-                if (vwk->clip) {
-                    tx1 = line->x1;
-                    tx2 = line->x2;
-                    ty1 = line->y1;
-                    ty2 = line->y2;
+        count = vwk->cur_font->ul_size;
+        for (i = 0; i < count; i++) {
+            if (vwk->clip) {
+                tx1 = line->x1;
+                tx2 = line->x2;
+                ty1 = line->y1;
+                ty2 = line->y2;
 
-                    if (clip_line(vwk, line))
-                        abline(line, vwk->wrt_mode, vwk->text_color);
-
-                    line->x1 = tx1;
-                    line->x2 = tx2;
-                    line->y1 = ty1;
-                    line->y2 = ty2;
-                } else
+                if (clip_line(vwk, line))
                     abline(line, vwk->wrt_mode, vwk->text_color);
 
-                line->x1 += xfact;
-                line->x2 += xfact;
-                line->y1 += yfact;
-                line->y2 += yfact;
+                line->x1 = tx1;
+                line->x2 = tx2;
+                line->y1 = ty1;
+                line->y2 = ty2;
+            } else
+                abline(line, vwk->wrt_mode, vwk->text_color);
 
-                if (LN_MASK & 1)
-                    LN_MASK = (LN_MASK >> 1) | 0x8000;
-                else
-                    LN_MASK = LN_MASK >> 1;
-            }
+            line->x1 += xfact;
+            line->x2 += xfact;
+            line->y1 += yfact;
+            line->y2 += yfact;
+
+            if (LN_MASK & 1)
+                LN_MASK = (LN_MASK >> 1) | 0x8000;
+            else
+                LN_MASK = LN_MASK >> 1;
         }
     }
 }
