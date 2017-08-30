@@ -125,10 +125,10 @@ static void calc_width_height(Vwk *vwk, WORD cnt, WORD *str)
 static void output_text(Vwk *vwk, WORD count, WORD *str)
 {
     WORD i, j;
-    WORD startx=0, starty=0;
-    WORD xfact=0, yfact=0;
+    WORD startx, starty;
+    WORD xfact, yfact;
     WORD tx1, tx2, ty1, ty2;
-    WORD delh=0, delv=0;
+    WORD delh, delv;
     WORD d1, d2;
     WORD justified;
 
@@ -181,7 +181,7 @@ static void output_text(Vwk *vwk, WORD count, WORD *str)
     FWIDTH = fnt_ptr->form_width;
 
     switch(vwk->h_align) {
-    case 0:
+    default:                /* normally case 0: left justified */
         delh = 0;
         break;
     case 1:
@@ -207,7 +207,7 @@ static void output_text(Vwk *vwk, WORD count, WORD *str)
     }
 
     switch(vwk->v_align) {
-    case 0:
+    default:                /* normally case 0: baseline */
         delv = fnt_ptr->top;
         delh += d1;
         break;
@@ -234,7 +234,7 @@ static void output_text(Vwk *vwk, WORD count, WORD *str)
 
     point = (Point*)PTSIN;
     switch(vwk->chup) {
-    case 0:
+    default:                /* normally case 0: no rotation */
         DESTX = point->x - delh;
         DESTY = point->y - delv;
         startx = DESTX;
