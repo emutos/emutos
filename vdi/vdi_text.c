@@ -89,12 +89,18 @@ static void calc_width_height(Vwk *vwk, WORD cnt, WORD *str)
     WORD table_start = fnt_ptr->first_ade;
     WORD i, chr;
 
-    width = 0;
     height = fnt_ptr->top + fnt_ptr->bottom + 1;    /* handles scaled fonts */
 
-    for (i = 0; i < cnt; i++) {
-        chr = *str++ - table_start;
-        width += fnt_ptr->off_table[chr + 1] - fnt_ptr->off_table[chr];
+    if (fnt_ptr->flags & F_MONOSPACE)
+    {
+        width = cnt * fnt_ptr->max_cell_width;
+    }
+    else
+    {
+        for (i = 0, width = 0; i < cnt; i++) {
+            chr = *str++ - table_start;
+            width += fnt_ptr->off_table[chr + 1] - fnt_ptr->off_table[chr];
+        }
     }
 
     if (vwk->scaled) {
