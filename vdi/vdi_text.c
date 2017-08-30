@@ -289,8 +289,6 @@ static void output_text(Vwk *vwk, WORD count, WORD *str)
 
         text_blt(vwk);
 
-        fnt_ptr = vwk->cur_font;     /* restore reg var */
-
         if (justified) {
             DESTX += charx;
             DESTY += chary;
