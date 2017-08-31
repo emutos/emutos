@@ -93,7 +93,7 @@ static void calc_width_height(Vwk *vwk, WORD cnt, WORD *str)
 
     if (fnt_ptr->flags & F_MONOSPACE)
     {
-        width = cnt * fnt_ptr->max_cell_width;
+        width = cnt * (fnt_ptr->off_table[1]-fnt_ptr->off_table[0]);
     }
     else
     {
