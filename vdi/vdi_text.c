@@ -1054,7 +1054,7 @@ void gdp_justified(Vwk * vwk)
         }
 
         switch (vwk->chup) {
-        case 0:
+        default:                /* normally case 0: no rotation */
             just.wordx = delword;
             just.wordy = 0;
             just.rmwordx = direction;
@@ -1096,7 +1096,7 @@ void gdp_justified(Vwk * vwk)
             direction = 1;
 
         switch (vwk->chup) {
-        case 0:
+        default:                /* normally case 0: no rotation */
             just.charx = delchar;
             just.chary = 0;
             just.rmcharx = direction;
