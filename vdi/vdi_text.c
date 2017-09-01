@@ -288,8 +288,8 @@ static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width, JUSTINFO *j
     case 2700:
         DESTX = point->x - ((fnt_ptr->top + fnt_ptr->bottom) - delv);
         DESTY = point->y - delh;
-        starty = DESTY;
         startx = (DESTX + fnt_ptr->bottom) - (fnt_ptr->ul_size + 1);
+        starty = DESTY;
         xfact = -1;
         yfact = 0;
         break;
