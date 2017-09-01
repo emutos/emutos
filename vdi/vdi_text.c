@@ -63,7 +63,6 @@ extern Fonthead fon8x8;         /* See bios/fntxxx.c */
 extern Fonthead fon8x16;        /* See bios/fntxxx.c */
 
 /* Local variables */
-static WORD width, height;      /* extent of string set in calc_width_height() */
 static WORD wordx, wordy;       /* add this to each space for interword */
 static WORD rmword;             /* the number of pixels left over   */
 static WORD rmwordx, rmwordy;   /* add this to use up remainder     */
@@ -79,17 +78,29 @@ static UWORD clc_dda(Vwk * vwk, UWORD act, UWORD req);
 UWORD act_siz(Vwk * vwk, UWORD top);    /* called also from vdi_tblit.S */
 
 /*
- * calculates width & height of text string
- *
- * values are saved in static variables 'width', 'height'
+ * calculates height of text string
  */
-static void calc_width_height(Vwk *vwk, WORD cnt, WORD *str)
+static WORD calc_height(Vwk *vwk)
+{
+    const Fonthead *fnt_ptr = vwk->cur_font;
+    WORD height;
+
+    height = fnt_ptr->top + fnt_ptr->bottom + 1;    /* handles scaled fonts */
+
+    if (vwk->style & F_OUTLINE)
+        height += 2;        /* outlining adds 1 pixel all around */
+
+    return height;
+}
+
+/*
+ * calculates width of text string
+ */
+static WORD calc_width(Vwk *vwk, WORD cnt, WORD *str)
 {
     const Fonthead *fnt_ptr = vwk->cur_font;
     WORD table_start = fnt_ptr->first_ade;
-    WORD i, chr;
-
-    height = fnt_ptr->top + fnt_ptr->bottom + 1;    /* handles scaled fonts */
+    WORD i, chr, width;
 
     if (fnt_ptr->flags & F_MONOSPACE)
     {
@@ -116,13 +127,19 @@ static void calc_width_height(Vwk *vwk, WORD cnt, WORD *str)
     if (vwk->style & F_SKEW)
         width += fnt_ptr->left_offset + fnt_ptr->right_offset;
 
-    if (vwk->style & F_OUTLINE) {
-        width += cnt * 2;       /* outlining adds 2 pixels all around */
-        height += 2;
-    }
+    if (vwk->style & F_OUTLINE)
+        width += cnt * 2;       /* outlining adds 1 pixel all around */
+
+    return width;
 }
 
-static void output_text(Vwk *vwk, WORD count, WORD *str)
+/*
+ * output specified text string
+ *
+ * 'width' is the pre-calculated width of the text on the screen;
+ * if negative, it has not yet been calculated
+ */
+static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width)
 {
     WORD i, j;
     WORD startx, starty;
@@ -185,15 +202,13 @@ static void output_text(Vwk *vwk, WORD count, WORD *str)
         delh = 0;
         break;
     case 1:
-        if (!justified) {   /* width already set if GDP */
-            calc_width_height(vwk, count, str);
-        }
+        if (width < 0)      /* called from vdi_v_gtext() */
+            width = calc_width(vwk, count, str);
         delh = width / 2;
         break;
     case 2:
-        if (!justified) {   /* width already set if GDP */
-            calc_width_height(vwk, count, str);
-        }
+        if (width < 0)      /* called from vdi_v_gtext() */
+            width = calc_width(vwk, count, str);
         delh = width;
         break;
     }
@@ -363,7 +378,7 @@ static void output_text(Vwk *vwk, WORD count, WORD *str)
 
 void vdi_v_gtext(Vwk * vwk)
 {
-    output_text(vwk, CONTRL[3], INTIN);
+    output_text(vwk, CONTRL[3], INTIN, -1);
 }
 
 void text_init2(Vwk * vwk)
@@ -815,7 +830,10 @@ void vdi_vqt_attributes(Vwk * vwk)
 
 void vdi_vqt_extent(Vwk * vwk)
 {
-    calc_width_height(vwk, CONTRL[3], INTIN);   /* output values in static variables */
+    WORD height, width;
+
+    height = calc_height(vwk);
+    width = calc_width(vwk, CONTRL[3], INTIN);
 
     CONTRL[2] = 4;
 
@@ -975,7 +993,7 @@ void gdp_justified(Vwk * vwk)
     WORD spaces;
     WORD expand;
     WORD interword, interchar;
-    WORD cnt, max_x;
+    WORD cnt, width, max_x;
     WORD i, direction, delword, delchar;
     WORD *pointer, *str;
 
@@ -990,7 +1008,7 @@ void gdp_justified(Vwk * vwk)
         if (*(pointer++) == ' ')
             spaces++;
 
-    calc_width_height(vwk, cnt, str);
+    width = calc_width(vwk, cnt, str);
 
     max_x = PTSIN[2];
 
@@ -1091,9 +1109,7 @@ void gdp_justified(Vwk * vwk)
         rmchar = 0;
     }
 
-    width = max_x;
-
-    output_text(vwk, cnt, str);
+    output_text(vwk, cnt, str, max_x);
 }
 
 
