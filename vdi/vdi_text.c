@@ -62,13 +62,28 @@ extern Fonthead fon6x6;         /* See bios/fntxxx.c */
 extern Fonthead fon8x8;         /* See bios/fntxxx.c */
 extern Fonthead fon8x16;        /* See bios/fntxxx.c */
 
-/* Local variables */
-static WORD wordx, wordy;       /* add this to each space for interword */
-static WORD rmword;             /* the number of pixels left over   */
-static WORD rmwordx, rmwordy;   /* add this to use up remainder     */
-static WORD charx, chary;       /* add this to each char for interchar  */
-static WORD rmchar;             /* number of pixels left over       */
-static WORD rmcharx, rmchary;   /* add this to use up remainder     */
+/*
+ * Local structure for passing justification info
+ *
+ * note 1: in each of the following pairs of variables, only one variable
+ * has a non-zero value:
+ *  (wordx,wordy), (rmwordx,rmwordy), (charx,chary), (rmcharx,rmchary)
+ *
+ * note 2: if rmword is zero, there are no 'remainder pixels' to use up
+ * between words; otherwise, rmword = max(rmwordx/rmwordy).  similarly
+ * for rmchar/rmcharx/rmchary.
+ */
+typedef struct
+{
+                        /* word-spacing variables */
+    WORD wordx, wordy;          /* #pixels to add to each space */
+    WORD rmword;                /* remaining #pixels to add over all spaces */
+    WORD rmwordx, rmwordy;      /* add this to use up remainder */
+                        /* character-spacing variables */
+    WORD charx, chary;          /* #pixels to add to each character */
+    WORD rmchar;                /* remaining #pixels to add over all characters */
+    WORD rmcharx, rmchary;      /* add this to use up remainder */
+} JUSTINFO;
 
 
 /* Prototypes for this module */
@@ -139,7 +154,7 @@ static WORD calc_width(Vwk *vwk, WORD cnt, WORD *str)
  * 'width' is the pre-calculated width of the text on the screen;
  * if negative, it has not yet been calculated
  */
-static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width)
+static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width, JUSTINFO *justified)
 {
     WORD i, j;
     WORD startx, starty;
@@ -147,7 +162,6 @@ static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width)
     WORD tx1, tx2, ty1, ty2;
     WORD delh, delv;
     WORD d1, d2;
-    WORD justified;
 
     WORD temp;
     const Fonthead *fnt_ptr;
@@ -176,8 +190,6 @@ static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width)
     SCRTCHP = vwk->scrtchp;
 
     fnt_ptr = vwk->cur_font;     /* Get current font pointer in register */
-
-    justified = (CONTRL[0] == 11);
 
     if (vwk->style & F_THICKEN)
         WEIGHT = fnt_ptr->thicken;
@@ -305,20 +317,20 @@ static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width)
         text_blt(vwk);
 
         if (justified) {
-            DESTX += charx;
-            DESTY += chary;
-            if (rmchar) {
-                DESTX += rmcharx;
-                DESTY += rmchary;
-                rmchar--;
+            DESTX += justified->charx;
+            DESTY += justified->chary;
+            if (justified->rmchar) {
+                DESTX += justified->rmcharx;
+                DESTY += justified->rmchary;
+                justified->rmchar--;
             }
             if (str[j] == ' ') {
-                DESTX += wordx;
-                DESTY += wordy;
-                if (rmword) {
-                    DESTX += rmwordx;
-                    DESTY += rmwordy;
-                    rmword--;
+                DESTX += justified->wordx;
+                DESTY += justified->wordy;
+                if (justified->rmword) {
+                    DESTX += justified->rmwordx;
+                    DESTY += justified->rmwordy;
+                    justified->rmword--;
                 }
             }
         }
@@ -378,7 +390,7 @@ static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width)
 
 void vdi_v_gtext(Vwk * vwk)
 {
-    output_text(vwk, CONTRL[3], INTIN, -1);
+    output_text(vwk, CONTRL[3], INTIN, -1, NULL);
 }
 
 void text_init2(Vwk * vwk)
@@ -996,6 +1008,7 @@ void gdp_justified(Vwk * vwk)
     WORD cnt, width, max_x;
     WORD i, direction, delword, delchar;
     WORD *pointer, *str;
+    JUSTINFO just;
 
     cnt = CONTRL[3] - 2;
 
@@ -1014,11 +1027,11 @@ void gdp_justified(Vwk * vwk)
 
     if (interword && spaces) {
         delword = (max_x - width) / spaces;
-        rmword = (max_x - width) % spaces;
+        just.rmword = (max_x - width) % spaces;
 
-        if (rmword < 0) {
+        if (just.rmword < 0) {
             direction = -1;
-            rmword = 0 - rmword;
+            just.rmword = 0 - just.rmword;
         } else
             direction = 1;
 
@@ -1026,90 +1039,90 @@ void gdp_justified(Vwk * vwk)
             expand = vwk->cur_font->max_cell_width / 2;
             if (delword > expand) {
                 delword = expand;
-                rmword = 0;
+                just.rmword = 0;
             }
             if (delword < (0 - expand)) {
                 delword = 0 - expand;
-                rmword = 0;
+                just.rmword = 0;
             }
-            width += (delword * spaces) + (rmword * direction);
+            width += (delword * spaces) + (just.rmword * direction);
         }
 
         switch (vwk->chup) {
         case 0:
-            wordx = delword;
-            wordy = 0;
-            rmwordx = direction;
-            rmwordy = 0;
+            just.wordx = delword;
+            just.wordy = 0;
+            just.rmwordx = direction;
+            just.rmwordy = 0;
             break;
         case 900:
-            wordx = 0;
-            wordy = 0 - delword;
-            rmwordx = 0;
-            rmwordy = 0 - direction;
+            just.wordx = 0;
+            just.wordy = 0 - delword;
+            just.rmwordx = 0;
+            just.rmwordy = 0 - direction;
             break;
         case 1800:
-            wordx = 0 - delword;
-            wordy = 0;
-            rmwordx = 0 - direction;
-            rmwordy = 0;
+            just.wordx = 0 - delword;
+            just.wordy = 0;
+            just.rmwordx = 0 - direction;
+            just.rmwordy = 0;
             break;
         case 2700:
-            wordx = 0;
-            wordy = delword;
-            rmwordx = 0;
-            rmwordy = direction;
+            just.wordx = 0;
+            just.wordy = delword;
+            just.rmwordx = 0;
+            just.rmwordy = direction;
             break;
         }
     } else {
-        wordx = 0;
-        wordy = 0;
-        rmword = 0;
+        just.wordx = 0;
+        just.wordy = 0;
+        just.rmword = 0;
     }
 
     if (interchar && cnt > 1) {
         delchar = (max_x - width) / (cnt - 1);
-        rmchar = (max_x - width) % (cnt - 1);
+        just.rmchar = (max_x - width) % (cnt - 1);
 
-        if (rmchar < 0) {
+        if (just.rmchar < 0) {
             direction = -1;
-            rmchar = 0 - rmchar;
+            just.rmchar = 0 - just.rmchar;
         } else
             direction = 1;
 
         switch (vwk->chup) {
         case 0:
-            charx = delchar;
-            chary = 0;
-            rmcharx = direction;
-            rmchary = 0;
+            just.charx = delchar;
+            just.chary = 0;
+            just.rmcharx = direction;
+            just.rmchary = 0;
             break;
         case 900:
-            charx = 0;
-            chary = 0 - delchar;
-            rmcharx = 0;
-            rmchary = 0 - direction;
+            just.charx = 0;
+            just.chary = 0 - delchar;
+            just.rmcharx = 0;
+            just.rmchary = 0 - direction;
             break;
         case 1800:
-            charx = 0 - delchar;
-            chary = 0;
-            rmcharx = 0 - direction;
-            rmchary = 0;
+            just.charx = 0 - delchar;
+            just.chary = 0;
+            just.rmcharx = 0 - direction;
+            just.rmchary = 0;
             break;
         case 2700:
-            charx = 0;
-            chary = delchar;
-            rmcharx = 0;
-            rmchary = direction;
+            just.charx = 0;
+            just.chary = delchar;
+            just.rmcharx = 0;
+            just.rmchary = direction;
             break;
         }
     } else {
-        charx = 0;
-        chary = 0;
-        rmchar = 0;
+        just.charx = 0;
+        just.chary = 0;
+        just.rmchar = 0;
     }
 
-    output_text(vwk, cnt, str, max_x);
+    output_text(vwk, cnt, str, max_x, &just);
 }
 
 
