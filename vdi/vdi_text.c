@@ -1017,9 +1017,14 @@ void gdp_justified(Vwk * vwk)
     interchar = *pointer++;
     str = pointer;
 
-    for (i = 0, spaces = 0; i < cnt; i++)
-        if (*(pointer++) == ' ')
-            spaces++;
+    /*
+     * if interword adjustment required, count spaces
+     */
+    if (interword) {
+        for (i = 0, spaces = 0; i < cnt; i++)
+            if (*(pointer++) == ' ')
+                spaces++;
+    }
 
     width = calc_width(vwk, cnt, str);
 
