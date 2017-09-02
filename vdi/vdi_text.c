@@ -198,13 +198,15 @@ static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width, JUSTINFO *j
         LITEMASK = fnt_ptr->lighten;
 
     if (vwk->style & F_SKEW) {
-        L_OFF = fnt_ptr->left_offset;
-        R_OFF = fnt_ptr->right_offset;
+        d1 = fnt_ptr->left_offset;  /* used in vertical alignment calcs */
+        d2 = fnt_ptr->right_offset;
         SKEWMASK = fnt_ptr->skew;
     } else {
-        L_OFF = 0;
-        R_OFF = 0;
+        d1 = 0;
+        d2 = 0;
     }
+    L_OFF = d1;
+    R_OFF = d2;
 
     FBASE = fnt_ptr->dat_table;
     FWIDTH = fnt_ptr->form_width;
@@ -223,14 +225,6 @@ static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width, JUSTINFO *j
             width = calc_width(vwk, count, str);
         delh = width;
         break;
-    }
-
-    if (vwk->style & F_SKEW) {
-        d1 = fnt_ptr->left_offset;
-        d2 = fnt_ptr->right_offset;
-    } else {
-        d1 = 0;
-        d2 = 0;
     }
 
     switch(vwk->v_align) {
