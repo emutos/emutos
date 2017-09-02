@@ -271,14 +271,14 @@ static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width, JUSTINFO *j
         break;
     case 900:
         DESTX = point->x - delv;
-        DESTY = point->y + delh;
+        DESTY = point->y + delh + 1;
         startx = DESTX + fnt_ptr->top + fnt_ptr->ul_size + 1;
         starty = DESTY;
         xfact = 1;
         yfact = 0;
         break;
     case 1800:
-        DESTX = point->x + delh;
+        DESTX = point->x + delh + 1;
         DESTY = point->y - ((fnt_ptr->top + fnt_ptr->bottom) - delv);
         startx = DESTX;
         starty = (DESTY + fnt_ptr->bottom) - (fnt_ptr->ul_size + 1);
