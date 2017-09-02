@@ -1,9 +1,9 @@
 AES/VDI/Line-A bugs:
-- Because EmuTOS doesn't take outline into account in text extents
-  calculation, the right side of outline characters are clipped
-  e.g. in "LaserChess", "Diamond miner" & "Minigolf" games,
-  and in vditext tester:
+- The right side of outline characters are clipped e.g. in "LaserChess",
+  "Diamond miner" & "Minigolf" games, and in vditext tester:
   http://sourceforge.net/mailarchive/message.php?msg_id=29276993
+  This is due to a bug somewhere in the ugly text_blt() assembler
+  function in vdi_tblit.S.
 - Thick arcs going partly outside of screen have incorrectly
   drawn pixels at top of screen in vdiline tester.
 - In "MathMaze" and "The Ultimate Minesweeper", game win and score
