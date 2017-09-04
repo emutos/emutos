@@ -261,7 +261,7 @@ _BYTES_LIN:     .ds.w   1       // -2   byte per screen line
                 .globl  _WEIGHT
                 .globl  _R_OFF
                 .globl  _L_OFF
-                .globl  _DOUBLE
+                .globl  _SCALE
                 .globl  _CHUP
                 .globl  _TEXT_FG
                 .globl  _SCRTCHP
@@ -329,7 +329,7 @@ _SKEWMASK:      .ds.w   1               // special effects
 _WEIGHT:        .ds.w   1               // special effects
 _R_OFF:         .ds.w   1
 _L_OFF:         .ds.w   1               // skew above and below baseline
-_DOUBLE:        .ds.w   1               // replicate pixels
+_SCALE:         .ds.w   1               // scale character
 _CHUP:          .ds.w   1               // character rotation vector
 _TEXT_FG:       .ds.w   1               // text foreground color
 _SCRTCHP:       .ds.l   1               // pointer to base of scratch buffer

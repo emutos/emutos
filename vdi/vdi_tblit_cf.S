@@ -10,7 +10,7 @@
 |                   All Rights Reserved Worldwide                       #
 |                                                                       #
 |########################################################################
-| Translated on Sat Jun 17 18:33:58 2017 by version 2.6.0 of PortAsm translator
+| Translated on Mon Sep  4 18:56:37 2017 by version 2.6.0 of PortAsm translator
 | PortAsm Licence Number #3250
 | Target assembler:    Gnu 'gas'
 |
@@ -92,8 +92,8 @@
 	.extern	_WEIGHT
 	.extern	_LITEMASK
 	.extern	_SKEWMASK
-|;;           .extern _DOUBLE          | [37]
-	.extern	_DOUBLE
+|;;           .extern _SCALE           | [37]
+	.extern	_SCALE
 |;;           .extern _CHUP            | [38]
 	.extern	_CHUP
 |;;           .extern _CLIP            | [39]
@@ -188,7 +188,7 @@ _text_blt:
 
       movea.w  _SCRPT2,%a0             | [101]
       move.w   (-106,%a6),%d3          | [102]
-      tst.w    _DOUBLE                 | [103 NE]
+      tst.w    _SCALE                  | [103 NE]
       jne      adr_dbl                 | [104]
       move.w   (-102,%a6),%d1          | [105]
       jra      adr_nodb                | [106]
@@ -517,7 +517,7 @@ preblt:
       move.w   _WEIGHT,%d1             | [312]
 |;;   add.w     d6,d7                  | [313]
 	add.l    %d6,%d7
-      tst.w    _DOUBLE                 | [314 EQ]
+      tst.w    _SCALE                  | [314 EQ]
       jeq      full_wt                 | [315]
 |;;   lsr.w     #1,d1                  | [316 NE]
 	mvz.w    %d1,%d4
@@ -547,7 +547,7 @@ no_smear:
       move.w   (-96,%a6),%d2           | [331]
       btst     #4,%d2                  | [332 EQ]
       jeq      no_out                  | [333]
-      tst.w    _DOUBLE                 | [334 NE]
+      tst.w    _SCALE                  | [334 NE]
       jne      no_out                  | [335]
 
 |;;   addq.w    #3,d0                  | [337]
@@ -620,7 +620,7 @@ replp:
 
       btst     #4,%d2                  | [373 EQ]
       jeq      no_clear                | [374]
-      tst.w    _DOUBLE                 | [375 NE]
+      tst.w    _SCALE                  | [375 NE]
       jne      no_clear                | [376]
 
 |;;   subq.w    #3,-20(a6)             | [378]
@@ -680,7 +680,7 @@ no_mode:
 
       btst     #4,(-96+1,%a6)          | [410 EQ]
       jeq      skip_out                | [411]
-      tst.w    _DOUBLE                 | [412 NE]
+      tst.w    _SCALE                  | [412 NE]
       jne      skip_out                | [413]
 
       movea.l  (-10,%a6),%a0           | [415]
@@ -709,7 +709,7 @@ chk_rota:
       jbsr     rotation                | [435]
 
 chk_db:
-      tst.w    _DOUBLE                 | [438 EQ]
+      tst.w    _SCALE                  | [438 EQ]
       jeq      do_clip                 | [439]
 
       jbsr     replicat                | [441]
@@ -937,7 +937,7 @@ scrn_blt:
 upda_dst:
       move.w   _DELX,%d1               | [578]
 
-      tst.w    _DOUBLE                 | [580 EQ]
+      tst.w    _SCALE                  | [580 EQ]
       jeq      upda_ndb                | [581]
 
 

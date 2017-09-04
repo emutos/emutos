@@ -29,7 +29,7 @@ extern UWORD DDA_INC;           /* the fraction to be added to the DDA */
 extern WORD T_SCLSTS;           /* 0 if scale down, 1 if enlarge */
 extern WORD MONO_STATUS;        /* True if current font monospaced */
 extern WORD STYLE;              /* Requested text special effects */
-extern WORD DOUBLE;             /* True if current font scaled */
+extern WORD SCALE;              /* True if current font scaled */
 extern WORD CHUP;               /* Text baseline vector */
 extern WORD WRT_MODE;
 
@@ -175,7 +175,7 @@ static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width, JUSTINFO *j
     /* some data copying for the assembler part */
     DDA_INC = vwk->dda_inc;
     T_SCLSTS = vwk->t_sclsts;
-    DOUBLE = vwk->scaled;
+    SCALE = vwk->scaled;
     MONO_STATUS = F_MONOSPACE & vwk->cur_font->flags;
     WRT_MODE = vwk->wrt_mode;
 

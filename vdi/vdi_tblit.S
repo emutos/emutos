@@ -82,7 +82,7 @@
 //                used by thicken (magnitude of thickness???)           //
 //              LITEMASK,SKEWMASK - word                                //
 //                for lighter letters                                   //
-//              DOUBLE - word                                           //
+//              SCALE - word                                            //
 //                if non-zero make character twice height & width       //
 //              CHUP - word                                             //
 //                rotation tenths of degrees (0,900,1800,or 2700 only)  //
@@ -175,7 +175,7 @@
         .extern _STYLE
         .extern _R_OFF,_L_OFF
         .extern _WEIGHT,_LITEMASK,_SKEWMASK
-        .extern _DOUBLE
+        .extern _SCALE
         .extern _CHUP
         .extern _CLIP
         .extern _MONO_STATUS
@@ -479,7 +479,7 @@ _text_blt:
 
         move.w  _SCRPT2,a0              //use big buffer
         move.w  DELY(a6),d3
-        tst.w   _DOUBLE                 //doubling?
+        tst.w   _SCALE                  //scaling?
         jne     adr_dbl                 //br if no
         move.w  DELX(a6),d1
         jra     adr_nodb
@@ -706,7 +706,7 @@ preblt:
         move.w  DELX(a6),d0             // char width
         move.w  _WEIGHT,d1              // thicken amount
         add.w   d6,d7                   // d7 = L_OFF + R_OFF
-        tst.w   _DOUBLE                 // doubling?
+        tst.w   _SCALE                  // scaling?
         jeq     full_wt                 // br if no
         lsr.w   #1,d1                   // only thicken by half the regular amount
         jne     ful_wtok                // 26 Feb
@@ -726,7 +726,7 @@ no_smear:
         move.w  STYLE(a6),d2
         btst    #OUTLINE,d2             // check for outline mode
         jeq     no_out
-        tst.w   _DOUBLE                 // doubling too?
+        tst.w   _SCALE                  // scaling too?
         jne     no_out                  // br if yes, outline after doubling
 
         addq.w  #3,d0                   // add 3 pixels to delx (1 left, 2 right)
@@ -767,7 +767,7 @@ replp:
 
         btst    #OUTLINE,d2
         jeq     no_clear
-        tst.w   _DOUBLE
+        tst.w   _SCALE
         jne     no_clear
 
         subq.w  #3,width(a6)
@@ -804,7 +804,7 @@ no_mode:
 //
         btst.b  #OUTLINE,STYLE+1(a6)    // check outline
         jeq     skip_out                // br to skip outline code
-        tst.w   _DOUBLE
+        tst.w   _SCALE
         jne     skip_out
 
         movea.l sform(a6),a0            // get starting address of character
@@ -830,10 +830,10 @@ chk_rota:
         jbsr    rotation                // perform rotation if 90, 180, or 270
 
 chk_db:
-        tst.w   _DOUBLE
+        tst.w   _SCALE
         jeq     do_clip
 
-        jbsr    replicat                // double if DOUBLE nonzero
+        jbsr    replicat                // scale text if SCALE nonzero
 
 ///////////////////////////////////////////////////////////
 //  clipping                                             //
@@ -980,7 +980,7 @@ scrn_blt:
 upda_dst:
         move.w  _DELX,d1
 
-        tst.w   _DOUBLE                 // set up dest address
+        tst.w   _SCALE                  // set up dest address
         jeq     upda_ndb
 //
 // added 5 mar 85
