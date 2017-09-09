@@ -19,10 +19,12 @@
 #define HAVE_BEZIER 0           /* switch on bezier capability */
 
 /* GEMDOS function numbers and parameters */
-#define X_MALLOC 0x48
-#define X_MFREE 0x49
-#define X_MXALLOC 0x44
-#define X_MXGLOBAL (2<<4)
+#define X_CRAWIO    0x06        /* raw i/o to standard input/output */
+#define X_CCONWS    0x09        /* write null terminated string to std output */
+#define X_MXALLOC   0x44
+#define X_MXGLOBAL  (2<<4)
+#define X_MALLOC    0x48
+#define X_MFREE     0x49
 
 
 /* different maximum settings */
