@@ -233,8 +233,9 @@ void put_pix(void);
 
 
 /* Assembly Language Support Routines, ignore workstation arg */
-void text_blt(Vwk * vwk);
+void text_blt(void);
 void rectfill (Vwk * vwk, Rect * rect);
+UWORD linea_act_siz(UWORD top); /* called from vdi_tblit.S */
 
 
 WORD gloc_key(void);

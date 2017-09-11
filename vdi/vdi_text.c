@@ -91,8 +91,6 @@ static void make_header(Vwk * vwk);
 static UWORD clc_dda(Vwk * vwk, UWORD act, UWORD req);
 static UWORD act_siz(Vwk * vwk, UWORD top);
 
-UWORD linea_act_siz(UWORD top); /* called from vdi_tblit.S */
-
 /*
  * calculates height of text string
  */
@@ -309,7 +307,7 @@ static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width, JUSTINFO *j
         SOURCEY = 0;
         DELY = fnt_ptr->form_height;
 
-        text_blt(vwk);
+        text_blt();
 
         if (justified) {
             DESTX += justified->charx;
