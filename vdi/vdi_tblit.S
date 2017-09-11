@@ -159,7 +159,7 @@
 //  Global routines referenced by this module.         //
 /////////////////////////////////////////////////////////
 
-        .extern _act_siz
+        .extern _linea_act_siz
 
 /////////////////////////////////////////////////////////
 //  Global variables referenced.                       //
@@ -488,10 +488,9 @@ _text_blt:
 //
 adr_dbl:
         movem.l a0/a1,-(sp)             //backup used scratch registers
-        move.w  d3,-(sp)                //pass DELY to act_siz on stack
-        move.l  8(a6),-(sp)             //pass also the parameter Vwk *
-        jsr     _act_siz                //
-        addq.l  #6,sp                   //remove act_siz parameters from stack
+        move.w  d3,-(sp)                //pass DELY to linea_act_siz
+        jsr     _linea_act_siz          //
+        addq.l  #2,sp                   //remove linea_act_siz parameter from stack
         movem.l (sp)+,a0/a1             //restore used scratch registers
         move.w  d0,d3                   //set new DELY
         move.w  d3,tmp_dely(a6)         //save in temp for replication use

@@ -89,8 +89,9 @@ typedef struct
 /* Prototypes for this module */
 static void make_header(Vwk * vwk);
 static UWORD clc_dda(Vwk * vwk, UWORD act, UWORD req);
+static UWORD act_siz(Vwk * vwk, UWORD top);
 
-UWORD act_siz(Vwk * vwk, UWORD top);    /* called also from vdi_tblit.S */
+UWORD linea_act_siz(UWORD top); /* called from vdi_tblit.S */
 
 /*
  * calculates height of text string
@@ -545,7 +546,7 @@ void vdi_vst_height(Vwk * vwk)
  * exit:
  *   actual size
  */
-UWORD act_siz(Vwk * vwk, UWORD top)
+static UWORD act_siz(Vwk * vwk, UWORD top)
 {
     UWORD accu;
     UWORD retval;
@@ -561,6 +562,46 @@ UWORD act_siz(Vwk * vwk, UWORD top)
     for (i = 0; i < top; i++) {
         accu += vwk->dda_inc;
         if (accu < vwk->dda_inc)
+            retval++;
+    }
+
+    /* if input is non-zero, make return value at least 1 */
+    if (top && !retval)
+        retval = 1;
+
+    return retval;
+}
+
+
+/*
+ * linea_act_siz - lineA version of act_siz()
+ *
+ * entry:
+ *   top     - size to scale (DELY etc)
+ *
+ * used variables:
+ *   DDA_INC  - DDA increment passed externally
+ *   T_SCLSTS - 0 if scale down, 1 if enlarge
+ *
+ * exit:
+ *   actual size
+ */
+UWORD linea_act_siz(UWORD top)
+{
+    UWORD accu;
+    UWORD retval;
+    UWORD i;
+
+    if (DDA_INC == 0xffff) {
+        /* double size */
+        return (top<<1);
+    }
+    accu = 0x7fff;
+    retval = T_SCLSTS ? top : 0;
+
+    for (i = 0; i < top; i++) {
+        accu += DDA_INC;
+        if (accu < DDA_INC)
             retval++;
     }
 
