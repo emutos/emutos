@@ -32,7 +32,7 @@
 //  changes made--                                                      //
 //                                                                      //
 //  26 Feb -- a. writing mode values table corrected                    //
-//            b. _MONO_STATUS if true stops thicken source form expansion //
+//            b. _MONO if true stops thicken source form expansion      //
 //                                                                      //
 //   6 Mar -- a. arbitrary scale of text mod to replicate/double code   //
 //                                                                      //
@@ -60,14 +60,14 @@
 //                                                                      //
 //                added Feb 26, 1985                                    //
 //                                                                      //
-//              MONO_ST - word                                          //
+//              MONO - word                                             //
 //                if non-zero (true), thicken effect should not enlarge //
 //                source( mono spaced font status flag )                //
-//              XACC_DDA - word                                         //
+//              XDDA - word                                             //
 //                DDA accumulator passed externally                     //
-//              DDA_INC - word                                          //
+//              DDAINC - word                                           //
 //                DDA increment passed externally                       //
-//              T_SCLSTS - word                                         //
+//              SCALDIR - word                                          //
 //                0 if scale down, 1 if enlarge                         //
 /////////////////////////////////////////////////////////////////////////
 
@@ -127,9 +127,9 @@
 
         .extern _SOURCEX,_SOURCEY
         .extern _LITEMASK
-        .extern _T_SCLSTS
-        .extern _XACC_DDA
-        .extern _DDA_INC
+        .extern _SCALDIR
+        .extern _XDDA
+        .extern _DDAINC
         .extern _SCRPT2
         .extern _SCRTCHP
 
@@ -1687,13 +1687,13 @@ noline1:
 //      move.l  a1,a3                   //not used with arbitrarily scaled text
 //
 //--6 mar --V
-        move.w  _T_SCLSTS,d7
+        move.w  _SCALDIR,d7
         roxr.l  #1,d7
         moveq.l #0,d7
         roxr.l  #1,d7
 
         move.w  s_next(a6),d7
-        move.w  _DDA_INC,d2
+        move.w  _DDAINC,d2
         move.w  height(a6),d5
         subq.w  #1,d5
         move.w  #32767,d6
@@ -1718,8 +1718,8 @@ y_no_rep:
 y_rep_don:
         move.w  DELX(a6),d2
         subq.w  #1,d2                   //adjust for dbra
-        move.w  _XACC_DDA,d1
-        move.w  _DDA_INC,d0
+        move.w  _XDDA,d1
+        move.w  _DDAINC,d0
         moveq.l #0,d3
 repwidcl:
         add.w   d0,d1
@@ -1731,7 +1731,7 @@ nrepdoub:
         addq.w  #1,d3
 nrpndoub:
         dbra    d2,repwidcl
-        move.w  d1,_XACC_DDA
+        move.w  d1,_XDDA
         move.w  d3,DELX(a6)
         move.w  tmp_dely(a6),DELY(a6)
 //--6 mar --^
@@ -1767,7 +1767,7 @@ repexit2:
 //
 //
 //  entry:      d1 = d_next             preserved
-//              d2 = _DDA_INC           preserved
+//              d2 = _DDAINC            preserved
 //              d3 = source bitmask     destroyed
 //              d4 = dest bitmask       destroyed
 //
@@ -1777,12 +1777,12 @@ repexit2:
 //                                         8086 Equiv
 //  reg use:    d0 = grafix build               bx
 //              d1 = d_next                     n/a
-//              d2 = _DDA_INC                   di
+//              d2 = _DDAINC                    di
 //              d3 = source bitmask             dx
 //              d4 = dest bitmask               bp
 //              d5 = width                      cx
 //              d6 = temp                       n/a
-//              d7 = _XACC_DDA                  si
+//              d7 = _XDDA                      si
 //
 //              a0 = source ptr                 si
 //              a1 = destination ptr            di
@@ -1800,7 +1800,7 @@ yloop:
         move.w  width(a6),d5
         subq.w  #1,d5                           //adjust for dbra
 
-        move.w  _XACC_DDA,d7
+        move.w  _XDDA,d7
         jra     nextsrc
 innerlp:
         ror.w   #1,d3

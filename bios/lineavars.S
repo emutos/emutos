@@ -243,10 +243,10 @@ _BYTES_LIN:     .ds.w   1       // -2   byte per screen line
                 .globl  _YMX_CLIP
 
                 .globl  _MFILL
-                .globl  _XACC_DDA
-                .globl  _DDA_INC
-                .globl  _T_SCLSTS
-                .globl  _MONO_STATUS
+                .globl  _XDDA
+                .globl  _DDAINC
+                .globl  _SCALDIR
+                .globl  _MONO
                 .globl  _SOURCEX
                 .globl  _SOURCEY
                 .globl  _DESTX
@@ -259,11 +259,11 @@ _BYTES_LIN:     .ds.w   1       // -2   byte per screen line
                 .globl  _LITEMASK
                 .globl  _SKEWMASK
                 .globl  _WEIGHT
-                .globl  _R_OFF
-                .globl  _L_OFF
+                .globl  _ROFF
+                .globl  _LOFF
                 .globl  _SCALE
                 .globl  _CHUP
-                .globl  _TEXT_FG
+                .globl  _TEXTFG
                 .globl  _SCRTCHP
                 .globl  _SCRPT2
                 .globl  _COPYTRAN
@@ -311,10 +311,10 @@ _YMN_CLIP:      .ds.w   1               // y minimum clipping value.
 _XMX_CLIP:      .ds.w   1               // x maximum clipping value.
 _YMX_CLIP:      .ds.w   1               // y maximum clipping value.
 
-_XACC_DDA:      .ds.w   1               // accumulator for x DDA
-_DDA_INC:       .ds.w   1               // the fraction to be added to the DDA
-_T_SCLSTS:      .ds.w   1               // scale up or down flag.
-_MONO_STATUS:   .ds.w   1               // non-zero - cur font is monospaced
+_XDDA:          .ds.w   1               // accumulator for x DDA
+_DDAINC:        .ds.w   1               // the fraction to be added to the DDA
+_SCALDIR:       .ds.w   1               // scale up or down flag.
+_MONO:          .ds.w   1               // non-zero - cur font is monospaced
 _SOURCEX:       .ds.w   1
 _SOURCEY:       .ds.w   1               // upper left of character in font file
 _DESTX:         .ds.w   1
@@ -327,13 +327,13 @@ _STYLE:         .ds.w   1               // special effects
 _LITEMASK:      .ds.w   1               // special effects
 _SKEWMASK:      .ds.w   1               // special effects
 _WEIGHT:        .ds.w   1               // special effects
-_R_OFF:         .ds.w   1
-_L_OFF:         .ds.w   1               // skew above and below baseline
+_ROFF:          .ds.w   1
+_LOFF:          .ds.w   1               // skew above and below baseline
 _SCALE:         .ds.w   1               // scale character
 _CHUP:          .ds.w   1               // character rotation vector
-_TEXT_FG:       .ds.w   1               // text foreground color
+_TEXTFG:        .ds.w   1               // text foreground color
 _SCRTCHP:       .ds.l   1               // pointer to base of scratch buffer
 _SCRPT2:        .ds.w   1               // large buffer base offset
-_TEXT_BG:       .ds.w   1               // text background color
+_TEXTBG:        .ds.w   1               // text background color
 _COPYTRAN:      .ds.w   1               // Flag for Copy-raster-form (<>0 = Transparent)
 _FILL_ABORT:    .ds.l   1               // Address of Routine for testing break out of contourfill function

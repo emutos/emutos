@@ -10,7 +10,7 @@
 |                   All Rights Reserved Worldwide                       #
 |                                                                       #
 |########################################################################
-| Translated on Thu Sep 14 15:05:34 2017 by version 2.6.0 of PortAsm translator
+| Translated on Thu Sep 14 15:31:40 2017 by version 2.6.0 of PortAsm translator
 | PortAsm Licence Number #3250
 | Target assembler:    Gnu 'gas'
 |
@@ -64,12 +64,12 @@
 	.extern	_SOURCEY
 |;;           .extern _LITEMASK        | [20]
 	.extern	_LITEMASK
-|;;           .extern _T_SCLSTS        | [21]
-	.extern	_T_SCLSTS
-|;;           .extern _XACC_DDA        | [22]
-	.extern	_XACC_DDA
-|;;           .extern _DDA_INC         | [23]
-	.extern	_DDA_INC
+|;;           .extern _SCALDIR         | [21]
+	.extern	_SCALDIR
+|;;           .extern _XDDA            | [22]
+	.extern	_XDDA
+|;;           .extern _DDAINC          | [23]
+	.extern	_DDAINC
 |;;           .extern _SCRPT2          | [24]
 	.extern	_SCRPT2
 |;;           .extern _SCRTCHP         | [25]
@@ -2178,7 +2178,7 @@ noline1:
 
 
 
-      move.w   _T_SCLSTS,%d7           | [1215]
+      move.w   _SCALDIR,%d7            | [1215]
 |;;   roxr.l    #1,d7                  | [1216 X]
 	move.l   %d7,%d0
 	addx.l   %d0,%d0
@@ -2196,7 +2196,7 @@ noline1:
 	or.l     %d0,%d7
 
       move.w   (-16,%a6),%d7           | [1220]
-      move.w   _DDA_INC,%d2            | [1221]
+      move.w   _DDAINC,%d2             | [1221]
       move.w   (-22,%a6),%d5           | [1222]
 |;;   subq.w    #1,d5                  | [1223]
 	subq.l   #1,%d5
@@ -2256,8 +2256,8 @@ y_rep_don:
       move.w   (-102,%a6),%d2          | [1244]
 |;;   subq.w    #1,d2                  | [1245]
 	subq.l   #1,%d2
-      move.w   _XACC_DDA,%d1           | [1246]
-      move.w   _DDA_INC,%d0            | [1247]
+      move.w   _XDDA,%d1               | [1246]
+      move.w   _DDAINC,%d0             | [1247]
       moveq.l  #0,%d3                  | [1248]
 repwidcl:
 |;;   add.w     d0,d1                  | [1250 CC]
@@ -2279,7 +2279,7 @@ nrpndoub:
 	subq.l   #1,%d2
 	jra      repwidcl
 	_PA_1257_:         
-      move.w   %d1,_XACC_DDA           | [1259]
+      move.w   %d1,_XDDA               | [1259]
       move.w   %d3,(-102,%a6)          | [1260]
       move.w   (-92,%a6),(-106,%a6)    | [1261]
 
@@ -2338,7 +2338,7 @@ yloop:
 |;;   subq.w    #1,d5                  | [1297]
 	subq.l   #1,%d5
 
-      move.w   _XACC_DDA,%d7           | [1299]
+      move.w   _XDDA,%d7               | [1299]
       jra      nextsrc                 | [1300]
 innerlp:
 |;;   ror.w     #1,d3                  | [1302 CC]

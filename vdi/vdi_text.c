@@ -25,15 +25,15 @@ extern const Fonthead *font_ring[]; /* Ring of available fonts */
 
 /* linea-variables used for text_blt in assembler */
 extern WORD CLIP, XMN_CLIP, XMX_CLIP, YMN_CLIP, YMX_CLIP;
-extern UWORD DDA_INC;           /* the fraction to be added to the DDA */
-extern WORD T_SCLSTS;           /* 0 if scale down, 1 if enlarge */
-extern WORD MONO_STATUS;        /* True if current font monospaced */
+extern UWORD DDAINC;            /* the fraction to be added to the DDA */
+extern WORD SCALDIR;            /* 0 if scale down, 1 if enlarge */
+extern WORD MONO;               /* True if current font monospaced */
 extern WORD STYLE;              /* Requested text special effects */
 extern WORD SCALE;              /* True if current font scaled */
 extern WORD CHUP;               /* Text baseline vector */
 extern WORD WRT_MODE;
 
-extern WORD XACC_DDA;           /* accumulator for x DDA        */
+extern WORD XDDA;               /* accumulator for x DDA        */
 extern WORD SOURCEX, SOURCEY;   /* upper left of character in font file */
 extern WORD DESTX, DESTY;       /* upper left of destination on screen  */
 extern UWORD DELX, DELY;        /* width and height of character    */
@@ -41,8 +41,8 @@ extern const UWORD *FBASE;      /* pointer to font data         */
 extern WORD FWIDTH;             /* offset,segment and form width of font */
 extern WORD LITEMASK, SKEWMASK; /* special effects          */
 extern WORD WEIGHT;             /* special effects          */
-extern WORD R_OFF, L_OFF;       /* skew above and below baseline    */
-extern WORD TEXT_FG;
+extern WORD ROFF, LOFF;         /* skew above and below baseline    */
+extern WORD TEXTFG;
 
 /* style bits */
 #define F_THICKEN 1
@@ -172,10 +172,10 @@ static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width, JUSTINFO *j
         return;
 
     /* some data copying for the assembler part */
-    DDA_INC = vwk->dda_inc;
-    T_SCLSTS = vwk->t_sclsts;
+    DDAINC = vwk->dda_inc;
+    SCALDIR = vwk->t_sclsts;
     SCALE = vwk->scaled;
-    MONO_STATUS = F_MONOSPACE & vwk->cur_font->flags;
+    MONO = F_MONOSPACE & vwk->cur_font->flags;
     WRT_MODE = vwk->wrt_mode;
 
     CLIP = vwk->clip;
@@ -204,8 +204,8 @@ static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width, JUSTINFO *j
         d1 = 0;
         d2 = 0;
     }
-    L_OFF = d1;
-    R_OFF = d2;
+    LOFF = d1;
+    ROFF = d2;
 
     FBASE = fnt_ptr->dat_table;
     FWIDTH = fnt_ptr->form_width;
@@ -288,9 +288,9 @@ static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width, JUSTINFO *j
         break;
     }
 
-    TEXT_FG = vwk->text_color;
+    TEXTFG = vwk->text_color;
     DELY = fnt_ptr->form_height;
-    XACC_DDA = 32767;   /* init the horizontal dda */
+    XDDA = 32767;       /* init the horizontal dda */
 
     for (j = 0; j < count; j++) {
 
@@ -1144,7 +1144,7 @@ void vdi_vst_unload_fonts(Vwk * vwk)
  *   act - d1, get actual size
  *
  * output:
- *   T_SCLSTS is the text scaling flag (means: scale up or down)
+ *   vwk->t_sclsts is the text scaling flag (means: scale up or down)
  */
 
 static UWORD clc_dda(Vwk * vwk, UWORD act, UWORD req)

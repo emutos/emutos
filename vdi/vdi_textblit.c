@@ -27,15 +27,15 @@
 
 /* linea-variables used for text_blt in assembler */
 extern WORD CLIP, XMN_CLIP, XMX_CLIP, YMN_CLIP, YMX_CLIP;
-extern UWORD DDA_INC;           /* the fraction to be added to the DDA */
-extern WORD T_SCLSTS;           /* 0 if scale down, 1 if enlarge */
-extern WORD MONO_STATUS;        /* True if current font monospaced */
+extern UWORD DDAINC;            /* the fraction to be added to the DDA */
+extern WORD SCALDIR;            /* 0 if scale down, 1 if enlarge */
+extern WORD MONO;               /* True if current font monospaced */
 extern WORD STYLE;              /* Requested text special effects */
 extern WORD SCALE;              /* True if current font scaled */
 extern WORD CHUP;               /* Text baseline vector */
 extern WORD WRT_MODE;
 
-extern WORD XACC_DDA;           /* accumulator for x DDA        */
+extern WORD XDDA;               /* accumulator for x DDA        */
 extern WORD SOURCEX, SOURCEY;   /* upper left of character in font file */
 extern WORD DESTX, DESTY;       /* upper left of destination on screen  */
 extern UWORD DELX, DELY;        /* width and height of character    */
@@ -43,8 +43,8 @@ extern const UWORD *FBASE;      /* pointer to font data         */
 extern WORD FWIDTH;             /* offset,segment and form width of font */
 extern WORD LITEMASK, SKEWMASK; /* special effects          */
 extern WORD WEIGHT;             /* special effects          */
-extern WORD R_OFF, L_OFF;       /* skew above and below baseline    */
-extern WORD TEXT_FG;
+extern WORD ROFF, LOFF;         /* skew above and below baseline    */
+extern WORD TEXTFG;
 
 extern WORD SCRPT2;             /* Offset to large text buffer */
 extern WORD *SCRTCHP;           /* Pointer to text scratch buffer */
@@ -288,7 +288,7 @@ static void pre_blit(LOCALVARS *vars)
     vars->s_next = -vars->s_next;       /* we draw from the bottom up */
 
     weight = WEIGHT;
-    skew = L_OFF + R_OFF;
+    skew = LOFF + ROFF;
     if (SCALE)
     {
         weight = max(weight/2, 1);  /* only thicken by half (but not 0) */
@@ -386,8 +386,8 @@ static void screen_blit(LOCALVARS *vars)
 {
     LONG offset;
 
-    vars->forecol = TEXT_FG;
-    vars->ambient = 0;          /* logically TEXT_BG, but that isn't set up by the VDI */
+    vars->forecol = TEXTFG;
+    vars->ambient = 0;          /* logically TEXTBG, but that isn't set up by the VDI */
     vars->nbrplane = v_planes;
     vars->nextwrd = vars->nbrplane * sizeof(WORD);
     vars->height = vars->DELY;
@@ -434,8 +434,8 @@ static void screen_blit(LOCALVARS *vars)
  *  size        value to scale
  *
  * used variables:
- *  DDA_INC     DDA increment passed externally
- *  T_SCLSTS    0 if scale down, 1 if enlarge
+ *  DDAINC      DDA increment passed externally
+ *  SCALDIR     0 if scale down, 1 if enlarge
  *
  * exit:
  *  new size
@@ -444,15 +444,15 @@ static UWORD char_resize(UWORD init, UWORD size)
 {
     UWORD accu, retval, i;
 
-    if (DDA_INC == 0xffff) {    /* double size */
+    if (DDAINC == 0xffff) {     /* double size */
         return (size<<1);
     }
     accu = init;
-    retval = T_SCLSTS ? size : 0;
+    retval = SCALDIR ? size : 0;
 
     for (i = 0; i < size; i++) {
-        accu += DDA_INC;
-        if (accu < DDA_INC)
+        accu += DDAINC;
+        if (accu < DDAINC)
             retval++;
     }
 
@@ -491,7 +491,7 @@ void text_blt(void)
     if (SCALE)
     {
         vars.tmp_dely = dely = char_resize(0x7fff, vars.DELY);
-        vars.tmp_delx = delx = char_resize(XACC_DDA, vars.DELX);
+        vars.tmp_delx = delx = char_resize(XDDA, vars.DELX);
         if (!vars.CHUP)
             vars.buffa = 0;         /* use small buffer if no rotation */
     }
@@ -502,13 +502,13 @@ void text_blt(void)
         weight = WEIGHT;
         if (weight == 0)        /* cancel thicken if no weight */
             vars.STYLE &= ~F_THICKEN;
-        if (!MONO_STATUS)
+        if (!MONO)
             delx += weight;
     }
 
     if (vars.STYLE & F_SKEW)
     {
-        delx += L_OFF + R_OFF;
+        delx += LOFF + ROFF;
     }
 
     if (vars.CHUP)
@@ -560,7 +560,7 @@ void text_blt(void)
     if (vars.STYLE & F_THICKEN)
     {
         vars.smear = WEIGHT;
-        if (!MONO_STATUS)
+        if (!MONO)
             vars.DELX += vars.smear;
     }
 
@@ -576,7 +576,7 @@ upda_dst:
         delx = vars.swap_tmps ? vars.tmp_dely : vars.tmp_delx;
     }
 
-    if ((STYLE & F_THICKEN) && !MONO_STATUS)
+    if ((STYLE & F_THICKEN) && !MONO)
     {
         delx += WEIGHT;
     }
