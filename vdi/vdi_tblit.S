@@ -46,12 +46,7 @@
         .globl  dbl_loop
         .globl  mlt_left
         .globl  mlt_rite
-        .globl  ramlen
         .globl  blttype
-        .globl  rite_msk
-        .globl  left_msk
-        .globl  tsdad
-        .globl  tddad
 #endif
 
 /////////////////////////////////////////////////////////////////////////
@@ -60,49 +55,19 @@
 //  inputs:     SOURCEX,SOURCEY - word                                  //
 //                X,Y coordinate of character relative to UL corner of  //
 //                font (in pixels)                                      //
-//              DESTX,DESTY - word                                      //
-//                UL corner of screen area to operate on (in pixels)    //
-//              DELX,DELY - word                                        //
-//                size of area to operate on (in pixels)                //
-//              FBASE - long word                                       //
-//                base address of font                                  //
-//              FWIDTH - word                                           //
-//                Form width of font in bytes                           //
-//              WRT_MODE - word                                         //
-//                writing mode operation(0-3) 0-replace,  1-transparent //
-//                                            2-XOR mode                //
-//                                            3-inverse transparent     //
-//              STYLE - word                                            //
-//                special effects select (thicken,light,skew,underline, //
-//                outline, etc.)                                        //
-//              R_OFF,L_OFF - word                                      //
-//                right & left offset between top & bottom when         //
-//                italicizing                                           //
-//              WEIGHT - word                                           //
-//                used by thicken (magnitude of thickness???)           //
-//              LITEMASK,SKEWMASK - word                                //
+//              LITEMASK - word                                         //
 //                for lighter letters                                   //
-//              SCALE - word                                            //
-//                if non-zero make character twice height & width       //
-//              CHUP - word                                             //
-//                rotation tenths of degrees (0,900,1800,or 2700 only)  //
-//              CLIP - word                                             //
-//                if non-zero, clipping bounds (below) in effect        //
-//              XMN_CLIP,XMX_CLIP - word                                //
-//                clipping region, x coordinate min & max               //
-//              YMN_CLIP,YMX_CLIP - word                                //
-//                clipping region, y coordinate min & max               //
 //                                                                      //
 //                added Feb 26, 1985                                    //
 //                                                                      //
 //              MONO_ST - word                                          //
 //                if non-zero (true), thicken effect should not enlarge //
 //                source( mono spaced font status flag )                //
-//              XACCC_DDA - word                                        //
+//              XACC_DDA - word                                         //
 //                DDA accumulator passed externally                     //
 //              DDA_INC - word                                          //
 //                DDA increment passed externally                       //
-//              T_SCLST - word                                          //
+//              T_SCLSTS - word                                         //
 //                0 if scale down, 1 if enlarge                         //
 /////////////////////////////////////////////////////////////////////////
 
@@ -131,12 +96,6 @@
 //   Style equates..                                   //
 /////////////////////////////////////////////////////////
 
-#define THICKM                 0x1
-#define LIGHTM                 0x2
-#define SKEWM                  0x4
-#define UNDERM                 0x8
-#define OUTLINEM               0x10
-#define SHADOWM                0x20
 //
 //  Style equates converted to 68k bit numbers
 //  (bit number 0 is the least significant bit)
@@ -166,38 +125,19 @@
 //  Global variables referenced.                       //
 /////////////////////////////////////////////////////////
 
-        .extern _DEV_TAB
         .extern _SOURCEX,_SOURCEY
-        .extern _DESTX,_DESTY
-        .extern _DELX,_DELY
-        .extern _FBASE
-        .extern _FWIDTH
-        .extern _WRT_MODE
-        .extern _STYLE
-        .extern _R_OFF,_L_OFF
-        .extern _WEIGHT,_LITEMASK,_SKEWMASK
-        .extern _SCALE
-        .extern _CHUP
-        .extern _CLIP
-        .extern _MONO_STATUS
+        .extern _LITEMASK
         .extern _T_SCLSTS
-        .extern _TEXT_FG        //foreground color, text
-        .extern _XMN_CLIP,_XMX_CLIP
-        .extern _YMN_CLIP,_YMX_CLIP
         .extern _XACC_DDA
         .extern _DDA_INC
         .extern _SCRPT2
         .extern _SCRTCHP
-        .extern _shift_offset
 
 
 /////////////////////////////////////////////////////////
 //  Hardware dependent variables referenced.           //
 /////////////////////////////////////////////////////////
 
-        .extern _v_bas_ad       //base address of graphic plane
-        .extern _v_lin_wr       //size of a scan line in bytes
-        .extern _v_planes       //number of graphic planes
 
 /////////////////////////////////////////////////////////
 //  Character buffer variables defined in this module. //
@@ -344,8 +284,6 @@ _deftxbuf:
         .ds.b   buf_siz         // char. buffer
 
         SECTION_RODATA
-
-#define _scrpt1 0               // small buffer base offset
 
         .even   // Mandatory in ELF section .rodata
 _scrtsiz:
