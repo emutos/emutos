@@ -26,7 +26,7 @@
 // they currently appear here and in vdi_text.c
 
 /* linea-variables used for text_blt in assembler */
-extern WORD CLIP, XMN_CLIP, XMX_CLIP, YMN_CLIP, YMX_CLIP;
+extern WORD CLIP, XMINCL, XMAXCL, YMINCL, YMAXCL;
 extern UWORD DDAINC;            /* the fraction to be added to the DDA */
 extern WORD SCALDIR;            /* 0 if scale down, 1 if enlarge */
 extern WORD MONO;               /* True if current font monospaced */
@@ -159,10 +159,10 @@ static WORD check_clip(LOCALVARS *vars, WORD delx, WORD dely)
     if (!vars->CLIP)
         return 0;
 
-    vars->XMN_CLIP = XMN_CLIP;
-    vars->YMN_CLIP = YMN_CLIP;
-    vars->XMX_CLIP = XMX_CLIP;
-    vars->YMX_CLIP = YMX_CLIP;
+    vars->XMN_CLIP = XMINCL;
+    vars->YMN_CLIP = YMINCL;
+    vars->XMX_CLIP = XMAXCL;
+    vars->YMX_CLIP = YMAXCL;
 
     rc = 0;
 

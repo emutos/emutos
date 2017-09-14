@@ -237,10 +237,10 @@ _BYTES_LIN:     .ds.w   1       // -2   byte per screen line
                 .globl  _PATMSK
 
                 .globl  _CLIP
-                .globl  _XMN_CLIP
-                .globl  _XMX_CLIP
-                .globl  _YMN_CLIP
-                .globl  _YMX_CLIP
+                .globl  _XMINCL
+                .globl  _XMAXCL
+                .globl  _YMINCL
+                .globl  _YMAXCL
 
                 .globl  _MFILL
                 .globl  _XDDA
@@ -306,10 +306,10 @@ _PATMSK:        .ds.w   1               // fill pattern "mask" (line count)
 _MFILL:         .ds.w   1               // multi-plane fill flag. (0 => 1 plane)
 
 _CLIP:          .ds.w   1               // clipping flag.
-_XMN_CLIP:      .ds.w   1               // x minimum clipping value.
-_YMN_CLIP:      .ds.w   1               // y minimum clipping value.
-_XMX_CLIP:      .ds.w   1               // x maximum clipping value.
-_YMX_CLIP:      .ds.w   1               // y maximum clipping value.
+_XMINCL:        .ds.w   1               // x minimum clipping value.
+_YMINCL:        .ds.w   1               // y minimum clipping value.
+_XMAXCL:        .ds.w   1               // x maximum clipping value.
+_YMAXCL:        .ds.w   1               // y maximum clipping value.
 
 _XDDA:          .ds.w   1               // accumulator for x DDA
 _DDAINC:        .ds.w   1               // the fraction to be added to the DDA

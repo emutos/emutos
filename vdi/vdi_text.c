@@ -24,7 +24,7 @@ extern const Fonthead *font_ring[]; /* Ring of available fonts */
 
 
 /* linea-variables used for text_blt in assembler */
-extern WORD CLIP, XMN_CLIP, XMX_CLIP, YMN_CLIP, YMX_CLIP;
+extern WORD CLIP, XMINCL, XMAXCL, YMINCL, YMAXCL;
 extern UWORD DDAINC;            /* the fraction to be added to the DDA */
 extern WORD SCALDIR;            /* 0 if scale down, 1 if enlarge */
 extern WORD MONO;               /* True if current font monospaced */
@@ -179,10 +179,10 @@ static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width, JUSTINFO *j
     WRT_MODE = vwk->wrt_mode;
 
     CLIP = vwk->clip;
-    XMN_CLIP = vwk->xmn_clip;
-    YMN_CLIP = vwk->ymn_clip;
-    XMX_CLIP = vwk->xmx_clip;
-    YMX_CLIP = vwk->ymx_clip;
+    XMINCL = vwk->xmn_clip;
+    YMINCL = vwk->ymn_clip;
+    XMAXCL = vwk->xmx_clip;
+    YMAXCL = vwk->ymx_clip;
     STYLE = vwk->style;
     CHUP = vwk->chup;
     SCRPT2 = vwk->scrpt2;

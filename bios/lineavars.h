@@ -60,7 +60,7 @@ extern WORD X1, Y1, X2, Y2;     /* coordinates for end points */
 extern WORD WRT_MODE;           /* write mode */
 extern WORD COLBIT0, COLBIT1, COLBIT2, COLBIT3; /* colour bit values for planes 0-3 */
 extern WORD CLIP;               /* clipping flag */
-extern WORD XMN_CLIP, XMX_CLIP, YMN_CLIP, YMX_CLIP; /* clipping rectangle */
+extern WORD XMINCL, XMAXCL, YMINCL, YMAXCL; /* clipping rectangle */
 extern UWORD *PATPTR;           /* fill pattern pointer */
 extern UWORD PATMSK;            /* pattern mask */
 

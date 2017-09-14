@@ -639,10 +639,10 @@ void linea_rect(void)
     Rect line;
 
     if (CLIP) {
-        if (X1 < XMN_CLIP) X1 = XMN_CLIP;
-        if (X2 > XMX_CLIP) X2 = XMX_CLIP;
-        if (Y1 < YMN_CLIP) Y1 = YMN_CLIP;
-        if (Y2 > YMX_CLIP) Y2 = YMX_CLIP;
+        if (X1 < XMINCL) X1 = XMINCL;
+        if (X2 > XMAXCL) X2 = XMAXCL;
+        if (Y1 < YMINCL) Y1 = YMINCL;
+        if (Y2 > YMAXCL) Y2 = YMAXCL;
     }
     line.x1 = X1;
     line.x2 = X2;
@@ -688,8 +688,8 @@ void linea_polygon(void)
     attr.multifill = 0;         /* linea6 does not support MFILL */
     if (CLIP) {
         /* clc_flit does only X-clipping */
-        clipper.xmn_clip = XMN_CLIP;
-        clipper.xmx_clip = XMX_CLIP;
+        clipper.xmn_clip = XMINCL;
+        clipper.xmx_clip = XMAXCL;
     } else {
         clipper.xmn_clip = 0;
         clipper.xmx_clip = xres;
@@ -710,10 +710,10 @@ void linea_fill(void)
     attr.multifill = 0;         /* lineaf does not support MFILL */
     attr.color = CUR_WORK->fill_color;
     if (CLIP) {
-        clipper.xmn_clip = XMN_CLIP;
-        clipper.xmx_clip = XMX_CLIP;
-        clipper.ymn_clip = YMN_CLIP;
-        clipper.ymx_clip = YMX_CLIP;
+        clipper.xmn_clip = XMINCL;
+        clipper.xmx_clip = XMAXCL;
+        clipper.ymn_clip = YMINCL;
+        clipper.ymx_clip = YMAXCL;
     } else {
         clipper.xmn_clip = 0;
         clipper.xmx_clip = xres;
