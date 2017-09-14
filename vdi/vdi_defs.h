@@ -77,6 +77,14 @@
 #define MD_XOR      3
 #define MD_ERASE    4
 
+/* text style bits: for vwk->style (and also lineA variable STYLE) */
+#define F_THICKEN   1
+#define F_LIGHT     2
+#define F_SKEW      4
+#define F_UNDER     8
+#define F_OUTLINE   16
+#define F_SHADOW    32
+
 
 /*
  * Small subset of Vwk data, used by draw_rect_common to hide VDI/Line-A

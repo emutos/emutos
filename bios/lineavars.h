@@ -64,6 +64,26 @@ extern WORD XMINCL, XMAXCL, YMINCL, YMAXCL; /* clipping rectangle */
 extern UWORD *PATPTR;           /* fill pattern pointer */
 extern UWORD PATMSK;            /* pattern mask */
 
+/* text-blit related variables */
+extern WORD XDDA;               /* accumulator for x DDA        */
+extern UWORD DDAINC;            /* the fraction to be added to the DDA */
+extern WORD SCALDIR;            /* 0 if scale down, 1 if enlarge */
+extern WORD MONO;               /* True if current font monospaced */
+extern WORD SOURCEX, SOURCEY;   /* upper left of character in font file */
+extern WORD DESTX, DESTY;       /* upper left of destination on screen  */
+extern UWORD DELX, DELY;        /* width and height of character    */
+extern const UWORD *FBASE;      /* pointer to font data         */
+extern WORD FWIDTH;             /* offset,segment and form width of font */
+extern WORD STYLE;              /* Requested text special effects */
+extern WORD LITEMASK, SKEWMASK; /* special effects          */
+extern WORD WEIGHT;             /* special effects          */
+extern WORD ROFF, LOFF;         /* skew above and below baseline    */
+extern WORD SCALE;              /* True if current font scaled */
+extern WORD CHUP;               /* Text baseline vector */
+extern WORD TEXTFG;             /* text foreground colour */
+extern WORD *SCRTCHP;           /* Pointer to text scratch buffer */
+extern WORD SCRPT2;             /* Offset to large text buffer */
+
 extern void linea_init(void);   /* initialize variables */
 
 #endif /* LINEAVARS_H */
