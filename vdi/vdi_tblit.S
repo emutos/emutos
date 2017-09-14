@@ -152,14 +152,15 @@
 //   Global routines defined in this module.           //
 /////////////////////////////////////////////////////////
 
-        .globl  _text_blt
-        .globl  concat          // convert x,y coordinates to buffer offsets
+        .globl  _normal_blit
+        .globl  _outline
+        .globl  _rotate
+        .globl  _scale
 
 /////////////////////////////////////////////////////////
 //  Global routines referenced by this module.         //
 /////////////////////////////////////////////////////////
 
-        .extern _linea_act_siz
 
 /////////////////////////////////////////////////////////
 //  Global variables referenced.                       //
@@ -361,7 +362,7 @@ _scrtsiz:
 
 #define buffa   -2              //for clip & prerotate blt
 #define buffb   -4              //for rotate
-#define buffc   -6              //for replicate
+//#define buffc   -6              //for replicate (now unused)
 #define sform   -10             //start of source form
 #define dform   -14             //start of destination form
 #define s_next  -16             //width of source form (formerly s_width)
@@ -450,577 +451,53 @@ _scrtsiz:
 //  Temporary working variables //
 //////////////////////////////////
 
-#define tmp_style -122
+//#define tmp_style -122                (now unused)
 #define blt_flag  -124
 #define chup_flag -126
 #define ramlen    -126
 
         .text
-/////////////////////////////////////////////////////////////////////////
-//   Global TEXTBLT entry point                                         //
-/////////////////////////////////////////////////////////////////////////
-
-_text_blt:
-        link    a6,#ramlen              //allocate stack for local variables
-        movem.l d2-d7/a2-a5,-(sp)
-
-        clr.w   swap_tmps(a6)           //temps not swapped yet RJG 4/13/85
-        move.w  #_scrpt1,buffc(a6)
-        lea.l   STYLE(a6),a1
-        move.w  _STYLE,(a1)
-        move.w  _WRT_MODE,-(a1)
-        move.w  _SKEWMASK,-(a1)
-
-        move.w  _DELX,-(a1)
-        move.w  _DESTX,-(a1)
-        move.w  _DELY,-(a1)
-        move.w  _DESTY,-(a1)
-        move.w  _CHUP,-(a1)
-
-        move.w  _SCRPT2,a0              //use big buffer
-        move.w  DELY(a6),d3
-        tst.w   _SCALE                  //scaling?
-        jne     adr_dbl                 //br if no
-        move.w  DELX(a6),d1
-        jra     adr_nodb
-//
-//  added 5 mar 85
-//
-adr_dbl:
-        movem.l a0/a1,-(sp)             //backup used scratch registers
-        move.w  d3,-(sp)                //pass DELY to linea_act_siz
-        jsr     _linea_act_siz          //
-        addq.l  #2,sp                   //remove linea_act_siz parameter from stack
-        movem.l (sp)+,a0/a1             //restore used scratch registers
-        move.w  d0,d3                   //set new DELY
-        move.w  d3,tmp_dely(a6)         //save in temp for replication use
-        move.w  DELX(a6),d2             //DELX to d2
-        move.w  _XACC_DDA,d4            //get xacc_dda to d4
-        move.w  _DDA_INC,d0             //dda_inc to d0
-        moveq.l #0,d1                   //d1 = 0
-        jra     clc_n_su
-doub_wid:
-        add.w   d0,d4
-        jcc     no_db_wd
-        addq.w  #1,d1
-no_db_wd:
-        btst.b  #0,_T_SCLSTS+1
-        jeq     clc_n_su
-        addq.w  #1,d1
-clc_n_su:
-        dbra    d2,doub_wid
-        move.w  d1,tmp_delx(a6)
-//
-//  end 5 mar additions
-//
-//   replacing these 2 instructions..
-//
-//      lsl.w   d1                      //we'll double in x (_DELX)
-//      lsl.w   d3                      //we'll double in y (_DELY)
-//
-        tst.w   CHUP(a6)                //is character rotated?
-        jne     adr_nodb                //for a rotated character
-//
-//  No character rotation
-//
-        move.w  #_scrpt1,a0             //have to use small buffer 1st
-adr_nodb:
-        move.w  a0,buffa(a6)            //set up clip & prerotate blt
-        move.w  DESTY(a6),d2
-        move.w  DESTX(a6),d0
-        move.w  _L_OFF,d6
-        move.w  _R_OFF,d7
-        clr.w   smear(a6)               //in case no thicken init
-        btst.b  #THICKEN,STYLE+1(a6)
-        jeq     adr_notk
-        move.w  _WEIGHT,d4
-        jne     adr_th1
-        and.w   #0xFFFF-THICKM,STYLE(a6)        //cancel thicken if WEIGHT=0
-adr_th1:
-        tst.w   _MONO_STATUS                // 26-Feb skip source expand
-        jne     adr_notk                // 26-Feb if monospaced font
-
-        add.w   d4,d1                   //we'll smear this amount (DELX=DELX+WEIGHT)
-adr_notk:
-        btst.b  #SKEW,STYLE+1(a6)               //skewin'?
-        jeq     chk_addr                //skip DELX adjust if not
-
-        add.w   d6,d1                   //DELX = DELX + L_OFF + R_OFF
-        add.w   d7,d1                   //width increases
-//
-//  Check_address:
-//  Recalculates address of upper left corner of blt area
-//  90  address passed is for lower left (move up by DELX)
-//  180 address passed is for upper right (move right by DELX)
-//  270 address passed is for upper left
-//
-chk_addr:
-        move.w  CHUP(a6),d4             //get rotate degree-tenths
-        jeq     chk_clip                //skip rotate adjust if not rotating
-        move.w  #_scrpt1,buffb(a6)      //use the small buffer
-        subi.w  #1800,d4                //convert rotation to 3 position flag
-        move.w  d4,chup_flag(a6)        //90 = -900, 180 = 0, 270 = 180
-        jeq     add180                  //for 180 degree rotation
-        jgt     add270                  //for 270 degree rotation
-//
-//  90 degree rotation
-//
-        sub.w   d1,d2                   //move up by DELX
-        move.w  d2,DESTY(a6)            //DESTY = DESTY - DELX
-        exg     d1,d3                   //DELX <-> DELY (swap x & y to check clipping)
-        jra     chk_clip
-//
-//  180 degree rotation
-//
-add180:
-        sub.w   d1,d0                   //DESTX = DESTX-DELX(move right by DELX)
-        move.w  d0,DESTX(a6)
-        jra     chk_clip
-//
-//  270 degree rotation
-//
-add270:
-        exg     d1,d3                   //DELX <-> DELY
-
-//////
-//   Check_clip
-//
-//     trivial accept and reject and set up buffer
-//     blt if char must be clipped
-//     buffer blt if clip in x or y and skew
-//     buffer blt if clip in x and thicken
-//////
-
-chk_clip:
-        moveq.l #0,d5                   //clear x clip flag (assume no clip)
-        move.w  _CLIP,-(a1)             //clip required?
-        jeq     clp_done                //no, skip over clip-stuff
-        move.w  _XMN_CLIP,-(a1)
-        move.w  _YMN_CLIP,-(a1)
-        move.w  _XMX_CLIP,-(a1)
-        move.w  _YMX_CLIP,-(a1)
-//
-//  y -coord clip check..
-//
-        cmp.w   YMN_CLI(a6),d2          //top edge >= Y-MIN?
-        jge     chk_ymx                 //br if so, min ok
-//
-//  partially above clip window, check if totally above..
-//
-        add.w   d3,d2                   //DESTY = DESTY + DELY
-        cmp.w   YMN_CLI(a6),d2          //bottom edge > Y-MIN?
-        jgt     chk_xmn                 //br to x check if so, still got a piece in window
-        jra     upda_dst                //else, skip further ado & exit, its gone
-chk_ymx:
-        cmp.w   YMX_CLI(a6),d2          //top edge > Y-MAX?
-        jgt     upda_dst                //br to exit if so, its totally off window
-
-        add.w   d3,d2                   //DESTY = DESTY + DELY
-        subq.w  #1,d2                   //DESTY 0 based
-        sub.w   YMX_CLI(a6),d2          //bottom edge <= Y-MAX
-        jle     chk_xmn                 //br if so, y-coord wholly within window
-//
-//  partial clipping of bottom portion..
-//
-        andi.w  #1,d2                   //clipping odd # of lines?
-        jeq     chk_xmn                 //br if even
-        btst.b  #OUTLINE,STYLE+1(a6)    //skip adjust if outlining
-        jne     chk_xmn
-        rol.w   SKEWMAS(a6)             //odd kinda skew mask alignment
-//
-//  x - coord clip check..
-//
-chk_xmn:
-        cmp.w   XMN_CLI(a6),d0          //left edge >= X-MIN?
-        jge     chk_xmx                 //br if so, go check X-MAX
-//
-//  partially to left of clip window, check if totally left..
-//
-        add.w   d1,d0                   //DESTX = DESTX + DELX
-        not.w   d5                      //must clip in x
-        cmp.w   XMN_CLI(a6),d0          //right edge > X-MIN?
-        jgt     clp_done                //br if so, some stuff still in window
-        jra     upda_dst                //else, totally off screen, exit
-chk_xmx:
-        cmp.w   XMX_CLI(a6),d0          //left edge > X-MAX?
-        jgt     upda_dst                //br to exit if so, its totally off window
-
-        add.w   d1,d0                   //DESTX = DESTX + DELX
-        subq.w  #1,d0                   //DESTX 0 based
-        cmp.w   XMX_CLI(a6),d0          //right edge <= X-MAX?
-        jle     clp_done                //br if so, no x-clip
-        not.w   d5                      //clip we must
-//
-//  clip check done..
-//
-clp_done:
-        clr.w   dest_wrd(a6)            //use dest_wrd as preblt flag
-
-        move.w  _FWIDTH,s_next(a6)      //add this to go down one line
-        move.l  _FBASE,sform(a6)        //start of font
-
-chk_skw:
-        move.w  STYLE(a6),d1
-        andi.w  #SKEWM+THICKM+OUTLINEM,d1 //skew, thicken, or outline special effects
-        jeq     chk_rota                //br if not, skip preblt into buffer
-//
-//  thicken or skew or outline in effect..
-//
-chk_chup:
-        tst.w   CHUP(a6)                //we may have to preblt into buffer
-        jne     preblt                  //br to preblt if rotation in effect
-
-        btst    #SKEW,d1                //skew bit set in STYLE?
-        jeq     preskew                 //br if not, skip x-clip test
-        tst.w   d5                      //did we clip in x
-        jne     preblt                  //br to preblt if yes
-preskew:
-        btst    #OUTLINE,d1             //outlining?
-        jeq     chk_rota                //br if not, no preblt
 
 /////////////////////////////////////////////////////////////////////////
-//  Copy the font character into the character buffer. Then manipulate //
-//  the copy of the character as necessary for outlining, rotating or  //
-//  replicating.                                                       //
-/////////////////////////////////////////////////////////////////////////
-preblt:
-        move.w  _SOURCEX,d0
-        move.w  d0,d2
-        andi.w  #0x0F,d2
-        move.w  d2,tsdad(a6)            // save source dot address
-        lsr.w   #4,d0                   // make byte address
-        lsl.w   #1,d0                   // make even-byte address (word aligned)
-
-        move.w  _SOURCEY,d2             // source y
-        move.w  DELY(a6),height(a6)
-        add.w   height(a6),d2           // bottom of source + 1
-        subq.w  #1,d2                   // 0 based
-
-        mulu    s_next(a6),d2           // d2 = form offset address for bottom of char
-        neg.w   s_next(a6)              // use negative increment to move up
-        add.w   d0,d2                   // add x
-        movea.l sform(a6),a0
-        lea     (a0,d2.w),a0            // a0 -> font source for bottom of char
-
-        move.w  DELX(a6),d0             // char width
-        move.w  _WEIGHT,d1              // thicken amount
-        add.w   d6,d7                   // d7 = L_OFF + R_OFF
-        tst.w   _SCALE                  // scaling?
-        jeq     full_wt                 // br if no
-        lsr.w   #1,d1                   // only thicken by half the regular amount
-        jne     ful_wtok                // 26 Feb
-        addq.w  #1,d1                   // 26 Feb if thickness = 0 then make = 1
-ful_wtok:
-        lsr.w   #1,d7
-full_wt:
-        btst.b  #THICKEN,STYLE+1(a6)    // smear?
-        jeq     no_smear                // br if no
-
-        add.w   d1,d0                   // add adjusted WEIGHT to DELX
-        move.w  d1,smear(a6)            // save smear
-no_smear:
-//  outline code..
-        clr.w   tddad(a6)
-        move.w  DELY(a6),d1
-        move.w  STYLE(a6),d2
-        btst    #OUTLINE,d2             // check for outline mode
-        jeq     no_out
-        tst.w   _SCALE                  // scaling too?
-        jne     no_out                  // br if yes, outline after doubling
-
-        addq.w  #3,d0                   // add 3 pixels to delx (1 left, 2 right)
-        addq.w  #1,tddad(a6)            // make leftmost column blank
-        addq.w  #2,DELY(a6)             // add 2 rows (outline adds 2 to height & width)
-        addq.w  #3,d1                   // add 3 rows for buffer clear (line buffer)
-no_out:
-//  end additions
-        move.w  d0,width(a6)
-        add.w   d7,d0                   // add in skew factor
-        move.w  d0,DELX(a6)             // now the char is bigger
-        lsr.w   #4,d0
-        lsl.w   #1,d0
-        addq.w  #2,d0                   // this is the dest width in bytes
-        neg.w   d0
-        move.w  d0,d_next(a6)           // move upward in buffer
-        neg.w   d0
-        subq.w  #1,d1                   // start of bottom line
-        mulu    d1,d0
-        movea.l _SCRTCHP,a1
-        adda.w  buffa(a6),a1            // use this logical buffer
-        move.l  a1,sform(a6)            // this will be new source address
-        btst    #OUTLINE,d2
-        jne     do_clear
-        btst    #SKEW,d2
-        jeq     no_clear
-do_clear:
-//  clear buffer first..
-        movea.l a1,a2
-        move.w  d0,d3
-        sub.w   d_next(a6),d3           // count the bottom line
-        lsr.w   #1,d3                   // bytes to words
-        subq.w  #1,d3                   // adjust words to clear for loop
-        moveq.l #0,d1
-replp:
-        move.w  d1,(a2)+                // clear out buffer for skew
-        dbra    d3,replp
-
-        btst    #OUTLINE,d2
-        jeq     no_clear
-        tst.w   _SCALE
-        jne     no_clear
-
-        subq.w  #3,width(a6)
-        subq.w  #1,DELX(a6)
-        add.w   d_next(a6),d0
-//
-//  buffer now clear..
-//
-no_clear:
-        adda.w  d0,a1                   // start at the bottom
-//
-//      clr.w   tddad(a6)
-//
-        move.w  STYLE(a6),tmp_style(a6)
-
-        clr.w   WRT_MOD(a6)             // replace mode for this blt
-        move.w  #1,forecol(a6)          // foreground 1 for this blt
-        clr.w   ambient(a6)             // background 0 for this blt
-
-        move.w  #1,nbrplane(a6)         // 1 plane, natch
-        move.w  #2,nextwrd(a6)          // plane offset is 2
-        andi.w  #SKEWM+THICKM,STYLE(a6) // only do thicken & skew
-
-        jbsr    norm_blt                // blt source into buffer
-
-        move.w  tmp_style(a6),STYLE(a6)
-        move.w  _WRT_MODE,WRT_MOD(a6)
-no_mode:
-        move.w  d_next(a6),d7           // reset the source to the buffer
-        neg.w   d7
-        move.w  d7,s_next(a6)
-//
-//  outline additions
-//
-        btst.b  #OUTLINE,STYLE+1(a6)    // check outline
-        jeq     skip_out                // br to skip outline code
-        tst.w   _SCALE
-        jne     skip_out
-
-        movea.l sform(a6),a0            // get starting address of character
-        ext.l   d7
-        add.l   d7,sform(a6)            // use 2nd down for buffer top (top is temp buf)
-        jbsr    outlin                  // outline buffer please
-skip_out:
-//
-//  end additions
-//
-        clr.w   _SOURCEX
-        clr.w   _SOURCEY
-//      move.w  STYLE(a6),dest_wrd(a6)  //not used with arbitrarily scaled text
-                                        //use as skew preblt indicator for double
-        andi.w  #0xFFFF-(SKEWM+THICKM),STYLE(a6)        //cancel effects
-//
-//  Preblt is done
-//
-chk_rota:
-        tst.w   CHUP(a6)
-        jeq     chk_db
-
-        jbsr    rotation                // perform rotation if 90, 180, or 270
-
-chk_db:
-        tst.w   _SCALE
-        jeq     do_clip
-
-        jbsr    replicat                // scale text if SCALE nonzero
-
-///////////////////////////////////////////////////////////
-//  clipping                                             //
-//      change SOURCEX, SOURCEY, DELX, DELY              //
-//      based on DESTX, DESTY (UL corner of destination) //
-///////////////////////////////////////////////////////////
-
-do_clip:
-        btst.b  #THICKEN,STYLE+1(a6)
-        jeq     no_thik
-        move.w  _WEIGHT,d0
-        tst.w   _MONO_STATUS                // 26 Feb
-        jne     do_cl_nt                // 26 Feb
-        add.w   d0,DELX(a6)
-do_cl_nt:
-        move.w  d0,smear(a6)
-no_thik:
-        tst.w   CLIP(a6)                // clip requested?
-        jne     clip_adjust             // yes
-        clr.w   XMN_CLI(a6)             // otherwise we set up to clip to screen
-        clr.w   YMN_CLI(a6)
-        move.w  _DEV_TAB,XMX_CLI(a6)
-        move.w  _DEV_TAB+2,YMX_CLI(a6)
-
-clip_adjust:
-        move.w  DESTY(a6),d0
-        cmp.w   YMN_CLI(a6),d0
-        jge     ymn_fine
-        add.w   DELY(a6),d0
-        cmp.w   YMN_CLI(a6),d0
-        jle     upda_dst
-mn_clipy:
-        sub.w   YMN_CLI(a6),d0
-        move.w  DELY(a6),d1
-        move.w  d0,DELY(a6)
-        sub.w   d0,d1
-        add.w   d1,_SOURCEY
-        move.w  YMN_CLI(a6),d0
-        move.w  d0,DESTY(a6)
-ymn_fine:
-        cmp.w   YMX_CLI(a6),d0
-        jgt     upda_dst
-mx_clipy:
-        add.w   DELY(a6),d0
-        subq.w  #1,d0           // make 0 relative
-        cmp.w   YMX_CLI(a6),d0
-        jle     ymx_fine
-//clip y
-        sub.w   YMX_CLI(a6),d0
-        sub.w   d0,DELY(a6)
-ymx_fine:
-        move.w  DESTX(a6),d0
-        cmp.w   XMN_CLI(a6),d0
-        jge     xmn_fine
-        add.w   DELX(a6),d0
-        cmp.w   XMN_CLI(a6),d0
-        jle     upda_dst
-//clip x
-mn_clipx:
-        sub.w   XMN_CLI(a6),d0
-        move.w  DELX(a6),d1
-        move.w  d0,DELX(a6)
-        sub.w   d0,d1
-        add.w   d1,_SOURCEX
-        move.w  XMN_CLI(a6),d0
-        move.w  d0,DESTX(a6)
-xmn_fine:
-        cmp.w   XMX_CLI(a6),d0
-        jgt     upda_dst
-mx_clipx:
-        add.w   DELX(a6),d0
-        subq.w  #1,d0           // make 0 relative
-        cmp.w   XMX_CLI(a6),d0
-        jle     scrn_blt
-//clip x
-        sub.w   XMX_CLI(a6),d0
-        sub.w   d0,DELX(a6)
-
-        jra     scrn_blt
-
-
-
-/////////////////////////////////////////////////////////////////////////
-//  screen blt                                                          //
-//      put a block defined by s_form, _SOURCEX, _SOURCEY, _DELX, _DELY //
-//      out to screen                                                   //
+//   Interface routines from C to assembler                            //
 /////////////////////////////////////////////////////////////////////////
 
-scrn_blt:
-        move.w  _TEXT_FG,forecol(a6)    // copy foreground color to temp
-        move.w  buffc(a6),ambient(a6)   //
-        move.w  _v_planes,d0            // copy # of planes
-        move.w  d0,nbrplane(a6)         // save in local
-        add.w   d0,d0                   // *2 = offset to next word in same plane
-        move.w  d0,nextwrd(a6)          // save in local
-
-        move.w  _SOURCEX,d0
-        move.w  d0,d2
-        andi.w  #0x0F,d2
-        move.w  d2,tsdad(a6)            // save source dot address
-        lsr.w   #3,d0                   // make byte address
-        andi.w  #0xFFFE,d0              // make even-byte address (word aligned)
-        move.w  _SOURCEY,d2
-
-        move.w  DELY(a6),height(a6)
-        add.w   height(a6),d2
-        subq.w  #1,d2
-        mulu    s_next(a6),d2
-        neg.w   s_next(a6)
-        add.w   d0,d2
-//
-//  Calculate the starting address for the character to be copied.
-//
-        movea.l sform(a6),a0
-        adda.w  d2,a0                   // calculate character source address
-        move.l  a0,sform(a6)            // save source address
-
-        move.w  DELX(a6),width(a6)
-
-        move.w  DESTY(a6),d1
-        add.w   DELY(a6),d1
-        subq.w  #1,d1                   // we draw from bottom up
-        jmi     upda_dst                // don't draw if outside screen area!
-
-        move.w  DESTX(a6),d0
-        jmi     upda_dst                // don't draw if outside screen area!
-
-        jbsr    concat                  // get memory address & dot address
-//
-//  d1.w is screen offset of destination
-//
-        move.l  _v_bas_ad.w,a1
-        adda.l  d1,a1                   // screen dest. addr. for x,y coordinate
-
-        move.l  a1,dform(a6)            // save character destination address
-        move.w  d0,tddad(a6)            // save dot address
-
-        move.w  _v_lin_wr,d0
-        neg.w   d0
-        move.w  d0,d_next(a6)
-
+//  interface to 'norm_blt'
+_normal_blit:
+        movem.l d2-d7/a2-a6,-(sp)       // save registers that GCC expects unchanged
+        move.l  44+4(sp),a6             // load ptr to end of vars
+        move.l  44+8(sp),a0             // a0 & a1 must also be set
+        move.l  44+12(sp),a1
         jbsr    norm_blt
+        movem.l (sp)+,d2-d7/a2-a6       // restore saved registers
+        rts
 
-upda_dst:
-        move.w  _DELX,d1
+//  interface to 'outlin'
+_outline:
+        movem.l d2-d7/a2-a6,-(sp)       // save registers that GCC expects unchanged
+        move.l  44+4(sp),a6             // load ptr to end of vars
+        move.l  44+8(sp),a0             // a0 & d7.w must also be set
+        move.w  44+12(sp),d7
+        jbsr    outlin
+        movem.l (sp)+,d2-d7/a2-a6       // restore saved registers
+        rts
 
-        tst.w   _SCALE                  // set up dest address
-        jeq     upda_ndb
-//
-// added 5 mar 85
-//
-        move.w  tmp_delx(a6),d1         // get actual char width
-        move.w  tmp_dely(a6),d3         // get actual char height
+//  interface to 'rotation'
+_rotate:
+        movem.l d2-d7/a2-a6,-(sp)       // save registers that GCC expects unchanged
+        move.l  44+4(sp),a6             // load ptr to end of vars
+        jbsr    rotation
+        movem.l (sp)+,d2-d7/a2-a6       // restore saved registers
+        rts
 
-        tst.w   swap_tmps(a6)           // are we swapped
-        jeq     upda_ndb                // if yes swap back rjg 4/14/85
-        exg     d1, d3
-//
-// end additions// following instruction deleted...
-//
-//      lsl.w   d1                      // we doubled in x
-//
-upda_ndb:
-        btst.b  #THICKEN,_STYLE+1
-        jeq     upda_ntk
-        tst.w   _MONO_STATUS                // 26 Feb
-        jne     upda_ntk                // 26 Feb
-        add.w   _WEIGHT,d1              // we smeared this amount
-upda_ntk:
-        tst.w   CHUP(a6)
-        jgt     ck90
-        add.w   d1,_DESTX               //move left by DELX
-        jra     blt_done
-ck90:
-        tst.w   chup_flag(a6)
-        jeq     ck180
-        jgt     ck270
-        sub.w   d1,_DESTY               // move up by DELX
-        jra     blt_done
-ck180:
-        sub.w   d1,_DESTX               // move right by DELX
-        jra     blt_done
-ck270:
-        add.w   d1,_DESTY               // move down by DELX
-blt_done:
-        movem.l (sp)+,d2-d7/a2-a5
-        unlk    a6
-        rts                             // return to "C"
+//  interface to 'replicat'
+_scale:
+        movem.l d2-d7/a2-a6,-(sp)       // save registers that GCC expects unchanged
+        move.l  44+4(sp),a6             // load ptr to end of vars
+        jbsr    replicat
+        movem.l (sp)+,d2-d7/a2-a6       // restore saved registers
+        rts
+
 
         SECTION_RODATA
 
@@ -2551,62 +2028,4 @@ out_loop:
         movea.l a1,a2
 srt_lin:
         dbra    d6,out_edge
-        rts
-
-
-/*
- * concat - calculate screen offset
- *
- *
- *
- * This routine converts x and y coordinates into a physical
- * offset to a word in the screen buffer and an index to the
- * desired bit within that word.
- *
- * input:
- *    d0.w = x coordinate.
- *    d1.w = y coordinate.
- *
- * output:
- *    d0.w = word index. (x mod 16)
- *    d1.l = physical offset -- (y * bytes_per_line) + (x & xmask)>>xshift
- *
- * destroys:       nothing
- */
-
-concat:
-        movem.l d2/d3/a0,-(sp)  // save the registers that get clobbered
-
-/* Convert the y-coordinate into an offset to the start of the scan row. */
-
-        mulu.w  _v_lin_wr,d1    // compute offset to start of scan row
-
-//
-// Compute the bit offset into the desired word, save it, and remove
-// these bits from the x-coordinate.
-//
-        move.w  d0,d2           // save the x-coordinate for later
-        andi.w  #0x000f,d0      // bit offset = x-coordinate mod 16
-        andi.w  #0xfff0,d2      // clear bits for offset into word
-
-//
-// Convert the adjusted x-coordinate to a word offset into the current
-// scan line.  If the planes are arranged in an interleaved fashion with
-// a word for each plane then shift the x-coordinate by a value contained
-// in the shift table.  If the planes are arranged as separate, consecu-
-// tive entities then divide the x-coordinate by 8 to get the number of bytes.
-//
-        lea     _shift_offset,a0
-        add.w   _v_planes,a0
-        move.b  (a0),d3         // get pre-calculated shift factor
-        lsr.w   d3,d2           // convert x-coordinate to offset
-
-//
-// Compute the offset to the desired word by adding the offset to the
-// start of the scan line to the offset within the scan line, restore
-// the clobbered registers, and exit.
-//
-        ext.l   d2
-        add.l   d2,d1           // compute total offset into screen buffer
-        movem.l (sp)+,d2/d3/a0  // restore the clobbered registers
         rts

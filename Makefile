@@ -224,7 +224,8 @@ endif
 
 vdi_src = vdi_asm.S vdi_bezier.c vdi_col.c vdi_control.c vdi_esc.c \
           vdi_fill.c vdi_gdp.c vdi_input.c vdi_line.c vdi_main.c \
-          vdi_marker.c vdi_misc.c vdi_mouse.c vdi_raster.c vdi_text.c
+          vdi_marker.c vdi_misc.c vdi_mouse.c vdi_raster.c vdi_text.c \
+          vdi_textblit.c
 
 ifeq (1,$(COLDFIRE))
 vdi_src += vdi_tblit_cf.S

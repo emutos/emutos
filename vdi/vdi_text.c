@@ -571,46 +571,6 @@ static UWORD act_siz(Vwk * vwk, UWORD top)
 }
 
 
-/*
- * linea_act_siz - lineA version of act_siz()
- *
- * entry:
- *   top     - size to scale (DELY etc)
- *
- * used variables:
- *   DDA_INC  - DDA increment passed externally
- *   T_SCLSTS - 0 if scale down, 1 if enlarge
- *
- * exit:
- *   actual size
- */
-UWORD linea_act_siz(UWORD top)
-{
-    UWORD accu;
-    UWORD retval;
-    UWORD i;
-
-    if (DDA_INC == 0xffff) {
-        /* double size */
-        return (top<<1);
-    }
-    accu = 0x7fff;
-    retval = T_SCLSTS ? top : 0;
-
-    for (i = 0; i < top; i++) {
-        accu += DDA_INC;
-        if (accu < DDA_INC)
-            retval++;
-    }
-
-    /* if input is non-zero, make return value at least 1 */
-    if (top && !retval)
-        retval = 1;
-
-    return retval;
-}
-
-
 static void make_header(Vwk * vwk)
 {
     const Fonthead *source_font;
