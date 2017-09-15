@@ -1454,8 +1454,7 @@ rotation:
         andi.w  #0x0F,d2
         move.w  d2,tsdad(a6)            //save source dot address
         lsr.w   #4,d1                   //make byte address
-        moveq.l #1,d5                   //use d5 for quick shift instrs.
-        lsl.w   d5,d1
+        add.w   d1,d1
 
         movea.l sform(a6),a0
         adda.w  d1,a0                   //a0 -> source
@@ -1478,7 +1477,7 @@ rot90:
 top_src:
         move.w  DELY(a6),d0
         lsr.w   #4,d0
-        lsl.w   d5,d0
+        add.w   d0,d0
         addq.w  #2,d0                   //form width is height / 8 + 1
         move.w  d0,d_next(a6)
         movea.l _SCRTCHP,a1
@@ -1512,7 +1511,7 @@ rot_xlp:
         jeq     rot_nor
         or.w    d4,d0
 rot_nor:
-        ror.w   d5,d4
+        ror.w   #1,d4
         jcc     rot_isrc
 rot_ndst:
         move.w  d0,(a1)+
@@ -1527,7 +1526,7 @@ rot_srt:
         adda.w  d_next(a6),a3
         movea.l a3,a1
         move.w  a4,d4
-        ror.w   d5,d3
+        ror.w   #1,d3
         jcc     rnew_src
         addq.l  #2,a2
 rnew_src:
@@ -1569,12 +1568,12 @@ upsd_dwn:
         add.w   tsdad(a6),d0
         subq.w  #1,d0                   //make width instead of address
         lsr.w   #4,d0
-        lsl.w   d5,d0                   //make it even byte address
+        add.w   d0,d0                   //make it even byte address
         addq.w  #2,d0                   //form width is DELX / 8 + 1
 
         move.w  d0,d_next(a6)
         move.w  d0,d2
-        lsr.w   d5,d2                   //number of words to move per line
+        lsr.w   #1,d2                   //number of words to move per line
         subq.w  #1,d2                   //for dbra, my sweetie
         mulu    d1,d0                   //d0 pts to bottom of new form
         add.w   buffb(a6),d0
@@ -1589,8 +1588,8 @@ line_lp:
         moveq.l #0,d6
         moveq.l #15,d4
 flip_lp:
-        lsr.w   d5,d0
-        roxl.w  d5,d6
+        lsr.w   #1,d0
+        roxl.w  #1,d6
         dbra    d4,flip_lp
 
         move.w  d6,-(a1)                //store in buffer pre-decrement
