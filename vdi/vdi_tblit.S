@@ -492,7 +492,7 @@ norm_blt:
 do_rot:
         move.w  d1,shif_cnt(a6)         // save shift count (bit15=1 if ROL, else ROR)
 
-        lsl.w   #1,d0                   // x2 for index
+        add.w   d0,d0                   // x2 for index
         lea     lf_tab,a2               // get base addr of mask table
         move.w  (a2,d0.w),d0            // set the overlap for middle words
         not.w   d0
@@ -502,7 +502,7 @@ do_rot:
 //
 get_mask:
         move.w  tddad(a6),d0            // get destination dot address
-        lsl.w   #1,d0                   // x2 for index in d0
+        add.w   d0,d0                   // x2 for index in d0
         move.w  (a2,d0.w),left_msk(a6)  // get mask for destination dot address
 
         lsr.w   #1,d0                   // d0 back to tddad
@@ -512,7 +512,7 @@ get_mask:
         move.w  d0,d2                   // copy possibly thickened width to temp d2
         sub.w   smear(a6),d2            // get original before thickened
         andi.w  #0xF,d2
-        lsl.w   #1,d2
+        add.w   d2,d2
         move.w  (a2,d2.w),d2
         not.w   d2
         move.w  d2,thk_msk(a6)
@@ -526,7 +526,7 @@ get_mask:
 //
 //  Fits in one word
 //
-        lsl.w   #1,d0                   // x2 for index
+        add.w   d0,d0                   // x2 for index
         move.w  (a2,d0.w),d1
         not.w   d1
         and.w   d1,left_msk(a6)         // put the two masks together
@@ -1622,7 +1622,7 @@ replicat:
         andi.w  #0x0F,d0
         move.w  d0,tsdad(a6)            //save source dot address
         lsr.w   #4,d4                   //make byte address
-        lsl.w   #1,d4
+        add.w   d4,d4
 
         move.w  _SOURCEY,d0
         mulu    s_next(a6),d0           //get mem addr of start corner
@@ -1651,10 +1651,10 @@ replicat:
         addq.w  #1,DELY(a6)             //will add 2 to height when doubled
         addq.w  #1,DELX(a6)             //same with width
 
-        lsl.w   #1,d1                   //buffer width * 2 -> new buffer width
+        add.w   d1,d1                   //buffer width * 2 -> new buffer width
         addq.w  #3,d1                   //new buffer is 3 pixels wider
         lsr.w   #4,d1
-        lsl.w   #1,d1                   //# (even) of bytes per row
+        add.w   d1,d1                   //# (even) of bytes per row
         addq.w  #2,d1                   //# minimum of 1 word
         move.w  d1,d5
         moveq.l #0,d6
@@ -1663,7 +1663,7 @@ oklear:
         dbra    d5,oklear
         lea     -2(a1),a2
         move.w  d2,d5
-        lsl.w   #1,d5
+        add.w   d5,d5
 oklear1:
         adda.w  d1,a2
         move.w  d6,(a2)                 //clear 3 pixels on right side
@@ -1679,7 +1679,7 @@ oklear3:
 
 noline:
         lsr.w   #3,d1
-        lsl.w   #1,d1
+        add.w   d1,d1
         addq.w  #2,d1
 noline1:
         move.w  d1,d_next(a6)

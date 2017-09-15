@@ -10,7 +10,7 @@
 |                   All Rights Reserved Worldwide                       #
 |                                                                       #
 |########################################################################
-| Translated on Fri Sep 15 12:58:02 2017 by version 2.6.0 of PortAsm translator
+| Translated on Fri Sep 15 15:14:42 2017 by version 2.6.0 of PortAsm translator
 | PortAsm Licence Number #3250
 | Target assembler:    Gnu 'gas'
 |
@@ -228,9 +228,9 @@ norm_blt:
 do_rot:
       move.w   %d1,(-42,%a6)           | [118]
 
-|;;   lsl.w     #1,d0                  | [120]
+|;;   add.w     d0,d0                  | [120]
 	move.w   %d0,%d5
-	lsl.l    #1,%d5
+	add.l    %d0,%d5
       lea      lf_tab,%a2              | [121]
 	move.w   %d5,%d0
 |;;   move.w    (a2,d0.w),d0           | [122]
@@ -246,9 +246,9 @@ do_rot:
 
 get_mask:
       move.w   (-26,%a6),%d0           | [129]
-|;;   lsl.w     #1,d0                  | [130]
+|;;   add.w     d0,d0                  | [130]
 	move.w   %d0,%d5
-	lsl.l    #1,%d5
+	add.l    %d0,%d5
 	move.w   %d5,%d0
 |;;   move.w    (a2,d0.w),-38(a6)      | [131]
 	move.w   %d0,%a5
@@ -272,8 +272,8 @@ get_mask:
 	sub.l    %d3,%d5
 |;;   andi.w    #0xF,d2                | [139]
 	andi.l   #(0xFFFF&0xF),%d5
-|;;   lsl.w     #1,d2                  | [140]
-	lsl.l    #1,%d5
+|;;   add.w     d2,d2                  | [140]
+	add.l    %d5,%d5
 	move.w   %d5,%d2
 |;;   move.w    (a2,d2.w),d2           | [141]
 	move.w   %d2,%a5
@@ -294,9 +294,9 @@ get_mask:
 
 
 
-|;;   lsl.w     #1,d0                  | [154]
+|;;   add.w     d0,d0                  | [154]
 	move.w   %d0,%d5
-	lsl.l    #1,%d5
+	add.l    %d0,%d5
 	move.w   %d5,%d0
 |;;   move.w    (a2,d0.w),d1           | [155]
 	move.w   %d0,%a5
@@ -1993,8 +1993,8 @@ replicat:
 |;;   lsr.w     #4,d4                  | [1149]
 	and.l    #0xffff,%d4
 	lsr.l    #4,%d4
-|;;   lsl.w     #1,d4                  | [1150]
-	lsl.l    #1,%d4
+|;;   add.w     d4,d4                  | [1150]
+	add.l    %d4,%d4
 
       move.w   _SOURCEY,%d0            | [1152]
       mulu.w   (-16,%a6),%d0           | [1153]
@@ -2040,15 +2040,15 @@ replicat:
 	addq.l   #1,%d0
 	move.w   %d0,(-102,%a6)
 
-|;;   lsl.w     #1,d1                  | [1179]
-	lsl.l    #1,%d1
+|;;   add.w     d1,d1                  | [1179]
+	add.l    %d1,%d1
 |;;   addq.w    #3,d1                  | [1180]
 	addq.l   #3,%d1
 |;;   lsr.w     #4,d1                  | [1181]
 	and.l    #0xffff,%d1
 	lsr.l    #4,%d1
-|;;   lsl.w     #1,d1                  | [1182]
-	lsl.l    #1,%d1
+|;;   add.w     d1,d1                  | [1182]
+	add.l    %d1,%d1
 |;;   addq.w    #2,d1                  | [1183]
 	addq.l   #2,%d1
       move.w   %d1,%d5                 | [1184]
@@ -2063,8 +2063,8 @@ oklear:
 	_PA_1187_:         
       lea      (-2,%a1),%a2            | [1189]
       move.w   %d2,%d5                 | [1190]
-|;;   lsl.w     #1,d5                  | [1191]
-	lsl.l    #1,%d5
+|;;   add.w     d5,d5                  | [1191]
+	add.l    %d5,%d5
 oklear1:
 |;;   adda.w    d1,a2                  | [1193]
 	mvs.w    %d1,%d0
@@ -2101,8 +2101,8 @@ noline:
 |;;   lsr.w     #3,d1                  | [1206]
 	and.l    #0xffff,%d1
 	lsr.l    #3,%d1
-|;;   lsl.w     #1,d1                  | [1207]
-	lsl.l    #1,%d1
+|;;   add.w     d1,d1                  | [1207]
+	add.l    %d1,%d1
 |;;   addq.w    #2,d1                  | [1208 X]
 	ori.l    #0xffff0000,%d1
 	addq.l   #2,%d1
