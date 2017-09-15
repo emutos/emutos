@@ -10,7 +10,7 @@
 |                   All Rights Reserved Worldwide                       #
 |                                                                       #
 |########################################################################
-| Translated on Fri Sep 15 15:14:42 2017 by version 2.6.0 of PortAsm translator
+| Translated on Fri Sep 15 15:36:14 2017 by version 2.6.0 of PortAsm translator
 | PortAsm Licence Number #3250
 | Target assembler:    Gnu 'gas'
 |
@@ -1754,9 +1754,7 @@ rot90:
 |;;   add.w     d1,d0                  | [999]
 	add.l    %d1,%d0
       mulu.w   %d2,%d0                 | [1000]
-|;;   adda.w    d0,a0                  | [1001]
-	ext.l    %d0
-	adda.l   %d0,%a0
+      adda.l   %d0,%a0                 | [1001]
 top_src:
       move.w   (-106,%a6),%d0          | [1003]
 |;;   lsr.w     #4,d0                  | [1004]
@@ -1782,9 +1780,7 @@ top_src:
 |;;   subq.w    #1,d1                  | [1015]
 	subq.l   #1,%d1
       mulu.w   %d1,%d0                 | [1016]
-|;;   adda.w    d0,a1                  | [1017]
-	ext.l    %d0
-	adda.l   %d0,%a1
+      adda.l   %d0,%a1                 | [1017]
 top_dwn:
       move.w   (-24,%a6),%d2           | [1019]
       move.w   #0x8000,%d3             | [1020]
@@ -1998,14 +1994,13 @@ replicat:
 
       move.w   _SOURCEY,%d0            | [1152]
       mulu.w   (-16,%a6),%d0           | [1153]
-|;;   add.w     d4,d0                  | [1154]
-	add.l    %d4,%d0
 |***	SAVE	d0	***
 	movem.l  %d0,(%a7)
-      movea.l  (-10,%a6),%a0           | [1155]
-|;;   adda.w    d0,a0                  | [1156]
-	ext.l    %d0
-	adda.l   %d0,%a0
+      movea.l  (-10,%a6),%a0           | [1154]
+|;;   adda.w    d4,a0                  | [1155]
+	mvs.w    %d4,%d3
+	adda.l   %d3,%a0
+      adda.l   %d0,%a0                 | [1156]
 
       move.w   (-24,%a6),%d2           | [1158]
       move.w   #0x8000,%d3             | [1159]

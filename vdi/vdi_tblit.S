@@ -1473,7 +1473,7 @@ rot90:
         subq.w  #1,d1
         add.w   d1,d0                   //start at bottom
         mulu    d2,d0                   //get mem address of start corner
-        adda.w  d0,a0
+        adda.l  d0,a0
 top_src:
         move.w  DELY(a6),d0
         lsr.w   #4,d0
@@ -1489,7 +1489,7 @@ top_src:
         move.w  DELX(a6),d1             //DELX is the height
         subq.w  #1,d1
         mulu    d1,d0
-        adda.w  d0,a1
+        adda.l  d0,a1
 top_dwn:
         move.w  tsdad(a6),d2
         move.w  #0x8000,d3              //d3=dx
@@ -1626,9 +1626,9 @@ replicat:
 
         move.w  _SOURCEY,d0
         mulu    s_next(a6),d0           //get mem addr of start corner
-        add.w   d4,d0
         movea.l sform(a6),a0
-        adda.w  d0,a0                   //a0 -> source
+        adda.w  d4,a0
+        adda.l  d0,a0                   //a0 -> source
 
         move.w  tsdad(a6),d2            //cx
         move.w  #0x8000,d3              //d3=dx
