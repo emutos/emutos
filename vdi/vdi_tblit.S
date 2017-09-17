@@ -465,6 +465,62 @@ rf_tab:         .dc.w   0x7FFF          // origin for right fringe lookup.
                 .dc.w   0x0001
                 .dc.w   0x0000
 
+/*
+ * Writing mode mapping tables
+ *
+ * These are accessed via an offset from 'toptable', allowing the use
+ * of indexing mode for speed.
+ */
+
+#define op0             4*0
+#define op1             4*1
+#define op2             4*2
+#define op3             4*3
+#define op4             4*4
+#define op5             4*5
+#define op6             4*6
+#define op7             4*7
+#define op8             4*8
+#define op9             4*9
+#define opa             4*10
+#define opb             4*11
+#define opc             4*12
+#define opd             4*13
+#define ope             4*14
+#define opf             4*15
+
+// fore/back    00  01  10  11
+wrmappin:                           // VDI modes
+        .dc.b   op0,op0,op3,op3         // replace mode
+        .dc.b   op4,op4,op7,op7         // transparent mode
+        .dc.b   op6,op6,op6,op6         // XOR mode
+        .dc.b   op1,op1,opd,opd         // inverse transparent mode
+                                    //BitBlt modes
+        .dc.b   op0,opf,op0,opf         // mode 0: all zeros
+        .dc.b   op0,ope,op1,opf         // mode 1: source AND destination
+        .dc.b   op0,opd,op2,opf         // mode 2: source AND (NOT destination)
+        .dc.b   op0,opc,op3,opf         // mode 3: source
+        .dc.b   op0,opb,op4,opf         // mode 4: (NOT source) AND destination
+        .dc.b   op0,opa,op5,opf         // mode 5: destination
+        .dc.b   op0,op9,op6,opf         // mode 6: source XOR destination
+        .dc.b   op0,op8,op7,opf         // mode 7: source OR destination
+        .dc.b   op0,op7,op8,opf         // mode 8: (NOT source) AND (NOT destination)
+        .dc.b   op0,op6,op9,opf         // mode 9: (NOT source) XOR destination
+        .dc.b   op0,op5,opa,opf         // mode A: NOT destination
+        .dc.b   op0,op4,opb,opf         // mode B: source or (NOT destination)
+        .dc.b   op0,op3,opc,opf         // mode C: NOT source
+        .dc.b   op0,op2,opd,opf         // mode D: (NOT source) OR destination
+        .dc.b   op0,op1,ope,opf         // mode E: (NOT source) OR (NOT destination)
+        .dc.b   op0,op0,opf,opf         // mode F: all ones
+
+toptable:
+        .dc.l   top0,top1,top2,top3,top4,top5,top6,top7
+        .dc.l   top8,top9,topa,topb,topc,topd,tope,topf
+
+twoptble:
+        .dc.l   twop0,twop1,twop2,twop3,twop4,twop5,twop6,twop7
+        .dc.l   twop8,twop9,twopa,twopb,twopc,twopd,twope,twopf
+
         .text
 
 /////////////////////////////////////////////////////////////////////////
@@ -580,50 +636,23 @@ msk_done:
 msk0:
         move.w  d3,src_wthk(a6)
         move.w  d3,src_wrd(a6)
-        jra     plane_loop
-
-////////////////////////////////////
-//  writing mode mapping tables:  //
-//                                //
-//      fb=     00  01  10  11    //
-////////////////////////////////////
-
-#define op0             4*0
-#define op1             4*1
-#define op2             4*2
-#define op3             4*3
-#define op4             4*4
-#define op5             4*5
-#define op6             4*6
-#define op7             4*7
-
-wrmappin:
-        .dc.b   op0,op0,op1,op1         // replace mode
-        .dc.b   op2,op2,op3,op3         // transparent mode
-        .dc.b   op4,op4,op4,op4         // XOR mode
-        .dc.b   op5,op5,op6,op6         // inverse transparent mode
-
-toptable:
-        .dc.l   top0,top3,top4,top7,top6,top1,topd
-twoptble:
-        .dc.l   twop0,twop3,twop4,twop7,twop6,twop1,twopd
-
 
 plane_loop:
-        move.w  WRT_MOD(a6),d0          // d0 = 0000xxxx ,_WRT_MODE
+        move.w  WRT_MOD(a6),d0          // d0 = 000xxxxx (0x00-0x13 are valid)
         lsr.w   forecol(a6)             // this plane's foreground bit
         roxl.w  #1,d0
         lsr.w   ambient(a6)
         roxl.w  #1,d0
 //
-//  d0.w is index
+//  d0.w is index into 'wrmappin'
 //
-        move.b  wrmappin(pc,d0.w),d0
-        move.l  toptable(pc,d0.w),a2
+        lea     toptable,a4             // allows us to use indexing mode for speed
+        move.b  wrmappin-toptable(a4,d0.w),d0
+        movea.l toptable-toptable(a4,d0.w),a2
         movea.l a2,a3                   // call this address to do tlogicop
         movea.l a2,a5                   // logicop or special effects
                                         // word fringe special effects
-        movea.l twoptble(pc,d0.w),a4    // logicop or special effects for words
+        movea.l twoptble-toptable(a4,d0.w),a4   // logicop or special effects for words
 //
 //  Do special effects..
 //
@@ -1016,9 +1045,18 @@ rgt_rfrng:
         dbra    d3,rite_loop            //decrement # of lines to move
         jra     next_plane
 
-///////////////////////////////////////////////////
-//      Writing Mode Operations using fringe mask //
-///////////////////////////////////////////////////
+//////////////////////////////////////////////////
+//  Writing Mode Operations using fringe mask   //
+//                                              //
+//  On entry to these routines:                 //
+//      d2.w    fringe mask                     //
+//      d1.w    source                          //
+//      d4.w    destination                     //
+//  On exit:                                    //
+//      d2.w    unchanged                       //
+//      d1.w    result (new destination)        //
+//      d4.w    (may be changed)                //
+//////////////////////////////////////////////////
 
 top0:
         not.w   d2                      //mode 0 - D' = 0
@@ -1028,10 +1066,17 @@ top0:
         jmp     (a3)
 
 top1:
-        not.w   d2                      //mode 1        - D' = S and D
+        not.w   d2                      //mode 1 - D' = S and D
         or.w    d2,d1
         not.w   d2
         and.w   d4,d1
+        jmp     (a3)
+
+top2:
+        not.w   d1                      //mode 2 - D' = S and [not D]
+        and.w   d2,d1
+        or.w    d4,d1
+        eor.w   d2,d1
         jmp     (a3)
 
 top3:
@@ -1046,6 +1091,10 @@ top4:
         and.w   d4,d1
         jmp     (a3)
 
+top5:
+        move.w  d4,d1                   //mode 5 - D' = D
+        jmp     (a3)
+
 top6:
         and.w   d2,d1                   //mode 6 - D' = S xor D (xor mode)
         eor.w   d4,d1
@@ -1056,15 +1105,64 @@ top7:
         or.w    d4,d1
         jmp     (a3)
 
+top8:
+        and.w   d2,d1                   //mode 8 - D' = [not S] and [not D]
+        or.w    d4,d1                   // (implemented as: D' = not [S or D])
+        eor.w   d2,d1
+        jmp     (a3)
+
+top9:
+        and.w   d2,d1                   //mode 9 - D' = [not S] xor D
+        eor.w   d4,d1                   // (implemented as: D' = not [S xor D])
+        eor.w   d2,d1
+        jmp     (a3)
+
+topa:
+        move.w  d4,d1                   //mode 10 - D' = not D
+        eor.w   d2,d1
+        jmp     (a3)
+
+topb:
+        eor.w   d2,d4                   //mode 11 - D' = S or [not D]
+        and.w   d2,d1
+        or.w    d4,d1
+        jmp     (a3)
+
+topc:
+        eor.w   d4,d1                   //mode 12 - D' = not S
+        and.w   d2,d1
+        eor.w   d4,d1
+        eor.w   d2,d1
+        jmp     (a3)
+
 topd:
         not.w   d1                      //mode 13 - D' = [not S] or D
         and.w   d2,d1
         or.w    d4,d1
         jmp     (a3)
 
-///////////////////////////////////////////////////
-//      Word Writing Mode Operations             //
-///////////////////////////////////////////////////
+tope:
+        not.w   d1                      //mode 14 - D' = [not S] or [not D]
+        and.w   d2,d1                   // (implemented as: D' = not [S and D])
+        eor.w   d2,d4
+        or.w    d4,d1
+        jmp (a3)
+
+topf:
+        or.w    d2,d4                   //mode 15 - D' = 1
+        move.w  d4,d1
+        jmp     (a3)
+
+//////////////////////////////////////////////////
+//      Word Writing Mode Operations            //
+//                                              //
+//  On entry to these routines:                 //
+//      d1.w    source                          //
+//      d4.w    destination                     //
+//  On exit:                                    //
+//      d1.w    result (new destination)        //
+//      d4.w    (may be changed)                //
+//////////////////////////////////////////////////
 
 twop0:
         moveq.l #0,d1                   //mode 0 - D' = 0
@@ -1072,6 +1170,11 @@ twop0:
 
 twop1:
         and.w   d4,d1                   //mode 1 - D' = S and D
+        jmp     (a3)
+
+twop2:
+        not.w   d4                      //mode 2 - D' = S and [not D]
+        and.w   d4,d1
         jmp     (a3)
 
 twop3:
@@ -1082,6 +1185,10 @@ twop4:
         and.w   d4,d1
         jmp     (a3)
 
+twop5:
+        move.w  d4,d1                   //mode 5 - D' = D
+        jmp     (a3)
+
 twop6:
         eor.w   d4,d1                   //mode 6 - D' = S xor D
         jmp     (a3)
@@ -1090,11 +1197,43 @@ twop7:
         or.w    d4,d1                   //mode 7 - D' = S or D
         jmp     (a3)
 
+twop8:
+        or.w    d4,d1                   //mode 8 - D' = [not S] and [not D]
+        not.w   d1                      // (implemented as: D' = not [S or D]
+        jmp     (a3)
+
+twop9:
+        eor.w   d4,d1                   //mode 9 - D' = [not S] xor D
+        not.w   d1                      // (implemented as: D' = not [S xor D]
+        jmp     (a3)
+
+twopa:
+        move.w  d4,d1                   //mode 10 - D' = not D
+        not.w   d1
+        jmp     (a3)
+
+twopb:
+        not.w   d4                      //mode 11 - D' = S or [not D]
+        or.w    d4,d1
+        jmp     (a3)
+
+twopc:
+        not.w   d1                      //mode 12 - D' = not S
+        jmp     (a3)
+
 twopd:
         not.w   d1                      //mode 13 - D' = [not S] or D
         or.w    d4,d1
         jmp     (a3)
 
+twope:
+        and.w   d4,d1                   //mode 14 - D' = [not S] or [not D]
+        not.w   d1                      // (implemented as: D' = not [S and D])
+        jmp     (a3)
+
+twopf:
+        moveq.l #-1,d1                  //mode 15 - D' = 1
+        jmp     (a3)
 
 
 /////////////////////////
