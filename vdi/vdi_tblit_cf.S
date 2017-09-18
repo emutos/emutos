@@ -10,7 +10,7 @@
 |                   All Rights Reserved Worldwide                       #
 |                                                                       #
 |########################################################################
-| Translated on Sun Sep 17 18:28:57 2017 by version 2.6.0 of PortAsm translator
+| Translated on Mon Sep 18 17:02:32 2017 by version 2.6.0 of PortAsm translator
 | PortAsm Licence Number #3250
 | Target assembler:    Gnu 'gas'
 |
@@ -62,8 +62,9 @@
 |;;           .extern _SOURCEX,_SOURCEY | [19]
 	.extern	_SOURCEX
 	.extern	_SOURCEY
-|;;           .extern _LITEMASK        | [20]
+|;;           .extern _LITEMASK,_SKEWMASK | [20]
 	.extern	_LITEMASK
+	.extern	_SKEWMASK
 |;;           .extern _SCALDIR         | [21]
 	.extern	_SCALDIR
 |;;           .extern _XDDA            | [22]
@@ -412,9 +413,9 @@ do_ritem:
       moveq.l  #0x10,%d0               | [222]
 	move.w   %d5,%d3
 not_null:
-|;;   lsl       #1,d0                  | [224]
+|;;   add.w     d0,d0                  | [224]
 	move.w   %d0,%d5
-	lsl.l    #1,%d5
+	add.l    %d0,%d5
 	move.w   %d5,%d0
 |;;   move.w    (a2,d0.w),d4           | [225]
 	move.w   %d0,%a5
@@ -452,14 +453,14 @@ plane_loop:
 	mvz.w    (-84,%a6),%d1
 	lsr.l    #1,%d1
 	move.w   %d1,(-84,%a6)
-|;;   roxl.w    #1,d0                  | [243]
+|;;   addx.w    d0,d0                  | [243]
 	move.w   %d0,%d1
-	addx.l   %d1,%d1
+	addx.l   %d0,%d1
 |;;   lsr.w     -76(a6)                | [244 X]
 	mvz.w    (-76,%a6),%d2
 	lsr.l    #1,%d2
 	move.w   %d2,(-76,%a6)
-|;;   roxl.w    #1,d0                  | [245]
+|;;   addx.w    d0,d0                  | [245]
 	addx.l   %d1,%d1
 
 
@@ -524,7 +525,9 @@ no_thick:
 
 
 
-      move.w   (-100,%a6),(-80,%a6)    | [300]
+|;;   move.w    _SKEWMASK,-80(a6)      | [300]
+	move.w   _SKEWMASK,%d1
+	move.w   %d1,(-80,%a6)
       move.l   %a5,(-56,%a6)           | [301]
       lea      skewop,%a5              | [302]
 
@@ -2195,7 +2198,7 @@ flip_lp:
 |;;   lsr.w     #1,d0                  | [1222 X]
 	and.l    #0xffff,%d0
 	lsr.l    #1,%d0
-|;;   roxl.w    #1,d6                  | [1223]
+|;;   addx.w    d6,d6                  | [1223]
 	addx.l   %d6,%d6
 |;;   dbra      d4,flip_lp             | [1224]
 	subq.l   #1,%d4

@@ -126,7 +126,7 @@
 /////////////////////////////////////////////////////////
 
         .extern _SOURCEX,_SOURCEY
-        .extern _LITEMASK
+        .extern _LITEMASK,_SKEWMASK
         .extern _SCALDIR
         .extern _XDDA
         .extern _DDAINC
@@ -368,7 +368,7 @@ _scrtsiz:
 
 #define STYLE   -96
 #define WRT_MOD -98
-#define SKEWMAS -100
+//#define SKEWMAS -100                  (now unused)
 #define DELX    -102
 #define DESTX   -104
 #define DELY    -106
@@ -621,7 +621,7 @@ do_ritem:
         subq.w  #1,d3                   // last word is full so its a fringe
         moveq.l #0x10,d0
 not_null:
-        lsl     #1,d0
+        add.w   d0,d0
         move.w  (a2,d0.w),d4
         not.w   d4
 
@@ -638,11 +638,11 @@ msk0:
         move.w  d3,src_wrd(a6)
 
 plane_loop:
-        move.w  WRT_MOD(a6),d0          // d0 = 000xxxxx (0x00-0x13 are valid)
+        move.w  WRT_MOD(a6),d0          // d0.b = 000xxxxx (0x00-0x13 are valid)
         lsr.w   forecol(a6)             // this plane's foreground bit
-        roxl.w  #1,d0
-        lsr.w   ambient(a6)
-        roxl.w  #1,d0
+        addx.w  d0,d0                   // d0.b = 00xxxxxf
+        lsr.w   ambient(a6)             // this plane's background bit
+        addx.w  d0,d0                   // d0.b = 0xxxxxfb
 //
 //  d0.w is index into 'wrmappin'
 //
@@ -697,7 +697,7 @@ no_thick:
 //
 //  Skew special effect..
 //
-        move.w  SKEWMAS(a6),skew_msk(a6) // reload mask for this char
+        move.w  _SKEWMASK,skew_msk(a6)  // reload mask for this char
         move.l  a5,skewjmp(a6)
         lea.l   skewop,a5
 
@@ -1728,7 +1728,7 @@ line_lp:
         moveq.l #15,d4
 flip_lp:
         lsr.w   #1,d0
-        roxl.w  #1,d6
+        addx.w  d6,d6                   //same as "roxl.w  #1,d6" but faster
         dbra    d4,flip_lp
 
         move.w  d6,-(a1)                //store in buffer pre-decrement

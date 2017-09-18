@@ -47,7 +47,7 @@ typedef struct {
     WORD DELY;
     WORD DESTX;
     WORD DELX;
-    WORD SKEWMASK;
+    WORD unused3;           /* was SKEWMASK */
     WORD WRT_MODE;
     WORD STYLE;
                         /* temps for arbitrary text scaling */
@@ -441,7 +441,6 @@ void text_blt(void)
      */
     vars.STYLE = STYLE;
     vars.WRT_MODE = WRT_MODE;
-    vars.SKEWMASK = SKEWMASK;
     vars.DELX = DELX;
     vars.DESTX = DESTX;
     vars.DELY = DELY;
