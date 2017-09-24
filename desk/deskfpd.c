@@ -228,7 +228,7 @@ FNODE *pn_sort(PNODE *pn)
  *  Build the filenode list for the specified pathnode
  *
  *  returns 0   0 or more files found without error
- *          <0  error (other than ENMFIL) returned by dos_sfirst()/dos_snext()
+ *          <0  error (other than EFILNF/ENMFIL) returned by dos_sfirst()/dos_snext()
  *              (e.g. when attempting to open a floppy drive with no disk)
  */
 WORD pn_active(PNODE *pn)
@@ -296,5 +296,5 @@ WORD pn_active(PNODE *pn)
         pn->p_flist = pn_sort(pn);
     }
 
-    return (ret==ENMFIL) ? 0 : ret;
+    return ((ret==ENMFIL) || (ret==EFILNF)) ? 0 : ret;
 }
