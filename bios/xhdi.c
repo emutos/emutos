@@ -248,13 +248,90 @@ static long XHMiNTInfo(UWORD opcode, void *data)
 
 static long XHDOSLimits(UWORD which, ULONG limit)
 {
-   if (next_handler) {
-        long ret = next_handler(XHDOSLIMITS, which, limit);
+    long ret;
+
+    if (next_handler) {
+        ret = next_handler(XHDOSLIMITS, which, limit);
         if (ret != EINVFN && ret != EUNDEV && ret != EDRIVE)
             return ret;
     }
 
-    return EINVFN;
+    /* Currently setting new limits is not supported */
+    if (limit == 0) {
+
+        switch (which) {
+            case XH_DL_SECSIZ:
+                /* Maximum sector size (BIOS level) */
+                ret = 16384;
+                break;
+
+            case XH_DL_MINFAT:
+            case XH_DL_MAXFAT:
+                /* Minimum number of FATs */
+                /* Maximal number of FATs */
+                ret = 2;
+                break;
+
+            case XH_DL_MINSPC:
+                /* Minimum sectors per cluster */
+                ret = 1;
+                break;
+
+            case XH_DL_MAXSPC:
+                /* Maximum sectors per cluster */
+                ret = 64;
+                break;
+
+            case XH_DL_CLUSTS:
+                /* Maximum number of clusters of a 16-bit FAT */
+                ret = MAX_FAT16_CLUSTERS;
+                break;
+
+            case XH_DL_MAXSEC:
+                /* Maximum number of sectors */
+                ret = 4194303L; /* i.e. size in bytes < LONG_MAX */
+                break;
+
+            case XH_DL_DRIVES:
+                /* Maximum number of BIOS drives supported by the DOS */
+                ret = BLKDEVNUM;
+                break;
+
+            case XH_DL_CLSIZB:
+                /* Maximum cluster size */
+                ret = 32768;
+                break;
+
+            case XH_DL_RDLEN:
+                /* Max. (bpb->rdlen * bpb->recsiz/32) */
+                ret = EINVFN; /* meaning of XH_DL_RDLEN is unclear */
+                break;
+
+            case XH_DL_CLUSTS12:
+                /* Max. number of clusters of a 12-bit FAT */
+                ret = MAX_FAT12_CLUSTERS;
+                break;
+
+            case XH_DL_CLUSTS32:
+                /* Max. number of clusters of a 32 bit FAT */
+                ret = EINVFN; /* No FAT32 support. */
+                break;
+
+            case XH_DL_BFLAGS:
+                /* Supported bits in bpb->bflags */
+                ret = 1; /* Bit 0 (16 bit fat) */
+                break;
+
+            default:
+                ret = EINVFN;
+                break;
+        }
+
+    } else { /* limit != 0 */
+        ret = EINVFN;
+    }
+
+    return ret;
 }
 
 static long XHLastAccess(UWORD major, UWORD minor, ULONG *ms)

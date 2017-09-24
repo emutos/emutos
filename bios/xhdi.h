@@ -34,6 +34,21 @@
 /* values in device_flags for XHInqTarget(), XHInqTarget2() */
 #define XH_TARGET_REMOVABLE 0x02L
 
+/* values used for XHDOSLimits() */
+#define XH_DL_SECSIZ    0   /* maximal sector size (BIOS level) */
+#define XH_DL_MINFAT    1   /* minimal number of FATs */
+#define XH_DL_MAXFAT    2   /* maximal number of FATs */
+#define XH_DL_MINSPC    3   /* sectors per cluster minimal */
+#define XH_DL_MAXSPC    4   /* sectors per cluster maximal */
+#define XH_DL_CLUSTS    5   /* maximal number of clusters of a 16 bit FAT */
+#define XH_DL_MAXSEC    6   /* maximal number of sectors */
+#define XH_DL_DRIVES    7   /* maximal number of BIOS drives supported by the DOS */
+#define XH_DL_CLSIZB    8   /* maximal clustersize */
+#define XH_DL_RDLEN     9   /* max. (bpb->rdlen * bpb->recsiz / 32) */
+#define XH_DL_CLUSTS12  12  /* max. number of clusters of a 12 bit FAT */
+#define XH_DL_CLUSTS32  13  /* max. number of clusters of a 32 bit FAT */
+#define XH_DL_BFLAGS    14  /* supported bits in bpb->bflags */
+
 /* Information for XHInqDriver() */
 #define DRIVER_NAME                 "EmuTOS"
 #define DRIVER_NAME_MAXLENGTH       17
