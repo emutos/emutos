@@ -27,7 +27,7 @@
 
 #if CONF_WITH_XHDI
 
-#define XHDI_MAXSECS    (0x7fffffffL/SECTOR_SIZE)   /* returned by XHDOSLimits() */
+#define XHDI_MAXSECS    0x7fffffffL     /* returned by XHDOSLimits() */
 
 /*--- Global variables ---*/
 
