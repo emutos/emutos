@@ -27,6 +27,8 @@
 
 #if CONF_WITH_XHDI
 
+#define XHDI_MAXSECS    (0x7fffffffL/SECTOR_SIZE)   /* returned by XHDOSLimits() */
+
 /*--- Global variables ---*/
 
 /* XHDI_HANDLER is the type where an XHDI cookie points to */
@@ -262,24 +264,27 @@ static long XHDOSLimits(UWORD which, ULONG limit)
         switch (which) {
             case XH_DL_SECSIZ:
                 /* Maximum sector size (BIOS level) */
-                ret = 16384;
+                ret = MAX_LOGSEC_SIZE;
                 break;
 
             case XH_DL_MINFAT:
-            case XH_DL_MAXFAT:
                 /* Minimum number of FATs */
+                ret = MIN_FATS;
+                break;
+
+            case XH_DL_MAXFAT:
                 /* Maximal number of FATs */
-                ret = 2;
+                ret = MAX_FATS;
                 break;
 
             case XH_DL_MINSPC:
                 /* Minimum sectors per cluster */
-                ret = 1;
+                ret = MIN_SECS_PER_CLUS;
                 break;
 
             case XH_DL_MAXSPC:
                 /* Maximum sectors per cluster */
-                ret = 64;
+                ret = MAX_SECS_PER_CLUS;
                 break;
 
             case XH_DL_CLUSTS:
@@ -289,7 +294,7 @@ static long XHDOSLimits(UWORD which, ULONG limit)
 
             case XH_DL_MAXSEC:
                 /* Maximum number of sectors */
-                ret = 4194303L; /* i.e. size in bytes < LONG_MAX */
+                ret = XHDI_MAXSECS;
                 break;
 
             case XH_DL_DRIVES:
@@ -299,7 +304,7 @@ static long XHDOSLimits(UWORD which, ULONG limit)
 
             case XH_DL_CLSIZB:
                 /* Maximum cluster size */
-                ret = 32768;
+                ret = MAX_CLUSTER_SIZE;
                 break;
 
             case XH_DL_RDLEN:
