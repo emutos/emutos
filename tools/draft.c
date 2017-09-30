@@ -788,7 +788,7 @@ int i;
                     delete_menuitem(d-def);
                     return;
                 }
-                /* drop thru */
+                /* fall through */
             default:
                 error("not a tree / alert / free string / menu item:",name);
             }
