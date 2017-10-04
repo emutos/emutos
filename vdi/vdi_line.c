@@ -276,7 +276,7 @@ BOOL blit_rect_common(const VwkAttrib *attr, const Rect *rect, BLITPARM *b)
      * (i.e. 0, 1, 3, 7, or 15).  if we have a non-standard value, we
      * handle it via the non-blitter code.
      */
-    if ((patmsk >= 16) || ((STD_PATMSKS && (1<<patmsk)) == 0))
+    if ((patmsk >= 16) || ((STD_PATMSKS & (1<<patmsk)) == 0))
         return FALSE;
 
     /*
