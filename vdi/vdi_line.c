@@ -261,7 +261,7 @@ static BOOL blit_hline(const VwkAttrib *attr, const Rect *rect, BLITPARM *b)
  *
  * Please refer to draw_rect_common for further information
  */
-BOOL blit_rect_common(const VwkAttrib *attr, const Rect *rect, BLITPARM *b)
+static BOOL blit_rect_common(const VwkAttrib *attr, const Rect *rect, BLITPARM *b)
 {
     const UWORD patmsk = attr->patmsk;
     const UWORD *patptr = attr->patptr;
