@@ -44,6 +44,9 @@
  *
  *  v1.1    roger burrows, august/2017
  *          . add support for menu item deletion
+ *
+ *  v1.2    roger burrows, october/2017
+ *          . rename strdup() to avoid name conflicts
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -222,7 +225,7 @@ typedef struct
  *  our own defines & structures
  */
 #define PROGRAM_NAME    "draft"
-#define VERSION         "v1.1"
+#define VERSION         "v1.2"
 #define MAX_STRLEN      300         /* max size for internal string areas */
 
 #define OFFSET(item,base)    ((char *)item-(char *)base)
@@ -416,7 +419,7 @@ PRIVATE void put_short(SHORT *p,short n);
 PRIVATE void put_ushort(USHORT *p,unsigned short n);
 PRIVATE void snip_item(OBJECT *tree,OBJECT *parent,OBJECT *item);
 PRIVATE void sort_def_table(int n);
-PRIVATE char *strdup(const char *string);
+PRIVATE char *xstrdup(const char *string);
 PRIVATE void usage(char *s);
 PRIVATE int write_def_file(char *name,char *ext);
 PRIVATE int write_rsc_file(char *name,char *ext);
@@ -992,7 +995,7 @@ char name[MAXLEN_HRD+1], *p;
             if (c == 0)
                 break;
         }
-        d->name = strdup(name);
+        d->name = xstrdup(name);
     }
     fclose(fp);
 
@@ -1042,7 +1045,7 @@ char temp[9];
         }
         d->indicator = entry.indicator;
         memcpy(temp,entry.name,8);
-        d->name = strdup(temp);
+        d->name = xstrdup(temp);
     }
     fclose(fp);
 
@@ -1099,7 +1102,7 @@ char temp[9];
         }
         d->indicator = entry.indicator;
         memcpy(temp,entry.name,8);
-        d->name = strdup(temp);
+        d->name = xstrdup(temp);
     }
     fclose(fp);
 
@@ -1819,8 +1822,14 @@ char s[MAX_STRLEN];
 
 /*
  *  allocate memory & copy string to it
+ *
+ *  this is the same as the quasi-standard function strdup();
+ *  however, strdup() is not available when compiling under gcc
+ *  with the -ansi option.  this used to be called strdup(), but
+ *  the name was changed to avoid name conflicts when compiling
+ *  with systems that do provide strdup().
  */
-PRIVATE char *strdup(const char *string)
+PRIVATE char *xstrdup(const char *string)
 {
 char *p;
 
