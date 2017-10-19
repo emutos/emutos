@@ -26,20 +26,11 @@ static WORD gshift_s(void);
 /* CHOICE_INPUT: implements vrq_choice()/vsm_choice() */
 void vdi_v_choice(Vwk * vwk)
 {
-    WORD i;
 
-    if (chc_mode == 0) {
-        *(CONTRL + 4) = 1;
-        while (gchc_key() != 1);
-        *(INTOUT) = TERM_CH & 0x00ff;
-    } else {
-        i = gchc_key();
-        *(CONTRL + 4) = i;
-        if (i == 1)
-            *(INTOUT) = TERM_CH & 0x00ff;
-        else if (i == 2)
-            *(INTOUT + 1) = TERM_CH & 0x00ff;
-    }
+    gchc_key();
+    *(CONTRL + 4) = 1;
+    *(INTOUT) = TERM_CH & 0x00ff;
+
 }
 
 
