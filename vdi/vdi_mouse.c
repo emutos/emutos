@@ -196,12 +196,6 @@ void vdi_v_locator(Vwk * vwk)
         dis_cur();
         /* loop till some event */
         while ((i = gloc_key()) != 1) {
-            if (i == 4) {       /* keyboard cursor? */
-                hide_cur();     /* turn cursor off */
-                GCURX = point->x;
-                GCURY = point->y;
-                dis_cur();      /* turn cursor on */
-            }
         }
         *(INTOUT) = TERM_CH & 0x00ff;
 
@@ -226,25 +220,6 @@ void vdi_v_locator(Vwk * vwk)
             CONTRL[2] = 1;
             PTSOUT[0] = point->x;
             PTSOUT[1] = point->y;
-            break;
-
-        case 3:
-            CONTRL[2] = 1;
-            PTSOUT[0] = point->x;
-            PTSOUT[1] = point->y;
-            break;
-
-        case 4:
-            CONTRL[2] = 1;
-            if (HIDE_CNT == 0) {
-                hide_cur();
-                PTSOUT[0] = GCURX = point->x;
-                PTSOUT[1] = GCURY = point->y;
-                dis_cur();
-            } else {
-                PTSOUT[0] = GCURX = point->x;
-                PTSOUT[1] = GCURY = point->y;
-            }
             break;
         }
     }
