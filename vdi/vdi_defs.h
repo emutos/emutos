@@ -244,8 +244,6 @@ void put_pix(void);
 void text_blt(void);
 void rectfill (Vwk * vwk, Rect * rect);
 
-WORD gloc_key(void);
-
 BOOL clip_line(Vwk * vwk, Line * line);
 void arb_corner(Rect * rect);
 void arb_line(Line * line);
