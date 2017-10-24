@@ -34,8 +34,8 @@ static WORD gshift_s(void);
 void vdi_v_choice(Vwk * vwk)
 {
     gchc_key();
-    *(CONTRL + 4) = 1;
-    *(INTOUT) = TERM_CH & 0x00ff;
+    CONTRL[4] = 1;
+    INTOUT[0] = TERM_CH & 0x00ff;
 
 }
 
@@ -47,7 +47,7 @@ void vdi_v_string(Vwk * vwk)
     WORD i, j, mask;
 
     mask = 0x00ff;
-    j = *INTIN;
+    j = INTIN[0];
     if (j < 0) {
         j = -j;
         mask = 0xffff;
@@ -56,17 +56,17 @@ void vdi_v_string(Vwk * vwk)
         TERM_CH = 0;
         for (i = 0; (i < j) && ((TERM_CH & 0x00ff) != 0x000d); i++) {
             while (gchr_key() == 0);
-            *(INTOUT + i) = TERM_CH = TERM_CH & mask;
+            INTOUT[i] = TERM_CH = TERM_CH & mask;
         }
         if ((TERM_CH & 0x00ff) == 0x000d)
             --i;
-        *(CONTRL + 4) = i;
+        CONTRL[4] = i;
     } else {                    /* Sample mode */
 
         i = 0;
         while ((gchr_key() != 0) && (i < j))
-            *(INTOUT + i++) = TERM_CH & mask;
-        *(CONTRL + 4) = i;
+            INTOUT[i++] = TERM_CH & mask;
+        CONTRL[4] = i;
     }
 }
 
@@ -84,14 +84,13 @@ void vdi_vq_key_s(Vwk * vwk)
 /* SET_INPUT_MODE: */
 void vdi_vsin_mode(Vwk * vwk)
 {
-    WORD i, *int_in;
+    WORD i;
 
     CONTRL[4] = 1;
-
-    int_in = INTIN;
-    *INTOUT = i = *(int_in + 1);
+    INTOUT[0] = i = INTIN[1];
     i--;
-    switch (*(int_in)) {
+
+    switch (INTIN[0]) {
     case 0:
         break;
 
@@ -127,10 +126,10 @@ void vdi_vqin_mode(Vwk * vwk)
 {
     WORD *int_out;
 
-    *(CONTRL + 4) = 1;
+    CONTRL[4] = 1;
 
     int_out = INTOUT;
-    switch (*(INTIN)) {
+    switch (INTIN[0]) {
     case 0:
         break;
 
