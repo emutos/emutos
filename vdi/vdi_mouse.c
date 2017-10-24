@@ -186,8 +186,6 @@ void vdi_v_locator(Vwk * vwk)
     WORD i;
     Point * point = (Point*)PTSIN;
 
-    INTIN[0] = 1;
-
     /* Set the initial locator position. */
 
     GCURX = point->x;
