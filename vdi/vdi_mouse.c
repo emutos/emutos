@@ -186,7 +186,7 @@ void vdi_v_locator(Vwk * vwk)
     WORD i;
     Point * point = (Point*)PTSIN;
 
-    *INTIN = 1;
+    INTIN[0] = 1;
 
     /* Set the initial locator position. */
 
@@ -197,7 +197,7 @@ void vdi_v_locator(Vwk * vwk)
         /* loop till some event */
         while ((i = gloc_key()) != 1) {
         }
-        *(INTOUT) = TERM_CH & 0x00ff;
+        INTOUT[0] = TERM_CH & 0x00ff;
 
         CONTRL[4] = 1;
         CONTRL[2] = 1;
@@ -208,12 +208,9 @@ void vdi_v_locator(Vwk * vwk)
     } else {
         i = gloc_key();
         switch (i) {
-        case 0:
-            break;
-
         case 1:
             CONTRL[4] = 1;
-            *(INTOUT) = TERM_CH & 0x00ff;
+            INTOUT[0] = TERM_CH & 0x00ff;
             break;
 
         case 2:
@@ -232,7 +229,7 @@ void vdi_v_locator(Vwk * vwk)
  */
 void vdi_v_show_c(Vwk * vwk)
 {
-    if (!*INTIN && HIDE_CNT)
+    if (!INTIN[0] && HIDE_CNT)
         HIDE_CNT = 1;           /* reset cursor to on */
 
     dis_cur();
@@ -255,17 +252,13 @@ void vdi_v_hide_c(Vwk * vwk)
  */
 void vdi_vq_mouse(Vwk * vwk)
 {
-    WORD *pointer;
-
     INTOUT[0] = MOUSE_BT;
 
-    pointer = CONTRL;
-    *(pointer + 4) = 1;
-    *(pointer + 2) = 1;
+    CONTRL[4] = 1;
+    CONTRL[2] = 1;
 
-    pointer = PTSOUT;
-    *pointer++ = GCURX;
-    *pointer = GCURY;
+    PTSOUT[0] = GCURX;
+    PTSOUT[1] = GCURY;
 }
 
 
