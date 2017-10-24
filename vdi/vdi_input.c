@@ -91,9 +91,6 @@ void vdi_vsin_mode(Vwk * vwk)
     i--;
 
     switch (INTIN[0]) {
-    case 0:
-        break;
-
     case 1:                     /* locator */
         loc_mode = i;
         break;
@@ -130,9 +127,6 @@ void vdi_vqin_mode(Vwk * vwk)
 
     int_out = INTOUT;
     switch (INTIN[0]) {
-    case 0:
-        break;
-
     case 1:                     /* locator */
         *int_out = loc_mode;
         break;
