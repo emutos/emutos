@@ -115,7 +115,14 @@ void vdi_vsin_mode(Vwk * vwk)
 
 
 
-/* INQUIRE INPUT MODE: */
+/*
+ * INQUIRE INPUT MODE: implements vqin_mode()
+ *
+ * This function is documented by Atari to return the mode value set
+ * by vsin_mode() [this is either 1 (request mode) or 2 (sample mode)].
+ * However, like all versions of Atari TOS, it actually returns the mode
+ * value minus 1 (i.e. 0 or 1).
+ */
 void vdi_vqin_mode(Vwk * vwk)
 {
     WORD *int_out;
