@@ -255,12 +255,39 @@ static WORD gloc_key(void)
  *    output mouse positions are the same as the input, and the
  *    terminating character is set to 0x20, indicating the left mouse
  *    button.
- * 2. Subsequent calls return when either a keyboard key or a mouse
- *    button is pressed: the output mouse positions are the current
- *    positions, and the terminating character is the ASCII key pressed
- *    or 0x20 for the left mouse button / 0x21 for the right.  Thus the
- *    space key is indistingishable from the left mouse button, and the
- *    exclamation mark is indistinguishable fron the right mouse button.
+ * 2. Subsequent calls return when either a keyboard key is pressed, or
+ *    a mouse button is pressed OR released (thus a normal mouse button
+ *    action satisfies TWO calls to vrq_locator()).  The output mouse
+ *    positions are the current positions, and the terminating character
+ *    is the ASCII key pressed, or 0x20 for the left mouse button / 0x21
+ *    for the right.
+ *    As a consequence, pressing the space key twice is indistingishable
+ *    from pressing/releasing the left mouse button, and likewise for 
+ *    the exclamation mark and the right mouse button.
+ *
+ * vsm_locator() operation in Atari TOS and EmuTOS
+ * -----------------------------------------------
+ * 1. The first call to vrq_locator() always sets the terminating
+ *    character to 0x20 and CONTRL[4] to 1 (indicating the left mouse
+ *    button).
+ * 2. On every call:
+ *    . if the mouse has been moved, CONTRL[2] is set to 1
+ *    . if a keyboard key is pressed, the terminating character is the
+ *      ASCII value of the key pressed, and CONTRL[4] is set to 1
+ *    . if a mouse button is pressed or released, the terminating
+ *      character is 0x20 for the left button, 0x21 for the right
+ *      button, and CONTRL[4] is set to 1
+ *    . the output mouse psitions are always set to the same as the
+ *      input
+ *
+ * Differences from official Atari documentation
+ * ---------------------------------------------
+ * 1. No special behaviour is described for the first call to
+ *    vrq_locator() or vsm_locator().
+ * 2. No mention is made of button press & release being separate
+ *    events.
+ * 3. For vsm_locator(), the output mouse positions should be the
+ *    current positions, not the input positions.
  */
 void vdi_v_locator(Vwk * vwk)
 {
@@ -284,7 +311,7 @@ void vdi_v_locator(Vwk * vwk)
         PTSOUT[0] = point->x;
         PTSOUT[1] = point->y;
         hide_cur();
-    } else {
+    } else {                /* handle sample mode (vsm_locator()) */
         i = gloc_key();
         if (i & 1) {
             CONTRL[4] = 1;
