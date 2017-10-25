@@ -241,17 +241,34 @@ static WORD gloc_key(void)
 
 
 
-/* LOCATOR_INPUT: implements vrq_locator()/vsm_locator() */
+/* 
+ * LOCATOR_INPUT: implements vrq_locator()/vsm_locator()
+ *
+ * These functions return the status of the logical 'locator' device.
+ *
+ * vrq_locator() operation in Atari TOS and EmuTOS
+ * -----------------------------------------------
+ * 1. The first call to vrq_locator() always returns immediately: the
+ *    output mouse positions are the same as the input, and the
+ *    terminating character is set to 0x20, indicating the left mouse
+ *    button.
+ * 2. Subsequent calls return when either a keyboard key or a mouse
+ *    button is pressed: the output mouse positions are the current
+ *    positions, and the terminating character is the ASCII key pressed
+ *    or 0x20 for the left mouse button / 0x21 for the right.  Thus the
+ *    space key is indistingishable from the left mouse button, and the
+ *    exclamation mark is indistinguishable fron the right mouse button.
+ */
 void vdi_v_locator(Vwk * vwk)
 {
     WORD i;
     Point * point = (Point*)PTSIN;
 
     /* Set the initial locator position. */
-
     GCURX = point->x;
     GCURY = point->y;
-    if (loc_mode == 0) {
+
+    if (loc_mode == 0) {    /* handle request mode (vrq_locator()) */
         dis_cur();
         /* loop till some event */
         while ((i = gloc_key()) != 1) {
