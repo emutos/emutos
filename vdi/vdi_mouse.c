@@ -206,9 +206,12 @@ static void hide_cur(void)
 
 static WORD gloc_key(void)
 {
-    WORD retval;
+    WORD retval = 0;
     ULONG ch;
 
+    /*
+     * check for mouse button or keyboard key
+     */
     if (cur_ms_stat & 0xc0) {           /* some button status bits set? */
         if (cur_ms_stat & 0x40)         /* if bit 6 set,                     */
             TERM_CH = 0x20;             /* send terminator code for left key */
@@ -216,26 +219,26 @@ static WORD gloc_key(void)
             TERM_CH = 0x21;             /* send terminator code for right key */
         cur_ms_stat &= 0x23;            /* clear mouse button status (bit 6/7) */
         retval = 1;                     /* set button pressed flag */
-    } else {                            /* check key stat */
-        if (Bconstat(2)) {              /* see if a character present at con */
-            ch = Bconin(2);
-            TERM_CH = (WORD)
-                (ch >> 8)|              /* scancode down to bit 8-15 */
-                (ch & 0xff);            /* asciicode to bit 0-7 */
-            retval = 1;                 /* set button pressed flag */
-        } else {
-            if (cur_ms_stat & 0x20) {   /* if bit #5 set ... */
-                Point * point = (Point*)PTSIN;
-
-                cur_ms_stat &= ~0x20;   /* clear bit 5 */
-                point->x = GCURX;       /* set X = GCURX */
-                point->y = GCURY;       /* set Y = GCURY */
-                retval = 2;
-            } else {
-                retval = 0;
-            }
-        }
+    } else if (Bconstat(2)) {           /* see if a character present at con */
+        ch = Bconin(2);
+        TERM_CH = (WORD)
+                  (ch >> 8)|            /* scancode down to bit 8-15 */
+                  (ch & 0xff);          /* asciicode to bit 0-7 */
+        retval = 1;                     /* set button pressed flag */
     }
+
+    /*
+     * check for mouse movement
+     */
+    if (cur_ms_stat & 0x20) {           /* if bit #5 set ... */
+        Point * point = (Point*)PTSIN;
+
+        cur_ms_stat &= ~0x20;   /* clear bit 5 */
+        point->x = GCURX;       /* set X = GCURX */
+        point->y = GCURY;       /* set Y = GCURY */
+        retval += 2;
+    }
+
     return retval;
 }
 
@@ -270,8 +273,8 @@ void vdi_v_locator(Vwk * vwk)
 
     if (loc_mode == 0) {    /* handle request mode (vrq_locator()) */
         dis_cur();
-        /* loop till some event */
-        while ((i = gloc_key()) != 1) {
+        /* loop till button or keyboard event */
+        while (!(gloc_key() & 1)) {
         }
         INTOUT[0] = TERM_CH & 0x00ff;
 
@@ -283,17 +286,14 @@ void vdi_v_locator(Vwk * vwk)
         hide_cur();
     } else {
         i = gloc_key();
-        switch (i) {
-        case 1:
+        if (i & 1) {
             CONTRL[4] = 1;
             INTOUT[0] = TERM_CH & 0x00ff;
-            break;
-
-        case 2:
+        }
+        if (i & 2) {
             CONTRL[2] = 1;
             PTSOUT[0] = point->x;
             PTSOUT[1] = point->y;
-            break;
         }
     }
 }
