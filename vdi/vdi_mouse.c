@@ -227,7 +227,7 @@ static WORD gloc_key(void)
             if (cur_ms_stat & 0x20) {   /* if bit #5 set ... */
                 Point * point = (Point*)PTSIN;
 
-                cur_ms_stat |= ~0x20;   /* clear bit 5 */
+                cur_ms_stat &= ~0x20;   /* clear bit 5 */
                 point->x = GCURX;       /* set X = GCURX */
                 point->y = GCURY;       /* set Y = GCURY */
                 retval = 2;
