@@ -211,9 +211,9 @@ static WORD gloc_key(void)
 
     if (cur_ms_stat & 0xc0) {           /* some button status bits set? */
         if (cur_ms_stat & 0x40)         /* if bit 6 set,                     */
-            TERM_CH = 0x21;             /* send terminator code for left key */
+            TERM_CH = 0x20;             /* send terminator code for left key */
         else
-            TERM_CH = 0x20;             /* send terminator code for right key */
+            TERM_CH = 0x21;             /* send terminator code for right key */
         cur_ms_stat &= 0x23;            /* clear mouse button status (bit 6/7) */
         retval = 1;                     /* set button pressed flag */
     } else {                            /* check key stat */
