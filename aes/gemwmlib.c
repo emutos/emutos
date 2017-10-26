@@ -460,7 +460,6 @@ void w_bldactive(WORD w_handle)
     WORD    havehbar;
     GRECT   t;
     WORD    tempw;
-    WORD    offx, offy;
     WINDOW  *pw;
 
     if (w_handle == NIL)
@@ -482,8 +481,6 @@ void w_bldactive(WORD w_handle)
     W_ACTIVE[W_BOX].ob_y = t.g_y;
     W_ACTIVE[W_BOX].ob_width = t.g_w;
     W_ACTIVE[W_BOX].ob_height = t.g_h;
-    offx = t.g_x;
-    offy = t.g_y;
 
     /* do title area */
     t.g_x = t.g_y = 0;
@@ -527,8 +524,6 @@ void w_bldactive(WORD w_handle)
     w_adjust(W_BOX, W_DATA, t.g_x, t.g_y, t.g_w, t.g_h);
 
     /* do work area */
-    t.g_x++;
-    t.g_y++;
     t.g_w -= 2;
     t.g_h -= 2;
     havevbar = kind & (UPARROW | DNARROW | VSLIDE | SIZER);
@@ -537,9 +532,6 @@ void w_bldactive(WORD w_handle)
         t.g_w -= (gl_wbox - 1);
     if (havehbar)
         t.g_h -= (gl_hbox - 1);
-
-    t.g_x += offx;
-    t.g_y += offy;
 
     t.g_x = t.g_y = 1;
     w_adjust(W_DATA, W_WORK, t.g_x, t.g_y, t.g_w, t.g_h);
