@@ -566,7 +566,7 @@ void dopanic(const char *fmt, ...)
         kcprintf("text=%08lx data=%08lx bss=%08lx\n",
                  (ULONG)run->p_tbase, (ULONG)run->p_dbase, (ULONG)run->p_bbase);
         if (pc && (pc >= (UWORD *)run->p_tbase) && (pc < (UWORD *)run->p_tbase + run->p_tlen))
-            kcprintf("Crash at text+%08lx\n", pc - (UWORD *)run->p_tbase);
+            kcprintf("Crash at text+%08lx\n", (BYTE *)pc - run->p_tbase);
     }
 
     /* allow interrupts so we get keypresses */
