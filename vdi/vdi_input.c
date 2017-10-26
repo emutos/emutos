@@ -41,7 +41,45 @@ void vdi_v_choice(Vwk * vwk)
 
 
 
-/* STRING_INPUT: implements vrq_string()/vsm_string() */
+/*
+ * STRING_INPUT: implements vrq_string()/vsm_string()
+ *
+ * These functions return the status of the logical 'string' device,
+ * which is the keyboard under TOS.
+ *
+ * vrq_string() operation in Atari TOS and EmuTOS
+ * ----------------------------------------------
+ * 1. This function reads characters from the keyboard until a carriage
+ *    return is entered, or until the maximum number of characters has
+ *    been read, and then returns.  The characters are returned in
+ *    intout[]: each word in intout[] will contain zero in the high-order
+ *    byte, and the ASCII character in the low-order byte.  The 'C'
+ *    binding will copy the low-order bytes to a buffer.  If the call is
+ *    terminated by a carriage return, the carriage return is NOT placed
+ *    in intout[].
+ * 2. The maximum number of characters may be specified as negative.  In
+ *    this case, the maximum used will be the absolute value of that
+ *    specified, and everything else will work the same as (1) above,
+ *    except that the words in the intout[] array will contain extended
+ *    keyboard codes: the scancode in the high-order byte and the ASCII
+ *    code in the low-order byte.
+ * 3. The 'echo' argument is ignored.
+ * 4. Atari TOS bug: when the maximum is specified as negative, carriage
+ *    returns do NOT terminate input; input is only terminated by the
+ *    maximum number of characters being reached.
+ *
+ * vsm_string() operation in Atari TOS and EmuTOS
+ * ----------------------------------------------
+ * 1. On entry, this function checks if any keyboard input is pending;
+ *    if not, it returns immediately.  Otherwise, it reads characters
+ *    until there are no more, or until the maximum number of characters
+ *    has been read.
+ *    NOTE: carriage returns are treated like any other character, are
+ *    included in intout[], and do NOT cause input termination.
+ * 2. The maximum number of characters may be specified as negative, with
+ *    the same results as described above for vrq_string().
+ * 3. The 'echo' argument is ignored.
+ */
 void vdi_v_string(Vwk * vwk)
 {
     WORD i, j, mask;
