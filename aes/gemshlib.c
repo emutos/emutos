@@ -515,6 +515,8 @@ static void sh_chgrf(SHELL *psh)
 
 static void sh_chdef(SHELL *psh,BOOL isgem)
 {
+    int n;
+
     psh->sh_isdef = FALSE;
     if (psh->sh_dodef)
     {
@@ -523,7 +525,19 @@ static void sh_chdef(SHELL *psh,BOOL isgem)
         if (psh->sh_cdir[1] == ':')
             dos_sdrv(psh->sh_cdir[0] - 'A');
         dos_chdir(psh->sh_cdir);
-        strcpy(D.s_cmd, psh->sh_desk);
+
+        /*
+         * if not the default desktop, build a fully-qualified name
+         */
+        n = 0;
+        if (strcmp(psh->sh_desk, DEF_DESKTOP) != 0)
+        {
+            strcpy(D.s_cmd, psh->sh_cdir);
+            n = strlen(D.s_cmd);
+            if (n)
+                D.s_cmd[n++] = '\\';
+        }
+        strcpy(D.s_cmd+n, psh->sh_desk);
     }
     else
     {
