@@ -400,7 +400,7 @@ msgid "  Shutdown        ^Q"
 msgstr "  ’œ¨£˜« ©£æª             ^Q"
 
 #: desk/desk_rsc.c:391 desk/desk_rsc.c:2051
-msgid "  Show as text  ^T"
+msgid "  Show as text   ^T"
 msgstr "  „£­á¤ ©ž àª ¡œå£œ¤¦     ^T"
 
 #: desk/desk_rsc.c:397
@@ -752,7 +752,7 @@ msgid "%ld bytes used in %d items."
 msgstr "%ld bytes ®¨ž© £¦§¦ ¦ç¤«˜  ©œ %d ˜¨®œå˜."
 
 #: desk/desk_rsc.c:2050
-msgid "  Show as icons ^T"
+msgid "  Show as icons  ^T"
 msgstr "  „£­á¤ ©ž àª œ ¡¦¤å› ˜   ^T"
 
 #: desk/desk_rsc.c:2052

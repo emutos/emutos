@@ -392,7 +392,7 @@ msgid "  Shutdown        ^Q"
 msgstr "  Stoppe System    ^Q"
 
 #: desk/desk_rsc.c:391 desk/desk_rsc.c:2051
-msgid "  Show as text  ^T"
+msgid "  Show as text   ^T"
 msgstr "  Als Text   ^T"
 
 #: desk/desk_rsc.c:397
@@ -744,7 +744,7 @@ msgid "%ld bytes used in %d items."
 msgstr "%ld Bytes in %d Dateien."
 
 #: desk/desk_rsc.c:2050
-msgid "  Show as icons ^T"
+msgid "  Show as icons  ^T"
 msgstr "  Als Icons  ^T"
 
 #: desk/desk_rsc.c:2052
