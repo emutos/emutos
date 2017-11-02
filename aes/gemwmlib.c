@@ -78,6 +78,7 @@
 #define WF_VSLSIZ   16
 #define WF_SCREEN   17
 
+#define DROP_SHADOW_SIZE    2   /* size of drop shadow on windows */
 
 GLOBAL WORD     gl_wtop;
 GLOBAL OBJECT   *gl_awind;
@@ -225,8 +226,8 @@ void w_getsize(WORD which, WORD w_handle, GRECT *pt)
     rc_copy(w_getxptr(which, w_handle), pt);
     if ((which == WS_TRUE) && pt->g_w && pt->g_h)
     {
-        pt->g_w += 2;
-        pt->g_h += 2;
+        pt->g_w += DROP_SHADOW_SIZE;
+        pt->g_h += DROP_SHADOW_SIZE;
     }
 }
 
@@ -316,8 +317,8 @@ void w_drawdesk(GRECT *pc)
     }
 
     /* account for drop shadow: BUGFIX in 2.1 */
-    pt.g_w += 2;
-    pt.g_h += 2;
+    pt.g_w += DROP_SHADOW_SIZE;
+    pt.g_h += DROP_SHADOW_SIZE;
 
     do_walk(DESKWH, tree, root, depth, pc);
 }
@@ -333,8 +334,8 @@ static void w_cpwalk(WORD wh, WORD obj, WORD depth, BOOL usetrue)
     else
     {
         gsx_gclip(&c);      /* use global clip */
-        c.g_w += 2;         /* add in drop shadow   */
-        c.g_h += 2;
+        c.g_w += DROP_SHADOW_SIZE;  /* add in drop shadow   */
+        c.g_h += DROP_SHADOW_SIZE;
     }
 
     w_bldactive(wh);
@@ -657,8 +658,8 @@ static WORD w_move(WORD w_handle, WORD *pstop, GRECT *prc)
     WORD    sminus1, dminus1;
 
     w_getsize(WS_PREV, w_handle, &s);
-    s.g_w += 2;
-    s.g_h += 2;
+    s.g_w += DROP_SHADOW_SIZE;
+    s.g_h += DROP_SHADOW_SIZE;
     w_getsize(WS_TRUE, w_handle, &d);
 
     /* set flags for when part of the source is off the screen */
@@ -856,8 +857,8 @@ static void draw_change(WORD w_handle, GRECT *pt)
                 start = DESKWH;
 
             /* update rect. is the union of two sizes + the drop shadow */
-            c.g_w = max(pt->g_w, c.g_w) + 2;
-            c.g_h = max(pt->g_h, c.g_h) + 2;
+            c.g_w = max(pt->g_w, c.g_w) + DROP_SHADOW_SIZE;
+            c.g_h = max(pt->g_h, c.g_h) + DROP_SHADOW_SIZE;
         }
     }
     else
@@ -917,8 +918,8 @@ static void draw_change(WORD w_handle, GRECT *pt)
     }
 
     /* account for drop shadow (BUGFIX in 2.1) */
-    c.g_w += 2;
-    c.g_h += 2;
+    c.g_w += DROP_SHADOW_SIZE;
+    c.g_h += DROP_SHADOW_SIZE;
 
     /* update the desktop background */
     if (start == DESKWH)
