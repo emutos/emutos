@@ -90,7 +90,12 @@ static void disk_init_one(UWORD unit,LONG *devices_available)
 #endif
     {
         /* Try our internal drivers */
-        rc = internal_inquire(unit, NULL, &device_flags, productname, sizeof productname);
+        for (i = 0; i <= HD_DETECT_RETRIES; i++)
+        {
+            rc = internal_inquire(unit, NULL, &device_flags, productname, sizeof productname);
+            if (rc == 0)
+                break;
+        }
         if (rc) {
             KDEBUG(("disk_init_one(): internal_inquire(%d) returned %ld\n",unit,rc));
             return;

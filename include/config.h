@@ -1374,6 +1374,22 @@
 #define MAX_COORDINATE  (10000)         /* arbitrary, could be 32767 */
 
 /*
+ * Retry count for the internal_inquire() used to detect the presence of
+ * a physical hard disk drive
+ *
+ * Setting this to be non-zero is usually not necessary, and will increase
+ * boot time by approximately (0.1 * HD_DETECT_RETRIES * n) seconds, where
+ * n is the total number of devices that are not present.  For example, if
+ * you set it to 1 on an ST with one device on the ACSI bus, the boot time
+ * will increase by (0.1*1*7) = 0.7 seconds.
+ *
+ * However, a non-zero retry count may help in some cases of misbehaving hardware.
+ */
+#ifndef HD_DETECT_RETRIES
+# define HD_DETECT_RETRIES 0
+#endif
+
+/*
  * Useful macros for both assembler and C
  */
 
