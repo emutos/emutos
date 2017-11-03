@@ -386,6 +386,7 @@ help:
 	@echo "expand  expand tabs to spaces"
 	@echo "crlf    convert all end of lines to LF"
 	@echo "charset check the charset of all the source files"
+	@echo "bugready set up files in preparation for 'bug update'"
 	@echo "gitready same as $(MAKE) expand crlf"
 	@echo "depend  creates dependancy file (makefile.dep)"
 	@echo "dsm     dsm.txt, an edited disassembly of emutos.img"
@@ -1172,6 +1173,16 @@ charset:
 .PHONY: gitready
 NODEP += gitready
 gitready: expand crlf
+
+#
+# set up files in preparation for 'bug update'
+#
+.PHONY: bugready
+NODEP += bugready
+bugready: bug erd grd
+	./erd -pdesk $(DESKRSC_BASE) $(DESKRSCGEN_BASE)
+	./grd $(GEMRSC_BASE) $(GEMRSCGEN_BASE)
+	./bug xgettext
 
 #
 # Standalone EmuCON
