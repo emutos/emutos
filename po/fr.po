@@ -82,7 +82,7 @@ msgstr ""
 "Utilisez FOLDR100.PRG pour l'augmenter.\n"
 "Système stoppé !\n"
 
-#: aes/gem_rsc.c:33 desk/desk_rsc.c:1975
+#: aes/gem_rsc.c:33 desk/desk_rsc.c:2098
 msgid "Drive:"
 msgstr "Lecteur :"
 
@@ -394,7 +394,7 @@ msgstr "  Exécuter EmuCON    ^Z"
 msgid "  Shutdown        ^Q"
 msgstr "  Arrêter            ^Q"
 
-#: desk/desk_rsc.c:400 desk/desk_rsc.c:2298
+#: desk/desk_rsc.c:400 desk/desk_rsc.c:2422
 msgid "  Show as text   ^T"
 msgstr "  Voir comme texte  ^T"
 
@@ -574,7 +574,7 @@ msgstr "Répertoire:"
 msgid "Application"
 msgstr "Application"
 
-#: desk/desk_rsc.c:1048 desk/desk_rsc.c:1567 desk/desk_rsc.c:2080
+#: desk/desk_rsc.c:1048 desk/desk_rsc.c:1567 desk/desk_rsc.c:2203
 msgid "Window"
 msgstr "Fenêtre"
 
@@ -694,7 +694,7 @@ msgstr "Dossier par défaut :"
 msgid "Input parameter:"
 msgstr "Paramètre :"
 
-#: desk/desk_rsc.c:1618 desk/desk_rsc.c:1681
+#: desk/desk_rsc.c:1618 desk/desk_rsc.c:1681 desk/desk_rsc.c:1969
 msgid "SET SCREEN RESOLUTION"
 msgstr "RÉSOLUTION DE L'ÉCRAN"
 
@@ -746,111 +746,119 @@ msgstr "Dossier"
 msgid "File"
 msgstr "Fichier"
 
-#: desk/desk_rsc.c:1814
+#: desk/desk_rsc.c:1975
 msgid "Monochrome only"
 msgstr "Monochrome seulement"
 
-#: desk/desk_rsc.c:1969
+#: desk/desk_rsc.c:2092
 msgid "FORMAT FLOPPY DISKETTE"
 msgstr "FORMATER DISQUETTE"
 
-#: desk/desk_rsc.c:2011
+#: desk/desk_rsc.c:2134
 msgid "Single sided"
 msgstr "Simple face"
 
-#: desk/desk_rsc.c:2017
+#: desk/desk_rsc.c:2140
 msgid "Double sided"
 msgstr "Double face"
 
-#: desk/desk_rsc.c:2023
+#: desk/desk_rsc.c:2146
 msgid "High density"
 msgstr "Haute densité"
 
-#: desk/desk_rsc.c:2056
+#: desk/desk_rsc.c:2179
 msgid "SET BACKGROUND"
 msgstr "DÉFINIR FOND"
 
-#: desk/desk_rsc.c:2062
+#: desk/desk_rsc.c:2185
 msgid "Select:"
 msgstr "Choisissez :"
 
-#: desk/desk_rsc.c:2074
+#: desk/desk_rsc.c:2197
 msgid "Desktop"
 msgstr "Bureau"
 
-#: desk/desk_rsc.c:2086
+#: desk/desk_rsc.c:2209
 msgid "Style:"
 msgstr "Style :"
 
-#: desk/desk_rsc.c:2092
+#: desk/desk_rsc.c:2215
 msgid "Color:"
 msgstr "Couleur :"
 
-#: desk/desk_rsc.c:2296
+#: desk/desk_rsc.c:2420
 msgid "%ld bytes used in %d items."
 msgstr "%ld octets utilisés par %d éléments."
 
-#: desk/desk_rsc.c:2297
+#: desk/desk_rsc.c:2421
 msgid "  Show as icons  ^T"
 msgstr "  Voir comme icônes ^T"
 
-#: desk/desk_rsc.c:2299
+#: desk/desk_rsc.c:2423
 msgid "FILE INFORMATION"
 msgstr "INFORMATIONS FICHIER"
 
-#: desk/desk_rsc.c:2300
+#: desk/desk_rsc.c:2424
 msgid "FOLDER INFORMATION"
 msgstr "INFORMATIONS DOSSIER"
 
-#: desk/desk_rsc.c:2301
+#: desk/desk_rsc.c:2425
 msgid "COPY FILE(S)"
 msgstr "COPIE DE FICHIER(S)"
 
-#: desk/desk_rsc.c:2302
+#: desk/desk_rsc.c:2426
 msgid "MOVE FILE(S)"
 msgstr "DEPLACEMENT DE FICHIER(S)"
 
-#: desk/desk_rsc.c:2303
+#: desk/desk_rsc.c:2427
 msgid "DELETE FILE(S)"
 msgstr "SUPPRESSION DE FICHIER(S)"
 
-#: desk/desk_rsc.c:2310
+#: desk/desk_rsc.c:2434
 msgid "DISK"
 msgstr "DISQUE"
 
-#: desk/desk_rsc.c:2311
+#: desk/desk_rsc.c:2435
 msgid "TRASH"
 msgstr "CORBEILLE"
 
-#: desk/desk_rsc.c:2312
+#: desk/desk_rsc.c:2436
 msgid "-More-"
 msgstr "-Plus-"
 
-#: desk/desk_rsc.c:2313
+#: desk/desk_rsc.c:2437
 msgid "-End of file-"
 msgstr "-Fin de fichier-"
 
-#: desk/desk_rsc.c:2314
+#: desk/desk_rsc.c:2438
 msgid "-File read error-"
 msgstr "-Erreur de lecture-"
 
-#: desk/desk_rsc.c:2315
+#: desk/desk_rsc.c:2439
 msgid "Locate item"
 msgstr "Localiser objet"
 
-#: desk/desk_rsc.c:2316
+#: desk/desk_rsc.c:2440
 msgid "[2]["
 "Switch resolution?][Yes|No]"
 msgstr "[2]["
 "Changer la résolution ?][Oui|Non]"
 
-#: desk/desk_rsc.c:2317
+#: desk/desk_rsc.c:2441
 msgid "[2]["
 "Show this document?][Show|Cancel]"
 msgstr "[2]["
 "Afficher ce document ?][Afficher|Annuler]"
 
-#: desk/desk_rsc.c:2318
+#: desk/desk_rsc.c:2442
+msgid "[1]["
+"This document type has no|"
+"associated application.][  OK  ]"
+msgstr "[1]["
+"Ce type de document n'est|"
+"associé à aucune application.][  OK  ]"
+
+#: desk/desk_rsc.c:2445
 msgid "[1]["
 "The GEM Desktop has no more|"
 "windows.  Please close a|"
@@ -861,7 +869,7 @@ msgstr "[1]["
 "fenêtres. Veuillez fermer une|"
 "fenêtre inutilisée.][  OK  ]"
 
-#: desk/desk_rsc.c:2325
+#: desk/desk_rsc.c:2452
 msgid "[3]["
 "You cannot copy a parent folder|"
 "into one of its child folders.][  OK  ]"
@@ -870,19 +878,19 @@ msgstr "[3]["
 "dossier parent dans l'un de|"
 "ses dossiers enfants.][  OK  ]"
 
-#: desk/desk_rsc.c:2328
+#: desk/desk_rsc.c:2455
 msgid "[3]["
 "Invalid copy operation.][  OK  ]"
 msgstr "[3]["
 "Opération de copie invalide.][  OK  ]"
 
-#: desk/desk_rsc.c:2329
+#: desk/desk_rsc.c:2456
 msgid "[2]["
 "Abort this operation?][  Yes  |  No  ]"
 msgstr "[2]["
 "Annuler cette opération ?][  Oui  |  Non  ]"
 
-#: desk/desk_rsc.c:2330
+#: desk/desk_rsc.c:2457
 msgid "[2]["
 "Do you want to delete all|"
 "the files on drive %c: ?][Yes| No ]"
@@ -890,7 +898,7 @@ msgstr "[2]["
 "Voulez-vous supprimer tous les|"
 "fichiers du lecteur %c: ?][Oui|Non]"
 
-#: desk/desk_rsc.c:2333
+#: desk/desk_rsc.c:2460
 msgid "[1]["
 "Sorry, the desktop cannot|"
 "install any more icons|"
@@ -900,7 +908,7 @@ msgstr "[1]["
 "installer de nouvelles icônes|"
 "ou applications.][  OK  ]"
 
-#: desk/desk_rsc.c:2338
+#: desk/desk_rsc.c:2465
 msgid "[2]["
 "You cannot create a folder|"
 "with that name. Please retry|"
@@ -911,7 +919,7 @@ msgstr "[2]["
 "réessayer avec un nouveau nom,|"
 "ou annuler.][Annuler|Réessayer]"
 
-#: desk/desk_rsc.c:2343
+#: desk/desk_rsc.c:2470
 msgid "[1]["
 "This disk does not have enough|"
 "room for this operation.][  OK  ]"
@@ -919,13 +927,13 @@ msgstr "[1]["
 "Ce disque n'a pas assez d'espace|"
 "libre pour cette opération.][  OK  ]"
 
-#: desk/desk_rsc.c:2346
+#: desk/desk_rsc.c:2473
 msgid "[3]["
 "Cannot create EMUDESK.INF.][  OK  ]"
 msgstr "[3]["
 "Impossible de créer EMUDESK.INF.][  OK  ]"
 
-#: desk/desk_rsc.c:2347
+#: desk/desk_rsc.c:2474
 msgid "[3]["
 "You cannot create or|"
 "access a folder this far|"
@@ -936,7 +944,7 @@ msgstr "[3]["
 "profondément dans l'arborescence|"
 "des répertoires.][  OK  ]"
 
-#: desk/desk_rsc.c:2352
+#: desk/desk_rsc.c:2479
 msgid "[3]["
 "You cannot create or access|"
 "a file or folder with that|"
@@ -948,7 +956,7 @@ msgstr "[3]["
 "dossier avec ce nom, car le|"
 "chemin est trop long.][  OK  ]"
 
-#: desk/desk_rsc.c:2359
+#: desk/desk_rsc.c:2486
 msgid "[1]["
 "You cannot open the trash|"
 "can icon into a window.][  OK  ]"
@@ -956,7 +964,7 @@ msgstr "[1]["
 "Vous ne pouvez pas ouvrir la|"
 "corbeille.][  OK  ]"
 
-#: desk/desk_rsc.c:2362
+#: desk/desk_rsc.c:2489
 msgid "[1]["
 "The trash can is used to|"
 "permanently delete files|"
@@ -966,7 +974,17 @@ msgstr "[1]["
 "définitivement les fichiers ou|"
 "les dossiers.][  OK  ]"
 
-#: desk/desk_rsc.c:2367
+#: desk/desk_rsc.c:2494
+msgid "[1]["
+"You cannot drag applications,|"
+"files or folders onto the|"
+"Desktop.][  OK  ]"
+msgstr "[1]["
+"Vous ne pouvez pas déposer des|"
+"applications, fichiers ou|"
+"dossiers sur le bureau.][  OK  ]"
+
+#: desk/desk_rsc.c:2499
 msgid "[1]["
 "You cannot drag the trash can|"
 "icon into a window.][  OK  ]"
@@ -974,7 +992,7 @@ msgstr "[1]["
 "Vous ne pouvez pas déposer la|"
 "corbeille dans une fenêtre.][  OK  ]"
 
-#: desk/desk_rsc.c:2370
+#: desk/desk_rsc.c:2502
 msgid "[1]["
 "You cannot place this|"
 "icon over another icon.][  OK  ]"
@@ -983,13 +1001,13 @@ msgstr "[1]["
 "icône au dessus d'une autre|"
 "icône.][  OK  ]"
 
-#: desk/desk_rsc.c:2373
+#: desk/desk_rsc.c:2505
 msgid "[2]["
 "Save Desktop?][  OK  |Cancel]"
 msgstr "[2]["
 "Sauver le bureau ?][  OK  |Annuler]"
 
-#: desk/desk_rsc.c:2374
+#: desk/desk_rsc.c:2506
 msgid "[2]["
 "Do you want to remove icons|"
 "or delete files?][Icons|Files|Cancel]"
@@ -997,13 +1015,13 @@ msgstr "[2]["
 "Voulez-vous supprimer les icônes|"
 "ou supprimer les fichiers ?][Icônes|Fichiers|Annuler]"
 
-#: desk/desk_rsc.c:2377
+#: desk/desk_rsc.c:2509
 msgid "[1]["
 "Invalid function key value.][  OK  ]"
 msgstr "[1]["
 "Touche de fonction invalide.][  OK  ]"
 
-#: desk/desk_rsc.c:2378
+#: desk/desk_rsc.c:2510
 msgid "[2]["
 "Function key already assigned.|"
 "Do you want to reassign it?][  OK  |Cancel]"
@@ -1012,7 +1030,7 @@ msgstr "[2]["
 "configurée. Voulez-vous la|"
 "réassigner ?][  OK  |Anuler]"
 
-#: desk/desk_rsc.c:2381
+#: desk/desk_rsc.c:2513
 msgid "[3]["
 "Not enough memory to|"
 "initialise EmuDesk.|"
@@ -1022,7 +1040,7 @@ msgstr "[3]["
 "initialiser EmuDesk.|"
 "Vous devez redémarrer.][OK]"
 
-#: desk/desk_rsc.c:2386
+#: desk/desk_rsc.c:2518
 msgid "[2]["
 "%s not found.|"
 "Do you want to remove the|"
@@ -1032,21 +1050,21 @@ msgstr "[2]["
 "Voulez-vous supprimer l'icône,|"
 "ou localiser l'objet ?][Supprimer|Localiser|Annuler]"
 
-#: desk/desk_rsc.c:2391
+#: desk/desk_rsc.c:2523
 msgid "[1]["
 "Please select icon type.][Desktop|Window|Cancel]"
 msgstr "[1]["
 "Veuillez sélectionner un type|"
 "d'icône.][Bureau|Fenêtre|Annuler]"
 
-#: desk/desk_rsc.c:2392
+#: desk/desk_rsc.c:2524
 msgid "[1]["
 "No matching file type.][  OK  ]"
 msgstr "[1]["
 "Aucun type de fichier|"
 "correspondant.][  OK  ]"
 
-#: desk/desk_rsc.c:2393
+#: desk/desk_rsc.c:2525
 msgid "[3]["
 "Formatting error. The target|"
 "disk may be write-protected|"
@@ -1057,7 +1075,7 @@ msgstr "[3]["
 "protégée en écriture ou|"
 "inutilisable.][Réessayer|Annuler]"
 
-#: desk/desk_rsc.c:2398
+#: desk/desk_rsc.c:2530
 msgid "[1]["
 "This disk has %ld bytes|"
 "available to the user.][ Continue | Quit ]"
