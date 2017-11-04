@@ -421,7 +421,7 @@ msgstr "  ’˜¥ ¤æ£ž©ž ¡˜«á £âšœŸ¦ª"
 
 #: desk/desk_rsc.c:430
 msgid "  Sort by date"
-msgstr "  ’˜¥ ¤æ£ž©ž ¡˜«á ž£œ¨¦£ž¤å˜ "
+msgstr "  ’˜¥ ¤æ£ž©ž ¡˜«á ž£œ¨¦£ž¤å˜"
 
 #: desk/desk_rsc.c:436
 msgid "  No sort"
