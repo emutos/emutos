@@ -24,7 +24,7 @@ msgstr ""
 "Content-Type: text/plain; charset=cp737\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: bios/bios.c:688
+#: bios/bios.c:699
 msgid ""
 "System halted!\n"
 msgstr "’¦ ©ç©«£˜ §ášà©œ!"
@@ -77,7 +77,7 @@ msgstr "˜«ã©«œ <Esc> š ˜ ¤˜ «¨â¥œ«œ £ ˜ §¨é £ ¡¦¤©æ¢˜"
 msgid " Hold <Shift> to pause this screen "
 msgstr "   ˜«ã©«œ «¦ <Shift> š ˜ §˜ç©   "
 
-#: bios/kprint.c:541
+#: bios/kprint.c:580
 msgid ""
 "\n"
 "*** Press any key to continue ***"
@@ -95,7 +95,7 @@ msgstr ""
 "•¨© £¦§¦ ã©«œ «¦ FOLDR100.PRG š ˜ §œ¨ ©©æ«œ¨.\n"
 "ƒ ˜¡¦§ã ©¬©«ã£˜«¦ª\n"
 
-#: aes/gem_rsc.c:33 desk/desk_rsc.c:1952
+#: aes/gem_rsc.c:33 desk/desk_rsc.c:2098
 msgid "Drive:"
 msgstr "ƒå©¡¦ª:"
 
@@ -103,19 +103,19 @@ msgstr "ƒå©¡¦ª:"
 msgid "Selection: ________.___"
 msgstr "„§ ¢¦šã: ________.___"
 
-#: aes/gem_rsc.c:296
+#: aes/gem_rsc.c:184
 msgid "Directory:"
 msgstr "‰˜«á¢¦š¦ª:"
 
-#: aes/gem_rsc.c:590 desk/desk_rsc.c:20
+#: aes/gem_rsc.c:478 desk/desk_rsc.c:20
 msgid "OK"
 msgstr "‰"
 
-#: aes/gem_rsc.c:596 desk/desk_rsc.c:21
+#: aes/gem_rsc.c:484 desk/desk_rsc.c:21
 msgid "Cancel"
 msgstr "ê¡¬¨¦"
 
-#: aes/gem_rsc.c:694
+#: aes/gem_rsc.c:582
 msgid "[1]["
 "The disk in drive %c: is|"
 "physically write-protected.][Cancel|Retry]"
@@ -123,7 +123,7 @@ msgstr "[1]["
 "† › ©¡â«˜ ©«¦¤ ›å©¡¦ %c:|"
 "œå¤˜  §¨¦©«˜«œ¬£â¤.][ê¡¬¨¦|„§˜¤á¢¯]"
 
-#: aes/gem_rsc.c:697
+#: aes/gem_rsc.c:585
 msgid "[2]["
 "Drive %c: is not responding.|"
 "Please check the disk drive,|"
@@ -133,7 +133,7 @@ msgstr "[2]["
 "˜¨˜¡˜¢é œ¢âš¥«â «¦¤ ¦›šæ ã|"
 "œ ©ášœ«œ £ ˜ › ©¡â«˜.][ê¡¬¨¦|„§˜¤á¢¯]"
 
-#: aes/gem_rsc.c:702
+#: aes/gem_rsc.c:590
 msgid "[1]["
 "Data on the disk in drive %c:|"
 "may be damaged.][Cancel|Retry]"
@@ -141,7 +141,7 @@ msgstr "[1]["
 "’˜ ›œ›¦£â¤˜ ©«¦ ›å©¡¦ %c:|"
 "£§¦¨œå ¤˜ œå¤˜  ¡˜«œ©«¨˜££â¤˜.][ê¡¬¨¦|„§˜¤á¢¯]"
 
-#: aes/gem_rsc.c:705
+#: aes/gem_rsc.c:593
 msgid "[2]["
 "This application cannot read|"
 "data on the disk in drive %c:.][Cancel|Retry]"
@@ -150,7 +150,7 @@ msgstr "[2]["
 "› ˜™á©œ  «˜ ›œ›¦£â¤˜ ©«¦|"
 "›å©¡¦ %c:.][ê¡¬¨¦|„§˜¤á¢¯]"
 
-#: aes/gem_rsc.c:708
+#: aes/gem_rsc.c:596
 msgid "[1]["
 "Your output device is not|"
 "receiving data.][Cancel|Retry]"
@@ -158,7 +158,7 @@ msgstr "[1]["
 "† ©¬©¡œ¬ã œ¥æ›¦¬ ©˜ª ›œ¤|"
 "¢˜£™á¤œ  ›œ›¦£â¤˜][ê¡¬¨¦|„§˜¤á¢¯]"
 
-#: aes/gem_rsc.c:711
+#: aes/gem_rsc.c:599
 msgid "[3]["
 "An error has occurred in GEM.|"
 "Please contact the EmuTOS|"
@@ -168,7 +168,7 @@ msgstr "[3]["
 "˜¨˜¡˜¢¦ç£œ œ§ ¡¦ ¤à¤ã©«œ £œ|"
 "«¤ ¦£á›˜ ˜¤á§«¬¥ª «¦¬ EmuTOS.][ê¡¬¨¦]"
 
-#: aes/gem_rsc.c:716
+#: aes/gem_rsc.c:604
 msgid "[2]["
 "This application cannot|"
 "find the folder or file|"
@@ -178,7 +178,7 @@ msgstr "[2]["
 "«¦ ­á¡œ¢¦ ã «¦ ˜¨®œå¦ §¦¬|"
 "§¨¦©§˜Ÿã©˜«œ ¤˜ ˜¤¦å¥œ«œ][  OK  ]"
 
-#: aes/gem_rsc.c:721
+#: aes/gem_rsc.c:609
 msgid "[1]["
 "This application does not|"
 "have room to open another|"
@@ -191,7 +191,7 @@ msgstr "[1]["
 "¡¢œå©«œ æ§¦ ¦ âšš¨˜­¦ ›œ¤|"
 "®¨œ áœ©«œ.][‰]"
 
-#: aes/gem_rsc.c:730
+#: aes/gem_rsc.c:618
 msgid "[1]["
 "An item with this name|"
 "already exists in the|"
@@ -203,7 +203,7 @@ msgstr "[1]["
 "ã â®œ  ¦¨ ©«œå ©œ ¡˜«á©«˜©|"
 "£æ¤¦ š ˜ ˜¤áš¤à©][‰]"
 
-#: aes/gem_rsc.c:737
+#: aes/gem_rsc.c:625
 msgid "[1]["
 "The drive you specified|"
 "does not exist.][ Cancel ]"
@@ -211,7 +211,7 @@ msgstr "[1]["
 " ›å©¡¦ª §¦¬ ¦¨å©˜«œ|"
 "›œ¤ ¬§á¨®œ .][ ê¡¬¨¦ ]"
 
-#: aes/gem_rsc.c:740
+#: aes/gem_rsc.c:628
 msgid "[1]["
 "There is not enough memory|"
 "in your computer for the|"
@@ -221,20 +221,20 @@ msgstr "[1]["
 "ƒœ¤ â®œ«œ ˜¨¡œ«ã £¤ã£ š ˜|"
 "¤˜ œ¡«œ¢â©œ«œ «¤ œ­˜¨£¦šã.][‰]"
 
-#: aes/gem_rsc.c:747
+#: aes/gem_rsc.c:635
 msgid "[3]["
 "TOS error #%u.][Cancel]"
 msgstr "[3]["
 "TOS error #%u.][ê¡¬¨¦]"
 
-#: aes/gem_rsc.c:748
+#: aes/gem_rsc.c:636
 msgid "[3]["
 "Unsupported AES function #%d.][Cancel]"
 msgstr "[3]["
 "‹ ¬§¦©«¨ æ£œ¤|"
 "¢œ «¦¬¨šå˜ AES #%d.][ê¡¬¨¦]"
 
-#: aes/gem_rsc.c:749
+#: aes/gem_rsc.c:637
 msgid "ITEM SELECTOR"
 msgstr "„ˆŠ‚„€‘ €•„ˆ—Œ"
 
@@ -267,7 +267,7 @@ msgid "No"
 msgstr "î® "
 
 #: desk/desk_rsc.c:33 desk/desk_rsc.c:93 desk/desk_rsc.c:153
-#: desk/desk_rsc.c:159
+#: desk/desk_rsc.c:158 desk/desk_rsc.c:163
 msgid "Name: ________.___"
 msgstr "î¤¦£˜: ________.___"
 
@@ -331,487 +331,535 @@ msgstr "’à¨ ¤æ æ¤¦£˜: ________.___"
 msgid "Copy's name: ________.___"
 msgstr "î¤¦£˜ ˜¤« š¨á­¦¬: ________.___"
 
-#: desk/desk_rsc.c:164
+#: desk/desk_rsc.c:168
 msgid "Label: ________.___"
 msgstr "„« ¡â«˜: ________.___"
 
-#: desk/desk_rsc.c:223
+#: desk/desk_rsc.c:226
 msgid " Desk "
 msgstr " Desk "
 
-#: desk/desk_rsc.c:229
+#: desk/desk_rsc.c:232
 msgid " File "
 msgstr " €¨®œå¦ "
 
-#: desk/desk_rsc.c:235
+#: desk/desk_rsc.c:238
 msgid " View "
 msgstr " ¨¦™¦¢ã "
 
-#: desk/desk_rsc.c:241
+#: desk/desk_rsc.c:244
 msgid " Options "
 msgstr " „§ ¢¦šâª "
 
-#: desk/desk_rsc.c:259
+#: desk/desk_rsc.c:262
 msgid "  Desktop info..."
 msgstr "  ¢¨¦­¦¨åœª Desktop..."
 
-#: desk/desk_rsc.c:265
+#: desk/desk_rsc.c:268 desk/desk_rsc.c:406 desk/desk_rsc.c:442
 msgid "--------------------"
 msgstr "-------------------------"
 
-#: desk/desk_rsc.c:313
+#: desk/desk_rsc.c:316
 msgid "  Open            ^O"
 msgstr "  ê¤¦ š£˜                 ^O"
 
-#: desk/desk_rsc.c:319
+#: desk/desk_rsc.c:322
 msgid "  Info/Rename...  ^I"
 msgstr "  ¢¨¦­¦¨åœª/‹œ«¦¤¦£˜©å˜ ^I"
 
-#: desk/desk_rsc.c:325 desk/desk_rsc.c:349 desk/desk_rsc.c:367
+#: desk/desk_rsc.c:328 desk/desk_rsc.c:358 desk/desk_rsc.c:376
 msgid "---------------------"
 msgstr "-----------------------------"
 
-#: desk/desk_rsc.c:331
+#: desk/desk_rsc.c:334
 msgid "  New Folder...   ^N"
 msgstr "  Nâ¦ª ”á¡œ¢¦ª...         ^N"
 
-#: desk/desk_rsc.c:337
+#: desk/desk_rsc.c:340
 msgid "  Close           ^U"
 msgstr "  ‰¢œå© £¦                ^U"
 
-#: desk/desk_rsc.c:343
+#: desk/desk_rsc.c:346
 msgid "  Close window    ^W"
 msgstr "  ‰¢œå© £¦ §˜¨˜Ÿç¨¦¬      ^W"
 
-#: desk/desk_rsc.c:355
+#: desk/desk_rsc.c:352
+msgid "  Set file mask..."
+msgstr "  ¨ ©£æª £á©¡˜ª ˜¨®œå¦¬..."
+
+#: desk/desk_rsc.c:364
 msgid "  Delete...       ^D"
 msgstr "  ƒ ˜š¨˜­ã...             ^D"
 
-#: desk/desk_rsc.c:361
+#: desk/desk_rsc.c:370
 msgid "  Format..."
 msgstr "  ƒ ˜£æ¨­à©..."
 
-#: desk/desk_rsc.c:373
+#: desk/desk_rsc.c:382
 msgid "  Execute EmuCON  ^Z"
 msgstr "  „¡«â¢œ© EmuCON         ^Z"
 
-#: desk/desk_rsc.c:379
+#: desk/desk_rsc.c:388
 msgid "  Shutdown        ^Q"
 msgstr "  ’œ¨£˜« ©£æª             ^Q"
 
-#: desk/desk_rsc.c:391 desk/desk_rsc.c:2051
+#: desk/desk_rsc.c:400 desk/desk_rsc.c:2422
 msgid "  Show as text   ^T"
 msgstr "  „£­á¤ © àª ¡œå£œ¤¦     ^T"
 
-#: desk/desk_rsc.c:397
-msgid "-------------------"
-msgstr "-----------------------------"
-
-#: desk/desk_rsc.c:403
+#: desk/desk_rsc.c:412
 msgid "  Sort by name"
 msgstr "  ’˜¥ ¤æ£© ¡˜«á æ¤¦£˜"
 
-#: desk/desk_rsc.c:409
+#: desk/desk_rsc.c:418
 msgid "  Sort by type"
 msgstr "  ’˜¥ ¤æ£© ¡˜«á «ç§¦"
 
-#: desk/desk_rsc.c:415
+#: desk/desk_rsc.c:424
 msgid "  Sort by size"
 msgstr "  ’˜¥ ¤æ£© ¡˜«á £âšœŸ¦ª"
 
-#: desk/desk_rsc.c:421
+#: desk/desk_rsc.c:430
 msgid "  Sort by date"
-msgstr "  ’˜¥ ¤æ£© ¡˜«á £œ¨¦£¤å˜"
+msgstr "  ’˜¥ ¤æ£© ¡˜«á £œ¨¦£¤å˜ "
 
-#: desk/desk_rsc.c:427
+#: desk/desk_rsc.c:436
 msgid "  No sort"
 msgstr "  •à¨åª «˜¥ ¤æ£©"
 
-#: desk/desk_rsc.c:439
+#: desk/desk_rsc.c:448
+msgid "  Set background..."
+msgstr "  ¨ ©£æª ­æ¤«¦¬..."
+
+#: desk/desk_rsc.c:460
 msgid "  Install icon..."
 msgstr "  „š¡˜«á©«˜© œ ¡¦¤ ›å¦¬..."
 
-#: desk/desk_rsc.c:445
+#: desk/desk_rsc.c:466
 msgid "  Install application..."
 msgstr "  „š¡˜«á©«˜© œ­˜¨£¦šãª..."
 
-#: desk/desk_rsc.c:451
+#: desk/desk_rsc.c:472
 msgid "  Install devices"
 msgstr "  „š¡˜«á©«˜© ©¬©¡œ¬é¤"
 
-#: desk/desk_rsc.c:457
+#: desk/desk_rsc.c:478
 msgid "  Remove desktop icon"
 msgstr "  ƒ ˜š¨˜­ã œ ¡¦¤ ›å¦¬"
 
-#: desk/desk_rsc.c:463
-msgid "--------------------------"
+#: desk/desk_rsc.c:484 desk/desk_rsc.c:514
+msgid "---------------------------"
 msgstr "----------------------------"
 
-#: desk/desk_rsc.c:469
+#: desk/desk_rsc.c:490
 msgid "  Set preferences..."
 msgstr "  ¨¦« £ã©œ ª..."
 
-#: desk/desk_rsc.c:475
-msgid "  Save desktop...      ^S"
-msgstr "  €§¦Ÿã¡œ¬© desktop...  ^S"
+#: desk/desk_rsc.c:496
+msgid "  Desktop configuration..."
+msgstr "  ƒ ˜£æ¨­à© Desktop..."
 
-#: desk/desk_rsc.c:481
-msgid "  Change resolution... ^R"
+#: desk/desk_rsc.c:502
+msgid "  Change resolution...  ^R"
 msgstr "  €¢¢˜šã ˜¤á¢¬©ª...     ^R"
 
-#: desk/desk_rsc.c:538
+#: desk/desk_rsc.c:508
+msgid "  Save desktop...       ^S"
+msgstr "  €§¦Ÿã¡œ¬© desktop...  ^S"
+
+#: desk/desk_rsc.c:520
+msgid "  Blitter"
+msgstr "  Blitter"
+
+#: desk/desk_rsc.c:577
 msgid "Attribute:"
 msgstr "ˆ› æ««œª:"
 
-#: desk/desk_rsc.c:550
+#: desk/desk_rsc.c:589
 msgid "Read/Write"
 msgstr "Read/Write"
 
-#: desk/desk_rsc.c:556
+#: desk/desk_rsc.c:595
 msgid "Read-Only"
 msgstr "Read-Only"
 
-#: desk/desk_rsc.c:583
+#: desk/desk_rsc.c:622
 msgid "DISK INFORMATION"
 msgstr "Š†”ˆ„‘ ƒˆ‘‰“"
 
-#: desk/desk_rsc.c:658
+#: desk/desk_rsc.c:697
 msgid "Version"
 msgstr "ë¡›¦©"
 
-#: desk/desk_rsc.c:670
+#: desk/desk_rsc.c:709
 msgid "Copyright \275 2001-"
 msgstr "Copyright ½ 2001-"
 
-#: desk/desk_rsc.c:682
+#: desk/desk_rsc.c:721
 msgid "The EmuTOS development team"
 msgstr "† ¦£á›˜ ˜¤á§«¬¥ª «¦¬ EmuTOS"
 
-#: desk/desk_rsc.c:694
+#: desk/desk_rsc.c:733
 msgid "Based on 'GPLed' sources"
 msgstr "˜© ©£â¤¦ ©œ GPL source"
 
-#: desk/desk_rsc.c:706
+#: desk/desk_rsc.c:745
 msgid "\275 1987 Digital Research, Inc."
 msgstr "½ 1987 Digital Research, Inc."
 
-#: desk/desk_rsc.c:712
+#: desk/desk_rsc.c:751
 msgid "\275 1999 Caldera Thin Clients, Inc."
 msgstr "½ 1999 Caldera Thin Clients, Inc."
 
-#: desk/desk_rsc.c:718
+#: desk/desk_rsc.c:757
 msgid "\275 2001 Lineo, Inc."
 msgstr "½ 2001 Lineo, Inc."
 
-#: desk/desk_rsc.c:724
+#: desk/desk_rsc.c:763
 msgid "EmuTOS is distributed under the GPL"
 msgstr "’¦ EmuTOS › ˜¤â£œ«˜  ¬§æ « GPL"
 
-#: desk/desk_rsc.c:730
+#: desk/desk_rsc.c:769
 msgid "See doc\\license.txt for details"
 msgstr "ƒœå«œ «¦ doc\\licence.txt"
 
-#: desk/desk_rsc.c:751
+#: desk/desk_rsc.c:790
 msgid "OPEN APPLICATION"
 msgstr "€Œˆ‚‹€ „”€‹‚†‘"
 
-#: desk/desk_rsc.c:763
+#: desk/desk_rsc.c:802
 msgid "Parameters:"
 msgstr "˜¨á£œ«¨¦ :"
 
-#: desk/desk_rsc.c:796
+#: desk/desk_rsc.c:835
 msgid "INSTALL DESKTOP ICON"
 msgstr "„‚‰€’€‘’€‘† „ˆ‰Œˆƒˆ“"
 
-#: desk/desk_rsc.c:814 desk/desk_rsc.c:1736
+#: desk/desk_rsc.c:853 desk/desk_rsc.c:1882
 msgid "Item type:"
 msgstr "’ç§¦ª:"
 
-#: desk/desk_rsc.c:826
+#: desk/desk_rsc.c:865
 msgid "Drive"
 msgstr "ƒå©¡¦ª"
 
-#: desk/desk_rsc.c:832
+#: desk/desk_rsc.c:871
 msgid "Trash can"
 msgstr "‰á›¦ª"
 
-#: desk/desk_rsc.c:838
+#: desk/desk_rsc.c:877
 msgid "Printer"
 msgstr "„¡«¬§à«ãª"
 
-#: desk/desk_rsc.c:868 desk/desk_rsc.c:1784
+#: desk/desk_rsc.c:907 desk/desk_rsc.c:1930
 msgid "Icon:"
 msgstr "„ ¡¦¤å› ¦:"
 
-#: desk/desk_rsc.c:901
+#: desk/desk_rsc.c:940
 msgid "INSTALL APPLICATION"
 msgstr "„‚‰€’€‘’€‘† „”€‹‚†‘"
 
-#: desk/desk_rsc.c:931
+#: desk/desk_rsc.c:970
 msgid "Boot status:"
 msgstr "‰˜«á©«˜© œ¡¡å¤©ª:"
 
-#: desk/desk_rsc.c:943
+#: desk/desk_rsc.c:982
 msgid "Auto"
 msgstr "€¬«æ£˜«"
 
-#: desk/desk_rsc.c:949
+#: desk/desk_rsc.c:988
 msgid "Normal"
 msgstr "‰˜¤¦¤ ¡ã"
 
-#: desk/desk_rsc.c:955
+#: desk/desk_rsc.c:994
 msgid "Application type:"
 msgstr "’ç§¦ª œ­˜¨£¦šãª:"
 
-#: desk/desk_rsc.c:991
+#: desk/desk_rsc.c:1030
 msgid "Default dir:"
 msgstr "¨¦œ§ ¢œš£â¤¦ª ¡˜«á¢¦š¦ª"
 
-#: desk/desk_rsc.c:1003
+#: desk/desk_rsc.c:1042 desk/desk_rsc.c:1561
 msgid "Application"
 msgstr "„­˜¨£¦šã"
 
-#: desk/desk_rsc.c:1009
+#: desk/desk_rsc.c:1048 desk/desk_rsc.c:1567 desk/desk_rsc.c:2203
 msgid "Window"
 msgstr "˜¨áŸ¬¨¦"
 
-#: desk/desk_rsc.c:1015
+#: desk/desk_rsc.c:1054
 msgid "Parameter:"
 msgstr "˜¨á£œ«¨¦ª:"
 
-#: desk/desk_rsc.c:1027
+#: desk/desk_rsc.c:1066 desk/desk_rsc.c:1585
 msgid "Full path"
 msgstr "ƒ ˜›¨¦£ã"
 
-#: desk/desk_rsc.c:1033
+#: desk/desk_rsc.c:1072 desk/desk_rsc.c:1591
 msgid "File name"
 msgstr "î¤¦£˜ ˜¨®œå¦¬"
 
-#: desk/desk_rsc.c:1111
+#: desk/desk_rsc.c:1150
 msgid "NAME CONFLICT DURING COPY"
 msgstr "‹ˆ Œ‹€ ‰€’€ ’†Œ €Œ’ˆ‚€”†"
 
-#: desk/desk_rsc.c:1141
+#: desk/desk_rsc.c:1180
 msgid "Stop"
 msgstr "‘«¦§"
 
-#: desk/desk_rsc.c:1156
+#: desk/desk_rsc.c:1195
 msgid "NEW FOLDER"
 msgstr "Œ„‘ ”€‰„Š‘"
 
-#: desk/desk_rsc.c:1189 desk/desk_rsc.c:1318
+#: desk/desk_rsc.c:1228 desk/desk_rsc.c:1357
 msgid "SET PREFERENCES"
 msgstr "’ˆ‹†‘„ˆ‘"
 
-#: desk/desk_rsc.c:1195
+#: desk/desk_rsc.c:1234
 msgid "Confirm deletes:"
 msgstr "„§ ™œ™˜åà© › ˜š¨˜­é¤"
 
-#: desk/desk_rsc.c:1219
+#: desk/desk_rsc.c:1258
 msgid "Confirm copies:"
 msgstr "„§ ™œ™˜åà© ˜¤« š¨˜­é¤"
 
-#: desk/desk_rsc.c:1243
+#: desk/desk_rsc.c:1282
 msgid "Confirm overwrites:"
 msgstr "„§ ™œ™˜åà© "
 
-#: desk/desk_rsc.c:1267
+#: desk/desk_rsc.c:1306
 msgid "Sound effects:"
 msgstr "†®« ¡á œ­â:"
 
-#: desk/desk_rsc.c:1279
+#: desk/desk_rsc.c:1318
 msgid "On"
 msgstr "Œ˜ "
 
-#: desk/desk_rsc.c:1285
+#: desk/desk_rsc.c:1324
 msgid "Off"
 msgstr "î® "
 
-#: desk/desk_rsc.c:1291
+#: desk/desk_rsc.c:1330
 msgid "More preferences"
 msgstr "œ¨ ©©æ«œ¨œª §¨¦« £ã©œ ª"
 
-#: desk/desk_rsc.c:1324
+#: desk/desk_rsc.c:1363
 msgid "Double-click speed:"
 msgstr "’˜®ç««˜ › §¢¦ç ¡¢å¡:"
 
-#: desk/desk_rsc.c:1366
+#: desk/desk_rsc.c:1405
 msgid "To drop down menus:"
 msgstr "‚ ˜ «¦ £œ¤¦ç:"
 
-#: desk/desk_rsc.c:1378
+#: desk/desk_rsc.c:1417
 msgid "Click"
 msgstr "‰¢å¡"
 
-#: desk/desk_rsc.c:1384
+#: desk/desk_rsc.c:1423
 msgid "No click"
 msgstr "•à¨åª ¡¢å¡"
 
-#: desk/desk_rsc.c:1390
+#: desk/desk_rsc.c:1429
 msgid "Time format:"
 msgstr "‹¦¨­ã é¨˜ª:"
 
-#: desk/desk_rsc.c:1402 desk/desk_rsc.c:1432
+#: desk/desk_rsc.c:1441 desk/desk_rsc.c:1471
 msgid "Default"
 msgstr "¨¦œ§ ¢¦šã"
 
-#: desk/desk_rsc.c:1408
+#: desk/desk_rsc.c:1447
 msgid "12H"
 msgstr "12—"
 
-#: desk/desk_rsc.c:1414
+#: desk/desk_rsc.c:1453
 msgid "24H"
 msgstr "24—"
 
-#: desk/desk_rsc.c:1420
+#: desk/desk_rsc.c:1459
 msgid "Date format:"
 msgstr "‹¦¨­ã £œ¨¦£¤å˜ª:"
 
-#: desk/desk_rsc.c:1438
+#: desk/desk_rsc.c:1477
 msgid "MDY"
 msgstr "‹†„"
 
-#: desk/desk_rsc.c:1444
+#: desk/desk_rsc.c:1483
 msgid "DMY"
 msgstr "†‹„"
 
-#: desk/desk_rsc.c:1472 desk/desk_rsc.c:1535 desk/desk_rsc.c:1823
+#: desk/desk_rsc.c:1510
+msgid "SET FILE MASK"
+msgstr "ˆ‘‹‘ ‹€‘‰€‘ €•„ˆ“"
+
+#: desk/desk_rsc.c:1543
+msgid "DESKTOP CONFIGURATION"
+msgstr "ƒˆ€‹”—‘† DESKTOP"
+
+#: desk/desk_rsc.c:1549
+msgid "Default directory:"
+msgstr "¨¦œ§ ¢œš£â¤¦ª ¡˜«á¢¦š¦ª:"
+
+#: desk/desk_rsc.c:1573
+msgid "Input parameter:"
+msgstr "˜¨á£œ«¨¦  œ ©æ›¦¬"
+
+#: desk/desk_rsc.c:1618 desk/desk_rsc.c:1681 desk/desk_rsc.c:1969
 msgid "SET SCREEN RESOLUTION"
 msgstr "€Œ€Š“‘† ‡Œ†‘"
 
-#: desk/desk_rsc.c:1484
+#: desk/desk_rsc.c:1630
 msgid "ST Low"
 msgstr "ST Low"
 
-#: desk/desk_rsc.c:1490
+#: desk/desk_rsc.c:1636
 msgid "ST Medium"
 msgstr "ST Medium"
 
-#: desk/desk_rsc.c:1496
+#: desk/desk_rsc.c:1642
 msgid "ST High"
 msgstr "ST High"
 
-#: desk/desk_rsc.c:1502
+#: desk/desk_rsc.c:1648
 msgid "TT Low"
 msgstr "TT Low"
 
-#: desk/desk_rsc.c:1508
+#: desk/desk_rsc.c:1654
 msgid "TT Medium"
 msgstr "TT Medium"
 
-#: desk/desk_rsc.c:1655
+#: desk/desk_rsc.c:1801
 msgid "High"
 msgstr "“¯¢ã"
 
-#: desk/desk_rsc.c:1661
+#: desk/desk_rsc.c:1807
 msgid "Medium"
 msgstr "‹œ©˜å˜"
 
-#: desk/desk_rsc.c:1667
+#: desk/desk_rsc.c:1813
 msgid "Low"
 msgstr "•˜£¢ã"
 
-#: desk/desk_rsc.c:1697
+#: desk/desk_rsc.c:1843
 msgid "ST Compatible"
 msgstr "‘¬£™˜«ã £œ ST"
 
-#: desk/desk_rsc.c:1724
+#: desk/desk_rsc.c:1870
 msgid "INSTALL WINDOW ICON"
 msgstr "„‚‰€’€‘’€‘† „ˆ‰Œˆƒˆ“ €€‡““"
 
-#: desk/desk_rsc.c:1748
+#: desk/desk_rsc.c:1894
 msgid "Folder"
 msgstr "”á¡œ¢¦ª"
 
-#: desk/desk_rsc.c:1754
+#: desk/desk_rsc.c:1900
 msgid "File"
 msgstr "€¨®œå¦"
 
-#: desk/desk_rsc.c:1829
+#: desk/desk_rsc.c:1975
 msgid "Monochrome only"
 msgstr "‹¦¤æ®¨à£¦ £æ¤¦"
 
-#: desk/desk_rsc.c:1946
+#: desk/desk_rsc.c:2056
+msgid "SET BACKGROUND"
+msgstr "ˆ‘‹‘ ”Œ’“"
+
+#: desk/desk_rsc.c:2062
+msgid "Select:"
+msgstr "„§ ¢¦šã:"
+
+#: desk/desk_rsc.c:2074
+msgid "Desktop"
+msgstr "Desktop"
+
+#: desk/desk_rsc.c:2086
+msgid "Style:"
+msgstr "‘«¬¢:"
+
+#: desk/desk_rsc.c:2092
+msgid "Color:"
+msgstr "•¨é£˜"
+
+#: desk/desk_rsc.c:2092
 msgid "FORMAT FLOPPY DISKETTE"
 msgstr "ƒˆ€‹”—‘† ƒˆ‘‰„’€‘"
 
-#: desk/desk_rsc.c:1988
+#: desk/desk_rsc.c:2134
 msgid "Single sided"
 msgstr "‹¦¤ã §¢œ¬¨á"
 
-#: desk/desk_rsc.c:1994
+#: desk/desk_rsc.c:2140
 msgid "Double sided"
 msgstr "ƒ §¢ã §¢œ¬¨á"
 
-#: desk/desk_rsc.c:2000
+#: desk/desk_rsc.c:2146
 msgid "High density"
 msgstr "“¯¢ã §¬¡¤æ««˜"
 
-#: desk/desk_rsc.c:2049
+#: desk/desk_rsc.c:2420
 msgid "%ld bytes used in %d items."
 msgstr "%ld bytes ®¨© £¦§¦ ¦ç¤«˜  ©œ %d ˜¨®œå˜."
 
-#: desk/desk_rsc.c:2050
+#: desk/desk_rsc.c:2421
 msgid "  Show as icons  ^T"
 msgstr "  „£­á¤ © àª œ ¡¦¤å› ˜   ^T"
 
-#: desk/desk_rsc.c:2052
+#: desk/desk_rsc.c:2423
 msgid "FILE INFORMATION"
 msgstr "Š†”ˆ„‘ €•„ˆ“"
 
-#: desk/desk_rsc.c:2053
+#: desk/desk_rsc.c:2424
 msgid "FOLDER INFORMATION"
 msgstr "Š†”ˆ„‘ ”€‰„Š“"
 
-#: desk/desk_rsc.c:2054
+#: desk/desk_rsc.c:2425
 msgid "COPY FILE(S)"
 msgstr "€Œ’ˆ‚€”† €•„ˆ“(—Œ)"
 
-#: desk/desk_rsc.c:2055
+#: desk/desk_rsc.c:2426
 msgid "MOVE FILE(S)"
 msgstr "‹„’€‰ˆŒ†‘† €•„ˆ“(—Œ)"
 
-#: desk/desk_rsc.c:2056
+#: desk/desk_rsc.c:2427
 msgid "DELETE FILE(S)"
 msgstr "ƒˆ€‚€”† €•„ˆ“(—Œ)"
 
-#: desk/desk_rsc.c:2063
+#: desk/desk_rsc.c:2434
 msgid "DISK"
 msgstr "ƒˆ‘‰‘"
 
-#: desk/desk_rsc.c:2064
+#: desk/desk_rsc.c:2435
 msgid "TRASH"
 msgstr "€ˆ‹€’€"
 
-#: desk/desk_rsc.c:2065
+#: desk/desk_rsc.c:2436
 msgid "-More-"
 msgstr "-œ¨ ©©æ«œ¨˜-"
 
-#: desk/desk_rsc.c:2066
+#: desk/desk_rsc.c:2437
 msgid "-End of file-"
 msgstr "-’â¢¦ª €¨®œå¦¬-"
 
-#: desk/desk_rsc.c:2067
+#: desk/desk_rsc.c:2438
 msgid "-File read error-"
 msgstr "-‘­á¢£˜ ˜¤áš¤à©ª ˜¨®œå¦¬-"
 
-#: desk/desk_rsc.c:2068
+#: desk/desk_rsc.c:2439
 msgid "Locate item"
 msgstr "„¤«¦§ ©£æª ˜¤« ¡œ £â¤¦¬"
 
-#: desk/desk_rsc.c:2069
+#: desk/desk_rsc.c:2440
 msgid "[2]["
 "Switch resolution?][Yes|No]"
 msgstr "[2]["
 "€¢¢˜šã ˜¤á¢¬©ª;][Œ˜ |î® ]"
 
-#: desk/desk_rsc.c:2070
+#: desk/desk_rsc.c:2441
 msgid "[2]["
 "Show this document?][Show|Cancel]"
 msgstr "[2]["
 "¨¦™¦¢ã ˜¨®œå¦¬;][¨¦™¦¢ã|€¡ç¨à©]"
 
-#: desk/desk_rsc.c:2071
+#: desk/desk_rsc.c:2442
 msgid "[1]["
 "This document type has no|"
 "associated application.][  OK  ]"
@@ -819,7 +867,7 @@ msgstr "[1]["
 "€¬«æª ¦ «ç§¦ª ˜¨®œå¦¬ ›œ¤ â®œ |"
 "©¬©®œ« ©£â¤ œ­˜¨£¦šã][  OK  ]"
 
-#: desk/desk_rsc.c:2074
+#: desk/desk_rsc.c:2445
 msgid "[1]["
 "The GEM Desktop has no more|"
 "windows.  Please close a|"
@@ -831,7 +879,7 @@ msgstr "[1]["
 "¡¢œå©«œ â¤˜ §˜¨áŸ¬¨¦ §¦¬ ›œ¤|"
 "®¨© £¦§¦ œå«œ.][  OK  ]"
 
-#: desk/desk_rsc.c:2081
+#: desk/desk_rsc.c:2452
 msgid "[3]["
 "You cannot copy a parent folder|"
 "into one of its child folders.][  OK  ]"
@@ -839,19 +887,19 @@ msgstr "[3]["
 "ƒœ¤ £§¦¨œå«œ ¤˜ ˜¤« š¨á¯œ«œ â¤˜|"
 "­á¡œ¢¦ ©œ â¤˜ ¬§¦­á¡œ¢æ «¦¬.][  OK  ]"
 
-#: desk/desk_rsc.c:2084
+#: desk/desk_rsc.c:2455
 msgid "[3]["
 "Invalid copy operation.][  OK  ]"
 msgstr "[3]["
 "ê¡¬¨ ¢œ «¦¬¨šå˜ ˜¤« š¨˜­ãª][  OK  ]"
 
-#: desk/desk_rsc.c:2085
+#: desk/desk_rsc.c:2456
 msgid "[2]["
 "Abort this operation?][  Yes  |  No  ]"
 msgstr "[2]["
 "€¤˜å¨œ© ¢œ «¦¬¨šå˜ª;][  Œ˜   |  î®   ]"
 
-#: desk/desk_rsc.c:2086
+#: desk/desk_rsc.c:2457
 msgid "[2]["
 "Do you want to delete all|"
 "the files on drive %c: ?][Yes| No ]"
@@ -859,7 +907,7 @@ msgstr "[2]["
 "‡â¢œ«œ ¤˜ › ˜š¨á¯œ«œ æ¢˜|"
 "«˜ ˜¨®œå˜ «¦¬ ›å©¡¦¬ %c: ;][Œ˜ | î®  ]"
 
-#: desk/desk_rsc.c:2089
+#: desk/desk_rsc.c:2460
 msgid "[1]["
 "Sorry, the desktop cannot|"
 "install any more icons|"
@@ -869,7 +917,7 @@ msgstr "[1]["
 "£§¦¨œå ¤˜ œš¡˜«˜©«ã©œ  á¢¢˜|"
 "œ ¡¦¤å› ˜ ã œ­˜¨£¦šâª.][  OK  ]"
 
-#: desk/desk_rsc.c:2094
+#: desk/desk_rsc.c:2465
 msgid "[2]["
 "You cannot create a folder|"
 "with that name. Please retry|"
@@ -879,7 +927,7 @@ msgstr "[2]["
 "â¤˜¤ ­á¡œ¢¦ £œ ˜¬«æ «¦ æ¤¦£˜.|"
 "ƒ¦¡ £á©«œ ¥˜¤á ã ˜¡¬¨é©«œ.][ê¡¬¨¦|˜¤á]"
 
-#: desk/desk_rsc.c:2099
+#: desk/desk_rsc.c:2470
 msgid "[1]["
 "This disk does not have enough|"
 "room for this operation.][  OK  ]"
@@ -887,14 +935,14 @@ msgstr "[1]["
 " ›å©¡¦ª ›œ¤ â®œ  ˜¨¡œ«æ|"
 "®é¨¦ š ˜ ˜¬«ã « ¢œ «¦¬¨šå˜.][  OK  ]"
 
-#: desk/desk_rsc.c:2102
+#: desk/desk_rsc.c:2473
 msgid "[3]["
 "Cannot create EMUDESK.INF.][  OK  ]"
 msgstr "[3]["
 "€›¬¤˜£å˜ ›£ ¦¬¨šå˜ª «¦¬|"
 "EMUDESK.INF.][  OK  ]"
 
-#: desk/desk_rsc.c:2103
+#: desk/desk_rsc.c:2474
 msgid "[3]["
 "You cannot create or|"
 "access a folder this far|"
@@ -904,7 +952,7 @@ msgstr "[3]["
 "­á¡œ¢¦ ã ¤˜ â®œ«œ §¨æ©™˜© «¦©¦|"
 "®˜£¢á ©« › ˜›¨¦£ã ¡˜«˜¢æš¦¬.][  OK  ]"
 
-#: desk/desk_rsc.c:2108
+#: desk/desk_rsc.c:2479
 msgid "[3]["
 "You cannot create or access|"
 "a file or folder with that|"
@@ -917,7 +965,7 @@ msgstr "[3]["
 "š ˜«å  › ˜›¨¦£ã œå¤˜  §¦¢ç|"
 "£œšá¢.][  OK  ]"
 
-#: desk/desk_rsc.c:2115
+#: desk/desk_rsc.c:2486
 msgid "[1]["
 "You cannot open the trash|"
 "can icon into a window.][  OK  ]"
@@ -925,7 +973,7 @@ msgstr "[1]["
 " ¡á›¦ª ˜§¦¨¨ £á«à¤ ›œ¤ £§¦¨œå|"
 "¤˜ ˜¤¦å¥œ  ©œ §˜¨áŸ¬¨¦][  OK  ]"
 
-#: desk/desk_rsc.c:2118
+#: desk/desk_rsc.c:2489
 msgid "[1]["
 "The trash can is used to|"
 "permanently delete files|"
@@ -936,7 +984,7 @@ msgstr "[1]["
 "¦¨ ©« ¡ã › ˜š¨˜­ã ˜¨®œåà¤|"
 "¡˜  ­˜¡â¢à¤.][  OK  ]"
 
-#: desk/desk_rsc.c:2123
+#: desk/desk_rsc.c:2494
 msgid "[1]["
 "You cannot drag applications,|"
 "files or folders onto the|"
@@ -946,7 +994,7 @@ msgstr "[1]["
 "œ­˜¨£¦šâª, ˜¨®œå˜ ã ­˜¡â¢¦¬ª|"
 "©«¤ œ§ ­á¤œ ˜ œ¨š˜©å˜ª.][  OK  ]"
 
-#: desk/desk_rsc.c:2128
+#: desk/desk_rsc.c:2499
 msgid "[1]["
 "You cannot drag the trash can|"
 "icon into a window.][  OK  ]"
@@ -955,7 +1003,7 @@ msgstr "[1]["
 "œ ¡¦¤å› ˜ «¦¬ ¡á›¦¬ ˜§¦¨¨ £á«à¤|"
 "©œ â¤˜ §˜¨áŸ¬¨¦.][  OK  ]"
 
-#: desk/desk_rsc.c:2131
+#: desk/desk_rsc.c:2502
 msgid "[1]["
 "You cannot place this|"
 "icon over another icon.][  OK  ]"
@@ -964,13 +1012,13 @@ msgstr "[1]["
 "˜¬«æ «¦ œ ¡¦¤å› ¦ §á¤à ˜§æ|"
 "â¤˜ á¢¢¦.][  OK  ]"
 
-#: desk/desk_rsc.c:2134
+#: desk/desk_rsc.c:2505
 msgid "[2]["
 "Save Desktop?][  OK  |Cancel]"
 msgstr "[2]["
 "€§¦Ÿã¡œ¬© Desktop;][  OK  |ê¡¬¨¦]"
 
-#: desk/desk_rsc.c:2135
+#: desk/desk_rsc.c:2506
 msgid "[2]["
 "Do you want to remove icons|"
 "or delete files?][Icons|Files|Cancel]"
@@ -978,13 +1026,13 @@ msgstr "[2]["
 "‡â¢œ«œ ¤˜ ˜­˜ ¨â©œ«œ œ ¡¦¤ › ˜|"
 "ã ¤˜ › ˜š¨á¯œ«œ ˜¨®œå˜;][„ ¡¦¤å› ˜|€¨®œå˜|ê¡¬¨¦]"
 
-#: desk/desk_rsc.c:2138
+#: desk/desk_rsc.c:2509
 msgid "[1]["
 "Invalid function key value.][  OK  ]"
 msgstr "[1]["
 "ê¡¬¨ « £ã function key.][  OK  ]"
 
-#: desk/desk_rsc.c:2139
+#: desk/desk_rsc.c:2510
 msgid "[2]["
 "Function key already assigned.|"
 "Do you want to reassign it?][  OK  |Cancel]"
@@ -993,7 +1041,7 @@ msgstr "[2]["
 "˜¤˜«œŸœå. ‡â¢œ«œ ¤˜ «¦|"
 "œ§˜¤˜Ÿâ©œ«œ;][  OK  |Cancel]"
 
-#: desk/desk_rsc.c:2142
+#: desk/desk_rsc.c:2513
 msgid "[3]["
 "Not enough memory to|"
 "initialise EmuDesk.|"
@@ -1003,7 +1051,7 @@ msgstr "[3]["
 "«¤ â¤˜¨¥ «¦¬ Emudesk.|"
 "¨â§œ  ¤˜ šå¤œ  œ§˜¤œ¡¡å¤©.][‰]"
 
-#: desk/desk_rsc.c:2147
+#: desk/desk_rsc.c:2518
 msgid "[2]["
 "%s not found.|"
 "Do you want to remove the|"
@@ -1014,20 +1062,20 @@ msgstr "[2]["
 "œ ¡¦¤å› ¦ ã ¤˜ œ¤«¦§å©œ«œ «¦|"
 "˜¤« ¡œå£œ¤¦;][€­˜å¨œ©|„¤«¦§ ©£æª|€¡ç¨¦]"
 
-#: desk/desk_rsc.c:2153
+#: desk/desk_rsc.c:2523
 msgid "[1]["
 "Please select icon type.][Desktop|Window|Cancel]"
 msgstr "[1]["
 "˜¨˜¡˜¢é œ§ ¢â¥«œ «ç§¦|"
 "œ ¡¦¤ ›å¦¬.][Desktop|˜¨áŸ¬¨¦|ê¡¬¨¦]"
 
-#: desk/desk_rsc.c:2154
+#: desk/desk_rsc.c:2524
 msgid "[1]["
 "No matching file type.][  OK  ]"
 msgstr "[1]["
 "‹ «˜ ¨ ˜©«æª «ç§¦ª ˜¨®œå¦¬.][  OK  ]"
 
-#: desk/desk_rsc.c:2155
+#: desk/desk_rsc.c:2525
 msgid "[3]["
 "Formatting error. The target|"
 "disk may be write-protected|"
@@ -1037,7 +1085,7 @@ msgstr "[3]["
 "£§¦¨œå ¤˜ œå¤˜  §¨¦©«˜«œ¬£â¤¦ª|"
 "ã ¡˜«œ©«¨˜££â¤¦ª.][„§˜¤á¢¯|€¡ç¨à©]"
 
-#: desk/desk_rsc.c:2160
+#: desk/desk_rsc.c:2530
 msgid "[1]["
 "This disk has %ld bytes|"
 "available to the user.][ Continue | Quit ]"
