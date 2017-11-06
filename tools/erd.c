@@ -71,11 +71,9 @@
  *  For compatibility with EmuTOS multi-language support, text strings
  *  (strings containing any character other than a space, a digit or
  *  punctuation) in the .c file are normally enclosed in the N_() macro.
- *  Additionally, strings consisting of all dashes (which are used to
- *  separate items in menus) are also enclosed in N_().  These actions
- *  may be overridden via the "no-translate" array in the program.
- *  Each entry in the array specifies a partial string to match; any
- *  text string beginning with any of the match strings will _not_ be
+ *  This action may be overridden via the "no-translate" array in the
+ *  program: each entry in the array specifies a partial string to match;
+ *  any text string beginning with any of the match strings will _not_ be
  *  enclosed by N_().
  *
  *  The user may also specify (via the -p option) a prefix to be applied
@@ -181,6 +179,11 @@
  *
  *  v5.1    roger burrows, august/2017
  *          . drop TARGET_192 conditional wrapping for desktop version
+ *
+ *  v5.2    roger burrows, november/2017
+ *          . EmuDesk now builds the menu separator lines dynamically, so
+ *            (a) we no longer need to mark them as translateable, and
+ *            (b) we can truncate them to one byte to save ROM space
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -402,7 +405,7 @@ typedef struct {
   #define PROGRAM_NAME  "mrd"
 #endif
 
-#define VERSION         "v5.1"
+#define VERSION         "v5.2"
 #define MAX_STRLEN      300         /* max size for internal string areas */
 #define NLS             "N_("       /* the macro used in EmuTOS for NLS support*/
 
@@ -2495,8 +2498,8 @@ char *base = (char *)rschdr;
         xlate = copycheck(temp,p,MAX_STRLEN-1);
         if (type == G_STRING)
             trim_spaces(temp);
-        if (all_dashes(temp) && !notranslate(temp))     /* handle menu separators */
-            xlate = 1;
+        if (all_dashes(temp))   /* truncate separator lines to save ROM space */
+            temp[1] = '\0';
         if (xlate == 0)
             fprintf(fp,"\"%s\",\n",temp);
         else fprintf(fp,"%s\"%s\"),\n",NLS,temp);

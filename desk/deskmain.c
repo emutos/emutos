@@ -188,6 +188,12 @@ static const WORD  dura[]=
 };
 #endif
 
+/*
+ * the ob_spec field of menu objects that represent separator lines
+ * is set to point to an appropriate offset within this string.
+ */
+#define MAXLEN_SEPARATOR    40
+static char separator[MAXLEN_SEPARATOR+1];
 
 static BYTE *ad_ptext;
 static BYTE *ad_picon;
@@ -1283,12 +1289,14 @@ void fix_tedinfo(TEDINFO *tedinfo, int nted)
 }
 
 /*
- *  Change the sizes of the menus after translation
+ *  Change the sizes of the menus after translation, and fix up the
+ *  separator lines
  *
  *  Note - the code below is based on the assumption that the width of
  *  the system font is eight (documented as such in lineavars.h)
  */
-#define CHAR_WIDTH 8
+#define CHAR_WIDTH 8            /* in pixels */
+#define MIN_DESKMENU_WIDTH  20  /* in characters, compatible with Atari TOS */
 static void adjust_menu(OBJECT *obj_array)
 {
 #define OBJ(i) (&obj_array[i])
@@ -1296,6 +1304,7 @@ static void adjust_menu(OBJECT *obj_array)
     int i;  /* index in the menu bar */
     int j;  /* index in the array of pull downs */
     int width = (G.g_wdesk >> 3);   /* screen width in chars */
+    int m;  /* max width of each set of menu items, needed for separator lines */
     int n, x;
     OBJECT *menu = OBJ(0);
     OBJECT *mbar = OBJ(OBJ(menu->ob_head)->ob_head);
@@ -1369,23 +1378,38 @@ static void adjust_menu(OBJECT *obj_array)
         mbar->ob_x = 1;
 
     /*
-     * finally we can set ob_x and ob_width for the pulldown objects within the menu
+     * set up the separator string that will be pointed to for all separator lines
+     */
+    memset(separator, '-', MAXLEN_SEPARATOR);
+    separator[MAXLEN_SEPARATOR] = '\0';
+
+    /*
+     * finally we can set ob_x and ob_width for the pulldown objects within the menu,
+     * and set up the separator lines
      */
     j = OBJ(menu->ob_tail)->ob_head;
-    for (i = mbar->ob_head, title = OBJ(i); i <= mbar->ob_tail; i++, title++)
+    m = MIN_DESKMENU_WIDTH - 1; /* make 'Desk' menu at least as wide as Atari TOS */
+    for (i = mbar->ob_head, title = OBJ(i); i <= mbar->ob_tail; i++, title++, m = 0)
     {
-        int k, m;
+        int k;
         OBJECT *dropbox = OBJ(j);
         OBJECT *item;
 
         /* find widest object under this menu heading */
-        for (k = dropbox->ob_head, item = OBJ(k), m = 0; k <= dropbox->ob_tail; k++, item++)
+        for (k = dropbox->ob_head, item = OBJ(k); k <= dropbox->ob_tail; k++, item++)
         {
             int l = strlen((char *)item->ob_spec);
             if (m < l)
                 m = l;
         }
         dropbox->ob_x = mbar->ob_x + title->ob_x;
+
+        /* set up separator lines */
+        for (k = dropbox->ob_head, item = OBJ(k), m++; k <= dropbox->ob_tail; k++, item++)
+        {
+            if (*(BYTE *)(item->ob_spec) == '-')
+                item->ob_spec = (LONG)(separator+MAXLEN_SEPARATOR-m);
+        }
 
         /* make sure the menu is not too far on the right of the screen */
         if ((dropbox->ob_x&0x00ff) + m >= width)
