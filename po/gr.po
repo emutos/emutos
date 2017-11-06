@@ -355,33 +355,25 @@ msgstr " „§ ¢¦šâª "
 msgid "  Desktop info..."
 msgstr "  ¢¨¦­¦¨åœª Desktop..."
 
-#: desk/desk_rsc.c:268 desk/desk_rsc.c:406 desk/desk_rsc.c:442
-msgid "--------------------"
-msgstr "-------------------------"
-
 #: desk/desk_rsc.c:316
 msgid "  Open            ^O"
-msgstr "  ê¤¦ š£˜                 ^O"
+msgstr "  ê¤¦ š£˜                    ^O"
 
 #: desk/desk_rsc.c:322
 msgid "  Info/Rename...  ^I"
-msgstr "  ¢¨¦­¦¨åœª/‹œ«¦¤¦£˜©å˜ ^I"
-
-#: desk/desk_rsc.c:328 desk/desk_rsc.c:358 desk/desk_rsc.c:376
-msgid "---------------------"
-msgstr "-----------------------------"
+msgstr "  ¢¨¦­¦¨åœª/‹œ«¦¤¦£˜©å˜... ^I"
 
 #: desk/desk_rsc.c:334
 msgid "  New Folder...   ^N"
-msgstr "  Nâ¦ª ”á¡œ¢¦ª...         ^N"
+msgstr "  Nâ¦ª ”á¡œ¢¦ª...            ^N"
 
 #: desk/desk_rsc.c:340
 msgid "  Close           ^U"
-msgstr "  ‰¢œå© £¦                ^U"
+msgstr "  ‰¢œå© £¦                   ^U"
 
 #: desk/desk_rsc.c:346
 msgid "  Close window    ^W"
-msgstr "  ‰¢œå© £¦ §˜¨˜Ÿç¨¦¬      ^W"
+msgstr "  ‰¢œå© £¦ §˜¨˜Ÿç¨¦¬         ^W"
 
 #: desk/desk_rsc.c:352
 msgid "  Set file mask..."
@@ -389,7 +381,7 @@ msgstr "  ¨ ©£æª £á©¡˜ª ˜¨®œå¦¬..."
 
 #: desk/desk_rsc.c:364
 msgid "  Delete...       ^D"
-msgstr "  ƒ ˜š¨˜­ã...             ^D"
+msgstr "  ƒ ˜š¨˜­ã...                ^D"
 
 #: desk/desk_rsc.c:370
 msgid "  Format..."
@@ -397,11 +389,11 @@ msgstr "  ƒ ˜£æ¨­à©..."
 
 #: desk/desk_rsc.c:382
 msgid "  Execute EmuCON  ^Z"
-msgstr "  „¡«â¢œ© EmuCON         ^Z"
+msgstr "  „¡«â¢œ© EmuCON            ^Z"
 
 #: desk/desk_rsc.c:388
 msgid "  Shutdown        ^Q"
-msgstr "  ’œ¨£˜« ©£æª             ^Q"
+msgstr "  ’œ¨£˜« ©£æª                ^Q"
 
 #: desk/desk_rsc.c:400 desk/desk_rsc.c:2422
 msgid "  Show as text   ^T"
@@ -446,10 +438,6 @@ msgstr "  „š¡˜«á©«˜© ©¬©¡œ¬é¤"
 #: desk/desk_rsc.c:478
 msgid "  Remove desktop icon"
 msgstr "  ƒ ˜š¨˜­ã œ ¡¦¤ ›å¦¬"
-
-#: desk/desk_rsc.c:484 desk/desk_rsc.c:514
-msgid "---------------------------"
-msgstr "----------------------------"
 
 #: desk/desk_rsc.c:490
 msgid "  Set preferences..."
@@ -759,23 +747,23 @@ msgstr "€¨®œå¦"
 msgid "Monochrome only"
 msgstr "‹¦¤æ®¨à£¦ £æ¤¦"
 
-#: desk/desk_rsc.c:2056
+#: desk/desk_rsc.c:2179
 msgid "SET BACKGROUND"
 msgstr "ˆ‘‹‘ ”Œ’“"
 
-#: desk/desk_rsc.c:2062
+#: desk/desk_rsc.c:2185
 msgid "Select:"
 msgstr "„§ ¢¦šã:"
 
-#: desk/desk_rsc.c:2074
+#: desk/desk_rsc.c:2197
 msgid "Desktop"
 msgstr "Desktop"
 
-#: desk/desk_rsc.c:2086
+#: desk/desk_rsc.c:2209
 msgid "Style:"
 msgstr "‘«¬¢:"
 
-#: desk/desk_rsc.c:2092
+#: desk/desk_rsc.c:2215
 msgid "Color:"
 msgstr "•¨é£˜"
 
