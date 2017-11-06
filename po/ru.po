@@ -385,7 +385,7 @@ msgstr "  Выключить             ^Q"
 
 #: desk/desk_rsc.c:400 desk/desk_rsc.c:2422
 msgid "  Show as text   ^T"
-msgstr "  Показать как текст  ^T"
+msgstr "  Показать как текст    ^T"
 
 #: desk/desk_rsc.c:412
 msgid "  Sort by name"
@@ -437,11 +437,11 @@ msgstr "  Конфигурация десктопа..."
 
 #: desk/desk_rsc.c:502
 msgid "  Change resolution...  ^R"
-msgstr "  Изменить разрешение... ^R"
+msgstr "  Изменить разрешение...   ^R"
 
 #: desk/desk_rsc.c:508
 msgid "  Save desktop...       ^S"
-msgstr "  Сохранить настройки... ^S"
+msgstr "  Сохранить настройки...   ^S"
 
 #: desk/desk_rsc.c:520
 msgid "  Blitter"
@@ -777,7 +777,7 @@ msgstr "%ld байт используется в %d объектах."
 
 #: desk/desk_rsc.c:2421
 msgid "  Show as icons  ^T"
-msgstr "  Показать как иконки ^T"
+msgstr "  Показать как иконки   ^T"
 
 #: desk/desk_rsc.c:2423
 msgid "FILE INFORMATION"
