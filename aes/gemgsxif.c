@@ -63,17 +63,6 @@
 #define memsize(wdwidth,h,nplanes)  ((LONG)(wdwidth)*(h)*(nplanes)*2)
 
 /*
- * the minimum menu/alert buffer size
- *
- * in the documentation for older versions of Atari TOS, it's said to be
- * one-quarter of the screen size, but in fact TOS uses 8192 bytes rather
- * than 8000.  this difference shows up when running QED in medium res:
- * the space required for the largest menu item is 8160 bytes, and there
- * are no menu droppings under e.g. Atari TOS 1.04.
- */
-#define MIN_MENU_BUFFER_SIZE    (8*1024)    /* 1/4 of 32kB */
-
-/*
  * the following specify the maximum dimensions of a form_alert, in
  * characters, derived by trial.  note that the actual maximum height
  * is 78 pixels (for 8-pixel chars) and 150 pixels (for 16-pixel chars),
@@ -81,6 +70,25 @@
  */
 #define MAX_ALERT_WIDTH  50     /* includes worst-case screen alignment */
 #define MAX_ALERT_HEIGHT 10
+#define MAX_ALERT_CHARS (MAX_ALERT_WIDTH*MAX_ALERT_HEIGHT)
+
+/*
+ * the following specify the maximum allowed dimensions of a drop-down
+ * menu, in characters.  these are somewhat arbitrary, but conservative
+ * for EmuTOS at the time this was updated.
+ */
+#define MAX_MENU_WIDTH  32
+#define MAX_MENU_HEIGHT 16
+#define MAX_MENU_CHARS  (MAX_MENU_WIDTH*MAX_MENU_HEIGHT)
+
+/*
+ * the menu/alert buffer size, in characters
+ */
+#if (MAX_MENU_CHARS > MAX_ALERT_CHARS)
+# define MENU_BUFFER_SIZE   MAX_MENU_CHARS
+#else
+# define MENU_BUFFER_SIZE   MAX_ALERT_CHARS
+#endif
 
 GLOBAL WORD  intout[45];
 GLOBAL WORD  ptsout[12];
@@ -99,36 +107,17 @@ static WORD  gl_graphic;
 static void  g_v_opnwk(WORD *pwork_in, WORD *phandle, WS *pwork_out );
 
 
-static LONG form_alert_bufsize(void)
-{
-    int w = MAX_ALERT_WIDTH * gl_wchar;
-    int h = MAX_ALERT_HEIGHT * gl_hchar;
-
-    if (w > gl_width)       /* e.g. max size form alert in ST low */
-        w = gl_width;
-
-    return (LONG)h * w * gl_nplanes / 8;
-}
-
-/* this function calculates the size of the menu/alert screen buffer.
- * as in older versions of Atari TOS, we use a value of one-quarter of
- * the screen size, with adjustment upwards if necessary to allow for
- * both the defined minimum buffer size and for the maximum size of
- * form alert.
+/*
+ * this function calculates the size of the menu/alert screen buffer.
+ * because of the width of some translated menus, we can't use the
+ * original Atari TOS method (1/4 of the screen size).
+ *
+ * note that gl_tmp, gl_mlen are initialised as a side effect
  */
 static ULONG gsx_mcalc(void)
 {
-    LONG mem;
-
     gsx_fix(&gl_tmp, NULL, 0, 0);           /* store screen info    */
-    gl_mlen = memsize(gl_tmp.fd_wdwidth,gl_tmp.fd_h,gl_tmp.fd_nplanes) / 4;
-
-    if (gl_mlen < MIN_MENU_BUFFER_SIZE)
-        gl_mlen = MIN_MENU_BUFFER_SIZE;
-
-    mem = form_alert_bufsize();
-    if (gl_mlen < mem)
-        gl_mlen = mem;
+    gl_mlen = (LONG)MENU_BUFFER_SIZE * gl_wchar * gl_hchar * gl_nplanes / 8;
 
     return(gl_mlen);
 }
