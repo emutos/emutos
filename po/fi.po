@@ -580,7 +580,7 @@ msgstr "NIMIKONFLIKTI KOPIOINNIN AIKANA"
 
 #: desk/desk_rsc.c:1180
 msgid "Stop"
-msgstr "Pysäytä"
+msgstr "Lopeta"
 
 #: desk/desk_rsc.c:1195
 msgid "NEW FOLDER"
