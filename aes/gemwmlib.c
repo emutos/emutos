@@ -300,9 +300,7 @@ void w_drawdesk(GRECT *pc)
     OBJECT  *tree;
     WORD    depth;
     WORD    root;
-    GRECT   pt;
 
-    rc_copy(pc, &pt);
     if (gl_newdesk)
     {
         tree = gl_newdesk;
@@ -315,10 +313,6 @@ void w_drawdesk(GRECT *pc)
         depth = 0;
         root = ROOT;
     }
-
-    /* account for drop shadow: BUGFIX in 2.1 */
-    pt.g_w += DROP_SHADOW_SIZE;
-    pt.g_h += DROP_SHADOW_SIZE;
 
     do_walk(DESKWH, tree, root, depth, pc);
 }
