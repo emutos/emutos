@@ -1643,7 +1643,7 @@ WORD deskmain(void)
     win_start();
 
     /* show menu */
-    desk_verify(0, FALSE);                  /* should this be here  */
+    desk_verify(0, FALSE);      /* initialise g_croot, g_cwin, g_wlastsel  */
     wind_update(BEG_UPDATE);
     menu_bar(G.a_trees[ADMENU], 1);
     wind_update(END_UPDATE);
