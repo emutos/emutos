@@ -229,34 +229,41 @@ static void sh_toalpha(void)
 }
 
 
-static void sh_draw(const BYTE *lcmd, WORD start, BOOL clear)
+/*
+ * draw (part of) the desktop tree
+ *
+ * if 'clear' is TRUE, update the ROOT object to clear the screen,
+ * and just draw the ROOT; otherwise, draw the entire tree.
+ */
+static void sh_draw(const BYTE *lcmd, BOOL clear)
 {
     OBJECT *tree;
-    TEDINFO *ted;
-    LONG spec;
 
     tree = rs_trees[DESKTOP];
     gsx_sclip(&gl_rscreen);
-    ted = (TEDINFO *)tree[DTNAME].ob_spec;
-    ted->te_ptext = (BYTE *)lcmd;   /* text string displayed in menu bar */
 
-    spec = tree[ROOT].ob_spec;
     if (clear)
+    {
+        LONG specsave = tree[ROOT].ob_spec;
         tree[ROOT].ob_spec = CLEAR_SCREEN;  /* white desktop screen */
-    ob_draw(tree, start, 0);
-    tree[ROOT].ob_spec = spec;
+        ob_draw(tree, ROOT, 0);
+        tree[ROOT].ob_spec = specsave;
+    }
+    else
+    {
+        TEDINFO *ted = (TEDINFO *)tree[DTNAME].ob_spec;
+        ted->te_ptext = (BYTE *)lcmd;       /* text string displayed in menu bar */
+        ob_draw(tree, ROOT, MAX_DEPTH);
+    }
 }
 
 
 static void sh_show(const BYTE *lcmd)
 {
-    WORD i;
-
     if (!gl_shgem)
         return;
 
-    for (i = 0; i < 3; i++)
-        sh_draw(lcmd, i, FALSE);
+    sh_draw(lcmd, FALSE);
 }
 
 
@@ -694,7 +701,7 @@ void sh_main(BOOL isgem)
         {
             wm_start();
             ratinit();
-            sh_draw(D.s_cmd, ROOT, TRUE);   /* clear the screen */
+            sh_draw(D.s_cmd, TRUE);     /* clear the screen */
         }
 
         if (rc)                         /* display alert for most recent error */
