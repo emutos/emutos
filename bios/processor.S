@@ -35,7 +35,6 @@
 
         .extern _longframe              // If not 0, use long stack frames
         .extern _setup_68030_pmmu
-        .extern _setup_68040_pmmu
 
 
 
@@ -326,10 +325,8 @@ pi_chk040:
         jra     pi_done
 
 m68040:
-#if CONF_WITH_68040_PMMU
-        jsr     setup_68040_pmmu
-        jra     pi_done
-#endif /* CONF_WITH_68040_PMMU */
+// 68040 MMU initialization is done later
+// because we need to know the memory size first
 
 m68060:
 //

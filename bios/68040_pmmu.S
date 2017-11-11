@@ -11,7 +11,7 @@
 
 #if CONF_WITH_68040_PMMU
 
-                .globl  setup_68040_pmmu
+                .globl  _setup_68040_pmmu
                 .extern _ramtop
 
                 .arch   68040
@@ -41,7 +41,7 @@ msk_4kpd_paddr  = 0b11111111111111111111000000000000
 
                 .text
 
-setup_68040_pmmu:
+_setup_68040_pmmu:
                 jbsr    turn_off_all
 
                 lea     mmu_tree,a1

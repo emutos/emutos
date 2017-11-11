@@ -93,6 +93,10 @@ extern void coma_start(void) NORETURN;  /* found in cli/cmdasm.S */
 extern long xmaddalt(UBYTE *start, long size); /* found in bdos/mem.h */
 #endif
 
+#if CONF_WITH_68040_PMMU
+extern void setup_68040_pmmu(void);
+#endif
+
 /*==== Declarations =======================================================*/
 
 /* Drive specific declarations */
@@ -230,6 +234,15 @@ static void bios_init(void)
     machine_detect();   /* detect hardware */
     KDEBUG(("machine_init()\n"));
     machine_init();     /* initialise machine-specific stuff */
+
+#if CONF_WITH_68040_PMMU
+    /*
+     * Initialize the 68040 MMU
+     * Must be done after memory detection.
+     */
+    if (mcpu == 40)
+        setup_68040_pmmu();
+#endif /* CONF_WITH_68040_PMMU */
 
     /* Initialize the BIOS memory management */
     KDEBUG(("bmem_init()\n"));
