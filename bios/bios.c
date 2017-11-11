@@ -238,7 +238,8 @@ static void bios_init(void)
 #if CONF_WITH_68040_PMMU
     /*
      * Initialize the 68040 MMU
-     * Must be done after memory detection.
+     * Must be done after TT-RAM memory detection (which takes place
+     * in machine_detect() above).
      */
     if (mcpu == 40)
         setup_68040_pmmu();
