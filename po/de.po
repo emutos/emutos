@@ -347,10 +347,6 @@ msgstr " Optionen "
 msgid "  Desktop info..."
 msgstr "  Desktop-Info..."
 
-#: desk/desk_rsc.c:268 desk/desk_rsc.c:406 desk/desk_rsc.c:442
-msgid "--------------------"
-msgstr "--------------------"
-
 #: desk/desk_rsc.c:316
 msgid "  Open            ^O"
 msgstr "  Öffnen           ^O"
@@ -358,10 +354,6 @@ msgstr "  Öffnen           ^O"
 #: desk/desk_rsc.c:322
 msgid "  Info/Rename...  ^I"
 msgstr "  Info/Ändern...   ^I"
-
-#: desk/desk_rsc.c:328 desk/desk_rsc.c:358 desk/desk_rsc.c:376
-msgid "---------------------"
-msgstr "----------------------"
 
 #: desk/desk_rsc.c:334
 msgid "  New Folder...   ^N"
@@ -397,7 +389,7 @@ msgstr "  Stoppe System    ^Q"
 
 #: desk/desk_rsc.c:400 desk/desk_rsc.c:2422
 msgid "  Show as text   ^T"
-msgstr "  Als Text   ^T"
+msgstr "  Als Text    ^T"
 
 #: desk/desk_rsc.c:412
 msgid "  Sort by name"
@@ -438,10 +430,6 @@ msgstr "  Laufwerke anmelden"
 #: desk/desk_rsc.c:478
 msgid "  Remove desktop icon"
 msgstr "  Desktopicon löschen"
-
-#: desk/desk_rsc.c:484 desk/desk_rsc.c:514
-msgid "---------------------------"
-msgstr "---------------------------"
 
 #: desk/desk_rsc.c:490
 msgid "  Set preferences..."
@@ -793,7 +781,7 @@ msgstr "%ld Bytes in %d Dateien."
 
 #: desk/desk_rsc.c:2421
 msgid "  Show as icons  ^T"
-msgstr "  Als Icons  ^T"
+msgstr "  Als Icons   ^T"
 
 #: desk/desk_rsc.c:2423
 msgid "FILE INFORMATION"
