@@ -388,7 +388,7 @@ static void screen_blit(LOCALVARS *vars)
  * this is similar to act_siz(), but note that act_siz() always starts
  * with the same value in the accumulator, while here the initial value
  * is passed as an argument.
- * 
+ *
  * this allows us to use the same routine for scaling height (which is
  * constant for a given string) and width (which can vary since we do a
  * kind of nano-justification).

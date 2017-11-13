@@ -397,7 +397,7 @@ WORD ins_app(WORD curr)
                 pa = temppa;
                 KDEBUG(("Found installed app anode for desktop shortcut\n"));
             }
-        }        
+        }
     }
 #endif
 

@@ -244,7 +244,7 @@ static WORD gloc_key(void)
 
 
 
-/* 
+/*
  * LOCATOR_INPUT: implements vrq_locator()/vsm_locator()
  *
  * These functions return the status of the logical 'locator' device.
@@ -262,7 +262,7 @@ static WORD gloc_key(void)
  *    is the ASCII key pressed, or 0x20 for the left mouse button / 0x21
  *    for the right.
  *    As a consequence, pressing the space key twice is indistingishable
- *    from pressing/releasing the left mouse button, and likewise for 
+ *    from pressing/releasing the left mouse button, and likewise for
  *    the exclamation mark and the right mouse button.
  *
  * vsm_locator() operation in Atari TOS and EmuTOS
