@@ -40,10 +40,12 @@ Links to programs listed above:
 - Japlish:
   http://www.ntrautanen.fi/marko/arkisto.atari.org/sivut/menu_pelit.htm
 - Minigolf (GFA):
-  http://koti.mbnet.fi/tammat/src/minigolf.tar.gz
+  http://eerott.mbnet.fi/hatari/sources/minigolf.zip
 - Swing:
   http://www.pouet.net/prod.php?which=52370
 - The Ultimate Minesweeper:
   http://www.pouet.net/prod.php?which=28904
+- VDI line/text tester:
+  http://eerott.mbnet.fi/hatari/programs.shtml#vditest
 
 (Links missing to: mathmaze, laserchess, diamondminer.)
