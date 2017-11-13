@@ -196,7 +196,7 @@ static __inline__ void swpcopyw(const UWORD* src, UWORD* dest)
 #ifdef __mcoldfire__
 #define rolw1(x)    x=(x>>15)|(x<<1)
 #else
-#define rolw1(x)	                \
+#define rolw1(x)                    \
     __asm__ volatile                \
     ("rol.w #1,%1"                  \
     : "=d"(x)       /* outputs */   \
@@ -213,7 +213,7 @@ static __inline__ void swpcopyw(const UWORD* src, UWORD* dest)
 #ifdef __mcoldfire__
 #define rorw1(x)    x=(x>>1)|(x<<15)
 #else
-#define rorw1(x)	                \
+#define rorw1(x)                    \
     __asm__ volatile                \
     ("ror.w #1,%1"                  \
     : "=d" (x)      /* outputs */   \
@@ -243,8 +243,8 @@ __extension__                             \
   __asm__ volatile                        \
   ("move.w sr,%0\n\t"                     \
    "move.w %1,sr"                         \
-  : "=&d"(_r)       /* outputs */        \
-  : "nd"(_a)        /* inputs  */        \
+  : "=&d"(_r)        /* outputs */        \
+  : "nd"(_a)         /* inputs  */        \
   : "cc", "memory"   /* clobbered */      \
   );                                      \
   _r;                                     \

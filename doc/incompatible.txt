@@ -138,7 +138,7 @@ accessing kbdvec correctly.  This causes EmuTOS to panic.
 
 Workaround:
 This can be worked around with the following hack.prg:
-	http://sourceforge.net/mailarchive/message.php?msg_id=26841274
+    http://sourceforge.net/mailarchive/message.php?msg_id=26841274
 
 
 Program: OMIKRON.BASIC V3.01 (interpreter)
