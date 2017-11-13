@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: bios/bios.c:699
+#: bios/bios.c:713
 msgid ""
 "System halted!\n"
 msgstr ""
@@ -346,10 +346,6 @@ msgstr " Options "
 msgid "  Desktop info..."
 msgstr "  Infos bureau..."
 
-#: desk/desk_rsc.c:268 desk/desk_rsc.c:406 desk/desk_rsc.c:442
-msgid "--------------------"
-msgstr "-----------------------"
-
 #: desk/desk_rsc.c:316
 msgid "  Open            ^O"
 msgstr "  Ouvrir             ^O"
@@ -357,10 +353,6 @@ msgstr "  Ouvrir             ^O"
 #: desk/desk_rsc.c:322
 msgid "  Info/Rename...  ^I"
 msgstr "  Info/Renommer...   ^I"
-
-#: desk/desk_rsc.c:328 desk/desk_rsc.c:358 desk/desk_rsc.c:376
-msgid "---------------------"
-msgstr "------------------------"
 
 #: desk/desk_rsc.c:334
 msgid "  New Folder...   ^N"
@@ -437,10 +429,6 @@ msgstr "  Installer périphériques"
 #: desk/desk_rsc.c:478
 msgid "  Remove desktop icon"
 msgstr "  Supprimer icône de bureau"
-
-#: desk/desk_rsc.c:484 desk/desk_rsc.c:514
-msgid "---------------------------"
-msgstr "------------------------------"
 
 #: desk/desk_rsc.c:490
 msgid "  Set preferences..."
