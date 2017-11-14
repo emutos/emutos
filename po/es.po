@@ -46,11 +46,11 @@ msgstr "Tiempo de arranque"
 
 #: bios/initinfo.c:294
 msgid "Hold <Control> to skip AUTO/ACC"
-msgstr "Mantén pulsado <Control> para saltar AUTO/ACC"
+msgstr "Presiona <Control> para saltar AUTO/ACC"
 
 #: bios/initinfo.c:297
 msgid "Hold <Alternate> to skip HDD boot"
-msgstr "Mantén pulsado <Alt> no iniciar disco duro"
+msgstr "Presiona <Alt> para no iniciar disco duro"
 
 #: bios/initinfo.c:300
 msgid "Press key 'X' to boot from X:"
@@ -332,7 +332,7 @@ msgstr " Desk "
 
 #: desk/desk_rsc.c:232
 msgid " File "
-msgstr " Fichero "
+msgstr " Archivo "
 
 #: desk/desk_rsc.c:238
 msgid " View "
@@ -368,7 +368,7 @@ msgstr "  Cerrar ventana        ^W"
 
 #: desk/desk_rsc.c:352
 msgid "  Set file mask..."
-msgstr "  Fijar máscara fichero..."
+msgstr "  Fijar máscara archivo..."
 
 #: desk/desk_rsc.c:364
 msgid "  Delete...       ^D"
@@ -516,7 +516,7 @@ msgstr "INSTALAR ICONO DE ESCRITORIO"
 
 #: desk/desk_rsc.c:853 desk/desk_rsc.c:1882
 msgid "Item type:"
-msgstr "Tipo de elemento:"
+msgstr "Elemento:"
 
 #: desk/desk_rsc.c:865
 msgid "Drive"
@@ -628,7 +628,7 @@ msgstr "Velocidad de doble clic:"
 
 #: desk/desk_rsc.c:1405
 msgid "To drop down menus:"
-msgstr "Para desplegar menús:"
+msgstr "Desplegar menús con:"
 
 #: desk/desk_rsc.c:1417
 msgid "Click"
@@ -668,11 +668,11 @@ msgstr "DMA"
 
 #: desk/desk_rsc.c:1510
 msgid "SET FILE MASK"
-msgstr "FIJAR MASCARA FICHERO"
+msgstr "FIJAR MÁSCARA FICHERO"
 
 #: desk/desk_rsc.c:1543
 msgid "DESKTOP CONFIGURATION"
-msgstr "CONFIGURACION ESCRITORIO"
+msgstr "CONFIGURACIÓN ESCRITORIO"
 
 #: desk/desk_rsc.c:1549
 msgid "Default directory:"
@@ -732,7 +732,7 @@ msgstr "Carpeta"
 
 #: desk/desk_rsc.c:1900
 msgid "File"
-msgstr "Fichero"
+msgstr "Archivo"
 
 #: desk/desk_rsc.c:1975
 msgid "Monochrome only"
@@ -884,7 +884,7 @@ msgid "[2]["
 "the files on drive %c: ?][Yes| No ]"
 msgstr "[2]["
 "¿Quiere borrar todos|"
-"los archivos en la unidad %c: ?][Sí| No ]"
+"los archivos de la unidad %c: ?][Sí| No ]"
 
 #: desk/desk_rsc.c:2460
 msgid "[1]["
@@ -892,8 +892,8 @@ msgid "[1]["
 "install any more icons|"
 "or applications.][  OK  ]"
 msgstr "[1]["
-"Disculpe, el escritorio no puede|"
-"instalar más iconos|"
+"Disculpe, el escritorio no|"
+"puede instalar más iconos|"
 "o aplicaciones.][  OK  ]"
 
 #: desk/desk_rsc.c:2465
@@ -904,8 +904,8 @@ msgid "[2]["
 msgstr "[2]["
 "No puede crear una carpeta|"
 "con ese nombre.|"
-"Por favor inténtelo|"
-"con otro nombre, o cancele.][Cancelar|Reintentar]"
+"Por favor, inténtelo|"
+"con otro nombre o cancele.][Cancelar|Reintentar]"
 
 #: desk/desk_rsc.c:2470
 msgid "[1]["
