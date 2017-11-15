@@ -117,6 +117,31 @@ static void set_line(void)
 }
 
 
+/*
+ * display a message followed by cr/lf
+ */
+static void display_message(const char *s)
+{
+    set_margin();
+    cprintf(s);
+    cprintf("\r\n");
+}
+
+
+/*
+ * display a message in inverse video, with optional cr/lf
+ */
+static void display_inverse(const char *s,BOOL crlf)
+{
+    set_margin();
+    cprintf("\033p");
+    cprintf(s);
+    cprintf("\033q");
+    if (crlf)
+        cprintf("\r\n");
+}
+
+
 static void pair_start(const char *left)
 {
     int n;
@@ -291,28 +316,21 @@ WORD initinfo(ULONG *pshiftbits)
     /* Print separator followed by blank line */
     set_line();
 
-    set_margin(); cprintf(_("Hold <Control> to skip AUTO/ACC"));
-    cprintf("\r\n");
+    display_message(_("Hold <Control> to skip AUTO/ACC"));
     if (hdd_available) {
-        set_margin(); cprintf(_("Hold <Alternate> to skip HDD boot"));
-        cprintf("\r\n");
+        display_message(_("Hold <Alternate> to skip HDD boot"));
     }
-    set_margin(); cprintf(_("Press key 'X' to boot from X:"));
-    cprintf("\r\n");
+    display_message(_("Press key 'X' to boot from X:"));
 #if WITH_CLI
-    set_margin(); cprintf(_("Press <Esc> to run an early console"));
-    cprintf("\r\n");
+    display_message(_("Press <Esc> to run an early console"));
 #endif
 #if CONF_WITH_AROS
     cprintf("\r\n");
-    set_margin(); cprintf("\033pThis binary mixes GPL and AROS APL\033q\r\n");
-    set_margin(); cprintf("\033pcode, redistribution is forbidden.\033q\r\n");
+    display_inverse("This binary mixes GPL and AROS APL",1);
+    display_inverse("code, redistribution is forbidden.",1);
 #endif
     cprintf("\r\n");
-    set_margin();
-    cprintf("\033p");
-    cprintf(_(" Hold <Shift> to pause this screen "));
-    cprintf("\033q");
+    display_inverse(_(" Hold <Shift> to pause this screen "),0);
 #ifdef ENABLE_KDEBUG
     /* We need +1 because the previous line is not ended with CRLF */
     actual_initinfo_height = v_cur_cy + 1 - top_margin;
