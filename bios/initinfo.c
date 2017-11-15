@@ -100,20 +100,20 @@ static void print_art(const char *s)
 }
 
 
+/*
+ * display a separator line
+ */
 static void set_line(void)
 {
-    WORD llen;
     WORD celx;
 
-    llen=v_cel_mx - 6 ;     /* line length */
-
-    cprintf("\r   ");          /* goto left side */
+    set_margin();
 
     /* count for columns */
-    for (celx = 0; celx<=llen; celx++)
+    for (celx = 0; celx < LOGO_LENGTH; celx++)
         cprintf("_");
 
-    cprintf("\r\n");          /* goto left side */
+    cprintf("\r\n\r\n");    /* followed by blank line */
 }
 
 
@@ -255,9 +255,8 @@ WORD initinfo(ULONG *pshiftbits)
     print_art("1     1 1 1 1   1  7   7   7     7");
     print_art("11111 1   1  111   7    777  7777 ");
 
-    /* Just a separator */
+    /* Print separator followed by blank line */
     set_line();
-    cprintf("\n\r");
 
     pair_start(_("EmuTOS Version")); cprintf("%s", version); pair_end();
 
@@ -289,9 +288,8 @@ WORD initinfo(ULONG *pshiftbits)
 
     pair_start(_("Boot time")); cprint_asctime(); pair_end();
 
-    /* Just a separator */
+    /* Print separator followed by blank line */
     set_line();
-    cprintf("\n\r");
 
     set_margin(); cprintf(_("Hold <Control> to skip AUTO/ACC"));
     cprintf("\r\n");
