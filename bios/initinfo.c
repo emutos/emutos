@@ -47,6 +47,8 @@
 
 /*==== Defines ============================================================*/
 
+#define LOGO_LENGTH 34      /* must equal length of strings in EmuTOS logo */
+
 /* allowed values for Mxalloc mode: (defined in mem.h) */
 #define MX_STRAM 0
 #define MX_TTRAM 1
@@ -67,12 +69,12 @@ static void set_margin(void)
     WORD marl;
     WORD celx;
 
-    marl=(v_cel_mx-34) / 2;     /* 36 = length of Logo */
+    marl = (v_cel_mx+1-LOGO_LENGTH) / 2;    /* centres logo */
 
     cprintf("\r");              /* goto left side */
 
     /* count for columns */
-    for (celx = 0; celx<=marl; celx++)
+    for (celx = 0; celx < marl; celx++)
         cprintf(" ");
 }
 
