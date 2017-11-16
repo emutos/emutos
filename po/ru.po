@@ -61,7 +61,7 @@ msgstr "Нажмите <Esc> для запуска предыдущей консоли"
 
 #: bios/initinfo.c:314
 msgid " Hold <Shift> to pause this screen "
-msgstr "Удерж.нажатой <Shift> для паузы"
+msgstr " Удерж.нажатой <Shift> для паузы "
 
 #: bios/kprint.c:580
 msgid ""
