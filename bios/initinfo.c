@@ -247,7 +247,7 @@ WORD initinfo(ULONG *pshiftbits)
 #endif
     LONG hdd_available = blkdev_avail(HARDDISK_BOOTDEV);
     ULONG shiftbits;
-    char *p;
+    const char *p;
 
     /*
      * If additional info lines are going to be printed in specific cases,
