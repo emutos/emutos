@@ -47,6 +47,7 @@
 
 /*==== Defines ============================================================*/
 
+#define INFO_LENGTH 40      /* width of info lines (must fit in low-rez) */
 #define LOGO_LENGTH 34      /* must equal length of strings in EmuTOS logo */
 
 /* allowed values for Mxalloc mode: (defined in mem.h) */
@@ -59,6 +60,7 @@
 extern long total_alt_ram(void); /* in bdos/umem.c */
 #endif
 
+static WORD left_margin;
 
 /*
  * set_margin - Set
@@ -66,15 +68,12 @@ extern long total_alt_ram(void); /* in bdos/umem.c */
 
 static void set_margin(void)
 {
-    WORD marl;
     WORD celx;
-
-    marl = (v_cel_mx+1-LOGO_LENGTH) / 2;    /* centres logo */
 
     cprintf("\r");              /* goto left side */
 
     /* count for columns */
-    for (celx = 0; celx < marl; celx++)
+    for (celx = 0; celx < left_margin; celx++)
         cprintf(" ");
 }
 
@@ -110,7 +109,7 @@ static void set_line(void)
     set_margin();
 
     /* count for columns */
-    for (celx = 0; celx < LOGO_LENGTH; celx++)
+    for (celx = 0; celx < INFO_LENGTH; celx++)
         cprintf("_");
 
     cprintf("\r\n\r\n");    /* followed by blank line */
@@ -146,9 +145,9 @@ static void pair_start(const char *left)
 {
     int n;
     set_margin();
-    n = cprintf(left);
+    n = cprintf(left) + 2;      /* allow for following cprintf() */
     cprintf(": ");
-    while(n++ < 14)
+    while(n++ < INFO_LENGTH/2)
         cprintf(" ");
     cprintf("\033b!");
 }
@@ -248,6 +247,7 @@ WORD initinfo(ULONG *pshiftbits)
 #endif
     LONG hdd_available = blkdev_avail(HARDDISK_BOOTDEV);
     ULONG shiftbits;
+    char *p;
 
     /*
      * If additional info lines are going to be printed in specific cases,
@@ -273,12 +273,18 @@ WORD initinfo(ULONG *pshiftbits)
     for (i = 0; i < top_margin; i++)
         cprintf("\r\n");
 
+    /* Centre the logo horizontally */
+    left_margin = (v_cel_mx+1-LOGO_LENGTH) / 2;
+
     /* Now print the EmuTOS Logo */
     print_art("11111111111 7777777777  777   7777");
     print_art("1                  7   7   7 7    ");
     print_art("1111   1 1  1   1  7   7   7  777 ");
     print_art("1     1 1 1 1   1  7   7   7     7");
     print_art("11111 1   1  111   7    777  7777 ");
+
+    /* adjust margins for remaining messages to allow more space for translations */
+    left_margin = (v_cel_mx+1-INFO_LENGTH) / 2;
 
     /* Print separator followed by blank line */
     set_line();
@@ -330,7 +336,12 @@ WORD initinfo(ULONG *pshiftbits)
     display_inverse("code, redistribution is forbidden.",1);
 #endif
     cprintf("\r\n");
-    display_inverse(_(" Hold <Shift> to pause this screen "),0);
+
+    /* centre 'hold shift' message in all languages */
+    p = _(" Hold <Shift> to pause this screen ");
+    left_margin = (v_cel_mx+1-strlen(p)) / 2;   /* -ve will be handled like zero */
+    display_inverse(p,0);
+
 #ifdef ENABLE_KDEBUG
     /* We need +1 because the previous line is not ended with CRLF */
     actual_initinfo_height = v_cur_cy + 1 - top_margin;
