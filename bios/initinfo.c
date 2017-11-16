@@ -60,6 +60,14 @@
 extern long total_alt_ram(void); /* in bdos/umem.c */
 #endif
 
+#define LOGO_HEIGHT 5
+static const char *logo[LOGO_HEIGHT] =
+    { "11111111111 7777777777  777   7777",
+      "1                  7   7   7 7    ",
+      "1111   1 1  1   1  7   7   7  777 ",
+      "1     1 1 1 1   1  7   7   7     7",
+      "11111 1   1  111   7    777  7777 " };
+
 static WORD left_margin;
 
 /*
@@ -277,11 +285,8 @@ WORD initinfo(ULONG *pshiftbits)
     left_margin = (v_cel_mx+1-LOGO_LENGTH) / 2;
 
     /* Now print the EmuTOS Logo */
-    print_art("11111111111 7777777777  777   7777");
-    print_art("1                  7   7   7 7    ");
-    print_art("1111   1 1  1   1  7   7   7  777 ");
-    print_art("1     1 1 1 1   1  7   7   7     7");
-    print_art("11111 1   1  111   7    777  7777 ");
+    for (i = 0; i < LOGO_HEIGHT; i++)
+        print_art(logo[i]);
 
     /* adjust margins for remaining messages to allow more space for translations */
     left_margin = (v_cel_mx+1-INFO_LENGTH) / 2;
