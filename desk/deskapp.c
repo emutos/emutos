@@ -102,7 +102,8 @@
 #define INF_E2_DAYMONTH 0x04    /* 1 => day before month */
 #define INF_E2_24HCLOCK 0x02    /* 1 => 24 hour clock */
 #define INF_E2_SOUND    0x01    /* 1 => sound effects on */
-#define INF_E2_DEFAULT  (INF_E2_IDTDATE|INF_E2_IDTTIME|INF_E2_SOUND)    /* default if no .INF */
+                                /* following are defaults if no .INF */
+#define INF_E2_DEFAULT  (INF_E2_BLITTER|INF_E2_IDTDATE|INF_E2_IDTTIME|INF_E2_SOUND)
 
                             /* 'E' bytes 3-4 are video mode (see process_inf1() in aes/geminit.c) */
 
@@ -148,7 +149,7 @@ static BYTE     *gl_buffer;
  */
 static const char desk_inf_data1[] =
     "#R 01\r\n"                         /* INF_REV_LEVEL */
-    "#E 1A 61\r\n"                      /* INF_E1_DEFAULT and INF_E2_DEFAULT */
+    "#E 1A E1\r\n"                      /* INF_E1_DEFAULT and INF_E2_DEFAULT */
 #if CONF_WITH_BACKGROUNDS
     "#Q 41 40 43 40 43 40\r\n"          /* INF_Q1_DEFAULT -> INF_Q6_DEFAULT */
 #endif
