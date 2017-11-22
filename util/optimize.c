@@ -252,9 +252,9 @@ BYTE *scan_2(BYTE *pcurr, WORD *pwd)
         temp |= hex_dig(*pcurr++);
         if (temp == 0x00ff)
             temp = -1;
-        *pwd = temp;
     }
 
+    *pwd = temp;
     return pcurr;
 }
 
