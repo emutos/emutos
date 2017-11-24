@@ -39,7 +39,8 @@ COUNTRY. This is mainly useful for the 192 and 256 KB targets. Example:
 
     make 256 UNIQUE=fr
 
-Finally, some settings can be configured in the file include/config.h.
+Many options are set via the configuration file include/config.h.  They can
+be overridden most easily via #defines in a user-created file localconf.h.
 
 A complete list of targets
 ==========================
@@ -57,9 +58,10 @@ amiga       emutos-amiga.rom, EmuTOS ROM for Amiga hardware
 amigakd     emutos-kickdisk.adf, EmuTOS as Amiga 1000 Kickstart disk
 amigaflop   emutos.adf, EmuTOS RAM as Amiga boot floppy
 amigaflopvampire emutos-vampire.adf, EmuTOS RAM as Amiga boot floppy optimized for Vampire V2
+amigavampire     emutos-vampire.rom, EmuTOS ROM for Amiga optimized for Vampire V2
 m548x-dbug  emutos-m548x-dbug.s19, EmuTOS-RAM for dBUG on ColdFire Evaluation Boards
 m548x-bas   emutos-m548x-bas.s19, EmuTOS-RAM for BaS_gcc on ColdFire Evaluation Boards
-m548x-prg  emutos.prg, a RAM tos for ColdFire Evaluation Boards with BaS_gcc
+m548x-prg   emutos.prg, a RAM tos for ColdFire Evaluation Boards with BaS_gcc
 prg         emutos.prg, a RAM tos
 flop        emutos.st, a bootable floppy with RAM tos
 cart        etoscart.img, EmuTOS as a diagnostic cartridge
@@ -74,6 +76,11 @@ DEF='-DSOMEDEFINE=value'
             used to override the default settings from include/config.h.
             WARNING: do "make clean" first.
 
+Utility targets
+---------------
+ 
+bugready    for translations: sets up files in preparation for 'bug update'
+
 Debug targets
 -------------
 
@@ -85,7 +92,10 @@ Git-related targets
 
 depend      generates dependencies
 clean       cleans all generated files
-gitready    ensure the files have a proper, canonic, format for Git
+charset     check the charset of wll the source files
+crlf        convert all end-of-lines to LF
+expand      expand tabs to spaces
+gitready    ensure the files have a proper format for Git (same as 'make crlf expand')
 checkindent try 'indent' without altering the files
 indent      indent all files - never done yet :-(
 
@@ -102,8 +112,7 @@ release     build the release archives into release-archives
 STonX-specific notes
 =======================
 
-EmuTOS now needs no change in STonX any longer. It will run on a
-normal STonX.
+EmuTOS now no longer needs changes to STonX. It will run on a normal STonX.
 
 But, if you want to see debugging output in STonX, you need to do two
 things:
@@ -136,10 +145,12 @@ things:
         case 1:
     ...
 
-(STonC release 0.8.0 and later already has this function)
+(STonX release 0.8.0 and later already has this function)
 
-2. Switch on the debugging output by setting, in include/config.h, the
-   parameter STONX_NATIVE_PRINT to 1 before building EmuTOS.
+2. Switch on STonX debugging output by setting STONX_NATIVE_PRINT to 1
+   before building EmuTOS. Do this by creating a file called localconf.h
+   (in the same folder as the EmuTOS Makefile) with one line:
+   #define STONX_NATIVE_PRINT 1
 
 
 Good luck!
