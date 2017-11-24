@@ -705,11 +705,6 @@ flop:
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes"
 
-.PHONY: fd0
-NODEP += fd0
-fd0: flop
-	dd if=$(EMUTOS_ST) of=/dev/fd0D360
-
 $(EMUTOS_ST): override DEF += -DTARGET_FLOPPY
 $(EMUTOS_ST): OPTFLAGS = $(SMALL_OPTFLAGS)
 $(EMUTOS_ST): mkflop bootsect.img emutos.img

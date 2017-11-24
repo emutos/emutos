@@ -74,11 +74,6 @@ DEF='-DSOMEDEFINE=value'
             used to override the default settings from include/config.h.
             WARNING: do "make clean" first.
 
-Utility targets
----------------
-
-fd0         dd emutos.st on a floppy (linux-specific)
-
 Debug targets
 -------------
 
