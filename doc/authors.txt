@@ -200,6 +200,7 @@ Hampa Hug
 
 Markus Fröschle
 - Tests on the FireBee and BaS_gcc support
+- Inspired the support for the blitter
 - Fix various AES & VDI bugs
 
 Christian Zietz <czietz at gmx.net>
@@ -219,8 +220,10 @@ Thorsten Otto <admin at tho-otto.de>
 - Make EmuTOS more compatible with Atari TOS in several areas
 - Add check_read_byte() workaround for ARAnyM-JIT
 - Fixes to 68040 PMMU setup
+- Inspired the support for window/desktop background configuration
+- Found many bugs in desktop shortcut handling
 - Miscellaneous bug fixes
-- Miscellaneous source code cleanup
+- Lots of source code cleanup
 
 Apollo Team: Gunnar von Boehn, Philippe Flype, Simo Koivukoski,
 pisklak, guibrush, TuKo, and all other members...
