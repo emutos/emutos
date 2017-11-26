@@ -92,7 +92,7 @@ Git-related targets
 
 depend      generates dependencies
 clean       cleans all generated files
-charset     check the charset of wll the source files
+charset     check the charset of all the source files
 crlf        convert all end-of-lines to LF
 expand      expand tabs to spaces
 gitready    ensure the files have a proper format for Git (same as 'make crlf expand')
