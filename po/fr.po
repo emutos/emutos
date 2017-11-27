@@ -46,11 +46,11 @@ msgstr "Date et heure"
 
 #: bios/initinfo.c:294
 msgid "Hold <Control> to skip AUTO/ACC"
-msgstr "Touche CTRL => pas d'AUTO/ACC"
+msgstr "<Control> pour ignorer AUTO/accessoires"
 
 #: bios/initinfo.c:297
 msgid "Hold <Alternate> to skip HDD boot"
-msgstr "Touche ALT => pas de disque dur"
+msgstr "<Alt> pour ignorer démarrage disque dur"
 
 #: bios/initinfo.c:300
 msgid "Press key 'X' to boot from X:"
