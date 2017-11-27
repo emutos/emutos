@@ -1658,15 +1658,6 @@ WORD deskmain(void)
     G.g_csortitem = NAMEITEM;
     menu_icheck(G.a_trees[ADMENU], G.g_csortitem, 1);
 
-#if CONF_WITH_BLITTER
-    if (blitter_is_present)
-    {
-        menu_ienable(G.a_trees[ADMENU], BLITITEM, 1);
-        menu_icheck(G.a_trees[ADMENU], BLITITEM, G.g_blitter);
-        Blitmode(G.g_blitter?1:0);
-    }
-#endif
-
     /* initialize desktop and its objects */
     app_blddesk();
 
@@ -1682,6 +1673,15 @@ WORD deskmain(void)
     wind_update(BEG_UPDATE);
     cnx_get();
     wind_update(END_UPDATE);
+
+#if CONF_WITH_BLITTER
+    /*
+     * we now have the blitter state from EMUDESK.INF, so we can call Blitmode()
+     */
+    if (blitter_is_present)
+        Blitmode(G.g_blitter?1:0);
+#endif
+
     men_update();
 
     /* get ready for main loop */
