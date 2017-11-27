@@ -50,7 +50,7 @@ msgstr "Presiona <Control> para saltar AUTO/ACC"
 
 #: bios/initinfo.c:297
 msgid "Hold <Alternate> to skip HDD boot"
-msgstr "Presiona <Alt> para no iniciar disco duro"
+msgstr "Presiona <Alt> para saltar el disco duro"
 
 #: bios/initinfo.c:300
 msgid "Press key 'X' to boot from X:"
@@ -62,7 +62,7 @@ msgstr "Pulse <Esc> para ejecutar la consola"
 
 #: bios/initinfo.c:314
 msgid "Hold <Shift> to pause this screen"
-msgstr "Mantén pulsado <Mayúsculas> para detener esta pantalla"
+msgstr "<Mayúsculas> para detener esta pantalla"
 
 #: bios/kprint.c:580
 msgid ""
