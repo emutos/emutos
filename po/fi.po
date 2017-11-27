@@ -63,8 +63,8 @@ msgid "Press <Esc> to run an early console"
 msgstr "Käynnistyskonsoli -> paina <Esc>"
 
 #: bios/initinfo.c:314
-msgid " Hold <Shift> to pause this screen "
-msgstr " Pysäytä ruutu <Shift> näppäimellä "
+msgid "Hold <Shift> to pause this screen"
+msgstr "Pysäytä ruutu <Shift> näppäimellä"
 
 #: bios/kprint.c:580
 msgid ""

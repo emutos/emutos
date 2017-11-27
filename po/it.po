@@ -61,8 +61,8 @@ msgid "Press <Esc> to run an early console"
 msgstr "Premi <Esc> per avvio early console"
 
 #: bios/initinfo.c:314
-msgid " Hold <Shift> to pause this screen "
-msgstr " Tieni <Shift> per pausa schermo "
+msgid "Hold <Shift> to pause this screen"
+msgstr "Tieni <Shift> per pausa schermo"
 
 #: bios/kprint.c:580
 msgid ""

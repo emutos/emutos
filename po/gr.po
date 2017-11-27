@@ -74,8 +74,8 @@ msgid "Press <Esc> to run an early console"
 msgstr "˜«ã©«œ <Esc> š ˜ ¤˜ «¨â¥œ«œ £ ˜ §¨é £ ¡¦¤©æ¢˜"
 
 #: bios/initinfo.c:314
-msgid " Hold <Shift> to pause this screen "
-msgstr " ˜«ã©«œ «¦ <Shift> š ˜ §˜ç© "
+msgid "Hold <Shift> to pause this screen"
+msgstr "˜«ã©«œ «¦ <Shift> š ˜ §˜ç©"
 
 #: bios/kprint.c:580
 msgid ""

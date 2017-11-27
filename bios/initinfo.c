@@ -355,7 +355,7 @@ WORD initinfo(ULONG *pshiftbits)
     cprintf("\r\n");
 
     /* centre 'hold shift' message in all languages */
-    display_inverse(_(" Hold <Shift> to pause this screen "),0);
+    display_inverse(_("Hold <Shift> to pause this screen"),0);
 
 #ifdef ENABLE_KDEBUG
     /* We need +1 because the previous line is not ended with CRLF */

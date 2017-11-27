@@ -63,8 +63,8 @@ msgid "Press <Esc> to run an early console"
 msgstr "Pro spu¹tìní brzké konzole stisknìte <Esc>."
 
 #: bios/initinfo.c:314
-msgid " Hold <Shift> to pause this screen "
-msgstr " Podr¾ <Shift> pro pauzu obrazovky "
+msgid "Hold <Shift> to pause this screen"
+msgstr "Podr¾ <Shift> pro pauzu obrazovky"
 
 #: bios/kprint.c:580
 msgid ""

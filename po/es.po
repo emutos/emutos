@@ -61,8 +61,8 @@ msgid "Press <Esc> to run an early console"
 msgstr "Pulse <Esc> para ejecutar la consola"
 
 #: bios/initinfo.c:314
-msgid " Hold <Shift> to pause this screen "
-msgstr " Mantén pulsado <Mayúsculas> para detener esta pantalla "
+msgid "Hold <Shift> to pause this screen"
+msgstr "Mantén pulsado <Mayúsculas> para detener esta pantalla"
 
 #: bios/kprint.c:580
 msgid ""
