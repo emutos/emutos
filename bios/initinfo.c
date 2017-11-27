@@ -42,6 +42,9 @@
 #include "lineavars.h"
 #endif
 
+/* Screen width, in characters, as signed value */
+#define SCREEN_WIDTH ((WORD)v_cel_mx + 1)
+
 #if FULL_INITINFO
 
 
@@ -282,14 +285,14 @@ WORD initinfo(ULONG *pshiftbits)
         cprintf("\r\n");
 
     /* Centre the logo horizontally */
-    left_margin = (v_cel_mx+1-LOGO_LENGTH) / 2;
+    left_margin = (SCREEN_WIDTH-LOGO_LENGTH) / 2;
 
     /* Now print the EmuTOS Logo */
     for (i = 0; i < LOGO_HEIGHT; i++)
         print_art(logo[i]);
 
     /* adjust margins for remaining messages to allow more space for translations */
-    left_margin = (v_cel_mx+1-INFO_LENGTH) / 2;
+    left_margin = (SCREEN_WIDTH-INFO_LENGTH) / 2;
 
     /* Print separator followed by blank line */
     set_line();
@@ -344,7 +347,7 @@ WORD initinfo(ULONG *pshiftbits)
 
     /* centre 'hold shift' message in all languages */
     p = _(" Hold <Shift> to pause this screen ");
-    left_margin = (v_cel_mx+1-strlen(p)) / 2;   /* -ve will be handled like zero */
+    left_margin = (SCREEN_WIDTH-strlen(p)) / 2;   /* -ve will be handled like zero */
     display_inverse(p,0);
 
 #ifdef ENABLE_KDEBUG
