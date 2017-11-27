@@ -341,6 +341,9 @@ static void men_update(void)
 #if CONF_WITH_SHUTDOWN
     menu_ienable(tree, QUITITEM, can_shutdown());
 #endif
+
+    menu_ienable(G.a_trees[ADMENU], RESITEM, can_change_resolution);
+
 #if CONF_WITH_BLITTER
     if (blitter_is_present)
     {
@@ -1654,8 +1657,6 @@ WORD deskmain(void)
 
     G.g_csortitem = NAMEITEM;
     menu_icheck(G.a_trees[ADMENU], G.g_csortitem, 1);
-
-    menu_ienable(G.a_trees[ADMENU], RESITEM, can_change_resolution);
 
 #if CONF_WITH_BLITTER
     if (blitter_is_present)
