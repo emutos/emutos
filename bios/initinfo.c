@@ -147,10 +147,16 @@ static void display_message(const char *s)
  */
 static void display_inverse(const char *s,BOOL crlf)
 {
-    set_margin();
+    WORD len = strlen(s);
+    WORD left = (SCREEN_WIDTH - len) / 2;
+    WORD right = SCREEN_WIDTH - (left + len);
+
     cprintf("\033p");
+    print_spaces(left);
     cprintf(s);
+    print_spaces(right);
     cprintf("\033q");
+
     if (crlf)
         cprintf("\r\n");
 }
@@ -262,7 +268,6 @@ WORD initinfo(ULONG *pshiftbits)
 #endif
     LONG hdd_available = blkdev_avail(HARDDISK_BOOTDEV);
     ULONG shiftbits;
-    const char *p;
 
     /*
      * If additional info lines are going to be printed in specific cases,
@@ -350,9 +355,7 @@ WORD initinfo(ULONG *pshiftbits)
     cprintf("\r\n");
 
     /* centre 'hold shift' message in all languages */
-    p = _(" Hold <Shift> to pause this screen ");
-    left_margin = (SCREEN_WIDTH-strlen(p)) / 2;   /* -ve will be handled like zero */
-    display_inverse(p,0);
+    display_inverse(_(" Hold <Shift> to pause this screen "),0);
 
 #ifdef ENABLE_KDEBUG
     /* We need +1 because the previous line is not ended with CRLF */
