@@ -383,8 +383,8 @@ WORD initinfo(ULONG *pshiftbits)
         }
         while (hz_200 < end);
 
-        /* Wait while Shift is pressed */
-        while (shiftbits & MODE_SHIFT)
+        /* Wait while Shift is pressed, and normal key is not pressed */
+        while ((shiftbits & MODE_SHIFT) && !bconstat2())
         {
 #if USE_STOP_INSN_TO_FREE_HOST_CPU
             stop_until_interrupt();
