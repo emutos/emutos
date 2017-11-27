@@ -349,8 +349,8 @@ WORD initinfo(ULONG *pshiftbits)
 #endif
 #if CONF_WITH_AROS
     cprintf("\r\n");
-    display_inverse("This binary mixes GPL and AROS APL",1);
-    display_inverse("code, redistribution is forbidden.",1);
+    display_inverse("This binary mixes GPL and AROS APL code,",1);
+    display_inverse("redistribution is forbidden.",1);
 #endif
     cprintf("\r\n");
 
