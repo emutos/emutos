@@ -71,6 +71,15 @@ static const char *logo[LOGO_HEIGHT] =
       "1     1 1 1 1   1  7   7   7     7",
       "11111 1   1  111   7    777  7777 " };
 
+/* Print n spaces */
+static void print_spaces(WORD n)
+{
+    WORD i;
+
+    for (i = 0; i < n; i++)
+        cprintf(" ");
+}
+
 static WORD left_margin;
 
 /*
@@ -79,13 +88,8 @@ static WORD left_margin;
 
 static void set_margin(void)
 {
-    WORD celx;
-
     cprintf("\r");              /* goto left side */
-
-    /* count for columns */
-    for (celx = 0; celx < left_margin; celx++)
-        cprintf(" ");
+    print_spaces(left_margin);
 }
 
 /* print a line in which each char stands for the background color */
