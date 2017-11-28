@@ -148,8 +148,10 @@ static void display_message(const char *s)
 static void display_inverse(const char *s,BOOL crlf)
 {
     WORD len = strlen(s);
-    WORD left = (SCREEN_WIDTH - len) / 2;
-    WORD right = SCREEN_WIDTH - (left + len);
+    WORD left = (INFO_LENGTH - len) / 2;
+    WORD right = INFO_LENGTH - (left + len);
+
+    set_margin();
 
     cprintf("\033p");
     print_spaces(left);
