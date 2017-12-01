@@ -259,8 +259,10 @@ void do_wopen(WORD new_win, WORD wh, WORD curr, WORD x, WORD y, WORD w, WORD h)
 
         if (!new_win)   /* no new window: window-relative coordinates */
         {
-            d.g_x += x; /* window to screen coordinates */
-            d.g_y += y;
+            GRECT c;
+            get_xywh(G.g_screen, G.g_croot, &c.g_x, &c.g_y, &c.g_w, &c.g_h);
+            d.g_x += c.g_x; /* convert window to screen coordinates */
+            d.g_y += c.g_y;
         }
 
         graf_growbox(d.g_x, d.g_y, d.g_w, d.g_h, x, y, w, h);
