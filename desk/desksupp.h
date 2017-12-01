@@ -29,7 +29,7 @@ void do_fopen(WNODE *pw, WORD curr, BYTE *pathname, WORD redraw);
 WORD do_open(WORD curr);
 WORD do_info(WORD curr);
 void do_format(void);
-void do_refresh(WNODE *pw);
+void refresh_window(WNODE *pw);
 ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp);
 WORD set_default_path(BYTE *path);
 

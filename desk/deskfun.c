@@ -185,7 +185,7 @@ void fun_mask(WNODE *pw)
     {
         inf_sget(tree, FMMASK, filemask);
         unfmt_str(filemask, maskptr);
-        do_refresh(pw);
+        refresh_window(pw);
     }
 }
 #endif
@@ -885,7 +885,7 @@ static void do_refresh_drive(WORD drive)
     {
         if (pw->w_id)
             if (pw->w_pnode.p_spec[0] == drive)
-                do_refresh(pw);
+                refresh_window(pw);
     }
 }
 

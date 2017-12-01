@@ -1377,7 +1377,7 @@ void do_format(void)
  *  Routine to re-read and redisplay the directory associated with
  *  the specified window
  */
-void do_refresh(WNODE *pw)
+void refresh_window(WNODE *pw)
 {
     if (!pw->w_id)      /* desktop */
         return;
