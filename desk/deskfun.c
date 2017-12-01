@@ -875,21 +875,6 @@ BOOL fun_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my, WOR
 
 
 /*
- * Function called to redisplay appropriate windows when disk is deleted
- */
-static void do_refresh_drive(WORD drive)
-{
-    WNODE *pw;
-
-    for (pw = G.g_wfirst; pw; pw = pw->w_next)
-    {
-        if (pw->w_id)
-            if (pw->w_pnode.p_spec[0] == drive)
-                refresh_window(pw);
-    }
-}
-
-/*
  * Function called to delete the contents of a disk
  */
 static WORD delete_disk(ANODE *pa)
@@ -952,7 +937,7 @@ void fun_del(WORD sobj)
             {
                 disk_found++;
                 if (delete_disk(pa))
-                    do_refresh_drive(pa->a_letter);
+                    refresh_drive(pa->a_letter);
             }
         }
         if (disk_found)

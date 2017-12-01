@@ -1361,6 +1361,7 @@ void do_format(void)
         if (rc == 0)
         {
             drive = (tree[FMT_DRVA].ob_state & SELECTED) ? 0 : 1;
+            refresh_drive('A'+drive);           /* update relevant windows */
             dos_space(drive + 1, &total, &avail);
             if (fun_alert_long(2, STFMTINF, avail) == 2)
                 rc = -1;
@@ -1383,6 +1384,28 @@ void refresh_window(WNODE *pw)
         return;
 
     do_fopen(pw, 0, pw->w_pnode.p_spec, TRUE);
+}
+
+
+/*
+ * Function called (after a format or delete) to redisplay any windows
+ * associated with the specified drive letter
+ */
+void refresh_drive(WORD drive)
+{
+    WNODE *pw;
+
+    for (pw = G.g_wfirst; pw; pw = pw->w_next)
+    {
+        if (pw->w_id)
+        {
+            if (pw->w_pnode.p_spec[0] == drive)
+            {
+                fun_close(pw, CLOSE_TO_ROOT);   /* what Atari TOS does */
+                refresh_window(pw);
+            }
+        }
+    }
 }
 
 
