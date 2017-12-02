@@ -46,7 +46,7 @@ msgstr "Date et heure"
 
 #: bios/initinfo.c:294
 msgid "Hold <Control> to skip AUTO/ACC"
-msgstr "<Control> pour ignorer AUTO/accessoires"
+msgstr "<Control> pour ignorer AUTO/ACC"
 
 #: bios/initinfo.c:297
 msgid "Hold <Alternate> to skip HDD boot"
