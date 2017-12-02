@@ -655,31 +655,34 @@ call_bzero_a0_a1:
 // Clobbers:
 //   - Exception Vectors
 _detect_32bit_address_bus:
+        move.l  a2,-(sp)                // Save registers
         move.l  sp,a1                   // Save sp before exception
         move.l  #bus_detected,0x08      // Bus Error will just return
         moveq   #1,d0                   // Assume 32-bit by default
 
         lea     0x0000000c.w,a0         // Test address is Address Error vector
+        lea     0x0100000c,a2           // 32-bit mirror address
 
         move.l  #0x12345678,d1          // First test value
         move.l  d1,(a0)                 // Write test value to 24-bit address
         jbsr    .sync_data_cache        // Mandatory if data cache is enabled
         // If we are on Atari hardware with 32-bit address bus but without
         // TT-RAM, then the instruction below will cause a Bus Error.
-        cmp.l   0x0100000c,d1           // Did value appear on 32-bit mirror?
+        cmp.l   (a2),d1                 // Did value appear on 32-bit mirror?
         jne     bus_detected            // No, we are on 32-bit bus
 
         // Test again in case where the mirror already had the test value
         not.l   d1                      // Second test value
         move.l  d1,(a0)                 // Write test value to 24-bit address
         jbsr    .sync_data_cache        // Mandatory if data cache is enabled
-        cmp.l   0x0100000c,d1           // Did value appear on 32-bit mirror?
+        cmp.l   (a2),d1                 // Did value appear on 32-bit mirror?
         jne     bus_detected            // No, we have a 32-bit address bus
 
         moveq   #0,d0                   // Yes, we have a 24-bit address bus
 
 bus_detected:
         move.l  a1,sp                   // Restore sp in case of exception
+        move.l  (sp)+,a2                // Restore registers
         rts
 
 .sync_data_cache:
@@ -689,7 +692,7 @@ bus_detected:
         addq.l  #8,sp
 
         pea     4.w                     // Size of test value
-        move.l  #0x0100000c,-(sp)       // Mirror address
+        move.l  a2,-(sp)                // Mirror address
         jbsr    _invalidate_data_cache  // Remove value from cache
         addq.l  #8,sp
 
