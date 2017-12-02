@@ -55,7 +55,7 @@ function print_object (addr, name) {
 	if (name) {
 		# remove object file path
 		sub("obj/", "", name);
-		print addr, "T", name;
+		printf "0x%08x T %s\n", strtonum(addr), name;
 	}
 }
 /^\.text/  { type = "T"; print_object($2, $4); }
@@ -64,7 +64,7 @@ function print_object (addr, name) {
 /^ COMMON/ { type = "T"; print_object($2, $4); }
 /^ +0x/    {
 	if (type) {
-		print $1, type4str(type, $2), $2;
+		printf "0x%08x %s %s\n", strtonum($1), type4str(type, $2), $2;
 	}
 }
 ' $1 | sort -n
