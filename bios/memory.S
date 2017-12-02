@@ -663,6 +663,7 @@ _detect_32bit_address_bus:
 
         move.l  #0x12345678,d1          // First test value
         move.l  d1,(a0)                 // Write test value to 24-bit address
+        jbsr    .sync_data_cache        // Mandatory if data cache is enabled
         // If we are on Atari hardware with 32-bit address bus but without
         // TT-RAM, then the instruction below will cause a Bus Error.
         cmp.l   0x0100000c,d1           // Did value appear on 32-bit mirror?
@@ -671,6 +672,7 @@ _detect_32bit_address_bus:
         // Test again in case where the mirror already had the test value
         not.l   d1                      // Second test value
         move.l  d1,(a0)                 // Write test value to 24-bit address
+        jbsr    .sync_data_cache        // Mandatory if data cache is enabled
         cmp.l   0x0100000c,d1           // Did value appear on 32-bit mirror?
         jne     bus_detected            // No, we have a 32-bit address bus
 
@@ -678,6 +680,19 @@ _detect_32bit_address_bus:
 
 bus_detected:
         move.l  a1,sp                   // Restore sp in case of exception
+        rts
+
+.sync_data_cache:
+        pea     4.w                     // Size of test value
+        move.l  a0,-(sp)                // Test address
+        jbsr    _flush_data_cache       // Push to RAM
+        addq.l  #8,sp
+
+        pea     4.w                     // Size of test value
+        move.l  #0x0100000c,-(sp)       // Mirror address
+        jbsr    _invalidate_data_cache  // Remove value from cache
+        addq.l  #8,sp
+
         rts
 
 #endif
