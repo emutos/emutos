@@ -58,11 +58,11 @@ function print_object (addr, name) {
 		printf "0x%08x T %s\n", strtonum(addr), name;
 	}
 }
-/^\.text/  { type = "T"; print_object($2, $4); }
-/^\.data/  { type = "D"; print_object($2, $4); }
-/^\.bss/   { type = "B"; print_object($2, $4); }
-/^ COMMON/ { type = "T"; print_object($2, $4); }
-/^ +0x/    {
+/^ *\.text/ { type = "T"; print_object($2, $4); }
+/^ *\.data/ { type = "D"; print_object($2, $4); }
+/^ *\.bss/  { type = "B"; print_object($2, $4); }
+/^ COMMON/  { type = "T"; print_object($2, $4); }
+/^ +0x/     {
 	if (type) {
 		printf "0x%08x %s %s\n", strtonum($1), type4str(type, $2), $2;
 	}
