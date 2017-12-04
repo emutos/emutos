@@ -74,11 +74,13 @@
 
 /*
  * the following specify the maximum allowed dimensions of a drop-down
- * menu, in characters.  these are somewhat arbitrary, but conservative
- * for EmuTOS at the time this was updated.
+ * menu, in characters.  these are somewhat arbitrary, but were large
+ * enough for EmuDesk itself at the time this was originally committed.
+ * they were subsequently increased to handle the menus in the French
+ * version of AtariWorks.
  */
 #define MAX_MENU_WIDTH  32
-#define MAX_MENU_HEIGHT 16
+#define MAX_MENU_HEIGHT 20
 #define MAX_MENU_CHARS  (MAX_MENU_WIDTH*MAX_MENU_HEIGHT)
 
 /*
