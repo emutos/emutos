@@ -657,15 +657,22 @@ bit_blt (void)
     }
 
     /*
-     * The low nybble of the difference in Source and Destination alignment
-     * is the skew value.  If the skew value is 0 and both the source &
-     * destination widths are 1, use a flag of FXSR only and force the
-     * source x inc to 0; otherwise, use the skew flag index to obtain
-     * FXSR and NFSR values from the skew flag table.
+     * Set up the skew byte, which contains the FXSR/NFSR flags and the
+     * skew value.  The skew value is the low nybble of the difference
+     * in Source and Destination alignment.
+     *
+     * The main complication is setting the FXSR/NFSR flags.  Normally
+     * we use the calculated skew_idx to obtain them from the skew_flags[]
+     * array.  However, when the source and destination widths are both 1,
+     * we do not set either flag unless the skew value is zero, in which
+     * case we set the FXSR flag only.  Additionally, we must set the skew
+     * direction in source x incr.
+     *
+     * Thank you blitter hardware designers ...
      */
-    if (!s_span && !d_span && !skew) {
-        blt->skew = mSkewFXSR;
-        blt->src_x_inc = 0;
+    if (!s_span && !d_span) {
+        blt->src_x_inc = skew;          /* sets skew direction */
+        blt->skew = skew ? (skew & 0x0f) : mSkewFXSR;
     } else {
         blt->skew = (skew & 0x0f) | skew_flags[skew_idx];
     }
