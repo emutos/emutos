@@ -1,7 +1,7 @@
 /*
  * linea.S - linea graphics stuff
  *
- * Copyright (C) 2002-2016 by Authors:
+ * Copyright (C) 2002-2017 by Authors:
  *
  * Authors:
  *  THH  Thomas Huth

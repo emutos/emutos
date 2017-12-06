@@ -2,7 +2,7 @@
  * memmove.S - a fast memmove/memcpy for 68000/ColdFire
  *
  * Copyright (C) 2001 by Authors:
- * Copyright (C) 2013-2016 by The EmuTOS development team.
+ * Copyright (C) 2013-2017 by The EmuTOS development team.
  *
  * Authors:
  *  LVL  Laurent Vogel
