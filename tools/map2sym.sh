@@ -39,7 +39,8 @@ fi
 # duplicate & misleading object addresses.
 awk '
 BEGIN {
-	objtype = "";
+	# system variables type at startup
+	objtype = "T";
 	objaddr = 0x0;
 }
 function set_object (addr, type, name) {
@@ -60,17 +61,25 @@ function set_object (addr, type, name) {
 		objtype = type;
 	}
 }
+# special sections
+/^ *\.lowstram/  { objtype = "D"; }
+/^ *\.laststram/ { objtype = "D"; }
+/^ *\.stack/     { objtype = "B"; }
+/^ COMMON/       { objtype = "T"; }
+# normal TEXT, BSS & DATA sections
 /^ *\.text/ { set_object($2, "T", $4); }
 /^ *\.data/ { set_object($2, "D", $4); }
 /^ *\.bss/  { set_object($2, "B", $4); }
-/^ COMMON/  { set_object($2, "T", $4); }
+# symbols in any of the sections
 /^ +0x/     {
 	if (objtype) {
 		if (objaddr) {
 			printf "0x%08x %s %s\n", objaddr, objtype, objname;
 			objaddr = 0x0;
 		}
-		printf "0x%08x %s %s\n", strtonum($1), objtype, $2;
+		if ($2 != "." && $2 != "ASSERT") {
+			printf "0x%08x %s %s\n", strtonum($1), objtype, $2;
+		}
 	}
 }
 # clean out library paths for objects coming from static libraries
