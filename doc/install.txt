@@ -78,7 +78,7 @@ DEF='-DSOMEDEFINE=value'
 
 Utility targets
 ---------------
- 
+
 bugready    for translations: sets up files in preparation for 'bug update'
 
 Debug targets
