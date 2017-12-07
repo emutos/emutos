@@ -12,57 +12,57 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: bios/bios.c:699
+#: bios/bios.c:713
 msgid ""
 "System halted!\n"
 msgstr ""
 "Systeemi pysäytetty!\n"
 
-#: bios/initinfo.c:168
+#: bios/initinfo.c:217
 msgid "GEMDOS drives"
 msgstr "GEMDOS-asemat"
 
-#: bios/initinfo.c:192
+#: bios/initinfo.c:241
 msgid "MB"
 msgstr "MB"
 
-#: bios/initinfo.c:196
+#: bios/initinfo.c:245
 msgid "KB"
 msgstr "KB"
 
-#: bios/initinfo.c:260
+#: bios/initinfo.c:311
 msgid "EmuTOS Version"
 msgstr "EmuTOS versio"
 
-#: bios/initinfo.c:262
+#: bios/initinfo.c:313
 msgid "CPU type"
 msgstr "CPU-tyyppi"
 
-#: bios/initinfo.c:275
+#: bios/initinfo.c:326
 msgid "Machine"
 msgstr "Kone"
 
-#: bios/initinfo.c:288
+#: bios/initinfo.c:339
 msgid "Boot time"
 msgstr "Käynnistysaika"
 
-#: bios/initinfo.c:294
+#: bios/initinfo.c:344
 msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "<Ctrl> pohjassa = ohita AUTO/ACC"
 
-#: bios/initinfo.c:297
+#: bios/initinfo.c:346
 msgid "Hold <Alternate> to skip HDD boot"
 msgstr "<Alt> pohjassa = ohita kovalevy"
 
-#: bios/initinfo.c:300
+#: bios/initinfo.c:348
 msgid "Press key 'X' to boot from X:"
 msgstr "Käynnistys asemalta X: -> paina 'X'"
 
-#: bios/initinfo.c:303
+#: bios/initinfo.c:350
 msgid "Press <Esc> to run an early console"
 msgstr "Käynnistyskonsoli -> paina <Esc>"
 
-#: bios/initinfo.c:314
+#: bios/initinfo.c:360
 msgid "Hold <Shift> to pause this screen"
 msgstr "Pysäytä ruutu <Shift> näppäimellä"
 

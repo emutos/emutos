@@ -9,57 +9,57 @@ msgstr ""
 "Content-Type: text/plain; charset=russian-atarist\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: bios/bios.c:699
+#: bios/bios.c:713
 msgid ""
 "System halted!\n"
 msgstr ""
 "Система остановлена!\n"
 
-#: bios/initinfo.c:168
+#: bios/initinfo.c:217
 msgid "GEMDOS drives"
 msgstr "Диски GEMDOS"
 
-#: bios/initinfo.c:192
+#: bios/initinfo.c:241
 msgid "MB"
 msgstr "МБ"
 
-#: bios/initinfo.c:196
+#: bios/initinfo.c:245
 msgid "KB"
 msgstr "КБ"
 
-#: bios/initinfo.c:260
+#: bios/initinfo.c:311
 msgid "EmuTOS Version"
 msgstr "Версия EmuTOS"
 
-#: bios/initinfo.c:262
+#: bios/initinfo.c:313
 msgid "CPU type"
 msgstr "Тип CPU"
 
-#: bios/initinfo.c:275
+#: bios/initinfo.c:326
 msgid "Machine"
 msgstr "Компьютер"
 
-#: bios/initinfo.c:288
+#: bios/initinfo.c:339
 msgid "Boot time"
 msgstr "Время загрузки"
 
-#: bios/initinfo.c:294
+#: bios/initinfo.c:344
 msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "Удерж.нажатой <Ctrl>-без AUTO/ACC"
 
-#: bios/initinfo.c:297
+#: bios/initinfo.c:346
 msgid "Hold <Alternate> to skip HDD boot"
 msgstr "Удерж.нажатой <Alt>-без HDD загрузки"
 
-#: bios/initinfo.c:300
+#: bios/initinfo.c:348
 msgid "Press key 'X' to boot from X:"
 msgstr "Нажмите клавишу 'X' для загрузки с диска X:"
 
-#: bios/initinfo.c:303
+#: bios/initinfo.c:350
 msgid "Press <Esc> to run an early console"
 msgstr "Нажмите <Esc> для запуска предыдущей консоли"
 
-#: bios/initinfo.c:314
+#: bios/initinfo.c:360
 msgid "Hold <Shift> to pause this screen"
 msgstr "Удерж.нажатой <Shift> для паузы"
 

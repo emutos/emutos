@@ -24,56 +24,56 @@ msgstr ""
 "Content-Type: text/plain; charset=cp737\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: bios/bios.c:699
+#: bios/bios.c:713
 msgid ""
 "System halted!\n"
 msgstr "’¦ ©ç©«£˜ §ášà©œ!"
 
-#: bios/initinfo.c:168
+#: bios/initinfo.c:217
 msgid "GEMDOS drives"
 msgstr "Drives «¦¬ GEMDOS"
 
-#: bios/initinfo.c:192
+#: bios/initinfo.c:241
 msgid "MB"
 msgstr "MB"
 
-#: bios/initinfo.c:196
+#: bios/initinfo.c:245
 msgid "KB"
 msgstr "KB"
 
-#: bios/initinfo.c:260
+#: bios/initinfo.c:311
 msgid "EmuTOS Version"
 msgstr "ë¡›¦© EmuTOS"
 
-#: bios/initinfo.c:262
+#: bios/initinfo.c:313
 msgid "CPU type"
 msgstr "’ç§¦ª CPU"
 
-#: bios/initinfo.c:275
+#: bios/initinfo.c:326
 msgid "Machine"
 msgstr "“§¦¢¦š ©«ãª"
 
-#: bios/initinfo.c:288
+#: bios/initinfo.c:339
 msgid "Boot time"
 msgstr "ğ¨˜ œ¡¡å¤©ª"
 
-#: bios/initinfo.c:294
+#: bios/initinfo.c:344
 msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "˜«ã©«œ <Control> š ˜ ¤˜ §˜¨˜¡á£¯œ«œ AUTO/ACC"
 
-#: bios/initinfo.c:297
+#: bios/initinfo.c:346
 msgid "Hold <Alternate> to skip HDD boot"
 msgstr "˜«ã©«œ <Alternate> š ˜ ¤˜ §˜¨˜¡á£¯œ«œ HDD"
 
-#: bios/initinfo.c:300
+#: bios/initinfo.c:348
 msgid "Press key 'X' to boot from X:"
 msgstr "˜«ã©«œ «¦ '•' š ˜ ¤˜ œ¡¡ ¤ã©œ«œ ˜§æ «¦ •:"
 
-#: bios/initinfo.c:303
+#: bios/initinfo.c:350
 msgid "Press <Esc> to run an early console"
 msgstr "˜«ã©«œ <Esc> š ˜ ¤˜ «¨â¥œ«œ £ ˜ §¨é £ ¡¦¤©æ¢˜"
 
-#: bios/initinfo.c:314
+#: bios/initinfo.c:360
 msgid "Hold <Shift> to pause this screen"
 msgstr "˜«ã©«œ «¦ <Shift> š ˜ §˜ç©"
 

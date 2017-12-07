@@ -18,51 +18,51 @@ msgid ""
 msgstr ""
 "Systém zastaven!\n"
 
-#: bios/initinfo.c:168
+#: bios/initinfo.c:217
 msgid "GEMDOS drives"
 msgstr "Disky GEMDOSu"
 
-#: bios/initinfo.c:192
+#: bios/initinfo.c:241
 msgid "MB"
 msgstr "MB"
 
-#: bios/initinfo.c:196
+#: bios/initinfo.c:245
 msgid "KB"
 msgstr "KB"
 
-#: bios/initinfo.c:260
+#: bios/initinfo.c:311
 msgid "EmuTOS Version"
 msgstr "EmuTOS verze"
 
-#: bios/initinfo.c:262
+#: bios/initinfo.c:313
 msgid "CPU type"
 msgstr "Typ CPU"
 
-#: bios/initinfo.c:275
+#: bios/initinfo.c:326
 msgid "Machine"
 msgstr "Poèítaè"
 
-#: bios/initinfo.c:288
+#: bios/initinfo.c:339
 msgid "Boot time"
 msgstr "Èas startu"
 
-#: bios/initinfo.c:294
+#: bios/initinfo.c:344
 msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "Podr¾ <Ctrl> a pøeskoè AUTO/ACC"
 
-#: bios/initinfo.c:297
+#: bios/initinfo.c:346
 msgid "Hold <Alternate> to skip HDD boot"
 msgstr "Podr¾ <Alt> k pøeskoèení HDD"
 
-#: bios/initinfo.c:300
+#: bios/initinfo.c:348
 msgid "Press key 'X' to boot from X:"
 msgstr "Pro start z disku X: stisknìte klávesu 'X'."
 
-#: bios/initinfo.c:303
+#: bios/initinfo.c:350
 msgid "Press <Esc> to run an early console"
 msgstr "Pro spu¹tìní brzké konzole stisknìte <Esc>."
 
-#: bios/initinfo.c:314
+#: bios/initinfo.c:360
 msgid "Hold <Shift> to pause this screen"
 msgstr "Podr¾ <Shift> pro pauzu obrazovky"
 
