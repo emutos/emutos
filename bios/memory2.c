@@ -70,14 +70,22 @@ void ttram_detect(void)
 #if CONF_WITH_TTRAM
     if (ramvalid == RAMVALID_MAGIC)
     {
-        /* Previous TT-RAM settings were valid. Just trust them blindly. */
+        /* Previous TT-RAM settings were valid. */
+        if (ramtop != NULL)
+        {
+            /* There was some TT-RAM. Be sure it is still valid.
+             * TT-RAM may disappear on CT60, after reset into 68030 mode. */
+            if (ramtop < (TTRAM_START + 1)
+                || !IS_BUS32
 #if CONF_WITH_BUS_ERROR
-        /* Nevertheless, we still check if TT-RAM is really available.
-         * It may have disappeared on CT60, after using a warm boot
-         * to switch back to 68030 mode. */
-        if (ramtop != NULL && !check_read_byte((long)TTRAM_START))
-            ramtop = NULL;
-#endif /* CONF_WITH_BUS_ERROR */
+                || !check_read_byte((long)TTRAM_START) /* First byte */
+                || !check_read_byte((long)(ramtop - 1)) /* Last byte */
+#endif
+            ) {
+                /* Previous TT-RAM settings aren't valid any more */
+                ramtop = NULL;
+            }
+        }
     }
     else
     {
