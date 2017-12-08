@@ -47,6 +47,9 @@
  *
  *  v1.2    roger burrows, october/2017
  *          . rename strdup() to avoid name conflicts
+ *
+ *  v1.3    roger burrows, december/2017
+ *          . fix bug when deleting last item of menu
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -225,7 +228,7 @@ typedef struct
  *  our own defines & structures
  */
 #define PROGRAM_NAME    "draft"
-#define VERSION         "v1.2"
+#define VERSION         "v1.3"
 #define MAX_STRLEN      300         /* max size for internal string areas */
 
 #define OFFSET(item,base)    ((char *)item-(char *)base)
@@ -654,7 +657,7 @@ short prev, temp;
 
 PRIVATE void delete_menuitem(int entry)
 {
-OFFSET *trindex;
+OFFSET *trindex, *trindex_end;
 OBJECT *item, *parent, *tree, *obj;
 DEF_ENTRY *d = &def[entry], *d2;
 short curr, prev;
@@ -755,7 +758,8 @@ int i, num_objs;
      * finally(!) we update the tree index entries for all tree numbers
      * above the current one, since all their objects have moved down one
      */
-    for (i = d->tree+1, trindex++; i < rsh_in.ntree; i++, trindex++)
+    trindex_end = (OFFSET *)((char *)rschdr_in+rsh_in.trindex) + rsh_in.ntree;
+    for (trindex++; trindex < trindex_end; trindex++)
         put_offset(trindex,get_offset(trindex)-sizeof(OBJECT));
 }
 
