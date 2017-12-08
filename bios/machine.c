@@ -207,8 +207,18 @@ static void detect_blitter(void)
 {
     has_blitter = blitter_is_enabled = 0;
 
-    if (check_read_byte(BLITTER_CONFIG1))
-        has_blitter = 1;
+    /*
+     * although no Atari-developed system has both TT-RAM and a blitter,
+     * some add-ons to Atari systems do (e.g. a CT60 in 68060 mode).
+     * because the Atari blitter only supports 24-bit addressing, we must
+     * prevent its use on such systems.  we do allow a blitter on the
+     * FireBee, which by design supports 32-bit blitting.
+     */
+#ifndef MACHINE_FIREBEE
+    if (!ramtop)
+#endif
+        if (check_read_byte(BLITTER_CONFIG1))
+            has_blitter = 1;
 
     KDEBUG(("has_blitter = %d\n", has_blitter));
 }
