@@ -746,6 +746,13 @@ int i, num_objs;
         d2->obj--;
 
     /*
+     * if we are deleting the physically last object,
+     * the previous item is now the last
+     */
+    if (get_ushort(&item->ob_flags) & LASTOB)
+        put_ushort(&item[-1].ob_flags,get_ushort(&item[-1].ob_flags) | LASTOB);
+
+    /*
      * now we delete the object itself and the corresponding DEF entry
      */
     n = item - (OBJECT *)((char *)rschdr_in+rsh_in.object);
