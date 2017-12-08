@@ -59,19 +59,19 @@ msgstr "ğ¨˜ œ¡¡å¤©ª"
 
 #: bios/initinfo.c:344
 msgid "Hold <Control> to skip AUTO/ACC"
-msgstr "˜«ã©«œ <Control> š ˜ ¤˜ §˜¨˜¡á£¯œ«œ AUTO/ACC"
+msgstr " â©«œ <Ctrl> š ˜ §˜¨á¡˜£¯ AUTO/ACC"
 
 #: bios/initinfo.c:346
 msgid "Hold <Alternate> to skip HDD boot"
-msgstr "˜«ã©«œ <Alternate> š ˜ ¤˜ §˜¨˜¡á£¯œ«œ HDD"
+msgstr " â©«œ <Alt> š ˜ §˜¨á¡˜£¯ HDD"
 
 #: bios/initinfo.c:348
 msgid "Press key 'X' to boot from X:"
-msgstr "˜«ã©«œ «¦ '•' š ˜ ¤˜ œ¡¡ ¤ã©œ«œ ˜§æ «¦ •:"
+msgstr " â©«œ X š ˜ œ¡¡å¤© ˜§æ X:"
 
 #: bios/initinfo.c:350
 msgid "Press <Esc> to run an early console"
-msgstr "˜«ã©«œ <Esc> š ˜ ¤˜ «¨â¥œ«œ £ ˜ §¨é £ ¡¦¤©æ¢˜"
+msgstr " â©«œ <Esc> š ˜ ­æ¨«à© ¡¦¤©æ¢˜ª"
 
 #: bios/initinfo.c:360
 msgid "Hold <Shift> to pause this screen"
@@ -293,7 +293,7 @@ msgstr "„« ¡â«˜ ›å©¡¦¬: ________.___"
 
 #: desk/desk_rsc.c:83
 msgid "Bytes used: __________"
-msgstr "Bytes §¦¬ ®¨© £¦§¦ ¦ç¤«˜ : __________"
+msgstr "Bytes ©œ ®¨ã©: __________"
 
 #: desk/desk_rsc.c:88
 msgid "Bytes available: __________"
@@ -549,7 +549,7 @@ msgstr "„‚‰€’€‘’€‘† „”€‹‚†‘"
 
 #: desk/desk_rsc.c:970
 msgid "Boot status:"
-msgstr "‰˜«á©«˜© œ¡¡å¤©ª:"
+msgstr "„¡¡å¤©:"
 
 #: desk/desk_rsc.c:982
 msgid "Auto"
