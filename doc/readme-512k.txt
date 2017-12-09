@@ -21,6 +21,9 @@ emucurs.def - definition file for the above
 emuicon.rsc - contains additional icons for the desktop
 emuicon.def - definition file for the above
 
+Note that the emuicon.rsc file format differs from deskicon.rsc used by later
+versions of the Atari TOS desktop.
+
 Additional information on debugging EmuTOS and its software compatibility
 is included with Hatari:
 http://hg.tuxfamily.org/mercurialroot/hatari/hatari/raw-file/tip/doc/emutos.txt
