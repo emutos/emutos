@@ -436,14 +436,6 @@ void ide_init(void)
     if (!has_ide)
         return;
 
-#if CONF_WITH_APOLLO_68080
-    if (is_apollo_68080)
-    {
-        /* Enable Fast IDE (PIO mode 6) */
-        *(volatile UWORD *)0x00dd1020 = 0x8000;
-    }
-#endif
-
 #if CONF_ATARI_HARDWARE && !defined(MACHINE_FIREBEE)
     /* reject 'ghost' interfaces & detect twisted cables */
     for (i = 0, bitmask = 1; i < NUM_IDE_INTERFACES; i++, bitmask <<= 1)
