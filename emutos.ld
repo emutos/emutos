@@ -38,7 +38,7 @@ OUTPUT_FORMAT(binary)
  * Then our padding tool will eventually report an overflow, with a better
  * diagnostic message than the linker.
  */
-# define ROM_LENGTH 1M /* Maximum size before I/O area */
+#define ROM_LENGTH 1M /* Maximum size before I/O area */
 
 /* Memory regions of a typical Atari computer.
  * Only start addresses matter. Lengths just need to be large enough.
