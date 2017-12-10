@@ -708,7 +708,6 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname, BYT
 
     if (installed_datafile)
     {
-        BYTE *p;
         /*
          * the user has selected a file with an extension that matches
          * an installed application.  we set up to open the application,
