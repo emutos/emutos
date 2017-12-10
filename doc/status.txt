@@ -16,7 +16,7 @@ if possible add a line telling in which version it did run.
   TOSBox 1.10a        |   no  |  ?  |  < Sep 2002 |
   WinSTon V0.1r2      |   no  |  ?  |  < Sep 2002 |
   WinUAE 3.5.0        |  yes  | VRI | 10 Dec 2017 |
-  SainT v2.40         |   no  | VRI | 10 Dec 2017 | does not start
+  SainT v2.40         |  yes  | (1) | 10 Dec 2017 | 192k ROM only
   --------------------+-------+-----+-------------+----------------
   Atari & compatibles |       |     |             |
   STfm                |  yes  | (1) | 23 Nov 2017 |
