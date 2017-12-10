@@ -1,7 +1,4 @@
 General
-- the source cannot currently be compiled with the following warning flags:
-    -Wmissing-prototypes -Wstrict-prototypes
-  because certain files (e.g. bdosmain.c) deliberately omit parameter lists.
 
 BIOS/XBIOS
 - implement missing XBIOS calls (e.g. Falcon DSP functions)

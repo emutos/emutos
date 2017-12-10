@@ -1,7 +1,7 @@
 EmuTOS - ARAnyM version
 
 This ROM is optimized for ARAnyM:
-http://aranym.org/
+https://aranym.github.io/
 
 emutos-aranym.img - Multilanguage
 

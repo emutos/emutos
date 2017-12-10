@@ -28,6 +28,7 @@ Other changes:
 - BIOS: Fix XHDrvMap() to return correct value
 - BIOS: Fix bug in memset/bzero clearing only 16MB at most
 - BIOS: Implement XHDOSLimits (read only)
+- BIOS: Amiga/Vampire V2: do not enable Fast IDE by default
 - EmuDesk: Add blitter menu item to desktop
 - EmuDesk: Add support for desktop drag-and-drop in window
 - EmuDesk: Allow any character as date separator
