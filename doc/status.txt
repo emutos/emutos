@@ -25,6 +25,7 @@ if possible add a line telling in which version it did run.
   Mega STe            |  yes  | (2) | 26 Jun 2004 | only RAMTOS tested
   TT030               |  yes  | (1) | 23 Nov 2017 | SCSI not yet supported
   Falcon030           |  yes  | (7) | 31 Dec 2016 |
+  Falcon030 + CT60    |  yes  | RFB | 10 Dec 2017 | only PRG tested
   Suska III-C (2K15B) |  yes  | (5) | 23 Apr 2016 |
   --------------------+-------+-----+-------------+----------------
   Other systems       |       |     |             |
