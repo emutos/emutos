@@ -150,8 +150,8 @@ SMALL_OPTFLAGS = -Os
 BUILD_TOOLS_OPTFLAGS = -O
 OPTFLAGS = $(STANDARD_OPTFLAGS)
 
-WARNFLAGS = -Wall -Wundef
-#-Wshadow -Wmissing-prototypes -Wstrict-prototypes
+WARNFLAGS = -Wall -Wundef -Wmissing-prototypes -Wstrict-prototypes
+#-Wshadow
 #-Werror
 
 GCCVERSION := $(shell $(CC) -dumpversion | cut -d. -f1)
