@@ -1541,6 +1541,11 @@ static void desk_xlate_fix(void)
         objversion->ob_width = 40;
         objversion->ob_flags |= CENTRE_ALIGNED;
     }
+    else {
+        /* quick hack to center 4-digit version */
+        objlabel->ob_x -= 1;
+        objversion->ob_x -= 1;
+    }
 
     /* insert the version number */
     objyear->ob_spec = (LONG) COPYRIGHT_YEAR;
