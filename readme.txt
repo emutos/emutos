@@ -1,9 +1,9 @@
-This release has been built on Linux Mint (a Ubuntu derivative), using
+This release has been built on Windows/Cygwin, using
 Vincent Rivière's GCC 4.6.4 cross-compiler.  The custom tools used in
-the build process were built with native GCC 4.8.4.
+the build process were built with native GCC 6.4.0.
 
 The source package and other binary packages are available at:
-http://sourceforge.net/projects/emutos/files/emutos/0.9.8/
+http://sourceforge.net/projects/emutos/files/emutos/0.9.9.1/
 
 If you want to read more about EmuTOS, please take a look at these files:
 

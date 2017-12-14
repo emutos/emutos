@@ -14,5 +14,5 @@
 # EmuTOS and EmuCON2 version
 #
 
-VERSION = 0.9.9-$(shell date +%Y%m%d)
-#VERSION = 0.9.9
+#VERSION = 0.9.9-$(shell date +%Y%m%d)
+VERSION = 0.9.9.1
