@@ -1,3 +1,12 @@
+CHANGES BETWEEN RELEASE 0.9.9 AND RELEASE 0.9.9.1
+
+There was only one change, to fix a major bug in EmuDesk: if a desktop
+shortcut for a file/folder was dragged to the trash or a disk icon or
+an open window, then all the folders at the same level as the selected
+file/folder were included in the operation, causing unwanted deletes/
+moves/copies.
+
+
 CHANGES BETWEEN RELEASE 0.9.8 AND RELEASE 0.9.9
 
 Major changes:
