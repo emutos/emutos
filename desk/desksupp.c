@@ -389,7 +389,7 @@ WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon,
     }
 
     /* activate path by search and sort of directory */
-    ret = pn_active(&pw->w_pnode);
+    ret = pn_active(&pw->w_pnode, TRUE);
     if (ret < 0)    /* error reading directory */
     {
         KDEBUG(("Error reading directory %s\n",pathname));
