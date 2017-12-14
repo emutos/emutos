@@ -227,11 +227,19 @@ FNODE *pn_sort(PNODE *pn)
 /*
  *  Build the filenode list for the specified pathnode
  *
+ *  if 'include_folders' is TRUE, the filenode list will include all
+ *  folders in the pathnode: this is required for correct display of
+ *  directory contents when the filemask is other than *.*
+ *
+ *  if 'include_folders' is FALSE, the filenode list will only include
+ *  files/folders matching the filespec in the pathnode: this is used by
+ *  fun_file2any() when dragging a desktop icon representing a file/folder
+ *
  *  returns 0   0 or more files found without error
  *          <0  error (other than EFILNF/ENMFIL) returned by dos_sfirst()/dos_snext()
  *              (e.g. when attempting to open a floppy drive with no disk)
  */
-WORD pn_active(PNODE *pn)
+WORD pn_active(PNODE *pn, BOOL include_folders)
 {
     FNODE *fn, *prev;
     LONG maxmem, maxcount, size = 0L;
@@ -256,14 +264,13 @@ WORD pn_active(PNODE *pn)
     dos_sdta(&G.g_wdta);
 
 #if CONF_WITH_FILEMASK
-    /*
-     * we cannot use the pathnode specification as-is, because the filenode
-     * list must include all folders, not just the ones that match p_spec.
-     * so we use a file mask of *.* and do the wildcard matching ourselves.
-     */
     strcpy(search, pn->p_spec);
-    del_fname(search);                  /* change search filespec to *.* */
-    match = filename_start(pn->p_spec); /* match filespec is unaltered */
+    /*
+     * do we want to include folders in the match list?
+     */
+    if (include_folders)                /* match all folders? */
+        del_fname(search);              /* yes - change search filespec to *.* */
+    match = filename_start(pn->p_spec); /* the match filespec is always unaltered */
     for (ret = dos_sfirst(search, pn->p_attr), count = 0; (ret == 0) && (count < maxcount); ret = dos_snext())
     {
         if (G.g_wdta.d_attrib != F_SUBDIR)  /* skip *files* that don't match */

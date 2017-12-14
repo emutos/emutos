@@ -82,6 +82,6 @@ FNODE *fpd_ofind(FNODE *pf, WORD obj);
 void pn_close(PNODE *thepath);
 PNODE *pn_open(BYTE *pathname, WNODE *pw);
 FNODE *pn_sort(PNODE *pn);
-WORD pn_active(PNODE *thepath);
+WORD pn_active(PNODE *thepath, BOOL include_folders);
 
 #endif  /* _DESKFPD_H */

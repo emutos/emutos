@@ -140,7 +140,7 @@ void fun_rebld(BYTE *ptst)
         /* if opened and same path then rebuild */
         if ( (pwin->w_id) && (strcmp(pwin->w_pnode.p_spec, ptst)==0) )
         {
-            pn_active(&pwin->w_pnode);
+            pn_active(&pwin->w_pnode, TRUE);
             desk_verify(pwin->w_id, TRUE);
             win_sinfo(pwin);
             wind_set(pwin->w_id, WF_INFO, pwin->w_info, 0, 0);
@@ -745,7 +745,7 @@ static WORD fun_file2any(WORD sobj, WNODE *wn_dest, ANODE *an_dest, FNODE *fn_de
 
     if (pn_src)
     {
-        okay = pn_active(pn_src);
+        okay = pn_active(pn_src, FALSE);
 
         if (pn_src->p_flist)
         {
@@ -891,7 +891,7 @@ static WORD delete_disk(ANODE *pa)
         return 0;
 
     graf_mouse(HGLASS, NULL);
-    pn_active(pn);
+    pn_active(pn, TRUE);
     if (pn->p_flist)
     {
         /*
