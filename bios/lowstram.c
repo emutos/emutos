@@ -31,4 +31,5 @@ UBYTE dskbuf[DSKBUF_SIZE] __attribute__ ((aligned (2)));
  * TOS puts this variable in a region accessible in user mode, so we
  * do.
  */
+UBYTE dskbuf_alignment[3]; /* FIXME: Unsafe hack to align dskbuf on 4 bytes */
 UBYTE shifty; /* reflects the status up/down of mode keys */

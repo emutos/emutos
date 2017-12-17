@@ -129,6 +129,7 @@ SECTIONS
         obj/lowstram.o(.bss COMMON)
         __low_stram_end = .;
         ASSERT(ABSOLUTE(_shifty) < 0x8000, "error: bad _shifty address");
+        ASSERT((ABSOLUTE(_dskbuf) & 3) == 0, "error: bad _dskbuf alignment");
     } >stram
 
     /* The BSS segment contains uninitialized global variables.
