@@ -82,31 +82,6 @@ SECTIONS
     } >altram
 #endif
 
-    /* The TEXT segment contains EmuTOS executable code and read-only data.
-     * It is always read-only, so it can safely live in ROM.
-     */
-    .text :
-    {
-        CREATE_OBJECT_SYMBOLS
-        __text = .;
-        *(.text)
-        *(.rodata .rodata.*) /* Only present in ELF objects */
-        __etext = .;
-    } >REGION_READ_ONLY
-
-    /* FIXME: Our DATA segment is currently read-only.
-     * It currently lives in the ROM, just after the TEXT segment.
-     * This means that initialized global variables can't be modified.
-     * Since a read-only DATA segment is useless, we try to keep it empty by
-     * making all initialized variables const, so they go to the TEXT segment.
-     */
-    .data :
-    {
-        __data = .;
-        *(.data)
-        __edata = .;
-    } >REGION_READ_ONLY
-
     /* This section is the internal BIOS stack.
      * It will *not* be cleared on startup or reset.
      */
@@ -131,6 +106,31 @@ SECTIONS
         ASSERT(ABSOLUTE(_shifty) < 0x8000, "error: bad _shifty address");
         ASSERT((ABSOLUTE(_dskbuf) & 3) == 0, "error: bad _dskbuf alignment");
     } >stram
+
+    /* The TEXT segment contains EmuTOS executable code and read-only data.
+     * It is always read-only, so it can safely live in ROM.
+     */
+    .text :
+    {
+        CREATE_OBJECT_SYMBOLS
+        __text = .;
+        *(.text)
+        *(.rodata .rodata.*) /* Only present in ELF objects */
+        __etext = .;
+    } >REGION_READ_ONLY
+
+    /* FIXME: Our DATA segment is currently read-only.
+     * It currently lives in the ROM, just after the TEXT segment.
+     * This means that initialized global variables can't be modified.
+     * Since a read-only DATA segment is useless, we try to keep it empty by
+     * making all initialized variables const, so they go to the TEXT segment.
+     */
+    .data :
+    {
+        __data = .;
+        *(.data)
+        __edata = .;
+    } >REGION_READ_ONLY
 
     /* The BSS segment contains uninitialized global variables.
      * It will be cleared by the startup code.
