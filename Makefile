@@ -183,6 +183,9 @@ NATIVECC = gcc -ansi -pedantic $(WARNFLAGS) -W $(BUILD_TOOLS_OPTFLAGS)
 # The source below must be the first to be linked
 bios_src = startup.S
 
+# These sources will be placed in ST-RAM by the linked script
+bios_src += lowstram.c
+
 # Other BIOS sources can be put in any order
 bios_src +=  memory.S processor.S vectors.S aciavecs.S bios.c xbios.c acsi.c \
              biosmem.c blkdev.c chardev.c clock.c conout.c cookie.c country.c \

@@ -146,6 +146,15 @@ SECTIONS
         _stktop = .;
     } >REGION_READ_WRITE
 
+    /* This section is located as low as possible in ST-RAM,
+     * but after the stack.
+     * Warning: this area is not cleared at startup.
+     */
+    .lowstram2 :
+    {
+        obj/lowstram.o(.bss COMMON)
+    } >stram
+
     /* The BSS segment contains uninitialized global variables.
      * It will be cleared by the startup code.
      */

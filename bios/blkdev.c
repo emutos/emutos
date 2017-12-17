@@ -93,9 +93,9 @@ UWORD compute_cksum(const UWORD *buf)
 
 void blkdev_init(void)
 {
-    /* allocate low memory for the block buffer */
-    dskbufp = balloc_stram(DSKBUF_SIZE, FALSE);
-    KDEBUG(("diskbuf = %p\n",dskbufp));
+    /* initialize dskbufp for the block buffer */
+    dskbufp = dskbuf;
+    KDEBUG(("dskbufp = %p\n",dskbufp));
 
     /* setup booting related vectors */
     hdv_boot    = blkdev_hdv_boot;
