@@ -74,35 +74,6 @@ sysvars_end = ORIGIN(sysvars) + LENGTH(sysvars);
 
 SECTIONS
 {
-    /* This section is located as low as possible in ST-RAM.
-     * Variables requiring very low addresses, while being accessible
-     * from user mode, can be put here.
-     * Warning: this area is not cleared at startup.
-     */
-    .lowstram :
-    {
-        __low_stram_start = .;
-
-        /* Workaround for bug in GFA Basic 3.51 startup.
-         * Theoretically, we are allowed to put the shifty variable anywhere,
-         * then programs may access it through the pointer present in
-         * OSHEADER. However, by mistake the GFA only reads the low word of
-         * that pointer, and sign-extends it to get the whole address.
-         * Consequently, this can only be correct if shifty is located in the
-         * first 32K of memory.
-         * TOS puts this variable in a region accessible in user mode, so we
-         * do.
-         */
-        _shifty = .; /* reflects the status up/down of mode keys */
-        . += 1; /* UBYTE */
-        ASSERT(ABSOLUTE(_shifty) < 0x8000, "error: bad _shifty address");
-
-        /* Be sure to align this section size */
-        . = ALIGN(4);
-
-        __low_stram_end = .;
-    } >stram
-
 #if CONF_WITH_STATIC_ALT_RAM
     /* First section in static Alt-RAM */
     .first_altram :
@@ -147,12 +118,17 @@ SECTIONS
     } >REGION_READ_WRITE
 
     /* This section is located as low as possible in ST-RAM,
-     * but after the stack.
+     * but after evental BIOS stack.
+     * Variables requiring very low addresses, while being accessible
+     * from user mode, can be put here.
      * Warning: this area is not cleared at startup.
      */
-    .lowstram2 :
+    .lowstram :
     {
+        __low_stram_start = .;
         obj/lowstram.o(.bss COMMON)
+        __low_stram_end = .;
+        ASSERT(ABSOLUTE(_shifty) < 0x8000, "error: bad _shifty address");
     } >stram
 
     /* The BSS segment contains uninitialized global variables.
