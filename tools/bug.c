@@ -641,15 +641,11 @@ static void ifclose(IFILE *f)
 static void iback(IFILE *f)
 {
     if (f->index == 0)
-    {
         fatal("too far backward");
-    }
-    else
-    {
-        if (f->buf[f->index] == '\n')
-            f->lineno --;
-        f->index --;
-    }
+
+    if (f->buf[f->index] == '\n')
+        f->lineno --;
+    f->index --;
 }
 
 static void ibackn(IFILE *f, int n)
@@ -687,21 +683,17 @@ static int inextsh(IFILE *f)
             f->lineno++;
             return '\n';
         }
-        else
-        {
-            iback(f);
-            return '\r';
-        }
+        iback(f);
+        return '\r';
     }
-    else if (ret == '\n')
+
+    if (ret == '\n')
     {
         f->lineno++;
         return '\n';
     }
-    else
-    {
-        return ret;
-    }
+
+    return ret;
 }
 
 /* returns the next logical char, in C syntax */
@@ -723,24 +715,19 @@ again:
                 f->lineno++;
                 goto again;
             }
-            else
-            {
-                ibackn(f,2);
-                return '\\';
-            }
+            ibackn(f,2);
+            return '\\';
         }
-        else if (ret == '\n')
+        if (ret == '\n')
         {
             f->lineno++;
             goto again;
         }
-        else
-        {
-            iback(f);
-            return '\\';
-        }
+        iback(f);
+        return '\\';
     }
-    else if (ret == '\r')
+
+    if (ret == '\r')
     {
         ret = igetc(f);
         if (ret == '\n')
@@ -748,21 +735,17 @@ again:
             f->lineno++;
             return '\n';
         }
-        else
-        {
-            iback(f);
-            return '\r';
-        }
+        iback(f);
+        return '\r';
     }
-    else if (ret == '\n')
+
+    if (ret == '\n')
     {
         f->lineno++;
         return '\n';
     }
-    else
-    {
-        return ret;
-    }
+
+    return ret;
 }
 
 #define is_white(c)  (((c)==' ')||((c)=='\t')||((c)=='\f'))
@@ -782,14 +765,10 @@ static int try_eof(IFILE *f)
 {
     int c = igetc(f);
     if (c == EOF)
-    {
         return 1;
-    }
-    else
-    {
-        iback(f);
-        return 0;
-    }
+
+    iback(f);
+    return 0;
 }
 
 static int try_c_comment(IFILE *f)
@@ -808,7 +787,8 @@ static int try_c_comment(IFILE *f)
             } while((c != EOF) && (c != '\n'));
             return 1;
         }
-        else if (c == '*')
+
+        if (c == '*')
         {
             int state = 0;
             do
@@ -856,11 +836,9 @@ static int try_white(IFILE *f)
         iback(f);
         return 1;
     }
-    else
-    {
-        iback(f);
-        return 0;
-    }
+
+    iback(f);
+    return 0;
 }
 
 static int try_c_white(IFILE *f)
@@ -874,10 +852,8 @@ static int try_c_white(IFILE *f)
             ;
         return 1;
     }
-    else
-    {
-        return 0;
-    }
+
+    return 0;
 }
 
 
@@ -900,7 +876,8 @@ static int get_c_string(IFILE *f, str *s)
             warn("EOF reached inside string");
             return 0;
         }
-        else if (c == '\\')
+
+        if (c == '\\')
         {
             c = inextc(f);
             if (c == EOF)
@@ -908,7 +885,7 @@ static int get_c_string(IFILE *f, str *s)
                 warn("EOF reached inside string");
                 return 0;
             }
-            else if (is_octal(c))
+            if (is_octal(c))
             {
                 int i;
                 int a = c - '0';
@@ -1124,10 +1101,9 @@ static void parse_c_file(char *fname, parse_c_action *pca, void *this)
     {
         c = inextc(f);
         if (c == EOF)
-        {
             break;
-        }
-        else if (c == '/')
+
+        if (c == '/')
         {
             c = inextc(f);
             if (c == '/')
@@ -1261,13 +1237,8 @@ static void parse_po_file(char *fname, oh *o, int ignore_ae)
     {
         /* TODO: UGLY HACK !!! */
         if (!strcmp("po/messages.pot", fname))
-        {
             fatal("could not open %s (run 'bug xgettext' to generate it)", fname);
-        }
-        else
-        {
-            fatal("could not open %s", fname);
-        }
+        fatal("could not open %s", fname);
     }
     for ( ; ; )
     {
@@ -1530,10 +1501,9 @@ static void parse_oipl_file(char *fname, da *d)
     {
         c = inextsh(f);
         if (c == EOF)
-        {
             break;
-        }
-        else if (c == '#')
+
+        if (c == '#')
         {
             while((c != EOF) && (c != '\n'))
                 c = inextsh(f);
@@ -1723,7 +1693,7 @@ static int print_canon(FILE *f, const char *t, const char *prefix,
                 fprintf(f, "%c\"\n%s\"", *t, prefix);
                 break;
             }
-            else if (gem_button)
+            if (gem_button)
             {
                 if ((err=alert_check(line_start, t, 0)) < 0)
                     rc = err;
@@ -1848,7 +1818,7 @@ static void print_po_file(FILE *f, oh *o)
             fputs("\n", f);
             continue;
         }
-        else if (e->kind == KIND_OLD)
+        if (e->kind == KIND_OLD)
         {
             prefix = "#~";
         }
