@@ -112,14 +112,16 @@ static void fatal(const char *fmt, ...)
 static void * xmalloc(size_t s)
 {
   void * a = calloc(1, s);
-  if(a == 0) fatal("memory");
+  if (a == 0)
+    fatal("memory");
   return a;
 }
 
 static void * xrealloc(void * b, size_t s)
 {
   void * a = realloc(b, s);
-  if(a == 0) fatal("memory");
+  if (a == 0)
+    fatal("memory");
   return a;
 }
 
@@ -175,7 +177,8 @@ static char * now(void)
   local_time = *localtime (&now);
   tz_sign = '+';
   tz_min = difftm (&local_time, gmtime (&now)) / 60;
-  if (tz_min < 0) {
+  if (tz_min < 0)
+  {
     tz_min = -tz_min;
     tz_sign = '-';
   }
@@ -200,10 +203,13 @@ typedef struct da {
 
 static void da_grow(da *d)
 {
-  if(d->size == 0) {
+  if (d->size == 0)
+  {
     d->size = DA_SIZE;
     d->buf = xmalloc(d->size * sizeof(void*));
-  } else {
+  }
+  else
+  {
     d->size *= 4;
     d->buf = xrealloc(d->buf, d->size * sizeof(void*));
   }
@@ -235,9 +241,9 @@ static void * da_nth(da *d, int n)
 
 static void da_add(da *d, void *elem)
 {
-  if(d->len >= d->size) {
+  if (d->len >= d->size)
     da_grow(d);
-  }
+
   d->buf[d->len++] = elem;
 }
 
@@ -263,10 +269,13 @@ static str * s_new(void)
 
 static void s_grow(str *s)
 {
-  if(s->size == 0) {
+  if (s->size == 0)
+  {
     s->size = STR_SIZE;
     s->buf = xmalloc(s->size);
-  } else {
+  }
+  else
+  {
     s->size *= 4;
     s->buf = xrealloc(s->buf, s->size);
   }
@@ -274,31 +283,31 @@ static void s_grow(str *s)
 
 static void s_free(str *s)
 {
-  if(s->size) {
+  if (s->size)
     free(s->buf);
-  }
+
   free(s);
 }
 
 static void s_addch(str *s, char c)
 {
-  if(s->len >= s->size) {
+  if (s->len >= s->size)
     s_grow(s);
-  }
+
   s->buf[s->len++] = c;
 }
 
 static void s_addstr(str *s, char *t)
 {
-  while(*t) {
+  while(*t)
     s_addch(s, *t++);
-  }
 }
 
 /* add a trailing 0 if needed and release excess mem */
 static char * s_close(str *s)
 {
-  if(s->size == 0) {
+  if (s->size == 0)
+  {
     s->buf = xmalloc(1);
     s->buf[0] = 0;
     return s->buf;
@@ -346,7 +355,8 @@ static unsigned int compute_hash(char *t)
 {
   unsigned int m = 0;
 
-  while(*t) {
+  while(*t)
+  {
     m += *t++;
     m <<= 1;
   }
@@ -361,13 +371,14 @@ static void * h_find(hash *h, char *key)
   hi *k;
 
   d = h->d[m];
-  if(d != NULL) {
+  if (d != NULL)
+  {
     n = da_len(d);
-    for(i = 0 ; i < n ; i++) {
+    for (i = 0; i < n; i++)
+    {
       k = da_nth(d, i);
-      if(!strcmp(key, k->key)) {
+      if (!strcmp(key, k->key))
         return k;
-      }
     }
   }
   return NULL;
@@ -379,7 +390,8 @@ static void h_insert(hash *h, void *k)
   da *d;
 
   d = h->d[m];
-  if(d == NULL) {
+  if (d == NULL)
+  {
     d = da_new();
     h->d[m] = d;
   }
@@ -522,12 +534,14 @@ static int ae_check_line(char **cc, char *start, char **end)
   int n = strlen(start);
   int m;
   c = *cc;
-  if(strncmp(c, start, n)) {
+  if (strncmp(c, start, n))
+  {
     warn("Expecting \"%s\" in administrative entry", start);
     return 0;
   }
   t = strchr(c+n, '\n');
-  if(t == NULL) {
+  if (t == NULL)
+  {
     warn("Fields in administrative entry must end with \\n");
     return 0;
   }
@@ -544,17 +558,23 @@ static int parse_ae(char *msgstr, ae_t *a)
 {
   char *c = msgstr;
   char *tmp;
-  if(!ae_check_line(&c, "Last-Translator: ", &a->lasttrans)) goto fail;
-  if(!ae_check_line(&c, "Language-Team: ", &a->langteam)) goto fail;
-  if(!ae_check_line(&c, "MIME-Version: ", &tmp)) goto fail;
-  if(strcmp(tmp, "1.0")) {
+  if (!ae_check_line(&c, "Last-Translator: ", &a->lasttrans))
+    goto fail;
+  if (!ae_check_line(&c, "Language-Team: ", &a->langteam))
+    goto fail;
+  if (!ae_check_line(&c, "MIME-Version: ", &tmp))
+    goto fail;
+  if (strcmp(tmp, "1.0"))
+  {
     warn("MIME version must be 1.0");
     goto fail;
   }
-  if(!ae_check_line(&c, "Content-Type: text/plain; charset=", &a->charset))
+  if (!ae_check_line(&c, "Content-Type: text/plain; charset=", &a->charset))
     goto fail;
-  if(!ae_check_line(&c, "Content-Transfer-Encoding: ", &tmp)) goto fail;
-  if(strcmp(tmp, "8bit")) {
+  if (!ae_check_line(&c, "Content-Transfer-Encoding: ", &tmp))
+    goto fail;
+  if (strcmp(tmp, "8bit"))
+  {
     warn("Content-Transfer-Encoding must be 8bit");
     goto fail;
   }
@@ -585,7 +605,8 @@ typedef struct ifile {
 
 static void irefill(IFILE *f)
 {
-  if(f->size > BACKSIZ) {
+  if (f->size > BACKSIZ)
+  {
     memmove(f->buf, f->buf + f->size - BACKSIZ, BACKSIZ);
     f->size = BACKSIZ;
     f->index = f->size;
@@ -599,7 +620,8 @@ static IFILE *ifopen(char *fname)
 
   f->fname = xstrdup(fname);
   f->fh = fopen(fname, "rb");
-  if(f->fh == 0) {
+  if (f->fh == 0)
+  {
     free(f);
     return NULL;
   }
@@ -618,12 +640,14 @@ static void ifclose(IFILE *f)
 
 static void iback(IFILE *f)
 {
-  if(f->index == 0) {
+  if (f->index == 0)
+  {
     fatal("too far backward");
-  } else {
-    if (f->buf[f->index] == 012) {
+  }
+  else
+  {
+    if (f->buf[f->index] == 012)
       f->lineno --;
-    }
     f->index --;
   }
 }
@@ -631,16 +655,17 @@ static void iback(IFILE *f)
 static void ibackn(IFILE *f, int n)
 {
   f->index -= n;
-  if(f->index < 0) {
+  if (f->index < 0)
     fatal("too far backward");
-  }
 }
 
 static int igetc(IFILE *f)
 {
-  if(f->index >= f->size) {
+  if (f->index >= f->size)
+  {
     irefill(f);
-    if(f->index >= f->size) {
+    if (f->index >= f->size)
+    {
       f->ateof = 1;
       return EOF;
     }
@@ -654,19 +679,27 @@ static int inextsh(IFILE *f)
   int ret;
 
   ret = igetc(f);
-  if(ret == 015) {
+  if (ret == 015)
+  {
     ret = igetc(f);
-    if(ret == 012) {
+    if (ret == 012)
+    {
       f->lineno++;
       return '\n';
-    } else {
+    }
+    else
+    {
       iback(f);
       return 015;
     }
-  } else if(ret == 012) {
+  }
+  else if (ret == 012)
+  {
     f->lineno++;
     return '\n';
-  } else {
+  }
+  else
+  {
     return ret;
   }
 }
@@ -679,37 +712,55 @@ static int inextc(IFILE *f)
 again:
   ret = igetc(f);
   /* look ahead if backslash new-line */
-  if(ret == '\\') {
+  if (ret == '\\')
+  {
     ret = igetc(f);
-    if(ret == 015) {
+    if (ret == 015)
+    {
       ret = igetc(f);
-      if(ret == 012) {
+      if (ret == 012)
+      {
         f->lineno++;
         goto again;
-      } else {
+      }
+      else
+      {
         ibackn(f,2);
         return '\\';
       }
-    } else if(ret == 012) {
+    }
+    else if (ret == 012)
+    {
       f->lineno++;
       goto again;
-    } else {
+    }
+    else
+    {
       iback(f);
       return '\\';
     }
-  } else if(ret == 015) {
+  }
+  else if (ret == 015)
+  {
     ret = igetc(f);
-    if(ret == 012) {
+    if (ret == 012)
+    {
       f->lineno++;
       return '\n';
-    } else {
+    }
+    else
+    {
       iback(f);
       return 015;
     }
-  } else if(ret == 012) {
+  }
+  else if (ret == 012)
+  {
     f->lineno++;
     return '\n';
-  } else {
+  }
+  else
+  {
     return ret;
   }
 }
@@ -730,9 +781,12 @@ again:
 static int try_eof(IFILE *f)
 {
   int c = igetc(f);
-  if(c == EOF) {
+  if (c == EOF)
+  {
     return 1;
-  } else {
+  }
+  else
+  {
     iback(f);
     return 0;
   }
@@ -743,27 +797,40 @@ static int try_c_comment(IFILE *f)
   int c;
 
   c = inextc(f);
-  if(c == '/') {
+  if (c == '/')
+  {
     c = inextc(f);
-    if(c == '/') {
-      do {
+    if (c == '/')
+    {
+      do
+      {
         c = inextc(f);
       } while((c != EOF) && (c != '\n'));
       return 1;
-    } else if(c == '*') {
+    }
+    else if (c == '*')
+    {
       int state = 0;
-      do {
+      do
+      {
         c = inextc(f);
-        if(c == '*') {
+        if (c == '*')
+        {
           state = 1;
-        } else if(c == '/') {
-          if(state == 1) return 1;
+        }
+        else if (c == '/')
+        {
+          if (state == 1)
+            return 1;
           else state = 0;
-        } else {
+        }
+        else
+        {
           state = 0;
         }
       } while(c != EOF);
-      if(c == EOF) {
+      if (c == EOF)
+      {
         warn("EOF reached inside comment");
         return 1;
       }
@@ -778,14 +845,19 @@ static int try_white(IFILE *f)
   int c;
 
   c = inextc(f);
-  if(is_white(c) || c == '\n') {
-    do {
+  if (is_white(c) || c == '\n')
+  {
+    do
+    {
       c = inextc(f);
-    } while (is_white(c) || (c == '\n'));
-    if(c == EOF) return 1;
+    } while(is_white(c) || (c == '\n'));
+    if (c == EOF)
+      return 1;
     iback(f);
     return 1;
-  } else {
+  }
+  else
+  {
     iback(f);
     return 0;
   }
@@ -793,14 +865,17 @@ static int try_white(IFILE *f)
 
 static int try_c_white(IFILE *f)
 {
-  if(try_eof(f)) {
+  if (try_eof(f))
     return 0;
-  }
-  if(try_c_comment(f) || try_white(f)) {
+
+  if (try_c_comment(f) || try_white(f))
+  {
     while(! try_eof(f) && (try_c_comment(f) || try_white(f)))
       ;
     return 1;
-  } else {
+  }
+  else
+  {
     return 0;
   }
 }
@@ -812,48 +887,67 @@ static int get_c_string(IFILE *f, str *s)
   int c;
 
   c = inextc(f);
-  if(c != '"') {
+  if (c != '"')
+  {
     iback(f);
     return 0;
   }
-  for(;;) {
+  for ( ; ; )
+  {
     c = inextc(f);
-    if(c == EOF) {
+    if (c == EOF)
+    {
       warn("EOF reached inside string");
       return 0;
-    } else if(c == '\\') {
+    }
+    else if (c == '\\')
+    {
       c = inextc(f);
-      if(c == EOF) {
+      if (c == EOF)
+      {
         warn("EOF reached inside string");
         return 0;
-      } else if(is_octal(c)) {
+      }
+      else if (is_octal(c))
+      {
         int i;
         int a = c - '0';
         c = inextc(f);
-        for(i = 0 ; i < 3 && is_octal(c) ; i++) {
+        for (i = 0; (i < 3) && is_octal(c); i++)
+        {
           a <<= 3;
           a += (c - '0');
           c = inextc(f);
-        };
+        }
         s_addch(s, a);
         iback(f);
-      } else if(c == 'x') {
+      }
+      else if (c == 'x')
+      {
         int a = 0;
         c = inextc(f);
-        while(is_hex(c)) {
+        while(is_hex(c))
+        {
           a <<= 4;
-          if(c <= '9') {
+          if (c <= '9')
+          {
             a += (c - '0');
-          } else if(c <= 'F') {
+          }
+          else if (c <= 'F')
+          {
             a += (c - 'A' + 10);
-          } else {
+          }
+          else
+          {
             a += (c - 'a' + 10);
           }
           c = inextc(f);
         }
         s_addch(s, a);
         iback(f);
-      } else {
+      }
+      else
+      {
         switch(c) {
         case 'a': c = '\a'; break;
         case 'b': c = '\b'; break;
@@ -867,9 +961,13 @@ static int get_c_string(IFILE *f, str *s)
         }
         s_addch(s, c);
       }
-    } else if(c == '\"') {
+    }
+    else if (c == '\"')
+    {
       return 1;
-    } else {
+    }
+    else
+    {
       s_addch(s,c);
     }
   }
@@ -902,17 +1000,19 @@ static void pca_xgettext_gstring(void *this, str *s, char *fname, int lineno)
 
   /* add the string into the hash */
   e = o_find(o, t);
-  if(e) {
+  if (e)
+  {
     /* the string already exists */
     free(t);
-  } else {
+  }
+  else
+  {
     e = poe_new(t);
     o_insert(o, e);
   }
   r = ref_new(fname, lineno);
-  if(e->refs == 0) {
+  if (e->refs == 0)
     e->refs = da_new();
-  }
   da_add(e->refs, r);
 }
 
@@ -955,8 +1055,10 @@ static void pca_translate_gstring(void *this, str *s, char *fname, int lineno)
 
   t = s_detach(s);
   e = o_find(p->o, t);
-  if(e) {  /* if there is a translation, get it instead */
-    if (e->msgstr[0]) { /* if the translation isn't empty, use it instead */
+  if (e)    /* if there is a translation, get it instead */
+  {
+    if (e->msgstr[0]) /* if the translation isn't empty, use it instead */
+    {
       free(t);
       t = xstrdup(e->msgstr);
       p->conv(t);  /* convert the string */
@@ -1009,7 +1111,8 @@ static void parse_c_file(char *fname, parse_c_action *pca, void *this)
   int lineno;
 
   IFILE *f = ifopen(fname);
-  if(f == NULL) {
+  if (f == NULL)
+  {
     warn("could not open file '%s'", fname);
     return;
   }
@@ -1017,36 +1120,49 @@ static void parse_c_file(char *fname, parse_c_action *pca, void *this)
 /* TODO - merge parse_c_comment into this, rewrite the parser */
 
   state = 0;
-  for(;;) {
+  for ( ; ; )
+  {
     c = inextc(f);
-    if(c == EOF) {
+    if (c == EOF)
+    {
       break;
-    } else if(c == '/') {
+    }
+    else if (c == '/')
+    {
       c = inextc(f);
-      if(c == '/') {
+      if (c == '/')
+      {
         pca->other(this, '\n');
       }
       ibackn(f,2);
       c = '/';
       state = 0;
-      if(! try_c_comment(f)) {
+      if (! try_c_comment(f))
+      {
         pca->other(this, c);
-      } else {
+      }
+      else
+      {
         pca->other(this, ' ');
       }
-    } else if(c == '\"') {
-      if(state == 3) {
+    }
+    else if (c == '\"')
+    {
+      if (state == 3)
+      {
         /* this is a new gettext string */
         s = s_new();
         lineno = f->lineno;
         /* accumulate all consecutive strings (separated by spaces) */
-        do {
+        do
+        {
           iback(f);
           get_c_string(f, s);
           try_c_white(f);
           c = inextc(f);
         } while(c == '\"');
-        if(c != ')') {
+        if (c != ')')
+        {
           char *t = s_detach(s);
           warn("_(\"...\" with no closing )");
           warn("the string is %s", t);
@@ -1057,40 +1173,47 @@ static void parse_c_file(char *fname, parse_c_action *pca, void *this)
         /* handle the string */
         pca->gstring(this, s, fname, lineno);
         pca->other(this, ')');
-      } else {
+      }
+      else
+      {
         iback(f);
         s = s_new();
         get_c_string(f, s);
         pca->string(this, s);
       }
-    } else {
-      if(c == '(') {
-        if(state == 2) {
+    }
+    else
+    {
+      if (c == '(')
+      {
+        if (state == 2)
           state = 3;
-        } else {
+        else
           state = 0;
-        }
-      } else if(c == '_') {
-        if(state < 2) {
-          state = 2;
-        } else {
-          state = 4;
-        }
-      } else if(c == 'N') {
-        if(state == 0) {
-          state = 1;
-        } else {
-          state = 4;
-        }
-      } else if(is_white(c)) {
-        if((state == 1) || (state == 4)) {
-          state = 0;
-        }
-      } else if(is_letter(c) || is_digit(c)) {
-        state = 4;
-      } else {
-        state = 0;
       }
+      else if (c == '_')
+      {
+        if (state < 2)
+          state = 2;
+        else
+          state = 4;
+      }
+      else if (c == 'N')
+      {
+        if (state == 0)
+          state = 1;
+        else
+          state = 4;
+      }
+      else if (is_white(c))
+      {
+        if ((state == 1) || (state == 4))
+          state = 0;
+      }
+      else if (is_letter(c) || is_digit(c))
+        state = 4;
+      else
+        state = 0;
       pca->other(this, c);
     }
   }
@@ -1134,32 +1257,36 @@ static void parse_po_file(char *fname, oh *o, int ignore_ae)
   str *s, *userstr, *refstr, *otherstr, *msgid, *msgstr;
 
   f = ifopen(fname);
-  if(f == NULL) {
+  if (f == NULL)
+  {
     /* TODO: UGLY HACK !!! */
-    if(!strcmp("po/messages.pot", fname)) {
+    if (!strcmp("po/messages.pot", fname))
+    {
       fatal("could not open %s (run 'bug xgettext' to generate it)", fname);
-    } else {
+    }
+    else
+    {
       fatal("could not open %s", fname);
     }
   }
-  for(;;) {
+  for ( ; ; )
+  {
     c = inextsh(f);
     /* skip any blank line before next entry */
-    while ((c == ' ') || (c == '\t')) {
-      while ((c == ' ') || (c == '\t')) {
+    while((c == ' ') || (c == '\t'))
+    {
+      while((c == ' ') || (c == '\t'))
         c = inextsh(f);
-      }
-      if((c != EOF) && (c != '\n')) {
+      if ((c != EOF) && (c != '\n'))
+      {
         warn ("syntax error in %s line %d", fname, f->lineno);
-        while ((c != EOF) && (c != '\n')) {
+        while((c != EOF) && (c != '\n'))
           c = inextsh(f);
-        }
       }
       c = inextsh(f);
     }
-    if (c == EOF) {
+    if (c == EOF)
       break;
-    }
 
     /* start an entry */
     userstr = 0;
@@ -1167,52 +1294,68 @@ static void parse_po_file(char *fname, oh *o, int ignore_ae)
     otherstr = 0;
     msgid = 0;
     msgstr = 0;
-    while (c == '#') {
+    while(c == '#')
+    {
       c = inextsh(f);
       switch(c) {
       case '\n':
       case ' ':  /* user comment */
-        if(! userstr) userstr = s_new();
+        if (! userstr)
+          userstr = s_new();
         s = userstr;
         break;
       case ':':  /* ref comment */
-        if(! refstr) refstr = s_new();
+        if (! refstr)
+          refstr = s_new();
         s = refstr;
         break;
       default:  /* other comment */
-        if(! otherstr) otherstr = s_new();
+        if (! otherstr)
+          otherstr = s_new();
         s = otherstr;
         break;
       }
       /* accumulate this comment line to the string */
       s_addch(s, '#');
-      if(c == EOF) {
+      if (c == EOF)
+      {
         s_addch(s, '\n');
         break;
       }
       s_addch(s, c);
-      if(c != '\n') {
-        while((c != EOF) && (c != '\n')) {
+      if (c != '\n')
+      {
+        while((c != EOF) && (c != '\n'))
+        {
           c = inextsh(f);
           s_addch(s, c);
         }
-        if(c == EOF) {
+        if (c == EOF)
+        {
           s_addch(s, '\n');
         }
       }
       c = inextsh(f);
     }
-    if((c == ' ') || (c == '\t') || (c == '\n') || (c == EOF)) {
+    if ((c == ' ') || (c == '\t') || (c == '\n') || (c == EOF))
+    {
       /* the previous entry is a pure comment */
-      if(userstr) {
-        if(otherstr) {
+      if (userstr)
+      {
+        if (otherstr)
+        {
           s_addstr(userstr,s_close(otherstr));
           s_free(otherstr);
         }
-      } else if(otherstr) {
+      }
+      else if (otherstr)
+      {
         userstr = otherstr;
-      } else {
-        if(refstr) {
+      }
+      else
+      {
+        if (refstr)
+        {
           s_free(refstr);
           warn("stray ref ignored in %s:%d", fname, f->lineno);
         }
@@ -1227,118 +1370,143 @@ static void parse_po_file(char *fname, oh *o, int ignore_ae)
       o_add(o, e);
       continue;
     }
-    if(c != 'm') goto err;
+    if (c != 'm')
+      goto err;
     c = inextsh(f);
-    if(c != 's') goto err;
+    if (c != 's')
+      goto err;
     c = inextsh(f);
-    if(c != 'g') goto err;
+    if (c != 'g')
+      goto err;
     c = inextsh(f);
-    if(c != 'i') goto err;
+    if (c != 'i')
+      goto err;
     c = inextsh(f);
-    if(c != 'd') goto err;
+    if (c != 'd')
+      goto err;
     c = inextsh(f);
-    if(c != ' ' && c != '\t') goto err;
-    while(c == ' ' || c == '\t') {
+    if (c != ' ' && c != '\t')
+      goto err;
+    while((c == ' ') || (c == '\t'))
       c = inextsh(f);
-    }
-    if(c != '\"') goto err;
+    if (c != '\"')
+      goto err;
     s = msgid = s_new();
     /* accumulate all consecutive strings (separated by spaces) */
-    do {
+    do
+    {
       iback(f);
       get_c_string(f, s);
       c = inextsh(f);
-      while((c == ' ') || (c == '\t')) {
+      while((c == ' ') || (c == '\t'))
         c = inextsh(f);
-      }
-      if(c == EOF) goto err;
-      if(c != '\n') goto err;
+      if (c == EOF)
+        goto err;
+      if (c != '\n')
+        goto err;
       c = inextsh(f);
     } while(c == '\"');
-    if(c != 'm') goto err;
+    if (c != 'm')
+      goto err;
     c = inextsh(f);
-    if(c != 's') goto err;
+    if (c != 's')
+      goto err;
     c = inextsh(f);
-    if(c != 'g') goto err;
+    if (c != 'g')
+      goto err;
     c = inextsh(f);
-    if(c != 's') goto err;
+    if (c != 's')
+      goto err;
     c = inextsh(f);
-    if(c != 't') goto err;
+    if (c != 't')
+      goto err;
     c = inextsh(f);
-    if(c != 'r') goto err;
+    if (c != 'r')
+      goto err;
     c = inextsh(f);
-    if(c != ' ' && c != '\t') goto err;
-    while((c == ' ') || (c == '\t')) {
+    if (c != ' ' && c != '\t')
+      goto err;
+    while((c == ' ') || (c == '\t'))
       c = inextsh(f);
-    }
-    if(c != '\"') goto err;
+    if (c != '\"')
+      goto err;
     s = msgstr = s_new();
     /* accumulate all consecutive strings (separated by spaces) */
-    do {
+    do
+    {
       iback(f);
       get_c_string(f, s);
       c = inextsh(f);
-      while((c == ' ') || (c == '\t')) {
+      while((c == ' ') || (c == '\t'))
         c = inextsh(f);
-      }
-      if(c == EOF) break;
-      if(c != '\n') goto err;
+      if (c == EOF)
+        break;
+      if (c != '\n')
+        goto err;
       c = inextsh(f);
     } while(c == '\"');
-    if(c != '\n' && c != EOF) goto err;
+    if (c != '\n' && c != EOF)
+      goto err;
     /* put the comment in userstr */
-    if(userstr) {
-      if(otherstr) {
+    if (userstr)
+    {
+      if (otherstr)
+      {
         s_addstr(userstr,s_close(otherstr));
         s_free(otherstr);
         otherstr = 0;
       }
-    } else if(otherstr) {
+    }
+    else if (otherstr)
+    {
       userstr = otherstr;
       otherstr = 0;
     }
     /* now we have the complete entry */
     e = o_find(o, s_close(msgid));
-    if(e) {
+    if (e)
+    {
       warn("double entry %s", s_close(msgid));
       s_free(msgid);
       s_free(msgstr);
-    } else if(ignore_ae && msgid->buf[0] == '\0') {
+    }
+    else if (ignore_ae && msgid->buf[0] == '\0')
+    {
       /* ignore administrative entry */
       s_free(msgid);
       s_free(msgstr);
-    } else {
+    }
+    else
+    {
       e = poe_new(s_detach(msgid));
       e->msgstr = s_detach(msgstr);
       if (strlen(e->msgstr))    /* really translating */
         if (underscore_length(e->msgid.key) != underscore_length(e->msgstr))
           warn("%s: underscores appear invalid for translation of '%s'",fname,e->msgid.key);
-      if(refstr) {
+      if (refstr)
+      {
         e->refstr = s_detach(refstr);
         refstr = 0;
       }
-      if(userstr) {
+      if (userstr)
+      {
         e->comment = s_detach(userstr);
         userstr = 0;
       }
       o_insert(o, e);
     }
     /* free temp strings */
-    if(refstr) {
+    if (refstr)
       s_free(refstr);
-    }
-    if(otherstr) {
+    if (otherstr)
       s_free(otherstr);
-    }
-    if(userstr) {
+    if (userstr)
       s_free(userstr);
-    }
     continue;
 err:
     warn("syntax error at %s:%d (c = '%c')", fname, f->lineno, c);
-    while(c != '\n' && c != EOF) {
+    while((c != '\n') && (c != EOF))
       c = inextsh(f);
-    }
   }
   ifclose(f);
 }
@@ -1355,32 +1523,41 @@ static void parse_oipl_file(char *fname, da *d)
   IFILE *f;
 
   f = ifopen(fname);
-  if(f == NULL) {
+  if (f == NULL)
     fatal("could not open %s", fname);
-  }
-  for(;;) {
+
+  for ( ; ; )
+  {
     c = inextsh(f);
-    if(c == EOF) {
+    if (c == EOF)
+    {
       break;
-    } else if(c == '#') {
-      while((c != EOF) && (c != '\n')) {
+    }
+    else if (c == '#')
+    {
+      while((c != EOF) && (c != '\n'))
         c = inextsh(f);
-      }
-    } else if((c == ' ') || (c == '\t')) {
-      while((c == ' ') || (c == '\t')) {
+    }
+    else if ((c == ' ') || (c == '\t'))
+    {
+      while((c == ' ') || (c == '\t'))
         c = inextsh(f);
-      }
-      if((c != EOF) && (c != '\n')) {
+      if ((c != EOF) && (c != '\n'))
+      {
         warn("syntax error in %s line %d", fname, f->lineno);
-        while((c != EOF) && (c != '\n')) {
+        while((c != EOF) && (c != '\n'))
           c = inextsh(f);
-        }
       }
-    } else if(c == '\n') {
+    }
+    else if (c == '\n')
+    {
       continue;
-    } else {
+    }
+    else
+    {
       str *s = s_new();
-      while((c != EOF) && (c != '\n')) {
+      while((c != EOF) && (c != '\n'))
+      {
         s_addch(s, c);
         c = inextsh(f);
       }
@@ -1404,11 +1581,14 @@ static int alert_check(const char *start, const char *end, int lines)
   if (lines > MAX_LINE_COUNT)
     return AC_LINE_COUNT;
 
-  if (lines) {
+  if (lines)
+  {
     /* dialog text */
     if (len > MAX_LINE_LENGTH)
       return AC_LINE_LENGTH;
-  } else {
+  }
+  else
+  {
     /* dialog button */
     if (len > MAX_BUTTON_LENGTH)
       return AC_BUTTON_LENGTH;
@@ -1487,12 +1667,14 @@ static int print_canon(FILE *f, const char *t, const char *prefix,
    * we need a special translate mode indicator
    * so we can generate backslashes in the output
    */
-  if (!prefix) {    /* being called for translation */
+  if (!prefix)      /* being called for translation */
+  {
     translate = 1;
     prefix = "";
   }
 
-  if(strchr(t, '\n')) {
+  if (strchr(t, '\n'))
+  {
     if (translate)
       fprintf(f,"\"\"\\\n");           /* insert backslash before newline */
     else
@@ -1500,7 +1682,8 @@ static int print_canon(FILE *f, const char *t, const char *prefix,
   }
 
 #if CANON_GEM_ALERT
-  if(t[0] == '[' && t[1] >= '0' && t[1] <= '9' && t[2] == ']' && t[3] == '[') {
+  if (t[0] == '[' && t[1] >= '0' && t[1] <= '9' && t[2] == ']' && t[3] == '[')
+  {
     fprintf(f, "\"[%c][\"\n%s", t[1], prefix);
     t += 4;
     line_start = t;
@@ -1509,15 +1692,19 @@ static int print_canon(FILE *f, const char *t, const char *prefix,
 #endif /* CANON_GEM_ALERT */
 
   fprintf(f, "\"");
-  while(*t) {
+  while(*t)
+  {
     switch(*t) {
     case '\n':
-      if(t[1]) {
+      if (t[1])
+      {
         if (translate)
           fprintf(f, "\\n\"\\\n\"");    /* insert backslash before newline */
         else
           fprintf(f, "\\n\"\n%s\"", prefix);
-      } else {
+      }
+      else
+      {
         fprintf(f, "\\n");
       }
       break;
@@ -1527,29 +1714,36 @@ static int print_canon(FILE *f, const char *t, const char *prefix,
     case '\\': fprintf(f, "\\%c", *t); break;
 #if CANON_GEM_ALERT
     case '|':
-      if(gem_alert) {
+      if (gem_alert)
+      {
         alert_lines += 1;
         if ((err=alert_check(line_start, t, alert_lines)) < 0)
           rc = err;
         line_start = t + 1;
         fprintf(f, "%c\"\n%s\"", *t, prefix);
         break;
-      } else if (gem_button) {
+      }
+      else if (gem_button)
+      {
         if ((err=alert_check(line_start, t, 0)) < 0)
           rc = err;
         line_start = t + 1;
       }
       FALLTHROUGH;
     case ']':
-      if(gem_alert) {
+      if (gem_alert)
+      {
         gem_alert = 0;
         if ((err=alert_check(line_start, t, alert_lines + 1)) < 0)
           rc = err;
-        if(t[1] == '[') {
+        if (t[1] == '[')
+        {
           line_start = t + 2;
           gem_button = 1;
         }
-      } else if (gem_button && *t != '|') {
+      }
+      else if (gem_button && *t != '|')
+      {
         gem_button = 0;
         if ((err=alert_check(line_start, t, 0)) < 0)
           rc = err;
@@ -1558,10 +1752,13 @@ static int print_canon(FILE *f, const char *t, const char *prefix,
 #endif /* CANON_GEM_ALERT */
     default:
       a = ((unsigned)(*t))&0xFF;
-      if ((a < ' ' || a == 0x7f) || (encode_extended_ascii && a >= 128)) {
+      if ((a < ' ' || a == 0x7f) || (encode_extended_ascii && a >= 128))
+      {
         /* control character */
         fprintf(f, "\\%03o", a);
-      } else {
+      }
+      else
+      {
         fprintf(f, "%c", *t);
       }
     }
@@ -1588,11 +1785,13 @@ static char * refs_to_str(da *refs)
   s_addstr(s, "#:");
   pos = 2;
   n = da_len(refs);
-  for(i = 0 ; i < n ; i++) {
+  for (i = 0; i < n; i++)
+  {
     r = da_nth(refs, i);
     sprintf(line, ":%d", r->lineno);
     len = strlen(line)+strlen(r->fname);
-    if(pos + len > 78) {
+    if (pos + len > 78)
+    {
       s_addstr(s, "\n#:");
       pos = 2;
     }
@@ -1617,9 +1816,11 @@ static void po_convert_refs(oh *o)
   poe *e;
 
   n = o_len(o);
-  for(i = 0 ; i < n ; i++) {
+  for (i = 0; i < n; i++)
+  {
     e = o_nth(o, i);
-    if(e->refs) {
+    if (e->refs)
+    {
       e->refstr = refs_to_str(e->refs);
       da_free(e->refs);
       e->refs = 0;
@@ -1637,15 +1838,21 @@ static void print_po_file(FILE *f, oh *o)
   char *prefix;
 
   n = o_len(o);
-  for(i = 0 ; i < n ; i++) {
+  for (i = 0; i < n; i++)
+  {
     poe *e = o_nth(o, i);
     fputs(e->comment, f);
-    if(e->kind == KIND_COMM) {
+    if (e->kind == KIND_COMM)
+    {
       fputs("\n", f);
       continue;
-    } else if(e->kind == KIND_OLD) {
+    }
+    else if (e->kind == KIND_OLD)
+    {
       prefix = "#~";
-    } else {
+    }
+    else
+    {
       fputs(e->refstr, f);
       prefix = "";
     }
@@ -1683,7 +1890,8 @@ static void update(char *fname)
   s_addstr(s, ".bak");
   bfname = s_detach(s);
 
-  if(rename(fname, bfname)) {
+  if (rename(fname, bfname))
+  {
     warn("cannot rename file '%s' to '%s', cancelled", fname, bfname);
     return;
   }
@@ -1701,17 +1909,16 @@ static void update(char *fname)
     ae_t a1, a2;
     e1 = o_find(o1, "");
     e2 = o_find(o2, "");
-    if(e1 == NULL || !parse_ae(e1->msgstr, &a1)) {
+    if (e1 == NULL || !parse_ae(e1->msgstr, &a1))
       fill_pot_ae(&a1);
-    }
-    if(e2 == NULL || !parse_ae(e2->msgstr, &a2)) {
+    if (e2 == NULL || !parse_ae(e2->msgstr, &a2))
+    {
       warn("bad administrative entry, getting back that of the template");
       a2 = a1;
     }
     e = poe_new("");
-    if(e2 != NULL) {
+    if (e2 != NULL)
       e->comment = e2->comment; /* keep the initial comment */
-    }
     e->kind = KIND_NORM;
     e->msgstr = ae_to_string(&a2);
     o_insert(o, e);
@@ -1720,25 +1927,33 @@ static void update(char *fname)
   /* TODO, better algorithm to keep the order of entries... */
 
   /* first, update entries in the po file */
-  for(i2 = 0 ; i2 < n2 ; i2 ++) {
+  for (i2 = 0; i2 < n2; i2++)
+  {
     e2 = o_nth(o2, i2);
-    if(e2->kind == KIND_COMM) {
+    if (e2->kind == KIND_COMM)
+    {
       o_add(o, e2);
-    } else if(e2->msgid.key[0] == 0) {
+    }
+    else if (e2->msgid.key[0] == 0)
+    {
       /* the old admin entry - do nothing */
-    } else {
+    }
+    else
+    {
       e = o_find(o1, e2->msgid.key);
-      if(e) {
+      if (e)
+      {
         e2->kind = KIND_NORM;
         e2->refstr = e->refstr;
         e2->refs = 0;
         o_add(o, e2);
-        if(strcmp("", e2->msgstr)) {
+        if (strcmp("", e2->msgstr))
           numtransl++;
-        } else {
+        else
           numuntransl++;
-        }
-      } else {
+      }
+      else
+      {
         e2->kind = KIND_OLD;
         o_add(o, e2);
         numold++;
@@ -1747,12 +1962,16 @@ static void update(char *fname)
   }
 
   /* then, add new entries from the template */
-  for(i1 = 0 ; i1 < n1 ; i1 ++) {
+  for (i1 = 0; i1 < n1; i1++)
+  {
     e1 = o_nth(o1, i1);
-    if(e1->kind == KIND_NORM) {
-      if(e1->msgid.key[0] != 0) {
+    if (e1->kind == KIND_NORM)
+    {
+      if (e1->msgid.key[0] != 0)
+      {
         e = o_find(o2, e1->msgid.key);
-        if(!e) {
+        if (!e)
+        {
           o_add(o, e1);
           numuntransl++;
         }
@@ -1766,9 +1985,8 @@ static void update(char *fname)
 
   /* dump o into the new file */
   f = fopen(fname, "w");
-  if(f == NULL) {
+  if (f == NULL)
     fatal("could not open %s", fname);
-  }
   print_po_file(f, o);
   fclose(f);
 }
@@ -1803,7 +2021,8 @@ static void xgettext(void)
   o_add(o, e);
 
   n = da_len(d);
-  for(i = 0 ; i < n ; i++) {
+  for (i = 0; i < n; i++)
+  {
     parse_c_file(da_nth(d,i), pca_xgettext, o);
   }
 
@@ -1811,9 +2030,8 @@ static void xgettext(void)
 
   fname = "po/messages.pot";
   f = fopen(fname, "w");
-  if(f == NULL) {
+  if (f == NULL)
     fatal("couldn't create %s", fname);
-  }
   print_po_file(f, o);
   fclose(f);
 }
@@ -1843,10 +2061,10 @@ static const char * get_canon_cset_name(const char *name)
 {
   int i;
   int n = ARRAY_SIZE(charsets);
-  for(i = 0 ; i < n ; i++) {
-    if(!strcmp(charsets[i].alias, name)) {
+  for (i = 0; i < n; i++)
+  {
+    if (!strcmp(charsets[i].alias, name))
       return charsets[i].name;
-    }
   }
   return xstrdup(name);
 }
@@ -1924,25 +2142,32 @@ static void latin1_to_atarist(char *s)
   int warned = 0;
   int i;
 
-  while((c = (unsigned char) (*s) & 0xff) != 0){
-    if(c >= 0x80) {
+  while((c = (unsigned char) (*s) & 0xff) != 0)
+  {
+    if (c >= 0x80)
+    {
       newc = i2a[c - 0x80];
-      if(newc == 0) {
-        for (i = 0; replacements[i].latin1 != 0 && replacements[i].latin1 != c; i++)
+      if (newc == 0)
+      {
+        for (i = 0; (replacements[i].latin1 != 0) && (replacements[i].latin1 != c); i++)
           ;
         newc = replacements[i].ascii;
-        if(!warned) {
+        if (!warned)
+        {
           const char *tmp = s;
           fprintf(stderr, "Warning: untranslatable character $%02x in ", c);
           /*
            * assume a console in utf-8 mode; printing a latin1 string usually won't work
            */
-          while ((c = (unsigned char) (*tmp) & 0xff) != 0){
+          while((c = (unsigned char) (*tmp) & 0xff) != 0)
+          {
             if (c >= 0x80)
             {
               putc(((c >> 6) & 0x03) | 0xc0, stderr);
               putc((c & 0x3f) | 0x80, stderr);
-            } else {
+            }
+            else
+            {
               putc(c, stderr);
             }
             tmp++;
@@ -1981,18 +2206,18 @@ static converter_t get_converter(const char * from, const char * to)
   int i;
   int n = ARRAY_SIZE(converters);
 
-  if(!strcmp(from, to)) {
+  if (!strcmp(from, to))
     return converter_noop;
-  }
 
-  for(i = 0 ; i < n ; i++) {
-    if(!strcmp(from, converters[i].from) && !strcmp(to,converters[i].to)) {
+  for (i = 0; i < n; i++)
+  {
+    if (!strcmp(from, converters[i].from) && !strcmp(to,converters[i].to))
       return converters[i].func;
-    }
   }
   warn("unknown charset conversion %s..%s.", from, to);
   fprintf(stderr, "known conversions are:\n");
-  for(i = 0 ; i < n ; i++) {
+  for (i = 0; i < n; i++)
+  {
     fprintf(stderr, "  %s..%s\n", converters[i].from, converters[i].to);
   }
   return converter_noop;
@@ -2018,7 +2243,8 @@ static int compute_th_value(const char *t)
   unsigned a, b;
 
   a = 0;
-  while(*u) {
+  while(*u)
+  {
     b = (a>>15) & 1;
     a <<= 1;
     a |= b;
@@ -2042,13 +2268,17 @@ static int compute_th_value(const char *t)
 #define LANG_LEN 3
 static int parse_linguas_item(const char *s, char *lang, const char **charset)
 {
-  if(*s <'a' || *s >= 'z') return 0;
+  if (*s <'a' || *s >= 'z')
+    return 0;
   *lang++ = *s++;
-  if(*s <'a' || *s >= 'z') return 0;
+  if (*s <'a' || *s >= 'z')
+    return 0;
   *lang++ = *s++;
   *lang = 0;
-  if(*s != ' ' && *s != '\t') return 0;
-  while(*s == ' ' || *s == '\t') s++;
+  if (*s != ' ' && *s != '\t')
+    return 0;
+  while((*s == ' ') || (*s == '\t'))
+    s++;
   *charset = get_canon_cset_name(s);
   return 1;
 }
@@ -2079,9 +2309,8 @@ static void make(void)
   parse_po_file("po/messages.pot", oref, 1);
 
   f = fopen(LANGS_C, "w");
-  if(f == NULL) {
+  if (f == NULL)
     fatal("cannot open " LANGS_C);
-  }
 
   fprintf(f, "\
 /*\n\
@@ -2104,9 +2333,11 @@ static void make(void)
   fprintf(f, "/*\n * The keys for hash tables below.\n */\n\n");
 
   m = o_len(oref);
-  for(j = 0 ; j < m ; j++) {
+  for (j = 0; j < m; j++)
+  {
     eref = o_nth(oref, j);
-    if(eref->kind == KIND_NORM) {
+    if (eref->kind == KIND_NORM)
+    {
       sprintf(tmp, "nls_key_%d", j);
       eref->msgstr = xstrdup(tmp);
       fprintf(f, "static const char %s [] = ", tmp);
@@ -2121,16 +2352,18 @@ static void make(void)
    * back to the keys output above
    */
   n = da_len(d);
-  for(i = 0 ; i < n ; i++) {
-
+  for (i = 0; i < n; i++)
+  {
     /* clear target hash */
-    for(j = 0 ; j < TH_SIZE ; j++) {
+    for (j = 0; j < TH_SIZE; j++)
+    {
       th[j] = 0;
     }
 
     /* obtain destination charset from LINGUAS */
     t = da_nth(d, i);
-    if(!parse_linguas_item(t, lang, &to_charset)) {
+    if (!parse_linguas_item(t, lang, &to_charset))
+    {
       warn("po/LINGUAS: bad lang/charset specification \"%s\"", t);
       continue;
     }
@@ -2143,7 +2376,8 @@ static void make(void)
     { /* get the source charset from the po file */
       ae_t a;
       poe *e = o_find(o, "");
-      if(e == NULL || !parse_ae(e->msgstr, &a)) {
+      if (e == NULL || !parse_ae(e->msgstr, &a))
+      {
         warn("%s: bad administrative entry", tmp);
         continue;
       }
@@ -2156,15 +2390,17 @@ static void make(void)
     /* compare o to oref */
     numtransl = 0;
     m = o_len(o);
-    for(j = 0 ; j < m ; j++) {
+    for (j = 0; j < m; j++)
+    {
       poe *e = o_nth(o, j);
-      if((e->kind == KIND_NORM) && strcmp("", e->msgstr)) {
+      if ((e->kind == KIND_NORM) && strcmp("", e->msgstr))
+      {
         eref = o_find(oref, e->msgid.key);
-        if(eref) {
+        if (eref)
+        {
           int a = compute_th_value(e->msgid.key);
-          if(th[a] == 0) {
+          if (th[a] == 0)
             th[a] = da_new();
-          }
           da_add(th[a], eref->msgstr);
           /* translate into destination encoding */
           converter(e->msgstr);
@@ -2175,19 +2411,21 @@ static void make(void)
     }
 
     /* print stats if some entries are missing */
-    if(numtransl < numref) {
+    if (numtransl < numref)
       printf("lang %s: %d untranslated entr%s\n",
           lang, numref - numtransl, (numref - numtransl == 1)? "y" : "ies");
-    }
 
     /* dump the hash table */
     fprintf(f, "/*\n * hash table for lang %s.\n */\n\n", lang);
-    for(j = 0 ; j < TH_SIZE ; j++) {
-      if(th[j] != 0) {
+    for (j = 0; j < TH_SIZE; j++)
+    {
+      if (th[j] != 0)
+      {
         int ii, nn, rc;
         fprintf(f, "static const char * const msg_%s_hash_%d[] = {\n", lang, j);
         nn = da_len(th[j]);
-        for(ii = 0 ; ii < nn ; ii+=2) {
+        for (ii = 0; ii < nn; ii += 2)
+        {
           fprintf(f, "  %s, ", (char *) da_nth(th[j],ii));
           rc = print_canon(f, da_nth(th[j],ii+1), "    ", TRUE);
           if (rc < 0)
@@ -2198,11 +2436,15 @@ static void make(void)
       }
     }
     fprintf(f, "static const char * const * const msg_%s[] = {\n", lang);
-    for(j = 0 ; j < TH_SIZE ; j++) {
-      if(th[j]) {
+    for (j = 0; j < TH_SIZE; j++)
+    {
+      if (th[j])
+      {
         fprintf(f, "  msg_%s_hash_%d,\n", lang, j);
         da_free(th[j]);
-      } else {
+      }
+      else
+      {
         fprintf(f, "  0,\n");
       }
     }
@@ -2215,14 +2457,16 @@ static void make(void)
   /* print a lang table */
   fprintf(f, "/*\n * the table of available langs.\n */\n\n");
   n = da_len(langs);
-  for(i = 0 ; i < n ; i++) {
+  for (i = 0; i < n; i++)
+  {
     t = da_nth(langs, i);
     fprintf(f, "\
 static const struct lang_info lang_%s = { \"%s\", msg_%s };\n", t, t, t);
   }
   fprintf(f, "\n");
   fprintf(f, "const struct lang_info * const langs[] = {\n");
-  for(i = 0 ; i < n ; i++) {
+  for (i = 0; i < n; i++)
+  {
     t = da_nth(langs, i);
     fprintf(f, "  &lang_%s,\n", t);
   }
@@ -2246,7 +2490,8 @@ static void translate(char *lang, char * from)
 
   { /* build destination filename */
     int len = strlen(from);
-    if(len < 2 || from[len-1] != 'c' || from[len-2] != '.') {
+    if (len < 2 || from[len-1] != 'c' || from[len-2] != '.')
+    {
       warn("I only translate .c files");
       return;
     }
@@ -2255,7 +2500,8 @@ static void translate(char *lang, char * from)
     strcpy(to+len-2, ".tr.c");
   }
   g = fopen(to, "w");
-  if(g == NULL) {
+  if (g == NULL)
+  {
     warn("cannot create %s\n", to);
     return;
   }
@@ -2269,17 +2515,22 @@ static void translate(char *lang, char * from)
     parse_oipl_file("po/LINGUAS", d);
 
     n = da_len(d);
-    for(i = 0 ; i < n ; i++) {
+    for (i = 0; i < n; i++)
+    {
       char *t = da_nth(d, i);
       char l[LANG_LEN];
-      if(! parse_linguas_item(t, l, &to_charset)) {
+      if (! parse_linguas_item(t, l, &to_charset))
+      {
         warn("po/LINGUAS: bad lang/charset specification \"%s\"", t);
-      } else if(!strcmp(lang, l)) {
+      }
+      else if (!strcmp(lang, l))
+      {
         break;
       }
     }
   }
-  if(to_charset == NULL) {
+  if (to_charset == NULL)
+  {
     warn("cannot find destination charset.");
     to_charset = "unknown";
   }
@@ -2292,7 +2543,8 @@ static void translate(char *lang, char * from)
   { /* get the source charset from the po file */
     ae_t a;
     poe *e = o_find(p.o, "");
-    if(e == NULL || !parse_ae(e->msgstr, &a)) {
+    if (e == NULL || !parse_ae(e->msgstr, &a))
+    {
       warn("%s: bad administrative entry", po);
       goto fail;
     }
@@ -2313,24 +2565,38 @@ fail:
 
 int main(int argc, char **argv)
 {
-  if(argc < 2) goto usage;
-  if(!strcmp(argv[1], "xgettext")) {
-    if(argc != 2) goto usage;
+  if (argc < 2)
+    goto usage;
+  if (!strcmp(argv[1], "xgettext"))
+  {
+    if (argc != 2)
+      goto usage;
     xgettext();
     exit(0);
-  } else if(!strcmp(argv[1], "update")) {
-    if(argc != 3) goto usage;
+  }
+  else if (!strcmp(argv[1], "update"))
+  {
+    if (argc != 3)
+      goto usage;
     update(argv[2]);
     exit(0);
-  } else if(!strcmp(argv[1], "make")) {
-    if(argc != 2) goto usage;
+  }
+  else if (!strcmp(argv[1], "make"))
+  {
+    if (argc != 2)
+      goto usage;
     make();
     exit(0);
-  } else if(!strcmp(argv[1], "translate")) {
-    if(argc != 4) goto usage;
+  }
+  else if (!strcmp(argv[1], "translate"))
+  {
+    if (argc != 4)
+      goto usage;
     translate(argv[2], argv[3]);
     exit(0);
-  } else if(!strcmp(argv[1], "--version")) {
+  }
+  else if (!strcmp(argv[1], "--version"))
+  {
     printf("version " VERSION "\n");
     exit(0);
   }
