@@ -646,7 +646,7 @@ static void iback(IFILE *f)
     }
     else
     {
-        if (f->buf[f->index] == 012)
+        if (f->buf[f->index] == '\n')
             f->lineno --;
         f->index --;
     }
@@ -679,10 +679,10 @@ static int inextsh(IFILE *f)
     int ret;
 
     ret = igetc(f);
-    if (ret == 015)
+    if (ret == '\r')
     {
         ret = igetc(f);
-        if (ret == 012)
+        if (ret == '\n')
         {
             f->lineno++;
             return '\n';
@@ -690,10 +690,10 @@ static int inextsh(IFILE *f)
         else
         {
             iback(f);
-            return 015;
+            return '\r';
         }
     }
-    else if (ret == 012)
+    else if (ret == '\n')
     {
         f->lineno++;
         return '\n';
@@ -715,10 +715,10 @@ again:
     if (ret == '\\')
     {
         ret = igetc(f);
-        if (ret == 015)
+        if (ret == '\r')
         {
             ret = igetc(f);
-            if (ret == 012)
+            if (ret == '\n')
             {
                 f->lineno++;
                 goto again;
@@ -729,7 +729,7 @@ again:
                 return '\\';
             }
         }
-        else if (ret == 012)
+        else if (ret == '\n')
         {
             f->lineno++;
             goto again;
@@ -740,10 +740,10 @@ again:
             return '\\';
         }
     }
-    else if (ret == 015)
+    else if (ret == '\r')
     {
         ret = igetc(f);
-        if (ret == 012)
+        if (ret == '\n')
         {
             f->lineno++;
             return '\n';
@@ -751,10 +751,10 @@ again:
         else
         {
             iback(f);
-            return 015;
+            return '\r';
         }
     }
-    else if (ret == 012)
+    else if (ret == '\n')
     {
         f->lineno++;
         return '\n';
