@@ -845,7 +845,7 @@ static int try_white(IFILE *f)
     int c;
 
     c = inextc(f);
-    if (is_white(c) || c == '\n')
+    if (is_white(c) || (c == '\n'))
     {
         do
         {
@@ -1385,7 +1385,7 @@ static void parse_po_file(char *fname, oh *o, int ignore_ae)
         if (c != 'd')
             goto err;
         c = inextsh(f);
-        if (c != ' ' && c != '\t')
+        if ((c != ' ') && (c != '\t'))
             goto err;
         while((c == ' ') || (c == '\t'))
             c = inextsh(f);
@@ -1424,7 +1424,7 @@ static void parse_po_file(char *fname, oh *o, int ignore_ae)
         if (c != 'r')
             goto err;
         c = inextsh(f);
-        if (c != ' ' && c != '\t')
+        if ((c != ' ') && (c != '\t'))
             goto err;
         while((c == ' ') || (c == '\t'))
             c = inextsh(f);
@@ -1445,7 +1445,7 @@ static void parse_po_file(char *fname, oh *o, int ignore_ae)
                 goto err;
             c = inextsh(f);
         } while(c == '\"');
-        if (c != '\n' && c != EOF)
+        if ((c != '\n') && (c != EOF))
             goto err;
         /* put the comment in userstr */
         if (userstr)
@@ -1470,7 +1470,7 @@ static void parse_po_file(char *fname, oh *o, int ignore_ae)
             s_free(msgid);
             s_free(msgstr);
         }
-        else if (ignore_ae && msgid->buf[0] == '\0')
+        else if (ignore_ae && (msgid->buf[0] == '\0'))
         {
             /* ignore administrative entry */
             s_free(msgid);
@@ -1682,7 +1682,7 @@ static int print_canon(FILE *f, const char *t, const char *prefix,
     }
 
 #if CANON_GEM_ALERT
-    if (t[0] == '[' && t[1] >= '0' && t[1] <= '9' && t[2] == ']' && t[3] == '[')
+    if ((t[0] == '[') && (t[1] >= '0') && (t[1] <= '9') && (t[2] == ']') && (t[3] == '['))
     {
         fprintf(f, "\"[%c][\"\n%s", t[1], prefix);
         t += 4;
@@ -1742,7 +1742,7 @@ static int print_canon(FILE *f, const char *t, const char *prefix,
                     gem_button = 1;
                 }
             }
-            else if (gem_button && *t != '|')
+            else if (gem_button && (*t != '|'))
             {
                 gem_button = 0;
                 if ((err=alert_check(line_start, t, 0)) < 0)
@@ -1752,7 +1752,8 @@ static int print_canon(FILE *f, const char *t, const char *prefix,
 #endif /* CANON_GEM_ALERT */
         default:
             a = ((unsigned)(*t))&0xFF;
-            if ((a < ' ' || a == 0x7f) || (encode_extended_ascii && a >= 128))
+            if (((a < ' ') || (a == 0x7f))
+             || (encode_extended_ascii && (a >= 128)))
             {
                 /* control character */
                 fprintf(f, "\\%03o", a);
@@ -1909,9 +1910,9 @@ static void update(char *fname)
         ae_t a1, a2;
         e1 = o_find(o1, "");
         e2 = o_find(o2, "");
-        if (e1 == NULL || !parse_ae(e1->msgstr, &a1))
+        if ((e1 == NULL) || !parse_ae(e1->msgstr, &a1))
             fill_pot_ae(&a1);
-        if (e2 == NULL || !parse_ae(e2->msgstr, &a2))
+        if ((e2 == NULL) || !parse_ae(e2->msgstr, &a2))
         {
             warn("bad administrative entry, getting back that of the template");
             a2 = a1;
@@ -2268,14 +2269,14 @@ static int compute_th_value(const char *t)
 #define LANG_LEN 3
 static int parse_linguas_item(const char *s, char *lang, const char **charset)
 {
-    if (*s <'a' || *s >= 'z')
+    if ((*s <'a') || (*s >= 'z'))
         return 0;
     *lang++ = *s++;
-    if (*s <'a' || *s >= 'z')
+    if ((*s <'a') || (*s >= 'z'))
         return 0;
     *lang++ = *s++;
     *lang = 0;
-    if (*s != ' ' && *s != '\t')
+    if ((*s != ' ') && (*s != '\t'))
         return 0;
     while((*s == ' ') || (*s == '\t'))
         s++;
@@ -2376,7 +2377,7 @@ static void make(void)
         { /* get the source charset from the po file */
             ae_t a;
             poe *e = o_find(o, "");
-            if (e == NULL || !parse_ae(e->msgstr, &a))
+            if ((e == NULL) || !parse_ae(e->msgstr, &a))
             {
                 warn("%s: bad administrative entry", tmp);
                 continue;
@@ -2490,7 +2491,7 @@ static void translate(char *lang, char * from)
 
     { /* build destination filename */
         int len = strlen(from);
-        if (len < 2 || from[len-1] != 'c' || from[len-2] != '.')
+        if ((len < 2) || (from[len-1] != 'c') || (from[len-2] != '.'))
         {
             warn("I only translate .c files");
             return;
@@ -2543,7 +2544,7 @@ static void translate(char *lang, char * from)
     { /* get the source charset from the po file */
         ae_t a;
         poe *e = o_find(p.o, "");
-        if (e == NULL || !parse_ae(e->msgstr, &a))
+        if ((e == NULL) || !parse_ae(e->msgstr, &a))
         {
             warn("%s: bad administrative entry", po);
             goto fail;
