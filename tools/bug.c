@@ -1221,6 +1221,63 @@ static int underscore_length(char *s)
 
 
 /*
+ * check for matching string
+ *
+ * the string must match the 'text' argument, and must be followed by
+ * white space and a double quote
+ */
+static int check_match(IFILE *f, char *text)
+{
+    char *p;
+    int c;
+
+    for (p = text; *p; p++)
+    {
+        c = inextsh(f);
+        if (c != *p)
+            return 0;
+    }
+
+    c = inextsh(f);
+    if ((c != ' ') && (c != '\t'))
+        return 0;
+    while((c == ' ') || (c == '\t'))
+        c = inextsh(f);
+    if (c != '"')
+        return 0;
+
+    return 1;
+}
+
+
+/*
+ * accumulate consecutive strings that are separated by spaces
+ *
+ * returns 0 iff error
+ */
+static int accumulate_strings(IFILE *f, str *s)
+{
+    int c;
+
+    do
+    {
+        iback(f);
+        get_c_string(f, s);
+        c = inextsh(f);
+        while((c == ' ') || (c == '\t'))
+            c = inextsh(f);
+        if (c == EOF)
+            return 0;
+        if (c != '\n')
+            return 0;
+        c = inextsh(f);
+    } while(c == '"');
+
+    return 1;
+}
+
+
+/*
  * parse po files
  */
 
@@ -1340,83 +1397,26 @@ static void parse_po_file(char *fname, oh *o, int ignore_ae)
             o_add(o, e);
             continue;
         }
-        if (c != 'm')
-            goto err;
-        c = inextsh(f);
-        if (c != 's')
-            goto err;
-        c = inextsh(f);
-        if (c != 'g')
-            goto err;
-        c = inextsh(f);
-        if (c != 'i')
-            goto err;
-        c = inextsh(f);
-        if (c != 'd')
-            goto err;
-        c = inextsh(f);
-        if ((c != ' ') && (c != '\t'))
-            goto err;
-        while((c == ' ') || (c == '\t'))
-            c = inextsh(f);
-        if (c != '\"')
+
+        iback(f);
+        if (check_match(f, "msgid") == 0)
             goto err;
         s = msgid = s_new();
-        /* accumulate all consecutive strings (separated by spaces) */
-        do
-        {
-            iback(f);
-            get_c_string(f, s);
-            c = inextsh(f);
-            while((c == ' ') || (c == '\t'))
-                c = inextsh(f);
-            if (c == EOF)
-                goto err;
-            if (c != '\n')
-                goto err;
-            c = inextsh(f);
-        } while(c == '\"');
-        if (c != 'm')
+        if (accumulate_strings(f, s) == 0)
             goto err;
-        c = inextsh(f);
-        if (c != 's')
-            goto err;
-        c = inextsh(f);
-        if (c != 'g')
-            goto err;
-        c = inextsh(f);
-        if (c != 's')
-            goto err;
-        c = inextsh(f);
-        if (c != 't')
-            goto err;
-        c = inextsh(f);
-        if (c != 'r')
-            goto err;
-        c = inextsh(f);
-        if ((c != ' ') && (c != '\t'))
-            goto err;
-        while((c == ' ') || (c == '\t'))
-            c = inextsh(f);
-        if (c != '\"')
+
+        iback(f);
+        if (check_match(f, "msgstr") == 0)
             goto err;
         s = msgstr = s_new();
-        /* accumulate all consecutive strings (separated by spaces) */
-        do
-        {
-            iback(f);
-            get_c_string(f, s);
-            c = inextsh(f);
-            while((c == ' ') || (c == '\t'))
-                c = inextsh(f);
-            if (c == EOF)
-                break;
-            if (c != '\n')
-                goto err;
-            c = inextsh(f);
-        } while(c == '\"');
+        if (accumulate_strings(f, s) == 0)
+            goto err;
+
+        iback(f);
+        c = inextsh(f);
         if ((c != '\n') && (c != EOF))
             goto err;
+
         /* put the comment in userstr */
         if (userstr)
         {
@@ -1474,6 +1474,8 @@ static void parse_po_file(char *fname, oh *o, int ignore_ae)
             s_free(userstr);
         continue;
 err:
+        iback(f);
+        c = inextsh(f);
         warn("syntax error at %s:%d (c = '%c')", fname, f->lineno, c);
         while((c != '\n') && (c != EOF))
             c = inextsh(f);
