@@ -57,7 +57,7 @@
 #include <time.h>
 #include "../include/portab.h"
 
-#define VERSION "0.2f"
+#define VERSION "0.3"
 
 #define ALERT_TEXT_WARNINGS 1   /* 1 => generate warning msgs */
 #define MAX_LINE_COUNT      5   /* validation values */
@@ -73,6 +73,8 @@
 
 #define HERE fprintf(stderr, "%s:%d\n", __FUNCTION__, __LINE__);
 
+static int wants_linenum_xrefs = 0; /* no linenumber xrefs by default */
+
 static char *usagemsg[] = {
     "Usage: " TOOLNAME " [options] command\n",
     "Commands are:\n",
@@ -84,8 +86,9 @@ static char *usagemsg[] = {
     "  translate xx from.c\n",
     "                 translates from.c into from.tr.c for language xx\n",
     "  make           takes all languages listed in file LINGUAS\n",
-    "                 and creates the C file(s) for the project\n\n",
+    "                 and creates the C file(s) for the project\n",
     "Options are:\n",
+    "  -L             include source code line numbers in comments\n",
     "  -V             display program version\n\n",
     "Note: " TOOLNAME " is a very limited gettext clone, with some compatibility\n",
     "with the original gettext. To have more control of your po files,\n",
@@ -1755,6 +1758,7 @@ static char * refs_to_str(da *refs)
     str *s;
     ref *r;
     char line[12];
+    char oldname[100] = "";
 
     s = s_new();
     s_addstr(s, "#:");
@@ -1763,17 +1767,31 @@ static char * refs_to_str(da *refs)
     for (i = 0; i < n; i++)
     {
         r = da_nth(refs, i);
-        sprintf(line, ":%d", r->lineno);
-        len = strlen(line)+strlen(r->fname);
-        if (pos + len > 78)
+        /*
+         * if we want line numbers, or the source module name is
+         * different from the previous entry for this text, then
+         * we need to output the reference
+         */
+        if (wants_linenum_xrefs || strcmp(oldname, r->fname))
         {
-            s_addstr(s, "\n#:");
-            pos = 2;
+            len = strlen(r->fname);
+            if (wants_linenum_xrefs)
+            {
+                sprintf(line, ":%d", r->lineno);
+                len += strlen(line);
+            }
+            if (pos + len > 78)
+            {
+                s_addstr(s, "\n#:");
+                pos = 2;
+            }
+            pos += len + 1;
+            s_addch(s, ' ');
+            s_addstr(s, r->fname);
+            if (wants_linenum_xrefs)
+                s_addstr(s, line);
+            strcpy(oldname, r->fname);
         }
-        pos += len + 1;
-        s_addch(s, ' ');
-        s_addstr(s, r->fname);
-        s_addstr(s, line);
         free(r);
     }
     s_addch(s, '\n');
@@ -2557,8 +2575,11 @@ int main(int argc, char **argv)
 {
 int n;
 
-    while((n=getopt(argc,argv,"V")) != -1) {
+    while((n=getopt(argc,argv,"LV")) != -1) {
         switch(n) {
+        case 'L':
+            wants_linenum_xrefs++;
+            break;
         case 'V':
             fprintf(stderr, TOOLNAME " version " VERSION "\n");
             exit(0);
