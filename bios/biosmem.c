@@ -1,5 +1,5 @@
 /*
- *  biosmem.h - dumb bios-level memory management
+ *  biosmem.c - dumb bios-level memory management
  *
  * Copyright (C) 2002-2017 The EmuTOS development team
  *
