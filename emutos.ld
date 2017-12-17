@@ -97,7 +97,7 @@ SECTIONS
      * from user mode, can be put here.
      * Warning: this area is not cleared at startup.
      */
-    .lowstram :
+    .low_stram :
     {
         __low_stram_start = .;
         obj/lowstram.o(.bss COMMON)
