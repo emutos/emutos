@@ -53,10 +53,11 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <getopt.h>
 #include <time.h>
 #include "../include/portab.h"
 
-#define VERSION "0.2e"
+#define VERSION "0.2f"
 
 #define ALERT_TEXT_WARNINGS 1   /* 1 => generate warning msgs */
 #define MAX_LINE_COUNT      5   /* validation values */
@@ -73,7 +74,7 @@
 #define HERE fprintf(stderr, "%s:%d\n", __FUNCTION__, __LINE__);
 
 static char *usagemsg[] = {
-    "Usage: " TOOLNAME " command\n",
+    "Usage: " TOOLNAME " [options] command\n",
     "Commands are:\n",
     "  xgettext       scans source files listed in POTFILES.in\n",
     "                 and (re)creates messages.pot\n",
@@ -84,6 +85,8 @@ static char *usagemsg[] = {
     "                 translates from.c into from.tr.c for language xx\n",
     "  make           takes all languages listed in file LINGUAS\n",
     "                 and creates the C file(s) for the project\n\n",
+    "Options are:\n",
+    "  -V             display program version\n\n",
     "Note: " TOOLNAME " is a very limited gettext clone, with some compatibility\n",
     "with the original gettext. To have more control of your po files,\n",
     "please use the original gettext utilities. You will still need this\n",
@@ -2552,44 +2555,52 @@ static int usage(void)
 
 int main(int argc, char **argv)
 {
-    if (argc < 2)
+int n;
+
+    while((n=getopt(argc,argv,"V")) != -1) {
+        switch(n) {
+        case 'V':
+            fprintf(stderr, TOOLNAME " version " VERSION "\n");
+            exit(0);
+            break;
+        default:
+            usage();
+            break;
+        }
+    }
+
+    if (argc-optind < 1)
         usage();
 
-    if (!strcmp(argv[1], "xgettext"))
+    if (!strcmp(argv[optind], "xgettext"))
     {
-        if (argc != 2)
+        if (argc-optind != 1)
             usage();
         xgettext();
         exit(0);
     }
 
-    if (!strcmp(argv[1], "update"))
+    if (!strcmp(argv[optind], "update"))
     {
-        if (argc != 3)
+        if (argc-optind != 2)
             usage();
-        update(argv[2]);
+        update(argv[optind+1]);
         exit(0);
     }
 
-    if (!strcmp(argv[1], "make"))
+    if (!strcmp(argv[optind], "make"))
     {
-        if (argc != 2)
+        if (argc-optind != 1)
             usage();
         make();
         exit(0);
     }
 
-    if (!strcmp(argv[1], "translate"))
+    if (!strcmp(argv[optind], "translate"))
     {
-        if (argc != 4)
+        if (argc-optind != 3)
             usage();
-        translate(argv[2], argv[3]);
-        exit(0);
-    }
-
-    if (!strcmp(argv[1], "--version"))
-    {
-        printf("version " VERSION "\n");
+        translate(argv[optind+1], argv[optind+2]);
         exit(0);
     }
 
