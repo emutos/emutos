@@ -662,9 +662,9 @@ static void iback(IFILE *f)
     if (f->index == 0)
         fatal("too far backward");
 
+    f->index--;
     if (f->buf[f->index] == '\n')
         f->lineno --;
-    f->index --;
 }
 
 static void ibackn(IFILE *f, int n)
@@ -728,7 +728,7 @@ static int inextc(IFILE *f)
     /* ignore backslash/newline */
     while(1)
     {
-        ret = igetc(f);
+        ret = inextsh(f);
         if (ret == EOF)
             return EOF;
         if (ret != '\\')
@@ -762,7 +762,7 @@ static int inextc(IFILE *f)
 
 static int try_eof(IFILE *f)
 {
-    int c = igetc(f);
+    int c = inextc(f);
     if (c == EOF)
         return 1;
 
