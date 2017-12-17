@@ -17,12 +17,6 @@
 /* Create a plain binary file, without any header */
 OUTPUT_FORMAT(binary)
 
-/*
- * The system variables have fixed addresses,
- * they live in the 0x380-0x800 region.
- */
-#include "tosvars.ld"
-
 /* The ROM address depends on the target */
 #if defined (MACHINE_AMIGA)
 # define ROM_ORIGIN 0x00fc0000
@@ -45,16 +39,12 @@ OUTPUT_FORMAT(binary)
  */
 MEMORY
 {
+    stram : ORIGIN = 0x00000000, LENGTH = 14M
     rom : ORIGIN = ROM_ORIGIN, LENGTH = ROM_LENGTH
-    sysvars : ORIGIN = 0x00000000, LENGTH = 0x800
-    stram : ORIGIN = LENGTH(sysvars), LENGTH = 14M - LENGTH(sysvars)
 #ifdef STATIC_ALT_RAM_ADDRESS
     altram : ORIGIN = STATIC_ALT_RAM_ADDRESS, LENGTH = 1M
 #endif
 }
-
-/* Global symbols */
-sysvars_end = ORIGIN(sysvars) + LENGTH(sysvars);
 
 /* Region used as read/write memory */
 #if CONF_WITH_STATIC_ALT_RAM
@@ -74,6 +64,15 @@ sysvars_end = ORIGIN(sysvars) + LENGTH(sysvars);
 
 SECTIONS
 {
+    /* First section in ST-RAM */
+    .first_stram :
+    {
+        /* System variables are located at fixed addresses */
+#include "tosvars.ld"
+        . = 0x800; /* Extend sysvars area upto end of supervisor-only RAM */
+        sysvars_end = .;
+    } >stram
+
 #if CONF_WITH_STATIC_ALT_RAM
     /* First section in static Alt-RAM */
     .first_altram :
