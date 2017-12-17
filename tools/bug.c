@@ -669,7 +669,12 @@ static int igetc(IFILE *f)
     return f->buf[f->index++];
 }
 
-/* returns the next logical char, in sh syntax */
+/*
+ * returns the next character, unless it's '\r' followed by '\n', in
+ * which case the '\r' is dropped and the '\n' is returned.
+ *
+ * increments the line number count if the character returned is '\n'
+ */
 static int inextsh(IFILE *f)
 {
     int ret;
@@ -678,74 +683,49 @@ static int inextsh(IFILE *f)
     if (ret == '\r')
     {
         ret = igetc(f);
-        if (ret == '\n')
+        if (ret != '\n')
         {
-            f->lineno++;
-            return '\n';
+            iback(f);
+            return '\r';
         }
-        iback(f);
-        return '\r';
     }
 
     if (ret == '\n')
-    {
         f->lineno++;
-        return '\n';
-    }
 
     return ret;
 }
 
-/* returns the next logical char, in C syntax */
+/*
+ * returns the next character, like inextsh() but allowing for the
+ * backslash/newline syntax of C
+ *
+ * increments the line number count if a newline was processed
+ */
 static int inextc(IFILE *f)
 {
     int ret;
 
-again:
-    ret = igetc(f);
-    /* look ahead if backslash new-line */
-    if (ret == '\\')
+    /* ignore backslash/newline */
+    while(1)
     {
         ret = igetc(f);
-        if (ret == '\r')
+        if (ret == EOF)
+            return EOF;
+        if (ret != '\\')
         {
-            ret = igetc(f);
-            if (ret == '\n')
-            {
-                f->lineno++;
-                goto again;
-            }
-            ibackn(f,2);
+            iback(f);   /* put character back so inextsh() sees it */
+            break;
+        }
+        ret = inextsh(f);
+        if (ret != '\n')
+        {
+            iback(f);
             return '\\';
         }
-        if (ret == '\n')
-        {
-            f->lineno++;
-            goto again;
-        }
-        iback(f);
-        return '\\';
     }
 
-    if (ret == '\r')
-    {
-        ret = igetc(f);
-        if (ret == '\n')
-        {
-            f->lineno++;
-            return '\n';
-        }
-        iback(f);
-        return '\r';
-    }
-
-    if (ret == '\n')
-    {
-        f->lineno++;
-        return '\n';
-    }
-
-    return ret;
+    return inextsh(f);
 }
 
 #define is_white(c)  (((c)==' ')||((c)=='\t')||((c)=='\f'))
