@@ -79,8 +79,6 @@
 typedef unsigned char uchar;
 
 typedef int bool;
-#define false 0
-#define true 1
 
 /*
  * errors
@@ -964,7 +962,7 @@ static void pca_translate_gstring(void *this, str *s, char *fname, int lineno)
       p->conv(t);  /* convert the string */
     }
   }
-  print_canon(p->f, t, NULL, true);
+  print_canon(p->f, t, NULL, TRUE);
   free(t);
 }
 
@@ -974,7 +972,7 @@ static void pca_translate_string(void *this, str *s)
   char *t;
 
   t = s_detach(s);
-  print_canon(p->f, t, NULL, true);
+  print_canon(p->f, t, NULL, TRUE);
   free(t);
 }
 
@@ -1652,9 +1650,9 @@ static void print_po_file(FILE *f, oh *o)
       prefix = "";
     }
     fprintf(f, "%smsgid ", prefix);
-    print_canon(f, e->msgid.key, prefix, true);
+    print_canon(f, e->msgid.key, prefix, TRUE);
     fprintf(f, "\n%smsgstr ", prefix);
-    print_canon(f, e->msgstr, prefix, false);
+    print_canon(f, e->msgstr, prefix, FALSE);
     fputs("\n\n", f);
   }
 }
@@ -2112,7 +2110,7 @@ static void make(void)
       sprintf(tmp, "nls_key_%d", j);
       eref->msgstr = xstrdup(tmp);
       fprintf(f, "static const char %s [] = ", tmp);
-      print_canon(f, eref->msgid.key, "  ", true);
+      print_canon(f, eref->msgid.key, "  ", TRUE);
       fprintf(f, ";\n");
       numref++;
     }
@@ -2191,7 +2189,7 @@ static void make(void)
         nn = da_len(th[j]);
         for(ii = 0 ; ii < nn ; ii+=2) {
           fprintf(f, "  %s, ", (char *) da_nth(th[j],ii));
-          rc = print_canon(f, da_nth(th[j],ii+1), "    ", true);
+          rc = print_canon(f, da_nth(th[j],ii+1), "    ", TRUE);
           if (rc < 0)
             print_alert_warning(rc,lang,da_nth(th[j],ii));
           fprintf(f, ",\n");
