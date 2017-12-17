@@ -86,23 +86,23 @@ typedef int bool;
 
 static void warn(const char *fmt, ...)
 {
-  va_list ap;
-  va_start(ap, fmt);
-  fprintf(stderr, "Warning: ");
-  vfprintf(stderr, fmt, ap);
-  fprintf(stderr, "\n");
-  va_end(ap);
+    va_list ap;
+    va_start(ap, fmt);
+    fprintf(stderr, "Warning: ");
+    vfprintf(stderr, fmt, ap);
+    fprintf(stderr, "\n");
+    va_end(ap);
 }
 
 static void fatal(const char *fmt, ...)
 {
-  va_list ap;
-  va_start(ap, fmt);
-  fprintf(stderr, "Fatal: ");
-  vfprintf(stderr, fmt, ap);
-  fprintf(stderr, "\n");
-  va_end(ap);
-  exit(EXIT_FAILURE);
+    va_list ap;
+    va_start(ap, fmt);
+    fprintf(stderr, "Fatal: ");
+    vfprintf(stderr, fmt, ap);
+    fprintf(stderr, "\n");
+    va_end(ap);
+    exit(EXIT_FAILURE);
 }
 
 /*
@@ -111,18 +111,18 @@ static void fatal(const char *fmt, ...)
 
 static void * xmalloc(size_t s)
 {
-  void * a = calloc(1, s);
-  if (a == 0)
-    fatal("memory");
-  return a;
+    void * a = calloc(1, s);
+    if (a == 0)
+        fatal("memory");
+    return a;
 }
 
 static void * xrealloc(void * b, size_t s)
 {
-  void * a = realloc(b, s);
-  if (a == 0)
-    fatal("memory");
-  return a;
+    void * a = realloc(b, s);
+    if (a == 0)
+        fatal("memory");
+    return a;
 }
 
 /*
@@ -131,10 +131,10 @@ static void * xrealloc(void * b, size_t s)
 
 static char * xstrdup(const char *s)
 {
-  int len = strlen(s);
-  char *a = xmalloc(len+1);
-  strcpy(a,s);
-  return a;
+    int len = strlen(s);
+    char *a = xmalloc(len+1);
+    strcpy(a,s);
+    return a;
 }
 
 /*
@@ -146,47 +146,47 @@ static char * xstrdup(const char *s)
 /* Yield A - B, measured in seconds.  */
 static long difftm (const struct tm *a, const struct tm *b)
 {
-  int ay = a->tm_year + (TM_YEAR_ORIGIN - 1);
-  int by = b->tm_year + (TM_YEAR_ORIGIN - 1);
-  /* Some compilers cannot handle this as a single return statement.  */
-  long days = (
-               /* difference in day of year  */
-               a->tm_yday - b->tm_yday
-               /* + intervening leap days  */
-               + ((ay >> 2) - (by >> 2))
-               - (ay / 100 - by / 100)
-               + ((ay / 100 >> 2) - (by / 100 >> 2))
-               /* + difference in years * 365  */
-               + (long) (ay - by) * 365l);
+    int ay = a->tm_year + (TM_YEAR_ORIGIN - 1);
+    int by = b->tm_year + (TM_YEAR_ORIGIN - 1);
+    /* Some compilers cannot handle this as a single return statement.  */
+    long days = (
+                /* difference in day of year  */
+                a->tm_yday - b->tm_yday
+                /* + intervening leap days  */
+                + ((ay >> 2) - (by >> 2))
+                    - (ay / 100 - by / 100)
+                    + ((ay / 100 >> 2) - (by / 100 >> 2))
+                /* + difference in years * 365  */
+                + (long) (ay - by) * 365l);
 
-  return 60l * (60l * (24l * days + (a->tm_hour - b->tm_hour))
-                + (a->tm_min - b->tm_min))
-         + (a->tm_sec - b->tm_sec);
+    return 60l * (60l * (24l * days + (a->tm_hour - b->tm_hour))
+            + (a->tm_min - b->tm_min))
+            + (a->tm_sec - b->tm_sec);
 }
 
 
 static char * now(void)
 {
-  time_t now;
-  struct tm local_time;
-  char tz_sign;
-  long tz_min;
-  char buf[40];
+    time_t now;
+    struct tm local_time;
+    char tz_sign;
+    long tz_min;
+    char buf[40];
 
-  time (&now);
-  local_time = *localtime (&now);
-  tz_sign = '+';
-  tz_min = difftm (&local_time, gmtime (&now)) / 60;
-  if (tz_min < 0)
-  {
-    tz_min = -tz_min;
-    tz_sign = '-';
-  }
-  sprintf(buf, "%d-%02d-%02d %02d:%02d%c%02ld%02ld",
-    local_time.tm_year + TM_YEAR_ORIGIN, local_time.tm_mon + 1,
-          local_time.tm_mday, local_time.tm_hour, local_time.tm_min,
-          tz_sign, tz_min / 60, tz_min % 60);
-  return xstrdup(buf);
+    time (&now);
+    local_time = *localtime (&now);
+    tz_sign = '+';
+    tz_min = difftm (&local_time, gmtime (&now)) / 60;
+    if (tz_min < 0)
+    {
+        tz_min = -tz_min;
+        tz_sign = '-';
+    }
+    sprintf(buf, "%d-%02d-%02d %02d:%02d%c%02ld%02ld",
+            local_time.tm_year + TM_YEAR_ORIGIN, local_time.tm_mon + 1,
+            local_time.tm_mday, local_time.tm_hour, local_time.tm_min,
+            tz_sign, tz_min / 60, tz_min % 60);
+    return xstrdup(buf);
 }
 
 /*
@@ -194,57 +194,57 @@ static char * now(void)
  */
 
 typedef struct da {
-  int size;
-  void **buf;
-  int len;
+    int size;
+    void **buf;
+    int len;
 } da;
 
 #define DA_SIZE 1000
 
 static void da_grow(da *d)
 {
-  if (d->size == 0)
-  {
-    d->size = DA_SIZE;
-    d->buf = xmalloc(d->size * sizeof(void*));
-  }
-  else
-  {
-    d->size *= 4;
-    d->buf = xrealloc(d->buf, d->size * sizeof(void*));
-  }
+    if (d->size == 0)
+    {
+        d->size = DA_SIZE;
+        d->buf = xmalloc(d->size * sizeof(void*));
+    }
+    else
+    {
+        d->size *= 4;
+        d->buf = xrealloc(d->buf, d->size * sizeof(void*));
+    }
 }
 
 static da * da_new(void)
 {
-  da *d = xmalloc(sizeof(*d));
-  d->size = 0;
-  d->len = 0;
-  return d;
+    da *d = xmalloc(sizeof(*d));
+    d->size = 0;
+    d->len = 0;
+    return d;
 }
 
 static void da_free(da *d)
 {
-  free(d->buf);
-  free(d);
+    free(d->buf);
+    free(d);
 }
 
 static int da_len(da *d)
 {
-  return d->len;
+    return d->len;
 }
 
 static void * da_nth(da *d, int n)
 {
-  return d->buf[n];
+    return d->buf[n];
 }
 
 static void da_add(da *d, void *elem)
 {
-  if (d->len >= d->size)
-    da_grow(d);
+    if (d->len >= d->size)
+        da_grow(d);
 
-  d->buf[d->len++] = elem;
+    d->buf[d->len++] = elem;
 }
 
 /*
@@ -252,76 +252,76 @@ static void da_add(da *d, void *elem)
  */
 
 typedef struct str {
-  int size;
-  int len;
-  char *buf;
+    int size;
+    int len;
+    char *buf;
 } str;
 
 #define STR_SIZE 100
 
 static str * s_new(void)
 {
-  str *s = xmalloc(sizeof(*s));
-  s->size = 0;
-  s->len = 0;
-  return s;
+    str *s = xmalloc(sizeof(*s));
+    s->size = 0;
+    s->len = 0;
+    return s;
 }
 
 static void s_grow(str *s)
 {
-  if (s->size == 0)
-  {
-    s->size = STR_SIZE;
-    s->buf = xmalloc(s->size);
-  }
-  else
-  {
-    s->size *= 4;
-    s->buf = xrealloc(s->buf, s->size);
-  }
+    if (s->size == 0)
+    {
+        s->size = STR_SIZE;
+        s->buf = xmalloc(s->size);
+    }
+    else
+    {
+        s->size *= 4;
+        s->buf = xrealloc(s->buf, s->size);
+    }
 }
 
 static void s_free(str *s)
 {
-  if (s->size)
-    free(s->buf);
+    if (s->size)
+        free(s->buf);
 
-  free(s);
+    free(s);
 }
 
 static void s_addch(str *s, char c)
 {
-  if (s->len >= s->size)
-    s_grow(s);
+    if (s->len >= s->size)
+        s_grow(s);
 
-  s->buf[s->len++] = c;
+    s->buf[s->len++] = c;
 }
 
 static void s_addstr(str *s, char *t)
 {
-  while(*t)
-    s_addch(s, *t++);
+    while(*t)
+        s_addch(s, *t++);
 }
 
 /* add a trailing 0 if needed and release excess mem */
 static char * s_close(str *s)
 {
-  if (s->size == 0)
-  {
-    s->buf = xmalloc(1);
-    s->buf[0] = 0;
+    if (s->size == 0)
+    {
+        s->buf = xmalloc(1);
+        s->buf[0] = 0;
+        return s->buf;
+    }
+    s->buf = xrealloc(s->buf, s->len+1);
+    s->buf[s->len] = 0;
     return s->buf;
-  }
-  s->buf = xrealloc(s->buf, s->len+1);
-  s->buf[s->len] = 0;
-  return s->buf;
 }
 
 static char * s_detach(str *s)
 {
-  char *t = s_close(s);
-  free(s);
-  return t;
+    char *t = s_close(s);
+    free(s);
+    return t;
 }
 
 /*
@@ -330,7 +330,7 @@ static char * s_detach(str *s)
  */
 
 typedef struct hash_item {
-  char *key;
+    char *key;
 } hi;
 
 /*
@@ -341,61 +341,61 @@ typedef struct hash_item {
 #define HASH_SIZ 10000
 
 typedef struct hash {
-  da *d[HASH_SIZ];
+    da *d[HASH_SIZ];
 } hash;
 
 static hash * h_new(void)
 {
-  hash *h = xmalloc(sizeof(*h));
-  return h;
+    hash *h = xmalloc(sizeof(*h));
+    return h;
 }
 
 /* a dumb one */
 static unsigned int compute_hash(char *t)
 {
-  unsigned int m = 0;
+    unsigned int m = 0;
 
-  while(*t)
-  {
-    m += *t++;
-    m <<= 1;
-  }
-  return m;
+    while(*t)
+    {
+        m += *t++;
+        m <<= 1;
+    }
+    return m;
 }
 
 static void * h_find(hash *h, char *key)
 {
-  unsigned m = compute_hash(key) % HASH_SIZ;
-  da *d;
-  int i, n;
-  hi *k;
+    unsigned m = compute_hash(key) % HASH_SIZ;
+    da *d;
+    int i, n;
+    hi *k;
 
-  d = h->d[m];
-  if (d != NULL)
-  {
-    n = da_len(d);
-    for (i = 0; i < n; i++)
+    d = h->d[m];
+    if (d != NULL)
     {
-      k = da_nth(d, i);
-      if (!strcmp(key, k->key))
-        return k;
+        n = da_len(d);
+        for (i = 0; i < n; i++)
+        {
+            k = da_nth(d, i);
+            if (!strcmp(key, k->key))
+                return k;
+        }
     }
-  }
-  return NULL;
+    return NULL;
 }
 
 static void h_insert(hash *h, void *k)
 {
-  unsigned m = compute_hash(((hi *)k)->key) % HASH_SIZ;
-  da *d;
+    unsigned m = compute_hash(((hi *)k)->key) % HASH_SIZ;
+    da *d;
 
-  d = h->d[m];
-  if (d == NULL)
-  {
-    d = da_new();
-    h->d[m] = d;
-  }
-  da_add(d, k);
+    d = h->d[m];
+    if (d == NULL)
+    {
+        d = da_new();
+        h->d[m] = d;
+    }
+    da_add(d, k);
 }
 
 /*
@@ -403,48 +403,48 @@ static void h_insert(hash *h, void *k)
  */
 
 typedef struct oh {
-  hash *h;
-  da *d;
+    hash *h;
+    da *d;
 } oh;
 
 static oh * o_new(void)
 {
-  oh *o = malloc(sizeof(*o));
-  o->h = h_new();
-  o->d = da_new();
-  return o;
+    oh *o = malloc(sizeof(*o));
+    o->h = h_new();
+    o->d = da_new();
+    return o;
 }
 
 static void o_free(oh *o)
 {
-  UNUSED(o);
-  /* TODO */
+    UNUSED(o);
+    /* TODO */
 }
 
 static void * o_find(oh *o, char *t)
 {
-  return h_find(o->h, t);
+    return h_find(o->h, t);
 }
 
 static void o_insert(oh *o, void *k)
 {
-  da_add(o->d, k);
-  h_insert(o->h, k);
+    da_add(o->d, k);
+    h_insert(o->h, k);
 }
 
 static void o_add(oh *o, void *k)
 {
-  da_add(o->d, k);
+    da_add(o->d, k);
 }
 
 static int o_len(oh *o)
 {
-  return da_len(o->d);
+    return da_len(o->d);
 }
 
 static void * o_nth(oh *o, int n)
 {
-  return da_nth(o->d, n);
+    return da_nth(o->d, n);
 }
 
 /*
@@ -452,16 +452,16 @@ static void * o_nth(oh *o, int n)
  */
 
 typedef struct ref {
-  char *fname;
-  int lineno;
+    char *fname;
+    int lineno;
 } ref;
 
 static ref * ref_new(char *fname, int lineno)
 {
-  ref *r = xmalloc(sizeof(*r));
-  r->fname = fname;
-  r->lineno = lineno;
-  return r;
+    ref *r = xmalloc(sizeof(*r));
+    r->fname = fname;
+    r->lineno = lineno;
+    return r;
 }
 
 /*
@@ -475,24 +475,24 @@ static ref * ref_new(char *fname, int lineno)
 #define KIND_OLD 2
 
 typedef struct poe {
-  hi    msgid;     /* the key (super-type) */
-  int   kind;      /* kind of entry */
-  char *comment;   /* free user comments */
-  da   *refs;      /* the references to locations in code */
-  char *refstr;    /* a char * representation of the references */
-  char *msgstr;    /* the translation */
+    hi    msgid;     /* the key (super-type) */
+    int   kind;      /* kind of entry */
+    char *comment;   /* free user comments */
+    da   *refs;      /* the references to locations in code */
+    char *refstr;    /* a char * representation of the references */
+    char *msgstr;    /* the translation */
 } poe;
 
 static poe * poe_new(char *t)
 {
-  poe *e = xmalloc(sizeof(*e));
-  e->msgid.key = t;
-  e->kind = KIND_NORM;
-  e->comment = "";
-  e->refs = NULL;
-  e->msgstr = "";
-  e->refstr = "";
-  return e;
+    poe *e = xmalloc(sizeof(*e));
+    e->msgid.key = t;
+    e->kind = KIND_NORM;
+    e->comment = "";
+    e->refs = NULL;
+    e->msgstr = "";
+    e->refstr = "";
+    return e;
 }
 
 
@@ -502,87 +502,87 @@ static poe * poe_new(char *t)
  */
 
 typedef struct {
-  char *lasttrans;
-  char *langteam;
-  char *charset;
-  char *other;
+    char *lasttrans;
+    char *langteam;
+    char *charset;
+    char *other;
 } ae_t;
 
 static void fill_pot_ae(ae_t *a)
 {
-  a->lasttrans = "FULL NAME <EMAIL@ADDRESS>";
-  a->langteam = "LANGUAGE";
-  a->charset = "CHARSET";
-  a->other = "";
+    a->lasttrans = "FULL NAME <EMAIL@ADDRESS>";
+    a->langteam = "LANGUAGE";
+    a->charset = "CHARSET";
+    a->other = "";
 }
 
 static char * ae_to_string(ae_t *a)
 {
-  str *s = s_new();
-  s_addstr(s, "Last-Translator: "); s_addstr(s, a->lasttrans);
-  s_addstr(s, "\nLanguage-Team: "); s_addstr(s, a->langteam);
-  s_addstr(s, "\nMIME-Version: 1.0\nContent-Type: text/plain; charset=");
-  s_addstr(s, a->charset);
-  s_addstr(s, "\nContent-Transfer-Encoding: 8bit\n");
-  s_addstr(s, a->other);
-  return s_detach(s);
+    str *s = s_new();
+    s_addstr(s, "Last-Translator: "); s_addstr(s, a->lasttrans);
+    s_addstr(s, "\nLanguage-Team: "); s_addstr(s, a->langteam);
+    s_addstr(s, "\nMIME-Version: 1.0\nContent-Type: text/plain; charset=");
+    s_addstr(s, a->charset);
+    s_addstr(s, "\nContent-Transfer-Encoding: 8bit\n");
+    s_addstr(s, a->other);
+    return s_detach(s);
 }
 
 static int ae_check_line(char **cc, char *start, char **end)
 {
-  char *c, *t;
-  int n = strlen(start);
-  int m;
-  c = *cc;
-  if (strncmp(c, start, n))
-  {
-    warn("Expecting \"%s\" in administrative entry", start);
-    return 0;
-  }
-  t = strchr(c+n, '\n');
-  if (t == NULL)
-  {
-    warn("Fields in administrative entry must end with \\n");
-    return 0;
-  }
-  *cc = t + 1;
-  m = t - (c+n);
-  t = xmalloc(m+1);
-  memmove(t, c+n, m);
-  t[m] = 0;
-  *end = t;
-  return 1;
+    char *c, *t;
+    int n = strlen(start);
+    int m;
+    c = *cc;
+    if (strncmp(c, start, n))
+    {
+        warn("Expecting \"%s\" in administrative entry", start);
+        return 0;
+    }
+    t = strchr(c+n, '\n');
+    if (t == NULL)
+    {
+        warn("Fields in administrative entry must end with \\n");
+        return 0;
+    }
+    *cc = t + 1;
+    m = t - (c+n);
+    t = xmalloc(m+1);
+    memmove(t, c+n, m);
+    t[m] = 0;
+    *end = t;
+    return 1;
 }
 
 static int parse_ae(char *msgstr, ae_t *a)
 {
-  char *c = msgstr;
-  char *tmp;
-  if (!ae_check_line(&c, "Last-Translator: ", &a->lasttrans))
-    goto fail;
-  if (!ae_check_line(&c, "Language-Team: ", &a->langteam))
-    goto fail;
-  if (!ae_check_line(&c, "MIME-Version: ", &tmp))
-    goto fail;
-  if (strcmp(tmp, "1.0"))
-  {
-    warn("MIME version must be 1.0");
-    goto fail;
-  }
-  if (!ae_check_line(&c, "Content-Type: text/plain; charset=", &a->charset))
-    goto fail;
-  if (!ae_check_line(&c, "Content-Transfer-Encoding: ", &tmp))
-    goto fail;
-  if (strcmp(tmp, "8bit"))
-  {
-    warn("Content-Transfer-Encoding must be 8bit");
-    goto fail;
-  }
-  a->other = xstrdup(c);
-  return 1;
+    char *c = msgstr;
+    char *tmp;
+    if (!ae_check_line(&c, "Last-Translator: ", &a->lasttrans))
+        goto fail;
+    if (!ae_check_line(&c, "Language-Team: ", &a->langteam))
+        goto fail;
+    if (!ae_check_line(&c, "MIME-Version: ", &tmp))
+        goto fail;
+    if (strcmp(tmp, "1.0"))
+    {
+        warn("MIME version must be 1.0");
+        goto fail;
+    }
+    if (!ae_check_line(&c, "Content-Type: text/plain; charset=", &a->charset))
+        goto fail;
+    if (!ae_check_line(&c, "Content-Transfer-Encoding: ", &tmp))
+        goto fail;
+    if (strcmp(tmp, "8bit"))
+    {
+        warn("Content-Transfer-Encoding must be 8bit");
+        goto fail;
+    }
+    a->other = xstrdup(c);
+    return 1;
 fail:
-  warn("Error in administrative entry");
-  return 0;
+    warn("Error in administrative entry");
+    return 0;
 }
 
 
@@ -594,175 +594,175 @@ fail:
 #define READSIZ 512
 
 typedef struct ifile {
-  int lineno;
-  char *fname;
-  FILE *fh;
-  uchar buf[BACKSIZ + READSIZ];
-  int size;
-  int index;
-  int ateof;
+    int lineno;
+    char *fname;
+    FILE *fh;
+    uchar buf[BACKSIZ + READSIZ];
+    int size;
+    int index;
+    int ateof;
 } IFILE;
 
 static void irefill(IFILE *f)
 {
-  if (f->size > BACKSIZ)
-  {
-    memmove(f->buf, f->buf + f->size - BACKSIZ, BACKSIZ);
-    f->size = BACKSIZ;
-    f->index = f->size;
-  }
-  f->size += fread(f->buf + f->size, 1, READSIZ, f->fh);
+    if (f->size > BACKSIZ)
+    {
+        memmove(f->buf, f->buf + f->size - BACKSIZ, BACKSIZ);
+        f->size = BACKSIZ;
+        f->index = f->size;
+    }
+    f->size += fread(f->buf + f->size, 1, READSIZ, f->fh);
 }
 
 static IFILE *ifopen(char *fname)
 {
-  IFILE *f = xmalloc(sizeof(IFILE));
+    IFILE *f = xmalloc(sizeof(IFILE));
 
-  f->fname = xstrdup(fname);
-  f->fh = fopen(fname, "rb");
-  if (f->fh == 0)
-  {
-    free(f);
-    return NULL;
-  }
-  f->size = 0;
-  f->index = 0;
-  f->ateof = 0;
-  f->lineno = 1;
-  return f;
+    f->fname = xstrdup(fname);
+    f->fh = fopen(fname, "rb");
+    if (f->fh == 0)
+    {
+        free(f);
+        return NULL;
+    }
+    f->size = 0;
+    f->index = 0;
+    f->ateof = 0;
+    f->lineno = 1;
+    return f;
 }
 
 static void ifclose(IFILE *f)
 {
-  fclose(f->fh);
-  free(f);
+    fclose(f->fh);
+    free(f);
 }
 
 static void iback(IFILE *f)
 {
-  if (f->index == 0)
-  {
-    fatal("too far backward");
-  }
-  else
-  {
-    if (f->buf[f->index] == 012)
-      f->lineno --;
-    f->index --;
-  }
+    if (f->index == 0)
+    {
+        fatal("too far backward");
+    }
+    else
+    {
+        if (f->buf[f->index] == 012)
+            f->lineno --;
+        f->index --;
+    }
 }
 
 static void ibackn(IFILE *f, int n)
 {
-  f->index -= n;
-  if (f->index < 0)
-    fatal("too far backward");
+    f->index -= n;
+    if (f->index < 0)
+        fatal("too far backward");
 }
 
 static int igetc(IFILE *f)
 {
-  if (f->index >= f->size)
-  {
-    irefill(f);
     if (f->index >= f->size)
     {
-      f->ateof = 1;
-      return EOF;
+        irefill(f);
+        if (f->index >= f->size)
+        {
+            f->ateof = 1;
+            return EOF;
+        }
     }
-  }
-  return f->buf[f->index++];
+    return f->buf[f->index++];
 }
 
 /* returns the next logical char, in sh syntax */
 static int inextsh(IFILE *f)
 {
-  int ret;
+    int ret;
 
-  ret = igetc(f);
-  if (ret == 015)
-  {
     ret = igetc(f);
-    if (ret == 012)
+    if (ret == 015)
     {
-      f->lineno++;
-      return '\n';
+        ret = igetc(f);
+        if (ret == 012)
+        {
+            f->lineno++;
+            return '\n';
+        }
+        else
+        {
+            iback(f);
+            return 015;
+        }
+    }
+    else if (ret == 012)
+    {
+        f->lineno++;
+        return '\n';
     }
     else
     {
-      iback(f);
-      return 015;
+        return ret;
     }
-  }
-  else if (ret == 012)
-  {
-    f->lineno++;
-    return '\n';
-  }
-  else
-  {
-    return ret;
-  }
 }
 
 /* returns the next logical char, in C syntax */
 static int inextc(IFILE *f)
 {
-  int ret;
+    int ret;
 
 again:
-  ret = igetc(f);
-  /* look ahead if backslash new-line */
-  if (ret == '\\')
-  {
     ret = igetc(f);
-    if (ret == 015)
+    /* look ahead if backslash new-line */
+    if (ret == '\\')
     {
-      ret = igetc(f);
-      if (ret == 012)
-      {
-        f->lineno++;
-        goto again;
-      }
-      else
-      {
-        ibackn(f,2);
-        return '\\';
-      }
+        ret = igetc(f);
+        if (ret == 015)
+        {
+            ret = igetc(f);
+            if (ret == 012)
+            {
+                f->lineno++;
+                goto again;
+            }
+            else
+            {
+                ibackn(f,2);
+                return '\\';
+            }
+        }
+        else if (ret == 012)
+        {
+            f->lineno++;
+            goto again;
+        }
+        else
+        {
+            iback(f);
+            return '\\';
+        }
+    }
+    else if (ret == 015)
+    {
+        ret = igetc(f);
+        if (ret == 012)
+        {
+            f->lineno++;
+            return '\n';
+        }
+        else
+        {
+            iback(f);
+            return 015;
+        }
     }
     else if (ret == 012)
     {
-      f->lineno++;
-      goto again;
+        f->lineno++;
+        return '\n';
     }
     else
     {
-      iback(f);
-      return '\\';
+        return ret;
     }
-  }
-  else if (ret == 015)
-  {
-    ret = igetc(f);
-    if (ret == 012)
-    {
-      f->lineno++;
-      return '\n';
-    }
-    else
-    {
-      iback(f);
-      return 015;
-    }
-  }
-  else if (ret == 012)
-  {
-    f->lineno++;
-    return '\n';
-  }
-  else
-  {
-    return ret;
-  }
 }
 
 #define is_white(c)  (((c)==' ')||((c)=='\t')||((c)=='\f'))
@@ -780,197 +780,197 @@ again:
 
 static int try_eof(IFILE *f)
 {
-  int c = igetc(f);
-  if (c == EOF)
-  {
-    return 1;
-  }
-  else
-  {
-    iback(f);
-    return 0;
-  }
+    int c = igetc(f);
+    if (c == EOF)
+    {
+        return 1;
+    }
+    else
+    {
+        iback(f);
+        return 0;
+    }
 }
 
 static int try_c_comment(IFILE *f)
 {
-  int c;
+    int c;
 
-  c = inextc(f);
-  if (c == '/')
-  {
     c = inextc(f);
     if (c == '/')
     {
-      do
-      {
         c = inextc(f);
-      } while((c != EOF) && (c != '\n'));
-      return 1;
-    }
-    else if (c == '*')
-    {
-      int state = 0;
-      do
-      {
-        c = inextc(f);
-        if (c == '*')
+        if (c == '/')
         {
-          state = 1;
-        }
-        else if (c == '/')
-        {
-          if (state == 1)
+            do
+            {
+                c = inextc(f);
+            } while((c != EOF) && (c != '\n'));
             return 1;
-          else state = 0;
         }
-        else
+        else if (c == '*')
         {
-          state = 0;
+            int state = 0;
+            do
+            {
+                c = inextc(f);
+                if (c == '*')
+                {
+                    state = 1;
+                }
+                else if (c == '/')
+                {
+                    if (state == 1)
+                        return 1;
+                    else state = 0;
+                }
+                else
+                {
+                    state = 0;
+                }
+            } while(c != EOF);
+            if (c == EOF)
+            {
+                warn("EOF reached inside comment");
+                return 1;
+            }
         }
-      } while(c != EOF);
-      if (c == EOF)
-      {
-        warn("EOF reached inside comment");
-        return 1;
-      }
     }
-  }
-  iback(f);
-  return 0;
+    iback(f);
+    return 0;
 }
 
 static int try_white(IFILE *f)
 {
-  int c;
+    int c;
 
-  c = inextc(f);
-  if (is_white(c) || c == '\n')
-  {
-    do
+    c = inextc(f);
+    if (is_white(c) || c == '\n')
     {
-      c = inextc(f);
-    } while(is_white(c) || (c == '\n'));
-    if (c == EOF)
-      return 1;
-    iback(f);
-    return 1;
-  }
-  else
-  {
-    iback(f);
-    return 0;
-  }
+        do
+        {
+            c = inextc(f);
+        } while(is_white(c) || (c == '\n'));
+        if (c == EOF)
+            return 1;
+        iback(f);
+        return 1;
+    }
+    else
+    {
+        iback(f);
+        return 0;
+    }
 }
 
 static int try_c_white(IFILE *f)
 {
-  if (try_eof(f))
-    return 0;
+    if (try_eof(f))
+        return 0;
 
-  if (try_c_comment(f) || try_white(f))
-  {
-    while(! try_eof(f) && (try_c_comment(f) || try_white(f)))
-      ;
-    return 1;
-  }
-  else
-  {
-    return 0;
-  }
+    if (try_c_comment(f) || try_white(f))
+    {
+        while(! try_eof(f) && (try_c_comment(f) || try_white(f)))
+            ;
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 
 /* only one "..." string will be appended to string s */
 static int get_c_string(IFILE *f, str *s)
 {
-  int c;
+    int c;
 
-  c = inextc(f);
-  if (c != '"')
-  {
-    iback(f);
-    return 0;
-  }
-  for ( ; ; )
-  {
     c = inextc(f);
-    if (c == EOF)
+    if (c != '"')
     {
-      warn("EOF reached inside string");
-      return 0;
-    }
-    else if (c == '\\')
-    {
-      c = inextc(f);
-      if (c == EOF)
-      {
-        warn("EOF reached inside string");
+        iback(f);
         return 0;
-      }
-      else if (is_octal(c))
-      {
-        int i;
-        int a = c - '0';
-        c = inextc(f);
-        for (i = 0; (i < 3) && is_octal(c); i++)
-        {
-          a <<= 3;
-          a += (c - '0');
-          c = inextc(f);
-        }
-        s_addch(s, a);
-        iback(f);
-      }
-      else if (c == 'x')
-      {
-        int a = 0;
-        c = inextc(f);
-        while(is_hex(c))
-        {
-          a <<= 4;
-          if (c <= '9')
-          {
-            a += (c - '0');
-          }
-          else if (c <= 'F')
-          {
-            a += (c - 'A' + 10);
-          }
-          else
-          {
-            a += (c - 'a' + 10);
-          }
-          c = inextc(f);
-        }
-        s_addch(s, a);
-        iback(f);
-      }
-      else
-      {
-        switch(c) {
-        case 'a': c = '\a'; break;
-        case 'b': c = '\b'; break;
-        case 'v': c = '\v'; break;
-        case 'e': c =  033; break;  /* GNU C extension: \e for escape */
-        case 'f': c = '\f'; break;
-        case 'r': c = '\r'; break;
-        case 't': c = '\t'; break;
-        case 'n': c = '\n'; break;
-        default: break;
-        }
-        s_addch(s, c);
-      }
     }
-    else if (c == '\"')
+    for ( ; ; )
     {
-      return 1;
+        c = inextc(f);
+        if (c == EOF)
+        {
+            warn("EOF reached inside string");
+            return 0;
+        }
+        else if (c == '\\')
+        {
+            c = inextc(f);
+            if (c == EOF)
+            {
+                warn("EOF reached inside string");
+                return 0;
+            }
+            else if (is_octal(c))
+            {
+                int i;
+                int a = c - '0';
+                c = inextc(f);
+                for (i = 0; (i < 3) && is_octal(c); i++)
+                {
+                    a <<= 3;
+                    a += (c - '0');
+                    c = inextc(f);
+                }
+                s_addch(s, a);
+                iback(f);
+            }
+            else if (c == 'x')
+            {
+                int a = 0;
+                c = inextc(f);
+                while(is_hex(c))
+                {
+                    a <<= 4;
+                    if (c <= '9')
+                    {
+                        a += (c - '0');
+                    }
+                    else if (c <= 'F')
+                    {
+                        a += (c - 'A' + 10);
+                    }
+                    else
+                    {
+                        a += (c - 'a' + 10);
+                    }
+                    c = inextc(f);
+                }
+                s_addch(s, a);
+                iback(f);
+            }
+            else
+            {
+                switch(c) {
+                case 'a': c = '\a'; break;
+                case 'b': c = '\b'; break;
+                case 'v': c = '\v'; break;
+                case 'e': c =  033; break;  /* GNU C extension: \e for escape */
+                case 'f': c = '\f'; break;
+                case 'r': c = '\r'; break;
+                case 't': c = '\t'; break;
+                case 'n': c = '\n'; break;
+                default: break;
+                }
+                s_addch(s, c);
+            }
+        }
+        else if (c == '\"')
+        {
+            return 1;
+        }
+        else
+        {
+            s_addch(s,c);
+        }
     }
-    else
-    {
-      s_addch(s,c);
-    }
-  }
 }
 
 /*
@@ -984,111 +984,111 @@ static int get_c_string(IFILE *f, str *s)
  */
 
 typedef struct parse_c_action {
-  void (*gstring)(void *this, str *s, char *fname, int lineno);
-  void (*string)(void *this, str *s);
-  void (*other)(void *this, int c);
+    void (*gstring)(void *this, str *s, char *fname, int lineno);
+    void (*string)(void *this, str *s);
+    void (*other)(void *this, int c);
 } parse_c_action;
 
 static void pca_xgettext_gstring(void *this, str *s, char *fname, int lineno)
 {
-  oh *o = (oh *) this;
-  poe *e;
-  ref *r;
-  char *t;
+    oh *o = (oh *) this;
+    poe *e;
+    ref *r;
+    char *t;
 
-  t = s_detach(s);
+    t = s_detach(s);
 
-  /* add the string into the hash */
-  e = o_find(o, t);
-  if (e)
-  {
-    /* the string already exists */
-    free(t);
-  }
-  else
-  {
-    e = poe_new(t);
-    o_insert(o, e);
-  }
-  r = ref_new(fname, lineno);
-  if (e->refs == 0)
-    e->refs = da_new();
-  da_add(e->refs, r);
+    /* add the string into the hash */
+    e = o_find(o, t);
+    if (e)
+    {
+        /* the string already exists */
+        free(t);
+    }
+    else
+    {
+        e = poe_new(t);
+        o_insert(o, e);
+    }
+    r = ref_new(fname, lineno);
+    if (e->refs == 0)
+        e->refs = da_new();
+    da_add(e->refs, r);
 }
 
 static void pca_xgettext_string(void *this, str *s)
 {
-  UNUSED(this);
-  s_free(s);
+    UNUSED(this);
+    s_free(s);
 }
 
 static void pca_xgettext_other(void *this, int c)
 {
-  UNUSED(this);
-  UNUSED(c);
+    UNUSED(this);
+    UNUSED(c);
 }
 
 parse_c_action pca_xgettext[] = { {
-  pca_xgettext_gstring,
-  pca_xgettext_string,
-  pca_xgettext_other,
+    pca_xgettext_gstring,
+    pca_xgettext_string,
+    pca_xgettext_other,
 } };
 
 static int print_canon(FILE *, const char *, const char *, bool);
 
 /* pcati - Parse C Action Translate Info */
 typedef struct pcati {
-  FILE *f;
-  void (*conv)(char *);
-  oh *o;
+    FILE *f;
+    void (*conv)(char *);
+    oh *o;
 } pcati;
 
 
 static void pca_translate_gstring(void *this, str *s, char *fname, int lineno)
 {
-  pcati *p = (pcati *) this;
-  char *t;
-  poe *e;
+    pcati *p = (pcati *) this;
+    char *t;
+    poe *e;
 
-  UNUSED(fname);
-  UNUSED(lineno);
+    UNUSED(fname);
+    UNUSED(lineno);
 
-  t = s_detach(s);
-  e = o_find(p->o, t);
-  if (e)    /* if there is a translation, get it instead */
-  {
-    if (e->msgstr[0]) /* if the translation isn't empty, use it instead */
+    t = s_detach(s);
+    e = o_find(p->o, t);
+    if (e)    /* if there is a translation, get it instead */
     {
-      free(t);
-      t = xstrdup(e->msgstr);
-      p->conv(t);  /* convert the string */
+        if (e->msgstr[0]) /* if the translation isn't empty, use it instead */
+        {
+            free(t);
+            t = xstrdup(e->msgstr);
+            p->conv(t);  /* convert the string */
+        }
     }
-  }
-  print_canon(p->f, t, NULL, TRUE);
-  free(t);
+    print_canon(p->f, t, NULL, TRUE);
+    free(t);
 }
 
 static void pca_translate_string(void *this, str *s)
 {
-  pcati *p = (pcati *) this;
-  char *t;
+    pcati *p = (pcati *) this;
+    char *t;
 
-  t = s_detach(s);
-  print_canon(p->f, t, NULL, TRUE);
-  free(t);
+    t = s_detach(s);
+    print_canon(p->f, t, NULL, TRUE);
+    free(t);
 }
 
 static void pca_translate_other(void *this, int c)
 {
-  pcati *p = (pcati *) this;
+    pcati *p = (pcati *) this;
 
-  fputc(c, p->f);
+    fputc(c, p->f);
 }
 
 parse_c_action pca_translate [] = { {
-  pca_translate_gstring,
-  pca_translate_string,
-  pca_translate_other,
+    pca_translate_gstring,
+    pca_translate_string,
+    pca_translate_other,
 } } ;
 
 /*
@@ -1105,119 +1105,119 @@ parse_c_action pca_translate [] = { {
  */
 static void parse_c_file(char *fname, parse_c_action *pca, void *this)
 {
-  int c;
-  int state;
-  str *s;
-  int lineno;
+    int c;
+    int state;
+    str *s;
+    int lineno;
 
-  IFILE *f = ifopen(fname);
-  if (f == NULL)
-  {
-    warn("could not open file '%s'", fname);
-    return;
-  }
+    IFILE *f = ifopen(fname);
+    if (f == NULL)
+    {
+        warn("could not open file '%s'", fname);
+        return;
+    }
 
 /* TODO - merge parse_c_comment into this, rewrite the parser */
 
-  state = 0;
-  for ( ; ; )
-  {
-    c = inextc(f);
-    if (c == EOF)
+    state = 0;
+    for ( ; ; )
     {
-      break;
-    }
-    else if (c == '/')
-    {
-      c = inextc(f);
-      if (c == '/')
-      {
-        pca->other(this, '\n');
-      }
-      ibackn(f,2);
-      c = '/';
-      state = 0;
-      if (! try_c_comment(f))
-      {
-        pca->other(this, c);
-      }
-      else
-      {
-        pca->other(this, ' ');
-      }
-    }
-    else if (c == '\"')
-    {
-      if (state == 3)
-      {
-        /* this is a new gettext string */
-        s = s_new();
-        lineno = f->lineno;
-        /* accumulate all consecutive strings (separated by spaces) */
-        do
+        c = inextc(f);
+        if (c == EOF)
         {
-          iback(f);
-          get_c_string(f, s);
-          try_c_white(f);
-          c = inextc(f);
-        } while(c == '\"');
-        if (c != ')')
-        {
-          char *t = s_detach(s);
-          warn("_(\"...\" with no closing )");
-          warn("the string is %s", t);
-          free(t);
-          state = 0;
-          continue;
+            break;
         }
-        /* handle the string */
-        pca->gstring(this, s, fname, lineno);
-        pca->other(this, ')');
-      }
-      else
-      {
-        iback(f);
-        s = s_new();
-        get_c_string(f, s);
-        pca->string(this, s);
-      }
+        else if (c == '/')
+        {
+            c = inextc(f);
+            if (c == '/')
+            {
+                pca->other(this, '\n');
+            }
+            ibackn(f,2);
+            c = '/';
+            state = 0;
+            if (! try_c_comment(f))
+            {
+                pca->other(this, c);
+            }
+            else
+            {
+                pca->other(this, ' ');
+            }
+        }
+        else if (c == '\"')
+        {
+            if (state == 3)
+            {
+                /* this is a new gettext string */
+                s = s_new();
+                lineno = f->lineno;
+                /* accumulate all consecutive strings (separated by spaces) */
+                do
+                {
+                    iback(f);
+                    get_c_string(f, s);
+                    try_c_white(f);
+                    c = inextc(f);
+                } while(c == '\"');
+                if (c != ')')
+                {
+                    char *t = s_detach(s);
+                    warn("_(\"...\" with no closing )");
+                    warn("the string is %s", t);
+                    free(t);
+                    state = 0;
+                    continue;
+                }
+                /* handle the string */
+                pca->gstring(this, s, fname, lineno);
+                pca->other(this, ')');
+            }
+            else
+            {
+                iback(f);
+                s = s_new();
+                get_c_string(f, s);
+                pca->string(this, s);
+            }
+        }
+        else
+        {
+            if (c == '(')
+            {
+                if (state == 2)
+                    state = 3;
+                else
+                    state = 0;
+            }
+            else if (c == '_')
+            {
+                if (state < 2)
+                    state = 2;
+                else
+                    state = 4;
+            }
+            else if (c == 'N')
+            {
+                if (state == 0)
+                    state = 1;
+                else
+                    state = 4;
+            }
+            else if (is_white(c))
+            {
+                if ((state == 1) || (state == 4))
+                    state = 0;
+            }
+            else if (is_letter(c) || is_digit(c))
+                state = 4;
+            else
+                state = 0;
+            pca->other(this, c);
+        }
     }
-    else
-    {
-      if (c == '(')
-      {
-        if (state == 2)
-          state = 3;
-        else
-          state = 0;
-      }
-      else if (c == '_')
-      {
-        if (state < 2)
-          state = 2;
-        else
-          state = 4;
-      }
-      else if (c == 'N')
-      {
-        if (state == 0)
-          state = 1;
-        else
-          state = 4;
-      }
-      else if (is_white(c))
-      {
-        if ((state == 1) || (state == 4))
-          state = 0;
-      }
-      else if (is_letter(c) || is_digit(c))
-        state = 4;
-      else
-        state = 0;
-      pca->other(this, c);
-    }
-  }
-  ifclose(f);
+    ifclose(f);
 }
 
 
@@ -1251,264 +1251,264 @@ static int underscore_length(char *s)
 
 static void parse_po_file(char *fname, oh *o, int ignore_ae)
 {
-  int c;
-  IFILE *f;
-  poe *e;
-  str *s, *userstr, *refstr, *otherstr, *msgid, *msgstr;
+    int c;
+    IFILE *f;
+    poe *e;
+    str *s, *userstr, *refstr, *otherstr, *msgid, *msgstr;
 
-  f = ifopen(fname);
-  if (f == NULL)
-  {
-    /* TODO: UGLY HACK !!! */
-    if (!strcmp("po/messages.pot", fname))
+    f = ifopen(fname);
+    if (f == NULL)
     {
-      fatal("could not open %s (run 'bug xgettext' to generate it)", fname);
-    }
-    else
-    {
-      fatal("could not open %s", fname);
-    }
-  }
-  for ( ; ; )
-  {
-    c = inextsh(f);
-    /* skip any blank line before next entry */
-    while((c == ' ') || (c == '\t'))
-    {
-      while((c == ' ') || (c == '\t'))
-        c = inextsh(f);
-      if ((c != EOF) && (c != '\n'))
-      {
-        warn ("syntax error in %s line %d", fname, f->lineno);
-        while((c != EOF) && (c != '\n'))
-          c = inextsh(f);
-      }
-      c = inextsh(f);
-    }
-    if (c == EOF)
-      break;
-
-    /* start an entry */
-    userstr = 0;
-    refstr = 0;
-    otherstr = 0;
-    msgid = 0;
-    msgstr = 0;
-    while(c == '#')
-    {
-      c = inextsh(f);
-      switch(c) {
-      case '\n':
-      case ' ':  /* user comment */
-        if (! userstr)
-          userstr = s_new();
-        s = userstr;
-        break;
-      case ':':  /* ref comment */
-        if (! refstr)
-          refstr = s_new();
-        s = refstr;
-        break;
-      default:  /* other comment */
-        if (! otherstr)
-          otherstr = s_new();
-        s = otherstr;
-        break;
-      }
-      /* accumulate this comment line to the string */
-      s_addch(s, '#');
-      if (c == EOF)
-      {
-        s_addch(s, '\n');
-        break;
-      }
-      s_addch(s, c);
-      if (c != '\n')
-      {
-        while((c != EOF) && (c != '\n'))
+        /* TODO: UGLY HACK !!! */
+        if (!strcmp("po/messages.pot", fname))
         {
-          c = inextsh(f);
-          s_addch(s, c);
+            fatal("could not open %s (run 'bug xgettext' to generate it)", fname);
+        }
+        else
+        {
+            fatal("could not open %s", fname);
+        }
+    }
+    for ( ; ; )
+    {
+        c = inextsh(f);
+        /* skip any blank line before next entry */
+        while((c == ' ') || (c == '\t'))
+        {
+            while((c == ' ') || (c == '\t'))
+                c = inextsh(f);
+            if ((c != EOF) && (c != '\n'))
+            {
+                warn ("syntax error in %s line %d", fname, f->lineno);
+                while((c != EOF) && (c != '\n'))
+                    c = inextsh(f);
+            }
+            c = inextsh(f);
         }
         if (c == EOF)
-        {
-          s_addch(s, '\n');
-        }
-      }
-      c = inextsh(f);
-    }
-    if ((c == ' ') || (c == '\t') || (c == '\n') || (c == EOF))
-    {
-      /* the previous entry is a pure comment */
-      if (userstr)
-      {
-        if (otherstr)
-        {
-          s_addstr(userstr,s_close(otherstr));
-          s_free(otherstr);
-        }
-      }
-      else if (otherstr)
-      {
-        userstr = otherstr;
-      }
-      else
-      {
-        if (refstr)
-        {
-          s_free(refstr);
-          warn("stray ref ignored in %s:%d", fname, f->lineno);
-        }
-        /* we will reach here when an entry is followed by more than one
-         * empty line, at each additional empty line.
-         */
-        continue;
-      }
-      e = poe_new("");
-      e->comment = s_detach(userstr);
-      e->kind = KIND_COMM;
-      o_add(o, e);
-      continue;
-    }
-    if (c != 'm')
-      goto err;
-    c = inextsh(f);
-    if (c != 's')
-      goto err;
-    c = inextsh(f);
-    if (c != 'g')
-      goto err;
-    c = inextsh(f);
-    if (c != 'i')
-      goto err;
-    c = inextsh(f);
-    if (c != 'd')
-      goto err;
-    c = inextsh(f);
-    if (c != ' ' && c != '\t')
-      goto err;
-    while((c == ' ') || (c == '\t'))
-      c = inextsh(f);
-    if (c != '\"')
-      goto err;
-    s = msgid = s_new();
-    /* accumulate all consecutive strings (separated by spaces) */
-    do
-    {
-      iback(f);
-      get_c_string(f, s);
-      c = inextsh(f);
-      while((c == ' ') || (c == '\t'))
-        c = inextsh(f);
-      if (c == EOF)
-        goto err;
-      if (c != '\n')
-        goto err;
-      c = inextsh(f);
-    } while(c == '\"');
-    if (c != 'm')
-      goto err;
-    c = inextsh(f);
-    if (c != 's')
-      goto err;
-    c = inextsh(f);
-    if (c != 'g')
-      goto err;
-    c = inextsh(f);
-    if (c != 's')
-      goto err;
-    c = inextsh(f);
-    if (c != 't')
-      goto err;
-    c = inextsh(f);
-    if (c != 'r')
-      goto err;
-    c = inextsh(f);
-    if (c != ' ' && c != '\t')
-      goto err;
-    while((c == ' ') || (c == '\t'))
-      c = inextsh(f);
-    if (c != '\"')
-      goto err;
-    s = msgstr = s_new();
-    /* accumulate all consecutive strings (separated by spaces) */
-    do
-    {
-      iback(f);
-      get_c_string(f, s);
-      c = inextsh(f);
-      while((c == ' ') || (c == '\t'))
-        c = inextsh(f);
-      if (c == EOF)
-        break;
-      if (c != '\n')
-        goto err;
-      c = inextsh(f);
-    } while(c == '\"');
-    if (c != '\n' && c != EOF)
-      goto err;
-    /* put the comment in userstr */
-    if (userstr)
-    {
-      if (otherstr)
-      {
-        s_addstr(userstr,s_close(otherstr));
-        s_free(otherstr);
-        otherstr = 0;
-      }
-    }
-    else if (otherstr)
-    {
-      userstr = otherstr;
-      otherstr = 0;
-    }
-    /* now we have the complete entry */
-    e = o_find(o, s_close(msgid));
-    if (e)
-    {
-      warn("double entry %s", s_close(msgid));
-      s_free(msgid);
-      s_free(msgstr);
-    }
-    else if (ignore_ae && msgid->buf[0] == '\0')
-    {
-      /* ignore administrative entry */
-      s_free(msgid);
-      s_free(msgstr);
-    }
-    else
-    {
-      e = poe_new(s_detach(msgid));
-      e->msgstr = s_detach(msgstr);
-      if (strlen(e->msgstr))    /* really translating */
-        if (underscore_length(e->msgid.key) != underscore_length(e->msgstr))
-          warn("%s: underscores appear invalid for translation of '%s'",fname,e->msgid.key);
-      if (refstr)
-      {
-        e->refstr = s_detach(refstr);
-        refstr = 0;
-      }
-      if (userstr)
-      {
-        e->comment = s_detach(userstr);
+            break;
+
+        /* start an entry */
         userstr = 0;
-      }
-      o_insert(o, e);
-    }
-    /* free temp strings */
-    if (refstr)
-      s_free(refstr);
-    if (otherstr)
-      s_free(otherstr);
-    if (userstr)
-      s_free(userstr);
-    continue;
+        refstr = 0;
+        otherstr = 0;
+        msgid = 0;
+        msgstr = 0;
+        while(c == '#')
+        {
+            c = inextsh(f);
+            switch(c) {
+            case '\n':
+            case ' ':  /* user comment */
+                if (! userstr)
+                    userstr = s_new();
+                s = userstr;
+                break;
+            case ':':  /* ref comment */
+                if (! refstr)
+                    refstr = s_new();
+                s = refstr;
+                break;
+            default:  /* other comment */
+                if (! otherstr)
+                    otherstr = s_new();
+                s = otherstr;
+                break;
+            }
+            /* accumulate this comment line to the string */
+            s_addch(s, '#');
+            if (c == EOF)
+            {
+                s_addch(s, '\n');
+                break;
+            }
+            s_addch(s, c);
+            if (c != '\n')
+            {
+                while((c != EOF) && (c != '\n'))
+                {
+                    c = inextsh(f);
+                    s_addch(s, c);
+                }
+                if (c == EOF)
+                {
+                    s_addch(s, '\n');
+                }
+            }
+            c = inextsh(f);
+        }
+        if ((c == ' ') || (c == '\t') || (c == '\n') || (c == EOF))
+        {
+            /* the previous entry is a pure comment */
+            if (userstr)
+            {
+                if (otherstr)
+                {
+                    s_addstr(userstr,s_close(otherstr));
+                    s_free(otherstr);
+                }
+            }
+            else if (otherstr)
+            {
+                userstr = otherstr;
+            }
+            else
+            {
+                if (refstr)
+                {
+                    s_free(refstr);
+                    warn("stray ref ignored in %s:%d", fname, f->lineno);
+                }
+                /* we will reach here when an entry is followed by more than one
+                 * empty line, at each additional empty line.
+                 */
+                continue;
+            }
+            e = poe_new("");
+            e->comment = s_detach(userstr);
+            e->kind = KIND_COMM;
+            o_add(o, e);
+            continue;
+        }
+        if (c != 'm')
+            goto err;
+        c = inextsh(f);
+        if (c != 's')
+            goto err;
+        c = inextsh(f);
+        if (c != 'g')
+            goto err;
+        c = inextsh(f);
+        if (c != 'i')
+            goto err;
+        c = inextsh(f);
+        if (c != 'd')
+            goto err;
+        c = inextsh(f);
+        if (c != ' ' && c != '\t')
+            goto err;
+        while((c == ' ') || (c == '\t'))
+            c = inextsh(f);
+        if (c != '\"')
+            goto err;
+        s = msgid = s_new();
+        /* accumulate all consecutive strings (separated by spaces) */
+        do
+        {
+            iback(f);
+            get_c_string(f, s);
+            c = inextsh(f);
+            while((c == ' ') || (c == '\t'))
+                c = inextsh(f);
+            if (c == EOF)
+                goto err;
+            if (c != '\n')
+                goto err;
+            c = inextsh(f);
+        } while(c == '\"');
+        if (c != 'm')
+            goto err;
+        c = inextsh(f);
+        if (c != 's')
+            goto err;
+        c = inextsh(f);
+        if (c != 'g')
+            goto err;
+        c = inextsh(f);
+        if (c != 's')
+            goto err;
+        c = inextsh(f);
+        if (c != 't')
+            goto err;
+        c = inextsh(f);
+        if (c != 'r')
+            goto err;
+        c = inextsh(f);
+        if (c != ' ' && c != '\t')
+            goto err;
+        while((c == ' ') || (c == '\t'))
+            c = inextsh(f);
+        if (c != '\"')
+            goto err;
+        s = msgstr = s_new();
+        /* accumulate all consecutive strings (separated by spaces) */
+        do
+        {
+            iback(f);
+            get_c_string(f, s);
+            c = inextsh(f);
+            while((c == ' ') || (c == '\t'))
+                c = inextsh(f);
+            if (c == EOF)
+                break;
+            if (c != '\n')
+                goto err;
+            c = inextsh(f);
+        } while(c == '\"');
+        if (c != '\n' && c != EOF)
+            goto err;
+        /* put the comment in userstr */
+        if (userstr)
+        {
+            if (otherstr)
+            {
+                s_addstr(userstr,s_close(otherstr));
+                s_free(otherstr);
+                otherstr = 0;
+            }
+        }
+        else if (otherstr)
+        {
+            userstr = otherstr;
+            otherstr = 0;
+        }
+        /* now we have the complete entry */
+        e = o_find(o, s_close(msgid));
+        if (e)
+        {
+            warn("double entry %s", s_close(msgid));
+            s_free(msgid);
+            s_free(msgstr);
+        }
+        else if (ignore_ae && msgid->buf[0] == '\0')
+        {
+            /* ignore administrative entry */
+            s_free(msgid);
+            s_free(msgstr);
+        }
+        else
+        {
+            e = poe_new(s_detach(msgid));
+            e->msgstr = s_detach(msgstr);
+            if (strlen(e->msgstr))    /* really translating */
+                if (underscore_length(e->msgid.key) != underscore_length(e->msgstr))
+                    warn("%s: underscores appear invalid for translation of '%s'",fname,e->msgid.key);
+            if (refstr)
+            {
+                e->refstr = s_detach(refstr);
+                refstr = 0;
+            }
+            if (userstr)
+            {
+                e->comment = s_detach(userstr);
+                userstr = 0;
+            }
+            o_insert(o, e);
+        }
+        /* free temp strings */
+        if (refstr)
+            s_free(refstr);
+        if (otherstr)
+            s_free(otherstr);
+        if (userstr)
+            s_free(userstr);
+        continue;
 err:
-    warn("syntax error at %s:%d (c = '%c')", fname, f->lineno, c);
-    while((c != '\n') && (c != EOF))
-      c = inextsh(f);
-  }
-  ifclose(f);
+        warn("syntax error at %s:%d (c = '%c')", fname, f->lineno, c);
+        while((c != '\n') && (c != EOF))
+            c = inextsh(f);
+    }
+    ifclose(f);
 }
 
 
@@ -1519,52 +1519,52 @@ err:
 
 static void parse_oipl_file(char *fname, da *d)
 {
-  int c;
-  IFILE *f;
+    int c;
+    IFILE *f;
 
-  f = ifopen(fname);
-  if (f == NULL)
-    fatal("could not open %s", fname);
+    f = ifopen(fname);
+    if (f == NULL)
+        fatal("could not open %s", fname);
 
-  for ( ; ; )
-  {
-    c = inextsh(f);
-    if (c == EOF)
+    for ( ; ; )
     {
-      break;
-    }
-    else if (c == '#')
-    {
-      while((c != EOF) && (c != '\n'))
         c = inextsh(f);
+        if (c == EOF)
+        {
+            break;
+        }
+        else if (c == '#')
+        {
+            while((c != EOF) && (c != '\n'))
+                c = inextsh(f);
+        }
+        else if ((c == ' ') || (c == '\t'))
+        {
+            while((c == ' ') || (c == '\t'))
+                c = inextsh(f);
+            if ((c != EOF) && (c != '\n'))
+            {
+                warn("syntax error in %s line %d", fname, f->lineno);
+                while((c != EOF) && (c != '\n'))
+                    c = inextsh(f);
+            }
+        }
+        else if (c == '\n')
+        {
+            continue;
+        }
+        else
+        {
+            str *s = s_new();
+            while((c != EOF) && (c != '\n'))
+            {
+                s_addch(s, c);
+                c = inextsh(f);
+            }
+            da_add(d, s_detach(s));
+        }
     }
-    else if ((c == ' ') || (c == '\t'))
-    {
-      while((c == ' ') || (c == '\t'))
-        c = inextsh(f);
-      if ((c != EOF) && (c != '\n'))
-      {
-        warn("syntax error in %s line %d", fname, f->lineno);
-        while((c != EOF) && (c != '\n'))
-          c = inextsh(f);
-      }
-    }
-    else if (c == '\n')
-    {
-      continue;
-    }
-    else
-    {
-      str *s = s_new();
-      while((c != EOF) && (c != '\n'))
-      {
-        s_addch(s, c);
-        c = inextsh(f);
-      }
-      da_add(d, s_detach(s));
-    }
-  }
-  ifclose(f);
+    ifclose(f);
 }
 
 
@@ -1576,25 +1576,25 @@ static void parse_oipl_file(char *fname, da *d)
  */
 static int alert_check(const char *start, const char *end, int lines)
 {
-  int len = end - start - 1;
+    int len = end - start - 1;
 
-  if (lines > MAX_LINE_COUNT)
-    return AC_LINE_COUNT;
+    if (lines > MAX_LINE_COUNT)
+        return AC_LINE_COUNT;
 
-  if (lines)
-  {
-    /* dialog text */
-    if (len > MAX_LINE_LENGTH)
-      return AC_LINE_LENGTH;
-  }
-  else
-  {
-    /* dialog button */
-    if (len > MAX_BUTTON_LENGTH)
-      return AC_BUTTON_LENGTH;
-  }
+    if (lines)
+    {
+        /* dialog text */
+        if (len > MAX_LINE_LENGTH)
+            return AC_LINE_LENGTH;
+    }
+    else
+    {
+        /* dialog button */
+        if (len > MAX_BUTTON_LENGTH)
+            return AC_BUTTON_LENGTH;
+    }
 
-  return 0;
+    return 0;
 }
 
 /*
@@ -1602,39 +1602,39 @@ static int alert_check(const char *start, const char *end, int lines)
  */
 static void print_alert_warning(int code,char *lang,char *key)
 {
-  char msg[100];
+    char msg[100];
 
-  switch(code) {
-  case AC_LINE_COUNT:
-    sprintf(msg,"has more than %d lines",MAX_LINE_COUNT);
-    break;
-  case AC_LINE_LENGTH:
-    sprintf(msg,"line has more than %d characters",MAX_LINE_LENGTH);
-    break;
-  case AC_BUTTON_LENGTH:
-    sprintf(msg,"button has more than %d characters",MAX_BUTTON_LENGTH);
-    break;
-  default:
-    sprintf(msg,"has error code %d",code);
-    break;
-  }
+    switch(code) {
+    case AC_LINE_COUNT:
+        sprintf(msg,"has more than %d lines",MAX_LINE_COUNT);
+        break;
+    case AC_LINE_LENGTH:
+        sprintf(msg,"line has more than %d characters",MAX_LINE_LENGTH);
+        break;
+    case AC_BUTTON_LENGTH:
+        sprintf(msg,"button has more than %d characters",MAX_BUTTON_LENGTH);
+        break;
+    default:
+        sprintf(msg,"has error code %d",code);
+        break;
+    }
 
-  printf("lang %s: translated dialog %s (see %s in %s)\n",lang,msg,key,LANGS_C);
+    printf("lang %s: translated dialog %s (see %s in %s)\n",lang,msg,key,LANGS_C);
 }
 #else
 static int alert_check(const char *start, const char *end, int lines)
 {
-  UNUSED(start);
-  UNUSED(end);
-  UNUSED(lines);
+    UNUSED(start);
+    UNUSED(end);
+    UNUSED(lines);
 
-  return 0;
+    return 0;
 }
 static void print_alert_warning(int code,char *lang,char *key)
 {
-  UNUSED(code);
-  UNUSED(lang);
-  UNUSED(key);
+    UNUSED(code);
+    UNUSED(lang);
+    UNUSED(key);
 }
 #endif
 
@@ -1652,121 +1652,121 @@ static void print_alert_warning(int code,char *lang,char *key)
 #define CANON_GEM_ALERT 1
 
 static int print_canon(FILE *f, const char *t, const char *prefix,
-    int encode_extended_ascii)
+        int encode_extended_ascii)
 {
-  unsigned a;
-  int translate = 0;
-  int rc = 0;
+    unsigned a;
+    int translate = 0;
+    int rc = 0;
 #if CANON_GEM_ALERT
-  int gem_alert = 0, gem_button = 0, alert_lines = 0;
-  int err;
-  const char *line_start = NULL;
+    int gem_alert = 0, gem_button = 0, alert_lines = 0;
+    int err;
+    const char *line_start = NULL;
 #endif /* CANON_GEM_ALERT */
 
-  /*
-   * we need a special translate mode indicator
-   * so we can generate backslashes in the output
-   */
-  if (!prefix)      /* being called for translation */
-  {
-    translate = 1;
-    prefix = "";
-  }
-
-  if (strchr(t, '\n'))
-  {
-    if (translate)
-      fprintf(f,"\"\"\\\n");           /* insert backslash before newline */
-    else
-      fprintf(f, "\"\"\n%s", prefix);
-  }
-
-#if CANON_GEM_ALERT
-  if (t[0] == '[' && t[1] >= '0' && t[1] <= '9' && t[2] == ']' && t[3] == '[')
-  {
-    fprintf(f, "\"[%c][\"\n%s", t[1], prefix);
-    t += 4;
-    line_start = t;
-    gem_alert = 1;
-  }
-#endif /* CANON_GEM_ALERT */
-
-  fprintf(f, "\"");
-  while(*t)
-  {
-    switch(*t) {
-    case '\n':
-      if (t[1])
-      {
-        if (translate)
-          fprintf(f, "\\n\"\\\n\"");    /* insert backslash before newline */
-        else
-          fprintf(f, "\\n\"\n%s\"", prefix);
-      }
-      else
-      {
-        fprintf(f, "\\n");
-      }
-      break;
-    case '\r': fprintf(f, "\\r"); break;
-    case '\t': fprintf(f, "\\t"); break;
-    case '\"':
-    case '\\': fprintf(f, "\\%c", *t); break;
-#if CANON_GEM_ALERT
-    case '|':
-      if (gem_alert)
-      {
-        alert_lines += 1;
-        if ((err=alert_check(line_start, t, alert_lines)) < 0)
-          rc = err;
-        line_start = t + 1;
-        fprintf(f, "%c\"\n%s\"", *t, prefix);
-        break;
-      }
-      else if (gem_button)
-      {
-        if ((err=alert_check(line_start, t, 0)) < 0)
-          rc = err;
-        line_start = t + 1;
-      }
-      FALLTHROUGH;
-    case ']':
-      if (gem_alert)
-      {
-        gem_alert = 0;
-        if ((err=alert_check(line_start, t, alert_lines + 1)) < 0)
-          rc = err;
-        if (t[1] == '[')
-        {
-          line_start = t + 2;
-          gem_button = 1;
-        }
-      }
-      else if (gem_button && *t != '|')
-      {
-        gem_button = 0;
-        if ((err=alert_check(line_start, t, 0)) < 0)
-          rc = err;
-      }
-      FALLTHROUGH;
-#endif /* CANON_GEM_ALERT */
-    default:
-      a = ((unsigned)(*t))&0xFF;
-      if ((a < ' ' || a == 0x7f) || (encode_extended_ascii && a >= 128))
-      {
-        /* control character */
-        fprintf(f, "\\%03o", a);
-      }
-      else
-      {
-        fprintf(f, "%c", *t);
-      }
+    /*
+     * we need a special translate mode indicator
+     * so we can generate backslashes in the output
+     */
+    if (!prefix)      /* being called for translation */
+    {
+        translate = 1;
+        prefix = "";
     }
-    t++;
-  }
-  fprintf(f, "\"");
 
-  return rc;
+    if (strchr(t, '\n'))
+    {
+        if (translate)
+            fprintf(f,"\"\"\\\n");           /* insert backslash before newline */
+        else
+            fprintf(f, "\"\"\n%s", prefix);
+    }
+
+#if CANON_GEM_ALERT
+    if (t[0] == '[' && t[1] >= '0' && t[1] <= '9' && t[2] == ']' && t[3] == '[')
+    {
+        fprintf(f, "\"[%c][\"\n%s", t[1], prefix);
+        t += 4;
+        line_start = t;
+        gem_alert = 1;
+    }
+#endif /* CANON_GEM_ALERT */
+
+    fprintf(f, "\"");
+    while(*t)
+    {
+        switch(*t) {
+        case '\n':
+            if (t[1])
+            {
+                if (translate)
+                    fprintf(f, "\\n\"\\\n\"");    /* insert backslash before newline */
+                else
+                    fprintf(f, "\\n\"\n%s\"", prefix);
+            }
+            else
+            {
+                fprintf(f, "\\n");
+            }
+            break;
+        case '\r': fprintf(f, "\\r"); break;
+        case '\t': fprintf(f, "\\t"); break;
+        case '\"':
+        case '\\': fprintf(f, "\\%c", *t); break;
+#if CANON_GEM_ALERT
+        case '|':
+            if (gem_alert)
+            {
+                alert_lines += 1;
+                if ((err=alert_check(line_start, t, alert_lines)) < 0)
+                    rc = err;
+                line_start = t + 1;
+                fprintf(f, "%c\"\n%s\"", *t, prefix);
+                break;
+            }
+            else if (gem_button)
+            {
+                if ((err=alert_check(line_start, t, 0)) < 0)
+                    rc = err;
+                line_start = t + 1;
+            }
+            FALLTHROUGH;
+        case ']':
+            if (gem_alert)
+            {
+                gem_alert = 0;
+                if ((err=alert_check(line_start, t, alert_lines + 1)) < 0)
+                    rc = err;
+                if (t[1] == '[')
+                {
+                    line_start = t + 2;
+                    gem_button = 1;
+                }
+            }
+            else if (gem_button && *t != '|')
+            {
+                gem_button = 0;
+                if ((err=alert_check(line_start, t, 0)) < 0)
+                    rc = err;
+            }
+            FALLTHROUGH;
+#endif /* CANON_GEM_ALERT */
+        default:
+            a = ((unsigned)(*t))&0xFF;
+            if ((a < ' ' || a == 0x7f) || (encode_extended_ascii && a >= 128))
+            {
+                /* control character */
+                fprintf(f, "\\%03o", a);
+            }
+            else
+            {
+                fprintf(f, "%c", *t);
+            }
+        }
+        t++;
+    }
+    fprintf(f, "\"");
+
+    return rc;
 }
 
 /*
@@ -1775,34 +1775,34 @@ static int print_canon(FILE *f, const char *t, const char *prefix,
 
 static char * refs_to_str(da *refs)
 {
-  int pos, len;
-  int i, n;
-  str *s;
-  ref *r;
-  char line[12];
+    int pos, len;
+    int i, n;
+    str *s;
+    ref *r;
+    char line[12];
 
-  s = s_new();
-  s_addstr(s, "#:");
-  pos = 2;
-  n = da_len(refs);
-  for (i = 0; i < n; i++)
-  {
-    r = da_nth(refs, i);
-    sprintf(line, ":%d", r->lineno);
-    len = strlen(line)+strlen(r->fname);
-    if (pos + len > 78)
+    s = s_new();
+    s_addstr(s, "#:");
+    pos = 2;
+    n = da_len(refs);
+    for (i = 0; i < n; i++)
     {
-      s_addstr(s, "\n#:");
-      pos = 2;
+        r = da_nth(refs, i);
+        sprintf(line, ":%d", r->lineno);
+        len = strlen(line)+strlen(r->fname);
+        if (pos + len > 78)
+        {
+            s_addstr(s, "\n#:");
+            pos = 2;
+        }
+        pos += len + 1;
+        s_addch(s, ' ');
+        s_addstr(s, r->fname);
+        s_addstr(s, line);
+        free(r);
     }
-    pos += len + 1;
-    s_addch(s, ' ');
-    s_addstr(s, r->fname);
-    s_addstr(s, line);
-    free(r);
-  }
-  s_addch(s, '\n');
-  return s_detach(s);
+    s_addch(s, '\n');
+    return s_detach(s);
 }
 
 /*
@@ -1812,20 +1812,20 @@ static char * refs_to_str(da *refs)
 
 static void po_convert_refs(oh *o)
 {
-  int i, n;
-  poe *e;
+    int i, n;
+    poe *e;
 
-  n = o_len(o);
-  for (i = 0; i < n; i++)
-  {
-    e = o_nth(o, i);
-    if (e->refs)
+    n = o_len(o);
+    for (i = 0; i < n; i++)
     {
-      e->refstr = refs_to_str(e->refs);
-      da_free(e->refs);
-      e->refs = 0;
+        e = o_nth(o, i);
+        if (e->refs)
+        {
+            e->refstr = refs_to_str(e->refs);
+            da_free(e->refs);
+            e->refs = 0;
+        }
     }
-  }
 }
 
 /*
@@ -1834,34 +1834,34 @@ static void po_convert_refs(oh *o)
 
 static void print_po_file(FILE *f, oh *o)
 {
-  int i, n;
-  char *prefix;
+    int i, n;
+    char *prefix;
 
-  n = o_len(o);
-  for (i = 0; i < n; i++)
-  {
-    poe *e = o_nth(o, i);
-    fputs(e->comment, f);
-    if (e->kind == KIND_COMM)
+    n = o_len(o);
+    for (i = 0; i < n; i++)
     {
-      fputs("\n", f);
-      continue;
+        poe *e = o_nth(o, i);
+        fputs(e->comment, f);
+        if (e->kind == KIND_COMM)
+        {
+            fputs("\n", f);
+            continue;
+        }
+        else if (e->kind == KIND_OLD)
+        {
+            prefix = "#~";
+        }
+        else
+        {
+            fputs(e->refstr, f);
+            prefix = "";
+        }
+        fprintf(f, "%smsgid ", prefix);
+        print_canon(f, e->msgid.key, prefix, TRUE);
+        fprintf(f, "\n%smsgstr ", prefix);
+        print_canon(f, e->msgstr, prefix, FALSE);
+        fputs("\n\n", f);
     }
-    else if (e->kind == KIND_OLD)
-    {
-      prefix = "#~";
-    }
-    else
-    {
-      fputs(e->refstr, f);
-      prefix = "";
-    }
-    fprintf(f, "%smsgid ", prefix);
-    print_canon(f, e->msgid.key, prefix, TRUE);
-    fprintf(f, "\n%smsgstr ", prefix);
-    print_canon(f, e->msgstr, prefix, FALSE);
-    fputs("\n\n", f);
-  }
 }
 
 /*
@@ -1870,125 +1870,125 @@ static void print_po_file(FILE *f, oh *o)
 
 static void update(char *fname)
 {
-  oh *o1, *o2, *o;
-  poe *e1, *e2, *e;
-  str *s;
-  char * bfname;
-  FILE *f;
-  int i1, i2, n1, n2;
-  int numtransl = 0;   /* number of translated entries */
-  int numold = 0;      /* number of old entries */
-  int numuntransl = 0; /* number of untranslated entries */
+    oh *o1, *o2, *o;
+    poe *e1, *e2, *e;
+    str *s;
+    char * bfname;
+    FILE *f;
+    int i1, i2, n1, n2;
+    int numtransl = 0;   /* number of translated entries */
+    int numold = 0;      /* number of old entries */
+    int numuntransl = 0; /* number of untranslated entries */
 
-  /* get the reference first, before renaming the file */
-  o1 = o_new();
-  parse_po_file("po/messages.pot", o1, 0);
+    /* get the reference first, before renaming the file */
+    o1 = o_new();
+    parse_po_file("po/messages.pot", o1, 0);
 
-  /* rename the po file (backup) */
-  s = s_new();
-  s_addstr(s, fname);
-  s_addstr(s, ".bak");
-  bfname = s_detach(s);
+    /* rename the po file (backup) */
+    s = s_new();
+    s_addstr(s, fname);
+    s_addstr(s, ".bak");
+    bfname = s_detach(s);
 
-  if (rename(fname, bfname))
-  {
-    warn("cannot rename file '%s' to '%s', cancelled", fname, bfname);
-    return;
-  }
-
-  /* parse the po file */
-  o2 = o_new();
-  parse_po_file(bfname, o2, 0);
-
-  /* scan o1 and o2, merging the two */
-  n1 = o_len(o1);
-  n2 = o_len(o2);
-  o = o_new();
-  /* first, put an updated admin entry */
-  {
-    ae_t a1, a2;
-    e1 = o_find(o1, "");
-    e2 = o_find(o2, "");
-    if (e1 == NULL || !parse_ae(e1->msgstr, &a1))
-      fill_pot_ae(&a1);
-    if (e2 == NULL || !parse_ae(e2->msgstr, &a2))
+    if (rename(fname, bfname))
     {
-      warn("bad administrative entry, getting back that of the template");
-      a2 = a1;
+        warn("cannot rename file '%s' to '%s', cancelled", fname, bfname);
+        return;
     }
-    e = poe_new("");
-    if (e2 != NULL)
-      e->comment = e2->comment; /* keep the initial comment */
-    e->kind = KIND_NORM;
-    e->msgstr = ae_to_string(&a2);
-    o_insert(o, e);
-  }
 
-  /* TODO, better algorithm to keep the order of entries... */
+    /* parse the po file */
+    o2 = o_new();
+    parse_po_file(bfname, o2, 0);
 
-  /* first, update entries in the po file */
-  for (i2 = 0; i2 < n2; i2++)
-  {
-    e2 = o_nth(o2, i2);
-    if (e2->kind == KIND_COMM)
+    /* scan o1 and o2, merging the two */
+    n1 = o_len(o1);
+    n2 = o_len(o2);
+    o = o_new();
+    /* first, put an updated admin entry */
     {
-      o_add(o, e2);
-    }
-    else if (e2->msgid.key[0] == 0)
-    {
-      /* the old admin entry - do nothing */
-    }
-    else
-    {
-      e = o_find(o1, e2->msgid.key);
-      if (e)
-      {
-        e2->kind = KIND_NORM;
-        e2->refstr = e->refstr;
-        e2->refs = 0;
-        o_add(o, e2);
-        if (strcmp("", e2->msgstr))
-          numtransl++;
-        else
-          numuntransl++;
-      }
-      else
-      {
-        e2->kind = KIND_OLD;
-        o_add(o, e2);
-        numold++;
-      }
-    }
-  }
-
-  /* then, add new entries from the template */
-  for (i1 = 0; i1 < n1; i1++)
-  {
-    e1 = o_nth(o1, i1);
-    if (e1->kind == KIND_NORM)
-    {
-      if (e1->msgid.key[0] != 0)
-      {
-        e = o_find(o2, e1->msgid.key);
-        if (!e)
+        ae_t a1, a2;
+        e1 = o_find(o1, "");
+        e2 = o_find(o2, "");
+        if (e1 == NULL || !parse_ae(e1->msgstr, &a1))
+            fill_pot_ae(&a1);
+        if (e2 == NULL || !parse_ae(e2->msgstr, &a2))
         {
-          o_add(o, e1);
-          numuntransl++;
+            warn("bad administrative entry, getting back that of the template");
+            a2 = a1;
         }
-      }
+        e = poe_new("");
+        if (e2 != NULL)
+            e->comment = e2->comment; /* keep the initial comment */
+        e->kind = KIND_NORM;
+        e->msgstr = ae_to_string(&a2);
+        o_insert(o, e);
     }
-  }
 
-  /* print stats */
-  printf("translated %d, untranslated %d, obsolete %d\n",
-    numtransl, numuntransl, numold);
+    /* TODO, better algorithm to keep the order of entries... */
 
-  /* dump o into the new file */
-  f = fopen(fname, "w");
-  if (f == NULL)
-    fatal("could not open %s", fname);
-  print_po_file(f, o);
-  fclose(f);
+    /* first, update entries in the po file */
+    for (i2 = 0; i2 < n2; i2++)
+    {
+        e2 = o_nth(o2, i2);
+        if (e2->kind == KIND_COMM)
+        {
+            o_add(o, e2);
+        }
+        else if (e2->msgid.key[0] == 0)
+        {
+            /* the old admin entry - do nothing */
+        }
+        else
+        {
+            e = o_find(o1, e2->msgid.key);
+            if (e)
+            {
+                e2->kind = KIND_NORM;
+                e2->refstr = e->refstr;
+                e2->refs = 0;
+                o_add(o, e2);
+                if (strcmp("", e2->msgstr))
+                    numtransl++;
+                else
+                    numuntransl++;
+            }
+            else
+            {
+                e2->kind = KIND_OLD;
+                o_add(o, e2);
+                numold++;
+            }
+        }
+    }
+
+    /* then, add new entries from the template */
+    for (i1 = 0; i1 < n1; i1++)
+    {
+        e1 = o_nth(o1, i1);
+        if (e1->kind == KIND_NORM)
+        {
+            if (e1->msgid.key[0] != 0)
+            {
+                e = o_find(o2, e1->msgid.key);
+                if (!e)
+                {
+                    o_add(o, e1);
+                    numuntransl++;
+                }
+            }
+        }
+    }
+
+    /* print stats */
+    printf("translated %d, untranslated %d, obsolete %d\n",
+        numtransl, numuntransl, numold);
+
+    /* dump o into the new file */
+    f = fopen(fname, "w");
+    if (f == NULL)
+        fatal("could not open %s", fname);
+    print_po_file(f, o);
+    fclose(f);
 }
 
 
@@ -1998,42 +1998,42 @@ static void update(char *fname)
 
 static void xgettext(void)
 {
-  da *d;
-  oh *o;
-  int i, n;
-  FILE *f;
-  char *fname;
-  ae_t a;
-  poe *e;
+    da *d;
+    oh *o;
+    int i, n;
+    FILE *f;
+    char *fname;
+    ae_t a;
+    poe *e;
 
-  d = da_new();
-  parse_oipl_file("po/POTFILES.in", d);
+    d = da_new();
+    parse_oipl_file("po/POTFILES.in", d);
 
-  o = o_new();
+    o = o_new();
 
-  /* create the administrative entry */
-  fill_pot_ae(&a);
-  e = poe_new("");
-  e->kind = KIND_NORM;
-  e->msgstr = ae_to_string(&a);
-  e->comment = "# SOME DESCRIPTIVE TITLE.\n\
+    /* create the administrative entry */
+    fill_pot_ae(&a);
+    e = poe_new("");
+    e->kind = KIND_NORM;
+    e->msgstr = ae_to_string(&a);
+    e->comment = "# SOME DESCRIPTIVE TITLE.\n\
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.\n";
-  o_add(o, e);
+    o_add(o, e);
 
-  n = da_len(d);
-  for (i = 0; i < n; i++)
-  {
-    parse_c_file(da_nth(d,i), pca_xgettext, o);
-  }
+    n = da_len(d);
+    for (i = 0; i < n; i++)
+    {
+        parse_c_file(da_nth(d,i), pca_xgettext, o);
+    }
 
-  po_convert_refs(o);
+    po_convert_refs(o);
 
-  fname = "po/messages.pot";
-  f = fopen(fname, "w");
-  if (f == NULL)
-    fatal("couldn't create %s", fname);
-  print_po_file(f, o);
-  fclose(f);
+    fname = "po/messages.pot";
+    f = fopen(fname, "w");
+    if (f == NULL)
+        fatal("couldn't create %s", fname);
+    print_po_file(f, o);
+    fclose(f);
 }
 
 /*
@@ -2046,27 +2046,27 @@ static void xgettext(void)
  */
 
 struct charset_alias {
-  const char *name;
-  const char *alias;
+    const char *name;
+    const char *alias;
 };
 
 const struct charset_alias charsets[] = {
-  { "latin1", "ISO-8859-1" },
-  { "latin2", "ISO-8859-2" },
-  { "latin9", "ISO-8859-15" },
+    { "latin1", "ISO-8859-1" },
+    { "latin2", "ISO-8859-2" },
+    { "latin9", "ISO-8859-15" },
 };
 
 /* resolve any known alias */
 static const char * get_canon_cset_name(const char *name)
 {
-  int i;
-  int n = ARRAY_SIZE(charsets);
-  for (i = 0; i < n; i++)
-  {
-    if (!strcmp(charsets[i].alias, name))
-      return charsets[i].name;
-  }
-  return xstrdup(name);
+    int i;
+    int n = ARRAY_SIZE(charsets);
+    for (i = 0; i < n; i++)
+    {
+        if (!strcmp(charsets[i].alias, name))
+            return charsets[i].name;
+    }
+    return xstrdup(name);
 }
 
 /*
@@ -2074,31 +2074,31 @@ static const char * get_canon_cset_name(const char *name)
  */
 
 static struct {
-    unsigned char latin1;
-    unsigned char ascii;
+        unsigned char latin1;
+        unsigned char ascii;
 } const replacements[] = {
-    { 0x00a0, ' ' },    /* NO-BREAK SPACE */
-    { 0x00a6, '|' },    /* BROKEN BAR */
-    { 0x00ad, '-' },    /* SOFT HYPHEN */
-    { 0x00c1, 'A' },    /* A' LATIN CAPITAL LETTER A WITH ACUTE */
-    { 0x00c2, 'A' },    /* A^ LATIN CAPITAL LETTER A WITH CIRCUMFLEX */
-    { 0x00c8, 'E' },    /* E` LATIN CAPITAL LETTER E WITH GRAVE */
-    { 0x00ca, 'E' },    /* E^ LATIN CAPITAL LETTER E WITH CIRCUMFLEX */
-    { 0x00cb, 'E' },    /* E" LATIN CAPITAL LETTER E WITH DIAERESIS */
-    { 0x00cc, 'I' },    /* I` LATIN CAPITAL LETTER I WITH GRAVE */
-    { 0x00cd, 'I' },    /* I' LATIN CAPITAL LETTER I WITH ACUTE */
-    { 0x00ce, 'I' },    /* I^ LATIN CAPITAL LETTER I WITH CIRCUMFLEX */
-    { 0x00cf, 'I' },    /* I" LATIN CAPITAL LETTER I WITH DIAERESIS */
-    { 0x00d2, 'O' },    /* O` LATIN CAPITAL LETTER O WITH GRAVE */
-    { 0x00d3, 'O' },    /* O' LATIN CAPITAL LETTER O WITH ACUTE */
-    { 0x00d4, 'O' },    /* O^ LATIN CAPITAL LETTER O WITH CIRCUMFLEX */
-    { 0x00d7, 'x' },    /* MULTIPLICATION SIGN */
-    { 0x00d9, 'U' },    /* U` LATIN CAPITAL LETTER U WITH GRAVE */
-    { 0x00da, 'U' },    /* U' LATIN CAPITAL LETTER U WITH ACUTE */
-    { 0x00db, 'U' },    /* U^ LATIN CAPITAL LETTER U WITH CIRCUMFLEX */
-    { 0x00dd, 'Y' },    /* Y` LATIN CAPITAL LETTER Y WITH ACUTE */
-    { 0x00fd, 'y' },    /* Y' LATIN SMALL LETTER Y WITH ACUTE */
-    { 0x0000, '?' }
+        { 0x00a0, ' ' },    /* NO-BREAK SPACE */
+        { 0x00a6, '|' },    /* BROKEN BAR */
+        { 0x00ad, '-' },    /* SOFT HYPHEN */
+        { 0x00c1, 'A' },    /* A' LATIN CAPITAL LETTER A WITH ACUTE */
+        { 0x00c2, 'A' },    /* A^ LATIN CAPITAL LETTER A WITH CIRCUMFLEX */
+        { 0x00c8, 'E' },    /* E` LATIN CAPITAL LETTER E WITH GRAVE */
+        { 0x00ca, 'E' },    /* E^ LATIN CAPITAL LETTER E WITH CIRCUMFLEX */
+        { 0x00cb, 'E' },    /* E" LATIN CAPITAL LETTER E WITH DIAERESIS */
+        { 0x00cc, 'I' },    /* I` LATIN CAPITAL LETTER I WITH GRAVE */
+        { 0x00cd, 'I' },    /* I' LATIN CAPITAL LETTER I WITH ACUTE */
+        { 0x00ce, 'I' },    /* I^ LATIN CAPITAL LETTER I WITH CIRCUMFLEX */
+        { 0x00cf, 'I' },    /* I" LATIN CAPITAL LETTER I WITH DIAERESIS */
+        { 0x00d2, 'O' },    /* O` LATIN CAPITAL LETTER O WITH GRAVE */
+        { 0x00d3, 'O' },    /* O' LATIN CAPITAL LETTER O WITH ACUTE */
+        { 0x00d4, 'O' },    /* O^ LATIN CAPITAL LETTER O WITH CIRCUMFLEX */
+        { 0x00d7, 'x' },    /* MULTIPLICATION SIGN */
+        { 0x00d9, 'U' },    /* U` LATIN CAPITAL LETTER U WITH GRAVE */
+        { 0x00da, 'U' },    /* U' LATIN CAPITAL LETTER U WITH ACUTE */
+        { 0x00db, 'U' },    /* U^ LATIN CAPITAL LETTER U WITH CIRCUMFLEX */
+        { 0x00dd, 'Y' },    /* Y` LATIN CAPITAL LETTER Y WITH ACUTE */
+        { 0x00fd, 'y' },    /* Y' LATIN SMALL LETTER Y WITH ACUTE */
+        { 0x0000, '?' }
 };
 
 /*
@@ -2106,121 +2106,121 @@ static struct {
  */
 
 static const unsigned char i2a[] = {
-     0,   0,     0,    0,    0,    0,   0,    0,
-     0,   0,     0,    0,    0,    0,   0,    0,
-     0,   0,     0,    0,    0,    0,   0,    0,
-     0,   0,     0,    0,    0,    0,   0,    0,
-  /*     ¡     ¢     £     ¤     ¥     ¦     § */
-     0, 0xad, 0x9b, 0x9c,    0, 0x9d,   0, 0xdd,
-  /* ¨   ©     ª     «     ¬     ­     ®     ¯ */
-  0xb9, 0xbd, 0xa6, 0xae, 0xaa,    0, 0xbe, 0xff,
-  /* °   ±     ²     ³     ´     µ     ¶     · */
-  0xf8, 0xf1, 0xfd, 0xfe, 0xba, 0xe6, 0xbc,  0,
-  /* ¸   ¹     º     »     ¼     ½     ¾     ¿ */
-     0,   0,  0xa7, 0xaf, 0xac, 0xab,    0, 0xa8,
-  /* À   Á     Â     Ã     Ä     Å     Æ     Ç */
-  0xb6,   0,     0, 0xB7, 0x8e, 0x8f, 0x92, 0x80,
-  /* È   É     Ê     Ë     Ì     Í     Î     Ï */
-     0, 0x90,    0,    0,    0,    0,    0,    0,
-  /* Ð   Ñ     Ò     Ó     Ô     Õ     Ö     × */
-  0   , 0xa5,    0,    0,    0, 0xb8, 0x99,    0,
-  /* Ø   Ù     Ú     Û     Ü     Ý     Þ     ß */
-  0xb2,   0 ,    0,    0, 0x9a,    0,   0,  0x9e,
-  /* à   á     â     ã     ä     å     æ     ç */
-  0x85, 0xa0, 0x83, 0xb0, 0x84, 0x86, 0x91, 0x87,
-  /* è   é     ê     ë     ì     í     î     ï */
-  0x8a, 0x82, 0x88, 0x89, 0x8d, 0xa1, 0x8c, 0x8b,
-  /* ð   ñ     ò     ó     ô     õ     ö     ÷ */
-  0   , 0xa4, 0x95, 0xa2, 0x93, 0xb1, 0x94, 0xf6,
-  /* ø   ù     ú     û     ü     ý     þ     ÿ */
-  0xb3, 0x97, 0xa3, 0x96, 0x81,    0,    0, 0x98,
+       0,    0,    0,    0,    0,    0,    0,    0,
+       0,    0,    0,    0,    0,    0,    0,    0,
+       0,    0,    0,    0,    0,    0,    0,    0,
+       0,    0,    0,    0,    0,    0,    0,    0,
+    /*       ¡     ¢     £     ¤     ¥     ¦     § */
+       0, 0xad, 0x9b, 0x9c,    0, 0x9d,   0,  0xdd,
+    /* ¨     ©     ª     «     ¬     ­      ®     ¯ */
+    0xb9, 0xbd, 0xa6, 0xae, 0xaa,    0, 0xbe, 0xff,
+    /* °     ±     ²     ³     ´     µ     ¶     · */
+    0xf8, 0xf1, 0xfd, 0xfe, 0xba, 0xe6, 0xbc,    0,
+    /* ¸    ¹      º     »     ¼     ½     ¾     ¿ */
+       0,    0, 0xa7, 0xaf, 0xac, 0xab,    0, 0xa8,
+    /* À     Á     Â     Ã     Ä     Å     Æ     Ç */
+    0xb6,    0,    0, 0xB7, 0x8e, 0x8f, 0x92, 0x80,
+    /* È     É     Ê     Ë     Ì     Í     Î     Ï */
+       0, 0x90,    0,    0,    0,    0,    0,    0,
+    /* Ð     Ñ     Ò     Ó     Ô     Õ     Ö     × */
+       0, 0xa5,    0,    0,    0, 0xb8, 0x99,    0,
+    /* Ø     Ù     Ú     Û     Ü     Ý     Þ     ß */
+    0xb2,    0,    0,    0, 0x9a,    0,   0,  0x9e,
+    /* à     á     â     ã     ä     å     æ     ç */
+    0x85, 0xa0, 0x83, 0xb0, 0x84, 0x86, 0x91, 0x87,
+    /* è     é     ê     ë     ì     í     î     ï */
+    0x8a, 0x82, 0x88, 0x89, 0x8d, 0xa1, 0x8c, 0x8b,
+    /* ð     ñ     ò     ó     ô     õ     ö     ÷ */
+       0, 0xa4, 0x95, 0xa2, 0x93, 0xb1, 0x94, 0xf6,
+    /* ø     ù     ú     û     ü     ý     þ     ÿ */
+    0xb3, 0x97, 0xa3, 0x96, 0x81,    0,    0, 0x98,
 };
 
 static void latin1_to_atarist(char *s)
 {
-  unsigned char c, newc;
-  int warned = 0;
-  int i;
+    unsigned char c, newc;
+    int warned = 0;
+    int i;
 
-  while((c = (unsigned char) (*s) & 0xff) != 0)
-  {
-    if (c >= 0x80)
+    while((c = (unsigned char) (*s) & 0xff) != 0)
     {
-      newc = i2a[c - 0x80];
-      if (newc == 0)
-      {
-        for (i = 0; (replacements[i].latin1 != 0) && (replacements[i].latin1 != c); i++)
-          ;
-        newc = replacements[i].ascii;
-        if (!warned)
+        if (c >= 0x80)
         {
-          const char *tmp = s;
-          fprintf(stderr, "Warning: untranslatable character $%02x in ", c);
-          /*
-           * assume a console in utf-8 mode; printing a latin1 string usually won't work
-           */
-          while((c = (unsigned char) (*tmp) & 0xff) != 0)
-          {
-            if (c >= 0x80)
+            newc = i2a[c - 0x80];
+            if (newc == 0)
             {
-              putc(((c >> 6) & 0x03) | 0xc0, stderr);
-              putc((c & 0x3f) | 0x80, stderr);
+                for (i = 0; (replacements[i].latin1 != 0) && (replacements[i].latin1 != c); i++)
+                    ;
+                newc = replacements[i].ascii;
+                if (!warned)
+                {
+                    const char *tmp = s;
+                    fprintf(stderr, "Warning: untranslatable character $%02x in ", c);
+                    /*
+                     * assume a console in utf-8 mode; printing a latin1 string usually won't work
+                     */
+                    while((c = (unsigned char) (*tmp) & 0xff) != 0)
+                    {
+                        if (c >= 0x80)
+                        {
+                            putc(((c >> 6) & 0x03) | 0xc0, stderr);
+                            putc((c & 0x3f) | 0x80, stderr);
+                        }
+                        else
+                        {
+                            putc(c, stderr);
+                        }
+                        tmp++;
+                    }
+                    fprintf(stderr, ", using '%c' instead\n", newc);
+                    warned = 1;
+                }
             }
-            else
-            {
-              putc(c, stderr);
-            }
-            tmp++;
-          }
-          fprintf(stderr, ", using '%c' instead\n", newc);
-          warned = 1;
+            *s = newc;
         }
-      }
-      *s = newc;
+        s++;
     }
-    s++;
-  }
 }
 
 
 static void converter_noop(char *s)
 {
-  UNUSED(s);
+    UNUSED(s);
 }
 
 typedef void(*converter_t)(char *);
 
 
 struct converter_info {
-  const char * from;
-  const char * to;
-  converter_t func;
+    const char * from;
+    const char * to;
+    converter_t func;
 };
 
 static const struct converter_info converters[] = {
-  { "latin1", "atarist", latin1_to_atarist },
+    { "latin1", "atarist", latin1_to_atarist },
 };
 
 static converter_t get_converter(const char * from, const char * to)
 {
-  int i;
-  int n = ARRAY_SIZE(converters);
+    int i;
+    int n = ARRAY_SIZE(converters);
 
-  if (!strcmp(from, to))
+    if (!strcmp(from, to))
+        return converter_noop;
+
+    for (i = 0; i < n; i++)
+    {
+        if (!strcmp(from, converters[i].from) && !strcmp(to,converters[i].to))
+            return converters[i].func;
+    }
+    warn("unknown charset conversion %s..%s.", from, to);
+    fprintf(stderr, "known conversions are:\n");
+    for (i = 0; i < n; i++)
+    {
+        fprintf(stderr, "  %s..%s\n", converters[i].from, converters[i].to);
+    }
     return converter_noop;
-
-  for (i = 0; i < n; i++)
-  {
-    if (!strcmp(from, converters[i].from) && !strcmp(to,converters[i].to))
-      return converters[i].func;
-  }
-  warn("unknown charset conversion %s..%s.", from, to);
-  fprintf(stderr, "known conversions are:\n");
-  for (i = 0; i < n; i++)
-  {
-    fprintf(stderr, "  %s..%s\n", converters[i].from, converters[i].to);
-  }
-  return converter_noop;
 }
 
 /*
@@ -2239,21 +2239,21 @@ static converter_t get_converter(const char * from, const char * to)
 
 static int compute_th_value(const char *t)
 {
-  const uchar *u = (const uchar *) t;
-  unsigned a, b;
+    const uchar *u = (const uchar *) t;
+    unsigned a, b;
 
-  a = 0;
-  while(*u)
-  {
-    b = (a>>15) & 1;
-    a <<= 1;
-    a |= b;
-    a += *u++;
-  }
-  b = (a >> TH_BITS) & TH_BMASK;
-  a &= TH_MASK;
-  a ^= b;
-  return a;
+    a = 0;
+    while(*u)
+    {
+        b = (a>>15) & 1;
+        a <<= 1;
+        a |= b;
+        a += *u++;
+    }
+    b = (a >> TH_BITS) & TH_BMASK;
+    a &= TH_MASK;
+    a ^= b;
+    return a;
 }
 
 /*
@@ -2268,51 +2268,51 @@ static int compute_th_value(const char *t)
 #define LANG_LEN 3
 static int parse_linguas_item(const char *s, char *lang, const char **charset)
 {
-  if (*s <'a' || *s >= 'z')
-    return 0;
-  *lang++ = *s++;
-  if (*s <'a' || *s >= 'z')
-    return 0;
-  *lang++ = *s++;
-  *lang = 0;
-  if (*s != ' ' && *s != '\t')
-    return 0;
-  while((*s == ' ') || (*s == '\t'))
-    s++;
-  *charset = get_canon_cset_name(s);
-  return 1;
+    if (*s <'a' || *s >= 'z')
+        return 0;
+    *lang++ = *s++;
+    if (*s <'a' || *s >= 'z')
+        return 0;
+    *lang++ = *s++;
+    *lang = 0;
+    if (*s != ' ' && *s != '\t')
+        return 0;
+    while((*s == ' ') || (*s == '\t'))
+        s++;
+    *charset = get_canon_cset_name(s);
+    return 1;
 }
 
 static void make(void)
 {
-  da *d;
-  da *th[TH_SIZE];
-  oh *o, *oref;
-  int i, n, j, m;
-  FILE *f;
-  poe *eref;
-  char tmp[20];
-  char *t;
-  char lang[LANG_LEN];
-  da *langs;
-  const char *from_charset, *to_charset;
-  converter_t converter;
-  int numref = 0;   /* number of entries in the reference */
-  int numtransl;    /* number of translated entries */
+    da *d;
+    da *th[TH_SIZE];
+    oh *o, *oref;
+    int i, n, j, m;
+    FILE *f;
+    poe *eref;
+    char tmp[20];
+    char *t;
+    char lang[LANG_LEN];
+    da *langs;
+    const char *from_charset, *to_charset;
+    converter_t converter;
+    int numref = 0;   /* number of entries in the reference */
+    int numtransl;    /* number of translated entries */
 
-  langs = da_new();
+    langs = da_new();
 
-  d = da_new();
-  parse_oipl_file("po/LINGUAS", d);
+    d = da_new();
+    parse_oipl_file("po/LINGUAS", d);
 
-  oref = o_new();
-  parse_po_file("po/messages.pot", oref, 1);
+    oref = o_new();
+    parse_po_file("po/messages.pot", oref, 1);
 
-  f = fopen(LANGS_C, "w");
-  if (f == NULL)
-    fatal("cannot open " LANGS_C);
+    f = fopen(LANGS_C, "w");
+    if (f == NULL)
+        fatal("cannot open " LANGS_C);
 
-  fprintf(f, "\
+    fprintf(f, "\
 /*\n\
  * " LANGS_C " - tables for all languages\n\
  *\n\
@@ -2322,158 +2322,158 @@ static void make(void)
  * For more info, refer to file " DOCNAME "\n\
  */\n\n", now());
 
-  fprintf(f, "#include \"config.h\"\n");
-  fprintf(f, "#include \"i18nconf.h\"\n\n");
-  fprintf(f, "#if CONF_WITH_NLS\n\n");
-  fprintf(f, "#include \"langs.h\"\n\n");
+    fprintf(f, "#include \"config.h\"\n");
+    fprintf(f, "#include \"i18nconf.h\"\n\n");
+    fprintf(f, "#if CONF_WITH_NLS\n\n");
+    fprintf(f, "#include \"langs.h\"\n\n");
 
-  /* generate the default strings table, and store the
-   * name of the key string in msgstr
-   */
-  fprintf(f, "/*\n * The keys for hash tables below.\n */\n\n");
+    /* generate the default strings table, and store the
+     * name of the key string in msgstr
+     */
+    fprintf(f, "/*\n * The keys for hash tables below.\n */\n\n");
 
-  m = o_len(oref);
-  for (j = 0; j < m; j++)
-  {
-    eref = o_nth(oref, j);
-    if (eref->kind == KIND_NORM)
-    {
-      sprintf(tmp, "nls_key_%d", j);
-      eref->msgstr = xstrdup(tmp);
-      fprintf(f, "static const char %s [] = ", tmp);
-      print_canon(f, eref->msgid.key, "  ", TRUE);
-      fprintf(f, ";\n");
-      numref++;
-    }
-  }
-  fprintf(f, "\n\n");
-
-  /* for each language, generate a hash table, pointing
-   * back to the keys output above
-   */
-  n = da_len(d);
-  for (i = 0; i < n; i++)
-  {
-    /* clear target hash */
-    for (j = 0; j < TH_SIZE; j++)
-    {
-      th[j] = 0;
-    }
-
-    /* obtain destination charset from LINGUAS */
-    t = da_nth(d, i);
-    if (!parse_linguas_item(t, lang, &to_charset))
-    {
-      warn("po/LINGUAS: bad lang/charset specification \"%s\"", t);
-      continue;
-    }
-
-    /* read translations */
-    o = o_new();
-    sprintf(tmp, "po/%s.po", lang);
-    parse_po_file(tmp, o, 0);
-
-    { /* get the source charset from the po file */
-      ae_t a;
-      poe *e = o_find(o, "");
-      if (e == NULL || !parse_ae(e->msgstr, &a))
-      {
-        warn("%s: bad administrative entry", tmp);
-        continue;
-      }
-      from_charset = get_canon_cset_name(a.charset);
-    }
-    da_add(langs, xstrdup(lang));
-
-    converter = get_converter(from_charset, to_charset);
-
-    /* compare o to oref */
-    numtransl = 0;
-    m = o_len(o);
+    m = o_len(oref);
     for (j = 0; j < m; j++)
     {
-      poe *e = o_nth(o, j);
-      if ((e->kind == KIND_NORM) && strcmp("", e->msgstr))
-      {
-        eref = o_find(oref, e->msgid.key);
-        if (eref)
+        eref = o_nth(oref, j);
+        if (eref->kind == KIND_NORM)
         {
-          int a = compute_th_value(e->msgid.key);
-          if (th[a] == 0)
-            th[a] = da_new();
-          da_add(th[a], eref->msgstr);
-          /* translate into destination encoding */
-          converter(e->msgstr);
-          da_add(th[a], e->msgstr);
-          numtransl++;
+            sprintf(tmp, "nls_key_%d", j);
+            eref->msgstr = xstrdup(tmp);
+            fprintf(f, "static const char %s [] = ", tmp);
+            print_canon(f, eref->msgid.key, "  ", TRUE);
+            fprintf(f, ";\n");
+            numref++;
         }
-      }
     }
+    fprintf(f, "\n\n");
 
-    /* print stats if some entries are missing */
-    if (numtransl < numref)
-      printf("lang %s: %d untranslated entr%s\n",
-          lang, numref - numtransl, (numref - numtransl == 1)? "y" : "ies");
-
-    /* dump the hash table */
-    fprintf(f, "/*\n * hash table for lang %s.\n */\n\n", lang);
-    for (j = 0; j < TH_SIZE; j++)
+    /* for each language, generate a hash table, pointing
+     * back to the keys output above
+     */
+    n = da_len(d);
+    for (i = 0; i < n; i++)
     {
-      if (th[j] != 0)
-      {
-        int ii, nn, rc;
-        fprintf(f, "static const char * const msg_%s_hash_%d[] = {\n", lang, j);
-        nn = da_len(th[j]);
-        for (ii = 0; ii < nn; ii += 2)
+        /* clear target hash */
+        for (j = 0; j < TH_SIZE; j++)
         {
-          fprintf(f, "  %s, ", (char *) da_nth(th[j],ii));
-          rc = print_canon(f, da_nth(th[j],ii+1), "    ", TRUE);
-          if (rc < 0)
-            print_alert_warning(rc,lang,da_nth(th[j],ii));
-          fprintf(f, ",\n");
+            th[j] = 0;
+        }
+
+        /* obtain destination charset from LINGUAS */
+        t = da_nth(d, i);
+        if (!parse_linguas_item(t, lang, &to_charset))
+        {
+            warn("po/LINGUAS: bad lang/charset specification \"%s\"", t);
+            continue;
+        }
+
+        /* read translations */
+        o = o_new();
+        sprintf(tmp, "po/%s.po", lang);
+        parse_po_file(tmp, o, 0);
+
+        { /* get the source charset from the po file */
+            ae_t a;
+            poe *e = o_find(o, "");
+            if (e == NULL || !parse_ae(e->msgstr, &a))
+            {
+                warn("%s: bad administrative entry", tmp);
+                continue;
+            }
+            from_charset = get_canon_cset_name(a.charset);
+        }
+        da_add(langs, xstrdup(lang));
+
+        converter = get_converter(from_charset, to_charset);
+
+        /* compare o to oref */
+        numtransl = 0;
+        m = o_len(o);
+        for (j = 0; j < m; j++)
+        {
+            poe *e = o_nth(o, j);
+            if ((e->kind == KIND_NORM) && strcmp("", e->msgstr))
+            {
+                eref = o_find(oref, e->msgid.key);
+                if (eref)
+                {
+                    int a = compute_th_value(e->msgid.key);
+                    if (th[a] == 0)
+                        th[a] = da_new();
+                    da_add(th[a], eref->msgstr);
+                    /* translate into destination encoding */
+                    converter(e->msgstr);
+                    da_add(th[a], e->msgstr);
+                    numtransl++;
+                }
+            }
+        }
+
+        /* print stats if some entries are missing */
+        if (numtransl < numref)
+            printf("lang %s: %d untranslated entr%s\n",
+                    lang, numref - numtransl, (numref - numtransl == 1)? "y" : "ies");
+
+        /* dump the hash table */
+        fprintf(f, "/*\n * hash table for lang %s.\n */\n\n", lang);
+        for (j = 0; j < TH_SIZE; j++)
+        {
+            if (th[j] != 0)
+            {
+                int ii, nn, rc;
+                fprintf(f, "static const char * const msg_%s_hash_%d[] = {\n", lang, j);
+                nn = da_len(th[j]);
+                for (ii = 0; ii < nn; ii += 2)
+                {
+                    fprintf(f, "  %s, ", (char *) da_nth(th[j],ii));
+                    rc = print_canon(f, da_nth(th[j],ii+1), "    ", TRUE);
+                    if (rc < 0)
+                        print_alert_warning(rc,lang,da_nth(th[j],ii));
+                    fprintf(f, ",\n");
+                }
+                fprintf(f, "  0\n};\n\n");
+            }
+        }
+        fprintf(f, "static const char * const * const msg_%s[] = {\n", lang);
+        for (j = 0; j < TH_SIZE; j++)
+        {
+            if (th[j])
+            {
+                fprintf(f, "  msg_%s_hash_%d,\n", lang, j);
+                da_free(th[j]);
+            }
+            else
+            {
+                fprintf(f, "  0,\n");
+            }
         }
         fprintf(f, "  0\n};\n\n");
-      }
+
+        /* free this po */
+        o_free(o);
     }
-    fprintf(f, "static const char * const * const msg_%s[] = {\n", lang);
-    for (j = 0; j < TH_SIZE; j++)
+
+    /* print a lang table */
+    fprintf(f, "/*\n * the table of available langs.\n */\n\n");
+    n = da_len(langs);
+    for (i = 0; i < n; i++)
     {
-      if (th[j])
-      {
-        fprintf(f, "  msg_%s_hash_%d,\n", lang, j);
-        da_free(th[j]);
-      }
-      else
-      {
-        fprintf(f, "  0,\n");
-      }
-    }
-    fprintf(f, "  0\n};\n\n");
-
-    /* free this po */
-    o_free(o);
-  }
-
-  /* print a lang table */
-  fprintf(f, "/*\n * the table of available langs.\n */\n\n");
-  n = da_len(langs);
-  for (i = 0; i < n; i++)
-  {
-    t = da_nth(langs, i);
-    fprintf(f, "\
+        t = da_nth(langs, i);
+        fprintf(f, "\
 static const struct lang_info lang_%s = { \"%s\", msg_%s };\n", t, t, t);
-  }
-  fprintf(f, "\n");
-  fprintf(f, "const struct lang_info * const langs[] = {\n");
-  for (i = 0; i < n; i++)
-  {
-    t = da_nth(langs, i);
-    fprintf(f, "  &lang_%s,\n", t);
-  }
-  fprintf(f, "  0,\n};\n\n#endif /* CONF_WITH_NLS */\n");
-  fclose(f);
-  da_free(langs);
-  da_free(d);
+    }
+    fprintf(f, "\n");
+    fprintf(f, "const struct lang_info * const langs[] = {\n");
+    for (i = 0; i < n; i++)
+    {
+        t = da_nth(langs, i);
+        fprintf(f, "  &lang_%s,\n", t);
+    }
+    fprintf(f, "  0,\n};\n\n#endif /* CONF_WITH_NLS */\n");
+    fclose(f);
+    da_free(langs);
+    da_free(d);
 }
 
 /*
@@ -2482,81 +2482,81 @@ static const struct lang_info lang_%s = { \"%s\", msg_%s };\n", t, t, t);
 
 static void translate(char *lang, char * from)
 {
-  FILE *g;
-  pcati p;
-  char *to;
-  char po[10];
-  const char *from_charset, *to_charset;
+    FILE *g;
+    pcati p;
+    char *to;
+    char po[10];
+    const char *from_charset, *to_charset;
 
-  { /* build destination filename */
-    int len = strlen(from);
-    if (len < 2 || from[len-1] != 'c' || from[len-2] != '.')
-    {
-      warn("I only translate .c files");
-      return;
+    { /* build destination filename */
+        int len = strlen(from);
+        if (len < 2 || from[len-1] != 'c' || from[len-2] != '.')
+        {
+            warn("I only translate .c files");
+            return;
+        }
+        to = xmalloc(len+3);
+        strcpy(to, from);
+        strcpy(to+len-2, ".tr.c");
     }
-    to = xmalloc(len+3);
-    strcpy(to, from);
-    strcpy(to+len-2, ".tr.c");
-  }
-  g = fopen(to, "w");
-  if (g == NULL)
-  {
-    warn("cannot create %s\n", to);
-    return;
-  }
-  free(to);
-  p.f = g;
-
-  to_charset = NULL;
-  { /* obtain destination charset from LINGUAS */
-    da *d = da_new();
-    int i, n;
-    parse_oipl_file("po/LINGUAS", d);
-
-    n = da_len(d);
-    for (i = 0; i < n; i++)
+    g = fopen(to, "w");
+    if (g == NULL)
     {
-      char *t = da_nth(d, i);
-      char l[LANG_LEN];
-      if (! parse_linguas_item(t, l, &to_charset))
-      {
-        warn("po/LINGUAS: bad lang/charset specification \"%s\"", t);
-      }
-      else if (!strcmp(lang, l))
-      {
-        break;
-      }
+        warn("cannot create %s\n", to);
+        return;
     }
-  }
-  if (to_charset == NULL)
-  {
-    warn("cannot find destination charset.");
-    to_charset = "unknown";
-  }
+    free(to);
+    p.f = g;
 
-  /* read all translations */
-  p.o = o_new();
-  sprintf(po, "po/%s.po", lang);
-  parse_po_file(po, p.o, 0);
+    to_charset = NULL;
+    { /* obtain destination charset from LINGUAS */
+        da *d = da_new();
+        int i, n;
+        parse_oipl_file("po/LINGUAS", d);
 
-  { /* get the source charset from the po file */
-    ae_t a;
-    poe *e = o_find(p.o, "");
-    if (e == NULL || !parse_ae(e->msgstr, &a))
+        n = da_len(d);
+        for (i = 0; i < n; i++)
+        {
+            char *t = da_nth(d, i);
+            char l[LANG_LEN];
+            if (! parse_linguas_item(t, l, &to_charset))
+            {
+                warn("po/LINGUAS: bad lang/charset specification \"%s\"", t);
+            }
+            else if (!strcmp(lang, l))
+            {
+                break;
+            }
+        }
+    }
+    if (to_charset == NULL)
     {
-      warn("%s: bad administrative entry", po);
-      goto fail;
+        warn("cannot find destination charset.");
+        to_charset = "unknown";
     }
-    from_charset = get_canon_cset_name(a.charset);
-  }
 
-  p.conv = get_converter(from_charset, to_charset);
+    /* read all translations */
+    p.o = o_new();
+    sprintf(po, "po/%s.po", lang);
+    parse_po_file(po, p.o, 0);
 
-  parse_c_file(from, pca_translate, &p);
+    { /* get the source charset from the po file */
+        ae_t a;
+        poe *e = o_find(p.o, "");
+        if (e == NULL || !parse_ae(e->msgstr, &a))
+        {
+            warn("%s: bad administrative entry", po);
+            goto fail;
+        }
+        from_charset = get_canon_cset_name(a.charset);
+    }
+
+    p.conv = get_converter(from_charset, to_charset);
+
+    parse_c_file(from, pca_translate, &p);
 fail:
-  o_free(p.o);
-  fclose(g);
+    o_free(p.o);
+    fclose(g);
 }
 
 /*
@@ -2565,46 +2565,46 @@ fail:
 
 int main(int argc, char **argv)
 {
-  if (argc < 2)
-    goto usage;
-  if (!strcmp(argv[1], "xgettext"))
-  {
-    if (argc != 2)
-      goto usage;
-    xgettext();
-    exit(0);
-  }
-  else if (!strcmp(argv[1], "update"))
-  {
-    if (argc != 3)
-      goto usage;
-    update(argv[2]);
-    exit(0);
-  }
-  else if (!strcmp(argv[1], "make"))
-  {
-    if (argc != 2)
-      goto usage;
-    make();
-    exit(0);
-  }
-  else if (!strcmp(argv[1], "translate"))
-  {
-    if (argc != 4)
-      goto usage;
-    translate(argv[2], argv[3]);
-    exit(0);
-  }
-  else if (!strcmp(argv[1], "--version"))
-  {
-    printf("version " VERSION "\n");
-    exit(0);
-  }
+    if (argc < 2)
+        goto usage;
+    if (!strcmp(argv[1], "xgettext"))
+    {
+        if (argc != 2)
+            goto usage;
+        xgettext();
+        exit(0);
+    }
+    else if (!strcmp(argv[1], "update"))
+    {
+        if (argc != 3)
+            goto usage;
+        update(argv[2]);
+        exit(0);
+    }
+    else if (!strcmp(argv[1], "make"))
+    {
+        if (argc != 2)
+            goto usage;
+        make();
+        exit(0);
+    }
+    else if (!strcmp(argv[1], "translate"))
+    {
+        if (argc != 4)
+            goto usage;
+        translate(argv[2], argv[3]);
+        exit(0);
+    }
+    else if (!strcmp(argv[1], "--version"))
+    {
+        printf("version " VERSION "\n");
+        exit(0);
+    }
 usage:
-  fprintf(stderr, "\
+    fprintf(stderr, "\
 Usage: " TOOLNAME " command\n");
 
-  fprintf(stderr, "\
+    fprintf(stderr, "\
 Commands are:\n\
   xgettext       scans source files listed in POTFILES.in \n\
                  and (re)creates messages.pot\n\
@@ -2616,7 +2616,7 @@ Commands are:\n\
   make           takes all languages listed in file LINGUAS \n\
                  and creates the C file(s) for the project\n");
 
-  fprintf(stderr, "\
+    fprintf(stderr, "\
 \n\
 Note: "
 TOOLNAME
@@ -2625,5 +2625,5 @@ with the original gettext. To have more control of your po files, \n\
 please use the original gettext utilities. You will still need this \n\
 tool to create the C file(s) at the end, though.\n");
 
-  exit(EXIT_FAILURE);
+    exit(EXIT_FAILURE);
 }
