@@ -184,6 +184,10 @@
  *          . EmuDesk now builds the menu separator lines dynamically, so
  *            (a) we no longer need to mark them as translateable, and
  *            (b) we can truncate them to one byte to save ROM space
+ *
+ *  v5.3    roger burrows, december/2017
+ *          . generates code to allocate the desktop object array
+ *            dynamically to reduce EmuTOS's low-memory footprint
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -1540,11 +1544,11 @@ PRIVATE int write_h_extern(FILE *fp)
     fprintf(fp,"extern const BITBLK %srs_bitblk[];\n",prefix);
     fprintf(fp,"extern const char * const %srs_fstr[];\n",prefix);
     fprintf(fp,"extern const ICONBLK %srs_iconblk[];\n",prefix);
-    fprintf(fp,"extern OBJECT %srs_obj[RS_NOBS];\n",prefix);
+    fprintf(fp,"extern OBJECT * %srs_obj;\n",prefix);
     fprintf(fp,"extern TEDINFO %srs_tedinfo[RS_NTED];\n",prefix);
-    fprintf(fp,"extern OBJECT * const %srs_trees[];\n\n",prefix);
+    fprintf(fp,"extern OBJECT * %srs_trees[];\n\n",prefix);
 
-    fprintf(fp,"extern void %srs_init(void);\n\n",prefix);
+    fprintf(fp,"extern int %srs_init(void);\n\n",prefix);
 #endif
 #ifdef GEM_RSC
     fprintf(fp,"/* The following arrays live in RAM */\n");
@@ -1580,6 +1584,9 @@ PRIVATE int write_include(FILE *fp,char *name)
     fprintf(fp,"#include \"string.h\"\n");
     fprintf(fp,"#include \"portab.h\"\n");
     fprintf(fp,"#include \"obdefs.h\"\n");
+#ifdef DESK_RSC
+    fprintf(fp,"#include \"gemdos.h\"\n");
+#endif
 #ifdef GEM_RSC
     fprintf(fp,"#include \"../desk/deskmain.h\"\n");
     fprintf(fp,"#include \"gemrslib.h\"\n");
@@ -1963,7 +1970,11 @@ char *base = (char *)rschdr;
     if (!generate_objects)
         return 0;
 
+#ifdef DESK_RSC
+    fprintf(fp,"OBJECT * %srs_obj;\n\n",prefix);
+#else
     fprintf(fp,"OBJECT %srs_obj[RS_NOBS];\n\n",prefix);
+#endif
 
     fprintf(fp,"static const OBJECT %srs_obj_rom[] = {\n",prefix);
 
@@ -2022,13 +2033,28 @@ char *base = (char *)rschdr;
 PRIVATE int write_tree(FILE *fp)
 {
 int i, ntree;
+#ifndef DESK_RSC
 int first_time = 1;
 DEF_ENTRY *d;
 char temp[MAX_STRLEN];
+#endif
 
     if (!generate_trees)
         return 0;
 
+#ifdef DESK_RSC
+    fprintf(fp,"OBJECT * %srs_trees[RS_NTREE];\n\n\n",prefix);
+
+    fprintf(fp,"static const WORD treestart[RS_NTREE] = {");
+
+    ntree = rsh.ntree;
+    for (i = 0; i < ntree; i++) {
+        if (i%8 == 0)
+            fprintf(fp,"\n    ");
+        fprintf(fp,"TR%d, ",i);
+    }
+    fprintf(fp,"\n");
+#else
     fprintf(fp,"OBJECT * const %srs_trees[] = {\n",prefix);
 
     ntree = rsh.ntree;
@@ -2045,6 +2071,7 @@ char temp[MAX_STRLEN];
     }
     if (!first_time)
         fprintf(fp,"#endif\n");
+#endif
 
     fprintf(fp,"};\n\n\n");
 
@@ -2111,12 +2138,20 @@ char *base = (char *)rschdr;
 PRIVATE int write_c_epilogue(FILE *fp)
 {
 #ifdef DESK_RSC
-    fprintf(fp,"void %srs_init(void)\n",prefix);
+    fprintf(fp,"int %srs_init(void)\n",prefix);
     fprintf(fp,"{\n");
+    fprintf(fp,"    WORD i;\n\n");
+    fprintf(fp,"    desk_rs_obj = dos_alloc_anyram(RS_NOBS*sizeof(OBJECT));\n");
+    fprintf(fp,"    if (!desk_rs_obj)\n");
+    fprintf(fp,"        return -1;\n\n");
     fprintf(fp,"    /* Copy data from ROM to RAM: */\n");
     fprintf(fp,"    memcpy(%srs_obj, %srs_obj_rom, RS_NOBS * sizeof(OBJECT));\n",prefix,prefix);
     fprintf(fp,"    memcpy(%srs_tedinfo, %srs_tedinfo_rom,\n",prefix,prefix);
-    fprintf(fp,"           RS_NTED * sizeof(TEDINFO));\n");
+    fprintf(fp,"           RS_NTED * sizeof(TEDINFO));\n\n");
+    fprintf(fp,"    /* set up the tree pointers */\n");
+    fprintf(fp,"    for (i = 0; i < RS_NTREE; i++)\n");
+    fprintf(fp,"        desk_rs_trees[i] = &desk_rs_obj[treestart[i]];\n\n");
+    fprintf(fp,"    return 0;\n");
     fprintf(fp,"}\n\n");
 #endif
 #ifdef GEM_RSC

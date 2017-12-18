@@ -1612,7 +1612,12 @@ WORD deskmain(void)
     detect_features();
 
     /* initialize resources */
-    desk_rs_init();                 /* copies ROM to RAM */
+    if (desk_rs_init() < 0)         /* copies ROM to RAM */
+    {
+        KDEBUG(("insufficient memory for desktop objects (need %ld bytes)\n",
+                (LONG)RS_NTED*sizeof(OBJECT)));
+        nomem_alert();              /* infinite loop */
+    }
     desk_xlate_fix();               /* translates & fixes desktop */
 
     /* initialize menus and dialogs */
