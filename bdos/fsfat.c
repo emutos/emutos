@@ -61,7 +61,7 @@ void clfix(CLNO cl, CLNO link, DMD *dm)
     /*
      * handle 12-bit FAT
      */
-    if (cl & 1)
+    if (IS_ODD(cl))
     {
         link = link << 4;
         mask = 0x000f;
@@ -138,7 +138,7 @@ CLNO getrealcl(CLNO cl, DMD *dm)
 
     swpw(f);
 
-    if (cl & 1)
+    if (IS_ODD(cl))
         cl = f >> 4;
     else
         cl = f & 0x0fff;

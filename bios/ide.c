@@ -936,7 +936,7 @@ LONG ide_rw(WORD rw,LONG sector,WORD count,UBYTE *buf,WORD dev,BOOL need_byteswa
      * word-aligned, and the processor is a 68000 or 68010
      */
 #ifndef __mcoldfire__
-    if (((LONG)buf & 1L) && (mcpu < 20))
+    if (IS_ODD_POINTER(buf) && (mcpu < 20))
     {
         if (maxsecs_per_io > DSKBUF_SECS)
             maxsecs_per_io = DSKBUF_SECS;

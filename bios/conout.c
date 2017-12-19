@@ -264,7 +264,7 @@ cell_addr(int x, int y)
 
     /* X displacement = even(X) * v_planes + Xmod2 */
     disx = (LONG)v_planes * (x & ~1);
-    if ( x & 1 ) {              /* Xmod2 = 0 ? */
+    if ( IS_ODD(x) ) {          /* Xmod2 = 0 ? */
         disx++;                 /* Xmod2 = 1 */
     }
 
@@ -530,7 +530,7 @@ static BOOL next_cell(void)
     v_cur_cx += 1;                      /* next cell to right */
 
     /* if X is even, move to next word in the plane */
-    if ( v_cur_cx & 1 ) {
+    if ( IS_ODD(v_cur_cx) ) {
         /* x is odd */
         v_cur_ad += 1;                  /* a1 -> new cell */
         return 0;                       /* indicate no wrap needed */

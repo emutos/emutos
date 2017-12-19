@@ -507,7 +507,7 @@ void dopanic(const char *fmt, ...)
      * (a) it is probably only useful for illegal instruction exceptions
      * (b) it could cause a recursive error
      */
-    if (((ULONG)pc & 1) == 0)   /* precaution if running on 68000 */
+    if (!IS_ODD_POINTER(pc))    /* precaution if running on 68000 */
     {
         kcprintf("Instruction at PC: %04x %04x %04x\n",
                  pc[0], pc[1], pc[2]);

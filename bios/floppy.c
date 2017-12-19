@@ -951,7 +951,7 @@ static WORD floprw(UBYTE *userbuf, WORD rw, WORD dev,
      * since we only do one sector at a time, we don't care about the
      * buffer size.
      */
-    if (((LONG)userbuf & 1L) || (userbuf >= phystop)) {
+    if (IS_ODD_POINTER(userbuf) || (userbuf >= phystop)) {
         tmpbuf = dskbufp;
         use_tmpbuf = TRUE;
      }
