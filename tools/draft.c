@@ -1236,6 +1236,11 @@ unsigned long offset;
     return strlen((char *)rschdr_in+offset) + 1;
 }
 
+PRIVATE long get_iconsize(ICONBLK *ib)
+{
+    return (long)((get_short(&ib->ib_wicon) + 15) >> 4) * get_short(&ib->ib_hicon) * 2;
+}
+
 PRIVATE void analyse_resource(MY_RSHDR *rshout,RSHDR *in,MY_RSHDR *rshin)
 {
 OFFSET *p;
@@ -1298,7 +1303,7 @@ unsigned short frimg_datalen = 0, image_datalen = 0;
                 ib = (ICONBLK *)((char *)in+get_offset(&obj->ob_spec));
                 string_textlen += get_textlen(&ib->ib_ptext);
                 /* add mask + data lengths */
-                image_datalen += 2 * get_short(&ib->ib_wicon) * get_short(&ib->ib_hicon) / 8;
+                image_datalen += 2 * get_iconsize(ib);
                 break;
             }
             if (get_ushort(&obj->ob_flags)&LASTOB)
@@ -1592,7 +1597,7 @@ int i;
     ib = (ICONBLK *)((char *)out + rshout->iconblk);
     for (i = 0; i < rshout->nib; i++, ib++)
     {
-        size = get_short(&ib->ib_wicon) * get_short(&ib->ib_hicon) / 8;
+        size = get_iconsize(ib);
         memcpy(data,(char *)in+get_offset(&ib->ib_pmask),size);
         put_offset(&ib->ib_pmask,OFFSET(data,out));
         data += size;
