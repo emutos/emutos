@@ -113,7 +113,7 @@ LONG acsi_rw(WORD rw, LONG sector, WORD count, UBYTE *buf, WORD dev)
      * located in ST-RAM.  if it isn't, we use an intermediate buffer:
      * the FRB (if available) or dskbufp.
      */
-    if (IS_ODD_POINTER(buf) || (buf >= phystop)) {
+    if (IS_ODD_POINTER(buf) || !IS_STRAM_POINTER(buf)) {
 #if CONF_WITH_FRB
         tmp_buf = get_frb_cookie();
         if (maxsecs_per_io > FRB_SECS)

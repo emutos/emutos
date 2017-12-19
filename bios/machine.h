@@ -197,5 +197,6 @@ void fill_cookie_jar(void);
 /* print the name of the machine */
 const char * machine_name(void);
 
+#define IS_STRAM_POINTER(p) ((UBYTE *)(p) < phystop)
 
 #endif /* MACHINE_H */
