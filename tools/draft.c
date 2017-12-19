@@ -1348,8 +1348,8 @@ unsigned short frimg_datalen = 0, image_datalen = 0;
     rshout->frstr = rshout->bitblk + rshout->nbb * sizeof(BITBLK);
     rshout->string = rshout->frstr + rshout->nstring * sizeof(OFFSET) + frstr_textlen;
     rshout->frimg = rshout->string + string_textlen;
-    if (rshout->nimages)        /* align to word if table present */
-        rshout->frimg = (rshout->frimg + 1) & ~1;
+    /* align to word */
+    rshout->frimg = (rshout->frimg + 1) & ~1;
     rshout->imdata = rshout->frimg + rshout->nimages * sizeof(OFFSET);
     rshout->rssize = rshout->imdata + image_datalen + frimg_datalen;
 }
