@@ -1650,11 +1650,7 @@ WORD deskmain(void)
     /* initialize windows */
     win_start();
 
-    /* show menu */
     desk_verify(0, FALSE);      /* initialise g_croot, g_cwin, g_wlastsel  */
-    wind_update(BEG_UPDATE);
-    menu_bar(G.a_trees[ADMENU], 1);
-    wind_update(END_UPDATE);
 
     /* establish menu items */
     G.g_iview = V_ICON;
@@ -1688,6 +1684,11 @@ WORD deskmain(void)
 #endif
 
     men_update();
+
+    /* menu is initialised - display menu bar */
+    wind_update(BEG_UPDATE);
+    menu_bar(G.a_trees[ADMENU], 1);
+    wind_update(END_UPDATE);
 
     /* get ready for main loop */
     flags = MU_BUTTON | MU_MESAG | MU_KEYBD;
