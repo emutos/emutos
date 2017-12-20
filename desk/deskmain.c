@@ -1685,17 +1685,15 @@ WORD deskmain(void)
 
     men_update();
 
-    /* menu is initialised - display menu bar */
+    /* menu is initialised - display menu bar & set mouse to arrow */
     wind_update(BEG_UPDATE);
     menu_bar(G.a_trees[ADMENU], 1);
+    desk_wait(FALSE);
     wind_update(END_UPDATE);
 
     /* get ready for main loop */
     flags = MU_BUTTON | MU_MESAG | MU_KEYBD;
     done = FALSE;
-
-    /* turn mouse on */
-    desk_wait(FALSE);
 
     /* enable graphical critical error handler */
     enable_ceh = TRUE;
