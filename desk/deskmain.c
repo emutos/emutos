@@ -1665,9 +1665,6 @@ WORD deskmain(void)
     /* Take over the desktop */
     wind_set(0, WF_NEWDESK, G.g_screen, 1, 0);
 
-    /* set up current parms */
-    desk_verify(0, FALSE);
-
     /* establish desktop's state from info found in app_start,
      * open windows
      */
