@@ -1709,19 +1709,22 @@ WORD deskmain(void)
 
         /* handle keybd message */
         if (ev_which & MU_KEYBD)
-            done = hndl_kbd(kret);
+            if (hndl_kbd(kret))
+                done = TRUE;
 
         /* handle button down */
         if (ev_which & MU_BUTTON)
-            done = hndl_button(bret, mx, my, button, kstate);
+            if (hndl_button(bret, mx, my, button, kstate))
+                done = TRUE;
 
         /* handle system message */
         while (ev_which & MU_MESAG)
         {
-            done = hndl_msg();
-            /* use quick-out to clean out all messages */
             if (done)
                 break;
+            if (hndl_msg())
+                done = TRUE;
+            /* use quick-out to clean out all messages */
             ev_which = evnt_multi(MU_MESAG | MU_TIMER, 0x02, 0x01, 0x01,
                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                 G.g_rmsg, 0, 0,
