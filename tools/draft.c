@@ -1563,8 +1563,9 @@ int i;
 
     indexin = (OFFSET *)((char *)in + rshin->frimg);
     indexout = (OFFSET *)((char *)out + rshout->frimg);
-    bbout = (BITBLK *)((char *)out + rshout->bitblk);
-    for (i = 0; i < rshin->nimages; i++, indexin++)
+    /* skip BITBLKs that belong to objects, since these have already been output */
+    bbout = (BITBLK *)((char *)out + rshout->bitblk + (rshin->nbb - rshin->nimages) * sizeof(BITBLK));
+    for (i = 0; i < rshout->nimages; i++, indexin++)
     {
         bbin = (BITBLK *)((char *)in + get_offset(indexin));
         put_offset(indexout++,OFFSET(bbout,out));
