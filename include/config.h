@@ -1362,7 +1362,7 @@
 /*
  * Maximum lengths for pathname, filename, and filename components
  */
-#define LEN_ZPATH 67                    /* max path length, incl drive */
+#define LEN_ZPATH 114                   /* max path length, incl drive */
 #define LEN_ZFNAME 13                   /* max fname length, incl '\' separator */
 #define LEN_ZNODE 8                     /* max node length */
 #define LEN_ZEXT 3                      /* max extension length */
