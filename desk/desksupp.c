@@ -432,6 +432,39 @@ WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon,
  */
 
 /*
+ *  receive a character via the BIOS
+ */
+static LONG bios_conin(void)
+{
+    return Bconin(2);
+}
+
+/*
+ *  test if character is available via the BIOS
+ */
+static WORD bios_conis(void)
+{
+    return (WORD) Bconstat(2);
+}
+
+/*
+ *  send a character via the BIOS
+ */
+static void bios_conout(WORD ch)
+{
+    Bconout(2, ch);
+}
+
+/*
+ *  send a string via the BIOS
+ */
+static void bios_conws(const char *s)
+{
+    while(*s)
+        Bconout(2, *s++);
+}
+
+/*
  *  get key from keyboard
  *
  *  if ASCII (1-255), returns value in low-order byte, 0 in high-order byte
@@ -441,7 +474,7 @@ static WORD get_key(void)
 {
     ULONG c;
 
-    c = dos_rawcin();
+    c = bios_conin();
 
     if (c & 0xff)           /* ASCII ? */
         c &= 0xff;          /* yes, just return the ASCII value */
@@ -485,8 +518,8 @@ static WORD user_input(WORD c)
  */
 static void blank_line(void)
 {
-    dos_conout('\x1b');
-    dos_conout('l');
+    bios_conout('\x1b');
+    bios_conout('l');
 }
 
 /*
@@ -494,8 +527,8 @@ static void blank_line(void)
  */
 static void clear_screen(void)
 {
-    dos_conout('\x1b');
-    dos_conout('E');
+    bios_conout('\x1b');
+    bios_conout('E');
 }
 
 /*
@@ -514,21 +547,21 @@ static WORD show_buf(const char *s,LONG len)
     n = len;
     while(n-- > 0)
     {
-        if (dos_conis())
+        if (bios_conis())
             if (user_input(-1))
                 return 1;
 
         c = *s++;
         /* convert Un*x-style text to TOS-style */
         if ((c == '\n') && (cprev != '\r'))
-            dos_conout('\r');
-        dos_conout(c);
+            bios_conout('\r');
+        bios_conout(c);
         if (c == '\n')
         {
             if (++linecount >= pagesize)
             {
                 rsrc_gaddr_rom(R_STRING,STMORE,(void **)&msg);
-                dos_conws(msg);             /* "-More-" */
+                bios_conws(msg);            /* "-More-" */
                 while(1)
                 {
                     response = get_key();
@@ -546,7 +579,7 @@ static WORD show_buf(const char *s,LONG len)
                     }
                     if (user_input(response))
                     {
-                        dos_conout('\r');
+                        bios_conout('\r');
                         return 1;
                     }
                 }
@@ -605,8 +638,8 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
     {
         rsrc_gaddr_rom(R_STRING,(rc==0L)?STEOF:STFRE,(void **)&msg);
         blank_line();
-        dos_conws(msg); /* "-End of file-" or "-File read error-" */
-        dos_rawcin();
+        bios_conws(msg);    /* "-End of file-" or "-File read error-" */
+        bios_conin();
     }
 
     /*
