@@ -555,7 +555,7 @@ static void sh_chdef(SHELL *psh,BOOL isgem)
 }
 
 
-void aes_run_rom_program(PRG_ENTRY *entry)
+LONG aes_run_rom_program(PRG_ENTRY *entry)
 {
     PD *pd;     /* this is the BDOS PD structure, not the AESPD */
 
@@ -564,7 +564,7 @@ void aes_run_rom_program(PRG_ENTRY *entry)
     pd->p_tbase = (BYTE *) entry;
 
     /* Run the program with dos_exec() for AES reentrancy issues */
-    dos_exec(PE_GOTHENFREE, NULL, (const BYTE *)pd, NULL);
+    return dos_exec(PE_GOTHENFREE, NULL, (const BYTE *)pd, NULL);
 }
 
 
@@ -587,7 +587,11 @@ static WORD sh_ldapp(SHELL *psh)
         sh_show("");        /* like TOS, we don't display a name */
         p_nameit(rlr, sh_name(D.s_cmd));
         p_setappdir(rlr, D.s_cmd);
-        aes_run_rom_program(deskstart);
+        if (aes_run_rom_program(deskstart))
+        {
+            KDEBUG(("sh_ldapp(): ROM desktop terminated abnormally\n"));
+            wm_new();           /* run wind_new() to clean up */
+        }
         return 0;
     }
 
