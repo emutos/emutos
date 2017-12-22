@@ -1374,6 +1374,12 @@
 #define MAX_COORDINATE  (10000)         /* arbitrary, could be 32767 */
 
 /*
+ * Default keyboard auto-repeat settings: values are units of 20 msec
+ */
+#define KB_INITIAL  15          /* initial delay i.e. 300 msec */
+#define KB_REPEAT   2           /* ticks between repeats, i.e. 40 msec */
+
+/*
  * Retry count for the internal_inquire() used to detect the presence of
  * a physical hard disk drive
  *

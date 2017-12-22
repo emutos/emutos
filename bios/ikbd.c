@@ -894,8 +894,8 @@ void kbd_init(void)
 
     /* initialize the key repeat stuff */
     kb_ticks = 0;
-    kb_initial = 25;
-    kb_repeat = 5;
+    kb_initial = KB_INITIAL;
+    kb_repeat = KB_REPEAT;
 
     kb_dead = -1;      /* not in a dead key sequence */
     kb_altnum = -1;    /* not in an alt-numeric sequence */
