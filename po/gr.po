@@ -206,10 +206,10 @@ msgstr "[1]["
 #: aes/gem_rsc.c:625
 msgid "[1]["
 "The drive you specified|"
-"does not exist.][ Cancel ]"
+"does not exist.][Cancel]"
 msgstr "[1]["
 "Ž ›å©¡¦ª §¦¬ ¦¨å©˜«œ|"
-"›œ¤ ¬§á¨®œ .][ ê¡¬¨¦ ]"
+"›œ¤ ¬§á¨®œ .][ê¡¬¨¦]"
 
 #: aes/gem_rsc.c:628
 msgid "[1]["

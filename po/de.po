@@ -196,10 +196,10 @@ msgstr "[1]["
 #: aes/gem_rsc.c:625
 msgid "[1]["
 "The drive you specified|"
-"does not exist.][ Cancel ]"
+"does not exist.][Cancel]"
 msgstr "[1]["
 "Das angegebene Laufwerk|"
-"existiert nicht.][ Abbruch ]"
+"existiert nicht.][Abbruch]"
 
 #: aes/gem_rsc.c:628
 msgid "[1]["
