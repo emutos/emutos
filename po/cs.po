@@ -824,9 +824,9 @@ msgstr "Vyhledat polo¾ku"
 
 #: desk/desk_rsc.c:2440
 msgid "[2]["
-"Switch resolution?][Yes|No]"
+"Switch resolution?][ Yes | No ]"
 msgstr "[2]["
-"Zmìnit rozli¹ení?][Ano|Ne]"
+"Zmìnit rozli¹ení?][ Ano | Ne ]"
 
 #: desk/desk_rsc.c:2441
 msgid "[2]["
@@ -869,9 +869,9 @@ msgstr "[3]["
 
 #: desk/desk_rsc.c:2456
 msgid "[2]["
-"Abort this operation?][  Yes  |  No  ]"
+"Abort this operation?][ Yes | No ]"
 msgstr "[2]["
-"Pøeru¹it operaci?][  Ano  |  Ne  ]"
+"Pøeru¹it operaci?][ Ano | Ne ]"
 
 #: desk/desk_rsc.c:2457
 msgid "[2]["
@@ -1013,11 +1013,11 @@ msgstr "[2]["
 msgid "[3]["
 "Not enough memory to|"
 "initialise EmuDesk.|"
-"You must reboot.][OK]"
+"You must reboot.][  OK  ]"
 msgstr "[3]["
 "Nedostatek pamìti|"
 "k inicializaci EmuDesku.|"
-"Nutno restartovat.][OK]"
+"Nutno restartovat.][  OK  ]"
 
 #: desk/desk_rsc.c:2518
 msgid "[2]["
@@ -1045,11 +1045,11 @@ msgstr "[1]["
 msgid "[3]["
 "Formatting error. The target|"
 "disk may be write-protected|"
-"or unusable.][Retry|Abort]"
+"or unusable.][ Retry | Abort ]"
 msgstr "[3]["
 "Chyba pøi formátování. Disketa|"
 "mù¾e být chránìna proti zápisu|"
-"nebo je ji nelze pou¾ít.][Opakovat|Zru¹it]"
+"nebo je ji nelze pou¾ít.][ Opakovat | Zru¹it ]"
 
 #: desk/desk_rsc.c:2530
 msgid "[1]["

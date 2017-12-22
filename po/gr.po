@@ -837,9 +837,9 @@ msgstr "„¤«¦§ ©£æª ˜¤« ¡œ £â¤¦¬"
 
 #: desk/desk_rsc.c:2440
 msgid "[2]["
-"Switch resolution?][Yes|No]"
+"Switch resolution?][ Yes | No ]"
 msgstr "[2]["
-"€¢¢˜šã ˜¤á¢¬©ª;][Œ˜ |î® ]"
+"€¢¢˜šã ˜¤á¢¬©ª;][ Œ˜ | î® ]"
 
 #: desk/desk_rsc.c:2441
 msgid "[2]["
@@ -883,9 +883,9 @@ msgstr "[3]["
 
 #: desk/desk_rsc.c:2456
 msgid "[2]["
-"Abort this operation?][  Yes  |  No  ]"
+"Abort this operation?][ Yes | No ]"
 msgstr "[2]["
-"€¤˜å¨œ© ¢œ «¦¬¨šå˜ª;][  Œ˜   |  î®   ]"
+"€¤˜å¨œ© ¢œ «¦¬¨šå˜ª;][ Œ˜ | î® ]"
 
 #: desk/desk_rsc.c:2457
 msgid "[2]["
@@ -1033,11 +1033,11 @@ msgstr "[2]["
 msgid "[3]["
 "Not enough memory to|"
 "initialise EmuDesk.|"
-"You must reboot.][OK]"
+"You must reboot.][  OK  ]"
 msgstr "[3]["
 "€¤œ§˜¨¡ãª £¤ã£ š ˜|"
 "«¤ â¤˜¨¥ «¦¬ Emudesk.|"
-"¨â§œ  ¤˜ šå¤œ  œ§˜¤œ¡¡å¤©.][‰]"
+"¨â§œ  ¤˜ šå¤œ  œ§˜¤œ¡¡å¤©.][  ‰  ]"
 
 #: desk/desk_rsc.c:2518
 msgid "[2]["
@@ -1067,11 +1067,11 @@ msgstr "[1]["
 msgid "[3]["
 "Formatting error. The target|"
 "disk may be write-protected|"
-"or unusable.][Retry|Abort]"
+"or unusable.][ Retry | Abort ]"
 msgstr "[3]["
 "‘­á¢£˜ › ˜£æ¨­à©ª.  ›å©¡¦ª|"
 "£§¦¨œå ¤˜ œå¤˜  §¨¦©«˜«œ¬£â¤¦ª|"
-"ã ¡˜«œ©«¨˜££â¤¦ª.][„§˜¤á¢¯|€¡ç¨à©]"
+"ã ¡˜«œ©«¨˜££â¤¦ª.][„§˜¤á¢¯| €¡ç¨à© ]"
 
 #: desk/desk_rsc.c:2530
 msgid "[1]["

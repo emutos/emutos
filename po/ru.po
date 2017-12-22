@@ -825,9 +825,9 @@ msgstr "Найти объект"
 
 #: desk/desk_rsc.c:2440
 msgid "[2]["
-"Switch resolution?][Yes|No]"
+"Switch resolution?][ Yes | No ]"
 msgstr "[2]["
-"Изменить разрешение?][Да|Нет]"
+"Изменить разрешение?][ Да | Нет ]"
 
 #: desk/desk_rsc.c:2441
 msgid "[2]["
@@ -872,9 +872,9 @@ msgstr "[3]["
 
 #: desk/desk_rsc.c:2456
 msgid "[2]["
-"Abort this operation?][  Yes  |  No  ]"
+"Abort this operation?][ Yes | No ]"
 msgstr "[2]["
-"Прервать эту операцию?][  Да  |  Нет ]"
+"Прервать эту операцию?][ Да | Нет ]"
 
 #: desk/desk_rsc.c:2457
 msgid "[2]["
@@ -1020,12 +1020,12 @@ msgstr "[2]["
 msgid "[3]["
 "Not enough memory to|"
 "initialise EmuDesk.|"
-"You must reboot.][OK]"
+"You must reboot.][  OK  ]"
 msgstr "[3]["
 "Недостаточно памяти|"
 "для запуска EmuDesk.|"
 "Вы должны перезагрузить|"
-"компьютер.][ОК]"
+"компьютер.][  ОК  ]"
 
 #: desk/desk_rsc.c:2518
 msgid "[2]["
@@ -1054,12 +1054,12 @@ msgstr "[1]["
 msgid "[3]["
 "Formatting error. The target|"
 "disk may be write-protected|"
-"or unusable.][Retry|Abort]"
+"or unusable.][ Retry | Abort ]"
 msgstr "[3]["
 "Ошибка форматирования.|"
 "Целевой диск может быть|"
 "защищен от записи или его|"
-"нельзя использовать.][Повтор|Отмена]"
+"нельзя использовать.][ Повтор | Отмена ]"
 
 #: desk/desk_rsc.c:2530
 msgid "[1]["
