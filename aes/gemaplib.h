@@ -10,8 +10,8 @@
 #ifndef GEMAPLIB_H
 #define GEMAPLIB_H
 
-extern WORD     gl_play;
-extern WORD     gl_recd;
+extern BOOL     gl_play;
+extern BOOL     gl_recd;
 extern WORD     gl_rlen;
 extern FPD      *gl_rbuf;
 

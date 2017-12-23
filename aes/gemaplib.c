@@ -48,8 +48,8 @@
 
 
 /* Global variables: */
-WORD     gl_play;
-WORD     gl_recd;
+BOOL     gl_play;
+BOOL     gl_recd;
 WORD     gl_rlen;
 FPD      *gl_rbuf;
 

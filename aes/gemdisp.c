@@ -135,7 +135,8 @@ void forker(void)
                     memcpy(gl_rbuf, f, sizeof(FPD));
                     gl_rbuf++;
                     gl_rlen--;
-                    gl_recd = gl_rlen;
+                    if (gl_rlen <= 0)
+                        gl_recd = FALSE;
                 }
             }
         }
