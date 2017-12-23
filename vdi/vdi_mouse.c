@@ -267,7 +267,7 @@ static WORD gloc_key(void)
  *
  * vsm_locator() operation in Atari TOS and EmuTOS
  * -----------------------------------------------
- * 1. The first call to vrq_locator() always sets the terminating
+ * 1. The first call to vsm_locator() always sets the terminating
  *    character to 0x20 and CONTRL[4] to 1 (indicating the left mouse
  *    button).
  * 2. On every call:
