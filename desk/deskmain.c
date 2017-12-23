@@ -1648,7 +1648,12 @@ WORD deskmain(void)
     app_start();
 
     /* initialize windows */
-    win_start();
+    if (win_start() < 0)
+    {
+        KDEBUG(("insufficient memory for desktop windows (need %ld bytes)\n",
+                (LONG)NUM_WNODES*sizeof(WNODE)));
+        nomem_alert();              /* infinite loop */
+    }
 
     desk_verify(0, FALSE);      /* initialise g_croot, g_cwin, g_wlastsel  */
 

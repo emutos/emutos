@@ -81,7 +81,7 @@ struct _windnode
 
 /* Prototypes: */
 void win_view(WORD vtype, WORD isort);
-void win_start(void);
+int win_start(void);
 void win_free(WNODE *thewin);
 WNODE *win_alloc(WORD obid);
 WNODE *win_find(WORD wh);
