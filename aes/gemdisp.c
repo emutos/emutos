@@ -152,22 +152,18 @@ void chkkbd(void)
 {
     WORD achar, kstat;
 
-    /* poll keybd */
-    if (!gl_play)
+    kstat = gsx_kstate();
+    achar = gsx_char();
+    if (achar && (gl_mowner->p_cda->c_q.c_cnt >= KBD_SIZE))
     {
-        kstat = gsx_kstate();
-        achar = gsx_char();
-        if (achar && (gl_mowner->p_cda->c_q.c_cnt >= KBD_SIZE))
-        {
-            achar = 0x0;                        /* buffer overrun       */
-            sound(TRUE, 880, 2);
-        }
-        if (achar || (kstat != kstate))
-        {
-            disable_interrupts();
-            forkq(kchange, MAKE_ULONG(achar, kstat));
-            enable_interrupts();
-        }
+        achar = 0x0;                        /* buffer overrun       */
+        sound(TRUE, 880, 2);
+    }
+    if (achar || (kstat != kstate))
+    {
+        disable_interrupts();
+        forkq(kchange, MAKE_ULONG(achar, kstat));
+        enable_interrupts();
     }
 }
 

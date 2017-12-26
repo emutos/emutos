@@ -15,6 +15,7 @@
 #include "portab.h"
 #include "asm.h"
 #include "biosbind.h"
+#include "vdipub.h"
 #include "../bios/tosvars.h"
 #include "vdi_defs.h"
 #include "../bios/lineavars.h"
@@ -176,6 +177,22 @@ void timer_exit(void)
     old_sr = set_sr(0x2700);            /* disable interrupts */
     Setexc(0x100, (long)tim_chain);     /* set etv_timer to tick_int */
     set_sr(old_sr);                     /* enable interrupts */
+}
+
+
+
+/*
+ * set_vdi_mousexy - sets VDI's idea of mouse coordinates
+ *
+ * this is used by the appl_tplay() code in AES to set the VDI mouse
+ * coordinates to the same position that the playback code has set
+ * the mouse.  this avoids sudden 'jumps' in mouse position during, or
+ * at the end of, playback.
+ */
+void set_vdi_mousexy(WORD x, WORD y)
+{
+    GCURX = x;
+    GCURY = y;
 }
 
 

@@ -21,6 +21,7 @@
 #include "struct.h"
 #include "basepage.h"
 #include "obdefs.h"
+#include "vdipub.h"
 #include "gemlib.h"
 #include "gem_rsc.h"
 
@@ -38,7 +39,8 @@
 #include "gemsclib.h"
 #include "gemrslib.h"
 #include "gemaplib.h"
-
+#include "gsx2.h"
+#include "funcdef.h"
 #include "string.h"
 
 #define TCHNG 0
@@ -115,13 +117,20 @@ WORD ap_find(BYTE *pname)
 
 /*
  *  APplication Tape PLAYer
+ *
+ *  this is relatively straightforward, except if we have to playback
+ *  mouse movement.  in this case, we need to:
+ *      a) disconnect the cursor from the VDI (done here), and
+ *      b) draw it ourselves (done in mchange() in geminput.c).
+ *  since playbacks do not necessarily involve mouse movement, the cursor
+ *  is not disconnected until a mouse movement is encountered, at which
+ *  point a flag is set.  the flag is checked in mchange().
  */
 void ap_tplay(FPD *pbuff,WORD length,WORD scale)
 {
     WORD   i;
     FPD    f;
-
-    gl_play = TRUE;
+    LONG mot_vecx_save = 0L;
 
     for (i = 0; i < length; i++) {
         /* get an event to play */
@@ -138,6 +147,19 @@ void ap_tplay(FPD *pbuff,WORD length,WORD scale)
             f.f_code = bchange;
             break;
         case MCHNG:
+            if (!gl_play)   /* i.e. first time for MCHNG */
+            {
+                /*
+                 * disconnect cursor drawing & movement routines
+                 */
+                i_ptr(justretf);
+                gsx_ncode(CUR_VECX, 0, 0);
+                m_lptr2(&drwaddr);  /* old address will be used by drawrat() */
+                i_ptr(justretf);
+                gsx_ncode(MOT_VECX, 0, 0);
+                m_lptr2(&mot_vecx_save);
+                gl_play = TRUE;
+            }
             f.f_code = mchange;
             break;
         case KCHNG:
@@ -153,7 +175,18 @@ void ap_tplay(FPD *pbuff,WORD length,WORD scale)
         dsptch();       /* let someone run */
     }
 
-    gl_play = FALSE;
+    /*
+     *  if we disconnected above, reconnect the old routines
+     */
+    if (gl_play)
+    {
+        i_ptr(drwaddr);                 /* restore vectors */
+        gsx_ncode(CUR_VECX, 0, 0);
+        i_ptr(mot_vecx_save);
+        gsx_ncode(MOT_VECX, 0, 0);
+        set_vdi_mousexy(xrat, yrat);    /* no jumping cursors, please */
+        gl_play = FALSE;
+    }
 }
 
 /*

@@ -22,6 +22,7 @@
 #include "struct.h"
 #include "basepage.h"
 #include "obdefs.h"
+#include "vdipub.h"
 #include "gemlib.h"
 
 #include "geminput.h"
@@ -360,10 +361,14 @@ void mchange(LONG fdata)
     xrat = rx;
     yrat = ry;
 
-    /* post the event */
+    /*
+     * if we are running because of appl_tplay(), then we need to draw
+     * the cursor ourselves
+     */
     if (gl_play)
     {
         drawrat(rx, ry);
+        set_vdi_mousexy(rx, ry);    /* synchronise VDI cursor */
     }
 
     /*

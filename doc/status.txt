@@ -485,7 +485,7 @@ All AES versions:
  X      appl_read
  X      appl_write
  t      appl_find
- X      appl_tplay
+ t      appl_tplay
  X      appl_trecord
  X      appl_yield              (PC-GEM call)
  t      appl_exit
