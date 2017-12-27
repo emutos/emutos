@@ -162,7 +162,7 @@ void chkkbd(void)
     if (achar || (kstat != kstate))
     {
         disable_interrupts();
-        forkq(kchange, MAKE_ULONG(achar, kstat));
+        forkq(kchange, MAKE_ULONG(kstat, achar));
         enable_interrupts();
     }
 }
