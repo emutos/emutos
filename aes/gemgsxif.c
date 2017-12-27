@@ -99,8 +99,8 @@ GLOBAL WORD  gl_moff;                /* counting semaphore   */
                                      /*  >  0 implies OFF    */
 
 static FDB   gl_tmp;
-static LONG  old_mcode;
-static LONG  old_bcode;
+static PFVOID old_mcode;
+static PFVOID old_bcode;
 static LONG  gl_mlen;
 static WORD  gl_graphic;
 
@@ -210,7 +210,7 @@ void ratexit(void)
 }
 
 
-static void gsx_setmb(PFVOID boff, PFVOID moff, LONG *pdrwaddr)
+static void gsx_setmb(PFVOID boff, PFVOID moff, PFVOID *pdrwaddr)
 {
     i_ptr( boff );
     gsx_ncode(BUT_VECX, 0, 0);

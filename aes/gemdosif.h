@@ -11,7 +11,7 @@
 #define GEMDOSIF_H
 
 
-extern LONG     drwaddr;
+extern PFVOID   drwaddr;
 
 extern void *   tikaddr;
 extern void *   tiksav;
