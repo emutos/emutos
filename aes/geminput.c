@@ -277,8 +277,8 @@ void evremove(EVB *e, UWORD ret)
 
 void kchange(LONG fdata)
 {
-    UWORD ch = LOWORD(fdata);
-    WORD kstat = HIWORD(fdata);
+    UWORD ch = HIWORD(fdata);
+    WORD kstat = LOWORD(fdata);
 
     kstate = kstat;
     if (ch)
