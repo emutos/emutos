@@ -42,7 +42,8 @@
 
 #include "asm.h"
 
-#define KEYSTOP 0x00002b1cL                     /* control backslash    */
+#define KEYMASK 0xffff0000L             /* for comparing data to KEYSTOP */
+#define KEYSTOP 0x2b1c0000L             /* control-backslash */
 
 
 /* forkq puts a fork block with a routine in the fork ring      */
@@ -116,7 +117,7 @@ void forker(void)
         if (gl_recd)
         {
             /* check for stop key */
-            if ((g.f_code == kchange) && ((UWORD)g.f_data == KEYSTOP))
+            if ((g.f_code == kchange) && ((g.f_data&KEYMASK) == KEYSTOP))
                 gl_recd = FALSE;
 
             /* if still recording, then handle event */
