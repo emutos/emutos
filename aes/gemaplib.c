@@ -21,7 +21,6 @@
 #include "struct.h"
 #include "basepage.h"
 #include "obdefs.h"
-#include "vdipub.h"
 #include "gemlib.h"
 #include "gem_rsc.h"
 
@@ -180,11 +179,12 @@ void ap_tplay(FPD *pbuff,WORD length,WORD scale)
      */
     if (gl_play)
     {
+        drawrat(xrat, yrat);
+        gsx_setmousexy(xrat, yrat);     /* no jumping cursors, please */
         i_ptr(drwaddr);                 /* restore vectors */
         gsx_ncode(CUR_VECX, 0, 0);
         i_ptr(mot_vecx_save);
         gsx_ncode(MOT_VECX, 0, 0);
-        set_vdi_mousexy(xrat, yrat);    /* no jumping cursors, please */
         gl_play = FALSE;
     }
 }

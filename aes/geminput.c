@@ -22,7 +22,6 @@
 #include "struct.h"
 #include "basepage.h"
 #include "obdefs.h"
-#include "vdipub.h"
 #include "gemlib.h"
 
 #include "geminput.h"
@@ -36,6 +35,7 @@
 #include "gemwmlib.h"
 #include "gemasync.h"
 #include "gemdisp.h"
+#include "gemgsxif.h"
 #include "rectfunc.h"
 #include "kprint.h"
 
@@ -368,7 +368,7 @@ void mchange(LONG fdata)
     if (gl_play)
     {
         drawrat(rx, ry);
-        set_vdi_mousexy(rx, ry);    /* synchronise VDI cursor */
+        gsx_setmousexy(rx, ry);     /* synchronise VDI cursor */
     }
 
     /*

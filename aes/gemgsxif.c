@@ -431,6 +431,26 @@ WORD gsx_char(void)
 
 
 
+/*
+ * Set the VDI's mouse cursor coordinates
+ *
+ * This is used by the appl_tplay() code in AES to set the VDI mouse
+ * coordinates to the same position that the playback code has set
+ * the mouse.  This avoids sudden 'jumps' in mouse position at the end
+ * of playback, or when the desktop restarts.
+ */
+void gsx_setmousexy(WORD x, WORD y)
+{
+    intin[0] = 1;
+    intin[1] = 2;
+    gsx_ncode(SET_INPUT_MODE, 0, 2);    /* sample mode */
+    ptsin[0] = x;
+    ptsin[1] = y;
+    gsx_ncode(LOCATOR_INPUT, 1, 0);     /* vsm_locator() */
+}
+
+
+
 /* Get the number of planes (or bit depth) of the current screen */
 WORD gsx_nplanes(void)
 {
