@@ -148,9 +148,13 @@ struct IDE
 #if IDE_32BIT_XFER
 #define XFERWIDTH   ULONG
 #define xferswap(a) swpw2(a)
+#define ide_get_and_incr(src,dst) asm volatile("move.l (%1),(%0)+" : "=a"(dst): "a"(src), "0"(dst));
+#define ide_put_and_incr(src,dst) asm volatile("move.l (%0)+,(%1)" : "=a"(src): "a"(dst), "0"(src));
 #else
 #define XFERWIDTH   UWORD
 #define xferswap(a) swpw(a)
+#define ide_get_and_incr(src,dst) asm volatile("move.w (%1),(%0)+" : "=a"(dst): "a"(src), "0"(dst));
+#define ide_put_and_incr(src,dst) asm volatile("move.w (%0)+,(%1)" : "=a"(src): "a"(dst), "0"(src));
 #endif
 
 #if CONF_ATARI_HARDWARE
@@ -739,8 +743,10 @@ static void ide_get_data(volatile struct IDE *interface,UBYTE *buffer,ULONG buff
             *p++ = temp;
         }
     } else {
-        while (p < end)
-            *p++ = interface->data;
+        while (p < end) {
+            /* Note that the pointer p gets incremented implicitly. */
+            ide_get_and_incr(&(interface->data), p);
+        }
     }
 }
 
@@ -835,8 +841,10 @@ static void ide_put_data(volatile struct IDE *interface,UBYTE *buffer,ULONG buff
             interface->data = temp;
         }
     } else {
-        while (p < end)
-            interface->data = *p++;
+        while (p < end) {
+            /* Note that the pointer p gets incremented implicitly. */
+            ide_put_and_incr(p, &(interface->data));
+        }
     }
 }
 
