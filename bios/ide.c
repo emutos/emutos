@@ -739,13 +739,48 @@ static void ide_get_data(volatile struct IDE *interface,UBYTE *buffer,UWORD nums
     if (need_byteswap) {
         while (p < end) {
             XFERWIDTH temp;
+
+            /* Unroll the loop 4 times, transferring 8/16 bytes in a row. */
+            temp = interface->data;
+            xferswap(temp);
+            *p++ = temp;
+
+            temp = interface->data;
+            xferswap(temp);
+            *p++ = temp;
+
+            temp = interface->data;
+            xferswap(temp);
+            *p++ = temp;
+
             temp = interface->data;
             xferswap(temp);
             *p++ = temp;
         }
     } else {
         while (p < end) {
-            /* Note that the pointer p gets incremented implicitly. */
+            /* Unroll the loop 16 times, transferring 32/64 bytes in a row.
+             * We always transfer multiples of SECTOR_SIZE (512 bytes).
+             * Note that the pointer p gets incremented implicitly.
+             */
+            ide_get_and_incr(&(interface->data), p);
+            ide_get_and_incr(&(interface->data), p);
+            ide_get_and_incr(&(interface->data), p);
+            ide_get_and_incr(&(interface->data), p);
+
+            ide_get_and_incr(&(interface->data), p);
+            ide_get_and_incr(&(interface->data), p);
+            ide_get_and_incr(&(interface->data), p);
+            ide_get_and_incr(&(interface->data), p);
+
+            ide_get_and_incr(&(interface->data), p);
+            ide_get_and_incr(&(interface->data), p);
+            ide_get_and_incr(&(interface->data), p);
+            ide_get_and_incr(&(interface->data), p);
+
+            ide_get_and_incr(&(interface->data), p);
+            ide_get_and_incr(&(interface->data), p);
+            ide_get_and_incr(&(interface->data), p);
             ide_get_and_incr(&(interface->data), p);
         }
     }
@@ -838,13 +873,48 @@ static void ide_put_data(volatile struct IDE *interface,UBYTE *buffer,UWORD nums
     if (need_byteswap) {
         while (p < end) {
             XFERWIDTH temp;
+
+            /* Unroll the loop 4 times, transferring 8/16 bytes in a row. */
             temp = *p++;
             xferswap(temp);
             interface->data = temp;
+
+            temp = *p++;
+            xferswap(temp);
+            interface->data = temp;
+
+            temp = *p++;
+            xferswap(temp);
+            interface->data = temp;
+
+            temp = *p++;
+            xferswap(temp);
+            interface->data = temp;            
         }
     } else {
         while (p < end) {
-            /* Note that the pointer p gets incremented implicitly. */
+            /* Unroll the loop 16 times, transferring 32/64 bytes in a row.
+             * We always transfer multiples of SECTOR_SIZE (512 bytes).
+             * Note that the pointer p gets incremented implicitly.
+             */
+            ide_put_and_incr(p, &(interface->data));
+            ide_put_and_incr(p, &(interface->data));
+            ide_put_and_incr(p, &(interface->data));
+            ide_put_and_incr(p, &(interface->data));
+
+            ide_put_and_incr(p, &(interface->data));
+            ide_put_and_incr(p, &(interface->data));
+            ide_put_and_incr(p, &(interface->data));
+            ide_put_and_incr(p, &(interface->data));
+
+            ide_put_and_incr(p, &(interface->data));
+            ide_put_and_incr(p, &(interface->data));
+            ide_put_and_incr(p, &(interface->data));
+            ide_put_and_incr(p, &(interface->data));
+
+            ide_put_and_incr(p, &(interface->data));
+            ide_put_and_incr(p, &(interface->data));
+            ide_put_and_incr(p, &(interface->data));
             ide_put_and_incr(p, &(interface->data));
         }
     }
