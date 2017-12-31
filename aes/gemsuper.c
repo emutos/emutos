@@ -112,10 +112,10 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         ret = ap_find((BYTE *)AP_PNAME);
         break;
     case APPL_TPLAY:
-        ap_tplay((FPD *)AP_TBUFFER, AP_TLENGTH, AP_TSCALE);
+        ap_tplay((EVNTREC *)AP_TBUFFER, AP_TLENGTH, AP_TSCALE);
         break;
     case APPL_TRECORD:
-        ret = ap_trecd((FPD *)AP_TBUFFER, AP_TLENGTH);
+        ret = ap_trecd((EVNTREC *)AP_TBUFFER, AP_TLENGTH);
         break;
 #if CONF_WITH_PCGEM
     case APPL_YIELD:
