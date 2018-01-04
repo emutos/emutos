@@ -616,8 +616,7 @@ static WORD sh_ldapp(SHELL *psh)
         /* Run a normal application: */
         sh_show(D.s_cmd);
         p_nameit(rlr, sh_name(D.s_cmd));
-        strcpy(rlr->p_appdir,sh_apdir);
-        strcat(rlr->p_appdir,"\\");
+        p_setappdir(rlr, D.s_cmd);
         rlr->p_flags = 0;
 
         ret = dos_exec(PE_LOADGO, D.s_cmd, ad_stail, ad_envrn); /* Run the APP */
