@@ -378,21 +378,18 @@ static BYTE *sh_path(BYTE *src, BYTE *dest, BYTE *pname)
  *  Routine to verify that a file is present.  Note that this routine
  *  tolerates the presence of wildcards in the filespec.
  *
- *  The directory search order is the same as that in TOS3/TOS4, as
+ *  The directory search order is the same as that in TOS2/TOS3/TOS4, as
  *  deduced from tests on those systems:
- *      (1) isolate the filename portion of pspec, and search the
+ *      (1) isolate the filename portion of pspec, and search for it in the
  *          application directory; if found, return the fully-qualified
  *          name, else continue.
- *      (2) if pspec contains a path specification, search for that
- *          path/filename; if found, return with pspec unchanged; if not
- *          found, return with error.
- *      (3) search for pspec in the current directory; if found, return
+ *      (2) search for pspec in the current directory; if found, return
  *          with pspec unchanged, else continue.
- *      (4) search for pspec in the root directory of the current drive;
+ *      (3) search for pspec in the root directory of the current drive;
  *          if found, return pspec with '\' prefixed, else continue.
- *      (5) search for pspec in each path of the AES path string; if found,
+ *      (4) search for pspec in each path of the AES path string; if found,
  *          return the fully-qualified name.
- *      (6) if still not found, return with error.
+ *      (5) if still not found, return with error.
  */
 WORD sh_find(BYTE *pspec)
 {
@@ -417,43 +414,29 @@ WORD sh_find(BYTE *pspec)
         }
     }
 
-    /* (2) if filename includes path, search that path */
-    if (pname != pspec)
-    {
-        WORD ret;
-
-        strcpy(D.g_work, pspec);
-        ret = dos_sfirst(D.g_work, F_RDONLY | F_SYSTEM);
-        KDEBUG(("sh_find(2): rc=%d, returning pspec='%s'\n",ret,pspec));
-        return !ret;
-    }
-
-    /* (3) search in the current directory */
-    sh_curdir(D.g_work);                    /* get current drive/dir*/
-    if (D.g_work[3] != '\0')                /* if not at root       */
-        strcat(D.g_work, "\\");             /*  add backslash       */
-    strcat(D.g_work, pname);                /* append name          */
+    /* (2) search in the current directory */
+    strcpy(D.g_work, pspec);
     if (dos_sfirst(D.g_work, F_RDONLY | F_SYSTEM) == 0) /* found */
     {
-        KDEBUG(("sh_find(3): returning pspec='%s'\n",pspec));
+        KDEBUG(("sh_find(2): returning pspec='%s'\n",pspec));
         return 1;
     }
 
-    /* (4) search in the root directory of the current drive */
+    /* (3) search in the root directory of the current drive */
     D.g_work[0] = '\\';
     strcpy(D.g_work+1, pname);
     if (dos_sfirst(D.g_work, F_RDONLY | F_SYSTEM) == 0) /* found */
     {
         strcpy(pspec, D.g_work);
-        KDEBUG(("sh_find(4): returning pspec='%s'\n",pspec));
+        KDEBUG(("sh_find(3): returning pspec='%s'\n",pspec));
         return 1;
     }
 
-    /* (5) search in the AES path */
+    /* (4) search in the AES path */
     sh_envrn(&path, PATH_ENV);      /* find PATH= in the command tail */
     if (!path)
     {
-        KDEBUG(("sh_find(5): no AES path, '%s' not found\n",pspec));
+        KDEBUG(("sh_find(): no AES path, '%s' not found\n",pspec));
         return 0;
     }
     if (!*path)                     /* skip nul after PATH= */
@@ -467,7 +450,7 @@ WORD sh_find(BYTE *pspec)
         if (dos_sfirst(D.g_work, F_RDONLY | F_SYSTEM) == 0) /* found */
         {
             strcpy(pspec, D.g_work);
-            KDEBUG(("sh_find(5): returning pspec='%s'\n",pspec));
+            KDEBUG(("sh_find(4): returning pspec='%s'\n",pspec));
             return 1;
         }
     }
