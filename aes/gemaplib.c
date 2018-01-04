@@ -115,15 +115,14 @@ WORD ap_find(BYTE *pname)
  *  mouse movement.  in this case, we need to:
  *      a) disconnect the cursor from the VDI (done here), and
  *      b) draw it ourselves (done in mchange() in geminput.c).
- *  since playbacks do not necessarily involve mouse movement, the cursor
- *  is not disconnected until a mouse movement is encountered, at which
- *  point a flag is set.  the flag is checked in mchange().
  */
 void ap_tplay(const EVNTREC *pbuff,WORD length,WORD scale)
 {
     WORD   i;
     FPD    f;
     PFVOID mot_vecx_save = NULL;
+
+    gl_play = TRUE;
 
     for (i = 0; i < length; i++, pbuff++) {
         /* set up FPD for forkq */
@@ -139,7 +138,7 @@ void ap_tplay(const EVNTREC *pbuff,WORD length,WORD scale)
             f.f_code = bchange;
             break;
         case MCHNG:
-            if (!gl_play)   /* i.e. first time for MCHNG */
+            if (!mot_vecx_save)     /* i.e. first time for MCHNG */
             {
                 /*
                  * disconnect cursor drawing & movement routines
@@ -150,7 +149,6 @@ void ap_tplay(const EVNTREC *pbuff,WORD length,WORD scale)
                 i_ptr(justretf);
                 gsx_ncode(MOT_VECX, 0, 0);
                 m_lptr2(&mot_vecx_save);
-                gl_play = TRUE;
             }
             f.f_code = mchange;
             break;
@@ -168,7 +166,7 @@ void ap_tplay(const EVNTREC *pbuff,WORD length,WORD scale)
     /*
      *  if we disconnected above, reconnect the old routines
      */
-    if (gl_play)
+    if (mot_vecx_save)
     {
         drawrat(xrat, yrat);
         gsx_setmousexy(xrat, yrat);     /* no jumping cursors, please */
@@ -176,8 +174,9 @@ void ap_tplay(const EVNTREC *pbuff,WORD length,WORD scale)
         gsx_ncode(CUR_VECX, 0, 0);
         i_ptr(mot_vecx_save);
         gsx_ncode(MOT_VECX, 0, 0);
-        gl_play = FALSE;
     }
+
+    gl_play = FALSE;
 }
 
 /*

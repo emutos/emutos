@@ -153,6 +153,9 @@ void chkkbd(void)
 {
     WORD achar, kstat;
 
+    if (gl_play)
+        return;
+
     kstat = gsx_kstate();
     achar = gsx_char();
     if (achar && (gl_mowner->p_cda->c_q.c_cnt >= KBD_SIZE))
