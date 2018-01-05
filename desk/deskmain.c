@@ -551,16 +551,9 @@ static WORD do_optnmenu(WORD item)
         curr = 0;
         while( (curr = win_isel(G.g_screen, G.g_croot, curr)) )
         {
-            WORD change;
-
-            change = ins_app(curr);
-            if (change < 0) /* user cancelled */
+            if (ins_app(curr) < 0)  /* user cancelled */
                 break;
-            if (change > 0) /* install or remove */
-                rebld++;
         }
-        if (rebld)
-            desk_all(FALSE);
         break;
     case IICNITEM:
         rebld = ins_icon(curr);
