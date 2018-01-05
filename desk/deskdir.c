@@ -222,43 +222,6 @@ static WORD item_exists(BYTE *path, BOOL is_folder)
 
 
 /*
- *  Routine to check that the name we will be adding is like the
- *  last folder name in the path.
- */
-static void like_parent(BYTE *path, BYTE *new_name)
-{
-    BYTE *pstart, *lastfold, *lastslsh;
-
-    /* remember start of path */
-    pstart = path;
-
-    /* scan to lastslsh */
-    lastslsh = path = filename_start(path) - 1;
-
-    /* back up to next to last slash if it exists */
-    path--;
-    while ((*path != '\\') && (path > pstart))
-        path--;
-
-    /* remember start of last folder name */
-    if (*path == '\\')
-        lastfold = path + 1;
-    else
-        lastfold = NULL;
-
-    if (lastfold)
-    {
-        *lastslsh = '\0';
-        if (strcmp(lastfold, new_name) == 0)
-            return;
-        *lastslsh = '\\';
-    }
-
-    add_fname(pstart, new_name);
-}
-
-
-/*
  *  Remove the file name from the end of a path and append an *.*
  */
 void del_fname(BYTE *pstr)
@@ -948,7 +911,7 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *co
             add_path(srcpth, pf->f_name);
             if ((op == OP_COPY) || (op == OP_MOVE) || (op == OP_RENAME))
             {
-                like_parent(dstpth, pf->f_name);
+                add_fname(dstpth, pf->f_name);
                 more = output_path(op,srcpth,dstpth);
             }
 
