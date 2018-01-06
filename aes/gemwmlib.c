@@ -710,7 +710,7 @@ static WORD w_move(WORD w_handle, WORD *pstop, GRECT *prc)
  *  first window drawn, just do the insides, since DRAW_CHANGE has already
  *  drawn the outside borders.
  */
-void w_update(WORD bottom, GRECT *pt, WORD top, BOOL moved, BOOL usetrue)
+void w_update(WORD bottom, GRECT *pt, WORD top, BOOL moved)
 {
     WORD   i, ni;
     WORD   done;
@@ -735,7 +735,7 @@ void w_update(WORD bottom, GRECT *pt, WORD top, BOOL moved, BOOL usetrue)
             {
                 /* set clip and draw a window's border  */
                 gsx_sclip(pt);
-                w_cpwalk(top, 0, MAX_DEPTH, usetrue);   /* let appl. draw inside*/
+                w_cpwalk(top, 0, MAX_DEPTH, FALSE); /* let appl. draw inside*/
                 w_redraw(top, pt);
             }
             /* scan to find prev */
@@ -920,7 +920,7 @@ static void draw_change(WORD w_handle, GRECT *pt)
         w_drawdesk(&c);
 
     /* start the redrawing  */
-    w_update(start, &c, stop, moved, TRUE);
+    w_update(start, &c, stop, moved);
 }
 
 
