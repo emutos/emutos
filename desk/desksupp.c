@@ -1384,13 +1384,13 @@ void do_format(void)
      * do the actual work
      */
     do {
-        show_hide(FMD_START, tree);
+        start_dialog(tree);
         exitobj = form_do(tree, FMTLABEL) & 0x7fff;
         if (exitobj == FMT_OK)
             rc = format_floppy(tree, max_width, incr);
         else
             rc = -1;
-        show_hide(FMD_FINISH, tree);
+        end_dialog(tree);
 
         if (rc == 0)
         {

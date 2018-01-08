@@ -223,7 +223,7 @@ WORD fun_mkdir(WNODE *pw_node)
     {
         fnew_name[0] = '\0';
         inf_sset(tree, MKNAME, fnew_name);
-        show_hide(FMD_START, tree);
+        start_dialog(tree);
         form_do(tree, 0);
         if (inf_what(tree, MKOK, MKCNCL) == 0)
             break;
@@ -266,7 +266,7 @@ WORD fun_mkdir(WNODE *pw_node)
             break;
     }
 
-    show_hide(FMD_FINISH, tree);
+    end_dialog(tree);
     return TRUE;
 }
 

@@ -17,7 +17,8 @@ WORD inf_disk(BYTE dr_id);
 void inf_numset(OBJECT *tree, WORD obj, ULONG value);
 WORD inf_pref(void);
 WORD opn_appl(BYTE *papname, BYTE *ptail);
-void show_hide(WORD fmd, OBJECT *tree);
+void start_dialog(OBJECT *tree);
+void end_dialog(OBJECT *tree);
 
 #if CONF_WITH_BACKGROUNDS
 BOOL inf_backgrounds(void);

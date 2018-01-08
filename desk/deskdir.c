@@ -104,7 +104,7 @@ static WORD do_namecon(void)
         draw_dial(tree);
     else
     {
-        show_hide(FMD_START, tree);
+        start_dialog(tree);
         ml_havebox = TRUE;
     }
     form_do(tree, 0);
@@ -858,7 +858,7 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *co
         centre_title(tree);
         inf_numset(tree, CDFILES, count->files);
         inf_numset(tree, CDFOLDS, count->dirs);
-        show_hide(FMD_START, tree);
+        start_dialog(tree);
         ml_havebox = TRUE;
         if (confirm)
         {
@@ -970,7 +970,7 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *co
     }
 
     if (tree)
-        show_hide(FMD_FINISH, tree);
+        end_dialog(tree);
     graf_mouse(ARROW, NULL);
 
     return TRUE;

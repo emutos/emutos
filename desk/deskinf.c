@@ -332,16 +332,27 @@ WORD dr_code(PARMBLK *pparms)
 
 
 /*
- * Start or end a dialog
+ * Start a dialog
  */
-void show_hide(WORD fmd, OBJECT *tree)
+void start_dialog(OBJECT *tree)
 {
     WORD xd, yd, wd, hd;
 
     form_center(tree, &xd, &yd, &wd, &hd);
-    form_dial(fmd, 0, 0, 0, 0, xd, yd, wd, hd);
-    if (fmd == FMD_START)
-        objc_draw(tree, ROOT, MAX_DEPTH, xd, yd, wd, hd);
+    form_dial(FMD_START, 0, 0, 0, 0, xd, yd, wd, hd);
+    objc_draw(tree, ROOT, MAX_DEPTH, xd, yd, wd, hd);
+}
+
+
+/*
+ * End a dialog
+ */
+void end_dialog(OBJECT *tree)
+{
+    WORD xd, yd, wd, hd;
+
+    form_center(tree, &xd, &yd, &wd, &hd);
+    form_dial(FMD_FINISH, 0, 0, 0, 0, xd, yd, wd, hd);
 }
 
 
@@ -350,13 +361,9 @@ void show_hide(WORD fmd, OBJECT *tree)
  */
 WORD inf_show(OBJECT *tree, WORD start)
 {
-    WORD   xd, yd, wd, hd;
-
-    form_center(tree, &xd, &yd, &wd, &hd);
-    form_dial(FMD_START, 0, 0, 0, 0, xd, yd, wd, hd);
-    objc_draw(tree, ROOT, MAX_DEPTH, xd, yd, wd, hd);
+    start_dialog(tree);
     form_do(tree, start);
-    form_dial(FMD_FINISH, 0, 0, 0, 0, xd, yd, wd, hd);
+    end_dialog(tree);
 
     return TRUE;
 }
@@ -807,7 +814,7 @@ BOOL inf_backgrounds(void)
                             | SAMPLE_BORDER_FLAGS;
 
     /* handle the dialog */
-    show_hide(FMD_START, tree);
+    start_dialog(tree);
 
     while(1)
     {
@@ -841,7 +848,7 @@ BOOL inf_backgrounds(void)
             curwin = tree[BGSAMPLE].ob_spec;
     }
 
-    show_hide(FMD_FINISH, tree);
+    end_dialog(tree);
 
     /* handle dialog exit */
     if (ret == BGOK)
