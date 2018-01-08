@@ -355,7 +355,7 @@ static void inf_finish(OBJECT *tree, WORD dl_ok)
 {
     OBJECT *obj;
 
-    inf_show(tree, 0);
+    inf_show(tree, ROOT);
     obj = tree + dl_ok;
     obj->ob_state = NORMAL;
 }
@@ -500,7 +500,7 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
     else
         obj->ob_state = NORMAL;
 
-    inf_show(tree, 0);
+    inf_show(tree, ROOT);
     if (inf_what(tree, FFOK, FFCNCL) != 1)
         return FALSE;
 
@@ -698,7 +698,7 @@ WORD inf_pref(void)
     }
 
     /* allow user to select preferences */
-    inf_show(tree1, 0);
+    inf_show(tree1, ROOT);
     button = inf_what(tree1,SPOK,SPCNCL);
 
     /*
@@ -707,7 +707,7 @@ WORD inf_pref(void)
     if (button < 0)         /* user selected More */
     {
         /* allow user to select preferences */
-        inf_show(tree2, 0);
+        inf_show(tree2, ROOT);
         button = inf_what(tree2, SPOK2, SPCNCL2);
     }
 
@@ -879,7 +879,7 @@ void inf_conf(void)
         tree[DCPMFILE].ob_state |= SELECTED;
 
     /* allow user to select preferences */
-    inf_show(tree, 0);
+    inf_show(tree, ROOT);
     button = inf_what(tree, DCOK, DC_CNCL);
 
     if (button)

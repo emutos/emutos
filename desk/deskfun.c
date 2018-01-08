@@ -175,7 +175,7 @@ void fun_mask(WNODE *pw)
     /*
      * get user input
      */
-    inf_show(tree,0);
+    inf_show(tree, ROOT);
 
     /*
      * if 'OK', extract filemask from dialog, update pnode/display
