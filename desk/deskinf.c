@@ -349,10 +349,31 @@ void start_dialog(OBJECT *tree)
  */
 void end_dialog(OBJECT *tree)
 {
-    WORD xd, yd, wd, hd;
+    WORD xd, yd, wd, hd, event;
+    UWORD junk;
 
     form_center(tree, &xd, &yd, &wd, &hd);
     form_dial(FMD_FINISH, 0, 0, 0, 0, xd, yd, wd, hd);
+
+    /*
+     * now handle any messages (expected to be redraws) triggered by
+     * the form_dial(FMD_FINISH) above.  because the desktop handles
+     * internally-generated messages directly (rather than calling
+     * the AES), AES-generated messages will stay pending until the
+     * next evnt_multi() call.  if we do not call evnt_multi() here,
+     * the redraws will be out of sequence, causing irritating
+     * partial-refresh effects in windows.
+     */
+    while(1)
+    {
+        event = evnt_multi(MU_TIMER|MU_MESAG, 0x02, 0x01, 0x01,
+                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                G.g_rmsg, 0, 0,
+                                &junk, &junk, &junk, &junk, &junk, &junk);
+        if (!(event & MU_MESAG))    /* no (more) messages */
+            break;
+        hndl_msg();
+    }
 }
 
 
