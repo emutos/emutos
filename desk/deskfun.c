@@ -39,6 +39,7 @@
 #include "desksupp.h"
 #include "deskdir.h"
 #include "deskfun.h"
+#include "deskinf.h"
 #include "deskins.h"
 #include "deskpro.h"
 #include "biosdefs.h"
@@ -174,9 +175,7 @@ void fun_mask(WNODE *pw)
     /*
      * get user input
      */
-    show_hide(FMD_START, tree);
-    form_do(tree, 0);
-    show_hide(FMD_FINISH, tree);
+    inf_show(tree,0);
 
     /*
      * if 'OK', extract filemask from dialog, update pnode/display
