@@ -332,6 +332,20 @@ WORD dr_code(PARMBLK *pparms)
 
 
 /*
+ * Start or end a dialog
+ */
+void show_hide(WORD fmd, OBJECT *tree)
+{
+    WORD xd, yd, wd, hd;
+
+    form_center(tree, &xd, &yd, &wd, &hd);
+    form_dial(fmd, 0, 0, 0, 0, xd, yd, wd, hd);
+    if (fmd == FMD_START)
+        objc_draw(tree, ROOT, MAX_DEPTH, xd, yd, wd, hd);
+}
+
+
+/*
  * Put up dialog box & call form_do
  */
 WORD inf_show(OBJECT *tree, WORD start)

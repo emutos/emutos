@@ -89,17 +89,6 @@ void draw_dial(OBJECT *tree)
 }
 
 
-void show_hide(WORD fmd, OBJECT *tree)
-{
-    WORD xd, yd, wd, hd;
-
-    form_center(tree, &xd, &yd, &wd, &hd);
-    form_dial(fmd, 0, 0, 0, 0, xd, yd, wd, hd);
-    if (fmd == FMD_START)
-        objc_draw(tree, ROOT, MAX_DEPTH, xd, yd, wd, hd);
-}
-
-
 /*
  * display copy alert dialog & wait for selection, then (re)display copying dialog
  *
