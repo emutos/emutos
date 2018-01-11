@@ -32,6 +32,7 @@ script:
   - . .travis/fix_travis_commit_range.sh
   # Build binaries
   - export VERSION=$(date -u +%Y%m%d-%H%M%S)-$(git rev-parse --short $TRAVIS_COMMIT)
+  - echo VERSION=$VERSION
   - make clean
   - make release VERSION=$VERSION
   # Add README.txt
