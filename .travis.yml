@@ -20,6 +20,7 @@ before_install:
   - make --version
   - ld --version
   - gcc --version
+  - awk -W version
   - m68k-atari-mint-ld --version
   - m68k-atari-mint-gcc --version
   - tar --version
