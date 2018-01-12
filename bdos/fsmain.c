@@ -415,7 +415,8 @@ long xsetdrv(int drv)
 
     drvmap = Drvmap();
 
-    if (drvmap & (1L<<drv))
+    /* Emulate TOS 4.04 which restricts allowed drives to A:-P: */
+    if (drv <= ('P'-'A'))
         run->p_curdrv = drv;
 
     return drvmap;
