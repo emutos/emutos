@@ -408,18 +408,19 @@ void xsetdta(DTAINFO *addr)     /* set transfer address to addr */
  *  xsetdrv - set default drive
  *      ( 0 = A, etc )
  *      Function 0x0E   d_setdrv
+ *
+ * Analogous to TOS 4.04 (which restricts drive selection to A:->P:), we
+ * only allow selection within our set of valid drives.  Historically we
+ * only allowed drives which existed in the drive map, but this caused
+ * problems with BetaDOS, which expects to be able to select drive P:
+ * even if it does not exist.
  */
 long xsetdrv(int drv)
 {
-    long drvmap;
-
-    drvmap = Drvmap();
-
-    /* Emulate TOS 4.04 which restricts allowed drives to A:-P: */
-    if (drv <= ('P'-'A'))
+    if ((drv >= 0) && (drv < BLKDEVNUM))
         run->p_curdrv = drv;
 
-    return drvmap;
+    return Drvmap();
 }
 
 
