@@ -428,7 +428,7 @@ static LONG blkdev_rwabs(WORD rw, UBYTE *buf, WORD cnt, WORD recnr, WORD dev, LO
 
         /* check if the count fits into this partition */
         if ((lrecnr < 0) || (blkdev[dev].size > 0
-                             && (lrecnr + lcount) >= blkdev[dev].size))
+                             && (lrecnr + lcount) > blkdev[dev].size))
             return ESECNF;  /* sector not found */
 
         /* convert partition offset to absolute offset on a unit */
