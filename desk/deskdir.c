@@ -385,13 +385,14 @@ static WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
  */
 static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WORD attr)
 {
+    BOOL diskfull = FALSE;
     WORD srcfh, dstfh, rc;
-    LONG readlen, writelen, ret;
+    LONG readlen, writelen, error;
 
-    ret = dos_open(psrc_file, 0);
-    if (ret < 0L)
-        return d_errmsg((WORD)ret);
-    srcfh = (WORD)ret;
+    error = dos_open(psrc_file, 0);
+    if (error < 0L)
+        return d_errmsg((WORD)error);
+    srcfh = (WORD)error;
 
     rc = output_fname(psrc_file, pdst_file);
     if (rc <= 0)        /* not allowed to copy file */
@@ -405,10 +406,10 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
     /*
      * we have the (possibly-modified) filename in pdst_file
      */
-    ret = dos_create(pdst_file, attr);
-    if (ret < 0L)
+    error = dos_create(pdst_file, attr);
+    if (error < 0L)
         return invalid_copy_msg();
-    dstfh = (WORD)ret;
+    dstfh = (WORD)error;
 
     /*
      * perform copy
@@ -416,45 +417,43 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
     rc = TRUE;
     while(1)
     {
-        readlen = dos_read(srcfh, copylen, copybuf);
-        if (readlen < 0L)   /* i.e. error */
-        {
-            rc = d_errmsg((WORD)readlen);
-            break;
-        }
-        if (readlen == 0)   /* end of file */
+        error = readlen = dos_read(srcfh, copylen, copybuf);
+        if (error <= 0L)    /* error or end of file */
             break;
 
-        writelen = dos_write(dstfh, readlen, copybuf);
-        if (writelen < 0L)  /* i.e. error */
-        {
-            rc = d_errmsg((WORD)writelen);
+        error = writelen = dos_write(dstfh, readlen, copybuf);
+        if (error < 0L)
             break;
-        }
-        if (writelen != readlen)    /* disk full? */
+
+        if (writelen != readlen)
         {
-            graf_mouse(ARROW, NULL);
-            fun_alert(1, STDISKFU);
-            graf_mouse(HGLASS, NULL);
-            rc = -1;        /* indicate disk full error */
+            diskfull = TRUE;
             break;
         }
     }
 
-    if (rc > 0)
+    if (diskfull)
     {
-        WORD err = dos_setdt(dstfh, time, date);
-        rc = d_errmsg(err);
+        fun_alert(1, STDISKFU);
+        rc = -1;
+    }
+    else if (error < 0L)
+    {
+        if (IS_BIOS_ERROR(error))
+            invalid_copy_msg();
+        else d_errmsg((WORD)error);
+        rc = FALSE;
+    }
+    else
+    {
+        rc = d_errmsg(dos_setdt(dstfh, time, date));
     }
 
     dos_close(srcfh);       /* close files */
     dos_close(dstfh);
 
-    if (rc < 0)             /* disk full? */
-    {
+    if (diskfull)
         dos_delete(pdst_file);
-        rc = FALSE;
-    }
 
     return rc;
 }
