@@ -337,7 +337,7 @@ static WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
         ob = do_namecon();
         if (ob == CASTOP)
             return 0;
-        else if (ob == CACNCL)
+        else if (ob == CASKIP)
             return -1;
 
         /*
@@ -400,7 +400,7 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
         dos_close(srcfh);
         if (rc == 0)    /* unexpected error opening dest, or user said stop */
             return FALSE;
-        return -1;      /* user said cancel, notify caller */
+        return -1;      /* user said skip, notify caller */
     }
 
     /*
@@ -644,7 +644,7 @@ static WORD get_new_name(BYTE *dstpth)
     ob = do_namecon();                  /* show dialog */
     if (ob == CASTOP)                   /* "Stop" button */
         return 0;
-    if (ob == CACNCL)                   /* "Skip" button */
+    if (ob == CASKIP)                   /* "Skip" button */
         return -1;
 
     inf_sget(tree, CACOPYNA, ml_fdst);
