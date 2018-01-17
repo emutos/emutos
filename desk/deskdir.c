@@ -380,8 +380,8 @@ static WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
  *  Returns:
  *      1/TRUE  ok
  *      0/FALSE if error opening destination, or user said stop,
- *              or error during copy
- *      -1      user cancelled (this) copy, or disk full
+ *              or error during copy (including disk full)
+ *      -1      user skipped this copy
  */
 static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WORD attr)
 {
@@ -435,7 +435,7 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
     if (diskfull)
     {
         fun_alert(1, STDISKFU);
-        rc = -1;
+        rc = FALSE;
     }
     else if (error < 0L)
     {
