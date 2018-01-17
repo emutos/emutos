@@ -261,7 +261,6 @@ int nextcl(OFD *p, int wrtflg)
     else if (!p->o_dnode)       /* if no dir node, must be FAT/root */
     {
         cl2 = cl + 1;
-        goto retcl;             /* will be able to omit this when we get rid of negative clusters ... */
     }
     else
     {
@@ -287,7 +286,6 @@ int nextcl(OFD *p, int wrtflg)
     if (endofchain(cl2))
         return -1;
 
-retcl:
     p->o_curcl = cl2;
     p->o_currec = cl2rec(cl2,dm);
     p->o_curbyt = 0;
