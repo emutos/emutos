@@ -115,9 +115,10 @@ FONTOBJ_L9 = fnt_l9_6x6.o fnt_l9_8x8.o fnt_l9_8x16.o
 FONTOBJ_GR = fnt_gr_6x6.o fnt_gr_8x8.o fnt_gr_8x16.o
 FONTOBJ_RU = fnt_ru_6x6.o fnt_ru_8x8.o fnt_ru_8x16.o
 FONTOBJ_ALL = $(FONTOBJ_ST) $(FONTOBJ_L2) $(FONTOBJ_L9) $(FONTOBJ_GR) $(FONTOBJ_RU)
+FONTOBJ_COMMON = obj/fnt_off_6x6.o obj/fnt_off_8x8.o
 
 ifneq (,$(UNIQUE))
-FONTOBJ = $(FONTOBJ_$(ETOSCSET):%=obj/%)
+FONTOBJ = $(FONTOBJ_$(ETOSCSET):%=obj/%) $(FONTOBJ_COMMON)
 else
-FONTOBJ = $(FONTOBJ_ALL:%=obj/%)
+FONTOBJ = $(FONTOBJ_ALL:%=obj/%) $(FONTOBJ_COMMON)
 endif
