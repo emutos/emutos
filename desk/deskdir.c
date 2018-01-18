@@ -434,7 +434,7 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
 
     if (diskfull)
     {
-        fun_alert(1, STDISKFU);
+        fun_alert_merge(1, STDISKFU, pdst_file[0]);
         rc = FALSE;
     }
     else if (error < 0L)
