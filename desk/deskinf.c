@@ -391,19 +391,6 @@ WORD inf_show(OBJECT *tree, WORD start)
 
 
 /*
- * Routine for finishing off a simple ok-only dialog box
- */
-static void inf_finish(OBJECT *tree, WORD dl_ok)
-{
-    OBJECT *obj;
-
-    inf_show(tree, ROOT);
-    obj = tree + dl_ok;
-    obj->ob_state = NORMAL;
-}
-
-
-/*
  *  Insert an unsigned long value into the te_ptext field of the TEDINFO
  *  structure for the specified object, truncating if necessary
  */
@@ -471,10 +458,17 @@ static WORD count_ffs(BYTE *path)
 /************************************************************************/
 /* i n f _ f i l e _ f o l d e r                                        */
 /************************************************************************/
+/*
+ * returns:
+ *      0   cancel
+ *      1   continue
+ *      -1  continue, and mark window for redraw
+ */
 WORD inf_file_folder(BYTE *ppath, FNODE *pf)
 {
     OBJECT *tree;
-    WORD more, nmidx, title, ret;
+    WORD nmidx, title, ret;
+    BOOL more, changed;
     BYTE attr;
     BYTE srcpth[MAXPATHLEN];
     BYTE dstpth[MAXPATHLEN];
@@ -482,6 +476,8 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
     OBJECT *obj;
 
     tree = G.a_trees[ADFFINFO];
+    deselect_all(tree);
+
     title = (pf->f_attr & F_SUBDIR) ? STFOINFO : STFIINFO;
     obj = tree + FFTITLE;
     obj->ob_spec = (LONG) ini_str(title);
@@ -504,7 +500,7 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
         graf_mouse(ARROW, NULL);
 
         if (!more)
-            return FALSE;
+            return 1;
 
         inf_fifosz(tree, FFNUMFIL, FFNUMFOL, FFSIZE);
     }
@@ -543,15 +539,15 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
         obj->ob_state = NORMAL;
 
     inf_show(tree, ROOT);
-    if (inf_what(tree, FFOK, FFCNCL) != 1)
-        return FALSE;
+    ret = inf_what(tree, FFSKIP, FFCNCL);
+    if (ret >= 0)       /* skip or cancel */
+        return ret;
 
     /*
      * user selected OK - we rename and/or change attributes
      */
     graf_mouse(HGLASS, NULL);
 
-    more = TRUE;
     inf_sget(tree, FFNAME, pnname);
 
     /* unformat the strings */
@@ -561,11 +557,16 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
     /*
      * if user has changed the name, do the DOS rename
      */
+    more = TRUE;
+    changed = FALSE;
     if (strcmp(srcpth+nmidx, dstpth+nmidx))
     {
         ret = dos_rename(srcpth, dstpth);
         if ((more=d_errmsg(ret)) != 0)
+        {
             strcpy(pf->f_name, dstpth+nmidx);
+            changed = TRUE;
+        }
     }
 
     /*
@@ -583,20 +584,28 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
         if (attr != pf->f_attr)
         {
             ret = dos_chmod(dstpth, F_SETMOD, attr);
-            if ((more=d_errmsg(ret)) != 0)
+            if (d_errmsg(ret) != 0)
+            {
                 pf->f_attr = attr;
+                changed = TRUE;
+            }
         }
     }
 
     graf_mouse(ARROW, NULL);
 
-    return more;
+    return changed ? -1 : 1;
 }
 
 
 /************************************************************************/
 /* i n f _ d i s k                                                      */
 /************************************************************************/
+/*
+ * returns:
+ *      0   cancel
+ *      1   continue
+ */
 WORD inf_disk(BYTE dr_id)
 {
     OBJECT *tree;
@@ -619,7 +628,7 @@ WORD inf_disk(BYTE dr_id)
     if (!more)
     {
         graf_mouse(ARROW, NULL);
-        return FALSE;
+        return 1;
     }
 
     dos_space(dr_id - 'A' + 1, &total, &avail);
@@ -635,9 +644,8 @@ WORD inf_disk(BYTE dr_id)
     inf_fifosz(tree, DINFILES, DINFOLDS, DIUSED);
     inf_numset(tree, DIAVAIL, avail);
 
-    inf_finish(tree, DIOK);
-
-    return TRUE;
+    inf_show(tree, ROOT);
+    return inf_what(tree, DIOK, DICNCL);
 }
 
 

@@ -871,7 +871,6 @@ void app_start(void)
     G.g_xytext[7] = gl_hchar;
 }
 
-
 /*
  *  Reverse the list of ANODEs
  */
@@ -1168,6 +1167,13 @@ void app_blddesk(void)
     /* set background pattern/colours */
     set_background();
 
+    /*
+     * reverse the order of the ANODEs, so that the disk icons will be
+     * allocated in the same sequence as they appear on the desktop.
+     * this is important for 'Show info'.
+     */
+    app_revit();
+
     for(pa = G.g_ahead; pa; pa = pa->a_next)
     {
         if (pa->a_flags & AF_ISDESK)
@@ -1201,6 +1207,9 @@ void app_blddesk(void)
             pic->ib_char |= pa->a_letter;
         }
     }
+
+    app_revit();    /* back to normal ... */
+
     do_wredraw(0, G.g_xdesk, G.g_ydesk, G.g_wdesk, G.g_hdesk);
 }
 

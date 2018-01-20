@@ -1069,10 +1069,14 @@ WORD do_open(WORD curr)
 
 /*
  *  Get information on an icon
+ *
+ *  returns:
+ *      0   cancel
+ *          otherwise continue
  */
 WORD do_info(WORD curr)
 {
-    WORD ret, drive;
+    WORD ret = 1, drive;
     ANODE *pa;
     WNODE *pw;
     FNODE fn, *pf;
@@ -1084,7 +1088,7 @@ WORD do_info(WORD curr)
 
     pa = i_find(G.g_cwin, curr, &pf, NULL);
     if (!pa)
-        return FALSE;
+        return ret;
 
     switch(pa->a_type)
     {
@@ -1118,20 +1122,20 @@ WORD do_info(WORD curr)
                 pathptr = pw->w_pnode.p_spec;
             }
             ret = inf_file_folder(pathptr, pf);
-            if (ret)
-                fun_rebld(pathptr);
+            if (ret < 0)
+                fun_mark_for_rebld(pathptr);
         }
         break;
     case AT_ISDISK:
         drive = LOBYTE(get_iconblk_ptr(G.g_screen, curr)->ib_char);
-        inf_disk(drive);
+        ret = inf_disk(drive);
         break;
     case AT_ISTRSH:
         fun_alert(1, STTRINFO);
         break;
     }
 
-    return FALSE;
+    return ret;
 }
 
 

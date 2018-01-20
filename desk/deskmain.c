@@ -139,7 +139,7 @@ static const BYTE ILL_FOLD[] =  { IDSKITEM, IAPPITEM, RICNITEM, 0 };
 static const BYTE ILL_FDSK[] =  { IAPPITEM, 0 };
 static const BYTE ILL_HDSK[] =  { IAPPITEM, 0 };
 static const BYTE ILL_NOSEL[] = { OPENITEM, SHOWITEM, DELTITEM, IAPPITEM, RICNITEM, 0 };
-static const BYTE ILL_MULTSEL[] = { OPENITEM, SHOWITEM, 0 };
+static const BYTE ILL_MULTSEL[] = { OPENITEM, 0 };
 static const BYTE ILL_TRASH[] = { OPENITEM, DELTITEM, IDSKITEM, IAPPITEM, 0 };
 static const BYTE ILL_NOWIN[] = {
     NFOLITEM, CLOSITEM, CLSWITEM,
@@ -416,8 +416,20 @@ static WORD do_filemenu(WORD item)
         break;
     case SHOWITEM:
         if (curr)
-            do_info(curr);
-        else if (pw)
+        {
+            for ( ; curr; curr = win_isel(G.g_screen, G.g_croot, curr))
+            {
+                if (!do_info(curr))
+                    break;
+            }
+            fun_rebld_marked(); /* rebuild any changed windows */
+            break;
+        }
+        /*
+         * here if there are no highlighted icons: display info for
+         * the disk associated with the top window (just like TOS)
+         */
+        if (pw)
             inf_disk(pw->w_pnode.p_spec[0]);
         break;
     case NFOLITEM:

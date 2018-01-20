@@ -126,11 +126,65 @@ void fun_msg(WORD type, WORD w3, WORD w4, WORD w5, WORD w6, WORD w7)
 
 
 /*
+ *  Mark window nodes for rebuild
+ */
+void fun_mark_for_rebld(BYTE *path)
+{
+    WNODE *pwin;
+
+    for (pwin = G.g_wfirst; pwin; pwin = pwin->w_next)
+    {
+        /* if opened and same path then mark */
+        if ( (pwin->w_id) && (strcmp(pwin->w_pnode.p_spec, path)==0) )
+            pwin->w_flags |= WN_REBUILD;
+    }
+}
+
+
+/*
+ *  Rebuild a window
+ */
+static void rebuild_window(WNODE *pwin)
+{
+    GRECT gr;
+
+    pn_active(&pwin->w_pnode, TRUE);
+    desk_verify(pwin->w_id, TRUE);
+    win_sinfo(pwin);
+    wind_set(pwin->w_id, WF_INFO, pwin->w_info, 0, 0);
+    wind_get_grect(pwin->w_id, WF_WXYWH, &gr);
+    fun_msg(WM_REDRAW, pwin->w_id, gr.g_x, gr.g_y, gr.g_w, gr.g_h);
+}
+
+
+/*
+ *  Rebuild marked windows
+ */
+void fun_rebld_marked(void)
+{
+    WNODE *pwin;
+
+    graf_mouse(HGLASS, NULL);
+
+    /* check all wnodes     */
+    for (pwin = G.g_wfirst; pwin; pwin = pwin->w_next)
+    {
+        if (pwin->w_flags & WN_REBUILD)
+        {
+            rebuild_window(pwin);
+            pwin->w_flags &= ~WN_REBUILD;
+        }
+    }
+
+    graf_mouse(ARROW, NULL);
+}
+
+
+/*
  *  Rebuild any windows with matching path
  */
 void fun_rebld(BYTE *ptst)
 {
-    GRECT gr;
     WNODE *pwin;
 
     graf_mouse(HGLASS, NULL);
@@ -141,12 +195,7 @@ void fun_rebld(BYTE *ptst)
         /* if opened and same path then rebuild */
         if ( (pwin->w_id) && (strcmp(pwin->w_pnode.p_spec, ptst)==0) )
         {
-            pn_active(&pwin->w_pnode, TRUE);
-            desk_verify(pwin->w_id, TRUE);
-            win_sinfo(pwin);
-            wind_set(pwin->w_id, WF_INFO, pwin->w_info, 0, 0);
-            wind_get_grect(pwin->w_id, WF_WXYWH, &gr);
-            fun_msg(WM_REDRAW, pwin->w_id, gr.g_x, gr.g_y, gr.g_w, gr.g_h);
+            rebuild_window(pwin);
         } /* if */
     } /* for */
 

@@ -35,6 +35,8 @@ void fun_mask(WNODE *pw);
 void fun_close(WNODE *pw, WORD closetype);
 BOOL fun_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my, WORD keystate);
 void fun_msg(WORD type, WORD w3, WORD w4, WORD w5, WORD w6, WORD w7);
+void fun_mark_for_rebld(BYTE *path);
+void fun_rebld_marked(void);
 void fun_rebld(BYTE *path);
 WORD fun_mkdir(WNODE *pw_node);
 WORD fun_op(WORD op, WORD icontype_src, PNODE *pspath, BYTE *pdest);

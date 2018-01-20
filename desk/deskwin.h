@@ -47,7 +47,8 @@
 /*
  * flags in w_flags below
  */
-#define WN_DESKTOP      0x01                /* the desktop pseudo-window */
+#define WN_DESKTOP      0x0001              /* the desktop pseudo-window */
+#define WN_REBUILD      0x8000              /* this window needs rebuilding */
 
 
 /*
@@ -57,7 +58,7 @@ typedef struct _windnode WNODE;
 struct _windnode
 {
         WNODE           *w_next;            /* -> next 'highest' window */
-        WORD            w_flags;
+        UWORD           w_flags;                /* see above */
         WORD            w_id;                   /* window handle id #   */
         WORD            w_obid;                 /* desktop object id    */
         WORD            w_root;                 /* pseudo root ob. in   */
