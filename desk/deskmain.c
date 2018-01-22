@@ -495,19 +495,11 @@ static WORD do_viewmenu(WORD item)
         newview = (G.g_iview == V_ICON) ? V_TEXT : V_ICON;
         break;
     case NAMEITEM:
-        newsort = S_NAME;
-        break;
-    case DATEITEM:
-        newsort = S_DATE;
-        break;
-    case SIZEITEM:
-        newsort = S_SIZE;
-        break;
     case TYPEITEM:
-        newsort = S_TYPE;
-        break;
+    case SIZEITEM:
+    case DATEITEM:
     case NSRTITEM:
-        newsort = S_NSRT;
+        newsort = item - NAMEITEM;
         break;
 #if CONF_WITH_BACKGROUNDS
     case BACKGRND:
@@ -525,7 +517,7 @@ static WORD do_viewmenu(WORD item)
     }
     if (newsort != G.g_isort)
     {
-        menu_icheck(G.a_trees[ADMENU], G.g_isort, 0);
+        menu_icheck(G.a_trees[ADMENU], NAMEITEM+G.g_isort, 0);
         menu_icheck(G.a_trees[ADMENU], item, 1);
         rc |= SORT_HAS_CHANGED;
     }

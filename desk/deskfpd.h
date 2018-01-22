@@ -17,6 +17,7 @@
 #ifndef _DESKFPD_H
 #define _DESKFPD_H
 #include "deskconf.h"
+#include "desk_rsc.h"           /* for ICONITEM, NAMEITEM etc */
 
 #define OP_COUNT 0
 #define OP_DELETE 1
@@ -34,11 +35,11 @@
  *
  * Note: folders are always listed before files, except for 'no sort'
  */
-#define S_NAME 0                /* file name (ascending) */
-#define S_DATE 1                /* date (newest first), then name */
-#define S_SIZE 2                /* size (largest first), then name */
-#define S_TYPE 3                /* file extension (ascending), then name */
-#define S_NSRT 4                /* no sort (directory sequence) */
+#define S_NAME (NAMEITEM-NAMEITEM)  /* file name (ascending) */
+#define S_TYPE (TYPEITEM-NAMEITEM)  /* file extension (ascending), then name */
+#define S_SIZE (SIZEITEM-NAMEITEM)  /* size (largest first), then name */
+#define S_DATE (DATEITEM-NAMEITEM)  /* date (newest first), then name */
+#define S_NSRT (NSRTITEM-NAMEITEM)  /* no sort (directory sequence) */
 #define START_SORT  S_NAME      /* default */
 
 #define E_NOERROR 0
