@@ -27,6 +27,7 @@
 
 #define V_ICON 0
 #define V_TEXT 1
+#define START_VIEW  V_ICON      /* default */
 
 /*
  * sort sequence for display
@@ -38,6 +39,7 @@
 #define S_SIZE 2                /* size (largest first), then name */
 #define S_TYPE 3                /* file extension (ascending), then name */
 #define S_NSRT 4                /* no sort (directory sequence) */
+#define START_SORT  S_NAME      /* default */
 
 #define E_NOERROR 0
 #define E_NOFNODES 100

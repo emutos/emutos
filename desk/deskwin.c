@@ -51,7 +51,6 @@
 
 #define WINDOW_STYLE (NAME | CLOSER | MOVER | FULLER | INFO | SIZER | \
                       UPARROW | DNARROW | VSLIDE | LFARROW | RTARROW | HSLIDE)
-#define START_VIEW   V_ICON
 
 /*
  * Specify the initial ob_state for icon objects in a window.  If the
@@ -109,7 +108,7 @@ int win_start(void)
     WNODE *pw;
     WORD i;
 
-    win_view(START_VIEW, S_NAME);
+    win_view(START_VIEW, START_SORT);
     obj_init();         /* must be called *after* win_view(), because it uses */
                         /*  G.g_iwspc/G.g_ihspc which are set by win_view()   */
 
