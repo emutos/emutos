@@ -338,7 +338,7 @@ static void men_update(void)
     menu_ienable(tree, QUITITEM, can_shutdown());
 #endif
 
-    menu_ienable(G.a_trees[ADMENU], RESITEM, can_change_resolution);
+    menu_ienable(tree, RESITEM, can_change_resolution);
 
 #if CONF_WITH_BLITTER
     if (blitter_is_present)
@@ -482,6 +482,7 @@ static WORD do_filemenu(WORD item)
 static WORD do_viewmenu(WORD item)
 {
     WORD newview, newsort, rc = 0;
+    OBJECT *menutree = G.a_trees[ADMENU];
 
     newview = G.g_iview;
     newsort = G.g_isort;
@@ -508,14 +509,14 @@ static WORD do_viewmenu(WORD item)
 
     if (newview != G.g_iview)
     {
-        menu_icheck(G.a_trees[ADMENU], ICONITEM+G.g_iview, 0);
-        menu_icheck(G.a_trees[ADMENU], item, 1);
+        menu_icheck(menutree, ICONITEM+G.g_iview, 0);
+        menu_icheck(menutree, item, 1);
         rc |= VIEW_HAS_CHANGED;
     }
     if (newsort != G.g_isort)
     {
-        menu_icheck(G.a_trees[ADMENU], NAMEITEM+G.g_isort, 0);
-        menu_icheck(G.a_trees[ADMENU], item, 1);
+        menu_icheck(menutree, NAMEITEM+G.g_isort, 0);
+        menu_icheck(menutree, item, 1);
         rc |= SORT_HAS_CHANGED;
     }
 
@@ -1581,6 +1582,7 @@ WORD deskmain(void)
 {
     WORD ii, done, flags;
     UWORD ev_which, mx, my, button, kstate, kret, bret;
+    OBJECT *menutree;
 
     /* initialize libraries */
     gl_apid = appl_init();
@@ -1647,8 +1649,9 @@ WORD deskmain(void)
     desk_verify(0, FALSE);      /* initialise g_croot, g_cwin, g_wlastsel  */
 
     /* establish menu items */
-    menu_icheck(G.a_trees[ADMENU], ICONITEM+G.g_iview, 1);
-    menu_icheck(G.a_trees[ADMENU], NAMEITEM+G.g_isort, 1);
+    menutree = G.a_trees[ADMENU];
+    menu_icheck(menutree, ICONITEM+G.g_iview, 1);
+    menu_icheck(menutree, NAMEITEM+G.g_isort, 1);
 
     /* initialize desktop and its objects */
     app_blddesk();
@@ -1675,7 +1678,7 @@ WORD deskmain(void)
 
     /* menu is initialised - display menu bar & set mouse to arrow */
     wind_update(BEG_UPDATE);
-    menu_bar(G.a_trees[ADMENU], 1);
+    menu_bar(menutree, 1);
     desk_wait(FALSE);
     wind_update(END_UPDATE);
 
