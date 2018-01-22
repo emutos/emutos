@@ -789,7 +789,7 @@ void app_start(void)
         case 'E':                       /* Environment */
             pcurr++;
             pcurr = scan_2(pcurr, &envr);
-            G.g_cnxsave.cs_view = ( (envr & INF_E1_VIEWTEXT) != 0);
+            G.g_cnxsave.cs_view = (envr & INF_E1_VIEWTEXT) ? V_TEXT : V_ICON;
             G.g_cnxsave.cs_sort = ( (envr & INF_E1_SORTMASK) >> 5);
             G.g_cnxsave.cs_confdel = ( (envr & INF_E1_CONFDEL) != 0);
             G.g_cnxsave.cs_confcpy = ( (envr & INF_E1_CONFCPY) != 0);
@@ -980,7 +980,7 @@ void app_save(WORD todisk)
             pcurr += sprintf(pcurr,"#Z %02X %s@\r\n",pa->a_flags&AF_ISCRYS,pa->a_pappl);
 
     /* save environment */
-    env1 = (G.g_cnxsave.cs_view) ? INF_E1_VIEWTEXT : 0x00;
+    env1 = (G.g_cnxsave.cs_view == V_TEXT) ? INF_E1_VIEWTEXT : 0x00;
     env1 |= ((G.g_cnxsave.cs_sort) << 5) & INF_E1_SORTMASK;
     env1 |= (G.g_cnxsave.cs_confdel) ? INF_E1_CONFDEL : 0x00;
     env1 |= (G.g_cnxsave.cs_confcpy) ? INF_E1_CONFCPY : 0x00;

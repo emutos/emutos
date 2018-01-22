@@ -114,14 +114,14 @@ typedef struct
                                             /* view-related parms:      */
 /*GLOBAL*/ WORD         g_num;                  /* number of points     */
 /*GLOBAL*/ WORD         *g_pxy;                 /* outline pts to drag  */
-/*GLOBAL*/ WORD         g_iview;                /* current view type    */
+/*GLOBAL*/ WORD         g_iview;                /* current view type (V_ICON/V_TEXT) */
 /*GLOBAL*/ WORD         g_iwext;                /* w,h of extent of a   */
 /*GLOBAL*/ WORD         g_ihext;                /*   single item        */
 /*GLOBAL*/ WORD         g_iwint;                /* w,h of interval      */
 /*GLOBAL*/ WORD         g_ihint;                /*   between items      */
 /*GLOBAL*/ WORD         g_iwspc;                /* w,h of space used by */
 /*GLOBAL*/ WORD         g_ihspc;                /*   a single item      */
-/*GLOBAL*/ WORD         g_isort;                /* current sort type    */
+/*GLOBAL*/ WORD         g_isort;                /* current sort type (S_NAME etc) */
 
                                                 /* stack of fcb's to use*/
                                                 /*   for non-recursive  */
@@ -159,7 +159,6 @@ typedef struct
 /*GLOBAL*/ WORD         g_wlastsel;             /* window holding last  */
                                                 /*   selection          */
                                             /* current desktop preference values */
-/*GLOBAL*/ WORD         g_csortitem;            /* curr. sort item chked*/
 /*GLOBAL*/ WORD         g_ccopypref;            /* curr. copy pref.     */
 /*GLOBAL*/ WORD         g_cdelepref;            /* curr. delete pref.   */
 /*GLOBAL*/ WORD         g_covwrpref;            /* curr. overwrite pref.*/

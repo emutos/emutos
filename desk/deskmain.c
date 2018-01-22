@@ -66,7 +66,7 @@ typedef struct {
 } KEYTAB;
 
 #define abs(x) ( (x) < 0 ? -(x) : (x) )
-#define menu_text(tree,inum,ptext) (((tree)+(inum))->ob_spec = (LONG)ptext)
+#define menu_text(tree,inum,ptext) (((tree)+(inum))->ob_spec = (LONG)(ptext))
 
 
 #define ESC     0x1b
@@ -520,15 +520,13 @@ static WORD do_viewmenu(WORD item)
 
     if (newview != G.g_iview)
     {
-        G.g_iview = newview;
         ptext = (newview == V_TEXT) ? ad_picon : ad_ptext;
         menu_text(G.a_trees[ADMENU], ICONITEM, ptext);
         rc |= VIEW_HAS_CHANGED;
     }
     if (newsort != G.g_isort)
     {
-        menu_icheck(G.a_trees[ADMENU], G.g_csortitem, 0);
-        G.g_csortitem = item;
+        menu_icheck(G.a_trees[ADMENU], G.g_isort, 0);
         menu_icheck(G.a_trees[ADMENU], item, 1);
         rc |= SORT_HAS_CHANGED;
     }
@@ -1081,8 +1079,8 @@ static void cnx_put(void)
     WSAVE *pws;
     WNODE *pw;
 
-    G.g_cnxsave.cs_view = (G.g_iview == V_ICON) ? 0 : 1;
-    G.g_cnxsave.cs_sort = G.g_csortitem - NAMEITEM;
+    G.g_cnxsave.cs_view = G.g_iview;        /* V_ICON/V_TEXT */
+    G.g_cnxsave.cs_sort = G.g_isort;        /* S_NAME etc */
     G.g_cnxsave.cs_confcpy = G.g_ccopypref;
     G.g_cnxsave.cs_confdel = G.g_cdelepref;
     G.g_cnxsave.cs_dblclick = G.g_cdclkpref;
@@ -1135,8 +1133,8 @@ static void cnx_get(void)
     WSAVE *pws;
     WNODE *pw;
 
-    G.g_iview = (G.g_cnxsave.cs_view == 0) ? V_TEXT : V_ICON;
-    do_viewmenu(ICONITEM);
+    if (G.g_cnxsave.cs_view != G.g_iview)
+        do_viewmenu(ICONITEM);      /* toggle display */
     do_viewmenu(NAMEITEM + G.g_cnxsave.cs_sort);
     G.g_ccopypref = G.g_cnxsave.cs_confcpy;
     G.g_cdelepref = G.g_cnxsave.cs_confdel;
@@ -1652,7 +1650,9 @@ WORD deskmain(void)
      */
     app_start();
 
-    /* initialize windows */
+    /*
+     * initialize windows: win_view() initialises g_iview, g_isort
+     */
     if (win_start() < 0)
     {
         KDEBUG(("insufficient memory for desktop windows (need %ld bytes)\n",
@@ -1663,11 +1663,8 @@ WORD deskmain(void)
     desk_verify(0, FALSE);      /* initialise g_croot, g_cwin, g_wlastsel  */
 
     /* establish menu items */
-    G.g_iview = V_ICON;
-    menu_text(G.a_trees[ADMENU], ICONITEM, ad_ptext);
-
-    G.g_csortitem = NAMEITEM;
-    menu_icheck(G.a_trees[ADMENU], G.g_csortitem, 1);
+    menu_text(G.a_trees[ADMENU], ICONITEM, (G.g_iview==V_ICON)?ad_ptext:ad_picon);
+    menu_icheck(G.a_trees[ADMENU], NAMEITEM+G.g_isort, 1);
 
     /* initialize desktop and its objects */
     app_blddesk();
