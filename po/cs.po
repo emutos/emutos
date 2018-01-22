@@ -383,8 +383,8 @@ msgid "  Shutdown        ^Q"
 msgstr "  Vypnout         ^Q"
 
 #: desk/desk_rsc.c:400 desk/desk_rsc.c:2422
-msgid "  Show as text   ^T"
-msgstr "  Jako text       ^T"
+msgid "  Show as text"
+msgstr "  Jako text"
 
 #: desk/desk_rsc.c:412
 msgid "  Sort by name"
@@ -775,8 +775,8 @@ msgid "%ld bytes used in %d items."
 msgstr "%ld bytù v %d polo¾kách."
 
 #: desk/desk_rsc.c:2421
-msgid "  Show as icons  ^T"
-msgstr "  Jako ikony      ^T"
+msgid "  Show as icons"
+msgstr "  Jako ikony"
 
 #: desk/desk_rsc.c:2423
 msgid "FILE INFORMATION"

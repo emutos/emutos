@@ -383,8 +383,8 @@ msgid "  Shutdown        ^Q"
 msgstr "  Pysäytä systeemi    ^Q"
 
 #: desk/desk_rsc.c:400 desk/desk_rsc.c:2422
-msgid "  Show as text   ^T"
-msgstr "  Tekstinä     ^T"
+msgid "  Show as text"
+msgstr "  Tekstinä"
 
 #: desk/desk_rsc.c:412
 msgid "  Sort by name"
@@ -775,8 +775,8 @@ msgid "%ld bytes used in %d items."
 msgstr "%ld tavua käytetty %d tiedostoon."
 
 #: desk/desk_rsc.c:2421
-msgid "  Show as icons  ^T"
-msgstr "  Ikoneina     ^T"
+msgid "  Show as icons"
+msgstr "  Ikoneina"
 
 #: desk/desk_rsc.c:2423
 msgid "FILE INFORMATION"

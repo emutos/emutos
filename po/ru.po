@@ -384,8 +384,8 @@ msgid "  Shutdown        ^Q"
 msgstr "  Выключить             ^Q"
 
 #: desk/desk_rsc.c:400 desk/desk_rsc.c:2422
-msgid "  Show as text   ^T"
-msgstr "  Показать как текст    ^T"
+msgid "  Show as text"
+msgstr "  Показать как текст"
 
 #: desk/desk_rsc.c:412
 msgid "  Sort by name"
@@ -776,8 +776,8 @@ msgid "%ld bytes used in %d items."
 msgstr "%ld байт используется в %d объектах."
 
 #: desk/desk_rsc.c:2421
-msgid "  Show as icons  ^T"
-msgstr "  Показать как иконки   ^T"
+msgid "  Show as icons"
+msgstr "  Показать как иконки"
 
 #: desk/desk_rsc.c:2423
 msgid "FILE INFORMATION"

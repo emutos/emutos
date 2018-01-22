@@ -384,8 +384,8 @@ msgid "  Shutdown        ^Q"
 msgstr "  Arresta sistema   ^Q"
 
 #: desk/desk_rsc.c:400 desk/desk_rsc.c:2422
-msgid "  Show as text   ^T"
-msgstr "  Formato testo  ^T"
+msgid "  Show as text"
+msgstr "  Formato testo"
 
 #: desk/desk_rsc.c:412
 msgid "  Sort by name"
@@ -776,8 +776,8 @@ msgid "%ld bytes used in %d items."
 msgstr "%ld byte usati in %d oggetti."
 
 #: desk/desk_rsc.c:2421
-msgid "  Show as icons  ^T"
-msgstr "  Formato icona  ^T"
+msgid "  Show as icons"
+msgstr "  Formato icona"
 
 #: desk/desk_rsc.c:2423
 msgid "FILE INFORMATION"

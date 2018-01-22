@@ -26,8 +26,8 @@
 
 #define D_PERM 0x0001
 
-#define V_ICON 0
-#define V_TEXT 1
+#define V_ICON (ICONITEM-ICONITEM)  /* view as icons */
+#define V_TEXT (TEXTITEM-ICONITEM)  /* view as text */
 #define START_VIEW  V_ICON      /* default */
 
 /*

@@ -194,9 +194,6 @@ static const WORD  dura[]=
 #define MAXLEN_SEPARATOR    40
 static char separator[MAXLEN_SEPARATOR+1];
 
-static BYTE *ad_ptext;
-static BYTE *ad_picon;
-
 static int can_change_resolution;
 static int blitter_is_present;
 
@@ -485,14 +482,14 @@ static WORD do_filemenu(WORD item)
 static WORD do_viewmenu(WORD item)
 {
     WORD newview, newsort, rc = 0;
-    BYTE *ptext;
 
     newview = G.g_iview;
     newsort = G.g_isort;
     switch(item)
     {
     case ICONITEM:
-        newview = (G.g_iview == V_ICON) ? V_TEXT : V_ICON;
+    case TEXTITEM:
+        newview = item - ICONITEM;
         break;
     case NAMEITEM:
     case TYPEITEM:
@@ -511,8 +508,8 @@ static WORD do_viewmenu(WORD item)
 
     if (newview != G.g_iview)
     {
-        ptext = (newview == V_TEXT) ? ad_picon : ad_ptext;
-        menu_text(G.a_trees[ADMENU], ICONITEM, ptext);
+        menu_icheck(G.a_trees[ADMENU], ICONITEM+G.g_iview, 0);
+        menu_icheck(G.a_trees[ADMENU], item, 1);
         rc |= VIEW_HAS_CHANGED;
     }
     if (newsort != G.g_isort)
@@ -1124,8 +1121,7 @@ static void cnx_get(void)
     WSAVE *pws;
     WNODE *pw;
 
-    if (G.g_cnxsave.cs_view != G.g_iview)
-        do_viewmenu(ICONITEM);      /* toggle display */
+    do_viewmenu(ICONITEM + G.g_cnxsave.cs_view);
     do_viewmenu(NAMEITEM + G.g_cnxsave.cs_sort);
     G.g_ccopypref = G.g_cnxsave.cs_confcpy;
     G.g_cdelepref = G.g_cnxsave.cs_confdel;
@@ -1626,9 +1622,6 @@ WORD deskmain(void)
         app_tran(ii);
     }
 
-    rsrc_gaddr_rom(R_STRING, STASTEXT, (void **)&ad_ptext);
-    rsrc_gaddr_rom(R_STRING, STASICON, (void **)&ad_picon);
-
     /* These strings are used by dr_code.  We can't get to the
      * resource in dr_code because that would reenter AES, so we
      * save them here.
@@ -1654,7 +1647,7 @@ WORD deskmain(void)
     desk_verify(0, FALSE);      /* initialise g_croot, g_cwin, g_wlastsel  */
 
     /* establish menu items */
-    menu_text(G.a_trees[ADMENU], ICONITEM, (G.g_iview==V_ICON)?ad_ptext:ad_picon);
+    menu_icheck(G.a_trees[ADMENU], ICONITEM+G.g_iview, 1);
     menu_icheck(G.a_trees[ADMENU], NAMEITEM+G.g_isort, 1);
 
     /* initialize desktop and its objects */
