@@ -31,11 +31,14 @@ emucurs.def - definition file for the above
 emuicon.rsc - contains additional icons for the desktop
 emuicon.def - definition file for the above
 
-Note that the emuicon.rsc file format differs from deskicon.rsc used by later
+Notes on possible points of confusion
+1. The emuicon.rsc file format differs from deskicon.rsc used by later
 versions of the Atari TOS desktop.
-
-Note that selecting Norwegian/Swedish currently sets the language to English,
+2. Selecting Norwegian/Swedish currently sets the language to English,
 but the keyboard layout to Norwegian/Swedish.
+3. The 'Shutdown' menu item is active when EmuTOS is run under an
+emulator supporting NatFeats.  Under Hatari, you may need to enable this
+feature manually: please refer to the Hatari documentation.
 
 These ROM images have been built using:
 make all256
