@@ -63,6 +63,7 @@ union acsidma {
 /*
  * defines
  */
+#define MAXSECS_PER_ACSI_IO     255
 #define SMALL_TIMEOUT (CLOCKS_PER_SEC/10)   /* 100ms between cmd bytes */
 #define LARGE_TIMEOUT (CLOCKS_PER_SEC)      /* 1000ms for the data xfer itself */
 
@@ -100,7 +101,7 @@ void acsi_init(void)
 
 LONG acsi_rw(WORD rw, LONG sector, WORD count, UBYTE *buf, WORD dev)
 {
-    WORD maxsecs_per_io = 128;  /* default, should probably be 255 */
+    WORD maxsecs_per_io = MAXSECS_PER_ACSI_IO;
     BOOL use_tmpbuf = FALSE;
     int retry;
     int err = 0;
