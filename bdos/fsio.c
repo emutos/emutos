@@ -497,10 +497,16 @@ static void usrio(int rwflg, int num, long strt, char *ubuf, DMD *dm)
     BCB *b;
 
     for (b = bufl[BI_DATA]; b; b = b->b_link)
+    {
         if ((b->b_bufdrv == dm->m_drvnum) &&
             (b->b_bufrec >= strt) &&
             (b->b_bufrec < strt+num))
-            flush(b);
+        {
+            if (b->b_dirty)
+                flush(b);
+            b->b_bufdrv = -1;
+        }
+    }
 
     longjmp_rwabs(rwflg, (long)ubuf, num, strt+dm->m_recoff[BT_DATA], dm->m_drvnum);
 }

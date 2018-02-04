@@ -503,7 +503,8 @@ long ixclose(OFD *fd, int part)
 
     for (i = 0; i < 2; i++)
         for (b = bufl[i]; b; b = b->b_link)
-            flush(b);
+            if ((b->b_bufdrv != -1) && b->b_dirty)
+                flush(b);
 
     return E_OK;
 }
