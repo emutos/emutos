@@ -481,6 +481,7 @@ long ixclose(OFD *fd, int part)
 
         ixlseek(fd->o_dirfil,fd->o_dirbyt+11);  /* seek to attrib byte */
         ixwrite(fd->o_dirfil,1,&attr);          /*  & rewrite it       */
+        fd->o_flag &= ~O_DIRTY;             /* not dirty any more */
     }
 
     if ((!part) || (part & CL_FULL))
