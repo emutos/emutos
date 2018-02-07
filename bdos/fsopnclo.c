@@ -502,9 +502,15 @@ long ixclose(OFD *fd, int part)
             return EINTRN;  /* some kind of internal error */
     }
 
-    /* only flush to appropriate drive ***** TBA ******/
-
-    for (i = 0; i < 2; i++)
+    /*
+     * flush all drives
+     *
+     * this could in theory be improved by flushing all sectors for one
+     * drive before moving on to the next, reducing arm movement on
+     * partitioned hard disks.  however this would cost code space and,
+     * in practice, flushing usually takes place to one drive only.
+     */
+    for (i = BI_FAT; i <= BI_DATA; i++)
         for (b = bufl[i]; b; b = b->b_link)
             if ((b->b_bufdrv != -1) && b->b_dirty)
                 flush(b);
