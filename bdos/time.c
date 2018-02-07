@@ -38,12 +38,14 @@ NAMES
         ACH     Anthony C. Hay (DR UK)
 */
 
+/* #define ENABLE_KDEBUG */
+
 #include "config.h"
 #include "time.h"
 #include "portab.h"
 #include "gemerror.h"
 #include "xbiosbind.h"
-
+#include "kprint.h"
 
 /*
  * globals: current time and date

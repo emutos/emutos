@@ -44,6 +44,7 @@
 **                                      for 0 return (indicating BDOS level error).
 */
 
+/* #define ENABLE_KDEBUG */
 
 #include "config.h"
 #include "portab.h"
@@ -54,6 +55,7 @@
 #include "mem.h"
 #include "time.h"
 #include "console.h"
+#include "kprint.h"
 
 /* the following characters are disallowed in the name when creating
  * or renaming files or folders.  this is *mostly* the same list as

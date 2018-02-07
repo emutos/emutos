@@ -8,15 +8,14 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
+/* #define ENABLE_KDEBUG */
 
 #include "config.h"
 #include "portab.h"
 #include "asm.h"
 #include "fs.h"
 #include "gemerror.h"
-
-
+#include "kprint.h"
 
 /*
 **  cl2rec -

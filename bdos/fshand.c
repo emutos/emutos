@@ -10,11 +10,14 @@
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  */
+
+/* #define ENABLE_KDEBUG */
+
 #include "config.h"
 #include "portab.h"
 #include "fs.h"
 #include "gemerror.h"
-
+#include "kprint.h"
 
 /*
  * xforce - 0x46, force a std handle to a non-std handle

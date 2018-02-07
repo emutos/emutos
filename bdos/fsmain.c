@@ -8,12 +8,15 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+/* #define ENABLE_KDEBUG */
+
 #include "config.h"
 #include "portab.h"
 #include "fs.h"
 #include "mem.h"
 #include "gemerror.h"
 #include "biosbind.h"
+#include "kprint.h"
 
 /*
 **
