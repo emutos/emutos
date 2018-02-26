@@ -1,5 +1,5 @@
 /*
- * acsi.h - Atari Simple Computer Interface (ACSI) support
+ * acsi.h - Atari Computer System Interface (ACSI) support
  *
  * Copyright (C) 2002-2016 The EmuTOS development team
  *
