@@ -664,7 +664,7 @@ void kbd_int(UBYTE scancode)
         default:                    /* non-modifier keys: */
             kb_ticks = 0;               /*  stop key repeat */
         }
-        handle_mouse_mode(kb_last.key); /* exit mouse mode if appropriate */
+        handle_mouse_mode(scancode);    /* exit mouse mode if appropriate */
         return;
     }
 
@@ -709,7 +709,7 @@ void kbd_int(UBYTE scancode)
         /*
          * check if an arrow key was already down and, if so, send the appropriate mouse packet
          */
-        handle_mouse_mode(kb_last.key);
+        handle_mouse_mode(scancode);
         return;
     }
 
