@@ -376,7 +376,7 @@ static WORD kb_repeat;
 static WORD kb_ticks;
 static UBYTE kb_last_shifty;
 static UBYTE kb_last_scancode;
-static ULONG kb_last_key;
+static ULONG kb_last_key;       /* see combine_scancode_ascii() for format */
 static PFVOID kb_last_ikbdsys; /* ikbdsys when kb_last_key was set */
 
 WORD kbrate(WORD initial, WORD repeat)
@@ -588,6 +588,12 @@ static WORD convert_scancode(UBYTE *scancodeptr)
 
 /*
  * combine the scancode and the ascii equivalent in a ULONG
+ *
+ * format of returned value:
+ *  bits 0-7    ascii value of character
+ *  bits 8-15   expected to be 0x00
+ *  bits 16-23  keyboard scan code
+ *  bits 24-31  value of 'shifty', iff the 0x08 bit of 'conterm' is set
  */
 static ULONG combine_scancode_ascii(UBYTE scancode,WORD ascii)
 {
