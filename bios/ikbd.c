@@ -161,6 +161,10 @@ LONG bconin2(void)
 
     /* restore interrupts */
     set_sr(old_sr);
+
+    if (!(conterm & 8))         /* shift status not wanted? */
+        value &= 0x00ffffffL;   /* true, so clean it out */
+
     return value;
 }
 
@@ -223,9 +227,7 @@ void push_ascii_ikbdiorec(UBYTE ascii)
     }
 
     value = MAKE_ULONG(scancode, ascii);
-
-    if (conterm & 0x8)
-        value |= (ULONG)mode << 24;
+    value |= (ULONG)mode << 24;
 
     push_ikbdiorec(value);
 }
@@ -593,7 +595,7 @@ static WORD convert_scancode(UBYTE *scancodeptr)
  *  bits 0-7    ascii value of character
  *  bits 8-15   expected to be 0x00
  *  bits 16-23  keyboard scan code
- *  bits 24-31  value of 'shifty', iff the 0x08 bit of 'conterm' is set
+ *  bits 24-31  value of 'shifty'
  */
 static ULONG combine_scancode_ascii(UBYTE scancode,WORD ascii)
 {
@@ -601,8 +603,7 @@ static ULONG combine_scancode_ascii(UBYTE scancode,WORD ascii)
 
     value = ((ULONG) scancode) << 16;
     value += ascii;
-    if (conterm & 0x8)
-        value += ((ULONG) shifty) << 24;
+    value += ((ULONG) shifty) << 24;
 
     return value;
 }
