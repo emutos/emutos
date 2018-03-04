@@ -254,6 +254,13 @@ static BOOL is_mouse_key(WORD key)
     case KEY_DNARROW:
     case KEY_LTARROW:
     case KEY_RTARROW:
+    /*
+     * in this context, shift & control keys are also related to mouse
+     * emulation, in that they don't switch into or out of emulation mode
+     */
+    case KEY_LSHIFT:
+    case KEY_RSHIFT:
+    case KEY_CTRL:
         return TRUE;
     }
 
@@ -301,7 +308,17 @@ static BOOL handle_mouse_mode(WORD newkey)
         init_mouse_packet(mouse_packet);
     }
 
-    distance = (shifty&MODE_SHIFT) ? 1 : 8;
+    /*
+     * set movement distance according to the Shift and Control keys.
+     * note that, for compatibility with Atari TOS, the mouse does
+     * not move while Control is pressed, although the keyboard remains
+     * in mouse emulation mode.
+     */
+    if (shifty&MODE_CTRL)
+        distance = 0;
+    else if (shifty&MODE_SHIFT)
+        distance = 1;
+    else distance = 8;
 
     switch(newkey) {
 #ifdef MACHINE_AMIGA
