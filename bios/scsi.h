@@ -17,6 +17,7 @@
 
 #if CONF_WITH_SCSI
 
+int build_rw_command(UBYTE *cdb, UWORD rw, ULONG sector, UWORD count);
 void detect_scsi(void);
 void scsi_init(void);
 LONG scsi_ioctl(WORD dev, UWORD ctrl, void *arg);

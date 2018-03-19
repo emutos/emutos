@@ -424,6 +424,57 @@ LONG scsi_rw(UWORD rw, ULONG sector, UWORD count, UBYTE *buf, WORD dev)
     return ret;
 }
 
+/*
+ * build ACSI/SCSI read/write command
+ * returns length of command built
+ */
+int build_rw_command(UBYTE *cdb, UWORD rw, ULONG sector, UWORD count)
+{
+    /*
+     * this function builds commands suitable for use with both ACSI and
+     * SCSI interfaces.
+     *
+     * if the command is being built for the ACSI interface, the sector
+     * count will be <= 255, and the operation code selected will depend
+     * on the sector number.  if it is greater than 0x1fffffL (the disk
+     * is >1GB), then the 10-byte commands will be used.  these are not
+     * ACSI-compatible, but that isn't a problem since pure ACSI disks
+     * cannot be that large, so we must be talking to a SCSI disk via a
+     * converter.
+     *
+     * if the command is being built for the Falcon SCSI interface, the
+     * sector count will be <= 255, and the operation code selected will
+     * depend on the sector number (as above).
+     *
+     * if the command is being built for the TT SCSI interface, the
+     * operation code selected will depend on both the starting sector
+     * number and the sector count.
+     */
+    if ((sector <= 0x1fffffL) && (count <= 255))    /* we can use 6-byte CDBs */
+    {
+        cdb[0] = (rw==RW_WRITE) ? 0x0a : 0x08;
+        cdb[1] = (sector >> 16) & 0x1f;
+        cdb[2] = sector >> 8;
+        cdb[3] = sector;
+        cdb[4] = count;
+        cdb[5] = 0x00;
+        return 6;
+    }
+
+    cdb[0] = (rw==RW_WRITE) ? 0x2a : 0x28;
+    cdb[1] = 0x00;
+    cdb[2] = sector >> 24;
+    cdb[3] = sector >> 16;
+    cdb[4] = sector >> 8;
+    cdb[5] = sector;
+    cdb[6] = 0x00;
+    cdb[7] = count >> 8;
+    cdb[8] = count;
+    cdb[9] = 0x00;
+    return 10;
+}
+
+
 
 /*
  * low-level routines
@@ -1269,59 +1320,6 @@ static LONG do_scsi_io(WORD dev, CMDINFO *info)
         flock = 0;                      /* allow floppy i/o again */
 
     return ret;
-}
-
-/*
- * build ACSI/SCSI read/write command
- * returns length of command built
- *
- * NOTE: essentially the same function is in acsi.c.
- * FIXME: a common function should be created!
- */
-static int build_rw_command(UBYTE *cdb, UWORD rw, ULONG sector, UWORD count)
-{
-    /*
-     * this function builds commands suitable for use with both ACSI and
-     * SCSI interfaces.
-     *
-     * if the command is being built for the ACSI interface, the sector
-     * count will be <= 255, and the operation code selected will depend
-     * on the sector number.  if it is greater than 0x1fffffL (the disk
-     * is >1GB), then the 10-byte commands will be used.  these are not
-     * ACSI-compatible, but that isn't a problem since pure ACSI disks
-     * cannot be that large, so we must be talking to a SCSI disk via a
-     * converter.
-     *
-     * if the command is being built for the Falcon SCSI interface, the
-     * sector count will be <= 255, and the operation code selected will
-     * depend on the sector number (as above).
-     *
-     * if the command is being built for the TT SCSI interface, the
-     * operation code selected will depend on both the starting sector
-     * number and the sector count.
-     */
-    if ((sector <= 0x1fffffL) && (count <= 255))    /* we can use 6-byte CDBs */
-    {
-        cdb[0] = (rw==RW_WRITE) ? 0x0a : 0x08;
-        cdb[1] = (sector >> 16) & 0x1f;
-        cdb[2] = sector >> 8;
-        cdb[3] = sector;
-        cdb[4] = count;
-        cdb[5] = 0x00;
-        return 6;
-    }
-
-    cdb[0] = (rw==RW_WRITE) ? 0x2a : 0x28;
-    cdb[1] = 0x00;
-    cdb[2] = sector >> 24;
-    cdb[3] = sector >> 16;
-    cdb[4] = sector >> 8;
-    cdb[5] = sector;
-    cdb[6] = 0x00;
-    cdb[7] = count >> 8;
-    cdb[8] = count;
-    cdb[9] = 0x00;
-    return 10;
 }
 
 static LONG decode_scsi_status(WORD dev, LONG ret)

@@ -14,6 +14,7 @@
 
 #include "config.h"
 #include "acsi.h"
+#include "scsi.h"
 #include "disk.h"
 #include "dma.h"
 #include "kprint.h"
@@ -38,7 +39,6 @@ static void acsi_begin(void);
 static void acsi_end(void);
 static void hdc_start_dma(UWORD control);
 static void dma_send_byte(UBYTE data, UWORD control);
-static int build_rw_command(UBYTE *cdb,WORD rw,WORD dev,LONG sector,WORD cnt);
 static int send_command(UBYTE *cdb,WORD cdblen,WORD rw,WORD dev,WORD cnt,UWORD repeat);
 static int do_acsi_rw(WORD rw, LONG sect, WORD cnt, UBYTE *buf, WORD dev);
 static LONG acsi_capacity(WORD dev, ULONG *info);
@@ -275,7 +275,7 @@ static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, UBYTE *buf, WORD dev)
     set_dma_addr(buf);
 
     /* emit command */
-    cdblen = build_rw_command(cdb,rw,dev,sector,cnt);
+    cdblen = build_rw_command(cdb,rw,sector,cnt);
     status = send_command(cdb,cdblen,rw,dev,cnt,0);
 
     acsi_end();
@@ -285,44 +285,6 @@ static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, UBYTE *buf, WORD dev)
         invalidate_data_cache(buf,buflen);
 
     return status;
-}
-
-/*
- * build ACSI read/write command
- * returns length of command built
- */
-static int build_rw_command(UBYTE *cdb,WORD rw,WORD dev,LONG sector,WORD cnt)
-{
-    /*
-     * when we talk to a device on the ACSI bus, it is almost always a
-     * SCSI device accessed via a converter.  so, we make our commands
-     * compatible with both ACSI and SCSI.  the maximum sector number
-     * for a 6-byte SCSI read/write command is 0x1fffff, corresponding
-     * to a 1GB disk. for disks greater than this, we must use the
-     * SCSI-only 10-byte read/write commands (this is not a problem
-     * since no ACSI disk was as large as 1GB).
-     */
-    if (sector <= 0x1fffffL) {  /* we can use 6-byte CDBs */
-        cdb[0] = (rw==RW_WRITE) ? 0x0a : 0x08;
-        cdb[1] = (sector >> 16) & 0x1f;
-        cdb[2] = sector >> 8;
-        cdb[3] = sector;
-        cdb[4] = cnt;
-        cdb[5] = 0x00;
-        return 6;
-    }
-
-    cdb[0] = (rw==RW_WRITE) ? 0x2a : 0x28;
-    cdb[1] = 0x00;
-    cdb[2] = sector >> 24;
-    cdb[3] = sector >> 16;
-    cdb[4] = sector >> 8;
-    cdb[5] = sector;
-    cdb[6] = 0x00;
-    cdb[7] = cnt >> 8;
-    cdb[8] = cnt;
-    cdb[9] = 0x00;
-    return 10;
 }
 
 /*
