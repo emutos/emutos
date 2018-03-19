@@ -44,6 +44,7 @@ void firebee_shutdown(void);
 
 #if CONF_SERIAL_CONSOLE
 void coldfire_rs232_enable_interrupt(void);
+void coldfire_rs232_interrupt_handler(void);
 void coldfire_int_35(void); /* In coldfire2.S */
 #endif /* CONF_SERIAL_CONSOLE */
 
@@ -116,6 +117,7 @@ void setvalue_mcf(void);
 #if CONF_WITH_FLEXCAN
 void coldfire_init_flexcan(void);
 void coldfire_flexcan_ikbd_writeb(UBYTE b);
+void coldfire_flexcan_message_buffer_interrupt(void);
 void coldfire_int_57(void); /* In coldfire2.S */
 #endif /* CONF_WITH_FLEXCAN */
 
