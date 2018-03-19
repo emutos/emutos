@@ -26,6 +26,7 @@
 #include "mfp.h"
 #include "ide.h"
 #include "acsi.h"
+#include "scsi.h"
 #include "sd.h"
 
 /*==== Defines ============================================================*/
@@ -248,6 +249,11 @@ LONG disk_mediach(UWORD unit)
         ret = acsi_ioctl(reldev,GET_MEDIACHANGE,NULL);
         break;
 #endif /* CONF_WITH_ACSI */
+#if CONF_WITH_SCSI
+    case SCSI_BUS:
+        ret = scsi_ioctl(reldev,GET_MEDIACHANGE,NULL);
+        break;
+#endif /* CONF_WITH_SCSI */
 #if CONF_WITH_IDE
     case IDE_BUS:
         ret = ide_ioctl(reldev,GET_MEDIACHANGE,NULL);
@@ -719,6 +725,11 @@ static LONG internal_inquire(UWORD unit, ULONG *blocksize, ULONG *deviceflags, c
         ret = acsi_ioctl(reldev,GET_DISKNAME,name);
         break;
 #endif /* CONF_WITH_ACSI */
+#if CONF_WITH_SCSI
+    case SCSI_BUS:
+        ret = scsi_ioctl(reldev,GET_DISKNAME,name);
+        break;
+#endif /* CONF_WITH_SCSI */
 #if CONF_WITH_IDE
     case IDE_BUS:
         ret = ide_ioctl(reldev,GET_DISKNAME,name);
@@ -792,6 +803,14 @@ LONG disk_get_capacity(UWORD unit, ULONG *blocks, ULONG *blocksize)
             return EUNDEV;
         break;
 #endif /* CONF_WITH_ACSI */
+#if CONF_WITH_SCSI
+    case SCSI_BUS:
+        ret = scsi_ioctl(reldev,GET_DISKINFO,info);
+        KDEBUG(("scsi_ioctl(%d) returned %ld\n", reldev, ret));
+        if (ret < 0)
+            return ret;
+        break;
+#endif /* CONF_WITH_SCSI */
 #if CONF_WITH_IDE
     case IDE_BUS:
         ret = ide_ioctl(reldev,GET_DISKINFO,info);
@@ -848,6 +867,12 @@ LONG disk_rw(UWORD unit, UWORD rw, ULONG sector, UWORD count, UBYTE *buf)
         KDEBUG(("acsi_rw() returned %ld\n", ret));
         break;
 #endif /* CONF_WITH_ACSI */
+#if CONF_WITH_SCSI
+    case SCSI_BUS:
+        ret = scsi_rw(rw, sector, count, buf, reldev);
+        KDEBUG(("scsi_rw() returned %ld\n", ret));
+        break;
+#endif /* CONF_WITH_SCSI */
 #if CONF_WITH_IDE
     case IDE_BUS:
     {

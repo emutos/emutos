@@ -28,6 +28,7 @@
 #include "blkdev.h"
 #include "processor.h"
 #include "acsi.h"
+#include "scsi.h"
 #include "ide.h"
 #include "sd.h"
 #include "biosext.h"
@@ -188,6 +189,10 @@ static void bus_init(void)
 {
 #if CONF_WITH_ACSI
     acsi_init();
+#endif
+
+#if CONF_WITH_SCSI
+    scsi_init();
 #endif
 
 #if CONF_WITH_IDE

@@ -60,6 +60,9 @@
 # ifndef CONF_WITH_ACSI
 #  define CONF_WITH_ACSI 0
 # endif
+# ifndef CONF_WITH_SCSI
+#  define CONF_WITH_SCSI 0
+# endif
 # ifndef CONF_WITH_TT_MFP
 #  define CONF_WITH_TT_MFP 0
 # endif
@@ -144,6 +147,9 @@
 # ifndef CONF_WITH_ACSI
 #  define CONF_WITH_ACSI 0      /* broken in current FireBee hardware */
 # endif
+# ifndef CONF_WITH_SCSI
+#  define CONF_WITH_SCSI 0
+# endif
 # ifndef CONF_WITH_ICDRTC
 #  define CONF_WITH_ICDRTC 0    /* useless on FireBee as it has NVRAM clock */
 # endif
@@ -196,6 +202,9 @@
 # endif
 # ifndef CONF_WITH_SCC
 #  define CONF_WITH_SCC 0
+# endif
+# ifndef CONF_WITH_SCSI
+#  define CONF_WITH_SCSI 0
 # endif
 # ifndef CONF_WITH_IDE
 #  define CONF_WITH_IDE 0
@@ -276,7 +285,7 @@
  * When this is selected, the Makefile excludes AES support in order
  * to reduce ROM size.  However this is still insufficient, so we
  * need to exclude some feature(s).  Since the cartridge is targetted
- * for ST/STe, we exclude TT video support.
+ * for ST/STe, we exclude SCSI support and TT video support.
  */
 #ifdef TARGET_CART
 # ifndef DIAGNOSTIC_CARTRIDGE
@@ -287,6 +296,9 @@
 # endif
 # ifndef CONF_WITH_APOLLO_68080
 #  define CONF_WITH_APOLLO_68080 0
+# endif
+# ifndef CONF_WITH_SCSI
+#  define CONF_WITH_SCSI 0
 # endif
 # ifndef CONF_WITH_TT_MFP
 #  define CONF_WITH_TT_MFP 0
@@ -444,6 +456,9 @@
 # endif
 # ifndef CONF_WITH_ACSI
 #  define CONF_WITH_ACSI 0
+# endif
+# ifndef CONF_WITH_SCSI
+#  define CONF_WITH_SCSI 0
 # endif
 # ifndef CONF_WITH_IDE
 #  define CONF_WITH_IDE 0
@@ -760,6 +775,13 @@
  */
 #ifndef CONF_WITH_ACSI
 # define CONF_WITH_ACSI 1
+#endif
+
+/*
+ * Set CONF_WITH_SCSI to 1 to activate SCSI support
+ */
+#ifndef CONF_WITH_SCSI
+# define CONF_WITH_SCSI 1
 #endif
 
 /*
@@ -1477,6 +1499,9 @@
 # endif
 # if CONF_WITH_MIDI_ACIA
 #  error CONF_WITH_MIDI_ACIA requires CONF_WITH_MFP.
+# endif
+# if CONF_WITH_SCSI
+#  error CONF_WITH_SCSI requires CONF_WITH_MFP.
 # endif
 #endif
 

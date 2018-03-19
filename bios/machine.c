@@ -28,6 +28,7 @@
 #include "string.h"
 #include "dmasound.h"
 #include "kprint.h"
+#include "scsi.h"
 #include "ide.h"
 #include "asm.h"
 #include "delay.h"
@@ -463,6 +464,9 @@ void machine_detect(void)
 #endif
 #if CONF_WITH_IDE
     detect_ide();
+#endif
+#if CONF_WITH_SCSI
+    detect_scsi();
 #endif
 #if CONF_WITH_MONSTER
     detect_monster();
