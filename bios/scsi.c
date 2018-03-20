@@ -289,6 +289,7 @@ void detect_scsi(void)
 void scsi_init(void)
 {
     UBYTE temp;
+    MAYBE_UNUSED(temp);
 
     if (!has_scsi)
         return;
@@ -312,12 +313,14 @@ void scsi_init(void)
     device_exists = 0;
 
     /*
-     * get system SCSI id value from NVRAM & save
+     * get system SCSI id value from NVRAM (if available) & save
      */
     hostid_bit = 1 << DEFAULT_HOSTID;
+#if CONF_WITH_NVRAM
     if (nvmaccess(0, 16, 1, &temp) == 0)
         if (temp & 0x80)
             hostid_bit = 1 << (temp&0x07);
+#endif
 
     KDEBUG(("SCSI hostid_bit = 0x%02x\n",hostid_bit));
 }
