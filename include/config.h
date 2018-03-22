@@ -281,6 +281,18 @@
 #endif
 
 /*
+ * Defaults for the 256 target.
+ * This target is only useful on ST/STe hardware, or for checking
+ * language-dependent features under Hatari.  Since none of these
+ * support SCSI, we disable SCSI support and save ourselves 4kB.
+ */
+#ifdef TARGET_256
+# ifndef CONF_WITH_SCSI
+#  define CONF_WITH_SCSI 0
+# endif
+#endif
+
+/*
  * Defaults for the diagnostic cartridge target (maximum size 128K).
  * When this is selected, the Makefile excludes AES support in order
  * to reduce ROM size.  However this is still insufficient, so we
