@@ -484,6 +484,22 @@ static void put_data_reg(UBYTE b)
         fscsi_put(fscsi_data, b);
 }
 
+static UBYTE get_icr_reg(void)
+{
+   if (has_scsi == TT_SCSI)
+        return SCSI_BASE->icr;
+    else
+        return fscsi_get(fscsi_icr);
+}
+
+static void put_icr_reg(UWORD value)
+{
+   if (has_scsi == TT_SCSI)
+        SCSI_BASE->icr = value;
+    else
+        fscsi_put(fscsi_icr, value);
+}
+
 static void and_icr_reg(UWORD value)
 {
     if (has_scsi == TT_SCSI)
@@ -500,6 +516,38 @@ static void or_icr_reg(UWORD value)
         fscsi_or(fscsi_icr, value);
 }
 
+static void put_mode_reg(UWORD value)
+{
+   if (has_scsi == TT_SCSI)
+        SCSI_BASE->mode = value;
+    else
+        fscsi_put(fscsi_mode, value);
+}
+
+static void and_mode_reg(UWORD value)
+{
+    if (has_scsi == TT_SCSI)
+        SCSI_BASE->mode &= value;
+    else
+        fscsi_and(fscsi_mode, value);
+}
+
+static void or_mode_reg(UWORD value)
+{
+    if (has_scsi == TT_SCSI)
+        SCSI_BASE->mode |= value;
+    else
+        fscsi_or(fscsi_mode, value);
+}
+
+static void put_tcr_reg(UWORD value)
+{
+   if (has_scsi == TT_SCSI)
+        SCSI_BASE->tcr = value;
+    else
+        fscsi_put(fscsi_tcr, value);
+}
+
 static UBYTE get_bus_status_reg(void)
 {
     if (has_scsi == TT_SCSI)
@@ -514,6 +562,14 @@ static UBYTE get_dma_status_reg(void)
         return SCSI_BASE->dma_status;
     else
         return fscsi_get(fscsi_dma_status);
+}
+
+static void put_select_enable_reg(UWORD value)
+{
+   if (has_scsi == TT_SCSI)
+        SCSI_BASE->select_enable = value;
+    else
+        fscsi_put(fscsi_select_enable, value);
 }
 
 /*
@@ -881,66 +937,34 @@ static int scsi_arbitrate(void)
         if (hz_200 >= timeout)
             return TIMEOUT_ERROR;
 
-    if (has_scsi == TT_SCSI)
-    {
-        SCSI_BASE->tcr = 0x00;          /* unassert I/O, C/D, MSG: bus free phase */
-        SCSI_BASE->select_enable = 0x00;/* disable interrupts during selection */
-        SCSI_BASE->mode = 0x00;         /* no parity check */
-
-        do
-        {
-            do
-            {
-                SCSI_BASE->icr = 0x00;          /* unassert BSY & degate data reg */
-                SCSI_BASE->data = hostid_bit;   /* our id into data reg */
-                SCSI_BASE->icr = 0x01;          /* gate it onto bus */
-                SCSI_BASE->mode |= 0x01;        /* set ARBITRATE bit */
-                timeout = hz_200 + AIP_TIMEOUT;
-                while(!(SCSI_BASE->icr&0x40))   /* wait for AIP bit to be set */
-                    if (hz_200 >= timeout)
-                        return TIMEOUT_ERROR;   /* probably broken hardware */
-                arbitration_delay();
-            } while(SCSI_BASE->icr&0x20);       /* retry if we lost arbitration */
-            temp = SCSI_BASE->data;             /* read active bus */
-            temp -= hostid_bit;                 /* remove ourselves */
-            /* continue if not the highest device or we lost arbitration */
-        } while((temp > hostid_bit) || (SCSI_BASE->icr&0x20));
-
-        SCSI_BASE->icr = 0x0c;          /* assert BSY / SEL */
-        bus_clear_delay();              /* wait for devices to clear bus */
-        bus_settle_delay();             /*  & bus to settle */
-        SCSI_BASE->mode &= 0xfe;        /* clear ARBITRATE bit */
-        return 0;
-    }
-
-    /* handle Falcon SCSI */
-    fscsi_put(fscsi_tcr, 0x00);         /* unassert I/O, C/D, MSG: bus free phase */
-    fscsi_put(fscsi_select_enable, 0x00); /* disable interrupts */
-    fscsi_put(fscsi_mode, 0x00);        /* no parity check */
+    put_tcr_reg(0x00);              /* unassert I/O, C/D, MSG: bus free phase */
+    put_select_enable_reg(0x00);    /* disable interrupts */
+    put_mode_reg(0x00);             /* no parity check */
 
     do
     {
         do
         {
-            fscsi_put(fscsi_icr, 0x00);     /* unassert BSY & degate data reg */
-            fscsi_put(fscsi_data, hostid_bit);  /* our id into data reg */
-            fscsi_put(fscsi_icr, 0x01);     /* gate it onto bus */
-            fscsi_or(fscsi_mode, 0x01);     /* set ARBITRATE bit */
+            put_icr_reg(0x00);              /* unassert BSY & degate data reg */
+            put_data_reg(hostid_bit);       /* our id into data reg */
+            put_icr_reg(0x01);              /* gate it onto bus */
+            or_mode_reg(0x01);              /* set ARBITRATE bit */
             timeout = hz_200 + AIP_TIMEOUT;
-            while(!(fscsi_get(fscsi_icr)&0x40)) /* wait for AIP bit to be set */
+            while(!(get_icr_reg()&0x40))    /* wait for AIP bit to be set */
                 if (hz_200 >= timeout)
-                    return TIMEOUT_ERROR;       /* probably broken hardware */
+                    return TIMEOUT_ERROR;   /* probably broken hardware */
             arbitration_delay();
-        } while(fscsi_get(fscsi_icr)&0x20); /* retry if we lost arbitration */
-        temp = fscsi_get(fscsi_data);       /* read active bus */
-        temp -= hostid_bit;                 /* remove ourselves */
+        } while(get_icr_reg()&0x20);        /* retry if we lost arbitration */
+        temp = get_data_reg();          /* read active bus */
+        temp -= hostid_bit;             /* remove ourselves */
         /* continue if not the highest device or we lost arbitration */
-    } while((temp > hostid_bit) || (fscsi_get(fscsi_icr)&0x20));
+    } while((temp > hostid_bit) || (get_icr_reg()&0x20));
 
-    fscsi_put(fscsi_icr, 0x0c);         /* assert BSY, SEL */
-    bus_clear_delay();                  /* wait for devices to clear bus */
-    bus_settle_delay();                 /*  & bus to settle */
-    fscsi_and(fscsi_mode, 0xfe);        /* clear ARBITRATE bit */
+    put_icr_reg(0x0c);              /* assert BSY, SEL */
+    bus_clear_delay();              /* wait for devices to clear bus */
+    bus_settle_delay();             /*  & bus to settle */
+    and_mode_reg(0xfe);             /* clear ARBITRATE bit */
+
     return 0;
 }
 
