@@ -11,7 +11,20 @@
  */
 
 /*
- * Note: this driver does not provide parity error checking.  Although
+ * A note on arbitration
+ * SCSI arbitration was optional in SCSI-1, and required in SCSI-2
+ * (introduced in 1993) and later.  Any working used drive available
+ * today (2018) is almost certainly SCSI-2 or later, and some will not
+ * work without arbitration.  Therefore this driver always arbitrates.
+ * Setting the 0x80 bit in location 16 of NVRAM, which formerly requested
+ * the use of arbitration, is now just used to validate the host SCSI id
+ * in bits 0-2 of that location.  If the 0x80 bit is clear, arbitration
+ * is done with a hostid of DEFAULT_HOSTID.
+ */
+
+/*
+ * A note on parity error checking
+ * By design, this driver does not provide parity error checking.  Although
  * it might seem simple to add a check for it after DMA completes, this
  * does not work: a parity error is always detected.  It is surmised
  * that this is due to the bus state being somewhat undefined as soon
