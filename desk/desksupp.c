@@ -1388,6 +1388,7 @@ void do_format(void)
      * do the actual work
      */
     do {
+        inf_sset(tree, FMTLABEL, "");
         start_dialog(tree);
         exitobj = form_do(tree, FMTLABEL) & 0x7fff;
         if (exitobj == FMT_OK)
