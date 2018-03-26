@@ -73,8 +73,12 @@
  * SCSI commands
  */
 #define REQUEST_SENSE   0x03
+#define READ6           0x08
+#define WRITE6          0x0a
 #define INQUIRY         0x12
 #define READ_CAPACITY   0x25
+#define READ10          0x28
+#define WRITE10         0x2a
 
 
 /*
@@ -1455,7 +1459,7 @@ int build_rw_command(UBYTE *cdb, UWORD rw, ULONG sector, UWORD count)
      */
     if ((sector <= 0x1fffffL) && (count <= 255))    /* we can use 6-byte CDBs */
     {
-        cdb[0] = (rw==RW_WRITE) ? 0x0a : 0x08;
+        cdb[0] = (rw==RW_WRITE) ? WRITE6 : READ6;
         cdb[1] = (sector >> 16) & 0x1f;
         cdb[2] = sector >> 8;
         cdb[3] = sector;
@@ -1464,7 +1468,7 @@ int build_rw_command(UBYTE *cdb, UWORD rw, ULONG sector, UWORD count)
         return 6;
     }
 
-    cdb[0] = (rw==RW_WRITE) ? 0x2a : 0x28;
+    cdb[0] = (rw==RW_WRITE) ? WRITE10 : READ10;
     cdb[1] = 0x00;
     cdb[2] = sector >> 24;
     cdb[3] = sector >> 16;
