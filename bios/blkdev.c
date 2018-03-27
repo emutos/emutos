@@ -643,15 +643,13 @@ LONG blkdev_getbpb(WORD dev)
     bdev->bpb.numcl = tmp;
 
     /*
-     * check for FAT12 or FAT16
+     * check for FAT12 or FAT16: according to Microsoft (who originated
+     * the FAT format, after all), FAT type should be determined on the
+     * basis of cluster count and nothing else
      */
-    if (b16->ext == 0x29 && !memcmp(b16->fstype, "FAT12   ", 8))
-        bdev->bpb.b_flags = 0;          /* explicit FAT12 */
-    else if (b16->ext == 0x29 && !memcmp(b16->fstype, "FAT16   ", 8))
-        bdev->bpb.b_flags = B_16;       /* explicit FAT16 */
-    else if (bdev->bpb.numcl > MAX_FAT12_CLUSTERS)
-        bdev->bpb.b_flags = B_16;       /* implicit FAT16 */
-    else bdev->bpb.b_flags = 0;         /* implicit FAT12 */
+    if (bdev->bpb.numcl > MAX_FAT12_CLUSTERS)
+        bdev->bpb.b_flags = B_16;       /* FAT16 */
+    else bdev->bpb.b_flags = 0;         /* FAT12 */
 
     /* additional geometry info */
     bdev->geometry.sides = getiword(b->sides);

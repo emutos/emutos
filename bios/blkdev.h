@@ -20,9 +20,12 @@
 
 /*
  * defines
+ *
+ * note that MAX_FATnn_CLUSTERS are as specified by Microsoft and agree
+ * with the values used by HDDRIVER.
  */
-#define MAX_FAT12_CLUSTERS  4078    /* architectural constants */
-#define MAX_FAT16_CLUSTERS  65518
+#define MAX_FAT12_CLUSTERS  4084        /* architectural constants */
+#define MAX_FAT16_CLUSTERS  65524
 #define MAX_CLUSTER_SIZE    32768L      /* must fit in unsigned short */
 #define MAX_LOGSEC_SIZE     (MAX_CLUSTER_SIZE/2)
 #define MIN_SECS_PER_CLUS   1
