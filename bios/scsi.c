@@ -73,12 +73,8 @@
  * SCSI commands
  */
 #define REQUEST_SENSE   0x03
-#define READ6           0x08
-#define WRITE6          0x0a
 #define INQUIRY         0x12
 #define READ_CAPACITY   0x25
-#define READ10          0x28
-#define WRITE10         0x2a
 
 
 /*
@@ -1431,6 +1427,14 @@ static LONG scsi_inquiry(WORD dev, UBYTE *buffer)
 #endif
 
 #if (CONF_WITH_ACSI || CONF_WITH_SCSI)
+/*
+ * SCSI commands used by build_rw_command()
+ */
+#define READ6           0x08
+#define WRITE6          0x0a
+#define READ10          0x28
+#define WRITE10         0x2a
+
 /*
  * build ACSI/SCSI read/write command
  * returns length of command built
