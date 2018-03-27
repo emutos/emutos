@@ -96,7 +96,7 @@
  * other SCSI-related constants
  */
 #define DEFAULT_HOSTID          7       /* if not available from NVRAM */
-#define MAXSECS_PER_FSCSI_IO    255     /* Falcon DMA chip limitation */
+#define MAXSECS_PER_FSCSI_IO    16383   /* Falcon DMA chip limitation */
 #define MAXSECS_PER_TTSCSI_IO   65535   /* TT limitation due to CDB used */
 
 
@@ -1449,13 +1449,10 @@ int build_rw_command(UBYTE *cdb, UWORD rw, ULONG sector, UWORD count)
      * cannot be that large, so we must be talking to a SCSI disk via a
      * converter.
      *
-     * if the command is being built for the Falcon SCSI interface, the
-     * sector count will be <= 255, and the operation code selected will
-     * depend on the sector number (as above).
-     *
-     * if the command is being built for the TT SCSI interface, the
-     * operation code selected will depend on both the starting sector
-     * number and the sector count.
+     * if the command is being built for the SCSI interface, the sector
+     * count can be up to 16383 (on the Falcon) or 65535 (on the TT).
+     * the operation code selected will depend on both the starting
+     * sector number and the sector count.
      */
     if ((sector <= 0x1fffffL) && (count <= 255))    /* we can use 6-byte CDBs */
     {
