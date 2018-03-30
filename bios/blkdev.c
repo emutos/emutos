@@ -637,6 +637,7 @@ LONG blkdev_getbpb(WORD dev)
     tmp = (tmp - bdev->bpb.datrec) / b->spc;
     if (tmp > MAX_FAT16_CLUSTERS)           /* FAT32 - unsupported */
     {
+        KINFO(("Disk %c: is inaccessible (FAT32)\n",dev+'A'));
         bdev->bpb.recsiz = 0;               /* mark it for XHDI */
         return 0L;
     }
