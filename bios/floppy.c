@@ -168,6 +168,14 @@ static void falcon_wait(void);
  */
 #define fdc_delay() delay_loop(loopcount_fdc)
 
+/*
+ * the following delay is used between toggling dma out.  in Atari TOS 3
+ * & TOS 4, the delay is provided by an instruction sequence which takes
+ * about 5usec on a Falcon.  EmuTOS uses 5usec (see flop_hdv_init()).
+ */
+#define toggle_delay() delay_loop(loopcount_toggle)
+
+
 /*==== Internal floppy status =============================================*/
 
 /* cur_dev is the current drive, or -1 if none is current.
@@ -229,6 +237,7 @@ static void falcon_wait(void);
 static WORD cur_dev;
 static ULONG deselect_time;
 static ULONG loopcount_fdc;
+static ULONG loopcount_toggle;
 
 /* the following is updated by flopvbl(), and used by flopcmd().  it is
  * non-zero iff the motor on bit is set in the floppy status byte.
@@ -303,6 +312,7 @@ void flop_hdv_init(void)
     cur_dev = -1;
     drivetype = (cookie_fdc >> 24) ? HD_DRIVE : DD_DRIVE;
     loopcount_fdc = loopcount_1_msec / 20;  /* 50 usec */
+    loopcount_toggle = loopcount_1_msec / 200;  /* 5 usec */
     deselect_time = 0UL;
 #endif
 
@@ -1453,17 +1463,19 @@ static void set_fdc_reg(WORD reg, WORD value)
 
 static void fdc_start_dma_read(WORD count)
 {
-    DMA->control = DMA_SCREG | DMA_FLOPPY;
     DMA->control = DMA_SCREG | DMA_FLOPPY | DMA_WRBIT;
+    toggle_delay();
     DMA->control = DMA_SCREG | DMA_FLOPPY;
+    toggle_delay();
     DMA->data = count;
 }
 
 static void fdc_start_dma_write(WORD count)
 {
-    DMA->control = DMA_SCREG | DMA_FLOPPY | DMA_WRBIT;
     DMA->control = DMA_SCREG | DMA_FLOPPY;
+    toggle_delay();
     DMA->control = DMA_SCREG | DMA_FLOPPY | DMA_WRBIT;
+    toggle_delay();
     DMA->data = count;
 }
 
