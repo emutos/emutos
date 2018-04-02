@@ -147,7 +147,7 @@ static void dummy_seek(void);
 #define MOTOROFF_TIMEOUT (3*CLOCKS_PER_SEC)     /* 3.0 seconds */
 
 /* deselection timeout (see "handling of drive deselection" below) */
-#define DESELECT_TIMEOUT (3*CLOCKS_PER_SEC) /* in ticks */
+#define DESELECT_TIMEOUT (5*CLOCKS_PER_SEC)     /* 5.0 seconds */
 
 /* access to dma and fdc registers */
 static WORD get_dma_status(void);
