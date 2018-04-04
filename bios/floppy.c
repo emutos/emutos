@@ -87,6 +87,9 @@
 struct flop_info {
     WORD rate;          /* rate selected via Floprate() */
     WORD actual_rate;   /* value to send to 1772 controller */
+    BYTE drive_type;
+#define DD_DRIVE    0x00
+#define HD_DRIVE    0x01
     BYTE cur_density;
 #define DENSITY_DD  0x00
 #define DENSITY_HD  0x03
@@ -188,10 +191,6 @@ static void fdc_start_dma_write(WORD count);
  * routine may deselect the drive in the PSG port A. The routine
  * floplock(dev) will set the new current drive.
  *
- * drivetype is the type of drive; this is derived from the first byte of the
- * _FDC cookie.  note that TOS appears to assume that if you have two drives,
- * they are both of the same type.  so EmuTOS does the same.
- *
  * finfo[] is an array of structures, one entry per floppy drive.  structure
  * members are as follows:
  *
@@ -200,6 +199,10 @@ static void fdc_start_dma_write(WORD count);
  *
  * finfo[].actual_rate is the value to send to the 1772 chip to get the stepping
  * rate implied by finfo[].rate.  it differs from finfo[].rate for HD diskettes.
+ *
+ * finfo[].drive_type is the type of drive; this is derived from the first byte
+ * of the _FDC cookie.  in two-drive systems, both drives are currently assumed
+ * to be the same.
  *
  * finfo[].cur_density is the density (either DD or HD) being used to access
  * the current diskette.
@@ -276,10 +279,6 @@ static const WORD hd_steprate[] =
  * that status exists as a possible return from Mediach()).
  */
 
-static UBYTE drivetype;
-#define DD_DRIVE    0x00
-#define HD_DRIVE    0x01
-
 static struct flop_info finfo[NUMFLOPPIES];
 
 #define IS_VALID_FLOPPY_DEVICE(dev) ((UWORD)(dev) < NUMFLOPPIES && units[dev].valid)
@@ -288,13 +287,16 @@ static struct flop_info finfo[NUMFLOPPIES];
 
 static void flop_init(WORD dev)
 {
-    finfo[dev].rate = seekrate;
+    struct flop_info *f = &finfo[dev];
+
+    f->rate = seekrate;
 #if CONF_WITH_FDC
-    finfo[dev].actual_rate = finfo[dev].rate;   /* updated by set_density() if HD drive */
-    finfo[dev].cur_density = (drivetype == HD_DRIVE) ? DENSITY_HD : DENSITY_DD;
-    finfo[dev].cur_track = -1;
-    finfo[dev].wpstatus = 0;
-    finfo[dev].wplatch = 0;
+    f->actual_rate = f->rate;       /* updated by set_density() if HD drive */
+    f->drive_type = (cookie_fdc >> 24) ? HD_DRIVE : DD_DRIVE;
+    f->cur_density = (f->drive_type == HD_DRIVE) ? DENSITY_HD : DENSITY_DD;
+    f->cur_track = -1;
+    f->wpstatus = 0;
+    f->wplatch = 0;
 #endif
 }
 
@@ -306,7 +308,6 @@ void flop_hdv_init(void)
 
 #if CONF_WITH_FDC
     cur_dev = -1;
-    drivetype = (cookie_fdc >> 24) ? HD_DRIVE : DD_DRIVE;
     loopcount_fdc = loopcount_1_msec / 20;  /* 50 usec */
     loopcount_toggle = loopcount_1_msec / 200;  /* 5 usec */
     deselect_time = 0UL;
@@ -793,7 +794,7 @@ LONG flopfmt(UBYTE *buf, WORD *skew, WORD dev, WORD spt,
         return EBADSF;          /* just like TOS4 */
 
     density = DENSITY_DD;       /* default density */
-    switch(drivetype) {
+    switch(finfo[dev].drive_type) {
     case HD_DRIVE:
         if ((spt >= 13) && (spt <= 20)) {
             density = DENSITY_HD;
@@ -1123,7 +1124,7 @@ static WORD flopwtrack(UBYTE *userbuf, WORD dev, WORD track, WORD side, WORD tra
  */
 static void set_density(struct flop_info *f)
 {
-    if (drivetype != HD_DRIVE)
+    if (f->drive_type != HD_DRIVE)
         return;
 
     DMA->modectl = f->cur_density;
@@ -1137,7 +1138,7 @@ static void switch_density(WORD dev)
 {
     struct flop_info *f = &finfo[dev];
 
-    if (drivetype != HD_DRIVE)
+    if (f->drive_type != HD_DRIVE)
         return;
 
     KDEBUG(("switching density (current=%d)\n",f->cur_density));
