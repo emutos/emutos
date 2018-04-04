@@ -290,8 +290,8 @@ static void flop_init(WORD dev)
 {
     finfo[dev].rate = seekrate;
 #if CONF_WITH_FDC
-    finfo[dev].actual_rate = finfo[dev].rate;
-    finfo[dev].cur_density = DENSITY_DD;
+    finfo[dev].actual_rate = finfo[dev].rate;   /* updated by set_density() if HD drive */
+    finfo[dev].cur_density = (drivetype == HD_DRIVE) ? DENSITY_HD : DENSITY_DD;
     finfo[dev].cur_track = -1;
     finfo[dev].wpstatus = 0;
     finfo[dev].wplatch = 0;
@@ -304,14 +304,6 @@ void flop_hdv_init(void)
     fverify = 0xff;
     seekrate = DD_STEPRATE_3MS;
 
-    /* by default, there is no floppy drive */
-    nflops = 0;
-#ifdef MACHINE_AMIGA
-    amiga_floppy_init();
-#endif
-    flop_init(0);
-    flop_init(1);
-
 #if CONF_WITH_FDC
     cur_dev = -1;
     drivetype = (cookie_fdc >> 24) ? HD_DRIVE : DD_DRIVE;
@@ -319,6 +311,14 @@ void flop_hdv_init(void)
     loopcount_toggle = loopcount_1_msec / 200;  /* 5 usec */
     deselect_time = 0UL;
 #endif
+
+    /* by default, there is no floppy drive */
+    nflops = 0;
+#ifdef MACHINE_AMIGA
+    amiga_floppy_init();
+#endif
+    flop_init(0);
+    flop_init(1);
 
     /* autodetect floppy drives */
     flop_detect_drive(0);
