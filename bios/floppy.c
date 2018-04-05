@@ -51,7 +51,7 @@
  * - boot-sector utilities: intel format words
  * - xbios floprd, flopwr, flopver
  * - xbios flopfmt
- * - internal floprw, fropwtrack
+ * - internal flopio, fropwtrack
  * - internal status, flopvbl
  * - low level dma and fdc registers access
  *
@@ -111,7 +111,7 @@ struct flop_info {
 static void setiword(UBYTE *addr, UWORD value);
 
 /* floppy read/write */
-static WORD floprw(UBYTE *buf, WORD rw, WORD dev,
+static WORD flopio(UBYTE *buf, WORD rw, WORD dev,
                    WORD sect, WORD track, WORD side, WORD count);
 
 /* floppy write track */
@@ -345,7 +345,7 @@ void flop_hdv_init(void)
  */
 WORD flop_boot_read(void)
 {
-    return floprw(dskbufp,RW_READ,bootdev,1,0,0,1);
+    return flopio(dskbufp,RW_READ,bootdev,1,0,0,1);
 }
 
 static void flop_add_drive(WORD dev)
@@ -482,7 +482,7 @@ LONG flop_mediach(WORD dev)
      * from a drive, or even replaced one WP diskette by another.  we
      * attempt to read the boot sector to check the diskette serial number
      */
-    if (floprw((UBYTE *)bootsec,RW_READ,dev,1,0,0,1) != 0) {
+    if (flopio((UBYTE *)bootsec,RW_READ,dev,1,0,0,1) != 0) {
         KDEBUG(("flop_mediach(): can't read boot sector => media change\n"));
         return MEDIACHANGE;
     }
@@ -551,7 +551,7 @@ LONG floppy_rw(WORD rw, UBYTE *buf, WORD cnt, LONG recnr, WORD spt,
         numsecs = spt - start_relsec;
         KDEBUG(("floppy_rw() #1: track=%d, side=%d, start=%d, count=%d\n",
                 track,side,start_relsec+1,numsecs));
-        err = floprw(buf, rw, dev, start_relsec+1, track, side, numsecs);
+        err = flopio(buf, rw, dev, start_relsec+1, track, side, numsecs);
         if (err)
             return err;
         buf += SECTOR_SIZE * numsecs;
@@ -572,7 +572,7 @@ LONG floppy_rw(WORD rw, UBYTE *buf, WORD cnt, LONG recnr, WORD spt,
         }
         KDEBUG(("floppy_rw() #2: track=%d, side=%d, start=%d, count=%d\n",
                 track,side,1,spt));
-        err = floprw(buf, rw, dev, 1, track, side, spt);
+        err = flopio(buf, rw, dev, 1, track, side, spt);
         if (err)
             return err;
         buf += SECTOR_SIZE * spt;
@@ -591,7 +591,7 @@ LONG floppy_rw(WORD rw, UBYTE *buf, WORD cnt, LONG recnr, WORD spt,
     numsecs = end_relsec - start_relsec + 1;
     KDEBUG(("floppy_rw() #3: track=%d, side=%d, start=%d, count=%d\n",
             track,side,start_relsec+1,numsecs));
-    err = floprw(buf, rw, dev, start_relsec+1, track, side, numsecs);
+    err = flopio(buf, rw, dev, start_relsec+1, track, side, numsecs);
     if (err)
         return err;
 
@@ -698,14 +698,14 @@ static void setiword(UBYTE *addr, UWORD value)
 LONG floprd(UBYTE *buf, LONG filler, WORD dev,
             WORD sect, WORD track, WORD side, WORD count)
 {
-    return floprw(buf, RW_READ, dev, sect, track, side, count);
+    return flopio(buf, RW_READ, dev, sect, track, side, count);
 }
 
 
 LONG flopwr(const UBYTE *buf, LONG filler, WORD dev,
             WORD sect, WORD track, WORD side, WORD count)
 {
-    return floprw(CONST_CAST(UBYTE *, buf), RW_WRITE, dev, sect, track, side, count);
+    return flopio(CONST_CAST(UBYTE *, buf), RW_WRITE, dev, sect, track, side, count);
 }
 
 /*==== xbios flopver ======================================================*/
@@ -758,7 +758,7 @@ LONG flopver(WORD *buf, LONG filler, WORD dev,
         return EUNDEV;  /* unknown disk */
 
     for (i = 0; i < count; i++, sect++) {
-        err = floprw(dskbufp, RW_READ, dev, sect, track, side, 1);
+        err = flopio(dskbufp, RW_READ, dev, sect, track, side, 1);
         if (err) {
             *bad++ = sect ? sect : -1;
             if ((err != EREADF) && (err != ESECNF))
@@ -887,7 +887,7 @@ LONG flopfmt(UBYTE *buf, WORD *skew, WORD dev, WORD spt,
      * track at a time; if that fails, we call flopver to do it slowly
      * and build a bad sector list
      */
-    if (floprw(buf, RW_READ, dev, 1, track, side, spt))
+    if (flopio(buf, RW_READ, dev, 1, track, side, spt))
     {
         err = flopver((WORD *)buf, 0L, dev, 1, track, side, spt);
         if (err || (*(WORD *)buf != 0))
@@ -924,9 +924,9 @@ LONG floprate(WORD dev, WORD rate)
     return old;
 }
 
-/*==== internal floprw ====================================================*/
+/*==== internal flopio ====================================================*/
 
-static WORD floprw(UBYTE *userbuf, WORD rw, WORD dev,
+static WORD flopio(UBYTE *userbuf, WORD rw, WORD dev,
                    WORD sect, WORD track, WORD side, WORD count)
 {
     WORD err;
