@@ -745,6 +745,9 @@ LONG flopwr(const UBYTE *buf, LONG filler, WORD dev,
  *      unexpected errors: all others
  * If no unexpected errors occur, the return code from Flopver() is zero;
  * otherwise it's the return code from the last unexpected error.
+ *
+ * Two important points to remember: the buffer must be WORD aligned and
+ * at least 1KB in length (actually 2*SECTOR_SIZE in this implementation).
  */
 
 LONG flopver(WORD *buf, LONG filler, WORD dev,
@@ -752,13 +755,14 @@ LONG flopver(WORD *buf, LONG filler, WORD dev,
 {
     WORD i, err;
     LONG rc = 0L;
-    WORD *bad = (WORD *)buf;
+    WORD *bad = buf;
+    UBYTE *diskbuf = (UBYTE *)buf + SECTOR_SIZE;
 
     if (!IS_VALID_FLOPPY_DEVICE(dev))
         return EUNDEV;  /* unknown disk */
 
     for (i = 0; i < count; i++, sect++) {
-        err = flopio(dskbufp, RW_READ, dev, sect, track, side, 1);
+        err = flopio(diskbuf, RW_READ, dev, sect, track, side, 1);
         if (err) {
             *bad++ = sect ? sect : -1;
             if ((err != EREADF) && (err != ESECNF))
