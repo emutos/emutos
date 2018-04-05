@@ -291,7 +291,7 @@ static void flop_init(WORD dev)
 
     f->rate = seekrate;
 #if CONF_WITH_FDC
-    f->actual_rate = f->rate;       /* updated by set_density() if HD drive */
+    /* actual_rate is set by set_density() which is called by floplock() */
     f->drive_type = (cookie_fdc >> 24) ? HD_DRIVE : DD_DRIVE;
     f->cur_density = (f->drive_type == HD_DRIVE) ? DENSITY_HD : DENSITY_DD;
     f->cur_track = -1;
@@ -1120,13 +1120,13 @@ static WORD flopwtrack(UBYTE *userbuf, WORD dev, WORD track, WORD side, WORD tra
 /*==== internal status, flopvbl ===========================================*/
 
 /*
- * set density & update step rate (HD drives only)
+ * set density & update step rate
+ *
+ * note: on pre-HD floppy systems (i.e. before the TT), writing to
+ * 'modectl' is safe (does nothing)
  */
 static void set_density(struct flop_info *f)
 {
-    if (f->drive_type != HD_DRIVE)
-        return;
-
     DMA->modectl = f->cur_density;
     f->actual_rate = (f->cur_density == DENSITY_HD) ? hd_steprate[f->rate] : f->rate;
 }
@@ -1165,7 +1165,7 @@ struct flop_info *f = &finfo[dev];
         }
     }
 
-    /* set density if required */
+    /* set density (if applicable) */
     set_density(f);
 }
 
