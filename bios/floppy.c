@@ -975,14 +975,20 @@ static WORD flopio(UBYTE *userbuf, WORD rw, WORD dev,
         use_tmpbuf = TRUE;
      }
 
-    /* if writing, flush data cache here so that memory is current */
-    if (rw)
+    /*
+     * if writing, we need to flush the data cache first, so that the
+     * backing memory is current.  if we're not using a temporary buffer,
+     * we can do it just once for efficiency.
+     */
+    if (rw && !use_tmpbuf)
         flush_data_cache(userbuf, (LONG)count * SECTOR_SIZE);
 
     while(count--) {
         iobufptr = use_tmpbuf ? tmpbuf : userbuf;
-        if (rw && use_tmpbuf)
+        if (rw && use_tmpbuf) {
             memcpy(iobufptr, userbuf, SECTOR_SIZE);
+            flush_data_cache(iobufptr, SECTOR_SIZE);
+        }
 
         for (retry = 0; retry < 2; retry++) {
             set_fdc_reg(FDC_SR, sect);
