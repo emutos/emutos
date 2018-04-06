@@ -935,11 +935,10 @@ static WORD flopio(UBYTE *userbuf, WORD rw, WORD dev,
 {
     WORD err;
 #if CONF_WITH_FDC
-    BOOL use_tmpbuf = FALSE;
     WORD retry;
     WORD status;
     WORD cmd;
-    UBYTE *tmpbuf, *iobufptr;
+    UBYTE *tmpbuf = NULL, *iobufptr;
 #endif
 
     if (!IS_VALID_FLOPPY_DEVICE(dev))
@@ -972,27 +971,27 @@ static WORD flopio(UBYTE *userbuf, WORD rw, WORD dev,
      */
     if (IS_ODD_POINTER(userbuf) || !IS_STRAM_POINTER(userbuf)) {
         tmpbuf = dskbufp;
-        use_tmpbuf = TRUE;
-     }
+    }
 
     /*
      * if writing, we need to flush the data cache first, so that the
      * backing memory is current.  if we're not using a temporary buffer,
      * we can do it just once for efficiency.
      */
-    if (rw && !use_tmpbuf)
+    if (rw && !tmpbuf)
         flush_data_cache(userbuf, (LONG)count * SECTOR_SIZE);
 
     while(count--) {
-        iobufptr = use_tmpbuf ? tmpbuf : userbuf;
-        if (rw && use_tmpbuf) {
-            memcpy(iobufptr, userbuf, SECTOR_SIZE);
-            flush_data_cache(iobufptr, SECTOR_SIZE);
+        iobufptr = tmpbuf ? tmpbuf : userbuf;
+        if (rw && tmpbuf) {
+            memcpy(tmpbuf, userbuf, SECTOR_SIZE);
+            flush_data_cache(tmpbuf, SECTOR_SIZE);
         }
 
+        set_fdc_reg(FDC_SR, sect);
+        set_dma_addr(iobufptr);
+
         for (retry = 0; retry < 2; retry++) {
-            set_fdc_reg(FDC_SR, sect);
-            set_dma_addr(iobufptr);
             if (rw == RW_READ) {
                 fdc_start_dma_read(1);
                 cmd = FDC_READ;
@@ -1032,8 +1031,8 @@ static WORD flopio(UBYTE *userbuf, WORD rw, WORD dev,
         if (!rw)
             invalidate_data_cache(iobufptr, SECTOR_SIZE);
 
-        if (!rw && use_tmpbuf)
-            memcpy(userbuf, iobufptr, SECTOR_SIZE);
+        if (!rw && tmpbuf)
+            memcpy(userbuf, tmpbuf, SECTOR_SIZE);
 
         /* Otherwise carry on sequentially */
         userbuf += SECTOR_SIZE;
