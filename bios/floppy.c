@@ -1447,14 +1447,9 @@ static WORD get_dma_status(void)
 
 static WORD get_fdc_reg(WORD reg)
 {
-    WORD ret;
-
     DMA->control = reg;
     fdc_delay();
-    ret = DMA->data;
-    fdc_delay();
-
-    return ret;
+    return DMA->data;
 }
 
 static void set_fdc_reg(WORD reg, WORD value)
@@ -1462,7 +1457,6 @@ static void set_fdc_reg(WORD reg, WORD value)
     DMA->control = reg;
     fdc_delay();
     DMA->data = value;
-    fdc_delay();
 }
 
 /* the fdc_start_dma_*() functions toggle the dma write bit, to
