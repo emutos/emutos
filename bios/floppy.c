@@ -1027,12 +1027,16 @@ static WORD flopio(UBYTE *userbuf, WORD rw, WORD dev,
         if (err)
             break;
 
-        /* invalidate data cache if we've read into memory */
-        if (!rw)
+        /*
+         * if reading, invalidate data cache (this is low-cost, so
+         * it's ok to do it on a sector-by-sector basis), then copy
+         * from temporary buffer if necessary.
+         */
+        if (!rw) {
             invalidate_data_cache(iobufptr, SECTOR_SIZE);
-
-        if (!rw && tmpbuf)
-            memcpy(userbuf, tmpbuf, SECTOR_SIZE);
+            if (tmpbuf)
+                memcpy(userbuf, tmpbuf, SECTOR_SIZE);
+        }
 
         /* Otherwise carry on sequentially */
         userbuf += SECTOR_SIZE;
