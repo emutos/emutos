@@ -938,6 +938,7 @@ static WORD flopio(UBYTE *userbuf, WORD rw, WORD dev,
     WORD retry;
     WORD status;
     WORD cmd;
+    BOOL density_ok;
     UBYTE *tmpbuf = NULL, *iobufptr;
 #endif
 
@@ -962,6 +963,12 @@ static WORD flopio(UBYTE *userbuf, WORD rw, WORD dev,
         flopunlk();
         return err;
     }
+
+    /*
+     * if the drive is double-density, then we know the density setting
+     * (none required) is OK.  otherwise, we don't know at this point.
+     */
+    density_ok = (finfo[dev].drive_type==DD_DRIVE) ? TRUE : FALSE;
 
     /*
      * the floppy hardware requires that the buffer be word-aligned and
@@ -1011,8 +1018,14 @@ static WORD flopio(UBYTE *userbuf, WORD rw, WORD dev,
                 if ((rw == RW_WRITE) && (status & FDC_WRI_PRO)) {
                     err = EWRPRO;       /* write protect */
                     break;              /* no retry */
-                } else if (status & FDC_RNF) {
-                    err = ESECNF;       /* sector not found */
+                } else if (status & FDC_RNF) {  /* symptom of wrong density */
+                    if (!density_ok) {  /* it _may_ be wrong */
+                        switch_density(dev);
+                        density_ok = TRUE;
+                        retry = 0;      /* allow retries after density switch */
+                        err = 0;
+                    } else
+                        err = ESECNF;   /* sector not found */
                 } else if (status & FDC_CRCERR) {
                     err = E_CRC;        /* CRC error */
                 } else if (status & FDC_LOSTDAT) {
@@ -1375,39 +1388,27 @@ static void restore(struct flop_info *fi)
 
 /*
  * seek to the specified track on the current device
+ * (does nothing if already at that track)
  *
  * returns  0       ok
  *          E_SEEK  seek error
- *
- * note: we always perform the seek, even if we are currently at the
- * correct track, since that's how we detect diskette density changes
  */
 static WORD set_track(WORD track)
 {
     struct flop_info *fi = &finfo[cur_dev];
-    WORD retry;
 
-    for (retry = 0; retry < SEEK_RETRIES; retry++)
+    if (track == fi->cur_track)
+        return 0;
+
+    set_fdc_reg(FDC_DR, track);
+    if (flopcmd(FDC_SEEK | fi->actual_rate) < 0)    /* timeout */
     {
-        set_fdc_reg(FDC_DR, track);
-        if (flopcmd(FDC_SEEK|FDC_VBIT|fi->actual_rate) < 0) /* timeout */
-        {
-            restore(fi);
-            break;
-        }
-
-        if ((get_fdc_reg(FDC_CS) & (FDC_RNF|FDC_CRCERR)) == 0)
-        {
-            fi->cur_track = track;          /* all ok */
-            return 0;
-        }
-
-        /* we may be at the wrong density */
-        switch_density(cur_dev);            /* switch (if possible) */
-        restore(fi);                        /* so we know where we are */
+        restore(fi);
+        return E_SEEK;
     }
 
-    return E_SEEK;
+    fi->cur_track = track;          /* all ok */
+    return 0;
 }
 
 /*
