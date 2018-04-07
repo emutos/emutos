@@ -103,7 +103,7 @@ struct flop_info {
 /*
  * retry counts
  */
-#define SEEK_RETRIES    2
+#define IO_RETRIES  2   /* actually the total number of tries */
 
 /*==== Internal prototypes ==============================================*/
 
@@ -998,7 +998,7 @@ static WORD flopio(UBYTE *userbuf, WORD rw, WORD dev,
         set_fdc_reg(FDC_SR, sect);
         set_dma_addr(iobufptr);
 
-        for (retry = 0; retry < 2; retry++) {
+        for (retry = 0; retry < IO_RETRIES; retry++) {
             if (rw == RW_READ) {
                 fdc_start_dma_read(1);
                 cmd = FDC_READ;
@@ -1110,7 +1110,7 @@ static WORD flopwtrack(UBYTE *userbuf, WORD dev, WORD track, WORD side, WORD tra
     }
 #endif
 
-    for (retry = 0; retry < 2; retry++) {
+    for (retry = 0; retry < IO_RETRIES; retry++) {
         set_dma_addr(iobuf);
         fdc_start_dma_write((track_size + SECTOR_SIZE-1) / SECTOR_SIZE);
         if (flopcmd(FDC_WRITETR) < 0) { /* timeout */
