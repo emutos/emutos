@@ -757,12 +757,18 @@ LONG flopver(WORD *buf, LONG filler, WORD dev,
     LONG rc = 0L;
     WORD *bad = buf;
     UBYTE *diskbuf = (UBYTE *)buf + SECTOR_SIZE;
+#if CONF_WITH_FDC
+    WORD retry;
+    WORD status;
+    BOOL density_ok;
+#endif
 
     if (!IS_VALID_FLOPPY_DEVICE(dev))
         return EUNDEV;  /* unknown disk */
 
+#ifdef MACHINE_AMIGA
     for (i = 0; i < count; i++, sect++) {
-        err = flopio(diskbuf, RW_READ, dev, sect, track, side, 1);
+        err = amiga_floprw(diskbuf, RW_READ, dev, sect, track, side, 1);
         if (err) {
             *bad++ = sect ? sect : -1;
             if ((err != EREADF) && (err != ESECNF))
@@ -770,12 +776,89 @@ LONG flopver(WORD *buf, LONG filler, WORD dev,
         }
     }
 
+    units[dev].last_access = hz_200;
+
+#elif CONF_WITH_FDC
+
+#if CONF_WITH_FRB
+    if (!IS_STRAM_POINTER(buf)) {
+        /*
+         * the buffer provided by the user is outside ST-RAM, so we must
+         * use the intermediate _FRB buffer
+         */
+        diskbuf = get_frb_cookie();
+        if (!diskbuf) {
+            KDEBUG(("flopver() error: can't DMA to Alt-RAM\n"));
+            return EGENRL;
+        }
+    }
+#endif
+
+    floplock(dev);
+
+    select(dev, side);
+    rc = set_track(track);
+    if (rc) {
+        flopunlk();
+        return rc;
+    }
+
+    /*
+     * if the drive is double-density, then we know the density setting
+     * (none required) is OK.  otherwise, we don't know at this point.
+     */
+    density_ok = (finfo[dev].drive_type==DD_DRIVE) ? TRUE : FALSE;
+
+    for (i = 0; i < count; i++, sect++) {
+        for (retry = 0; retry < IO_RETRIES; retry++) {
+            set_fdc_reg(FDC_SR, sect);
+            set_dma_addr(diskbuf);
+            fdc_start_dma_read(1);
+            if (flopcmd(FDC_READ) < 0) {/* timeout */
+                err = EDRVNR;           /* drive not ready */
+                break;                  /* no retry */
+            }
+            status = get_dma_status();
+            if (!(status & DMA_OK)) {   /* DMA error, retry */
+                err = EGENRL;           /* general error */
+            } else {
+                status = get_fdc_reg(FDC_CS);
+                if (status & FDC_RNF) { /* symptom of wrong density */
+                    if (!density_ok) {  /* it _may_ be wrong */
+                        switch_density(dev);
+                        density_ok = TRUE;
+                        retry = 0;      /* allow retries after density switch */
+                        err = 0;
+                    } else
+                        err = ESECNF;   /* sector not found */
+                } else if (status & FDC_CRCERR) {
+                    err = E_CRC;        /* CRC error */
+                } else if (status & FDC_LOSTDAT) {
+                    err = EDRVNR;       /* drive not ready */
+                } else {
+                    err = 0;
+                    break;
+                }
+            }
+        }
+        if (err) {
+            *bad++ = sect ? sect : -1;
+            if ((err != EREADF) && (err != ESECNF))
+                rc = err;
+        }
+    }
+
+    flopunlk();
+
+#else
+    rc = EUNDEV;
+#endif
+
     /* we always terminate the list of bad sectors! */
     *bad = 0;
 
     return rc;
 }
-
 
 /*==== xbios flopfmt ======================================================*/
 
