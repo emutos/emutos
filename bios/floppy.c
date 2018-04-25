@@ -995,10 +995,9 @@ static WORD flopio(UBYTE *userbuf, WORD rw, WORD dev,
             flush_data_cache(tmpbuf, SECTOR_SIZE);
         }
 
-        set_fdc_reg(FDC_SR, sect);
-        set_dma_addr(iobufptr);
-
         for (retry = 0; retry < IO_RETRIES; retry++) {
+            set_fdc_reg(FDC_SR, sect);
+            set_dma_addr(iobufptr);
             if (rw == RW_READ) {
                 fdc_start_dma_read(1);
                 cmd = FDC_READ;
