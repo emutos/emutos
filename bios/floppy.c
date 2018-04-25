@@ -817,6 +817,20 @@ LONG flopfmt(UBYTE *buf, WORD *skew, WORD dev, WORD spt,
         return EBADSF;          /* consistent, at least :-) */
     }
 
+#if CONF_WITH_FRB
+    if (!IS_STRAM_POINTER(buf)) {
+        /*
+         * the buffer provided by the user is outside ST-RAM, but flopwtrack()
+         * needs to use DMA, so we must use the intermediate _FRB buffer
+         */
+        buf = get_frb_cookie();
+        if (!buf) {
+            KDEBUG(("flopfmt() error: can't DMA from Alt-RAM\n"));
+            return EGENRL;
+        }
+    }
+#endif
+
     /*
      * fixup interleave if not using skew table
      */
@@ -1070,7 +1084,6 @@ static WORD flopwtrack(UBYTE *userbuf, WORD dev, WORD track, WORD side, WORD tra
 #if CONF_WITH_FDC
     WORD err;
     WORD status;
-    UBYTE *iobuf;
     struct flop_info *f = &finfo[dev];
 
     if ((track == 0) && (side == 0)) {
@@ -1090,25 +1103,7 @@ static WORD flopwtrack(UBYTE *userbuf, WORD dev, WORD track, WORD side, WORD tra
         return err;
     }
 
-    iobuf = userbuf;    /* by default, we do i/o directly into the user buffer */
-
-#if CONF_WITH_FRB
-    if (userbuf >= phystop) {
-        /*
-         * The buffer provided by the user is outside ST-RAM, but flopwtrack()
-         * needs to use DMA, so we must use the intermediate _FRB buffer.
-         */
-        iobuf = get_frb_cookie();
-        if (!iobuf)
-        {
-            KDEBUG(("flopwtrack() error: can't DMA from Alt-RAM\n"));
-            return ERR;
-        }
-        memcpy(iobuf, userbuf, track_size);
-    }
-#endif
-
-    set_dma_addr(iobuf);
+    set_dma_addr(userbuf);
     fdc_start_dma_write((track_size + SECTOR_SIZE-1) / SECTOR_SIZE);
 
     if (flopcmd(FDC_WRITETR) < 0) {     /* timeout: */
