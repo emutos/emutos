@@ -1069,7 +1069,6 @@ static WORD flopio(UBYTE *userbuf, WORD rw, WORD dev,
 static WORD flopwtrack(UBYTE *userbuf, WORD dev, WORD track, WORD side, WORD track_size, WORD density)
 {
 #if CONF_WITH_FDC
-    WORD retry;
     WORD err;
     WORD status;
     UBYTE *iobuf;
@@ -1110,29 +1109,27 @@ static WORD flopwtrack(UBYTE *userbuf, WORD dev, WORD track, WORD side, WORD tra
     }
 #endif
 
-    for (retry = 0; retry < IO_RETRIES; retry++) {
-        set_dma_addr(iobuf);
-        fdc_start_dma_write((track_size + SECTOR_SIZE-1) / SECTOR_SIZE);
-        if (flopcmd(FDC_WRITETR) < 0) { /* timeout */
-            err = EDRVNR;               /* drive not ready */
-            break;
-        }
+    set_dma_addr(iobuf);
+    fdc_start_dma_write((track_size + SECTOR_SIZE-1) / SECTOR_SIZE);
+
+    if (flopcmd(FDC_WRITETR) < 0) {     /* timeout: */
+        err = EDRVNR;                   /* drive not ready */
+    } else {
         status = get_dma_status();
-        if (!(status & DMA_OK)) {       /* DMA error, retry */
+        if (!(status & DMA_OK)) {       /* DMA error: */
             err = EGENRL;               /* general error */
         } else {
             status = get_fdc_reg(FDC_CS);
             if (status & FDC_WRI_PRO) {
                 err = EWRPRO;           /* write protect */
-                break;                  /* no retry */
             } else if (status & FDC_LOSTDAT) {
                 err = EDRVNR;           /* drive not ready */
             } else {
                 err = 0;
-                break;
             }
         }
     }
+
     flopunlk();
 
     return err;
