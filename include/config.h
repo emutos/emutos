@@ -90,6 +90,9 @@
 # ifndef CONF_WITH_MONSTER
 #  define CONF_WITH_MONSTER 0
 # endif
+# ifndef CONF_WITH_NOVA
+#  define CONF_WITH_NOVA 0
+# endif
 # ifndef CONF_WITH_FORMAT
 #  define CONF_WITH_FORMAT 0
 # endif
@@ -156,6 +159,9 @@
 # ifndef CONF_WITH_MONSTER
 #  define CONF_WITH_MONSTER 0
 # endif
+# ifndef CONF_WITH_NOVA
+#  define CONF_WITH_NOVA 0
+# endif
 # ifndef CONF_WITH_FORMAT
 #  define CONF_WITH_FORMAT 0
 # endif
@@ -193,6 +199,9 @@
 # endif
 # ifndef CONF_WITH_MONSTER
 #  define CONF_WITH_MONSTER 0
+# endif
+# ifndef CONF_WITH_NOVA
+#  define CONF_WITH_NOVA 0
 # endif
 # ifndef CONF_WITH_TTRAM
 #  define CONF_WITH_TTRAM 0
@@ -332,6 +341,9 @@
 # endif
 # ifndef CONF_WITH_MONSTER
 #  define CONF_WITH_MONSTER 0
+# endif
+# ifndef CONF_WITH_NOVA
+#  define CONF_WITH_NOVA 0
 # endif
 #endif
 
@@ -522,6 +534,9 @@
 # endif
 # ifndef CONF_WITH_MONSTER
 #  define CONF_WITH_MONSTER 0
+# endif
+# ifndef CONF_WITH_NOVA
+#  define CONF_WITH_NOVA 0
 # endif
 #endif
 
@@ -920,6 +935,13 @@
  */
 #ifndef CONF_WITH_SFP004
 # define CONF_WITH_SFP004 1
+#endif
+
+/*
+ * Set CONF_WITH_NOVA to 1 to enable support for Nova graphic card adapter.
+ */
+#ifndef CONF_WITH_NOVA
+# define CONF_WITH_NOVA 1
 #endif
 
 /*
