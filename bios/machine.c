@@ -36,6 +36,7 @@
 #include "scc.h"
 #include "memory.h"
 #include "coldfire.h"
+#include "nova.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif
@@ -475,6 +476,9 @@ void machine_detect(void)
         detect_monster_rtc();
         KDEBUG(("has_monster_rtc = %d\n", has_monster_rtc));
     }
+#endif
+#if CONF_WITH_NOVA
+    detect_nova();
 #endif
 }
 

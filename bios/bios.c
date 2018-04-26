@@ -58,6 +58,7 @@
 #include "delay.h"
 #include "biosbind.h"
 #include "memory.h"
+#include "nova.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif
@@ -364,6 +365,18 @@ static void bios_init(void)
     KDEBUG(("clock_init()\n"));
     clock_init();       /* init clock */
     KDEBUG(("after clock_init()\n"));
+
+#if CONF_WITH_NOVA 
+    /* Detect and initialize a Nova card, skip if Ctrl is pressed */
+    if (has_nova && !(kbshift(-1) & MODE_CTRL)) {
+        KDEBUG(("init_nova()\n"));
+        if (init_nova()) {
+            set_rez_hacked();
+            font_set_default(-1);   /* set default font */
+            vt52_init();            /* initialize the vt52 console */
+        }
+    }
+#endif
 
 #if CONF_WITH_NLS
     KDEBUG(("nls_init()\n"));
