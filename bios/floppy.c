@@ -158,6 +158,7 @@ static void dummy_seek(void);
 #define DESELECT_TIMEOUT (5*CLOCKS_PER_SEC)     /* 5.0 seconds */
 
 /* access to dma and fdc registers */
+static WORD decode_error(void);
 static WORD get_dma_status(void);
 static WORD get_fdc_reg(WORD reg);
 static void set_fdc_reg(WORD reg, WORD value);
@@ -759,7 +760,6 @@ LONG flopver(WORD *buf, LONG filler, WORD dev,
     UBYTE *diskbuf = (UBYTE *)buf + SECTOR_SIZE;
 #if CONF_WITH_FDC
     WORD retry;
-    WORD status;
     BOOL density_ok;
 #endif
 
@@ -818,27 +818,14 @@ LONG flopver(WORD *buf, LONG filler, WORD dev,
                 err = EDRVNR;           /* drive not ready */
                 break;                  /* no retry */
             }
-            status = get_dma_status();
-            if (!(status & DMA_OK)) {   /* DMA error, retry */
-                err = EGENRL;           /* general error */
-            } else {
-                status = get_fdc_reg(FDC_CS);
-                if (status & FDC_RNF) { /* symptom of wrong density */
-                    if (!density_ok) {  /* it _may_ be wrong */
-                        switch_density(dev);
-                        density_ok = TRUE;
-                        retry = 0;      /* allow retries after density switch */
-                        err = 0;
-                    } else
-                        err = ESECNF;   /* sector not found */
-                } else if (status & FDC_CRCERR) {
-                    err = E_CRC;        /* CRC error */
-                } else if (status & FDC_LOSTDAT) {
-                    err = EDRVNR;       /* drive not ready */
-                } else {
-                    err = 0;
-                    break;
-                }
+            err = decode_error();
+            if (err == 0)
+                break;
+            if ((err == ESECNF) && !density_ok) {   /* density _may_ be wrong */
+                switch_density(dev);
+                density_ok = TRUE;
+                retry = 0;              /* allow retries after density switch */
+                err = 0;
             }
         }
         if (err) {
@@ -1025,7 +1012,6 @@ static WORD flopio(UBYTE *userbuf, WORD rw, WORD dev,
     WORD err;
 #if CONF_WITH_FDC
     WORD retry;
-    WORD status;
     WORD cmd;
     BOOL density_ok;
     UBYTE *tmpbuf = NULL, *iobufptr;
@@ -1098,30 +1084,14 @@ static WORD flopio(UBYTE *userbuf, WORD rw, WORD dev,
                 err = EDRVNR;           /* drive not ready */
                 break;                  /* no retry */
             }
-            status = get_dma_status();
-            if (!(status & DMA_OK)) {   /* DMA error, retry */
-                err = EGENRL;           /* general error */
-            } else {
-                status = get_fdc_reg(FDC_CS);
-                if ((rw == RW_WRITE) && (status & FDC_WRI_PRO)) {
-                    err = EWRPRO;       /* write protect */
-                    break;              /* no retry */
-                } else if (status & FDC_RNF) {  /* symptom of wrong density */
-                    if (!density_ok) {  /* it _may_ be wrong */
-                        switch_density(dev);
-                        density_ok = TRUE;
-                        retry = 0;      /* allow retries after density switch */
-                        err = 0;
-                    } else
-                        err = ESECNF;   /* sector not found */
-                } else if (status & FDC_CRCERR) {
-                    err = E_CRC;        /* CRC error */
-                } else if (status & FDC_LOSTDAT) {
-                    err = EDRVNR;       /* drive not ready */
-                } else {
-                    err = 0;
-                    break;
-                }
+            err = decode_error();
+            if ((err == 0) || (err == EWRPRO))
+                break;
+            if ((err == ESECNF) && !density_ok) {   /* density _may_ be wrong */
+                switch_density(dev);
+                density_ok = TRUE;
+                retry = 0;              /* allow retries after density switch */
+                err = 0;
             }
         }
         /* If there was an error, don't read any more sectors */
@@ -1158,7 +1128,6 @@ static WORD flopwtrack(UBYTE *userbuf, WORD dev, WORD track, WORD side, WORD tra
 {
 #if CONF_WITH_FDC
     WORD err;
-    WORD status;
     struct flop_info *f = &finfo[dev];
 
     if ((track == 0) && (side == 0)) {
@@ -1184,19 +1153,7 @@ static WORD flopwtrack(UBYTE *userbuf, WORD dev, WORD track, WORD side, WORD tra
     if (flopcmd(FDC_WRITETR) < 0) {     /* timeout: */
         err = EDRVNR;                   /* drive not ready */
     } else {
-        status = get_dma_status();
-        if (!(status & DMA_OK)) {       /* DMA error: */
-            err = EGENRL;               /* general error */
-        } else {
-            status = get_fdc_reg(FDC_CS);
-            if (status & FDC_WRI_PRO) {
-                err = EWRPRO;           /* write protect */
-            } else if (status & FDC_LOSTDAT) {
-                err = EDRVNR;           /* drive not ready */
-            } else {
-                err = 0;
-            }
-        }
+        err = decode_error();
     }
 
     flopunlk();
@@ -1507,6 +1464,30 @@ static WORD flopcmd(WORD cmd)
         fdc_delay();                    /* allow it to complete */
         return -1;
     }
+
+    return 0;
+}
+
+/*
+ * decode DMA/FDC error status
+ */
+static WORD decode_error(void)
+{
+    WORD status;
+
+    status = get_dma_status();
+    if (!(status & DMA_OK))     /* DMA error */
+        return EGENRL;
+
+    status = get_fdc_reg(FDC_CS);
+    if (status & FDC_RNF)       /* can be symptom of wrong density */
+        return ESECNF;
+    if (status & FDC_WRI_PRO)
+        return EWRPRO;          /* write protect */
+    if (status & FDC_CRCERR)
+        return E_CRC;           /* CRC error */
+    if (status & FDC_LOSTDAT)
+        return EDRVNR;          /* drive not ready */
 
     return 0;
 }
