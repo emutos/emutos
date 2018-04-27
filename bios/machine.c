@@ -496,7 +496,8 @@ void machine_detect(void)
     }
 #endif
 #if CONF_WITH_NOVA
-    detect_nova();
+    if (!IS_ARANYM)
+        detect_nova();
 #endif
 }
 

@@ -21,6 +21,7 @@
 #include "vectors.h"
 #include "tosvars.h"
 #include "lineavars.h"
+#include "machine.h"
 #include "nova.h"
 
 #if CONF_WITH_NOVA
@@ -128,33 +129,59 @@ static void set_multiple_atcreg(UBYTE startreg, UBYTE cnt, const UBYTE *values)
     UNUSED(dummy);
 }
 
+/* Check for presence of a VGA card using the ATC palette registers */
+static int check_for_vga(void)
+{
+    volatile UBYTE dummy;
+    dummy = VGAREG(IS1_RC); /* set ATC_IW to index */
+
+    SHORT_DELAY;
+    VGAREG(ATC_IW) = 0x0A;
+    SHORT_DELAY;
+    VGAREG(ATC_IW) = 0x55;
+    SHORT_DELAY;
+
+    /* Reading the index/write register will return the register index */
+    if (VGAREG(ATC_IW) == 0x0A)
+    {
+        VGAREG(ATC_IW) = 0x20; /* enable screen output */
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+
+    UNUSED(dummy);
+}
+
 /* Detect Nova addresses */
 void detect_nova(void)
 {
     has_nova = 0;
 
-    if (check_read_byte(0xFE900000L+VIDSUB))
+    if (IS_BUS32 && HAS_VME && check_read_byte(0xFE900000L+VIDSUB))
     {
         /* Mach32(?) in Atari TT */
         novaregbase = (UBYTE *)0xFE900000L;
         novamembase = (UBYTE *)0xFE800000L;
         has_nova = 1;
     }
-    else if (check_read_byte(0x00DC0000L+VIDSUB))
+    else if (HAS_VME && check_read_byte(0x00DC0000L+VIDSUB))
     {
         /* Nova in Atari MegaSTE */
         novaregbase = (UBYTE *)0x00DC0000L;
         novamembase = (UBYTE *)0x00C00000L;
         has_nova = 1;
     }
-    else if (check_read_byte(0x00CC0000L+VIDSUB))
+    else if (((long)phystop < 0x00C00000L) && check_read_byte(0x00CC0000L+VIDSUB))
     {
-        /* Nova in Atari MegaST */
+        /* Nova in Atari MegaST: be sure via phystop that it's not RAM we read */
         novaregbase = (UBYTE *)0x00CC0000L;
         novamembase = (UBYTE *)0x00C00000L;
         has_nova = 1;
     }
-    else if (check_read_byte(0xFEDC0000L+VIDSUB))
+    else if (IS_BUS32 && HAS_VME && check_read_byte(0xFEDC0000L+VIDSUB))
     {
         /* ET4000 in Atari TT */
         novaregbase = (UBYTE *)0xFEDC0000L;
@@ -374,6 +401,14 @@ int init_nova(void)
     /* Enables VGA mode and selects MCLK 1 */
     VGAREG(VIDSUB) = 0x01;
     VGAREG(MISC_W) = 0xE3;
+    
+    /* Sanity check that no other VME or Megabus HW has been detected. 
+     * Note that we can do this only after enabling VGA in the lines above. 
+     */
+    if (!check_for_vga()) {
+        KDEBUG(("No Nova or no VGA card found\n"));
+        return 0;
+    }
 
     unlock_et4000();
     init_et4000_memory();
