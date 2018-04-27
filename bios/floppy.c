@@ -113,6 +113,8 @@ static void setiword(UBYTE *addr, UWORD value);
 /* floppy read/write */
 static WORD flopio(UBYTE *buf, WORD rw, WORD dev,
                    WORD sect, WORD track, WORD side, WORD count);
+static WORD flopio_ver(UBYTE *buf, WORD rw, WORD dev,
+                   WORD sect, WORD track, WORD side, WORD count);
 
 /* floppy write track */
 static WORD flopwtrack(UBYTE *buf, WORD dev, WORD track, WORD side,
@@ -552,7 +554,7 @@ LONG floppy_rw(WORD rw, UBYTE *buf, WORD cnt, LONG recnr, WORD spt,
         numsecs = spt - start_relsec;
         KDEBUG(("floppy_rw() #1: track=%d, side=%d, start=%d, count=%d\n",
                 track,side,start_relsec+1,numsecs));
-        err = flopio(buf, rw, dev, start_relsec+1, track, side, numsecs);
+        err = flopio_ver(buf, rw, dev, start_relsec+1, track, side, numsecs);
         if (err)
             return err;
         buf += SECTOR_SIZE * numsecs;
@@ -573,7 +575,7 @@ LONG floppy_rw(WORD rw, UBYTE *buf, WORD cnt, LONG recnr, WORD spt,
         }
         KDEBUG(("floppy_rw() #2: track=%d, side=%d, start=%d, count=%d\n",
                 track,side,1,spt));
-        err = flopio(buf, rw, dev, 1, track, side, spt);
+        err = flopio_ver(buf, rw, dev, 1, track, side, spt);
         if (err)
             return err;
         buf += SECTOR_SIZE * spt;
@@ -592,7 +594,7 @@ LONG floppy_rw(WORD rw, UBYTE *buf, WORD cnt, LONG recnr, WORD spt,
     numsecs = end_relsec - start_relsec + 1;
     KDEBUG(("floppy_rw() #3: track=%d, side=%d, start=%d, count=%d\n",
             track,side,start_relsec+1,numsecs));
-    err = flopio(buf, rw, dev, start_relsec+1, track, side, numsecs);
+    err = flopio_ver(buf, rw, dev, start_relsec+1, track, side, numsecs);
     if (err)
         return err;
 
@@ -1119,6 +1121,32 @@ static WORD flopio(UBYTE *userbuf, WORD rw, WORD dev,
 #else
     err = EUNDEV;
 #endif
+    return err;
+}
+
+/*==== internal flopio_ver =================================================*/
+
+/*
+ * performs flopio() with optional verification when writing
+ */
+static WORD flopio_ver(UBYTE *buf, WORD rw, WORD dev, WORD sect, WORD track, WORD side, WORD count)
+{
+    WORD err;
+
+    err = flopio(buf, rw, dev, sect, track, side, count);
+
+    if ((rw & RW_WRITE) && (err == 0) && fverify)
+    {
+        err = flopver((WORD *)dskbufp, 0L, dev, sect, track, side, count);
+        /*
+         * flopver() returns 0 if it only encounters EREADF/ESECNF, but
+         * the buffer will contain one or more non-zero sector numbers.
+         * so in this case we set an error code.
+         */
+        if ((err == 0) && (*(WORD *)dskbufp != 0))
+            err = EBADSF;
+    }
+
     return err;
 }
 
