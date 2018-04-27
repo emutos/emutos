@@ -170,6 +170,8 @@ extern int has_dip_switches;
   #define HAS_DIP_SWITCHES 0
 #endif
 
+extern int has_modectl;
+
 /*
  * functions
  */

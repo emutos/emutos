@@ -1198,13 +1198,12 @@ static WORD flopwtrack(UBYTE *userbuf, WORD dev, WORD track, WORD side, WORD tra
 
 /*
  * set density & update step rate
- *
- * note: on pre-HD floppy systems (i.e. before the TT), writing to
- * 'modectl' is safe (does nothing)
  */
 static void set_density(struct flop_info *f)
 {
-    DMA->modectl = f->cur_density;
+    if (has_modectl)
+        DMA->modectl = f->cur_density;
+
     f->actual_rate = (f->cur_density == DENSITY_HD) ? hd_steprate[f->rate] : f->rate;
 }
 

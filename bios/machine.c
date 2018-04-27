@@ -36,6 +36,7 @@
 #include "scc.h"
 #include "memory.h"
 #include "coldfire.h"
+#include "dma.h"
 #include "nova.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
@@ -59,7 +60,7 @@ long cookie_swi;
 /*
  * test specific hardware features
  */
-
+int has_modectl;
 #if CONF_WITH_STE_SHIFTER
 int has_ste_shifter;
 #endif
@@ -69,6 +70,22 @@ int has_tt_shifter;
 #if CONF_WITH_VIDEL
 int has_videl;
 #endif
+
+/*
+ * Check if the DMA 'modectl' register exists
+ *
+ * A bus error _may_ occur when accessing 'modectl' on some systems that
+ * do not support HD floppies [Christian Zietz's investigations indicate
+ * that the error occurs on systems with the IMP chip set].
+ */
+static void detect_modectl(void)
+{
+    has_modectl = 0;
+    if (check_read_byte((LONG)&DMA->modectl))
+        has_modectl = 1;
+
+    KDEBUG(("has_modectl = %d\n", has_modectl));
+}
 
 /*
  * Tests video capabilities (STEnhanced Shifter, TT Shifter and VIDEL)
@@ -424,6 +441,7 @@ void machine_detect(void)
 #ifdef MACHINE_AMIGA
     amiga_machine_detect();
 #endif
+    detect_modectl();
 
     /* Detect TT-RAM and set up ramtop/ramvalid */
     KDEBUG(("ttram_detect()\n"));
