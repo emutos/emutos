@@ -756,10 +756,12 @@ LONG flopwr(const UBYTE *buf, LONG filler, WORD dev,
 LONG flopver(WORD *buf, LONG filler, WORD dev,
              WORD sect, WORD track, WORD side, WORD count)
 {
-    WORD i, err;
     LONG rc = 0L;
     WORD *bad = buf;
+#if defined(MACHINE_AMIGA) || CONF_WITH_FDC
+    WORD i, err;
     UBYTE *diskbuf = (UBYTE *)buf + SECTOR_SIZE;
+#endif
 #if CONF_WITH_FDC
     WORD retry;
     BOOL density_ok;
