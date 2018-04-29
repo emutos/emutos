@@ -1,5 +1,5 @@
 /*
- *  initinfo.c - Info screen at startup
+ * initinfo.h - Info screen at startup
  *
  * Copyright (C) 2001-2017 by Authors:
  *

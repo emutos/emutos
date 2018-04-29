@@ -260,7 +260,7 @@ coldfire_startup_ret:
 #endif
         jne     nodiag                  // no -> go on
         lea     nodiag(pc), a6          // save return address
-        jmp     cart_base+4             // execute diagnostig cartridge
+        jmp     cart_base+4             // execute diagnostic cartridge
 nodiag:
 #endif /* CONF_WITH_CARTRIDGE */
 
