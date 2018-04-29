@@ -1,0 +1,73 @@
+A few notes on the EmuTOS startup sequence
+==========================================
+
+The EmuTOS startup sequence is similar to that of Atari TOS.  The
+following keys affect startup:
+   Alt: set floppy A: as boot device
+   Esc: run an early console
+   Ctrl: start up as a 'bare' system:
+        do not use any Nova/ET4000 card present
+        do not run AUTO folder programs
+        do not load user-defined mouse cursors
+        do not load desk accessories
+        do not run an autorun program
+        do not load desktop icons
+        do not use the EMUDESK.INF file for desktop setup
+
+Details
+-------
+Note: in the following, all files referenced must be in the root
+directory of the boot device.
+
+1. After some basic system initialisation, if a diagnostic cartridge
+   is present, it is run.
+
+2. ST RAM is initialised, then the BIOS and the rest of the hardware
+   is initialised.  If a Nova/ET4000 video board is detected, the
+   video output is directed to it (this may be skipped by pressing
+   the Ctrl key during startup).
+
+3. If a cartridge is present, any type 3 cartridge applications are
+   run (under Hatari, this is where GEMDOS emulation is set up).
+
+4. On a cold boot only, the EmuTOS welcome screen is displayed.
+   While the screen is displayed, the keys Alt, Ctrl, and Esc may be
+   pressed to alter subsequent processing (see below).
+   
+6. If the user pressed the Alt key in step 4 above, the boot device
+   is set to the first floppy (drive A:).  Otherwise it is set to
+   the first partition of the first device found.  Devices are scanned
+   in the following sequence: IDE, SCSI, ACSI, SD/MMC.
+
+5. If the user pressed the Esc key in step 4 above, the Emucon2 console
+   is displayed (on exit, the startup will continue as below).
+
+6. All PRG programs in the AUTO folder are run, in directory sequence.
+   This is skipped if the Ctrl key was pressed in step 4 above.
+
+7. The AES is started.  If an EMUDESK.INF file is present, it is
+   checked for a video setting (a #E line).  If a setting is specified,
+   and it differs from the current setting, the current display mode
+   is changed.
+
+8. The AES is initialised.  If an EMUCURS.RSC file is present, user-
+   defined mouse cursors are loaded from it.  This is skipped if the
+   Ctrl key was pressed in step 4 above.
+
+9. Desk accessories are loaded, if present.  This is skipped if the
+   Ctrl key was pressed in step 4 above.
+
+10. If an EMUDESK.INF file is present, it is checked for an autorun
+   program setting (a #Z line).  If an autorun program exists, it is
+   run.  This is skipped if the Ctrl key was pressed in step 4 above.
+
+11. The desktop is started.  If an EMUICON.RSC file is present, user
+   desktop icons are loaded from it.  This is skipped if the Ctrl key
+   was pressed in step 4 above.
+
+12. If an EMUDESK.INF file is present, it is used to set up the
+   desktop display.  This is skipped if the Ctrl key was pressed in
+   step 4 above, and a default display is set up instead.
+
+At this point, desktop initialisation is complete, and EmuDesk waits
+for user input.
