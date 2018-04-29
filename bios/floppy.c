@@ -984,26 +984,30 @@ LONG flopfmt(UBYTE *buf, WORD *skew, WORD dev, WORD spt,
 
 /*==== xbios floprate ======================================================*/
 
-/* sets the stepping rate of the specified drive.
- * rate meaning
- * 0   6ms
- * 1  12ms
- * 2   2ms
- * 3   3ms
+/*
+ * sets the stepping rate of the specified drive:
+ *  rate meaning
+ *   0     6ms
+ *   1    12ms
+ *   2     2ms
+ *   3     3ms
+ * & returns the previous rate
+ *
+ * to just get the current rate, use a rate of -1
  */
-
 LONG floprate(WORD dev, WORD rate)
 {
     WORD old;
+    struct flop_info *f;
 
     if (!IS_VALID_FLOPPY_DEVICE(dev))
         return EUNDEV;  /* unknown disk */
 
-    old = finfo[dev].rate;
-    if (rate >= 0 && rate <= 3) {
-        finfo[dev].rate = rate;
-        finfo[dev].actual_rate = rate;
-    }
+    f = &finfo[dev];
+
+    old = f->rate;
+    if (rate >= 0 && rate <= 3)
+        f->rate = rate;
 
     return old;
 }
