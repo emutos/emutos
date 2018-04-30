@@ -269,6 +269,9 @@
 # ifndef CONF_WITH_PCGEM
 #  define CONF_WITH_PCGEM 0
 # endif
+# ifndef CONF_WITH_BIOS_EXTENSIONS
+#  define CONF_WITH_BIOS_EXTENSIONS 0
+# endif
 # ifndef CONF_WITH_VDI_EXTENSIONS
 #  define CONF_WITH_VDI_EXTENSIONS 0
 # endif
@@ -326,6 +329,9 @@
 # endif
 # ifndef CONF_WITH_TT_SHIFTER
 #  define CONF_WITH_TT_SHIFTER 0
+# endif
+# ifndef CONF_WITH_BIOS_EXTENSIONS
+#  define CONF_WITH_BIOS_EXTENSIONS 0
 # endif
 # ifndef CONF_WITH_VDI_EXTENSIONS
 #  define CONF_WITH_VDI_EXTENSIONS 0
@@ -1123,6 +1129,13 @@
  */
 #ifndef CONF_WITH_PCGEM
 # define CONF_WITH_PCGEM 1
+#endif
+
+/*
+ * Set CONF_WITH_BIOS_EXTENSIONS to 1 to support various BIOS extension functions
+ */
+#ifndef CONF_WITH_BIOS_EXTENSIONS
+# define CONF_WITH_BIOS_EXTENSIONS 1
 #endif
 
 /*

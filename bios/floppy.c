@@ -991,13 +991,20 @@ LONG flopfmt(UBYTE *buf, WORD *skew, WORD dev, WORD spt,
  *   1    12ms
  *   2     2ms
  *   3     3ms
- * & returns the previous rate
+ * returns the previous value; to obtain the current value without
+ * changing it, use a rate of -1
  *
- * to just get the current rate, use a rate of -1
+ * as of TOS 3, the following additional, undocumented, special values
+ * may be used for rate:
+ *  -2: mark the specified drive as an HD drive (always returns 0)
+ *  -3: mark the specified drive as a DD drive (always returns 0)
+ *  -4: query the type of the specified drive (returns -1 for HD, 0 for DD)
+ * the main purpose of this would seem to be to allow a mix of drive
+ * types on e.g. a TT, via a small user program.
  */
 LONG floprate(WORD dev, WORD rate)
 {
-    WORD old;
+    WORD old = 0;
     struct flop_info *f;
 
     if (!IS_VALID_FLOPPY_DEVICE(dev))
@@ -1005,9 +1012,20 @@ LONG floprate(WORD dev, WORD rate)
 
     f = &finfo[dev];
 
-    old = f->rate;
-    if (rate >= 0 && rate <= 3)
-        f->rate = rate;
+#if CONF_WITH_BIOS_EXTENSIONS
+    if (rate == -4)
+        old = (f->drive_type == HD_DRIVE) ? -1 : 0;
+    else if (rate == -3)
+        f->drive_type = DD_DRIVE;
+    else if (rate == -2)
+        f->drive_type = HD_DRIVE;
+    else
+#endif
+    {
+        old = f->rate;
+        if (rate >= 0 && rate <= 3)
+            f->rate = rate;     /* actual_rate is set via floplock() */
+    }
 
     return old;
 }
