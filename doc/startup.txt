@@ -3,7 +3,7 @@ A few notes on the EmuTOS startup sequence
 
 The EmuTOS startup sequence is similar to that of Atari TOS.  The
 following keys affect startup:
-   Alt: set floppy A: as boot device
+   Alt: set floppy A: as boot device instead of first disk partition
    Esc: run an early console
    Ctrl: start up as a 'bare' system:
         do not use any Nova/ET4000 card present
@@ -23,9 +23,10 @@ directory of the boot device.
    is present, it is run.
 
 2. ST RAM is initialised, then the BIOS and the rest of the hardware
-   is initialised.  If a Nova/ET4000 video board is detected, the
-   video output is directed to it (this may be skipped by pressing
-   the Ctrl key during startup).
+   is initialised.  On ROMs other than 192K, the code checks for the
+   presence of a Nova/ET4000 video board.  If detected, the video
+   output is directed to it (this may be skipped by pressing the Ctrl
+   key during startup).
 
 3. If a cartridge is present, any type 3 cartridge applications are
    run (under Hatari, this is where GEMDOS emulation is set up).
