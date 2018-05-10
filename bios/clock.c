@@ -629,24 +629,25 @@ void detect_megartc(void)
 static void mgetregs(struct myclkreg *clkregs)
 {
     WORD i;
-    UBYTE *buf1, *buf2, *regs;
+    UBYTE *buf1, *buf2;
+    volatile UBYTE *regs;
     struct myclkreg clkcopy;
 
     clk.bank0.mode &= ~SELECT_BANK1;    /* ensure bank 0 */
 
     do
     {
-        regs = (UBYTE *)&clk.bank0.sec_l;
-        buf1 = (UBYTE *)&clkregs->sec_l;
+        regs = &clk.bank0.sec_l;
+        buf1 = &clkregs->sec_l;
         for (i = 0; i < NUM_MEGARTC_REGS; i++)
         {
             *buf1++ = *regs;
             regs += 2;
         }
 
-        regs = (UBYTE *)&clk.bank0.sec_l;
-        buf1 = (UBYTE *)&clkregs->sec_l;
-        buf2 = (UBYTE *)&clkcopy.sec_l;
+        regs = &clk.bank0.sec_l;
+        buf1 = &clkregs->sec_l;
+        buf2 = &clkcopy.sec_l;
         for (i = 0; i < NUM_MEGARTC_REGS; i++)
         {
             *buf2 = *regs;
@@ -660,7 +661,8 @@ static void mgetregs(struct myclkreg *clkregs)
 static void msetregs(struct myclkreg *clkregs)
 {
     WORD i;
-    UBYTE *buf, *regs;
+    UBYTE *buf;
+    volatile UBYTE *regs;
 
     /*
      * set required bank1 register contents
@@ -675,8 +677,8 @@ static void msetregs(struct myclkreg *clkregs)
      * copy values from holding area to bank0
      */
     clk.bank0.mode &= ~ENABLE_TIMER;    /* disable timer */
-    regs = (UBYTE *)&clk.bank0.sec_l;
-    buf = (UBYTE *)&clkregs->sec_l;
+    regs = &clk.bank0.sec_l;
+    buf = &clkregs->sec_l;
     for (i = 0; i < NUM_MEGARTC_REGS; i++)
     {
         *regs = *buf++;
