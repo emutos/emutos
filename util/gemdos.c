@@ -117,20 +117,6 @@ void dos_func(UWORD function, LONG parm)
 */
 
 
-#if CONF_WITH_SHOW_FILE
-void dos_conout(WORD ch)
-{
-    gemdos(X_TABOUT,ch);
-}
-
-
-void dos_conws(const char *str)
-{
-    gemdos(X_CONWS,str);
-}
-#endif
-
-
 LONG dos_rawcin(void)
 {
     return gemdos(X_RAWCIN);

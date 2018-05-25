@@ -166,6 +166,13 @@ _init_acia_vecs:
         move.b  d0,joybuf+1
         move.b  d0,joybuf+2
 
+#if CONF_WITH_IKBD_ACIA
+        // clear any pending data from IKBD ACIA
+        .equ    ikbd_acia_stat, 0xfffffc00
+        .equ    ikbd_acia_data, 0xfffffc02
+        move.b  ikbd_acia_data,d0
+#endif
+
 #if CONF_WITH_IKBD_ACIA || CONF_WITH_MIDI_ACIA
         // finally, setup the interrupt vector
         pea     _int_acia
@@ -308,8 +315,6 @@ just_rts:
         rts
 
 #if CONF_WITH_IKBD_ACIA
-        .equ    ikbd_acia_stat, 0xfffffc00
-        .equ    ikbd_acia_data, 0xfffffc02
 
 _ikbdsys:
         moveq   #0,d0

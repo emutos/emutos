@@ -2,7 +2,7 @@
 /*      for 3.0         11/4/87                 mdf             */
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2016 The EmuTOS development team
+*                 2002-2017 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -17,6 +17,7 @@
 #ifndef _DESKFPD_H
 #define _DESKFPD_H
 #include "deskconf.h"
+#include "desk_rsc.h"           /* for ICONITEM, NAMEITEM etc */
 
 #define OP_COUNT 0
 #define OP_DELETE 1
@@ -25,19 +26,21 @@
 
 #define D_PERM 0x0001
 
-#define V_ICON 0
-#define V_TEXT 1
+#define V_ICON (ICONITEM-ICONITEM)  /* view as icons */
+#define V_TEXT (TEXTITEM-ICONITEM)  /* view as text */
+#define START_VIEW  V_ICON      /* default */
 
 /*
  * sort sequence for display
  *
  * Note: folders are always listed before files, except for 'no sort'
  */
-#define S_NAME 0                /* file name (ascending) */
-#define S_DATE 1                /* date (newest first), then name */
-#define S_SIZE 2                /* size (largest first), then name */
-#define S_TYPE 3                /* file extension (ascending), then name */
-#define S_NSRT 4                /* no sort (directory sequence) */
+#define S_NAME (NAMEITEM-NAMEITEM)  /* file name (ascending) */
+#define S_TYPE (TYPEITEM-NAMEITEM)  /* file extension (ascending), then name */
+#define S_SIZE (SIZEITEM-NAMEITEM)  /* size (largest first), then name */
+#define S_DATE (DATEITEM-NAMEITEM)  /* date (newest first), then name */
+#define S_NSRT (NSRTITEM-NAMEITEM)  /* no sort (directory sequence) */
+#define START_SORT  S_NAME      /* default */
 
 #define E_NOERROR 0
 #define E_NOFNODES 100
@@ -65,7 +68,6 @@ struct _filenode
 typedef struct _pathnode PNODE;
 struct _pathnode
 {
-    PNODE *p_next;
     WORD  p_attr;           /* attribs used in Fsfirst() */
     BYTE  p_spec[LEN_ZPATH];/* dir path containing the FNODEs below */
     FNODE *p_fbase;         /* start of malloc'd fnodes */
@@ -75,12 +77,14 @@ struct _pathnode
 };
 
 
+typedef struct _windnode WNODE; /* see deskwin.h */
+
+
 /* Prototypes: */
-void fpd_start(void);
 FNODE *fpd_ofind(FNODE *pf, WORD obj);
 void pn_close(PNODE *thepath);
-PNODE *pn_open(BYTE *pathname, WORD attr);
+PNODE *pn_open(BYTE *pathname, WNODE *pw);
 FNODE *pn_sort(PNODE *pn);
-WORD pn_active(PNODE *thepath);
+WORD pn_active(PNODE *thepath, BOOL include_folders);
 
 #endif  /* _DESKFPD_H */

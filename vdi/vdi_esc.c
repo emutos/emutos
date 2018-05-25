@@ -1,7 +1,7 @@
 /*
  * vdi_esc.c - GSX escapes for the VDI screen driver
  *
- * Copyright (C) 2002-2016 The EmuTOS development team
+ * Copyright (C) 2002-2017 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -20,11 +20,6 @@
 /* Local Constants */
 
 #define ldri_escape             19      /* last DRI escape = 19. */
-
-/* GEMDOS Function Codes */
-
-#define rawio                   0x06    /* raw i/o to standard input/output */
-#define wntstr                  0x09    /* write null terminated string to std output */
 
 
 /*
@@ -56,7 +51,7 @@ static void escfn1(Vwk * vwk)
  */
 static void escfn2(Vwk * vwk)
 {
-    trap1(wntstr, "\033f\033E");   /* hide alpha cursor */
+    trap1(X_CCONWS, "\033f\033E");  /* hide alpha cursor */
     vdi_v_clrwk(vwk);
 }
 
@@ -67,7 +62,7 @@ static void escfn2(Vwk * vwk)
 static void escfn3(Vwk * vwk)
 {
     vdi_v_clrwk(vwk);
-    trap1(wntstr, "\033E\033e");   /* show alpha cursor */
+    trap1(X_CCONWS, "\033E\033e");  /* show alpha cursor */
 }
 
 
@@ -76,7 +71,7 @@ static void escfn3(Vwk * vwk)
  */
 static void escfn4(Vwk * vwk)
 {
-    trap1(wntstr, "\033A");
+    trap1(X_CCONWS, "\033A");
 }
 
 
@@ -85,7 +80,7 @@ static void escfn4(Vwk * vwk)
  */
 static void escfn5(Vwk * vwk)
 {
-    trap1(wntstr, "\033B");
+    trap1(X_CCONWS, "\033B");
 }
 
 
@@ -94,7 +89,7 @@ static void escfn5(Vwk * vwk)
  */
 static void escfn6(Vwk * vwk)
 {
-    trap1(wntstr, "\033C");
+    trap1(X_CCONWS, "\033C");
 }
 
 
@@ -103,7 +98,7 @@ static void escfn6(Vwk * vwk)
  */
 static void escfn7(Vwk * vwk)
 {
-    trap1(wntstr, "\033D");
+    trap1(X_CCONWS, "\033D");
 }
 
 
@@ -112,7 +107,7 @@ static void escfn7(Vwk * vwk)
  */
 static void escfn8(Vwk * vwk)
 {
-    trap1(wntstr, "\033H");
+    trap1(X_CCONWS, "\033H");
 }
 
 
@@ -121,7 +116,7 @@ static void escfn8(Vwk * vwk)
  */
 static void escfn9(Vwk * vwk)
 {
-    trap1(wntstr, "\033J");
+    trap1(X_CCONWS, "\033J");
 }
 
 
@@ -130,7 +125,7 @@ static void escfn9(Vwk * vwk)
  */
 static void escfn10(Vwk * vwk)
 {
-    trap1(wntstr, "\033K");
+    trap1(X_CCONWS, "\033K");
 }
 
 
@@ -154,7 +149,7 @@ static void escfn11(Vwk * vwk)
     out[2] = 0x20 + INTIN[0] - 1;   /* zero-based */
     out[3] = 0x20 + INTIN[1] - 1;
     out[4] = '\0';
-    trap1(wntstr, out);
+    trap1(X_CCONWS, out);
 }
 
 
@@ -177,7 +172,7 @@ static void escfn12(Vwk * vwk)
     chr = INTIN;                /* address of the character array */
 
     while (cnt--) {
-        trap1(rawio, *chr++);   /* raw i/o to standard input/output */
+        trap1(X_CRAWIO, *chr++);/* raw i/o to standard input/output */
     }
 }
 
@@ -187,7 +182,7 @@ static void escfn12(Vwk * vwk)
  */
 static void escfn13(Vwk * vwk)
 {
-    trap1(wntstr, "\033p");      /* enter reverse video */
+    trap1(X_CCONWS, "\033p");   /* enter reverse video */
 }
 
 
@@ -196,7 +191,7 @@ static void escfn13(Vwk * vwk)
  */
 static void escfn14(Vwk * vwk)
 {
-    trap1(wntstr, "\033q");      /* enter normal video */
+    trap1(X_CCONWS, "\033q");   /* enter normal video */
 }
 
 

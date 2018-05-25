@@ -83,35 +83,45 @@ typedef union
 } SCREENINFO;
 
 
+#if CONF_WITH_BACKGROUNDS
+/*
+ * the following structure is used in GLOBES to store the current
+ * background pattern/colour values for the desktop & windows, for
+ * a resolution with a given number of planes.  note that only the
+ * low-order byte is used.
+ */
+typedef struct
+{
+    WORD desktop;       /* for desktop background */
+    WORD window;        /* for window backgrounds */
+} PATCOL;
+#endif
+
+
 /*
  * The desktop global data area
  */
 typedef struct
 {
-/*GLOBAL*/ PNODE        g_plist[NUM_PNODES];
-/*GLOBAL*/ PNODE        *g_pavail;
-/*GLOBAL*/ PNODE        *g_phead;
-
 /*GLOBAL*/ WORD         g_stdrv;                /* start drive */
 
 /*GLOBAL*/ DTA          g_wdta;
 
 /*GLOBAL*/ WNODE        g_wdesktop;             /* the desktop pseudo-window */
 /*GLOBAL*/ WNODE        *g_wfirst;
-/*GLOBAL*/ WNODE        g_wlist[NUM_WNODES];
 /*GLOBAL*/ WORD         g_wcnt;
 
                                             /* view-related parms:      */
 /*GLOBAL*/ WORD         g_num;                  /* number of points     */
 /*GLOBAL*/ WORD         *g_pxy;                 /* outline pts to drag  */
-/*GLOBAL*/ WORD         g_iview;                /* current view type    */
+/*GLOBAL*/ WORD         g_iview;                /* current view type (V_ICON/V_TEXT) */
 /*GLOBAL*/ WORD         g_iwext;                /* w,h of extent of a   */
 /*GLOBAL*/ WORD         g_ihext;                /*   single item        */
 /*GLOBAL*/ WORD         g_iwint;                /* w,h of interval      */
 /*GLOBAL*/ WORD         g_ihint;                /*   between items      */
 /*GLOBAL*/ WORD         g_iwspc;                /* w,h of space used by */
 /*GLOBAL*/ WORD         g_ihspc;                /*   a single item      */
-/*GLOBAL*/ WORD         g_isort;                /* current sort type    */
+/*GLOBAL*/ WORD         g_isort;                /* current sort type (S_NAME etc) */
 
                                                 /* stack of fcb's to use*/
                                                 /*   for non-recursive  */
@@ -148,7 +158,7 @@ typedef struct
 /*GLOBAL*/ WORD         g_cwin;                 /* current window #     */
 /*GLOBAL*/ WORD         g_wlastsel;             /* window holding last  */
                                                 /*   selection          */
-/*GLOBAL*/ WORD         g_csortitem;            /* curr. sort item chked*/
+                                            /* current desktop preference values */
 /*GLOBAL*/ WORD         g_ccopypref;            /* curr. copy pref.     */
 /*GLOBAL*/ WORD         g_cdelepref;            /* curr. delete pref.   */
 /*GLOBAL*/ WORD         g_covwrpref;            /* curr. overwrite pref.*/
@@ -156,6 +166,9 @@ typedef struct
 /*GLOBAL*/ WORD         g_cmclkpref;            /* curr. menu click     */
 /*GLOBAL*/ WORD         g_ctimeform;            /* curr. time format    */
 /*GLOBAL*/ WORD         g_cdateform;            /* curr. date format    */
+/*GLOBAL*/ WORD         g_blitter;              /* curr. blitter enable */
+/*GLOBAL*/ WORD         g_appdir;               /* default dir is application dir */
+/*GLOBAL*/ WORD         g_fullpath;             /* use full path for parameter */
 
 /*GLOBAL*/ BYTE         g_1text[256];
 
@@ -177,10 +190,18 @@ typedef struct
 /*GLOBAL*/ ANODE        *g_ahead;               /* pointer to chain of allocated ANODEs */
 
 /*GLOBAL*/ WORD         g_numiblks;             /* number of icon blocks */
-/*GLOBAL*/ UWORD        **g_origmask;           /* ptr to array of ptrs to untransformed icon mask */
 /*GLOBAL*/ ICONBLK      *g_iblist;              /* ptr to array of icon blocks */
 
 /*GLOBAL*/ CSAVE        g_cnxsave;
+
+#if CONF_WITH_BACKGROUNDS
+/* Default pattern/colour for desktop/windows:
+ * [0] applies to 1-plane (ST high, TT high)
+ * [1] applies to 2-plane (ST medium)
+ * [2] applies to everything else
+ */
+        PATCOL          g_patcol[3];
+#endif
 
 /* Number of first free item object within g_screen[]; free objects
  * are chained via ob_next.

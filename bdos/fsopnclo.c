@@ -44,6 +44,7 @@
 **                                      for 0 return (indicating BDOS level error).
 */
 
+/* #define ENABLE_KDEBUG */
 
 #include "config.h"
 #include "portab.h"
@@ -54,6 +55,7 @@
 #include "mem.h"
 #include "time.h"
 #include "console.h"
+#include "kprint.h"
 
 /* the following characters are disallowed in the name when creating
  * or renaming files or folders.  this is *mostly* the same list as
@@ -481,6 +483,7 @@ long ixclose(OFD *fd, int part)
 
         ixlseek(fd->o_dirfil,fd->o_dirbyt+11);  /* seek to attrib byte */
         ixwrite(fd->o_dirfil,1,&attr);          /*  & rewrite it       */
+        fd->o_flag &= ~O_DIRTY;             /* not dirty any more */
     }
 
     if ((!part) || (part & CL_FULL))
@@ -499,11 +502,18 @@ long ixclose(OFD *fd, int part)
             return EINTRN;  /* some kind of internal error */
     }
 
-    /* only flush to appropriate drive ***** TBA ******/
-
-    for (i = 0; i < 2; i++)
+    /*
+     * flush all drives
+     *
+     * this could in theory be improved by flushing all sectors for one
+     * drive before moving on to the next, reducing arm movement on
+     * partitioned hard disks.  however this would cost code space and,
+     * in practice, flushing usually takes place to one drive only.
+     */
+    for (i = BI_FAT; i <= BI_DATA; i++)
         for (b = bufl[i]; b; b = b->b_link)
-            flush(b);
+            if ((b->b_bufdrv != -1) && b->b_dirty)
+                flush(b);
 
     return E_OK;
 }

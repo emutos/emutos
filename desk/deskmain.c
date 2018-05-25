@@ -66,7 +66,7 @@ typedef struct {
 } KEYTAB;
 
 #define abs(x) ( (x) < 0 ? -(x) : (x) )
-#define menu_text(tree,inum,ptext) (((tree)+(inum))->ob_spec = ptext)
+#define menu_text(tree,inum,ptext) (((tree)+(inum))->ob_spec = (LONG)(ptext))
 
 
 #define ESC     0x1b
@@ -85,6 +85,7 @@ typedef struct {
  */
 #define VIEW_HAS_CHANGED    0x0001
 #define SORT_HAS_CHANGED    0x0002
+#define BACKGROUND_HAS_CHANGED  0x0004
 
 
 /*
@@ -121,7 +122,6 @@ static WORD     ig_close;
  *  there is one array of items to enable:
  *      ILL_OPENWIN[]   enabled if there is an open window
  *  and many arrays of items to disable:
- *      ILL_ITEM[]      always disabled
  *      ILL_NOWIN[]     disabled if there are no open windows
  *      ILL NOSEL[]     disabled if there are no icons selected
  *      ILL_MULTSEL[]   disabled if two or more icons are selected
@@ -133,20 +133,26 @@ static WORD     ig_close;
  *      ILL_FOLD[]      disabled if a folder is selected
  *      ILL_TRASH[]     disabled if the trash can is selected
  */
-static const BYTE     ILL_ITEM[] = {L1ITEM, L2ITEM, L3ITEM, L4ITEM, L5ITEM, 0};
-static const BYTE     ILL_FILE[] = {IDSKITEM,RICNITEM,0};
-static const BYTE     ILL_DOCU[] = {IDSKITEM,IAPPITEM,RICNITEM,0};
-static const BYTE     ILL_FOLD[] = {IDSKITEM,IAPPITEM,RICNITEM,0};
-static const BYTE     ILL_FDSK[] = {IAPPITEM,0};
-static const BYTE     ILL_HDSK[] = {IAPPITEM,0};
-static const BYTE     ILL_NOSEL[] = {OPENITEM,DELTITEM,
-                                IAPPITEM,RICNITEM,0};
-static const BYTE     ILL_MULTSEL[] = {OPENITEM, IDSKITEM, SHOWITEM, 0};
-static const BYTE     ILL_TRASH[] = {OPENITEM,DELTITEM,IDSKITEM,
-                                IAPPITEM,0};
-static const BYTE     ILL_NOWIN[] = {NFOLITEM,CLOSITEM,CLSWITEM,0};
-static const BYTE     ILL_OPENWIN[] = {SHOWITEM,NFOLITEM,CLOSITEM,CLSWITEM,ICONITEM,
-                                NAMEITEM,DATEITEM,SIZEITEM,TYPEITEM,0};
+static const BYTE ILL_FILE[] =  { IDSKITEM, RICNITEM, 0 };
+static const BYTE ILL_DOCU[] =  { IDSKITEM, IAPPITEM, RICNITEM, 0 };
+static const BYTE ILL_FOLD[] =  { IDSKITEM, IAPPITEM, RICNITEM, 0 };
+static const BYTE ILL_FDSK[] =  { IAPPITEM, 0 };
+static const BYTE ILL_HDSK[] =  { IAPPITEM, 0 };
+static const BYTE ILL_NOSEL[] = { OPENITEM, SHOWITEM, DELTITEM, IAPPITEM, RICNITEM, 0 };
+static const BYTE ILL_MULTSEL[] = { OPENITEM, 0 };
+static const BYTE ILL_TRASH[] = { OPENITEM, DELTITEM, IDSKITEM, IAPPITEM, 0 };
+static const BYTE ILL_NOWIN[] = {
+    NFOLITEM, CLOSITEM, CLSWITEM,
+#if CONF_WITH_FILEMASK
+    MASKITEM,
+#endif
+    0 };
+static const BYTE ILL_OPENWIN[] = {
+    SHOWITEM, NFOLITEM, CLOSITEM, CLSWITEM,
+#if CONF_WITH_FILEMASK
+    MASKITEM,
+#endif
+    0 };
 
 /*
  * table to map the keyboard arrow character to the corresponding
@@ -181,15 +187,20 @@ static const WORD  dura[]=
 };
 #endif
 
-
-static LONG     ad_ptext;
-static LONG     ad_picon;
+/*
+ * the ob_spec field of menu objects that represent separator lines
+ * is set to point to an appropriate offset within this string.
+ */
+#define MAXLEN_SEPARATOR    40
+static char separator[MAXLEN_SEPARATOR+1];
 
 static int can_change_resolution;
+static int blitter_is_present;
 
 static void detect_features(void)
 {
     can_change_resolution = rez_changeable();
+    blitter_is_present = Blitmode(-1) & 0x0002;
 }
 
 
@@ -230,7 +241,7 @@ static void desk_all(WORD flags)
     desk_wait(TRUE);
     if (flags & SORT_HAS_CHANGED)
         win_srtall();
-    if (flags)          /* either sort or view has changed */
+    if (flags & (VIEW_HAS_CHANGED|SORT_HAS_CHANGED))
         win_bdall();
     win_shwall();
     desk_wait(FALSE);
@@ -257,15 +268,25 @@ static void men_update(void)
     const BYTE *pvalue;
     ANODE *appl;
     OBJECT *tree = G.a_trees[ADMENU];
+    OBJECT *obj;
 
     pvalue = 0;
 
-    /* enable all items */
-    for (item = OPENITEM; item <= PREFITEM; item++)
-        menu_ienable(tree, item, 1);
-
-    /* disable some items */
-    men_list(tree, ILL_ITEM, FALSE);
+    /*
+     * disable separator strings, enable remaining menu items
+     */
+    for (obj = tree+OPENITEM; ; obj++)
+    {
+        if (obj->ob_type == G_STRING)
+        {
+            if (*(BYTE *)obj->ob_spec == '-')   /* must be a separator */
+                obj->ob_state |= DISABLED;
+            else
+                obj->ob_state &= ~DISABLED;
+        }
+        if (obj->ob_flags & LASTOB)
+            break;
+    }
 
     nsel = 0;
     for (item = 0; (item=win_isel(G.g_screen, G.g_croot, item)) != 0; nsel++)
@@ -299,11 +320,6 @@ static void men_update(void)
 #endif
     }
 
-    if (win_ontop())
-        men_list(tree, ILL_OPENWIN, TRUE);
-    else
-        men_list(tree, ILL_NOWIN, FALSE);
-
     if (nsel != 1)
     {
         if (nsel)
@@ -313,20 +329,26 @@ static void men_update(void)
         men_list(tree, pvalue, FALSE);
     }
 
-#if !CONF_WITH_FORMAT
-    menu_ienable(tree, FORMITEM, 0);
-#endif
+    if (win_ontop())
+        men_list(tree, ILL_OPENWIN, TRUE);
+    else
+        men_list(tree, ILL_NOWIN, FALSE);
 
 #if CONF_WITH_SHUTDOWN
     menu_ienable(tree, QUITITEM, can_shutdown());
-#else
-    menu_ienable(tree, QUITITEM, 0);
 #endif
 
-#if WITH_CLI == 0
-    menu_ienable(tree, CLIITEM, 0);
-#endif
+    menu_ienable(tree, RESITEM, can_change_resolution);
 
+#if CONF_WITH_BLITTER
+    if (blitter_is_present)
+    {
+        menu_ienable(tree, BLITITEM, TRUE);
+        menu_icheck(tree, BLITITEM, G.g_blitter);
+    }
+    else
+        menu_ienable(tree, BLITITEM, FALSE);
+#endif
 }
 
 
@@ -342,7 +364,7 @@ static WORD do_deskmenu(WORD item)
         display_free_stack();
         tree = G.a_trees[ADDINFO];
         /* draw the form        */
-        show_hide(FMD_START, tree);
+        start_dialog(tree);
         while(!done)
         {
             touchob = form_do(tree, 0);
@@ -363,7 +385,7 @@ static WORD do_deskmenu(WORD item)
         }
         obj = tree + DEOK;
         obj->ob_state = NORMAL;
-        show_hide(FMD_FINISH, tree);
+        end_dialog(tree);
         done = FALSE;
         break;
     }
@@ -390,9 +412,21 @@ static WORD do_filemenu(WORD item)
         break;
     case SHOWITEM:
         if (curr)
-            do_info(curr);
-        else if (pw)
-            inf_disk(pw->w_path->p_spec[0]);
+        {
+            for ( ; curr; curr = win_isel(G.g_screen, G.g_croot, curr))
+            {
+                if (!do_info(curr))
+                    break;
+            }
+            fun_rebld_marked(); /* rebuild any changed windows */
+            break;
+        }
+        /*
+         * here if there are no highlighted icons: display info for
+         * the disk associated with the top window (just like TOS)
+         */
+        if (pw)
+            inf_disk(pw->w_pnode.p_spec[0]);
         break;
     case NFOLITEM:
         if (pw)
@@ -406,6 +440,12 @@ static WORD do_filemenu(WORD item)
         if (pw)
             fun_close(pw, CLOSE_WINDOW);
         break;
+#if CONF_WITH_FILEMASK
+    case MASKITEM:
+        if (pw)
+            fun_mask(pw);
+        break;
+#endif
     case DELTITEM:
         if (curr)
             fun_del(curr);
@@ -442,48 +482,45 @@ static WORD do_filemenu(WORD item)
 static WORD do_viewmenu(WORD item)
 {
     WORD newview, newsort, rc = 0;
-    LONG ptext;
+    OBJECT *menutree = G.a_trees[ADMENU];
 
     newview = G.g_iview;
     newsort = G.g_isort;
     switch(item)
     {
     case ICONITEM:
-        newview = (G.g_iview == V_ICON) ? V_TEXT : V_ICON;
+    case TEXTITEM:
+        newview = item - ICONITEM;
         break;
     case NAMEITEM:
-        newsort = S_NAME;
-        break;
-    case DATEITEM:
-        newsort = S_DATE;
-        break;
-    case SIZEITEM:
-        newsort = S_SIZE;
-        break;
     case TYPEITEM:
-        newsort = S_TYPE;
-        break;
+    case SIZEITEM:
+    case DATEITEM:
     case NSRTITEM:
-        newsort = S_NSRT;
+        newsort = item - NAMEITEM;
         break;
+#if CONF_WITH_BACKGROUNDS
+    case BACKGRND:
+        if (inf_backgrounds())
+            rc |= BACKGROUND_HAS_CHANGED;
+        break;
+#endif
     }
 
     if (newview != G.g_iview)
     {
-        G.g_iview = newview;
-        ptext = (newview == V_TEXT) ? ad_picon : ad_ptext;
-        menu_text(G.a_trees[ADMENU], ICONITEM, ptext);
+        menu_icheck(menutree, ICONITEM+G.g_iview, 0);
+        menu_icheck(menutree, item, 1);
         rc |= VIEW_HAS_CHANGED;
     }
     if (newsort != G.g_isort)
     {
-        menu_icheck(G.a_trees[ADMENU], G.g_csortitem, 0);
-        G.g_csortitem = item;
-        menu_icheck(G.a_trees[ADMENU], item, 1);
+        menu_icheck(menutree, NAMEITEM+G.g_isort, 0);
+        menu_icheck(menutree, item, 1);
         rc |= SORT_HAS_CHANGED;
     }
 
-    if (rc)
+    if (rc & (VIEW_HAS_CHANGED|SORT_HAS_CHANGED))
         win_view(newview, newsort);
 
     return rc;
@@ -513,16 +550,9 @@ static WORD do_optnmenu(WORD item)
         curr = 0;
         while( (curr = win_isel(G.g_screen, G.g_croot, curr)) )
         {
-            WORD change;
-
-            change = ins_app(curr);
-            if (change < 0) /* user cancelled */
+            if (ins_app(curr) < 0)  /* user cancelled */
                 break;
-            if (change > 0) /* install or remove */
-                rebld++;
         }
-        if (rebld)
-            desk_all(FALSE);
         break;
     case IICNITEM:
         rebld = ins_icon(curr);
@@ -556,6 +586,11 @@ static WORD do_optnmenu(WORD item)
         app_save(TRUE);
         desk_wait(FALSE);
         break;
+#if CONF_WITH_DESKTOP_CONFIG
+    case CONFITEM:
+        inf_conf();
+        break;
+#endif
     case RESITEM:
         rebld = change_resolution(&newres,&newmode);
         if (rebld == 1)
@@ -574,6 +609,13 @@ static WORD do_optnmenu(WORD item)
             done = TRUE;
         }
         break;
+#if CONF_WITH_BLITTER
+    case BLITITEM:
+        G.g_blitter = !G.g_blitter;
+        menu_icheck(G.a_trees[ADMENU], BLITITEM, G.g_blitter);  /* flip blit mode */
+        Blitmode(G.g_blitter);
+        break;
+#endif
     }
 
     return done;
@@ -641,8 +683,8 @@ static WORD hndl_menu(WORD title, WORD item)
     case VIEWMENU:
         done = FALSE;
         rc = do_viewmenu(item);
-        if (rc)             /* if sort and/or view has changed,  */
-            desk_all(rc);   /* rebuild all windows appropriately */
+        if (rc)             /* if sort, view, or background has changed, */
+            desk_all(rc);   /* rebuild/show all windows as appropriate   */
         break;
     case OPTNMENU:
         done = do_optnmenu(item);
@@ -715,7 +757,7 @@ static WORD process_funkey(WORD funkey)
         pfname = filename_start(pa->a_pappl);
         /* copy pathname including trailing backslash */
         strlcpy(pathname,pa->a_pappl,pfname-pa->a_pappl+1);
-        return do_aopen(pa,1,-1,pathname,pfname);
+        return do_aopen(pa,1,-1,pathname,pfname,NULL);
     }
 
     return -1;
@@ -855,7 +897,7 @@ static WORD hndl_kbd(WORD thechar)
     {
         pw = win_ontop();
         if (pw)
-            do_refresh(pw);
+            refresh_window(pw);
         return FALSE;
     }
 
@@ -939,7 +981,6 @@ WORD hndl_msg(void)
             wind_set(G.g_rmsg[3], WF_TOP, 0, 0, 0, 0);
             win_top(pw);
             desk_verify(pw->w_id, FALSE);
-            G.g_wlastsel = pw->w_id;
             change = TRUE;
         }
         break;
@@ -1027,8 +1068,8 @@ static void cnx_put(void)
     WSAVE *pws;
     WNODE *pw;
 
-    G.g_cnxsave.cs_view = (G.g_iview == V_ICON) ? 0 : 1;
-    G.g_cnxsave.cs_sort = G.g_csortitem - NAMEITEM;
+    G.g_cnxsave.cs_view = G.g_iview;        /* V_ICON/V_TEXT */
+    G.g_cnxsave.cs_sort = G.g_isort;        /* S_NAME etc */
     G.g_cnxsave.cs_confcpy = G.g_ccopypref;
     G.g_cnxsave.cs_confdel = G.g_cdelepref;
     G.g_cnxsave.cs_dblclick = G.g_cdclkpref;
@@ -1036,6 +1077,11 @@ static void cnx_put(void)
     G.g_cnxsave.cs_mnuclick = G.g_cmclkpref;
     G.g_cnxsave.cs_timefmt = G.g_ctimeform;
     G.g_cnxsave.cs_datefmt = G.g_cdateform;
+    G.g_cnxsave.cs_blitter = G.g_blitter;
+#if CONF_WITH_DESKTOP_CONFIG
+    G.g_cnxsave.cs_appdir = G.g_appdir;
+    G.g_cnxsave.cs_fullpath = G.g_fullpath;
+#endif
 
     /*
      * first, count the unused slots & initialise them
@@ -1062,7 +1108,7 @@ static void cnx_put(void)
         wind_get(pw->w_id,WF_CXYWH,&pws->x_save,&pws->y_save,&pws->w_save,&pws->h_save);
         do_xyfix(&pws->x_save,&pws->y_save);
         pws->vsl_save  = pw->w_cvrow;
-        strcpy(pws->pth_save,pw->w_path->p_spec);
+        strcpy(pws->pth_save,pw->w_pnode.p_spec);
         pws--;
     }
 }
@@ -1076,8 +1122,7 @@ static void cnx_get(void)
     WSAVE *pws;
     WNODE *pw;
 
-    G.g_iview = (G.g_cnxsave.cs_view == 0) ? V_TEXT : V_ICON;
-    do_viewmenu(ICONITEM);
+    do_viewmenu(ICONITEM + G.g_cnxsave.cs_view);
     do_viewmenu(NAMEITEM + G.g_cnxsave.cs_sort);
     G.g_ccopypref = G.g_cnxsave.cs_confcpy;
     G.g_cdelepref = G.g_cnxsave.cs_confdel;
@@ -1086,6 +1131,11 @@ static void cnx_get(void)
     G.g_cmclkpref = G.g_cnxsave.cs_mnuclick;
     G.g_ctimeform = G.g_cnxsave.cs_timefmt;
     G.g_cdateform = G.g_cnxsave.cs_datefmt;
+    G.g_blitter   = G.g_cnxsave.cs_blitter;
+#if CONF_WITH_DESKTOP_CONFIG
+    G.g_appdir    = G.g_cnxsave.cs_appdir;
+    G.g_fullpath  = G.g_cnxsave.cs_fullpath;
+#endif
     G.g_cdclkpref = evnt_dclick(G.g_cdclkpref, TRUE);
     G.g_cmclkpref = menu_click(G.g_cmclkpref, TRUE);
 
@@ -1233,12 +1283,14 @@ void fix_tedinfo(TEDINFO *tedinfo, int nted)
 }
 
 /*
- *  Change the sizes of the menus after translation
+ *  Change the sizes of the menus after translation, and fix up the
+ *  separator lines
  *
  *  Note - the code below is based on the assumption that the width of
  *  the system font is eight (documented as such in lineavars.h)
  */
-#define CHAR_WIDTH 8
+#define CHAR_WIDTH 8            /* in pixels */
+#define MIN_DESKMENU_WIDTH  20  /* in characters, compatible with Atari TOS */
 static void adjust_menu(OBJECT *obj_array)
 {
 #define OBJ(i) (&obj_array[i])
@@ -1246,6 +1298,7 @@ static void adjust_menu(OBJECT *obj_array)
     int i;  /* index in the menu bar */
     int j;  /* index in the array of pull downs */
     int width = (G.g_wdesk >> 3);   /* screen width in chars */
+    int m;  /* max width of each set of menu items, needed for separator lines */
     int n, x;
     OBJECT *menu = OBJ(0);
     OBJECT *mbar = OBJ(OBJ(menu->ob_head)->ob_head);
@@ -1319,23 +1372,38 @@ static void adjust_menu(OBJECT *obj_array)
         mbar->ob_x = 1;
 
     /*
-     * finally we can set ob_x and ob_width for the pulldown objects within the menu
+     * set up the separator string that will be pointed to for all separator lines
+     */
+    memset(separator, '-', MAXLEN_SEPARATOR);
+    separator[MAXLEN_SEPARATOR] = '\0';
+
+    /*
+     * finally we can set ob_x and ob_width for the pulldown objects within the menu,
+     * and set up the separator lines
      */
     j = OBJ(menu->ob_tail)->ob_head;
-    for (i = mbar->ob_head, title = OBJ(i); i <= mbar->ob_tail; i++, title++)
+    m = MIN_DESKMENU_WIDTH - 1; /* make 'Desk' menu at least as wide as Atari TOS */
+    for (i = mbar->ob_head, title = OBJ(i); i <= mbar->ob_tail; i++, title++, m = 0)
     {
-        int k, m;
+        int k;
         OBJECT *dropbox = OBJ(j);
         OBJECT *item;
 
         /* find widest object under this menu heading */
-        for (k = dropbox->ob_head, item = OBJ(k), m = 0; k <= dropbox->ob_tail; k++, item++)
+        for (k = dropbox->ob_head, item = OBJ(k); k <= dropbox->ob_tail; k++, item++)
         {
             int l = strlen((char *)item->ob_spec);
             if (m < l)
                 m = l;
         }
         dropbox->ob_x = mbar->ob_x + title->ob_x;
+
+        /* set up separator lines */
+        for (k = dropbox->ob_head, item = OBJ(k), m++; k <= dropbox->ob_tail; k++, item++)
+        {
+            if (*(BYTE *)(item->ob_spec) == '-')
+                item->ob_spec = (LONG)(separator+MAXLEN_SEPARATOR-m);
+        }
 
         /* make sure the menu is not too far on the right of the screen */
         if ((dropbox->ob_x&0x00ff) + m >= width)
@@ -1459,8 +1527,10 @@ static void desk_xlate_fix(void)
     /* slightly adjust the about box for a timestamp build */
     if (version[1] != '.')
     {
-        objlabel->ob_spec = (LONG) "";  /* remove the word "Version" */
-        objversion->ob_x -= 6;          /* and move the start of the string */
+        objlabel->ob_flags |= HIDETREE;   /* hide the word "Version" */
+        objversion->ob_x = 0;             /* and enlarge the version object */
+        objversion->ob_width = 40;
+        objversion->ob_flags |= CENTRE_ALIGNED;
     }
 
     /* insert the version number */
@@ -1512,6 +1582,7 @@ WORD deskmain(void)
 {
     WORD ii, done, flags;
     UWORD ev_which, mx, my, button, kstate, kret, bret;
+    OBJECT *menutree;
 
     /* initialize libraries */
     gl_apid = appl_init();
@@ -1533,7 +1604,12 @@ WORD deskmain(void)
     detect_features();
 
     /* initialize resources */
-    desk_rs_init();                 /* copies ROM to RAM */
+    if (desk_rs_init() < 0)         /* copies ROM to RAM */
+    {
+        KDEBUG(("insufficient memory for desktop objects (need %ld bytes)\n",
+                (LONG)RS_NTED*sizeof(OBJECT)));
+        nomem_alert();              /* infinite loop */
+    }
     desk_xlate_fix();               /* translates & fixes desktop */
 
     /* initialize menus and dialogs */
@@ -1548,9 +1624,6 @@ WORD deskmain(void)
         app_tran(ii);
     }
 
-    rsrc_gaddr_rom(R_STRING, STASTEXT, (void **)&ad_ptext);
-    rsrc_gaddr_rom(R_STRING, STASICON, (void **)&ad_picon);
-
     /* These strings are used by dr_code.  We can't get to the
      * resource in dr_code because that would reenter AES, so we
      * save them here.
@@ -1563,26 +1636,22 @@ WORD deskmain(void)
      */
     app_start();
 
-    /* initialize windows */
-    win_start();
+    /*
+     * initialize windows: win_view() initialises g_iview, g_isort
+     */
+    if (win_start() < 0)
+    {
+        KDEBUG(("insufficient memory for desktop windows (need %ld bytes)\n",
+                (LONG)NUM_WNODES*sizeof(WNODE)));
+        nomem_alert();              /* infinite loop */
+    }
 
-    /* initialize folders, paths, and drives */
-    fpd_start();
-
-    /* show menu */
-    desk_verify(0, FALSE);                  /* should this be here  */
-    wind_update(BEG_UPDATE);
-    menu_bar(G.a_trees[ADMENU], 1);
-    wind_update(END_UPDATE);
+    desk_verify(0, FALSE);      /* initialise g_croot, g_cwin, g_wlastsel  */
 
     /* establish menu items */
-    G.g_iview = V_ICON;
-    menu_text(G.a_trees[ADMENU], ICONITEM, ad_ptext);
-
-    G.g_csortitem = NAMEITEM;
-    menu_icheck(G.a_trees[ADMENU], G.g_csortitem, 1);
-
-    menu_ienable(G.a_trees[ADMENU], RESITEM, can_change_resolution);
+    menutree = G.a_trees[ADMENU];
+    menu_icheck(menutree, ICONITEM+G.g_iview, 1);
+    menu_icheck(menutree, NAMEITEM+G.g_isort, 1);
 
     /* initialize desktop and its objects */
     app_blddesk();
@@ -1590,23 +1659,32 @@ WORD deskmain(void)
     /* Take over the desktop */
     wind_set(0, WF_NEWDESK, G.g_screen, 1, 0);
 
-    /* set up current parms */
-    desk_verify(0, FALSE);
-
     /* establish desktop's state from info found in app_start,
      * open windows
      */
     wind_update(BEG_UPDATE);
     cnx_get();
     wind_update(END_UPDATE);
+
+#if CONF_WITH_BLITTER
+    /*
+     * we now have the blitter state from EMUDESK.INF, so we can call Blitmode()
+     */
+    if (blitter_is_present)
+        Blitmode(G.g_blitter?1:0);
+#endif
+
     men_update();
+
+    /* menu is initialised - display menu bar & set mouse to arrow */
+    wind_update(BEG_UPDATE);
+    menu_bar(menutree, 1);
+    desk_wait(FALSE);
+    wind_update(END_UPDATE);
 
     /* get ready for main loop */
     flags = MU_BUTTON | MU_MESAG | MU_KEYBD;
     done = FALSE;
-
-    /* turn mouse on */
-    desk_wait(FALSE);
 
     /* enable graphical critical error handler */
     enable_ceh = TRUE;
@@ -1625,19 +1703,22 @@ WORD deskmain(void)
 
         /* handle keybd message */
         if (ev_which & MU_KEYBD)
-            done = hndl_kbd(kret);
+            if (hndl_kbd(kret))
+                done = TRUE;
 
         /* handle button down */
         if (ev_which & MU_BUTTON)
-            done = hndl_button(bret, mx, my, button, kstate);
+            if (hndl_button(bret, mx, my, button, kstate))
+                done = TRUE;
 
         /* handle system message */
         while (ev_which & MU_MESAG)
         {
-            done = hndl_msg();
-            /* use quick-out to clean out all messages */
             if (done)
                 break;
+            if (hndl_msg())
+                done = TRUE;
+            /* use quick-out to clean out all messages */
             ev_which = evnt_multi(MU_MESAG | MU_TIMER, 0x02, 0x01, 0x01,
                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                 G.g_rmsg, 0, 0,

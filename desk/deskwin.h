@@ -47,7 +47,8 @@
 /*
  * flags in w_flags below
  */
-#define WN_DESKTOP      0x01                /* the desktop pseudo-window */
+#define WN_DESKTOP      0x0001              /* the desktop pseudo-window */
+#define WN_REBUILD      0x8000              /* this window needs rebuilding */
 
 
 /*
@@ -57,7 +58,7 @@ typedef struct _windnode WNODE;
 struct _windnode
 {
         WNODE           *w_next;            /* -> next 'highest' window */
-        WORD            w_flags;
+        UWORD           w_flags;                /* see above */
         WORD            w_id;                   /* window handle id #   */
         WORD            w_obid;                 /* desktop object id    */
         WORD            w_root;                 /* pseudo root ob. in   */
@@ -67,7 +68,7 @@ struct _windnode
         WORD            w_pncol;                /* physical # of cols   */
         WORD            w_pnrow;                /* physical # of rows   */
         WORD            w_vnrow;                /* virtual # of rows    */
-        PNODE           *w_path;
+        PNODE           w_pnode;                /* now embedded         */
         BYTE            w_name[LEN_ZPATH+2];    /* allow for leading & trailing spaces */
 /*
  * the following array must be large enough to hold the sprintf-formatted
@@ -81,7 +82,7 @@ struct _windnode
 
 /* Prototypes: */
 void win_view(WORD vtype, WORD isort);
-void win_start(void);
+int win_start(void);
 void win_free(WNODE *thewin);
 WNODE *win_alloc(WORD obid);
 WNODE *win_find(WORD wh);

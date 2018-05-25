@@ -63,17 +63,6 @@
 #define memsize(wdwidth,h,nplanes)  ((LONG)(wdwidth)*(h)*(nplanes)*2)
 
 /*
- * the minimum menu/alert buffer size
- *
- * in the documentation for older versions of Atari TOS, it's said to be
- * one-quarter of the screen size, but in fact TOS uses 8192 bytes rather
- * than 8000.  this difference shows up when running QED in medium res:
- * the space required for the largest menu item is 8160 bytes, and there
- * are no menu droppings under e.g. Atari TOS 1.04.
- */
-#define MIN_MENU_BUFFER_SIZE    (8*1024)    /* 1/4 of 32kB */
-
-/*
  * the following specify the maximum dimensions of a form_alert, in
  * characters, derived by trial.  note that the actual maximum height
  * is 78 pixels (for 8-pixel chars) and 150 pixels (for 16-pixel chars),
@@ -81,6 +70,27 @@
  */
 #define MAX_ALERT_WIDTH  50     /* includes worst-case screen alignment */
 #define MAX_ALERT_HEIGHT 10
+#define MAX_ALERT_CHARS (MAX_ALERT_WIDTH*MAX_ALERT_HEIGHT)
+
+/*
+ * the following specify the maximum allowed dimensions of a drop-down
+ * menu, in characters.  these are somewhat arbitrary, but were large
+ * enough for EmuDesk itself at the time this was originally committed.
+ * they were subsequently increased to handle the menus in the French
+ * version of AtariWorks.
+ */
+#define MAX_MENU_WIDTH  32
+#define MAX_MENU_HEIGHT 20
+#define MAX_MENU_CHARS  (MAX_MENU_WIDTH*MAX_MENU_HEIGHT)
+
+/*
+ * the menu/alert buffer size, in characters
+ */
+#if (MAX_MENU_CHARS > MAX_ALERT_CHARS)
+# define MENU_BUFFER_SIZE   MAX_MENU_CHARS
+#else
+# define MENU_BUFFER_SIZE   MAX_ALERT_CHARS
+#endif
 
 GLOBAL WORD  intout[45];
 GLOBAL WORD  ptsout[12];
@@ -89,8 +99,8 @@ GLOBAL WORD  gl_moff;                /* counting semaphore   */
                                      /*  >  0 implies OFF    */
 
 static FDB   gl_tmp;
-static LONG  old_mcode;
-static LONG  old_bcode;
+static PFVOID old_mcode;
+static PFVOID old_bcode;
 static LONG  gl_mlen;
 static WORD  gl_graphic;
 
@@ -99,36 +109,17 @@ static WORD  gl_graphic;
 static void  g_v_opnwk(WORD *pwork_in, WORD *phandle, WS *pwork_out );
 
 
-static LONG form_alert_bufsize(void)
-{
-    int w = MAX_ALERT_WIDTH * gl_wchar;
-    int h = MAX_ALERT_HEIGHT * gl_hchar;
-
-    if (w > gl_width)       /* e.g. max size form alert in ST low */
-        w = gl_width;
-
-    return (LONG)h * w * gl_nplanes / 8;
-}
-
-/* this function calculates the size of the menu/alert screen buffer.
- * as in older versions of Atari TOS, we use a value of one-quarter of
- * the screen size, with adjustment upwards if necessary to allow for
- * both the defined minimum buffer size and for the maximum size of
- * form alert.
+/*
+ * this function calculates the size of the menu/alert screen buffer.
+ * because of the width of some translated menus, we can't use the
+ * original Atari TOS method (1/4 of the screen size).
+ *
+ * note that gl_tmp, gl_mlen are initialised as a side effect
  */
 static ULONG gsx_mcalc(void)
 {
-    LONG mem;
-
-    gsx_fix(&gl_tmp, 0x0L, 0, 0);           /* store screen info    */
-    gl_mlen = memsize(gl_tmp.fd_wdwidth,gl_tmp.fd_h,gl_tmp.fd_nplanes) / 4;
-
-    if (gl_mlen < MIN_MENU_BUFFER_SIZE)
-        gl_mlen = MIN_MENU_BUFFER_SIZE;
-
-    mem = form_alert_bufsize();
-    if (gl_mlen < mem)
-        gl_mlen = mem;
+    gsx_fix(&gl_tmp, NULL, 0, 0);           /* store screen info    */
+    gl_mlen = (LONG)MENU_BUFFER_SIZE * gl_wchar * gl_hchar * gl_nplanes / 8;
 
     return(gl_mlen);
 }
@@ -140,21 +131,21 @@ void gsx_malloc(void)
     ULONG   mlen;
 
     mlen = gsx_mcalc();                     /* need side effects now     */
-    gl_tmp.fd_addr = (LONG)dos_alloc_anyram(mlen);
+    gl_tmp.fd_addr = dos_alloc_anyram(mlen);
 }
 
 
 
 void gsx_mfree(void)
 {
-    dos_free((void *)gl_tmp.fd_addr);
+    dos_free(gl_tmp.fd_addr);
 }
 
 
 
 void gsx_mret(LONG *pmaddr, LONG *pmlen)
 {
-     *pmaddr = gl_tmp.fd_addr;
+     *pmaddr = (LONG)gl_tmp.fd_addr;
      *pmlen = gl_mlen;
 }
 
@@ -219,7 +210,7 @@ void ratexit(void)
 }
 
 
-static void gsx_setmb(PFVOID boff, PFVOID moff, LONG *pdrwaddr)
+static void gsx_setmb(PFVOID boff, PFVOID moff, PFVOID *pdrwaddr)
 {
     i_ptr( boff );
     gsx_ncode(BUT_VECX, 0, 0);
@@ -343,7 +334,7 @@ static void bb_set(WORD sx, WORD sy, WORD sw, WORD sh, WORD *pts1, WORD *pts2,
     pts2[2] = sw - 1;
     pts2[3] = sh - 1 ;
 
-    gsx_fix(pfd, 0L, 0, 0);
+    gsx_fix(pfd, NULL, 0, 0);
     vro_cpyfm(S_ONLY, ptsin, psrc, pdst);
     gsx_mon();
 }
@@ -436,6 +427,26 @@ WORD gsx_char(void)
         return(intout[0]);
     else
         return(0);
+}
+
+
+
+/*
+ * Set the VDI's mouse cursor coordinates
+ *
+ * This is used by the appl_tplay() code in AES to set the VDI mouse
+ * coordinates to the same position that the playback code has set
+ * the mouse.  This avoids sudden 'jumps' in mouse position at the end
+ * of playback, or when the desktop restarts.
+ */
+void gsx_setmousexy(WORD x, WORD y)
+{
+    intin[0] = 1;
+    intin[1] = 2;
+    gsx_ncode(SET_INPUT_MODE, 0, 2);    /* sample mode */
+    ptsin[0] = x;
+    ptsin[1] = y;
+    gsx_ncode(LOCATOR_INPUT, 1, 0);     /* vsm_locator() */
 }
 
 

@@ -3,7 +3,7 @@
  *
  * Copyright 1982 by Digital Research Inc.  All rights reserved.
  * Copyright 1999 by Caldera, Inc. and Authors:
- * Copyright 2002-2016 The EmuTOS development team
+ * Copyright 2002-2017 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -1080,7 +1080,7 @@ put_pix(void)
     /* co-ordinates can wrap, but cannot write outside screen,
      * alternatively this could check against v_bas_ad+vram_size()
      */
-    if (addr < (UWORD*)v_bas_ad || addr >= get_start_addr(v_hz_rez, v_vt_rez)) {
+    if (addr < (UWORD*)v_bas_ad || addr >= get_start_addr(V_REZ_HZ, V_REZ_VT)) {
         return;
     }
     color = INTIN[0];           /* device dependent encoded color bits */

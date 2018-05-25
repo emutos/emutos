@@ -599,7 +599,7 @@ static FCB *ixsnext(DTAINFO *dt)
         bufend = buf + dmd->m_recsiz;
         for (fcb = (FCB *)(buf+offset); fcb < (FCB *)bufend; fcb++) {
             if (fcb->f_name[0] == 0x00)     /* never used, so must be end */
-                break;
+                return NULL;
             if ((found = match(name,fcb->f_name)))
                 break;
         }

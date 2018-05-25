@@ -1,14 +1,9 @@
 AES/VDI/Line-A bugs:
-- In "Patience" game, all the dialogs (quit, start new game)
-  show the button that was selected last time, as still selected,
-  and it needs to be unselected to use the dialog.
-- Because EmuTOS doesn't take outline into account in text extents
-  calculation, the right side of outline characters are clipped
-  e.g. in "LaserChess", "Diamond miner" & "Minigolf" games,
-  and in vditext tester:
+- The right side of outline characters are clipped e.g. in "LaserChess",
+  "Diamond miner" & "Minigolf" games, and in vditext tester:
   http://sourceforge.net/mailarchive/message.php?msg_id=29276993
-- Game result texts in "Sherlock" game are positioned wrong,
-  they overlap vertically.
+  This is due to a bug somewhere in the ugly text_blt() assembler
+  function in vdi_tblit.S.
 - Thick arcs going partly outside of screen have incorrectly
   drawn pixels at top of screen in vdiline tester.
 - In "MathMaze" and "The Ultimate Minesweeper", game win and score
@@ -17,6 +12,11 @@ AES/VDI/Line-A bugs:
   because clc_flit() function does it for VDI (where perimeter
   is drawn separately).  It is visible e.g. in "Japlish" game.
 
+Desktop bugs:
+- Sometimes, if ^C is pressed during a "Show file" operation, the menu
+  may subsequently refuse to drop down, and a reboot is required to
+  fix the situation.  This will be fixed in the next release.
+
 Video problems:
 - Omega's XiTec presentations "swing.prg" throws privilege exception
   on exit.  Both TOS v3 & EmuTOS survive that OK, but in EmuTOS both
@@ -24,19 +24,10 @@ Video problems:
   is missing videomode & mouse reset.
 
 Atari Falcon / TOS v4 compatibility bugs:
-- EmuTOS doesn't update mouse clip rect or limits when Falcon program
-  changes resolution with VsetScreen(). If one doesn't start Chainz,
-  Jewelz or Sweety Things games from large enough (640x480 VGA)
-  resolution, mouse is constrained in them to upper left corner of
-  screen.
 - Escape Paint icons don't show in image operations window and their
   place in toolbar window is inverted on mouse click.
 - Falcon FalcAMP button icons aren't visible as EmuTOS doesn't support
   new style RSC files with CICONs.
-
-Other problems:
-- Spectrum512 drawing program gives address error on XBios Kbdvbase()
-  return value handling.
 
 Problems that also occur in Atari TOS:
 - VDI: when drawing a wide polyline with squared ends and more than one
@@ -47,8 +38,6 @@ Problems that also occur in Atari TOS:
   part of the circle that joins the end segment to the previous one.
 
 Links to programs listed above:
-- Chainz, Jewelz, Sweety Things:
-  http://paradize.final-memory.org/games.shtml
 - Escape Paint:
   http://www.pouet.net/prod.php?which=25328
 - FalcAMP:
@@ -56,16 +45,12 @@ Links to programs listed above:
 - Japlish:
   http://www.ntrautanen.fi/marko/arkisto.atari.org/sivut/menu_pelit.htm
 - Minigolf (GFA):
-  http://koti.mbnet.fi/tammat/src/minigolf.tar.gz
-- Patience (older version):
-  http://www.umich.edu/~archive/atari/Games/Cards/patience.lzh
-- Sherlock:
-  http://www.umich.edu/~archive/atari/Games/Adventure/sherlock.arc
+  http://eerott.mbnet.fi/hatari/sources/minigolf.zip
 - Swing:
   http://www.pouet.net/prod.php?which=52370
 - The Ultimate Minesweeper:
   http://www.pouet.net/prod.php?which=28904
-- Spectrum512:
-  http://www.atarimania.com/utility-atari-st-spectrum-512_22312.html
+- VDI line/text tester:
+  http://eerott.mbnet.fi/hatari/programs.shtml#vditest
 
 (Links missing to: mathmaze, laserchess, diamondminer.)

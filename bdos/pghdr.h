@@ -2,7 +2,7 @@
  * pghdr.h - header file for program loaders, 'size' pgms, etc.
  *
  * Copyright (C) 2001 Lineo, Inc.
- * Copyright (C) 2015 The EmuTOS development team
+ * Copyright (C) 2015-2017 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -11,8 +11,7 @@
 #ifndef PGHDR_H
 #define PGHDR_H
 
-#define PGMHDR01        struct  pgmhdr01
-PGMHDR01
+typedef struct
 {
         /*  magic number is already read  */
         LONG    h01_tlen ;      /*  length of text segment              */
@@ -22,10 +21,9 @@ PGMHDR01
         LONG    h01_res1 ;      /*  reserved - always zero              */
         ULONG   h01_flags ;     /*  flags                               */
         WORD    h01_abs ;       /*  not zero if no relocation           */
-} ;
+} PGMHDR01;
 
-#define PGMINFO         struct  pgminfo
-PGMINFO
+typedef struct
 {
         LONG    pi_tpalen ;             /*  length of tpa area          */
         BYTE    *pi_tbase ;             /*  start addr of text seg      */
@@ -35,6 +33,6 @@ PGMINFO
         BYTE    *pi_bbase ;             /*  start addr of bss  seg      */
         LONG    pi_blen ;               /*  length of bss  seg          */
         LONG    pi_slen ;               /*  length of symbol table      */
-} ;
+} PGMINFO;
 
 #endif /* PGHDR_H */

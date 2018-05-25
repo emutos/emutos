@@ -404,7 +404,7 @@ static WORD fs_newdir(BYTE *fpath, BYTE *pspec, OBJECT *tree, WORD *pcount)
      */
     ob_draw(tree, FSDIRECT, MAX_DEPTH);
     if (!fs_active(fpath, pspec, pcount))
-        return FALSE;
+        return FALSE;           /* e.g. path does not exist */
 
     fs_format(tree, 0, *pcount);
 
@@ -623,15 +623,24 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
             newlist = FALSE;
             if (!fs_newdir(locstr, mask, tree, &count)) /* error reading dir */
             {
+                /*
+                 * if path was changed, reset it; otherwise initial
+                 * path was was wrong, so set it to the root of the
+                 * current drive.  retry in either case.
+                 */
+                newlist = TRUE;                     /* make it retry */
                 if (strcmp(locstr,locold) != 0)     /* path was changed */
                 {                                   /* so try to recover */
                     strcpy(locstr,locold);
                     select_drive(tree,get_drive(locstr),TRUE);
-                    newlist = TRUE;
+                }
+                else
+                {
+                    sprintf(locstr,"%c:\\%s",'A'+dos_gdrv(),mask);
+                    strcpy(locold,locstr);
                 }
             }
-            else
-                strcpy(locold,locstr);
+            strcpy(locold,locstr);
         }
 
         value = 0;

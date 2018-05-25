@@ -21,8 +21,13 @@ emutosuk.prg - English (PAL)
 emutosus.prg - English (NTSC)
 
 The following optional files are also supplied:
+emucurs.rsc - modifiable mouse cursors for the AES/desktop
+emucurs.def - definition file for the above
 emuicon.rsc - contains additional icons for the desktop
 emuicon.def - definition file for the above
+
+Note that the emuicon.rsc file format differs from deskicon.rsc used by later
+versions of the Atari TOS desktop.
 
 Notes:
 - these versions are compatible with any Atari hardware (except the FireBee)

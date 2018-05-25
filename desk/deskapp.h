@@ -125,6 +125,9 @@ typedef struct
     BYTE cs_mnuclick;           /* Drop down menu click mode */
     BYTE cs_timefmt;            /* Time format */
     BYTE cs_datefmt;            /* Date format */
+    BYTE cs_blitter;            /* Blitter enabled */
+    BYTE cs_appdir;             /* Appl dir is default for non-installed apps */
+    BYTE cs_fullpath;           /* Full path for arg to non-installed apps */
     WSAVE cs_wnode[NUM_WNODES]; /* window save info */
 } CSAVE;
 
@@ -141,6 +144,6 @@ void app_save(WORD todisk);
 void app_blddesk(void);
 ANODE *app_afind_by_id(WORD obid);
 ANODE *app_afind_by_name(WORD atype, WORD ignore, BYTE *pspec, BYTE *pname, WORD *pisapp);
-void nomem_alert(void);
+void nomem_alert(void) NORETURN;
 
 #endif  /* _DESKAPP_H */

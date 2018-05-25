@@ -3,7 +3,7 @@
  *
  * This file provides a place to centralise the desktop configuration.
  *
- * Copyright (C) 2011-2016 The EmuTOS development team
+ * Copyright (C) 2011-2017 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows
@@ -31,8 +31,6 @@
 
 #define WOBS_START  (NUM_WNODES+2)  /* first desktop item object within g_screen[] */
 #define MIN_WOBS    128             /* minimum number of desktop item objects */
-
-#define NUM_PNODES  (NUM_WNODES+1)  /* one more than windows for unopen disk copy */
 
 #define MAX_OBS     60              /* max number of objects that can be dragged */
 

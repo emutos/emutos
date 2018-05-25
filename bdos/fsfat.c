@@ -8,15 +8,14 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
+/* #define ENABLE_KDEBUG */
 
 #include "config.h"
 #include "portab.h"
 #include "asm.h"
 #include "fs.h"
 #include "gemerror.h"
-
-
+#include "kprint.h"
 
 /*
 **  cl2rec -
@@ -61,7 +60,7 @@ void clfix(CLNO cl, CLNO link, DMD *dm)
     /*
      * handle 12-bit FAT
      */
-    if (cl & 1)
+    if (IS_ODD(cl))
     {
         link = link << 4;
         mask = 0x000f;
@@ -138,7 +137,7 @@ CLNO getrealcl(CLNO cl, DMD *dm)
 
     swpw(f);
 
-    if (cl & 1)
+    if (IS_ODD(cl))
         cl = f >> 4;
     else
         cl = f & 0x0fff;
@@ -169,6 +168,74 @@ CLNO getclnum(CLNO cl, OFD *of)
 
 
 /*
+ * findfree16 - fast scan of FAT16 filesystem to find first free cluster
+ *
+ * returns cluster number, or 0 if no free clusters
+ */
+static CLNO findfree16(DMD *dm)
+{
+    int recnum, offset;
+    CLNO clnum;
+    char *buf;
+
+    for (clnum = 2; clnum < dm->m_numcl+2; )
+    {
+        /*
+         * get the next FAT record
+         */
+        recnum = (clnum * sizeof(CLNO)) >> dm->m_rblog;
+        offset = (clnum * sizeof(CLNO)) & dm->m_rbm;
+        buf = getrec(recnum, dm->m_fatofd, 0);
+
+        /*
+         * scan the FAT record, looking for a free slot
+         */
+        for ( ; (offset < dm->m_recsiz) && (clnum < (dm->m_numcl+2)); offset += sizeof(CLNO), clnum++)
+        {
+            if (*(CLNO *)(buf+offset) == 0)
+                return clnum;
+        }
+    }
+
+    return 0;
+}
+
+
+/*
+ * findfree - scan filesystem to find next free cluster
+ *
+ * returns cluster number, or 0 if no free clusters
+ */
+static CLNO findfree(CLNO cl, DMD *dm)
+{
+    CLNO i;
+
+    /*
+     * fast scan for first free cluster on FAT16 filesystem
+     */
+    if ((cl == 0) && dm->m_16)
+        return findfree16(dm);
+
+    /*
+     * handle FAT12 filesystems, or subsequent scans on FAT16
+     *
+     * the following code carefully avoids allowing overflow in CLNO variables
+     */
+    if (cl < 2)
+        cl = 2;     /* start search at first or current cluster */
+    for (i = 0; i < dm->m_numcl; i++, cl++) /* look at every cluster once */
+    {
+        if (!getrealcl(cl,dm))      /* check for empty cluster */
+            return cl;
+        if (cl == dm->m_numcl+1)    /* wrap at max cluster num */
+            cl = 1;
+    }
+
+    return 0;
+}
+
+
+/*
 **  nextcl -
 **      get the cluster number which follows the cluster indicated in the curcl
 **      field of the OFD, and place it in the OFD.
@@ -181,8 +248,6 @@ CLNO getclnum(CLNO cl, OFD *of)
 int nextcl(OFD *p, int wrtflg)
 {
     DMD     *dm;
-    CLNO    i;
-    CLNO    rover;
     CLNO    cl, cl2;                                /*  M01.01.03   */
 
     cl = p->o_curcl;
@@ -195,7 +260,6 @@ int nextcl(OFD *p, int wrtflg)
     else if (!p->o_dnode)       /* if no dir node, must be FAT/root */
     {
         cl2 = cl + 1;
-        goto retcl;             /* will be able to omit this when we get rid of negative clusters ... */
     }
     else
     {
@@ -204,36 +268,23 @@ int nextcl(OFD *p, int wrtflg)
 
     if (wrtflg && endofchain(cl2))  /* end of file, allocate new clusters */
     {
-        /* the following code carefully avoids allowing overflow in CLNO variables */
-        rover = (cl < 2) ? 2 : cl;  /* start search at first or current cluster */
-        for (i = 0; i < dm->m_numcl; i++, rover++)  /* look at every cluster once */
-        {
-            if (!getrealcl(rover,dm))       /* check for empty cluster */
-                break;
-            if (rover == dm->m_numcl+1)     /* wrap at max cluster num */
-                rover = 1;
-        }
-        cl2 = rover;
-
-        if (i < dm->m_numcl)
-        {
-            clfix(cl2,ENDOFCHAIN,dm);
-            if (cl)
-                clfix(cl,cl2,dm);
-            else
-            {
-                p->o_strtcl = cl2;
-                p->o_flag |= O_DIRTY;
-            }
-        }
-        else
+        cl2 = findfree(cl,dm);
+        if (cl2 == 0)
             return -1;
+
+        clfix(cl2,ENDOFCHAIN,dm);
+        if (cl)
+            clfix(cl,cl2,dm);
+        else
+        {
+            p->o_strtcl = cl2;
+            p->o_flag |= O_DIRTY;
+        }
     }
 
     if (endofchain(cl2))
         return -1;
 
-retcl:
     p->o_curcl = cl2;
     p->o_currec = cl2rec(cl2,dm);
     p->o_curbyt = 0;

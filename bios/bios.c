@@ -58,6 +58,7 @@
 #include "delay.h"
 #include "biosbind.h"
 #include "memory.h"
+#include "nova.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif
@@ -91,6 +92,10 @@ extern void coma_start(void) NORETURN;  /* found in cli/cmdasm.S */
 
 #if CONF_WITH_ALT_RAM
 extern long xmaddalt(UBYTE *start, long size); /* found in bdos/mem.h */
+#endif
+
+#if CONF_WITH_68040_PMMU
+extern void setup_68040_pmmu(void);
 #endif
 
 /*==== Declarations =======================================================*/
@@ -231,6 +236,16 @@ static void bios_init(void)
     KDEBUG(("machine_init()\n"));
     machine_init();     /* initialise machine-specific stuff */
 
+#if CONF_WITH_68040_PMMU
+    /*
+     * Initialize the 68040 MMU
+     * Must be done after TT-RAM memory detection (which takes place
+     * in machine_detect() above).
+     */
+    if (mcpu == 40)
+        setup_68040_pmmu();
+#endif /* CONF_WITH_68040_PMMU */
+
     /* Initialize the BIOS memory management */
     KDEBUG(("bmem_init()\n"));
     bmem_init();
@@ -351,6 +366,18 @@ static void bios_init(void)
     clock_init();       /* init clock */
     KDEBUG(("after clock_init()\n"));
 
+#if CONF_WITH_NOVA 
+    /* Detect and initialize a Nova card, skip if Ctrl is pressed */
+    if (has_nova && !(kbshift(-1) & MODE_CTRL)) {
+        KDEBUG(("init_nova()\n"));
+        if (init_nova()) {
+            set_rez_hacked();
+            font_set_default(-1);   /* set default font */
+            vt52_init();            /* initialize the vt52 console */
+        }
+    }
+#endif
+
 #if CONF_WITH_NLS
     KDEBUG(("nls_init()\n"));
     nls_init();         /* init native language support */
@@ -386,7 +413,7 @@ static void bios_init(void)
 
 #if CONF_WITH_CARTRIDGE
     {
-        WORD save_hz = v_hz_rez, save_vt = v_vt_rez, save_pl = v_planes;
+        WORD save_hz = V_REZ_HZ, save_vt = V_REZ_VT, save_pl = v_planes;
 
         /* Run all boot applications from the application cartridge.
          * Beware: Hatari features a special cartridge which is used
@@ -397,7 +424,7 @@ static void bios_init(void)
         run_cartridge_applications(3); /* Type "Execute prior to bootdisk" */
         KDEBUG(("after run_cartridge_applications()\n"));
 
-        if ((v_hz_rez != save_hz) || (v_vt_rez != save_vt) || (v_planes != save_pl))
+        if ((V_REZ_HZ != save_hz) || (V_REZ_VT != save_vt) || (v_planes != save_pl))
         {
             set_rez_hacked();
             font_set_default(-1);   /* set default font */
@@ -426,7 +453,7 @@ static void bootstrap(void)
     pd = (PD *) trap1_pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, args, default_env);
 
     /* get the TOS executable from the emulator */
-    length = nf_bootstrap( (char*)pd->p_lowtpa + sizeof(PD), (long)pd->p_hitpa - pd->p_lowtpa);
+    length = nf_bootstrap(pd->p_lowtpa + sizeof(PD), pd->p_hitpa - pd->p_lowtpa);
 
     /* free the allocated space if something is wrong */
     if ( length <= 0 )
@@ -666,7 +693,7 @@ void biosmain(void)
 #if WITH_CLI
     if (bootflags & BOOTFLAG_EARLY_CLI) {   /* run an early console */
         PD *pd = (PD *) trap1_pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, "", default_env);
-        pd->p_tbase = (LONG) coma_start;
+        pd->p_tbase = (BYTE *) coma_start;
         pd->p_tlen = pd->p_dlen = pd->p_blen = 0;
         trap1_pexec(PE_GOTHENFREE, "", pd, "");
     }
@@ -683,7 +710,7 @@ void biosmain(void)
         /* start the default (ROM) shell */
         PD *pd;
         pd = (PD *) trap1_pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, "", default_env);
-        pd->p_tbase = (LONG) exec_os;
+        pd->p_tbase = (BYTE *) exec_os;
         pd->p_tlen = pd->p_dlen = pd->p_blen = 0;
         trap1_pexec(PE_GO, "", pd, "");
     }

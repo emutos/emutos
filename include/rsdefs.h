@@ -16,15 +16,15 @@
 typedef struct rshdr
 {
     UWORD   rsh_vrsn;       /* see below */
-    WORD    rsh_object;
-    WORD    rsh_tedinfo;
-    WORD    rsh_iconblk;    /* list of ICONBLKS */
-    WORD    rsh_bitblk;
-    WORD    rsh_frstr;
-    WORD    rsh_string;
-    WORD    rsh_imdata;     /* image data */
-    WORD    rsh_frimg;
-    WORD    rsh_trindex;
+    UWORD   rsh_object;
+    UWORD   rsh_tedinfo;
+    UWORD   rsh_iconblk;    /* list of ICONBLKS */
+    UWORD   rsh_bitblk;
+    UWORD   rsh_frstr;
+    UWORD   rsh_string;
+    UWORD   rsh_imdata;     /* image data */
+    UWORD   rsh_frimg;
+    UWORD   rsh_trindex;
     WORD    rsh_nobs;       /* counts of various structs */
     WORD    rsh_ntree;
     WORD    rsh_nted;
@@ -32,7 +32,7 @@ typedef struct rshdr
     WORD    rsh_nbb;
     WORD    rsh_nstring;
     WORD    rsh_nimages;
-    WORD    rsh_rssize;     /* total bytes in resource */
+    UWORD   rsh_rssize;     /* total bytes in resource */
 } RSHDR;
 
 /* definitions for rsh_vrsn */

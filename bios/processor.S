@@ -35,7 +35,6 @@
 
         .extern _longframe              // If not 0, use long stack frames
         .extern _setup_68030_pmmu
-        .extern _setup_68040_pmmu
 
 
 
@@ -326,14 +325,13 @@ pi_chk040:
         jra     pi_done
 
 m68040:
-#if CONF_WITH_68040_PMMU
-        jsr     setup_68040_pmmu
-        jra     pi_done
-#endif /* CONF_WITH_68040_PMMU */
+// the optional 68040 MMU initialization used to be done here.  it is
+// now done later because we need to know _ramtop first, and that is
+// set later by ttram_detect()
 
 m68060:
 //
-// On a 68040 (if not using the PMMU) or a 68060 (always, at the moment):
+// On a 68040 or a 68060:
 //   disable the PMMU (it might be enabled if we're running as a PRG)
 //   set up the TTRs
 //   clear the caches

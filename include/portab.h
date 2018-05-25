@@ -9,9 +9,10 @@
  */
 
 /*
- * I guess now this file is just badly named. it just contains
- * common macros that were so often in the code that we just have
- * to keep them here.
+ * Warning: This header is included by both EmuTOS code (compiled with
+ * cross-compiler) and native tools such as "bug" (compiled with native
+ * compiler). So it must *not* assume that we are compiling for 68000,
+ * or that pointers are 32-bit.
  */
 
 #ifndef PORTAB_H
@@ -106,6 +107,8 @@ typedef void (*PFVOID)(void);
 #define HIWORD(x) ((UWORD)((ULONG)(x) >> 16))
 #define LOBYTE(x) ((UBYTE)(UWORD)(x))
 #define HIBYTE(x) ((UBYTE)((UWORD)(x) >> 8))
+#define IS_ODD(x) ((x) & 1)
+#define IS_ODD_POINTER(x) IS_ODD((ULONG)(x))
 
 /*
  * The following ARRAY_SIZE() macro is taken from Linux kernel sources.
@@ -126,8 +129,11 @@ typedef void (*PFVOID)(void);
  * Note that the name of this macro is misleading:
  * it actually produces a compilation bug when the parameter is *not zero*
  * However, when the parameter is zero, it evaluates as 0, hence the name.
+ *
+ * Additional "int dummy" added by VRI to avoid warning "struct has no named
+ * members" when compiling with -pedantic.
  */
-#define BUILD_BUG_ON_ZERO(e) (sizeof(struct { int:-!!(e); }))
+#define BUILD_BUG_ON_ZERO(e) (sizeof(struct { int:-!!(e); int dummy; }) & 0)
 
 #if __GNUC_PREREQ(3, 3)
 /* &a[0] degrades to a pointer: a different type from an array */
@@ -173,5 +179,26 @@ typedef WORD WORD_ALIAS MAY_ALIAS;
 typedef ULONG ULONG_ALIAS MAY_ALIAS;
 typedef LONG LONG_ALIAS MAY_ALIAS;
 typedef BYTE *BYTEPTR_ALIAS MAY_ALIAS;
+
+/*
+ * GCC 7 needs special care to avoid warning when using switch/case fallthrough:
+ * warning: this statement may fall through
+ * This warning is generated when -Wimplicit-fallthrough is enabled, which is
+ * the case when compiling with -Wextra (a.k.a -W).
+ *
+ * See documentation of -Wimplicit-fallthrough
+ * https://gcc.gnu.org/onlinedocs/gcc-7.1.0/gcc/Warning-Options.html#index-Wimplicit-fallthrough
+ * https://developers.redhat.com/blog/2017/03/10/wimplicit-fallthrough-in-gcc-7/
+ *
+ * Special comments such as -fallthrough can be put just before a switch label
+ * to disable the warning. But this does not work if there is a #endif between
+ * both.
+ * To avoid any ambiguity, we use the explicit FALLTHROUGH macro.
+ */
+#if __GNUC_PREREQ(7, 1)
+# define FALLTHROUGH __attribute__ ((fallthrough))
+#else
+# define FALLTHROUGH NULL_FUNCTION()
+#endif
 
 #endif /* PORTAB_H */

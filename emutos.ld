@@ -17,12 +17,6 @@
 /* Create a plain binary file, without any header */
 OUTPUT_FORMAT(binary)
 
-/*
- * The system variables have fixed addresses,
- * they live in the 0x380-0x800 region.
- */
-#include "tosvars.ld"
-
 /* The ROM address depends on the target */
 #if defined (MACHINE_AMIGA)
 # define ROM_ORIGIN 0x00fc0000
@@ -38,23 +32,19 @@ OUTPUT_FORMAT(binary)
  * Then our padding tool will eventually report an overflow, with a better
  * diagnostic message than the linker.
  */
-# define ROM_LENGTH 1M /* Maximum size before I/O area */
+#define ROM_LENGTH 1M /* Maximum size before I/O area */
 
 /* Memory regions of a typical Atari computer.
  * Only start addresses matter. Lengths just need to be large enough.
  */
 MEMORY
 {
+    stram : ORIGIN = 0x00000000, LENGTH = 14M
     rom : ORIGIN = ROM_ORIGIN, LENGTH = ROM_LENGTH
-    sysvars : ORIGIN = 0x00000000, LENGTH = 0x800
-    stram : ORIGIN = LENGTH(sysvars), LENGTH = 1M - LENGTH(sysvars)
 #ifdef STATIC_ALT_RAM_ADDRESS
     altram : ORIGIN = STATIC_ALT_RAM_ADDRESS, LENGTH = 1M
 #endif
 }
-
-/* Global symbols */
-sysvars_end = ORIGIN(sysvars) + LENGTH(sysvars);
 
 /* Region used as read/write memory */
 #if CONF_WITH_STATIC_ALT_RAM
@@ -74,33 +64,13 @@ sysvars_end = ORIGIN(sysvars) + LENGTH(sysvars);
 
 SECTIONS
 {
-    /* This section is located as low as possible in ST-RAM.
-     * Variables requiring very low addresses, while being accessible
-     * from user mode, can be put here.
-     * Warning: this area is not cleared at startup.
-     */
-    .lowstram :
+    /* First section in ST-RAM */
+    .first_stram :
     {
-        __low_stram_start = .;
-
-        /* Workaround for bug in GFA Basic 3.51 startup.
-         * Theoretically, we are allowed to put the shifty variable anywhere,
-         * then programs may access it through the pointer present in
-         * OSHEADER. However, by mistake the GFA only reads the low word of
-         * that pointer, and sign-extends it to get the whole address.
-         * Consequently, this can only be correct if shifty is located in the
-         * first 32K of memory.
-         * TOS puts this variable in a region accessible in user mode, so we
-         * do.
-         */
-        _shifty = .; /* reflects the status up/down of mode keys */
-        . += 1; /* UBYTE */
-        ASSERT(ABSOLUTE(_shifty) < 0x8000, "error: bad _shifty address");
-
-        /* Be sure to align this section size */
-        . = ALIGN(4);
-
-        __low_stram_end = .;
+        /* System variables are located at fixed addresses */
+#include "tosvars.ld"
+        . = 0x800; /* Extend sysvars area upto end of supervisor-only RAM */
+        sysvars_end = .;
     } >stram
 
 #if CONF_WITH_STATIC_ALT_RAM
@@ -110,6 +80,31 @@ SECTIONS
         __static_altram_start = .;
     } >altram
 #endif
+
+    /* This section is the internal BIOS stack.
+     * It will *not* be cleared on startup or reset.
+     */
+    .stack :
+    {
+        _stkbot = .;
+        . += 2K;
+        _stktop = .;
+    } >REGION_READ_WRITE
+
+    /* This section is located as low as possible in ST-RAM,
+     * but after evental BIOS stack.
+     * Variables requiring very low addresses, while being accessible
+     * from user mode, can be put here.
+     * Warning: this area is not cleared at startup.
+     */
+    .low_stram :
+    {
+        __low_stram_start = .;
+        obj/lowstram.o(.bss COMMON)
+        __low_stram_end = .;
+        ASSERT(ABSOLUTE(_shifty) < 0x8000, "error: bad _shifty address");
+        ASSERT((ABSOLUTE(_dskbuf) & 3) == 0, "error: bad _dskbuf alignment");
+    } >stram
 
     /* The TEXT segment contains EmuTOS executable code and read-only data.
      * It is always read-only, so it can safely live in ROM.
@@ -157,16 +152,6 @@ SECTIONS
        */
       AT>REGION_READ_WRITE
 #endif
-
-    /* This section is the internal BIOS stack.
-     * It will *not* be cleared on startup or reset.
-     */
-    .stack :
-    {
-        _stkbot = .;
-        . += 2K;
-        _stktop = .;
-    } >REGION_READ_WRITE
 
     /* This section is always the last one stored in ST-RAM.
      * It is usually empty, just used to calculate the last address

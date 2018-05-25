@@ -75,11 +75,10 @@ typedef struct moblk
 
 /*      WINDLIB.H       05/05/84 - 01/26/85     Lee Lorenzen            */
 
-#define VF_INUSE    0x0001
-#define VF_BROKEN   0x0002
-#define VF_INTREE   0x0004
-#define VF_SUBWIN   0x0008
-#define VF_KEEPWIN  0x0010
+#define VF_INUSE    0x0001      /* the window has been created */
+#define VF_BROKEN   0x0002      /* the window is overlapped, can't be blitted */
+#define VF_INTREE   0x0004      /* the window is currently open */
+
 
 typedef struct window
 {
@@ -152,6 +151,12 @@ typedef struct window
 #define WA_RTPAGE 5
 #define WA_LFLINE 6
 #define WA_RTLINE 7
+
+                                /* wind_update()        */
+#define END_UPDATE 0
+#define BEG_UPDATE 1
+#define END_MCTRL  2
+#define BEG_MCTRL  3
 
 
 typedef struct sh_struct

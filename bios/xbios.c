@@ -839,16 +839,24 @@ static WORD xbios_2e(WORD op, WORD start, WORD count, UBYTE *buffer)
 
 /*
  * xbios_40 - (Blitmode)
- *
- * this is a minimalist implementation: we ignore any requests to use
- * the blitter, we just return hardware status
  */
 static WORD blitmode(WORD mode)
 {
-    if (HAS_BLITTER)
-        return 0x0002;
-    else
-        return 0x0000;
+#if CONF_WITH_BLITTER
+    WORD status = 0x0000;
+
+    if (has_blitter)
+    {
+        status = blitter_is_enabled ? 0x0003 : 0x0002;
+
+        if (mode != -1)
+            blitter_is_enabled = mode & 1;
+    }
+
+    return status;
+#else
+    return 0x0000;
+#endif
 }
 
 #if DBG_XBIOS

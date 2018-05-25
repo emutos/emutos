@@ -2,7 +2,7 @@
  * vdidef.h - Definitions for virtual workstations
  *
  * Copyright 1999 by Caldera, Inc.
- * Copyright 2005-2016 The EmuTOS development team.
+ * Copyright 2005-2017 The EmuTOS development team.
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -18,9 +18,13 @@
 
 #define HAVE_BEZIER 0           /* switch on bezier capability */
 
-/* GEMDOS function numbers */
-#define X_MALLOC 0x48
-#define X_MFREE 0x49
+/* GEMDOS function numbers and parameters */
+#define X_CRAWIO    0x06        /* raw i/o to standard input/output */
+#define X_CCONWS    0x09        /* write null terminated string to std output */
+#define X_MXALLOC   0x44
+#define X_MXGLOBAL  (2<<4)
+#define X_MALLOC    0x48
+#define X_MFREE     0x49
 
 
 /* different maximum settings */
@@ -72,6 +76,14 @@
 #define MD_TRANS    2
 #define MD_XOR      3
 #define MD_ERASE    4
+
+/* text style bits: for vwk->style (and also lineA variable STYLE) */
+#define F_THICKEN   1
+#define F_LIGHT     2
+#define F_SKEW      4
+#define F_UNDER     8
+#define F_OUTLINE   16
+#define F_SHADOW    32
 
 
 /*
@@ -202,7 +214,7 @@ extern WORD TERM_CH;
 
 /* Line-A Bit-Blt / Copy raster form variables */
 extern WORD COPYTRAN;
-extern WORD multifill;
+extern WORD MFILL;
 
 /* referenced by Line-A flood fill */
 extern Vwk *CUR_WORK;           /* pointer to currently-open virtual workstation */
@@ -229,11 +241,8 @@ void put_pix(void);
 
 
 /* Assembly Language Support Routines, ignore workstation arg */
-void text_blt(Vwk * vwk);
+void text_blt(void);
 void rectfill (Vwk * vwk, Rect * rect);
-
-
-WORD gloc_key(void);
 
 BOOL clip_line(Vwk * vwk, Line * line);
 void arb_corner(Rect * rect);
@@ -245,7 +254,7 @@ Vwk * get_vwk_by_handle(WORD);
 UWORD * get_start_addr(const WORD x, const WORD y);
 void set_LN_MASK(Vwk *vwk);
 void st_fl_ptr(Vwk *);
-void d_justified(Vwk *);
+void gdp_justified(Vwk *);
 
 /* drawing primitives */
 void draw_pline(Vwk * vwk);
@@ -263,14 +272,14 @@ void abline (const Line * line, const WORD wrt_mode, UWORD color);
 void contourfill(const VwkAttrib * attr, const VwkClip *clip);
 
 /* initialization of subsystems */
-void text_init(Vwk *);
+void text_init(void);
 void text_init2(Vwk *);
-void timer_init(Vwk *);
-void vdimouse_init(Vwk *);
+void timer_init(void);
+void vdimouse_init(void);
 void esc_init(Vwk *);
 
-void vdimouse_exit(Vwk *);
-void timer_exit(Vwk *);
+void vdimouse_exit(void);
+void timer_exit(void);
 void esc_exit(Vwk *);
 
 /* all VDI functions */

@@ -3,7 +3,7 @@
  *
  * Copyright 1982 by Digital Research Inc.  All rights reserved.
  * Copyright 1999 by Caldera, Inc. and Authors:
- * Copyright 2002-2016 The EmuTOS development team
+ * Copyright 2002-2017 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -145,7 +145,7 @@ static void do_nothing_int(int u)
  * initially set timer vector to dummy, save old vector
  */
 
-void timer_init(Vwk * vwk)
+void timer_init(void)
 {
     WORD old_sr;
 
@@ -169,7 +169,7 @@ void timer_init(Vwk * vwk)
  * reactivate the old saved vector
  */
 
-void timer_exit(Vwk * vwk)
+void timer_exit(void)
 {
     WORD old_sr;
 

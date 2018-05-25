@@ -148,9 +148,13 @@ struct IDE
 #if IDE_32BIT_XFER
 #define XFERWIDTH   ULONG
 #define xferswap(a) swpw2(a)
+#define ide_get_and_incr(src,dst) asm volatile("move.l (%1),(%0)+" : "=a"(dst): "a"(src), "0"(dst));
+#define ide_put_and_incr(src,dst) asm volatile("move.l (%0)+,(%1)" : "=a"(src): "a"(dst), "0"(src));
 #else
 #define XFERWIDTH   UWORD
 #define xferswap(a) swpw(a)
+#define ide_get_and_incr(src,dst) asm volatile("move.w (%1),(%0)+" : "=a"(dst): "a"(src), "0"(dst));
+#define ide_put_and_incr(src,dst) asm volatile("move.w (%0)+,(%1)" : "=a"(src): "a"(dst), "0"(src));
 #endif
 
 #if CONF_ATARI_HARDWARE
@@ -251,7 +255,13 @@ struct IFINFO {
 
 /* timing stuff */
 
+#ifdef MACHINE_AMIGA
+/* Amiga already provides proper delay at bus level, no need for more */
+#define DELAY_400NS     NULL_FUNCTION()
+#else
 #define DELAY_400NS     delay_loop(delay400ns)
+#endif
+
 #define DELAY_5US       delay_loop(delay5us)
 
 #define SHORT_TIMEOUT   (CLOCKS_PER_SEC/10) /* 100ms */
@@ -435,14 +445,6 @@ void ide_init(void)
 
     if (!has_ide)
         return;
-
-#if CONF_WITH_APOLLO_68080
-    if (is_apollo_68080)
-    {
-        /* Enable Fast IDE (PIO mode 6) */
-        *(volatile UWORD *)0x00dd1020 = 0x8000;
-    }
-#endif
 
 #if CONF_ATARI_HARDWARE && !defined(MACHINE_FIREBEE)
     /* reject 'ghost' interfaces & detect twisted cables */
@@ -718,12 +720,13 @@ static void ide_get_data_32(volatile struct IDE *interface,UBYTE *buffer,ULONG b
 /*
  * get data from IDE device
  */
-static void ide_get_data(volatile struct IDE *interface,UBYTE *buffer,ULONG bufferlen,int need_byteswap)
+static void ide_get_data(volatile struct IDE *interface,UBYTE *buffer,UWORD numsecs,int need_byteswap)
 {
+    ULONG bufferlen = (ULONG)numsecs * SECTOR_SIZE;
     XFERWIDTH *p = (XFERWIDTH *)buffer;
     XFERWIDTH *end = (XFERWIDTH *)(buffer + bufferlen);
 
-    KDEBUG(("ide_get_data(%p, %p, %lu, %d)\n", interface, buffer, bufferlen, need_byteswap));
+    KDEBUG(("ide_get_data(%p, %p, %u, %d)\n", interface, buffer, numsecs, need_byteswap));
 
 #if CONF_WITH_APOLLO_68080
     if (is_apollo_68080)
@@ -736,13 +739,50 @@ static void ide_get_data(volatile struct IDE *interface,UBYTE *buffer,ULONG buff
     if (need_byteswap) {
         while (p < end) {
             XFERWIDTH temp;
+
+            /* Unroll the loop 4 times, transferring 8/16 bytes in a row. */
+            temp = interface->data;
+            xferswap(temp);
+            *p++ = temp;
+
+            temp = interface->data;
+            xferswap(temp);
+            *p++ = temp;
+
+            temp = interface->data;
+            xferswap(temp);
+            *p++ = temp;
+
             temp = interface->data;
             xferswap(temp);
             *p++ = temp;
         }
     } else {
-        while (p < end)
-            *p++ = interface->data;
+        while (p < end) {
+            /* Unroll the loop 16 times, transferring 32/64 bytes in a row.
+             * We always transfer multiples of SECTOR_SIZE (512 bytes).
+             * Note that the pointer p gets incremented implicitly.
+             */
+            ide_get_and_incr(&(interface->data), p);
+            ide_get_and_incr(&(interface->data), p);
+            ide_get_and_incr(&(interface->data), p);
+            ide_get_and_incr(&(interface->data), p);
+
+            ide_get_and_incr(&(interface->data), p);
+            ide_get_and_incr(&(interface->data), p);
+            ide_get_and_incr(&(interface->data), p);
+            ide_get_and_incr(&(interface->data), p);
+
+            ide_get_and_incr(&(interface->data), p);
+            ide_get_and_incr(&(interface->data), p);
+            ide_get_and_incr(&(interface->data), p);
+            ide_get_and_incr(&(interface->data), p);
+
+            ide_get_and_incr(&(interface->data), p);
+            ide_get_and_incr(&(interface->data), p);
+            ide_get_and_incr(&(interface->data), p);
+            ide_get_and_incr(&(interface->data), p);
+        }
     }
 }
 
@@ -795,9 +835,9 @@ static LONG ide_read(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UWORD count,UB
         rc = E_OK;
         if (status1 & IDE_STATUS_DRQ) {
             if (info->twisted_cable) {
-                ide_get_data((volatile struct IDE *)(((ULONG)interface)+1),buffer,xferlen,need_byteswap);
+                ide_get_data((volatile struct IDE *)(((ULONG)interface)+1),buffer,numsecs,need_byteswap);
             } else {
-                ide_get_data(interface,buffer,xferlen,need_byteswap);
+                ide_get_data(interface,buffer,numsecs,need_byteswap);
             }
         } else {
             rc = EREADF;
@@ -824,21 +864,59 @@ static LONG ide_read(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UWORD count,UB
 /*
  * send data to IDE device
  */
-static void ide_put_data(volatile struct IDE *interface,UBYTE *buffer,ULONG bufferlen,int need_byteswap)
+static void ide_put_data(volatile struct IDE *interface,UBYTE *buffer,UWORD numsecs,int need_byteswap)
 {
+    ULONG bufferlen = (ULONG)numsecs * SECTOR_SIZE;
     XFERWIDTH *p = (XFERWIDTH *)buffer;
     XFERWIDTH *end = (XFERWIDTH *)(buffer + bufferlen);
 
     if (need_byteswap) {
         while (p < end) {
             XFERWIDTH temp;
+
+            /* Unroll the loop 4 times, transferring 8/16 bytes in a row. */
             temp = *p++;
             xferswap(temp);
             interface->data = temp;
+
+            temp = *p++;
+            xferswap(temp);
+            interface->data = temp;
+
+            temp = *p++;
+            xferswap(temp);
+            interface->data = temp;
+
+            temp = *p++;
+            xferswap(temp);
+            interface->data = temp;            
         }
     } else {
-        while (p < end)
-            interface->data = *p++;
+        while (p < end) {
+            /* Unroll the loop 16 times, transferring 32/64 bytes in a row.
+             * We always transfer multiples of SECTOR_SIZE (512 bytes).
+             * Note that the pointer p gets incremented implicitly.
+             */
+            ide_put_and_incr(p, &(interface->data));
+            ide_put_and_incr(p, &(interface->data));
+            ide_put_and_incr(p, &(interface->data));
+            ide_put_and_incr(p, &(interface->data));
+
+            ide_put_and_incr(p, &(interface->data));
+            ide_put_and_incr(p, &(interface->data));
+            ide_put_and_incr(p, &(interface->data));
+            ide_put_and_incr(p, &(interface->data));
+
+            ide_put_and_incr(p, &(interface->data));
+            ide_put_and_incr(p, &(interface->data));
+            ide_put_and_incr(p, &(interface->data));
+            ide_put_and_incr(p, &(interface->data));
+
+            ide_put_and_incr(p, &(interface->data));
+            ide_put_and_incr(p, &(interface->data));
+            ide_put_and_incr(p, &(interface->data));
+            ide_put_and_incr(p, &(interface->data));
+        }
     }
 }
 
@@ -888,9 +966,9 @@ static LONG ide_write(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UWORD count,U
         status1 = IDE_READ_STATUS();    /* status, clear pending interrupt */
         if (status1 & IDE_STATUS_DRQ) {
             if (info->twisted_cable) {
-                ide_put_data((volatile struct IDE *)(((ULONG)interface)+1),buffer,xferlen,need_byteswap);
+                ide_put_data((volatile struct IDE *)(((ULONG)interface)+1),buffer,numsecs,need_byteswap);
             } else {
-                ide_put_data(interface,buffer,xferlen,need_byteswap);
+                ide_put_data(interface,buffer,numsecs,need_byteswap);
             }
         } else {
             rc = EWRITF;
@@ -938,7 +1016,7 @@ LONG ide_rw(WORD rw,LONG sector,WORD count,UBYTE *buf,WORD dev,BOOL need_byteswa
      * word-aligned, and the processor is a 68000 or 68010
      */
 #ifndef __mcoldfire__
-    if (((LONG)buf & 1L) && (mcpu < 20))
+    if (IS_ODD_POINTER(buf) && (mcpu < 20))
     {
         if (maxsecs_per_io > DSKBUF_SECS)
             maxsecs_per_io = DSKBUF_SECS;

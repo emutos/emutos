@@ -3,7 +3,7 @@
  *
  * Copyright 1982 by Digital Research Inc.  All rights reserved.
  * Copyright 1999 by Caldera, Inc. and Authors:
- * Copyright 2002-2016 by The EmuTOS development team
+ * Copyright 2002-2017 by The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -14,23 +14,16 @@
 #include "config.h"
 #include "portab.h"
 #include "asm.h"
+#include "biosbind.h"
 #include "xbiosbind.h"
+#include "aespub.h"
+#include "obdefs.h"
+#include "gsxdefs.h"
 #include "vdi_defs.h"
 #include "../bios/tosvars.h"
 #include "../bios/lineavars.h"
 #include "kprint.h"
 
-
-
-/* mouse related vectors (linea variables in bios/lineavars.S) */
-
-extern void     (*user_but)(void);      /* user button vector */
-extern void     (*user_cur)(void);      /* user cursor vector */
-extern void     (*user_mot)(void);      /* user motion vector */
-
-/* call the vectors from C */
-extern void call_user_but(WORD status);
-extern void call_user_wheel(WORD wheel_number, WORD wheel_amount);
 
 /* Mouse / sprite structure */
 typedef struct Mcdb_ Mcdb;
@@ -40,25 +33,28 @@ struct Mcdb_ {
         WORD    planes;
         WORD    bg_col;
         WORD    fg_col;
-        UWORD   mask[16];
-        UWORD   data[16];
+        UWORD   maskdata[32];   /* mask & data are interleaved */
 };
+
+/* mouse related linea variables in bios/lineavars.S */
+extern void     (*user_but)(void);      /* user button vector */
+extern void     (*user_cur)(void);      /* user cursor vector */
+extern void     (*user_mot)(void);      /* user motion vector */
+extern Mcdb     mouse_cdb;              /* storage for mouse sprite */
+
+/* call the vectors from C */
+extern void call_user_but(WORD status);
+extern void call_user_wheel(WORD wheel_number, WORD wheel_amount);
 
 /* prototypes */
 static void cur_display(Mcdb *sprite, MCS *savebuf, WORD x, WORD y);
 static void cur_replace(MCS *savebuf);
 static void vb_draw(void);             /* user button vector */
 
+/* prototypes for functions in vdi_asm.S */
 extern void mouse_int(void);    /* mouse interrupt routine */
 extern void wheel_int(void);    /* wheel interrupt routine */
 extern void mov_cur(void);      /* user button vector */
-
-/* global line-A storage area for mouse form definition */
-extern Mcdb mouse_cdb;
-
-extern WORD HIDE_CNT;
-extern WORD MOUSE_BT;
-extern WORD GCURX, GCURY;
 
 
 /* FIXME: should go to linea variables */
@@ -66,10 +62,9 @@ void     (*user_wheel)(void);   /* user provided mouse wheel vector */
 PFVOID old_statvec;             /* original IKBD status packet routine */
 
 
-
-
+#if !WITH_AES
 /* Default Mouse Cursor Definition */
-static const Mcdb arrow_cdb = {
+static const MFORM arrow_mform = {
     1, 0, 1, 0, 1,
     /* background definition */
     {
@@ -110,6 +105,9 @@ static const Mcdb arrow_cdb = {
         0x0000  /* %0000000000000000 */
     }
 };
+#define default_mform() &arrow_mform
+#endif
+
 
 /*
  * do_nothing - doesn't do much  :-)
@@ -183,30 +181,129 @@ static void hide_cur(void)
 
 
 
-/* LOCATOR_INPUT: implements vrq_locator()/vsm_locator() */
+/*
+ * gloc_key - get locator key
+ *
+ * returns:  0    - nothing
+ *           1    - button pressed
+ *                  TERM_CH = 16 bit char info
+ *           2    - coordinate info
+ *                     X1 = new x
+ *                     Y1 = new y
+ *
+ * The variable cur_ms_stat holds the bitmap of mouse status since the last
+ * interrupt. The bits are
+ *
+ * 0 - 0x01 Left mouse button status  (0=up)
+ * 1 - 0x02 Right mouse button status (0=up)
+ * 2 - 0x04 Reserved
+ * 3 - 0x08 Reserved
+ * 4 - 0x10 Reserved
+ * 5 - 0x20 Mouse move flag (1=moved)
+ * 6 - 0x40 Right mouse button status flag (0=hasn't changed)
+ * 7 - 0x80 Left mouse button status flag  (0=hasn't changed)
+ */
+
+static WORD gloc_key(void)
+{
+    WORD retval = 0;
+    ULONG ch;
+
+    /*
+     * check for mouse button or keyboard key
+     */
+    if (cur_ms_stat & 0xc0) {           /* some button status bits set? */
+        if (cur_ms_stat & 0x40)         /* if bit 6 set,                     */
+            TERM_CH = 0x20;             /* send terminator code for left key */
+        else
+            TERM_CH = 0x21;             /* send terminator code for right key */
+        cur_ms_stat &= 0x23;            /* clear mouse button status (bit 6/7) */
+        retval = 1;                     /* set button pressed flag */
+    } else if (Bconstat(2)) {           /* see if a character present at con */
+        ch = Bconin(2);
+        TERM_CH = (WORD)
+                  (ch >> 8)|            /* scancode down to bit 8-15 */
+                  (ch & 0xff);          /* asciicode to bit 0-7 */
+        retval = 1;                     /* set button pressed flag */
+    }
+
+    /*
+     * check for mouse movement
+     */
+    if (cur_ms_stat & 0x20) {           /* if bit #5 set ... */
+        Point * point = (Point*)PTSIN;
+
+        cur_ms_stat &= ~0x20;   /* clear bit 5 */
+        point->x = GCURX;       /* set X = GCURX */
+        point->y = GCURY;       /* set Y = GCURY */
+        retval += 2;
+    }
+
+    return retval;
+}
+
+
+
+/*
+ * LOCATOR_INPUT: implements vrq_locator()/vsm_locator()
+ *
+ * These functions return the status of the logical 'locator' device.
+ *
+ * vrq_locator() operation in Atari TOS and EmuTOS
+ * -----------------------------------------------
+ * 1. The first call to vrq_locator() always returns immediately: the
+ *    output mouse positions are the same as the input, and the
+ *    terminating character is set to 0x20, indicating the left mouse
+ *    button.
+ * 2. Subsequent calls return when either a keyboard key is pressed, or
+ *    a mouse button is pressed OR released (thus a normal mouse button
+ *    action satisfies TWO calls to vrq_locator()).  The output mouse
+ *    positions are the current positions, and the terminating character
+ *    is the ASCII key pressed, or 0x20 for the left mouse button / 0x21
+ *    for the right.
+ *    As a consequence, pressing the space key twice is indistingishable
+ *    from pressing/releasing the left mouse button, and likewise for
+ *    the exclamation mark and the right mouse button.
+ *
+ * vsm_locator() operation in Atari TOS and EmuTOS
+ * -----------------------------------------------
+ * 1. The first call to vsm_locator() always sets the terminating
+ *    character to 0x20 and CONTRL[4] to 1 (indicating the left mouse
+ *    button).
+ * 2. On every call:
+ *    . if the mouse has been moved, CONTRL[2] is set to 1
+ *    . if a keyboard key is pressed, the terminating character is the
+ *      ASCII value of the key pressed, and CONTRL[4] is set to 1
+ *    . if a mouse button is pressed or released, the terminating
+ *      character is 0x20 for the left button, 0x21 for the right
+ *      button, and CONTRL[4] is set to 1
+ *    . the output mouse psitions are always set to the same as the
+ *      input
+ *
+ * Differences from official Atari documentation
+ * ---------------------------------------------
+ * 1. No special behaviour is described for the first call to
+ *    vrq_locator() or vsm_locator().
+ * 2. No mention is made of button press & release being separate
+ *    events.
+ * 3. For vsm_locator(), the output mouse positions should be the
+ *    current positions, not the input positions.
+ */
 void vdi_v_locator(Vwk * vwk)
 {
     WORD i;
     Point * point = (Point*)PTSIN;
 
-    *INTIN = 1;
-
     /* Set the initial locator position. */
-
     GCURX = point->x;
     GCURY = point->y;
-    if (loc_mode == 0) {
+
+    if (loc_mode == 0) {    /* handle request mode (vrq_locator()) */
         dis_cur();
-        /* loop till some event */
-        while ((i = gloc_key()) != 1) {
-            if (i == 4) {       /* keyboard cursor? */
-                hide_cur();     /* turn cursor off */
-                GCURX = point->x;
-                GCURY = point->y;
-                dis_cur();      /* turn cursor on */
-            }
+        /* loop till button or keyboard event */
+        while (!(gloc_key() & 1)) {
         }
-        *(INTOUT) = TERM_CH & 0x00ff;
+        INTOUT[0] = TERM_CH & 0x00ff;
 
         CONTRL[4] = 1;
         CONTRL[2] = 1;
@@ -214,41 +311,16 @@ void vdi_v_locator(Vwk * vwk)
         PTSOUT[0] = point->x;
         PTSOUT[1] = point->y;
         hide_cur();
-    } else {
+    } else {                /* handle sample mode (vsm_locator()) */
         i = gloc_key();
-        switch (i) {
-        case 0:
-            break;
-
-        case 1:
+        if (i & 1) {
             CONTRL[4] = 1;
-            *(INTOUT) = TERM_CH & 0x00ff;
-            break;
-
-        case 2:
+            INTOUT[0] = TERM_CH & 0x00ff;
+        }
+        if (i & 2) {
             CONTRL[2] = 1;
             PTSOUT[0] = point->x;
             PTSOUT[1] = point->y;
-            break;
-
-        case 3:
-            CONTRL[2] = 1;
-            PTSOUT[0] = point->x;
-            PTSOUT[1] = point->y;
-            break;
-
-        case 4:
-            CONTRL[2] = 1;
-            if (HIDE_CNT == 0) {
-                hide_cur();
-                PTSOUT[0] = GCURX = point->x;
-                PTSOUT[1] = GCURY = point->y;
-                dis_cur();
-            } else {
-                PTSOUT[0] = GCURX = point->x;
-                PTSOUT[1] = GCURY = point->y;
-            }
-            break;
         }
     }
 }
@@ -260,7 +332,7 @@ void vdi_v_locator(Vwk * vwk)
  */
 void vdi_v_show_c(Vwk * vwk)
 {
-    if (!*INTIN && HIDE_CNT)
+    if (!INTIN[0] && HIDE_CNT)
         HIDE_CNT = 1;           /* reset cursor to on */
 
     dis_cur();
@@ -283,22 +355,25 @@ void vdi_v_hide_c(Vwk * vwk)
  */
 void vdi_vq_mouse(Vwk * vwk)
 {
-    WORD *pointer;
-
     INTOUT[0] = MOUSE_BT;
 
-    pointer = CONTRL;
-    *(pointer + 4) = 1;
-    *(pointer + 2) = 1;
+    CONTRL[4] = 1;
+    CONTRL[2] = 1;
 
-    pointer = PTSOUT;
-    *pointer++ = GCURX;
-    *pointer = GCURY;
+    PTSOUT[0] = GCURX;
+    PTSOUT[1] = GCURY;
 }
 
 
 
-/* VALUATOR_INPUT: implements vrq_valuator()/vsm_valuator() */
+/*
+ * VALUATOR_INPUT: implements vrq_valuator()/vsm_valuator()
+ *
+ * These functions return the status of the logical 'valuator' device.
+ * The "GEM Programmer's Guide: VDI" indicates that these functions
+ * are not required, and both Atari TOS and EmuTOS (using the original
+ * imported DRI source) implement them as dummy functions.
+*/
 void vdi_v_valuator(Vwk * vwk)
 {
 }
@@ -408,10 +483,10 @@ void vdi_vex_wheelv(Vwk * vwk)
 
 
 
-/* copies src mouse form to dst, constrains hotspot
+/* copies src mouse form to dst mouse sprite, constrains hotspot
  * position & colors and maps colors
  */
-static void set_mouse_form (const Mcdb *src, Mcdb * dst)
+static void set_mouse_form(const MFORM *src, Mcdb *dst)
 {
     int i;
     WORD col;
@@ -422,20 +497,20 @@ static void set_mouse_form (const Mcdb *src, Mcdb * dst)
     mouse_flag += 1;            /* disable updates while redefining cursor */
 
     /* save x-offset of mouse hot spot */
-    dst->xhot = src->xhot & 0x000f;
+    dst->xhot = src->mf_xhot & 0x000f;
 
     /* save y-offset of mouse hot spot */
-    dst->yhot = src->yhot & 0x000f;
+    dst->yhot = src->mf_yhot & 0x000f;
 
     /* is background color index too high? */
-    col = src->bg_col;
+    col = src->mf_bg;
     if (col >= DEV_TAB[13]) {
         col = 1;               /* yes - default to 1 */
     }
     dst->bg_col = MAP_COL[col];
 
     /* is foreground color index too high? */
-    col = src->fg_col;
+    col = src->mf_fg;
     if (col >= DEV_TAB[13]) {
         col = 1;               /* yes - default to 1 */
     }
@@ -450,9 +525,9 @@ static void set_mouse_form (const Mcdb *src, Mcdb * dst)
      */
 
     /* copy the data to the global mouse definition table */
-    gmdt = dst->mask;
-    mask = src->mask;
-    data = src->data;
+    gmdt = dst->maskdata;
+    mask = src->mf_mask;
+    data = src->mf_data;
     for (i = 15; i >= 0; i--) {
         *gmdt++ = *mask++;              /* get next word of mask */
         *gmdt++ = *data++;              /* get next word of data */
@@ -482,7 +557,7 @@ static void set_mouse_form (const Mcdb *src, Mcdb * dst)
  */
 void vdi_vsc_form(Vwk * vwk)
 {
-    set_mouse_form((const Mcdb *)INTIN, &mouse_cdb);
+    set_mouse_form((const MFORM *)INTIN, &mouse_cdb);
 }
 
 
@@ -529,7 +604,7 @@ static void vdi_mousex_handler (WORD scancode)
  * exit:           none
  */
 
-void vdimouse_init(Vwk * vwk)
+void vdimouse_init(void)
 {
     struct kbdvecs *kbd_vectors;
     static const struct {
@@ -556,7 +631,7 @@ void vdimouse_init(Vwk * vwk)
     user_wheel = do_nothing;
 
     /* Move in the default mouse form (presently the arrow) */
-    set_mouse_form(&arrow_cdb, &mouse_cdb);
+    set_mouse_form(default_mform(), &mouse_cdb);
 
     MOUSE_BT = 0;               /* clear the mouse button state */
     cur_ms_stat = 0;            /* clear the mouse status */
@@ -583,7 +658,7 @@ void vdimouse_init(Vwk * vwk)
  * vdimouse_exit - deinitialize/disable mouse
  */
 
-void vdimouse_exit(Vwk * vwk)
+void vdimouse_exit(void)
 {
     LONG * pointer;             /* help for storing LONGs in INTIN */
     struct kbdvecs *kbd_vectors;
@@ -652,6 +727,7 @@ static void cur_display_clip(WORD op,Mcdb *sprite,MCS *mcs,UWORD *mask_start,UWO
 {
     WORD dst_inc, plane;
     UWORD cdb_fg, cdb_bg;
+    UWORD cdb_mask;             /* for checking cdb_bg/cdb_fg */
     UWORD *addr, *save;
 
     dst_inc = v_lin_wr >> 1;    /* calculate number of words in a scan line */
@@ -663,10 +739,9 @@ static void cur_display_clip(WORD op,Mcdb *sprite,MCS *mcs,UWORD *mask_start,UWO
     cdb_fg = sprite->fg_col;    /* get mouse foreground color bits */
 
     /* plane controller, draw cursor in each graphic plane */
-    for (plane = v_planes - 1; plane >= 0; plane--) {
+    for (plane = v_planes - 1, cdb_mask = 0x0001; plane >= 0; plane--) {
         WORD row;
         UWORD *src, *dst;
-        UWORD cdb_mask = 0x01;  /* for checking cdb_bg/cdb_fg */
 
         /* setup the things we need for each plane again */
         src = mask_start;               /* calculated mask data begin */
@@ -750,6 +825,7 @@ static void cur_display (Mcdb *sprite, MCS *mcs, WORD x, WORD y)
     int row_count, plane, inc, op, dst_inc;
     UWORD * addr, * mask_start;
     UWORD shft, cdb_fg, cdb_bg;
+    UWORD cdb_mask;             /* for checking cdb_bg/cdb_fg */
     ULONG *save;
 
     x -= sprite->xhot;          /* x = left side of destination block */
@@ -775,7 +851,7 @@ static void cur_display (Mcdb *sprite, MCS *mcs, WORD x, WORD y)
     /*
      * clip y axis
      */
-    mask_start = sprite->mask;  /* MASK/FORM for cursor */
+    mask_start = sprite->maskdata;  /* MASK/DATA for cursor */
     if (y < 0) {            /* clip top */
         row_count = y + 16;
         mask_start -= y << 1;   /* point to first visible row of MASK/FORM */
@@ -823,10 +899,9 @@ static void cur_display (Mcdb *sprite, MCS *mcs, WORD x, WORD y)
     cdb_fg = sprite->fg_col;    /* get mouse foreground color bits */
 
     /* plane controller, draw cursor in each graphic plane */
-    for (plane = v_planes - 1; plane >= 0; plane--) {
+    for (plane = v_planes - 1, cdb_mask = 0x0001; plane >= 0; plane--) {
         int row;
         UWORD * src, * dst;
-        UWORD cdb_mask = 0x01;  /* for checking cdb_bg/cdb_fg */
 
         /* setup the things we need for each plane again */
         src = mask_start;               /* calculated mask data begin */

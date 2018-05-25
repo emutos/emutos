@@ -127,8 +127,7 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
     message = 0;
     x = y = w = h = 0;
 
-    if ( (w_handle == gl_wtop) ||
-       ( (pwin->w_flags & VF_SUBWIN) && (D.w_win[gl_wtop].w_flags & VF_SUBWIN) )  )
+    if (w_handle == gl_wtop)
     {
         /*
          * went down on active window so handle control points
@@ -285,7 +284,7 @@ void ct_mouse(WORD grabit)
 {
     if (grabit)
     {
-        wm_update(TRUE);
+        wm_update(BEG_UPDATE);
         gl_ctmown = TRUE;
         gl_mowner = rlr;
         set_mouse_to_arrow();
@@ -300,7 +299,7 @@ void ct_mouse(WORD grabit)
         gl_moff = gl_tmpmoff;
         gsx_mfset(&gl_mouse);
         gl_ctmown = FALSE;
-        wm_update(FALSE);
+        wm_update(END_UPDATE);
     }
 }
 

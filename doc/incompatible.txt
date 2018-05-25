@@ -138,7 +138,7 @@ accessing kbdvec correctly.  This causes EmuTOS to panic.
 
 Workaround:
 This can be worked around with the following hack.prg:
-	http://sourceforge.net/mailarchive/message.php?msg_id=26841274
+    http://sourceforge.net/mailarchive/message.php?msg_id=26841274
 
 
 Program: OMIKRON.BASIC V3.01 (interpreter)
@@ -193,3 +193,18 @@ The program relies on a TOS-specific code sequence, as follows:
 Subsequently, when "DISK OP." is selected, the stored long is used as a
 pointer.  In TOS2, the value stored is $4216; in EmuTOS, it's zero,
 resulting in a crash.
+
+
+Program: Spectrum 512
+---------------------
+Error: crash during program initialisation
+
+Bug analysis:
+The program relies on a TOS-specific code sequence, as follows:
+1. it searches the VBL handler (pointed to by location $70) for the
+   first word containing a value of 0x6100
+2. when found, it uses the word immediately following as an index to
+   generate an address, and starts searching at that address for a
+   word containing a value of 0x8606
+Under EmuTOS, the address generated is a nonsense address which happens
+to be odd, causing an immediate address error.

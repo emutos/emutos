@@ -2,7 +2,7 @@
  * fsbuf.c - buffer mgmt for file system
  *
  * Copyright (C) 2001 Lineo, Inc.
- *               2002-2016 The EmuTOS development team
+ *               2002-2017 The EmuTOS development team
  *
  * Authors:
  *  SCC   Steve C. Cavender
@@ -54,7 +54,7 @@ void bufl_init(void)
     LONG n;
 
     n = sizeof(BCB) + pun_ptr->max_sect_siz;
-    p = (char *)xmalloc(2L*NUMBUFS*n);
+    p = xmalloc(2L*NUMBUFS*n);
     if (!p)
         panic("bufl_init(%ld): no memory\n",2L*NUMBUFS*n);
 
@@ -81,13 +81,6 @@ void flush(BCB *b)
 {
     int n,d;
     DMD *dm;
-
-    /* if buffer not in use or not dirty, no work to do */
-
-    if ((b->b_bufdrv == -1) || (!b->b_dirty)) {
-        b->b_bufdrv = -1;
-        return;
-    }
 
     dm = b->b_dm;               /*  media descr for buffer      */
     n = b->b_buftyp;
@@ -159,11 +152,11 @@ doio:   for (p = *(q = phdr); p->b_link; p = *(q = &p->b_link))
         b = p;
 
         /*
-         * flush the current contents of the buffer, and read in the
-         * new record.
+         * if the buffer is dirty, flush it, then read in the new record
          */
-
-        flush(b);
+        if ((b->b_bufdrv != -1) && b->b_dirty)
+            flush(b);
+        b->b_bufdrv = -1;       /* in case longjmp_rwabs() fails */
         longjmp_rwabs(0, (long)b->b_bufr, 1, recnum+dmd->m_recoff[buftype], dmd->m_drvnum);
 
         /*

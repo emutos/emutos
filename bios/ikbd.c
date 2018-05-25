@@ -46,7 +46,6 @@
 
 
 /* forward declarations */
-static ULONG combine_scancode_ascii(UBYTE scancode,WORD ascii);
 static WORD convert_scancode(UBYTE *scancodeptr);
 
 /* scancode definitions */
@@ -161,6 +160,10 @@ LONG bconin2(void)
 
     /* restore interrupts */
     set_sr(old_sr);
+
+    if (!(conterm & 8))         /* shift status not wanted? */
+        value &= 0x00ffffffL;   /* true, so clean it out */
+
     return value;
 }
 
@@ -223,9 +226,7 @@ void push_ascii_ikbdiorec(UBYTE ascii)
     }
 
     value = MAKE_ULONG(scancode, ascii);
-
-    if (conterm & 0x8)
-        value |= (ULONG)mode << 24;
+    value |= (ULONG)mode << 24;
 
     push_ikbdiorec(value);
 }
@@ -253,6 +254,13 @@ static BOOL is_mouse_key(WORD key)
     case KEY_DNARROW:
     case KEY_LTARROW:
     case KEY_RTARROW:
+    /*
+     * in this context, shift & control keys are also related to mouse
+     * emulation, in that they don't switch into or out of emulation mode
+     */
+    case KEY_LSHIFT:
+    case KEY_RSHIFT:
+    case KEY_CTRL:
         return TRUE;
     }
 
@@ -300,7 +308,17 @@ static BOOL handle_mouse_mode(WORD newkey)
         init_mouse_packet(mouse_packet);
     }
 
-    distance = (shifty&MODE_SHIFT) ? 1 : 8;
+    /*
+     * set movement distance according to the Shift and Control keys.
+     * note that, for compatibility with Atari TOS, the mouse does
+     * not move while Control is pressed, although the keyboard remains
+     * in mouse emulation mode.
+     */
+    if (shifty&MODE_CTRL)
+        distance = 0;
+    else if (shifty&MODE_SHIFT)
+        distance = 1;
+    else distance = 8;
 
     switch(newkey) {
 #ifdef MACHINE_AMIGA
@@ -343,18 +361,17 @@ static BOOL handle_mouse_mode(WORD newkey)
 
 /*
  * key repeat is handled as follows:
- * As a key is hit and enters the buffer, it is recorded as kb_last_key;
- * the scancode and state of 'shifty' are also saved in kb_last_scancode
- * and kb_last_shifty.  At the same time a downward counter kb_ticks is
- * set to the first delay, kb_initial.
+ * As a key is hit and enters the buffer, the scancode, ascii equivalent,
+ * and the state of 'shifty' are recorded in kb_last.  At the same time a
+ * downward counter kb_ticks is set to the first delay, kb_initial.
  *
  * Every fourth timer C interrupt (50 Hz ticks), kb_tick is decremented if
  * not zero (zero means no more key repeat for this key).  If kb_tick
  * reaches zero, the value of 'shifty' is compared to the saved value.  If
- * they are the same, kb_last_key is re-emitted; otherwise:
+ * they are the same, the value in kb_last is re-emitted; otherwise:
  *  . the scancode is re-evaluated using the new value of 'shifty'
  *  . a (probably new) key is emitted
- *  . kb_last_key and kb_last_shifty are updated
+ *  . kb_last is updated
  * In either case, kb_tick is now set to the second delay kb_repeat.
  *
  * Any release of a *non-modifier* key stops the repeat handling by
@@ -374,10 +391,15 @@ static BOOL handle_mouse_mode(WORD newkey)
 static WORD kb_initial = 25;
 static WORD kb_repeat = 5;
 static WORD kb_ticks = 0;
-static UBYTE kb_last_shifty;
-static UBYTE kb_last_scancode;
-static ULONG kb_last_key;
-static PFVOID kb_last_ikbdsys; /* ikbdsys when kb_last_key was set */
+static union {
+    ULONG key;                  /* combined value */
+    struct {
+        UBYTE shifty;           /* state of 'shifty' */
+        UBYTE scancode;         /* actual scancode */
+        UWORD ascii;            /* derived ascii value */
+    } k;
+} kb_last;
+static PFVOID kb_last_ikbdsys;  /* ikbdsys when kb_last was set */
 
 WORD kbrate(WORD initial, WORD repeat)
 {
@@ -436,27 +458,27 @@ static void do_key_repeat(void)
 
     /* Play the key click sound */
     if (conterm & 1)
-        keyclick(kb_last_scancode);
+        keyclick(kb_last.k.scancode);
 
     /*
      * changing the modifier keys no longer stops key repeat, so when
      * they change, we must do the scancode conversion again
      */
-    if (shifty != kb_last_shifty) {
+    if (shifty != kb_last.k.shifty) {
         UBYTE scancode;
-        WORD ascii;
 
-        scancode = kb_last_scancode;            /* make a copy so we don't change  */
-        ascii = convert_scancode(&scancode);    /* kb_last_scancode inadvertently! */
-        kb_last_key = combine_scancode_ascii(kb_last_scancode,ascii);
-        kb_last_shifty = shifty;
+        /* use a copy of scancode because convert_scancode() can change it */
+        scancode = kb_last.k.scancode;
+        kb_last.k.ascii = convert_scancode(&scancode);
+        kb_last.k.shifty = shifty;
+        kb_last_ikbdsys = kbdvecs.ikbdsys;
     }
 
     /* Simulate a key press or a mouse action */
     if (mouse_packet[0]) {
         KDEBUG(("Repeating mouse packet %02x%02x%02x\n",mouse_packet[0],mouse_packet[1],mouse_packet[2]));
         call_mousevec(mouse_packet);
-    } else push_ikbdiorec(kb_last_key);
+    } else push_ikbdiorec(kb_last.key);
 
     /* The key will repeat again until some key up */
     kb_ticks = kb_repeat;
@@ -586,20 +608,6 @@ static WORD convert_scancode(UBYTE *scancodeptr)
     return ascii;
 }
 
-/*
- * combine the scancode and the ascii equivalent in a ULONG
- */
-static ULONG combine_scancode_ascii(UBYTE scancode,WORD ascii)
-{
-    ULONG value;
-
-    value = ((ULONG) scancode) << 16;
-    value += ascii;
-    if (conterm & 0x8)
-        value += ((ULONG) shifty) << 24;
-
-    return value;
-}
 
 /*
  * kbd_int : called by the interrupt routine for key events.
@@ -607,7 +615,6 @@ static ULONG combine_scancode_ascii(UBYTE scancode,WORD ascii)
 
 void kbd_int(UBYTE scancode)
 {
-    ULONG value;                /* the value to push into iorec */
     WORD ascii = 0;
     UBYTE scancode_only = scancode & ~KEY_RELEASED;  /* get rid of release bits */
     BOOL modifier;
@@ -674,7 +681,7 @@ void kbd_int(UBYTE scancode)
         default:                    /* non-modifier keys: */
             kb_ticks = 0;               /*  stop key repeat */
         }
-        handle_mouse_mode(kb_last_key); /* exit mouse mode if appropriate */
+        handle_mouse_mode(scancode);    /* exit mouse mode if appropriate */
         return;
     }
 
@@ -719,7 +726,7 @@ void kbd_int(UBYTE scancode)
         /*
          * check if an arrow key was already down and, if so, send the appropriate mouse packet
          */
-        handle_mouse_mode(kb_last_key);
+        handle_mouse_mode(scancode);
         return;
     }
 
@@ -736,18 +743,19 @@ void kbd_int(UBYTE scancode)
     if (conterm & 1)
         keyclick(scancode);
 
-    value = combine_scancode_ascii(scancode,ascii);
+    /*
+     * save last key info for do_key_repeat()
+     */
+    kb_last.k.shifty = shifty;
+    kb_last.k.scancode = scancode;
+    kb_last.k.ascii = ascii;
+    kb_last_ikbdsys = kbdvecs.ikbdsys;
 
     /*
      * if we're not sending mouse packets, send a real key
      */
     if (!mouse_packet[0])
-        push_ikbdiorec(value);
-
-    kb_last_scancode = scancode;    /* save for do_key_repeat() */
-    kb_last_shifty = shifty;
-    kb_last_key = value;
-    kb_last_ikbdsys = kbdvecs.ikbdsys;
+        push_ikbdiorec(kb_last.key);
 }
 
 
@@ -891,6 +899,15 @@ void kbd_init(void)
     ikbd_version = ikbd_readb(); /* Usually 0xf1, or 0xf0 for antique STs */
     KDEBUG(("ikbd_version = 0x%02x\n", ikbd_version));
     UNUSED(ikbd_version);
+
+    /* initialize the key repeat stuff */
+    kb_ticks = 0;
+    kb_initial = KB_INITIAL;
+    kb_repeat = KB_REPEAT;
+
+    kb_dead = -1;      /* not in a dead key sequence */
+    kb_altnum = -1;    /* not in an alt-numeric sequence */
+    kb_switched = 0;   /* not switched initially */
 
     conterm = 7;       /* keyclick and autorepeat on by default */
     conterm |= 0x8;    /* add Kbshift state to Bconin value */

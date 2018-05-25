@@ -60,6 +60,9 @@
 # ifndef CONF_WITH_ACSI
 #  define CONF_WITH_ACSI 0
 # endif
+# ifndef CONF_WITH_SCSI
+#  define CONF_WITH_SCSI 0
+# endif
 # ifndef CONF_WITH_TT_MFP
 #  define CONF_WITH_TT_MFP 0
 # endif
@@ -86,6 +89,9 @@
 # endif
 # ifndef CONF_WITH_MONSTER
 #  define CONF_WITH_MONSTER 0
+# endif
+# ifndef CONF_WITH_NOVA
+#  define CONF_WITH_NOVA 0
 # endif
 # ifndef CONF_WITH_FORMAT
 #  define CONF_WITH_FORMAT 0
@@ -117,6 +123,9 @@
 # ifndef CONF_WITH_MEGARTC
 #  define CONF_WITH_MEGARTC 0
 # endif
+# ifndef CONF_WITH_BLITTER
+#  define CONF_WITH_BLITTER 0
+# endif
 # ifndef CONF_WITH_SFP004
 #  define CONF_WITH_SFP004 0
 # endif
@@ -141,11 +150,17 @@
 # ifndef CONF_WITH_ACSI
 #  define CONF_WITH_ACSI 0      /* broken in current FireBee hardware */
 # endif
+# ifndef CONF_WITH_SCSI
+#  define CONF_WITH_SCSI 0
+# endif
 # ifndef CONF_WITH_ICDRTC
 #  define CONF_WITH_ICDRTC 0    /* useless on FireBee as it has NVRAM clock */
 # endif
 # ifndef CONF_WITH_MONSTER
 #  define CONF_WITH_MONSTER 0
+# endif
+# ifndef CONF_WITH_NOVA
+#  define CONF_WITH_NOVA 0
 # endif
 # ifndef CONF_WITH_FORMAT
 #  define CONF_WITH_FORMAT 0
@@ -185,6 +200,9 @@
 # ifndef CONF_WITH_MONSTER
 #  define CONF_WITH_MONSTER 0
 # endif
+# ifndef CONF_WITH_NOVA
+#  define CONF_WITH_NOVA 0
+# endif
 # ifndef CONF_WITH_TTRAM
 #  define CONF_WITH_TTRAM 0
 # endif
@@ -193,6 +211,9 @@
 # endif
 # ifndef CONF_WITH_SCC
 #  define CONF_WITH_SCC 0
+# endif
+# ifndef CONF_WITH_SCSI
+#  define CONF_WITH_SCSI 0
 # endif
 # ifndef CONF_WITH_IDE
 #  define CONF_WITH_IDE 0
@@ -236,8 +257,20 @@
 # ifndef CONF_WITH_DESKTOP_SHORTCUTS
 #  define CONF_WITH_DESKTOP_SHORTCUTS 0
 # endif
+# ifndef CONF_WITH_BACKGROUNDS
+#  define CONF_WITH_BACKGROUNDS 0
+# endif
+# ifndef CONF_WITH_FILEMASK
+#  define CONF_WITH_FILEMASK 0
+# endif
+# ifndef CONF_WITH_DESKTOP_CONFIG
+#  define CONF_WITH_DESKTOP_CONFIG 0
+# endif
 # ifndef CONF_WITH_PCGEM
 #  define CONF_WITH_PCGEM 0
+# endif
+# ifndef CONF_WITH_BIOS_EXTENSIONS
+#  define CONF_WITH_BIOS_EXTENSIONS 0
 # endif
 # ifndef CONF_WITH_VDI_EXTENSIONS
 #  define CONF_WITH_VDI_EXTENSIONS 0
@@ -260,11 +293,23 @@
 #endif
 
 /*
+ * Defaults for the 256 target.
+ * This target is only useful on ST/STe hardware, or for checking
+ * language-dependent features under Hatari.  Since none of these
+ * support SCSI, we disable SCSI support and save ourselves 4kB.
+ */
+#ifdef TARGET_256
+# ifndef CONF_WITH_SCSI
+#  define CONF_WITH_SCSI 0
+# endif
+#endif
+
+/*
  * Defaults for the diagnostic cartridge target (maximum size 128K).
  * When this is selected, the Makefile excludes AES support in order
  * to reduce ROM size.  However this is still insufficient, so we
  * need to exclude some feature(s).  Since the cartridge is targetted
- * for ST/STe, we exclude TT video support.
+ * for ST/STe, we exclude SCSI support and TT video support.
  */
 #ifdef TARGET_CART
 # ifndef DIAGNOSTIC_CARTRIDGE
@@ -276,11 +321,17 @@
 # ifndef CONF_WITH_APOLLO_68080
 #  define CONF_WITH_APOLLO_68080 0
 # endif
+# ifndef CONF_WITH_SCSI
+#  define CONF_WITH_SCSI 0
+# endif
 # ifndef CONF_WITH_TT_MFP
 #  define CONF_WITH_TT_MFP 0
 # endif
 # ifndef CONF_WITH_TT_SHIFTER
 #  define CONF_WITH_TT_SHIFTER 0
+# endif
+# ifndef CONF_WITH_BIOS_EXTENSIONS
+#  define CONF_WITH_BIOS_EXTENSIONS 0
 # endif
 # ifndef CONF_WITH_VDI_EXTENSIONS
 #  define CONF_WITH_VDI_EXTENSIONS 0
@@ -296,6 +347,9 @@
 # endif
 # ifndef CONF_WITH_MONSTER
 #  define CONF_WITH_MONSTER 0
+# endif
+# ifndef CONF_WITH_NOVA
+#  define CONF_WITH_NOVA 0
 # endif
 #endif
 
@@ -433,6 +487,9 @@
 # ifndef CONF_WITH_ACSI
 #  define CONF_WITH_ACSI 0
 # endif
+# ifndef CONF_WITH_SCSI
+#  define CONF_WITH_SCSI 0
+# endif
 # ifndef CONF_WITH_IDE
 #  define CONF_WITH_IDE 0
 # endif
@@ -483,6 +540,9 @@
 # endif
 # ifndef CONF_WITH_MONSTER
 #  define CONF_WITH_MONSTER 0
+# endif
+# ifndef CONF_WITH_NOVA
+#  define CONF_WITH_NOVA 0
 # endif
 #endif
 
@@ -751,6 +811,13 @@
 #endif
 
 /*
+ * Set CONF_WITH_SCSI to 1 to activate SCSI support
+ */
+#ifndef CONF_WITH_SCSI
+# define CONF_WITH_SCSI 1
+#endif
+
+/*
  * Set CONF_WITH_IDE to 1 to activate Falcon IDE support
  */
 #ifndef CONF_WITH_IDE
@@ -863,7 +930,7 @@
 #endif
 
 /*
- * Set CONF_WITH_BLITTER to 1 to enable minimal Blitmode() support
+ * Set CONF_WITH_BLITTER to 1 to enable blitter support
  */
 #ifndef CONF_WITH_BLITTER
 # define CONF_WITH_BLITTER 1
@@ -874,6 +941,13 @@
  */
 #ifndef CONF_WITH_SFP004
 # define CONF_WITH_SFP004 1
+#endif
+
+/*
+ * Set CONF_WITH_NOVA to 1 to enable support for Nova graphic card adapter.
+ */
+#ifndef CONF_WITH_NOVA
+# define CONF_WITH_NOVA 1
 #endif
 
 /*
@@ -1009,6 +1083,41 @@
 #endif
 
 /*
+ * Set CONF_WITH_BACKGROUNDS to 1 to allow the background pattern/colour
+ * of the desktop & windows to be configured
+ */
+#ifndef CONF_WITH_BACKGROUNDS
+# define CONF_WITH_BACKGROUNDS 1
+#endif
+
+/*
+ * Set CONF_WITH_FILEMASK to 1 to allow the filemask used for desktop
+ * windows to be configured
+ */
+#ifndef CONF_WITH_FILEMASK
+# define CONF_WITH_FILEMASK 1
+#endif
+
+/*
+ * Set CONF_WITH_DESKTOP_CONFIG to 1 to enable the 'Desktop configuration'
+ * dialog
+ */
+#ifndef CONF_WITH_DESKTOP_CONFIG
+# define CONF_WITH_DESKTOP_CONFIG 1
+#endif
+
+/*
+ * Set CONF_WITH_LOADABLE_CURSORS to 1 to allow mouse cursors to
+ * be loaded from the file specified by CURSOR_RSC_NAME
+ */
+#ifndef CONF_WITH_LOADABLE_CURSORS
+# define CONF_WITH_LOADABLE_CURSORS 1
+#endif
+#if CONF_WITH_LOADABLE_CURSORS
+# define CURSOR_RSC_NAME "A:\\EMUCURS.RSC"  /* path to user cursor file */
+#endif
+
+/*
  * Set CONF_WITH_EASTER_EGG to 1 to include the EmuDesk Easter Egg
  */
 #ifndef CONF_WITH_EASTER_EGG
@@ -1020,6 +1129,13 @@
  */
 #ifndef CONF_WITH_PCGEM
 # define CONF_WITH_PCGEM 1
+#endif
+
+/*
+ * Set CONF_WITH_BIOS_EXTENSIONS to 1 to support various BIOS extension functions
+ */
+#ifndef CONF_WITH_BIOS_EXTENSIONS
+# define CONF_WITH_BIOS_EXTENSIONS 1
 #endif
 
 /*
@@ -1315,7 +1431,7 @@
 /*
  * Maximum lengths for pathname, filename, and filename components
  */
-#define LEN_ZPATH 67                    /* max path length, incl drive */
+#define LEN_ZPATH 114                   /* max path length, incl drive */
 #define LEN_ZFNAME 13                   /* max fname length, incl '\' separator */
 #define LEN_ZNODE 8                     /* max node length */
 #define LEN_ZEXT 3                      /* max extension length */
@@ -1325,6 +1441,28 @@
  * Maximum coordinate supported (must fit in WORD)
  */
 #define MAX_COORDINATE  (10000)         /* arbitrary, could be 32767 */
+
+/*
+ * Default keyboard auto-repeat settings: values are units of 20 msec
+ */
+#define KB_INITIAL  15          /* initial delay i.e. 300 msec */
+#define KB_REPEAT   2           /* ticks between repeats, i.e. 40 msec */
+
+/*
+ * Retry count for the internal_inquire() used to detect the presence of
+ * a physical hard disk drive
+ *
+ * Setting this to be non-zero is usually not necessary, and will increase
+ * boot time by approximately (0.1 * HD_DETECT_RETRIES * n) seconds, where
+ * n is the total number of devices that are not present.  For example, if
+ * you set it to 1 on an ST with one device on the ACSI bus, the boot time
+ * will increase by (0.1*1*7) = 0.7 seconds.
+ *
+ * However, a non-zero retry count may help in some cases of misbehaving hardware.
+ */
+#ifndef HD_DETECT_RETRIES
+# define HD_DETECT_RETRIES 0
+#endif
 
 /*
  * Useful macros for both assembler and C
@@ -1409,6 +1547,9 @@
 # if CONF_WITH_MIDI_ACIA
 #  error CONF_WITH_MIDI_ACIA requires CONF_WITH_MFP.
 # endif
+# if CONF_WITH_SCSI
+#  error CONF_WITH_SCSI requires CONF_WITH_MFP.
+# endif
 #endif
 
 #if !CONF_WITH_ATARI_VIDEO
@@ -1441,12 +1582,12 @@
 # endif
 #endif
 
-#if !defined(__mcoldfire__)
+#if !defined(MACHINE_FIREBEE) && !defined(MACHINE_M548X)
 # if CONF_WITH_BAS_MEMORY_MAP
-#  error CONF_WITH_BAS_MEMORY_MAP requires a ColdFire CPU.
+#  error CONF_WITH_BAS_MEMORY_MAP requires MACHINE_FIREBEE or MACHINE_M548X.
 # endif
 # if CONF_WITH_FLEXCAN
-#  error CONF_WITH_FLEXCAN requires a ColdFire CPU.
+#  error CONF_WITH_FLEXCAN requires MACHINE_FIREBEE or MACHINE_M548X.
 # endif
 #endif
 

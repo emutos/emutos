@@ -119,7 +119,7 @@ static void move_drvicon(OBJECT *tree, WORD root, WORD x, WORD y, WORD *pts, WOR
             oldx = tree[obj].ob_x;
             oldy = tree[obj].ob_y;
 
-            snap_disk(x + pts[2 * objcnt], y + pts[2 * objcnt + 1],
+            snap_icon(x + pts[2 * objcnt], y + pts[2 * objcnt + 1],
                                 &tree[obj].ob_x, &tree[obj].ob_y, sxoff, syoff);
 
             for (an_disk = G.g_ahead; an_disk; an_disk = an_disk->a_next)
@@ -320,9 +320,7 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc,
         if (!(obj->ob_state & SELECTED))
         {
             pa = i_find(dst_wh, *pdobj, NULL, NULL);
-            if (pa && ((pa->a_type == AT_ISFOLD) ||
-                       (pa->a_type == AT_ISDISK) ||
-                       (pa->a_type == AT_ISTRSH)))
+            if (pa)
             {
                 curr_wh = dst_wh;
                 curr_tree = tree;
@@ -348,27 +346,13 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc,
 
 
 /*
- *  See if the bit at x,y in a raster form is on or off
- */
-static WORD bit_on(WORD x, WORD y, UWORD *raster, WORD bwidth)
-{
-    WORD  windex;
-    UWORD tmpw;
-
-    windex = (bwidth * y / 2) + (x / 16);
-    tmpw = raster[windex];
-    tmpw = (tmpw >> (15 - (x % 16)) ) & 0x0001;
-    return tmpw;
-}
-
-
-/*
- *  Check to see over which part of the object the mouse has been
- *  clicked.  If the type of object is an icon, then use the icon mask
- *  to determine if the icon was actually selected.
+ *  Check to see if the mouse has been clicked over an object.
  *
- *  If the current view is by text strings then use the name portion
- *  of the text string.
+ *  If the current view is by icon, then check the areas occupied by the
+ *  icon graphic and the icon text to determine if the icon was selected.
+ *
+ *  If the current view is by text, then use the name portion of the text
+ *  string.
  */
 static WORD act_chkobj(OBJECT *tree, WORD root, WORD obj, WORD mx, WORD my, WORD w, WORD h)
 {
@@ -392,18 +376,11 @@ static WORD act_chkobj(OBJECT *tree, WORD root, WORD obj, WORD mx, WORD my, WORD
         r_set(&t, mx - ox, my - oy, w, h);
         r_set(&m, mx - ox, my - oy, w, h);
         icon = G.g_screeninfo[obj].icon.index;
-        ib = (ICONBLK *) &G.g_iblist[icon];
+        ib = &G.g_iblist[icon];
         if (!rc_intersect((GRECT *)&ib->ib_xtext, &t))
         {
             if (!rc_intersect((GRECT *)&ib->ib_xicon, &m))
                 return root;
-            else
-            {
-                if (!bit_on(m.g_x - ib->ib_xicon + (w / 2),
-                            m.g_y - ib->ib_yicon + (h / 2),
-                            G.g_origmask[icon], ib->ib_wicon/8))
-                    return root;
-            }
         }
         break;
     }
@@ -448,10 +425,7 @@ WORD act_chg(WORD wh, OBJECT *tree, WORD root, WORD obj, GRECT *pc, UWORD chgval
     /* get it updated on screen */
     if (old_state != curr_state)
     {
-        /* change it without drawing */
-        objc_change(tree, obj, 0, pc->g_x, pc->g_y, pc->g_w, pc->g_h,
-                    curr_state, FALSE);
-
+        tree[obj].ob_state = curr_state;
         /*
          * clip to uncovered portion of desktop or window
          * and the object's extent

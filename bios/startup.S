@@ -125,8 +125,9 @@ os_dummy:
  * The following considerations have been taken into account:
  * 1. for unknown reasons, real Falcons need an access to location $ffff8006
  *    before and after the reset instruction
- * 2. in order to run the same code on systems without a register at $ffff8006,
- *    the bus error vector must be intercepted prior to #1
+ * 2. on some non-Falcon systems (some STs and some or all TTs), accessing
+ *    $ffff8006 causes a bus error; therefore the bus error vector must be
+ *    intercepted prior to #1
  * 3. since non-68000 systems use the VBR to point to the start of the exception
  *    vectors, the VBR must be zeroed prior to #2 via MOVEC
  * 4. in order to run the same code on 68000 systems (which don't have MOVEC),
@@ -159,6 +160,36 @@ _main:
         lea     amiga_startup_ret,a6
         jmp     amiga_startup
 amiga_startup_ret:
+#endif
+
+#if (!EMUTOS_LIVES_IN_RAM) && (CONF_WITH_ST_MMU)
+        // Some ST MMUs power up with an invalid memory bank configuration,
+        // inhibiting any RAM access. However, EmuTOS needs at least a
+        // little bit of RAM for the CPU to read the vectors of the
+        // exceptions that are raised below during hardware detection.
+        // At such an early stage we don't know whether we are even running
+        // on an ST. Also we can't use bus errors to detect the machine type.
+        // Thus, check the MMU configuration register for values that
+        // are invalid on an ST and only then write a new (valid) value
+        // into it. This should not interfere with non-ST machines.
+
+        // 0xc and above are an invalid memory bank 0 configuration on the ST.
+        // 0x5 is a valid value for the ST and the TT, the correct configuration
+        // will be found and applied in memory.S. On the Falcon this is a dummy
+        // register, so we can write to it as well without consequences.
+#ifdef __mcoldfire__
+        move.b  0xffff8001.w, d0
+        cmpi.b  #0xc, d0
+        blt.s   valid_st_mmu_config
+        move.b  #0x5, d0
+        move.b  d0, 0xffff8001.w
+#else
+        cmpi.b  #0xc, 0xffff8001.w
+        blt.s   valid_st_mmu_config
+        move.b  #0x5, 0xffff8001.w
+#endif
+
+valid_st_mmu_config:
 #endif
 
         // Initialize an early stack to a valid write address.
@@ -229,7 +260,7 @@ coldfire_startup_ret:
 #endif
         jne     nodiag                  // no -> go on
         lea     nodiag(pc), a6          // save return address
-        jmp     cart_base+4             // execute diagnostig cartridge
+        jmp     cart_base+4             // execute diagnostic cartridge
 nodiag:
 #endif /* CONF_WITH_CARTRIDGE */
 

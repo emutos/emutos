@@ -23,44 +23,22 @@
 #include "portab.h"
 #include "obdefs.h"
 #include "gemdos.h"
+#include "optimize.h"
 #include "optimopt.h"
+#include "gemerror.h"
 
 #include "deskbind.h"
 #include "deskglob.h"
 #include "deskapp.h"
+#include "deskdir.h"
 #include "deskfpd.h"
+#include "deskins.h"
 #include "deskwin.h"
 #include "dos.h"
 #include "deskrsrc.h"
 
 #include "string.h"
 #include "kprint.h"
-
-
-/*
- *  Initialize the list of pnodes
- */
-static void pn_init(void)
-{
-    WORD i;
-    PNODE *pn;
-
-    for (i = 0, pn = G.g_plist; i < NUM_PNODES-1; i++, pn++)
-        pn->p_next = pn + 1;
-    pn->p_next = NULL;
-
-    G.g_pavail = G.g_plist;
-    G.g_phead = (PNODE *) NULL;
-}
-
-
-/*
- *  Start up by initializing global variables
- */
-void fpd_start(void)
-{
-    pn_init();
-}
 
 
 /*
@@ -97,80 +75,37 @@ static void fl_free(PNODE *pn)
 
 
 /*
- *  Allocate a path node
- */
-static PNODE *pn_alloc(void)
-{
-    PNODE *thepath;
-
-    if (G.g_pavail)
-    {
-        /* get us off the avail list */
-        thepath = G.g_pavail;
-        G.g_pavail = G.g_pavail->p_next;
-
-        /* put us on the active list */
-        thepath->p_next = G.g_phead;
-        G.g_phead = thepath;
-
-        /* init. and return */
-        thepath->p_flist = (FNODE *) NULL;
-        return thepath;
-    }
-
-    return NULL;
-}
-
-
-/*
- *  Free a path node
- */
-static void pn_free(PNODE *thepath)
-{
-    PNODE *pp;
-
-    /* free our file list */
-    fl_free(thepath);
-
-    /* if first in list, unlink by changing phead
-     * else by finding and changing our previous guy
-     */
-    pp = (PNODE *) &G.g_phead;
-    while(pp->p_next != thepath)
-        pp = pp->p_next;
-    pp->p_next = thepath->p_next;
-
-    /* put us on the avail list */
-    thepath->p_next = G.g_pavail;
-    G.g_pavail = thepath;
-}
-
-
-/*
  *  Close a particular path
  */
 void pn_close(PNODE *thepath)
 {
-    pn_free(thepath);
+    /* free our file list */
+    fl_free(thepath);
 }
 
 
 /*
  *  Open a particular path
  */
-PNODE *pn_open(BYTE *pathname, WORD attr)
+PNODE *pn_open(BYTE *pathname, WNODE *pw)
 {
     PNODE *thepath;
 
     if (strlen(pathname) >= MAXPATHLEN)
         return NULL;
 
-    thepath = pn_alloc();
-    if (!thepath)
-        return NULL;
+    /*
+     * if not associated with a specific window, use the PNODE in the
+     * desktop pseudo-window.  this happens for e.g. disk->disk copy
+     */
+    if (!pw)
+        pw = &G.g_wdesktop;
 
+    thepath = &pw->w_pnode;
+    thepath->p_flist = NULL;    /* file list starts empty */
     strcpy(thepath->p_spec,pathname);
-    thepath->p_attr = attr;
+    thepath->p_attr = F_SUBDIR;
+
     return thepath;
 }
 
@@ -291,12 +226,28 @@ FNODE *pn_sort(PNODE *pn)
 
 /*
  *  Build the filenode list for the specified pathnode
+ *
+ *  if 'include_folders' is TRUE, the filenode list will include all
+ *  folders in the pathnode: this is required for correct display of
+ *  directory contents when the filemask is other than *.*
+ *
+ *  if 'include_folders' is FALSE, the filenode list will only include
+ *  files/folders matching the filespec in the pathnode: this is used by
+ *  fun_file2any() when dragging a desktop icon representing a file/folder
+ *
+ *  returns 0   0 or more files found without error
+ *          <0  error (other than EFILNF/ENMFIL) returned by dos_sfirst()/dos_snext()
+ *              (e.g. when attempting to open a floppy drive with no disk)
  */
-WORD pn_active(PNODE *pn)
+WORD pn_active(PNODE *pn, BOOL include_folders)
 {
     FNODE *fn, *prev;
     LONG maxmem, maxcount, size = 0L;
     WORD count, ret;
+#if CONF_WITH_FILEMASK
+    BYTE search[MAXPATHLEN];
+    BYTE *match;
+#endif
 
     fl_free(pn);                    /* free any existing filenodes */
 
@@ -312,8 +263,23 @@ WORD pn_active(PNODE *pn)
 
     dos_sdta(&G.g_wdta);
 
+#if CONF_WITH_FILEMASK
+    strcpy(search, pn->p_spec);
+    /*
+     * do we want to include folders in the match list?
+     */
+    if (include_folders)                /* match all folders? */
+        del_fname(search);              /* yes - change search filespec to *.* */
+    match = filename_start(pn->p_spec); /* the match filespec is always unaltered */
+    for (ret = dos_sfirst(search, pn->p_attr), count = 0; (ret == 0) && (count < maxcount); ret = dos_snext())
+    {
+        if (G.g_wdta.d_attrib != F_SUBDIR)  /* skip *files* that don't match */
+            if (!wildcmp(match, G.g_wdta.d_fname))
+                continue;
+#else
     for (ret = dos_sfirst(pn->p_spec,pn->p_attr), count = 0; (ret == 0) && (count < maxcount); ret = dos_snext())
     {
+#endif
         if (G.g_wdta.d_fname[0] == '.') /* skip "." & ".." entries */
             continue;
         memcpy(&fn->f_junk, &G.g_wdta.d_reserved[20], 23);
@@ -330,11 +296,12 @@ WORD pn_active(PNODE *pn)
     {
         dos_free(pn->p_fbase);
         pn->p_fbase = NULL;
-        return 0;
     }
-    dos_shrink(pn->p_fbase,count*sizeof(FNODE));
+    else
+    {
+        dos_shrink(pn->p_fbase,count*sizeof(FNODE));
+        pn->p_flist = pn_sort(pn);
+    }
 
-    pn->p_flist = pn_sort(pn);
-
-    return 0;   /* TODO: return error if error occurred? */
+    return ((ret==ENMFIL) || (ret==EFILNF)) ? 0 : ret;
 }

@@ -865,7 +865,7 @@ erase_from_bol_impl (void)
         ascii_out(0x20);        /* output a space. */
     else {
         /* test, if x is even or odd */
-        if ( v_cur_cx & 1 ) {
+        if ( IS_ODD(v_cur_cx) ) {
             ascii_out(0x20);    /* first output a space. */
             blank_out (0, v_cur_cy, v_cur_cx - 2, v_cur_cy);
         }

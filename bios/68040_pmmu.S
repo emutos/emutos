@@ -1,7 +1,7 @@
 /*
  * 68040_pmmu.S - MMU initialization for 68040 (taken from set_mmu.prg).
  *
- * Copyright 2013-2016 by Odd Skancke and Miro Kropáček.
+ * Copyright 2013-2017 by Odd Skancke and Miro Kropáček.
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -11,7 +11,7 @@
 
 #if CONF_WITH_68040_PMMU
 
-                .globl  setup_68040_pmmu
+                .globl  _setup_68040_pmmu
                 .extern _ramtop
 
                 .arch   68040
@@ -41,7 +41,7 @@ msk_4kpd_paddr  = 0b11111111111111111111000000000000
 
                 .text
 
-setup_68040_pmmu:
+_setup_68040_pmmu:
                 jbsr    turn_off_all
 
                 lea     mmu_tree,a1
@@ -166,10 +166,12 @@ make_mmu_tree:
                 move.l  #0x01000000,d1          // physical
                 //move.l        #64*1024*1024,d2        // size
                 move.l  _ramtop,d2
+                jeq     .no_ttram
                 sub.l   d0,d2
                 move.l  #c_copyback<<d_cache_pos,d3     // flags
                 jbsr    create_table
                 jcc     .error
+.no_ttram:
 
                 // I/O space (shadow)
                 move.l  #0xfff00000,d0          // logical

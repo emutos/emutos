@@ -446,6 +446,7 @@ WORD objc_edit(OBJECT *tree, WORD obj, WORD inchar, WORD *idx, WORD kind)
 */
 
 
+/* unused
 WORD objc_change(OBJECT *tree, WORD drawob, WORD depth, WORD xc, WORD yc,
                  WORD wc, WORD hc, WORD newstate, WORD redraw)
 {
@@ -460,6 +461,7 @@ WORD objc_change(OBJECT *tree, WORD drawob, WORD depth, WORD xc, WORD yc,
     OB_REDRAW = redraw;
     return gem_if(AES_CTRL_CODE(OBJC_CHANGE, 8, 1, 1));
 }
+*/
 
 
 /*

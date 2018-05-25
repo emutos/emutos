@@ -20,7 +20,7 @@
  */
 #define FALCON_BUS_CTL      0xffff8007UL
 #define FALCON_HHT          0xffff8282UL
-#define TT_PALETTE_REGS     0xffff8400UL
+#define TT_PALETTE_REGS     ((volatile UWORD *)0xffff8400UL)
 #define BLITTER_CONFIG1     0xffff8a3cUL
 #define SCC_BASE            0xffff8c80UL
 #define SYS_INT_MASK        0xffff8e01UL
@@ -144,6 +144,7 @@ extern int has_nvram;     /* in nvram.c */
 
 #if CONF_WITH_BLITTER
 extern int has_blitter;
+extern int blitter_is_enabled;
   #define HAS_BLITTER has_blitter
 #else
   #define HAS_BLITTER 0
@@ -168,6 +169,8 @@ extern int has_dip_switches;
 #else
   #define HAS_DIP_SWITCHES 0
 #endif
+
+extern int has_modectl;
 
 /*
  * functions
@@ -196,5 +199,6 @@ void fill_cookie_jar(void);
 /* print the name of the machine */
 const char * machine_name(void);
 
+#define IS_STRAM_POINTER(p) ((UBYTE *)(p) < phystop)
 
 #endif /* MACHINE_H */

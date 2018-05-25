@@ -17,6 +17,6 @@ XHDRIVERSPECIAL 13      OPTIONAL                NO
 XHGETCAPACITY   14      OPTIONAL                YES
 XHMEDIUMCHANGED 15      OPTIONAL                NO
 XHMINTINFO      16      OPTIONAL                NO
-XHDOSLIMITS     17      OPTIONAL                NO
+XHDOSLIMITS     17      OPTIONAL                YES
 XHLASTACCESS    18      >= 1.25                 NO
 XHREACCESS      19      >= 1.25                 NO

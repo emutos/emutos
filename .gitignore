@@ -17,10 +17,14 @@
 /needcountry.tmp
 /mkheader
 /bug
+/draft
 /erd
 /grd
 /ird
+/mrd
 /mkrom
+/temp.rsc
+/temp.def
 /local.mk
 /dsm.txt
 /fal_dsm.txt

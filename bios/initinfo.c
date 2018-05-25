@@ -42,10 +42,16 @@
 #include "lineavars.h"
 #endif
 
+/* Screen width, in characters, as signed value */
+#define SCREEN_WIDTH ((WORD)v_cel_mx + 1)
+
 #if FULL_INITINFO
 
 
 /*==== Defines ============================================================*/
+
+#define INFO_LENGTH 40      /* width of info lines (must fit in low-rez) */
+#define LOGO_LENGTH 34      /* must equal length of strings in EmuTOS logo */
 
 /* allowed values for Mxalloc mode: (defined in mem.h) */
 #define MX_STRAM 0
@@ -57,6 +63,24 @@
 extern long total_alt_ram(void); /* in bdos/umem.c */
 #endif
 
+#define LOGO_HEIGHT 5
+static const char *logo[LOGO_HEIGHT] =
+    { "11111111111 7777777777  777   7777",
+      "1                  7   7   7 7    ",
+      "1111   1 1  1   1  7   7   7  777 ",
+      "1     1 1 1 1   1  7   7   7     7",
+      "11111 1   1  111   7    777  7777 " };
+
+/* Print n spaces */
+static void print_spaces(WORD n)
+{
+    WORD i;
+
+    for (i = 0; i < n; i++)
+        cprintf(" ");
+}
+
+static WORD left_margin;
 
 /*
  * set_margin - Set
@@ -64,16 +88,8 @@ extern long total_alt_ram(void); /* in bdos/umem.c */
 
 static void set_margin(void)
 {
-    WORD marl;
-    WORD celx;
-
-    marl=(v_cel_mx-34) / 2;     /* 36 = length of Logo */
-
     cprintf("\r");              /* goto left side */
-
-    /* count for columns */
-    for (celx = 0; celx<=marl; celx++)
-        cprintf(" ");
+    print_spaces(left_margin);
 }
 
 /* print a line in which each char stands for the background color */
@@ -98,20 +114,53 @@ static void print_art(const char *s)
 }
 
 
+/*
+ * display a separator line
+ */
 static void set_line(void)
 {
-    WORD llen;
     WORD celx;
 
-    llen=v_cel_mx - 6 ;     /* line length */
-
-    cprintf("\r   ");          /* goto left side */
+    set_margin();
 
     /* count for columns */
-    for (celx = 0; celx<=llen; celx++)
+    for (celx = 0; celx < INFO_LENGTH; celx++)
         cprintf("_");
 
-    cprintf("\r\n");          /* goto left side */
+    cprintf("\r\n\r\n");    /* followed by blank line */
+}
+
+
+/*
+ * display a message followed by cr/lf
+ */
+static void display_message(const char *s)
+{
+    set_margin();
+    cprintf(s);
+    cprintf("\r\n");
+}
+
+
+/*
+ * display a message in inverse video, with optional cr/lf
+ */
+static void display_inverse(const char *s,BOOL crlf)
+{
+    WORD len = strlen(s);
+    WORD left = (INFO_LENGTH - len) / 2;
+    WORD right = INFO_LENGTH - (left + len);
+
+    set_margin();
+
+    cprintf("\033p");
+    print_spaces(left);
+    cprintf(s);
+    print_spaces(right);
+    cprintf("\033q");
+
+    if (crlf)
+        cprintf("\r\n");
 }
 
 
@@ -119,9 +168,9 @@ static void pair_start(const char *left)
 {
     int n;
     set_margin();
-    n = cprintf(left);
+    n = cprintf(left) + 2;      /* allow for following cprintf() */
     cprintf(": ");
-    while(n++ < 14)
+    while(n++ < INFO_LENGTH/2)
         cprintf(" ");
     cprintf("\033b!");
 }
@@ -246,16 +295,18 @@ WORD initinfo(ULONG *pshiftbits)
     for (i = 0; i < top_margin; i++)
         cprintf("\r\n");
 
-    /* Now print the EmuTOS Logo */
-    print_art("11111111111 7777777777  777   7777");
-    print_art("1                  7   7   7 7    ");
-    print_art("1111   1 1  1   1  7   7   7  777 ");
-    print_art("1     1 1 1 1   1  7   7   7     7");
-    print_art("11111 1   1  111   7    777  7777 ");
+    /* Centre the logo horizontally */
+    left_margin = (SCREEN_WIDTH-LOGO_LENGTH) / 2;
 
-    /* Just a separator */
+    /* Now print the EmuTOS Logo */
+    for (i = 0; i < LOGO_HEIGHT; i++)
+        print_art(logo[i]);
+
+    /* adjust margins for remaining messages to allow more space for translations */
+    left_margin = (SCREEN_WIDTH-INFO_LENGTH) / 2;
+
+    /* Print separator followed by blank line */
     set_line();
-    cprintf("\n\r");
 
     pair_start(_("EmuTOS Version")); cprintf("%s", version); pair_end();
 
@@ -287,32 +338,27 @@ WORD initinfo(ULONG *pshiftbits)
 
     pair_start(_("Boot time")); cprint_asctime(); pair_end();
 
-    /* Just a separator */
+    /* Print separator followed by blank line */
     set_line();
-    cprintf("\n\r");
 
-    set_margin(); cprintf(_("Hold <Control> to skip AUTO/ACC"));
-    cprintf("\r\n");
+    display_message(_("Hold <Control> to skip AUTO/ACC"));
     if (hdd_available) {
-        set_margin(); cprintf(_("Hold <Alternate> to skip HDD boot"));
-        cprintf("\r\n");
+        display_message(_("Hold <Alternate> to skip HDD boot"));
     }
-    set_margin(); cprintf(_("Press key 'X' to boot from X:"));
-    cprintf("\r\n");
+    display_message(_("Press key 'X' to boot from X:"));
 #if WITH_CLI
-    set_margin(); cprintf(_("Press <Esc> to run an early console"));
-    cprintf("\r\n");
+    display_message(_("Press <Esc> to run an early console"));
 #endif
 #if CONF_WITH_AROS
     cprintf("\r\n");
-    set_margin(); cprintf("\033pThis binary mixes GPL and AROS APL\033q\r\n");
-    set_margin(); cprintf("\033pcode, redistribution is forbidden.\033q\r\n");
+    display_inverse("This binary mixes GPL and AROS APL code,",1);
+    display_inverse("redistribution is forbidden.",1);
 #endif
     cprintf("\r\n");
-    set_margin();
-    cprintf("\033p");
-    cprintf(_(" Hold <Shift> to pause this screen "));
-    cprintf("\033q");
+
+    /* centre 'hold shift' message in all languages */
+    display_inverse(_("Hold <Shift> to pause this screen"),0);
+
 #ifdef ENABLE_KDEBUG
     /* We need +1 because the previous line is not ended with CRLF */
     actual_initinfo_height = v_cur_cy + 1 - top_margin;
@@ -349,8 +395,8 @@ WORD initinfo(ULONG *pshiftbits)
         }
         while (hz_200 < end);
 
-        /* Wait while Shift is pressed */
-        while (shiftbits & MODE_SHIFT)
+        /* Wait while Shift is pressed, and normal key is not pressed */
+        while ((shiftbits & MODE_SHIFT) && !bconstat2())
         {
 #if USE_STOP_INSN_TO_FREE_HOST_CPU
             stop_until_interrupt();

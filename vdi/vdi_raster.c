@@ -2,7 +2,7 @@
  * vdi_raster.c - Blitting routines
  *
  * Copyright 2002 Joachim Hoenig (blitter)
- * Copyright 2003-2016 The EmuTOS development team
+ * Copyright 2003-2017 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -13,15 +13,92 @@
 #include "config.h"
 #include "portab.h"
 #include "vdi_defs.h"
+#include "blitter.h"
 #include "../bios/lineavars.h"
 #include "../bios/tosvars.h"
+#include "../bios/machine.h"    /* for blitter-related items */
+#include "../bios/processor.h"  /* for cache control routines */
 #include "kprint.h"
 
 #ifdef __mcoldfire__
-#define ASM_BLIT 0      /* the assembler routine does not support ColdFire. */
+#define ASM_BLIT_IS_AVAILABLE   0   /* assembler routine does not support ColdFire */
 #else
-#define ASM_BLIT 1      /* use m68k assembler bit_blt routine. */
+#define ASM_BLIT_IS_AVAILABLE   1   /* may use m68k assembler fast_bit_blt routine */
 #endif
+
+
+#if CONF_WITH_BLITTER || !ASM_BLIT_IS_AVAILABLE
+#define FXSR    0x80
+#define NFSR    0x40
+#define SKEW    0x0f
+#define BUSY    0x80
+#define HOG     0x40
+#define SMUDGE  0x20
+#define LINENO  0x0f
+
+#define GetMemW(addr) ((ULONG)*(UWORD*)(addr))
+#define SetMemW(addr, val) *(UWORD*)(addr) = val
+
+/* blitter registers */
+typedef struct blit blit;
+struct blit {
+    UWORD          halftone[16];
+    WORD           src_x_inc, src_y_inc;
+    ULONG          src_addr;
+    WORD           end_1, end_2, end_3;
+    WORD           dst_x_inc, dst_y_inc;
+    ULONG          dst_addr;
+    UWORD          x_cnt, y_cnt;
+    BYTE           hop, op, status, skew;
+};
+
+/* setting of skew flags */
+
+/* ---QUALIFIERS--- -ACTIONS-
+ * dirn equal Sx&F>
+ * L->R spans Dx&F  FXSR NFSR
+ *  0     0     0     0    1  |..ssssssssssssss|ssssssssssssss..|
+ *                            |......dddddddddd|dddddddddddddddd|dd..............|
+ *
+ *  0     0     1     1    0  |......ssssssssss|ssssssssssssssss|ss..............|
+ *                            |..dddddddddddddd|dddddddddddddd..|
+ *
+ *  0     1     0     1    1  |..ssssssssssssss|ssssssssssssss..|
+ *                            |...ddddddddddddd|ddddddddddddddd.|
+ *
+ *  0     1     1     0    0  |...sssssssssssss|sssssssssssssss.|
+ *                            |..dddddddddddddd|dddddddddddddd..|
+ *
+ *  1     0     0     0    1  |..ssssssssssssss|ssssssssssssss..|
+ *                            |......dddddddddd|dddddddddddddddd|dd..............|
+ *
+ *  1     0     1     1    0  |......ssssssssss|ssssssssssssssss|ss..............|
+ *                            |..dddddddddddddd|dddddddddddddd..|
+ *
+ *  1     1     0     0    0  |..ssssssssssssss|ssssssssssssss..|
+ *                            |...ddddddddddddd|ddddddddddddddd.|
+ *
+ *  1     1     1     1    1  |...sssssssssssss|sssssssssssssss.|
+ *                            |..dddddddddddddd|dddddddddddddd..|
+ */
+
+#define mSkewFXSR    0x80
+#define mSkewNFSR    0x40
+
+static const UBYTE skew_flags[8] = {
+                        /* for blit direction Right->Left */
+    mSkewNFSR,              /* Source span < Destination span */
+    mSkewFXSR,              /* Source span > Destination span */
+    mSkewNFSR+mSkewFXSR,    /* Spans equal, Shift Source right */
+    0,                      /* Spans equal, Shift Source left */
+                        /* for blit direction Left->Right */
+    mSkewNFSR,              /* Source span < Destination span */
+    mSkewFXSR,              /* Source span > Destination span */
+    0,                      /* Spans equal, Shift Source right */
+    mSkewNFSR+mSkewFXSR     /* Spans equal, Shift Source left */
+};
+#endif
+
 
 /* bitblt modes */
 #define BM_ALL_WHITE   0
@@ -110,7 +187,9 @@ typedef struct {
 
 extern void linea_blit(struct blit_frame *info); /* called only from linea.S */
 extern void linea_raster(void); /* called only from linea.S */
-
+#if ASM_BLIT_IS_AVAILABLE
+extern void fast_bit_blt(void); /* in vdi_blit.S */
+#endif
 
 /* holds VDI internal info for bit_blt() */
 static struct blit_frame vdi_info;
@@ -201,43 +280,78 @@ void vdi_vr_trnfm(Vwk * vwk)
 }
 
 
-#if ASM_BLIT
+#if CONF_WITH_BLITTER
+/*
+ * blitter_do_blit()
+ *
+ * Interface to hardware blitter for raster functions
+ */
+static void
+blitter_do_blit(blit *blt)
+{
+    LONG length;
+    /*
+     * since the blitter doesn't see the data cache, and we may be in
+     * copyback mode (e.g. the FireBee), we must flush the data cache
+     * first to ensure that the memory is current.  we strictly do not
+     * need to calculate the length, since the current cache control
+     * routines ignore it & act on the whole cache anyway.
+     */
+    length = (blt->y_cnt * blt->dst_y_inc) + (blt->x_cnt * blt->dst_x_inc);
+    flush_data_cache((void *)blt->dst_addr,length);
 
-extern void bit_blt(void);
+    BLITTER->src_x_incr = blt->src_x_inc;
+    BLITTER->src_y_incr = blt->src_y_inc;
+    BLITTER->src_addr = (UWORD *)blt->src_addr;
+    BLITTER->endmask_1 = blt->end_1;
+    BLITTER->endmask_2 = blt->end_2;
+    BLITTER->endmask_3 = blt->end_3;
+    BLITTER->dst_x_incr = blt->dst_x_inc;
+    BLITTER->dst_y_incr = blt->dst_y_inc;
+    BLITTER->dst_addr = (UWORD *)blt->dst_addr;
+    BLITTER->x_count = blt->x_cnt;
+    BLITTER->y_count = blt->y_cnt;
+    BLITTER->op = blt->op;
+    BLITTER->hop = blt->hop;
+    BLITTER->skew = blt->skew;
 
-#else
+    /*
+     * we run the blitter in the Atari-recommended way: use no-HOG mode,
+     * and manually restart the blitter until it's done.
+     */
+    BLITTER->status = BUSY;     /* no-HOG mode */
+    __asm__ __volatile__(
+    "lea    0xFFFF8A3C,a0\n\t"
+    "0:\n\t"
+    "tas    (a0)\n\t"
+    "nop\n\t"
+    "jbmi   0b\n\t"
+    :
+    :
+    : "a0", "memory", "cc"
+    );
 
-#define FXSR    0x80
-#define NFSR    0x40
-#define SKEW    0x0f
-#define BUSY    0x80
-#define HOG     0x40
-#define SMUDGE  0x20
-#define LINENO  0x0f
+    /*
+     * we've modified data behind the cpu's back, so we must
+     * invalidate any cached data.
+     */
+    invalidate_data_cache((void *)blt->dst_addr,length);
+}
+#endif
 
-#define GetMemW(addr) ((ULONG)*(UWORD*)(addr))
-#define SetMemW(addr, val) *(UWORD*)(addr) = val
 
-/* blitter registers */
-typedef struct blit blit;
-struct blit {
-    UWORD          halftone[16];
-    WORD           src_x_inc, src_y_inc;
-    ULONG          src_addr;
-    WORD           end_1, end_2, end_3;
-    WORD           dst_x_inc, dst_y_inc;
-    ULONG          dst_addr;
-    UWORD          x_cnt, y_cnt;
-    BYTE           hop, op, status, skew;
-    /* BYTE           ready; */
-};
-
+#if !ASM_BLIT_IS_AVAILABLE
+/*
+ * the following is a modified version of a blitter emulator, with the HOP
+ * processing removed since it is always called with a HOP value of 2 (source)
+ */
 static void
 do_blit(blit * blt)
 {
     ULONG   blt_src_in;
     UWORD   blt_src_out, blt_dst_in, blt_dst_out, mask_out;
-    int  xc, yc, last, first;
+    int     last, first;
+    UWORD   xc;
 
     KDEBUG(("do_blit(): Start\n"));
     /*
@@ -258,19 +372,12 @@ do_blit(blit * blt)
     KDEBUG(("NFSR=%d,FXSR=%d,SKEW=%d\n",
             (blt->skew&NFSR)!=0,(blt->skew&FXSR)!=0,(blt->skew & SKEW)));
 
-    if (blt->x_cnt == 0) blt->x_cnt = 65535;
-    if (blt->y_cnt == 0) blt->y_cnt = 65535;
-
-    xc = 0;
-    yc = blt->y_cnt;
-    while (yc-- > 0) {
+    do {
         xc = blt->x_cnt;
         first = 1;
         blt_src_in = 0;
-        /* next line to get rid of obnoxious compiler warnings */
-        blt_src_out = blt_dst_out = 0;
-        while (xc-- > 0) {
-            last = (xc == 0);
+        do {
+            last = (xc == 1);
             /* read source into blt_src_in */
             if (blt->src_x_inc >= 0) {
                 if (first && (blt->skew & FXSR)) {
@@ -373,42 +480,37 @@ do_blit(blit * blt)
                 blt->dst_addr += blt->dst_x_inc;
             }
             first = 0;
-        }
+        } while(--xc != 0);
         blt->status = (blt->status + ((blt->dst_y_inc >= 0) ? 1 : 15)) & 0xef;
         blt->src_addr += blt->src_y_inc;
         blt->dst_addr += blt->dst_y_inc;
-    }
+    } while(--blt->y_cnt != 0);
     /* blt->status &= ~BUSY; */
-    blt->y_cnt = 0;
 }
+#endif
 
+
+#if CONF_WITH_BLITTER || !ASM_BLIT_IS_AVAILABLE
 /*
- * endmask data
+ * bit_blt()
  *
- * a bit means:
+ * Purpose:
+ * Transfer a rectangular block of pixels located at an arbitrary X,Y
+ * position in the source memory form to another arbitrary X,Y position
+ * in the destination memory form, using replace mode (boolean operator 3).
+ * This is used on ColdFire (where fast_bit_blt() is not available) or if
+ * configuring with the blitter on a 68K system, since fast_bit_blt() does
+ * not provide an interface to the hardware.
  *
- *   0: Destination
- *   1: Source <<< Invert right end mask data >>>
+ * In:
+ *  blit_info   pointer to 34 byte input parameter block
+ *
+ * Note: This is a translation of the original assembler code in the Atari
+ * blitter document, with the addition that source and destination are
+ * allowed to overlap.  Original source code comments are mostly preserved.
  */
 
-/* TiTLE: BLiT_iT */
-
-/* PuRPoSE: */
-/* Transfer a rectangular block of pixels located at an */
-/* arbitrary X,Y position in the source memory form to */
-/* another arbitrary X,Y position in the destination memory */
-/* form using replace mode (boolean operator 3). */
-/* The source and destination rectangles should not overlap. */
-
-/* iN: */
-/* a4 pointer to 34 byte input parameter block */
-
-/* Note: This routine must be executed in supervisor mode as */
-/* access is made to hardware registers in the protected region */
-/* of the memory map. */
-
-
-/* I n p u t p a r a m e t e r b l o c k o f f s e t s */
+/* I n p u t   p a r a m e t e r   b l o c k   o f f s e t s */
 
 #define SRC_FORM  0 /* Base address of source memory form .l: */
 #define SRC_NXWD  4 /* Offset between words in source plane .w: */
@@ -444,65 +546,34 @@ bit_blt (void)
     /* a5-> BLiTTER register block */
     blit * blt = &blitter;
 
-    /* setting of skew flags */
-
-    /* QUALIFIERS   ACTIONS   BITBLT DIRECTION: LEFT -> RIGHT */
-
-    /* equal Sx&F> */
-    /* spans Dx&F FXSR NFSR */
-
-    /* 0     0     0    1 |..ssssssssssssss|ssssssssssssss..|   */
-    /*   |......dddddddddd|dddddddddddddddd|dd..............|   */
-
-    /* 0     1      1  0 */
-    /*   |......ssssssssss|ssssssssssssssss|ss..............|   */
-    /*   |..dddddddddddddd|dddddddddddddd..|   */
-
-    /* 1     0     0    0 |..ssssssssssssss|ssssssssssssss..|   */
-    /*   |...ddddddddddddd|ddddddddddddddd.|   */
-
-    /* 1     1     1    1 |...sssssssssssss|sssssssssssssss.|   */
-    /*   |..dddddddddddddd|dddddddddddddd..|   */
-
-#define mSkewFXSR    0x80
-#define mSkewNFSR    0x40
-
-    const UBYTE skew_flags [8] = {
-        mSkewNFSR,              /* Source span < Destination span */
-        mSkewFXSR,              /* Source span > Destination span */
-        0,                      /* Spans equal Shift Source right */
-        mSkewNFSR+mSkewFXSR,    /* Spans equal Shift Source left */
-
-        /* When Destination span is but a single word ... */
-        0,                      /* Implies a Source span of no words */
-        mSkewFXSR,              /* Source span of two words */
-        0,                      /* Skew flags aren't set if Source and */
-        0                       /* Destination spans are both one word */
-    };
-
     /* Calculate Xmax coordinates from Xmin coordinates and width */
     s_xmin = blit_info->s_xmin;               /* d0<- src Xmin */
     s_xmax = s_xmin + blit_info->b_wd - 1;    /* d1<- src Xmax=src Xmin+width-1 */
     d_xmin = blit_info->d_xmin;               /* d2<- dst Xmin */
     d_xmax = d_xmin + blit_info->b_wd - 1;    /* d3<- dst Xmax=dstXmin+width-1 */
 
-    /* Skew value is (destination Xmin mod 16 - source Xmin mod 16) */
-    /* && 0x000F.  Three discriminators are used to determine the */
-    /* states of FXSR and NFSR flags: */
-
-    /* bit 0     0: Source Xmin mod 16 =< Destination Xmin mod 16 */
-    /*           1: Source Xmin mod 16 >  Destination Xmin mod 16 */
-
-    /* bit 1     0: SrcXmax/16-SrcXmin/16 <> DstXmax/16-DstXmin/16 */
-    /*                       Source span      Destination span */
-    /*           1: SrcXmax/16-SrcXmin/16 == DstXmax/16-DstXmin/16 */
-
-    /* bit 2     0: multiple word Destination span */
-    /*           1: single word Destination span */
-
-    /* These flags form an offset into a skew flag table yielding */
-    /* correct FXSR and NFSR flag states for the given source and */
-    /* destination alignments */
+    /*
+     * Skew value is (destination Xmin mod 16 - source Xmin mod 16) && 0x000F.
+     * Three main discriminators are used to determine the states of the skew
+     * flags (FXSR and NFSR):
+     *
+     * bit 0     0: Source Xmin mod 16 =< Destination Xmin mod 16
+     *           1: Source Xmin mod 16 >  Destination Xmin mod 16
+     *
+     * bit 1     0: SrcXmax/16-SrcXmin/16 <> DstXmax/16-DstXmin/16
+     *                       Source span      Destination span
+     *           1: SrcXmax/16-SrcXmin/16 == DstXmax/16-DstXmin/16
+     *
+     * bit 2     0: Blit direction is from Right to Left
+     *           1: Blit direction is from Left to Right
+     *
+     * These form an offset into a skew flag table yielding FXSR and NFSR flag
+     * states for the given source and destination alignments.
+     *
+     * NOTE: this table lookup is overridden for the special case when both
+     * the source & destination widths are one, and the skew is 0.  For this
+     * case, the FXSR flag alone is always set.
+     */
 
     skew_idx = 0x0000;                  /* default */
 
@@ -514,7 +585,7 @@ bit_blt (void)
     d_xmax_off = d_xmax >> 4;           /* d3<- word offset to dst Xmax */
     d_span = d_xmax_off - d_xmin_off;   /* d3<- dst span - 1 */
 
-    /* the last discriminator is the */
+                                        /* the last discriminator is the */
     if ( d_span == s_span ) {           /* equality of src and dst spans */
         skew_idx |= 0x0002;             /* d6[bit1]:1 => equal spans */
     }
@@ -522,19 +593,14 @@ bit_blt (void)
     /* d4<- number of words in dst line */
     blt->x_cnt = d_span + 1;            /* set value in BLiTTER */
 
-    /* Endmasks derived from source Xmin mod 16 and source Xmax mod 16 */
+    /* Endmasks derived from dst Xmin mod 16 and dst Xmax mod 16 */
     lendmask=0xffff>>(d_xmin%16);
     rendmask=~(0x7fff>>(d_xmax%16));
 
-    /* does destination just span a single word? */
-    if ( !d_span ) {
-        /* merge both end masks into Endmask1. */
-        lendmask &= rendmask;           /* d4<- single word end mask */
-        /* VRI: This C implementation incorrectly handles the special case    */
-        /* of a single word destination, so I comment out the following line. */
-        //skew_idx |= 0x0004;             /* d6[bit2]:1 => single word dst */
-        /* The other end masks will be ignored by the BLiTTER */
-    }
+    /* d7<- Dst Xmin mod16 - Src Xmin mod16 */
+    skew = (d_xmin & 0x0f) - (s_xmin & 0x0f);
+    if (skew < 0 )
+        skew_idx |= 0x0001;             /* d6[bit0]<- alignment flag */
 
     /* Calculate starting addresses */
     s_addr = (ULONG)blit_info->s_form
@@ -545,7 +611,8 @@ bit_blt (void)
         + (ULONG)d_xmin_off * (ULONG)blit_info->d_nxwd;
 
     /* if (just_screen && (s_addr < d_addr)) { */
-    if (s_addr < d_addr) {
+    if ((s_addr < d_addr)
+     || ((s_addr == d_addr) && (skew >= 0))) {
         /* start from lower right corner, so add width+length */
         s_addr = (ULONG)blit_info->s_form
             + (ULONG)blit_info->s_ymax * (ULONG)blit_info->s_nxln
@@ -562,14 +629,9 @@ bit_blt (void)
         blt->src_y_inc = -(blit_info->s_nxln - blit_info->s_nxwd * s_span);
         blt->dst_y_inc = -(blit_info->d_nxln - blit_info->d_nxwd * d_span);
 
-        blt->end_1 = rendmask;          /* left end mask */
-        blt->end_2 = 0xFFFF;            /* center end mask */
-        blt->end_3 = lendmask;          /* right end mask */
-
-        /* we start at maximum, d7<- Dst Xmax mod16 - Src Xmax mod16 */
-        skew = (d_xmax & 0x0f) - (s_xmax & 0x0f);
-        if (skew >= 0 )
-            skew_idx |= 0x0001;         /* d6[bit0]<- alignment flag */
+        blt->end_1 = rendmask;          /* first write mask */
+        blt->end_2 = 0xFFFF;            /* center mask */
+        blt->end_3 = lendmask;          /* last write mask */
     }
     else {
         /* offset between consecutive words in planes */
@@ -580,22 +642,40 @@ bit_blt (void)
         blt->src_y_inc = blit_info->s_nxln - blit_info->s_nxwd * s_span;
         blt->dst_y_inc = blit_info->d_nxln - blit_info->d_nxwd * d_span;
 
-        blt->end_1 = lendmask;          /* left end mask */
-        blt->end_2 = 0xFFFF;            /* center end mask */
-        blt->end_3 = rendmask;          /* right end mask */
+        blt->end_1 = lendmask;          /* first write mask */
+        blt->end_2 = 0xFFFF;            /* center mask */
+        blt->end_3 = rendmask;          /* last write mask */
 
-        /* d7<- Dst Xmin mod16 - Src Xmin mod16 */
-        skew = (d_xmin & 0x0f) - (s_xmin & 0x0f);
-        if (skew < 0 )
-            skew_idx |= 0x0001;         /* d6[bit0]<- alignment flag */
-
+        skew_idx |= 0x0004;             /* blitting left->right */
     }
+
+    /* does destination just span a single word? */
+    if ( !d_span ) {
+        /* merge both end masks into Endmask1. */
+        blt->end_1 &= blt->end_3;       /* single word end mask */
+        /* The other end masks will be ignored by the BLiTTER */
+    }
+
     /*
-     * The low nibble of the difference in Source and Destination alignment
-     * is the skew value.  Use the skew flag index to reference FXSR and
-     * NFSR states in skew flag table.
+     * Set up the skew byte, which contains the FXSR/NFSR flags and the
+     * skew value.  The skew value is the low nybble of the difference
+     * in Source and Destination alignment.
+     *
+     * The main complication is setting the FXSR/NFSR flags.  Normally
+     * we use the calculated skew_idx to obtain them from the skew_flags[]
+     * array.  However, when the source and destination widths are both 1,
+     * we do not set either flag unless the skew value is zero, in which
+     * case we set the FXSR flag only.  Additionally, we must set the skew
+     * direction in source x incr.
+     *
+     * Thank you blitter hardware designers ...
      */
-    blt->skew = (skew & 0x0f) | skew_flags[skew_idx];
+    if (!s_span && !d_span) {
+        blt->src_x_inc = skew;          /* sets skew direction */
+        blt->skew = skew ? (skew & 0x0f) : mSkewFXSR;
+    } else {
+        blt->skew = (skew & 0x0f) | skew_flags[skew_idx];
+    }
 
     /* BLiTTER REGISTER MASKS */
 #define mHOP_Source  0x02
@@ -614,13 +694,33 @@ bit_blt (void)
         op_tabidx |= (blit_info->bg_col>>plane) & 0x0001;
         blt->op = blit_info->op_tab[op_tabidx] & 0x000f;
 
-        do_blit(blt);
+        /*
+         * We can only be here if either:
+         * (a) we are on ColdFire (ASM_BLIT_IS_AVAILABLE is 0): the
+         *     hardware blitter may or may not be enabled, or
+         * (b) we are on 68K (ASM_BLIT_IS_AVAILABLE is 1): the
+         *     hardware blitter must be enabled to get here.
+         */
+#if !ASM_BLIT_IS_AVAILABLE
+#if CONF_WITH_BLITTER
+        if (blitter_is_enabled)
+        {
+            blitter_do_blit(blt);
+        }
+        else
+#endif
+        {
+            do_blit(blt);
+        }
+#else
+        blitter_do_blit(blt);
+#endif
 
         s_addr += blit_info->s_nxpl;          /* a0-> start of next src plane   */
         d_addr += blit_info->d_nxpl;          /* a1-> start of next dst plane   */
     }
 }
-#endif   /* ASM_BLIT */
+#endif
 
 
 /* common settings needed both by VDI and line-A raster
@@ -909,9 +1009,28 @@ cpy_raster(struct raster_t *raster, struct blit_frame *info)
         }
     }
 
-    /* call assembly blit routine or C-implementation */
+    /*
+     * call assembler blit routine or C-implementation.  we call the
+     * assembler version if we're not on ColdFire and either
+     * (a) the blitter isn't configured, or
+     * (b) it's configured but not available.
+     */
     blit_info = info;
+
+#if ASM_BLIT_IS_AVAILABLE
+#if CONF_WITH_BLITTER
+    if (blitter_is_enabled)
+    {
+        bit_blt();
+    }
+    else
+#endif
+    {
+        fast_bit_blt();
+    }
+#else
     bit_blt();
+#endif
 }
 
 /*
@@ -964,7 +1083,7 @@ void linea_raster(void)
 
     raster.clipper = NULL;
     raster.clip = 0;
-    raster.multifill = multifill;
+    raster.multifill = MFILL;
     raster.transparent = COPYTRAN;
 
     cpy_raster(&raster, &vdi_info);
@@ -981,5 +1100,25 @@ void linea_blit(struct blit_frame *info)
     info->d_xmax = info->d_xmin + info->b_wd - 1;
     info->d_ymax = info->d_ymin + info->b_ht - 1;
     blit_info = info;
+
+    /*
+     * call assembler blit routine or C-implementation.  we call the
+     * assembler version if we're not on ColdFire and either
+     * (a) the blitter isn't configured, or
+     * (b) it's configured but not available.
+     */
+#if ASM_BLIT_IS_AVAILABLE
+#if CONF_WITH_BLITTER
+    if (blitter_is_enabled)
+    {
+        bit_blt();
+    }
+    else
+#endif
+    {
+        fast_bit_blt();
+    }
+#else
     bit_blt();
+#endif
 }

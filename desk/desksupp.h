@@ -23,15 +23,15 @@ void do_wopen(WORD new_win, WORD wh, WORD curr, WORD x, WORD y, WORD w, WORD h);
 WORD do_wfull(WORD wh);
 WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon,
                 BYTE *pathname, GRECT *pt, WORD redraw);
-WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname);
+WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname, BYTE *tail);
 WORD do_dopen(WORD curr);
 void do_fopen(WNODE *pw, WORD curr, BYTE *pathname, WORD redraw);
 WORD do_open(WORD curr);
 WORD do_info(WORD curr);
 void do_format(void);
-void do_refresh(WNODE *pw);
+void refresh_drive(WORD drive);
+void refresh_window(WNODE *pw);
 ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp);
-void remove_one_level(BYTE *pathname);
 WORD set_default_path(BYTE *path);
 
 #endif  /* _DESKSUPP_H */

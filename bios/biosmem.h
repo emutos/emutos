@@ -14,15 +14,17 @@
 #define BIOSMEM_H
 
 #include "memdefs.h"
+#include "disk.h"
 
 /*
- * sizes of disk buffers allocated via balloc_stram()
+ * sizes of ST-RAM disk buffers
  */
 #define DSKBUF_SECS     2
 #define DSKBUF_SIZE     (DSKBUF_SECS * SECTOR_SIZE) /* pointed to by dskbufp */
 #define FRB_SIZE        (64 * 1024UL)       /* pointed to by _FRB cookie */
 #define FRB_SECS        (FRB_SIZE / SECTOR_SIZE)
 
+extern UBYTE dskbuf[DSKBUF_SIZE]; /* In ST-RAM */
 
 /* Prototypes */
 void bmem_init(void);

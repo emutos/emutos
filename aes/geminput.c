@@ -35,6 +35,7 @@
 #include "gemwmlib.h"
 #include "gemasync.h"
 #include "gemdisp.h"
+#include "gemgsxif.h"
 #include "rectfunc.h"
 #include "kprint.h"
 
@@ -100,12 +101,7 @@ static WORD chk_ctrl(WORD mx, WORD my)
     wh = wm_find(mx, my);
     if (wh)
     {
-        if ((D.w_win[gl_wtop].w_flags & VF_SUBWIN) &&
-            (D.w_win[wh].w_flags & VF_SUBWIN) &&
-            inside(mx, my, &D.w_win[wh].w_work))
-            return 1;
-        else
-            return -1;
+        return -1;
     }
     else
         return 0;
@@ -365,10 +361,14 @@ void mchange(LONG fdata)
     xrat = rx;
     yrat = ry;
 
-    /* post the event */
+    /*
+     * if we are running because of appl_tplay(), then we need to draw
+     * the cursor ourselves
+     */
     if (gl_play)
     {
         drawrat(rx, ry);
+        gsx_setmousexy(rx, ry);     /* synchronise VDI cursor */
     }
 
     /*
@@ -504,19 +504,19 @@ void adelay(EVB *e, LONG c)
     q = (EVB *) ((BYTE *) &dlr - offsetof(EVB, e_link));
     for (p = dlr; p; p = (q = p) -> e_link)
     {
-        if (c <= (LONG) p->e_parm)
+        if (c <= p->e_parm)
             break;
-        c -= (LONG) p->e_parm;
+        c -= p->e_parm;
     }
     e->e_pred = q;
     q->e_link = e;
-    e->e_parm = (LONG) c;
+    e->e_parm = c;
     e->e_link = p;
     if (p)
     {
-        c = (LONG) p->e_parm - c;
+        c = p->e_parm - c;
         p->e_pred = e;
-        p->e_parm = (LONG) c;
+        p->e_parm = c;
     }
     enable_interrupts();
 }

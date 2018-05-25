@@ -38,14 +38,16 @@ Roger Burrows (RFB) <rfburrows at ymail.com>
 - Full support for Falcon video hardware
 - Real Falcon 030 support (cache, MMU, SCC, HD floppy)
 - Real TT 030 support (video, MFP2)
+- Blitter support for horizontal lines/filled rectangles/raster graphics
 - Desktop and file selector improvements
 - EmuCON2
-- erd tool: the EmuTOS Resource Decompiler
+- Tools: erd (EmuTOS Resource Decompiler) & draft (deletes items from desktop resource)
 - Various bugfixes and cleanups
 
 Vincent Rivière (VRI) <vincent.riviere at freesbee.fr>
 - Many improvements to the build and configuration process
 - Moved project from CVS to Git, and from SourceForge to GitHub
+- Implemented automatic builds via Travis CI
 - Patches for compiling with GCC 4.x
 - ColdFire CPU and FireBee support
 - Initial IDE driver
@@ -198,25 +200,30 @@ Hampa Hug
 
 Markus Fröschle
 - Tests on the FireBee and BaS_gcc support
+- Inspired the support for the blitter
 - Fix various AES & VDI bugs
 
 Christian Zietz <czietz at gmx.net>
-- ROM tests on real STe hardware
+- ROM tests on real ST/STe hardware
 - Fix floppy/ACSI bug
 - Fix memory detection to support STs as well as STes
 - Support for extended MBR partitions
 - Add IDE 'twisted cable' support
+- Fix cold boot problems caused by some ST MMUs
 - Miscellaneous bug fixes
 
-Jo Even Skarstein (joska at online.no)
+Jo Even Skarstein <joska at online.no>
 - Support for Norwegian & Swedish keyboards
 - Support for MonSTer add-on board
 
-Thorsten Otto (admin at tho-otto.de)
+Thorsten Otto <admin at tho-otto.de>
 - Make EmuTOS more compatible with Atari TOS in several areas
 - Add check_read_byte() workaround for ARAnyM-JIT
+- Fixes to 68040 PMMU setup
+- Inspired the support for window/desktop background configuration
+- Found many bugs in desktop shortcut handling
 - Miscellaneous bug fixes
-- Miscellaneous source code cleanup
+- Lots of source code cleanup
 
 Apollo Team: Gunnar von Boehn, Philippe Flype, Simo Koivukoski,
 pisklak, guibrush, TuKo, and all other members...
@@ -233,3 +240,9 @@ Ingo Uhlemann
 
 Stefan Haubenthal
 - EmuTOS packaging on Aminet: http://aminet.net/package/misc/emu/emutos
+
+Christian Quante
+- Various desktop bug fixes & improvements
+
+Keli Hlodversson
+- Replaced form_alert() icons with more TOS-like ones

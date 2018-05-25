@@ -1,7 +1,7 @@
 /*
  * lineavars.S - Graphics related system variables
  *
- * Copyright (C) 2001-2016 by Authors:
+ * Copyright (C) 2001-2017 by Authors:
  *
  * Authors:
  *  THH  Thomas Huth
@@ -62,11 +62,11 @@
                 .globl  _v_fnt_nd
                 .globl  _v_fnt_st
                 .globl  _v_fnt_wr
-                .globl  _v_hz_rez
+                .globl  _V_REZ_HZ
                 .globl  _v_off_ad
                 .globl  _v_stat_0
-                .globl  _v_vt_rez
-                .globl  _v_bytes_lin
+                .globl  _V_REZ_VT
+                .globl  _BYTES_LIN
                 .globl  _GCURX
                 .globl  _GCURY
                 .globl  _HIDE_CNT
@@ -195,12 +195,12 @@ _v_fnt_ad:      .ds.l   1       // -22  pointer to current monospace font
 _v_fnt_nd:      .ds.w   1       // -18  ascii code of last cell in font
 _v_fnt_st:      .ds.w   1       // -16  ascii code of first cell in font
 _v_fnt_wr:      .ds.w   1       // -14  font cell wrap
-_v_hz_rez:      .ds.w   1       // -12  horizontal resolution in pixels
+_V_REZ_HZ:      .ds.w   1       // -12  horizontal resolution in pixels
 _v_off_ad:      .ds.l   1       // -10  pointer to font offset table
 _v_stat_0:      .ds.b   1       // -6   video cell system status (was in words)
                 .ds.b   1       //      dummy
-_v_vt_rez:      .ds.w   1       // -4   vertical resolution in pixels
-_v_bytes_lin:   .ds.w   1       // -2   byte per screen line
+_V_REZ_VT:      .ds.w   1       // -4   vertical resolution in pixels
+_BYTES_LIN:     .ds.w   1       // -2   byte per screen line
 
 
 
@@ -217,11 +217,10 @@ _v_bytes_lin:   .ds.w   1       // -2   byte per screen line
                 .globl  _INTOUT
                 .globl  _PTSOUT
 
-                .globl  _fg_bp
-                .globl  _FG_BP_1
-                .globl  _FG_BP_2
-                .globl  _FG_BP_3
-                .globl  _FG_BP_4
+                .globl  _COLBIT0
+                .globl  _COLBIT1
+                .globl  _COLBIT2
+                .globl  _COLBIT3
 
                 .globl  _X1
                 .globl  _X2
@@ -234,20 +233,20 @@ _v_bytes_lin:   .ds.w   1       // -2   byte per screen line
                 .globl  _v_planes
                 .globl  _v_lin_wr
 
-                .globl  _patptr
-                .globl  _patmsk
+                .globl  _PATPTR
+                .globl  _PATMSK
 
                 .globl  _CLIP
-                .globl  _XMN_CLIP
-                .globl  _XMX_CLIP
-                .globl  _YMN_CLIP
-                .globl  _YMX_CLIP
+                .globl  _XMINCL
+                .globl  _XMAXCL
+                .globl  _YMINCL
+                .globl  _YMAXCL
 
-                .globl  _multifill
-                .globl  _XACC_DDA
-                .globl  _DDA_INC
-                .globl  _T_SCLSTS
-                .globl  _MONO_STATUS
+                .globl  _MFILL
+                .globl  _XDDA
+                .globl  _DDAINC
+                .globl  _SCALDIR
+                .globl  _MONO
                 .globl  _SOURCEX
                 .globl  _SOURCEY
                 .globl  _DESTX
@@ -260,13 +259,13 @@ _v_bytes_lin:   .ds.w   1       // -2   byte per screen line
                 .globl  _LITEMASK
                 .globl  _SKEWMASK
                 .globl  _WEIGHT
-                .globl  _R_OFF
-                .globl  _L_OFF
-                .globl  _DOUBLE
+                .globl  _ROFF
+                .globl  _LOFF
+                .globl  _SCALE
                 .globl  _CHUP
-                .globl  _TEXT_FG
-                .globl  _scrtchp
-                .globl  _scrpt2
+                .globl  _TEXTFG
+                .globl  _SCRTCHP
+                .globl  _SCRPT2
                 .globl  _COPYTRAN
 
 // ==== Global GSX Variables =================================================
@@ -288,11 +287,10 @@ _PTSOUT:        .ds.l   1               // +20  ptr to the PTSOUT array.
 //      as an array (to allow post-increment addressing).  They must be contiguous!!
 // ===========================================================================
 
-_fg_bp:
-_FG_BP_1:       .ds.w   1               // foreground bit_plane #1 value.
-_FG_BP_2:       .ds.w   1               // foreground bit_plane #2 value.
-_FG_BP_3:       .ds.w   1               // foreground bit_plane #3 value.
-_FG_BP_4:       .ds.w   1               // foreground bit_plane #4 value.
+_COLBIT0:       .ds.w   1               // colour bit value for plane 0
+_COLBIT1:       .ds.w   1               // colour bit value for plane 1
+_COLBIT2:       .ds.w   1               // colour bit value for plane 2
+_COLBIT3:       .ds.w   1               // colour bit value for plane 3
 
 _LSTLIN:        .ds.w   1               // 0 => not last line of polyline.
 _LN_MASK:       .ds.w   1               // line style mask.
@@ -303,20 +301,20 @@ _X1:            .ds.w   1               // _X1 coordinate for squares
 _Y1:            .ds.w   1               // _Y1 coordinate for squares
 _X2:            .ds.w   1               // _X2 coordinate for squares
 _Y2:            .ds.w   1               // _Y2 coordinate for squares
-_patptr:        .ds.l   1               // fill pattern pointer
-_patmsk:        .ds.w   1               // fill pattern "mask" (line count)
-_multifill:     .ds.w   1               // multi-plane fill flag. (0 => 1 plane)
+_PATPTR:        .ds.l   1               // fill pattern pointer
+_PATMSK:        .ds.w   1               // fill pattern "mask" (line count)
+_MFILL:         .ds.w   1               // multi-plane fill flag. (0 => 1 plane)
 
 _CLIP:          .ds.w   1               // clipping flag.
-_XMN_CLIP:      .ds.w   1               // x minimum clipping value.
-_YMN_CLIP:      .ds.w   1               // y minimum clipping value.
-_XMX_CLIP:      .ds.w   1               // x maximum clipping value.
-_YMX_CLIP:      .ds.w   1               // y maximum clipping value.
+_XMINCL:        .ds.w   1               // x minimum clipping value.
+_YMINCL:        .ds.w   1               // y minimum clipping value.
+_XMAXCL:        .ds.w   1               // x maximum clipping value.
+_YMAXCL:        .ds.w   1               // y maximum clipping value.
 
-_XACC_DDA:      .ds.w   1               // accumulator for x DDA
-_DDA_INC:       .ds.w   1               // the fraction to be added to the DDA
-_T_SCLSTS:      .ds.w   1               // scale up or down flag.
-_MONO_STATUS:   .ds.w   1               // non-zero - cur font is monospaced
+_XDDA:          .ds.w   1               // accumulator for x DDA
+_DDAINC:        .ds.w   1               // the fraction to be added to the DDA
+_SCALDIR:       .ds.w   1               // scale up or down flag.
+_MONO:          .ds.w   1               // non-zero - cur font is monospaced
 _SOURCEX:       .ds.w   1
 _SOURCEY:       .ds.w   1               // upper left of character in font file
 _DESTX:         .ds.w   1
@@ -329,13 +327,13 @@ _STYLE:         .ds.w   1               // special effects
 _LITEMASK:      .ds.w   1               // special effects
 _SKEWMASK:      .ds.w   1               // special effects
 _WEIGHT:        .ds.w   1               // special effects
-_R_OFF:         .ds.w   1
-_L_OFF:         .ds.w   1               // skew above and below baseline
-_DOUBLE:        .ds.w   1               // replicate pixels
+_ROFF:          .ds.w   1
+_LOFF:          .ds.w   1               // skew above and below baseline
+_SCALE:         .ds.w   1               // scale character
 _CHUP:          .ds.w   1               // character rotation vector
-_TEXT_FG:       .ds.w   1               // text foreground color
-_scrtchp:       .ds.l   1               // pointer to base of scratch buffer
-_scrpt2:        .ds.w   1               // large buffer base offset
-_TEXT_BG:       .ds.w   1               // text background color
+_TEXTFG:        .ds.w   1               // text foreground color
+_SCRTCHP:       .ds.l   1               // pointer to base of scratch buffer
+_SCRPT2:        .ds.w   1               // large buffer base offset
+_TEXTBG:        .ds.w   1               // text background color
 _COPYTRAN:      .ds.w   1               // Flag for Copy-raster-form (<>0 = Transparent)
 _FILL_ABORT:    .ds.l   1               // Address of Routine for testing break out of contourfill function

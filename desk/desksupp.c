@@ -110,10 +110,7 @@ void desk_clear(WORD wh)
 {
     WNODE *pw;
     GRECT c;
-    WORD root = -1;
-
-    /* get current size */
-    wind_get_grect(wh, WF_WXYWH, &c);
+    WORD root = DROOT;
 
     if (wh)         /* not the desktop */
     {
@@ -121,7 +118,17 @@ void desk_clear(WORD wh)
         if (pw)
             root = pw->w_root;
     }
-    else root = DROOT;
+
+    /*
+     * if 'root' is still DROOT, then either the 'window' is the desktop
+     * (wh==0), or something is wrong with the window setup.  to handle
+     * the latter case, we force the handle to 0 anyway for safety.
+     */
+    if (root == DROOT)
+        wh = 0;
+
+    /* get current size */
+    wind_get_grect(wh, WF_WXYWH, &c);
 
     /* clear all selections */
     act_allchg(wh, G.g_screen, root, 0, &gl_rfull, &c, SELECTED, FALSE, TRUE);
@@ -224,29 +231,42 @@ void do_xyfix(WORD *px, WORD *py)
 /*
  * open a window, normally corresponding to a disk drive icon on the desktop
  *
- * if curr == 0, there is no corresponding screen object, so we do not
- * do the zoom effect & we do not try to reset the object state
+ * if curr == 0, there is no 'source' screen object from which the new
+ * object is coming, so we do not do the zoom effect & we do not try to
+ * reset the object state.
+ *
+ * if curr != 0, there *is* a source object: we always do the zoom effect,
+ * and change the object state, but we only redraw the object when we are
+ * opening a new window.  otherwise, we must be showing the new data in
+ * an existing window: the FNODE for the 'source' object has already been
+ * freed via pn_close(), but would be needed for the redraw because:
+ *  . in text mode, a redraw will cause the userdef code for text display
+ *    to access the FNODE corresponding to the source object
+ *  . in icon mode, a redraw will use the name from the FNODE as the icon
+ *    name.
+ * if we did allow a redraw, at best the display would show the wrong
+ * values (or garbage) briefly; at worst, the desktop would crash.
  */
 void do_wopen(WORD new_win, WORD wh, WORD curr, WORD x, WORD y, WORD w, WORD h)
 {
-    GRECT c;
-    GRECT d;
+    GRECT c, d;
 
     do_xyfix(&x, &y);
 
     if (curr > 0)
     {
+        /*
+         * get coordinates of current window & current object within window
+         * and adjust object x/y to screen-relative values.  note that this
+         * works ok even if the current window is the desktop pseudo-window.
+         */
         get_xywh(G.g_screen, G.g_croot, &c.g_x, &c.g_y, &c.g_w, &c.g_h);
         get_xywh(G.g_screen, curr, &d.g_x, &d.g_y, &d.g_w, &d.g_h);
-
-        if (!new_win)   /* no new window: window-relative coordinates */
-        {
-            d.g_x += x; /* window to screen coordinates */
-            d.g_y += y;
-        }
+        d.g_x += c.g_x;     /* convert window to screen coordinates */
+        d.g_y += c.g_y;
 
         graf_growbox(d.g_x, d.g_y, d.g_w, d.g_h, x, y, w, h);
-        act_chg(G.g_cwin, G.g_screen, G.g_croot, curr, &c, SELECTED, FALSE, TRUE, TRUE);
+        act_chg(G.g_cwin, G.g_screen, G.g_croot, curr, &gl_rfull, SELECTED, FALSE, new_win?TRUE:FALSE, TRUE);
     }
 
     if (new_win)
@@ -356,57 +376,26 @@ WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon,
                 BYTE *pathname, GRECT *pt, WORD redraw)
 {
     WORD ret;
-    BYTE *p;
-    PNODE *tmp;
 
     /* convert to hourglass */
     graf_mouse(HGLASS, NULL);
 
-    p = filename_start(pathname);
-    *p = '\0';
-    ret = set_default_path(pathname);
-    if (ret != 0)
-    {
-#if CONF_WITH_DESKTOP_SHORTCUTS
-        /* handle renamed target of shortcut */
-        if ((pw->w_flags&WN_DESKTOP) && (ret == EPTHNF))
-            remove_locate_shortcut(curr_icon);
-#endif
-        graf_mouse(ARROW, NULL);
-        return FALSE;
-    }
-    strcpy(p,"*.*");
-
     /* open a path node */
-    tmp = pn_open(pathname, F_SUBDIR);
-    if (tmp == NULL)
+    if (!pn_open(pathname, pw)) /* pathname is too long */
     {
+        KDEBUG(("Pathname is too long\n"));
         graf_mouse(ARROW, NULL);
         return FALSE;
     }
-
-#if CONF_WITH_DESKTOP_SHORTCUTS
-    /* handle opening directory on the desktop */
-    if (pw->w_flags&WN_DESKTOP)
-    {
-        pw = win_alloc(curr_icon);
-        if (!pw)
-        {
-            graf_mouse(ARROW, NULL);
-            fun_alert(1, STNOWIND);
-            return FALSE;
-        }
-        pt = (GRECT *)&G.g_screen[pw->w_root].ob_x;
-    }
-#endif
-
-    pw->w_path = tmp;
 
     /* activate path by search and sort of directory */
-    ret = pn_active(pw->w_path);
-    if (ret != E_NOFILES)
+    ret = pn_active(&pw->w_pnode, TRUE);
+    if (ret < 0)    /* error reading directory */
     {
-        /* some error condition */
+        KDEBUG(("Error reading directory %s\n",pathname));
+        pn_close(&pw->w_pnode);
+        graf_mouse(ARROW, NULL);
+        return FALSE;
     }
 
     /* set new name and info lines for window */
@@ -443,6 +432,39 @@ WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon,
  */
 
 /*
+ *  receive a character via the BIOS
+ */
+static LONG bios_conin(void)
+{
+    return Bconin(2);
+}
+
+/*
+ *  test if character is available via the BIOS
+ */
+static WORD bios_conis(void)
+{
+    return (WORD) Bconstat(2);
+}
+
+/*
+ *  send a character via the BIOS
+ */
+static void bios_conout(WORD ch)
+{
+    Bconout(2, ch);
+}
+
+/*
+ *  send a string via the BIOS
+ */
+static void bios_conws(const char *s)
+{
+    while(*s)
+        Bconout(2, *s++);
+}
+
+/*
  *  get key from keyboard
  *
  *  if ASCII (1-255), returns value in low-order byte, 0 in high-order byte
@@ -452,7 +474,7 @@ static WORD get_key(void)
 {
     ULONG c;
 
-    c = dos_rawcin();
+    c = bios_conin();
 
     if (c & 0xff)           /* ASCII ? */
         c &= 0xff;          /* yes, just return the ASCII value */
@@ -496,8 +518,8 @@ static WORD user_input(WORD c)
  */
 static void blank_line(void)
 {
-    dos_conout('\x1b');
-    dos_conout('l');
+    bios_conout('\x1b');
+    bios_conout('l');
 }
 
 /*
@@ -505,8 +527,8 @@ static void blank_line(void)
  */
 static void clear_screen(void)
 {
-    dos_conout('\x1b');
-    dos_conout('E');
+    bios_conout('\x1b');
+    bios_conout('E');
 }
 
 /*
@@ -525,21 +547,21 @@ static WORD show_buf(const char *s,LONG len)
     n = len;
     while(n-- > 0)
     {
-        if (dos_conis())
+        if (bios_conis())
             if (user_input(-1))
                 return 1;
 
         c = *s++;
         /* convert Un*x-style text to TOS-style */
         if ((c == '\n') && (cprev != '\r'))
-            dos_conout('\r');
-        dos_conout(c);
+            bios_conout('\r');
+        bios_conout(c);
         if (c == '\n')
         {
             if (++linecount >= pagesize)
             {
                 rsrc_gaddr_rom(R_STRING,STMORE,(void **)&msg);
-                dos_conws(msg);             /* "-More-" */
+                bios_conws(msg);            /* "-More-" */
                 while(1)
                 {
                     response = get_key();
@@ -557,7 +579,7 @@ static WORD show_buf(const char *s,LONG len)
                     }
                     if (user_input(response))
                     {
-                        dos_conout('\r');
+                        bios_conout('\r');
                         return 1;
                     }
                 }
@@ -616,8 +638,8 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
     {
         rsrc_gaddr_rom(R_STRING,(rc==0L)?STEOF:STFRE,(void **)&msg);
         blank_line();
-        dos_conws(msg); /* "-End of file-" or "-File read error-" */
-        dos_rawcin();
+        bios_conws(msg);    /* "-End of file-" or "-File read error-" */
+        bios_conin();
     }
 
     /*
@@ -636,10 +658,12 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
  *  Open an application
  *
  *  This may be called via the Open item under the File menu, or by
- *  double-clicking an icon, or via function key
+ *  double-clicking an icon, or by pressing a function key, or by
+ *  dropping a file on to a desktop shortcut for a program
  */
-WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname)
+WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname, BYTE *tail)
 {
+    WNODE *pw;
     WORD ret, done;
     WORD isgraf, isparm, installed_datafile;
     BYTE *pcmd, *ptail, *p;
@@ -675,21 +699,34 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname)
     isgraf = pa->a_flags & AF_ISCRYS;
     isparm = pa->a_flags & AF_ISPARM;
     installed_datafile = (is_installed(pa) && !isapp);
+    pw = win_ontop();
 
     /*
-     * update the current directory.  if the application was selected
-     * via an extension that matches an installed application, and the
-     * application flags indicate it, we need to use the application
-     * directory.  otherwise, we just use the selected icon's directory.
+     * update the current directory
      */
-    if (installed_datafile && (pa->a_flags & AF_APPDIR))
+    if (is_installed(pa))
     {
-        strcpy(app_path,pa->a_pappl);
+        /*
+         * if the application flags specify 'top window' and one exists,
+         * we use it; otherwise we use the application directory
+         */
+        if (!(pa->a_flags & AF_APPDIR) && pw)
+            p = pw->w_pnode.p_spec;
+        else
+            p = pa->a_pappl;
     }
     else
     {
-        strcpy(app_path,pathname);
+        /*
+         * if the desktop config flags specify 'top window' and one exists,
+         * we use it; otherwise we use the application directory
+         */
+        if (!G.g_appdir && pw)
+            p = pw->w_pnode.p_spec;
+        else
+            p = pathname;
     }
+    strcpy(app_path, p);
     p = filename_start(app_path);
     *p = '\0';
     set_default_path(app_path);
@@ -704,7 +741,6 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname)
 
     if (installed_datafile)
     {
-        BYTE *p;
         /*
          * the user has selected a file with an extension that matches
          * an installed application.  we set up to open the application,
@@ -723,16 +759,30 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname)
     }
     else
     {
+        /* build full pathname for pro_run() or show_file() */
+        strcpy(app_path, pathname);
+        p = filename_start(app_path);
+        strcpy(p, pname);
         if (isapp)
         {
+#if CONF_WITH_DESKTOP_SHORTCUTS
+            if (tail)
+            {
+                /*
+                 * the user has dropped a file on to an application,
+                 * so we already know the tail to pass
+                 */
+                strcpy(ptail, tail);
+            } else
+#endif
             if (isparm)
             {
                 /*
-                 * the user has selected a .TTP or .GTP application
+                 * the user has selected a .TTP or .GTP application,
+                 * so we need to prompt for the parameters to pass
                  */
                 ret = opn_appl(pname, ptail);
             }
-            strcat(app_path, pname);    /* build full pathname for pro_run() */
             pcmd = app_path;
         }
         else
@@ -748,7 +798,8 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname)
                 char *iobuf = dos_alloc_anyram(IOBUFSIZE);
                 if (iobuf)
                 {
-                    show_file(pname, IOBUFSIZE, iobuf);
+
+                    show_file(app_path, IOBUFSIZE, iobuf);
                     dos_free(iobuf);
                 }
             }
@@ -817,7 +868,10 @@ WORD do_dopen(WORD curr)
         build_root_path(path,drv);
         strcpy(path+3,"*.*");
         if (!do_diropen(pw, TRUE, curr, path, (GRECT *)&G.g_screen[pw->w_root].ob_x, TRUE))
+        {
             win_free(pw);
+            act_chg(0, G.g_screen, DROOT, curr, &gl_rfull, SELECTED, FALSE, TRUE, TRUE);
+        }
     }
     else
     {
@@ -834,6 +888,7 @@ WORD do_dopen(WORD curr)
 void do_fopen(WNODE *pw, WORD curr, BYTE *pathname, WORD redraw)
 {
     GRECT t;
+    WORD junk, keystate, new_win = FALSE;
     BYTE app_path[MAXPATHLEN];
 
     wind_get_grect(pw->w_id, WF_WXYWH, &t);
@@ -845,17 +900,62 @@ void do_fopen(WNODE *pw, WORD curr, BYTE *pathname, WORD redraw)
         return;
     }
 
-    strcpy(app_path,pathname);
-    if (strlen(app_path) >= LEN_ZPATH)
+    if (strlen(pathname) >= LEN_ZPATH)
     {
         fun_alert(1, STDEEPPA);
-        remove_one_level(app_path);         /* back up one level */
+        return;
     }
 
-    if (!(pw->w_flags&WN_DESKTOP))          /* folder in window, not on desktop */
-        pn_close(pw->w_path);
+    strcpy(app_path, pathname);
 
-    do_diropen(pw, (pw->w_flags&WN_DESKTOP)?TRUE:FALSE, curr, app_path, &t, redraw);
+#if CONF_WITH_DESKTOP_SHORTCUTS
+    if (pw->w_flags & WN_DESKTOP)
+    {
+        /*
+         * handle renamed target of shortcut
+         */
+        BYTE *p = filename_start(app_path);
+        *p = '\0';
+        if (set_default_path(app_path) == EPTHNF)
+        {
+            remove_locate_shortcut(curr);
+            return;
+        }
+        strcpy(p,"*.*");
+        new_win = TRUE;
+    }
+    else
+#endif
+    {
+        graf_mkstate(&junk, &junk, &junk, &keystate);
+        if (keystate & MODE_ALT)
+            new_win = TRUE;
+    }
+
+    /*
+     * if we are opening a folder on the desktop, or holding down the Alt
+     * key when opening a folder in a window, we need to create a new window
+     */
+    if (new_win)
+    {
+        pw = win_alloc(curr);
+        if (!pw)
+        {
+            fun_alert(1, STNOWIND);
+            return;
+        }
+        rc_copy((GRECT *)&G.g_screen[pw->w_root].ob_x,&t);
+    }
+    else
+    {
+        pn_close(&pw->w_pnode);
+    }
+
+    if (!do_diropen(pw, new_win, curr, app_path, &t, redraw))
+    {
+        if (new_win)
+            win_free(pw);
+    }
 }
 
 
@@ -896,30 +996,6 @@ static BOOL add_one_level(BYTE *pathname,BYTE *folder)
 
 
 /*
- *  Removes the lowest level of folder from a pathname, assumed
- *  to be of the form:
- *      D:\X\Y\Z\F.E
- *  where X,Y,Z are folders and F.E is a filename.  In the above
- *  example, this would change D:\X\Y\Z\F.E to D:\X\Y\F.E
- */
-void remove_one_level(BYTE *pathname)
-{
-    BYTE *stop = pathname+2;    /* the first path separator */
-    BYTE *filename, *prev;
-
-    filename = filename_start(pathname);
-    if (filename-1 <= stop)     /* already at the root */
-        return;
-
-    for (prev = filename-2; prev >= stop; prev--)
-        if (*prev == '\\')
-            break;
-
-    strcpy(prev+1,filename);
-}
-
-
-/*
  *  Open an icon
  */
 WORD do_open(WORD curr)
@@ -930,10 +1006,6 @@ WORD do_open(WORD curr)
     WORD isapp;
     BYTE pathname[MAXPATHLEN];
     BYTE filename[LEN_ZFNAME];
-    BYTE *pathptr, *fileptr;
-
-    MAYBE_UNUSED(pathname);
-    MAYBE_UNUSED(filename);
 
     pa = i_find(G.g_cwin, curr, &pf, &isapp);
     if (!pa)
@@ -963,24 +1035,22 @@ WORD do_open(WORD curr)
                 strcpy(filename, p);
             }
             strcat(pathname, "\\*.*");
-            pathptr = pathname;
-            fileptr = filename;
         }
         else
 #endif
         {
-            pathptr = pw->w_path->p_spec;
-            fileptr = pf->f_name;
+            strcpy(pathname, pw->w_pnode.p_spec);
+            strcpy(filename, pf->f_name);
         }
 
         if (pa->a_type == AT_ISFILE)
-            return do_aopen(pa, isapp, curr, pathptr, fileptr);
+            return do_aopen(pa, isapp, curr, pathname, filename, NULL);
 
         /* handle opening a folder */
-        if (add_one_level(pathptr, fileptr))
+        if (add_one_level(pathname, filename))
         {
             pw->w_cvrow = 0;        /* reset slider */
-            do_fopen(pw, curr, pathptr, TRUE);
+            do_fopen(pw, curr, pathname, TRUE);
         }
         else
             fun_alert(1, STDEEPPA);
@@ -999,10 +1069,14 @@ WORD do_open(WORD curr)
 
 /*
  *  Get information on an icon
+ *
+ *  returns:
+ *      0   cancel
+ *          otherwise continue
  */
 WORD do_info(WORD curr)
 {
-    WORD ret, drive;
+    WORD ret = 1, drive;
     ANODE *pa;
     WNODE *pw;
     FNODE fn, *pf;
@@ -1014,7 +1088,7 @@ WORD do_info(WORD curr)
 
     pa = i_find(G.g_cwin, curr, &pf, NULL);
     if (!pa)
-        return FALSE;
+        return ret;
 
     switch(pa->a_type)
     {
@@ -1045,23 +1119,23 @@ WORD do_info(WORD curr)
             else
 #endif
             {
-                pathptr = pw->w_path->p_spec;
+                pathptr = pw->w_pnode.p_spec;
             }
             ret = inf_file_folder(pathptr, pf);
-            if (ret)
-                fun_rebld(pathptr);
+            if (ret < 0)
+                fun_mark_for_rebld(pathptr);
         }
         break;
     case AT_ISDISK:
         drive = LOBYTE(get_iconblk_ptr(G.g_screen, curr)->ib_char);
-        inf_disk(drive);
+        ret = inf_disk(drive);
         break;
     case AT_ISTRSH:
         fun_alert(1, STTRINFO);
         break;
     }
 
-    return FALSE;
+    return ret;
 }
 
 
@@ -1314,17 +1388,19 @@ void do_format(void)
      * do the actual work
      */
     do {
-        show_hide(FMD_START, tree);
+        inf_sset(tree, FMTLABEL, "");
+        start_dialog(tree);
         exitobj = form_do(tree, FMTLABEL) & 0x7fff;
         if (exitobj == FMT_OK)
             rc = format_floppy(tree, max_width, incr);
         else
             rc = -1;
-        show_hide(FMD_FINISH, tree);
+        end_dialog(tree);
 
         if (rc == 0)
         {
             drive = (tree[FMT_DRVA].ob_state & SELECTED) ? 0 : 1;
+            refresh_drive('A'+drive);           /* update relevant windows */
             dos_space(drive + 1, &total, &avail);
             if (fun_alert_long(2, STFMTINF, avail) == 2)
                 rc = -1;
@@ -1341,12 +1417,34 @@ void do_format(void)
  *  Routine to re-read and redisplay the directory associated with
  *  the specified window
  */
-void do_refresh(WNODE *pw)
+void refresh_window(WNODE *pw)
 {
     if (!pw->w_id)      /* desktop */
         return;
 
-    do_fopen(pw, 0, pw->w_path->p_spec, TRUE);
+    do_fopen(pw, 0, pw->w_pnode.p_spec, TRUE);
+}
+
+
+/*
+ * Function called (after a format or delete) to redisplay any windows
+ * associated with the specified drive letter
+ */
+void refresh_drive(WORD drive)
+{
+    WNODE *pw;
+
+    for (pw = G.g_wfirst; pw; pw = pw->w_next)
+    {
+        if (pw->w_id)
+        {
+            if (pw->w_pnode.p_spec[0] == drive)
+            {
+                fun_close(pw, CLOSE_TO_ROOT);   /* what Atari TOS does */
+                refresh_window(pw);
+            }
+        }
+    }
 }
 
 
@@ -1384,10 +1482,10 @@ ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp)
         pw = win_find(wh);
         if (pw)
         {
-            pf = fpd_ofind(pw->w_path->p_flist, item);
+            pf = fpd_ofind(pw->w_pnode.p_flist, item);
             if (pf)
                 pa = app_afind_by_name((pf->f_attr&F_SUBDIR)?AT_ISFOLD:AT_ISFILE,
-                            AF_ISDESK|AF_WINDOW, pw->w_path->p_spec, pf->f_name, &isapp);
+                            AF_ISDESK|AF_WINDOW, pw->w_pnode.p_spec, pf->f_name, &isapp);
         }
     }
 

@@ -2,7 +2,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*       Copyright (C) 2002-2015 The EmuTOS development team
+*       Copyright (C) 2002-2017 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -64,7 +64,7 @@ typedef struct wsstr
 
 typedef struct fdbstr
 {
-        LONG            fd_addr;
+        void           *fd_addr;
         WORD            fd_w;
         WORD            fd_h;
         WORD            fd_wdwidth;
@@ -81,10 +81,10 @@ typedef struct mform
         WORD    mf_xhot;
         WORD    mf_yhot;
         WORD    mf_nplanes;
-        WORD    mf_fg;
-        WORD    mf_bg;
-        WORD    mf_mask[16];
-        WORD    mf_data[16];
+        WORD    mf_bg;          /* mask colour index */
+        WORD    mf_fg;          /* data colour index */
+        UWORD   mf_mask[16];
+        UWORD   mf_data[16];
 } MFORM;
 
 extern WORD     gl_width;
@@ -135,9 +135,9 @@ void gsx_gclip(GRECT *pt);
 void gsx_sclip(const GRECT *pt);
 void gsx_pline(WORD offx, WORD offy, WORD cnt, const WORD *pts);
 void gsx_attr(UWORD text, UWORD mode, UWORD color);
-void gsx_fix(FDB *pfd, LONG theaddr, WORD wb, WORD h);
+void gsx_fix(FDB *pfd, void *theaddr, WORD wb, WORD h);
 void bb_screen(WORD scrule, WORD scsx, WORD scsy, WORD scdx, WORD scdy, WORD scw, WORD sch);
-void gsx_trans(LONG saddr, UWORD swb, LONG daddr, UWORD dwb, UWORD h);
+void gsx_trans(void *saddr, UWORD swb, void *daddr, UWORD dwb, UWORD h);
 void gsx_start(void);
 void gsx_tblt(WORD tb_f, WORD x, WORD y, WORD tb_nc);
 void bb_fill(WORD mode, WORD fis, WORD patt, WORD hx, WORD hy, WORD hw, WORD hh);

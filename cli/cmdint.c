@@ -534,6 +534,9 @@ LONG rc;
 
 PRIVATE LONG run_setdrv(WORD argc,char **argv)
 {
+    if (!is_valid_drive(argv[0][0]))
+        return EDRIVE;
+
     strlower(argv[0]);
     Dsetdrv(argv[0][0]-'a');
 

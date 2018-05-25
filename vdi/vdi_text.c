@@ -3,7 +3,7 @@
  *
  * Copyright 1982 by Digital Research Inc.  All rights reserved.
  * Copyright 1999 by Caldera, Inc. and Authors:
- * Copyright 2002-2016 The EmuTOS development team
+ * Copyright 2002-2017 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -22,313 +22,337 @@
 extern const Fonthead *def_font;    /* Default font of open workstation */
 extern const Fonthead *font_ring[]; /* Ring of available fonts */
 
-
-/* linea-variables used for text_blt in assembler */
-extern WORD CLIP, XMN_CLIP, XMX_CLIP, YMN_CLIP, YMX_CLIP;
-extern UWORD DDA_INC;           /* the fraction to be added to the DDA */
-extern WORD T_SCLSTS;           /* 0 if scale down, 1 if enlarge */
-extern WORD MONO_STATUS;        /* True if current font monospaced */
-extern WORD STYLE;              /* Requested text special effects */
-extern WORD DOUBLE;             /* True if current font scaled */
-extern WORD CHUP;               /* Text baseline vector */
-extern WORD WRT_MODE;
-
-extern WORD XACC_DDA;           /* accumulator for x DDA        */
-extern WORD SOURCEX, SOURCEY;   /* upper left of character in font file */
-extern WORD DESTX, DESTY;       /* upper left of destination on screen  */
-extern UWORD DELX, DELY;        /* width and height of character    */
-extern const UWORD *FBASE;      /* pointer to font data         */
-extern WORD FWIDTH;             /* offset,segment and form width of font */
-extern WORD LITEMASK, SKEWMASK; /* special effects          */
-extern WORD WEIGHT;             /* special effects          */
-extern WORD R_OFF, L_OFF;       /* skew above and below baseline    */
-extern WORD TEXT_FG;
-
-/* style bits */
-#define F_THICKEN 1
-#define F_LIGHT 2
-#define F_SKEW  4
-#define F_UNDER 8
-#define F_OUTLINE 16
-#define F_SHADOW        32
-
 extern WORD font_count;         /* Number of fonts in driver */
 extern WORD deftxbuf[];         /* Default text scratch buffer */
 extern const WORD scrtsiz;      /* Default offset to large text buffer */
-extern WORD scrpt2;             /* Offset to large text buffer */
-extern WORD *scrtchp;           /* Pointer to text scratch buffer */
 
 extern Fonthead fon6x6;         /* See bios/fntxxx.c */
 extern Fonthead fon8x8;         /* See bios/fntxxx.c */
 extern Fonthead fon8x16;        /* See bios/fntxxx.c */
 
-/* Local variables */
-static WORD width, height;      /* extent of string set in vdi_vqt_extent()   */
-static WORD wordx, wordy;       /* add this to each space for interword */
-static WORD rmword;             /* the number of pixels left over   */
-static WORD rmwordx, rmwordy;   /* add this to use up remainder     */
-static WORD charx, chary;       /* add this to each char for interchar  */
-static WORD rmchar;             /* number of pixels left over       */
-static WORD rmcharx, rmchary;   /* add this to use up remainder     */
+/*
+ * Local structure for passing justification info
+ *
+ * note 1: in each of the following pairs of variables, only one variable
+ * has a non-zero value:
+ *  (wordx,wordy), (rmwordx,rmwordy), (charx,chary), (rmcharx,rmchary)
+ *
+ * note 2: if rmword is zero, there are no 'remainder pixels' to use up
+ * between words; otherwise, rmword = max(rmwordx/rmwordy).  similarly
+ * for rmchar/rmcharx/rmchary.
+ */
+typedef struct
+{
+                        /* word-spacing variables */
+    WORD wordx, wordy;          /* #pixels to add to each space */
+    WORD rmword;                /* remaining #pixels to add over all spaces */
+    WORD rmwordx, rmwordy;      /* add this to use up remainder */
+                        /* character-spacing variables */
+    WORD charx, chary;          /* #pixels to add to each character */
+    WORD rmchar;                /* remaining #pixels to add over all characters */
+    WORD rmcharx, rmchary;      /* add this to use up remainder */
+} JUSTINFO;
 
 
 /* Prototypes for this module */
 static void make_header(Vwk * vwk);
 static UWORD clc_dda(Vwk * vwk, UWORD act, UWORD req);
+static UWORD act_siz(Vwk * vwk, UWORD top);
 
-
-void vdi_v_gtext(Vwk * vwk)
+/*
+ * calculates height of text string
+ */
+static WORD calc_height(Vwk *vwk)
 {
-    WORD count;
+    const Fonthead *fnt_ptr = vwk->cur_font;
+    WORD height;
+
+    height = fnt_ptr->top + fnt_ptr->bottom + 1;    /* handles scaled fonts */
+
+    if (vwk->style & F_OUTLINE)
+        height += 2;        /* outlining adds 1 pixel all around */
+
+    return height;
+}
+
+/*
+ * calculates width of text string
+ */
+static WORD calc_width(Vwk *vwk, WORD cnt, WORD *str)
+{
+    const Fonthead *fnt_ptr = vwk->cur_font;
+    WORD table_start = fnt_ptr->first_ade;
+    WORD i, chr, width;
+
+    if (fnt_ptr->flags & F_MONOSPACE)
+    {
+        width = cnt * (fnt_ptr->off_table[1]-fnt_ptr->off_table[0]);
+    }
+    else
+    {
+        for (i = 0, width = 0; i < cnt; i++) {
+            chr = *str++ - table_start;
+            width += fnt_ptr->off_table[chr + 1] - fnt_ptr->off_table[chr];
+        }
+    }
+
+    if (vwk->scaled) {
+        if (vwk->dda_inc == 0xFFFF)
+            width *= 2;
+        else
+            width = act_siz(vwk, width);
+    }
+
+    if ((vwk->style & F_THICKEN) && !(fnt_ptr->flags & F_MONOSPACE))
+        width += cnt * fnt_ptr->thicken;
+
+    if (vwk->style & F_SKEW)
+        width += fnt_ptr->left_offset + fnt_ptr->right_offset;
+
+    if (vwk->style & F_OUTLINE)
+        width += cnt * 2;       /* outlining adds 1 pixel all around */
+
+    return width;
+}
+
+/*
+ * output specified text string
+ *
+ * 'width' is the pre-calculated width of the text on the screen;
+ * if negative, it has not yet been calculated
+ */
+static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width, JUSTINFO *justified)
+{
     WORD i, j;
-    WORD startx=0, starty=0;
-    WORD xfact=0, yfact=0;
+    WORD startx, starty;
+    WORD xfact, yfact;
     WORD tx1, tx2, ty1, ty2;
-    WORD delh=0, delv=0;
+    WORD delh, delv;
     WORD d1, d2;
-    WORD extent[8];
-    WORD *old_ptr;
-    WORD justified;
 
     WORD temp;
-    const Fonthead *fnt_ptr = NULL;
-    Point * point = NULL;
+    const Fonthead *fnt_ptr;
+    Point * point;
+
+    CONTRL[2] = 0;      /* # points in PTSOUT */
+
+    if (count <= 0)     /* quick out for unlikely occurrence */
+        return;
 
     /* some data copying for the assembler part */
-    DDA_INC = vwk->dda_inc;
-    T_SCLSTS = vwk->t_sclsts;
-    DOUBLE = vwk->scaled;
-    MONO_STATUS = F_MONOSPACE & vwk->cur_font->flags;
+    DDAINC = vwk->dda_inc;
+    SCALDIR = vwk->t_sclsts;
+    SCALE = vwk->scaled;
+    MONO = F_MONOSPACE & vwk->cur_font->flags;
     WRT_MODE = vwk->wrt_mode;
 
     CLIP = vwk->clip;
-    XMN_CLIP = vwk->xmn_clip;
-    YMN_CLIP = vwk->ymn_clip;
-    XMX_CLIP = vwk->xmx_clip;
-    YMX_CLIP = vwk->ymx_clip;
+    XMINCL = vwk->xmn_clip;
+    YMINCL = vwk->ymn_clip;
+    XMAXCL = vwk->xmx_clip;
+    YMAXCL = vwk->ymx_clip;
     STYLE = vwk->style;
     CHUP = vwk->chup;
-    scrpt2 = vwk->scrpt2;
-    scrtchp = vwk->scrtchp;
+    SCRPT2 = vwk->scrpt2;
+    SCRTCHP = vwk->scrtchp;
 
-    count = CONTRL[3];
-    if (count > 0) {
+    fnt_ptr = vwk->cur_font;     /* Get current font pointer in register */
 
-        fnt_ptr = vwk->cur_font;     /* Get current font pointer in register */
+    if (vwk->style & F_THICKEN)
+        WEIGHT = fnt_ptr->thicken;
 
-        justified = (CONTRL[0] == 11);
+    if (vwk->style & F_LIGHT)
+        LITEMASK = fnt_ptr->lighten;
 
-        if (vwk->style & F_THICKEN)
-            WEIGHT = fnt_ptr->thicken;
+    if (vwk->style & F_SKEW) {
+        d1 = fnt_ptr->left_offset;  /* used in vertical alignment calcs */
+        d2 = fnt_ptr->right_offset;
+        SKEWMASK = fnt_ptr->skew;
+    } else {
+        d1 = 0;
+        d2 = 0;
+    }
+    LOFF = d1;
+    ROFF = d2;
 
-        if (vwk->style & F_LIGHT)
-            LITEMASK = fnt_ptr->lighten;
+    FBASE = fnt_ptr->dat_table;
+    FWIDTH = fnt_ptr->form_width;
 
-        if (vwk->style & F_SKEW) {
-            L_OFF = fnt_ptr->left_offset;
-            R_OFF = fnt_ptr->right_offset;
-            SKEWMASK = fnt_ptr->skew;
-        } else {
-            L_OFF = 0;
-            R_OFF = 0;
-        }
+    switch(vwk->h_align) {
+    default:                /* normally case 0: left justified */
+        delh = 0;
+        break;
+    case 1:
+        if (width < 0)      /* called from vdi_v_gtext() */
+            width = calc_width(vwk, count, str);
+        delh = width / 2;
+        break;
+    case 2:
+        if (width < 0)      /* called from vdi_v_gtext() */
+            width = calc_width(vwk, count, str);
+        delh = width;
+        break;
+    }
 
-        FBASE = fnt_ptr->dat_table;
-        FWIDTH = fnt_ptr->form_width;
+    switch(vwk->v_align) {
+    default:                /* normally case 0: baseline */
+        delv = fnt_ptr->top;
+        delh += d1;
+        break;
+    case 1:
+        delv = fnt_ptr->top - fnt_ptr->half;
+        delh += (fnt_ptr->half * d2) / fnt_ptr->top;
+        break;
+    case 2:
+        delv = fnt_ptr->top - fnt_ptr->ascent;
+        delh += (fnt_ptr->ascent * d2) / fnt_ptr->top;
+        break;
+    case 3:
+        delv = fnt_ptr->top + fnt_ptr->bottom;
+        break;
+    case 4:
+        delv = fnt_ptr->top + fnt_ptr->descent;
+        delh += (fnt_ptr->descent * d1) / fnt_ptr->bottom;
+        break;
+    case 5:
+        delv = 0;
+        delh += d1 + d2;
+        break;
+    }
 
-        switch (vwk->h_align) {
-        case 0:
-            delh = 0;
-            break;
-        case 1:
-            if (!justified) {   /* width set if GDP */
-                old_ptr = PTSOUT;
-                PTSOUT = extent;
-                vdi_vqt_extent(vwk);
-                PTSOUT = old_ptr;
-                CONTRL[2] = 0;
-            }
-            delh = width / 2;
-            break;
-        case 2:
-            if (!justified) {   /* width set if GDP */
-                old_ptr = PTSOUT;
-                PTSOUT = extent;
-                vdi_vqt_extent(vwk);
-                PTSOUT = old_ptr;
-                CONTRL[2] = 0;
-            }
-            delh = width;
-            break;
-        }
+    point = (Point*)PTSIN;
+    switch(vwk->chup) {
+    default:                /* normally case 0: no rotation */
+        DESTX = point->x - delh;
+        DESTY = point->y - delv;
+        startx = DESTX;
+        starty = DESTY + fnt_ptr->top + fnt_ptr->ul_size + 1;
+        xfact = 0;
+        yfact = 1;
+        break;
+    case 900:
+        DESTX = point->x - delv;
+        DESTY = point->y + delh + 1;
+        startx = DESTX + fnt_ptr->top + fnt_ptr->ul_size + 1;
+        starty = DESTY;
+        xfact = 1;
+        yfact = 0;
+        break;
+    case 1800:
+        DESTX = point->x + delh + 1;
+        DESTY = point->y - ((fnt_ptr->top + fnt_ptr->bottom) - delv);
+        startx = DESTX;
+        starty = (DESTY + fnt_ptr->bottom) - (fnt_ptr->ul_size + 1);
+        xfact = 0;
+        yfact = -1;
+        break;
+    case 2700:
+        DESTX = point->x - ((fnt_ptr->top + fnt_ptr->bottom) - delv);
+        DESTY = point->y - delh;
+        startx = (DESTX + fnt_ptr->bottom) - (fnt_ptr->ul_size + 1);
+        starty = DESTY;
+        xfact = -1;
+        yfact = 0;
+        break;
+    }
 
-        if (vwk->style & F_SKEW) {
-            d1 = fnt_ptr->left_offset;
-            d2 = fnt_ptr->right_offset;
-        } else {
-            d1 = 0;
-            d2 = 0;
-        }
+    TEXTFG = vwk->text_color;
+    DELY = fnt_ptr->form_height;
+    XDDA = 32767;       /* init the horizontal dda */
 
-        switch (vwk->v_align) {
-        case 0:
-            delv = fnt_ptr->top;
-            delh += d1;
-            break;
-        case 1:
-            delv = fnt_ptr->top - fnt_ptr->half;
-            delh += (fnt_ptr->half * d2) / fnt_ptr->top;
-            break;
-        case 2:
-            delv = fnt_ptr->top - fnt_ptr->ascent;
-            delh += (fnt_ptr->ascent * d2) / fnt_ptr->top;
-            break;
-        case 3:
-            delv = fnt_ptr->top + fnt_ptr->bottom;
-            break;
-        case 4:
-            delv = fnt_ptr->top + fnt_ptr->descent;
-            delh += (fnt_ptr->descent * d1) / fnt_ptr->bottom;
-            break;
-        case 5:
-            delv = 0;
-            delh += d1 + d2;
-            break;
-        }
+    for (j = 0; j < count; j++) {
 
-        point = (Point*)PTSIN;
-        switch (vwk->chup) {
-        case 0:
-            DESTX = point->x - delh;
-            DESTY = point->y - delv;
-            startx = DESTX;
-            starty = DESTY + fnt_ptr->top + fnt_ptr->ul_size + 1;
-            xfact = 0;
-            yfact = 1;
-            break;
-        case 900:
-            DESTX = point->x - delv;
-            DESTY = point->y + delh;
-            startx = DESTX + fnt_ptr->top + fnt_ptr->ul_size + 1;
-            starty = DESTY;
-            xfact = 1;
-            yfact = 0;
-            break;
-        case 1800:
-            DESTX = point->x + delh;
-            DESTY = point->y - ((fnt_ptr->top + fnt_ptr->bottom) - delv);
-            startx = DESTX;
-            starty = (DESTY + fnt_ptr->bottom) - (fnt_ptr->ul_size + 1);
-            xfact = 0;
-            yfact = -1;
-            break;
-        case 2700:
-            DESTX = point->x - ((fnt_ptr->top + fnt_ptr->bottom) - delv);
-            DESTY = point->y - delh;
-            starty = DESTY;
-            startx = (DESTX + fnt_ptr->bottom) - (fnt_ptr->ul_size + 1);
-            xfact = -1;
-            yfact = 0;
-            break;
-        }
+        temp = str[j];
 
-        TEXT_FG = vwk->text_color;
+        /* If the character is out of range for this font make it a ? */
+        if ((temp < fnt_ptr->first_ade) || (temp > fnt_ptr->last_ade))
+            temp = '?';
+        temp -= fnt_ptr->first_ade;
+
+        SOURCEX = fnt_ptr->off_table[temp];
+        DELX = fnt_ptr->off_table[temp + 1] - SOURCEX;
+
+        SOURCEY = 0;
         DELY = fnt_ptr->form_height;
-        XACC_DDA = 32767;   /* init the horizontal dda */
 
-        for (j = 0; j < count; j++) {
+        text_blt();
 
-            temp = INTIN[j];
-
-            /* If the character is out of range for this font make it a ? */
-            if ((temp < fnt_ptr->first_ade) || (temp > fnt_ptr->last_ade))
-                temp = 63;
-            temp -= fnt_ptr->first_ade;
-
-            SOURCEX = fnt_ptr->off_table[temp];
-            DELX = fnt_ptr->off_table[temp + 1] - SOURCEX;
-
-            SOURCEY = 0;
-            DELY = fnt_ptr->form_height;
-
-            text_blt(vwk);
-
-            fnt_ptr = vwk->cur_font;     /* restore reg var */
-
-            if (justified) {
-                DESTX += charx;
-                DESTY += chary;
-                if (rmchar) {
-                    DESTX += rmcharx;
-                    DESTY += rmchary;
-                    rmchar--;
-                }
-                if (INTIN[j] == 32) {
-                    DESTX += wordx;
-                    DESTY += wordy;
-                    if (rmword) {
-                        DESTX += rmwordx;
-                        DESTY += rmwordy;
-                        rmword--;
-                    }
+        if (justified) {
+            DESTX += justified->charx;
+            DESTY += justified->chary;
+            if (justified->rmchar) {
+                DESTX += justified->rmcharx;
+                DESTY += justified->rmchary;
+                justified->rmchar--;
+            }
+            if (str[j] == ' ') {
+                DESTX += justified->wordx;
+                DESTY += justified->wordy;
+                if (justified->rmword) {
+                    DESTX += justified->rmwordx;
+                    DESTY += justified->rmwordy;
+                    justified->rmword--;
                 }
             }
-            /* end if justified */
-            if (fnt_ptr->flags & F_HORZ_OFF)
-                DESTX += fnt_ptr->hor_table[temp];
+        }
+        /* end if justified */
+        if (fnt_ptr->flags & F_HORZ_OFF)
+            DESTX += fnt_ptr->hor_table[temp];
 
-        }                   /* for j */
+    }                   /* for j */
 
-        if (vwk->style & F_UNDER) {
-            Line * line = (Line*)PTSIN;
-            line->x1 = startx;
-            line->y1 = starty;
+    if (vwk->style & F_UNDER) {
+        Line * line = (Line*)PTSIN;
+        line->x1 = startx;
+        line->y1 = starty;
 
-            if (vwk->chup % 1800 == 0) {
-                line->x2 = DESTX;
-                line->y2 = line->y1;
-            } else {
-                line->x2 = line->x1;
-                line->y2 = DESTY;
-            }
-            if (vwk->style & F_LIGHT)
-                LN_MASK = vwk->cur_font->lighten;
-            else
-                LN_MASK = 0xffff;
+        if (vwk->chup % 1800 == 0) {
+            line->x2 = DESTX;
+            line->y2 = line->y1;
+        } else {
+            line->x2 = line->x1;
+            line->y2 = DESTY;
+        }
+        if (vwk->style & F_LIGHT)
+            LN_MASK = vwk->cur_font->lighten;
+        else
+            LN_MASK = 0xffff;
 
-            count = vwk->cur_font->ul_size;
-            for (i = 0; i < count; i++) {
-                if (vwk->clip) {
-                    tx1 = line->x1;
-                    tx2 = line->x2;
-                    ty1 = line->y1;
-                    ty2 = line->y2;
+        count = vwk->cur_font->ul_size;
+        for (i = 0; i < count; i++) {
+            if (vwk->clip) {
+                tx1 = line->x1;
+                tx2 = line->x2;
+                ty1 = line->y1;
+                ty2 = line->y2;
 
-                    if (clip_line(vwk, line))
-                        abline(line, vwk->wrt_mode, vwk->text_color);
-
-                    line->x1 = tx1;
-                    line->x2 = tx2;
-                    line->y1 = ty1;
-                    line->y2 = ty2;
-                } else
+                if (clip_line(vwk, line))
                     abline(line, vwk->wrt_mode, vwk->text_color);
 
-                line->x1 += xfact;
-                line->x2 += xfact;
-                line->y1 += yfact;
-                line->y2 += yfact;
+                line->x1 = tx1;
+                line->x2 = tx2;
+                line->y1 = ty1;
+                line->y2 = ty2;
+            } else
+                abline(line, vwk->wrt_mode, vwk->text_color);
 
-                if (LN_MASK & 1)
-                    LN_MASK = (LN_MASK >> 1) | 0x8000;
-                else
-                    LN_MASK = LN_MASK >> 1;
-            }
+            line->x1 += xfact;
+            line->x2 += xfact;
+            line->y1 += yfact;
+            line->y2 += yfact;
+
+            if (LN_MASK & 1)
+                LN_MASK = (LN_MASK >> 1) | 0x8000;
+            else
+                LN_MASK = LN_MASK >> 1;
         }
     }
 }
 
-
+void vdi_v_gtext(Vwk * vwk)
+{
+    output_text(vwk, CONTRL[3], INTIN, -1, NULL);
+}
 
 void text_init2(Vwk * vwk)
 {
@@ -349,7 +373,7 @@ void text_init2(Vwk * vwk)
     DEV_TAB[10] = vwk->num_fonts;
 }
 
-void text_init(Vwk * vwk)
+void text_init(void)
 {
     WORD i, j;
     WORD id_save, cell_height;
@@ -369,7 +393,7 @@ void text_init(Vwk * vwk)
     id_save = fon6x6.font_id;
 
     def_font = NULL;
-    cell_height = (v_vt_rez >= 400) ? 16 : 8;   /* to select among default fonts */
+    cell_height = (V_REZ_VT >= 400) ? 16 : 8;   /* to select among default fonts */
 
     chain_ptr = font_ring;
     i = 0;
@@ -475,8 +499,6 @@ void vdi_vst_height(Vwk * vwk)
 }
 
 
-extern UWORD act_siz(Vwk * vwk, UWORD top); /* called also from vdi_tblit.S */
-
 /*
  * act_siz - Actual sizer routine
  *
@@ -490,7 +512,7 @@ extern UWORD act_siz(Vwk * vwk, UWORD top); /* called also from vdi_tblit.S */
  * exit:
  *   actual size
  */
-UWORD act_siz(Vwk * vwk, UWORD top)
+static UWORD act_siz(Vwk * vwk, UWORD top)
 {
     UWORD accu;
     UWORD retval;
@@ -781,43 +803,10 @@ void vdi_vqt_attributes(Vwk * vwk)
 
 void vdi_vqt_extent(Vwk * vwk)
 {
-    WORD i, chr, table_start;
-    WORD *pointer;
-    const Fonthead *fnt_ptr;
+    WORD height, width;
 
-    WORD cnt;
-
-    fnt_ptr = vwk->cur_font;
-    pointer = INTIN;
-
-    width = 0;
-    table_start = fnt_ptr->first_ade;
-    cnt = CONTRL[3];
-
-    for (i = 0; i < cnt; i++) {
-        chr = *pointer++ - table_start;
-        width += fnt_ptr->off_table[chr + 1] - fnt_ptr->off_table[chr];
-    }
-
-    if (vwk->scaled) {
-        if (vwk->dda_inc == 0xFFFF)
-            width *= 2;
-        else
-            width = act_siz(vwk, width);
-    }
-
-    if ((vwk->style & F_THICKEN) && !(fnt_ptr->flags & F_MONOSPACE))
-        width += cnt * fnt_ptr->thicken;
-
-    if (vwk->style & F_SKEW)
-        width += fnt_ptr->left_offset + fnt_ptr->right_offset;
-
-    height = fnt_ptr->top + fnt_ptr->bottom + 1;    /* handles scaled fonts */
-
-    if (vwk->style & F_OUTLINE) {
-        width += cnt * 2;       /* outlining adds 2 pixels all around */
-        height += 2;
-    }
+    height = calc_height(vwk);
+    width = calc_width(vwk, CONTRL[3], INTIN);
 
     CONTRL[2] = 4;
 
@@ -972,44 +961,43 @@ void vdi_vqt_fontinfo(Vwk * vwk)
 }
 
 
-void d_justified(Vwk * vwk)
+void gdp_justified(Vwk * vwk)
 {
     WORD spaces;
-    WORD expand, sav_cnt;
+    WORD expand;
     WORD interword, interchar;
-    WORD cnt, *old_intin, *old_ptsout, extent[8], max_x;
+    WORD cnt, width, max_x;
     WORD i, direction, delword, delchar;
-    WORD *pointer;
+    WORD *pointer, *str;
+    JUSTINFO just;
 
-    pointer = (CONTRL + 3);
-    sav_cnt = *pointer;     /* so we can modify CONTRL[3] for vdi_vqt_extent() */
-    cnt = *pointer = sav_cnt - 2;
+    cnt = CONTRL[3] - 2;
 
     pointer = INTIN;
     interword = *pointer++;
     interchar = *pointer++;
+    str = pointer;
 
-    old_intin = INTIN;
-    INTIN = pointer;
-    old_ptsout = PTSOUT;
-    PTSOUT = extent;
+    /*
+     * if interword adjustment required, count spaces
+     */
+    if (interword) {
+        for (i = 0, spaces = 0; i < cnt; i++)
+            if (*(pointer++) == ' ')
+                spaces++;
+    }
 
-    for (i = 0, spaces = 0; i < cnt; i++)
-        if (*(pointer++) == 32)
-            spaces++;
-
-    vdi_vqt_extent(vwk);
-    CONTRL[2] = 0;
+    width = calc_width(vwk, cnt, str);
 
     max_x = PTSIN[2];
 
     if (interword && spaces) {
         delword = (max_x - width) / spaces;
-        rmword = (max_x - width) % spaces;
+        just.rmword = (max_x - width) % spaces;
 
-        if (rmword < 0) {
+        if (just.rmword < 0) {
             direction = -1;
-            rmword = 0 - rmword;
+            just.rmword = 0 - just.rmword;
         } else
             direction = 1;
 
@@ -1017,96 +1005,90 @@ void d_justified(Vwk * vwk)
             expand = vwk->cur_font->max_cell_width / 2;
             if (delword > expand) {
                 delword = expand;
-                rmword = 0;
+                just.rmword = 0;
             }
             if (delword < (0 - expand)) {
                 delword = 0 - expand;
-                rmword = 0;
+                just.rmword = 0;
             }
-            width += (delword * spaces) + (rmword * direction);
+            width += (delword * spaces) + (just.rmword * direction);
         }
 
         switch (vwk->chup) {
-        case 0:
-            wordx = delword;
-            wordy = 0;
-            rmwordx = direction;
-            rmwordy = 0;
+        default:                /* normally case 0: no rotation */
+            just.wordx = delword;
+            just.wordy = 0;
+            just.rmwordx = direction;
+            just.rmwordy = 0;
             break;
         case 900:
-            wordx = 0;
-            wordy = 0 - delword;
-            rmwordx = 0;
-            rmwordy = 0 - direction;
+            just.wordx = 0;
+            just.wordy = 0 - delword;
+            just.rmwordx = 0;
+            just.rmwordy = 0 - direction;
             break;
         case 1800:
-            wordx = 0 - delword;
-            wordy = 0;
-            rmwordx = 0 - direction;
-            rmwordy = 0;
+            just.wordx = 0 - delword;
+            just.wordy = 0;
+            just.rmwordx = 0 - direction;
+            just.rmwordy = 0;
             break;
         case 2700:
-            wordx = 0;
-            wordy = delword;
-            rmwordx = 0;
-            rmwordy = direction;
+            just.wordx = 0;
+            just.wordy = delword;
+            just.rmwordx = 0;
+            just.rmwordy = direction;
             break;
         }
     } else {
-        wordx = 0;
-        wordy = 0;
-        rmword = 0;
+        just.wordx = 0;
+        just.wordy = 0;
+        just.rmword = 0;
     }
 
     if (interchar && cnt > 1) {
         delchar = (max_x - width) / (cnt - 1);
-        rmchar = (max_x - width) % (cnt - 1);
+        just.rmchar = (max_x - width) % (cnt - 1);
 
-        if (rmchar < 0) {
+        if (just.rmchar < 0) {
             direction = -1;
-            rmchar = 0 - rmchar;
+            just.rmchar = 0 - just.rmchar;
         } else
             direction = 1;
 
         switch (vwk->chup) {
-        case 0:
-            charx = delchar;
-            chary = 0;
-            rmcharx = direction;
-            rmchary = 0;
+        default:                /* normally case 0: no rotation */
+            just.charx = delchar;
+            just.chary = 0;
+            just.rmcharx = direction;
+            just.rmchary = 0;
             break;
         case 900:
-            charx = 0;
-            chary = 0 - delchar;
-            rmcharx = 0;
-            rmchary = 0 - direction;
+            just.charx = 0;
+            just.chary = 0 - delchar;
+            just.rmcharx = 0;
+            just.rmchary = 0 - direction;
             break;
         case 1800:
-            charx = 0 - delchar;
-            chary = 0;
-            rmcharx = 0 - direction;
-            rmchary = 0;
+            just.charx = 0 - delchar;
+            just.chary = 0;
+            just.rmcharx = 0 - direction;
+            just.rmchary = 0;
             break;
         case 2700:
-            charx = 0;
-            chary = delchar;
-            rmcharx = 0;
-            rmchary = direction;
+            just.charx = 0;
+            just.chary = delchar;
+            just.rmcharx = 0;
+            just.rmchary = direction;
             break;
         }
     } else {
-        charx = 0;
-        chary = 0;
-        rmchar = 0;
+        just.charx = 0;
+        just.chary = 0;
+        just.rmchar = 0;
     }
 
-    width = max_x;
-
-    vdi_v_gtext(vwk);
-
-    CONTRL[3] = sav_cnt;    /* restore original value for neatness */
-    PTSOUT = old_ptsout;
-    INTIN = old_intin;
+    output_text(vwk, cnt, str, max_x, &just);
 }
 
 
@@ -1130,7 +1112,7 @@ void vdi_vst_unload_fonts(Vwk * vwk)
  *   act - d1, get actual size
  *
  * output:
- *   T_SCLSTS is the text scaling flag (means: scale up or down)
+ *   vwk->t_sclsts is the text scaling flag (means: scale up or down)
  */
 
 static UWORD clc_dda(Vwk * vwk, UWORD act, UWORD req)

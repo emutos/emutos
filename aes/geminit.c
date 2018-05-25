@@ -27,7 +27,9 @@
 #include "struct.h"
 #include "basepage.h"
 #include "gemlib.h"
+#include "gsxdefs.h"
 #include "gem_rsc.h"
+#include "mforms.h"
 #include "dos.h"
 #include "xbiosbind.h"
 #include "../bios/screen.h"
@@ -35,6 +37,7 @@
 #include "biosbind.h"
 #include "biosext.h"
 
+#include "crysbind.h"
 #include "gemgsxif.h"
 #include "gemdosif.h"
 #include "gemctrl.h"
@@ -71,6 +74,14 @@ extern void gem_main(void); /* called only from gemstart.S */
 
 #define ROPEN 0
 
+#define NUM_MOUSE_CURSORS   8
+
+#if CONF_WITH_LOADABLE_CURSORS
+#define CURSOR_RSC_SIZE     1024
+#define CURSOR_WIDTH        2           /* in BITBLK */
+#define CURSOR_HEIGHT       37
+#endif
+
 #define INF_SIZE   300                  /* size of buffer used by sh_rdinf() */
                                         /*  for start of EMUDESK.INF file    */
 
@@ -92,6 +103,8 @@ GLOBAL WORD     totpds;
 GLOBAL WORD     num_accs;
 
 GLOBAL BYTE     *ad_envrn;              /* initialized in GEMSTART      */
+
+GLOBAL MFORM    *mouse_cursor[NUM_MOUSE_CURSORS];
 
 GLOBAL MFORM    gl_mouse;
 GLOBAL BYTE     gl_logdrv;
@@ -139,11 +152,20 @@ LONG init_p0_stkptr(void)
 
 
 /*
+ *  return pointer to default mouse form
+ */
+MFORM *default_mform(void)
+{
+    return mouse_cursor[ARROW];
+}
+
+
+/*
  *  set mouse pointer to arrow shape
  */
 void set_mouse_to_arrow(void)
 {
-    gsx_mfset((MFORM *)rs_bitblk[MICE00].bi_pdata);
+    gsx_mfset(mouse_cursor[ARROW]);
 }
 
 
@@ -152,7 +174,7 @@ void set_mouse_to_arrow(void)
  */
 void set_mouse_to_hourglass(void)
 {
-    gsx_mfset((MFORM *)rs_bitblk[MICE02].bi_pdata);
+    gsx_mfset(mouse_cursor[HOURGLASS]);
 }
 
 
@@ -271,35 +293,29 @@ static void sh_init(void)
 
 
 /*
- *  Routine to read in the start of the emudesk.inf file,
- *  expected to contain the #E and #Z lines.
+ *  Routine to read in the start of a file
+ *
+ *  returns: >=0  number of bytes read
+ *           < 0  error code from dos_open()/dos_read()
  */
-static void sh_rdinf(void)
+static LONG readfile(BYTE *filename, LONG count, BYTE *buf)
 {
     WORD    fh;
-    LONG    size, ret;
-    char    *pfile;
+    LONG    ret;
     char    tmpstr[MAX_LEN];
 
-    infbuf[0] = 0;
+    strcpy(tmpstr, filename);
+    tmpstr[0] += dos_gdrv();            /* set the drive letter */
 
-    strcpy(tmpstr, INF_FILE_NAME);
-    pfile = tmpstr;
-    *pfile += dos_gdrv();                   /* set the drive        */
+    ret = dos_open(tmpstr, ROPEN);
+    if (ret >= 0L)
+    {
+        fh = (WORD)ret;
+        ret = dos_read(fh, count, buf);
+        dos_close(fh);
+    }
 
-    ret = dos_open(pfile, ROPEN);
-    if (ret < 0L)
-        return;
-    fh = (WORD)ret;
-
-    /* NOTA BENE: all required info MUST be within INF_SIZE
-     * bytes from the beginning of the file
-     */
-    size = dos_read(fh, INF_SIZE, infbuf);
-    dos_close(fh);
-    if (size < 0L)      /* if read error, force empty buffer */
-        size = 0L;
-    infbuf[size] = 0;
+    return ret;
 }
 
 
@@ -407,6 +423,85 @@ static BOOL process_inf2(void)
 }
 
 
+#if CONF_WITH_LOADABLE_CURSORS
+/*
+ *  Copy mouse cursors from buffered RSC file
+ */
+static WORD load_mouse_cursors(BYTE *buf)
+{
+    RSHDR *hdr = (RSHDR *)buf;
+    BITBLK *bb;
+    WORD i;
+
+    /*
+     * perform a little validation
+     */
+    if (hdr->rsh_nbb != NUM_MOUSE_CURSORS)
+    {
+        KDEBUG(("Wrong number of mouse cursors (%d)\n",hdr->rsh_nbb));
+        return -1;
+    }
+    if (hdr->rsh_rssize > CURSOR_RSC_SIZE)
+    {
+        KDEBUG(("Mouse cursor file is too big (%d bytes)\n",hdr->rsh_rssize));
+        return -1;
+    }
+    for (i = 0, bb = (BITBLK *)(buf+hdr->rsh_bitblk); i < NUM_MOUSE_CURSORS; i++, bb++)
+    {
+        if ((bb->bi_wb != CURSOR_WIDTH) || (bb->bi_hl != CURSOR_HEIGHT))
+        {
+            KDEBUG(("Invalid mouse cursor dimensions (%dx%d)\n",bb->bi_wb,bb->bi_hl));
+            return -1;
+        }
+    }
+
+    /*
+     * load the pointers
+     */
+    for (i = 0, bb = (BITBLK *)(buf+hdr->rsh_bitblk); i < NUM_MOUSE_CURSORS; i++, bb++)
+        mouse_cursor[i] = (MFORM *)(buf+(LONG)bb->bi_pdata);
+
+    return 0;
+}
+#endif
+
+
+/*
+ *  Set up RAM array of pointers to mouse cursors
+ */
+static void setup_mouse_cursors(void)
+{
+    WORD i;
+#if CONF_WITH_LOADABLE_CURSORS
+    LONG rc;
+    BYTE *buf;
+#endif
+
+    for (i = 0; i < NUM_MOUSE_CURSORS; i++)
+        mouse_cursor[i] = (MFORM *)mform_rs_data[i];
+
+#if CONF_WITH_LOADABLE_CURSORS
+    /* Do not load user cursors if Control was held on startup */
+    if (bootflags & BOOTFLAG_SKIP_AUTO_ACC)
+        return;
+
+    /*
+     * update pointers to point to user-supplied versions, if available
+     */
+    buf = dos_alloc_anyram(CURSOR_RSC_SIZE);
+    if (!buf)
+        return;
+
+    rc = readfile(CURSOR_RSC_NAME, CURSOR_RSC_SIZE, buf);
+    if (rc >= 0)
+        rc = load_mouse_cursors(buf);
+
+    if (rc < 0)     /* load failed */
+        dos_free(buf);
+#endif
+}
+
+
 /*
  *  Give everyone a chance to run, at least once
  */
@@ -420,8 +515,8 @@ void all_run(void)
         dsptch();
     }
     /* then get in the wait line */
-    wm_update(TRUE);
-    wm_update(FALSE);
+    wm_update(BEG_UPDATE);
+    wm_update(END_UPDATE);
 }
 
 
@@ -504,6 +599,7 @@ void run_accs_and_desktop(void)
 
     /* load gem resource and fix it up before we go */
     gem_rsc_init();
+    setup_mouse_cursors();
 
     /* init button stuff */
     gl_btrue = 0x0;
@@ -562,9 +658,16 @@ void run_accs_and_desktop(void)
 
 void gem_main(void)
 {
+    LONG    n;
     WORD    i;
 
-    sh_rdinf();                 /* get start of emudesk.inf */
+    /* read in first part of emudesk.inf */
+    n = readfile(INF_FILE_NAME, INF_SIZE, infbuf);
+
+    if (n < 0L)
+        n = 0L;
+    infbuf[n] = '\0';           /* terminate input data */
+
     if (!gl_changerez)          /* can't be here because of rez change,       */
         process_inf1();         /*  so see if .inf says we need to change rez */
 

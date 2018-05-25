@@ -3,7 +3,7 @@
  *
  * Copyright 1982 by Digital Research Inc.  All rights reserved.
  * Copyright 1999 by Caldera, Inc.
- * Copyright 2002-2016 The EmuTOS development team.
+ * Copyright 2002-2017 The EmuTOS development team.
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -322,8 +322,11 @@ void vdi_v_opnvwk(Vwk * vwk)
     WORD handle;
     Vwk *temp, *work_ptr;
 
-    /* Allocate the memory for a virtual workstation. */
-    vwk = (Vwk *)trap1(X_MALLOC, (LONG) (sizeof(Vwk)));
+    /* Allocate the memory for a virtual workstation using Mxalloc with the flag
+     * for a global allocation. This becomes important when running MiNT
+     * on a CPU with memory protection.
+     */
+    vwk = (Vwk *)trap1(X_MXALLOC, (LONG)(sizeof(Vwk)), (WORD)(X_MXGLOBAL));
     if (vwk == NULL) {
         CONTRL[6] = 0;  /* No memory available, exit */
         return;
@@ -385,8 +388,8 @@ void vdi_v_opnwk(Vwk * vwk)
     }
 
     /* Copy data from linea variables */
-    DEV_TAB[0] = v_hz_rez-1;
-    DEV_TAB[1] = v_vt_rez-1;
+    DEV_TAB[0] = V_REZ_HZ-1;
+    DEV_TAB[1] = V_REZ_VT-1;
     INQ_TAB[4] = v_planes;
 
     /* get pixel sizes for use by routines in vdi_gdp.c & vdi_line.c */
@@ -411,12 +414,12 @@ void vdi_v_opnwk(Vwk * vwk)
 
     init_colors();              /* Initialize palette etc. */
 
-    text_init(vwk);             /* initialize the SIZ_TAB info */
+    text_init();                /* initialize the SIZ_TAB info */
 
     init_wk(vwk);
 
-    timer_init(vwk);
-    vdimouse_init(vwk);         /* initialize mouse */
+    timer_init();
+    vdimouse_init();            /* initialize mouse */
     esc_init(vwk);              /* enter graphics mode */
 }
 
@@ -435,8 +438,8 @@ void vdi_v_clswk(Vwk * vwk)
         } while ((vwk = next_work));
     }
 
-    timer_exit(vwk);
-    vdimouse_exit(vwk);                 /* deinitialize mouse */
+    timer_exit();
+    vdimouse_exit();                    /* deinitialize mouse */
     esc_exit(vwk);                      /* back to console mode */
 }
 
@@ -453,7 +456,7 @@ void vdi_v_clrwk(Vwk * vwk)
     ULONG size;
 
     /* Calculate screen size */
-    size = (ULONG)v_lin_wr * v_vt_rez;
+    size = (ULONG)v_lin_wr * V_REZ_VT;
 
     /* clear the screen */
     memset(v_bas_ad, 0, size);

@@ -196,7 +196,7 @@ void gr_rubwind(WORD xorigin, WORD yorigin, WORD wmin, WORD hmin,
     BOOL    down;
     GRECT   o;
 
-    wm_update(TRUE);
+    wm_update(BEG_UPDATE);
     gr_setup(BLACK);
 
     r_set(&o, xorigin, yorigin, 0, 0);
@@ -210,7 +210,7 @@ void gr_rubwind(WORD xorigin, WORD yorigin, WORD wmin, WORD hmin,
 
     *pwend = o.g_w;
     *phend = o.g_h;
-    wm_update(FALSE);
+    wm_update(END_UPDATE);
 }
 
 
@@ -241,7 +241,7 @@ void gr_dragbox(WORD w, WORD h, WORD sx, WORD sy, GRECT *pc,
     BOOL    down;
     GRECT   o;
 
-    wm_update(TRUE);
+    wm_update(BEG_UPDATE);
     gr_setup(BLACK);
 
     gr_clamp(sx+1, sy+1, 0, 0, &offx, &offy);
@@ -258,7 +258,7 @@ void gr_dragbox(WORD w, WORD h, WORD sx, WORD sy, GRECT *pc,
 
     *pdx = o.g_x;
     *pdy = o.g_y;
-    wm_update(FALSE);
+    wm_update(END_UPDATE);
 }
 
 

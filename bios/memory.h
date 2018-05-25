@@ -33,12 +33,6 @@
 
 #include "portab.h"
 
-#if CONF_WITH_ADVANCED_CPU
-
-BOOL detect_32bit_address_bus(void);
-
-#endif /* CONF_WITH_ADVANCED_CPU */
-
 void ttram_detect(void);
 
 #if CONF_WITH_ALT_RAM

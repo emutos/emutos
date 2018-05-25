@@ -28,6 +28,7 @@
 #include "string.h"
 #include "dmasound.h"
 #include "kprint.h"
+#include "scsi.h"
 #include "ide.h"
 #include "asm.h"
 #include "delay.h"
@@ -35,6 +36,8 @@
 #include "scc.h"
 #include "memory.h"
 #include "coldfire.h"
+#include "dma.h"
+#include "nova.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif
@@ -57,7 +60,9 @@ long cookie_swi;
 /*
  * test specific hardware features
  */
-
+#if CONF_ATARI_HARDWARE
+int has_modectl;
+#endif
 #if CONF_WITH_STE_SHIFTER
 int has_ste_shifter;
 #endif
@@ -67,6 +72,24 @@ int has_tt_shifter;
 #if CONF_WITH_VIDEL
 int has_videl;
 #endif
+
+/*
+ * Check if the DMA 'modectl' register exists
+ *
+ * A bus error _may_ occur when accessing 'modectl' on some systems that
+ * do not support HD floppies [Christian Zietz's investigations indicate
+ * that the error occurs on systems with the IMP chip set].
+ */
+static void detect_modectl(void)
+{
+#if CONF_ATARI_HARDWARE
+    has_modectl = 0;
+    if (check_read_byte((LONG)&DMA->modectl))
+        has_modectl = 1;
+
+    KDEBUG(("has_modectl = %d\n", has_modectl));
+#endif
+}
 
 /*
  * Tests video capabilities (STEnhanced Shifter, TT Shifter and VIDEL)
@@ -100,7 +123,7 @@ static void detect_video(void)
 #if CONF_WITH_TT_SHIFTER
     /* test if we have a TT Shifter by testing for TT color palette */
     has_tt_shifter = 0;
-    if (check_read_byte(TT_PALETTE_REGS))
+    if (check_read_byte((long)TT_PALETTE_REGS))
         has_tt_shifter = 1;
 
     KDEBUG(("has_tt_shifter = %d\n", has_tt_shifter));
@@ -201,13 +224,24 @@ static void detect_monster(void)
 /* blitter */
 
 int has_blitter;
+int blitter_is_enabled;
 
 static void detect_blitter(void)
 {
-    has_blitter = 0;
+    has_blitter = blitter_is_enabled = 0;
 
-    if (check_read_byte(BLITTER_CONFIG1))
-        has_blitter = 1;
+    /*
+     * although no Atari-developed system has both TT-RAM and a blitter,
+     * some add-ons to Atari systems do (e.g. a CT60 in 68060 mode).
+     * because the Atari blitter only supports 24-bit addressing, we must
+     * prevent its use on such systems.  we do allow a blitter on the
+     * FireBee, which by design supports 32-bit blitting.
+     */
+#ifndef MACHINE_FIREBEE
+    if (!ramtop)
+#endif
+        if (check_read_byte(BLITTER_CONFIG1))
+            has_blitter = 1;
 
     KDEBUG(("has_blitter = %d\n", has_blitter));
 }
@@ -411,8 +445,9 @@ void machine_detect(void)
 #ifdef MACHINE_AMIGA
     amiga_machine_detect();
 #endif
+    detect_modectl();
 
-    /* Detect TT-RAM and set up ramtom/ramvalid */
+    /* Detect TT-RAM and set up ramtop/ramvalid */
     KDEBUG(("ttram_detect()\n"));
     ttram_detect();
 
@@ -453,6 +488,9 @@ void machine_detect(void)
 #if CONF_WITH_IDE
     detect_ide();
 #endif
+#if CONF_WITH_SCSI
+    detect_scsi();
+#endif
 #if CONF_WITH_MONSTER
     detect_monster();
     if (has_monster)
@@ -460,6 +498,10 @@ void machine_detect(void)
         detect_monster_rtc();
         KDEBUG(("has_monster_rtc = %d\n", has_monster_rtc));
     }
+#endif
+#if CONF_WITH_NOVA
+    if (!IS_ARANYM)
+        detect_nova();
 #endif
 }
 

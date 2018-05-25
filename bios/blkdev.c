@@ -28,6 +28,7 @@
 #include "blkdev.h"
 #include "processor.h"
 #include "acsi.h"
+#include "scsi.h"
 #include "ide.h"
 #include "sd.h"
 #include "biosext.h"
@@ -93,9 +94,9 @@ UWORD compute_cksum(const UWORD *buf)
 
 void blkdev_init(void)
 {
-    /* allocate low memory for the block buffer */
-    dskbufp = balloc_stram(DSKBUF_SIZE, FALSE);
-    KDEBUG(("diskbuf = %p\n",dskbufp));
+    /* initialize dskbufp for the block buffer */
+    dskbufp = dskbuf;
+    KDEBUG(("dskbufp = %p\n",dskbufp));
 
     /* setup booting related vectors */
     hdv_boot    = blkdev_hdv_boot;
@@ -188,6 +189,10 @@ static void bus_init(void)
 {
 #if CONF_WITH_ACSI
     acsi_init();
+#endif
+
+#if CONF_WITH_SCSI
+    scsi_init();
 #endif
 
 #if CONF_WITH_IDE
@@ -428,7 +433,7 @@ static LONG blkdev_rwabs(WORD rw, UBYTE *buf, WORD cnt, WORD recnr, WORD dev, LO
 
         /* check if the count fits into this partition */
         if ((lrecnr < 0) || (blkdev[dev].size > 0
-                             && (lrecnr + lcount) >= blkdev[dev].size))
+                             && (lrecnr + lcount) > blkdev[dev].size))
             return ESECNF;  /* sector not found */
 
         /* convert partition offset to absolute offset on a unit */
@@ -632,21 +637,20 @@ LONG blkdev_getbpb(WORD dev)
     tmp = (tmp - bdev->bpb.datrec) / b->spc;
     if (tmp > MAX_FAT16_CLUSTERS)           /* FAT32 - unsupported */
     {
+        KINFO(("Disk %c: is inaccessible (FAT32)\n",dev+'A'));
         bdev->bpb.recsiz = 0;               /* mark it for XHDI */
         return 0L;
     }
     bdev->bpb.numcl = tmp;
 
     /*
-     * check for FAT12 or FAT16
+     * check for FAT12 or FAT16: according to Microsoft (who originated
+     * the FAT format, after all), FAT type should be determined on the
+     * basis of cluster count and nothing else
      */
-    if (b16->ext == 0x29 && !memcmp(b16->fstype, "FAT12   ", 8))
-        bdev->bpb.b_flags = 0;          /* explicit FAT12 */
-    else if (b16->ext == 0x29 && !memcmp(b16->fstype, "FAT16   ", 8))
-        bdev->bpb.b_flags = B_16;       /* explicit FAT16 */
-    else if (bdev->bpb.numcl > MAX_FAT12_CLUSTERS)
-        bdev->bpb.b_flags = B_16;       /* implicit FAT16 */
-    else bdev->bpb.b_flags = 0;         /* implicit FAT12 */
+    if (bdev->bpb.numcl > MAX_FAT12_CLUSTERS)
+        bdev->bpb.b_flags = B_16;       /* FAT16 */
+    else bdev->bpb.b_flags = 0;         /* FAT12 */
 
     /* additional geometry info */
     bdev->geometry.sides = getiword(b->sides);

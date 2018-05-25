@@ -25,6 +25,7 @@
 #include "obdefs.h"
 #include "rectfunc.h"
 #include "gsxdefs.h"
+#include "gemdos.h"
 
 #include "deskbind.h"
 #include "deskglob.h"
@@ -50,8 +51,20 @@
 
 #define WINDOW_STYLE (NAME | CLOSER | MOVER | FULLER | INFO | SIZER | \
                       UPARROW | DNARROW | VSLIDE | LFARROW | RTARROW | HSLIDE)
-#define START_VIEW   V_ICON
 
+/*
+ * Specify the initial ob_state for icon objects in a window.  If the
+ * background colour is *not* configurable, it is always white, and
+ * setting the ob_state to WHITEBAK is valid.  It reduces the number of
+ * blits & rectangle fills, and provides (marginally) better performance.
+ */
+#ifdef CONF_WITH_BACKGROUNDS
+#define INITIAL_ICON_STATE  0
+#else
+#define INITIAL_ICON_STATE  WHITEBAK
+#endif
+
+static WNODE *windows;
 
 void win_view(WORD vtype, WORD isort)
 {
@@ -90,24 +103,30 @@ void win_view(WORD vtype, WORD isort)
 /*
  *  Start up by initializing global variables
  */
-void win_start(void)
+int win_start(void)
 {
     WNODE *pw;
     WORD i;
 
-    win_view(START_VIEW, S_NAME);
+    win_view(START_VIEW, START_SORT);
     obj_init();         /* must be called *after* win_view(), because it uses */
                         /*  G.g_iwspc/G.g_ihspc which are set by win_view()   */
 
     G.g_wdesktop.w_flags = WN_DESKTOP;  /* mark as special pseudo-window */
 
-    for (i = 0, G.g_wfirst = pw = G.g_wlist; i < NUM_WNODES; i++, pw++)
+    windows = dos_alloc_anyram(NUM_WNODES*sizeof(WNODE));
+    if (!windows)
+        return -1;
+
+    for (i = 0, G.g_wfirst = pw = windows; i < NUM_WNODES; i++, pw++)
     {
         pw->w_next = pw + 1;
         pw->w_id = 0;
     }
     (pw-1)->w_next = NULL;
     G.g_wcnt = 0x0;
+
+    return 0;
 }
 
 
@@ -144,7 +163,7 @@ WNODE *win_alloc(WORD obid)
     if (wob)
     {
         G.g_wcnt++;
-        pw = &G.g_wlist[wob-2];
+        pw = &windows[wob-2];
         pw->w_flags = 0x0;
         pw->w_obid = obid;    /* if -ve, the complement of the drive letter */
         pw->w_root = wob;
@@ -226,7 +245,7 @@ WNODE *win_ontop(void)
 
     wob = G.g_screen[ROOT].ob_tail;
     if (G.g_screen[wob].ob_width && G.g_screen[wob].ob_height)
-        return &G.g_wlist[wob-2];
+        return &windows[wob-2];
     else
         return NULL;
 }
@@ -251,7 +270,7 @@ static void win_ocalc(WNODE *pwin, WORD wfit, WORD hfit, FNODE **ppstart)
      * number of files in virtual file space
      */
     cnt = 0;
-    for (pf = pwin->w_path->p_flist; pf; pf = pf->f_next)
+    for (pf = pwin->w_pnode.p_flist; pf; pf = pf->f_next)
     {
         pf->f_obid = NIL;
         cnt++;
@@ -273,7 +292,7 @@ static void win_ocalc(WNODE *pwin, WORD wfit, WORD hfit, FNODE **ppstart)
      * & column, calculate the start and stop files
      */
     start = pwin->w_cvrow * pwin->w_pncol;
-    pf = pwin->w_path->p_flist;
+    pf = pwin->w_pnode.p_flist;
     while (start-- && pf)
         pf = pf->f_next;
     *ppstart = pf;
@@ -288,7 +307,7 @@ static void win_ocalc(WNODE *pwin, WORD wfit, WORD hfit, FNODE **ppstart)
 static void win_icalc(FNODE *pfnode, WNODE *pwin)
 {
     pfnode->f_pa = app_afind_by_name((pfnode->f_attr&F_SUBDIR) ? AT_ISFOLD : AT_ISFILE,
-                        AF_ISDESK, pwin->w_path->p_spec, pfnode->f_name, &pfnode->f_isap);
+                        AF_ISDESK, pwin->w_pnode.p_spec, pfnode->f_name, &pfnode->f_isap);
 }
 
 
@@ -340,7 +359,7 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
 
         /* build object */
         obj = &G.g_screen[obid];
-        obj->ob_state = WHITEBAK /*| DRAW3D*/;
+        obj->ob_state = INITIAL_ICON_STATE;
         obj->ob_flags = 0x00;
         si = &G.g_screeninfo[obid];
         switch(G.g_iview)
@@ -349,8 +368,8 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
             ub = &si->udef;
             obj->ob_type = G_USERDEF;
             obj->ob_spec = (LONG)ub;
-            ub->ub_code = &dr_code;
-            ub->ub_parm = (LONG)&pstart->f_junk;
+            ub->ub_code = dr_code;
+            ub->ub_parm = (LONG)pstart;
             win_icalc(pstart, pwin);
             break;
         case V_ICON:
@@ -527,7 +546,7 @@ void win_srtall(void)
         if (pw->w_id != 0)
         {
             pw->w_cvrow = 0;        /* reset slider         */
-            pw->w_path->p_flist = pn_sort(pw->w_path);
+            pw->w_pnode.p_flist = pn_sort(&pw->w_pnode);
         }
     }
 }
@@ -601,11 +620,11 @@ void win_sname(WNODE *pw)
     BYTE *psrc;
     BYTE *pdst;
 
-    psrc = pw->w_path->p_spec;
+    psrc = pw->w_pnode.p_spec;
     pdst = pw->w_name;
 
     *pdst++ = ' ';
-    while (*psrc && (*psrc != '*'))
+    while (*psrc)
         *pdst++ = *psrc++;
     *pdst++ = ' ';
     *pdst = '\0';
@@ -617,7 +636,7 @@ void win_sinfo(WNODE *pwin)
 {
     PNODE *pn;
 
-    pn = pwin->w_path;
+    pn = &pwin->w_pnode;
     rsrc_gaddr_rom(R_STRING, STINFOST, (void **)&G.a_alert);
     strlencpy(G.g_1text, G.a_alert);
 

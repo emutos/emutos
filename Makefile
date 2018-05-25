@@ -87,11 +87,20 @@ LOCALCONF =
 endif
 
 #
+# GEN_SRC will accumulate the all the generated source files.
+# Consequences for such files are:
+# - they are automatically built before generating makefile.dep
+# - they are automatically deleted on make clean
+#
+
+GEN_SRC =
+
+#
 # TOCLEAN will accumulate over the Makefile the names of files to remove
 # when doing make clean; temporary Makefile files are *.tmp
 #
 
-TOCLEAN := *~ */*~ $(CORE) *.tmp obj/*.h
+TOCLEAN = *~ */*~ $(CORE) *.tmp obj/*.h $(GEN_SRC)
 
 #
 # NODEP will accumulate the names of the targets which does not need to include
@@ -141,15 +150,15 @@ SMALL_OPTFLAGS = -Os
 BUILD_TOOLS_OPTFLAGS = -O
 OPTFLAGS = $(STANDARD_OPTFLAGS)
 
-WARNFLAGS = -Wall -Wundef
-#-Wshadow -Wmissing-prototypes -Wstrict-prototypes
+WARNFLAGS = -Wall -Wundef -Wmissing-prototypes -Wstrict-prototypes
+#-Wshadow
 #-Werror
 
 GCCVERSION := $(shell $(CC) -dumpversion | cut -d. -f1)
 # add warning flags not supported by GCC v2
 ifneq (,$(GCCVERSION))
 ifneq (2,$(GCCVERSION))
-WARNFLAGS += -Wold-style-definition
+WARNFLAGS += -Wold-style-definition -Wtype-limits
 endif
 endif
 
@@ -174,6 +183,9 @@ NATIVECC = gcc -ansi -pedantic $(WARNFLAGS) -W $(BUILD_TOOLS_OPTFLAGS)
 # The source below must be the first to be linked
 bios_src = startup.S
 
+# These sources will be placed in ST-RAM by the linked script
+bios_src += lowstram.c
+
 # Other BIOS sources can be put in any order
 bios_src +=  memory.S processor.S vectors.S aciavecs.S bios.c xbios.c acsi.c \
              biosmem.c blkdev.c chardev.c clock.c conout.c cookie.c country.c \
@@ -183,7 +195,7 @@ bios_src +=  memory.S processor.S vectors.S aciavecs.S bios.c xbios.c acsi.c \
              parport.c screen.c serport.c sound.c videl.c vt52.c xhdi.c \
              pmmu030.c 68040_pmmu.S \
              amiga.c amiga2.S aros.c aros2.S \
-             delay.c delayasm.S sd.c memory2.c bootparams.c
+             delay.c delayasm.S sd.c memory2.c bootparams.c scsi.c nova.c
 
 ifeq (1,$(COLDFIRE))
   bios_src += coldfire.c coldfire2.S spi.c
@@ -215,7 +227,8 @@ endif
 
 vdi_src = vdi_asm.S vdi_bezier.c vdi_col.c vdi_control.c vdi_esc.c \
           vdi_fill.c vdi_gdp.c vdi_input.c vdi_line.c vdi_main.c \
-          vdi_marker.c vdi_misc.c vdi_mouse.c vdi_raster.c vdi_text.c
+          vdi_marker.c vdi_misc.c vdi_mouse.c vdi_raster.c vdi_text.c \
+          vdi_textblit.c
 
 ifeq (1,$(COLDFIRE))
 vdi_src += vdi_tblit_cf.S
@@ -235,7 +248,7 @@ aes_src = gemasm.S gemstart.S gemdosif.S gemaplib.c gemasync.c gemctrl.c \
           gemfslib.c gemgraf.c gemgrlib.c gemgsxif.c geminit.c geminput.c \
           gemmnlib.c gemobed.c gemobjop.c gemoblib.c gempd.c gemqueue.c \
           gemrslib.c gemsclib.c gemshlib.c gemsuper.c gemwmlib.c gemwrect.c \
-          gsx2.c gem_rsc.c
+          gsx2.c gem_rsc.c mforms.c
 
 #
 # source code in desk/
@@ -272,7 +285,7 @@ desk_copts =
 #
 
 # Shell command to get the address of a symbol
-FUNCTION_SHELL_GET_SYMBOL_ADDRESS = awk '/^ *0x[^ ]* *$(1)( |$$)/{print $$1}' $(2)
+FUNCTION_SHELL_GET_SYMBOL_ADDRESS = printf 0x%08x $$(awk '/^ *0x[^ ]* *$(1)( |$$)/{print $$1}' $(2))
 
 # Function to get the address of a symbol into a Makefile variable
 # $(1) = symbol name
@@ -376,6 +389,7 @@ help:
 	@echo "expand  expand tabs to spaces"
 	@echo "crlf    convert all end of lines to LF"
 	@echo "charset check the charset of all the source files"
+	@echo "bugready set up files in preparation for 'bug update'"
 	@echo "gitready same as $(MAKE) expand crlf"
 	@echo "depend  creates dependancy file (makefile.dep)"
 	@echo "dsm     dsm.txt, an edited disassembly of emutos.img"
@@ -408,10 +422,10 @@ emutos.img: $(OBJECTS) obj/emutospp.ld Makefile
 	$(LD) $(CORE_OBJ) $(LIBS) $(OPTIONAL_OBJ) $(LIBS) $(LDFLAGS) -Wl,-Map=emutos.map -o emutos.img
 	@echo "# TEXT=$(call SHELL_SYMADDR,__text,emutos.map)"\
 " DATA_LMA=$(call SHELL_SYMADDR,__data_lma,emutos.map)"\
+" STKBOT=$(call SHELL_SYMADDR,_stkbot,emutos.map)"\
 " LOWSTRAM=$(call SHELL_SYMADDR,__low_stram_start,emutos.map)"\
 " DATA=$(call SHELL_SYMADDR,__data,emutos.map)"\
 " BSS=$(call SHELL_SYMADDR,__bss,emutos.map)"\
-" STKBOT=$(call SHELL_SYMADDR,_stkbot,emutos.map)"\
 " MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map)"
 
 #
@@ -552,7 +566,7 @@ $(ROM_AMIGA): emutos.img mkrom
 # Special Amiga ROM optimized for Vampire V2
 
 VAMPIRE_CPUFLAGS = -m68040
-VAMPIRE_DEF = -DSTATIC_ALT_RAM_ADDRESS=0x08000000 -DSTATIC_ALT_RAM_SIZE=127UL*1024*1024
+VAMPIRE_DEF = -DSTATIC_ALT_RAM_ADDRESS=0x08000000 -DSTATIC_ALT_RAM_SIZE=126UL*1024*1024
 VAMPIRE_ROM_AMIGA = emutos-vampire.rom
 
 .PHONY: amigavampire
@@ -692,11 +706,6 @@ flop:
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes"
 
-.PHONY: fd0
-NODEP += fd0
-fd0: flop
-	dd if=$(EMUTOS_ST) of=/dev/fd0D360
-
 $(EMUTOS_ST): override DEF += -DTARGET_FLOPPY
 $(EMUTOS_ST): OPTFLAGS = $(SMALL_OPTFLAGS)
 $(EMUTOS_ST): mkflop bootsect.img emutos.img
@@ -770,7 +779,8 @@ dumpkbd.prg: obj/minicrt.o obj/memmove.o obj/dumpkbd.o obj/doprintf.o \
 
 POFILES = $(wildcard po/*.po)
 
-TOCLEAN += bug util/langs.c po/messages.pot
+GEN_SRC += util/langs.c
+TOCLEAN += bug po/messages.pot
 
 NODEP += bug
 bug: tools/bug.c
@@ -786,15 +796,19 @@ po/messages.pot: bug po/POTFILES.in $(shell grep -v '^#' po/POTFILES.in)
 # Resource support
 #
 
-TOCLEAN += erd grd ird
+TOCLEAN += erd grd ird mrd draft temp.rsc temp.def
 
-NODEP += erd grd ird
+NODEP += erd grd ird mrd draft
 erd: tools/erd.c
 	$(NATIVECC) $< -o $@
 grd: tools/erd.c
 	$(NATIVECC) -DGEM_RSC $< -o grd
 ird: tools/erd.c
 	$(NATIVECC) -DICON_RSC $< -o ird
+mrd: tools/erd.c
+	$(NATIVECC) -DMFORM_RSC $< -o mrd
+draft: tools/draft.c
+	$(NATIVECC) $(DEFINES) $< -o $@
 
 DESKRSC_BASE = desk/desktop
 DESKRSCGEN_BASE = desk/desk_rsc
@@ -802,14 +816,20 @@ GEMRSC_BASE = aes/gem
 GEMRSCGEN_BASE = aes/gem_rsc
 ICONRSC_BASE = desk/icon
 ICONRSCGEN_BASE = desk/icons
-TOCLEAN += $(DESKRSCGEN_BASE).c $(DESKRSCGEN_BASE).h $(GEMRSCGEN_BASE).c $(GEMRSCGEN_BASE).h $(ICONRSCGEN_BASE).c $(ICONRSCGEN_BASE).h
+MFORMRSC_BASE = aes/mform
+MFORMRSCGEN_BASE = aes/mforms
+GEN_SRC += $(DESKRSCGEN_BASE).c $(DESKRSCGEN_BASE).h $(GEMRSCGEN_BASE).c $(GEMRSCGEN_BASE).h
+GEN_SRC += $(ICONRSCGEN_BASE).c $(ICONRSCGEN_BASE).h $(MFORMRSCGEN_BASE).c $(MFORMRSCGEN_BASE).h
 
-$(DESKRSCGEN_BASE).c $(DESKRSCGEN_BASE).h: erd $(DESKRSC_BASE).rsc $(DESKRSC_BASE).def
-	./erd -pdesk $(DESKRSC_BASE) $(DESKRSCGEN_BASE)
+$(DESKRSCGEN_BASE).c $(DESKRSCGEN_BASE).h: draft erd $(DESKRSC_BASE).rsc $(DESKRSC_BASE).def
+	./draft $(DESKRSC_BASE) temp
+	./erd -pdesk temp $(DESKRSCGEN_BASE)
 $(GEMRSCGEN_BASE).c $(GEMRSCGEN_BASE).h: grd $(GEMRSC_BASE).rsc $(GEMRSC_BASE).def
 	./grd $(GEMRSC_BASE) $(GEMRSCGEN_BASE)
 $(ICONRSCGEN_BASE).c $(ICONRSCGEN_BASE).h: ird $(ICONRSC_BASE).rsc $(ICONRSC_BASE).def
 	./ird -picon $(ICONRSC_BASE) $(ICONRSCGEN_BASE)
+$(MFORMRSCGEN_BASE).c $(MFORMRSCGEN_BASE).h: mrd $(MFORMRSC_BASE).rsc $(MFORMRSC_BASE).def
+	./mrd -pmform $(MFORMRSC_BASE) $(MFORMRSCGEN_BASE)
 
 #
 # Special ROM support
@@ -824,7 +844,7 @@ mkrom: tools/mkrom.c
 # test target to build all tools
 .PHONY: tools
 NODEP += tools
-tools: bug erd mkflop mkrom tos-lang-change
+tools: bug draft erd mkflop mkrom tos-lang-change
 
 # user tool, not needed in EmuTOS building
 TOCLEAN += tos-lang-change
@@ -949,7 +969,7 @@ obj/country: always-execute-recipe
 # - explicit dependencies can force rebuilding files that include it
 #
 
-TOCLEAN += include/i18nconf.h
+GEN_SRC += include/i18nconf.h
 
 ifneq (,$(UNIQUE))
 include/i18nconf.h: obj/country
@@ -974,7 +994,7 @@ endif
 # included in bios/country.c
 #
 
-TOCLEAN += bios/ctables.h
+GEN_SRC += bios/ctables.h
 
 bios/ctables.h: country.mk tools/genctables.awk
 	awk -f tools/genctables.awk < country.mk > $@
@@ -983,7 +1003,7 @@ bios/ctables.h: country.mk tools/genctables.awk
 # OS header
 #
 
-TOCLEAN += bios/header.h
+GEN_SRC += bios/header.h
 
 bios/header.h: tools/mkheader.awk obj/country
 	awk -f tools/mkheader.awk $(COUNTRY) > $@
@@ -1016,7 +1036,7 @@ obj/%.o : %.S
 # version string
 #
 
-TOCLEAN += obj/*.c
+GEN_SRC += obj/version.c
 
 # This temporary file is always generated
 obj/version2.c:
@@ -1144,11 +1164,21 @@ crlf:
 NODEP += charset
 charset:
 	@echo "# All the files below should use charset=utf-8"
-	find . -type f '!' -path '*/.git/*' '!' -path './obj/*' '!' -path './*.img' '!' -path './?rd*' '!' -path './bug*' '!' -path './mkrom*' '!' -name '*.def' '!' -name '*.rsc' '!' -name '*.icn' '!' -name '*.po' -print0 | xargs -0 file -i |grep -v us-ascii
+	find . -type f '!' -path '*/.git/*' '!' -path './obj/*' '!' -path './*.img' '!' -path './?rd*' '!' -path './draft*' '!' -path './bug*' '!' -path './mkrom*' '!' -name '*.def' '!' -name '*.rsc' '!' -name '*.icn' '!' -name '*.po' -print0 | xargs -0 file -i |grep -v us-ascii
 
 .PHONY: gitready
 NODEP += gitready
 gitready: expand crlf
+
+#
+# set up files in preparation for 'bug update'
+#
+.PHONY: bugready
+NODEP += bugready
+bugready: bug erd grd
+	./erd -pdesk $(DESKRSC_BASE) $(DESKRSCGEN_BASE)
+	./grd $(GEMRSC_BASE) $(GEMRSCGEN_BASE)
+	./bug xgettext
 
 #
 # Standalone EmuCON
@@ -1240,7 +1270,12 @@ depend: makefile.dep
 
 TOCLEAN += makefile.dep
 NODEP += makefile.dep
-makefile.dep: util/langs.c bios/header.h bios/ctables.h include/i18nconf.h
+# Theoretically, makefile.dep should depend on $(DEP_SRC). But in that case,
+# makefile.dep would be rebuilt every time a single source is modified, even
+# for trivial changes. This would be useless in most cases. As a pragmatic
+# workaround, makefile.dep only depends on generated sources, which ensures
+# they are always created first.
+makefile.dep: $(GEN_SRC)
 	$(CC) $(MULTILIBFLAGS) $(TOOLCHAIN_CFLAGS) -MM $(INC) $(DEF) -DGENERATING_DEPENDENCIES $(DEP_SRC) | sed -e '/:/s,^,obj/,' >makefile.dep
 
 # Do not include or rebuild makefile.dep for the targets listed in NODEP

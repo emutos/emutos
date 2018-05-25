@@ -31,40 +31,56 @@ fi
 # are such.
 #
 # Const data gets assigned to code section by compiler.
-# Special case common prefixes for them and set their type
-# as data.
+# Special case font objects containing just const font struct
+# symbols as having data type (helps Hatari profiler a bit).
+#
+# Print object addresses only if they contain other symbols,
+# or their address differs from other addresses, to avoid
+# duplicate & misleading object addresses.
 awk '
 BEGIN {
-	type = "";
-	# OS variables & font arrays
-	split("_os_ _fnt_", prefixes);
+	# system variables type at startup
+	objtype = "T";
+	objaddr = 0x0;
 }
-function type4str (type, str) {
-	if (type != "T") {
-		return type;
+function set_object (addr, type, name) {
+	addr = strtonum(addr);
+	if (addr && objaddr && objaddr != addr) {
+		printf "0x%08x %s %s\n", objaddr, objtype, objname;
 	}
-	for (prefix in prefixes) {
-		# starts with indexed prefix?
-		if (index(str, prefixes[prefix]) == 1) {
-			return "D";
+	if (name) {
+		# remove EmuTOS object file path
+		sub("obj/", "", name);
+		objname = name;
+		objaddr = addr;
+	}
+	# font objects contain just font data structs
+	if (index(name, "fnt_") == 1) {
+		objtype = "D";
+	} else {
+		objtype = type;
+	}
+}
+# special sections
+/^ *\.lowstram/  { objtype = "D"; }
+/^ *\.laststram/ { objtype = "D"; }
+/^ *\.stack/     { objtype = "B"; }
+/^ COMMON/       { objtype = "T"; }
+# normal TEXT, BSS & DATA sections
+/^ *\.text/ { set_object($2, "T", $4); }
+/^ *\.data/ { set_object($2, "D", $4); }
+/^ *\.bss/  { set_object($2, "B", $4); }
+# symbols in any of the sections
+/^ +0x/     {
+	if (objtype) {
+		if (objaddr) {
+			printf "0x%08x %s %s\n", objaddr, objtype, objname;
+			objaddr = 0x0;
+		}
+		if ($2 != "." && $2 != "ASSERT") {
+			printf "0x%08x %s %s\n", strtonum($1), objtype, $2;
 		}
 	}
-	return type;
 }
-function print_object (addr, name) {
-	if (name) {
-		# remove object file path
-		sub("obj/", "", name);
-		print addr, "T", name;
-	}
-}
-/^\.text/  { type = "T"; print_object($2, $4); }
-/^\.data/  { type = "D"; print_object($2, $4); }
-/^\.bss/   { type = "B"; print_object($2, $4); }
-/^ COMMON/ { type = "T"; print_object($2, $4); }
-/^ +0x/    {
-	if (type) {
-		print $1, type4str(type, $2), $2;
-	}
-}
-' $1 | sort -n
+# clean out library paths for objects coming from static libraries
+' $1 | sed -e 's/ [^ ]\+(//' -e 's/)//' | sort -n

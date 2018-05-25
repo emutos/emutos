@@ -4,7 +4,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2016 The EmuTOS development team
+*                 2002-2017 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -42,7 +42,8 @@
 
 #include "asm.h"
 
-#define KEYSTOP 0x00002b1cL                     /* control backslash    */
+#define KEYMASK 0xffff0000L             /* for comparing data to KEYSTOP */
+#define KEYSTOP 0x2b1c0000L             /* control-backslash */
 
 
 /* forkq puts a fork block with a routine in the fork ring      */
@@ -116,7 +117,7 @@ void forker(void)
         if (gl_recd)
         {
             /* check for stop key */
-            if ((g.f_code == kchange) && ((UWORD)g.f_data == KEYSTOP))
+            if ((g.f_code == kchange) && ((g.f_data&KEYMASK) == KEYSTOP))
                 gl_recd = FALSE;
 
             /* if still recording, then handle event */
@@ -135,7 +136,8 @@ void forker(void)
                     memcpy(gl_rbuf, f, sizeof(FPD));
                     gl_rbuf++;
                     gl_rlen--;
-                    gl_recd = gl_rlen;
+                    if (gl_rlen <= 0)
+                        gl_recd = FALSE;
                 }
             }
         }
@@ -151,22 +153,21 @@ void chkkbd(void)
 {
     WORD achar, kstat;
 
-    /* poll keybd */
-    if (!gl_play)
+    if (gl_play)
+        return;
+
+    kstat = gsx_kstate();
+    achar = gsx_char();
+    if (achar && (gl_mowner->p_cda->c_q.c_cnt >= KBD_SIZE))
     {
-        kstat = gsx_kstate();
-        achar = gsx_char();
-        if (achar && (gl_mowner->p_cda->c_q.c_cnt >= KBD_SIZE))
-        {
-            achar = 0x0;                        /* buffer overrun       */
-            sound(880, 2);
-        }
-        if (achar || (kstat != kstate))
-        {
-            disable_interrupts();
-            forkq(kchange, MAKE_ULONG(achar, kstat));
-            enable_interrupts();
-        }
+        achar = 0x0;                        /* buffer overrun       */
+        sound(880, 2);
+    }
+    if (achar || (kstat != kstate))
+    {
+        disable_interrupts();
+        forkq(kchange, MAKE_ULONG(achar, kstat));
+        enable_interrupts();
     }
 }
 

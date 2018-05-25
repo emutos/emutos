@@ -1,7 +1,7 @@
 /*
  * EmuTOS AES
  *
- * Copyright (C) 2002-2016 The EmuTOS development team
+ * Copyright (C) 2002-2017 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -43,6 +43,7 @@ WORD gsx_kstate(void);
 void gsx_mon(void);
 void gsx_moff(void);
 WORD gsx_char(void);
+void gsx_setmousexy(WORD x, WORD y);
 WORD gsx_nplanes(void);
 
 void g_v_pline(WORD  count, WORD *pxyarray );

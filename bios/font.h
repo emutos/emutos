@@ -3,7 +3,7 @@
  *
  * Copyright (C) 2001 Lineo, Inc.
  * Copyright (C) 2004 by Authors (see below)
- * Copyright (C) 2015-2016 The EmuTOS development team
+ * Copyright (C) 2015-2017 The EmuTOS development team
  *
  * Authors:
  *  MAD     Martin Doering
@@ -17,15 +17,6 @@
 
 #include "portab.h"
 #include "fonthdr.h"
-
-/* font style bits */
-
-#define F_THICKEN 1
-#define F_LIGHT 2
-#define F_SKEW  4
-#define F_UNDER 8
-#define F_OUTLINE 16
-#define F_SHADOW        32
 
 /* font specific linea variables */
 

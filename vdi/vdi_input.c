@@ -3,7 +3,7 @@
  *
  * Copyright 1982 by Digital Research Inc.  All rights reserved.
  * Copyright 1999 by Caldera, Inc. and Authors:
- * Copyright 2002-2016 by The EmuTOS development team
+ * Copyright 2002-2017 by The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -23,34 +23,69 @@ static WORD gchr_key(void);
 static WORD gshift_s(void);
 
 
-/* CHOICE_INPUT: implements vrq_choice()/vsm_choice() */
+/*
+ * CHOICE_INPUT: implements vrq_choice()/vsm_choice()
+ *
+ * These functions return the status of the logical 'choice' device.
+ * The "GEM Programmer's Guide: VDI" indicates that these functions
+ * are not required, and both Atari TOS and EmuTOS (using the original
+ * imported DRI source) implement them as dummy functions.
+ */
 void vdi_v_choice(Vwk * vwk)
 {
-    WORD i;
+    gchc_key();
+    CONTRL[4] = 1;
+    INTOUT[0] = TERM_CH & 0x00ff;
 
-    if (chc_mode == 0) {
-        *(CONTRL + 4) = 1;
-        while (gchc_key() != 1);
-        *(INTOUT) = TERM_CH & 0x00ff;
-    } else {
-        i = gchc_key();
-        *(CONTRL + 4) = i;
-        if (i == 1)
-            *(INTOUT) = TERM_CH & 0x00ff;
-        else if (i == 2)
-            *(INTOUT + 1) = TERM_CH & 0x00ff;
-    }
 }
 
 
 
-/* STRING_INPUT: implements vrq_string()/vsm_string() */
+/*
+ * STRING_INPUT: implements vrq_string()/vsm_string()
+ *
+ * These functions return the status of the logical 'string' device,
+ * which is the keyboard under TOS.
+ *
+ * vrq_string() operation in Atari TOS and EmuTOS
+ * ----------------------------------------------
+ * 1. This function reads characters from the keyboard until a carriage
+ *    return is entered, or until the maximum number of characters has
+ *    been read, and then returns.  The characters are returned in
+ *    intout[]: each word in intout[] will contain zero in the high-order
+ *    byte, and the ASCII character in the low-order byte.  The 'C'
+ *    binding will copy the low-order bytes to a buffer.  If the call is
+ *    terminated by a carriage return, the carriage return is NOT placed
+ *    in intout[].
+ * 2. The maximum number of characters may be specified as negative.  In
+ *    this case, the maximum used will be the absolute value of that
+ *    specified, and everything else will work the same as (1) above,
+ *    except that the words in the intout[] array will contain extended
+ *    keyboard codes: the scancode in the high-order byte and the ASCII
+ *    code in the low-order byte.
+ * 3. The 'echo' argument is ignored.
+ * 4. Atari TOS bug: when the maximum is specified as negative, carriage
+ *    returns do NOT terminate input; input is only terminated by the
+ *    maximum number of characters being reached.
+ *
+ * vsm_string() operation in Atari TOS and EmuTOS
+ * ----------------------------------------------
+ * 1. On entry, this function checks if any keyboard input is pending;
+ *    if not, it returns immediately.  Otherwise, it reads characters
+ *    until there are no more, or until the maximum number of characters
+ *    has been read.
+ *    NOTE: carriage returns are treated like any other character, are
+ *    included in intout[], and do NOT cause input termination.
+ * 2. The maximum number of characters may be specified as negative, with
+ *    the same results as described above for vrq_string().
+ * 3. The 'echo' argument is ignored.
+ */
 void vdi_v_string(Vwk * vwk)
 {
     WORD i, j, mask;
 
     mask = 0x00ff;
-    j = *INTIN;
+    j = INTIN[0];
     if (j < 0) {
         j = -j;
         mask = 0xffff;
@@ -59,17 +94,17 @@ void vdi_v_string(Vwk * vwk)
         TERM_CH = 0;
         for (i = 0; (i < j) && ((TERM_CH & 0x00ff) != 0x000d); i++) {
             while (gchr_key() == 0);
-            *(INTOUT + i) = TERM_CH = TERM_CH & mask;
+            INTOUT[i] = TERM_CH = TERM_CH & mask;
         }
         if ((TERM_CH & 0x00ff) == 0x000d)
             --i;
-        *(CONTRL + 4) = i;
+        CONTRL[4] = i;
     } else {                    /* Sample mode */
 
         i = 0;
         while ((gchr_key() != 0) && (i < j))
-            *(INTOUT + i++) = TERM_CH & mask;
-        *(CONTRL + 4) = i;
+            INTOUT[i++] = TERM_CH & mask;
+        CONTRL[4] = i;
     }
 }
 
@@ -87,17 +122,13 @@ void vdi_vq_key_s(Vwk * vwk)
 /* SET_INPUT_MODE: */
 void vdi_vsin_mode(Vwk * vwk)
 {
-    WORD i, *int_in;
+    WORD i;
 
     CONTRL[4] = 1;
-
-    int_in = INTIN;
-    *INTOUT = i = *(int_in + 1);
+    INTOUT[0] = i = INTIN[1];
     i--;
-    switch (*(int_in)) {
-    case 0:
-        break;
 
+    switch (INTIN[0]) {
     case 1:                     /* locator */
         loc_mode = i;
         break;
@@ -118,18 +149,22 @@ void vdi_vsin_mode(Vwk * vwk)
 
 
 
-/* INQUIRE INPUT MODE: */
+/*
+ * INQUIRE INPUT MODE: implements vqin_mode()
+ *
+ * This function is documented by Atari to return the mode value set
+ * by vsin_mode() [this is either 1 (request mode) or 2 (sample mode)].
+ * However, like all versions of Atari TOS, it actually returns the mode
+ * value minus 1 (i.e. 0 or 1).
+ */
 void vdi_vqin_mode(Vwk * vwk)
 {
     WORD *int_out;
 
-    *(CONTRL + 4) = 1;
+    CONTRL[4] = 1;
 
     int_out = INTOUT;
-    switch (*(INTIN)) {
-    case 0:
-        break;
-
+    switch (INTIN[0]) {
     case 1:                     /* locator */
         *int_out = loc_mode;
         break;
@@ -200,66 +235,4 @@ static WORD gchr_key(void)
         return 1;
     }
     return 0;
-}
-
-
-
-/*
- * gloc_key - get locator key
- *
- * returns:  0    - nothing
- *           1    - button pressed
- *                  TERM_CH = 16 bit char info
- *
- *           2    - coordinate info
- *                     X1 = new x
- *                     Y1 = new y
- *           4    - NOT IMPLIMENTED IN THIS VERSION
- *
- * The variable cur_ms_stat holds the bitmap of mouse status since the last
- * interrupt. The bits are
- *
- * 0 - 0x01 Left mouse button status  (0=up)
- * 1 - 0x02 Right mouse button status (0=up)
- * 2 - 0x04 Reserved
- * 3 - 0x08 Reserved
- * 4 - 0x10 Reserved
- * 5 - 0x20 Mouse move flag (1=moved)
- * 6 - 0x40 Right mouse button status flag (0=hasn't changed)
- * 7 - 0x80 Left mouse button status flag  (0=hasn't changed)
- */
-
-WORD gloc_key(void)
-{
-    WORD retval;
-    ULONG ch;
-
-    if (cur_ms_stat & 0xc0) {           /* some button status bits set? */
-        if (cur_ms_stat & 0x40)         /* if bit 6 set,                     */
-            TERM_CH = 0x21;             /* send terminator code for left key */
-        else
-            TERM_CH = 0x20;             /* send terminator code for right key */
-        cur_ms_stat &= 0x23;            /* clear mouse button status (bit 6/7) */
-        retval = 1;                     /* set button pressed flag */
-    } else {                            /* check key stat */
-        if (Bconstat(2)) {              /* see if a character present at con */
-            ch = Bconin(2);
-            TERM_CH = (WORD)
-                (ch >> 8)|              /* scancode down to bit 8-15 */
-                (ch & 0xff);            /* asciicode to bit 0-7 */
-            retval = 1;                 /* set button pressed flag */
-        } else {
-            if (cur_ms_stat & 0x20) {   /* if bit #5 set ... */
-                Point * point = (Point*)PTSIN;
-
-                cur_ms_stat |= ~0x20;   /* clear bit 5 */
-                point->x = GCURX;       /* set X = GCURX */
-                point->y = GCURY;       /* set Y = GCURY */
-                retval = 2;
-            } else {
-                retval = 0;
-            }
-        }
-    }
-    return retval;
 }

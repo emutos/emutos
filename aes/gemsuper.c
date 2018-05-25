@@ -80,12 +80,13 @@ static void aestrace(const char* message)
 
 static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_in[], WORD int_out[], LONG addr_in[])
 {
-    LONG    maddr, buparm;
+    LONG    count, buparm;
+    MFORM   *maddr;
     OBJECT  *tree;
     WORD    mouse, ret;
     WORD    unsupported = FALSE;
 
-    maddr = 0;
+    count = 0L;
     ret = TRUE;
 
     switch(opcode)
@@ -111,10 +112,10 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         ret = ap_find((BYTE *)AP_PNAME);
         break;
     case APPL_TPLAY:
-        ap_tplay((FPD *)AP_TBUFFER, AP_TLENGTH, AP_TSCALE);
+        ap_tplay((EVNTREC *)AP_TBUFFER, AP_TLENGTH, AP_TSCALE);
         break;
     case APPL_TRECORD:
-        ret = ap_trecd((FPD *)AP_TBUFFER, AP_TLENGTH);
+        ret = ap_trecd((EVNTREC *)AP_TBUFFER, AP_TLENGTH);
         break;
 #if CONF_WITH_PCGEM
     case APPL_YIELD:
@@ -151,10 +152,10 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         if (MU_FLAGS & MU_MESAG)
             rlr->p_flags |= AP_MESAG;
         if (MU_FLAGS & MU_TIMER)
-            maddr = MAKE_ULONG(MT_HICOUNT, MT_LOCOUNT);
+            count = MAKE_ULONG(MT_HICOUNT, MT_LOCOUNT);
         buparm = combine_cms(MB_CLICKS,MB_MASK,MB_STATE);
         ret = ev_multi(MU_FLAGS, (MOBLK *)&MMO1_FLAGS, (MOBLK *)&MMO2_FLAGS,
-                        maddr, buparm, (WORD *)MME_PBUFF, &EV_MX);
+                        count, buparm, (WORD *)MME_PBUFF, &EV_MX);
         if ((ret & MU_MESAG) && (*(WORD *)MME_PBUFF == AC_CLOSE))
             rlr->p_flags |= AP_ACCLOSE;
         break;
@@ -299,43 +300,19 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
                 gsx_moff();
             if (GR_MNUMBER == M_ON)
                 gsx_mon();
+            break;
+        }
+        if (GR_MNUMBER != USER_DEF)
+        {
+            if ((GR_MNUMBER < ARROW) || (GR_MNUMBER > OUTLN_CROSS))
+                mouse = ARROW;
+            else
+                mouse = GR_MNUMBER;
+            maddr = mouse_cursor[mouse];
         }
         else
-        {
-            if (GR_MNUMBER != USER_DEF)
-            {
-                switch(GR_MNUMBER) {
-                case TEXT_CRSR:
-                    mouse = MICE01;
-                    break;
-                case HOURGLASS:
-                    mouse = MICE02;
-                    break;
-                case POINT_HAND:
-                    mouse = MICE03;
-                    break;
-                case FLAT_HAND:
-                    mouse = MICE04;
-                    break;
-                case THIN_CROSS:
-                    mouse = MICE05;
-                    break;
-                case THICK_CROSS:
-                    mouse = MICE06;
-                    break;
-                case OUTLN_CROSS:
-                    mouse = MICE07;
-                    break;
-                default:
-                    mouse = MICE00;
-                    break;
-                }
-                maddr = rs_bitblk[mouse].bi_pdata;
-            }
-            else
-                maddr = GR_MADDR;
-            gsx_mfset((MFORM *)maddr);
-        }
+            maddr = (MFORM *)GR_MADDR;
+        gsx_mfset(maddr);
         break;
     case GRAF_MKSTATE:
         gr_mkstate(&GR_MX, &GR_MY, &GR_MSTATE, &GR_KSTATE);

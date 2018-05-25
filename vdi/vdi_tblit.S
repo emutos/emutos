@@ -3,7 +3,7 @@
  *
  * Copyright (C) 1999 Caldera, Inc. and Authors:
  *               1984 Dave Staugas
- *               2002-2016 The EmuTOS development team
+ *               2002-2017 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -32,7 +32,7 @@
 //  changes made--                                                      //
 //                                                                      //
 //  26 Feb -- a. writing mode values table corrected                    //
-//            b. _MONO_STATUS if true stops thicken source form expansion //
+//            b. _MONO if true stops thicken source form expansion      //
 //                                                                      //
 //   6 Mar -- a. arbitrary scale of text mod to replicate/double code   //
 //                                                                      //
@@ -46,12 +46,7 @@
         .globl  dbl_loop
         .globl  mlt_left
         .globl  mlt_rite
-        .globl  ramlen
         .globl  blttype
-        .globl  rite_msk
-        .globl  left_msk
-        .globl  tsdad
-        .globl  tddad
 #endif
 
 /////////////////////////////////////////////////////////////////////////
@@ -60,49 +55,19 @@
 //  inputs:     SOURCEX,SOURCEY - word                                  //
 //                X,Y coordinate of character relative to UL corner of  //
 //                font (in pixels)                                      //
-//              DESTX,DESTY - word                                      //
-//                UL corner of screen area to operate on (in pixels)    //
-//              DELX,DELY - word                                        //
-//                size of area to operate on (in pixels)                //
-//              FBASE - long word                                       //
-//                base address of font                                  //
-//              FWIDTH - word                                           //
-//                Form width of font in bytes                           //
-//              WRT_MODE - word                                         //
-//                writing mode operation(0-3) 0-replace,  1-transparent //
-//                                            2-XOR mode                //
-//                                            3-inverse transparent     //
-//              STYLE - word                                            //
-//                special effects select (thicken,light,skew,underline, //
-//                outline, etc.)                                        //
-//              R_OFF,L_OFF - word                                      //
-//                right & left offset between top & bottom when         //
-//                italicizing                                           //
-//              WEIGHT - word                                           //
-//                used by thicken (magnitude of thickness???)           //
-//              LITEMASK,SKEWMASK - word                                //
+//              LITEMASK - word                                         //
 //                for lighter letters                                   //
-//              DOUBLE - word                                           //
-//                if non-zero make character twice height & width       //
-//              CHUP - word                                             //
-//                rotation tenths of degrees (0,900,1800,or 2700 only)  //
-//              CLIP - word                                             //
-//                if non-zero, clipping bounds (below) in effect        //
-//              XMN_CLIP,XMX_CLIP - word                                //
-//                clipping region, x coordinate min & max               //
-//              YMN_CLIP,YMX_CLIP - word                                //
-//                clipping region, y coordinate min & max               //
 //                                                                      //
 //                added Feb 26, 1985                                    //
 //                                                                      //
-//              MONO_ST - word                                          //
+//              MONO - word                                             //
 //                if non-zero (true), thicken effect should not enlarge //
 //                source( mono spaced font status flag )                //
-//              XACCC_DDA - word                                        //
+//              XDDA - word                                             //
 //                DDA accumulator passed externally                     //
-//              DDA_INC - word                                          //
+//              DDAINC - word                                           //
 //                DDA increment passed externally                       //
-//              T_SCLST - word                                          //
+//              SCALDIR - word                                          //
 //                0 if scale down, 1 if enlarge                         //
 /////////////////////////////////////////////////////////////////////////
 
@@ -131,12 +96,6 @@
 //   Style equates..                                   //
 /////////////////////////////////////////////////////////
 
-#define THICKM                 0x1
-#define LIGHTM                 0x2
-#define SKEWM                  0x4
-#define UNDERM                 0x8
-#define OUTLINEM               0x10
-#define SHADOWM                0x20
 //
 //  Style equates converted to 68k bit numbers
 //  (bit number 0 is the least significant bit)
@@ -152,51 +111,33 @@
 //   Global routines defined in this module.           //
 /////////////////////////////////////////////////////////
 
-        .globl  _text_blt
-        .globl  concat          // convert x,y coordinates to buffer offsets
+        .globl  _normal_blit
+        .globl  _outline
+        .globl  _rotate
+        .globl  _scale
 
 /////////////////////////////////////////////////////////
 //  Global routines referenced by this module.         //
 /////////////////////////////////////////////////////////
 
-        .extern _act_siz
 
 /////////////////////////////////////////////////////////
 //  Global variables referenced.                       //
 /////////////////////////////////////////////////////////
 
-        .extern _DEV_TAB
         .extern _SOURCEX,_SOURCEY
-        .extern _DESTX,_DESTY
-        .extern _DELX,_DELY
-        .extern _FBASE
-        .extern _FWIDTH
-        .extern _WRT_MODE
-        .extern _STYLE
-        .extern _R_OFF,_L_OFF
-        .extern _WEIGHT,_LITEMASK,_SKEWMASK
-        .extern _DOUBLE
-        .extern _CHUP
-        .extern _CLIP
-        .extern _MONO_STATUS
-        .extern _T_SCLSTS
-        .extern _TEXT_FG        //foreground color, text
-        .extern _XMN_CLIP,_XMX_CLIP
-        .extern _YMN_CLIP,_YMX_CLIP
-        .extern _XACC_DDA
-        .extern _DDA_INC
-        .extern _scrpt2
-        .extern _scrtchp
-        .extern _shift_offset
+        .extern _LITEMASK,_SKEWMASK
+        .extern _SCALDIR
+        .extern _XDDA
+        .extern _DDAINC
+        .extern _SCRPT2
+        .extern _SCRTCHP
 
 
 /////////////////////////////////////////////////////////
 //  Hardware dependent variables referenced.           //
 /////////////////////////////////////////////////////////
 
-        .extern _v_bas_ad       //base address of graphic plane
-        .extern _v_lin_wr       //size of a scan line in bytes
-        .extern _v_planes       //number of graphic planes
 
 /////////////////////////////////////////////////////////
 //  Character buffer variables defined in this module. //
@@ -323,16 +264,16 @@
 //                                                  // small + large buffer
 
 /////////////////////////////////////////////////////////////////////////
-//  _text_blt expects variables scratchp & scrpt2 to be                 //
+//  _text_blt expects variables SCRTCHP & SCRPT2 to be                  //
 //           initialized as follows:                                    //
 //                                                                      //
-//   _scrtchp:  is a long word pointer to the base of a buffer with at  //
+//   _SCRTCHP:  is a long word pointer to the base of a buffer with at  //
 //              least buf_siz bytes available for scratch use           //
 //                                                                      //
-//   _scrpt2:   is a word offset within the buffer partitioning it into //
+//   _SCRPT2:   is a word offset within the buffer partitioning it into //
 //              a small and a large segment. Should be set to cel_siz   //
 //                                                                      //
-//      NOTE: _scrtchp & _scrpt2 must be initialized to an even pointer //
+//      NOTE: _SCRTCHP & _SCRPT2 must be initialized to an even pointer //
 //               even offset respectively                               //
 /////////////////////////////////////////////////////////////////////////
 
@@ -343,8 +284,6 @@ _deftxbuf:
         .ds.b   buf_siz         // char. buffer
 
         SECTION_RODATA
-
-#define _scrpt1 0               // small buffer base offset
 
         .even   // Mandatory in ELF section .rodata
 _scrtsiz:
@@ -361,7 +300,7 @@ _scrtsiz:
 
 #define buffa   -2              //for clip & prerotate blt
 #define buffb   -4              //for rotate
-#define buffc   -6              //for replicate
+//#define buffc   -6              //for replicate (now unused)
 #define sform   -10             //start of source form
 #define dform   -14             //start of destination form
 #define s_next  -16             //width of source form (formerly s_width)
@@ -429,7 +368,7 @@ _scrtsiz:
 
 #define STYLE   -96
 #define WRT_MOD -98
-#define SKEWMAS -100
+//#define SKEWMAS -100                  (now unused)
 #define DELX    -102
 #define DESTX   -104
 #define DELY    -106
@@ -450,578 +389,53 @@ _scrtsiz:
 //  Temporary working variables //
 //////////////////////////////////
 
-#define tmp_style -122
+//#define tmp_style -122                (now unused)
 #define blt_flag  -124
 #define chup_flag -126
 #define ramlen    -126
 
         .text
-/////////////////////////////////////////////////////////////////////////
-//   Global TEXTBLT entry point                                         //
-/////////////////////////////////////////////////////////////////////////
-
-_text_blt:
-        link    a6,#ramlen              //allocate stack for local variables
-        movem.l d2-d7/a2-a5,-(sp)
-
-        clr.w   swap_tmps(a6)           //temps not swapped yet RJG 4/13/85
-        move.w  #_scrpt1,buffc(a6)
-        lea.l   STYLE(a6),a1
-        move.w  _STYLE,(a1)
-        move.w  _WRT_MODE,-(a1)
-        move.w  _SKEWMASK,-(a1)
-
-        move.w  _DELX,-(a1)
-        move.w  _DESTX,-(a1)
-        move.w  _DELY,-(a1)
-        move.w  _DESTY,-(a1)
-        move.w  _CHUP,-(a1)
-
-        move.w  _scrpt2,a0              //use big buffer
-        move.w  DELY(a6),d3
-        tst.w   _DOUBLE                 //doubling?
-        jne     adr_dbl                 //br if no
-        move.w  DELX(a6),d1
-        jra     adr_nodb
-//
-//  added 5 mar 85
-//
-adr_dbl:
-        movem.l a0/a1,-(sp)             //backup used scratch registers
-        move.w  d3,-(sp)                //pass DELY to act_siz on stack
-        move.l  8(a6),-(sp)             //pass also the parameter Vwk *
-        jsr     _act_siz                //
-        addq.l  #6,sp                   //remove act_siz parameters from stack
-        movem.l (sp)+,a0/a1             //restore used scratch registers
-        move.w  d0,d3                   //set new DELY
-        move.w  d3,tmp_dely(a6)         //save in temp for replication use
-        move.w  DELX(a6),d2             //DELX to d2
-        move.w  _XACC_DDA,d4            //get xacc_dda to d4
-        move.w  _DDA_INC,d0             //dda_inc to d0
-        moveq.l #0,d1                   //d1 = 0
-        jra     clc_n_su
-doub_wid:
-        add.w   d0,d4
-        jcc     no_db_wd
-        addq.w  #1,d1
-no_db_wd:
-        btst.b  #0,_T_SCLSTS+1
-        jeq     clc_n_su
-        addq.w  #1,d1
-clc_n_su:
-        dbra    d2,doub_wid
-        move.w  d1,tmp_delx(a6)
-//
-//  end 5 mar additions
-//
-//   replacing these 2 instructions..
-//
-//      lsl.w   d1                      //we'll double in x (_DELX)
-//      lsl.w   d3                      //we'll double in y (_DELY)
-//
-        tst.w   CHUP(a6)                //is character rotated?
-        jne     adr_nodb                //for a rotated character
-//
-//  No character rotation
-//
-        move.w  #_scrpt1,a0             //have to use small buffer 1st
-adr_nodb:
-        move.w  a0,buffa(a6)            //set up clip & prerotate blt
-        move.w  DESTY(a6),d2
-        move.w  DESTX(a6),d0
-        move.w  _L_OFF,d6
-        move.w  _R_OFF,d7
-        clr.w   smear(a6)               //in case no thicken init
-        btst.b  #THICKEN,STYLE+1(a6)
-        jeq     adr_notk
-        move.w  _WEIGHT,d4
-        jne     adr_th1
-        and.w   #0xFFFF-THICKM,STYLE(a6)        //cancel thicken if WEIGHT=0
-adr_th1:
-        tst.w   _MONO_STATUS                // 26-Feb skip source expand
-        jne     adr_notk                // 26-Feb if monospaced font
-
-        add.w   d4,d1                   //we'll smear this amount (DELX=DELX+WEIGHT)
-adr_notk:
-        btst.b  #SKEW,STYLE+1(a6)               //skewin'?
-        jeq     chk_addr                //skip DELX adjust if not
-
-        add.w   d6,d1                   //DELX = DELX + L_OFF + R_OFF
-        add.w   d7,d1                   //width increases
-//
-//  Check_address:
-//  Recalculates address of upper left corner of blt area
-//  90  address passed is for lower left (move up by DELX)
-//  180 address passed is for upper right (move right by DELX)
-//  270 address passed is for upper left
-//
-chk_addr:
-        move.w  CHUP(a6),d4             //get rotate degree-tenths
-        jeq     chk_clip                //skip rotate adjust if not rotating
-        move.w  #_scrpt1,buffb(a6)      //use the small buffer
-        subi.w  #1800,d4                //convert rotation to 3 position flag
-        move.w  d4,chup_flag(a6)        //90 = -900, 180 = 0, 270 = 180
-        jeq     add180                  //for 180 degree rotation
-        jgt     add270                  //for 270 degree rotation
-//
-//  90 degree rotation
-//
-        sub.w   d1,d2                   //move up by DELX
-        move.w  d2,DESTY(a6)            //DESTY = DESTY - DELX
-        exg     d1,d3                   //DELX <-> DELY (swap x & y to check clipping)
-        jra     chk_clip
-//
-//  180 degree rotation
-//
-add180:
-        sub.w   d1,d0                   //DESTX = DESTX-DELX(move right by DELX)
-        move.w  d0,DESTX(a6)
-        jra     chk_clip
-//
-//  270 degree rotation
-//
-add270:
-        exg     d1,d3                   //DELX <-> DELY
-
-//////
-//   Check_clip
-//
-//     trivial accept and reject and set up buffer
-//     blt if char must be clipped
-//     buffer blt if clip in x or y and skew
-//     buffer blt if clip in x and thicken
-//////
-
-chk_clip:
-        moveq.l #0,d5                   //clear x clip flag (assume no clip)
-        move.w  _CLIP,-(a1)             //clip required?
-        jeq     clp_done                //no, skip over clip-stuff
-        move.w  _XMN_CLIP,-(a1)
-        move.w  _YMN_CLIP,-(a1)
-        move.w  _XMX_CLIP,-(a1)
-        move.w  _YMX_CLIP,-(a1)
-//
-//  y -coord clip check..
-//
-        cmp.w   YMN_CLI(a6),d2          //top edge >= Y-MIN?
-        jge     chk_ymx                 //br if so, min ok
-//
-//  partially above clip window, check if totally above..
-//
-        add.w   d3,d2                   //DESTY = DESTY + DELY
-        cmp.w   YMN_CLI(a6),d2          //bottom edge > Y-MIN?
-        jgt     chk_xmn                 //br to x check if so, still got a piece in window
-        jra     upda_dst                //else, skip further ado & exit, its gone
-chk_ymx:
-        cmp.w   YMX_CLI(a6),d2          //top edge > Y-MAX?
-        jgt     upda_dst                //br to exit if so, its totally off window
-
-        add.w   d3,d2                   //DESTY = DESTY + DELY
-        subq.w  #1,d2                   //DESTY 0 based
-        sub.w   YMX_CLI(a6),d2          //bottom edge <= Y-MAX
-        jle     chk_xmn                 //br if so, y-coord wholly within window
-//
-//  partial clipping of bottom portion..
-//
-        andi.w  #1,d2                   //clipping odd # of lines?
-        jeq     chk_xmn                 //br if even
-        btst.b  #OUTLINE,STYLE+1(a6)    //skip adjust if outlining
-        jne     chk_xmn
-        rol.w   SKEWMAS(a6)             //odd kinda skew mask alignment
-//
-//  x - coord clip check..
-//
-chk_xmn:
-        cmp.w   XMN_CLI(a6),d0          //left edge >= X-MIN?
-        jge     chk_xmx                 //br if so, go check X-MAX
-//
-//  partially to left of clip window, check if totally left..
-//
-        add.w   d1,d0                   //DESTX = DESTX + DELX
-        not.w   d5                      //must clip in x
-        cmp.w   XMN_CLI(a6),d0          //right edge > X-MIN?
-        jgt     clp_done                //br if so, some stuff still in window
-        jra     upda_dst                //else, totally off screen, exit
-chk_xmx:
-        cmp.w   XMX_CLI(a6),d0          //left edge > X-MAX?
-        jgt     upda_dst                //br to exit if so, its totally off window
-
-        add.w   d1,d0                   //DESTX = DESTX + DELX
-        subq.w  #1,d0                   //DESTX 0 based
-        cmp.w   XMX_CLI(a6),d0          //right edge <= X-MAX?
-        jle     clp_done                //br if so, no x-clip
-        not.w   d5                      //clip we must
-//
-//  clip check done..
-//
-clp_done:
-        clr.w   dest_wrd(a6)            //use dest_wrd as preblt flag
-
-        move.w  _FWIDTH,s_next(a6)      //add this to go down one line
-        move.l  _FBASE,sform(a6)        //start of font
-
-chk_skw:
-        move.w  STYLE(a6),d1
-        andi.w  #SKEWM+THICKM+OUTLINEM,d1 //skew, thicken, or outline special effects
-        jeq     chk_rota                //br if not, skip preblt into buffer
-//
-//  thicken or skew or outline in effect..
-//
-chk_chup:
-        tst.w   CHUP(a6)                //we may have to preblt into buffer
-        jne     preblt                  //br to preblt if rotation in effect
-
-        btst    #SKEW,d1                //skew bit set in STYLE?
-        jeq     preskew                 //br if not, skip x-clip test
-        tst.w   d5                      //did we clip in x
-        jne     preblt                  //br to preblt if yes
-preskew:
-        btst    #OUTLINE,d1             //outlining?
-        jeq     chk_rota                //br if not, no preblt
 
 /////////////////////////////////////////////////////////////////////////
-//  Copy the font character into the character buffer. Then manipulate //
-//  the copy of the character as necessary for outlining, rotating or  //
-//  replicating.                                                       //
-/////////////////////////////////////////////////////////////////////////
-preblt:
-        move.w  _SOURCEX,d0
-        move.w  d0,d2
-        andi.w  #0x0F,d2
-        move.w  d2,tsdad(a6)            // save source dot address
-        lsr.w   #4,d0                   // make byte address
-        lsl.w   #1,d0                   // make even-byte address (word aligned)
-
-        move.w  _SOURCEY,d2             // source y
-        move.w  DELY(a6),height(a6)
-        add.w   height(a6),d2           // bottom of source + 1
-        subq.w  #1,d2                   // 0 based
-
-        mulu    s_next(a6),d2           // d2 = form offset address for bottom of char
-        neg.w   s_next(a6)              // use negative increment to move up
-        add.w   d0,d2                   // add x
-        movea.l sform(a6),a0
-        lea     (a0,d2.w),a0            // a0 -> font source for bottom of char
-
-        move.w  DELX(a6),d0             // char width
-        move.w  _WEIGHT,d1              // thicken amount
-        add.w   d6,d7                   // d7 = L_OFF + R_OFF
-        tst.w   _DOUBLE                 // doubling?
-        jeq     full_wt                 // br if no
-        lsr.w   #1,d1                   // only thicken by half the regular amount
-        jne     ful_wtok                // 26 Feb
-        addq.w  #1,d1                   // 26 Feb if thickness = 0 then make = 1
-ful_wtok:
-        lsr.w   #1,d7
-full_wt:
-        btst.b  #THICKEN,STYLE+1(a6)    // smear?
-        jeq     no_smear                // br if no
-
-        add.w   d1,d0                   // add adjusted WEIGHT to DELX
-        move.w  d1,smear(a6)            // save smear
-no_smear:
-//  outline code..
-        clr.w   tddad(a6)
-        move.w  DELY(a6),d1
-        move.w  STYLE(a6),d2
-        btst    #OUTLINE,d2             // check for outline mode
-        jeq     no_out
-        tst.w   _DOUBLE                 // doubling too?
-        jne     no_out                  // br if yes, outline after doubling
-
-        addq.w  #3,d0                   // add 3 pixels to delx (1 left, 2 right)
-        addq.w  #1,tddad(a6)            // make leftmost column blank
-        addq.w  #2,DELY(a6)             // add 2 rows (outline adds 2 to height & width)
-        addq.w  #3,d1                   // add 3 rows for buffer clear (line buffer)
-no_out:
-//  end additions
-        move.w  d0,width(a6)
-        add.w   d7,d0                   // add in skew factor
-        move.w  d0,DELX(a6)             // now the char is bigger
-        lsr.w   #4,d0
-        lsl.w   #1,d0
-        addq.w  #2,d0                   // this is the dest width in bytes
-        neg.w   d0
-        move.w  d0,d_next(a6)           // move upward in buffer
-        neg.w   d0
-        subq.w  #1,d1                   // start of bottom line
-        mulu    d1,d0
-        movea.l _scrtchp,a1
-        adda.w  buffa(a6),a1            // use this logical buffer
-        move.l  a1,sform(a6)            // this will be new source address
-        btst    #OUTLINE,d2
-        jne     do_clear
-        btst    #SKEW,d2
-        jeq     no_clear
-do_clear:
-//  clear buffer first..
-        movea.l a1,a2
-        move.w  d0,d3
-        sub.w   d_next(a6),d3           // count the bottom line
-        lsr.w   #1,d3                   // bytes to words
-        subq.w  #1,d3                   // adjust words to clear for loop
-        moveq.l #0,d1
-replp:
-        move.w  d1,(a2)+                // clear out buffer for skew
-        dbra    d3,replp
-
-        btst    #OUTLINE,d2
-        jeq     no_clear
-        tst.w   _DOUBLE
-        jne     no_clear
-
-        subq.w  #3,width(a6)
-        subq.w  #1,DELX(a6)
-        add.w   d_next(a6),d0
-//
-//  buffer now clear..
-//
-no_clear:
-        adda.w  d0,a1                   // start at the bottom
-//
-//      clr.w   tddad(a6)
-//
-        move.w  STYLE(a6),tmp_style(a6)
-
-        clr.w   WRT_MOD(a6)             // replace mode for this blt
-        move.w  #1,forecol(a6)          // foreground 1 for this blt
-        clr.w   ambient(a6)             // background 0 for this blt
-
-        move.w  #1,nbrplane(a6)         // 1 plane, natch
-        move.w  #2,nextwrd(a6)          // plane offset is 2
-        andi.w  #SKEWM+THICKM,STYLE(a6) // only do thicken & skew
-
-        jbsr    norm_blt                // blt source into buffer
-
-        move.w  tmp_style(a6),STYLE(a6)
-        move.w  _WRT_MODE,WRT_MOD(a6)
-no_mode:
-        move.w  d_next(a6),d7           // reset the source to the buffer
-        neg.w   d7
-        move.w  d7,s_next(a6)
-//
-//  outline additions
-//
-        btst.b  #OUTLINE,STYLE+1(a6)    // check outline
-        jeq     skip_out                // br to skip outline code
-        tst.w   _DOUBLE
-        jne     skip_out
-
-        movea.l sform(a6),a0            // get starting address of character
-        ext.l   d7
-        add.l   d7,sform(a6)            // use 2nd down for buffer top (top is temp buf)
-        jbsr    outlin                  // outline buffer please
-skip_out:
-//
-//  end additions
-//
-        clr.w   _SOURCEX
-        clr.w   _SOURCEY
-//      move.w  STYLE(a6),dest_wrd(a6)  //not used with arbitrarily scaled text
-                                        //use as skew preblt indicator for double
-        andi.w  #0xFFFF-(SKEWM+THICKM),STYLE(a6)        //cancel effects
-//
-//  Preblt is done
-//
-chk_rota:
-        tst.w   CHUP(a6)
-        jeq     chk_db
-
-        jbsr    rotation                // perform rotation if 90, 180, or 270
-
-chk_db:
-        tst.w   _DOUBLE
-        jeq     do_clip
-
-        jbsr    replicat                // double if DOUBLE nonzero
-
-///////////////////////////////////////////////////////////
-//  clipping                                             //
-//      change SOURCEX, SOURCEY, DELX, DELY              //
-//      based on DESTX, DESTY (UL corner of destination) //
-///////////////////////////////////////////////////////////
-
-do_clip:
-        btst.b  #THICKEN,STYLE+1(a6)
-        jeq     no_thik
-        move.w  _WEIGHT,d0
-        tst.w   _MONO_STATUS                // 26 Feb
-        jne     do_cl_nt                // 26 Feb
-        add.w   d0,DELX(a6)
-do_cl_nt:
-        move.w  d0,smear(a6)
-no_thik:
-        tst.w   CLIP(a6)                // clip requested?
-        jne     clip_adjust             // yes
-        clr.w   XMN_CLI(a6)             // otherwise we set up to clip to screen
-        clr.w   YMN_CLI(a6)
-        move.w  _DEV_TAB,XMX_CLI(a6)
-        move.w  _DEV_TAB+2,YMX_CLI(a6)
-
-clip_adjust:
-        move.w  DESTY(a6),d0
-        cmp.w   YMN_CLI(a6),d0
-        jge     ymn_fine
-        add.w   DELY(a6),d0
-        cmp.w   YMN_CLI(a6),d0
-        jle     upda_dst
-mn_clipy:
-        sub.w   YMN_CLI(a6),d0
-        move.w  DELY(a6),d1
-        move.w  d0,DELY(a6)
-        sub.w   d0,d1
-        add.w   d1,_SOURCEY
-        move.w  YMN_CLI(a6),d0
-        move.w  d0,DESTY(a6)
-ymn_fine:
-        cmp.w   YMX_CLI(a6),d0
-        jgt     upda_dst
-mx_clipy:
-        add.w   DELY(a6),d0
-        subq.w  #1,d0           // make 0 relative
-        cmp.w   YMX_CLI(a6),d0
-        jle     ymx_fine
-//clip y
-        sub.w   YMX_CLI(a6),d0
-        sub.w   d0,DELY(a6)
-ymx_fine:
-        move.w  DESTX(a6),d0
-        cmp.w   XMN_CLI(a6),d0
-        jge     xmn_fine
-        add.w   DELX(a6),d0
-        cmp.w   XMN_CLI(a6),d0
-        jle     upda_dst
-//clip x
-mn_clipx:
-        sub.w   XMN_CLI(a6),d0
-        move.w  DELX(a6),d1
-        move.w  d0,DELX(a6)
-        sub.w   d0,d1
-        add.w   d1,_SOURCEX
-        move.w  XMN_CLI(a6),d0
-        move.w  d0,DESTX(a6)
-xmn_fine:
-        cmp.w   XMX_CLI(a6),d0
-        jgt     upda_dst
-mx_clipx:
-        add.w   DELX(a6),d0
-        subq.w  #1,d0           // make 0 relative
-        cmp.w   XMX_CLI(a6),d0
-        jle     scrn_blt
-//clip x
-        sub.w   XMX_CLI(a6),d0
-        sub.w   d0,DELX(a6)
-
-        jra     scrn_blt
-
-
-
-/////////////////////////////////////////////////////////////////////////
-//  screen blt                                                          //
-//      put a block defined by s_form, _SOURCEX, _SOURCEY, _DELX, _DELY //
-//      out to screen                                                   //
+//   Interface routines from C to assembler                            //
 /////////////////////////////////////////////////////////////////////////
 
-scrn_blt:
-        move.w  _TEXT_FG,forecol(a6)    // copy foreground color to temp
-        move.w  buffc(a6),ambient(a6)   //
-        move.w  _v_planes,d0            // copy # of planes
-        move.w  d0,nbrplane(a6)         // save in local
-        add.w   d0,d0                   // *2 = offset to next word in same plane
-        move.w  d0,nextwrd(a6)          // save in local
-
-        move.w  _SOURCEX,d0
-        move.w  d0,d2
-        andi.w  #0x0F,d2
-        move.w  d2,tsdad(a6)            // save source dot address
-        lsr.w   #3,d0                   // make byte address
-        andi.w  #0xFFFE,d0              // make even-byte address (word aligned)
-        move.w  _SOURCEY,d2
-
-        move.w  DELY(a6),height(a6)
-        add.w   height(a6),d2
-        subq.w  #1,d2
-        mulu    s_next(a6),d2
-        neg.w   s_next(a6)
-        add.w   d0,d2
-//
-//  Calculate the starting address for the character to be copied.
-//
-        movea.l sform(a6),a0
-        adda.w  d2,a0                   // calculate character source address
-        move.l  a0,sform(a6)            // save source address
-
-        move.w  DELX(a6),width(a6)
-
-        move.w  DESTY(a6),d1
-        add.w   DELY(a6),d1
-        subq.w  #1,d1                   // we draw from bottom up
-        jmi     upda_dst                // don't draw if outside screen area!
-
-        move.w  DESTX(a6),d0
-        jmi     upda_dst                // don't draw if outside screen area!
-
-        jbsr    concat                  // get memory address & dot address
-//
-//  d1.w is screen offset of destination
-//
-        move.l  _v_bas_ad.w,a1
-        adda.l  d1,a1                   // screen dest. addr. for x,y coordinate
-
-        move.l  a1,dform(a6)            // save character destination address
-        move.w  d0,tddad(a6)            // save dot address
-
-        move.w  _v_lin_wr,d0
-        neg.w   d0
-        move.w  d0,d_next(a6)
-
+//  interface to 'norm_blt'
+_normal_blit:
+        movem.l d2-d7/a2-a6,-(sp)       // save registers that GCC expects unchanged
+        move.l  44+4(sp),a6             // load ptr to end of vars
+        move.l  44+8(sp),a0             // a0 & a1 must also be set
+        move.l  44+12(sp),a1
         jbsr    norm_blt
+        movem.l (sp)+,d2-d7/a2-a6       // restore saved registers
+        rts
 
-upda_dst:
-        move.w  _DELX,d1
+//  interface to 'outlin'
+_outline:
+        movem.l d2-d7/a2-a6,-(sp)       // save registers that GCC expects unchanged
+        move.l  44+4(sp),a6             // load ptr to end of vars
+        move.l  44+8(sp),a0             // a0 & d7.w must also be set
+        move.w  44+12(sp),d7
+        jbsr    outlin
+        movem.l (sp)+,d2-d7/a2-a6       // restore saved registers
+        rts
 
-        tst.w   _DOUBLE                 // set up dest address
-        jeq     upda_ndb
-//
-// added 5 mar 85
-//
-        move.w  tmp_delx(a6),d1         // get actual char width
-        move.w  tmp_dely(a6),d3         // get actual char height
+//  interface to 'rotation'
+_rotate:
+        movem.l d2-d7/a2-a6,-(sp)       // save registers that GCC expects unchanged
+        move.l  44+4(sp),a6             // load ptr to end of vars
+        jbsr    rotation
+        movem.l (sp)+,d2-d7/a2-a6       // restore saved registers
+        rts
 
-        tst.w   swap_tmps(a6)           // are we swapped
-        jeq     upda_ndb                // if yes swap back rjg 4/14/85
-        exg     d1, d3
-//
-// end additions// following instruction deleted...
-//
-//      lsl.w   d1                      // we doubled in x
-//
-upda_ndb:
-        btst.b  #THICKEN,_STYLE+1
-        jeq     upda_ntk
-        tst.w   _MONO_STATUS                // 26 Feb
-        jne     upda_ntk                // 26 Feb
-        add.w   _WEIGHT,d1              // we smeared this amount
-upda_ntk:
-        tst.w   CHUP(a6)
-        jgt     ck90
-        add.w   d1,_DESTX               //move left by DELX
-        jra     blt_done
-ck90:
-        tst.w   chup_flag(a6)
-        jeq     ck180
-        jgt     ck270
-        sub.w   d1,_DESTY               // move up by DELX
-        jra     blt_done
-ck180:
-        sub.w   d1,_DESTX               // move right by DELX
-        jra     blt_done
-ck270:
-        add.w   d1,_DESTY               // move down by DELX
-blt_done:
-        movem.l (sp)+,d2-d7/a2-a5
-        unlk    a6
-        rts                             // return to "C"
+//  interface to 'replicat'
+_scale:
+        movem.l d2-d7/a2-a6,-(sp)       // save registers that GCC expects unchanged
+        move.l  44+4(sp),a6             // load ptr to end of vars
+        jbsr    replicat
+        movem.l (sp)+,d2-d7/a2-a6       // restore saved registers
+        rts
+
 
         SECTION_RODATA
 
@@ -1051,6 +465,62 @@ rf_tab:         .dc.w   0x7FFF          // origin for right fringe lookup.
                 .dc.w   0x0001
                 .dc.w   0x0000
 
+/*
+ * Writing mode mapping tables
+ *
+ * These are accessed via an offset from 'toptable', allowing the use
+ * of indexing mode for speed.
+ */
+
+#define op0             4*0
+#define op1             4*1
+#define op2             4*2
+#define op3             4*3
+#define op4             4*4
+#define op5             4*5
+#define op6             4*6
+#define op7             4*7
+#define op8             4*8
+#define op9             4*9
+#define opa             4*10
+#define opb             4*11
+#define opc             4*12
+#define opd             4*13
+#define ope             4*14
+#define opf             4*15
+
+// fore/back    00  01  10  11
+wrmappin:                           // VDI modes
+        .dc.b   op0,op0,op3,op3         // replace mode
+        .dc.b   op4,op4,op7,op7         // transparent mode
+        .dc.b   op6,op6,op6,op6         // XOR mode
+        .dc.b   op1,op1,opd,opd         // inverse transparent mode
+                                    //BitBlt modes
+        .dc.b   op0,opf,op0,opf         // mode 0: all zeros
+        .dc.b   op0,ope,op1,opf         // mode 1: source AND destination
+        .dc.b   op0,opd,op2,opf         // mode 2: source AND (NOT destination)
+        .dc.b   op0,opc,op3,opf         // mode 3: source
+        .dc.b   op0,opb,op4,opf         // mode 4: (NOT source) AND destination
+        .dc.b   op0,opa,op5,opf         // mode 5: destination
+        .dc.b   op0,op9,op6,opf         // mode 6: source XOR destination
+        .dc.b   op0,op8,op7,opf         // mode 7: source OR destination
+        .dc.b   op0,op7,op8,opf         // mode 8: (NOT source) AND (NOT destination)
+        .dc.b   op0,op6,op9,opf         // mode 9: (NOT source) XOR destination
+        .dc.b   op0,op5,opa,opf         // mode A: NOT destination
+        .dc.b   op0,op4,opb,opf         // mode B: source or (NOT destination)
+        .dc.b   op0,op3,opc,opf         // mode C: NOT source
+        .dc.b   op0,op2,opd,opf         // mode D: (NOT source) OR destination
+        .dc.b   op0,op1,ope,opf         // mode E: (NOT source) OR (NOT destination)
+        .dc.b   op0,op0,opf,opf         // mode F: all ones
+
+toptable:
+        .dc.l   top0,top1,top2,top3,top4,top5,top6,top7
+        .dc.l   top8,top9,topa,topb,topc,topd,tope,topf
+
+twoptble:
+        .dc.l   twop0,twop1,twop2,twop3,twop4,twop5,twop6,twop7
+        .dc.l   twop8,twop9,twopa,twopb,twopc,twopd,twope,twopf
+
         .text
 
 /////////////////////////////////////////////////////////////////////////
@@ -1078,7 +548,7 @@ norm_blt:
 do_rot:
         move.w  d1,shif_cnt(a6)         // save shift count (bit15=1 if ROL, else ROR)
 
-        lsl.w   #1,d0                   // x2 for index
+        add.w   d0,d0                   // x2 for index
         lea     lf_tab,a2               // get base addr of mask table
         move.w  (a2,d0.w),d0            // set the overlap for middle words
         not.w   d0
@@ -1088,7 +558,7 @@ do_rot:
 //
 get_mask:
         move.w  tddad(a6),d0            // get destination dot address
-        lsl.w   #1,d0                   // x2 for index in d0
+        add.w   d0,d0                   // x2 for index in d0
         move.w  (a2,d0.w),left_msk(a6)  // get mask for destination dot address
 
         lsr.w   #1,d0                   // d0 back to tddad
@@ -1098,7 +568,7 @@ get_mask:
         move.w  d0,d2                   // copy possibly thickened width to temp d2
         sub.w   smear(a6),d2            // get original before thickened
         andi.w  #0xF,d2
-        lsl.w   #1,d2
+        add.w   d2,d2
         move.w  (a2,d2.w),d2
         not.w   d2
         move.w  d2,thk_msk(a6)
@@ -1112,7 +582,7 @@ get_mask:
 //
 //  Fits in one word
 //
-        lsl.w   #1,d0                   // x2 for index
+        add.w   d0,d0                   // x2 for index
         move.w  (a2,d0.w),d1
         not.w   d1
         and.w   d1,left_msk(a6)         // put the two masks together
@@ -1151,7 +621,7 @@ do_ritem:
         subq.w  #1,d3                   // last word is full so its a fringe
         moveq.l #0x10,d0
 not_null:
-        lsl     #1,d0
+        add.w   d0,d0
         move.w  (a2,d0.w),d4
         not.w   d4
 
@@ -1166,50 +636,23 @@ msk_done:
 msk0:
         move.w  d3,src_wthk(a6)
         move.w  d3,src_wrd(a6)
-        jra     plane_loop
-
-////////////////////////////////////
-//  writing mode mapping tables:  //
-//                                //
-//      fb=     00  01  10  11    //
-////////////////////////////////////
-
-#define op0             4*0
-#define op1             4*1
-#define op2             4*2
-#define op3             4*3
-#define op4             4*4
-#define op5             4*5
-#define op6             4*6
-#define op7             4*7
-
-wrmappin:
-        .dc.b   op0,op0,op1,op1         // replace mode
-        .dc.b   op2,op2,op3,op3         // transparent mode
-        .dc.b   op4,op4,op4,op4         // XOR mode
-        .dc.b   op5,op5,op6,op6         // inverse transparent mode
-
-toptable:
-        .dc.l   top0,top3,top4,top7,top6,top1,topd
-twoptble:
-        .dc.l   twop0,twop3,twop4,twop7,twop6,twop1,twopd
-
 
 plane_loop:
-        move.w  WRT_MOD(a6),d0          // d0 = 0000xxxx ,_WRT_MODE
+        move.w  WRT_MOD(a6),d0          // d0.b = 000xxxxx (0x00-0x13 are valid)
         lsr.w   forecol(a6)             // this plane's foreground bit
-        roxl.w  #1,d0
-        lsr.w   ambient(a6)
-        roxl.w  #1,d0
+        addx.w  d0,d0                   // d0.b = 00xxxxxf
+        lsr.w   ambient(a6)             // this plane's background bit
+        addx.w  d0,d0                   // d0.b = 0xxxxxfb
 //
-//  d0.w is index
+//  d0.w is index into 'wrmappin'
 //
-        move.b  wrmappin(pc,d0.w),d0
-        move.l  toptable(pc,d0.w),a2
+        lea     toptable,a4             // allows us to use indexing mode for speed
+        move.b  wrmappin-toptable(a4,d0.w),d0
+        movea.l toptable-toptable(a4,d0.w),a2
         movea.l a2,a3                   // call this address to do tlogicop
         movea.l a2,a5                   // logicop or special effects
                                         // word fringe special effects
-        movea.l twoptble(pc,d0.w),a4    // logicop or special effects for words
+        movea.l twoptble-toptable(a4,d0.w),a4   // logicop or special effects for words
 //
 //  Do special effects..
 //
@@ -1254,7 +697,7 @@ no_thick:
 //
 //  Skew special effect..
 //
-        move.w  SKEWMAS(a6),skew_msk(a6) // reload mask for this char
+        move.w  _SKEWMASK,skew_msk(a6)  // reload mask for this char
         move.l  a5,skewjmp(a6)
         lea.l   skewop,a5
 
@@ -1602,9 +1045,18 @@ rgt_rfrng:
         dbra    d3,rite_loop            //decrement # of lines to move
         jra     next_plane
 
-///////////////////////////////////////////////////
-//      Writing Mode Operations using fringe mask //
-///////////////////////////////////////////////////
+//////////////////////////////////////////////////
+//  Writing Mode Operations using fringe mask   //
+//                                              //
+//  On entry to these routines:                 //
+//      d2.w    fringe mask                     //
+//      d1.w    source                          //
+//      d4.w    destination                     //
+//  On exit:                                    //
+//      d2.w    unchanged                       //
+//      d1.w    result (new destination)        //
+//      d4.w    (may be changed)                //
+//////////////////////////////////////////////////
 
 top0:
         not.w   d2                      //mode 0 - D' = 0
@@ -1614,10 +1066,17 @@ top0:
         jmp     (a3)
 
 top1:
-        not.w   d2                      //mode 1        - D' = S and D
+        not.w   d2                      //mode 1 - D' = S and D
         or.w    d2,d1
         not.w   d2
         and.w   d4,d1
+        jmp     (a3)
+
+top2:
+        not.w   d1                      //mode 2 - D' = S and [not D]
+        and.w   d2,d1
+        or.w    d4,d1
+        eor.w   d2,d1
         jmp     (a3)
 
 top3:
@@ -1632,6 +1091,10 @@ top4:
         and.w   d4,d1
         jmp     (a3)
 
+top5:
+        move.w  d4,d1                   //mode 5 - D' = D
+        jmp     (a3)
+
 top6:
         and.w   d2,d1                   //mode 6 - D' = S xor D (xor mode)
         eor.w   d4,d1
@@ -1642,15 +1105,64 @@ top7:
         or.w    d4,d1
         jmp     (a3)
 
+top8:
+        and.w   d2,d1                   //mode 8 - D' = [not S] and [not D]
+        or.w    d4,d1                   // (implemented as: D' = not [S or D])
+        eor.w   d2,d1
+        jmp     (a3)
+
+top9:
+        and.w   d2,d1                   //mode 9 - D' = [not S] xor D
+        eor.w   d4,d1                   // (implemented as: D' = not [S xor D])
+        eor.w   d2,d1
+        jmp     (a3)
+
+topa:
+        move.w  d4,d1                   //mode 10 - D' = not D
+        eor.w   d2,d1
+        jmp     (a3)
+
+topb:
+        eor.w   d2,d4                   //mode 11 - D' = S or [not D]
+        and.w   d2,d1
+        or.w    d4,d1
+        jmp     (a3)
+
+topc:
+        eor.w   d4,d1                   //mode 12 - D' = not S
+        and.w   d2,d1
+        eor.w   d4,d1
+        eor.w   d2,d1
+        jmp     (a3)
+
 topd:
         not.w   d1                      //mode 13 - D' = [not S] or D
         and.w   d2,d1
         or.w    d4,d1
         jmp     (a3)
 
-///////////////////////////////////////////////////
-//      Word Writing Mode Operations             //
-///////////////////////////////////////////////////
+tope:
+        not.w   d1                      //mode 14 - D' = [not S] or [not D]
+        and.w   d2,d1                   // (implemented as: D' = not [S and D])
+        eor.w   d2,d4
+        or.w    d4,d1
+        jmp (a3)
+
+topf:
+        or.w    d2,d4                   //mode 15 - D' = 1
+        move.w  d4,d1
+        jmp     (a3)
+
+//////////////////////////////////////////////////
+//      Word Writing Mode Operations            //
+//                                              //
+//  On entry to these routines:                 //
+//      d1.w    source                          //
+//      d4.w    destination                     //
+//  On exit:                                    //
+//      d1.w    result (new destination)        //
+//      d4.w    (may be changed)                //
+//////////////////////////////////////////////////
 
 twop0:
         moveq.l #0,d1                   //mode 0 - D' = 0
@@ -1658,6 +1170,11 @@ twop0:
 
 twop1:
         and.w   d4,d1                   //mode 1 - D' = S and D
+        jmp     (a3)
+
+twop2:
+        not.w   d4                      //mode 2 - D' = S and [not D]
+        and.w   d4,d1
         jmp     (a3)
 
 twop3:
@@ -1668,6 +1185,10 @@ twop4:
         and.w   d4,d1
         jmp     (a3)
 
+twop5:
+        move.w  d4,d1                   //mode 5 - D' = D
+        jmp     (a3)
+
 twop6:
         eor.w   d4,d1                   //mode 6 - D' = S xor D
         jmp     (a3)
@@ -1676,11 +1197,43 @@ twop7:
         or.w    d4,d1                   //mode 7 - D' = S or D
         jmp     (a3)
 
+twop8:
+        or.w    d4,d1                   //mode 8 - D' = [not S] and [not D]
+        not.w   d1                      // (implemented as: D' = not [S or D]
+        jmp     (a3)
+
+twop9:
+        eor.w   d4,d1                   //mode 9 - D' = [not S] xor D
+        not.w   d1                      // (implemented as: D' = not [S xor D]
+        jmp     (a3)
+
+twopa:
+        move.w  d4,d1                   //mode 10 - D' = not D
+        not.w   d1
+        jmp     (a3)
+
+twopb:
+        not.w   d4                      //mode 11 - D' = S or [not D]
+        or.w    d4,d1
+        jmp     (a3)
+
+twopc:
+        not.w   d1                      //mode 12 - D' = not S
+        jmp     (a3)
+
 twopd:
         not.w   d1                      //mode 13 - D' = [not S] or D
         or.w    d4,d1
         jmp     (a3)
 
+twope:
+        and.w   d4,d1                   //mode 14 - D' = [not S] or [not D]
+        not.w   d1                      // (implemented as: D' = not [S and D])
+        jmp     (a3)
+
+twopf:
+        moveq.l #-1,d1                  //mode 15 - D' = 1
+        jmp     (a3)
 
 
 /////////////////////////
@@ -2040,8 +1593,7 @@ rotation:
         andi.w  #0x0F,d2
         move.w  d2,tsdad(a6)            //save source dot address
         lsr.w   #4,d1                   //make byte address
-        moveq.l #1,d5                   //use d5 for quick shift instrs.
-        lsl.w   d5,d1
+        add.w   d1,d1
 
         movea.l sform(a6),a0
         adda.w  d1,a0                   //a0 -> source
@@ -2060,14 +1612,14 @@ rot90:
         subq.w  #1,d1
         add.w   d1,d0                   //start at bottom
         mulu    d2,d0                   //get mem address of start corner
-        adda.w  d0,a0
+        adda.l  d0,a0
 top_src:
         move.w  DELY(a6),d0
         lsr.w   #4,d0
-        lsl.w   d5,d0
+        add.w   d0,d0
         addq.w  #2,d0                   //form width is height / 8 + 1
         move.w  d0,d_next(a6)
-        movea.l _scrtchp,a1
+        movea.l _SCRTCHP,a1
         adda.w  buffb(a6),a1
 
         tst.w   chup_flag(a6)           //determine if 90 or 270 rotation
@@ -2076,7 +1628,7 @@ top_src:
         move.w  DELX(a6),d1             //DELX is the height
         subq.w  #1,d1
         mulu    d1,d0
-        adda.w  d0,a1
+        adda.l  d0,a1
 top_dwn:
         move.w  tsdad(a6),d2
         move.w  #0x8000,d3              //d3=dx
@@ -2098,7 +1650,7 @@ rot_xlp:
         jeq     rot_nor
         or.w    d4,d0
 rot_nor:
-        ror.w   d5,d4
+        ror.w   #1,d4
         jcc     rot_isrc
 rot_ndst:
         move.w  d0,(a1)+
@@ -2113,7 +1665,7 @@ rot_srt:
         adda.w  d_next(a6),a3
         movea.l a3,a1
         move.w  a4,d4
-        ror.w   d5,d3
+        ror.w   #1,d3
         jcc     rnew_src
         addq.l  #2,a2
 rnew_src:
@@ -2144,7 +1696,7 @@ rot_nneg:
 repexit:
         clr.w   _SOURCEX
 repexit3:
-        movea.l _scrtchp,a2
+        movea.l _SCRTCHP,a2
         adda.w  d0,a2
         move.l  a2,sform(a6)
         clr.w   _SOURCEY
@@ -2155,16 +1707,16 @@ upsd_dwn:
         add.w   tsdad(a6),d0
         subq.w  #1,d0                   //make width instead of address
         lsr.w   #4,d0
-        lsl.w   d5,d0                   //make it even byte address
+        add.w   d0,d0                   //make it even byte address
         addq.w  #2,d0                   //form width is DELX / 8 + 1
 
         move.w  d0,d_next(a6)
         move.w  d0,d2
-        lsr.w   d5,d2                   //number of words to move per line
+        lsr.w   #1,d2                   //number of words to move per line
         subq.w  #1,d2                   //for dbra, my sweetie
         mulu    d1,d0                   //d0 pts to bottom of new form
         add.w   buffb(a6),d0
-        movea.l _scrtchp,a1
+        movea.l _SCRTCHP,a1
         adda.w  d0,a1                   //a1 -> last word in form
         jra     strtflip
 upsd_lp:
@@ -2175,8 +1727,8 @@ line_lp:
         moveq.l #0,d6
         moveq.l #15,d4
 flip_lp:
-        lsr.w   d5,d0
-        roxl.w  d5,d6
+        lsr.w   #1,d0
+        addx.w  d6,d6                   //same as "roxl.w  #1,d6" but faster
         dbra    d4,flip_lp
 
         move.w  d6,-(a1)                //store in buffer pre-decrement
@@ -2187,7 +1739,7 @@ strtflip:
         dbra    d1,upsd_lp
 
         move.w  d_next(a6),s_next(a6)
-        movea.l _scrtchp,a1
+        movea.l _SCRTCHP,a1
         adda.w  buffb(a6),a1
         move.l  a1,sform(a6)
         move.w  _SOURCEX,d0
@@ -2209,13 +1761,13 @@ replicat:
         andi.w  #0x0F,d0
         move.w  d0,tsdad(a6)            //save source dot address
         lsr.w   #4,d4                   //make byte address
-        lsl.w   #1,d4
+        add.w   d4,d4
 
         move.w  _SOURCEY,d0
         mulu    s_next(a6),d0           //get mem addr of start corner
-        add.w   d4,d0
         movea.l sform(a6),a0
-        adda.w  d0,a0                   //a0 -> source
+        adda.w  d4,a0
+        adda.l  d0,a0                   //a0 -> source
 
         move.w  tsdad(a6),d2            //cx
         move.w  #0x8000,d3              //d3=dx
@@ -2227,8 +1779,8 @@ replicat:
 
         move.w  d2,height(a6)           //# of rows to duplicate
         move.w  d1,width(a6)
-        move.l  _scrtchp,a1
-        adda.w  _scrpt2,a1              //dest ptr
+        move.l  _SCRTCHP,a1
+        adda.w  _SCRPT2,a1              //dest ptr
 
         btst    #OUTLINE,STYLE+1(a6)    //outline after double?
         jeq     noline                  //br if not
@@ -2238,10 +1790,10 @@ replicat:
         addq.w  #1,DELY(a6)             //will add 2 to height when doubled
         addq.w  #1,DELX(a6)             //same with width
 
-        lsl.w   #1,d1                   //buffer width * 2 -> new buffer width
+        add.w   d1,d1                   //buffer width * 2 -> new buffer width
         addq.w  #3,d1                   //new buffer is 3 pixels wider
         lsr.w   #4,d1
-        lsl.w   #1,d1                   //# (even) of bytes per row
+        add.w   d1,d1                   //# (even) of bytes per row
         addq.w  #2,d1                   //# minimum of 1 word
         move.w  d1,d5
         moveq.l #0,d6
@@ -2250,7 +1802,7 @@ oklear:
         dbra    d5,oklear
         lea     -2(a1),a2
         move.w  d2,d5
-        lsl.w   #1,d5
+        add.w   d5,d5
 oklear1:
         adda.w  d1,a2
         move.w  d6,(a2)                 //clear 3 pixels on right side
@@ -2266,20 +1818,20 @@ oklear3:
 
 noline:
         lsr.w   #3,d1
-        lsl.w   #1,d1
+        add.w   d1,d1
         addq.w  #2,d1
 noline1:
         move.w  d1,d_next(a6)
 //      move.l  a1,a3                   //not used with arbitrarily scaled text
 //
 //--6 mar --V
-        move.w  _T_SCLSTS,d7
+        move.w  _SCALDIR,d7
         roxr.l  #1,d7
         moveq.l #0,d7
         roxr.l  #1,d7
 
         move.w  s_next(a6),d7
-        move.w  _DDA_INC,d2
+        move.w  _DDAINC,d2
         move.w  height(a6),d5
         subq.w  #1,d5
         move.w  #32767,d6
@@ -2304,8 +1856,8 @@ y_no_rep:
 y_rep_don:
         move.w  DELX(a6),d2
         subq.w  #1,d2                   //adjust for dbra
-        move.w  _XACC_DDA,d1
-        move.w  _DDA_INC,d0
+        move.w  _XDDA,d1
+        move.w  _DDAINC,d0
         moveq.l #0,d3
 repwidcl:
         add.w   d0,d1
@@ -2317,7 +1869,7 @@ nrepdoub:
         addq.w  #1,d3
 nrpndoub:
         dbra    d2,repwidcl
-        move.w  d1,_XACC_DDA
+        move.w  d1,_XDDA
         move.w  d3,DELX(a6)
         move.w  tmp_dely(a6),DELY(a6)
 //--6 mar --^
@@ -2334,17 +1886,17 @@ nrpndoub:
 repexit1:
         btst    #OUTLINE,STYLE+1(a6)
         jeq     repexit2
-        move.l  _scrtchp,a0
-        adda.w  _scrpt2,a0
+        move.l  _SCRTCHP,a0
+        adda.w  _SCRPT2,a0
         move.w  d1,d7
         lea     2(a0,d7.w),a1
         jbsr    outlin1
-        move.w  _scrpt2,d0
+        move.w  _SCRPT2,d0
         add.w   d_next(a6),d0
         move.w  #15,_SOURCEX
         jra     repexit3
 repexit2:
-        move.w  _scrpt2,d0
+        move.w  _SCRPT2,d0
         jra     repexit
 //
 /////////////////////////////
@@ -2353,7 +1905,7 @@ repexit2:
 //
 //
 //  entry:      d1 = d_next             preserved
-//              d2 = _DDA_INC           preserved
+//              d2 = _DDAINC            preserved
 //              d3 = source bitmask     destroyed
 //              d4 = dest bitmask       destroyed
 //
@@ -2363,12 +1915,12 @@ repexit2:
 //                                         8086 Equiv
 //  reg use:    d0 = grafix build               bx
 //              d1 = d_next                     n/a
-//              d2 = _DDA_INC                   di
+//              d2 = _DDAINC                    di
 //              d3 = source bitmask             dx
 //              d4 = dest bitmask               bp
 //              d5 = width                      cx
 //              d6 = temp                       n/a
-//              d7 = _XACC_DDA                  si
+//              d7 = _XDDA                      si
 //
 //              a0 = source ptr                 si
 //              a1 = destination ptr            di
@@ -2386,7 +1938,7 @@ yloop:
         move.w  width(a6),d5
         subq.w  #1,d5                           //adjust for dbra
 
-        move.w  _XACC_DDA,d7
+        move.w  _XDDA,d7
         jra     nextsrc
 innerlp:
         ror.w   #1,d3
@@ -2552,62 +2104,4 @@ out_loop:
         movea.l a1,a2
 srt_lin:
         dbra    d6,out_edge
-        rts
-
-
-/*
- * concat - calculate screen offset
- *
- *
- *
- * This routine converts x and y coordinates into a physical
- * offset to a word in the screen buffer and an index to the
- * desired bit within that word.
- *
- * input:
- *    d0.w = x coordinate.
- *    d1.w = y coordinate.
- *
- * output:
- *    d0.w = word index. (x mod 16)
- *    d1.l = physical offset -- (y * bytes_per_line) + (x & xmask)>>xshift
- *
- * destroys:       nothing
- */
-
-concat:
-        movem.l d2/d3/a0,-(sp)  // save the registers that get clobbered
-
-/* Convert the y-coordinate into an offset to the start of the scan row. */
-
-        mulu.w  _v_lin_wr,d1    // compute offset to start of scan row
-
-//
-// Compute the bit offset into the desired word, save it, and remove
-// these bits from the x-coordinate.
-//
-        move.w  d0,d2           // save the x-coordinate for later
-        andi.w  #0x000f,d0      // bit offset = x-coordinate mod 16
-        andi.w  #0xfff0,d2      // clear bits for offset into word
-
-//
-// Convert the adjusted x-coordinate to a word offset into the current
-// scan line.  If the planes are arranged in an interleaved fashion with
-// a word for each plane then shift the x-coordinate by a value contained
-// in the shift table.  If the planes are arranged as separate, consecu-
-// tive entities then divide the x-coordinate by 8 to get the number of bytes.
-//
-        lea     _shift_offset,a0
-        add.w   _v_planes,a0
-        move.b  (a0),d3         // get pre-calculated shift factor
-        lsr.w   d3,d2           // convert x-coordinate to offset
-
-//
-// Compute the offset to the desired word by adding the offset to the
-// start of the scan line to the offset within the scan line, restore
-// the clobbered registers, and exit.
-//
-        ext.l   d2
-        add.l   d2,d1           // compute total offset into screen buffer
-        movem.l (sp)+,d2/d3/a0  // restore the clobbered registers
         rts

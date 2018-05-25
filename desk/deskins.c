@@ -96,28 +96,51 @@ static WORD grid_free(WORD x,WORD y)
 
 
 /*
- *  Align drive icon on a grid
+ *  Align icon on a grid
+ *
+ *  input:
+ *      x/y: mouse cursor location
+ *      sxoff/syoff: offset of cursor from upper left of target icon position
+ *  returns:
+ *      px/py: 'snapped' upper left of target icon position
  */
-void snap_disk(WORD x, WORD y, WORD *px, WORD *py, WORD sxoff, WORD syoff)
+void snap_icon(WORD x, WORD y, WORD *px, WORD *py, WORD sxoff, WORD syoff)
 {
     WORD xgrid, ygrid, icw, ich;
+    WORD columns, rows, spare_pixels;
 
+    /*
+     * Determine:
+     * (1) the number of columns that can fit, and
+     * (2) the total number of spare pixels that should be distributed
+     *     evenly between the columns
+     * Then determine the x grid position corresponding to x/sxoff
+     * and convert it to pixels
+     */
     icw  = G.g_icw;
-    xgrid  = (x - sxoff + (icw / 2)) / icw;
-    *px = xgrid * icw;
+    columns = G.g_wdesk / icw;
+    spare_pixels = G.g_wdesk - (columns * icw);
 
-    *px = min(gl_width - icw, *px);
-    if (*px < (gl_width / 2))
-        *px += (gl_width % icw);
+    xgrid = (x - sxoff + (icw / 2)) / icw;  /* x grid position */
+    xgrid = min(xgrid, columns-1);          /* clamp it for safety */
+    *px = (xgrid * icw) + (spare_pixels / columns);
+
+    /*
+     * Determine:
+     * (1) the number of rows that can fit, and
+     * (2) the total number of spare pixels that should be distributed
+     *     evenly between the rows
+     * Then determine the y grid position corresponding to y/syoff
+     * and convert it to pixels
+     */
+    ich = G.g_ich;
+    rows = G.g_hdesk / ich;
+    spare_pixels = G.g_hdesk - (rows * ich);
 
     y -= G.g_ydesk;
-    ich = G.g_ich;
-    ygrid  = (y - syoff + (ich / 2)) / ich;
-    *py = ygrid * ich;
-
-    *py = min(G.g_hdesk - ich, *py);
-    if (*py < (G.g_hdesk / 2))
-        *py += (G.g_hdesk % ich);
+    ygrid  = (y - syoff + (ich / 2)) / ich; /* y grid position */
+    ygrid = min(ygrid, rows-1);             /* clamp it for safety */
+    *py = (ygrid * ich) + (spare_pixels / rows);
     *py += G.g_ydesk;
 }
 
@@ -187,7 +210,7 @@ static WORD install_drive(WORD drive)
     pa->a_pdata = "";                   /* point to empty string */
     pa->a_aicon = (drive > 1) ? IG_HARD : IG_FLOPPY;
     pa->a_dicon = NIL;
-    snap_disk(x,y,&pa->a_xspot,&pa->a_yspot, 0, 0);
+    snap_icon(x,y,&pa->a_xspot,&pa->a_yspot, 0, 0);
 
     return 0;
 }
@@ -347,6 +370,37 @@ WORD ins_app(WORD curr)
     if (!pa)
         return 0;
 
+#if CONF_WITH_DESKTOP_SHORTCUTS
+    /*
+     * here we handle the case of installing an application identified by
+     * a desktop shortcut.  we need to determine if this application is
+     * already installed, i.e. if there already exists a non-shortcut ANODE
+     * for this application.
+     *
+     * if so, we change the ANODE pointer to point to it, and continue as
+     * though the user has selected the application in a desktop window.
+     *
+     * if not, we handle first-time installation later below.
+     */
+    if (G.g_cwin == 0)  /* we're on the desktop, so this is a shortcut icon */
+    {
+        ANODE *temppa;
+
+        strcpy(pathname,pa->a_pdata);   /* get path for app_afind_by_name() */
+        p = filename_start(pathname);
+        *p = '\0';
+        temppa = app_afind_by_name(AT_ISFILE,AF_ISDESK|AF_WINDOW,pathname,pa->a_pappl,&isapp);
+        if (temppa)
+        {
+            if (strcmp(temppa->a_pappl,pa->a_pdata) == 0)
+            {
+                pa = temppa;
+                KDEBUG(("Found installed app anode for desktop shortcut\n"));
+            }
+        }
+    }
+#endif
+
     installed = is_installed(pa);
 
     /*
@@ -363,7 +417,10 @@ WORD ins_app(WORD curr)
         if (!isapp)     /* selected item appears to be a data file */
             return 0;
 #if CONF_WITH_DESKTOP_SHORTCUTS
-        /* special handling for desktop shortcuts */
+        /*
+         * handle install application for a desktop shortcut when there
+         * is no existing 'install application' anode
+         */
         if (pa->a_flags & AF_ISDESK)
         {
             p = pa->a_pdata;
@@ -374,7 +431,7 @@ WORD ins_app(WORD curr)
 #endif
         {
             pw = win_find(G.g_cwin);
-            p = pw->w_path->p_spec;
+            p = pw->w_pnode.p_spec;
             q = filename_start(p);
             pfname = pf->f_name;
         }
@@ -424,7 +481,7 @@ WORD ins_app(WORD curr)
     field = (pa->a_flags&AF_ISFULL) ? APPMFULL : APPMFILE;
     tree[field].ob_state |= SELECTED;
 
-    show_hide(FMD_START, tree);
+    start_dialog(tree);
     do
     {
         exitobj = form_do(tree, APARGS);
@@ -506,7 +563,7 @@ WORD ins_app(WORD curr)
             break;
         }
     } while(exitobj == -1);
-    show_hide(FMD_FINISH, tree);
+    end_dialog(tree);
 
     return change;
 }
@@ -574,7 +631,7 @@ static WORD install_desktop_icon(ANODE *pa)
         pa->a_pargs = "";
         pa->a_aicon = IG_HARD;
         pa->a_dicon = NIL;
-        snap_disk(x,y,&pa->a_xspot,&pa->a_yspot, 0, 0);
+        snap_icon(x,y,&pa->a_xspot,&pa->a_yspot, 0, 0);
     }
 
     id[0] = id[1] = '\0';
@@ -623,7 +680,7 @@ static WORD install_desktop_icon(ANODE *pa)
 
     insert_icon(tree, ID_ICON, curr_icon);
 
-    show_hide(FMD_START, tree);
+    start_dialog(tree);
     while(1)
     {
         exitobj = form_do(tree, start_fld) & 0x7fff;
@@ -681,7 +738,7 @@ static WORD install_desktop_icon(ANODE *pa)
         }
         draw_fld(tree, ID_IBOX);
     }
-    show_hide(FMD_FINISH, tree);
+    end_dialog(tree);
 
     return change;
 }
@@ -827,7 +884,7 @@ static WORD install_window_icon(FNODE *pf)
 
     insert_icon(tree, IW_ICON, curr_icon);
 
-    show_hide(FMD_START, tree);
+    start_dialog(tree);
     while(1)
     {
         exitobj = form_do(tree, edit_start) & 0x7fff;
@@ -905,7 +962,7 @@ static WORD install_window_icon(FNODE *pf)
         }
         draw_fld(tree, IW_IBOX);
     }
-    show_hide(FMD_FINISH, tree);
+    end_dialog(tree);
 
     return change;
 }
@@ -983,7 +1040,7 @@ WORD ins_icon(WORD sobj)
     pw = win_find(G.g_cwin);    /* get WNODE for current window */
     if (pw)
     {
-        for (pf = pw->w_path->p_flist; pf; pf = pf->f_next)
+        for (pf = pw->w_pnode.p_flist; pf; pf = pf->f_next)
         {
             if (!fnode_is_selected(pf))
                 continue;
@@ -1038,7 +1095,7 @@ void ins_shortcut(WORD wh, WORD mx, WORD my)
     /*
      * put the first icon on the grid where the user wanted
      */
-    snap_disk(mx, my, &x, &y, 0, 0);
+    snap_icon(mx, my, &x, &y, 0, 0);
 
     /*
      * install each selected icon on desktop
@@ -1059,7 +1116,7 @@ void ins_shortcut(WORD wh, WORD mx, WORD my)
         /*
          * build the full pathname
          */
-        p = pw->w_path->p_spec;
+        p = pw->w_pnode.p_spec;
         q = filename_start(p);
         strlcpy(pathname,p,q-p+1);  /* copy pathname including trailing backslash */
         strcat(pathname,pf->f_name);
@@ -1084,7 +1141,7 @@ void ins_shortcut(WORD wh, WORD mx, WORD my)
          * override the default icon with an installed icon (if it exists)
          */
         pa = app_afind_by_name((pf->f_attr&F_SUBDIR)?AT_ISFOLD:AT_ISFILE,
-                        AF_ISDESK, pw->w_path->p_spec, pf->f_name, &dummy);
+                        AF_ISDESK, pw->w_pnode.p_spec, pf->f_name, &dummy);
         if (pa)                     /* paranoia */
         {
             newpa->a_aicon = pa->a_aicon;

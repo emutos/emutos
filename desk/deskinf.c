@@ -47,20 +47,10 @@
 
 
 /*
- * NOTE: this structure is used to access a subset of the fields
- * in the FNODE structure, so the fields MUST be the same size and
- * sequence as those in the FNODE structure!
+ * Border flags for 'BGSAMPLE' object in 'Set background' dialog:
+ * outside border, thickness=1, border colour black, text black.
  */
-typedef struct sfcb
-{
-    BYTE sfcb_junk;
-    BYTE sfcb_attr;
-    WORD sfcb_time;
-    WORD sfcb_date;
-    LONG sfcb_size;
-    BYTE sfcb_name[LEN_ZFNAME];
-} SFCB;
-
+#define SAMPLE_BORDER_FLAGS 0x00ff1100L
 
 /*
  * Routine to format DOS style time
@@ -132,7 +122,8 @@ static BYTE *fmt_date(UWORD date, BOOL fourdigit, BYTE *pdate)
 {
     WORD dd, mm, yy;
     WORD var1, var2, var3;
-    char tmp, separator = DATEFORM_SEP;
+    UBYTE tmp;
+    char separator = DATEFORM_SEP;
     WORD format;
 
     yy = 1980 + ((date >> 9) & 0x007f);
@@ -145,7 +136,7 @@ static BYTE *fmt_date(UWORD date, BOOL fourdigit, BYTE *pdate)
     {
     case DATEFORM_IDT:
         tmp = cookie_idt & IDT_SMASK;   /* separator */
-        if ((tmp >= 0x20) && (tmp <= 0x7f))
+        if (tmp)
             separator = tmp;
         format = cookie_idt&IDT_DMASK;
         break;
@@ -187,7 +178,7 @@ static BYTE *fmt_date(UWORD date, BOOL fourdigit, BYTE *pdate)
 
 
 /*
- * Routine to format sfcb_size into an 8- or 11-byte field,
+ * Routine to format f_size into an 8- or 11-byte field,
  * depending on the current screen width
  *
  * Note: files larger than 9999999 bytes will be displayed
@@ -223,9 +214,9 @@ static BYTE *fmt_size(LONG size, BOOL wide, BYTE *psize)
 }
 
 
-static WORD format_sfcb(LONG psfcb, BYTE *pfmt)
+static WORD format_fnode(LONG pfnode, BYTE *pfmt)
 {
-    SFCB sf;
+    FNODE *pf;
     BYTE *pdst, *psrc;
     WORD i;
     BOOL wide;
@@ -236,15 +227,15 @@ static WORD format_sfcb(LONG psfcb, BYTE *pfmt)
      */
     wide = USE_WIDE_FORMAT();
 
-    sf = *(SFCB *)psfcb;
+    pf = (FNODE *)pfnode;
     pdst = pfmt;
 
     /*
      * folder or read-only indicator
      */
-    if (sf.sfcb_attr & F_SUBDIR)
+    if (pf->f_attr & F_SUBDIR)
         indicator = 0x07;
-    else if (sf.sfcb_attr & F_RDONLY)
+    else if (pf->f_attr & F_RDONLY)
         indicator = 0x7f;
     else indicator = ' ';
     *pdst++ = indicator;
@@ -254,7 +245,7 @@ static WORD format_sfcb(LONG psfcb, BYTE *pfmt)
     /*
      * name and extension
      */
-    for (i = 0, psrc = sf.sfcb_name; *psrc; i++)
+    for (i = 0, psrc = pf->f_name; *psrc; i++)
     {
         if (*psrc == '.')
         {
@@ -273,7 +264,7 @@ static WORD format_sfcb(LONG psfcb, BYTE *pfmt)
     /*
      * size
      */
-    if (sf.sfcb_attr & F_SUBDIR)
+    if (pf->f_attr & F_SUBDIR)
     {
         WORD n = wide ? 11 : 8;
         while(n--)
@@ -281,7 +272,7 @@ static WORD format_sfcb(LONG psfcb, BYTE *pfmt)
     }
     else
     {
-        pdst = fmt_size(sf.sfcb_size, wide, pdst);
+        pdst = fmt_size(pf->f_size, wide, pdst);
     }
 
     /*
@@ -294,18 +285,18 @@ static WORD format_sfcb(LONG psfcb, BYTE *pfmt)
     *pdst++ = ' ';
     if (wide)
         *pdst++ = ' ';
-    pdst = fmt_date(sf.sfcb_date, wide, pdst);
+    pdst = fmt_date(pf->f_date, wide, pdst);
     *pdst++ = ' ';
     if (wide)
         *pdst++ = ' ';
-    pdst = fmt_time(sf.sfcb_time, wide?"%02d:%02d %s":"%02d:%02d%s", pdst);
+    pdst = fmt_time(pf->f_time, wide?"%02d:%02d %s":"%02d:%02d%s", pdst);
 
     return (pdst-pfmt);
 }
 
 
 static WORD dr_fnode(UWORD last_state, UWORD curr_state, WORD x, WORD y,
-            WORD w, WORD h, LONG psfcb)
+            WORD w, WORD h, LONG fnode)
 {
     WORD len;
     BYTE temp[LEN_FNODE];
@@ -314,8 +305,8 @@ static WORD dr_fnode(UWORD last_state, UWORD curr_state, WORD x, WORD y,
         bb_fill(MD_XOR, FIS_SOLID, IP_SOLID, x, y, w, h);
     else
     {
-        len = format_sfcb(psfcb, temp);     /* convert to text */
-        gsx_attr(TRUE, MD_REPLACE, BLACK);
+        len = format_fnode(fnode, temp);    /* convert to text */
+        gsx_attr(TRUE, MD_TRANS, BLACK);
         expand_string(intin, temp);
         gsx_tblt(IBM, x, y, len);
         gsx_attr(FALSE, MD_XOR, BLACK);
@@ -341,32 +332,61 @@ WORD dr_code(PARMBLK *pparms)
 
 
 /*
- * Put up dialog box & call form_do
+ * Start a dialog
  */
-WORD inf_show(OBJECT *tree, WORD start)
+void start_dialog(OBJECT *tree)
 {
-    WORD   xd, yd, wd, hd;
+    WORD xd, yd, wd, hd;
 
     form_center(tree, &xd, &yd, &wd, &hd);
     form_dial(FMD_START, 0, 0, 0, 0, xd, yd, wd, hd);
     objc_draw(tree, ROOT, MAX_DEPTH, xd, yd, wd, hd);
-    form_do(tree, start);
-    form_dial(FMD_FINISH, 0, 0, 0, 0, xd, yd, wd, hd);
-
-    return TRUE;
 }
 
 
 /*
- * Routine for finishing off a simple ok-only dialog box
+ * End a dialog
  */
-static void inf_finish(OBJECT *tree, WORD dl_ok)
+void end_dialog(OBJECT *tree)
 {
-    OBJECT *obj;
+    WORD xd, yd, wd, hd, event;
+    UWORD junk;
 
-    inf_show(tree, 0);
-    obj = tree + dl_ok;
-    obj->ob_state = NORMAL;
+    form_center(tree, &xd, &yd, &wd, &hd);
+    form_dial(FMD_FINISH, 0, 0, 0, 0, xd, yd, wd, hd);
+
+    /*
+     * now handle any messages (expected to be redraws) triggered by
+     * the form_dial(FMD_FINISH) above.  because the desktop handles
+     * internally-generated messages directly (rather than calling
+     * the AES), AES-generated messages will stay pending until the
+     * next evnt_multi() call.  if we do not call evnt_multi() here,
+     * the redraws will be out of sequence, causing irritating
+     * partial-refresh effects in windows.
+     */
+    while(1)
+    {
+        event = evnt_multi(MU_TIMER|MU_MESAG, 0x02, 0x01, 0x01,
+                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                G.g_rmsg, 0, 0,
+                                &junk, &junk, &junk, &junk, &junk, &junk);
+        if (!(event & MU_MESAG))    /* no (more) messages */
+            break;
+        hndl_msg();
+    }
+}
+
+
+/*
+ * Put up dialog box & call form_do
+ */
+WORD inf_show(OBJECT *tree, WORD start)
+{
+    start_dialog(tree);
+    form_do(tree, start);
+    end_dialog(tree);
+
+    return TRUE;
 }
 
 
@@ -438,10 +458,17 @@ static WORD count_ffs(BYTE *path)
 /************************************************************************/
 /* i n f _ f i l e _ f o l d e r                                        */
 /************************************************************************/
+/*
+ * returns:
+ *      0   cancel
+ *      1   continue
+ *      -1  continue, and mark window for redraw
+ */
 WORD inf_file_folder(BYTE *ppath, FNODE *pf)
 {
     OBJECT *tree;
-    WORD more, nmidx, title, ret;
+    WORD nmidx, title, ret;
+    BOOL more, changed;
     BYTE attr;
     BYTE srcpth[MAXPATHLEN];
     BYTE dstpth[MAXPATHLEN];
@@ -449,6 +476,8 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
     OBJECT *obj;
 
     tree = G.a_trees[ADFFINFO];
+    deselect_all(tree);
+
     title = (pf->f_attr & F_SUBDIR) ? STFOINFO : STFIINFO;
     obj = tree + FFTITLE;
     obj->ob_spec = (LONG) ini_str(title);
@@ -471,7 +500,7 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
         graf_mouse(ARROW, NULL);
 
         if (!more)
-            return FALSE;
+            return 1;
 
         inf_fifosz(tree, FFNUMFIL, FFNUMFOL, FFSIZE);
     }
@@ -509,16 +538,16 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
     else
         obj->ob_state = NORMAL;
 
-    inf_show(tree, 0);
-    if (inf_what(tree, FFOK, FFCNCL) != 1)
-        return FALSE;
+    inf_show(tree, ROOT);
+    ret = inf_what(tree, FFSKIP, FFCNCL);
+    if (ret >= 0)       /* skip or cancel */
+        return ret;
 
     /*
      * user selected OK - we rename and/or change attributes
      */
     graf_mouse(HGLASS, NULL);
 
-    more = TRUE;
     inf_sget(tree, FFNAME, pnname);
 
     /* unformat the strings */
@@ -528,11 +557,16 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
     /*
      * if user has changed the name, do the DOS rename
      */
+    more = TRUE;
+    changed = FALSE;
     if (strcmp(srcpth+nmidx, dstpth+nmidx))
     {
         ret = dos_rename(srcpth, dstpth);
         if ((more=d_errmsg(ret)) != 0)
+        {
             strcpy(pf->f_name, dstpth+nmidx);
+            changed = TRUE;
+        }
     }
 
     /*
@@ -550,20 +584,28 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
         if (attr != pf->f_attr)
         {
             ret = dos_chmod(dstpth, F_SETMOD, attr);
-            if ((more=d_errmsg(ret)) != 0)
+            if (d_errmsg(ret) != 0)
+            {
                 pf->f_attr = attr;
+                changed = TRUE;
+            }
         }
     }
 
     graf_mouse(ARROW, NULL);
 
-    return more;
+    return changed ? -1 : 1;
 }
 
 
 /************************************************************************/
 /* i n f _ d i s k                                                      */
 /************************************************************************/
+/*
+ * returns:
+ *      0   cancel
+ *      1   continue
+ */
 WORD inf_disk(BYTE dr_id)
 {
     OBJECT *tree;
@@ -586,7 +628,7 @@ WORD inf_disk(BYTE dr_id)
     if (!more)
     {
         graf_mouse(ARROW, NULL);
-        return FALSE;
+        return 1;
     }
 
     dos_space(dr_id - 'A' + 1, &total, &avail);
@@ -602,9 +644,8 @@ WORD inf_disk(BYTE dr_id)
     inf_fifosz(tree, DINFILES, DINFOLDS, DIUSED);
     inf_numset(tree, DIAVAIL, avail);
 
-    inf_finish(tree, DIOK);
-
-    return TRUE;
+    inf_show(tree, ROOT);
+    return inf_what(tree, DIOK, DICNCL);
 }
 
 
@@ -707,7 +748,7 @@ WORD inf_pref(void)
     }
 
     /* allow user to select preferences */
-    inf_show(tree1, 0);
+    inf_show(tree1, ROOT);
     button = inf_what(tree1,SPOK,SPCNCL);
 
     /*
@@ -716,7 +757,7 @@ WORD inf_pref(void)
     if (button < 0)         /* user selected More */
     {
         /* allow user to select preferences */
-        inf_show(tree2, 0);
+        inf_show(tree2, ROOT);
         button = inf_what(tree2, SPOK2, SPCNCL2);
     }
 
@@ -759,6 +800,145 @@ WORD inf_pref(void)
 
     return FALSE;
 }
+
+
+#if CONF_WITH_BACKGROUNDS
+/*
+ *      Handle background pattern/colour configuration dialog
+ */
+BOOL inf_backgrounds(void)
+{
+    OBJECT *tree, *obj;
+    WORD ret;
+    LONG curdesk, curwin;
+    WORD i, index, unused;
+
+    /* set pattern/colour index and first unused colour */
+    switch(gl_nplanes)
+    {
+    case 1:
+        index = 0;
+        unused = 2;
+        break;
+    case 2:
+        index = 1;
+        unused = 4;
+        break;
+    default:
+        index = 2;
+        unused = 16;
+        break;
+    }
+
+    tree = G.a_trees[ADBKGND];
+
+    /* hide colours that are not available in the current resolution */
+    for (i = unused, obj = tree+BGCOL0+unused; i < 16; i++, obj++)
+        obj->ob_flags |= HIDETREE;
+
+    /* set the initially-displayed background pattern */
+    curdesk = G.g_screen[DROOT].ob_spec;
+    curwin = G.g_screen[DROOT+1].ob_spec;
+    tree[BGSAMPLE].ob_spec = ((tree[BGDESK].ob_state & SELECTED) ? curdesk : curwin)
+                            | SAMPLE_BORDER_FLAGS;
+
+    /* handle the dialog */
+    start_dialog(tree);
+
+    while(1)
+    {
+        draw_fld(tree, BGSAMPLE);
+        ret = form_do(tree, ROOT);
+
+        if ((ret == BGOK) || (ret == BGCANCEL))
+        {
+            tree[ret].ob_state &= ~SELECTED;
+            break;
+        }
+
+        if (ret == BGDESK)
+            tree[BGSAMPLE].ob_spec = curdesk;
+        else if (ret == BGWIN)
+            tree[BGSAMPLE].ob_spec = curwin;
+        else if ((ret >= BGPAT0) && (ret <= BGPAT7))
+        {
+            tree[BGSAMPLE].ob_spec &= ~FILLPAT_MASK;
+            tree[BGSAMPLE].ob_spec |= tree[ret].ob_spec & FILLPAT_MASK;
+        }
+        else if ((ret >= BGCOL0) && (ret <= BGCOL15))
+        {
+            tree[BGSAMPLE].ob_spec &= ~FILLCOL_MASK;
+            tree[BGSAMPLE].ob_spec |= tree[ret].ob_spec & FILLCOL_MASK;
+        }
+
+        if (tree[BGDESK].ob_state & SELECTED)
+            curdesk = tree[BGSAMPLE].ob_spec;
+        else
+            curwin = tree[BGSAMPLE].ob_spec;
+    }
+
+    end_dialog(tree);
+
+    /* handle dialog exit */
+    if (ret == BGOK)
+    {
+        /* check for desktop background change */
+        if (G.g_screen[DROOT].ob_spec != curdesk)
+        {
+            G.g_patcol[index].desktop = curdesk & 0xff;
+            G.g_screen[DROOT].ob_spec = curdesk;
+            do_wredraw(0, G.g_xdesk, G.g_ydesk, G.g_wdesk, G.g_hdesk);
+        }
+
+        /* check for window background change */
+        if (G.g_screen[DROOT+1].ob_spec != curwin)
+        {
+            G.g_patcol[index].window = curwin & 0xff;
+            for (i = DROOT+1, tree = G.g_screen+i; i < WOBS_START; i++, tree++)
+                tree->ob_spec = curwin;
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+#endif
+
+
+#if CONF_WITH_DESKTOP_CONFIG
+/*
+ *      Handle desktop configuration dialog
+ */
+void inf_conf(void)
+{
+    OBJECT *tree = G.a_trees[ADDESKCF];
+    WORD button;
+
+    /* first, deselect all objects */
+    deselect_all(tree);
+
+    /* select buttons corresponding to current state */
+    if (G.g_appdir)
+        tree[DCDEFAPP].ob_state |= SELECTED;
+    else
+        tree[DCDEFWIN].ob_state |= SELECTED;
+
+    if (G.g_fullpath)
+        tree[DCPMFULL].ob_state |= SELECTED;
+    else
+        tree[DCPMFILE].ob_state |= SELECTED;
+
+    /* allow user to select preferences */
+    inf_show(tree, ROOT);
+    button = inf_what(tree, DCOK, DC_CNCL);
+
+    if (button)
+    {
+        G.g_appdir = inf_which(tree, DCDEFAPP, 2);
+        G.g_fullpath = inf_which(tree, DCPMFULL, 2);
+    }
+}
+#endif
 
 
 /*

@@ -39,6 +39,7 @@
 #include "desksupp.h"
 #include "deskdir.h"
 #include "deskfun.h"
+#include "deskinf.h"
 #include "deskins.h"
 #include "deskpro.h"
 #include "biosdefs.h"
@@ -125,11 +126,65 @@ void fun_msg(WORD type, WORD w3, WORD w4, WORD w5, WORD w6, WORD w7)
 
 
 /*
+ *  Mark window nodes for rebuild
+ */
+void fun_mark_for_rebld(BYTE *path)
+{
+    WNODE *pwin;
+
+    for (pwin = G.g_wfirst; pwin; pwin = pwin->w_next)
+    {
+        /* if opened and same path then mark */
+        if ( (pwin->w_id) && (strcmp(pwin->w_pnode.p_spec, path)==0) )
+            pwin->w_flags |= WN_REBUILD;
+    }
+}
+
+
+/*
+ *  Rebuild a window
+ */
+static void rebuild_window(WNODE *pwin)
+{
+    GRECT gr;
+
+    pn_active(&pwin->w_pnode, TRUE);
+    desk_verify(pwin->w_id, TRUE);
+    win_sinfo(pwin);
+    wind_set(pwin->w_id, WF_INFO, pwin->w_info, 0, 0);
+    wind_get_grect(pwin->w_id, WF_WXYWH, &gr);
+    fun_msg(WM_REDRAW, pwin->w_id, gr.g_x, gr.g_y, gr.g_w, gr.g_h);
+}
+
+
+/*
+ *  Rebuild marked windows
+ */
+void fun_rebld_marked(void)
+{
+    WNODE *pwin;
+
+    graf_mouse(HGLASS, NULL);
+
+    /* check all wnodes     */
+    for (pwin = G.g_wfirst; pwin; pwin = pwin->w_next)
+    {
+        if (pwin->w_flags & WN_REBUILD)
+        {
+            rebuild_window(pwin);
+            pwin->w_flags &= ~WN_REBUILD;
+        }
+    }
+
+    graf_mouse(ARROW, NULL);
+}
+
+
+/*
  *  Rebuild any windows with matching path
  */
 void fun_rebld(BYTE *ptst)
 {
-    GRECT gr;
     WNODE *pwin;
 
     graf_mouse(HGLASS, NULL);
@@ -138,19 +193,50 @@ void fun_rebld(BYTE *ptst)
     for (pwin = G.g_wfirst; pwin; pwin = pwin->w_next)
     {
         /* if opened and same path then rebuild */
-        if ( (pwin->w_id) && (strcmp(pwin->w_path->p_spec, ptst)==0) )
+        if ( (pwin->w_id) && (strcmp(pwin->w_pnode.p_spec, ptst)==0) )
         {
-            pn_active(pwin->w_path);
-            desk_verify(pwin->w_id, TRUE);
-            win_sinfo(pwin);
-            wind_set(pwin->w_id, WF_INFO, pwin->w_info, 0, 0);
-            wind_get_grect(pwin->w_id, WF_WXYWH, &gr);
-            fun_msg(WM_REDRAW, pwin->w_id, gr.g_x, gr.g_y, gr.g_w, gr.g_h);
+            rebuild_window(pwin);
         } /* if */
     } /* for */
 
     graf_mouse(ARROW, NULL);
 } /* fun_rebld */
+
+
+#if CONF_WITH_FILEMASK
+/*
+ *  Routine to update the file mask for the current window
+ */
+void fun_mask(WNODE *pw)
+{
+    BYTE *maskptr, filemask[LEN_ZFNAME];
+    OBJECT *tree;
+
+    tree = G.a_trees[ADFMASK];
+
+    /*
+     * get current filemask & insert in dialog
+     */
+    maskptr = filename_start(pw->w_pnode.p_spec);
+    fmt_str(maskptr, filemask);
+    inf_sset(tree, FMMASK, filemask);
+
+    /*
+     * get user input
+     */
+    inf_show(tree, ROOT);
+
+    /*
+     * if 'OK', extract filemask from dialog, update pnode/display
+     */
+    if (inf_what(tree, FMOK, FMCANCEL) == 1)
+    {
+        inf_sget(tree, FMMASK, filemask);
+        unfmt_str(filemask, maskptr);
+        refresh_window(pw);
+    }
+}
+#endif
 
 
 /*
@@ -165,7 +251,7 @@ WORD fun_mkdir(WNODE *pw_node)
     BYTE  path[MAXPATHLEN];
 
     tree = G.a_trees[ADMKDBOX];
-    pp_node = pw_node->w_path;
+    pp_node = &pw_node->w_pnode;
     ptmp = path;
     strcpy(ptmp, pp_node->p_spec);
 
@@ -186,7 +272,7 @@ WORD fun_mkdir(WNODE *pw_node)
     {
         fnew_name[0] = '\0';
         inf_sset(tree, MKNAME, fnew_name);
-        show_hide(FMD_START, tree);
+        start_dialog(tree);
         form_do(tree, 0);
         if (inf_what(tree, MKOK, MKCNCL) == 0)
             break;
@@ -201,7 +287,7 @@ WORD fun_mkdir(WNODE *pw_node)
         err = dos_mkdir(path);
         if (err == 0)       /* mkdir succeeded */
         {
-            fun_rebld(pw_node->w_path->p_spec);
+            fun_rebld(pw_node->w_pnode.p_spec);
             break;
         }
 
@@ -229,7 +315,7 @@ WORD fun_mkdir(WNODE *pw_node)
             break;
     }
 
-    show_hide(FMD_FINISH, tree);
+    end_dialog(tree);
     return TRUE;
 }
 
@@ -390,8 +476,38 @@ static void fun_full_close(WNODE *pw)
                         rc.g_x, rc.g_y, rc.g_w, rc.g_h);
     }
 
-    pn_close(pw->w_path);
+    pn_close(&pw->w_pnode);
     win_free(pw);
+
+    /*
+     * update current window etc
+     */
+    pw = win_ontop();
+    desk_verify(pw ? pw->w_id : 0, FALSE);
+}
+
+
+/*
+ *  Removes the lowest level of folder from a pathname, assumed
+ *  to be of the form:
+ *      D:\X\Y\Z\F.E
+ *  where X,Y,Z are folders and F.E is a filename.  In the above
+ *  example, this would change D:\X\Y\Z\F.E to D:\X\Y\F.E
+ */
+static void remove_one_level(BYTE *pathname)
+{
+    BYTE *stop = pathname+2;    /* the first path separator */
+    BYTE *filename, *prev;
+
+    filename = filename_start(pathname);
+    if (filename-1 <= stop)     /* already at the root */
+        return;
+
+    for (prev = filename-2; prev >= stop; prev--)
+        if (*prev == '\\')
+            break;
+
+    strcpy(prev+1,filename);
 }
 
 
@@ -403,12 +519,6 @@ void fun_close(WNODE *pw, WORD closetype)
     BYTE pathname[MAXPATHLEN];
     BYTE *fname;
 
-    if (!pw->w_path)
-    {
-        KDEBUG(("Invalid WNODE passed to fun_close()\n"));
-        return;
-    }
-
     graf_mouse(HGLASS, NULL);
 
     /*
@@ -419,7 +529,7 @@ void fun_close(WNODE *pw, WORD closetype)
      */
     if (closetype != CLOSE_WINDOW)
     {
-        strcpy(pathname,pw->w_path->p_spec);
+        strcpy(pathname,pw->w_pnode.p_spec);
         fname = filename_start(pathname);
         if (closetype == CLOSE_TO_ROOT)
             strcpy(pathname+3,fname);
@@ -438,15 +548,51 @@ void fun_close(WNODE *pw, WORD closetype)
 }
 
 
+/*
+ * builds the path corresponding to the first selected file in the
+ * specified PNODE.  the path will be the filename only, or the full
+ * pathname, depending on the desktop configuration settings.
+ *
+ * returns FALSE if no file is selected (probable program bug)
+ */
+static BOOL build_selected_path(PNODE *pn, BYTE *pathname)
+{
+    FNODE *fn;
+
+    for (fn = pn->p_flist; fn; fn = fn->f_next)
+    {
+        if (fnode_is_selected(fn))
+            break;
+    }
+    if (!fn)
+        return FALSE;
+
+#if CONF_WITH_DESKTOP_CONFIG
+    if (G.g_fullpath)
+    {
+        strcpy(pathname,pn->p_spec);
+        add_fname(pathname,fn->f_name);
+    }
+    else
+#endif
+    {
+        strcpy(pathname,fn->f_name);
+    }
+
+    return TRUE;
+}
+
 
 /*
  *  Routine to call when several icons have been dragged from a
  *  window to another window (it might be the same window) and
  *  dropped on a particular icon or open space.
  *
- *  Note that, for DESK1, this is NEVER called if either the source
- *  or destination is the desktop.  Therefore 'datype' can ONLY be
- *  AT_ISFILE or AT_ISFOLD.
+ *  This can be invoked when copying/moving files, or when launching
+ *  a program via drag-and-drop.
+ *
+ *  Note that this is NEVER called if either the source or destination
+ *  is the desktop.  Thus 'datype' can ONLY be AT_ISFILE or AT_ISFOLD.
  */
 static void fun_win2win(WORD src_wh, WORD dst_wh, WORD dst_ob, WORD keystate)
 {
@@ -465,24 +611,41 @@ static void fun_win2win(WORD src_wh, WORD dst_wh, WORD dst_ob, WORD keystate)
         return;
 
     pda = i_find(dst_wh, dst_ob, &pdf, NULL);
-    datype = (pda) ? pda->a_type : AT_ISFILE;
+
+    if (pda)
+    {
+        if (pda->a_aicon >= 0)      /* dropping file on to an application */
+        {
+            if (build_selected_path(&psw->w_pnode, destpath))
+            {
+                /* set global so desktop will exit if do_aopen() succeeds */
+                exit_desktop = do_aopen(pda, 1, dst_ob, pdw->w_pnode.p_spec, pdf->f_name, destpath);
+                return;
+            }
+        }
+        datype = pda->a_type;
+    }
+    else
+    {
+        datype = AT_ISFILE;
+    }
 
     /* set up default destination path name */
-    strcpy(destpath, pdw->w_path->p_spec);
+    strcpy(destpath, pdw->w_pnode.p_spec);
 
     /* if destination is folder, insert folder name in path */
     if (datype == AT_ISFOLD)
         add_path(destpath, pdf->f_name);
 
-    ret = fun_op(op, -1, psw->w_path, destpath);
+    ret = fun_op(op, -1, &psw->w_pnode, destpath);
 
     if (ret)
     {
         if (src_wh != dst_wh)
             desk_clear(src_wh);
         if (op == OP_MOVE)
-            fun_rebld(psw->w_path->p_spec);
-        fun_rebld(pdw->w_path->p_spec);
+            fun_rebld(psw->w_pnode.p_spec);
+        fun_rebld(pdw->w_pnode.p_spec);
         /*
          * if we copied into a folder, we must redraw any windows with
          * a matching path
@@ -508,31 +671,22 @@ static WORD fun_file2desk(PNODE *pn_src, WORD icontype_src, ANODE *an_dest, WORD
         switch(an_dest->a_type)
         {
 #if CONF_WITH_DESKTOP_SHORTCUTS
-        FNODE *fn;
+        BYTE tail[MAXPATHLEN];
 
         case AT_ISFILE:     /* dropping something onto a file */
             if (an_dest->a_aicon < 0)       /* is target a program? */
                 break;                      /* no, do nothing */
 
-            /* look for the first (or only) selected file */
-            for (fn = pn_src->p_flist; fn; fn = fn->f_next)
-            {
-                if (fnode_is_selected(fn))
-                    break;
-            }
-            if (!fn)                        /* "can't happen" */
+            /* build the full tail to pass to the target program */
+            if (!build_selected_path(pn_src,tail))
                 break;
 
-            /* build the full pathname to pass to the target program */
-            strcpy(pathname,pn_src->p_spec);
-            add_fname(pathname,fn->f_name);
+            /* build pathname for do_aopen() */
+            strcpy(pathname,an_dest->a_pdata);
+            strcpy(filename_start(pathname),"*.*");
 
-            /* set globals used by pro_run() */
-            strcpy(G.g_cmd,an_dest->a_pdata);
-            strcpy(G.g_tail+1,pathname);
-
-            /* set global so desktop will exit if pro_run() succeeds */
-            exit_desktop = pro_run(an_dest->a_flags&AF_ISCRYS, 1, -1, -1);
+            /* set global so desktop will exit if do_aopen() succeeds */
+            exit_desktop = do_aopen(an_dest, 1, dobj, pathname, an_dest->a_pappl, tail);
             break;
         case AT_ISFOLD:     /* dropping file on folder - copy or move */
             strcpy(pathname,an_dest->a_pdata);
@@ -605,8 +759,8 @@ static void fun_win2desk(WORD wh, WORD obj, WORD keystate)
     if (!wn_src)
         return;
 
-    if (fun_file2desk(wn_src->w_path, -1, an_dest, obj, keystate))
-        fun_rebld(wn_src->w_path->p_spec);
+    if (fun_file2desk(&wn_src->w_pnode, -1, an_dest, obj, keystate))
+        fun_rebld(wn_src->w_pnode.p_spec);
 }
 
 
@@ -635,11 +789,11 @@ static WORD fun_file2any(WORD sobj, WNODE *wn_dest, ANODE *an_dest, FNODE *fn_de
         strcat(path,"*.*");
     }
 
-    pn_src = pn_open(path, F_SUBDIR);
+    pn_src = pn_open(path, NULL);
 
     if (pn_src)
     {
-        okay = pn_active(pn_src);
+        okay = pn_active(pn_src, FALSE);
 
         if (pn_src->p_flist)
         {
@@ -653,7 +807,7 @@ static WORD fun_file2any(WORD sobj, WNODE *wn_dest, ANODE *an_dest, FNODE *fn_de
             G.g_screen->ob_state = SELECTED;
             if (wn_dest)    /* we are dragging a desktop icon to a window */
             {
-                okay = fun_file2win(pn_src, wn_dest->w_path->p_spec, an_dest, fn_dest);
+                okay = fun_file2win(pn_src, wn_dest->w_pnode.p_spec, an_dest, fn_dest);
             }
             else    /* we are dragging a desktop item to another desktop item */
             {
@@ -693,7 +847,7 @@ static void fun_desk2win(WORD wh, WORD dobj, WORD keystate)
         }
         copied = fun_file2any(sobj, wn_dest, an_dest, fn_dest, dobj, keystate);
         if (copied)
-            fun_rebld(wn_dest->w_path->p_spec);
+            fun_rebld(wn_dest->w_pnode.p_spec);
     }
 }
 
@@ -769,21 +923,6 @@ BOOL fun_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my, WOR
 
 
 /*
- * Function called to redisplay appropriate windows when disk is deleted
- */
-static void do_refresh_drive(WORD drive)
-{
-    WNODE *pw;
-
-    for (pw = G.g_wfirst; pw; pw = pw->w_next)
-    {
-        if (pw->w_id)
-            if (pw->w_path->p_spec[0] == drive)
-                do_refresh(pw);
-    }
-}
-
-/*
  * Function called to delete the contents of a disk
  */
 static WORD delete_disk(ANODE *pa)
@@ -795,12 +934,12 @@ static WORD delete_disk(ANODE *pa)
 
     build_root_path(path, pa->a_letter);
     strcat(path,"*.*");
-    pn = pn_open(path, F_SUBDIR);
-    if (pn == NULL)
+    pn = pn_open(path, NULL);
+    if (pn == NULL)     /* "can't happen" - pathname too long! */
         return 0;
 
     graf_mouse(HGLASS, NULL);
-    pn_active(pn);
+    pn_active(pn, TRUE);
     if (pn->p_flist)
     {
         /*
@@ -846,7 +985,7 @@ void fun_del(WORD sobj)
             {
                 disk_found++;
                 if (delete_disk(pa))
-                    do_refresh_drive(pa->a_letter);
+                    refresh_drive(pa->a_letter);
             }
         }
         if (disk_found)
@@ -863,8 +1002,8 @@ void fun_del(WORD sobj)
 
     if (pw)
     {
-        if (fun_op(OP_DELETE, -1, pw->w_path, NULL))
-            fun_rebld(pw->w_path->p_spec);
+        if (fun_op(OP_DELETE, -1, &pw->w_pnode, NULL))
+            fun_rebld(pw->w_pnode.p_spec);
     }
 }
 

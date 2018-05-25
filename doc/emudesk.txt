@@ -5,10 +5,13 @@ The current version of EmuDesk is based on the TOS 1 desktop, but with
 many improvements inspired by the TOS 2/3/4 desktop, including:
 
 1) new menu items
+    . set file mask
     . install icon
     . install application
     . install devices
     . remove desktop icon
+    . desktop configuration
+    . blitter
 Due to space limitations, the implementation of the above is somewhat
 restricted in the 192K ROMs (see the detailed descriptions below).  If
 you make any changes to the desktop using the above features, you must
@@ -16,10 +19,23 @@ save the desktop to preserve the changes.
 
 2) other new features
     . user-assignable icons
+    . user-assignable mouse cursors
     . open disk window via keyboard shortcut
     . desktop shortcuts
 Due to space limitations, desktop shortcuts are not available in the
 192K ROMs.  Desktop shortcuts are preserved when you save the desktop.
+
+
+Set file mask
+=============
+192K ROMs:
+This is not available.
+
+Other ROMs:
+This is used to change the file mask of the currently-topped window, to
+control which files are displayed within the window.  Note that folders
+are always displayed; the mask affects the display of files only.  The
+default file mask when a window is opened is "*.*"
 
 
 Install icon
@@ -155,6 +171,25 @@ This is used to remove a disk or trash icon.  Highlight the icon you
 wish to remove, and click on "Remove desktop icon".
 
 
+Desktop configuration
+=====================
+192K ROMs:
+This is not available.
+
+Other ROMs:
+This is a simplified version of the corresponding Atari TOS menu item.
+It allows you to specify the default directory and input parameter for
+all applications that are not installed applications.  See "Install
+application" above, under 'Default dir' and 'Parameter', for further
+information about these options.
+
+
+Blitter
+=======
+This item allows you to enable or disable the use of the blitter by the
+desktop.  The item is greyed-out if the system does not have a blitter.
+
+
 User-assignable icons
 =====================
 When EmuDesk starts, it looks for a file called EMUICON.RSC in the root
@@ -182,9 +217,35 @@ desktop display.
 A default EMUICON.RSC file (currently containing 41 icons) is shipped
 with the release; the first 8 icons are the same as the builtin ones.
 Also shipped is the corresponding EMUICON.DEF file for use by a resource
-editor.  You should be aware that each icon consumes about 400 bytes of
+editor.  You should be aware that each icon consumes about 300 bytes of
 RAM, so if you are short of memory, avoid putting too many icons in
 EMUICON.RSC.
+
+
+User-assignable mouse cursors
+=============================
+When the AES starts, it looks for a file called EMUCURS.RSC in the root
+of the boot drive.  This file should be a standard Atari resource file,
+containing 8 ICONBLKs; each ICONBLK is a container for a mouse cursor.
+If the file is found, these cursors are used instead of the builtin
+cursors.  The usage is as described for the AES graf_mouse() call:
+    0   arrow
+    1   text cursor / i-beam
+    2   busy bee / hourglass
+    3   pointing hand
+    4   flat hand
+    5   thin cross
+    6   thick cross
+    7   outline cross
+
+A default EMUCURS.RSC file is shipped with the release; the mouse cursors
+in it are the same as the builtin ones.  Also shipped is the corresponding
+EMUCURS.DEF file for use by a resource editor.
+
+NOTE: Because the mouse cursors are not really ICONBLKs (though they are
+stored as such within the resource), editing them with a standard resource
+editor is difficult.  Thorsten Otto's ORCS resource editor has special
+support for mouse cursors and is the recommended tool for modifying them.
 
 
 Open disk window via keyboard shortcut
@@ -216,6 +277,15 @@ The name and shape of the shortcut icon itself may be modified by the
 folder that the icon points to.  The shortcut icon may be deleted by the
 "Remove icon" menu item.  To preserve shortcut information across boots,
 you must save the desktop.
+
+You may drag a file or folder to a desktop shortcut, with the following
+results:
+. dragging documents to a desktop shortcut for a folder will copy (or
+  move, if the control key is held down) them to the folder
+. dragging documents to a desktop shortcut for a program will launch the
+  program, passing the full pathname of the first document
+. dragging documents to a desktop shortcut for a non-executable file will
+  do nothing
 
 If you open a desktop shortcut that points to a file or folder that no
 longer exists, an alert will be issued, giving you the choice of removing

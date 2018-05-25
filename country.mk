@@ -1,7 +1,7 @@
 #
 # country.mk - the country tables
 #
-# Copyright (C) 2002-2016 The EmuTOS development team
+# Copyright (C) 2002-2017 The EmuTOS development team
 #
 # This file is distributed under the GPL, version 2 or at your
 # option any later version.  See doc/license.txt for details.
@@ -23,7 +23,7 @@ i18n_us_idt  = IDT_12H | IDT_MMDDYY | '/'
 i18n_de_lang = de
 i18n_de_keyb = DE
 i18n_de_cset = ST
-i18n_de_idt  = IDT_24H | IDT_DDMMYY | '/'
+i18n_de_idt  = IDT_24H | IDT_DDMMYY | '.'
 
 i18n_fr_lang = fr
 i18n_fr_keyb = FR
@@ -33,7 +33,7 @@ i18n_fr_idt  = IDT_24H | IDT_DDMMYY | '/'
 i18n_cz_lang = cs
 i18n_cz_keyb = CZ
 i18n_cz_cset = L2
-i18n_cz_idt  = IDT_24H | IDT_DDMMYY | '/'
+i18n_cz_idt  = IDT_24H | IDT_DDMMYY | '.'
 
 i18n_gr_lang = gr
 i18n_gr_keyb = GR
@@ -48,12 +48,12 @@ i18n_es_idt  = IDT_24H | IDT_DDMMYY | '/'
 i18n_fi_lang = fi
 i18n_fi_keyb = SE
 i18n_fi_cset = ST
-i18n_fi_idt  = IDT_24H | IDT_DDMMYY | '/'
+i18n_fi_idt  = IDT_24H | IDT_DDMMYY | '.'
 
 i18n_sg_lang = de
 i18n_sg_keyb = SG
 i18n_sg_cset = ST
-i18n_sg_idt  = IDT_24H | IDT_DDMMYY | '/'
+i18n_sg_idt  = IDT_24H | IDT_DDMMYY | '.'
 
 i18n_ru_lang = ru
 i18n_ru_keyb = RU
@@ -115,9 +115,10 @@ FONTOBJ_L9 = fnt_l9_6x6.o fnt_l9_8x8.o fnt_l9_8x16.o
 FONTOBJ_GR = fnt_gr_6x6.o fnt_gr_8x8.o fnt_gr_8x16.o
 FONTOBJ_RU = fnt_ru_6x6.o fnt_ru_8x8.o fnt_ru_8x16.o
 FONTOBJ_ALL = $(FONTOBJ_ST) $(FONTOBJ_L2) $(FONTOBJ_L9) $(FONTOBJ_GR) $(FONTOBJ_RU)
+FONTOBJ_COMMON = obj/fnt_off_6x6.o obj/fnt_off_8x8.o
 
 ifneq (,$(UNIQUE))
-FONTOBJ = $(FONTOBJ_$(ETOSCSET):%=obj/%)
+FONTOBJ = $(FONTOBJ_$(ETOSCSET):%=obj/%) $(FONTOBJ_COMMON)
 else
-FONTOBJ = $(FONTOBJ_ALL:%=obj/%)
+FONTOBJ = $(FONTOBJ_ALL:%=obj/%) $(FONTOBJ_COMMON)
 endif

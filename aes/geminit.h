@@ -15,6 +15,8 @@
 
 extern BYTE     *ad_envrn;
 
+extern MFORM    *mouse_cursor[];
+
 extern MFORM    gl_mouse;
 extern BYTE     gl_logdrv;
 

@@ -51,7 +51,7 @@
  * - boot-sector utilities: intel format words
  * - xbios floprd, flopwr, flopver
  * - xbios flopfmt
- * - internal floprw, fropwtrack
+ * - internal flopio, fropwtrack
  * - internal status, flopvbl
  * - low level dma and fdc registers access
  *
@@ -87,6 +87,9 @@
 struct flop_info {
     WORD rate;          /* rate selected via Floprate() */
     WORD actual_rate;   /* value to send to 1772 controller */
+    BYTE drive_type;
+#define DD_DRIVE    0x00
+#define HD_DRIVE    0x01
     BYTE cur_density;
 #define DENSITY_DD  0x00
 #define DENSITY_HD  0x03
@@ -97,13 +100,20 @@ struct flop_info {
 #endif
 };
 
+/*
+ * retry counts
+ */
+#define IO_RETRIES  2   /* actually the total number of tries */
+
 /*==== Internal prototypes ==============================================*/
 
 /* set intel words */
 static void setiword(UBYTE *addr, UWORD value);
 
 /* floppy read/write */
-static WORD floprw(UBYTE *buf, WORD rw, WORD dev,
+static WORD flopio(UBYTE *buf, WORD rw, WORD dev,
+                   WORD sect, WORD track, WORD side, WORD count);
+static WORD flopio_ver(UBYTE *buf, WORD rw, WORD dev,
                    WORD sect, WORD track, WORD side, WORD count);
 
 /* floppy write track */
@@ -147,15 +157,15 @@ static void dummy_seek(void);
 #define MOTOROFF_TIMEOUT (3*CLOCKS_PER_SEC)     /* 3.0 seconds */
 
 /* deselection timeout (see "handling of drive deselection" below) */
-#define DESELECT_TIMEOUT (3*CLOCKS_PER_SEC) /* in ticks */
+#define DESELECT_TIMEOUT (5*CLOCKS_PER_SEC)     /* 5.0 seconds */
 
 /* access to dma and fdc registers */
+static WORD decode_error(void);
 static WORD get_dma_status(void);
 static WORD get_fdc_reg(WORD reg);
 static void set_fdc_reg(WORD reg, WORD value);
 static void fdc_start_dma_read(WORD count);
 static void fdc_start_dma_write(WORD count);
-static void falcon_wait(void);
 
 /*
  * fdc_delay() is for worst-case 1772 access (in MFM mode)
@@ -168,6 +178,14 @@ static void falcon_wait(void);
  */
 #define fdc_delay() delay_loop(loopcount_fdc)
 
+/*
+ * the following delay is used between toggling dma out.  in Atari TOS 3
+ * & TOS 4, the delay is provided by an instruction sequence which takes
+ * about 5usec on a Falcon.  EmuTOS uses 5usec (see flop_hdv_init()).
+ */
+#define toggle_delay() delay_loop(loopcount_toggle)
+
+
 /*==== Internal floppy status =============================================*/
 
 /* cur_dev is the current drive, or -1 if none is current.
@@ -175,10 +193,6 @@ static void falcon_wait(void);
  * current drive. 'current' does not mean 'active', because the flopvbl
  * routine may deselect the drive in the PSG port A. The routine
  * floplock(dev) will set the new current drive.
- *
- * drivetype is the type of drive; this is derived from the first byte of the
- * _FDC cookie.  note that TOS appears to assume that if you have two drives,
- * they are both of the same type.  so EmuTOS does the same.
  *
  * finfo[] is an array of structures, one entry per floppy drive.  structure
  * members are as follows:
@@ -188,6 +202,10 @@ static void falcon_wait(void);
  *
  * finfo[].actual_rate is the value to send to the 1772 chip to get the stepping
  * rate implied by finfo[].rate.  it differs from finfo[].rate for HD diskettes.
+ *
+ * finfo[].drive_type is the type of drive; this is derived from the first byte
+ * of the _FDC cookie.  in two-drive systems, both drives are currently assumed
+ * to be the same.
  *
  * finfo[].cur_density is the density (either DD or HD) being used to access
  * the current diskette.
@@ -229,6 +247,7 @@ static void falcon_wait(void);
 static WORD cur_dev;
 static ULONG deselect_time;
 static ULONG loopcount_fdc;
+static ULONG loopcount_toggle;
 
 /* the following is updated by flopvbl(), and used by flopcmd().  it is
  * non-zero iff the motor on bit is set in the floppy status byte.
@@ -263,10 +282,6 @@ static const WORD hd_steprate[] =
  * that status exists as a possible return from Mediach()).
  */
 
-static UBYTE drivetype;
-#define DD_DRIVE    0x00
-#define HD_DRIVE    0x01
-
 static struct flop_info finfo[NUMFLOPPIES];
 
 #define IS_VALID_FLOPPY_DEVICE(dev) ((UWORD)(dev) < NUMFLOPPIES && units[dev].valid)
@@ -275,13 +290,16 @@ static struct flop_info finfo[NUMFLOPPIES];
 
 static void flop_init(WORD dev)
 {
-    finfo[dev].rate = seekrate;
+    struct flop_info *f = &finfo[dev];
+
+    f->rate = seekrate;
 #if CONF_WITH_FDC
-    finfo[dev].actual_rate = finfo[dev].rate;
-    finfo[dev].cur_density = DENSITY_DD;
-    finfo[dev].cur_track = -1;
-    finfo[dev].wpstatus = 0;
-    finfo[dev].wplatch = 0;
+    /* actual_rate is set by set_density() which is called by floplock() */
+    f->drive_type = (cookie_fdc >> 24) ? HD_DRIVE : DD_DRIVE;
+    f->cur_density = (f->drive_type == HD_DRIVE) ? DENSITY_HD : DENSITY_DD;
+    f->cur_track = -1;
+    f->wpstatus = 0;
+    f->wplatch = 0;
 #endif
 }
 
@@ -291,6 +309,13 @@ void flop_hdv_init(void)
     fverify = 0xff;
     seekrate = DD_STEPRATE_3MS;
 
+#if CONF_WITH_FDC
+    cur_dev = -1;
+    loopcount_fdc = loopcount_1_msec / 20;  /* 50 usec */
+    loopcount_toggle = loopcount_1_msec / 200;  /* 5 usec */
+    deselect_time = 0UL;
+#endif
+
     /* by default, there is no floppy drive */
     nflops = 0;
 #ifdef MACHINE_AMIGA
@@ -298,13 +323,6 @@ void flop_hdv_init(void)
 #endif
     flop_init(0);
     flop_init(1);
-
-#if CONF_WITH_FDC
-    cur_dev = -1;
-    drivetype = (cookie_fdc >> 24) ? HD_DRIVE : DD_DRIVE;
-    loopcount_fdc = loopcount_1_msec / 20;  /* 50 usec */
-    deselect_time = 0UL;
-#endif
 
     /* autodetect floppy drives */
     flop_detect_drive(0);
@@ -330,7 +348,7 @@ void flop_hdv_init(void)
  */
 WORD flop_boot_read(void)
 {
-    return floprw(dskbufp,RW_READ,bootdev,1,0,0,1);
+    return flopio(dskbufp,RW_READ,bootdev,1,0,0,1);
 }
 
 static void flop_add_drive(WORD dev)
@@ -467,7 +485,7 @@ LONG flop_mediach(WORD dev)
      * from a drive, or even replaced one WP diskette by another.  we
      * attempt to read the boot sector to check the diskette serial number
      */
-    if (floprw((UBYTE *)bootsec,RW_READ,dev,1,0,0,1) != 0) {
+    if (flopio((UBYTE *)bootsec,RW_READ,dev,1,0,0,1) != 0) {
         KDEBUG(("flop_mediach(): can't read boot sector => media change\n"));
         return MEDIACHANGE;
     }
@@ -536,7 +554,7 @@ LONG floppy_rw(WORD rw, UBYTE *buf, WORD cnt, LONG recnr, WORD spt,
         numsecs = spt - start_relsec;
         KDEBUG(("floppy_rw() #1: track=%d, side=%d, start=%d, count=%d\n",
                 track,side,start_relsec+1,numsecs));
-        err = floprw(buf, rw, dev, start_relsec+1, track, side, numsecs);
+        err = flopio_ver(buf, rw, dev, start_relsec+1, track, side, numsecs);
         if (err)
             return err;
         buf += SECTOR_SIZE * numsecs;
@@ -557,7 +575,7 @@ LONG floppy_rw(WORD rw, UBYTE *buf, WORD cnt, LONG recnr, WORD spt,
         }
         KDEBUG(("floppy_rw() #2: track=%d, side=%d, start=%d, count=%d\n",
                 track,side,1,spt));
-        err = floprw(buf, rw, dev, 1, track, side, spt);
+        err = flopio_ver(buf, rw, dev, 1, track, side, spt);
         if (err)
             return err;
         buf += SECTOR_SIZE * spt;
@@ -576,7 +594,7 @@ LONG floppy_rw(WORD rw, UBYTE *buf, WORD cnt, LONG recnr, WORD spt,
     numsecs = end_relsec - start_relsec + 1;
     KDEBUG(("floppy_rw() #3: track=%d, side=%d, start=%d, count=%d\n",
             track,side,start_relsec+1,numsecs));
-    err = floprw(buf, rw, dev, start_relsec+1, track, side, numsecs);
+    err = flopio_ver(buf, rw, dev, start_relsec+1, track, side, numsecs);
     if (err)
         return err;
 
@@ -683,14 +701,14 @@ static void setiword(UBYTE *addr, UWORD value)
 LONG floprd(UBYTE *buf, LONG filler, WORD dev,
             WORD sect, WORD track, WORD side, WORD count)
 {
-    return floprw(buf, RW_READ, dev, sect, track, side, count);
+    return flopio(buf, RW_READ, dev, sect, track, side, count);
 }
 
 
 LONG flopwr(const UBYTE *buf, LONG filler, WORD dev,
             WORD sect, WORD track, WORD side, WORD count)
 {
-    return floprw(CONST_CAST(UBYTE *, buf), RW_WRITE, dev, sect, track, side, count);
+    return flopio(CONST_CAST(UBYTE *, buf), RW_WRITE, dev, sect, track, side, count);
 }
 
 /*==== xbios flopver ======================================================*/
@@ -730,20 +748,31 @@ LONG flopwr(const UBYTE *buf, LONG filler, WORD dev,
  *      unexpected errors: all others
  * If no unexpected errors occur, the return code from Flopver() is zero;
  * otherwise it's the return code from the last unexpected error.
+ *
+ * Two important points to remember: the buffer must be WORD aligned and
+ * at least 1KB in length (actually 2*SECTOR_SIZE in this implementation).
  */
 
 LONG flopver(WORD *buf, LONG filler, WORD dev,
              WORD sect, WORD track, WORD side, WORD count)
 {
-    WORD i, err;
     LONG rc = 0L;
-    WORD *bad = (WORD *)buf;
+    WORD *bad = buf;
+#if defined(MACHINE_AMIGA) || CONF_WITH_FDC
+    WORD i, err;
+    UBYTE *diskbuf = (UBYTE *)buf + SECTOR_SIZE;
+#endif
+#if CONF_WITH_FDC
+    WORD retry;
+    BOOL density_ok;
+#endif
 
     if (!IS_VALID_FLOPPY_DEVICE(dev))
         return EUNDEV;  /* unknown disk */
 
+#ifdef MACHINE_AMIGA
     for (i = 0; i < count; i++, sect++) {
-        err = floprw(dskbufp, RW_READ, dev, sect, track, side, 1);
+        err = amiga_floprw(diskbuf, RW_READ, dev, sect, track, side, 1);
         if (err) {
             *bad++ = sect ? sect : -1;
             if ((err != EREADF) && (err != ESECNF))
@@ -751,12 +780,76 @@ LONG flopver(WORD *buf, LONG filler, WORD dev,
         }
     }
 
+    units[dev].last_access = hz_200;
+
+#elif CONF_WITH_FDC
+
+#if CONF_WITH_FRB
+    if (!IS_STRAM_POINTER(buf)) {
+        /*
+         * the buffer provided by the user is outside ST-RAM, so we must
+         * use the intermediate _FRB buffer
+         */
+        diskbuf = get_frb_cookie();
+        if (!diskbuf) {
+            KDEBUG(("flopver() error: can't DMA to Alt-RAM\n"));
+            return EGENRL;
+        }
+    }
+#endif
+
+    floplock(dev);
+
+    select(dev, side);
+    rc = set_track(track);
+    if (rc) {
+        flopunlk();
+        return rc;
+    }
+
+    /*
+     * if the drive is double-density, then we know the density setting
+     * (none required) is OK.  otherwise, we don't know at this point.
+     */
+    density_ok = (finfo[dev].drive_type==DD_DRIVE) ? TRUE : FALSE;
+
+    for (i = 0; i < count; i++, sect++) {
+        for (retry = 0; retry < IO_RETRIES; retry++) {
+            set_fdc_reg(FDC_SR, sect);
+            set_dma_addr(diskbuf);
+            fdc_start_dma_read(1);
+            if (flopcmd(FDC_READ) < 0) {/* timeout */
+                err = EDRVNR;           /* drive not ready */
+                break;                  /* no retry */
+            }
+            err = decode_error();
+            if (err == 0)
+                break;
+            if ((err == ESECNF) && !density_ok) {   /* density _may_ be wrong */
+                switch_density(dev);
+                density_ok = TRUE;
+                retry = 0;              /* allow retries after density switch */
+                err = 0;
+            }
+        }
+        if (err) {
+            *bad++ = sect ? sect : -1;
+            if ((err != EREADF) && (err != ESECNF))
+                rc = err;
+        }
+    }
+
+    flopunlk();
+
+#else
+    rc = EUNDEV;
+#endif
+
     /* we always terminate the list of bad sectors! */
     *bad = 0;
 
     return rc;
 }
-
 
 /*==== xbios flopfmt ======================================================*/
 
@@ -779,7 +872,7 @@ LONG flopfmt(UBYTE *buf, WORD *skew, WORD dev, WORD spt,
         return EBADSF;          /* just like TOS4 */
 
     density = DENSITY_DD;       /* default density */
-    switch(drivetype) {
+    switch(finfo[dev].drive_type) {
     case HD_DRIVE:
         if ((spt >= 13) && (spt <= 20)) {
             density = DENSITY_HD;
@@ -797,6 +890,20 @@ LONG flopfmt(UBYTE *buf, WORD *skew, WORD dev, WORD spt,
     default:
         return EBADSF;          /* consistent, at least :-) */
     }
+
+#if CONF_WITH_FRB
+    if (!IS_STRAM_POINTER(buf)) {
+        /*
+         * the buffer provided by the user is outside ST-RAM, but flopwtrack()
+         * needs to use DMA, so we must use the intermediate _FRB buffer
+         */
+        buf = get_frb_cookie();
+        if (!buf) {
+            KDEBUG(("flopfmt() error: can't DMA from Alt-RAM\n"));
+            return EGENRL;
+        }
+    }
+#endif
 
     /*
      * fixup interleave if not using skew table
@@ -865,62 +972,75 @@ LONG flopfmt(UBYTE *buf, WORD *skew, WORD dev, WORD spt,
     if (err)
         return err;
 
-    /*
-     * verify sectors and store bad sector numbers in buf
-     *
-     * we speed things up for the normal case by attempting to read a
-     * track at a time; if that fails, we call flopver to do it slowly
-     * and build a bad sector list
-     */
-    if (floprw(buf, RW_READ, dev, 1, track, side, spt))
-    {
-        err = flopver((WORD *)buf, 0L, dev, 1, track, side, spt);
-        if (err || (*(WORD *)buf != 0))
-            return EBADSF;
-    }
+    /* verify sectors and store bad sector numbers in buf */
+    err = flopver((WORD *)buf, 0L, dev, 1, track, side, spt);
+    if (err)
+        return err;
+    if (*(WORD *)buf != 0)
+        return EBADSF;
 
-    *(WORD *)buf = 0;   /* safety first */
     return 0;
 }
 
 /*==== xbios floprate ======================================================*/
 
-/* sets the stepping rate of the specified drive.
- * rate meaning
- * 0   6ms
- * 1  12ms
- * 2   2ms
- * 3   3ms
+/*
+ * sets the stepping rate of the specified drive:
+ *  rate meaning
+ *   0     6ms
+ *   1    12ms
+ *   2     2ms
+ *   3     3ms
+ * returns the previous value; to obtain the current value without
+ * changing it, use a rate of -1
+ *
+ * as of TOS 3, the following additional, undocumented, special values
+ * may be used for rate:
+ *  -2: mark the specified drive as an HD drive (always returns 0)
+ *  -3: mark the specified drive as a DD drive (always returns 0)
+ *  -4: query the type of the specified drive (returns -1 for HD, 0 for DD)
+ * the main purpose of this would seem to be to allow a mix of drive
+ * types on e.g. a TT, via a small user program.
  */
-
 LONG floprate(WORD dev, WORD rate)
 {
-    WORD old;
+    WORD old = 0;
+    struct flop_info *f;
 
     if (!IS_VALID_FLOPPY_DEVICE(dev))
         return EUNDEV;  /* unknown disk */
 
-    old = finfo[dev].rate;
-    if (rate >= 0 && rate <= 3) {
-        finfo[dev].rate = rate;
-        finfo[dev].actual_rate = rate;
+    f = &finfo[dev];
+
+#if CONF_WITH_BIOS_EXTENSIONS
+    if (rate == -4)
+        old = (f->drive_type == HD_DRIVE) ? -1 : 0;
+    else if (rate == -3)
+        f->drive_type = DD_DRIVE;
+    else if (rate == -2)
+        f->drive_type = HD_DRIVE;
+    else
+#endif
+    {
+        old = f->rate;
+        if (rate >= 0 && rate <= 3)
+            f->rate = rate;     /* actual_rate is set via floplock() */
     }
 
     return old;
 }
 
-/*==== internal floprw ====================================================*/
+/*==== internal flopio ====================================================*/
 
-static WORD floprw(UBYTE *userbuf, WORD rw, WORD dev,
+static WORD flopio(UBYTE *userbuf, WORD rw, WORD dev,
                    WORD sect, WORD track, WORD side, WORD count)
 {
     WORD err;
 #if CONF_WITH_FDC
-    BOOL density_ok, use_tmpbuf = FALSE;
     WORD retry;
-    WORD status;
     WORD cmd;
-    UBYTE *tmpbuf, *iobufptr;
+    BOOL density_ok;
+    UBYTE *tmpbuf = NULL, *iobufptr;
 #endif
 
     if (!IS_VALID_FLOPPY_DEVICE(dev))
@@ -946,32 +1066,37 @@ static WORD floprw(UBYTE *userbuf, WORD rw, WORD dev,
     }
 
     /*
+     * if the drive is double-density, then we know the density setting
+     * (none required) is OK.  otherwise, we don't know at this point.
+     */
+    density_ok = (finfo[dev].drive_type==DD_DRIVE) ? TRUE : FALSE;
+
+    /*
      * the floppy hardware requires that the buffer be word-aligned and
      * located in ST-RAM.  if it isn't, we get an intermediate buffer.
      * since we only do one sector at a time, we don't care about the
      * buffer size.
      */
-    if (((LONG)userbuf & 1L) || (userbuf >= phystop)) {
+    if (IS_ODD_POINTER(userbuf) || !IS_STRAM_POINTER(userbuf)) {
         tmpbuf = dskbufp;
-        use_tmpbuf = TRUE;
-     }
+    }
 
     /*
-     * if the drive is double-density, then we know the density setting
-     * (none required) is OK.  otherwise, we don't know at this point.
+     * if writing, we need to flush the data cache first, so that the
+     * backing memory is current.  if we're not using a temporary buffer,
+     * we can do it just once for efficiency.
      */
-    density_ok = (drivetype==DD_DRIVE) ? TRUE : FALSE;
-
-    /* if writing, flush data cache here so that memory is current */
-    if (rw)
+    if (rw && !tmpbuf)
         flush_data_cache(userbuf, (LONG)count * SECTOR_SIZE);
 
     while(count--) {
-        iobufptr = use_tmpbuf ? tmpbuf : userbuf;
-        if (rw && use_tmpbuf)
-            memcpy(iobufptr, userbuf, SECTOR_SIZE);
+        iobufptr = tmpbuf ? tmpbuf : userbuf;
+        if (rw && tmpbuf) {
+            memcpy(tmpbuf, userbuf, SECTOR_SIZE);
+            flush_data_cache(tmpbuf, SECTOR_SIZE);
+        }
 
-        for (retry = 0; retry < 2; retry++) {
+        for (retry = 0; retry < IO_RETRIES; retry++) {
             set_fdc_reg(FDC_SR, sect);
             set_dma_addr(iobufptr);
             if (rw == RW_READ) {
@@ -979,50 +1104,36 @@ static WORD floprw(UBYTE *userbuf, WORD rw, WORD dev,
                 cmd = FDC_READ;
             } else {
                 fdc_start_dma_write(1);
-                if (cookie_mch == MCH_FALCON)
-                    falcon_wait();
                 cmd = FDC_WRITE;
             }
             if (flopcmd(cmd) < 0) {     /* timeout */
                 err = EDRVNR;           /* drive not ready */
                 break;                  /* no retry */
             }
-            status = get_dma_status();
-            if (!(status & DMA_OK)) {   /* DMA error, retry */
-                err = EGENRL;           /* general error */
-            } else {
-                status = get_fdc_reg(FDC_CS);
-                if ((rw == RW_WRITE) && (status & FDC_WRI_PRO)) {
-                    err = EWRPRO;       /* write protect */
-                    break;              /* no retry */
-                } else if (status & FDC_RNF) {  /* symptom of wrong density */
-                    if (!density_ok) {  /* it _may_ be wrong */
-                        switch_density(dev);
-                        density_ok = TRUE;
-                        retry = 0;      /* allow retries after density switch */
-                        err = 0;
-                    } else
-                        err = ESECNF;   /* sector not found */
-                } else if (status & FDC_CRCERR) {
-                    err = E_CRC;        /* CRC error */
-                } else if (status & FDC_LOSTDAT) {
-                    err = EDRVNR;       /* drive not ready */
-                } else {
-                    err = 0;
-                    break;
-                }
+            err = decode_error();
+            if ((err == 0) || (err == EWRPRO))
+                break;
+            if ((err == ESECNF) && !density_ok) {   /* density _may_ be wrong */
+                switch_density(dev);
+                density_ok = TRUE;
+                retry = 0;              /* allow retries after density switch */
+                err = 0;
             }
         }
         /* If there was an error, don't read any more sectors */
         if (err)
             break;
 
-        /* invalidate data cache if we've read into memory */
-        if (!rw)
+        /*
+         * if reading, invalidate data cache (this is low-cost, so
+         * it's ok to do it on a sector-by-sector basis), then copy
+         * from temporary buffer if necessary.
+         */
+        if (!rw) {
             invalidate_data_cache(iobufptr, SECTOR_SIZE);
-
-        if (!rw && use_tmpbuf)
-            memcpy(userbuf, iobufptr, SECTOR_SIZE);
+            if (tmpbuf)
+                memcpy(userbuf, tmpbuf, SECTOR_SIZE);
+        }
 
         /* Otherwise carry on sequentially */
         userbuf += SECTOR_SIZE;
@@ -1037,15 +1148,38 @@ static WORD floprw(UBYTE *userbuf, WORD rw, WORD dev,
     return err;
 }
 
+/*==== internal flopio_ver =================================================*/
+
+/*
+ * performs flopio() with optional verification when writing
+ */
+static WORD flopio_ver(UBYTE *buf, WORD rw, WORD dev, WORD sect, WORD track, WORD side, WORD count)
+{
+    WORD err;
+
+    err = flopio(buf, rw, dev, sect, track, side, count);
+
+    if ((rw & RW_WRITE) && (err == 0) && fverify)
+    {
+        err = flopver((WORD *)dskbufp, 0L, dev, sect, track, side, count);
+        /*
+         * flopver() returns 0 if it only encounters EREADF/ESECNF, but
+         * the buffer will contain one or more non-zero sector numbers.
+         * so in this case we set an error code.
+         */
+        if ((err == 0) && (*(WORD *)dskbufp != 0))
+            err = EBADSF;
+    }
+
+    return err;
+}
+
 /*==== internal flopwtrack =================================================*/
 
 static WORD flopwtrack(UBYTE *userbuf, WORD dev, WORD track, WORD side, WORD track_size, WORD density)
 {
 #if CONF_WITH_FDC
-    WORD retry;
     WORD err;
-    WORD status;
-    UBYTE *iobuf;
     struct flop_info *f = &finfo[dev];
 
     if ((track == 0) && (side == 0)) {
@@ -1065,49 +1199,15 @@ static WORD flopwtrack(UBYTE *userbuf, WORD dev, WORD track, WORD side, WORD tra
         return err;
     }
 
-    iobuf = userbuf;    /* by default, we do i/o directly into the user buffer */
+    set_dma_addr(userbuf);
+    fdc_start_dma_write((track_size + SECTOR_SIZE-1) / SECTOR_SIZE);
 
-#if CONF_WITH_FRB
-    if (userbuf >= phystop) {
-        /*
-         * The buffer provided by the user is outside ST-RAM, but flopwtrack()
-         * needs to use DMA, so we must use the intermediate _FRB buffer.
-         */
-        iobuf = get_frb_cookie();
-        if (!iobuf)
-        {
-            KDEBUG(("flopwtrack() error: can't DMA from Alt-RAM\n"));
-            return ERR;
-        }
-        memcpy(iobuf, userbuf, track_size);
+    if (flopcmd(FDC_WRITETR) < 0) {     /* timeout: */
+        err = EDRVNR;                   /* drive not ready */
+    } else {
+        err = decode_error();
     }
-#endif
 
-    for (retry = 0; retry < 2; retry++) {
-        set_dma_addr(iobuf);
-        fdc_start_dma_write((track_size + SECTOR_SIZE-1) / SECTOR_SIZE);
-        if (cookie_mch == MCH_FALCON)
-            falcon_wait();
-        if (flopcmd(FDC_WRITETR) < 0) { /* timeout */
-            err = EDRVNR;               /* drive not ready */
-            break;
-        }
-        status = get_dma_status();
-        if (!(status & DMA_OK)) {       /* DMA error, retry */
-            err = EGENRL;               /* general error */
-        } else {
-            status = get_fdc_reg(FDC_CS);
-            if (status & FDC_WRI_PRO) {
-                err = EWRPRO;           /* write protect */
-                break;                  /* no retry */
-            } else if (status & FDC_LOSTDAT) {
-                err = EDRVNR;           /* drive not ready */
-            } else {
-                err = 0;
-                break;
-            }
-        }
-    }
     flopunlk();
 
     return err;
@@ -1121,14 +1221,13 @@ static WORD flopwtrack(UBYTE *userbuf, WORD dev, WORD track, WORD side, WORD tra
 /*==== internal status, flopvbl ===========================================*/
 
 /*
- * set density & update step rate (HD drives only)
+ * set density & update step rate
  */
 static void set_density(struct flop_info *f)
 {
-    if (drivetype != HD_DRIVE)
-        return;
+    if (has_modectl)
+        DMA->modectl = f->cur_density;
 
-    DMA->modectl = f->cur_density;
     f->actual_rate = (f->cur_density == DENSITY_HD) ? hd_steprate[f->rate] : f->rate;
 }
 
@@ -1139,7 +1238,7 @@ static void switch_density(WORD dev)
 {
     struct flop_info *f = &finfo[dev];
 
-    if (drivetype != HD_DRIVE)
+    if (f->drive_type != HD_DRIVE)
         return;
 
     KDEBUG(("switching density (current=%d)\n",f->cur_density));
@@ -1166,7 +1265,7 @@ struct flop_info *f = &finfo[dev];
         }
     }
 
-    /* set density if required */
+    /* set density (if applicable) */
     set_density(f);
 }
 
@@ -1351,33 +1450,38 @@ static void dummy_seek(void)
     get_fdc_reg(FDC_CS);                    /* resets IRQ */
 }
 
+ /*
+ * restore head to track 0 on specified device
+ */
+static void restore(struct flop_info *fi)
+{
+    if (flopcmd(FDC_RESTORE | fi->actual_rate) == 0)
+        if (get_fdc_reg(FDC_CS) & FDC_TRACK0)
+            fi->cur_track = 0;
+}
+
 /*
  * seek to the specified track on the current device
  * (does nothing if already at that track)
+ *
+ * returns  0       ok
+ *          E_SEEK  seek error
  */
 static WORD set_track(WORD track)
 {
     struct flop_info *fi = &finfo[cur_dev];
-    WORD cmd;
 
     if (track == fi->cur_track)
         return 0;
 
-    if (track == 0) {
-        cmd = FDC_RESTORE;
-    } else {
-        set_fdc_reg(FDC_DR, track);
-        cmd = FDC_SEEK;
+    set_fdc_reg(FDC_DR, track);
+    if (flopcmd(FDC_SEEK | fi->actual_rate) < 0)    /* timeout */
+    {
+        restore(fi);
+        return E_SEEK;
     }
 
-    if (flopcmd(cmd | fi->actual_rate) < 0) {   /* timeout */
-        if (cmd == FDC_SEEK)
-            flopcmd(FDC_RESTORE | fi->actual_rate); /* attempt to restore */
-        fi->cur_track = 0;                          /* assume we did */
-        return E_SEEK;  /* seek error */
-    }
-
-    fi->cur_track = track;
+    fi->cur_track = track;          /* all ok */
     return 0;
 }
 
@@ -1415,6 +1519,30 @@ static WORD flopcmd(WORD cmd)
     return 0;
 }
 
+/*
+ * decode DMA/FDC error status
+ */
+static WORD decode_error(void)
+{
+    WORD status;
+
+    status = get_dma_status();
+    if (!(status & DMA_OK))     /* DMA error */
+        return EGENRL;
+
+    status = get_fdc_reg(FDC_CS);
+    if (status & FDC_RNF)       /* can be symptom of wrong density */
+        return ESECNF;
+    if (status & FDC_WRI_PRO)
+        return EWRPRO;          /* write protect */
+    if (status & FDC_CRCERR)
+        return E_CRC;           /* CRC error */
+    if (status & FDC_LOSTDAT)
+        return EDRVNR;          /* drive not ready */
+
+    return 0;
+}
+
 static WORD get_dma_status(void)
 {
     WORD ret;
@@ -1427,14 +1555,9 @@ static WORD get_dma_status(void)
 
 static WORD get_fdc_reg(WORD reg)
 {
-    WORD ret;
-
     DMA->control = reg;
     fdc_delay();
-    ret = DMA->data;
-    fdc_delay();
-
-    return ret;
+    return DMA->data;
 }
 
 static void set_fdc_reg(WORD reg, WORD value)
@@ -1442,7 +1565,6 @@ static void set_fdc_reg(WORD reg, WORD value)
     DMA->control = reg;
     fdc_delay();
     DMA->data = value;
-    fdc_delay();
 }
 
 /* the fdc_start_dma_*() functions toggle the dma write bit, to
@@ -1453,31 +1575,29 @@ static void set_fdc_reg(WORD reg, WORD value)
 
 static void fdc_start_dma_read(WORD count)
 {
-    DMA->control = DMA_SCREG | DMA_FLOPPY;
     DMA->control = DMA_SCREG | DMA_FLOPPY | DMA_WRBIT;
+    toggle_delay();
     DMA->control = DMA_SCREG | DMA_FLOPPY;
+    toggle_delay();
     DMA->data = count;
 }
 
 static void fdc_start_dma_write(WORD count)
 {
-    DMA->control = DMA_SCREG | DMA_FLOPPY | DMA_WRBIT;
     DMA->control = DMA_SCREG | DMA_FLOPPY;
+    toggle_delay();
     DMA->control = DMA_SCREG | DMA_FLOPPY | DMA_WRBIT;
+    toggle_delay();
     DMA->data = count;
-}
 
 /*
  * during write sector and write track sequences, just before sending
- * the write command, Falcon TOS (TOS4) loops waiting for a bit in a
- * Falcon-only register (at $860f) to become zero.  at a guess, this
- * bit is set to zero when the DMA has been cleared, but who knows?
- * we just do the same.
+ * the write command, Falcon TOS (TOS4) loops waiting for bit 3 in the
+ * "mode control" register (at $860f) to become zero.  we do the same.
  */
-static void falcon_wait(void)
-{
-    while(DMA->modectl&DMA_MCBIT3)
-        ;
+    if (cookie_mch == MCH_FALCON)
+        while(DMA->modectl&DMA_MCBIT3)
+            ;
 }
 
 #endif /* CONF_WITH_FDC */

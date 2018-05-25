@@ -46,19 +46,6 @@
  *  strings.  It also contains externs for the structures in the .c file
  *  that are to be globally-visible.
  *
- *  In order to save space in the generated resource file when compiling
- *  for the 192K ROM images, the generated code for certain items is
- *  surrounded by a #ifdef/#endif wrapper.  This is based on two pairs
- *  of program-supplied values:
- *      . a starting free string name & conditional compilation string
- *      . a starting tree name & conditional compilation string.
- *  All free strings with numbers greater than or equal to the number
- *  of the starting free string are wrapped.  Trees are treated in a
- *  similar fashion.  Objects/tedinfos/bitblks/iconblks that appear only
- *  in wrapped trees will also be wrapped.  Note that, at this time, this
- *  process does NOT extend to the images pointed to by bitblks/iconblks,
- *  but this could be added with some extra work.
- *
  *  In order to save space in the generated resource file for all ROMs,
  *  the following additional steps are taken:
  *    . duplicate image data is automatically eliminated; multiple
@@ -84,11 +71,9 @@
  *  For compatibility with EmuTOS multi-language support, text strings
  *  (strings containing any character other than a space, a digit or
  *  punctuation) in the .c file are normally enclosed in the N_() macro.
- *  Additionally, strings consisting of all dashes (which are used to
- *  separate items in menus) are also enclosed in N_().  These actions
- *  may be overridden via the "no-translate" array in the program.
- *  Each entry in the array specifies a partial string to match; any
- *  text string beginning with any of the match strings will _not_ be
+ *  This action may be overridden via the "no-translate" array in the
+ *  program: each entry in the array specifies a partial string to match;
+ *  any text string beginning with any of the match strings will _not_ be
  *  enclosed by N_().
  *
  *  The user may also specify (via the -p option) a prefix to be applied
@@ -187,6 +172,22 @@
  *  v4.9    roger burrows, april/2017
  *          . treat all single-character strings as non-translatable
  *          . don't generate unnecessary casts in write_c_epilogue() output
+ *
+ *  v5.0    roger burrows, july/2017
+ *          . add support for mform (mouse cursor) resource generation
+ *            (performed if preprocessor symbol MFORM_RSC is #defined)
+ *
+ *  v5.1    roger burrows, august/2017
+ *          . drop TARGET_192 conditional wrapping for desktop version
+ *
+ *  v5.2    roger burrows, november/2017
+ *          . EmuDesk now builds the menu separator lines dynamically, so
+ *            (a) we no longer need to mark them as translateable, and
+ *            (b) we can truncate them to one byte to save ROM space
+ *
+ *  v5.3    roger burrows, december/2017
+ *          . generates code to allocate the desktop object array
+ *            dynamically to reduce EmuTOS's low-memory footprint
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -224,6 +225,12 @@
   #endif
   #define RSC_CHOSEN
 #endif
+#ifdef MFORM_RSC
+  #ifdef RSC_CHOSEN
+    #error Conflicting preprocessor defines
+  #endif
+  #define RSC_CHOSEN
+#endif
 #ifndef RSC_CHOSEN
   #define DESK_RSC
 #endif
@@ -238,6 +245,7 @@
 #define RSD             "rsd"
 #define MAXLEN_HRD      16          /* max length of name allowed in HRD entry */
 #define MAX_SUBSTR      5           /* maximum number of "substrings" in a free string (see getlen()) */
+#define MFORM_SIZE      74          /* stored as BITBLK data in a resource */
 
 /*
  *  our version of standard AES stuff, with changes to accommodate
@@ -397,8 +405,11 @@ typedef struct {
 #ifdef ICON_RSC
   #define PROGRAM_NAME  "ird"
 #endif
+#ifdef MFORM_RSC
+  #define PROGRAM_NAME  "mrd"
+#endif
 
-#define VERSION         "v4.9"
+#define VERSION         "v5.2"
 #define MAX_STRLEN      300         /* max size for internal string areas */
 #define NLS             "N_("       /* the macro used in EmuTOS for NLS support*/
 
@@ -482,9 +493,11 @@ typedef struct {
 #ifdef DESK_RSC
 /*
  *  conditional wrapping control
+ *
+ *  not used since the introduction of the 'draft' resource preprocessor
  */
-LOCAL const CONDITIONAL frstr_cond = { "STICNTYP", "#ifndef TARGET_192" };
-LOCAL const CONDITIONAL other_cond = { "ADTTREZ", "#ifndef TARGET_192" };
+LOCAL const CONDITIONAL frstr_cond = { "?", "#error Code generation error" };  /* no match, error if it does ... */
+LOCAL const CONDITIONAL other_cond = { "?", "#error Code generation error" };  /* likewise */
 
 /*
  *  table of complete strings that will have a shared data item
@@ -575,6 +588,27 @@ LOCAL int num_notrans = 0;
 #endif
 
 
+#ifdef MFORM_RSC
+/*
+ *  conditional wrapping control
+ */
+LOCAL const CONDITIONAL frstr_cond = { "?", "#error Code generation error" };  /* no match, error if it does ... */
+LOCAL const CONDITIONAL other_cond = { "?", "#error Code generation error" };  /* likewise */
+
+/*
+ *  table of complete strings that will have a shared data item
+ */
+LOCAL SHARED_ENTRY shared[1];     /* dummy */
+LOCAL int num_shared = 0;
+
+/*
+ *  table of string prefixes for text that should not be translated
+ */
+LOCAL NOTRANS_ENTRY notrans[1];   /* dummy */
+LOCAL int num_notrans = 0;
+#endif
+
+
 /*
  *  END OF PROGRAM PARAMETERS
  */
@@ -583,7 +617,7 @@ LOCAL int num_notrans = 0;
 /*
  *  other globals
  */
-LOCAL const char *copyright = PROGRAM_NAME " " VERSION " copyright (C) 2012-2016 by Roger Burrows\n"
+LOCAL const char *copyright = PROGRAM_NAME " " VERSION " copyright (C) 2012-2017 by Roger Burrows\n"
 "This program is licensed under the GNU General Public License.\n"
 "Please see LICENSE.TXT for details.\n";
 
@@ -628,11 +662,12 @@ LOCAL int conditional_bitblk_start;
 LOCAL int conditional_iconblk_start;
 
 /*
- *  the following control generation of trees and objects
- *  (the generated icon C file does not contain either)
+ *  the following control generation of trees, objects and freestrings
+ *  (the generated icon C file does not contain any of these)
  */
 LOCAL int generate_trees = 1;
 LOCAL int generate_objects = 1;
+LOCAL int generate_freestrings = 1;
 
 /*
  *  table for decoding ob_flags
@@ -691,7 +726,9 @@ PRIVATE int all_dashes(char *string);
 PRIVATE int cmp_def(const void *a,const void *b);
 PRIVATE int cmp_shared(const void *a,const void *b);
 PRIVATE int compare_data(ICONBLK *b1,ICONBLK *b2);
+#ifndef MFORM_RSC
 PRIVATE int compare_images(BITBLK *b1,BITBLK *b2);
+#endif
 PRIVATE int compare_mask(ICONBLK *b1,ICONBLK *b2);
 PRIVATE void convert_header(RSHDR *hdr);
 PRIVATE short convert_def_type(int deftype);
@@ -829,8 +866,9 @@ int n;
      */
     mark_conditional();
 
-#ifdef ICON_RSC
+#if defined(ICON_RSC) || defined(MFORM_RSC)
     generate_trees = generate_objects = 0;  /* the generated C file has neither */
+    generate_freestrings = 0;
 #endif
 
     /*
@@ -1440,7 +1478,7 @@ short old_tree = -1;
         fprintf(fp,"#endif\n");
     fprintf(fp,"\n");
 
-#ifndef ICON_RSC
+#if !defined(ICON_RSC) && !defined(MFORM_RSC)
     /*
      * then bitblks & free images
      */
@@ -1506,11 +1544,11 @@ PRIVATE int write_h_extern(FILE *fp)
     fprintf(fp,"extern const BITBLK %srs_bitblk[];\n",prefix);
     fprintf(fp,"extern const char * const %srs_fstr[];\n",prefix);
     fprintf(fp,"extern const ICONBLK %srs_iconblk[];\n",prefix);
-    fprintf(fp,"extern OBJECT %srs_obj[RS_NOBS];\n",prefix);
+    fprintf(fp,"extern OBJECT * %srs_obj;\n",prefix);
     fprintf(fp,"extern TEDINFO %srs_tedinfo[RS_NTED];\n",prefix);
-    fprintf(fp,"extern OBJECT * const %srs_trees[];\n\n",prefix);
+    fprintf(fp,"extern OBJECT * %srs_trees[];\n\n",prefix);
 
-    fprintf(fp,"extern void %srs_init(void);\n\n",prefix);
+    fprintf(fp,"extern int %srs_init(void);\n\n",prefix);
 #endif
 #ifdef GEM_RSC
     fprintf(fp,"/* The following arrays live in RAM */\n");
@@ -1530,6 +1568,9 @@ PRIVATE int write_h_extern(FILE *fp)
 #ifdef ICON_RSC
     fprintf(fp,"extern const ICONBLK %srs_iconblk[];\n\n",prefix);
 #endif
+#ifdef MFORM_RSC
+    fprintf(fp,"extern const MFORM * const %srs_data[];\n\n",prefix);
+#endif
 
     return ferror(fp) ? -1 : 0;
 }
@@ -1543,9 +1584,15 @@ PRIVATE int write_include(FILE *fp,char *name)
     fprintf(fp,"#include \"string.h\"\n");
     fprintf(fp,"#include \"portab.h\"\n");
     fprintf(fp,"#include \"obdefs.h\"\n");
+#ifdef DESK_RSC
+    fprintf(fp,"#include \"gemdos.h\"\n");
+#endif
 #ifdef GEM_RSC
     fprintf(fp,"#include \"../desk/deskmain.h\"\n");
     fprintf(fp,"#include \"gemrslib.h\"\n");
+#endif
+#ifdef MFORM_RSC
+    fprintf(fp,"#include \"gsxdefs.h\"\n");
 #endif
     fprintf(fp,"#include \"%s.h\"\n",name);
     fprintf(fp,"#include \"nls.h\"\n\n");
@@ -1664,6 +1711,10 @@ char temp[MAX_STRLEN];
 int *mmap, *dmap;
 ICONBLK *iconblk;
 char *base = (char *)rschdr;
+int w, h;
+#ifdef ICON_RSC
+int wicon = 0, hicon = 0;
+#endif
 
     nib = rsh.nib;
     if (nib == 0)
@@ -1708,16 +1759,31 @@ char *base = (char *)rschdr;
      * then we create the actual icon mask/data arrays
      */
     for (i = 0; i < nib; i++, iconblk++) {
+        w = get_short(&iconblk->ib_wicon);
+        h = get_short(&iconblk->ib_hicon);
+#ifdef ICON_RSC
+        if (i != 0 && w != wicon)
+            fprintf(stderr, "error: width %d of icon %d is different than width %d\n", w, i, wicon);
+        if (i != 0 && h != hicon)
+            fprintf(stderr, "error: height %d of icon %d is different than height %d\n", h, i, hicon);
+        if (i != 0 && (w != wicon || h != hicon))
+            error("mismatch in icon dimensions", NULL);
+        if (i == 0)
+        {
+            wicon = w;
+            hicon = h;
+        }
+#endif
         if (i == conditional_iconblk_start)
             fprintf(fp,"%s\n",other_cond.string);
         if (mmap[i] < 0) {      /* only create icon mask for an "unmapped" icon */
-            n = get_short(&iconblk->ib_hicon) * get_short(&iconblk->ib_wicon) / 16;
+            n = h * w / 16;
             fprintf(fp,"static const WORD rs_iconmask%d[] = {\n",i);    /* output mask */
             write_data(fp,n,(USHORT *)(base+get_offset(&iconblk->ib_pmask)));
             fprintf(fp,"};\n\n");
         }
         if (dmap[i] < 0) {      /* only create icon data for an "unmapped" icon */
-            n = get_short(&iconblk->ib_hicon) * get_short(&iconblk->ib_wicon) / 16;
+            n = h * w / 16;
             fprintf(fp,"static const WORD rs_icondata%d[] = {\n",i);    /* output data */
             write_data(fp,n,(USHORT *)(base+get_offset(&iconblk->ib_pdata)));
             fprintf(fp,"};\n\n");
@@ -1764,7 +1830,57 @@ char *base = (char *)rschdr;
 
 /*
  *  this creates the BITBLK stuff for the .c file
+ *  (or, in the case of mrd, the MFORM data)
  */
+#ifdef MFORM_RSC
+PRIVATE int write_bitblk(FILE *fp)
+{
+int i, n, nbb;
+SHORT *w;
+BITBLK *bitblk;
+char *base = (char *)rschdr;
+
+    nbb = rsh.nbb;
+    if (nbb == 0)
+        return 0;
+
+    bitblk = (BITBLK *)(base + rsh.bitblk);
+
+    /*
+     * here we create the actual MFORMs
+     */
+    for (i = 0; i < nbb; i++, bitblk++) {
+        n = get_short(&bitblk->bi_hl) * get_short(&bitblk->bi_wb) / 2;
+        if (n * sizeof(USHORT) != MFORM_SIZE)
+            error("BITBLK data is not an MFORM",NULL);
+        w = (SHORT *)(base+get_offset(&bitblk->bi_pdata));
+        fprintf(fp,"static const MFORM rs_mform%d = {\n",i);
+        fprintf(fp,"    %d, %d, %d, %d, %d,\n",
+                get_short(w),get_short(w+1),get_short(w+2),
+                get_short(w+3),get_short(w+4));
+        fprintf(fp,"    {\n");
+        write_data(fp,16,(USHORT *)(w+5));
+        fprintf(fp,"    },\n");
+        fprintf(fp,"    {\n");
+        write_data(fp,16,(USHORT *)(w+21));
+        fprintf(fp,"    }\n");
+        fprintf(fp,"};\n\n");
+    }
+    fprintf(fp,"\n");
+
+    /*
+     * finally we create the array of pointers to MFORMs
+     */
+    fprintf(fp,"const MFORM * const %srs_data[] = {\n",prefix);
+    bitblk = (BITBLK *)(base + rsh.bitblk);
+    for (i = 0; i < nbb; i++, bitblk++) {
+        fprintf(fp,"    &rs_mform%d,\n",i);
+    }
+    fprintf(fp,"};\n\n\n");
+
+    return ferror(fp) ? -1 : 0;
+}
+#else
 PRIVATE int write_bitblk(FILE *fp)
 {
 int i, j, n, nbb;
@@ -1821,7 +1937,7 @@ char *base = (char *)rschdr;
     for (i = 0; i < nbb; i++, bitblk++) {
         if (i == conditional_bitblk_start)
             fprintf(fp,"%s\n",other_cond.string);
-        fprintf(fp,"    { (LONG) rs_bitblk%d, %d, %d, %d, %d, %d },\n",
+        fprintf(fp,"    { (void *)rs_bitblk%d, %d, %d, %d, %d, %d },\n",
                 (map[i]==-1)?i:map[i],get_short(&bitblk->bi_wb),
                 get_short(&bitblk->bi_hl),get_short(&bitblk->bi_x),
                 get_short(&bitblk->bi_y),get_short(&bitblk->bi_color));
@@ -1834,6 +1950,7 @@ char *base = (char *)rschdr;
 
     return ferror(fp) ? -1 : 0;
 }
+#endif
 
 /*
  *  this creates the OBJECT stuff for the .c file
@@ -1853,7 +1970,11 @@ char *base = (char *)rschdr;
     if (!generate_objects)
         return 0;
 
+#ifdef DESK_RSC
+    fprintf(fp,"OBJECT * %srs_obj;\n\n",prefix);
+#else
     fprintf(fp,"OBJECT %srs_obj[RS_NOBS];\n\n",prefix);
+#endif
 
     fprintf(fp,"static const OBJECT %srs_obj_rom[] = {\n",prefix);
 
@@ -1912,13 +2033,28 @@ char *base = (char *)rschdr;
 PRIVATE int write_tree(FILE *fp)
 {
 int i, ntree;
+#ifndef DESK_RSC
 int first_time = 1;
 DEF_ENTRY *d;
 char temp[MAX_STRLEN];
+#endif
 
     if (!generate_trees)
         return 0;
 
+#ifdef DESK_RSC
+    fprintf(fp,"OBJECT * %srs_trees[RS_NTREE];\n\n\n",prefix);
+
+    fprintf(fp,"static const WORD treestart[RS_NTREE] = {");
+
+    ntree = rsh.ntree;
+    for (i = 0; i < ntree; i++) {
+        if (i%8 == 0)
+            fprintf(fp,"\n    ");
+        fprintf(fp,"TR%d, ",i);
+    }
+    fprintf(fp,"\n");
+#else
     fprintf(fp,"OBJECT * const %srs_trees[] = {\n",prefix);
 
     ntree = rsh.ntree;
@@ -1935,6 +2071,7 @@ char temp[MAX_STRLEN];
     }
     if (!first_time)
         fprintf(fp,"#endif\n");
+#endif
 
     fprintf(fp,"};\n\n\n");
 
@@ -1944,16 +2081,6 @@ char temp[MAX_STRLEN];
 /*
  *  this creates the free string stuff for the .c file
  */
-#ifdef ICON_RSC
-PRIVATE int write_freestr(FILE *fp)
-{
-int length;
-
-    getlen(&length,"");         /* otherwise GCC complains */
-
-    return ferror(fp) ? -1 : 0; /* likewise */
-}
-#else
 PRIVATE int write_freestr(FILE *fp)
 {
 int i, j, n, nstring;
@@ -1965,6 +2092,9 @@ OFFSET *strptr;
 DEF_ENTRY *d;
 char temp[MAX_STRLEN];
 char *base = (char *)rschdr;
+
+    if (!generate_freestrings)
+        return 0;
 
     fprintf(fp,"const char * const %srs_fstr[] = {\n",prefix);
 
@@ -2000,7 +2130,7 @@ char *base = (char *)rschdr;
 
     return ferror(fp) ? -1 : 0;
 }
-#endif
+
 
 /*
  *  this creates miscellaneous defines + the initialisation code in the .c file
@@ -2008,12 +2138,20 @@ char *base = (char *)rschdr;
 PRIVATE int write_c_epilogue(FILE *fp)
 {
 #ifdef DESK_RSC
-    fprintf(fp,"void %srs_init(void)\n",prefix);
+    fprintf(fp,"int %srs_init(void)\n",prefix);
     fprintf(fp,"{\n");
+    fprintf(fp,"    WORD i;\n\n");
+    fprintf(fp,"    desk_rs_obj = dos_alloc_anyram(RS_NOBS*sizeof(OBJECT));\n");
+    fprintf(fp,"    if (!desk_rs_obj)\n");
+    fprintf(fp,"        return -1;\n\n");
     fprintf(fp,"    /* Copy data from ROM to RAM: */\n");
     fprintf(fp,"    memcpy(%srs_obj, %srs_obj_rom, RS_NOBS * sizeof(OBJECT));\n",prefix,prefix);
     fprintf(fp,"    memcpy(%srs_tedinfo, %srs_tedinfo_rom,\n",prefix,prefix);
-    fprintf(fp,"           RS_NTED * sizeof(TEDINFO));\n");
+    fprintf(fp,"           RS_NTED * sizeof(TEDINFO));\n\n");
+    fprintf(fp,"    /* set up the tree pointers */\n");
+    fprintf(fp,"    for (i = 0; i < RS_NTREE; i++)\n");
+    fprintf(fp,"        desk_rs_trees[i] = &desk_rs_obj[treestart[i]];\n\n");
+    fprintf(fp,"    return 0;\n");
     fprintf(fp,"}\n\n");
 #endif
 #ifdef GEM_RSC
@@ -2395,8 +2533,8 @@ char *base = (char *)rschdr;
         xlate = copycheck(temp,p,MAX_STRLEN-1);
         if (type == G_STRING)
             trim_spaces(temp);
-        if (all_dashes(temp) && !notranslate(temp))     /* handle menu separators */
-            xlate = 1;
+        if (all_dashes(temp))   /* truncate separator lines to save ROM space */
+            temp[1] = '\0';
         if (xlate == 0)
             fprintf(fp,"\"%s\",\n",temp);
         else fprintf(fp,"%s\"%s\"),\n",NLS,temp);
@@ -2482,6 +2620,7 @@ char *p;
     *(p+1) = '\0';
 }
 
+#ifndef MFORM_RSC
 /*
  *  compare images, return 0 iff identical size & image data
  */
@@ -2507,6 +2646,7 @@ char *base = (char *)rschdr;
 
     return 0;
 }
+#endif
 
 /*
  *  compare icon mask, return 0 iff identical size & mask

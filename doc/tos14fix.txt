@@ -779,7 +779,7 @@ Ddelete()
 
 Folder Limits
 -------------
-124. The so-called "40-folder bug" is fixed.  There are still         FIXED: 
+124. The so-called "40-folder bug" is fixed.  There are still         FIXED:
      limits, mainly on the depth of folders and the accumulated       initial fix by commit 410326
      depth of open files, but these limits are very far away and      main fix via commit 49d837
      can still be extended with "FOLDRXXX.PRG" which is widely        further help via commit f54411

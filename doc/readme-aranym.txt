@@ -1,13 +1,18 @@
 EmuTOS - ARAnyM version
 
 This ROM is optimized for ARAnyM:
-http://aranym.org/
+https://aranym.github.io/
 
 emutos-aranym.img - Multilanguage
 
 The following optional files are also supplied:
+emucurs.rsc - modifiable mouse cursors for the AES/desktop
+emucurs.def - definition file for the above
 emuicon.rsc - contains additional icons for the desktop
 emuicon.def - definition file for the above
+
+Note that the emuicon.rsc file format differs from deskicon.rsc used by later
+versions of the Atari TOS desktop.
 
 The default language is English.
 Other languages can be used by setting the NVRAM appropriately.

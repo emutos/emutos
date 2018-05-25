@@ -38,18 +38,13 @@
 #include "gemsclib.h"
 #include "gemrslib.h"
 #include "gemaplib.h"
-
+#include "gsx2.h"
+#include "funcdef.h"
 #include "string.h"
 
-#define TCHNG 0
-#define BCHNG 1
-#define MCHNG 2
-#define KCHNG 3
-
-
 /* Global variables: */
-WORD     gl_play;
-WORD     gl_recd;
+BOOL     gl_play;
+BOOL     gl_recd;
 WORD     gl_rlen;
 FPD      *gl_rbuf;
 
@@ -115,36 +110,51 @@ WORD ap_find(BYTE *pname)
 
 /*
  *  APplication Tape PLAYer
+ *
+ *  this is relatively straightforward, except if we have to playback
+ *  mouse movement.  in this case, we need to:
+ *      a) disconnect the cursor from the VDI (done here), and
+ *      b) draw it ourselves (done in mchange() in geminput.c).
  */
-void ap_tplay(FPD *pbuff,WORD length,WORD scale)
+void ap_tplay(const EVNTREC *pbuff,WORD length,WORD scale)
 {
     WORD   i;
     FPD    f;
+    PFVOID mot_vecx_save = NULL;
 
     gl_play = TRUE;
 
-    for (i = 0; i < length; i++) {
-        /* get an event to play */
-        f = *pbuff;
-        pbuff++;
+    for (i = 0; i < length; i++, pbuff++) {
+        /* set up FPD for forkq */
+        f.f_code = NULL;            /* by default we don't call forkq() */
+        f.f_data = pbuff->ap_value;
 
         /* convert to form suitable for forkq */
-        switch((LONG)f.f_code) {
+        switch(pbuff->ap_event) {
         case TCHNG:
             ev_timer((f.f_data*100L)/scale);
-            f.f_code = NULL;
             break;
         case BCHNG:
             f.f_code = bchange;
             break;
         case MCHNG:
+            if (!mot_vecx_save)     /* i.e. first time for MCHNG */
+            {
+                /*
+                 * disconnect cursor drawing & movement routines
+                 */
+                i_ptr(justretf);
+                gsx_ncode(CUR_VECX, 0, 0);
+                m_lptr2(&drwaddr);  /* old address will be used by drawrat() */
+                i_ptr(justretf);
+                gsx_ncode(MOT_VECX, 0, 0);
+                m_lptr2(&mot_vecx_save);
+            }
             f.f_code = mchange;
             break;
         case KCHNG:
             f.f_code = kchange;
             break;
-        default:
-            f.f_code = NULL;
         }
 
         if (f.f_code)   /* if valid, add to queue */
@@ -153,23 +163,49 @@ void ap_tplay(FPD *pbuff,WORD length,WORD scale)
         dsptch();       /* let someone run */
     }
 
+    /*
+     *  if we disconnected above, reconnect the old routines
+     */
+    if (mot_vecx_save)
+    {
+        drawrat(xrat, yrat);
+        gsx_setmousexy(xrat, yrat);     /* no jumping cursors, please */
+        i_ptr(drwaddr);                 /* restore vectors */
+        gsx_ncode(CUR_VECX, 0, 0);
+        i_ptr(mot_vecx_save);
+        gsx_ncode(MOT_VECX, 0, 0);
+    }
+
     gl_play = FALSE;
 }
 
 /*
  *  APplication Tape RECorDer
  */
-WORD ap_trecd(FPD *pbuff,WORD length)
+WORD ap_trecd(EVNTREC *pbuff,WORD length)
 {
     WORD   i;
     LONG   code;
     FCODE  proutine;
 
-    /* start recording in forker() [gemdisp.c] */
+    /*
+     * start recording in forker() [gemdisp.c]
+     *
+     * the events are recorded in the buffer in FPD format, and converted
+     * to EVNTREC format below, after recording is complete.  This assumes
+     * that sizeof(FPD) = sizeof(EVNTREC).
+     *
+     * if the size of the FPD structure changes (unlikely), you'll get
+     * an error from _Static_assert(), and you'll probably need to do
+     * the conversion to EVNTREC on the fly in gemdisp.c.
+     */
+    _Static_assert(sizeof(EVNTREC)==sizeof(FPD),
+                    "EVNTREC & FPD structures are not the same size!");
+
     disable_interrupts();
     gl_recd = TRUE;
     gl_rlen = length;
-    gl_rbuf = pbuff;
+    gl_rbuf = (FPD *)pbuff;
     enable_interrupts();
 
     /* check every 0.1 seconds if recording is done */
@@ -181,14 +217,14 @@ WORD ap_trecd(FPD *pbuff,WORD length)
      * figure out actual length & reset globals for next time
      */
     disable_interrupts();
-    length = (WORD)(gl_rbuf - pbuff);
+    length = (WORD)(gl_rbuf - (FPD *)pbuff);
     gl_rlen = 0;
     gl_rbuf = NULL;
     enable_interrupts();
 
     /* convert to standard format */
-    for (i = 0; i < length; i++) {
-        proutine = pbuff->f_code;
+    for (i = 0; i < length; i++, pbuff++) {
+        proutine = (FCODE)pbuff->ap_event;
         if (proutine == tchange)
             code = TCHNG;
         else if (proutine == bchange)
@@ -198,8 +234,8 @@ WORD ap_trecd(FPD *pbuff,WORD length)
         else if (proutine == kchange)
             code = KCHNG;
         else code = -1;
-        pbuff->f_code = (FCODE)code;
-        pbuff++;
+        pbuff->ap_event = code;
+        /* ap_value is the (unchanged) f_data */
     }
 
     return length;
@@ -210,13 +246,13 @@ WORD ap_trecd(FPD *pbuff,WORD length)
  */
 void ap_exit(void)
 {
-    wm_update(TRUE);
+    wm_update(BEG_UPDATE);
     mn_clsda();
     wait_for_accs(AP_ACCLOSE);  /* block until all DAs have seen AC_CLOSE */
     if (rlr->p_qindex)
         ap_rdwr(MU_MESAG, rlr, rlr->p_qindex, (WORD *)D.g_valstr);
     set_mouse_to_arrow();
-    wm_update(FALSE);
+    wm_update(END_UPDATE);
     all_run();
     rlr->p_flags &= ~AP_OPEN;   /* say appl_exit() is done */
 }

@@ -89,17 +89,6 @@ void draw_dial(OBJECT *tree)
 }
 
 
-void show_hide(WORD fmd, OBJECT *tree)
-{
-    WORD xd, yd, wd, hd;
-
-    form_center(tree, &xd, &yd, &wd, &hd);
-    form_dial(fmd, 0, 0, 0, 0, xd, yd, wd, hd);
-    if (fmd == FMD_START)
-        objc_draw(tree, ROOT, MAX_DEPTH, xd, yd, wd, hd);
-}
-
-
 /*
  * display copy alert dialog & wait for selection, then (re)display copying dialog
  *
@@ -115,7 +104,7 @@ static WORD do_namecon(void)
         draw_dial(tree);
     else
     {
-        show_hide(FMD_START, tree);
+        start_dialog(tree);
         ml_havebox = TRUE;
     }
     form_do(tree, 0);
@@ -218,43 +207,6 @@ static WORD item_exists(BYTE *path, BOOL is_folder)
     dos_sdta(dta);
 
     return !rc;
-}
-
-
-/*
- *  Routine to check that the name we will be adding is like the
- *  last folder name in the path.
- */
-static void like_parent(BYTE *path, BYTE *new_name)
-{
-    BYTE *pstart, *lastfold, *lastslsh;
-
-    /* remember start of path */
-    pstart = path;
-
-    /* scan to lastslsh */
-    lastslsh = path = filename_start(path) - 1;
-
-    /* back up to next to last slash if it exists */
-    path--;
-    while ((*path != '\\') && (path > pstart))
-        path--;
-
-    /* remember start of last folder name */
-    if (*path == '\\')
-        lastfold = path + 1;
-    else
-        lastfold = NULL;
-
-    if (lastfold)
-    {
-        *lastslsh = '\0';
-        if (strcmp(lastfold, new_name) == 0)
-            return;
-        *lastslsh = '\\';
-    }
-
-    add_fname(pstart, new_name);
 }
 
 
@@ -385,7 +337,7 @@ static WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
         ob = do_namecon();
         if (ob == CASTOP)
             return 0;
-        else if (ob == CACNCL)
+        else if (ob == CASKIP)
             return -1;
 
         /*
@@ -428,18 +380,19 @@ static WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
  *  Returns:
  *      1/TRUE  ok
  *      0/FALSE if error opening destination, or user said stop,
- *              or error during copy
- *      -1      user cancelled (this) copy, or disk full
+ *              or error during copy (including disk full)
+ *      -1      user skipped this copy
  */
 static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WORD attr)
 {
+    BOOL diskfull = FALSE;
     WORD srcfh, dstfh, rc;
-    LONG readlen, writelen, ret;
+    LONG readlen, writelen, error;
 
-    ret = dos_open(psrc_file, 0);
-    if (ret < 0L)
-        return d_errmsg((WORD)ret);
-    srcfh = (WORD)ret;
+    error = dos_open(psrc_file, 0);
+    if (error < 0L)
+        return d_errmsg((WORD)error);
+    srcfh = (WORD)error;
 
     rc = output_fname(psrc_file, pdst_file);
     if (rc <= 0)        /* not allowed to copy file */
@@ -447,16 +400,16 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
         dos_close(srcfh);
         if (rc == 0)    /* unexpected error opening dest, or user said stop */
             return FALSE;
-        return -1;      /* user said cancel, notify caller */
+        return -1;      /* user said skip, notify caller */
     }
 
     /*
      * we have the (possibly-modified) filename in pdst_file
      */
-    ret = dos_create(pdst_file, attr);
-    if (ret < 0L)
+    error = dos_create(pdst_file, attr);
+    if (error < 0L)
         return invalid_copy_msg();
-    dstfh = (WORD)ret;
+    dstfh = (WORD)error;
 
     /*
      * perform copy
@@ -464,45 +417,43 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
     rc = TRUE;
     while(1)
     {
-        readlen = dos_read(srcfh, copylen, copybuf);
-        if (readlen < 0L)   /* i.e. error */
-        {
-            rc = d_errmsg((WORD)readlen);
-            break;
-        }
-        if (readlen == 0)   /* end of file */
+        error = readlen = dos_read(srcfh, copylen, copybuf);
+        if (error <= 0L)    /* error or end of file */
             break;
 
-        writelen = dos_write(dstfh, readlen, copybuf);
-        if (writelen < 0L)  /* i.e. error */
-        {
-            rc = d_errmsg((WORD)writelen);
+        error = writelen = dos_write(dstfh, readlen, copybuf);
+        if (error < 0L)
             break;
-        }
-        if (writelen != readlen)    /* disk full? */
+
+        if (writelen != readlen)
         {
-            graf_mouse(ARROW, NULL);
-            fun_alert(1, STDISKFU);
-            graf_mouse(HGLASS, NULL);
-            rc = -1;        /* indicate disk full error */
+            diskfull = TRUE;
             break;
         }
     }
 
-    if (rc > 0)
+    if (diskfull)
     {
-        WORD err = dos_setdt(dstfh, time, date);
-        rc = d_errmsg(err);
+        fun_alert_merge(1, STDISKFU, pdst_file[0]);
+        rc = FALSE;
+    }
+    else if (error < 0L)
+    {
+        if (IS_BIOS_ERROR(error))
+            invalid_copy_msg();
+        else d_errmsg((WORD)error);
+        rc = FALSE;
+    }
+    else
+    {
+        rc = d_errmsg(dos_setdt(dstfh, time, date));
     }
 
     dos_close(srcfh);       /* close files */
     dos_close(dstfh);
 
-    if (rc < 0)             /* disk full? */
-    {
+    if (diskfull)
         dos_delete(pdst_file);
-        rc = FALSE;
-    }
 
     return rc;
 }
@@ -521,7 +472,7 @@ static void update_modified_windows(BYTE *path,WORD length)
     for (pwin = G.g_wfirst; pwin; pwin = pwin->w_next)
     {
        if (pwin->w_id)
-            if (strncmp(pwin->w_path->p_spec,path,length) == 0)
+            if (strncmp(pwin->w_pnode.p_spec,path,length) == 0)
                 fun_close(pwin,CLOSE_TO_ROOT);
     }
 }
@@ -693,7 +644,7 @@ static WORD get_new_name(BYTE *dstpth)
     ob = do_namecon();                  /* show dialog */
     if (ob == CASTOP)                   /* "Stop" button */
         return 0;
-    if (ob == CACNCL)                   /* "Skip" button */
+    if (ob == CASKIP)                   /* "Skip" button */
         return -1;
 
     inf_sget(tree, CACOPYNA, ml_fdst);
@@ -906,7 +857,7 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *co
         centre_title(tree);
         inf_numset(tree, CDFILES, count->files);
         inf_numset(tree, CDFOLDS, count->dirs);
-        show_hide(FMD_START, tree);
+        start_dialog(tree);
         ml_havebox = TRUE;
         if (confirm)
         {
@@ -948,7 +899,7 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *co
             add_path(srcpth, pf->f_name);
             if ((op == OP_COPY) || (op == OP_MOVE) || (op == OP_RENAME))
             {
-                like_parent(dstpth, pf->f_name);
+                add_fname(dstpth, pf->f_name);
                 more = output_path(op,srcpth,dstpth);
             }
 
@@ -1018,7 +969,7 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *co
     }
 
     if (tree)
-        show_hide(FMD_FINISH, tree);
+        end_dialog(tree);
     graf_mouse(ARROW, NULL);
 
     return TRUE;
