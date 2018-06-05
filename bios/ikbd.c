@@ -306,7 +306,13 @@ static BOOL handle_mouse_mode(WORD newkey)
     if (!mouse_packet[0]) {
         KDEBUG(("Entering mouse emulation mode\n"));
         init_mouse_packet(mouse_packet);
-    }
+    } else
+    /*
+     * reset the x,y distance variables to don't carry previous
+     * values in the next mouse packet, this is important when
+     * the packet is a emulated mouse button click.
+     */
+       mouse_packet[1] = mouse_packet[2] = 0;
 
     /*
      * set movement distance according to the Shift and Control keys.
