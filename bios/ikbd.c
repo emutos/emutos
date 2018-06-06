@@ -290,7 +290,7 @@ static BOOL handle_mouse_mode(WORD newkey)
      * if we shouldn't be in emulation mode, but we are, send an
      * appropriate mouse packet and exit
      */
-    if (!(shifty&MODE_ALT) || !is_mouse_key(newkey)) {
+    if (!(shifty&MODE_ALT) || !is_mouse_key(newkey & ~KEY_RELEASED)) {
         if (mouse_packet[0]) {  /* emulating, need to clean up */
             init_mouse_packet(mouse_packet);
             call_mousevec(mouse_packet);
@@ -657,8 +657,7 @@ void kbd_int(UBYTE scancode)
     }
 
     if (scancode & KEY_RELEASED) {
-        scancode = scancode_only;
-        switch (scancode) {
+        switch (scancode_only) {
         case KEY_RSHIFT:
             shifty &= ~MODE_RSHIFT;     /* clear bit */
             break;
