@@ -65,7 +65,7 @@ static WORD convert_scancode(UBYTE *scancodeptr);
 
 /*
  * support for mouse emulation:
- *  alt-insert, alt-home => mouse buttons
+ *  alt-insert, alt-home => mouse buttons (standard, but Amiga differs, see below)
  *  alt-arrowkeys: mouse movement
  */
 #define KEY_HELP    0x62
@@ -76,6 +76,13 @@ static WORD convert_scancode(UBYTE *scancodeptr);
 #define KEY_LTARROW 0x4b
 #define KEY_RTARROW 0x4d
 #define KEY_DNARROW 0x50
+#ifdef MACHINE_AMIGA
+#define KEY_EMULATE_LEFT_BUTTON     KEY_DELETE
+#define KEY_EMULATE_RIGHT_BUTTON    KEY_HELP
+#else
+#define KEY_EMULATE_LEFT_BUTTON     KEY_INSERT
+#define KEY_EMULATE_RIGHT_BUTTON    KEY_HOME
+#endif
 
 #define MOUSE_REL_POS_REPORT    0xf8    /* values for mouse_packet[0] */
 #define RIGHT_BUTTON_DOWN       0x01    /* these values are OR'ed in */
@@ -243,13 +250,8 @@ void push_ascii_ikbdiorec(UBYTE ascii)
 static BOOL is_mouse_key(WORD key)
 {
     switch(key) {
-#ifdef MACHINE_AMIGA
-    case KEY_DELETE:
-    case KEY_HELP:
-#else
-    case KEY_INSERT:
-    case KEY_HOME:
-#endif
+    case KEY_EMULATE_LEFT_BUTTON:
+    case KEY_EMULATE_RIGHT_BUTTON:
     case KEY_UPARROW:
     case KEY_DNARROW:
     case KEY_LTARROW:
@@ -328,33 +330,16 @@ static BOOL handle_mouse_mode(WORD newkey)
     else distance = 8;
 
     switch(newkey) {
-#ifdef MACHINE_AMIGA
-    case KEY_DELETE:
-#else
-    case KEY_INSERT:
-#endif
+    case KEY_EMULATE_LEFT_BUTTON:
         mouse_packet[0] |= LEFT_BUTTON_DOWN;
         break;
-#ifdef MACHINE_AMIGA
-    case KEY_DELETE | KEY_RELEASED:
-#else
-    case KEY_INSERT | KEY_RELEASED:
-#endif
+    case KEY_EMULATE_LEFT_BUTTON | KEY_RELEASED:
         mouse_packet[0] &= ~LEFT_BUTTON_DOWN;
         break;
-#ifdef MACHINE_AMIGA
-    case KEY_HELP:
-#else
-
-    case KEY_HOME:
-#endif
+    case KEY_EMULATE_RIGHT_BUTTON:
         mouse_packet[0] |= RIGHT_BUTTON_DOWN;
         break;
-#ifdef MACHINE_AMIGA
-    case KEY_HELP | KEY_RELEASED:
-#else
-    case KEY_HOME | KEY_RELEASED:
-#endif
+    case KEY_EMULATE_RIGHT_BUTTON | KEY_RELEASED:
         mouse_packet[0] &= ~RIGHT_BUTTON_DOWN;
         break;
     case KEY_UPARROW:
