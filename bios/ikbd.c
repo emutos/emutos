@@ -336,11 +336,26 @@ static BOOL handle_mouse_mode(WORD newkey)
         mouse_packet[0] |= LEFT_BUTTON_DOWN;
         break;
 #ifdef MACHINE_AMIGA
+    case KEY_DELETE | KEY_RELEASED:
+#else
+    case KEY_INSERT | KEY_RELEASED:
+#endif
+        mouse_packet[0] &= ~LEFT_BUTTON_DOWN;
+        break;
+#ifdef MACHINE_AMIGA
     case KEY_HELP:
 #else
+
     case KEY_HOME:
 #endif
         mouse_packet[0] |= RIGHT_BUTTON_DOWN;
+        break;
+#ifdef MACHINE_AMIGA
+    case KEY_HELP | KEY_RELEASED:
+#else
+    case KEY_HOME | KEY_RELEASED:
+#endif
+        mouse_packet[0] &= ~RIGHT_BUTTON_DOWN;
         break;
     case KEY_UPARROW:
         distance = -distance;
