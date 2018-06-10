@@ -884,8 +884,12 @@ WORD do_dopen(WORD curr)
 
 /*
  *  Open a folder
+ *
+ *  the folder is opened in a new window in two cases:
+ *  1) desktop shortcuts are configured & the current window is the desktop, or
+ *  2) 'allow_new_win' is TRUE and the Alt key is pressed
  */
-void do_fopen(WNODE *pw, WORD curr, BYTE *pathname, WORD redraw)
+void do_fopen(WNODE *pw, WORD curr, BYTE *pathname, WORD allow_new_win)
 {
     GRECT t;
     WORD junk, keystate, new_win = FALSE;
@@ -926,6 +930,7 @@ void do_fopen(WNODE *pw, WORD curr, BYTE *pathname, WORD redraw)
     }
     else
 #endif
+    if (allow_new_win)
     {
         graf_mkstate(&junk, &junk, &junk, &keystate);
         if (keystate & MODE_ALT)
@@ -951,7 +956,7 @@ void do_fopen(WNODE *pw, WORD curr, BYTE *pathname, WORD redraw)
         pn_close(&pw->w_pnode);
     }
 
-    if (!do_diropen(pw, new_win, curr, app_path, &t, redraw))
+    if (!do_diropen(pw, new_win, curr, app_path, &t, TRUE))
     {
         if (new_win)
             win_free(pw);
@@ -1422,7 +1427,8 @@ void refresh_window(WNODE *pw)
     if (!pw->w_id)      /* desktop */
         return;
 
-    do_fopen(pw, 0, pw->w_pnode.p_spec, TRUE);
+    /* make sure we don't open a new window */
+    do_fopen(pw, 0, pw->w_pnode.p_spec, FALSE);
 }
 
 

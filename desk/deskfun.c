@@ -453,7 +453,8 @@ static void w_setpath(WNODE *pw, BYTE *pathname)
     graf_shrinkbox(icx, icy, G.g_wicon, G.g_hicon,
                     rc.g_x, rc.g_y, rc.g_w, rc.g_h);
 
-    do_fopen(pw, 0, pathname, TRUE);
+    /* we're closing a folder, so we never want a new window */
+    do_fopen(pw, 0, pathname, FALSE);
 }
 
 
