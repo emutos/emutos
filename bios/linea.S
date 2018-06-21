@@ -23,9 +23,9 @@
         .extern _sysfonts
         .extern _kprintf
 
-        .extern _vdi_v_show_c
-        .extern _vdi_v_hide_c
-        .extern _vdi_vsc_form
+        .extern _linea_show_mouse
+        .extern _linea_hide_mouse
+        .extern _linea_transform_mouse
 
         .extern _get_pix
         .extern _set_pix
@@ -197,9 +197,9 @@ linea_vecs:
         .dc.l   _linea_polygon  /* $6 - draw 1 line of polygon */
         .dc.l   linea_blit      /* $7 - area blit */
         .dc.l   _text_blt       /* $8 - text blitting */
-        .dc.l   _vdi_v_show_c   /* $9 - show mouse */
-        .dc.l   _vdi_v_hide_c   /* $A - hide cursor */
-        .dc.l   _vdi_vsc_form   /* $B - transform mouse */
+        .dc.l   _linea_show_mouse      /* $9 - show mouse */
+        .dc.l   _linea_hide_mouse      /* $A - hide cursor */
+        .dc.l   _linea_transform_mouse /* $B - transform mouse */
         .dc.l   _undraw_sprite  /* $C - undraw sprite */
         .dc.l   _draw_sprite    /* $D - draw sprite */
         .dc.l   _linea_raster   /* $E - copy raster form */

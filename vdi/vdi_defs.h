@@ -238,6 +238,9 @@ void undraw_sprite(void);
 void draw_sprite(void);
 WORD get_pix(void);
 void put_pix(void);
+void linea_show_mouse(void);
+void linea_hide_mouse(void);
+void linea_transform_mouse(void);
 
 
 /* Assembly Language Support Routines, ignore workstation arg */
