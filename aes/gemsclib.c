@@ -88,7 +88,7 @@ WORD sc_clear(void)
 {
     BYTE    *ptmp;
     WORD    ret;
-    static const char *scrapmask = "\\SCRAP.*";
+    static const char * const scrapmask = "\\SCRAP.*";
 
     if (D.g_scrap[0] == '\0')
       return FALSE;

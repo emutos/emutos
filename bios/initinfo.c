@@ -64,7 +64,7 @@ extern long total_alt_ram(void); /* in bdos/umem.c */
 #endif
 
 #define LOGO_HEIGHT 5
-static const char *logo[LOGO_HEIGHT] =
+static const char * const logo[LOGO_HEIGHT] =
     { "11111111111 7777777777  777   7777",
       "1                  7   7   7 7    ",
       "1111   1 1  1   1  7   7   7  777 ",
