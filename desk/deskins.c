@@ -746,8 +746,7 @@ static WORD install_desktop_icon(ANODE *pa)
 
 #if CONF_WITH_WINDOW_ICONS
 
-#define NUM_EXTS    5
-static const BYTE * const exec_ext[NUM_EXTS] = { "TOS", "TTP", "PRG", "APP", "GTP" };
+static const BYTE * const exec_ext[] = { "TOS", "TTP", "PRG", "APP", "GTP" };
 
 /*
  * test if file is executable, based on extension
@@ -762,7 +761,7 @@ static BOOL is_executable(const BYTE *filename)
 
     filename += n - 3;  /* point to start of extension */
 
-    for (i = 0; i < NUM_EXTS; i++)
+    for (i = 0; i < ARRAY_SIZE(exec_ext); i++)
         if (strcmp(filename,exec_ext[i]) == 0)
             return TRUE;
 

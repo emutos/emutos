@@ -63,8 +63,7 @@
 extern long total_alt_ram(void); /* in bdos/umem.c */
 #endif
 
-#define LOGO_HEIGHT 5
-static const char * const logo[LOGO_HEIGHT] =
+static const char * const logo[] =
     { "11111111111 7777777777  777   7777",
       "1                  7   7   7 7    ",
       "1111   1 1  1   1  7   7   7  777 ",
@@ -299,7 +298,7 @@ WORD initinfo(ULONG *pshiftbits)
     left_margin = (SCREEN_WIDTH-LOGO_LENGTH) / 2;
 
     /* Now print the EmuTOS Logo */
-    for (i = 0; i < LOGO_HEIGHT; i++)
+    for (i = 0; i < ARRAY_SIZE(logo); i++)
         print_art(logo[i]);
 
     /* adjust margins for remaining messages to allow more space for translations */
