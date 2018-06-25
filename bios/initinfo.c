@@ -63,7 +63,7 @@
 extern long total_alt_ram(void); /* in bdos/umem.c */
 #endif
 
-static const char * const logo[] =
+static const char logo[][LOGO_LENGTH+1] =
     { "11111111111 7777777777  777   7777",
       "1                  7   7   7 7    ",
       "1111   1 1  1   1  7   7   7  777 ",

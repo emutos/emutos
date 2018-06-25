@@ -747,7 +747,7 @@ static WORD install_desktop_icon(ANODE *pa)
 #if CONF_WITH_WINDOW_ICONS
 
 #define EXT_LENGTH 3
-static const BYTE * const exec_ext[] = { "TOS", "TTP", "PRG", "APP", "GTP" };
+static const BYTE exec_ext[][EXT_LENGTH+1] = { "TOS", "TTP", "PRG", "APP", "GTP" };
 
 /*
  * test if file is executable, based on extension
