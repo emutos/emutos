@@ -746,6 +746,7 @@ static WORD install_desktop_icon(ANODE *pa)
 
 #if CONF_WITH_WINDOW_ICONS
 
+#define EXT_LENGTH 3
 static const BYTE * const exec_ext[] = { "TOS", "TTP", "PRG", "APP", "GTP" };
 
 /*
@@ -756,10 +757,10 @@ static BOOL is_executable(const BYTE *filename)
     WORD i, n;
 
     n = strlen(filename);
-    if (n < 5)          /* must be at least A.XYZ */
+    if (n < (2 + EXT_LENGTH))       /* must be at least A.XYZ */
         return FALSE;
 
-    filename += n - 3;  /* point to start of extension */
+    filename += n - EXT_LENGTH;     /* point to start of extension */
 
     for (i = 0; i < ARRAY_SIZE(exec_ext); i++)
         if (strcmp(filename,exec_ext[i]) == 0)
