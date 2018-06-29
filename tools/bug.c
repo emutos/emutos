@@ -168,7 +168,7 @@ static char * xstrdup(const char *s)
 
 #define TM_YEAR_ORIGIN 1900
 
-/* Yield A - B, measured in seconds.  */
+/* Yield A - B, measured in minutes.  */
 static long difftm (const struct tm *a, const struct tm *b)
 {
     int ay = a->tm_year + (TM_YEAR_ORIGIN - 1);
@@ -184,9 +184,8 @@ static long difftm (const struct tm *a, const struct tm *b)
                 /* + difference in years * 365  */
                 + (long) (ay - by) * 365l);
 
-    return 60l * (60l * (24l * days + (a->tm_hour - b->tm_hour))
-            + (a->tm_min - b->tm_min))
-            + (a->tm_sec - b->tm_sec);
+    return (60l * (24l * days + (a->tm_hour - b->tm_hour))
+            + (a->tm_min - b->tm_min));
 }
 
 
@@ -195,19 +194,19 @@ static char * now(void)
     time_t now;
     struct tm local_time;
     char tz_sign;
-    long tz_min;
+    int tz_min;
     char buf[40];
 
     time (&now);
     local_time = *localtime (&now);
     tz_sign = '+';
-    tz_min = difftm (&local_time, gmtime (&now)) / 60;
+    tz_min = (int)difftm (&local_time, gmtime (&now));
     if (tz_min < 0)
     {
         tz_min = -tz_min;
         tz_sign = '-';
     }
-    sprintf(buf, "%d-%02d-%02d %02d:%02d%c%02ld%02ld",
+    sprintf(buf, "%d-%02d-%02d %02d:%02d%c%02d%02d",
             local_time.tm_year + TM_YEAR_ORIGIN, local_time.tm_mon + 1,
             local_time.tm_mday, local_time.tm_hour, local_time.tm_min,
             tz_sign, tz_min / 60, tz_min % 60);
