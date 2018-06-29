@@ -195,7 +195,8 @@ static char * now(void)
     struct tm local_time;
     char tz_sign;
     int tz_min;
-    char buf[40];
+    char buf[80];   /* really only needs to be 22, but gcc 8 assumes max-value ints & */
+                    /* complains about string overflow if it's much shorter than ~80 */ 
 
     time (&now);
     local_time = *localtime (&now);
