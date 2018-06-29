@@ -454,6 +454,7 @@ static void w_setpath(WNODE *pw, BYTE *pathname)
                     rc.g_x, rc.g_y, rc.g_w, rc.g_h);
 
     /* we're closing a folder, so we never want a new window */
+    pw->w_cvrow = 0;        /* must reset slider */
     do_fopen(pw, 0, pathname, FALSE);
 }
 
