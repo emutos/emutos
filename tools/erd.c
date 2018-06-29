@@ -1,7 +1,7 @@
 /*
  *  erd: the EmuTOS Resource Decompiler
  *
- *  Copyright 2012-2017 Roger Burrows
+ *  Copyright 2012-2018 Roger Burrows
  *
  *  This program is licensed under the GNU General Public License.
  *  Please see LICENSE.TXT for details.
@@ -617,12 +617,12 @@ LOCAL int num_notrans = 0;
 /*
  *  other globals
  */
-LOCAL const char *copyright = PROGRAM_NAME " " VERSION " copyright (C) 2012-2017 by Roger Burrows\n"
+LOCAL const char *copyright = PROGRAM_NAME " " VERSION " copyright (C) 2012-2018 by Roger Burrows\n"
 "This program is licensed under the GNU General Public License.\n"
 "Please see LICENSE.TXT for details.\n";
 
 LOCAL int debug = 0;                    /* options */
-LOCAL char prefix[MAX_STRLEN] = "";
+LOCAL char prefix[MAX_STRLEN-100] = ""; /* so it can be sprintf'd into a MAX_STRLEN string*/
 LOCAL int verbose = 0;
 
 LOCAL char *rsc_root = NULL;            /* paths of input, output files */
