@@ -49,9 +49,6 @@ void xmfreblk(void *m);
 MD *xmgetmd(void);          /* xmgetmd - get an MD */
 void xmfremd(MD *md);       /* xmfremd - free an MD */
 
-/* init os memory */
-void osmem_init(void);
-
 /*
  * in umem.c
  */

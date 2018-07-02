@@ -327,7 +327,7 @@ WORD fm_do(OBJECT *tree, WORD start_fld)
             next_obj = ob_find(tree, ROOT, MAX_DEPTH, rets[0], rets[1]);
             if (next_obj == NIL)
             {
-                sound(TRUE, 440, 2);
+                sound(440, 2);
                 next_obj = 0;
             }
             else

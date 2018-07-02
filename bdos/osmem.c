@@ -60,7 +60,7 @@ struct _mdb {
  *  internal variables
  */
 static WORD osmptr;
-static WORD osmlen;
+static WORD osmlen=LENOSM;
 static WORD osmem[LENOSM];
 
 
@@ -78,15 +78,15 @@ static WORD osmem[LENOSM];
 #define MAXQUICK    5
 WORD *root[MAXQUICK];
 
-static MDBLOCK *mdbroot;    /* root for partially-used MDBLOCKs */
+static MDBLOCK *mdbroot = NULL;    /* root for partially-used MDBLOCKs */
 
 
 /*
  *  local debug counters
  */
-static LONG dbgfreblk;
-static LONG dbggtosm;
-static LONG dbggtblk;
+static LONG dbgfreblk = 0;
+static LONG dbggtosm  = 0;
+static LONG dbggtblk  = 0;
 
 
 /*
@@ -382,17 +382,4 @@ void xmfreblk(void *m)
         if (*((WORD **)m) == m)
             KDEBUG(("xmfreblk: Circular link in root[0x%x] at 0x%p\n",i,m));
     }
-}
-
-
-/*
- * called by bdosmain to initialise the OS memory pool
- */
-void osmem_init(void)
-{
-    osmlen = LENOSM;
-    mdbroot = NULL;
-    dbgfreblk = 0;
-    dbggtosm = 0;
-    dbggtblk = 0;
 }
