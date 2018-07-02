@@ -10,7 +10,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-// (following text is taken from the Atari Compendium, xbios(0x22)
+// the following text is taken from the Atari Compendium, xbios(0x22)
 //
 // Kbdvbase() returns a pointer to a system structure KBDVECS which
 // is defined as follows:
@@ -58,7 +58,7 @@
 
 /* Known differences between this and Atari TOS:
  *
- * a) Although this doesn't appear to be documented, the TOS setups the
+ * a) Although this doesn't appear to be documented, TOS sets up the
  * following registers before entering vectors ikbdsys and midisys:
  *   a0: address of the iorec structure
  *   a1: address of the ACIA control register
@@ -341,14 +341,14 @@ _midivec:
 //
 //  1     F6 a1 a2 a3 a4 a5 a6 a7 (miscellaneous, 7 bytes)
 //  2     F7 0b xh xl yh yl       (absolute mouse)
-//  3        F8 dx dy             (relative mouse, no button)
-//  3        F9 dx dy             (relative mouse, button 1)
-//  3        FA dx dy             (relative mouse, button 2)
-//  3        FB dx dy             (relative mouse, both buttons)
+//  3     F8 dx dy                (relative mouse, no button)
+//  3     F9 dx dy                (relative mouse, button 1)
+//  3     FA dx dy                (relative mouse, button 2)
+//  3     FB dx dy                (relative mouse, both buttons)
 //  4     FC yy MM dd hh mm ss    (date and time)
 //  5     FD j0 j1                (both joysticks)
-//  6        FE bj                (joystick 0)
-//  7        FF bj                (joystick 1)
+//  6     FE bj                   (joystick 0)
+//  7     FF bj                   (joystick 1)
 //
         .bss
         .even
