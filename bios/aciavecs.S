@@ -98,8 +98,11 @@
 // ==== IOREC BUFFERS ======================================================
 // Table of input-output buffers for kbd in, midi in
 
-ikbdibufbuf:    .ds.b   0x100
-midiibufbuf:    .ds.b   0x80
+        .equ    ikbd_bufsize, 256
+        .equ    midi_bufsize, 128
+
+ikbdibufbuf:    .ds.b   ikbd_bufsize
+midiibufbuf:    .ds.b   midi_bufsize
 
 
 // ==== IORECS =============================================================
@@ -231,11 +234,11 @@ _init_acia_vecs:
         SECTION_RODATA
         .even   // Mandatory in ELF section .rodata
 iorec_table:
-        //         sz, hd, tl,   lo, hi
+        //          sz,       hd, tl,       lo,             hi
         .dc.l   ikbdibufbuf
-        .dc.w   0x100,  0,  0, 0x40, 0xC0
+        .dc.w   ikbd_bufsize,  0,  0, ikbd_bufsize/4, 3*ikbd_bufsize/4
         .dc.l   midiibufbuf
-        .dc.w    0x80,  0,  0, 0x20, 0x60
+        .dc.w   midi_bufsize,  0,  0, midi_bufsize/4, 3*midi_bufsize/4
 iorec_table_end:
         .text
 
