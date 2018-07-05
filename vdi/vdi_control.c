@@ -320,7 +320,7 @@ static void init_wk(Vwk * vwk)
 void vdi_v_opnvwk(Vwk * vwk)
 {
     WORD handle;
-    Vwk *temp, *work_ptr;
+    Vwk *work_ptr;
 
     /* Allocate the memory for a virtual workstation using Mxalloc with the flag
      * for a global allocation. This becomes important when running MiNT
@@ -332,20 +332,17 @@ void vdi_v_opnvwk(Vwk * vwk)
         return;
     }
 
-    /* Now find a free handle */
-    handle = 1;
+    /* Now find a free handle (start with 2, since 1 is the handle of the physical station) */
+    handle = 2;
     work_ptr = &virt_work;
-    while (handle == work_ptr->handle) {
+    while (work_ptr->next_work != NULL && handle == work_ptr->next_work->handle) {
         handle++;
-        if (work_ptr->next_work == NULL)
-            break;
         work_ptr = work_ptr->next_work;
     }
 
     /* Empty slot found, insert the workstation here */
-    temp = work_ptr->next_work;   /* may be NULL */
+    vwk->next_work = work_ptr->next_work;
     work_ptr->next_work = vwk;
-    vwk->next_work = temp;
 
     vwk->handle = CONTRL[6] = handle;
     init_wk(vwk);
