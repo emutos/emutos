@@ -1144,7 +1144,7 @@ indent:
 # gitready
 #
 
-EXPAND_FILES = $(wildcard */*.[chS] */*.awk)
+EXPAND_FILES = $(wildcard */*.[chS] */*.awk */*.sh)
 EXPAND_NOFILES = vdi/vdi_tblit_cf.S
 
 .PHONY: expand
