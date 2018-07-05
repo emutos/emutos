@@ -2,26 +2,26 @@
 
 usage ()
 {
-	name=${0##*/}
-	echo
-	echo "usage: $name <map file>"
-	echo
-	echo "convert (e.g. EmuTOS) linker map file to 'nm' format"
-	echo "understood by the Hatari debugger 'symbols' command."
-	echo
-	echo "For example:"
-	echo "  $name emutos.map > etos512.sym"
-	echo
-	echo "ERROR: $1!"
-	echo
-	exit 1
+    name=${0##*/}
+    echo
+    echo "usage: $name <map file>"
+    echo
+    echo "convert (e.g. EmuTOS) linker map file to 'nm' format"
+    echo "understood by the Hatari debugger 'symbols' command."
+    echo
+    echo "For example:"
+    echo "  $name emutos.map > etos512.sym"
+    echo
+    echo "ERROR: $1!"
+    echo
+    exit 1
 }
 if [ $# -ne 1 ]; then
-	usage "incorrect number of arguments"
+    usage "incorrect number of arguments"
 fi
 
 if [ \! -f $1 ]; then
-	usage "given '$1' address map file not found"
+    usage "given '$1' address map file not found"
 fi
 
 # Hatari allows symbols marked as code to be used as disassembly
@@ -39,27 +39,27 @@ fi
 # duplicate & misleading object addresses.
 awk '
 BEGIN {
-	# system variables type at startup
-	objtype = "T";
-	objaddr = 0x0;
+    # system variables type at startup
+    objtype = "T";
+    objaddr = 0x0;
 }
 function set_object (addr, type, name) {
-	addr = strtonum(addr);
-	if (addr && objaddr && objaddr != addr) {
-		printf "0x%08x %s %s\n", objaddr, objtype, objname;
-	}
-	if (name) {
-		# remove EmuTOS object file path
-		sub("obj/", "", name);
-		objname = name;
-		objaddr = addr;
-	}
-	# font objects contain just font data structs
-	if (index(name, "fnt_") == 1) {
-		objtype = "D";
-	} else {
-		objtype = type;
-	}
+    addr = strtonum(addr);
+    if (addr && objaddr && objaddr != addr) {
+        printf "0x%08x %s %s\n", objaddr, objtype, objname;
+    }
+    if (name) {
+        # remove EmuTOS object file path
+        sub("obj/", "", name);
+        objname = name;
+        objaddr = addr;
+    }
+    # font objects contain just font data structs
+    if (index(name, "fnt_") == 1) {
+        objtype = "D";
+    } else {
+        objtype = type;
+    }
 }
 # special sections
 /^ *\.lowstram/  { objtype = "D"; }
@@ -72,15 +72,15 @@ function set_object (addr, type, name) {
 /^ *\.bss/  { set_object($2, "B", $4); }
 # symbols in any of the sections
 /^ +0x/     {
-	if (objtype) {
-		if (objaddr) {
-			printf "0x%08x %s %s\n", objaddr, objtype, objname;
-			objaddr = 0x0;
-		}
-		if ($2 != "." && $2 != "ASSERT") {
-			printf "0x%08x %s %s\n", strtonum($1), objtype, $2;
-		}
-	}
+    if (objtype) {
+        if (objaddr) {
+            printf "0x%08x %s %s\n", objaddr, objtype, objname;
+            objaddr = 0x0;
+        }
+        if ($2 != "." && $2 != "ASSERT") {
+            printf "0x%08x %s %s\n", strtonum($1), objtype, $2;
+        }
+    }
 }
 # clean out library paths for objects coming from static libraries
 ' $1 | sed -e 's/ [^ ]\+(//' -e 's/)//' | sort -n
