@@ -86,7 +86,7 @@ function mystrtonum(str,        ret, n, i, k, c)
 BEGIN {
     # system variables type at startup
     objtype = "T";
-    objaddr = 0x0;
+    objaddr = 0;
 }
 function set_object (addr, type, name) {
     addr = mystrtonum(addr);
@@ -121,7 +121,7 @@ function set_object (addr, type, name) {
     if (objtype) {
         if (objaddr) {
             printf "0x%08x %s %s\n", objaddr, objtype, objname;
-            objaddr = 0x0;
+            objaddr = 0;
         }
         if ($2 != "." && $2 != "ASSERT") {
             printf "0x%08x %s %s\n", mystrtonum($1), objtype, $2;
