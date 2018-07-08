@@ -62,6 +62,7 @@ function set_object (addr, type, name) {
     }
 }
 # special sections
+/^ *\.first_stram/ { objtype = "D"; }
 /^ *\.lowstram/  { objtype = "D"; }
 /^ *\.laststram/ { objtype = "D"; }
 /^ *\.stack/     { objtype = "B"; }
