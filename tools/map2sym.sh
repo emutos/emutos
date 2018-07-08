@@ -38,13 +38,58 @@ fi
 # or their address differs from other addresses, to avoid
 # duplicate & misleading object addresses.
 awk '
+# mystrtonum --- convert string to number
+# This is the equivalent of GNU Awk strtonum().
+# strtonum() is not POSIX-compliant, it is a GNU Awk extension.
+# It may not be available in other Awk implementations.
+# So we use our own implementation to stay POSIX-compatible.
+# Source:
+# https://www.gnu.org/software/gawk/manual/html_node/Strtonum-Function.html
+function mystrtonum(str,        ret, n, i, k, c)
+{
+    if (str ~ /^0[0-7]*$/) {
+        # octal
+        n = length(str)
+        ret = 0
+        for (i = 1; i <= n; i++) {
+            c = substr(str, i, 1)
+            # index() returns 0 if c not in string,
+            # includes c == "0"
+            k = index("1234567", c)
+
+            ret = ret * 8 + k
+        }
+    } else if (str ~ /^0[xX][[:xdigit:]]+$/) {
+        # hexadecimal
+        str = substr(str, 3)    # lop off leading 0x
+        n = length(str)
+        ret = 0
+        for (i = 1; i <= n; i++) {
+            c = substr(str, i, 1)
+            c = tolower(c)
+            # index() returns 0 if c not in string,
+            # includes c == "0"
+            k = index("123456789abcdef", c)
+
+            ret = ret * 16 + k
+        }
+    } else if (str ~ \
+  /^[-+]?([0-9]+([.][0-9]*([Ee][0-9]+)?)?|([.][0-9]+([Ee][-+]?[0-9]+)?))$/) {
+        # decimal number, possibly floating point
+        ret = str + 0
+    } else
+        ret = "NOT-A-NUMBER"
+
+    return ret
+}
+
 BEGIN {
     # system variables type at startup
     objtype = "T";
     objaddr = 0x0;
 }
 function set_object (addr, type, name) {
-    addr = strtonum(addr);
+    addr = mystrtonum(addr);
     if (addr && objaddr && objaddr != addr) {
         printf "0x%08x %s %s\n", objaddr, objtype, objname;
     }
@@ -79,7 +124,7 @@ function set_object (addr, type, name) {
             objaddr = 0x0;
         }
         if ($2 != "." && $2 != "ASSERT") {
-            printf "0x%08x %s %s\n", strtonum($1), objtype, $2;
+            printf "0x%08x %s %s\n", mystrtonum($1), objtype, $2;
         }
     }
 }
