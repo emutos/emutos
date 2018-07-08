@@ -45,6 +45,7 @@ awk '
 # So we use our own implementation to stay POSIX-compatible.
 # Source:
 # https://www.gnu.org/software/gawk/manual/html_node/Strtonum-Function.html
+# Removed [:xdigit:] usage for mawk compatibility
 function mystrtonum(str,        ret, n, i, k, c)
 {
     if (str ~ /^0[0-7]*$/) {
@@ -59,7 +60,7 @@ function mystrtonum(str,        ret, n, i, k, c)
 
             ret = ret * 8 + k
         }
-    } else if (str ~ /^0[xX][[:xdigit:]]+$/) {
+    } else if (str ~ /^0[xX][0-9a-fA-F]+$/) {
         # hexadecimal
         str = substr(str, 3)    # lop off leading 0x
         n = length(str)
