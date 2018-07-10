@@ -527,7 +527,8 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
     WORD dclkret, cont, newlist, newsel, newdrive;
     BYTE *pstr;
     GRECT pt;
-    BYTE locstr[LEN_ZPATH+1], locold[LEN_ZPATH+1], mask[LEN_ZPATH+1], selname[LEN_FSNAME];
+    BYTE locstr[LEN_ZPATH+4], locold[LEN_ZPATH+4];  /* at least 3 bytes longer than 'mask' */
+    BYTE mask[LEN_ZPATH+1], selname[LEN_FSNAME];
     OBJECT *obj;
     TEDINFO *tedinfo;
 
