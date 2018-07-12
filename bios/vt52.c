@@ -11,9 +11,6 @@
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  */
-
-
-
 #include "config.h"
 #include "portab.h"
 #include "lineavars.h"
@@ -36,7 +33,6 @@
 /*
  * internal prototypes
  */
-
 static void nop(void);
 static void cursor_up(void);
 static void cursor_down_impl(void);
@@ -82,10 +78,7 @@ static void get_column(WORD);
 
 void blink(void);
 
-
-
 void (*con_state)(WORD);        /* state of conout state machine */
-
 
 
 /* jumptable for ESC + uppercase character */
@@ -132,6 +125,7 @@ static void (* const bw_tab[])(void) = {
     line_wrap_off       /* No Wrap at End of Line */
 };
 
+
 /* jumptable for ASCII control codes */
 static void (* const cntl_tab[])(void) = {
     do_bell,            /* 7 = bell */
@@ -144,11 +138,9 @@ static void (* const cntl_tab[])(void) = {
 };
 
 
-
 /*
  * cputc - console output
  */
-
 void
 cputc(WORD ch)
 {
@@ -171,11 +163,9 @@ cputc(WORD ch)
 }
 
 
-
 /*
  * normal_ascii - state is normal output
  */
-
 static void
 normal_ascii(WORD ch)
 {
@@ -186,7 +176,6 @@ normal_ascii(WORD ch)
 #endif
         ascii_out(ch);    /* go print it. */
     }
-
 
     /* We handle the following control characters as special: */
 
@@ -223,13 +212,9 @@ nop(void)
 }
 
 
-
-
-
 /*
  * do_bell - Ring the bell (in sound.c)
  */
-
 static void
 do_bell(void) {
     if (conterm & 4) {
@@ -241,7 +226,6 @@ do_bell(void) {
 /*
  * do_backspace - Same as Cursor Left
  */
-
 static void
 do_backspace (void)
 {
@@ -252,19 +236,15 @@ do_backspace (void)
 /*
  * do_tab - calculate the tabulator values
  */
-
 static void
 do_tab(void) {
     move_cursor((v_cur_cx & 0xfff8) + 8, v_cur_cy);
 }
 
 
-
-
 /*
  * esc_ch1 - state is: handle first character of an escape sequence
  */
-
 static void
 esc_ch1 (WORD ch)
 {
@@ -294,7 +274,6 @@ esc_ch1 (WORD ch)
 /*
  * get_row - state is: calculate row from character
  */
-
 static void
 get_row (WORD ch)
 {
@@ -306,7 +285,6 @@ get_row (WORD ch)
 /*
  * get_row - state is: calculate column from character
  */
-
 static void
 get_column (WORD ch)
 {
@@ -322,7 +300,6 @@ get_column (WORD ch)
 /*
  * get_fg_col - state is: get foreground color
  */
-
 static void
 get_fg_col (WORD ch)
 {
@@ -338,11 +315,9 @@ get_fg_col (WORD ch)
 }
 
 
-
 /*
  * get_bg_col - state is: get background color
  */
-
 static void
 get_bg_col (WORD ch)
 {
@@ -356,7 +331,6 @@ get_bg_col (WORD ch)
     v_col_bg = ch & 0x0f;
     con_state = normal_ascii;           /* Next char is not special */
 }
-
 
 
 static void
@@ -373,14 +347,9 @@ set_bg(void)
 }
 
 
-
-
-
-
 /*
  * clear_and_home - Clear Screen and Home Cursor.
  */
-
 static void
 clear_and_home(void)
 {
@@ -400,11 +369,9 @@ clear_and_home(void)
 }
 
 
-
 /*
  * cursor_up - Alpha Cursor Up
  */
-
 static void
 cursor_up (void)
 {
@@ -417,12 +384,9 @@ cursor_up (void)
 }
 
 
-
-
 /*
  * cursor_down_impl - Used by Cursor Down and LF
  */
-
 static void
 cursor_down_impl (void)
 {
@@ -431,11 +395,9 @@ cursor_down_impl (void)
 }
 
 
-
 /*
  * cursor_down - Alpha Cursor Down
  */
-
 static void
 cursor_down (void)
 {
@@ -447,11 +409,9 @@ cursor_down (void)
 }
 
 
-
 /*
  * cursor_right - Alpha Cursor Right
  */
-
 static void
 cursor_right (void)
 {
@@ -464,11 +424,9 @@ cursor_right (void)
 }
 
 
-
 /*
  * cursor_left_impl - Used by Cursor Left and Backspace
  */
-
 static void
 cursor_left_impl (void)
 {
@@ -477,11 +435,9 @@ cursor_left_impl (void)
 }
 
 
-
 /*
  * cursor_left - Alpha Cursor Left
  */
-
 static void
 cursor_left (void)
 {
@@ -493,11 +449,9 @@ cursor_left (void)
 }
 
 
-
 /*
  * cursor_home - Home Alpha Cursor
  */
-
 static void
 cursor_home (void)
 {
@@ -514,11 +468,9 @@ cursor_home (void)
 }
 
 
-
 /*
  * erase_to_eos - Erase to End of Screen
  */
-
 static void
 erase_to_eos (void)
 {
@@ -537,11 +489,9 @@ erase_to_eos (void)
 }
 
 
-
 /*
  * erase_to_eol_impl - Erase to End of Line (implementation)
  */
-
 static void
 erase_to_eol_impl (void)
 {
@@ -578,7 +528,6 @@ erase_to_eol_impl (void)
 /*
  * erase_to_eol - Erase to End of Line.
  */
-
 static void
 erase_to_eol (void)
 {
@@ -593,7 +542,6 @@ erase_to_eol (void)
 /*
  * reverse_video_on - Reverse Video On
  */
-
 static void
 reverse_video_on (void)
 {
@@ -605,13 +553,9 @@ reverse_video_on (void)
 }
 
 
-
-
-
 /*
  * reverse_video_off - Reverse Video Off.
  */
-
 static void
 reverse_video_off (void)
 {
@@ -621,7 +565,6 @@ reverse_video_off (void)
 
     v_stat_0 &= ~M_REVID;    /* clear the reverse bit. */
 }
-
 
 
 /*
@@ -642,11 +585,9 @@ reverse_linefeed (void)
 }
 
 
-
 /*
  * insert_line - Insert Line.
  */
-
 static void
 insert_line (void)
 {
@@ -657,11 +598,9 @@ insert_line (void)
 }
 
 
-
 /*
  * delete_line - Delete Line.
  */
-
 static void
 delete_line (void)
 {
@@ -672,11 +611,9 @@ delete_line (void)
 }
 
 
-
 /*
  * erase_from_home - Erase from Beginning of Page to cursor.
  */
-
 static void
 erase_from_home (void)
 {
@@ -695,11 +632,9 @@ erase_from_home (void)
 }
 
 
-
 /*
  * do_cnt_esce - Enable Cursor.
  */
-
 static void
 do_cnt_esce (void)
 {
@@ -716,11 +651,9 @@ do_cnt_esce (void)
 }
 
 
-
 /*
  * cursor_on - Enable Cursor forced.
  */
-
 static void
 cursor_on(void)
 {
@@ -738,11 +671,9 @@ cursor_on(void)
 }
 
 
-
 /*
  * cursor_on_cnt - Enable Cursor (counted depth).
  */
-
 static void
 cursor_on_cnt(void)
 {
@@ -756,11 +687,9 @@ cursor_on_cnt(void)
 }
 
 
-
 /*
  * cursor_off - Disable Cursor.
  */
-
 static void
 cursor_off (void)
 {
@@ -789,11 +718,9 @@ cursor_off (void)
 }
 
 
-
 /*
  * save_cursor_pos - Save Cursor Position.
  */
-
 static void
 save_cursor_pos (void)
 {
@@ -810,11 +737,9 @@ save_cursor_pos (void)
 }
 
 
-
 /*
  * restore_cursor_pos - Restore Cursor Position.
  */
-
 static void
 restore_cursor_pos (void)
 {
@@ -832,13 +757,11 @@ restore_cursor_pos (void)
 }
 
 
-
 /*
  * erase_line - Erase Entire Line.
  *
  * upper left coords. (0,y), lower right coords. (max,y)
  */
-
 static void
 erase_line (void)
 {
@@ -853,14 +776,12 @@ erase_line (void)
 }
 
 
-
 /*
  * erase_from_bol_impl - Erase from Beginning of Line (implementation)
  *
  * upper left coords. (0,y)
  * lower right coords. (x,y)
  */
-
 static void
 erase_from_bol_impl (void)
 {
@@ -889,14 +810,12 @@ erase_from_bol_impl (void)
 }
 
 
-
 /*
  * erase_from_bol - Erase from Beginning of Line.
  *
  * upper left coords. (0,y)
  * lower right coords. (x,y)
  */
-
 static void
 erase_from_bol (void)
 {
@@ -906,7 +825,6 @@ erase_from_bol (void)
 
     erase_from_bol_impl();
 }
-
 
 
 /*
@@ -919,7 +837,6 @@ line_wrap_on(void)
 }
 
 
-
 /*
  * line_wrap_off - Discard at End of Line.
  */
@@ -928,7 +845,6 @@ line_wrap_off(void)
 {
     v_stat_0 &= ~M_CEOL;    /* clear the eol handling bit. */
 }
-
 
 
 /*
@@ -940,7 +856,6 @@ ascii_cr (void)
     /* beginning of current line. */
     move_cursor(0, v_cur_cy);
 }
-
 
 
 /*
@@ -960,13 +875,11 @@ ascii_lf (void)
 }
 
 
-
 /*
  * blink - cursor blink interrupt routine.
  *
  * This routine may trash registers, when called from assembler!
  */
-
 void
 blink (void)
 {
@@ -995,7 +908,6 @@ blink (void)
 }
 
 
-
 /*
  * cursconf - cursor configuration
  *
@@ -1013,7 +925,6 @@ blink (void)
  *   M_CFLASH - cursor flash on
  *   M_CVIS   - cursor visibility on
  */
-
 WORD
 cursconf(WORD function, WORD operand)
 {
@@ -1040,11 +951,9 @@ cursconf(WORD function, WORD operand)
 }
 
 
-
 /*
  * con_state_init - initialize the conout state machine
  */
-
 void
 vt52_init(void)
 {
