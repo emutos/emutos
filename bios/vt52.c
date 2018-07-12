@@ -332,8 +332,8 @@ get_fg_col (WORD ch)
     bconout_str(1, ansi);
 #endif
 
-    /* set the foreground color, low-order bits only. */
-    v_col_fg = (ch - 0x20) & 0x0f;
+    /* set the foreground color from the 4 low-order bits only. */
+    v_col_fg = ch & 0x0f;
     con_state = normal_ascii;           /* Next char is not special */
 }
 
@@ -352,8 +352,8 @@ get_bg_col (WORD ch)
     bconout_str(1, ansi);
 #endif
 
-    /* set the foreground color, low-order bits only. */
-    v_col_bg = (ch - 0x20) & 0x0f;
+    /* set the foreground color from the 4 low-order bits only. */
+    v_col_bg = ch & 0x0f;
     con_state = normal_ascii;           /* Next char is not special */
 }
 
