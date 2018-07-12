@@ -177,7 +177,7 @@ static void
 normal_ascii(WORD ch)
 {
     /* If the character is printable ascii */
-    if ( ch >= 0x20 ) {
+    if ( ch >= ' ' ) {
 #if CONF_SERIAL_CONSOLE_ANSI
         bconout(1, ch);
 #endif
@@ -554,11 +554,11 @@ erase_to_eol_impl (void)
 
     /* is x = x maximum? */
     if ( v_cur_cx == v_cel_mx )
-        ascii_out(0x20);        /* output a space, the cell is odd!. */
+        ascii_out(' ');         /* output a space, the cell is odd!. */
     else {
         /* test, if x is even or odd */
         if ( IS_ODD(v_cur_cx) )
-            ascii_out(0x20);    /* first output a space. */
+            ascii_out(' ');     /* first output a space. */
 
         blank_out (v_cur_cx, v_cur_cy, v_cel_mx, v_cur_cy);
     }
@@ -870,11 +870,11 @@ erase_from_bol_impl (void)
 
     /* are we in column 0?*/
     if ( v_cur_cx == 0 )
-        ascii_out(0x20);        /* output a space. */
+        ascii_out(' ');         /* output a space. */
     else {
         /* test, if x is even or odd */
         if ( IS_ODD(v_cur_cx) ) {
-            ascii_out(0x20);    /* first output a space. */
+            ascii_out(' ');     /* first output a space. */
             blank_out (0, v_cur_cy, v_cur_cx - 2, v_cur_cy);
         }
         else
