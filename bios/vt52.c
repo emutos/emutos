@@ -23,7 +23,7 @@
 #include "bios.h"
 
 #if CONF_SERIAL_CONSOLE_ANSI
-/* We disable cursor home commands because it is more convenient. */
+/* We disable cursor home commands because it is more convenient */
 # define SERIAL_CONSOLE_HONOR_HOME 0
 #endif
 
@@ -169,12 +169,12 @@ cputc(WORD ch)
 static void
 normal_ascii(WORD ch)
 {
-    /* If the character is printable ascii */
+    /* If the character is printable ascii, go print it */
     if ( ch >= ' ' ) {
 #if CONF_SERIAL_CONSOLE_ANSI
         bconout(1, ch);
 #endif
-        ascii_out(ch);    /* go print it. */
+        ascii_out(ch);
     }
 
     /* We handle the following control characters as special: */
@@ -201,7 +201,7 @@ normal_ascii(WORD ch)
 #endif
         (*cntl_tab[ch - 7])();
     }
-    /* All others are thrown away. */
+    /* All others are thrown away */
 }
 
 
@@ -309,7 +309,7 @@ get_fg_col (WORD ch)
     bconout_str(1, ansi);
 #endif
 
-    /* set the foreground color from the 4 low-order bits only. */
+    /* set the foreground color from the 4 low-order bits only */
     v_col_fg = ch & 0x0f;
     con_state = normal_ascii;           /* Next char is not special */
 }
@@ -327,7 +327,7 @@ get_bg_col (WORD ch)
     bconout_str(1, ansi);
 #endif
 
-    /* set the foreground color from the 4 low-order bits only. */
+    /* set the foreground color from the 4 low-order bits only */
     v_col_bg = ch & 0x0f;
     con_state = normal_ascii;           /* Next char is not special */
 }
@@ -348,7 +348,7 @@ set_bg(void)
 
 
 /*
- * clear_and_home - Clear Screen and Home Cursor.
+ * clear_and_home - Clear Screen and Home Cursor
  */
 static void
 clear_and_home(void)
@@ -362,10 +362,10 @@ clear_and_home(void)
 # endif
 #endif
 
-    cursor_off();                               /* hide cursor. */
+    cursor_off();                               /* hide cursor */
     move_cursor(0, 0);                          /* cursor home */
-    blank_out (0, 0, v_cel_mx, v_cel_my);       /* clear screen. */
-    cursor_on_cnt();                            /* show cursor. */
+    blank_out (0, 0, v_cel_mx, v_cel_my);       /* clear screen */
+    cursor_on_cnt();                            /* show cursor */
 }
 
 
@@ -478,13 +478,13 @@ erase_to_eos (void)
     bconout_str(1, "\033[J");
 #endif
 
-    erase_to_eol_impl(); /* erase to end of line. */
+    erase_to_eol_impl(); /* erase to end of line */
 
     /* last line? */
     if ( v_cur_cy == v_cel_my )
-        return;    /* yes, done. */
+        return;    /* yes, done */
 
-    /* erase from upper left corner to lower right corner. */
+    /* erase from upper left corner to lower right corner */
     blank_out (0, v_cur_cy + 1, v_cel_mx, v_cel_my);
 }
 
@@ -498,35 +498,35 @@ erase_to_eol_impl (void)
     BOOL wrap = v_stat_0 & M_CEOL;      /* save line wrap status */
     WORD s_cur_x, s_cur_y;
 
-    v_stat_0 &= ~M_CEOL;    /* clear EOL handling bit. (overwrite) */
+    v_stat_0 &= ~M_CEOL;    /* clear EOL handling bit (overwrite) */
 
-    cursor_off();               /* hide cursor. */
-    /* save the x and y coords of cursor. */
+    cursor_off();               /* hide cursor */
+    /* save the x and y coords of cursor */
     s_cur_x = v_cur_cx;
     s_cur_y = v_cur_cy;
 
     /* is x = x maximum? */
     if ( v_cur_cx == v_cel_mx )
-        ascii_out(' ');         /* output a space, the cell is odd!. */
+        ascii_out(' ');         /* output a space, the cell is odd! */
     else {
         /* test, if x is even or odd */
         if ( IS_ODD(v_cur_cx) )
-            ascii_out(' ');     /* first output a space. */
+            ascii_out(' ');     /* first output a space */
 
         blank_out (v_cur_cx, v_cur_cy, v_cel_mx, v_cur_cy);
     }
 
-    /* restore wrap flag, the result of EOL test. */
+    /* restore wrap flag, the result of EOL test */
     if ( wrap )
         v_stat_0 |= M_CEOL;
 
-    move_cursor(s_cur_x, s_cur_y); /* restore cursor position. */
-    cursor_on_cnt();            /* show cursor. */
+    move_cursor(s_cur_x, s_cur_y); /* restore cursor position */
+    cursor_on_cnt();            /* show cursor */
 }
 
 
 /*
- * erase_to_eol - Erase to End of Line.
+ * erase_to_eol - Erase to End of Line
  */
 static void
 erase_to_eol (void)
@@ -549,12 +549,12 @@ reverse_video_on (void)
     bconout_str(1, "\033[7m");
 #endif
 
-    v_stat_0 |= M_REVID;    /* set the reverse bit. */
+    v_stat_0 |= M_REVID;    /* set the reverse bit */
 }
 
 
 /*
- * reverse_video_off - Reverse Video Off.
+ * reverse_video_off - Reverse Video Off
  */
 static void
 reverse_video_off (void)
@@ -563,7 +563,7 @@ reverse_video_off (void)
     bconout_str(1, "\033[27m");
 #endif
 
-    v_stat_0 &= ~M_REVID;    /* clear the reverse bit. */
+    v_stat_0 &= ~M_REVID;    /* clear the reverse bit */
 }
 
 
@@ -586,33 +586,33 @@ reverse_linefeed (void)
 
 
 /*
- * insert_line - Insert Line.
+ * insert_line - Insert Line
  */
 static void
 insert_line (void)
 {
-    cursor_off();               /* hide cursor. */
-    scroll_down(v_cur_cy);      /* scroll down 1 line & blank current line. */
-    move_cursor(0, v_cur_cy);   /* move cursor to beginning of line. */
-    cursor_on_cnt();            /* show cursor. */
+    cursor_off();               /* hide cursor */
+    scroll_down(v_cur_cy);      /* scroll down 1 line & blank current line */
+    move_cursor(0, v_cur_cy);   /* move cursor to beginning of line */
+    cursor_on_cnt();            /* show cursor */
 }
 
 
 /*
- * delete_line - Delete Line.
+ * delete_line - Delete Line
  */
 static void
 delete_line (void)
 {
-    cursor_off();               /* hide cursor. */
-    scroll_up(v_cur_cy);        /* scroll up 1 line & blank bottom line. */
-    move_cursor(0, v_cur_cy);   /* move cursor to beginning of line. */
-    cursor_on_cnt();            /* show cursor. */
+    cursor_off();               /* hide cursor */
+    scroll_up(v_cur_cy);        /* scroll up 1 line & blank bottom line */
+    move_cursor(0, v_cur_cy);   /* move cursor to beginning of line */
+    cursor_on_cnt();            /* show cursor */
 }
 
 
 /*
- * erase_from_home - Erase from Beginning of Page to cursor.
+ * erase_from_home - Erase from Beginning of Page to cursor
  */
 static void
 erase_from_home (void)
@@ -621,44 +621,44 @@ erase_from_home (void)
     bconout_str(1, "\033[1J");
 #endif
 
-    erase_from_bol_impl(); /* erase from beginning of line. */
+    erase_from_bol_impl(); /* erase from beginning of line */
 
     /* first line? */
     if ( !v_cur_cy )
-        return;    /* yes, done. */
+        return;    /* yes, done */
 
-    /* erase rest of screen. */
-    blank_out (0, 0, v_cel_mx, v_cur_cy - 1);        /* clear screen. */
+    /* erase rest of screen */
+    blank_out (0, 0, v_cel_mx, v_cur_cy - 1);        /* clear screen */
 }
 
 
 /*
- * do_cnt_esce - Enable Cursor.
+ * do_cnt_esce - Enable Cursor
  */
 static void
 do_cnt_esce (void)
 {
-    invert_cell(v_cur_cx, v_cur_cy);        /* complement cursor. */
-    v_stat_0 |= M_CVIS;                     /* set visibility bit. */
+    invert_cell(v_cur_cx, v_cur_cy);        /* complement cursor */
+    v_stat_0 |= M_CVIS;                     /* set visibility bit */
 
-    /* see if flashing is enabled. */
+    /* see if flashing is enabled */
     if ( v_stat_0 & M_CFLASH ) {
-        v_stat_0 |= M_CSTATE;                   /* set cursor on. */
+        v_stat_0 |= M_CSTATE;                   /* set cursor on */
 
         /* do not flash the cursor when it moves */
-        v_cur_tim = v_period;                   /* reset the timer. */
+        v_cur_tim = v_period;                   /* reset the timer */
     }
 }
 
 
 /*
- * cursor_on - Enable Cursor forced.
+ * cursor_on - Enable Cursor forced
  */
 static void
 cursor_on(void)
 {
 #if CONF_SERIAL_CONSOLE_ANSI
-    /* Disabled because function used from internal VT52 implementation. */
+    /* Disabled because function used from internal VT52 implementation */
     /* bconout_str(1, "\033[?25h"); */
 #endif
 
@@ -666,13 +666,13 @@ cursor_on(void)
     if ( !disab_cnt )
         return;
 
-    disab_cnt = 0;                      /* reset the disable counter. */
+    disab_cnt = 0;                      /* reset the disable counter */
     do_cnt_esce();
 }
 
 
 /*
- * cursor_on_cnt - Enable Cursor (counted depth).
+ * cursor_on_cnt - Enable Cursor (counted depth)
  */
 static void
 cursor_on_cnt(void)
@@ -681,26 +681,26 @@ cursor_on_cnt(void)
     if ( !disab_cnt )
         return;
 
-    disab_cnt--;                        /* decrement the disable counter. */
+    disab_cnt--;                        /* decrement the disable counter */
     if (!disab_cnt)
-        do_cnt_esce();                  /* if 0, do the enable. */
+        do_cnt_esce();                  /* if 0, do the enable */
 }
 
 
 /*
- * cursor_off - Disable Cursor.
+ * cursor_off - Disable Cursor
  */
 static void
 cursor_off (void)
 {
 #if CONF_SERIAL_CONSOLE_ANSI
-    /* Disabled because function used from internal VT52 implementation. */
+    /* Disabled because function used from internal VT52 implementation */
     /* bconout_str(1, "\033[?25l"); */
 #endif
 
     disab_cnt++;                        /* increment the disable counter */
 
-    /* test and clear the visible state bit. */
+    /* test and clear the visible state bit */
     if (!(v_stat_0 & M_CVIS) )
         return;                         /* if already invisible, just return */
 
@@ -719,46 +719,46 @@ cursor_off (void)
 
 
 /*
- * save_cursor_pos - Save Cursor Position.
+ * save_cursor_pos - Save Cursor Position
  */
 static void
 save_cursor_pos (void)
 {
 #if CONF_SERIAL_CONSOLE_ANSI
-    /* Disabled because function used from internal VT52 implementation. */
+    /* Disabled because function used from internal VT52 implementation */
     /* bconout_str(1, "\033[s"); */
 #endif
 
-    v_stat_0 |= M_SVPOS;    /* set "position saved" status bit. */
+    v_stat_0 |= M_SVPOS;    /* set "position saved" status bit */
 
-    /* save the x and y coords of cursor. */
+    /* save the x and y coords of cursor */
     sav_cur_x = v_cur_cx;
     sav_cur_y = v_cur_cy;
 }
 
 
 /*
- * restore_cursor_pos - Restore Cursor Position.
+ * restore_cursor_pos - Restore Cursor Position
  */
 static void
 restore_cursor_pos (void)
 {
 #if CONF_SERIAL_CONSOLE_ANSI
-    /* Disabled because function used from internal VT52 implementation. */
+    /* Disabled because function used from internal VT52 implementation */
     /* bconout_str(1, "\033[u"); */
 #endif
 
     if ( v_stat_0 & M_SVPOS )
-        move_cursor(sav_cur_x, sav_cur_y);      /* move to saved position. */
+        move_cursor(sav_cur_x, sav_cur_y);      /* move to saved position */
     else
-        move_cursor(0, 0);      /* if position was not saved, home cursor. */
+        move_cursor(0, 0);      /* if position was not saved, home cursor */
 
-    v_stat_0 &= ~M_SVPOS;    /* clear "position saved" status bit. */
+    v_stat_0 &= ~M_SVPOS;    /* clear "position saved" status bit */
 }
 
 
 /*
- * erase_line - Erase Entire Line.
+ * erase_line - Erase Entire Line
  *
  * upper left coords. (0,y), lower right coords. (max,y)
  */
@@ -769,10 +769,10 @@ erase_line (void)
     bconout_str(1, "\033[2K\033[1G");
 #endif
 
-    cursor_off();               /* hide cursor. */
-    blank_out (0, v_cur_cy, v_cel_mx, v_cur_cy);   /* blank whole line. */
-    move_cursor(0, v_cur_cy);   /* move cursor to beginning of line. */
-    cursor_on_cnt();            /* show cursor. */
+    cursor_off();               /* hide cursor */
+    blank_out (0, v_cur_cy, v_cel_mx, v_cur_cy);   /* blank whole line */
+    move_cursor(0, v_cur_cy);   /* move cursor to beginning of line */
+    cursor_on_cnt();            /* show cursor */
 }
 
 
@@ -787,31 +787,31 @@ erase_from_bol_impl (void)
 {
     WORD s_cur_x, s_cur_y;
 
-    cursor_off();               /* hide cursor. */
-    /* save the x and y coords of cursor. */
+    cursor_off();               /* hide cursor */
+    /* save the x and y coords of cursor */
     s_cur_x = v_cur_cx;
     s_cur_y = v_cur_cy;
 
     /* are we in column 0?*/
     if ( v_cur_cx == 0 )
-        ascii_out(' ');         /* output a space. */
+        ascii_out(' ');         /* output a space */
     else {
         /* test, if x is even or odd */
         if ( IS_ODD(v_cur_cx) ) {
-            ascii_out(' ');     /* first output a space. */
+            ascii_out(' ');     /* first output a space */
             blank_out (0, v_cur_cy, v_cur_cx - 2, v_cur_cy);
         }
         else
             blank_out (0, v_cur_cy, v_cur_cx, v_cur_cy);
     }
 
-    move_cursor(s_cur_x, s_cur_y); /* restore cursor position. */
-    cursor_on_cnt();            /* show cursor. */
+    move_cursor(s_cur_x, s_cur_y); /* restore cursor position */
+    cursor_on_cnt();            /* show cursor */
 }
 
 
 /*
- * erase_from_bol - Erase from Beginning of Line.
+ * erase_from_bol - Erase from Beginning of Line
  *
  * upper left coords. (0,y)
  * lower right coords. (x,y)
@@ -828,38 +828,38 @@ erase_from_bol (void)
 
 
 /*
- * line_wrap_on() - Wrap at End of Line.
+ * line_wrap_on() - Wrap at End of Line
  */
 static void
 line_wrap_on(void)
 {
-    v_stat_0 |= M_CEOL;    /* set the eol handling bit. */
+    v_stat_0 |= M_CEOL;    /* set the eol handling bit */
 }
 
 
 /*
- * line_wrap_off - Discard at End of Line.
+ * line_wrap_off - Discard at End of Line
  */
 static void
 line_wrap_off(void)
 {
-    v_stat_0 &= ~M_CEOL;    /* clear the eol handling bit. */
+    v_stat_0 &= ~M_CEOL;    /* clear the eol handling bit */
 }
 
 
 /*
- * ascii_cr - carriage return.
+ * ascii_cr - carriage return
  */
 static void
 ascii_cr (void)
 {
-    /* beginning of current line. */
+    /* beginning of current line */
     move_cursor(0, v_cur_cy);
 }
 
 
 /*
- * ascii_lf - line feed.
+ * ascii_lf - line feed
  */
 static void
 ascii_lf (void)
@@ -868,42 +868,42 @@ ascii_lf (void)
     if ( v_cur_cy != v_cel_my )
         cursor_down_impl();
     else {
-        cursor_off();                   /* yes, hide cursor. */
+        cursor_off();                   /* yes, hide cursor */
         scroll_up(0);                   /* scroll up 1 line */
-        cursor_on_cnt();                /* show cursor. */
+        cursor_on_cnt();                /* show cursor */
     }
 }
 
 
 /*
- * blink - cursor blink interrupt routine.
+ * blink - cursor blink interrupt routine
  *
  * This routine may trash registers, when called from assembler!
  */
 void
 blink (void)
 {
-    /* test visibility/semaphore bit. */
+    /* test visibility/semaphore bit */
     if (!(v_stat_0 & M_CVIS) )
-        return;    /* if invisible or blocked, return. */
+        return;    /* if invisible or blocked, return */
 
-    /* test flash bit. */
+    /* test flash bit */
     if (!(v_stat_0 & M_CFLASH) )
-        return;    /* if not flashing, return. */
+        return;    /* if not flashing, return */
 
-    /* decrement cursor flash timer. */
+    /* decrement cursor flash timer */
     if ( --v_cur_tim )
-        return;    /* if <> 0, return. */
+        return;    /* if <> 0, return */
 
-    v_cur_tim = v_period;       /* else reset timer. */
+    v_cur_tim = v_period;       /* else reset timer */
 
-    /* toggle cursor state. */
+    /* toggle cursor state */
     if ( v_stat_0 & M_CSTATE )
-        v_stat_0 &= ~M_CSTATE;    /* clear bit. (overwrite) */
+        v_stat_0 &= ~M_CSTATE;    /* clear bit (overwrite) */
     else
-        v_stat_0 |= M_CSTATE;    /* set bit. (overwrite) */
+        v_stat_0 |= M_CSTATE;    /* set bit (overwrite) */
 
-    /* fetch x and y coords and complement cursor. */
+    /* fetch x and y coords and complement cursor */
     invert_cell(v_cur_cx, v_cur_cy);
 }
 
