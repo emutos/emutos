@@ -30,6 +30,9 @@
 # define SERIAL_CONSOLE_HONOR_HOME 0
 #endif
 
+/* converts from escape sequence value to column or row number */
+#define POSITION_BIAS   32
+
 /*
  * internal prototypes
  */
@@ -295,7 +298,7 @@ esc_ch1 (WORD ch)
 static void
 get_row (WORD ch)
 {
-    save_row = ch - 0x20;       /* Remove space bias */
+    save_row = ch - POSITION_BIAS;      /* Remove space bias */
     con_state = get_column;
 }
 
@@ -309,7 +312,7 @@ get_column (WORD ch)
 {
     int row, col;
 
-    col = ch - 0x20;                    /* Remove space bias */
+    col = ch - POSITION_BIAS;           /* Remove space bias */
     row = save_row;
     move_cursor(col,row);
     con_state = normal_ascii;           /* Next char is not special */
