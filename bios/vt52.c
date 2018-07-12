@@ -557,7 +557,7 @@ erase_to_eol_impl (void)
         ascii_out(0x20);        /* output a space, the cell is odd!. */
     else {
         /* test, if x is even or odd */
-        if ( v_cur_cx & 0x1 )
+        if ( IS_ODD(v_cur_cx) )
             ascii_out(0x20);    /* first output a space. */
 
         blank_out (v_cur_cx, v_cur_cy, v_cel_mx, v_cur_cy);
