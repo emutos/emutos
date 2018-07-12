@@ -543,10 +543,14 @@ static void
 erase_to_eol_impl (void)
 {
     BOOL wrap = v_stat_0 & M_CEOL;      /* save line wrap status */
+    WORD s_cur_x, s_cur_y;
+
     v_stat_0 &= ~M_CEOL;    /* clear EOL handling bit. (overwrite) */
 
     cursor_off();               /* hide cursor. */
-    save_cursor_pos();          /* save cursor position. */
+    /* save the x and y coords of cursor. */
+    s_cur_x = v_cur_cx;
+    s_cur_y = v_cur_cy;
 
     /* is x = x maximum? */
     if ( v_cur_cx == v_cel_mx )
@@ -563,7 +567,7 @@ erase_to_eol_impl (void)
     if ( wrap )
         v_stat_0 |= M_CEOL;
 
-    restore_cursor_pos();       /* restore cursor position. */
+    move_cursor(s_cur_x, s_cur_y); /* restore cursor position. */
     cursor_on_cnt();            /* show cursor. */
 }
 
@@ -857,8 +861,12 @@ erase_line (void)
 static void
 erase_from_bol_impl (void)
 {
+    WORD s_cur_x, s_cur_y;
+
     cursor_off();               /* hide cursor. */
-    save_cursor_pos();          /* save cursor position. */
+    /* save the x and y coords of cursor. */
+    s_cur_x = v_cur_cx;
+    s_cur_y = v_cur_cy;
 
     /* are we in column 0?*/
     if ( v_cur_cx == 0 )
@@ -873,7 +881,7 @@ erase_from_bol_impl (void)
             blank_out (0, v_cur_cy, v_cur_cx, v_cur_cy);
     }
 
-    restore_cursor_pos();       /* restore cursor position. */
+    move_cursor(s_cur_x, s_cur_y); /* restore cursor position. */
     cursor_on_cnt();            /* show cursor. */
 }
 
