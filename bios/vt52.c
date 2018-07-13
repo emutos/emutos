@@ -248,26 +248,17 @@ do_tab(void) {
 static void
 esc_ch1 (WORD ch)
 {
-    con_state = normal_ascii;   /* Most functions only 2 chars so set */
-    ch -= 0x41;                 /* state to normal ascii.  Bias by low */
+    con_state = normal_ascii;           /* default state is normal ascii */
 
-    if ( ch < 0 )
-        return;                 /* char and get out if invalid */
-
-    /* If in the range A-M go handle */
-    if ( ch <= 12 ) {
-        (*am_tab[ch])();
+    if ( (ch >= 'A') && (ch <= 'M') ) {     /* handle the range A-M */
+        (*am_tab[ch-'A'])();
     }
-
-    /* check for lower case control code */
-    else if ( ch != 24 ) {
-        ch -= 0x21;       /* see if b to w */
-        if ( ch >= 0 && ch <= 21 )
-            (*bw_tab[ch])();
+    else if ( (ch >= 'b') && (ch <= 'w') ) {/* handle b-w */    
+        (*bw_tab[ch-'b'])();
     }
-    else
-        /* direct cursor addressing, take 2 additional chars */
+    else if ( ch == 'Y' ) {                 /* direct cursor addressing, need more chars */
         con_state = get_row;
+    }
 }
 
 
