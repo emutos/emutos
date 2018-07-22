@@ -18,6 +18,7 @@
 #include "tosvars.h"
 #include "kprint.h"
 #include "machine.h"
+#include "processor.h"
 #include "vectors.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
@@ -36,7 +37,7 @@ static ULONG detect_ttram_size(void)
     /* Fixed-size TT-RAM */
     return CONF_TTRAM_SIZE;
 #else
-    UBYTE *addr;
+    volatile UBYTE *addr;
 
     /* By design, TT-RAM is always in 32-bit address space */
     if (!IS_BUS32)
@@ -53,7 +54,15 @@ static ULONG detect_ttram_size(void)
     for (addr = TTRAM_START + 1024UL*1024 - 1;
         (long)addr > 0; addr += 1024UL*1024)
     {
+        /* First check for bus error, then try writing to memory and
+         * reading back. */
         if (!check_read_byte((long)addr))
+            break;
+
+        *addr     = 0x12;
+        *(addr-1) = 0x34;
+        invalidate_data_cache(addr-1, 2);
+        if ((*addr != 0x12) || (*(addr-1) != 0x34))
             break;
     }
 
