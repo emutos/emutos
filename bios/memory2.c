@@ -61,7 +61,7 @@ static ULONG detect_ttram_size(void)
 
         *addr     = 0x12;
         *(addr-1) = 0x34;
-        invalidate_data_cache(addr-1, 2);
+        invalidate_data_cache((UBYTE *)(addr-1), 2);
         if ((*addr != 0x12) || (*(addr-1) != 0x34))
             break;
     }
