@@ -892,8 +892,7 @@ void kbd_init(void)
 #endif
 
     /* initialize the IKBD */
-    ikbd_writeb(0x80);            /* Reset */
-    ikbd_writeb(0x01);
+    ikbd_writew(0x8001);        /* Reset */
 
     /* The IKBD answers to Reset command with a version byte.
      * It is *mandatory* to wait for that byte before sending further commands,
