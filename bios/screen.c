@@ -647,24 +647,6 @@ WORD get_monitor_type(void)
 #endif
 }
 
-/* calculate initial VRAM size based on video hardware */
-static ULONG initial_vram_size(void)
-{
-#ifdef MACHINE_AMIGA
-    return amiga_initial_vram_size();
-#else
-    if (HAS_VIDEL)
-        return FALCON_VRAM_SIZE;
-    else if (HAS_TT_SHIFTER)
-        return TT_VRAM_SIZE;
-    else
-    {
-        /* ST TOS rounds the VRAM size to upper kilobyte, so we do. */
-        return (ST_VRAM_SIZE + 1023) & -1024;
-    }
-#endif
-}
-
 /* Settings for the different video modes */
 struct video_mode {
     UBYTE       planes;         /* count of color planes (v_planes) */
@@ -684,6 +666,24 @@ static const struct video_mode video_mode[] = {
     { 8,  320, 480},            /* rez=7: TT low */
 #endif
 };
+
+/* calculate initial VRAM size based on video hardware */
+static ULONG initial_vram_size(void)
+{
+#ifdef MACHINE_AMIGA
+    return amiga_initial_vram_size();
+#else
+    if (HAS_VIDEL)
+        return FALCON_VRAM_SIZE;
+    else if (HAS_TT_SHIFTER)
+        return TT_VRAM_SIZE;
+    else
+    {
+        /* ST TOS rounds the VRAM size to upper kilobyte, so we do. */
+        return (ST_VRAM_SIZE + 1023) & -1024;
+    }
+#endif
+}
 
 static void shifter_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *vt_rez)
 {
