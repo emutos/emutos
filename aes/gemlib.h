@@ -161,8 +161,7 @@ typedef struct window
 
 typedef struct sh_struct
 {
-    WORD sh_doexec;             /* TRUE during normal processing; set */
-                                /*  to FALSE to shutdown the system   */
+    WORD sh_doexec;             /* for values, see aespub.h */
     WORD sh_dodef;              /* if TRUE then run the default startup   */
                                 /*  app: normally EMUDESK, but can be an  */
                                 /*  autorun program if so configured.     */

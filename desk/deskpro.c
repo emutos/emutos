@@ -23,6 +23,7 @@
 #include <string.h>
 
 #include "portab.h"
+#include "aespub.h"
 #include "obdefs.h"
 #include "gemdos.h"
 
@@ -74,7 +75,7 @@ WORD pro_exit(BYTE *pcmd, BYTE *ptail)
 {
     WORD ret;
 
-    ret = shel_write(0, FALSE, 1, pcmd, ptail);
+    ret = shel_write(SHW_SHUTDOWN, FALSE, 1, pcmd, ptail);
     return ret;
 }
 #endif

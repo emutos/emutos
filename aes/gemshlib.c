@@ -143,23 +143,25 @@ WORD sh_write(WORD doex, WORD isgem, WORD isover, const BYTE *pcmd, const BYTE *
 {
     SHELL *psh;
 
-    if (doex == 5)      /* Change resolution */
-    {
+    switch(doex) {
+    case SHW_EXEC:      /* run another program */
+    case SHW_SHUTDOWN:  /* shutdown system */
+        strcpy(D.s_cmd, pcmd);
+        memcpy(ad_stail, ptail, CMDTAILSIZE);
+
+        psh = &sh[rlr->p_pid];
+        psh->sh_isgem = (isgem != FALSE);
+        psh->sh_doexec = doex;
+        psh->sh_dodef = FALSE;
+        sh_curdir(sh_apdir);    /* save app's current directory */
+        break;
+    case SHW_RESCHNG:   /* change resolution */
         gl_changerez = 1 + isover;
         gl_nextrez = isgem;
         D.s_cmd[0] = '\0';
         ad_stail[0] = '\0';
-        return TRUE;
+        break;
     }
-
-    strcpy(D.s_cmd, pcmd);
-    memcpy(ad_stail, ptail, CMDTAILSIZE);
-
-    psh = &sh[rlr->p_pid];
-    psh->sh_isgem = (isgem != FALSE);
-    psh->sh_doexec = doex;
-    psh->sh_dodef = FALSE;
-    sh_curdir(sh_apdir);    /* save app's current directory */
 
     return TRUE;
 }
@@ -695,7 +697,7 @@ void sh_main(BOOL isgem)
 
         rc = sh_ldapp(psh);             /* run the desktop/console/app */
 
-    } while(psh->sh_doexec && !gl_changerez);
+    } while((psh->sh_doexec != SHW_SHUTDOWN) && !gl_changerez);
 
     if (gl_shgem)                       /* if graphics mode,     */
         sh_toalpha();                   /*  switch back to alpha */
