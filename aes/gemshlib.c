@@ -141,19 +141,18 @@ void sh_curdir(BYTE *ppath)
  */
 WORD sh_write(WORD doex, WORD isgem, WORD isover, const BYTE *pcmd, const BYTE *ptail)
 {
-    SHELL *psh;
+    SHELL *psh = &sh[rlr->p_pid];
 
     switch(doex) {
     case SHW_EXEC:      /* run another program */
-    case SHW_SHUTDOWN:  /* shutdown system */
         strcpy(D.s_cmd, pcmd);
         memcpy(ad_stail, ptail, CMDTAILSIZE);
-
-        psh = &sh[rlr->p_pid];
+        sh_curdir(sh_apdir);    /* save app's current directory */
+        /* drop through */
+    case SHW_SHUTDOWN:  /* shutdown system */
         psh->sh_isgem = (isgem != FALSE);
         psh->sh_doexec = doex;
         psh->sh_dodef = FALSE;
-        sh_curdir(sh_apdir);    /* save app's current directory */
         break;
     case SHW_RESCHNG:   /* change resolution */
         gl_changerez = 1 + isover;

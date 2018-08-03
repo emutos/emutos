@@ -469,7 +469,7 @@ static WORD do_filemenu(WORD item)
     case QUITITEM:
         enable_ceh = FALSE; /* avoid possibility of useless form_alert()s */
         display_free_stack();
-        pro_exit(G.g_cmd, G.g_tail);
+        pro_exit();
         done = TRUE;
         break;
 #endif

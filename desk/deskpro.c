@@ -71,11 +71,11 @@ WORD pro_run(WORD isgraf, WORD isover, WORD wh, WORD curr)
 
 
 #if CONF_WITH_SHUTDOWN
-WORD pro_exit(BYTE *pcmd, BYTE *ptail)
+WORD pro_exit(void)
 {
     WORD ret;
 
-    ret = shel_write(SHW_SHUTDOWN, FALSE, 1, pcmd, ptail);
+    ret = shel_write(SHW_SHUTDOWN, FALSE, 2, NULL, NULL);
     return ret;
 }
 #endif

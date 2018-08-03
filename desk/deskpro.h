@@ -13,7 +13,7 @@
 WORD pro_run(WORD isgraf, WORD isover, WORD wh, WORD curr);
 
 #if CONF_WITH_SHUTDOWN
-WORD pro_exit(BYTE *pcmd, BYTE *ptail);
+WORD pro_exit(void);
 #endif
 
 #endif  /* _DESKPRO_H */
