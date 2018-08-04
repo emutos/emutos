@@ -20,9 +20,9 @@
 /*
  * values for shel_write() 'doex' arg
  */
-//#define SHW_NOEXEC      0       /* just return to desktop */
+#define SHW_NOEXEC      0       /* just return to desktop */
 #define SHW_EXEC        1       /* run another program after this */
-#define SHW_SHUTDOWN    0       /* shutdown system */
+#define SHW_SHUTDOWN    4       /* shutdown system */
 #define SHW_RESCHNG     5       /* change resolution */
 
 #define PATH_ENV    "PATH="     /* PATH environment variable */

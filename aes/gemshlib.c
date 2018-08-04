@@ -32,6 +32,7 @@
 #include "aespub.h"
 #include "gemlib.h"
 #include "gem_rsc.h"
+#include "biosext.h"
 
 #include "gemdosif.h"
 #include "gemdos.h"
@@ -129,31 +130,52 @@ void sh_curdir(BYTE *ppath)
  *                  . indicates Falcon-style video)
  *                      isgem = value used by Setscreen() for video mode
  *
- *      (2) doex = 1
+ *      (2) doex = 4
+ *          . system shutdown management
+ *              isgem       ignored
+ *              isover = 0  abort shutdown (not possible, ignored)
+ *              isover = 1  partial shutdown (currently the same as full)
+ *              isover = 2  full shutdown
+ *
+ *      (3) doex = 1
  *          . set the next application to run after the current one terminates
  *              isover      ignored, should currently always be 1
  *              isgem = 0   run in character mode (TOS/TTP)
  *              isgem = 1   run in graphic mode (APP/PRG)
  *
- *      (3) doex = 0
- *          . set no application to run after the current one terminates
- *              note that this is used by the desktop shutdown code
+ *      (4) doex = 0
+ *          . run no application after the current one terminates, i.e.
+ *            just exit to desktop
  */
 WORD sh_write(WORD doex, WORD isgem, WORD isover, const BYTE *pcmd, const BYTE *ptail)
 {
     SHELL *psh = &sh[rlr->p_pid];
 
     switch(doex) {
+    case SHW_NOEXEC:    /* exit to desktop */
+        strcpy(D.s_cmd, DEF_DESKTOP);
+        psh->sh_doexec = doex;
+        psh->sh_isdef = TRUE;
+        psh->sh_isgem = TRUE;
+        break;
     case SHW_EXEC:      /* run another program */
         strcpy(D.s_cmd, pcmd);
         memcpy(ad_stail, ptail, CMDTAILSIZE);
         sh_curdir(sh_apdir);    /* save app's current directory */
-        /* drop through */
-    case SHW_SHUTDOWN:  /* shutdown system */
-        psh->sh_isgem = (isgem != FALSE);
         psh->sh_doexec = doex;
         psh->sh_dodef = FALSE;
+        psh->sh_isgem = (isgem != FALSE);
         break;
+#if CONF_WITH_SHUTDOWN
+    case SHW_SHUTDOWN:  /* shutdown system */
+        if (can_shutdown())
+        {
+            psh->sh_doexec = doex;
+            psh->sh_dodef = FALSE;
+            psh->sh_isgem = FALSE;
+        }
+        break;
+#endif
     case SHW_RESCHNG:   /* change resolution */
         gl_changerez = 1 + isover;
         gl_nextrez = isgem;
