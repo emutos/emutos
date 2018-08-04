@@ -862,8 +862,6 @@ static UBYTE ikbd_readb(void)
 
 void kbd_init(void)
 {
-    UBYTE ikbd_version;
-
 #if CONF_SERIAL_CONSOLE
 # ifdef __mcoldfire__
     coldfire_rs232_enable_interrupt();
@@ -894,16 +892,46 @@ void kbd_init(void)
     /* initialize the IKBD */
     ikbd_writew(0x8001);        /* Reset */
 
-    /* The IKBD answers to Reset command with a version byte.
-     * It is *mandatory* to wait for that byte before sending further commands,
-     * otherwise the IKBD will enter an undefined state. Concretely, it will
-     * stop working.
-     * This is particularly important on real hardware, and with Hatari which
-     * has very accurate IKBD emulation.
+    /* According to Atari documentation, the IKBD answers to the Reset
+     * command with a version byte when the reset is complete.  So we
+     * used to just wait for a byte before sending further commands.
+     * However, if we are rebooting because of Ctrl+Alt+Del, and we keep
+     * Ctrl+Alt+Del held down, a real IKBD transmits the following within
+     * about 100msec of the reset command (info courtesy Christian Zietz):
+     *  0x9d    Ctrl released
+     *  0xf1    version byte
+     *  0x1d    Ctrl pressed
+     *  0x38    Alt pressed
+     *  0x53    Del pressed
+     * As a result, EmuTOS sees another reboot request, and will reboot
+     * continually while the keys are held down.  Atari TOS does not have
+     * this problem, because it just delays for approx 312msec after the
+     * reset.
+     *
+     * It would be simplest to do exactly the same; however, this is
+     * difficult because the only timing available on all systems at
+     * this point is the loop counter, and this is not yet calibrated so
+     * may be too large by a factor of two (see delay.c).
+     *
+     * So we now combine the approaches: first, we wait for the version
+     * byte, then we delay an extra 50msec.  As long as we don't see the
+     * 'Ctrl pressed' byte we should be ok.
      */
-    ikbd_version = ikbd_readb(); /* Usually 0xf1, or 0xf0 for antique STs */
-    KDEBUG(("ikbd_version = 0x%02x\n", ikbd_version));
-    UNUSED(ikbd_version);
+    while(1)
+    {
+        int n;
+        UBYTE ikbd_version = ikbd_readb();
+
+        if (ikbd_version == 0)              /* timeout */
+            break;
+        if ((ikbd_version&0xf0) == 0xf0)    /* version byte, usually 0xf1 */
+        {
+            KDEBUG(("ikbd_version = 0x%02x\n", ikbd_version));
+            for (n = 0; n < 50; n++)
+                delay_loop(loopcount_1_msec);
+            break;
+        }
+    }
 
     /* initialize the key repeat stuff */
     kb_ticks = 0;
