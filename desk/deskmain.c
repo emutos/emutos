@@ -470,7 +470,7 @@ static WORD do_filemenu(WORD item)
     case QUITITEM:
         enable_ceh = FALSE; /* avoid possibility of useless form_alert()s */
         display_free_stack();
-        pro_exit();
+        shel_write(SHW_SHUTDOWN, FALSE, 2, NULL, NULL);
         done = TRUE;
         break;
 #endif
