@@ -23,6 +23,7 @@
 
 #include "xbiosbind.h"
 #include "portab.h"
+#include "aespub.h"
 #include "biosext.h"
 #include "obdefs.h"
 #include "gsxdefs.h"
@@ -601,10 +602,10 @@ static WORD do_optnmenu(WORD item)
                 }
 #if CONF_WITH_VIDEL || defined(MACHINE_AMIGA)
             else if (newres == FALCON_REZ)
-                shel_write(5,newmode,1,NULL,NULL);
+                shel_write(SHW_RESCHNG,newmode,1,NULL,NULL);
 #endif
 #if CONF_WITH_ATARI_VIDEO
-            else shel_write(5,newres+2,0,NULL,NULL);
+            else shel_write(SHW_RESCHNG,newres+2,0,NULL,NULL);
 #endif
             done = TRUE;
         }

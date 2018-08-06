@@ -44,7 +44,7 @@ static WORD pro_exec(WORD isgraf, WORD isover, BYTE *pcmd, BYTE *ptail)
 
     graf_mouse(HGLASS, NULL);
 
-    ret = shel_write(1, isgraf, isover, pcmd, ptail);
+    ret = shel_write(SHW_EXEC, isgraf, isover, pcmd, ptail);
     if (!ret)
         graf_mouse(ARROW, NULL);
     return ret;
