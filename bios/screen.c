@@ -523,6 +523,12 @@ static void screen_init_mode(void)
         /* On ST, it is important to change the resolution register when nothing
          * is displaying, otherwise the plane shift bug may appear. */
         vsync();
+#if CONF_WITH_RESET
+        /* If the Glue was reset during startup, it will sometimes need a second
+         * VSYNC interrupt to settle again.  Without this second wait for VSYNC,
+         * a monochrome screen display may wrap, or black bars may appear. */
+        vsync();
+#endif
 
         rez = monitor_type?ST_LOW:ST_HIGH;
         *(volatile BYTE *) ST_SHIFTER = rez;
