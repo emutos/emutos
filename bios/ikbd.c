@@ -176,17 +176,20 @@ LONG bconin2(void)
 
 static void push_ikbdiorec(ULONG value)
 {
+    short tail;
+
     KDEBUG(("KBD iorec: Pushing value 0x%08lx\n", value));
 
-    ikbdiorec.tail += 4;
-    if (ikbdiorec.tail >= ikbdiorec.size) {
-        ikbdiorec.tail = 0;
+    tail = ikbdiorec.tail + 4;
+    if (tail >= ikbdiorec.size) {
+        tail = 0;
     }
-    if (ikbdiorec.tail == ikbdiorec.size) {
+    if (tail == ikbdiorec.head) {
         /* iorec full */
         return;
     }
-    *(ULONG_ALIAS *) (ikbdiorec.buf + ikbdiorec.tail) = value;
+    *(ULONG_ALIAS *) (ikbdiorec.buf + tail) = value;
+    ikbdiorec.tail = tail;
 }
 
 #if CONF_SERIAL_CONSOLE
