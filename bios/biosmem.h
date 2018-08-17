@@ -19,7 +19,11 @@
 /*
  * sizes of ST-RAM disk buffers
  */
-#define DSKBUF_SECS     2
+#if ((CHKSUM_SECTORS) > 2)
+# define DSKBUF_SECS     (CHKSUM_SECTORS)
+#else
+# define DSKBUF_SECS     2
+#endif
 #define DSKBUF_SIZE     (DSKBUF_SECS * SECTOR_SIZE) /* pointed to by dskbufp */
 #define FRB_SIZE        (64 * 1024UL)       /* pointed to by _FRB cookie */
 #define FRB_SECS        (FRB_SIZE / SECTOR_SIZE)

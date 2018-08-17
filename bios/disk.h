@@ -67,6 +67,14 @@
 #define MEDIAMAYCHANGE  1L              /*  media may have changed      */
 #define MEDIACHANGE     2L              /*  media def has changed       */
 
+/*
+ * flop_mediach() does checksums over the first few sectors in order to
+ * detect floppy media change.  the following specifies the number of
+ * sectors to use; the value is (1 + the maximum FAT size)
+ */
+#define CHKSUM_SECTORS  6
+
+
 /* physical unit (floppy/harddisk) identificator */
 struct _unit
 {

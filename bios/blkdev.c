@@ -544,7 +544,7 @@ LONG blkdev_getbpb(WORD dev)
     ULONG tmp;
     LONG ret;
     UWORD reserved, recsiz;
-    int unit;
+    int n, unit;
 
     KDEBUG(("blkdev_getbpb(%d)\n",dev));
 
@@ -579,10 +579,15 @@ LONG blkdev_getbpb(WORD dev)
     if (!(bdev->flags & GETBPB_ALLOWED))
         return 0L;              /* no can do */
 
-    /* now we can read the bootsector using the physical mode */
+    /*
+     * now we can read the bootsector using the physical mode.  for
+     * floppies, we read additional sectors so that we can compute
+     * checksums later on
+     */
+    n = (unit < NUMFLOPPIES) ? CHKSUM_SECTORS : 1;
     do {
         ret = blkdev_rwabs(RW_READ | RW_NOMEDIACH | RW_NOTRANSLATE,
-                           dskbufp, 1, -1, unit, bdev->start);
+                           dskbufp, n, -1, unit, bdev->start);
         if (ret < 0L)
             ret = call_etv_critic((WORD)ret,dev);
     } while(ret == CRITIC_RETRY_REQUEST);
@@ -657,6 +662,10 @@ LONG blkdev_getbpb(WORD dev)
     bdev->geometry.spt = getiword(b->spt);
     memcpy(bdev->serial,b->serial,3);
     memcpy(bdev->serial2,b16->serial2,4);
+
+    /* store checksums iff floppy drive */
+    if (unit < NUMFLOPPIES)
+        flop_checksum(unit, dskbufp);
 
     KDEBUG(("bpb[dev=%d] = {\n  recsiz = %d;\n  clsiz  = %d;\n",
             dev,bdev->bpb.recsiz,bdev->bpb.clsiz));

@@ -40,9 +40,11 @@ extern LONG flopver(WORD *buf, LONG filler, WORD dev,
                     WORD sect, WORD track, WORD side, WORD count);
 extern LONG floprate(WORD dev, WORD rate);
 
-#if CONF_WITH_FDC
-
 /* internal functions */
+
+extern void flop_checksum(int floppy, UBYTE *buf);
+
+#if CONF_WITH_FDC
 
 extern void flopvbl(void);
 

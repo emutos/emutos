@@ -98,6 +98,7 @@ struct flop_info {
     UBYTE wpstatus;     /* current write protect status */
     UBYTE wplatch;      /* latched copy of wpstatus */
 #endif
+    UWORD chksum[CHKSUM_SECTORS];   /* for media change detection */
 };
 
 /*
@@ -423,6 +424,17 @@ static void flop_detect_drive(WORD dev)
 #endif
 }
 
+/*
+ * flop_checksum - calculate & store floppy checksums
+ */
+void flop_checksum(int floppy, UBYTE *buf)
+{
+    struct flop_info *fi = &finfo[floppy];
+    int i;
+
+    for (i = 0; i < CHKSUM_SECTORS; i++, buf += SECTOR_SIZE)
+        fi->chksum[i] = compute_cksum((const UWORD *)buf);
+}
 
 /*
  * flop_mediach - return mediachange status for floppy
@@ -430,7 +442,9 @@ static void flop_detect_drive(WORD dev)
 LONG flop_mediach(WORD dev)
 {
     struct fat16_bs *bootsec = (struct fat16_bs *) dskbufp;
-    int unit;
+    struct flop_info *fi;
+    UBYTE *p;
+    int i, unit;
 
     KDEBUG(("flop_mediach(%d)\n",dev));
 
@@ -438,9 +452,10 @@ LONG flop_mediach(WORD dev)
     return amiga_flop_mediach(dev);
 #endif
 
+    fi = &finfo[dev];
+
 #if CONF_WITH_FDC
     {
-    struct flop_info *fi = &finfo[dev];
 
     /*
      * if the latch has not been set since we reset it last time, status
@@ -482,11 +497,11 @@ LONG flop_mediach(WORD dev)
     /*
      * the current status was set, as was the latch.  we might have
      * inserted a WP diskette in an empty drive, or removed a WP diskette
-     * from a drive, or even replaced one WP diskette by another.  we
-     * attempt to read the boot sector to check the diskette serial number
+     * from a drive, or even replaced one WP diskette by another.  in order
+     * to detect a diskette change, we must now read the boot sector & FAT1.
      */
-    if (flopio((UBYTE *)bootsec,RW_READ,dev,1,0,0,1) != 0) {
-        KDEBUG(("flop_mediach(): can't read boot sector => media change\n"));
+    if (flopio((UBYTE *)bootsec,RW_READ,dev,1,0,0,CHKSUM_SECTORS) != 0) {
+        KDEBUG(("flop_mediach(): can't read starting sectors => media change\n"));
         return MEDIACHANGE;
     }
 
@@ -494,6 +509,9 @@ LONG flop_mediach(WORD dev)
             bootsec->serial[0],bootsec->serial[1],bootsec->serial[2],
             bootsec->serial2[0],bootsec->serial2[1],bootsec->serial2[2],bootsec->serial2[3]));
 
+    /*
+     * we first check the serial numbers in the boot sector for a change
+     */
     if (memcmp(bootsec->serial,blkdev[dev].serial,3)
      || memcmp(bootsec->serial2,blkdev[dev].serial2,4)) {
         KDEBUG(("flop_mediach(): serial number change => media change\n"));
@@ -503,11 +521,20 @@ LONG flop_mediach(WORD dev)
     /*
      * the serial number has not changed, but there could be two diskettes
      * with the same serial number, or the diskette could have been ejected,
-     * modified on another system, and replaced.  so we have to say "maybe".
+     * modified on another system, and replaced.  so we checksum each of
+     * the read sectors and compare against stored values to distinguish
+     * changed/unchanged.
      */
-    KDEBUG(("flop_mediach(): serial number unchanged => maybe media change\n"));
+    for (i = 0, p = dskbufp; i < CHKSUM_SECTORS; i++, p += SECTOR_SIZE) {
+        if (compute_cksum((const UWORD *)p) != fi->chksum[i]) {
+            KDEBUG(("flop_mediach(): checksum changed => media change\n"));
+            return MEDIACHANGE;
+        }
+    }
 
-    return MEDIAMAYCHANGE;
+    KDEBUG(("flop_mediach(): checksums unchanged => no media change\n"));
+
+    return MEDIANOCHANGE;
 }
 
 
