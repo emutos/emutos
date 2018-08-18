@@ -138,7 +138,7 @@ LONG call_etv_critic(WORD error,WORD device);   /* in vectors.S */
 
 
 /*
- * unified block device identificator - partially stolen from MiNT, hehe
+ * unified block device identifier - partially stolen from MiNT, hehe
  *
  * The 'forcechange' byte is used to force EmuTOS to recognise a media
  * change when logical sector zero is written to.

@@ -75,7 +75,7 @@
 #define CHKSUM_SECTORS  6
 
 
-/* physical unit (floppy/harddisk) identificator */
+/* physical unit (floppy/harddisk) identifier */
 struct _unit
 {
     BYTE    valid;          /* unit valid */
