@@ -336,6 +336,12 @@
 # ifndef CONF_WITH_VDI_EXTENSIONS
 #  define CONF_WITH_VDI_EXTENSIONS 0
 # endif
+# ifndef CONF_WITH_XBIOS_SOUND
+#  define CONF_WITH_XBIOS_SOUND 0
+# endif
+# ifndef CONF_WITH_XHDI
+#  define CONF_WITH_XHDI 0
+# endif
 # ifndef CONF_WITH_ICDRTC
 #  define CONF_WITH_ICDRTC 0
 # endif
