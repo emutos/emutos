@@ -131,6 +131,9 @@ extern GRECT    gl_rzero;
 extern GRECT    gl_rcenter;
 extern GRECT    gl_rmenu;
 
+/*
+ * the following functions are defined in aes/gemgraf.c
+ */
 void gsx_gclip(GRECT *pt);
 void gsx_sclip(const GRECT *pt);
 void gsx_pline(WORD offx, WORD offy, WORD cnt, const WORD *pts);
