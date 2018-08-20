@@ -79,7 +79,10 @@ static WORD shifter_check_moderez(WORD moderez)
 {
     WORD return_rez;
 
-    /* handle old-fashioned rez :-) */
+    /*
+     * videl modes are not valid for the shifter, so we return zero
+     * to indicate that the resolution should not be changed
+     */
     if (moderez > 0)                        /* ignore mode values */
         return 0;
 
@@ -98,7 +101,7 @@ static WORD shifter_check_moderez(WORD moderez)
 
 static int shifter_rez_changeable(void)
 {
-    int rez = Getrez();
+    int rez = Getrez();     /* we might be in running in user mode */
 
     if (HAS_TT_SHIFTER)
         return (rez != TT_HIGH);
