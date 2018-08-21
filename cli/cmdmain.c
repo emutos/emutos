@@ -29,7 +29,6 @@
  */
 LONG idt_value;
 UWORD screen_cols, screen_rows;
-UWORD linesize;
 WORD linewrap;
 DTA *dta;
 char user_path[MAXPATHLEN];
@@ -72,7 +71,6 @@ ULONG n;
     n = getwh();                            /* get max cell number for x and y */
     screen_cols = HIWORD(n) + 1;
     screen_rows = LOWORD(n) + 1;
-    linesize = screen_cols + 1 - 3;         /* allow for trailing NUL and prompt */
 
     linewrap = 0;
     dta = (DTA *)Fgetdta();

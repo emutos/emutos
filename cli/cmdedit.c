@@ -16,6 +16,7 @@
 /*
  *  local to this set of functions
  */
+LOCAL WORD linesize;
 LOCAL WORD history_num;
 LOCAL char *history_line[HISTORY_SIZE];
 
@@ -128,6 +129,8 @@ char *p;
 WORD i;
 
     history_num = -1;       /* means history not available */
+
+    linesize = screen_cols + 1 - 3; /* allow for trailing NUL and prompt */
 
     p = (char *)Malloc(linesize*HISTORY_SIZE);
     if (!p)

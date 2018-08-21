@@ -184,7 +184,6 @@ typedef LONG FUNC(WORD argc,char **argv);
  */
 extern LONG idt_value;
 extern UWORD screen_cols, screen_rows;
-extern UWORD linesize;
 extern WORD linewrap;
 extern DTA *dta;
 extern LONG redir_handle;
