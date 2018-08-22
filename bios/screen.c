@@ -946,16 +946,16 @@ WORD getrez(void)
  *      if a VIDEL is present and rez==3, then the video mode is
  *      set by a call to vsetmode with 'videlmode' as the argument
  *  . *** special EmuTOS-only extension, used by EmuCON ***
- *      if logLoc==physLoc==rez==-1, 'videlmode' is used to select
+ *      if logLoc<0 && physLoc<0 && rez<0, 'videlmode' is used to select
  *      the cellheight of the default font
  */
 void setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
 {
-    if (logLoc != (UBYTE *)-1) {
+    if ((LONG)logLoc >= 0) {
         v_bas_ad = logLoc;
         KDEBUG(("v_bas_ad = %p\n", v_bas_ad));
     }
-    if (physLoc != (UBYTE *)-1) {
+    if ((LONG)physLoc >= 0) {
         setphys(physLoc);
     }
     if (rez >= 0 && rez < 8) {
@@ -975,7 +975,7 @@ void setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
     }
 
     /* handle EmuCON extension */
-    if ((logLoc == (UBYTE *)-1) && (physLoc == (UBYTE *)-1) && (rez == -1)) {
+    if (((LONG)logLoc < 0) && ((LONG)physLoc < 0) && (rez < 0)) {
         font_set_default(videlmode);
         vt52_init();
     }
