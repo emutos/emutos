@@ -61,8 +61,6 @@ GLOBAL WORD     gl_hptschar;
 GLOBAL WORD     gl_wbox;
 GLOBAL WORD     gl_hbox;
 
-GLOBAL WORD     gl_xclip;
-GLOBAL WORD     gl_yclip;
 GLOBAL WORD     gl_wclip;
 GLOBAL WORD     gl_hclip;
 
@@ -77,18 +75,25 @@ GLOBAL WORD     contrl[12];
 GLOBAL WORD     intin[128];
 GLOBAL WORD     ptsin[20];
 
-GLOBAL WORD     gl_mode;
-GLOBAL WORD     gl_tcolor;
-GLOBAL WORD     gl_lcolor;
-GLOBAL WORD     gl_fis;
-GLOBAL WORD     gl_patt;
-GLOBAL WORD     gl_font;
-
 GLOBAL GRECT    gl_rscreen;
 GLOBAL GRECT    gl_rfull;
 GLOBAL GRECT    gl_rzero;
 GLOBAL GRECT    gl_rcenter;
 GLOBAL GRECT    gl_rmenu;
+
+static WORD     gl_xclip;
+static WORD     gl_yclip;
+
+/*
+ * the following are used to save the currently-set values for
+ * various VDI attributes, in order to save unnecessary VDI calls
+ */
+static WORD     gl_mode;        /* text writing mode (vswr_mode) */
+static WORD     gl_tcolor;      /* text colour (vst_color) */
+static WORD     gl_lcolor;      /* line colour (vsl_color) */
+static WORD     gl_fis;         /* interior type (vsf_interior) */
+static WORD     gl_patt;        /* style of fill pattern (vsf_style) */
+static WORD     gl_font;        /* font type (IBM/SMALL) for v_gtext */
 
 static WORD     gl_wsptschar;
 static WORD     gl_hsptschar;

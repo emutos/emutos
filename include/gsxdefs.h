@@ -102,8 +102,6 @@ extern WORD     gl_hptschar;
 extern WORD     gl_wbox;
 extern WORD     gl_hbox;
 
-extern WORD     gl_xclip;
-extern WORD     gl_yclip;
 extern WORD     gl_wclip;
 extern WORD     gl_hclip;
 
@@ -117,13 +115,6 @@ extern WS       gl_ws;
 extern WORD     contrl[12];
 extern WORD     intin[128];
 extern WORD     ptsin[20];
-
-extern WORD     gl_mode;
-extern WORD     gl_tcolor;
-extern WORD     gl_lcolor;
-extern WORD     gl_fis;
-extern WORD     gl_patt;
-extern WORD     gl_font;
 
 extern GRECT    gl_rscreen;
 extern GRECT    gl_rfull;
