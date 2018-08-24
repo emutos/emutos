@@ -68,7 +68,11 @@ void ob_center(OBJECT *tree, GRECT *pt)
     if (root->ob_state & (OUTLINED|SHADOWED))
     {
         xd -= 3;
+        if (xd < 0)     /* don't move object offscreen */
+            xd = 0;
         yd -= 3;
+        if (yd < 0)     /* don't move object offscreen */
+            yd = 0;
         wd += 6;
         hd += 6;
     }
