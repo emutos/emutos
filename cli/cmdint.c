@@ -412,7 +412,7 @@ WORD rate = -1, delay = -1, height = -1;
         if ((delay >= 0) || (rate >= 0))
             Kbrate(delay,rate);
         if (height >= 0) {
-            Setscreen(-1L,-1L,-1,height);
+            Setscreen(-1L,-1L,0x8000,height);
             enable_cursor();
         }
         return 0;
