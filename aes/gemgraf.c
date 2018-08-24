@@ -431,6 +431,10 @@ void gsx_start(void)
 {
     WORD    char_height;
 
+    /* reset variables to force initial VDI calls */
+    gl_mode = gl_tcolor = gl_lcolor = -1;
+    gl_fis = gl_patt = gl_font = -1;
+
     gl_xclip = 0;
     gl_yclip = 0;
     gl_width = gl_wclip = gl_ws.ws_xres + 1;
