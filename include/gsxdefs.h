@@ -96,9 +96,6 @@ extern WORD     gl_hchar;
 extern WORD     gl_wschar;
 extern WORD     gl_hschar;
 
-extern WORD     gl_wptschar;
-extern WORD     gl_hptschar;
-
 extern WORD     gl_wbox;
 extern WORD     gl_hbox;
 

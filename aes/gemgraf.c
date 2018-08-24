@@ -55,9 +55,6 @@ GLOBAL WORD     gl_hchar;
 GLOBAL WORD     gl_wschar;
 GLOBAL WORD     gl_hschar;
 
-GLOBAL WORD     gl_wptschar;
-GLOBAL WORD     gl_hptschar;
-
 GLOBAL WORD     gl_wbox;
 GLOBAL WORD     gl_hbox;
 
@@ -94,6 +91,9 @@ static WORD     gl_lcolor;      /* line colour (vsl_color) */
 static WORD     gl_fis;         /* interior type (vsf_interior) */
 static WORD     gl_patt;        /* style of fill pattern (vsf_style) */
 static WORD     gl_font;        /* font type (IBM/SMALL) for v_gtext */
+
+static WORD     gl_wptschar;
+static WORD     gl_hptschar;
 
 static WORD     gl_wsptschar;
 static WORD     gl_hsptschar;
