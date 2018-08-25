@@ -657,6 +657,15 @@ void run_accs_and_desktop(void)
     gsx_wsclose();
 }
 
+/*
+ * change resolution & reinitialise the palette registers
+ */
+static void new_resolution(WORD rez, WORD videlmode)
+{
+    Setscreen(-1L, -1L, rez, videlmode);        /* change resolution */
+    Setscreen(-1L, -1L, 0xc000|rez, videlmode); /* init palette regs */
+}
+
 void gem_main(void)
 {
     LONG    n;
@@ -676,14 +685,12 @@ void gem_main(void)
         switch(gl_changerez) {
 #if CONF_WITH_ATARI_VIDEO
         case 1:                     /* ST(e) or TT display */
-            Setscreen(-1L,-1L,gl_nextrez-2,0);
-            initialise_palette_registers(gl_nextrez-2,0);
+            new_resolution(gl_nextrez-2, 0);
             break;
 #endif
 #if CONF_WITH_VIDEL || defined(MACHINE_AMIGA)
         case 2:                     /* Falcon display */
-            Setscreen(-1L, -1L, FALCON_REZ, gl_nextrez);
-            initialise_palette_registers(FALCON_REZ,gl_nextrez);
+            new_resolution(FALCON_REZ, gl_nextrez);
             break;
 #endif
         }

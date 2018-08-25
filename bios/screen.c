@@ -949,15 +949,20 @@ WORD getrez(void)
  * in addition, EmuTOS implements the following extensions iff
  * logLoc<0 and physLoc<0 and the 0x8000 bit is set in rez (TOS will
  * ignore these since it ignores negative values of 'rez'):
- *  . if no other bits are set in rez, 'videlmode' selects the
- *    cellheight of the default font
+ *  . if the 0x4000 bit is set in rez, the palette registers are
+ *    initialised according to 'rez' (bits 2-0) and 'videlmode'
+ *  . otherwise, 'videlmode' selects the cellheight of the default font
  */
 void setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
 {
-    /* handle EmuCON extension */
-    if (((LONG)logLoc < 0) && ((LONG)physLoc < 0) && (rez == 0x8000)) {
-        font_set_default(videlmode);
-        vt52_init();
+    /* handle EmuCON extensions */
+    if (((LONG)logLoc < 0) && ((LONG)physLoc < 0) && (rez & 0x8000)) {
+        if (rez & 0x4000) {
+            initialise_palette_registers(rez&0x0007, videlmode);
+        } else {
+            font_set_default(videlmode);
+            vt52_init();
+        }
         return;
     }
 
