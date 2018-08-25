@@ -57,7 +57,7 @@ void ob_center(OBJECT *tree, GRECT *pt)
 {
     WORD    xd, yd, wd, hd;
     LONG spec;
-    WORD state, obtype, flags;
+    WORD dummy;
     GRECT t;
     WORD th;
 
@@ -84,7 +84,7 @@ void ob_center(OBJECT *tree, GRECT *pt)
     /* account for shadow */
     if (tree->ob_state & SHADOWED)
     {
-        ob_sst(tree, ROOT, &spec, &state, &obtype, &flags, &t, &th);
+        ob_sst(tree, ROOT, &spec, &dummy, &dummy, &dummy, &t, &th);
         if (th < 0)
             th = -th;
         th += th;
