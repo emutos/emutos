@@ -56,21 +56,20 @@ static void ob_getsp(OBJECT *tree, WORD obj, TEDINFO *pted)
 void ob_center(OBJECT *tree, GRECT *pt)
 {
     WORD    xd, yd, wd, hd;
-    OBJECT  *root = tree;
     LONG spec;
     WORD state, obtype, flags;
     GRECT t;
     WORD th;
 
-    wd = root->ob_width;
-    hd = root->ob_height;
+    wd = tree->ob_width;
+    hd = tree->ob_height;
     xd = (gl_width - wd) / 2;
     yd = gl_hbox + ((gl_height - gl_hbox - hd) / 2);
-    root->ob_x = xd;
-    root->ob_y = yd;
+    tree->ob_x = xd;
+    tree->ob_y = yd;
 
     /* account for outline */
-    if (root->ob_state & OUTLINED)
+    if (tree->ob_state & OUTLINED)
     {
         xd -= 3;
         if (xd < 0)     /* don't move object offscreen */
@@ -83,9 +82,9 @@ void ob_center(OBJECT *tree, GRECT *pt)
     }
 
     /* account for shadow */
-    if (root->ob_state & SHADOWED)
+    if (tree->ob_state & SHADOWED)
     {
-        ob_sst(root, 0, &spec, &state, &obtype, &flags, &t, &th);
+        ob_sst(tree, ROOT, &spec, &state, &obtype, &flags, &t, &th);
         if (th < 0)
             th = -th;
         th += th;
