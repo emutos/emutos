@@ -28,6 +28,7 @@
 #include "gemoblib.h"
 #include "gemgraf.h"
 #include "geminit.h"
+#include "gemobjop.h"
 #include "gemrslib.h"
 #include "optimize.h"
 #include "optimopt.h"
@@ -56,6 +57,10 @@ void ob_center(OBJECT *tree, GRECT *pt)
 {
     WORD    xd, yd, wd, hd;
     OBJECT  *root = tree;
+    LONG spec;
+    WORD state, obtype, flags;
+    GRECT t;
+    WORD th;
 
     wd = root->ob_width;
     hd = root->ob_height;
@@ -64,8 +69,8 @@ void ob_center(OBJECT *tree, GRECT *pt)
     root->ob_x = xd;
     root->ob_y = yd;
 
-    /* account for outline or shadow */
-    if (root->ob_state & (OUTLINED|SHADOWED))
+    /* account for outline */
+    if (root->ob_state & OUTLINED)
     {
         xd -= 3;
         if (xd < 0)     /* don't move object offscreen */
@@ -75,6 +80,17 @@ void ob_center(OBJECT *tree, GRECT *pt)
             yd = 0;
         wd += 6;
         hd += 6;
+    }
+
+    /* account for shadow */
+    if (root->ob_state & SHADOWED)
+    {
+        ob_sst(root, 0, &spec, &state, &obtype, &flags, &t, &th);
+        if (th < 0)
+            th = -th;
+        th += th;
+        wd += th;
+        hd += th;
     }
     r_set(pt, xd, yd, wd, hd);
 }
