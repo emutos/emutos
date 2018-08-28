@@ -330,6 +330,22 @@ WORD esetsmear(WORD mode)
 
 /*
  * Initialise TT palette
+ *
+ * Note the following special handling for the TT's "Duochrome" mode,
+ * (used when you select "ST High" on the TT desktop):
+ *
+ * For Duochrome mode, TT palette register 0 contains the inversion bit
+ * (bit 1), and the foreground/background colours are in registers 254/255.
+ * For both TOS3 and EmuTOS, the initial value for VDI pens 0/254/255 are
+ * white/white/black for all resolutions, which causes hardware registers
+ * 0/254/255 to be set to 0x0fff/0x0fff/0x000.
+ *
+ * Without any compensation, this would cause problems when switching to
+ * duochrome mode: since the inversion bit in register 0 is set, the display
+ * would show as white on black.  Since it's desirable for other reasons to
+ * leave register 0 as white, TOS3 (and EmuTOS) compensate as follows: if
+ * the inversion bit is set, the values in registers 254/255 are swapped.
+ * This produces the correct black on white display.
  */
 static void initialise_tt_palette(WORD rez)
 {
@@ -341,6 +357,13 @@ static void initialise_tt_palette(WORD rez)
     if (rez == TT_HIGH) {
         /* TT_PALETTE_REGS[1] is updated by h/w */
         TT_PALETTE_REGS[1] = TT_PALETTE_REGS[15];
+        return;
+    }
+
+    /* special handling for Duochrome mode */
+    if ((rez == ST_HIGH) && (tt_dflt_palette[0] & TT_DUOCHROME_INVERT)) {
+        TT_PALETTE_REGS[254] = tt_dflt_palette[255];
+        TT_PALETTE_REGS[255] = tt_dflt_palette[254];
     }
 }
 
