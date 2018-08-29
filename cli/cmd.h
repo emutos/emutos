@@ -22,6 +22,7 @@
  typedef unsigned short  UWORD;
  typedef long            LONG;
  typedef unsigned long   ULONG;
+ #define FALSE           0
  #define MAXPATHLEN      256
  #define BLKDEVNUM       26
  #define LOWORD(x) ((UWORD)(ULONG)(x))

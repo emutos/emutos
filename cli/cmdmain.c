@@ -42,7 +42,9 @@ LOCAL char input_line[MAX_LINE_SIZE];
 LOCAL char *arglist[MAX_ARGS];
 LOCAL char redir_name[MAXPATHLEN];
 LOCAL WORD original_res;
+#ifndef STANDALONE_CONSOLE
 LOCAL LONG vdo_value;
+#endif
 
 /*
  *  function prototypes
@@ -71,6 +73,10 @@ ULONG n;
      */
     if (getcookie(_IDT_COOKIE,&idt_value) == 0)
         idt_value = DEFAULT_DT_FORMAT;      /* if not found, make sure it's initialised properly */
+
+#ifdef STANDALONE_CONSOLE
+    original_res = -1;
+#else
     if (getcookie(_VDO_COOKIE,&vdo_value) == 0)
         vdo_value = _VDO_ST;
 #if CONF_WITH_TT_SHIFTER
@@ -78,6 +84,7 @@ ULONG n;
 #else
     original_res = (vdo_value < _VDO_TT) ? Getrez() : -1;
 #endif
+#endif  /* STANDALONE_CONSOLE */
 
     linewrap = 0;
     dta = (DTA *)Fgetdta();

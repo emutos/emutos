@@ -99,9 +99,14 @@ LOCAL const char * const help_ls[] = { "[-l] <path>",
     N_("Specify -l for detailed list"), NULL };
 LOCAL const char * const help_mkdir[] = { "<dir>",
     N_("Create directory <dir>"), NULL };
+#ifndef STANDALONE_CONSOLE
 LOCAL const char * const help_mode[] = { "con[:] [res=<r>] [delay=<m>] [rate=<n>] [height=<h>]",
     N_("Set or display console settings:"),
     N_("res for screen resolution (ST(e)/TT only);"),
+#else
+LOCAL const char * const help_mode[] = { "con[:] [delay=<m>] [rate=<n>] [height=<h>]",
+    N_("Set or display console settings:"),
+#endif
     N_("delay/rate for the keyboard;"),
     N_("line height (8,16) for the display"), NULL };
 LOCAL const char * const help_more[] = { "<filespec>",
