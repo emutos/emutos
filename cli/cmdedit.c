@@ -147,6 +147,17 @@ WORD i;
 }
 
 /*
+ *  cleanup command editing globals
+ */
+void term_cmdedit(void)
+{
+    if (history_num >= 0)
+        Mfree(history_line[0]);
+
+    history_num = -1;       /* history not available */
+}
+
+/*
  *  save a line in the history
  */
 void save_history(const char *line)

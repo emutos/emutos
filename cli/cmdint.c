@@ -99,8 +99,9 @@ LOCAL const char * const help_ls[] = { "[-l] <path>",
     N_("Specify -l for detailed list"), NULL };
 LOCAL const char * const help_mkdir[] = { "<dir>",
     N_("Create directory <dir>"), NULL };
-LOCAL const char * const help_mode[] = { "con[:] [delay=<m>] [rate=<n>] [height=<h>]",
+LOCAL const char * const help_mode[] = { "con[:] [res=<r>] [delay=<m>] [rate=<n>] [height=<h>]",
     N_("Set or display console settings:"),
+    N_("res for screen resolution (ST(e)/TT only);"),
     N_("delay/rate for the keyboard;"),
     N_("line height (8,16) for the display"), NULL };
 LOCAL const char * const help_more[] = { "<filespec>",
@@ -149,7 +150,7 @@ LOCAL const COMMAND cmdtable[] = {
     { "help", NULL, 0, 1, run_help, help_help },
     { "ls", "dir", 0, 2, run_ls, help_ls },
     { "mkdir", "md", 1, 1, run_mkdir, help_mkdir },
-    { "mode", NULL, 1, 4, run_mode, help_mode },
+    { "mode", NULL, 1, 5, run_mode, help_mode },
     { "more", NULL, 1, 1, run_more, help_more },
     { "mv", "move", 2, 2, run_mv, help_mv },
     { "path", NULL, 0, 1, run_path, help_path },
@@ -376,13 +377,18 @@ PRIVATE LONG run_mode(WORD argc,char **argv)
 {
 char buf[80];
 WORD i, old;
-WORD rate = -1, delay = -1, height = -1;
+WORD res = -1, rate = -1, delay = -1, height = -1;
 
     argv++;
     if (strequal(*argv,"con") || strequal(*argv,"con:")) {
         if (argc == 2) {    /* just status wanted */
-            old = Kbrate(-1,-1);
             outputnl(_("Status for CON:"));
+            if (current_res >= 0) {
+                output(_("  Resolution:     "));
+                convulong(buf,current_res,3,' ');
+                outputnl(buf);
+            }
+            old = Kbrate(-1,-1);
             output(_("  Keyboard delay: "));
             convulong(buf,HIBYTE(old),3,' ');
             outputnl(buf);
@@ -395,7 +401,11 @@ WORD rate = -1, delay = -1, height = -1;
             return 0;
         }
         for (i = 2, argv++; i < argc; i++, argv++) {
-            if (strncasecmp(*argv,"delay=",6) == 0) {
+            if (strncasecmp(*argv,"res=",4) == 0) {
+                res = getword(*argv+4);
+                if (!valid_res(res))
+                    return INVALID_PARAM;
+            } else if (strncasecmp(*argv,"delay=",6) == 0) {
                 delay = getword(*argv+6);
                 if (delay < 0)
                     return INVALID_PARAM;
@@ -414,6 +424,10 @@ WORD rate = -1, delay = -1, height = -1;
         if (height >= 0) {
             Setscreen(-1L,-1L,0x8000,height);
             enable_cursor();
+        }
+        if ((res >= 0) && (res != current_res)) {
+            requested_res = res;
+            return CHANGE_RES;
         }
         return 0;
     }
