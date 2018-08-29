@@ -287,7 +287,7 @@ const char * const *s;
     if (argc == 1) {
         outputnl(_("Builtin commands:"));
         for (p = cmdtable; p->func; p++) {
-            output("    ");
+            output("  ");
             if (p->synonym) {
                 output(p->name);
                 output("/");
@@ -299,7 +299,7 @@ const char * const *s;
 
     if (strequal(argv[1],"edit")) {
         for (s = &help_edit[0]; *s; s++) {
-            output("    ");
+            output("  ");
             outputnl(gettext(*s));
         }
         return 0L;
@@ -864,7 +864,7 @@ const char * const *s;
     outputnl(p->help[0]);
 
     for (s = &p->help[1]; *s; s++) {
-        output("    ");
+        output("  ");
         outputnl(gettext(*s));
     }
 }
