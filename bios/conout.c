@@ -25,7 +25,7 @@
 
 
 
-#define  plane_offset   2       /* interleaved planes */
+#define PLANE_OFFSET    2       /* interleaved planes */
 
 
 
@@ -366,7 +366,7 @@ cell_xfer(UBYTE * src, UBYTE * dst)
 
         bg >>= 1;                       /* next background color bit */
         fg >>= 1;                       /* next foreground color bit */
-        dst_sav += plane_offset;        /* top of block in next plane */
+        dst_sav += PLANE_OFFSET;        /* top of block in next plane */
     }
 }
 
@@ -473,7 +473,7 @@ neg_cell(UBYTE * cell)
             *addr = ~*addr;
             addr += v_lin_wr;
         }
-        cell += plane_offset;           /* a1 -> top of block in next plane */
+        cell += PLANE_OFFSET;           /* a1 -> top of block in next plane */
     }
     v_stat_0 &= ~M_CRIT;                /* end of critical section. */
 }
