@@ -62,12 +62,6 @@ int cmdmain(void)
 WORD argc, rc;
 ULONG n;
 
-    clear_screen();
-    enable_cursor();
-    message(_("Welcome to EmuCON2 version ")); messagenl(version);
-    messagenl(_("Type HELP for builtin commands"));
-    messagenl("");
-
     /*
      *  initialise some global variables
      */
@@ -85,11 +79,23 @@ ULONG n;
     original_res = (vdo_value < _VDO_TT) ? Getrez() : -1;
 #endif
 #endif  /* STANDALONE_CONSOLE */
+    current_res = original_res;
+
+    /*
+     * start up in ST medium if we are currently in ST low
+     */
+    if (current_res == ST_LOW)
+        change_res(ST_MEDIUM);
+
+    clear_screen();
+    enable_cursor();
+    message(_("Welcome to EmuCON2 version ")); messagenl(version);
+    messagenl(_("Type HELP for builtin commands"));
+    messagenl("");
 
     linewrap = 0;
     dta = (DTA *)Fgetdta();
     redir_handle = -1L;
-    current_res = original_res;
 
     while(1) {
         n = getwh();        /* get max cell number for x and y */
