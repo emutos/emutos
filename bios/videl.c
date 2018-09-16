@@ -30,6 +30,17 @@
 
 #if CONF_WITH_VIDEL
 
+/*
+ * although the EmuTOS BIOS fully supports the Videl hardware, the
+ * VDI/EmuCON/EmuDesk do not support TrueColor modes.  so we clamp
+ * the bits-per-pixel value returned by get_videl_bpp() to the
+ * following value in order to avoid crashes elsewhere.
+ *
+ * programs may use Vsetmode()/Vsetscreen() to set a TrueColor mode,
+ * but, if they do, they must handle the screen display themselves.
+ */
+#define MAX_BPP     8
+
 static const ULONG videl_dflt_palette[] = {
     FRGB_WHITE, FRGB_RED, FRGB_GREEN, FRGB_YELLOW,
     FRGB_BLUE, FRGB_MAGENTA, FRGB_CYAN, FRGB_LTGRAY,
@@ -291,6 +302,13 @@ static UWORD get_videl_bpp(void)
         bits_per_pixel = 2;
     else /* if (st_shift == 0x2) */
         bits_per_pixel = 1;
+
+    /*
+     * the following will no longer be necessary, and should be removed,
+     * when the VDI/EmuCON/EmuDesk are upgraded to support Falcon TrueColor
+     */
+    if (bits_per_pixel > MAX_BPP)
+        bits_per_pixel = MAX_BPP;
 
     return bits_per_pixel;
 }
