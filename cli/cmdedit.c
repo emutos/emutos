@@ -121,6 +121,21 @@ char *p;
 }
 
 /*
+ * initialise variables related to current screen size
+ */
+void init_screen(void)
+{
+ULONG n;
+
+    n = getwh();                    /* get max cell number for x and y */
+    screen_cols = HIWORD(n) + 1;
+    screen_rows = LOWORD(n) + 1;
+    linesize = screen_cols + 1 - 3; /* allow for trailing NUL and prompt */
+    if (linesize > MAX_LINE_SIZE)
+        linesize = MAX_LINE_SIZE;
+}
+
+/*
  *  initialise command editing globals
  */
 WORD init_cmdedit(void)
@@ -130,13 +145,11 @@ WORD i;
 
     history_num = -1;       /* means history not available */
 
-    linesize = screen_cols + 1 - 3; /* allow for trailing NUL and prompt */
-
-    p = (char *)Malloc(linesize*HISTORY_SIZE);
+    p = (char *)Malloc(MAX_LINE_SIZE*HISTORY_SIZE);
     if (!p)
         return -1;
 
-    for (i = 0; i < HISTORY_SIZE; i++, p += linesize) {
+    for (i = 0; i < HISTORY_SIZE; i++, p += MAX_LINE_SIZE) {
         history_line[i] = p;
         *p = '\0';
     }

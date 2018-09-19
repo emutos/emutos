@@ -100,7 +100,7 @@ extern LONG jmp_xbios(WORD, ...);
 
 #define IOBUFSIZE       16384L  /* buffer size */
 
-#define MAX_LINE_SIZE   200     /* must be greater than the largest screen width */
+#define MAX_LINE_SIZE   200L    /* must be greater than the largest screen width */
 #define HISTORY_SIZE    10      /* number of lines of history */
 #define MAX_ARGS        30      /* maximum number of args we can parse */
 
@@ -217,6 +217,7 @@ int valid_res(WORD res);
 
 /* cmdedit.c */
 WORD init_cmdedit(void);
+void init_screen(void);
 void insert_char(char *line,WORD pos,WORD len,char c);
 WORD read_line(char *line);
 void save_history(const char *line);

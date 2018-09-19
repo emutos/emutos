@@ -60,7 +60,6 @@ extern int cmdmain(void); /* called only from cmdasm.S */
 int cmdmain(void)
 {
 WORD argc, rc;
-ULONG n;
 
     /*
      *  initialise some global variables
@@ -97,13 +96,11 @@ ULONG n;
     dta = (DTA *)Fgetdta();
     redir_handle = -1L;
 
-    while(1) {
-        n = getwh();        /* get max cell number for x and y */
-        screen_cols = HIWORD(n) + 1;
-        screen_rows = LOWORD(n) + 1;
+    if (init_cmdedit() < 0)
+        messagenl(_("warning: no history buffers"));
 
-        if (init_cmdedit() < 0)
-            messagenl(_("warning: no history buffers"));
+    while(1) {
+        init_screen();      /* init variables for screen size */
 
         do {
             rc = read_line(input_line);
@@ -120,9 +117,10 @@ ULONG n;
             }
         } while (rc <= 0);      /* until resolution change */
 
-        term_cmdedit();     /* cleanup */
         change_res(requested_res);
     }
+
+    term_cmdedit();         /* cleanup */
 
     return 0;
 }
