@@ -401,12 +401,12 @@ static void write_scc(PORT *port,UBYTE reg,UBYTE data)
     RECOVERY_DELAY;
 }
 
-static ULONG rsconf_scc(PORT *port,WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
+static ULONG rsconf_scc(PORT *port,EXT_IOREC *iorec,WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 {
     ULONG old;
 
     if (baud == -2)     /* wants current baud rate */
-        return rs232iorecptr->baudrate;
+        return iorec->baudrate;
 
     /*
      * retrieve old ucr/rsr/tsr/scr
@@ -414,19 +414,19 @@ static ULONG rsconf_scc(PORT *port,WORD baud, WORD ctrl, WORD ucr, WORD rsr, WOR
      * we must return 0 for rsr and scr, and the only valid bit in the
      * tsr is bit 3.
      */
-    old = (ULONG)(rs232iorecptr->ucr) << 24;
-    if (rs232iorecptr->wr5 & 0x10)  /* break being sent? */
+    old = (ULONG)(iorec->ucr) << 24;
+    if (iorec->wr5 & 0x10)  /* break being sent? */
         old |= 0x0800;              /* yes, mark it in the returned pseudo-TSR */
 
     if ((ctrl >= MIN_FLOW_CTRL) && (ctrl <= MAX_FLOW_CTRL))
-        rs232iorecptr->flowctrl = ctrl;
+        iorec->flowctrl = ctrl;
 
     /*
      * set baudrate from lookup table
      */
     if ((baud >= MIN_BAUDRATE_CODE ) && (baud <= MAX_BAUDRATE_CODE)) {
         WORD tc;
-        rs232iorecptr->baudrate = baud;
+        iorec->baudrate = baud;
         tc = scc_timeconst[baud];
         write_scc(port,12,LOBYTE(tc));
         write_scc(port,13,HIBYTE(tc));
@@ -437,7 +437,7 @@ static ULONG rsconf_scc(PORT *port,WORD baud, WORD ctrl, WORD ucr, WORD rsr, WOR
      */
     if (ucr >= 0) {
         UBYTE bpc, mask, wr4, wr5;
-        rs232iorecptr->ucr = ucr;
+        iorec->ucr = ucr;
         switch((ucr>>5)&0x03) {     /* isolate ucr bits/char code */
         case 3:     /* 5 bits */
             mask = 0x1f;
@@ -456,9 +456,9 @@ static ULONG rsconf_scc(PORT *port,WORD baud, WORD ctrl, WORD ucr, WORD rsr, WOR
             bpc = 0x60;
             break;
         }
-        rs232iorecptr->datamask = mask;
-        wr5 = (rs232iorecptr->wr5&0x9f) | bpc;
-        rs232iorecptr->wr5 = wr5;       /* update tx bits/char in shadow wr5 */
+        iorec->datamask = mask;
+        wr5 = (iorec->wr5&0x9f) | bpc;
+        iorec->wr5 = wr5;       /* update tx bits/char in shadow wr5 */
         write_scc(port,5,wr5);          /* update real wr5 */
         write_scc(port,3,(bpc<<1)|0x01);/* update rx bits/char too */
         wr4 = 0x40 | ((ucr>>1)&0x0c);   /* set x16 clock & stop bits */
@@ -474,7 +474,7 @@ static ULONG rsconf_scc(PORT *port,WORD baud, WORD ctrl, WORD ucr, WORD rsr, WOR
      */
     if (tsr >= 0) {
         UBYTE wr5;
-        wr5 = rs232iorecptr->wr5;
+        wr5 = iorec->wr5;
         if (tsr & 0x08) {       /* break requested */
             if (!(wr5 & 0x10))      /* not currently breaking */
                 wr5 |= 0x10;
@@ -482,8 +482,8 @@ static ULONG rsconf_scc(PORT *port,WORD baud, WORD ctrl, WORD ucr, WORD rsr, WOR
             if (wr5 & 0x10)         /* break in progress */
                 wr5 &= ~0x10;
         }
-        if (wr5 != rs232iorecptr->wr5) {
-            rs232iorecptr->wr5 = wr5;
+        if (wr5 != iorec->wr5) {
+            iorec->wr5 = wr5;
             write_scc(port,5,wr5);
         }
     }
@@ -495,14 +495,14 @@ static ULONG rsconfA(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD sc
 {
     SCC *scc = (SCC *)SCC_BASE;
 
-    return rsconf_scc(&scc->portA,baud,ctrl,ucr,rsr,tsr,scr);
+    return rsconf_scc(&scc->portA,&iorecA,baud,ctrl,ucr,rsr,tsr,scr);
 }
 
 static ULONG rsconfB(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 {
     SCC *scc = (SCC *)SCC_BASE;
 
-    return rsconf_scc(&scc->portB,baud,ctrl,ucr,rsr,tsr,scr);
+    return rsconf_scc(&scc->portB,&iorecB,baud,ctrl,ucr,rsr,tsr,scr);
 }
 
 static const WORD SCC_init_string[] = {
