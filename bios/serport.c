@@ -557,6 +557,15 @@ ULONG reset_recovery_loops;
     /* initialise channel B */
     for (p = SCC_init_string; *p >= 0; p++)
         write_scc(&scc->portB,HIBYTE(*p),LOBYTE(*p));
+
+    /*
+     * Enable routing of the SCC interrupt through the SCU like TOS does.
+     * Even though interrupts are not used here, other programs might
+     * install their own interrupt vectors and expect the interrupt
+     * to be available to them.
+     */
+     if (HAS_VME)
+        *(volatile BYTE *)VME_INT_MASK |= 1<<5;
 }
 #endif  /* CONF_WITH_SCC */
 
