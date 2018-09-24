@@ -270,8 +270,8 @@ ULONG rsconf1(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
  */
 static LONG bconstatA(void)
 {
-SCC *scc = (SCC *)SCC_BASE;
-LONG rc;
+    SCC *scc = (SCC *)SCC_BASE;
+    LONG rc;
 
     rc = (scc->portA.ctl & 0x01) ? -1L : 0L;
     RECOVERY_DELAY;
@@ -281,8 +281,8 @@ LONG rc;
 
 static LONG bconinA(void)
 {
-SCC *scc = (SCC *)SCC_BASE;
-LONG data;
+    SCC *scc = (SCC *)SCC_BASE;
+    LONG data;
 
     while(!bconstatA())
         ;
@@ -294,8 +294,8 @@ LONG data;
 
 static LONG bcostatA(void)
 {
-SCC *scc = (SCC *)SCC_BASE;
-LONG rc;
+    SCC *scc = (SCC *)SCC_BASE;
+    LONG rc;
 
     rc = (scc->portA.ctl & 0x04) ? -1L : 0L;
     RECOVERY_DELAY;
@@ -305,7 +305,7 @@ LONG rc;
 
 static LONG bconoutA(WORD dev, WORD b)
 {
-SCC *scc = (SCC *)SCC_BASE;
+    SCC *scc = (SCC *)SCC_BASE;
 
     while(!bcostatA())
         ;
@@ -320,8 +320,8 @@ SCC *scc = (SCC *)SCC_BASE;
  */
 static LONG bconstatB(void)
 {
-SCC *scc = (SCC *)SCC_BASE;
-LONG rc;
+    SCC *scc = (SCC *)SCC_BASE;
+    LONG rc;
 
     rc = (scc->portB.ctl & 0x01) ? -1L : 0L;
     RECOVERY_DELAY;
@@ -331,8 +331,8 @@ LONG rc;
 
 static LONG bconinB(void)
 {
-SCC *scc = (SCC *)SCC_BASE;
-LONG data;
+    SCC *scc = (SCC *)SCC_BASE;
+    LONG data;
 
     while(!bconstatB())
         ;
@@ -344,8 +344,8 @@ LONG data;
 
 static LONG bcostatB(void)
 {
-SCC *scc = (SCC *)SCC_BASE;
-LONG rc;
+    SCC *scc = (SCC *)SCC_BASE;
+    LONG rc;
 
     rc = (scc->portB.ctl & 0x04) ? -1L : 0L;
     RECOVERY_DELAY;
@@ -356,7 +356,7 @@ LONG rc;
 /* note that bconoutB() is global to support SCC_DEBUG_PRINT */
 LONG bconoutB(WORD dev, WORD b)
 {
-SCC *scc = (SCC *)SCC_BASE;
+    SCC *scc = (SCC *)SCC_BASE;
 
     while(!bcostatB())
         ;
@@ -493,14 +493,14 @@ static ULONG rsconf_scc(PORT *port,WORD baud, WORD ctrl, WORD ucr, WORD rsr, WOR
 
 static ULONG rsconfA(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 {
-SCC *scc = (SCC *)SCC_BASE;
+    SCC *scc = (SCC *)SCC_BASE;
 
     return rsconf_scc(&scc->portA,baud,ctrl,ucr,rsr,tsr,scr);
 }
 
 static ULONG rsconfB(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 {
-SCC *scc = (SCC *)SCC_BASE;
+    SCC *scc = (SCC *)SCC_BASE;
 
     return rsconf_scc(&scc->portB,baud,ctrl,ucr,rsr,tsr,scr);
 }
@@ -536,9 +536,9 @@ static const WORD SCC_init_string[] = {
  */
 static void init_scc(void)
 {
-SCC *scc = (SCC *)SCC_BASE;
-const WORD *p;
-ULONG reset_recovery_loops;
+    SCC *scc = (SCC *)SCC_BASE;
+    const WORD *p;
+    ULONG reset_recovery_loops;
 
     /* calculate delay times for SCC access: note that SCC PCLK is 8MHz */
     reset_recovery_loops = loopcount_1_msec / 1000; /* 8 cycles = 1 usec */
