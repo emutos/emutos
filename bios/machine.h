@@ -16,7 +16,7 @@
 #include "memory.h"
 
 /*
- * hardware registers
+ * hardware registers (and some bit definitions)
  */
 #define FALCON_BUS_CTL      0xffff8007UL
 #define FALCON_HHT          0xffff8282UL
@@ -24,8 +24,12 @@
 #define BLITTER_CONFIG1     0xffff8a3cUL
 #define SCC_BASE            0xffff8c80UL
 #define SYS_INT_MASK        0xffff8e01UL
+#define SYS_INT_VSYNC           (1<<4)
+#define SYS_INT_HSYNC           (1<<2)
 #define SCU_GPR1            0xffff8e09UL
 #define VME_INT_MASK        0xffff8e0dUL
+#define VME_INT_MFP             (1<<6)
+#define VME_INT_SCC             (1<<5)
 #define DIP_SWITCHES        0xffff9200UL
 #define MONSTER_REG         0xfffffe00UL
 

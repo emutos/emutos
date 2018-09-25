@@ -186,8 +186,8 @@ static void detect_vme(void)
 
     if (check_read_byte(SCU_GPR1))
     {
-        *vme_mask = 0x40;   /* ??? IRQ3 from VMEBUS/soft */
-        *sys_mask = 0x14;   /* ??? set VSYNC and HSYNC */
+        *vme_mask = VME_INT_MFP;                    /* allow MFP interrupts */
+        *sys_mask = SYS_INT_VSYNC | SYS_INT_HSYNC;  /* allow VSYNC, HSYNC */
         has_vme = 1;
     } else {
         has_vme = 0;

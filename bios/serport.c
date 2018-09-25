@@ -565,7 +565,7 @@ static void init_scc(void)
      * to be available to them.
      */
      if (HAS_VME)
-        *(volatile BYTE *)VME_INT_MASK |= 1<<5;
+        *(volatile BYTE *)VME_INT_MASK |= VME_INT_SCC;
 }
 #endif  /* CONF_WITH_SCC */
 
