@@ -124,15 +124,12 @@ void bioskeys(void)
 
 LONG kbshift(WORD flag)
 {
-    WORD oldy;
+    WORD oldshifty = shifty;
 
-    if (flag == -1)
-        return (shifty);        /* return bitvector of shift state */
+    if (flag != -1)
+        shifty = flag;
 
-    oldy = shifty;
-    shifty = flag;
-
-    return (oldy);
+    return oldshifty;
 }
 
 /*=== iorec handling (bios) ==============================================*/
