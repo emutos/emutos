@@ -58,8 +58,8 @@ WORD sc_read(BYTE *pscrap)
 /*                                                                      */
 /* sc_write() -- sets the current scrap directory                       */
 /*                                                                      */
-/*      pscrap must be the long address of a valid path.  Returns       */
-/*      TRUE if no error occurs in validating the path name.            */
+/*  for compatibility with Atari TOS, no longer validates the           */
+/*  supplied directory path, always returns TRUE.                       */
 /*                                                                      */
 /************************************************************************/
 
@@ -70,8 +70,8 @@ WORD sc_write(const BYTE *pscrap)
     len = strlencpy(D.g_scrap, pscrap);     /* new scrap directory  */
     if (D.g_scrap[--len] == '\\')           /* remove backslash     */
       D.g_scrap[len] = '\0';
-    dos_sdta(&D.g_dta);                     /* use our dta          */
-    return !dos_sfirst(D.g_scrap, F_SUBDIR);/* make sure path ok    */
+
+    return TRUE;
 }
 
 #if CONF_WITH_PCGEM
