@@ -45,11 +45,7 @@
 
 WORD sc_read(BYTE *pscrap)
 {
-    WORD    len;
-
-    /* current scrap directory */
-    len = strlencpy(pscrap, D.g_scrap);
-    strcpy(pscrap+len, "\\");      /* cat on backslash  */
+    strcpy(pscrap, D.g_scrap);
 
     return TRUE;
 }
@@ -66,11 +62,7 @@ WORD sc_read(BYTE *pscrap)
 
 WORD sc_write(const BYTE *pscrap)
 {
-    WORD    len;
-
-    len = strlencpy(D.g_scrap, pscrap);     /* new scrap directory  */
-    if (D.g_scrap[--len] == '\\')           /* remove backslash     */
-      D.g_scrap[len] = '\0';
+    strcpy(D.g_scrap, pscrap);
 
     return TRUE;
 }
@@ -90,7 +82,7 @@ WORD sc_clear(void)
     BYTE    *ptmp;
     DTA     *save_dta;
     WORD    ret;
-    const char *scrapmask = "\\SCRAP.*";
+    const char *scrapmask = "SCRAP.*";
 
     if (D.g_scrap[0] == '\0')
       return FALSE;
