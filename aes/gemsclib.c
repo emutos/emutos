@@ -87,6 +87,7 @@ WORD sc_write(const BYTE *pscrap)
 WORD sc_clear(void)
 {
     BYTE    *ptmp;
+    DTA     *save_dta;
     WORD    ret;
     const char *scrapmask = "\\SCRAP.*";
 
@@ -99,6 +100,7 @@ WORD sc_clear(void)
 
     strcpy(ptmp, scrapmask);                /* Add mask */
 
+    save_dta = dos_gdta();                  /* save current DTA */
     dos_sdta(&D.g_dta);                     /* make sure dta ok */
 
     ret = dos_sfirst(D.g_scrap, F_SUBDIR);
@@ -111,6 +113,8 @@ WORD sc_clear(void)
     }
 
     *ptmp = '\0';                           /* keep just path name */
+
+    dos_sdta(save_dta);                     /* restore old DTA */
 
     return(TRUE);
 }
