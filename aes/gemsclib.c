@@ -36,10 +36,10 @@
 
 /************************************************************************/
 /*                                                                      */
-/* sc_read() -- get info about current scrap directory                  */
+/* sc_read() -- get the current scrap directory                         */
 /*                                                                      */
-/*      copies the current scrap directory path to the passed-in        */
-/*      address and returns TRUE if a valid path has already been set.  */
+/*  for compatibility with Atari TOS, no longer checks if a non-empty   */
+/*  path already exists, always returns TRUE.                           */
 /*                                                                      */
 /************************************************************************/
 
@@ -50,7 +50,8 @@ WORD sc_read(BYTE *pscrap)
     /* current scrap directory */
     len = strlencpy(pscrap, D.g_scrap);
     strcpy(pscrap+len, "\\");      /* cat on backslash  */
-    return( len != 0 );
+
+    return TRUE;
 }
 
 
