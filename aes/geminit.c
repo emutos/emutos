@@ -609,6 +609,10 @@ void run_accs_and_desktop(void)
     gl_bclick = 0x0;
 
     gl_logdrv = dos_gdrv() + 'A';   /* boot directory       */
+
+    strcpy(D.g_scrap, SCRAP_DIR_NAME);
+    D.g_scrap[0] = gl_logdrv;       /* set up scrap dir path */
+
     gsx_init();                     /* do gsx open work station */
 
     load_accs(num_accs);            /* load up to 'num_accs' desk accessories */

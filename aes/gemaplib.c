@@ -55,14 +55,8 @@ FPD      *gl_rbuf;
 WORD ap_init(void)
 {
     WORD    pid;
-    char    scdir[32];
 
     pid = rlr->p_pid;
-
-    strcpy(scdir, SCRAP_DIR_NAME);
-
-    scdir[0] = gl_logdrv;           /* set drive letter     */
-    sc_write(scdir);
 
     rlr->p_flags |= AP_OPEN;        /* appl_init() done */
 
