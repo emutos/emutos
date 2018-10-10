@@ -699,6 +699,7 @@ static const struct video_mode video_mode[] = {
 #endif
 };
 
+#ifndef MACHINE_AMIGA
 /* calculate the VRAM size required by a video mode */
 static ULONG shifter_vram_size(UWORD vmode)
 {
@@ -706,6 +707,7 @@ static ULONG shifter_vram_size(UWORD vmode)
     ULONG bytes_per_plane = bytes_per_plane_line * video_mode[vmode].vt_rez;
     return bytes_per_plane * video_mode[vmode].planes;
 }
+#endif
 
 /* calculate initial VRAM size based on video hardware */
 static ULONG initial_vram_size(void)
