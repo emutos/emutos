@@ -414,7 +414,7 @@ static BYTE *sh_path(BYTE *src, BYTE *dest, BYTE *pname)
  *          return the fully-qualified name.
  *      (5) if still not found, return with error.
  */
-WORD sh_find(BYTE *pspec)
+static WORD findfile(BYTE *pspec)
 {
     BYTE *path;
     BYTE *pname;
@@ -480,6 +480,18 @@ WORD sh_find(BYTE *pspec)
 
     KDEBUG(("sh_find(): '%s' not found\n",pspec));
     return 0;
+}
+
+WORD sh_find(BYTE *pspec)
+{
+    DTA *save_dta;
+    WORD ret;
+
+    save_dta = dos_gdta();      /* save, findfile() modifies it */
+    ret = findfile(pspec);      /* do the actual shel_find() */
+    dos_sdta(save_dta);         /* restore */
+
+    return ret;
 }
 
 
