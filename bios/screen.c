@@ -718,11 +718,11 @@ static ULONG initial_vram_size(void)
     if (HAS_VIDEL)
         return FALCON_VRAM_SIZE;
     else if (HAS_TT_SHIFTER)
-        return shifter_vram_size(6); /* TT high */
+        return shifter_vram_size(TT_HIGH);
     else
     {
         /* ST TOS rounds the VRAM size to upper kilobyte, so we do. */
-        ULONG vram_size = shifter_vram_size(0); /* ST low */
+        ULONG vram_size = shifter_vram_size(ST_LOW);
         return (vram_size + 1023) & -1024;
     }
 #endif
