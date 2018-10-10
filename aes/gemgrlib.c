@@ -19,7 +19,6 @@
 #include "config.h"
 #include "portab.h"
 #include "struct.h"
-#include "basepage.h"
 #include "obdefs.h"
 #include "gemlib.h"
 
@@ -31,8 +30,6 @@
 #include "gemgsxif.h"
 #include "gemgrlib.h"
 #include "gemasm.h"
-#include "gsx2.h"
-#include "optimopt.h"
 #include "rectfunc.h"
 
 #include "intmath.h"

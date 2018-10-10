@@ -23,12 +23,10 @@
 #include "portab.h"
 #include "obdefs.h"
 #include "intmath.h"
-#include "gsxdefs.h"
 #include "funcdef.h"
 
 #include "gemgraf.h"
 #include "gemgsxif.h"
-#include "optimize.h"
 #include "optimopt.h"
 #include "gsx2.h"
 #include "rectfunc.h"

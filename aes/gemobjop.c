@@ -20,7 +20,6 @@
 #include "config.h"
 #include "portab.h"
 #include "obdefs.h"
-#include "kprint.h"
 #include "gemobjop.h"
 
 

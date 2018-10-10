@@ -19,16 +19,13 @@
 #include "config.h"
 #include "portab.h"
 #include "struct.h"
-#include "basepage.h"
 #include "obdefs.h"
-#include "rsdefs.h"
 #include "gemlib.h"
 #include "gem_rsc.h"
 
 #include "gemdos.h"
 #include "gemshlib.h"
 #include "gemgraf.h"
-#include "geminit.h"
 #include "gemrslib.h"
 
 #include "string.h"

@@ -21,13 +21,11 @@
 #include "struct.h"
 #include "basepage.h"
 #include "obdefs.h"
-#include "gemlib.h"
 
 #include "gemasync.h"
 #include "gemdisp.h"
 #include "geminput.h"
 #include "gemaplib.h"
-#include "geminit.h"
 #include "gemevlib.h"
 
 

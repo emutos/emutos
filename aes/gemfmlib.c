@@ -22,7 +22,6 @@
 #include "struct.h"
 #include "basepage.h"
 #include "obdefs.h"
-#include "gemlib.h"
 #include "gem_rsc.h"
 
 #include "gemwmlib.h"
@@ -33,14 +32,12 @@
 #include "gemobjop.h"
 #include "gemgrlib.h"
 #include "gemevlib.h"
-#include "gemgraf.h"
 #include "gemobed.h"
 #include "optimize.h"
 #include "gemfmalt.h"
 #include "geminit.h"
 #include "gemmnlib.h"
 #include "gemfmlib.h"
-#include "gemgsxif.h"
 #include "scancode.h"
 
 

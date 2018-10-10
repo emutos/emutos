@@ -23,11 +23,8 @@
 #include "obdefs.h"
 #include "gemlib.h"
 
-#include "gemdosif.h"
 #include "geminit.h"
 #include "gemasm.h"
-#include "optimize.h"
-#include "optimopt.h"
 #include "gempd.h"
 
 #include "string.h"

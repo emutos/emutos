@@ -36,7 +36,6 @@
 
 #include "gemdosif.h"
 #include "gemdos.h"
-#include "gemgraf.h"
 #include "gemgsxif.h"
 #include "gemoblib.h"
 #include "gemwmlib.h"
@@ -44,11 +43,8 @@
 #include "gempd.h"
 #include "gemflag.h"
 #include "geminit.h"
-#include "gemrslib.h"
 #include "gemaplib.h"
 #include "gemmnlib.h"
-#include "gemasm.h"
-#include "optimopt.h"
 
 #include "string.h"
 #include "kprint.h"             /* for debugging */

@@ -29,7 +29,6 @@
 #include "gemgsxif.h"
 #include "gemevlib.h"
 #include "gemoblib.h"
-#include "gemobed.h"
 #include "gemwmlib.h"
 #include "gemgraf.h"
 #include "geminput.h"
@@ -40,8 +39,6 @@
 #include "gemmnlib.h"
 #include "geminit.h"
 #include "kprint.h"
-
-#include "string.h"
 
 
 #define MTH 1                                   /* menu thickness       */

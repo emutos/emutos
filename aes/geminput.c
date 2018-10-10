@@ -18,14 +18,11 @@
 
 #include "config.h"
 #include "portab.h"
-#include "string.h"
 #include "struct.h"
 #include "basepage.h"
 #include "obdefs.h"
-#include "gemlib.h"
 
 #include "geminput.h"
-#include "gemgraf.h"
 #include "gemdosif.h"
 #include "gemctrl.h"
 #include "gemmnlib.h"

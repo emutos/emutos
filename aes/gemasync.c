@@ -21,12 +21,10 @@
 #include "struct.h"
 #include "basepage.h"
 #include "obdefs.h"
-#include "gemlib.h"
 
 #include "geminput.h"
 #include "gemflag.h"
 #include "gemqueue.h"
-#include "optimopt.h"
 #include "gemasm.h"
 #include "gemasync.h"
 

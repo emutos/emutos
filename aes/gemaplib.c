@@ -22,7 +22,6 @@
 #include "basepage.h"
 #include "obdefs.h"
 #include "gemlib.h"
-#include "gem_rsc.h"
 
 #include "geminit.h"
 #include "gempd.h"
@@ -35,8 +34,6 @@
 #include "gemdosif.h"
 #include "gemasm.h"
 #include "gemdisp.h"
-#include "gemsclib.h"
-#include "gemrslib.h"
 #include "gemaplib.h"
 #include "gsx2.h"
 #include "funcdef.h"

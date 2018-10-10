@@ -27,7 +27,6 @@
 #include "struct.h"
 #include "basepage.h"
 #include "obdefs.h"
-#include "gemlib.h"
 
 #include "geminput.h"
 #include "gempd.h"
