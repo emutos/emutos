@@ -90,12 +90,12 @@ WORD esetsmear(WORD mode);
 #define TTRGB_LTYELLOW  0x0ff9
 #define TTRGB_WHITE     0x0fff
 
+#endif /* CONF_WITH_ATARI_VIDEO */
+
 /* TT resolutions */
 #define TT_HIGH        6
 #define TT_MEDIUM      4
 #define TT_LOW         7
-
-#endif /* CONF_WITH_ATARI_VIDEO */
 
 /* ST(e) resolutions */
 #define ST_HIGH        2
