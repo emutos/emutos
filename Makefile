@@ -766,10 +766,7 @@ obj/amigaboot.o: obj/ramtos.h
 # Misc utilities
 #
 
-TOCLEAN += date.prg dumpkbd.prg
-
-date.prg: obj/minicrt.o obj/doprintf.o obj/date.o
-	$(LD) $+ -lgcc -o $@ -s
+TOCLEAN += dumpkbd.prg
 
 dumpkbd.prg: obj/minicrt.o obj/memmove.o obj/dumpkbd.o obj/doprintf.o \
 	     obj/string.o
