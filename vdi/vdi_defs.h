@@ -218,6 +218,7 @@ extern WORD MFILL;
 
 /* referenced by Line-A flood fill */
 extern Vwk *CUR_WORK;           /* pointer to currently-open virtual workstation */
+extern WORD (*SEEDABORT)(void); /* ptr to function called to signal early abort */
 
 /* Mouse specific externals */
 extern WORD GCURX;              /* mouse X position */

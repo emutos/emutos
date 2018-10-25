@@ -267,6 +267,7 @@ _BYTES_LIN:     .ds.w   1       // -2   byte per screen line
                 .globl  _SCRTCHP
                 .globl  _SCRPT2
                 .globl  _COPYTRAN
+                .globl  _SEEDABORT
 
 // ==== Global GSX Variables =================================================
 
@@ -336,4 +337,4 @@ _SCRTCHP:       .ds.l   1               // pointer to base of scratch buffer
 _SCRPT2:        .ds.w   1               // large buffer base offset
 _TEXTBG:        .ds.w   1               // text background color
 _COPYTRAN:      .ds.w   1               // Flag for Copy-raster-form (<>0 = Transparent)
-_FILL_ABORT:    .ds.l   1               // Address of Routine for testing break out of contourfill function
+_SEEDABORT:     .ds.l   1               // Address of Routine for testing break out of lineA contourfill function
