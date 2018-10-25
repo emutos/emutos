@@ -942,6 +942,10 @@ void contourfill(const VwkAttrib * attr, const VwkClip *clip)
 
             /* rectangle fill routine draws horizontal line */
             draw_rect_common(attr, &rect);
+
+            /* after every line, check for early abort */
+            if ((*SEEDABORT)())
+                break;
         }
     }
 }                               /* end of fill() */
@@ -1011,11 +1015,26 @@ get_seed(const VwkAttrib * attr, const VwkClip * clip,
     return 0;           /* we didn't put a seed in the Q */
 }
 
+/*
+ * no_abort
+ *
+ * the VDI routine v_contourfill() calls the lineA routine contourfill()
+ * to do its work.  contourfill() calls the routine pointed to by SEEDABORT
+ * on a regular basis to determine whether to prematurely abort the fill.
+ * we initialise SEEDABORT to point to the routine below, which never
+ * requests an early abort.
+ */
+static WORD no_abort(void)
+{
+    return 0;
+}
 
 /* VDI version */
 void vdi_v_contourfill(Vwk * vwk)
 {
     VwkAttrib attr;
+
+    SEEDABORT = no_abort;
     Vwk2Attrib(vwk, &attr, vwk->fill_color);
     contourfill(&attr, VDI_CLIP(vwk));
 }
