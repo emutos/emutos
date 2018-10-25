@@ -142,6 +142,11 @@ static const UWORD HATCH1[96] = {
 const UWORD HOLLOW = 0;
 const UWORD SOLID = 0xFFFF;
 
+/*
+ * this used by contourfill() to limit the value of the search colour,
+ * according to the number of planes in the current resolution.
+ */
+static const WORD plane_mask[] = { 1, 3, 7, 15, 31, 63, 127, 255 };
 
 
 /*
@@ -859,8 +864,6 @@ void contourfill(const VwkAttrib * attr, const VwkClip *clip)
         search_color = pixelread(xleft,oldy);
         seed_type = 1;
     } else {
-        const WORD plane_mask[] = { 1, 3, 7, 15 };
-
         /* Range check the color and convert the index to a pixel value */
         if (search_color >= DEV_TAB[13])
             return;
