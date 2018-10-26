@@ -62,7 +62,6 @@
 #define MIN_WRT_MODE    1       /* for vswr_mode() */
 #define MAX_WRT_MODE    4
 #define DEF_WRT_MODE    1
-#define MAX_MODE        3
 
 #define MAX_ARC_CT      70      /* maximum number of points on circle */
 

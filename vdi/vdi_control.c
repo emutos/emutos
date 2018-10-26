@@ -200,11 +200,10 @@ void vdi_vswr_mode(Vwk * vwk)
     WORD wm;
 
     CONTRL[4] = 1;
-    wm = INTIN[0] - 1;
-    if ((wm > MAX_MODE) | (wm < 0))
-        wm = 0;
+    wm = ((INTIN[0]<MIN_WRT_MODE) || (INTIN[0]>MAX_WRT_MODE)) ? DEF_WRT_MODE : INTIN[0];
 
-    INTOUT[0] = (vwk->wrt_mode = wm) + 1;
+    INTOUT[0] = wm;
+    vwk->wrt_mode = wm - 1;
 }
 
 
