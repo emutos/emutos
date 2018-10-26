@@ -43,7 +43,6 @@
 #define MIN_MARK_STYLE  1       /* for vsm_type() */
 #define MAX_MARK_STYLE  6
 #define DEF_MARK_STYLE  3
-#define MAX_MARK_INDEX  6
 
 #define MAX_FONT        1
 

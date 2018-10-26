@@ -227,8 +227,10 @@ static void init_wk(Vwk * vwk)
         l = 1;
     vwk->line_color = MAP_COL[l];
 
-    l = *pointer++ - 1;         /* INTIN[3] */
-    vwk->mark_index = ((l >= MAX_MARK_INDEX) || (l < 0)) ? 2 : l;
+    l = *pointer++;             /* INTIN[3] */
+    if ((l > MAX_MARK_STYLE) || (l < MIN_MARK_STYLE))
+        l = DEF_MARK_STYLE;
+    vwk->mark_index = l - 1;
 
     l = *pointer++;             /* INTIN[4] */
     if ((l >= DEV_TAB[13]) || (l < 0))

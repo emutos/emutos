@@ -60,11 +60,12 @@ void vdi_vsm_height(Vwk * vwk)
  */
 void vdi_vsm_type(Vwk * vwk)
 {
-    WORD i;
+    WORD mk;
 
-    i = INTIN[0] - 1;
-    i = ((i >= MAX_MARK_INDEX) || (i < 0)) ? 2 : i;
-    INTOUT[0] = (vwk->mark_index = i) + 1;
+    mk = ((INTIN[0]<MIN_MARK_STYLE) || (INTIN[0]>MAX_MARK_STYLE)) ? DEF_MARK_STYLE : INTIN[0];
+
+    vwk->mark_index = mk - 1;
+    INTOUT[0] = mk;
     CONTRL[4] = 1;
 }
 
