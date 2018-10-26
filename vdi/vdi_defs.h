@@ -49,12 +49,13 @@
 #define MIN_FILL_STYLE  0       /* for vsf_interior() */
 #define MAX_FILL_STYLE  4
 #define DEF_FILL_STYLE  0
+#define PATTERN_FILL_STYLE  2
 
-#define MIN_FILL_HATCH  1       /* for vsf_style() */
+#define MIN_FILL_HATCH  1       /* for vsf_style() when fill style is hatch */
 #define MAX_FILL_HATCH  12
 #define DEF_FILL_HATCH  1
 
-#define MIN_FILL_PATTERN 1      /* for vsf_style() */
+#define MIN_FILL_PATTERN 1      /* for vsf_style() when fill style is pattern */
 #define MAX_FILL_PATTERN 24
 #define DEF_FILL_PATTERN 1
 

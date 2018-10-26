@@ -197,12 +197,12 @@ void vdi_vsf_style(Vwk * vwk)
     CONTRL[4] = 1;
     fi = *INTIN;
 
-    if (vwk->fill_style == 2) {
-        if ((fi > MAX_FILL_PATTERN) || (fi < 1))
-            fi = 1;
+    if (vwk->fill_style == PATTERN_FILL_STYLE) {
+        if ((fi > MAX_FILL_PATTERN) || (fi < MIN_FILL_PATTERN))
+            fi = DEF_FILL_PATTERN;
     } else {
-        if ((fi > MAX_FILL_HATCH) || (fi < 1))
-            fi = 1;
+        if ((fi > MAX_FILL_HATCH) || (fi < MIN_FILL_HATCH))
+            fi = DEF_FILL_HATCH;
     }
     vwk->fill_index = (*INTOUT = fi) - 1;
     st_fl_ptr(vwk);
