@@ -28,7 +28,7 @@
 
 
 /* different maximum settings */
-#define MAX_PTSIN 256           /* max. # of coordinate pairs, also in vdi_asm.S! */
+#define MAX_PTSIN   256         /* max. # of coordinate pairs, also in vdi_asm.S! */
 
 
 #define MAX_COLOR       16
@@ -44,32 +44,32 @@
 
 
 /* aliases for different values */
-#define SQUARED 0
-#define ARROWED 1
-#define CIRCLED 2
+#define SQUARED     0
+#define ARROWED     1
+#define CIRCLED     2
 
 /* aliases for different table positions */
-#define xres            DEV_TAB[0]
-#define yres            DEV_TAB[1]
-#define xsize           DEV_TAB[3]
-#define ysize           DEV_TAB[4]
+#define xres        DEV_TAB[0]
+#define yres        DEV_TAB[1]
+#define xsize       DEV_TAB[3]
+#define ysize       DEV_TAB[4]
 
-#define DEF_LWID        SIZ_TAB[4]
-#define DEF_CHHT        SIZ_TAB[1]
-#define DEF_CHWT        SIZ_TAB[0]
-#define DEF_MKWD        SIZ_TAB[8]
-#define DEF_MKHT        SIZ_TAB[9]
-#define MAX_MKWD        SIZ_TAB[10]
-#define MAX_MKHT        SIZ_TAB[11]
+#define DEF_LWID    SIZ_TAB[4]
+#define DEF_CHHT    SIZ_TAB[1]
+#define DEF_CHWT    SIZ_TAB[0]
+#define DEF_MKWD    SIZ_TAB[8]
+#define DEF_MKHT    SIZ_TAB[9]
+#define MAX_MKWD    SIZ_TAB[10]
+#define MAX_MKHT    SIZ_TAB[11]
 
 /* Defines for CONTRL[] */
-#define ROUTINE 0
-#define N_PTSIN 1
-#define N_PTSOUT 2
-#define N_INTIN 3
-#define N_INTOUT 4
-#define SUBROUTINE 5
-#define VDI_HANDLE 6
+#define ROUTINE     0
+#define N_PTSIN     1
+#define N_PTSOUT    2
+#define N_INTIN     3
+#define N_INTOUT    4
+#define SUBROUTINE  5
+#define VDI_HANDLE  6
 
 /* gsx write modes */
 #define MD_REPLACE  1
@@ -91,12 +91,12 @@
  * specific details from rectangle & polygon drawing.
  */
 typedef struct {
-    WORD clip;       /* polygon clipping on/off */
-    WORD multifill;  /* Multi-plane fill flag   */
-    UWORD patmsk;    /* Current pattern mask    */
-    const UWORD *patptr;/* Current pattern pointer */
-    WORD wrt_mode;   /* Current writing mode    */
-    UWORD color;     /* fill color */
+    WORD clip;                  /* polygon clipping on/off */
+    WORD multifill;             /* Multi-plane fill flag   */
+    UWORD patmsk;               /* Current pattern mask    */
+    const UWORD *patptr;        /* Current pattern pointer */
+    WORD wrt_mode;              /* Current writing mode    */
+    UWORD color;                /* fill color */
 } VwkAttrib;
 
 
