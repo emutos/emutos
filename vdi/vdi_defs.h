@@ -1,5 +1,5 @@
 /*
- * vdidef.h - Definitions for virtual workstations
+ * vdi_defs.h - Definitions for virtual workstations
  *
  * Copyright 1999 by Caldera, Inc.
  * Copyright 2005-2017 The EmuTOS development team.
@@ -43,7 +43,7 @@
 #define MAX_ARC_CT      70      /* maximum number of points on circle */
 
 
-/* aliases for different values */
+/* line ending types */
 #define SQUARED     0
 #define ARROWED     1
 #define CIRCLED     2
