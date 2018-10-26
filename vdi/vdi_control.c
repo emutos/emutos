@@ -218,7 +218,9 @@ static void init_wk(Vwk * vwk)
     pointer++;
 
     l = *pointer++;             /* INTIN[1] */
-    vwk->line_index = ((l > MAX_LINE_STYLE) || (l < 0)) ? 0 : l - 1;
+    if ((l > MAX_LINE_STYLE) || (l < MIN_LINE_STYLE))
+        l = DEF_LINE_STYLE;
+    vwk->line_index = l - 1;
 
     l = *pointer++;             /* INTIN[2] */
     if ((l >= DEV_TAB[13]) || (l < 0))

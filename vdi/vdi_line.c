@@ -96,12 +96,10 @@ void vdi_vsl_type(Vwk * vwk)
     WORD li;
 
     CONTRL[4] = 1;
+    li = ((INTIN[0]<MIN_LINE_STYLE) || (INTIN[0]>MAX_LINE_STYLE)) ? DEF_LINE_STYLE : INTIN[0];
 
-    li = (*INTIN - 1);
-    if ((li >= MAX_LINE_STYLE) || (li < 0))
-        li = 0;
-
-    *INTOUT = (vwk->line_index = li) + 1;
+    INTOUT[0] = li;
+    vwk->line_index = li - 1;
 }
 
 
