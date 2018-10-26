@@ -249,7 +249,7 @@ static void init_wk(Vwk * vwk)
     vwk->mark_scale = 1;
 
     l = *pointer++;             /* INTIN[7] */
-    vwk->fill_style = ((l > MAX_FILL_STYLE) || (l < 0)) ? 0 : l;
+    vwk->fill_style = ((l > MAX_FILL_STYLE) || (l < MIN_FILL_STYLE)) ? DEF_FILL_STYLE : l;
 
     l = *pointer++;             /* INTIN[8] */
     if (vwk->fill_style == 2)

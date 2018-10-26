@@ -181,10 +181,9 @@ void vdi_vsf_interior(Vwk * vwk)
     WORD fs;
 
     CONTRL[4] = 1;
-    fs = *INTIN;
-    if ((fs > MAX_FILL_STYLE) || (fs < 0))
-        fs = 0;
-    *INTOUT = vwk->fill_style = fs;
+    fs = ((INTIN[0]<MIN_FILL_STYLE) || (INTIN[0]>MAX_FILL_STYLE)) ? DEF_FILL_STYLE : INTIN[0];
+
+    INTOUT[0] = vwk->fill_style = fs;
     st_fl_ptr(vwk);
 }
 
