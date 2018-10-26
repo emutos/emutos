@@ -501,14 +501,14 @@ static void set_mouse_form(const MFORM *src, Mcdb *dst)
 
     /* is background color index too high? */
     col = src->mf_bg;
-    if (col >= DEV_TAB[13]) {
+    if (col >= numcolors) {
         col = 1;               /* yes - default to 1 */
     }
     dst->bg_col = MAP_COL[col];
 
     /* is foreground color index too high? */
     col = src->mf_fg;
-    if (col >= DEV_TAB[13]) {
+    if (col >= numcolors) {
         col = 1;               /* yes - default to 1 */
     }
     dst->fg_col = MAP_COL[col];

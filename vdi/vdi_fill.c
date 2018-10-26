@@ -217,7 +217,7 @@ void vdi_vsf_color(Vwk * vwk)
 
     *(CONTRL + 4) = 1;
     fc = *INTIN;
-    if ((fc >= DEV_TAB[13]) || (fc < 0))
+    if ((fc >= numcolors) || (fc < 0))
         fc = 1;
 
     *INTOUT = fc;
@@ -864,7 +864,7 @@ void contourfill(const VwkAttrib * attr, const VwkClip *clip)
         seed_type = 1;
     } else {
         /* Range check the color and convert the index to a pixel value */
-        if (search_color >= DEV_TAB[13])
+        if (search_color >= numcolors)
             return;
 
         /*

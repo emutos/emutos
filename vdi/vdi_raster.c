@@ -963,13 +963,13 @@ cpy_raster(struct raster_t *raster, struct blit_frame *info)
 
         /* d6 <- background color */
         fg_col = INTIN[1];
-        if ((fg_col >= DEV_TAB[13]) || (fg_col < 0))
+        if ((fg_col >= numcolors) || (fg_col < 0))
             fg_col = 1;
         fg_col = MAP_COL[fg_col];
 
         /* d7 <- foreground color */
         bg_col = INTIN[2];
-        if ((bg_col >= DEV_TAB[13]) || (bg_col < 0))
+        if ((bg_col >= numcolors) || (bg_col < 0))
             bg_col = 1;
         bg_col = MAP_COL[bg_col];
 

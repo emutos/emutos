@@ -223,7 +223,7 @@ static void init_wk(Vwk * vwk)
     vwk->line_index = l - 1;
 
     l = *pointer++;             /* INTIN[2] */
-    if ((l >= DEV_TAB[13]) || (l < 0))
+    if ((l >= numcolors) || (l < 0))
         l = 1;
     vwk->line_color = MAP_COL[l];
 
@@ -233,7 +233,7 @@ static void init_wk(Vwk * vwk)
     vwk->mark_index = l - 1;
 
     l = *pointer++;             /* INTIN[4] */
-    if ((l >= DEV_TAB[13]) || (l < 0))
+    if ((l >= numcolors) || (l < 0))
         l = 1;
     vwk->mark_color = MAP_COL[l];
 
@@ -241,7 +241,7 @@ static void init_wk(Vwk * vwk)
     pointer++;                  /* INTIN[5] */
 
     l = *pointer++;             /* INTIN[6] */
-    if ((l >= DEV_TAB[13]) || (l < 0))
+    if ((l >= numcolors) || (l < 0))
         l = 1;
     vwk->text_color = MAP_COL[l];
 
@@ -259,7 +259,7 @@ static void init_wk(Vwk * vwk)
     vwk->fill_index = l;
 
     l = *pointer++;             /* INTIN[9] */
-    if ((l >= DEV_TAB[13]) || (l < 0))
+    if ((l >= numcolors) || (l < 0))
         l = 1;
     vwk->fill_color = MAP_COL[l];
 

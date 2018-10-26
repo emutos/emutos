@@ -328,7 +328,7 @@ static void set_tt_color(WORD colnum, WORD *rgb)
     tt_shifter = EgetShift();
     rez = (tt_shifter>>8) & 0x07;
     bank = tt_shifter & 0x000f;
-    mask = DEV_TAB[13] - 1;
+    mask = numcolors - 1;
 
     switch(rez) {
     case ST_LOW:
@@ -426,7 +426,7 @@ static void query_tt_color(WORD colnum,WORD *retval)
     tt_shifter = EgetShift();
     rez = (tt_shifter>>8) & 0x07;
     bank = tt_shifter & 0x000f;
-    mask = DEV_TAB[13] - 1;
+    mask = numcolors - 1;
 
     switch(rez) {
     case ST_LOW:
@@ -604,7 +604,7 @@ void vdi_vs_color(Vwk *vwk)
     colnum = INTIN[0];
 
     /* Check for valid color index */
-    if (colnum < 0 || colnum >= DEV_TAB[13])
+    if (colnum < 0 || colnum >= numcolors)
     {
         /* It was out of range */
         return;
@@ -669,7 +669,7 @@ void init_colors(void)
 
     /* set up vdi pen -> hardware colour register mapping */
     memcpy(MAP_COL, MAP_COL_ROM, sizeof(MAP_COL_ROM));
-    MAP_COL[1] = DEV_TAB[13] - 1;   /* pen 1 varies according to # colours available */
+    MAP_COL[1] = numcolors - 1; /* pen 1 varies according to # colours available */
 
 #if EXTENDED_PALETTE
     for (i = 16; i < MAXCOLOURS-1; i++)
@@ -678,11 +678,11 @@ void init_colors(void)
 #endif
 
     /* set up reverse mapping (hardware colour register -> vdi pen) */
-    for (i = 0; i < DEV_TAB[13]; i++)
+    for (i = 0; i < numcolors; i++)
         REV_MAP_COL[MAP_COL[i]] = i;
 
     /* now initialise the hardware */
-    for (i = 0; i < DEV_TAB[13]; i++)
+    for (i = 0; i < numcolors; i++)
     {
         if (i < 16)
             set_color(i, REQ_COL[i]);
@@ -747,7 +747,7 @@ void vdi_vq_color(Vwk *vwk)
     CONTRL[4] = 4;
 
     /* Check for valid color index */
-    if (colnum < 0 || colnum >= DEV_TAB[13])
+    if (colnum < 0 || colnum >= numcolors)
     {
         /* It was out of range */
         INTOUT[0] = -1;

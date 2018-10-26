@@ -163,7 +163,7 @@ void vdi_vsl_color(Vwk * vwk)
 
     *(CONTRL + 4) = 1;
     lc = *(INTIN);
-    if ((lc >= DEV_TAB[13]) || (lc < 0))
+    if ((lc >= numcolors) || (lc < 0))
         lc = 1;
     *(INTOUT) = lc;
     vwk->line_color = MAP_COL[lc];

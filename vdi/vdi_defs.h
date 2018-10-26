@@ -75,6 +75,7 @@
 #define yres        DEV_TAB[1]
 #define xsize       DEV_TAB[3]
 #define ysize       DEV_TAB[4]
+#define numcolors   DEV_TAB[13]
 
 #define DEF_LWID    SIZ_TAB[4]
 #define DEF_CHHT    SIZ_TAB[1]
