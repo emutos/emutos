@@ -14,7 +14,6 @@
 #include "string.h"
 #include "../bios/machine.h"
 #include "xbiosbind.h"
-#include "vdi_col.h"
 #include "../bios/lineavars.h"
 #include "../bios/screen.h"
 
@@ -25,6 +24,8 @@
 #else
 #define MAXCOLOURS  16
 #endif
+
+extern WORD REQ_COL[16][3];     /* in lineavars.S */
 
 /* Some color mapping tables */
 WORD MAP_COL[MAXCOLOURS];       /* maps vdi pen -> hardware register */

@@ -212,6 +212,8 @@ extern WORD *CONTRL, *INTIN, *PTSIN, *INTOUT, *PTSOUT;
 extern WORD LN_MASK, LSTLIN;
 extern WORD TERM_CH;
 
+extern WORD MAP_COL[], REV_MAP_COL[];
+
 /* Line-A Bit-Blt / Copy raster form variables */
 extern WORD COPYTRAN;
 extern WORD MFILL;
@@ -276,6 +278,7 @@ void abline (const Line * line, const WORD wrt_mode, UWORD color);
 void contourfill(const VwkAttrib * attr, const VwkClip *clip);
 
 /* initialization of subsystems */
+void init_colors(void);
 void text_init(void);
 void text_init2(Vwk *);
 void timer_init(void);
@@ -304,6 +307,7 @@ void vdi_v_fillarea(Vwk *);         /* 9   - fcba3a */
 void vdi_v_gdp(Vwk *);              /* 11  - fcba46 */
 void vdi_vst_height(Vwk *);         /* 12  - fcde96 */
 void vdi_vst_rotation(Vwk *);       /* 13  - fce308 */
+void vdi_vs_color(Vwk *);           /* 14           */
 void vdi_vsl_type(Vwk *);           /* 15  - fcab20 */
 
 void vdi_vsl_width(Vwk *);          /* 16  - fcab6a */
@@ -318,6 +322,7 @@ void vdi_vsf_interior(Vwk *);       /* 23  - fcada8 */
 void vdi_vsf_style(Vwk *);          /* 24  - fcadf4 */
 void vdi_vsf_color(Vwk *);          /* 25  - fcae5c */
 
+void vdi_vq_color(Vwk *vwk);        /* 26           */
 /* void vdi_vq_cellarray(Vwk *); */ /* 27  - fca4e6 - not implemented */
 void vdi_v_locator(Vwk *);          /* 28  - fcaeac */
 void vdi_v_valuator(Vwk *);         /* 29  - fcb042 */
@@ -382,9 +387,5 @@ void v_bez_qual(Vwk *);
 void v_bez_control(Vwk *);
 void v_bez(Vwk *vwk, Point * points, int count);
 void v_bez_fill(Vwk *vwk, Point * points, int count);
-
-
-#include "vdi_col.h"
-
 
 #endif                          /* VDIDEF_H */
