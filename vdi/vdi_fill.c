@@ -199,10 +199,10 @@ void vdi_vsf_style(Vwk * vwk)
     fi = *INTIN;
 
     if (vwk->fill_style == 2) {
-        if ((fi > MAX_FILL_PATTERN_INDEX) || (fi < 1))
+        if ((fi > MAX_FILL_PATTERN) || (fi < 1))
             fi = 1;
     } else {
-        if ((fi > MAX_FILL_HATCH_INDEX) || (fi < 1))
+        if ((fi > MAX_FILL_HATCH) || (fi < 1))
             fi = 1;
     }
     vwk->fill_index = (*INTOUT = fi) - 1;

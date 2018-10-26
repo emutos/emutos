@@ -111,8 +111,8 @@ static const WORD DEV_TAB_rom[45] = {
     6,                          /* 8    marker types             */
     8,                          /* 9    marker size              */
     1,                          /* 10   text font                */
-    MAX_FILL_PATTERN_INDEX,     /* 11   area patterns             */
-    MAX_FILL_HATCH_INDEX,       /* 12   crosshatch patterns       */
+    MAX_FILL_PATTERN,           /* 11   area patterns             */
+    MAX_FILL_HATCH,             /* 12   crosshatch patterns       */
     2,                          /* 13   colors at one time       */
     10,                         /* 14   number of GDP's          */
     1,                          /* 15   GDP bar                  */
@@ -249,9 +249,9 @@ static void init_wk(Vwk * vwk)
 
     l = *pointer++;             /* INTIN[8] */
     if (vwk->fill_style == 2)
-        l = ((l > MAX_FILL_PATTERN_INDEX) || (l < 1)) ? 1 : l;
+        l = ((l > MAX_FILL_PATTERN) || (l < 1)) ? 1 : l;
     else
-        l = ((l > MAX_FILL_HATCH_INDEX) || (l < 1)) ? 1 : l;
+        l = ((l > MAX_FILL_HATCH) || (l < 1)) ? 1 : l;
     vwk->fill_index = l;
 
     l = *pointer++;             /* INTIN[9] */
