@@ -56,7 +56,7 @@ const UBYTE op_nodraw[] = { 0x00, 0x04, 0x06, 0x01 };
 
 
 #define MAX_PIXEL_ASPECT_RATIO  2   /* max expected value of xsize/ysize */
-#define MAX_QC_LINES    ((MX_LN_WIDTH*MAX_PIXEL_ASPECT_RATIO)/2 + 1)
+#define MAX_QC_LINES    ((MAX_LINE_WIDTH*MAX_PIXEL_ASPECT_RATIO)/2 + 1)
 
 
 /* the six predefined line styles */
@@ -98,7 +98,7 @@ void vdi_vsl_type(Vwk * vwk)
     CONTRL[4] = 1;
 
     li = (*INTIN - 1);
-    if ((li >= MX_LN_STYLE) || (li < 0))
+    if ((li >= MAX_LINE_STYLE) || (li < 0))
         li = 0;
 
     *INTOUT = (vwk->line_index = li) + 1;

@@ -32,13 +32,13 @@
 
 
 #define MAX_COLOR       16
-#define MX_LN_STYLE     7
-#define MX_LN_WIDTH     40
+#define MAX_LINE_STYLE  7
+#define MAX_LINE_WIDTH  40
 #define MAX_MARK_INDEX  6
 #define MAX_FONT        1
-#define MX_FIL_STYLE    4
-#define MX_FIL_HAT_INDEX        12
-#define MX_FIL_PAT_INDEX        24
+#define MAX_FILL_STYLE  4
+#define MAX_FILL_HATCH_INDEX    12
+#define MAX_FILL_PATTERN_INDEX  24
 #define MAX_MODE        3
 #define MAX_ARC_CT      70      /* maximum number of points on circle */
 

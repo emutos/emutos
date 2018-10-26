@@ -36,7 +36,7 @@ static const WORD SIZ_TAB_rom[12] = {
     7,                          /* 3    max char height         */
     1,                          /* 4    min line width          */
     0,                          /* 5    reserved 0          */
-    MX_LN_WIDTH,                /* 6    max line width          */
+    MAX_LINE_WIDTH,             /* 6    max line width          */
     0,                          /* 7    reserved 0          */
     15,                         /* 8    min marker width        */
     11,                         /* 9    min marker height       */
@@ -106,13 +106,13 @@ static const WORD DEV_TAB_rom[45] = {
     372,                        /* 3    width of pixel           */
     372,                        /* 4    height of pixel          */
     1,                          /* 5    character sizes          */
-    MX_LN_STYLE,                /* 6    linestyles               */
+    MAX_LINE_STYLE,             /* 6    linestyles               */
     0,                          /* 7    linewidth                */
     6,                          /* 8    marker types             */
     8,                          /* 9    marker size              */
     1,                          /* 10   text font                */
-    MX_FIL_PAT_INDEX,           /* 11   area patterns             */
-    MX_FIL_HAT_INDEX,           /* 12   crosshatch patterns       */
+    MAX_FILL_PATTERN_INDEX,     /* 11   area patterns             */
+    MAX_FILL_HATCH_INDEX,       /* 12   crosshatch patterns       */
     2,                          /* 13   colors at one time       */
     10,                         /* 14   number of GDP's          */
     1,                          /* 15   GDP bar                  */
@@ -219,7 +219,7 @@ static void init_wk(Vwk * vwk)
     pointer++;
 
     l = *pointer++;             /* INTIN[1] */
-    vwk->line_index = ((l > MX_LN_STYLE) || (l < 0)) ? 0 : l - 1;
+    vwk->line_index = ((l > MAX_LINE_STYLE) || (l < 0)) ? 0 : l - 1;
 
     l = *pointer++;             /* INTIN[2] */
     if ((l >= DEV_TAB[13]) || (l < 0))
@@ -246,13 +246,13 @@ static void init_wk(Vwk * vwk)
     vwk->mark_scale = 1;
 
     l = *pointer++;             /* INTIN[7] */
-    vwk->fill_style = ((l > MX_FIL_STYLE) || (l < 0)) ? 0 : l;
+    vwk->fill_style = ((l > MAX_FILL_STYLE) || (l < 0)) ? 0 : l;
 
     l = *pointer++;             /* INTIN[8] */
     if (vwk->fill_style == 2)
-        l = ((l > MX_FIL_PAT_INDEX) || (l < 1)) ? 1 : l;
+        l = ((l > MAX_FILL_PATTERN_INDEX) || (l < 1)) ? 1 : l;
     else
-        l = ((l > MX_FIL_HAT_INDEX) || (l < 1)) ? 1 : l;
+        l = ((l > MAX_FILL_HATCH_INDEX) || (l < 1)) ? 1 : l;
     vwk->fill_index = l;
 
     l = *pointer++;             /* INTIN[9] */

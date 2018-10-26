@@ -182,7 +182,7 @@ void vdi_vsf_interior(Vwk * vwk)
 
     CONTRL[4] = 1;
     fs = *INTIN;
-    if ((fs > MX_FIL_STYLE) || (fs < 0))
+    if ((fs > MAX_FILL_STYLE) || (fs < 0))
         fs = 0;
     *INTOUT = vwk->fill_style = fs;
     st_fl_ptr(vwk);
@@ -199,10 +199,10 @@ void vdi_vsf_style(Vwk * vwk)
     fi = *INTIN;
 
     if (vwk->fill_style == 2) {
-        if ((fi > MX_FIL_PAT_INDEX) || (fi < 1))
+        if ((fi > MAX_FILL_PATTERN_INDEX) || (fi < 1))
             fi = 1;
     } else {
-        if ((fi > MX_FIL_HAT_INDEX) || (fi < 1))
+        if ((fi > MAX_FILL_HATCH_INDEX) || (fi < 1))
             fi = 1;
     }
     vwk->fill_index = (*INTOUT = fi) - 1;
