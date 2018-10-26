@@ -32,8 +32,6 @@
  */
 #define MAX_PTSIN   256         /* max. # of coordinate pairs, also in vdi_asm.S! */
 
-#define MAX_COLOR       16
-
 #define MIN_LINE_STYLE  1       /* for vsl_type() */
 #define MAX_LINE_STYLE  7
 #define DEF_LINE_STYLE  1
@@ -43,8 +41,6 @@
 #define MIN_MARK_STYLE  1       /* for vsm_type() */
 #define MAX_MARK_STYLE  6
 #define DEF_MARK_STYLE  3
-
-#define MAX_FONT        1
 
 #define MIN_FILL_STYLE  0       /* for vsf_interior() */
 #define MAX_FILL_STYLE  4
