@@ -269,8 +269,8 @@ static void init_wk(Vwk * vwk)
 
     vwk->wrt_mode = 0;     /* default is replace mode */
     vwk->line_width = DEF_LWID;
-    vwk->line_beg = 0;     /* default to squared ends */
-    vwk->line_end = 0;
+    vwk->line_beg = SQUARED;       /* default to squared ends */
+    vwk->line_end = SQUARED;
 
     vwk->fill_per = TRUE;
 

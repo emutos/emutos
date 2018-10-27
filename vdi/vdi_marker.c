@@ -116,8 +116,8 @@ void vdi_v_pmarker(Vwk * vwk)
     vwk->line_index = 0;
     vwk->line_color = vwk->mark_color;
     vwk->line_width = 1;
-    vwk->line_beg = 0;
-    vwk->line_end = 0;
+    vwk->line_beg = SQUARED;
+    vwk->line_end = SQUARED;
     vwk->clip = 1;
 
     scale = vwk->mark_scale;
