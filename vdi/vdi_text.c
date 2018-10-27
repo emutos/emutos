@@ -786,7 +786,7 @@ void vdi_vqt_attributes(Vwk * vwk)
     *pointer++ = vwk->chup;        /* INTOUT[2] */
     *pointer++ = vwk->h_align;     /* INTOUT[3] */
     *pointer++ = vwk->v_align;     /* INTOUT[4] */
-    *pointer = vwk->wrt_mode;      /* INTOUT[5] */
+    *pointer = vwk->wrt_mode + 1;  /* INTOUT[5] */
 
     pointer = PTSOUT;
     *pointer++ = fnt_ptr->max_char_width;
