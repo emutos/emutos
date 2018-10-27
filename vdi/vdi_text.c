@@ -765,9 +765,8 @@ void vdi_vst_color(Vwk * vwk)
 {
     WORD r;
 
-    r = INTIN[0];
-    if ((r >= numcolors) || (r < 0))
-        r = 1;
+    r = validate_color_index(INTIN[0]);
+
     CONTRL[4] = 1;
     INTOUT[0] = r;
     vwk->text_color = MAP_COL[r];

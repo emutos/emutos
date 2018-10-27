@@ -962,15 +962,11 @@ cpy_raster(struct raster_t *raster, struct blit_frame *info)
         info->s_nxpl = 0;       /* use only one plane of source */
 
         /* d6 <- background color */
-        fg_col = INTIN[1];
-        if ((fg_col >= numcolors) || (fg_col < 0))
-            fg_col = 1;
+        fg_col = validate_color_index(INTIN[1]);
         fg_col = MAP_COL[fg_col];
 
         /* d7 <- foreground color */
-        bg_col = INTIN[2];
-        if ((bg_col >= numcolors) || (bg_col < 0))
-            bg_col = 1;
+        bg_col = validate_color_index(INTIN[2]);
         bg_col = MAP_COL[bg_col];
 
         switch(mode) {

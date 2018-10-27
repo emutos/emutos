@@ -285,6 +285,7 @@ UWORD * get_start_addr(const WORD x, const WORD y);
 void set_LN_MASK(Vwk *vwk);
 void st_fl_ptr(Vwk *);
 void gdp_justified(Vwk *);
+WORD validate_color_index(WORD colnum);
 
 /* drawing primitives */
 void draw_pline(Vwk * vwk);

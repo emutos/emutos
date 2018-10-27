@@ -164,6 +164,22 @@ Vwk * get_vwk_by_handle(WORD handle)
 
 
 
+/*
+ * validate colour index
+ *
+ * checks the supplied colour index and, if valid, returns it;
+ * otherwise returns 1 (which by default maps to black)
+ */
+WORD validate_color_index(WORD colnum)
+{
+    if ((colnum < 0) || (colnum >= numcolors))
+        return 1;
+
+    return colnum;
+}
+
+
+
 /* Set Clip Region */
 void vdi_vs_clip(Vwk * vwk)
 {
@@ -222,9 +238,7 @@ static void init_wk(Vwk * vwk)
         l = DEF_LINE_STYLE;
     vwk->line_index = l - 1;
 
-    l = *pointer++;             /* INTIN[2] */
-    if ((l >= numcolors) || (l < 0))
-        l = 1;
+    l = validate_color_index(*pointer++);   /* INTIN[2] */
     vwk->line_color = MAP_COL[l];
 
     l = *pointer++;             /* INTIN[3] */
@@ -232,17 +246,13 @@ static void init_wk(Vwk * vwk)
         l = DEF_MARK_STYLE;
     vwk->mark_index = l - 1;
 
-    l = *pointer++;             /* INTIN[4] */
-    if ((l >= numcolors) || (l < 0))
-        l = 1;
+    l = validate_color_index(*pointer++);   /* INTIN[4] */
     vwk->mark_color = MAP_COL[l];
 
     /* You always get the default font */
     pointer++;                  /* INTIN[5] */
 
-    l = *pointer++;             /* INTIN[6] */
-    if ((l >= numcolors) || (l < 0))
-        l = 1;
+    l = validate_color_index(*pointer++);   /* INTIN[6] */
     vwk->text_color = MAP_COL[l];
 
     vwk->mark_height = DEF_MKHT;
@@ -258,9 +268,7 @@ static void init_wk(Vwk * vwk)
         l = ((l > MAX_FILL_HATCH) || (l < MIN_FILL_HATCH)) ? DEF_FILL_HATCH : l;
     vwk->fill_index = l;
 
-    l = *pointer++;             /* INTIN[9] */
-    if ((l >= numcolors) || (l < 0))
-        l = 1;
+    l = validate_color_index(*pointer++);   /* INTIN[9] */
     vwk->fill_color = MAP_COL[l];
 
     vwk->xfm_mode = *pointer;      /* INTIN[10] */

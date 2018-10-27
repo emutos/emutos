@@ -216,9 +216,7 @@ void vdi_vsf_color(Vwk * vwk)
     WORD fc;
 
     *(CONTRL + 4) = 1;
-    fc = *INTIN;
-    if ((fc >= numcolors) || (fc < 0))
-        fc = 1;
+    fc = validate_color_index(INTIN[0]);
 
     *INTOUT = fc;
     vwk->fill_color = MAP_COL[fc];

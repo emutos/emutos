@@ -162,9 +162,7 @@ void vdi_vsl_color(Vwk * vwk)
     WORD lc;
 
     *(CONTRL + 4) = 1;
-    lc = *(INTIN);
-    if ((lc >= numcolors) || (lc < 0))
-        lc = 1;
+    lc = validate_color_index(INTIN[0]);
     *(INTOUT) = lc;
     vwk->line_color = MAP_COL[lc];
 }

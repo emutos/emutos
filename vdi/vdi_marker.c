@@ -78,8 +78,7 @@ void vdi_vsm_color(Vwk * vwk)
 {
     WORD i;
 
-    i = INTIN[0];
-    i = ((i >= numcolors) || (i < 0)) ? 1 : i;
+    i = validate_color_index(INTIN[0]);
     INTOUT[0] = i;
     vwk->mark_color = MAP_COL[i];
     CONTRL[4] = 1;

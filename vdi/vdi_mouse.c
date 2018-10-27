@@ -499,18 +499,12 @@ static void set_mouse_form(const MFORM *src, Mcdb *dst)
     /* save y-offset of mouse hot spot */
     dst->yhot = src->mf_yhot & 0x000f;
 
-    /* is background color index too high? */
-    col = src->mf_bg;
-    if (col >= numcolors) {
-        col = 1;               /* yes - default to 1 */
-    }
+    /* check/fix background color index */
+    col = validate_color_index(src->mf_bg);
     dst->bg_col = MAP_COL[col];
 
-    /* is foreground color index too high? */
-    col = src->mf_fg;
-    if (col >= numcolors) {
-        col = 1;               /* yes - default to 1 */
-    }
+    /* check/fix foreground color index */
+    col = validate_color_index(src->mf_fg);
     dst->fg_col = MAP_COL[col];
 
     /*
