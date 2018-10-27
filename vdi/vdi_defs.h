@@ -36,6 +36,10 @@
 #define MAX_LINE_STYLE  7
 #define DEF_LINE_STYLE  1
 
+#define MIN_END_STYLE   SQUARED /* for vsl_ends() */
+#define MAX_END_STYLE   ROUND
+#define DEF_END_STYLE   SQUARED
+
 #define MAX_LINE_WIDTH  40
 
 #define MIN_MARK_STYLE  1       /* for vsm_type() */
@@ -65,7 +69,7 @@
 /* line ending types */
 #define SQUARED     0
 #define ARROWED     1
-#define CIRCLED     2
+#define ROUND       2
 
 /* aliases for different table positions */
 #define xres        DEV_TAB[0]

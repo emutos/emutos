@@ -141,12 +141,12 @@ void vdi_vsl_ends(Vwk * vwk)
 
     pointer = INTIN;
     lb = *pointer++;
-    if (lb < 0 || lb > 2)
-        lb = 0;
+    if ((lb < MIN_END_STYLE) || (lb > MAX_END_STYLE))
+        lb = DEF_END_STYLE;
 
     le = *pointer;
-    if (le < 0 || le > 2)
-        le = 0;
+    if ((le < MIN_END_STYLE) || (le > MAX_END_STYLE))
+        le = DEF_END_STYLE;
 
     pointer = INTOUT;
     *pointer++ = vwk->line_beg = lb;
