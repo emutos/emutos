@@ -195,7 +195,7 @@ void vdi_vsf_style(Vwk * vwk)
     WORD fi;
 
     CONTRL[4] = 1;
-    fi = *INTIN;
+    fi = INTIN[0];
 
     if (vwk->fill_style == PATTERN_FILL_STYLE) {
         if ((fi > MAX_FILL_PATTERN) || (fi < MIN_FILL_PATTERN))
@@ -204,7 +204,7 @@ void vdi_vsf_style(Vwk * vwk)
         if ((fi > MAX_FILL_HATCH) || (fi < MIN_FILL_HATCH))
             fi = DEF_FILL_HATCH;
     }
-    vwk->fill_index = (*INTOUT = fi) - 1;
+    vwk->fill_index = (INTOUT[0] = fi) - 1;
     st_fl_ptr(vwk);
 }
 
@@ -215,10 +215,10 @@ void vdi_vsf_color(Vwk * vwk)
 {
     WORD fc;
 
-    *(CONTRL + 4) = 1;
+    CONTRL[4] = 1;
     fc = validate_color_index(INTIN[0]);
 
-    *INTOUT = fc;
+    INTOUT[0] = fc;
     vwk->fill_color = MAP_COL[fc];
 }
 
@@ -227,15 +227,11 @@ void vdi_vsf_color(Vwk * vwk)
 /* ST_FILLPERIMETER: */
 void vdi_vsf_perimeter(Vwk * vwk)
 {
-    WORD *int_out;
-
-    int_out = INTOUT;
-
-    if (*INTIN == 0) {
-        *int_out = 0;
+    if (INTIN[0] == 0) {
+        INTOUT[0] = 0;
         vwk->fill_per = FALSE;
     } else {
-        *(int_out) = 1;
+        INTOUT[0] = 1;
         vwk->fill_per = TRUE;
     }
     CONTRL[4] = 1;
@@ -1043,17 +1039,14 @@ void vdi_v_contourfill(Vwk * vwk)
 void vdi_v_get_pixel(Vwk * vwk)
 {
     WORD pel;
-    WORD *int_out;
     const WORD x = PTSIN[0];       /* fetch x coord. */
     const WORD y = PTSIN[1];       /* fetch y coord. */
 
     /* Get the requested pixel */
     pel = (WORD)pixelread(x,y);
 
-    int_out = INTOUT;
-    *int_out++ = pel;
-
-    *int_out = REV_MAP_COL[pel];
+    INTOUT[0] = pel;
+    INTOUT[1] = REV_MAP_COL[pel];
     CONTRL[4] = 2;
 }
 

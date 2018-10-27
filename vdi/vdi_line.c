@@ -84,7 +84,7 @@ static WORD s_begsty, s_endsty, s_fil_col, s_fill_per;
  */
 void vdi_vsl_udsty(Vwk * vwk)
 {
-    vwk->ud_ls = *INTIN;
+    vwk->ud_ls = INTIN[0];
 }
 
 
@@ -161,9 +161,9 @@ void vdi_vsl_color(Vwk * vwk)
 {
     WORD lc;
 
-    *(CONTRL + 4) = 1;
+    CONTRL[4] = 1;
     lc = validate_color_index(INTIN[0]);
-    *(INTOUT) = lc;
+    INTOUT[0] = lc;
     vwk->line_color = MAP_COL[lc];
 }
 
