@@ -408,7 +408,7 @@ static void gdp_arc(Vwk * vwk)
 /*
  * clc_nsteps - calculates the number of line segments ('steps') to draw
  *              for a circle/ellipse, based on the larger of xrad/yrad,
- *              and clamped to a range of 16->MAX_ARC_CT
+ *              and clamped to a range of MIN_ARC_CT -> MAX_ARC_CT
  */
 
 static int clc_nsteps(void)
@@ -420,12 +420,12 @@ static int clc_nsteps(void)
     else
         steps = yrad;
     steps = steps >> 2;
-    if (steps < 16)
-        steps = 16;
-    else {
-        if (steps > MAX_ARC_CT)
-            steps = MAX_ARC_CT;
-    }
+
+    if (steps < MIN_ARC_CT)
+        steps = MIN_ARC_CT;
+    else if (steps > MAX_ARC_CT)
+        steps = MAX_ARC_CT;
+
     return steps;
 }
 
