@@ -291,9 +291,8 @@ static void init_wk(Vwk * vwk)
     vwk->multifill = 0;
     vwk->ud_ls = LINE_STYLE[0];
 
-    pointer = CONTRL;
-    *(pointer + 2) = 6;
-    *(pointer + 4) = 45;
+    CONTRL[2] = 6;
+    CONTRL[4] = 45;
 
     pointer = INTOUT;
     src_ptr = DEV_TAB;

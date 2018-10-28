@@ -137,7 +137,7 @@ void vdi_vsl_ends(Vwk * vwk)
     WORD lb, le;
     WORD *pointer;
 
-    *(CONTRL + 4) = 2;
+    CONTRL[4] = 2;
 
     pointer = INTIN;
     lb = *pointer++;
