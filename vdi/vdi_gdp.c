@@ -127,11 +127,11 @@ static void clc_pts(WORD j, WORD angle)
     WORD k;
     WORD *pointer;
 
-    pointer = PTSIN;
+    pointer = PTSIN + j;
     k = mul_div(Icos(angle), xrad, 32767) + xc;
-    *(pointer + j) = k;
+    *pointer++ = k;
     k = yc - mul_div(Isin(angle), yrad, 32767);        /* FOR RASTER CORDS. */
-    *(pointer + j + 1) = k;
+    *pointer = k;
 }
 
 
