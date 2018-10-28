@@ -213,7 +213,6 @@ void vdi_v_gdp(Vwk * vwk)
         if (vwk->fill_per == TRUE) {
             LN_MASK = 0xffff;
 
-            xy = PTSIN;
             xy[5] = xy[7] = xy[3];
             xy[3] = xy[9] = xy[1];
             xy[4] = xy[2];
