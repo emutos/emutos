@@ -202,13 +202,12 @@ static void clc_arc(Vwk * vwk, int steps)
 
 void vdi_v_gdp(Vwk * vwk)
 {
-    WORD i, ltmp_end, rtmp_end;
+    WORD ltmp_end, rtmp_end;
     WORD *xy;
 
-    i = CONTRL[5];
     xy = PTSIN;
 
-    switch (i) {
+    switch(CONTRL[5]) {
     case 1:         /* GDP BAR - converted to alpha 2 RJG 12-1-84 */
         vdi_vr_recfl(vwk);
         if (vwk->fill_per == TRUE) {
