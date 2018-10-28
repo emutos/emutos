@@ -23,7 +23,11 @@
 #define    PI        1800
 #define    TWOPI     3600
 
-/* local GDP variables */
+/*
+ * local GDP variables
+ *
+ * these are used to pass values to clc_arc(), clc_nsteps(), and clc_pts()
+ */
 static WORD beg_ang, del_ang, end_ang;
 static WORD xc, xrad, yc, yrad;
 
@@ -55,9 +59,9 @@ static const WORD sin_tbl[92] = {
 
 
 /*
- * ISin - Returns integer sin between -32767 - 32767.
+ * Isin - Returns integer sine between 0 and 32767
  *
- * Uses integer lookup table sintable^[]. Expects angle in tenths of
+ * Uses integer lookup table sin_tbl[]. Expects angle in tenths of
  * degree 0 - 32767; angles >3599 will be normalised to 0-3599.
  * Assumes positive angles only.
  */
@@ -98,7 +102,9 @@ static WORD Isin(WORD angle)
 
 
 /*
- * Icos - Return integer cos between -32767 and 32767.
+ * Icos - Return integer cosine between 0 and 32767
+ *
+ * Assumes positive angles only.
  */
 static WORD Icos(WORD angle)
 {
@@ -112,7 +118,8 @@ static WORD Icos(WORD angle)
 
 
 /*
- * clc_pts - calculates
+ * clc_pts - calculates a segment endpoint position, based on the
+ *           point number and xc/yc/xrad/yrad
  */
 
 static void clc_pts(WORD j, WORD angle)
@@ -130,7 +137,8 @@ static void clc_pts(WORD j, WORD angle)
 
 
 /*
- * clc_arc - calculates
+ * clc_arc - calculates the positions of all the points necessary to draw
+ *           a circular/elliptical arc (or a circle/ellipse), and draws it
  */
 
 static void clc_arc(Vwk * vwk, int steps)
@@ -156,9 +164,10 @@ static void clc_arc(Vwk * vwk, int steps)
 
     point = (Point*)PTSIN;
 
-    /* If pie wedge draw to center and then close. */
-    if ((CONTRL[5] == 3) || (CONTRL[5] == 7)) {
-        /* pie wedge */
+    /*
+     * If pie wedge draw to center and then close
+     */
+    if ((CONTRL[5] == 3) || (CONTRL[5] == 7)) { /* v_pieslice()/v_ellpie() */
         Point * endpoint;
 
         steps++;
@@ -168,9 +177,10 @@ static void clc_arc(Vwk * vwk, int steps)
     }
     steps++;                 /* since loop in Clc_arc starts at 0 */
 
-    /* If arc or circle, do nothing because loop should close circle. */
+    /*
+     * If arc or circle, do nothing because loop should close circle
+     */
     if ((CONTRL[5] == 2) || (CONTRL[5] == 6)) { /* v_arc() or v_ellarc() */
-        /* open arc */
         if (vwk->line_width == 1) {
             set_LN_MASK(vwk);
             polyline(vwk, point, steps, vwk->line_color);
@@ -364,7 +374,7 @@ static void gdp_rbox(Vwk * vwk)
 
 
 /*
- * gdp_arc - draw an arc
+ * gdp_arc - draws a circular arc or pie
  */
 
 static void gdp_arc(Vwk * vwk)
@@ -396,7 +406,9 @@ static void gdp_arc(Vwk * vwk)
 
 
 /*
- * clc_nsteps - calculates
+ * clc_nsteps - calculates the number of line segments ('steps') to draw
+ *              for a circle/ellipse, based on the larger of xrad/yrad,
+ *              and clamped to a range of 16->MAX_ARC_CT
  */
 
 static int clc_nsteps(void)
@@ -420,7 +432,7 @@ static int clc_nsteps(void)
 
 
 /*
- * gdp_ell - draws an ell
+ * gdp_ell - draws an elliptical arc or pie
  */
 
 static void gdp_ell(Vwk * vwk)
