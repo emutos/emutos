@@ -20,6 +20,7 @@
 #include "../bios/screen.h"
 #include "asm.h"
 #include "string.h"
+#include "intmath.h"
 
 
 static Vwk virt_work;          /* attribute areas for workstations */
@@ -183,23 +184,14 @@ WORD validate_color_index(WORD colnum)
 /* Set Clip Region */
 void vdi_vs_clip(Vwk * vwk)
 {
-    vwk->clip = *INTIN;
+    vwk->clip = INTIN[0];
     if (vwk->clip) {
-        WORD rtemp;
         Rect * rect = (Rect*)PTSIN;
         arb_corner(rect);
-
-        rtemp = rect->x1;
-        vwk->xmn_clip = (rtemp < 0) ? 0 : rtemp;
-
-        rtemp = rect->y1;
-        vwk->ymn_clip = (rtemp < 0) ? 0 : rtemp;
-
-        rtemp = rect->x2;
-        vwk->xmx_clip = (rtemp > xres) ? xres : rtemp;
-
-        rtemp = rect->y2;
-        vwk->ymx_clip = (rtemp > yres) ? yres : rtemp;
+        vwk->xmn_clip = max(0, rect->x1);
+        vwk->ymn_clip = max(0, rect->y1);
+        vwk->xmx_clip = min(xres, rect->x2);
+        vwk->ymx_clip = min(yres, rect->y2);
     } else {
         vwk->xmn_clip = 0;
         vwk->ymn_clip = 0;
