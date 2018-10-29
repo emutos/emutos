@@ -399,9 +399,9 @@ void vdi_v_opnwk(Vwk * vwk)
 
     /* Calculate colors allowed at one time */
     if (INQ_TAB[4] < 8)
-        DEV_TAB[13] = 2<<(v_planes-1);
+        numcolors = 2<<(v_planes-1);
     else
-        DEV_TAB[13] = 256;
+        numcolors = 256;
 
     vwk = &virt_work;
     CONTRL[6] = vwk->handle = 1;
