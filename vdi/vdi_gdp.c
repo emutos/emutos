@@ -194,7 +194,7 @@ static void clc_arc(Vwk * vwk, int steps)
  */
 void vdi_v_gdp(Vwk * vwk)
 {
-    WORD ltmp_end, rtmp_end;
+    WORD save_beg, save_end;
     WORD *xy;
 
     xy = PTSIN;
@@ -249,13 +249,13 @@ void vdi_v_gdp(Vwk * vwk)
         break;
 
     case 8:         /* GDP Rounded Box */
-        ltmp_end = vwk->line_beg;
+        save_beg = vwk->line_beg;
+        save_end = vwk->line_end;
         vwk->line_beg = SQUARED;
-        rtmp_end = vwk->line_end;
         vwk->line_end = SQUARED;
         gdp_rbox(vwk);
-        vwk->line_beg = ltmp_end;
-        vwk->line_end = rtmp_end;
+        vwk->line_beg = save_beg;
+        vwk->line_end = save_end;
         break;
 
     case 9:         /* GDP Rounded Filled Box */
