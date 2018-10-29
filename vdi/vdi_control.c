@@ -274,8 +274,8 @@ static void init_wk(Vwk * vwk)
 
     vwk->xmn_clip = 0;
     vwk->ymn_clip = 0;
-    vwk->xmx_clip = DEV_TAB[0];
-    vwk->ymx_clip = DEV_TAB[1];
+    vwk->xmx_clip = xres;
+    vwk->ymx_clip = yres;
     vwk->clip = FALSE;
 
     text_init2(vwk);
@@ -385,8 +385,8 @@ void vdi_v_opnwk(Vwk * vwk)
     }
 
     /* Copy data from linea variables */
-    DEV_TAB[0] = V_REZ_HZ-1;
-    DEV_TAB[1] = V_REZ_VT-1;
+    xres = V_REZ_HZ - 1;
+    yres = V_REZ_VT - 1;
     INQ_TAB[4] = v_planes;
 
     /* get pixel sizes for use by routines in vdi_gdp.c & vdi_line.c */

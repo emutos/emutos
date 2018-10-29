@@ -606,8 +606,8 @@ void vdimouse_init(void)
 
     /* mouse settings */
     HIDE_CNT = 1;               /* mouse is initially hidden */
-    GCURX = DEV_TAB[0] / 2;     /* initialize the mouse to center */
-    GCURY = DEV_TAB[1] / 2;
+    GCURX = xres / 2;           /* initialize the mouse to center */
+    GCURY = yres / 2;
 
     user_but = do_nothing;
     user_mot = do_nothing;
@@ -822,7 +822,7 @@ static void cur_display (Mcdb *sprite, MCS *mcs, WORD x, WORD y)
         x += 16;                /* get address of right word */
         op = 1;                 /* remember we're clipping left */
     }
-    else if (x >= (DEV_TAB[0]-15)) {    /* clip right */
+    else if (x >= (xres-15)) {  /* clip right */
         op = 2;                 /* remember we're clipping right */
     }
     else {                  /* no clipping */
@@ -839,8 +839,8 @@ static void cur_display (Mcdb *sprite, MCS *mcs, WORD x, WORD y)
         mask_start -= y << 1;   /* point to first visible row of MASK/FORM */
         y = 0;                  /* and reset starting row */
     }
-    else if (y > (DEV_TAB[1]-15)) { /* clip bottom */
-        row_count = DEV_TAB[1] - y + 1;
+    else if (y > (yres-15)) {   /* clip bottom */
+        row_count = yres - y + 1;
     }
     else {
         row_count = 16;

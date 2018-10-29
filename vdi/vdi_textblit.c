@@ -180,8 +180,8 @@ static WORD do_clip(LOCALVARS *vars)
     {
         vars->XMN_CLIP = 0;     /* set screen coordinates */
         vars->YMN_CLIP = 0;
-        vars->XMX_CLIP = DEV_TAB[0];
-        vars->YMX_CLIP = DEV_TAB[1];
+        vars->XMX_CLIP = xres;
+        vars->YMX_CLIP = yres;
     }
 
     /*
