@@ -8,8 +8,6 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
-
 #ifndef VDIDEFS_H
 #define VDIDEFS_H
 

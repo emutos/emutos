@@ -9,13 +9,10 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
-
 #include "config.h"
 #include "portab.h"
 #include "intmath.h"
 #include "vdi_defs.h"
-
 
 
 /* Definitions for sine and cosine */
@@ -37,8 +34,6 @@ static void gdp_arc(Vwk * vwk);
 static int  clc_nsteps(void);
 static void gdp_ell(Vwk * vwk);
 static void clc_arc(Vwk * vwk, int steps);
-
-
 
 /* Sines of angles 0 - 90 degrees normalized between 0-32767. */
 static const WORD sin_tbl[92] = {
@@ -121,7 +116,6 @@ static WORD Icos(WORD angle)
  * clc_pts - calculates a segment endpoint position, based on the
  *           point number and xc/yc/xrad/yrad
  */
-
 static void clc_pts(WORD j, WORD angle)
 {
     WORD k;
@@ -140,7 +134,6 @@ static void clc_pts(WORD j, WORD angle)
  * clc_arc - calculates the positions of all the points necessary to draw
  *           a circular/elliptical arc (or a circle/ellipse), and draws it
  */
-
 static void clc_arc(Vwk * vwk, int steps)
 {
     WORD i, j, start, angle;
@@ -199,7 +192,6 @@ static void clc_arc(Vwk * vwk, int steps)
 /*
  * vdi_v_gdp - Major opcode for graphics device primitives
  */
-
 void vdi_v_gdp(Vwk * vwk)
 {
     WORD ltmp_end, rtmp_end;
@@ -286,7 +278,6 @@ void vdi_v_gdp(Vwk * vwk)
 /*
  * gdp_rbox - draws an rbox
  */
-
 static void gdp_rbox(Vwk * vwk)
 {
     WORD i, j;
@@ -374,7 +365,6 @@ static void gdp_rbox(Vwk * vwk)
 /*
  * gdp_arc - draws a circular arc or pie
  */
-
 static void gdp_arc(Vwk * vwk)
 {
     WORD *pointer;
@@ -408,7 +398,6 @@ static void gdp_arc(Vwk * vwk)
  *              for a circle/ellipse, based on the larger of xrad/yrad,
  *              and clamped to a range of MIN_ARC_CT -> MAX_ARC_CT
  */
-
 static int clc_nsteps(void)
 {
     int steps;
@@ -432,7 +421,6 @@ static int clc_nsteps(void)
 /*
  * gdp_ell - draws an elliptical arc or pie
  */
-
 static void gdp_ell(Vwk * vwk)
 {
     WORD *pointer;

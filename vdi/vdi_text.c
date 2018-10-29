@@ -9,8 +9,6 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
-
 #include "config.h"
 #include "portab.h"
 #include "asm.h"
@@ -1104,7 +1102,6 @@ void vdi_vst_unload_fonts(Vwk * vwk)
 }
 
 
-
 /*
  * input:
  *   req - d0, get requested size
@@ -1113,7 +1110,6 @@ void vdi_vst_unload_fonts(Vwk * vwk)
  * output:
  *   vwk->t_sclsts is the text scaling flag (means: scale up or down)
  */
-
 static UWORD clc_dda(Vwk * vwk, UWORD act, UWORD req)
 {
     if ( req < act ) {

@@ -8,18 +8,13 @@
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  */
-
-
-
 #include "asmdefs.h"
 #include "vdi_asm.h"
-
 
 
 /*
  * _GSX_ENTRY - front end of the GIOS for the screen driver
  */
-
         .extern _local_pb
         .extern _CONTRL
         .extern _INTIN
@@ -123,7 +118,6 @@ intin_ok:
         rts
 
 
-
 #define F_SAVRDY        0               // save buffer status flag: 0:empty  1:full
 #define F_SAVWID        1               // saved line width        0:word   1:longword
 
@@ -162,8 +156,6 @@ intin_ok:
 
 
         .text
-
-
 
 /*
  * scrn_clip - This routine clips the x and y-coordinates of the cursor
@@ -230,7 +222,6 @@ cl_done:
  * exit:        none
  * destroys:    nothing
  */
-
 _mouse_int:
         tst.b   _mouse_flag     // If we are in a show/hide operation
         jne     ms_exit         // just exit.

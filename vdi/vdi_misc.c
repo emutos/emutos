@@ -9,8 +9,6 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
-
 #include "config.h"
 #include "portab.h"
 #include "asm.h"
@@ -20,12 +18,10 @@
 #include "../bios/lineavars.h"
 
 
-
 /* timer related vectors (linea variables in bios/lineavars.S) */
 
 extern void     (*tim_addr)(int);       /* timer interrupt vector */
 extern void     (*tim_chain)(int);      /* timer interrupt vector save */
-
 
 
 static BOOL in_proc;                   /* flag, if we are still running */
@@ -85,7 +81,6 @@ void arb_line(Line * line)
  *
  * The etv_timer does point to this routine
  */
-
 static void tick_int(int u)
 {
     if (!in_proc) {
@@ -131,7 +126,6 @@ void vdi_vex_timv(Vwk * vwk)
 /*
  * do_nothing - doesn't do much  :-)
  */
-
 static void do_nothing_int(int u)
 {
     (void)u;
@@ -144,7 +138,6 @@ static void do_nothing_int(int u)
  *
  * initially set timer vector to dummy, save old vector
  */
-
 void timer_init(void)
 {
     WORD old_sr;
@@ -168,7 +161,6 @@ void timer_init(void)
  *
  * reactivate the old saved vector
  */
-
 void timer_exit(void)
 {
     WORD old_sr;

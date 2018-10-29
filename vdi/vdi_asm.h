@@ -10,8 +10,6 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
-
 #ifndef VDI_ASM_H
 #define VDI_ASM_H
 

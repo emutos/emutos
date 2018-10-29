@@ -8,8 +8,6 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
-
 #include "config.h"
 #include "portab.h"
 #include "vdi_defs.h"
@@ -225,7 +223,6 @@ draw_segs(Vwk * vwk, WORD nr_vertices, Point * point, WORD mode)
  * If you are not using the C library, but directly programming the VDI
  * interface, you need to do the byte swapping yourself.
  */
-
 void
 v_bez(Vwk * vwk, Point * ptsget, int nr_ptsin)
 {
@@ -581,7 +578,6 @@ v_bez_fill(Vwk * vwk, Point * ptsget, int nr_ptsin)
  * bezier functions. We do not support the use of this function to
  * enable or disable bezier curves.
  */
-
 void
 v_bez_control(Vwk * vwk)
 {

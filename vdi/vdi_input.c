@@ -9,8 +9,6 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
-
 #include "config.h"
 #include "portab.h"
 #include "biosbind.h"
@@ -190,7 +188,6 @@ void vdi_vqin_mode(Vwk * vwk)
  *
  * returns:   CTL/SHIFT/ALT status
  */
-
 static WORD gshift_s(void)
 {
     return (Kbshift(-1) & 0x000f);
@@ -205,7 +202,6 @@ static WORD gshift_s(void)
  *            1    choice value
  *            2    button pressed
  */
-
 static WORD gchc_key(void)
 {
     TERM_CH = 1;                /* 16 bit char info */
@@ -222,7 +218,6 @@ static WORD gchc_key(void)
  *
  * TERM_CH         16 bit char info
  */
-
 static WORD gchr_key(void)
 {
     ULONG ch;

@@ -9,8 +9,6 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
-
 #include "config.h"
 #include "portab.h"
 #include "vdi_defs.h"
@@ -23,9 +21,7 @@
 #define QMAX QSIZE-1
 
 
-
 #define ABS(v) (v & 0x7FFF)
-
 
 
 /* prototypes */
@@ -288,7 +284,6 @@ void vdi_vqf_attributes(Vwk * vwk)
 /*
  * st_fl_ptr - set fill pattern?
  */
-
 void
 st_fl_ptr(Vwk * vwk)
 {
@@ -344,7 +339,6 @@ st_fl_ptr(Vwk * vwk)
  *     buf   - ptr to start of array.
  *     count - number of words in array.
  */
-
 static void
 bub_sort (WORD * buf, WORD count)
 {
@@ -534,10 +528,10 @@ clc_flit (const VwkAttrib * attr, const VwkClip * clipper, const Point * point, 
 }
 
 
+
 /*
  * polygon - draw a filled polygon
  */
-
 void
 polygon(Vwk * vwk, Point * ptsin, int count)
 {
@@ -645,7 +639,6 @@ void vdi_v_fillarea(Vwk * vwk)
  *         ->x2 = x coord of lower right corner.
  *         ->y2 = y coord of lower right corner.
  */
-
 static BOOL
 clipbox(const VwkClip * clip, Rect * rect)
 {
@@ -684,6 +677,7 @@ clipbox(const VwkClip * clip, Rect * rect)
 }
 
 
+
 /*
  * get_color - Get color value of requested pixel.
  */
@@ -707,6 +701,8 @@ get_color (UWORD mask, UWORD * addr)
     return color;       /* this is the color we are searching for */
 }
 
+
+
 /*
  * pixelread - gets a pixel's color index value
  *
@@ -716,7 +712,6 @@ get_color (UWORD mask, UWORD * addr)
  * output:
  *     pixel value
  */
-
 static UWORD
 pixelread(const WORD x, const WORD y)
 {
@@ -730,6 +725,8 @@ pixelread(const WORD x, const WORD y)
 
     return get_color(mask, addr);       /* return the composed color value */
 }
+
+
 
 static UWORD
 search_to_right (const VwkClip * clip, WORD x, UWORD mask, const UWORD search_col, UWORD * addr)
@@ -754,6 +751,8 @@ search_to_right (const VwkClip * clip, WORD x, UWORD mask, const UWORD search_co
     return x - 1;       /* output x coord -1 to endxright. */
 }
 
+
+
 static UWORD
 search_to_left (const VwkClip * clip, WORD x, UWORD mask, const UWORD search_col, UWORD * addr)
 {
@@ -776,6 +775,8 @@ search_to_left (const VwkClip * clip, WORD x, UWORD mask, const UWORD search_col
     return x + 1;       /* output x coord + 1 to endxleft. */
 }
 
+
+
 /*
  * end_pts - find the endpoints of a section of solid color
  *           (for the _seed_fill routine.)
@@ -792,7 +793,6 @@ search_to_left (const VwkClip * clip, WORD x, UWORD mask, const UWORD search_col
  *             1 => endpoints found.
  *         seed_type  indicates the type of fill
  */
-
 static WORD
 end_pts(const VwkClip * clip, WORD x, WORD y, WORD *xleftout, WORD *xrightout,
         BOOL seed_type)
@@ -822,11 +822,13 @@ end_pts(const VwkClip * clip, WORD x, WORD y, WORD *xleftout, WORD *xrightout,
     return seed_type ^ 0;       /* return segment is of search color */
 }
 
+
 /* Prototypes local to this module */
 static WORD
 get_seed(const VwkAttrib * attr, const VwkClip * clip,
          WORD xin, WORD yin, WORD *xleftout, WORD *xrightout,
          BOOL seed_type);
+
 
 
 /* common function for line-A linea_fill() and VDI d_countourfill() */
@@ -946,6 +948,8 @@ void contourfill(const VwkAttrib * attr, const VwkClip *clip)
     }
 }                               /* end of fill() */
 
+
+
 /*
  * crunch_queue - move qtop down to remove unused seeds
  */
@@ -957,6 +961,8 @@ crunch_queue(void)
     if (qptr >= qtop)
         qptr = qbottom;
 }
+
+
 
 /*
  * get_seed - put seeds into Q, if (xin,yin) is not of search_color
@@ -1011,6 +1017,8 @@ get_seed(const VwkAttrib * attr, const VwkClip * clip,
     return 0;           /* we didn't put a seed in the Q */
 }
 
+
+
 /*
  * no_abort
  *
@@ -1025,6 +1033,8 @@ static WORD no_abort(void)
     return 0;
 }
 
+
+
 /* VDI version */
 void vdi_v_contourfill(Vwk * vwk)
 {
@@ -1034,6 +1044,7 @@ void vdi_v_contourfill(Vwk * vwk)
     Vwk2Attrib(vwk, &attr, vwk->fill_color);
     contourfill(&attr, VDI_CLIP(vwk));
 }
+
 
 
 void vdi_v_get_pixel(Vwk * vwk)
@@ -1067,6 +1078,8 @@ get_pix(void)
     /* return the composed color value */
     return pixelread(PTSIN[0], PTSIN[1]);
 }
+
+
 
 /*
  * put_pix - plot a pixel (just for linea!)

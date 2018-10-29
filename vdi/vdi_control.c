@@ -9,8 +9,6 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
-
 #include "config.h"
 #include "portab.h"
 #include "../bios/lineavars.h"
@@ -449,7 +447,6 @@ void vdi_v_clswk(Vwk * vwk)
  *
  * Screen is cleared from the base address v_bas_ad.
  */
-
 void vdi_v_clrwk(Vwk * vwk)
 {
     ULONG size;

@@ -8,11 +8,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
-
 #include "asmdefs.h"
 #include "vdi_asm.h"
-
 
 
         .globl  _fast_bit_blt

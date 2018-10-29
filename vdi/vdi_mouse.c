@@ -9,8 +9,6 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
-
 #include "config.h"
 #include "portab.h"
 #include "asm.h"
@@ -112,7 +110,6 @@ static const MFORM arrow_mform = {
 /*
  * do_nothing - doesn't do much  :-)
  */
-
 static void do_nothing(void)
 {
 }
@@ -131,7 +128,6 @@ static void do_nothing(void)
  *      hide_cnt = hide_cnt - 1
  *      draw_flag = 0
  */
-
 static void dis_cur(void)
 {
     mouse_flag += 1;            /* disable mouse redrawing */
@@ -160,7 +156,6 @@ static void dis_cur(void)
  *    hide_cnt = hide_cnt + 1
  *    draw_flag = 0
  */
-
 static void hide_cur(void)
 {
     mouse_flag += 1;            /* disable mouse redrawing */
@@ -203,7 +198,6 @@ static void hide_cur(void)
  * 6 - 0x40 Right mouse button status flag (0=hasn't changed)
  * 7 - 0x80 Left mouse button status flag  (0=hasn't changed)
  */
-
 static WORD gloc_key(void)
 {
     WORD retval = 0;
@@ -552,10 +546,10 @@ void vdi_vsc_form(Vwk * vwk)
 }
 
 
+
 /*
  * vdi_mousex_handler - Handle additional mouse buttons
  */
-
 static void vdi_mousex_handler (WORD scancode)
 {
     WORD old_buttons = MOUSE_BT;
@@ -594,7 +588,6 @@ static void vdi_mousex_handler (WORD scancode)
  * entry:          none
  * exit:           none
  */
-
 void vdimouse_init(void)
 {
     struct kbdvecs *kbd_vectors;
@@ -648,7 +641,6 @@ void vdimouse_init(void)
 /*
  * vdimouse_exit - deinitialize/disable mouse
  */
-
 void vdimouse_exit(void)
 {
     LONG * pointer;             /* help for storing LONGs in INTIN */
@@ -810,7 +802,6 @@ static void cur_display_clip(WORD op,Mcdb *sprite,MCS *mcs,UWORD *mask_start,UWO
  * is subject to left or right clipping, however, then it must lie
  * within one screen word (per plane), so we only save 32 bytes/plane.
  */
-
 static void cur_display (Mcdb *sprite, MCS *mcs, WORD x, WORD y)
 {
     int row_count, plane, inc, op, dst_inc;
