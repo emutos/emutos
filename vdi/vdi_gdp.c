@@ -28,12 +28,6 @@
 static WORD beg_ang, del_ang, end_ang;
 static WORD xc, xrad, yc, yrad;
 
-/* Prototypes local to this module */
-static void gdp_rbox(Vwk * vwk);
-static void gdp_arc(Vwk * vwk);
-static int  clc_nsteps(void);
-static void gdp_ell(Vwk * vwk);
-static void clc_arc(Vwk * vwk, int steps);
 
 /* Sines of angles 0 - 90 degrees normalized between 0-32767. */
 static const WORD sin_tbl[92] = {
@@ -190,92 +184,6 @@ static void clc_arc(Vwk * vwk, int steps)
 
 
 /*
- * vdi_v_gdp - Major opcode for graphics device primitives
- */
-void vdi_v_gdp(Vwk * vwk)
-{
-    WORD save_beg, save_end;
-    WORD *xy;
-
-    xy = PTSIN;
-
-    switch(CONTRL[5]) {
-    case 1:         /* GDP BAR - converted to alpha 2 RJG 12-1-84 */
-        vdi_vr_recfl(vwk);
-        if (vwk->fill_per == TRUE) {
-            LN_MASK = 0xffff;
-
-            xy[5] = xy[7] = xy[3];
-            xy[3] = xy[9] = xy[1];
-            xy[4] = xy[2];
-            xy[6] = xy[8] = xy[0];
-
-            polyline(vwk, (Point*)PTSIN, 5, vwk->fill_color);
-        }
-        break;
-
-    case 2:         /* GDP ARC */
-    case 3:         /* GDP PIE */
-        gdp_arc(vwk);
-        break;
-
-    case 4:         /* GDP CIRCLE */
-        xc = xy[0];
-        yc = xy[1];
-        xrad = xy[4];
-        yrad = mul_div(xrad, xsize, ysize);
-        del_ang = TWOPI;
-        beg_ang = 0;
-        end_ang = TWOPI;
-        clc_arc(vwk, clc_nsteps(/*vwk*/));
-        break;
-
-    case 5:         /* GDP ELLIPSE */
-        xc = xy[0];
-        yc = xy[1];
-        xrad = xy[2];
-        yrad = xy[3];
-        if (vwk->xfm_mode < 2)
-            yrad = yres - yrad;
-        del_ang = TWOPI;
-        beg_ang = 0;
-        end_ang = TWOPI;
-        clc_arc(vwk, clc_nsteps(/*vwk*/));
-        break;
-
-    case 6:         /* GDP ELLIPTICAL ARC */
-    case 7:         /* GDP ELLIPTICAL PIE */
-        gdp_ell(vwk);
-        break;
-
-    case 8:         /* GDP Rounded Box */
-        save_beg = vwk->line_beg;
-        save_end = vwk->line_end;
-        vwk->line_beg = SQUARED;
-        vwk->line_end = SQUARED;
-        gdp_rbox(vwk);
-        vwk->line_beg = save_beg;
-        vwk->line_end = save_end;
-        break;
-
-    case 9:         /* GDP Rounded Filled Box */
-        gdp_rbox(vwk);
-        break;
-
-    case 10:         /* GDP Justified Text */
-        gdp_justified(vwk);
-        break;
-#if HAVE_BEZIER
-    case 13:         /* GDP Bezier */
-        v_bez_control(vwk);     /* check, if we can do bezier curves */
-        break;
-#endif
-    }
-}
-
-
-
-/*
  * gdp_rbox - draws an rbox
  */
 static void gdp_rbox(Vwk * vwk)
@@ -363,6 +271,31 @@ static void gdp_rbox(Vwk * vwk)
 
 
 /*
+ * clc_nsteps - calculates the number of line segments ('steps') to draw
+ *              for a circle/ellipse, based on the larger of xrad/yrad,
+ *              and clamped to a range of MIN_ARC_CT -> MAX_ARC_CT
+ */
+static int clc_nsteps(void)
+{
+    int steps;
+
+    if (xrad > yrad)
+        steps = xrad;
+    else
+        steps = yrad;
+    steps = steps >> 2;
+
+    if (steps < MIN_ARC_CT)
+        steps = MIN_ARC_CT;
+    else if (steps > MAX_ARC_CT)
+        steps = MAX_ARC_CT;
+
+    return steps;
+}
+
+
+
+/*
  * gdp_arc - draws a circular arc or pie
  */
 static void gdp_arc(Vwk * vwk)
@@ -385,31 +318,6 @@ static void gdp_arc(Vwk * vwk)
     yc = PTSIN[1];
     clc_arc(vwk, steps);
     return;
-}
-
-
-
-/*
- * clc_nsteps - calculates the number of line segments ('steps') to draw
- *              for a circle/ellipse, based on the larger of xrad/yrad,
- *              and clamped to a range of MIN_ARC_CT -> MAX_ARC_CT
- */
-static int clc_nsteps(void)
-{
-    int steps;
-
-    if (xrad > yrad)
-        steps = xrad;
-    else
-        steps = yrad;
-    steps = steps >> 2;
-
-    if (steps < MIN_ARC_CT)
-        steps = MIN_ARC_CT;
-    else if (steps > MAX_ARC_CT)
-        steps = MAX_ARC_CT;
-
-    return steps;
 }
 
 
@@ -439,4 +347,90 @@ static void gdp_ell(Vwk * vwk)
         steps = 1;      /* always draw something! */
     clc_arc(vwk, steps);
     return;
+}
+
+
+
+/*
+ * vdi_v_gdp - Major opcode for graphics device primitives
+ */
+void vdi_v_gdp(Vwk * vwk)
+{
+    WORD save_beg, save_end;
+    WORD *xy;
+
+    xy = PTSIN;
+
+    switch(CONTRL[5]) {
+    case 1:         /* GDP BAR - converted to alpha 2 RJG 12-1-84 */
+        vdi_vr_recfl(vwk);
+        if (vwk->fill_per == TRUE) {
+            LN_MASK = 0xffff;
+
+            xy[5] = xy[7] = xy[3];
+            xy[3] = xy[9] = xy[1];
+            xy[4] = xy[2];
+            xy[6] = xy[8] = xy[0];
+
+            polyline(vwk, (Point*)PTSIN, 5, vwk->fill_color);
+        }
+        break;
+
+    case 2:         /* GDP ARC */
+    case 3:         /* GDP PIE */
+        gdp_arc(vwk);
+        break;
+
+    case 4:         /* GDP CIRCLE */
+        xc = xy[0];
+        yc = xy[1];
+        xrad = xy[4];
+        yrad = mul_div(xrad, xsize, ysize);
+        del_ang = TWOPI;
+        beg_ang = 0;
+        end_ang = TWOPI;
+        clc_arc(vwk, clc_nsteps(/*vwk*/));
+        break;
+
+    case 5:         /* GDP ELLIPSE */
+        xc = xy[0];
+        yc = xy[1];
+        xrad = xy[2];
+        yrad = xy[3];
+        if (vwk->xfm_mode < 2)
+            yrad = yres - yrad;
+        del_ang = TWOPI;
+        beg_ang = 0;
+        end_ang = TWOPI;
+        clc_arc(vwk, clc_nsteps(/*vwk*/));
+        break;
+
+    case 6:         /* GDP ELLIPTICAL ARC */
+    case 7:         /* GDP ELLIPTICAL PIE */
+        gdp_ell(vwk);
+        break;
+
+    case 8:         /* GDP Rounded Box */
+        save_beg = vwk->line_beg;
+        save_end = vwk->line_end;
+        vwk->line_beg = SQUARED;
+        vwk->line_end = SQUARED;
+        gdp_rbox(vwk);
+        vwk->line_beg = save_beg;
+        vwk->line_end = save_end;
+        break;
+
+    case 9:         /* GDP Rounded Filled Box */
+        gdp_rbox(vwk);
+        break;
+
+    case 10:         /* GDP Justified Text */
+        gdp_justified(vwk);
+        break;
+#if HAVE_BEZIER
+    case 13:         /* GDP Bezier */
+        v_bez_control(vwk);     /* check, if we can do bezier curves */
+        break;
+#endif
+    }
 }
