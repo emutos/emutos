@@ -239,7 +239,7 @@ void vdi_v_gdp(Vwk * vwk)
             yrad = yres - yrad;
         del_ang = TWOPI;
         beg_ang = 0;
-        end_ang = 0;
+        end_ang = TWOPI;
         clc_arc(vwk, clc_nsteps(/*vwk*/));
         break;
 
