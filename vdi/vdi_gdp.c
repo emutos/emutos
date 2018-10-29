@@ -367,26 +367,22 @@ static void gdp_rbox(Vwk * vwk)
  */
 static void gdp_arc(Vwk * vwk)
 {
-    WORD *pointer;
     int steps;
 
-    pointer = INTIN;
-
-    beg_ang = *pointer++;
-    end_ang = *pointer;
+    beg_ang = INTIN[0];
+    end_ang = INTIN[1];
     del_ang = end_ang - beg_ang;
     if (del_ang < 0)
         del_ang += TWOPI;
 
-    pointer = PTSIN;
-    xrad = *(pointer + 6);
+    xrad = PTSIN[6];
     yrad = mul_div(xrad, xsize, ysize);
     steps = clc_nsteps(/*vwk*/);
     steps = mul_div(del_ang, steps, TWOPI);
     if (steps == 0)
         steps = 1;      /* always draw something! */
-    xc = *pointer++;
-    yc = *pointer;
+    xc = PTSIN[0];
+    yc = PTSIN[1];
     clc_arc(vwk, steps);
     return;
 }
@@ -423,21 +419,18 @@ static int clc_nsteps(void)
  */
 static void gdp_ell(Vwk * vwk)
 {
-    WORD *pointer;
     int steps;
 
-    pointer = INTIN;
-    beg_ang = *pointer++;
-    end_ang = *pointer;
+    beg_ang = INTIN[0];
+    end_ang = INTIN[1];
     del_ang = end_ang - beg_ang;
     if (del_ang < 0)
         del_ang += TWOPI;
 
-    pointer = PTSIN;
-    xc = *pointer++;
-    yc = *pointer++;
-    xrad = *pointer++;
-    yrad = *pointer;
+    xc = PTSIN[0];
+    yc = PTSIN[1];
+    xrad = PTSIN[2];
+    yrad = PTSIN[3];
     if (vwk->xfm_mode < 2)
         yrad = yres - yrad;
     steps = clc_nsteps(/*vwk*/);

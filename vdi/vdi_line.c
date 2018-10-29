@@ -108,7 +108,7 @@ void vdi_vsl_type(Vwk * vwk)
  */
 void vdi_vsl_width(Vwk * vwk)
 {
-    WORD w, *pts_out;
+    WORD w;
 
     /* Limit the requested line width to a reasonable value. */
     w = PTSIN[0];
@@ -123,9 +123,8 @@ void vdi_vsl_width(Vwk * vwk)
 
     /* Set the line width internals and return parameters */
     CONTRL[2] = 1;
-    pts_out = PTSOUT;
-    *pts_out++ = vwk->line_width = w;
-    *pts_out = 0;
+    PTSOUT[0] = vwk->line_width = w;
+    PTSOUT[1] = 0;
 }
 
 
@@ -135,22 +134,14 @@ void vdi_vsl_width(Vwk * vwk)
 void vdi_vsl_ends(Vwk * vwk)
 {
     WORD lb, le;
-    WORD *pointer;
 
     CONTRL[4] = 2;
 
-    pointer = INTIN;
-    lb = *pointer++;
-    if ((lb < MIN_END_STYLE) || (lb > MAX_END_STYLE))
-        lb = DEF_END_STYLE;
+    lb = ((INTIN[0] < MIN_END_STYLE) || (INTIN[0] > MAX_END_STYLE)) ? DEF_END_STYLE : INTIN[0];
+    le = ((INTIN[1] < MIN_END_STYLE) || (INTIN[1] > MAX_END_STYLE)) ? DEF_END_STYLE : INTIN[1];
 
-    le = *pointer;
-    if ((le < MIN_END_STYLE) || (le > MAX_END_STYLE))
-        le = DEF_END_STYLE;
-
-    pointer = INTOUT;
-    *pointer++ = vwk->line_beg = lb;
-    *pointer = vwk->line_end = le;
+    INTOUT[0] = vwk->line_beg = lb;
+    INTOUT[1] = vwk->line_end = le;
 }
 
 
