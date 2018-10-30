@@ -296,57 +296,46 @@ static int clc_nsteps(void)
 
 
 /*
- * gdp_arc - draws a circular arc or pie
+ * gdp_curve: handles all circle/ellipse GDP functions:
+ *  v_arc(), v_pieslice(), v_circle(), v_ellipse(), v_ellarc(), v_ellpie()
  */
-static void gdp_arc(Vwk * vwk)
+static void gdp_curve(Vwk *vwk)
 {
-    int steps;
+    WORD steps;
 
-    beg_ang = INTIN[0];
-    end_ang = INTIN[1];
+    xc = PTSIN[0];
+    yc = PTSIN[1];
+
+    if (CONTRL[5] <= 4) {   /* v_arc(), v_pieslice(), v_circle() */
+        xrad = (CONTRL[5] == 4) ? PTSIN[4] : PTSIN[6];
+        yrad = mul_div(xrad, xsize, ysize);
+    } else {                /* v_ellipse(), v_ellarc(), v_ellpie() */
+        xrad = PTSIN[2];
+        yrad = PTSIN[3];
+        if (vwk->xfm_mode < 2)  /* NDC coordinates ... not tested AFAIK */
+            yrad = yres - yrad;
+    }
+
+    if ((CONTRL[5] == 4) || (CONTRL[5] == 5)) { /* v_circle(), v_ellipse() */
+        beg_ang = 0;
+        end_ang = TWOPI;
+    } else {
+        beg_ang = INTIN[0];
+        end_ang = INTIN[1];
+    }
+
     del_ang = end_ang - beg_ang;
     if (del_ang < 0)
         del_ang += TWOPI;
 
-    xrad = PTSIN[6];
-    yrad = mul_div(xrad, xsize, ysize);
-    steps = clc_nsteps(/*vwk*/);
-    steps = mul_div(del_ang, steps, TWOPI);
-    if (steps == 0)
-        steps = 1;      /* always draw something! */
-    xc = PTSIN[0];
-    yc = PTSIN[1];
-    clc_arc(vwk, steps);
-    return;
-}
+    steps = clc_nsteps();
+    if (del_ang != TWOPI) {
+        steps = mul_div(del_ang, steps, TWOPI);
+        if (steps == 0)
+            steps = 1;      /* always draw something! */
+    }
 
-
-
-/*
- * gdp_ell - draws an elliptical arc or pie
- */
-static void gdp_ell(Vwk * vwk)
-{
-    int steps;
-
-    beg_ang = INTIN[0];
-    end_ang = INTIN[1];
-    del_ang = end_ang - beg_ang;
-    if (del_ang < 0)
-        del_ang += TWOPI;
-
-    xc = PTSIN[0];
-    yc = PTSIN[1];
-    xrad = PTSIN[2];
-    yrad = PTSIN[3];
-    if (vwk->xfm_mode < 2)
-        yrad = yres - yrad;
-    steps = clc_nsteps(/*vwk*/);
-    steps = mul_div(del_ang, steps, TWOPI);
-    if (steps == 0)
-        steps = 1;      /* always draw something! */
-    clc_arc(vwk, steps);
-    return;
+    clc_arc(vwk, steps);    
 }
 
 
@@ -376,38 +365,13 @@ void vdi_v_gdp(Vwk * vwk)
         }
         break;
 
-    case 2:         /* GDP ARC */
-    case 3:         /* GDP PIE */
-        gdp_arc(vwk);
-        break;
-
-    case 4:         /* GDP CIRCLE */
-        xc = xy[0];
-        yc = xy[1];
-        xrad = xy[4];
-        yrad = mul_div(xrad, xsize, ysize);
-        del_ang = TWOPI;
-        beg_ang = 0;
-        end_ang = TWOPI;
-        clc_arc(vwk, clc_nsteps(/*vwk*/));
-        break;
-
-    case 5:         /* GDP ELLIPSE */
-        xc = xy[0];
-        yc = xy[1];
-        xrad = xy[2];
-        yrad = xy[3];
-        if (vwk->xfm_mode < 2)
-            yrad = yres - yrad;
-        del_ang = TWOPI;
-        beg_ang = 0;
-        end_ang = TWOPI;
-        clc_arc(vwk, clc_nsteps(/*vwk*/));
-        break;
-
-    case 6:         /* GDP ELLIPTICAL ARC */
-    case 7:         /* GDP ELLIPTICAL PIE */
-        gdp_ell(vwk);
+    case 2:         /* GDP Arc */
+    case 3:         /* GDP Pieslice */
+    case 4:         /* GDP Circle */
+    case 5:         /* GDP Ellipse */
+    case 6:         /* GDP Elliptical Arc */
+    case 7:         /* GDP Elliptical Pieslice */
+        gdp_curve(vwk);
         break;
 
     case 8:         /* GDP Rounded Box */
