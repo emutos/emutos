@@ -329,11 +329,6 @@ static void gdp_curve(Vwk *vwk)
         del_ang += TWOPI;
 
     steps = clc_nsteps();
-    if (del_ang != TWOPI) {
-        steps = mul_div(del_ang, steps, TWOPI);
-        if (steps == 0)
-            steps = 1;      /* always draw something! */
-    }
 
     clc_arc(vwk, steps);    
 }
