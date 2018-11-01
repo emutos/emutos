@@ -15,6 +15,13 @@
 #include "vdi_defs.h"
 
 
+/*
+ * the number of points used to describe the corners of a rounded
+ * rectangle.  this should be 5 for TOS visual compatibility.
+ */
+#define CORNER_POINTS   5
+#define RBOX_POINTS     (4*CORNER_POINTS+1)
+
 /* Definitions for sine and cosine */
 #define    HALFPI    900
 #define    PI        1800
@@ -45,6 +52,14 @@ static const WORD sin_tbl[92] = {
     32747, 32762, 32767, 32767
 };
 
+
+/* precalculated sine/cosine values used in gdp_rbox() */
+#define Isin225     12539
+#define Isin450     23170
+#define Isin675     30273
+#define Icos225     Isin675
+#define Icos450     Isin450
+#define Icos675     Isin225
 
 
 /*
@@ -184,88 +199,118 @@ static void clc_arc(Vwk * vwk, int steps)
 
 
 /*
- * gdp_rbox - draws an rbox
+ * gdp_rbox - implements v_rbox(), v_rfbox()
  */
-static void gdp_rbox(Vwk * vwk)
+static void gdp_rbox(Vwk *vwk)
 {
-    WORD i, j;
-    WORD x1,y1,x2,y2;
-    WORD rdeltax, rdeltay;
-    WORD *pointer;
+    WORD i;
+    WORD x1, y1, x2, y2;
+    WORD xoff[CORNER_POINTS], yoff[CORNER_POINTS];
+    WORD *p, *xp, *yp;
     Line * line = (Line*)PTSIN;
 
+    /*
+     * set (x1,y1) to LL corner of box, (x2,y2) to UR corner of box
+     */
     arb_line(line);
     x1 = line->x1;
     y1 = line->y1;
     x2 = line->x2;
     y2 = line->y2;
 
-    rdeltax = (x2 - x1) / 2;
-    rdeltay = (y1 - y2) / 2;
+    /*
+     * calculate x & y radii:
+     * . the x radius is nominally 1/64th of the screen width
+     * . because the corners are nominally quadrants of a circle, we
+     *   scale the y radius according to pixel dimensions
+     * . we clamp both radii to a maximum of half the length of the
+     *   corresponding box side
+     */
+    xrad = min(xres>>6,(x2-x1)/2);
+    yrad = min(mul_div(xrad,xsize,ysize),(y1-y2)/2);
 
-    xrad = xres >> 6;
-    if (xrad > rdeltax)
-        xrad = rdeltax;
+    /*
+     * for each corner we generate 5 points.  the following calculates
+     * the unsigned offset of those points from the centre of the
+     * 'circle', one quarter of which is drawn at each box corner.
+     */
+    xoff[0] = 0;
+    xoff[1] = mul_div(Icos675, xrad, 32767);
+    xoff[2] = mul_div(Icos450, xrad, 32767);
+    xoff[3] = mul_div(Icos225, xrad, 32767);
+    xoff[4] = xrad;
+    yoff[0] = yrad;
+    yoff[1] = mul_div(Isin675, yrad, 32767);
+    yoff[2] = mul_div(Isin450, yrad, 32767);
+    yoff[3] = mul_div(Isin225, yrad, 32767);
+    yoff[4] = 0;
 
-    yrad = mul_div(xrad, xsize, ysize);
-    if (yrad > rdeltay)
-        yrad = rdeltay;
+    /*
+     * now we fill in PTSIN, starting with the UR corner of the box
+     *
+     * we first calculate the centre of the circle used for the quadrant
+     * and then add in the offset (appropriately signed)
+     */
+    p = PTSIN;
 
-    pointer = PTSIN;
-    *pointer++ = 0;
-    *pointer++ = yrad;
-    *pointer++ = mul_div(Icos(675), xrad, 32767);
-    *pointer++ = mul_div(Isin(675), yrad, 32767);
-    *pointer++ = mul_div(Icos(450), xrad, 32767);
-    *pointer++ = mul_div(Isin(450), yrad, 32767);
-    *pointer++ = mul_div(Icos(225), xrad, 32767);
-    *pointer++ = mul_div(Isin(225), yrad, 32767);
-    *pointer++ = xrad;
-    *pointer = 0;
-
-    pointer = PTSIN;
     xc = x2 - xrad;
-    yc = y1 - yrad;
-    j = 10;
-    for (i = 9; i >= 0; i--) {
-        *(pointer + j + 1) = yc + *(pointer + i--);
-        *(pointer + j) = xc + *(pointer + i);
-        j += 2;
-    }
-    xc = x1 + xrad;
-    j = 20;
-    for (i = 0; i < 10; i++) {
-        *(pointer + j++) = xc - *(pointer + i++);
-        *(pointer + j++) = yc + *(pointer + i);
-    }
     yc = y2 + yrad;
-    j = 30;
-    for (i = 9; i >= 0; i--) {
-        *(pointer + j + 1) = yc - *(pointer + i--);
-        *(pointer + j) = xc - *(pointer + i);
-        j += 2;
+    xp = xoff;
+    yp = yoff;
+    for (i = 0; i < CORNER_POINTS; i++) {
+        *p++ = xc + *xp++;
+        *p++ = yc - *yp++;
     }
-    xc = x2 - xrad;
-    j = 0;
-    for (i = 0; i < 10; i++) {
-        *(pointer + j++) = xc + *(pointer + i++);
-        *(pointer + j++) = yc - *(pointer + i);
+
+    /*
+     * handle LR corner: note that the offset sequence is reversed
+     *
+     * xc, xp and yp are already set correctly
+     */
+    yc = y1 - yrad;
+    for (i = 0; i < CORNER_POINTS; i++) {
+        *p++ = xc + *--xp;
+        *p++ = yc + *--yp;
     }
-    *(pointer + 40) = *pointer;
-    *(pointer + 41) = *(pointer + 1);
+
+    /*
+     * handle LL corner
+     *
+     * yc, xp and yp are already set correctly
+     */
+    xc = x1 + xrad;
+    for (i = 0; i < CORNER_POINTS; i++) {
+        *p++ = xc - *xp++;
+        *p++ = yc + *yp++;
+    }
+
+    /*
+     * handle UL corner: the offset sequence is reversed here too
+     *
+     * xc, xp and yp are already set correctly
+     */
+    yc = y2 + yrad;
+    for (i = 0; i < CORNER_POINTS; i++) {
+        *p++ = xc - *--xp;
+        *p++ = yc - *--yp;
+    }
+
+    /*
+     * join up the box
+     */
+    *p++ = PTSIN[0];
+    *p = PTSIN[1];
 
     if (CONTRL[5] == 8) {       /* v_rbox() */
         set_LN_MASK(vwk);
 
         if (vwk->line_width == 1) {
-            polyline(vwk, (Point*)PTSIN, 21, vwk->line_color);
+            polyline(vwk, (Point*)PTSIN, RBOX_POINTS, vwk->line_color);
         } else
-            wideline(vwk, (Point*)PTSIN, 21);
-    } else {
-        polygon(vwk, (Point*)PTSIN, 21);
+            wideline(vwk, (Point*)PTSIN, RBOX_POINTS);
+    } else {                    /* v_rfbox() */
+        polygon(vwk, (Point*)PTSIN, RBOX_POINTS);
     }
-
-    return;
 }
 
 
