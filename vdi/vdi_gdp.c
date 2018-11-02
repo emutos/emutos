@@ -147,10 +147,12 @@ static void clc_arc(Vwk * vwk, int steps)
     clc_pts(point++, start);
     for (i = 1; i < steps; i++) {
         angle = mul_div(del_ang, i, steps) + start;
-        clc_pts(point++, angle);
+        clc_pts(point, angle);
+        if (*(LONG *)point != *(LONG *)(point-1))   /* ignore duplicates */
+            point++;
     }
     clc_pts(point++, end_ang);
-    steps++;        /* this now really means 'number of points' */
+    steps = point - (Point *)PTSIN; /* number of points, not number of steps */
 
     /*
      * If pie wedge draw to center and then close
