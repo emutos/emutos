@@ -122,19 +122,13 @@ static WORD Icos(WORD angle)
 
 
 /*
- * clc_pts - calculates a segment endpoint position, based on the
- *           point number and xc/yc/xrad/yrad
+ * clc_pts - calculates and saves an endpoint position (in raster
+ *           coordinates), based on the input angle and xc/yc/xrad/yrad
  */
-static void clc_pts(WORD j, WORD angle)
+static void clc_pts(Point *point, WORD angle)
 {
-    WORD k;
-    WORD *pointer;
-
-    pointer = PTSIN + j;
-    k = mul_div(Icos(angle), xrad, 32767) + xc;
-    *pointer++ = k;
-    k = yc - mul_div(Isin(angle), yrad, 32767);        /* FOR RASTER CORDS. */
-    *pointer = k;
+    point->x = mul_div(Icos(angle), xrad, 32767) + xc;
+    point->y = yc - mul_div(Isin(angle), yrad, 32767);
 }
 
 
@@ -145,35 +139,29 @@ static void clc_pts(WORD j, WORD angle)
  */
 static void clc_arc(Vwk * vwk, int steps)
 {
-    WORD i, j, start, angle;
+    WORD i, start, angle;
     Point * point;
 
+    point = (Point *)PTSIN;
     start = beg_ang;
-    j = 0;
-    clc_pts(j, beg_ang);
+    clc_pts(point++, start);
     for (i = 1; i < steps; i++) {
-        j += 2;
         angle = mul_div(del_ang, i, steps) + start;
-        clc_pts(j, angle);
+        clc_pts(point++, angle);
     }
-    j += 2;
-    clc_pts(j, end_ang);
-
-    point = (Point*)PTSIN;
+    clc_pts(point++, end_ang);
+    steps++;        /* this now really means 'number of points' */
 
     /*
      * If pie wedge draw to center and then close
      */
     if ((CONTRL[5] == 3) || (CONTRL[5] == 7)) { /* v_pieslice()/v_ellpie() */
-        Point * endpoint;
-
+        point->x = xc;
+        point->y = yc;
         steps++;
-        endpoint = point + steps;
-        endpoint->x = xc;
-        endpoint->y = yc;
     }
-    steps++;                 /* since loop in Clc_arc starts at 0 */
 
+    point = (Point *)PTSIN;
     /*
      * If arc or circle, do nothing because loop should close circle
      */
