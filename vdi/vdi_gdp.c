@@ -203,7 +203,7 @@ static void clc_arc(Vwk * vwk, int steps)
  */
 static void gdp_rbox(Vwk *vwk)
 {
-    WORD i;
+    WORD i, xcentre, ycentre, xradius, yradius;
     WORD x1, y1, x2, y2;
     WORD xoff[CORNER_POINTS], yoff[CORNER_POINTS];
     WORD *p, *xp, *yp;
@@ -226,8 +226,8 @@ static void gdp_rbox(Vwk *vwk)
      * . we clamp both radii to a maximum of half the length of the
      *   corresponding box side
      */
-    xrad = min(xres>>6,(x2-x1)/2);
-    yrad = min(mul_div(xrad,xsize,ysize),(y1-y2)/2);
+    xradius = min(xres>>6,(x2-x1)/2);
+    yradius = min(mul_div(xradius,xsize,ysize),(y1-y2)/2);
 
     /*
      * for each corner we generate 5 points.  the following calculates
@@ -235,14 +235,14 @@ static void gdp_rbox(Vwk *vwk)
      * 'circle', one quarter of which is drawn at each box corner.
      */
     xoff[0] = 0;
-    xoff[1] = mul_div(Icos675, xrad, 32767);
-    xoff[2] = mul_div(Icos450, xrad, 32767);
-    xoff[3] = mul_div(Icos225, xrad, 32767);
-    xoff[4] = xrad;
-    yoff[0] = yrad;
-    yoff[1] = mul_div(Isin675, yrad, 32767);
-    yoff[2] = mul_div(Isin450, yrad, 32767);
-    yoff[3] = mul_div(Isin225, yrad, 32767);
+    xoff[1] = mul_div(Icos675, xradius, 32767);
+    xoff[2] = mul_div(Icos450, xradius, 32767);
+    xoff[3] = mul_div(Icos225, xradius, 32767);
+    xoff[4] = xradius;
+    yoff[0] = yradius;
+    yoff[1] = mul_div(Isin675, yradius, 32767);
+    yoff[2] = mul_div(Isin450, yradius, 32767);
+    yoff[3] = mul_div(Isin225, yradius, 32767);
     yoff[4] = 0;
 
     /*
@@ -253,46 +253,46 @@ static void gdp_rbox(Vwk *vwk)
      */
     p = PTSIN;
 
-    xc = x2 - xrad;
-    yc = y2 + yrad;
+    xcentre = x2 - xradius;
+    ycentre = y2 + yradius;
     xp = xoff;
     yp = yoff;
     for (i = 0; i < CORNER_POINTS; i++) {
-        *p++ = xc + *xp++;
-        *p++ = yc - *yp++;
+        *p++ = xcentre + *xp++;
+        *p++ = ycentre - *yp++;
     }
 
     /*
      * handle LR corner: note that the offset sequence is reversed
      *
-     * xc, xp and yp are already set correctly
+     * xcentre, xp and yp are already set correctly
      */
-    yc = y1 - yrad;
+    ycentre = y1 - yradius;
     for (i = 0; i < CORNER_POINTS; i++) {
-        *p++ = xc + *--xp;
-        *p++ = yc + *--yp;
+        *p++ = xcentre + *--xp;
+        *p++ = ycentre + *--yp;
     }
 
     /*
      * handle LL corner
      *
-     * yc, xp and yp are already set correctly
+     * ycentre, xp and yp are already set correctly
      */
-    xc = x1 + xrad;
+    xcentre = x1 + xradius;
     for (i = 0; i < CORNER_POINTS; i++) {
-        *p++ = xc - *xp++;
-        *p++ = yc + *yp++;
+        *p++ = xcentre - *xp++;
+        *p++ = ycentre + *yp++;
     }
 
     /*
      * handle UL corner: the offset sequence is reversed here too
      *
-     * xc, xp and yp are already set correctly
+     * xcentre, xp and yp are already set correctly
      */
-    yc = y2 + yrad;
+    ycentre = y2 + yradius;
     for (i = 0; i < CORNER_POINTS; i++) {
-        *p++ = xc - *--xp;
-        *p++ = yc - *--yp;
+        *p++ = xcentre - *--xp;
+        *p++ = ycentre - *--yp;
     }
 
     /*
