@@ -148,11 +148,6 @@ static void clc_arc(Vwk * vwk, int steps)
     WORD i, j, start, angle;
     Point * point;
 
-    if (vwk->clip) {
-        if (((xc + xrad) < vwk->xmn_clip) || ((xc - xrad) > vwk->xmx_clip) ||
-            ((yc + yrad) < vwk->ymn_clip) || ((yc - yrad) > vwk->ymx_clip))
-            return;
-    }
     start = beg_ang;
     j = 0;
     clc_pts(j, beg_ang);
@@ -359,6 +354,15 @@ static void gdp_curve(Vwk *vwk)
         yrad = PTSIN[3];
         if (vwk->xfm_mode < 2)  /* NDC coordinates ... not tested AFAIK */
             yrad = yres - yrad;
+    }
+
+    /*
+     * we can quit now if clipping excludes the entire curve
+     */
+    if (vwk->clip) {
+        if (((xc + xrad) < vwk->xmn_clip) || ((xc - xrad) > vwk->xmx_clip) ||
+            ((yc + yrad) < vwk->ymn_clip) || ((yc - yrad) > vwk->ymx_clip))
+            return;
     }
 
     if ((CONTRL[5] == 4) || (CONTRL[5] == 5)) { /* v_circle(), v_ellipse() */
