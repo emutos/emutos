@@ -36,20 +36,23 @@ static WORD beg_ang, del_ang, end_ang;
 static WORD xc, xrad, yc, yrad;
 
 
-/* Sines of angles 0 - 90 degrees normalized between 0-32767. */
-static const WORD sin_tbl[92] = {
-        0,   572,  1144,  1715,  2286,  2856,  3425,  3993,
-     4560,  5126,  5690,  6252,  6813,  7371,  7927,  8481,
-     9032,  9580, 10126, 10668, 11207, 11743, 12275, 12803,
-    13328, 13848, 14364, 14876, 15383, 15886, 16383, 16876,
-    17364, 17846, 18323, 18794, 19260, 19720, 20173, 20621,
-    21062, 21497, 21925, 22347, 22762, 23170, 23571, 23964,
-    24351, 24730, 25101, 25465, 25821, 26169, 26509, 26841,
-    27165, 27481, 27788, 28087, 28377, 28659, 28932, 29196,
-    29451, 29697, 29934, 30162, 30381, 30591, 30791, 30982,
-    31163, 31335, 31498, 31650, 31794, 31927, 32051, 32165,
-    32269, 32364, 32448, 32523, 32587, 32642, 32687, 32722,
-    32747, 32762, 32767, 32767
+/* Sines of angles 0 - 90 degrees in 0.8 steps normalized between 0-32767. */
+static const WORD sin_tbl[114] = {
+     0,   457,   915,  1372,  1829,  2286,  2742,  3197,
+  3653,  4107,  4560,  5013,  5465,  5915,  6364,  6813,
+  7259,  7705,  8149,  8591,  9032,  9471,  9908, 10343,
+ 10776, 11207, 11636, 12062, 12487, 12908, 13328, 13744,
+ 14158, 14569, 14978, 15383, 15786, 16185, 16581, 16974,
+ 17364, 17750, 18133, 18512, 18888, 19260, 19628, 19993,
+ 20353, 20710, 21062, 21411, 21755, 22095, 22431, 22762,
+ 23089, 23411, 23729, 24042, 24351, 24654, 24953, 25247,
+ 25537, 25821, 26100, 26374, 26643, 26907, 27165, 27418,
+ 27666, 27909, 28146, 28377, 28603, 28823, 29038, 29247,
+ 29451, 29648, 29840, 30026, 30207, 30381, 30549, 30712,
+ 30868, 31019, 31163, 31302, 31434, 31560, 31680, 31794,
+ 31901, 32003, 32098, 32187, 32269, 32345, 32415, 32479,
+ 32537, 32587, 32632, 32670, 32702, 32728, 32747, 32760,
+ 32766, 32767
 };
 
 
@@ -72,33 +75,29 @@ static const WORD sin_tbl[92] = {
 static WORD Isin(WORD angle)
 {
     WORD index, remainder, tmpsin;      /* holder for sin. */
-    WORD quadrant;              /* 0-3 = 1st, 2nd, 3rd, 4th.        */
+    WORD negative = 0;
 
     while (angle >= TWOPI)      /* normalise angle to 0-3599 inclusive */
         angle -= TWOPI;
-    quadrant = angle / HALFPI;
-    switch(quadrant) {          /* quadrant MUST be 0-3 */
-    case 0:
-        break;
 
-    case 1:
-        angle = PI - angle;
-        break;
-
-    case 2:
-        angle -= PI;
-        break;
-
-    case 3:
+    if (angle > 3*HALFPI) {
+        /* fourth quadrant */
         angle = TWOPI - angle;
-        break;
+        negative = 1;
+    } else if (angle > 2*HALFPI) {
+        /* third quadrant */
+        angle -= PI;
+        negative = 1;
+    } else if (angle > HALFPI) {
+        /* second quadrant */
+        angle = PI - angle;
     }
-    index = angle / 10;
-    remainder = angle % 10;
+    index = angle >> 3;
+    remainder = angle & 7;
     tmpsin = sin_tbl[index];
     if (remainder != 0)         /* add interpolation. */
-        tmpsin += ((sin_tbl[index + 1] - tmpsin) * remainder) / 10;
-    if (quadrant > 1)
+        tmpsin += ((sin_tbl[index + 1] - tmpsin) * remainder) >> 3;
+    if (negative)
         tmpsin = -tmpsin;
     return (tmpsin);
 }
