@@ -394,14 +394,11 @@ clc_flit (const VwkAttrib * attr, const VwkClip * clipper, const Point * point, 
     bufptr = fill_buffer;
 
     /* find intersection points of scan line with poly edges. */
-    for (i = vectors - 1; i >= 0; i--) {
-        WORD x1, x2, y1, y2, dy;
+    for (i = 0; i < vectors; i++) {
+        WORD y1, y2, dy;
 
-        x1 = point->x;          /* fetch x-value of 1st endpoint. */
-        y1 = point->y;          /* fetch y-value of 1st endpoint. */
-        point++;
-        x2 = point->x;          /* fetch x-value of 2nd endpoint. */
-        y2 = point->y;          /* fetch y-value of 2nd endpoint. */
+        y1 = point[i].y;        /* fetch y-value of 1st endpoint. */
+        y2 = point[i+1].y;      /* fetch y-value of 2nd endpoint. */
 
         /* if the current vector is horizontal, ignore it. */
         dy = y2 - y1;
@@ -421,7 +418,11 @@ clc_flit (const VwkAttrib * attr, const VwkClip * clipper, const Point * point, 
              * test is found in Newman and Sproull.
              */
             if ((dy1 < 0) != (dy2 < 0)) {
-                int dx = (x2 - x1) << 1;    /* so we can round by adding 1 below */
+                int dx;
+                WORD x1, x2;
+                x1 = point[i].x;        /* fetch x-value of 1st endpoint. */
+                x2 = point[i+1].x;      /* fetch x-value of 2nd endpoint. */
+                dx = (x2 - x1) << 1;    /* so we can round by adding 1 below */
                 if (intersections >= MAX_INTERSECTIONS)
                     break;
                 intersections++;
