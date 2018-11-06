@@ -290,6 +290,9 @@
 # ifndef CONF_WITH_SHUTDOWN
 #  define CONF_WITH_SHUTDOWN 0
 # endif
+# ifndef NUM_VDI_HANDLES
+#  define NUM_VDI_HANDLES 64
+# endif
 #endif
 
 /*
@@ -1453,6 +1456,13 @@
  */
 #define KB_INITIAL  15          /* initial delay i.e. 300 msec */
 #define KB_REPEAT   2           /* ticks between repeats, i.e. 40 msec */
+
+/*
+ * VDI configuration
+ */
+#ifndef NUM_VDI_HANDLES
+# define NUM_VDI_HANDLES 128    /* maximum number of open workstations */
+#endif
 
 /*
  * Retry count for the internal_inquire() used to detect the presence of

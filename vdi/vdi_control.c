@@ -20,8 +20,16 @@
 #include "string.h"
 #include "intmath.h"
 
+#define FIRST_VDI_HANDLE    1
+#define LAST_VDI_HANDLE     (FIRST_VDI_HANDLE+NUM_VDI_HANDLES-1)
+#define VDI_PHYS_HANDLE     FIRST_VDI_HANDLE
 
-static Vwk virt_work;          /* attribute areas for workstations */
+/*
+ * entry n in the following array points to the Vwk corresponding to
+ * VDI handle n.  entry 0 is unused.
+ */
+static Vwk *vwk_ptr[NUM_VDI_HANDLES+1];
+static Vwk phys_work;          /* attribute area for physical workstation */
 
 
 /*
@@ -150,15 +158,10 @@ static const WORD DEV_TAB_rom[45] = {
 
 Vwk * get_vwk_by_handle(WORD handle)
 {
-    Vwk * vwk = &virt_work;
+    if ((handle < FIRST_VDI_HANDLE) || (handle > LAST_VDI_HANDLE))
+        return NULL;
 
-    /* Find the attribute area which matches the handle */
-    do {
-        if (handle == vwk->handle)
-            return vwk;
-    } while ((vwk = vwk->next_work));
-
-    return NULL;
+    return vwk_ptr[handle];
 }
 
 
@@ -312,6 +315,8 @@ static void init_wk(Vwk * vwk)
     vwk->bezier.depth.max = 7;
 #endif
 
+    vwk->next_work = NULL;  /* neatness */
+
     flip_y = 1;
 }
 
@@ -320,7 +325,19 @@ static void init_wk(Vwk * vwk)
 void vdi_v_opnvwk(Vwk * vwk)
 {
     WORD handle;
-    Vwk *work_ptr;
+    Vwk **p;
+
+    /* First find a free handle */
+    for (handle = VDI_PHYS_HANDLE+1, p = vwk_ptr+handle; handle <= LAST_VDI_HANDLE; handle++, p++) {
+        if (!*p) {
+            *p = vwk;
+            break;
+        }
+    }
+    if (handle > LAST_VDI_HANDLE) { /* No handle available, exit */
+        CONTRL[6] = 0;
+        return;
+    }
 
     /* Allocate the memory for a virtual workstation using Mxalloc with the flag
      * for a global allocation. This becomes important when running MiNT
@@ -332,18 +349,7 @@ void vdi_v_opnvwk(Vwk * vwk)
         return;
     }
 
-    /* Now find a free handle (start with 2, since 1 is the handle of the physical station) */
-    handle = 2;
-    work_ptr = &virt_work;
-    while (work_ptr->next_work != NULL && handle == work_ptr->next_work->handle) {
-        handle++;
-        work_ptr = work_ptr->next_work;
-    }
-
-    /* Empty slot found, insert the workstation here */
-    vwk->next_work = work_ptr->next_work;
-    work_ptr->next_work = vwk;
-
+    vwk_ptr[handle] = vwk;
     vwk->handle = CONTRL[6] = handle;
     init_wk(vwk);
     CUR_WORK = vwk;
@@ -351,19 +357,30 @@ void vdi_v_opnvwk(Vwk * vwk)
 
 void vdi_v_clsvwk(Vwk * vwk)
 {
-    Vwk *work_ptr;
     WORD handle;
 
-    /* vwk points to workstation to deallocate, find who points to me */
+    /* vwk points to workstation to deallocate */
     handle = vwk->handle;
-    if (handle == 1)            /* Can't close physical this way */
+    if (handle == VDI_PHYS_HANDLE)  /* can't close physical this way */
+        return;
+    if (!vwk_ptr[handle])           /* workstation is already closed */
         return;
 
-    for (work_ptr = &virt_work; handle != work_ptr->next_work->handle;
-         work_ptr = work_ptr->next_work);
+    vwk_ptr[handle] = NULL;         /* close it */
 
-    work_ptr->next_work = vwk->next_work;
-    CUR_WORK = work_ptr;
+    /*
+     * When we close a virtual workstation, Atari TOS and previous versions
+     * of EmuTOS update CUR_WORK (lineA's idea of the current workstation)
+     * to point to the precursor of the closed workstation.  This is a bit
+     * arbitrary, especially as the workstation being closed isn't necessarily
+     * what lineA thinks is the current one.
+     *
+     * What we must do as a minimum is ensure that CUR_WORK points to a
+     * valid open workstation.  The following does that by pointing it to
+     * the physical workstation.  That's what NVDI appears to do too.
+     */
+    CUR_WORK = &phys_work;
+
     trap1(X_MFREE, vwk);
 }
 
@@ -373,6 +390,7 @@ void vdi_v_clsvwk(Vwk * vwk)
 void vdi_v_opnwk(Vwk * vwk)
 {
     int i;
+    Vwk **p;
 
     /* We need to copy some initial table data from the ROM */
     for (i = 0; i < 12; i++) {
@@ -403,9 +421,12 @@ void vdi_v_opnwk(Vwk * vwk)
     else
         numcolors = 256;
 
-    vwk = &virt_work;
-    CONTRL[6] = vwk->handle = 1;
-    vwk->next_work = NULL;
+    /* initialize the vwk pointer array */
+    vwk = &phys_work;
+    vwk_ptr[VDI_PHYS_HANDLE] = vwk;
+    CONTRL[6] = vwk->handle = VDI_PHYS_HANDLE;
+    for (i = VDI_PHYS_HANDLE+1, p = vwk_ptr+i; i <= LAST_VDI_HANDLE; i++)
+        *p++ = NULL;
 
     line_cw = -1;               /* invalidate current line width */
 
@@ -425,15 +446,17 @@ void vdi_v_opnwk(Vwk * vwk)
 /* CLOSE_WORKSTATION: */
 void vdi_v_clswk(Vwk * vwk)
 {
-    Vwk *next_work;
+    WORD handle;
+    Vwk **p;
 
-    if (virt_work.next_work != NULL) {      /* Are there VWs to close */
-        vwk = virt_work.next_work;
-        do {
-            next_work = vwk->next_work;
-            trap1(X_MFREE, vwk);
-        } while ((vwk = next_work));
+    /* close all open virtual workstations */
+    for (handle = VDI_PHYS_HANDLE+1, p = vwk_ptr+handle; handle <= LAST_VDI_HANDLE; handle++, p++) {
+        if (*p) {
+            trap1(X_MFREE, *p);
+            *p = NULL;
+        }
     }
+    CUR_WORK = vwk_ptr[VDI_PHYS_HANDLE];
 
     timer_exit();
     vdimouse_exit();                    /* deinitialize mouse */
