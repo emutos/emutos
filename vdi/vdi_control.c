@@ -339,11 +339,10 @@ void vdi_v_opnvwk(Vwk * vwk)
         return;
     }
 
-    /* Allocate the memory for a virtual workstation using Mxalloc with the flag
-     * for a global allocation. This becomes important when running MiNT
-     * on a CPU with memory protection.
+    /*
+     * Allocate the memory for a virtual workstation
      */
-    vwk = (Vwk *)trap1(X_MXALLOC, (LONG)(sizeof(Vwk)), (WORD)(X_MXGLOBAL));
+    vwk = (Vwk *)trap1(X_MALLOC, (LONG)(sizeof(Vwk)));
     if (vwk == NULL) {
         CONTRL[6] = 0;  /* No memory available, exit */
         return;
