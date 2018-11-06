@@ -454,13 +454,13 @@ Disk Directories
 
 Disk Format
 -----------
-068. The "Format Disk" dialog now defaults to "Exit" if <Return>      MISSING FEATURE
-     is pressed.  This is consistent with other parts of the
-     Desktop.
-069. The Desktop now formats disks with an MS-DOS compatible boot     MISSING FEATURE
-     sector.
-070. Double-sided disks are now "twisted" in a more-efficient way     MISSING FEATURE
-     than before.  Single-sided disks are already "twisted"
+068. The "Format Disk" dialog now defaults to "Exit" if <Return>      FIXED: commit 883E79
+     is pressed.  This is consistent with other parts of the          (this commit implements
+     Desktop.                                                         EmuDesk's Disk Format)
+069. The Desktop now formats disks with an MS-DOS compatible boot     FIXED: commit 883E79
+     sector.                                                          (see above)
+070. Double-sided disks are now "twisted" in a more-efficient way     FIXED: commit 883E79
+     than before.  Single-sided disks are already "twisted"           (see above)
      optimally, and have been since Mega ROMs.
 
 
