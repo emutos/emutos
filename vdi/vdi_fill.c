@@ -11,6 +11,7 @@
 
 #include "config.h"
 #include "portab.h"
+#include "intmath.h"
 #include "vdi_defs.h"
 #include "../bios/tosvars.h"
 #include "../bios/lineavars.h"
@@ -428,10 +429,12 @@ clc_flit (const VwkAttrib * attr, const VwkClip * clipper, const Point * point, 
                 intersections++;
                 /* fill edge buffer with x-values */
                 if ( dx < 0 ) {
-                    *bufptr++ = ((dy2 * dx / dy + 1) >> 1) + x2;
+                    /* does ((dy2 * dx / dy + 1) >> 1) + x2; */
+                    *bufptr++ = ((mul_div(dy2, dx, dy) + 1) >> 1) + x2;
                 }
                 else {
-                    *bufptr++ = ((dy1 * dx / dy + 1) >> 1) + x1;
+                    /* does ((dy1 * dx / dy + 1) >> 1) + x1; */
+                    *bufptr++ = ((mul_div(dy1, dx, dy) + 1) >> 1) + x1;
                 }
             }
         }
