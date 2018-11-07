@@ -530,14 +530,14 @@ void draw_rect_common(const VwkAttrib *attr, const Rect *rect)
 
 
 /*
- * helper to copy relevant Vwk members to VwkAttrib struct which is
- * used to pass requred Wvk info from VDI/Line-A polygon drawing to
+ * helper to copy relevant Vwk members to the VwkAttrib struct, which is
+ * used to pass the required Vwk info from VDI/Line-A polygon drawing to
  * draw_rect().
  */
 void Vwk2Attrib(const Vwk *vwk, VwkAttrib *attr, const UWORD color)
 {
-    /* in same order as they're in Vwk, so that gcc
-     * could use longs for copying words
+    /* in the same order as in Vwk, so that gcc
+     * can use longs for copying words
      */
     attr->clip = vwk->clip;
     attr->multifill = vwk->multifill;
@@ -1326,31 +1326,31 @@ void arrow(Vwk * vwk, Point * point, int count)
 /*
  * abline - draw a line (general purpose)
  *
- * This routine draws a line between (_X1,_Y1) and (_X2,_Y2).
- * The line is modified by the LN_MASK and WRT_MODE variables.
- * This routine handles all 3 interleaved bitplanes video resolutions.
+ * This routine draws a line defined by the Line structure.
+ * The line is modified by the LN_MASK variable and the wrt_mode parameter.
+ * This routine handles all 3 interleaved-bitplane video resolutions.
  *
  * Note that for line-drawing the background color is always 0 (i.e., there
  * is no user-settable background color).  This fact allows coding short-cuts
  * in the implementation of "replace" and "not" modes, resulting in faster
  * execution of their inner loops.
  *
- * This routines is more or less the one from the original VDI asm part.
- * I could not take bresenham, because pixels were set improperly in
- * use with the polygone filling part, did look ugly.  (MAD)
+ * This routine is more or less the one from the original VDI asm code.
+ * I could not use bresenham, because the pixels were not aligned with
+ * the polygon-filling part, so it did look ugly.  (MAD)
  *
  * input:
- *     X1, Y1, X2, Y2 = coordinates.
- *     num_planes     = number of video planes. (resolution)
- *     LN_MASK        = line mask. (for dashed/dotted lines)
- *     WRT_MODE       = writing mode:
+ *     line         = pointer to structure containing coordinates
+ *     v_planes     = number of video planes
+ *     LN_MASK      = line mask (for dashed/dotted lines)
+ *     wrt_mode     = writing mode:
  *                          0 => replace mode.
  *                          1 => or mode.
  *                          2 => xor mode.
  *                          3 => not mode.
  *
  * output:
- *     LN_MASK rotated to proper alignment with (X2,Y2).
+ *     LN_MASK rotated to proper alignment with x coordinate of line end
  */
 void abline (const Line * line, WORD wrt_mode, UWORD color)
 {
@@ -1364,7 +1364,7 @@ void abline (const Line * line, WORD wrt_mode, UWORD color)
     int plane;
     UWORD linemask = LN_MASK;   /* linestyle bits */
 
-    /* Make x axis always goind up */
+    /* Always draw from left to right */
     if (line->x2 < line->x1) {
         /* if delta x < 0 then draw from point 2 to 1 */
         x1 = line->x2;
