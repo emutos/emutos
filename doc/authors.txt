@@ -33,6 +33,7 @@ nevertheless here is an attempt at identifying who's guilty of what:
 Roger Burrows (RFB) <rfburrows at ymail.com>
 - Current project admin
 - Support for SD/MMC Cards on the FireBee
+- SCSI support
 - Improvements to IDE, CompactFlash, ACSI, and other mass-storage support
 - FAT16 partitions up to 2 GB (inspired by Didier Méquignon's BDOS fork)
 - Full support for Falcon video hardware
@@ -57,8 +58,8 @@ Vincent Rivière (VRI) <vincent.riviere at freesbee.fr>
 - Apollo 68080 support
 - Various bug fixes and cleanups
 
-Thomas Huth (THH) <huth at users.berlios.de>
-- Lots of bugfixes all over the place
+Thomas Huth (THH) <huth at tuxfamily.org>
+- Lots of bugfixes & cleanups all over the place
 - Integration and maintenance of the AES and GEM-Desktop
 - XBIOS DMA sound functions
 
@@ -156,6 +157,7 @@ Roger Crettol
 
 David Savinkoff
 - Bug fixes for the BIOS parallel port code
+- Improved Isqrt() function
 - Other various bugfixes
 
 Olivier Landemarre <olivier.landemarre at free.fr>
@@ -209,7 +211,10 @@ Christian Zietz <czietz at gmx.net>
 - Fix memory detection to support STs as well as STes
 - Support for extended MBR partitions
 - Add IDE 'twisted cable' support
+- IDE performance improvements
 - Fix cold boot problems caused by some ST MMUs
+- Fix screen corruption after a reset on some Mega(STe) systems
+- ET4000/Nova support
 - Miscellaneous bug fixes
 
 Jo Even Skarstein <joska at online.no>
@@ -222,6 +227,7 @@ Thorsten Otto <admin at tho-otto.de>
 - Fixes to 68040 PMMU setup
 - Inspired the support for window/desktop background configuration
 - Found many bugs in desktop shortcut handling
+- Help with resource manipulation programs
 - Miscellaneous bug fixes
 - Lots of source code cleanup
 
