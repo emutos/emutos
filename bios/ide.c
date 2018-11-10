@@ -889,7 +889,7 @@ static void ide_put_data(volatile struct IDE *interface,UBYTE *buffer,UWORD nums
 
             temp = *p++;
             xferswap(temp);
-            interface->data = temp;            
+            interface->data = temp;
         }
     } else {
         while (p < end) {

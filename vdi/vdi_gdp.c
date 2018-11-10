@@ -368,7 +368,7 @@ static void gdp_curve(Vwk *vwk)
 
     steps = clc_nsteps();
 
-    clc_arc(vwk, steps);    
+    clc_arc(vwk, steps);
 }
 
 

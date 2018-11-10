@@ -401,9 +401,9 @@ int init_nova(void)
     /* Enables VGA mode and selects MCLK 1 */
     VGAREG(VIDSUB) = 0x01;
     VGAREG(MISC_W) = 0xE3;
-    
-    /* Sanity check that no other VME or Megabus HW has been detected. 
-     * Note that we can do this only after enabling VGA in the lines above. 
+
+    /* Sanity check that no other VME or Megabus HW has been detected.
+     * Note that we can do this only after enabling VGA in the lines above.
      */
     if (!check_for_vga()) {
         KDEBUG(("No Nova or no VGA card found\n"));

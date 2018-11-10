@@ -366,7 +366,7 @@ static void bios_init(void)
     clock_init();       /* init clock */
     KDEBUG(("after clock_init()\n"));
 
-#if CONF_WITH_NOVA 
+#if CONF_WITH_NOVA
     /* Detect and initialize a Nova card, skip if Ctrl is pressed */
     if (has_nova && !(kbshift(-1) & MODE_CTRL)) {
         KDEBUG(("init_nova()\n"));

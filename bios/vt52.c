@@ -253,7 +253,7 @@ esc_ch1 (WORD ch)
     if ( (ch >= 'A') && (ch <= 'M') ) {     /* handle the range A-M */
         (*am_tab[ch-'A'])();
     }
-    else if ( (ch >= 'b') && (ch <= 'w') ) {/* handle b-w */    
+    else if ( (ch >= 'b') && (ch <= 'w') ) {/* handle b-w */
         (*bw_tab[ch-'b'])();
     }
     else if ( ch == 'Y' ) {                 /* direct cursor addressing, need more chars */
