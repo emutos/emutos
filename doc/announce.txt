@@ -3,7 +3,7 @@ Dear Atari Community!
 
 We are happy to announce a new public release of EmuTOS:
 
-EmuTOS 0.9.9.1 -- December 14, 2017
+EmuTOS 0.9.10 -- December ??, 2018
 
 
 
@@ -42,7 +42,7 @@ EmuTOS is basically made up of the following:
 - EmuCON2, the command-line interpreter
 
 The BIOS and XBIOS code is our own development. It is written from
-scratch and implements all relevant TOS 1.0 Bios & XBIOS functionality,
+scratch and implements all relevant TOS 3 BIOS & XBIOS functionality,
 and a bit more, e.g. hard disk access. See doc/status.txt for details.
 
 The GEMDOS part is based on Digital Research's GEMDOS sources, which were
@@ -67,9 +67,9 @@ an alternative to MiNT, but it's the only free base OS to boot MiNT.
 
 
 
-EMULATION AND FUTURE PLATFORM
+EMULATION AND FUTURE PLATFORMS
 
-EmuTOS and MiNT cooperate well. Both can utilize Native Features
+EmuTOS and MiNT cooperate well. Both can utilize the Native Features
 (NatFeats) interface for emulators:
     http://wiki.aranym.org/natfeats/proposal
 
@@ -93,10 +93,8 @@ Making EmuTOS run natively on a new hardware platform is more or less just
 a question of driver support for EmuTOS. The same for MiNT, if you'd like
 to have it running on top of EmuTOS.
 
-This is the currently supported Atari hardware:
-
-- CPU support for M68000, M68010, M68020, M68030, M68040, M68060,
-                  ColdFire V4e, and Apollo 68080
+This is the currently supported original Atari hardware:
+- CPU support for M68000, M68030
 - FPU detection
 - 68030 MMU and cache
 - Memory controller (both ST and Falcon)
@@ -112,19 +110,24 @@ This is the currently supported Atari hardware:
 - VIDEL
 - ACIAs, IKBD protocol, mouse
 - MegaST Real-Time Clock (set clock not tested)
-- ICD AdSCSI Plus ST Real-Time Clock
 - NVRAM (including RTC)
 - Blitter
 - Microwire
 - SCC
 - IDE
+- SCSI
 - ACSI
+
+EmuTOS also supports the following Atari-compatible hardware:
+- CPU support for M68010, M68020, M68040, M68060, ColdFire V4e, and Apollo 68080
+- ICD AdSCSI Plus ST Real-Time Clock
+- MonSTer expansion card
+- Nova/ET4000 graphics card
 - SD/MMC
 - The Native Features interface to some degree
 
 Currently unsupported hardware features:
 - DSP
-- SCSI
 
 EmuTOS is also available on some non-Atari hardware:
 - Amiga (floppy or ROM for any Amiga, including MapROM support)
