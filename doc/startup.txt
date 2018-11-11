@@ -34,7 +34,7 @@ directory of the boot device.
 4. On a cold boot only, the EmuTOS welcome screen is displayed.
    While the screen is displayed, the keys Alt, Ctrl, and Esc may be
    pressed to alter subsequent processing (see below).
-   
+
 6. If the user pressed the Alt key in step 4 above, the boot device
    is set to the first floppy (drive A:).  Otherwise it is set to
    the first partition of the first device found.  Devices are scanned
