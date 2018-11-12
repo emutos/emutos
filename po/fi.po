@@ -12,61 +12,61 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: bios/bios.c:713
+#: bios/bios.c
 msgid ""
 "System halted!\n"
 msgstr ""
 "Systeemi pysäytetty!\n"
 
-#: bios/initinfo.c:217
+#: bios/initinfo.c
 msgid "GEMDOS drives"
 msgstr "GEMDOS-asemat"
 
-#: bios/initinfo.c:241
+#: bios/initinfo.c
 msgid "MB"
 msgstr "MB"
 
-#: bios/initinfo.c:245
+#: bios/initinfo.c
 msgid "KB"
 msgstr "KB"
 
-#: bios/initinfo.c:311
+#: bios/initinfo.c
 msgid "EmuTOS Version"
 msgstr "EmuTOS versio"
 
-#: bios/initinfo.c:313
+#: bios/initinfo.c
 msgid "CPU type"
 msgstr "CPU-tyyppi"
 
-#: bios/initinfo.c:326
+#: bios/initinfo.c
 msgid "Machine"
 msgstr "Kone"
 
-#: bios/initinfo.c:339
+#: bios/initinfo.c
 msgid "Boot time"
 msgstr "Käynnistysaika"
 
-#: bios/initinfo.c:344
+#: bios/initinfo.c
 msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "<Ctrl> pohjassa = ohita AUTO/ACC"
 
-#: bios/initinfo.c:346
+#: bios/initinfo.c
 msgid "Hold <Alternate> to skip HDD boot"
 msgstr "<Alt> pohjassa = ohita kovalevy"
 
-#: bios/initinfo.c:348
+#: bios/initinfo.c
 msgid "Press key 'X' to boot from X:"
 msgstr "Käynnistys asemalta X: -> paina 'X'"
 
-#: bios/initinfo.c:350
+#: bios/initinfo.c
 msgid "Press <Esc> to run an early console"
 msgstr "Käynnistyskonsoli -> paina <Esc>"
 
-#: bios/initinfo.c:360
+#: bios/initinfo.c
 msgid "Hold <Shift> to pause this screen"
 msgstr "Pysäytä ruutu <Shift> näppäimellä"
 
-#: bios/kprint.c:580
+#: bios/kprint.c
 msgid ""
 "\n"
 "*** Press any key to continue ***"
@@ -74,7 +74,7 @@ msgstr ""
 "\n"
 "*** Paina näppäintä jatkaaksesi ***"
 
-#: bdos/osmem.c:341
+#: bdos/osmem.c
 msgid ""
 "\033EOut of internal memory.\n"
 "Use FOLDR100.PRG to get more.\n"
@@ -84,27 +84,27 @@ msgstr ""
 "FOLDR100.PRG ohjelma auttaa.\n"
 "Järjestelmä pysäytetty!\n"
 
-#: aes/gem_rsc.c:33 desk/desk_rsc.c:2098
+#: aes/gem_rsc.c desk/desk_rsc.c
 msgid "Drive:"
 msgstr "Asema:"
 
-#: aes/gem_rsc.c:38
+#: aes/gem_rsc.c
 msgid "Selection: ________.___"
 msgstr "Valinta: ________.___"
 
-#: aes/gem_rsc.c:184
+#: aes/gem_rsc.c
 msgid "Directory:"
 msgstr "Hakemisto:"
 
-#: aes/gem_rsc.c:478 desk/desk_rsc.c:20
+#: aes/gem_rsc.c desk/desk_rsc.c
 msgid "OK"
 msgstr "OK"
 
-#: aes/gem_rsc.c:484 desk/desk_rsc.c:21
+#: aes/gem_rsc.c desk/desk_rsc.c
 msgid "Cancel"
 msgstr "Kumoa"
 
-#: aes/gem_rsc.c:582
+#: aes/gem_rsc.c
 msgid "[1]["
 "The disk in drive %c: is|"
 "physically write-protected.][Cancel|Retry]"
@@ -112,7 +112,7 @@ msgstr "[1]["
 "Levy asemassa %c: on|"
 "kirjoitussuojattu.][Kumoa|Uudestaan]"
 
-#: aes/gem_rsc.c:585
+#: aes/gem_rsc.c
 msgid "[2]["
 "Drive %c: is not responding.|"
 "Please check the disk drive,|"
@@ -122,7 +122,7 @@ msgstr "[2]["
 "Tarkista asema,|"
 "tai anna levyke.][Kumoa|Uudestaan]"
 
-#: aes/gem_rsc.c:590
+#: aes/gem_rsc.c
 msgid "[1]["
 "Data on the disk in drive %c:|"
 "may be damaged.][Cancel|Retry]"
@@ -130,7 +130,7 @@ msgstr "[1]["
 "Levyn tiedot asemassa %c:|"
 "saattavat olla vioittuneet.][Kumoa|Uudestaan]"
 
-#: aes/gem_rsc.c:593
+#: aes/gem_rsc.c
 msgid "[2]["
 "This application cannot read|"
 "data on the disk in drive %c:.][Cancel|Retry]"
@@ -138,7 +138,7 @@ msgstr "[2]["
 "Sovellus ei pysty lukemaan|"
 "tietoja levyltä %c: asemassa.][Kumoa|Uudestaan]"
 
-#: aes/gem_rsc.c:596
+#: aes/gem_rsc.c
 msgid "[1]["
 "Your output device is not|"
 "receiving data.][Cancel|Retry]"
@@ -146,7 +146,7 @@ msgstr "[1]["
 "Tulostuslaitteesi ei|"
 "vastaanota tietoja.][Kumoa|Uudestaan]"
 
-#: aes/gem_rsc.c:599
+#: aes/gem_rsc.c
 msgid "[3]["
 "An error has occurred in GEM.|"
 "Please contact the EmuTOS|"
@@ -156,7 +156,7 @@ msgstr "[3]["
 "Ota yhteyttä EmuTOS-|"
 "kehitystiimiin.][Kumoa]"
 
-#: aes/gem_rsc.c:604
+#: aes/gem_rsc.c
 msgid "[2]["
 "This application cannot|"
 "find the folder or file|"
@@ -166,7 +166,7 @@ msgstr "[2]["
 "kansiota tai tiedostoa,|"
 "jota yritit käyttää.][  OK  ]"
 
-#: aes/gem_rsc.c:609
+#: aes/gem_rsc.c
 msgid "[1]["
 "This application does not|"
 "have room to open another|"
@@ -179,7 +179,7 @@ msgstr "[1]["
 "Sulje ensin dokumentit,|"
 "joita et tarvitse.][  OK  ]"
 
-#: aes/gem_rsc.c:618
+#: aes/gem_rsc.c
 msgid "[1]["
 "An item with this name|"
 "already exists in the|"
@@ -190,7 +190,7 @@ msgstr "[1]["
 "niminen tiedosto, tai se|"
 "on kirjoitussuojattu.][  OK  ]"
 
-#: aes/gem_rsc.c:625
+#: aes/gem_rsc.c
 msgid "[1]["
 "The drive you specified|"
 "does not exist.][Cancel]"
@@ -198,7 +198,7 @@ msgstr "[1]["
 "Valitsemaasi asemaa ei|"
 "ole olemassa.][Kumoa]"
 
-#: aes/gem_rsc.c:628
+#: aes/gem_rsc.c
 msgid "[1]["
 "There is not enough memory|"
 "in your computer for the|"
@@ -209,632 +209,631 @@ msgstr "[1]["
 "enemmän muistia kuin|"
 "on saatavilla.][  OK  ]"
 
-#: aes/gem_rsc.c:635
+#: aes/gem_rsc.c
 msgid "[3]["
 "TOS error #%u.][Cancel]"
 msgstr "[3]["
 "TOS virhe #%u.][Kumoa]"
 
-#: aes/gem_rsc.c:636
+#: aes/gem_rsc.c
 msgid "[3]["
 "Unsupported AES function #%d.][Cancel]"
 msgstr "[3]["
 "Tuntematon AES-funktio #%d.][Kumoa]"
 
-#: aes/gem_rsc.c:637
+#: aes/gem_rsc.c
 msgid "ITEM SELECTOR"
 msgstr "TIEDOSTON VALINTA"
 
-#: desk/desk_rsc.c:18
+#: desk/desk_rsc.c
 msgid "Number of folders: _____"
 msgstr "Kansioita: _____"
 
-#: desk/desk_rsc.c:19
+#: desk/desk_rsc.c
 msgid "Number of files: _____"
 msgstr "Tiedostoja: _____"
 
-#: desk/desk_rsc.c:22
+#: desk/desk_rsc.c
 msgid "Skip"
 msgstr "Ohita"
 
-#: desk/desk_rsc.c:23
+#: desk/desk_rsc.c
 msgid "Install"
 msgstr "Asenna"
 
-#: desk/desk_rsc.c:24
+#: desk/desk_rsc.c
 msgid "Remove"
 msgstr "Poista"
 
-#: desk/desk_rsc.c:25
+#: desk/desk_rsc.c
 msgid "Yes"
 msgstr "Kyllä"
 
-#: desk/desk_rsc.c:26
+#: desk/desk_rsc.c
 msgid "No"
 msgstr "Ei"
 
-#: desk/desk_rsc.c:33 desk/desk_rsc.c:93 desk/desk_rsc.c:153
-#: desk/desk_rsc.c:158 desk/desk_rsc.c:163
+#: desk/desk_rsc.c
 msgid "Name: ________.___"
 msgstr "Nimi: ________.___"
 
-#: desk/desk_rsc.c:38
+#: desk/desk_rsc.c
 msgid "Size: __________"
 msgstr "Koko: __________"
 
-#: desk/desk_rsc.c:43
+#: desk/desk_rsc.c
 msgid "Date: __________"
 msgstr "Pvm.: __________"
 
-#: desk/desk_rsc.c:48
+#: desk/desk_rsc.c
 msgid "Time: __:__ __"
 msgstr "Aika: __:__ __"
 
-#: desk/desk_rsc.c:63
+#: desk/desk_rsc.c
 msgid "Drive identifier:     _"
 msgstr "Aseman tunnus:     _"
 
-#: desk/desk_rsc.c:68
+#: desk/desk_rsc.c
 msgid "Disk label: ________.___"
 msgstr "Levyn nimi: ________.___"
 
-#: desk/desk_rsc.c:83
+#: desk/desk_rsc.c
 msgid "Bytes used: __________"
 msgstr "Tavuja käytetty: __________"
 
-#: desk/desk_rsc.c:88
+#: desk/desk_rsc.c
 msgid "Bytes available: __________"
 msgstr "Tavuja vapaana: __________"
 
-#: desk/desk_rsc.c:103
+#: desk/desk_rsc.c
 msgid "Identifier: _:"
 msgstr "Tunnus: _:"
 
-#: desk/desk_rsc.c:108
+#: desk/desk_rsc.c
 msgid "Label: ____________"
 msgstr "Nimi: ____________"
 
-#: desk/desk_rsc.c:113
+#: desk/desk_rsc.c
 msgid "Application name: ________.___"
 msgstr "Sovelluksen nimi: ________.___"
 
-#: desk/desk_rsc.c:118
+#: desk/desk_rsc.c
 msgid "Arguments: ___________"
 msgstr "Argumentit: ___________"
 
-#: desk/desk_rsc.c:123
+#: desk/desk_rsc.c
 msgid "Document type: ___"
 msgstr "Tiedostotyyppi: ___"
 
-#: desk/desk_rsc.c:128
+#: desk/desk_rsc.c
 msgid "Install as: F__"
 msgstr "Asenna: F__"
 
-#: desk/desk_rsc.c:143
+#: desk/desk_rsc.c
 msgid "Current name: ________.___"
 msgstr "Nykyinen nimi: ________.___"
 
-#: desk/desk_rsc.c:148
+#: desk/desk_rsc.c
 msgid "Copy's name: ________.___"
 msgstr "Kopion nimi: ________.___"
 
-#: desk/desk_rsc.c:168
+#: desk/desk_rsc.c
 msgid "Label: ________.___"
 msgstr "Nimi: ________.___"
 
-#: desk/desk_rsc.c:226
+#: desk/desk_rsc.c
 msgid " Desk "
 msgstr " EmuTOS "
 
-#: desk/desk_rsc.c:232
+#: desk/desk_rsc.c
 msgid " File "
 msgstr " Arkisto "
 
-#: desk/desk_rsc.c:238
+#: desk/desk_rsc.c
 msgid " View "
 msgstr " Näytä "
 
-#: desk/desk_rsc.c:244
+#: desk/desk_rsc.c
 msgid " Options "
 msgstr " Asetukset "
 
-#: desk/desk_rsc.c:262
+#: desk/desk_rsc.c
 msgid "  Desktop info..."
 msgstr "  Ohjelmasta..."
 
-#: desk/desk_rsc.c:316
+#: desk/desk_rsc.c
 msgid "  Open            ^O"
 msgstr "  Avaa                ^O"
 
-#: desk/desk_rsc.c:322
+#: desk/desk_rsc.c
 msgid "  Info/Rename...  ^I"
 msgstr "  Näytä tiedot...     ^I"
 
-#: desk/desk_rsc.c:334
+#: desk/desk_rsc.c
 msgid "  New Folder...   ^N"
 msgstr "  Uusi kansio...      ^N"
 
-#: desk/desk_rsc.c:340
+#: desk/desk_rsc.c
 msgid "  Close           ^U"
 msgstr "  Sulje               ^U"
 
-#: desk/desk_rsc.c:346
+#: desk/desk_rsc.c
 msgid "  Close window    ^W"
 msgstr "  Sulje ikkuna        ^W"
 
-#: desk/desk_rsc.c:352
+#: desk/desk_rsc.c
 msgid "  Set file mask..."
 msgstr "  Aseta tiedostomaski..."
 
-#: desk/desk_rsc.c:364
+#: desk/desk_rsc.c
 msgid "  Delete...       ^D"
 msgstr "  Poista...           ^D"
 
-#: desk/desk_rsc.c:370
+#: desk/desk_rsc.c
 msgid "  Format..."
 msgstr "  Alusta..."
 
-#: desk/desk_rsc.c:382
+#: desk/desk_rsc.c
 msgid "  Execute EmuCON  ^Z"
 msgstr "  Käynnistä EmuCON    ^Z"
 
-#: desk/desk_rsc.c:388
+#: desk/desk_rsc.c
 msgid "  Shutdown        ^Q"
 msgstr "  Pysäytä systeemi    ^Q"
 
-#: desk/desk_rsc.c:400 desk/desk_rsc.c:2422
+#: desk/desk_rsc.c
 msgid "  Show as text"
 msgstr "  Tekstinä"
 
-#: desk/desk_rsc.c:412
+#: desk/desk_rsc.c
 msgid "  Sort by name"
 msgstr "  Nimi"
 
-#: desk/desk_rsc.c:418
+#: desk/desk_rsc.c
 msgid "  Sort by type"
 msgstr "  Tyyppi"
 
-#: desk/desk_rsc.c:424
+#: desk/desk_rsc.c
 msgid "  Sort by size"
 msgstr "  Koko"
 
-#: desk/desk_rsc.c:430
+#: desk/desk_rsc.c
 msgid "  Sort by date"
 msgstr "  Päiväys"
 
-#: desk/desk_rsc.c:436
+#: desk/desk_rsc.c
 msgid "  No sort"
 msgstr "  Järjestämätön"
 
-#: desk/desk_rsc.c:448
+#: desk/desk_rsc.c
 msgid "  Set background..."
 msgstr "  Aseta tausta..."
 
-#: desk/desk_rsc.c:460
+#: desk/desk_rsc.c
 msgid "  Install icon..."
 msgstr "  Asenna ikoni..."
 
-#: desk/desk_rsc.c:466
+#: desk/desk_rsc.c
 msgid "  Install application..."
 msgstr "  Asenna sovellus..."
 
-#: desk/desk_rsc.c:472
+#: desk/desk_rsc.c
 msgid "  Install devices"
 msgstr "  Asenna laitteet"
 
-#: desk/desk_rsc.c:478
+#: desk/desk_rsc.c
 msgid "  Remove desktop icon"
 msgstr "  Poista ikoni"
 
-#: desk/desk_rsc.c:490
+#: desk/desk_rsc.c
 msgid "  Set preferences..."
 msgstr "  Määritä asetukset..."
 
-#: desk/desk_rsc.c:496
+#: desk/desk_rsc.c
 msgid "  Desktop configuration..."
 msgstr "  Työpöytäasetukset..."
 
-#: desk/desk_rsc.c:502
+#: desk/desk_rsc.c
 msgid "  Change resolution...  ^R"
 msgstr "  Vaihda tarkkuutta... ^R"
 
-#: desk/desk_rsc.c:508
+#: desk/desk_rsc.c
 msgid "  Save desktop...       ^S"
 msgstr "  Tallenna työpöytä... ^S"
 
-#: desk/desk_rsc.c:520
+#: desk/desk_rsc.c
 msgid "  Blitter"
 msgstr "  Blitteri"
 
-#: desk/desk_rsc.c:577
+#: desk/desk_rsc.c
 msgid "Attribute:"
 msgstr "Ominaisuus:"
 
-#: desk/desk_rsc.c:589
+#: desk/desk_rsc.c
 msgid "Read/Write"
 msgstr "Lue/Kirj."
 
-#: desk/desk_rsc.c:595
+#: desk/desk_rsc.c
 msgid "Read-Only"
 msgstr "Vain luku"
 
-#: desk/desk_rsc.c:622
+#: desk/desk_rsc.c
 msgid "DISK INFORMATION"
 msgstr "LEVYN TIEDOT"
 
-#: desk/desk_rsc.c:697
+#: desk/desk_rsc.c
 msgid "Version"
 msgstr "Versio"
 
-#: desk/desk_rsc.c:709
+#: desk/desk_rsc.c
 msgid "Copyright \275 2001-"
 msgstr "Copyright © 2001-"
 
-#: desk/desk_rsc.c:721
+#: desk/desk_rsc.c
 msgid "The EmuTOS development team"
 msgstr "EmuTOS-kehitystiimi"
 
-#: desk/desk_rsc.c:733
+#: desk/desk_rsc.c
 msgid "Based on 'GPLed' sources"
 msgstr "Pohjautuu lähdekoodiin:"
 
-#: desk/desk_rsc.c:745
+#: desk/desk_rsc.c
 msgid "\275 1987 Digital Research, Inc."
 msgstr "© 1987 Digital Research, Inc."
 
-#: desk/desk_rsc.c:751
+#: desk/desk_rsc.c
 msgid "\275 1999 Caldera Thin Clients, Inc."
 msgstr "© 1999 Caldera Thin Clients, Inc."
 
-#: desk/desk_rsc.c:757
+#: desk/desk_rsc.c
 msgid "\275 2001 Lineo, Inc."
 msgstr "© 2001 Lineo, Inc."
 
-#: desk/desk_rsc.c:763
+#: desk/desk_rsc.c
 msgid "EmuTOS is distributed under the GPL"
 msgstr "EmuTOS on GPL-lisenssin alainen,"
 
-#: desk/desk_rsc.c:769
+#: desk/desk_rsc.c
 msgid "See doc\\license.txt for details"
 msgstr "katso doc\\license.txt."
 
-#: desk/desk_rsc.c:790
+#: desk/desk_rsc.c
 msgid "OPEN APPLICATION"
 msgstr "AVAA SOVELLUS"
 
-#: desk/desk_rsc.c:802
+#: desk/desk_rsc.c
 msgid "Parameters:"
 msgstr "Parametrit:"
 
-#: desk/desk_rsc.c:835
+#: desk/desk_rsc.c
 msgid "INSTALL DESKTOP ICON"
 msgstr "ASENNA IKONI TYÖPÖYDÄLLE"
 
-#: desk/desk_rsc.c:853 desk/desk_rsc.c:1882
+#: desk/desk_rsc.c
 msgid "Item type:"
 msgstr "Tyyppi:"
 
-#: desk/desk_rsc.c:865
+#: desk/desk_rsc.c
 msgid "Drive"
 msgstr "Asema"
 
-#: desk/desk_rsc.c:871
+#: desk/desk_rsc.c
 msgid "Trash can"
 msgstr "Roskis"
 
-#: desk/desk_rsc.c:877
+#: desk/desk_rsc.c
 msgid "Printer"
 msgstr "Tulostin"
 
-#: desk/desk_rsc.c:907 desk/desk_rsc.c:1930
+#: desk/desk_rsc.c
 msgid "Icon:"
 msgstr "Ikoni:"
 
-#: desk/desk_rsc.c:940
+#: desk/desk_rsc.c
 msgid "INSTALL APPLICATION"
 msgstr "ASENNA SOVELLUS"
 
-#: desk/desk_rsc.c:970
+#: desk/desk_rsc.c
 msgid "Boot status:"
 msgstr "Käynnistys:"
 
-#: desk/desk_rsc.c:982
+#: desk/desk_rsc.c
 msgid "Auto"
 msgstr "Bootissa"
 
-#: desk/desk_rsc.c:988
+#: desk/desk_rsc.c
 msgid "Normal"
 msgstr "Käyttäjä"
 
-#: desk/desk_rsc.c:994
+#: desk/desk_rsc.c
 msgid "Application type:"
 msgstr "Sovellustyyppi:"
 
-#: desk/desk_rsc.c:1030
+#: desk/desk_rsc.c
 msgid "Default dir:"
 msgstr "Oletuskansio:"
 
-#: desk/desk_rsc.c:1042 desk/desk_rsc.c:1561
+#: desk/desk_rsc.c
 msgid "Application"
 msgstr "Sovellus"
 
-#: desk/desk_rsc.c:1048 desk/desk_rsc.c:1567 desk/desk_rsc.c:2203
+#: desk/desk_rsc.c
 msgid "Window"
 msgstr "Ikkuna"
 
-#: desk/desk_rsc.c:1054
+#: desk/desk_rsc.c
 msgid "Parameter:"
 msgstr "Syöte:"
 
-#: desk/desk_rsc.c:1066 desk/desk_rsc.c:1585
+#: desk/desk_rsc.c
 msgid "Full path"
 msgstr "Koko polku"
 
-#: desk/desk_rsc.c:1072 desk/desk_rsc.c:1591
+#: desk/desk_rsc.c
 msgid "File name"
 msgstr "Vain nimi"
 
-#: desk/desk_rsc.c:1150
+#: desk/desk_rsc.c
 msgid "NAME CONFLICT DURING COPY"
 msgstr "NIMIKONFLIKTI KOPIOINNIN AIKANA"
 
-#: desk/desk_rsc.c:1180
+#: desk/desk_rsc.c
 msgid "Stop"
 msgstr "Lopeta"
 
-#: desk/desk_rsc.c:1195
+#: desk/desk_rsc.c
 msgid "NEW FOLDER"
 msgstr "UUSI KANSIO"
 
-#: desk/desk_rsc.c:1228 desk/desk_rsc.c:1357
+#: desk/desk_rsc.c
 msgid "SET PREFERENCES"
 msgstr "MÄÄRITÄ ASETUKSET"
 
-#: desk/desk_rsc.c:1234
+#: desk/desk_rsc.c
 msgid "Confirm deletes:"
 msgstr "Vahvista poistot:"
 
-#: desk/desk_rsc.c:1258
+#: desk/desk_rsc.c
 msgid "Confirm copies:"
 msgstr "Vahvista kopiointi:"
 
-#: desk/desk_rsc.c:1282
+#: desk/desk_rsc.c
 msgid "Confirm overwrites:"
 msgstr "Vahvista ylikirjoitus:"
 
-#: desk/desk_rsc.c:1306
+#: desk/desk_rsc.c
 msgid "Sound effects:"
 msgstr "Ääniefektit:"
 
-#: desk/desk_rsc.c:1318
+#: desk/desk_rsc.c
 msgid "On"
 msgstr "Päällä"
 
-#: desk/desk_rsc.c:1324
+#: desk/desk_rsc.c
 msgid "Off"
 msgstr "Pois"
 
-#: desk/desk_rsc.c:1330
+#: desk/desk_rsc.c
 msgid "More preferences"
 msgstr "Lisäasetukset"
 
-#: desk/desk_rsc.c:1363
+#: desk/desk_rsc.c
 msgid "Double-click speed:"
 msgstr "Tuplaklikkausnopeus:"
 
-#: desk/desk_rsc.c:1405
+#: desk/desk_rsc.c
 msgid "To drop down menus:"
 msgstr "Menujen aukaisu:"
 
-#: desk/desk_rsc.c:1417
+#: desk/desk_rsc.c
 msgid "Click"
 msgstr "Klikkaa"
 
-#: desk/desk_rsc.c:1423
+#: desk/desk_rsc.c
 msgid "No click"
 msgstr "Siirry"
 
-#: desk/desk_rsc.c:1429
+#: desk/desk_rsc.c
 msgid "Time format:"
 msgstr "Ajannäyttö:"
 
-#: desk/desk_rsc.c:1441 desk/desk_rsc.c:1471
+#: desk/desk_rsc.c
 msgid "Default"
 msgstr "Oletus"
 
-#: desk/desk_rsc.c:1447
+#: desk/desk_rsc.c
 msgid "12H"
 msgstr "12"
 
-#: desk/desk_rsc.c:1453
+#: desk/desk_rsc.c
 msgid "24H"
 msgstr "24"
 
-#: desk/desk_rsc.c:1459
+#: desk/desk_rsc.c
 msgid "Date format:"
 msgstr "Päiväys:"
 
-#: desk/desk_rsc.c:1477
+#: desk/desk_rsc.c
 msgid "MDY"
 msgstr "KPV"
 
-#: desk/desk_rsc.c:1483
+#: desk/desk_rsc.c
 msgid "DMY"
 msgstr "PKV"
 
-#: desk/desk_rsc.c:1510
+#: desk/desk_rsc.c
 msgid "SET FILE MASK"
 msgstr "ASETA TIEDOSTOMASKI"
 
-#: desk/desk_rsc.c:1543
+#: desk/desk_rsc.c
 msgid "DESKTOP CONFIGURATION"
 msgstr "TYÖPÖYTÄASETUKSET"
 
-#: desk/desk_rsc.c:1549
+#: desk/desk_rsc.c
 msgid "Default directory:"
 msgstr "Oletushakemisto:"
 
-#: desk/desk_rsc.c:1573
+#: desk/desk_rsc.c
 msgid "Input parameter:"
 msgstr "Syöte:"
 
-#: desk/desk_rsc.c:1618 desk/desk_rsc.c:1681 desk/desk_rsc.c:1969
+#: desk/desk_rsc.c
 msgid "SET SCREEN RESOLUTION"
 msgstr "ASETA RUUDUN TARKKUUS"
 
-#: desk/desk_rsc.c:1630
+#: desk/desk_rsc.c
 msgid "ST Low"
 msgstr "ST matala"
 
-#: desk/desk_rsc.c:1636
+#: desk/desk_rsc.c
 msgid "ST Medium"
 msgstr "ST keski"
 
-#: desk/desk_rsc.c:1642
+#: desk/desk_rsc.c
 msgid "ST High"
 msgstr "ST korkea"
 
-#: desk/desk_rsc.c:1648
+#: desk/desk_rsc.c
 msgid "TT Low"
 msgstr "TT matala"
 
-#: desk/desk_rsc.c:1654
+#: desk/desk_rsc.c
 msgid "TT Medium"
 msgstr "TT keski"
 
-#: desk/desk_rsc.c:1801
+#: desk/desk_rsc.c
 msgid "High"
 msgstr "Korkea"
 
-#: desk/desk_rsc.c:1807
+#: desk/desk_rsc.c
 msgid "Medium"
 msgstr "Keski"
 
-#: desk/desk_rsc.c:1813
+#: desk/desk_rsc.c
 msgid "Low"
 msgstr "Matala"
 
-#: desk/desk_rsc.c:1843
+#: desk/desk_rsc.c
 msgid "ST Compatible"
 msgstr "ST tarkkuudet"
 
-#: desk/desk_rsc.c:1870
+#: desk/desk_rsc.c
 msgid "INSTALL WINDOW ICON"
 msgstr "ASENNA IKKUNAIKONI"
 
-#: desk/desk_rsc.c:1894
+#: desk/desk_rsc.c
 msgid "Folder"
 msgstr "Kansio"
 
-#: desk/desk_rsc.c:1900
+#: desk/desk_rsc.c
 msgid "File"
 msgstr "Tiedosto"
 
-#: desk/desk_rsc.c:1975
+#: desk/desk_rsc.c
 msgid "Monochrome only"
 msgstr "Vain mustavalkoinen"
 
-#: desk/desk_rsc.c:2179
+#: desk/desk_rsc.c
 msgid "SET BACKGROUND"
 msgstr "ASETA TAUSTA"
 
-#: desk/desk_rsc.c:2185
+#: desk/desk_rsc.c
 msgid "Select:"
 msgstr "Valitse:"
 
-#: desk/desk_rsc.c:2197
+#: desk/desk_rsc.c
 msgid "Desktop"
 msgstr "Työpöytä"
 
-#: desk/desk_rsc.c:2209
+#: desk/desk_rsc.c
 msgid "Style:"
 msgstr "Tyyli:"
 
-#: desk/desk_rsc.c:2215
+#: desk/desk_rsc.c
 msgid "Color:"
 msgstr "Väri:"
 
-#: desk/desk_rsc.c:2092
+#: desk/desk_rsc.c
 msgid "FORMAT FLOPPY DISKETTE"
 msgstr "ALUSTA LEVYKE"
 
-#: desk/desk_rsc.c:2134
+#: desk/desk_rsc.c
 msgid "Single sided"
 msgstr "Yksipuolinen"
 
-#: desk/desk_rsc.c:2140
+#: desk/desk_rsc.c
 msgid "Double sided"
 msgstr "Kaksipuolinen"
 
-#: desk/desk_rsc.c:2146
+#: desk/desk_rsc.c
 msgid "High density"
 msgstr "Korkeatiheyksinen"
 
-#: desk/desk_rsc.c:2420
+#: desk/desk_rsc.c
 msgid "%ld bytes used in %d items."
 msgstr "%ld tavua käytetty %d tiedostoon."
 
-#: desk/desk_rsc.c:2421
+#: desk/desk_rsc.c
 msgid "  Show as icons"
 msgstr "  Ikoneina"
 
-#: desk/desk_rsc.c:2423
+#: desk/desk_rsc.c
 msgid "FILE INFORMATION"
 msgstr "TIEDOSTON TIEDOT"
 
-#: desk/desk_rsc.c:2424
+#: desk/desk_rsc.c
 msgid "FOLDER INFORMATION"
 msgstr "KANSION TIEDOT"
 
-#: desk/desk_rsc.c:2425
+#: desk/desk_rsc.c
 msgid "COPY FILE(S)"
 msgstr "KOPIOI TIEDOSTO(JA)"
 
-#: desk/desk_rsc.c:2426
+#: desk/desk_rsc.c
 msgid "MOVE FILE(S)"
 msgstr "SIIRRÄ TIEDOSTO(JA)"
 
-#: desk/desk_rsc.c:2427
+#: desk/desk_rsc.c
 msgid "DELETE FILE(S)"
 msgstr "POISTA TIEDOSTO(JA)"
 
-#: desk/desk_rsc.c:2434
+#: desk/desk_rsc.c
 msgid "DISK"
 msgstr "LEVYKE"
 
-#: desk/desk_rsc.c:2435
+#: desk/desk_rsc.c
 msgid "TRASH"
 msgstr "ROSKIS"
 
-#: desk/desk_rsc.c:2436
+#: desk/desk_rsc.c
 msgid "-More-"
 msgstr "-Lisää-"
 
-#: desk/desk_rsc.c:2437
+#: desk/desk_rsc.c
 msgid "-End of file-"
 msgstr "-Tiedoston loppu-"
 
-#: desk/desk_rsc.c:2438
+#: desk/desk_rsc.c
 msgid "-File read error-"
 msgstr "-Tiedoston lukuvirhe-"
 
-#: desk/desk_rsc.c:2439
+#: desk/desk_rsc.c
 msgid "Locate item"
 msgstr "Etsi kohde"
 
-#: desk/desk_rsc.c:2440
+#: desk/desk_rsc.c
 msgid "[2]["
 "Switch resolution?][ Yes | No ]"
 msgstr "[2]["
 "Vaihda tarkkuutta?][ Kyllä | Ei ]"
 
-#: desk/desk_rsc.c:2441
+#: desk/desk_rsc.c
 msgid "[2]["
 "Show this document?][Show|Cancel]"
 msgstr "[2]["
 "Näytä tämä tiedosto?][ Näytä | Kumoa ]"
 
-#: desk/desk_rsc.c:2442
+#: desk/desk_rsc.c
 msgid "[1]["
 "This document type has no|"
 "associated application.][  OK  ]"
@@ -842,7 +841,7 @@ msgstr "[1]["
 "Tiedostolle ei ole|"
 "määritetty sovellusta.][  OK  ]"
 
-#: desk/desk_rsc.c:2445
+#: desk/desk_rsc.c
 msgid "[1]["
 "The GEM Desktop has no more|"
 "windows.  Please close a|"
@@ -854,7 +853,7 @@ msgstr "[1]["
 "jokin ikkunoista, joita et|"
 "käytä.][  OK  ]"
 
-#: desk/desk_rsc.c:2452
+#: desk/desk_rsc.c
 msgid "[3]["
 "You cannot copy a parent folder|"
 "into one of its child folders.][  OK  ]"
@@ -862,19 +861,19 @@ msgstr "[3]["
 "Et voi kopioida kansiota sen|"
 "omiin alikansioihin.][  OK  ]"
 
-#: desk/desk_rsc.c:2455
+#: desk/desk_rsc.c
 msgid "[3]["
 "Invalid copy operation.][  OK  ]"
 msgstr "[3]["
 "Kopiointi epäonnistui.][  OK  ]"
 
-#: desk/desk_rsc.c:2456
+#: desk/desk_rsc.c
 msgid "[2]["
 "Abort this operation?][ Yes | No ]"
 msgstr "[2]["
 "Peru operaatio?][ Kyllä | Ei ]"
 
-#: desk/desk_rsc.c:2457
+#: desk/desk_rsc.c
 msgid "[2]["
 "Do you want to delete all|"
 "the files on drive %c: ?][Yes| No ]"
@@ -882,7 +881,7 @@ msgstr "[2]["
 "Haluatko poistaa kaikki|"
 "tiedostot %c: asemalta?][Kyllä| Ei ]"
 
-#: desk/desk_rsc.c:2460
+#: desk/desk_rsc.c
 msgid "[1]["
 "Sorry, the desktop cannot|"
 "install any more icons|"
@@ -892,7 +891,7 @@ msgstr "[1]["
 "ei voi asentaa enempää|"
 "ikoneita tai sovelluksia.][  OK  ]"
 
-#: desk/desk_rsc.c:2465
+#: desk/desk_rsc.c
 msgid "[2]["
 "You cannot create a folder|"
 "with that name. Please retry|"
@@ -902,22 +901,23 @@ msgstr "[2]["
 "ei voi luoda. Kokeile muuta|"
 "nimeä.][Kumoa|Uudestaan]"
 
-#: desk/desk_rsc.c:2470
 msgid "[1]["
-"This disk does not have enough|"
-"room for this operation.][  OK  ]"
+"Drive %c: does not have|"
+"enough room for this|"
+"operation.][  OK  ]"
 msgstr "[1]["
-"Tällä levyllä ei ole riittävästi|"
-"tilaa pyydetylle toiminnolle.][  OK  ]"
+"Asemassa %c: ei ole|"
+"riittävästi tilaa|"
+"toiminnolle.][  OK  ]"
 
-#: desk/desk_rsc.c:2473
+#: desk/desk_rsc.c
 msgid "[3]["
 "Cannot create EMUDESK.INF.][  OK  ]"
 msgstr "[3]["
 "EMUDESK.INF tiedoston|"
 "luonti epäonnistui.][  OK  ]"
 
-#: desk/desk_rsc.c:2474
+#: desk/desk_rsc.c
 msgid "[3]["
 "You cannot create or|"
 "access a folder this far|"
@@ -927,7 +927,7 @@ msgstr "[3]["
 "näin syvällä hakemistopuussa|"
 "ei ole mahdollista.][  OK  ]"
 
-#: desk/desk_rsc.c:2479
+#: desk/desk_rsc.c
 msgid "[3]["
 "You cannot create or access|"
 "a file or folder with that|"
@@ -937,14 +937,14 @@ msgstr "[3]["
 "Tiedostopolku on liian pitkä|"
 "hakemiston/tiedoston luontiin.][  OK  ]"
 
-#: desk/desk_rsc.c:2486
+#: desk/desk_rsc.c
 msgid "[1]["
 "You cannot open the trash|"
 "can icon into a window.][  OK  ]"
 msgstr "[1]["
 "Roskis ei ole aukaistava.][  OK  ]"
 
-#: desk/desk_rsc.c:2489
+#: desk/desk_rsc.c
 msgid "[1]["
 "The trash can is used to|"
 "permanently delete files|"
@@ -954,7 +954,7 @@ msgstr "[1]["
 "ja kansioiden pysyvää|"
 "tuhoamista varten.][  OK  ]"
 
-#: desk/desk_rsc.c:2494
+#: desk/desk_rsc.c
 msgid "[1]["
 "You cannot drag applications,|"
 "files or folders onto the|"
@@ -963,7 +963,7 @@ msgstr "[1]["
 "Tiedostoja tai kansioita|"
 "ei voi vetää työpöydälle.][  OK  ]"
 
-#: desk/desk_rsc.c:2499
+#: desk/desk_rsc.c
 msgid "[1]["
 "You cannot drag the trash can|"
 "icon into a window.][  OK  ]"
@@ -971,7 +971,7 @@ msgstr "[1]["
 "Roskista ei voi siirtää|"
 "ikkunaan.][  OK  ]"
 
-#: desk/desk_rsc.c:2502
+#: desk/desk_rsc.c
 msgid "[1]["
 "You cannot place this|"
 "icon over another icon.][  OK  ]"
@@ -979,13 +979,13 @@ msgstr "[1]["
 "Ikonia ei voi sijoittaa|"
 "toisen päälle.][  OK  ]"
 
-#: desk/desk_rsc.c:2505
+#: desk/desk_rsc.c
 msgid "[2]["
 "Save Desktop?][  OK  |Cancel]"
 msgstr "[2]["
 "Tallenna työpöytä?][  OK  |Kumoa]"
 
-#: desk/desk_rsc.c:2506
+#: desk/desk_rsc.c
 msgid "[2]["
 "Do you want to remove icons|"
 "or delete files?][Icons|Files|Cancel]"
@@ -993,13 +993,13 @@ msgstr "[2]["
 "Haluatko poistaa ikoneita|"
 "tai poistaa tiedostoja?][Ikoneita|Tiedostoja|Kumoa]"
 
-#: desk/desk_rsc.c:2509
+#: desk/desk_rsc.c
 msgid "[1]["
 "Invalid function key value.][  OK  ]"
 msgstr "[1]["
 "Funktionäppäin ei käy.][  OK  ]"
 
-#: desk/desk_rsc.c:2510
+#: desk/desk_rsc.c
 msgid "[2]["
 "Function key already assigned.|"
 "Do you want to reassign it?][  OK  |Cancel]"
@@ -1007,7 +1007,7 @@ msgstr "[2]["
 "Funktionäppäin on jo käytössä.|"
 "Haluatko vaihtaa sen?][  OK  |Kumoa]"
 
-#: desk/desk_rsc.c:2513
+#: desk/desk_rsc.c
 msgid "[3]["
 "Not enough memory to|"
 "initialise EmuDesk.|"
@@ -1017,7 +1017,7 @@ msgstr "[3]["
 "EmuDeskin alustamiseen.|"
 "Uudelleenkäynnistä!][  OK  ]"
 
-#: desk/desk_rsc.c:2518
+#: desk/desk_rsc.c
 msgid "[2]["
 "%s not found.|"
 "Do you want to remove the|"
@@ -1027,20 +1027,20 @@ msgstr "[2]["
 "Haluatko poistaa ikonin|"
 "tai etsiä sen kohdetta?][Poista|Etsi|Kumoa]"
 
-#: desk/desk_rsc.c:2523
+#: desk/desk_rsc.c
 msgid "[1]["
 "Please select icon type.][Desktop|Window|Cancel]"
 msgstr "[1]["
 "Valitse ikonityyppi.][Työpöytä|Ikkuna|Kumoa]"
 
-#: desk/desk_rsc.c:2524
+#: desk/desk_rsc.c
 msgid "[1]["
 "No matching file type.][  OK  ]"
 msgstr "[1]["
 "Ei vastaavia|"
 "tiedostotyyppejä.][  OK  ]"
 
-#: desk/desk_rsc.c:2525
+#: desk/desk_rsc.c
 msgid "[3]["
 "Formatting error. The target|"
 "disk may be write-protected|"
@@ -1050,7 +1050,7 @@ msgstr "[3]["
 "levyke voi olla kirjoitus-|"
 "suojattu tai kelvoton.][Uudelleen| Poistu ]"
 
-#: desk/desk_rsc.c:2530
+#: desk/desk_rsc.c
 msgid "[1]["
 "This disk has %ld bytes|"
 "available to the user.][ Continue | Quit ]"
@@ -1058,355 +1058,363 @@ msgstr "[1]["
 "Levyllä on %ld tavua|"
 "käytettävissä.][ Jatka | Lopeta ]"
 
-#: cli/cmdint.c:74
+#: cli/cmdint.c
 msgid "Copy <filespec> ... to standard output"
 msgstr "Copy <filespec> ... to standard output"
 
-#: cli/cmdint.c:76
+#: cli/cmdint.c
 msgid "Change current directory to <dir>"
 msgstr "Change current directory to <dir>"
 
-#: cli/cmdint.c:77
+#: cli/cmdint.c
 msgid "or display current directory"
 msgstr "or display current directory"
 
-#: cli/cmdint.c:79
+#: cli/cmdint.c
 msgid "Change attributes for <filename>"
 msgstr "Change attributes for <filename>"
 
-#: cli/cmdint.c:80
+#: cli/cmdint.c
 msgid "<mode> specifies the new attribute(s):"
 msgstr "<mode> specifies the new attribute(s):"
 
-#: cli/cmdint.c:81
+#: cli/cmdint.c
 msgid "r=read-only  h=hidden  s=system  -=none"
 msgstr "r=read-only  h=hidden  s=system  -=none"
 
-#: cli/cmdint.c:83
+#: cli/cmdint.c
 msgid "Clear screen"
 msgstr "Clear screen"
 
-#: cli/cmdint.c:85
+#: cli/cmdint.c
 msgid "Copy files matching <filespec> to <dest>"
 msgstr "Copy files matching <filespec> to <dest>"
 
-#: cli/cmdint.c:86
+#: cli/cmdint.c
 msgid "If <filespec> matches multiple files,"
 msgstr "If <filespec> matches multiple files,"
 
-#: cli/cmdint.c:87
+#: cli/cmdint.c
 msgid "<dest> must be a directory"
 msgstr "<dest> must be a directory"
 
-#: cli/cmdint.c:89
+#: cli/cmdint.c
 msgid "Copy <string> ... to standard output"
 msgstr "Copy <string> ... to standard output"
 
-#: cli/cmdint.c:90
+#: cli/cmdint.c
 msgid "Strings may be surrounded by \"\""
 msgstr "Strings may be surrounded by \"\""
 
-#: cli/cmdint.c:92
+#: cli/cmdint.c
 msgid "Exit EmuCON2"
 msgstr "Exit EmuCON2"
 
-#: cli/cmdint.c:94
+#: cli/cmdint.c
 msgid "Get help about <cmd> or list available commands"
 msgstr "Get help about <cmd> or list available commands"
 
-#: cli/cmdint.c:95
+#: cli/cmdint.c
 msgid "Use HELP ALL for help on all commands"
 msgstr "Use HELP ALL for help on all commands"
 
-#: cli/cmdint.c:96
+#: cli/cmdint.c
 msgid "Use HELP EDIT for help on line editing"
 msgstr "Use HELP EDIT for help on line editing"
 
-#: cli/cmdint.c:98
+#: cli/cmdint.c
 msgid "List files (default terse, horizontal)"
 msgstr "List files (default terse, horizontal)"
 
-#: cli/cmdint.c:99
+#: cli/cmdint.c
 msgid "Specify -l for detailed list"
 msgstr "Specify -l for detailed list"
 
-#: cli/cmdint.c:101
+#: cli/cmdint.c
 msgid "Create directory <dir>"
 msgstr "Create directory <dir>"
 
-#: cli/cmdint.c:103
+#: cli/cmdint.c
 msgid "Set or display console settings:"
 msgstr "Set or display console settings:"
 
-#: cli/cmdint.c:104
+#: cli/cmdint.c
 msgid "delay/rate for the keyboard;"
 msgstr "delay/rate for the keyboard;"
 
-#: cli/cmdint.c:105
+#: cli/cmdint.c
 msgid "line height (8,16) for the display"
 msgstr "line height (8,16) for the display"
 
-#: cli/cmdint.c:107
+#: cli/cmdint.c
 msgid "Copy <filespec> to standard output,"
 msgstr "Copy <filespec> to standard output,"
 
-#: cli/cmdint.c:108
+#: cli/cmdint.c
 msgid "pausing every screenful"
 msgstr "pausing every screenful"
 
-#: cli/cmdint.c:110
+#: cli/cmdint.c
 msgid "Copy files matching <filespec> to <dir>,"
 msgstr "Copy files matching <filespec> to <dir>,"
 
-#: cli/cmdint.c:111
+#: cli/cmdint.c
 msgid "then delete input files"
 msgstr "then delete input files"
 
-#: cli/cmdint.c:113
+#: cli/cmdint.c
 msgid "Set search path for external programs"
 msgstr "Set search path for external programs"
 
-#: cli/cmdint.c:114
+#: cli/cmdint.c
 msgid "or display current search path"
 msgstr "or display current search path"
 
-#: cli/cmdint.c:116
+#: cli/cmdint.c
 msgid "Display current drive and directory"
 msgstr "Display current drive and directory"
 
-#: cli/cmdint.c:118
+#: cli/cmdint.c
 msgid "Rename <oldname> to <newname>"
 msgstr "Rename <oldname> to <newname>"
 
-#: cli/cmdint.c:120
+#: cli/cmdint.c
 msgid "Delete files matching <filespec>"
 msgstr "Delete files matching <filespec>"
 
-#: cli/cmdint.c:121
+#: cli/cmdint.c
 msgid "Specify -q to be prompted each time"
 msgstr "Specify -q to be prompted each time"
 
-#: cli/cmdint.c:123
+#: cli/cmdint.c
 msgid "Delete directory <dir>"
 msgstr "Delete directory <dir>"
 
-#: cli/cmdint.c:125
+#: cli/cmdint.c
 msgid "Show info for <drive> or current drive"
 msgstr "Show info for <drive> or current drive"
 
-#: cli/cmdint.c:127
+#: cli/cmdint.c
 msgid "Display GEMDOS version"
 msgstr "Display GEMDOS version"
 
-#: cli/cmdint.c:129
+#: cli/cmdint.c
 msgid "Set line wrap or show current status"
 msgstr "Set line wrap or show current status"
 
-#: cli/cmdint.c:133
+#: cli/cmdint.c
 msgid "up/down arrow = previous/next line in history"
 msgstr "up/down arrow = previous/next line in history"
 
-#: cli/cmdint.c:134
+#: cli/cmdint.c
 msgid "left/right arrow = previous/next character"
 msgstr "left/right arrow = previous/next character"
 
-#: cli/cmdint.c:135
+#: cli/cmdint.c
 msgid "shift-left/right arrow = previous/next word"
 msgstr "shift-left/right arrow = previous/next word"
 
-#: cli/cmdint.c:239
+#: cli/cmdint.c
 msgid "invalid mode argument"
 msgstr "invalid mode argument"
 
-#: cli/cmdint.c:282
+#: cli/cmdint.c
 msgid "Builtin commands:"
 msgstr "Builtin commands:"
 
-#: cli/cmdint.c:343
+#: cli/cmdint.c
 msgid "Listing of "
 msgstr "Listing of "
 
-#: cli/cmdint.c:385
+#: cli/cmdint.c
 msgid "Status for CON:"
 msgstr "Status for CON:"
 
-#: cli/cmdint.c:386
+#: cli/cmdint.c
 msgid "  Keyboard delay: "
 msgstr "  Keyboard delay: "
 
-#: cli/cmdint.c:389
+#: cli/cmdint.c
 msgid "  Keyboard rate:  "
 msgstr "  Keyboard rate:  "
 
-#: cli/cmdint.c:392
+#: cli/cmdint.c
 msgid "  Line height:    "
 msgstr "  Line height:    "
 
-#: cli/cmdint.c:443
+#: cli/cmdint.c
 msgid "(empty)"
 msgstr "(empty)"
 
-#: cli/cmdint.c:500
+#: cli/cmdint.c
 msgid "Delete ALL matching files"
 msgstr "Delete ALL matching files"
 
-#: cli/cmdint.c:507
+#: cli/cmdint.c
 msgid "Delete file "
 msgstr "Delete file "
 
-#: cli/cmdint.c:562
+#: cli/cmdint.c
 msgid "Allocation info for drive "
 msgstr "Allocation info for drive "
 
-#: cli/cmdint.c:565
+#: cli/cmdint.c
 msgid "  Size (bytes):   "
 msgstr "  Size (bytes):   "
 
-#: cli/cmdint.c:566
+#: cli/cmdint.c
 msgid "  Bytes used:     "
 msgstr "  Bytes used:     "
 
-#: cli/cmdint.c:567
+#: cli/cmdint.c
 msgid "  Bytes free:     "
 msgstr "  Bytes free:     "
 
-#: cli/cmdint.c:568
+#: cli/cmdint.c
 msgid "  Total clusters: "
 msgstr "  Total clusters: "
 
-#: cli/cmdint.c:569
+#: cli/cmdint.c
 msgid "  Free clusters:  "
 msgstr "  Free clusters:  "
 
-#: cli/cmdint.c:570
+#: cli/cmdint.c
 msgid "  Sectors/cluster:"
 msgstr "  Sectors/cluster:"
 
-#: cli/cmdint.c:571
+#: cli/cmdint.c
 msgid "  Bytes/sector:   "
 msgstr "  Bytes/sector:   "
 
-#: cli/cmdint.c:699
+#: cli/cmdint.c
 msgid " is not a directory"
 msgstr " is not a directory"
 
-#: cli/cmdint.c:728
+#: cli/cmdint.c
 msgid " and "
 msgstr " and "
 
-#: cli/cmdint.c:734
+#: cli/cmdint.c
 msgid "Copying "
 msgstr "Copying "
 
-#: cli/cmdint.c:736
+#: cli/cmdint.c
 msgid " to "
 msgstr " to "
 
-#: cli/cmdint.c:772
+#: cli/cmdint.c
 msgid " ... deleting "
 msgstr " ... deleting "
 
-#: cli/cmdint.c:782
+#: cli/cmdint.c
 msgid " ... done"
 msgstr " ... done"
 
-#: cli/cmdint.c:838
+#: cli/cmdint.c
 msgid " or "
 msgstr " or "
 
-#: cli/cmdint.c:866
+#: cli/cmdint.c
 msgid "CR to continue ..."
 msgstr "CR to continue ..."
 
-#: cli/cmdint.c:1096
+#: cli/cmdint.c
 msgid "--More--"
 msgstr "--More--"
 
-#: cli/cmdmain.c:62
+#: cli/cmdmain.c
 msgid "Welcome to EmuCON2 version "
 msgstr "Welcome to EmuCON2 version "
 
-#: cli/cmdmain.c:63
+#: cli/cmdmain.c
 msgid "Type HELP for builtin commands"
 msgstr "Type HELP for builtin commands"
 
-#: cli/cmdmain.c:82
+#: cli/cmdmain.c
 msgid "warning: no history buffers"
 msgstr "warning: no history buffers"
 
-#: cli/cmdparse.c:29
+#: cli/cmdparse.c
 msgid "more than one redirection"
 msgstr "more than one redirection"
 
-#: cli/cmdparse.c:47
+#: cli/cmdparse.c
 msgid "no filename for redirection"
 msgstr "no filename for redirection"
 
-#: cli/cmdparse.c:53
+#: cli/cmdparse.c
 msgid "error in quoted field"
 msgstr "error in quoted field"
 
-#: cli/cmdparse.c:57
+#: cli/cmdparse.c
 msgid "error parsing line"
 msgstr "error parsing line"
 
-#: cli/cmdutil.c:63
+#: cli/cmdutil.c
 msgid "file not found"
 msgstr "file not found"
 
-#: cli/cmdutil.c:66
+#: cli/cmdutil.c
 msgid "path not found"
 msgstr "path not found"
 
-#: cli/cmdutil.c:69
+#: cli/cmdutil.c
 msgid "no more file handles"
 msgstr "no more file handles"
 
-#: cli/cmdutil.c:72
+#: cli/cmdutil.c
 msgid "can't create file"
 msgstr "can't create file"
 
-#: cli/cmdutil.c:75
+#: cli/cmdutil.c
 msgid "not enough memory"
 msgstr "not enough memory"
 
-#: cli/cmdutil.c:78
+#: cli/cmdutil.c
 msgid "invalid drive"
 msgstr "invalid drive"
 
-#: cli/cmdutil.c:81
+#: cli/cmdutil.c
 msgid "interrupted"
 msgstr "interrupted"
 
-#: cli/cmdutil.c:84
+#: cli/cmdutil.c
 msgid "invalid path"
 msgstr "invalid path"
 
-#: cli/cmdutil.c:87
+#: cli/cmdutil.c
 msgid "can't write to disk (full?)"
 msgstr "can't write to disk (full?)"
 
-#: cli/cmdutil.c:90
+#: cli/cmdutil.c
 msgid "cmdline too long"
 msgstr "cmdline too long"
 
-#: cli/cmdutil.c:93
+#: cli/cmdutil.c
 msgid "directory not empty"
 msgstr "directory not empty"
 
-#: cli/cmdutil.c:96
+#: cli/cmdutil.c
 msgid "can't delete file (read-only?)"
 msgstr "can't delete file (read-only?)"
 
-#: cli/cmdutil.c:99
+#: cli/cmdutil.c
 msgid "invalid parameter"
 msgstr "invalid parameter"
 
-#: cli/cmdutil.c:102
+#: cli/cmdutil.c
 msgid "wrong number of arguments"
 msgstr "wrong number of arguments"
 
-#: cli/cmdutil.c:105
+#: cli/cmdutil.c
 msgid "error code "
 msgstr "error code "
+
+#: cli/cmdint.c
+msgid "res for screen resolution (ST(e)/TT only);"
+msgstr "res for screen resolution (ST(e)/TT only);"
+
+#: cli/cmdint.c
+msgid "  Resolution:     "
+msgstr "  Resolution:     "
 
