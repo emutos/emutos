@@ -1,7 +1,7 @@
 /*
  *  draft: Delete Resource Alerts, Freestrings, and Trees
  *
- *  Copyright 2017 Roger Burrows
+ *  Copyright 2017-2018 Roger Burrows
  *
  *  This program is licensed under the GNU General Public License.
  *  Please see LICENSE.TXT for details.

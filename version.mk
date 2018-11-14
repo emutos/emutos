@@ -1,7 +1,7 @@
 #
 # version.mk - Makefile fragment for version numbers
 #
-# Copyright (C) 2017 The EmuTOS development team.
+# Copyright (C) 2017-2018 The EmuTOS development team.
 #
 # Authors:
 #  VRI      Vincent Rivière

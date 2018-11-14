@@ -1,7 +1,7 @@
 /*
  * aespub.h - Public AES functions
  *
- * Copyright (C) 2016-2017 The EmuTOS development team
+ * Copyright (C) 2016-2018 The EmuTOS development team
  *
  * Authors:
  *  VRI   Vincent Rivière
