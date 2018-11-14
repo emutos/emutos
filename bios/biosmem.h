@@ -19,8 +19,8 @@
 /*
  * sizes of ST-RAM disk buffers
  */
-#if ((CHKSUM_SECTORS) > 2)
-# define DSKBUF_SECS     (CHKSUM_SECTORS)
+#if CHKSUM_SECTORS > 2
+# define DSKBUF_SECS     CHKSUM_SECTORS
 #else
 # define DSKBUF_SECS     2
 #endif
