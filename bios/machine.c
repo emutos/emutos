@@ -60,9 +60,6 @@ long cookie_swi;
 /*
  * test specific hardware features
  */
-#if CONF_ATARI_HARDWARE
-int has_modectl;
-#endif
 #if CONF_WITH_STE_SHIFTER
 int has_ste_shifter;
 #endif
@@ -73,6 +70,10 @@ int has_tt_shifter;
 int has_videl;
 #endif
 
+#if CONF_ATARI_HARDWARE
+
+int has_modectl;
+
 /*
  * Check if the DMA 'modectl' register exists
  *
@@ -82,14 +83,14 @@ int has_videl;
  */
 static void detect_modectl(void)
 {
-#if CONF_ATARI_HARDWARE
     has_modectl = 0;
     if (check_read_byte((LONG)&DMA->modectl))
         has_modectl = 1;
 
     KDEBUG(("has_modectl = %d\n", has_modectl));
-#endif
 }
+
+#endif
 
 /*
  * Tests video capabilities (STEnhanced Shifter, TT Shifter and VIDEL)
@@ -445,7 +446,9 @@ void machine_detect(void)
 #ifdef MACHINE_AMIGA
     amiga_machine_detect();
 #endif
+#if CONF_ATARI_HARDWARE
     detect_modectl();
+#endif
 
     /* Detect TT-RAM and set up ramtop/ramvalid */
     KDEBUG(("ttram_detect()\n"));
