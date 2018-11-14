@@ -9,7 +9,6 @@
  */
 
 #include "asmdefs.h"
-#include "vdi_asm.h"
 
 
         .globl  _fast_bit_blt

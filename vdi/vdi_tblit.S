@@ -12,7 +12,6 @@
 
 
 #include "asmdefs.h"
-#include "vdi_asm.h"
 
 
 
