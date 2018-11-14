@@ -297,7 +297,7 @@ const Fonthead fnt_ru_8x16  = {
     0x5555, /* skew */
     F_STDFORM | F_MONOSPACE | F_DEFAULT,  /* flags */
     0,                  /*   UBYTE *hor_table   */
-    off_8x16_table,          /*   UWORD *off_table   */
+    off_8x16_table,     /*   UWORD *off_table   */
     dat_table,          /*   UWORD *dat_table   */
     256,  /* form_width */
     16,  /* form_height */

@@ -112,7 +112,7 @@ const Fonthead fnt_ru_6x6 = {
     0xaaaa, /* skew */
     F_STDFORM | F_MONOSPACE,  /* flags */
     0,                  /*   UBYTE *hor_table   */
-    off_6x6_table,          /*   UWORD *off_table   */
+    off_6x6_table,      /*   UWORD *off_table   */
     dat_table,          /*   UWORD *dat_table   */
     192,  /* form_width */
     6,  /* form_height */
