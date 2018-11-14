@@ -92,7 +92,7 @@ SECTIONS
     } >REGION_READ_WRITE
 
     /* This section is located as low as possible in ST-RAM,
-     * but after evental BIOS stack.
+     * but after eventual BIOS stack.
      * Variables requiring very low addresses, while being accessible
      * from user mode, can be put here.
      * Warning: this area is not cleared at startup.
