@@ -1326,18 +1326,27 @@ void arrow(Vwk * vwk, Point * point, int count)
 /*
  * abline - draw a line (general purpose)
  *
- * This routine draws a line defined by the Line structure.
- * The line is modified by the LN_MASK variable and the wrt_mode parameter.
- * This routine handles all 3 interleaved-bitplane video resolutions.
+ * This routine draws a line defined by the Line structure, using
+ * Bresenham's algorithm.  The line is modified by the LN_MASK
+ * variable and the wrt_mode parameter.  This routine handles
+ * all interleaved-bitplane video resolutions.
  *
- * Note that for line-drawing the background color is always 0 (i.e., there
- * is no user-settable background color).  This fact allows coding short-cuts
- * in the implementation of "replace" and "not" modes, resulting in faster
- * execution of their inner loops.
+ * Note that for line-drawing the background color is always 0
+ * (i.e., there is no user-settable background color).  This fact
+ * allows coding short-cuts in the implementation of "replace" and
+ * "not" modes, resulting in faster execution of their inner loops.
  *
- * This routine is more or less the one from the original VDI asm code.
- * I could not use bresenham, because the pixels were not aligned with
- * the polygon-filling part, so it did look ugly.  (MAD)
+ * This routine is more or less the one from the original VDI asm
+ * code, with the following exception:
+ *  . when the writing mode is XOR, and this is not the last line
+ *    in a polyline, the original code decremented the x coordinate
+ *    of the ending point.  this prevented polylines from xor'ing
+ *    themselves at the intersection points.  this was done in both
+ *    the XOR handler within abline() and, for horizontal lines,
+ *    before calling a separate function to draw a horizontal line.
+ *    NOTE: the determination of 'last line or not' was done via
+ *    the _LSTLIN variable which was set in the polyline() function.
+ *
  *
  * input:
  *     line         = pointer to structure containing coordinates
