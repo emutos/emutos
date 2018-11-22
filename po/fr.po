@@ -1154,8 +1154,8 @@ msgid "Set or display console settings:"
 msgstr "Définir ou afficher les paramètres de la console:"
 
 #: cli/cmdint.c
-msgid "res for screen resolution (ST(e)/TT only);"
-msgstr "résolution de l'écran (ST(e)/TT seulement);"
+msgid "res for screen resolution (0,1)[ST] (0,1,4,7)[TT];"
+msgstr "res: résolution de l'écran (0,1)[ST] (0,1,4,7)[TT];"
 
 #: cli/cmdint.c
 msgid "delay/rate for the keyboard;"

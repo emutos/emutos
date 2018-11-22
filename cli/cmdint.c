@@ -102,7 +102,7 @@ LOCAL const char * const help_mkdir[] = { "<dir>",
 #ifndef STANDALONE_CONSOLE
 LOCAL const char * const help_mode[] = { "con[:] [res=<r>] [delay=<m>] [rate=<n>] [height=<h>]",
     N_("Set or display console settings:"),
-    N_("res for screen resolution (ST(e)/TT only);"),
+    N_("res for screen resolution (0,1)[ST] (0,1,4,7)[TT];"),
 #else
 LOCAL const char * const help_mode[] = { "con[:] [delay=<m>] [rate=<n>] [height=<h>]",
     N_("Set or display console settings:"),
