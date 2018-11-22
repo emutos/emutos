@@ -1258,7 +1258,7 @@ msgstr "  Velocidad del teclado:"
 
 #: cli/cmdint.c
 msgid "  Line height:    "
-msgstr "  Altura de línea:"
+msgstr "  Altura de línea:      "
 
 #: cli/cmdint.c
 msgid "(empty)"

@@ -1150,6 +1150,10 @@ msgid "Set or display console settings:"
 msgstr "Установить или показать параметры консоли:"
 
 #: cli/cmdint.c
+msgid "res for screen resolution (ST(e)/TT only);"
+msgstr "res для разрешения (только ST(e)/TT);"
+
+#: cli/cmdint.c
 msgid "delay/rate for the keyboard;"
 msgstr "задержка/скорость повторного ввода клавиатуры;"
 
@@ -1242,6 +1246,10 @@ msgid "Status for CON:"
 msgstr "Статус консоли CON:"
 
 #: cli/cmdint.c
+msgid "  Resolution:     "
+msgstr "  Разрешение:                          "
+
+#: cli/cmdint.c
 msgid "  Keyboard delay: "
 msgstr "  Задержка повторного ввода клавиатуры:"
 
@@ -1251,7 +1259,7 @@ msgstr "  Скорость повторного ввода клавиатуры:"
 
 #: cli/cmdint.c
 msgid "  Line height:    "
-msgstr "  Высота строки:  "
+msgstr "  Высота строки:                       "
 
 #: cli/cmdint.c
 msgid "(empty)"
@@ -1421,10 +1429,3 @@ msgstr "неверное количество аргументов"
 msgid "error code "
 msgstr "код ошибки "
 
-#: cli/cmdint.c
-msgid "res for screen resolution (ST(e)/TT only);"
-msgstr "res для разрешения (только ST(e)/TT);"
-
-#: cli/cmdint.c
-msgid "  Resolution:     "
-msgstr "  Разрешение:     "

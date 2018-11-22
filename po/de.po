@@ -1231,7 +1231,7 @@ msgstr "Status von CON:"
 
 #: cli/cmdint.c
 msgid "  Resolution:     "
-msgstr "  Auflösung:      "
+msgstr "  Auflösung:                 "
 
 #: cli/cmdint.c
 msgid "  Keyboard delay: "
@@ -1243,7 +1243,7 @@ msgstr "  Tastatur Wiederholungsrate:"
 
 #: cli/cmdint.c
 msgid "  Line height:    "
-msgstr "  Zeichenhöhe:    "
+msgstr "  Zeichenhöhe:               "
 
 #: cli/cmdint.c
 msgid "(empty)"

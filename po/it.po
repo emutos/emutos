@@ -1143,6 +1143,10 @@ msgid "Set or display console settings:"
 msgstr "Imposta/mostra parametri console:"
 
 #: cli/cmdint.c
+msgid "res for screen resolution (ST(e)/TT only);"
+msgstr "res per risoluzione schermo (solo ST(e)/TT);"
+
+#: cli/cmdint.c
 msgid "delay/rate for the keyboard;"
 msgstr "ritardo/ripetizione tastiera;"
 
@@ -1235,6 +1239,10 @@ msgid "Status for CON:"
 msgstr "Stato CON:"
 
 #: cli/cmdint.c
+msgid "  Resolution:     "
+msgstr "  Risoluzione:         "
+
+#: cli/cmdint.c
 msgid "  Keyboard delay: "
 msgstr "  Ritardo tastiera:    "
 
@@ -1244,7 +1252,7 @@ msgstr "  Ripetizione tastiera:"
 
 #: cli/cmdint.c
 msgid "  Line height:    "
-msgstr "  Altezza linea:  "
+msgstr "  Altezza linea:       "
 
 #: cli/cmdint.c
 msgid "(empty)"
@@ -1413,12 +1421,4 @@ msgstr "numero errato di argomenti"
 #: cli/cmdutil.c
 msgid "error code "
 msgstr "codice errore "
-
-#: cli/cmdint.c
-msgid "res for screen resolution (ST(e)/TT only);"
-msgstr "res per risoluzione schermo (solo ST(e)/TT);"
-
-#: cli/cmdint.c
-msgid "  Resolution:     "
-msgstr "  Risoluzione:    "
 
