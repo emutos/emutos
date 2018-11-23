@@ -735,6 +735,10 @@ msgid "File"
 msgstr "Datei"
 
 #: desk/desk_rsc.c
+msgid "Monochrome only"
+msgstr "Nur schwarz-weiß"
+
+#: desk/desk_rsc.c
 msgid "FORMAT FLOPPY DISKETTE"
 msgstr "DISKETTE FORMATIEREN"
 
@@ -833,6 +837,14 @@ msgid "[2]["
 "Show this document?][Show|Cancel]"
 msgstr "[2]["
 "Dokument anzeigen?][Anzeigen|Abbruch]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"This document type has no|"
+"associated application.][  OK  ]"
+msgstr "[1]["
+"Das Dokument ist keiner|"
+"Anwendung zugeordnet.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -954,6 +966,16 @@ msgstr "[1]["
 "In den Mülleimer können Dateien|"
 "verschoben werden, um sie|"
 "endgültig zu löschen.][  OK  ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"You cannot drag applications,|"
+"files or folders onto the|"
+"Desktop.][  OK  ]"
+msgstr "[1]["
+"Ordner, Dokumente und Programme|"
+"können nicht auf dem Desktop|"
+"abgelegt werden.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
