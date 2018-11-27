@@ -74,15 +74,36 @@ po/LINGUAS      }   bug translate (invoked by the Makefile)
 po file         }--------------> translated C source file
 C source file   }
 
+Note that many text strings are maintained in resource files and
+dynamically converted to C code during the make process by specialised
+resource decompilers, so those decompilers must be run before invoking
+bug.
+
 
 Who does what
 =============
 
 The translator for language 'xx' owns po/xx.po. The translator edits it,
-adding translations (initially all translations are empty). It is the
-translator's responsibility to update the po-file regularly to make sure
-no translation is missing. "update" here means: generate po/messages.pot
-using bug xgettext, and then do bug update po/xx.po. This is a manual task.
+adding translations (initially all translations are empty).
+
+The EmuTOS administrator is responsible for requesting translations,
+although translators who have write access to the repository may do their
+translations at any time.  To avoid translating text that may be changed
+again before a release, translations are normally deferred until a release
+is planned.
+
+The process is as follows:
+1. For each language xx, the administrator does:
+    make bugready
+    ./bug update po/xx.po
+   ("make bugready" runs the resource decompilers and then "./bug xgettext")
+2. At the end of each xx.po file are the untranslated strings.  The
+   administrator cuts/pastes these to text files which are sent to the
+   translators.
+3. When each translation is received, the administrator inserts the
+   translated strings into the appropriate po file; for neatness, this
+   should be done so that the sequence of messages in xx.po matches the
+   sequence in messages.pot.
 
 To build EmuTOS for multiple languages, a C source file containing the
 translation hashes are needed. This file, langs.c, is output by bug make.
