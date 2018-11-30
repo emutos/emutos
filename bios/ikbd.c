@@ -830,18 +830,18 @@ void ikbd_writew(WORD w)
     ikbd_writeb(LOBYTE(w));
 }
 
-/* Read a byte from the IKBD.
+/* Read a byte from the IKBD, with a timeout in msec.
  * This must not be used when interrupts are enabled.
  */
-static UBYTE ikbd_readb(void)
+static UBYTE ikbd_readb(WORD timeout)
 {
 #if CONF_WITH_IKBD_ACIA
-    unsigned int i;
+    WORD i;
 
     /* We have to use a timeout to avoid waiting forever
-     * if the keyboard is unplugged. The standard value is 300 ms.
+     * if the keyboard is unplugged.
      */
-    for (i = 0; i < 300; i++)
+    for (i = 0; i < timeout; i++)
     {
         if (ikbd_acia.ctrl & ACIA_RDRF)
             return ikbd_acia.data;
@@ -853,6 +853,60 @@ static UBYTE ikbd_readb(void)
 #else
     return 0; /* bogus value */
 #endif
+}
+
+/*
+ * reset the IKBD
+ *
+ * According to Atari documentation, the IKBD answers to the Reset command
+ * with a version byte when the reset is complete.  At one time we just
+ * waited for a byte before sending further commands.  However, if we are
+ * rebooting because of Ctrl+Alt+Del, and we keep Ctrl+Alt+Del held down,
+ * a real IKBD transmits the following within about 100msec of the reset
+ * command (info courtesy Christian Zietz):
+ *  0x9d    Ctrl released
+ *  0xf1    version byte
+ *  0x1d    Ctrl pressed
+ *  0x38    Alt pressed
+ *  0x53    Del pressed
+ * As a result, EmuTOS sees another reboot request, and will reboot
+ * continually while the keys are held down.  Atari TOS does not have this
+ * problem, because it just delays for approx 312msec after the reset and
+ * does not see the additional keys.
+ *
+ * It is difficult to do exactly the same as Atari TOS, because the only
+ * timing available on all systems at this point is the loop counter, and
+ * this is not yet calibrated.  If the delay is too short, we may see the
+ * spurious bytes; if the delay is too long, it not only slows down the
+ * boot process, it may also cause problems with IKBD replacement hardware.
+ * For example, the QWERTYX hardware will not respond if there is too great
+ * a delay between the reset and data from the OS (the 'Set date' command).
+ *
+ * The following code is supposed to handle all this ...
+ */
+static void ikbd_reset(void)
+{
+    UBYTE version;
+
+    ikbd_writew(0x8001);            /* reset */
+
+    /* first, wait for the version byte */
+    while(1)
+    {
+        version = ikbd_readb(300);  /* 'standard' 300msec timeout */
+        if (version == 0)           /* timeout, we give up */
+            return;
+
+        if ((version&0xf0) == 0xf0) /* version byte, usually 0xf1 */
+        {
+            KDEBUG(("ikbd_version = 0x%02x\n", version));
+            break;
+        }
+    }
+
+    /* eat any pending keyboard bytes */
+    while(ikbd_readb(5))    /* timeout long enough for pending data */
+        ;
 }
 
 /*
@@ -890,48 +944,7 @@ void kbd_init(void)
 #endif
 
     /* initialize the IKBD */
-    ikbd_writew(0x8001);        /* Reset */
-
-    /* According to Atari documentation, the IKBD answers to the Reset
-     * command with a version byte when the reset is complete.  So we
-     * used to just wait for a byte before sending further commands.
-     * However, if we are rebooting because of Ctrl+Alt+Del, and we keep
-     * Ctrl+Alt+Del held down, a real IKBD transmits the following within
-     * about 100msec of the reset command (info courtesy Christian Zietz):
-     *  0x9d    Ctrl released
-     *  0xf1    version byte
-     *  0x1d    Ctrl pressed
-     *  0x38    Alt pressed
-     *  0x53    Del pressed
-     * As a result, EmuTOS sees another reboot request, and will reboot
-     * continually while the keys are held down.  Atari TOS does not have
-     * this problem, because it just delays for approx 312msec after the
-     * reset.
-     *
-     * It would be simplest to do exactly the same; however, this is
-     * difficult because the only timing available on all systems at
-     * this point is the loop counter, and this is not yet calibrated so
-     * may be too large by a factor of two (see delay.c).
-     *
-     * So we now combine the approaches: first, we wait for the version
-     * byte, then we delay an extra 50msec.  As long as we don't see the
-     * 'Ctrl pressed' byte we should be ok.
-     */
-    while(1)
-    {
-        int n;
-        UBYTE ikbd_version = ikbd_readb();
-
-        if (ikbd_version == 0)              /* timeout */
-            break;
-        if ((ikbd_version&0xf0) == 0xf0)    /* version byte, usually 0xf1 */
-        {
-            KDEBUG(("ikbd_version = 0x%02x\n", ikbd_version));
-            for (n = 0; n < 50; n++)
-                delay_loop(loopcount_1_msec);
-            break;
-        }
-    }
+    ikbd_reset();
 
     /* initialize the key repeat stuff */
     kb_ticks = 0;
