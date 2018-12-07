@@ -841,7 +841,7 @@ LONG flopver(WORD *buf, LONG filler, WORD dev,
     density_ok = (finfo[dev].drive_type==DD_DRIVE) ? TRUE : FALSE;
 
     for (i = 0; i < count; i++, sect++) {
-        for (retry = 0; retry < IO_RETRIES; retry++) {
+        for (retry = 0; retry < IO_RETRIES; ) {
             set_fdc_reg(FDC_SR, sect);
             set_dma_addr(diskbuf);
             fdc_start_dma_read(1);
@@ -855,9 +855,10 @@ LONG flopver(WORD *buf, LONG filler, WORD dev,
             if ((err == ESECNF) && !density_ok) {   /* density _may_ be wrong */
                 switch_density(dev);
                 density_ok = TRUE;
-                retry = 0;              /* allow retries after density switch */
-                err = 0;
+                retry = 0;              /* reset retry count after density switch */
+                continue;
             }
+            retry++;
         }
         if (err) {
             *bad++ = sect ? sect : -1;
@@ -1123,7 +1124,7 @@ static WORD flopio(UBYTE *userbuf, WORD rw, WORD dev,
             flush_data_cache(tmpbuf, SECTOR_SIZE);
         }
 
-        for (retry = 0; retry < IO_RETRIES; retry++) {
+        for (retry = 0; retry < IO_RETRIES; ) {
             set_fdc_reg(FDC_SR, sect);
             set_dma_addr(iobufptr);
             if (rw == RW_READ) {
@@ -1143,9 +1144,10 @@ static WORD flopio(UBYTE *userbuf, WORD rw, WORD dev,
             if ((err == ESECNF) && !density_ok) {   /* density _may_ be wrong */
                 switch_density(dev);
                 density_ok = TRUE;
-                retry = 0;              /* allow retries after density switch */
-                err = 0;
+                retry = 0;              /* reset retry count after density switch */
+                continue;
             }
+            retry++;
         }
         /* If there was an error, don't read any more sectors */
         if (err)
