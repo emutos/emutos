@@ -383,6 +383,10 @@ msgid "  Shutdown        ^Q"
 msgstr "  Выключить             ^Q"
 
 #: desk/desk_rsc.c
+msgid "  Show as icons"
+msgstr "  Показать как иконки"
+
+#: desk/desk_rsc.c
 msgid "  Show as text"
 msgstr "  Показать как текст"
 
@@ -775,10 +779,6 @@ msgid "%ld bytes used in %d items."
 msgstr "%ld байт используется в %d объектах."
 
 #: desk/desk_rsc.c
-msgid "  Show as icons"
-msgstr "  Показать как иконки"
-
-#: desk/desk_rsc.c
 msgid "FILE INFORMATION"
 msgstr "ИНФОРМАЦИЯ О ФАЙЛЕ"
 
@@ -904,6 +904,7 @@ msgstr "[2]["
 "попробуйте другое имя,|"
 "или отмените.][Отмена|Попробовать]"
 
+#: desk/desk_rsc.c
 msgid "[1]["
 "Drive %c: does not have|"
 "enough room for this|"

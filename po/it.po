@@ -383,6 +383,10 @@ msgid "  Shutdown        ^Q"
 msgstr "  Arresta sistema   ^Q"
 
 #: desk/desk_rsc.c
+msgid "  Show as icons"
+msgstr "  Formato icona"
+
+#: desk/desk_rsc.c
 msgid "  Show as text"
 msgstr "  Formato testo"
 
@@ -773,10 +777,6 @@ msgstr "Colore:"
 #: desk/desk_rsc.c
 msgid "%ld bytes used in %d items."
 msgstr "%ld byte usati in %d oggetti."
-
-#: desk/desk_rsc.c
-msgid "  Show as icons"
-msgstr "  Formato icona"
 
 #: desk/desk_rsc.c
 msgid "FILE INFORMATION"

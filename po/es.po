@@ -386,6 +386,10 @@ msgid "  Shutdown        ^Q"
 msgstr "  Cerrar sistema        ^Q"
 
 #: desk/desk_rsc.c
+msgid "  Show as icons"
+msgstr "  Mostrar como iconos"
+
+#: desk/desk_rsc.c
 msgid "  Show as text"
 msgstr "  Mostrar como texto"
 
@@ -742,6 +746,18 @@ msgid "FORMAT FLOPPY DISKETTE"
 msgstr "FORMATEAR DISQUETE"
 
 #: desk/desk_rsc.c
+msgid "Single sided"
+msgstr "Simple Cara"
+
+#: desk/desk_rsc.c
+msgid "Double sided"
+msgstr "Doble Cara"
+
+#: desk/desk_rsc.c
+msgid "High density"
+msgstr "Alta densidad"
+
+#: desk/desk_rsc.c
 msgid "SET BACKGROUND"
 msgstr "FIJAR FONDO"
 
@@ -762,24 +778,8 @@ msgid "Color:"
 msgstr "Color:"
 
 #: desk/desk_rsc.c
-msgid "Single sided"
-msgstr "Simple Cara"
-
-#: desk/desk_rsc.c
-msgid "Double sided"
-msgstr "Doble Cara"
-
-#: desk/desk_rsc.c
-msgid "High density"
-msgstr "Alta densidad"
-
-#: desk/desk_rsc.c
 msgid "%ld bytes used in %d items."
 msgstr "%ld Bytes en %d elementos."
-
-#: desk/desk_rsc.c
-msgid "  Show as icons"
-msgstr "  Mostrar como iconos"
 
 #: desk/desk_rsc.c
 msgid "FILE INFORMATION"

@@ -382,6 +382,10 @@ msgid "  Shutdown        ^Q"
 msgstr "  Vypnout         ^Q"
 
 #: desk/desk_rsc.c
+msgid "  Show as icons"
+msgstr "  Jako ikony"
+
+#: desk/desk_rsc.c
 msgid "  Show as text"
 msgstr "  Jako text"
 
@@ -774,10 +778,6 @@ msgid "%ld bytes used in %d items."
 msgstr "%ld bytù v %d polo¾kách."
 
 #: desk/desk_rsc.c
-msgid "  Show as icons"
-msgstr "  Jako ikony"
-
-#: desk/desk_rsc.c
 msgid "FILE INFORMATION"
 msgstr "INFORMACE O SOUBORU"
 
@@ -899,7 +899,6 @@ msgstr "[2]["
 "Nelze vytvoøit adresáø|"
 "s tímto jménem. Prosím zadejte|"
 "jiné jméno, nebo zru¹te.][Zru¹it|Znovu]"
-
 
 #: desk/desk_rsc.c
 msgid "[1]["

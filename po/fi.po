@@ -382,6 +382,10 @@ msgid "  Shutdown        ^Q"
 msgstr "  Pysäytä systeemi    ^Q"
 
 #: desk/desk_rsc.c
+msgid "  Show as icons"
+msgstr "  Ikoneina"
+
+#: desk/desk_rsc.c
 msgid "  Show as text"
 msgstr "  Tekstinä"
 
@@ -734,6 +738,22 @@ msgid "Monochrome only"
 msgstr "Vain mustavalkoinen"
 
 #: desk/desk_rsc.c
+msgid "FORMAT FLOPPY DISKETTE"
+msgstr "ALUSTA LEVYKE"
+
+#: desk/desk_rsc.c
+msgid "Single sided"
+msgstr "Yksipuolinen"
+
+#: desk/desk_rsc.c
+msgid "Double sided"
+msgstr "Kaksipuolinen"
+
+#: desk/desk_rsc.c
+msgid "High density"
+msgstr "Korkeatiheyksinen"
+
+#: desk/desk_rsc.c
 msgid "SET BACKGROUND"
 msgstr "ASETA TAUSTA"
 
@@ -754,28 +774,8 @@ msgid "Color:"
 msgstr "Väri:"
 
 #: desk/desk_rsc.c
-msgid "FORMAT FLOPPY DISKETTE"
-msgstr "ALUSTA LEVYKE"
-
-#: desk/desk_rsc.c
-msgid "Single sided"
-msgstr "Yksipuolinen"
-
-#: desk/desk_rsc.c
-msgid "Double sided"
-msgstr "Kaksipuolinen"
-
-#: desk/desk_rsc.c
-msgid "High density"
-msgstr "Korkeatiheyksinen"
-
-#: desk/desk_rsc.c
 msgid "%ld bytes used in %d items."
 msgstr "%ld tavua käytetty %d tiedostoon."
-
-#: desk/desk_rsc.c
-msgid "  Show as icons"
-msgstr "  Ikoneina"
 
 #: desk/desk_rsc.c
 msgid "FILE INFORMATION"
@@ -901,6 +901,7 @@ msgstr "[2]["
 "ei voi luoda. Kokeile muuta|"
 "nimeä.][Kumoa|Uudestaan]"
 
+#: desk/desk_rsc.c
 msgid "[1]["
 "Drive %c: does not have|"
 "enough room for this|"

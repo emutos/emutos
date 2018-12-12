@@ -387,6 +387,10 @@ msgid "  Shutdown        ^Q"
 msgstr "  Stoppe System    ^Q"
 
 #: desk/desk_rsc.c
+msgid "  Show as icons"
+msgstr "  Als Icons"
+
+#: desk/desk_rsc.c
 msgid "  Show as text"
 msgstr "  Als Text"
 
@@ -777,10 +781,6 @@ msgstr "Farbe:"
 #: desk/desk_rsc.c
 msgid "%ld bytes used in %d items."
 msgstr "%ld Bytes in %d Dateien."
-
-#: desk/desk_rsc.c
-msgid "  Show as icons"
-msgstr "  Als Icons"
 
 #: desk/desk_rsc.c
 msgid "FILE INFORMATION"
@@ -1434,3 +1434,4 @@ msgstr "Falsche Zahl von Parametern"
 #: cli/cmdutil.c
 msgid "error code "
 msgstr "Fehlercode "
+
