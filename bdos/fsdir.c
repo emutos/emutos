@@ -527,7 +527,7 @@ long xsfirst(char *name, int att)
 
 
 /*
- * ixsnest
+ * ixsnext - does the heavy lifting for Fsnext()
  */
 static FCB *ixsnext(DTAINFO *dt)
 {
