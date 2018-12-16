@@ -6,9 +6,9 @@ been definitively identified.  It is mainly intended to prevent these
 programs from being added to 'bugs.txt' in the future.
 
 
-Program: STOS games
--------------------
-Error: joystick and/or keyboard input doesn't work.
+Program: STOS programs
+----------------------
+Error 1: joystick and/or keyboard input doesn't work.
 
 Bug analysis:
 STOS Basic compiler routines check for input using undocumented and
@@ -16,8 +16,22 @@ TOS-specific locations.  Programs using these routines work only with
 specific TOS versions, and not with EmuTOS.
 
 Workaround:
-Use version of the game that has been fixed to work with modern TOS
+Use version of the program that has been fixed to work with modern TOS
 versions.
+
+Error 2: divide-by-zero error in vsm_height() during startup, when run
+         from the AUTO folder
+
+Bug analysis:
+STOS Basic compiler routines call VDI routines before v_opnwk() has
+been called by Atari TOS/EmuTOS.  Part of the function of v_opnwk() is
+initialisation of some key internal VDI variables.  To allow the VDI
+routines to run successfully, STOS initialises these variables, based
+on a built-in table of TOS-specific locations.  This does not work for
+EmuTOS, and the variables remain zero, causing the error.
+
+Workaround:
+Run the program from the desktop.
 
 
 Program: old game using fixed addresses
