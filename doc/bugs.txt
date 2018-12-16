@@ -8,6 +8,8 @@ AES/VDI/Line-A bugs:
   drawn pixels at top of screen in vdiline tester.
 - In "MathMaze" and "The Ultimate Minesweeper", game win and score
   dialogs leave left/bottom outline on screen when they close.
+- Dialog box at the end of Glücksrad game is missing text from
+  the dialog button (and the button width isn't correct)
 - Line-A polygons are one pixel short at both sides.  This is
   because clc_flit() function does it for VDI (where perimeter
   is drawn separately).  It is visible e.g. in "Japlish" game.
@@ -33,12 +35,18 @@ Problems that also occur in Atari TOS:
   part of the circle that joins the end segment to the previous one.
 
 Links to programs listed above:
+- Diamond Miner:
+  http://www.atarimania.com/game-atari-st-diamond-miner_31993.html
 - Escape Paint:
   http://www.pouet.net/prod.php?which=25328
 - FalcAMP:
   http://deunstg.free.fr/sct1/falcamp/
+- Glücksrad:
+  http://www.atarimania.com/game-atari-st-glucksrad-st_22001.html
 - Japlish:
   http://www.ntrautanen.fi/marko/arkisto.atari.org/sivut/menu_pelit.htm
+- Laserchess:
+  http://www.atarimania.com/game-atari-st-laserchess_31257.html
 - Minigolf (GFA):
   http://eerott.mbnet.fi/hatari/sources/minigolf.zip
 - Swing:
@@ -48,4 +56,4 @@ Links to programs listed above:
 - VDI line/text tester:
   http://eerott.mbnet.fi/hatari/programs.shtml#vditest
 
-(Links missing to: mathmaze, laserchess, diamondminer.)
+(Links missing to: mathmaze.)
