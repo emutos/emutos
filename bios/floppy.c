@@ -161,7 +161,7 @@ static void dummy_seek(void);
 #define DESELECT_TIMEOUT (5*CLOCKS_PER_SEC)     /* 5.0 seconds */
 
 /* access to dma and fdc registers */
-static WORD decode_error(void);
+static WORD decode_error(WORD writeflag);
 static WORD get_dma_status(void);
 static WORD get_fdc_reg(WORD reg);
 static void set_fdc_reg(WORD reg, WORD value);
@@ -849,7 +849,7 @@ LONG flopver(WORD *buf, LONG filler, WORD dev,
                 err = EDRVNR;           /* drive not ready */
                 break;                  /* no retry */
             }
-            err = decode_error();
+            err = decode_error(0);
             if (err == 0)
                 break;
             if ((err == ESECNF) && !density_ok) {   /* density _may_ be wrong */
@@ -1138,7 +1138,7 @@ static WORD flopio(UBYTE *userbuf, WORD rw, WORD dev,
                 err = EDRVNR;           /* drive not ready */
                 break;                  /* no retry */
             }
-            err = decode_error();
+            err = decode_error(rw);
             if ((err == 0) || (err == EWRPRO))
                 break;
             if ((err == ESECNF) && !density_ok) {   /* density _may_ be wrong */
@@ -1234,7 +1234,7 @@ static WORD flopwtrack(UBYTE *userbuf, WORD dev, WORD track, WORD side, WORD tra
     if (flopcmd(FDC_WRITETR) < 0) {     /* timeout: */
         err = EDRVNR;                   /* drive not ready */
     } else {
-        err = decode_error();
+        err = decode_error(1);
     }
 
     flopunlk();
@@ -1551,7 +1551,7 @@ static WORD flopcmd(WORD cmd)
 /*
  * decode DMA/FDC error status
  */
-static WORD decode_error(void)
+static WORD decode_error(WORD writeflag)
 {
     WORD status;
 
@@ -1562,7 +1562,7 @@ static WORD decode_error(void)
     status = get_fdc_reg(FDC_CS);
     if (status & FDC_RNF)       /* can be symptom of wrong density */
         return ESECNF;
-    if (status & FDC_WRI_PRO)
+    if (writeflag && (status & FDC_WRI_PRO))
         return EWRPRO;          /* write protect */
     if (status & FDC_CRCERR)
         return E_CRC;           /* CRC error */
