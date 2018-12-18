@@ -208,7 +208,7 @@ int i;
  */
 PRIVATE void change_res(WORD res)
 {
-#ifndef STANDALONE_CONSOLE
+#if !defined(STANDALONE_CONSOLE) && CONF_ATARI_HARDWARE
     if (res == current_res)
         return;
 
