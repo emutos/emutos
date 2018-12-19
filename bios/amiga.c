@@ -1129,6 +1129,12 @@ void amiga_floppy_init(void)
 /* Select a single floppy drive for further operation */
 static void amiga_floppy_select(WORD dev)
 {
+    if (dev != curdev)
+    {
+        /* Selecting other drive invalidates current track cache */
+        sectors_decoded = FALSE;
+    }
+
     /* Set Motor On flag. It will be taken in account on next selection. */
     CIABPRB &= ~0x80;
 
