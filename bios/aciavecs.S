@@ -458,11 +458,7 @@ action_table:
         .dc.l   kbd_status      // 1
         .dc.l   kbd_abs_mouse   // 2
         .dc.l   kbd_rel_mouse   // 3
-#ifdef CONF_WITH_IKBD_CLOCK
         .dc.l   kbd_clock       // 4
-#else
-        .dc.l   0               // 4
-#endif
         .dc.l   kbd_joys        // 5
         .dc.l   kbd_joy0        // 6
         .dc.l   kbd_joy1        // 7
@@ -475,12 +471,10 @@ kbd_abs_mouse:
 kbd_rel_mouse:
         move.l  mousevec,a1
         jra     kbd_jump_vec
-#ifdef CONF_WITH_IKBD_CLOCK
 kbd_clock:
         addq.l  #1,a0
         move.l  clockvec,a1
         jra     kbd_jump_vec
-#endif
 
 // Joystick support is special. The buffer passed to routine joyvec
 // will, in all cases, contain (package header, joystick 0, joystick 1)
