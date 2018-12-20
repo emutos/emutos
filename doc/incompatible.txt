@@ -19,19 +19,21 @@ Workaround:
 Use version of the program that has been fixed to work with modern TOS
 versions.
 
-Error 2: divide-by-zero error in vsm_height() during startup, when run
-         from the AUTO folder
+Error 2: STOS error message "Error #046, press any key" during startup.
 
 Bug analysis:
-STOS Basic compiler routines call VDI routines before v_opnwk() has
-been called by Atari TOS/EmuTOS.  Part of the function of v_opnwk() is
-initialisation of some key internal VDI variables.  To allow the VDI
-routines to run successfully, STOS initialises these variables, based
-on a built-in table of TOS-specific locations.  This does not work for
-EmuTOS, and the variables remain zero, causing the error.
+This is caused by a divide-by-zero error in vsm_height() when the
+program is run from the AUTO folder.  VDI initialisation does not occur
+until after AUTO-folder programs have been run, so if a VDI function is
+called by an AUTO-folder program, internal variables have not been
+initialised.  STOS tries to initialise these variables itself, based on
+a built-in table of TOS-specific locations.  These locations are invalid
+for EmuTOS, so the required variables remain zero, causing the error.
 
 Workaround:
-Run the program from the desktop.
+Move the program from the AUTO folder to the root of the drive, and run
+it from there.  While STOS programs will then start, most of them will
+remain unusable to to error 1 above.
 
 
 Program: old game using fixed addresses
@@ -42,20 +44,21 @@ Bug analysis:
 Several old, floppy-only games load their data into fixed memory
 addresses, which won't work when EmuTOS has loaded something else
 there.  This can be detected by tracing programs' OS calls with Hatari
-(--trace os_all) and checking the used addresses. For example, Gods
-game demo (on ST Format cover disk) overwrites itself with its game
-data because of this, and crashes.
+(--trace os_all) and checking the used addresses. For example, under
+older EmuTOS versions, the Gods game demo (from an ST Format cover disk)
+overwrote itself with its game data because of this, and crashed.
 
 Workarounds:
-Issue with Gods demo and few other games, can be worked around by
-using special high-RAM build of EmuTOS, that uses higher RAM addresses
-for loading programs and memory allocations: make 512 UNIQUE=uk
-DEF="-DSTATIC_ALT_RAM_ADDRESS=0x00080000 -DCONF_WITH_FRB=0"
+In some games this can be worked around by either using the cartridge
+version of EmuTOS (which uses less memory) or by using a custom high-RAM
+build of EmuTOS, that uses higher RAM addresses for loading programs and
+for memory allocation:
+make 512 UNIQUE=uk DEF="-DSTATIC_ALT_RAM_ADDRESS=0x00080000 -DCONF_WITH_FRB=0"
 
-However, this doesn't help with programs which also expect
-undocumented, OS internal functions and variables to be at certain
-locations. Best workaround is using a version of the game that has
-been fixed to work from HD and with modern TOS versions.
+However, this doesn't help with programs which also expect undocumented,
+OS internal functions and variables to be at certain locations.  The
+best workaround is to use a version of the game that has been fixed to
+run from HD and with modern TOS versions.
 
 
 Program: Awele v1.01
