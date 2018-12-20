@@ -383,7 +383,7 @@ _ikbdsys:
 #endif /* CONF_WITH_IKBD_ACIA */
 
 // Process a raw byte received from IKBD protocol.
-// This routine is hardware independant.
+// This routine is hardware independent.
 // The byte to process is in d0.l
         .globl  ikbdraw
 ikbdraw:

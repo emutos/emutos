@@ -121,7 +121,7 @@ WORD get_monitor_type(void);
 void screen_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *vt_rez);
 void get_pixel_size(WORD *width,WORD *height);
 
-/* hardware independant xbios routines */
+/* hardware independent xbios routines */
 
 const UBYTE *physbase(void);
 UBYTE *logbase(void);
