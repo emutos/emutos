@@ -176,6 +176,8 @@ _init_acia_vecs:
 #else
         move.l  #_clockvec,clockvec-_kbdvecs(a1)     // in bios/clock.c
 #endif
+#else
+        move.l  a0,clockvec-_kbdvecs(a1)
 #endif /* CONF_WITH_IKBD_CLOCK */
         move.l  a0,joyvec-_kbdvecs(a1)
 #if CONF_WITH_MIDI_ACIA
