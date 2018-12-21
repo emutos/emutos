@@ -50,7 +50,7 @@ dn emutos-m548x-dbug.s19
 go
 
 6) You will see the EmuTOS welcome screen.
-Press C to enter the early console.
+Press Escape to enter the early console.
 
 7) If you wait too much, the desktop will run in the background.
 Press Control+Z to return to EmuCON.

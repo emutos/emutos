@@ -15,7 +15,7 @@ https://www.nxp.com/products/no-longer-manufactured/mcf5484-lite-evaluation-kit:
 
 Prerequisites:
 Your EVB needs to boot to BaS_gcc. It is a pre-OS similar to the one found on
-the FireBee. You can download it there:
+the FireBee. You can download it there, but you will have to build it yourself:
 https://github.com/firebee-org/BaS_gcc
 Then you can flash the file m5484lite/bas.s19. Beware, after that, your EVB will
 boot straight to BaS_gcc, and dBUG will not be available anymore.
@@ -47,7 +47,7 @@ How to run EmuTOS:
 You will see a few BaS_gcc debug messages in the terminal.
 
 2) Then you will see the EmuTOS welcome screen.
-Press C to enter the early console.
+Press Escape to enter the early console.
 
 3) If you wait too much, the desktop will run in the background.
 Press Control+Z to return to EmuCON.
