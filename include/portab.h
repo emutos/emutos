@@ -114,7 +114,7 @@ typedef void (*PFVOID)(void);
  * The following ARRAY_SIZE() macro is taken from Linux kernel sources.
  *
  * Inspired from this page:
- * http://stackoverflow.com/questions/4415530/equivalents-to-msvcs-countof-in-other-compilers
+ * https://stackoverflow.com/questions/4415530/equivalents-to-msvcs-countof-in-other-compilers
  */
 
 /*
@@ -124,7 +124,7 @@ typedef void (*PFVOID)(void);
  * aren't permitted).
  *
  * Explanations there:
- * http://stackoverflow.com/questions/9229601/what-is-in-c-code
+ * https://stackoverflow.com/questions/9229601/what-is-in-c-code
  *
  * Note that the name of this macro is misleading:
  * it actually produces a compilation bug when the parameter is *not zero*
@@ -187,7 +187,7 @@ typedef BYTE *BYTEPTR_ALIAS MAY_ALIAS;
  * the case when compiling with -Wextra (a.k.a -W).
  *
  * See documentation of -Wimplicit-fallthrough
- * https://gcc.gnu.org/onlinedocs/gcc-7.1.0/gcc/Warning-Options.html#index-Wimplicit-fallthrough
+ * https://gcc.gnu.org/onlinedocs/gcc-7.4.0/gcc/Warning-Options.html#index-Wimplicit-fallthrough
  * https://developers.redhat.com/blog/2017/03/10/wimplicit-fallthrough-in-gcc-7/
  *
  * Special comments such as -fallthrough can be put just before a switch label

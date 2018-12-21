@@ -23,7 +23,7 @@ emuicon.def - definition file for the above
 
 Additional information on debugging EmuTOS and its software compatibility
 is included with Hatari:
-http://hg.tuxfamily.org/mercurialroot/hatari/hatari/raw-file/tip/doc/emutos.txt
+https://hg.tuxfamily.org/mercurialroot/hatari/hatari/raw-file/tip/doc/emutos.txt
 
 The default language is English.
 Other supported languages are:

@@ -7,7 +7,7 @@
 # commit is not an ancestor of the last commit, so it is not present in the
 # cloned repository. And also, the range contains unrelated commits.
 # https://docs.travis-ci.com/user/environment-variables/
-# https://git-scm.com/book/tr/v2/Git-Tools-Revision-Selection
+# https://git-scm.com/book/en/v2/Git-Tools-Revision-Selection
 # https://github.com/travis-ci/travis-ci/issues/4596
 #
 # The solution is to use double-dot syntax instead.

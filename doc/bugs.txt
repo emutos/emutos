@@ -1,7 +1,7 @@
 AES/VDI/Line-A bugs:
 - The right side of outline characters are clipped e.g. in "LaserChess",
   "Diamond miner" & "Minigolf" games, and in vditext tester:
-  http://sourceforge.net/mailarchive/message.php?msg_id=29276993
+  https://sourceforge.net/p/emutos/mailman/message/29276993/
   This is due to a bug somewhere in the ugly text_blt() assembler
   function in vdi_tblit.S.
 - Thick arcs going partly outside of screen have incorrectly

@@ -40,8 +40,8 @@
  * Before defining new ones, be sure to register them in tos.hyp:
  * http://toshyp.atari.org/en/003007.html#Cookie_2C_20_AKP
  * Note that those codes are also used in FreeMiNT/XaAES and must match:
- * https://github.com/freemint/freemint/blob/master/sys/keyboard.c
- * https://github.com/freemint/freemint/blob/master/xaaes/src.km/init.c
+ * https://github.com/freemint/freemint/blob/master/sys/keyboard.c#L93
+ * https://github.com/freemint/freemint/blob/master/xaaes/src.km/init.c#L164
  */
 #define COUNTRY_RU 19   /* Russia */
 #define COUNTRY_GR 31   /* Greece */

@@ -71,7 +71,7 @@ EMULATION AND FUTURE PLATFORMS
 
 EmuTOS and MiNT cooperate well. Both can utilize the Native Features
 (NatFeats) interface for emulators:
-    http://wiki.aranym.org/natfeats/proposal
+    https://github.com/aranym/aranym/wiki/natfeats-about
 
 EmuTOS uses this new standard interface for all the relevant native
 functions supported by an emulator on which it's running. This interface

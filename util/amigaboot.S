@@ -114,7 +114,7 @@ bootmain:
 
 // Detect Alt-RAM //////////////////////////////////////////////////////////////
 // This code is inspired from Linux bootstrap
-// http://lxr.free-electrons.com/source/arch/m68k/boot/amiga/bootstrap.c?v=2.0.40
+// http://www.cs.albany.edu/~sdc/Linux/linux-2.0/arch/m68k/boot/amiga/bootstrap.c
 
         move.l  a4,a1                       // Buffer
         adda.l  #OFFSETOF(ADR_ALTRAM_REGIONS),a1    // Alt-RAM region list

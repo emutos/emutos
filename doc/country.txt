@@ -83,7 +83,7 @@ New country check list
   - get it from tos.hyp:
     http://toshyp.atari.org/en/003007.html#Cookie_2C_20_AKP
   - or from FreeMiNT:
-    http://sparemint.atariforge.net/cgi-bin/cvsweb/freemint/sys/keyboard.c?rev=1.114&content-type=text/x-cvsweb-markup
+    https://github.com/freemint/freemint/blob/master/sys/keyboard.c#L93
   - if there is no code for your country yet, be sure to agree with tos.hyp
     and FreeMiNT people to avoid a number clash.
   - add your new entry in bios/ctrycodes.h

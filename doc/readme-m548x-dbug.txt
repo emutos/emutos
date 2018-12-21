@@ -8,10 +8,10 @@ emutos-m548x-dbug.s19 - RAM executable (English)
 Supported hardware:
 
 - M5485EVB (a.k.a. Zoom ColdFire EVB)
-http://www.nxp.com/products/microcontrollers-and-processors/more-processors/coldfire-plus-coldfire-mcus-mpus/coldfire-mpus/v4-mpu/mcf5485-evaluation-board:M5485EVB
+https://www.nxp.com/products/no-longer-manufactured/mcf5485-evaluation-board:M5485EVB
 
 - M5484LITE (a.k.a. Zoom ColdFire LITEKIT)
-http://www.nxp.com/pages/mcf5484-lite-evaluation-kit:M5484LITE
+https://www.nxp.com/products/no-longer-manufactured/mcf5484-lite-evaluation-kit:M5484LITE
 
 Prerequisites:
 On your EVB, you need Freescale's dBUG command-line tool. By default, at startup

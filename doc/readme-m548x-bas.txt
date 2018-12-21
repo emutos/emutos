@@ -8,15 +8,15 @@ emutos-m548x-bas.s19 - RAM executable (English)
 Supported hardware:
 
 - M5485EVB (a.k.a. Zoom ColdFire EVB)
-http://www.nxp.com/products/microcontrollers-and-processors/more-processors/coldfire-plus-coldfire-mcus-mpus/coldfire-mpus/v4-mpu/mcf5485-evaluation-board:M5485EVB
+https://www.nxp.com/products/no-longer-manufactured/mcf5485-evaluation-board:M5485EVB
 
 - M5484LITE (a.k.a. Zoom ColdFire LITEKIT)
-http://www.nxp.com/pages/mcf5484-lite-evaluation-kit:M5484LITE
+https://www.nxp.com/products/no-longer-manufactured/mcf5484-lite-evaluation-kit:M5484LITE
 
 Prerequisites:
 Your EVB needs to boot to BaS_gcc. It is a pre-OS similar to the one found on
 the FireBee. You can download it there:
-http://www.atariforge.org/gf/project/firebee/frs/?action=FrsReleaseBrowse&frs_package_id=19
+https://github.com/firebee-org/BaS_gcc
 Then you can flash the file m5484lite/bas.s19. Beware, after that, your EVB will
 boot straight to BaS_gcc, and dBUG will not be available anymore.
 Of course, you can always reflash dBUG afterwards.
