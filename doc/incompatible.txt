@@ -33,7 +33,7 @@ for EmuTOS, so the required variables remain zero, causing the error.
 Workaround:
 Move the program from the AUTO folder to the root of the drive, and run
 it from there.  While STOS programs will then start, most of them will
-remain unusable to to error 1 above.
+remain unusable due to error 1 above.
 
 
 Program: old game using fixed addresses
