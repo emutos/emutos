@@ -1,3 +1,62 @@
+CHANGES BETWEEN RELEASE 0.9.9.1 AND RELEASE 0.9.10
+
+Major changes:
+- AES: Avoid unnecessary redraws by AES window manager
+- AES: Fix shutdown bug in shel_write()
+- BDOS: Improve BDOS write file performance
+- BDOS: Improve BDOS sector caching algorithm
+- BDOS: Avoid unnecessary directory sector writes in BDOS
+- BDOS: Improve Fsnext() performance
+- BIOS: Add SCSI support for TT and Falcon
+- BIOS: Implement support for ET4000 graphics card
+- BIOS: Implement automatic verify for floppy writes
+- BIOS: Improve IDE data transfer speed
+- BIOS: Improve TT RAM size detection for Storm cards
+- BIOS: Fix reboot loop if Ctrl+Alt+Del held down
+- EmuCON: Allow resolution change in EmuCON
+- EmuDesk: Clean up if EmuDesk terminates abnormally
+- EmuDesk: Fix bug in EmuDesk copy function
+- EmuDesk: Fix EmuDesk out-of-sequence redraws
+- EmuDesk: Make EmuDesk menu for icon/text selection like Atari TOS
+- VDI: Improve the appearance of VDI curved lines
+
+Other changes:
+- AES: Do not set the scrap directory in appl_init()
+- AES: Do not validate the path supplied to scrp_write()
+- AES: Fix appl_tplay()
+- AES: Fix appl_trecord()
+- AES: Fix bug in setting application directory
+- AES: Fix file selector bug
+- AES: Handle SHADOWED correctly for form_center()
+- AES: Make form_center() behave like Atari TOS
+- AES: Preserve DTA address across shel_find()
+- BDOS: Increase max length of fully-qualified filename
+- BIOS: Fix bug in VT52 emulation
+- BIOS: Fix bug in rsconf handling for SCC 
+- BIOS: Fix bugs in keyboard mouse emulation
+- BIOS: Fix end-of-partition test in Rwabs()
+- BIOS: Fix screen corruption on some (Mega)STe systems
+- BIOS: Improve FAT12/FAT16/FAT32 detection
+- BIOS: Increase default keyboard auto-repeat speed
+- BIOS: Remove IDE delay on Amiga
+- BIOS: Remove unneeded delay when accessing the FDC
+- EmuDesk: Allow 'Show item' to handle multiple items
+- EmuDesk: Fix bug in EmuDesk change resolution handling
+- EmuDesk: Fix bug in EmuDesk copy process when disk is full
+- EmuDesk: Fix display bug in EmuDesk initialisation
+- EmuDesk: Fix EmuDesk mouse cursor initialisation
+- EmuDesk: Fix label bug when formatting floppy
+- EmuDesk: Fix 'name conflict' bug in copy/move folders
+- LineA: Fix bug that affected Aegis Animator
+- LineA: Implement early abort for lineA seedfill()
+- VDI: Fix bug in v_opnvwk()
+- VDI: Fix contourfill() for 8 planes
+- VDI: Fix design bug in VDI workstation creation
+- XBIOS: Fix crash if Vsetscreen() sets TrueColor mode
+- XBIOS: Improve performance of Flopver()
+- The usual source code cleanup and minor bug fixes
+
+
 CHANGES BETWEEN RELEASE 0.9.9 AND RELEASE 0.9.9.1
 
 There was only one change, to fix a major bug in EmuDesk: if a desktop
