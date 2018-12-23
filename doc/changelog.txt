@@ -32,7 +32,7 @@ Other changes:
 - AES: Preserve DTA address across shel_find()
 - BDOS: Increase max length of fully-qualified filename
 - BIOS: Fix bug in VT52 emulation
-- BIOS: Fix bug in rsconf handling for SCC 
+- BIOS: Fix bug in rsconf handling for SCC
 - BIOS: Fix bugs in keyboard mouse emulation
 - BIOS: Fix end-of-partition test in Rwabs()
 - BIOS: Fix screen corruption on some (Mega)STe systems
