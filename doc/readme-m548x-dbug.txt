@@ -17,7 +17,7 @@ Prerequisites:
 On your EVB, you need Freescale's dBUG command-line tool. By default, at startup
 the EVB boots straight to the dBUG prompt. If you lost the dBUG tool, you can
 download it there and flash it on your EVB:
-http://cache.nxp.com/files/32bit/software/app_software/M547X-8XEVB-DBBIN.zip
+https://www.nxp.com/files-static/32bit/software/app_software/M547X-8XEVB-DBBIN.zip
 
 Requirements:
 - An RS-232 connection between the EVB and a controlling computer.
