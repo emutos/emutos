@@ -3,6 +3,8 @@ This file documents the status of the individual parts of EmuTOS.
 Here is a quick list of supported emulators/hardware:
 This table should be updated regularly. When indicating failure,
 if possible add a line telling in which version it did run.
+Unless otherwise specified in 'details', systems were tested using
+a ROM version of EmuTOS.
 
   system              |  ok?  | who |   date      |  details
   --------------------+-------+-----+-------------+----------------
@@ -10,22 +12,23 @@ if possible add a line telling in which version it did run.
   ARAnyM 1.0.2        |  yes  | VRI | 17 Dec 2018 |
   Hatari v2.1.0       |  yes  | VRI | 16 Dec 2018 |
   Pacifist v0.48      |  yes  | LVL | winter 2001 |
-  STonX 0.6.7.6       |  yes  | THH | 14 Nov 2008 |
-  STonC v0.8.1        |  yes  | LVL |  9 Feb 2003 |
+  SainT v2.40         |  yes  | (1) | 10 Dec 2017 | 192k ROM only
   STeem SSE 3.9.4     |  yes  | VRI | 16 Dec 2018 |
+  STonC v0.8.1        |  yes  | LVL |  9 Feb 2003 |
+  STonX 0.6.7.6       |  yes  | THH | 14 Nov 2008 |
   TOSBox 1.10a        |   no  |  ?  |  < Sep 2002 |
   WinSTon V0.1r2      |   no  |  ?  |  < Sep 2002 |
   WinUAE 4.1.0        |  yes  | VRI | 19 Dec 2018 |
-  SainT v2.40         |  yes  | (1) | 10 Dec 2017 | 192k ROM only
   --------------------+-------+-----+-------------+----------------
   Atari & compatibles |       |     |             |
   STfm                |  yes  | (1) | 23 Nov 2017 |
-  Mega ST             |  yes  | RFB | 13 Nov 2016 | only PRG tested
+  Mega ST             |  yes  | (8) |  7 Dec 2018 | tested with PRG
   STe                 |  yes  | (1) | 23 Nov 2017 |
   Mega STe            |  yes  | (2) | 26 Jun 2004 | only RAMTOS tested
-  TT030               |  yes  | (1) | 23 Nov 2017 | SCSI not yet supported
+  TT030               |  yes  | RFB | 30 Nov 2018 | tested with PRG
   Falcon030           |  yes  | (7) | 31 Dec 2016 |
-  Falcon030 + CT60    |  yes  | RFB | 29 Nov 2018 | only PRG tested
+  Falcon030           |  yes  | RFB | 29 Nov 2018 | tested with PRG
+  Falcon030 + CT60    |  yes  | RFB | 29 Nov 2018 | tested with PRG
   Suska III-C (2K15B) |  yes  | (5) | 23 Apr 2016 |
   --------------------+-------+-----+-------------+----------------
   Other systems       |       |     |             |
@@ -43,6 +46,7 @@ if possible add a line telling in which version it did run.
   (5) reported by Markus Fröschle
   (6) reported by Flype
   (7) reported by Stefan Niestegge
+  (8) reported by Claude Labelle
 
 Now let's talk about the different subsystems, and what is implemented.
 NOTE: the information in the following table may be somewhat dated.  For
