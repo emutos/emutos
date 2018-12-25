@@ -790,6 +790,10 @@ LONG bufsize, n, rc;
         Fclose(in);
         Fclose(out);
 
+        /* if the copy failed, delete the output to avoid an incomplete file */
+        if (rc < 0L)
+            Fdelete(outname);
+
         if (delete && (rc == 0L)) { /* don't delete unless copy successful */
             message(_(" ... deleting "));
             message(inptr);
