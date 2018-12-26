@@ -400,6 +400,17 @@ static LONG blkdev_rwabs(WORD rw, UBYTE *buf, WORD cnt, WORD recnr, WORD dev, LO
     KDEBUG(("rwabs(rw=%d, buf=%p, count=%ld, recnr=%u, dev=%d, lrecnr=%ld)\n",
             rw,buf,lcount,recnr,dev,lrecnr));
 
+    /*
+     * handle special undocumented feature in the floppy-only Rwabs() handler
+     * installed by TOS: if the buffer pointer is NULL, the value in 'count'
+     * is set as the current mediachange status (expected to be 0-2).
+     * this feature is used by FastCopy III (and probably others).
+     */
+    if ((dev < NUMFLOPPIES) && (buf == NULL)) {
+        blkdev[dev].mediachange = cnt;
+        return 0L;
+    }
+
     if (recnr != -1)            /* if long offset not used */
         lrecnr = (UWORD)recnr;  /* recnr as unsigned to enable 16-bit recn */
 
