@@ -216,7 +216,7 @@ static void fix_trindex(void)
     WORD ii;
     LONG *ptreebase;
 
-    ptreebase = (LONG *)get_sub(R_TREE, rs_hdr->rsh_trindex, sizeof(LONG));
+    ptreebase = (LONG *)get_sub(0, rs_hdr->rsh_trindex, sizeof(LONG));
     rs_global->ap_ptree = (OBJECT **)ptreebase;
 
     for (ii = 0; ii < rs_hdr->rsh_ntree; ii++)
