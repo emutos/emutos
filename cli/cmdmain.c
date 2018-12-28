@@ -120,8 +120,6 @@ WORD argc, rc;
         change_res(requested_res);
     }
 
-    term_cmdedit();         /* cleanup */
-
     return 0;
 }
 

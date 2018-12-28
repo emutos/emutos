@@ -221,7 +221,6 @@ void init_screen(void);
 void insert_char(char *line,WORD pos,WORD len,char c);
 WORD read_line(char *line);
 void save_history(const char *line);
-void term_cmdedit(void);
 
 /* cmdexec.c */
 LONG exec_program(WORD argc,char **argv,char *redir_name);
