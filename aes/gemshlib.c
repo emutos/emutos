@@ -592,6 +592,7 @@ static void set_default_desktop(SHELL *psh)
 
 static WORD sh_ldapp(SHELL *psh)
 {
+    char *fname = sh_name(D.s_cmd);     /* filename portion of program */
     LONG ret;
 
     KDEBUG(("sh_ldapp: Starting %s, sh_isgem=%d\n",D.s_cmd,psh->sh_isgem));
@@ -599,7 +600,7 @@ static WORD sh_ldapp(SHELL *psh)
     {
         /* Start the ROM desktop: */
         sh_show("");        /* like TOS, we don't display a name */
-        p_nameit(rlr, sh_name(D.s_cmd));
+        p_nameit(rlr, fname);
         p_setappdir(rlr, D.s_cmd);
         if (aes_run_rom_program(deskstart))
         {
@@ -628,8 +629,8 @@ static WORD sh_ldapp(SHELL *psh)
     if (ret)
     {
         /* Run a normal application: */
-        sh_show(D.s_cmd);
-        p_nameit(rlr, sh_name(D.s_cmd));
+        sh_show(fname);
+        p_nameit(rlr, fname);
         p_setappdir(rlr, D.s_cmd);
         rlr->p_flags = 0;
 
