@@ -591,7 +591,7 @@ char id[] = "X:";
         show_line(_("  Free clusters:  "),info[0]);
         show_line(_("  Sectors/cluster:"),info[3]);
         show_line(_("  Bytes/sector:   "),info[2]);
-    }
+    } else rc = EDRIVE;
 
     return rc;
 }
