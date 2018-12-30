@@ -705,7 +705,7 @@ static void kbd_arrow(WORD type)
     WORD dummy;
     WNODE *pw;
 
-    wind_get(0, WF_TOP, &wh, &dummy, &dummy, &dummy);
+    wind_get(DESKWH, WF_TOP, &wh, &dummy, &dummy, &dummy);
     if (!wh)
         return;
 
@@ -1592,7 +1592,7 @@ WORD deskmain(void)
     gl_handle = graf_handle(&gl_wchar, &gl_hchar, &gl_wbox, &gl_hbox);
 
     /* set clip to working desk and calc full */
-    wind_get(0, WF_WXYWH, &G.g_xdesk, &G.g_ydesk, &G.g_wdesk, &G.g_hdesk);
+    wind_get(DESKWH, WF_WXYWH, &G.g_xdesk, &G.g_ydesk, &G.g_wdesk, &G.g_hdesk);
     wind_calc(1, -1, G.g_xdesk,  G.g_ydesk,  G.g_wdesk,  G.g_hdesk,
                     &G.g_xfull, &G.g_yfull, &G.g_wfull, &G.g_hfull);
 
@@ -1647,7 +1647,7 @@ WORD deskmain(void)
         nomem_alert();              /* infinite loop */
     }
 
-    desk_verify(0, FALSE);      /* initialise g_croot, g_cwin, g_wlastsel  */
+    desk_verify(DESKWH, FALSE);     /* initialise g_croot, g_cwin, g_wlastsel  */
 
     /* establish menu items */
     menutree = G.a_trees[ADMENU];
@@ -1658,7 +1658,7 @@ WORD deskmain(void)
     app_blddesk();
 
     /* Take over the desktop */
-    wind_set(0, WF_NEWDESK, G.g_screen, 1, 0);
+    wind_set(DESKWH, WF_NEWDESK, G.g_screen, 1, 0);
 
     /* establish desktop's state from info found in app_start,
      * open windows

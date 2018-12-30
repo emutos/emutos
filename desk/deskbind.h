@@ -26,6 +26,8 @@
 #include "deskfpd.h"
 #include "deskwin.h"
 
+#define DESKWH  0               /* the desktop's window handle */
+
 #define ARROW   0
 #define HGLASS  2
 #define FLATHAND 4

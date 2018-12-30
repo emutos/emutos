@@ -485,7 +485,7 @@ static void fun_full_close(WNODE *pw)
      * update current window etc
      */
     pw = win_ontop();
-    desk_verify(pw ? pw->w_id : 0, FALSE);
+    desk_verify(pw ? pw->w_id : DESKWH, FALSE);
 }
 
 
@@ -776,7 +776,7 @@ static WORD fun_file2any(WORD sobj, WNODE *wn_dest, ANODE *an_dest, FNODE *fn_de
     ANODE *an_src;
     BYTE path[MAXPATHLEN];
 
-    an_src = i_find(0, sobj, NULL, NULL);
+    an_src = i_find(DESKWH, sobj, NULL, NULL);
 
 #if CONF_WITH_DESKTOP_SHORTCUTS
     if ((an_src->a_type == AT_ISFILE) || (an_src->a_type == AT_ISFOLD))
@@ -819,7 +819,7 @@ static WORD fun_file2any(WORD sobj, WNODE *wn_dest, ANODE *an_dest, FNODE *fn_de
             G.g_screen->ob_state = 0;
         }
         pn_close(pn_src);
-        desk_clear(0);
+        desk_clear(DESKWH);
     }
 
     return okay;
@@ -841,7 +841,7 @@ static void fun_desk2win(WORD wh, WORD dobj, WORD keystate)
     sobj = 0;
     while ((sobj = win_isel(G.g_screen, DROOT, sobj)))
     {
-        an_src = i_find(0, sobj, NULL, NULL);
+        an_src = i_find(DESKWH, sobj, NULL, NULL);
         if (an_src && (an_src->a_type == AT_ISTRSH))
         {
             fun_alert(1, STNODRA2);
@@ -867,7 +867,7 @@ static void fun_desk2desk(WORD dobj, WORD keystate)
     sobj  = 0;
     while ((sobj = win_isel(G.g_screen, DROOT, sobj)))
     {
-        source = i_find(0, sobj, NULL, NULL);
+        source = i_find(DESKWH, sobj, NULL, NULL);
         if (!source || (source == target))
             continue;
         if (source->a_type == AT_ISTRSH)
@@ -974,13 +974,13 @@ void fun_del(WORD sobj)
      * if the item selected is on the desktop, there may be other desktop
      * items that have been selected; make sure we process all of them
      */
-    if ( (pa = i_find(0, sobj, NULL, NULL)) )
+    if ( (pa = i_find(DESKWH, sobj, NULL, NULL)) )
     {
         if (wants_to_delete_files() == FALSE)   /* i.e. remove icons or cancel */
             return;
         for ( ; sobj; sobj = win_isel(G.g_screen, DROOT, sobj))
         {
-            pa = i_find(0,sobj,NULL,NULL);
+            pa = i_find(DESKWH,sobj,NULL,NULL);
             if (!pa)
                 continue;
             if (pa->a_type == AT_ISDISK)
@@ -992,7 +992,7 @@ void fun_del(WORD sobj)
         }
         if (disk_found)
         {
-            desk_clear(0);
+            desk_clear(DESKWH);
             return;
         }
     }

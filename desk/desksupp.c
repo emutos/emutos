@@ -177,7 +177,7 @@ void do_wredraw(WORD w_handle, WORD xc, WORD yc, WORD wc, WORD hc)
     clip_r.g_h = hc;
 
     root = DROOT;
-    if (w_handle != 0)
+    if (w_handle != DESKWH)
     {
         pw = win_find(w_handle);
         if (pw)

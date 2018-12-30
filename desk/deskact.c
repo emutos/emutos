@@ -130,8 +130,8 @@ static void move_drvicon(OBJECT *tree, WORD root, WORD x, WORD y, WORD *pts, WOR
                     an_disk->a_yspot = tree[obj].ob_y;
                 }
             }
-            do_wredraw(0, oldx, oldy, G.g_wicon, G.g_hicon);
-            do_wredraw(0, tree[obj].ob_x, tree[obj].ob_y, G.g_wicon, G.g_hicon);
+            do_wredraw(DESKWH, oldx, oldy, G.g_wicon, G.g_hicon);
+            do_wredraw(DESKWH, tree[obj].ob_x, tree[obj].ob_y, G.g_wicon, G.g_hicon);
             ++objcnt;
         }
     }
