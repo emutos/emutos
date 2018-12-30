@@ -37,6 +37,21 @@ WORD argc, n, rc;
         rc = get_next_arg(&p,&temp);
         switch(rc) {
         case ARG_NORMAL:
+#ifdef STANDALONE_CONSOLE
+            /*
+             * we wish to avoid Atari TOS mapping drive B to drive A when
+             * we are running as a standalone console on a 1-floppy system.
+             * if we see what appears to be a drive letter of B:, we convert
+             * it to 9:, which is never valid.  TOS will reject such paths
+             * with 'invalid path'.
+             *
+             * to avoid surprises, we do not convert the args of the 'echo'
+             * builtin command.
+             */
+            if ((nflops == 1) && (temp[1] == ':') && ((temp[0]|0x20) == 'b'))
+                if (!strequal(argv[0],"echo"))
+                    temp[0] = '9';
+#endif
             if (redir_addr && (temp > redir_addr)) {
                 strcpy(redir_name,temp);
                 redir_addr = NULL;

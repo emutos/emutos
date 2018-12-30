@@ -31,6 +31,7 @@ LONG idt_value;
 UWORD screen_cols, screen_rows;
 WORD current_res, requested_res;
 WORD linewrap;
+WORD nflops;
 DTA *dta;
 char user_path[MAXPATHLEN];
 LONG redir_handle;
@@ -53,6 +54,7 @@ PRIVATE void change_res(WORD res);
 PRIVATE void close_redir(void);
 PRIVATE void create_redir(const char *name);
 PRIVATE WORD execute(WORD argc,char **argv,char *redir);
+PRIVATE WORD get_nflops(void);
 PRIVATE void strip_quotes(int argc,char **argv);
 
 extern int cmdmain(void); /* called only from cmdasm.S */
@@ -79,6 +81,8 @@ WORD argc, rc;
 #endif
 #endif  /* STANDALONE_CONSOLE */
     current_res = original_res;
+
+    nflops = Supexec(get_nflops);           /* number of floppy drives */
 
     /*
      * start up in ST medium if we are currently in ST low
@@ -248,4 +252,9 @@ int valid_res(WORD res)
 #endif  /* STANDALONE_CONSOLE */
 
     return FALSE;
+}
+
+PRIVATE WORD get_nflops(void)
+{
+    return *(WORD *)0x4a6;          /* number of floppy drives */
 }

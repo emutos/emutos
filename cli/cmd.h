@@ -204,6 +204,7 @@ extern LONG idt_value;
 extern UWORD screen_cols, screen_rows;
 extern WORD current_res, requested_res;
 extern WORD linewrap;
+extern WORD nflops;
 extern DTA *dta;
 extern LONG redir_handle;
 extern char user_path[MAXPATHLEN];     /* from PATH command */
