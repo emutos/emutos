@@ -123,6 +123,12 @@ LONG dos_rawcin(void)
 }
 
 
+void dos_conws(BYTE *string)
+{
+    gemdos(X_CONWS, string);
+}
+
+
 WORD dos_conis(void)
 {
     return gemdos(X_CONIS);

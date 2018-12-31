@@ -669,6 +669,13 @@ void gem_main(void)
     LONG    n;
     WORD    i;
 
+    /*
+     * turn off the text cursor now to prevent an irritating blinking
+     * cursor on a blank screen during resolution change.  this is most
+     * noticeable on a floppy-only system with no diskettes loaded.
+     */
+    dos_conws("\033f\033E");    /* cursor off, clear screen */
+
     /* read in first part of emudesk.inf */
     n = readfile(INF_FILE_NAME, INF_SIZE, infbuf);
 
