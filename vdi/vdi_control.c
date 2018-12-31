@@ -11,6 +11,7 @@
 
 #include "config.h"
 #include "portab.h"
+#include "gemdos.h"
 #include "../bios/lineavars.h"
 #include "vdi_defs.h"
 /* #include "kprint.h" */
@@ -342,7 +343,7 @@ void vdi_v_opnvwk(Vwk * vwk)
     /*
      * Allocate the memory for a virtual workstation
      */
-    vwk = (Vwk *)trap1(X_MALLOC, (LONG)(sizeof(Vwk)));
+    vwk = (Vwk *)dos_alloc_stram(sizeof(Vwk));
     if (vwk == NULL) {
         CONTRL[6] = 0;  /* No memory available, exit */
         return;
@@ -380,7 +381,7 @@ void vdi_v_clsvwk(Vwk * vwk)
      */
     CUR_WORK = &phys_work;
 
-    trap1(X_MFREE, vwk);
+    dos_free(vwk);
 }
 
 
@@ -451,7 +452,7 @@ void vdi_v_clswk(Vwk * vwk)
     /* close all open virtual workstations */
     for (handle = VDI_PHYS_HANDLE+1, p = vwk_ptr+handle; handle <= LAST_VDI_HANDLE; handle++, p++) {
         if (*p) {
-            trap1(X_MFREE, *p);
+            dos_free(*p);
             *p = NULL;
         }
     }

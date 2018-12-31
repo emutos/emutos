@@ -28,7 +28,7 @@ extern LONG gemdos(short, ...);
 
 #define X_TABOUT 0x02
 #define X_PRTOUT 0x05
-#define X_RAWCON 0x06
+#define X_RAWIO  0x06
 #define X_RAWCIN 0x07
 #define X_CONWS  0x09
 #define X_CONIS  0x0B
@@ -95,13 +95,6 @@ void chrout(WORD chr)
 */
 
 /*
-BYTE rawcon(WORD parm)
-{
-    return( (BYTE)gemdos(X_RAWCON, parm) );
-}
-*/
-
-/*
 void prt_chr(WORD chr)
 {
     return( gemdos(X_PRTOUT,chr) );
@@ -115,6 +108,12 @@ void dos_func(UWORD function, LONG parm)
     return( gemdos(function,parm) );
 }
 */
+
+
+LONG dos_rawio(WORD ch)
+{
+    return gemdos(X_RAWIO,ch);
+}
 
 
 LONG dos_rawcin(void)

@@ -11,6 +11,7 @@
 
 #include "config.h"
 #include "portab.h"
+#include "gemdos.h"
 #include "vdi_defs.h"
 #include "../bios/lineavars.h"
 #include "asm.h"
@@ -51,7 +52,7 @@ static void escfn1(Vwk * vwk)
  */
 static void escfn2(Vwk * vwk)
 {
-    trap1(X_CCONWS, "\033f\033E");  /* hide alpha cursor */
+    dos_conws("\033f\033E");    /* hide alpha cursor */
     vdi_v_clrwk(vwk);
 }
 
@@ -62,7 +63,7 @@ static void escfn2(Vwk * vwk)
 static void escfn3(Vwk * vwk)
 {
     vdi_v_clrwk(vwk);
-    trap1(X_CCONWS, "\033E\033e");  /* show alpha cursor */
+    dos_conws("\033E\033e");    /* show alpha cursor */
 }
 
 
@@ -71,7 +72,7 @@ static void escfn3(Vwk * vwk)
  */
 static void escfn4(Vwk * vwk)
 {
-    trap1(X_CCONWS, "\033A");
+    dos_conws("\033A");
 }
 
 
@@ -80,7 +81,7 @@ static void escfn4(Vwk * vwk)
  */
 static void escfn5(Vwk * vwk)
 {
-    trap1(X_CCONWS, "\033B");
+    dos_conws("\033B");
 }
 
 
@@ -89,7 +90,7 @@ static void escfn5(Vwk * vwk)
  */
 static void escfn6(Vwk * vwk)
 {
-    trap1(X_CCONWS, "\033C");
+    dos_conws("\033C");
 }
 
 
@@ -98,7 +99,7 @@ static void escfn6(Vwk * vwk)
  */
 static void escfn7(Vwk * vwk)
 {
-    trap1(X_CCONWS, "\033D");
+    dos_conws("\033D");
 }
 
 
@@ -107,7 +108,7 @@ static void escfn7(Vwk * vwk)
  */
 static void escfn8(Vwk * vwk)
 {
-    trap1(X_CCONWS, "\033H");
+    dos_conws("\033H");
 }
 
 
@@ -116,7 +117,7 @@ static void escfn8(Vwk * vwk)
  */
 static void escfn9(Vwk * vwk)
 {
-    trap1(X_CCONWS, "\033J");
+    dos_conws("\033J");
 }
 
 
@@ -125,7 +126,7 @@ static void escfn9(Vwk * vwk)
  */
 static void escfn10(Vwk * vwk)
 {
-    trap1(X_CCONWS, "\033K");
+    dos_conws("\033K");
 }
 
 
@@ -149,7 +150,7 @@ static void escfn11(Vwk * vwk)
     out[2] = 0x20 + INTIN[0] - 1;   /* zero-based */
     out[3] = 0x20 + INTIN[1] - 1;
     out[4] = '\0';
-    trap1(X_CCONWS, out);
+    dos_conws(out);
 }
 
 
@@ -172,7 +173,7 @@ static void escfn12(Vwk * vwk)
     chr = INTIN;                /* address of the character array */
 
     while (cnt--) {
-        trap1(X_CRAWIO, *chr++);/* raw i/o to standard input/output */
+        dos_rawio(*chr++);      /* raw i/o to standard input/output */
     }
 }
 
@@ -182,7 +183,7 @@ static void escfn12(Vwk * vwk)
  */
 static void escfn13(Vwk * vwk)
 {
-    trap1(X_CCONWS, "\033p");   /* enter reverse video */
+    dos_conws("\033p");     /* enter reverse video */
 }
 
 
@@ -191,7 +192,7 @@ static void escfn13(Vwk * vwk)
  */
 static void escfn14(Vwk * vwk)
 {
-    trap1(X_CCONWS, "\033q");   /* enter normal video */
+    dos_conws("\033q");     /* enter normal video */
 }
 
 
