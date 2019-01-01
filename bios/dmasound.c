@@ -286,7 +286,7 @@ static LONG sndcmd_falcon(WORD mode, WORD data)
        {
            data = data & 0xf0;
            val = (val & 0x0f) | data;
-           DMASOUND->channel_attenuation = val;
+           DMASOUND->channel_amplification = val;
        }
        return val & 0x0f0;
      case 3:                /* RTGAIN */
@@ -295,7 +295,7 @@ static LONG sndcmd_falcon(WORD mode, WORD data)
        {
            data = (data & 0xf0) >> 4;
            val = (val & 0xf0) | data;
-           DMASOUND->channel_attenuation = val;
+           DMASOUND->channel_amplification = val;
        }
        return (val & 0x0f) << 4;
      case 4:                /* ADDERIN */
