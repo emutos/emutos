@@ -12,7 +12,6 @@
 
 WORD pgmld(WORD handle, BYTE *pname, LONG **ldaddr);
 
-LONG dos_rawio(WORD ch);
 LONG dos_rawcin(void);
 void dos_conws(BYTE *string);
 WORD dos_conis(void);

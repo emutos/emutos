@@ -11,7 +11,6 @@
 
 #include "config.h"
 #include "portab.h"
-#include "gemdos.h"
 #include "vdi_defs.h"
 #include "../bios/lineavars.h"
 #include "asm.h"
@@ -21,6 +20,27 @@
 /* Local Constants */
 
 #define ldri_escape             19      /* last DRI escape = 19. */
+
+#define X_RAWIO  0x06
+#define X_CONWS  0x09
+
+
+/*
+ * do console raw i/o
+ */
+static LONG crawio(WORD ch)
+{
+    return trap1(X_RAWIO,ch);
+}
+
+
+/*
+ * write string to console
+ */
+static void cconws(BYTE *string)
+{
+    trap1(X_CONWS, string);
+}
 
 
 /*
@@ -52,7 +72,7 @@ static void escfn1(Vwk * vwk)
  */
 static void escfn2(Vwk * vwk)
 {
-    dos_conws("\033f\033E");    /* hide alpha cursor */
+    cconws("\033f\033E");       /* hide alpha cursor */
     vdi_v_clrwk(vwk);
 }
 
@@ -63,7 +83,7 @@ static void escfn2(Vwk * vwk)
 static void escfn3(Vwk * vwk)
 {
     vdi_v_clrwk(vwk);
-    dos_conws("\033E\033e");    /* show alpha cursor */
+    cconws("\033E\033e");       /* show alpha cursor */
 }
 
 
@@ -72,7 +92,7 @@ static void escfn3(Vwk * vwk)
  */
 static void escfn4(Vwk * vwk)
 {
-    dos_conws("\033A");
+    cconws("\033A");
 }
 
 
@@ -81,7 +101,7 @@ static void escfn4(Vwk * vwk)
  */
 static void escfn5(Vwk * vwk)
 {
-    dos_conws("\033B");
+    cconws("\033B");
 }
 
 
@@ -90,7 +110,7 @@ static void escfn5(Vwk * vwk)
  */
 static void escfn6(Vwk * vwk)
 {
-    dos_conws("\033C");
+    cconws("\033C");
 }
 
 
@@ -99,7 +119,7 @@ static void escfn6(Vwk * vwk)
  */
 static void escfn7(Vwk * vwk)
 {
-    dos_conws("\033D");
+    cconws("\033D");
 }
 
 
@@ -108,7 +128,7 @@ static void escfn7(Vwk * vwk)
  */
 static void escfn8(Vwk * vwk)
 {
-    dos_conws("\033H");
+    cconws("\033H");
 }
 
 
@@ -117,7 +137,7 @@ static void escfn8(Vwk * vwk)
  */
 static void escfn9(Vwk * vwk)
 {
-    dos_conws("\033J");
+    cconws("\033J");
 }
 
 
@@ -126,7 +146,7 @@ static void escfn9(Vwk * vwk)
  */
 static void escfn10(Vwk * vwk)
 {
-    dos_conws("\033K");
+    cconws("\033K");
 }
 
 
@@ -150,7 +170,7 @@ static void escfn11(Vwk * vwk)
     out[2] = 0x20 + INTIN[0] - 1;   /* zero-based */
     out[3] = 0x20 + INTIN[1] - 1;
     out[4] = '\0';
-    dos_conws(out);
+    cconws(out);
 }
 
 
@@ -173,7 +193,7 @@ static void escfn12(Vwk * vwk)
     chr = INTIN;                /* address of the character array */
 
     while (cnt--) {
-        dos_rawio(*chr++);      /* raw i/o to standard input/output */
+        crawio(*chr++);         /* raw i/o to standard input/output */
     }
 }
 
@@ -183,7 +203,7 @@ static void escfn12(Vwk * vwk)
  */
 static void escfn13(Vwk * vwk)
 {
-    dos_conws("\033p");     /* enter reverse video */
+    cconws("\033p");        /* enter reverse video */
 }
 
 
@@ -192,7 +212,7 @@ static void escfn13(Vwk * vwk)
  */
 static void escfn14(Vwk * vwk)
 {
-    dos_conws("\033q");     /* enter normal video */
+    cconws("\033q");        /* enter normal video */
 }
 
 

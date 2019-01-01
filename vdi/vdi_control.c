@@ -11,7 +11,6 @@
 
 #include "config.h"
 #include "portab.h"
-#include "gemdos.h"
 #include "../bios/lineavars.h"
 #include "vdi_defs.h"
 /* #include "kprint.h" */
@@ -20,6 +19,9 @@
 #include "asm.h"
 #include "string.h"
 #include "intmath.h"
+
+#define X_MALLOC 0x48
+#define X_MFREE 0x49
 
 #define FIRST_VDI_HANDLE    1
 #define LAST_VDI_HANDLE     (FIRST_VDI_HANDLE+NUM_VDI_HANDLES-1)
@@ -343,7 +345,7 @@ void vdi_v_opnvwk(Vwk * vwk)
     /*
      * Allocate the memory for a virtual workstation
      */
-    vwk = (Vwk *)dos_alloc_stram(sizeof(Vwk));
+    vwk = (Vwk *)trap1(X_MALLOC, sizeof(Vwk));
     if (vwk == NULL) {
         CONTRL[6] = 0;  /* No memory available, exit */
         return;
@@ -381,7 +383,7 @@ void vdi_v_clsvwk(Vwk * vwk)
      */
     CUR_WORK = &phys_work;
 
-    dos_free(vwk);
+    trap1(X_MFREE, vwk);
 }
 
 
@@ -452,7 +454,7 @@ void vdi_v_clswk(Vwk * vwk)
     /* close all open virtual workstations */
     for (handle = VDI_PHYS_HANDLE+1, p = vwk_ptr+handle; handle <= LAST_VDI_HANDLE; handle++, p++) {
         if (*p) {
-            dos_free(*p);
+            trap1(X_MFREE, *p);
             *p = NULL;
         }
     }

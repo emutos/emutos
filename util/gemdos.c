@@ -110,12 +110,6 @@ void dos_func(UWORD function, LONG parm)
 */
 
 
-LONG dos_rawio(WORD ch)
-{
-    return gemdos(X_RAWIO,ch);
-}
-
-
 LONG dos_rawcin(void)
 {
     return gemdos(X_RAWCIN);
