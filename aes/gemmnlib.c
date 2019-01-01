@@ -472,6 +472,8 @@ void mn_bar(OBJECT *tree, WORD showit)
         ob_actxywh(gl_mntree, THEACTIVE, &gl_ctwait.m_gr);
         gsx_sclip(&gl_rzero);
         ob_draw(gl_mntree, THEBAR, MAX_DEPTH);
+        /* ensure the separator line is drawn in black in replace mode */
+        gsx_attr(FALSE, MD_REPLACE, BLACK);
         gsx_cline(0, gl_hbox - 1, gl_width - 1, gl_hbox - 1);
     }
     else
