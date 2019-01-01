@@ -106,6 +106,7 @@ static void gr_accobs(OBJECT *tree, WORD root, WORD *pnum, WORD *pxypts)
 static void move_drvicon(OBJECT *tree, WORD root, WORD x, WORD y, WORD *pts, WORD sxoff, WORD syoff)
 {
     ANODE *an_disk;
+    GRECT t;
     WORD objcnt;
     WORD obj;
     WORD oldx;
@@ -130,8 +131,14 @@ static void move_drvicon(OBJECT *tree, WORD root, WORD x, WORD y, WORD *pts, WOR
                     an_disk->a_yspot = tree[obj].ob_y;
                 }
             }
-            do_wredraw(DESKWH, oldx, oldy, G.g_wicon, G.g_hicon);
-            do_wredraw(DESKWH, tree[obj].ob_x, tree[obj].ob_y, G.g_wicon, G.g_hicon);
+            t.g_x = oldx;
+            t.g_y = oldy;
+            t.g_w = G.g_wicon;
+            t.g_h = G.g_hicon;
+            do_wredraw(DESKWH, &t);
+            t.g_x = tree[obj].ob_x;
+            t.g_y = tree[obj].ob_y;
+            do_wredraw(DESKWH, &t);
             ++objcnt;
         }
     }
@@ -432,7 +439,7 @@ WORD act_chg(WORD wh, OBJECT *tree, WORD root, WORD obj, GRECT *pc, UWORD chgval
          */
         if (dodraw && rc_intersect(pc, &t))
         {
-            do_wredraw(wh, t.g_x, t.g_y, t.g_w, t.g_h);
+            do_wredraw(wh, &t);
         }
     }
 
@@ -494,7 +501,7 @@ void act_allchg(WORD wh, OBJECT *tree, WORD root, WORD ex_obj, GRECT *pt, GRECT 
 
     if (dodraw && rc_intersect(pc, &a))
     {
-        do_wredraw(wh, a.g_x, a.g_y, a.g_w, a.g_h);
+        do_wredraw(wh, &a);
     }
 }
 

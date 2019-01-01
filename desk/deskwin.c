@@ -473,7 +473,7 @@ static void win_blt(WNODE *pw, WORD newcv)
         }
     }
 
-    do_wredraw(pw->w_id, c.g_x, c.g_y, c.g_w, c.g_h);
+    do_wredraw(pw->w_id, &c);
 }
 
 

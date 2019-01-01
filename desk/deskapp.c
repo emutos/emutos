@@ -1210,7 +1210,7 @@ void app_blddesk(void)
 
     app_revit();    /* back to normal ... */
 
-    do_wredraw(DESKWH, G.g_xdesk, G.g_ydesk, G.g_wdesk, G.g_hdesk);
+    do_wredraw(DESKWH, (GRECT *)&G.g_xdesk);
 }
 
 

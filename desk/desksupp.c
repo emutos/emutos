@@ -165,16 +165,13 @@ void desk_verify(WORD wh, WORD changed)
 
 
 
-void do_wredraw(WORD w_handle, WORD xc, WORD yc, WORD wc, WORD hc)
+void do_wredraw(WORD w_handle, GRECT *gptr)
 {
     GRECT clip_r, t;
     WNODE *pw;
     WORD root;
 
-    clip_r.g_x = xc;
-    clip_r.g_y = yc;
-    clip_r.g_w = wc;
-    clip_r.g_h = hc;
+    clip_r = *gptr;
 
     root = DROOT;
     if (w_handle != DESKWH)

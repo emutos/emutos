@@ -971,8 +971,7 @@ WORD hndl_msg(void)
         menu = TRUE;
         if (G.g_rmsg[3])
         {
-            do_wredraw(G.g_rmsg[3], G.g_rmsg[4], G.g_rmsg[5],
-                            G.g_rmsg[6], G.g_rmsg[7]);
+            do_wredraw(G.g_rmsg[3], (GRECT *)&G.g_rmsg[4]);
         }
         break;
     case WM_TOPPED:

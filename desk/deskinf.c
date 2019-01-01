@@ -887,7 +887,7 @@ BOOL inf_backgrounds(void)
         {
             G.g_patcol[index].desktop = curdesk & 0xff;
             G.g_screen[DROOT].ob_spec = curdesk;
-            do_wredraw(DESKWH, G.g_xdesk, G.g_ydesk, G.g_wdesk, G.g_hdesk);
+            do_wredraw(DESKWH, (GRECT *)&G.g_xdesk);
         }
 
         /* check for window background change */
