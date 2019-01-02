@@ -12,6 +12,7 @@
 
 #include "asmdefs.h"
 
+#define EXTENDED_PALETTE (CONF_WITH_VIDEL || CONF_WITH_TT_SHIFTER)
 
                 .bss
 
@@ -40,6 +41,7 @@
                 .globl  _sav_cur_y
 
                 .globl  _mouse_cursor_save
+                .globl  _ext_mouse_cursor_save
 
                 .globl  _tim_addr
                 .globl  _tim_chain
@@ -338,3 +340,26 @@ _SCRPT2:        .ds.w   1               // large buffer base offset
 _TEXTBG:        .ds.w   1               // text background color
 _COPYTRAN:      .ds.w   1               // Flag for Copy-raster-form (<>0 = Transparent)
 _SEEDABORT:     .ds.l   1               // Address of Routine for testing break out of lineA contourfill function
+
+// ===========================================================================
+// ==== The following line-a variables are NOT documented by Atari.  However,
+// ==== the offsets seem to be stable in all TOS releases from 3.00 up, and
+// ==== NVDI 5.03 expects that at least some of them are present.  The source
+// ==== code for MVDI (the MagiC VDI written by the authors of NVDI) also
+// ==== references them.
+// ==== The names are partly an EmuTOS invention, and partly stolen from MVDI.
+// ===========================================================================
+#if EXTENDED_PALETTE
+                .ds.b   1500
+_COLBIT4:       .ds.w   1       // these 4 variables are referenced by NVDI 5.03
+_COLBIT5:       .ds.w   1       // we do not use them (yet?)
+_COLBIT6:       .ds.w   1
+_COLBIT7:       .ds.w   1
+_ext_mouse_cursor_save:         // covers the following five items; note that
+                                // this area is only used when v_planes == 8
+_ext_save_len:  .ds.w   1           // 1630 height of saved form
+_ext_save_addr: .ds.l   1           // 1632 screen addr of saved form
+_ext_save_stat: .ds.b   1           // 1636 save status
+                .ds.b   1
+_ext_save_area: .ds.l   128         // 1638 form save area
+#endif

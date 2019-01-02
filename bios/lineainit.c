@@ -17,18 +17,14 @@
 
 #define DBG_LINEA 0
 
+#define EXTENDED_PALETTE (CONF_WITH_VIDEL || CONF_WITH_TT_SHIFTER)
+
 /* Precomputed value of log2(8/v_planes).
  * To get the address of a pixel x in a scan line, use the formula:
  * (x&0xfff0)>>shift_offset[v_planes]
  * Only the indexes 1, 2, 4 and 8 are meaningful.
  */
 const BYTE shift_offset[9] = {0, 3, 2, 0, 1, 0, 0, 0, 0};
-
-/*
- * mouse cursor save areas
- */
-extern MCS mouse_cursor_save;       /* in linea variable area */
-static MCS ext_mouse_cursor_save;   /* use for v_planes > 4 */
 
 MCS *mcs_ptr;   /* ptr to current mouse cursor save area, based on v_planes */
 
@@ -44,7 +40,11 @@ void linea_init(void)
     v_lin_wr = V_REZ_HZ / 8 * v_planes;     /* bytes per line */
     BYTES_LIN = v_lin_wr;       /* I think BYTES_LIN = v_lin_wr (PES) */
 
+#if EXTENDED_PALETTE
     mcs_ptr = (v_planes <= 4) ? &mouse_cursor_save : &ext_mouse_cursor_save;
+#else
+    mcs_ptr = &mouse_cursor_save;
+#endif
 
     /*
      * this is a convenient place to update the workstation xres/yres which
