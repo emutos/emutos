@@ -151,6 +151,7 @@ WORD sh_write(WORD doex, WORD isgem, WORD isover, const BYTE *pcmd, const BYTE *
     case SHW_NOEXEC:    /* exit to desktop */
         strcpy(D.s_cmd, DEF_DESKTOP);
         psh->sh_doexec = doex;
+        psh->sh_dodef = TRUE;
         psh->sh_isdef = TRUE;
         psh->sh_isgem = TRUE;
         break;
