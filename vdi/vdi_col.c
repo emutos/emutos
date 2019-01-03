@@ -25,7 +25,15 @@
 #define MAXCOLOURS  16
 #endif
 
+/*
+ * the following lineA variables contain the VDI color palette entries.
+ * REQ_COL contains the first 16 entries; req_col2 contains entries
+ * 16-255 (only applicable for 8-plane resolutions).  Note that the
+ * location of req_col2 is not documented by Atari, but is derived from
+ * disassembly of TOS ROMs, and source code for MagiC's VDI.
+ */
 extern WORD REQ_COL[16][3];     /* in lineavars.S */
+extern WORD req_col2[240][3];
 
 /* Some color mapping tables */
 WORD MAP_COL[MAXCOLOURS];       /* maps vdi pen -> hardware register */
@@ -39,13 +47,6 @@ static const WORD MAP_COL_ROM[] =
  */
 #define STE_MONO_FUDGE_FACTOR   0x43
 #define ST_MONO_FUDGE_FACTOR    0x8e
-
-#if EXTENDED_PALETTE
-/* req_col2 contains the VDI color palette entries 16 - 255 for vq_color().
- * To stay compatible with the line-a variables, only entries > 16 are
- * stored in this array, the first 16 entries are stored in REQ_COL */
-static WORD req_col2[240][3];
-#endif
 
 /* Initial color palettes */
 static const WORD st_palette[16][3] =

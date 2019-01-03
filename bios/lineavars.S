@@ -74,6 +74,7 @@
                 .globl  _HIDE_CNT
                 .globl  _MOUSE_BT
                 .globl  _REQ_COL
+                .globl  _req_col2
                 .globl  _SIZ_TAB
                 .globl  _TERM_CH
                 .globl  _chc_mode
@@ -350,7 +351,9 @@ _SEEDABORT:     .ds.l   1               // Address of Routine for testing break 
 // ==== The names are partly an EmuTOS invention, and partly stolen from MVDI.
 // ===========================================================================
 #if EXTENDED_PALETTE
-                .ds.b   1500
+                .ds.b   52
+_req_col2:      .ds.w   720     // [240][3] words for saving color palette
+                .ds.b   8
 _COLBIT4:       .ds.w   1       // these 4 variables are referenced by NVDI 5.03
 _COLBIT5:       .ds.w   1       // we do not use them (yet?)
 _COLBIT6:       .ds.w   1
