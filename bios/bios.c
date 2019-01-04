@@ -24,6 +24,7 @@
 #include "biosext.h"
 #include "bios.h"
 #include "dos.h"
+#include "dta.h"
 #include "pd.h"
 #include "gemerror.h"
 #include "kprint.h"
@@ -538,14 +539,7 @@ static void run_auto_program(const char* filename)
 
 static void autoexec(void)
 {
-    struct {
-        BYTE reserved[21];
-        BYTE attr;
-        WORD time;
-        WORD date;
-        LONG size;
-        BYTE name[14];
-    } dta;
+    DTA dta;
     WORD err;
 
     /* check if the user does not want to run AUTO programs */
@@ -561,14 +555,14 @@ static void autoexec(void)
     err = trap1( 0x4e, "\\AUTO\\*.PRG", 7);  /* Fsfirst */
     while(err == 0) {
 #ifdef TARGET_PRG
-        if (!strncmp(dta.name, "EMUTOS", 6))
+        if (!strncmp(dta.d_fname, "EMUTOS", 6))
         {
-            KDEBUG(("Skipping %s from AUTO folder\n", dta.name));
+            KDEBUG(("Skipping %s from AUTO folder\n", dta.d_fname));
         }
         else
 #endif
         {
-            run_auto_program(dta.name);
+            run_auto_program(dta.d_fname);
 
             /* Setdta. BetaDOS corrupted the AUTO load if the Setdta
              * not repeated here */
