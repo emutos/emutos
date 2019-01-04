@@ -43,7 +43,7 @@
 
 #define TT_DUOCHROME_INVERT 0x0002      /* inversion bit in TT h/w palette reg 0 */
 
-/* hardware dependant xbios routines */
+/* hardware-dependent xbios routines */
 
 WORD esetshift(WORD mode);
 WORD egetshift(void);
@@ -54,7 +54,7 @@ WORD egetpalette(WORD index,WORD count,UWORD *rgb);
 WORD esetgray(WORD mode);
 WORD esetsmear(WORD mode);
 
-/* pallette color definitions */
+/* palette color definitions */
 
 #define RGB_BLACK     0x0000            /* ST(e) palette */
 #define RGB_BLUE      0x000f
@@ -73,7 +73,7 @@ WORD esetsmear(WORD mode);
 #define RGB_LTYELLOW  0x0ff3
 #define RGB_WHITE     0x0fff
 
-#define TTRGB_BLACK     0x0000          /* TT Palette */
+#define TTRGB_BLACK     0x0000          /* TT palette */
 #define TTRGB_BLUE      0x000f
 #define TTRGB_GREEN     0x00f0
 #define TTRGB_CYAN      0x00ff
@@ -121,8 +121,7 @@ WORD get_monitor_type(void);
 void screen_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *vt_rez);
 void get_pixel_size(WORD *width,WORD *height);
 
-/* hardware independent xbios routines */
-
+/* hardware-independent xbios routines */
 const UBYTE *physbase(void);
 UBYTE *logbase(void);
 WORD getrez(void);
