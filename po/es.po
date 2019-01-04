@@ -1153,7 +1153,7 @@ msgid "res for screen resolution (0,1)[ST] (0,1,4,7)[TT];"
 msgstr "res para la resolución de pantalla (0,1)[ST] (0,1,4,7)[TT];"
 
 #: cli/cmdint.c
-msgid "delay/rate for the keyboard;"
+msgid "delay/rate for the keyboard"
 msgstr "retraso/velocidad para el teclado"
 
 #: cli/cmdint.c

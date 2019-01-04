@@ -1147,8 +1147,8 @@ msgid "res for screen resolution (0,1)[ST] (0,1,4,7)[TT];"
 msgstr "res per risoluzione schermo (0,1)[ST] (0,1,4,7)[TT];"
 
 #: cli/cmdint.c
-msgid "delay/rate for the keyboard;"
-msgstr "ritardo/ripetizione tastiera;"
+msgid "delay/rate for the keyboard"
+msgstr "ritardo/ripetizione tastiera"
 
 #: cli/cmdint.c
 msgid "line height (8,16) for the display"
