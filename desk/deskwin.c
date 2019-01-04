@@ -613,7 +613,7 @@ WORD win_isel(OBJECT olist[], WORD root, WORD curr)
 
 
 /*
- *  Set the name and information lines of a particular window
+ *  Update the name line for a window
  */
 void win_sname(WNODE *pw)
 {
