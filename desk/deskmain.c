@@ -660,7 +660,6 @@ static WORD hndl_button(WORD clicks, WORD mx, WORD my, WORD button, WORD keystat
 
         pw = win_find(wh);
         win_sinfo(pw, TRUE);
-        wind_set(wh, WF_INFO, pw->w_info, 0, 0);
     }
     else
     {

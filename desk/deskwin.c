@@ -674,4 +674,5 @@ void win_sinfo(WNODE *pwin, BOOL check_selected)
 
     strlencpy(G.g_1text, G.a_alert);
     sprintf(pwin->w_info, G.g_1text, select_size, select_count);
+    wind_set(pwin->w_id, WF_INFO, pwin->w_info, 0, 0);
 }
