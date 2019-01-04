@@ -126,6 +126,7 @@ static long XHInqDev2(UWORD drv, UWORD *major, UWORD *minor, ULONG *start,
         partid[0] = blkdev[drv].id[0];
         partid[1] = blkdev[drv].id[1];
         partid[2] = blkdev[drv].id[2];
+        partid[3] = 0;
     }
 
    return E_OK;
