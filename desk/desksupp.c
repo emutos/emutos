@@ -1117,7 +1117,7 @@ WORD do_info(WORD curr)
                 }
 
                 pf = &fn;
-                memcpy(&pf->f_junk, &dta->d_reserved[20], 23);
+                memcpy(&pf->f_attr, &dta->d_attrib, 23);
                 strcpy(pathname, pa->a_pdata);
                 strcpy(filename_start(pathname),"*.*");
                 pathptr = pathname;

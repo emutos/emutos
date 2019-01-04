@@ -282,7 +282,7 @@ WORD pn_active(PNODE *pn, BOOL include_folders)
 #endif
         if (G.g_wdta.d_fname[0] == '.') /* skip "." & ".." entries */
             continue;
-        memcpy(&fn->f_junk, &G.g_wdta.d_reserved[20], 23);
+        memcpy(&fn->f_attr, &G.g_wdta.d_attrib, 23);
         fn->f_seq = count++;
         size += fn->f_size;
         prev->f_next = fn;      /* link fnodes */
