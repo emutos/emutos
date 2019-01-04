@@ -150,7 +150,7 @@ static void rebuild_window(WNODE *pwin)
 
     pn_active(&pwin->w_pnode, TRUE);
     desk_verify(pwin->w_id, TRUE);
-    win_sinfo(pwin);
+    win_sinfo(pwin, FALSE);
     wind_set(pwin->w_id, WF_INFO, pwin->w_info, 0, 0);
     wind_get_grect(pwin->w_id, WF_WXYWH, &gr);
     fun_msg(WM_REDRAW, pwin->w_id, gr.g_x, gr.g_y, gr.g_w, gr.g_h);

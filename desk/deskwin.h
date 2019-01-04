@@ -72,10 +72,10 @@ struct _windnode
         BYTE            w_name[LEN_ZPATH+2];    /* allow for leading & trailing spaces */
 /*
  * the following array must be large enough to hold the sprintf-formatted
- * output of the longest translated version of the STINFOST resource item.
+ * output of the longest translated version of the STINFOST/STINFST2 resource item.
  * as of december 2014, this is 51 bytes for the Greek-language version.
  */
-        BYTE            w_info[60];
+        BYTE            w_info[72];
 };
 
 
@@ -96,6 +96,6 @@ void win_bdall(void);
 void win_shwall(void);
 WORD win_isel(OBJECT olist[], WORD root, WORD curr);
 void win_sname(WNODE *pw);
-void win_sinfo(WNODE *pwin);
+void win_sinfo(WNODE *pwin, BOOL check_selected);
 
 #endif  /* _DESKWIN_H */

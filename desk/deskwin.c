@@ -631,14 +631,47 @@ void win_sname(WNODE *pw)
 }
 
 
-/* Added for DESKTOP v1.2 */
-void win_sinfo(WNODE *pwin)
+/*
+ * Set the info line for a window
+ *
+ * Optionally, count selected items
+ */
+void win_sinfo(WNODE *pwin, BOOL check_selected)
 {
     PNODE *pn;
+    FNODE *fn;
+    WORD i, select_count = 0;
+    LONG select_size = 0L;
 
     pn = &pwin->w_pnode;
-    rsrc_gaddr_rom(R_STRING, STINFOST, (void **)&G.a_alert);
-    strlencpy(G.g_1text, G.a_alert);
 
-    sprintf(pwin->w_info, G.g_1text, pn->p_size, pn->p_count);
+    if (check_selected)
+    {
+        /* for each item, check if the corresponding object is selected */
+        for (i = 0, fn = pn->p_fbase; i < pn->p_count; i++, fn++)
+        {
+            if (G.g_screen[fn->f_obid].ob_state & SELECTED)
+            {
+                select_count++;
+                select_size += fn->f_size;
+            }
+        }
+    }
+
+    /*
+     * choose the appropriate string
+     */
+    if (select_count)
+    {
+        rsrc_gaddr_rom(R_STRING, STINFST2, (void **)&G.a_alert);
+    }
+    else
+    {
+        rsrc_gaddr_rom(R_STRING, STINFOST, (void **)&G.a_alert);
+        select_count = pn->p_count;     /* so we can use common code below */
+        select_size = pn->p_size;
+    }
+
+    strlencpy(G.g_1text, G.a_alert);
+    sprintf(pwin->w_info, G.g_1text, select_size, select_count);
 }

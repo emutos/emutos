@@ -132,6 +132,12 @@ void desk_clear(WORD wh)
 
     /* clear all selections */
     act_allchg(wh, G.g_screen, root, 0, &gl_rfull, &c, SELECTED, FALSE, TRUE);
+
+    if (wh)                     /* not the desktop */
+    {
+        win_sinfo(pw, TRUE);    /* may need to update info line */
+        wind_set(wh, WF_INFO, pw->w_info, 0, 0);
+    }
 }
 
 
@@ -397,7 +403,7 @@ WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon,
 
     /* set new name and info lines for window */
     win_sname(pw);
-    win_sinfo(pw);
+    win_sinfo(pw, FALSE);
     wind_set(pw->w_id, WF_NAME, pw->w_name, 0, 0);
     wind_set(pw->w_id, WF_INFO, pw->w_info, 0, 0);
 
