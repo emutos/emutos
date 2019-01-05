@@ -871,7 +871,7 @@ WORD do_dopen(WORD curr)
         if (!do_diropen(pw, TRUE, curr, path, (GRECT *)&G.g_screen[pw->w_root].ob_x, TRUE))
         {
             win_free(pw);
-            act_chg(0, G.g_screen, DROOT, curr, &gl_rfull, FALSE, TRUE);
+            act_chg(DESKWH, G.g_screen, DROOT, curr, &gl_rfull, FALSE, TRUE);
         }
     }
     else
