@@ -161,14 +161,26 @@ WORD i;
 
 /*
  *  save a line in the history
+ *  skip whitespace at start, and empty or duplicate lines
  */
 void save_history(const char *line)
 {
+    WORD old;
     if (history_num < 0)
         return;
 
-    strcpy(history_line[history_num],line);
+    while (*line == ' ')
+        line++;
+    if (!*line)
+        return;
 
+    old = history_num - 1;
+    if (old < 0)
+        old = HISTORY_SIZE - 1;
+    if (strncasecmp(history_line[old],line,MAX_LINE_SIZE) == 0)
+        return;
+
+    strcpy(history_line[history_num],line);
     if (++history_num >= HISTORY_SIZE)
         history_num = 0;
 }
