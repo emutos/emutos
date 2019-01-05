@@ -14,7 +14,7 @@
 WORD act_chg(WORD wh, OBJECT *tree, WORD root, WORD obj, GRECT *pc,
              WORD dochg, WORD dodraw);
 void act_allchg(WORD wh, OBJECT *tree, WORD root, WORD ex_obj, GRECT *pt, GRECT *pc,
-                WORD chgvalue, WORD dochg, WORD dodraw);
+                WORD dochg);
 void act_bsclick(WORD wh, OBJECT *tree, WORD root, WORD mx, WORD my, WORD keystate,
                  GRECT *pc, WORD dclick);
 WORD act_bdown(WORD wh, OBJECT *tree, WORD root, WORD *in_mx, WORD *in_my,

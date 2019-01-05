@@ -444,11 +444,11 @@ WORD act_chg(WORD wh, OBJECT *tree, WORD root, WORD obj, GRECT *pc,
 
 
 /*
- *  Change state of all objects partially intersecting the given rectangle
- *  but allow one object to be excluded
+ *  Change the SELECTED bit of all objects partially intersecting the
+ *  given rectangle, allowing one object to be excluded
  */
 void act_allchg(WORD wh, OBJECT *tree, WORD root, WORD ex_obj, GRECT *pt, GRECT *pc,
-                WORD chgvalue, WORD dochg, WORD dodraw)
+                WORD dochg)
 {
     WORD obj, newstate;
     WORD offx, offy;
@@ -477,9 +477,9 @@ void act_allchg(WORD wh, OBJECT *tree, WORD root, WORD ex_obj, GRECT *pt, GRECT 
                 /* make change */
                 newstate = tree[obj].ob_state;
                 if (dochg)
-                    newstate |= chgvalue;
+                    newstate |= SELECTED;
                 else
-                    newstate &= ~chgvalue;
+                    newstate &= ~SELECTED;
                 if (newstate != tree[obj].ob_state)
                 {
                     tree[obj].ob_state= newstate;
@@ -495,7 +495,7 @@ void act_allchg(WORD wh, OBJECT *tree, WORD root, WORD ex_obj, GRECT *pt, GRECT 
         }
     }
 
-    if (dodraw && rc_intersect(pc, &a))
+    if (rc_intersect(pc, &a))
     {
         do_wredraw(wh, &a);
     }
@@ -528,8 +528,7 @@ void act_bsclick(WORD wh, OBJECT *tree, WORD root, WORD mx, WORD my, WORD keysta
 
     if ((obj == root) || (obj == NIL))
     {
-        act_allchg(wh, tree, root, obj, &gl_rfull, pc,
-                    SELECTED, FALSE, TRUE);
+        act_allchg(wh, tree, root, obj, &gl_rfull, pc, FALSE);
     }
     else
     {
@@ -538,8 +537,7 @@ void act_bsclick(WORD wh, OBJECT *tree, WORD root, WORD mx, WORD my, WORD keysta
         {
             if (dclick || !(state & SELECTED))
             {
-                act_allchg(wh, tree, root, obj, &gl_rfull, pc,
-                            SELECTED, FALSE, TRUE);
+                act_allchg(wh, tree, root, obj, &gl_rfull, pc, FALSE);
                 state |= SELECTED;
             }
         }
@@ -587,7 +585,7 @@ WORD act_bdown(WORD wh, OBJECT *tree, WORD root, WORD *in_mx, WORD *in_my,
             l_mh = -l_mh;
         }
         r_set(&m, l_mx, l_my, l_mw, l_mh);
-        act_allchg(wh, tree, root, sobj, &m, pc, SELECTED, TRUE, TRUE);
+        act_allchg(wh, tree, root, sobj, &m, pc, TRUE);
     }
     else
     {       /* drag icon(s) */

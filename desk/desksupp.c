@@ -131,7 +131,7 @@ void desk_clear(WORD wh)
     wind_get_grect(wh, WF_WXYWH, &c);
 
     /* clear all selections */
-    act_allchg(wh, G.g_screen, root, 0, &gl_rfull, &c, SELECTED, FALSE, TRUE);
+    act_allchg(wh, G.g_screen, root, 0, &gl_rfull, &c, FALSE);
 
     if (wh)                     /* not the desktop */
     {
