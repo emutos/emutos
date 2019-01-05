@@ -301,8 +301,7 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc,
         {
             if (curr_sel)
             {
-                act_chg(curr_wh, curr_tree, curr_root, curr_sel, pc,
-                        SELECTED, FALSE, TRUE, TRUE);
+                act_chg(curr_wh, curr_tree, curr_root, curr_sel, pc, FALSE, TRUE);
                 curr_wh = 0x0;
                 curr_tree = NULL;
                 curr_root = 0x0;
@@ -315,8 +314,7 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc,
         {
             if (curr_sel)
             {
-                act_chg(curr_wh, curr_tree, curr_root, curr_sel, pc,
-                        SELECTED, FALSE, TRUE, TRUE);
+                act_chg(curr_wh, curr_tree, curr_root, curr_sel, pc, FALSE, TRUE);
                 curr_wh = 0x0;
                 curr_tree = NULL;
                 curr_root = 0x0;
@@ -333,15 +331,13 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc,
                 curr_tree = tree;
                 curr_root = root;
                 curr_sel = *pdobj;
-                act_chg(curr_wh, curr_tree, curr_root, curr_sel, pc,
-                        SELECTED, TRUE, TRUE, TRUE);
+                act_chg(curr_wh, curr_tree, curr_root, curr_sel, pc, TRUE, TRUE);
             }
         }
     } while (down);
 
     if (curr_sel)
-        act_chg(curr_wh, curr_tree, curr_root, curr_sel, pc,
-                SELECTED, FALSE, TRUE, TRUE);
+        act_chg(curr_wh, curr_tree, curr_root, curr_sel, pc, FALSE, TRUE);
 
     *pdulx = l_mx;              /* pass back dest. x,y  */
     *pduly = l_my;
@@ -397,25 +393,25 @@ static WORD act_chkobj(OBJECT *tree, WORD root, WORD obj, WORD mx, WORD my, WORD
 
 
 /*
- *  Change a single object's state
+ *  Change the SELECTED bit in a single object
  *
  *  Usage of (some) arguments:
  *      OBJECT *tree            * tree that holds item
  *      WORD   obj              * object to affect
- *      UWORD  chgvalue         * bit value to change
  *      WORD   dochg            * set or reset value
  *      WORD   dodraw           * draw resulting change
- *      WORD   chkdisabled      * only if item enabled
+ *
+ *  We do not change the state if the item is disabled
  */
-WORD act_chg(WORD wh, OBJECT *tree, WORD root, WORD obj, GRECT *pc, UWORD chgvalue,
-             WORD dochg, WORD dodraw, WORD chkdisabled)
+WORD act_chg(WORD wh, OBJECT *tree, WORD root, WORD obj, GRECT *pc,
+             WORD dochg, WORD dodraw)
 {
     UWORD curr_state;
     UWORD old_state;
     GRECT t;
 
     old_state = curr_state = tree[obj].ob_state;
-    if (chkdisabled && (curr_state & DISABLED))
+    if (curr_state & DISABLED)
         return FALSE;
 
     /* get object's extent */
@@ -425,9 +421,9 @@ WORD act_chg(WORD wh, OBJECT *tree, WORD root, WORD obj, GRECT *pc, UWORD chgval
 
     /* make change */
     if (dochg)
-        curr_state |= chgvalue;
+        curr_state |= SELECTED;
     else
-        curr_state &= ~chgvalue;
+        curr_state &= ~SELECTED;
 
     /* get it updated on screen */
     if (old_state != curr_state)
@@ -551,8 +547,7 @@ void act_bsclick(WORD wh, OBJECT *tree, WORD root, WORD mx, WORD my, WORD keysta
         {
             state ^= SELECTED;
         }
-        act_chg(wh, tree, root, obj, pc, SELECTED,
-                state & SELECTED, TRUE, TRUE);
+        act_chg(wh, tree, root, obj, pc, state & SELECTED, TRUE);
     }
 }
 
