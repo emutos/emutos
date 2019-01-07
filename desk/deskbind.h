@@ -68,6 +68,10 @@
  *  G_USERDEF   Used for text display in a desktop window.
  *              Needs a USERBLK.
  *
+ * It is also convenient to store a pointer to the FNODE of the file that
+ * the screen object represents, so that we can mark a file/folder as
+ * selected when we select the object.
+ * 
  * The following typedefs allow us to conveniently use a single array
  * for the additional data, thus saving some RAM space over the previous
  * approach.
@@ -78,10 +82,13 @@ typedef struct
     ICONBLK block;      /* the ICONBLK for this object */
 } ICONINFO;
 
-typedef union
+typedef struct
 {
-    ICONINFO icon;      /* relevant when the corresponding object is a G_ICON */
-    USERBLK udef;       /* relevant when the corresponding object is a G_USERDEF */
+    FNODE *fnptr;       /* ptr to FNODE corresponding to screen object (if applicable) */
+    union {
+        ICONINFO icon;  /* relevant when the corresponding object is a G_ICON */
+        USERBLK udef;   /* relevant when the corresponding object is a G_USERDEF */
+    } u;
 } SCREENINFO;
 
 

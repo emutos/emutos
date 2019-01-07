@@ -52,7 +52,8 @@ typedef struct _filenode FNODE;
 struct _filenode
 {
     FNODE *f_next;
-    BYTE  f_junk;           /* to align on even boundaries  */
+    BYTE  f_selected;       /* if TRUE, file/folder has been selected */
+                            /* note: we arrange to align f_attr on an odd boundary */
     BYTE  f_attr;               /* NOTE: f_attr thru f_name[]  */
     UWORD f_time;               /*  MUST be the same size & in */
     UWORD f_date;               /*   the same sequence as the  */

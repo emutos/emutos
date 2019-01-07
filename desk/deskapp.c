@@ -1198,8 +1198,8 @@ void app_blddesk(void)
             pob->ob_flags = NONE;
             pob->ob_type = G_ICON;
             si = &G.g_screeninfo[obid];
-            si->icon.index = icon;
-            pic = &si->icon.block;
+            si->u.icon.index = icon;
+            pic = &si->u.icon.block;
             pob->ob_spec = (LONG)pic;
             memcpy(pic, &G.g_iblist[icon], sizeof(ICONBLK));
             pic->ib_xicon = ((G.g_wicon - pic->ib_wicon) / 2);

@@ -365,7 +365,7 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
         switch(G.g_iview)
         {
         case V_TEXT:
-            ub = &si->udef;
+            ub = &si->u.udef;
             obj->ob_type = G_USERDEF;
             obj->ob_spec = (LONG)ub;
             ub->ub_code = dr_code;
@@ -373,7 +373,7 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
             win_icalc(pstart, pwin);
             break;
         case V_ICON:
-            ib = &si->icon.block;
+            ib = &si->u.icon.block;
             obj->ob_type = G_ICON;
             win_icalc(pstart, pwin);
             anode = pstart->f_pa;
@@ -387,7 +387,7 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
                 else
                     i_index = (pstart->f_isap) ? IG_APPL : IG_DOCU;
             }
-            si->icon.index = i_index;
+            si->u.icon.index = i_index;
             obj->ob_spec = (LONG)ib;
             memcpy(ib, &G.g_iblist[i_index], sizeof(ICONBLK));
             ib->ib_ptext = pstart->f_name;
