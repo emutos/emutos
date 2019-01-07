@@ -112,7 +112,7 @@ void desk_clear(WORD wh)
     GRECT c;
     WORD root = DROOT;
 
-    if (wh)         /* not the desktop */
+    if (wh != DESKWH)       /* not the desktop */
     {
         pw = win_find(wh);  /* find its tree of items */
         if (pw)
@@ -125,7 +125,7 @@ void desk_clear(WORD wh)
      * the latter case, we force the handle to 0 anyway for safety.
      */
     if (root == DROOT)
-        wh = 0;
+        wh = DESKWH;
 
     /* get current size */
     wind_get_grect(wh, WF_WXYWH, &c);
@@ -135,7 +135,7 @@ void desk_clear(WORD wh)
         pn_clear(pw);
     act_allchg(wh, G.g_screen, root, 0, &gl_rfull, &c, FALSE);
 
-    if (wh)                     /* not the desktop */
+    if (wh != DESKWH)           /* not the desktop */
     {
         win_sinfo(pw, TRUE);    /* may need to update info line */
     }

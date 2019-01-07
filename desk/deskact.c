@@ -290,7 +290,7 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc,
                 tree = G.g_screen;
                 root = pw->w_root;
             }
-            else dst_wh = 0;
+            else dst_wh = DESKWH;
         }
 
         *pdobj = gr_obfind(tree, root, l_mx, l_my);
@@ -642,7 +642,7 @@ WORD act_bdown(WORD wh, OBJECT *tree, WORD root, WORD *in_mx, WORD *in_my,
                 }
                 else
                 {
-                    if (wh == 0 && (*pdobj == root)) /* Dragging from desktop */
+                    if ((wh == DESKWH) && (*pdobj == root)) /* Dragging from desktop */
                     {
                         move_drvicon(tree, root, dulx, duly, G.g_xyobpts, offx, offy);
                         dst_wh = NIL;
