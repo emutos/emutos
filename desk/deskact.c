@@ -406,6 +406,7 @@ static WORD act_chkobj(OBJECT *tree, WORD root, WORD obj, WORD mx, WORD my, WORD
 WORD act_chg(WORD wh, OBJECT *tree, WORD root, WORD obj, GRECT *pc,
              WORD dochg, WORD dodraw)
 {
+    FNODE *fn;
     UWORD curr_state;
     UWORD old_state;
     GRECT t;
@@ -424,6 +425,14 @@ WORD act_chg(WORD wh, OBJECT *tree, WORD root, WORD obj, GRECT *pc,
         curr_state |= SELECTED;
     else
         curr_state &= ~SELECTED;
+
+    /*
+     * NOTE: here we assume tree == G.g_screen, so obj is a valid index
+     * into G.g_screeninfo[]
+     */
+    fn = G.g_screeninfo[obj].fnptr;
+    if (fn)
+        fn->f_selected = curr_state & SELECTED;
 
     /* get it updated on screen */
     if (old_state != curr_state)
@@ -446,10 +455,14 @@ WORD act_chg(WORD wh, OBJECT *tree, WORD root, WORD obj, GRECT *pc,
 /*
  *  Change the SELECTED bit of all objects partially intersecting the
  *  given rectangle, allowing one object to be excluded
+ *
+ *  If setting the SELECTED bit, we also set the selected indicator in
+ *  the corresponding FNODE
  */
 void act_allchg(WORD wh, OBJECT *tree, WORD root, WORD ex_obj, GRECT *pt, GRECT *pc,
                 WORD dochg)
 {
+    FNODE *fn;
     WORD obj, newstate;
     WORD offx, offy;
     GRECT o, a, w;
@@ -474,6 +487,15 @@ void act_allchg(WORD wh, OBJECT *tree, WORD root, WORD ex_obj, GRECT *pt, GRECT 
             if (rc_intersect(&w, &o) &&
                 (root != act_chkobj(tree,root,obj,o.g_x,o.g_y,o.g_w,o.g_h)))
             {
+                /*
+                 * mark FNODE iff we're setting the SELECTED bit
+                 *
+                 * NOTE: here we assume tree == G.g_screen, so obj is a valid index
+                 * into G.g_screeninfo[]
+                 */
+                fn = G.g_screeninfo[obj].fnptr;
+                if (fn && dochg)
+                    fn->f_selected = TRUE;
                 /* make change */
                 newstate = tree[obj].ob_state;
                 if (dochg)
@@ -516,6 +538,7 @@ void act_allchg(WORD wh, OBJECT *tree, WORD root, WORD ex_obj, GRECT *pt, GRECT 
 void act_bsclick(WORD wh, OBJECT *tree, WORD root, WORD mx, WORD my, WORD keystate,
                  GRECT *pc, WORD dclick)
 {
+    WNODE *pw;
     WORD obj;
     WORD shifted;
     WORD state;
@@ -526,8 +549,11 @@ void act_bsclick(WORD wh, OBJECT *tree, WORD root, WORD mx, WORD my, WORD keysta
     if ((obj == root) && shifted)   /* shift-click within window does nothing */
         return;
 
+    pw = win_find(wh);
+
     if ((obj == root) || (obj == NIL))
     {
+        pn_clear(pw);               /* deselect all objects */
         act_allchg(wh, tree, root, obj, &gl_rfull, pc, FALSE);
     }
     else
@@ -537,6 +563,7 @@ void act_bsclick(WORD wh, OBJECT *tree, WORD root, WORD mx, WORD my, WORD keysta
         {
             if (dclick || !(state & SELECTED))
             {
+                pn_clear(pw);       /* deselect all objects */
                 act_allchg(wh, tree, root, obj, &gl_rfull, pc, FALSE);
                 state |= SELECTED;
             }

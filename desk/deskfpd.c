@@ -282,6 +282,7 @@ WORD pn_active(PNODE *pn, BOOL include_folders)
 #endif
         if (G.g_wdta.d_fname[0] == '.') /* skip "." & ".." entries */
             continue;
+        fn->f_selected = FALSE;
         memcpy(&fn->f_attr, &G.g_wdta.d_attrib, 23);
         fn->f_seq = count++;
         size += fn->f_size;
@@ -304,4 +305,16 @@ WORD pn_active(PNODE *pn, BOOL include_folders)
     }
 
     return ((ret==ENMFIL) || (ret==EFILNF)) ? 0 : ret;
+}
+
+
+/*
+ *  Clear the selection flag in all FNODES chained from the PNODE in the specified WNODE
+ */
+void pn_clear(WNODE *pwin)
+{
+    FNODE *pf;
+
+    for (pf = pwin->w_pnode.p_flist; pf; pf = pf->f_next)
+        pf->f_selected = FALSE;
 }

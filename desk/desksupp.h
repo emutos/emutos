@@ -16,6 +16,7 @@
 void build_root_path(BYTE *path, WORD drive);
 void deselect_all(OBJECT *tree);
 void desk_clear(WORD wh);
+void desk_clear_all(void);
 void desk_verify(WORD wh, WORD changed);
 void do_wredraw(WORD w_handle, GRECT *pt);
 void do_xyfix(WORD *px, WORD *py);

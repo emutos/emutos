@@ -83,6 +83,7 @@ typedef struct _windnode WNODE; /* see deskwin.h */
 
 /* Prototypes: */
 FNODE *fpd_ofind(FNODE *pf, WORD obj);
+void pn_clear(WNODE *pwin);
 void pn_close(PNODE *thepath);
 PNODE *pn_open(BYTE *pathname, WNODE *pw);
 FNODE *pn_sort(PNODE *pn);

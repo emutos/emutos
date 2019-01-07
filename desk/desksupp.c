@@ -131,12 +131,27 @@ void desk_clear(WORD wh)
     wind_get_grect(wh, WF_WXYWH, &c);
 
     /* clear all selections */
+    if (wh != DESKWH)
+        pn_clear(pw);
     act_allchg(wh, G.g_screen, root, 0, &gl_rfull, &c, FALSE);
 
     if (wh)                     /* not the desktop */
     {
         win_sinfo(pw, TRUE);    /* may need to update info line */
     }
+}
+
+
+/*
+ *  Clear out selections for all desktop windows
+ */
+void desk_clear_all(void)
+{
+    WNODE *pw;
+
+    for (pw = G.g_wfirst; pw; pw = pw->w_next)
+        if (pw->w_id)
+            desk_clear(pw->w_id);
 }
 
 

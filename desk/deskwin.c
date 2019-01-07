@@ -356,12 +356,15 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
 
         /* remember it          */
         pstart->f_obid = obid;
+        si = &G.g_screeninfo[obid];
+        si->fnptr = pstart;
 
         /* build object */
         obj = &G.g_screen[obid];
         obj->ob_state = INITIAL_ICON_STATE;
+        if (pstart->f_selected)
+            obj->ob_state |= SELECTED;
         obj->ob_flags = 0x00;
-        si = &G.g_screeninfo[obid];
         switch(G.g_iview)
         {
         case V_TEXT:
@@ -647,10 +650,10 @@ void win_sinfo(WNODE *pwin, BOOL check_selected)
 
     if (check_selected)
     {
-        /* for each item, check if the corresponding object is selected */
+        /* count selected FNODEs */
         for (i = 0, fn = pn->p_fbase; i < pn->p_count; i++, fn++)
         {
-            if (G.g_screen[fn->f_obid].ob_state & SELECTED)
+            if (fn->f_selected)
             {
                 select_count++;
                 select_size += fn->f_size;

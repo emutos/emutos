@@ -634,7 +634,7 @@ static WORD hndl_button(WORD clicks, WORD mx, WORD my, WORD button, WORD keystat
     wh = wind_find(mx, my);
 
     if (wh != G.g_cwin)
-        desk_clear(G.g_cwin);
+        desk_clear_all();
 
     desk_verify(wh, FALSE);
 
@@ -954,20 +954,6 @@ WORD hndl_msg(void)
 
     switch(G.g_rmsg[0])
     {
-    case WM_TOPPED:
-    case WM_CLOSED:
-    case WM_FULLED:
-    case WM_ARROWED:
-    case WM_VSLID:
-    case WM_HSLID:
-    case WM_SIZED:
-    case WM_MOVED:
-        desk_clear(G.g_cwin);
-        break;
-    }
-
-    switch(G.g_rmsg[0])
-    {
     case MN_SELECTED:
         desk_verify(G.g_wlastsel, FALSE);
         done = hndl_menu(G.g_rmsg[3], G.g_rmsg[4]);
@@ -980,6 +966,7 @@ WORD hndl_msg(void)
         }
         break;
     case WM_TOPPED:
+        desk_clear(G.g_cwin);
         pw = win_find(G.g_rmsg[3]);
         if (pw)
         {
