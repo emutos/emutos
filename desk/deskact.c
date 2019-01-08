@@ -432,7 +432,7 @@ WORD act_chg(WORD wh, OBJECT *tree, WORD root, WORD obj, GRECT *pc,
      */
     fn = G.g_screeninfo[obj].fnptr;
     if (fn)
-        fn->f_selected = curr_state & SELECTED;
+        fn->f_selected = (curr_state & SELECTED) ? TRUE : FALSE;
 
     /* get it updated on screen */
     if (old_state != curr_state)
