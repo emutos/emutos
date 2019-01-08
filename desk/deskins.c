@@ -217,37 +217,86 @@ static WORD install_drive(WORD drive)
 
 
 /*
- *  Install devices: installs an icon on the desktop for all
- *  devices that do not currently have an icon
+ *  Remove ANODE for one drive
  *
- *  Returns count of drives successfully installed
+ *  Returns -1 for error (couldn't find ANODE)
  */
-WORD ins_devices(void)
+static WORD remove_drive(WORD drive)
 {
-    ULONG drivebits, mask;
-    WORD drive, count;
     ANODE *pa;
+    WORD letter = drive + 'A';
 
-    drivebits = dos_sdrv(dos_gdrv());   /* all current devices */
-
-    /*
-     * scan ANODEs and zero out the bits for installed drives
-     */
     for (pa = G.g_ahead; pa; pa = pa->a_next)
-        if (pa->a_type == AT_ISDISK)
-            drivebits &= ~(1L<<(pa->a_letter-'A'));
-
-    for (drive = 0, mask = 1, count = 0; drive < BLKDEVNUM; drive++, mask <<= 1)
     {
-        if (drivebits&mask)
+        if (pa->a_type == AT_ISDISK)
         {
-            if (install_drive(drive) < 0)
-                break;
-            count++;
+            if (pa->a_letter == letter)
+            {
+                app_free(pa);
+                return 0;
+            }
         }
     }
 
-    return count;
+    return -1;
+}
+
+
+/*
+ *  Install devices: removes desktop icons for non-existent devices, then
+ *  installs an icon on the desktop for existing devices without an icon
+ *
+ *  Returns TRUE iff any changes were made, else FALSE
+ */
+BOOL ins_devices(void)
+{
+    ULONG current, installed, drivebits, mask;
+    WORD drive;
+    BOOL change = FALSE;
+    ANODE *pa;
+
+    current = dos_sdrv(dos_gdrv());     /* all current devices */
+
+    /*
+     * scan ANODEs and build bitmask of installed devices
+     */
+    for (pa = G.g_ahead, installed = 0UL; pa; pa = pa->a_next)
+        if (pa->a_type == AT_ISDISK)
+            installed |= 1L << (pa->a_letter - 'A');
+
+    KDEBUG(("current=0x%08lx, installed=0x%08lx\n",current,installed));
+
+    /*
+     * remove icons for non-existent devices
+     */
+    drivebits = installed & ~current;
+
+    for (drive = 0, mask = 1L; drive < BLKDEVNUM; drive++, mask <<= 1)
+    {
+        if (drivebits & mask)
+        {
+            KDEBUG(("removing ANODE for device %c\n",drive+'A'));
+            if (remove_drive(drive) == 0)
+                change = TRUE;
+        }
+    }
+
+    /*
+     * install icons for devices without one
+     */
+    drivebits = current & ~installed;
+
+    for (drive = 0, mask = 1L; drive < BLKDEVNUM; drive++, mask <<= 1)
+    {
+        if (drivebits & mask)
+        {
+            KDEBUG(("installing ANODE for device %c\n",drive+'A'));
+            if (install_drive(drive) == 0)
+                change = TRUE;
+        }
+    }
+
+    return change;
 }
 
 

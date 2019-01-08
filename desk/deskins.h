@@ -13,7 +13,7 @@
 BYTE *filename_start(BYTE *path);
 WORD is_installed(ANODE *pa);
 WORD ins_app(WORD curr);
-WORD ins_devices(void);
+BOOL ins_devices(void);
 WORD ins_icon(WORD sobj);
 void ins_shortcut(WORD wh, WORD mx, WORD my);
 WORD rmv_icon(WORD sobj);
