@@ -48,7 +48,7 @@ BOOL wants_to_delete_files(void);
  */
 static __inline__ BOOL fnode_is_selected(FNODE *fn)
 {
-    if ((fn->f_obid != NIL) && (G.g_screen[fn->f_obid].ob_state & SELECTED))
+    if (fn->f_selected)
         return TRUE;
 
     return FALSE;

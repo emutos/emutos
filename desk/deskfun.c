@@ -798,14 +798,9 @@ static WORD fun_file2any(WORD sobj, WNODE *wn_dest, ANODE *an_dest, FNODE *fn_de
 
         if (pn_src->p_flist)
         {
+            /* mark all files as selected */
             for (bp8 = pn_src->p_flist; bp8; bp8 = bp8->f_next)
-                bp8->f_obid = 0;
-            /*
-             * if we do not set the root's SELECTED attribute, dir_op()
-             * (which is called by fun_file2win() & fun_file2desk())
-             * will not process any of these files ...
-             */
-            G.g_screen->ob_state = SELECTED;
+                bp8->f_selected = TRUE;
             if (wn_dest)    /* we are dragging a desktop icon to a window */
             {
                 okay = fun_file2win(pn_src, wn_dest->w_pnode.p_spec, an_dest, fn_dest);
@@ -815,7 +810,6 @@ static WORD fun_file2any(WORD sobj, WNODE *wn_dest, ANODE *an_dest, FNODE *fn_de
                 icontype = an_src ? an_src->a_type : -1;
                 okay = fun_file2desk(pn_src, icontype, an_dest, dobj, keystate);
             }
-            G.g_screen->ob_state = 0;
         }
         pn_close(pn_src);
         desk_clear(DESKWH);
@@ -943,16 +937,9 @@ static WORD delete_disk(ANODE *pa)
     pn_active(pn, TRUE);
     if (pn->p_flist)
     {
-        /*
-         * point all the FNODEs to the root, then set the root's
-         * SELECTED attribute; this is a cheap way of making dir_op()
-         * (called by fun_op()) think all the files are selected
-         */
         for (fn = pn->p_flist; fn; fn = fn->f_next)
-            fn->f_obid = 0;
-        G.g_screen->ob_state = SELECTED;
+            fn->f_selected = TRUE;
         ret = fun_op(OP_DELETE, pa->a_type, pn, NULL);
-        G.g_screen->ob_state = 0;   /* reset for safety */
     }
     pn_close(pn);
     graf_mouse(ARROW, NULL);
