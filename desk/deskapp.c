@@ -1198,6 +1198,7 @@ void app_blddesk(void)
             pob->ob_flags = NONE;
             pob->ob_type = G_ICON;
             si = &G.g_screeninfo[obid];
+            si->fnptr = NULL;
             si->u.icon.index = icon;
             pic = &si->u.icon.block;
             pob->ob_spec = (LONG)pic;
