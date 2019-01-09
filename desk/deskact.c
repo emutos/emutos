@@ -430,6 +430,7 @@ WORD act_chg(WORD wh, OBJECT *tree, WORD root, WORD obj, GRECT *pc,
      * NOTE: here we assume tree == G.g_screen, so obj is a valid index
      * into G.g_screeninfo[]
      */
+    assert(tree == G.g_screen);
     fn = G.g_screeninfo[obj].fnptr;
     if (fn)
         fn->f_selected = (curr_state & SELECTED) ? TRUE : FALSE;
@@ -493,6 +494,7 @@ void act_allchg(WORD wh, OBJECT *tree, WORD root, WORD ex_obj, GRECT *pt, GRECT 
                  * NOTE: here we assume tree == G.g_screen, so obj is a valid index
                  * into G.g_screeninfo[]
                  */
+                assert(tree == G.g_screen);
                 fn = G.g_screeninfo[obj].fnptr;
                 if (fn && dochg)
                     fn->f_selected = TRUE;
