@@ -42,25 +42,6 @@
 
 
 /*
- *  Find the file node that matches a particular object id
- */
-FNODE *fpd_ofind(FNODE *pf, WORD obj)
-{
-    if (obj < 0)    /* if object doesn't exist, */
-        return NULL;/* neither does file node.  */
-
-    while(pf)
-    {
-        if (pf->f_obid == obj)
-            return pf;
-        pf = pf->f_next;
-    }
-
-    return NULL;
-}
-
-
-/*
  *  Free the file nodes for a specified pathnode
  */
 static void fl_free(PNODE *pn)
