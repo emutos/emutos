@@ -282,7 +282,7 @@ int nextcl(OFD *p, int wrtflg)
         }
     }
 
-    if (endofchain(cl2))
+    if (endofchain(cl2) || (cl2 < 2))   /* treat invalid cluster num as end of chain */
         return -1;
 
     p->o_curcl = cl2;
