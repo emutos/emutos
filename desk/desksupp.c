@@ -142,6 +142,7 @@ void desk_clear(WORD wh)
 
 /*
  *  Clear out selections for all desktop windows
+ *  (including the desktop itself)
  */
 void desk_clear_all(void)
 {
@@ -150,6 +151,8 @@ void desk_clear_all(void)
     for (pw = G.g_wfirst; pw; pw = pw->w_next)
         if (pw->w_id)
             desk_clear(pw->w_id);
+
+    desk_clear(DESKWH);
 }
 
 
