@@ -918,28 +918,25 @@ BOOL fun_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my, WOR
 
 
 /*
- * Function called to delete the contents of a disk
+ * Function called to delete a file or the contents of a folder or disk
  */
-static WORD delete_disk(ANODE *pa)
+static WORD delete_ffd(BYTE *path, WORD icontype)
 {
     PNODE *pn;
     FNODE *fn;
-    BYTE path[10];
     WORD ret = 0;
 
-    build_root_path(path, pa->a_letter);
-    strcat(path,"*.*");
     pn = pn_open(path, NULL);
     if (pn == NULL)     /* "can't happen" - pathname too long! */
         return 0;
 
     graf_mouse(HGLASS, NULL);
-    pn_active(pn, TRUE);
+    pn_active(pn, FALSE);
     if (pn->p_flist)
     {
         for (fn = pn->p_flist; fn; fn = fn->f_next)
             fn->f_selected = TRUE;
-        ret = fun_op(OP_DELETE, pa->a_type, pn, NULL);
+        ret = fun_op(OP_DELETE, icontype, pn, NULL);
     }
     pn_close(pn);
     graf_mouse(ARROW, NULL);
@@ -952,9 +949,10 @@ static WORD delete_disk(ANODE *pa)
  */
 void fun_del(WORD sobj)
 {
+    BYTE path[MAXPATHLEN];
     ANODE *pa;
     WNODE *pw;
-    WORD disk_found = 0;
+    WORD item_found = 0;
 
     /*
      * if the item selected is on the desktop, there may be other desktop
@@ -969,14 +967,23 @@ void fun_del(WORD sobj)
             pa = i_find(DESKWH,sobj,NULL,NULL);
             if (!pa)
                 continue;
-            if (pa->a_type == AT_ISDISK)
-            {
-                disk_found++;
-                if (delete_disk(pa))
-                    refresh_drive(pa->a_letter);
+            switch(pa->a_type) {
+            case AT_ISFILE:
+            case AT_ISFOLD:
+                strcpy(path, pa->a_pdata);
+                break;
+            case AT_ISDISK:
+                build_root_path(path, pa->a_letter);
+                strcat(path,"*.*");
+                break;
+            default:        /* "can't happen" */
+                continue;
             }
+            item_found++;
+            if (delete_ffd(path, pa->a_type))
+                refresh_drive(path[0]);
         }
-        if (disk_found)
+        if (item_found)
         {
             desk_clear(DESKWH);
             return;
