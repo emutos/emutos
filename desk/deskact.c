@@ -496,8 +496,8 @@ void act_allchg(WORD wh, OBJECT *tree, WORD root, WORD ex_obj, GRECT *pt, GRECT 
                  */
                 assert(tree == G.g_screen);
                 fn = G.g_screeninfo[obj].fnptr;
-                if (fn && dochg)
-                    fn->f_selected = TRUE;
+                if (fn)
+                    fn->f_selected = dochg ? TRUE : FALSE;
                 /* make change */
                 newstate = tree[obj].ob_state;
                 if (dochg)
@@ -540,7 +540,6 @@ void act_allchg(WORD wh, OBJECT *tree, WORD root, WORD ex_obj, GRECT *pt, GRECT 
 void act_bsclick(WORD wh, OBJECT *tree, WORD root, WORD mx, WORD my, WORD keystate,
                  GRECT *pc, WORD dclick)
 {
-    WNODE *pw;
     WORD obj;
     WORD shifted;
     WORD state;
@@ -551,11 +550,9 @@ void act_bsclick(WORD wh, OBJECT *tree, WORD root, WORD mx, WORD my, WORD keysta
     if ((obj == root) && shifted)   /* shift-click within window does nothing */
         return;
 
-    pw = win_find(wh);
-
     if ((obj == root) || (obj == NIL))
     {
-        pn_clear(pw);               /* deselect all objects */
+        /* deselect all objects */
         act_allchg(wh, tree, root, obj, &gl_rfull, pc, FALSE);
     }
     else
@@ -565,7 +562,7 @@ void act_bsclick(WORD wh, OBJECT *tree, WORD root, WORD mx, WORD my, WORD keysta
         {
             if (dclick || !(state & SELECTED))
             {
-                pn_clear(pw);       /* deselect all objects */
+                /* deselect all objects & select one */
                 act_allchg(wh, tree, root, obj, &gl_rfull, pc, FALSE);
                 state |= SELECTED;
             }

@@ -287,15 +287,3 @@ WORD pn_active(PNODE *pn, BOOL include_folders)
 
     return ((ret==ENMFIL) || (ret==EFILNF)) ? 0 : ret;
 }
-
-
-/*
- *  Clear the selection flag in all FNODES chained from the PNODE in the specified WNODE
- */
-void pn_clear(WNODE *pwin)
-{
-    FNODE *pf;
-
-    for (pf = pwin->w_pnode.p_flist; pf; pf = pf->f_next)
-        pf->f_selected = FALSE;
-}
