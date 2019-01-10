@@ -225,3 +225,17 @@ The program relies on a TOS-specific code sequence, as follows:
    word containing a value of 0x8606
 Under EmuTOS, the address generated is a nonsense address which happens
 to be odd, causing an immediate address error.
+
+
+Program: CTRL.ACC/CONTROL.ACC (from ST/STe Language Disks)
+----------------------------------------------------------
+Error: hangs on startup; eventually crashes with bus error
+
+Bug analysis:
+The program searches the buffer returned by shel_read() for a line
+beginning with '#a' and never tests for buffer end.  EmuTOS does not
+use the '#a' line.
+
+Workaround:
+Use a less-buggy control panel, e.g. XCONTROL.ACC from the TT or
+Falcon Language Disk.
