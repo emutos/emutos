@@ -1462,6 +1462,13 @@ short old_tree = -1;
         fprintf(fp,"#endif\n");
     fprintf(fp,"\n");
 
+#ifdef ICON_RSC
+    /*
+     * define the number of builtin icon blocks found in "icons.rsc"
+     */
+    fprintf (fp,"#define BUILTIN_IBLKS   %d\n",conditional_iconblk_start);
+#endif
+
     /*
      * then alerts & free strings
      */

@@ -496,7 +496,7 @@ static WORD load_user_icons(void)
     }
 
     hdr = (RSHDR *)(AP_1RESV);
-    if (hdr->rsh_nib < BUILTIN_IBLKS)   /* must have at least the minimum set */
+    if (hdr->rsh_nib < NUM_GEM_IBLKS)   /* must have at least the minimum set */
     {
         KDEBUG(("too few user desktop icons (%d)\n",hdr->rsh_nib));
         rsrc_free();
