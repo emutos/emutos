@@ -55,6 +55,15 @@ struct cookie {
 #define MCH_ARANYM  0x00050000L
 
 /*
+ * values of _VDO cookie
+ */
+
+#define VDO_ST      0x00000000L
+#define VDO_STE     0x00010000L
+#define VDO_TT      0x00020000L
+#define VDO_FALCON  0x00030000L
+
+/*
  * value of _FDC cookie
  */
 

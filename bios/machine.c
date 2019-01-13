@@ -290,13 +290,13 @@ static void setvalue_swi(void)
 static void setvalue_vdo(void)
 {
     if (HAS_VIDEL)
-        cookie_vdo = 0x00030000L;
+        cookie_vdo = VDO_FALCON;
     else if (HAS_TT_SHIFTER)
-        cookie_vdo = 0x00020000L;
+        cookie_vdo = VDO_TT;
     else if (HAS_STE_SHIFTER)
-        cookie_vdo = 0x00010000L;
+        cookie_vdo = VDO_STE;
     else
-        cookie_vdo = 0x00000000L;
+        cookie_vdo = VDO_ST;
 
     KDEBUG(("cookie_vdo = 0x%08lx\n", cookie_vdo));
 }
