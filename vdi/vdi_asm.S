@@ -401,7 +401,7 @@ wheel_check:
         cmp.b   (a1)+,d0
 #ifdef __mcoldfire__
         jne      wheel_exit
-        subq.l   #1,%d1
+        subq.l   #1,d1
         jpl      wheel_check
 #else
         dbne    d1,wheel_check
