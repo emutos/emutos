@@ -289,6 +289,7 @@ static void setvalue_swi(void)
 
 static void setvalue_vdo(void)
 {
+#if CONF_ATARI_HARDWARE
     if (HAS_VIDEL)
         cookie_vdo = VDO_FALCON;
     else if (HAS_TT_SHIFTER)
@@ -297,6 +298,9 @@ static void setvalue_vdo(void)
         cookie_vdo = VDO_STE;
     else
         cookie_vdo = VDO_ST;
+#else
+    cookie_vdo = VDO_NOHARD;
+#endif /* CONF_ATARI_HARDWARE */
 
     KDEBUG(("cookie_vdo = 0x%08lx\n", cookie_vdo));
 }
