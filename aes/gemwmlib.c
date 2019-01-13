@@ -1166,6 +1166,7 @@ static void wm_mktop(WORD w_handle)
 
 void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
 {
+    BOOL    do_cpwalk = FALSE;
     WORD    gadget = -1;
     WINDOW  *pwin;
 
@@ -1196,10 +1197,12 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
     case WF_NAME:
         gl_aname.te_ptext = pwin->w_pname = *(BYTE **)pinwds;
         gadget = W_NAME;
+        do_cpwalk = TRUE;       /* update name applies to all windows */
         break;
     case WF_INFO:
         gl_ainfo.te_ptext = pwin->w_pinfo = *(BYTE **)pinwds;
         gadget = W_INFO;
+        do_cpwalk = TRUE;       /* update info line applies to all windows */
         break;
     case WF_CXYWH:
         draw_change(w_handle, (GRECT *)pinwds);
@@ -1233,7 +1236,11 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
         break;
     }
 
-    if ((gadget != -1) && (w_handle == gl_wtop))
+    if (w_handle == gl_wtop)    /* only update slides in topped window */
+        if ((gadget == W_HSLIDE) || (gadget == W_VSLIDE))
+            do_cpwalk = TRUE;
+
+    if (do_cpwalk)
         w_cpwalk(w_handle, gadget, MAX_DEPTH, TRUE);
 
     wm_update(END_UPDATE);      /* give up the sync */
