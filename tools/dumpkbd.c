@@ -1,112 +1,22 @@
 /*
  * dumpkbd.c : dump the TOS keyboard tables into a KEYTBL.TBL file format
  *
+ * Compile with:
+ *      m68k-atari-mint-gcc -o DUMPKBD.TOS -Wall dumpkbd.c
+ *
  * Copyright (C) 2001-2017 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  */
 
-#define USE_STATIC_INLINES 0
-
+#include <stdio.h>
+#include <stdlib.h>
 #include <osbind.h>
-#include <stdarg.h>
-#include "doprintf.h"
-#include "string.h"
+#include <string.h>
 
 #define ARRAY_SIZE(array) ((int)(sizeof(array)/sizeof(array[0])))
 
-/*
- * fake stdio stuff
- */
-
-extern void exit(int status);
-
-struct file { int f; };
-#define FILE struct file
-FILE stdin[] = { { -1 } };
-#define stdout stdin
-#define stderr stdout
-
-static int stdio_f;
-
-static void fprintf_outc(int c)
-{
-    if( c == '\n') {
-        Fwrite(stdio_f, 2, "\r\n");
-    } else {
-        char u = c;
-        Fwrite(stdio_f, 1, &u);
-    }
-}
-
-static int vfprintf(FILE *f, const char *fmt, va_list ap)
-{
-    stdio_f = f->f;
-    return doprintf(fprintf_outc, fmt, ap);
-}
-
-int printf(const char *fmt, ...)
-{
-    int n;
-    va_list ap;
-    va_start(ap, fmt);
-    n = vfprintf(stdout, fmt, ap);
-    va_end(ap);
-    return n;
-}
-
-int fprintf(FILE *f, const char *fmt, ...)
-{
-    int n;
-    va_list ap;
-    va_start(ap, fmt);
-    n = vfprintf(f, fmt, ap);
-    va_end(ap);
-    return n;
-}
-
-
-static struct { char *mode; int m ; } fopen_table[] = {
-  { "r", 0 }, { "rb", 0 }, { "w", 1 }, { "wb", 1 },
-};
-
-int stdio_fileno = 0;
-FILE stdio_files[10];
-
-FILE * fopen(const char *fname, const char *mode)
-{
-    int i;
-    int m = -1;
-    FILE *f;
-    for(i = 0 ; i < ARRAY_SIZE(fopen_table) ; i++) {
-        if(!strcmp(mode, fopen_table[i].mode)) {
-            m = fopen_table[i].m;
-            break;
-        }
-    }
-    if(m == -1) return 0;
-    if(stdio_fileno > ARRAY_SIZE(stdio_files)) return 0;
-    f = &stdio_files[stdio_fileno++];
-    f->f = Fopen(fname, m);
-    if(m == 1 && f->f == -33) f->f = Fcreate(fname, 0);
-    if(f->f < 0) return 0;
-    return f;
-}
-
-#define fclose(_f) Fclose(_f->f)
-#define fread(_b, _n, _s, _f) Fread(_f->f, _n*_s, _b)
-#define fwrite(_b, _n, _s, _f) Fwrite(_f->f, _n*_s, _b)
-#define getchar() ((int)(0xFF & Cconin()))
-
-/*
- * fake stdlib stuff
- */
-
-#define malloc(_s) Malloc(_s)
-#define free(_p) Mfree(_p)
-#define EXIT_FAILURE 1
-#define NULL ((void *)0)
 
 /*
  *
