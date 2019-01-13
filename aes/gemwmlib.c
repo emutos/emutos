@@ -1233,7 +1233,7 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
         break;
     }
 
-    if (gadget && (w_handle == gl_wtop))
+    if ((gadget != -1) && (w_handle == gl_wtop))
         w_cpwalk(w_handle, gadget, MAX_DEPTH, TRUE);
 
     wm_update(END_UPDATE);      /* give up the sync */
