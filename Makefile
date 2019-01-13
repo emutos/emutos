@@ -763,16 +763,6 @@ amigaboot.img: obj/amigaboot.o obj/bootram.o
 obj/amigaboot.o: obj/ramtos.h
 
 #
-# Misc utilities
-#
-
-TOCLEAN += dumpkbd.prg
-
-dumpkbd.prg: obj/minicrt.o obj/memmove.o obj/dumpkbd.o obj/doprintf.o \
-	     obj/string.o
-	$(LD) $+ -lgcc -o $@ -s
-
-#
 # NLS support
 #
 
