@@ -1196,13 +1196,19 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
     {
     case WF_NAME:
         gl_aname.te_ptext = pwin->w_pname = *(BYTE **)pinwds;
-        gadget = W_NAME;
-        do_cpwalk = TRUE;       /* update name applies to all windows */
+        if (pwin->w_flags & VF_INTREE)
+        {
+            gadget = W_NAME;
+            do_cpwalk = TRUE;   /* update name applies to all open windows */
+        }
         break;
     case WF_INFO:
         gl_ainfo.te_ptext = pwin->w_pinfo = *(BYTE **)pinwds;
-        gadget = W_INFO;
-        do_cpwalk = TRUE;       /* update info line applies to all windows */
+        if (pwin->w_flags & VF_INTREE)
+        {
+            gadget = W_INFO;
+            do_cpwalk = TRUE;   /* update info line applies to all open windows */
+        }
         break;
     case WF_CXYWH:
         draw_change(w_handle, (GRECT *)pinwds);
