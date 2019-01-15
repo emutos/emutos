@@ -130,4 +130,4 @@ function set_object (addr, type, name) {
     }
 }
 # clean out library paths for objects coming from static libraries
-' $1 | sed -e 's/ [^ ]\+(//' -e 's/)//' | sort -n
+' $1 | sed -e 's/ [^ ]\+(/ /' -e 's/)//' | sort -n
