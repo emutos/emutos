@@ -104,6 +104,8 @@ static WORD sob_malloc(void)
  *  Initialize all objects in the G.g_screen[] array
  *
  *  . every non-item object is initialized by setting the links to NIL
+ *    (for safety, we also initialize fnptr in the corresponding members
+ *    of the G.g_screeninfo[] array)
  *  . all item objects are chained from g_screenfree
  *  . the root object is initialized as a G_IBOX object covering the
  *    entire screen
@@ -115,16 +117,18 @@ void obj_init(void)
 {
     WORD ii, num_sobs;
     OBJECT *obj;
+    SCREENINFO *info;
 
     num_sobs = sob_malloc();
     KDEBUG(("obj_init(): allocated %d screen objects\n",num_sobs));
 
     /* initialize non-item objects */
-    for (ii = 0, obj = G.g_screen; ii < WOBS_START; ii++, obj++)
+    for (ii = 0, obj = G.g_screen, info = G.g_screeninfo; ii < WOBS_START; ii++, obj++, info++)
     {
         obj->ob_head = NIL;
         obj->ob_next = NIL;
         obj->ob_tail = NIL;
+        info->fnptr = NULL;
     }
 
     /* put all item objects on the free chain */
