@@ -462,6 +462,7 @@ neg_cell(UBYTE * cell)
 {
     int plane, len;
     int cell_len = v_cel_ht;
+    int lin_wr = v_lin_wr;
 
     v_stat_0 |= M_CRIT;                 /* start of critical section. */
 
@@ -471,7 +472,7 @@ neg_cell(UBYTE * cell)
         /* reset cell length counter */
         for (len = cell_len; len--; ) {
             *addr = ~*addr;
-            addr += v_lin_wr;
+            addr += lin_wr;
         }
         cell += PLANE_OFFSET;           /* a1 -> top of block in next plane */
     }
