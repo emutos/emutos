@@ -27,6 +27,12 @@ Atari Falcon / TOS v4 compatibility bugs:
   new style RSC files with CICONs.
 
 Problems that also occur in Atari TOS:
+- BIOS: Startup time can be slow on a floppy-only system.  You can speed
+  things up by ensuring that you have a formatted floppy diskette in
+  drive A at boot time.  Boot time will be further reduced if the root
+  directory of the diskette contains as few files as possible, and there
+  are no "deleted file" entries in it.  This can be achieved by freshly
+  formatting the diskette and then copying any desired files to it.
 - VDI: when drawing a wide polyline with squared ends and more than one
   segment, if the width of the line is greater than twice the length of
   an ending segment, the end will have a bump rather than being square.
