@@ -5,6 +5,14 @@ the build process were built with native GCC 4.8.4.
 The source package and other binary packages are available at:
 https://sourceforge.net/projects/emutos/files/emutos/0.9.10/
 
+The extras directory (if provided) contains one or more alternate desktop
+icon sets, which you can use to replace the builtin ones.  You can use a
+standard resource editor to see what the replacement icons look like.
+To use a replacement set, move or rename the existing emuicon.rsc &
+emuicon.def files in the root directory, then copy the files containing
+the desired icons to the root, and rename them to emuicon.rsc/emuicon.def.
+For further information, see doc/emudesk.txt.
+
 If you want to read more about EmuTOS, please take a look at these files:
 
 doc/announce.txt      - Introduction and general description, including

@@ -20,6 +20,10 @@ DOCFILES = doc/announce.txt doc/authors.txt doc/bugs.txt doc/changelog.txt \
   doc/emudesk.txt doc/incompatible.txt doc/license.txt doc/status.txt \
   doc/todo.txt doc/xhdi.txt
 
+# This subset of the extras directory will be included in all the binary archives
+# that have a desktop
+EXTRAFILES = extras/*
+
 # The archives will be placed into this directory
 RELEASE_DIR = release-archives
 
@@ -60,6 +64,8 @@ release-512k:
 	cat doc/readme-512k.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_512K)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_512K)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_512K)/doc
+	mkdir $(RELEASE_DIR)/$(RELEASE_512K)/extras
+	cp $(EXTRAFILES) $(RELEASE_DIR)/$(RELEASE_512K)/extras
 	find $(RELEASE_DIR)/$(RELEASE_512K) -name '*.txt' -exec unix2dos '{}' ';'
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_512K).zip $(RELEASE_512K)
 	rm -r $(RELEASE_DIR)/$(RELEASE_512K)
@@ -79,6 +85,8 @@ release-256k:
 	cat doc/readme-256k.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_256K)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_256K)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_256K)/doc
+	mkdir $(RELEASE_DIR)/$(RELEASE_256K)/extras
+	cp $(EXTRAFILES) $(RELEASE_DIR)/$(RELEASE_256K)/extras
 	find $(RELEASE_DIR)/$(RELEASE_256K) -name '*.txt' -exec unix2dos '{}' ';'
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_256K).zip $(RELEASE_256K)
 	rm -r $(RELEASE_DIR)/$(RELEASE_256K)
@@ -99,6 +107,8 @@ release-192k:
 	mkdir $(RELEASE_DIR)/$(RELEASE_192K)/doc
 	find $(RELEASE_DIR)/$(RELEASE_192K) -name '*.txt' -exec unix2dos '{}' ';'
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_192K)/doc
+	mkdir $(RELEASE_DIR)/$(RELEASE_192K)/extras
+	cp $(EXTRAFILES) $(RELEASE_DIR)/$(RELEASE_192K)/extras
 	find $(RELEASE_DIR)/$(RELEASE_192K) -name '*.txt' -exec unix2dos '{}' ';'
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_192K).zip $(RELEASE_192K)
 	rm -r $(RELEASE_DIR)/$(RELEASE_192K)
@@ -134,6 +144,8 @@ release-aranym:
 	cat doc/readme-aranym.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_ARANYM)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_ARANYM)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_ARANYM)/doc
+	mkdir $(RELEASE_DIR)/$(RELEASE_ARANYM)/extras
+	cp $(EXTRAFILES) $(RELEASE_DIR)/$(RELEASE_ARANYM)/extras
 	find $(RELEASE_DIR)/$(RELEASE_ARANYM) -name '*.txt' -exec unix2dos '{}' ';'
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_ARANYM).zip $(RELEASE_ARANYM)
 	rm -r $(RELEASE_DIR)/$(RELEASE_ARANYM)
@@ -153,6 +165,8 @@ release-firebee:
 	cat doc/readme-firebee.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_FIREBEE)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_FIREBEE)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_FIREBEE)/doc
+	mkdir $(RELEASE_DIR)/$(RELEASE_FIREBEE)/extras
+	cp $(EXTRAFILES) $(RELEASE_DIR)/$(RELEASE_FIREBEE)/extras
 	find $(RELEASE_DIR)/$(RELEASE_FIREBEE) -name '*.txt' -exec unix2dos '{}' ';'
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_FIREBEE).zip $(RELEASE_FIREBEE)
 	rm -r $(RELEASE_DIR)/$(RELEASE_FIREBEE)
@@ -176,6 +190,8 @@ release-amiga-rom:
 	cat doc/readme-amiga-rom.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)/doc
+	mkdir $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)/extras
+	cp $(EXTRAFILES) $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)/extras
 	find $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM) -name '*.txt' -exec unix2dos '{}' ';'
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_AMIGA_ROM).zip $(RELEASE_AMIGA_ROM)
 	rm -r $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)
@@ -198,6 +214,8 @@ release-amiga-floppy:
 	cat doc/readme-amiga-floppy.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_AMIGA_FLOPPY)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_AMIGA_FLOPPY)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_AMIGA_FLOPPY)/doc
+	mkdir $(RELEASE_DIR)/$(RELEASE_AMIGA_FLOPPY)/extras
+	cp $(EXTRAFILES) $(RELEASE_DIR)/$(RELEASE_AMIGA_FLOPPY)/extras
 	find $(RELEASE_DIR)/$(RELEASE_AMIGA_FLOPPY) -name '*.txt' -exec unix2dos '{}' ';'
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_AMIGA_FLOPPY).zip $(RELEASE_AMIGA_FLOPPY)
 	rm -r $(RELEASE_DIR)/$(RELEASE_AMIGA_FLOPPY)
@@ -247,6 +265,8 @@ release-prg:
 	cat doc/readme-prg.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_PRG)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_PRG)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_PRG)/doc
+	mkdir $(RELEASE_DIR)/$(RELEASE_PRG)/extras
+	cp $(EXTRAFILES) $(RELEASE_DIR)/$(RELEASE_PRG)/extras
 	find $(RELEASE_DIR)/$(RELEASE_PRG) -name '*.txt' -exec unix2dos '{}' ';'
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_PRG).zip $(RELEASE_PRG)
 	rm -r $(RELEASE_DIR)/$(RELEASE_PRG)
@@ -266,6 +286,8 @@ release-floppy:
 	cat doc/readme-floppy.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_FLOPPY)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_FLOPPY)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_FLOPPY)/doc
+	mkdir $(RELEASE_DIR)/$(RELEASE_FLOPPY)/extras
+	cp $(EXTRAFILES) $(RELEASE_DIR)/$(RELEASE_FLOPPY)/extras
 	find $(RELEASE_DIR)/$(RELEASE_FLOPPY) -name '*.txt' -exec unix2dos '{}' ';'
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_FLOPPY).zip $(RELEASE_FLOPPY)
 	rm -r $(RELEASE_DIR)/$(RELEASE_FLOPPY)
