@@ -25,6 +25,10 @@ Atari Falcon / TOS v4 compatibility bugs:
   place in toolbar window is inverted on mouse click.
 - Falcon FalcAMP button icons aren't visible as EmuTOS doesn't support
   new style RSC files with CICONs.
+- Videl Inside causes a desktop crash if a resolution is selected that
+  requires more than the standard EmuTOS Falcon video memory allocation
+  (307200 bytes).  It should be able to detect or avoid this situation
+  but does not.
 
 Problems that also occur in Atari TOS:
 - BIOS: Startup time can be slow on a floppy-only system.  You can speed
