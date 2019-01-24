@@ -23,6 +23,7 @@
 #include "mem.h"
 #include "gemerror.h"
 #include "biosbind.h"
+#include "biosext.h"
 #include "xbiosbind.h"
 #include "kprint.h"
 #include "../bios/tosvars.h"
@@ -342,17 +343,22 @@ ret:
  *              largest chunk of free memory in ST RAM
  *  'len' >= 0: allocate a block of memory of size 'len' for the screen
  *              and returns a pointer to it; the memory will be owned by
- *              the boot process
+ *              the boot process.  returns NULL if the memory cannot be
+ *              allocated.
  *
  *  at this time, this implementation is provided for compatibility
- *  purposes only, since we always allocate enough memory for any type
- *  of screen during the boot process.
+ *  purposes only, since video memory is always preallocated.
  */
 extern UBYTE *v_bas_ad;
 void *srealloc(long amount)
 {
+    ULONG maxmem = initial_vram_size();
+
     if (amount < 0L)
-        return xmxalloc(-1L, MX_STRAM);
+        return (void *)maxmem;
+
+    if (amount > maxmem)
+        return NULL;
 
     return (void *)Physbase();
 }

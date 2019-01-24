@@ -32,11 +32,11 @@
 #include "country.h"
 #include "header.h"
 #include "biosmem.h"
+#include "biosext.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif
 
-static ULONG initial_vram_size(void);
 static void setphys(const UBYTE *addr);
 
 #if CONF_WITH_ATARI_VIDEO
@@ -710,7 +710,7 @@ static ULONG shifter_vram_size(UWORD vmode)
 #endif
 
 /* calculate initial VRAM size based on video hardware */
-static ULONG initial_vram_size(void)
+ULONG initial_vram_size(void)
 {
 #ifdef MACHINE_AMIGA
     return amiga_initial_vram_size();
