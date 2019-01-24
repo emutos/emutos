@@ -330,10 +330,13 @@ All GEMDOS versions:
  T 0x56 Frename
  T 0x57 Fdatime
 
-GEMDOS v0.19 (TOS v2):
+GEMDOS v0.19 (TOS v2/v3):
  T 0x14 Maddalt
  T 0x44 Mxalloc
  (and Pexec mode 6)
+
+GEMDOS v0.30 (TOS v4):
+ > 0x15 Srealloc (undocumented by Atari)
 
 
  Line-A functions
