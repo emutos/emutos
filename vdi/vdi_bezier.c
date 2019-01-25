@@ -124,7 +124,7 @@ gen_segs(WORD *const array, WORD *px, const int bez_qual,
 
         if (labs( (x0 >> 1) + (d1x >> (qd + 1)) ) >= 0x3ffffffeL) {
             /** halve scale to avoid overflow **/
-            x0 = x0 >> 1;
+            x0 >>= 1;
             q--;
             qd++;
             /* assert( labs(x0+(d1x>>qd)) >= 0x40000000L ); */

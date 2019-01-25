@@ -194,12 +194,12 @@ blank_out(int topx, int topy, int botx, int boty)
                 pair_planes[i] = 0xffff0000;
             else
                 pair_planes[i] = 0x00000000;
-            color = color >> 1;         /* get next bit */
+            color >>= 1;        /* get next bit */
 
             /* set the low WORD of our LONG for the current plane */
             if (color & 0x0001)
                 pair_planes[i] |= 0x0000ffff;
-            color = color >> 1;         /* get next bit */
+            color >>= 1;        /* get next bit */
         }
 
         /* do all rows in region */

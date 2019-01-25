@@ -312,7 +312,7 @@ static int clc_nsteps(void)
         steps = xrad;
     else
         steps = yrad;
-    steps = steps >> 2;
+    steps >>= 2;
 
     if (steps < MIN_ARC_CT)
         steps = MIN_ARC_CT;
