@@ -339,10 +339,7 @@ static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width, JUSTINFO *j
             line->y1 += yfact;
             line->y2 += yfact;
 
-            if (LN_MASK & 1)
-                LN_MASK = (LN_MASK >> 1) | 0x8000;
-            else
-                LN_MASK = LN_MASK >> 1;
+            rorw1(LN_MASK);
         }
     }
 }
