@@ -58,8 +58,8 @@ char_addr(WORD ch)
     UWORD offs;
 
     /* test against limits */
-    if ( ch >= v_fnt_st ) {
-        if ( ch <= v_fnt_nd ) {
+    if (ch >= v_fnt_st) {
+        if (ch <= v_fnt_nd) {
             /* getch offset from offset table */
             offs = v_off_ad[ch];
             offs >>= 3;                 /* convert from pixels to bytes. */
@@ -84,7 +84,7 @@ char_addr(WORD ch)
  */
 
 void
-ascii_out (int ch)
+ascii_out(int ch)
 {
     UBYTE * src, * dst;
     BOOL visible;                       /* was the cursor visible? */
@@ -96,7 +96,7 @@ ascii_out (int ch)
     dst = v_cur_ad;                     /* a1 -> get destination */
 
     visible = v_stat_0 & M_CVIS;        /* test visibility bit */
-    if ( visible ) {
+    if (visible) {
         v_stat_0 &= ~M_CVIS;                    /* start of critical section */
     }
 
@@ -114,7 +114,7 @@ ascii_out (int ch)
         v_cur_cx = 0;                   /* set X to first cell in line */
 
         /* perform cell line feed. */
-        if ( y < v_cel_my ) {
+        if (y < v_cel_my) {
             cell += v_cel_wr;           /* move down one cell */
             v_cur_cy = y + 1;           /* update cursor's y coordinate */
         }
@@ -125,7 +125,7 @@ ascii_out (int ch)
     }
 
     /* if visible */
-    if ( visible ) {
+    if (visible) {
         neg_cell(v_cur_ad);             /* display cursor. */
         v_stat_0 |= M_CSTATE;           /* set state flag (cursor on). */
         v_stat_0 |= M_CVIS;             /* end of critical section. */
@@ -159,7 +159,7 @@ ascii_out (int ch)
  */
 
 void
-blank_out (int topx, int topy, int botx, int boty)
+blank_out(int topx, int topy, int botx, int boty)
 {
     UWORD color = v_col_bg;             /* bg color value */
     int pair, pairs, row, rows, offs;
@@ -182,14 +182,14 @@ blank_out (int topx, int topy, int botx, int boty)
         /* Precalculate the pairs of plane data */
         for (i = 0; i < v_planes / 2; i++) {
             /* set the high WORD of our LONG for the current plane */
-            if ( color & 0x1 )
+            if (color & 0x0001)
                 pair_planes[i] = 0xffff0000;
             else
                 pair_planes[i] = 0x00000000;
             color = color >> 1;         /* get next bit */
 
             /* set the low WORD of our LONG for the current plane */
-            if ( color & 0x1 )
+            if (color & 0x0001)
                 pair_planes[i] |= 0x0000ffff;
             color = color >> 1;         /* get next bit */
         }
@@ -211,7 +211,7 @@ blank_out (int topx, int topy, int botx, int boty)
         UWORD pl;               /* bits on screen for current plane */
 
         /* set the WORD for plane 0 */
-        if ( color & 0x0001 )
+        if (color & 0x0001)
             pl = 0xffff;
         else
             pl = 0x0000;
@@ -255,15 +255,15 @@ cell_addr(int x, int y)
     LONG disx, disy;
 
     /* check bounds against screen limits */
-    if ( x >= v_cel_mx )
+    if (x >= v_cel_mx)
         x = v_cel_mx;           /* clipped x */
 
-    if ( y >= v_cel_my )
+    if (y >= v_cel_my)
         y = v_cel_my;           /* clipped y */
 
     /* X displacement = even(X) * v_planes + Xmod2 */
     disx = (LONG)v_planes * (x & ~1);
-    if ( IS_ODD(x) ) {          /* Xmod2 = 0 ? */
+    if (IS_ODD(x)) {            /* Xmod2 = 0 ? */
         disx++;                 /* Xmod2 = 1 */
     }
 
@@ -309,7 +309,7 @@ cell_xfer(UBYTE * src, UBYTE * dst)
     line_wr = v_lin_wr;
 
     /* check for reversed foreground and background colors */
-    if ( v_stat_0 & M_REVID ) {
+    if (v_stat_0 & M_REVID) {
         fg = v_col_bg;
         bg = v_col_fg;
     }
@@ -327,7 +327,7 @@ cell_xfer(UBYTE * src, UBYTE * dst)
         src = src_sav;                  /* reload src */
         dst = dst_sav;                  /* reload dst */
 
-        if ( bg & 0x0001 ) {
+        if (bg & 0x0001) {
             if (fg & 0x0001) {
                 /* back:1  fore:1  =>  all ones */
                 for (i = v_cel_ht; i--; ) {
@@ -346,7 +346,7 @@ cell_xfer(UBYTE * src, UBYTE * dst)
             }
         }
         else {
-            if ( fg & 0x0001 ) {
+            if (fg & 0x0001) {
                 /* back:0  fore:1  =>  direct substitution */
                 for (i = v_cel_ht; i--; ) {
                     *dst = *src;
@@ -402,18 +402,18 @@ move_cursor(int x, int y)
     v_cur_cy = y;
 
     /* is cursor visible? */
-    if ( !(v_stat_0 & M_CVIS) ) {
+    if (!(v_stat_0 & M_CVIS)) {
         /* not visible */
         v_cur_ad = cell_addr(x, y);             /* just set new coordinates */
         return;                                 /* and quit */
     }
 
     /* is cursor flashing? */
-    if ( v_stat_0 & M_CFLASH ) {
+    if (v_stat_0 & M_CFLASH) {
         v_stat_0 &= ~M_CVIS;                    /* yes, make invisible...semaphore. */
 
         /* is cursor presently displayed ? */
-        if ( !(v_stat_0 & M_CSTATE )) {
+        if (!(v_stat_0 & M_CSTATE)) {
             /* not displayed */
             v_cur_ad = cell_addr(x, y);         /* just set new coordinates */
 
@@ -515,8 +515,8 @@ invert_cell(int x, int y)
 static BOOL next_cell(void)
 {
     /* check bounds against screen limits */
-    if ( v_cur_cx == v_cel_mx ) {               /* increment cell ptr */
-        if ( !( v_stat_0 & M_CEOL ) ) {
+    if (v_cur_cx == v_cel_mx) {         /* increment cell ptr */
+        if (!(v_stat_0 & M_CEOL)) {
             /* overwrite in effect */
             return 0;                   /* no wrap condition exists */
                                         /* don't change cell parameters */
@@ -530,7 +530,7 @@ static BOOL next_cell(void)
     v_cur_cx += 1;                      /* next cell to right */
 
     /* if X is even, move to next word in the plane */
-    if ( IS_ODD(v_cur_cx) ) {
+    if (IS_ODD(v_cur_cx)) {
         /* x is odd */
         v_cur_ad += 1;                  /* a1 -> new cell */
         return 0;                       /* indicate no wrap needed */
@@ -580,7 +580,7 @@ scroll_up(UWORD top_line)
     memmove(dst, src, count);
 
     /* exit thru blank out, bottom line cell address y to top/left cell */
-    blank_out(0, v_cel_my , v_cel_mx, v_cel_my );
+    blank_out(0, v_cel_my , v_cel_mx, v_cel_my);
 }
 
 
@@ -608,5 +608,5 @@ scroll_down(UWORD start_line)
     memmove(dst, src, count);
 
     /* exit thru blank out */
-    blank_out(0, start_line , v_cel_mx, start_line );
+    blank_out(0, start_line , v_cel_mx, start_line);
 }
