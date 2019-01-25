@@ -165,13 +165,21 @@ blank_out(int topx, int topy, int botx, int boty)
     int pair, pairs, row, rows, offs;
     UBYTE * addr = cell_addr(topx, topy);   /* running pointer to screen */
 
-    /* # of cell-pairs per row in region -1 */
-    pairs = (botx - topx) / 2 + 1;      /* pairs of characters */
+    /*
+     * # of cell-pairs per row in region - 1
+     *
+     * e.g. topx = 2, botx = 5, so pairs = 2
+     */
+    pairs = (botx - topx + 1) / 2;      /* pairs of characters */
 
     /* calculate the BYTE offset from the end of one row to next start */
     offs = v_lin_wr - pairs * 2 * v_planes;
 
-    /* # of lines in region - 1 */
+    /*
+     * # of lines in region - 1
+     *
+     * see comments re cell-pairs above
+     */
     rows = (boty - topy + 1) * v_cel_ht;
 
     if (v_planes > 1) {
