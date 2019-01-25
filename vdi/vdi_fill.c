@@ -11,6 +11,7 @@
 
 #include "config.h"
 #include "portab.h"
+#include "asm.h"
 #include "intmath.h"
 #include "vdi_defs.h"
 #include "../bios/tosvars.h"
@@ -740,7 +741,7 @@ search_to_right (const VwkClip * clip, WORD x, UWORD mask, const UWORD search_co
         UWORD color;
 
         /* need to jump over interleaved bit_plane? */
-        mask = mask >> 1 | mask << 15;  /* roll right */
+        rorw1(mask);    /* rotate right */
         if ( mask & 0x8000 )
             addr += v_planes;
 
@@ -765,7 +766,7 @@ search_to_left (const VwkClip * clip, WORD x, UWORD mask, const UWORD search_col
         UWORD color;
 
         /* need to jump over interleaved bit_plane? */
-        mask = mask >> 15 | mask << 1;  /* roll left */
+        rolw1(mask);    /* rotate left */
         if ( mask & 0x0001 )
             addr -= v_planes;
 
