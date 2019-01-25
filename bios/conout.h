@@ -52,5 +52,5 @@ void ascii_out(int);
 void move_cursor(int, int);
 void blank_out (int, int, int, int);
 void invert_cell(int, int);
-void scroll_up(int);
-void scroll_down(int);
+void scroll_up(UWORD top_line);
+void scroll_down(UWORD start_line);

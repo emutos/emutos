@@ -562,7 +562,7 @@ static BOOL next_cell(void)
  */
 
 void
-scroll_up(int top_line)
+scroll_up(UWORD top_line)
 {
     ULONG count;
     UBYTE * src, * dst;
@@ -590,7 +590,7 @@ scroll_up(int top_line)
  */
 
 void
-scroll_down(int start_line)
+scroll_down(UWORD start_line)
 {
     ULONG count;
     UBYTE * src, * dst;
