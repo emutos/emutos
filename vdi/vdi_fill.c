@@ -1115,11 +1115,11 @@ put_pix(void)
     color = INTIN[0];           /* device dependent encoded color bits */
     mask = 0x8000 >> (x&0xf);   /* initial bit position in WORD */
 
-    for (plane = v_planes-1; plane >= 0; plane-- ) {
-        color = color >> 1| color << 15;        /* rotate color bits */
-        if (color&0x8000)
+    for (plane = v_planes; plane; plane--) {
+        if (color&0x0001)
             *addr++ |= mask;
         else
             *addr++ &= ~mask;
+        color >>= 1;
     }
 }
