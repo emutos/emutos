@@ -97,7 +97,6 @@ ascii_out (int ch)
 
     visible = v_stat_0 & M_CVIS;        /* test visibility bit */
     if ( visible ) {
-        neg_cell(v_cur_ad);             /* delete cursor. */
         v_stat_0 &= ~M_CVIS;                    /* start of critical section */
     }
 
