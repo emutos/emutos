@@ -262,10 +262,10 @@ cell_addr(UWORD x, UWORD y)
     ULONG disx, disy;
 
     /* check bounds against screen limits */
-    if (x >= v_cel_mx)
+    if (x > v_cel_mx)
         x = v_cel_mx;           /* clipped x */
 
-    if (y >= v_cel_my)
+    if (y > v_cel_my)
         y = v_cel_my;           /* clipped y */
 
     /*
