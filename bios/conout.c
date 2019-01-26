@@ -33,7 +33,7 @@
  * internal prototypes
  */
 static void neg_cell(UBYTE *);
-static UBYTE * cell_addr(int, int);
+static UBYTE * cell_addr(UWORD x, UWORD y);
 static void cell_xfer(UBYTE *, UBYTE *);
 static BOOL next_cell(void);
 
@@ -106,8 +106,7 @@ ascii_out(int ch)
     /* advance the cursor and update cursor address and coordinates */
     if (next_cell()) {
         UBYTE * cell;
-
-        int y = v_cur_cy;
+        UWORD y = v_cur_cy;
 
         /* perform cell carriage return. */
         cell = v_bas_ad + (ULONG)v_cel_wr * y;
@@ -258,9 +257,9 @@ blank_out(int topx, int topy, int botx, int boty)
  */
 
 static UBYTE *
-cell_addr(int x, int y)
+cell_addr(UWORD x, UWORD y)
 {
-    LONG disx, disy;
+    ULONG disx, disy;
 
     /* check bounds against screen limits */
     if (x >= v_cel_mx)
@@ -269,14 +268,19 @@ cell_addr(int x, int y)
     if (y >= v_cel_my)
         y = v_cel_my;           /* clipped y */
 
-    /* X displacement = even(X) * v_planes + Xmod2 */
-    disx = (LONG)v_planes * (x & ~1);
+    /*
+     * v_planes cannot be more than 8, so as long as there are no more
+     * than 4000 characters per line, the result will fit in a word ...
+     *
+     * X displacement = even(X) * v_planes + Xmod2
+     */
+    disx = v_planes * (x & ~1);
     if (IS_ODD(x)) {            /* Xmod2 = 0 ? */
         disx++;                 /* Xmod2 = 1 */
     }
 
     /* Y displacement = Y // cell conversion factor */
-    disy = (LONG)v_cel_wr * y;
+    disy = (ULONG)v_cel_wr * y;
 
     /*
      * cell address = screen base address + Y displacement
