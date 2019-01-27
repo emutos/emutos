@@ -161,14 +161,16 @@ Install devices
 ===============
 This automatically installs icons for all devices that are currently
 known to GEMDOS (have an entry in _drvbits) and that do not currently
-have an icon.  If the device is A: or B:, a floppy icon is installed;
-otherwise a hard disk icon is installed.
+have an icon.  It also removes any icons for devices that are not known
+to GEMDOS.  For device A: or B:, a floppy icon is used; otherwise a hard
+disk icon is used.  You must save the desktop if you want the new setup
+to be preserved.
 
 
 Remove desktop icon
 ===================
-This is used to remove a disk or trash icon.  Highlight the icon you
-wish to remove, and click on "Remove desktop icon".
+This is used to remove a desktop icon.  Highlight the icon you wish to
+remove, and click on "Remove desktop icon".
 
 
 Desktop configuration
@@ -214,12 +216,19 @@ those used by Atari TOS, so if you have an equivalent RSC file that works
 with Atari TOS, you will need to move the icons around to get the same
 desktop display.
 
-A default EMUICON.RSC file (currently containing 41 icons) is shipped
-with the release; the first 8 icons are the same as the builtin ones.
-Also shipped is the corresponding EMUICON.DEF file for use by a resource
-editor.  You should be aware that each icon consumes about 300 bytes of
-RAM, so if you are short of memory, avoid putting too many icons in
-EMUICON.RSC.
+A default EMUICON.RSC file is shipped with the release; the first 8 icons
+are the same as the builtin ones.  Also shipped is the corresponding
+EMUICON.DEF file so that you can modify the resource with a standard
+resource editor.  The EMUICON.DEF file is not used during startup, so
+does not need to be on the boot disk.
+
+In the EXTRAS folder, you will find other examples of EMUICON.RSC file
+(with their corresponding EMUICON.DEF files).  To use one, just copy it
+to the root of your boot disk, and rename it to EMUICON.RSC.
+
+You should be aware that each additional icon beyond the basic set
+consumes about 300 bytes of RAM, so if you are short of memory, avoid
+putting too many icons in EMUICON.RSC.
 
 
 User-assignable mouse cursors
