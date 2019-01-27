@@ -12,7 +12,10 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
+/*
+ * NOTE: the code currently assumes that the font width is 8 bits.
+ * If we ever add a 16x32 font, the code will need changing!
+ */
 
 #include "config.h"
 #include "portab.h"
