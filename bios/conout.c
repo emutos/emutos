@@ -31,17 +31,6 @@
 #define PLANE_OFFSET    2       /* interleaved planes */
 
 
-
-/*
- * internal prototypes
- */
-static void neg_cell(UBYTE *);
-static UBYTE * cell_addr(UWORD x, UWORD y);
-static void cell_xfer(UBYTE *, UBYTE *);
-static BOOL next_cell(void);
-
-
-
 /*
  * char_addr - retrieve the address of the source cell
  *
@@ -74,168 +63,6 @@ char_addr(WORD ch)
 
     /* invalid code. no address returned */
     return NULL;
-}
-
-
-
-/*
- * ascii_out - prints an ascii character on the screen
- *
- * in:
- *
- * ch.w      ascii code for character
- */
-
-void
-ascii_out(int ch)
-{
-    UBYTE * src, * dst;
-    BOOL visible;                       /* was the cursor visible? */
-
-    src = char_addr(ch);                /* a0 -> get character source */
-    if (src == NULL)
-        return;                         /* no valid character */
-
-    dst = v_cur_ad;                     /* a1 -> get destination */
-
-    visible = v_stat_0 & M_CVIS;        /* test visibility bit */
-    if (visible) {
-        v_stat_0 &= ~M_CVIS;                    /* start of critical section */
-    }
-
-    /* put the cell out (this covers the cursor) */
-    cell_xfer(src, dst);
-
-    /* advance the cursor and update cursor address and coordinates */
-    if (next_cell()) {
-        UBYTE * cell;
-        UWORD y = v_cur_cy;
-
-        /* perform cell carriage return. */
-        cell = v_bas_ad + (ULONG)v_cel_wr * y;
-        v_cur_cx = 0;                   /* set X to first cell in line */
-
-        /* perform cell line feed. */
-        if (y < v_cel_my) {
-            cell += v_cel_wr;           /* move down one cell */
-            v_cur_cy = y + 1;           /* update cursor's y coordinate */
-        }
-        else {
-            scroll_up(0);               /* scroll from top of screen */
-        }
-        v_cur_ad = cell;                /* update cursor address */
-    }
-
-    /* if visible */
-    if (visible) {
-        neg_cell(v_cur_ad);             /* display cursor. */
-        v_stat_0 |= M_CSTATE;           /* set state flag (cursor on). */
-        v_stat_0 |= M_CVIS;             /* end of critical section. */
-
-        /* do not flash the cursor when it moves */
-        if (v_stat_0 & M_CFLASH) {
-            v_cur_tim = v_period;       /* reset the timer. */
-        }
-    }
-}
-
-
-
-
-/*
- * blank_out - Fills region with the background color.
- *
- * Fills a cell-word aligned region with the background color.
- *
- * The rectangular region is specified by a top/left cell x,y and a
- * bottom/right cell x,y, inclusive.  Routine assumes top/left x is
- * even and bottom/right x is odd for cell-word alignment. This is,
- * because this routine is heavily optimized for speed, by always
- * blanking as much space as possible in one go.
- *
- * in:
- *   topx - top/left cell x position (must be even)
- *   topy - top/left cell y position
- *   botx - bottom/right cell x position (must be odd)
- *   boty - bottom/right cell y position
- */
-
-void
-blank_out(int topx, int topy, int botx, int boty)
-{
-    UWORD color = v_col_bg;             /* bg color value */
-    int pair, pairs, row, rows, offs;
-    UBYTE * addr = cell_addr(topx, topy);   /* running pointer to screen */
-
-    /*
-     * # of cell-pairs per row in region - 1
-     *
-     * e.g. topx = 2, botx = 5, so pairs = 2
-     */
-    pairs = (botx - topx + 1) / 2;      /* pairs of characters */
-
-    /* calculate the BYTE offset from the end of one row to next start */
-    offs = v_lin_wr - pairs * 2 * v_planes;
-
-    /*
-     * # of lines in region - 1
-     *
-     * see comments re cell-pairs above
-     */
-    rows = (boty - topy + 1) * v_cel_ht;
-
-    if (v_planes > 1) {
-        /* Color modes are optimized for handling 2 planes at once */
-        ULONG pair_planes[4];        /* bits on screen for 8 planes max */
-        UWORD i;
-
-        /* Precalculate the pairs of plane data */
-        for (i = 0; i < v_planes / 2; i++) {
-            /* set the high WORD of our LONG for the current plane */
-            if (color & 0x0001)
-                pair_planes[i] = 0xffff0000;
-            else
-                pair_planes[i] = 0x00000000;
-            color >>= 1;        /* get next bit */
-
-            /* set the low WORD of our LONG for the current plane */
-            if (color & 0x0001)
-                pair_planes[i] |= 0x0000ffff;
-            color >>= 1;        /* get next bit */
-        }
-
-        /* do all rows in region */
-        for (row = rows; row--;) {
-            /* loop through all cell pairs */
-            for (pair = pairs; pair--;) {
-                for (i = 0; i < v_planes / 2; i++) {
-                    *(ULONG*)addr = pair_planes[i];
-                    addr += sizeof(ULONG);
-                }
-            }
-            addr += offs;       /* skip non-region area with stride advance */
-        }
-    }
-    else {
-        /* Monochrome mode */
-        UWORD pl;               /* bits on screen for current plane */
-
-        /* set the WORD for plane 0 */
-        if (color & 0x0001)
-            pl = 0xffff;
-        else
-            pl = 0x0000;
-
-        /* do all rows in region */
-        for (row = rows; row--;) {
-            /* loop through all cell pairs */
-            for (pair = pairs; pair--;) {
-                *(UWORD*)addr = pl;
-                addr += sizeof(UWORD);
-            }
-            addr += offs;       /* skip non-region area with stride advance */
-        }
-    }
 }
 
 
@@ -387,6 +214,109 @@ cell_xfer(UBYTE * src, UBYTE * dst)
 
 
 /*
+ * neg_cell - negates
+ *
+ * This routine negates the contents of an arbitrarily-tall byte-wide cell
+ * composed of an arbitrary number of (Atari-style) bit-planes.
+ * Cursor display can be accomplished via this procedure.  Since a second
+ * negation restores the original cell condition, there is no need to save
+ * the contents beneath the cursor block.
+ *
+ * in:
+ * a1.l      points to destination (1st plane, top of block)
+ *
+ * out:
+ */
+
+static void
+neg_cell(UBYTE * cell)
+{
+    int plane, len;
+    int cell_len = v_cel_ht;
+    int lin_wr = v_lin_wr;
+
+    v_stat_0 |= M_CRIT;                 /* start of critical section. */
+
+    for (plane = v_planes; plane--; ) {
+        UBYTE * addr = cell;            /* top of current dest plane */
+
+        /* reset cell length counter */
+        for (len = cell_len; len--; ) {
+            *addr = ~*addr;
+            addr += lin_wr;
+        }
+        cell += PLANE_OFFSET;           /* a1 -> top of block in next plane */
+    }
+    v_stat_0 &= ~M_CRIT;                /* end of critical section. */
+}
+
+
+
+/*
+ * next_cell - Return the next cell address.
+ *
+ * sets next cell address given the current position and screen constraints
+ *
+ * returns:
+ *     false - no wrap condition exists
+ *     true  - CR LF required (position has not been updated)
+ */
+
+static BOOL next_cell(void)
+{
+    /* check bounds against screen limits */
+    if (v_cur_cx == v_cel_mx) {         /* increment cell ptr */
+        if (!(v_stat_0 & M_CEOL)) {
+            /* overwrite in effect */
+            return 0;                   /* no wrap condition exists */
+                                        /* don't change cell parameters */
+        }
+
+        /* call carriage return routine */
+        /* call line feed routine */
+        return 1;                       /* indicate that CR LF is required */
+    }
+
+    v_cur_cx += 1;                      /* next cell to right */
+
+    /* if X is even, move to next word in the plane */
+    if (IS_ODD(v_cur_cx)) {
+        /* x is odd */
+        v_cur_ad += 1;                  /* a1 -> new cell */
+        return 0;                       /* indicate no wrap needed */
+    }
+
+    /* new cell (1st plane), added offset to next word in plane */
+    v_cur_ad += (v_planes << 1) - 1;
+
+    return 0;                           /* indicate no wrap needed */
+}
+
+
+
+/*
+ * invert_cell - negates the cells bits
+ *
+ * This routine negates the contents of an arbitrarily-tall byte-wide cell
+ * composed of an arbitrary number of (Atari-style) bit-planes.
+ *
+ * Wrapper for neg_cell().
+ *
+ * in:
+ * x - cell X coordinate
+ * y - cell Y coordinate
+ */
+
+void
+invert_cell(int x, int y)
+{
+    /* fetch x and y coords and invert cursor. */
+    neg_cell(cell_addr(x, y));
+}
+
+
+
+/*
  * move_cursor - move the cursor.
  *
  * move the cursor and update global parameters
@@ -457,105 +387,164 @@ move_cursor(int x, int y)
 
 
 /*
- * neg_cell - negates
- *
- * This routine negates the contents of an arbitrarily-tall byte-wide cell
- * composed of an arbitrary number of (Atari-style) bit-planes.
- * Cursor display can be accomplished via this procedure.  Since a second
- * negation restores the original cell condition, there is no need to save
- * the contents beneath the cursor block.
+ * ascii_out - prints an ascii character on the screen
  *
  * in:
- * a1.l      points to destination (1st plane, top of block)
  *
- * out:
- */
-
-static void
-neg_cell(UBYTE * cell)
-{
-    int plane, len;
-    int cell_len = v_cel_ht;
-    int lin_wr = v_lin_wr;
-
-    v_stat_0 |= M_CRIT;                 /* start of critical section. */
-
-    for (plane = v_planes; plane--; ) {
-        UBYTE * addr = cell;            /* top of current dest plane */
-
-        /* reset cell length counter */
-        for (len = cell_len; len--; ) {
-            *addr = ~*addr;
-            addr += lin_wr;
-        }
-        cell += PLANE_OFFSET;           /* a1 -> top of block in next plane */
-    }
-    v_stat_0 &= ~M_CRIT;                /* end of critical section. */
-}
-
-
-
-/*
- * invert_cell - negates the cells bits
- *
- * This routine negates the contents of an arbitrarily-tall byte-wide cell
- * composed of an arbitrary number of (Atari-style) bit-planes.
- *
- * Wrapper for neg_cell().
- *
- * in:
- * x - cell X coordinate
- * y - cell Y coordinate
+ * ch.w      ascii code for character
  */
 
 void
-invert_cell(int x, int y)
+ascii_out(int ch)
 {
-    /* fetch x and y coords and invert cursor. */
-    neg_cell(cell_addr(x, y));
+    UBYTE * src, * dst;
+    BOOL visible;                       /* was the cursor visible? */
+
+    src = char_addr(ch);                /* a0 -> get character source */
+    if (src == NULL)
+        return;                         /* no valid character */
+
+    dst = v_cur_ad;                     /* a1 -> get destination */
+
+    visible = v_stat_0 & M_CVIS;        /* test visibility bit */
+    if (visible) {
+        v_stat_0 &= ~M_CVIS;                    /* start of critical section */
+    }
+
+    /* put the cell out (this covers the cursor) */
+    cell_xfer(src, dst);
+
+    /* advance the cursor and update cursor address and coordinates */
+    if (next_cell()) {
+        UBYTE * cell;
+        UWORD y = v_cur_cy;
+
+        /* perform cell carriage return. */
+        cell = v_bas_ad + (ULONG)v_cel_wr * y;
+        v_cur_cx = 0;                   /* set X to first cell in line */
+
+        /* perform cell line feed. */
+        if (y < v_cel_my) {
+            cell += v_cel_wr;           /* move down one cell */
+            v_cur_cy = y + 1;           /* update cursor's y coordinate */
+        }
+        else {
+            scroll_up(0);               /* scroll from top of screen */
+        }
+        v_cur_ad = cell;                /* update cursor address */
+    }
+
+    /* if visible */
+    if (visible) {
+        neg_cell(v_cur_ad);             /* display cursor. */
+        v_stat_0 |= M_CSTATE;           /* set state flag (cursor on). */
+        v_stat_0 |= M_CVIS;             /* end of critical section. */
+
+        /* do not flash the cursor when it moves */
+        if (v_stat_0 & M_CFLASH) {
+            v_cur_tim = v_period;       /* reset the timer. */
+        }
+    }
 }
 
 
 
 /*
- * next_cell - Return the next cell address.
+ * blank_out - Fills region with the background color.
  *
- * sets next cell address given the current position and screen constraints
+ * Fills a cell-word aligned region with the background color.
  *
- * returns:
- *     false - no wrap condition exists
- *     true  - CR LF required (position has not been updated)
+ * The rectangular region is specified by a top/left cell x,y and a
+ * bottom/right cell x,y, inclusive.  Routine assumes top/left x is
+ * even and bottom/right x is odd for cell-word alignment. This is,
+ * because this routine is heavily optimized for speed, by always
+ * blanking as much space as possible in one go.
+ *
+ * in:
+ *   topx - top/left cell x position (must be even)
+ *   topy - top/left cell y position
+ *   botx - bottom/right cell x position (must be odd)
+ *   boty - bottom/right cell y position
  */
 
-static BOOL next_cell(void)
+void
+blank_out(int topx, int topy, int botx, int boty)
 {
-    /* check bounds against screen limits */
-    if (v_cur_cx == v_cel_mx) {         /* increment cell ptr */
-        if (!(v_stat_0 & M_CEOL)) {
-            /* overwrite in effect */
-            return 0;                   /* no wrap condition exists */
-                                        /* don't change cell parameters */
+    UWORD color = v_col_bg;             /* bg color value */
+    int pair, pairs, row, rows, offs;
+    UBYTE * addr = cell_addr(topx, topy);   /* running pointer to screen */
+
+    /*
+     * # of cell-pairs per row in region - 1
+     *
+     * e.g. topx = 2, botx = 5, so pairs = 2
+     */
+    pairs = (botx - topx + 1) / 2;      /* pairs of characters */
+
+    /* calculate the BYTE offset from the end of one row to next start */
+    offs = v_lin_wr - pairs * 2 * v_planes;
+
+    /*
+     * # of lines in region - 1
+     *
+     * see comments re cell-pairs above
+     */
+    rows = (boty - topy + 1) * v_cel_ht;
+
+    if (v_planes > 1) {
+        /* Color modes are optimized for handling 2 planes at once */
+        ULONG pair_planes[4];        /* bits on screen for 8 planes max */
+        UWORD i;
+
+        /* Precalculate the pairs of plane data */
+        for (i = 0; i < v_planes / 2; i++) {
+            /* set the high WORD of our LONG for the current plane */
+            if (color & 0x0001)
+                pair_planes[i] = 0xffff0000;
+            else
+                pair_planes[i] = 0x00000000;
+            color >>= 1;        /* get next bit */
+
+            /* set the low WORD of our LONG for the current plane */
+            if (color & 0x0001)
+                pair_planes[i] |= 0x0000ffff;
+            color >>= 1;        /* get next bit */
         }
 
-        /* call carriage return routine */
-        /* call line feed routine */
-        return 1;                       /* indicate that CR LF is required */
+        /* do all rows in region */
+        for (row = rows; row--;) {
+            /* loop through all cell pairs */
+            for (pair = pairs; pair--;) {
+                for (i = 0; i < v_planes / 2; i++) {
+                    *(ULONG*)addr = pair_planes[i];
+                    addr += sizeof(ULONG);
+                }
+            }
+            addr += offs;       /* skip non-region area with stride advance */
+        }
     }
+    else {
+        /* Monochrome mode */
+        UWORD pl;               /* bits on screen for current plane */
 
-    v_cur_cx += 1;                      /* next cell to right */
+        /* set the WORD for plane 0 */
+        if (color & 0x0001)
+            pl = 0xffff;
+        else
+            pl = 0x0000;
 
-    /* if X is even, move to next word in the plane */
-    if (IS_ODD(v_cur_cx)) {
-        /* x is odd */
-        v_cur_ad += 1;                  /* a1 -> new cell */
-        return 0;                       /* indicate no wrap needed */
+        /* do all rows in region */
+        for (row = rows; row--;) {
+            /* loop through all cell pairs */
+            for (pair = pairs; pair--;) {
+                *(UWORD*)addr = pl;
+                addr += sizeof(UWORD);
+            }
+            addr += offs;       /* skip non-region area with stride advance */
+        }
     }
-
-    /* new cell (1st plane), added offset to next word in plane */
-    v_cur_ad += (v_planes << 1) - 1;
-
-    return 0;                           /* indicate no wrap needed */
 }
+
 
 
 /*
