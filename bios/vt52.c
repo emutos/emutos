@@ -1,5 +1,5 @@
 /*
- * console.c - vt52 like screen handling routines
+ * vt52.c - vt52 like screen handling routines
  *
  *
  * Copyright (C) 2013-2018 The EmuTOS development team
@@ -274,7 +274,7 @@ get_row (WORD ch)
 
 
 /*
- * get_row - state is: calculate column from character
+ * get_column - state is: calculate column from character
  */
 static void
 get_column (WORD ch)
@@ -943,7 +943,7 @@ cursconf(WORD function, WORD operand)
 
 
 /*
- * con_state_init - initialize the conout state machine
+ * vt52_init - initialize the conout state machine
  */
 void
 vt52_init(void)
