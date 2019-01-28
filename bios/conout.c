@@ -44,8 +44,7 @@
  *   pointer to first byte of source cell if code was valid
  */
 
-static UBYTE *
-char_addr(WORD ch)
+static UBYTE *char_addr(WORD ch)
 {
     UWORD offs;
 
@@ -86,8 +85,7 @@ char_addr(WORD ch)
  * a1      points to first byte of cell
  */
 
-static UBYTE *
-cell_addr(UWORD x, UWORD y)
+static UBYTE *cell_addr(UWORD x, UWORD y)
 {
     ULONG disx, disy;
 
@@ -138,8 +136,7 @@ cell_addr(UWORD x, UWORD y)
  * a4      points to byte below this cell's bottom
  */
 
-static void
-cell_xfer(UBYTE * src, UBYTE * dst)
+static void cell_xfer(UBYTE *src, UBYTE *dst)
 {
     UBYTE * src_sav, * dst_sav;
     UWORD fg;
@@ -228,8 +225,7 @@ cell_xfer(UBYTE * src, UBYTE * dst)
  * out:
  */
 
-static void
-neg_cell(UBYTE * cell)
+static void neg_cell(UBYTE *cell)
 {
     int plane, len;
     int cell_len = v_cel_ht;
@@ -307,8 +303,7 @@ static BOOL next_cell(void)
  * y - cell Y coordinate
  */
 
-void
-invert_cell(int x, int y)
+void invert_cell(int x, int y)
 {
     /* fetch x and y coords and invert cursor. */
     neg_cell(cell_addr(x, y));
@@ -327,8 +322,7 @@ invert_cell(int x, int y)
  * d1.w    new cell Y coordinate
  */
 
-void
-move_cursor(int x, int y)
+void move_cursor(int x, int y)
 {
     /* update cell position */
 
@@ -394,8 +388,7 @@ move_cursor(int x, int y)
  * ch.w      ascii code for character
  */
 
-void
-ascii_out(int ch)
+void ascii_out(int ch)
 {
     UBYTE * src, * dst;
     BOOL visible;                       /* was the cursor visible? */
@@ -467,8 +460,7 @@ ascii_out(int ch)
  *   boty - bottom/right cell y position
  */
 
-void
-blank_out(int topx, int topy, int botx, int boty)
+void blank_out(int topx, int topy, int botx, int boty)
 {
     UWORD color = v_col_bg;             /* bg color value */
     int pair, pairs, row, rows, offs;
@@ -565,8 +557,7 @@ blank_out(int topx, int topy, int botx, int boty)
  *   top_line - cell y of cell line to be used as top line in scroll
  */
 
-void
-scroll_up(UWORD top_line)
+void scroll_up(UWORD top_line)
 {
     ULONG count;
     UBYTE * src, * dst;
@@ -593,8 +584,7 @@ scroll_up(UWORD top_line)
  * scroll_down - Scroll (partially) downwards
  */
 
-void
-scroll_down(UWORD start_line)
+void scroll_down(UWORD start_line)
 {
     ULONG count;
     UBYTE * src, * dst;
