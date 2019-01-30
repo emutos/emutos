@@ -953,11 +953,11 @@ msgstr "[1]["
 
 #: desk/desk_rsc.c
 msgid "[1]["
-"The trash can is used to|"
+"%s is used to|"
 "permanently delete files|"
 "or folders.][  OK  ]"
 msgstr "[1]["
-"La papelera se utiliza para|"
+"%s se utiliza para|"
 "borrar permanentemente archivos|"
 "o carpetas.][  OK  ]"
 

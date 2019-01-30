@@ -1153,7 +1153,7 @@ WORD do_info(WORD curr)
         ret = inf_disk(drive);
         break;
     case AT_ISTRSH:
-        fun_alert(1, STTRINFO);
+        fun_alert_string(1, STTRINFO, pa->a_pappl);
         break;
     }
 
