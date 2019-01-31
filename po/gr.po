@@ -976,24 +976,6 @@ msgstr "[1]["
 "©«ž¤ œ§ ­á¤œ ˜ œ¨š˜©å˜ª.][  OK  ]"
 
 #: desk/desk_rsc.c
-msgid "[1]["
-"You cannot drag the trash can|"
-"icon into a window.][  OK  ]"
-msgstr "[1]["
-"ƒœ¤ £§¦¨œå«œ ¤˜ ©ç¨œ«œ «¦|"
-"œ ¡¦¤å› ˜ «¦¬ ¡á›¦¬ ˜§¦¨¨ £á«à¤|"
-"©œ â¤˜ §˜¨áŸ¬¨¦.][  OK  ]"
-
-#: desk/desk_rsc.c
-msgid "[1]["
-"You cannot place this|"
-"icon over another icon.][  OK  ]"
-msgstr "[1]["
-"ƒœ¤ £§¦¨œå«œ ¤˜ «¦§¦Ÿœ«ã©œ«œ|"
-"˜¬«æ «¦ œ ¡¦¤å› ¦ §á¤à ˜§æ|"
-"â¤˜ á¢¢¦.][  OK  ]"
-
-#: desk/desk_rsc.c
 msgid "[2]["
 "Save Desktop?][  OK  |Cancel]"
 msgstr "[2]["

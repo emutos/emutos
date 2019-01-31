@@ -961,22 +961,6 @@ msgstr "[1]["
 "Scrivania.][  OK  ]"
 
 #: desk/desk_rsc.c
-msgid "[1]["
-"You cannot drag the trash can|"
-"icon into a window.][  OK  ]"
-msgstr "[1]["
-"Non puoi spostare l'icona|"
-"del cestino in una finestra.][  OK  ]"
-
-#: desk/desk_rsc.c
-msgid "[1]["
-"You cannot place this|"
-"icon over another icon.][  OK  ]"
-msgstr "[1]["
-"Non puoi mettere questa|"
-"icona sopra ad una altra.][  OK  ]"
-
-#: desk/desk_rsc.c
 msgid "[2]["
 "Save Desktop?][  OK  |Cancel]"
 msgstr "[2]["

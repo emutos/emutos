@@ -957,22 +957,6 @@ msgstr "[1]["
 "soubory nebo adresáøe.][  OK  ]"
 
 #: desk/desk_rsc.c
-msgid "[1]["
-"You cannot drag the trash can|"
-"icon into a window.][  OK  ]"
-msgstr "[1]["
-"Popelnici nelze pøetáhnout|"
-"do okna.][  OK  ]"
-
-#: desk/desk_rsc.c
-msgid "[1]["
-"You cannot place this|"
-"icon over another icon.][  OK  ]"
-msgstr "[1]["
-"Tuto ikonu nelze pøetáhnout|"
-"pøes jinou ikonu.][  OK  ]"
-
-#: desk/desk_rsc.c
 msgid "[2]["
 "Save Desktop?][  OK  |Cancel]"
 msgstr "[2]["

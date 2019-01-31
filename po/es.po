@@ -964,22 +964,6 @@ msgstr "[1]["
 "escritorio.][  OK  ]"
 
 #: desk/desk_rsc.c
-msgid "[1]["
-"You cannot drag the trash can|"
-"icon into a window.][  OK  ]"
-msgstr "[1]["
-"No puede arrastrar el icono|"
-"de la papelera a una ventana.][  OK  ]"
-
-#: desk/desk_rsc.c
-msgid "[1]["
-"You cannot place this|"
-"icon over another icon.][  OK  ]"
-msgstr "[1]["
-"No puede colocar este|"
-"icono sobre otro icono.][  OK  ]"
-
-#: desk/desk_rsc.c
 msgid "[2]["
 "Save Desktop?][  OK  |Cancel]"
 msgstr "[2]["

@@ -970,23 +970,6 @@ msgstr "[1]["
 "abgelegt werden.][  OK  ]"
 
 #: desk/desk_rsc.c
-msgid "[1]["
-"You cannot drag the trash can|"
-"icon into a window.][  OK  ]"
-msgstr "[1]["
-"Der Mülleimer kann nicht in|"
-"einem Fenster abgelegt werden.][  OK  ]"
-
-#: desk/desk_rsc.c
-msgid "[1]["
-"You cannot place this|"
-"icon over another icon.][  OK  ]"
-msgstr "[1]["
-"Diese Icon kann nicht auf|"
-"einem anderen Symbol abgelegt|"
-"werden.][  OK  ]"
-
-#: desk/desk_rsc.c
 msgid "[2]["
 "Save Desktop?][  OK  |Cancel]"
 msgstr "[2]["
