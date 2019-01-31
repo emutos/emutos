@@ -944,14 +944,6 @@ msgstr "[3]["
 
 #: desk/desk_rsc.c
 msgid "[1]["
-"You cannot open the trash|"
-"can icon into a window.][  OK  ]"
-msgstr "[1]["
-"Вы не можете открыть|"
-"иконку Корзины в окне.][  ОК ]"
-
-#: desk/desk_rsc.c
-msgid "[1]["
 "The trash can is used to|"
 "permanently delete files|"
 "or folders.][  OK  ]"

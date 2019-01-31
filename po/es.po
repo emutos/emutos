@@ -945,14 +945,6 @@ msgstr "[3]["
 
 #: desk/desk_rsc.c
 msgid "[1]["
-"You cannot open the trash|"
-"can icon into a window.][  OK  ]"
-msgstr "[1]["
-"No puede abrir el icono de|"
-"la papelera en una ventana.][  OK  ]"
-
-#: desk/desk_rsc.c
-msgid "[1]["
 "%s is used to|"
 "permanently delete files|"
 "or folders.][  OK  ]"

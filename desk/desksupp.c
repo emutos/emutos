@@ -1018,6 +1018,17 @@ static BOOL add_one_level(BYTE *pathname,BYTE *folder)
 
 
 /*
+ *  Issue alert about the trash
+ *
+ *  The current name of the trash icon is obtained from the ANODE
+ */
+static void trash_alert(ANODE *pa)
+{
+    fun_alert_string(1, STTRINFO, pa->a_pappl);
+}
+
+
+/*
  *  Open an icon
  */
 WORD do_open(WORD curr)
@@ -1081,7 +1092,7 @@ WORD do_open(WORD curr)
         do_dopen(curr);
         break;
     case AT_ISTRSH:
-        fun_alert(1, STNOOPEN);
+        trash_alert(pa);
         break;
     }
 
@@ -1153,7 +1164,7 @@ WORD do_info(WORD curr)
         ret = inf_disk(drive);
         break;
     case AT_ISTRSH:
-        fun_alert_string(1, STTRINFO, pa->a_pappl);
+        trash_alert(pa);
         break;
     }
 
