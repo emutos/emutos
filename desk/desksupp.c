@@ -1543,3 +1543,20 @@ WORD set_default_path(BYTE *path)
 
     return (WORD)dos_chdir(path);
 }
+
+
+/*
+ *  Check if specified drive is valid
+ */
+BOOL valid_drive(BYTE drive)
+{
+    drive -= 'A';
+
+    if ((drive < 0) || (drive >= BLKDEVNUM))
+        return FALSE;
+
+    if (dos_sdrv(dos_gdrv()) & (1L << drive))
+        return TRUE;
+
+    return FALSE;
+}

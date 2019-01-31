@@ -34,5 +34,6 @@ void refresh_drive(WORD drive);
 void refresh_window(WNODE *pw);
 ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp);
 WORD set_default_path(BYTE *path);
+BOOL valid_drive(BYTE drive);
 
 #endif  /* _DESKSUPP_H */
