@@ -141,7 +141,7 @@ static const BYTE ILL_FDSK[] =  { IAPPITEM, 0 };
 static const BYTE ILL_HDSK[] =  { IAPPITEM, 0 };
 static const BYTE ILL_NOSEL[] = { OPENITEM, SHOWITEM, DELTITEM, IAPPITEM, RICNITEM, 0 };
 static const BYTE ILL_MULTSEL[] = { OPENITEM, 0 };
-static const BYTE ILL_TRASH[] = { DELTITEM, IDSKITEM, IAPPITEM, 0 };
+static const BYTE ILL_TRASH[] = { DELTITEM, IAPPITEM, 0 };
 static const BYTE ILL_NOWIN[] = {
     NFOLITEM, CLOSITEM, CLSWITEM,
 #if CONF_WITH_FILEMASK
