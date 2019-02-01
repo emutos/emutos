@@ -732,6 +732,8 @@ static WORD install_desktop_icon(ANODE *pa)
     start_dialog(tree);
     while(1)
     {
+        BOOL retry = FALSE;
+
         exitobj = form_do(tree, start_fld) & 0x7fff;
 
         switch(exitobj)
@@ -743,17 +745,15 @@ static WORD install_desktop_icon(ANODE *pa)
             new_icon = (curr_icon < G.g_numiblks-1) ? curr_icon+1 : G.g_numiblks-1;
             break;
         case ID_OK:             /* (re)install an icon */
-            if (inf_gindex(tree, ID_DRIVE, 3) == 0) /* only disks have a letter */
-            {
-                inf_sget(tree, ID_ID, id);
-                pa->a_letter = id[0];
-            }
-            else
-                pa->a_letter = '\0';
+            pa->a_letter = '\0';            /* default is no letter */
             switch(inf_gindex(tree, ID_DRIVE,3))
             {
             case 0:
                 pa->a_type = AT_ISDISK;
+                inf_sget(tree, ID_ID, id);  /* disks must have a letter */
+                pa->a_letter = id[0];
+                if ((id[0] == '\0') || (id[0] == ' '))  /* must have something */
+                    retry = TRUE;                       /* else force retry    */
                 break;
             case 1:
                 pa->a_type = AT_ISTRSH;
@@ -776,9 +776,17 @@ static WORD install_desktop_icon(ANODE *pa)
                 app_free(pa);       /* so we need to free it */
             break;
         }
+        tree[exitobj].ob_state &= ~SELECTED;
+
+        if (retry)
+        {
+            fun_alert(1, STDRIVID); /* issue error alert */
+            draw_dial(tree);        /* redraw original dialog */
+            continue;
+        }
+
         if ((exitobj != ID_UP) && (exitobj != ID_DOWN))
             break;
-        tree[exitobj].ob_state &= ~SELECTED;
 
         if (new_icon != curr_icon)
         {
