@@ -808,14 +808,12 @@ static BOOL check_alt_letter_key(WORD thechar)
     keytab = (KEYTAB *)Keytbl(-1, -1, -1);
     drive = keytab->shift[HIBYTE(thechar)];
 
-    if (valid_drive(drive))
-    {
-        do_dopen(-drive);   /* -ve indicates drive letter rather than obid */
-        men_update();       /* must update menu items */
-        return TRUE;
-    }
+    if (!valid_drive(drive))
+        return FALSE;
 
-    return FALSE;
+    do_dopen(-drive);       /* -ve indicates drive letter rather than obid */
+    men_update();           /* must update menu items */
+    return TRUE;
 }
 
 

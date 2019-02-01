@@ -833,9 +833,17 @@ static void fun_desk2win(WORD wh, WORD dobj, WORD keystate)
     while ((sobj = win_isel(G.g_screen, DROOT, sobj)))
     {
         an_src = i_find(DESKWH, sobj, NULL, NULL);
-        if (an_src && (an_src->a_type == AT_ISTRSH))
+        if (an_src)
         {
-            continue;
+            switch(an_src->a_type)
+            {
+            case AT_ISDISK:
+                if (!valid_drive(an_src->a_letter))
+                    continue;
+                break;
+            case AT_ISTRSH:
+                continue;
+            }
         }
         copied = fun_file2any(sobj, wn_dest, an_dest, fn_dest, dobj, keystate);
         if (copied)
@@ -854,15 +862,24 @@ static void fun_desk2desk(WORD dobj, WORD keystate)
     if (!target)    /* "can't happen" */
         return;
 
+    /* check if dropping icon onto non-existent disk */
+    if ((target->a_type == AT_ISDISK) && !valid_drive(target->a_letter))
+        return;
+
     sobj  = 0;
     while ((sobj = win_isel(G.g_screen, DROOT, sobj)))
     {
         source = i_find(DESKWH, sobj, NULL, NULL);
         if (!source || (source == target))
             continue;
-        if (source->a_type == AT_ISTRSH)
+        switch(source->a_type)
         {
-            continue;
+            case AT_ISDISK:
+                if (!valid_drive(source->a_letter))
+                    continue;
+                break;
+            case AT_ISTRSH:
+                continue;
         }
         fun_file2any(sobj, NULL, target, NULL, dobj, keystate);
     }

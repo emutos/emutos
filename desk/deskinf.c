@@ -42,6 +42,7 @@
 #include "desksupp.h"
 #include "deskinf.h"
 #include "deskins.h"
+#include "deskfun.h"
 #include "../bios/country.h"
 #include "kprint.h"
 
@@ -615,11 +616,15 @@ WORD inf_disk(BYTE dr_id)
     BYTE label[LEN_ZFNAME];
     BYTE drive[2];
 
+    drive[0] = dr_id;
+    drive[1] = '\0';
+
+    if (!valid_drive(dr_id))
+        return 1;
+
     graf_mouse(HGLASS, NULL);
     tree = G.a_trees[ADDISKIN];
 
-    drive[0] = dr_id;
-    drive[1] = '\0';
     srcpth[0] = dr_id;
     srcpth[1] = ':';
     strcpy(srcpth+2, "\\*.*");

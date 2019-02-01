@@ -879,6 +879,9 @@ WORD do_dopen(WORD curr)
         curr = obj_get_obid(drv);
     }
 
+    if (!valid_drive(drv))
+        return FALSE;
+
     pw = win_alloc(curr);
     if (pw)
     {
@@ -1546,17 +1549,25 @@ WORD set_default_path(BYTE *path)
 
 
 /*
- *  Check if specified drive is valid
+ *  Check if specified drive letter is valid
+ *
+ *  if it is, return TRUE
+ *  else issue form_alert and return FALSE
  */
 BOOL valid_drive(BYTE drive)
 {
+    BYTE drvstr[2];
+
+    drvstr[0] = drive;
+    drvstr[1] = '\0';
+
     drive -= 'A';
 
-    if ((drive < 0) || (drive >= BLKDEVNUM))
-        return FALSE;
+    if ((drive >= 0) && (drive < BLKDEVNUM))
+        if (dos_sdrv(dos_gdrv()) & (1L << drive))
+            return TRUE;
 
-    if (dos_sdrv(dos_gdrv()) & (1L << drive))
-        return TRUE;
+    fun_alert_string(1, STNODRIV, drvstr);
 
     return FALSE;
 }
