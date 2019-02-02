@@ -808,6 +808,13 @@ static BOOL check_alt_letter_key(WORD thechar)
     keytab = (KEYTAB *)Keytbl(-1, -1, -1);
     drive = keytab->shift[HIBYTE(thechar)];
 
+    /*
+     * check for impossible drive characters here and just ignore them;
+     * otherwise valid_drive() will issue an (ugly) error message
+     */
+    if ((drive < 'A') || (drive > 'Z')) /* ignore if not A-Z */
+        return FALSE;
+
     if (!valid_drive(drive))
         return FALSE;
 
