@@ -261,14 +261,33 @@ static WORD invalid_copy_msg(void)
 
 /*
  *  Directory routine to DO File DELeting
+ *
+ *  if the delete fails, issues an alert for skip/retry/abort
+ *
+ *  Returns 
+ *      1   delete succeeded
+ *      0   delete failed, user wants to stop
+ *      -1  delete failed, user wants to continue
  */
 static WORD d_dofdel(BYTE *ppath)
 {
-    WORD ret;
+    while(1)
+    {
+        if (dos_delete(ppath) == 0)
+            break;
 
-    ret = dos_delete(ppath);
+        switch(fun_alert_string(1, STDELFIL, filename_start(ppath)))
+        {
+        case 1:     /* skip */
+            return -1;
+        case 2:     /* retry */
+            break;
+        case 3:     /* abort */
+            return 0;
+        }
+    }
 
-    return d_errmsg(ret);
+    return TRUE;
 }
 
 
