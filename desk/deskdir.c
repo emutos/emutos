@@ -292,6 +292,38 @@ static WORD d_dofdel(BYTE *ppath)
 
 
 /*
+ *  Directory routine to DO FOLder DELeting
+ *
+ *  if the delete fails, issues an alert for skip/retry/abort
+ *
+ *  Returns 
+ *      1   delete succeeded
+ *      0   delete failed, user wants to stop
+ *      -1  delete failed, user wants to continue
+ */
+static WORD d_dofoldel(BYTE *ppath)
+{
+    while(1)
+    {
+        if (dos_rmdir(ppath) == 0)
+            break;
+
+        switch(fun_alert_string(1, STDELDIR, filename_start(ppath)))
+        {
+        case 1:     /* skip */
+            return -1;
+        case 2:     /* retry */
+            break;
+        case 3:     /* abort */
+            return 0;
+        }
+    }
+
+    return TRUE;
+}
+
+
+/*
  *  Determines output filename as required by d_dofcopy()
  *
  *  Returns:
@@ -528,11 +560,10 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path, OBJECT *tree,
             case OP_MOVE:
                 ptmp = filename_start(psrc_path) - 1;
                 *ptmp = '\0';
-                ret = dos_rmdir(psrc_path);
-                strcpy(ptmp, "\\*.*");
-                more = d_errmsg(ret);
-                if (more)
+                more = d_dofoldel(psrc_path);
+                if (more > 0)
                     deleted_folders++;
+                strcpy(ptmp, "\\*.*");
                 /*
                  * if we're finishing up, and we deleted one or more folders,
                  * update any window that was displaying the contents of
