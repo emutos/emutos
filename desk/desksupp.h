@@ -30,6 +30,7 @@ void do_fopen(WNODE *pw, WORD curr, BYTE *pathname, WORD allow_new_win);
 WORD do_open(WORD curr);
 WORD do_info(WORD curr);
 void do_format(void);
+void malloc_fail_alert(void);
 void refresh_drive(WORD drive);
 void refresh_window(WNODE *pw);
 ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp);

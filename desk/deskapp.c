@@ -417,6 +417,7 @@ static WORD setup_iconblks(const ICONBLK *ibstart, WORD count)
     if (!allocmem)
     {
         KDEBUG(("insufficient memory for %d desktop icons\n",count));
+        malloc_fail_alert();
         return -1;
     }
 

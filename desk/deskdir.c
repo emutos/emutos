@@ -865,8 +865,8 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *co
         lavail = dos_avail_stram() - 0x400; /* allow safety margin */
         if (lavail < 0L)
         {
-            form_error(E_NOMEMORY);     /* let user know */
             graf_mouse(ARROW, NULL);
+            malloc_fail_alert();        /* let user know */
             return FALSE;
         }
         /*

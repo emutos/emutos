@@ -36,6 +36,7 @@
 #include "deskwin.h"
 #include "dos.h"
 #include "deskrsrc.h"
+#include "desksupp.h"
 
 #include "string.h"
 #include "kprint.h"
@@ -168,7 +169,10 @@ FNODE *pn_sort(PNODE *pn)
      */
     ml_pfndx = dos_alloc_anyram(pn->p_count*sizeof(FNODE *));
     if (!ml_pfndx)              /* no space, can't sort */
+    {
+        malloc_fail_alert();
         return pn->p_flist;
+    }
 
     for (count = 0, pf = pn->p_flist; pf; pf = pf->f_next)
         ml_pfndx[count++] = pf;
@@ -234,7 +238,10 @@ WORD pn_active(PNODE *pn, BOOL include_folders)
 
     maxmem = dos_avail_anyram();     /* allocate max possible memory */
     if (maxmem < sizeof(FNODE))
+    {
+        malloc_fail_alert();
         return E_NOMEMORY;
+    }
 
     pn->p_fbase = dos_alloc_anyram(maxmem);
     maxcount = maxmem / sizeof(FNODE);

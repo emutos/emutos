@@ -815,10 +815,11 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname, BYT
                 char *iobuf = dos_alloc_anyram(IOBUFSIZE);
                 if (iobuf)
                 {
-
                     show_file(app_path, IOBUFSIZE, iobuf);
                     dos_free(iobuf);
                 }
+                else
+                    malloc_fail_alert();
             }
 #else
             fun_alert(1, STNOAPPL);
@@ -1284,8 +1285,11 @@ static WORD format_floppy(OBJECT *tree, WORD max_width, WORD incr)
     }
 
     buf = dos_alloc_stram(FMTBUFLEN);
-    if (!buf)           //FIXME: should issue an alert here
+    if (!buf)
+    {
+        malloc_fail_alert();
         return -1;
+    }
 
     tree[FMT_BAR].ob_width = 0;
     tree[FMT_BAR].ob_spec = 0x00FF1121L;
@@ -1570,4 +1574,13 @@ BOOL valid_drive(BYTE drive)
     fun_alert_string(1, STNODRIV, drvstr);
 
     return FALSE;
+}
+
+
+/*
+ *  Issue 'out of memory' alert
+ */
+void malloc_fail_alert(void)
+{
+    fun_alert(1, STMAFAIL);
 }
