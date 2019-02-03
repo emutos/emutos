@@ -236,15 +236,10 @@ WORD pn_active(PNODE *pn, BOOL include_folders)
 
     fl_free(pn);                    /* free any existing filenodes */
 
-    maxmem = dos_avail_anyram();     /* allocate max possible memory */
-    if (maxmem < sizeof(FNODE))
-    {
-        malloc_fail_alert();
-        return E_NOMEMORY;
-    }
-
-    pn->p_fbase = dos_alloc_anyram(maxmem);
+    maxmem = dos_avail_anyram();    /* allocate max possible memory */
     maxcount = maxmem / sizeof(FNODE);
+    if (maxcount)
+        pn->p_fbase = dos_alloc_anyram(maxmem);
 
     fn = pn->p_fbase;
     prev = (FNODE *)&pn->p_flist;   /* assumes fnode link is at start of fnode */
@@ -283,14 +278,17 @@ WORD pn_active(PNODE *pn, BOOL include_folders)
 
     if (count == 0)
     {
-        dos_free(pn->p_fbase);
-        pn->p_fbase = NULL;
+        fl_free(pn);            /* free any existing filenodes */
     }
     else
     {
         dos_shrink(pn->p_fbase,count*sizeof(FNODE));
         pn->p_flist = pn_sort(pn);
     }
+
+    /* check if enough FNODEs were available */
+    if (count >= maxcount)
+        return E_NOMEMORY;
 
     return ((ret==ENMFIL) || (ret==EFILNF)) ? 0 : ret;
 }
