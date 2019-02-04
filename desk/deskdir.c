@@ -440,9 +440,21 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
     WORD srcfh, dstfh, rc;
     LONG readlen, writelen, error;
 
-    error = dos_open(psrc_file, 0);
-    if (error < 0L)
-        return d_errmsg((WORD)error);
+    while(1)
+    {
+        error = dos_open(psrc_file, 0);
+        if (error >= 0)
+            break;
+        switch(fun_alert_string(1, STOPFAIL, filename_start(psrc_file)))
+        {
+        case 1:     /* skip */
+            return -1;
+        case 2:     /* retry */
+            break;
+        case 3:     /* abort */
+            return 0;
+        }
+    }
     srcfh = (WORD)error;
 
     rc = output_fname(psrc_file, pdst_file);
