@@ -321,7 +321,6 @@ WORD do_wfull(WORD wh)
 }
 
 
-#if CONF_WITH_DESKTOP_SHORTCUTS
 /*
  *  test if specified file exists
  *
@@ -345,6 +344,7 @@ static DTA *file_exists(BYTE *path, BYTE *name)
 }
 
 
+#if CONF_WITH_DESKTOP_SHORTCUTS
 /*
  *  Prompt to Remove or Locate a shortcut
  */
@@ -831,8 +831,15 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname, BYT
     if (ret)
     {
         /*
-         * the user wants to run an application
+         * the user wants to run an application: we first check that
+         * it exists, since it may be being invoked by an outdated
+         * entry for an installed application.
          */
+        if (!file_exists(pcmd, NULL))
+        {
+            fun_alert_string(1, STFILENF, filename_start(pcmd));
+            return done;
+        }
         strcpy(G.g_cmd, pcmd);  /* G.g_tail+1 is already set up */
         done = pro_run(isgraf, 1, G.g_cwin, curr);
     }
