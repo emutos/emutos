@@ -461,9 +461,23 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
     /*
      * we have the (possibly-modified) filename in pdst_file
      */
-    error = dos_create(pdst_file, attr);
-    if (error < 0L)
-        return invalid_copy_msg();
+    while(1)
+    {
+        error = dos_create(pdst_file, attr);
+        if (error >= 0)
+            break;
+        switch(fun_alert_string(1, STCRTFIL, filename_start(pdst_file)))
+        {
+        case 1:     /* skip */
+            dos_close(srcfh);
+            return -1;
+        case 2:     /* retry */
+            break;
+        case 3:     /* abort */
+            dos_close(srcfh);
+            return 0;
+        }
+    }
     dstfh = (WORD)error;
 
     /*
