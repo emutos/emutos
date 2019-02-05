@@ -333,8 +333,7 @@ static WORD d_dofoldel(BYTE *ppath)
  */
 static WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
 {
-    WORD fh, ob = 0, samefile;
-    LONG ret;
+    WORD ob = 0, samefile;
     OBJECT *tree = G.a_trees[ADCPALER];
     BYTE ml_fsrc[LEN_ZFNAME], ml_fdst[LEN_ZFNAME], ml_fstr[LEN_ZFNAME];
     BYTE old_dst[LEN_ZFNAME];
@@ -360,15 +359,8 @@ static WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
                 break;
             if (!G.g_covwrpref)
                 break;
-            ret = dos_open(pdst_file, 0);
-            if (ret < 0L)
-            {
-                if (ret == EFILNF)
-                    break;
-                return d_errmsg((WORD)ret);
-            }
-            fh = (WORD)ret;
-            dos_close(fh);
+            if (!item_exists(pdst_file, FALSE))
+                break;
         }
 
         /*
