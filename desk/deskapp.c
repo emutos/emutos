@@ -898,8 +898,7 @@ static void app_revit(void)
  */
 static void save_to_disk(void)
 {
-    LONG ret, len;
-    WORD fh = -1;
+    LONG ret;
     BYTE inf_file_name[sizeof(INF_FILE_NAME)];
 
     /* make sure user really wants to save the desktop */
@@ -909,28 +908,32 @@ static void save_to_disk(void)
     strcpy(inf_file_name, INF_FILE_NAME);
     inf_file_name[0] += G.g_stdrv;  /* Adjust drive letter  */
 
-    ret = dos_create(inf_file_name, 0);
-    if (ret >= 0L)
+    while(1)
     {
-        fh = (WORD) ret;
-        len = G.g_afsize - 1;
-        ret = dos_write(fh, len, gl_afile);
-        dos_close(fh);
-        if (ret != len)             /* write error */
-            ret = -1L;
+        ret = dos_create(inf_file_name, 0);
+        if (ret >= 0L)
+        {
+            WORD fh = (WORD) ret;
+            LONG len = G.g_afsize - 1;
+            ret = dos_write(fh, len, gl_afile);
+            dos_close(fh);
+            if (ret != len)             /* write error */
+                ret = -1L;
+            else ret = 0L;
+        }
+        if (ret == 0L)
+            break;
+        /* error - prompt user */
+        if (fun_alert_string(1, STCRTFIL, filename_start(inf_file_name)) != 2)
+            return;                     /* if not retrying, return now */
     }
-    if (ret < 0L)                   /* open error or write error */
-        fun_alert(1, STNOINF);
 
     /*
-     * now update any open windows for the directory containing
-     * the saved file (as long as the file was created ok).
+     * we can only be here if the file was created successfully, so update
+     * any open windows for the directory containing the saved file
      */
-    if (fh >= 0)                    /* file was created */
-    {
-        del_fname(inf_file_name);   /* convert to pathname ending in *.* */
-        fun_rebld(inf_file_name);   /* rebuild all matching open windows */
-    }
+    del_fname(inf_file_name);   /* convert to pathname ending in *.* */
+    fun_rebld(inf_file_name);   /* rebuild all matching open windows */
 }
 
 
