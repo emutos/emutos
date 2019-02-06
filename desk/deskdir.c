@@ -487,7 +487,12 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
     while(1)
     {
         error = readlen = dos_read(srcfh, copylen, copybuf);
-        if (error <= 0L)    /* error or end of file */
+        if (error == 0L)    /* end of file */
+        {
+            dos_setdt(dstfh, time, date);   /* update target date/time */
+            break;
+        }
+        if (error < 0L)     /* read error */
             break;
 
         error = writelen = dos_write(dstfh, readlen, copybuf);
@@ -496,33 +501,38 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
 
         if (writelen != readlen)
         {
+            fun_alert_merge(1, STDISKFU, pdst_file[0]);
             diskfull = TRUE;
             break;
         }
     }
 
-    if (diskfull)
+    if (error < 0L)
     {
-        fun_alert_merge(1, STDISKFU, pdst_file[0]);
-        rc = FALSE;
-    }
-    else if (error < 0L)
-    {
-        if (IS_BIOS_ERROR(error))
-            invalid_copy_msg();
-        else d_errmsg((WORD)error);
-        rc = FALSE;
-    }
-    else
-    {
-        rc = d_errmsg(dos_setdt(dstfh, time, date));
+        WORD alert;
+        BYTE *file;
+        if (readlen < 0)
+        {
+            alert = STRDFILE;
+            file = psrc_file;
+        }
+        else
+        {
+            alert = STWRFILE;
+            file = pdst_file;
+        }
+        /* Skip or Abort ? */
+        rc = (fun_alert_string(1, alert, filename_start(file))==1) ? -1 : 0;
     }
 
     dos_close(srcfh);       /* close files */
     dos_close(dstfh);
 
     if (diskfull)
+    {
         dos_delete(pdst_file);
+        rc = FALSE;
+    }
 
     return rc;
 }
