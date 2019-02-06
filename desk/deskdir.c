@@ -846,6 +846,28 @@ static WORD d_dofoldren(BYTE *oldname, BYTE *newname)
 
 
 /*
+ *  Check to see if the source is a parent of the destination
+ *  (both paths must be fully qualified)
+ *
+ *  Returns TRUE iff it is
+ */
+static BOOL source_is_parent(BYTE *src, BYTE *dst)
+{
+    while(*src)
+    {
+        if (*src == '*')        /* matched so far, and * matches the rest */
+            break;              /* so go return TRUE */
+        if (*src != *dst)
+            return FALSE;
+        src++;                  /* up to next */
+        dst++;
+    }
+
+    return TRUE;
+}
+
+
+/*
  *  DIRectory routine that does an OPeration on all the selected files and
  *  folders in the source path.  The selected files and folders are
  *  marked in the source file list.
@@ -978,6 +1000,12 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *co
             if ((op == OP_COPY) || (op == OP_MOVE) || (op == OP_RENAME))
             {
                 add_fname(dstpth, pf->f_name);
+                if (source_is_parent(srcpth,dstpth))
+                {
+                    if (fun_alert(1, STILLDIR) == 1)    /* Skip */
+                        continue;
+                    break;                              /* Abort */
+                }
                 more = output_path(op,srcpth,dstpth);
             }
 

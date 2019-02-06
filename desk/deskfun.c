@@ -318,96 +318,6 @@ WORD fun_mkdir(WNODE *pw_node)
 
 
 /*
- *  return pointer to next folder in path.
- *  start at the current position of the ptr.
- *  assume path will eventually end with \*.*
- */
-static BYTE *ret_path(BYTE *pcurr)
-{
-    BYTE *path;
-
-    /* find next level */
-    while( (*pcurr) && (*pcurr != '\\') )
-        pcurr++;
-    pcurr++;
-
-    /* get to current position */
-    path = pcurr;
-
-    /* find end of curr level */
-    while( (*path) && (*path != '\\') )
-        path++;
-
-    *path = '\0';
-    return(pcurr);
-} /* ret_path */
-
-
-/*
- *  Check to see if source is a parent of the destination.
- *  If it is, issue alert & return TRUE; otherwise just return FALSE.
- *  Must assume that src and dst paths both end with "\*.*".
- */
-static WORD source_is_parent(BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path)
-{
-    BYTE *tsrc, *tdst;
-    WORD same;
-    FNODE *pf;
-    BYTE srcpth[MAXPATHLEN];
-    BYTE dstpth[MAXPATHLEN];
-
-    if (psrc_path[0] != pdst_path[0])   /* check drives */
-        return FALSE;
-
-    tsrc = srcpth;
-    tdst = dstpth;
-    same = TRUE;
-    do
-    {
-        /* new copies */
-        strcpy(srcpth, psrc_path);
-        strcpy(dstpth, pdst_path);
-
-        /* get next paths */
-        tsrc = ret_path(tsrc);
-        tdst = ret_path(tdst);
-        if ( strcmp(tsrc, "*.*") )
-        {
-            if ( strcmp(tdst, "*.*") )
-                same = strcmp(tdst, tsrc);
-            else
-                same = FALSE;
-        }
-        else
-        {
-            /* check to same level */
-            if ( !strcmp(tdst, "*.*") )
-                same = FALSE;
-            else
-            {
-                /* walk file list */
-                for (pf = pflist; pf; pf = pf->f_next)
-                {
-                    /* exit if same subdir  */
-                    if ( fnode_is_selected(pf) &&
-                        (pf->f_attr & F_SUBDIR) &&
-                        (!strcmp(pf->f_name, tdst)) )
-                    {
-                        /* INVALID      */
-                        fun_alert(1, STBADCOP);
-                        return TRUE;
-                    }
-                }
-                same = FALSE;   /* ALL OK */
-            }
-        }
-    } while(same);
-
-    return FALSE;
-}
-
-
-/*
  *  Perform the operation 'op' on all the files & folders in the
  *  path associated with 'pspath'.  'op' can be OP_DELETE, OP_COPY,
  *  OP_MOVE.
@@ -420,9 +330,6 @@ WORD fun_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdest)
     {
     case OP_COPY:
     case OP_MOVE:
-        if (source_is_parent(pspath->p_spec, pspath->p_flist, pdest))
-            return FALSE;
-        /* drop thru */
     case OP_DELETE:
         dir_op(OP_COUNT, icontype, pspath, pdest, &count);  /* get count of source files */
         if ((count.files+count.dirs) == 0)
