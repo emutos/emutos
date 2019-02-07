@@ -252,9 +252,9 @@ WORD d_errmsg(WORD err)
 }
 
 
-static WORD invalid_copy_msg(void)
+static WORD illegal_op_msg(void)
 {
-    fun_alert(1, STINVCPY);
+    fun_alert(1, STILLOP);
     return FALSE;
 }
 
@@ -638,7 +638,7 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path, OBJECT *tree,
                     if (dos_mkdir(pdst_path) < 0)
                     {
                         if (!item_exists(pdst_path, TRUE))
-                            more = invalid_copy_msg();
+                            more = illegal_op_msg();
                     }
                     strcat(pdst_path, "\\*.*");
                 }
@@ -762,7 +762,7 @@ static WORD output_path(WORD op,BYTE *srcpth, BYTE *dstpth)
              * or there is insufficient space (e.g. in root dir)
              */
             if (!item_exists(dstpth, TRUE))
-                return invalid_copy_msg();
+                return illegal_op_msg();
         }
 
         /*
@@ -808,7 +808,7 @@ static WORD d_dofileren(BYTE *oldname, BYTE *newname, BOOL is_folder)
          * or there is insufficient space (e.g. in root dir)
          */
         if (!item_exists(newname,is_folder))
-            return invalid_copy_msg();
+            return illegal_op_msg();
 
         /*
          * we cannot rename because the file/folder exists, so
