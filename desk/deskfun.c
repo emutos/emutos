@@ -607,6 +607,8 @@ static WORD fun_file2desk(PNODE *pn_src, WORD icontype_src, ANODE *an_dest, WORD
             pathname[0] = pn_src->p_spec[0];
             operation = OP_DELETE;
             break;
+        default:            /* "can't happen" */
+            illegal_op_msg();
         }
     }
 
@@ -779,6 +781,11 @@ static void fun_desk2desk(WORD dobj, WORD keystate)
             case AT_ISDISK:
                 if (!valid_drive(source->a_letter))
                     continue;
+                if ((target->a_type == AT_ISDISK) && (target->a_letter == source->a_letter))
+                {
+                    illegal_op_msg();
+                    continue;
+                }
                 break;
             case AT_ISTRSH:
                 continue;
