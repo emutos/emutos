@@ -587,7 +587,7 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path, OBJECT *tree,
         /*
          * handle end of folder
          */
-        if ((ret < 0) && ((ret == ENMFIL) || (ret == EFILNF)))
+        if ((ret == ENMFIL) || (ret == EFILNF))
         {
             switch(op)
             {
