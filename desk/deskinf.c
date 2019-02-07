@@ -555,26 +555,12 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
     unfmt_str(poname, srcpth+nmidx);
     unfmt_str(pnname, dstpth+nmidx);
 
-    /*
-     * if user has changed the name, do the DOS rename
-     */
-    more = TRUE;
     changed = FALSE;
-    if (strcmp(srcpth+nmidx, dstpth+nmidx))
-    {
-        ret = dos_rename(srcpth, dstpth);
-        if ((more=d_errmsg(ret)) != 0)
-        {
-            strcpy(pf->f_name, dstpth+nmidx);
-            changed = TRUE;
-        }
-    }
-
     /*
-     * if user has changed the attributes, and we haven't had
-     * an error from the rename, tell DOS to change them
+     * if user has changed the attributes, tell DOS to change them
+     * (like Atari TOS, we don't check the return code from dos_chmod())
      */
-    if (!(pf->f_attr & F_SUBDIR) && more)
+    if (!(pf->f_attr & F_SUBDIR))
     {
         attr = pf->f_attr;
         obj = tree + FFRONLY;
@@ -584,12 +570,22 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
             attr &= ~F_RDONLY;
         if (attr != pf->f_attr)
         {
-            ret = dos_chmod(dstpth, F_SETMOD, attr);
-            if (d_errmsg(ret) != 0)
-            {
-                pf->f_attr = attr;
-                changed = TRUE;
-            }
+            dos_chmod(dstpth, F_SETMOD, attr);
+            pf->f_attr = attr;
+            changed = TRUE;
+        }
+    }
+
+    /*
+     * if user has changed the name, do the DOS rename
+     */
+    if (strcmp(srcpth+nmidx, dstpth+nmidx))
+    {
+        ret = dos_rename(srcpth, dstpth);
+        if (d_errmsg(ret) != 0)
+        {
+            strcpy(pf->f_name, dstpth+nmidx);
+            changed = TRUE;
         }
     }
 
