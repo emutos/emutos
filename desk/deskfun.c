@@ -243,7 +243,7 @@ WORD fun_mkdir(WNODE *pw_node)
 {
     PNODE *pp_node;
     OBJECT *tree;
-    WORD  i, len, err;
+    WORD  i, len;
     BYTE  fnew_name[LEN_ZFNAME], unew_name[LEN_ZFNAME], *ptmp;
     BYTE  path[MAXPATHLEN];
 
@@ -281,20 +281,11 @@ WORD fun_mkdir(WNODE *pw_node)
             break;
 
         ptmp = add_fname(path, unew_name);
-        err = dos_mkdir(path);
-        if (err == 0)       /* mkdir succeeded */
+        if (dos_mkdir(path) == 0)   /* mkdir succeeded */
         {
             fun_rebld(pw_node->w_pnode.p_spec);
             break;
         }
-
-        /*
-         * if we're getting a BIOS (rather than GEMDOS) error, the
-         * critical error handler has already issued a message, so
-         * just quit
-         */
-        if (IS_BIOS_ERROR(err))
-            break;
 
         len = strlen(path); /* before we restore old path */
         restore_path(ptmp); /* restore original path */

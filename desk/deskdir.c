@@ -635,12 +635,9 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path, OBJECT *tree,
                 if ((op == OP_COPY) || (op == OP_MOVE))
                 {
                     add_fname(pdst_path, dta->d_fname);
-                    ret = dos_mkdir(pdst_path);
-                    if (ret < 0)
+                    if (dos_mkdir(pdst_path) < 0)
                     {
-                        if (ret != EACCDN)
-                            more = d_errmsg(ret);
-                        else if (!item_exists(pdst_path, TRUE))
+                        if (!item_exists(pdst_path, TRUE))
                             more = invalid_copy_msg();
                     }
                     strcat(pdst_path, "\\*.*");
@@ -758,12 +755,8 @@ static WORD output_path(WORD op,BYTE *srcpth, BYTE *dstpth)
         }
         else
         {
-            ret = dos_mkdir(dstpth);
-            if (ret == 0)           /* ok, we created the new folder */
+            if (dos_mkdir(dstpth) == 0) /* ok, we created the new folder */
                 break;
-            if (ret != EACCDN)      /* some strange problem */
-                return d_errmsg(ret);
-
             /*
              * we cannot create the folder: either it already exists
              * or there is insufficient space (e.g. in root dir)
