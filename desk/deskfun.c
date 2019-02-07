@@ -259,7 +259,7 @@ WORD fun_mkdir(WNODE *pw_node)
             i++;
     }
 
-    if (i > MAX_LEVEL)
+    if (i > NUM_LEVEL)
     {
         fun_alert(1, STFO8DEE);
         return FALSE;

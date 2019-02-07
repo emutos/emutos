@@ -136,7 +136,7 @@ typedef struct
                                                 /*   for non-recursive  */
                                                 /*   directory tree     */
                                                 /*   traversal          */
-/*GLOBAL*/ DTA          g_dtastk[MAX_LEVEL];
+/*GLOBAL*/ DTA          g_dtastk[NUM_LEVEL];
 /*GLOBAL*/ LONG         g_nfiles;
 /*GLOBAL*/ LONG         g_ndirs;
 /*GLOBAL*/ LONG         g_size;

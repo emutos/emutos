@@ -629,7 +629,7 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path, OBJECT *tree,
          */
         if (dta->d_attrib & F_SUBDIR)
         {
-            if ((dta->d_fname[0] != '.') && (level < (MAX_LEVEL-1)))
+            if ((dta->d_fname[0] != '.') && (level < MAX_LEVEL))
             {
                 add_path(psrc_path, dta->d_fname);
                 if ((op == OP_COPY) || (op == OP_MOVE))

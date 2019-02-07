@@ -34,6 +34,7 @@
 
 #define MAX_OBS     60              /* max number of objects that can be dragged */
 
-#define MAX_LEVEL   8               /* max directory depth supported by the desktop */
+#define NUM_LEVEL   8               /* number of directory levels supported by the desktop */
+#define MAX_LEVEL   (NUM_LEVEL-1)
 
 #endif  /* _DESKCONF_H */
