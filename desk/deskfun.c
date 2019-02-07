@@ -316,13 +316,17 @@ WORD fun_mkdir(WNODE *pw_node)
 WORD fun_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdest)
 {
     DIRCOUNT count;
+    WORD more;
 
     switch(op)
     {
     case OP_COPY:
     case OP_MOVE:
     case OP_DELETE:
-        dir_op(OP_COUNT, icontype, pspath, pdest, &count);  /* get count of source files */
+        /* first, count source files */
+        more = dir_op(OP_COUNT, icontype, pspath, pdest, &count);
+        if (!more)
+            return illegal_op_msg();
         if ((count.files+count.dirs) == 0)
             break;
         dir_op(op, icontype, pspath, pdest, &count);        /* do the operation     */

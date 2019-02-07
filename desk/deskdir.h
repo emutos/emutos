@@ -31,5 +31,6 @@ void add_path(BYTE *path, BYTE *new_name);
 WORD d_errmsg(WORD err);
 WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path, OBJECT *tree, DIRCOUNT *count);
 WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *count);
+WORD illegal_op_msg(void);
 
 #endif  /* _DESKDIR_H */

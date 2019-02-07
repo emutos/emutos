@@ -252,7 +252,7 @@ WORD d_errmsg(WORD err)
 }
 
 
-static WORD illegal_op_msg(void)
+WORD illegal_op_msg(void)
 {
     fun_alert(1, STILLOP);
     return FALSE;
@@ -563,12 +563,22 @@ static void update_modified_windows(BYTE *path,WORD length)
 WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path, OBJECT *tree, DIRCOUNT *count)
 {
     BYTE *ptmp, *ptmpdst;
-    DTA  *dta = &G.g_dtastk[level];
+    DTA  *dta;
     WORD more, ret;
+
+    /*
+     * ensure we don't go past the end of the g_dtastk[] array
+     */
+    if (level > MAX_LEVEL)
+    {
+        fun_alert(1, STFO8DEE);
+        return FALSE;
+    }
 
     if (level == 0)
         deleted_folders = 0L;
 
+    dta = &G.g_dtastk[level];
     dos_sdta(dta);
 
     for (ret = dos_sfirst(psrc_path, ALLFILES); ; ret = dos_snext())
@@ -629,7 +639,7 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path, OBJECT *tree,
          */
         if (dta->d_attrib & F_SUBDIR)
         {
-            if ((dta->d_fname[0] != '.') && (level < MAX_LEVEL))
+            if (dta->d_fname[0] != '.')
             {
                 add_path(psrc_path, dta->d_fname);
                 if ((op == OP_COPY) || (op == OP_MOVE))
@@ -1011,6 +1021,8 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *co
                     more = (op==OP_RENAME) ? d_dofoldren(srcpth,dstpth) :
                             d_doop(0, op, srcpth, dstpth, tree, count);
             }
+            if (!more)
+                break;
             continue;
         }
 
@@ -1071,5 +1083,5 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *co
         end_dialog(tree);
     graf_mouse(ARROW, NULL);
 
-    return TRUE;
+    return more;
 }
