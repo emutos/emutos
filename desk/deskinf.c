@@ -469,7 +469,7 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
 {
     OBJECT *tree;
     WORD nmidx, title, ret;
-    BOOL more, changed;
+    BOOL more, changed = FALSE;
     BYTE attr;
     BYTE srcpth[MAXPATHLEN];
     BYTE dstpth[MAXPATHLEN];
@@ -521,72 +521,91 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
     inf_dttm(tree, pf, FFDATE, FFTIME);
 
     /*
-     * initialise the attributes display
+     * this major loop allows us to retry a rename failure
      */
-    obj = tree + FFRONLY;
-    if (pf->f_attr & F_SUBDIR)
-        obj->ob_state = DISABLED;
-    else if (pf->f_attr & F_RDONLY)
-        obj->ob_state = SELECTED;
-    else
-        obj->ob_state = NORMAL;
-
-    obj = tree + FFRWRITE;
-    if (pf->f_attr & F_SUBDIR)
-        obj->ob_state = DISABLED;
-    else if (!(pf->f_attr & F_RDONLY))
-        obj->ob_state = SELECTED;
-    else
-        obj->ob_state = NORMAL;
-
-    inf_show(tree, ROOT);
-    ret = inf_what(tree, FFSKIP, FFCNCL);
-    if (ret >= 0)       /* skip or cancel */
-        return ret;
-
-    /*
-     * user selected OK - we rename and/or change attributes
-     */
-    graf_mouse(HGLASS, NULL);
-
-    inf_sget(tree, FFNAME, pnname);
-
-    /* unformat the strings */
-    unfmt_str(poname, srcpth+nmidx);
-    unfmt_str(pnname, dstpth+nmidx);
-
-    changed = FALSE;
-    /*
-     * if user has changed the attributes, tell DOS to change them
-     * (like Atari TOS, we don't check the return code from dos_chmod())
-     */
-    if (!(pf->f_attr & F_SUBDIR))
+    while(1)
     {
-        attr = pf->f_attr;
+        /*
+         * initialise the attributes display
+         */
         obj = tree + FFRONLY;
-        if (obj->ob_state & SELECTED)
-            attr |= F_RDONLY;
+        if (pf->f_attr & F_SUBDIR)
+            obj->ob_state = DISABLED;
+        else if (pf->f_attr & F_RDONLY)
+            obj->ob_state = SELECTED;
         else
-            attr &= ~F_RDONLY;
-        if (attr != pf->f_attr)
-        {
-            dos_chmod(dstpth, F_SETMOD, attr);
-            pf->f_attr = attr;
-            changed = TRUE;
-        }
-    }
+            obj->ob_state = NORMAL;
 
-    /*
-     * if user has changed the name, do the DOS rename
-     */
-    if (strcmp(srcpth+nmidx, dstpth+nmidx))
-    {
-        ret = dos_rename(srcpth, dstpth);
-        if (d_errmsg(ret) != 0)
+        obj = tree + FFRWRITE;
+        if (pf->f_attr & F_SUBDIR)
+            obj->ob_state = DISABLED;
+        else if (!(pf->f_attr & F_RDONLY))
+            obj->ob_state = SELECTED;
+        else
+            obj->ob_state = NORMAL;
+
+        obj = tree + FFOK;
+        obj->ob_state &= ~SELECTED;
+        inf_show(tree, ROOT);
+        ret = inf_what(tree, FFSKIP, FFCNCL);
+        if (ret >= 0)       /* skip or cancel */
+            return ret;
+
+        /*
+         * user selected OK - we rename and/or change attributes
+         */
+        graf_mouse(HGLASS, NULL);
+
+        inf_sget(tree, FFNAME, pnname);
+
+        /* unformat the strings */
+        unfmt_str(poname, srcpth+nmidx);
+        unfmt_str(pnname, dstpth+nmidx);
+
+        /*
+         * if user has changed the attributes, tell DOS to change them
+         * and remember that we made a change
+         * (like Atari TOS, we don't check the return code from dos_chmod())
+         */
+        if (!(pf->f_attr & F_SUBDIR))
+        {
+            attr = pf->f_attr;
+            obj = tree + FFRONLY;
+            if (obj->ob_state & SELECTED)
+                attr |= F_RDONLY;
+            else
+                attr &= ~F_RDONLY;
+            if (attr != pf->f_attr)
+            {
+                dos_chmod(srcpth, F_SETMOD, attr);
+                pf->f_attr = attr;
+                changed = TRUE;
+            }
+        }
+
+        /*
+         * if user has not changed the name, we're done
+         */
+        if (strcmp(srcpth+nmidx, dstpth+nmidx) == 0)
+            break;
+
+        /*
+         * do the rename
+         *
+         * if it worked, remember the change & exit loop
+         */
+        if (dos_rename(srcpth, dstpth) == 0)
         {
             strcpy(pf->f_name, dstpth+nmidx);
             changed = TRUE;
+            break;
         }
+
+        /*
+         * rename failed: issue alert & handle response
+         */
+        if (fun_alert(1, STRENAME) == 2)    /* Cancel */
+            break;
     }
 
     graf_mouse(ARROW, NULL);
