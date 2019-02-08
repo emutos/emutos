@@ -140,6 +140,14 @@ static BYTE     *gl_buffer;
  *  desk_inf_data2 below, for most of the remaining lines
  * The #T line is added at the end.
  *
+ * NOTES re desk_inf_data1:
+ *  1. this is essentially the standard starting set of lines for all
+ *     EMUDESK.INF files
+ *  2. if an auto-run program is defined, the corresponding #Z line will
+ *     be created between the #R and the #E lines.
+ *  3. the #Z and #E lines must be completely contained within the first
+ *     INF_SIZE (currently 300) bytes of EMUDESK.INF - see geminit.c.
+ *
  * NOTES re desk_inf_data2:
  *  1. the icon numbers MUST correspond to those in deskapp.h & the
  *     icon.rsc file itself.
