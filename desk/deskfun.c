@@ -243,7 +243,7 @@ WORD fun_mkdir(WNODE *pw_node)
 {
     PNODE *pp_node;
     OBJECT *tree;
-    WORD  i, len;
+    WORD  len;
     BYTE  fnew_name[LEN_ZFNAME], unew_name[LEN_ZFNAME], *ptmp;
     BYTE  path[MAXPATHLEN];
 
@@ -251,19 +251,6 @@ WORD fun_mkdir(WNODE *pw_node)
     pp_node = &pw_node->w_pnode;
     ptmp = path;
     strcpy(ptmp, pp_node->p_spec);
-
-    i = 0;
-    while (*ptmp++)
-    {
-        if (*ptmp == '\\')
-            i++;
-    }
-
-    if (i > NUM_LEVEL)
-    {
-        fun_alert(1, STFO8DEE);
-        return FALSE;
-    }
 
     while(1)
     {
