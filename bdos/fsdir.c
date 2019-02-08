@@ -920,6 +920,12 @@ long xrename(int n, char *p1, char *p2)
     if (!f)                     /* old path doesn't exist */
         return EFILNF;
 
+    /*
+     * renames are forbidden for Read-Only files
+     */
+    if (f->f_attrib & FA_RO)
+        return EACCDN;
+
     /* at this point:
      *   f -> FCB for old path
      *   dn1->d_ofd -> OFD for the directory containing the old path
