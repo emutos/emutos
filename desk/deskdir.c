@@ -235,23 +235,6 @@ static void get_fname(BYTE *pstr, BYTE *newstr)
 }
 
 
-/*
- *  if err is not negative, return TRUE; otherwise:
- *      (1) if it's a BDOS error, issue a message via form_error()
- *      (2) return FALSE
- */
-WORD d_errmsg(WORD err)
-{
-    if (err >= 0)
-        return TRUE;
-
-    if (!IS_BIOS_ERROR(err))
-        form_error(-err-31);    /* convert to 'MS-DOS error code' */
-
-    return FALSE;
-}
-
-
 WORD illegal_op_msg(void)
 {
     fun_alert(1, STILLOP);
@@ -625,7 +608,7 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path, OBJECT *tree,
          * return if real error
          */
         if (ret < 0)
-            return d_errmsg(ret);
+            return FALSE;
 
         if (op != OP_COUNT)
             if (user_abort())
@@ -809,9 +792,6 @@ static WORD d_dofileren(BYTE *oldname, BYTE *newname, BOOL is_folder)
         ret = dos_rename(oldname,newname);
         if (ret == 0)               /* rename ok */
             return TRUE;
-
-        if (ret != EACCDN)          /* some strange problem */
-            return d_errmsg(ret);
 
         /*
          * we cannot rename the file/folder: either it already exists
