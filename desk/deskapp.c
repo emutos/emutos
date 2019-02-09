@@ -129,7 +129,6 @@
 
 static WORD     inf_rev_level;  /* revision level of current EMUDESK.INF */
 
-static BYTE     gl_afile[SIZE_AFILE];
 static BYTE     *gl_buffer;
 
 
@@ -617,6 +616,7 @@ void app_start(void)
     WORD i, x, y;
     ANODE *pa;
     WSAVE *pws;
+    BYTE *buf;
     BYTE *pcurr, *ptmp, *pauto = NULL;
     WORD envr, xcnt, ycnt, xcent, wincnt, dummy;
 
@@ -634,6 +634,14 @@ void app_start(void)
     if (app_rdicon() < 0)
     {
         /* app_rdicon() has already issued a KDEBUG() */
+        nomem_alert();          /* infinite loop */
+    }
+
+    /* allocate a temporary buffer for EMUDESK.INF */
+    buf = dos_alloc_anyram(SIZE_AFILE);
+    if (!buf)
+    {
+        KDEBUG(("insufficient memory for temporary EMUDESK.INF buffer (need %d bytes)\n",SIZE_AFILE));
         nomem_alert();          /* infinite loop */
     }
 
@@ -659,9 +667,9 @@ void app_start(void)
     G.g_patcol[2].window = INF_Q6_DEFAULT;
 #endif
 
-    shel_get(gl_afile, SIZE_AFILE);
+    shel_get(buf, SIZE_AFILE);
     if (!(bootflags & BOOTFLAG_SKIP_AUTO_ACC)
-        && gl_afile[0] != '#')              /* invalid signature    */
+        && buf[0] != '#')                   /* invalid signature    */
     {                                       /*   so read from disk  */
         LONG ret;
         WORD fh;
@@ -672,16 +680,16 @@ void app_start(void)
         if (ret >= 0L)
         {
             fh = (WORD) ret;
-            ret = dos_read(fh, SIZE_AFILE, gl_afile);
+            ret = dos_read(fh, SIZE_AFILE, buf);
             if (ret < 0L)
                 ret = 0L;                   /* length read */
             dos_close(fh);
-            gl_afile[ret] = '\0';
+            buf[ret] = '\0';
         }
     }
 
     /* If there's still no desktop.inf data, use built-in now: */
-    if (gl_afile[0] != '#')
+    if (buf[0] != '#')
     {
         LONG drivemask;
         char *text;
@@ -692,7 +700,7 @@ void app_start(void)
         char drive_letter;
 
         /* Environment and Windows */
-        strcat(gl_afile, desk_inf_data1);
+        strcat(buf, desk_inf_data1);
 
         /* Scan for valid drives: */
         drivemask = dos_sdrv(dos_gdrv());
@@ -700,35 +708,35 @@ void app_start(void)
         {
             if (drivemask&(1L<<i))
             {
-                x = strlen(gl_afile);
+                x = strlen(buf);
                 drive_x = icon_index % xcnt; /* x position */
                 drive_y = icon_index / xcnt; /* y position */
                 icon_type = (i > 1) ? 0 /* Hard disk */ : 1 /* Floppy */;
                 drive_letter = 'A' + i;
                 rsrc_gaddr_rom(R_STRING, STDISK, (void **)&text);
-                sprintf(gl_afile + x, "#M %02X %02X %02X FF %c %s %c@ @\r\n",
+                sprintf(buf + x, "#M %02X %02X %02X FF %c %s %c@ @\r\n",
                         drive_x, drive_y, icon_type, drive_letter, text, drive_letter);
                 icon_index++;
             }
         }
 
         /* Copy core data part 2 */
-        strcat(gl_afile, desk_inf_data2);
+        strcat(buf, desk_inf_data2);
 
         /* add Trash icon to end */
-        x = strlen(gl_afile);
+        x = strlen(buf);
         trash_x = 0;            /* Left */
         trash_y = ycnt-1;       /* Bottom */
         if (drive_y >= trash_y) /* if the last drive icon overflows over */
             trash_x = xcnt-1;   /*  the trash row, force trash to right  */
         rsrc_gaddr_rom(R_STRING, STTRASH, (void **)&text);
-        sprintf(gl_afile + x, "#T %02X %02X 03 FF   %s@ @\r\n",
+        sprintf(buf + x, "#T %02X %02X 03 FF   %s@ @\r\n",
                 trash_x, trash_y, text);
     }
 
     wincnt = 0;
     inf_rev_level = 0;
-    pcurr = gl_afile;
+    pcurr = buf;
 
     while(*pcurr)
     {
@@ -878,6 +886,8 @@ void app_start(void)
     G.g_xytext[4] = gl_wchar * DRAG_BOX_WIDTH;
     G.g_xytext[5] = gl_hchar;
     G.g_xytext[7] = gl_hchar;
+
+    dos_free(buf);
 }
 
 /*
@@ -975,12 +985,20 @@ void app_save(WORD todisk)
     WORD i, len;
     WORD env1, env2, mode, env5;
     BYTE type;
-    BYTE *pcurr, *ptmp;
+    BYTE *outbuf, *pcurr, *ptmp;
     ANODE *pa;
     WSAVE *pws;
 
-    memset(gl_afile, 0, SIZE_AFILE);
-    pcurr = gl_afile;
+    /* allocate a temporary buffer */
+    outbuf = dos_alloc_anyram(SIZE_AFILE);
+    if (!outbuf)
+    {
+        KDEBUG(("insufficient memory for temporary EMUDESK.INF buffer (need %d bytes)\n",SIZE_AFILE));
+        nomem_alert();          /* infinite loop */
+    }
+
+    memset(outbuf, 0, SIZE_AFILE);
+    pcurr = outbuf;
 
     /* save revision level */
     pcurr += sprintf(pcurr,"#R %02X\r\n",INF_REV_LEVEL);
@@ -1119,14 +1137,16 @@ void app_save(WORD todisk)
     app_revit();
 
     /* calculate size */
-    len = pcurr - gl_afile;
+    len = pcurr - outbuf;
 
     /* save in memory */
-    shel_put(gl_afile, len+1);  /* also save terminating NUL */
+    shel_put(outbuf, len+1);  /* also save terminating NUL */
 
     /* save to disk */
     if (todisk)
-        save_to_disk(gl_afile, len);
+        save_to_disk(outbuf, len);
+
+    dos_free(outbuf);
 }
 
 
