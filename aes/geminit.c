@@ -74,6 +74,26 @@ extern void gem_main(void); /* called only from gemstart.S */
 #define CURSOR_HEIGHT       37
 #endif
 
+/*
+ * for compatibility purposes, the following string is written to the
+ * start of the shell buffer during AES initialisation.  its purpose is
+ * to prevent crashes in certain control-panel-like desk accessories
+ * (including CTRL.ACC & EMULATOR.ACC) that were released before XCONTROL.
+ * these accessories use the area at the start of the shell buffer to save
+ * configuration data, and expect that the data returned by shel_get()
+ * will *always* contain a string starting with #a.
+ *
+ * in this section of the shell buffer, the #a line is used to store
+ * serial port settings.  for complete compatibility, this string could
+ * also contain #b, #c, and #d lines, although no accessories are known
+ * to require them.  the #b line is for printer settings, the #c line is
+ * for palette/mouse/keyboard settings, and the #d line is reserved.
+ *
+ * the maximum allowed length of this string is 128 bytes (excluding the
+ * terminating NUL byte).
+ */
+#define CP_SHELL_INIT   "#a000000\r\n"  /* initialisation string */
+
 #define INF_SIZE   300                  /* size of buffer used by sh_rdinf() */
                                         /*  for start of EMUDESK.INF file    */
 
@@ -606,6 +626,8 @@ void run_accs_and_desktop(void)
     D.g_scrap[0] = gl_logdrv;       /* set up scrap dir path */
 
     gsx_init();                     /* do gsx open work station */
+
+    sh_put(CP_SHELL_INIT,sizeof(CP_SHELL_INIT)-1);  /* see description at top */
 
     load_accs(num_accs);            /* load up to 'num_accs' desk accessories */
 
