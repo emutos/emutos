@@ -34,7 +34,14 @@
 
 #define MAX_OBS     60              /* max number of objects that can be dragged */
 
-#define NUM_LEVEL   8               /* number of directory levels supported by the desktop */
-#define MAX_LEVEL   (NUM_LEVEL-1)
+/*
+ * the following specifies the maximum number of directory levels supported
+ * for a copy/move/count/delete operation; if lower levels are found to exist,
+ * the operation will be terminated with a form alert (STFO8DEE).  levels are
+ * counted from the top level of the source tree.  note that this does NOT
+ * restrict the number of directory levels that may exist in a file system.
+ */
+#define NUM_LEVEL   8               /* number of directory levels: */
+#define MAX_LEVEL   (NUM_LEVEL-1)   /*  0 thru MAX_LEVEL           */
 
 #endif  /* _DESKCONF_H */
