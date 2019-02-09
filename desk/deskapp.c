@@ -673,9 +673,10 @@ void app_start(void)
         {
             fh = (WORD) ret;
             ret = dos_read(fh, SIZE_AFILE, gl_afile);
-            G.g_afsize = (ret < 0L) ? 0L : ret;
+            if (ret < 0L)
+                ret = 0L;                   /* length read */
             dos_close(fh);
-            gl_afile[G.g_afsize] = '\0';
+            gl_afile[ret] = '\0';
         }
     }
 
@@ -723,7 +724,6 @@ void app_start(void)
         rsrc_gaddr_rom(R_STRING, STTRASH, (void **)&text);
         sprintf(gl_afile + x, "#T %02X %02X 03 FF   %s@ @\r\n",
                 trash_x, trash_y, text);
-        G.g_afsize = strlen(gl_afile);
     }
 
     wincnt = 0;
@@ -904,7 +904,7 @@ static void app_revit(void)
 /*
  *  Perform the actual save of the EMUDESK.INF file
  */
-static void save_to_disk(void)
+static void save_to_disk(BYTE *buf, WORD len)
 {
     LONG ret;
     BYTE inf_file_name[sizeof(INF_FILE_NAME)];
@@ -922,8 +922,7 @@ static void save_to_disk(void)
         if (ret >= 0L)
         {
             WORD fh = (WORD) ret;
-            LONG len = G.g_afsize - 1;
-            ret = dos_write(fh, len, gl_afile);
+            ret = dos_write(fh, len, buf);
             dos_close(fh);
             if (ret != len)             /* write error */
                 ret = -1L;
@@ -973,7 +972,7 @@ static WORD desk_get_videomode(void)
  */
 void app_save(WORD todisk)
 {
-    WORD i;
+    WORD i, len;
     WORD env1, env2, mode, env5;
     BYTE type;
     BYTE *pcurr, *ptmp;
@@ -1114,20 +1113,20 @@ void app_save(WORD todisk)
         *pcurr++ = '\r';
         *pcurr++ = '\n';
     }
-    *pcurr++ = 0x0;
+    *pcurr = 0x00;
 
     /* reverse list back */
     app_revit();
 
     /* calculate size */
-    G.g_afsize = pcurr - gl_afile;
+    len = pcurr - gl_afile;
 
     /* save in memory */
-    shel_put(gl_afile, G.g_afsize);
+    shel_put(gl_afile, len+1);  /* also save terminating NUL */
 
     /* save to disk */
     if (todisk)
-        save_to_disk();
+        save_to_disk(gl_afile, len);
 }
 
 
