@@ -127,6 +127,13 @@
 
 #define INF_REV_LEVEL   0x01    /* revision level when creating EMUDESK.INF */
 
+/*
+ * the following defines the number of bytes reserved for control panel
+ * use at the start of the shell buffer.  these bytes are not modified
+ * by EmuDesk, and are (currently) not saved to the EMUDESK.INF file.
+ */
+#define CPDATA_LEN      128
+
 static WORD     inf_rev_level;  /* revision level of current EMUDESK.INF */
 
 static BYTE     *gl_buffer;
@@ -616,7 +623,7 @@ void app_start(void)
     WORD i, x, y;
     ANODE *pa;
     WSAVE *pws;
-    BYTE *buf;
+    BYTE *buf, *inf_data;
     BYTE *pcurr, *ptmp, *pauto = NULL;
     WORD envr, xcnt, ycnt, xcent, wincnt, dummy;
 
@@ -668,8 +675,9 @@ void app_start(void)
 #endif
 
     shel_get(buf, SIZE_AFILE);
+    inf_data = buf + CPDATA_LEN;
     if (!(bootflags & BOOTFLAG_SKIP_AUTO_ACC)
-        && buf[0] != '#')                   /* invalid signature    */
+        && inf_data[0] != '#')              /* invalid signature    */
     {                                       /*   so read from disk  */
         LONG ret;
         WORD fh;
@@ -680,16 +688,16 @@ void app_start(void)
         if (ret >= 0L)
         {
             fh = (WORD) ret;
-            ret = dos_read(fh, SIZE_AFILE, buf);
+            ret = dos_read(fh, SIZE_AFILE-CPDATA_LEN, inf_data);
             if (ret < 0L)
                 ret = 0L;                   /* length read */
             dos_close(fh);
-            buf[ret] = '\0';
+            inf_data[ret] = '\0';
         }
     }
 
-    /* If there's still no desktop.inf data, use built-in now: */
-    if (buf[0] != '#')
+    /* If there's still no EMUDESK.INF data, use built-in now: */
+    if (inf_data[0] != '#')
     {
         LONG drivemask;
         char *text;
@@ -700,7 +708,7 @@ void app_start(void)
         char drive_letter;
 
         /* Environment and Windows */
-        strcat(buf, desk_inf_data1);
+        strcat(inf_data, desk_inf_data1);
 
         /* Scan for valid drives: */
         drivemask = dos_sdrv(dos_gdrv());
@@ -708,35 +716,35 @@ void app_start(void)
         {
             if (drivemask&(1L<<i))
             {
-                x = strlen(buf);
+                x = strlen(inf_data);
                 drive_x = icon_index % xcnt; /* x position */
                 drive_y = icon_index / xcnt; /* y position */
                 icon_type = (i > 1) ? 0 /* Hard disk */ : 1 /* Floppy */;
                 drive_letter = 'A' + i;
                 rsrc_gaddr_rom(R_STRING, STDISK, (void **)&text);
-                sprintf(buf + x, "#M %02X %02X %02X FF %c %s %c@ @\r\n",
+                sprintf(inf_data + x, "#M %02X %02X %02X FF %c %s %c@ @\r\n",
                         drive_x, drive_y, icon_type, drive_letter, text, drive_letter);
                 icon_index++;
             }
         }
 
         /* Copy core data part 2 */
-        strcat(buf, desk_inf_data2);
+        strcat(inf_data, desk_inf_data2);
 
         /* add Trash icon to end */
-        x = strlen(buf);
+        x = strlen(inf_data);
         trash_x = 0;            /* Left */
         trash_y = ycnt-1;       /* Bottom */
         if (drive_y >= trash_y) /* if the last drive icon overflows over */
             trash_x = xcnt-1;   /*  the trash row, force trash to right  */
         rsrc_gaddr_rom(R_STRING, STTRASH, (void **)&text);
-        sprintf(buf + x, "#T %02X %02X 03 FF   %s@ @\r\n",
+        sprintf(inf_data + x, "#T %02X %02X 03 FF   %s@ @\r\n",
                 trash_x, trash_y, text);
     }
 
     wincnt = 0;
     inf_rev_level = 0;
-    pcurr = buf;
+    pcurr = inf_data;
 
     while(*pcurr)
     {
@@ -985,7 +993,7 @@ void app_save(WORD todisk)
     WORD i, len;
     WORD env1, env2, mode, env5;
     BYTE type;
-    BYTE *outbuf, *pcurr, *ptmp;
+    BYTE *outbuf, *inf_data, *pcurr, *ptmp;
     ANODE *pa;
     WSAVE *pws;
 
@@ -997,8 +1005,9 @@ void app_save(WORD todisk)
         nomem_alert();          /* infinite loop */
     }
 
-    memset(outbuf, 0, SIZE_AFILE);
-    pcurr = outbuf;
+    shel_get(outbuf, SIZE_AFILE);
+    inf_data = outbuf + CPDATA_LEN;
+    pcurr = inf_data;
 
     /* save revision level */
     pcurr += sprintf(pcurr,"#R %02X\r\n",INF_REV_LEVEL);
@@ -1144,7 +1153,7 @@ void app_save(WORD todisk)
 
     /* save to disk */
     if (todisk)
-        save_to_disk(outbuf, len);
+        save_to_disk(inf_data, len-CPDATA_LEN);
 
     dos_free(outbuf);
 }
