@@ -498,14 +498,6 @@ WORD form_alert(WORD defbut, const BYTE *astring)
     return gem_if(AES_CTRL_CODE(FORM_ALERT, 1, 1, 1));
 }
 
-
-WORD form_error(WORD errnum)
-{
-    FM_ERRNUM = errnum;
-    return gem_if(AES_CTRL_CODE(FORM_ERROR, 1, 1, 0));
-}
-
-
 WORD form_center(OBJECT *tree, WORD *pcx, WORD *pcy, WORD *pcw, WORD *pch)
 {
     FM_FORM = (LONG)tree;
