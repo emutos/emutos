@@ -185,7 +185,7 @@ static BYTE *fmt_date(UWORD date, BOOL fourdigit, BYTE *pdate)
  * Note: files larger than 9999999 bytes will be displayed
  * in kbytes on narrow screens
  */
-static BYTE *fmt_size(LONG size, BOOL wide, BYTE *psize)
+static BYTE *fmt_size(ULONG size, BOOL wide, BYTE *psize)
 {
     BYTE *fmt_string;
 
