@@ -546,7 +546,10 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
     if (nm_files >= NM_NAMES)
         ad_fsnames = dos_alloc_anyram(nm_files*(LEN_FSNAME+sizeof(BYTE *)));
     if (!ad_fsnames)
+    {
+        fm_show(ALFSMEM, NULL, 1);
         return FALSE;
+    }
 
     g_fslist = (LONG *)(ad_fsnames+nm_files*LEN_FSNAME);
 
