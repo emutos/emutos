@@ -39,10 +39,6 @@
 
 #define LEN_FSNAME (LEN_ZFNAME+1)   /* includes leading flag byte & trailing nul */
 
-                            /* max number of files/directory that we can handle */
-#define MAX_NM_FILES 1600L          /*  ... if we have enough memory */
-#define MIN_NM_FILES 100L           /*  ... if memory is tight */
-
 
 static GRECT gl_rfs;
 
@@ -541,15 +537,14 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
         *pipath += dos_gdrv();
     }
 
-    /* get memory for the filename buffer
-     *  & for the array that points to it
+    /*
+     * get memory for the filename array & the array that points to it.
+     * we must have enough memory for the first page of directory names
      */
-    for (nm_files = MAX_NM_FILES; nm_files >= MIN_NM_FILES; nm_files /= 2)
-    {
+    ad_fsnames = NULL;
+    nm_files = dos_avail_anyram() / (LEN_FSNAME+sizeof(BYTE *));
+    if (nm_files >= NM_NAMES)
         ad_fsnames = dos_alloc_anyram(nm_files*(LEN_FSNAME+sizeof(BYTE *)));
-        if (ad_fsnames)
-            break;
-    }
     if (!ad_fsnames)
         return FALSE;
 
