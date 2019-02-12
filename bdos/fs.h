@@ -236,7 +236,7 @@ struct _dmd         /* drive media block */
     int    m_fsiz;      /*  fat size in records M01.01.03       */
     int    m_clsiz;     /*  cluster size in records M01.01.03   */
     unsigned int m_clsizb;  /*  cluster size in bytes           */
-    int    m_recsiz;    /*  record size in bytes                */
+    UWORD  m_recsiz;    /*  record size in bytes                */
 
     CLNO   m_numcl;     /*  total number of clusters in data    */
     int    m_clrlog;    /* log (base 2) of clsiz in records     */

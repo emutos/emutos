@@ -27,9 +27,9 @@
 #define MAX_FAT12_CLUSTERS  4084        /* architectural constants */
 #define MAX_FAT16_CLUSTERS  65524
 #define MAX_CLUSTER_SIZE    32768L      /* must fit in unsigned short */
-#define MAX_LOGSEC_SIZE     (MAX_CLUSTER_SIZE/2)
 #define MIN_SECS_PER_CLUS   1
 #define MAX_SECS_PER_CLUS   (MAX_CLUSTER_SIZE/SECTOR_SIZE)
+#define MAX_LOGSEC_SIZE     (MAX_CLUSTER_SIZE/MIN_SECS_PER_CLUS)
 #define MIN_FATS            2           /* FIXME: should allow 1 */
 #define MAX_FATS            2
 

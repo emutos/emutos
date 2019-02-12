@@ -151,7 +151,7 @@ static void pun_info_setup(void)
 
     pun_ptr = &pun_info;
 
-    KDEBUG(("PUN INFO: max sector size = %d\n",pun_info.max_sect_siz));
+    KDEBUG(("PUN INFO: max sector size = %u\n",pun_info.max_sect_siz));
 }
 
 /*
@@ -678,7 +678,7 @@ LONG blkdev_getbpb(WORD dev)
     if (unit < NUMFLOPPIES)
         flop_checksum(unit, dskbufp);
 
-    KDEBUG(("bpb[dev=%d] = {\n  recsiz = %d;\n  clsiz  = %d;\n",
+    KDEBUG(("bpb[dev=%d] = {\n  recsiz = %u;\n  clsiz  = %d;\n",
             dev,bdev->bpb.recsiz,bdev->bpb.clsiz));
     KDEBUG(("  clsizb = %u;\n  rdlen  = %d;\n  fsiz   = %d;\n",
             bdev->bpb.clsizb,bdev->bpb.rdlen,bdev->bpb.fsiz));
