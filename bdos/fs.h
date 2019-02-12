@@ -89,7 +89,7 @@ typedef struct _ofd OFD;
 typedef struct _dnd DND;
 typedef struct _dmd DMD;
 
-typedef unsigned int FH;        /*  file handle    */
+typedef UWORD FH;               /*  file handle    */
 typedef UWORD CLNO;             /*  cluster number */
 typedef ULONG RECNO;            /*  record number  */
 
@@ -232,19 +232,19 @@ struct _dnd         /* directory node descriptor */
 struct _dmd         /* drive media block */
 {
     RECNO  m_recoff[3]; /*  record offsets for fat,dir,data     */
-    int    m_drvnum;    /*  drive number for this media         */
-    int    m_fsiz;      /*  fat size in records M01.01.03       */
-    int    m_clsiz;     /*  cluster size in records M01.01.03   */
-    unsigned int m_clsizb;  /*  cluster size in bytes           */
+    WORD   m_drvnum;    /*  drive number for this media         */
+    WORD   m_fsiz;      /*  fat size in records M01.01.03       */
+    WORD   m_clsiz;     /*  cluster size in records M01.01.03   */
+    UWORD  m_clsizb;    /*  cluster size in bytes               */
     UWORD  m_recsiz;    /*  record size in bytes                */
 
     CLNO   m_numcl;     /*  total number of clusters in data    */
-    int    m_clrlog;    /* log (base 2) of clsiz in records     */
-    int    m_clrm;      /* clsiz in rec, mask                   */
-    int    m_rblog;     /* log (base 2) of recsiz in bytes      */
-    int    m_rbm;       /* recsiz in bytes, mask                */
-    int    m_clblog;    /* log (base 2) of clsiz in bytes       */
-    int    m_clbm;      /* clsiz in bytes, mask                 */
+    WORD   m_clrlog;    /* log (base 2) of clsiz in records     */
+    WORD   m_clrm;      /* clsiz in rec, mask                   */
+    WORD   m_rblog;     /* log (base 2) of recsiz in bytes      */
+    WORD   m_rbm;       /* recsiz in bytes, mask                */
+    WORD   m_clblog;    /* log (base 2) of clsiz in bytes       */
+    WORD   m_clbm;      /* clsiz in bytes, mask                 */
     OFD    *m_fatofd;   /* OFD for 'fat file'                   */
 
     OFD    *m_ofl;      /*  list of open files                  */
@@ -299,7 +299,7 @@ typedef struct
 {
     OFD *f_ofd;
     PD  *f_own;         /* file owners */
-    int f_use;          /* use count */
+    WORD f_use;         /* use count */
 } FTAB;
 
 
