@@ -28,7 +28,7 @@
 #include "rectfunc.h"
 #include "gemerror.h"
 #include "gemobed.h"
-
+#include "kprint.h"
 #include "string.h"
 #include "intmath.h"
 
@@ -519,7 +519,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
     WORD dclkret, cont, newlist, newsel, newdrive;
     BYTE *pstr;
     GRECT pt;
-    BYTE *locstr, *locold, *mask;
+    BYTE *memblk, *locstr, *locold, *mask;
     BYTE selname[LEN_FSNAME];
     OBJECT *obj;
     TEDINFO *tedinfo;
@@ -546,24 +546,25 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
      * (this also happily reduces code size).
      *
      * the order of data within the gotten area is:
-     *  filename array
      *  filename pointers
+     *  filename array
      *  locstr
      *  locold
      *  mask
      */
-    ad_fsnames = NULL;
+    memblk = NULL;
     nm_files = (dos_avail_anyram()-LEN_FSWORK) / (LEN_FSNAME+sizeof(BYTE *));
     if (nm_files >= NM_NAMES)
-        ad_fsnames = dos_alloc_anyram(nm_files*(LEN_FSNAME+sizeof(BYTE *))+LEN_FSWORK);
-    if (!ad_fsnames)
+        memblk = dos_alloc_anyram(nm_files*(LEN_FSNAME+sizeof(BYTE *))+LEN_FSWORK);
+    if (!memblk)
     {
         fm_show(ALFSMEM, NULL, 1);
         return FALSE;
     }
 
-    g_fslist = (LONG *)(ad_fsnames+nm_files*LEN_FSNAME);
-    locstr = (BYTE *)(g_fslist+nm_files);
+    g_fslist = (LONG *)memblk;
+    ad_fsnames = (BYTE *)(g_fslist+nm_files);
+    locstr = ad_fsnames + (nm_files * LEN_FSNAME);
     locold = locstr + LEN_FSPATH;
     mask = locold + LEN_FSPATH;
 
@@ -804,7 +805,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
 
     /* return exit button */
     *pbutton = inf_what(tree, FSOK, FSCANCEL);
-    dos_free(ad_fsnames);
+    dos_free(memblk);
 
     return TRUE;
 }
