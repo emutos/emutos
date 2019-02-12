@@ -38,7 +38,8 @@
 #define DRIVE_OFFSET FS1STDRV
 
 #define LEN_FSNAME (LEN_ZFNAME+1)   /* includes leading flag byte & trailing nul */
-
+#define LEN_FSPATH  (LEN_ZPATH+4)   /* at least 3 bytes longer than max path */
+#define LEN_FSWORK  (3*LEN_FSPATH)  /* total workarea length in fs_input() */
 
 static GRECT gl_rfs;
 
@@ -518,8 +519,8 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
     WORD dclkret, cont, newlist, newsel, newdrive;
     BYTE *pstr;
     GRECT pt;
-    BYTE locstr[LEN_ZPATH+4], locold[LEN_ZPATH+4];  /* at least 3 bytes longer than 'mask' */
-    BYTE mask[LEN_ZPATH+1], selname[LEN_FSNAME];
+    BYTE *locstr, *locold, *mask;
+    BYTE selname[LEN_FSNAME];
     OBJECT *obj;
     TEDINFO *tedinfo;
 
@@ -538,13 +539,23 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
     }
 
     /*
-     * get memory for the filename array & the array that points to it.
-     * we must have enough memory for the first page of directory names
+     * get memory for the filename array & the array that points to it:
+     * we must have enough memory for the first page of directory names.
+     *
+     * also get memory for some pathname workareas to save stack space
+     * (this also happily reduces code size).
+     *
+     * the order of data within the gotten area is:
+     *  filename array
+     *  filename pointers
+     *  locstr
+     *  locold
+     *  mask
      */
     ad_fsnames = NULL;
-    nm_files = dos_avail_anyram() / (LEN_FSNAME+sizeof(BYTE *));
+    nm_files = (dos_avail_anyram()-LEN_FSWORK) / (LEN_FSNAME+sizeof(BYTE *));
     if (nm_files >= NM_NAMES)
-        ad_fsnames = dos_alloc_anyram(nm_files*(LEN_FSNAME+sizeof(BYTE *)));
+        ad_fsnames = dos_alloc_anyram(nm_files*(LEN_FSNAME+sizeof(BYTE *))+LEN_FSWORK);
     if (!ad_fsnames)
     {
         fm_show(ALFSMEM, NULL, 1);
@@ -552,6 +563,9 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
     }
 
     g_fslist = (LONG *)(ad_fsnames+nm_files*LEN_FSNAME);
+    locstr = (BYTE *)(g_fslist+nm_files);
+    locold = locstr + LEN_FSPATH;
+    mask = locold + LEN_FSPATH;
 
     strcpy(locstr, pipath);
     strcpy(locold,locstr);
