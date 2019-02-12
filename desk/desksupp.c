@@ -746,7 +746,13 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname, BYT
     strcpy(app_path, p);
     p = filename_start(app_path);
     *p = '\0';
-    set_default_path(app_path);
+
+    /* exit with error if we can't set the default directory */
+    if (set_default_path(app_path) < 0)
+    {
+        fun_alert(1, STDEFDIR);
+        return FALSE;
+    }
 
     /*
      * see if application was selected directly or a
