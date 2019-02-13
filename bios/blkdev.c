@@ -623,11 +623,21 @@ LONG blkdev_getbpb(WORD dev)
     bdev->bpb.recsiz = recsiz;
     bdev->bpb.clsiz = b->spc;
     bdev->bpb.clsizb = bdev->bpb.clsiz * bdev->bpb.recsiz;
-    tmp = getiword(b->dir);
+
+    /*
+     * determine the number of root directory sectors
+     *
+     * if the space required for the specified number of root directory
+     * entries is not an exact number of logical sectors, we round up
+     */
+    tmp = getiword(b->dir);     /* root dir entries */
     if (bdev->bpb.recsiz != 0)
-        bdev->bpb.rdlen = (tmp * 32) / bdev->bpb.recsiz;
+        bdev->bpb.rdlen = ((tmp * 32) + (bdev->bpb.recsiz - 1)) / bdev->bpb.recsiz;
     else
         bdev->bpb.rdlen = 0;
+    if (tmp*32 != bdev->bpb.rdlen*bdev->bpb.recsiz)
+        KDEBUG(("root directory length has been rounded up\n"));
+
     bdev->bpb.fsiz = getiword(b->spf);
 
     /* the structure of the logical disk is assumed to be:
