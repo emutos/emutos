@@ -1,222 +1,279 @@
 /*
- * doprintf adapted from ACK doprnt.c   1.1 as found in Minix 1.5
- * Unless otherwise stated, the MINIX BSD-ish license applies.
+ * doprintf.c - a simple printf() implementation
  *
- * modified Laurent Vogel 2000, 2001
+ * Copyright (C) 2019 The EmuTOS development team
+ *
+ * Authors:
+ *  RFB   Roger Burrows
+ *
+ * Note the following differences from a 'standard' implementation:
+ *  1. The only flag supported is '-'
+ *  2. The only size supported is 'l' ('L' is treated as a synonym)
+ *  3. Only the following types are supported: cdioPpsuXx
+ * The limitations are compatible with the previous implementation.
+ *
+ * This file is distributed under the GPL, version 2 or at your
+ * option any later version.  See doc/license.txt for details.
  */
-
 #include "config.h"
 #include <stdarg.h>
 #include "doprintf.h"
 
+/*
+ * max size of buffer for number strings (arbitrary)
+ */
+#define MAXNUMLEN   100     /* allows a lot of leading zeros ... */
 
-static char *itoa(char *p, unsigned int num, int radix, char first_hex_letter)
+/*
+ * definitions for 'flags'
+ */
+#define FLAG_LJUST  0x0001
+#define FLAG_WIDTH  0x0002
+#define FLAG_PREC   0x0004
+#define FLAG_LONG   0x0008
+#define FLAG_SIGN   0x0010
+#define FLAG_CAPS   0x0020
+
+/*
+ * convert the value passed to an ASCII string starting at p
+ *
+ * returns a pointer to the first character after the converted value
+ */
+static void *numconv(char *p, unsigned long value, int radix, int precision, unsigned int flags)
 {
-  int i;
-  char *q;
+    char buf[MAXNUMLEN], *q;
+    char c;
+    long quot, rem;
 
-  q = p + 32;
-  do {
-    i = (int)(num % radix);
-    if(i >= 10) {
-      i += first_hex_letter - 10;
-    } else {
-      i += '0';
+    /* first, a paranoia check */
+    if (precision > MAXNUMLEN)
+        precision = MAXNUMLEN;
+
+    /* create the string in reverse order in 'buf' */
+    for (q = buf; value; precision--)
+    {
+        quot = value / radix;
+        rem = value - (quot * radix);
+        if (rem < 10)
+            c = rem + '0';
+        else
+            c = (rem - 10) + ((flags & FLAG_CAPS) ? 'A' : 'a');
+        *q++ = c;
+        value = quot;
     }
-    *--q = i;
-  } while ((num = num / radix) != 0);
-  i = (int)(p + 32 - q);
-  do {
-    *p++ = *q++;
-  } while (--i);
-  return(p);
-}
 
-static char *ltoa(char *p, unsigned long num, int radix, char first_hex_letter)
-{
-  int i;
-  char *q;
+    /* pad with zeroes if necessary */
+    if (flags & FLAG_PREC)
+        while(precision-- > 0)
+            *q++ = '0';
 
-  q = p + 32;
-  do {
-    i = (int)(num % radix);
-    if(i >= 10) {
-      i += first_hex_letter - 10;
-    } else {
-      i += '0';
-    }
-    *--q = i;
-  } while ((num = num / radix) != 0);
-  i = (int)(p + 32 - q);
-  do {
-    *p++ = *q++;
-  } while (--i);
-  return(p);
+    /* copy to input buffer */
+    for ( ; q > buf; )
+        *p++ = *--q;
+
+    return p;
 }
 
 int doprintf(void (*outc)(int), const char *fmt, va_list ap)
 {
-  char buf[128];
-  char *p;
-  char *s;
-  int c;
-  int i;
-  short  width;
-  short  ndigit;
-  int ndfnd;
-  int ljust;
-  int zfill;
-  int len = 0;
-  int lflag;
-  char first_hex_letter;
-  long l;
-  for (;;) {
-    p = buf;
-    s = buf;
-    while ((c = *fmt++) && c != '%') {
-      (*outc)(c); len++;
-    }
-    if (c == 0)
-      return len;
-    ljust = 0;
-    if (*fmt == '-') {
-      fmt++;
-      ljust++;
-    }
-    zfill = ' ';
-    if (*fmt == '0') {
-      fmt++;
-      zfill = '0';
-    }
-    for (width = 0;;) {
-      c = *fmt++;
-      if (c >= '0' && c <= '9') {
-        c -= '0';
-      } else if (c == '*') {
-        c = va_arg(ap, int);
-      } else {
-        break;
-      }
-      width *= 10;
-      width += c;
-    }
-    ndfnd = 0;
-    ndigit = 0;
-    if (c == '.') {
-      for (;;) {
-        c = *fmt++;
-        if (c >= '0' && c <= '9') {
-          c -= '0';
-        } else if (c == '*') {
-          c = va_arg(ap, int);
-        } else {
-          break;
+    char *p, *bufstart, buf[MAXNUMLEN];
+    long longval;
+    unsigned int flags;
+    int n, type, fill_len, precision, width;
+    char c, fill;
+    int length = 0; /* returned by us */
+
+    while(1)
+    {
+        /*
+         * look for start of format string
+         */
+        while(1)
+        {
+            c = *fmt++;
+            if (!c)
+                return length;
+            if (c == '%')
+                break;
+            (*outc)(c);
+            length++;
         }
-        ndigit *= 10;
-        ndigit += c;
-        ndfnd++;
-      }
-    }
-    lflag = 0;
-    if (c == 'l' || c == 'L') {
-      lflag++;
-      if (*fmt)
-        c = *fmt++;
-    }
-    first_hex_letter = 'a';
-    switch (c) {
-    case 'p':
-      lflag++;
-      zfill = '0';
-      c = 16;
-      width = 8;
-      (*outc)('0'); len++;
-      (*outc)('x'); len++;
-      goto oxu;
-    case 'X':
-      first_hex_letter = 'A';
-    case 'x':
-      c = 16;
-      goto oxu;
-    case 'u':
-      c = 10;
-      goto oxu;
-    case 'o':
-      c = 8;
-    oxu:
-      if (lflag) {
-        l = va_arg(ap, long);
-        p = ltoa(p, l, c, first_hex_letter);
-        break;
-      }
-      i = va_arg(ap, int);
-      p = itoa(p, i, c, first_hex_letter);
-      break;
-    case 'i':
-    case 'd':
-      if (lflag) {
-        l = va_arg(ap, long);
-        if (l < 0) {
-          *p++ = '-';
-          l = -l;
+
+        /*
+         * check flags
+         *
+         * note that we currently only support the '-' flag
+         */
+        flags = 0;
+        if (*fmt == '-')
+        {
+            flags |= FLAG_LJUST;
+            fmt++;
         }
-        p = ltoa(p, l, 10, first_hex_letter);
-        break;
-      }
-      i = va_arg(ap, int);
-      if (i < 0) {
-        *p++ = '-';
-        i = -i;
-      }
-      p = itoa(p, i, 10, first_hex_letter);
-      break;
-    case 'e':
-    case 'f':
-    case 'g':
-      zfill = ' ';
-      *p++ = '?';
-      break;
-    case 'c':
-      zfill = ' ';
-      c = va_arg(ap, int);
-      if (c)
-        *p++ = c;
-      break;
-    case 's':
-      zfill = ' ';
-      s = va_arg(ap, char *);
-      if (s == 0)
-        s = "(null)";
-      if (ndigit == 0)
-        ndigit = 32767;
-      for (p = s; *p && --ndigit >= 0; p++)
-        ;
-      break;
-    default:
-      *p++ = c;
-      break;
+
+        /*
+         * get width, checking for fill character
+         */
+        width = 0;
+        fill = ' ';
+        if (*fmt == '0')
+        {
+            fill = '0';
+            fmt++;
+        }
+        for ( ; ; fmt++)
+        {
+            c = *fmt;
+            if ((c >= '0') && (c <= '9'))
+                n = c - '0';
+            else if (c == '*')
+                n = va_arg(ap, int);
+            else break;
+            width = width * 10 + n;
+            flags |= FLAG_WIDTH;
+        }
+
+        /*
+         * check for precision
+         */
+        precision = 0;
+        if (*fmt == '.')
+        {
+            while(1)
+            {
+                c = *++fmt;
+                if ((c >= '0') && (c <= '9'))
+                    n = c - '0';
+                else if (c == '*')
+                    n = va_arg(ap, int);
+                else break;
+                precision = precision * 10 + n;
+            }
+            flags |= FLAG_PREC;
+        }
+
+        /*
+         * check for size
+         *
+         * note that we currently only support 'l' (or 'L' as a synonym)
+         */
+        if ((*fmt == 'l') || (*fmt == 'L'))
+        {
+            fmt++;
+            flags |= FLAG_LONG;
+        }
+
+        /*
+         * handle type: the following types are recognised: cdioPpsuXx
+         *
+         * we assemble the output into a buffer first
+         */
+        p = bufstart = buf;
+        type = *fmt++;
+        switch(type)
+        {
+        case 'c':
+            fill = ' ';     /* precautionary */
+            c = va_arg(ap, int);
+            *p++ = c;
+            break;
+        case 'd':
+        case 'i':
+            flags |= FLAG_SIGN;
+            /* drop through */
+        case 'o':
+        case 'u':
+            if (flags & FLAG_LONG)
+                longval = va_arg(ap, long);
+            else
+                longval = va_arg(ap, int);
+		    if (flags & FLAG_SIGN)
+		    {
+		        if (longval < 0)
+        		{
+		            longval = -longval;
+        		    *p++ = '-';
+		        }
+		    }
+            p = numconv(p, longval, (type=='o')?8:10, precision, flags);
+            break;
+        case 'P':
+            flags |= FLAG_CAPS;
+            /* drop through */
+        case 'p':
+            flags |= FLAG_LONG;     /* pointers are always long */
+            fill = '0';
+            width = 8;
+            outc('0');
+            outc((flags&FLAG_CAPS)?'X':'x');
+            length += 2;
+            longval = va_arg(ap, long);
+            p = numconv(p, longval, 16, precision, flags);
+            break;
+        case 'X':
+            flags |= FLAG_CAPS;
+            /* drop through */
+        case 'x':
+            if (flags & FLAG_LONG)
+                longval = va_arg(ap, long);
+            else
+                longval = va_arg(ap, int);
+            p = numconv(p, longval, 16, precision, flags);
+            break;
+        case 's':
+            fill = ' ';
+            bufstart = va_arg(ap, char *);
+            if (!bufstart)
+                bufstart = "(null)";
+            for (p = bufstart; *p; p++)
+                ;
+            if ((flags & FLAG_PREC) && (p-bufstart > precision))
+                p = bufstart + precision;
+            break;
+        default:
+            *p++ = type;    /* just copy unrecognised type ... */
+            break;
+        }
+
+        /*
+         * copy the buffer to output, respecting width, fill, and justification
+         */
+        n = p - bufstart;   /* item size */
+        fill_len = 0;
+        /* pad the item if necessary */
+        if (flags & FLAG_WIDTH)
+        {
+            if (n < width)
+                fill_len = width - n;
+        }
+		if (flags & FLAG_PREC)
+			fill = ' ';
+
+        /*
+         * if not left justified, output the fill characters.  note special
+         * handling for negative numbers: if we are padding with zeros, the
+         * minus sign must appear before the zeros; if we are padding with
+         * spaces, there is no special handling.
+         */
+        p = bufstart;
+        if (!(flags & FLAG_LJUST))
+        {
+            if ((*p == '-') && (fill == '0'))
+            {
+                (*outc)(*p++);
+                length++;
+                n--;
+            }
+            for ( ; fill_len; fill_len--, length++)
+                (*outc)(fill);
+        }
+        /* output the item */
+        for ( ; n; n--, length++)
+            (*outc)(*p++);
+        /* output fill characters, if any */
+        for ( ; fill_len; fill_len--, length++)
+            (*outc)(fill);
     }
-    i = (int)(p - s);
-    if ((width -= i) < 0)
-      width = 0;
-    if (ljust == 0)
-      width = -width;
-    if (width < 0) {
-      if (*s=='-' && zfill=='0') {
-        (*outc)(*s++); len++;
-        i--;
-      }
-      do {
-        (*outc)(zfill); len++;
-      }
-      while (++width != 0);
-    }
-    while (--i>=0) {
-      (*outc)(*s++); len++;
-    }
-    while (width) {
-      (*outc)(zfill); len++;
-      width--;
-    }
-  }
+
+    return length;
 }
