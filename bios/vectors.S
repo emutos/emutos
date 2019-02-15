@@ -536,9 +536,9 @@ timerc_end:
 #if REAL_TIMER_C_HANDLER
 #ifdef __mcoldfire__
         lea     0xfffffa11.w, a0
-        bclr    #5, (a0)                // clear interrupt service bit
+        move.b  #0xdf,(a0)              // clear interrupt service bit
 #else
-        bclr    #5, 0xfffffa11.w        // clear interrupt service bit
+        move.b  #0xdf,0xfffffa11.w      // clear interrupt service bit
 #endif
 #endif /* REAL_TIMER_C_HANDLER */
 

@@ -89,7 +89,7 @@ cal_loop:                           //just like asm.h inline function
 // --------------------
 //   68000 at 8MHz
 //       an interrupt occurs every 8000000/960 = 8333 cycles.
-//       the overhead is 116/3333, approx 1.4%
+//       the overhead is 112/8333, approx 1.4%
 //   other systems are even less, so we ignore
 //
 handle_timer:                   //68000:
@@ -98,13 +98,13 @@ handle_timer:                   //68000:
 #ifdef __mcoldfire__
         move.l  a0,-(sp)
         lea     MFP_ISRB,a0
-        bclr.b  #4,(a0)
+        move.b  #0xef,(a0)
         movea.l (sp)+,a0
 #else
-        bclr.b  #4,MFP_ISRB       //12+12 = 24
+        move.b  #0xef,MFP_ISRB    //20
 #endif
         rte                       //20
-                                //total 116
+                                //total 112
         .bss
 intcount: .ds.l 1
 intsave:  .ds.l 1
