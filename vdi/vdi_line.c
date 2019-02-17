@@ -42,7 +42,7 @@ typedef struct
 /*
  * bit mask for 'standard' values of patmsk
  */
-#define STD_PATMSKS ((1<<15) | (1<<7) | (1<<3) | (1<<1) | (1<<0))
+#define STD_PATMSKS ((1u<<15) | (1u<<7) | (1u<<3) | (1u<<1) | (1u<<0))
 
 /*
  * blitter ops for draw/nodraw cases for wrt_mode 0-3
@@ -263,7 +263,7 @@ static BOOL blit_rect_common(const VwkAttrib *attr, const Rect *rect, BLITPARM *
      * (i.e. 0, 1, 3, 7, or 15).  if we have a non-standard value, we
      * handle it via the non-blitter code.
      */
-    if ((patmsk >= 16) || ((STD_PATMSKS & (1<<patmsk)) == 0))
+    if ((patmsk >= 16) || ((STD_PATMSKS & (1u<<patmsk)) == 0))
         return FALSE;
 
     /*
