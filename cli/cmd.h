@@ -14,6 +14,8 @@
  #include <nls.h>
 #else
  /* config.h */
+ #define CONF_ATARI_HARDWARE    1
+ #define CONF_WITH_TT_SHIFTER   1
  #define MAXPATHLEN      256
  #define BLKDEVNUM       26
  /* nls.h */

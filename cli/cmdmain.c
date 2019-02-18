@@ -43,9 +43,7 @@ LOCAL char input_line[MAX_LINE_SIZE];
 LOCAL char *arglist[MAX_ARGS];
 LOCAL char redir_name[MAXPATHLEN];
 LOCAL WORD original_res;
-#ifndef STANDALONE_CONSOLE
 LOCAL LONG vdo_value;
-#endif
 
 /*
  *  function prototypes
@@ -69,9 +67,6 @@ WORD argc, rc;
     if (getcookie(_IDT_COOKIE,&idt_value) == 0)
         idt_value = DEFAULT_DT_FORMAT;      /* if not found, make sure it's initialised properly */
 
-#ifdef STANDALONE_CONSOLE
-    original_res = -1;
-#else
     if (getcookie(_VDO_COOKIE,&vdo_value) == 0)
         vdo_value = _VDO_ST;
 #if CONF_WITH_TT_SHIFTER
@@ -79,7 +74,6 @@ WORD argc, rc;
 #else
     original_res = (vdo_value < _VDO_TT) ? Getrez() : -1;
 #endif
-#endif  /* STANDALONE_CONSOLE */
     current_res = original_res;
 
     nflops = Supexec(get_nflops);           /* number of floppy drives */
@@ -210,12 +204,27 @@ int i;
  */
 PRIVATE void change_res(WORD res)
 {
-#if !defined(STANDALONE_CONSOLE) && CONF_ATARI_HARDWARE
+#if CONF_ATARI_HARDWARE
     if (res == current_res)
         return;
 
     Setscreen(-1L,-1L,res,0);
-    Setscreen(-1L,-1L,0xc000|res,0);    /* init palette regs */
+#ifndef STANDALONE_CONSOLE
+    /* use EmuTOS extension to initialize palette for given resolution */
+    Setscreen(-1L,-1L,0xc000|res,0);
+#else
+    /* mode changed *without* palette change -> set readable text color index */
+    {
+        /* OS masks color index, so 15 is fine also for mono modes */
+	int idx = 15;
+        /* from first 4 entries in LOW palette, red is better than yellow */
+        if (res == ST_MEDIUM)
+            idx = 1;
+        conout(ESC);    /* with VT52 command */
+        conout('b');    /* b=foreground, c=background */
+        conout(idx);
+    }
+#endif
     enable_cursor();
     current_res = res;
 #endif
@@ -226,7 +235,6 @@ PRIVATE void change_res(WORD res)
  */
 int valid_res(WORD res)
 {
-#ifndef STANDALONE_CONSOLE
     if (vdo_value == _VDO_VIDEL)    /* can't change Falcon resolutions */
         return FALSE;
 
@@ -249,7 +257,6 @@ int valid_res(WORD res)
     case ST_MEDIUM:
         return TRUE;
     }
-#endif  /* STANDALONE_CONSOLE */
 
     return FALSE;
 }
