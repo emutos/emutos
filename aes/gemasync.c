@@ -29,6 +29,7 @@
 #include "gemasync.h"
 
 #include "string.h"
+#include "kprint.h"
 
 
 static void signal(EVB *e)
@@ -131,18 +132,16 @@ EVSPEC iasync(WORD afunc, LONG aparm)
     EVB *e;
 
     /* get an evb */
-    if ((e = eul) != 0)
-    {
-        eul = eul->e_nextp;
-        memset(e, 0, sizeof(EVB));
-    }
+    if ((e = eul) == NULL)
+        panic("no free EVBs available\n");
 
-    /* put in on list */
+    eul = e->e_nextp;
+    memset(e, 0, sizeof(EVB));
+
+    /* add to list of events being waited for */
     e->e_nextp = rlr->p_evlist;
     rlr->p_evlist = e;
     e->e_pd = rlr;
-    e->e_flag = 0;
-    e->e_pred = 0;
 
     /* update mask */
     e->e_mask = afunc;

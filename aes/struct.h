@@ -31,7 +31,17 @@ typedef struct fpd     FPD;             /* fork process descriptor      */
 typedef UWORD   EVSPEC;
 
 #define NUM_PDS (NUM_ACCS + 2)          /* acc's + ctrlpd + dos appl.   */
-#define EVBS_PER_PD     5               /* EVBs per AES process */
+
+/*
+ * EVBs are used to track events that an AES process is waiting on.  the
+ * maximum number of events that a process can wait for is 6 (MU_KEYBD,
+ * MU_BUTTON, MU_M1, MU_M2, MU_MESAG, MU_TIMER), when ev_multi() is used.
+ *
+ * therefore we create 6 EVBs per AES process and ensure that we cannot
+ * run out of EVBs.
+ */
+#define EVBS_PER_PD     6               /* EVBs per AES process */
+
 #define KBD_SIZE 8
 #define QUEUE_SIZE 128
 #define NFORKS 32
