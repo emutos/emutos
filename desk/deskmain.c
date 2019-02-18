@@ -642,7 +642,7 @@ static WORD hndl_button(WORD clicks, WORD mx, WORD my, WORD button, WORD keystat
 
     if (clicks == 1)
     {
-        WNODE *pw = win_find(wh);
+        WNODE *pw;
 
         act_bsclick(G.g_cwin, G.g_screen, G.g_croot, mx, my,
                     keystate, &c, FALSE);
