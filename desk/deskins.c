@@ -1073,7 +1073,7 @@ WORD ins_icon(WORD sobj)
     /*
      * handle one or more desktop icons
      */
-    if ( (pa = i_find(DESKWH, sobj, NULL, NULL)) )
+    if ( (i_find(DESKWH, sobj, NULL, NULL)) )
     {
         for ( ; sobj; sobj = win_isel(G.g_screen, DROOT, sobj))
         {

@@ -262,7 +262,7 @@ WORD initinfo(ULONG *pshiftbits)
     int actual_initinfo_height;
 #endif
     int i;
-    WORD olddev = -1, dev = bootdev;
+    WORD olddev, dev = bootdev;
     long stramsize = (long)phystop;
 #if CONF_WITH_ALT_RAM
     long altramsize = total_alt_ram();

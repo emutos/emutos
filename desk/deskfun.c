@@ -867,7 +867,7 @@ void fun_del(WORD sobj)
      * if the item selected is on the desktop, there may be other desktop
      * items that have been selected; make sure we process all of them
      */
-    if ( (pa = i_find(DESKWH, sobj, NULL, NULL)) )
+    if ( (i_find(DESKWH, sobj, NULL, NULL)) )
     {
         if (wants_to_delete_files() == FALSE)   /* i.e. remove icons or cancel */
             return;

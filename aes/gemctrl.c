@@ -234,7 +234,6 @@ static void hctl_rect(void)
 
     if ( gl_mntree )
     {
-        mesag = 0;
         if ( mn_do(&title, &item) )
         {
             owner = gl_mnppd;

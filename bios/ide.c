@@ -996,7 +996,7 @@ static LONG ide_write(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UWORD count,U
 
 LONG ide_rw(WORD rw,LONG sector,WORD count,UBYTE *buf,WORD dev,BOOL need_byteswap)
 {
-    UBYTE *p = buf;
+    UBYTE *p;
     UWORD ifnum;
     WORD maxsecs_per_io = MAXSECS_PER_IO;
     BOOL use_tmpbuf = FALSE;
