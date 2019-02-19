@@ -33,6 +33,7 @@
 #define FLAG_LONG   0x0008
 #define FLAG_SIGN   0x0010
 #define FLAG_CAPS   0x0020
+#define FLAG_ZERO   0x0040  /* if set, pad with zeros, else spaces */
 
 /*
  * convert the value passed to an ASCII string starting at p
@@ -62,10 +63,13 @@ static void *numconv(char *p, unsigned long value, int radix, int precision, uns
         value = quot;
     }
 
-    /* pad with zeroes if necessary */
+    /* pad if necessary */
     if (flags & FLAG_PREC)
+    {
+        char fill = (flags & FLAG_ZERO) ? '0' : ' ';
         while(precision-- > 0)
-            *q++ = '0';
+            *q++ = fill;
+    }
 
     /* copy to input buffer */
     for ( ; q > buf; )
@@ -115,10 +119,9 @@ int doprintf(void (*outc)(int), const char *fmt, va_list ap)
          * get width, checking for fill character
          */
         width = 0;
-        fill = ' ';
         if (*fmt == '0')
         {
-            fill = '0';
+            flags |= FLAG_ZERO;
             fmt++;
         }
         for ( ; ; fmt++)
@@ -173,7 +176,7 @@ int doprintf(void (*outc)(int), const char *fmt, va_list ap)
         switch(type)
         {
         case 'c':
-            fill = ' ';     /* precautionary */
+            flags &= ~FLAG_ZERO;    /* precautionary */
             c = va_arg(ap, int);
             *p++ = c;
             break;
@@ -201,8 +204,7 @@ int doprintf(void (*outc)(int), const char *fmt, va_list ap)
             flags |= FLAG_CAPS;
             /* drop through */
         case 'p':
-            flags |= FLAG_LONG;     /* pointers are always long */
-            fill = '0';
+            flags |= FLAG_LONG|FLAG_ZERO;   /* pointers are always long & zero-filled */
             width = 8;
             outc('0');
             outc((flags&FLAG_CAPS)?'X':'x');
@@ -221,7 +223,7 @@ int doprintf(void (*outc)(int), const char *fmt, va_list ap)
             p = numconv(p, longval, 16, precision, flags);
             break;
         case 's':
-            fill = ' ';
+            flags &= ~FLAG_ZERO;
             bufstart = va_arg(ap, char *);
             if (!bufstart)
                 bufstart = "(null)";
@@ -247,7 +249,7 @@ int doprintf(void (*outc)(int), const char *fmt, va_list ap)
                 fill_len = width - n;
         }
 		if (flags & FLAG_PREC)
-			fill = ' ';
+			flags &= ~FLAG_ZERO;
 
         /*
          * if not left justified, output the fill characters.  note special
@@ -255,6 +257,7 @@ int doprintf(void (*outc)(int), const char *fmt, va_list ap)
          * minus sign must appear before the zeros; if we are padding with
          * spaces, there is no special handling.
          */
+        fill = (flags & FLAG_ZERO) ? '0' : ' ';
         p = bufstart;
         if (!(flags & FLAG_LJUST))
         {
