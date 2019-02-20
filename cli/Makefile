@@ -20,7 +20,8 @@ CFLAGS = $(CPPFLAGS) -mshort -Os -Wall -Wundef -Wold-style-definition
 default: $(TARGET)
 all: default
 
-OBJECTS = cmdasm.o cmdmain.o cmdedit.o cmdexec.o cmdint.o cmdparse.o cmdutil.o version.o
+OBJECTS = cmdasm.o cmdmain.o cmdedit.o cmdexec.o cmdint.o cmdparse.o cmdutil.o version.o \
+	../util/doprintf.o
 HEADERS = cmd.h
 
 %.o: %.c $(HEADERS)
@@ -35,7 +36,7 @@ $(TARGET): $(OBJECTS)
 	$(CC) $(OBJECTS) -Wall $(LIBS) -s -o $@
 
 clean:
-	-rm -f *.o version.c
+	-rm -f *.o ../util/doprintf.o version.c
 	-rm -f $(TARGET)
 
 #

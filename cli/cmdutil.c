@@ -11,6 +11,8 @@
  */
 #include "cmd.h"
 #include <string.h>
+#include <stdarg.h>
+#include "doprintf.h"
 
 typedef struct {
     long cookie;
@@ -186,28 +188,6 @@ char *p = buf + width;
         *p-- = filler;
 }
 
-PRIVATE char *conv2(char *p,WORD n)
-{
-WORD tens;
-
-    tens = n / 10;
-    *p++ = '0' + tens;
-    *p++ = '0' + (n - tens * 10);
-
-    return p;
-}
-
-PRIVATE char *conv4(char *p,WORD n)
-{
-WORD hundreds;
-
-    hundreds = n / 100;
-    p = conv2(p,hundreds);
-    p = conv2(p,n-hundreds*100);
-
-    return p;
-}
-
 /*
  *  decode_date_time - generate string with date/time in format derived from _IDT cookie
  *
@@ -217,7 +197,7 @@ WORD decode_date_time(char *s,UWORD date,UWORD time)
 {
 WORD year, month, day, hour, minute, second;
 char *p = s;
-char ampm;
+char *ampm;
 unsigned char date_sep;
 
     date_sep = LOBYTE(idt_value);           /* date separator */
@@ -230,36 +210,18 @@ unsigned char date_sep;
 
     switch(HIBYTE(idt_value)&0x03) {
     case _IDT_MDY:
-        p = conv2(p,month);
-        *p++ = date_sep;
-        p = conv2(p,day);
-        *p++ = date_sep;
-        p = conv4(p,year);
+        p += sprintf(p,"%02d%c%02d%c%04d",month,date_sep,day,date_sep,year);
         break;
     case _IDT_DMY:
-        p = conv2(p,day);
-        *p++ = date_sep;
-        p = conv2(p,month);
-        *p++ = date_sep;
-        p = conv4(p,year);
+        p += sprintf(p,"%02d%c%02d%c%04d",day,date_sep,month,date_sep,year);
         break;
     case _IDT_YDM:
-        p = conv4(p,year);
-        *p++ = date_sep;
-        p = conv2(p,day);
-        *p++ = date_sep;
-        p = conv2(p,month);
+        p += sprintf(p,"%04d%c%02d%c%02d",year,date_sep,day,date_sep,month);
         break;
     default:                        /* i.e. _IDT_YMD or some kind of bug ... */
-        p = conv4(p,year);
-        *p++ = date_sep;
-        p = conv2(p,month);
-        *p++ = date_sep;
-        p = conv2(p,day);
+        p += sprintf(p,"%04d%c%02d%c%02d",year,date_sep,month,date_sep,day);
         break;
     }
-    *p++ = ' ';
-    *p++ = ' ';
 
     hour = time >> 11;
     minute = (time>>5) & 0x3f;
@@ -268,31 +230,18 @@ unsigned char date_sep;
     switch((idt_value>>12)&0x01) {
     case _IDT_12H:
         if (hour < 12)              /* figure out am/pm */
-            ampm = 'a';
-        else ampm = 'p';
+            ampm = "am";
+        else ampm = "pm";
         if (hour > 12)              /* figure out noon/midnight */
             hour -= 12;
         else if (hour == 0)
             hour = 12;
-        p = conv2(p,hour);
-        *p++ = ':';
-        p = conv2(p,minute);
-        *p++ = ':';
-        p = conv2(p,second);
-        *p++ = ampm;
-        *p++ = 'm';
         break;
     default:                        /* i.e. _IDT_24H or some kind of bug ... */
-        p = conv2(p,hour);
-        *p++ = ':';
-        p = conv2(p,minute);
-        *p++ = ':';
-        p = conv2(p,second);
-        *p++ = ' ';
-        *p++ = ' ';
+        ampm = "  ";
         break;
     }
-    *p = '\0';
+    p += sprintf(p,"  %02d:%02d:%02d%s  ",hour,minute,second,ampm);
 
     return p - s;
 }
@@ -482,5 +431,29 @@ int strncasecmp(const char *a, const char *b, size_t n)
     }
 
     return 0;
+}
+
+/* sprintf(), borrowed from string.c */
+static char *sprintf_str;
+
+static void sprintf_outc(int c)     /* Output one character from doprintf */
+{
+    *sprintf_str++ = c;
+}
+
+int sprintf(char *str, const char *fmt, ...)
+{
+    int n;
+    va_list ap;
+
+    sprintf_str = str;
+
+    va_start(ap, fmt);
+    n = doprintf(sprintf_outc, fmt, ap);
+    va_end(ap);
+
+    str[n] = 0;                     /* Terminate string with a 0 */
+
+    return n;
 }
 #endif

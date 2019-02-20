@@ -956,19 +956,16 @@ WORD i;
 
 PRIVATE void display_dta_detail(void)
 {
-char buf[30], *p;
+char buf[80], *p = buf;
 
-    padname(buf,dta->d_fname);
-    output(buf);
-    decode_date_time(buf,dta->d_date,dta->d_time);
-    output(buf);
+    p += sprintf(buf,"%-13.13s",dta->d_fname);
+    p += decode_date_time(p,dta->d_date,dta->d_time);
 
-    p = buf;
-    memset(p,' ',7);
     if (dta->d_attrib & 0x10) {
-        strcpy(p+2,"<dir>");
+        strcpy(p,"<dir>");
     } else {
-        p += 3;
+        sprintf(p,"%15lu",dta->d_length);
+        p++;
         if (dta->d_attrib & 0x01)
             *p++= 'r';
         if (dta->d_attrib & 0x02)
@@ -977,7 +974,6 @@ char buf[30], *p;
             *p = 's';
         if (!(dta->d_attrib & 0x07))
             *p = '-';
-        convulong(buf+7,dta->d_length,10,' ');
     }
     outputnl(buf);
 }
