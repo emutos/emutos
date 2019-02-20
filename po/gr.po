@@ -1413,6 +1413,6 @@ msgid "wrong number of arguments"
 msgstr "wrong number of arguments"
 
 #: cli/cmdutil.c
-msgid "error code "
-msgstr "error code "
+msgid "error code %ld"
+msgstr "error code %ld"
 

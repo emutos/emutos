@@ -104,14 +104,8 @@ const char *p;
         p = _("wrong number of arguments");
         break;
     default:
-        message(_("error code "));
-        if (rc < 0) {
-            conout('-');
-            rc = -rc;
-        }
-        convulong(buf,rc,10,' ');
-        for (p = buf; *p == ' '; p++)
-            ;
+        p = buf;
+        sprintf(buf,_("error code %ld"),rc);
         break;
     }
     messagenl(p);

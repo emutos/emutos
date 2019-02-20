@@ -1395,6 +1395,6 @@ msgid "wrong number of arguments"
 msgstr "numero errato di argomenti"
 
 #: cli/cmdutil.c
-msgid "error code "
-msgstr "codice errore "
+msgid "error code %ld"
+msgstr "codice errore %ld"
 

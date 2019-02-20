@@ -1401,6 +1401,6 @@ msgid "wrong number of arguments"
 msgstr "número de argumentos inválido"
 
 #: cli/cmdutil.c
-msgid "error code "
-msgstr "código de error "
+msgid "error code %ld"
+msgstr "código de error %ld"
 
