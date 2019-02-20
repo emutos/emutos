@@ -1348,27 +1348,27 @@ msgstr "Удалить файл "
 
 #: cli/cmdint.c
 msgid "Allocation info for drive "
-msgstr "Информация о диске  "
+msgstr "Информация о диске "
 
 #: cli/cmdint.c
 msgid "  Size (bytes):   "
-msgstr "  Размер (байт):   "
+msgstr "  Размер (байт):      "
 
 #: cli/cmdint.c
 msgid "  Bytes used:     "
-msgstr "  Байт используется:     "
+msgstr "  Байт используется:  "
 
 #: cli/cmdint.c
 msgid "  Bytes free:     "
-msgstr "  Байт свободно:     "
+msgstr "  Байт свободно:      "
 
 #: cli/cmdint.c
 msgid "  Total clusters: "
-msgstr "  Всего кластеров: "
+msgstr "  Всего кластеров:    "
 
 #: cli/cmdint.c
 msgid "  Free clusters:  "
-msgstr "  Свободных кластеров:  "
+msgstr "  Свободных кластеров:"
 
 #: cli/cmdint.c
 msgid "  Sectors/cluster:"
@@ -1376,7 +1376,7 @@ msgstr "  Секторов в кластере:"
 
 #: cli/cmdint.c
 msgid "  Bytes/sector:   "
-msgstr "  Байт в секторе:   "
+msgstr "  Байт в секторе:     "
 
 #: cli/cmdint.c
 msgid " is not a directory"

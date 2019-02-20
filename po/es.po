@@ -1266,7 +1266,7 @@ msgstr "  Bytes libres:     "
 
 #: cli/cmdint.c
 msgid "  Total clusters: "
-msgstr "  Total clusters: "
+msgstr "  Total clusters:   "
 
 #: cli/cmdint.c
 msgid "  Free clusters:  "
@@ -1278,7 +1278,7 @@ msgstr "  Sectores/clusters:"
 
 #: cli/cmdint.c
 msgid "  Bytes/sector:   "
-msgstr "  Bytes/sector:   "
+msgstr "  Bytes/sector:     "
 
 #: cli/cmdint.c
 msgid " is not a directory"
