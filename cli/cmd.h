@@ -228,7 +228,6 @@ LONG (*lookup_builtin(WORD argc,char **argv))(WORD,char **);
 WORD parse_line(char *line,char **argv,char *redir_name);
 
 /* cmdutil.c */
-void convulong(char *buf,ULONG n,WORD width,char filler);
 WORD decode_date_time(char *s,UWORD date,UWORD time);
 void errmsg(LONG rc);
 void escape(char c);

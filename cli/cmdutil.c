@@ -162,27 +162,6 @@ char *p;
 }
 
 /*
- *  convert an unsigned long to a string
- */
-void convulong(char *buf,ULONG n,WORD width,char filler)
-{
-ULONG quot;
-char *p = buf + width;
-
-    *p-- = '\0';
-    while(p >= buf) {
-        quot = n / 10;
-        *p-- = (n - quot*10) + '0';
-        n = quot;
-        if (!n)
-            break;
-    }
-
-    while(p >= buf)
-        *p-- = filler;
-}
-
-/*
  *  decode_date_time - generate string with date/time in format derived from _IDT cookie
  *
  *  returns length of formatted string

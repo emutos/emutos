@@ -1044,10 +1044,9 @@ char c;
 
 PRIVATE void show_line(const char *title,ULONG n)
 {
-char buf[20];
+char buf[80];
 
-    output(title);
-    convulong(buf,n,10,' ');
+    sprintf(buf,"%s%10lu",title,n);
     outputnl(buf);
 }
 
