@@ -383,18 +383,14 @@ WORD res = -1, rate = -1, delay = -1;
         if (argc == 2) {    /* just status wanted */
             outputnl(_("Status for CON:"));
             if (current_res >= 0) {
-                output(_("  Resolution:     "));
-                convulong(buf,current_res,3,' ');
+                sprintf(buf,"%s%3d",_("  Resolution:     "),current_res);
                 outputnl(buf);
             }
             old = Kbrate(-1,-1);
-            output(_("  Keyboard delay: "));
-            convulong(buf,HIBYTE(old),3,' ');
+            sprintf(buf,"%s%3d",_("  Keyboard delay: "),HIBYTE(old));
             outputnl(buf);
-            output(_("  Keyboard rate:  "));
-            convulong(buf,LOBYTE(old),3,' ');
+            sprintf(buf,"%s%3d",_("  Keyboard rate:  "),LOBYTE(old));
             outputnl(buf);
-
             return 0;
         }
         for (i = 2, argv++; i < argc; i++, argv++) {
