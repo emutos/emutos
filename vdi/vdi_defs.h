@@ -184,25 +184,19 @@ struct Vwk_ {
 };
 
 
-typedef struct Rect_ Rect;
-struct Rect_
-{
+typedef struct {
     WORD x1,y1;
     WORD x2,y2;
-};
+} Rect;
 
-typedef struct Line_ Line;
-struct Line_
-{
+typedef struct {
     WORD x1,y1;
     WORD x2,y2;
-};
+} Line;
 
-typedef struct Point_ Point;
-struct Point_
-{
+typedef struct {
     WORD x,y;
-};
+} Point;
 
 
 
