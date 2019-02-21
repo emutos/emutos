@@ -1324,7 +1324,7 @@ void arrow(Vwk * vwk, Point * point, int count)
 
 
 /*
- * abline - draw a line (general purpose)
+ * draw_line - draw a line (general purpose)
  *
  * This routine draws a line defined by the Line structure, using
  * Bresenham's algorithm.  The line is modified by the LN_MASK
@@ -1347,24 +1347,10 @@ void arrow(Vwk * vwk, Point * point, int count)
  *    NOTE: the determination of 'last line or not' was done via
  *    the _LSTLIN variable which was set in the polyline() function.
  *
- *
- * input:
- *     line         = pointer to structure containing coordinates
- *     v_planes     = number of video planes
- *     LN_MASK      = line mask (for dashed/dotted lines)
- *     wrt_mode     = writing mode:
- *                          0 => replace mode.
- *                          1 => or mode.
- *                          2 => xor mode.
- *                          3 => not mode.
- *
- * output:
- *     LN_MASK rotated to proper alignment with x coordinate of line end
  */
-void abline (const Line * line, WORD wrt_mode, UWORD color)
+static void draw_line(const Line *line, WORD wrt_mode, UWORD color)
 {
     UWORD *adr;
-    UWORD x1,y1,x2,y2;          /* the coordinates */
     WORD dx;                    /* width of rectangle around line */
     WORD dy;                    /* height of rectangle around line */
     WORD yinc;                  /* in/decrease for each y step */
@@ -1373,43 +1359,8 @@ void abline (const Line * line, WORD wrt_mode, UWORD color)
     int plane;
     UWORD linemask = LN_MASK;   /* linestyle bits */
 
-    /* Always draw from left to right */
-    if (line->x2 < line->x1) {
-        /* if delta x < 0 then draw from point 2 to 1 */
-        x1 = line->x2;
-        y1 = line->y2;
-        x2 = line->x1;
-        y2 = line->y1;
-    } else {
-        /* positive, start with first point */
-        x1 = line->x1;
-        y1 = line->y1;
-        x2 = line->x2;
-        y2 = line->y2;
-    }
-
-    /*
-     * optimize drawing of horizontal lines
-     */
-    if (y1 == y2) {
-        VwkAttrib attr;
-        Rect rect;
-        attr.clip = 0;
-        attr.multifill = 0;
-        attr.patmsk = 0;
-        attr.patptr = &linemask;
-        attr.wrt_mode = wrt_mode;
-        attr.color = color;
-        rect.x1 = x1;
-        rect.y1 = y1;
-        rect.x2 = x2;
-        rect.y2 = y2;
-        draw_rect_common(&attr,&rect);
-        return;
-    }
-
-    dx = x2 - x1;
-    dy = y2 - y1;
+    dx = line->x2 - line->x1;
+    dy = line->y2 - line->y1;
 
     /* calculate increase values for x and y to add to actual address */
     if (dy < 0) {
@@ -1419,8 +1370,8 @@ void abline (const Line * line, WORD wrt_mode, UWORD color)
         yinc = (LONG) v_lin_wr / 2;     /* add one line of words */
     }
 
-    adr = get_start_addr(x1, y1);       /* init address counter */
-    msk = 0x8000 >> (x1&0xf);           /* initial bit position in WORD */
+    adr = get_start_addr(line->x1, line->y1);   /* init address counter */
+    msk = 0x8000 >> (line->x1&0xf);             /* initial bit position in WORD */
 
     for (plane = v_planes-1; plane >= 0; plane-- ) {
         UWORD *addr;
@@ -1674,6 +1625,76 @@ void abline (const Line * line, WORD wrt_mode, UWORD color)
     LN_MASK = linemask;
 }
 
+
+/*
+ * abline - draw a line
+ *
+ * this is now a wrapper for the actual line drawing routines
+ *
+ * input:
+ *     line         = pointer to structure containing coordinates
+ *     v_planes     = number of video planes
+ *     LN_MASK      = line mask (for dashed/dotted lines)
+ *     wrt_mode     = writing mode:
+ *                          0 => replace mode.
+ *                          1 => or mode.
+ *                          2 => xor mode.
+ *                          3 => not mode.
+ *
+ * output:
+ *     LN_MASK rotated to proper alignment with x coordinate of line end
+ */
+void abline(const Line *line, WORD wrt_mode, UWORD color)
+{
+    Line ordered;
+    UWORD x1,y1,x2,y2;          /* the coordinates */
+
+    /* Always draw from left to right */
+    if (line->x2 < line->x1) {
+        /* if delta x < 0 then draw from point 2 to 1 */
+        x1 = line->x2;
+        y1 = line->y2;
+        x2 = line->x1;
+        y2 = line->y1;
+    } else {
+        /* positive, start with first point */
+        x1 = line->x1;
+        y1 = line->y1;
+        x2 = line->x2;
+        y2 = line->y2;
+    }
+
+    /*
+     * optimize drawing of horizontal lines
+     */
+    if (y1 == y2) {
+        UWORD linemask = LN_MASK;   /* linestyle bits */
+        VwkAttrib attr;
+        Rect rect;
+
+        attr.clip = 0;
+        attr.multifill = 0;
+        attr.patmsk = 0;
+        attr.patptr = &linemask;
+        attr.wrt_mode = wrt_mode;
+        attr.color = color;
+        rect.x1 = x1;
+        rect.y1 = y1;
+        rect.x2 = x2;
+        rect.y2 = y2;
+        draw_rect_common(&attr, &rect);
+        return;
+    }
+
+    /*
+     * draw any line
+     */
+    ordered.x1 = x1;
+    ordered.y1 = y1;
+    ordered.x2 = x2;
+    ordered.y2 = y2;
+    draw_line(&ordered, wrt_mode, color);
+}
 
 /*
  * Line-A wrapper for line drawing with abline
