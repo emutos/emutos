@@ -222,6 +222,14 @@ msgstr "[3]["
 "Tuntematon AES-funktio #%d.][Kumoa]"
 
 #: aes/gem_rsc.c
+msgid "[1]["
+"Not enough memory for|"
+"this directory][  OK  ]"
+msgstr "[1]["
+"Muisti ei riitä|"
+"hakemistolle][  OK  ]"
+
+#: aes/gem_rsc.c
 msgid "ITEM SELECTOR"
 msgstr "TIEDOSTON VALINTA"
 
@@ -778,6 +786,10 @@ msgid "%ld bytes used in %d items."
 msgstr "%ld tavua käytetty %d tiedostoon."
 
 #: desk/desk_rsc.c
+msgid "%ld bytes used in %d selected items."
+msgstr "%ld tavua käytetty %d valintoihin."
+
+#: desk/desk_rsc.c
 msgid "FILE INFORMATION"
 msgstr "TIEDOSTON TIEDOT"
 
@@ -854,18 +866,16 @@ msgstr "[1]["
 "käytä.][  OK  ]"
 
 #: desk/desk_rsc.c
-msgid "[3]["
-"You cannot copy a parent folder|"
-"into one of its child folders.][  OK  ]"
-msgstr "[3]["
-"Et voi kopioida kansiota sen|"
-"omiin alikansioihin.][  OK  ]"
+msgid "[1]["
+"Illegal directory operation!][ Skip | Abort ]"
+msgstr "[1]["
+"Sopimaton hakemisto-operaatio!][ Ohita | Keskeytä ]"
 
 #: desk/desk_rsc.c
-msgid "[3]["
-"Invalid copy operation.][  OK  ]"
-msgstr "[3]["
-"Kopiointi epäonnistui.][  OK  ]"
+msgid "[1]["
+"Illegal operation!][  OK  ]"
+msgstr "[1]["
+"Sopimaton operaatio!][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[2]["
@@ -1035,6 +1045,92 @@ msgid "[1]["
 msgstr "[1]["
 "Levyllä on %ld tavua|"
 "käytettävissä.][ Jatka | Lopeta ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Drive %s: does not exist.][ Cancel ]"
+msgstr "[1]["
+"Asemaa %s: ei ole.][ Cancel ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"No drive identifier.][ Retry ]"
+msgstr "[1]["
+"Aseman tunniste puuttuu.][ Uudestaan ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Cannot delete file|"
+"%s][ Skip | Retry | Abort ]"
+msgstr "[1]["
+"Tiedoston poisto epäonnistui|"
+"%s][ Ohita | Uudestaan | Keskeytä ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Cannot delete directory|"
+"%s][ Skip | Retry | Abort ]"
+msgstr "[1]["
+"Hakemiston poisto epäonnistui|"
+"%s][ Ohita | Uudestaan | Keskeytä ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Not enough memory.][  OK  ]"
+msgstr "[1]["
+"Muisti ei riitä.][  OK  ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"%s not found.][  OK  ]"
+msgstr "[1]["
+"%s ei löydy.][  OK  ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Cannot open file|"
+"%s][ Skip | Retry | Abort ]"
+msgstr "[1]["
+"Tiedoston aukaisu epäonnistui|"
+"%s][ Ohita | Uudestaan | Keskeytä ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Cannot create file|"
+"%s][ Skip | Retry | Abort ]"
+msgstr "[1]["
+"Tiedoston luonti epäonnistui|"
+"%s][ Ohita | Uudestaan | Keskeytä ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Cannot read file|"
+"%s][ Skip | Abort ]"
+msgstr "[1]["
+"Tiedoston luku epäonnistui|"
+"%s][ Ohita | Keskeytä ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Cannot write file|"
+"%s][ Skip | Abort ]"
+msgstr "[1]["
+"Tiedoston kirjoitus epäonnistui|"
+"%s][ Ohita | Keskeytä ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Rename error!][ Retry | Cancel ]"
+msgstr "[1]["
+"Virhe uudelleennimeämisessä!][ Uudestaan | Kumoa ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Failed to set default|"
+"directory.][  OK  ]"
+msgstr "[1]["
+"Oletushakemiston|"
+"asetus epäonnistui.][  OK  ]"
 
 #: cli/cmdint.c
 msgid "Copy <filespec> ... to standard output"
