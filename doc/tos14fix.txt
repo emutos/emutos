@@ -45,10 +45,12 @@ Autorun Application
 
 Context Switches
 ----------------
-004. No context switches are allowed during the AES Critical          TO BE CHECKED
-     Error Handler, correcting a bug where some media errors
-     would cause the File Selector to crash at the next critical
-     error. (See "File Selector")
+004. No context switches are allowed during the AES Critical          COMMENT: although we allow context switches,
+     Error Handler, correcting a bug where some media errors          this should not happen in EmuTOS because we
+     would cause the File Selector to crash at the next critical      save & restore key values around the call to
+     error. (See "File Selector")                                     eralert().  If this proves to be insufficient,
+                                                                      the best option would be to set a flag which
+                                                                      is tested by the dispatcher.
 
 
 Default Path
@@ -129,7 +131,7 @@ File Selector
      you get a redisplay with the new file path, and then you get
      a second redisplay with the original file path.  TOS 1.04
      does not do the second redisplay.
-022. Media errors no longer cause the FS to crash at the next         TO BE CHECKED
+022. Media errors no longer cause the FS to crash at the next         COMMENT: see the response for #004
      critical error. (See "Context Switches")
 
 
