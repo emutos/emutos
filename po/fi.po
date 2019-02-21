@@ -871,7 +871,7 @@ msgstr "[3]["
 msgid "[2]["
 "Abort this operation?][ Yes | No ]"
 msgstr "[2]["
-"Peru operaatio?][ Kyllä | Ei ]"
+"Keskeytä operaatio?][ Kyllä | Ei ]"
 
 #: desk/desk_rsc.c
 msgid "[2]["
@@ -1026,7 +1026,7 @@ msgid "[3]["
 msgstr "[3]["
 "Alustusongelma. Valittu|"
 "levyke voi olla kirjoitus-|"
-"suojattu tai kelvoton.][Uudelleen| Poistu ]"
+"suojattu tai kelvoton.][Uudestaan| Keskeytä ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
