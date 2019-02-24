@@ -31,6 +31,7 @@
 #include "mforms.h"
 #include "dos.h"
 #include "xbiosbind.h"
+#include "../bios/machine.h"
 #include "../bios/screen.h"
 #include "../bios/videl.h"
 #include "biosext.h"
@@ -380,10 +381,9 @@ static void process_inf1(void)
 /*
  *  Part 2 of early emudesk.inf processing
  *
- *  This has two functions:
- *      1. Determine the auto-run program to be started (from #Z).
- *      2. Set the double-click speed (from #E).  This is done here
- *         in case we have an auto-run program.
+ *  The main function is to determine the auto-run program to be
+ *  started, from the #Z line.  We also set the double-click speed
+ *  and the blitter status (if applicable), from the #E line.
  *
  *  Returns:
  *      TRUE if initial program is a GEM program (normal)
@@ -405,8 +405,13 @@ static BOOL process_inf2(void)
         if (tmp == 'E')             /* #E 3A 11                     */
         {                           /* desktop environment          */
             pcurr += 2;
-            scan_2(pcurr, &env);
+            pcurr = scan_2(pcurr, &env);
             ev_dclick(env & 0x07, TRUE);
+#if CONF_WITH_BLITTER
+            scan_2(pcurr, &env);    /* get desired blitter state */
+            if (has_blitter)
+                Blitmode((env&0x80)?1:0);
+#endif
         }
         else if (tmp == 'Z')        /* something like "#Z 01 C:\THING.APP@" */
         {

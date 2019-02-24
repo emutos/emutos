@@ -1660,7 +1660,10 @@ WORD deskmain(void)
 
 #if CONF_WITH_BLITTER
     /*
-     * we now have the blitter state from EMUDESK.INF, so we can call Blitmode()
+     * we now have the desired blitter state from EMUDESK.INF, so we can
+     * call Blitmode() here.  note that we call it here, even if we've
+     * called it in process_inf2() in geminit.c, because an auto-run
+     * program may have changed the state in between.
      */
     if (blitter_is_present)
         Blitmode(G.g_blitter?1:0);
