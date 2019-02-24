@@ -10,11 +10,9 @@ bugs.
 
 This document summarises the Atari document, and lists the current EmuTOS
 status for each TOS 1.4 fix:
-    BUG: aaaaaa             the bug exists in EmuTOS; aaaaaa is more info
     FIXED: commit xxxxxx    the bug is fixed in EmuTOS by commit xxxxxx
     MISSING FEATURE         the bug is associated with a feature missing
                             from EmuTOS
-    TO BE CHECKED           it is not yet known if the bug exists
     COMMENT: aaaaa          any other status, e.g. where EmuTOS implements
                             things differently from Atari TOS
 The list is broken down into 5 major areas: AES, BIOS/XBIOS, Desktop,
