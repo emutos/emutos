@@ -28,7 +28,7 @@
         .extern _linea_transform_mouse
 
         .extern _get_pix
-        .extern _set_pix
+        .extern _put_pix
 
         .extern _linea_line
         .extern _linea_rect
@@ -36,6 +36,7 @@
         .extern _linea_polygon
 
         .extern _linea_blit
+        .extern _text_blt
 
         .extern _sprite_x
         .extern _sprite_y
@@ -43,6 +44,8 @@
         .extern _sprite_sav
         .extern _draw_sprite
         .extern _undraw_sprite
+        .extern _linea_raster
+        .extern _linea_fill
 
 
 // ==== Definitions ==========================================================

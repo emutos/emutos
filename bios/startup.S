@@ -42,6 +42,11 @@
         .extern __edata       // end of data section
         .extern __endvdibss   // end of VDI BSS
 
+        .extern _root
+        .extern _shifty
+        .extern _run
+        .extern _ui_mupb
+
 // ===========================================================================
 // ==== TEXT segment (TOS image) =============================================
 // ===========================================================================
@@ -59,9 +64,6 @@
         .globl  _os_date
         .globl  _os_conf
         .globl  _os_dosdate
-        .globl  _root
-        .globl  _shifty
-        .globl  _run
 
 #if DIAGNOSTIC_CARTRIDGE
     .dc.l   0xfa52235f  // diagnostic cartridge magic number

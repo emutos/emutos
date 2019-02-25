@@ -81,6 +81,11 @@
 
 #include "asmdefs.h"
 
+        .extern _clockvec
+        .extern _memmove
+        .extern _mfpint
+        .extern _kbd_int
+
         .globl  _init_acia_vecs
         .globl  _int_acia
 

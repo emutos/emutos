@@ -44,6 +44,7 @@
         .extern _tchange
         .extern _b_delay
         .extern _os_beg
+        .extern __etext
 
 /* disable interrupts */
 _disable_interrupts:

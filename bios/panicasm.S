@@ -15,6 +15,17 @@
 
         .text
 
+        .extern _proc_dregs
+        .extern _proc_usp
+        .extern _proc_enum
+        .extern _proc_stk
+        .extern _proc_lives
+        .extern _dopanic
+        .extern _flush_data_cache
+        .extern _main
+        .extern resvalid
+        .extern resvector
+
         .globl  _panic
         .globl  _halt
         .globl  _kill_program

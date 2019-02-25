@@ -34,7 +34,6 @@
 #endif
         .globl  _just_rts
         .globl  _just_rte
-        .globl  _bell
         .globl  _keyclick
         .globl  _trap_save_area
 
@@ -69,6 +68,33 @@
         .extern _proc_enum
         .extern _proc_usp
         .extern _proc_stk
+
+        .extern _bell
+        .extern _GSX_ENTRY
+        .extern _vblsem
+        .extern _colorptr
+#if CONF_WITH_VIDEL
+        .extern _falcon_shadow_palette
+#endif
+        .extern _screenpt
+        .extern _has_videl
+        .extern _has_tt_shifter
+        .extern _has_ste_shifter
+        .extern _flopvbl
+        .extern _nvbls
+        .extern _timer_c_sieve
+        .extern _kb_timerc_int
+        .extern _sndirq
+        .extern _etv_timer
+        .extern _etv_critic
+        .extern _mcpu
+        .extern _bios_ent
+        .extern _bios_vecs
+        .extern _xbios_ent
+        .extern _xbios_vecs
+        .extern _savptr
+        .extern _xbios_do_unimpl
+        .extern _kcl_hook
 
         .text
 

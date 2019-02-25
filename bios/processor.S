@@ -35,6 +35,9 @@
 
         .extern _longframe              // If not 0, use long stack frames
         .extern _setup_68030_pmmu
+#if CONF_WITH_68030_PMMU
+        .extern _pmmutree
+#endif
 
 
 

@@ -22,7 +22,6 @@
         .globl  _accdesk_start
         .globl  _gemdos
         .globl  _dos_exec
-        .globl  _ui_mupb
 
         .extern _ad_stail
         .extern _ad_envrn

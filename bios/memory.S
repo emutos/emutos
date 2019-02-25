@@ -29,10 +29,13 @@
         .extern memdone       // return to, after memory config is done
         .extern _warm_magic
         .extern _stktop
+        .extern _meminit_flags
 
         // functions for detecting hardware
         .extern _check_read_byte
         .extern _bzero
+        .extern _flush_data_cache
+        .extern _invalidate_data_cache
 
         // ST-RAM settings
         .extern memctrl
