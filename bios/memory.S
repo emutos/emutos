@@ -170,7 +170,7 @@ memchk:
 memory_reused:
 #if CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF
         // If _warm_magic == WARM_MAGIC, this is explicitly not a first boot
-        lea     _warm_magic, a0
+        lea     _warm_magic.w, a0
         move.l  #0x5741524D, d1         // WARM_MAGIC
         cmp.l   (a0), d1
         jeq     .warm_magic_done        // Indeed, this is not a first boot
@@ -586,7 +586,7 @@ stram_detected:
 // ===========================================================================
 
         /* Clear the sysvars */
-        move.l  #sysvars_start, a0
+        move.l  #sysvars_start.w, a0
         move.l  #sysvars_end, a1
         jbsr    call_bzero_a0_a1
 
@@ -609,7 +609,7 @@ stram_detected:
 #endif
 
 #if CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF
-        lea     _warm_magic, a0
+        lea     _warm_magic.w, a0
         move.l  #0x5741524D, d1         // WARM_MAGIC
         move.l  d1, (a0)                // Next boot will not be a first boot
 #endif

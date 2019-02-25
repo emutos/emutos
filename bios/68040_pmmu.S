@@ -165,7 +165,7 @@ make_mmu_tree:
                 move.l  #0x01000000,d0          // logical
                 move.l  #0x01000000,d1          // physical
                 //move.l        #64*1024*1024,d2        // size
-                move.l  _ramtop,d2
+                move.l  _ramtop.w,d2
                 jeq     .no_ttram
                 sub.l   d0,d2
                 move.l  #c_copyback<<d_cache_pos,d3     // flags

@@ -103,7 +103,7 @@
 /* basically initialize the 62 exception vectors. */
 
 _init_exc_vec:
-        clr.l   _proc_lives
+        clr.l   _proc_lives.w
         lea     deflt_vec_table, a0
         lea     8, a1
         move.l  #61, d0
@@ -222,36 +222,36 @@ any_vec:
         move.w  #0x2700, sr
         // dump the registers, including USP
 #ifdef __mcoldfire__
-        move.l  a0,_proc_dregs+32
-        lea     _proc_dregs,a0
+        move.l  a0,(_proc_dregs+32).w
+        lea     _proc_dregs.w,a0
         movem.l d0-d7,(a0)
         movem.l a1-a6,36(a0)
 #else
-        movem.l d0-d7/a0-a6,_proc_dregs
+        movem.l d0-d7/a0-a6,_proc_dregs.w
 #endif
         move.l  usp,a0
-        move.l  a0,_proc_usp
+        move.l  a0,_proc_usp.w
         // compute and dump the exception number
         move.l  (sp)+,d0
         // dump the correct value for sp
-        move.l  sp,_proc_aregs+28
+        move.l  sp,(_proc_aregs+28).w
         lea     deflt_vec_table(pc), a0
         sub.l   a0, d0
         lsr.l   #1, d0
         add.l   #1, d0
-        move.l  d0, _proc_enum
+        move.l  d0, _proc_enum.w
         // dump 16 words from the stack
         movem.l (sp),d0-d7
 #ifdef __mcoldfire__
-        lea     _proc_stk,a0
+        lea     _proc_stk.w,a0
         movem.l d0-d7,(a0)
         // magic value
-        lea     _proc_lives, a0
+        lea     _proc_lives.w, a0
         move.l  #0x12345678, (a0)
 #else
-        movem.l d0-d7,_proc_stk
+        movem.l d0-d7,_proc_stk.w
         // magic value
-        move.l  #0x12345678, _proc_lives
+        move.l  #0x12345678, _proc_lives.w
 #endif
         // restore a sane stack
         // this stack must be large enough for dopanic(); as of
@@ -344,11 +344,11 @@ _int_vbl:
 #ifdef __mcoldfire__
         move.l  d0, -(sp)               // ColdFire specific
         moveq   #0, d0
-        move.w  _vblsem, d0
+        move.w  _vblsem.w, d0
         subq.l  #1, d0
-        move.w  d0, _vblsem
+        move.w  d0, _vblsem.w
 #else
-        subq.w  #1, _vblsem             // check vbl semaphore
+        subq.w  #1, _vblsem.w           // check vbl semaphore
 #endif
         jmi     vbl_end                 // if VBl routine disabled -> end
 
@@ -486,12 +486,12 @@ vbl_no_queue:
 vbl_end:
 #ifdef __mcoldfire__
         moveq   #0,d0
-        move.w  _vblsem,d0
+        move.w  _vblsem.w,d0
         addq.l  #1,d0
-        move.w  d0,_vblsem
+        move.w  d0,_vblsem.w
         move.l  (sp)+,d0                // ColdFire specific
 #else
-        addq.w  #1,_vblsem
+        addq.w  #1,_vblsem.w
 #endif
 
 #if CONF_WITH_ATARI_VIDEO
