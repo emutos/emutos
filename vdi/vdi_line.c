@@ -355,7 +355,8 @@ void draw_rect_common(const VwkAttrib *attr, const Rect *rect)
 {
     UWORD leftmask, rightmask, *addr;
     const UWORD patmsk = attr->patmsk;
-    const int yinc = (v_lin_wr>>1) - v_planes;
+    const int vplanes = v_planes;
+    const int yinc = (v_lin_wr>>1) - vplanes;
     int width, centre, y;
 #if CONF_WITH_BLITTER
     BLITPARM b;
@@ -403,27 +404,27 @@ void draw_rect_common(const VwkAttrib *attr, const Rect *rect)
             int plane;
             UWORD color;
 
-            for (plane = 0, color = attr->color; plane < v_planes; plane++, color>>=1, addr++) {
+            for (plane = 0, color = attr->color; plane < vplanes; plane++, color>>=1, addr++) {
                 UWORD *work = addr;
                 UWORD pattern = ~attr->patptr[patind];
                 int n;
 
                 if (color & 0x0001) {
                     *work |= pattern & leftmask;    /* left section */
-                    work += v_planes;
+                    work += vplanes;
                     for (n = 0; n < centre; n++) {  /* centre section */
                         *work |= pattern;
-                        work += v_planes;
+                        work += vplanes;
                     }
                     if (rightmask) {                /* right section */
                         *work |= pattern & rightmask;
                     }
                 } else {
                     *work &= ~(pattern & leftmask); /* left section */
-                    work += v_planes;
+                    work += vplanes;
                     for (n = 0; n < centre; n++) {  /* centre section */
                         *work &= ~pattern;
-                        work += v_planes;
+                        work += vplanes;
                     }
                     if (rightmask) {                /* right section */
                         *work &= ~(pattern & rightmask);
@@ -440,16 +441,16 @@ void draw_rect_common(const VwkAttrib *attr, const Rect *rect)
             int plane;
             UWORD color;
 
-            for (plane = 0, color = attr->color; plane < v_planes; plane++, color>>=1, addr++) {
+            for (plane = 0, color = attr->color; plane < vplanes; plane++, color>>=1, addr++) {
                 UWORD *work = addr;
                 UWORD pattern = attr->patptr[patind];
                 int n;
 
                 *work ^= pattern & leftmask;        /* left section */
-                work += v_planes;
+                work += vplanes;
                 for (n = 0; n < centre; n++) {      /* centre section */
                     *work ^= pattern;
-                    work += v_planes;
+                    work += vplanes;
                 }
                 if (rightmask) {                    /* right section */
                     *work ^= pattern & rightmask;
@@ -465,27 +466,27 @@ void draw_rect_common(const VwkAttrib *attr, const Rect *rect)
             int plane;
             UWORD color;
 
-            for (plane = 0, color = attr->color; plane < v_planes; plane++, color>>=1, addr++) {
+            for (plane = 0, color = attr->color; plane < vplanes; plane++, color>>=1, addr++) {
                 UWORD *work = addr;
                 UWORD pattern = attr->patptr[patind];
                 int n;
 
                 if (color & 0x0001) {
                     *work |= pattern & leftmask;    /* left section */
-                    work += v_planes;
+                    work += vplanes;
                     for (n = 0; n < centre; n++) {  /* centre section */
                         *work |= pattern;
-                        work += v_planes;
+                        work += vplanes;
                     }
                     if (rightmask) {                /* right section */
                         *work |= pattern & rightmask;
                     }
                 } else {
                     *work &= ~(pattern & leftmask); /* left section */
-                    work += v_planes;
+                    work += vplanes;
                     for (n = 0; n < centre; n++) {  /* centre section */
                         *work &= ~pattern;
-                        work += v_planes;
+                        work += vplanes;
                     }
                     if (rightmask) {                /* right section */
                         *work &= ~(pattern & rightmask);
@@ -502,7 +503,7 @@ void draw_rect_common(const VwkAttrib *attr, const Rect *rect)
             int plane;
             UWORD color;
 
-            for (plane = 0, color = attr->color; plane < v_planes; plane++, color>>=1, addr++) {
+            for (plane = 0, color = attr->color; plane < vplanes; plane++, color>>=1, addr++) {
                 UWORD data, *work = addr;
                 UWORD pattern = (color & 0x0001) ? attr->patptr[patind] : 0x0000;
                 int n;
@@ -510,10 +511,10 @@ void draw_rect_common(const VwkAttrib *attr, const Rect *rect)
                 data = *work & ~leftmask;           /* left section */
                 data |= pattern & leftmask;
                 *work = data;
-                work += v_planes;
+                work += vplanes;
                 for (n = 0; n < centre; n++) {      /* centre section */
                     *work = pattern;
-                    work += v_planes;
+                    work += vplanes;
                 }
                 if (rightmask) {                    /* right section */
                     data = *work & ~rightmask;
