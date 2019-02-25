@@ -923,13 +923,6 @@ msgstr "[1]["
 
 #: desk/desk_rsc.c
 msgid "[3]["
-"Cannot create EMUDESK.INF.][  OK  ]"
-msgstr "[3]["
-"EMUDESK.INF tiedoston|"
-"luonti epäonnistui.][  OK  ]"
-
-#: desk/desk_rsc.c
-msgid "[3]["
 "You cannot create or|"
 "access a folder this far|"
 "down the directory path.][  OK  ]"
@@ -1221,10 +1214,6 @@ msgid "delay/rate for the keyboard"
 msgstr "delay/rate for the keyboard"
 
 #: cli/cmdint.c
-msgid "line height (8,16) for the display"
-msgstr "line height (8,16) for the display"
-
-#: cli/cmdint.c
 msgid "Copy <filespec> to standard output,"
 msgstr "Copy <filespec> to standard output,"
 
@@ -1319,10 +1308,6 @@ msgstr "  Keyboard delay: "
 #: cli/cmdint.c
 msgid "  Keyboard rate:  "
 msgstr "  Keyboard rate:  "
-
-#: cli/cmdint.c
-msgid "  Line height:    "
-msgstr "  Line height:    "
 
 #: cli/cmdint.c
 msgid "(empty)"

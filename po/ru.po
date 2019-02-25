@@ -926,12 +926,6 @@ msgstr "[1]["
 
 #: desk/desk_rsc.c
 msgid "[3]["
-"Cannot create EMUDESK.INF.][  OK  ]"
-msgstr "[3]["
-"Не могу создать файл EMUDESK.INF.][  ОК  ]"
-
-#: desk/desk_rsc.c
-msgid "[3]["
 "You cannot create or|"
 "access a folder this far|"
 "down the directory path.][  OK  ]"
@@ -1231,10 +1225,6 @@ msgid "delay/rate for the keyboard"
 msgstr "задержка/скорость повторного ввода клавиатуры"
 
 #: cli/cmdint.c
-msgid "line height (8,16) for the display"
-msgstr "высота строки (8,16) дисплея"
-
-#: cli/cmdint.c
 msgid "Copy <filespec> to standard output,"
 msgstr "Копировать <filespec> на стандартный выход,"
 
@@ -1329,10 +1319,6 @@ msgstr "  Задержка повторного ввода клавиатуры:"
 #: cli/cmdint.c
 msgid "  Keyboard rate:  "
 msgstr "  Скорость повторного ввода клавиатуры:"
-
-#: cli/cmdint.c
-msgid "  Line height:    "
-msgstr "  Высота строки:                       "
 
 #: cli/cmdint.c
 msgid "(empty)"
