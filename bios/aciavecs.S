@@ -150,7 +150,7 @@ kbdlength:      .ds.b   1       // number of bytes remaining in current packet
 
 _init_acia_vecs:
         // initialize the kbdvecs structure
-        lea     _just_rts,a0            // dummy vector
+        lea     just_rts,a0             // dummy vector
         lea     _kbdvecs,a1
         move.l  a0,_mousexvec-_kbdvecs(a1)
 #ifdef __mcoldfire__
