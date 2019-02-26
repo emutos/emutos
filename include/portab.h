@@ -201,4 +201,25 @@ typedef BYTE *BYTEPTR_ALIAS MAY_ALIAS;
 # define FALLTHROUGH NULL_FUNCTION()
 #endif
 
+/*
+ * See:
+ * - https://gcc.gnu.org/onlinedocs/gcc-4.4.0/gcc/Function-Specific-Option-Pragmas.html
+ *
+ * NOTE:
+ * - Later GCC manual states:
+ *	Optimize attribute should be used for debugging purposes only.
+ *	It is not suitable in production code.
+ */
+#if __GNUC_PREREQ(4, 4)
+/* potentially reduce function size (and perf) for -O2 (256k / 512k) builds */
+# define OPTIMIZE_SMALL __attribute__ ((optimize("Os")))
+/* potentially increase function perf (and size) for -Os (192k) build */
+# define OPTIMIZE_O2 __attribute__ ((optimize("O2")))
+# define OPTIMIZE_O3 __attribute__ ((optimize("O3")))
+#else
+# define OPTIMIZE_SMALL
+# define OPTIMIZE_O2
+# define OPTIMIZE_O3
+#endif
+
 #endif /* PORTAB_H */
