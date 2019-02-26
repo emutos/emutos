@@ -351,7 +351,7 @@ static BOOL blit_rect_common(const VwkAttrib *attr, const Rect *rect, BLITPARM *
  * 8MHz ST or 16MHz Falcon.  You are strongly advised not to change this
  * without a lot of careful thought & performance testing!
  */
-void draw_rect_common(const VwkAttrib *attr, const Rect *rect)
+void OPTIMIZE_SMALL draw_rect_common(const VwkAttrib *attr, const Rect *rect)
 {
     UWORD leftmask, rightmask, *addr;
     const UWORD patmsk = attr->patmsk;
