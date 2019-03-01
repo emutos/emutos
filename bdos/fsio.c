@@ -350,7 +350,7 @@ static long xrw(int wrtflg, OFD *p, long len, char *ubufr)
 
         lenxfr = min(len,dm->m_recsiz-bytn);
         bufp = getrec(recn,p,wrtflg);   /* get desired record  */
-        addit(p,(long) lenxfr,1);       /* update ofd          */
+        addit(p,lenxfr,1);              /* update ofd          */
         len -= lenxfr;                  /* nbr left to do      */
         recn++;                         /* starting w/ next    */
 
@@ -390,7 +390,7 @@ static long xrw(int wrtflg, OFD *p, long len, char *ubufr)
             usrio(wrtflg,hdrrec,recn,ubufr,dm);
             ubufr += (lsiz = hdrrec << dm->m_rblog);
             lenmid -= lsiz;
-            addit(p,(long) lsiz,1);
+            addit(p,lsiz,1);
         }
 
         /* do whole clusters */
@@ -447,7 +447,7 @@ mulio:
             if (nextcl(p,wrtflg))
                 goto eof;
             lsiz = tailrec << dm->m_rblog;
-            addit(p,(long) lsiz,1);
+            addit(p,lsiz,1);
             usrio(wrtflg,tailrec,p->o_currec,ubufr,dm);
             ubufr += lsiz;
         }
@@ -467,7 +467,7 @@ mulio:
         }
 
         bufp = getrec((RECNO)p->o_currec+recn,p,wrtflg);
-        addit(p,(long) lentail,1);
+        addit(p,lentail,1);
 
         if (!ubufr)
             return (long) bufp;
