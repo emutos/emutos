@@ -406,8 +406,7 @@ void app_tran(WORD bi_num)
  */
 static WORD setup_iconblks(const ICONBLK *ibstart, WORD count)
 {
-    BYTE *maskstart, *datastart;
-    void *allocmem;
+    BYTE *maskstart, *datastart, *allocmem;
     char *p;
     WORD i, iwb, ih;
     LONG num_bytes, offset;
@@ -435,7 +434,7 @@ static WORD setup_iconblks(const ICONBLK *ibstart, WORD count)
         return -1;
     }
 
-    G.g_iblist = allocmem;
+    G.g_iblist = (ICONBLK*)allocmem;
     allocmem += count * sizeof(ICONBLK);
     maskstart = allocmem;
     allocmem += count * num_bytes;
