@@ -66,10 +66,9 @@ static __inline LONG muls(WORD m1, WORD m2)
     LONG ret;
 
     __asm__ (
-      "muls %2,%0\n\t"
-      "move.l %0,%1"
-    : "+d"(m1), "=idm" (ret)
-    : "idm"(m2)
+      "muls %2,%0"
+    : "=d"(ret)
+    : "%0"(m1), "idm"(m2)
     );
 
     return ret;
