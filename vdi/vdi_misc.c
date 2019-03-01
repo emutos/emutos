@@ -12,6 +12,7 @@
 #include "config.h"
 #include "portab.h"
 #include "asm.h"
+#include "intmath.h"
 #include "biosbind.h"
 #include "../bios/tosvars.h"
 #include "vdi_defs.h"
@@ -179,7 +180,7 @@ UWORD * get_start_addr(const WORD x, const WORD y)
     /* init address counter */
     addr = v_bas_ad;                    /* start of screen */
     addr += (x&0xfff0)>>shift_offset[v_planes]; /* add x coordinate part of addr */
-    addr += (LONG)y * v_lin_wr;         /* add y coordinate part of addr */
+    addr += muls(y, v_lin_wr);          /* add y coordinate part of addr */
 
     return (UWORD*)addr;
 }
