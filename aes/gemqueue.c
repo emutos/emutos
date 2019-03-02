@@ -67,7 +67,7 @@ static void doq(WORD donq, AESPD *p, QPB *m)
                         n = 0;
                     }
                     else
-                        index += (om[2] != 0xFFFF) ? (om[2] + 16) : 16;
+                        index += om[2] + 16;
                 }
             }
         }
