@@ -404,7 +404,7 @@ void inf_numset(OBJECT *tree, WORD obj, ULONG value)
     ted = (TEDINFO *)objptr->ob_spec;
     len = ted->te_txtlen - 1;
 
-    sprintf(ted->te_ptext,"%*.*lu",len,len,value);
+    sprintf(ted->te_ptext,"%*lu",len,value);
 }
 
 

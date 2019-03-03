@@ -46,12 +46,12 @@ static void *numconv(char *p, unsigned long value, int radix, int precision, uns
     char c;
     long quot, rem;
 
-    /* first, a paranoia check */
-    if (precision > MAXNUMLEN)
-        precision = MAXNUMLEN;
+    /* by default, output 0 as 0, rather than the empty string */
+    if (!(flags & FLAG_PREC))
+        precision = 1;
 
     /* create the string in reverse order in 'buf' */
-    for (q = buf; value; precision--)
+    for (q = buf; value || (precision > 0); precision--)
     {
         quot = value / radix;
         rem = value - (quot * radix);
@@ -61,14 +61,6 @@ static void *numconv(char *p, unsigned long value, int radix, int precision, uns
             c = (rem - 10) + ((flags & FLAG_CAPS) ? 'A' : 'a');
         *q++ = c;
         value = quot;
-    }
-
-    /* pad if necessary */
-    if (flags & FLAG_PREC)
-    {
-        char fill = (flags & FLAG_ZERO) ? '0' : ' ';
-        while(precision-- > 0)
-            *q++ = fill;
     }
 
     /* copy to input buffer */
@@ -152,6 +144,8 @@ int doprintf(void (*outc)(int), const char *fmt, va_list ap)
                 else break;
                 precision = precision * 10 + n;
             }
+            if (precision > MAXNUMLEN)
+                precision = MAXNUMLEN;
             flags |= FLAG_PREC;
         }
 
