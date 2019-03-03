@@ -42,7 +42,7 @@
  */
 static void *numconv(char *p, unsigned long value, int radix, int precision, unsigned int flags)
 {
-    char buf[MAXNUMLEN], *q = buf;
+    char buf[MAXNUMLEN], *q;
     char c;
     long quot, rem;
 
@@ -51,7 +51,8 @@ static void *numconv(char *p, unsigned long value, int radix, int precision, uns
         precision = MAXNUMLEN;
 
     /* create the string in reverse order in 'buf' */
-    do {
+    for (q = buf; value; precision--)
+    {
         quot = value / radix;
         rem = value - (quot * radix);
         if (rem < 10)
@@ -59,9 +60,8 @@ static void *numconv(char *p, unsigned long value, int radix, int precision, uns
         else
             c = (rem - 10) + ((flags & FLAG_CAPS) ? 'A' : 'a');
         *q++ = c;
-        precision--;
         value = quot;
-    } while(value);
+    }
 
     /* pad if necessary */
     if (flags & FLAG_PREC)
