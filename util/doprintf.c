@@ -46,6 +46,10 @@ static void *numconv(char *p, unsigned long value, int radix, int precision, uns
     char c;
     long quot, rem;
 
+    /* if displaying an unsigned short item, limit it to the appropriate size */
+    if (!(flags & FLAG_LONG) && !(flags & FLAG_SIGN))
+        value &= 0xffff;
+
     /* by default, output 0 as 0, rather than the empty string */
     if (!(flags & FLAG_PREC))
         precision = 1;
