@@ -51,7 +51,7 @@
 #define ENABLE_KDEBUG
 #endif
 
-extern WORD super(WORD cx, AESPB *pcrys_blk);   /* called only from gemdosif.S */
+extern LONG super(WORD cx, AESPB *pcrys_blk);   /* called only from gemdosif.S */
 
 GLOBAL WORD     gl_mnclick;
 
@@ -463,7 +463,7 @@ static void xif(AESPB *pcrys_blk)
  *  Supervisor entry point.  Stack frame must be exactly like
  *  this if supret is to work.
  */
-WORD super(WORD cx, AESPB *pcrys_blk)
+LONG super(WORD cx, AESPB *pcrys_blk)
 {
     switch(cx)
     {
