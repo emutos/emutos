@@ -458,7 +458,6 @@ mulio:
     if (lentail)
     {
         recn = p->o_curbyt >> dm->m_rblog;
-        bytn = p->o_curbyt & dm->m_rbm;
 
         if ((!recn) || (recn == (RECNO)dm->m_clsiz))
         {

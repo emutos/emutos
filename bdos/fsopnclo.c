@@ -175,7 +175,7 @@ long ixcreat(char *name, char attr)
         if ( nextcl(fd,1) )
             return EACCDN;
 
-        f = dirinit(dn);
+        dirinit(dn);
         pos = 0;
     }
 
