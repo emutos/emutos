@@ -15,7 +15,7 @@
 *       Copyright (C) 1987                      Digital Research Inc.
 *       -------------------------------------------------------------
 */
-
+/* #define ENABLE_KDEBUG */
 #include "config.h"
 #include "portab.h"
 #include "struct.h"
@@ -185,6 +185,13 @@ UWORD apret(EVSPEC mask)
     for (p = (q = (EVB *) &rlr->p_evlist) -> e_nextp; p; p = (q=p)->e_nextp)
         if (p->e_mask == mask)
             break;
+
+    /* paranoia, make sure there is an event */
+    if (!p)
+    {
+        KDEBUG(("Expected event %04x not found\n", mask));
+        return 0;
+    }
 
     /* found the event, remove it from the zombie list */
     p->e_pred->e_link = p->e_link;
