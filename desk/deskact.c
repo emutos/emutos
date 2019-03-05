@@ -457,6 +457,9 @@ WORD act_chg(WORD wh, OBJECT *tree, WORD root, WORD obj, GRECT *pc,
  *  Change the SELECTED bit of all objects partially intersecting the
  *  given rectangle, allowing one object to be excluded
  *
+ *  If clearing the SELECTED bit, we also clear the selected indicator in
+ *  all FNODEs associated with this window
+ *
  *  If setting the SELECTED bit, we also set the selected indicator in
  *  the corresponding FNODE
  */
@@ -467,6 +470,10 @@ void act_allchg(WORD wh, OBJECT *tree, WORD root, WORD ex_obj, GRECT *pt, GRECT 
     WORD obj, newstate;
     WORD offx, offy;
     GRECT o, a, w;
+
+    /* clearing selections: do all FNODEs, not just the visible ones */
+    if (!dochg)
+        pn_clear(win_find(wh));
 
     offx = tree[root].ob_x;
     offy = tree[root].ob_y;
