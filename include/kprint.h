@@ -44,14 +44,6 @@ extern int kprintf(const char *fmt, ...) PRINTF_STYLE;
 /* output done both through kprintf and cprintf */
 extern int kcprintf(const char *fmt, ...) PRINTF_STYLE;
 
-/* assert stuff */
-#if CONF_WITH_ASSERT
-extern void doassert(const char *, long, const char *, const char *);
-#define assert(a) if(!(a)) { doassert(__FILE__, __LINE__, __FUNCTION__, #a); }
-#else
-#define assert(a) NULL_FUNCTION()
-#endif
-
 /* KINFO(()) outputs to the debugger, if kprintf() is available */
 #if HAS_KPRINTF
 #define KINFO(args) kprintf args

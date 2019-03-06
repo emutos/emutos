@@ -263,18 +263,6 @@ int kcprintf(const char *fmt, ...)
     return n;
 }
 
-#if CONF_WITH_ASSERT
-
-/*==== doassert ======*/
-
-void doassert(const char *file, long line, const char *func, const char *text)
-{
-    kprintf("assert failed in %s:%ld (function %s): %s\n", file, line, func, text);
-}
-
-#endif /* CONF_WITH_ASSERT */
-
-
 /*==== dopanic - display information found in 0x380 and attempt to recover ======*/
 
 static const char *const exc_messages[] = {

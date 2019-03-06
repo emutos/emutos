@@ -248,9 +248,6 @@
 # ifndef CONF_WITH_XHDI
 #  define CONF_WITH_XHDI 0
 # endif
-# ifndef CONF_WITH_ASSERT
-#  define CONF_WITH_ASSERT 0
-# endif
 # ifndef CONF_WITH_WINDOW_ICONS
 #  define CONF_WITH_WINDOW_ICONS 0
 # endif
@@ -347,9 +344,6 @@
 # endif
 # ifndef CONF_WITH_ICDRTC
 #  define CONF_WITH_ICDRTC 0
-# endif
-# ifndef CONF_WITH_ASSERT
-#  define CONF_WITH_ASSERT 0
 # endif
 # ifndef CONF_WITH_SHUTDOWN
 #  define CONF_WITH_SHUTDOWN 0
@@ -973,13 +967,6 @@
  */
 #ifndef CONF_LOGSEC_SIZE
 # define CONF_LOGSEC_SIZE 512
-#endif
-
-/*
- * Set CONF_WITH_ASSERT to 1 to enable the assert() function
- */
-#ifndef CONF_WITH_ASSERT
-# define CONF_WITH_ASSERT 1
 #endif
 
 /*
