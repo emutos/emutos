@@ -644,12 +644,12 @@ static WORD hndl_button(WORD clicks, WORD mx, WORD my, WORD button, WORD keystat
     {
         WNODE *pw;
 
-        act_bsclick(G.g_cwin, G.g_screen, G.g_croot, mx, my,
+        act_bsclick(G.g_cwin, G.g_croot, mx, my,
                     keystate, &c, FALSE);
         graf_mkstate(&junk, &junk, &button, &junk);
         if (button & 0x0001)
         {
-            dest_wh = act_bdown(G.g_cwin, G.g_screen, G.g_croot, &mx, &my,
+            dest_wh = act_bdown(G.g_cwin, G.g_croot, &mx, &my,
                                 &keystate, &c, &dobj);
             if (dest_wh != NIL)
             {
@@ -663,7 +663,7 @@ static WORD hndl_button(WORD clicks, WORD mx, WORD my, WORD button, WORD keystat
     }
     else
     {
-        act_bsclick(G.g_cwin, G.g_screen, G.g_croot, mx, my, keystate, &c, TRUE);
+        act_bsclick(G.g_cwin, G.g_croot, mx, my, keystate, &c, TRUE);
         done = do_filemenu(OPENITEM);
     }
 

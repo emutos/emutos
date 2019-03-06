@@ -238,7 +238,7 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc,
             WORD numpts, WORD *xylnpts, WORD numobs, WORD *xyobpts,
             WORD *pdulx, WORD *pduly, WORD *poffx, WORD *poffy, WORD *pdwh, WORD *pdobj)
 {
-    OBJECT *tree, *curr_tree;
+    OBJECT *tree;
     WNODE  *pw;
     WORD   root, curr_wh, curr_root, curr_sel, dst_wh;
     WORD   l_mx, l_my;
@@ -267,7 +267,6 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc,
     offy = l_my - o.g_y;
 
     curr_wh = 0x0;
-    curr_tree = NULL;
     curr_root = 0;
     curr_sel = 0;
 
@@ -301,9 +300,8 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc,
         {
             if (curr_sel)
             {
-                act_chg(curr_wh, curr_tree, curr_root, curr_sel, pc, FALSE, TRUE);
+                act_chg(curr_wh, curr_root, curr_sel, pc, FALSE, TRUE);
                 curr_wh = 0x0;
-                curr_tree = NULL;
                 curr_root = 0x0;
                 curr_sel = 0;
                 continue;
@@ -314,9 +312,8 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc,
         {
             if (curr_sel)
             {
-                act_chg(curr_wh, curr_tree, curr_root, curr_sel, pc, FALSE, TRUE);
+                act_chg(curr_wh, curr_root, curr_sel, pc, FALSE, TRUE);
                 curr_wh = 0x0;
-                curr_tree = NULL;
                 curr_root = 0x0;
                 curr_sel = 0;
             }
@@ -328,16 +325,15 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc,
             if (pa)
             {
                 curr_wh = dst_wh;
-                curr_tree = tree;
                 curr_root = root;
                 curr_sel = *pdobj;
-                act_chg(curr_wh, curr_tree, curr_root, curr_sel, pc, TRUE, TRUE);
+                act_chg(curr_wh, curr_root, curr_sel, pc, TRUE, TRUE);
             }
         }
     } while (down);
 
     if (curr_sel)
-        act_chg(curr_wh, curr_tree, curr_root, curr_sel, pc, FALSE, TRUE);
+        act_chg(curr_wh, curr_root, curr_sel, pc, FALSE, TRUE);
 
     *pdulx = l_mx;              /* pass back dest. x,y  */
     *pduly = l_my;
@@ -393,19 +389,19 @@ static WORD act_chkobj(OBJECT *tree, WORD root, WORD obj, WORD mx, WORD my, WORD
 
 
 /*
- *  Change the SELECTED bit in a single object
+ *  Change the SELECTED bit in a single screen object
  *
  *  Usage of (some) arguments:
- *      OBJECT *tree            * tree that holds item
  *      WORD   obj              * object to affect
  *      WORD   dochg            * set or reset value
  *      WORD   dodraw           * draw resulting change
  *
  *  We do not change the state if the item is disabled
  */
-WORD act_chg(WORD wh, OBJECT *tree, WORD root, WORD obj, GRECT *pc,
+WORD act_chg(WORD wh, WORD root, WORD obj, GRECT *pc,
              WORD dochg, WORD dodraw)
 {
+    OBJECT *tree = G.g_screen;
     FNODE *fn;
     UWORD curr_state;
     UWORD old_state;
@@ -427,10 +423,9 @@ WORD act_chg(WORD wh, OBJECT *tree, WORD root, WORD obj, GRECT *pc,
         curr_state &= ~SELECTED;
 
     /*
-     * NOTE: here we assume tree == G.g_screen, so obj is a valid index
+     * NOTE: since tree == G.g_screen, obj is a valid index
      * into G.g_screeninfo[]
      */
-    assert(tree == G.g_screen);
     fn = G.g_screeninfo[obj].fnptr;
     if (fn)
         fn->f_selected = (curr_state & SELECTED) ? TRUE : FALSE;
@@ -463,9 +458,10 @@ WORD act_chg(WORD wh, OBJECT *tree, WORD root, WORD obj, GRECT *pc,
  *  If setting the SELECTED bit, we also set the selected indicator in
  *  the corresponding FNODE
  */
-void act_allchg(WORD wh, OBJECT *tree, WORD root, WORD ex_obj, GRECT *pt, GRECT *pc,
+void act_allchg(WORD wh, WORD root, WORD ex_obj, GRECT *pt, GRECT *pc,
                 WORD dochg)
 {
+    OBJECT *tree = G.g_screen;
     FNODE *fn;
     WORD obj, newstate;
     WORD offx, offy;
@@ -498,10 +494,9 @@ void act_allchg(WORD wh, OBJECT *tree, WORD root, WORD ex_obj, GRECT *pt, GRECT 
                 /*
                  * mark FNODE iff we're setting the SELECTED bit
                  *
-                 * NOTE: here we assume tree == G.g_screen, so obj is a valid index
+                 * NOTE: since tree == G.g_screen, obj is a valid index
                  * into G.g_screeninfo[]
                  */
-                assert(tree == G.g_screen);
                 fn = G.g_screeninfo[obj].fnptr;
                 if (fn)
                     fn->f_selected = dochg ? TRUE : FALSE;
@@ -534,7 +529,7 @@ void act_allchg(WORD wh, OBJECT *tree, WORD root, WORD ex_obj, GRECT *pt, GRECT 
 
 
 /*
- *  Single click action on the specified tree of objects
+ *  Single click action on the specified screen objects
  *
  *  Rules:
  *   1. a shift-click on no object within a window will leave the selection
@@ -544,9 +539,10 @@ void act_allchg(WORD wh, OBJECT *tree, WORD root, WORD ex_obj, GRECT *pt, GRECT 
  *   3. a click on an object will deselect all objects & select the object
  *   4. a shift-click on an object will toggle the state of that object only
  */
-void act_bsclick(WORD wh, OBJECT *tree, WORD root, WORD mx, WORD my, WORD keystate,
+void act_bsclick(WORD wh, WORD root, WORD mx, WORD my, WORD keystate,
                  GRECT *pc, WORD dclick)
 {
+    OBJECT *tree = G.g_screen;
     WORD obj;
     WORD shifted;
     WORD state;
@@ -560,7 +556,7 @@ void act_bsclick(WORD wh, OBJECT *tree, WORD root, WORD mx, WORD my, WORD keysta
     if ((obj == root) || (obj == NIL))
     {
         /* deselect all objects */
-        act_allchg(wh, tree, root, obj, &gl_rfull, pc, FALSE);
+        act_allchg(wh, root, obj, &gl_rfull, pc, FALSE);
     }
     else
     {
@@ -570,7 +566,7 @@ void act_bsclick(WORD wh, OBJECT *tree, WORD root, WORD mx, WORD my, WORD keysta
             if (dclick || !(state & SELECTED))
             {
                 /* deselect all objects & select one */
-                act_allchg(wh, tree, root, obj, &gl_rfull, pc, FALSE);
+                act_allchg(wh, root, obj, &gl_rfull, pc, FALSE);
                 state |= SELECTED;
             }
         }
@@ -578,17 +574,18 @@ void act_bsclick(WORD wh, OBJECT *tree, WORD root, WORD mx, WORD my, WORD keysta
         {
             state ^= SELECTED;
         }
-        act_chg(wh, tree, root, obj, pc, state & SELECTED, TRUE);
+        act_chg(wh, root, obj, pc, state & SELECTED, TRUE);
     }
 }
 
 
 /*
- *  Button stayed down over the specified tree of objects
+ *  Button stayed down over the specified screen objects
  */
-WORD act_bdown(WORD wh, OBJECT *tree, WORD root, WORD *in_mx, WORD *in_my,
+WORD act_bdown(WORD wh, WORD root, WORD *in_mx, WORD *in_my,
                WORD *keystate, GRECT *pc, WORD *pdobj)
 {
+    OBJECT *tree = G.g_screen;
     WORD sobj;
     WORD numobs, button;
     WORD dst_wh;
@@ -618,7 +615,7 @@ WORD act_bdown(WORD wh, OBJECT *tree, WORD root, WORD *in_mx, WORD *in_my,
             l_mh = -l_mh;
         }
         r_set(&m, l_mx, l_my, l_mw, l_mh);
-        act_allchg(wh, tree, root, sobj, &m, pc, TRUE);
+        act_allchg(wh, root, sobj, &m, pc, TRUE);
     }
     else
     {       /* drag icon(s) */

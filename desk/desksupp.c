@@ -131,7 +131,7 @@ void desk_clear(WORD wh)
     wind_get_grect(wh, WF_WXYWH, &c);
 
     /* clear all selections */
-    act_allchg(wh, G.g_screen, root, 0, &gl_rfull, &c, FALSE);
+    act_allchg(wh, root, 0, &gl_rfull, &c, FALSE);
 
     if (wh != DESKWH)           /* not the desktop */
     {
@@ -284,7 +284,7 @@ void do_wopen(WORD new_win, WORD wh, WORD curr, WORD x, WORD y, WORD w, WORD h)
         d.g_y += c.g_y;
 
         graf_growbox(d.g_x, d.g_y, d.g_w, d.g_h, x, y, w, h);
-        act_chg(G.g_cwin, G.g_screen, G.g_croot, curr, &gl_rfull, FALSE, new_win?TRUE:FALSE);
+        act_chg(G.g_cwin, G.g_croot, curr, &gl_rfull, FALSE, new_win?TRUE:FALSE);
     }
 
     if (new_win)
@@ -904,7 +904,7 @@ WORD do_dopen(WORD curr)
         if (!do_diropen(pw, TRUE, curr, path, (GRECT *)&G.g_screen[pw->w_root].ob_x, TRUE))
         {
             win_free(pw);
-            act_chg(DESKWH, G.g_screen, DROOT, curr, &gl_rfull, FALSE, TRUE);
+            act_chg(DESKWH, DROOT, curr, &gl_rfull, FALSE, TRUE);
         }
     }
     else
