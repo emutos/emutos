@@ -226,6 +226,14 @@ msgstr "[3]["
 "Función #%d del AES errónea.][Cancelar]"
 
 #: aes/gem_rsc.c
+msgid "[1]["
+"Not enough memory for|"
+"this directory][  OK  ]"
+msgstr "[1]["
+"No hay suficiente memoria|"
+"para este directorio][  OK  ]"
+
+#: aes/gem_rsc.c
 msgid "ITEM SELECTOR"
 msgstr "SELECTOR DE ELEMENTOS"
 
@@ -782,6 +790,10 @@ msgid "%ld bytes used in %d items."
 msgstr "%ld Bytes en %d elementos."
 
 #: desk/desk_rsc.c
+msgid "%ld bytes used in %d selected items."
+msgstr "%ld bytes en %d elementos seleccionados."
+
+#: desk/desk_rsc.c
 msgid "FILE INFORMATION"
 msgstr "INFORMACIÓN DEL FICHERO"
 
@@ -857,19 +869,17 @@ msgstr "[1]["
 "ventana que no esté utilizando.][  OK  ]"
 
 #: desk/desk_rsc.c
-msgid "[3]["
-"You cannot copy a parent folder|"
-"into one of its child folders.][  OK  ]"
-msgstr "[3]["
-"No puede copiar una carpeta de |"
-"nivel superior en una |"
-"inferior.][  OK  ]"
+msgid "[1]["
+"Illegal directory operation!][ Skip | Abort ]"
+msgstr "[1]["
+"Operación ilegal en|"
+"el directorio!][ Saltar | Anular ]"
 
 #: desk/desk_rsc.c
-msgid "[3]["
-"Invalid copy operation.][  OK  ]"
-msgstr "[3]["
-"Operación de copia inválida.][  OK  ]"
+msgid "[1]["
+"Illegal operation!][  OK  ]"
+msgstr "[1]["
+"Operación ilegal!][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[2]["
@@ -915,12 +925,6 @@ msgstr "[1]["
 "La unidad %c: no tiene|"
 "suficiente espacio para|"
 "esta operación.][  OK  ]"
-
-#: desk/desk_rsc.c
-msgid "[3]["
-"Cannot create EMUDESK.INF.][  OK  ]"
-msgstr "[3]["
-"Imposible crear EMUDESK.INF.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[3]["
@@ -1044,6 +1048,95 @@ msgstr "[1]["
 "Este disco tiene %ld bytes|"
 "disponibles para el usuario.][Continuar| Salir ]"
 
+#: desk/desk_rsc.c
+msgid "[1]["
+"Drive %s: does not exist.][ Cancel ]"
+msgstr "[1]["
+"La unidad %s: no existe.][ Cancelar ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"No drive identifier.][ Retry ]"
+msgstr "[1]["
+"No hay identificador|"
+"de unidad.][Reintentar]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Cannot delete file|"
+"%s][ Skip | Retry | Abort ]"
+msgstr "[1]["
+"El fichero no se puede borrar|"
+"%s][ Saltar |Reintentar| Anular ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Cannot delete directory|"
+"%s][ Skip | Retry | Abort ]"
+msgstr "[1]["
+"El directorio no|"
+"se puede borrar|"
+"%s][ Saltar |Reintentar| Anular ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Not enough memory.][  OK  ]"
+msgstr "[1]["
+"No hay suficiente memoria.][  OK  ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"%s not found.][  OK  ]"
+msgstr "[1]["
+"%s no se|"
+"ha encontrado.][  OK  ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Cannot open file|"
+"%s][ Skip | Retry | Abort ]"
+msgstr "[1]["
+"No se puede abrir el fichero|"
+"%s][ Saltar |Reintentar| Anular ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Cannot create file|"
+"%s][ Skip | Retry | Abort ]"
+msgstr "[1]["
+"No se puede crear el fichero|"
+"%s][ Saltar |Reintentar| Anular ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Cannot read file|"
+"%s][ Skip | Abort ]"
+msgstr "[1]["
+"No se puede leer el fichero|"
+"%s][ Saltar | Anular ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Cannot write file|"
+"%s][ Skip | Abort ]"
+msgstr "[1]["
+"No se puede grabar el fichero|"
+"%s][ Saltar | Anular ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Rename error!][ Retry | Cancel ]"
+msgstr "[1]["
+"Error al renombrar!][Reintentar| Anular  ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Failed to set default|"
+"directory.][  OK  ]"
+msgstr "[1]["
+"Error al seleccionar|"
+"el directorio por defecto.][  OK  ]"
+
 #: cli/cmdint.c
 msgid "Copy <filespec> ... to standard output"
 msgstr "Copiar <filespec> ... en la salida estándar"
@@ -1131,10 +1224,6 @@ msgstr "res para la resolución de pantalla (0,1)[ST] (0,1,2,4,7)[TT];"
 #: cli/cmdint.c
 msgid "delay/rate for the keyboard"
 msgstr "retraso/velocidad para el teclado"
-
-#: cli/cmdint.c
-msgid "line height (8,16) for the display"
-msgstr "altura de línea (8,16) para el monitor"
 
 #: cli/cmdint.c
 msgid "Copy <filespec> to standard output,"
@@ -1231,10 +1320,6 @@ msgstr "  Retraso del teclado:  "
 #: cli/cmdint.c
 msgid "  Keyboard rate:  "
 msgstr "  Velocidad del teclado:"
-
-#: cli/cmdint.c
-msgid "  Line height:    "
-msgstr "  Altura de línea:      "
 
 #: cli/cmdint.c
 msgid "(empty)"
