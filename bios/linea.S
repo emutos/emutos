@@ -13,7 +13,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#define DBG_LINEA 0
+/* #define ENABLE_KDEBUG */
 
 #include "asmdefs.h"
 
@@ -87,7 +87,7 @@ _int_linea:
         cmp.w   #nb_linea,d0
         jhs     wrong_linea
 
-#if DBG_LINEA
+#ifdef ENABLE_KDEBUG
 #ifdef __mcoldfire__
         lea     -16(sp),sp
         movem.l d0-d1/a0-a1,(sp)
@@ -104,7 +104,7 @@ _int_linea:
 #else
         movem.l (sp)+,d0-d1/a0-a1
 #endif
-#endif /* DBG_LINEA */
+#endif /* ENABLE_KDEBUG */
 
         lea     linea_vecs,a0
 #ifdef __mcoldfire__
@@ -118,19 +118,19 @@ linea_dispatch_pc:
         rte
 
 wrong_linea:
-#if DBG_LINEA
+#ifdef ENABLE_KDEBUG
         move.w  d0,-(sp)
         subq.l  #2,a0
         move.l  a0,-(sp)
         pea     wrong_linea_msg
         jsr     _kprintf
         lea     10(sp),sp
-#endif /* DBG_LINEA */
+#endif /* ENABLE_KDEBUG */
         rte
 
         SECTION_RODATA
 
-#if DBG_LINEA
+#ifdef ENABLE_KDEBUG
 
 wrong_linea_msg:
         .ascii  "pc=0x%08lx: Line-A call number 0x%03x out of bounds\n\0"
@@ -140,7 +140,7 @@ linea_msg:
         .ascii  "Line-A #%x\n\0"
         .even
 
-#endif  /* DBG_LINEA */
+#endif  /* ENABLE_KDEBUG */
 
         .text
 

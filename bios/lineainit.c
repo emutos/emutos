@@ -10,12 +10,12 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+/* #define ENABLE_KDEBUG */
+
 #include "config.h"
 #include "lineavars.h"
 #include "kprint.h"
 #include "screen.h"
-
-#define DBG_LINEA 0
 
 #define EXTENDED_PALETTE (CONF_WITH_VIDEL || CONF_WITH_TT_SHIFTER)
 
@@ -53,10 +53,8 @@ void linea_init(void)
     DEV_TAB[0] = V_REZ_HZ - 1;
     DEV_TAB[1] = V_REZ_VT - 1;
 
-#if DBG_LINEA
-    kprintf("planes: %d\n", v_planes);
-    kprintf("lin_wr: %d\n", v_lin_wr);
-    kprintf("hz_rez: %d\n", V_REZ_HZ);
-    kprintf("vt_rez: %d\n", V_REZ_VT);
-#endif
+    KDEBUG(("planes: %d\n", v_planes));
+    KDEBUG(("lin_wr: %d\n", v_lin_wr));
+    KDEBUG(("hz_rez: %d\n", V_REZ_HZ));
+    KDEBUG(("vt_rez: %d\n", V_REZ_VT));
 }
