@@ -844,7 +844,7 @@ static WORD atari_getrez(void)
                 rez = 0;
                 break;
             default:
-                kprintf("Problem - unsupported video mode\n");
+                KINFO(("Problem - unsupported video mode\n"));
                 rez = 0;
             }
         } else

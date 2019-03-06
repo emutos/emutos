@@ -87,7 +87,7 @@ void nf_shutdown(void)
     if(nfid_shutdown) {
         NFCall(nfid_shutdown);
     } else {
-        kprintf("NF_SHUTDOWN not available\n");
+        KINFO(("NF_SHUTDOWN not available\n"));
     }
 }
 
@@ -105,7 +105,7 @@ long nf_bootstrap(char *addr, long size)
         if(bootstrap_id) {
             return NFCall(bootstrap_id, addr, size);
         } else {
-            kprintf("BOOTSTRAP natfeat not available\n");
+            KINFO(("BOOTSTRAP natfeat not available\n"));
         }
     }
     return 0;
@@ -119,7 +119,7 @@ char nf_getbootdrive(void)
         if(bootstrap_id) {
             return NFCall(bootstrap_id | 0x0001);
         } else {
-            kprintf("BOOTSTRAP natfeat not available\n");
+            KINFO(("BOOTSTRAP natfeat not available\n"));
         }
     }
     return 0;
@@ -133,7 +133,7 @@ long nf_getbootstrap_args(char *addr, long size)
         if(bootstrap_id) {
             return NFCall(bootstrap_id | 0x0002, addr, size);
         } else {
-            kprintf("BOOTSTRAP natfeat not available\n");
+            KINFO(("BOOTSTRAP natfeat not available\n"));
         }
     }
     return 0;
