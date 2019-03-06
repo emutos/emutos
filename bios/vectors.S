@@ -116,6 +116,9 @@ set_vec:
 #else
         dbra    d0, set_vec
 #endif
+// The RTS below is shared for other purposes.
+buggy_jit_save_registers_before_bus_error:
+_just_rts:
         rts
 
 /* initialize the 192 user vectors. */
@@ -277,6 +280,8 @@ _gemtrap:
         cmp.w   #0x73,d0                // VDI call?
         jne     no_vdi
         jsr     _GSX_ENTRY
+// The RTE below is shared for other purposes.
+_just_rte:
         rte
 
 no_vdi:
@@ -1211,24 +1216,6 @@ msgcrb:
 #endif
 
 #endif /* CONF_WITH_BUS_ERROR */
-
-
-/*
- * _just_rts - just a dummy
- */
-
-buggy_jit_save_registers_before_bus_error:
-_just_rts:
-        rts
-
-
-
-/*
- * just_rte - just rte for e.g. divide by zero on 680x0 systems
- */
-
-_just_rte:
-        rte
 
 
 /* ==== Glue for external vectors ===========================================
