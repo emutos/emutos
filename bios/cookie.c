@@ -34,18 +34,14 @@ void cookie_add(long tag, long value)
     long n, count;
     struct cookie *jar = (struct cookie *)p_cookies;
 
-    assert(jar != NULL);
-
     count = 0;
     while(jar->tag)
     {
-        assert(jar->tag != tag);
         count++;
         jar++;
     }
 
     n = jar->value;
-    assert(n != 0);
     if (count < (n-1))
     {
         jar->tag = tag;
