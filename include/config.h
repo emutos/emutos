@@ -272,6 +272,9 @@
 # ifndef CONF_WITH_VDI_EXTENSIONS
 #  define CONF_WITH_VDI_EXTENSIONS 0
 # endif
+# ifndef CONF_WITH_VDI_VERTLINE
+#  define CONF_WITH_VDI_VERTLINE 0
+# endif
 # ifndef CONF_WITH_SHOW_FILE
 #  define CONF_WITH_SHOW_FILE 0
 # endif
@@ -335,6 +338,9 @@
 # endif
 # ifndef CONF_WITH_VDI_EXTENSIONS
 #  define CONF_WITH_VDI_EXTENSIONS 0
+# endif
+# ifndef CONF_WITH_VDI_VERTLINE
+#  define CONF_WITH_VDI_VERTLINE 0
 # endif
 # ifndef CONF_WITH_XBIOS_SOUND
 #  define CONF_WITH_XBIOS_SOUND 0
@@ -1139,6 +1145,13 @@
  */
 #ifndef CONF_WITH_VDI_EXTENSIONS
 # define CONF_WITH_VDI_EXTENSIONS 1
+#endif
+
+/*
+ * Set CONF_WITH_VDI_VERTLINE to 1 to improve VDI vertical line performance
+ */
+#ifndef CONF_WITH_VDI_VERTLINE
+# define CONF_WITH_VDI_VERTLINE 1
 #endif
 
 /*

@@ -1627,6 +1627,106 @@ static void draw_line(const Line *line, WORD wrt_mode, UWORD color)
 }
 
 
+#if CONF_WITH_VDI_VERTLINE
+/*
+ * vertical_line - draw a vertical line
+ *
+ * this is a stripped-down version of abline(), for speed
+ */
+static void vertical_line(const Line *line, WORD wrt_mode, UWORD color)
+{
+    UWORD *start, *addr;
+    WORD dy;                    /* length of line */
+    WORD yinc;                  /* in/decrease for each y step */
+    UWORD bit, bitcomp;
+    WORD plane, loopcnt;
+    UWORD linemask = LN_MASK;
+
+    /* calculate increase value for y to add to actual address */
+    dy = line->y2 - line->y1;
+    yinc = v_lin_wr / 2;        /* one line of words */
+
+    if (dy < 0) {
+        dy = -dy;               /* make dy absolute */
+        yinc = -yinc;           /* sub one line of words */
+    }
+
+    start = get_start_addr(line->x1, line->y1); /* init address counter */
+    bit = 0x8000 >> (line->x1&0xf);             /* initial bit position in WORD */
+    bitcomp = ~bit;
+
+    for (plane = v_planes-1; plane >= 0; plane--, start++, color >>= 1) {
+        /* load values fresh for this bitplane */
+        addr = start;           /* initial start address for changes */
+        linemask = LN_MASK;
+
+        switch(wrt_mode) {
+        case 3:              /* reverse transparent */
+            if (color & 0x0001) {
+                for (loopcnt = dy; loopcnt >= 0; loopcnt--) {
+                    rolw1(linemask);        /* get next bit of line style */
+                    if (linemask&0x0001)
+                        *addr &= bitcomp;
+                    addr += yinc;
+                }
+            } else {
+                for (loopcnt = dy; loopcnt >= 0; loopcnt--) {
+                    rolw1(linemask);        /* get next bit of line style */
+                    if (linemask&0x0001)
+                        *addr |= bit;
+                    addr += yinc;
+                }
+            }
+            break;
+        case 2:              /* xor */
+            for (loopcnt = dy; loopcnt >= 0; loopcnt--) {
+                rolw1(linemask);        /* get next bit of line style */
+                if (linemask&0x0001)
+                    *addr ^= bit;
+                addr += yinc;
+            }
+            break;
+        case 1:              /* or */
+            if (color & 0x0001) {
+                for (loopcnt = dy; loopcnt >= 0; loopcnt--) {
+                    rolw1(linemask);        /* get next bit of line style */
+                    if (linemask&0x0001)
+                        *addr |= bit;
+                    addr += yinc;
+                }
+            } else {
+                for (loopcnt = dy; loopcnt >= 0; loopcnt--) {
+                    rolw1(linemask);        /* get next bit of line style */
+                    if (linemask&0x0001)
+                        *addr &= bitcomp;
+                    addr += yinc;
+                }
+            }
+            break;
+        case 0:              /* rep */
+            if (color & 0x0001) {
+                for (loopcnt = dy; loopcnt >= 0; loopcnt--) {
+                    rolw1(linemask);        /* get next bit of line style */
+                    if (linemask&0x0001)
+                        *addr |= bit;
+                    else
+                        *addr &= bitcomp;
+                    addr += yinc;
+                }
+            } else {
+                for (loopcnt = dy;loopcnt >= 0; loopcnt--) {
+                    rolw1(linemask);        /* get next bit of line style */
+                    *addr &= bitcomp;
+                    addr += yinc;
+                }
+            }
+        }
+    }
+    LN_MASK = linemask;
+}
+#endif
+
+
 /*
  * abline - draw a line
  *
@@ -1649,6 +1749,16 @@ void abline(const Line *line, WORD wrt_mode, UWORD color)
 {
     Line ordered;
     UWORD x1,y1,x2,y2;          /* the coordinates */
+
+#if CONF_WITH_VDI_VERTLINE
+    /*
+     * optimize drawing of vertical lines
+     */
+    if (line->x1 == line->x2) {
+        vertical_line(line, wrt_mode, color);
+        return;
+    }
+#endif
 
     /* Always draw from left to right */
     if (line->x2 < line->x1) {
