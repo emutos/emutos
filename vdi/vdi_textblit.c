@@ -89,8 +89,8 @@ typedef struct {
     WORD width;             /* width of area in pixels */
     WORD d_next;            /* width of dest form (_v_lin_wr formerly used) */
     WORD s_next;            /* width of source form (formerly s_width) */
-    void *dform;            /* start of destination form */
-    void *sform;            /* start of source form */
+    UBYTE *dform;           /* start of destination form */
+    UBYTE *sform;           /* start of source form */
     WORD unused2;           /* was buffc */
     WORD buffb;             /* for rotate */
     WORD buffa;             /* for clip & prerotate blt */
@@ -248,7 +248,7 @@ static void pre_blit(LOCALVARS *vars)
 
     vars->tsdad = SOURCEX & 0x000f;     /* source dot address */
     offset = (SOURCEY+vars->DELY-1) * (LONG)vars->s_next + ((SOURCEX >> 3) & ~1);
-    src = (UBYTE *)vars->sform + offset;/* bottom of font char source */
+    src = vars->sform + offset;         /* bottom of font char source */
     vars->s_next = -vars->s_next;       /* we draw from the bottom up */
 
     weight = WEIGHT;
@@ -291,7 +291,7 @@ static void pre_blit(LOCALVARS *vars)
     vars->sform = dst;
     if (vars->STYLE & (F_OUTLINE|F_SKEW))
     {
-        p = vars->sform;
+        p = (WORD *)vars->sform;
         n = (size - vars->d_next) / 2;  /* add bottom line */
         while(n--)
             *p++ = 0;               /* clear buffer */
@@ -498,7 +498,7 @@ void text_blt(void)
 
     vars.dest_wrd = 0;
     vars.s_next = FWIDTH;
-    vars.sform = (void *)FBASE;
+    vars.sform = (UBYTE *)FBASE;
 
     if (vars.STYLE & (F_SKEW|F_THICKEN|F_OUTLINE))
     {
