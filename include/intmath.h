@@ -61,7 +61,7 @@ static __inline__ WORD mul_div(WORD m1, WORD m2, WORD d1)
  *
  * multiply two signed shorts, returning a signed long
  */
-static __inline LONG muls(WORD m1, WORD m2)
+static __inline__ LONG muls(WORD m1, WORD m2)
 {
     LONG ret;
 
