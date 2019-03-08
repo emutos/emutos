@@ -177,6 +177,95 @@ void vdi_vql_attributes(Vwk * vwk)
 
 
 #if CONF_WITH_BLITTER
+#if CONF_WITH_VDI_VERTLINE
+/*
+ * draw a single vertical line using the blitter
+ */
+static BOOL blit_vline(const Line *line, WORD wrt_mode, UWORD color)
+{
+    WORD i, plane, dy, yinc, height, start_line;
+    UWORD mask;
+    UWORD *screen_addr = get_start_addr(line->x1, line->y1);
+    ULONG size;
+
+    dy = line->y2 - line->y1;
+    yinc = v_lin_wr;
+
+    if (dy >= 0)
+    {
+        for (i = 0, mask = 0x8000; i < 16; i++, mask >>= 1)
+            BLITTER->halftone[i] = (LN_MASK & mask) ? 0xffff : 0x0000;
+        start_line = 0;
+    }
+    else
+    {
+        dy = -dy;
+        yinc = -yinc;
+        for (i = 0, mask = 0x0001; i < 16; i++, mask <<= 1)
+            BLITTER->halftone[i] = (LN_MASK & mask) ? 0xffff : 0x0000;
+        start_line = 15;
+    }
+
+    height = dy + 1;
+    size = muls(height, v_lin_wr);
+
+    /*
+     * since the blitter doesn't see the data cache, and we may be in
+     * copyback mode (e.g. the FireBee), we must flush the data cache
+     * first to ensure that the screen memory is current.  the length
+     * below should be correct, but note that the current cache control
+     * routines ignore the length specification & act on the whole cache
+     * anyway.
+     */
+    flush_data_cache(screen_addr, size);
+
+    BLITTER->endmask_1 = 0x8000 >> (line->x1&0x000f);
+    BLITTER->endmask_2 = 0x0000;
+    BLITTER->endmask_3 = 0x0000;
+    BLITTER->dst_y_incr = yinc;
+    BLITTER->x_count = 1;
+    BLITTER->hop = HOP_HALFTONE_ONLY;
+    BLITTER->skew = 0;
+
+    for (plane = 0; plane < v_planes; plane++, color >>= 1)
+    {
+        BLITTER->dst_addr = screen_addr++;
+        BLITTER->y_count = dy + 1;
+        BLITTER->op = (color & 1) ? op_draw[wrt_mode]: op_nodraw[wrt_mode];
+
+        /*
+         * we run the blitter in the Atari-recommended way: use no-HOG mode,
+         * and manually restart the blitter until it's done.
+         */
+        BLITTER->status = BUSY | start_line;    /* no-HOG mode */
+        __asm__ __volatile__(
+        "lea    0xFFFF8A3C,a0\n\t"
+        "0:\n\t"
+        "tas    (a0)\n\t"
+        "nop\n\t"
+        "jbmi   0b\n\t"
+        :
+        :
+        : "a0", "memory", "cc"
+        );
+    }
+    /*
+     * we've modified the screen behind the cpu's back, so we must
+     * invalidate any cached screen data.
+     */
+    invalidate_data_cache(screen_addr, size);
+
+    /* update LN_MASK for next time */
+    mask = LN_MASK;
+    for (i = height & 0x000f; i; i--)
+        rolw1(mask);
+    LN_MASK = mask;
+
+    return TRUE;
+}
+#endif
+
+
 /*
  * draw a single horizontal line using the blitter
  */
@@ -1755,8 +1844,18 @@ void abline(const Line *line, WORD wrt_mode, UWORD color)
      * optimize drawing of vertical lines
      */
     if (line->x1 == line->x2) {
-        vertical_line(line, wrt_mode, color);
-        return;
+#if CONF_WITH_BLITTER
+        if (blitter_is_enabled)
+        {
+            blit_vline(line, wrt_mode, color);
+            return;
+        }
+        else
+#endif
+        {
+            vertical_line(line, wrt_mode, color);
+            return;
+        }
     }
 #endif
 
