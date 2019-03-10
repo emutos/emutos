@@ -222,6 +222,14 @@ msgstr "[3]["
 "Nepodporovaná AES funkce #%d.][Zru¹it]"
 
 #: aes/gem_rsc.c
+msgid "[1]["
+"Not enough memory for|"
+"this directory][  OK  ]"
+msgstr "[1]["
+"Nedostatek pamìti pro|"
+"tento adresáø][  OK  ]"
+
+#: aes/gem_rsc.c
 msgid "ITEM SELECTOR"
 msgstr "VÝBÌR POLO®EK"
 
@@ -778,6 +786,10 @@ msgid "%ld bytes used in %d items."
 msgstr "%ld bytù v %d polo¾kách."
 
 #: desk/desk_rsc.c
+msgid "%ld bytes used in %d selected items."
+msgstr "%ld bytù obsazeno v %d vybraných polo¾kách."
+
+#: desk/desk_rsc.c
 msgid "FILE INFORMATION"
 msgstr "INFORMACE O SOUBORU"
 
@@ -853,18 +865,16 @@ msgstr "[1]["
 "co nepou¾íváte.][  OK  ]"
 
 #: desk/desk_rsc.c
-msgid "[3]["
-"You cannot copy a parent folder|"
-"into one of its child folders.][  OK  ]"
-msgstr "[3]["
-"Není mo¾né zkopírovat nadøazený|"
-"adresáø do jeho podadresáøe.][  OK  ]"
+msgid "[1]["
+"Illegal directory operation!][ Skip | Abort ]"
+msgstr "[1]["
+"Neplatná adresáøová operace!][Pøeskoèit| Zru¹it ]"
 
 #: desk/desk_rsc.c
-msgid "[3]["
-"Invalid copy operation.][  OK  ]"
-msgstr "[3]["
-"Neplatná operace kopírování.][  OK  ]"
+msgid "[1]["
+"Illegal operation!][  OK  ]"
+msgstr "[1]["
+"Neplatná operace!][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[2]["
@@ -908,12 +918,6 @@ msgid "[1]["
 msgstr "[1]["
 "Na disku %c: není dost místa|"
 "pro tuto operaci.][  OK  ]"
-
-#: desk/desk_rsc.c
-msgid "[3]["
-"Cannot create EMUDESK.INF.][  OK  ]"
-msgstr "[3]["
-"Nelze vytvoøit EMUDESK.INF.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[3]["
@@ -1035,6 +1039,92 @@ msgstr "[1]["
 "Na disku je k dispozici|"
 "%ld u¾ivatelských bytù.][Pokraèovat| Konec ]"
 
+#: desk/desk_rsc.c
+msgid "[1]["
+"Drive %s: does not exist.][ Cancel ]"
+msgstr "[1]["
+"Disk %s: neexistuje.][ Zru¹it ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"No drive identifier.][ Retry ]"
+msgstr "[1]["
+"®ádný identifikátor disku.][ Opakovat ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Cannot delete file|"
+"%s][ Skip | Retry | Abort ]"
+msgstr "[1]["
+"Nelze smazat soubor|"
+"%s][Pøeskoèit| Opakovat | Zru¹it ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Cannot delete directory|"
+"%s][ Skip | Retry | Abort ]"
+msgstr "[1]["
+"Nelze smazat adresáø|"
+"%s][Pøeskoèit| Opakovat | Zru¹it ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Not enough memory.][  OK  ]"
+msgstr "[1]["
+"Nedostatek pamìti.][  OK  ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"%s not found.][  OK  ]"
+msgstr "[1]["
+"%s nenalezen.][  OK  ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Cannot open file|"
+"%s][ Skip | Retry | Abort ]"
+msgstr "[1]["
+"Nelze otevøít soubor|"
+"%s][Pøeskoèit| Opakovat | Zru¹it ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Cannot create file|"
+"%s][ Skip | Retry | Abort ]"
+msgstr "[1]["
+"Nelze vytvoøit soubor|"
+"%s][Pøeskoèit| Opakovat | Zru¹it ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Cannot read file|"
+"%s][ Skip | Abort ]"
+msgstr "[1]["
+"Nelze èíst soubor|"
+"%s][Pøeskoèit| Zru¹it ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Cannot write file|"
+"%s][ Skip | Abort ]"
+msgstr "[1]["
+"Nelze zapsat soubor|"
+"%s][Pøeskoèit| Zru¹it ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Rename error!][ Retry | Cancel ]"
+msgstr "[1]["
+"Chyba pøejmenování!][ Opakovat | Zru¹it ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Failed to set default|"
+"directory.][  OK  ]"
+msgstr "[1]["
+"Selhalo nastavení|"
+"výchozího adresáøe.][  OK  ]"
+
 #: cli/cmdint.c
 msgid "Copy <filespec> ... to standard output"
 msgstr "Copy <filespec> ... to standard output"
@@ -1122,10 +1212,6 @@ msgstr "res for screen resolution (0,1)[ST] (0,1,2,4,7)[TT];"
 #: cli/cmdint.c
 msgid "delay/rate for the keyboard"
 msgstr "delay/rate for the keyboard"
-
-#: cli/cmdint.c
-msgid "line height (8,16) for the display"
-msgstr "line height (8,16) for the display"
 
 #: cli/cmdint.c
 msgid "Copy <filespec> to standard output,"
@@ -1222,10 +1308,6 @@ msgstr "  Keyboard delay: "
 #: cli/cmdint.c
 msgid "  Keyboard rate:  "
 msgstr "  Keyboard rate:  "
-
-#: cli/cmdint.c
-msgid "  Line height:    "
-msgstr "  Line height:    "
 
 #: cli/cmdint.c
 msgid "(empty)"
