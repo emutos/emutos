@@ -23,7 +23,7 @@ emuicon.def - definition file for the above
 
 Additional information on debugging EmuTOS and its software compatibility
 is included with Hatari:
-https://hg.tuxfamily.org/mercurialroot/hatari/hatari/raw-file/tip/doc/emutos.txt
+	https://hatari.tuxfamily.org/doc/emutos.txt
 
 The default language is English.  Other supported languages are:
 - Czech
@@ -48,8 +48,8 @@ versions of the Atari TOS desktop.
 2. Selecting Norwegian/Swedish currently sets the language to English,
 but the keyboard layout to Norwegian/Swedish.
 3. The 'Shutdown' menu item is active when EmuTOS is run under an
-emulator supporting NatFeats.  Under Hatari, you may need to enable this
-feature manually: please refer to the Hatari documentation.
+emulator supporting NatFeats (under Hatari, you need to enable this
+with the "--natfeats on" option).
 
 This ROM image has been built using:
 make 512
