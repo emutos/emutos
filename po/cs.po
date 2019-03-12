@@ -787,7 +787,7 @@ msgstr "%ld bytù v %d polo¾kách."
 
 #: desk/desk_rsc.c
 msgid "%ld bytes used in %d selected items."
-msgstr "%ld bytù obsazeno v %d vybraných polo¾kách."
+msgstr "%ld bytù v %d vybraných polo¾kách."
 
 #: desk/desk_rsc.c
 msgid "FILE INFORMATION"
