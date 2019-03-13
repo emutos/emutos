@@ -104,9 +104,9 @@ extern long xmaddalt(UBYTE *start, long size); /* found in bdos/mem.h */
 #define CIABCRB    *(volatile UBYTE*)0xbfdf00
 
 /* Gayle registers */
-#define GAYLE_ID *(volatile BYTE*)0xde1000
+#define GAYLE_ID *(volatile UBYTE*)0xde1000
 #define INTENA_MIRROR *(volatile UWORD*)0xde109a
-#define FAT_GARY_TIMEOUT *(volatile BYTE*)0xde0000
+#define FAT_GARY_TIMEOUT *(volatile UBYTE*)0xde0000
 
 /* Generic Set/Clear bit */
 #define SETBITS  (1U << 15)
@@ -682,8 +682,8 @@ const UBYTE scancode_atari_from_amiga[128] =
 /* Mouse                                                                      */
 /******************************************************************************/
 
-static BYTE oldMouseX;
-static BYTE oldMouseY;
+static UBYTE oldMouseX;
+static UBYTE oldMouseY;
 static BOOL oldButton1;
 static BOOL oldButton2;
 static BOOL oldMouseSet;
@@ -691,7 +691,7 @@ static BOOL oldMouseSet;
 static void amiga_mouse_vbl(void)
 {
     UWORD data;
-    BYTE mouseX, mouseY;
+    UBYTE mouseX, mouseY;
     BOOL button1, button2;
 
     if (mouse_events_disabled || port0_joystick_mode)

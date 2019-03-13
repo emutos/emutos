@@ -160,7 +160,7 @@ struct Node
     struct Node * ln_Succ,
                 * ln_Pred;
     UBYTE       ln_Type;
-    BYTE        ln_Pri;
+    SBYTE       ln_Pri;
     char        * ln_Name;
 };
 
@@ -529,7 +529,7 @@ static BOOL ConfigBoard(APTR board, struct ConfigDev * configDev)
             for (addr = start; addr < end; addr += step) {
                 ULONG startaddr = addr;
                 UWORD offset = startaddr / (E_SLOTSIZE * SLOTSPERBYTE);
-                BYTE bit = 7 - ((startaddr / E_SLOTSIZE) % SLOTSPERBYTE);
+                SBYTE bit = 7 - ((startaddr / E_SLOTSIZE) % SLOTSPERBYTE);
                 UBYTE res = space[offset];
                 ULONG sizeleft = size;
 
