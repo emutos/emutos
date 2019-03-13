@@ -47,7 +47,7 @@ static TYPEAHEAD buffer[3];
 /*
  * default standard handles
  */
-static const BYTE default_handle[NUMSTD] =
+static const signed char default_handle[NUMSTD] =
 {
     H_Console,      /* stdin  = con: */
     H_Console,      /* stdout = con: */
@@ -111,7 +111,7 @@ void stdhdl_init(void)
 /*
  * return default handle for given standard handle
  */
-BYTE get_default_handle(int stdh)
+signed char get_default_handle(int stdh)
 {
     return default_handle[stdh];
 }

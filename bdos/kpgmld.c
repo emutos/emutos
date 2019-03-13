@@ -117,7 +117,7 @@ static LONG pgmld01(FH h, PD *pdptr, PGMHDR01 *hd)
     PGMINFO *pi;
     PD      *p;
     PGMINFO pinfo;
-    BYTE    *cp;
+    char    *cp;
     LONG    relst;
     LONG    flen;
     LONG    r;
@@ -284,7 +284,7 @@ static LONG pgfix01(void *lastcp, LONG nrelbytes, PGMINFO *pi)
 #if DETECT_NATIVE_FEATURES
 LONG kpgm_relocate(PD *p, long length)
 {
-    BYTE    *cp;
+    char    *cp;
     LONG    *rp;
     LONG    flen;
     PGMINFO pinfo;

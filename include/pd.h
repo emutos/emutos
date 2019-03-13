@@ -47,7 +47,7 @@ struct _pd
     ULONG   p_flags;        /* see below */
     BYTE    *p_env;         /* pointer to environment string */
 /* 0x30 */
-    BYTE    p_uft[NUMSTD];  /* index into sys file table for std files */
+    signed char p_uft[NUMSTD];  /* index into sys file table for std files */
     BYTE    p_lddrv;
     BYTE    p_curdrv;
     LONG    p_1fill[2];

@@ -852,7 +852,7 @@ static BOOL is_subdir(const char *s1,DND *dn1, DND *dn2)
  *
  *  returns 0 if ok, -1 if error
  */
-static WORD update_fcb(OFD *fd,LONG posp,LONG len,BYTE *buf)
+static WORD update_fcb(OFD *fd, LONG posp, LONG len, UBYTE *buf)
 {
     if (ixlseek(fd,posp) != posp)
         return -1;
@@ -1005,7 +1005,7 @@ long xrename(int n, char *p1, char *p2)
 
         /* now we can erase (0xe5) the old file */
         buf[0] = (char)ERASE_MARKER;
-        if (update_fcb(fd,posp,1L,buf) < 0)
+        if (update_fcb(fd,posp,1L,(UBYTE *)buf) < 0)
         {
             KDEBUG(("xrename(): can't erase old entry\n"));
             return EACCDN;
@@ -1033,14 +1033,14 @@ long xrename(int n, char *p1, char *p2)
                 temp = 0;
             else temp = fdparent->o_strtcl; /* else real start cluster */
             swpw(temp);                     /* convert to disk format */
-            if (update_fcb(fd2,32+26,2L,(BYTE *)&temp) < 0)
+            if (update_fcb(fd2,32+26,2L,(UBYTE *)&temp) < 0)
             {
                 KDEBUG(("xrename(): can't update .. entry\n"));
                 return EINTRN;
             }
 
             /* set attribute for this file in parent directory */
-            if (update_fcb(fdparent,fd2->o_dirbyt+11,1L,&att) < 0)
+            if (update_fcb(fdparent,fd2->o_dirbyt+11,1L,(UBYTE *)&att) < 0)
             {
                 KDEBUG(("xrename(): can't update parent's attr byte\n"));
                 return EINTRN;
@@ -1058,7 +1058,7 @@ long xrename(int n, char *p1, char *p2)
     else                        /* rename within directory */
     {
         builds(s2,buf);             /* build disk version of name */
-        if (update_fcb(fd,posp,11L,buf) < 0) /* just overwrite the FCB */
+        if (update_fcb(fd,posp,11L,(UBYTE *)buf) < 0)   /* just overwrite the FCB */
         {
             KDEBUG(("xrename(): can't update FCB with new name\n"));
             return EACCDN;

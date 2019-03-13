@@ -86,7 +86,7 @@ static PD initial_basepage;
  * name with the corresponding handle
  */
 typedef struct {
-    BYTE *name;
+    char *name;
     long handle;
 } SPECNAME;
 

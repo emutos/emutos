@@ -87,8 +87,8 @@ extern void (*etv_timer)(int);
 
 static void tikfrk(int n);
 
-static const BYTE nday_norm[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-static const BYTE nday_leap[] = {0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+static const char nday_norm[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+static const char nday_leap[] = {0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 /* static long uptime; */
 
@@ -111,7 +111,7 @@ long xgetdate(void)
 long xsetdate(UWORD d)
 {
     UWORD curmo, day;
-    const BYTE *nday = IS_A_LEAP_YEAR(d) ? nday_leap : nday_norm;
+    const char *nday = IS_A_LEAP_YEAR(d) ? nday_leap : nday_norm;
 
     curmo = (d & MTH_BM) >> MTH_SHIFT;
     day = d & DAY_BM;
@@ -178,7 +178,7 @@ void time_init(void)
 static void tikfrk(int n)
 {
     int curmo, newday;
-    const BYTE *nday;
+    const char *nday;
 
 /*  uptime += n; */
 
