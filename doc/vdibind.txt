@@ -214,7 +214,7 @@ v_gtext( handle, x, y, string)
 WORD handle;		/* Physical device handle */
 WORD x;
 WORD y;
-BYTE *string;
+char *string;
 {
     WORD i;
 
@@ -523,7 +523,7 @@ WORD y;
 WORD length;
 WORD word_space;
 WORD char_space;
-BYTE string[];
+char *string;
 {
     WORD *intstr;
 
@@ -1160,7 +1160,7 @@ WORD handle;		/* Physical device handle */
 WORD length;
 WORD echo_mode;
 WORD echo_xy[];
-BYTE *string;
+char *string;
 {
     WORD    count;
 
@@ -1186,7 +1186,7 @@ WORD handle;		/* Physical device handle */
 WORD length;
 WORD echo_mode;
 WORD echo_xy[];
-BYTE *string;
+char *string;
 {
     WORD    count;
 
@@ -1476,7 +1476,7 @@ WORD attributes[];
 vqt_extent( handle, string, extent )
 WORD handle;		/* Physical device handle */
 WORD extent[];
-BYTE string[];
+char *string;
 {
     WORD *intstr;
 
@@ -1500,7 +1500,7 @@ WORD handle;		/* Physical device handle */
 WORD *cell_width;
 WORD *left_delta;
 WORD *right_delta;
-BYTE character;
+char character;
 {
     intin[0] = character;
 
@@ -1520,7 +1520,7 @@ BYTE character;
 vqt_name( handle, element_num, name )
 WORD handle;		/* Physical device handle */
 WORD element_num;
-BYTE name[];
+char *name;
 {
     WORD i;
 
@@ -1769,7 +1769,7 @@ WORD column;
     WORD
 v_curtext( handle, string )
 WORD handle;		/* Physical device handle */
-BYTE *string;
+char *string;
 {
     WORD *intstr;
 
@@ -1929,7 +1929,7 @@ WORD aspect;
 WORD scaling;
 WORD num_pts;
 WORD xy[];
-BYTE *filename;
+char *filename;
 {
     WORD i;
 
@@ -1967,7 +1967,7 @@ WORD palette;
     WORD
 vqp_films( handle, names )
 WORD handle;		/* Physical device handle */
-BYTE names[];
+char *names;
 {
     WORD   i;
 
@@ -2123,7 +2123,7 @@ WORD pts[];
     WORD
 vm_filename( handle, filename )
 WORD handle;		/* Physical device handle */
-BYTE *filename;
+char *filename;
 {
     WORD *intstr;
 

@@ -395,10 +395,10 @@
                  look like:
 
                      struct param {
-                         BYTE topmode;
-                         BYTE buttons;
-                         BYTE xparam;
-                         BYTE yparam;
+                         UBYTE topmode;
+                         UBYTE buttons;
+                         UBYTE xparam;
+                         UBYTE yparam;
                      };
 
 
@@ -879,8 +879,8 @@
                  Enable interrupt number 'intno' on the 68901.
 
        (28) giaccess
-           BYTE giaccess(data, regno)
-           BYTE data;
+           WORD giaccess(data, regno)
+           WORD data;
            WORD regno;
                  Read or write  a  register  on  the  sound  chip.
                  'regno'  is  the  register number, logically ORed
@@ -890,7 +890,7 @@
                          /really/ OR with this...]
                      $80 to write
 
-                 'data' is a byte to write to the register.
+                 the LSB of 'data' is a byte to write to the register.
 
                  Sound chip  registers  are  not  shadowed.   Pro-
                  cedures  that change register values by reading a
