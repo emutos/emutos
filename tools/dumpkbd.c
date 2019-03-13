@@ -53,7 +53,7 @@ void dump_table(char *table, char *name, FILE *out, char *prefix)
     int i;
 
     fprintf(out,
-"const BYTE keytbl_%s_%s[] = {\n",
+"const char keytbl_%s_%s[] = {\n",
             prefix, name
             );
     for(i = 0 ; i < 128 ; i++) {
@@ -117,12 +117,12 @@ void dump_tables(struct ktbl *ktbl, char *fname, char *name)
 
     fprintf(out,
 "\n"
-"const BYTE keytbl_%s_norm[];\n"
-"const BYTE keytbl_%s_shft[];\n"
-"const BYTE keytbl_%s_caps[];\n"
-"const BYTE keytbl_%s_altnorm[];\n"
-"const BYTE keytbl_%s_altshft[];\n"
-"const BYTE keytbl_%s_altcaps[];\n"
+"const char keytbl_%s_norm[];\n"
+"const char keytbl_%s_shft[];\n"
+"const char keytbl_%s_caps[];\n"
+"const char keytbl_%s_altnorm[];\n"
+"const char keytbl_%s_altshft[];\n"
+"const char keytbl_%s_altcaps[];\n"
 "\n"
 "const struct keytbl keytbl_%s = {\n"
 "    keytbl_%s_norm, \n"
@@ -152,21 +152,21 @@ void dump_tables(struct ktbl *ktbl, char *fname, char *name)
 
     fprintf(out,
 "\n"
-"const BYTE keytbl_%s_altnorm[] = {\n"
+"const char keytbl_%s_altnorm[] = {\n"
 "    0,\n"
 "};\n",
             prefix
             );
     fprintf(out,
 "\n"
-"const BYTE keytbl_%s_altshft[] = {\n"
+"const char keytbl_%s_altshft[] = {\n"
 "    0,\n"
 "};\n",
             prefix
             );
     fprintf(out,
 "\n"
-"const BYTE keytbl_%s_altcaps[] = {\n"
+"const char keytbl_%s_altcaps[] = {\n"
 "    0,\n"
 "};\n",
             prefix
