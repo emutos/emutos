@@ -88,9 +88,9 @@ WORD sound(WORD isfreq, WORD freq, WORD dura)
  *      . 'TEST.A.B.C' is converted to 'TEST    A.B'
  *      . 'TESTTESTTEST' is converted to 'TESTTEST'
  */
-void fmt_str(BYTE *instr,BYTE *outstr)
+void fmt_str(char *instr, char *outstr)
 {
-    BYTE *p, *q;
+    char *p, *q;
 
     /* copy up to 8 bytes before the (first) dot (we eat excess bytes) */
     for (p = instr, q = outstr; *p; p++)
@@ -121,9 +121,9 @@ void fmt_str(BYTE *instr,BYTE *outstr)
  *  Does the reverse of fmt_str() above.  For example,
  *      'SAMPLE  PRG' is converted to 'SAMPLE.PRG'.
  */
-void unfmt_str(BYTE *instr, BYTE *outstr)
+void unfmt_str(char *instr, char *outstr)
 {
-    BYTE    *pstr, temp;
+    char *pstr, temp;
 
     pstr = instr;
     while(*pstr && ((pstr - instr) < 8))
@@ -146,9 +146,9 @@ void unfmt_str(BYTE *instr, BYTE *outstr)
  *  Copies the specified string to the te_ptext field of the TEDINFO
  *  structure for (tree,object), truncating if necessary to fit
  */
-void inf_sset(OBJECT *tree, WORD obj, BYTE *pstr)
+void inf_sset(OBJECT *tree, WORD obj, char *pstr)
 {
-    BYTE    *text;
+    char    *text;
     TEDINFO *ted;
     OBJECT  *objptr = tree + obj;
 
@@ -162,7 +162,7 @@ void inf_sset(OBJECT *tree, WORD obj, BYTE *pstr)
  *  Copies the te_ptext field of the TEDINFO structure for (tree,object)
  *  to the specified string
  */
-void inf_sget(OBJECT *tree, WORD obj, BYTE *pstr)
+void inf_sget(OBJECT *tree, WORD obj, char *pstr)
 {
     TEDINFO *ted;
     OBJECT  *objptr = tree + obj;
@@ -220,7 +220,7 @@ WORD inf_what(OBJECT *tree, WORD ok, WORD cncl)
  *  Validation of input has been given up in order to minimize the size of the
  *  generated code enough to making inlining it result in smaller total code size.
  */
-static UBYTE hex_dig(BYTE achar)
+static UBYTE hex_dig(char achar)
 {
     if (achar >= 'A')
         achar += 9;
@@ -239,7 +239,7 @@ static UBYTE hex_dig(BYTE achar)
  *  set the scanned value to N.  In either case, return a pointer to the
  *  byte immediately following the two hex characters.
  */
-BYTE *scan_2(BYTE *pcurr, WORD *pwd)
+char *scan_2(char *pcurr, WORD *pwd)
 {
     WORD temp = 0;
 
@@ -309,7 +309,7 @@ WORD i;
  *  can grow to; if necessary, the string will be truncated after
  *  inserting the character.
  */
-void ins_char(BYTE *str, WORD pos, BYTE chr, WORD tot_len)
+void ins_char(char *str, WORD pos, char chr, WORD tot_len)
 {
     WORD ii, len;
 

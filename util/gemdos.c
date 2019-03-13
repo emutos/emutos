@@ -66,7 +66,7 @@ extern LONG gemdos(short, ...);
 
 
 
-WORD pgmld(WORD handle, BYTE *pname, LONG **ldaddr)
+WORD pgmld(WORD handle, char *pname, LONG **ldaddr)
 {
     LONG    length, ret;
     LONG    *temp;
@@ -116,7 +116,7 @@ LONG dos_rawcin(void)
 }
 
 
-void dos_conws(BYTE *string)
+void dos_conws(char *string)
 {
     gemdos(X_CONWS, string);
 }
@@ -146,7 +146,7 @@ void *dos_gdta(void)
 }
 
 
-WORD dos_sfirst(BYTE *pspec, WORD attr)
+WORD dos_sfirst(char *pspec, WORD attr)
 {
     return gemdos(X_SFIRST,pspec,attr);
 }
@@ -158,7 +158,7 @@ WORD dos_snext(void)
 }
 
 
-LONG dos_open(BYTE *pname, WORD access)
+LONG dos_open(char *pname, WORD access)
 {
     return gemdos(X_OPEN,pname,access);
 }
@@ -188,13 +188,13 @@ LONG dos_lseek(WORD handle, WORD smode, LONG sofst)
 }
 
 
-LONG dos_chdir(BYTE *pdrvpath)
+LONG dos_chdir(char *pdrvpath)
 {
     return gemdos(X_CHDIR,pdrvpath);
 }
 
 
-WORD dos_gdir(WORD drive, BYTE *pdrvpath)
+WORD dos_gdir(WORD drive, char *pdrvpath)
 {
     return gemdos(X_GETDIR,pdrvpath,drive);
 }
@@ -206,19 +206,19 @@ LONG dos_sdrv(WORD newdrv)
 }
 
 
-LONG dos_create(BYTE *name, WORD attr)
+LONG dos_create(char *name, WORD attr)
 {
     return gemdos(X_CREAT,name,attr);
 }
 
 
-WORD dos_mkdir(BYTE *path)
+WORD dos_mkdir(char *path)
 {
     return gemdos(X_MKDIR,path);
 }
 
 
-WORD dos_chmod(BYTE *name, WORD wrt, WORD mod)
+WORD dos_chmod(char *name, WORD wrt, WORD mod)
 {
     return gemdos(X_CHMOD,name,wrt,mod);
 }
@@ -234,10 +234,10 @@ WORD dos_setdt(UWORD h, UWORD time, UWORD date)
 }
 
 
-WORD dos_label(BYTE drive, BYTE *plabel)
+WORD dos_label(char drive, char *plabel)
 {
     DTA     dta;
-    BYTE    path[8];
+    char    path[8];
 
     gemdos(X_SETDTA,&dta);
     strcpy(path, " :\\*.*");
@@ -252,7 +252,7 @@ WORD dos_label(BYTE drive, BYTE *plabel)
 }
 
 
-LONG dos_delete(BYTE *name)
+LONG dos_delete(char *name)
 {
     return gemdos(X_UNLINK,name);
 }
@@ -274,13 +274,13 @@ void dos_space(WORD drv, LONG *ptotal, LONG *pavail)
 }
 
 
-WORD dos_rename(BYTE *p1, BYTE *p2)
+WORD dos_rename(char *p1, char *p2)
 {
     return gemdos(X_RENAME,0x0,p1,p2);
 }
 
 
-WORD dos_rmdir(BYTE *path)
+WORD dos_rmdir(char *path)
 {
     return gemdos(X_RMDIR,path);
 }

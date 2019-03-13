@@ -11,14 +11,14 @@
 #define OPTIMIZE_H
 
 WORD sound(WORD isfreq, WORD freq, WORD dura);
-void fmt_str(BYTE *instr, BYTE *outstr);
-void unfmt_str(BYTE *instr, BYTE *outstr);
-void inf_sset(OBJECT *tree, WORD obj, BYTE *pstr);
-void inf_sget(OBJECT *tree, WORD obj, BYTE *pstr);
+void fmt_str(char *instr, char *outstr);
+void unfmt_str(char *instr, char *outstr);
+void inf_sset(OBJECT *tree, WORD obj, char *pstr);
+void inf_sget(OBJECT *tree, WORD obj, char *pstr);
 WORD inf_gindex(OBJECT *tree, WORD baseobj, WORD numobj);
 WORD inf_what(OBJECT *tree, WORD ok, WORD cncl);
-BYTE *scan_2(BYTE *pcurr, WORD *pwd);
-WORD wildcmp(BYTE *pwld, BYTE *ptst);
-void ins_char(BYTE *str, WORD pos, BYTE chr, WORD tot_len);
+char *scan_2(char *pcurr, WORD *pwd);
+WORD wildcmp(char *pwld, char *ptst);
+void ins_char(char *str, WORD pos, char chr, WORD tot_len);
 
 #endif
