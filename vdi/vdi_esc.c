@@ -37,7 +37,7 @@ static LONG crawio(WORD ch)
 /*
  * write string to console
  */
-static void cconws(BYTE *string)
+static void cconws(char *string)
 {
     trap1(X_CONWS, string);
 }

@@ -592,10 +592,10 @@ void vdimouse_init(void)
 {
     struct kbdvecs *kbd_vectors;
     static const struct {
-        BYTE topmode;
-        BYTE buttons;
-        BYTE xparam;
-        BYTE yparam;
+        UBYTE topmode;
+        UBYTE buttons;
+        UBYTE xparam;
+        UBYTE yparam;
     } mouse_params = {0, 0, 1, 1};
 
     /* Input must be initialized here and not in init_wk */

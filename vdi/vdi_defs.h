@@ -240,9 +240,9 @@ extern WORD MOUSE_BT;           /* mouse button state */
 /* Mouse related variables */
 extern WORD     newx;           /* new mouse x&y position */
 extern WORD     newy;           /* new mouse x&y position */
-extern BYTE     draw_flag;      /* non-zero means draw mouse form on vblank */
-extern BYTE     mouse_flag;     /* non-zero, if mouse ints disabled */
-extern BYTE     cur_ms_stat;    /* current mouse status */
+extern UBYTE    draw_flag;      /* non-zero means draw mouse form on vblank */
+extern UBYTE    mouse_flag;     /* non-zero, if mouse ints disabled */
+extern UBYTE    cur_ms_stat;    /* current mouse status */
 
 
 /* shared VDI functions & VDI line-A wrapper functions */

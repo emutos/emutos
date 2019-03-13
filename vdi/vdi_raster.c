@@ -49,7 +49,7 @@ struct blit {
     WORD           dst_x_inc, dst_y_inc;
     ULONG          dst_addr;
     UWORD          x_cnt, y_cnt;
-    BYTE           hop, op, status, skew;
+    UBYTE          hop, op, status, skew;
 };
 
 /* setting of skew flags */

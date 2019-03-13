@@ -452,7 +452,7 @@ void vdi_vst_height(Vwk * vwk)
     const Fonthead *test_font, *single_font;
     WORD font_id;
     UWORD test_height;
-    BYTE found;
+    char found;
 
     font_id = vwk->cur_font->font_id;
     vwk->pts_mode = FALSE;
@@ -590,7 +590,7 @@ void vdi_vst_point(Vwk * vwk)
     const Fonthead **chain_ptr, *double_font;
     const Fonthead *test_font, *single_font;
     WORD test_height, h;
-    BYTE found;
+    char found;
 
     font_id = vwk->cur_font->font_id;
     vwk->pts_mode = TRUE;
@@ -711,7 +711,7 @@ void vdi_vst_font(Vwk * vwk)
     WORD *old_intin, point, *old_ptsout, dummy[4], *old_ptsin;
     WORD face;
     const Fonthead *test_font, **chain_ptr;
-    BYTE found;
+    char found;
 
     test_font = vwk->cur_font;
     point = test_font->point;
@@ -878,10 +878,10 @@ void vdi_vqt_width(Vwk * vwk)
 void vdi_vqt_name(Vwk * vwk)
 {
     WORD i, element;
-    const BYTE *name;
+    const char *name;
     WORD *int_out;
     const Fonthead *tmp_font;
-    BYTE found;
+    char found;
 
     const Fonthead **chain_ptr;
 
