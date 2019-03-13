@@ -94,7 +94,7 @@ static const UWORD dat_table[] =
 const Fonthead fnt_ru_6x6 = {
     1,  /* font_id */
     8,  /* point */
-    "6x6 Russian font",  /*   BYTE name[32]     */
+    "6x6 Russian font",  /*   char name[32]     */
     0,  /* first_ade */
     255,  /* last_ade */
     4,  /* top */

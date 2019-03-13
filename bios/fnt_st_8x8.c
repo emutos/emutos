@@ -148,7 +148,7 @@ static const UWORD dat_table[] =
 const Fonthead fnt_st_8x8 = {
     1,  /* WORD font_id */
     9,  /* WORD point */
-    "8x8 system font",  /*   BYTE name[32]      */
+    "8x8 system font",  /*   char name[32]      */
     0,  /* WORD first_ade */
     255,  /* WORD last_ade */
     6,  /* UWORD top */

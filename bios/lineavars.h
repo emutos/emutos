@@ -32,8 +32,8 @@
 typedef struct {
         WORD    len;            /* height of saved form */
         UWORD   *addr;          /* screen address of saved form */
-        BYTE    stat;           /* save status */
-        BYTE    reserved;
+        UBYTE    stat;          /* save status */
+        char    reserved;
         ULONG   area[8*16];     /* handle up to 8 video planes */
 } MCS;
 /* defines for 'stat' above */

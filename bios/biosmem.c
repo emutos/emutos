@@ -39,9 +39,9 @@ static BOOL bmem_allowed;
  *   +---------+---------+-----------+-----+------------------+--------+
  *
  * variables and symbols:
- *   BYTE _etext[]   set by emutos.ld: end of TEXT segment
- *   BYTE _edata[]   set by emutos.ld: end of DATA segment
- *   BYTE _bss[]     set by emutos.ld: end of BSS segment
+ *   UBYTE _etext[]  set by emutos.ld: end of TEXT segment
+ *   UBYTE _edata[]  set by emutos.ld: end of DATA segment
+ *   UBYTE _bss[]    set by emutos.ld: end of BSS segment
  *   LONG end_os     TOS variable in 0x4fa: end of OS static variables
  *   LONG membot     TOS variable in 0x432: bottom of TPA
  *   LONG memtop     TOS variable in 0x436: top of TPA

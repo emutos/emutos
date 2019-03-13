@@ -47,7 +47,7 @@ static void do_keyclick(void);
 
 /* data used by dosound: */
 
-static BYTE *sndtable;    /* 0xE44 */
+static signed char *sndtable;   /* 0xE44 */
 static UBYTE snddelay;    /* 0xE48 */
 static UBYTE sndtmp;      /* 0xE49 */
 
@@ -150,7 +150,7 @@ LONG dosound(LONG table)
 
     if (table >= 0)
     {
-        sndtable = (BYTE *) table;
+        sndtable = (signed char *) table;
         snddelay = 0;
     }
 
@@ -163,8 +163,8 @@ LONG dosound(LONG table)
 #if CONF_WITH_YM2149
 void sndirq(void)
 {
-    BYTE *code;
-    BYTE instr;
+    signed char *code;
+    signed char instr;
 
     code = sndtable;
     if (code == 0)

@@ -101,8 +101,8 @@ static void detect_video(void)
     /* test if we have an STe Shifter by testing if register 820d
      * works (put a value, read other reg, read again, and compare)
      */
-    volatile BYTE *ste_reg = (BYTE *) 0xffff820d;
-    volatile BYTE *other_reg1 = (BYTE *) 0xffff8203;
+    volatile UBYTE *ste_reg = (UBYTE *) 0xffff820d;
+    volatile UBYTE *other_reg1 = (UBYTE *) 0xffff8203;
     volatile WORD *other_reg2 = (WORD *) 0xffff8240;
 
     has_ste_shifter = 0;
@@ -182,8 +182,8 @@ int has_vme;
 
 static void detect_vme(void)
 {
-    volatile BYTE *vme_mask = (BYTE *) VME_INT_MASK;
-    volatile BYTE *sys_mask = (BYTE *) SYS_INT_MASK;
+    volatile UBYTE *vme_mask = (UBYTE *) VME_INT_MASK;
+    volatile UBYTE *sys_mask = (UBYTE *) SYS_INT_MASK;
 
     if (check_read_byte(SCU_GPR1))
     {
@@ -518,7 +518,7 @@ void machine_detect(void)
 void machine_init(void)
 {
 #if CONF_WITH_VIDEL
-volatile BYTE *fbcr = (BYTE *)FALCON_BUS_CTL;
+volatile UBYTE *fbcr = (UBYTE *)FALCON_BUS_CTL;
 /* the Falcon Bus Control Register uses the following bits:
  *   0x40 : type of start (0=cold, 1=warm)
  *   0x20 : STe Bus emulation (0=on, 1=off)

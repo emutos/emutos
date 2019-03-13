@@ -589,7 +589,7 @@ static void xbios_1b(WORD intno)
  */
 
 #if DBG_XBIOS
-static BYTE xbios_1c(BYTE data, WORD regno)
+static WORD xbios_1c(WORD data, WORD regno)
 {
     kprintf("XBIOS: Giaccess()\n");
     return giaccess(data, regno);

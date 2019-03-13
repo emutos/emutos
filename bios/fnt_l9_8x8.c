@@ -151,7 +151,7 @@ const Fonthead fnt_l9_8x8 =
 {
     1,  /* font_id */
     9,  /* point */
-    "8x8 system font",  /* BYTE name[32] */
+    "8x8 system font",  /* char name[32] */
     0,  /* first_ade */
     255,  /* last_ade */
     6,  /* top */

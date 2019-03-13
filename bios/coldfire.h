@@ -98,15 +98,15 @@ void coldfire_int_35(void); /* In coldfire2.S */
 #define MCF_VALUE_UNKNOWN     -1
 
 typedef struct {
-    BYTE magic[3];            /* Magic number 0x4d4346 (MCF), identifies this struct */
+    char magic[3];            /* Magic number 0x4d4346 (MCF), identifies this struct */
 #define COOKIE_MCF_VERSION    1
     UBYTE version;            /* This struct version */
-    BYTE device_name[16];     /* Device identification number, null terminated */
-    BYTE core;                /* ColdFire core version number */
-    BYTE revision;            /* Processor revision number */
+    char device_name[16];     /* Device identification number, null terminated */
+    UBYTE core;               /* ColdFire core version number */
+    UBYTE revision;           /* Processor revision number */
     ULONG units;              /* Bit mask. b0: MAC, b1: DIV, b2: EMAC, b3: FPU, b4: MMU */
-    BYTE isa;                 /* Instruction-Set Architecture (ISA) revision level */
-    BYTE debug;               /* Debug module revision */
+    UBYTE isa;                /* Instruction-Set Architecture (ISA) revision level */
+    UBYTE debug;              /* Debug module revision */
     WORD sysbus_frequency;    /* System bus frequency in Mhz */
 } MCF_COOKIE;
 

@@ -104,7 +104,7 @@ extern void setup_68040_pmmu(void);
 /* Drive specific declarations */
 static WORD defdrv;             /* default drive number (0 is a:, 2 is c:) */
 
-static BYTE default_env[ENV_SIZE];  /* default environment area */
+static char default_env[ENV_SIZE];  /* default environment area */
 
 /* used by kprintf() */
 WORD boot_status;               /* see kprint.h for bit flags */
@@ -618,7 +618,7 @@ BOOL can_shutdown(void)
 void biosmain(void)
 {
     BOOL show_initinfo;         /* TRUE if welcome screen must be displayed */
-    BYTE *p;
+    char *p;
     ULONG shiftbits;
 
     bios_init();                /* Initialize the BIOS */
@@ -687,7 +687,7 @@ void biosmain(void)
 #if WITH_CLI
     if (bootflags & BOOTFLAG_EARLY_CLI) {   /* run an early console */
         PD *pd = (PD *) trap1_pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, "", default_env);
-        pd->p_tbase = (BYTE *) coma_start;
+        pd->p_tbase = (char *) coma_start;
         pd->p_tlen = pd->p_dlen = pd->p_blen = 0;
         trap1_pexec(PE_GOTHENFREE, "", pd, "");
     }
@@ -704,7 +704,7 @@ void biosmain(void)
         /* start the default (ROM) shell */
         PD *pd;
         pd = (PD *) trap1_pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, "", default_env);
-        pd->p_tbase = (BYTE *) exec_os;
+        pd->p_tbase = (char *) exec_os;
         pd->p_tlen = pd->p_dlen = pd->p_blen = 0;
         trap1_pexec(PE_GO, "", pd, "");
     }

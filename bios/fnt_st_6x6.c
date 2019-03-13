@@ -92,7 +92,7 @@ static const UWORD dat_table[576] =
 const Fonthead fnt_st_6x6 = {
     1,                  /*   WORD font_id       */
     8,                  /*   WORD point         */
-    "6x6 system font",  /*   BYTE name[32]      */
+    "6x6 system font",  /*   char name[32]      */
     0,                  /*   UWORD first_ade    */
     255,                /*   UWORD last_ade     */
     4,                  /*   UWORD top          */

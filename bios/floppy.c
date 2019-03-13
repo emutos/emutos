@@ -87,10 +87,10 @@
 struct flop_info {
     WORD rate;          /* rate selected via Floprate() */
     WORD actual_rate;   /* value to send to 1772 controller */
-    BYTE drive_type;
+    UBYTE drive_type;
 #define DD_DRIVE    0x00
 #define HD_DRIVE    0x01
-    BYTE cur_density;
+    UBYTE cur_density;
 #define DENSITY_DD  0x00
 #define DENSITY_HD  0x03
 #if CONF_WITH_FDC

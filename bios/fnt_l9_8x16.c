@@ -280,7 +280,7 @@ const Fonthead fnt_l9_8x16 =
 {
     1,  /* font_id */
     10,  /* point */
-    "8x16 system font",  /* BYTE name[32] */
+    "8x16 system font",  /* char name[32] */
     0,  /* first_ade */
     255,  /* last_ade */
     13,  /* top */

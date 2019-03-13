@@ -569,8 +569,8 @@ WORD vsetsync(WORD external)
         return 0x5a;    /* unimplemented xbios call: return function # */
 
     if (external & 0x01)            /* external clock wanted? */
-        *(volatile BYTE *)SYNCMODE |= 0x01;
-    else *(volatile BYTE *)SYNCMODE &= 0xfe;
+        *(volatile char *)SYNCMODE |= 0x01;
+    else *(volatile char *)SYNCMODE &= 0xfe;
 
     spshift = *(volatile UWORD *)SPSHIFT;
 

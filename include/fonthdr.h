@@ -33,7 +33,7 @@ typedef struct font_head Fonthead;
 struct font_head {
     WORD font_id;
     WORD point;
-    BYTE name[FONT_NAME_LEN];
+    char name[FONT_NAME_LEN];
     UWORD first_ade;
     UWORD last_ade;
     UWORD top;

@@ -15,7 +15,7 @@
 
 #include "portab.h"
 
-extern void clockvec(BYTE *buf);
+extern void clockvec(char *buf);
 
 /* interface for machine.c */
 

@@ -705,7 +705,7 @@ static LONG internal_inquire(UWORD unit, ULONG *blocksize, ULONG *deviceflags, c
     UWORD major = unit - NUMFLOPPIES;
     LONG ret;
     WORD bus, reldev;
-    BYTE name[40] = "Disk";
+    char name[40] = "Disk";
     ULONG flags = 0UL;
     MAYBE_UNUSED(reldev);
     MAYBE_UNUSED(ret);

@@ -78,7 +78,7 @@
 /* physical unit (floppy/harddisk) identifier */
 struct _unit
 {
-    BYTE    valid;          /* unit valid */
+    UBYTE   valid;          /* unit valid */
 #if CONF_WITH_IDE
     BYTE    byteswap;       /* unit is byteswapped */
 #endif

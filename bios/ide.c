@@ -274,7 +274,7 @@ static ULONG delay400ns;
 static ULONG delay5us;
 static struct {
     UWORD filler00[27];
-    BYTE model_number[40];
+    char model_number[40];
     UWORD multiple_io_info;
     UWORD filler2f;
     UWORD capabilities;
