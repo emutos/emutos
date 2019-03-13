@@ -84,6 +84,7 @@
  */
 
 typedef char            BYTE;                   /*  Deprecated alias for char. May be signed or unsigned. */
+typedef signed char     SBYTE;                  /*  Signed byte         */
 typedef unsigned char   UBYTE;                  /*  Unsigned byte       */
 typedef unsigned long   ULONG;                  /*  unsigned 32 bit word*/
 typedef int             BOOL;                   /*  boolean, TRUE or FALSE */
