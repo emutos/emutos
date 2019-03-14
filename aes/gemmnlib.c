@@ -531,7 +531,7 @@ static void build_menuid_lookup(void)
  *  Routine to register a desk accessory item on the menu bar.  The
  *  return value is the object index of the menu item that was added.
  */
-WORD mn_register(WORD pid, BYTE *pstr)
+WORD mn_register(WORD pid, char *pstr)
 {
     WORD    openda;
 

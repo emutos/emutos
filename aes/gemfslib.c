@@ -43,9 +43,9 @@
 
 static GRECT gl_rfs;
 
-static const BYTE gl_fsobj[4] = {FTITLE, FILEBOX, SCRLBAR, 0x0};
+static const char gl_fsobj[4] = {FTITLE, FILEBOX, SCRLBAR, 0x0};
 
-static BYTE *ad_fsnames;    /* holds filenames in currently-displayed directory */
+static char *ad_fsnames;    /* holds filenames in currently-displayed directory */
 static LONG *g_fslist;      /* offsets of filenames within ad_fsnames */
 static LONG nm_files;       /* total number of slots in g_fslist[] */
 
@@ -83,7 +83,7 @@ static void centre_title(OBJECT *tree,WORD objnum)
     OBJECT *root = tree;
     OBJECT *str = root+objnum;
 
-    str->ob_x = (root->ob_width - strlen((BYTE *)str->ob_spec)*gl_wchar) / 2;
+    str->ob_x = (root->ob_width - strlen((char *)str->ob_spec)*gl_wchar) / 2;
 }
 
 
@@ -98,9 +98,9 @@ static void centre_title(OBJECT *tree,WORD objnum)
  *  Returns a pointer to the beginning of the string (if no colon or
  *  backslash found), or to the last backslash.
  */
-static BYTE *fs_back(BYTE *pstr, BYTE *pend)
+static char *fs_back(char *pstr, char *pend)
 {
-    BYTE *p;
+    char *p;
 
     if (!pend)
         pend = pstr + strlen(pstr);
@@ -128,7 +128,7 @@ static BYTE *fs_back(BYTE *pstr, BYTE *pend)
  *  Routine to back up a path and return the pointer to the beginning
  *  of the file specification part
  */
-static BYTE *fs_pspec(BYTE *pstr, BYTE *pend)
+static char *fs_pspec(char *pstr, char *pend)
 {
     pend = fs_back(pstr, pend);
     if (*pend == '\\')
@@ -142,7 +142,7 @@ static BYTE *fs_pspec(BYTE *pstr, BYTE *pend)
  *  Routine to compare files based on name
  *  Note: folders always sort lowest because the first character is \007
  */
-static WORD fs_comp(BYTE *name1, BYTE *name2)
+static WORD fs_comp(char *name1, char *name2)
 {
     return strcmp(name1, name2);
 }
@@ -167,12 +167,12 @@ static LONG fs_add(WORD thefile, LONG fs_index)
  *
  *  Returns FALSE iff error occurred
  */
-static WORD fs_active(BYTE *ppath, BYTE *pspec, WORD *pcount)
+static WORD fs_active(char *ppath, char *pspec, WORD *pcount)
 {
     WORD ret;
     LONG thefile, fs_index, temp;
     WORD i, j, gap;
-    BYTE *fname, allpath[LEN_ZPATH+1];
+    char *fname, allpath[LEN_ZPATH+1];
     DTA *user_dta;
 
     set_mouse_to_hourglass();
@@ -268,7 +268,7 @@ static void fs_format(OBJECT *tree, WORD currtop, WORD count)
 {
     WORD i, cnt;
     WORD y, h, th;
-    BYTE   *p, name[LEN_FSNAME];
+    char   *p, name[LEN_FSNAME];
     OBJECT *obj, *treeptr = tree;
 
     /* build in real text strings */
@@ -385,9 +385,9 @@ static WORD fs_nscroll(OBJECT *tree, WORD *psel, WORD curr, WORD count,
  *
  *  Returns FALSE iff error occurred
  */
-static WORD fs_newdir(BYTE *fpath, BYTE *pspec, OBJECT *tree, WORD *pcount)
+static WORD fs_newdir(char *fpath, char *pspec, OBJECT *tree, WORD *pcount)
 {
-    const BYTE *ptmp;
+    const char *ptmp;
     OBJECT *obj;
     TEDINFO *tedinfo;
 
@@ -422,9 +422,9 @@ static WORD fs_newdir(BYTE *fpath, BYTE *pspec, OBJECT *tree, WORD *pcount)
  *  (so path_changed() can detect a change properly).  therefore we allow
  *  up to LEN_ZPATH bytes.
  */
-static void set_mask(BYTE *mask,BYTE *path)
+static void set_mask(char *mask, char *path)
 {
-    BYTE *pend;
+    char *pend;
 
     pend = fs_pspec(path, NULL);
     if (!*pend)                 /* if there's no mask, add one */
@@ -507,20 +507,20 @@ static WORD get_drive(char *path)
  *  or change of path, and returns to the application with
  *  the selected path, filename, and exit button.
  */
-WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
+WORD fs_input(char *pipath, char *pisel, WORD *pbutton, char *pilabel)
 {
     WORD touchob, value, fnum;
     WORD curr, count, sel;
     WORD mx, my;
     OBJECT *tree;
     ULONG bitmask;
-    BYTE *ad_fpath, *ad_fname, *ad_ftitle;
+    char *ad_fpath, *ad_fname, *ad_ftitle;
     WORD drive;
     WORD dclkret, cont, newlist, newsel, newdrive;
-    BYTE *pstr;
+    char *pstr;
     GRECT pt;
-    BYTE *memblk, *locstr, *locold, *mask;
-    BYTE selname[LEN_FSNAME];
+    char *memblk, *locstr, *locold, *mask;
+    char selname[LEN_FSNAME];
     OBJECT *obj;
     TEDINFO *tedinfo;
 
@@ -553,9 +553,9 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
      *  mask
      */
     memblk = NULL;
-    nm_files = (dos_avail_anyram()-LEN_FSWORK) / (LEN_FSNAME+sizeof(BYTE *));
+    nm_files = (dos_avail_anyram()-LEN_FSWORK) / (LEN_FSNAME+sizeof(char *));
     if (nm_files >= NM_NAMES)
-        memblk = dos_alloc_anyram(nm_files*(LEN_FSNAME+sizeof(BYTE *))+LEN_FSWORK);
+        memblk = dos_alloc_anyram(nm_files*(LEN_FSNAME+sizeof(char *))+LEN_FSWORK);
     if (!memblk)
     {
         fm_show(ALFSMEM, NULL, 1);
@@ -563,7 +563,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
     }
 
     g_fslist = (LONG *)memblk;
-    ad_fsnames = (BYTE *)(g_fslist+nm_files);
+    ad_fsnames = (char *)(g_fslist+nm_files);
     locstr = ad_fsnames + (nm_files * LEN_FSNAME);
     locold = locstr + LEN_FSPATH;
     mask = locold + LEN_FSPATH;

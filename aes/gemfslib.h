@@ -10,7 +10,7 @@
 #ifndef GEMFSLIB_H
 #define GEMFSLIB_H
 
-WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel);
+WORD fs_input(char *pipath, char *pisel, WORD *pbutton, char *pilabel);
 void fs_start(void);
 
 #endif

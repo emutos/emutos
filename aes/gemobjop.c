@@ -23,7 +23,7 @@
 #include "gemobjop.h"
 
 
-BYTE ob_sst(OBJECT *tree, WORD obj, LONG *pspec, WORD *pstate, WORD *ptype,
+char ob_sst(OBJECT *tree, WORD obj, LONG *pspec, WORD *pstate, WORD *ptype,
             WORD *pflags, GRECT *pt, WORD *pth)
 {
     WORD    th;
@@ -55,7 +55,7 @@ BYTE ob_sst(OBJECT *tree, WORD obj, LONG *pspec, WORD *pstate, WORD *ptype,
     case G_BOX:
     case G_BOXCHAR:
     case G_IBOX:
-        th = *(((BYTE *)pspec)+1);
+        th = *(((char *)pspec)+1);
         break;
     case G_BUTTON:
         th--;
@@ -70,7 +70,7 @@ BYTE ob_sst(OBJECT *tree, WORD obj, LONG *pspec, WORD *pstate, WORD *ptype,
         th -= 256;
     *pth = th;
 
-    return *(BYTE *)pspec;  /* only useful for G_BOXCHAR */
+    return *(char *)pspec;  /* only useful for G_BOXCHAR */
 }
 
 

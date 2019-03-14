@@ -100,8 +100,8 @@ extern void gem_main(void); /* called only from gemstart.S */
 
 #define WAIT_TIMEOUT 500                /* see wait_for_accs() */
 
-static BYTE     infbuf[INF_SIZE+1];     /* used to read part of EMUDESK.INF */
-static BYTE     acc_name[NUM_ACCS][LEN_ZFNAME]; /* used by count_accs()/ldaccs() */
+static char     infbuf[INF_SIZE+1];     /* used to read part of EMUDESK.INF */
+static char     acc_name[NUM_ACCS][LEN_ZFNAME]; /* used by count_accs()/ldaccs() */
 
 /* Some global variables: */
 
@@ -115,17 +115,17 @@ GLOBAL const GEM_MUPB ui_mupb =
 GLOBAL WORD     totpds;
 GLOBAL WORD     num_accs;
 
-GLOBAL BYTE     *ad_envrn;              /* initialized in GEMSTART      */
+GLOBAL char     *ad_envrn;              /* initialized in GEMSTART      */
 
 GLOBAL MFORM    *mouse_cursor[NUM_MOUSE_CURSORS];
 
 GLOBAL MFORM    gl_mouse;
-GLOBAL BYTE     gl_logdrv;
+GLOBAL char     gl_logdrv;
 
 GLOBAL AESPD    *rlr, *drl, *nrl;
 GLOBAL EVB      *eul, *dlr, *zlr;
 
-GLOBAL BYTE     indisp;
+GLOBAL UBYTE    indisp;
 
 GLOBAL WORD     fpt, fph, fpcnt;                /* forkq tail, head,    */
                                                 /*   count              */
@@ -208,7 +208,7 @@ static void ev_init(EVB evblist[], WORD cnt)
  *  Also do all the initialization that is required.
  *      TODO - get rid of this.
  */
-static AESPD *iprocess(BYTE *pname, PFVOID routine)
+static AESPD *iprocess(char *pname, PFVOID routine)
 {
     ULONG ldaddr;
 
@@ -227,7 +227,7 @@ static AESPD *iprocess(BYTE *pname, PFVOID routine)
  *  Routine to load program file pointed at by pfilespec, then create a
  *  new process context for it.  This is used to load a desk accessory.
  */
-static void sndcli(BYTE *pfilespec)
+static void sndcli(char *pfilespec)
 {
     WORD    handle;
     WORD    err_ret;
@@ -312,7 +312,7 @@ static void sh_init(void)
  *  returns: >=0  number of bytes read
  *           < 0  error code from dos_open()/dos_read()
  */
-static LONG readfile(BYTE *filename, LONG count, BYTE *buf)
+static LONG readfile(char *filename, LONG count, char *buf)
 {
     WORD    fh;
     LONG    ret;
@@ -394,7 +394,7 @@ static BOOL process_inf2(void)
 {
     WORD    env, isgem = TRUE;
     char    *pcurr;
-    BYTE    tmp;
+    char    tmp;
 
     pcurr = infbuf;
     while (*pcurr)
@@ -415,7 +415,7 @@ static BOOL process_inf2(void)
         }
         else if (tmp == 'Z')        /* something like "#Z 01 C:\THING.APP@" */
         {
-            BYTE *tmpptr1, *tmpptr2;
+            char *tmpptr1, *tmpptr2;
             pcurr += 2;
             scan_2(pcurr, &isgem);  /* 00 => not GEM, otherwise GEM */
             pcurr += 3;
@@ -445,7 +445,7 @@ static BOOL process_inf2(void)
 /*
  *  Copy mouse cursors from buffered RSC file
  */
-static WORD load_mouse_cursors(BYTE *buf)
+static WORD load_mouse_cursors(char *buf)
 {
     RSHDR *hdr = (RSHDR *)buf;
     BITBLK *bb;
@@ -492,7 +492,7 @@ static void setup_mouse_cursors(void)
     WORD i;
 #if CONF_WITH_LOADABLE_CURSORS
     LONG rc;
-    BYTE *buf;
+    char *buf;
 #endif
 
     for (i = 0; i < NUM_MOUSE_CURSORS; i++)

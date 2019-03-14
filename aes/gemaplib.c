@@ -90,7 +90,7 @@ WORD ap_rdwr(WORD code, AESPD *p, WORD length, WORD *pbuff)
 /*
  *  APplication FIND
  */
-WORD ap_find(BYTE *pname)
+WORD ap_find(char *pname)
 {
     AESPD  *p;
 

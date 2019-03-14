@@ -27,11 +27,11 @@ typedef struct aesglobal {
 } AESGLOBAL;
 
 void rs_obfix(OBJECT *tree, WORD curob);
-BYTE *rs_str(UWORD stnum);
+char *rs_str(UWORD stnum);
 WORD rs_free(AESGLOBAL *pglobal);
 WORD rs_gaddr(AESGLOBAL *pglobal, UWORD rtype, UWORD rindex, void **rsaddr);
 WORD rs_saddr(AESGLOBAL *pglobal, UWORD rtype, UWORD rindex, void *rsaddr);
 void rs_fixit(AESGLOBAL *pglobal);
-WORD rs_load(AESGLOBAL *pglobal, BYTE *rsfname);
+WORD rs_load(AESGLOBAL *pglobal, char *rsfname);
 
 #endif

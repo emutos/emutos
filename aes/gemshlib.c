@@ -60,14 +60,14 @@
 #define SIZE_AFILE 2048                 /* size of AES shell buffer: must   */
                                         /*  agree with #define in deskapp.h */
 
-static BYTE shelbuf[SIZE_AFILE];        /* AES shell buffer */
+static char shelbuf[SIZE_AFILE];        /* AES shell buffer */
 
 GLOBAL SHELL sh[NUM_PDS];
 
-static BYTE sh_apdir[LEN_ZPATH];        /* holds directory of applications to be */
+static char sh_apdir[LEN_ZPATH];        /* holds directory of applications to be */
                                         /* run from desktop.  GEMDOS resets dir  */
                                         /* to parent's on return from exec.      */
-GLOBAL BYTE *ad_stail;
+GLOBAL char *ad_stail;
 
 GLOBAL WORD gl_shgem;
 
@@ -88,14 +88,14 @@ extern void coma_start(void) NORETURN;  /* see cli/cmdasm.S */
 static void sh_toalpha(void);
 
 
-void sh_read(BYTE *pcmd, BYTE *ptail)
+void sh_read(char *pcmd, char *ptail)
 {
     strcpy(pcmd, D.s_cmd);
     memcpy(ptail, ad_stail, CMDTAILSIZE);
 }
 
 
-void sh_curdir(BYTE *ppath)
+void sh_curdir(char *ppath)
 {
     WORD drive;
 
@@ -143,7 +143,7 @@ void sh_curdir(BYTE *ppath)
  *          . run no application after the current one terminates, i.e.
  *            just exit to desktop
  */
-WORD sh_write(WORD doex, WORD isgem, WORD isover, const BYTE *pcmd, const BYTE *ptail)
+WORD sh_write(WORD doex, WORD isgem, WORD isover, const char *pcmd, const char *ptail)
 {
     SHELL *psh = &sh[rlr->p_pid];
 
@@ -255,7 +255,7 @@ static void sh_toalpha(void)
  * if 'clear' is TRUE, update the ROOT object to clear the screen,
  * and just draw the ROOT; otherwise, draw the entire tree.
  */
-static void sh_draw(const BYTE *lcmd, BOOL clear)
+static void sh_draw(const char *lcmd, BOOL clear)
 {
     OBJECT *tree;
 
@@ -272,13 +272,13 @@ static void sh_draw(const BYTE *lcmd, BOOL clear)
     else
     {
         TEDINFO *ted = (TEDINFO *)tree[DTNAME].ob_spec;
-        ted->te_ptext = (BYTE *)lcmd;       /* text string displayed in menu bar */
+        ted->te_ptext = (char *)lcmd;       /* text string displayed in menu bar */
         ob_draw(tree, ROOT, MAX_DEPTH);
     }
 }
 
 
-static void sh_show(const BYTE *lcmd)
+static void sh_show(const char *lcmd)
 {
     if (!gl_shgem)
         return;
@@ -291,9 +291,9 @@ static void sh_show(const BYTE *lcmd)
  *  Routine to take a full path, and scan back from the end to
  *  find the starting byte of the particular filename
  */
-BYTE *sh_name(BYTE *ppath)
+char *sh_name(char *ppath)
 {
-    BYTE *pname;
+    char *pname;
 
     pname = &ppath[strlen(ppath)];
     while((pname >= ppath) && (*pname != '\\') && (*pname != ':'))
@@ -309,11 +309,11 @@ BYTE *sh_name(BYTE *ppath)
  *  a long pointer to the character after the string if it is found.
  *  Otherwise, return a NULL pointer
  */
-void sh_envrn(BYTE **ppath, const BYTE *psrch)
+void sh_envrn(char **ppath, const char *psrch)
 {
-    BYTE *lp;
+    char *lp;
     WORD len, findend;
-    BYTE last, tmp, loc1[10], loc2[10];
+    char last, tmp, loc1[10], loc2[10];
 
 
     len = strlencpy(loc2, psrch);
@@ -331,7 +331,7 @@ void sh_envrn(BYTE **ppath, const BYTE *psrch)
         if (findend && (tmp == '\0'))
         {
             findend = FALSE;
-            tmp = (BYTE)0xFF;
+            tmp = 0xFF;
         }
         else
         {
@@ -361,10 +361,10 @@ void sh_envrn(BYTE **ppath, const BYTE *psrch)
  *  of the DOS environment.  It returns a pointer to the start of the
  *  following path until there are no more paths to find.
  */
-static BYTE *sh_path(BYTE *src, BYTE *dest, BYTE *pname)
+static char *sh_path(char *src, char *dest, char *pname)
 {
-    BYTE last = 0;
-    BYTE *p;
+    char last = 0;
+    char *p;
 
     if (!src)           /* precautionary */
         return NULL;
@@ -411,10 +411,10 @@ static BYTE *sh_path(BYTE *src, BYTE *dest, BYTE *pname)
  *          return the fully-qualified name.
  *      (5) if still not found, return with error.
  */
-static WORD findfile(BYTE *pspec)
+static WORD findfile(char *pspec)
 {
-    BYTE *path;
-    BYTE *pname;
+    char *path;
+    char *pname;
 
     KDEBUG(("sh_find(): input pspec='%s'\n",pspec));
     pname = sh_name(pspec);                 /* get ptr to name      */
@@ -479,7 +479,7 @@ static WORD findfile(BYTE *pspec)
     return 0;
 }
 
-WORD sh_find(BYTE *pspec)
+WORD sh_find(char *pspec)
 {
     DTA *save_dta;
     WORD ret;
@@ -496,7 +496,7 @@ WORD sh_find(BYTE *pspec)
 /*
  *  Read the default application to invoke.
  */
-void sh_rdef(BYTE *lpcmd, BYTE *lpdir)
+void sh_rdef(char *lpcmd, char *lpdir)
 {
     SHELL *psh;
 
@@ -511,7 +511,7 @@ void sh_rdef(BYTE *lpcmd, BYTE *lpdir)
 /*
  *  Write the default application to invoke
  */
-void sh_wdef(const BYTE *lpcmd, const BYTE *lpdir)
+void sh_wdef(const char *lpcmd, const char *lpdir)
 {
     SHELL *psh;
 
@@ -576,10 +576,10 @@ LONG aes_run_rom_program(PRG_ENTRY *entry)
 
     /* Create a basepage with the standard Pexec() */
     pd = (PD *) trap1_pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, "", NULL);
-    pd->p_tbase = (BYTE *) entry;
+    pd->p_tbase = (char *) entry;
 
     /* Run the program with dos_exec() for AES reentrancy issues */
-    return dos_exec(PE_GOTHENFREE, NULL, (const BYTE *)pd, NULL);
+    return dos_exec(PE_GOTHENFREE, NULL, (const char *)pd, NULL);
 }
 
 

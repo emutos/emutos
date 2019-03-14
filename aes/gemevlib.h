@@ -31,8 +31,8 @@ static __inline__ LONG combine_cms(WORD clicks,WORD mask,WORD state)
         LONG result;
         struct {
             WORD c;
-            BYTE m;
-            BYTE s;
+            UBYTE m;
+            UBYTE s;
         } combined;
     } u;
 

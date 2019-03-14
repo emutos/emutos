@@ -107,7 +107,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
                 fpdnm(NULL, AP_RWID), AP_LENGTH, (WORD *)AP_PBUFF);
         break;
     case APPL_FIND:
-        ret = ap_find((BYTE *)AP_PNAME);
+        ret = ap_find((char *)AP_PNAME);
         break;
     case APPL_TPLAY:
         ap_tplay((EVNTREC *)AP_TBUFFER, AP_TLENGTH, AP_TSCALE);
@@ -180,7 +180,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         strcpy((char *)tree[ITEM_NUM].ob_spec,(char *)MM_PTEXT);
         break;
     case MENU_REGISTER:
-        ret = mn_register(MM_PID, (BYTE *)MM_PSTR);
+        ret = mn_register(MM_PID, (char *)MM_PSTR);
         break;
     case MENU_UNREGISTER:
 #if CONF_WITH_PCGEM
@@ -243,7 +243,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         ret = fm_dial(FM_TYPE, (GRECT *)&FM_IX, (GRECT *)&FM_X);
         break;
     case FORM_ALERT:
-        ret = fm_alert(FM_DEFBUT, (BYTE *)FM_ASTRING);
+        ret = fm_alert(FM_DEFBUT, (char *)FM_ASTRING);
         break;
     case FORM_ERROR:
         ret = fm_error(FM_ERRNUM);
@@ -318,10 +318,10 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
 
     /* Scrap Manager */
     case SCRP_READ:
-        ret = sc_read((BYTE*)SC_PATH);
+        ret = sc_read((char *)SC_PATH);
         break;
     case SCRP_WRITE:
-        ret = sc_write((const BYTE*)SC_PATH);
+        ret = sc_write((const char *)SC_PATH);
         break;
 #if CONF_WITH_PCGEM
     case SCRP_CLEAR:
@@ -331,10 +331,10 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
 
     /* File Selector Manager */
     case FSEL_INPUT:
-        ret = fs_input((BYTE*)FS_IPATH, (BYTE*)FS_ISEL, &FS_BUTTON, NULL);
+        ret = fs_input((char *)FS_IPATH, (char *)FS_ISEL, &FS_BUTTON, NULL);
         break;
     case FSEL_EXINPUT:
-        ret = fs_input((BYTE*)FS_IPATH, (BYTE*)FS_ISEL, &FS_BUTTON, (BYTE *)FS_ILABEL);
+        ret = fs_input((char *)FS_IPATH, (char *)FS_ISEL, &FS_BUTTON, (char *)FS_ILABEL);
         break;
 
     /* Window Manager */
@@ -372,7 +372,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
 
     /* Resource Manager */
     case RSRC_LOAD:
-        ret = rs_load(pglobal, (BYTE *)RS_PFNAME);
+        ret = rs_load(pglobal, (char *)RS_PFNAME);
         break;
     case RSRC_FREE:
         ret = rs_free(pglobal);
@@ -389,10 +389,10 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
 
     /* Shell Manager */
     case SHEL_READ:
-        sh_read((BYTE*)SH_PCMD, (BYTE*)SH_PTAIL);
+        sh_read((char *)SH_PCMD, (char *)SH_PTAIL);
         break;
     case SHEL_WRITE:
-        ret = sh_write(SH_DOEX, SH_ISGR, SH_ISCR, (const BYTE*)SH_PCMD, (const BYTE*)SH_PTAIL);
+        ret = sh_write(SH_DOEX, SH_ISGR, SH_ISCR, (const char *)SH_PCMD, (const char *)SH_PTAIL);
         break;
     case SHEL_GET:
         sh_get((void*)SH_PBUFFER, SH_LEN);
@@ -401,17 +401,17 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         sh_put((const void *)SH_PDATA, SH_LEN);
         break;
     case SHEL_FIND:
-        ret = sh_find((BYTE*)SH_PATH);
+        ret = sh_find((char *)SH_PATH);
         break;
     case SHEL_ENVRN:
-        sh_envrn((BYTE**)SH_PATH, (const BYTE*)SH_SRCH);
+        sh_envrn((char **)SH_PATH, (const char *)SH_SRCH);
         break;
 #if CONF_WITH_PCGEM
     case SHEL_RDEF:
-        sh_rdef((BYTE*)SH_LPCMD, (BYTE*)SH_LPDIR);
+        sh_rdef((char *)SH_LPCMD, (char *)SH_LPDIR);
         break;
     case SHEL_WDEF:
-        sh_wdef((const BYTE*)SH_LPCMD, (const BYTE*)SH_LPDIR);
+        sh_wdef((const char *)SH_LPCMD, (const char *)SH_LPDIR);
         break;
 #endif
     default:

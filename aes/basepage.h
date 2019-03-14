@@ -28,7 +28,7 @@ extern EVB      *eul, *dlr, *zlr;
 /* In Dispatch - a byte whose value is zero when not in function
  * dsptch, and 1 when between dsptch ... switchto function calls
  */
-extern BYTE     indisp;
+extern UBYTE    indisp;
 
 extern WORD     fpt, fph, fpcnt;                /* forkq tail, head,    */
                                                 /*   count              */

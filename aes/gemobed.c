@@ -99,7 +99,7 @@ void ob_center(OBJECT *tree, GRECT *pt)
  *  the cursor will jump to the first raw string underscore after
  *  that character.
  */
-static WORD scan_to_end(BYTE *pstr, WORD idx, BYTE chr)
+static WORD scan_to_end(char *pstr, WORD idx, char chr)
 {
     while(*pstr && (*pstr != chr))
     {
@@ -116,7 +116,7 @@ static WORD scan_to_end(BYTE *pstr, WORD idx, BYTE chr)
  *  for the position that was input (in raw string relative numbers).
  *  The returned position will always be right before an '_'.
  */
-static WORD find_pos(BYTE *str, WORD pos)
+static WORD find_pos(char *str, WORD pos)
 {
     WORD i;
 
@@ -186,9 +186,9 @@ static void curfld(OBJECT *tree, WORD obj, WORD new_pos, WORD dist)
  *  The character ranges are stored as enumerated characters (xyz) or
  *  ranges (x..z)
  */
-static WORD instr(BYTE chr, BYTE *str)
+static WORD instr(char chr, char *str)
 {
-    BYTE test1, test2;
+    char test1, test2;
 
     while(*str)
     {
@@ -210,10 +210,10 @@ static WORD instr(BYTE chr, BYTE *str)
  *  Routine to verify that the character matches the validation
  *  string.  If necessary, upshift it.
  */
-static WORD check(BYTE *in_char, BYTE valchar)
+static WORD check(char *in_char, char valchar)
 {
     WORD upcase;
-    BYTE *rstr;
+    char *rstr;
 
     upcase = TRUE;
     rstr = NULL;
@@ -298,7 +298,7 @@ WORD ob_edit(OBJECT *tree, WORD obj, WORD in_char, WORD *idx, WORD kind)
     WORD    pos, len;
     WORD    ii, no_redraw, start, finish, nstart, nfinish;
     WORD    dist, tmp_back, cur_pos;
-    BYTE    bin_char;
+    char    bin_char;
 
     if ((kind == EDSTART) || (obj <= 0))
         return TRUE;

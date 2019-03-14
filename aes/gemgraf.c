@@ -516,7 +516,7 @@ static UWORD ch_height(WORD fn)
 }
 
 
-static void gsx_tcalc(WORD font, BYTE *ptext, WORD *ptextw, WORD *ptexth, WORD *pnumchs)
+static void gsx_tcalc(WORD font, char *ptext, WORD *ptextw, WORD *ptexth, WORD *pnumchs)
 {
     WORD    wc, hc;
 
@@ -607,7 +607,7 @@ void gr_rect(UWORD icolor, UWORD ipattern, GRECT *pt)
  *  account for its justification.  The number of characters in
  *  the string is also returned.
  */
-WORD gr_just(WORD just, WORD font, BYTE *ptext, WORD w, WORD h, GRECT *pt)
+WORD gr_just(WORD just, WORD font, char *ptext, WORD w, WORD h, GRECT *pt)
 {
     WORD    numchs, diff;
 
@@ -649,7 +649,7 @@ WORD gr_just(WORD just, WORD font, BYTE *ptext, WORD w, WORD h, GRECT *pt)
 /*
  *  Routine to draw a string of graphic text
  */
-void gr_gtext(WORD just, WORD font, BYTE *ptext, GRECT *pt)
+void gr_gtext(WORD just, WORD font, char *ptext, GRECT *pt)
 {
     WORD    numchs;
     GRECT   t;
@@ -696,7 +696,7 @@ static void gr_gblt(WORD *pimage, GRECT *pi, WORD col1, WORD col2)
  *  Routine to draw an icon, which is a graphic image with a text
  *  string underneath it
  */
-void gr_gicon(WORD state, WORD *pmask, WORD *pdata, BYTE *ptext, WORD ch,
+void gr_gicon(WORD state, WORD *pmask, WORD *pdata, char *ptext, WORD ch,
               WORD chx, WORD chy, GRECT *pi, GRECT *pt)
 {
     WORD    ifgcol, ibgcol;

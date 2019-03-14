@@ -13,7 +13,7 @@
 
 #define DEF_DESKTOP "EMUDESK"   /* default desktop */
 
-extern BYTE     *ad_envrn;
+extern char     *ad_envrn;
 
 extern MFORM    *mouse_cursor[];
 

@@ -1195,7 +1195,7 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
     switch(w_field)
     {
     case WF_NAME:
-        gl_aname.te_ptext = pwin->w_pname = *(BYTE **)pinwds;
+        gl_aname.te_ptext = pwin->w_pname = *(char **)pinwds;
         if (pwin->w_flags & VF_INTREE)
         {
             gadget = W_NAME;
@@ -1203,7 +1203,7 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
         }
         break;
     case WF_INFO:
-        gl_ainfo.te_ptext = pwin->w_pinfo = *(BYTE **)pinwds;
+        gl_ainfo.te_ptext = pwin->w_pinfo = *(char **)pinwds;
         if (pwin->w_flags & VF_INTREE)
         {
             gadget = W_INFO;

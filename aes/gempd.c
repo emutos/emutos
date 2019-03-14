@@ -36,7 +36,7 @@ AESPD *pd_index(WORD i)
 }
 
 /* returns the AESPD for the given name, or if pname is NULL for the given pid */
-AESPD *fpdnm(BYTE *pname, UWORD pid)
+AESPD *fpdnm(char *pname, UWORD pid)
 {
     WORD    i;
     AESPD   *p;
@@ -78,7 +78,7 @@ static AESPD *getpd(void)
  * name an AESPD from the 8 first chars of the given string, stopping at the first
  * '.' (remove the file extension)
  */
-void p_nameit(AESPD *p, BYTE *pname)
+void p_nameit(AESPD *p, char *pname)
 {
     char *s, *d;
     int i;
@@ -91,11 +91,11 @@ void p_nameit(AESPD *p, BYTE *pname)
 
 
 /* set the application directory of an AESPD */
-void p_setappdir(AESPD *pd, BYTE *pfilespec)
+void p_setappdir(AESPD *pd, char *pfilespec)
 {
-    BYTE *p;
-    BYTE *plast;
-    BYTE *pdest;
+    char *p;
+    char *plast;
+    char *pdest;
 
     /* find the position *after* the last backslash */
     for (p = plast = pfilespec; *p; )   /* assume no backslash */
@@ -111,7 +111,7 @@ void p_setappdir(AESPD *pd, BYTE *pfilespec)
 }
 
 
-AESPD *pstart(PFVOID pcode, BYTE *pfilespec, LONG ldaddr)
+AESPD *pstart(PFVOID pcode, char *pfilespec, LONG ldaddr)
 {
     AESPD *px;
 

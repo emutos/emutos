@@ -114,7 +114,7 @@ struct aespd                /* process descriptor */
         AESPD   *p_thread;      /*  4 */
         UDA     *p_uda;         /*  8 */
 
-        BYTE    p_name[AP_NAMELEN]; /*  C */
+        char    p_name[AP_NAMELEN]; /*  C */
 
         CDA     *p_cda;         /* 14  cio data area        */
         LONG    p_ldaddr;       /* 18  long addr. of load   */
@@ -129,10 +129,10 @@ struct aespd                /* process descriptor */
         EVB     *p_evlist;      /* 28 */
         EVB     *p_qdq;         /* 2C */
         EVB     *p_qnq;         /* 30 */
-        BYTE    *p_qaddr;       /* 34 */
+        char    *p_qaddr;       /* 34 */
         WORD    p_qindex;       /* 38 */
-        BYTE    p_queue[QUEUE_SIZE];   /* 3A */
-        BYTE    p_appdir[LEN_ZPATH+2];  /* directory containing the executable */
+        char    p_queue[QUEUE_SIZE];   /* 3A */
+        char    p_appdir[LEN_ZPATH+2];  /* directory containing the executable */
                                         /* (includes trailing path separator)  */
 };
 

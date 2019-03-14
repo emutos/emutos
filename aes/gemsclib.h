@@ -12,8 +12,8 @@
 
 #define SCRAP_DIR_NAME  "C:\\CLIPBRD"
 
-WORD sc_read(BYTE *pscrap);
-WORD sc_write(const BYTE *pscrap);
+WORD sc_read(char *pscrap);
+WORD sc_write(const char *pscrap);
 WORD sc_clear(void);
 
 

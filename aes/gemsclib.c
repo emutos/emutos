@@ -39,7 +39,7 @@
 /*                                                                      */
 /************************************************************************/
 
-WORD sc_read(BYTE *pscrap)
+WORD sc_read(char *pscrap)
 {
     strcpy(pscrap, D.g_scrap);
 
@@ -56,7 +56,7 @@ WORD sc_read(BYTE *pscrap)
 /*                                                                      */
 /************************************************************************/
 
-WORD sc_write(const BYTE *pscrap)
+WORD sc_write(const char *pscrap)
 {
     strcpy(D.g_scrap, pscrap);
 
@@ -75,7 +75,7 @@ WORD sc_write(const BYTE *pscrap)
 
 WORD sc_clear(void)
 {
-    BYTE    *ptmp;
+    char    *ptmp;
     DTA     *save_dta;
     WORD    ret;
     const char *scrapmask = "SCRAP.*";

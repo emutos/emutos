@@ -10,7 +10,7 @@
 #ifndef GEMOBLIB_H
 #define GEMOBLIB_H
 
-void ob_format(WORD just, BYTE *raw_str, BYTE *tmpl_str, BYTE *fmt_str);
+void ob_format(WORD just, char *raw_str, char *tmpl_str, char *fmt_str);
 void ob_draw(OBJECT *tree, WORD obj, WORD depth);
 WORD ob_find(OBJECT *tree, WORD currobj, WORD depth, WORD mx, WORD my);
 void ob_add(OBJECT *tree, WORD parent, WORD child);

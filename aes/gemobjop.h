@@ -12,7 +12,7 @@
 
 typedef void (*EVERYOBJ_CALLBACK)(OBJECT *tree, WORD obj, WORD sx, WORD sy);
 
-BYTE ob_sst(OBJECT *tree, WORD obj, LONG *pspec, WORD *pstate, WORD *ptype,
+char ob_sst(OBJECT *tree, WORD obj, LONG *pspec, WORD *pstate, WORD *ptype,
             WORD *pflags, GRECT *pt, WORD *pth);
 void everyobj(OBJECT *tree, WORD this, WORD last, EVERYOBJ_CALLBACK routine,
               WORD startx, WORD starty, WORD maxdep);

@@ -54,7 +54,7 @@ WORD     ml_ocnt;    /* Needs to be 0 initially! */
 static OBJECT   *ml_mnhold;
 static GRECT    ml_ctrl;
 static AESPD    *ml_pmown;
-static BYTE     alert_str[256]; /* must be long enough for longest alert in gem.rsc */
+static char     alert_str[256]; /* must be long enough for longest alert in gem.rsc */
 
 /*
  * The following arrays are used by eralert() to generate values to
@@ -382,7 +382,7 @@ WORD fm_dial(WORD fmd_type, GRECT *pi, GRECT *pt)
  */
 WORD fm_show(WORD string, WORD *pwd, WORD level)
 {
-    BYTE    *ad_alert;
+    char *ad_alert;
 
     ad_alert = rs_str(string);
     if (pwd)

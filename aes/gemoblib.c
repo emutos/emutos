@@ -99,10 +99,10 @@ void ob_setxywh(OBJECT *tree, WORD obj, GRECT *pt)
  *  Routine to take an unformatted raw string and, based on a
  *  template string, build a formatted string.
  */
-void ob_format(WORD just, BYTE *raw_str, BYTE *tmpl_str, BYTE *fmt_str)
+void ob_format(WORD just, char *raw_str, char *tmpl_str, char *fmt_str)
 {
-    BYTE *pfbeg, *ptbeg, *prbeg;
-    BYTE *ptend, *prend;
+    char *pfbeg, *ptbeg, *prbeg;
+    char *ptend, *prend;
     WORD inc, ptlen, prlen;
 
     if (*raw_str == '@')
@@ -198,7 +198,7 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
     WORD state, obtype, len, flags;
     LONG spec;
     WORD tmpx, tmpy, tmpth;
-    BYTE ch;
+    char ch;
     GRECT t, c;
     TEDINFO edblk;
     BITBLK bi;
@@ -348,7 +348,7 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
         (obtype == G_TITLE) ||
         (obtype == G_BUTTON))
     {
-        len = expand_string(intin, (BYTE *)spec);
+        len = expand_string(intin, (char *)spec);
         if (len)
         {
             gsx_attr(TRUE, MD_TRANS, BLACK);

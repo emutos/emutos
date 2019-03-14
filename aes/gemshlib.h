@@ -12,27 +12,27 @@
 
 extern SHELL    sh[];
 
-extern BYTE     *ad_stail;
+extern char     *ad_stail;
 
 extern WORD     gl_shgem;
 
 extern WORD     gl_changerez;
 extern WORD     gl_nextrez;
 
-void sh_read(BYTE *pcmd, BYTE *ptail);
-void sh_curdir(BYTE *ppath);
-WORD sh_write(WORD doex, WORD isgem, WORD isover, const BYTE *pcmd, const BYTE *ptail);
+void sh_read(char *pcmd, char *ptail);
+void sh_curdir(char *ppath);
+WORD sh_write(WORD doex, WORD isgem, WORD isover, const char *pcmd, const char *ptail);
 void sh_get(void *pbuffer, WORD len);
 void sh_put(const void *pdata, WORD len);
 void sh_tographic(void);
 
-BYTE *sh_name(BYTE *ppath);
-void sh_envrn(BYTE **ppath, const BYTE *psrch);
+char *sh_name(char *ppath);
+void sh_envrn(char **ppath, const char *psrch);
 
-WORD sh_find(BYTE *pspec);
+WORD sh_find(char *pspec);
 
-void sh_rdef(BYTE *lpcmd, BYTE *lpdir);
-void sh_wdef(const BYTE *lpcmd, const BYTE *lpdir);
+void sh_rdef(char *lpcmd, char *lpdir);
+void sh_wdef(const char *lpcmd, const char *lpdir);
 
 void sh_main(BOOL isgem);
 

@@ -85,8 +85,8 @@ typedef struct window
     WORD  w_flags;
     AESPD *w_owner;
     WORD  w_kind;
-    BYTE  *w_pname;
-    BYTE  *w_pinfo;
+    char  *w_pname;
+    char  *w_pinfo;
     GRECT w_full;
     GRECT w_work;
     GRECT w_prev;
@@ -172,8 +172,8 @@ typedef struct sh_struct
                                 /*  if FALSE, running a normal application. */
     WORD sh_isgem;              /* TRUE if the application to be run is a GEM */
                                 /*  application; FALSE if character-mode      */
-    BYTE sh_desk[LEN_ZFNAME];   /* the name of the default startup app */
-    BYTE sh_cdir[LEN_ZPATH];    /* the current directory for the default startup app */
+    char sh_desk[LEN_ZFNAME];   /* the name of the default startup app */
+    char sh_cdir[LEN_ZPATH];    /* the current directory for the default startup app */
 } SHELL;
 
 
@@ -200,24 +200,24 @@ typedef struct
 {
     AESPROCESS g_int[2];        /* for AES internal processes, must be 1st */
 
-    BYTE  g_scrap[LEN_ZPATH];   /* current scrap directory */
-    BYTE  s_cdir[LEN_ZPATH];    /* current desktop directory */
-    BYTE  s_cmd[MAXPATHLEN];    /* fully-qualified program name */
-    BYTE  g_work[WORKAREASIZE]; /* general work area */
+    char  g_scrap[LEN_ZPATH];   /* current scrap directory */
+    char  s_cdir[LEN_ZPATH];    /* current desktop directory */
+    char  s_cmd[MAXPATHLEN];    /* fully-qualified program name */
+    char  g_work[WORKAREASIZE]; /* general work area */
     DTA   g_dta;                /* AES's DTA */
 
     FPD   g_fpdx[NFORKS];       /* the fork ring, used by gemdisp.c */
     ORECT g_olist[NUM_ORECT];
 
-    BYTE  g_rawstr[MAX_LEN];
-    BYTE  g_tmpstr[MAX_LEN];
-    BYTE  g_valstr[MAX_LEN];
-    BYTE  g_fmtstr[MAX_LEN];
+    char  g_rawstr[MAX_LEN];
+    char  g_tmpstr[MAX_LEN];
+    char  g_valstr[MAX_LEN];
+    char  g_fmtstr[MAX_LEN];
 
     WINDOW w_win[NUM_WIN];
 
     WORD  g_accreg;             /* number of entries used in g_acctitle[] */
-    BYTE  *g_acctitle[NUM_ACCS];/* used by menu_register(). must always   */
+    char  *g_acctitle[NUM_ACCS];/* used by menu_register(). must always   */
                                 /*  be NUM_ACCS since one DA can issue    */
                                 /*   more than one menu_register()!       */
 

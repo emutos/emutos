@@ -396,7 +396,7 @@ void rs_fixit(AESGLOBAL *pglobal)
 /*
  *  rs_load: the rsrc_load() implementation
  */
-WORD rs_load(AESGLOBAL *pglobal, BYTE *rsfname)
+WORD rs_load(AESGLOBAL *pglobal, char *rsfname)
 {
     LONG  dosrc;
     WORD  ret;
@@ -409,7 +409,7 @@ WORD rs_load(AESGLOBAL *pglobal, BYTE *rsfname)
     if (!sh_find(tmprsfname))
         return FALSE;
 
-    dosrc = dos_open((BYTE *)tmprsfname,0); /* mode 0: read only */
+    dosrc = dos_open(tmprsfname,0); /* mode 0: read only */
     if (dosrc < 0L)
         return FALSE;
     fd = (UWORD)dosrc;
@@ -424,7 +424,7 @@ WORD rs_load(AESGLOBAL *pglobal, BYTE *rsfname)
 
 
 /* Get a string from the GEM-RSC */
-BYTE *rs_str(UWORD stnum)
+char *rs_str(UWORD stnum)
 {
     strcpy(free_str, gettext(rs_fstr[stnum]));
     return free_str;
