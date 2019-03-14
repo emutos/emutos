@@ -134,21 +134,21 @@ static WORD     ig_close;
  *      ILL_FOLD[]      disabled if a folder is selected
  *      ILL_TRASH[]     disabled if the trash can is selected
  */
-static const BYTE ILL_FILE[] =  { IDSKITEM, RICNITEM, 0 };
-static const BYTE ILL_DOCU[] =  { IDSKITEM, IAPPITEM, RICNITEM, 0 };
-static const BYTE ILL_FOLD[] =  { IDSKITEM, IAPPITEM, RICNITEM, 0 };
-static const BYTE ILL_FDSK[] =  { IAPPITEM, 0 };
-static const BYTE ILL_HDSK[] =  { IAPPITEM, 0 };
-static const BYTE ILL_NOSEL[] = { OPENITEM, SHOWITEM, DELTITEM, IAPPITEM, RICNITEM, 0 };
-static const BYTE ILL_MULTSEL[] = { OPENITEM, 0 };
-static const BYTE ILL_TRASH[] = { DELTITEM, IAPPITEM, 0 };
-static const BYTE ILL_NOWIN[] = {
+static const UBYTE ILL_FILE[] =  { IDSKITEM, RICNITEM, 0 };
+static const UBYTE ILL_DOCU[] =  { IDSKITEM, IAPPITEM, RICNITEM, 0 };
+static const UBYTE ILL_FOLD[] =  { IDSKITEM, IAPPITEM, RICNITEM, 0 };
+static const UBYTE ILL_FDSK[] =  { IAPPITEM, 0 };
+static const UBYTE ILL_HDSK[] =  { IAPPITEM, 0 };
+static const UBYTE ILL_NOSEL[] = { OPENITEM, SHOWITEM, DELTITEM, IAPPITEM, RICNITEM, 0 };
+static const UBYTE ILL_MULTSEL[] = { OPENITEM, 0 };
+static const UBYTE ILL_TRASH[] = { DELTITEM, IAPPITEM, 0 };
+static const UBYTE ILL_NOWIN[] = {
     NFOLITEM, CLOSITEM, CLSWITEM,
 #if CONF_WITH_FILEMASK
     MASKITEM,
 #endif
     0 };
-static const BYTE ILL_OPENWIN[] = {
+static const UBYTE ILL_OPENWIN[] = {
     SHOWITEM, NFOLITEM, CLOSITEM, CLSWITEM,
 #if CONF_WITH_FILEMASK
     MASKITEM,
@@ -252,7 +252,7 @@ static void desk_all(WORD flags)
 /*
  *  Enable/Disable the menu items in dlist
  */
-static void men_list(OBJECT *mlist, const BYTE *dlist, WORD enable)
+static void men_list(OBJECT *mlist, const UBYTE *dlist, WORD enable)
 {
     while (*dlist)
         menu_ienable(mlist, *dlist++, enable);
@@ -266,7 +266,7 @@ static void men_list(OBJECT *mlist, const BYTE *dlist, WORD enable)
 static void men_update(void)
 {
     WORD item, nsel, isapp;
-    const BYTE *pvalue;
+    const UBYTE *pvalue;
     ANODE *appl;
     OBJECT *tree = G.a_trees[ADMENU];
     OBJECT *obj;
