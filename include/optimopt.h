@@ -11,7 +11,7 @@
 #ifndef OPTIMOPT_H
 #define OPTIMOPT_H
 
-BYTE *scasb(BYTE *p, BYTE b);
-WORD expand_string(WORD *dest, BYTE *src);
+char *scasb(char *p, char b);
+WORD expand_string(WORD *dest, char *src);
 
 #endif

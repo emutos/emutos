@@ -20,12 +20,12 @@
 
 typedef struct
 {
-    BYTE    d_reserved[21];     /* internal EmuTOS usage */
-    BYTE    d_attrib;           /* attributes */
+    char    d_reserved[21];     /* internal EmuTOS usage */
+    char    d_attrib;           /* attributes */
     UWORD   d_time;             /* packed time */
     UWORD   d_date;             /* packed date */
     LONG    d_length;           /* size */
-    BYTE    d_fname[14];        /* name */
+    char    d_fname[14];        /* name */
 } DTA;
 
 #endif /* _DTA_H */

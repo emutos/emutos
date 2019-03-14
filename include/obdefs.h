@@ -158,9 +158,9 @@ typedef struct _ORECT
 
 typedef struct
 {
-        BYTE    *te_ptext;      /* ptr to text (must be 1st)    */
-        BYTE    *te_ptmplt;     /* ptr to template              */
-        BYTE    *te_pvalid;     /* ptr to validation chrs.      */
+        char    *te_ptext;      /* ptr to text (must be 1st)    */
+        char    *te_ptmplt;     /* ptr to template              */
+        char    *te_pvalid;     /* ptr to validation chrs.      */
         WORD    te_font;        /* font                         */
         WORD    te_junk1;       /* junk word                    */
         WORD    te_just;        /* justification- left, right...*/
@@ -175,7 +175,7 @@ typedef struct
 {
         WORD    *ib_pmask;
         WORD    *ib_pdata;
-        BYTE    *ib_ptext;
+        char    *ib_ptext;
         WORD    ib_char;
         WORD    ib_xchar;
         WORD    ib_ychar;

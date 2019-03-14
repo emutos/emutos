@@ -36,8 +36,8 @@ typedef struct
     volatile WORD   y_count;            /* Y count */
     UBYTE           hop;                /* HOP */
     UBYTE           op;                 /* OP */
-    volatile BYTE   status;             /* status bits & line# */
-    BYTE            skew;               /* FXSR, NFSR, & skew */
+    volatile UBYTE  status;             /* status bits & line# */
+    UBYTE           skew;               /* FXSR, NFSR, & skew */
 } BLIT;
 
 /*

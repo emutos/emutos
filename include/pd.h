@@ -32,34 +32,34 @@ typedef struct _pd PD;
 struct _pd
 {
 /* 0x00 */
-    BYTE    *p_lowtpa;      /* pointer to start of TPA */
-    BYTE    *p_hitpa;       /* pointer to end of TPA+1 */
-    BYTE    *p_tbase;       /* pointer to base of text segment */
+    char    *p_lowtpa;      /* pointer to start of TPA */
+    char    *p_hitpa;       /* pointer to end of TPA+1 */
+    char    *p_tbase;       /* pointer to base of text segment */
     LONG    p_tlen;         /* length of text segment */
 /* 0x10 */
-    BYTE    *p_dbase;       /* pointer to base of data segment */
+    char    *p_dbase;       /* pointer to base of data segment */
     LONG    p_dlen;         /* length of data segment */
-    BYTE    *p_bbase;       /* pointer to base of bss segment */
+    char    *p_bbase;       /* pointer to base of bss segment */
     LONG    p_blen;         /* length of bss segment */
 /* 0x20 */
     DTA     *p_xdta;
     PD      *p_parent;      /* parent PD */
     ULONG   p_flags;        /* see below */
-    BYTE    *p_env;         /* pointer to environment string */
+    char    *p_env;         /* pointer to environment string */
 /* 0x30 */
-    signed char p_uft[NUMSTD];  /* index into sys file table for std files */
-    BYTE    p_lddrv;
-    BYTE    p_curdrv;
+    SBYTE   p_uft[NUMSTD];  /* index into sys file table for std files */
+    char    p_lddrv;
+    char    p_curdrv;
     LONG    p_1fill[2];
 /* 0x40 */
-    BYTE    p_curdir[NUMCURDIR];    /* index into sys dir table */
-    BYTE    p_2fill[32-NUMCURDIR];
+    SBYTE   p_curdir[NUMCURDIR];    /* index into sys dir table */
+    char    p_2fill[32-NUMCURDIR];
 /* 0x60 */
     LONG    p_3fill[2];
     LONG    p_dreg[1];      /* dreg[0] */
     LONG    p_areg[5];      /* areg[3..7] */
 /* 0x80 */
-    BYTE    p_cmdlin[PDCLSIZE];     /* command line image */
+    char    p_cmdlin[PDCLSIZE];     /* command line image */
 };
 
 /* p_flags values: */
