@@ -139,14 +139,14 @@ extern LONG     addr_out[AO_SIZE];
 #define AP_VERSION global[0]                /* AES version */
 #define AP_COUNT   global[1]                /* max # of concurrent applications */
 #define AP_ID      global[2]                /* application id */
-#define AP_PRIVATE (*(LONG_ALIAS *)&global[3])      /* for application use */
-#define AP_PTREE   (*(ULONG_ALIAS *)&global[5])     /* ptr to array of tree addresses */
+#define AP_PRIVATE ULONG_AT(&global[3])     /* for application use */
+#define AP_PTREE   ULONG_AT(&global[5])     /* ptr to array of tree addresses */
                                         /* the following usage is not advertised */
-#define AP_1RESV   (*(ULONG_ALIAS *)&global[7])     /* address of rsc file in memory */
+#define AP_1RESV   ULONG_AT(&global[7])     /* address of rsc file in memory */
 #define AP_2RESV0  global[9]                        /* length of rsc file */
 #define AP_2RESV1  global[10]                       /* # of colour planes on screen */
-#define AP_3RESV   (*(ULONG_ALIAS*)&global[11])     /* ptr to AES global area D (struct THEGLO) */
-#define AP_4RESV   (*(LONG_ALIAS *)&global[13])     /* used in AES 4.00 */
+#define AP_3RESV   ULONG_AT(&global[11])    /* ptr to AES global area D (struct THEGLO) */
+#define AP_4RESV   ULONG_AT(&global[13])    /* used in AES 4.00 */
 
 #define AP_GLSIZE int_out[1]
 

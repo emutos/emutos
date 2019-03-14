@@ -180,6 +180,8 @@ typedef WORD WORD_ALIAS MAY_ALIAS;
 typedef ULONG ULONG_ALIAS MAY_ALIAS;
 typedef LONG LONG_ALIAS MAY_ALIAS;
 
+#define ULONG_AT(p) (*(ULONG_ALIAS *)(p)) /* ULONG pointed by p, regardless of pointer type */
+
 /*
  * GCC 7 needs special care to avoid warning when using switch/case fallthrough:
  * warning: this statement may fall through
