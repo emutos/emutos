@@ -286,7 +286,7 @@ static void init_mouse_packet(UBYTE *packet)
  */
 static BOOL handle_mouse_mode(WORD newkey)
 {
-    signed char distance;
+    SBYTE distance;
 
     /*
      * if we shouldn't be in emulation mode, but we are, send an
