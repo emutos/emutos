@@ -179,7 +179,6 @@ typedef UWORD UWORD_ALIAS MAY_ALIAS;
 typedef WORD WORD_ALIAS MAY_ALIAS;
 typedef ULONG ULONG_ALIAS MAY_ALIAS;
 typedef LONG LONG_ALIAS MAY_ALIAS;
-typedef BYTE *BYTEPTR_ALIAS MAY_ALIAS;
 
 /*
  * GCC 7 needs special care to avoid warning when using switch/case fallthrough:
