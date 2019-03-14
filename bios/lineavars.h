@@ -43,7 +43,7 @@ typedef struct {
 extern MCS mouse_cursor_save;       /* in linea variable area */
 extern MCS ext_mouse_cursor_save;   /* use for v_planes > 4 */
 
-extern const BYTE shift_offset[9];  /* pixel to address helper */
+extern const UBYTE shift_offset[9]; /* pixel to address helper */
 extern MCS *mcs_ptr;            /* ptr to mouse cursor save area in use */
 
 extern UWORD v_planes;          /* count of color planes */
