@@ -18,7 +18,6 @@ extern char     *ad_envrn;
 extern MFORM    *mouse_cursor[];
 
 extern MFORM    gl_mouse;
-extern BYTE     gl_logdrv;
 
 extern WORD     totpds;
 extern WORD     num_accs;

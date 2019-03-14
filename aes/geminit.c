@@ -120,7 +120,6 @@ GLOBAL char     *ad_envrn;              /* initialized in GEMSTART      */
 GLOBAL MFORM    *mouse_cursor[NUM_MOUSE_CURSORS];
 
 GLOBAL MFORM    gl_mouse;
-GLOBAL char     gl_logdrv;
 
 GLOBAL AESPD    *rlr, *drl, *nrl;
 GLOBAL EVB      *eul, *dlr, *zlr;
@@ -625,10 +624,8 @@ void run_accs_and_desktop(void)
     gl_bdely = 0x0;
     gl_bclick = 0x0;
 
-    gl_logdrv = dos_gdrv() + 'A';   /* boot directory       */
-
     strcpy(D.g_scrap, SCRAP_DIR_NAME);
-    D.g_scrap[0] = gl_logdrv;       /* set up scrap dir path */
+    D.g_scrap[0] = dos_gdrv() + 'A';/* set up scrap dir path */
 
     gsx_init();                     /* do gsx open work station */
 
