@@ -24,7 +24,7 @@ WORD appl_exit(void);
 /*
 WORD appl_write(WORD rwid, WORD length, const void *pbuff);
 WORD appl_read(WORD rwid, WORD length, void *pbuff);
-WORD appl_find(const BYTE *pname);
+WORD appl_find(const char *pname);
 WORD appl_tplay(const EVNTREC *tbuffer, WORD tlength, WORD tscale);
 WORD appl_trecord(EVNTREC *tbuffer, WORD tlength);
 */
@@ -57,8 +57,8 @@ WORD menu_bar(OBJECT *tree, WORD showit);
 WORD menu_icheck(OBJECT *tree, WORD itemnum, WORD checkit);
 WORD menu_ienable(OBJECT *tree, WORD itemnum, WORD enableit);
 WORD menu_tnormal(OBJECT *tree, WORD titlenum, WORD normalit);
-/* WORD menu_text(OBJECT *tree, WORD inum, const BYTE *ptext); */
-/* WORD menu_register(WORD pid, const BYTE *pstr); */
+/* WORD menu_text(OBJECT *tree, WORD inum, const char *ptext); */
+/* WORD menu_register(WORD pid, const char *pstr); */
 /* WORD menu_unregister(WORD mid); */
 WORD menu_click(WORD click, WORD setit);
 
@@ -86,7 +86,7 @@ WORD objc_change(OBJECT *tree, WORD drawob, WORD depth, WORD xc, WORD yc,
 WORD form_do(OBJECT *form, WORD start);
 WORD form_dial(WORD dtype, WORD ix, WORD iy, WORD iw, WORD ih,
                WORD x, WORD y, WORD w, WORD h);
-WORD form_alert(WORD defbut, const BYTE *astring);
+WORD form_alert(WORD defbut, const char *astring);
 /* WORD form_error(WORD errnum); */
 WORD form_center(OBJECT *tree, WORD *pcx, WORD *pcy, WORD *pcw, WORD *pch);
 /*
@@ -123,8 +123,8 @@ void graf_mkstate(WORD *pmx, WORD *pmy, WORD *pmstate, WORD *pkstate);
  *  Scrap Manager
  */
 /*
-WORD scrp_read(BYTE *pscrap);
-WORD scrp_write(const BYTE *pscrap);
+WORD scrp_read(char *pscrap);
+WORD scrp_write(const char *pscrap);
 */
 
 
@@ -132,10 +132,10 @@ WORD scrp_write(const BYTE *pscrap);
  * Form Selector Manager
  */
 /*
-WORD fsel_input(BYTE *pipath, BYTE *pisel, WORD *pbutton);
+WORD fsel_input(char *pipath, char *pisel, WORD *pbutton);
 */
 #if CONF_WITH_DESKTOP_SHORTCUTS
-WORD fsel_exinput(BYTE *pipath, BYTE *pisel, WORD *pbutton, const BYTE *title);
+WORD fsel_exinput(char *pipath, char *pisel, WORD *pbutton, const char *title);
 #endif
 
 
@@ -159,7 +159,7 @@ WORD wind_calc(WORD wctype, UWORD kind, WORD x, WORD y, WORD w, WORD h,
 /*
  *  Resource Manager
  */
-WORD rsrc_load(const BYTE *rsname);
+WORD rsrc_load(const char *rsname);
 WORD rsrc_free(void);
 /*
 WORD rsrc_gaddr(WORD rstype, WORD rsid, void **paddr);
@@ -172,15 +172,15 @@ WORD rsrc_gaddr_rom(WORD rstype, WORD rsid, void **paddr);  /* see deskmain.c */
 /*
  *  Shell Manager
  */
-/* WORD shel_read(BYTE *pcmd, BYTE *ptail); */
-WORD shel_write(WORD doex, WORD isgr, WORD iscr, BYTE *pcmd, BYTE *ptail);
+/* WORD shel_read(char *pcmd, char *ptail); */
+WORD shel_write(WORD doex, WORD isgr, WORD iscr, char *pcmd, char *ptail);
 WORD shel_get(void *pbuffer, WORD len);
 WORD shel_put(const void *pdata, WORD len);
 /*
-WORD shel_find(BYTE *ppath);
-WORD shel_envrn(BYTE *ppath, const BYTE *psrch);
-WORD shel_rdef(BYTE *lpcmd, BYTE *lpdir);
-WORD shel_wdef(BYTE *lpcmd, BYTE *lpdir);
+WORD shel_find(char *ppath);
+WORD shel_envrn(char *ppath, const char *psrch);
+WORD shel_rdef(char *lpcmd, char *lpdir);
+WORD shel_wdef(char *lpcmd, char *lpdir);
 */
 
 #endif  /* _AESBIND_H */

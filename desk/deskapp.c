@@ -136,7 +136,7 @@
 
 static WORD     inf_rev_level;  /* revision level of current EMUDESK.INF */
 
-static BYTE     *gl_buffer;
+static char     *gl_buffer;
 
 
 /* When we can't get EMUDESK.INF via shel_get() or by reading from
@@ -248,10 +248,10 @@ void app_free(ANODE *pa)
  *  terminated by @ or '\r', this is the following character; otherwise
  *  this is the terminating character (null).
  */
-BYTE *scan_str(BYTE *pcurr, BYTE **ppstr)
+char *scan_str(char *pcurr, char **ppstr)
 {
-    BYTE *dest = G.g_pbuff;
-    BYTE *end = gl_buffer + SIZE_BUFF - 1;
+    char *dest = G.g_pbuff;
+    char *end = gl_buffer + SIZE_BUFF - 1;
 
     *ppstr = dest;              /* return ptr to start of string in buffer */
 
@@ -285,7 +285,7 @@ BYTE *scan_str(BYTE *pcurr, BYTE **ppstr)
 /*
  *  Parse a single line from the EMUDESK.INF file
  */
-static BYTE *app_parse(BYTE *pcurr, ANODE *pa)
+static char *app_parse(char *pcurr, ANODE *pa)
 {
     WORD temp;
 
@@ -406,7 +406,7 @@ void app_tran(WORD bi_num)
  */
 static WORD setup_iconblks(const ICONBLK *ibstart, WORD count)
 {
-    BYTE *maskstart, *datastart, *allocmem;
+    char *maskstart, *datastart, *allocmem;
     char *p;
     WORD i, iwb, ih;
     LONG num_bytes, offset;
@@ -492,7 +492,7 @@ static WORD load_user_icons(void)
     RSHDR *hdr;
     ICONBLK *ibptr, *ib;
     WORD i, n, rc, w, h;
-    BYTE icon_rsc_name[sizeof(ICON_RSC_NAME)];
+    char icon_rsc_name[sizeof(ICON_RSC_NAME)];
 
     /* Do not load user icons if Control was held on startup */
     if (bootflags & BOOTFLAG_SKIP_AUTO_ACC)
@@ -622,8 +622,8 @@ void app_start(void)
     WORD i, x, y;
     ANODE *pa;
     WSAVE *pws;
-    BYTE *buf, *inf_data;
-    BYTE *pcurr, *ptmp, *pauto = NULL;
+    char *buf, *inf_data;
+    char *pcurr, *ptmp, *pauto = NULL;
     WORD envr, xcnt, ycnt, xcent, wincnt, dummy;
 
     /* remember start drive */
@@ -921,10 +921,10 @@ static void app_revit(void)
 /*
  *  Perform the actual save of the EMUDESK.INF file
  */
-static void save_to_disk(BYTE *buf, WORD len)
+static void save_to_disk(char *buf, WORD len)
 {
     LONG ret;
-    BYTE inf_file_name[sizeof(INF_FILE_NAME)];
+    char inf_file_name[sizeof(INF_FILE_NAME)];
 
     /* make sure user really wants to save the desktop */
     if (fun_alert(1, STSVINF) != 1)
@@ -991,8 +991,8 @@ void app_save(WORD todisk)
 {
     WORD i, len;
     WORD env1, env2, mode, env5;
-    BYTE type;
-    BYTE *outbuf, *inf_data, *pcurr, *ptmp;
+    char type;
+    char *outbuf, *inf_data, *pcurr, *ptmp;
     ANODE *pa;
     WSAVE *pws;
 
@@ -1281,11 +1281,11 @@ ANODE *app_afind_by_id(WORD obid)
  *      TRUE if name matches application name
  *      FALSE if name matches data name
  */
-ANODE *app_afind_by_name(WORD atype, WORD ignore, BYTE *pspec, BYTE *pname, WORD *pisapp)
+ANODE *app_afind_by_name(WORD atype, WORD ignore, char *pspec, char *pname, WORD *pisapp)
 {
     ANODE *pa;
     WORD match;
-    BYTE pathname[MAXPATHLEN];
+    char pathname[MAXPATHLEN];
 
     strcpy(pathname,pspec);                 /* build full pathname */
     strcpy(filename_start(pathname),pname);

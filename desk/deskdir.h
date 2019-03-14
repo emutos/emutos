@@ -24,12 +24,12 @@ typedef struct {    /* #files/#folders/total filesize of directory & its subdire
  */
 void draw_fld(OBJECT *tree, WORD obj);
 void draw_dial(OBJECT *tree);
-BYTE *add_fname(BYTE *path, BYTE *new_name);
-void restore_path(BYTE *target);
-void del_fname(BYTE *pstr);
-void add_path(BYTE *path, BYTE *new_name);
-WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path, OBJECT *tree, DIRCOUNT *count);
-WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *count);
+char *add_fname(char *path, char *new_name);
+void restore_path(char *target);
+void del_fname(char *pstr);
+void add_path(char *path, char *new_name);
+WORD d_doop(WORD level, WORD op, char *psrc_path, char *pdst_path, OBJECT *tree, DIRCOUNT *count);
+WORD dir_op(WORD op, WORD icontype, PNODE *pspath, char *pdst_path, DIRCOUNT *count);
 WORD illegal_op_msg(void);
 
 #endif  /* _DESKDIR_H */

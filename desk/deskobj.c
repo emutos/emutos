@@ -54,7 +54,7 @@ static const OBJECT gl_sampob[2] =
 static WORD sob_malloc(void)
 {
     LONG mem, limit, num_obs;
-    BYTE *p;
+    char *p;
 
     /* We need to calculate how many objects can be displayed in a
      * maximum-sized window.  Because icons take less display space,

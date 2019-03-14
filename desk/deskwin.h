@@ -69,13 +69,13 @@ struct _windnode
         WORD            w_pnrow;                /* physical # of rows   */
         WORD            w_vnrow;                /* virtual # of rows    */
         PNODE           w_pnode;                /* now embedded         */
-        BYTE            w_name[LEN_ZPATH+2];    /* allow for leading & trailing spaces */
+        char            w_name[LEN_ZPATH+2];    /* allow for leading & trailing spaces */
 /*
  * the following array must be large enough to hold the sprintf-formatted
  * output of the longest translated version of the STINFOST/STINFST2 resource item.
  * as of december 2014, this is 51 bytes for the Greek-language version.
  */
-        BYTE            w_info[72];
+        char            w_info[72];
 };
 
 

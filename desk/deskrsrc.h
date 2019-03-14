@@ -10,6 +10,6 @@
 #ifndef _DESKRSRC_H
 #define _DESKRSRC_H
 
-BYTE *ini_str(WORD stnum);
+char *ini_str(WORD stnum);
 
 #endif  /* _DESKRSRC_H */

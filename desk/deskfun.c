@@ -73,7 +73,7 @@ WORD fun_alert(WORD defbut, WORD stnum)
 /*
  *  Issue an alert after merging in an optional character variable
  */
-WORD fun_alert_merge(WORD defbut, WORD stnum, BYTE merge)
+WORD fun_alert_merge(WORD defbut, WORD stnum, char merge)
 {
     rsrc_gaddr_rom(R_STRING, stnum, (void **)&G.a_alert);
     sprintf(G.g_1text, G.a_alert, merge);
@@ -99,7 +99,7 @@ WORD fun_alert_long(WORD defbut, WORD stnum, LONG merge)
 /*
  *  Issue an alert after merging in a string
  */
-WORD fun_alert_string(WORD defbut, WORD stnum, BYTE *merge)
+WORD fun_alert_string(WORD defbut, WORD stnum, char *merge)
 {
     rsrc_gaddr_rom(R_STRING, stnum, (void **)&G.a_alert);
     sprintf(G.g_1text, G.a_alert, merge);
@@ -126,7 +126,7 @@ void fun_msg(WORD type, WORD w3, WORD w4, WORD w5, WORD w6, WORD w7)
 /*
  *  Mark window nodes for rebuild
  */
-void fun_mark_for_rebld(BYTE *path)
+void fun_mark_for_rebld(char *path)
 {
     WNODE *pwin;
 
@@ -180,7 +180,7 @@ void fun_rebld_marked(void)
 /*
  *  Rebuild any windows with matching path
  */
-void fun_rebld(BYTE *ptst)
+void fun_rebld(char *ptst)
 {
     WNODE *pwin;
 
@@ -206,7 +206,7 @@ void fun_rebld(BYTE *ptst)
  */
 void fun_mask(WNODE *pw)
 {
-    BYTE *maskptr, filemask[LEN_ZFNAME];
+    char *maskptr, filemask[LEN_ZFNAME];
     OBJECT *tree;
 
     tree = G.a_trees[ADFMASK];
@@ -244,8 +244,8 @@ WORD fun_mkdir(WNODE *pw_node)
     PNODE *pp_node;
     OBJECT *tree;
     WORD  len;
-    BYTE  fnew_name[LEN_ZFNAME], unew_name[LEN_ZFNAME], *ptmp;
-    BYTE  path[MAXPATHLEN];
+    char  fnew_name[LEN_ZFNAME], unew_name[LEN_ZFNAME], *ptmp;
+    char  path[MAXPATHLEN];
 
     tree = G.a_trees[ADMKDBOX];
     pp_node = &pw_node->w_pnode;
@@ -300,7 +300,7 @@ WORD fun_mkdir(WNODE *pw_node)
  *  path associated with 'pspath'.  'op' can be OP_DELETE, OP_COPY,
  *  OP_MOVE.
  */
-WORD fun_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdest)
+WORD fun_op(WORD op, WORD icontype, PNODE *pspath, char *pdest)
 {
     DIRCOUNT count;
     WORD more;
@@ -327,7 +327,7 @@ WORD fun_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdest)
  *   D E S K 1   r o u t i n e s                                         *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-static void w_setpath(WNODE *pw, BYTE *pathname)
+static void w_setpath(WNODE *pw, char *pathname)
 {
     WORD icx, icy;
     GRECT rc;
@@ -382,10 +382,10 @@ static void fun_full_close(WNODE *pw)
  *  where X,Y,Z are folders and F.E is a filename.  In the above
  *  example, this would change D:\X\Y\Z\F.E to D:\X\Y\F.E
  */
-static void remove_one_level(BYTE *pathname)
+static void remove_one_level(char *pathname)
 {
-    BYTE *stop = pathname+2;    /* the first path separator */
-    BYTE *filename, *prev;
+    char *stop = pathname+2;    /* the first path separator */
+    char *filename, *prev;
 
     filename = filename_start(pathname);
     if (filename-1 <= stop)     /* already at the root */
@@ -404,8 +404,8 @@ static void remove_one_level(BYTE *pathname)
  */
 void fun_close(WNODE *pw, WORD closetype)
 {
-    BYTE pathname[MAXPATHLEN];
-    BYTE *fname;
+    char pathname[MAXPATHLEN];
+    char *fname;
 
     graf_mouse(HGLASS, NULL);
 
@@ -443,7 +443,7 @@ void fun_close(WNODE *pw, WORD closetype)
  *
  * returns FALSE if no file is selected (probable program bug)
  */
-static BOOL build_selected_path(PNODE *pn, BYTE *pathname)
+static BOOL build_selected_path(PNODE *pn, char *pathname)
 {
     FNODE *fn;
 
@@ -488,7 +488,7 @@ static void fun_win2win(WORD src_wh, WORD dst_wh, WORD dst_ob, WORD keystate)
     WNODE *psw, *pdw;
     ANODE *pda;
     FNODE *pdf;
-    BYTE  destpath[MAXPATHLEN];
+    char  destpath[MAXPATHLEN];
 
     op = (keystate&MODE_CTRL) ? OP_MOVE : OP_COPY;
     psw = win_find(src_wh);
@@ -547,7 +547,7 @@ static void fun_win2win(WORD src_wh, WORD dst_wh, WORD dst_ob, WORD keystate)
 static WORD fun_file2desk(PNODE *pn_src, WORD icontype_src, ANODE *an_dest, WORD dobj, WORD keystate)
 {
     ICONBLK *dicon;
-    BYTE pathname[MAXPATHLEN];
+    char pathname[MAXPATHLEN];
     WORD operation, ret;
 
     pathname[1] = ':';      /* set up everything except drive letter */
@@ -559,7 +559,7 @@ static WORD fun_file2desk(PNODE *pn_src, WORD icontype_src, ANODE *an_dest, WORD
         switch(an_dest->a_type)
         {
 #if CONF_WITH_DESKTOP_SHORTCUTS
-        BYTE tail[MAXPATHLEN];
+        char tail[MAXPATHLEN];
 
         case AT_ISFILE:     /* dropping something onto a file */
             if (an_dest->a_aicon < 0)       /* is target a program? */
@@ -613,10 +613,10 @@ static WORD fun_file2desk(PNODE *pn_src, WORD icontype_src, ANODE *an_dest, WORD
 }
 
 
-static WORD fun_file2win(PNODE *pn_src, BYTE  *spec, ANODE *an_dest, FNODE *fn_dest)
+static WORD fun_file2win(PNODE *pn_src, char  *spec, ANODE *an_dest, FNODE *fn_dest)
 {
-    BYTE *p;
-    BYTE pathname[MAXPATHLEN];
+    char *p;
+    char pathname[MAXPATHLEN];
 
     strcpy(pathname, spec);
 
@@ -662,7 +662,7 @@ static WORD fun_file2any(WORD sobj, WNODE *wn_dest, ANODE *an_dest, FNODE *fn_de
     ICONBLK * ib_src;
     PNODE *pn_src;
     ANODE *an_src;
-    BYTE path[MAXPATHLEN];
+    char path[MAXPATHLEN];
 
     an_src = i_find(DESKWH, sobj, NULL, NULL);
 
@@ -829,7 +829,7 @@ BOOL fun_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my, WOR
 /*
  * Function called to delete a file or the contents of a folder or disk
  */
-static WORD delete_ffd(BYTE *path, WORD icontype)
+static WORD delete_ffd(char *path, WORD icontype)
 {
     PNODE *pn;
     FNODE *fn;
@@ -858,7 +858,7 @@ static WORD delete_ffd(BYTE *path, WORD icontype)
  */
 void fun_del(WORD sobj)
 {
-    BYTE path[MAXPATHLEN];
+    char path[MAXPATHLEN];
     ANODE *pa;
     WNODE *pw;
     WORD item_found = 0;

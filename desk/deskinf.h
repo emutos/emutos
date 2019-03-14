@@ -12,11 +12,11 @@
 
 WORD dr_code(PARMBLK *pparms);
 WORD inf_show(OBJECT *tree, WORD start);
-WORD inf_file_folder(BYTE *ppath, FNODE *pf);
-WORD inf_disk(BYTE dr_id);
+WORD inf_file_folder(char *ppath, FNODE *pf);
+WORD inf_disk(char dr_id);
 void inf_numset(OBJECT *tree, WORD obj, ULONG value);
 WORD inf_pref(void);
-WORD opn_appl(BYTE *papname, BYTE *ptail);
+WORD opn_appl(char *papname, char *ptail);
 void start_dialog(OBJECT *tree);
 void end_dialog(OBJECT *tree);
 

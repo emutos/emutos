@@ -620,8 +620,8 @@ WORD win_isel(OBJECT olist[], WORD root, WORD curr)
  */
 void win_sname(WNODE *pw)
 {
-    BYTE *psrc;
-    BYTE *pdst;
+    char *psrc;
+    char *pdst;
 
     psrc = pw->w_pnode.p_spec;
     pdst = pw->w_name;

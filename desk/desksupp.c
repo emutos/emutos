@@ -326,11 +326,11 @@ WORD do_wfull(WORD wh)
  *
  *  returns ptr to DTA if it exists, else NULL
  */
-static DTA *file_exists(BYTE *path, BYTE *name)
+static DTA *file_exists(char *path, char *name)
 {
     DTA *dta;
     WORD rc;
-    BYTE fullname[MAXPATHLEN];
+    char fullname[MAXPATHLEN];
 
     strcpy(fullname, path);
     if (name)
@@ -352,8 +352,8 @@ static void remove_locate_shortcut(WORD curr)
 {
     WORD rc, button;
     ANODE *pa;
-    BYTE path[MAXPATHLEN];
-    BYTE fname[LEN_ZFNAME], *p;
+    char path[MAXPATHLEN];
+    char fname[LEN_ZFNAME], *p;
 
     pa = app_afind_by_id(curr);
     if (!pa)        /* can't happen */
@@ -391,7 +391,7 @@ static void remove_locate_shortcut(WORD curr)
  *  pathname to *.*
  */
 WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon,
-                BYTE *pathname, GRECT *pt, WORD redraw)
+                char *pathname, GRECT *pt, WORD redraw)
 {
     WORD ret;
 
@@ -558,8 +558,8 @@ static WORD show_buf(const char *s,LONG len)
 {
     LONG n;
     WORD response;
-    BYTE c, cprev = 0;
-    BYTE *msg;
+    char c, cprev = 0;
+    char *msg;
 
     n = len;
     while(n-- > 0)
@@ -616,7 +616,7 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
 {
     LONG rc, n;
     WORD handle, scr_width, scr_height;
-    BYTE *msg;
+    char *msg;
 
     rc = dos_open(name,0);
     if (rc < 0L)
@@ -678,13 +678,13 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
  *  double-clicking an icon, or by pressing a function key, or by
  *  dropping a file on to a desktop shortcut for a program
  */
-WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname, BYTE *tail)
+WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, char *pathname, char *pname, char *tail)
 {
     WNODE *pw;
     WORD ret, done;
     WORD isgraf, isparm, installed_datafile;
-    BYTE *pcmd, *ptail, *p;
-    BYTE app_path[MAXPATHLEN];
+    char *pcmd, *ptail, *p;
+    char app_path[MAXPATHLEN];
 
     done = FALSE;
 
@@ -857,9 +857,9 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname, BYT
 /*
  *  Build root path for specified drive
  */
-void build_root_path(BYTE *path,WORD drive)
+void build_root_path(char *path,WORD drive)
 {
-    BYTE *p = path;
+    char *p = path;
 
     *p++ = drive;
     *p++= ':';
@@ -880,7 +880,7 @@ WORD do_dopen(WORD curr)
     WORD drv;
     WNODE *pw;
     ICONBLK *pib;
-    BYTE path[10];
+    char path[10];
 
     if (curr >= 0)
     {
@@ -923,11 +923,11 @@ WORD do_dopen(WORD curr)
  *  1) desktop shortcuts are configured & the current window is the desktop, or
  *  2) 'allow_new_win' is TRUE and the Alt key is pressed
  */
-void do_fopen(WNODE *pw, WORD curr, BYTE *pathname, WORD allow_new_win)
+void do_fopen(WNODE *pw, WORD curr, char *pathname, WORD allow_new_win)
 {
     GRECT t;
     WORD junk, keystate, new_win = FALSE;
-    BYTE app_path[MAXPATHLEN];
+    char app_path[MAXPATHLEN];
 
     wind_get_grect(pw->w_id, WF_WXYWH, &t);
 
@@ -952,7 +952,7 @@ void do_fopen(WNODE *pw, WORD curr, BYTE *pathname, WORD allow_new_win)
         /*
          * handle renamed target of shortcut
          */
-        BYTE *p = filename_start(app_path);
+        char *p = filename_start(app_path);
         *p = '\0';
         if (set_default_path(app_path) == EPTHNF)
         {
@@ -1011,10 +1011,10 @@ void do_fopen(WNODE *pw, WORD curr, BYTE *pathname, WORD allow_new_win)
  *
  *  returns FALSE iff the resulting pathname would be too long
  */
-static BOOL add_one_level(BYTE *pathname,BYTE *folder)
+static BOOL add_one_level(char *pathname,char *folder)
 {
     WORD plen, flen;
-    BYTE filename[LEN_ZFNAME+1], *p;
+    char filename[LEN_ZFNAME+1], *p;
 
     flen = strlen(folder);
     if (flen == 0)
@@ -1054,8 +1054,8 @@ WORD do_open(WORD curr)
     WNODE *pw;
     FNODE *pf;
     WORD isapp;
-    BYTE pathname[MAXPATHLEN];
-    BYTE filename[LEN_ZFNAME];
+    char pathname[MAXPATHLEN];
+    char filename[LEN_ZFNAME];
 
     pa = i_find(G.g_cwin, curr, &pf, &isapp);
     if (!pa)
@@ -1072,7 +1072,7 @@ WORD do_open(WORD curr)
 #if CONF_WITH_DESKTOP_SHORTCUTS
         if (pa->a_flags & AF_ISDESK)
         {
-            BYTE *p = filename_start(pa->a_pdata);
+            char *p = filename_start(pa->a_pdata);
             /* check for root folder */
             if ((pa->a_type == AT_ISFOLD) && (p == pa->a_pdata))
             {
@@ -1130,8 +1130,8 @@ WORD do_info(WORD curr)
     ANODE *pa;
     WNODE *pw;
     FNODE fn, *pf;
-    BYTE pathname[MAXPATHLEN];
-    BYTE *pathptr;
+    char pathname[MAXPATHLEN];
+    char *pathptr;
 
     MAYBE_UNUSED(fn);
     MAYBE_UNUSED(pathname);
@@ -1193,7 +1193,7 @@ WORD do_info(WORD curr)
 /*
  *  Write boot sector
  */
-static WORD write_boot(BYTE *buf, WORD disktype, WORD drive)
+static WORD write_boot(char *buf, WORD disktype, WORD drive)
 {
     Protobt((LONG)buf, RANDOM_SERIAL, disktype, 0);
     *buf = 0xe9;        /* DOS compatibility */
@@ -1204,10 +1204,10 @@ static WORD write_boot(BYTE *buf, WORD disktype, WORD drive)
 /*
  *  Initialise starting sectors of floppy disk (boot sector, FATs, root dir)
  */
-static WORD init_start(BYTE *buf, WORD disktype, WORD drive, BYTE *label)
+static WORD init_start(char *buf, WORD disktype, WORD drive, char *label)
 {
     BPB *bpb;
-    BYTE *p;
+    char *p;
 
     /*
      * write boot so we can do a Getbpb()
@@ -1270,7 +1270,7 @@ static BOOL retry_format(void)
  */
 static WORD format_floppy(OBJECT *tree, WORD max_width, WORD incr)
 {
-    BYTE *buf, label[LEN_ZFNAME];
+    char *buf, label[LEN_ZFNAME];
     const WORD *skewtab;
     WORD drive, numsides, disktype, spt, trackskew;
     WORD track, side, skewindex;
@@ -1557,7 +1557,7 @@ ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp)
 /*
  *  Routine to change the default drive and directory
  */
-WORD set_default_path(BYTE *path)
+WORD set_default_path(char *path)
 {
     dos_sdrv(path[0]-'A');
 
@@ -1571,9 +1571,9 @@ WORD set_default_path(BYTE *path)
  *  if it is, return TRUE
  *  else issue form_alert and return FALSE
  */
-BOOL valid_drive(BYTE drive)
+BOOL valid_drive(char drive)
 {
-    BYTE drvstr[2];
+    char drvstr[2];
 
     drvstr[0] = drive;
     drvstr[1] = '\0';

@@ -69,10 +69,10 @@
  *
  * Returns pointer to end of formatted string
  */
-static BYTE *fmt_time(UWORD time, BYTE *fmt_string, BYTE *ptime)
+static char *fmt_time(UWORD time, char *fmt_string, char *ptime)
 {
     WORD hh, mm;
-    BYTE *suffix = "  ";
+    char *suffix = "  ";
 
     hh = (time >> 11) & 0x001f;
     mm = (time >> 5) & 0x003f;
@@ -119,7 +119,7 @@ static BYTE *fmt_time(UWORD time, BYTE *fmt_string, BYTE *ptime)
  *
  * Returns pointer to end of formatted string
  */
-static BYTE *fmt_date(UWORD date, BOOL fourdigit, BYTE *pdate)
+static char *fmt_date(UWORD date, BOOL fourdigit, char *pdate)
 {
     WORD dd, mm, yy;
     WORD var1, var2, var3;
@@ -185,9 +185,9 @@ static BYTE *fmt_date(UWORD date, BOOL fourdigit, BYTE *pdate)
  * Note: files larger than 9999999 bytes will be displayed
  * in kbytes on narrow screens
  */
-static BYTE *fmt_size(ULONG size, BOOL wide, BYTE *psize)
+static char *fmt_size(ULONG size, BOOL wide, char *psize)
 {
-    BYTE *fmt_string;
+    char *fmt_string;
 
     /*
      * if the screen is wide enough, it's simple
@@ -215,13 +215,13 @@ static BYTE *fmt_size(ULONG size, BOOL wide, BYTE *psize)
 }
 
 
-static WORD format_fnode(LONG pfnode, BYTE *pfmt)
+static WORD format_fnode(LONG pfnode, char *pfmt)
 {
     FNODE *pf;
-    BYTE *pdst, *psrc;
+    char *pdst, *psrc;
     WORD i;
     BOOL wide;
-    BYTE indicator;
+    char indicator;
 
     /*
      * determine if we should use the wide format
@@ -300,7 +300,7 @@ static WORD dr_fnode(UWORD last_state, UWORD curr_state, WORD x, WORD y,
             WORD w, WORD h, LONG fnode)
 {
     WORD len;
-    BYTE temp[LEN_FNODE];
+    char temp[LEN_FNODE];
 
     if ((last_state ^ curr_state) & SELECTED)
         bb_fill(MD_XOR, FIS_SOLID, IP_SOLID, x, y, w, h);
@@ -434,7 +434,7 @@ static void inf_fifosz(OBJECT *tree, WORD dl_fi, WORD dl_fo, WORD dl_sz)
 
 static void inf_dttm(OBJECT *tree, FNODE *pf, WORD dl_dt, WORD dl_tm)
 {
-    BYTE str[11];
+    char str[11];
 
     fmt_date(pf->f_date, 1, str);   /* 4-digit year always */
     inf_sset(tree, dl_dt, str);
@@ -448,7 +448,7 @@ static void inf_dttm(OBJECT *tree, FNODE *pf, WORD dl_dt, WORD dl_tm)
  * Count files, folders, and total filesize in a given path
  * Values are stored in G.g_nfiles & friends
  */
-static WORD count_ffs(BYTE *path)
+static WORD count_ffs(char *path)
 {
     G.g_nfiles = G.g_ndirs = G.g_size = 0L;
 
@@ -465,15 +465,15 @@ static WORD count_ffs(BYTE *path)
  *      1   continue
  *      -1  continue, and mark window for redraw
  */
-WORD inf_file_folder(BYTE *ppath, FNODE *pf)
+WORD inf_file_folder(char *ppath, FNODE *pf)
 {
     OBJECT *tree;
     WORD nmidx, title, ret;
     BOOL more, changed = FALSE;
-    BYTE attr;
-    BYTE srcpth[MAXPATHLEN];
-    BYTE dstpth[MAXPATHLEN];
-    BYTE poname[LEN_ZFNAME], pnname[LEN_ZFNAME];
+    char attr;
+    char srcpth[MAXPATHLEN];
+    char dstpth[MAXPATHLEN];
+    char poname[LEN_ZFNAME], pnname[LEN_ZFNAME];
     OBJECT *obj;
 
     tree = G.a_trees[ADFFINFO];
@@ -622,14 +622,14 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
  *      0   cancel
  *      1   continue
  */
-WORD inf_disk(BYTE dr_id)
+WORD inf_disk(char dr_id)
 {
     OBJECT *tree;
     LONG total, avail;
     WORD more;
-    BYTE srcpth[MAXPATHLEN];
-    BYTE label[LEN_ZFNAME];
-    BYTE drive[2];
+    char srcpth[MAXPATHLEN];
+    char label[LEN_ZFNAME];
+    char drive[2];
 
     drive[0] = dr_id;
     drive[1] = '\0';
@@ -964,10 +964,10 @@ void inf_conf(void)
 /*
  *       Open application icon
  */
-WORD opn_appl(BYTE *papname, BYTE *ptail)
+WORD opn_appl(char *papname, char *ptail)
 {
     OBJECT *tree;
-    BYTE poname[LEN_ZFNAME];
+    char poname[LEN_ZFNAME];
 
     tree = G.a_trees[ADOPENAP];
 

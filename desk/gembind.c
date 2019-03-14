@@ -148,7 +148,7 @@ WORD appl_read(WORD rwid, WORD length, void *pbuff)
 */
 
 /* unused
-WORD appl_find(const BYTE *pname)
+WORD appl_find(const char *pname)
 {
     AP_PNAME = (LONG)pname;
     return gem_if(AES_CTRL_CODE(APPL_FIND, 0, 1, 1));
@@ -327,7 +327,7 @@ WORD menu_tnormal(OBJECT *tree, WORD titlenum, WORD normalit)
 
 
 /* unused
-WORD menu_text(OBJECT *tree, WORD inum, const BYTE *ptext)
+WORD menu_text(OBJECT *tree, WORD inum, const char *ptext)
 {
     MM_ITREE = (LONG)tree;
     ITEM_NUM = inum;
@@ -338,7 +338,7 @@ WORD menu_text(OBJECT *tree, WORD inum, const BYTE *ptext)
 
 
 /* unused
-WORD menu_register(WORD pid, const BYTE *pstr)
+WORD menu_register(WORD pid, const char *pstr)
 {
     MM_PID = pid;
     MM_PSTR = (LONG)pstr;
@@ -491,7 +491,7 @@ WORD form_dial(WORD dtype, WORD ix, WORD iy, WORD iw, WORD ih,
 }
 
 
-WORD form_alert(WORD defbut, const BYTE *astring)
+WORD form_alert(WORD defbut, const char *astring)
 {
     FM_DEFBUT = defbut;
     FM_ASTRING = (LONG)astring;
@@ -675,13 +675,13 @@ void graf_mkstate(WORD *pmx, WORD *pmy, WORD *pmstate, WORD *pkstate)
  *  Scrap Manager
  */
 /* unused
-WORD scrp_read(BYTE *pscrap)
+WORD scrp_read(char *pscrap)
 {
     SC_PATH = (LONG)pscrap;
     return gem_if(AES_CTRL_CODE(SCRP_READ, 0, 1, 1));
 }
 
-WORD scrp_write(const BYTE *pscrap)
+WORD scrp_write(const char *pscrap)
 {
     SC_PATH = (LONG)pscrap;
     return gem_if(AES_CTRL_CODE(SCRP_WRITE, 0, 1, 1));
@@ -693,7 +693,7 @@ WORD scrp_write(const BYTE *pscrap)
  *  File Selector Manager
  */
 /* unused
-WORD fsel_input(BYTE *pipath, BYTE *pisel, WORD *pbutton)
+WORD fsel_input(char *pipath, char *pisel, WORD *pbutton)
 {
     FS_IPATH = (LONG)pipath;
     FS_ISEL = (LONG)pisel;
@@ -705,7 +705,7 @@ WORD fsel_input(BYTE *pipath, BYTE *pisel, WORD *pbutton)
 
 
 #if CONF_WITH_DESKTOP_SHORTCUTS
-WORD fsel_exinput(BYTE *pipath, BYTE *pisel, WORD *pbutton, const BYTE *title)
+WORD fsel_exinput(char *pipath, char *pisel, WORD *pbutton, const char *title)
 {
     FS_IPATH = (LONG)pipath;
     FS_ISEL = (LONG)pisel;
@@ -840,7 +840,7 @@ WORD wind_new(void)
 /*
  *  Resource Manager
  */
-WORD rsrc_load(const BYTE *rsname)
+WORD rsrc_load(const char *rsname)
 {
     RS_PFNAME = (LONG)rsname;
     return gem_if(AES_CTRL_CODE(RSRC_LOAD, 0, 1, 1));
@@ -900,7 +900,7 @@ WORD rsrc_rcfix(RSHDR *hdr)
  *  Shell Manager
  */
 /* unused
-WORD shel_read(BYTE *pcmd, BYTE *ptail)
+WORD shel_read(char *pcmd, char *ptail)
 {
     SH_PCMD = (LONG)pcmd;
     SH_PTAIL = (LONG)ptail;
@@ -909,7 +909,7 @@ WORD shel_read(BYTE *pcmd, BYTE *ptail)
 */
 
 
-WORD shel_write(WORD doex, WORD isgr, WORD iscr, BYTE *pcmd, BYTE *ptail)
+WORD shel_write(WORD doex, WORD isgr, WORD iscr, char *pcmd, char *ptail)
 {
     SH_DOEX = doex;
     SH_ISGR = isgr;
@@ -937,7 +937,7 @@ WORD shel_put(const void *pdata, WORD len)
 
 
 /* unused
-WORD shel_find(BYTE *ppath)
+WORD shel_find(char *ppath)
 {
     SH_PATH = (LONG)ppath;
     return gem_if(AES_CTRL_CODE(SHEL_FIND, 0, 1, 1));
@@ -946,7 +946,7 @@ WORD shel_find(BYTE *ppath)
 
 
 /* unused
-WORD shel_envrn(BYTE *ppath, const BYTE *psrch)
+WORD shel_envrn(char *ppath, const char *psrch)
 {
     SH_PATH = (LONG)ppath;
     SH_SRCH = (LONG)psrch;
@@ -956,7 +956,7 @@ WORD shel_envrn(BYTE *ppath, const BYTE *psrch)
 
 
 /* unused
-WORD shel_rdef(BYTE *lpcmd, BYTE *lpdir)
+WORD shel_rdef(char *lpcmd, char *lpdir)
 {
     SH_LPCMD = (LONG)lpcmd;
     SH_LPDIR = (LONG)lpdir;
@@ -965,7 +965,7 @@ WORD shel_rdef(BYTE *lpcmd, BYTE *lpdir)
 */
 
 /* unused
-WORD shel_wdef(BYTE *lpcmd, BYTE *lpdir)
+WORD shel_wdef(char *lpcmd, char *lpdir)
 {
     SH_LPCMD = (LONG)lpcmd;
     SH_LPDIR = (LONG)lpdir;

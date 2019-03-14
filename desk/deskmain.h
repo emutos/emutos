@@ -10,8 +10,8 @@
 #ifndef _DESKMAIN_H
 #define _DESKMAIN_H
 
-extern BYTE     gl_amstr[4];
-extern BYTE     gl_pmstr[4];
+extern char     gl_amstr[4];
+extern char     gl_pmstr[4];
 
 extern WORD     gl_apid;
 

@@ -13,7 +13,7 @@
 #define CTL_Q   ('Q'-0x40)
 #define CTL_S   ('S'-0x40)
 
-void build_root_path(BYTE *path, WORD drive);
+void build_root_path(char *path, WORD drive);
 void deselect_all(OBJECT *tree);
 void desk_clear(WORD wh);
 void desk_clear_all(void);
@@ -23,10 +23,10 @@ void do_xyfix(WORD *px, WORD *py);
 void do_wopen(WORD new_win, WORD wh, WORD curr, WORD x, WORD y, WORD w, WORD h);
 WORD do_wfull(WORD wh);
 WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon,
-                BYTE *pathname, GRECT *pt, WORD redraw);
-WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, BYTE *pathname, BYTE *pname, BYTE *tail);
+                char *pathname, GRECT *pt, WORD redraw);
+WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, char *pathname, char *pname, char *tail);
 WORD do_dopen(WORD curr);
-void do_fopen(WNODE *pw, WORD curr, BYTE *pathname, WORD allow_new_win);
+void do_fopen(WNODE *pw, WORD curr, char *pathname, WORD allow_new_win);
 WORD do_open(WORD curr);
 WORD do_info(WORD curr);
 void do_format(void);
@@ -34,7 +34,7 @@ void malloc_fail_alert(void);
 void refresh_drive(WORD drive);
 void refresh_window(WNODE *pw);
 ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp);
-WORD set_default_path(BYTE *path);
-BOOL valid_drive(BYTE drive);
+WORD set_default_path(char *path);
+BOOL valid_drive(char drive);
 
 #endif  /* _DESKSUPP_H */

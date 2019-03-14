@@ -155,10 +155,10 @@ typedef struct
 /*GLOBAL*/ WORD         g_wfull;
 /*GLOBAL*/ WORD         g_hfull;
 
-/*GLOBAL*/ BYTE         g_cmd[128];
-/*GLOBAL*/ BYTE         g_tail[128];
+/*GLOBAL*/ char         g_cmd[128];
+/*GLOBAL*/ char         g_tail[128];
 
-/*GLOBAL*/ BYTE         *a_alert;
+/*GLOBAL*/ char         *a_alert;
 
 /*GLOBAL*/ OBJECT       *a_trees[RS_NTREE];     /* ptrs to dialog trees */
 
@@ -168,18 +168,18 @@ typedef struct
 /*GLOBAL*/ WORD         g_wlastsel;             /* window holding last  */
                                                 /*   selection          */
                                             /* current desktop preference values */
-/*GLOBAL*/ BYTE         g_ccopypref;            /* curr. copy pref.     */
-/*GLOBAL*/ BYTE         g_cdelepref;            /* curr. delete pref.   */
-/*GLOBAL*/ BYTE         g_covwrpref;            /* curr. overwrite pref.*/
-/*GLOBAL*/ BYTE         g_cdclkpref;            /* curr. double click   */
-/*GLOBAL*/ BYTE         g_cmclkpref;            /* curr. menu click     */
-/*GLOBAL*/ BYTE         g_ctimeform;            /* curr. time format    */
-/*GLOBAL*/ BYTE         g_cdateform;            /* curr. date format    */
-/*GLOBAL*/ BYTE         g_blitter;              /* curr. blitter enable */
-/*GLOBAL*/ BYTE         g_appdir;               /* default dir is application dir */
-/*GLOBAL*/ BYTE         g_fullpath;             /* use full path for parameter */
+/*GLOBAL*/ char         g_ccopypref;            /* curr. copy pref.     */
+/*GLOBAL*/ char         g_cdelepref;            /* curr. delete pref.   */
+/*GLOBAL*/ char         g_covwrpref;            /* curr. overwrite pref.*/
+/*GLOBAL*/ char         g_cdclkpref;            /* curr. double click   */
+/*GLOBAL*/ char         g_cmclkpref;            /* curr. menu click     */
+/*GLOBAL*/ char         g_ctimeform;            /* curr. time format    */
+/*GLOBAL*/ char         g_cdateform;            /* curr. date format    */
+/*GLOBAL*/ char         g_blitter;              /* curr. blitter enable */
+/*GLOBAL*/ char         g_appdir;               /* default dir is application dir */
+/*GLOBAL*/ char         g_fullpath;             /* use full path for parameter */
 
-/*GLOBAL*/ BYTE         g_1text[256];
+/*GLOBAL*/ char         g_1text[256];
 
 /*GLOBAL*/ WORD         g_icw;
 /*GLOBAL*/ WORD         g_ich;
@@ -191,7 +191,7 @@ typedef struct
 /*GLOBAL*/ WORD         g_wicon;
 /*GLOBAL*/ WORD         g_hicon;
 
-/*GLOBAL*/ BYTE         *g_pbuff;               /* pointer to text buffer used by ANODEs */
+/*GLOBAL*/ char         *g_pbuff;               /* pointer to text buffer used by ANODEs */
 /*GLOBAL*/ ANODE        *g_alist;               /* pointer to ANODE array */
 /*GLOBAL*/ ANODE        *g_aavail;              /* pointer to chain of free ANODEs */
 /*GLOBAL*/ ANODE        *g_ahead;               /* pointer to chain of allocated ANODEs */

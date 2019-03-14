@@ -33,7 +33,7 @@
 #include "kprint.h"
 
 
-static WORD pro_exec(WORD isgraf, WORD isover, BYTE *pcmd, BYTE *ptail)
+static WORD pro_exec(WORD isgraf, WORD isover, char *pcmd, char *ptail)
 {
     WORD ret;
 

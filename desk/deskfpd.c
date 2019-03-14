@@ -69,7 +69,7 @@ void pn_close(PNODE *thepath)
 /*
  *  Open a particular path
  */
-PNODE *pn_open(BYTE *pathname, WNODE *pw)
+PNODE *pn_open(char *pathname, WNODE *pw)
 {
     PNODE *thepath;
 
@@ -102,7 +102,7 @@ PNODE *pn_open(BYTE *pathname, WNODE *pw)
 static LONG pn_fcomp(FNODE *pf1, FNODE *pf2, WORD which)
 {
     LONG chk = 0L;
-    BYTE *ps1, *ps2;
+    char *ps1, *ps2;
 
     ps1 = pf1->f_name;
     ps2 = pf2->f_name;
@@ -230,8 +230,8 @@ WORD pn_active(PNODE *pn, BOOL include_folders)
     LONG maxmem, maxcount, size = 0L;
     WORD count, ret;
 #if CONF_WITH_FILEMASK
-    BYTE search[MAXPATHLEN];
-    BYTE *match;
+    char search[MAXPATHLEN];
+    char *match;
 #endif
 
     fl_free(pn);                    /* free any existing filenodes */

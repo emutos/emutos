@@ -10,7 +10,7 @@
 #ifndef _DESKINS_H
 #define _DESKINS_H
 
-BYTE *filename_start(BYTE *path);
+char *filename_start(char *path);
 WORD is_installed(ANODE *pa);
 WORD ins_app(WORD curr);
 BOOL ins_devices(void);

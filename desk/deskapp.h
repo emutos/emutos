@@ -82,13 +82,13 @@ struct _applstr
 {
     ANODE *a_next;
     UWORD a_flags;              /* see above for usage */
-    BYTE a_funkey;              /* associated function key: 0=none, else 0x01-0x14 */
-    BYTE a_letter;              /* letter for icon */
+    char a_funkey;              /* associated function key: 0=none, else 0x01-0x14 */
+    char a_letter;              /* letter for icon */
     WORD a_type;                /* icon type (see above) */
     WORD a_obid;                /* object index */
-    BYTE *a_pappl;              /* filename.ext of appplication */
-    BYTE *a_pdata;              /* mask for data files */
-    BYTE *a_pargs;              /* arguments */
+    char *a_pappl;              /* filename.ext of appplication */
+    char *a_pdata;              /* mask for data files */
+    char *a_pargs;              /* arguments */
     WORD a_aicon;               /* application icon # */
     WORD a_dicon;               /* data icon # */
     WORD a_xspot;               /* desired spot on desk */
@@ -106,7 +106,7 @@ typedef struct
     WORD w_save;
     WORD h_save;
     WORD vsl_save;              /* vertical slider position */
-    BYTE pth_save[LEN_ZPATH];
+    char pth_save[LEN_ZPATH];
 } WSAVE;
 
 
@@ -118,18 +118,18 @@ typedef struct
  */
 typedef struct
 {
-    BYTE cs_sort;               /* Sort mode */
-    BYTE cs_view;               /* Show files as icons or text */
-    BYTE cs_confcpy;            /* Confirm copies */
-    BYTE cs_confdel;            /* Confirm deletes */
-    BYTE cs_confovwr;           /* Confirm overwrite */
-    BYTE cs_dblclick;           /* Double click speed */
-    BYTE cs_mnuclick;           /* Drop down menu click mode */
-    BYTE cs_timefmt;            /* Time format */
-    BYTE cs_datefmt;            /* Date format */
-    BYTE cs_blitter;            /* Blitter enabled */
-    BYTE cs_appdir;             /* Appl dir is default for non-installed apps */
-    BYTE cs_fullpath;           /* Full path for arg to non-installed apps */
+    char cs_sort;               /* Sort mode */
+    char cs_view;               /* Show files as icons or text */
+    char cs_confcpy;            /* Confirm copies */
+    char cs_confdel;            /* Confirm deletes */
+    char cs_confovwr;           /* Confirm overwrite */
+    char cs_dblclick;           /* Double click speed */
+    char cs_mnuclick;           /* Drop down menu click mode */
+    char cs_timefmt;            /* Time format */
+    char cs_datefmt;            /* Date format */
+    char cs_blitter;            /* Blitter enabled */
+    char cs_appdir;             /* Appl dir is default for non-installed apps */
+    char cs_fullpath;           /* Full path for arg to non-installed apps */
     WSAVE cs_wnode[NUM_WNODES]; /* window save info */
 } CSAVE;
 
@@ -139,13 +139,13 @@ typedef struct
  */
 ANODE *app_alloc(void);
 void app_free(ANODE *pa);
-BYTE *scan_str(BYTE *pcurr, BYTE **ppstr);
+char *scan_str(char *pcurr, char **ppstr);
 void app_tran(WORD bi_num);
 void app_start(void);
 void app_save(WORD todisk);
 void app_blddesk(void);
 ANODE *app_afind_by_id(WORD obid);
-ANODE *app_afind_by_name(WORD atype, WORD ignore, BYTE *pspec, BYTE *pname, WORD *pisapp);
+ANODE *app_afind_by_name(WORD atype, WORD ignore, char *pspec, char *pname, WORD *pisapp);
 void nomem_alert(void) NORETURN;
 
 #endif  /* _DESKAPP_H */

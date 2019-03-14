@@ -136,7 +136,7 @@ void draw_fld(OBJECT *tree, WORD obj)
  *  Add a new directory name to the end of an existing path.  This
  *  includes appending a \*.*.
  */
-void add_path(BYTE *path, BYTE *new_name)
+void add_path(char *path, char *new_name)
 {
     path = filename_start(path);
     strcpy(path, new_name);
@@ -147,7 +147,7 @@ void add_path(BYTE *path, BYTE *new_name)
 /*
  *  Remove the last directory in the path and replace it with *.*
  */
-static void sub_path(BYTE *path)
+static void sub_path(char *path)
 {
     /* scan to last segment in path */
     path = filename_start(path);
@@ -167,7 +167,7 @@ static void sub_path(BYTE *path)
  *
  *  Returns pointer to the start of the added name within the path.
  */
-BYTE *add_fname(BYTE *path, BYTE *new_name)
+char *add_fname(char *path, char *new_name)
 {
     path = filename_start(path);
 
@@ -179,7 +179,7 @@ BYTE *add_fname(BYTE *path, BYTE *new_name)
  *  Restores "*.*" to the position in a path that was
  *  overwritten by add_fname() above
  */
-void restore_path(BYTE *target)
+void restore_path(char *target)
 {
     strcpy(target,"*.*");
 }
@@ -188,9 +188,9 @@ void restore_path(BYTE *target)
 /*
  *  test if specified file/folder exists
  */
-static WORD item_exists(BYTE *path, BOOL is_folder)
+static WORD item_exists(char *path, BOOL is_folder)
 {
-    BYTE *p;
+    char *p;
     DTA *dta;
     WORD rc;
 
@@ -213,7 +213,7 @@ static WORD item_exists(BYTE *path, BOOL is_folder)
 /*
  *  Remove the file name from the end of a path and append an *.*
  */
-void del_fname(BYTE *pstr)
+void del_fname(char *pstr)
 {
     strcpy(filename_start(pstr), "*.*");
 }
@@ -226,9 +226,9 @@ void del_fname(BYTE *pstr)
  *  input:  pstr, the full pathname
  *  output: newstr, the formatted filename
  */
-static void get_fname(BYTE *pstr, BYTE *newstr)
+static void get_fname(char *pstr, char *newstr)
 {
-    BYTE ml_ftmp[LEN_ZFNAME];
+    char ml_ftmp[LEN_ZFNAME];
 
     strcpy(ml_ftmp, filename_start(pstr));
     fmt_str(ml_ftmp, newstr);
@@ -252,7 +252,7 @@ WORD illegal_op_msg(void)
  *      0   delete failed, user wants to stop
  *      -1  delete failed, user wants to continue
  */
-static WORD d_dofdel(BYTE *ppath)
+static WORD d_dofdel(char *ppath)
 {
     while(1)
     {
@@ -284,7 +284,7 @@ static WORD d_dofdel(BYTE *ppath)
  *      0   delete failed, user wants to stop
  *      -1  delete failed, user wants to continue
  */
-static WORD d_dofoldel(BYTE *ppath)
+static WORD d_dofoldel(char *ppath)
 {
     while(1)
     {
@@ -314,12 +314,12 @@ static WORD d_dofoldel(BYTE *ppath)
  *      0   error, stop copying
  *      -1  error, but allow more copying
  */
-static WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
+static WORD output_fname(char *psrc_file, char *pdst_file)
 {
     WORD ob = 0, samefile;
     OBJECT *tree = G.a_trees[ADCPALER];
-    BYTE ml_fsrc[LEN_ZFNAME], ml_fdst[LEN_ZFNAME], ml_fstr[LEN_ZFNAME];
-    BYTE old_dst[LEN_ZFNAME];
+    char ml_fsrc[LEN_ZFNAME], ml_fdst[LEN_ZFNAME], ml_fstr[LEN_ZFNAME];
+    char old_dst[LEN_ZFNAME];
 
     while(1)
     {
@@ -409,7 +409,7 @@ static WORD output_fname(BYTE *psrc_file, BYTE *pdst_file)
  *              or error during copy (including disk full)
  *      -1      user skipped this copy
  */
-static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WORD attr)
+static WORD d_dofcopy(char *psrc_file, char *pdst_file, WORD time, WORD date, WORD attr)
 {
     BOOL diskfull = FALSE;
     WORD srcfh, dstfh, rc;
@@ -493,7 +493,7 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
     if (error < 0L)
     {
         WORD alert;
-        BYTE *file;
+        char *file;
         if (readlen < 0)
         {
             alert = STRDFILE;
@@ -527,7 +527,7 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
  *  Such windows are updated to display the root directory
  *  of the drive concerned.
  */
-static void update_modified_windows(BYTE *path,WORD length)
+static void update_modified_windows(char *path,WORD length)
 {
     WNODE *pwin;
 
@@ -543,9 +543,9 @@ static void update_modified_windows(BYTE *path,WORD length)
 /*
  *  Directory routine to DO an operation on an entire sub-directory
  */
-WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path, OBJECT *tree, DIRCOUNT *count)
+WORD d_doop(WORD level, WORD op, char *psrc_path, char *pdst_path, OBJECT *tree, DIRCOUNT *count)
 {
-    BYTE *ptmp, *ptmpdst;
+    char *ptmp, *ptmpdst;
     DTA  *dta;
     WORD more, ret;
 
@@ -698,9 +698,9 @@ WORD d_doop(WORD level, WORD op, BYTE *psrc_path, BYTE *pdst_path, OBJECT *tree,
  *          0   STOP
  *          -1  SKIP
  */
-static WORD get_new_name(BYTE *dstpth)
+static WORD get_new_name(char *dstpth)
 {
-    BYTE ml_fsrc[LEN_ZFNAME], ml_fdst[LEN_ZFNAME], str[LEN_ZFNAME];
+    char ml_fsrc[LEN_ZFNAME], ml_fdst[LEN_ZFNAME], str[LEN_ZFNAME];
     OBJECT *tree = G.a_trees[ADCPALER];
     WORD ob;
 
@@ -732,7 +732,7 @@ static WORD get_new_name(BYTE *dstpth)
  *      0   error, stop copying
  *     -1   error, but allow more copying
  */
-static WORD output_path(WORD op,BYTE *srcpth, BYTE *dstpth)
+static WORD output_path(WORD op, char *srcpth, char *dstpth)
 {
     WORD ret;
 
@@ -783,7 +783,7 @@ static WORD output_path(WORD op,BYTE *srcpth, BYTE *dstpth)
 /*
  *      Routine to do file rename for dir_op()
  */
-static WORD d_dofileren(BYTE *oldname, BYTE *newname, BOOL is_folder)
+static WORD d_dofileren(char *oldname, char *newname, BOOL is_folder)
 {
     WORD ret;
 
@@ -815,9 +815,9 @@ static WORD d_dofileren(BYTE *oldname, BYTE *newname, BOOL is_folder)
 /*
  *      Routine to do folder rename for dir_op()
  */
-static WORD d_dofoldren(BYTE *oldname, BYTE *newname)
+static WORD d_dofoldren(char *oldname, char *newname)
 {
-    BYTE *p;
+    char *p;
 
     p = filename_start(oldname) - 1;    /* remove trailing wildcards */
     *p = '\0';
@@ -834,7 +834,7 @@ static WORD d_dofoldren(BYTE *oldname, BYTE *newname)
  *
  *  Returns TRUE iff it is
  */
-static BOOL source_is_parent(BYTE *src, BYTE *dst)
+static BOOL source_is_parent(char *src, char *dst)
 {
     while(*src)
     {
@@ -855,14 +855,14 @@ static BOOL source_is_parent(BYTE *src, BYTE *dst)
  *  folders in the source path.  The selected files and folders are
  *  marked in the source file list.
  */
-WORD dir_op(WORD op, WORD icontype, PNODE *pspath, BYTE *pdst_path, DIRCOUNT *count)
+WORD dir_op(WORD op, WORD icontype, PNODE *pspath, char *pdst_path, DIRCOUNT *count)
 {
     OBJECT *tree, *obj;
     FNODE *pf;
     WORD more, confirm;
-    BYTE *ptmpsrc, *ptmpdst, *psrc_path = pspath->p_spec;
+    char *ptmpsrc, *ptmpdst, *psrc_path = pspath->p_spec;
     LONG lavail;
-    BYTE srcpth[MAXPATHLEN], dstpth[MAXPATHLEN];
+    char srcpth[MAXPATHLEN], dstpth[MAXPATHLEN];
 
     graf_mouse(HGLASS, NULL);
 

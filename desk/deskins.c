@@ -316,9 +316,9 @@ static void clear_all_autorun(void)
  * return pointer to start of last segment of path
  * (assumed to be the filename)
  */
-BYTE *filename_start(BYTE *path)
+char *filename_start(char *path)
 {
-    BYTE *start = path;
+    char *start = path;
 
     while (*path)
         if (*path++ == '\\')
@@ -333,7 +333,7 @@ BYTE *filename_start(BYTE *path)
  *
  * stops at nul byte or first non-decimal character
  */
-static WORD atow(BYTE *s)
+static WORD atow(char *s)
 {
     WORD n = 0;
 
@@ -360,7 +360,7 @@ static WORD get_funkey(OBJECT *tree,ANODE *pa,BOOL installed)
 {
     ANODE *an;
     WORD funkey;
-    BYTE fkey[3];
+    char fkey[3];
 
     inf_sget(tree,APFUNKEY,fkey);
     if (fkey[0] == '\0')                /* empty? */
@@ -411,9 +411,9 @@ WORD ins_app(WORD curr)
     WORD change = 0;    /* -ve means cancel, 0 means no change, +ve means change */
     WORD isapp, field, exitobj, funkey;
     BOOL installed;
-    BYTE *pfname, *p, *q;
-    BYTE name[LEN_ZFNAME];
-    BYTE pathname[MAXPATHLEN];
+    char *pfname, *p, *q;
+    char name[LEN_ZFNAME];
+    char pathname[MAXPATHLEN];
 
     pa = i_find(G.g_cwin, curr, &pf, &isapp);
     if (!pa)
@@ -648,7 +648,7 @@ static WORD install_desktop_icon(ANODE *pa)
     WORD curr_icon, new_icon;
     WORD start_fld = ID_ID;
     WORD change = 0;
-    BYTE curr_label[LEN_ZFNAME], new_label[LEN_ZFNAME], id[2];
+    char curr_label[LEN_ZFNAME], new_label[LEN_ZFNAME], id[2];
 
     /* find first available spot on desktop (before we alloc a new one) */
     ins_posdisk(0, 0, &x, &y);
@@ -804,12 +804,12 @@ static WORD install_desktop_icon(ANODE *pa)
 #if CONF_WITH_WINDOW_ICONS
 
 #define EXT_LENGTH 3
-static const BYTE exec_ext[][EXT_LENGTH+1] = { "TOS", "TTP", "PRG", "APP", "GTP" };
+static const char exec_ext[][EXT_LENGTH+1] = { "TOS", "TTP", "PRG", "APP", "GTP" };
 
 /*
  * test if file is executable, based on extension
  */
-static BOOL is_executable(const BYTE *filename)
+static BOOL is_executable(const char *filename)
 {
     WORD i, n;
 
@@ -887,7 +887,7 @@ static WORD install_window_icon(FNODE *pf)
     WORD change = 0;
     OBJECT *tree;
     ANODE *pa;
-    BYTE curr_name[LEN_ZFNAME], new_name[LEN_ZFNAME], temp[LEN_ZFNAME];
+    char curr_name[LEN_ZFNAME], new_name[LEN_ZFNAME], temp[LEN_ZFNAME];
 
     /*
      * deselect all objects
@@ -1143,7 +1143,7 @@ WORD rmv_icon(WORD sobj)
  */
 void ins_shortcut(WORD wh, WORD mx, WORD my)
 {
-    BYTE pathname[MAXPATHLEN], *p, *q;
+    char pathname[MAXPATHLEN], *p, *q;
     WORD sobj, x, y, dummy;
     ANODE *pa, *newpa;
     FNODE *pf;

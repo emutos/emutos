@@ -99,8 +99,8 @@ typedef struct {
 #define RIGHT_ALIGNED   0x4000
 
 
-GLOBAL BYTE     gl_amstr[4];
-GLOBAL BYTE     gl_pmstr[4];
+GLOBAL char     gl_amstr[4];
+GLOBAL char     gl_pmstr[4];
 
 GLOBAL WORD     gl_apid;
 
@@ -280,7 +280,7 @@ static void men_update(void)
     {
         if (obj->ob_type == G_STRING)
         {
-            if (*(BYTE *)obj->ob_spec == '-')   /* must be a separator */
+            if (*(char *)obj->ob_spec == '-')   /* must be a separator */
                 obj->ob_state |= DISABLED;
             else
                 obj->ob_state &= ~DISABLED;
@@ -751,8 +751,8 @@ static BOOL check_arrow_key(WORD thechar)
 static WORD process_funkey(WORD funkey)
 {
     ANODE *pa;
-    BYTE pathname[MAXPATHLEN];
-    BYTE *pfname;
+    char pathname[MAXPATHLEN];
+    char *pfname;
 
     for (pa = G.g_ahead; pa; pa = pa->a_next)
         if (pa->a_funkey == funkey)
@@ -841,11 +841,11 @@ static BOOL check_alt_letter_key(WORD thechar)
  *      to scan for ctl-X: set 'type' to '^', 'shortcut' to 'X'
  *      to scan for alt-Y: set 'type' to 0x07, 'shortcut' to 'Y'
  */
-static WORD scan_menu(BYTE type, BYTE shortcut, WORD *itemptr)
+static WORD scan_menu(char type, char shortcut, WORD *itemptr)
 {
     OBJECT *tree = G.a_trees[ADMENU];
     OBJECT *obj;
-    BYTE *text, *p;
+    char *text, *p;
     WORD title_root, item_root, title, item;
 
     title_root = TITLE_ROOT;
@@ -861,7 +861,7 @@ static WORD scan_menu(BYTE type, BYTE shortcut, WORD *itemptr)
                 continue;
             if ((obj->ob_type & 0x00ff) != G_STRING)    /* all items are strings */
                 continue;
-            text = (BYTE *)obj->ob_spec;
+            text = (char *)obj->ob_spec;
             p = strchr(text,type);                      /* look for marker */
             if (!p)
                 continue;
@@ -1198,7 +1198,7 @@ static int count_chars(char *str, char c)
 void xlate_obj_array(OBJECT *obj_array, int nobj)
 {
     OBJECT *obj;
-    BYTE **str;
+    char **str;
 
     for (obj = obj_array; --nobj >= 0; obj++) {
         switch(obj->ob_type)
@@ -1212,13 +1212,13 @@ void xlate_obj_array(OBJECT *obj_array, int nobj)
         case G_TEXT:
         case G_BOXTEXT:
             str = & ((TEDINFO *)obj->ob_spec)->te_ptext;
-            *str = (BYTE *)gettext(*str);
+            *str = (char *)gettext(*str);
             break;
 #endif
         case G_FTEXT:
         case G_FBOXTEXT:
             str = & ((TEDINFO *)obj->ob_spec)->te_ptmplt;
-            *str = (BYTE *)gettext(*str);
+            *str = (char *)gettext(*str);
             break;
         case G_STRING:
         case G_BUTTON:
@@ -1393,7 +1393,7 @@ static void adjust_menu(OBJECT *obj_array)
         /* set up separator lines */
         for (k = dropbox->ob_head, item = OBJ(k), m++; k <= dropbox->ob_tail; k++, item++)
         {
-            if (*(BYTE *)(item->ob_spec) == '-')
+            if (*(char *)(item->ob_spec) == '-')
                 item->ob_spec = (LONG)(separator+MAXLEN_SEPARATOR-m);
         }
 

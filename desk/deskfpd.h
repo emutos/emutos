@@ -52,13 +52,13 @@ typedef struct _filenode FNODE;
 struct _filenode
 {
     FNODE *f_next;
-    BYTE  f_selected;       /* if TRUE, file/folder has been selected */
+    char  f_selected;       /* if TRUE, file/folder has been selected */
                             /* note: we arrange to align f_attr on an odd boundary */
-    BYTE  f_attr;               /* NOTE: f_attr thru f_name[]  */
+    char  f_attr;               /* NOTE: f_attr thru f_name[]  */
     UWORD f_time;               /*  MUST be the same size & in */
     UWORD f_date;               /*   the same sequence as the  */
     LONG  f_size;               /*    corresponding items in   */
-    BYTE  f_name[LEN_ZFNAME];   /*     the DTA structure!      */
+    char  f_name[LEN_ZFNAME];   /*     the DTA structure!      */
     WORD  f_seq;            /* sequence within directory */
     WORD  f_obid;           /* index into G.g_screen[] for this object */
     ANODE *f_pa;            /* ANODE to get icon# from */
@@ -70,7 +70,7 @@ typedef struct _pathnode PNODE;
 struct _pathnode
 {
     WORD  p_attr;           /* attribs used in Fsfirst() */
-    BYTE  p_spec[LEN_ZPATH];/* dir path containing the FNODEs below */
+    char  p_spec[LEN_ZPATH];/* dir path containing the FNODEs below */
     FNODE *p_fbase;         /* start of malloc'd fnodes */
     FNODE *p_flist;         /* linked list of fnodes */
     WORD  p_count;          /* number of items (fnodes) */
@@ -84,7 +84,7 @@ typedef struct _windnode WNODE; /* see deskwin.h */
 /* Prototypes: */
 void pn_clear(WNODE *pw);
 void pn_close(PNODE *thepath);
-PNODE *pn_open(BYTE *pathname, WNODE *pw);
+PNODE *pn_open(char *pathname, WNODE *pw);
 FNODE *pn_sort(PNODE *pn);
 WORD pn_active(PNODE *thepath, BOOL include_folders);
 

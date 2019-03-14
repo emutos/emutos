@@ -28,9 +28,9 @@
 #include "kprint.h"
 
 
-BYTE *ini_str(WORD stnum)
+char *ini_str(WORD stnum)
 {
-    BYTE *str;
+    char *str;
 
     rsrc_gaddr_rom(R_STRING, stnum, (void **)&str);
     return str;
