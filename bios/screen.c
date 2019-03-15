@@ -541,7 +541,7 @@ static void screen_init_mode(void)
 #if CONF_WITH_TT_SHIFTER
     if (has_tt_shifter) {
         rez = monitor_type?TT_MEDIUM:TT_HIGH;
-        *(volatile BYTE *) TT_SHIFTER = rez;
+        *(volatile UBYTE *) TT_SHIFTER = rez;
     }
     else
 #endif
@@ -557,7 +557,7 @@ static void screen_init_mode(void)
 #endif
 
         rez = monitor_type?ST_LOW:ST_HIGH;
-        *(volatile BYTE *) ST_SHIFTER = rez;
+        *(volatile UBYTE *) ST_SHIFTER = rez;
     }
 
 #if CONF_WITH_VIDEL
