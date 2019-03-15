@@ -887,7 +887,7 @@ LONG flopfmt(UBYTE *buf, WORD *skew, WORD dev, WORD spt,
 {
     int i, j;
     WORD density, track_size, leader, offset;
-    BYTE b1, b2;
+    UBYTE b1, b2;
     UBYTE *s;
     LONG used, err;
 
@@ -949,8 +949,8 @@ LONG flopfmt(UBYTE *buf, WORD *skew, WORD dev, WORD spt,
      * record ::= GAP2 index GAP3 data GAP4
      */
 
-    b1 = virgin >> 8;
-    b2 = virgin;
+    b1 = HIBYTE(virgin);
+    b2 = LOBYTE(virgin);
 
     /* GAP1 + GAP2(part1) : 60/120 bytes 0x4E */
     APPEND(0x4E, leader);
