@@ -38,11 +38,11 @@ extern WORD v_col_fg;           /* current foreground color */
 
 extern UBYTE *v_cur_ad;         /* current cursor address */
 extern WORD v_cur_of;           /* cursor offset */
-extern BYTE v_cur_tim;          /* cursor blink timer */
+extern UBYTE v_cur_tim;         /* cursor blink timer */
 
-extern BYTE v_period;
+extern UBYTE v_period;
 extern WORD disab_cnt;          /* disable depth count. (>0 means disabled) */
-extern BYTE v_stat_0;           /* video cell system status */
+extern UBYTE v_stat_0;          /* video cell system status */
 extern WORD sav_cur_x;          /* saved cursor cell x */
 extern WORD sav_cur_y;          /* saved cursor cell y */
 

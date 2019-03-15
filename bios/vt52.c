@@ -890,7 +890,7 @@ WORD cursconf(WORD function, WORD operand)
         v_stat_0 |= M_CFLASH;           /* set cursor flash bit */
         break;
     case 4:
-        v_period = operand;             /* set cursor flash interval */
+        v_period = LOBYTE(operand);     /* set cursor flash interval */
         break;
     case 5:
         return(v_period);               /* set cursor flash interval */
