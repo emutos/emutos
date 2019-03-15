@@ -43,10 +43,10 @@
 
 struct param
 {
-    BYTE      topmode;
-    BYTE      buttons;
-    BYTE      xparam;
-    BYTE      yparam;
+    UBYTE    topmode;
+    UBYTE    buttons;
+    UBYTE    xparam;
+    UBYTE    yparam;
     WORD     xmax;
     WORD     ymax;
     WORD     xinitial;
