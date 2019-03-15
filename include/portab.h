@@ -83,7 +83,6 @@
  *  Types
  */
 
-typedef char            BYTE;                   /*  Deprecated alias for char. May be signed or unsigned. */
 typedef signed char     SBYTE;                  /*  Signed byte         */
 typedef unsigned char   UBYTE;                  /*  Unsigned byte       */
 typedef unsigned long   ULONG;                  /*  unsigned 32 bit word*/
@@ -174,7 +173,6 @@ typedef void (*PFVOID)(void);
 #endif
 
 typedef UBYTE UBYTE_ALIAS MAY_ALIAS;
-typedef BYTE BYTE_ALIAS MAY_ALIAS;
 typedef UWORD UWORD_ALIAS MAY_ALIAS;
 typedef WORD WORD_ALIAS MAY_ALIAS;
 typedef ULONG ULONG_ALIAS MAY_ALIAS;
