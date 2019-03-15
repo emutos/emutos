@@ -578,7 +578,7 @@ static void screen_init_mode(void)
         BOOL palmode = get_default_palmode();
         sync_mode = palmode?0x02:0x00;
     }
-    *(volatile BYTE *) SYNCMODE = sync_mode;
+    *(volatile UBYTE *) SYNCMODE = sync_mode;
 
 /*
  * next, set up the palette(s)
