@@ -80,7 +80,7 @@ struct _unit
 {
     UBYTE   valid;          /* unit valid */
 #if CONF_WITH_IDE
-    BYTE    byteswap;       /* unit is byteswapped */
+    UBYTE   byteswap;       /* unit is byteswapped */
 #endif
     ULONG   size;           /* number of physical sectors */
     WORD    psshift;        /* shift left amount to convert sectors to bytes */
