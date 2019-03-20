@@ -798,7 +798,7 @@ LONG bufsize, n, rc;
 /*
  *  output current path
  */
-PRIVATE LONG pathout(void)
+LONG pathout_base(void)
 {
 LONG rc;
 char buf[MAXPATHLEN];
@@ -809,9 +809,19 @@ char buf[MAXPATHLEN];
             buf[0] = '\\';
             buf[1] = '\0';
         }
-        outputnl(buf);
+        output(buf);
     }
+    return rc;
+}
 
+/*
+ *  output current path, with CRLF
+ */
+PRIVATE LONG pathout(void)
+{
+LONG rc;
+    rc = pathout_base();
+    outputnl("");
     return rc;
 }
 

@@ -223,6 +223,7 @@ LONG exec_program(WORD argc,char **argv,char *redir_name);
 
 /* cmdint.c */
 LONG (*lookup_builtin(WORD argc,char **argv))(WORD,char **);
+LONG pathout_base(void);
 
 /* cmdparse.c */
 WORD parse_line(char *line,char **argv,char *redir_name);

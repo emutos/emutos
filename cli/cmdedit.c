@@ -42,12 +42,14 @@ char c;
 UWORD save_history_num;
 WORD scancode, prevcode = 0;
 WORD pos = 0, len = 0;
-char prompt[] = "X:>";
+char prompt[] = "X:";
 
     save_history_num = history_num;     /* so that edit_line() can play with it */
 
     prompt[0] = Dgetdrv() + 'A';
     message(prompt);
+    pathout_base();
+    message(">");
     while(1) {
         charcode = conin();
         scancode = ((charcode >> 8) | charcode) & 0xffff;
