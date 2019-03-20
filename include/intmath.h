@@ -73,3 +73,21 @@ static __inline__ LONG muls(WORD m1, WORD m2)
 
     return ret;
 }
+
+/*
+ * divu - unsigned integer divide
+ *
+ * divide an unsigned long by an unsigned short, returning an unsigned short
+ * (assumes that the result will always fit in an unsigned short)
+ */
+static __inline__ UWORD divu(ULONG d1, UWORD d2)
+{
+    __asm__ (
+      "divu %1,%0"
+    : "+d"(d1)
+    : "idm"(d2)
+    : "cc"
+    );
+
+    return (UWORD)d1;
+}
