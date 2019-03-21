@@ -27,7 +27,7 @@ msgstr ""
 #: bios/bios.c
 msgid ""
 "System halted!\n"
-msgstr "’¦ ©ç©«ž£˜ §ášà©œ!"
+msgstr "’¦ ©ç©«ž£˜ §ášà©œ!\n"
 
 #: bios/initinfo.c
 msgid "GEMDOS drives"
