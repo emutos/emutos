@@ -576,7 +576,7 @@ msgstr "’ç§¦ª œ­˜¨£¦šãª:"
 
 #: desk/desk_rsc.c
 msgid "Default dir:"
-msgstr "¨¦œ§ ¢œš£â¤¦ª ¡˜«á¢¦š¦ª"
+msgstr "‰˜«á¢¦š¦ª:"
 
 #: desk/desk_rsc.c
 msgid "Application"
@@ -596,7 +596,7 @@ msgstr "ƒ ˜›¨¦£ã"
 
 #: desk/desk_rsc.c
 msgid "File name"
-msgstr "î¤¦£˜ ˜¨®œå¦¬"
+msgstr "€¨®œå¦"
 
 #: desk/desk_rsc.c
 msgid "NAME CONFLICT DURING COPY"
