@@ -31,6 +31,7 @@
 #include "delay.h"
 #include "processor.h"
 #include "cookie.h"
+#include "intmath.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif
@@ -557,11 +558,11 @@ LONG floppy_rw(WORD rw, UBYTE *buf, WORD cnt, LONG recnr, WORD spt,
      *  2. 0 or more entire track/sides
      *  3. the sectors from the start of the last track/side to the ending sector
      */
-    start_trkside = recnr / spt;
+    start_trkside = divu(recnr,spt);
     start_relsec = recnr - (spt * start_trkside);   /* zero-based sector number */
 
     recnr += cnt - 1;
-    end_trkside = recnr / spt;
+    end_trkside = divu(recnr,spt);
     end_relsec = recnr - (spt * end_trkside);
 
     KDEBUG(("floppy_rw(): start=%d/%d, end=%d/%d\n",

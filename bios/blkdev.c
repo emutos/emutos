@@ -34,6 +34,7 @@
 #include "biosext.h"
 #include "biosmem.h"
 #include "xhdi.h"
+#include "intmath.h"
 
 
 /*
@@ -632,7 +633,7 @@ LONG blkdev_getbpb(WORD dev)
      */
     tmp = getiword(b->dir);     /* root dir entries */
     if (bdev->bpb.recsiz != 0)
-        bdev->bpb.rdlen = ((tmp * 32) + (bdev->bpb.recsiz - 1)) / bdev->bpb.recsiz;
+        bdev->bpb.rdlen = divu((tmp*32)+(bdev->bpb.recsiz-1),bdev->bpb.recsiz);
     else
         bdev->bpb.rdlen = 0;
     if (tmp*32 != bdev->bpb.rdlen*bdev->bpb.recsiz)
