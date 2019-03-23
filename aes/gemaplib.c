@@ -37,6 +37,7 @@
 #include "gemaplib.h"
 #include "gsx2.h"
 #include "funcdef.h"
+#include "intmath.h"
 #include "string.h"
 
 /* Global variables: */
@@ -123,7 +124,7 @@ void ap_tplay(const EVNTREC *pbuff,WORD length,WORD scale)
         /* convert to form suitable for forkq */
         switch(pbuff->ap_event) {
         case TCHNG:
-            ev_timer((f.f_data*100L)/scale);
+            ev_timer(divu(f.f_data*100L, scale));
             break;
         case BCHNG:
             f.f_code = bchange;

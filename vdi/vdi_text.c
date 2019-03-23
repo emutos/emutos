@@ -12,6 +12,7 @@
 #include "config.h"
 #include "portab.h"
 #include "asm.h"
+#include "intmath.h"
 #include "string.h"
 #include "vdi_defs.h"
 #include "../bios/lineavars.h"
@@ -1123,5 +1124,5 @@ static UWORD clc_dda(Vwk * vwk, UWORD act, UWORD req)
             return 0xFFFF;          /* indicates 2x scale up */
     }
 
-    return (UWORD)((((ULONG)req)<<16)/act);
+    return divu(((ULONG)req)<<16, act);
 }
