@@ -24,6 +24,7 @@
 #include "processor.h"
 #include "gemerror.h"
 #include "kprint.h"
+#include "machine.h"
 
 /* The following functions are defined in aros2.S */
 ULONG MemoryTest(void *address, void *endAddress, ULONG blockSize);
@@ -76,17 +77,13 @@ struct ExecBase
 static struct ExecBase g_ExecBase;
 static struct ExecBase* const SysBase = &g_ExecBase;
 
-#define AFF_ADDR32  (1L<<14)
-
 /******************************************************************************/
 /* Machine detection                                                          */
 /******************************************************************************/
 
 void aros_machine_detect(void)
 {
-    /* Do we have a 32-bit address bus? */
-    if (MemoryTest((APTR)0x08000000, (APTR)0x08000000, 0x00100000) == 0)
-        SysBase->AttnFlags |= AFF_ADDR32;
+
 }
 
 #if CONF_WITH_ALT_RAM
@@ -676,7 +673,7 @@ static void findmbram(struct ExpansionBase *ExpansionBase)
 
     if (!(mcpu >= 20))
         return;
-    if (mcpu >= 20 && !(SysBase->AttnFlags & AFF_ADDR32))
+    if (mcpu >= 20 && !IS_BUS32)
         return;
 
     /* High MBRAM */
@@ -755,7 +752,7 @@ static void ConfigChain(APTR baseAddr)
      *
      * Ignores original baseAddr by design.
      */
-    BOOL maybeZ3 = (SysBase->AttnFlags & AFF_ADDR32);
+    BOOL maybeZ3 = IS_BUS32;
     D(bug("configchain\n"));
     for(;;) {
         BOOL gotrom = FALSE;
