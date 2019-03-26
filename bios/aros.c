@@ -66,26 +66,6 @@ typedef unsigned char UBYTE; /* unsigned 8-bit value */
 // STRPTR is char* in C++, but should be UBYTE* in C
 typedef char * STRPTR; /* Pointer to string (NULL terminated) */
 
-/* From compiler/include/exec/execbase.h **************************************/
-
-// Minimal ExecBase
-struct ExecBase
-{
-    UWORD AttnFlags; /* Attention Flags */
-};
-
-static struct ExecBase g_ExecBase;
-static struct ExecBase* const SysBase = &g_ExecBase;
-
-/******************************************************************************/
-/* Machine detection                                                          */
-/******************************************************************************/
-
-void aros_machine_detect(void)
-{
-
-}
-
 #if CONF_WITH_ALT_RAM
 
 /******************************************************************************/

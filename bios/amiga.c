@@ -219,10 +219,6 @@ void amiga_machine_detect(void)
 {
     detect_gayle();
     KDEBUG(("has_gayle = %d\n", has_gayle));
-
-#if CONF_WITH_AROS
-    aros_machine_detect();
-#endif
 }
 
 #if CONF_WITH_ALT_RAM

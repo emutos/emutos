@@ -15,7 +15,6 @@
 
 #ifdef MACHINE_AMIGA
 
-void aros_machine_detect(void);
 #if CONF_WITH_ALT_RAM
 void aros_add_alt_ram(void);
 #endif
