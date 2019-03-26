@@ -76,7 +76,6 @@ struct ExecBase
 static struct ExecBase g_ExecBase;
 static struct ExecBase* const SysBase = &g_ExecBase;
 
-#define AFF_68020   (1L<<1)
 #define AFF_ADDR32  (1L<<14)
 
 /******************************************************************************/
@@ -85,10 +84,6 @@ static struct ExecBase* const SysBase = &g_ExecBase;
 
 void aros_machine_detect(void)
 {
-    /* Do we have at least a 68020? */
-    if (mcpu >= 20)
-        SysBase->AttnFlags |= AFF_68020;
-
     /* Do we have a 32-bit address bus? */
     if (MemoryTest((APTR)0x08000000, (APTR)0x08000000, 0x00100000) == 0)
         SysBase->AttnFlags |= AFF_ADDR32;
@@ -679,9 +674,9 @@ static void findmbram(struct ExpansionBase *ExpansionBase)
     LONG ret;
     ULONG step, start, end;
 
-    if (!(SysBase->AttnFlags & AFF_68020))
+    if (!(mcpu >= 20))
         return;
-    if ((SysBase->AttnFlags & AFF_68020) && !(SysBase->AttnFlags & AFF_ADDR32))
+    if (mcpu >= 20 && !(SysBase->AttnFlags & AFF_ADDR32))
         return;
 
     /* High MBRAM */
