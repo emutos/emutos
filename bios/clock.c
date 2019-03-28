@@ -451,13 +451,18 @@ static ULONG monstergetdt(void)
 
 static void monstersetdt(ULONG time)
 {
+    UWORD year;
+
     write_ds1307(0, decToBcd((time & 0x1f)*2));     /* Seconds */
     write_ds1307(1, decToBcd((time >> 5) & 0x3f));  /* Minute */
     write_ds1307(2, decToBcd((time >> 11) & 0x1f)); /* Hour */
 
     write_ds1307(4, decToBcd((time >> 16) & 0x1f)); /* Day of month */
     write_ds1307(5, decToBcd((time >> 21) & 0x0f)); /* Month */
-    write_ds1307(6, decToBcd((time >> 25) - 20));   /* Year */
+    year = (time >> 25) + 80;
+    if (year >= 100)
+        year -= 100;
+    write_ds1307(6, decToBcd(year));                /* Year */
 
     KDEBUG(("monstersetdt(0x%lx)\n", time));
 }
