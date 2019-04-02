@@ -207,8 +207,8 @@ typedef LONG LONG_ALIAS MAY_ALIAS;
  *
  * NOTE:
  * - Later GCC manual states:
- *	Optimize attribute should be used for debugging purposes only.
- *	It is not suitable in production code.
+ *     Optimize attribute should be used for debugging purposes only.
+ *     It is not suitable in production code.
  */
 #if __GNUC_PREREQ(4, 4)
 /* potentially reduce function size (and perf) for -O2 (256k / 512k) builds */

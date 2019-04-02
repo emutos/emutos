@@ -188,14 +188,14 @@ int doprintf(void (*outc)(int), const char *fmt, va_list ap)
                 longval = va_arg(ap, long);
             else
                 longval = va_arg(ap, int);
-		    if (flags & FLAG_SIGN)
-		    {
-		        if (longval < 0)
-        		{
-		            longval = -longval;
-        		    *p++ = '-';
-		        }
-		    }
+            if (flags & FLAG_SIGN)
+            {
+                if (longval < 0)
+                {
+                    longval = -longval;
+                    *p++ = '-';
+                }
+            }
             p = numconv(p, longval, (type=='o')?8:10, precision, flags);
             break;
         case 'P':
@@ -246,8 +246,8 @@ int doprintf(void (*outc)(int), const char *fmt, va_list ap)
             if (n < width)
                 fill_len = width - n;
         }
-		if (flags & FLAG_PREC)
-			flags &= ~FLAG_ZERO;
+        if (flags & FLAG_PREC)
+            flags &= ~FLAG_ZERO;
 
         /*
          * if not left justified, output the fill characters.  note special

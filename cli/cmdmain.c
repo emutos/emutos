@@ -216,7 +216,7 @@ PRIVATE void change_res(WORD res)
     /* mode changed *without* palette change -> set readable text color index */
     {
         /* OS masks color index, so 15 is fine also for mono modes */
-	int idx = 15;
+        int idx = 15;
         /* from first 4 entries in LOW palette, red is better than yellow */
         if (res == ST_MEDIUM)
             idx = 1;
