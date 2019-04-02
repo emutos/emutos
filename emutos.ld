@@ -95,15 +95,16 @@ SECTIONS
      * but after eventual BIOS stack.
      * Variables requiring very low addresses, while being accessible
      * from user mode, can be put here.
-     * Warning: this area is not cleared at startup.
      */
     .low_stram :
     {
         __low_stram_start = .;
         obj/lowstram.o(.bss COMMON)
+        obj/lineavars.o(.bss COMMON)
         __low_stram_end = .;
         ASSERT(ABSOLUTE(_shifty) < 0x8000, "error: bad _shifty address");
         ASSERT((ABSOLUTE(_dskbuf) & 3) == 0, "error: bad _dskbuf alignment");
+        ASSERT(ABSOLUTE(__low_stram_end) <= 0x8000, "error: .low_stram section extends beyond 32k");
     } >stram
 
     /* The TEXT segment contains EmuTOS executable code and read-only data.

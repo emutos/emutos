@@ -49,10 +49,12 @@
         .extern _ramvalid
 
         // Overall memory map
-        .extern sysvars_start // start of system variables
-        .extern sysvars_end   // end of system variables
-        .extern __bss         // start of BSS segment
-        .extern __ebss        // end of BSS segment
+        .extern sysvars_start     // start of system variables
+        .extern sysvars_end       // end of system variables
+        .extern __bss             // start of BSS segment
+        .extern __ebss            // end of BSS segment
+        .extern __low_stram_start // start of .low_stram section
+        .extern __low_stram_end   // end of .low_stram section
 
 // ===========================================================================
 // ==== meminit - Reuse or detect RAM settings, then initialize RAM areas ====
@@ -630,6 +632,11 @@ any_boot:
         // bzero() will be able to return.
         move.l  #__bss, a0
         move.l  #__ebss, a1
+        jbsr    call_bzero_a0_a1
+
+        // Also clear the variables located in the .low_stram section.
+        move.l  #__low_stram_start, a0
+        move.l  #__low_stram_end, a1
         jbsr    call_bzero_a0_a1
 
         // Save the meminit_flags into BSS
