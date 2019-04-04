@@ -828,10 +828,6 @@ void amiga_extra_vbl(void)
 /* Clock                                                                      */
 /******************************************************************************/
 
-/* Date/Time to use when the hardware clock is not set.
- * We use the OS creation date at 00:00:00 */
-#define DEFAULT_DATETIME MAKE_ULONG(os_dosdate, 0)
-
 #define BATTCLOCK ((volatile UBYTE*)0x00dc0000)
 
 #define AMIGA_CLOCK_NONE 0

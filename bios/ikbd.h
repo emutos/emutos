@@ -90,6 +90,12 @@ struct keytbl {
 /* Baud rate used by Atari keyboards */
 #define IKBD_BAUD 7812
 
+/*
+ * Date/Time to use when the hardware clock is not set.
+ * We use the OS creation date at 00:00:00
+ */
+#define DEFAULT_DATETIME MAKE_ULONG(os_dosdate, 0)
+
 /* initialise the ikbd */
 extern void kbd_init(void);
 

@@ -34,11 +34,6 @@
 #include "amiga.h"
 #endif
 
-/* Date/Time to use when the hardware clock is not set.
- * We use the OS creation date at 00:00:00
- */
-#define DEFAULT_DATETIME MAKE_ULONG(os_dosdate, 0)
-
 #if CONF_WITH_ICDRTC
 
 /*==== ICD AdSCSI Plus ST RTC section =====================================*/
