@@ -457,12 +457,12 @@ static void bootstrap(void)
     length = nf_bootstrap(pd->p_lowtpa + sizeof(PD), pd->p_hitpa - pd->p_lowtpa);
 
     /* free the allocated space if something is wrong */
-    if ( length <= 0 )
+    if (length <= 0)
         goto err;
 
     /* relocate the loaded executable */
     r = trap1_pexec(PE_RELOCATE, (char*)length, pd, "");
-    if ( r != (LONG)pd )
+    if (r != (LONG)pd)
         goto err;
 
     /* set the boot drive for the new OS to use */
@@ -548,11 +548,11 @@ static void autoexec(void)
 
     bootstrap();                        /* try to boot the new OS kernel directly */
 
-    if( ! blkdev_avail(bootdev) )       /* check, if bootdev available */
+    if(!blkdev_avail(bootdev))          /* check, if bootdev available */
         return;
 
-    trap1( 0x1a, &dta);                      /* Setdta */
-    err = trap1( 0x4e, "\\AUTO\\*.PRG", 7);  /* Fsfirst */
+    trap1(0x1a, &dta);                      /* Setdta */
+    err = trap1(0x4e, "\\AUTO\\*.PRG", 7);  /* Fsfirst */
     while(err == 0) {
 #ifdef TARGET_PRG
         if (!strncmp(dta.d_fname, "EMUTOS", 6))
@@ -566,10 +566,10 @@ static void autoexec(void)
 
             /* Setdta. BetaDOS corrupted the AUTO load if the Setdta
              * not repeated here */
-            trap1( 0x1a, &dta);
+            trap1(0x1a, &dta);
         }
 
-        err = trap1( 0x4f );                 /* Fsnext */
+        err = trap1(0x4f);                  /* Fsnext */
     }
 }
 
@@ -623,7 +623,7 @@ void biosmain(void)
 
     bios_init();                /* Initialize the BIOS */
 
-    trap1( 0x30 );              /* initial test, if BDOS works: Sversion() */
+    trap1(0x30);                /* initial test, if BDOS works: Sversion() */
 
     /* Steem needs this to initialize its GEMDOS hard disk emulation.
      * This may change drvbits. See Steem sources:
@@ -665,7 +665,7 @@ void biosmain(void)
     blkdev_boot();
 
     defdrv = bootdev;
-    trap1( 0x0e , defdrv );    /* Set boot drive: Dsetdrv(defdrv) */
+    trap1(0x0e, defdrv);        /* Set boot drive: Dsetdrv(defdrv) */
 
 #if ENABLE_RESET_RESIDENT
     run_reset_resident();       /* see comments above */
