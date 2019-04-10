@@ -623,8 +623,6 @@ void biosmain(void)
 
     bios_init();                /* Initialize the BIOS */
 
-    trap1(0x30);                /* initial test, if BDOS works: Sversion() */
-
     /* Steem needs this to initialize its GEMDOS hard disk emulation.
      * This may change drvbits. See Steem sources:
      * File steem/code/emulator.cpp, function intercept_bios(). */
