@@ -34,6 +34,47 @@
 #include "amiga.h"
 #endif
 
+#if (CONF_WITH_ICDRTC || CONF_WITH_MONSTER || CONF_WITH_MEGARTC || CONF_WITH_NVRAM || CONF_WITH_IKBD_CLOCK)
+/*
+ * structures used by extract_date(), extract_time()
+ */
+struct ymd
+{
+    UWORD year;
+    UWORD month;
+    UWORD day;
+};
+
+struct hms
+{
+    UWORD hour;
+    UWORD minute;
+    UWORD second;
+};
+
+/*
+ * extract year/month/day from GEMDOS-style date
+ *
+ * note: extracted year is raw, i.e. relative to 1980 
+ */
+static void extract_date(struct ymd *out, UWORD date)
+{
+    out->year = date >> 9;
+    out->month = (date >> 5) & 0x0f;
+    out->day = date & 0x1f;
+}
+
+/*
+ * extract hour/minute/second from GEMDOS-style time
+ */
+static void extract_time(struct hms *out, UWORD time)
+{
+    out->hour = time >> 11;
+    out->minute = (time >> 5) & 0x3f;
+    out->second = (time << 1) & 0x3f;
+}
+#endif
+
 #if CONF_WITH_ICDRTC
 
 /*==== ICD AdSCSI Plus ST RTC section =====================================*/
@@ -198,21 +239,19 @@ static void icdsetregs(struct icdclkreg *clkregs)
 
 static void icdsettime(struct icdclkreg *clkregs,UWORD time)
 {
-    UWORD hr, min, sec;
+    struct hms tm;
 
-    hr = (time >> 11) & 0x1f;
-    min = (time >> 5) & 0x3f;
-    sec = (time & 0x1f) << 1;
+    extract_time(&tm, time);
 
     /*
      * we must set the '24-hour clock' indicator in the tens-of-hours register
      */
-    clkregs->sec_l = sec % 10;
-    clkregs->sec_h = sec / 10;
-    clkregs->min_l = min % 10;
-    clkregs->min_h = min / 10;
-    clkregs->hour_l = hr % 10;
-    clkregs->hour_h = (hr / 10) | ICDRTC_24;
+    clkregs->sec_l = tm.second % 10;
+    clkregs->sec_h = tm.second / 10;
+    clkregs->min_l = tm.minute % 10;
+    clkregs->min_h = tm.minute / 10;
+    clkregs->hour_l = tm.hour % 10;
+    clkregs->hour_h = (tm.hour / 10) | ICDRTC_24;
 
     KDEBUG(("icdsettime() %x%x:%x%x:%x%x\n", clkregs->hour_h, clkregs->hour_l,
             clkregs->min_h, clkregs->min_l, clkregs->sec_h, clkregs->sec_l));
@@ -238,7 +277,7 @@ static UWORD icdgettime(struct icdclkreg *clkregs)
 
 static void icdsetdate(struct icdclkreg *clkregs,UWORD date)
 {
-    UWORD year, month, day;
+    struct ymd dt;
 
     /*
      * The ICD RTC stores the year as the offset from 1900; thus we need
@@ -249,16 +288,16 @@ static void icdsetdate(struct icdclkreg *clkregs,UWORD date)
      * it appears to use the year value, i.e. if the year is divisible by
      * 4, then it is assumed to be a leap year.
      */
-    year = (date >> 9) + 80;
-    month = (date >> 5) & 0x0f;
-    day = date & 0x1f;
+    extract_date(&dt, date);
 
-    clkregs->day_l = day % 10;
-    clkregs->day_h = (day / 10);
-    clkregs->mon_l = month % 10;
-    clkregs->mon_h = month / 10;
-    clkregs->year_l = year % 10;
-    clkregs->year_h = year / 10;
+    dt.year += 80;
+
+    clkregs->day_l = dt.day % 10;
+    clkregs->day_h = dt.day / 10;
+    clkregs->mon_l = dt.month % 10;
+    clkregs->mon_h = dt.month / 10;
+    clkregs->year_l = dt.year % 10;
+    clkregs->year_h = dt.year / 10;
 
     KDEBUG(("icdsetdate() %x%x/%x%x/%x%x\n", clkregs->year_h, clkregs->year_l,
             clkregs->mon_h, clkregs->mon_l, clkregs->day_h, clkregs->day_l));
@@ -446,18 +485,20 @@ static ULONG monstergetdt(void)
 
 static void monstersetdt(ULONG time)
 {
-    UWORD year;
+    struct hms tm;
+    struct ymd dt;
 
-    write_ds1307(0, decToBcd((time & 0x1f)*2));     /* Seconds */
-    write_ds1307(1, decToBcd((time >> 5) & 0x3f));  /* Minute */
-    write_ds1307(2, decToBcd((time >> 11) & 0x1f)); /* Hour */
+    extract_time(&tm, LOWORD(time));
+    extract_date(&dt, HIWORD(time));
+    dt.year = (dt.year + 1980) % 100;
 
-    write_ds1307(4, decToBcd((time >> 16) & 0x1f)); /* Day of month */
-    write_ds1307(5, decToBcd((time >> 21) & 0x0f)); /* Month */
-    year = (time >> 25) + 80;
-    if (year >= 100)
-        year -= 100;
-    write_ds1307(6, decToBcd(year));                /* Year */
+    write_ds1307(0, decToBcd(tm.second));   /* Seconds */
+    write_ds1307(1, decToBcd(tm.minute));   /* Minute */
+    write_ds1307(2, decToBcd(tm.hour));     /* Hour */
+
+    write_ds1307(4, decToBcd(dt.day));      /* Day of month */
+    write_ds1307(5, decToBcd(dt.month));    /* Month */
+    write_ds1307(6, decToBcd(dt.year));     /* Year */
 
     KDEBUG(("monstersetdt(0x%lx)\n", time));
 }
@@ -689,12 +730,16 @@ static void msetregs(struct myclkreg *clkregs)
 
 static void mdosettime(struct myclkreg *clkregs,UWORD time)
 {
-    clkregs->sec_l = ((time & 0x1f) << 1) % 10;
-    clkregs->sec_h = ((time & 0x1f) << 1) / 10;
-    clkregs->min_l = ((time >> 5) & 0x3f) % 10;
-    clkregs->min_h = ((time >> 5) & 0x3f) / 10;
-    clkregs->hour_l = ((time >> 11) & 0x1f) % 10;
-    clkregs->hour_h = ((time >> 11) & 0x1f) / 10;
+    struct hms tm;
+
+    extract_time(&tm, time);
+
+    clkregs->sec_l = tm.second % 10;
+    clkregs->sec_h = tm.second / 10;
+    clkregs->min_l = tm.minute % 10;
+    clkregs->min_h = tm.minute / 10;
+    clkregs->hour_l = tm.hour % 10;
+    clkregs->hour_h = tm.hour / 10;
 
     KDEBUG(("mdosettime() %x%x:%x%x:%x%x\n", clkregs->hour_h, clkregs->hour_l,
             clkregs->min_h, clkregs->min_l, clkregs->sec_h, clkregs->sec_l));
@@ -716,12 +761,16 @@ static UWORD mdogettime(struct myclkreg *clkregs)
 
 static void mdosetdate(struct myclkreg *clkregs,UWORD date)
 {
-    clkregs->day_l = (date & 0x1F) % 10;
-    clkregs->day_h = (date & 0x1F) / 10;
-    clkregs->mon_l = ((date >> 5) & 0xF) % 10;
-    clkregs->mon_h = ((date >> 5) & 0xF) / 10;
-    clkregs->year_l = (date >> 9) % 10;
-    clkregs->year_h = (date >> 9) / 10;
+    struct ymd dt;
+
+    extract_date(&dt, date);
+
+    clkregs->day_l = dt.day % 10;
+    clkregs->day_h = dt.day / 10;
+    clkregs->mon_l = dt.month % 10;
+    clkregs->mon_h = dt.month / 10;
+    clkregs->year_l = dt.year % 10;
+    clkregs->year_h = dt.year / 10;
 
     KDEBUG(("mdosetdate() %x%x/%x%x/%x%x\n", clkregs->year_h, clkregs->year_l,
             clkregs->mon_h, clkregs->mon_l, clkregs->day_h, clkregs->day_l));
@@ -795,15 +844,15 @@ static int nvram_rtc_year_offset;
 
 static void ndosettime(UWORD time)
 {
-    int seconds = (time & 0x1f) << 1;
-    int minutes = (time >> 5) & 0x3f;
-    int hours = (time >> 11) & 0x1f;
+    struct hms tm;
 
-    KDEBUG(("ndosettime() %02d:%02d:%02d\n", hours, minutes, seconds));
+    extract_time(&tm, time);
 
-    set_nvram_rtc(NVRAM_RTC_SECONDS, seconds);
-    set_nvram_rtc(NVRAM_RTC_MINUTES, minutes);
-    set_nvram_rtc(NVRAM_RTC_HOURS, hours);
+    KDEBUG(("ndosettime() %02d:%02d:%02d\n", tm.hour, tm.minute, tm.second));
+
+    set_nvram_rtc(NVRAM_RTC_SECONDS, tm.second);
+    set_nvram_rtc(NVRAM_RTC_MINUTES, tm.minute);
+    set_nvram_rtc(NVRAM_RTC_HOURS, tm.hour);
 }
 
 static UWORD ndogettime(void)
@@ -822,15 +871,16 @@ static UWORD ndogettime(void)
 
 static void ndosetdate(UWORD date)
 {
-    int days = date & 0x1f;
-    int months = (date >> 5) & 0xf;
-    int years = (date >> 9) - nvram_rtc_year_offset;
+    struct ymd dt;
 
-    KDEBUG(("ndosetdate() %02d/%02d/%02d\n", years, months, days));
+    extract_date(&dt, date);
+    dt.year -= nvram_rtc_year_offset;
 
-    set_nvram_rtc(NVRAM_RTC_DAYS, days);
-    set_nvram_rtc(NVRAM_RTC_MONTHS, months);
-    set_nvram_rtc(NVRAM_RTC_YEARS, years);
+    KDEBUG(("ndosetdate() %02d/%02d/%02d\n", dt.year, dt.month, dt.day));
+
+    set_nvram_rtc(NVRAM_RTC_DAYS, dt.day);
+    set_nvram_rtc(NVRAM_RTC_MONTHS, dt.month);
+    set_nvram_rtc(NVRAM_RTC_YEARS, dt.year);
 }
 
 static UWORD ndogetdate(void)
@@ -956,20 +1006,27 @@ static UWORD idogettime(void)
 
 static void idosettime(UWORD time)
 {
-    iclkbuf.sec = int2bcd((time << 1) & 0x3f);
-    iclkbuf.min = int2bcd((time >> 5) & 0x3f);
-    iclkbuf.hour = int2bcd((time >> 11) & 0x1f);
+    struct hms tm;
+
+    extract_time(&tm, time);
+
+    iclkbuf.sec = int2bcd(tm.second);
+    iclkbuf.min = int2bcd(tm.minute);
+    iclkbuf.hour = int2bcd(tm.hour);
 
     KDEBUG(("idosettime() %02x:%02x:%02x\n", iclkbuf.hour, iclkbuf.min, iclkbuf.sec));
 }
 
 static void idosetdate(UWORD date)
 {
-    UWORD year = 1980 + ((date >> 9) & 0x7f);
+    struct ymd dt;
 
-    iclkbuf.year = int2bcd(year % 100);
-    iclkbuf.month = int2bcd((date >> 5) & 0xf);
-    iclkbuf.day = int2bcd(date & 0x1f);
+    extract_date(&dt, date);
+    dt.year = (dt.year + 1980) % 100;
+
+    iclkbuf.year = int2bcd(dt.year);
+    iclkbuf.month = int2bcd(dt.month);
+    iclkbuf.day = int2bcd(dt.day);
 
     KDEBUG(("idosetdate() %02x/%02x/%02x\n", iclkbuf.year, iclkbuf.month, iclkbuf.day));
 }
