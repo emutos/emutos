@@ -34,6 +34,18 @@
 #include "amiga.h"
 #endif
 
+#if (CONF_WITH_MONSTER || CONF_WITH_IKBD_CLOCK)
+static UBYTE int2bcd(UWORD a)
+{
+    return (a % 10) + ((a / 10) << 4);
+}
+
+static UWORD bcd2int(UBYTE a)
+{
+    return (a & 0xf) + ((a >> 4) * 10);
+}
+#endif
+
 #if (CONF_WITH_ICDRTC || CONF_WITH_MONSTER || CONF_WITH_MEGARTC || CONF_WITH_NVRAM || CONF_WITH_IKBD_CLOCK)
 /*
  * structures used by extract_date(), extract_time()
@@ -457,26 +469,16 @@ static UBYTE read_ds1307(UBYTE address)
 
 /*==== MonSTer RTC high-level functions ====================================*/
 
-static UBYTE bcdToDec(UBYTE val)
-{
-    return (val/16*10) + (val%16);
-}
-
-static UBYTE decToBcd(UBYTE val)
-{
-    return (val/10*16) + (val%10);
-}
-
 static ULONG monstergetdt(void)
 {
     ULONG t = 0;
-    t  = (ULONG)(bcdToDec((read_ds1307(0) & 0x7f)/2));   /* Seconds */
-    t |= (ULONG)(bcdToDec(read_ds1307(1))) << 5;         /* Minute */
-    t |= (ULONG)(bcdToDec(read_ds1307(2) & 0x3f)) << 11; /* Hour */
+    t  = (ULONG)(bcd2int((read_ds1307(0) & 0x7f)/2));   /* Seconds */
+    t |= (ULONG)(bcd2int(read_ds1307(1))) << 5;         /* Minute */
+    t |= (ULONG)(bcd2int(read_ds1307(2) & 0x3f)) << 11; /* Hour */
 
-    t |= (ULONG)(bcdToDec(read_ds1307(4))) << 16;        /* Day of month */
-    t |= (ULONG)(bcdToDec(read_ds1307(5))) << 21;        /* Month */
-    t |= (ULONG)(bcdToDec(read_ds1307(6)) + 20) << 25;   /* Year */
+    t |= (ULONG)(bcd2int(read_ds1307(4))) << 16;        /* Day of month */
+    t |= (ULONG)(bcd2int(read_ds1307(5))) << 21;        /* Month */
+    t |= (ULONG)(bcd2int(read_ds1307(6)) + 20) << 25;   /* Year */
 
     KDEBUG(("monstergetdt = 0x%lx\n", t));
 
@@ -492,13 +494,13 @@ static void monstersetdt(ULONG time)
     extract_date(&dt, HIWORD(time));
     dt.year = (dt.year + 1980) % 100;
 
-    write_ds1307(0, decToBcd(tm.second));   /* Seconds */
-    write_ds1307(1, decToBcd(tm.minute));   /* Minute */
-    write_ds1307(2, decToBcd(tm.hour));     /* Hour */
+    write_ds1307(0, int2bcd(tm.second));    /* Seconds */
+    write_ds1307(1, int2bcd(tm.minute));    /* Minute */
+    write_ds1307(2, int2bcd(tm.hour));      /* Hour */
 
-    write_ds1307(4, decToBcd(dt.day));      /* Day of month */
-    write_ds1307(5, decToBcd(dt.month));    /* Month */
-    write_ds1307(6, decToBcd(dt.year));     /* Year */
+    write_ds1307(4, int2bcd(dt.day));       /* Day of month */
+    write_ds1307(5, int2bcd(dt.month));     /* Month */
+    write_ds1307(6, int2bcd(dt.year));      /* Year */
 
     KDEBUG(("monstersetdt(0x%lx)\n", time));
 }
@@ -939,16 +941,6 @@ void clockvec(char *buf)
 
     memmove(b, buf, 6);
     iclk_ready = 1;
-}
-
-static UBYTE int2bcd(UWORD a)
-{
-    return (a % 10) + ((a / 10) << 4);
-}
-
-static UWORD bcd2int(UBYTE a)
-{
-    return (a & 0xf) + ((a >> 4) * 10);
 }
 
 /*==== Ikbd clock internal functions ======================================*/
