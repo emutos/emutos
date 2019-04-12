@@ -488,7 +488,7 @@ msgstr "Команда разработчиков EmuTOS"
 
 #: desk/desk_rsc.c
 msgid "Based on 'GPLed' sources"
-msgstr "Основано на 'GPL'-исходниках"
+msgstr "Основано на открытых исходниках:"
 
 #: desk/desk_rsc.c
 msgid "\275 1987 Digital Research, Inc."
