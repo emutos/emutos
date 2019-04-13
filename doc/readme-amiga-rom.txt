@@ -5,6 +5,7 @@ This EmuTOS version is a ROM for Amiga hardware.
 emutos-amiga.rom - English ROM
 emutos-kickdisk.adf - English Amiga 1000 Kickstart disk
 emutos-vampire.rom - English ROM optimized for Vampire V2 accelerators
+emutos-vampire-v4sa.rom - English ROM optimized for Vampire V4 Standalone
 
 The following optional files are also supplied:
 emucurs.rsc - modifiable mouse cursors for the AES/desktop
@@ -35,6 +36,7 @@ EmuTOS for Amiga has been successfully tested on:
 - Amiga 1200 with Blizzard 1260 accelerator board, using BlizKick
 - Amiga 600, as ROM replacement
 - Amiga 500 with Vampire V2 accelerator board and experimental MapROM feature
+- Vampire V4 Standalone
 
 The (*) in the following lists indicates support disabled by default.
 See below for the details.
@@ -70,6 +72,9 @@ make amiga
 
 The Vampire V2 ROM image has been built using:
 make amigavampire
+
+The Vampire V4 Standalone ROM image has been built using:
+make v4sa
 
 (*) This additional hardware support is provided by sources imported
 from the AROS project. Unfortunately, due to AROS and GPL licenses

@@ -183,6 +183,9 @@ release-amiga-rom:
 	$(MAKE) clean
 	$(MAKE) amigavampire
 	cp $(VAMPIRE_ROM_AMIGA) $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)
+	$(MAKE) clean
+	$(MAKE) v4sa
+	cp $(V4_ROM_AMIGA) $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)
 	cp aes/mform.def $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)/emucurs.def
 	cp aes/mform.rsc $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)/emucurs.rsc
 	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)/emuicon.def
