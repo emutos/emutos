@@ -372,6 +372,7 @@ help:
 	@echo "firebee-prg emutos.prg, a RAM tos for the FireBee"
 	@echo "amiga   $(ROM_AMIGA), EmuTOS ROM for Amiga hardware"
 	@echo "amigavampire $(VAMPIRE_ROM_AMIGA), EmuTOS ROM for Amiga optimized for Vampire V2"
+	@echo "v4sa $(V4_ROM_AMIGA), EmuTOS ROM for Amiga Vampire V4 Standalone"
 	@echo "amigakd $(AMIGA_KICKDISK), EmuTOS as Amiga 1000 Kickstart disk"
 	@echo "amigaflop $(EMUTOS_ADF), EmuTOS RAM as Amiga boot floppy"
 	@echo "amigaflopvampire $(EMUTOS_VAMPIRE_ADF), EmuTOS RAM as Amiga boot floppy optimized for Vampire V2"
@@ -577,6 +578,18 @@ amigavampire: CPUFLAGS = $(VAMPIRE_CPUFLAGS)
 amigavampire: override DEF += $(VAMPIRE_DEF)
 amigavampire: ROM_AMIGA = $(VAMPIRE_ROM_AMIGA)
 amigavampire: amiga
+
+# Special Amiga ROM optimized for Vampire V4 Standalone
+V4_CPUFLAGS = -m68040
+V4_DEF = -DSTATIC_ALT_RAM_ADDRESS=0x01000000 -DSTATIC_ALT_RAM_SIZE=496UL*1024*1024
+V4_ROM_AMIGA = emutos-vampire-v4sa.rom
+
+.PHONY: v4sa
+NODEP += v4sa
+v4sa: CPUFLAGS = $(V4_CPUFLAGS)
+v4sa: override DEF += $(V4_DEF)
+v4sa: ROM_AMIGA = $(V4_ROM_AMIGA)
+v4sa: amiga
 
 #
 # Amiga Kickstart disk image for Amiga 1000
