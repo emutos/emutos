@@ -241,18 +241,21 @@ void amiga_machine_detect(void)
 const char *amiga_machine_name(void)
 {
 #if CONF_WITH_APOLLO_68080
-    /* Detect Vampire core using Board_ID register */
-    UBYTE boardid = HIBYTE(VREG_BOARD);
-    switch(boardid)
+    if (is_apollo_68080)
     {
-    case VREG_BOARD_V4SA:
-        return "Vampire V4 - Standalone";
-    case VREG_BOARD_V500:
-        return "Amiga 500 with Vampire V2";
-    case VREG_BOARD_V600:
-        return "Amiga 600 with Vampire V2";
-    case VREG_BOARD_V1200:
-        return "Amiga 1200 with Vampire V1200";
+        /* Detect Vampire core using Board_ID register */
+        UBYTE boardid = HIBYTE(VREG_BOARD);
+        switch(boardid)
+        {
+        case VREG_BOARD_V4SA:
+            return "Vampire V4 - Standalone";
+        case VREG_BOARD_V500:
+            return "Amiga 500 with Vampire V2";
+        case VREG_BOARD_V600:
+            return "Amiga 600 with Vampire V2";
+        case VREG_BOARD_V1200:
+            return "Amiga 1200 with Vampire V1200";
+        }
     }
 #endif
 
