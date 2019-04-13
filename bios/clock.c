@@ -1111,10 +1111,12 @@ void clock_init(void)
 #if CONF_WITH_IKBD_CLOCK
     else
     {
-        /* The IKBD clock is lost at power off, and has bogus values at
-         * power on.  So initialize it to the default date/time at startup.
+        /*
+         * The IKBD clock powers up with zeros in the month & day
+         * fields.  If we find that, we initialize it to the default
+         * date/time, just like Atari TOS does.
          */
-        if (FIRST_BOOT)
+        if ((igetdt() & 0x01ff0000L) == 0L)
             isetdt(DEFAULT_DATETIME);
     }
 #endif /* CONF_WITH_IKBD_CLOCK */
