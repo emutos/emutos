@@ -733,7 +733,7 @@ const char * machine_name(void)
 #ifdef MACHINE_FIREBEE
     return "FireBee";
 #elif defined(MACHINE_AMIGA)
-    return "Amiga";
+    return amiga_machine_name();
 #elif defined(MACHINE_M548X)
     return m548x_machine_name();
 #else

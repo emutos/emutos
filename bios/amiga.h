@@ -50,6 +50,7 @@ extern UWORD *copper_list;
 extern int has_gayle;
 
 void amiga_machine_detect(void);
+const char *amiga_machine_name(void);
 #if CONF_WITH_ALT_RAM
 void amiga_add_alt_ram(void);
 #endif
