@@ -187,10 +187,27 @@ static void cprint_asctime(void)
 {
     int years, months, days;
     int hours, minutes, seconds;
+    BOOL bad_clock = FALSE;
     ULONG system_time = Gettime(); /* Use the trap interface as a workaround
                                       to wrong Steem IKBD date after 16:00 */
+
     seconds = (system_time & 0x1F) * 2;
     system_time >>= 5;
+
+    /*
+     * if the system time is not later than the default date/time, it is
+     * invalid (the default date/time is 00:00 on the build date).
+     *
+     * note: if we do not have an RTC and are therefore using the IKBD
+     * clock, and if we found it to be invalid (see clock_init() in
+     * clock.c), we will have set the clock to the default date/time.
+     * it could now be a second or two later, so if we included seconds
+     * when comparing the clock to the default date/time, we would not
+     * detect a bad clock.  therefore we ignore the seconds.
+     */
+    if (system_time <= (DEFAULT_DATETIME>>5))
+        bad_clock = TRUE;
+
     minutes = system_time & 0x3F;
     system_time >>= 6;
     hours = system_time & 0x1F;
@@ -200,7 +217,15 @@ static void cprint_asctime(void)
     months = (system_time & 0x0F);
     system_time >>= 4;
     years = (system_time & 0x7F) + 1980;
+
+    /*
+     * if the date/time is invalid, show it in inverse video
+     */
+    if (bad_clock)
+        cprintf("\033p");
     cprintf("%04d/%02d/%02d %02d:%02d:%02d", years, months, days, hours, minutes, seconds);
+    if (bad_clock)
+        cprintf("\033q");
 }
 
 /*
