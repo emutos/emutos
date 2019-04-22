@@ -188,8 +188,7 @@ static void cprint_asctime(void)
     int years, months, days;
     int hours, minutes, seconds;
     BOOL bad_clock = FALSE;
-    ULONG system_time = Gettime(); /* Use the trap interface as a workaround
-                                      to wrong Steem IKBD date after 16:00 */
+    ULONG system_time = Gettime();
 
     seconds = (system_time & 0x1F) * 2;
     system_time >>= 5;
