@@ -46,7 +46,7 @@ delay:  subq.l  #1,D0                   // Delay loop.
 /* http://wandel.ca/homepage/execdis/exec_disassembly.txt                     */
 /******************************************************************************/
 
-        .globl amiga_memconf
+        .globl  amiga_memconf
 amiga_memconf:
         lea     0,a0                    // Start looking at location 0.
         lea     0x800000,a1             // Don't look past 8 megabytes.
@@ -65,7 +65,7 @@ checkmem:
 checkmore:
         lea     0x1000(a0),a0           // Increment current location by 4K.
         cmp.l   a0,a1                   // See if upper bound reached.
-        jls    exitcheck                // If so, exit from the loop.
+        jls     exitcheck               // If so, exit from the loop.
         move.l  d0,(a0)                 // Write the signature into memory.
 
         // Longword 0 of the block being checked was initially cleared to
@@ -90,7 +90,7 @@ exitcheck:
 /* Interrupt 2: Keyboard and 200 Hz timer                                     */
 /******************************************************************************/
 
-        .globl _amiga_init_keyboard_interrupt
+        .globl  _amiga_init_keyboard_interrupt
 _amiga_init_keyboard_interrupt:
         move.l  #_amiga_int_2,0x68.w
 
@@ -114,7 +114,7 @@ _amiga_init_keyboard_interrupt:
 
 /* Interrupt 2 handler */
 
-        .globl _amiga_int_2
+        .globl  _amiga_int_2
 _amiga_int_2:
         //move.w  #0x0f00,0xdff180        // Background color = red
         movem.l d0-d2/a0-a1,-(sp)
@@ -212,7 +212,7 @@ nolong:
 
 /* Interrupt 5 handler */
 
-        .globl _amiga_int_5
+        .globl  _amiga_int_5
 _amiga_int_5:
         movem.l d0-d1/a0-a1,-(sp)
 
