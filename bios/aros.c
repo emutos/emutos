@@ -651,9 +651,7 @@ static void findmbram(struct ExpansionBase *ExpansionBase)
     LONG ret;
     ULONG step, start, end;
 
-    if (!(mcpu >= 20))
-        return;
-    if (mcpu >= 20 && !IS_BUS32)
+    if (!IS_BUS32)
         return;
 
     /* High MBRAM */
