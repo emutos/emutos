@@ -42,6 +42,8 @@ msk_4kpd_paddr  = 0b11111111111111111111000000000000
                 .text
 
 _setup_68040_pmmu:
+                movem.l d2-d7/a2-a6,-(sp)
+
                 jbsr    turn_off_all
 
                 lea     mmu_tree,a1
@@ -54,15 +56,15 @@ _setup_68040_pmmu:
                 jcc     error_terminate
 
                 jbsr    mmu_start
+                movem.l (sp)+,d2-d7/a2-a6
                 moveq   #0,d0
                 rts
 
-error_terminate:moveq   #1,d0
+error_terminate:movem.l (sp)+,d2-d7/a2-a6
+                moveq   #1,d0
                 rts
 
-mmu_start:      movem.l d0-a6,-(sp)
-
-                moveq   #0,d0
+mmu_start:      moveq   #0,d0
                 movec   d0,cacr
                 cpusha  bc
                 nop
@@ -97,12 +99,9 @@ mmu_start:      movem.l d0-a6,-(sp)
                 // 4K
                 movec   d0,tc
 
-                movem.l (sp)+,d0-a6
                 rts
 
-turn_off_all:   movem.l d0-a6,-(sp)
-
-                moveq   #0,d0
+turn_off_all:   moveq   #0,d0
                 movec   d0,cacr
                 cpusha  bc
                 nop
@@ -117,7 +116,6 @@ turn_off_all:   movem.l d0-a6,-(sp)
                 pflusha
                 nop
 
-                movem.l (sp)+,d0-a6
                 rts
 
 
