@@ -141,8 +141,7 @@ mmu_start:      moveq   #0,d0
                 movec   d0,itt1
                 movec   d0,dtt1
 
-                move.l  #(1<<31)+(1<<29)+(1<<23)+(1<<22)+(1<<15),d0     // cacr=edc,esb,ebc,cabc,eic
-                and.l   #(1<<31)+(1<<15),d0
+                move.l  #(1<<31)+(1<<15),d0     // enable data and instruction caches
                 movec   d0,cacr
 
                 move.l  #(1<<tc_enable),d0
