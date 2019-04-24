@@ -354,7 +354,7 @@ create_pointertable:
                 move.l  d7,d6
                 and.l   #~msk_pnttab_addr,d6    //Already on 512 byte boundary?
                 jeq     .nf_ok                  //yes
-        //Fix address to next whole 512 byte boudary
+        //Fix address to next whole 512 byte boundary
                 add.l   #(~msk_pnttab_addr)+1,d7
                 and.l   #msk_pnttab_addr,d7
 .nf_ok:         move.l  d7,d6
