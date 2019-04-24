@@ -96,7 +96,7 @@ extern long xmaddalt(UBYTE *start, long size); /* found in bdos/mem.h */
 #endif
 
 #if CONF_WITH_68040_PMMU
-extern void setup_68040_pmmu(void);
+extern long setup_68040_pmmu(void);
 #endif
 
 /*==== Declarations =======================================================*/
@@ -237,19 +237,19 @@ static void bios_init(void)
     KDEBUG(("machine_init()\n"));
     machine_init();     /* initialise machine-specific stuff */
 
+    /* Initialize the BIOS memory management */
+    KDEBUG(("bmem_init()\n"));
+    bmem_init();
+
 #if CONF_WITH_68040_PMMU
     /*
      * Initialize the 68040 MMU
      * Must be done after TT-RAM memory detection (which takes place
-     * in machine_detect() above).
+     * in machine_detect() above) and memory management initialization.
      */
-    if (mcpu == 40)
-        setup_68040_pmmu();
+    if (mcpu == 40 && setup_68040_pmmu() != 0)
+        panic("setup_68040_pmmu() failed");
 #endif /* CONF_WITH_68040_PMMU */
-
-    /* Initialize the BIOS memory management */
-    KDEBUG(("bmem_init()\n"));
-    bmem_init();
 
     /* Initialize the screen */
     KDEBUG(("screen_init()\n"));

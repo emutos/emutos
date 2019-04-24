@@ -13,6 +13,7 @@
 
                 .globl  _setup_68040_pmmu
                 .extern _ramtop
+                .extern _balloc_stram
 
                 .arch   68040
 
@@ -39,6 +40,11 @@ msk_pnttab_addr = 0b11111111111111111111111000000000
 msk_4kpt_addr   = 0b11111111111111111111111100000000
 msk_4kpd_paddr  = 0b11111111111111111111000000000000
 
+MEMORY_SIZE_ST_RAM  = 14*1024*1024
+MEMORY_SIZE_TOS_ROM = 1024*1024
+MEMORY_SIZE_IO1     = 1024*1024
+MEMORY_SIZE_IO2     = 1024*1024
+
                 .text
 
 _setup_68040_pmmu:
@@ -46,8 +52,53 @@ _setup_68040_pmmu:
 
                 jbsr    turn_off_all
 
-                lea     mmu_tree,a1
-                move.l  a1,d0
+                // find out how much TT RAM we have
+                move.l  _ramtop.w,d0
+                jeq     no_ttram1
+                sub.l   #0x01000000,d0
+                move.l  d0,tt_ram_size
+no_ttram1:
+                add.l   #MEMORY_SIZE_ST_RAM+MEMORY_SIZE_TOS_ROM+MEMORY_SIZE_IO1+MEMORY_SIZE_IO2,d0
+
+                // calculate amount of memory needed for the tables and descriptors:
+
+                // 1) Each of the 128 root-level table descriptors corresponds to
+                //    a 32-Mbyte block of memory
+                // 2) Each of the 128 pointer-level table descriptors corresponds to
+                //    a 256-Kbyte block of memory.
+                // 3) There are 64 4-Kbyte page descriptors in a page-level table.
+
+                // page descriptors to allocate    = ⌈size / 4096⌉
+                // pointer descriptors to allocate = ⌈number of page descriptors / 64⌉
+                // root descriptors to allocate    = ⌈number of pointer descriptors / 128⌉
+
+                // However, perhaps to avoid unnecessary code complexity,
+                // create_pointertable() always assumes 128 pointer descriptors
+                // and create_pagetable() always assumes 64 page descriptors,
+                // regardless of whether they are going to be used or not.
+                // Also, there are 128 root descriptors assumed in mmusetup().
+                // A possible C version of this function could easily remove those
+                // shortcuts but that would be beneficial only if it made sense to
+                // assume RAM size was not divisible by 256 KB.
+
+                lsr.l   #8,d0                   // memory size / 4096 (no remainder)
+                lsr.l   #4,d0
+                move.l  d0,d1                   // add number of page descriptors
+
+                lsr.l   #6,d1                   // number of page descriptors / 64 (no remainder)
+                add.l   d1,d0                   // add number of pointer descriptors
+
+                add.l   #128,d0                 // add number of root descriptors
+
+                lsl.l   #2,d0                   // each descriptor is 4 bytes
+
+                add.l   #~msk_rootp_addr,d0     // padding
+
+                clr.w   -(sp)                   // FALSE
+                move.l  d0,-(sp)
+                jsr     _balloc_stram
+                addq.l  #6,sp
+
                 add.l   #~msk_rootp_addr,d0
                 and.l   #msk_rootp_addr,d0
                 move.l  d0,root_table
@@ -124,7 +175,6 @@ turn_off_all:   moveq   #0,d0
 
 //=======================================================
 mmusetup:
-make_mmu_tree:
                 move.l  root_table,a0
                 move.l  a0,d0
                 add.l   #~msk_rootp_addr+1,d0
@@ -138,7 +188,7 @@ make_mmu_tree:
                 // ST RAM
                 move.l  #0x00000000,d0          // logical
                 move.l  #0x00000000,d1          // physical
-                move.l  #14*1024*1024,d2        // size
+                move.l  #MEMORY_SIZE_ST_RAM,d2  // size
                 move.l  #c_writetrough<<d_cache_pos,d3  // flags
                 jbsr    create_table
                 jcc     .error
@@ -146,7 +196,7 @@ make_mmu_tree:
                 // TOS ROM
                 move.l  #0x00e00000,d0          // logical
                 move.l  #0x00e00000,d1          // physical
-                move.l  #1024*1024,d2           // size
+                move.l  #MEMORY_SIZE_TOS_ROM,d2 // size
                 move.l  #c_precise<<d_cache_pos,d3      // flags
                 jbsr    create_table
                 jcc     .error
@@ -154,26 +204,24 @@ make_mmu_tree:
                 // I/O space
                 move.l  #0x00f00000,d0          // logical
                 move.l  #0x00f00000,d1          // physical
-                move.l  #1024*1024,d2           // size
+                move.l  #MEMORY_SIZE_IO1,d2     // size
                 move.l  #c_precise<<d_cache_pos,d3      // flags
                 jbsr    create_table
                 jcc     .error
 
                 // TT RAM
+                move.l  tt_ram_size,d2          // size
+                jeq     no_ttram2
                 move.l  #0x01000000,d0          // logical
                 move.l  #0x01000000,d1          // physical
-                move.l  _ramtop.w,d2
-                jeq     .no_ttram
-                sub.l   d0,d2
                 move.l  #c_copyback<<d_cache_pos,d3     // flags
                 jbsr    create_table
                 jcc     .error
-.no_ttram:
-
+no_ttram2:
                 // I/O space (shadow)
                 move.l  #0xfff00000,d0          // logical
                 move.l  #0x00f00000,d1          // physical
-                move.l  #1024*1024,d2           // size
+                move.l  #MEMORY_SIZE_IO2,d2     // size
                 move.l  #c_precise<<d_cache_pos,d3      // flags
                 jbsr    create_table
                 jcc     .error
@@ -326,8 +374,6 @@ create_pointertable:
                 .even
 root_table:     .ds.l 1
 next_free:      .ds.l 1
-                .ds.b 128*5
-mmu_tree:       .ds.b (128*4)
-                .ds.b 4*1024*1024
+tt_ram_size:    .ds.l 1
 
 #endif /* CONF_WITH_68040_PMMU */
