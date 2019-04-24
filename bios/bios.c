@@ -248,7 +248,7 @@ static void bios_init(void)
      * in machine_detect() above) and memory management initialization.
      */
     if (mcpu == 40 && setup_68040_pmmu() != 0)
-        panic("setup_68040_pmmu() failed");
+        panic("setup_68040_pmmu() failed\n");
 #endif /* CONF_WITH_68040_PMMU */
 
     /* Initialize the screen */
