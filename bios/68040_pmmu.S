@@ -325,22 +325,22 @@ create_table:   movem.l d0-a6,-(sp)
 //      D4 = root table index
 //      D5 = pointer table index
 create_pagetable:
-                move.l  next_free,d7                    //Address of next free location
+                move.l  next_free,d7            //Address of next free location
                 move.l  d7,d6
 
         //Create 4k page table
-.4kp:           and.l   #~msk_4kpt_addr,d6              //Already on a "size of 4K page-table" boundary?
-                jeq     .4kp_nf_ok                      //Yes
-                add.l   #(~msk_4kpt_addr)+1,d7          //Add size of page table..
-                and.l   #msk_4kpt_addr,d7               //..then align to size of pagetable.
-.4kp_nf_ok:     move.l  d7,d6                           //D6 = Base address of new page table
-                add.l   #(~msk_4kpt_addr)+1,d7          //Update the next_free pointer
-                move.l  d7,next_free                    //Save
-                move.l  d6,a2                           //A2 = Base address of new page table
-                or.b    #2,d6                           //OR in %10 in the PDT field
-                move.l  d6,(a1,d5.l)                    //Store this descriptor in the pointer table (pointer level)
+.4kp:           and.l   #~msk_4kpt_addr,d6      //Already on a "4K page-table" boundary?
+                jeq     .4kp_nf_ok              //Yes
+                add.l   #(~msk_4kpt_addr)+1,d7  //Add size of page table..
+                and.l   #msk_4kpt_addr,d7       //..then align to size of pagetable.
+.4kp_nf_ok:     move.l  d7,d6                   //D6 = Base address of new page table
+                add.l   #(~msk_4kpt_addr)+1,d7  //Update the next_free pointer
+                move.l  d7,next_free            //Save
+                move.l  d6,a2                   //A2 = Base address of new page table
+                or.b    #2,d6                   //OR in %10 in the PDT field
+                move.l  d6,(a1,d5.l)            //Store descriptor in ptr table (pointer level)
                 moveq   #((((~msk_4kpt_addr)+1)&0xffffffff)/4)-1,d7  //Size of page table / 4
-.4kp_clr_pt:    clr.l   (a2)+                           //Make sure all descriptors in the new page table are invalidated
+.4kp_clr_pt:    clr.l   (a2)+                   //Invalidate all descriptors in new page table
                 dbra    d7,.4kp_clr_pt
                 rts
 
@@ -350,15 +350,15 @@ create_pagetable:
 
         //Return new pointertable base in D6, and store it in the root-table at (a0,d4.l)
 create_pointertable:
-                move.l  next_free,d7                            //Get next free location
+                move.l  next_free,d7            //Get next free location
                 move.l  d7,d6
-                and.l   #~msk_pnttab_addr,d6                    //Already on 512 byte boundary?
-                jeq     .nf_ok                                  //yes
+                and.l   #~msk_pnttab_addr,d6    //Already on 512 byte boundary?
+                jeq     .nf_ok                  //yes
         //Fix address to next whole 512 byte boudary
                 add.l   #(~msk_pnttab_addr)+1,d7
                 and.l   #msk_pnttab_addr,d7
 .nf_ok:         move.l  d7,d6
-                add.l   #(~msk_pnttab_addr)+1,d7                //Add the bytes needed (512)
+                add.l   #(~msk_pnttab_addr)+1,d7    //Add the bytes needed (512)
                 move.l  d7,next_free
                 move.l  d6,a1
                 or.b    #2,d6
