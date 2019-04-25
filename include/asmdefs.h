@@ -51,14 +51,14 @@
 #define PMOVE_TO_TTR0(addr) .dc.l 0xf0390800,addr   /* 68030 */
 #define PMOVE_TO_TTR1(addr) .dc.l 0xf0390c00,addr   /* 68030 */
 
-#define FNOP                .dc.l 0xf2800000        /* 6888X, 68040-68060 */
-#define FSAVE_MINUS_SP      .dc.w 0xf327            /* 6888X, 68040-68060 */
-#define FRESTORE_SP_PLUS    .dc.w 0xf35f            /* 6888X, 68040-68060 */
+#define FNOP                .dc.l 0xf2800000        /* 6888X, 68040-68060 (except 68ec040/68ec060) */
+#define FSAVE_MINUS_SP      .dc.w 0xf327            /* 6888X, 68040-68060 (except 68ec040/68ec060) */
+#define FRESTORE_SP_PLUS    .dc.w 0xf35f            /* 6888X, 68040-68060 (except 68ec040/68ec060) */
 
-#define CINVA_DC            .dc.w 0xf458            /* 68040-68060 (except 68ec040) */
-#define CINVA_IC            .dc.w 0xf498            /* 68040-68060 (except 68ec040) */
-#define CINVA_BC            .dc.w 0xf4d8            /* 68040-68060 (except 68ec040) */
-#define CINVL_IC_A0         .dc.w 0xf488            /* 68040-68060 (except 68ec040) */
+#define CINVA_DC            .dc.w 0xf458            /* 68040-68060 */
+#define CINVA_IC            .dc.w 0xf498            /* 68040-68060 */
+#define CINVA_BC            .dc.w 0xf4d8            /* 68040-68060 */
+#define CINVL_IC_A0         .dc.w 0xf488            /* 68040-68060 */
 
 #define ADDIWL_0_A0         .dc.l 0x06d00000        /* 68080 */
 
