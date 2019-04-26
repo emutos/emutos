@@ -26,9 +26,6 @@
 #include "kprint.h"
 #include "machine.h"
 
-/* The following functions are defined in aros2.S */
-ULONG MemoryTest(void *address, void *endAddress, ULONG blockSize);
-
 /******************************************************************************/
 /* Compatibility macros and types                                             */
 /******************************************************************************/
@@ -638,10 +635,7 @@ static ULONG autosize(struct ExpansionBase *ExpansionBase, struct ConfigDev *con
         return 0x00010000 << (sizebits - 2);
     if (sizebits >= 9)
         return 0x00600000 + (0x200000 * (sizebits - 9));
-    size = AROS_UFC3(ULONG, MemoryTest,
-        AROS_UFCA(APTR, addr, A0),
-        AROS_UFCA(APTR, addr + maxsize, A1),
-        AROS_UFCA(ULONG, 0x80000, D0));
+    size = amiga_detect_ram(addr, addr + maxsize, 0x80000);
     D(bug("addr=%lx size=%lx maxsize=%lx\n", (ULONG)addr, size, maxsize));
     return size;
 }
@@ -658,10 +652,7 @@ static void findmbram(struct ExpansionBase *ExpansionBase)
     step =  0x00100000;
     start = 0x08000000;
     end =   0x7f000000;
-    ret = AROS_UFC3(LONG, MemoryTest,
-        AROS_UFCA(APTR, start, A0),
-        AROS_UFCA(APTR, end, A1),
-        AROS_UFCA(ULONG, step, D0));
+    ret = amiga_detect_ram((void *)start, (void *)end, step);
     if (ret < 0)
         return;
     if (ret > 0) {
@@ -674,10 +665,7 @@ static void findmbram(struct ExpansionBase *ExpansionBase)
     start = 0x08000000;
     end =   0x01000000;
     for (;;) {
-        ret = AROS_UFC3(LONG, MemoryTest,
-            AROS_UFCA(APTR, start - step, A0),
-            AROS_UFCA(APTR, start, A1),
-            AROS_UFCA(ULONG, step, D0));
+        ret = amiga_detect_ram((void *)(start - step), (void *)start, step);
         if (ret <= 0)
             break;
         if (end >= start - step)
@@ -778,7 +766,7 @@ static void add_slow_ram(void)
 {
     APTR address = (APTR)0x00c00000;
     APTR endAddress = has_gayle ? (APTR)0x00d80000 : (APTR)0x00dc0000;
-    ULONG size = MemoryTest(address, endAddress, 0x00040000);
+    ULONG size = amiga_detect_ram(address, endAddress, 0x00040000);
 
     if (size > 0)
     {

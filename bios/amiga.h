@@ -53,6 +53,7 @@ void amiga_machine_detect(void);
 const char *amiga_machine_name(void);
 #if CONF_WITH_ALT_RAM
 void amiga_add_alt_ram(void);
+ULONG amiga_detect_ram(void *start, void *end, ULONG step);
 #endif
 ULONG amiga_initial_vram_size(void);
 void amiga_screen_init(void);

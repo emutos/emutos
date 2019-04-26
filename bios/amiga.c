@@ -268,6 +268,45 @@ const char *amiga_machine_name(void)
 /* Alternate RAM                                                              */
 /******************************************************************************/
 
+static BOOL write_read_equals(void *start, ULONG testval)
+{
+    volatile ULONG *p = (volatile ULONG *)start;
+
+    p[0] = testval; /* Write test value */
+    p[1] = 0; /* Put something else on the data bus */
+
+    return p[0] == testval; /* Should be TRUE if there is RAM here */
+}
+
+static BOOL is_valid_ram(void *p)
+{
+    BOOL valid = FALSE;
+    const ULONG testval = 0x55aa33cc;
+
+    /* Test with 2 different patterns */
+    if (write_read_equals(p, testval)
+        && write_read_equals(p, ~testval))
+    {
+        valid = TRUE;
+    }
+
+    KDEBUG(("is_valid_ram(%p) == %d\n", p, valid));
+
+    return valid;
+}
+
+ULONG amiga_detect_ram(void *start, void *end, ULONG step)
+{
+    UBYTE *pbyte_start = (UBYTE *)start;
+    UBYTE *pbyte_end = (UBYTE *)end;
+    UBYTE *p = pbyte_start;
+
+    while (p < pbyte_end && is_valid_ram(p))
+        p += step;
+
+    return p - pbyte_start;
+}
+
 /* Detect Alt-RAM directly from hardware */
 static void add_alt_ram_from_hardware(void)
 {
