@@ -34,7 +34,10 @@ static volatile UBYTE* novamembase;
 int has_nova;
 
 /* Macros for VGA register access */
-#define VGAREG(x) (*(novaregbase+(x)))
+#define VGAREG(x)   (*(novaregbase+(x)))
+/* Note that for 16 bit access high and low word are swapped by Nova HW.
+   Writing to and reading from VGAREG_W needs to take this into account. */
+#define VGAREG_W(x) (*(volatile UWORD*)(novaregbase+(x)))
 
 #define CRTC_I  0x3D4   /* CRT Controller index and data ports */
 #define CRTC_D  0x3D5
@@ -50,6 +53,29 @@ int has_nova;
 #define DAC_D   0x3C9   /* RAMDAC palette data */
 #define ATC_IW  0x3C0   /* Attribute controller: index and data write */
 #define IS1_RC  0x3DA   /* Input Status Register 1: color emulation */
+
+/* ATI Mach32 only */
+#define SETUP_CONTROL   0x0102
+#define ATI_I           0x01CE
+#define ATI_DAC_R2      0x02EA
+#define ATI_DAC_R3      0x02EB
+#define ATI_DAC_R0      0x02EC
+#define ATI_DAC_R1      0x02ED
+#define CONFIG_STATUS_1 0x12EE
+#define MISC_OPTIONS    0x36EE
+#define SUBSYS_CNTL     0x42E8
+#define ADVFUNC_CNTL    0x4AE8
+#define CLOCK_SEL       0x4AEE
+#define MEM_BNDRY       0x42EE
+#define ROM_PAGE_SEL    0x46E8
+#define ROM_ADDR_1      0x52EE
+#define SCRATCH_PAD_1   0x56EE
+#define MEM_CFG         0x5EEE
+#define HORZ_OVERSCAN   0x62EE
+#define MAX_WAITSTATES  0x6AEE
+#define EXT_GE_CONFIG   0x7AEE
+#define MISC_CNTL       0x7EEE
+#define R_MISC_CNTL     0x92EE
 
 static ULONG delay20us;
 #define SHORT_DELAY delay_loop(delay20us)
@@ -195,6 +221,62 @@ void detect_nova(void)
     }
 }
 
+/* Read and write some registers specific to Mach32. */
+static int detect_mach32(void)
+{
+    int result = 0;
+
+    if (VGAREG_W(CONFIG_STATUS_1) != 0xFFFFU)
+    {
+        VGAREG_W(SCRATCH_PAD_1) = 0x5555U;
+        if (VGAREG_W(SCRATCH_PAD_1) == 0x5555U)
+        {
+            result = 1;
+        }
+    }
+
+    if (result)
+    {
+        KDEBUG(("detect_mach32() detected ATI Mach32\n"));
+    }
+    return result;
+}
+
+/* Basic Mach32 initialisation before VGA mode can be enabled. */
+static void init_mach32(void)
+{
+
+    KDEBUG(("init_mach32()\n"));
+
+    /* General card configuration */
+    VGAREG(MISC_OPTIONS) = 0xA5;    /* Enable 16 bit IO */
+    VGAREG(MISC_OPTIONS+1) = 0x90;
+    VGAREG(MAX_WAITSTATES) = 0x0E;  /* Memory config */
+    VGAREG(MEM_BNDRY) = 0x00;
+    VGAREG_W(MEM_CFG) = 0x0202;
+    VGAREG_W(ROM_ADDR_1) = 0x0040;
+    // VGAREG_W(SCRATCH_PAD_1) = 0x0000;
+    VGAREG(ADVFUNC_CNTL) = 0x03;    /* Go to 8514 mode */
+    VGAREG_W(SUBSYS_CNTL) = 0x90;   /* 8514 reset */
+    VGAREG_W(SUBSYS_CNTL) = 0x50;
+    VGAREG_W(CLOCK_SEL) = 0x5002;   /* Back to ATI mode and clock select */
+
+    /* Configure DAC */
+    VGAREG_W(EXT_GE_CONFIG) = 0x1A20; /* Select DAC registers 8-11. */
+    VGAREG(ATI_DAC_R1) = 0x00;      /* Input clock select */
+    VGAREG(ATI_DAC_R2) = 0x30;      /* Output clock select */
+    VGAREG(ATI_DAC_R3) = 0x2D;      /* Mux control */
+    VGAREG(MISC_CNTL+1) = (VGAREG(R_MISC_CNTL+1) & 0xF0) | 0x0C;
+    VGAREG_W(EXT_GE_CONFIG) = 0x1A40; /* DAC 8 bit mode. */
+    VGAREG_W(HORZ_OVERSCAN) = 0;
+    //VGAREG(ATI_DAC_R2) = 0xFF     /* DAC mask register. Set later. */
+    
+    /* Enable VGA mode */
+    VGAREG(ROM_PAGE_SEL) = 0x10;    /* VGA setup mode */
+    VGAREG(SETUP_CONTROL) = 0x01;   /* Enable card */
+    VGAREG(ROM_PAGE_SEL) = 0x08;    /* Enable VGA */
+}
+
 /* Unlocks access to the extended registers of ET4000 */
 static void unlock_et4000(void)
 {
@@ -204,9 +286,9 @@ static void unlock_et4000(void)
 }
 
 /* Initializes card and memory access */
-static void init_et4000_memory(void)
+static void init_et4000(void)
 {
-    KDEBUG(("init_et4000_memory()\n"));
+    KDEBUG(("init_et4000()\n"));
     set_idxreg(CRTC_I, 0x34, 0x00); /* 6845 compatibility reg */
     set_idxreg(CRTC_I, 0x31, 0x00); /* W32: clock select */
 
@@ -216,7 +298,7 @@ static void init_et4000_memory(void)
     set_idxreg(GDC_I, 0x03, 0x00);  /* Function select = MOVE */
     set_idxreg(GDC_I, 0x06, 0x05);  /* Memory map: graphics mode enable */
     set_idxreg(GDC_I, 0x08, 0xFF);  /* Bit mask: pass all CPU bits */
-    VGAREG(GDC_SEG) = 0x00;        /* Select segment 0, because of linear mode(?) */
+    VGAREG(GDC_SEG) = 0x00;         /* Select segment 0, because of linear mode(?) */
     set_idxreg(CRTC_I, 0x32, 0x28); /* RAS/CAS timing */
     set_idxreg(CRTC_I, 0x36, 0xF3); /* Video System Conf. 1: linear memory access, 16 bit access */
     set_idxreg(CRTC_I, 0x37, 0x0F); /* Video System Conf. 2: DRAM, 32 bit wide */
@@ -249,6 +331,33 @@ static void ramdac_hicolor_off(void)
     UNUSED(dummy);
 }
 
+/* Loads the Mach32 specific indexed registers */
+static void set_mach32_idxreg(void)
+{
+    int idx;
+
+    set_idxreg(ATI_I, 0x86, 0x7A);
+    set_idxreg(ATI_I, 0xA3, 0x00);
+    set_idxreg(ATI_I, 0xAD, 0x00);
+    set_idxreg(ATI_I, 0xAE, 0x00);
+    set_idxreg(ATI_I, 0xB0, 0x08);
+    for (idx = 0xB1; idx <= 0xB5; idx++)
+    {
+        set_idxreg(ATI_I, idx, 0x00);
+    }
+    set_idxreg(ATI_I, 0xB6, 0x01);
+    set_idxreg(ATI_I, 0xB8, 0x00); // TODO: is overwritten below
+    set_idxreg(ATI_I, 0xBD, 0x04);
+    set_idxreg(ATI_I, 0xBE, 0x08); // TODO: is overwritten below
+    set_idxreg(ATI_I, 0xBF, 0x01);
+
+    set_idxreg(TS_I, 0x00, 0x01);   /* Reset Timing Sequencer */
+    set_idxreg(ATI_I, 0xB9, 0x42);
+    set_idxreg(ATI_I, 0xB8, 0x40);
+    set_idxreg(ATI_I, 0xBE, 0x00);
+    set_idxreg(TS_I, 0x00, 0x03);
+}
+
 /* Loads the palette entries for colors 0 = white, 1 = black and 255 = overscan, also black */
 static void set_palette_entries(const UBYTE* palette)
 {
@@ -275,12 +384,14 @@ static void set_palette_entries(const UBYTE* palette)
 
 
 /* Loads predefined values to all relevant VGA registers */
-static void init_et4000_resolution(void)
+static void init_nova_resolution(int is_mach32)
 {
     UBYTE temp;
 
-    KDEBUG(("init_et4000_resolution()\n"));
-    ramdac_hicolor_off();
+    KDEBUG(("init_nova_resolution()\n"));
+    if (!is_mach32) {
+        ramdac_hicolor_off();
+    }
 
     /* Load registers */
 
@@ -289,23 +400,38 @@ static void init_et4000_resolution(void)
     LONG_DELAY;
     set_idxreg(TS_I, 0x00, 0x03);
 
-    unlock_et4000(); /* TODO: really required again? */
+    if (!is_mach32) {
+        unlock_et4000(); /* TODO: really required again? */
+    }
 
     set_multiple_idxreg(TS_I, 1, sizeof(et4000_TS_1_4), et4000_TS_1_4);
-    set_multiple_idxreg(TS_I, 6, sizeof(et4000_TS_6_8), et4000_TS_6_8);
+    if (!is_mach32) {
+        set_multiple_idxreg(TS_I, 6, sizeof(et4000_TS_6_8), et4000_TS_6_8);
+    }
 
     VGAREG(MISC_W) = et4000_MISC_W;
 
     set_idxreg(CRTC_I, 0x11, 0); /* enable write to CRTC */
     set_multiple_idxreg(CRTC_I, 0, sizeof(et4000_CRTC_0_0x18), et4000_CRTC_0_0x18);
-    set_multiple_idxreg(CRTC_I, 0x33, sizeof(et4000_CRTC_0x33_0x35), et4000_CRTC_0x33_0x35);
+    if (!is_mach32) {
+        set_multiple_idxreg(CRTC_I, 0x33, sizeof(et4000_CRTC_0x33_0x35), et4000_CRTC_0x33_0x35);
+    }
     temp = get_idxreg(CRTC_I, 0x11);
     set_idxreg(CRTC_I, 0x11, temp | 0x80); /* disable write to CRTC */
 
-    set_multiple_atcreg(0, sizeof(et4000_ATC_0_0x16), et4000_ATC_0_0x16);
+    if (is_mach32) {
+        /* Do not write ATC registers 0x15 and 0x16 on Mach32 */
+        set_multiple_atcreg(0, sizeof(et4000_ATC_0_0x16) - 2, et4000_ATC_0_0x16);
+    } else {   /* ET4000 */
+        set_multiple_atcreg(0, sizeof(et4000_ATC_0_0x16), et4000_ATC_0_0x16);
+    }
     set_multiple_idxreg(GDC_I, 0, sizeof(et4000_GDC_0_8), et4000_GDC_0_8);
 
-    set_idxreg(CRTC_I, 0x36, 0x53);
+    if (is_mach32) {
+        set_mach32_idxreg();
+    } else {   /* ET4000 */
+        set_idxreg(CRTC_I, 0x36, 0x53);
+    }
     set_idxreg(TS_I, 1, et4000_TS_1_4[0] | 0x20); /* screen off */
     set_palette_entries(et4000_palette);
     set_idxreg(TS_I, 1, et4000_TS_1_4[0]); /* screen on */
@@ -392,15 +518,30 @@ static void init_system_vars(void)
 /* Initialize Nova card */
 int init_nova(void)
 {
+    int is_mach32;
+
     delay20us = loopcount_1_msec / 50;
 
     /* Fail if detect_nova() hasn't found card */
     if (!has_nova)
         return 0;
+    
+    /* Detect ATI Mach32 (as opposed to ET4000). */
+    is_mach32 = detect_mach32();
+    if (is_mach32) {
+        novamembase += 0x0A0000UL;
+        init_mach32();
+    }
 
-    /* Enables VGA mode and selects MCLK 1 */
+    /* Enable VGA mode */
     VGAREG(VIDSUB) = 0x01;
-    VGAREG(MISC_W) = 0xE3;
+    if (is_mach32) {
+        /* Mach32 indexed registers at 0x1CE. */
+        set_idxreg(GDC_I, 0x50, 0xCE);
+        set_idxreg(GDC_I, 0x51, 0x81);
+    } else {   /* ET4000 */
+        VGAREG(MISC_W) = 0xE3; /* Select MCLK1 */
+    }
 
     /* Sanity check that no other VME or Megabus HW has been detected.
      * Note that we can do this only after enabling VGA in the lines above.
@@ -410,10 +551,16 @@ int init_nova(void)
         return 0;
     }
 
-    unlock_et4000();
-    init_et4000_memory();
-    init_et4000_resolution();
-    count_vbls();
+    if (!is_mach32) {   /* ET4000 */
+        unlock_et4000();
+        init_et4000();
+    }
+
+    init_nova_resolution(is_mach32);
+
+    if (!is_mach32) {   /* ET4000 */
+        count_vbls();
+    }
 
     if (!test_video_memory()) {
         KDEBUG(("Nova memory inaccessible\n"));
