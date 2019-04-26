@@ -155,7 +155,7 @@ static void set_multiple_atcreg(UBYTE startreg, UBYTE cnt, const UBYTE *values)
     UNUSED(dummy);
 }
 
-/* Check for presence of a VGA card using the ATC palette registers */
+/* Check for presence of a VGA card using the ATC palette registers. */
 static int check_for_vga(void)
 {
     volatile UBYTE dummy;
@@ -402,6 +402,11 @@ static void init_nova_resolution(int is_mach32)
     }
 
     /* Load registers */
+    if (is_mach32) {
+        /* Mach32 indexed registers at 0x1CE. */
+        set_idxreg(GDC_I, 0x50, 0xCE);
+        set_idxreg(GDC_I, 0x51, 0x81);
+    }
 
     /* Reset Timing Sequencer */
     set_idxreg(TS_I, 0x00, 0x01);
@@ -543,16 +548,10 @@ int init_nova(void)
 
     /* Enable VGA mode */
     VGAREG(VIDSUB) = 0x01;
-    if (is_mach32) {
-        /* Mach32 indexed registers at 0x1CE. */
-        set_idxreg(GDC_I, 0x50, 0xCE);
-        set_idxreg(GDC_I, 0x51, 0x81);
-    } else {   /* ET4000 */
-        VGAREG(MISC_W) = 0xE3; /* Select MCLK1 */
-    }
+    VGAREG(MISC_W) = 0xE3; /* Select color mode & MCLK1 */
 
     /* Sanity check that no other VME or Megabus HW has been detected.
-     * Note that we can do this only after enabling VGA in the lines above.
+     * Note that we can do this only after enabling VGA in the code above.
      */
     if (!check_for_vga()) {
         KDEBUG(("No Nova or no VGA card found\n"));
