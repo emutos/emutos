@@ -88,25 +88,25 @@ static inline void set_idxreg(UWORD port, UBYTE reg, UBYTE value) __attribute__(
 static void set_multiple_idxreg(UWORD port, UBYTE startreg, UBYTE cnt, const UBYTE *values);
 static void set_multiple_atcreg(UBYTE startreg, UBYTE cnt, const UBYTE *values);
 
-/* Register data for ET4000 init */
+/* Register data for Mach32/ET4000 init */
 /* Timing Sequencer registers 1...4 */
-static const UBYTE et4000_TS_1_4[] = {0x01,0x01,0x00,0x06};
+static const UBYTE vga_TS_1_4[] = {0x01,0x01,0x00,0x06};
 /* Timing Sequencer registers 6...8 */
 static const UBYTE et4000_TS_6_8[] = {0x00,0xF4,0x03};
 /* Misc Output Write Register */
-static const UBYTE et4000_MISC_W = 0x63; /* sync polarity: H-, V+ */
+static const UBYTE vga_MISC_W = 0x63; /* sync polarity: H-, V+ */
 /* CRT Controller: registers 0 - 0x18 */
-static const UBYTE et4000_CRTC_0_0x18[] = {0x5F,0x4F,0x50,0x82,
+static const UBYTE vga_CRTC_0_0x18[] = {0x5F,0x4F,0x50,0x82,
     0x54,0x80,0xBF,0x1F,0x00,0x40,0x00,0x00,0x00,0x00,0x00,
     0x00,0x9C,0x0E,0x8F,0x28,0x00,0x96,0xB9,0xC3,0xFF};
 /* CRT Controller: registers 0x33 - 0x35 */
 static const UBYTE et4000_CRTC_0x33_0x35[] = {0x00,0x00,0x00};
 /* Attribute Controller: registers 0 - 0x16 */
-static const UBYTE et4000_ATC_0_0x16[] = {0x00,0x01,0x02,0x03,
+static const UBYTE vga_ATC_0_0x16[] = {0x00,0x01,0x02,0x03,
      0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,
      0x0F,0x01,0xFF,0x01,0x10,0x00,0x05,0x00};
-static const UBYTE et4000_GDC_0_8[] = {0x00,0x00,0x00,0x00,0x00,0x00,0x01,0x0F,0xFF};
-static const UBYTE et4000_palette[] = {0xFF,0xFF,0xFF, 0,0,0, 0,0,0};
+static const UBYTE vga_GDC_0_8[] = {0x00,0x00,0x00,0x00,0x00,0x00,0x01,0x0F,0xFF};
+static const UBYTE vga_palette[] = {0xFF,0xFF,0xFF, 0,0,0, 0,0,0};
 
 /* Read an indexed VGA register */
 static inline UBYTE get_idxreg(UWORD port, UBYTE reg)
@@ -404,15 +404,15 @@ static void init_nova_resolution(int is_mach32)
         unlock_et4000(); /* TODO: really required again? */
     }
 
-    set_multiple_idxreg(TS_I, 1, sizeof(et4000_TS_1_4), et4000_TS_1_4);
+    set_multiple_idxreg(TS_I, 1, sizeof(vga_TS_1_4), vga_TS_1_4);
     if (!is_mach32) {
         set_multiple_idxreg(TS_I, 6, sizeof(et4000_TS_6_8), et4000_TS_6_8);
     }
 
-    VGAREG(MISC_W) = et4000_MISC_W;
+    VGAREG(MISC_W) = vga_MISC_W;
 
     set_idxreg(CRTC_I, 0x11, 0); /* enable write to CRTC */
-    set_multiple_idxreg(CRTC_I, 0, sizeof(et4000_CRTC_0_0x18), et4000_CRTC_0_0x18);
+    set_multiple_idxreg(CRTC_I, 0, sizeof(vga_CRTC_0_0x18), vga_CRTC_0_0x18);
     if (!is_mach32) {
         set_multiple_idxreg(CRTC_I, 0x33, sizeof(et4000_CRTC_0x33_0x35), et4000_CRTC_0x33_0x35);
     }
@@ -421,20 +421,20 @@ static void init_nova_resolution(int is_mach32)
 
     if (is_mach32) {
         /* Do not write ATC registers 0x15 and 0x16 on Mach32 */
-        set_multiple_atcreg(0, sizeof(et4000_ATC_0_0x16) - 2, et4000_ATC_0_0x16);
+        set_multiple_atcreg(0, sizeof(vga_ATC_0_0x16) - 2, vga_ATC_0_0x16);
     } else {   /* ET4000 */
-        set_multiple_atcreg(0, sizeof(et4000_ATC_0_0x16), et4000_ATC_0_0x16);
+        set_multiple_atcreg(0, sizeof(vga_ATC_0_0x16), vga_ATC_0_0x16);
     }
-    set_multiple_idxreg(GDC_I, 0, sizeof(et4000_GDC_0_8), et4000_GDC_0_8);
+    set_multiple_idxreg(GDC_I, 0, sizeof(vga_GDC_0_8), vga_GDC_0_8);
 
     if (is_mach32) {
         set_mach32_idxreg();
     } else {   /* ET4000 */
         set_idxreg(CRTC_I, 0x36, 0x53);
     }
-    set_idxreg(TS_I, 1, et4000_TS_1_4[0] | 0x20); /* screen off */
-    set_palette_entries(et4000_palette);
-    set_idxreg(TS_I, 1, et4000_TS_1_4[0]); /* screen on */
+    set_idxreg(TS_I, 1, vga_TS_1_4[0] | 0x20); /* screen off */
+    set_palette_entries(vga_palette);
+    set_idxreg(TS_I, 1, vga_TS_1_4[0]); /* screen on */
 }
 
 /* Certain ET4000 graphic cards require a different clock divider.
