@@ -228,16 +228,23 @@ static int detect_mach32(void)
 
     if (VGAREG_W(CONFIG_STATUS_1) != 0xFFFFU)
     {
-        VGAREG_W(SCRATCH_PAD_1) = 0x5555U;
-        if (VGAREG_W(SCRATCH_PAD_1) == 0x5555U)
+        /* Read two bytes of ATI magic number from BIOS ROM. */
+        /* After power-up, only even bytes are accessible. */
+        if (*(novamembase + 0xC0032UL) == '6' && *(novamembase + 0xC0034UL) == '2')
         {
-            result = 1;
+            /* Try to read and write Mach32 specific scratch register. */
+            VGAREG(SCRATCH_PAD_1) = 0x55U;
+            if (VGAREG(SCRATCH_PAD_1) == 0x55U)
+            {
+                result = 1;
+            }
         }
     }
 
-    if (result)
-    {
+    if (result) {
         KDEBUG(("detect_mach32() detected ATI Mach32\n"));
+    } else {
+        KDEBUG(("detect_mach32() did not detect ATI Mach32\n"));
     }
     return result;
 }
@@ -346,15 +353,16 @@ static void set_mach32_idxreg(void)
         set_idxreg(ATI_I, idx, 0x00);
     }
     set_idxreg(ATI_I, 0xB6, 0x01);
-    set_idxreg(ATI_I, 0xB8, 0x00); // TODO: is overwritten below
+    set_idxreg(ATI_I, 0xB8, 0x00);
     set_idxreg(ATI_I, 0xBD, 0x04);
-    set_idxreg(ATI_I, 0xBE, 0x08); // TODO: is overwritten below
+    set_idxreg(ATI_I, 0xBE, 0x08);
     set_idxreg(ATI_I, 0xBF, 0x01);
 
     set_idxreg(TS_I, 0x00, 0x01);   /* Reset Timing Sequencer */
-    set_idxreg(ATI_I, 0xB9, 0x42);
+    set_idxreg(ATI_I, 0xB9, 0x42);  /* Configure clock generator */
     set_idxreg(ATI_I, 0xB8, 0x40);
     set_idxreg(ATI_I, 0xBE, 0x00);
+    VGAREG(MISC_W) = vga_MISC_W;    /* Needed again here. */
     set_idxreg(TS_I, 0x00, 0x03);
 }
 
