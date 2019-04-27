@@ -1066,7 +1066,7 @@ TOCLEAN += *.dsm dsm.txt
 	$(OBJDUMP) --target=binary --architecture=m68k \
 	  --adjust-vma=$$vma -D $*.img \
 	  | sed -e '/^ *[0-9a-f]*:/!d;s/^    /0000/;s/^   /000/;s/^  /00/;s/:	/: /' > dsm.tmp
-	sed -e '/^ *0x/!d;s///;s/  */:  /;s/^00000000//' $< > map.tmp
+	sed -e '/^ *0x/!d;s///;s/  */:  /;s/^00000000//;/^00000001:  ASSERT /d' $< > map.tmp
 	cat dsm.tmp map.tmp | LC_ALL=C sort > $@
 	rm -f dsm.tmp map.tmp
 
