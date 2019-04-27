@@ -956,7 +956,7 @@ obj/country: always-execute-recipe
 	mv last.tmp $@; \
 	for i in $(TRANS_SRC); \
 	do \
-	  j=obj/`basename $$i tr.c`o; \
+	  j=obj/$$(basename $$i tr.c)o; \
 	  echo "rm -f $$i $$j"; \
 	  rm -f $$i $$j; \
 	done
@@ -1062,7 +1062,7 @@ obj/version.o: obj/version.c
 TOCLEAN += *.dsm dsm.txt
 
 %.dsm: %.map %.img
-	vma=`sed -e '/^\.text/!d;s/[^0]*//;s/ .*//;q' $<`; \
+	vma=$$(sed -e '/^\.text/!d;s/[^0]*//;s/ .*//;q' $<); \
 	$(OBJDUMP) --target=binary --architecture=m68k \
 	  --adjust-vma=$$vma -D $*.img \
 	  | sed -e '/^ *[0-9a-f]*:/!d;s/^    /0000/;s/^   /000/;s/^  /00/;s/:	/: /' > dsm.tmp
@@ -1102,7 +1102,7 @@ checkindent:
 	for i in $(INDENTFILES) ; do \
 		$(INDENT) <$$i 2>err.tmp >/dev/null; \
 		if test -s err.tmp ; then \
-			err=`expr $$err + 1`; \
+			err=$$(expr $$err + 1); \
 			echo in $$i:; \
 			cat err.tmp; \
 		fi \
@@ -1127,7 +1127,7 @@ indent:
 				mv indent.tmp $$i; \
 			fi \
 		else \
-			err=`expr $$err + 1`; \
+			err=$$(expr $$err + 1); \
 			echo in $$i:; \
 			cat err.tmp; \
 		fi \
@@ -1149,7 +1149,7 @@ EXPAND_NOFILES = vdi/vdi_tblit_cf.S
 .PHONY: expand
 NODEP += expand
 expand:
-	@for i in `grep -l '	' $(filter-out $(EXPAND_NOFILES), $(EXPAND_FILES))` ; do \
+	@for i in $$(grep -l '	' $(filter-out $(EXPAND_NOFILES), $(EXPAND_FILES))) ; do \
 		echo expanding $$i; \
 		expand <$$i >expand.tmp; \
 		mv expand.tmp $$i; \
