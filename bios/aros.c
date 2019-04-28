@@ -762,24 +762,8 @@ static void ExpansionInit(struct ExpansionBase *ExpansionBase)
 
 /* EmuTOS to AROS glue for Alternate RAM detection ****************************/
 
-static void add_slow_ram(void)
-{
-    APTR address = (APTR)0x00c00000;
-    APTR endAddress = has_gayle ? (APTR)0x00d80000 : (APTR)0x00dc0000;
-    ULONG size = amiga_detect_ram(address, endAddress, 0x00040000);
-
-    if (size > 0)
-    {
-        D(bug("Slow RAM detected at %08lx, size %08lx\n", (ULONG)address, size));
-        xmaddalt((UBYTE *)address, (long)size);
-    }
-}
-
 void aros_add_alt_ram(void)
 {
-    /* Add the slowest RAM first to put it at the end of the Alt-RAM pool */
-    add_slow_ram();
-
     MAYBE_UNUSED(ExpansionInit);
 #if !EMUTOS_LIVES_IN_RAM
     /* Configure Zorro II / Zorro III boards and find the Alt-RAM */
