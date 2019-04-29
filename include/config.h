@@ -1217,10 +1217,9 @@
 #endif
 
 /*
- * Set CONF_WITH_68040_PMMU to install a PMMU tree on a 68040 CPU.
- * This provides improved performance by allowing the data cache to
- * be enabled. It also allows FreeMiNT to be run on a 68040 without
- * using set_mmu.prg.
+ * Set CONF_WITH_68040_PMMU to install a PMMU tree when running on a
+ * 68040 CPU.  The main purpose of this is to allow FreeMiNT to be
+ * run under aranym-mmu without using set_mmu.prg.
  */
 #ifndef CONF_WITH_68040_PMMU
 /* This is currently an experimental feature */
@@ -1613,6 +1612,12 @@
 # endif
 # if CONF_WITH_AROS
 #  error CONF_WITH_AROS requires MACHINE_AMIGA.
+# endif
+#endif
+
+#ifndef MACHINE_ARANYM
+# if CONF_WITH_68040_PMMU
+#  error CONF_WITH_68040_PMMU requires MACHINE_ARANYM.
 # endif
 #endif
 
