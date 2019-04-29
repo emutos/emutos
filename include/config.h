@@ -1627,7 +1627,7 @@
 
 #if !CONF_WITH_ACSI
 # if CONF_WITH_ICDRTC
-#  error CONF_WITH_ICDRTC requires CONF_WITH_ACSI
+#  error CONF_WITH_ICDRTC requires CONF_WITH_ACSI.
 # endif
 #endif
 
