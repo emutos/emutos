@@ -1489,7 +1489,7 @@
 #endif
 
 /*
- * Sanity checks
+ * Sanity checks for features - general
  */
 
 #if EMUTOS_LIVES_IN_RAM
@@ -1597,6 +1597,26 @@
 # endif
 #endif
 
+#if (CONSOLE_DEBUG_PRINT + RS232_DEBUG_PRINT + SCC_DEBUG_PRINT + COLDFIRE_DEBUG_PRINT + MIDI_DEBUG_PRINT) > 1
+# error Only one of CONSOLE_DEBUG_PRINT, RS232_DEBUG_PRINT, SCC_DEBUG_PRINT, COLDFIRE_DEBUG_PRINT or MIDI_DEBUG_PRINT must be set to 1.
+#endif
+
+#if !CONF_WITH_ACSI
+# if CONF_WITH_ICDRTC
+#  error CONF_WITH_ICDRTC requires CONF_WITH_ACSI.
+# endif
+#endif
+
+#if !CONF_WITH_DMASOUND
+# if CONF_WITH_XBIOS_SOUND
+#  error CONF_WITH_XBIOS_SOUND requires CONF_WITH_DMASOUND.
+# endif
+#endif
+
+/*
+ * Sanity checks for features on specific target machines
+ */
+
 #if !defined(MACHINE_FIREBEE) && !defined(MACHINE_M548X)
 # if CONF_WITH_BAS_MEMORY_MAP
 #  error CONF_WITH_BAS_MEMORY_MAP requires MACHINE_FIREBEE or MACHINE_M548X.
@@ -1618,22 +1638,6 @@
 #ifndef MACHINE_ARANYM
 # if CONF_WITH_68040_PMMU
 #  error CONF_WITH_68040_PMMU requires MACHINE_ARANYM.
-# endif
-#endif
-
-#if (CONSOLE_DEBUG_PRINT + RS232_DEBUG_PRINT + SCC_DEBUG_PRINT + COLDFIRE_DEBUG_PRINT + MIDI_DEBUG_PRINT) > 1
-# error Only one of CONSOLE_DEBUG_PRINT, RS232_DEBUG_PRINT, SCC_DEBUG_PRINT, COLDFIRE_DEBUG_PRINT or MIDI_DEBUG_PRINT must be set to 1.
-#endif
-
-#if !CONF_WITH_ACSI
-# if CONF_WITH_ICDRTC
-#  error CONF_WITH_ICDRTC requires CONF_WITH_ACSI.
-# endif
-#endif
-
-#if !CONF_WITH_DMASOUND
-# if CONF_WITH_XBIOS_SOUND
-#  error CONF_WITH_XBIOS_SOUND requires CONF_WITH_DMASOUND.
 # endif
 #endif
 
