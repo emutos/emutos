@@ -39,6 +39,7 @@ extern long xmaddalt(UBYTE *start, long size); /* found in bdos/mem.h */
 #ifdef MACHINE_AMIGA
 
 /* Custom registers */
+#define CUSTOM_BASE ((void *)0xdff000)
 #define JOY0DAT *(volatile UWORD*)0xdff00a
 #define JOY1DAT *(volatile UWORD*)0xdff00c
 #define ADKCONR *(volatile UWORD*)0xdff010
@@ -104,8 +105,8 @@ extern long xmaddalt(UBYTE *start, long size); /* found in bdos/mem.h */
 #define CIABCRB    *(volatile UBYTE*)0xbfdf00
 
 /* Gayle registers */
+#define GAYLE_BASE ((void *)0xde1000)
 #define GAYLE_ID *(volatile UBYTE*)0xde1000
-#define INTENA_MIRROR *(volatile UWORD*)0xde109a
 #define FAT_GARY_TIMEOUT *(volatile UBYTE*)0xde0000
 
 /* Generic Set/Clear bit */
@@ -176,6 +177,54 @@ extern long xmaddalt(UBYTE *start, long size); /* found in bdos/mem.h */
 /* Machine detection                                                          */
 /******************************************************************************/
 
+/* This deals with casts. No worry, this is inlined at compile time. */
+static volatile UWORD *get_custom_register_mirror_address(volatile UWORD *preg, void *mirror_base)
+{
+    UBYTE* pbyte_base = (UBYTE *)CUSTOM_BASE;
+    UBYTE* pbyte_reg = (UBYTE *)preg;
+    ULONG offset = pbyte_reg - pbyte_base;
+    UBYTE* pbyte_mirror_base = (UBYTE*)mirror_base;
+    return (volatile UWORD *)(pbyte_mirror_base + offset);
+}
+
+/* Determine if an address range is a mirror of official custom chips */
+static BOOL is_custom_chips_mirror(void *mirror_base)
+{
+    BOOL mirror = FALSE;
+    volatile UWORD *pintena_mirror;
+    UWORD save_intena;
+
+    /* We will detect an eventual mirror through INTENA register */
+    pintena_mirror = get_custom_register_mirror_address(&INTENA, mirror_base);
+
+    /* Save interrupts */
+    save_intena = INTENAR;
+
+    /* Disable all interrupts using mirror */
+    *pintena_mirror = ~SETBITS;
+    if (INTENAR == 0)
+    {
+        /* All interrupts are disabled.
+         * Either interrupts were previously disabled,
+         * or this is a mirror of INTENA. */
+
+        /* Enable TBE interrupt using mirror */
+        *pintena_mirror = SETBITS | TBE;
+        if (INTENAR == TBE)
+        {
+            /* Interrupt has been enabled. This is a mirror of INTENA. */
+            mirror = TRUE;
+            KDEBUG(("Custom chips mirror detected at %p.\n", mirror_base));
+        }
+    }
+
+    /* Restore interrupts */
+    INTENA = ~SETBITS;
+    INTENA = SETBITS | save_intena;
+
+    return mirror;
+}
+
 int has_gayle;
 
 /* Detect A600 / A1200 Gayle chip.
@@ -183,30 +232,14 @@ int has_gayle;
  */
 static void detect_gayle(void)
 {
-    UWORD save_intena;
     UBYTE gayle_id;
     int i;
 
     has_gayle = 0;
 
-    /* Check if 0xde1000 is a mirror of 0xdff000 custom chips */
-    save_intena = INTENAR;
-    INTENA_MIRROR = ~SETBITS; /* Disable interrupts using mirror */
-    if (INTENAR == 0)
-    {
-        /* Interrupts have been disabled. Maybe mirror of INTENA. */
-        INTENA_MIRROR = SETBITS | TBE; /* Enable TBE interrupt */
-        if (INTENAR != 0)
-        {
-            /* Interrupt was enabled. This is an INTENA mirror. */
-            /* Restore interrupts */
-            INTENA = ~SETBITS;
-            INTENA = SETBITS | save_intena;
-
-            /* So this is not a Gayle */
-            return;
-        }
-    }
+    /* There may be a custom chips mirror instead of Gayle */
+    if (is_custom_chips_mirror(GAYLE_BASE))
+        return;
 
     /* On A300, we must clear the Fat Gary Timeout register
      * to avoid reading a bogus 0x80 Gayle ID */
