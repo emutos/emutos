@@ -87,6 +87,9 @@
 # ifndef CONF_WITH_68030_PMMU
 #  define CONF_WITH_68030_PMMU 0
 # endif
+# ifndef CONF_WITH_68040_PMMU
+#  define CONF_WITH_68040_PMMU 1
+# endif
 # ifndef CONF_WITH_MONSTER
 #  define CONF_WITH_MONSTER 0
 # endif
@@ -1222,7 +1225,6 @@
  * run under aranym-mmu without using set_mmu.prg.
  */
 #ifndef CONF_WITH_68040_PMMU
-/* This is currently an experimental feature */
 # define CONF_WITH_68040_PMMU 0
 #endif
 
