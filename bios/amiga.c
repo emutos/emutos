@@ -374,6 +374,10 @@ static void add_slow_ram(void)
     UBYTE *end;
     ULONG size;
 
+    /* There may be a custom chips mirror instead of Slow RAM */
+    if (is_custom_chips_mirror(start))
+        return;
+
     if (has_gayle)
     {
         /* Slow RAM area is supposed to stop here */
