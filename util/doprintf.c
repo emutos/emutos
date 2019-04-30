@@ -202,7 +202,8 @@ int doprintf(void (*outc)(int), const char *fmt, va_list ap)
             flags |= FLAG_CAPS;
             /* drop through */
         case 'p':
-            flags |= FLAG_LONG|FLAG_ZERO;   /* pointers are always long & zero-filled */
+            /* pointers are always long & zero-filled to a width of 8 */
+            flags |= FLAG_WIDTH|FLAG_LONG|FLAG_ZERO;
             width = 8;
             outc('0');
             outc((flags&FLAG_CAPS)?'X':'x');
