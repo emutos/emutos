@@ -373,7 +373,7 @@ pi_done:
         rts
 
 /*
- * void instruction_cache_kludge(void *start, long length)
+ * void instruction_cache_kludge(void *start, long size)
  *
  * TOS compatibility: invalidate the instruction cache
  *
@@ -394,7 +394,7 @@ _instruction_cache_kludge:
 //
 
 /*
- * void invalidate_instruction_cache(void *start, long length)
+ * void invalidate_instruction_cache(void *start, long size)
  * First, the data cache is flushed to push changes into the RAM.
  * Then the instruction cache is invalidated for the specified zone.
  *
@@ -432,7 +432,7 @@ ii_done:
 #endif
 
 /*
- * void flush_data_cache(void *start, long length)
+ * void flush_data_cache(void *start, long size)
  *
  * flush data cache before writing data with DMA
  *
@@ -462,7 +462,7 @@ _flush_data_cache:
 
 
 /*
- * void invalidate_data_cache(void *start, long length)
+ * void invalidate_data_cache(void *start, long size)
  *
  * invalidate data cache after data has been read with DMA
  *
