@@ -278,6 +278,28 @@ static BOOL write_read_equals(void *start, ULONG testval)
     p[0] = testval; /* Write test value */
     p[1] = 0; /* Put something else on the data bus */
 
+    /* Memory detection should always be performed with data cache disabled.
+     * But just in case it is enabled, we do proper cache management here.
+     * This also has a positive side effect with WinUAE JIT (see below). */
+    flush_data_cache(start, sizeof(ULONG)*2);
+    invalidate_data_cache(start, sizeof(ULONG)*2);
+
+    /* Note for WinUAE: there is an issue with the JIT compiler.
+     * http://eab.abime.net/showthread.php?t=97234
+     * Even when JIT is enabled in the WinUAE settings, it is disabled by
+     * default. It is actually enabled when the instruction cache is enabled
+     * through CACR, which happens very early in EmuTOS initialization.
+     * And code is only compiled after 5(?) calls.
+     * Unfortunately, the simple algorithm used here is defeated by the JIT.
+     * I guess that JIT assumes that when a value is written to some memory
+     * address, then it can be cached in a register and reused when read back.
+     * Fortunately, a single call to an external function is enough to defeat
+     * that caching. So even if the above cache management is useless when the
+     * data cache is disabled, those *calls* (whatever is called) are still
+     * useful as "JIT barrier" to prevent data caching.
+     * Typical testcase is A4000 + JIT + 1.5 MB of Slow RAM.
+     * It is incorrectly detected as 1.75 MB without JIT barrier. */
+
     return p[0] == testval; /* Should be TRUE if there is RAM here */
 }
 
