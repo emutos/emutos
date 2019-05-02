@@ -29,6 +29,7 @@
 #include "disk.h"
 #include "biosmem.h"
 #include "bootparams.h"
+#include "machine.h"
 
 #if CONF_WITH_AROS
 #include "aros.h"
@@ -397,11 +398,31 @@ static void add_slow_ram(void)
     xmaddalt(start, size);
 }
 
+/* Detect A3000/A4000 Processor Slot Fast RAM, a.k.a. Ramsey High MBRAM.
+ * Max = 128 MB, theoretical max = 1904 MB? */
+static void add_processor_slot_fast_ram(void)
+{
+    UBYTE *start = (UBYTE *)0x08000000;
+    UBYTE *end = (UBYTE *)0x7f000000; /* Maximum positive address? */
+    ULONG size;
+
+    if (!IS_BUS32)
+        return;
+
+    size = amiga_detect_ram(start, end, 1*1024*1024UL);
+    if (size == 0)
+        return;
+
+    KDEBUG(("Processor Slot Fast RAM detected at %p, size=%lu\n", start, size));
+    xmaddalt(start, size);
+}
+
 /* Detect Alt-RAM directly from hardware */
 static void add_alt_ram_from_hardware(void)
 {
     /* Add the slowest RAM first to put it at the end of the Alt-RAM pool */
     add_slow_ram();
+    add_processor_slot_fast_ram();
 #if CONF_WITH_AROS
     aros_add_alt_ram();
 #endif

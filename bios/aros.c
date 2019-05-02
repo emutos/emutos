@@ -648,18 +648,6 @@ static void findmbram(struct ExpansionBase *ExpansionBase)
     if (!IS_BUS32)
         return;
 
-    /* High MBRAM */
-    step =  0x00100000;
-    start = 0x08000000;
-    end =   0x7f000000;
-    ret = amiga_detect_ram((void *)start, (void *)end, step);
-    if (ret < 0)
-        return;
-    if (ret > 0) {
-        AddMemList(ret, MEMF_KICK | MEMF_LOCAL | MEMF_FAST | MEMF_PUBLIC, 40, (APTR)start, "expansion.memory");
-        D(bug("MBRAM @%08lx, size %08lx\n", start, ret));
-    }
-
     /* Low MBRAM, reversed detection needed */
     step =  0x00100000;
     start = 0x08000000;
