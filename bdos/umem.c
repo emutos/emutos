@@ -400,9 +400,15 @@ long xmaddalt(UBYTE *start, LONG size)
      || (start < end_stram))
         return -1;
 
-    /* if the new block is just after a free one, just extend it */
+    /* try to merge blocks */
     for (p = pmdalt.mp_mfl; p; p = p->m_link) {
         if (p->m_start + p->m_length == start) {
+            /* new block is just after a free one, extend it at end */
+            p->m_length += size;
+            return 0;
+        } else if (start + size == p->m_start) {
+            /* new block is just before a free one, extend it at beginning */
+            p->m_start -= size;
             p->m_length += size;
             return 0;
         }
