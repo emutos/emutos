@@ -640,38 +640,10 @@ static ULONG autosize(struct ExpansionBase *ExpansionBase, struct ConfigDev *con
     return size;
 }
 
-static void findmbram(struct ExpansionBase *ExpansionBase)
-{
-    LONG ret;
-    ULONG step, start, end;
-
-    if (!IS_BUS32)
-        return;
-
-    /* Low MBRAM, reversed detection needed */
-    step =  0x00100000;
-    start = 0x08000000;
-    end =   0x01000000;
-    for (;;) {
-        ret = amiga_detect_ram((void *)(start - step), (void *)start, step);
-        if (ret <= 0)
-            break;
-        if (end >= start - step)
-            break;
-        start -= step;
-    }
-    if (start != 0x08000000) {
-        ULONG size = 0x08000000 - start;
-        AddMemList(size, MEMF_KICK | MEMF_LOCAL | MEMF_FAST | MEMF_PUBLIC, 30, (APTR)start, "expansion.memory");
-        D(bug("MBRAM @%08lx, size %08lx\n", start, size));
-    }
-}
-
 static void allocram(struct ExpansionBase *ExpansionBase)
 {
     struct Node *node;
 
-    findmbram(ExpansionBase);
     // we should merge address spaces, later..
     D(bug("adding ram boards\n"));
     ForeachNode(&ExpansionBase->BoardList, node) {

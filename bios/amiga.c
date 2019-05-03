@@ -354,6 +354,7 @@ static BOOL is_valid_ram(void *p)
     return valid;
 }
 
+/* Normal RAM detection */
 ULONG amiga_detect_ram(void *start, void *end, ULONG step)
 {
     UBYTE *pbyte_start = (UBYTE *)start;
@@ -364,6 +365,19 @@ ULONG amiga_detect_ram(void *start, void *end, ULONG step)
         p += step;
 
     return p - pbyte_start;
+}
+
+/* Reverse RAM detection, when actual RAM is located at the end of the range. */
+static ULONG amiga_detect_ram_reverse(void *start, void *end, ULONG step)
+{
+    UBYTE *pbyte_start = (UBYTE *)start;
+    UBYTE *pbyte_end = (UBYTE *)end;
+    UBYTE *p = pbyte_end - step;
+
+    while (p >= pbyte_start && is_valid_ram(p))
+        p -= step;
+
+    return pbyte_end - (p + step);
 }
 
 /* Detect Slow RAM, a.k.a A500 trapdoor RAM, a.k.a pseudo-fast RAM.
@@ -417,12 +431,33 @@ static void add_processor_slot_fast_ram(void)
     xmaddalt(start, size);
 }
 
+/* Detect A3000/A4000 Motherboard Fast RAM, a.k.a. Ramsey Low MBRAM.
+ * Max = 64 MB, theoretical max = 112 MB? */
+static void add_motherboard_fast_ram(void)
+{
+    UBYTE *start = (UBYTE *)0x01000000; /* Start of 32-bit space */
+    UBYTE *end = (UBYTE *)0x08000000;
+    ULONG size;
+
+    if (!IS_BUS32)
+        return;
+
+    /* This RAM is located at the end of the address range */
+    size = amiga_detect_ram_reverse(start, end, 1*1024*1024UL);
+    if (size == 0)
+        return;
+
+    KDEBUG(("Motherboard Fast RAM detected at %p, size=%lu\n", end - size, size));
+    xmaddalt(end - size, size);
+}
+
 /* Detect Alt-RAM directly from hardware */
 static void add_alt_ram_from_hardware(void)
 {
     /* Add the slowest RAM first to put it at the end of the Alt-RAM pool */
     add_slow_ram();
     add_processor_slot_fast_ram();
+    add_motherboard_fast_ram();
 #if CONF_WITH_AROS
     aros_add_alt_ram();
 #endif
