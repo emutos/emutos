@@ -74,6 +74,19 @@ extern WORD trap_save_area[];
 /* MFP interrupt vectors */
 #define VEC_MFP6   (*(volatile PFVOID*)0x118) /* MFP level 6 interrupt vector */
 
+#if CONF_WITH_SCC
+/* SCC interrupt vectors, default addresses */
+#define VEC_SCCB_TBE (*(volatile PFVOID*)0x180) /* Channel B, transmit buffer empty */
+#define VEC_SCCB_EXT (*(volatile PFVOID*)0x188) /* Channel B, external status change */
+#define VEC_SCCB_RXA (*(volatile PFVOID*)0x190) /* Channel B, receive character available */
+#define VEC_SCCB_SRC (*(volatile PFVOID*)0x198) /* Channel B, special receive condition */
+
+#define VEC_SCCA_TBE (*(volatile PFVOID*)0x1a0) /* Channel A, transmit buffer empty */
+#define VEC_SCCA_EXT (*(volatile PFVOID*)0x1a8) /* Channel A, external status change */
+#define VEC_SCCA_RXA (*(volatile PFVOID*)0x1b0) /* Channel A, receive character available */
+#define VEC_SCCA_SRC (*(volatile PFVOID*)0x1b8) /* Channel A, special receive condition */
+#endif
+
 /* Atari hardware interrupt mapping */
 #define VEC_HBL     VEC_LEVEL2                /* HBL interrupt vector */
 #define VEC_VBL     VEC_LEVEL4                /* VBL interrupt vector */

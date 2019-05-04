@@ -23,6 +23,7 @@
 #include "serport.h"
 #include "string.h"
 #include "tosvars.h"
+#include "vectors.h"
 #include "coldfire.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
@@ -561,9 +562,22 @@ static void init_scc(void)
     /*
      * Enable routing of the SCC interrupt through the SCU like TOS does.
      * Even though interrupts are not used here, other programs might
-     * install their own interrupt vectors and expect the interrupt
+     * install their own interrupt handlers and expect the interrupt
      * to be available to them.
+     * Point interrupts to just_rte() in case a program enables them
+     * before setting its own handler.
      */
+
+     VEC_SCCB_TBE = just_rte;
+     VEC_SCCB_EXT = just_rte;
+     VEC_SCCB_RXA = just_rte;
+     VEC_SCCB_SRC = just_rte;
+
+     VEC_SCCA_TBE = just_rte;
+     VEC_SCCA_EXT = just_rte;
+     VEC_SCCA_RXA = just_rte;
+     VEC_SCCA_SRC = just_rte;
+
      if (HAS_VME)
         *(volatile char *)VME_INT_MASK |= VME_INT_SCC;
 }
