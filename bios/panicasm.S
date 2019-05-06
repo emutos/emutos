@@ -26,6 +26,7 @@
         .extern resvalid
         .extern resvector
         .extern memvalid
+        .extern _warm_magic
 
         .globl  _panic
         .globl  _halt

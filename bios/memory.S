@@ -30,6 +30,7 @@
         .extern _warm_magic
         .extern _stktop
         .extern _meminit_flags
+        .extern amiga_memconf
 
         // functions for detecting hardware
         .extern _check_read_byte

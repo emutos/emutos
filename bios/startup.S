@@ -46,6 +46,7 @@
         .extern _shifty
         .extern _run
         .extern _ui_mupb
+        .extern amiga_startup
 
 // ===========================================================================
 // ==== TEXT segment (TOS image) =============================================

@@ -14,6 +14,14 @@
 
 #ifdef MACHINE_AMIGA
 
+        .extern _amiga_rs232_rbf_interrupt
+        .extern _amiga_screen_width_in_bytes
+        .extern _amiga_screenbase
+        .extern _int_vbl
+        .extern _kbdvecs
+        .extern _longframe
+        .extern _scancode_atari_from_amiga
+
 /******************************************************************************/
 /* Startup                                                                    */
 /******************************************************************************/
