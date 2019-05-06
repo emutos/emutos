@@ -124,8 +124,10 @@
 //  Global variables referenced.                       //
 /////////////////////////////////////////////////////////
 
-        .extern _SOURCEX,_SOURCEY
-        .extern _LITEMASK,_SKEWMASK
+        .extern _SOURCEX
+        .extern _SOURCEY
+        .extern _LITEMASK
+        .extern _SKEWMASK
         .extern _SCALDIR
         .extern _XDDA
         .extern _DDAINC
