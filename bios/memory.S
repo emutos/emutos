@@ -695,7 +695,7 @@ bus_detected:
 
 end_detect_bus:
         move.l  a2,sp                   // Restore sp in case of exception
-        movem.l (sp)+,d2/a2-a4         // Restore registers
+        movem.l (sp)+,d2/a2-a4          // Restore registers
         rts
 
 sync_data_cache:
