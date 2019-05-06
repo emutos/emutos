@@ -22,7 +22,9 @@
         .globl  _set_aestrap
         .globl  _aestrap_intercepted
         .globl  _far_mcha
+#if CONF_WITH_VDI_EXTENSIONS
         .globl  _aes_wheel
+#endif
         .globl  _far_bcha
         .globl  _drawrat
 

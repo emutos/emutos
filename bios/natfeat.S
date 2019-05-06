@@ -18,9 +18,13 @@
 // ==== References ===========================================================
 
 
+#if DETECT_NATIVE_FEATURES
         .globl  _detect_native_features
         .globl  _natfeat_cookie
+#endif
+#if CONF_WITH_XHDI
         .globl  _xhdi_vec
+#endif
         .extern _xhdi_handler
 
         .equ vec_illegal, 0x10       // illegal exception vector

@@ -88,7 +88,9 @@
         .extern _amiga_init_keyboard_interrupt
 
         .globl  _init_acia_vecs
+#if CONF_WITH_IKBD_ACIA || CONF_WITH_MIDI_ACIA
         .globl  _int_acia
+#endif
 
         .globl  _mousexvec
         .globl  _kbdvecs

@@ -41,7 +41,9 @@
                 .globl  _sav_cur_y
 
                 .globl  _mouse_cursor_save
+#if EXTENDED_PALETTE
                 .globl  _ext_mouse_cursor_save
+#endif
 
                 .globl  _tim_addr
                 .globl  _tim_chain
@@ -74,7 +76,9 @@
                 .globl  _HIDE_CNT
                 .globl  _MOUSE_BT
                 .globl  _REQ_COL
+#if EXTENDED_PALETTE
                 .globl  _req_col2
+#endif
                 .globl  _SIZ_TAB
                 .globl  _TERM_CH
                 .globl  _chc_mode

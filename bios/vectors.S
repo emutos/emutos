@@ -21,7 +21,9 @@
         .globl  _xbiostrap      // call XBIOS from C
         .globl  _xbios_unimpl
 
+#if CONF_WITH_BUS_ERROR
         .globl  _check_read_byte
+#endif
         .globl  _int_vbl
 #if CONF_WITH_ATARI_VIDEO
         .globl  _int_hbl
