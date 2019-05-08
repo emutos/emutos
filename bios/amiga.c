@@ -1990,4 +1990,82 @@ void amiga_rs232_rbf_interrupt(void)
 #endif
 }
 
+/******************************************************************************/
+/* AmigaOS-like types, defines and functions.                                 */
+/* They are necessary for the AUTOCONFIG / WinUAE glue.                       */
+/* Declarations come from the Commodore documentation,                        */
+/* implementation is written by the EmuTOS development team.                  */
+/******************************************************************************/
+
+/* http://amigadev.elowar.com/read/ADCD_2.1/Includes_and_Autodocs_3._guide/node0654.html */
+typedef void *APTR; /* Generic, untyped pointer */
+
+/*
+ * AmigaOS lists are doubly linked lists, with a few particularities.
+ * - A Head pseudo-node is always present before the first data node.
+ * - A Tail pseudo-node is always present after the first data node.
+ * - If the list is empty, Head and Tail are linked together.
+ * - Head and Tail pseudo-nodes are embedded in the List structure, and they
+ *   partially overlap. In order to save space, Head.ln_Pred and Tail.ln_Succ
+ *   occupy the same memory location, as both will always stay NULL.
+ *   Because of that overlap, Head and Tail can't be formally represented in C.
+ *   - Head is located at (struct Node *)&list->lh_Head
+ *   - Tail is located at (struct Node *)&list->lh_Tail
+ * - Names of List member are confusing:
+ *   - List.lh_Head *overlaps* the Head pseudo-node (*not* a pointer to Head),
+ *     so the value of List.lh_Head is actually the value of Head.ln_Succ,
+ *     it other words it is a pointer to the first data node (or &Tail if empty).
+ *   - List.lh_Tail *overlaps* the Tail pseudo-node (*not* a pointer to Tail),
+ *     so the value of List.lh_Tail is actually the value of Tail.ln_Succ,
+ *     which is, by definition, always NULL.
+ *   - List.lh_TailPred is not confusing. As it overlaps Tail.ln_Pred,
+ *     it is actually a pointer to the last data node (or &Head if empty).
+ * - Because of those overlaps, care must be taken for GCC Strict Aliasing.
+ * More information: https://wiki.amigaos.net/wiki/Exec_Lists_and_Queues
+ */
+
+/* http://amigadev.elowar.com/read/ADCD_2.1/Includes_and_Autodocs_3._guide/node062F.html */
+struct Node MAY_ALIAS;
+struct Node
+{
+    struct Node *ln_Succ; /* Successor, next data node, or &Tail if none */
+    struct Node *ln_Pred; /* Predecessor, previous data node, or &Head if none */
+    UBYTE       ln_Type;
+    SBYTE       ln_Pri;
+    char        *ln_Name;
+};
+
+/* http://amigadev.elowar.com/read/ADCD_2.1/Includes_and_Autodocs_3._guide/node0628.html */
+struct List MAY_ALIAS;
+struct List
+{
+    struct Node *lh_Head; /* ln_Succ of Head pseudo-node, pointer to first data node, or &Tail if empty */
+    struct Node *lh_Tail; /* ln_Pred of Head pseudo-node, and also ln_Succ of Tail pseudo-node: always NULL */
+    struct Node *lh_TailPred; /* ln_Pred of Tail pseudo-node, pointer to last data node, or &Head if empty */
+    UBYTE       lh_Type;
+    UBYTE       l_pad;
+};
+
+/* http://amigadev.elowar.com/read/ADCD_2.1/Includes_and_Autodocs_3._guide/node0047.html */
+static void NewList(struct List *list)
+{
+    list->lh_Head = (struct Node *)&list->lh_Tail; /* Head.ln_Succ = &Tail; */
+    list->lh_Tail = NULL; /* Head.ln_Pred = NULL; Tail.ln_Succ = NULL; */
+    list->lh_TailPred = (struct Node *)&list->lh_Head; /* Tail.ln_Pred = &Head; */
+}
+
+/* http://amigadev.elowar.com/read/ADCD_2.1/Includes_and_Autodocs_3._guide/node01E1.html */
+static void AddTail(struct List *list, struct Node *node)
+{
+    /* Fill the node */
+    node->ln_Succ = (struct Node *)&list->lh_Tail; /* Tail pseudo-node */
+    node->ln_Pred = list->lh_TailPred; /* Previous last node */
+
+    /* Link previous last node to new node */
+    list->lh_TailPred->ln_Succ = node;
+
+    /* Link list to new last node */
+    list->lh_TailPred = node;
+}
+
 #endif /* MACHINE_AMIGA */
