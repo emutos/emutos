@@ -379,6 +379,9 @@ help:
 	@echo "m548x-dbug $(SREC_M548X_DBUG), EmuTOS-RAM for dBUG on ColdFire Evaluation Boards"
 	@echo "m548x-bas  $(SREC_M548X_BAS), EmuTOS for BaS_gcc on ColdFire Evaluation Boards"
 	@echo "m548x-prg  emutos.prg, a RAM tos for ColdFire Evaluation Boards with BaS_gcc"
+	@echo "m547x-dbug $(SREC_M547X_DBUG), EmuTOS-RAM for dBUG on ColdFire Evaluation Boards"
+	@echo "m547x-bas  $(SREC_M547X_BAS), EmuTOS for BaS_gcc on ColdFire Evaluation Boards"
+	@echo "m547x-prg  emutos.prg, a RAM tos for ColdFire Evaluation Boards with BaS_gcc"
 	@echo "prg     emutos.prg, a RAM tos"
 	@echo "flop    $(EMUTOS_ST), a bootable floppy with RAM tos"
 	@echo "all192  all 192 KB images"
@@ -668,6 +671,41 @@ m548x-bas: CPUFLAGS = $(CPUFLAGS_M548X)
 m548x-bas:
 	@echo "# Building M548x BaS_gcc EmuTOS in $(SREC_M548X_BAS)"
 	$(MAKE) COLDFIRE=1 CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' UNIQUE=$(UNIQUE) LMA=0xe0100000 SRECFILE=$(SREC_M548X_BAS) $(SREC_M548X_BAS)
+	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
+	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
+
+CPUFLAGS_M547X = -mcpu=5475
+
+.PHONY: m547x-prg
+NODEP += m547x-prg
+m547x-prg: OPTFLAGS = $(STANDARD_OPTFLAGS)
+m547x-prg: override DEF += -DMACHINE_M547X -DCONF_WITH_BAS_MEMORY_MAP=1
+m547x-prg: CPUFLAGS = $(CPUFLAGS_M547X)
+m547x-prg:
+	@echo "# Building m547x $(EMUTOS_PRG)"
+	$(MAKE) COLDFIRE=1 CPUFLAGS=$(CPUFLAGS) DEF='$(DEF)' OPTFLAGS=$(OPTFLAGS) prg
+
+SREC_M547X_DBUG = emutos-m547x-dbug.s19
+.PHONY: m547x-dbug
+NODEP += m547x-dbug
+m547x-dbug: UNIQUE = $(COUNTRY)
+m547x-dbug: override DEF += -DMACHINE_M547X
+m547x-dbug: CPUFLAGS = $(CPUFLAGS_M547X)
+m547x-dbug:
+	@echo "# Building M547x dBUG EmuTOS in $(SREC_M547X_DBUG)"
+	$(MAKE) COLDFIRE=1 CPUFLAGS=$(CPUFLAGS) DEF='$(DEF)' UNIQUE=$(UNIQUE) LMA=0x00e00000 SRECFILE=$(SREC_M547X_DBUG) $(SREC_M547X_DBUG)
+	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
+	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
+
+SREC_M547X_BAS = emutos-m547x-bas.s19
+.PHONY: m547x-bas
+NODEP += m547x-bas
+m547x-bas: UNIQUE = $(COUNTRY)
+m547x-bas: override DEF += -DMACHINE_M547X -DCONF_WITH_BAS_MEMORY_MAP=1
+m547x-bas: CPUFLAGS = $(CPUFLAGS_M547X)
+m547x-bas:
+	@echo "# Building M547x BaS_gcc EmuTOS in $(SREC_M547X_BAS)"
+	$(MAKE) COLDFIRE=1 CPUFLAGS=$(CPUFLAGS) DEF='$(DEF)' UNIQUE=$(UNIQUE) LMA=0xe0100000 SRECFILE=$(SREC_M547X_BAS) $(SREC_M547X_BAS)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 

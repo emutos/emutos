@@ -2431,7 +2431,7 @@ typedef volatile unsigned long vuint32;
 *
 *********************************************************************/
 
-#ifdef MACHINE_M548X
+#if defined(MACHINE_M548X) || defined(MACHINE_M547X)
 
 #if CONF_WITH_BAS_MEMORY_MAP
 #define FIRE_ENGINE_CS4_BASE 0x00000000L
@@ -2455,6 +2455,6 @@ typedef volatile unsigned long vuint32;
 
 #define COMPACTFLASH_BASE (FIRE_ENGINE_CS5_BASE + 0x0A000000)
 
-#endif /* MACHINE_M548X */
+#endif /* MACHINE_M548X || MACHINE_M547X */
 
 #endif /* COLDPRIV_H */

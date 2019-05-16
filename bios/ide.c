@@ -43,7 +43,7 @@
 
 #if CONF_WITH_IDE
 
-#ifdef MACHINE_M548X
+#if defined(MACHINE_M548X) || defined(MACHINE_M547X)
 
 #include "coldpriv.h"
 
@@ -129,7 +129,7 @@ struct IDE
 #define IDE_READ_CYLINDER_HIGH_CYLINDER_LOW() \
     MAKE_UWORD(interface->cylinder_high, interface->cylinder_low)
 
-#endif /* MACHINE_M548X */
+#endif /* MACHINE_M548X || MACHINE_M547X */
 
 /* the data register is naturally byteswapped on some hardware */
 #if defined(MACHINE_AMIGA)
@@ -398,7 +398,7 @@ void detect_ide(void)
 
 #ifdef MACHINE_AMIGA
     has_ide = has_gayle ? 0x01 : 0x00;
-#elif defined(MACHINE_M548X)
+#elif defined(MACHINE_M548X) || defined(MACHINE_M547X)
     has_ide = 0x01;
 #elif defined(MACHINE_FIREBEE)
     has_ide = 0x03;

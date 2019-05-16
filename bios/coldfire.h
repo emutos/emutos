@@ -29,12 +29,12 @@ void coldfire_init_system_timer(void);
 void coldfire_int_61(void); /* In coldfire2.S */
 #endif
 
-#ifdef MACHINE_M548X
+#if defined(MACHINE_M548X) || defined(MACHINE_M547X)
 const char* m548x_machine_name(void);
 # if CONF_WITH_IDE && !CONF_WITH_BAS_MEMORY_MAP
 void m548x_init_cpld(void);
 # endif
-#endif /* MACHINE_M548X */
+#endif /* MACHINE_M548X || MACHINE_M547X */
 
 #ifdef MACHINE_FIREBEE
 BOOL firebee_pic_can_write(void);

@@ -734,7 +734,7 @@ const char * machine_name(void)
     return "FireBee";
 #elif defined(MACHINE_AMIGA)
     return amiga_machine_name();
-#elif defined(MACHINE_M548X)
+#elif defined(MACHINE_M548X) || defined(MACHINE_M547X)
     return m548x_machine_name();
 #else
     return guess_machine_name();

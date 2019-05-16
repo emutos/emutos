@@ -34,7 +34,7 @@ static void flexcan_dump_registers(void);
 
 void coldfire_early_init(void)
 {
-#if defined(MACHINE_M548X) && CONF_WITH_IDE && !CONF_WITH_BAS_MEMORY_MAP
+#if (defined(MACHINE_M548X) || defined(MACHINE_M547X)) && CONF_WITH_IDE && !CONF_WITH_BAS_MEMORY_MAP
     m548x_init_cpld();
 #endif
 }
@@ -116,7 +116,7 @@ void coldfire_init_system_timer(void)
 
 #endif /* CONF_COLDFIRE_TIMER_C */
 
-#ifdef MACHINE_M548X
+#if defined(MACHINE_M548X) || defined(MACHINE_M547X)
 
 const char* m548x_machine_name(void)
 {
@@ -128,6 +128,9 @@ const char* m548x_machine_name(void)
 
         case MCF_SIU_JTAGID_MCF5485:
             return "M5485EVB";
+
+        case MCF_SIU_JTAGID_MCF5475:
+            return "M5475EVB";
 
         default:
             return "M548????";
@@ -151,7 +154,7 @@ void m548x_init_cpld(void)
 
 #endif /* CONF_WITH_IDE && !CONF_WITH_BAS_MEMORY_MAP */
 
-#endif /* MACHINE_M548X */
+#endif /* MACHINE_M548X || MACHINE_M547X */
 
 #ifdef MACHINE_FIREBEE
 
@@ -257,6 +260,11 @@ void setvalue_mcf(void)
             break;
         case MCF_SIU_JTAGID_MCF5485:
             strcpy(cookie_mcf.device_name, "MCF5485");
+            /* If a MCF5485 we guess it is a EVB board */
+            cookie_mcf.sysbus_frequency = 133;
+            break;
+        case MCF_SIU_JTAGID_MCF5475:
+            strcpy(cookie_mcf.device_name, "MCF5475");
             /* If a MCF5485 we guess it is a EVB board */
             cookie_mcf.sysbus_frequency = 133;
             break;

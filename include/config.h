@@ -431,6 +431,39 @@
 #endif
 
 /*
+ * Defaults for the M547x target.
+ */
+#ifdef MACHINE_M547X
+# ifndef SDCLK_FREQUENCY_MHZ
+#  define SDCLK_FREQUENCY_MHZ 133UL
+# endif
+# ifndef CONF_ATARI_HARDWARE
+#  define CONF_ATARI_HARDWARE 0
+# endif
+# ifndef CONF_STRAM_SIZE
+#  define CONF_STRAM_SIZE 14*1024*1024
+# endif
+# ifndef CONF_TTRAM_SIZE
+#  define CONF_TTRAM_SIZE 48UL*1024*1024
+# endif
+# ifndef CONF_WITH_IDE
+#  define CONF_WITH_IDE 1
+# endif
+# ifndef CONF_WITH_FLEXCAN
+#  define CONF_WITH_FLEXCAN 0
+# endif
+# ifndef CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF
+#  define CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF 1
+# endif
+# ifndef ALWAYS_SHOW_INITINFO
+#  define ALWAYS_SHOW_INITINFO 1
+# endif
+# ifndef AES_STACK_SIZE
+#  define AES_STACK_SIZE 2048   /* in LONGs */
+# endif
+#endif
+
+/*
  * By default, EmuTOS is built for Atari ST/TT/Falcon compatible hardware.
  */
 #ifndef CONF_ATARI_HARDWARE

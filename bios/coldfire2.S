@@ -31,7 +31,7 @@
 coldfire_startup:
         lea     __RAMBAR1+0x00001000,sp
 
-#if defined(MACHINE_M548X) && !CONF_WITH_BAS_MEMORY_MAP
+#if (defined(MACHINE_M548X) || defined(MACHINE_M547X)) && !CONF_WITH_BAS_MEMORY_MAP
         // ACR0: Read-only cache data accesses to 2 MB memory region at address 0x00e00000
         move.l  #0x00e1c424,d0
         movec   d0,ACR0
