@@ -59,8 +59,10 @@
 
 #undef AND_MEMORY
 #if __GNUC_PREREQ(2, 6)
-#define AND_MEMORY , "memory"
+#define CLOBBER_MEMORY "memory"     /* When memory is the only clobber */
+#define AND_MEMORY , CLOBBER_MEMORY /* When memory is the last clobber */
 #else
+#define CLOBBER_MEMORY
 #define AND_MEMORY
 #endif
 
