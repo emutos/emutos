@@ -451,6 +451,9 @@ static void add_motherboard_fast_ram(void)
     xmaddalt(end - size, size);
 }
 
+/* AUTOCONFIG is implemented lower */
+static void add_expansion_ram(void);
+
 /* Detect Alt-RAM directly from hardware */
 static void add_alt_ram_from_hardware(void)
 {
@@ -459,7 +462,10 @@ static void add_alt_ram_from_hardware(void)
     add_processor_slot_fast_ram();
     add_motherboard_fast_ram();
 #if CONF_WITH_AROS
+    UNUSED(add_expansion_ram);
     aros_add_alt_ram();
+#else
+    add_expansion_ram();
 #endif
 }
 
@@ -2658,6 +2664,95 @@ void amiga_autoconfig(void)
     }
 
     KDEBUG(("**************** AUTOCONFIG DONE ****************\n"));
+}
+
+/******************************************************************************/
+/* Expansion RAM                                                              */
+/******************************************************************************/
+
+/* Detect the amount of RAM present on a board */
+static ULONG detect_board_ram_size(struct ConfigDev *configDev)
+{
+    UBYTE subsize = configDev->cd_Rom.er_Flags & ERT_Z3_SSMASK;
+
+    if (!IS_32BIT_POINTER(configDev->cd_BoardAddr) || subsize == 0)
+    {
+        /* RAM is available in the whole range */
+        return configDev->cd_BoardSize;
+    }
+    else if (subsize == 1)
+    {
+        /* Probe the whole range for actual RAM */
+        UBYTE *start = (UBYTE *)configDev->cd_BoardAddr;
+        ULONG maxsize = configDev->cd_BoardSize;
+        return amiga_detect_ram(start, start + maxsize, EZ3_SIZEGRANULARITY);
+    }
+    else if (subsize <= 8)
+    {
+        /* subsize == 2 means 64 KB, next ones double the size */
+        return (64*1024UL) << (subsize - 2);
+    }
+    else if (subsize <= 13)
+    {
+        /* subsize == 9 means 6 MB, next ones add 2 MB */
+        return (6*1024*1024UL) + ((2*1024*1024UL) * (subsize - 9));
+    }
+    else
+    {
+        /* Invalid subsize */
+        return 0;
+    }
+}
+
+/* Detect RAM from a single board, and if found, add it to the OS */
+static void add_ram_from_board(struct ConfigDev *configDev)
+{
+    APTR start;
+    ULONG size;
+
+    /* Consider only RAM boards */
+    if (!(configDev->cd_Rom.er_Type & ERTF_MEMLIST))
+        return;
+
+    /* Skip already processed boards */
+    if (configDev->cd_Flags & (CDF_SHUTUP | CDF_PROCESSED))
+        return;
+
+    /* Determine RAM address range */
+    start = configDev->cd_BoardAddr;
+    size = detect_board_ram_size(configDev);
+
+    /* Sanity check */
+    if (size == 0 || size > configDev->cd_BoardSize)
+    {
+        KDEBUG(("*** Skip RAM board due to invalid size: configDev=%p cd_BoardAddr=%p cd_BoardSize=%lu subsize=%d size=%lu\n",
+            configDev, configDev->cd_BoardAddr, configDev->cd_BoardSize,
+            configDev->cd_Rom.er_Flags & ERT_Z3_SSMASK, size));
+        return;
+    }
+
+    KDEBUG(("*** Expansion RAM found: configDev=%p cd_BoardAddr=%p cd_BoardSize=%lu subsize=%d size=%lu\n",
+        configDev, configDev->cd_BoardAddr, configDev->cd_BoardSize,
+        configDev->cd_Rom.er_Flags & ERT_Z3_SSMASK, size));
+
+    /* Register this Alt-RAM to the OS */
+    xmaddalt(start, size);
+
+    /* This board has been processed */
+    configDev->cd_Flags |= CDF_PROCESSED;
+}
+
+/* Look for RAM on Expansion boards. This must be done after AUTOCONFIG. */
+static void add_expansion_ram(void)
+{
+    struct Node *node;
+
+    /* Scan the list of Expansion boards */
+    for (node = boardList.lh_Head; node->ln_Succ; node = node->ln_Succ)
+    {
+        struct ConfigDev *configDev = (struct ConfigDev *)node;
+        add_ram_from_board(configDev);
+    }
 }
 
 #endif /* MACHINE_AMIGA */
