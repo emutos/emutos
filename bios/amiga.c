@@ -2483,46 +2483,50 @@ static BOOL configure_zorro2_board(APTR board, struct ConfigDev *configDev)
 /* Configure a Zorro III board. */
 static BOOL configure_zorro3_board(APTR board, struct ConfigDev *configDev)
 {
-    static ULONG nextFreeAddress; /* Not initialized here due to lack of DATA segment */
     ULONG z3size; /* Total size of Zorro III space allocated to this board */
-    ULONG z3start; /* Board start address */
+    UWORD slotsize; /* Number of Zorro II-sized slots required */
+    ULONG start = EZ3_CONFIGAREA; /* Zorro III start address */
+    ULONG end = ZORRO3_SPACE_END; /* Zorro III end address */
+    ULONG addr;
 
-    /* Round size to upper slot */
+    /* Round z3size to upper slot */
     z3size = (configDev->cd_BoardSize + (ZORRO3_SLOT_SIZE - 1)) / ZORRO3_SLOT_SIZE * ZORRO3_SLOT_SIZE;
+    slotsize = z3size / E_SLOTSIZE;
+
     KDEBUG(("configure_zorro3_board() configDev=%p cd_BoardSize=0x%08lx z3size=0x%08lx\n",
         configDev, configDev->cd_BoardSize, z3size));
 
-    /* First Zorro III board will live at the start of Zorro III space */
-    if (nextFreeAddress == 0)
-        nextFreeAddress = EZ3_CONFIGAREA;
-
-    /* Check for space availability */
-    if (nextFreeAddress + z3size > ZORRO3_SPACE_END)
+    /* Find the first free address meeting the requirements. */
+    for (addr = start; (addr + z3size) <= end; addr += ZORRO3_SLOT_SIZE)
     {
-        KDEBUG(("configure_zorro3_board(): not enough Zorro III space.\n"));
-        return FALSE;
+        UWORD slot = HIWORD(addr); /* Slot number */
+
+        /* If some board overlaps this slot range, continue searching */
+        if (some_board_overlaps(slot, slotsize))
+            continue;
+
+        /* Initialize ConfigDev like AmigaOS */
+        configDev->cd_BoardAddr = (APTR)addr;
+        configDev->cd_SlotAddr = slot;
+        configDev->cd_SlotSize = slotsize;
+        configDev->cd_Flags |= CDF_CONFIGME;
+
+        KDEBUG(("configure_zorro3_board() configDev=%p: Mapping board: cd_BoardAddr=%p cd_SlotAddr=0x%04x cd_SlotSize=0x%04x cd_Flags=0x%02x\n",
+            configDev, configDev->cd_BoardAddr, configDev->cd_SlotAddr, configDev->cd_SlotSize, configDev->cd_Flags));
+
+        /* Configure the board. This will map it to start,
+         * and next board will appear at "board" address.
+         * Warning: UAE may override configDev->cd_BoardAddr and configDev->cd_SlotAddr
+         * during WriteExpansionWord(), so we take special precautions. */
+        WriteExpansionWord_UAE(board, ECOFFSET(ec_Z3_HighBase), slot, configDev);
+
+        return TRUE;
     }
 
-    /* Allocate board space */
-    z3start = nextFreeAddress;
-    nextFreeAddress += z3size;
+    KDEBUG(("configure_zorro3_board() configDev=%p cd_BoardSize=0x%08lx failed: no suitable slot found\n",
+        configDev, configDev->cd_BoardSize));
 
-    /* Initialize ConfigDev like AmigaOS */
-    configDev->cd_BoardAddr = (APTR)z3start;
-    configDev->cd_SlotAddr = HIWORD(z3start);
-    configDev->cd_SlotSize = z3size / E_SLOTSIZE;
-    configDev->cd_Flags |= CDF_CONFIGME;
-
-    KDEBUG(("configure_zorro3_board() configDev=%p: Mapping board: cd_BoardAddr=%p cd_SlotAddr=0x%04x cd_SlotSize=0x%04x cd_Flags=0x%02x\n",
-        configDev, configDev->cd_BoardAddr, configDev->cd_SlotAddr, configDev->cd_SlotSize, configDev->cd_Flags));
-
-    /* Configure the board. This will map it to z3start,
-     * and next board will appear at "board" address.
-     * Warning: UAE may override configDev->cd_BoardAddr and configDev->cd_SlotAddr
-     * during WriteExpansionWord(), so we take special precautions. */
-    WriteExpansionWord_UAE(board, ECOFFSET(ec_Z3_HighBase), HIWORD(z3start), configDev);
-
-    return TRUE;
+    return FALSE;
 }
 
 /* Configure a board.
