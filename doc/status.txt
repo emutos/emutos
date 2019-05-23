@@ -21,11 +21,11 @@ a ROM version of EmuTOS.
   WinUAE 4.1.0        |  yes  | VRI | 19 Dec 2018 |
   --------------------+-------+-----+-------------+----------------
   Atari & compatibles |       |     |             |
-  STfm                |  yes  | (1) | 23 Nov 2017 |
+  STf & STfm          |  yes  | (1) | 21 May 2019 |
   Mega ST             |  yes  | (8) |  7 Dec 2018 | tested with PRG
-  STe                 |  yes  | (1) | 23 Nov 2017 |
-  Mega STe            |  yes  | (2) | 26 Jun 2004 | only RAMTOS tested
-  TT030               |  yes  | RFB | 30 Nov 2018 | tested with PRG
+  STe                 |  yes  | (1) | 21 May 2019 |
+  Mega STe            |  yes  | (1) | 21 May 2019 | tested with PRG
+  TT030               |  yes  | (1) | 21 May 2019 |
   Falcon030           |  yes  | (7) | 31 Dec 2016 |
   Falcon030           |  yes  | RFB | 29 Nov 2018 | tested with PRG
   Falcon030 + CT60    |  yes  | RFB | 29 Nov 2018 | tested with PRG
