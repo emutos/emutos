@@ -51,6 +51,7 @@ extern int has_gayle;
 
 void amiga_machine_detect(void);
 const char *amiga_machine_name(void);
+void amiga_autoconfig(void);
 #if CONF_WITH_ALT_RAM
 void amiga_add_alt_ram(void);
 ULONG amiga_detect_ram(void *start, void *end, ULONG step);

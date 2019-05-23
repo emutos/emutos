@@ -2068,4 +2068,596 @@ static void AddTail(struct List *list, struct Node *node)
     list->lh_TailPred = node;
 }
 
+/******************************************************************************/
+/* AUTOCONFIG - Initialization of Zorro II/III expansion boards               */
+/******************************************************************************/
+
+/* http://amigadev.elowar.com/read/ADCD_2.1/Includes_and_Autodocs_3._guide/node05FE.html */
+/* http://amigadev.elowar.com/read/ADCD_2.1/Hardware_Manual_guide/node02C8.html */
+
+/* Each expansion board starts with ExpansionRom read-only data
+ * followed by ExpansionControl write registers.
+ * Special routines are required to read/write them on hardware.
+ * As soon as the board is configured, those areas disappear.
+ * This is why a copy of ExpansionRom is stored in the ConfigDev structure. */
+
+struct ExpansionRom
+{
+    UBYTE er_Type;
+    UBYTE er_Product;
+    UBYTE er_Flags;
+    UBYTE er_Reserved03;
+    UWORD er_Manufacturer;
+    ULONG er_SerialNumber;
+    UWORD er_InitDiagVec;
+    UBYTE er_Reserved0c;
+    UBYTE er_Reserved0d;
+    UBYTE er_Reserved0e;
+    UBYTE er_Reserved0f;
+};
+
+/* Logical offset of ExpansionRom field from start of board */
+#define EROFFSET(field) offsetof(struct ExpansionRom, field)
+
+struct ExpansionControl
+{
+    UBYTE ec_Interrupt;
+    UBYTE ec_Z3_HighBase;
+    UBYTE ec_BaseAddress;
+    UBYTE ec_Shutup;
+    UBYTE ec_Reserved14;
+    UBYTE ec_Reserved15;
+    UBYTE ec_Reserved16;
+    UBYTE ec_Reserved17;
+    UBYTE ec_Reserved18;
+    UBYTE ec_Reserved19;
+    UBYTE ec_Reserved1a;
+    UBYTE ec_Reserved1b;
+    UBYTE ec_Reserved1c;
+    UBYTE ec_Reserved1d;
+    UBYTE ec_Reserved1e;
+    UBYTE ec_Reserved1f;
+};
+
+/* Logical offset of ExpansionControl field from start of board */
+#define ECOFFSET(field) (sizeof(struct ExpansionRom) + offsetof(struct ExpansionControl, field))
+
+/* er_Type bits */
+#define ERT_TYPEMASK 0xc0
+#define ERT_NEWBOARD 0xc0
+#define ERT_ZORROII  ERT_NEWBOARD
+#define ERT_ZORROIII 0x80
+#define ERTF_MEMLIST (1<<5) /* RAM board */
+#define ERT_MEMMASK  0x07
+
+/* er_Flags bits */
+#define ERFF_NOSHUTUP (1<<6) /* Board can't be shut up */
+#define ERFF_EXTENDED (1<<5) /* Interpret ERT_MEMMASK bits differently */
+#define ERT_Z3_SSMASK 0x0f /* Zorro III board sub-size */
+
+/* AmigaOS stores board information in ConfigDev structure. So we do. */
+/* http://amigadev.elowar.com/read/ADCD_2.1/Includes_and_Autodocs_3._guide/node05F1.html */
+struct ConfigDev MAY_ALIAS;
+struct ConfigDev
+{
+    struct Node         cd_Node;
+    UBYTE               cd_Flags;
+    UBYTE               cd_Pad;
+    struct ExpansionRom cd_Rom; /* Copy of hardware ROM data */
+    APTR                cd_BoardAddr;
+    ULONG               cd_BoardSize;
+    UWORD               cd_SlotAddr;
+    UWORD               cd_SlotSize;
+    APTR                cd_Driver;
+    struct ConfigDev    *cd_NextCD;
+    ULONG               cd_Unused[4];
+};
+
+/* cd_Flags bits */
+#define CDF_SHUTUP    0x01
+#define CDF_CONFIGME  0x02
+#define CDF_PROCESSED 0x08
+
+/* Expansion ROM data is encoded using a very special scheme.
+ * The 2 nybbles (4 bits) of each byte are stored independently.
+ * Each nybble resides in the high bits of a WORD.
+ * So each data byte actually occupies 2 WORDs (4 bytes)
+ * - High nybble is located at data offset * 4
+ * - Offset of the low nybble depends of the board type
+ * http://amigadev.elowar.com/read/ADCD_2.1/Hardware_Manual_guide/node02C7.html
+ */
+
+static void get_nybble_offsets(APTR board, ULONG offset, volatile UBYTE **pphigh, volatile UBYTE **pplow)
+{
+    volatile UBYTE *p = (UBYTE *)board;
+    ULONG low_nybble_offset;
+
+    /* High (or Low) nybbles are always spaced out to 4 bytes */
+    offset *= 4;
+
+    /* Low nybble offset depends on bus type */
+    if (IS_32BIT_POINTER(board))
+        low_nybble_offset = 0x100; /* Zorro III */
+    else
+        low_nybble_offset = 0x002; /* Zorro II */
+
+    /* Return pointers */
+    *pphigh = &p[offset];
+    *pplow = &p[offset + low_nybble_offset];
+}
+
+/* http://amigadev.elowar.com/read/ADCD_2.1/Includes_and_Autodocs_3._guide/node0268.html */
+static UBYTE ReadExpansionByte(APTR board, ULONG offset)
+{
+    volatile UBYTE *phigh, *plow;
+    UBYTE byte;
+
+    get_nybble_offsets(board, offset, &phigh, &plow);
+
+    /* Read low nybble */
+    byte = (*plow & 0xf0) >> 4;
+
+    /* Add high nybble */
+    byte |= *phigh & 0xf0;
+
+    return byte;
+}
+
+/* http://amigadev.elowar.com/read/ADCD_2.1/Includes_and_Autodocs_3._guide/node026D.html */
+static void WriteExpansionByte(APTR board, ULONG offset, ULONG byte)
+{
+    volatile UBYTE *phigh, *plow;
+
+    KDEBUG(("WriteExpansionByte() board=%p offset=%ld byte=0x%02lx\n",
+        board, offset, byte));
+
+    get_nybble_offsets(board, offset, &phigh, &plow);
+
+    /* Write low nybble */
+    *plow = byte << 4;
+
+    /* Write high nybble */
+    *phigh = byte;
+}
+
+/* Read the ExpansionRom structure from a board */
+static void read_board_rom(APTR board, struct ExpansionRom *rom)
+{
+    ULONG offset;
+    UBYTE *p = (UBYTE *)rom;
+
+    for (offset = 0; offset < sizeof(struct ExpansionRom); offset++)
+    {
+        /* ROM bits are inverted, so NOT() them all */
+        *p++ = ~ReadExpansionByte(board, offset);
+    }
+
+    /* Exception: this field was not inverted, so invert it again. */
+    rom->er_Type = ~rom->er_Type;
+}
+
+/* http://amigadev.elowar.com/read/ADCD_2.1/Includes_and_Autodocs_3._guide/node0269.html
+ * http://amigadev.elowar.com/read/ADCD_2.1/Hardware_Manual_guide/node02C8.html */
+static BOOL ReadExpansionRom(APTR board, struct ConfigDev *configDev)
+{
+    struct ExpansionRom *rom = &configDev->cd_Rom;
+    UBYTE type;
+    UBYTE mem;
+    BOOL extended;
+    ULONG size;
+
+    /* Read ExpansionRom structure from the board hardware */
+    read_board_rom(board, rom);
+
+    /* Sanity check on er_Reserved03. Must always be 0 */
+    if (rom->er_Reserved03 != 0)
+        return FALSE;
+
+    /* Sanity check on manufacturer */
+    if (rom->er_Manufacturer == 0 || rom->er_Manufacturer == 0xffff)
+        return FALSE;
+
+    /* Sanity check on board type */
+    type = rom->er_Type & ERT_TYPEMASK;
+    if (!(type == ERT_ZORROII || type == ERT_ZORROIII))
+        return FALSE;
+
+    /* Determine board size */
+    mem = rom->er_Type & ERT_MEMMASK;
+    extended = (rom->er_Flags & ERFF_EXTENDED) != 0;
+    if (type == ERT_ZORROIII && extended)
+    {
+        /* Extended size is interpreted differently */
+        size = (16*1024*1024UL) << mem;
+    }
+    else
+    {
+        /* Standard size */
+        if (mem == 0)
+            size = 8*1024*1024UL;
+        else
+            size = (64*1024UL) << (mem - 1);
+    }
+
+    KDEBUG(("*** ReadExpansionRom(): Found %s board at %p: configDev=%p Type=0x%02x Flags=0x%02x Manufacturer=%u Product=%u SerialNumber=0x%08lx InitDiagVec=0x%04x, mem=%u extended=%d size=0x%08lx\n",
+        (type == ERT_ZORROIII ? "Zorro III" : "Zorro II"),
+        board, configDev, rom->er_Type, rom->er_Flags, rom->er_Manufacturer, rom->er_Product, rom->er_SerialNumber, rom->er_InitDiagVec,
+        mem, extended, size));
+
+    /* FIXME: Do we need to check Zorro III subsize here? */
+
+    /* Store board size into ConfigDev */
+    configDev->cd_BoardSize = size;
+
+    if (rom->er_InitDiagVec)
+        KDEBUG(("Warning: DiagArea will be ignored by EmuTOS.\n"));
+
+    return TRUE;
+}
+
+/* http://amigadev.elowar.com/read/ADCD_2.1/Includes_and_Autodocs_3._guide/node025F.html */
+static struct ConfigDev *AllocConfigDev(void)
+{
+    size_t size = sizeof(struct ConfigDev);
+    struct ConfigDev *configDev;
+
+    configDev = (struct ConfigDev *)balloc_stram(size, FALSE);
+    if (!configDev)
+        return NULL;
+
+    bzero(configDev, size);
+
+    return configDev;
+}
+
+/* http://amigadev.elowar.com/read/ADCD_2.1/Includes_and_Autodocs_3._guide/node0263.html */
+static void FreeConfigDev(struct ConfigDev *configDev)
+{
+    /* FIXME: bfree()? */
+}
+
+/* List of all ConfigDev's found by AUTOCONFIG. */
+static struct List boardList; /* Needs to be initialized! */
+
+/* http://amigadev.elowar.com/read/ADCD_2.1/Includes_and_Autodocs_3._guide/node025D.html */
+static void AddConfigDev(struct ConfigDev *configDev)
+{
+    KDEBUG(("AddConfigDev configDev=%p cd_BoardAddr=%p\n", configDev, configDev->cd_BoardAddr));
+    AddTail(&boardList, (struct Node *)configDev);
+}
+
+/* http://aros.sourceforge.net/de/documentation/developers/autodocs/expansion.php#writeexpansionword
+ * WriteExpansionWord() is used to configure Zorro III boards
+ * by writing to ExpansionControl ec_Z3_HighBase and ec_BaseAddress.
+ * It makes ExpansionRom/ExpansionControl disappear from "board" address,
+ * then the real board appears at its final address.
+ * Here, we add an extra parameter "configDev" specially for UAE hacks.
+ * Normally, the AUTOCONFIG protocol maps Zorro III boards to 0x40000000.
+ * But during WriteExpansionWord, UAE may forcibly remap the board to 0x10000000.
+ * This happens with WinUAE when the option below is selected:
+ * Settings > Hardware > RAM > Z3 mapping mode > UAE (0x10000000)
+ * In that case, UAE expects to find the configDev pointer in A3 register.
+ * This is why we need to implement this routine in assembly language.
+ * UAE may override configDev->cd_BoardAddr and configDev->cd_SlotAddr
+ * with the forced location.
+ * See WinUAE source below for details, in function expamemz3_map():
+ * https://github.com/tonioni/WinUAE/blob/master/expansion.cpp */
+static void WriteExpansionWord_UAE(APTR board, ULONG offset, ULONG word, struct ConfigDev *configDev)
+{
+    register struct ConfigDev *regConfigDev __asm__("a3") = configDev; /* configDev must be in A3 for UAE */
+    UBYTE *adr = (UBYTE *)board + (offset * 4); /* Registers are spaced out to 4 bytes */
+
+    KDEBUG(("Before WriteExpansionWord_UAE() configDev=%p cd_BoardAddr=%p cd_SlotAddr=0x%04x\n",
+        configDev, configDev->cd_BoardAddr, configDev->cd_SlotAddr));
+
+    KDEBUG(("WriteExpansionWord() board=%p offset=%ld word=0x%04lx\n",
+        board, offset, word));
+
+    __asm__ volatile
+    (
+        "move.b  %2,4(%1)\n\t"  /* Write Low byte in next register */
+        "move.w  %2,(%1)"       /* Write High and Low bytes as single WORD */
+    : /* outputs */
+    : "a"(regConfigDev), "a"(adr), "d"(word) /* inputs */
+    : CLOBBER_MEMORY /* clobbered */
+    );
+
+    KDEBUG(("After  WriteExpansionWord_UAE() configDev=%p cd_BoardAddr=%p cd_SlotAddr=0x%04x\n",
+        configDev, configDev->cd_BoardAddr, configDev->cd_SlotAddr));
+}
+
+/* Zorro II bus, 24-bit addresses */
+#define E_EXPANSIONBASE 0x00e80000 /* Zorro II configuration address */
+#define E_MEMORYBASE    0x00200000 /* Start of Zorro II space */
+#define E_MEMORYSIZE    0x00800000 /* 8 MB */
+#define E_SLOTSIZE      0x00010000 /* 64 KB */
+
+#define ZORRO2_SECONDARY_START 0x00e90000 /* Secondary Zorro II space for I/O boards */
+#define ZORRO2_SECONDARY_END   0x00f00000
+
+/* A slot number is the the HIWORD() of its start address.
+ * As Zorro II boards always live in the 24-bit space,
+ * Zorro II slot numbers always fit a single byte. */
+#define MAX_Z2SLOTS (ZORRO2_SECONDARY_END / E_SLOTSIZE) /* Maximum number of Zorro II slots */
+#define BITSPERBYTE 8
+
+/* We will use this array to remember the allocation status of Zorro II slots.
+ * To save space, each slot is represented by a single bit. */
+static UBYTE z2Slots[MAX_Z2SLOTS / BITSPERBYTE];
+
+/* Configure a Zorro II board.
+ * This implementation is freely inspired from AROS's ConfigBoard().
+ * https://repo.or.cz/AROS.git/blob/HEAD:/arch/m68k-amiga/expansion/configboard.c */
+static BOOL configure_zorro2_board(APTR board, struct ConfigDev *configDev)
+{
+    BOOL ramboard = (configDev->cd_Rom.er_Type & ERTF_MEMLIST) != 0;
+    ULONG size = configDev->cd_BoardSize;
+    UWORD slotsize = HIWORD(size);
+    ULONG start, end; /* Address space suitable for this board */
+    ULONG addr;
+
+    KDEBUG(("configure_zorro2_board() configDev=%p cd_BoardSize=0x%08lx\n",
+        configDev, configDev->cd_BoardSize));
+
+    if (ramboard || size >= 512*1024UL)
+    {
+        /* Primary Zorro II space for FastRAM */
+        start = E_MEMORYBASE;
+        end = E_MEMORYBASE + E_MEMORYSIZE;
+    }
+    else
+    {
+        /* Secondary Zorro II space for I/O and ROM boards */
+        start = ZORRO2_SECONDARY_START;
+        end = ZORRO2_SECONDARY_END;
+    }
+
+    /* Small boards must be aligned on their own size. */
+    if (size <= 2*1024*1024UL)
+        start = (start + (size - 1)) / size * size;
+
+    /* Find the first free address meeting the requirements. */
+    for (addr = start; addr < end; addr += size)
+    {
+        UWORD slot = HIWORD(addr); /* Slot number */
+        UWORD offset = slot / BITSPERBYTE; /* Slot byte offset in z2Slots[] */
+        int bit = BITSPERBYTE - 1 - (slot % BITSPERBYTE); /* Slot bit inside byte */
+        ULONG sizeleft = size; /* Remaining size to find at this slot */
+
+        /* If this slot is already used, continue searching */
+        if (z2Slots[offset] & (1U << bit))
+            continue;
+
+        /* We have found a free start address.
+         * Check if there are enough free slots there. */
+        if (slotsize >= BITSPERBYTE)
+        {
+            /* This board needs at least BITSPERBYTE slots,
+             * so its slotsize is always a multiple of 2 divisible by BITSPERBYTE.
+             * We can allocate whole bytes at once */
+            UWORD endslot = HIWORD(end);
+            while (offset < endslot / BITSPERBYTE /* We are not at the end */
+                && sizeleft > 0 /* and we need more room */
+                && z2Slots[offset] == 0) /* and group of slots is free */
+            {
+                offset++; /* Next byte */
+                sizeleft -= E_SLOTSIZE * BITSPERBYTE;
+            }
+        }
+        else
+        {
+            /* This board needs less than BITSPERBYTE slots.
+             * As slots are aligned on their own size, and are always
+             * multiple of 2, they never cross a byte boundary.
+             * So this small board can always fit a single byte.
+             * Just check that next bits are also free. */
+            while (bit >= 0 /* We are not at the end */
+                && sizeleft > 0 /* and we need more room */
+                && (z2Slots[offset] & (1 << bit)) == 0) /* and slot is free */
+            {
+                bit--; /* Next bit */
+                sizeleft -= E_SLOTSIZE;
+            }
+        }
+
+        if (sizeleft > 0)
+        {
+            /* Not enough free slots here at addr */
+            continue;
+        }
+
+        /* Initialize ConfigDev like AmigaOS */
+        configDev->cd_BoardAddr = (APTR)addr;
+        configDev->cd_SlotAddr = slot;
+        configDev->cd_SlotSize = slotsize;
+        configDev->cd_Flags |= CDF_CONFIGME;
+
+        KDEBUG(("configure_zorro2_board() configDev=%p: Mapping board: cd_BoardAddr=%p cd_SlotAddr=0x%04x cd_SlotSize=0x%04x cd_Flags=0x%02x\n",
+            configDev, configDev->cd_BoardAddr, configDev->cd_SlotAddr, configDev->cd_SlotSize, configDev->cd_Flags));
+
+        /* Configure the board. This will map it to addr,
+         * and next board will appear at "board" address. */
+        WriteExpansionByte(board, ECOFFSET(ec_BaseAddress), slot);
+
+        /* Restore variables modified during check for free slots */
+        offset = slot / BITSPERBYTE;
+        bit = BITSPERBYTE - 1 - (slot % BITSPERBYTE);
+        sizeleft = size;
+
+        /* Mark our slots as already used */
+        while (sizeleft > 0)
+        {
+            z2Slots[offset] |= (1U << bit); /* Mark slot as used */
+            sizeleft -= E_SLOTSIZE; /* We need one slot less */
+            bit--; /* Next bit */
+
+            /* Fix bug in AROS algorithm here.
+             * If slotsize >= BITSPERBYTE, then we need to switch to next byte
+             * when current byte is full. */
+            if (bit < 0)
+            {
+                offset++;
+                bit = BITSPERBYTE - 1;
+            }
+        }
+
+        /* As this isn't a trivial algorithm, some traces will help */
+        KDEBUG(("        "));
+        for (offset = 0; offset < MAX_Z2SLOTS / BITSPERBYTE; offset++)
+            KDEBUG(("%02x", offset * BITSPERBYTE));
+        KDEBUG(("\n"));
+        KDEBUG(("z2Slots="));
+        for (offset = 0; offset < MAX_Z2SLOTS / BITSPERBYTE; offset++)
+            KDEBUG(("%02x", z2Slots[offset]));
+        KDEBUG(("\n"));
+
+        return TRUE;
+    }
+
+    KDEBUG(("configure_zorro2_board() configDev=%p cd_BoardSize=0x%08lx failed: no suitable slot found\n",
+        configDev, configDev->cd_BoardSize));
+
+    return FALSE;
+}
+
+/* Zorro III bus, 32-bit addresses */
+#define EZ3_EXPANSIONBASE   0xff000000 /* Zorro III configuration address */
+#define EZ3_SIZEGRANULARITY 0x00080000
+#define EZ3_CONFIGAREA      0x40000000 /* Start of Zorro III space */
+#define EZ3_CONFIGAREAEND   0x7fffffff /* Last byte of Zorro III space */
+#define ZORRO3_SPACE_END    (EZ3_CONFIGAREAEND + 1UL)
+#define ZORRO3_SLOT_SIZE    0x01000000
+
+/* Configure a Zorro III board. */
+static BOOL configure_zorro3_board(APTR board, struct ConfigDev *configDev)
+{
+    static ULONG nextFreeAddress; /* Not initialized here due to lack of DATA segment */
+    ULONG z3size; /* Total size of Zorro III space allocated to this board */
+    ULONG z3start; /* Board start address */
+
+    /* Round size to upper slot */
+    z3size = (configDev->cd_BoardSize + (ZORRO3_SLOT_SIZE - 1)) / ZORRO3_SLOT_SIZE * ZORRO3_SLOT_SIZE;
+    KDEBUG(("configure_zorro3_board() configDev=%p cd_BoardSize=0x%08lx z3size=0x%08lx\n",
+        configDev, configDev->cd_BoardSize, z3size));
+
+    /* First Zorro III board will live at the start of Zorro III space */
+    if (nextFreeAddress == 0)
+        nextFreeAddress = EZ3_CONFIGAREA;
+
+    /* Check for space availability */
+    if (nextFreeAddress + z3size > ZORRO3_SPACE_END)
+    {
+        KDEBUG(("configure_zorro3_board(): not enough Zorro III space.\n"));
+        return FALSE;
+    }
+
+    /* Allocate board space */
+    z3start = nextFreeAddress;
+    nextFreeAddress += z3size;
+
+    /* Initialize ConfigDev like AmigaOS */
+    configDev->cd_BoardAddr = (APTR)z3start;
+    configDev->cd_SlotAddr = HIWORD(z3start);
+    configDev->cd_SlotSize = z3size / E_SLOTSIZE;
+    configDev->cd_Flags |= CDF_CONFIGME;
+
+    KDEBUG(("configure_zorro3_board() configDev=%p: Mapping board: cd_BoardAddr=%p cd_SlotAddr=0x%04x cd_SlotSize=0x%04x cd_Flags=0x%02x\n",
+        configDev, configDev->cd_BoardAddr, configDev->cd_SlotAddr, configDev->cd_SlotSize, configDev->cd_Flags));
+
+    /* Configure the board. This will map it to z3start,
+     * and next board will appear at "board" address.
+     * Warning: UAE may override configDev->cd_BoardAddr and configDev->cd_SlotAddr
+     * during WriteExpansionWord(), so we take special precautions. */
+    WriteExpansionWord_UAE(board, ECOFFSET(ec_Z3_HighBase), HIWORD(z3start), configDev);
+
+    return TRUE;
+}
+
+/* Configure a board.
+ * This makes ExpansionRom/ExpansionControl disappear from "board" address,
+ * then the real board appears at its final address.
+ * Then next board on the bus will appear at "board".
+ * Note: if RAM is found on the board, it will be registered later to the OS. */
+static BOOL configure_board(APTR board, struct ConfigDev *configDev)
+{
+    UBYTE type = configDev->cd_Rom.er_Type & ERT_TYPEMASK;
+    BOOL configured;
+
+    if (type == ERT_ZORROIII)
+        configured = configure_zorro3_board(board, configDev);
+    else
+        configured = configure_zorro2_board(board, configDev);
+
+    if (configured)
+        return TRUE;
+
+    KDEBUG(("configure_board() failed. board=%p configDev=%p type=0x%02x\n",
+        board, configDev, type));
+
+    /* Configuration failed. Try to shut up the board. */
+    if (!(configDev->cd_Flags & ERFF_NOSHUTUP))
+    {
+        WriteExpansionByte(board, ECOFFSET(ec_Shutup), 0);
+        configDev->cd_Flags |= CDF_SHUTUP;
+    }
+
+    return FALSE;
+}
+
+/* Auto-configure all Zorro II/III expansion boards.
+ * This implements the AUTOCONFIG protocol.
+ * https://wiki.amigaos.net/wiki/Expansion_Library
+ * For each board, a ConfigDev structure is allocated and kept in boardList.
+ * That list will be scanned later to add actual RAM to the OS pool.
+ */
+void amiga_autoconfig(void)
+{
+    KDEBUG(("**************** AUTOCONFIG !!!! ****************\n"));
+    KDEBUG(("IS_BUS32=%d\n", IS_BUS32));
+
+    /* ConfigDev's are supposed to be chained, so we do. */
+    NewList(&boardList);
+
+    for(;;)
+    {
+        APTR base; /* Bus base address, either Zorro II or Zorro III */
+        struct ConfigDev *configDev = AllocConfigDev();
+        BOOL found = FALSE;
+
+        /* First, look for the board on Zorro III bus. */
+        if (IS_BUS32)
+        {
+            base = (APTR)EZ3_EXPANSIONBASE;
+            found = ReadExpansionRom(base, configDev);
+        }
+
+        /* If not found, look for the board on Zorro II bus. */
+        if (!found)
+        {
+            base = (APTR)E_EXPANSIONBASE;
+            found = ReadExpansionRom(base, configDev);
+        }
+
+        /* If still not found, there are no more boards. */
+        if (!found)
+        {
+            FreeConfigDev(configDev);
+            break;
+        }
+
+        /* Board found. Configure it. */
+        if (!configure_board(base, configDev))
+        {
+            /* Configuration failed */
+            FreeConfigDev(configDev);
+            break;
+        }
+
+        /* Register this board to the OS */
+        AddConfigDev(configDev);
+    }
+
+    KDEBUG(("**************** AUTOCONFIG DONE ****************\n"));
+}
+
 #endif /* MACHINE_AMIGA */

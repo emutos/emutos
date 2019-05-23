@@ -241,6 +241,14 @@ static void bios_init(void)
     KDEBUG(("bmem_init()\n"));
     bmem_init();
 
+#if defined(MACHINE_AMIGA) && !CONF_WITH_AROS
+    /* Detect and initialize Zorro II/III expansion boards.
+     * This must be done after is_bus32 and bmem_init().
+     * Alt-RAM found on those boards will be added later in altram_init().
+     */
+    amiga_autoconfig();
+#endif
+
 #if CONF_WITH_68040_PMMU
     /*
      * Initialize the 68040 MMU
