@@ -2381,24 +2381,43 @@ static void WriteExpansionWord_UAE(APTR board, ULONG offset, ULONG word, struct 
 #define ZORRO2_SECONDARY_START 0x00e90000 /* Secondary Zorro II space for I/O boards */
 #define ZORRO2_SECONDARY_END   0x00f00000
 
-/* A slot number is the the HIWORD() of its start address.
- * As Zorro II boards always live in the 24-bit space,
- * Zorro II slot numbers always fit a single byte. */
-#define MAX_Z2SLOTS (ZORRO2_SECONDARY_END / E_SLOTSIZE) /* Maximum number of Zorro II slots */
-#define BITSPERBYTE 8
+/* Check if a ConfigDev overlaps a slot range */
+static BOOL board_overlaps(struct ConfigDev *configDev, UWORD slot, UWORD slotsize)
+{
+    /* Check if configDev is before slot range */
+    if ((configDev->cd_SlotAddr + configDev->cd_SlotSize) <= slot)
+        return FALSE;
 
-/* We will use this array to remember the allocation status of Zorro II slots.
- * To save space, each slot is represented by a single bit. */
-static UBYTE z2Slots[MAX_Z2SLOTS / BITSPERBYTE];
+    /* Check if configDev is after slot range */
+    if (configDev->cd_SlotAddr >= (slot + slotsize))
+        return FALSE;
 
-/* Configure a Zorro II board.
- * This implementation is freely inspired from AROS's ConfigBoard().
- * https://repo.or.cz/AROS.git/blob/HEAD:/arch/m68k-amiga/expansion/configboard.c */
+    /* Overlap */
+    return TRUE;
+}
+
+/* Check if some Expansion board overlaps a slot range */
+static BOOL some_board_overlaps(UWORD slot, UWORD slotsize)
+{
+    struct Node *node;
+
+    /* Scan the list of already configured Expansion boards */
+    for (node = boardList.lh_Head; node->ln_Succ; node = node->ln_Succ)
+    {
+        struct ConfigDev *configDev = (struct ConfigDev *)node;
+        if (board_overlaps(configDev, slot, slotsize))
+            return TRUE;
+    }
+
+    return FALSE;
+}
+
+/* Configure a Zorro II board */
 static BOOL configure_zorro2_board(APTR board, struct ConfigDev *configDev)
 {
     BOOL ramboard = (configDev->cd_Rom.er_Type & ERTF_MEMLIST) != 0;
     ULONG size = configDev->cd_BoardSize;
-    UWORD slotsize = HIWORD(size);
+    UWORD slotsize = size / E_SLOTSIZE; /* Number of slots required */
     ULONG start, end; /* Address space suitable for this board */
     ULONG addr;
 
@@ -2423,54 +2442,13 @@ static BOOL configure_zorro2_board(APTR board, struct ConfigDev *configDev)
         start = (start + (size - 1)) / size * size;
 
     /* Find the first free address meeting the requirements. */
-    for (addr = start; addr < end; addr += size)
+    for (addr = start; (addr + size) <= end; addr += size)
     {
         UWORD slot = HIWORD(addr); /* Slot number */
-        UWORD offset = slot / BITSPERBYTE; /* Slot byte offset in z2Slots[] */
-        int bit = BITSPERBYTE - 1 - (slot % BITSPERBYTE); /* Slot bit inside byte */
-        ULONG sizeleft = size; /* Remaining size to find at this slot */
 
-        /* If this slot is already used, continue searching */
-        if (z2Slots[offset] & (1U << bit))
+        /* If some board overlaps this slot range, continue searching */
+        if (some_board_overlaps(slot, slotsize))
             continue;
-
-        /* We have found a free start address.
-         * Check if there are enough free slots there. */
-        if (slotsize >= BITSPERBYTE)
-        {
-            /* This board needs at least BITSPERBYTE slots,
-             * so its slotsize is always a multiple of 2 divisible by BITSPERBYTE.
-             * We can allocate whole bytes at once */
-            UWORD endslot = HIWORD(end);
-            while (offset < endslot / BITSPERBYTE /* We are not at the end */
-                && sizeleft > 0 /* and we need more room */
-                && z2Slots[offset] == 0) /* and group of slots is free */
-            {
-                offset++; /* Next byte */
-                sizeleft -= E_SLOTSIZE * BITSPERBYTE;
-            }
-        }
-        else
-        {
-            /* This board needs less than BITSPERBYTE slots.
-             * As slots are aligned on their own size, and are always
-             * multiple of 2, they never cross a byte boundary.
-             * So this small board can always fit a single byte.
-             * Just check that next bits are also free. */
-            while (bit >= 0 /* We are not at the end */
-                && sizeleft > 0 /* and we need more room */
-                && (z2Slots[offset] & (1 << bit)) == 0) /* and slot is free */
-            {
-                bit--; /* Next bit */
-                sizeleft -= E_SLOTSIZE;
-            }
-        }
-
-        if (sizeleft > 0)
-        {
-            /* Not enough free slots here at addr */
-            continue;
-        }
 
         /* Initialize ConfigDev like AmigaOS */
         configDev->cd_BoardAddr = (APTR)addr;
@@ -2484,38 +2462,6 @@ static BOOL configure_zorro2_board(APTR board, struct ConfigDev *configDev)
         /* Configure the board. This will map it to addr,
          * and next board will appear at "board" address. */
         WriteExpansionByte(board, ECOFFSET(ec_BaseAddress), slot);
-
-        /* Restore variables modified during check for free slots */
-        offset = slot / BITSPERBYTE;
-        bit = BITSPERBYTE - 1 - (slot % BITSPERBYTE);
-        sizeleft = size;
-
-        /* Mark our slots as already used */
-        while (sizeleft > 0)
-        {
-            z2Slots[offset] |= (1U << bit); /* Mark slot as used */
-            sizeleft -= E_SLOTSIZE; /* We need one slot less */
-            bit--; /* Next bit */
-
-            /* Fix bug in AROS algorithm here.
-             * If slotsize >= BITSPERBYTE, then we need to switch to next byte
-             * when current byte is full. */
-            if (bit < 0)
-            {
-                offset++;
-                bit = BITSPERBYTE - 1;
-            }
-        }
-
-        /* As this isn't a trivial algorithm, some traces will help */
-        KDEBUG(("        "));
-        for (offset = 0; offset < MAX_Z2SLOTS / BITSPERBYTE; offset++)
-            KDEBUG(("%02x", offset * BITSPERBYTE));
-        KDEBUG(("\n"));
-        KDEBUG(("z2Slots="));
-        for (offset = 0; offset < MAX_Z2SLOTS / BITSPERBYTE; offset++)
-            KDEBUG(("%02x", z2Slots[offset]));
-        KDEBUG(("\n"));
 
         return TRUE;
     }
