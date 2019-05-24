@@ -2290,7 +2290,49 @@ static BOOL ReadExpansionRom(APTR board, struct ConfigDev *configDev)
         board, configDev, rom->er_Type, rom->er_Flags, rom->er_Manufacturer, rom->er_Product, rom->er_SerialNumber, rom->er_InitDiagVec,
         mem, extended, size));
 
-    /* FIXME: Do we need to check Zorro III subsize here? */
+    /* Check Zorro III subsize */
+    if (type == ERT_ZORROIII)
+    {
+        ULONG subsize = 0;
+        UBYTE subsizebits = configDev->cd_Rom.er_Flags & ERT_Z3_SSMASK;
+        if (subsizebits < 2)
+        {
+            // Nothing
+            if (subsizebits == 1)
+                KDEBUG(("configDev=%p size=0x%08lx subsizebits=%u: Actual size will be probed later\n",
+                    configDev, size, subsizebits));
+        }
+        else if (subsizebits <= 8)
+        {
+            /* subsizebits == 2 means 64 KB, next ones double the value */
+            subsize = (64*1024UL) << (subsizebits - 2);
+        }
+        else if (subsizebits <= 13)
+        {
+            /* subsizebits == 9 means 6 MB, next ones add 2 MB */
+            subsize = (6*1024*1024UL) + ((2*1024*1024UL) * (subsizebits - 9));
+        }
+        else
+        {
+            KDEBUG(("Error: configDev=%p size=0x%08lx subsizebits=%u: Invalid subsizebits\n",
+                configDev, size, subsizebits));
+        }
+
+        if (subsize > 0)
+        {
+            if (subsize > size)
+            {
+                KDEBUG(("Error: configDev=%p size=0x%08lx subsize=0x%08lx: Invalid subsize\n",
+                    configDev, size, subsize));
+            }
+            else
+            {
+                KDEBUG(("configDev=%p size=0x%08lx subsize=0x%08lx: Shrink size to subsize\n",
+                    configDev, size, subsize));
+                size = subsize;
+            }
+        }
+    }
 
     /* Store board size into ConfigDev */
     configDev->cd_BoardSize = size;
@@ -2480,6 +2522,29 @@ static BOOL configure_zorro2_board(APTR board, struct ConfigDev *configDev)
 #define ZORRO3_SPACE_END    (EZ3_CONFIGAREAEND + 1UL)
 #define ZORRO3_SLOT_SIZE    0x01000000
 
+/* Probe a board for actual RAM size */
+static void autosize_ramboard(struct ConfigDev *configDev)
+{
+    UBYTE *start;
+    ULONG maxsize;
+    ULONG actualsize;
+
+    KDEBUG(("autosize_ramboard() configDev=%p cd_BoardSize=0x%08lx\n",
+        configDev, configDev->cd_BoardSize));
+
+    /* Probe the whole range for actual RAM */
+    start = (UBYTE *)configDev->cd_BoardAddr;
+    maxsize = configDev->cd_BoardSize;
+    actualsize = amiga_detect_ram(start, start + maxsize, EZ3_SIZEGRANULARITY);
+
+    if (actualsize < maxsize)
+    {
+        KDEBUG(("autosize_ramboard() configDev=%p: Shrink cd_BoardSize from 0x%08lx to 0x%08lx\n",
+            configDev, maxsize, actualsize));
+        configDev->cd_BoardSize = actualsize;
+    }
+}
+
 /* Configure a Zorro III board. */
 static BOOL configure_zorro3_board(APTR board, struct ConfigDev *configDev)
 {
@@ -2488,6 +2553,8 @@ static BOOL configure_zorro3_board(APTR board, struct ConfigDev *configDev)
     ULONG start = EZ3_CONFIGAREA; /* Zorro III start address */
     ULONG end = ZORRO3_SPACE_END; /* Zorro III end address */
     ULONG addr;
+    BOOL ramboard = (configDev->cd_Rom.er_Type & ERTF_MEMLIST) != 0;
+    UBYTE subsizebits = configDev->cd_Rom.er_Flags & ERT_Z3_SSMASK;
 
     /* Round z3size to upper slot */
     z3size = (configDev->cd_BoardSize + (ZORRO3_SLOT_SIZE - 1)) / ZORRO3_SLOT_SIZE * ZORRO3_SLOT_SIZE;
@@ -2519,6 +2586,13 @@ static BOOL configure_zorro3_board(APTR board, struct ConfigDev *configDev)
          * Warning: UAE may override configDev->cd_BoardAddr and configDev->cd_SlotAddr
          * during WriteExpansionWord(), so we take special precautions. */
         WriteExpansionWord_UAE(board, ECOFFSET(ec_Z3_HighBase), slot, configDev);
+
+        if (ramboard && subsizebits == 1)
+        {
+            /* Probe the board for actual RAM size.
+             * This may update configDev->cd_BoardSize */
+            autosize_ramboard(configDev);
+        }
 
         return TRUE;
     }
@@ -2620,46 +2694,9 @@ void amiga_autoconfig(void)
 /* Expansion RAM                                                              */
 /******************************************************************************/
 
-/* Detect the amount of RAM present on a board */
-static ULONG detect_board_ram_size(struct ConfigDev *configDev)
-{
-    UBYTE subsize = configDev->cd_Rom.er_Flags & ERT_Z3_SSMASK;
-
-    if (!IS_32BIT_POINTER(configDev->cd_BoardAddr) || subsize == 0)
-    {
-        /* RAM is available in the whole range */
-        return configDev->cd_BoardSize;
-    }
-    else if (subsize == 1)
-    {
-        /* Probe the whole range for actual RAM */
-        UBYTE *start = (UBYTE *)configDev->cd_BoardAddr;
-        ULONG maxsize = configDev->cd_BoardSize;
-        return amiga_detect_ram(start, start + maxsize, EZ3_SIZEGRANULARITY);
-    }
-    else if (subsize <= 8)
-    {
-        /* subsize == 2 means 64 KB, next ones double the size */
-        return (64*1024UL) << (subsize - 2);
-    }
-    else if (subsize <= 13)
-    {
-        /* subsize == 9 means 6 MB, next ones add 2 MB */
-        return (6*1024*1024UL) + ((2*1024*1024UL) * (subsize - 9));
-    }
-    else
-    {
-        /* Invalid subsize */
-        return 0;
-    }
-}
-
 /* Detect RAM from a single board, and if found, add it to the OS */
 static void add_ram_from_board(struct ConfigDev *configDev)
 {
-    APTR start;
-    ULONG size;
-
     /* Consider only RAM boards */
     if (!(configDev->cd_Rom.er_Type & ERTF_MEMLIST))
         return;
@@ -2668,25 +2705,11 @@ static void add_ram_from_board(struct ConfigDev *configDev)
     if (configDev->cd_Flags & (CDF_SHUTUP | CDF_PROCESSED))
         return;
 
-    /* Determine RAM address range */
-    start = configDev->cd_BoardAddr;
-    size = detect_board_ram_size(configDev);
-
-    /* Sanity check */
-    if (size == 0 || size > configDev->cd_BoardSize)
-    {
-        KDEBUG(("*** Skip RAM board due to invalid size: configDev=%p cd_BoardAddr=%p cd_BoardSize=%lu subsize=%d size=%lu\n",
-            configDev, configDev->cd_BoardAddr, configDev->cd_BoardSize,
-            configDev->cd_Rom.er_Flags & ERT_Z3_SSMASK, size));
-        return;
-    }
-
-    KDEBUG(("*** Expansion RAM found: configDev=%p cd_BoardAddr=%p cd_BoardSize=%lu subsize=%d size=%lu\n",
-        configDev, configDev->cd_BoardAddr, configDev->cd_BoardSize,
-        configDev->cd_Rom.er_Flags & ERT_Z3_SSMASK, size));
+    KDEBUG(("*** Expansion RAM found: configDev=%p cd_BoardAddr=%p cd_BoardSize=%lu\n",
+        configDev, configDev->cd_BoardAddr, configDev->cd_BoardSize));
 
     /* Register this Alt-RAM to the OS */
-    xmaddalt(start, size);
+    xmaddalt(configDev->cd_BoardAddr, configDev->cd_BoardSize);
 
     /* This board has been processed */
     configDev->cd_Flags |= CDF_PROCESSED;
