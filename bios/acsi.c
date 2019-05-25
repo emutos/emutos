@@ -43,7 +43,7 @@ static int send_command(UBYTE *cdb,WORD cdblen,WORD rw,WORD dev,WORD cnt,UWORD r
 static int do_acsi_rw(WORD rw, LONG sect, WORD cnt, UBYTE *buf, WORD dev);
 static LONG acsi_capacity(WORD dev, ULONG *info);
 static LONG acsi_testunit(WORD dev);
-
+static LONG acsi_inquiry(WORD dev, UBYTE *buf);
 
 /* the following exists to allow the data and control registers to
  * be written together as well as separately.  this avoids the
@@ -76,6 +76,8 @@ union acsidma {
 /* delay for dma out toggle */
 #define delay() delay_loop(loopcount_delay)
 
+/* Bytes to request for an INQUIRY command */
+#define INQUIRY_BYTES 36
 
 /*
  * local variables
@@ -179,8 +181,18 @@ LONG acsi_ioctl(UWORD dev, UWORD ctrl, void *arg)
         rc = acsi_testunit(dev);
         if (rc < 0)
             return EUNDEV;
-        /* TODO: here we could attempt an INQUIRY & return the name from that */
-        strcpy(arg, "ACSI Disk");
+        rc = acsi_inquiry(dev,dskbufp);
+        /* ACSI devices are not required to support INQUIRY.
+           Return generic name in case command failed.
+         */
+        if (rc == 0) {
+            /* Zero terminate vendor & product ID. */
+            dskbufp[32] = 0;
+            strcpy(arg, &dskbufp[8]);
+        } else {
+            strcpy(arg, "ACSI Disk");
+            rc = 0; /* Don't return an error. */
+        }
         break;
     case GET_MEDIACHANGE:
         rc = MEDIANOCHANGE;
@@ -231,6 +243,29 @@ static LONG acsi_testunit(WORD dev)
 
     return status;
 }
+
+static LONG acsi_inquiry(WORD dev, UBYTE *buf)
+{
+    UBYTE cdb[6];
+    int status;
+
+    acsi_begin();
+
+    /* load DMA base address */
+    set_dma_addr(buf);
+
+    cdb[0] = 0x12;          /* set up Inquiry cdb */
+    cdb[1] = cdb[2] = cdb[3] = cdb[5] = 0;
+    cdb[4] = INQUIRY_BYTES; /* retrieve 36 bytes at maximum. */
+    status = send_command(cdb,6,RW_READ,dev,1,1);
+
+    acsi_end();
+
+    invalidate_data_cache(buf,INQUIRY_BYTES);
+
+    return status;
+}
+
 
 /* must call this before manipulating any ACSI-related hardware */
 static void acsi_begin(void)
