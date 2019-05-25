@@ -1199,16 +1199,25 @@ uaelib_demux_t* uaelib_demux = NULL;
 
 static ULONG uaelib_GetVersion(void);
 
-#define IS_TRAP(x)(((*(ULONG*)(x)) & 0xf000ffff) == 0xa0004e75)
+/* UAE implements native "traps" using Line-A opcodes followed by RTS */
+#define IS_TRAP(x)((ULONG_AT(x) & 0xf000ffff) == 0xa0004e75)
+
+/* Find "trap" (native function) inside UAE Boot ROM */
+static PFLONG uae_find_trap(UWORD offset)
+{
+    if (IS_TRAP(RTAREA_DEFAULT + offset))
+        return (PFLONG)(RTAREA_DEFAULT + offset);
+    else if (IS_TRAP(RTAREA_BACKUP + offset))
+        return (PFLONG)(RTAREA_BACKUP + offset);
+    else
+        return NULL;
+}
 
 void amiga_uaelib_init(void)
 {
     MAYBE_UNUSED(uaelib_GetVersion);
 
-    if (IS_TRAP(RTAREA_DEFAULT + UAELIB_DEMUX_OFFSET))
-        uaelib_demux = (uaelib_demux_t*)(RTAREA_DEFAULT + UAELIB_DEMUX_OFFSET);
-    else if (IS_TRAP(RTAREA_BACKUP + UAELIB_DEMUX_OFFSET))
-        uaelib_demux = (uaelib_demux_t*)(RTAREA_BACKUP + UAELIB_DEMUX_OFFSET);
+    uaelib_demux = (uaelib_demux_t*)uae_find_trap(UAELIB_DEMUX_OFFSET);
 
 #ifdef ENABLE_KDEBUG
     if (has_uaelib)
