@@ -186,6 +186,9 @@ LONG acsi_ioctl(UWORD dev, UWORD ctrl, void *arg)
            Return generic name in case command failed.
          */
         if (rc == 0) {
+            /* Only accept direct-access devices (e.g. HDDs). */
+            if ((dskbufp[0] & 0x1F) != 0)
+                return EUNDEV;
             /* Zero terminate vendor & product ID. */
             dskbufp[32] = 0;
             strcpy(arg, &dskbufp[8]);
