@@ -229,8 +229,8 @@ static BOOL is_custom_chips_mirror(void *mirror_base)
 int has_gayle;
 
 /* Detect A600 / A1200 Gayle chip.
- * Freely inspired from AROS ReadGayle().
- */
+ * Freely inspired by AROS ReadGayle().
+ * https://repo.or.cz/AROS.git/blob/HEAD:/arch/m68k-amiga/exec/readgayle.S */
 static void detect_gayle(void)
 {
     UBYTE gayle_id;
@@ -1311,7 +1311,8 @@ BOOL amiga_can_shutdown(void)
 /* Floppy                                                                     */
 /******************************************************************************/
 
-/* Parts of this code were inspired by AROS trackdisk device */
+/* Some parts of this code have been inspired by AROS trackdisk.device.
+ * https://repo.or.cz/AROS.git/blob/HEAD:/arch/m68k-amiga/devs/trackdisk/trackdisk_hw.c */
 
 static ULONG delay3ms;
 static ULONG delay15ms;
