@@ -1214,6 +1214,13 @@ static UBYTE *uae_boot_rom; /* Pointer to UAE Boot ROM */
  * So the only way to call UAE traps is through UAE Boot ROM functions. */
 #define IS_TRAP(p)((ULONG_AT(p) & 0xf000ffff) == 0xa0004e75)
 
+/* Note: "New UAE" Boot ROM *Indirect* uses a different trap format
+ * which is *not* supported because it relies on AmigaOS features.
+ * See calltrap() in WinUAE autoconf.cpp:
+ * https://github.com/tonioni/WinUAE/blob/master/autoconf.cpp
+ * Each indirect trap calls hwtrap_entry, which uses some Exec functions.
+ * https://github.com/tonioni/WinUAE/blob/master/filesys.asm */
+
 /* uaelib_demux premature declaration */
 #define OFFSET_UAELIB_DEMUX 0xFF60
 
@@ -1238,6 +1245,9 @@ static void find_uae_boot_rom(void)
 
     /* Alternate address */
     detect_uae_boot_rom((void *)RTAREA_BACKUP);
+
+    /* In "New UAE" mode, the UAE Boot ROM may be present elsewhere.
+     * It will be detected during AUTOCONFIG */
 }
 
 /* Find UAE trap (native function) inside UAE Boot ROM.
@@ -2836,12 +2846,54 @@ void amiga_autoconfig(void)
 /* Internal drivers for specific expansion boards                             */
 /******************************************************************************/
 
+#if CONF_WITH_UAE
+
+/* UAE Board (a.k.a. "New UAE") is the new interface for UAE features.
+ * It can be enabled in WinUAE from:
+ * Settings > Hardware > ROM > Board type: New UAE
+ * In this case, the UAE Boot ROM may be located at a non-standard place. */
+static void init_driver_uae_board(struct ConfigDev *configDev)
+{
+    UBYTE *p;
+
+    if (uae_boot_rom)
+    {
+        /* UAE Boot ROM has already been found, nothing to do */
+        return;
+    }
+
+    /* We haven't found the UAE Boot ROM at well-known locations.
+     * Its non-standard address is indicated here in the UAE Board.
+     * See UAE expansion.cpp, function add_rtarea_pointer().
+     * https://github.com/tonioni/WinUAE/blob/master/expansion.cpp */
+    p = (UBYTE *)ULONG_AT((UBYTE *)configDev->cd_BoardAddr + 0x48);
+    detect_uae_boot_rom(p);
+    if (!uae_boot_rom)
+    {
+        KDEBUG(("init_driver_uae_board() configDev=%p cd_BoardAddr=%p: Invalid UAE Boot ROM found at %p\n",
+            configDev, configDev->cd_BoardAddr, p));
+        return;
+    }
+
+    /* Now we can detect traps inside this UAE Boot ROM */
+    find_uae_traps();
+}
+
+#endif
+
 /* We may have an internal driver for some boards */
 static void find_and_init_driver(struct ConfigDev *configDev)
 {
     struct ExpansionRom *rom = &configDev->cd_Rom;
 
     MAYBE_UNUSED(rom);
+#if CONF_WITH_UAE
+    if (rom->er_Manufacturer == 6502 && rom->er_Product == 1)
+    {
+        /* UAE Board (a.k.a. "New UAE") */
+        init_driver_uae_board(configDev);
+    }
+#endif
 }
 
 /* Initialize internal drivers for expansion boards */
