@@ -1195,7 +1195,16 @@ ULONG amiga_getdt(void)
 /* UAE emulator native functions (a.k.a. UAE traps)                           */
 /******************************************************************************/
 
-/* Location of the UAE Boot ROM (a.k.a. RTAREA) */
+/* UAE native functions are only accessible from the UAE Boot ROM (a.k.a. RTAREA).
+ * This ROM is only present if necessary for the emulation of some devices.
+ * A reliable way to enable the UAE Boot ROM from WinUAE is:
+ * Settings > Hardware > Expansions > bsdsocket.library
+ * Actual location of the UAE Boot ROM may vary.
+ * Note that debug output is only available if the UAE Boot ROM is present. */
+
+static UBYTE *uae_boot_rom; /* Pointer to UAE Boot ROM */
+
+/* Well-known locations of the UAE Boot ROM */
 #define RTAREA_DEFAULT 0x00f00000
 #define RTAREA_BACKUP  0x00ef0000
 
@@ -1205,16 +1214,46 @@ ULONG amiga_getdt(void)
  * So the only way to call UAE traps is through UAE Boot ROM functions. */
 #define IS_TRAP(p)((ULONG_AT(p) & 0xf000ffff) == 0xa0004e75)
 
+/* uaelib_demux premature declaration */
+#define OFFSET_UAELIB_DEMUX 0xFF60
+
+/* Detect UAE Boot ROM at a given address.
+ * If found, update uae_boot_rom global variable. */
+static void detect_uae_boot_rom(void *p)
+{
+    UBYTE *pbyte = (UBYTE *)p;
+
+    /* If uaelib_demux trap is found, assume this is the UAE Boot ROM */
+    if (IS_TRAP(pbyte + OFFSET_UAELIB_DEMUX))
+        uae_boot_rom = pbyte;
+}
+
+/* Look for UAE Boot ROM at all well-known locations */
+static void find_uae_boot_rom(void)
+{
+    /* Traditional address */
+    detect_uae_boot_rom((void *)RTAREA_DEFAULT);
+    if (uae_boot_rom)
+        return;
+
+    /* Alternate address */
+    detect_uae_boot_rom((void *)RTAREA_BACKUP);
+}
+
 /* Find UAE trap (native function) inside UAE Boot ROM.
  * Each trap is located at a fixed offset. They are defined in UAE sources.
  * To find them, keywords are: deftrap, deftrap2, deftrapres.
  * https://github.com/tonioni/WinUAE */
 static PFLONG uae_find_trap(UWORD offset)
 {
-    if (IS_TRAP(RTAREA_DEFAULT + offset))
-        return (PFLONG)(RTAREA_DEFAULT + offset);
-    else if (IS_TRAP(RTAREA_BACKUP + offset))
-        return (PFLONG)(RTAREA_BACKUP + offset);
+    UBYTE *p;
+
+    if (!uae_boot_rom)
+        return NULL;
+
+    p = uae_boot_rom + offset;
+    if (IS_TRAP(p))
+        return (PFLONG)p;
     else
         return NULL;
 }
@@ -1227,7 +1266,6 @@ static PFLONG uae_find_trap(UWORD offset)
  * Trap is installed in UAE uaelib.cpp, function emulib_install().
  * Most subfunctions are called in uaelib_demux_common().
  * https://github.com/tonioni/WinUAE/blob/master/uaelib.cpp */
-#define OFFSET_UAELIB_DEMUX 0xFF60
 uaelib_demux_t* uaelib_demux; /* Pointer to UAE trap */
 
 /* Get UAE version */
@@ -1330,7 +1368,8 @@ static void add_uae_32bit_chip_ram(void)
 /* UAE special initialization                                                 */
 /******************************************************************************/
 
-void amiga_uae_init(void)
+/* Find UAE traps inside the UAE Boot ROM */
+static void find_uae_traps(void)
 {
     MAYBE_UNUSED(uaelib_GetVersion);
 
@@ -1363,6 +1402,17 @@ void amiga_uae_init(void)
             chipmem_size, z3chipmem_start, z3chipmem_size));
     }
 #endif
+}
+
+/* UAE startup initialization */
+void amiga_uae_init(void)
+{
+    /* UAE special features require the UAE Boot ROM */
+    find_uae_boot_rom();
+    if (!uae_boot_rom)
+        return;
+
+    find_uae_traps();
 }
 
 #endif /* CONF_WITH_UAE */
