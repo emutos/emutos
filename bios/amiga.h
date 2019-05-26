@@ -76,7 +76,7 @@ typedef ULONG uaelib_demux_t(ULONG fnum, ...);
 extern uaelib_demux_t* uaelib_demux;
 #define has_uaelib (uaelib_demux != NULL)
 
-void amiga_uaelib_init(void);
+void amiga_uae_init(void);
 void kprintf_outc_uae(int c);
 #endif
 

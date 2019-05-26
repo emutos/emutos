@@ -1192,23 +1192,23 @@ ULONG amiga_getdt(void)
 #if CONF_WITH_UAE
 
 /******************************************************************************/
-/* uaelib: special functions provided by the UAE emulator                     */
+/* UAE emulator native functions (a.k.a. UAE traps)                           */
 /******************************************************************************/
 
-/* Location of the UAE Boot ROM, a.k.a. RTAREA */
+/* Location of the UAE Boot ROM (a.k.a. RTAREA) */
 #define RTAREA_DEFAULT 0x00f00000
 #define RTAREA_BACKUP  0x00ef0000
 
-/* uaelib_demux() is the entry point */
-#define UAELIB_DEMUX_OFFSET 0xFF60
-uaelib_demux_t* uaelib_demux = NULL;
+/* UAE implements native "traps" using Line-A opcodes followed by RTS.
+ * Note that Line-A opcodes only trigger UAE traps when they are located
+ * in the UAE Boot ROM. From elsewhere, they behave normally.
+ * So the only way to call UAE traps is through UAE Boot ROM functions. */
+#define IS_TRAP(p)((ULONG_AT(p) & 0xf000ffff) == 0xa0004e75)
 
-static ULONG uaelib_GetVersion(void);
-
-/* UAE implements native "traps" using Line-A opcodes followed by RTS */
-#define IS_TRAP(x)((ULONG_AT(x) & 0xf000ffff) == 0xa0004e75)
-
-/* Find "trap" (native function) inside UAE Boot ROM */
+/* Find UAE trap (native function) inside UAE Boot ROM.
+ * Each trap is located at a fixed offset. They are defined in UAE sources.
+ * To find them, keywords are: deftrap, deftrap2, deftrapres.
+ * https://github.com/tonioni/WinUAE */
 static PFLONG uae_find_trap(UWORD offset)
 {
     if (IS_TRAP(RTAREA_DEFAULT + offset))
@@ -1219,67 +1219,16 @@ static PFLONG uae_find_trap(UWORD offset)
         return NULL;
 }
 
-/* Pointer to UAE trap "getchipmemsize" */
-static PFLONG uae_trap_getchipmemsize;
+/******************************************************************************/
+/* uaelib: a set of native functions called from a single trap.               */
+/******************************************************************************/
 
-/* Get information about Chip and 32-bit Chip RAM.
- * Implementation is in UAE autoconf.cpp, function getchipmemsize().
- * https://github.com/tonioni/WinUAE/blob/master/autoconf.cpp */
-static ULONG uae_getchipmemsize(void **pz3chipmem_start, ULONG *pz3chipmem_size)
-{
-    register ULONG chipmem_size __asm__("d0");
-    register ULONG z3chipmem_size __asm__("d1");
-    register void *z3chipmem_start __asm__("a1");
-
-    /* Call uae_trap_getchipmemsize() */
-    __asm__ volatile
-    (
-        "jsr     (%3)"
-    : "=r"(chipmem_size), "=r"(z3chipmem_size), "=r"(z3chipmem_start) /* outputs */
-    : "a"(uae_trap_getchipmemsize) /* inputs */
-    : /* clobbered */
-    );
-
-    *pz3chipmem_start = z3chipmem_start;
-    *pz3chipmem_size = z3chipmem_size;
-    return chipmem_size;
-}
-
-/* Find UAE traps for calling emulator native functions.
- * They are installed in UAE autoconf.cpp, function rtarea_init().
- * https://github.com/tonioni/WinUAE/blob/master/autoconf.cpp */
-void amiga_uaelib_init(void)
-{
-    MAYBE_UNUSED(uaelib_GetVersion);
-
-    uaelib_demux = (uaelib_demux_t*)uae_find_trap(UAELIB_DEMUX_OFFSET);
-
-#ifdef ENABLE_KDEBUG
-    if (has_uaelib)
-    {
-        ULONG version = uaelib_GetVersion();
-        KDEBUG(("EmuTOS running on UAE version %d.%d.%d\n",
-            (int)((version & 0xff000000) >> 24),
-            (int)((version & 0x00ff0000) >> 16),
-            (int)(version & 0x0000ffff)));
-    }
-#endif
-
-    /* Find UAE trap "getchipmemsize" */
-    uae_trap_getchipmemsize = uae_find_trap(0xff80);
-#ifdef ENABLE_KDEBUG
-    if (uae_trap_getchipmemsize)
-    {
-        ULONG chipmem_size;
-        void *z3chipmem_start;
-        ULONG z3chipmem_size;
-
-        chipmem_size = uae_getchipmemsize(&z3chipmem_start, &z3chipmem_size);
-        KDEBUG(("uae_getchipmemsize(): chipmem_size=%lu z3chipmem_start=%p z3chipmem_size=%lu\n",
-            chipmem_size, z3chipmem_start, z3chipmem_size));
-    }
-#endif
-}
+/* uaelib_demux() is the entry point for all subfunctions
+ * Trap is installed in UAE uaelib.cpp, function emulib_install().
+ * Most subfunctions are called in uaelib_demux_common().
+ * https://github.com/tonioni/WinUAE/blob/master/uaelib.cpp */
+#define OFFSET_UAELIB_DEMUX 0xFF60
+uaelib_demux_t* uaelib_demux; /* Pointer to UAE trap */
 
 /* Get UAE version */
 static ULONG uaelib_GetVersion(void)
@@ -1301,11 +1250,10 @@ static ULONG uaelib_ExitEmu(void)
 }
 
 /******************************************************************************/
-/* kprintf()                                                                  */
+/* kprintf() for UAE debug log                                                */
 /******************************************************************************/
 
 #define UAE_MAX_DEBUG_LENGTH 255
-
 static char uae_debug_string[UAE_MAX_DEBUG_LENGTH + 1];
 
 /* The only available output function is uaelib_DbgPuts(),
@@ -1337,6 +1285,33 @@ void kprintf_outc_uae(int c)
 /* Note that such RAM doesn't exist on real hardware.                         */
 /******************************************************************************/
 
+#define OFFSET_GETCHIPMEMSIZE 0xFF80
+static PFLONG uae_trap_getchipmemsize; /* Pointer to UAE trap */
+
+/* Get information about Chip and 32-bit Chip RAM.
+ * Trap is installed in UAE autoconf.cpp, function rtarea_init().
+ * https://github.com/tonioni/WinUAE/blob/master/autoconf.cpp */
+static ULONG uae_getchipmemsize(void **pz3chipmem_start, ULONG *pz3chipmem_size)
+{
+    register ULONG chipmem_size __asm__("d0");
+    register ULONG z3chipmem_size __asm__("d1");
+    register void *z3chipmem_start __asm__("a1");
+
+    /* Call uae_trap_getchipmemsize() */
+    __asm__ volatile
+    (
+        "jsr     (%3)"
+    : "=r"(chipmem_size), "=r"(z3chipmem_size), "=r"(z3chipmem_start) /* outputs */
+    : "a"(uae_trap_getchipmemsize) /* inputs */
+    : /* clobbered */
+    );
+
+    *pz3chipmem_start = z3chipmem_start;
+    *pz3chipmem_size = z3chipmem_size;
+    return chipmem_size;
+}
+
+/* Register eventual 32-bit Chip RAM to the OS */
 static void add_uae_32bit_chip_ram(void)
 {
     void *z3chipmem_start;
@@ -1349,6 +1324,45 @@ static void add_uae_32bit_chip_ram(void)
 
     KDEBUG(("UAE 32-bit Chip RAM detected at %p, size=%lu\n", z3chipmem_start, z3chipmem_size));
     xmaddalt(z3chipmem_start, z3chipmem_size);
+}
+
+/******************************************************************************/
+/* UAE special initialization                                                 */
+/******************************************************************************/
+
+void amiga_uae_init(void)
+{
+    MAYBE_UNUSED(uaelib_GetVersion);
+
+    uaelib_demux = (uaelib_demux_t*)uae_find_trap(OFFSET_UAELIB_DEMUX);
+
+    /* Display this message here, because debug output requires uaelib_demux */
+    KDEBUG(("UAE Boot ROM found at %p\n", uae_boot_rom));
+
+#ifdef ENABLE_KDEBUG
+    if (has_uaelib)
+    {
+        ULONG version = uaelib_GetVersion();
+        KDEBUG(("uaelib_GetVersion(): UAE version %d.%d.%d\n",
+            (int)((version & 0xff000000) >> 24),
+            (int)((version & 0x00ff0000) >> 16),
+            (int)(version & 0x0000ffff)));
+    }
+#endif
+
+    uae_trap_getchipmemsize = uae_find_trap(OFFSET_GETCHIPMEMSIZE);
+#ifdef ENABLE_KDEBUG
+    if (uae_trap_getchipmemsize)
+    {
+        ULONG chipmem_size;
+        void *z3chipmem_start;
+        ULONG z3chipmem_size;
+
+        chipmem_size = uae_getchipmemsize(&z3chipmem_start, &z3chipmem_size);
+        KDEBUG(("uae_getchipmemsize(): chipmem_size=%lu z3chipmem_start=%p z3chipmem_size=%lu\n",
+            chipmem_size, z3chipmem_start, z3chipmem_size));
+    }
+#endif
 }
 
 #endif /* CONF_WITH_UAE */
@@ -1784,6 +1798,8 @@ static WORD amiga_floppy_decode_track(void)
     UWORD datacrc; /* Partial CRC of Data Field */
 #ifdef ENABLE_KDEBUG
     ULONG hz_start = hz_200;
+
+    MAYBE_UNUSED(hz_start); /* #if !HAS_KPRINTF */
 #endif
 
     /* Pre-compute the CRC of Data Field header */

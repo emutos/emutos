@@ -213,8 +213,8 @@ static void bios_init(void)
     stonx_kprintf_init();
 #endif
 #if CONF_WITH_UAE
-    KDEBUG(("amiga_uaelib_init()\n"));
-    amiga_uaelib_init();
+    KDEBUG(("amiga_uae_init()\n"));
+    amiga_uae_init();
 #endif
 
     /* Initialize the processor */
