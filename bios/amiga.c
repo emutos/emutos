@@ -2770,6 +2770,9 @@ static BOOL configure_board(APTR board, struct ConfigDev *configDev)
     return FALSE;
 }
 
+/* Forward declaration */
+static void init_expansion_drivers(void);
+
 /* Auto-configure all Zorro II/III expansion boards.
  * This implements the AUTOCONFIG protocol.
  * https://wiki.amigaos.net/wiki/Expansion_Library
@@ -2823,7 +2826,35 @@ void amiga_autoconfig(void)
         AddConfigDev(configDev);
     }
 
+    /* Intialize internal drivers for detected boards */
+    init_expansion_drivers();
+
     KDEBUG(("**************** AUTOCONFIG DONE ****************\n"));
+}
+
+/******************************************************************************/
+/* Internal drivers for specific expansion boards                             */
+/******************************************************************************/
+
+/* We may have an internal driver for some boards */
+static void find_and_init_driver(struct ConfigDev *configDev)
+{
+    struct ExpansionRom *rom = &configDev->cd_Rom;
+
+    MAYBE_UNUSED(rom);
+}
+
+/* Initialize internal drivers for expansion boards */
+static void init_expansion_drivers(void)
+{
+    struct Node *node;
+
+    /* Scan the list of Expansion boards */
+    for (node = boardList.lh_Head; node->ln_Succ; node = node->ln_Succ)
+    {
+        struct ConfigDev *configDev = (struct ConfigDev *)node;
+        find_and_init_driver(configDev);
+    }
 }
 
 /******************************************************************************/
