@@ -1,8 +1,9 @@
 This file documents the status of the individual parts of EmuTOS.
 
-Here is a quick list of supported emulators/hardware:
+Supported emulators/hardware
+============================
 This table should be updated regularly. When indicating failure,
-if possible add a line telling in which version it did run.
+if possible add a line showing which version ran OK.
 Unless otherwise specified in 'details', systems were tested using
 a ROM version of EmuTOS.
 
@@ -27,8 +28,8 @@ a ROM version of EmuTOS.
   Mega STe            |  yes  | (1) | 21 May 2019 | tested with PRG
   TT030               |  yes  | (1) | 21 May 2019 |
   Falcon030           |  yes  | (7) | 31 Dec 2016 |
-  Falcon030           |  yes  | RFB | 29 Nov 2018 | tested with PRG
-  Falcon030 + CT60    |  yes  | RFB | 29 Nov 2018 | tested with PRG
+  Falcon030           |  yes  | RFB | 26 May 2019 | tested with PRG
+  Falcon030 + CT60    |  yes  | RFB | 26 May 2019 | tested with PRG
   Suska III-C (2K15B) |  yes  | (5) | 23 Apr 2016 |
   --------------------+-------+-----+-------------+----------------
   Other systems       |       |     |             |
@@ -36,9 +37,16 @@ a ROM version of EmuTOS.
   Amiga 500 + Vampire |  yes  | VRI | 21 Dec 2018 |
   Amiga 600 + Vampire |  yes  | (6) |    Mar 2017 |
   Amiga 1000          |  yes  | (4) |    Jul 2012 |
-  FireBee             |  yes  | VRI | 18 Dec 2018 |
+  FireBee             |  yes  | RFB | 26 May 2019 |
   M5484LITE           |  yes  | VRI | 18 Dec 2018 |
 
+Abbreviations for testers:
+    LVL: Laurent Vogel
+    RFB: Roger Burrows
+    THH: Thomas Huth
+    VRI: Vincent Rivière
+
+Other testers:
   (1) reported by Christian Zietz
   (2) reported to LVL by Frédéric Pécourt
   (3) reported by Michaël Gibs
@@ -48,14 +56,16 @@ a ROM version of EmuTOS.
   (7) reported by Stefan Niestegge
   (8) reported by Claude Labelle
 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Implemented functions
+=====================
 Now let's talk about the different subsystems, and what is implemented.
 NOTE: the information in the following table may be somewhat dated.  For
 example, most GEMDOS/BIOS/XBIOS functions are known to work without
 problems.
 
-
 This is what the first field of the following table means:
-
 ? status unknown
 - Not yet implemented
 > Partially implemented
