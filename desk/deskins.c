@@ -8,7 +8,7 @@
  *          . install application
  *          . remove desktop icons
  *
- *      Copyright 2002-2018 The EmuTOS development team
+ *      Copyright 2002-2019 The EmuTOS development team
  *
  *      This software is licenced under the GNU Public License.
  *      Please see LICENSE.TXT for further information.

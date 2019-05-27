@@ -2,7 +2,7 @@
  * conout.h - lowlevel color model dependent screen handling routines
  *
  *
- * Copyright (C) 2004-2016 by Authors:
+ * Copyright (C) 2004-2019 by Authors:
  *
  * Authors:
  *  MAD     Martin Doering

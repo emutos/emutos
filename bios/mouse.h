@@ -1,7 +1,7 @@
 /*
  * mouse.h - mouse routines header
  *
- * Copyright (C) 2001-2013 The EmuTOS development team
+ * Copyright (C) 2001-2019 The EmuTOS development team
  *
  * Authors:
  *  MAD   Martin Doering

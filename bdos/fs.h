@@ -2,7 +2,7 @@
  * fs.h - file system defines
  *
  * Copyright (C) 2001 Lineo, Inc.
- *               2002-2017 The EmuTOS development team
+ *               2002-2019 The EmuTOS development team
  *
  * Authors:
  *  JSL   Jason S. Loveman

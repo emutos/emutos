@@ -2,7 +2,7 @@
  * bdosmain.c - GEMDOS main function dispatcher
  *
  * Copyright (C) 2001 Lineo, Inc.
- *               2002-2017 The EmuTOS development team
+ *               2002-2019 The EmuTOS development team
  *
  * Authors:
  *  EWF  Eric W. Fleischman

@@ -1,7 +1,7 @@
 /*
  * coldfire.h - ColdFire specific functions
  *
- * Copyright (C) 2013-2018 The EmuTOS development team
+ * Copyright (C) 2013-2019 The EmuTOS development team
  *
  * Authors:
  *  VRI   Vincent Rivière

@@ -1,7 +1,7 @@
 /*
  * vdi_textblit.c - the text_blt() mainline code
  *
- * Copyright (C) 2017-2018 The EmuTOS development team
+ * Copyright (C) 2017-2019 The EmuTOS development team
  *
  * Authors:
  *  RFB   Roger Burrows

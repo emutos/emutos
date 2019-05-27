@@ -1,7 +1,7 @@
 #
 # release.mk - Makefile fragment for building releases
 #
-# Copyright (C) 2011-2017 The EmuTOS development team.
+# Copyright (C) 2011-2019 The EmuTOS development team.
 #
 # Authors:
 #  VRI      Vincent Rivière

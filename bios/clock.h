@@ -1,7 +1,7 @@
 /*
  * clock.h - BIOS time and date routines
  *
- * Copyright (C) 2001-2016 The EmuTOS development team
+ * Copyright (C) 2001-2019 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel

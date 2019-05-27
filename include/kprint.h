@@ -1,7 +1,7 @@
 /*
  *  kprint.h - header file for keyboard/console routines
  *
- * Copyright (C) 2001-2017 The EmuTOS development team
+ * Copyright (C) 2001-2019 The EmuTOS development team
  *
  * Authors:
  *  MAD     Martin Doering

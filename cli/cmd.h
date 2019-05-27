@@ -1,7 +1,7 @@
 /*
  * EmuCON2 header
  *
- * Copyright (C) 2013-2018 The EmuTOS development team
+ * Copyright (C) 2013-2019 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows
