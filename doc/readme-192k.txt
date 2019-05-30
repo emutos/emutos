@@ -8,6 +8,7 @@ These ROMs are suitable for the following hardware:
 Unlike other ROM versions, they do NOT autodetect extra hardware, and might not
 work on machines with additional hardware. For example, they don't work under
 the Hatari emulator's Falcon emulation due to missing VIDEL support.
+Also, they only work with plain 68000 CPU.
 
 Each ROM contains a single language:
 
