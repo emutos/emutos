@@ -2,6 +2,8 @@
 # Find missing .extern declarations in assembler files.
 # Although those declarations are ignored by gas,
 # they are useful for documentation.
+# Written by Vincent Rivière, 2019.
+# License: Public domain
 
 # Check if there are some object files
 if [ -z "$(ls obj/*.o 2>/dev/null)" ]
