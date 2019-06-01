@@ -33,6 +33,13 @@ static volatile UBYTE* novaregbase;
 static volatile UBYTE* novamembase;
 int has_nova;
 
+/* Nova and Volksfarben HW differ in the way that accesses to IO ports
+ * are handled: On Nova, read accesses to odd IO addresses will only
+ * work when the card is switched to 16 bit IO mode. On the Volksfarben,
+ * these accesses will not work when the card is switched to 16 bit.
+ */
+static int use_16bit_io;
+
 /* Macros for VGA register access */
 #define VGAREG(x)   (*(novaregbase+(x)))
 /* Note that for 16 bit access high and low word are swapped by Nova HW.
@@ -185,6 +192,7 @@ static int check_for_vga(void)
 void detect_nova(void)
 {
     has_nova = 0;
+    use_16bit_io = 1; /* Default for everything but Volksfarben/ST */
 
     if (IS_BUS32 && HAS_VME && check_read_byte(0xFE900000L+VIDSUB))
     {
@@ -199,6 +207,14 @@ void detect_nova(void)
         novaregbase = (UBYTE *)0x00DC0000L;
         novamembase = (UBYTE *)0x00C00000L;
         has_nova = 1;
+    }
+    else if (((long)phystop < 0x00C00000L) && check_read_byte(0x00D00000L+VIDSUB))
+    {
+        /* Volksfarben 4000 in ST: be sure via phystop that it's not RAM we read */
+        novaregbase = (UBYTE *)0x00D00000L;
+        novamembase = (UBYTE *)0x00C00000L;
+        has_nova = 1;
+        use_16bit_io = 0;
     }
     else if (((long)phystop < 0x00C00000L) && check_read_byte(0x00CC0000L+VIDSUB))
     {
@@ -307,7 +323,11 @@ static void init_et4000(void)
     set_idxreg(GDC_I, 0x08, 0xFF);  /* Bit mask: pass all CPU bits */
     VGAREG(GDC_SEG) = 0x00;         /* Select segment 0, because of linear mode(?) */
     set_idxreg(CRTC_I, 0x32, 0x28); /* RAS/CAS timing */
-    set_idxreg(CRTC_I, 0x36, 0xF3); /* Video System Conf. 1: linear memory access, 16 bit access */
+    if (use_16bit_io) {
+        set_idxreg(CRTC_I, 0x36, 0xF3); /* Video System Conf. 1: linear memory access, 16 bit IO access */
+    } else {
+        set_idxreg(CRTC_I, 0x36, 0x73); /* Video System Conf. 1: linear memory access, 8 bit IO access */
+    }
     set_idxreg(CRTC_I, 0x37, 0x0F); /* Video System Conf. 2: DRAM, 32 bit wide */
 }
 
