@@ -82,6 +82,7 @@ extern LONG jmp_xbios(WORD, ...);
 
 #define Getrez()            jmp_xbios_v(0x04)
 #define Setscreen(a,b,c,d)  jmp_xbios_llww(0x05,a,b,c,d)
+#define Setcolor(a,b)       jmp_xbios_ww(0x07,a,b)
 #define Cursconf(a,b)       jmp_xbios_ww(0x15,a,b)
 #define Kbrate(a,b)         jmp_xbios_ww(0x23,a,b)
 #define Supexec(a)          jmp_xbios_l(0x26,a)

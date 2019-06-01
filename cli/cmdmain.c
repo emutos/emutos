@@ -215,14 +215,17 @@ PRIVATE void change_res(WORD res)
 #else
     /* mode changed *without* palette change -> set readable text color index */
     {
-        /* OS masks color index, so 15 is fine also for mono modes */
-        int idx = 15;
-        /* from first 4 entries in LOW palette, red is better than yellow */
+        static int old_color_3 = -1;
+        /* switching to ST medium: set color 3 to black */
         if (res == ST_MEDIUM)
-            idx = 1;
+            old_color_3 = Setcolor(3, 0);
+        /* switching from ST medium: reset color 3 */
+        if (current_res == ST_MEDIUM && old_color_3 != -1)
+            Setcolor(3, old_color_3);
         conout(ESC);    /* with VT52 command */
         conout('b');    /* b=foreground, c=background */
-        conout(idx);
+        /* OS masks color index, so 15 is fine also for mono/medium modes */
+        conout(15);
     }
 #endif
     enable_cursor();
