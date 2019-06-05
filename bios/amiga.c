@@ -1399,7 +1399,7 @@ static WORD amiga_floppy_read_raw_track(void)
 
 /*
  * Accurate documentation about CRC-CCITT can be found there:
- * http://jlgconsult.pagesperso-orange.fr/Atari/diskette/diskette_en.htm#FDC_CRC_Computation
+ * https://jlgconsult.pagesperso-orange.fr/Atari/diskette/diskette_en.htm#FDC_CRC_Computation
  * http://www.atari-forum.com/viewtopic.php?p=9497#p9497
  */
 
@@ -1486,7 +1486,7 @@ static UWORD decode_mfm_word(const UWORD **ppmfm)
  * Output: sectors, sectors_decoded
  *
  * Documentation:
- * http://jlgconsult.pagesperso-orange.fr/Atari/diskette/diskette_en.htm#Atari_Double_Density_Diskette_Format
+ * https://jlgconsult.pagesperso-orange.fr/Atari/diskette/diskette_en.htm#Atari_Double_Density_Diskette_Format
  * http://bitsavers.trailing-edge.com/pdf/ibm/floppy/GA21-9182-4_Diskette_General_Information_Manual_Aug79.pdf
  */
 static WORD amiga_floppy_decode_track(void)

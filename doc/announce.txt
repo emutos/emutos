@@ -143,11 +143,11 @@ The EmuTOS home page is:
 
 The project home is on SourceForge:
 
-    http://sourceforge.net/projects/emutos/
+    https://sourceforge.net/projects/emutos/
 
 The latest releases can be downloaded from:
 
-    http://sourceforge.net/projects/emutos/files/emutos/
+    https://sourceforge.net/projects/emutos/files/emutos/
 
 Development snapshots allow you to test the current development progress:
 

@@ -93,7 +93,7 @@ New country check list
   - add a line in the charset table in bios/country.h
   - provide C source code fonts for this charset (you may use
     tool fntconv to create the C files, available from Laurent's
-    page at http://lvogel.free.fr). The files should be named
+    page at http://lvogel.free.fr/ ). The files should be named
     bios/fnt_xx_6x6.c, bios/fnt_xx_8x8.c and bios/fnt_xx_8x16.c,
     where xx is the charset name; each should define a struct
     font_head which has the same name as the file's without extension.
