@@ -243,6 +243,7 @@ Stefan Niestegge
 
 Ingo Uhlemann
 - ROM tests on real TT hardware
+- Support for Vampire V4 Standalone (Amiga)
 
 Stefan Haubenthal
 - EmuTOS packaging on Aminet: http://aminet.net/package/misc/emu/emutos
