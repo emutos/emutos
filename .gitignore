@@ -27,4 +27,4 @@
 /temp.def
 /local.mk
 /dsm.txt
-/fal_dsm.txt
+/tests/*/*.tos
