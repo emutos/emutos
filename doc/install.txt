@@ -59,6 +59,7 @@ amigakd     emutos-kickdisk.adf, EmuTOS as Amiga 1000 Kickstart disk
 amigaflop   emutos.adf, EmuTOS RAM as Amiga boot floppy
 amigaflopvampire emutos-vampire.adf, EmuTOS RAM as Amiga boot floppy optimized for Vampire V2
 amigavampire     emutos-vampire.rom, EmuTOS ROM for Amiga optimized for Vampire V2
+v4sa        emutos-vampire-v4sa.rom, EmuTOS ROM for Amiga Vampire V4 Standalone
 m548x-dbug  emutos-m548x-dbug.s19, EmuTOS-RAM for dBUG on ColdFire Evaluation Boards
 m548x-bas   emutos-m548x-bas.s19, EmuTOS-RAM for BaS_gcc on ColdFire Evaluation Boards
 m548x-prg   emutos.prg, a RAM tos for ColdFire Evaluation Boards with BaS_gcc
