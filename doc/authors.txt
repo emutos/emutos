@@ -16,7 +16,7 @@ from Novell in 1997 along with DR-DOS; later Caldera disappeared and this
 is the copyright notice that refers to Lineo)
 
 Minor borrowed stuff:
-- the printf and memcpy stuff is inspired by the Minix kernel and library;
+- the memcpy stuff is inspired by the Minix kernel and library;
 - the processor/FPU detection is taken from the MiNT kernel;
 - "Bug" includes parts of the original gettext source code;
 - some low-level hardware stuff comes from the Linux kernel;
@@ -62,6 +62,18 @@ Thomas Huth (THH) <huth at tuxfamily.org>
 - Lots of bugfixes & cleanups all over the place
 - Integration and maintenance of the AES and GEM-Desktop
 - XBIOS DMA sound functions
+
+Christian Zietz <czietz at gmx.net>
+- ROM tests on real ST/STe hardware
+- Fix floppy/ACSI bug
+- Fix memory detection to support STs as well as STes
+- Support for extended MBR partitions
+- Add IDE 'twisted cable' support
+- IDE performance improvements
+- Fix cold boot problems caused by some ST MMUs
+- Fix screen corruption after a reset on some Mega(STe) systems
+- ET4000/Nova support
+- Miscellaneous bug fixes
 
 Petr Stehlik (PES) <pstehlik at sophics.cz>
 - BIOS disk interface, BDOS filesystem
@@ -183,7 +195,7 @@ Stephen Leary <sleary at vavi.co.uk>
 - Fixed support for IDE slave device
 
 Miro Kropáček <miro.kropacek at gmail.com>
-- Experimental 68040 MMU support
+- 68040 MMU support
 
 WongCK on Atari-Forum
 - Tests on real Falcon 030
@@ -204,18 +216,6 @@ Markus Fröschle
 - Tests on the FireBee and BaS_gcc support
 - Inspired the support for the blitter
 - Fix various AES & VDI bugs
-
-Christian Zietz <czietz at gmx.net>
-- ROM tests on real ST/STe hardware
-- Fix floppy/ACSI bug
-- Fix memory detection to support STs as well as STes
-- Support for extended MBR partitions
-- Add IDE 'twisted cable' support
-- IDE performance improvements
-- Fix cold boot problems caused by some ST MMUs
-- Fix screen corruption after a reset on some Mega(STe) systems
-- ET4000/Nova support
-- Miscellaneous bug fixes
 
 Jo Even Skarstein <joska at online.no>
 - Support for Norwegian & Swedish keyboards
@@ -249,6 +249,7 @@ Stefan Haubenthal
 - EmuTOS packaging on Aminet: http://aminet.net/package/misc/emu/emutos
 
 Christian Quante
+- New desktop icons and mouse cursors
 - Various desktop bug fixes & improvements
 
 Keli Hlodversson

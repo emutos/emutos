@@ -1,3 +1,47 @@
+CHANGES BETWEEN RELEASE 0.9.10 AND RELEASE 0.9.11
+
+Major changes:
+- Amiga: Add support for Vampire V4 Standalone
+- ARAnyM: Enable 68040 PMMU by default (relevant for FreeMiNT users)
+- BIOS: Improve console output performance
+- EmuCON: Make command prompt include the current path
+- EmuDesk: Many changes and additions to alerts
+- EmuDesk: Show count & size of selected items in window info line
+- EmuDesk: Update default icon set
+- LineA: Fix crash when using NVDI 5.03 in 256-colour resolution
+- VDI: Improve performance of VDI rectangle drawing
+
+Other changes:
+- AES: Clear D0 when exiting (circumvents WordPerfect bug)
+- AES: Ensure menu bar separator line is drawn in black
+- AES: Fix erroneous message that could be issued when exiting ORCS
+- AES: Improve filename display while loading a program
+- AES: Modify builtin mouse cursors slightly
+- AES: Redraw window name/info lines immediately they are updated
+- AES: Reduce thickness of shadow on root of form alerts
+- AES: Remove limitation on number of files shown by file selector
+- AES: Set blitter state before running autorun program
+- AES: Turn off text-mode cursor during resolution change
+- BDOS: Fix bug: renaming a R/O file is not allowed
+- BIOS: Allocate ARAnyM PMMU tree dynamically
+- BIOS: Circumvent SCC interrupt problem in FreeMiNT's SCC.XDD
+- BIOS: Display boot time in inverse video if invalid
+- BIOS: Fix errors in Russian 6x6 font
+- BIOS: Fix system freeze when running FastCopy III
+- BIOS: Round up root dir entries to fill logical sector
+- BIOS: Test for uninitialised IKBD clock at startup
+- EmuCON: Delete output file if copy/move fails
+- EmuDesk: Deselect desktop icons when selecting a window icon
+- EmuDesk: Deselect window items when maximising/moving/scrolling
+- EmuDesk: Ensure that device icons have a drive id
+- EmuDesk: Fix bug attempting to delete desktop file/folder
+- EmuDesk: Improve 'check for parent' test for copy/move
+- EmuDesk: Improve compatibility with certain old DAs
+- VDI: Allow programs to change video mode via v_opnwk()
+- XBIOS: Fix bug in Falcon Soundcmd() handler
+- The usual source code cleanup and minor bug fixes
+
+
 CHANGES BETWEEN RELEASE 0.9.9.1 AND RELEASE 0.9.10
 
 Major changes:
