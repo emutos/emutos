@@ -243,7 +243,6 @@ void ap_exit(void)
     wait_for_accs(AP_ACCLOSE);  /* block until all DAs have seen AC_CLOSE */
     if (rlr->p_qindex)
         ap_rdwr(MU_MESAG, rlr, rlr->p_qindex, (WORD *)D.g_valstr);
-    set_mouse_to_arrow();
     wm_update(END_UPDATE);
     all_run();
     rlr->p_flags &= ~AP_OPEN;   /* say appl_exit() is done */
