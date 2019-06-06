@@ -1,0 +1,15 @@
+#R 01
+#Z 00 C:\BCONIO1.TOS@
+#E 1A E1 FF 02 00
+#Q 41 40 43 40 43 40
+#M 00 00 01 FF A DISK A@ @
+#M 02 00 00 FF C DISK C@ @
+#F FF 07 @ *.*@ 000 @
+#N FF 07 @ *.*@ 000 @
+#D FF 02 @ *.*@
+#G 06 FF *.APP@ @ 000 @
+#G 06 FF *.PRG@ @ 000 @
+#P 06 FF *.TTP@ @ 000 @
+#F 06 FF *.TOS@ @ 000 @
+#T 00 08 03 FF   TRASH@ @
+#F 06 07 C:\BCONIO1.TOS@ *.@ 000 @
