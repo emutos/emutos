@@ -523,7 +523,7 @@ void abutton(EVB *e, LONG p)
 {
     WORD bclicks;
 
-    if ((rlr == gl_mowner) && downorup(button, p))
+    if (downorup(button, p))
     {
         azombie(e, 1);      /* 'nuff said */
     }
