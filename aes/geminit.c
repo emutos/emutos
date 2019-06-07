@@ -100,8 +100,13 @@ extern void gem_main(void); /* called only from gemstart.S */
 
 #define WAIT_TIMEOUT 500                /* see wait_for_accs() */
 
+typedef struct {                     /* used by count_accs()/ldaccs() */
+    LONG addr;                          /* DA load address */
+    char name[LEN_ZFNAME];              /* DA file name */
+} ACC;
+
+static ACC      acc[NUM_ACCS];
 static char     infbuf[INF_SIZE+1];     /* used to read part of EMUDESK.INF */
-static char     acc_name[NUM_ACCS][LEN_ZFNAME]; /* used by count_accs()/ldaccs() */
 
 /* Some global variables: */
 
@@ -223,35 +228,38 @@ static AESPD *iprocess(char *pname, PFVOID routine)
 
 
 /*
- *  Routine to load program file pointed at by pfilespec, then create a
- *  new process context for it.  This is used to load a desk accessory.
+ *  Routine to load program file pointed at by acc->name, then create a
+ *  new process context for it.  The load address is stored in acc->addr.
+ *
+ *  This is used to load a desk accessory.
  */
-static void sndcli(char *pfilespec)
+static void sndcli(ACC *acc)
 {
     WORD    handle;
     WORD    err_ret;
-    LONG    ldaddr, ret;
+    LONG    ret;
 
-    KDEBUG(("sndcli(\"%s\")\n", (const char*)pfilespec));
+    KDEBUG(("sndcli(\"%s\")\n", (const char *)acc->name));
 
-    strcpy(D.s_cmd, pfilespec);
+    acc->addr = -1L;
+    strcpy(D.s_cmd, acc->name);
 
     ret = dos_open(D.s_cmd, ROPEN);
     if (ret >= 0L)
     {
         handle = (WORD)ret;
-        err_ret = pgmld(handle, D.s_cmd, (LONG **)&ldaddr);
+        err_ret = pgmld(handle, D.s_cmd, (LONG **)&acc->addr);
         dos_close(handle);
         /* create process to execute it */
         if (err_ret != -1)
-            pstart(gotopgm, pfilespec, ldaddr);
+            pstart(gotopgm, acc->name, acc->addr);
     }
 }
 
 
 /*
  *  Count up to a maximum of NUM_ACCS desk accessories, saving
- *  their names in acc_name[].
+ *  their names in acc[].name
  */
 static WORD count_accs(void)
 {
@@ -269,7 +277,7 @@ static WORD count_accs(void)
         rc = (i==0) ? dos_sfirst(D.g_work,F_RDONLY) : dos_snext();
         if (rc < 0)
             break;
-        strlcpy(acc_name[i],D.g_dta.d_fname,LEN_ZFNAME);
+        strlcpy(acc[i].name,D.g_dta.d_fname,LEN_ZFNAME);
     }
 
     return i;
@@ -277,14 +285,33 @@ static WORD count_accs(void)
 
 
 /*
- *  Load in the desk accessories specified by acc_name[]
+ *  Free memory occupied by the desk accessories specified by acc[]
+ *
+ *  Note that this is NOT required for correct functioning of EmuTOS,
+ *  since when the 'run_accs_and_desktop' process terminates, all
+ *  allocated memory is freed.  However, some DAs (I'm looking at you,
+ *  Chameleon) require explicit freeing of their memory to trigger
+ *  proper cleanup.
+ */
+static void free_accs(WORD n)
+{
+    WORD i;
+
+    for (i = 0; i < n; i++)
+        if (acc[i].addr >= 0L)
+            dos_free((void *)acc[i].addr);
+}
+
+
+/*
+ *  Load in the desk accessories specified by acc[]
  */
 static void load_accs(WORD n)
 {
     WORD i;
 
     for (i = 0; i < n; i++)
-        sndcli(acc_name[i]);
+        sndcli(&acc[i]);
 }
 
 
@@ -668,6 +695,8 @@ void run_accs_and_desktop(void)
     sh_init();                      /* init for shell loop */
     sh_main(isgem);                 /* main shell loop */
 
+    free_accs(num_accs);            /* free DA memory */
+
     /* give back the tick   */
     disable_interrupts();
     gl_ticktime = gsx_tick(tiksav, &tiksav);
@@ -739,7 +768,7 @@ void gem_main(void)
 
     mn_init();                      /* initialise variables for menu_register() */
 
-    num_accs = count_accs();        /* puts ACC names in acc_name[] */
+    num_accs = count_accs();        /* puts ACC names in acc[].name */
 
     D.g_acc = NULL;
     if (num_accs)
