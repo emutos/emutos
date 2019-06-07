@@ -323,8 +323,8 @@ void ctlmgr(void)
         w_setactive();
         /*
          * wait for something to happen, keys need to be eaten
-         * inc. fake key sent by ... or if button already down,
-         * then let other guys run then do it
+         * including fake key sent by mn_bar() [the menu bar handler]
+         * ... or if button already down, let other guys run then do it
          */
         if (button)
         {
