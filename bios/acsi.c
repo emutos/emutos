@@ -191,7 +191,7 @@ LONG acsi_ioctl(UWORD dev, UWORD ctrl, void *arg)
                 return EUNDEV;
             /* Zero terminate vendor & product ID. */
             dskbufp[32] = 0;
-            strcpy(arg, &dskbufp[8]);
+            strcpy(arg, (char *)&dskbufp[8]);
         } else {
             strcpy(arg, "ACSI Disk");
             rc = 0; /* Don't return an error. */
