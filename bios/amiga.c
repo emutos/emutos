@@ -268,12 +268,23 @@ const char *amiga_machine_name(void)
 /* Alternate RAM                                                              */
 /******************************************************************************/
 
-void amiga_add_alt_ram(void)
+/* Detect Alt-RAM directly from hardware */
+static void add_alt_ram_from_hardware(void)
 {
+#if CONF_WITH_AROS
+    aros_add_alt_ram();
+#endif
+}
+
 #if EMUTOS_LIVES_IN_RAM
+
+/* AmigaOS has already performed AUTOCONFIG on cold boot, we can't do it again.
+ * The EmuTOS RAM loader has gathered the list of Alt-RAM regions from AmigaOS,
+ * so we just have to register each region to the OS. */
+static void add_alt_ram_from_loader(void)
+{
     int i;
 
-    /* The list of Alt-RAM regions has been provided by the ramtos loader */
     for (i = 0; i < MAX_ALTRAM_REGIONS && altram_regions[i].address; i++)
     {
         UBYTE *address = altram_regions[i].address;
@@ -281,8 +292,18 @@ void amiga_add_alt_ram(void)
         KDEBUG(("xmaddalt(%p, %lu)\n", address, size));
         xmaddalt(address, size);
     }
-#elif CONF_WITH_AROS
-    aros_add_alt_ram();
+}
+
+#endif /* EMUTOS_LIVES_IN_RAM */
+
+/* Find and register all Alt-RAM to the OS */
+void amiga_add_alt_ram(void)
+{
+#if EMUTOS_LIVES_IN_RAM
+    UNUSED(add_alt_ram_from_hardware);
+    add_alt_ram_from_loader();
+#else
+    add_alt_ram_from_hardware();
 #endif
 }
 
