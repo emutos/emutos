@@ -301,9 +301,6 @@ WORD initinfo(ULONG *pshiftbits)
 #if WITH_CLI
     initinfo_height += 1;
 #endif
-#if CONF_WITH_AROS
-    initinfo_height += 3;
-#endif
 #if CONF_WITH_ALT_RAM
     if (altramsize > 0)
         initinfo_height += 1;
@@ -371,11 +368,6 @@ WORD initinfo(ULONG *pshiftbits)
     display_message(_("Press key 'X' to boot from X:"));
 #if WITH_CLI
     display_message(_("Press <Esc> to run an early console"));
-#endif
-#if CONF_WITH_AROS
-    cprintf("\r\n");
-    display_inverse("This binary mixes GPL and AROS APL code,",1);
-    display_inverse("redistribution is forbidden.",1);
 #endif
     cprintf("\r\n");
 

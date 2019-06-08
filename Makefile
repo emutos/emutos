@@ -194,7 +194,7 @@ bios_src +=  memory.S processor.S vectors.S aciavecs.S bios.c xbios.c acsi.c \
              mfp.c midi.c mouse.c natfeat.S natfeats.c nvram.c panicasm.S \
              parport.c screen.c serport.c sound.c videl.c vt52.c xhdi.c \
              pmmu030.c 68040_pmmu.S \
-             amiga.c amiga2.S aros.c \
+             amiga.c amiga2.S \
              delay.c delayasm.S sd.c memory2.c bootparams.c scsi.c nova.c
 
 ifeq (1,$(COLDFIRE))
@@ -545,12 +545,6 @@ TOCLEAN += *.rom
 
 ROM_AMIGA = emutos-amiga.rom
 AMIGA_DEFS =
-
-# AROS support is disabled by default due to license issues
-AROS = 0
-ifeq (1,$(AROS))
-AMIGA_DEFS += -DCONF_WITH_AROS=1
-endif
 
 .PHONY: amiga
 NODEP += amiga

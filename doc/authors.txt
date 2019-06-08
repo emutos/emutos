@@ -20,11 +20,7 @@ Minor borrowed stuff:
 - the processor/FPU detection is taken from the MiNT kernel;
 - "Bug" includes parts of the original gettext source code;
 - some low-level hardware stuff comes from the Linux kernel;
-
-While the main Amiga support was written from scratch by the EmuTOS team,
-some advanced code (FastRAM support for ROM versions) has been borrowed from the
-AROS project. Due to license incompatibilities, that code is shipped in the
-source archive, but not compiled into the official binaries.
+- parts of Amiga floppy driver and AUTOCONFIG are inspired from AROS;
 
 The following is a list of 'recent' contributors - individuals involved in the
 EmuTOS project. In this project virtually everybody modifies every file;

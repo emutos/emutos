@@ -23,8 +23,6 @@ doc/changelog.txt     - A summarised list of changes after release 0.9.4
 doc/emudesk.txt       - A brief guide to the newer features of the desktop
 doc/incompatible.txt  - Programs incompatible with EmuTOS due to program bugs
 doc/license.txt       - The FSF General Public License for EmuTOS
-doc/license_aros.txt  - The AROS Public License for certain Amiga source
-                        code distributed as part of EmuTOS source
 doc/status.txt        - What is implemented and running (or not yet)
 doc/todo.txt          - What should be done in future versions
 doc/xhdi.txt          - Current XHDI implementation status

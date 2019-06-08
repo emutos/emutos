@@ -31,10 +31,6 @@
 #include "bootparams.h"
 #include "machine.h"
 
-#if CONF_WITH_AROS
-#include "aros.h"
-#endif
-
 extern long xmaddalt(UBYTE *start, long size); /* found in bdos/mem.h */
 
 #ifdef MACHINE_AMIGA
@@ -461,12 +457,7 @@ static void add_alt_ram_from_hardware(void)
     add_slow_ram();
     add_processor_slot_fast_ram();
     add_motherboard_fast_ram();
-#if CONF_WITH_AROS
-    UNUSED(add_expansion_ram);
-    aros_add_alt_ram();
-#else
     add_expansion_ram();
-#endif
 }
 
 #if EMUTOS_LIVES_IN_RAM
