@@ -43,7 +43,7 @@ extern int has_nf_shutdown(void);
 extern long nf_bootstrap(char *addr, long size);
 /* return the OS kernel arguments to be passed to 'addr' ('size' bytes available) */
 extern long nf_getbootstrap_args(char *addr, long size);
-extern char nf_getbootdrive(void);
+extern UWORD nf_getbootdrive(void);
 
 
 #endif /* _NATFEAT_H */

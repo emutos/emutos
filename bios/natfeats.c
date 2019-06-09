@@ -11,6 +11,7 @@
  */
 
 #include "config.h"
+#include "portab.h"
 #include "natfeat.h"
 #include "kprint.h"
 
@@ -112,7 +113,7 @@ long nf_bootstrap(char *addr, long size)
 }
 
 /* get the boot drive number */
-char nf_getbootdrive(void)
+UWORD nf_getbootdrive(void)
 {
     if(hasNF) {
         long bootstrap_id = NFID("BOOTSTRAP");
