@@ -188,7 +188,7 @@ typedef LONG FUNC(WORD argc,char **argv);
 #define enable_cursor() escape('e')
 #define conin()         Bconin(2)
 #define constat()       Bconstat(2)
-#define conout(c)       Bconout(2,c)
+#define conout(c)       Bconout(2,(unsigned char)(c))
 
 #define LOOKUP_EXIT     (FUNC *)-1L     /* special return values from lookup_builtin() */
 #define LOOKUP_ARGS     (FUNC *)-2L
