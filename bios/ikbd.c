@@ -955,8 +955,7 @@ void kbd_init(void)
     kb_altnum = -1;    /* not in an alt-numeric sequence */
     kb_switched = 0;   /* not switched initially */
 
-    conterm = 7;       /* keyclick and autorepeat on by default */
-    conterm |= 0x8;    /* add Kbshift state to Bconin value */
+    conterm = 7;       /* keyclick, key repeat & system bell on by default */
 
     shifty = 0;        /* initial state of modifiers */
 
