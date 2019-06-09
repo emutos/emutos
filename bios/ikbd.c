@@ -57,11 +57,22 @@ static WORD convert_scancode(UBYTE *scancodeptr);
 #define KEY_ALT     0x38
 #define KEY_CAPS    0x3a
 
+#define KEY_ESCAPE  0x01        /* invariant keys, unaffected by modifiers */
+#define KEY_BACKSPACE 0x0e
+#define KEY_TAB     0x0f
+#define KEY_UNDO    0x61
+
+#define KEY_RETURN  0x1c        /* semi-invariant, ctrl changes ascii to newline */
+#define KEY_ENTER   0x72
+
 #define KEY_F1      0x3b        /* function keys F1 - F10 */
 #define KEY_F10     0x44
 
 #define KEYPAD_START 0x67       /* numeric keypad: 7 8 9 4 5 6 1 2 3 0 */
 #define KEYPAD_END  0x70
+
+/* standard ascii */
+#define LF          0x0a
 
 /*
  * support for mouse emulation:
@@ -522,6 +533,25 @@ static WORD convert_scancode(UBYTE *scancodeptr)
     UBYTE scancode = *scancodeptr;
     WORD ascii = 0;
     const UBYTE *a;
+
+    /*
+     * do special processing for some keys that are in the same position
+     * on all keyboards:
+     * (a) invariant scancodes (unaffected by modifier keys)
+     * (b) return/enter (unaffected except that ctrl causes LF to be returned)
+     */
+    switch(scancode) {
+    case KEY_RETURN:
+    case KEY_ENTER:
+        if (shifty & MODE_CTRL)
+            return LF;
+        /* drop through */
+    case KEY_ESCAPE:
+    case KEY_BACKSPACE:
+    case KEY_TAB:
+    case KEY_UNDO:
+        return current_keytbl.norm[scancode];
+    }
 
     /*
      * do special processing for alt-arrow, alt-keypad, shift-function
