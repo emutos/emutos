@@ -454,7 +454,7 @@ NODEP += 192
 192: override DEF += -DTARGET_192
 192: WITH_CLI = 0
 192:
-	$(MAKE) DEF='$(DEF)' OPTFLAGS=$(OPTFLAGS) WITH_CLI=$(WITH_CLI) UNIQUE=$(UNIQUE) ROM_192=$(ROM_192) $(ROM_192)
+	$(MAKE) DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)' WITH_CLI=$(WITH_CLI) UNIQUE=$(UNIQUE) ROM_192=$(ROM_192) $(ROM_192)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS102))) bytes more than TOS 1.02)"
 
@@ -474,7 +474,7 @@ NODEP += 256
 256: OPTFLAGS = $(SMALL_OPTFLAGS)
 256: override DEF += -DTARGET_256
 256:
-	$(MAKE) DEF='$(DEF)' OPTFLAGS=$(OPTFLAGS) UNIQUE=$(UNIQUE) ROM_256=$(ROM_256) $(ROM_256)
+	$(MAKE) DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)' UNIQUE=$(UNIQUE) ROM_256=$(ROM_256) $(ROM_256)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS162))) bytes more than TOS 1.62)"
 
@@ -532,7 +532,7 @@ cart: override DEF += -DTARGET_CART
 cart: WITH_AES = 0
 cart:
 	@echo "# Building Diagnostic Cartridge EmuTOS into $(ROM_CARTRIDGE)"
-	$(MAKE) OPTFLAGS=$(OPTFLAGS) DEF='$(DEF)' UNIQUE=$(COUNTRY) WITH_AES=$(WITH_AES) ROM_128=$(ROM_CARTRIDGE) $(ROM_CARTRIDGE)
+	$(MAKE) OPTFLAGS='$(OPTFLAGS)' DEF='$(DEF)' UNIQUE=$(COUNTRY) WITH_AES=$(WITH_AES) ROM_128=$(ROM_CARTRIDGE) $(ROM_CARTRIDGE)
 	./mkrom stc emutos.img emutos.stc
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS102))) bytes more than TOS 1.02)"
@@ -553,7 +553,7 @@ amiga: OPTFLAGS = $(SMALL_OPTFLAGS)
 amiga: override DEF += -DTARGET_AMIGA_ROM $(AMIGA_DEFS)
 amiga:
 	@echo "# Building Amiga EmuTOS into $(ROM_AMIGA)"
-	$(MAKE) CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' OPTFLAGS=$(OPTFLAGS) UNIQUE=$(UNIQUE) ROM_AMIGA=$(ROM_AMIGA) $(ROM_AMIGA)
+	$(MAKE) CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)' UNIQUE=$(UNIQUE) ROM_AMIGA=$(ROM_AMIGA) $(ROM_AMIGA)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS162))) bytes more than TOS 1.62)"
 
@@ -628,7 +628,7 @@ firebee-prg: override DEF += -DMACHINE_FIREBEE
 firebee-prg: CPUFLAGS = $(CPUFLAGS_FIREBEE)
 firebee-prg:
 	@echo "# Building FireBee $(EMUTOS_PRG)"
-	$(MAKE) COLDFIRE=1 CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' OPTFLAGS=$(OPTFLAGS) prg
+	$(MAKE) COLDFIRE=1 CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)' prg
 
 CPUFLAGS_M548X = -mcpu=5475
 
@@ -639,7 +639,7 @@ m548x-prg: override DEF += -DMACHINE_M548X -DCONF_WITH_BAS_MEMORY_MAP=1
 m548x-prg: CPUFLAGS = $(CPUFLAGS_M548X)
 m548x-prg:
 	@echo "# Building m548x $(EMUTOS_PRG)"
-	$(MAKE) COLDFIRE=1 CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' OPTFLAGS=$(OPTFLAGS) prg
+	$(MAKE) COLDFIRE=1 CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)' prg
 
 SREC_M548X_DBUG = emutos-m548x-dbug.s19
 .PHONY: m548x-dbug
@@ -740,7 +740,7 @@ amigaflop: UNIQUE = $(COUNTRY)
 amigaflop: OPTFLAGS = $(SMALL_OPTFLAGS)
 amigaflop: override DEF += -DTARGET_AMIGA_FLOPPY $(AMIGA_DEFS)
 amigaflop:
-	$(MAKE) CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' OPTFLAGS=$(OPTFLAGS) UNIQUE=$(UNIQUE) EMUTOS_ADF=$(EMUTOS_ADF) $(EMUTOS_ADF)
+	$(MAKE) CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)' UNIQUE=$(UNIQUE) EMUTOS_ADF=$(EMUTOS_ADF) $(EMUTOS_ADF)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes"
 
