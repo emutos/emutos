@@ -331,11 +331,11 @@ void sh_envrn(char **ppath, const char *psrch)
         if (findend && (tmp == '\0'))
         {
             findend = FALSE;
-            tmp = 0xFF;
+            tmp = '\xff';
         }
         else
         {
-            if (((last == '\0') || (last == -1)) && (tmp == loc2[0]))
+            if (((last == '\0') || (last == '\xff')) && (tmp == loc2[0]))
             {
                 memcpy(loc1, lp, len);
                 if (strcmp(&loc1[0], &loc2[1]) == 0)
