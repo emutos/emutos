@@ -1573,15 +1573,14 @@ WORD set_default_path(char *path)
  */
 BOOL valid_drive(char drive)
 {
+    int drv = drive - 'A';
     char drvstr[2];
 
     drvstr[0] = drive;
     drvstr[1] = '\0';
 
-    drive -= 'A';
-
-    if ((drive >= 0) && (drive < BLKDEVNUM))
-        if (dos_sdrv(dos_gdrv()) & (1L << drive))
+    if ((drv >= 0) && (drv < BLKDEVNUM))
+        if (dos_sdrv(dos_gdrv()) & (1L << drv))
             return TRUE;
 
     fun_alert_string(1, STNODRIV, drvstr);
