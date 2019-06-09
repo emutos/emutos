@@ -249,7 +249,7 @@ static void conout(int h, int ch)
 
     conbrk(h);                  /* check for control-s break */
     Bconout(h,ch);              /* output character to console */
-    if (ch >= ' ')
+    if ((unsigned char)ch >= ' ')
         bufptr->glbcolumn++;    /* keep track of screen column */
     else if (ch == cr)
         bufptr->glbcolumn = 0;
