@@ -26,11 +26,11 @@ typedef struct
 typedef struct
 {
         LONG    pi_tpalen ;             /*  length of tpa area          */
-        char    *pi_tbase ;             /*  start addr of text seg      */
+        UBYTE   *pi_tbase ;             /*  start addr of text seg      */
         LONG    pi_tlen ;               /*  length of text seg          */
-        char    *pi_dbase ;             /*  start addr of data seg      */
+        UBYTE   *pi_dbase ;             /*  start addr of data seg      */
         LONG    pi_dlen ;               /*  length of data seg          */
-        char    *pi_bbase ;             /*  start addr of bss  seg      */
+        UBYTE   *pi_bbase ;             /*  start addr of bss  seg      */
         LONG    pi_blen ;               /*  length of bss  seg          */
         LONG    pi_slen ;               /*  length of symbol table      */
 } PGMINFO;

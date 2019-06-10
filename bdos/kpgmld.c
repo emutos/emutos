@@ -29,7 +29,7 @@
  */
 
 static LONG pgmld01(FH h, PD *pdptr, PGMHDR01 *hd);
-static LONG pgfix01(void *lastcp, LONG nrelbytes, PGMINFO *pi);
+static LONG pgfix01(UBYTE *lastcp, LONG nrelbytes, PGMINFO *pi);
 
 /*
  * kpgmhdrld - load program header
@@ -117,7 +117,7 @@ static LONG pgmld01(FH h, PD *pdptr, PGMHDR01 *hd)
     PGMINFO *pi;
     PD      *p;
     PGMINFO pinfo;
-    char    *cp;
+    UBYTE   *cp;
     LONG    relst;
     LONG    flen;
     LONG    r;
@@ -135,7 +135,7 @@ static LONG pgmld01(FH h, PD *pdptr, PGMHDR01 *hd)
     pi->pi_blen = hd->h01_blen;
     pi->pi_slen = hd->h01_slen;
     pi->pi_tpalen = p->p_hitpa - p->p_lowtpa - sizeof(PD);
-    pi->pi_tbase = (char *) (p+1);      /*  1st byte after PD   */
+    pi->pi_tbase = (UBYTE *) (p+1);     /*  1st byte after PD   */
     pi->pi_bbase = pi->pi_tbase + flen;
     pi->pi_dbase = pi->pi_tbase + pi->pi_tlen;
 
@@ -248,7 +248,7 @@ static LONG pgmld01(FH h, PD *pdptr, PGMHDR01 *hd)
  *  pi        - program info pointer
  */
 
-static LONG pgfix01(void *lastcp, LONG nrelbytes, PGMINFO *pi)
+static LONG pgfix01(UBYTE *lastcp, LONG nrelbytes, PGMINFO *pi)
 {
     UBYTE *cp;              /*  code pointer                */
     UBYTE *rp;              /*  relocation info pointer     */
@@ -257,10 +257,10 @@ static LONG pgfix01(void *lastcp, LONG nrelbytes, PGMINFO *pi)
     LONG  tbase;            /*  base addr of text segment   */
 
     cp = lastcp;
-    rp = (UBYTE *)pi->pi_bbase;
+    rp = pi->pi_bbase;
     n = nrelbytes;
     tbase = (LONG)pi->pi_tbase;
-    bbase = (UBYTE *)pi->pi_bbase;
+    bbase = pi->pi_bbase;
 
     while(n-- && (*rp != 0))
     {
@@ -284,7 +284,7 @@ static LONG pgfix01(void *lastcp, LONG nrelbytes, PGMINFO *pi)
 #if DETECT_NATIVE_FEATURES
 LONG kpgm_relocate(PD *p, long length)
 {
-    char    *cp;
+    UBYTE   *cp;
     LONG    *rp;
     LONG    flen;
     PGMINFO pinfo;
@@ -305,7 +305,7 @@ LONG kpgm_relocate(PD *p, long length)
     pi->pi_blen = hd->h01_blen;
     pi->pi_slen = hd->h01_slen;
     pi->pi_tpalen = p->p_hitpa - p->p_lowtpa - sizeof(PD);
-    pi->pi_tbase = (char *)(p+1);       /*  1st byte after PD   */
+    pi->pi_tbase = (UBYTE *)(p+1);      /*  1st byte after PD   */
     pi->pi_bbase = pi->pi_tbase + flen;
     pi->pi_dbase = pi->pi_tbase + pi->pi_tlen;
 
