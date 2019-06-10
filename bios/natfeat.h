@@ -40,7 +40,7 @@ extern void nf_shutdown(void);
 extern int has_nf_shutdown(void);
 
 /* load a new OS kernel into the memory to 'addr' ('size' bytes available) */
-extern long nf_bootstrap(char *addr, long size);
+extern long nf_bootstrap(UBYTE *addr, long size);
 /* return the OS kernel arguments to be passed to 'addr' ('size' bytes available) */
 extern long nf_getbootstrap_args(char *addr, long size);
 extern UWORD nf_getbootdrive(void);

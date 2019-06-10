@@ -99,7 +99,7 @@ int has_nf_shutdown(void)
 }
 
 /* load a new OS kernel into memory at 'addr' ('size' bytes available) */
-long nf_bootstrap(char *addr, long size)
+long nf_bootstrap(UBYTE *addr, long size)
 {
     if(hasNF) {
         long bootstrap_id = NFID("BOOTSTRAP");

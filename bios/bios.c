@@ -462,7 +462,7 @@ static void bootstrap(void)
     pd = (PD *) trap1_pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, args, default_env);
 
     /* get the TOS executable from the emulator */
-    length = nf_bootstrap((char *)pd->p_lowtpa + sizeof(PD), pd->p_hitpa - pd->p_lowtpa);
+    length = nf_bootstrap(pd->p_lowtpa + sizeof(PD), pd->p_hitpa - pd->p_lowtpa);
 
     /* free the allocated space if something is wrong */
     if (length <= 0)
