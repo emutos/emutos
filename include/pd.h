@@ -49,7 +49,7 @@ struct _pd
 /* 0x30 */
     SBYTE   p_uft[NUMSTD];  /* index into sys file table for std files */
     char    p_lddrv;
-    char    p_curdrv;
+    UBYTE   p_curdrv;
     LONG    p_1fill[2];
 /* 0x40 */
     SBYTE   p_curdir[NUMCURDIR];    /* index into sys dir table */
