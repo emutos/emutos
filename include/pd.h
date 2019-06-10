@@ -32,14 +32,14 @@ typedef struct _pd PD;
 struct _pd
 {
 /* 0x00 */
-    char    *p_lowtpa;      /* pointer to start of TPA */
-    char    *p_hitpa;       /* pointer to end of TPA+1 */
-    char    *p_tbase;       /* pointer to base of text segment */
+    UBYTE   *p_lowtpa;      /* pointer to start of TPA */
+    UBYTE   *p_hitpa;       /* pointer to end of TPA+1 */
+    UBYTE   *p_tbase;       /* pointer to base of text segment */
     LONG    p_tlen;         /* length of text segment */
 /* 0x10 */
-    char    *p_dbase;       /* pointer to base of data segment */
+    UBYTE   *p_dbase;       /* pointer to base of data segment */
     LONG    p_dlen;         /* length of data segment */
-    char    *p_bbase;       /* pointer to base of bss segment */
+    UBYTE   *p_bbase;       /* pointer to base of bss segment */
     LONG    p_blen;         /* length of bss segment */
 /* 0x20 */
     DTA     *p_xdta;

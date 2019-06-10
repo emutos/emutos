@@ -576,7 +576,7 @@ LONG aes_run_rom_program(PRG_ENTRY *entry)
 
     /* Create a basepage with the standard Pexec() */
     pd = (PD *) trap1_pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, "", NULL);
-    pd->p_tbase = (char *) entry;
+    pd->p_tbase = (UBYTE *) entry;
 
     /* Run the program with dos_exec() for AES reentrancy issues */
     return dos_exec(PE_GOTHENFREE, NULL, (const char *)pd, NULL);

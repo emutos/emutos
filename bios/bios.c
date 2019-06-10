@@ -462,7 +462,7 @@ static void bootstrap(void)
     pd = (PD *) trap1_pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, args, default_env);
 
     /* get the TOS executable from the emulator */
-    length = nf_bootstrap(pd->p_lowtpa + sizeof(PD), pd->p_hitpa - pd->p_lowtpa);
+    length = nf_bootstrap((char *)pd->p_lowtpa + sizeof(PD), pd->p_hitpa - pd->p_lowtpa);
 
     /* free the allocated space if something is wrong */
     if (length <= 0)
@@ -690,7 +690,7 @@ void biosmain(void)
 #if WITH_CLI
     if (bootflags & BOOTFLAG_EARLY_CLI) {   /* run an early console */
         PD *pd = (PD *) trap1_pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, "", default_env);
-        pd->p_tbase = (char *) coma_start;
+        pd->p_tbase = (UBYTE *) coma_start;
         pd->p_tlen = pd->p_dlen = pd->p_blen = 0;
         trap1_pexec(PE_GOTHENFREE, "", pd, "");
     }
@@ -707,7 +707,7 @@ void biosmain(void)
         /* start the default (ROM) shell */
         PD *pd;
         pd = (PD *) trap1_pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, "", default_env);
-        pd->p_tbase = (char *) exec_os;
+        pd->p_tbase = (UBYTE *) exec_os;
         pd->p_tlen = pd->p_dlen = pd->p_blen = 0;
         trap1_pexec(PE_GO, "", pd, "");
     }

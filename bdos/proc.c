@@ -362,8 +362,8 @@ static void init_pd_fields(PD *p, char *tail, long max, char *envptr)
     bzero(p, sizeof(PD)) ;
 
     /* memory values */
-    p->p_lowtpa = (char *)p;               /*  M01.01.06   */
-    p->p_hitpa  = (char *)p  +  max;       /*  M01.01.06   */
+    p->p_lowtpa = (UBYTE *)p;              /*  M01.01.06   */
+    p->p_hitpa  = (UBYTE *)p  +  max;      /*  M01.01.06   */
     p->p_xdta = (DTA *) p->p_cmdlin;       /* default p_xdta is p_cmdlin */
     p->p_env = envptr;
 
