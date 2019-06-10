@@ -439,7 +439,8 @@ void gsx_start(void)
     gl_height = gl_hclip = gl_ws.ws_yres + 1;
     gl_nplanes = gsx_nplanes();
 
-    KINFO(("VDI video mode = %dx%d %d-bit\n", gl_width, gl_height, gl_nplanes));
+    KINFO(("VDI video mode = %dx%d %d-%s\n", gl_width, gl_height, gl_nplanes,
+        (gl_nplanes < 16 ? "plane" : "bit")));
 
     char_height = gl_ws.ws_chminh;
     vst_height( char_height, &gl_wsptschar, &gl_hsptschar,
