@@ -68,6 +68,10 @@ static WORD convert_scancode(UBYTE *scancodeptr);
 #define KEY_F1      0x3b        /* function keys F1 - F10 */
 #define KEY_F10     0x44
 
+#define KEY_CTRL_HOME 0x77      /* scancode values set when ctrl modifies scancode */
+#define KEY_CTRL_LTARROW 0x73
+#define KEY_CTRL_RTARROW 0x74
+
 #define KEYPAD_START 0x67       /* numeric keypad: 7 8 9 4 5 6 1 2 3 0 */
 #define KEYPAD_END  0x70
 
@@ -526,7 +530,9 @@ static UBYTE kb_switched;
 /*
  * convert a scancode to an ascii character
  *
- * for shifted function keys, we also update the scancode
+ * for certain keys, we also update the scancode:
+ *  shifted function keys
+ *  some keys when modified by ctrl
  */
 static WORD convert_scancode(UBYTE *scancodeptr)
 {
@@ -625,9 +631,33 @@ static WORD convert_scancode(UBYTE *scancodeptr)
         ascii = a[scancode];
     }
 
+    /*
+     * Ctrl key handling is mostly straightforward, but there are a few warts
+     */
     if (shifty & MODE_CTRL) {
-        /* More complicated in TOS, but is it really necessary ? */
-        ascii &= 0x1F;
+        switch(ascii) {
+        case '-':
+            ascii = 0x1f;
+            break;
+        case '2':
+            ascii = 0x00;
+            break;
+        case '6':
+            ascii = 0x1e;
+        }
+        switch(scancode) {
+        case KEY_HOME:
+            *scancodeptr = KEY_CTRL_HOME;
+            break;
+        case KEY_LTARROW:
+            *scancodeptr = KEY_CTRL_LTARROW;
+            break;
+        case KEY_RTARROW:
+            *scancodeptr = KEY_CTRL_RTARROW;
+            break;
+        default:
+            ascii &= 0x1F;
+        }
     } else if (kb_dead >= 0) {
         a = current_keytbl.dead[kb_dead];
         while (*a && *a != ascii) {
