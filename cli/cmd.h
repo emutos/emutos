@@ -209,7 +209,6 @@ extern char user_path[MAXPATHLEN];     /* from PATH command */
  *  function prototypes
  */
 /* cmdmain.c */
-void outlong(ULONG n,WORD width,char filler);
 int valid_res(WORD res);
 
 /* cmdedit.c */
