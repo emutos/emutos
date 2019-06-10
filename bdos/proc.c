@@ -345,7 +345,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
      * programs that jump into their DATA, BSS or HEAP are kindly invited
      * to do their cache management themselves.
      */
-    invalidate_instruction_cache(((char *)cur_p) + sizeof(PD), hdr.h01_tlen);
+    invalidate_instruction_cache(((UBYTE *)cur_p) + sizeof(PD), hdr.h01_tlen);
 
     if (flag != PE_LOAD)
         proc_go(cur_p);
