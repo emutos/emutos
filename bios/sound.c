@@ -47,7 +47,7 @@ static void do_keyclick(void);
 
 /* data used by dosound: */
 
-static SBYTE *sndtable;   /* 0xE44 */
+static const UBYTE *sndtable;   /* 0xE44 */
 static UBYTE snddelay;    /* 0xE48 */
 static UBYTE sndtmp;      /* 0xE49 */
 
@@ -143,18 +143,18 @@ void offgibit(WORD data)
 #endif
 }
 
-LONG dosound(LONG table)
+LONG dosound(const UBYTE *table)
 {
 #if CONF_WITH_YM2149
-    LONG oldtable = (LONG) sndtable;
+    const UBYTE *oldtable = sndtable;
 
-    if (table >= 0)
+    if ((LONG)table >= 0)
     {
-        sndtable = (SBYTE *) table;
+        sndtable = table;
         snddelay = 0;
     }
 
-    return oldtable;
+    return (LONG)oldtable;
 #else
     return 0;
 #endif
@@ -163,8 +163,8 @@ LONG dosound(LONG table)
 #if CONF_WITH_YM2149
 void sndirq(void)
 {
-    SBYTE *code;
-    SBYTE instr;
+    const UBYTE *code;
+    UBYTE instr;
 
     code = sndtable;
     if (code == 0)
@@ -176,7 +176,7 @@ void sndirq(void)
         return;
     }
 
-    while((instr = *code++) >= 0)
+    while((instr = *code++) < 0x80)
     {
         PSG->control = instr;
         if (instr == PSG_MULTI)
@@ -188,7 +188,7 @@ void sndirq(void)
         }
     }
 
-    switch((UBYTE)instr)
+    switch(instr)
     {
     case 0x80:
         sndtmp = *code++;
@@ -258,13 +258,13 @@ void bell(void)
 static void do_bell(void)
 {
 #if CONF_WITH_YM2149
-    dosound((LONG) bellsnd);
+    dosound(bellsnd);
 #endif
 }
 
 static void do_keyclick(void)
 {
 #if CONF_WITH_YM2149
-    dosound((LONG) keyclicksnd);
+    dosound(keyclicksnd);
 #endif
 }

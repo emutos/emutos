@@ -23,7 +23,7 @@
 extern LONG giaccess(WORD data, WORD reg);
 extern void ongibit(WORD value);
 extern void offgibit(WORD value);
-extern LONG dosound(LONG table);
+extern LONG dosound(const UBYTE *table);
 
 /* internal routines */
 

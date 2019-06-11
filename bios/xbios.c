@@ -650,7 +650,7 @@ static void xbios_1f(WORD timer, WORD control, WORD data, LONG vec)
  */
 
 #if DBG_XBIOS
-static void xbios_20(LONG ptr)
+static void xbios_20(const UBYTE *ptr)
 {
     kprintf("XBIOS: Dosound()\n");
     dosound(ptr);
