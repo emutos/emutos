@@ -198,7 +198,7 @@ typedef struct
 struct _dnd         /* directory node descriptor */
 {
     char d_name[11];    /*  directory name                      */
-    char d_fill;        /*  attributes?                         */
+    UBYTE d_fill;       /*  attributes?                         */
     UWORD d_flag;
     CLNO d_strtcl;      /*  starting cluster number of dir      */
 
