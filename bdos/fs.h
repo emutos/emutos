@@ -169,7 +169,7 @@ typedef struct
 {
     char f_name[11];
     UBYTE f_attrib;
-    char f_fill[10];
+    UBYTE f_fill[10];
     DOSTIME f_td;           /* time, date */
     CLNO f_clust;
     long f_fileln;
