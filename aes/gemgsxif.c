@@ -27,6 +27,9 @@
 #include "geminit.h"
 #include "gemctrl.h"
 #include "gemgsxif.h"
+#include "xbiosbind.h"
+#include "../bios/machine.h"    /* for HAS_VIDEL */
+#include "../bios/screen.h"     /* for FALCON_REZ */
 #include "kprint.h"
 
 /*
@@ -166,13 +169,32 @@ void gsx_1code(WORD code, WORD value)
 
 
 
+static WORD screen_rez(void)
+{
+    if (HAS_VIDEL)
+        return FALCON_REZ;
+
+    return Getrez();
+}
+
+
+
 static void gsx_wsopen(void)
 {
-    WORD  i;
+    WORD  i, *p = intin;
 
-    for(i=0; i<10; i++)
-        intin[i] = 1;
-    intin[10] = 2;                  /* device coordinate space */
+    /*
+     * set up intin[]: the screen rez (+2) goes into intin[0]
+     *
+     * but there are (undocumented) complications for the Falcon:
+     * we need to use the special pseudo-screen rez, and put the actual
+     * videl mode into ptsout[0] (!).
+     */
+    *p++ = screen_rez() + 2;
+    for (i = 1; i < 10; i++)
+        *p++ = 1;
+    *p = 2;                         /* device coordinate space */
+    gl_ws.ws_pts0 = VsetMode(-1);   /* ptsout points here ... harmless if not a Falcon */
     g_v_opnwk(intin, &gl_handle, &gl_ws);
     gl_graphic = TRUE;
 }
