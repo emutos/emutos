@@ -168,7 +168,7 @@ struct _ofd
 typedef struct
 {
     char f_name[11];
-    char f_attrib;
+    UBYTE f_attrib;
     char f_fill[10];
     DOSTIME f_td;           /* time, date */
     CLNO f_clust;
@@ -376,8 +376,8 @@ long xdup(int h);
  */
 
 /* create file with specified name, attributes */
-long xcreat(char *name, char attr);
-long ixcreat(char *name, char attr);
+long xcreat(char *name, UBYTE attr);
+long ixcreat(char *name, UBYTE attr);
 
 /* open a file (path name) */
 long xopen(char *name, int mod);
@@ -439,7 +439,7 @@ long ixwrite(OFD *p, long len, void *ubufr);
 
 long xmkdir(char *s);
 long xrmdir(char *p);
-long xchmod(char *p, int wrt, char mod);
+long xchmod(char *p, int wrt, UBYTE mod);
 long ixsfirst(char *name, WORD att, DTAINFO *addr);
 long xsfirst(char *name, int att);
 long xsnext(void);

@@ -384,7 +384,7 @@ long xrmdir(char *p)
  *                  EPTHNF
  *                  EFILNF
  */
-long xchmod(char *p, int wrt, char mod)
+long xchmod(char *p, int wrt, UBYTE mod)
 {
     OFD *fd;
     DND *dn;                                /*  M01.01.03   */
@@ -884,7 +884,8 @@ long xrename(int n, char *p1, char *p2)
     DMD *dmd1, *dmd2;
     CLNO strtcl1, strtcl2, temp;
     const char *s1, *s2;
-    char buf[11], att;
+    char buf[11];
+    UBYTE att;
     int hnew;
     long posp;
     UWORD filetime, filedate;
@@ -1040,7 +1041,7 @@ long xrename(int n, char *p1, char *p2)
             }
 
             /* set attribute for this file in parent directory */
-            if (update_fcb(fdparent,fd2->o_dirbyt+11,1L,(UBYTE *)&att) < 0)
+            if (update_fcb(fdparent,fd2->o_dirbyt+11,1L,&att) < 0)
             {
                 KDEBUG(("xrename(): can't update parent's attr byte\n"));
                 return EINTRN;

@@ -81,7 +81,7 @@ static void sftdel(FTAB *sftp);
  *
  *  Error returns   EPTHNF, EACCDN, ENHNDL
  */
-long xcreat(char *name, char attr)
+long xcreat(char *name, UBYTE attr)
 {
     return ixcreat(name, attr & ~FA_SUBDIR);
 }
@@ -93,7 +93,7 @@ long xcreat(char *name, char attr)
 /*  name: path name of file
  *  attr: atttributes
  */
-long ixcreat(char *name, char attr)
+long ixcreat(char *name, UBYTE attr)
 {
     DND *dn;
     OFD *fd;
