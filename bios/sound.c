@@ -47,9 +47,9 @@ static void do_keyclick(void);
 
 /* data used by dosound: */
 
-static const UBYTE *sndtable;   /* 0xE44 */
-static UBYTE snddelay;    /* 0xE48 */
-static UBYTE sndtmp;      /* 0xE49 */
+static const UBYTE *sndtable;
+static UBYTE snddelay;
+static UBYTE sndtmp;
 
 /*
  * Bit 7 of PSG port A was unused on the original ST, but has
