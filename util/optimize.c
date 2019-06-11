@@ -46,6 +46,7 @@
  */
 WORD sound(WORD isfreq, WORD freq, WORD dura)
 {
+    UWORD tp; /* 12 bit oscillation frequency setting value */
     static UBYTE snddat[16];
     static WORD disabled;
 
@@ -54,8 +55,9 @@ WORD sound(WORD isfreq, WORD freq, WORD dura)
         if (disabled)
             return 1;
 
-        snddat[0] = 0;  snddat[1] = LOBYTE(divu(125000L,freq)); /* channel A pitch lo */
-        snddat[2] = 1;  snddat[3] = HIBYTE(divu(125000L,freq)); /* channel A pitch hi */
+        tp = divu(125000L,freq);
+        snddat[0] = 0;  snddat[1] = LOBYTE(tp);     /* channel A pitch lo */
+        snddat[2] = 1;  snddat[3] = HIBYTE(tp);     /* channel A pitch hi */
         snddat[4] = 7;  snddat[5] = 0xFE;
         snddat[6] = 8;  snddat[7] = 0x10;                   /* amplitude: envelop */
         snddat[8] = 11;  snddat[9] = 0;                     /* envelope lo */
