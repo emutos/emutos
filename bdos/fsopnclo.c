@@ -103,7 +103,7 @@ long ixcreat(char *name, UBYTE attr)
     int i, f2;                              /*  M01.01.03   */
     long pos, rc;
 
-    n[0] = (char)ERASE_MARKER; n[1] = 0;
+    n[0] = ERASE_MARKER; n[1] = 0;
 
     /* first find path */
 
@@ -610,7 +610,7 @@ long ixdel(DND *dn, FCB *f, long pos)
      */
     fd = dn->d_ofd;
     ixlseek(fd,pos);
-    c = (char)ERASE_MARKER;
+    c = ERASE_MARKER;
     ixwrite(fd,1L,&c);
     ixclose(fd,CL_DIR);
 

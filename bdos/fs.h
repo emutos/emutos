@@ -175,7 +175,7 @@ typedef struct
     long f_fileln;
 } FCB;
 
-#define ERASE_MARKER    0xe5    /* in f_name[0], indicates erased file */
+#define ERASE_MARKER    '\xe5'  /* in f_name[0], indicates erased file */
 
 #define FA_RO           0x01
 #define FA_HIDDEN       0x02
