@@ -52,7 +52,7 @@ struct _pd
     UBYTE   p_curdrv;
     LONG    p_1fill[2];
 /* 0x40 */
-    SBYTE   p_curdir[NUMCURDIR];    /* index into sys dir table */
+    UBYTE   p_curdir[NUMCURDIR];    /* index into sys dir table */
     char    p_2fill[32-NUMCURDIR];
 /* 0x60 */
     LONG    p_3fill[2];
