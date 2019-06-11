@@ -47,7 +47,7 @@
 WORD sound(WORD isfreq, WORD freq, WORD dura)
 {
     UWORD tp; /* 12 bit oscillation frequency setting value */
-    static UBYTE snddat[16];
+    static UBYTE snddat[16]; /* Will be read later from interrupt! */
     static WORD disabled;
 
     if (isfreq)     /* Play a sound? */
