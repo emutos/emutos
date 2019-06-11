@@ -719,8 +719,8 @@ void protobt(UBYTE *buf, LONG serial, WORD type, WORD exec)
 
 static void setiword(UBYTE *addr, UWORD value)
 {
-    addr[0] = value;
-    addr[1] = value >> 8;
+    addr[0] = LOBYTE(value);
+    addr[1] = HIBYTE(value);
 }
 
 /*==== xbios floprd, flopwr ===============================================*/

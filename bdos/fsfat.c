@@ -87,7 +87,7 @@ void clfix(CLNO cl, CLNO link, DMD *dm)
 
     /* write back */
     buf = getrec(recnum,dm->m_fatofd,1) + offset;
-    *buf++ = f >> 8;
+    *buf++ = HIBYTE(f);
     if (spans)
         buf = getrec(recnum+1,dm->m_fatofd,1);
     *buf = LOBYTE(f);

@@ -76,8 +76,8 @@ static void fix_chpos(WORD *pfix, WORD offset)
     WORD cpos;
 
     cpos = *pfix;
-    coffset = (cpos >> 8) & 0x00ff;
-    cpos &= 0x00ff;
+    coffset = HIBYTE(cpos);
+    cpos = LOBYTE(cpos);
 
     switch(offset)
     {

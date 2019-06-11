@@ -783,9 +783,9 @@ static WORD check_function_key(WORD thechar)
     WORD funkey;
 
     if ((thechar >= FUNKEY_01) && (thechar <= FUNKEY_10))
-        funkey = ((thechar-FUNKEY_01) >> 8) + 1;
+        funkey = HIBYTE(thechar-FUNKEY_01) + 1;
     else if ((thechar >= FUNKEY_11) && (thechar <= FUNKEY_20))
-        funkey = ((thechar-FUNKEY_11) >> 8) + 11;
+        funkey = HIBYTE(thechar-FUNKEY_11) + 11;
     else return -1;
 
     return process_funkey(funkey);
@@ -898,7 +898,7 @@ static WORD hndl_kbd(WORD thechar)
     WORD done, ascii;
     WORD title = -1, item;
 
-    ascii = thechar & 0x00ff;
+    ascii = LOBYTE(thechar);
     if (ascii == ESC)   /* refresh window */
     {
         pw = win_ontop();

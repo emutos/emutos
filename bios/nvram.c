@@ -139,9 +139,9 @@ static void set_sum(UWORD sum)
     volatile UBYTE *data_reg = (volatile UBYTE *)NVRAM_DATA_REG;
 
     *addr_reg = NVRAM_START + NVRAM_CKSUM;
-    *data_reg = sum >> 8;
+    *data_reg = HIBYTE(sum);
     *addr_reg = NVRAM_START + NVRAM_CKSUM + 1;
-    *data_reg = sum;
+    *data_reg = LOBYTE(sum);
 }
 
 /*
