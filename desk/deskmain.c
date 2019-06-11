@@ -39,7 +39,6 @@
 #include "deskwin.h"
 
 #include "../bios/screen.h"
-#include "../bios/videl.h"
 #include "nls.h"
 #include "version.h"
 #include "../bios/header.h"

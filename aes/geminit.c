@@ -33,7 +33,6 @@
 #include "xbiosbind.h"
 #include "../bios/machine.h"
 #include "../bios/screen.h"
-#include "../bios/videl.h"
 #include "biosext.h"
 
 #include "crysbind.h"
