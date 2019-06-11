@@ -532,7 +532,7 @@ long xsfirst(char *name, int att)
 static FCB *ixsnext(DTAINFO *dt)
 {
     char name[12];
-    char *buf, *bufend;
+    UBYTE *buf, *bufend;
     DMD *dmd;
     BCB *bcb;
     FCB *fcb;
@@ -615,7 +615,7 @@ static FCB *ixsnext(DTAINFO *dt)
     /*
      * update the private area
      */
-    offset = (char *)fcb - buf + sizeof(FCB);   /* to next FCB within buffer */
+    offset = (UBYTE *)fcb - buf + sizeof(FCB);  /* to next FCB within buffer */
     if (buftype == BT_ROOT)
     {
         dt->dt_offset_drive = (recnum << dmd->m_rblog) + offset;
@@ -1247,7 +1247,7 @@ FCB *dirinit(DND *dn)
     OFD *fd;            /*  ofd for this dir  */
     int num;
     RECNO i2;
-    char *s1;
+    UBYTE *s1;
     DMD *dm;
     FCB *f1;
 

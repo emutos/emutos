@@ -315,7 +315,7 @@ static void addit(OFD *p, long siz, int flg)
 static long xrw(int wrtflg, OFD *p, long len, char *ubufr)
 {
     DMD *dm;
-    char *bufp;
+    UBYTE *bufp;
     unsigned int bytn, tailrec;
     int lenxfr, lentail;
     RECNO recn, num;

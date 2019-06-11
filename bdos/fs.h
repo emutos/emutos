@@ -287,7 +287,7 @@ struct _bcb
     UBYTE   b_buftyp;   /*  buffer type                 */
     UBYTE   b_dirty;    /*  true if buffer dirty        */
     DMD     *b_dm;      /*  ptr to drive media block    */
-    char    *b_bufr;    /*  pointer to buffer (API)     */
+    UBYTE   *b_bufr;    /*  pointer to buffer (API)     */
 } ;
 
 /*
@@ -402,7 +402,7 @@ void bufl_init(void);
 /* ??? */
 void flush(BCB *b);
 /* return the ptr to the buffer containing the desired record */
-char *getrec(RECNO recn, OFD *of, int wrtflg);
+UBYTE *getrec(RECNO recn, OFD *of, int wrtflg);
 BCB *getbcb(DMD *dmd,WORD buftype,RECNO recnum);
 
 /*

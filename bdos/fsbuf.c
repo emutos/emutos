@@ -28,7 +28,7 @@ extern BCB *bufl[];     /* buffer lists - two lists:  FAT and dir/data */
 #define NUMBUFS 2       /* buffers per list */
 
 /* creates a chain of BCBs and corresponding buffers */
-static void *create_chain(char *p,LONG n)
+static void *create_chain(UBYTE *p,LONG n)
 {
     BCB *bcbptr;
     WORD i;
@@ -50,7 +50,7 @@ static void *create_chain(char *p,LONG n)
  */
 void bufl_init(void)
 {
-    char *p;
+    UBYTE *p;
     LONG n;
 
     n = sizeof(BCB) + pun_ptr->max_sect_siz;
@@ -201,7 +201,7 @@ doio:   for (p = *(q = phdr); p->b_link; p = *(q = &p->b_link))
 /*
  * getrec - return the ptr to the buffer containing the desired record
  */
-char *getrec(RECNO recn, OFD *of, int wrtflg)
+UBYTE *getrec(RECNO recn, OFD *of, int wrtflg)
 {
     DMD *dm = of->o_dmd;
     BCB *b;
