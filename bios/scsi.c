@@ -51,7 +51,7 @@
 #include "machine.h"
 #include "mfp.h"
 #include "nvram.h"
-#include "processor.h"
+#include "biosext.h"    /* for cache control routines */
 #include "string.h"
 #include "tosvars.h"
 #include "vectors.h"

@@ -24,7 +24,7 @@
 #include "tosvars.h"
 #include "gemerror.h"
 #include "blkdev.h"
-#include "processor.h"
+#include "biosext.h"    /* for cache control routines */
 #include "asm.h"
 #include "cookie.h"
 #include "delay.h"

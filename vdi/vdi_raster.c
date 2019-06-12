@@ -14,10 +14,10 @@
 #include "portab.h"
 #include "vdi_defs.h"
 #include "blitter.h"
+#include "biosext.h"    /* for cache control routines */
 #include "../bios/lineavars.h"
 #include "../bios/tosvars.h"
 #include "../bios/machine.h"    /* for blitter-related items */
-#include "../bios/processor.h"  /* for cache control routines */
 #include "kprint.h"
 
 #ifdef __mcoldfire__

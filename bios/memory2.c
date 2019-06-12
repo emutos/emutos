@@ -18,7 +18,7 @@
 #include "tosvars.h"
 #include "kprint.h"
 #include "machine.h"
-#include "processor.h"
+#include "biosext.h"    /* for cache control routines */
 #include "vectors.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"

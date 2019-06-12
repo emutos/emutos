@@ -17,6 +17,8 @@ extern UBYTE bootflags;
 #define BOOTFLAG_SKIP_AUTO_ACC 0x04
 
 ULONG initial_vram_size(void);
+void flush_data_cache(void *start, long size);
+void invalidate_data_cache(void *start, long size);
 void invalidate_instruction_cache(void *start, long size);
 
 #if CONF_WITH_SHUTDOWN

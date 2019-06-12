@@ -15,9 +15,9 @@
 #include "asm.h"
 #include "vdi_defs.h"
 #include "blitter.h"
+#include "biosext.h"    /* for cache control routines */
 #include "../bios/lineavars.h"
 #include "../bios/machine.h"    /* for blitter-related items */
-#include "../bios/processor.h"  /* for cache control routines */
 
 
 extern void linea_rect(void);     /* called only from linea.S */

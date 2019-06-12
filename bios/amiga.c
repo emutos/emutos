@@ -19,6 +19,7 @@
 #include "vectors.h"
 #include "tosvars.h"
 #include "processor.h"
+#include "biosext.h"            /* for cache control routines */
 #include "gemerror.h"
 #include "ikbd.h"               /* for call_mousevec() */
 #include "screen.h"

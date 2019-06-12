@@ -88,10 +88,11 @@
 #define PROCESSOR_H
 
 extern void processor_init(void);
-/* invalidate_instruction_cache() is declared in include/biosext.h */
+/*
+ * flush_data_cache(), invalidate_data_cache() & 
+ * invalidate_instruction_cache() are declared in include/biosext.h
+ */
 extern void instruction_cache_kludge(void *start,long size);
-extern void flush_data_cache(void *start, long size);
-extern void invalidate_data_cache(void *start, long size);
 extern LONG mcpu;
 extern LONG fputype;
 extern WORD longframe;

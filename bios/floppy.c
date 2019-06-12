@@ -29,7 +29,7 @@
 #include "kprint.h"
 #include "xbiosbind.h"  /* Random() */
 #include "delay.h"
-#include "processor.h"
+#include "biosext.h"    /* for cache control routines */
 #include "cookie.h"
 #include "intmath.h"
 #ifdef MACHINE_AMIGA
