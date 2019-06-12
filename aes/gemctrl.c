@@ -331,7 +331,7 @@ void ctlmgr(void)
         ev_which = ev_multi(ev_which, &gl_ctwait, &gl_ctwait,
                                 0x0L, 0x0001ff01L, NULL, rets);
 
-        wm_update(BEG_UPDATE);          
+        wm_update(BEG_UPDATE);
         gl_ctmown = TRUE;
         gl_mowner = rlr;
 

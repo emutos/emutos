@@ -89,7 +89,7 @@
 
 extern void processor_init(void);
 /*
- * flush_data_cache(), invalidate_data_cache() & 
+ * flush_data_cache(), invalidate_data_cache() &
  * invalidate_instruction_cache() are declared in include/biosext.h
  */
 extern void instruction_cache_kludge(void *start,long size);

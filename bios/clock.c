@@ -67,7 +67,7 @@ struct hms
 /*
  * extract year/month/day from GEMDOS-style date
  *
- * note: extracted year is raw, i.e. relative to 1980 
+ * note: extracted year is raw, i.e. relative to 1980
  */
 static void extract_date(struct ymd *out, UWORD date)
 {

@@ -293,7 +293,7 @@ static void init_mach32(void)
     VGAREG_W(EXT_GE_CONFIG) = 0x1A40; /* DAC 8 bit mode. */
     VGAREG_W(HORZ_OVERSCAN) = 0;
     //VGAREG(ATI_DAC_R2) = 0xFF     /* DAC mask register. Set later. */
-    
+
     /* Enable VGA mode */
     VGAREG(ROM_PAGE_SEL) = 0x10;    /* VGA setup mode */
     VGAREG(SETUP_CONTROL) = 0x01;   /* Enable card */
@@ -558,7 +558,7 @@ int init_nova(void)
     /* Fail if detect_nova() hasn't found card */
     if (!has_nova)
         return 0;
-    
+
     /* Detect ATI Mach32 (as opposed to ET4000). */
     is_mach32 = detect_mach32();
     if (is_mach32) {

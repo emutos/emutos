@@ -247,7 +247,7 @@ WORD illegal_op_msg(void)
  *
  *  if the delete fails, issues an alert for skip/retry/abort
  *
- *  Returns 
+ *  Returns
  *      1   delete succeeded
  *      0   delete failed, user wants to stop
  *      -1  delete failed, user wants to continue
@@ -279,7 +279,7 @@ static WORD d_dofdel(char *ppath)
  *
  *  if the delete fails, issues an alert for skip/retry/abort
  *
- *  Returns 
+ *  Returns
  *      1   delete succeeded
  *      0   delete failed, user wants to stop
  *      -1  delete failed, user wants to continue
