@@ -72,6 +72,9 @@ static WORD convert_scancode(UBYTE *scancodeptr);
 #define KEY_CTRL_LTARROW 0x73
 #define KEY_CTRL_RTARROW 0x74
 
+#define TOPROW_START 0x02       /* numeric keys, minus, equals */
+#define TOPROW_END  0x0d
+
 #define KEYPAD_START 0x67       /* numeric keypad: 7 8 9 4 5 6 1 2 3 0 */
 #define KEYPAD_END  0x70
 
@@ -560,8 +563,8 @@ static WORD convert_scancode(UBYTE *scancodeptr)
     }
 
     /*
-     * do special processing for alt-arrow, alt-keypad, shift-function
-     * keys, then return
+     * do special processing for alt-arrow, alt-keypad, alt-number &
+     * shift-function keys, then return
      */
     if (shifty & MODE_ALT) {
         /*
@@ -579,6 +582,10 @@ static WORD convert_scancode(UBYTE *scancodeptr)
             kb_altnum += "\7\10\11\4\5\6\1\2\3\0" [scancode-KEYPAD_START];
             return -1;
         }
+        if ((scancode >= TOPROW_START) && (scancode <= TOPROW_END)) {
+            *scancodeptr += 0x76;
+            return 0;
+        }
     } else if (shifty & MODE_SHIFT) {
         /* function keys F1 to F10 => F11 to F20 */
         if ((scancode >= KEY_F1) && (scancode <= KEY_F10)) {
@@ -592,10 +599,11 @@ static WORD convert_scancode(UBYTE *scancodeptr)
      * the presence or absence of the DUAL_KEYBOARD feature
      *
      * Alt-X handling:
-     * if the DUAL_KEYBOARD feature is present, Alt-X always generates
-     * an ascii value of zero; otherwise, Alt-X performs an ascii
-     * lookup using the 'alternate' keyboard tables, which are set up
-     * as (scancode,ascii) pairs.
+     * we obtain a default ascii value by using the standard keyboard
+     * tables.  if the DUAL_KEYBOARD feature is not present, we may then
+     * override that value via a lookup using the 'alternate' keyboard
+     * tables, which are set up as (scancode,ascii) pairs.  finally we
+     * zero out alphabetic ascii values.
      *
      * All other key handling:
      * if 'kb_switched' is set (only set if a keyboard table has the
@@ -605,6 +613,14 @@ static WORD convert_scancode(UBYTE *scancodeptr)
      * scancode lookup tables).
      */
     if (shifty & MODE_ALT) {
+        if (shifty & MODE_SHIFT) {
+            a = current_keytbl.shft;
+        } else if (shifty & MODE_CAPS) {
+            a = current_keytbl.caps;
+        } else {
+            a = current_keytbl.norm;
+        }
+        ascii = a[scancode];
         if ((current_keytbl.features & DUAL_KEYBOARD) == 0) {
             if (shifty & MODE_SHIFT) {
                 a = current_keytbl.altshft;
@@ -620,6 +636,9 @@ static WORD convert_scancode(UBYTE *scancodeptr)
                 ascii = *a;
             }
         }
+        if (((ascii >= 'A') && (ascii <= 'Z'))
+         || ((ascii >= 'a') && (ascii <= 'z')))
+            ascii = 0;
     } else {
         if (shifty & MODE_SHIFT) {
             a = kb_switched ? current_keytbl.altshft : current_keytbl.shft;
