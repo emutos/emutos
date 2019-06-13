@@ -132,7 +132,7 @@ LOCAL const char * const help_wrap[] = { "[on|off]",
 LOCAL const char * const help_edit[] = {
  N_("up/down arrow = previous/next line in history"),
  N_("left/right arrow = previous/next character"),
- N_("shift-left/right arrow = previous/next word"), NULL };
+ N_("control-left/right arrow = previous/next word"), NULL };
 
 
 /*

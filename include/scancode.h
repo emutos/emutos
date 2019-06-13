@@ -38,6 +38,9 @@
 #define SHIFT_ARROW_LEFT    0x4b34
 #define SHIFT_ARROW_RIGHT   0x4d36
 
+#define CTRL_ARROW_LEFT     0x7300
+#define CTRL_ARROW_RIGHT    0x7400
+
 /*
  * function keys
  */
