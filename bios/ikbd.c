@@ -20,7 +20,6 @@
  * not supported:
  * - alt-help screen hardcopy
  * - KEYTBL.TBL config with _AKP cookie (tos 5.00 and later)
- * - CLRHOME and INSERT in kbshift.
  */
 
 /* #define ENABLE_KDEBUG */
@@ -763,6 +762,14 @@ void kbd_int(UBYTE scancode)
             shifty &= ~MODE_CAPS;       /* clear bit */
             break;
 #endif
+        case KEY_HOME:
+            shifty &= ~MODE_HOME;       /* clear bit */
+            kb_ticks = 0;               /* stop key repeat */
+            break;
+        case KEY_INSERT:
+            shifty &= ~MODE_INSERT;     /* clear bit */
+            kb_ticks = 0;               /* stop key repeat */
+            break;
         default:                    /* non-modifier keys: */
             kb_ticks = 0;               /*  stop key repeat */
         }
@@ -818,6 +825,17 @@ void kbd_int(UBYTE scancode)
     /*
      * a non-modifier key has been pressed
      */
+    if (shifty & MODE_ALT) {    /* only if the Alt key is down ... */
+        switch(scancode) {
+        case KEY_HOME:
+            shifty |= MODE_HOME;    /* set bit */
+            break;
+        case KEY_INSERT:
+            shifty |= MODE_INSERT;  /* set bit */
+            break;
+        }
+    }
+
     ascii = convert_scancode(&scancode);
     if (ascii < 0)      /* dead key (including alt-keypad) processing */
         return;

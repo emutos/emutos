@@ -47,6 +47,10 @@ typedef struct _bpb BPB;
 #define MODE_CTRL   0x04        /* Control is down         */
 #define MODE_ALT    0x08        /* Alternate is down       */
 #define MODE_CAPS   0x10        /* CapsLock is down        */
-#define MODE_CLEAR  0x20        /* Clr/Home is down        */
+                        /* the following bits are ONLY set if the Alt key is already */
+                        /* down.  however, they remain set until the corresponding   */
+                        /* key is released, even if the Alt key is released first.   */
+#define MODE_HOME   0x20        /* Clr/Home is down        */
+#define MODE_INSERT 0x40        /* Insert is down          */
 
 #endif /* BIOSDEFS_H */
