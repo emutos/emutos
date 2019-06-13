@@ -193,7 +193,7 @@ All XBIOS versions:
  T 0x11 Random
  T 0x12 Protobt
  T 0x13 Flopver
- - 0x14 Scrdmp
+ T 0x14 Scrdmp          (unlike TOS, the default dump routine does nothing)
  T 0x15 Cursconf
  T 0x16 Settime
  T 0x17 Gettime

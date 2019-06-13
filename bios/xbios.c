@@ -472,7 +472,19 @@ static LONG xbios_13(WORD *buf, LONG filler, WORD devno, WORD sectno,
  * xbios_14 - (scrdmp) Dump screen to printer.
  */
 
-/* unimplemented */
+static void scrdmp(void)
+{
+    protect_v((PFLONG)dump_vec);
+    dumpflg = -1;       /* reset to allow future dumps ... */
+}
+
+#if DBG_XBIOS
+static void xbios_14(void)
+{
+    kprintf("XBIOS: scrdmp()\n");
+    scrdmp();
+}
+#endif
 
 
 
@@ -1078,7 +1090,7 @@ const PFLONG xbios_vecs[] = {
     VEC(xbios_11, random),
     VEC(xbios_12, protobt),
     VEC(xbios_13, flopver),
-    xbios_unimpl,   /* 14 scrdmp */
+    VEC(xbios_14, scrdmp),
     VEC(xbios_15, cursconf),
     VEC(xbios_16, settime),
     VEC(xbios_17, gettime),
