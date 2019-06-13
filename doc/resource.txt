@@ -41,8 +41,8 @@ it is often useful to centre- or right-align text objects.  The AES
 does not provide an easy way of doing this (alignment in TEDINFO objects
 affects the text within the object, as well as object positioning).
 
-To allow centre- or right-alignment alignment of text objects, we
-steal unused bits in ob_flags to indicate the required alignment.
+To allow centre- or right-alignment of text objects, we steal unused
+bits in ob_flags to indicate the required alignment.
 The following bits are used:
     0x8000      centre-aligned
     0x4000      right-aligned

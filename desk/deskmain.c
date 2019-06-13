@@ -1423,7 +1423,7 @@ static void adjust_menu(OBJECT *obj_array)
  *  (alignment in TEDINFO objects affects the text within the object,
  *  as well as object positioning).
  *
- *  To allow centre- or right-alignment alignment of text objects,
+ *  To allow centre- or right-alignment of text objects,
  *  we steal unused bits in ob_flags to indicate the required
  *  alignment.  Note that this does not cause any incompatibilities
  *  because this extra function is performed outside the AES, and
