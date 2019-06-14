@@ -562,8 +562,8 @@ static WORD convert_scancode(UBYTE *scancodeptr)
     }
 
     /*
-     * do special processing for alt-arrow, alt-keypad, alt-number &
-     * shift-function keys, then return
+     * do special processing for alt-arrow, alt-help, alt-keypad,
+     * alt-number & shift-function keys, then return
      */
     if (shifty & MODE_ALT) {
         /*
@@ -572,6 +572,11 @@ static WORD convert_scancode(UBYTE *scancodeptr)
          */
         if (handle_mouse_mode(scancode))    /* we sent a packet, */
             return 0;                       /* so we're done     */
+
+        if (scancode == KEY_HELP) {
+            dumpflg++;      /* tell VBL to call scrdmp() function */
+            return 0;
+        }
 
         /* ALT-keypad means that char number */
         if ((scancode >= KEYPAD_START) && (scancode <= KEYPAD_END)) {

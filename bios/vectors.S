@@ -482,7 +482,13 @@ vbl_queue_next:
 vbl_no_queue:
 
         // screen hardcopy
-        // (not done)
+        tst.w   _dumpflg.w
+        jne     vbl_no_dump
+        move.l  _dump_vec.w,a0
+        jsr     (a0)
+        moveq  #-1,d0
+        move.w  d0,_dumpflg.w
+vbl_no_dump:
 
 #ifdef __mcoldfire__
         movem.l (sp), d1-d7/a0-a6       // restore registers
