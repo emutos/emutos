@@ -664,6 +664,21 @@ static WORD hndl_button(WORD clicks, WORD mx, WORD my, WORD button, WORD keystat
     {
         act_bsclick(G.g_cwin, G.g_croot, mx, my, keystate, &c, TRUE);
         done = do_filemenu(OPENITEM);
+        /*
+         * we wait for button up because, if the user keeps the button
+         * down after the second click, the AES will continue to send
+         * double-click events, causing these cosmetic problems:
+         * (1) if the double-click is opening a disk/folder, multiple
+         *     opens are done
+         * (2) if the double-click launches a .TOS program and the eventual
+         *     button up occurs in alpha mode, it is not seen by the AES.
+         *     this leaves a residual value in the 'button' global which,
+         *     on return to the desktop, causes the ctlmgr() function to
+         *     continually call ct_mouse().  this calls gsx_mfset() which
+         *     turns the mouse on and off, causing the mouse to blink.
+         *     this only stops when a mouse click is done.
+         */
+        evnt_button(1, 0x01, 0x00, &junk, &junk, &junk, &junk);
     }
 
     men_update();
