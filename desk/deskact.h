@@ -12,11 +12,11 @@
 
 /* Prototypes: */
 WORD act_chg(WORD wh, WORD root, WORD obj, GRECT *pc,
-             WORD dochg, WORD dodraw);
+             BOOL dochg, BOOL dodraw);
 void act_allchg(WORD wh, WORD root, WORD ex_obj, GRECT *pt, GRECT *pc,
-                WORD dochg);
+                BOOL dochg);
 void act_bsclick(WORD wh, WORD root, WORD mx, WORD my, WORD keystate,
-                 GRECT *pc, WORD dclick);
+                 GRECT *pc, BOOL dclick);
 WORD act_bdown(WORD wh, WORD root, WORD *in_mx, WORD *in_my,
                WORD *keystate, GRECT *pc, WORD *pdobj);
 

@@ -393,13 +393,13 @@ static WORD act_chkobj(OBJECT *tree, WORD root, WORD obj, WORD mx, WORD my, WORD
  *
  *  Usage of (some) arguments:
  *      WORD   obj              * object to affect
- *      WORD   dochg            * set or reset value
- *      WORD   dodraw           * draw resulting change
+ *      BOOL   dochg            * set or reset value
+ *      BOOL   dodraw           * draw resulting change
  *
  *  We do not change the state if the item is disabled
  */
 WORD act_chg(WORD wh, WORD root, WORD obj, GRECT *pc,
-             WORD dochg, WORD dodraw)
+             BOOL dochg, BOOL dodraw)
 {
     OBJECT *tree = G.g_screen;
     FNODE *fn;
@@ -459,7 +459,7 @@ WORD act_chg(WORD wh, WORD root, WORD obj, GRECT *pc,
  *  the corresponding FNODE
  */
 void act_allchg(WORD wh, WORD root, WORD ex_obj, GRECT *pt, GRECT *pc,
-                WORD dochg)
+                BOOL dochg)
 {
     OBJECT *tree = G.g_screen;
     FNODE *fn;
@@ -540,7 +540,7 @@ void act_allchg(WORD wh, WORD root, WORD ex_obj, GRECT *pt, GRECT *pc,
  *   4. a shift-click on an object will toggle the state of that object only
  */
 void act_bsclick(WORD wh, WORD root, WORD mx, WORD my, WORD keystate,
-                 GRECT *pc, WORD dclick)
+                 GRECT *pc, BOOL dclick)
 {
     OBJECT *tree = G.g_screen;
     WORD obj;
