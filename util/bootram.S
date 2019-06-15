@@ -178,9 +178,13 @@ setloop:
         cmpi.l  #4,d0           // flushed all the ways?
         jne     setloop
 #else
+        moveq   #20,d0
+        cmp.l   d0,d5
+        jeq     inv_020or030
         moveq   #30,d0
         cmp.l   d0,d5
         jne     not68030
+inv_020or030:
         MOVEC_CACR_D0
         ori.b   #0x08,d0        // invalidate instruction cache
         MOVEC_D0_CACR

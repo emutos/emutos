@@ -277,6 +277,14 @@ m68000:
         jbsr    _detect_fpu
         move.l  d0,_fputype
 
+        cmpi.b  #20,_mcpu+3
+        jne     pi_chk030
+
+// We're running on a 68020
+        move.l  #0x000000001,d0  // enable cache
+        jra     init_cacr
+
+pi_chk030:
         cmpi.b  #30,_mcpu+3
         jne     pi_chk040
 
@@ -409,8 +417,12 @@ _invalidate_instruction_cache:
         jra     cpushl_loop
 #else
 #if CONF_WITH_ADVANCED_CPU
+        cmpi.b  #20,_mcpu+3
+        jeq     ii_020or030
         cmpi.b  #30,_mcpu+3
         jne     ii_not30
+
+ii_020or030:
         MOVEC_CACR_D0                   // get current cacr
         ori.b   #0x08,d0                // set the CI bit
         MOVEC_D0_CACR                   // clear the whole i-cache

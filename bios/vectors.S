@@ -670,10 +670,13 @@ _int_priv:
         ori.w   #0x200,(a0)             // make it MOVE CCR,XX
 
 #if CONF_WITH_ADVANCED_CPU
+        cmpi.b  #20,_mcpu+3
+        jeq     pi_020or030
         cmpi.b  #30,_mcpu+3
         jne     pi_not30
 
-        // on 68030, invalidate the i-cache line we just modified
+pi_020or030:
+        // on 68020/030, invalidate the i-cache line we just modified
         move.l  a0,d0                   // get full address
         andi.l  #0x000000fc,d0          //  zero out unused bits
         MOVEC_D0_CAAR                   //   & set caar -> index/longword of cache line
