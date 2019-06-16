@@ -41,8 +41,6 @@
 #define g_vsf_color( x )          gsx_1code(S_FILL_COLOR, x)
 #define g_vsl_udsty( x )          gsx_1code(ST_UD_LINE_STYLE, x)
 
-#define YRES_LIMIT  380     /* screens with yres less than this are considered */
-                            /*  'small' for the purposes of get_char_height()  */
 
 GLOBAL WORD     gl_width;
 GLOBAL WORD     gl_height;
@@ -413,21 +411,12 @@ void gsx_trans(void *saddr, UWORD swb, void *daddr, UWORD dwb, UWORD h)
 
 
 /*
- *  Determine char height based on yres in WS
- */
-static WORD get_char_height(WS *ws)
-{
-    return (ws->ws_yres<YRES_LIMIT) ? 6 : ws->ws_chmaxh;
-}
-
-
-/*
  *  Routine to initialize all the global variables dealing with
  *  a particular workstation open
  */
 void gsx_start(void)
 {
-    WORD    char_height;
+    WORD dummy;
 
     /* reset variables to force initial VDI calls */
     gl_mode = gl_tcolor = gl_lcolor = -1;
@@ -442,11 +431,17 @@ void gsx_start(void)
     KINFO(("VDI video mode = %dx%d %d-%s\n", gl_width, gl_height, gl_nplanes,
         (gl_nplanes < 16 ? "plane" : "bit")));
 
-    char_height = gl_ws.ws_chminh;
-    vst_height( char_height, &gl_wsptschar, &gl_hsptschar,
-                                &gl_wschar, &gl_hschar );
-    char_height = get_char_height(&gl_ws);
-    vst_height(char_height, &gl_wptschar, &gl_hptschar, &gl_wchar, &gl_hchar);
+    /*
+     * replacement VDIs (e.g. NVDI) may support more than two font sizes.
+     * we use the current font height for the big (IBM) desktop font,
+     * and the minimum font height for the small (SMALL) desktop font.
+     */
+    gsx_textsize(&gl_wptschar, &gl_hptschar, &gl_wchar, &gl_hchar);
+    gl_ws.ws_chmaxh = gl_hptschar;  /* save the IBM font size here */
+    vst_height(gl_ws.ws_chminh, &gl_wsptschar, &gl_hsptschar, &gl_wschar, &gl_hschar);
+
+    /* must restore the current font height */
+    vst_height(gl_ws.ws_chmaxh, &dummy, &dummy, &dummy, &dummy);
 
     gl_hbox = gl_hchar + 3;
     gl_wbox = (gl_hbox * gl_ws.ws_hpixel) / gl_ws.ws_wpixel;
@@ -539,14 +534,11 @@ static void gsx_tcalc(WORD font, char *ptext, WORD *ptextw, WORD *ptexth, WORD *
 
 void gsx_tblt(WORD tb_f, WORD x, WORD y, WORD tb_nc)
 {
-    WORD    pts_height;
-
     if (tb_f == IBM)
     {
         if (tb_f != gl_font)
         {
-            pts_height = get_char_height(&gl_ws);
-            vst_height(pts_height, &gl_wptschar, &gl_hptschar, &gl_wchar, &gl_hchar);
+            vst_height(gl_ws.ws_chmaxh, &gl_wptschar, &gl_hptschar, &gl_wchar, &gl_hchar);
             gl_font = tb_f;
         }
         y += gl_hptschar;
@@ -556,8 +548,7 @@ void gsx_tblt(WORD tb_f, WORD x, WORD y, WORD tb_nc)
     {
         if (tb_f != gl_font)
         {
-            pts_height = gl_ws.ws_chminh;
-            vst_height(pts_height, &gl_wsptschar, &gl_hsptschar, &gl_wschar, &gl_hschar);
+            vst_height(gl_ws.ws_chminh, &gl_wsptschar, &gl_hsptschar, &gl_wschar, &gl_hschar);
             gl_font = tb_f;
         }
         y += gl_hsptschar;

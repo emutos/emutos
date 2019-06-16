@@ -45,6 +45,7 @@ void gsx_moff(void);
 WORD gsx_char(void);
 void gsx_setmousexy(WORD x, WORD y);
 WORD gsx_nplanes(void);
+void gsx_textsize(WORD *charw, WORD *charh, WORD *cellw, WORD *cellh);
 
 void g_v_pline(WORD  count, WORD *pxyarray );
 void vst_clip(WORD clip_flag, WORD *pxyarray );

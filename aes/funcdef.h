@@ -56,6 +56,8 @@
 
 #define SET_INPUT_MODE          33
 
+#define INQ_TEXT_ATTRIBUTES     38
+
 #define OPEN_VWORKSTATION       100
 #define CLOSE_VWORKSTATION      101
 #define EXTENDED_INQUIRE        102

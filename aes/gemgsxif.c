@@ -476,6 +476,19 @@ WORD gsx_nplanes(void)
     return intout[4];
 }
 
+
+/* Get text size info */
+void gsx_textsize(WORD *charw, WORD *charh, WORD *cellw, WORD *cellh)
+{
+    gsx_ncode(INQ_TEXT_ATTRIBUTES, 0, 0);
+    *charw = ptsout[0];
+    *charh = ptsout[1];
+    *cellw = ptsout[2];
+    *cellh = ptsout[3];
+}
+
+
+
 /* This function was formerly just called v_opnwk, but there was a
    conflict with the VDI then, so I renamed it to g_v_opnwk  - Thomas */
 static void g_v_opnwk(WORD *pwork_in, WORD *phandle, WS *pwork_out )
