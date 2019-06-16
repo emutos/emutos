@@ -136,10 +136,10 @@ void ap_tplay(const EVNTREC *pbuff,WORD length,WORD scale)
                  * disconnect cursor drawing & movement routines
                  */
                 i_ptr(justretf);
-                gsx_ncode(CUR_VECX, 0, 0);
+                gsx_0code(CUR_VECX);
                 m_lptr2(&drwaddr);  /* old address will be used by drawrat() */
                 i_ptr(justretf);
-                gsx_ncode(MOT_VECX, 0, 0);
+                gsx_0code(MOT_VECX);
                 m_lptr2(&mot_vecx_save);
             }
             f.f_code = mchange;
@@ -163,9 +163,9 @@ void ap_tplay(const EVNTREC *pbuff,WORD length,WORD scale)
         drawrat(xrat, yrat);
         gsx_setmousexy(xrat, yrat);     /* no jumping cursors, please */
         i_ptr(drwaddr);                 /* restore vectors */
-        gsx_ncode(CUR_VECX, 0, 0);
+        gsx_0code(CUR_VECX);
         i_ptr(mot_vecx_save);
-        gsx_ncode(MOT_VECX, 0, 0);
+        gsx_0code(MOT_VECX);
     }
 
     gl_play = FALSE;

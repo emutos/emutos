@@ -22,7 +22,7 @@ void gsx_malloc(void);
 void gsx_mfree(void);
 
 void gsx_mret(LONG *pmaddr, LONG *pmlen);
-void gsx_ncode(WORD code, WORD n, WORD m);
+void gsx_0code(WORD code);
 void gsx_1code(WORD code, WORD value);
 
 void gsx_wsclose(void);

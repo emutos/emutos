@@ -150,13 +150,20 @@ void gsx_mret(LONG *pmaddr, LONG *pmlen)
 
 
 
-void gsx_ncode(WORD code, WORD n, WORD m)
+static void gsx_ncode(WORD code, WORD n, WORD m)
 {
     contrl[0] = code;
     contrl[1] = n;
     contrl[3] = m;
     contrl[6] = gl_handle;
     gsx2();
+}
+
+
+
+void gsx_0code(WORD code)
+{
+    gsx_ncode(code, 0, 0);
 }
 
 
@@ -203,14 +210,14 @@ static void gsx_wsopen(void)
 
 void gsx_wsclose(void)
 {
-    gsx_ncode(CLOSE_WORKSTATION, 0, 0);
+    gsx_0code(CLOSE_WORKSTATION);
 }
 
 
 
 void gsx_wsclear(void)
 {
-    gsx_ncode(CLEAR_WORKSTATION, 0, 0);
+    gsx_0code(CLEAR_WORKSTATION);
 }
 
 
@@ -231,11 +238,11 @@ void ratexit(void)
 static void gsx_setmb(PFVOID boff, PFVOID moff, PFVOID *pdrwaddr)
 {
     i_ptr( boff );
-    gsx_ncode(BUT_VECX, 0, 0);
+    gsx_0code(BUT_VECX);
     m_lptr2( &old_bcode );
 
     i_ptr( moff );
-    gsx_ncode(MOT_VECX, 0, 0);
+    gsx_0code(MOT_VECX);
     m_lptr2( &old_mcode );
 
 /* not used in Atari GEM:
@@ -250,10 +257,10 @@ static void gsx_setmb(PFVOID boff, PFVOID moff, PFVOID *pdrwaddr)
 static void gsx_resetmb(void)
 {
     i_ptr( (void*)old_bcode );
-    gsx_ncode(BUT_VECX, 0, 0);
+    gsx_0code(BUT_VECX);
 
     i_ptr( (void*)old_mcode );
-    gsx_ncode(MOT_VECX, 0, 0);
+    gsx_0code(MOT_VECX);
 
 /* not used in Atari GEM:
     i_ptr( (void*)drwaddr );
@@ -268,7 +275,7 @@ void gsx_init(void)
     gsx_wsopen();
     gsx_start();
     gsx_setmb(far_bcha, far_mcha, &drwaddr);
-    gsx_ncode(MOUSE_ST, 0, 0);
+    gsx_0code(MOUSE_ST);
     xrat = ptsout[0];
     yrat = ptsout[1];
 
@@ -302,13 +309,13 @@ void gsx_graphic(WORD tographic)
         if (gl_graphic)
         {
             contrl[5] = 2;
-            gsx_ncode(ESCAPE_FUNCTION, 0, 0);
+            gsx_0code(ESCAPE_FUNCTION);
             gsx_setmb(far_bcha, far_mcha, &drwaddr);
         }
         else
         {
             contrl[5] = 3;
-            gsx_ncode(ESCAPE_FUNCTION, 0, 0);
+            gsx_0code(ESCAPE_FUNCTION);
             gsx_resetmb();
         }
     }
@@ -378,7 +385,7 @@ void bb_restore(GRECT *pr)
 WORD gsx_tick(void *tcode, void *ptsave)
 {
     i_ptr( tcode );
-    gsx_ncode(TIM_VECX, 0, 0);
+    gsx_0code(TIM_VECX);
     m_lptr2( ptsave );
     return(intout[0]);
 }
@@ -407,7 +414,7 @@ void gsx_mxmy(WORD *pmx, WORD *pmy)
 
 WORD gsx_kstate(void)
 {
-    gsx_ncode(KEY_SHST, 0, 0);
+    gsx_0code(KEY_SHST);
     return(intout[0]);
 }
 
@@ -416,7 +423,7 @@ WORD gsx_kstate(void)
 void gsx_moff(void)
 {
     if (!gl_moff)
-        gsx_ncode(HIDE_CUR, 0, 0);
+        gsx_0code(HIDE_CUR);
 
     gl_moff++;
 }
@@ -480,7 +487,7 @@ WORD gsx_nplanes(void)
 /* Get text size info */
 void gsx_textsize(WORD *charw, WORD *charh, WORD *cellw, WORD *cellh)
 {
-    gsx_ncode(INQ_TEXT_ATTRIBUTES, 0, 0);
+    gsx_0code(INQ_TEXT_ATTRIBUTES);
     *charw = ptsout[0];
     *charh = ptsout[1];
     *cellw = ptsout[2];
@@ -589,7 +596,7 @@ void vrn_trnfm(FDB *psrcMFDB, FDB *pdesMFDB)
     i_ptr( psrcMFDB );
     i_ptr2( pdesMFDB );
 
-    gsx_ncode(TRANSFORM_FORM, 0, 0);
+    gsx_0code(TRANSFORM_FORM);
 }
 
 
@@ -611,7 +618,7 @@ void g_vsl_width(WORD width)
 void vex_wheelv(PFVOID new, PFVOID *old)
 {
     i_ptr(new);
-    gsx_ncode(WHEEL_VECX, 0, 0);
+    gsx_0code(WHEEL_VECX);
     m_lptr2(old);
 }
 #endif
