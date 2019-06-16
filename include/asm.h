@@ -46,7 +46,7 @@
 #define PE_RELOCATE   50    /* required for NatFeats support only, not in Atari TOS */
 
 /* OS entry points implemented in util/miscasm.S */
-extern long trap1(int, ...);
+extern long trap1(int, ...); /* Not reentrant! Do not call for Pexec() */
 extern long trap1_pexec(short mode, const char * path,
   const void * tail, const char * env);
 
