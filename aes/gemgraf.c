@@ -554,7 +554,7 @@ void gsx_tblt(WORD tb_f, WORD x, WORD y, WORD tb_nc)
         y += gl_hsptschar;
     }
 
-    contrl[0] = 8;          /* TEXT */
+    contrl[0] = TEXT;
     contrl[1] = 1;
     contrl[6] = gl_handle;
     ptsin[0] = x;
