@@ -34,12 +34,11 @@
 
 #define ORGADDR NULL
 
-                                                /* in GSXBIND.C         */
-#define g_vsf_interior( x )       gsx_1code(S_FILL_STYLE, x)
-#define g_vsl_type( x )           gsx_1code(S_LINE_TYPE, x)
-#define g_vsf_style( x )          gsx_1code(S_FILL_INDEX, x)
-#define g_vsf_color( x )          gsx_1code(S_FILL_COLOR, x)
-#define g_vsl_udsty( x )          gsx_1code(ST_UD_LINE_STYLE, x)
+#define g_vsf_interior( x )       gsx_1code(SET_FILL_INTERIOR, x)
+#define g_vsl_type( x )           gsx_1code(SET_LINE_TYPE, x)
+#define g_vsf_style( x )          gsx_1code(SET_FILL_STYLE, x)
+#define g_vsf_color( x )          gsx_1code(SET_FILL_COLOR, x)
+#define g_vsl_udsty( x )          gsx_1code(SET_UD_LINE_STYLE, x)
 
 
 GLOBAL WORD     gl_width;
@@ -229,7 +228,7 @@ void gsx_attr(UWORD text, UWORD mode, UWORD color)
     {
         if (color != gl_tcolor)
         {
-            contrl[0] = S_TEXT_COLOR;
+            contrl[0] = SET_TEXT_COLOR;
             gl_tcolor = color;
         }
     }
@@ -237,7 +236,7 @@ void gsx_attr(UWORD text, UWORD mode, UWORD color)
     {
         if (color != gl_lcolor)
         {
-            contrl[0] = S_LINE_COLOR;
+            contrl[0] = SET_LINE_COLOR;
             gl_lcolor = color;
         }
     }

@@ -275,7 +275,7 @@ void gsx_init(void)
     gsx_wsopen();
     gsx_start();
     gsx_setmb(far_bcha, far_mcha, &drwaddr);
-    gsx_0code(MOUSE_ST);
+    gsx_0code(MOUSE_STATE);
     xrat = ptsout[0];
     yrat = ptsout[1];
 
@@ -398,7 +398,7 @@ void gsx_mfset(const MFORM *pmfnew)
     if (!gl_ctmown)
         gl_mouse = *pmfnew;
     memcpy(intin, (void *)pmfnew, sizeof(MFORM));
-    gsx_ncode(ST_CUR_FORM, 0, sizeof(MFORM)/sizeof(WORD));
+    gsx_ncode(SET_CUR_FORM, 0, sizeof(MFORM)/sizeof(WORD));
     gsx_mon();
 }
 
@@ -414,7 +414,7 @@ void gsx_mxmy(WORD *pmx, WORD *pmy)
 
 WORD gsx_kstate(void)
 {
-    gsx_0code(KEY_SHST);
+    gsx_0code(KEY_STATE);
     return(intout[0]);
 }
 
@@ -545,7 +545,7 @@ void vst_height(WORD height, WORD *pchr_width, WORD *pchr_height,
 {
     ptsin[0] = 0;
     ptsin[1] = height;
-    gsx_ncode(CHAR_HEIGHT, 1, 0);
+    gsx_ncode(SET_CHAR_HEIGHT, 1, 0);
     *pchr_width = ptsout[0];
     *pchr_height = ptsout[1];
     *pcell_width = ptsout[2];
@@ -570,7 +570,7 @@ void vro_cpyfm(WORD wr_mode, WORD *pxyarray, FDB *psrcMFDB, FDB *pdesMFDB )
     i_ptr( psrcMFDB );
     i_ptr2( pdesMFDB );
     i_ptsin( pxyarray );
-    gsx_ncode(COPY_RASTER_FORM, 4, 1);
+    gsx_ncode(COPY_RASTER_OPAQUE, 4, 1);
     i_ptsin( ptsin );
 }
 
@@ -585,7 +585,7 @@ void vrt_cpyfm(WORD wr_mode, WORD *pxyarray, FDB *psrcMFDB, FDB *pdesMFDB,
     i_ptr( psrcMFDB );
     i_ptr2( pdesMFDB );
     i_ptsin( pxyarray );
-    gsx_ncode(TRAN_RASTER_FORM, 4, 3);
+    gsx_ncode(COPY_RASTER_TRANS, 4, 3);
     i_ptsin( ptsin );
 }
 
@@ -609,7 +609,7 @@ void g_vsl_width(WORD width)
 {
     ptsin[0] = width;
     ptsin[1] = 0;
-    gsx_ncode(S_LINE_WIDTH, 1, 0);
+    gsx_ncode(SET_LINE_WIDTH, 1, 0);
 }
 
 

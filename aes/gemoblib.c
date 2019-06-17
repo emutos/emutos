@@ -37,7 +37,7 @@
 #include "kprint.h"
 
                                                 /* in GSXBIND.C         */
-#define g_vsf_color( x )          gsx_1code(S_FILL_COLOR, x)
+#define g_vsf_color( x )          gsx_1code(SET_FILL_COLOR, x)
 
 
 /*
