@@ -665,13 +665,100 @@ char *iobuf, *p;
     return rc;
 }
 
+/*
+ *  extract next dirname from input path (includes any terminating backslash)
+ *
+ *  returns pointer to next starting point in input path
+ */
+PRIVATE char *next_dir(char *out,char *in)
+{
+    while(*in) {
+        *out++ = *in++;
+        if (*(in-1) == '\\')
+            break;
+    }
+    *out = '\0';
+
+    return in;
+}
+
+/*
+ *  back up one level of directory in an (assumed) absolute path
+ *
+ *  returns pointer to char following the backslash at the end of
+ *  the next higher level
+ */
+PRIVATE char *prev_dir(char *p)
+{
+    /* don't backup past root! */
+    if (*--p == '\\')
+        if (*(p-1) == ':')
+            return p+1;
+
+    while(*--p != '\\')
+        ;
+
+    return p+1;
+}
+
+/*
+ *  convert name to absolute path
+ */
+PRIVATE LONG make_absolute(char *out,char *in)
+{
+char *p, *q, temp[MAXPATHLEN];
+LONG rc = 0L;
+
+    p = in;
+    q = out;
+
+    /* set up initial drive letter and : separator */
+    if (*(p+1) == ':') {
+        *q++ = toupper(*p);
+        p += 2;
+    } else {
+        *q++ = Dgetdrv() + 'A';
+    }
+    *q++ = ':';
+
+    /* insert current path if specified path is relative */
+    if (*p != '\\') {
+        if (Dgetpath(temp,out[0]-'A'+1) != 0)   /* e.g. invalid drive */
+            temp[0] = '\0';
+        strcpy(q,temp);
+        q += strlen(q);
+    } else p++;
+    *q++ = '\\';
+
+    /* copy dirnames one at a time, with special processing for . and .. */
+    while(*p) {
+        p = next_dir(temp,p);
+        if (temp[0] == '.') {
+            if ((temp[1] == '\\') || (temp[1] == '\0'))     /* got '.':       */
+                continue;                                   /*  nothing to do */
+            if ((temp[1] == '.')
+             && ((temp[2] == '\\') || (temp[2] == '\0'))) { /* got '..':         */
+                q = prev_dir(q);                            /* move up one level */
+                continue;
+            }
+            rc = EPTHNF;
+            break;
+        }
+        strcpy(q,temp);
+        q += strlen(q);
+    }
+
+    *q = '\0';
+
+    return rc;
+}
 
 /*
  *  copy_move
  */
 PRIVATE LONG copy_move(WORD argc,char **argv,WORD delete)
 {
-char inname[MAXPATHLEN], outname[MAXPATHLEN];
+char inname[MAXPATHLEN], outname[MAXPATHLEN], fullname[MAXPATHLEN];
 char *inptr, *outptr;
 WORD in, out, output_is_dir = 0;
 char *iobuf;
@@ -687,21 +774,29 @@ LONG bufsize, n, rc;
     /*
      * determine if target is a valid directory
      */
-    rc = check_path_component(outname);
+    rc = make_absolute(fullname,outname);   /* convert to absolute path */
     if (rc == 0L)
+        rc = check_path_component(fullname);
+    if (rc == 0L)                           /* it's a directory */
         output_is_dir = 1;
+    else if (rc == INVALID_PATH)            /* it's a file */
+        rc = 0L;
 
     /*
-     * if invalid drive OR (multiple input files and output isn't a directory),
+     * if error detected OR (multiple input files and output isn't a directory),
      * it's an error
      */
-    if ((rc == EDRIVE)
+    if ((rc < 0L)
      || ((n > 1) && !output_is_dir)) {
         message(outname);
         messagenl(_(" is not a directory"));
         return 0;           /* because we already issued a message */
     }
 
+    /*
+     * for the remainder of processing, we use the converted output name
+     */
+    outptr = extract_path(outname,fullname);
     if (output_is_dir) {
         outptr += strlen(outptr);
         if ((*(outptr-1) != '\\') && (*(outptr-1) != ':'))
@@ -997,6 +1092,13 @@ WORD drive_number;
     return (drvbits & (1L << drive_number)) ? 1 : 0;
 }
 
+/*
+ *  checks a pathname
+ *
+ *  returns 0 if it specifies a directory
+ *          INVALID_PATH if it specifies a file
+ *          else a negative error code
+ */
 PRIVATE LONG check_path_component(char *component)
 {
 char *p;
@@ -1019,7 +1121,7 @@ LONG rc;
 
     for (p = component; *p; p++) {      /* scan thru string */
         if ((*p == '?') || (*p == '*'))
-            return INVALID_PATH;
+            return EPTHNF;
     }
 
     if (*(p-1) == '\\')
@@ -1031,9 +1133,9 @@ LONG rc;
 
     rc = Fsfirst(component,0x17);
     if (rc < 0L)
-        rc = INVALID_PATH;
+        rc = EPTHNF;
     else if ((rc == 0L) && ((dta->d_attrib&0x10) != 0x10))
-        rc = INVALID_PATH;
+        rc = INVALID_PATH;      /* a file, not a directory */
 
     if (fixup)
         *p = '\\';

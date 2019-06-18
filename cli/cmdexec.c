@@ -1,7 +1,7 @@
 /*
  * EmuCON2: execute external programs
  *
- * Copyright (C) 2013-2017 The EmuTOS development team
+ * Copyright (C) 2013-2019 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows
@@ -33,7 +33,7 @@ char cmdline[CMDLINELEN];
 LONG rc;
 
     if (has_wildcard(argv[0]))
-        return INVALID_PATH;
+        return EPTHNF;
 
     if (build_cmdline(cmdline,argc,argv) < 0)
         return CMDLINE_LENGTH;
