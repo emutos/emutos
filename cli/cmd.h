@@ -165,7 +165,7 @@ typedef LONG FUNC(WORD argc,char **argv);
 #define ENMFIL          -49
                                 /* additional emucon-only error codes */
 #define USER_BREAK      -100        /* user interrupted long output */
-#define INVALID_PATH    -101        /* invalid component for PATH command */
+#define NOT_DIRECTORY   -101        /* path points to a file */
 #define DISK_FULL       -102
 #define CMDLINE_LENGTH  -103
 #define DIR_NOT_EMPTY   -104        /* translated from EACCDN for folders */

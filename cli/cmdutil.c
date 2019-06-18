@@ -82,7 +82,7 @@ const char *p;
     case USER_BREAK:
         p = _("interrupted");
         break;
-    case INVALID_PATH:
+    case NOT_DIRECTORY:
         p = _("invalid path");
         break;
     case DISK_FULL:

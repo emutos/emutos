@@ -779,7 +779,7 @@ LONG bufsize, n, rc;
         rc = check_path_component(fullname);
     if (rc == 0L)                           /* it's a directory */
         output_is_dir = 1;
-    else if (rc == INVALID_PATH)            /* it's a file */
+    else if (rc == NOT_DIRECTORY)           /* it's a file */
         rc = 0L;
 
     /*
@@ -1096,7 +1096,7 @@ WORD drive_number;
  *  checks a pathname
  *
  *  returns 0 if it specifies a directory
- *          INVALID_PATH if it specifies a file
+ *          NOT_DIRECTORY if it specifies a file
  *          else a negative error code
  */
 PRIVATE LONG check_path_component(char *component)
@@ -1135,7 +1135,7 @@ LONG rc;
     if (rc < 0L)
         rc = EPTHNF;
     else if ((rc == 0L) && ((dta->d_attrib&0x10) != 0x10))
-        rc = INVALID_PATH;      /* a file, not a directory */
+        rc = NOT_DIRECTORY;     /* a file, not a directory */
 
     if (fixup)
         *p = '\\';
