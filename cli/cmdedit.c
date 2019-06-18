@@ -19,6 +19,7 @@
 LOCAL WORD linesize;
 LOCAL WORD history_num;
 LOCAL char *history_line[HISTORY_SIZE];
+LOCAL char *insert;     /* saves insertion point for tab completion */
 
 /*
  *  function prototypes
@@ -28,6 +29,7 @@ PRIVATE WORD edit_line(char *line,WORD *pos,WORD *len,WORD scancode,WORD prevcod
 PRIVATE void erase_line(char *start,WORD len);
 PRIVATE LONG getfirstnondot(const char *buffer,WORD executable_only);
 PRIVATE LONG getnextfile(WORD executable_only);
+PRIVATE char *insertion_point(char *start);
 PRIVATE WORD next_history(char *line);
 PRIVATE WORD next_word_count(const char *line,WORD pos,WORD len);
 PRIVATE WORD previous_history(char *line);
@@ -247,7 +249,9 @@ WORD n, word = 0;
         break;
     case TAB:           /* tab completion */
         start = start_of_current_word(line,*pos);
-        if (start+sizeof(dta->d_fname)-line >= linesize)
+        if (prevcode != TAB)
+            insert = insertion_point(start);    /* where we insert the names */
+        if (insert+sizeof(dta->d_fname)-line >= linesize)
             break;
         if (prevcode == TAB) {
             rc = getnextfile(start==line);
@@ -264,8 +268,8 @@ WORD n, word = 0;
             rc = getfirstnondot(buffer,start==line);
         }
         if (rc == 0L) {
-            erase_line(start,*pos-(start-line));
-            for (q = start, p = dta->d_fname; *p; ) {
+            erase_line(insert,*pos-(insert-line));
+            for (q = insert, p = dta->d_fname; *p; ) {
                 conout(*p);
                 *q++ = *p++;
             }
@@ -375,6 +379,21 @@ char *p;
 
     /* no spaces found, so start of line */
     return line;
+}
+
+/*
+ *  return pointer to insertion point for tab completion
+ */
+PRIVATE char *insertion_point(char *start)
+{
+char *p, *ins = NULL;
+
+    for (p = ins = start; *p; p++) {
+        if ((*p == ':') || (*p == '\\'))
+            ins = p+1;
+    }
+
+    return ins;
 }
 
 /*
