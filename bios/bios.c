@@ -24,6 +24,7 @@
 #include "biosext.h"
 #include "bios.h"
 #include "dos.h"
+#include "bdosbind.h"
 #include "dta.h"
 #include "pd.h"
 #include "gemerror.h"
@@ -459,7 +460,7 @@ static void bootstrap(void)
     nf_getbootstrap_args(args, sizeof(args));
 
     /* allocate space */
-    pd = (PD *) trap1_pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, args, default_env);
+    pd = (PD *) Pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, args, default_env);
 
     /* get the TOS executable from the emulator */
     length = nf_bootstrap(pd->p_lowtpa + sizeof(PD), pd->p_hitpa - pd->p_lowtpa);
@@ -469,7 +470,7 @@ static void bootstrap(void)
         goto err;
 
     /* relocate the loaded executable */
-    r = trap1_pexec(PE_RELOCATE, (char*)length, pd, "");
+    r = Pexec(PE_RELOCATE, (char *)length, (char *)pd, "");
     if (r != (LONG)pd)
         goto err;
 
@@ -477,11 +478,11 @@ static void bootstrap(void)
     bootdev = nf_getbootdrive();
 
     /* execute the relocated process */
-    trap1_pexec(PE_GO, "", pd, "");
+    Pexec(PE_GO, "", (char *)pd, "");
 
 err:
-    trap1(0x49, (long)pd->p_env); /* Mfree() the environment */
-    trap1(0x49, (long)pd); /* Mfree() the process area */
+    Mfree(pd->p_env); /* Mfree() the environment */
+    Mfree(pd); /* Mfree() the process area */
 #endif
 }
 
@@ -541,7 +542,7 @@ static void run_auto_program(const char* filename)
     strcat(path, filename);
 
     KDEBUG(("Loading %s ...\n", path));
-    trap1_pexec(PE_LOADGO, path, "", default_env);  /* Pexec */
+    Pexec(PE_LOADGO, path, "", default_env);
     KDEBUG(("[OK]\n"));
 }
 
@@ -559,8 +560,8 @@ static void autoexec(void)
     if(!blkdev_avail(bootdev))          /* check, if bootdev available */
         return;
 
-    trap1(0x1a, &dta);                      /* Setdta */
-    err = trap1(0x4e, "\\AUTO\\*.PRG", 7);  /* Fsfirst */
+    Fsetdta(&dta);
+    err = Fsfirst("\\AUTO\\*.PRG", 7);
     while(err == 0) {
 #ifdef TARGET_PRG
         if (!strncmp(dta.d_fname, "EMUTOS", 6))
@@ -574,10 +575,10 @@ static void autoexec(void)
 
             /* Setdta. BetaDOS corrupted the AUTO load if the Setdta
              * not repeated here */
-            trap1(0x1a, &dta);
+            Fsetdta(&dta);
         }
 
-        err = trap1(0x4f);                  /* Fsnext */
+        err = Fsnext();
     }
 }
 
@@ -671,7 +672,7 @@ void biosmain(void)
     blkdev_boot();
 
     defdrv = bootdev;
-    trap1(0x0e, defdrv);        /* Set boot drive: Dsetdrv(defdrv) */
+    Dsetdrv(defdrv);            /* Set boot drive */
 
 #if ENABLE_RESET_RESIDENT
     run_reset_resident();       /* see comments above */
@@ -689,10 +690,10 @@ void biosmain(void)
 
 #if WITH_CLI
     if (bootflags & BOOTFLAG_EARLY_CLI) {   /* run an early console */
-        PD *pd = (PD *) trap1_pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, "", default_env);
+        PD *pd = (PD *) Pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, "", default_env);
         pd->p_tbase = (UBYTE *) coma_start;
         pd->p_tlen = pd->p_dlen = pd->p_blen = 0;
-        trap1_pexec(PE_GOTHENFREE, "", pd, "");
+        Pexec(PE_GOTHENFREE, "", (char *)pd, "");
     }
 #endif
 
@@ -702,14 +703,14 @@ void biosmain(void)
 
     if(cmdload != 0) {
         /* Pexec a program called COMMAND.PRG */
-        trap1_pexec(PE_LOADGO, "COMMAND.PRG", "", default_env);
+        Pexec(PE_LOADGO, "COMMAND.PRG", "", default_env);
     } else if (exec_os) {
         /* start the default (ROM) shell */
         PD *pd;
-        pd = (PD *) trap1_pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, "", default_env);
+        pd = (PD *) Pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, "", default_env);
         pd->p_tbase = (UBYTE *) exec_os;
         pd->p_tlen = pd->p_dlen = pd->p_blen = 0;
-        trap1_pexec(PE_GO, "", pd, "");
+        Pexec(PE_GO, "", (char*)pd, "");
     }
 
 #if CONF_WITH_SHUTDOWN

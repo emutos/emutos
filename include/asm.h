@@ -32,24 +32,6 @@
 #ifndef ASM_H
 #define ASM_H
 
-/*
- * values of 'mode' for Pexec()
- *
- * these were moved here because of the definition of trap1_pexec() below
- */
-#define PE_LOADGO     0
-#define PE_LOAD       3
-#define PE_GO         4
-#define PE_BASEPAGE   5
-#define PE_GOTHENFREE 6
-#define PE_BASEPAGEFLAGS 7
-#define PE_RELOCATE   50    /* required for NatFeats support only, not in Atari TOS */
-
-/* OS entry points implemented in util/miscasm.S */
-extern long trap1(int, ...); /* Not reentrant! Do not call for Pexec() */
-extern long trap1_pexec(short mode, const char * path,
-  const void * tail, const char * env);
-
 /* Wrapper around the STOP instruction. This preserves SR. */
 extern void stop_until_interrupt(void);
 

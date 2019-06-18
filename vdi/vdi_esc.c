@@ -15,14 +15,12 @@
 #include "../bios/lineavars.h"
 #include "asm.h"
 #include "kprint.h"
+#include "bdosbind.h"
 
 
 /* Local Constants */
 
 #define ldri_escape             19      /* last DRI escape = 19. */
-
-#define X_RAWIO  0x06
-#define X_CONWS  0x09
 
 
 /*
@@ -30,7 +28,7 @@
  */
 static LONG crawio(WORD ch)
 {
-    return trap1(X_RAWIO,ch);
+    return Crawio(ch);
 }
 
 
@@ -39,7 +37,7 @@ static LONG crawio(WORD ch)
  */
 static void cconws(char *string)
 {
-    trap1(X_CONWS, string);
+    Cconws(string);
 }
 
 

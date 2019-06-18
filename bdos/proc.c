@@ -17,6 +17,7 @@
 
 #include "config.h"
 #include "portab.h"
+#include "bdosdefs.h"
 #include "fs.h"
 #include "mem.h"
 #include "proc.h"
