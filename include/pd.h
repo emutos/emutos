@@ -17,7 +17,7 @@
 #define PD_H
 
 #include "portab.h"
-#include "dta.h"
+#include "bdosdefs.h"
 
 #define NUMSTD      6       /* number of standard files */
 

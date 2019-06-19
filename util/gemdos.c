@@ -20,7 +20,6 @@
 #include "string.h"
 #include "asm.h"
 #include "gemdos.h"
-#include "dta.h"
 #include "bdosbind.h"
 
 

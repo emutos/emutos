@@ -20,7 +20,7 @@
 #ifndef GEMLIB_H
 #define GEMLIB_H
 
-#include "dta.h"
+#include "bdosdefs.h"
                                 /* mu_flags             */
 #define MU_KEYBD    0x0001
 #define MU_BUTTON   0x0002

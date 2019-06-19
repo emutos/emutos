@@ -25,7 +25,6 @@
 #include "bios.h"
 #include "dos.h"
 #include "bdosbind.h"
-#include "dta.h"
 #include "pd.h"
 #include "gemerror.h"
 #include "kprint.h"

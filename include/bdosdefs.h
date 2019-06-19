@@ -1,10 +1,11 @@
 /*
  * bdosdefs.h - Public definitions for BDOS system calls
  *
- * Copyright (C) 2019 The EmuTOS development team
+ * Copyright (C) 2014-2019 The EmuTOS development team
  *
  * Authors:
  *  VRI   Vincent Rivière
+ *  RFB   Roger Burrows
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -30,5 +31,15 @@
 #if DETECT_NATIVE_FEATURES
 #define PE_RELOCATE   50    /* required for NatFeats support only, not in Atari TOS */
 #endif
+
+typedef struct
+{
+    char    d_reserved[21];     /* internal EmuTOS usage */
+    char    d_attrib;           /* attributes */
+    UWORD   d_time;             /* packed time */
+    UWORD   d_date;             /* packed date */
+    LONG    d_length;           /* size */
+    char    d_fname[14];        /* name */
+} DTA;
 
 #endif /* _BDOSDEFS_H */

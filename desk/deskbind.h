@@ -21,7 +21,7 @@
 
 #include "deskconf.h"
 #include "desk_rsc.h"           /* for RS_NTREE */
-#include "dta.h"
+#include "bdosdefs.h"
 #include "deskapp.h"
 #include "deskfpd.h"
 #include "deskwin.h"
