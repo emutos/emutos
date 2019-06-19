@@ -34,6 +34,7 @@ echo "Deploying $LOCAL_DIRNAME to $SSH_HOST:$SSH_PATH/$REMOTE_DIRNAME"
 echo "See result at https://sourceforge.net/projects/$SF_PROJECT/files/$SF_DIR/$REMOTE_DIRNAME/"
 echo '$ lftp'
 cat << EOF | tee /dev/stderr | lftp
+set sftp:connect-program "ssh -a -x -o StrictHostKeyChecking=no"
 open sftp://$SSH_USER:@$SSH_HOST$SSH_PATH
 mirror -R $LOCAL_DIRNAME $REMOTE_DIRNAME
 ls | .travis/generate-purge.sh >purge.lftp
