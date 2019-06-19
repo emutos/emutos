@@ -206,7 +206,7 @@ All XBIOS versions:
  T 0x1e Ongibit
  T 0x1f Xbtimer
  T 0x20 Dosound
- - 0x21 Setprt          (useless - will not be implemented)
+ T 0x21 Setprt
  X 0x22 Kbdvbase
  T 0x23 Kbrate
  - 0x24 Prtblk          (useless - will not be implemented)

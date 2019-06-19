@@ -23,6 +23,7 @@
 #include "ikbd.h"
 #include "midi.h"
 #include "mfp.h"
+#include "parport.h"
 #include "serport.h"
 #include "machine.h"
 #include "screen.h"
@@ -671,14 +672,26 @@ static void xbios_20(const UBYTE *ptr)
 
 
 
-/*
- * xbios_21 - (setprt) Set/get printer configuration byte.
- *
- * If 'config' is -1 ($FFFF) return the current printer configuration
- * byte. Otherwise set the byte and return its old value.
- */
+#if CONF_WITH_PRINTER_PORT
 
-/* unimplemented */
+/*
+ * xbios_21 - (setprt) Set/get the desktop printer configuration word.
+ *
+ * If 'config' is not -1 ($FFFF) set the word to the new value.  Note
+ * that only bit 4 (parallel or serial) is used by EmuTOS.
+ *
+ * Always returns the old value.
+ */
+#if DBG_XBIOS
+static WORD xbios_21(WORD config)
+{
+    kprintf("XBIOS: Setprt()\n");
+    return setprt(config);
+}
+#endif
+
+#endif  /* CONF_WITH_PRINTER_PORT */
+
 
 
 /*
@@ -1112,7 +1125,11 @@ const PFLONG xbios_vecs[] = {
     xbios_unimpl,   /* 1f */
 #endif
     VEC(xbios_20, dosound),
-    xbios_unimpl,   /* 21 setprt */
+#if CONF_WITH_PRINTER_PORT
+    VEC(xbios_21, setprt),
+#else
+    xbios_unimpl,   /* 21 */
+#endif
     VEC(xbios_22, kbdvbase),
     VEC(xbios_23, kbrate),
     xbios_unimpl,   /* 24 prtblk */

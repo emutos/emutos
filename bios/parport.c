@@ -1,7 +1,7 @@
 /*
  * parport.c - limited parallel port support
  *
- * Copyright (C) 2002-2016 The EmuTOS development team
+ * Copyright (C) 2002-2019 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -23,8 +23,6 @@
 
 /*
  * known differences with respect to the original TOS:
- * - Setprt() not implemented. One cannot access the serial port through
- *   the device 0 BIOS functions.
  * - printer configuration and hardcopy not done
  * - no input
  * - no 30 seconds delay for printer output.
@@ -34,6 +32,22 @@
 /* timing stuff */
 #define DELAY_1US       delay_loop(delay1us)
 static ULONG delay1us;
+static WORD printer_config;
+#endif
+
+#if CONF_WITH_PRINTER_PORT
+/*
+ * implements xbios_21 - Set/get the desktop printer configuration word
+ */
+WORD setprt(WORD config)
+{
+    WORD old_config = printer_config;
+
+    if (config != -1)
+        printer_config = config;
+
+    return old_config;
+}
 #endif
 
 void parport_init(void)
@@ -44,6 +58,9 @@ void parport_init(void)
 
     /* initialize delay */
     delay1us = loopcount_1_msec / 1000;
+
+    /* initialize other printer variables */
+    printer_config = 0;     /* Setprt() default: output via parallel port */ 
 #endif
 }
 
