@@ -87,29 +87,6 @@ WORD pgmld(WORD handle, char *pname, LONG **ldaddr)
 }
 
 
-/*
-void chrout(WORD chr)
-{
-    return( gemdos(X_TABOUT,chr) );
-}
-*/
-
-/*
-void prt_chr(WORD chr)
-{
-    return( gemdos(X_PRTOUT,chr) );
-}
-*/
-
-
-/*
-void dos_func(UWORD function, LONG parm)
-{
-    return( gemdos(function,parm) );
-}
-*/
-
-
 LONG dos_rawcin(void)
 {
     return gemdos(X_RAWCIN);
