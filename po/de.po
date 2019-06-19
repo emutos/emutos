@@ -1290,8 +1290,8 @@ msgid "left/right arrow = previous/next character"
 msgstr "Pfeil links/rechts = vorhergehendes/nächstes Zeichen"
 
 #: cli/cmdint.c
-msgid "shift-left/right arrow = previous/next word"
-msgstr "Umschalt-Pfeil links/rechts = vorhergehendes/nächstes Wort"
+msgid "control-left/right arrow = previous/next word"
+msgstr "Strg-Pfeil links/rechts = vorherigesgehendes/nächstes Wort"
 
 #: cli/cmdint.c
 msgid "invalid mode argument"
