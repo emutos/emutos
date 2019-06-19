@@ -24,39 +24,6 @@
 #include "bdosbind.h"
 
 
-#define X_TABOUT 0x02
-#define X_PRTOUT 0x05
-#define X_RAWIO  0x06
-#define X_RAWCIN 0x07
-#define X_CONWS  0x09
-#define X_CONIS  0x0B
-#define X_SETDRV 0x0E
-#define X_GETDRV 0x19
-#define X_SETDTA 0x1A
-#define X_GETDTA 0x2F
-#define X_GETFREE 0x36
-#define X_MKDIR 0x39
-#define X_RMDIR 0x3A
-#define X_CHDIR 0x3B
-#define X_CREAT 0x3C
-#define X_OPEN 0x3D
-#define X_CLOSE 0x3E
-#define X_READ 0x3F
-#define X_WRITE 0x40
-#define X_UNLINK 0x41
-#define X_LSEEK 0x42
-#define X_CHMOD 0x43
-#define X_MXALLOC 0x44
-#define X_GETDIR 0x47
-#define X_MALLOC 0x48
-#define X_MFREE 0x49
-#define X_SETBLOCK 0x4A
-#define X_EXEC 0x4B
-#define X_SFIRST 0x4E
-#define X_SNEXT 0x4F
-#define X_RENAME 0x56
-#define X_GSDTOF 0x57
-
 
 /* values for Mxalloc() mode: (defined in mem.h) */
 #define MX_STRAM        0
