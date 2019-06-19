@@ -32,12 +32,6 @@ struct _md
 };
 
 /*
- *  fields in Memory Descriptor
- */
-#define MF_FREE 1
-
-
-/*
  *  MPB - Memory Partition Block
  */
 typedef struct _mpb MPB;
