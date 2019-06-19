@@ -20,7 +20,6 @@
 
         .globl  _ui_start
         .globl  _accdesk_start
-        .globl  _gemdos
         .globl  _dos_exec
 
         .extern _ad_stail
@@ -171,29 +170,6 @@ _accdesk_start:
 
 
 //////////////////////////////////////////////////////////////////////////////
-// Execute a GEMDOS call (see gemdos.c).
-//////////////////////////////////////////////////////////////////////////////
-_gemdos:
-        move.l  (SP)+,saveretaddr
-#ifdef __mcoldfire__
-        move.l  d2,saveregs
-        move.l  a2,saveregs+4
-#else
-        movem.l d2/a2,saveregs
-#endif
-
-        trap    #1
-#ifdef __mcoldfire__
-        move.l  saveregs,d2
-        move.l  saveregs+4,a2
-#else
-        movem.l saveregs,d2/a2
-#endif
-        move.l  saveretaddr,-(SP)
-        rts
-
-
-//////////////////////////////////////////////////////////////////////////////
 // A wrapper around Pexec. We can't use the above function _gemdos for this
 // since _gemdos is not reentrant.
 //////////////////////////////////////////////////////////////////////////////
@@ -277,17 +253,10 @@ old_gem_ssp:
 
 
 
-saveretaddr:
-        .ds.l   1
-
-
 // Space for the user stack:
         .ds.b   256
 gemusp:
 
-
-saveregs:
-        .ds.l   2
 
 // pointer to original environment, restored on AES restart
 save_ad_envrn:
