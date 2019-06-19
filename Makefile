@@ -1256,6 +1256,17 @@ vdi/%_cf.S: vdi/%_preprocessed.s
 include release.mk
 
 #
+# Tests
+#
+
+.PHONY: test
+NODEP += test
+test:
+	@for dir in $(wildcard tests/*/Makefile) ; do \
+		$(MAKE) -C $$(dirname $$dir) test CC=$(CC) || exit 1; \
+	done
+
+#
 # file dependencies (makefile.dep)
 #
 
@@ -1285,9 +1296,3 @@ ifeq (,$(filter $(NODEP), $(MAKECMDGOALS)))
 -include makefile.dep
 endif
 endif
-
-.PHONY: test
-test:
-	@for dir in $(wildcard tests/*/Makefile) ; do \
-		$(MAKE) -C $$(dirname $$dir) test CC=$(CC) || exit 1; \
-	done
