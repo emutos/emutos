@@ -4,7 +4,7 @@
 
 language: c
 os: linux
-dist: xenial
+dist: trusty
 sudo: required
 
 before_install:

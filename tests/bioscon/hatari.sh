@@ -16,7 +16,7 @@ export SDL_AUDIODRIVER=dummy
 
 run_hatari() {
     outtxt=$(mktemp)
-    hatari --log-level fatal --sound off --fast-forward on --run-vbls 1000 \
+    hatari --log-level fatal --sound off --fast-forward on --run-vbls 2000 \
         --fast-boot on --tos "$EMUTOS" -d . "$@"  >"$outtxt" 2>&1
     if [ $? -ne 0 ]; then
         echo "ERROR: Failed to run hatari:"
