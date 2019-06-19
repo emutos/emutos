@@ -67,13 +67,6 @@ void *xmxalloc(long amount, int mode);
 /* srealloc */
 void *srealloc(long amount);
 
-/* supported values for Mxalloc mode: */
-#define MX_STRAM 0
-#define MX_TTRAM 1
-#define MX_PREFSTRAM 2
-#define MX_PREFTTRAM 3
-#define MX_MODEMASK  0x03   /* mask for supported mode bits */
-
 #if CONF_WITH_ALT_RAM
 /* declare additional memory */
 long xmaddalt(UBYTE *start, long size);

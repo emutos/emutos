@@ -13,6 +13,13 @@
 #ifndef _BDOSDEFS_H
 #define _BDOSDEFS_H
 
+/* Values for Mxalloc() mode */
+#define MX_STRAM 0
+#define MX_TTRAM 1
+#define MX_PREFSTRAM 2
+#define MX_PREFTTRAM 3
+#define MX_MODEMASK  0x03   /* mask for supported mode bits */
+
 /* Values of 'mode' for Pexec() */
 #define PE_LOADGO     0
 #define PE_LOAD       3

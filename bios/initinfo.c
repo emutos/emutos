@@ -53,10 +53,6 @@
 #define INFO_LENGTH 40      /* width of info lines (must fit in low-rez) */
 #define LOGO_LENGTH 34      /* must equal length of strings in EmuTOS logo */
 
-/* allowed values for Mxalloc mode: (defined in mem.h) */
-#define MX_STRAM 0
-#define MX_TTRAM 1
-
 /*==== External declarations ==============================================*/
 
 #if CONF_WITH_ALT_RAM

@@ -24,13 +24,6 @@
 #include "bdosbind.h"
 
 
-
-/* values for Mxalloc() mode: (defined in mem.h) */
-#define MX_STRAM        0
-#define MX_PREFTTRAM    3
-
-
-
 WORD pgmld(WORD handle, char *pname, LONG **ldaddr)
 {
     LONG    length, ret;
