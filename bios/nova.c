@@ -194,40 +194,40 @@ void detect_nova(void)
     has_nova = 0;
     use_16bit_io = 1; /* Default for everything but Volksfarben/ST */
 
-    if (IS_BUS32 && HAS_VME && check_read_byte(0xFE900000L+VIDSUB))
+    if (IS_BUS32 && HAS_VME && check_read_byte(0xFE900000UL+VIDSUB))
     {
         /* Mach32(?) in Atari TT */
-        novaregbase = (UBYTE *)0xFE900000L;
-        novamembase = (UBYTE *)0xFE800000L;
+        novaregbase = (UBYTE *)0xFE900000UL;
+        novamembase = (UBYTE *)0xFE800000UL;
         has_nova = 1;
     }
-    else if (HAS_VME && check_read_byte(0x00DC0000L+VIDSUB))
+    else if (HAS_VME && check_read_byte(0x00DC0000UL+VIDSUB))
     {
         /* Nova in Atari MegaSTE */
-        novaregbase = (UBYTE *)0x00DC0000L;
-        novamembase = (UBYTE *)0x00C00000L;
+        novaregbase = (UBYTE *)0x00DC0000UL;
+        novamembase = (UBYTE *)0x00C00000UL;
         has_nova = 1;
     }
-    else if (((long)phystop < 0x00C00000L) && check_read_byte(0x00D00000L+VIDSUB))
+    else if (((ULONG)phystop < 0x00C00000UL) && check_read_byte(0x00D00000UL+VIDSUB))
     {
         /* Volksfarben 4000 in ST: be sure via phystop that it's not RAM we read */
-        novaregbase = (UBYTE *)0x00D00000L;
-        novamembase = (UBYTE *)0x00C00000L;
+        novaregbase = (UBYTE *)0x00D00000UL;
+        novamembase = (UBYTE *)0x00C00000UL;
         has_nova = 1;
         use_16bit_io = 0;
     }
-    else if (((long)phystop < 0x00C00000L) && check_read_byte(0x00CC0000L+VIDSUB))
+    else if (((ULONG)phystop < 0x00C00000UL) && check_read_byte(0x00CC0000UL+VIDSUB))
     {
         /* Nova in Atari MegaST: be sure via phystop that it's not RAM we read */
-        novaregbase = (UBYTE *)0x00CC0000L;
-        novamembase = (UBYTE *)0x00C00000L;
+        novaregbase = (UBYTE *)0x00CC0000UL;
+        novamembase = (UBYTE *)0x00C00000UL;
         has_nova = 1;
     }
-    else if (IS_BUS32 && HAS_VME && check_read_byte(0xFEDC0000L+VIDSUB))
+    else if (IS_BUS32 && HAS_VME && check_read_byte(0xFEDC0000UL+VIDSUB))
     {
         /* ET4000 in Atari TT */
-        novaregbase = (UBYTE *)0xFEDC0000L;
-        novamembase = (UBYTE *)0xFEC00000L;
+        novaregbase = (UBYTE *)0xFEDC0000UL;
+        novamembase = (UBYTE *)0xFEC00000UL;
         has_nova = 1;
     }
 
@@ -282,7 +282,6 @@ static void init_mach32(void)
     VGAREG(ADVFUNC_CNTL) = 0x03;    /* Go to 8514 mode */
     VGAREG_W(SUBSYS_CNTL) = 0x90;   /* 8514 reset */
     VGAREG_W(SUBSYS_CNTL) = 0x50;
-    VGAREG_W(CLOCK_SEL) = 0x5002;   /* Back to ATI mode and clock select */
 
     /* Configure DAC */
     VGAREG_W(EXT_GE_CONFIG) = 0x1A20; /* Select DAC registers 8-11. */
@@ -293,6 +292,8 @@ static void init_mach32(void)
     VGAREG_W(EXT_GE_CONFIG) = 0x1A40; /* DAC 8 bit mode. */
     VGAREG_W(HORZ_OVERSCAN) = 0;
     //VGAREG(ATI_DAC_R2) = 0xFF     /* DAC mask register. Set later. */
+
+    VGAREG_W(CLOCK_SEL) = 0x5002;   /* Back to ATI mode and clock select */
 
     /* Enable VGA mode */
     VGAREG(ROM_PAGE_SEL) = 0x10;    /* VGA setup mode */
