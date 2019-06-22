@@ -1064,7 +1064,7 @@ NODEP += dsm
 dsm: VMA = $(shell sed -e '/^\.text/!d;s/[^0]*//;s/ .*//;q' emutos.map)
 dsm: check_target_exists
 	$(OBJDUMP) --target=binary --architecture=m68k --adjust-vma=$(VMA) -D emutos.img \
-	  | sed -e '/^ *[0-9a-f]*:/!d;s/^    /0000/;s/^   /000/;s/^  /00/;s/:	/: /' > $(DSM_TMP_CODE)
+	  | sed -e '/^ *[0-9a-f]*:/!d;s/^    /0000/;s/^   /000/;s/^  /00/;s/^ /0/;s/:	/: /' > $(DSM_TMP_CODE)
 	sed -e '/^ *0x/!d;s///;s/  */:  /;s/^00000000//;/^00000001:  ASSERT /d' emutos.map > $(DSM_TMP_LABELS)
 	cat $(DSM_TMP_CODE) $(DSM_TMP_LABELS) | LC_ALL=C sort > $(DSM_OUTPUT)
 	rm $(DSM_TMP_CODE) $(DSM_TMP_LABELS)
