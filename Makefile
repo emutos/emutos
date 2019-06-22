@@ -1070,10 +1070,6 @@ dsm.txt: emutos.dsm
 .PHONY: dsm
 dsm: dsm.txt
 
-.PHONY: show
-show: dsm.txt
-	cat dsm.txt
-
 #
 # Hatari symbols file
 #
