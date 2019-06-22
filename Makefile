@@ -801,8 +801,8 @@ ird: tools/erd.c
 	$(NATIVECC) -DICON_RSC $< -o ird
 mrd: tools/erd.c
 	$(NATIVECC) -DMFORM_RSC $< -o mrd
-draft: tools/draft.c
-	$(NATIVECC) $(DEFINES) $< -o $@
+draft: tools/draft.c tools/draftexc.c
+	$(NATIVECC) $(DEFINES) $^ -o $@
 
 DESKRSC_BASE = desk/desktop
 DESKRSCGEN_BASE = desk/desk_rsc

@@ -1,7 +1,7 @@
 /*
  *  draft: Delete Resource Alerts, Freestrings, and Trees
  *
- *  Copyright 2017-2018 Roger Burrows
+ *  Copyright 2017-2019 Roger Burrows
  *
  *  This program is licensed under the GNU General Public License.
  *  Please see LICENSE.TXT for details.
@@ -32,7 +32,7 @@
  *                  values in a different sequence
  *
  *  It then deletes the trees/alerts/free strings/menu items specified
- *  in the compiled-in exclude_items[] array.
+ *  in the exclude_items[] array (now maintained in its own file).
  *
  *  Finally, it writes the files <RSCout>.rsc and <RSCout>.def
  *
@@ -50,13 +50,15 @@
  *
  *  v1.3    roger burrows, december/2017
  *          . fix bug when deleting last item of menu
+ *
+ *  v1.4    roger burrows, june/2019
+ *          . move exclude_items[] array to separate file for maintainability
  */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #ifndef ATARI
 #include <getopt.h>
-#include "../include/config.h"
 #endif
 
 #define LOCAL   static  /* comment out for LatticeC debugging */
@@ -228,7 +230,7 @@ typedef struct
  *  our own defines & structures
  */
 #define PROGRAM_NAME    "draft"
-#define VERSION         "v1.3"
+#define VERSION         "v1.4"
 #define MAX_STRLEN      300         /* max size for internal string areas */
 
 #define OFFSET(item,base)    ((char *)item-(char *)base)
@@ -281,93 +283,14 @@ typedef struct
 
 
 /*
- *  START OF PROGRAM PARAMETERS
+ *  The exclude_items[] array is now maintained in draftexc.c
  */
-
-/*
- *  list of items to be deleted from resource before processing by erd
- *
- *  This will need to be updated when a configurable alert/freestring/tree
- *  is added to the resource
- */
-char *exclude_items[] =
-{
-#if !CONF_WITH_BACKGROUNDS
-    "BACKGRND",
-    "SEP_VW1",
-    "ADBKGND",
-#endif
-#if !CONF_WITH_BLITTER
-    "BLITITEM",
-    "SEP_OP1",
-#endif
-#if !CONF_WITH_DESKTOP_CONFIG
-    "CONFITEM",
-    "ADDESKCF",
-#endif
-#if !CONF_WITH_DESKTOP_SHORTCUTS
-    "STLOCATE",
-    "STRMVLOC",
-#else
-    "STNODRA1",
-#endif
-#if !CONF_WITH_FILEMASK
-    "MASKITEM",
-    "ADFMASK",
-#endif
-#if !CONF_WITH_FORMAT
-    "FORMITEM",
-    "ADFORMAT",
-    "STFMTERR",
-    "STFMTINF",
-#endif
-#if !CONF_WITH_SHOW_FILE
-    "STMORE",
-    "STEOF",
-    "STFRE",
-    "STSHOW",
-#else
-    "STNOAPPL",
-#endif
-#if !CONF_WITH_SHUTDOWN
-    "QUITITEM",
-#endif
-#if !CONF_WITH_TT_SHIFTER
-    "ADTTREZ",
-#endif
-#if !CONF_WITH_VIDEL
-    "ADFALREZ",
-    "STREZ1",
-    "STREZ2",
-    "STREZ3",
-    "STREZ4",
-#endif
-#if !CONF_WITH_WINDOW_ICONS
-    "ADINSWIN",
-    "STICNTYP",
-    "STNOMTCH",
-#endif
-#if !defined(MACHINE_AMIGA)
-    "ADAMIREZ",
-#endif
-#if !WITH_CLI
-    "CLIITEM",
-#endif
-#if !WITH_CLI && !CONF_WITH_SHUTDOWN
-    "SEP_FL2",
-#endif
-    NULL                            /* end marker */
-};
-
-/*
- *  END OF PROGRAM PARAMETERS
- */
-
+extern char *exclude_items[];
 
 /*
  *  other globals
  */
-LOCAL const char *copyright = PROGRAM_NAME " " VERSION " copyright (c) 2017 by Roger Burrows\n"
+LOCAL const char *copyright = PROGRAM_NAME " " VERSION " copyright (c) 2017-2019 by Roger Burrows\n"
 "This program is licensed under the GNU General Public License.\n"
 "Please see LICENSE.TXT for details.\n";
 
