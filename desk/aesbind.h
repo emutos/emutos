@@ -87,7 +87,9 @@ WORD form_do(OBJECT *form, WORD start);
 WORD form_dial(WORD dtype, WORD ix, WORD iy, WORD iw, WORD ih,
                WORD x, WORD y, WORD w, WORD h);
 WORD form_alert(WORD defbut, const char *astring);
-/* WORD form_error(WORD errnum); */
+#if CONF_WITH_SHOW_FILE
+WORD form_error(WORD errnum);
+#endif
 WORD form_center(OBJECT *tree, WORD *pcx, WORD *pcy, WORD *pcw, WORD *pch);
 /*
 WORD form_keybd(OBJECT *form, WORD obj, WORD nxt_obj, WORD thechar,

@@ -47,10 +47,12 @@ char *exclude_items[] =
     "STFMTINF",
 #endif
 #if !CONF_WITH_SHOW_FILE
+    "ADPRINT",
     "STMORE",
     "STEOF",
     "STFRE",
     "STSHOW",
+    "STPRINT",
 #else
     "STNOAPPL",
 #endif

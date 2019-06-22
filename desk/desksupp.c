@@ -88,6 +88,10 @@ static const WORD hd_skewtab[] =
 #define IOBUFSIZE   16384L
 static LONG linecount;
 static WORD pagesize;
+
+#define SETPRT_SERIAL   0x10    /* bit set by Setprt() to request serial o/p */
+#define FF              0x0c    /* standard form feed code */
+#define CHECK_COUNT     16      /* how often to check keyboard when printing */
 #endif
 
 
@@ -482,6 +486,14 @@ static void bios_conws(const char *s)
 }
 
 /*
+ *  send a character to the printer
+ */
+static WORD bios_prnout(WORD device, WORD ch)
+{
+    return Bconout(device, ch);
+}
+
+/*
  *  get key from keyboard
  *
  *  if ASCII (1-255), returns value in low-order byte, 0 in high-order byte
@@ -502,18 +514,21 @@ static WORD get_key(void)
 }
 
 /*
- *  check for flow control or quit (ctl-C/Q/q)
+ *  check for quit (ctl-C/Q/q/UNDO) and (optionally) handle flow control
  *
  *  a +ve argument is the character to check
  *  a -ve argument means get the character from the console
  */
-static WORD user_input(WORD c)
+static WORD user_input(WORD c, BOOL flow_control)
 {
     if (c < 0)
         c = get_key();
 
     if ((c == CTL_C) || (c == 'Q') || (c == 'q') || (c == UNDO))    /* wants to quit */
         return -1;
+
+    if (!flow_control)
+        return 0;
 
     if (c == CTL_S)         /* user wants to pause */
     {
@@ -565,7 +580,7 @@ static WORD show_buf(const char *s,LONG len)
     while(n-- > 0)
     {
         if (bios_conis())
-            if (user_input(-1))
+            if (user_input(-1, TRUE))
                 return 1;
 
         c = *s++;
@@ -594,7 +609,7 @@ static WORD show_buf(const char *s,LONG len)
                         linecount = pagesize / 2;
                         break;
                     }
-                    if (user_input(response))
+                    if (user_input(response, TRUE))
                     {
                         bios_conout('\r');
                         return 1;
@@ -667,6 +682,92 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
     wind_update(END_UPDATE);
     menu_bar(G.a_trees[ADMENU],1);
     graf_mouse(M_ON, NULL);
+}
+
+/*
+ *  print a fixed-length buffer
+ *
+ *  returns +1 if user interrupt or quit
+ *          0 otherwise
+ */
+static WORD print_buf(WORD device,const char *s,LONG len)
+{
+    WORD charcount = 0;
+    char c;
+
+    while(len-- > 0)
+    {
+        /* like Atari TOS, only check for user input 'occasionally' */
+        if (++charcount > CHECK_COUNT)
+        {
+            charcount = 0;
+            if (bios_conis())
+                if (user_input(-1, FALSE))  /* no flow control */
+                    return 1;
+        }
+
+        c = *s++;
+        while(bios_prnout(device, c) == 0)
+        {
+            graf_mouse(ARROW, NULL);
+            if (fun_alert(1, STPRINT) != 1) /* retry or cancel? */
+                return 1;
+            graf_mouse(HGLASS, NULL);       /* we're busy again */
+        }
+    }
+
+    return 0;
+}
+
+/*
+ *  print a text file, allowing user cancel
+ */
+static void print_file(char *name,LONG bufsize,char *iobuf)
+{
+    OBJECT *tree;
+    char fmtname[LEN_ZFNAME];
+    LONG rc, n;
+    WORD handle, device;
+
+    rc = dos_open(name,0);
+    if (rc < 0L)
+    {
+        form_error(2);  /* file not found */
+        return;
+    }
+
+    handle = (WORD)rc;
+
+    /* open dialog, set busy cursor */
+    tree = G.a_trees[ADPRINT];
+    fmt_str(filename_start(name), fmtname);
+    inf_sset(tree, PRNAME, fmtname);
+    start_dialog(tree);
+
+    graf_mouse(HGLASS,NULL);    /* say we're busy */
+
+    /* determine whether to use serial or parallel port */
+    device = (Setprt(-1) & SETPRT_SERIAL) ? 1 : 0;
+
+    while(1)
+    {
+        n = rc = dos_read(handle,bufsize,iobuf);
+        if (rc <= 0L)
+            break;
+        rc = print_buf(device, iobuf, n);
+        if (rc > 0L)
+            break;
+    }
+
+    /* if not user cancel, do a form feed */
+    if (rc <= 0L)
+        bios_prnout(device, FF);
+
+    dos_close(handle);
+
+    /* close dialog, reset mouse cursor */
+    end_dialog(tree);
+    graf_mouse(ARROW, NULL);
 }
 #endif
 
@@ -816,12 +917,15 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, char *pathname, char *pname, cha
              */
 #if CONF_WITH_SHOW_FILE
             ret = fun_alert(1, STSHOW);
-            if (ret == 1)   /* user said "Show" */
+            if (ret != 3)   /* user said "Show" or "Print" */
             {
                 char *iobuf = dos_alloc_anyram(IOBUFSIZE);
                 if (iobuf)
                 {
-                    show_file(app_path, IOBUFSIZE, iobuf);
+                    if (ret == 1)
+                        show_file(app_path, IOBUFSIZE, iobuf);
+                    else
+                        print_file(app_path, IOBUFSIZE, iobuf);
                     dos_free(iobuf);
                 }
                 else

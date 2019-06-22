@@ -498,6 +498,20 @@ WORD form_alert(WORD defbut, const char *astring)
     return gem_if(AES_CTRL_CODE(FORM_ALERT, 1, 1, 1));
 }
 
+
+#if CONF_WITH_SHOW_FILE
+/*
+ * save some space in the 192K ROMs, since this AES call
+ * is (currently) only used by the 'Show file' code
+ */
+WORD form_error(WORD errnum)
+{
+    FM_ERRNUM = errnum;
+    return gem_if(AES_CTRL_CODE(FORM_ERROR, 1, 0, 0));
+}
+#endif
+
+
 WORD form_center(OBJECT *tree, WORD *pcx, WORD *pcy, WORD *pcw, WORD *pch)
 {
     FM_FORM = (LONG)tree;
