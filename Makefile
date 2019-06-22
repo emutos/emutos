@@ -394,7 +394,6 @@ help:
 	@echo "gitready same as $(MAKE) expand crlf"
 	@echo "depend  creates dependancy file (makefile.dep)"
 	@echo "dsm     dsm.txt, an edited disassembly of emutos.img"
-	@echo "*.dsm   disassembly of any .c or almost any .img file"
 	@echo "release build the release archives into $(RELEASE_DIR)"
 
 # Display the EmuTOS version
@@ -1010,7 +1009,7 @@ bios/header.h: tools/mkheader.awk obj/country
 # ASM source files in vdi/
 #
 
-TOCLEAN += obj/*.o */*.dsm
+TOCLEAN += obj/*.o
 
 CFILE_FLAGS = $(strip $(CFLAGS) $($(subst /,_,$(dir $<))copts))
 SFILE_FLAGS = $(strip $(CFLAGS) $($(subst /,_,$(dir $<))sopts))
@@ -1023,9 +1022,6 @@ obj/%.o : %.c
 
 obj/%.o : %.S
 	$(CC) $(SFILE_FLAGS) -c $< -o $@
-
-%.dsm : %.c
-	$(CC) $(CFILE_FLAGS) -S $< -o $@
 
 #
 # version string
