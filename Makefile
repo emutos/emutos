@@ -1046,25 +1046,29 @@ obj/version.o: obj/version.c
 	$(CC) $(CFILE_FLAGS) -c $< -o $@
 
 #
-# generic dsm handling
+# Disassembly
 #
 
-TOCLEAN += *.dsm dsm.txt
+DSM_OUTPUT = dsm.txt
+DSM_TMP_CODE = obj/dsm.tmp
+DSM_TMP_LABELS = obj/map.tmp
+TOCLEAN += $(DSM_OUTPUT)
 
-%.dsm: %.map %.img
-	vma=$$(sed -e '/^\.text/!d;s/[^0]*//;s/ .*//;q' $<); \
-	$(OBJDUMP) --target=binary --architecture=m68k \
-	  --adjust-vma=$$vma -D $*.img \
-	  | sed -e '/^ *[0-9a-f]*:/!d;s/^    /0000/;s/^   /000/;s/^  /00/;s/:	/: /' > dsm.tmp
-	sed -e '/^ *0x/!d;s///;s/  */:  /;s/^00000000//;/^00000001:  ASSERT /d' $< > map.tmp
-	cat dsm.tmp map.tmp | LC_ALL=C sort > $@
-	rm -f dsm.tmp map.tmp
-
-dsm.txt: emutos.dsm
-	cp $< $@
+.PHONY: check_target_exists
+check_target_exists:
+	@test -f emutos.img -a -f emutos.map \
+	  || (echo "Please make a target before disassembling." >&2 ; false)
 
 .PHONY: dsm
-dsm: dsm.txt
+NODEP += dsm
+dsm: VMA = $(shell sed -e '/^\.text/!d;s/[^0]*//;s/ .*//;q' emutos.map)
+dsm: check_target_exists
+	$(OBJDUMP) --target=binary --architecture=m68k --adjust-vma=$(VMA) -D emutos.img \
+	  | sed -e '/^ *[0-9a-f]*:/!d;s/^    /0000/;s/^   /000/;s/^  /00/;s/:	/: /' > $(DSM_TMP_CODE)
+	sed -e '/^ *0x/!d;s///;s/  */:  /;s/^00000000//;/^00000001:  ASSERT /d' emutos.map > $(DSM_TMP_LABELS)
+	cat $(DSM_TMP_CODE) $(DSM_TMP_LABELS) | LC_ALL=C sort > $(DSM_OUTPUT)
+	rm $(DSM_TMP_CODE) $(DSM_TMP_LABELS)
+	@echo "# $(DSM_OUTPUT) contains the disassembly of emutos.img"
 
 #
 # Hatari symbols file
