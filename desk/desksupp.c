@@ -635,7 +635,10 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
 
     rc = dos_open(name,0);
     if (rc < 0L)
+    {
+        form_error(2);  /* file not found */
         return;
+    }
 
     handle = (WORD)rc;
 
