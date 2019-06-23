@@ -1,7 +1,7 @@
 /*
  * natfeat.S - EmuTOS NatFeat detection routine
  *
- * Copyright (C) 2001-2019 by the EmuTOS development team
+ * Copyright (C) 2001-2019 The EmuTOS development team
  *
  * Authors:
  *  PES   Petr Stehlik
