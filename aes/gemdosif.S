@@ -45,7 +45,6 @@
         .extern _wheel_change
         .extern _tchange
         .extern _b_delay
-        .extern _os_beg
         .extern __etext
 
 /* disable interrupts */
@@ -319,7 +318,7 @@ _set_aestrap:
 _aestrap_intercepted:
         moveq   #1,d0           // assume it's intercepted
         movea.l 0x88,a0
-        cmpa.l  _os_beg,a0
+        cmpa.l  _os_header+8,a0 // os_beg
         jcs     done
         cmpa.l  #__etext,a0
         jcc     done

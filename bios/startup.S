@@ -19,7 +19,8 @@
 
 // ==== Definitions ==========================================================
 
-        .globl  _os_entry
+        .globl  _os_header
+        .globl  _main         // OS entry point
 #if CONF_WITH_CARTRIDGE
         .globl  _run_cartridge_applications
 #endif
@@ -54,18 +55,6 @@
 
         .text
 
-
-/*
- * OSHEADER
- */
-
-        .globl  _main           // OS entry point
-        .globl  _os_beg
-        .globl  _os_magic
-        .globl  _os_date
-        .globl  _os_conf
-        .globl  _os_dosdate
-
 #if DIAGNOSTIC_CARTRIDGE
     .dc.l   0xfa52235f  // diagnostic cartridge magic number
 #endif
@@ -79,37 +68,42 @@
     .org    0xd0
     reset
 amiga_main:
-    // drop into _os_entry
+    // drop into os_entry
 #endif
 
-_os_entry:
-    bra.s   _main       // os_entry, branch to _main
+/*
+ * OSHEADER
+ */
+
+_os_header:
+os_entry:
+    bra.s   _main       // branch to _main
 os_version:
-    .dc.w   TOS_VERSION // os_version, TOS version
+    .dc.w   TOS_VERSION // TOS version
 reseth:
-    .dc.l   _main       // reseth, pointer to reset handler
+    .dc.l   _main       // pointer to reset handler
 // The 3-long structure here is actually the default GEM_MUPB.
-// It is supposed to be used when _os_magic does not point to a valid GEM_MUPB.
+// It is supposed to be used when os_magic does not point to a valid GEM_MUPB.
 // In EmuTOS, this never happens, so os_end and os_res1 below are never used.
 // Note that the first field here has a different meaning from gm_magic.
-_os_beg:
-    .dc.l   _os_entry   // os_beg, base of os = _sysbase
+os_beg:
+    .dc.l   _os_header  // base of OS = _sysbase
 os_end:
-    .dc.l   __endvdibss // os_end, end of VDI BSS
+    .dc.l   __endvdibss // end of VDI BSS
 os_res1:
-    .dc.l   _main       // os_res1, reserved
-_os_magic:
-    .dc.l   _ui_mupb    // os_magic, pointer to main UI's GEM_MUPB
-_os_date:
-    .dc.l   OS_DATE     // os_date, Date of system build
-_os_conf:               // Flag for PAL version + country
+    .dc.l   _main       // reserved
+os_magic:
+    .dc.l   _ui_mupb    // pointer to main UI's GEM_MUPB
+os_date:
+    .dc.l   OS_DATE     // Date of system build
+os_conf:                // Flag for PAL version + country
 #if CONF_MULTILANG
     .dc.w   OS_CONF_MULTILANG
 #else
     .dc.w   (OS_COUNTRY << 1) + OS_PAL
 #endif
-_os_dosdate:
-    .dc.w   OS_DOSDATE  // os_date, Date of system build in GEMDOS format
+os_dosdate:
+    .dc.w   OS_DOSDATE  // Date of system build in GEMDOS format
 os_root:
     .dc.l   _root       // Pointer to the GEMDOS mem pool
 os_kbshift:

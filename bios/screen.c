@@ -444,7 +444,7 @@ static char rez_was_hacked;
  */
 static BOOL get_default_palmode(void)
 {
-    if (os_conf == OS_CONF_MULTILANG)
+    if (os_header.os_conf == OS_CONF_MULTILANG)
     {
         /* No country/mode specified in OS header.
          * The mode is inferred from the COUNTRY Makefile variable. */
@@ -453,7 +453,7 @@ static BOOL get_default_palmode(void)
     else
     {
         /* Use the mode specified in OS header */
-        return os_conf & 0x0001;
+        return os_header.os_conf & 0x0001;
     }
 }
 

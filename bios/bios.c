@@ -280,7 +280,7 @@ static void bios_init(void)
 
     /* misc. variables */
     dumpflg = -1;
-    sysbase = (LONG) os_entry;
+    sysbase = &os_header;
     savptr = (LONG) trap_save_area;
     etv_timer = (void(*)(int)) just_rts;
     etv_critic = default_etv_critic;
@@ -394,9 +394,9 @@ static void bios_init(void)
 #endif
 
     /* Set start of user interface.
-     * No need to check if os_magic->gm_magic == GEM_MUPB_MAGIC,
+     * No need to check if os_header.os_magic->gm_magic == GEM_MUPB_MAGIC,
      * as this is always true. */
-    exec_os = os_magic->gm_init;
+    exec_os = os_header.os_magic->gm_init;
 
     KDEBUG(("osinit_before_xmaddalt()\n"));
     osinit_before_xmaddalt();   /* initialize BDOS (part 1) */

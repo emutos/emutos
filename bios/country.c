@@ -64,7 +64,7 @@ long cookie_akp;
 /* Get the default country code according to OS header. */
 static int get_default_country(void)
 {
-    if (os_conf == OS_CONF_MULTILANG)
+    if (os_header.os_conf == OS_CONF_MULTILANG)
     {
         /* No country specified in OS header.
          * Default to the value of the COUNTRY Makefile variable. */
@@ -73,7 +73,7 @@ static int get_default_country(void)
     else
     {
         /* Default to the country specified in OS header */
-        return os_conf >> 1;
+        return os_header.os_conf >> 1;
     }
 }
 

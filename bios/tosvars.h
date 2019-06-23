@@ -20,6 +20,9 @@
 
 #include "portab.h"
 
+/* Forward declarations */
+struct _pd;
+
 /* GEM memory usage parameters block.
  * This is actually a structure used by the BIOS
  * in order to call the main UI (i.e. AES) */
@@ -33,7 +36,26 @@ typedef struct
     PRG_ENTRY *gm_init; /* Start address of the main UI */
 } GEM_MUPB;
 
-extern const GEM_MUPB *os_magic; /* Information about the main UI */
+typedef struct _osheader
+{
+    UWORD      os_entry;      /* BRA.S to reset handler */
+    UWORD      os_version;    /* TOS version number */
+    PFVOID     reseth;        /* Pointer to reset handler */
+    /* The following 3 longs are actually the default GEM_MUPB structure */
+    struct _osheader *os_beg; /* Base address of the operating system */
+    UBYTE      *os_end;       /* End of ST-RAM statically used by the OS */
+    PRG_ENTRY  *os_rsvl;      /* Entry point of default UI (unused) */
+    GEM_MUPB   *os_magic;     /* GEM memory usage parameters block */
+    ULONG      os_date;       /* TOS date in BCD format MMDDYYYY */
+    WORD       os_conf;       /* Flag for PAL version + country */
+    UWORD      os_dosdate;    /* TOS date in BDOS format */
+    WORD       **os_root;     /* Pointer to the BDOS quick pool */
+    UBYTE      *os_kbshift;   /* Pointer to the BIOS shifty variable */
+    struct _pd **os_run;      /* Pointer to the pointer to current BASEPAGE */
+    ULONG      os_dummy;      /* 'ETOS' signature */
+} OSHEADER;
+
+extern const OSHEADER os_header;
 
 extern LONG proc_lives;
 extern LONG proc_dregs[];
@@ -77,12 +99,7 @@ extern LONG *p_cookies;
 extern WORD save_row;     /* saved row in escape Y command */
 
 
-extern LONG sysbase;
-extern void os_entry(void) NORETURN;
-extern LONG os_beg;
-extern LONG os_date;
-extern UWORD os_dosdate;
-extern WORD os_conf;
+extern const OSHEADER *sysbase;
 extern PRG_ENTRY *exec_os;
 extern UBYTE *end_os;
 
