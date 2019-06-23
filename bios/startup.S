@@ -88,6 +88,10 @@ os_version:
     .dc.w   TOS_VERSION // os_version, TOS version
 reseth:
     .dc.l   _main       // reseth, pointer to reset handler
+// The 3-long structure here is actually the default GEM_MUPB.
+// It is supposed to be used when _os_magic does not point to a valid GEM_MUPB.
+// In EmuTOS, this never happens, so os_end and os_res1 below are never used.
+// Note that the first field here has a different meaning from gm_magic.
 _os_beg:
     .dc.l   _os_entry   // os_beg, base of os = _sysbase
 os_end:
