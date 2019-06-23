@@ -221,6 +221,9 @@ FNODE *pn_sort(PNODE *pn)
  *  fun_file2any() when dragging a desktop icon representing a file/folder
  *
  *  returns 0   0 or more files found without error
+ *              NOTE: if insufficient memory is available, some files in
+ *              the specified pathnode will be silently excluded from the
+ *              filenode list.  our excuse is that Atari TOS does this too ...
  *          <0  error (other than EFILNF/ENMFIL) returned by dos_sfirst()/dos_snext()
  *              (e.g. when attempting to open a floppy drive with no disk)
  */
@@ -288,7 +291,7 @@ WORD pn_active(PNODE *pn, BOOL include_folders)
 
     /* check if enough FNODEs were available */
     if (count >= maxcount)
-        return E_NOMEMORY;
+        KDEBUG(("Not enough FNODEs for folder %s\n",pn->p_spec));
 
     return ((ret==ENMFIL) || (ret==EFILNF)) ? 0 : ret;
 }
