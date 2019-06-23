@@ -36,6 +36,5 @@ void sh_wdef(const char *lpcmd, const char *lpdir);
 
 void sh_main(BOOL isgem);
 
-typedef void PRG_ENTRY(void);   /* Program entry point type */
 LONG aes_run_rom_program(PRG_ENTRY *entry);
 #endif

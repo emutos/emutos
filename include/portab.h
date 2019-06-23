@@ -99,6 +99,9 @@ typedef LONG (*PFLONG)(void);
 /* pointer to function returning VOID */
 typedef void (*PFVOID)(void);
 
+/* BDOS program entry point */
+typedef void PRG_ENTRY(void) /* NORETURN */;
+
 /*
  *  Macros
  */

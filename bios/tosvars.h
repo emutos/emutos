@@ -28,9 +28,9 @@
 
 typedef struct
 {
-    ULONG  gm_magic; /* Magical value, has to be GEM_MUPB_MAGIC */
-    UBYTE  *gm_end;  /* End of the static ST-RAM used by the OS */
-    PFVOID gm_init;  /* Start address of the main UI */
+    ULONG     gm_magic; /* Magical value, has to be GEM_MUPB_MAGIC */
+    UBYTE     *gm_end;  /* End of the static ST-RAM used by the OS */
+    PRG_ENTRY *gm_init; /* Start address of the main UI */
 } GEM_MUPB;
 
 extern const GEM_MUPB *os_magic; /* Information about the main UI */
@@ -83,7 +83,7 @@ extern LONG os_beg;
 extern LONG os_date;
 extern UWORD os_dosdate;
 extern WORD os_conf;
-extern void (*exec_os)(void) NORETURN;
+extern PRG_ENTRY *exec_os;
 extern UBYTE *end_os;
 
 /* these symbols are automatically created by ld */
