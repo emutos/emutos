@@ -393,14 +393,10 @@ static void bios_init(void)
     nls_set_lang(get_lang_name());
 #endif
 
-    /* set start of user interface */
-#if WITH_AES
-    exec_os = ui_start;
-#elif WITH_CLI
-    exec_os = coma_start;
-#else
-    exec_os = NULL;
-#endif
+    /* Set start of user interface.
+     * No need to check if os_magic->gm_magic == GEM_MUPB_MAGIC,
+     * as this is always true. */
+    exec_os = os_magic->gm_init;
 
     KDEBUG(("osinit_before_xmaddalt()\n"));
     osinit_before_xmaddalt();   /* initialize BDOS (part 1) */
@@ -1120,5 +1116,11 @@ const GEM_MUPB ui_mupb =
 {
     GEM_MUPB_MAGIC, /* Magic value identifying this structure */
     _end_os_stram,  /* End of the static ST-RAM used by the OS */
+#if WITH_AES
     ui_start        /* AES entry point */
+#elif WITH_CLI
+    coma_start      /* EmuCON entry point */
+#else
+#  error You must provide a main UI
+#endif
 };

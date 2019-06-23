@@ -99,11 +99,7 @@ os_end:
 os_res1:
     .dc.l   _main       // os_res1, reserved
 _os_magic:
-#if WITH_AES
-    .dc.l   _ui_mupb    // os_magic, pointer to GEM's MUPB
-#else
-    .dc.l   0           // os_magic, pointer to GEM's MUPB
-#endif
+    .dc.l   _ui_mupb    // os_magic, pointer to main UI's GEM_MUPB
 _os_date:
     .dc.l   OS_DATE     // os_date, Date of system build
 _os_conf:               // Flag for PAL version + country
