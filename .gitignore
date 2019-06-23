@@ -1,7 +1,6 @@
 /obj/
 *.tr.c
 *_preprocessed.*
-/*.dsm
 /*.prg
 /*.st
 /*.exe
