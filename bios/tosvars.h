@@ -47,7 +47,7 @@ typedef struct _osheader
     PRG_ENTRY  *os_rsvl;      /* Entry point of default UI (unused) */
     GEM_MUPB   *os_magic;     /* GEM memory usage parameters block */
     ULONG      os_date;       /* TOS date in BCD format MMDDYYYY */
-    WORD       os_conf;       /* Flag for PAL version + country */
+    UWORD      os_conf;       /* Flag for PAL version + country */
     UWORD      os_dosdate;    /* TOS date in BDOS format */
     WORD       **os_root;     /* Pointer to the BDOS quick pool */
     UBYTE      *os_kbshift;   /* Pointer to the BIOS shifty variable */
