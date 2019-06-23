@@ -535,7 +535,7 @@ static int atari_partition(UWORD unit,LONG *devices_available)
                      * access via XHDI for MiNT's benefit.
                      */
                     KDEBUG((" %s partition: not yet supported\n",(type==0x83)?"Linux":"FAT32"));
-                    /* drop through */
+                    FALLTHROUGH;
                 case 0x01:
                 case 0x04:
                 case 0x06:

@@ -121,7 +121,7 @@ static WORD find_obj(OBJECT *tree, WORD start_obj, WORD which)
     {
     case BACKWARD:
         inc = -1;
-        /* fall thru */
+        FALLTHROUGH;
     case FORWARD:
         obj = start_obj + inc;
         break;

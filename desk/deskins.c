@@ -1004,7 +1004,7 @@ static WORD install_window_icon(FNODE *pf)
             break;
         case IW_CNCL:           /* cancel further installs */
             change = -1;
-            /* drop thru */
+            FALLTHROUGH;
         case IW_SKIP:           /* skip this application */
             break;
         }

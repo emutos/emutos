@@ -143,7 +143,7 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
                 message = WM_CLOSED;
                 break;
             }
-            /* else fall thru */
+            FALLTHROUGH;
         case W_FULLER:
             if ( gr_watchbox(gl_awind, cpt, SELECTED, NORMAL) )
             {
@@ -198,7 +198,7 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
                 if ( !(my < pt.g_y) )
                     cpt += 1;
             }
-            /* fall thru */
+            FALLTHROUGH;
         case W_UPARROW:
         case W_DNARROW:
         case W_LFARROW:

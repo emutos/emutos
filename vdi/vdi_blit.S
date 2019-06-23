@@ -362,7 +362,7 @@ fl_l2r_rt:
 fl_l2r_lf:
         dbra    d5,i1_l2r_lf    // do another INNER LOOP cycle             (10)/14
 
-////////        jra     f2_flush        // fall through to f2_flush                     10
+        // fall through f2_flush
 
 //////                                         //////
 //////   FINAL FRINGE OUTPUT and ROW CONTROL   //////

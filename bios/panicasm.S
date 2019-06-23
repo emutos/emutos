@@ -97,7 +97,7 @@ _kill_program:
         move.w  #-1,-(sp)               // error code for program killed by OS
         move.w  #0x4C,-(sp)             // Pterm
         trap    #1
-        // drop thru into warm reset
+        // fall through _warm_reset (should not happen!)
 
 /* void warm_reset(void)
  * Restart this OS

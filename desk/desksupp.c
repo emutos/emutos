@@ -1250,7 +1250,6 @@ WORD do_info(WORD curr)
     switch(pa->a_type)
     {
     case AT_ISFOLD:
-        /* drop thru */
     case AT_ISFILE:
         pw = win_find(G.g_cwin);
         if (pw)

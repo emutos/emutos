@@ -996,7 +996,7 @@ mrb_exit:
 movep_read_err:
         move.l  a3,a0
         move.l  #FSLW_READ,d0
-                                            // drop through
+                                            // fall through movep_err_exit
 /*
  * exit for read/write errors
  *
