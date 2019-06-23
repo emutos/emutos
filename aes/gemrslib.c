@@ -258,7 +258,7 @@ static BOOL fix_ptr(WORD type, WORD index)
 }
 
 
-static void fix_tedinfo(void)
+static void fix_tedinfo_std(void)
 {
     WORD ii;
     TEDINFO *ted;
@@ -368,7 +368,7 @@ static WORD rs_readit(AESGLOBAL *pglobal,UWORD fd)
      * base of file into pointers
      */
     fix_trindex();
-    fix_tedinfo();
+    fix_tedinfo_std();
     ibcnt = rs_hdr->rsh_nib;
     fix_nptrs(ibcnt, R_IBPMASK);
     fix_nptrs(ibcnt, R_IBPDATA);
