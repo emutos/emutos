@@ -22,7 +22,6 @@
 #define MFP_TCDCR   MFP_REGS+28
 #define MFP_TDDR    MFP_REGS+36
 
-
         .text
 //
 // calibrate using MFP TimerD

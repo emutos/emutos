@@ -47,11 +47,9 @@
         .extern _linea_raster
         .extern _linea_fill
 
-
 // ==== Definitions ==========================================================
 
         .globl  _int_linea              // entry for linea exception
-
 
 // ==== Line-A handler ===============================
 _int_linea:
@@ -160,7 +158,6 @@ linea_blit:
         rts
 
         SECTION_RODATA
-
 
 /* Some VDI C-functions can be used directly as-is because:
  * - they don't use the passed VDI workstation pointer

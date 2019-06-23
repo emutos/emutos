@@ -9,19 +9,12 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
-
 #include "asmdefs.h"
-
-
-
 
 /* Conditionals for textblit */
 #define test0           0       /* if give program access to internal variables */
 #define test1           0       /* if using very large fonts (else, 8x16) */
 #define bytswap         0       /* if font words are byte swapped! */
-
-
 
 /////////////////////////////////////////////////////////////////////////
 //                                                                      //
@@ -70,9 +63,6 @@
 //                0 if scale down, 1 if enlarge                         //
 /////////////////////////////////////////////////////////////////////////
 
-
-
-
 /////////////////////////////////////////////////////////////////////////
 //  process:    The main process of textblt does the following:         //
 //                { load source word (a0.l)                             //
@@ -88,8 +78,6 @@
 //                 alteration of the destination outside the            //
 //                 fringes.                                             //
 /////////////////////////////////////////////////////////////////////////
-
-
 
 /////////////////////////////////////////////////////////
 //   Style equates..                                   //
@@ -116,11 +104,6 @@
         .globl  _scale
 
 /////////////////////////////////////////////////////////
-//  Global routines referenced by this module.         //
-/////////////////////////////////////////////////////////
-
-
-/////////////////////////////////////////////////////////
 //  Global variables referenced.                       //
 /////////////////////////////////////////////////////////
 
@@ -133,12 +116,6 @@
         .extern _DDAINC
         .extern _SCRPT2
         .extern _SCRTCHP
-
-
-/////////////////////////////////////////////////////////
-//  Hardware dependent variables referenced.           //
-/////////////////////////////////////////////////////////
-
 
 /////////////////////////////////////////////////////////
 //  Character buffer variables defined in this module. //
@@ -278,8 +255,6 @@
 //               even offset respectively                               //
 /////////////////////////////////////////////////////////////////////////
 
-
-
         .bss
 _deftxbuf:
         .ds.b   buf_siz         // char. buffer
@@ -289,8 +264,6 @@ _deftxbuf:
         .even   // Mandatory in ELF section .rodata
 _scrtsiz:
         .dc.w   cel_siz         // eat up some rom so value can be passed
-
-
 
 /////////////////////////////////////////////////////////////////////////
 //      Local variables defined on the user stack.                      //
@@ -437,7 +410,6 @@ _scale:
         movem.l (sp)+,d2-d7/a2-a6       // restore saved registers
         rts
 
-
         SECTION_RODATA
 
 /*
@@ -446,7 +418,6 @@ _scale:
  * The table has been compacted by taking the one's complement of the left
  * fringe table and combining it with the right fringe table.
  */
-
                 .even   // Mandatory in ELF section .rodata
 lf_tab:         .dc.w   0xFFFF          // origin for not left fringe lookup.
 rf_tab:         .dc.w   0x7FFF          // origin for right fringe lookup.
@@ -472,7 +443,6 @@ rf_tab:         .dc.w   0x7FFF          // origin for right fringe lookup.
  * These are accessed via an offset from 'toptable', allowing the use
  * of indexing mode for speed.
  */
-
 #define op0             4*0
 #define op1             4*1
 #define op2             4*2
@@ -1235,7 +1205,6 @@ twope:
 twopf:
         moveq.l #-1,d1                  //mode 15 - D' = 1
         jmp     (a3)
-
 
 /////////////////////////
 //    special effect THICKEN

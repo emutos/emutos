@@ -7,11 +7,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
-
 #include "asmdefs.h"
 #include "header.h"
-
 
 // ==== Defines ==============================================================
 
@@ -112,9 +109,6 @@ os_run:
     .dc.l   _run        // Pointer to a pointer to the actual basepage
 os_dummy:
     .ascii  "ETOS"      // _main should start at offset 0x30, shouldn't it?
-
-
-
 
 /*
  * Get in supervisor mode and reset all Hardware
@@ -317,7 +311,6 @@ resetvec:
        jmp      (a0)                    // jump to resvec
 noreset:
 
-
 /*
  * memory configuration
  */
@@ -326,14 +319,12 @@ noreset:
         jmp     meminit         // do/test memory config and clear it (needs sp)
 memdone:
 
-
 /*
  * From now, the stack is allowed, and C code can be used.
  * The BIOS startup goes on in bios.c
  */
 
         jmp     _biosmain
-
 
 #if CONF_WITH_CARTRIDGE
 /*

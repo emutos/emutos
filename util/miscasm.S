@@ -18,7 +18,6 @@
         .globl  _trap1_pexec    // Reentrant Pexec call
         .globl  _stop_until_interrupt   // Wrapper around the STOP instruction
 
-
 /*
  * trap1 - trap 1 (GEMDOS) entry point
  */
@@ -45,8 +44,6 @@ t1spsav:
         .ds.l   1       // Save space for _trap_1
 t1regsav:
         .ds.l   2
-
-
 
 /*
  *  GEMDOS Pexec() call. This version is reentrant unlike the trap1 function!

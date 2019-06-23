@@ -138,7 +138,6 @@ aes_restart:
         clr.w   -(sp)
         trap    #1
 
-
 //////////////////////////////////////////////////////////////////////////////
 // Run accessories and desktop
 //////////////////////////////////////////////////////////////////////////////
@@ -167,7 +166,6 @@ _accdesk_start:
 
         clr.w   -(sp)                   // Pterm0()
         trap    #1
-
 
 //////////////////////////////////////////////////////////////////////////////
 // A wrapper around Pexec. We can't use the above function _gemdos for this
@@ -247,16 +245,12 @@ _dos_exec:
 
 .bss
 
-
 old_gem_ssp:
         .ds.l   1
-
-
 
 // Space for the user stack:
         .ds.b   256
 gemusp:
-
 
 // pointer to original environment, restored on AES restart
 save_ad_envrn:

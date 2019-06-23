@@ -24,7 +24,6 @@
 
         .text
 
-
 /*
  * psetup(PD *p, PFVOID codevalue)
  * arranges for codevalue to be pushed to the stack for process p,
@@ -32,7 +31,6 @@
  * will start this process executing".
  * That RTS will occur at the end of switchto()
  */
-
 _psetup:
 #ifdef __mcoldfire__
         move.w  sr,d0
@@ -57,7 +55,6 @@ _psetup:
 #endif
         rts
 
-
 /*
  * gotopgm(void)
  * launches the top of rlr list
@@ -69,7 +66,6 @@ _psetup:
  * address of the basepage. The value of the other registers is not
  * important.
  */
-
 _gotopgm:
         // get the basepage for the top of rlr
         movea.l _rlr,a0
@@ -110,7 +106,6 @@ _gotopgm:
         move.l  P_TBASE(a0),a1          // Start of the TEXT segment
         jmp     (a1)
 
-
 /*
  * dsptch() is a machine (& compiler) dependent routine which:
  *      1) saves any flags that will be trashed
@@ -119,7 +114,6 @@ _gotopgm:
  *              save machine state,
  *              jump to disp
  */
-
 _dsptch:
         tst.b   _indisp
         jeq     savestate
@@ -160,7 +154,6 @@ savestate:
 #endif
         jmp     _disp
 
-
 _switchto:
 #ifdef __mcoldfire__
         move.w  sr,d0
@@ -187,7 +180,6 @@ _switchto:
         move.w  savesr0,sr
 #endif
         rts                     // Switch to the next process now !
-
 
         .bss
 

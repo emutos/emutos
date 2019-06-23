@@ -17,7 +17,6 @@
 
 #include "asmdefs.h"
 
-
 // ==== Definitions ==========================================================
 
         .globl  _memset

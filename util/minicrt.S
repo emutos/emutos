@@ -25,7 +25,6 @@
 #define MSHRINK 0x4A
 #define PTERM   0x4C
 
-
         .globl  _start
         .globl  _exit
         .globl  ___main

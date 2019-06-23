@@ -16,7 +16,6 @@
 
 #include "asmdefs.h"
 
-
 // This is taken from Minix 1.5 copy_68k.s fast copy routine.
 // extracted phys_copy() and converted to modern syntax,
 // Laurent Vogel, october 2001.
@@ -66,8 +65,6 @@
 // void * memcpy(void * dst, void * src, size_t length);
 // moves length bytes from src to dst. returns dst as passed.
 // the behaviour is undefined if the two regions overlap.
-
-
 
 _memcpy:
 #ifndef __mcoldfire__

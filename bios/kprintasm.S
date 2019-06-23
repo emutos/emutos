@@ -69,7 +69,6 @@ msg_empty:
         .ascii  "\0"
         .even
 
-
 // ==== STonX - Native print routine for debugging ====================
 _printout_stonx:
         .dc.w   0xa0ff     // Jump to native execution

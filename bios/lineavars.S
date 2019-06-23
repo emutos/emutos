@@ -95,16 +95,12 @@
                 .globl  _DEV_TAB
                 .globl  _INQ_TAB
 
-
 /* Font related VDI variables */
-
                 .ds.l   1       // -910 start angle
 _cur_font:      .ds.l   1       // -906 current VDI font
                 .ds.w   23      // -902
 
-
 /* The mouse form storage area: */
-
 _mouse_cdb:
 _m_pos_hx:       .ds.w   1       // -856 (cdb+0) Mouse hot spot - x coord
 _m_pos_hy:       .ds.w   1       // -854 (cdb+2) Mouse hot spot - y coord
@@ -115,19 +111,14 @@ _mask_form:      .ds.w   32      // -846 (cdb+10) Storage for mouse mask and cur
 
 
 /* Extended workstation information */
-
 _INQ_TAB:
                 .ds.w   45      // -782 information returned from a _vq_extnd()
 
-
 /* Workstation information */
-
 _DEV_TAB:
                 .ds.w   45      // -692 information returned from a _v_opnwk()
 
-
 /* Mouse data */
-
 _mdata:                         // Block of mouse pointer data
 _GCURX:         .ds.w   1       // -602 mouse X position
 _GCURY:         .ds.w   1       // -600 mouse Y position
@@ -135,11 +126,9 @@ _HIDE_CNT:      .ds.w   1       // -598 Number of levels the mouse is hidden
 _MOUSE_BT:      .ds.w   1       // -596 mouse button state
 
 /* RGB values for colors 0-15 */
-
 _REQ_COL:       .ds.w   48      // -594 48 WORDs of RGB data (color registers)
 
 /* Workstation PTSOUT information */
-
 _SIZ_TAB:       .ds.w   15      // -498 size table
 
 _TERM_CH:       .ds.w   1       // -468 pressed key, aciii + scancode
@@ -177,7 +166,6 @@ _save_stat:     .ds.b   1       // -324 save status
 _save_area:     .ds.l   64      // -322 form save area
 
 /* Timer vectors */
-
 _tim_addr:      .ds.l   1       // -66  timer interrupt vector
 _tim_chain:     .ds.l   1       // -62  timer interrupt vector save
 _user_but:      .ds.l   1       // -58  user button vector
@@ -185,7 +173,6 @@ _user_cur:      .ds.l   1       // -54  user cursor vector
 _user_mot:      .ds.l   1       // -50  user motion vector
 
 /* VDI ESC variables */
-
 _v_cel_ht:      .ds.w   1       // -46  cell height (width is 8)
 _v_cel_mx:      .ds.w   1       // -44  columns on the screen minus 1
 _v_cel_my:      .ds.w   1       // -42  rows on the screen minus 1
@@ -208,8 +195,6 @@ _v_stat_0:      .ds.b   1       // -6   video cell system status (was in words)
                 .ds.b   1       //      dummy
 _V_REZ_VT:      .ds.w   1       // -4   vertical resolution in pixels
 _BYTES_LIN:     .ds.w   1       // -2   byte per screen line
-
-
 
 // ===========================================================================
 // ==== Normal line-a variables now follow

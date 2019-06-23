@@ -8,8 +8,8 @@
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  */
-#include "asmdefs.h"
 
+#include "asmdefs.h"
 
 /*
  * _GSX_ENTRY - front end of the GIOS for the screen driver
@@ -25,7 +25,6 @@
 
         .globl  _GSX_ENTRY
 
-
 #define ptsin_size 512          // max. # of elements allowed for PTSIN array
 #define ptsin_max  ptsin_size/2 // max. # of coordinate pairs for PTSIN array
 #define W_1        2            // byte offset to first element of an array
@@ -37,7 +36,6 @@ lcl_ptsin:      .ds.w   ptsin_size
         .text
 
 _GSX_ENTRY:
-
 #ifdef __mcoldfire__
         lea     -56(sp),sp
         movem.l d1-d7/a0-a6,(sp)        //Save the callers registers
@@ -96,7 +94,6 @@ size_intin:
         clr.w   W_3(a0)         // put 0 entries in user's CONTRL[3]
 
 intin_ok:
-
 /* Call screen which contains all the C routines for the SCREEN DRIVER. */
         jsr     _screen
 
@@ -116,10 +113,8 @@ intin_ok:
 
         rts
 
-
 #define F_SAVRDY        0               // save buffer status flag: 0:empty  1:full
 #define F_SAVWID        1               // saved line width        0:word   1:longword
-
 
         .text
 
@@ -152,7 +147,6 @@ intin_ok:
         .extern _DEV_TAB        // address of device table
 
         .extern _old_statvec    // previous IKBD status packet vector
-
 
         .text
 
@@ -212,8 +206,6 @@ cl_ymax:
         move.w  2(a0),d1        // yes - set it to the maximum value
 cl_done:
         rts
-
-
 
 /*
  * _mouse_int - Mouse interrupt routine
@@ -375,8 +367,6 @@ ms_done:
 ms_exit:
         rts
 
-
-
 /*
  * _wheel_int - Mouse wheel interrupt routine
  * entry:       a0 = address of IKBD status packet buffer from aciavecs.S
@@ -475,8 +465,6 @@ wheel_exit:
 wheel_ikbd_packet:
         .dc.b   0x05,0x00,0x00,0x00,0x00,0x00
 
-
-
 /*
  * mov_cur - moves the mouse cursor to its new location
  *           unless the cursor is currently hidden.
@@ -489,7 +477,6 @@ wheel_ikbd_packet:
  *
  * Registers Modified:     None
  */
-
 _mov_cur:
         tst.w   _HIDE_CNT       // is the cursor hidden?
         jne     mov_cur1        // yes - don't draw it now
@@ -529,8 +516,6 @@ _mov_cur:
 mov_cur1:
         rts
 
-
-
 /*
  * Call the _user_but vector from C.
  */
@@ -538,8 +523,6 @@ _call_user_but:
         move.w  4(sp),d0
         move.l  _user_but,a0
         jmp     (a0)
-
-
 
 /*
  * Call the _user_wheel vector from C.

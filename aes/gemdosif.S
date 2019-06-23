@@ -74,7 +74,6 @@ _enable_interrupts:
 #endif
         rts
 
-
 /*
  * DOS error trapping code: restores aestrap & critical error vector
  *
@@ -209,9 +208,6 @@ no_retry:
 #endif
         rts
 
-
-
-
 // **** Trap entry: ****
 _aestrap:
         tst.w   d0
@@ -227,7 +223,6 @@ _back:
         clr.w   -(sp)
         move.w  #0x4C,-(sp)             // Pterm
         trap    #1
-
 
 trapaes:
 #if CONF_DEBUG_AES_STACK
@@ -289,8 +284,6 @@ supret:                                 // return from gementry
 #endif
         rte
 
-
-
 _unset_aestrap:
 #ifdef __mcoldfire__
         lea     0x88,a0
@@ -325,8 +318,6 @@ _aestrap_intercepted:
         moveq   #0,d0
 done:
         rts
-
-
 
 _far_bcha:
         move.l  sp,gstksave
@@ -400,7 +391,6 @@ _aes_wheel:
         rts
 #endif
 
-
 /*
 ;
 ;       drawrat(newx, newy)
@@ -412,10 +402,8 @@ _drawrat:
         move.l  _drwaddr,-(sp)
         rts                     // Jump to vector stored in _drwaddr
 
-
 _justretf:
         rts
-
 
 _tikcod:
         move.l  sp,tstksave
@@ -437,8 +425,6 @@ L2234:
         movea.l tstksave,sp
         move.l  _tiksav,-(sp)
         rts                     // Jump to vector stored in _tiksav
-
-
 
 SECTION_RODATA
 

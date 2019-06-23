@@ -13,7 +13,6 @@
 #include "asmdefs.h"
 #include "i18nconf.h"
 
-
 #if CONF_WITH_NLS
 
 // set this to one to first hash addresses in RAM before
@@ -215,7 +214,6 @@ srh_end:
         move.l  a1,d0
 #endif /* USE_RAM_HASH */
         rts
-
 
         .bss
 #if USE_RAM_HASH

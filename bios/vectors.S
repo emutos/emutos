@@ -100,10 +100,7 @@
 
         .text
 
-
-
 /* basically initialize the 62 exception vectors. */
-
 _init_exc_vec:
         clr.l   _proc_lives.w
         lea     deflt_vec_table, a0
@@ -124,7 +121,6 @@ _just_rts:
         rts
 
 /* initialize the 192 user vectors. */
-
 _init_user_vec:
         lea     user_vec, a0
         lea     256, a1
@@ -148,7 +144,6 @@ set_uvec:
  * the former method will allow any_vec to display the correct vector
  * number and report a meaningful panic message.
  */
-
 deflt_vec_table:
 buserr_vec:
         bsr.s   any_vec         // vector 2
@@ -264,8 +259,6 @@ any_vec:
         lea     panic_stack,sp
         jmp     _dopanic
 
-
-
 /*
  * _gemtrap - VDI trap dispatcher
  *
@@ -275,9 +268,7 @@ any_vec:
  *
  * Note that this function does not care about AES calls since the AES later
  * hooks into the trap-2 vector itself.
- *
  */
-
 _gemtrap:
         cmp.w   #0x73,d0                // VDI call?
         jne     no_vdi
@@ -295,7 +286,6 @@ no_vdi:
 
         rte
 
-
 what_gdos:
         move.l  #-2, d0                 // -2  -  no GDOS installed
         rte
@@ -303,7 +293,6 @@ what_gdos:
 query:
         move.l  #_GSX_ENTRY,d0          // Return address of VDI dispatcher
         rte
-
 
 #if CONF_WITH_ATARI_VIDEO
 
@@ -338,7 +327,6 @@ is_ipl:
         rte
 
 #endif /* CONF_WITH_ATARI_VIDEO */
-
 
 /*
  * _int_vbl - Int 0x70 - VBL interrupt
@@ -513,8 +501,6 @@ vbl_end:
         rts
 #endif
 
-
-
 // ==== Timer C interrupt handler ============================================
 
 #define REAL_TIMER_C_HANDLER (CONF_WITH_MFP && !CONF_COLDFIRE_TIMER_C)
@@ -624,7 +610,6 @@ _default_etv_critic:
         ext.l   d0
         rts
 
-
 #ifndef __mcoldfire__
 
 /*
@@ -650,15 +635,12 @@ ii_back:
         movem.l (sp)+,d0/a0
         jra     illg_vec                // go directly to our panic handler
 
-
-
 /*
  * _int_priv - privileged instruction handler
  *
  * Convert a privileged 'MOVE SR,...' to 'MOVE CCR,...'
  * (see bios/processor.h for the full story)
  */
-
 _int_priv:
         movem.l d0/a0,-(sp)             // saving d0 and a0 while we test
         movea.l 10(sp),a0               // the offending address
@@ -707,8 +689,6 @@ pi_back:
         jra     priv_vec                // go directly to our panic handler
 
 #endif /* __mcoldfire__ */
-
-
 
 #if CONF_WITH_ADVANCED_CPU
 
@@ -1163,20 +1143,16 @@ bx_nolong2:
         move.l  a1, _savptr.w
         rte                     // return with return value in D0
 
-
-
 /*
  * (X)BIOS unimplemented function handler.
  * These functions are called indirectly, ONLY from biosxbios.
  * The requested BIOS/XBIOS function number is in d0.
  */
-
 _xbios_unimpl:
        move.w   d0,-(sp)
        jsr      _xbios_do_unimpl
        addq.l   #2,sp
        rts
-
 
 #if CONF_WITH_BUS_ERROR
 
@@ -1187,7 +1163,6 @@ _xbios_unimpl:
  * C call: int check_read_byte(long);
  * returns 0 if reading the address caused a bus error
  */
-
 _check_read_byte:
         move.l  sp,d1
         move.l  (8).w,a1
@@ -1228,7 +1203,6 @@ msgcrb:
 
 #endif /* CONF_WITH_BUS_ERROR */
 
-
 /* ==== Glue for external vectors ===========================================
  *
  * EmuTOS uses d0-d1/a0-a1 as scratch registers. However the original TOS
@@ -1245,7 +1219,6 @@ msgcrb:
 /*
  * LONG protect_v(LONG (*func)(void));
  */
-
 _protect_v:
         move.l   4(sp),a0
         move.l   a2,-(sp)
@@ -1258,7 +1231,6 @@ _protect_v:
 /*
  * LONG protect_w(LONG (*func)(WORD), WORD);
  */
-
 _protect_w:
         move.l   4(sp),a0
         move.w   8(sp),d0
@@ -1274,7 +1246,6 @@ _protect_w:
 /*
  * LONG protect_ww(LONG (*func)(WORD), WORD, WORD);
  */
-
 _protect_ww:
         move.l   4(sp),a0
         move.l   8(sp),d0
@@ -1287,11 +1258,9 @@ _protect_ww:
         move.l   (sp)+,a2
         rts
 
-
 /*
  * LONG protect_wlwwwl(LONG (*func)(), WORD, LONG, WORD, WORD, WORD, LONG);
  */
-
 _protect_wlwwwl:
         movem.l  8(sp),d0-d1/a0-a1
         move.l   a2,-(sp)
@@ -1308,7 +1277,6 @@ _protect_wlwwwl:
         move.l   (sp)+,d2
         move.l   (sp)+,a2
         rts
-
 
 /* Compendium says that the scancode is supplied in register d0. */
 _keyclick:

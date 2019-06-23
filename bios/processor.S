@@ -15,10 +15,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
 #include "asmdefs.h"
-
-
 
 /* References */
 
@@ -38,8 +35,6 @@
 #if CONF_WITH_68030_PMMU
         .extern _pmmutree
 #endif
-
-
 
         .text
 
@@ -129,8 +124,6 @@ exit:
 #endif /* CONF_WITH_ADVANCED_CPU */
         rts
 
-
-
 /*
  * _detect_fpu - FPU type detection, experimental (draco@atari.org).
  *
@@ -164,7 +157,6 @@ exit:
  * I am very interested if this will really work on everything =)
  * On a 68030/68882 tandem it does.
  */
-
 _detect_fpu:
 #if CONF_WITH_ADVANCED_CPU
         movem.l d2/a2,-(sp)
@@ -252,12 +244,9 @@ nosfp:  move.l  a1,(0x08).w     // restore bus error
 
 #endif /* __mcoldfire__ */
 
-
-
 /*
  * void processor_init(void) - sets mcpu and fputype.
  */
-
 _processor_init:
 #ifdef __mcoldfire__
         // On ColdFire, the caches are enabled by the pre-OS
@@ -270,7 +259,6 @@ _processor_init:
         move.l  d0,_mcpu            // & type
 #if CONF_WITH_ADVANCED_CPU
         jeq     m68000
-
 
         move.w  #1,_longframe.w // this is a 68010 or later
 m68000:
@@ -392,7 +380,6 @@ pi_done:
  * we don't do that on ColdFire, because ColdFire executables are brand new
  * and supposed to be aware of cache issues.
  */
-
 _instruction_cache_kludge:
 #ifdef __mcoldfire__
         rts
@@ -454,7 +441,6 @@ ii_done:
  *   copyback:
  *     we must push the data cache (the backing memory may be stale)
  */
-
 _flush_data_cache:
 #ifdef __mcoldfire__
         lea     cpushl_dc,a1    // flush/invalidate data cache
@@ -471,7 +457,6 @@ _flush_data_cache:
 #endif
         rts
 #endif
-
 
 /*
  * void invalidate_data_cache(void *start, long size)
@@ -563,7 +548,6 @@ cpushl_dc:
 cpushl_bc:
         cpushl  bc,(a0)         // both caches
         rts
-
 #endif
 
         SECTION_RODATA

@@ -96,7 +96,6 @@ _jmp_xbios:
         move.l  ret_addr,-(sp)
         rts
 
-
         .bss
 ret_addr:
         .ds.l   1

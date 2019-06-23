@@ -16,8 +16,6 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
-
 //============================================================================
 //
 // Originally written by JSL.
@@ -152,17 +150,13 @@ oterm:  move.l  #fstrt,sp
         jsr     _xterm
         rte
 
-
         .bss
         .even
-
 
 _old_trap2:
         .ds.l   1                       // old TRAP #2 handler
 
         .text
-
-
 
 //==== _enter - Front end of TRAP #1 handler =================================
 
@@ -239,8 +233,6 @@ callos: move.l  a0,-(sp)        // push parm pointer
 
 //...fall into gouser....
 
-
-
 //==== _gouser ===============================================================
 
 _gouser:
@@ -311,10 +303,6 @@ xu_0:
         move.l  a0,sp           // set new SSP
 
         jra     fix_rte
-
-
-
-
 
 // supervisor mode gemdos(20) entry point
 
@@ -394,8 +382,6 @@ ft_cf_nofiller:
 #endif
 ft_exit:
         rts
-
-
 
 //==== fix_rte - re-build exception stack frame for current processor ========
 

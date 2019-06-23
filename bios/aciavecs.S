@@ -100,7 +100,6 @@
 
         .globl  _call_mousevec
 
-
         .bss
 
 // ==== IOREC BUFFERS ======================================================
@@ -111,7 +110,6 @@
 
 ikbdibufbuf:    .ds.b   ikbd_bufsize
 midiibufbuf:    .ds.b   midi_bufsize
-
 
 // ==== IORECS =============================================================
 // Table of input-output records for kbd in, midi in
@@ -130,7 +128,6 @@ midiibufhd:     .ds.w   1
 midiibuftl:     .ds.w   1
 midiibuflo:     .ds.w   1
 midiibufhi:     .ds.w   1
-
 
 // ==== KBDVBASE =============================================================
 // This is now the table of routines for managing midi and keyboard data
@@ -151,8 +148,6 @@ ikbdsys:        .ds.l   1       // IKBD-systemvector
 ikbdstate:      .ds.b   1       // action to take upon packet completion
 kbdlength:      .ds.b   1       // number of bytes remaining in current packet
         .even
-
-
 
         .text
 

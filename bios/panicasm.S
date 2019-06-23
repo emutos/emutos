@@ -12,7 +12,6 @@
 
 #include "asmdefs.h"
 
-
         .text
 
         .extern _proc_dregs
@@ -34,7 +33,6 @@
         .globl  _warm_reset
         .globl  _cold_reset
 
-
 /*
  * void panic(const char *fmt, ...);
  * save the registers, state and stack in 0x380, then
@@ -42,7 +40,6 @@
  * note: the stack dump will contain the attributes.
  * the exception number proc_enum will be zero.
  */
-
 _panic:
         // supervisor mode, no interrupts
         move.w  #0x2700,sr

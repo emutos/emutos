@@ -10,13 +10,9 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
-
 #include "asmdefs.h"
 
-
 // ==== References ===========================================================
-
 
 #if DETECT_NATIVE_FEATURES
         .globl  _detect_native_features
