@@ -921,7 +921,7 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, char *pdst_path, DIRCOUNT *co
 #else
         copybuf = dos_alloc_anyram(copylen);
 #endif
-        /* drop thru */
+        FALLTHROUGH;
     case OP_RENAME:
         confirm = G.g_ccopypref;
         obj->ob_spec = (LONG) ini_str(STCOPY);

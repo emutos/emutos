@@ -361,14 +361,14 @@ static BOOL handle_mouse_mode(WORD newkey)
         break;
     case KEY_UPARROW:
         distance = -distance;
-        /* drop through */
+        FALLTHROUGH;
     case KEY_DNARROW:
         mouse_packet[1] = 0;        /* Atari TOS only allows one direction at a time */
         mouse_packet[2] = distance;
         break;
     case KEY_LTARROW:
         distance = -distance;
-        /* drop through */
+        FALLTHROUGH;
     case KEY_RTARROW:
         mouse_packet[1] = distance;
         mouse_packet[2] = 0;        /* Atari TOS only allows one direction at a time */
@@ -553,7 +553,7 @@ static WORD convert_scancode(UBYTE *scancodeptr)
     case KEY_ENTER:
         if (shifty & MODE_CTRL)
             return LF;
-        /* drop through */
+        FALLTHROUGH;
     case KEY_ESCAPE:
     case KEY_BACKSPACE:
     case KEY_TAB:

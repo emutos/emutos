@@ -1183,7 +1183,7 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
     case WF_VSLSIZ:
         if (pinwds[0] == -1)    /* means "use default size" */
             break;
-        /* drop thru */
+        FALLTHROUGH;
     case WF_HSLIDE:
     case WF_VSLIDE:
         if (pinwds[0] < 1)

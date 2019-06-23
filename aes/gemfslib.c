@@ -662,6 +662,7 @@ WORD fs_input(char *pipath, char *pisel, WORD *pbutton, char *pilabel)
                 ob_change(tree,FSOK,NORMAL,TRUE);/* (so deselect the button) */
                 break;
             }
+            FALLTHROUGH;
         case FSCANCEL:
             cont = FALSE;
             break;
@@ -681,7 +682,7 @@ WORD fs_input(char *pipath, char *pisel, WORD *pbutton, char *pilabel)
                 value = NM_NAMES;
                 break;
             }
-            /* drop through */
+            FALLTHROUGH;
         case FSVELEV:
             fm_own(TRUE);
             value = gr_slidebox(tree, FSVSLID, FSVELEV, TRUE);

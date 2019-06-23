@@ -909,13 +909,14 @@ LONG flopfmt(UBYTE *buf, WORD *skew, WORD dev, WORD spt,
             leader = LEADER_HD;
             break;
         }
-        /* else drop thru */
+        FALLTHROUGH;
     case DD_DRIVE:
         if ((spt >= 1) && (spt <= 10)) {
             track_size = TRACK_SIZE_DD;
             leader = LEADER_DD;
             break;
         }
+        FALLTHROUGH;
     default:
         return EBADSF;          /* consistent, at least :-) */
     }

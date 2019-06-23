@@ -16,6 +16,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 #include "config.h"
+#include "portab.h"
 #include <stdarg.h>
 #include "doprintf.h"
 
@@ -181,7 +182,7 @@ int doprintf(void (*outc)(int), const char *fmt, va_list ap)
         case 'd':
         case 'i':
             flags |= FLAG_SIGN;
-            /* drop through */
+            FALLTHROUGH;
         case 'o':
         case 'u':
             if (flags & FLAG_LONG)
@@ -200,7 +201,7 @@ int doprintf(void (*outc)(int), const char *fmt, va_list ap)
             break;
         case 'P':
             flags |= FLAG_CAPS;
-            /* drop through */
+            FALLTHROUGH;
         case 'p':
             /* pointers are always long & zero-filled to a width of 8 */
             flags |= FLAG_WIDTH|FLAG_LONG|FLAG_ZERO;
@@ -213,7 +214,7 @@ int doprintf(void (*outc)(int), const char *fmt, va_list ap)
             break;
         case 'X':
             flags |= FLAG_CAPS;
-            /* drop through */
+            FALLTHROUGH;
         case 'x':
             if (flags & FLAG_LONG)
                 longval = va_arg(ap, long);

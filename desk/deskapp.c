@@ -303,14 +303,14 @@ static char *app_parse(char *pcurr, ANODE *pa)
         break;
     case 'Y':                             /* GEM App needs parms  */
         pa->a_flags = AF_ISPARM;
-        /* drop thru */
+        FALLTHROUGH;
     case 'G':                             /* GEM App no parms     */
         pa->a_type = AT_ISFILE;
         pa->a_flags |= AF_ISCRYS;
         break;
     case 'P':                             /* TOS App needs parms  */
         pa->a_flags = AF_ISPARM;
-        /* drop thru */
+        FALLTHROUGH;
     case 'F':                             /* TOS App no parms     */
         pa->a_type = AT_ISFILE;
         break;
@@ -319,7 +319,7 @@ static char *app_parse(char *pcurr, ANODE *pa)
         break;
     case 'I':                             /* Executable file      */
         pa->a_flags = AF_ISEXEC;
-        /* drop thru */
+        FALLTHROUGH;
     case 'N':                             /* Non-executable file  */
         pa->a_type = AT_ISFILE;
         pa->a_flags |= AF_WINDOW;

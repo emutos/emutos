@@ -82,7 +82,7 @@ static char *fmt_time(UWORD time, char *fmt_string, char *ptime)
     case TIMEFORM_IDT:
         if ((cookie_idt&IDT_TMASK) == IDT_24H)
             break;
-        /* else 12 hour clock, so drop thru */
+        FALLTHROUGH; /* else 12 hour clock */
     case TIMEFORM_12H:
         if (hh >= 12)
         {

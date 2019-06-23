@@ -469,7 +469,7 @@ LONG super(WORD cx, AESPB *pcrys_blk)
     {
     case 200:
         xif(pcrys_blk);
-        /* drop thru */
+        FALLTHROUGH;
     case 201:           /* undocumented TOS feature */
         dsptch();
     }

@@ -214,7 +214,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
 #endif
     case PE_BASEPAGE:           /* just create a basepage */
         path = (char *) 0L;     /* (same as basepage+flags with flags set to zero) */
-        /* drop thru */
+        FALLTHROUGH;
     case PE_BASEPAGEFLAGS:      /* create a basepage, respecting the flags */
         hdrflags = (ULONG)path;
         env_ptr = alloc_env(hdrflags, env);

@@ -262,7 +262,7 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
         case G_BOXCHAR:
         case G_IBOX:
             gr_crack((UWORD)spec, &bcol, &tcol, &ipat, &icol, &tmode);
-            /* drop thru */
+            FALLTHROUGH;
         case G_BUTTON:
             if (obtype == G_BUTTON)
             {
@@ -270,7 +270,7 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
                 ipat = IP_HOLLOW;
                 icol = WHITE;
             }
-            /* drop thru */
+            FALLTHROUGH;
         case G_BOXTEXT:
         case G_FBOXTEXT:
             /* draw box's border */
@@ -301,7 +301,7 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
             strcpy(D.g_rawstr, edblk.te_ptext);
             strcpy(D.g_tmpstr, edblk.te_ptmplt);
             ob_format(edblk.te_just, D.g_rawstr, D.g_tmpstr, D.g_fmtstr);
-            /* drop thru to gr_gtext */
+            FALLTHROUGH; /* to gr_gtext */
         case G_BOXCHAR:
             edblk.te_ptext = D.g_fmtstr;
             if (obtype == G_BOXCHAR)
@@ -311,7 +311,7 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
                 edblk.te_just = TE_CNTR;
                 edblk.te_font = IBM;
             }
-            /* drop thru to gr_gtext */
+            FALLTHROUGH; /* to gr_gtext */
         case G_TEXT:
         case G_BOXTEXT:
             gr_inside(&t, tmpth);

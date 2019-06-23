@@ -701,7 +701,7 @@ static WORD install_desktop_icon(ANODE *pa)
         break;
     case AT_ISDISK:
         id[0] = pa->a_letter;
-        /* drop thru */
+        FALLTHROUGH;
     case AT_ISTRSH:
         inf_sset(tree, ID_ID, id);
         if (pa->a_type == AT_ISDISK)
@@ -770,7 +770,7 @@ static WORD install_desktop_icon(ANODE *pa)
             break;
         case ID_CNCL:           /* cancel further installs */
             change = -1;
-            /* drop thru */
+            FALLTHROUGH;
         case ID_SKIP:           /* skip this application */
             if (!icon_exists)       /* we allocated one */
                 app_free(pa);       /* so we need to free it */

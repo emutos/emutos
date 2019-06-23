@@ -477,6 +477,7 @@ restrt:
             case 6:                 /* Crawio() */
                 if (pw[1] != 0xFF)
                     goto rawout;
+                FALLTHROUGH;
             case 1:                 /* Cconin() */
             case 3:                 /* Cauxin() */
             case 7:                 /* Crawcin() */
@@ -527,7 +528,7 @@ restrt:
             case 18:                /* Cauxis() */
                 if (eof(h))
                     return 0L;
-                /* drop through */
+                FALLTHROUGH;
 
             case 16:                /* Cconos() */
             case 17:                /* Cprnos() */
