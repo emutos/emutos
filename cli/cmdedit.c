@@ -214,6 +214,7 @@ WORD n, word = 0;
         break;
     case CTRL_ARROW_LEFT:
         word = 1;
+        /* fall through */
     case ARROW_LEFT:
         if (*pos > 0) {
             n = word ? previous_word_count(line,*pos) : 1;
@@ -225,6 +226,7 @@ WORD n, word = 0;
         break;
     case CTRL_ARROW_RIGHT:
         word = 1;
+        /* fall through */
     case ARROW_RIGHT:
         if (*pos < *len) {
             n = word ? next_word_count(line,*pos,*len) : 1;
