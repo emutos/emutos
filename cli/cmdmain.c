@@ -254,7 +254,7 @@ int valid_res(WORD res)
     case ST_HIGH:
         if (vdo_value != _VDO_TT)
             return FALSE;
-        /* fall through */
+        FALLTHROUGH;
 #endif  /* CONF_WITH_TT_SHIFTER */
     case ST_LOW:
     case ST_MEDIUM:

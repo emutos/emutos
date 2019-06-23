@@ -245,7 +245,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
         p = (PD *) tail;
         set_owner(p, p);
         set_owner(p->p_env, p);
-        /* fall through */
+        FALLTHROUGH;
     case PE_GO:
         p = (PD *) tail;
         proc_go(p);
