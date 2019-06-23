@@ -159,15 +159,4 @@ struct fpd                  /* fork process descriptor */
         LONG    f_data;
 } ;
 
-/* GEM memory usage parameter block */
-
-#define GEM_MUPB_MAGIC 0x87654321
-
-typedef struct
-{
-    ULONG  gm_magic;        /* Magical value, has to be GEM_MUPB_MAGIC */
-    UBYTE  *gm_end;         /* End of the memory required by GEM */
-    PFVOID gm_init;         /* Start address of GEM */
-} GEM_MUPB;
-
 #endif /* GEMSTRUCT_H */

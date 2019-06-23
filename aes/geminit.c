@@ -109,13 +109,6 @@ static char     infbuf[INF_SIZE+1];     /* used to read part of EMUDESK.INF */
 
 /* Some global variables: */
 
-GLOBAL const GEM_MUPB ui_mupb =
-{
-    GEM_MUPB_MAGIC, /* Magic value identifying this structure */
-    _endgembss,     /* End of GEM BSS */
-    ui_start        /* AES entry point */
-};
-
 GLOBAL WORD     totpds;
 GLOBAL WORD     num_accs;
 

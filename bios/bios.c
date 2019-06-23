@@ -1114,3 +1114,11 @@ const PFLONG bios_vecs[] = {
 };
 
 const UWORD bios_ent = ARRAY_SIZE(bios_vecs);
+
+/* GEM memory usage parameters block */
+const GEM_MUPB ui_mupb =
+{
+    GEM_MUPB_MAGIC, /* Magic value identifying this structure */
+    _endgembss,     /* End of GEM BSS */
+    ui_start        /* AES entry point */
+};

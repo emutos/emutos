@@ -20,6 +20,21 @@
 
 #include "portab.h"
 
+/* GEM memory usage parameters block.
+ * This is actually a structure used by the BIOS
+ * in order to call the main UI (i.e. AES) */
+
+#define GEM_MUPB_MAGIC 0x87654321
+
+typedef struct
+{
+    ULONG  gm_magic; /* Magical value, has to be GEM_MUPB_MAGIC */
+    UBYTE  *gm_end;  /* End of the static ST-RAM used by the OS */
+    PFVOID gm_init;  /* Start address of the main UI */
+} GEM_MUPB;
+
+extern const GEM_MUPB *os_magic; /* Information about the main UI */
+
 extern LONG proc_lives;
 extern LONG proc_dregs[];
 extern LONG proc_aregs[];
@@ -98,8 +113,6 @@ extern UBYTE *memtop;
 extern UBYTE *ramtop;     /* top of TT-RAM, or NULL if no TT-RAM is present */
 #define RAMVALID_MAGIC 0x1357BD13
 extern LONG ramvalid;     /* if equal to RAMVALID_MAGIC, then ramtop is valid */
-
-extern LONG os_magic;     /* if == 0x87654321, means that GEM is present */
 
 extern LONG savptr;
 
