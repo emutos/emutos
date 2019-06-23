@@ -390,7 +390,6 @@ help:
 	@echo "charset check the charset of all the source files"
 	@echo "bugready set up files in preparation for 'bug update'"
 	@echo "gitready same as $(MAKE) expand crlf"
-	@echo "depend  creates dependancy file (makefile.dep)"
 	@echo "dsm     dsm.txt, an edited disassembly of emutos.img"
 	@echo "release build the release archives into $(RELEASE_DIR)"
 
@@ -922,7 +921,7 @@ endif
 #
 # obj/country contains the current values of $(COUNTRY) and $(UNIQUE).
 # whenever it changes, whatever necessary steps are taken so that the
-# correct files get re-compiled, even without doing make depend.
+# correct files get re-compiled.
 #
 
 TOCLEAN += obj/country
@@ -1266,10 +1265,6 @@ test:
 
 ALL_UTIL_SRC = $(wildcard util/*.[cS])
 DEP_SRC = $(sort $(SRC) $(ALL_UTIL_SRC))
-
-.PHONY: depend
-NODEP += depend
-depend: makefile.dep
 
 TOCLEAN += makefile.dep
 NODEP += makefile.dep

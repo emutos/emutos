@@ -91,7 +91,6 @@ dsm         dsm.txt, an edited disassembly of emutos.img
 Git-related targets
 -------------------
 
-depend      generates dependencies
 clean       cleans all generated files
 charset     check the charset of all the source files
 crlf        convert all end-of-lines to LF
