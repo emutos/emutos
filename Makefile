@@ -1282,6 +1282,6 @@ makefile.dep: $(GEN_SRC)
 # being used. Be sure to keep this block at the end of the Makefile.
 ifneq (,$(MAKECMDGOALS))
 ifeq (,$(filter $(NODEP), $(MAKECMDGOALS)))
--include makefile.dep
+include makefile.dep
 endif
 endif
