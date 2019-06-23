@@ -1188,106 +1188,6 @@ static void cnx_get(void)
 }
 
 
-/*  Counts the occurrences of c in str */
-static int count_chars(char *str, char c)
-{
-    int count;
-
-    count = 0;
-    while(*str)
-    {
-        if (*str++ == c)
-            count++;
-    }
-
-    return count;
-}
-
-/*
- *  The xlate_obj_array() & fix_tedinfo() functions below are also
- *  used by the GEM rsc in aes/gem_rsc.c
- */
-
-/* Translates the strings in an OBJECT array */
-void xlate_obj_array(OBJECT *obj_array, int nobj)
-{
-    OBJECT *obj;
-    char **str;
-
-    for (obj = obj_array; --nobj >= 0; obj++) {
-        switch(obj->ob_type)
-        {
-#if 0
-        /*
-         * at the moment, there are no G_TEXT or G_BOXTEXT items in the
-         * EmuTOS resources.  note that, if they are added, erd will have
-         * to be updated too.
-         */
-        case G_TEXT:
-        case G_BOXTEXT:
-            str = & ((TEDINFO *)obj->ob_spec)->te_ptext;
-            *str = (char *)gettext(*str);
-            break;
-#endif
-        case G_FTEXT:
-        case G_FBOXTEXT:
-            str = & ((TEDINFO *)obj->ob_spec)->te_ptmplt;
-            *str = (char *)gettext(*str);
-            break;
-        case G_STRING:
-        case G_BUTTON:
-        case G_TITLE:
-            obj->ob_spec = (LONG) gettext( (char *) obj->ob_spec);
-            break;
-        default:
-            break;
-        }
-    }
-}
-
-/* Fixes the TEDINFO strings */
-void fix_tedinfo(TEDINFO *tedinfo, int nted)
-{
-    int i = 0;
-    long len;
-    int j;
-    char *tedinfptr;
-
-    /* Fix TEDINFO strings: */
-    len = 0;
-    for (i = 0; i < nted; i++)
-    {
-        if (tedinfo[i].te_ptext == 0)
-        {
-            /* Count number of '_' in strings
-             * ( +2 for @ at the beginning, and \0 at the end )
-             */
-            len += count_chars(tedinfo[i].te_ptmplt, '_') + 2;
-        }
-    }
-    tedinfptr = dos_alloc_anyram(len);   /* Get memory */
-    if (!tedinfptr)
-    {
-        KDEBUG(("insufficient memory for TEDINFO strings (need %ld bytes)\n",len));
-        nomem_alert();          /* infinite loop */
-    }
-
-    for (i = 0; i < nted; i++)
-    {
-        if (tedinfo[i].te_ptext == 0)
-        {
-            tedinfo[i].te_ptext = tedinfptr;
-            *tedinfptr++ = '@'; /* First character of uninitialized string */
-            len = count_chars(tedinfo[i].te_ptmplt, '_');
-            for (j = 0; j < len; j++)
-            {
-                *tedinfptr++ = '_';     /* Set other characters to '_' */
-            }
-            *tedinfptr++ = 0;   /* Final 0 */
-        }
-    }
-}
-
 /*
  *  Change the sizes of the menus after translation, and fix up the
  *  separator lines
@@ -1552,7 +1452,11 @@ static void desk_xlate_fix(void)
     }
 
     /* Fix TEDINFO strings */
-    fix_tedinfo(desk_rs_tedinfo, RS_NTED);
+    if (!fix_tedinfo(desk_rs_tedinfo, RS_NTED))
+    {
+        KDEBUG(("insufficient memory for desktop TEDINFO strings\n"));
+        nomem_alert();          /* infinite loop */
+    }
 
     /*
      * perform special object alignment - this must be done after

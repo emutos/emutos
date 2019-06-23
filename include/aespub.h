@@ -1,7 +1,7 @@
 /*
  * aespub.h - Public AES functions
  *
- * Copyright (C) 2016-2018 The EmuTOS development team
+ * Copyright (C) 2016-2019 The EmuTOS development team
  *
  * Authors:
  *  VRI   Vincent Rivière
@@ -32,5 +32,9 @@ void ui_start(void) NORETURN;   /* found in aes/gemstart.S */
 
 /* returns default mouse form */
 MFORM *default_mform(void);
+
+/* functions used by AES and desktop, found in gemrslib.c */
+void xlate_obj_array(OBJECT *obj_array, int nobj);
+BOOL fix_tedinfo(TEDINFO *tedinfo, int nted);
 
 #endif /* AESPUB_H */
