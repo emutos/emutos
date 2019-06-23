@@ -56,9 +56,6 @@ void bmem_init(void)
     KDEBUG(("       _edata = %p\n", _edata));
     KDEBUG(("         _bss = %p\n", _bss));
     KDEBUG(("   _endvdibss = %p\n", _endvdibss));
-#if WITH_AES
-    KDEBUG(("   _endgembss = %p\n", _endgembss));
-#endif
     KDEBUG(("        _ebss = %p\n", _ebss));
     KDEBUG(("       stkbot = %p\n", stkbot));
     KDEBUG(("       stktop = %p\n", stktop));

@@ -102,9 +102,6 @@ extern UBYTE _static_altram_end[];
 #endif
 
 extern UBYTE _endvdibss[];  /* end of VDI BSS */
-#if WITH_AES
-extern UBYTE _endgembss[];  /* end of GEM BSS */
-#endif
 
 extern UBYTE *membot;
 extern UBYTE *memtop;

@@ -1119,6 +1119,6 @@ const UWORD bios_ent = ARRAY_SIZE(bios_vecs);
 const GEM_MUPB ui_mupb =
 {
     GEM_MUPB_MAGIC, /* Magic value identifying this structure */
-    _endgembss,     /* End of GEM BSS */
+    _end_os_stram,  /* End of the static ST-RAM used by the OS */
     ui_start        /* AES entry point */
 };
