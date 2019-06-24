@@ -38,6 +38,7 @@
 #include "gemerror.h"
 #include "biosbind.h"
 #include "kprint.h"
+#include "bdosext.h"
 
 
 /*

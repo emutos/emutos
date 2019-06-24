@@ -24,6 +24,7 @@
 #include "console.h"
 #include "biosbind.h"
 #include "kprint.h"
+#include "bdosext.h"
 
 /*
  * The following structure is used for the typeahead buffer

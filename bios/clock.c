@@ -30,6 +30,7 @@
 #include "asm.h"
 #include "dma.h"
 #include "delay.h"
+#include "bdosext.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif
@@ -1123,8 +1124,6 @@ void clock_init(void)
 }
 
 /* xbios functions */
-
-extern UWORD current_time, current_date; /* From bdos/time.c */
 
 void settime(LONG time)
 {

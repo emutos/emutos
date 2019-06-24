@@ -31,8 +31,7 @@
 #include "biosmem.h"
 #include "bootparams.h"
 #include "machine.h"
-
-extern long xmaddalt(UBYTE *start, long size); /* found in bdos/mem.h */
+#include "bdosext.h"
 
 #ifdef MACHINE_AMIGA
 

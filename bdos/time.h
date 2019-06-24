@@ -12,8 +12,6 @@
 
 #include "portab.h"
 
-extern UWORD current_time, current_date;
-
 long xgetdate(void);
 long xsetdate(UWORD d);
 long xgettime(void);

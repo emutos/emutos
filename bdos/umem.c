@@ -27,6 +27,7 @@
 #include "biosext.h"
 #include "xbiosbind.h"
 #include "kprint.h"
+#include "bdosext.h"
 #include "../bios/tosvars.h"
 
 

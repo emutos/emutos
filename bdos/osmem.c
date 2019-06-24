@@ -29,6 +29,7 @@
 #include "fs.h"
 #include "mem.h"
 #include "kprint.h"
+#include "bdosext.h"
 
 /*
  *  local constants
@@ -75,7 +76,6 @@ static WORD osmem[LENOSM];
  *  note: MAXQUICK used to be 20, but 5 (indexes 0-4) is now all we need,
  *  and we actually only use index 4 (all blocks are 64 bytes).
  */
-#define MAXQUICK    5
 WORD *root[MAXQUICK];
 
 static MDBLOCK *mdbroot;    /* root for partially-used MDBLOCKs */

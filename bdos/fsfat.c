@@ -16,6 +16,7 @@
 #include "fs.h"
 #include "gemerror.h"
 #include "kprint.h"
+#include "bdosext.h"
 
 /*
 **  cl2rec -

@@ -18,6 +18,7 @@
 #include "fs.h"
 #include "gemerror.h"
 #include "kprint.h"
+#include "bdosext.h"
 
 /*
  * xforce - 0x46, force a std handle to a non-std handle

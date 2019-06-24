@@ -28,12 +28,11 @@
 #include "acsi.h"
 #include "scsi.h"
 #include "sd.h"
+#include "bdosext.h"
 
 /*==== Defines ============================================================*/
 
 #define REMOVABLE_PARTITIONS    1   /* minimum # partitions for removable unit */
-
-extern LONG drvrem;                 /* bitmap of removable media drives */
 
 /*==== Structures =========================================================*/
 typedef struct {

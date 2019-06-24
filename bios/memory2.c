@@ -20,11 +20,10 @@
 #include "machine.h"
 #include "biosext.h"    /* for cache control routines */
 #include "vectors.h"
+#include "bdosext.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif
-
-extern long xmaddalt(UBYTE *start, long size); /* found in bdos/mem.h */
 
 UBYTE meminit_flags;
 
