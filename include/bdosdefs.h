@@ -40,6 +40,10 @@
 #define FA_SUBDIR       0x10
 #define FA_ARCHIVE      0x20
 
+/* Values of 'wrt' for Fattrib() */
+#define F_GETMOD 0x0
+#define F_SETMOD 0x1
+
 typedef struct
 {
     char    d_reserved[21];     /* internal EmuTOS usage */
