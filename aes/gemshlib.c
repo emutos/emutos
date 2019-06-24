@@ -427,7 +427,7 @@ static WORD findfile(char *pspec)
     {
         strcpy(D.g_work, rlr->p_appdir);
         strcat(D.g_work, pname);
-        if (dos_sfirst(D.g_work, F_RDONLY | F_SYSTEM) == 0) /* found */
+        if (dos_sfirst(D.g_work, FA_RO | FA_SYSTEM) == 0)   /* found */
         {
             strcpy(pspec, D.g_work);
             KDEBUG(("sh_find(1): returning pspec='%s'\n",pspec));
@@ -437,7 +437,7 @@ static WORD findfile(char *pspec)
 
     /* (2) search in the current directory */
     strcpy(D.g_work, pspec);
-    if (dos_sfirst(D.g_work, F_RDONLY | F_SYSTEM) == 0) /* found */
+    if (dos_sfirst(D.g_work, FA_RO | FA_SYSTEM) == 0)   /* found */
     {
         KDEBUG(("sh_find(2): returning pspec='%s'\n",pspec));
         return 1;
@@ -446,7 +446,7 @@ static WORD findfile(char *pspec)
     /* (3) search in the root directory of the current drive */
     D.g_work[0] = '\\';
     strcpy(D.g_work+1, pname);
-    if (dos_sfirst(D.g_work, F_RDONLY | F_SYSTEM) == 0) /* found */
+    if (dos_sfirst(D.g_work, FA_RO | FA_SYSTEM) == 0)   /* found */
     {
         strcpy(pspec, D.g_work);
         KDEBUG(("sh_find(3): returning pspec='%s'\n",pspec));
@@ -468,7 +468,7 @@ static WORD findfile(char *pspec)
         path = sh_path(path, D.g_work, pname);
         if (!path)                  /* end of PATH= */
             break;
-        if (dos_sfirst(D.g_work, F_RDONLY | F_SYSTEM) == 0) /* found */
+        if (dos_sfirst(D.g_work, FA_RO | FA_SYSTEM) == 0)   /* found */
         {
             strcpy(pspec, D.g_work);
             KDEBUG(("sh_find(4): returning pspec='%s'\n",pspec));

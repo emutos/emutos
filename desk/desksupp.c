@@ -56,7 +56,7 @@
 #include "kprint.h"
 
 
-#define ALLFILES    (F_SUBDIR|F_SYSTEM|F_HIDDEN)
+#define ALLFILES    (FA_SUBDIR|FA_SYSTEM|FA_HIDDEN)
 
 
 #if CONF_WITH_FORMAT
@@ -1643,7 +1643,7 @@ ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp)
             if (item >= 0)
                 pf = G.g_screeninfo[item].fnptr;
             if (pf)
-                pa = app_afind_by_name((pf->f_attr&F_SUBDIR)?AT_ISFOLD:AT_ISFILE,
+                pa = app_afind_by_name((pf->f_attr&FA_SUBDIR)?AT_ISFOLD:AT_ISFILE,
                             AF_ISDESK|AF_WINDOW, pw->w_pnode.p_spec, pf->f_name, &isapp);
         }
     }

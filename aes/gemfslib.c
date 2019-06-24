@@ -153,7 +153,7 @@ static LONG fs_add(WORD thefile, LONG fs_index)
     WORD len;
 
     g_fslist[thefile] = fs_index;
-    ad_fsnames[fs_index++] = (D.g_dta.d_attrib & F_SUBDIR) ? 0x07 : ' ';
+    ad_fsnames[fs_index++] = (D.g_dta.d_attrib & FA_SUBDIR) ? 0x07 : ' ';
     len = strlencpy(ad_fsnames+fs_index,D.g_dta.d_fname);
     fs_index += len + 1;
     return fs_index;
@@ -186,7 +186,7 @@ static WORD fs_active(char *ppath, char *pspec, WORD *pcount)
 
     user_dta = dos_gdta();          /* remember user's DTA */
     dos_sdta(&D.g_dta);
-    ret = dos_sfirst(allpath, F_SUBDIR);
+    ret = dos_sfirst(allpath, FA_SUBDIR);
 
     while (ret == 0)
     {
@@ -195,7 +195,7 @@ static WORD fs_active(char *ppath, char *pspec, WORD *pcount)
          */
         if (D.g_dta.d_fname[0] != '.')
         {
-            if ((D.g_dta.d_attrib & F_SUBDIR) || (wildcmp(pspec, D.g_dta.d_fname)))
+            if ((D.g_dta.d_attrib & FA_SUBDIR) || (wildcmp(pspec, D.g_dta.d_fname)))
             {
                 fs_index = fs_add(thefile, fs_index);
                 thefile++;

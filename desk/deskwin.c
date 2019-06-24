@@ -306,7 +306,7 @@ static void win_ocalc(WNODE *pwin, WORD wfit, WORD hfit, FNODE **ppstart)
  */
 static void win_icalc(FNODE *pfnode, WNODE *pwin)
 {
-    pfnode->f_pa = app_afind_by_name((pfnode->f_attr&F_SUBDIR) ? AT_ISFOLD : AT_ISFILE,
+    pfnode->f_pa = app_afind_by_name((pfnode->f_attr&FA_SUBDIR) ? AT_ISFOLD : AT_ISFILE,
                         AF_ISDESK, pwin->w_pnode.p_spec, pfnode->f_name, &pfnode->f_isap);
 }
 
@@ -385,7 +385,7 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
             else
             {
                 KDEBUG(("win_bldview(): NULL anode, using defaults\n"));
-                if (pstart->f_attr&F_SUBDIR)
+                if (pstart->f_attr&FA_SUBDIR)
                     i_index = IG_FOLDER;
                 else
                     i_index = (pstart->f_isap) ? IG_APPL : IG_DOCU;

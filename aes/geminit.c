@@ -266,7 +266,7 @@ static WORD count_accs(void)
 
     for (i = 0; i < NUM_ACCS; i++)
     {
-        rc = (i==0) ? dos_sfirst(D.g_work,F_RDONLY) : dos_snext();
+        rc = (i==0) ? dos_sfirst(D.g_work,FA_RO) : dos_snext();
         if (rc < 0)
             break;
         strlcpy(acc[i].name,D.g_dta.d_fname,LEN_ZFNAME);

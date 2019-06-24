@@ -234,9 +234,9 @@ static WORD format_fnode(LONG pfnode, char *pfmt)
     /*
      * folder or read-only indicator
      */
-    if (pf->f_attr & F_SUBDIR)
+    if (pf->f_attr & FA_SUBDIR)
         indicator = 0x07;
-    else if (pf->f_attr & F_RDONLY)
+    else if (pf->f_attr & FA_RO)
         indicator = 0x7f;
     else indicator = ' ';
     *pdst++ = indicator;
@@ -265,7 +265,7 @@ static WORD format_fnode(LONG pfnode, char *pfmt)
     /*
      * size
      */
-    if (pf->f_attr & F_SUBDIR)
+    if (pf->f_attr & FA_SUBDIR)
     {
         WORD n = wide ? 11 : 8;
         while(n--)
@@ -479,7 +479,7 @@ WORD inf_file_folder(char *ppath, FNODE *pf)
     tree = G.a_trees[ADFFINFO];
     deselect_all(tree);
 
-    title = (pf->f_attr & F_SUBDIR) ? STFOINFO : STFIINFO;
+    title = (pf->f_attr & FA_SUBDIR) ? STFOINFO : STFIINFO;
     obj = tree + FFTITLE;
     obj->ob_spec = (LONG) ini_str(title);
     centre_title(tree);
@@ -492,7 +492,7 @@ WORD inf_file_folder(char *ppath, FNODE *pf)
      * for folders, count the contents & insert the values in the
      * dialog; for files, blank out the corresponding dialog fields
      */
-    if (pf->f_attr & F_SUBDIR)
+    if (pf->f_attr & FA_SUBDIR)
     {
         graf_mouse(HGLASS, NULL);
         strcpy(srcpth+nmidx, pf->f_name);
@@ -529,17 +529,17 @@ WORD inf_file_folder(char *ppath, FNODE *pf)
          * initialise the attributes display
          */
         obj = tree + FFRONLY;
-        if (pf->f_attr & F_SUBDIR)
+        if (pf->f_attr & FA_SUBDIR)
             obj->ob_state = DISABLED;
-        else if (pf->f_attr & F_RDONLY)
+        else if (pf->f_attr & FA_RO)
             obj->ob_state = SELECTED;
         else
             obj->ob_state = NORMAL;
 
         obj = tree + FFRWRITE;
-        if (pf->f_attr & F_SUBDIR)
+        if (pf->f_attr & FA_SUBDIR)
             obj->ob_state = DISABLED;
-        else if (!(pf->f_attr & F_RDONLY))
+        else if (!(pf->f_attr & FA_RO))
             obj->ob_state = SELECTED;
         else
             obj->ob_state = NORMAL;
@@ -567,14 +567,14 @@ WORD inf_file_folder(char *ppath, FNODE *pf)
          * and remember that we made a change
          * (like Atari TOS, we don't check the return code from dos_chmod())
          */
-        if (!(pf->f_attr & F_SUBDIR))
+        if (!(pf->f_attr & FA_SUBDIR))
         {
             attr = pf->f_attr;
             obj = tree + FFRONLY;
             if (obj->ob_state & SELECTED)
-                attr |= F_RDONLY;
+                attr |= FA_RO;
             else
-                attr &= ~F_RDONLY;
+                attr &= ~FA_RO;
             if (attr != pf->f_attr)
             {
                 dos_chmod(srcpth, F_SETMOD, attr);

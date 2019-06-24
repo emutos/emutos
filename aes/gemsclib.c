@@ -92,7 +92,7 @@ WORD sc_clear(void)
     save_dta = dos_gdta();                  /* save current DTA */
     dos_sdta(&D.g_dta);                     /* make sure dta ok */
 
-    ret = dos_sfirst(D.g_scrap, F_SUBDIR);
+    ret = dos_sfirst(D.g_scrap, FA_SUBDIR);
     while(ret == 0)
     {
         strcpy(ptmp + 1, D.g_dta.d_fname);  /* Add file name */

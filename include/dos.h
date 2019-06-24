@@ -15,13 +15,6 @@
 *       -------------------------------------------------------------
 */
 
-#define F_RDONLY 0x01
-#define F_HIDDEN 0x02
-#define F_SYSTEM 0x04
-#define F_VOLUME 0x08
-#define F_SUBDIR 0x10
-#define F_ARCHIVE 0x20
-
 #define F_GETMOD 0x0
 #define F_SETMOD 0x1
 

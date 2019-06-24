@@ -48,7 +48,7 @@
 
 #define MAX_CLUS_SIZE   (32*1024L)  /* maximum cluster size */
 
-#define ALLFILES    (F_SUBDIR|F_SYSTEM|F_HIDDEN)
+#define ALLFILES    (FA_SUBDIR|FA_SYSTEM|FA_HIDDEN)
 
 #define OP_RENAME   777     /* used internally by dir_op(): must not be the same as any other OP_XXX ! */
 
@@ -604,7 +604,7 @@ WORD d_doop(WORD level, WORD op, char *psrc_path, char *pdst_path, OBJECT *tree,
         /*
          * handle folder
          */
-        if (dta->d_attrib & F_SUBDIR)
+        if (dta->d_attrib & FA_SUBDIR)
         {
             if (dta->d_fname[0] != '.')
             {
@@ -961,7 +961,7 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, char *pdst_path, DIRCOUNT *co
         /*
          * handle folder
          */
-        if (pf->f_attr & F_SUBDIR)
+        if (pf->f_attr & FA_SUBDIR)
         {
             add_path(srcpth, pf->f_name);
             if ((op == OP_COPY) || (op == OP_MOVE) || (op == OP_RENAME))

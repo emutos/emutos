@@ -1195,7 +1195,7 @@ void ins_shortcut(WORD wh, WORD mx, WORD my)
         /*
          * override the default icon with an installed icon (if it exists)
          */
-        pa = app_afind_by_name((pf->f_attr&F_SUBDIR)?AT_ISFOLD:AT_ISFILE,
+        pa = app_afind_by_name((pf->f_attr&FA_SUBDIR)?AT_ISFOLD:AT_ISFILE,
                         AF_ISDESK, pw->w_pnode.p_spec, pf->f_name, &dummy);
         if (pa)                     /* paranoia */
         {

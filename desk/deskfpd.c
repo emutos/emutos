@@ -86,7 +86,7 @@ PNODE *pn_open(char *pathname, WNODE *pw)
     thepath = &pw->w_pnode;
     thepath->p_flist = NULL;    /* file list starts empty */
     strcpy(thepath->p_spec,pathname);
-    thepath->p_attr = F_SUBDIR;
+    thepath->p_attr = FA_SUBDIR;
 
     return thepath;
 }
@@ -142,8 +142,8 @@ static LONG pn_comp(FNODE *pf1, FNODE *pf2)
 {
     if (G.g_isort != S_NSRT)
     {
-        if ((pf1->f_attr ^ pf2->f_attr) & F_SUBDIR)
-            return (pf1->f_attr & F_SUBDIR) ? -1L : 1L;
+        if ((pf1->f_attr ^ pf2->f_attr) & FA_SUBDIR)
+            return (pf1->f_attr & FA_SUBDIR) ? -1L : 1L;
     }
 
     return pn_fcomp(pf1,pf2,G.g_isort);
@@ -259,7 +259,7 @@ WORD pn_active(PNODE *pn, BOOL include_folders)
     match = filename_start(pn->p_spec); /* the match filespec is always unaltered */
     for (ret = dos_sfirst(search, pn->p_attr), count = 0; (ret == 0) && (count < maxcount); ret = dos_snext())
     {
-        if (G.g_wdta.d_attrib != F_SUBDIR)  /* skip *files* that don't match */
+        if (G.g_wdta.d_attrib != FA_SUBDIR) /* skip *files* that don't match */
             if (!wildcmp(match, G.g_wdta.d_fname))
                 continue;
 #else
