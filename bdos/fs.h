@@ -177,13 +177,6 @@ typedef struct
 
 #define ERASE_MARKER    '\xe5'  /* in f_name[0], indicates erased file */
 
-#define FA_RO           0x01
-#define FA_HIDDEN       0x02
-#define FA_SYSTEM       0x04
-#define FA_VOL          0x08
-#define FA_SUBDIR       0x10
-#define FA_ARCHIVE      0x20
-
 #define FA_NORM         (FA_ARCHIVE|FA_SYSTEM|FA_HIDDEN|FA_RO)
 #define FA_LFN          0x0f
 

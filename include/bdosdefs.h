@@ -32,6 +32,14 @@
 #define PE_RELOCATE   50    /* required for NatFeats support only, not in Atari TOS */
 #endif
 
+/* File Attributes bits used by FAT and Fsfirst() / Fattrib() */
+#define FA_RO           0x01
+#define FA_HIDDEN       0x02
+#define FA_SYSTEM       0x04
+#define FA_VOL          0x08
+#define FA_SUBDIR       0x10
+#define FA_ARCHIVE      0x20
+
 typedef struct
 {
     char    d_reserved[21];     /* internal EmuTOS usage */
