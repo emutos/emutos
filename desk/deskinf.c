@@ -658,8 +658,7 @@ WORD inf_disk(char dr_id)
         label[0] = '\0';
 
     inf_sset(tree, DIDRIVE, drive);
-    fmt_str(label, srcpth);
-    inf_sset(tree, DIVOLUME, srcpth);
+    set_tedinfo_name(tree, DIVOLUME, label);
 
     inf_fifosz(tree, DINFILES, DINFOLDS, DIUSED);
     inf_numset(tree, DIAVAIL, avail);
@@ -967,12 +966,10 @@ void inf_conf(void)
 WORD opn_appl(char *papname, char *ptail)
 {
     OBJECT *tree;
-    char poname[LEN_ZFNAME];
 
     tree = G.a_trees[ADOPENAP];
 
-    fmt_str(papname, poname);
-    inf_sset(tree, APPLNAME, poname);
+    set_tedinfo_name(tree, APPLNAME, papname);
     inf_sset(tree, APPLPARM, "");
     inf_show(tree, APPLPARM);
 

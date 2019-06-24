@@ -496,8 +496,7 @@ WORD ins_app(WORD curr)
     /*
      * fill in dialog
      */
-    fmt_str(pfname, name);
-    inf_sset(tree, APNAME, name);
+    set_tedinfo_name(tree, APNAME, pfname);
     inf_sset(tree, APARGS, installed ? pa->a_pargs : "");
     inf_sset(tree, APDOCTYP, installed ? pa->a_pdata+2 : "");
     if (pa->a_funkey)
@@ -929,8 +928,7 @@ static WORD install_window_icon(FNODE *pf)
         tree[IW_FILE].ob_state &= ~DISABLED;
         tree[IW_FOLD].ob_state &= ~DISABLED;
     }
-    fmt_str(curr_name, temp);
-    inf_sset(tree, IW_NAME, temp);
+    set_tedinfo_name(tree, IW_NAME, curr_name);
 
     curr_icon = pa ? pa->a_dicon : 0;
     if (curr_icon < 0)

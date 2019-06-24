@@ -215,8 +215,7 @@ void fun_mask(WNODE *pw)
      * get current filemask & insert in dialog
      */
     maskptr = filename_start(pw->w_pnode.p_spec);
-    fmt_str(maskptr, filemask);
-    inf_sset(tree, FMMASK, filemask);
+    set_tedinfo_name(tree, FMMASK, maskptr);
 
     /*
      * get user input

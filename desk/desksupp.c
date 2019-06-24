@@ -728,7 +728,6 @@ static WORD print_buf(WORD device,const char *s,LONG len)
 static void print_file(char *name,LONG bufsize,char *iobuf)
 {
     OBJECT *tree;
-    char fmtname[LEN_ZFNAME];
     LONG rc, n;
     WORD handle, device;
 
@@ -743,8 +742,7 @@ static void print_file(char *name,LONG bufsize,char *iobuf)
 
     /* open dialog, set busy cursor */
     tree = G.a_trees[ADPRINT];
-    fmt_str(filename_start(name), fmtname);
-    inf_sset(tree, PRNAME, fmtname);
+    set_tedinfo_name(tree, PRNAME, filename_start(name));
     start_dialog(tree);
 
     graf_mouse(HGLASS,NULL);    /* say we're busy */
