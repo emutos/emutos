@@ -757,13 +757,24 @@ static void xbios_25(void)
  * BIOS or GEMDOS calls. This function is meant to allow programs
  * to hack hardware and protected locations without having to fiddle
  * with GEMDOS get/set supervisor mode call.
- * There is no rule regarding to which registers might be clobbered by the user
- * function. For safety, we assume it can clobber all of them.
+ *
+ * The normal version of supexec() is very simple and written in
+ * assembler (see vectors.S).  This allows us to avoid complications
+ * with register saving which can cause problems when the user's
+ * stack is small.
+ *
+ * The debug version lives here and is much uglier since it has to
+ * protect itself against GCC possibly generating code to use registers
+ * which might have been clobbered by the called user function.  There
+ * are no rules about this, so for safety, we assume it can clobber all
+ * of them.
  */
-
-static LONG supexec(PFLONG codeptr)
+#if DBG_XBIOS
+static LONG xbios_26(PFLONG codeptr)
 {
     register LONG retval __asm__("d0");
+
+    kprintf("XBIOS: Supexec(%p)\n", codeptr);
 
     __asm__ volatile
     (
@@ -777,13 +788,6 @@ static LONG supexec(PFLONG codeptr)
     );
 
     return retval;
-}
-
-#if DBG_XBIOS
-static LONG xbios_26(PFLONG codeptr)
-{
-    kprintf("XBIOS: Supexec(%p)\n", codeptr);
-    return supexec(codeptr);
 }
 #endif
 
@@ -1064,6 +1068,7 @@ LONG xbios_do_unimpl(WORD number)
 }
 
 extern LONG xbios_unimpl(void);
+extern LONG supexec(PFLONG);
 
 
 /*
