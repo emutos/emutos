@@ -219,22 +219,6 @@ void del_fname(char *pstr)
 }
 
 
-/*
- *  Parse to find the filename part of a path and return a copy of it
- *  in a form ready to be placed in a dialog box.
- *
- *  input:  pstr, the full pathname
- *  output: newstr, the formatted filename
- */
-static void get_fname(char *pstr, char *newstr)
-{
-    char ml_ftmp[LEN_ZFNAME];
-
-    strcpy(ml_ftmp, filename_start(pstr));
-    fmt_str(ml_ftmp, newstr);
-}
-
-
 WORD illegal_op_msg(void)
 {
     fun_alert(1, STILLOP);
@@ -351,8 +335,8 @@ static WORD output_fname(char *psrc_file, char *pdst_file)
          * the user wants to be notified about overwrites, so we need
          * to tell the user: get i/p & o/p filenames and prefill dialog
          */
-        get_fname(psrc_file, ml_fsrc);  /* get input filename */
-        get_fname(pdst_file, ml_fdst);  /* get output filename */
+        fmt_str(filename_start(psrc_file), ml_fsrc);    /* get input filename */
+        fmt_str(filename_start(pdst_file), ml_fdst);    /* get output filename */
         inf_sset(tree, CACURRNA, ml_fsrc);
         inf_sset(tree, CACOPYNA, ml_fdst);
 
@@ -704,7 +688,7 @@ static WORD get_new_name(char *dstpth)
     OBJECT *tree = G.a_trees[ADCPALER];
     WORD ob;
 
-    get_fname(dstpth, ml_fsrc);         /* extract current folder name */
+    fmt_str(filename_start(dstpth), ml_fsrc);   /* extract current folder name */
     strcpy(ml_fdst,ml_fsrc);            /* pre-fill new folder name */
     inf_sset(tree, CACURRNA, ml_fsrc);  /* and put both in dialog */
     inf_sset(tree, CACOPYNA, ml_fdst);
