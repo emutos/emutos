@@ -32,7 +32,7 @@
 #include "biosbind.h"
 #include "string.h"
 #include "kprint.h"
-#include "dos.h"
+#include "bdosext.h"
 
 /*
 **  externals
@@ -394,8 +394,9 @@ static void offree(DMD *d)
 
 
 /*
- *  osif -
+ *  osif - C implementation of trap #1. Called by _enter.
  */
+extern long osif(short *pw);
 long osif(short *pw)
 {
     char **pb, *pb2, *p, ctmp;

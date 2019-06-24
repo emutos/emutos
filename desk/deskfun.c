@@ -24,7 +24,6 @@
 #include "config.h"
 #include "portab.h"
 #include "obdefs.h"
-#include "dos.h"
 #include "gemdos.h"
 #include "optimize.h"
 

@@ -24,7 +24,6 @@
 #include "string.h"
 #include "obdefs.h"
 #include "gsxdefs.h"
-#include "dos.h"
 #include "gemdos.h"
 #include "rectfunc.h"
 #include "optimize.h"

@@ -34,7 +34,6 @@
 #include "deskfpd.h"
 #include "deskins.h"
 #include "deskwin.h"
-#include "dos.h"
 #include "deskrsrc.h"
 #include "desksupp.h"
 

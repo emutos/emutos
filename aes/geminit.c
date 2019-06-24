@@ -29,7 +29,6 @@
 #include "gsxdefs.h"
 #include "gem_rsc.h"
 #include "mforms.h"
-#include "dos.h"
 #include "xbiosbind.h"
 #include "../bios/machine.h"
 #include "../bios/screen.h"

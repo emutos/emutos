@@ -23,7 +23,7 @@
 #include "portab.h"
 #include "biosext.h"
 #include "bios.h"
-#include "dos.h"
+#include "bdosext.h"
 #include "bdosbind.h"
 #include "pd.h"
 #include "gemerror.h"

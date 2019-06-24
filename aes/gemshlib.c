@@ -27,7 +27,6 @@
 #include "struct.h"
 #include "basepage.h"
 #include "pd.h"
-#include "dos.h"
 #include "bdosbind.h"
 #include "gemerror.h"
 #include "aespub.h"

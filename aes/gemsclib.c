@@ -22,7 +22,6 @@
 #include "struct.h"
 #include "obdefs.h"
 #include "gemlib.h"
-#include "dos.h"
 
 #include "gemdos.h"
 #include "geminit.h"

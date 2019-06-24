@@ -11,7 +11,6 @@
 #include "portab.h"
 #include "struct.h"
 #include "obdefs.h"
-#include "dos.h"
 #include "../bios/tosvars.h"
 #include "gemlib.h"
 #include "gem_rsc.h"

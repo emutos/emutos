@@ -30,7 +30,6 @@
 #include "obdefs.h"
 #include "gsxdefs.h"
 #include "gemdos.h"
-#include "dos.h"
 #include "optimize.h"
 
 #include "deskbind.h"
