@@ -19,7 +19,7 @@
 /* #define ENABLE_KDEBUG */
 
 #include "config.h"
-#include <string.h>
+#include "string.h"
 
 #include "xbiosbind.h"
 #include "portab.h"

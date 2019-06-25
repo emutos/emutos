@@ -10,7 +10,7 @@
 #ifndef _BDOSEXT_H
 #define _BDOSEXT_H
 
-#include <bdosdefs.h>
+#include "bdosdefs.h"
 
 /* BDOS initialization entry points. Called by BIOS. */
 extern void osinit_before_xmaddalt(void);

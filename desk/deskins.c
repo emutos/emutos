@@ -24,7 +24,7 @@
 /* #define ENABLE_KDEBUG */
 
 #include "config.h"
-#include <string.h>
+#include "string.h"
 
 #include "portab.h"
 #include "obdefs.h"

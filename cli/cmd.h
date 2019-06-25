@@ -11,7 +11,7 @@
  */
 #ifndef STANDALONE_CONSOLE
  #include "config.h"
- #include <nls.h>
+ #include "nls.h"
 #else
  /* config.h */
  #define CONF_ATARI_HARDWARE    1
@@ -24,7 +24,7 @@
  #define gettext(a) a
 #endif
 
-#include <portab.h>
+#include "portab.h"
 
 
 /*

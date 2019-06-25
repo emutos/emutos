@@ -22,7 +22,7 @@
  *      no input redirection or pipes
  */
 #include "cmd.h"
-#include <version.h>
+#include "version.h"
 
 /*
  *  global variables
