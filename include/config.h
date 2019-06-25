@@ -99,6 +99,9 @@
 # ifndef CONF_WITH_FORMAT
 #  define CONF_WITH_FORMAT 0
 # endif
+# ifndef CONF_WITH_EASTER_EGG
+#  define CONF_WITH_EASTER_EGG 0 /* ARAnyM's YM2149 can't produce sound */
+# endif
 #endif
 
 /*
@@ -1123,7 +1126,7 @@
  * Set CONF_WITH_EASTER_EGG to 1 to include the EmuDesk Easter Egg
  */
 #ifndef CONF_WITH_EASTER_EGG
-# define CONF_WITH_EASTER_EGG 1
+# define CONF_WITH_EASTER_EGG CONF_WITH_YM2149
 #endif
 
 /*
