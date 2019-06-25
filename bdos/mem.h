@@ -14,7 +14,7 @@
 #ifndef MEM_H
 #define MEM_H
 
-#include "memdefs.h"
+#include "bdosdefs.h"
 
 
 /*

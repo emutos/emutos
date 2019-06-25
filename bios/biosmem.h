@@ -13,7 +13,7 @@
 #ifndef BIOSMEM_H
 #define BIOSMEM_H
 
-#include "memdefs.h"
+#include "bdosdefs.h"
 #include "disk.h"
 
 /*
