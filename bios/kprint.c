@@ -26,7 +26,6 @@
 #include "processor.h"
 #include "chardev.h"
 #include "serport.h"
-#include "pd.h"
 #include "coldfire.h"
 #include "asm.h"
 #include "vectors.h"

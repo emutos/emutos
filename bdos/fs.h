@@ -22,7 +22,7 @@
 #define FS_H
 
 #include "biosdefs.h"
-#include "pd.h"
+#include "bdosdefs.h"
 
 /*
  *  fix conditionals

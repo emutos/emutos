@@ -17,7 +17,7 @@
 #define _MEMDEFS_H
 
 #include "portab.h"
-#include "pd.h"
+#include "bdosdefs.h"
 
 /*
  *  MD - Memory Descriptor

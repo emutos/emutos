@@ -25,7 +25,6 @@
 #include "bios.h"
 #include "bdosext.h"
 #include "bdosbind.h"
-#include "pd.h"
 #include "gemerror.h"
 #include "kprint.h"
 #include "tosvars.h"
