@@ -80,6 +80,7 @@
 #define GLOBAL                                  /* Global variable         */
 #define UNUSED(x)       (void)(x)               /* Unused variable         */
 #define MAYBE_UNUSED(x) UNUSED(x)               /* Maybe unused variable   */
+#define FORCE_READ(x)   UNUSED(x)     /* Read a volatile hardware register */
 
 /*
  *  Types

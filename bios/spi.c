@@ -161,14 +161,10 @@ void spi_cs_unassert(void)
 
 void spi_send_byte(UBYTE c)
 {
-ULONG temp;
-
-    UNUSED(temp);
-
     MCF_DSPI_DTFR = fifo_out | c;
     while(!(MCF_DSPI_DSR & MCF_DSPI_DSR_TCF))   /* wait for transfer complete */
         ;
-    temp = MCF_DSPI_DRFR;                       /* need to do this! */
+    FORCE_READ(MCF_DSPI_DRFR);                  /* need to do this! */
 
     MCF_DSPI_DSR = 0xffffffffL;                 /* clear status register */
 }

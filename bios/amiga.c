@@ -240,7 +240,7 @@ static void detect_gayle(void)
 
     /* On A300, we must clear the Fat Gary Timeout register
      * to avoid reading a bogus 0x80 Gayle ID */
-    UNUSED(FAT_GARY_TIMEOUT);
+    FORCE_READ(FAT_GARY_TIMEOUT);
 
     gayle_id = 0;
     GAYLE_ID = 0; /* Reset ID register */

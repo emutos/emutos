@@ -438,7 +438,7 @@ void coldfire_flexcan_message_buffer_interrupt(void)
 
         /* Unlock the message buffer.
          * This is achieved by reading the free-running timer. */
-        UNUSED(MCF_CAN_TIMER1);
+        FORCE_READ(MCF_CAN_TIMER1);
 
         /* Clear the interrupt */
         MCF_CAN_IFLAG1 = MCF_CAN_IFLAG_BUF15I;

@@ -149,8 +149,7 @@ static void set_multiple_idxreg(UWORD port, UBYTE startreg, UBYTE cnt, const UBY
    The Attribute Controller uses a different indexing scheme than other VGA ports. */
 static void set_multiple_atcreg(UBYTE startreg, UBYTE cnt, const UBYTE *values)
 {
-    volatile UBYTE dummy;
-    dummy = VGAREG(IS1_RC); /* set ATC_IW to index */
+    FORCE_READ(VGAREG(IS1_RC)); /* set ATC_IW to index */
 
     for (; cnt>0; cnt--, startreg++, values++)
     {
@@ -158,15 +157,12 @@ static void set_multiple_atcreg(UBYTE startreg, UBYTE cnt, const UBYTE *values)
         VGAREG(ATC_IW) = *values; /* yes, they really go to the same port */
     }
     VGAREG(ATC_IW) = 0x20; /* enable screen output */
-
-    UNUSED(dummy);
 }
 
 /* Check for presence of a VGA card using the ATC palette registers. */
 static int check_for_vga(void)
 {
-    volatile UBYTE dummy;
-    dummy = VGAREG(IS1_RC); /* set ATC_IW to index */
+    FORCE_READ(VGAREG(IS1_RC)); /* set ATC_IW to index */
 
     SHORT_DELAY;
     VGAREG(ATC_IW) = 0x0A;
@@ -184,8 +180,6 @@ static int check_for_vga(void)
     {
         return 0;
     }
-
-    UNUSED(dummy);
 }
 
 /* Detect Nova addresses */
@@ -339,24 +333,20 @@ static void init_et4000(void)
 */
 static void ramdac_hicolor_off(void)
 {
-    volatile UBYTE dummy;
-
     /* Switch DAC to command mode, if supported */
-    dummy = VGAREG(DAC_IW);
+    FORCE_READ(VGAREG(DAC_IW));
     SHORT_DELAY;
-    dummy = VGAREG(DAC_PEL);
+    FORCE_READ(VGAREG(DAC_PEL));
     SHORT_DELAY;
-    dummy = VGAREG(DAC_PEL);
+    FORCE_READ(VGAREG(DAC_PEL));
     SHORT_DELAY;
-    dummy = VGAREG(DAC_PEL);
+    FORCE_READ(VGAREG(DAC_PEL));
     SHORT_DELAY;
-    dummy = VGAREG(DAC_PEL);
+    FORCE_READ(VGAREG(DAC_PEL));
     SHORT_DELAY;
 
     VGAREG(DAC_PEL) = 0x00;  /* HiColor off */
-    dummy = VGAREG(DAC_IW);  /* Back to normal mode */
-
-    UNUSED(dummy);
+    FORCE_READ(VGAREG(DAC_IW)); /* Back to normal mode */
 }
 
 /* Loads the Mach32 specific indexed registers */
