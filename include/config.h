@@ -395,7 +395,7 @@
 #endif
 
 /*
- * Defaults for the M548x target.
+ * Defaults for the M548x machine.
  */
 #ifdef MACHINE_M548X
 # ifndef SDCLK_FREQUENCY_MHZ
