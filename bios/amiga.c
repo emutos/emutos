@@ -1171,7 +1171,7 @@ static UWORD amiga_dogetdate(void)
     if (years < 1980)
     {
         /* This date can't be represented in BDOS format. */
-        return DEFAULT_DATETIME >> 16;
+        return HIWORD(DEFAULT_DATETIME);
     }
 
     date = (days & 0x1F)
