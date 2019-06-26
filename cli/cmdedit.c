@@ -250,6 +250,7 @@ WORD n, word = 0;
         }
         break;
     case TAB:           /* tab completion */
+        line[*pos] = '\0';  /* terminate line so we don't see residual data */
         start = start_of_current_word(line,*pos);
         if (prevcode != TAB)
             insert = insertion_point(start);    /* where we insert the names */
