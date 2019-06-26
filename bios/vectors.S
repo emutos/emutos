@@ -35,7 +35,6 @@
 #if CONF_WITH_ADVANCED_CPU
         .globl  _int_unimpint
 #endif
-        .globl  _just_rts
         .globl  _just_rte
         .globl  _keyclick
         .globl  _trap_save_area
@@ -118,7 +117,6 @@ set_vec:
 #endif
 // The RTS below is shared for other purposes.
 buggy_jit_save_registers_before_bus_error:
-_just_rts:
         rts
 
 /* initialize the 192 user vectors. */

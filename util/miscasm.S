@@ -14,6 +14,7 @@
 
 #include "asmdefs.h"
 
+        .globl  _just_rts
         .globl  _trap1          // call GEMDOS
         .globl  _trap1_pexec    // Reentrant Pexec call
         .globl  _stop_until_interrupt   // Wrapper around the STOP instruction
@@ -36,6 +37,8 @@ _trap1:
         movem.l t1regsav,d2/a2
 #endif
         move.l  t1spsav,-(sp)   // restore return address
+// The RTS below is shared for other purposes.
+_just_rts:
         rts
 
         .bss

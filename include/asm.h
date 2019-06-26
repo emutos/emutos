@@ -32,6 +32,9 @@
 #ifndef ASM_H
 #define ASM_H
 
+/* External function doing nothing */
+extern void just_rts(void);
+
 /* Wrapper around the STOP instruction. This preserves SR. */
 extern void stop_until_interrupt(void);
 

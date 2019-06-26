@@ -26,6 +26,7 @@
 #include "ikbd.h"
 #include "mouse.h"
 #include "vectors.h"
+#include "asm.h"
 
 
 
