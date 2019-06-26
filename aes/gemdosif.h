@@ -33,7 +33,6 @@ extern void enable_interrupts(void);
 extern void far_bcha(void);
 extern void far_mcha(void);
 extern void aes_wheel(void);
-extern void justretf(void);
 
 extern void unset_aestrap(void);
 extern void set_aestrap(void);

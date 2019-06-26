@@ -17,7 +17,6 @@
         .globl  _giveerr
         .globl  _takeerr
         .globl  _retake
-        .globl  _justretf
         .globl  _unset_aestrap
         .globl  _set_aestrap
         .globl  _aestrap_intercepted
@@ -401,9 +400,6 @@ _drawrat:
         move.w  6(sp),d1
         move.l  _drwaddr,-(sp)
         rts                     // Jump to vector stored in _drwaddr
-
-_justretf:
-        rts
 
 _tikcod:
         move.l  sp,tstksave

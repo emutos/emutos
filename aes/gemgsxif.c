@@ -31,6 +31,7 @@
 #include "../bios/machine.h"    /* for HAS_VIDEL */
 #include "../bios/screen.h"     /* for FALCON_REZ */
 #include "kprint.h"
+#include "asm.h"
 
 /*
  * Calls used in Crystal:
@@ -246,7 +247,7 @@ static void gsx_setmb(PFVOID boff, PFVOID moff, PFVOID *pdrwaddr)
     m_lptr2( &old_mcode );
 
 /* not used in Atari GEM:
-    i_ptr( justretf );
+    i_ptr( just_rts );
     gsx_ncode(CUR_VECX, 0, 0);
     m_lptr2( pdrwaddr );
 */

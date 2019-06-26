@@ -39,6 +39,7 @@
 #include "funcdef.h"
 #include "intmath.h"
 #include "string.h"
+#include "asm.h"
 
 /* Global variables: */
 BOOL     gl_play;
@@ -135,10 +136,10 @@ void ap_tplay(const EVNTREC *pbuff,WORD length,WORD scale)
                 /*
                  * disconnect cursor drawing & movement routines
                  */
-                i_ptr(justretf);
+                i_ptr(just_rts);
                 gsx_0code(CUR_VECX);
                 m_lptr2(&drwaddr);  /* old address will be used by drawrat() */
-                i_ptr(justretf);
+                i_ptr(just_rts);
                 gsx_0code(MOT_VECX);
                 m_lptr2(&mot_vecx_save);
             }

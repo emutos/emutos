@@ -27,7 +27,7 @@
         .extern _size_theglo
         .extern _D
         .extern _bzero
-        .extern _justretf
+        .extern _just_rts
         .extern _drwaddr
         .extern _tikcod
         .extern _tikaddr
@@ -107,7 +107,7 @@ aes_restart:
         addq.l  #8,sp
 
         // _drwaddr ??? set to just_rts
-        lea     _justretf,a0
+        lea     _just_rts,a0
         move.l  a0,_drwaddr
 
         // _tikaddr ??? set to tikcod
