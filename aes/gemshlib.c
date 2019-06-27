@@ -49,6 +49,7 @@
 #include "kprint.h"             /* for debugging */
 
 #include "gemshlib.h"
+#include "../desk/deskstub.h"
 
 #if WITH_CLI != 0
 #include "../cli/clistub.h"
@@ -83,8 +84,6 @@ GLOBAL WORD gl_changerez;
 GLOBAL WORD gl_nextrez;
 
 /* Prototypes: */
-extern void deskstart(void) NORETURN;   /* see ../desk/deskstart.S */
-
 static void sh_toalpha(void);
 
 
