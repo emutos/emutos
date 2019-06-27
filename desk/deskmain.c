@@ -24,6 +24,7 @@
 #include "xbiosbind.h"
 #include "portab.h"
 #include "aespub.h"
+#include "aesdefs.h"
 #include "biosext.h"
 #include "obdefs.h"
 #include "gsxdefs.h"

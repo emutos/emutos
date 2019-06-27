@@ -23,7 +23,8 @@
 #include "string.h"
 
 #include "portab.h"
-#include "aespub.h"
+#include "aesdefs.h"
+#include "obdefs.h"
 
 #include "deskbind.h"
 #include "deskglob.h"

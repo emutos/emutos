@@ -161,7 +161,7 @@ typedef struct window
 
 typedef struct sh_struct
 {
-    WORD sh_doexec;             /* for values, see aespub.h */
+    WORD sh_doexec;             /* for values, see aesdefs.h */
     WORD sh_dodef;              /* if TRUE then run the default startup   */
                                 /*  app: normally EMUDESK, but can be an  */
                                 /*  autorun program if so configured.     */

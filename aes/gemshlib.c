@@ -28,7 +28,7 @@
 #include "basepage.h"
 #include "bdosbind.h"
 #include "gemerror.h"
-#include "aespub.h"
+#include "aesdefs.h"
 #include "gemlib.h"
 #include "gem_rsc.h"
 #include "biosext.h"

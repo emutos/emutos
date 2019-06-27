@@ -53,7 +53,7 @@
 #include "gemmnlib.h"
 #include "geminit.h"
 #include "optimize.h"
-#include "aespub.h"
+#include "aesdefs.h"
 #include "aesstub.h"
 
 #include "string.h"
