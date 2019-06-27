@@ -40,7 +40,6 @@ PRIVATE void outputnl(const char *s);
 PRIVATE LONG outputbuf(const char *s,LONG len,WORD paging);
 PRIVATE LONG output_files(WORD argc,char **argv,WORD paging);
 PRIVATE void padname(char *buf,const char *name);
-PRIVATE LONG pathout(void);
 PRIVATE void show_line(const char *title,ULONG n);
 PRIVATE WORD user_break(void);
 PRIVATE WORD user_input(WORD c);
@@ -209,10 +208,16 @@ PRIVATE LONG run_cat(WORD argc,char **argv)
 
 PRIVATE LONG run_cd(WORD argc,char **argv)
 {
-    if (argc == 1)
-        return pathout();
+char path[MAXPATHLEN];
+LONG rc;
 
-    return Dsetpath(argv[1]);
+    if (argc != 1)
+        return Dsetpath(argv[1]);
+ 
+    rc = get_path(path);
+    outputnl(path);
+
+    return rc;
 }
 
 PRIVATE LONG run_chmod(WORD argc,char **argv)
@@ -466,11 +471,15 @@ LONG rc = 0L;
 
 PRIVATE LONG run_pwd(WORD argc,char **argv)
 {
-char buf[] = "X:";
-
+char buf[MAXPATHLEN];
+LONG rc;
+ 
     buf[0] = Dgetdrv() + 'A';
-    output(buf);
-    return pathout();
+    buf[1] = ':';
+    rc = get_path(buf+2);
+    outputnl(buf);
+
+    return rc;
 }
 
 PRIVATE LONG run_ren(WORD argc,char **argv)
@@ -891,32 +900,23 @@ LONG bufsize, n, rc;
 }
 
 /*
- *  output current path
+ *  get current path into buffer (always nul-terminates buffer)
+ *
+ *  returns error code from Dgetpath()
  */
-LONG pathout_base(void)
+LONG get_path(char *buf)
 {
 LONG rc;
-char buf[MAXPATHLEN];
 
+    buf[0] = '\0';
     rc = Dgetpath(buf,0);
     if (rc == 0L) {
         if (!buf[0]) {
             buf[0] = '\\';
             buf[1] = '\0';
         }
-        output(buf);
     }
-    return rc;
-}
 
-/*
- *  output current path, with CRLF
- */
-PRIVATE LONG pathout(void)
-{
-LONG rc;
-    rc = pathout_base();
-    outputnl("");
     return rc;
 }
 

@@ -44,13 +44,14 @@ char c;
 UWORD save_history_num;
 WORD scancode, prevcode = 0;
 WORD pos = 0, len = 0;
-char prompt[] = "X:";
+char prompt[MAXPATHLEN];
 
     save_history_num = history_num;     /* so that edit_line() can play with it */
 
     prompt[0] = Dgetdrv() + 'A';
+    prompt[1] = ':';
+    get_path(prompt+2);
     message(prompt);
-    pathout_base();
     message(">");
     while(1) {
         charcode = conin();
