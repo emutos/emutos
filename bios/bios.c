@@ -37,7 +37,6 @@
 #include "country.h"
 #include "nls.h"
 #include "biosmem.h"
-#include "aespub.h"
 #include "ikbd.h"
 #include "mouse.h"
 #include "midi.h"
@@ -64,6 +63,9 @@
 #endif
 #ifdef MACHINE_FIREBEE
 #include "coldfire.h"
+#endif
+#if WITH_AES
+#include "../aes/aesstub.h"
 #endif
 
 

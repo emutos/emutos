@@ -54,6 +54,7 @@
 #include "geminit.h"
 #include "optimize.h"
 #include "aespub.h"
+#include "aesstub.h"
 
 #include "string.h"
 #include "kprint.h"

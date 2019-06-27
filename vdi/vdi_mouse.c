@@ -14,13 +14,15 @@
 #include "asm.h"
 #include "biosbind.h"
 #include "xbiosbind.h"
-#include "aespub.h"
 #include "obdefs.h"
 #include "gsxdefs.h"
 #include "vdi_defs.h"
 #include "../bios/tosvars.h"
 #include "../bios/lineavars.h"
 #include "kprint.h"
+#if WITH_AES
+#include "../aes/aesstub.h"
+#endif
 
 
 /* Mouse / sprite structure */

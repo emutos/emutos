@@ -25,12 +25,6 @@
 #define SHW_SHUTDOWN    4       /* shutdown system */
 #define SHW_RESCHNG     5       /* change resolution */
 
-/* AES entry point */
-void ui_start(void) NORETURN;   /* found in aes/gemstart.S */
-
-/* returns default mouse form */
-MFORM *default_mform(void);
-
 /* functions used by AES and desktop, found in gemrslib.c */
 void xlate_obj_array(OBJECT *obj_array, int nobj);
 BOOL fix_tedinfo(TEDINFO *tedinfo, int nted);
