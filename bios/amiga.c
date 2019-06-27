@@ -31,7 +31,7 @@
 #include "biosmem.h"
 #include "bootparams.h"
 #include "machine.h"
-#include "bdosext.h"
+#include "../bdos/bdosstub.h"
 
 #ifdef MACHINE_AMIGA
 

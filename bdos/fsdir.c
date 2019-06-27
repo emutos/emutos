@@ -132,7 +132,7 @@
 #include "biosbind.h"
 #include "string.h"
 #include "kprint.h"
-#include "bdosext.h"
+#include "bdosstub.h"
 
 #define ROOT_PSEUDO_CLUSTER 1   /* see comments in xrename() */
 

@@ -32,7 +32,7 @@
 #include "biosbind.h"
 #include "string.h"
 #include "kprint.h"
-#include "bdosext.h"
+#include "bdosstub.h"
 
 /*
 **  externals

@@ -30,7 +30,7 @@
 #include "asm.h"
 #include "vectors.h"
 #include "super.h"      /* for Super() and SuperToUser() */
-#include "bdosext.h"
+#include "../bdos/bdosstub.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif

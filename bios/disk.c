@@ -28,7 +28,7 @@
 #include "acsi.h"
 #include "scsi.h"
 #include "sd.h"
-#include "bdosext.h"
+#include "../bdos/bdosstub.h"
 
 /*==== Defines ============================================================*/
 

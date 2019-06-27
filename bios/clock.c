@@ -30,7 +30,7 @@
 #include "asm.h"
 #include "dma.h"
 #include "delay.h"
-#include "bdosext.h"
+#include "../bdos/bdosstub.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif

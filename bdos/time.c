@@ -46,7 +46,7 @@ NAMES
 #include "gemerror.h"
 #include "xbiosbind.h"
 #include "kprint.h"
-#include "bdosext.h"
+#include "bdosstub.h"
 
 /*
  * globals: current time and date

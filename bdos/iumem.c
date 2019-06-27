@@ -17,7 +17,7 @@
 #include "fs.h"
 #include "mem.h"
 #include "kprint.h"
-#include "bdosext.h"
+#include "bdosstub.h"
 
 
 /*

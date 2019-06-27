@@ -56,7 +56,7 @@
 #include "time.h"
 #include "console.h"
 #include "kprint.h"
-#include "bdosext.h"
+#include "bdosstub.h"
 
 /* the following characters are disallowed in the name when creating
  * or renaming files or folders.  this is *mostly* the same list as
