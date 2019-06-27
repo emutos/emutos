@@ -50,6 +50,10 @@
 
 #include "gemshlib.h"
 
+#if WITH_CLI != 0
+#include "../cli/clistub.h"
+#endif
+
 /*
  * clear screen value for ob_spec:
  * white border, white text, hollow pattern, white fill
@@ -80,9 +84,6 @@ GLOBAL WORD gl_nextrez;
 
 /* Prototypes: */
 extern void deskstart(void) NORETURN;   /* see ../desk/deskstart.S */
-#if WITH_CLI != 0
-extern void coma_start(void) NORETURN;  /* see cli/cmdasm.S */
-#endif
 
 static void sh_toalpha(void);
 

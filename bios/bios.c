@@ -67,6 +67,9 @@
 #if WITH_AES
 #include "../aes/aesstub.h"
 #endif
+#if WITH_CLI
+#include "../cli/clistub.h"
+#endif
 
 
 
@@ -86,10 +89,6 @@ extern void stonx_kprintf_init(void);
 
 #if CONF_WITH_CARTRIDGE
 extern void run_cartridge_applications(WORD typebit); /* found in startup.S */
-#endif
-
-#if WITH_CLI
-extern void coma_start(void) NORETURN;  /* found in cli/cmdasm.S */
 #endif
 
 #if CONF_WITH_68040_PMMU
