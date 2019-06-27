@@ -21,7 +21,7 @@
 #include "struct.h"
 #include "obdefs.h"
 #include "gemlib.h"
-#include "aespub.h"
+#include "aesext.h"
 #include "gem_rsc.h"
 
 #include "gemdos.h"

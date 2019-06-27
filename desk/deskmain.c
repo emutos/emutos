@@ -23,7 +23,7 @@
 
 #include "xbiosbind.h"
 #include "portab.h"
-#include "aespub.h"
+#include "aesext.h"
 #include "aesdefs.h"
 #include "biosext.h"
 #include "obdefs.h"

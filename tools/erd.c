@@ -1595,7 +1595,7 @@ PRIVATE int write_include(FILE *fp,char *name)
     fprintf(fp,"#include \"gemdos.h\"\n");
 #endif
 #ifdef GEM_RSC
-    fprintf(fp,"#include \"aespub.h\"\n");
+    fprintf(fp,"#include \"aesext.h\"\n");
     fprintf(fp,"#include \"gemrslib.h\"\n");
 #endif
 #ifdef MFORM_RSC
