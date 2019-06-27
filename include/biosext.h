@@ -10,6 +10,9 @@
 #ifndef BIOSEXT_H
 #define BIOSEXT_H
 
+/* Bitmap of removable logical drives */
+extern LONG drvrem;
+
 /* Boot flags */
 extern UBYTE bootflags;
 #define BOOTFLAG_EARLY_CLI     0x01

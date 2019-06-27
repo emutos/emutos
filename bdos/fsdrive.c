@@ -39,6 +39,7 @@
 #include "biosbind.h"
 #include "kprint.h"
 #include "bdosstub.h"
+#include "biosext.h"
 
 
 /*
@@ -56,10 +57,8 @@ DIRTBL_ENTRY dirtbl[NCURDIR];
 
 /*
  **     drvsel - mask of drives selected since power up
- **     drvrem - mask of drives with removable media
  */
 LONG    drvsel;
-LONG    drvrem;
 
 
 /*

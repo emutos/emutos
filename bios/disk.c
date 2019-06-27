@@ -142,6 +142,11 @@ static void disk_init_one(UWORD unit,LONG *devices_available)
 }
 
 /*
+ **     drvrem - mask of drives with removable media
+ */
+LONG    drvrem;
+
+/*
  * disk_init_all
  *
  * scans all interfaces and adds all found partitions to blkdev and drvbits

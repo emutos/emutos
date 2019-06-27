@@ -39,8 +39,4 @@ extern PD *run;
  * Declared here because also updated by XBIOS Settime() */
 extern UWORD current_date, current_time;
 
-/* Bitmap of removable logical drives.
- * Updated by BIOS disk_init_all() */
-extern LONG drvrem;
-
 #endif /* _BDOSSTUB_H */
