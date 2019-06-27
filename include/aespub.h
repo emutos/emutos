@@ -25,8 +25,6 @@
 #define SHW_SHUTDOWN    4       /* shutdown system */
 #define SHW_RESCHNG     5       /* change resolution */
 
-#define PATH_ENV    "PATH="     /* PATH environment variable */
-
 /* AES entry point */
 void ui_start(void) NORETURN;   /* found in aes/gemstart.S */
 

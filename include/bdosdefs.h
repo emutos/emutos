@@ -125,4 +125,6 @@ struct _mpb
         MD      *mp_rover;  /* roving pointer - no longer used */
 };
 
+#define PATH_ENV "PATH="    /* PATH environment variable */
+
 #endif /* _BDOSDEFS_H */
