@@ -44,7 +44,7 @@
 
 extern void enter(void);
 extern void bdos_trap2(void);
-extern PFVOID old_trap2;
+PFVOID old_trap2; /* Old trap #2 handler, also used by rwa.S */
 
 /*
  *  prototypes / forward declarations

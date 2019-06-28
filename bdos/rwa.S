@@ -122,7 +122,6 @@
         .globl  _termuser
         .globl  _gouser
         .globl  _enter
-        .globl  _old_trap2
         .globl  _bdos_trap2
 
 // ==== References ===========================================================
@@ -131,6 +130,7 @@
         .extern _xterm
         .extern _run
         .extern _longframe              // If not 0, use long stack frames
+        .extern _old_trap2
 
 //==== bdos_trap2 - trap 2 entry point =======================================
 //
@@ -149,14 +149,6 @@ oterm:  move.l  #fstrt,sp
         clr     -(sp)
         jsr     _xterm
         rte
-
-        .bss
-        .even
-
-_old_trap2:
-        .ds.l   1                       // old TRAP #2 handler
-
-        .text
 
 //==== _enter - Front end of TRAP #1 handler =================================
 
