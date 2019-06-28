@@ -19,7 +19,6 @@
 #include "cookie.h"
 #include "country.h"
 #include "nvram.h"
-#include "tosvars.h"
 #include "header.h"
 #include "bios.h"
 

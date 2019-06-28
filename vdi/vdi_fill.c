@@ -14,7 +14,7 @@
 #include "asm.h"
 #include "intmath.h"
 #include "vdi_defs.h"
-#include "../bios/tosvars.h"
+#include "tosvars.h"
 #include "../bios/lineavars.h"
 
 #define EMPTY   0xffff

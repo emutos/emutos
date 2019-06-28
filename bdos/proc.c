@@ -27,7 +27,7 @@
 #include "kprint.h"
 #include "biosext.h"
 #include "asm.h"
-#include "../bios/tosvars.h"
+#include "tosvars.h"
 
 
 /*

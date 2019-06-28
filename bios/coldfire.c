@@ -21,7 +21,6 @@
 #include "portab.h"
 #include "coldfire.h"
 #include "coldpriv.h"
-#include "tosvars.h"
 #include "ikbd.h"
 #include "string.h"
 #include "kprint.h"

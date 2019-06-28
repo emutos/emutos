@@ -16,7 +16,7 @@
 #include "portab.h"
 #include "intmath.h"
 
-#include "../bios/tosvars.h"
+#include "tosvars.h"
 #include "vdi_defs.h"
 #include "../bios/lineavars.h"
 #include "kprint.h"

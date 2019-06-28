@@ -28,7 +28,6 @@
 #include "xbiosbind.h"
 #include "kprint.h"
 #include "bdosstub.h"
-#include "../bios/tosvars.h"
 
 
 /*
@@ -349,7 +348,6 @@ ret:
  *  at this time, this implementation is provided for compatibility
  *  purposes only, since video memory is always preallocated.
  */
-extern UBYTE *v_bas_ad;
 void *srealloc(long amount)
 {
     ULONG maxmem = initial_vram_size();

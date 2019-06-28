@@ -14,7 +14,7 @@
 #include "asm.h"
 #include "intmath.h"
 #include "biosbind.h"
-#include "../bios/tosvars.h"
+#include "tosvars.h"
 #include "vdi_defs.h"
 #include "../bios/lineavars.h"
 

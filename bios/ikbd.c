@@ -32,7 +32,6 @@
 #include "tosvars.h"
 #include "biosext.h"
 #include "lineavars.h"
-#include "tosvars.h"
 #include "iorec.h"
 #include "asm.h"
 #include "ikbd.h"

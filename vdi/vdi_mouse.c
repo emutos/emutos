@@ -17,7 +17,7 @@
 #include "obdefs.h"
 #include "gsxdefs.h"
 #include "vdi_defs.h"
-#include "../bios/tosvars.h"
+#include "tosvars.h"
 #include "biosext.h"
 #include "../bios/lineavars.h"
 #include "kprint.h"

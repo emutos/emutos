@@ -27,7 +27,6 @@
 #include "bdosbind.h"
 #include "gemerror.h"
 #include "kprint.h"
-#include "tosvars.h"
 #include "lineavars.h"
 #include "vt52.h"
 #include "processor.h"
