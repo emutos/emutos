@@ -18,6 +18,7 @@
 #include "kprint.h"
 #include "iorec.h"
 #include "tosvars.h"
+#include "bios.h"
 #include "lineavars.h"
 #include "vt52.h"
 #include "ikbd.h"

@@ -21,6 +21,7 @@
 #include "nvram.h"
 #include "tosvars.h"
 #include "header.h"
+#include "bios.h"
 
 /*
  * country tables - we define the data structures here, then include the

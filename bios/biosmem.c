@@ -19,6 +19,7 @@
 #include "biosmem.h"
 #include "kprint.h"
 #include "tosvars.h"
+#include "bios.h"
 
 #if DBG_BALLOC
 static BOOL bmem_allowed;

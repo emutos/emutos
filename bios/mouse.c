@@ -22,6 +22,7 @@
 #include "kprint.h"
 
 #include "tosvars.h"
+#include "bios.h"
 #include "lineavars.h"
 #include "ikbd.h"
 #include "mouse.h"

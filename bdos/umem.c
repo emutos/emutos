@@ -365,6 +365,12 @@ void *srealloc(long amount)
 
 #if CONF_WITH_ALT_RAM
 
+#if CONF_WITH_STATIC_ALT_RAM
+/* Static Alt-RAM is the area used by static data (BSS and maybe TEXT) */
+extern UBYTE _static_altram_start[];
+extern UBYTE _static_altram_end[];
+#endif /* CONF_WITH_STATIC_ALT_RAM */
+
 /*
  * Maddalt() informs GEMDOS of the existence of additional 'alternative'
  * RAM that would not normally have been identified by the system.

@@ -1,5 +1,5 @@
 /*
- * tosvars.h - name of low-memory variables
+ * tosvars.h - declarations of low-memory system variables
  *
  * Copyright (C) 2001-2019 The EmuTOS development team
  *
@@ -11,8 +11,9 @@
  */
 
 /*
- * Put in this file only the low-mem vars actually used by
- * C code.
+ * The system variables are only accessible from supervisor mode.
+ * Each variable has a fixed address documented by Atari.
+ * Actual addresses are defined in tosvars.ld
  */
 
 #ifndef TOSVARS_H
@@ -20,8 +21,6 @@
 
 #include "portab.h"
 #include "biosdefs.h"
-
-extern const OSHEADER os_header;
 
 extern LONG proc_lives;
 extern LONG proc_dregs[];
@@ -64,27 +63,9 @@ extern volatile LONG frclock;
 extern LONG *p_cookies;
 extern WORD save_row;     /* saved row in escape Y command */
 
-
 extern const OSHEADER *sysbase;
 extern PRG_ENTRY *exec_os;
 extern UBYTE *end_os;
-
-/* these symbols are automatically created by ld */
-extern UBYTE _text[];     /* start of TEXT segment */
-extern UBYTE _etext[];    /* end of TEXT segment */
-extern UBYTE _data[];     /* start of DATA segment */
-extern UBYTE _edata[];    /* end of DATA segment */
-extern UBYTE _bss[];      /* start of BSS segment */
-extern UBYTE _ebss[];     /* end of BSS segment */
-extern UBYTE _end_os_stram[]; /* end of the RAM used by the OS in ST-RAM */
-
-#if CONF_WITH_STATIC_ALT_RAM
-/* Static Alt-RAM is the area used by static data (BSS and maybe TEXT) */
-extern UBYTE _static_altram_start[];
-extern UBYTE _static_altram_end[];
-#endif
-
-extern UBYTE _endvdibss[];  /* end of VDI BSS */
 
 extern UBYTE *membot;
 extern UBYTE *memtop;
@@ -122,17 +103,6 @@ extern void (*etv_timer)(int);
 extern LONG (*etv_critic)(WORD err,WORD dev);
 extern void (*etv_term)(void);
 
-
 extern void (*mousexvec)(WORD scancode);    /* Additional mouse buttons */
-
-extern struct kbdvecs kbdvecs;
-
-#if CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF
-#define WARM_MAGIC 0x5741524D /* 'WARM' */
-extern ULONG warm_magic;
-#endif
-
-extern UBYTE stkbot[]; /* BIOS internal stack */
-extern UBYTE stktop[];
 
 #endif /* TOSVARS_H */

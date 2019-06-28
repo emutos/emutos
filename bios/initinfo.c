@@ -34,6 +34,7 @@
 #include "xbiosbind.h"
 #include "biosext.h"
 #include "version.h"
+#include "bios.h"
 
 #include "initinfo.h"
 #include "conout.h"

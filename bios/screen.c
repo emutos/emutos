@@ -33,6 +33,7 @@
 #include "header.h"
 #include "biosmem.h"
 #include "biosext.h"
+#include "bios.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif
