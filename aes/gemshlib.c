@@ -51,7 +51,7 @@
 #include "gemshlib.h"
 #include "../desk/deskstub.h"
 
-#if WITH_CLI != 0
+#if WITH_CLI
 #include "../cli/clistub.h"
 #endif
 
@@ -610,7 +610,7 @@ static WORD sh_ldapp(SHELL *psh)
         return 0;
     }
 
-#if WITH_CLI != 0
+#if WITH_CLI
     if (strcmp(D.s_cmd, "EMUCON") == 0)
     {
         /* start the EmuCON shell: */

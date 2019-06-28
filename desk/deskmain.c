@@ -457,7 +457,7 @@ static WORD do_filemenu(WORD item)
         break;
 #endif
 
-#if WITH_CLI != 0
+#if WITH_CLI
     case CLIITEM:                         /* Start EmuCON */
         G.g_tail[0] = G.g_tail[1] = 0;
         strcpy(G.g_cmd, "EMUCON");
