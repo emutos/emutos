@@ -28,4 +28,6 @@ void invalidate_instruction_cache(void *start, long size);
 BOOL can_shutdown(void);
 #endif
 
+extern void (*mousexvec)(WORD scancode);    /* Additional mouse buttons */
+
 #endif /* BIOSEXT_H */

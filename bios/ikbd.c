@@ -30,6 +30,7 @@
 #include "acia.h"
 #include "kprint.h"
 #include "tosvars.h"
+#include "biosext.h"
 #include "lineavars.h"
 #include "tosvars.h"
 #include "iorec.h"

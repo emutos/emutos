@@ -18,6 +18,7 @@
 #include "gsxdefs.h"
 #include "vdi_defs.h"
 #include "../bios/tosvars.h"
+#include "biosext.h"
 #include "../bios/lineavars.h"
 #include "kprint.h"
 #if WITH_AES
