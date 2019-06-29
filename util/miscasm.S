@@ -14,15 +14,10 @@
 
 #include "asmdefs.h"
 
-        .globl  _just_rts
-        .globl  _trap1          // call GEMDOS
-        .globl  _trap1_pexec    // Reentrant Pexec call
-        .globl  _stop_until_interrupt   // Wrapper around the STOP instruction
-
 /*
  * trap1 - trap 1 (GEMDOS) entry point
  */
-        .text
+        .globl  _trap1
 _trap1:
         move.l  (sp)+,t1spsav   // save return address
 #ifdef __mcoldfire__
@@ -37,8 +32,6 @@ _trap1:
         movem.l t1regsav,d2/a2
 #endif
         move.l  t1spsav,-(sp)   // restore return address
-// The RTS below is shared for other purposes.
-_just_rts:
         rts
 
         .bss
@@ -48,10 +41,12 @@ t1spsav:
 t1regsav:
         .ds.l   2
 
+        .text
+
 /*
  *  GEMDOS Pexec() call. This version is reentrant unlike the trap1 function!
  */
-        .text
+        .globl  _trap1_pexec    // Reentrant Pexec call
 _trap1_pexec:
 #ifdef __mcoldfire__
         move.l  a2,-(sp)
@@ -80,6 +75,7 @@ _trap1_pexec:
  * Stop the CPU until an interrupt occurs.
  * This may save some host CPU time on emulators (i.e. ARAnyM).
  */
+        .globl  _stop_until_interrupt
 _stop_until_interrupt:
         move.w  sr,d0
         move.w  d0,d1           // Backup
@@ -141,6 +137,12 @@ stop6:
 stop7:
         stop    #0x2700
         move.w  d0,sr
-        rts
+
+        // Fall through _just_rts
 
 #endif /* USE_STOP_INSN_TO_FREE_HOST_CPU */
+
+// The RTS below is shared for other purposes.
+        .globl  _just_rts
+_just_rts:
+        rts
