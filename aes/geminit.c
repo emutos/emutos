@@ -325,6 +325,24 @@ static void sh_init(void)
 }
 
 
+static void sh_curdir(char *ppath)
+{
+    WORD drive;
+
+    /* remember current directory */
+    drive = dos_gdrv();
+    *ppath++ = drive + 'A';
+    *ppath++ = ':';
+    *ppath = '\0';
+    dos_gdir(drive+1, ppath);
+    if (*ppath == '\0')
+    {
+        *ppath++ = '\\';
+        *ppath = '\0';
+    }
+}
+
+
 /*
  *  Routine to read in the start of a file
  *

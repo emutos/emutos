@@ -20,7 +20,6 @@ extern WORD     gl_changerez;
 extern WORD     gl_nextrez;
 
 void sh_read(char *pcmd, char *ptail);
-void sh_curdir(char *ppath);
 WORD sh_write(WORD doex, WORD isgem, WORD isover, const char *pcmd, const char *ptail);
 void sh_get(void *pbuffer, WORD len);
 void sh_put(const void *pdata, WORD len);
