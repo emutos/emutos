@@ -50,7 +50,7 @@ static void (* const jmptb1[])(Vwk *) = {
     vdi_vq_color,           /*  26 */
     vdi_v_nop,              /*  27 - vq_cellarray, not usually implemented by drivers */
     vdi_v_locator,          /*  28 */
-    vdi_v_valuator,         /*  29 */
+    vdi_v_nop,              /*  29 - vdi_v_valuator, not usually implemented by drivers */
     vdi_v_choice,           /*  30 */
     vdi_v_string,           /*  31 */
     vdi_vswr_mode,          /*  32 */

@@ -351,20 +351,6 @@ void vdi_vq_mouse(Vwk * vwk)
 
 
 /*
- * VALUATOR_INPUT: implements vrq_valuator()/vsm_valuator()
- *
- * These functions return the status of the logical 'valuator' device.
- * The "GEM Programmer's Guide: VDI" indicates that these functions
- * are not required, and both Atari TOS and EmuTOS (using the original
- * imported DRI source) implement them as dummy functions.
-*/
-void vdi_v_valuator(Vwk * vwk)
-{
-}
-
-
-
-/*
  * vdi_vex_butv
  *
  * This routine replaces the mouse button change vector with

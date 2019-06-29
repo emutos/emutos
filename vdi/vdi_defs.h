@@ -337,7 +337,6 @@ void vdi_vsf_color(Vwk *);          /* 25  - fcae5c */
 void vdi_vq_color(Vwk *vwk);        /* 26           */
 /* void vdi_vq_cellarray(Vwk *); */ /* 27  - fca4e6 - not implemented */
 void vdi_v_locator(Vwk *);          /* 28  - fcaeac */
-void vdi_v_valuator(Vwk *);         /* 29  - fcb042 */
 void vdi_v_choice(Vwk *);           /* 30  - fcb04a */
 
 void vdi_v_string(Vwk *);           /* 31  - fcb0d4 */
