@@ -20,10 +20,11 @@ void screen(void);
 
 WORD flip_y;                    /* True if magnitudes being returned */
 
-#define vdi_v_nop ((void (*)(Vwk *))just_rts) /* VDI dummy operation */
+typedef void (*VDI_OP_T)(Vwk *); /* Pointer type to VDI operation */
+#define vdi_v_nop ((VDI_OP_T)just_rts) /* VDI dummy operation */
 
 /* Two main jumptables for VDI functions */
-static void (* const jmptb1[])(Vwk *) = {
+static const VDI_OP_T jmptb1[] = {
     vdi_v_opnwk,            /*   1 */
     vdi_v_clswk,            /*   2 */
     vdi_v_clrwk,            /*   3 */
@@ -65,7 +66,7 @@ static void (* const jmptb1[])(Vwk *) = {
     vdi_vst_alignment       /*  39 */
 };
 
-static void(* const jmptb2[])(Vwk *) = {
+static const VDI_OP_T jmptb2[] = {
     vdi_v_opnvwk,           /* 100 */
     vdi_v_clsvwk,           /* 101 */
     vdi_vq_extnd,           /* 102 */
