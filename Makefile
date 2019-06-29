@@ -150,15 +150,20 @@ SMALL_OPTFLAGS = -Os
 BUILD_TOOLS_OPTFLAGS = -O
 OPTFLAGS = $(STANDARD_OPTFLAGS)
 
-WARNFLAGS = -Wall -Wundef -Wmissing-prototypes -Wstrict-prototypes
-#-Wshadow
-#-Werror
+WARNFLAGS =
+WARNFLAGS += -Wall
+WARNFLAGS += -Wundef
+WARNFLAGS += -Wmissing-prototypes
+WARNFLAGS += -Wstrict-prototypes
+#WARNFLAGS += -Wshadow
+#WARNFLAGS += -Werror
 
 GCCVERSION := $(shell $(CC) -dumpversion | cut -d. -f1)
 # add warning flags not supported by GCC v2
 ifneq (,$(GCCVERSION))
 ifneq (2,$(GCCVERSION))
-WARNFLAGS += -Wold-style-definition -Wtype-limits
+WARNFLAGS += -Wold-style-definition
+WARNFLAGS += -Wtype-limits
 endif
 endif
 
