@@ -84,6 +84,4 @@ extern WORD TEXTFG;             /* text foreground colour */
 extern WORD *SCRTCHP;           /* Pointer to text scratch buffer */
 extern WORD SCRPT2;             /* Offset to large text buffer */
 
-extern void linea_init(void);   /* initialize variables */
-
 #endif /* LINEAVARS_H */

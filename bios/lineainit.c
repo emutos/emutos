@@ -16,6 +16,7 @@
 #include "lineavars.h"
 #include "kprint.h"
 #include "screen.h"
+#include "bios.h"
 
 #define EXTENDED_PALETTE (CONF_WITH_VIDEL || CONF_WITH_TT_SHIFTER)
 

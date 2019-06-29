@@ -33,6 +33,9 @@ LONG drvmap(void);
 void bconout_str(WORD handle, const char* str);
 #endif
 
+/* Line-A functions */
+void linea_init(void); /* initialize variables */
+
 /* misc BIOS variables */
 extern const OSHEADER os_header;
 extern struct kbdvecs kbdvecs;
