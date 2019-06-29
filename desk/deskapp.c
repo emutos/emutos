@@ -500,11 +500,20 @@ static WORD load_user_icons(void)
 
     /*
      * determine the number of icons in the user's icon resource
+     *
+     * note: since the icons must be in the root of the boot drive, we
+     * make sure that they are there before calling rsrc_load(), which
+     * could otherwise search in multiple directories, taking longer
+     * and potentially causing useless form alerts
      */
     strcpy(icon_rsc_name, ICON_RSC_NAME);
     icon_rsc_name[0] += G.g_stdrv;  /* Adjust drive letter  */
-    if (!rsrc_load(icon_rsc_name))
-    {
+    rc = -1;
+    if (dos_sfirst(icon_rsc_name, FA_RO|FA_SYSTEM) == 0)
+        if (rsrc_load(icon_rsc_name))
+            rc = 0;
+    if (rc < 0)
+    {       
         KDEBUG(("can't load user desktop icons from %s\n",icon_rsc_name));
         return -1;
     }
