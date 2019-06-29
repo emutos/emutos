@@ -58,6 +58,7 @@
 
 #include "string.h"
 #include "kprint.h"
+#include "tosvars.h"
 
 extern LONG size_theglo(void); /* called only from gemstart.S */
 extern LONG init_p0_stkptr(void); /* called only from gemstart.S */

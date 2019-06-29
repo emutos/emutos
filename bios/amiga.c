@@ -17,6 +17,7 @@
 #include "kprint.h"
 #include "amiga.h"
 #include "vectors.h"
+#include "tosvars.h"
 #include "bios.h"
 #include "processor.h"
 #include "biosext.h"            /* for cache control routines */

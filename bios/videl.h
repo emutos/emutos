@@ -32,7 +32,6 @@
 #if CONF_WITH_VIDEL
 
 #include "portab.h"
-#include "tosvars.h"
 
 #define SPSHIFT             0xffff8266L
 

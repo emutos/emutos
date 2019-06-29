@@ -21,6 +21,7 @@
 #include "string.h"
 #include "intmath.h"
 #include "bdosbind.h"
+#include "tosvars.h"
 
 #define FIRST_VDI_HANDLE    1
 #define LAST_VDI_HANDLE     (FIRST_VDI_HANDLE+NUM_VDI_HANDLES-1)

@@ -57,6 +57,7 @@
 #include "biosbind.h"
 #include "memory.h"
 #include "nova.h"
+#include "tosvars.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif

@@ -15,7 +15,6 @@
 #define SCREEN_H
 
 #include "portab.h"
-#include "tosvars.h"
 
 #define ST_VRAM_SIZE        32000UL
 #define TT_VRAM_SIZE        153600UL
