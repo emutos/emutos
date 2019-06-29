@@ -22,8 +22,7 @@
 #include "mem.h"
 #include "string.h"
 #include "kprint.h"
-
-extern BCB *bufl[];     /* buffer lists - two lists:  FAT and dir/data */
+#include "tosvars.h"
 
 #define NUMBUFS 2       /* buffers per list */
 

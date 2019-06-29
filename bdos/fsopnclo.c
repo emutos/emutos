@@ -57,6 +57,7 @@
 #include "console.h"
 #include "kprint.h"
 #include "bdosstub.h"
+#include "tosvars.h"
 
 /* the following characters are disallowed in the name when creating
  * or renaming files or folders.  this is *mostly* the same list as

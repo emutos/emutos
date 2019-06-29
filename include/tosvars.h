@@ -24,6 +24,7 @@
 
 /* Forward declarations */
 struct _md;
+struct _bcb;
 
 extern LONG proc_lives;
 extern LONG proc_dregs[];
@@ -81,6 +82,7 @@ extern LONG ramvalid;     /* if equal to RAMVALID_MAGIC, then ramtop is valid */
 extern LONG savptr;
 
 extern struct _md themd;  /* BIOS memory descriptor */
+extern struct _bcb *bufl[2]; /* buffer lists - two lists:  FAT and dir/data */
 
 extern void (*prt_stat)(void);
 extern void (*prt_vec)(void);

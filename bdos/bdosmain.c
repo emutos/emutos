@@ -33,6 +33,7 @@
 #include "string.h"
 #include "kprint.h"
 #include "bdosstub.h"
+#include "tosvars.h"
 
 /*
 **  externals
