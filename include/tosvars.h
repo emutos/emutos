@@ -59,10 +59,9 @@ extern WORD bootdev;
 extern WORD fverify;
 extern WORD seekrate;
 extern WORD dumpflg;
-extern WORD nvbls;
+extern WORD nvbls; /* Number of slots in the array pointed by vblqueue */
 extern volatile WORD vblsem;
-extern LONG vbl_list[];
-extern LONG *vblqueue;
+extern PFVOID *vblqueue; /* Pointer to the VBL queue array */
 extern volatile LONG frclock;
 extern LONG *p_cookies;
 extern WORD save_row;     /* saved row in escape Y command */

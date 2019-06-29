@@ -625,8 +625,7 @@ void vdimouse_init(void)
     newx = 0;                   /* set cursor x-coordinate to 0 */
     newy = 0;                   /* set cursor y-coordinate to 0 */
 
-    /* vblqueue points to start of vbl_list[] */
-    *vblqueue = (LONG)vb_draw;   /* set GEM VBL-routine to vbl_list[0] */
+    vblqueue[0] = vb_draw;      /* set GEM VBL-routine to the first VBL slot */
 
     /* Initialize mouse via XBIOS in relative mode */
     Initmous(1, (LONG)&mouse_params, (LONG)mouse_int);
@@ -644,7 +643,6 @@ void vdimouse_init(void)
  */
 void vdimouse_exit(void)
 {
-    LONG * pointer;             /* help for storing LONGs in INTIN */
     struct kbdvecs *kbd_vectors;
 
     user_but = do_nothing;
@@ -652,8 +650,7 @@ void vdimouse_exit(void)
     user_cur = do_nothing;
     user_wheel = do_nothing;
 
-    pointer = vblqueue;         /* vblqueue points to start of vbl_list[] */
-    *pointer = (LONG)vb_draw;   /* set GEM VBL-routine to vbl_list[0] */
+    vblqueue[0] = vb_draw;      /* set GEM VBL-routine to the first VBL slot */
 
     /* disable mouse via XBIOS */
     Initmous(0, 0, 0);

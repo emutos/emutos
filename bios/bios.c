@@ -188,6 +188,7 @@ static void vecs_init(void)
 #endif
 }
 
+extern PFVOID vbl_list[8]; /* Default array for vblqueue */
 
 /*
  * Initialize the BIOS
@@ -282,13 +283,13 @@ static void bios_init(void)
     etv_critic = default_etv_critic;
     etv_term = just_rts;
 
-    /* setup VBL queue */
-    nvbls = 8;
+    /* setup default VBL queue with vbl_list[] */
+    nvbls = ARRAY_SIZE(vbl_list);
     vblqueue = vbl_list;
     {
         int i;
-        for(i = 0 ; i < 8 ; i++) {
-            vbl_list[i] = 0;
+        for(i = 0 ; i < nvbls ; i++) {
+            vbl_list[i] = NULL;
         }
     }
 
