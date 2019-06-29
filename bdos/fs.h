@@ -45,12 +45,6 @@
 #define KBBUFMASK       (KBBUFSZ-1)
 
 /*
- *  code macros
- */
-
-#define min(a,b) (((a) < (b)) ? (a) : (b))
-
-/*
  *  Error handling
  */
 

@@ -18,6 +18,7 @@
 #include "string.h"
 #include "kprint.h"
 #include "tosvars.h"
+#include "intmath.h"
 
 
 /*
