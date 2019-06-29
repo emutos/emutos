@@ -19,13 +19,6 @@
 
 #define EXTENDED_PALETTE (CONF_WITH_VIDEL || CONF_WITH_TT_SHIFTER)
 
-/* Precomputed value of log2(8/v_planes).
- * To get the address of a pixel x in a scan line, use the formula:
- * (x&0xfff0)>>shift_offset[v_planes]
- * Only the indexes 1, 2, 4 and 8 are meaningful.
- */
-const UBYTE shift_offset[9] = {0, 3, 2, 0, 1, 0, 0, 0, 0};
-
 MCS *mcs_ptr;   /* ptr to current mouse cursor save area, based on v_planes */
 
 /*
