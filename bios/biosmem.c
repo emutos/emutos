@@ -131,8 +131,6 @@ UBYTE *balloc_stram(ULONG size, BOOL top)
     return ret;
 }
 
-extern MD themd;                /* BIOS memory descriptor */
-
 void getmpb(MPB * mpb)
 {
 #if DBG_BALLOC

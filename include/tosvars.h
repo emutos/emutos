@@ -22,6 +22,9 @@
 #include "portab.h"
 #include "biosdefs.h"
 
+/* Forward declarations */
+struct _md;
+
 extern LONG proc_lives;
 extern LONG proc_dregs[];
 extern LONG proc_aregs[];
@@ -76,6 +79,8 @@ extern UBYTE *ramtop;     /* top of TT-RAM, or NULL if no TT-RAM is present */
 extern LONG ramvalid;     /* if equal to RAMVALID_MAGIC, then ramtop is valid */
 
 extern LONG savptr;
+
+extern struct _md themd;  /* BIOS memory descriptor */
 
 extern void (*prt_stat)(void);
 extern void (*prt_vec)(void);
