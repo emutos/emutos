@@ -152,9 +152,10 @@ OPTFLAGS = $(STANDARD_OPTFLAGS)
 
 WARNFLAGS =
 WARNFLAGS += -Wall
-WARNFLAGS += -Wundef
-WARNFLAGS += -Wmissing-prototypes
-WARNFLAGS += -Wstrict-prototypes
+WARNFLAGS += -Werror=undef
+WARNFLAGS += -Werror=missing-prototypes
+WARNFLAGS += -Werror=strict-prototypes
+WARNFLAGS += -Werror=implicit-function-declaration
 #WARNFLAGS += -Wshadow
 #WARNFLAGS += -Werror
 
@@ -162,8 +163,8 @@ GCCVERSION := $(shell $(CC) -dumpversion | cut -d. -f1)
 # add warning flags not supported by GCC v2
 ifneq (,$(GCCVERSION))
 ifneq (2,$(GCCVERSION))
-WARNFLAGS += -Wold-style-definition
-WARNFLAGS += -Wtype-limits
+WARNFLAGS += -Werror=old-style-definition
+WARNFLAGS += -Werror=type-limits
 endif
 endif
 
