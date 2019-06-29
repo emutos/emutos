@@ -47,6 +47,7 @@ NAMES
 #include "xbiosbind.h"
 #include "kprint.h"
 #include "bdosstub.h"
+#include "tosvars.h"
 
 /*
  * globals: current time and date
@@ -78,9 +79,6 @@ UWORD current_time, current_date;
  * BIOS interface
  * I didn't put it in a header because only this file is interested.
  */
-
-/* the address of the vector in TOS vars */
-extern void (*etv_timer)(int);
 
 /*
  * private declarations

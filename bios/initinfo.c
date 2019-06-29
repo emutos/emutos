@@ -38,6 +38,7 @@
 
 #include "initinfo.h"
 #include "conout.h"
+#include "../bdos/bdosstub.h"
 
 #ifdef ENABLE_KDEBUG
 #include "lineavars.h"
@@ -48,17 +49,8 @@
 
 #if FULL_INITINFO
 
-
-/*==== Defines ============================================================*/
-
 #define INFO_LENGTH 40      /* width of info lines (must fit in low-rez) */
 #define LOGO_LENGTH 34      /* must equal length of strings in EmuTOS logo */
-
-/*==== External declarations ==============================================*/
-
-#if CONF_WITH_ALT_RAM
-extern long total_alt_ram(void); /* in bdos/umem.c */
-#endif
 
 static const char logo[][LOGO_LENGTH+1] =
     { "11111111111 7777777777  777   7777",
