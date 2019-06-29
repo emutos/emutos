@@ -42,7 +42,7 @@
 
 /* external declarations from kprintasm.S */
 
-extern void printout_stonx(const char *str);
+extern void printout_stonx(const char *str); /* defined in kprintasm.S */
 
 /* this variable is filled by stonx_kprintf_init() */
 int stonx_kprintf_available;

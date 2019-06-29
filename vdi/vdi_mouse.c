@@ -43,10 +43,6 @@ extern void     (*user_cur)(void);      /* user cursor vector */
 extern void     (*user_mot)(void);      /* user motion vector */
 extern Mcdb     mouse_cdb;              /* storage for mouse sprite */
 
-/* call the vectors from C */
-extern void call_user_but(WORD status);
-extern void call_user_wheel(WORD wheel_number, WORD wheel_amount);
-
 /* prototypes */
 static void cur_display(Mcdb *sprite, MCS *savebuf, WORD x, WORD y);
 static void cur_replace(MCS *savebuf);
@@ -56,6 +52,8 @@ static void vb_draw(void);             /* user button vector */
 extern void mouse_int(void);    /* mouse interrupt routine */
 extern void wheel_int(void);    /* wheel interrupt routine */
 extern void mov_cur(void);      /* user button vector */
+extern void call_user_but(WORD status); /* call user_but from C */
+extern void call_user_wheel(WORD wheel_number, WORD wheel_amount); /* call user_wheel from C */
 
 
 /* FIXME: should go to linea variables */

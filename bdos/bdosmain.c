@@ -43,8 +43,8 @@
  * in rwa.S
  */
 
-extern void enter(void);
-extern void bdos_trap2(void);
+extern void enter(void); /* defined in rwa.S */
+extern void bdos_trap2(void); /* defined in rwa.S */
 PFVOID old_trap2; /* Old trap #2 handler, also used by rwa.S */
 
 /*
@@ -397,7 +397,7 @@ static void offree(DMD *d)
 /*
  *  osif - C implementation of trap #1. Called by _enter.
  */
-extern long osif(short *pw);
+extern long osif(short *pw); /* called only from rwa.S */
 long osif(short *pw)
 {
     char **pb, *pb2, *p, ctmp;

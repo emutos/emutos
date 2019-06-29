@@ -203,7 +203,7 @@ static void detect_features(void)
 
 
 #if CONF_DEBUG_DESK_STACK
-extern LONG deskstackbottom[];
+extern LONG deskstackbottom[]; /* defined in deskstart.S */
 
 static void display_free_stack(void)
 {

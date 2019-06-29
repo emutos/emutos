@@ -32,8 +32,8 @@
  * location of req_col2 is not documented by Atari, but is derived from
  * disassembly of TOS ROMs, and source code for MagiC's VDI.
  */
-extern WORD REQ_COL[16][3];     /* in lineavars.S */
-extern WORD req_col2[240][3];
+extern WORD REQ_COL[16][3];     /* defined in lineavars.S */
+extern WORD req_col2[240][3];   /* defined in lineavars.S */
 
 /* Some color mapping tables */
 WORD MAP_COL[MAXCOLOURS];       /* maps vdi pen -> hardware register */

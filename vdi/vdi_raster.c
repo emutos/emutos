@@ -188,7 +188,7 @@ typedef struct {
 extern void linea_blit(struct blit_frame *info); /* called only from linea.S */
 extern void linea_raster(void); /* called only from linea.S */
 #if ASM_BLIT_IS_AVAILABLE
-extern void fast_bit_blt(void); /* in vdi_blit.S */
+extern void fast_bit_blt(void); /* defined in vdi_blit.S */
 #endif
 
 /* holds VDI internal info for bit_blt() */

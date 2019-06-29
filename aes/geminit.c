@@ -131,7 +131,7 @@ GLOBAL WORD     curpid;
 GLOBAL THEGLO   D;
 
 /* Prototypes: */
-extern void accdesk_start(void) NORETURN;   /* see gemstart.S */
+extern void accdesk_start(void) NORETURN;   /* called only from gemstart.S */
 
 
 /*
