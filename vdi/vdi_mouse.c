@@ -55,11 +55,9 @@ extern void mov_cur(void);      /* user button vector */
 extern void call_user_but(WORD status); /* call user_but from C */
 extern void call_user_wheel(WORD wheel_number, WORD wheel_amount); /* call user_wheel from C */
 
-
-/* FIXME: should go to linea variables */
-void     (*user_wheel)(void);   /* user provided mouse wheel vector */
-PFVOID old_statvec;             /* original IKBD status packet routine */
-
+/* pointers to callbacks called from vdi_asm.S */
+PFVOID user_wheel;  /* user mouse wheel vector provided by vdi_vex_wheelv() */
+PFVOID old_statvec; /* original IKBD status packet routine */
 
 #if !WITH_AES
 /* Default Mouse Cursor Definition */
@@ -379,11 +377,8 @@ void vdi_v_valuator(Vwk * vwk)
  */
 void vdi_vex_butv(Vwk * vwk)
 {
-    LONG * pointer;
-
-    pointer = (LONG*)&CONTRL[9];
-    *pointer = (LONG)user_but;
-    user_but = (void (*)(void)) *--pointer;
+    ULONG_AT(&CONTRL[9]) = (ULONG) user_but;
+    user_but = (PFVOID) ULONG_AT(&CONTRL[7]);
 }
 
 
@@ -403,11 +398,8 @@ void vdi_vex_butv(Vwk * vwk)
  */
 void vdi_vex_motv(Vwk * vwk)
 {
-    LONG * pointer;
-
-    pointer = (LONG*) &CONTRL[9];
-    *pointer = (LONG) user_mot;
-    user_mot = (void (*)(void)) *--pointer;
+    ULONG_AT(&CONTRL[9]) = (ULONG) user_mot;
+    user_mot = (PFVOID) ULONG_AT(&CONTRL[7]);
 }
 
 
@@ -429,11 +421,8 @@ void vdi_vex_motv(Vwk * vwk)
  */
 void vdi_vex_curv(Vwk * vwk)
 {
-    LONG * pointer;
-
-    pointer = (LONG*) &CONTRL[9];
-    *pointer = (LONG) user_cur;
-    user_cur = (void (*)(void)) *--pointer;
+    ULONG_AT(&CONTRL[9]) = (ULONG) user_cur;
+    user_cur = (PFVOID) ULONG_AT(&CONTRL[7]);
 }
 
 
@@ -456,11 +445,8 @@ void vdi_vex_curv(Vwk * vwk)
  */
 void vdi_vex_wheelv(Vwk * vwk)
 {
-    LONG * pointer;
-
-    pointer = (LONG*) &CONTRL[9];
-    *pointer = (LONG) user_wheel;
-    user_wheel = (void (*)(void)) *--pointer;
+    ULONG_AT(&CONTRL[9]) = (ULONG) user_wheel;
+    user_wheel = (PFVOID) ULONG_AT(&CONTRL[7]);
 }
 #endif
 
