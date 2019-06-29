@@ -21,7 +21,7 @@
         .globl  _set_aestrap
         .globl  _aestrap_intercepted
         .globl  _far_mcha
-#if CONF_WITH_VDI_EXTENSIONS
+#if CONF_WITH_EXTENDED_MOUSE
         .globl  _aes_wheel
 #endif
         .globl  _far_bcha
@@ -41,7 +41,9 @@
         .extern _b_click
         .extern _mchange
         .extern _forkq
+#if CONF_WITH_EXTENDED_MOUSE
         .extern _wheel_change
+#endif
         .extern _tchange
         .extern _b_delay
         .extern __etext
@@ -363,7 +365,7 @@ _far_mcha:
         movea.l gstksave,sp
         rts
 
-#if CONF_WITH_VDI_EXTENSIONS
+#if CONF_WITH_EXTENDED_MOUSE
 /* AES mouse wheel handler called by the VDI */
 _aes_wheel:
         move.l  sp,gstksave
@@ -388,7 +390,7 @@ _aes_wheel:
 #endif
         movea.l gstksave,sp
         rts
-#endif
+#endif /* CONF_WITH_EXTENDED_MOUSE */
 
 /*
 ;

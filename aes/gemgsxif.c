@@ -280,7 +280,7 @@ void gsx_init(void)
     xrat = ptsout[0];
     yrat = ptsout[1];
 
-#if CONF_WITH_VDI_EXTENSIONS
+#if CONF_WITH_EXTENDED_MOUSE
     /*
      * if NVDI3 has been installed, it will see the following VDI call.
      * since it doesn't understand vex_wheelv() (which is a Milan extension),
@@ -615,7 +615,7 @@ void g_vsl_width(WORD width)
 
 
 
-#if CONF_WITH_VDI_EXTENSIONS
+#if CONF_WITH_EXTENDED_MOUSE
 void vex_wheelv(PFVOID new, PFVOID *old)
 {
     i_ptr(new);

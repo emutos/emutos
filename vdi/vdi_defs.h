@@ -392,7 +392,9 @@ void vdi_vqt_name(Vwk *);           /* 130 - fce790 */
 
 void vdi_vqt_fontinfo(Vwk *);       /* 131 - fce820 */
 
+#if CONF_WITH_EXTENDED_MOUSE
 void vdi_vex_wheelv(Vwk *);         /* 134 */
+#endif
 
 /* not in original TOS */
 void v_bez_qual(Vwk *);

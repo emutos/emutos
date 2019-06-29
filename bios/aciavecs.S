@@ -92,7 +92,9 @@
         .globl  _int_acia
 #endif
 
+#if CONF_WITH_EXTENDED_MOUSE
         .globl  _mousexvec
+#endif
         .globl  _kbdvecs
 
         .globl  _ikbdiorec
@@ -133,7 +135,9 @@ midiibufhi:     .ds.w   1
 // This is now the table of routines for managing midi and keyboard data
 // in packets from IKBD (shown by a0 and 4(sp))
 
+#if CONF_WITH_EXTENDED_MOUSE
 _mousexvec:     .ds.l   1       // mouse-routine for additional buttons
+#endif
 kbdvec:         .ds.l   1       // must be right before _kbdvecs
 _kbdvecs:
 midivec:        .ds.l   1       // MIDI input
@@ -155,7 +159,9 @@ _init_acia_vecs:
         // initialize the kbdvecs structure
         lea     just_rts,a0             // dummy vector
         lea     _kbdvecs,a1
+#if CONF_WITH_EXTENDED_MOUSE
         move.l  a0,_mousexvec-_kbdvecs(a1)
+#endif
 #ifdef __mcoldfire__
         move.l  #_kbdvec,d0
         move.l  d0,kbdvec-_kbdvecs(a1)

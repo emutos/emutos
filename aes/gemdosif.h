@@ -32,7 +32,9 @@ extern void enable_interrupts(void);
 
 extern void far_bcha(void);
 extern void far_mcha(void);
+#if CONF_WITH_EXTENDED_MOUSE
 extern void aes_wheel(void);
+#endif
 
 extern void unset_aestrap(void);
 extern void set_aestrap(void);

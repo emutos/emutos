@@ -122,9 +122,11 @@ intin_ok:
 
         .globl  _mov_cur        // set's new x/y coordinates
         .globl  _mouse_int      // mouse interrupt routine
+#if CONF_WITH_EXTENDED_MOUSE
         .globl  _wheel_int      // wheel interrupt routine
         .globl  _call_user_but  // call the _user_but vector from C
         .globl  _call_user_wheel// call the _user_wheel vector from C
+#endif
 
         /* External variables used here */
 
@@ -142,11 +144,12 @@ intin_ok:
         .extern _user_but       // user button vector
         .extern _user_mot       // user motion vector
         .extern _user_cur       // user cursor vector
+#if CONF_WITH_EXTENDED_MOUSE
         .extern _user_wheel     // user wheel vector
+        .extern _old_statvec    // previous IKBD status packet vector
+#endif
 
         .extern _DEV_TAB        // address of device table
-
-        .extern _old_statvec    // previous IKBD status packet vector
 
         .text
 
@@ -367,6 +370,8 @@ ms_done:
 ms_exit:
         rts
 
+#if CONF_WITH_EXTENDED_MOUSE
+
 /*
  * _wheel_int - Mouse wheel interrupt routine
  * entry:       a0 = address of IKBD status packet buffer from aciavecs.S
@@ -465,6 +470,8 @@ wheel_exit:
 wheel_ikbd_packet:
         .dc.b   0x05,0x00,0x00,0x00,0x00,0x00
 
+#endif /* CONF_WITH_EXTENDED_MOUSE */
+
 /*
  * mov_cur - moves the mouse cursor to its new location
  *           unless the cursor is currently hidden.
@@ -516,6 +523,8 @@ _mov_cur:
 mov_cur1:
         rts
 
+#if CONF_WITH_EXTENDED_MOUSE
+
 /*
  * Call the _user_but vector from C.
  */
@@ -532,3 +541,5 @@ _call_user_wheel:
         move.w  6(sp),d1
         move.l  _user_wheel,a0
         jmp     (a0)
+
+#endif /* CONF_WITH_EXTENDED_MOUSE */

@@ -31,7 +31,9 @@ void invalidate_instruction_cache(void *start, long size);
 BOOL can_shutdown(void);
 #endif
 
+#if CONF_WITH_EXTENDED_MOUSE
 extern void (*mousexvec)(WORD scancode);    /* Additional mouse buttons */
+#endif
 
 /* Line A extensions */
 extern struct _mcs *mcs_ptr; /* ptr to mouse cursor save area in use */

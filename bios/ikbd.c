@@ -726,6 +726,7 @@ void kbd_int(UBYTE scancode)
         }
     }
 
+#if CONF_WITH_EXTENDED_MOUSE
     /* the additional mouse buttons use a separate vector */
     if (   scancode_only == 0x37  /* Mouse button 3 */
         || scancode_only == 0x5e  /* Mouse button 4 */
@@ -738,6 +739,7 @@ void kbd_int(UBYTE scancode)
         mousexvec(scancode);
         return;
     }
+#endif
 
     if (scancode & KEY_RELEASED) {
         switch (scancode_only) {

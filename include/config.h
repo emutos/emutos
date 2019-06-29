@@ -275,8 +275,8 @@
 # ifndef CONF_WITH_BIOS_EXTENSIONS
 #  define CONF_WITH_BIOS_EXTENSIONS 0
 # endif
-# ifndef CONF_WITH_VDI_EXTENSIONS
-#  define CONF_WITH_VDI_EXTENSIONS 0
+# ifndef CONF_WITH_EXTENDED_MOUSE
+#  define CONF_WITH_EXTENDED_MOUSE 0
 # endif
 # ifndef CONF_WITH_VDI_VERTLINE
 #  define CONF_WITH_VDI_VERTLINE 0
@@ -342,8 +342,8 @@
 # ifndef CONF_WITH_BIOS_EXTENSIONS
 #  define CONF_WITH_BIOS_EXTENSIONS 0
 # endif
-# ifndef CONF_WITH_VDI_EXTENSIONS
-#  define CONF_WITH_VDI_EXTENSIONS 0
+# ifndef CONF_WITH_EXTENDED_MOUSE
+#  define CONF_WITH_EXTENDED_MOUSE 0
 # endif
 # ifndef CONF_WITH_VDI_VERTLINE
 #  define CONF_WITH_VDI_VERTLINE 0
@@ -1143,11 +1143,11 @@
 # define CONF_WITH_BIOS_EXTENSIONS 1
 #endif
 
-/*
- * Set CONF_WITH_VDI_EXTENSIONS to 1 to support various VDI extension functions
+/* Set CONF_WITH_EXTENDED_MOUSE to 1 to enable support for extended mouse.
+ * This includes new Eiffel scancodes for mouse buttons 3, 4, 5, and the wheel.
  */
-#ifndef CONF_WITH_VDI_EXTENSIONS
-# define CONF_WITH_VDI_EXTENSIONS 1
+#ifndef CONF_WITH_EXTENDED_MOUSE
+# define CONF_WITH_EXTENDED_MOUSE 1
 #endif
 
 /*

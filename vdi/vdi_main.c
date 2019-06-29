@@ -96,7 +96,7 @@ static void(* const jmptb2[])(Vwk *) = {
     vdi_vs_clip,            /* 129 */
     vdi_vqt_name,           /* 130 */
     vdi_vqt_fontinfo,       /* 131 */
-#if CONF_WITH_VDI_EXTENSIONS
+#if CONF_WITH_EXTENDED_MOUSE
     vdi_v_nop,              /* 132 */ /* vqt_justified (PC-GEM) */
     vdi_v_nop,              /* 133 */ /* vs_grayoverride (PC-GEM/3) */
     vdi_vex_wheelv          /* 134 */ /* (Milan), also v_pat_rotate (PC-GEM/3) */

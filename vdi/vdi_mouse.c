@@ -50,14 +50,17 @@ static void vb_draw(void);             /* user button vector */
 
 /* prototypes for functions in vdi_asm.S */
 extern void mouse_int(void);    /* mouse interrupt routine */
-extern void wheel_int(void);    /* wheel interrupt routine */
 extern void mov_cur(void);      /* user button vector */
+
+#if CONF_WITH_EXTENDED_MOUSE
+extern void wheel_int(void);    /* wheel interrupt routine */
 extern void call_user_but(WORD status); /* call user_but from C */
 extern void call_user_wheel(WORD wheel_number, WORD wheel_amount); /* call user_wheel from C */
 
 /* pointers to callbacks called from vdi_asm.S */
 PFVOID user_wheel;  /* user mouse wheel vector provided by vdi_vex_wheelv() */
 PFVOID old_statvec; /* original IKBD status packet routine */
+#endif
 
 #if !WITH_AES
 /* Default Mouse Cursor Definition */
@@ -427,7 +430,7 @@ void vdi_vex_curv(Vwk * vwk)
 
 
 
-#if CONF_WITH_VDI_EXTENSIONS
+#if CONF_WITH_EXTENDED_MOUSE
 /*
  * vdi_vex_wheelv: a Milan VDI extension
  *
@@ -525,6 +528,8 @@ void vdi_vsc_form(Vwk * vwk)
 
 
 
+#if CONF_WITH_EXTENDED_MOUSE
+
 /*
  * vdi_mousex_handler - Handle additional mouse buttons
  */
@@ -558,6 +563,8 @@ static void vdi_mousex_handler (WORD scancode)
         call_user_wheel(1, 1);
 }
 
+#endif /* CONF_WITH_EXTENDED_MOUSE */
+
 
 
 /*
@@ -568,7 +575,6 @@ static void vdi_mousex_handler (WORD scancode)
  */
 void vdimouse_init(void)
 {
-    struct kbdvecs *kbd_vectors;
     static const struct {
         UBYTE topmode;
         UBYTE buttons;
@@ -590,7 +596,9 @@ void vdimouse_init(void)
     user_but = just_rts;
     user_mot = just_rts;
     user_cur = mov_cur;         /* initialize user_cur vector */
+#if CONF_WITH_EXTENDED_MOUSE
     user_wheel = just_rts;
+#endif
 
     /* Move in the default mouse form (presently the arrow) */
     set_mouse_form(default_mform(), &mouse_cdb);
@@ -607,10 +615,14 @@ void vdimouse_init(void)
     /* Initialize mouse via XBIOS in relative mode */
     Initmous(1, (LONG)&mouse_params, (LONG)mouse_int);
 
-    kbd_vectors = (struct kbdvecs *)Kbdvbase();
-    old_statvec = kbd_vectors->statvec;
-    kbd_vectors->statvec = wheel_int;
-    mousexvec = vdi_mousex_handler;
+#if CONF_WITH_EXTENDED_MOUSE
+    {
+        struct kbdvecs *kbd_vectors = (struct kbdvecs *)Kbdvbase();
+        old_statvec = kbd_vectors->statvec;
+        kbd_vectors->statvec = wheel_int;
+        mousexvec = vdi_mousex_handler;
+    }
+#endif
 }
 
 
@@ -620,20 +632,24 @@ void vdimouse_init(void)
  */
 void vdimouse_exit(void)
 {
-    struct kbdvecs *kbd_vectors;
-
     user_but = just_rts;
     user_mot = just_rts;
     user_cur = just_rts;
+#if CONF_WITH_EXTENDED_MOUSE
     user_wheel = just_rts;
+#endif
 
     vblqueue[0] = vb_draw;      /* set GEM VBL-routine to the first VBL slot */
 
     /* disable mouse via XBIOS */
     Initmous(0, 0, 0);
 
-    kbd_vectors = (struct kbdvecs *)Kbdvbase();
-    kbd_vectors->statvec = old_statvec;
+#if CONF_WITH_EXTENDED_MOUSE
+    {
+        struct kbdvecs *kbd_vectors = (struct kbdvecs *)Kbdvbase();
+        kbd_vectors->statvec = old_statvec;
+    }
+#endif
 }
 
 

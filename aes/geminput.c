@@ -37,7 +37,9 @@
 #include "kprint.h"
 
 
+#if CONF_WITH_EXTENDED_MOUSE
 extern void wheel_change(WORD wheel_number, WORD wheel_amount); /* called only from aes/gemdosif.S */
+#endif
 extern void b_click(WORD state); /* called only from aes/gemdosif.S */
 extern void b_delay(WORD amnt);  /* called only from aes/gemdosif.S */
 
@@ -378,7 +380,7 @@ void mchange(LONG fdata)
 }
 
 
-#if CONF_WITH_VDI_EXTENSIONS
+#if CONF_WITH_EXTENDED_MOUSE
 void wheel_change(WORD wheel_number, WORD wheel_amount)
 {
     WORD wh;

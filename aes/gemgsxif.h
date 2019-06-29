@@ -58,7 +58,7 @@ void vrt_cpyfm(WORD wr_mode, WORD *pxyarray, FDB *psrcMFDB, FDB *pdesMFDB,
 void vrn_trnfm(FDB *psrcMFDB, FDB *pdesMFDB);
 void g_vsl_width(WORD width);
 
-#if CONF_WITH_VDI_EXTENSIONS
+#if CONF_WITH_EXTENDED_MOUSE
 void vex_wheelv(PFVOID new, PFVOID *old);
 #endif
 
