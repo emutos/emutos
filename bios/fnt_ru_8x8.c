@@ -11,9 +11,8 @@
 
 #include "config.h"
 #include "portab.h"
+#include "bios.h"
 #include "fonthdr.h"
-
-extern const UWORD off_8x8_table[];
 
 static const UWORD dat_table[] =
 {

@@ -40,6 +40,11 @@ void linea_init(void); /* initialize variables */
 extern const OSHEADER os_header;
 extern struct kbdvecs kbdvecs;
 
+/* Font offsets */
+extern const UWORD off_6x6_table[];
+extern const UWORD off_8x8_table[];
+#define off_8x16_table off_8x8_table
+
 /* these symbols are created by the linker script */
 extern UBYTE _text[];     /* start of TEXT segment */
 extern UBYTE _etext[];    /* end of TEXT segment */

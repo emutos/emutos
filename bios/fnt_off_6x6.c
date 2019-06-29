@@ -9,6 +9,7 @@
 
 #include "config.h"
 #include "portab.h"
+#include "bios.h"
 #include "fonthdr.h"
 
 const UWORD off_6x6_table[] =
