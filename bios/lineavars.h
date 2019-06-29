@@ -29,7 +29,7 @@
  * and above when referencing the lineA version will overwrite
  * other lineA variables with unpredictable results.
  */
-typedef struct {
+typedef struct _mcs {
         WORD    len;            /* height of saved form */
         UWORD   *addr;          /* screen address of saved form */
         UBYTE    stat;          /* save status */
@@ -44,7 +44,6 @@ extern MCS mouse_cursor_save;       /* in linea variable area */
 extern MCS ext_mouse_cursor_save;   /* use for v_planes > 4 */
 
 extern const UBYTE shift_offset[9]; /* pixel to address helper */
-extern MCS *mcs_ptr;            /* ptr to mouse cursor save area in use */
 
 extern UWORD v_planes;          /* count of color planes */
 extern UWORD v_lin_wr;          /* line wrap : bytes per line */

@@ -10,6 +10,9 @@
 #ifndef BIOSEXT_H
 #define BIOSEXT_H
 
+/* Forward declarations */
+struct _mcs;
+
 /* Bitmap of removable logical drives */
 extern LONG drvrem;
 
@@ -29,5 +32,8 @@ BOOL can_shutdown(void);
 #endif
 
 extern void (*mousexvec)(WORD scancode);    /* Additional mouse buttons */
+
+/* Line A extensions */
+extern struct _mcs *mcs_ptr; /* ptr to mouse cursor save area in use */
 
 #endif /* BIOSEXT_H */
