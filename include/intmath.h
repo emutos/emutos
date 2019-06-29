@@ -11,21 +11,25 @@ ULONG Isqrt(ULONG x);
 
 /*
  *  min(): return minimum of two values
+ *  Implemented as a macro to allow any type
  */
-static __inline__
-WORD min(WORD a, WORD b)
-{
-    return (a < b) ? a : b;
-}
+#define min(a,b) \
+({ \
+    __typeof__(a) _a = (a); /* Copy to avoid double evaluation */ \
+    __typeof__(b) _b = (b); /* Copy to avoid double evaluation */ \
+    _a <= _b ? _a : _b; \
+})
 
 /*
  *  max(): return maximum of two values
+ *  Implemented as a macro to allow any type
  */
-static __inline__
-WORD max(WORD a, WORD b)
-{
-    return (a > b) ? a : b;
-}
+#define max(a,b) \
+({ \
+    __typeof__(a) _a = (a); /* Copy to avoid double evaluation */ \
+    __typeof__(b) _b = (b); /* Copy to avoid double evaluation */ \
+    _a >= _b ? _a : _b; \
+})
 
 /*
  * mul_div - signed integer multiply and divide
