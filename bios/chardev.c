@@ -22,6 +22,7 @@
 #include "vt52.h"
 #include "mfp.h"
 #include "bios.h"
+#include "asm.h"
 
 #define NUM_CHAR_VECS   8
 
@@ -45,10 +46,6 @@ static LONG (* const bconout_init[NUM_CHAR_VECS])(WORD,WORD) =
 /*
  * dummy - unimplemented functions
  */
-static void dummy(void)
-{
-}
-
 LONG char_dummy(void)
 {
     return 0L;
@@ -77,13 +74,13 @@ int i;
         bconout_vec[i] = bconout_init[i];
 
     /* setup serial output functions */
-    aux_stat = dummy;
-    aux_vec = dummy;
+    aux_stat = just_rts;
+    aux_vec = just_rts;
 
     /* setup parallel output functions */
-    prt_stat = dummy;
-    prt_vec = dummy;
-    dump_vec = dummy;
+    prt_stat = just_rts;
+    prt_vec = just_rts;
+    dump_vec = just_rts;
 }
 
 
