@@ -325,21 +325,15 @@ static void sh_init(void)
 }
 
 
+/*
+ *  Set default desktop path (root of current drive)
+ */
 static void sh_curdir(char *ppath)
 {
-    WORD drive;
-
-    /* remember current directory */
-    drive = dos_gdrv();
-    *ppath++ = drive + 'A';
+    *ppath++ = dos_gdrv() + 'A';
     *ppath++ = ':';
+    *ppath++ = '\\';
     *ppath = '\0';
-    dos_gdir(drive+1, ppath);
-    if (*ppath == '\0')
-    {
-        *ppath++ = '\\';
-        *ppath = '\0';
-    }
 }
 
 
