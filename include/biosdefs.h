@@ -104,4 +104,13 @@ struct kbdvecs
     PFVOID ikbdsys;     /* Main IKBD Vector */
 };
 
+/*
+ * Struct returned by Kbdvbase()
+ */
+
+/*
+ * Types for callbacks
+ */
+typedef void (*ETV_TIMER_T)(int ms); /* Type of BDOS Event Timer */
+
 #endif /* BIOSDEFS_H */

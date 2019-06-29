@@ -18,6 +18,7 @@
 #define LINEAVARS_H
 
 #include "portab.h"
+#include "biosdefs.h"
 
 /* Screen related variables */
 
@@ -83,5 +84,9 @@ extern WORD CHUP;               /* Text baseline vector */
 extern WORD TEXTFG;             /* text foreground colour */
 extern WORD *SCRTCHP;           /* Pointer to text scratch buffer */
 extern WORD SCRPT2;             /* Offset to large text buffer */
+
+/* timer-related vectors */
+extern ETV_TIMER_T tim_addr;  /* timer interrupt vector */
+extern ETV_TIMER_T tim_chain; /* timer interrupt vector save */
 
 #endif /* LINEAVARS_H */

@@ -18,13 +18,6 @@
 #include "vdi_defs.h"
 #include "lineavars.h"
 
-
-/* timer related vectors (linea variables in bios/lineavars.S) */
-
-extern void     (*tim_addr)(int);       /* timer interrupt vector */
-extern void     (*tim_chain)(int);      /* timer interrupt vector save */
-
-
 static BOOL in_proc;                   /* flag, if we are still running */
 
 /* Precomputed value of log2(8/v_planes).
@@ -93,12 +86,12 @@ static void tick_int(int u)
     if (!in_proc) {
         in_proc = 1;                    /* set flag, that we are running */
                                         /* MAD: evtl. registers to stack */
-        (*tim_addr)(u);                 /* call the timer vector */
+        tim_addr(u);                    /* call the timer vector */
                                         /* and back from stack */
     }
     in_proc = 0;                        /* allow yet another trip through */
                                         /* MAD: evtl. registers to stack */
-    (*tim_chain)(u);                    /* call the old timer vector too */
+    tim_chain(u);                       /* call the old timer vector too */
                                         /* and back from stack */
 }
 
@@ -117,7 +110,7 @@ void vdi_vex_timv(Vwk * vwk)
     old_sr = set_sr(0x2700);
 
     ULONG_AT(&CONTRL[9]) = (ULONG) tim_addr;
-    tim_addr = (void (*)(int)) ULONG_AT(&CONTRL[7]);
+    tim_addr = (ETV_TIMER_T) ULONG_AT(&CONTRL[7]);
 
     set_sr(old_sr);
 
@@ -152,8 +145,8 @@ void timer_init(void)
     tim_addr = do_nothing_int;          /* tick points to rts */
 
     old_sr = set_sr(0x2700);            /* disable interrupts */
-    tim_chain = (void(*)(int))          /* save old vector */
-    Setexc(0x100, (long)tick_int);      /* set etv_timer to tick_int */
+    tim_chain = (ETV_TIMER_T)           /* save old vector */
+        Setexc(0x100, (long)tick_int);  /* set etv_timer to tick_int */
     set_sr(old_sr);                     /* enable interrupts */
 
 }

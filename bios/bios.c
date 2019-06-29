@@ -279,7 +279,7 @@ static void bios_init(void)
     dumpflg = -1;
     sysbase = &os_header;
     savptr = (LONG) trap_save_area;
-    etv_timer = (void(*)(int)) just_rts;
+    etv_timer = (ETV_TIMER_T) just_rts;
     etv_critic = default_etv_critic;
     etv_term = just_rts;
 
