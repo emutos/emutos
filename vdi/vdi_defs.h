@@ -342,7 +342,6 @@ void vdi_v_choice(Vwk *);           /* 30  - fcb04a */
 void vdi_v_string(Vwk *);           /* 31  - fcb0d4 */
 void vdi_vswr_mode(Vwk *);          /* 32  - fcb1d8 */
 void vdi_vsin_mode(Vwk *);          /* 33  - fcb232 */
-void vdi_v_nop(Vwk *);              /* 34  - fca4e6 */
 void vdi_vql_attributes(Vwk *);     /* 35  - fcbbf8 */
 
 void vdi_vqm_attributes(Vwk *);     /* 36  - fcbc54 */

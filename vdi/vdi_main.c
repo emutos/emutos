@@ -12,6 +12,7 @@
 #include "portab.h"
 #include "vdi_defs.h"
 #include "kprint.h"
+#include "asm.h"
 
 /* forward prototypes */
 void screen(void);
@@ -19,6 +20,7 @@ void screen(void);
 
 WORD flip_y;                    /* True if magnitudes being returned */
 
+#define vdi_v_nop ((void (*)(Vwk *))just_rts) /* VDI dummy operation */
 
 /* Two main jumptables for VDI functions */
 static void (* const jmptb1[])(Vwk *) = {

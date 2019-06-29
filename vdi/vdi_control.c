@@ -542,13 +542,3 @@ void vdi_vq_extnd(Vwk * vwk)
     for (i = 0; i < 45; i++)
         *dst++ = *src++;
 }
-
-
-
-/*
- * vdi_v_nop - dummy
- */
-void vdi_v_nop(Vwk * vwk)
-{
-    /* will never be implemented */
-}
