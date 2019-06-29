@@ -113,14 +113,11 @@ static void tick_int(int u)
 void vdi_vex_timv(Vwk * vwk)
 {
     WORD old_sr;
-    LONG * pointer;
-
-    pointer = (LONG*) &CONTRL[9];
 
     old_sr = set_sr(0x2700);
 
-    *pointer = (LONG) tim_addr;
-    tim_addr = (void (*)(int)) *--pointer;
+    ULONG_AT(&CONTRL[9]) = (ULONG) tim_addr;
+    tim_addr = (void (*)(int)) ULONG_AT(&CONTRL[7]);
 
     set_sr(old_sr);
 
