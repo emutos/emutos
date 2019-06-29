@@ -68,9 +68,6 @@ static char shelbuf[SIZE_AFILE];        /* AES shell buffer */
 
 GLOBAL SHELL sh[NUM_PDS];
 
-static char sh_apdir[LEN_ZPATH];        /* holds directory of applications to be */
-                                        /* run from desktop.  GEMDOS resets dir  */
-                                        /* to parent's on return from exec.      */
 GLOBAL char *ad_stail;
 
 GLOBAL WORD gl_shgem;
@@ -157,7 +154,6 @@ WORD sh_write(WORD doex, WORD isgem, WORD isover, const char *pcmd, const char *
     case SHW_EXEC:      /* run another program */
         strcpy(D.s_cmd, pcmd);
         memcpy(ad_stail, ptail, CMDTAILSIZE);
-        sh_curdir(sh_apdir);    /* save app's current directory */
         psh->sh_doexec = doex;
         psh->sh_dodef = FALSE;
         psh->sh_isgem = (isgem != FALSE);
@@ -560,12 +556,6 @@ static void sh_chdef(SHELL *psh,BOOL isgem)
         }
         strcpy(D.s_cmd+n, psh->sh_desk);
     }
-    else
-    {
-        if (sh_apdir[1] == ':')
-            dos_sdrv(sh_apdir[0] - 'A');    /* desktop's def. dir   */
-        dos_chdir(sh_apdir);
-    }
 }
 
 
@@ -695,7 +685,6 @@ void sh_main(BOOL isgem)
     SHELL *psh;
 
     psh = &sh[rlr->p_pid];
-    strcpy(sh_apdir, D.s_cdir);         /* initialize sh_apdir  */
 
     /* Set default DESKTOP if there isn't any yet */
     if (psh->sh_desk[0] == '\0')
