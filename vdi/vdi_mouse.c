@@ -109,15 +109,6 @@ static const MFORM arrow_mform = {
 
 
 /*
- * do_nothing - doesn't do much  :-)
- */
-static void do_nothing(void)
-{
-}
-
-
-
-/*
  * dis_cur - Displays the mouse cursor if the number of hide
  *           operations has gone back to 0.
  *
@@ -610,10 +601,10 @@ void vdimouse_init(void)
     GCURX = xres / 2;           /* initialize the mouse to center */
     GCURY = yres / 2;
 
-    user_but = do_nothing;
-    user_mot = do_nothing;
+    user_but = just_rts;
+    user_mot = just_rts;
     user_cur = mov_cur;         /* initialize user_cur vector */
-    user_wheel = do_nothing;
+    user_wheel = just_rts;
 
     /* Move in the default mouse form (presently the arrow) */
     set_mouse_form(default_mform(), &mouse_cdb);
@@ -645,10 +636,10 @@ void vdimouse_exit(void)
 {
     struct kbdvecs *kbd_vectors;
 
-    user_but = do_nothing;
-    user_mot = do_nothing;
-    user_cur = do_nothing;
-    user_wheel = do_nothing;
+    user_but = just_rts;
+    user_mot = just_rts;
+    user_cur = just_rts;
+    user_wheel = just_rts;
 
     vblqueue[0] = vb_draw;      /* set GEM VBL-routine to the first VBL slot */
 
