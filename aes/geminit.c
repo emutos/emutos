@@ -226,13 +226,13 @@ static AESPD *iprocess(char *pname, PFVOID routine)
  *
  *  This is used to load a desk accessory.
  */
-static void sndcli(ACC *acc)
+static void load_one_acc(ACC *acc)
 {
     WORD    handle;
     WORD    err_ret;
     LONG    ret;
 
-    KDEBUG(("sndcli(\"%s\")\n", (const char *)acc->name));
+    KDEBUG(("load_one_acc(\"%s\")\n", (const char *)acc->name));
 
     acc->addr = -1L;
     strcpy(D.s_cmd, acc->name);
@@ -304,7 +304,7 @@ static void load_accs(WORD n)
     WORD i;
 
     for (i = 0; i < n; i++)
-        sndcli(&acc[i]);
+        load_one_acc(&acc[i]);
 }
 
 
