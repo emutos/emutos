@@ -342,9 +342,9 @@ _int_vbl:
         subq.l  #1, d0
         move.w  d0, _vblsem.w
 #else
-        subq.w  #1, _vblsem.w           // check vbl semaphore
+        subq.w  #1, _vblsem.w           // check VBL semaphore
 #endif
-        jmi     vbl_end                 // if VBl routine disabled -> end
+        jmi     vbl_end                 // if VBL routine disabled -> end
 
 #ifdef __mcoldfire__
         lea     -56(sp), sp

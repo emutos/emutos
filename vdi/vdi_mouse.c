@@ -135,7 +135,7 @@ static void dis_cur(void)
     HIDE_CNT -= 1;              /* decrement hide operations counter */
     if (HIDE_CNT == 0) {
         cur_display(&mouse_cdb, mcs_ptr, GCURX, GCURY);  /* display the cursor */
-        draw_flag = 0;          /* disable vbl drawing routine */
+        draw_flag = 0;          /* disable VBL drawing routine */
     }
     else if (HIDE_CNT < 0) {
         HIDE_CNT = 0;           /* hide counter should not become negative */
@@ -169,7 +169,7 @@ static void hide_cur(void)
     HIDE_CNT += 1;              /* increment it */
     if (HIDE_CNT == 1) {        /* if cursor was not hidden... */
         cur_replace(mcs_ptr);   /* remove the cursor from screen */
-        draw_flag = 0;          /* disable vbl drawing routine */
+        draw_flag = 0;          /* disable VBL drawing routine */
     }
 
     mouse_flag -= 1;            /* re-enable mouse drawing */
