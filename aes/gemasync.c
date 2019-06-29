@@ -19,7 +19,7 @@
 #include "config.h"
 #include "portab.h"
 #include "struct.h"
-#include "basepage.h"
+#include "aesvars.h"
 #include "obdefs.h"
 
 #include "geminput.h"

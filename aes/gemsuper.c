@@ -19,7 +19,7 @@
 #include "portab.h"
 #include "kprint.h"
 #include "struct.h"
-#include "basepage.h"
+#include "aesvars.h"
 #include "obdefs.h"
 #include "intmath.h"
 #include "gemlib.h"

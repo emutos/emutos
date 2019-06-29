@@ -25,7 +25,7 @@
 
 #include "obdefs.h"
 #include "struct.h"
-#include "basepage.h"
+#include "aesvars.h"
 #include "bdosbind.h"
 #include "gemerror.h"
 #include "aesdefs.h"

@@ -20,7 +20,7 @@
 #include "portab.h"
 #include "string.h"
 #include "struct.h"
-#include "basepage.h"
+#include "aesvars.h"
 #include "obdefs.h"
 #include "gem_rsc.h"
 
