@@ -15,7 +15,7 @@
 #include "intmath.h"
 #include "string.h"
 #include "vdi_defs.h"
-#include "../bios/lineavars.h"
+#include "lineavars.h"
 
 
 extern const Fonthead *def_font;    /* Default font of open workstation */

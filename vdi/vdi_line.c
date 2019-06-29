@@ -16,7 +16,7 @@
 #include "vdi_defs.h"
 #include "blitter.h"
 #include "biosext.h"    /* for cache control routines */
-#include "../bios/lineavars.h"
+#include "lineavars.h"
 #include "../bios/machine.h"    /* for blitter-related items */
 
 

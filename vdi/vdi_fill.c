@@ -15,7 +15,7 @@
 #include "intmath.h"
 #include "vdi_defs.h"
 #include "tosvars.h"
-#include "../bios/lineavars.h"
+#include "lineavars.h"
 
 #define EMPTY   0xffff
 #define DOWN_FLAG 0x8000

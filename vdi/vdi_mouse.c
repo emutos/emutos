@@ -19,7 +19,7 @@
 #include "vdi_defs.h"
 #include "tosvars.h"
 #include "biosext.h"
-#include "../bios/lineavars.h"
+#include "lineavars.h"
 #include "kprint.h"
 #if WITH_AES
 #include "../aes/aesstub.h"

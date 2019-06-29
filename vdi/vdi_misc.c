@@ -16,7 +16,7 @@
 #include "biosbind.h"
 #include "tosvars.h"
 #include "vdi_defs.h"
-#include "../bios/lineavars.h"
+#include "lineavars.h"
 
 
 /* timer related vectors (linea variables in bios/lineavars.S) */

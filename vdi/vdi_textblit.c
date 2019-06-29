@@ -18,7 +18,7 @@
 
 #include "tosvars.h"
 #include "vdi_defs.h"
-#include "../bios/lineavars.h"
+#include "lineavars.h"
 #include "kprint.h"
 
 
