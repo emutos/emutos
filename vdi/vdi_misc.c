@@ -121,16 +121,6 @@ void vdi_vex_timv(Vwk * vwk)
 
 
 /*
- * do_nothing - doesn't do much  :-)
- */
-static void do_nothing_int(int u)
-{
-    (void)u;
-}
-
-
-
-/*
  * timer_init - initialize the timer
  *
  * initially set timer vector to dummy, save old vector
@@ -142,7 +132,7 @@ void timer_init(void)
     in_proc = 0;                        /* no vblanks in process */
 
     /* Now initialize the lower level things */
-    tim_addr = do_nothing_int;          /* tick points to rts */
+    tim_addr = (ETV_TIMER_T)just_rts;   /* tick points to rts */
 
     old_sr = set_sr(0x2700);            /* disable interrupts */
     tim_chain = (ETV_TIMER_T)           /* save old vector */
