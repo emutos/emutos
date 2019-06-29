@@ -645,6 +645,9 @@ static ULONG rsconf_dummy(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WO
 
 /*
  * initialise the Bconmap() structures
+ *
+ * note: using IS_ARANYM below rather than (cookie_mch==MCH_ARANYM) avoids
+ * producing unnecessary code for non-ARAnyM images
  */
 static void init_bconmap(void)
 {
@@ -656,7 +659,7 @@ static void init_bconmap(void)
         memcpy(&maptable[i],&maptable_dummy,sizeof(MAPTAB));
     bconmap_root.maptab = maptable;
     bconmap_root.maptabsize = 1;
-    bconmap_root.mapped_device = (cookie_mch==MCH_FALCON) ? 7 : 6;
+    bconmap_root.mapped_device = (cookie_mch==MCH_FALCON || IS_ARANYM) ? 7 : 6;
 
     /*
      * initialise the BCONMAP structure according to machine type first
@@ -664,7 +667,7 @@ static void init_bconmap(void)
      */
     memcpy(&maptable[0],&maptable_mfp,sizeof(MAPTAB));
 
-    if ((cookie_mch == MCH_FALCON) || (cookie_mch == MCH_MSTE)) {
+    if ((cookie_mch == MCH_FALCON) || (cookie_mch == MCH_MSTE) || IS_ARANYM) {
 #if CONF_WITH_SCC
         if (has_scc) {
             memcpy(&maptable[1],&maptable_port_b,sizeof(MAPTAB));
