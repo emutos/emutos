@@ -103,8 +103,6 @@ GLOBAL char     gl_pmstr[4];
 
 GLOBAL WORD     gl_apid;
 
-extern WORD     enable_ceh;     /* in gemdosif.S */
-
 /* forward declaration  */
 static void    cnx_put(void);
 

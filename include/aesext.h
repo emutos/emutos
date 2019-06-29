@@ -17,4 +17,7 @@
 void xlate_obj_array(OBJECT *obj_array, int nobj);
 BOOL fix_tedinfo(TEDINFO *tedinfo, int nted);
 
+/* flag to display alerts in Critical Error Handler */
+extern WORD enable_ceh; /* in gemdosif.S */
+
 #endif /* _AESEXT_H */
