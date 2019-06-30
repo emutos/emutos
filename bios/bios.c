@@ -438,10 +438,10 @@ static void bios_init(void)
     KDEBUG(("bios_init() end\n"));
 }
 
+#if DETECT_NATIVE_FEATURES
 
 static void bootstrap(void)
 {
-#if DETECT_NATIVE_FEATURES
     /* start the kernel provided by the emulator */
     PD *pd;
     LONG length;
@@ -475,9 +475,9 @@ static void bootstrap(void)
 err:
     Mfree(pd->p_env); /* Mfree() the environment */
     Mfree(pd); /* Mfree() the process area */
-#endif
 }
 
+#endif /* DETECT_NATIVE_FEATURES */
 
 #if ENABLE_RESET_RESIDENT
 /*
@@ -547,7 +547,9 @@ static void autoexec(void)
     if (bootflags & BOOTFLAG_SKIP_AUTO_ACC)
         return;
 
+#if DETECT_NATIVE_FEATURES
     bootstrap();                        /* try to boot the new OS kernel directly */
+#endif
 
     if(!blkdev_avail(bootdev))          /* check, if bootdev available */
         return;
