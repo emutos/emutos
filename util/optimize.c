@@ -263,6 +263,22 @@ char *scan_2(char *pcurr, WORD *pwd)
 
 
 /*
+ * return pointer to start of last segment of path
+ * (assumed to be the filename)
+ */
+char *filename_start(char *path)
+{
+    char *start = path;
+
+    while (*path)
+        if (*path++ == '\\')
+            start = path;
+
+    return start;
+}
+
+
+/*
  *  Routine to see if the test filename matches a standard TOS
  *  wildcard string.  For example:
  *      pattern = "*.BAT"

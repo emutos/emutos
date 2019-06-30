@@ -11,6 +11,7 @@
 #define OPTIMIZE_H
 
 WORD sound(WORD isfreq, WORD freq, WORD dura);
+char *filename_start(char *path);
 void fmt_str(char *instr, char *outstr);
 void unfmt_str(char *instr, char *outstr);
 void inf_sset(OBJECT *tree, WORD obj, char *pstr);

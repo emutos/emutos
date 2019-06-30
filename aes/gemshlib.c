@@ -32,6 +32,7 @@
 #include "gemlib.h"
 #include "gem_rsc.h"
 #include "biosext.h"
+#include "optimize.h"
 
 #include "gemdosif.h"
 #include "gemdos.h"
@@ -265,19 +266,22 @@ static void sh_show(const char *lcmd)
 
 
 /*
- *  Routine to take a full path, and scan back from the end to
- *  find the starting byte of the particular filename
+ *  Return a pointer to the start of the filename in a path
+ *  (assumed to be the last component of the path)
  */
 char *sh_name(char *ppath)
 {
-    char *pname;
+    char *pname = ppath;
 
-    pname = &ppath[strlen(ppath)];
-    while((pname >= ppath) && (*pname != '\\') && (*pname != ':'))
-        pname--;
-    pname++;
+    /*
+     * note: filename_start() assumes that there is a filename separator
+     * within the path, so we handle a path like X:AAAAAAAA.BBB before
+     * calling the general function
+     */
+    if (ppath[0] && (ppath[1] == ':'))
+        pname += 2;
 
-    return pname;
+    return filename_start(pname);
 }
 
 

@@ -312,22 +312,6 @@ static void clear_all_autorun(void)
 
 
 /*
- * return pointer to start of last segment of path
- * (assumed to be the filename)
- */
-char *filename_start(char *path)
-{
-    char *start = path;
-
-    while (*path)
-        if (*path++ == '\\')
-            start = path;
-
-    return start;
-}
-
-
-/*
  * convert ascii to WORD
  *
  * stops at nul byte or first non-decimal character
