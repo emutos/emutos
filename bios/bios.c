@@ -24,6 +24,7 @@
 #include "biosext.h"
 #include "bios.h"
 #include "../bdos/bdosstub.h"
+#include "../vdi/vdistub.h"
 #include "bdosbind.h"
 #include "gemerror.h"
 #include "kprint.h"

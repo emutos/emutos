@@ -11,9 +11,6 @@
 
 #include "asmdefs.h"
 
-/*
- * _GSX_ENTRY - front end of the GIOS for the screen driver
- */
         .extern _local_pb
         .extern _CONTRL
         .extern _INTIN
@@ -23,7 +20,43 @@
         .extern _flip_y
         .extern _screen
 
-        .globl  _GSX_ENTRY
+/*
+ * _vditrap - VDI trap dispatcher
+ *
+ * This functions checks for a trap-2 VDI call and jumps to the VDI dispatcher
+ * then. It also provides a simple vq_gdos call and the "d0=-1" query function
+ * that returns the dispatcher's address.
+ *
+ * Note that this function does not care about AES calls since the AES later
+ * hooks into the trap-2 vector itself.
+ */
+        .globl  _vditrap
+_vditrap:
+        cmp.w   #0x73,d0                // VDI call?
+        jne     no_vdi
+        jsr     _GSX_ENTRY
+        rte
+
+no_vdi:
+        cmp.w   #0xfffe,d0              // vq_gdos call?
+        jeq     what_gdos
+
+        cmp.w   #0xffff,d0              // query for jsr:able address?
+        jeq     query
+
+        rte
+
+what_gdos:
+        move.l  #-2, d0                 // -2  -  no GDOS installed
+        rte
+
+query:
+        move.l  #_GSX_ENTRY,d0          // Return address of VDI dispatcher
+        rte
+
+/*
+ * _GSX_ENTRY - front end of the GIOS for the screen driver
+ */
 
 #define ptsin_size 512          // max. # of elements allowed for PTSIN array
 #define ptsin_max  ptsin_size/2 // max. # of coordinate pairs for PTSIN array
@@ -35,6 +68,7 @@ lcl_ptsin:      .ds.w   ptsin_size
 
         .text
 
+        .globl  _GSX_ENTRY
 _GSX_ENTRY:
 #ifdef __mcoldfire__
         lea     -56(sp),sp

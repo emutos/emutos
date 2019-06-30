@@ -16,7 +16,6 @@
         .globl  _init_exc_vec
         .globl  _init_user_vec
 
-        .globl  _vditrap        // VDI trap #2 exception handler
         .globl  _biostrap       // call BIOS from C
         .globl  _xbiostrap      // call XBIOS from C
         .globl  _xbios_unimpl
@@ -257,39 +256,6 @@ any_vec:
         // may 2015, this is about 460 bytes
         lea     panic_stack,sp
         jmp     _dopanic
-
-/*
- * _vditrap - VDI trap dispatcher
- *
- * This functions checks for a trap-2 VDI call and jumps to the VDI dispatcher
- * then. It also provides a simple vq_gdos call and the "d0=-1" query function
- * that returns the dispatcher's address.
- *
- * Note that this function does not care about AES calls since the AES later
- * hooks into the trap-2 vector itself.
- */
-_vditrap:
-        cmp.w   #0x73,d0                // VDI call?
-        jne     no_vdi
-        jsr     _GSX_ENTRY
-        rte
-
-no_vdi:
-        cmp.w   #0xfffe,d0              // vq_gdos call?
-        jeq     what_gdos
-
-        cmp.w   #0xffff,d0              // query for jsr:able address?
-        jeq     query
-
-        rte
-
-what_gdos:
-        move.l  #-2, d0                 // -2  -  no GDOS installed
-        rte
-
-query:
-        move.l  #_GSX_ENTRY,d0          // Return address of VDI dispatcher
-        rte
 
 #if CONF_WITH_ATARI_VIDEO
 

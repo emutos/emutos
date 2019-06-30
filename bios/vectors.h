@@ -33,7 +33,6 @@ extern void int_vbl(void);
 extern void int_linea(void);
 extern void int_timerc(void);
 
-extern void vditrap(void);
 extern void biostrap(void);
 extern void xbiostrap(void);
 
