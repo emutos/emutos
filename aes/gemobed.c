@@ -27,7 +27,6 @@
 #include "gemgraf.h"
 #include "geminit.h"
 #include "gemobjop.h"
-#include "optimize.h"
 #include "gemobed.h"
 
 #include "string.h"
@@ -88,6 +87,30 @@ void ob_center(OBJECT *tree, GRECT *pt)
         hd += th;
     }
     r_set(pt, xd, yd, wd, hd);
+}
+
+
+/*
+ *  Inserts character 'chr' into the string pointed to 'str', at
+ *  position 'pos' (positions are relative to the start of the
+ *  string; inserting at position 0 means inserting at the start
+ *  of the string).  'tot_len' gives the maximum length the string
+ *  can grow to; if necessary, the string will be truncated after
+ *  inserting the character.
+ */
+void ins_char(char *str, WORD pos, char chr, WORD tot_len)
+{
+    WORD ii, len;
+
+    len = strlen(str);
+
+    for (ii = len; ii > pos; ii--)
+        str[ii] = str[ii-1];
+    str[ii] = chr;
+    if (len+1 < tot_len)
+        str[len+1] = '\0';
+    else
+        str[tot_len-1] = '\0';
 }
 
 

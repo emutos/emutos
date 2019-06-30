@@ -20,6 +20,5 @@ WORD inf_gindex(OBJECT *tree, WORD baseobj, WORD numobj);
 WORD inf_what(OBJECT *tree, WORD ok, WORD cncl);
 char *scan_2(char *pcurr, WORD *pwd);
 WORD wildcmp(char *pwld, char *ptst);
-void ins_char(char *str, WORD pos, char chr, WORD tot_len);
 
 #endif

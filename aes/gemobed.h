@@ -11,7 +11,7 @@
 #define GEMOBED_H
 
 void ob_center(OBJECT *tree, GRECT *pt);
-
 WORD ob_edit(OBJECT *tree, WORD obj, WORD in_char, WORD *idx, WORD kind);
+void ins_char(char *str, WORD pos, char chr, WORD tot_len);
 
 #endif
