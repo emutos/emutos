@@ -408,6 +408,19 @@ void inf_numset(OBJECT *tree, WORD obj, ULONG value)
 
 
 /*
+ *  Formats a 'normal' filename-only string and copies it to the
+ *  te_ptext field of the specified object
+ */
+void set_tedinfo_name(OBJECT *tree, WORD obj, char *str)
+{
+    char temp[LEN_ZFNAME];
+
+    fmt_str(str, temp);
+    inf_sset(tree, obj, temp);
+}
+
+
+/*
  * Routine to put number of files, folders and size into
  * a dialog box
  */

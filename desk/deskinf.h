@@ -16,6 +16,7 @@ WORD inf_file_folder(char *ppath, FNODE *pf);
 WORD inf_disk(char dr_id);
 void inf_numset(OBJECT *tree, WORD obj, ULONG value);
 WORD inf_pref(void);
+void set_tedinfo_name(OBJECT *tree, WORD obj, char *str);
 WORD opn_appl(char *papname, char *ptail);
 void start_dialog(OBJECT *tree);
 void end_dialog(OBJECT *tree);

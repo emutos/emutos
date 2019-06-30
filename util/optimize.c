@@ -176,19 +176,6 @@ void inf_sget(OBJECT *tree, WORD obj, char *pstr)
 
 
 /*
- *  Formats a 'normal' filename-only string and copies it to the
- *  te_ptext field of the specified object
- */
-void set_tedinfo_name(OBJECT *tree, WORD obj, char *str)
-{
-    char temp[LEN_ZFNAME];
-
-    fmt_str(str, temp);
-    inf_sset(tree, obj, temp);
-}
-
-
-/*
  *  Examines 'numobj' objects in 'tree', starting at 'baseobj', looking
  *  for a SELECTED onject.  Returns the relative number of the first
  *  SELECTED object, or -1 if none of the objects is selected.

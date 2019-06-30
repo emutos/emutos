@@ -15,7 +15,6 @@ void fmt_str(char *instr, char *outstr);
 void unfmt_str(char *instr, char *outstr);
 void inf_sset(OBJECT *tree, WORD obj, char *pstr);
 void inf_sget(OBJECT *tree, WORD obj, char *pstr);
-void set_tedinfo_name(OBJECT *tree, WORD obj, char *str);
 WORD inf_gindex(OBJECT *tree, WORD baseobj, WORD numobj);
 WORD inf_what(OBJECT *tree, WORD ok, WORD cncl);
 char *scan_2(char *pcurr, WORD *pwd);
