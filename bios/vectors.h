@@ -92,7 +92,7 @@ extern WORD trap_save_area[];
 #define VEC_ACIA    VEC_MFP6                  /* Keyboard/MIDI interrupt vector */
 
 /* OS exception mapping */
-#define VEC_AES     VEC_TRAP2                 /* AES trap exception vector */
+#define VEC_GEM     VEC_TRAP2                 /* GEM trap exception vector */
 #define VEC_BIOS    VEC_TRAP13                /* BIOS trap exception vector */
 #define VEC_XBIOS   VEC_TRAP14                /* XBIOS trap exception vector */
 

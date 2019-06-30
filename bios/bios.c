@@ -155,7 +155,7 @@ static void vecs_init(void)
 #endif
 
     /* initialise some vectors we really need */
-    VEC_AES = gemtrap;
+    VEC_GEM = gemtrap;
     VEC_BIOS = biostrap;
     VEC_XBIOS = xbiostrap;
     VEC_LINEA = int_linea;
