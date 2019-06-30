@@ -43,6 +43,9 @@
 #define AT_ISFOLD 1
 #define AT_ISDISK 2
 #define AT_ISTRSH 3
+#if CONF_WITH_PRINTER_ICON
+#define AT_ISPRNT 4
+#endif
 
 /*
  * standard gem icons, always available

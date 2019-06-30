@@ -284,6 +284,9 @@
 # ifndef CONF_WITH_SHOW_FILE
 #  define CONF_WITH_SHOW_FILE 0
 # endif
+# ifndef CONF_WITH_PRINTER_ICON
+#  define CONF_WITH_PRINTER_ICON 0
+# endif
 # ifndef CONF_WITH_68030_PMMU
 #  define CONF_WITH_68030_PMMU 0
 # endif
@@ -1170,6 +1173,13 @@
  */
 #ifndef CONF_WITH_SHOW_FILE
  # define CONF_WITH_SHOW_FILE 1
+#endif
+
+/*
+ * Set CONF_WITH_PRINTER_ICON to 1 to support a printer icon in EmuDesk
+ */
+#ifndef CONF_WITH_PRINTER_ICON
+ # define CONF_WITH_PRINTER_ICON 1
 #endif
 
 /*

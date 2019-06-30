@@ -638,11 +638,13 @@ static WORD install_desktop_icon(ANODE *pa)
     icon_exists = pa ? TRUE : FALSE;
 
     /*
-     * deselect all objects & hide printer button
+     * deselect all objects & hide printer button if not supported
      */
     tree = G.a_trees[ADINSDSK];
     deselect_all(tree);
+#if !CONF_WITH_PRINTER_ICON
     tree[ID_PRINT].ob_flags |= HIDETREE;
+#endif
 
     /*
      * fill in dialog
@@ -678,25 +680,34 @@ static WORD install_desktop_icon(ANODE *pa)
         tree[ID_ID].ob_state |= DISABLED;
         tree[ID_DRIVE].ob_state |= DISABLED;
         tree[ID_TRASH].ob_state |= DISABLED;
+        tree[ID_PRINT].ob_state |= DISABLED;
         start_fld = ID_LABEL;
 #endif
         break;
     case AT_ISDISK:
         id[0] = pa->a_letter;
         FALLTHROUGH;
+#if CONF_WITH_PRINTER_ICON
+    case AT_ISPRNT:
+#endif
     case AT_ISTRSH:
         inf_sset(tree, ID_ID, id);
         if (pa->a_type == AT_ISDISK)
             tree[ID_DRIVE].ob_state |= SELECTED;
+#if CONF_WITH_PRINTER_ICON
+        else if (pa->a_type == AT_ISPRNT)
+            tree[ID_PRINT].ob_state |= SELECTED;
+#endif
         else
             tree[ID_TRASH].ob_state |= SELECTED;
 #if CONF_WITH_DESKTOP_SHORTCUTS
         /*
-         * for desktop disk/trash icons, anything can be changed
+         * for desktop disk/trash/printer icons, anything can be changed
          */
         tree[ID_ID].ob_state &= ~DISABLED;
         tree[ID_DRIVE].ob_state &= ~DISABLED;
         tree[ID_TRASH].ob_state &= ~DISABLED;
+        tree[ID_PRINT].ob_state &= ~DISABLED;
 #endif
     }
     strcpy(curr_label, pa->a_pappl);
@@ -730,7 +741,7 @@ static WORD install_desktop_icon(ANODE *pa)
             pa->a_letter = '\0';            /* default is no letter */
             switch(inf_gindex(tree, ID_DRIVE,3))
             {
-            case 0:
+            default:                        /* i.e. case 0 */
                 pa->a_type = AT_ISDISK;
                 inf_sget(tree, ID_ID, id);  /* disks must have a letter */
                 pa->a_letter = id[0];
@@ -740,6 +751,11 @@ static WORD install_desktop_icon(ANODE *pa)
             case 1:
                 pa->a_type = AT_ISTRSH;
                 break;
+#if CONF_WITH_PRINTER_ICON
+            case 2:
+                pa->a_type = AT_ISPRNT;
+                break;
+#endif
             }
             inf_sget(tree, ID_LABEL, new_label);
             if (strcmp(curr_label, new_label))      /* if label changed, */

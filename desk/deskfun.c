@@ -730,6 +730,9 @@ static void fun_desk2win(WORD wh, WORD dobj, WORD keystate)
                 if (!valid_drive(an_src->a_letter))
                     continue;
                 break;
+#if CONF_WITH_PRINTER_ICON
+            case AT_ISPRNT:
+#endif
             case AT_ISTRSH:
                 continue;
             }
@@ -772,6 +775,9 @@ static void fun_desk2desk(WORD dobj, WORD keystate)
                     continue;
                 }
                 break;
+#if CONF_WITH_PRINTER_ICON
+            case AT_ISPRNT:
+#endif
             case AT_ISTRSH:
                 continue;
         }

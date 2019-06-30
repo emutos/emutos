@@ -1149,6 +1149,19 @@ static void trash_alert(ANODE *pa)
 }
 
 
+#if CONF_WITH_PRINTER_ICON
+/*
+ *  Issue alert about the printer
+ *
+ *  The current name of the printer icon is obtained from the ANODE
+ */
+static void printer_alert(ANODE *pa)
+{
+    fun_alert_string(1, STPRINFO, pa->a_pappl);
+}
+#endif
+
+
 /*
  *  Open an icon
  */
@@ -1215,6 +1228,11 @@ WORD do_open(WORD curr)
     case AT_ISTRSH:
         trash_alert(pa);
         break;
+#if CONF_WITH_PRINTER_ICON
+    case AT_ISPRNT:
+        printer_alert(pa);
+        break;
+#endif
     }
 
     return FALSE;
@@ -1286,6 +1304,11 @@ WORD do_info(WORD curr)
     case AT_ISTRSH:
         trash_alert(pa);
         break;
+#if CONF_WITH_PRINTER_ICON
+    case AT_ISPRNT:
+        printer_alert(pa);
+        break;
+#endif
     }
 
     return ret;

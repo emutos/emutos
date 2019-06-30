@@ -129,7 +129,7 @@ static WORD     ig_close;
  *                       file with an associated application, is selected
  *      ILL_DOCU[]      disabled if a normal non-executable file is selected
  *      ILL_FOLD[]      disabled if a folder is selected
- *      ILL_TRASH[]     disabled if the trash can is selected
+ *      ILL_TRASH[]     disabled if the trash can or printer is selected
  */
 static const UBYTE ILL_FILE[] =  { IDSKITEM, RICNITEM, 0 };
 static const UBYTE ILL_DOCU[] =  { IDSKITEM, IAPPITEM, RICNITEM, 0 };
@@ -306,6 +306,9 @@ static void men_update(void)
         case AT_ISDISK:
             pvalue = (appl->a_aicon == IG_FLOPPY) ? ILL_FDSK : ILL_HDSK;
             break;
+#if CONF_WITH_PRINTER_ICON
+        case AT_ISPRNT:                 /* Printer */
+#endif
         case AT_ISTRSH:                 /* Trash */
             pvalue = ILL_TRASH;
             break;
