@@ -16,7 +16,7 @@
         .globl  _init_exc_vec
         .globl  _init_user_vec
 
-        .globl  _gemtrap        // call VDI/AES
+        .globl  _vditrap        // VDI trap #2 exception handler
         .globl  _biostrap       // call BIOS from C
         .globl  _xbiostrap      // call XBIOS from C
         .globl  _xbios_unimpl
@@ -259,7 +259,7 @@ any_vec:
         jmp     _dopanic
 
 /*
- * _gemtrap - VDI trap dispatcher
+ * _vditrap - VDI trap dispatcher
  *
  * This functions checks for a trap-2 VDI call and jumps to the VDI dispatcher
  * then. It also provides a simple vq_gdos call and the "d0=-1" query function
@@ -268,7 +268,7 @@ any_vec:
  * Note that this function does not care about AES calls since the AES later
  * hooks into the trap-2 vector itself.
  */
-_gemtrap:
+_vditrap:
         cmp.w   #0x73,d0                // VDI call?
         jne     no_vdi
         jsr     _GSX_ENTRY
