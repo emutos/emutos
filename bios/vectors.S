@@ -272,8 +272,6 @@ _gemtrap:
         cmp.w   #0x73,d0                // VDI call?
         jne     no_vdi
         jsr     _GSX_ENTRY
-// The RTE below is shared for other purposes.
-_just_rte:
         rte
 
 no_vdi:
@@ -1140,6 +1138,8 @@ bx_nolong2:
         move.w  (a1)+,-(sp)
 #endif
         move.l  a1, _savptr.w
+// The RTE below is shared for other purposes.
+_just_rte:
         rte                     // return with return value in D0
 
 /*
