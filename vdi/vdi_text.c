@@ -15,6 +15,7 @@
 #include "intmath.h"
 #include "string.h"
 #include "vdi_defs.h"
+#include "vdistub.h"
 #include "lineavars.h"
 
 

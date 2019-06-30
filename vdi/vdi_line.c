@@ -14,17 +14,11 @@
 #include "intmath.h"
 #include "asm.h"
 #include "vdi_defs.h"
+#include "vdistub.h"
 #include "blitter.h"
 #include "biosext.h"    /* for cache control routines */
 #include "lineavars.h"
 #include "../bios/machine.h"    /* for blitter-related items */
-
-
-extern void linea_rect(void);     /* called only from linea.S */
-extern void linea_hline(void);    /* called only from linea.S */
-extern void linea_polygon(void);  /* called only from linea.S */
-extern void linea_line(void);     /* called only from linea.S */
-extern void linea_fill(void);     /* called only from linea.S */
 
 
 #if CONF_WITH_BLITTER

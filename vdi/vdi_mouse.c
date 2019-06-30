@@ -17,6 +17,7 @@
 #include "obdefs.h"
 #include "gsxdefs.h"
 #include "vdi_defs.h"
+#include "vdistub.h"
 #include "tosvars.h"
 #include "biosext.h"
 #include "lineavars.h"

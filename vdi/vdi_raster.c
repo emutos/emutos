@@ -13,6 +13,7 @@
 #include "config.h"
 #include "portab.h"
 #include "vdi_defs.h"
+#include "vdistub.h"
 #include "blitter.h"
 #include "biosext.h"    /* for cache control routines */
 #include "lineavars.h"
@@ -185,8 +186,6 @@ typedef struct {
 } MFDB;
 
 
-extern void linea_blit(struct blit_frame *info); /* called only from linea.S */
-extern void linea_raster(void); /* called only from linea.S */
 #if ASM_BLIT_IS_AVAILABLE
 extern void fast_bit_blt(void); /* defined in vdi_blit.S */
 #endif

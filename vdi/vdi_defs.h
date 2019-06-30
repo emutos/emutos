@@ -247,20 +247,6 @@ extern UBYTE    mouse_flag;     /* non-zero, if mouse ints disabled */
 extern UBYTE    cur_ms_stat;    /* current mouse status */
 
 
-/* shared VDI functions & VDI line-A wrapper functions */
-void undraw_sprite(void);
-void draw_sprite(void);
-WORD get_pix(void);
-void put_pix(void);
-void linea_show_mouse(void);
-void linea_hide_mouse(void);
-void linea_transform_mouse(void);
-
-
-/* Assembly Language Support Routines, ignore workstation arg */
-void text_blt(void);
-void rectfill (Vwk * vwk, Rect * rect);
-
 BOOL clip_line(Vwk * vwk, Line * line);
 void arb_corner(Rect * rect);
 void arb_line(Line * line);

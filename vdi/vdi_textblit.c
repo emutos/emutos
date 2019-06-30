@@ -18,6 +18,7 @@
 
 #include "tosvars.h"
 #include "vdi_defs.h"
+#include "vdistub.h"
 #include "lineavars.h"
 #include "kprint.h"
 
