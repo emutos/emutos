@@ -334,6 +334,12 @@ static char *app_parse(char *pcurr, ANODE *pa)
         pa->a_flags = AF_ISDESK;
         break;
 #endif
+#if CONF_WITH_PRINTER_ICON
+    case 'O':                           /* Printer */
+        pa->a_type  = AT_ISPRNT;
+        pa->a_flags = AF_ISDESK;
+        break;
+#endif
     }
     pcurr++;
 
@@ -781,6 +787,9 @@ void app_start(void)
         case 'X':                       /* File shortcut on desktop */
         case 'V':                       /* Directory shortcut on desktop */
 #endif
+#if CONF_WITH_PRINTER_ICON
+        case 'O':                       /* Printer */
+#endif
             pa = app_alloc();
             if (!pa)                    /* paranoia */
                 return;
@@ -1125,6 +1134,11 @@ void app_save(WORD todisk)
         case AT_ISTRSH:     /* Trash */
             type = 'T';
             break;
+#if CONF_WITH_PRINTER_ICON
+        case AT_ISPRNT:     /* Printer */
+            type = 'O';
+            break;
+#endif
         default:
             type = ' ';
         }
