@@ -35,6 +35,12 @@
 #define NORETURN
 #endif
 
+#ifdef __GNUC__
+#define PRINTF_STYLE __attribute__ ((format (printf, 1, 2)))
+#else
+#define PRINTF_STYLE
+#endif
+
 /* Convenience macros to test the versions of glibc and gcc.
    Use them like this:
    #if __GNUC_PREREQ (2,8)

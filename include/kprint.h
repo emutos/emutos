@@ -22,12 +22,6 @@ extern WORD boot_status;
 #define SCC_AVAILABLE   0x08
 #define CHARDEV_AVAILABLE 0x10
 
-#ifdef __GNUC__
-#define PRINTF_STYLE __attribute__ ((format (printf, 1, 2)))
-#else
-#define PRINTF_STYLE
-#endif
-
 /* LVL - A handy macro used when debugging */
 #ifdef __GNUC__
 #define HERE kprintf("HERE %s:%s:%d\n", __FILE__, __FUNCTION__, __LINE__);
