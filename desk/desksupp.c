@@ -715,9 +715,8 @@ static WORD print_buf(WORD device,const char *s,LONG len)
         if (++charcount > CHECK_COUNT)
         {
             charcount = 0;
-            if (bios_conis())
-                if (user_input(-1, FALSE))  /* no flow control */
-                    return 1;
+            if (user_quit())
+                return 1;
         }
 
         c = *s++;
