@@ -2333,7 +2333,7 @@ static void make(void)
         {
             sprintf(tmp, "nls_key_%d", j);
             eref->msgstr = xstrdup(tmp);
-            fprintf(f, "static const char %s [] = ", tmp);
+            fprintf(f, "static const char %s [] __attribute__((unused)) = ", tmp);
             print_canon(f, eref->msgid.key, "  ", TRUE);
             fprintf(f, ";\n");
             numref++;
