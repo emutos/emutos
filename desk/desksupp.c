@@ -689,7 +689,7 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
 /*
  *  return TRUE iff user wants to quit printing this file
  */
-BOOL user_quit(void)
+static BOOL user_quit(void)
 {
     if (bios_conis())
         if (user_input(-1, FALSE) < 0)  /* no flow control */

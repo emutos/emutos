@@ -646,8 +646,6 @@ static WORD fun_file2desk(PNODE *pn_src, WORD icontype_src, ANODE *an_dest, WORD
             while((sobj = win_isel(G.g_screen, G.g_croot, sobj)))
             {
                 if (!fun_print(sobj, PRTBUFSIZE, prtbuf))
-                    break;
-                if (user_quit())
                     if (fun_alert(1, STABORT) != 2) /* quit unless "No" */
                         break;
             }
