@@ -7,8 +7,8 @@
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  */
-#include "config.h"
-#include "portab.h"
+
+#include "emutos.h"
 #include "struct.h"
 #include "obdefs.h"
 #include "tosvars.h"
@@ -27,7 +27,6 @@
 #include "rectfunc.h"
 #include "gemerror.h"
 #include "gemobed.h"
-#include "kprint.h"
 #include "string.h"
 #include "intmath.h"
 

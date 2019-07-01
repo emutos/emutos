@@ -20,8 +20,7 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "string.h"
 #include "obdefs.h"
 #include "gemdos.h"
@@ -42,7 +41,6 @@
 #include "deskdir.h"
 #include "deskins.h"
 #include "gemerror.h"
-#include "kprint.h"
 
 
 #define MAX_CLUS_SIZE   (32*1024L)  /* maximum cluster size */

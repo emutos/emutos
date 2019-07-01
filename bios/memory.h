@@ -31,8 +31,6 @@
 
 #ifndef ASM_SOURCE
 
-#include "portab.h"
-
 void ttram_detect(void);
 
 #if CONF_WITH_ALT_RAM

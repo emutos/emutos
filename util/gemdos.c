@@ -15,8 +15,7 @@
 *       -------------------------------------------------------------
 */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "string.h"
 #include "asm.h"
 #include "gemdos.h"

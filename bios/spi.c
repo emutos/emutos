@@ -14,8 +14,7 @@
 #error This SPI implementation is only suitable for ColdFire targets
 #endif
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "coldpriv.h"
 #include "spi.h"
 

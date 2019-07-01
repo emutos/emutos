@@ -13,8 +13,7 @@
 *       -------------------------------------------------------------
 */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "struct.h"
 #include "obdefs.h"
 #include "intmath.h"

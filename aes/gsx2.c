@@ -10,7 +10,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#include "config.h"
+#include "emutos.h"
 #include "gsx2.h"
 #include "obdefs.h"
 #include "gsxdefs.h"

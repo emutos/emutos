@@ -23,10 +23,8 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
+#include "emutos.h"
 #include "string.h"
-
-#include "portab.h"
 #include "obdefs.h"
 #include "gsxdefs.h"
 #include "gemdos.h"
@@ -48,7 +46,6 @@
 #include "intmath.h"
 #include "deskins.h"
 #include "desksupp.h"
-#include "kprint.h"
 
 
 /*

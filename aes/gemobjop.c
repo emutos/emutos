@@ -17,8 +17,7 @@
 *       -------------------------------------------------------------
 */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "obdefs.h"
 #include "gemobjop.h"
 

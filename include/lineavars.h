@@ -17,7 +17,6 @@
 #ifndef LINEAVARS_H
 #define LINEAVARS_H
 
-#include "portab.h"
 #include "biosdefs.h"
 
 /* Screen related variables */

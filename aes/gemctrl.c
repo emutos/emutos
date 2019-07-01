@@ -18,8 +18,7 @@
 *       -------------------------------------------------------------
 */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "struct.h"
 #include "aesvars.h"
 #include "obdefs.h"

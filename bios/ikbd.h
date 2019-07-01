@@ -13,7 +13,6 @@
 #ifndef IKBD_H
 #define IKBD_H
 
-#include "portab.h"
 #include "biosdefs.h"
 
 /*

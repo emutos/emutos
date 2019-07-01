@@ -19,7 +19,6 @@
 #ifndef TOSVARS_H
 #define TOSVARS_H
 
-#include "portab.h"
 #include "biosdefs.h"
 
 /* Forward declarations */

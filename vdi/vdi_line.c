@@ -9,8 +9,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "intmath.h"
 #include "asm.h"
 #include "vdi_defs.h"

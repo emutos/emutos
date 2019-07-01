@@ -14,8 +14,7 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "string.h"
 #include "obdefs.h"
 #include "funcdef.h"
@@ -30,7 +29,6 @@
 #include "xbiosbind.h"
 #include "../bios/machine.h"    /* for HAS_VIDEL */
 #include "../bios/screen.h"     /* for FALCON_REZ */
-#include "kprint.h"
 #include "asm.h"
 
 /*

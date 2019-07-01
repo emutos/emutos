@@ -19,10 +19,9 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
+#include "emutos.h"
 #include "string.h"
 
-#include "portab.h"
 #include "aesdefs.h"
 #include "obdefs.h"
 
@@ -31,7 +30,6 @@
 #include "aesbind.h"
 #include "desksupp.h"
 #include "deskpro.h"
-#include "kprint.h"
 
 
 static WORD pro_exec(WORD isgraf, WORD isover, char *pcmd, char *ptail)

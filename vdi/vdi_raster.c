@@ -10,8 +10,7 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "vdi_defs.h"
 #include "vdistub.h"
 #include "blitter.h"
@@ -19,7 +18,6 @@
 #include "lineavars.h"
 #include "tosvars.h"
 #include "../bios/machine.h"    /* for blitter-related items */
-#include "kprint.h"
 
 #ifdef __mcoldfire__
 #define ASM_BLIT_IS_AVAILABLE   0   /* assembler routine does not support ColdFire */

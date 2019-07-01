@@ -13,8 +13,6 @@
 #ifndef _DELAY_H
 #define _DELAY_H
 
-#include "portab.h"
-
 /*
  * this is the value to pass to the inline function delay_loop()
  * to get a delay of 1 millisecond.  other delays may be obtained

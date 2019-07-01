@@ -10,12 +10,10 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "cookie.h"
 #include "processor.h"
 #include "tosvars.h"
-#include "kprint.h"
 
 /* the default cookie jar, in the bss */
 

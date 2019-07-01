@@ -2313,7 +2313,7 @@ static void make(void)
     fprintf(f, " * For more info, refer to file " DOCNAME "\n");
     fprintf(f, " */\n\n");
 
-    fprintf(f, "#include \"config.h\"\n");
+    fprintf(f, "#include \"emutos.h\"\n");
     fprintf(f, "#include \"i18nconf.h\"\n\n");
     fprintf(f, "#if CONF_WITH_NLS\n\n");
     fprintf(f, "#include \"langs.h\"\n\n");

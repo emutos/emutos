@@ -14,9 +14,6 @@
 #ifndef _CHARDEV_H
 #define _CHARDEV_H
 
-#include        "portab.h"
-
-
 /* Prototypes */
 LONG bconstat1(void);
 LONG bconstat2(void);

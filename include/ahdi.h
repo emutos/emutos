@@ -16,9 +16,6 @@
 #ifndef _AHDI_H
 #define _AHDI_H
 
-#include "portab.h"
-
-
 typedef struct
 {
     UWORD puns;                 /* number of block devices (partitions) */

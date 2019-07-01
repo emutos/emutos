@@ -13,8 +13,6 @@
 #ifndef IDE_H
 #define IDE_H
 
-#include "portab.h"
-
 #ifdef MACHINE_AMIGA
 
 /*

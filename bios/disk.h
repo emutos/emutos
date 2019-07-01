@@ -13,8 +13,6 @@
 #ifndef DISK_H
 #define DISK_H
 
-#include "portab.h"
-
 /* defines */
 
 #define SECTOR_SIZE     512 /* standard for floppy, hard disk */

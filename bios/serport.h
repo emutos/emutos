@@ -13,7 +13,6 @@
 #ifndef _SERPORT_H
 #define _SERPORT_H
 
-#include "portab.h"
 #include "iorec.h"
 
 #define BCONMAP_AVAILABLE (CONF_WITH_SCC || CONF_WITH_TT_MFP)

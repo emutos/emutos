@@ -18,11 +18,10 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
+#include "emutos.h"
 #include "string.h"
 
 #include "xbiosbind.h"
-#include "portab.h"
 #include "aesext.h"
 #include "aesdefs.h"
 #include "biosext.h"
@@ -54,7 +53,6 @@
 #include "deskact.h"
 #include "deskobj.h"
 #include "deskrez.h"
-#include "kprint.h"
 #include "deskmain.h"
 #include "scancode.h"
 

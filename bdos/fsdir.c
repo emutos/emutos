@@ -122,8 +122,7 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "asm.h"
 #include "fs.h"
 #include "time.h"
@@ -131,7 +130,6 @@
 #include "gemerror.h"
 #include "biosbind.h"
 #include "string.h"
-#include "kprint.h"
 #include "bdosstub.h"
 
 #define ROOT_PSEUDO_CLUSTER 1   /* see comments in xrename() */

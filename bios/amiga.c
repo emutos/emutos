@@ -12,9 +12,7 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
-#include "kprint.h"
+#include "emutos.h"
 #include "amiga.h"
 #include "vectors.h"
 #include "tosvars.h"

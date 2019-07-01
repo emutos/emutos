@@ -40,12 +40,10 @@ NAMES
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
+#include "emutos.h"
 #include "time.h"
-#include "portab.h"
 #include "gemerror.h"
 #include "xbiosbind.h"
-#include "kprint.h"
 #include "bdosstub.h"
 #include "tosvars.h"
 

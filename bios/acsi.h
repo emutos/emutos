@@ -13,8 +13,6 @@
 #ifndef ACSI_H
 #define ACSI_H
 
-#include "portab.h"
-
 #if CONF_WITH_ACSI
 
 void acsi_init(void);

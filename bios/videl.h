@@ -31,8 +31,6 @@
 
 #if CONF_WITH_VIDEL
 
-#include "portab.h"
-
 #define SPSHIFT             0xffff8266L
 
 #define FRGB_BLACK     0x00000000       /* Falcon palette */

@@ -15,8 +15,6 @@
 #ifndef MFP_H
 #define MFP_H
 
-#include "portab.h"
-
 #define CLOCKS_PER_SEC  200UL
 
 

@@ -19,10 +19,8 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
+#include "emutos.h"
 #include "string.h"
-
-#include "portab.h"
 #include "obdefs.h"
 #include "rsdefs.h"
 #include "intmath.h"
@@ -49,7 +47,6 @@
 #include "icons.h"
 #include "xbiosbind.h"
 #include "biosext.h"
-#include "kprint.h"
 
 
 /*

@@ -13,8 +13,6 @@
 #ifndef MIDI_H
 #define MIDI_H
 
-#include "portab.h"
-
 /* initialise the MIDI ACIA */
 extern void midi_init(void);
 

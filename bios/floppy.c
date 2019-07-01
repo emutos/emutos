@@ -12,8 +12,7 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "gemerror.h"
 #include "floppy.h"
 #include "disk.h"
@@ -26,7 +25,6 @@
 #include "machine.h"
 #include "blkdev.h"
 #include "string.h"
-#include "kprint.h"
 #include "xbiosbind.h"  /* Random() */
 #include "delay.h"
 #include "biosext.h"    /* for cache control routines */

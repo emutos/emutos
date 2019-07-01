@@ -12,9 +12,7 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
-
+#include "emutos.h"
 #include "disk.h"
 #include "asm.h"
 #include "blkdev.h"
@@ -25,8 +23,6 @@
 #include "spi.h"
 #include "string.h"
 #include "tosvars.h"
-
-#include "kprint.h"
 
 #if CONF_WITH_SDMMC
 

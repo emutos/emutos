@@ -19,8 +19,7 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "asm.h"
 
 #include "obdefs.h"
@@ -47,7 +46,6 @@
 #include "gemmnlib.h"
 
 #include "string.h"
-#include "kprint.h"             /* for debugging */
 
 #include "gemshlib.h"
 #include "../desk/deskstub.h"

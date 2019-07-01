@@ -13,8 +13,6 @@
 #ifndef ACIA_H
 #define ACIA_H
 
-#include        "portab.h"
-
 #if CONF_WITH_IKBD_ACIA || CONF_WITH_MIDI_ACIA
 
 /*==== Defines ============================================================*/

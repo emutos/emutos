@@ -13,8 +13,6 @@
 #ifndef KPRINT_H
 #define KPRINT_H
 
-#include "portab.h"
-
 extern WORD boot_status;
 #define RS232_AVAILABLE 0x01
 #define MIDI_AVAILABLE  0x02

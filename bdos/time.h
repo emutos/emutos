@@ -10,8 +10,6 @@
 #ifndef TIME_H
 #define TIME_H
 
-#include "portab.h"
-
 long xgetdate(void);
 long xsetdate(UWORD d);
 long xgettime(void);

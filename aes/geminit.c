@@ -21,8 +21,7 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "obdefs.h"
 #include "struct.h"
 #include "gemlib.h"
@@ -57,7 +56,6 @@
 #include "aesstub.h"
 
 #include "string.h"
-#include "kprint.h"
 #include "tosvars.h"
 
 extern LONG size_theglo(void); /* called only from gemstart.S */

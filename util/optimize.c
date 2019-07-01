@@ -17,8 +17,7 @@
 *       -------------------------------------------------------------
 */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "intmath.h"
 #include "obdefs.h"
 #include "optimize.h"

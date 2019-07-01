@@ -19,8 +19,7 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "string.h"
 #include "obdefs.h"
 #include "rectfunc.h"
@@ -41,7 +40,6 @@
 #include "deskrsrc.h"
 #include "deskmain.h"
 #include "deskinf.h"
-#include "kprint.h"
 
 
 #define SPACE 0x20

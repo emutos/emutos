@@ -14,14 +14,12 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "fs.h"
 #include "proc.h"
 #include "gemerror.h"
 #include "pghdr.h"
 #include "string.h"
-#include "kprint.h"
 
 
 /*

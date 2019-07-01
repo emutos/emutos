@@ -19,8 +19,7 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "asm.h"
 #include "blkdev.h"
 #include "delay.h"
@@ -31,7 +30,6 @@
 #include "string.h"
 #include "tosvars.h"
 #include "vectors.h"
-#include "kprint.h"
 #include "machine.h"
 #include "cookie.h"
 #include "coldfire.h"

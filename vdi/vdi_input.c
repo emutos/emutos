@@ -9,8 +9,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "biosbind.h"
 #include "xbiosbind.h"
 #include "vdi_defs.h"

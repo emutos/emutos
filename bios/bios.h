@@ -10,7 +10,6 @@
 #ifndef BIOS_H
 #define BIOS_H
 
-#include "portab.h"
 #include "biosdefs.h"
 
 void biosmain(void) NORETURN;

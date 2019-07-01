@@ -17,13 +17,11 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "fs.h"
 #include "proc.h"
 #include "console.h"
 #include "biosbind.h"
-#include "kprint.h"
 #include "bdosstub.h"
 
 /*

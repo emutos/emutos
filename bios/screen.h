@@ -14,8 +14,6 @@
 #ifndef SCREEN_H
 #define SCREEN_H
 
-#include "portab.h"
-
 #define ST_VRAM_SIZE        32000UL
 #define TT_VRAM_SIZE        153600UL
 #define FALCON_VRAM_SIZE    307200UL

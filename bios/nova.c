@@ -13,9 +13,7 @@
 /* #define ENABLE_KDEBUG */
 /* #define DEBUG_REGISTER_WRITES */
 
-#include "config.h"
-#include "portab.h"
-#include "kprint.h"
+#include "emutos.h"
 #include "asm.h"
 #include "delay.h"
 #include "vectors.h"

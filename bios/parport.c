@@ -10,8 +10,7 @@
  * option any later version.  See doc/licence.txt for details.
  */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "parport.h"
 #if CONF_WITH_PRINTER_PORT
 #include "asm.h"

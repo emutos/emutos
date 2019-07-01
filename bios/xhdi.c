@@ -14,9 +14,8 @@
 
 /*#define ENABLE_KDEBUG*/
 
-#include "config.h"
+#include "emutos.h"
 #include "xhdi.h"
-#include "kprint.h"
 #include "blkdev.h"
 #include "gemerror.h"
 #include "string.h"

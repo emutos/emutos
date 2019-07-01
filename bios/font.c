@@ -13,12 +13,11 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
+#include "emutos.h"
 #include "font.h"
 #include "country.h"
 #include "string.h"
 #include "lineavars.h"
-#include "kprint.h"
 
 /* RAM-copies of the ROM-fontheaders */
 Fonthead *sysfonts[4];  /* all three fonts and NULL */

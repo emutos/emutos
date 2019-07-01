@@ -20,12 +20,10 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "obdefs.h"
 #include "gembind.h"
 #include "aesbind.h"
-#include "kprint.h"
 #include <stdarg.h>
 
 

@@ -16,8 +16,6 @@
 #ifndef FONTHDR_H
 #define FONTHDR_H
 
-#include "portab.h"
-
 /* font header flags */
 
 #define F_DEFAULT   1   /* this is the default font (face and size) */

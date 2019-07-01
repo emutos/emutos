@@ -19,8 +19,7 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "string.h"
 #include "obdefs.h"
 #include "gsxdefs.h"
@@ -43,7 +42,6 @@
 #include "deskins.h"
 #include "deskfun.h"
 #include "../bios/country.h"
-#include "kprint.h"
 
 
 /*

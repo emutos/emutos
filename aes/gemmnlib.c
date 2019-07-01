@@ -19,8 +19,7 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "struct.h"
 #include "aesvars.h"
 #include "obdefs.h"
@@ -38,7 +37,6 @@
 #include "rectfunc.h"
 #include "gemmnlib.h"
 #include "geminit.h"
-#include "kprint.h"
 
 
 #define MTH 1                                   /* menu thickness       */

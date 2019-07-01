@@ -11,12 +11,9 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
-#include "config.h"
+#include "emutos.h"
 #include <stdarg.h>
 #include "doprintf.h"
-#include "portab.h"
-#include "kprint.h"
 #include "nls.h"
 #include "lineavars.h"
 #include "vt52.h"

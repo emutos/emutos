@@ -17,7 +17,6 @@
 
 #ifndef GEMSTRUCT_H
 #define GEMSTRUCT_H
-#include "config.h"                     /* for AES_STACK_SIZE */
 
 typedef struct aespd   AESPD;           /* process descriptor           */
 typedef struct uda     UDA;             /* user stack data area         */

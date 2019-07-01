@@ -15,7 +15,6 @@
 #ifndef FONT_H
 #define FONT_H
 
-#include "portab.h"
 #include "fonthdr.h"
 
 /* font specific linea variables */

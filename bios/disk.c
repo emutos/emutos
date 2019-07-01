@@ -12,13 +12,11 @@
 
 /*#define ENABLE_KDEBUG*/
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "gemerror.h"
 #include "disk.h"
 #include "asm.h"
 #include "blkdev.h"
-#include "kprint.h"
 #include "xhdi.h"
 #include "processor.h"
 #include "natfeat.h"

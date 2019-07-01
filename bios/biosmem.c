@@ -14,10 +14,8 @@
 /* #define ENABLE_KDEBUG */
 #define DBG_BALLOC 0
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "biosmem.h"
-#include "kprint.h"
 #include "tosvars.h"
 #include "bios.h"
 

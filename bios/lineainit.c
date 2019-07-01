@@ -12,9 +12,8 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
+#include "emutos.h"
 #include "lineavars.h"
-#include "kprint.h"
 #include "screen.h"
 #include "bios.h"
 

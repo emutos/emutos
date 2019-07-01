@@ -12,10 +12,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "gemerror.h"
-#include "kprint.h"
 #include "tosvars.h"
 #include "chardev.h"
 #include "conout.h"

@@ -16,8 +16,6 @@
 #ifndef VT52_H
 #define VT52_H
 
-#include "portab.h"
-
 extern void vt52_init(void);            /* initialize the vt52 console */
 extern WORD cursconf(WORD, WORD);       /* XBIOS cursor configuration */
 

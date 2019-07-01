@@ -10,8 +10,6 @@
 #ifndef _VDISTUB_H
 #define _VDISTUB_H
 
-#include "portab.h"
-
 /* Forward declarations */
 struct Mcdb_;
 struct _mcs;

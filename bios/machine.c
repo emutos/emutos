@@ -12,8 +12,7 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "cookie.h"
 #include "machine.h"
 #include "processor.h"
@@ -27,7 +26,6 @@
 #include "xhdi.h"
 #include "string.h"
 #include "dmasound.h"
-#include "kprint.h"
 #include "scsi.h"
 #include "ide.h"
 #include "asm.h"

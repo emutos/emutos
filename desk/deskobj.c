@@ -18,8 +18,7 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "string.h"
 #include "obdefs.h"
 #include "gsxdefs.h"
@@ -33,7 +32,6 @@
 #include "aesbind.h"
 #include "deskobj.h"
 #include "gembind.h"
-#include "kprint.h"
 
 
 static const OBJECT gl_sampob[2] =

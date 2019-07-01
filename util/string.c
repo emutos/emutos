@@ -15,11 +15,10 @@
  * this, replacements for common string routines are provided here.
  */
 
-#include "config.h"
+#include "emutos.h"
 #include <stdarg.h>
 #include "doprintf.h"
 #include "string.h"
-#include "kprint.h"
 
 
 /* The following functions are either used as inlines in string.h

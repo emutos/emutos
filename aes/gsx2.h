@@ -13,8 +13,6 @@
 #ifndef GSX2_H
 #define GSX2_H
 
-#include "portab.h"
-
 /* VDI parameter block */
 typedef struct
 {

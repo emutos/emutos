@@ -9,11 +9,9 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "lineavars.h"
 #include "vdi_defs.h"
-/* #include "kprint.h" */
 #include "biosbind.h"
 #include "xbiosbind.h"
 #include "../bios/screen.h"

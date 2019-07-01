@@ -12,8 +12,6 @@
 #ifndef _SPI_H
 #define _SPI_H
 
-#include "portab.h"
-
 void spi_clock_ident(void);
 void spi_clock_mmc(void);
 void spi_clock_sd(void);

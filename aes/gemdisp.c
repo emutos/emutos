@@ -19,9 +19,7 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-
-#include "portab.h"
+#include "emutos.h"
 #include "gemdisp.h"
 #include "string.h"
 #include "struct.h"
@@ -37,7 +35,6 @@
 #include "gemasm.h"
 #include "optimize.h"
 #include "gemdosif.h"
-#include "kprint.h"
 
 #include "asm.h"
 

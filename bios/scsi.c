@@ -36,9 +36,7 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
-
+#include "emutos.h"
 #include "scsi.h"
 #include "asm.h"
 #include "biosmem.h"
@@ -55,8 +53,6 @@
 #include "string.h"
 #include "tosvars.h"
 #include "vectors.h"
-
-#include "kprint.h"
 
 #if CONF_WITH_SCSI
 

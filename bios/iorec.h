@@ -13,8 +13,6 @@
 #ifndef IOREC_H
 #define IOREC_H
 
-#include        "portab.h"
-
 /*==== Structs ============================================================*/
 
 typedef struct iorec IOREC;

@@ -14,8 +14,7 @@
  * read doc/country.txt for information about country-related issues.
  */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "cookie.h"
 #include "country.h"
 #include "nvram.h"

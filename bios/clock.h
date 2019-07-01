@@ -13,8 +13,6 @@
 #ifndef CLOCK_H
 #define CLOCK_H
 
-#include "portab.h"
-
 extern void clockvec(char *buf);
 
 /* interface for machine.c */

@@ -10,8 +10,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "sound.h"
 #include "psg.h"
 #include "tosvars.h"

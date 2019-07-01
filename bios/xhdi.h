@@ -60,8 +60,6 @@
 
 #if CONF_WITH_XHDI
 
-#include "portab.h"
-
 extern long xhdi_vec(UWORD opcode, ...); /* In bios/natfeat.S */
 
 void create_XHDI_cookie(void);

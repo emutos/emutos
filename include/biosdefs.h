@@ -14,8 +14,6 @@
 #ifndef BIOSDEFS_H
 #define BIOSDEFS_H
 
-#include "portab.h"
-
 /* Forward declarations */
 struct _pd;
 

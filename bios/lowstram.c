@@ -12,8 +12,7 @@
 
 /* Variables defined here will go as low as possible in ST-RAM */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "biosmem.h"
 
 /* Disk buffer pointed by dskbufp */

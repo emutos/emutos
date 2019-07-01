@@ -13,11 +13,9 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "dmasound.h"
 #include "vectors.h"
-#include "kprint.h"
 #include "gemerror.h"
 #include "delay.h"
 #include "asm.h"

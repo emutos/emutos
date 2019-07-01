@@ -19,9 +19,7 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
-#include "kprint.h"
+#include "emutos.h"
 #include "nls.h"
 #include "ikbd.h"
 #include "asm.h"

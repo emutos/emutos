@@ -16,8 +16,7 @@
 *       -------------------------------------------------------------
 */
 /* #define ENABLE_KDEBUG */
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "struct.h"
 #include "aesvars.h"
 #include "obdefs.h"
@@ -29,7 +28,6 @@
 #include "gemasync.h"
 
 #include "string.h"
-#include "kprint.h"
 
 
 static void signal(EVB *e)

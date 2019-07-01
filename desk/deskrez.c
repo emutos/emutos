@@ -15,9 +15,7 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
-
+#include "emutos.h"
 #include "aesbind.h"
 #include "gembind.h"
 #include "obdefs.h"
@@ -39,7 +37,6 @@
 #include "../bios/screen.h"
 #include "../bios/videl.h"
 #include "../bios/amiga.h"
-#include "kprint.h"
 
 
 #if CONF_WITH_TT_SHIFTER

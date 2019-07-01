@@ -12,14 +12,12 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "cookie.h"
 #include "machine.h"
 #include "vectors.h"
 #include "nvram.h"
 #include "biosmem.h"
-#include "kprint.h"
 
 #if CONF_WITH_NVRAM
 

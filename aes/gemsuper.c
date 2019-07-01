@@ -15,9 +15,7 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
-#include "kprint.h"
+#include "emutos.h"
 #include "struct.h"
 #include "aesvars.h"
 #include "obdefs.h"

@@ -10,13 +10,11 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "fs.h"
 #include "gemerror.h"
 #include "biosbind.h"
 #include "string.h"
-#include "kprint.h"
 #include "tosvars.h"
 #include "intmath.h"
 

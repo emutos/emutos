@@ -10,10 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "natfeat.h"
-#include "kprint.h"
 
 #if DETECT_NATIVE_FEATURES
 

@@ -13,12 +13,9 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
 /* #define ENABLE_KDEBUG */
 
-
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "bdosdefs.h"
 #include "fs.h"
 #include "mem.h"
@@ -26,7 +23,6 @@
 #include "biosbind.h"
 #include "biosext.h"
 #include "xbiosbind.h"
-#include "kprint.h"
 #include "bdosstub.h"
 
 

@@ -18,8 +18,7 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "struct.h"
 #include "obdefs.h"
 #include "gemlib.h"
@@ -34,7 +33,6 @@
 #include "gemoblib.h"
 
 #include "string.h"
-#include "kprint.h"
 
                                                 /* in GSXBIND.C         */
 #define g_vsf_color( x )          gsx_1code(SET_FILL_COLOR, x)

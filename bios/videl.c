@@ -13,8 +13,7 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "machine.h"
 #include "screen.h"
 #include "videl.h"
@@ -22,7 +21,6 @@
 #include "tosvars.h"
 #include "lineavars.h"
 #include "nvram.h"
-#include "kprint.h"
 #include "font.h"
 #include "vt52.h"
 #include "xbiosbind.h"

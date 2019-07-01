@@ -13,8 +13,6 @@
 #ifndef DMA_H
 #define DMA_H
 
-#include "portab.h"
-
 #define DMA     ((volatile struct dma *) 0xFFFF8600)
 
 struct dma {

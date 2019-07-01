@@ -8,10 +8,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "vdi_defs.h"
-#include "kprint.h"
 #include "asm.h"
 
 /* forward prototypes */

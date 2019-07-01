@@ -1587,9 +1587,8 @@ PRIVATE int write_h_extern(FILE *fp)
  */
 PRIVATE int write_include(FILE *fp,char *name)
 {
-    fprintf(fp,"#include \"config.h\"\n");
+    fprintf(fp,"#include \"emutos.h\"\n");
     fprintf(fp,"#include \"string.h\"\n");
-    fprintf(fp,"#include \"portab.h\"\n");
     fprintf(fp,"#include \"obdefs.h\"\n");
 #ifdef DESK_RSC
     fprintf(fp,"#include \"gemdos.h\"\n");

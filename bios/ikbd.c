@@ -24,11 +24,9 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
+#include "emutos.h"
 #include "country.h"
-#include "portab.h"
 #include "acia.h"
-#include "kprint.h"
 #include "tosvars.h"
 #include "biosext.h"
 #include "lineavars.h"

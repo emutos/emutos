@@ -17,10 +17,7 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
-#include "kprint.h"
-
+#include "emutos.h"
 #include "tosvars.h"
 #include "bios.h"
 #include "lineavars.h"

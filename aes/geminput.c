@@ -16,8 +16,7 @@
 *       -------------------------------------------------------------
 */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "struct.h"
 #include "aesvars.h"
 #include "obdefs.h"
@@ -34,7 +33,6 @@
 #include "gemdisp.h"
 #include "gemgsxif.h"
 #include "rectfunc.h"
-#include "kprint.h"
 
 
 #if CONF_WITH_EXTENDED_MOUSE

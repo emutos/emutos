@@ -18,8 +18,7 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "obdefs.h"
 #include "rectfunc.h"
 #include "gsxdefs.h"
@@ -35,7 +34,6 @@
 #include "deskmain.h"
 #include "desksupp.h"
 #include "deskins.h"
-#include "kprint.h"
 
 
 /* defines */

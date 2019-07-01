@@ -19,8 +19,7 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "obdefs.h"
 #include "intmath.h"
 #include "funcdef.h"
@@ -30,7 +29,6 @@
 #include "optimopt.h"
 #include "gsx2.h"
 #include "rectfunc.h"
-#include "kprint.h"
 
 #define ORGADDR NULL
 

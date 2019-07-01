@@ -13,8 +13,6 @@
 #ifndef SOUND_H
 #define SOUND_H
 
-#include "portab.h"
-
 /* xbios functions */
 
 #define GIACCESS_READ  0x00

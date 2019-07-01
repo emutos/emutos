@@ -12,15 +12,13 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "intmath.h"
 
 #include "tosvars.h"
 #include "vdi_defs.h"
 #include "vdistub.h"
 #include "lineavars.h"
-#include "kprint.h"
 
 
 /*

@@ -5,8 +5,7 @@
  *       Please see LICENSE.TXT for further information.
  */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "obdefs.h"
 #include "intmath.h"
 #include "rectfunc.h"

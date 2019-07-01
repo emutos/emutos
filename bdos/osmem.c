@@ -23,12 +23,10 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "nls.h"
 #include "fs.h"
 #include "mem.h"
-#include "kprint.h"
 #include "bdosstub.h"
 
 /*

@@ -17,13 +17,11 @@
 /* #define ENABLE_KDEBUG */
 #define DEBUG_FLEXCAN 0
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "coldfire.h"
 #include "coldpriv.h"
 #include "ikbd.h"
 #include "string.h"
-#include "kprint.h"
 #include "delay.h"
 #include "asm.h"
 

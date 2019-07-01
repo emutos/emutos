@@ -9,12 +9,10 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "vdi_defs.h"
 #include "lineavars.h"
 #include "asm.h"
-#include "kprint.h"
 #include "bdosbind.h"
 
 

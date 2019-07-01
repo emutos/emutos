@@ -18,8 +18,7 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "struct.h"
 #include "obdefs.h"
 #include "intmath.h"
@@ -36,7 +35,6 @@
 #include "gemwmlib.h"
 #include "rectfunc.h"
 #include "gemfmalt.h"
-#include "kprint.h"
 
 /* TOS standard form_alert() maximum values */
 #define TOS_MAX_LINELEN 32

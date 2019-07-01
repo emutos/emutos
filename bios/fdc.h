@@ -13,7 +13,6 @@
 #ifndef FDC_H
 #define FDC_H
 
-#include "portab.h"
 #include "dma.h"
 
 /*

@@ -13,11 +13,9 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "string.h"
 #include "gemerror.h"
-#include "kprint.h"
 #include "asm.h"
 #include "tosvars.h"
 #include "ahdi.h"

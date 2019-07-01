@@ -19,15 +19,13 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "biosext.h"
 #include "bios.h"
 #include "../bdos/bdosstub.h"
 #include "../vdi/vdistub.h"
 #include "bdosbind.h"
 #include "gemerror.h"
-#include "kprint.h"
 #include "lineavars.h"
 #include "vt52.h"
 #include "processor.h"

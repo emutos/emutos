@@ -15,9 +15,6 @@
 #ifndef MOUSE_H
 #define MOUSE_H
 
-#include "portab.h"
-
-
 /* Defines for mouse configuration in IKBD */
                     /* the following values apply to 'topmode' in 'struct param' */
 #define IN_YTOP 0       /* Y=0 means top of screen */

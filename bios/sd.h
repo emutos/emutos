@@ -12,8 +12,6 @@
 #ifndef _SD_H
 #define _SD_H
 
-#include "portab.h"
-
 #if CONF_WITH_SDMMC
 
 /* driver functions */

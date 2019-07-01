@@ -13,8 +13,6 @@
 #ifndef VECTORS_H
 #define VECTORS_H
 
-#include "portab.h"
-
 /* initialize default exception vectors */
 
 extern void init_exc_vec(void);

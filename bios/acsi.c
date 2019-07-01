@@ -12,12 +12,11 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
+#include "emutos.h"
 #include "acsi.h"
 #include "scsi.h"
 #include "disk.h"
 #include "dma.h"
-#include "kprint.h"
 #include "string.h"
 #include "mfp.h"
 #include "machine.h"

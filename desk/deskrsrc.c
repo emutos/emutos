@@ -19,13 +19,11 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 
 #include "aesbind.h"
 #include "gembind.h"
 #include "deskrsrc.h"
-#include "kprint.h"
 
 
 char *ini_str(WORD stnum)

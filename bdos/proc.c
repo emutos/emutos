@@ -15,8 +15,7 @@
 
 /* #define ENABLE_KDEBUG */
 
-#include "config.h"
-#include "portab.h"
+#include "emutos.h"
 #include "bdosdefs.h"
 #include "fs.h"
 #include "mem.h"
@@ -24,7 +23,6 @@
 #include "gemerror.h"
 #include "biosbind.h"
 #include "string.h"
-#include "kprint.h"
 #include "biosext.h"
 #include "asm.h"
 #include "tosvars.h"

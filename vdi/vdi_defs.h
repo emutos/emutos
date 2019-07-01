@@ -11,7 +11,6 @@
 #ifndef VDIDEFS_H
 #define VDIDEFS_H
 
-#include "portab.h"
 #include "fonthdr.h"
 
 #define HAVE_BEZIER 0           /* switch on bezier capability */

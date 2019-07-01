@@ -13,9 +13,6 @@
 #ifndef _SCC_H
 #define _SCC_H
 
-#include "config.h"
-#include "portab.h"
-
 #if CONF_WITH_SCC
 /*
  * structures
