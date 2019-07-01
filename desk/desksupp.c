@@ -685,6 +685,20 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
     menu_bar(G.a_trees[ADMENU],1);
     graf_mouse(M_ON, NULL);
 }
+#endif
+
+#if CONF_WITH_SHOW_FILE || CONF_WITH_PRINTER_ICON
+/*
+ *  return TRUE iff user wants to quit printing this file
+ */
+BOOL user_quit(void)
+{
+    if (bios_conis())
+        if (user_input(-1, FALSE) < 0)  /* no flow control */
+            return TRUE;
+
+    return FALSE;
+}
 
 /*
  *  print a fixed-length buffer
@@ -723,8 +737,10 @@ static WORD print_buf(WORD device,const char *s,LONG len)
 
 /*
  *  print a text file, allowing user cancel
+ *
+ *  returns FALSE iff user cancel
  */
-static void print_file(char *name,LONG bufsize,char *iobuf)
+BOOL print_file(char *name,LONG bufsize,char *iobuf)
 {
     OBJECT *tree;
     LONG rc, n;
@@ -734,7 +750,7 @@ static void print_file(char *name,LONG bufsize,char *iobuf)
     if (rc < 0L)
     {
         form_error(2);  /* file not found */
-        return;
+        return TRUE;
     }
 
     handle = (WORD)rc;
@@ -768,6 +784,8 @@ static void print_file(char *name,LONG bufsize,char *iobuf)
     /* close dialog, reset mouse cursor */
     end_dialog(tree);
     graf_mouse(ARROW, NULL);
+
+    return (rc > 0L) ? FALSE : TRUE;
 }
 #endif
 

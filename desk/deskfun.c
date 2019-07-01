@@ -59,6 +59,10 @@
  */
 static BOOL exit_desktop;
 
+#if CONF_WITH_PRINTER_ICON
+#define PRTBUFSIZE  16384       /* buffer size */
+#endif
+
 /*
  *  Issue an alert
  */
@@ -291,6 +295,44 @@ WORD fun_mkdir(WNODE *pw_node)
     end_dialog(tree);
     return TRUE;
 }
+
+
+#if CONF_WITH_PRINTER_ICON
+/*
+ *  Print one or more files dropped onto the printer icon
+ *  (we silently ignore icons that aren't files)
+ *
+ *  returns FALSE iff the user cancelled the print
+ */
+static BOOL fun_print(WORD sobj, LONG bufsize, char *iobuf)
+{
+    ANODE *pa;
+    FNODE *pf;
+    WNODE *pw;
+    char path[MAXPATHLEN];
+
+    pa = i_find(G.g_cwin, sobj, &pf, NULL);
+
+    if (!pa)    /* "can't happen" */
+        return TRUE;
+
+    if (pa->a_type != AT_ISFILE)
+        return TRUE;
+
+    if (pf)     /* it's a window icon */
+    {
+        pw = win_find(G.g_cwin);    /* build the path */
+        strcpy(path, pw->w_pnode.p_spec);
+        strcpy(filename_start(path), pf->f_name);
+    }
+    else        /* it's a desktop icon */
+    {
+        strcpy(path,pa->a_pdata);   /* the path is in the anode */
+    }
+
+    return print_file(path, bufsize, iobuf);
+}
+#endif
 
 
 /*
@@ -592,6 +634,29 @@ static WORD fun_file2desk(PNODE *pn_src, WORD icontype_src, ANODE *an_dest, WORD
             pathname[0] = pn_src->p_spec[0];
             operation = OP_DELETE;
             break;
+#if CONF_WITH_PRINTER_ICON
+        case AT_ISPRNT:
+            {
+            WORD sobj = 0;
+            char *prtbuf = dos_alloc_anyram(PRTBUFSIZE);
+
+            if (!prtbuf)
+            {
+                malloc_fail_alert();
+                break;
+            }
+            while((sobj = win_isel(G.g_screen, G.g_croot, sobj)))
+            {
+                if (!fun_print(sobj, PRTBUFSIZE, prtbuf))
+                    break;
+                if (user_quit())
+                    if (fun_alert(1, STABORT) != 2) /* quit unless "No" */
+                        break;
+            }
+            dos_free(prtbuf);
+            }
+            break;
+#endif
         default:            /* "can't happen" */
             illegal_op_msg();
         }
