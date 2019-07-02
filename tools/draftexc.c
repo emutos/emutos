@@ -55,7 +55,7 @@ char *exclude_items[] =
     "STEOF",
     "STFRE",
     "STSHOW",
-    "STPRINT",
+    "STPRTERR",
 #else
     "STNOAPPL",
 #endif

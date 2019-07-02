@@ -723,7 +723,7 @@ static WORD print_buf(WORD device,const char *s,LONG len)
         while(bios_prnout(device, c) == 0)
         {
             graf_mouse(ARROW, NULL);
-            if (fun_alert(1, STPRINT) != 1) /* retry or cancel? */
+            if (fun_alert(1, STPRTERR) != 1)    /* retry or cancel? */
                 return 1;
             graf_mouse(HGLASS, NULL);       /* we're busy again */
         }
