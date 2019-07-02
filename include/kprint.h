@@ -1,10 +1,12 @@
 /*
- *  kprint.h - header file for keyboard/console routines
+ * kprint.h - BIOS console routines & debug macros
  *
  * Copyright (C) 2001-2019 The EmuTOS development team
  *
  * Authors:
  *  MAD     Martin Doering
+ *  LVL     Laurent Vogel
+ *  VRI     Vincent Rivière
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -13,21 +15,14 @@
 #ifndef KPRINT_H
 #define KPRINT_H
 
-/* LVL - A handy macro used when debugging */
-#ifdef __GNUC__
-#define HERE kprintf("HERE %s:%s:%d\n", __FILE__, __FUNCTION__, __LINE__);
-#else
-#define HERE kprintf("HERE %s:%d\n", __FILE__, __LINE__);
-#endif
-
 /* console output */
-extern int cprintf(const char *fmt, ...) PRINTF_STYLE;
+int cprintf(const char *fmt, ...) PRINTF_STYLE;
 
 /* native debugging output */
-extern int kprintf(const char *fmt, ...) PRINTF_STYLE;
+int kprintf(const char *fmt, ...) PRINTF_STYLE;
 
 /* output done both through kprintf and cprintf */
-extern int kcprintf(const char *fmt, ...) PRINTF_STYLE;
+int kcprintf(const char *fmt, ...) PRINTF_STYLE;
 
 /* KINFO(()) outputs to the debugger, if kprintf() is available */
 #if HAS_KPRINTF
@@ -41,6 +36,13 @@ extern int kcprintf(const char *fmt, ...) PRINTF_STYLE;
 #define KDEBUG(args) KINFO(args)
 #else
 #define KDEBUG(args) NULL_FUNCTION()
+#endif
+
+/* A handy macro used when debugging */
+#ifdef __GNUC__
+#define HERE kprintf("HERE %s:%s:%d\n", __FILE__, __FUNCTION__, __LINE__);
+#else
+#define HERE kprintf("HERE %s:%d\n", __FILE__, __LINE__);
 #endif
 
 #endif /* KPRINT_H */
