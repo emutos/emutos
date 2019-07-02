@@ -28,6 +28,7 @@
 #include "fs.h"
 #include "mem.h"
 #include "bdosstub.h"
+#include "biosext.h"
 
 /*
  *  local constants

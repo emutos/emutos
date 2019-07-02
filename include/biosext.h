@@ -27,6 +27,12 @@ void flush_data_cache(void *start, long size);
 void invalidate_data_cache(void *start, long size);
 void invalidate_instruction_cache(void *start, long size);
 
+/* print a panic message both via kprintf and cprintf, then halt */
+void panic(const char *fmt, ...) PRINTF_STYLE NORETURN;
+
+/* halt the machine */
+void halt(void) NORETURN;
+
 #if CONF_WITH_SHUTDOWN
 BOOL can_shutdown(void);
 #endif

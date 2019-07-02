@@ -28,6 +28,7 @@
 #include "gemasync.h"
 
 #include "string.h"
+#include "biosext.h"
 
 
 static void signal(EVB *e)

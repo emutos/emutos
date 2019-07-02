@@ -21,6 +21,7 @@
 #include "mem.h"
 #include "string.h"
 #include "tosvars.h"
+#include "biosext.h"
 
 #define NUMBUFS 2       /* buffers per list */
 

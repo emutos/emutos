@@ -43,10 +43,4 @@ extern int kcprintf(const char *fmt, ...) PRINTF_STYLE;
 #define KDEBUG(args) NULL_FUNCTION()
 #endif
 
-/* print a panic message both via kprintf and cprintf, then halt */
-extern void panic(const char *fmt, ...) PRINTF_STYLE NORETURN;
-
-/* halt the machine */
-extern void halt(void) NORETURN;
-
 #endif /* KPRINT_H */
