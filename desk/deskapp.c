@@ -625,6 +625,56 @@ static WORD app_rdicon(void)
 
 
 /*
+ *  Create a default minimal internal EMUDESK.INF
+ */
+static void build_inf(char *infbuf, WORD xcnt, WORD ycnt)
+{
+    LONG drivemask;
+    char *p, *text;
+    int icon_index = 0;
+    int drive_x = 0, drive_y = 0;
+    int icon_x, icon_y;
+    int icon_type;
+    char drive_letter;
+    int i;
+
+    /* Environment and Windows */
+    strcpy(infbuf, desk_inf_data1);
+    p = infbuf + sizeof(desk_inf_data1) - 1;
+
+    /* Scan for valid drives: */
+    drivemask = dos_sdrv(dos_gdrv());
+    for (i = 0; i < BLKDEVNUM; i++)
+    {
+        if (drivemask&(1L<<i))
+        {
+            drive_x = icon_index % xcnt; /* x position */
+            drive_y = icon_index / xcnt; /* y position */
+            icon_type = (i > 1) ? IG_HARD : IG_FLOPPY;
+            drive_letter = 'A' + i;
+            rsrc_gaddr_rom(R_STRING, STDISK, (void **)&text);
+            p += sprintf(p, "#M %02X %02X %02X FF %c %s %c@ @\r\n",
+                    drive_x, drive_y, icon_type, drive_letter, text, drive_letter);
+            icon_index++;
+        }
+    }
+
+    /* Copy core data part 2 */
+    strcpy(p, desk_inf_data2);
+    p += sizeof(desk_inf_data2) - 1;
+
+    /* add Trash icon to end */
+    icon_x = 0;             /* Left */
+    icon_y = ycnt - 1;      /* Bottom */
+    if (drive_y >= icon_y)  /* if the last drive icon overflows over */
+        icon_x = xcnt - 1;  /*  the trash row, force trash to right  */
+    rsrc_gaddr_rom(R_STRING, STTRASH, (void **)&text);
+    sprintf(p, "#T %02X %02X %02X FF   %s@ @\r\n",
+            icon_x, icon_y, IG_TRASH, text);
+}
+
+
+/*
  *  Initialize the application list by reading in the EMUDESK.INF
  *  file, either from memory or from the disk if the shel_get
  *  indicates no message is there.
@@ -637,6 +687,8 @@ void app_start(void)
     char *buf, *inf_data;
     char *pcurr, *ptmp, *pauto = NULL;
     WORD envr, xcnt, ycnt, xcent, wincnt, dummy;
+
+    MAYBE_UNUSED(i);
 
     /* remember start drive */
     G.g_stdrv = dos_gdrv();
@@ -707,51 +759,9 @@ void app_start(void)
         }
     }
 
-    /* If there's still no EMUDESK.INF data, use built-in now: */
+    /* If there's still no EMUDESK.INF data, build one now */
     if (inf_data[0] != '#')
-    {
-        LONG drivemask;
-        char *text;
-        int icon_index = 0;
-        int drive_x = 0, drive_y = 0;
-        int trash_x, trash_y;
-        int icon_type;
-        char drive_letter;
-
-        /* Environment and Windows */
-        strcat(inf_data, desk_inf_data1);
-
-        /* Scan for valid drives: */
-        drivemask = dos_sdrv(dos_gdrv());
-        for (i = 0; i < BLKDEVNUM; i++)
-        {
-            if (drivemask&(1L<<i))
-            {
-                x = strlen(inf_data);
-                drive_x = icon_index % xcnt; /* x position */
-                drive_y = icon_index / xcnt; /* y position */
-                icon_type = (i > 1) ? 0 /* Hard disk */ : 1 /* Floppy */;
-                drive_letter = 'A' + i;
-                rsrc_gaddr_rom(R_STRING, STDISK, (void **)&text);
-                sprintf(inf_data + x, "#M %02X %02X %02X FF %c %s %c@ @\r\n",
-                        drive_x, drive_y, icon_type, drive_letter, text, drive_letter);
-                icon_index++;
-            }
-        }
-
-        /* Copy core data part 2 */
-        strcat(inf_data, desk_inf_data2);
-
-        /* add Trash icon to end */
-        x = strlen(inf_data);
-        trash_x = 0;            /* Left */
-        trash_y = ycnt-1;       /* Bottom */
-        if (drive_y >= trash_y) /* if the last drive icon overflows over */
-            trash_x = xcnt-1;   /*  the trash row, force trash to right  */
-        rsrc_gaddr_rom(R_STRING, STTRASH, (void **)&text);
-        sprintf(inf_data + x, "#T %02X %02X 03 FF   %s@ @\r\n",
-                trash_x, trash_y, text);
-    }
+        build_inf(inf_data, xcnt, ycnt);
 
     wincnt = 0;
     inf_rev_level = 0;
