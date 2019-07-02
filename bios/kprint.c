@@ -12,6 +12,7 @@
  */
 
 #include "emutos.h"
+#include "bios.h"
 #include <stdarg.h>
 #include "doprintf.h"
 #include "nls.h"

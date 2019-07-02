@@ -13,13 +13,6 @@
 #ifndef KPRINT_H
 #define KPRINT_H
 
-extern WORD boot_status;
-#define RS232_AVAILABLE 0x01
-#define MIDI_AVAILABLE  0x02
-#define DOS_AVAILABLE   0x04
-#define SCC_AVAILABLE   0x08
-#define CHARDEV_AVAILABLE 0x10
-
 /* LVL - A handy macro used when debugging */
 #ifdef __GNUC__
 #define HERE kprintf("HERE %s:%s:%d\n", __FILE__, __FUNCTION__, __LINE__);
@@ -50,24 +43,10 @@ extern int kcprintf(const char *fmt, ...) PRINTF_STYLE;
 #define KDEBUG(args) NULL_FUNCTION()
 #endif
 
-/* functions below implemented in panicasm.S */
-
 /* print a panic message both via kprintf and cprintf, then halt */
 extern void panic(const char *fmt, ...) PRINTF_STYLE NORETURN;
 
 /* halt the machine */
 extern void halt(void) NORETURN;
-
-/* kill current program */
-void kill_program(void) NORETURN;
-
-/* Restart this OS */
-void warm_reset(void) NORETURN;
-
-/* Invalidate the RAM configuration and reset the computer to the ROM OS */
-void cold_reset(void) NORETURN;
-
-/* display information found in 0x380 and halt */
-extern void dopanic(const char *fmt, ...) PRINTF_STYLE NORETURN;
 
 #endif /* KPRINT_H */

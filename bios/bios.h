@@ -35,6 +35,20 @@ void bconout_str(WORD handle, const char* str);
 /* Line-A functions */
 void linea_init(void); /* initialize variables */
 
+/* functions below implemented in panicasm.S */
+
+/* kill current program */
+void kill_program(void) NORETURN;
+
+/* Restart this OS */
+void warm_reset(void) NORETURN;
+
+/* Invalidate the RAM configuration and reset the computer to the ROM OS */
+void cold_reset(void) NORETURN;
+
+/* display information found in 0x380 and halt */
+void dopanic(const char *fmt, ...) PRINTF_STYLE NORETURN;
+
 /* misc BIOS variables */
 extern const OSHEADER os_header;
 extern struct kbdvecs kbdvecs;
@@ -66,5 +80,12 @@ extern UBYTE _static_altram_end[];
 #define WARM_MAGIC 0x5741524D /* 'WARM' */
 extern ULONG warm_magic;
 #endif
+
+extern WORD boot_status;
+#define RS232_AVAILABLE 0x01
+#define MIDI_AVAILABLE  0x02
+#define DOS_AVAILABLE   0x04
+#define SCC_AVAILABLE   0x08
+#define CHARDEV_AVAILABLE 0x10
 
 #endif /* BIOS_H */
