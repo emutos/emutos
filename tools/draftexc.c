@@ -47,6 +47,7 @@ char *exclude_items[] =
     "STFMTINF",
 #endif
 #if !CONF_WITH_PRINTER_ICON
+    "STPRINT",
     "STPRINFO",
 #endif
 #if !CONF_WITH_SHOW_FILE

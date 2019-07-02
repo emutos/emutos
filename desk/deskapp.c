@@ -669,8 +669,19 @@ static void build_inf(char *infbuf, WORD xcnt, WORD ycnt)
     if (drive_y >= icon_y)  /* if the last drive icon overflows over */
         icon_x = xcnt - 1;  /*  the trash row, force trash to right  */
     rsrc_gaddr_rom(R_STRING, STTRASH, (void **)&text);
-    sprintf(p, "#T %02X %02X %02X FF   %s@ @\r\n",
+    p += sprintf(p, "#T %02X %02X %02X FF   %s@ @\r\n",
             icon_x, icon_y, IG_TRASH, text);
+
+#if CONF_WITH_PRINTER_ICON
+    /* add Printer icon, if room */
+    if (icon_x == 0)        /* trash at left of bottom row */
+    {
+        icon_x = xcnt - 1;
+        rsrc_gaddr_rom(R_STRING, STPRINT, (void **)&text);
+        sprintf(p, "#O %02X %02X %02X FF   %s@ @\r\n",
+                icon_x, icon_y, IG_PRINT, text);
+    }
+#endif
 }
 
 
