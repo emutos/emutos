@@ -133,7 +133,7 @@
 
 static WORD     inf_rev_level;  /* revision level of current EMUDESK.INF */
 
-static char     *gl_buffer;
+static char     *atextptr;      /* current pointer within ANODE text buffer */
 
 
 /* When we can't get EMUDESK.INF via shel_get() or by reading from
@@ -235,8 +235,8 @@ void app_free(ANODE *pa)
 
 
 /*
- *  Scans a string into a private buffer used for ANODE text (currently
- *  gl_buffer[]) and ups the string pointer for next time.
+ *  Scans a string into a buffer used for ANODE text (currently G.g_atext[])
+ *  and ups the string pointer for next time.
  *
  *  Leading spaces are ignored; the scan is terminated by @, '\r', or
  *  the null character.
@@ -247,8 +247,8 @@ void app_free(ANODE *pa)
  */
 char *scan_str(char *pcurr, char **ppstr)
 {
-    char *dest = G.g_pbuff;
-    char *end = gl_buffer + SIZE_BUFF - 1;
+    char *dest = atextptr;
+    char *end = G.g_atext + SIZE_BUFF - 1;
 
     *ppstr = dest;              /* return ptr to start of string in buffer */
 
@@ -273,7 +273,7 @@ char *scan_str(char *pcurr, char **ppstr)
         dest++;
     else
         KDEBUG(("scan_str(): ANODE string buffer is too small\n"));
-    G.g_pbuff = dest;           /* update buffer ptr for next time */
+    atextptr = dest;            /* update buffer ptr for next time */
 
     return pcurr;               /* next input character */
 }
@@ -568,8 +568,8 @@ static WORD initialise_anodes(void)
     /*
      * allocate buffer for ANODE text
      */
-    G.g_pbuff = gl_buffer = dos_alloc_anyram(SIZE_BUFF);
-    if (!gl_buffer)
+    atextptr = G.g_atext = dos_alloc_anyram(SIZE_BUFF);
+    if (!G.g_atext)
     {
         KDEBUG(("insufficient memory for anode text buffer (need %ld bytes)\n",SIZE_BUFF));
         return -1;

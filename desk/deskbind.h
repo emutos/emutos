@@ -191,7 +191,8 @@ typedef struct
 /*GLOBAL*/ WORD         g_wicon;
 /*GLOBAL*/ WORD         g_hicon;
 
-/*GLOBAL*/ char         *g_pbuff;               /* pointer to text buffer used by ANODEs */
+                                            /* ANODE-related variables */
+/*GLOBAL*/ char         *g_atext;               /* ptr to text buffer */
 /*GLOBAL*/ ANODE        *g_alist;               /* pointer to ANODE array */
 /*GLOBAL*/ ANODE        *g_aavail;              /* pointer to chain of free ANODEs */
 /*GLOBAL*/ ANODE        *g_ahead;               /* pointer to chain of allocated ANODEs */
