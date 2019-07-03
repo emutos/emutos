@@ -234,6 +234,7 @@ void ratexit(void)
 }
 
 
+
 static void gsx_setmb(PFVOID boff, PFVOID moff, PFVOID *pdrwaddr)
 {
     i_ptr( boff );
@@ -493,6 +494,29 @@ void gsx_textsize(WORD *charw, WORD *charh, WORD *cellw, WORD *cellh)
     *cellh = ptsout[3];
 }
 
+
+/*
+ *  Routine to fix up the MFDB of a particular raster form
+ */
+void gsx_fix(FDB *pfd, void *theaddr, WORD wb, WORD h)
+{
+    if (theaddr == NULL)
+    {
+        pfd->fd_w = gl_ws.ws_xres + 1;
+        pfd->fd_wdwidth = pfd->fd_w / 16;
+        pfd->fd_h = gl_ws.ws_yres + 1;
+        pfd->fd_nplanes = gl_nplanes;
+    }
+    else
+    {
+        pfd->fd_wdwidth = wb / 2;
+        pfd->fd_w = wb * 8;
+        pfd->fd_h = h;
+        pfd->fd_nplanes = 1;
+    }
+    pfd->fd_stand = FALSE;
+    pfd->fd_addr = theaddr;
+}
 
 
 /* This function was formerly just called v_opnwk, but there was a

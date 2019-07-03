@@ -30,8 +30,6 @@
 #include "gsx2.h"
 #include "rectfunc.h"
 
-#define ORGADDR NULL
-
 #define g_vsf_interior( x )       gsx_1code(SET_FILL_INTERIOR, x)
 #define g_vsl_type( x )           gsx_1code(SET_LINE_TYPE, x)
 #define g_vsf_style( x )          gsx_1code(SET_FILL_STYLE, x)
@@ -327,30 +325,6 @@ void gsx_xcbox(GRECT *pt)
     ptsin[4] = pt->g_x;
     ptsin[5] = pt->g_y + pt->g_h - ha;
     gsx_xline(3, ptsin);
-}
-
-
-/*
- *  Routine to fix up the MFDB of a particular raster form
- */
-void gsx_fix(FDB *pfd, void *theaddr, WORD wb, WORD h)
-{
-    if (theaddr == ORGADDR)
-    {
-        pfd->fd_w = gl_ws.ws_xres + 1;
-        pfd->fd_wdwidth = pfd->fd_w / 16;
-        pfd->fd_h = gl_ws.ws_yres + 1;
-        pfd->fd_nplanes = gl_nplanes;
-    }
-    else
-    {
-        pfd->fd_wdwidth = wb / 2;
-        pfd->fd_w = wb * 8;
-        pfd->fd_h = h;
-        pfd->fd_nplanes = 1;
-    }
-    pfd->fd_stand = FALSE;
-    pfd->fd_addr = theaddr;
 }
 
 
