@@ -497,10 +497,10 @@ WORD form_alert(WORD defbut, const char *astring)
 }
 
 
-#if CONF_WITH_SHOW_FILE
+#if CONF_WITH_SHOW_FILE || CONF_WITH_PRINTER_ICON
 /*
  * save some space in the 192K ROMs, since this AES call
- * is (currently) only used by the 'Show file' code
+ * is (currently) only used by 'Show file' & the printer icon handler
  */
 WORD form_error(WORD errnum)
 {

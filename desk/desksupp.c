@@ -78,17 +78,22 @@ static const WORD hd_skewtab[] =
 
 #endif
 
+#if CONF_WITH_SHOW_FILE || CONF_WITH_PRINTER_ICON
+/*
+ *      declarations used by show_file() or print_file()
+ */
+#define SETPRT_SERIAL   0x10    /* bit set by Setprt() to request serial o/p */
+#define FF              0x0c    /* standard form feed code */
+#define CHECK_COUNT     16      /* how often to check keyboard when printing */
+#endif
+
 #if CONF_WITH_SHOW_FILE
 /*
- *      declarations used by the show_file() code
+ *      declarations used by show_file() only
  */
 #define IOBUFSIZE   16384L
 static LONG linecount;
 static WORD pagesize;
-
-#define SETPRT_SERIAL   0x10    /* bit set by Setprt() to request serial o/p */
-#define FF              0x0c    /* standard form feed code */
-#define CHECK_COUNT     16      /* how often to check keyboard when printing */
 #endif
 
 
@@ -444,9 +449,9 @@ WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon,
 }
 
 
-#if CONF_WITH_SHOW_FILE
+#if CONF_WITH_SHOW_FILE || CONF_WITH_PRINTER_ICON
 /*
- *  helper functions for displaying a file
+ *  helper functions for displaying or printing a file
  */
 
 /*
@@ -463,23 +468,6 @@ static LONG bios_conin(void)
 static WORD bios_conis(void)
 {
     return (WORD) Bconstat(2);
-}
-
-/*
- *  send a character via the BIOS
- */
-static void bios_conout(WORD ch)
-{
-    Bconout(2, ch);
-}
-
-/*
- *  send a string via the BIOS
- */
-static void bios_conws(const char *s)
-{
-    while(*s)
-        Bconout(2, *s++);
 }
 
 /*
@@ -540,6 +528,129 @@ static WORD user_input(WORD c, BOOL flow_control)
     }
 
     return 0;
+}
+
+/*
+ *  return TRUE iff user wants to quit printing this file
+ */
+static BOOL user_quit(void)
+{
+    if (bios_conis())
+        if (user_input(-1, FALSE) < 0)  /* no flow control */
+            return TRUE;
+
+    return FALSE;
+}
+
+/*
+ *  print a fixed-length buffer
+ *
+ *  returns +1 if user interrupt or quit
+ *          0 otherwise
+ */
+static WORD print_buf(WORD device,const char *s,LONG len)
+{
+    WORD charcount = 0;
+    char c;
+
+    while(len-- > 0)
+    {
+        /* like Atari TOS, only check for user input 'occasionally' */
+        if (++charcount > CHECK_COUNT)
+        {
+            charcount = 0;
+            if (user_quit())
+                return 1;
+        }
+
+        c = *s++;
+        while(bios_prnout(device, c) == 0)
+        {
+            graf_mouse(ARROW, NULL);
+            if (fun_alert(1, STPRTERR) != 1)    /* retry or cancel? */
+                return 1;
+            graf_mouse(HGLASS, NULL);       /* we're busy again */
+        }
+    }
+
+    return 0;
+}
+
+/*
+ *  print a text file, allowing user cancel
+ *
+ *  returns FALSE iff user cancel
+ */
+BOOL print_file(char *name,LONG bufsize,char *iobuf)
+{
+    OBJECT *tree;
+    LONG rc, n;
+    WORD handle, device;
+
+    rc = dos_open(name,0);
+    if (rc < 0L)
+    {
+        form_error(2);  /* file not found */
+        return TRUE;
+    }
+
+    handle = (WORD)rc;
+
+    /* open dialog, set busy cursor */
+    tree = G.a_trees[ADPRINT];
+    set_tedinfo_name(tree, PRNAME, filename_start(name));
+    start_dialog(tree);
+
+    graf_mouse(HGLASS,NULL);    /* say we're busy */
+
+    /* determine whether to use serial or parallel port */
+    device = (Setprt(-1) & SETPRT_SERIAL) ? 1 : 0;
+
+    while(1)
+    {
+        n = rc = dos_read(handle,bufsize,iobuf);
+        if (rc <= 0L)
+            break;
+        rc = print_buf(device, iobuf, n);
+        if (rc > 0L)
+            break;
+    }
+
+    /* if not user cancel, do a form feed */
+    if (rc <= 0L)
+        bios_prnout(device, FF);
+
+    dos_close(handle);
+
+    /* close dialog, reset mouse cursor */
+    end_dialog(tree);
+    graf_mouse(ARROW, NULL);
+
+    return (rc > 0L) ? FALSE : TRUE;
+}
+#endif
+
+
+#if CONF_WITH_SHOW_FILE
+/*
+ *  helper functions for displaying a file
+ */
+
+/*
+ *  send a character via the BIOS
+ */
+static void bios_conout(WORD ch)
+{
+    Bconout(2, ch);
+}
+
+/*
+ *  send a string via the BIOS
+ */
+static void bios_conws(const char *s)
+{
+    while(*s)
+        Bconout(2, *s++);
 }
 
 /*
@@ -682,107 +793,6 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
     wind_update(END_UPDATE);
     menu_bar(G.a_trees[ADMENU],1);
     graf_mouse(M_ON, NULL);
-}
-#endif
-
-#if CONF_WITH_SHOW_FILE || CONF_WITH_PRINTER_ICON
-/*
- *  return TRUE iff user wants to quit printing this file
- */
-static BOOL user_quit(void)
-{
-    if (bios_conis())
-        if (user_input(-1, FALSE) < 0)  /* no flow control */
-            return TRUE;
-
-    return FALSE;
-}
-
-/*
- *  print a fixed-length buffer
- *
- *  returns +1 if user interrupt or quit
- *          0 otherwise
- */
-static WORD print_buf(WORD device,const char *s,LONG len)
-{
-    WORD charcount = 0;
-    char c;
-
-    while(len-- > 0)
-    {
-        /* like Atari TOS, only check for user input 'occasionally' */
-        if (++charcount > CHECK_COUNT)
-        {
-            charcount = 0;
-            if (user_quit())
-                return 1;
-        }
-
-        c = *s++;
-        while(bios_prnout(device, c) == 0)
-        {
-            graf_mouse(ARROW, NULL);
-            if (fun_alert(1, STPRTERR) != 1)    /* retry or cancel? */
-                return 1;
-            graf_mouse(HGLASS, NULL);       /* we're busy again */
-        }
-    }
-
-    return 0;
-}
-
-/*
- *  print a text file, allowing user cancel
- *
- *  returns FALSE iff user cancel
- */
-BOOL print_file(char *name,LONG bufsize,char *iobuf)
-{
-    OBJECT *tree;
-    LONG rc, n;
-    WORD handle, device;
-
-    rc = dos_open(name,0);
-    if (rc < 0L)
-    {
-        form_error(2);  /* file not found */
-        return TRUE;
-    }
-
-    handle = (WORD)rc;
-
-    /* open dialog, set busy cursor */
-    tree = G.a_trees[ADPRINT];
-    set_tedinfo_name(tree, PRNAME, filename_start(name));
-    start_dialog(tree);
-
-    graf_mouse(HGLASS,NULL);    /* say we're busy */
-
-    /* determine whether to use serial or parallel port */
-    device = (Setprt(-1) & SETPRT_SERIAL) ? 1 : 0;
-
-    while(1)
-    {
-        n = rc = dos_read(handle,bufsize,iobuf);
-        if (rc <= 0L)
-            break;
-        rc = print_buf(device, iobuf, n);
-        if (rc > 0L)
-            break;
-    }
-
-    /* if not user cancel, do a form feed */
-    if (rc <= 0L)
-        bios_prnout(device, FF);
-
-    dos_close(handle);
-
-    /* close dialog, reset mouse cursor */
-    end_dialog(tree);
-    graf_mouse(ARROW, NULL);
-
-    return (rc > 0L) ? FALSE : TRUE;
 }
 #endif
 

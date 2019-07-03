@@ -46,17 +46,19 @@ char *exclude_items[] =
     "STFMTERR",
     "STFMTINF",
 #endif
+#if !CONF_WITH_SHOW_FILE && !CONF_WITH_PRINTER_ICON
+    "ADPRINT",
+    "STPRTERR",
+#endif
 #if !CONF_WITH_PRINTER_ICON
     "STPRINT",
     "STPRINFO",
 #endif
 #if !CONF_WITH_SHOW_FILE
-    "ADPRINT",
     "STMORE",
     "STEOF",
     "STFRE",
     "STSHOW",
-    "STPRTERR",
 #else
     "STNOAPPL",
 #endif
