@@ -117,6 +117,7 @@ typedef struct
 /*GLOBAL*/ DTA          g_wdta;
 
 /*GLOBAL*/ WNODE        g_wdesktop;             /* the desktop pseudo-window */
+/*GLOBAL*/ WNODE        *g_wlist;               /* ptr to array of WNODEs */
 /*GLOBAL*/ WNODE        *g_wfirst;
 /*GLOBAL*/ WORD         g_wcnt;
 

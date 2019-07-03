@@ -61,8 +61,6 @@
 #define INITIAL_ICON_STATE  WHITEBAK
 #endif
 
-static WNODE *windows;
-
 void win_view(WORD vtype, WORD isort)
 {
     G.g_iview = vtype;
@@ -111,11 +109,11 @@ int win_start(void)
 
     G.g_wdesktop.w_flags = WN_DESKTOP;  /* mark as special pseudo-window */
 
-    windows = dos_alloc_anyram(NUM_WNODES*sizeof(WNODE));
-    if (!windows)
+    G.g_wfirst = G.g_wlist = dos_alloc_anyram(NUM_WNODES*sizeof(WNODE));
+    if (!G.g_wlist)
         return -1;
 
-    for (i = 0, G.g_wfirst = pw = windows; i < NUM_WNODES; i++, pw++)
+    for (i = 0, pw = G.g_wlist; i < NUM_WNODES; i++, pw++)
     {
         pw->w_next = pw + 1;
         pw->w_id = 0;
@@ -160,7 +158,7 @@ WNODE *win_alloc(WORD obid)
     if (wob)
     {
         G.g_wcnt++;
-        pw = &windows[wob-2];
+        pw = &G.g_wlist[wob-2];
         pw->w_flags = 0x0;
         pw->w_obid = obid;    /* if -ve, the complement of the drive letter */
         pw->w_root = wob;
@@ -242,7 +240,7 @@ WNODE *win_ontop(void)
 
     wob = G.g_screen[ROOT].ob_tail;
     if (G.g_screen[wob].ob_width && G.g_screen[wob].ob_height)
-        return &windows[wob-2];
+        return &G.g_wlist[wob-2];
     else
         return NULL;
 }
