@@ -1515,7 +1515,7 @@ WORD deskmain(void)
     if (desk_rs_init() < 0)         /* copies ROM to RAM */
     {
         KDEBUG(("insufficient memory for desktop objects (need %ld bytes)\n",
-                (LONG)RS_NTED*sizeof(OBJECT)));
+                (LONG)RS_NOBS*sizeof(OBJECT)));
         nomem_alert();              /* infinite loop */
     }
     desk_xlate_fix();               /* translates & fixes desktop */
