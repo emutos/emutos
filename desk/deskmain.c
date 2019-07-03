@@ -26,7 +26,6 @@
 #include "aesdefs.h"
 #include "biosext.h"
 #include "obdefs.h"
-#include "gsxdefs.h"
 #include "gemdos.h"
 #include "optimize.h"
 

@@ -26,7 +26,6 @@
 #include "emutos.h"
 #include "string.h"
 #include "obdefs.h"
-#include "gsxdefs.h"
 #include "gemdos.h"
 #include "optimize.h"
 
