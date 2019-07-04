@@ -431,7 +431,7 @@ char *rs_str(UWORD stnum)
 }
 
 /*
- *  The xlate_obj_array() & fix_tedinfo() functions below are used by
+ *  The xlate_obj_array() & create_te_ptext() functions below are used by
  *  the generated GEM rsc code in aes/gem_rsc.c, and by the desktop
  */
 
@@ -488,11 +488,14 @@ void xlate_obj_array(OBJECT *obj_array, int nobj)
 }
 
 /*
- * Fixes the TEDINFO strings for a ROM resource
+ * Create the TEDINFO te_ptext strings for a ROM resource
+ *
+ * In order to save space in the ROMs, the te_ptext ptr is set to NULL,
+ * where possible.  The te_ptext strings are created here from te_ptmplt.
  *
  * returns FALSE for error (insufficient memory)
  */
-BOOL fix_tedinfo(TEDINFO *tedinfo, int nted)
+BOOL create_te_ptext(TEDINFO *tedinfo, int nted)
 {
     int i = 0;
     long len;
@@ -503,7 +506,7 @@ BOOL fix_tedinfo(TEDINFO *tedinfo, int nted)
     len = 0;
     for (i = 0; i < nted; i++)
     {
-        if (tedinfo[i].te_ptext == 0)
+        if (tedinfo[i].te_ptext == NULL)
         {
             /* Count number of '_' in strings
              * ( +2 for @ at the beginning, and \0 at the end )
@@ -517,7 +520,7 @@ BOOL fix_tedinfo(TEDINFO *tedinfo, int nted)
 
     for (i = 0; i < nted; i++)
     {
-        if (tedinfo[i].te_ptext == 0)
+        if (tedinfo[i].te_ptext == NULL)
         {
             tedinfo[i].te_ptext = tedinfptr;
             *tedinfptr++ = '@'; /* First character of uninitialized string */

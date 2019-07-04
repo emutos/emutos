@@ -1450,7 +1450,7 @@ static void desk_xlate_fix(void)
     }
 
     /* Fix TEDINFO strings */
-    if (!fix_tedinfo(desk_rs_tedinfo, RS_NTED))
+    if (!create_te_ptext(desk_rs_tedinfo, RS_NTED))
     {
         KDEBUG(("insufficient memory for desktop TEDINFO strings\n"));
         nomem_alert();          /* infinite loop */
