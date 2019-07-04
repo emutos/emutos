@@ -493,14 +493,14 @@ void xlate_obj_array(OBJECT *obj_array, int nobj)
  * In order to save space in the ROMs, the te_ptext ptr is set to NULL,
  * where possible.  The te_ptext strings are created here from te_ptmplt.
  *
- * returns FALSE for error (insufficient memory)
+ * returns address of allocated memory (NULL if insufficient memory)
  */
-BOOL create_te_ptext(TEDINFO *tedinfo, int nted)
+char *create_te_ptext(TEDINFO *tedinfo, int nted)
 {
     int i = 0;
     long len;
     int j;
-    char *tedinfptr;
+    char *ptextptr, *p;
 
     /* Fix TEDINFO strings: */
     len = 0;
@@ -514,24 +514,24 @@ BOOL create_te_ptext(TEDINFO *tedinfo, int nted)
             len += count_chars(tedinfo[i].te_ptmplt, '_') + 2;
         }
     }
-    tedinfptr = dos_alloc_anyram(len);   /* Get memory */
-    if (!tedinfptr)
-        return FALSE;
+    ptextptr = dos_alloc_anyram(len);   /* Get memory */
+    if (!ptextptr)
+        return NULL;
 
-    for (i = 0; i < nted; i++)
+    for (i = 0, p = ptextptr; i < nted; i++)
     {
         if (tedinfo[i].te_ptext == NULL)
         {
-            tedinfo[i].te_ptext = tedinfptr;
-            *tedinfptr++ = '@'; /* First character of uninitialized string */
+            tedinfo[i].te_ptext = p;
+            *p++ = '@';         /* First character of uninitialized string */
             len = count_chars(tedinfo[i].te_ptmplt, '_');
             for (j = 0; j < len; j++)
             {
-                *tedinfptr++ = '_';     /* Set other characters to '_' */
+                *p++ = '_';     /* Set other characters to '_' */
             }
-            *tedinfptr++ = 0;   /* Final 0 */
+            *p++ = '\0';        /* Final nul */
         }
     }
 
-    return TRUE;
+    return ptextptr;
 }

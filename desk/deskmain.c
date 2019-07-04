@@ -191,6 +191,7 @@ static char separator[MAXLEN_SEPARATOR+1];
 
 static int can_change_resolution;
 static int blitter_is_present;
+static char *desk_rs_ptext;     /* see desk_xlate_fix() */
 
 static void detect_features(void)
 {
@@ -1449,10 +1450,11 @@ static void desk_xlate_fix(void)
         rsrc_obfix(desk_rs_obj, i);
     }
 
-    /* Fix TEDINFO strings */
-    if (!create_te_ptext(desk_rs_tedinfo, RS_NTED))
+    /* Create te_ptext strings */
+    desk_rs_ptext = create_te_ptext(desk_rs_tedinfo, RS_NTED);
+    if (!desk_rs_ptext)
     {
-        KDEBUG(("insufficient memory for desktop TEDINFO strings\n"));
+        KDEBUG(("insufficient memory for desktop te_ptext strings\n"));
         nomem_alert();          /* infinite loop */
     }
 
