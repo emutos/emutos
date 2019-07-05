@@ -1,5 +1,5 @@
 /*
- * spi.c - SPI interface for SD/MMC card driver
+ * spi_cf.c - SPI interface for SD/MMC card driver
  *
  * Copyright (C) 2013-2017 The EmuTOS development team
  *

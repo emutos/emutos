@@ -205,7 +205,7 @@ bios_src +=  memory.S processor.S vectors.S aciavecs.S bios.c xbios.c acsi.c \
              delay.c delayasm.S sd.c memory2.c bootparams.c scsi.c nova.c
 
 ifeq (1,$(COLDFIRE))
-  bios_src += coldfire.c coldfire2.S spi.c
+  bios_src += coldfire.c coldfire2.S spi_cf.c
 endif
 
 #
