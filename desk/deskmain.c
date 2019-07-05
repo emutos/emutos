@@ -1646,6 +1646,35 @@ WORD deskmain(void)
     cnx_put();
     app_save(FALSE);
 
+    /*
+     * close all the windows & free all the memory we allocated above
+     *
+     * this is initially disabled, since the memory will be automatically
+     * freed when the desktop process terminates after this function exits
+     */
+#if 0
+    graf_mouse(HGLASS, NULL);
+    {
+        WNODE *pw;
+
+        while( (pw=win_ontop()) )
+        {
+            wind_close(pw->w_id);           /* close the window */
+            dos_free(pw->w_pnode.p_fbase);  /* free the fnodes */
+            win_free(pw);                   /* free the wnode */
+        }
+
+    }
+    dos_free(G.g_wlist);        /* the windows */
+    dos_free(G.g_screen);       /* the screen objects */
+    dos_free(G.g_iblist);       /* the iconblks for the desktop icons */
+    dos_free(G.g_alist);        /* the anodes */
+    dos_free(G.g_atext);        /* the anode text buffer */
+    dos_free(desk_rs_ptext);    /* the te_ptext fields for the EmuDesk resource */
+    dos_free(desk_rs_obj);      /* the RAM copies of the Emudesk resource objects */
+    graf_mouse(ARROW, NULL);
+#endif
+
     /* turn off the menu bar */
     menu_bar(NULL, 0);
 
