@@ -200,7 +200,7 @@ void detect_nova(void)
         novamembase = (UBYTE *)0x00C00000UL;
         has_nova = 1;
     }
-    else if (((ULONG)phystop < 0x00C00000UL) && check_read_byte(0x00D00000UL+VIDSUB))
+    else if (((ULONG)phystop < 0x00C00000UL) && check_read_byte(0x00D00000UL+VIDSUB) && check_read_byte(0x00C00000UL))
     {
         /* Volksfarben 4000 in ST: be sure via phystop that it's not RAM we read */
         novaregbase = (UBYTE *)0x00D00000UL;
