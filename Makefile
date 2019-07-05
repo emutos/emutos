@@ -201,7 +201,7 @@ bios_src +=  memory.S processor.S vectors.S aciavecs.S bios.c xbios.c acsi.c \
              mfp.c midi.c mouse.c natfeat.S natfeats.c nvram.c panicasm.S \
              parport.c screen.c serport.c sound.c videl.c vt52.c xhdi.c \
              pmmu030.c 68040_pmmu.S \
-             amiga.c amiga2.S \
+             amiga.c amiga2.S spi_vamp.c \
              delay.c delayasm.S sd.c memory2.c bootparams.c scsi.c nova.c
 
 ifeq (1,$(COLDFIRE))
@@ -577,7 +577,7 @@ amigavampire: ROM_AMIGA = $(VAMPIRE_ROM_AMIGA)
 amigavampire: amiga
 
 # Special Amiga ROM optimized for Vampire V4 Standalone
-V4_DEF = -DSTATIC_ALT_RAM_ADDRESS=0x01000000 -DSTATIC_ALT_RAM_SIZE=496UL*1024*1024
+V4_DEF = -DSTATIC_ALT_RAM_ADDRESS=0x01000000 -DSTATIC_ALT_RAM_SIZE=496UL*1024*1024 -DCONF_WITH_VAMPIRE_SPI=1 -DCONF_WITH_SDMMC=1
 V4_ROM_AMIGA = emutos-vampire-v4sa.rom
 
 .PHONY: v4sa

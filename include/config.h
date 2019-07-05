@@ -847,6 +847,14 @@
 #endif
 
 /*
+ * Set CONF_WITH_SDMMC to 1 to activate SPI on the Vampire, required
+ * for SD/MMC support on these boards.
+ */
+#ifndef CONF_WITH_VAMPIRE_SPI
+# define CONF_WITH_VAMPIRE_SPI 0
+#endif
+
+/*
  * Set CONF_WITH_ATARI_VIDEO to 1 to enable support for ST Shifter and higher
  */
 #ifndef CONF_WITH_ATARI_VIDEO
