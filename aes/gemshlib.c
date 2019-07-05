@@ -71,7 +71,7 @@ static char sh_apdir[LEN_ZPATH];        /* saves initial value of current direct
                                         /* for applications run from the desktop.   */
 GLOBAL char *ad_stail;
 
-GLOBAL WORD gl_shgem;
+GLOBAL BOOL gl_shgem;
 
 /*
  *  Resolution settings:

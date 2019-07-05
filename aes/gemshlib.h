@@ -14,7 +14,7 @@ extern SHELL    sh[];
 
 extern char     *ad_stail;
 
-extern WORD     gl_shgem;
+extern BOOL     gl_shgem;
 
 extern WORD     gl_changerez;
 extern WORD     gl_nextrez;

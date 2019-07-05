@@ -170,7 +170,7 @@ typedef struct sh_struct
                                 /*  app: normally EMUDESK, but can be an    */
                                 /*  autorun program if so configured.       */
                                 /*  if FALSE, running a normal application. */
-    WORD sh_isgem;              /* TRUE if the application to be run is a GEM */
+    BOOL sh_isgem;              /* TRUE if the application to be run is a GEM */
                                 /*  application; FALSE if character-mode      */
     char sh_desk[LEN_ZFNAME];   /* the name of the default startup app */
     char sh_cdir[LEN_ZPATH];    /* the current directory for the default startup app */
