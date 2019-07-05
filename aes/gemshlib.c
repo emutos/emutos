@@ -612,7 +612,7 @@ static WORD sh_ldapp(SHELL *psh)
     }
 
 #if WITH_CLI
-    if (strcmp(D.s_cmd, "EMUCON") == 0)
+    if (strcmp(D.s_cmd, DEF_CONSOLE) == 0)
     {
         /* start the EmuCON shell: */
         aes_run_rom_program(coma_start);

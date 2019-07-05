@@ -11,6 +11,11 @@
 #define _AESDEFS_H
 
 /*
+ * internal name of console/cli
+ */
+#define DEF_CONSOLE     "EMUCON"
+
+/*
  * values for shel_write() 'doex' arg
  */
 #define SHW_NOEXEC      0       /* just return to desktop */
