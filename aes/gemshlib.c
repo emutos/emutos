@@ -67,6 +67,8 @@ static char shelbuf[SIZE_AFILE];        /* AES shell buffer */
 
 GLOBAL SHELL sh[NUM_PDS];
 
+static char sh_apdir[LEN_ZPATH];        /* saves initial value of current directory */
+                                        /* for applications run from the desktop.   */
 GLOBAL char *ad_stail;
 
 GLOBAL WORD gl_shgem;
@@ -87,6 +89,24 @@ void sh_read(char *pcmd, char *ptail)
 {
     strcpy(pcmd, D.s_cmd);
     memcpy(ptail, ad_stail, CMDTAILSIZE);
+}
+
+
+static void sh_curdrvdir(char *ppath)
+{
+    WORD drive;
+
+    /* remember current directory */
+    drive = dos_gdrv();
+    *ppath++ = drive + 'A';
+    *ppath++ = ':';
+    *ppath = '\0';
+    dos_gdir(drive+1, ppath);
+    if (*ppath == '\0')
+    {
+        *ppath++ = '\\';
+        *ppath = '\0';
+    }
 }
 
 
@@ -135,6 +155,7 @@ WORD sh_write(WORD doex, WORD isgem, WORD isover, const char *pcmd, const char *
     case SHW_EXEC:      /* run another program */
         strcpy(D.s_cmd, pcmd);
         memcpy(ad_stail, ptail, CMDTAILSIZE);
+        sh_curdrvdir(sh_apdir);     /* save app's current directory */
         psh->sh_doexec = doex;
         psh->sh_dodef = FALSE;
         psh->sh_isgem = (isgem != FALSE);
@@ -540,6 +561,12 @@ static void sh_chdef(SHELL *psh,BOOL isgem)
         }
         strcpy(D.s_cmd+n, psh->sh_desk);
     }
+    else                        /* running a normal application */   
+    {
+        if (sh_apdir[1] == ':')     /* set default drive (if specified) */
+            dos_sdrv(sh_apdir[0] - 'A');
+        dos_chdir(sh_apdir);        /* and default directory */
+    }
 }
 
 
@@ -669,6 +696,7 @@ void sh_main(BOOL isgem)
     SHELL *psh;
 
     psh = &sh[rlr->p_pid];
+    strcpy(sh_apdir, D.s_cdir);         /* initialize sh_apdir  */
 
     /* Set default DESKTOP if there isn't any yet */
     if (psh->sh_desk[0] == '\0')
