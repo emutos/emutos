@@ -566,24 +566,25 @@ $(ROM_AMIGA): emutos.img mkrom
 # Special Amiga ROM optimized for Vampire V2
 
 VAMPIRE_CPUFLAGS = -m68040
+VAMPIRE_COMMON_DEF = -DCONF_WITH_VAMPIRE_SPI=1 -DCONF_WITH_SDMMC=1
 VAMPIRE_DEF = -DSTATIC_ALT_RAM_ADDRESS=0x08000000 -DSTATIC_ALT_RAM_SIZE=126UL*1024*1024
 VAMPIRE_ROM_AMIGA = emutos-vampire.rom
 
 .PHONY: amigavampire
 NODEP += amigavampire
 amigavampire: CPUFLAGS = $(VAMPIRE_CPUFLAGS)
-amigavampire: override DEF += $(VAMPIRE_DEF)
+amigavampire: override DEF += $(VAMPIRE_COMMON_DEF) $(VAMPIRE_DEF)
 amigavampire: ROM_AMIGA = $(VAMPIRE_ROM_AMIGA)
 amigavampire: amiga
 
 # Special Amiga ROM optimized for Vampire V4 Standalone
-V4_DEF = -DSTATIC_ALT_RAM_ADDRESS=0x01000000 -DSTATIC_ALT_RAM_SIZE=496UL*1024*1024 -DCONF_WITH_VAMPIRE_SPI=1 -DCONF_WITH_SDMMC=1
+V4_DEF = -DSTATIC_ALT_RAM_ADDRESS=0x01000000 -DSTATIC_ALT_RAM_SIZE=496UL*1024*1024
 V4_ROM_AMIGA = emutos-vampire-v4sa.rom
 
 .PHONY: v4sa
 NODEP += v4sa
 v4sa: CPUFLAGS = $(VAMPIRE_CPUFLAGS)
-v4sa: override DEF += $(V4_DEF)
+v4sa: override DEF += $(VAMPIRE_COMMON_DEF) $(V4_DEF)
 v4sa: ROM_AMIGA = $(V4_ROM_AMIGA)
 v4sa: amiga
 
@@ -751,7 +752,7 @@ EMUTOS_VAMPIRE_ADF = emutos-vampire.adf
 
 .PHONY: amigaflopvampire
 NODEP += amigaflopvampire
-amigaflopvampire: override DEF += -DSTATIC_ALT_RAM_ADDRESS=0x08000000 $(AMIGA_DEFS)
+amigaflopvampire: override DEF += $(VAMPIRE_COMMON_DEF) -DSTATIC_ALT_RAM_ADDRESS=0x08000000 $(AMIGA_DEFS)
 amigaflopvampire: CPUFLAGS = $(VAMPIRE_CPUFLAGS)
 amigaflopvampire: EMUTOS_ADF = $(EMUTOS_VAMPIRE_ADF)
 amigaflopvampire: amigaflop
