@@ -56,18 +56,6 @@ extern long cookie_akp;
 /* Convenience macro to test if first boot. See MEMINIT_BIT_FIRST_BOOT. */
 #define FIRST_BOOT (meminit_flags & MEMINIT_FIRST_BOOT)
 
-#if CONF_WITH_FALCON_MMU
-# define HAS_FALCON_MMU (meminit_flags & MEMINIT_FALCON_MMU)
-#else
-# define HAS_FALCON_MMU 0
-#endif
-
-#if CONF_WITH_TT_MMU
-# define HAS_TT_MMU (meminit_flags & MEMINIT_TT_MMU)
-#else
-# define HAS_TT_MMU 0
-#endif
-
 #if CONF_WITH_ARANYM
 extern int is_aranym;
   #define IS_ARANYM is_aranym
