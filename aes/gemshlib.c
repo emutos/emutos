@@ -71,7 +71,7 @@ static char sh_apdir[LEN_ZPATH];        /* saves initial value of current direct
                                         /* for applications run from the desktop.   */
 GLOBAL char *ad_stail;
 
-GLOBAL BOOL gl_shgem;
+static BOOL gl_shgem;                   /* TRUE iff currently in graphics mode */
 
 /*
  *  Resolution settings:
@@ -148,8 +148,7 @@ WORD sh_write(WORD doex, WORD isgem, WORD isover, const char *pcmd, const char *
     case SHW_NOEXEC:    /* exit to desktop */
         strcpy(D.s_cmd, DEF_DESKTOP);
         psh->sh_doexec = doex;
-        psh->sh_dodef = TRUE;
-        psh->sh_isdef = TRUE;
+        psh->sh_nextapp = DESKTOP_APP;
         psh->sh_isgem = TRUE;
         break;
     case SHW_EXEC:      /* run another program */
@@ -157,7 +156,7 @@ WORD sh_write(WORD doex, WORD isgem, WORD isover, const char *pcmd, const char *
         memcpy(ad_stail, ptail, CMDTAILSIZE);
         sh_curdrvdir(sh_apdir);     /* save app's current directory */
         psh->sh_doexec = doex;
-        psh->sh_dodef = FALSE;
+        psh->sh_nextapp = (strcmp(pcmd, DEF_CONSOLE) == 0) ? CONSOLE_APP : NORMAL_APP;
         psh->sh_isgem = (isgem != FALSE);
         break;
 #if CONF_WITH_SHUTDOWN
@@ -165,7 +164,7 @@ WORD sh_write(WORD doex, WORD isgem, WORD isover, const char *pcmd, const char *
         if (can_shutdown())
         {
             psh->sh_doexec = doex;
-            psh->sh_dodef = FALSE;
+            psh->sh_nextapp = NORMAL_APP;   /* irrelevant, I think */
             psh->sh_isgem = FALSE;
         }
         break;
@@ -535,15 +534,19 @@ static void sh_chgrf(SHELL *psh)
 }
 
 
-static void sh_chdef(SHELL *psh,BOOL isgem)
+static void sh_chdef(SHELL *psh)
 {
     int n;
 
-    psh->sh_isdef = FALSE;
-    if (psh->sh_dodef)
-    {
-        psh->sh_isdef = TRUE;
-        psh->sh_isgem = isgem;  /* FALSE iff a character-mode autorun program */
+    switch(psh->sh_nextapp) {
+    case NORMAL_APP:
+    case CONSOLE_APP:
+        if (sh_apdir[1] == ':')     /* set default drive (if specified) */
+            dos_sdrv(sh_apdir[0] - 'A');
+        dos_chdir(sh_apdir);        /* and default directory */
+        break;
+    case AUTORUN_APP:
+    case DESKTOP_APP:
         if (psh->sh_cdir[1] == ':')
             dos_sdrv(psh->sh_cdir[0] - 'A');
         dos_chdir(psh->sh_cdir);
@@ -552,7 +555,7 @@ static void sh_chdef(SHELL *psh,BOOL isgem)
          * if not the default desktop, build a fully-qualified name
          */
         n = 0;
-        if (strcmp(psh->sh_desk, DEF_DESKTOP) != 0)
+        if (psh->sh_nextapp == AUTORUN_APP)
         {
             strcpy(D.s_cmd, psh->sh_cdir);
             n = strlen(D.s_cmd);
@@ -560,12 +563,7 @@ static void sh_chdef(SHELL *psh,BOOL isgem)
                 D.s_cmd[n++] = '\\';
         }
         strcpy(D.s_cmd+n, psh->sh_desk);
-    }
-    else                        /* running a normal application */   
-    {
-        if (sh_apdir[1] == ':')     /* set default drive (if specified) */
-            dos_sdrv(sh_apdir[0] - 'A');
-        dos_chdir(sh_apdir);        /* and default directory */
+        break;
     }
 }
 
@@ -585,6 +583,7 @@ LONG aes_run_rom_program(PRG_ENTRY *entry)
 
 static void set_default_desktop(SHELL *psh)
 {
+    psh->sh_nextapp = DESKTOP_APP;
     psh->sh_isgem = TRUE;
     strcpy(psh->sh_desk, DEF_DESKTOP);
     strcpy(psh->sh_cdir, D.s_cdir);
@@ -596,8 +595,10 @@ static WORD sh_ldapp(SHELL *psh)
     char *fname = sh_name(D.s_cmd);     /* filename portion of program */
     LONG ret;
 
-    KDEBUG(("sh_ldapp: Starting %s, sh_isgem=%d\n",D.s_cmd,psh->sh_isgem));
-    if (psh->sh_isdef && strcmp(D.s_cmd, DEF_DESKTOP) == 0)
+    KDEBUG(("sh_ldapp: Starting %s, sh_nextapp=%d, sh_isgem=%d\n",
+            D.s_cmd,psh->sh_nextapp,psh->sh_isgem));
+
+    if (psh->sh_nextapp == DESKTOP_APP)
     {
         /* Start the ROM desktop: */
         sh_show("");        /* like TOS, we don't display a name */
@@ -612,28 +613,36 @@ static WORD sh_ldapp(SHELL *psh)
     }
 
 #if WITH_CLI
-    if (strcmp(D.s_cmd, DEF_CONSOLE) == 0)
+    if (psh->sh_nextapp == CONSOLE_APP)
     {
         /* start the EmuCON shell: */
         aes_run_rom_program(coma_start);
+        psh->sh_nextapp = DESKTOP_APP;
+        psh->sh_isgem = TRUE;
         return 0;
     }
 #endif
 
     /*
-     * we are now going to run a normal application, possibly via
-     * autorun.  if it's being run via autorun, sh_isdef will be TRUE,
-     * and we should *not* invoke sh_find().  otherwise we do, and
-     * only attempt to run the application if it's found.
+     * we are now going to run a normal application, possibly via autorun.
+     * if it's being run via autorun, we should *not* invoke sh_find().
+     * otherwise we do, and only attempt to run the application if it's found.
      */
-    ret = (psh->sh_isdef) ? 1 : sh_find(D.s_cmd);
+    ret = (psh->sh_nextapp == AUTORUN_APP) ? 1 : sh_find(D.s_cmd);
     if (ret)
     {
-        /* Run a normal application: */
+        /* Run a normal or autorun application: */
         sh_show(fname);
         p_nameit(rlr, fname);
         p_setappdir(rlr, D.s_cmd);
         rlr->p_flags = 0;
+
+        /* by default, run the desktop after a normal application */
+        if (psh->sh_nextapp == NORMAL_APP)
+        {
+            psh->sh_nextapp = DESKTOP_APP;
+            psh->sh_isgem = TRUE;
+        }
 
         ret = dos_exec(PE_LOADGO, D.s_cmd, ad_stail, ad_envrn); /* Run the APP */
 
@@ -652,9 +661,9 @@ static WORD sh_ldapp(SHELL *psh)
         /* If the user ran an "autorun" application and quitted it,
          * return now to the default desktop
          */
-        if (psh->sh_isdef && psh->sh_dodef)
+        if (psh->sh_nextapp == AUTORUN_APP)
         {
-            KDEBUG(("sh_ldapp: Returning to ROM desktop!\n"));
+            KDEBUG(("sh_ldapp: autorun program returning to ROM desktop\n"));
             set_default_desktop(psh);
         }
 
@@ -666,7 +675,7 @@ static WORD sh_ldapp(SHELL *psh)
          * we call wind_new() to do a general cleanup - but only
          * if we were running in graphics mode
          */
-        if (psh->sh_isgem)
+        if (gl_shgem)
             wm_new();
 
         KDEBUG(("sh_ldapp: %s exited with rc=%ld\n",D.s_cmd,ret));
@@ -690,16 +699,20 @@ static WORD sh_ldapp(SHELL *psh)
 }
 
 
-void sh_main(BOOL isgem)
+void sh_main(BOOL isauto, BOOL isgem)
 {
     WORD rc = 0;
     SHELL *psh;
 
     psh = &sh[rlr->p_pid];
+    psh->sh_doexec = SHW_EXEC;
+    psh->sh_nextapp = isauto ? AUTORUN_APP : DESKTOP_APP;
+    psh->sh_isgem = isgem;              /* may be character mode if autorun */
     strcpy(sh_apdir, D.s_cdir);         /* initialize sh_apdir  */
+    gl_shgem = TRUE;
 
-    /* Set default DESKTOP if there isn't any yet */
-    if (psh->sh_desk[0] == '\0')
+    /* Set default DESKTOP if no autorun app */
+    if (psh->sh_nextapp == DESKTOP_APP)
         set_default_desktop(psh);
 
     /*
@@ -707,13 +720,7 @@ void sh_main(BOOL isgem)
      */
     do
     {
-        sh_chdef(psh,isgem);
-        /*
-         * set up to run the default app, i.e. the desktop, immediately
-         * after this one, and make sure it's started in graphics mode
-         */
-        psh->sh_dodef = TRUE;
-        isgem = TRUE;
+        sh_chdef(psh);
         sh_chgrf(psh);                  /* set alpha/graphics mode */
 
         if (gl_shgem)

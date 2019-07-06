@@ -14,8 +14,6 @@ extern SHELL    sh[];
 
 extern char     *ad_stail;
 
-extern BOOL     gl_shgem;
-
 extern WORD     gl_changerez;
 extern WORD     gl_nextrez;
 
@@ -33,7 +31,7 @@ WORD sh_find(char *pspec);
 void sh_rdef(char *lpcmd, char *lpdir);
 void sh_wdef(const char *lpcmd, const char *lpdir);
 
-void sh_main(BOOL isgem);
+void sh_main(BOOL isauto, BOOL isgem);
 
 LONG aes_run_rom_program(PRG_ENTRY *entry);
 #endif

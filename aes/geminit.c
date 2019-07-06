@@ -306,23 +306,6 @@ static void load_accs(WORD n)
 }
 
 
-static void sh_init(void)
-{
-    SHELL   *psh;
-    OBJECT *tree = rs_trees[DESKTOP];
-
-    /*
-     * set height of root DESKTOP object to screen height
-     */
-    tree[ROOT].ob_height = gl_rscreen.g_h;
-
-    /* set defaults */
-    psh = sh;
-    psh->sh_doexec = SHW_EXEC;
-    psh->sh_dodef = gl_shgem = psh->sh_isgem = TRUE;
-}
-
-
 /*
  *  Set default desktop path (root of current drive)
  */
@@ -419,11 +402,13 @@ static void process_inf1(void)
  *      FALSE if initial program is character-mode (only if an autorun
  *      entry exists, and it is for a character-mode program).
  */
-static BOOL process_inf2(void)
+static BOOL process_inf2(BOOL *isauto)
 {
     WORD    env, isgem = TRUE;
     char    *pcurr;
     char    tmp;
+
+    *isauto = FALSE;                /* assume no autorun program */
 
     pcurr = infbuf;
     while (*pcurr)
@@ -460,13 +445,14 @@ static BOOL process_inf2(void)
             {
                 /* run autorun program */
                 sh_wdef(tmpptr2, tmpptr1);
+                *isauto = TRUE;
             }
 
             ++pcurr;
         }
     }
 
-    return isgem ? TRUE : FALSE;
+    return (*isauto && !isgem) ? FALSE : TRUE;
 }
 
 
@@ -641,8 +627,9 @@ void wait_for_accs(WORD bitmask)
 void run_accs_and_desktop(void)
 {
     WORD i;
-    BOOL isgem;
+    BOOL isgem, isauto;
     BITBLK bi;
+    OBJECT *tree;
 
     /* load gem resource and fix it up before we go */
     gem_rsc_init();
@@ -687,16 +674,21 @@ void run_accs_and_desktop(void)
     /* fix up the GEM rsc file now that we have an open WS */
     gem_rsc_fixit();
 
+    /*
+     * set height of root DESKTOP object to screen height
+     */
+    tree = rs_trees[DESKTOP];
+    tree[ROOT].ob_height = gl_rscreen.g_h;
+
     wm_start();                     /* initialise window vars */
     fs_start();                     /* startup gem libs */
     sh_curdir(D.s_cdir);            /* remember current desktop directory */
-    isgem = process_inf2();         /* process emudesk.inf part 2 */
+    isgem = process_inf2(&isauto);  /* process emudesk.inf part 2 */
 
     dsptch();                       /* off we go !!! */
     wait_for_accs(AP_MESAG);        /* wait until DAs have initialised */
 
-    sh_init();                      /* init for shell loop */
-    sh_main(isgem);                 /* main shell loop */
+    sh_main(isauto, isgem);         /* main shell loop */
 
     free_accs(num_accs);            /* free DA memory */
 
