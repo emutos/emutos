@@ -81,9 +81,6 @@ static BOOL gl_shgem;                   /* TRUE iff currently in graphics mode *
 GLOBAL WORD gl_changerez;
 GLOBAL WORD gl_nextrez;
 
-/* Prototypes: */
-static void sh_toalpha(void);
-
 
 void sh_read(char *pcmd, char *ptail)
 {
