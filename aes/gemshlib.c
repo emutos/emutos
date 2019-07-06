@@ -63,6 +63,25 @@
 #define SIZE_AFILE 2048                 /* size of AES shell buffer: must   */
                                         /*  agree with #define in deskapp.h */
 
+/*
+ * values used in sh_nextapp below
+ */
+#define NORMAL_APP  0
+#define CONSOLE_APP 1
+#define AUTORUN_APP 2
+#define DESKTOP_APP 3
+
+typedef struct
+{
+    WORD sh_doexec;             /* for values, see aesdefs.h */
+    WORD sh_nextapp;            /* type of application to be run next (see above) */
+    BOOL sh_isgem;              /* TRUE if the application to be run is a GEM */
+                                /*  application; FALSE if character-mode      */
+    char sh_desk[LEN_ZFNAME];   /* the name of the default startup app */
+    char sh_cdir[LEN_ZPATH];    /* the current directory for the default startup app */
+} SHELL;
+
+
 static char shelbuf[SIZE_AFILE];        /* AES shell buffer */
 
 static SHELL sh;
