@@ -154,10 +154,11 @@ WORD sh_write(WORD doex, WORD isgem, WORD isover, const char *pcmd, const char *
     case SHW_EXEC:      /* run another program */
         strcpy(D.s_cmd, pcmd);
         memcpy(ad_stail, ptail, CMDTAILSIZE);
-        sh_curdrvdir(sh_apdir);     /* save app's current directory */
         psh->sh_doexec = doex;
         psh->sh_nextapp = (strcmp(pcmd, DEF_CONSOLE) == 0) ? CONSOLE_APP : NORMAL_APP;
         psh->sh_isgem = (isgem != FALSE);
+        if (psh->sh_nextapp == NORMAL_APP)
+            sh_curdrvdir(sh_apdir);     /* save app's current directory */
         break;
 #if CONF_WITH_SHUTDOWN
     case SHW_SHUTDOWN:  /* shutdown system */
@@ -536,10 +537,11 @@ static void sh_chdef(SHELL *psh)
 
     switch(psh->sh_nextapp) {
     case NORMAL_APP:
-    case CONSOLE_APP:
         if (sh_apdir[1] == ':')     /* set default drive (if specified) */
             dos_sdrv(sh_apdir[0] - 'A');
         dos_chdir(sh_apdir);        /* and default directory */
+        break;
+    case CONSOLE_APP:
         break;
     case AUTORUN_APP:
     case DESKTOP_APP:
