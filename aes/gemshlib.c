@@ -65,7 +65,7 @@
 
 static char shelbuf[SIZE_AFILE];        /* AES shell buffer */
 
-GLOBAL SHELL sh[NUM_PDS];
+static SHELL sh;
 
 static char sh_apdir[LEN_ZPATH];        /* saves initial value of current directory */
                                         /* for applications run from the desktop.   */
@@ -142,7 +142,7 @@ static void sh_curdrvdir(char *ppath)
  */
 WORD sh_write(WORD doex, WORD isgem, WORD isover, const char *pcmd, const char *ptail)
 {
-    SHELL *psh = &sh[rlr->p_pid];
+    SHELL *psh = &sh;
 
     switch(doex) {
     case SHW_NOEXEC:    /* exit to desktop */
@@ -497,9 +497,7 @@ WORD sh_find(char *pspec)
  */
 void sh_rdef(char *lpcmd, char *lpdir)
 {
-    SHELL *psh;
-
-    psh = &sh[rlr->p_pid];
+    SHELL *psh = &sh;
 
     strcpy(lpcmd, psh->sh_desk);
     strcpy(lpdir, psh->sh_cdir);
@@ -512,9 +510,7 @@ void sh_rdef(char *lpcmd, char *lpdir)
  */
 void sh_wdef(const char *lpcmd, const char *lpdir)
 {
-    SHELL *psh;
-
-    psh = &sh[rlr->p_pid];
+    SHELL *psh = &sh;
 
     strcpy(psh->sh_desk, lpcmd);
     strcpy(psh->sh_cdir, lpdir);
@@ -702,9 +698,8 @@ static WORD sh_ldapp(SHELL *psh)
 void sh_main(BOOL isauto, BOOL isgem)
 {
     WORD rc = 0;
-    SHELL *psh;
+    SHELL *psh = &sh;
 
-    psh = &sh[rlr->p_pid];
     psh->sh_doexec = SHW_EXEC;
     psh->sh_nextapp = isauto ? AUTORUN_APP : DESKTOP_APP;
     psh->sh_isgem = isgem;              /* may be character mode if autorun */

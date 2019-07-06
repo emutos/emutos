@@ -10,8 +10,6 @@
 #ifndef GEMSHLIB_H
 #define GEMSHLIB_H
 
-extern SHELL    sh[];
-
 extern char     *ad_stail;
 
 extern WORD     gl_changerez;
