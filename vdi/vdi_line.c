@@ -17,7 +17,7 @@
 #include "blitter.h"
 #include "biosext.h"    /* for cache control routines */
 #include "lineavars.h"
-#include "../bios/machine.h"    /* for blitter-related items */
+#include "has.h"        /* for blitter-related items */
 
 
 #if CONF_WITH_BLITTER

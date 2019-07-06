@@ -20,6 +20,7 @@
 #include "tosvars.h"
 #include "lineavars.h"
 #include "machine.h"
+#include "has.h"
 #include "nova.h"
 
 #if CONF_WITH_NOVA

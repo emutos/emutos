@@ -31,6 +31,7 @@
 #include "processor.h"
 #include "initinfo.h"
 #include "machine.h"
+#include "has.h"
 #include "cookie.h"
 #include "country.h"
 #include "nls.h"

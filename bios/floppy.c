@@ -23,6 +23,7 @@
 #include "asm.h"
 #include "tosvars.h"
 #include "machine.h"
+#include "has.h"
 #include "blkdev.h"
 #include "string.h"
 #include "xbiosbind.h"  /* Random() */

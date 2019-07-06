@@ -17,7 +17,7 @@
 #include "biosext.h"    /* for cache control routines */
 #include "lineavars.h"
 #include "tosvars.h"
-#include "../bios/machine.h"    /* for blitter-related items */
+#include "has.h"        /* for blitter-related items */
 
 #ifdef __mcoldfire__
 #define ASM_BLIT_IS_AVAILABLE   0   /* assembler routine does not support ColdFire */

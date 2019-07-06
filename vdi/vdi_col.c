@@ -11,7 +11,7 @@
 #include "intmath.h"
 #include "vdi_defs.h"
 #include "string.h"
-#include "../bios/machine.h"
+#include "has.h"
 #include "xbiosbind.h"
 #include "lineavars.h"
 #include "../bios/screen.h"

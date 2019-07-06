@@ -15,6 +15,7 @@
 #include "emutos.h"
 #include "cookie.h"
 #include "machine.h"
+#include "has.h"
 #include "processor.h"
 #include "biosmem.h"
 #include "vectors.h"

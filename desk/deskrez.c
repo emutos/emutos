@@ -33,7 +33,7 @@
 #include "deskrez.h"
 
 #include "xbiosbind.h"
-#include "../bios/machine.h"    /* for has_videl etc */
+#include "has.h"                /* for has_videl etc */
 #include "../bios/screen.h"
 #include "../bios/videl.h"
 #include "../bios/amiga.h"

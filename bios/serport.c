@@ -18,6 +18,7 @@
 #include "cookie.h"
 #include "delay.h"
 #include "machine.h"
+#include "has.h"
 #include "mfp.h"
 #include "scc.h"
 #include "serport.h"

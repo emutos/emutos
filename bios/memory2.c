@@ -16,6 +16,7 @@
 #include "memory.h"
 #include "tosvars.h"
 #include "machine.h"
+#include "has.h"
 #include "biosext.h"    /* for cache control routines */
 #include "vectors.h"
 #include "../bdos/bdosstub.h"

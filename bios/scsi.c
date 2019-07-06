@@ -47,6 +47,7 @@
 #include "gemerror.h"
 #include "intmath.h"                /* for max() */
 #include "machine.h"
+#include "has.h"
 #include "mfp.h"
 #include "nvram.h"
 #include "biosext.h"    /* for cache control routines */

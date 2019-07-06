@@ -17,6 +17,7 @@
 
 #include "emutos.h"
 #include "machine.h"
+#include "has.h"
 #include "screen.h"
 #include "videl.h"
 #include "asm.h"

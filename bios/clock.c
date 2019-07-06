@@ -24,6 +24,7 @@
 #include "vectors.h"
 #include "nvram.h"
 #include "machine.h"
+#include "has.h"
 #include "cookie.h"
 #include "asm.h"
 #include "dma.h"

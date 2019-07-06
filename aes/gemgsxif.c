@@ -27,7 +27,7 @@
 #include "gemctrl.h"
 #include "gemgsxif.h"
 #include "xbiosbind.h"
-#include "../bios/machine.h"    /* for HAS_VIDEL */
+#include "has.h"        /* for blitter-related items */
 #include "../bios/screen.h"     /* for FALCON_REZ */
 #include "asm.h"
 

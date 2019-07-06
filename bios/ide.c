@@ -31,6 +31,7 @@
 #include "tosvars.h"
 #include "vectors.h"
 #include "machine.h"
+#include "has.h"
 #include "cookie.h"
 #include "coldfire.h"
 #include "processor.h"

@@ -29,7 +29,7 @@
 #include "gem_rsc.h"
 #include "mforms.h"
 #include "xbiosbind.h"
-#include "../bios/machine.h"
+#include "has.h"
 #include "../bios/screen.h"
 #include "biosext.h"
 
