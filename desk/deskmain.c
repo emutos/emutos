@@ -1162,11 +1162,11 @@ static void cnx_get(void)
         /* Check for valid width + height */
         if (pws->w_save <= 0 || pws->w_save > G.g_wdesk)
         {
-            pws->w_save = G.g_wdesk/2;
+            pws->w_save = G.g_wdesk;
         }
         if (pws->h_save <= 0 || pws->h_save > G.g_hdesk)
         {
-            pws->h_save = G.g_hdesk/2;
+            pws->h_save = G.g_hdesk;
         }
 
         if (pws->pth_save[0])
