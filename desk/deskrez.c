@@ -35,7 +35,6 @@
 #include "xbiosbind.h"
 #include "has.h"                /* for has_videl etc */
 #include "biosdefs.h"
-#include "../bios/videl.h"
 #include "../bios/amiga.h"
 
 
