@@ -56,4 +56,9 @@ extern struct font_head fon6x6;
 extern struct font_head fon8x8;
 extern struct font_head fon8x16;
 
+/* Memory map information */
+#if CONF_WITH_EXTENDED_MOUSE
+BOOL is_text_pointer(void *p);
+#endif
+
 #endif /* BIOSEXT_H */

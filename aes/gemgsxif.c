@@ -29,6 +29,7 @@
 #include "xbiosbind.h"
 #include "has.h"        /* for blitter-related items */
 #include "biosdefs.h"   /* for FALCON_REZ */
+#include "biosext.h"
 #include "asm.h"
 
 /*
@@ -268,7 +269,20 @@ static void gsx_resetmb(void)
 */
 }
 
+#if CONF_WITH_EXTENDED_MOUSE
 
+/*
+ * determine if trap #2 has been intercepted by someone else (e.g. NVDI)
+ *
+ * return 1 if intercepted, else 0
+ */
+static BOOL aestrap_intercepted(void)
+{
+    void *trap2_handler = (void *)ULONG_AT(0x88);
+    return !is_text_pointer(trap2_handler);
+}
+
+#endif /* CONF_WITH_EXTENDED_MOUSE */
 
 void gsx_init(void)
 {

@@ -19,7 +19,6 @@
         .globl  _retake
         .globl  _unset_aestrap
         .globl  _set_aestrap
-        .globl  _aestrap_intercepted
         .globl  _far_mcha
 #if CONF_WITH_EXTENDED_MOUSE
         .globl  _aes_wheel
@@ -302,22 +301,6 @@ _set_aestrap:
         move.l  0x88,savetrap2
         move.l  #_aestrap,0x88
 #endif
-        rts
-
-/*
- * determine if trap #2 has been intercepted by someone else (e.g. NVDI)
- *
- * return 1 if intercepted, else 0
- */
-_aestrap_intercepted:
-        moveq   #1,d0           // assume it's intercepted
-        movea.l 0x88,a0
-        cmpa.l  _os_header+8,a0 // os_beg
-        jcs     done
-        cmpa.l  #__etext,a0
-        jcc     done
-        moveq   #0,d0
-done:
         rts
 
 _far_bcha:

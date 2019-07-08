@@ -1123,3 +1123,14 @@ const GEM_MUPB ui_mupb =
 #  error You must provide a main UI
 #endif
 };
+
+#if CONF_WITH_EXTENDED_MOUSE
+
+/* Does this pointer belong to our TEXT segment? */
+BOOL is_text_pointer(void *p)
+{
+    UBYTE *pb = (UBYTE *)p;
+    return pb >= (UBYTE *)&os_header && pb < _etext;
+}
+
+#endif /* CONF_WITH_EXTENDED_MOUSE */
