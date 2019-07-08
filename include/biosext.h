@@ -63,5 +63,8 @@ BOOL is_text_pointer(void *p);
 
 /* VIDEL routines */
 WORD get_videl_mode(void);
+#ifdef MACHINE_AMIGA
+WORD amiga_vgetmode(void);
+#endif
 
 #endif /* BIOSEXT_H */

@@ -35,7 +35,7 @@
 #include "xbiosbind.h"
 #include "has.h"                /* for has_videl etc */
 #include "biosdefs.h"
-#include "../bios/amiga.h"
+#include "biosext.h"
 
 
 #if CONF_WITH_TT_SHIFTER
