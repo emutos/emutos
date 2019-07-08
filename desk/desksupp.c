@@ -50,7 +50,7 @@
 #include "deskobj.h"
 #include "nls.h"
 #include "scancode.h"
-#include "../bios/machine.h"
+#include "biosext.h"
 
 
 #define ALLFILES    (FA_SUBDIR|FA_SYSTEM|FA_HIDDEN)
