@@ -34,7 +34,6 @@
 #include "deskfpd.h"
 #include "deskwin.h"
 #include "gembind.h"
-#include "../bios/videl.h"
 #include "../bios/amiga.h"
 #include "aesbind.h"
 #include "deskrsrc.h"

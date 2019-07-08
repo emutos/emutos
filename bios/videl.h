@@ -87,7 +87,6 @@ WORD vsetrgb(WORD index,WORD count,const ULONG *rgb);
 WORD vgetrgb(WORD index,WORD count,ULONG *rgb);
 
 /* misc routines */
-WORD get_videl_mode(void);
 WORD vfixmode(WORD mode);
 WORD videl_check_moderez(WORD moderez);
 void videl_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *vt_rez);

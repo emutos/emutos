@@ -61,4 +61,7 @@ extern struct font_head fon8x16;
 BOOL is_text_pointer(void *p);
 #endif
 
+/* VIDEL routines */
+WORD get_videl_mode(void);
+
 #endif /* BIOSEXT_H */

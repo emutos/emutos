@@ -18,6 +18,7 @@
 #include "has.h"
 #include "screen.h"
 #include "videl.h"
+#include "biosext.h"
 #include "asm.h"
 #include "tosvars.h"
 #include "lineavars.h"
