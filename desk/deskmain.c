@@ -36,7 +36,7 @@
 #include "deskfpd.h"
 #include "deskwin.h"
 
-#include "../bios/screen.h"
+#include "biosdefs.h"
 #include "nls.h"
 #include "version.h"
 #include "../bios/header.h"

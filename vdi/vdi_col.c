@@ -14,7 +14,6 @@
 #include "has.h"
 #include "xbiosbind.h"
 #include "lineavars.h"
-#include "../bios/screen.h"
 
 #define EXTENDED_PALETTE (CONF_WITH_VIDEL || CONF_WITH_TT_SHIFTER)
 

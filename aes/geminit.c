@@ -30,7 +30,6 @@
 #include "mforms.h"
 #include "xbiosbind.h"
 #include "has.h"
-#include "../bios/screen.h"
 #include "biosext.h"
 
 #include "crysbind.h"

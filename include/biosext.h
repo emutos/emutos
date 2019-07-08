@@ -44,4 +44,10 @@ extern void (*mousexvec)(WORD scancode);    /* Additional mouse buttons */
 /* Line A extensions */
 extern struct _mcs *mcs_ptr; /* ptr to mouse cursor save area in use */
 
+/* determine monitor type, ... */
+WORD get_monitor_type(void);
+void get_pixel_size(WORD *width,WORD *height);
+int rez_changeable(void);
+WORD check_moderez(WORD moderez);
+
 #endif /* BIOSEXT_H */

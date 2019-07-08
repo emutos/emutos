@@ -31,14 +31,11 @@
 #define SPSHIFT             0xffff8266L
 
 #define TT_SHIFTER_BITMASK  0x970f      /* valid bits in TT_SHIFTER */
-#define TT_HYPER_MONO       0x1000          /* bit usage */
 
 #define ST_PALETTE_REGS     0xffff8240L
 #define FALCON_PALETTE_REGS 0xffff9800L
 
 #define TT_PALETTE_BITMASK  0x0fff      /* valid bits in TT_PALETTE_REGS */
-
-#define TT_DUOCHROME_INVERT 0x0002      /* inversion bit in TT h/w palette reg 0 */
 
 /* hardware-dependent xbios routines */
 
@@ -89,34 +86,13 @@ WORD esetsmear(WORD mode);
 
 #endif /* CONF_WITH_ATARI_VIDEO */
 
-/* TT resolutions */
-#define TT_HIGH        6
-#define TT_MEDIUM      4
-#define TT_LOW         7
-
-/* ST(e) resolutions */
-#define ST_HIGH        2
-#define ST_MEDIUM      1
-#define ST_LOW         0
-#define FALCON_REZ     3    /* used as a Falcon indicator */
-
-/* monitor types (from VgetMonitor()) */
-#define MON_MONO       0    /* ST monochrome */
-#define MON_COLOR      1    /* ST colour */
-#define MON_VGA        2    /* VGA */
-#define MON_TV         3    /* TV via RF modulator */
-
 /* misc routines */
-WORD check_moderez(WORD moderez);
 void initialise_palette_registers(WORD rez,WORD mode);
 
 /* determine monitor type, ... */
 void screen_init(void);
 void set_rez_hacked(void);
-int rez_changeable(void);
-WORD get_monitor_type(void);
 void screen_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *vt_rez);
-void get_pixel_size(WORD *width,WORD *height);
 
 /* hardware-independent xbios routines */
 const UBYTE *physbase(void);

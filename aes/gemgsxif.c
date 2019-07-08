@@ -28,7 +28,7 @@
 #include "gemgsxif.h"
 #include "xbiosbind.h"
 #include "has.h"        /* for blitter-related items */
-#include "../bios/screen.h"     /* for FALCON_REZ */
+#include "biosdefs.h"   /* for FALCON_REZ */
 #include "asm.h"
 
 /*

@@ -14,7 +14,7 @@
 #include "vdi_defs.h"
 #include "biosbind.h"
 #include "xbiosbind.h"
-#include "../bios/screen.h"
+#include "biosext.h"
 #include "asm.h"
 #include "string.h"
 #include "intmath.h"

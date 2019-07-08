@@ -111,4 +111,25 @@ struct kbdvecs
  */
 typedef void (*ETV_TIMER_T)(int ms); /* Type of BDOS Event Timer */
 
+/* TT resolutions */
+#define TT_HIGH        6
+#define TT_MEDIUM      4
+#define TT_LOW         7
+
+/* ST(e) resolutions */
+#define ST_HIGH        2
+#define ST_MEDIUM      1
+#define ST_LOW         0
+#define FALCON_REZ     3    /* used as a Falcon indicator */
+
+/* monitor types (from VgetMonitor()) */
+#define MON_MONO       0    /* ST monochrome */
+#define MON_COLOR      1    /* ST colour */
+#define MON_VGA        2    /* VGA */
+#define MON_TV         3    /* TV via RF modulator */
+
+/* TT shifter defines */
+#define TT_HYPER_MONO       0x1000      /* bit usage */
+#define TT_DUOCHROME_INVERT 0x0002      /* inversion bit in TT h/w palette reg 0 */
+
 #endif /* BIOSDEFS_H */
