@@ -23,7 +23,6 @@
 /* cookies */
 
 extern long cookie_akp;
-extern long cookie_idt;
 
 /* used by machine.c */
 void detect_akp(void);

@@ -42,6 +42,7 @@
 #include "deskins.h"
 #include "deskfun.h"
 #include "biosdefs.h"
+#include "biosext.h"
 
 
 /*

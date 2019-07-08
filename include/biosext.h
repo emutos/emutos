@@ -67,4 +67,7 @@ WORD get_videl_mode(void);
 WORD amiga_vgetmode(void);
 #endif
 
+/* Cookies. FIXME: Should not be accessed directly from upper layers */
+extern long cookie_idt;
+
 #endif /* BIOSEXT_H */
