@@ -625,6 +625,30 @@ static WORD app_rdicon(void)
 
 
 /*
+ *  Read in the EMUDESK.INF file
+ */
+static void read_inf_file(char *infbuf)
+{
+    LONG ret;
+    WORD fh;
+    char inf_file_name[16];
+
+    strcpy(inf_file_name, INF_FILE_NAME);
+    inf_file_name[0] += G.g_stdrv;      /* Adjust drive letter  */
+    ret = dos_open(inf_file_name, 0);
+    if (ret >= 0L)
+    {
+        fh = (WORD) ret;
+        ret = dos_read(fh, SIZE_AFILE-CPDATA_LEN, infbuf);
+        if (ret < 0L)
+            ret = 0L;                   /* length read */
+        dos_close(fh);
+        infbuf[ret] = '\0';
+    }
+}
+
+
+/*
  *  Create a default minimal internal EMUDESK.INF
  */
 static void build_inf(char *infbuf, WORD xcnt, WORD ycnt)
@@ -748,24 +772,8 @@ void app_start(void)
     shel_get(buf, SIZE_AFILE);
     inf_data = buf + CPDATA_LEN;
     if (!(bootflags & BOOTFLAG_SKIP_AUTO_ACC)
-        && inf_data[0] != '#')              /* invalid signature    */
-    {                                       /*   so read from disk  */
-        LONG ret;
-        WORD fh;
-        char inf_file_name[16];
-        strcpy(inf_file_name, INF_FILE_NAME);
-        inf_file_name[0] += G.g_stdrv;      /* Adjust drive letter  */
-        ret = dos_open(inf_file_name, 0x0);
-        if (ret >= 0L)
-        {
-            fh = (WORD) ret;
-            ret = dos_read(fh, SIZE_AFILE-CPDATA_LEN, inf_data);
-            if (ret < 0L)
-                ret = 0L;                   /* length read */
-            dos_close(fh);
-            inf_data[ret] = '\0';
-        }
-    }
+     && (inf_data[0] != '#'))               /* invalid signature    */
+        read_inf_file(inf_data);            /*   so read from disk  */
 
     /* If there's still no EMUDESK.INF data, build one now */
     if (inf_data[0] != '#')
