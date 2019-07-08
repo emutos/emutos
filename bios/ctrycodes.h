@@ -10,6 +10,9 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#ifndef CTRYCODES_H
+#define CTRYCODES_H
+
 /*
  * The country codes were defined by Atari. They do not need to be contiguous.
  * They are used as the country identifier in the ROM header.
@@ -52,3 +55,5 @@
  * will be inferred from the COUNTRY Makefile variable.
  */
 #define OS_CONF_MULTILANG 0xff
+
+#endif /* CTRYCODES_H */
