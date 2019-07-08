@@ -12,6 +12,7 @@
 
 /* Forward declarations */
 struct _mcs;
+struct font_head;
 
 /* Bitmap of removable logical drives */
 extern LONG drvrem;
@@ -49,5 +50,10 @@ WORD get_monitor_type(void);
 void get_pixel_size(WORD *width,WORD *height);
 int rez_changeable(void);
 WORD check_moderez(WORD moderez);
+
+/* RAM-copies of the ROM-fontheaders. See bios/fntxxx.c */
+extern struct font_head fon6x6;
+extern struct font_head fon8x8;
+extern struct font_head fon8x16;
 
 #endif /* BIOSEXT_H */

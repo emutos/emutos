@@ -16,6 +16,7 @@
 #include "vdi_defs.h"
 #include "vdistub.h"
 #include "lineavars.h"
+#include "biosext.h"
 
 
 extern const Fonthead *def_font;    /* Default font of open workstation */
@@ -24,10 +25,6 @@ extern const Fonthead *font_ring[]; /* Ring of available fonts */
 extern WORD font_count;         /* Number of fonts in driver */
 extern WORD deftxbuf[];         /* Default text scratch buffer */
 extern const WORD scrtsiz;      /* Default offset to large text buffer */
-
-extern Fonthead fon6x6;         /* See bios/fntxxx.c */
-extern Fonthead fon8x8;         /* See bios/fntxxx.c */
-extern Fonthead fon8x16;        /* See bios/fntxxx.c */
 
 /*
  * Local structure for passing justification info
