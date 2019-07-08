@@ -41,7 +41,7 @@
 #include "deskinf.h"
 #include "deskins.h"
 #include "deskfun.h"
-#include "../bios/country.h"
+#include "biosdefs.h"
 
 
 /*
