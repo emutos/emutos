@@ -39,7 +39,7 @@
 #include "biosdefs.h"
 #include "nls.h"
 #include "version.h"
-#include "../bios/header.h"
+#include "../obj/header.h"
 
 #include "aesbind.h"
 #include "desksupp.h"

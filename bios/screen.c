@@ -29,7 +29,7 @@
 #include "xbiosbind.h"
 #include "vectors.h"
 #include "country.h"
-#include "header.h"
+#include "../obj/header.h"
 #include "biosmem.h"
 #include "biosext.h"
 #include "bios.h"

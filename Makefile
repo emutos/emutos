@@ -1002,9 +1002,9 @@ bios/ctables.h: country.mk tools/genctables.awk
 # OS header
 #
 
-GEN_SRC += bios/header.h
+GEN_SRC += obj/header.h
 
-bios/header.h: tools/mkheader.awk obj/country
+obj/header.h: tools/mkheader.awk obj/country
 	awk -f tools/mkheader.awk $(COUNTRY) > $@
 
 #

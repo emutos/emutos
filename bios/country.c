@@ -19,7 +19,7 @@
 #include "biosdefs.h"
 #include "country.h"
 #include "nvram.h"
-#include "header.h"
+#include "../obj/header.h"
 #include "bios.h"
 
 /*
