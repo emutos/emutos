@@ -1494,6 +1494,9 @@ WORD deskmain(void)
     UWORD ev_which, mx, my, button, kstate, kret, bret;
     OBJECT *menutree;
 
+    /* remember start drive */
+    G.g_stdrv = dos_gdrv();
+
     /* initialize libraries */
     gl_apid = appl_init();
 

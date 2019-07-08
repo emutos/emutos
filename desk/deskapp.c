@@ -701,9 +701,6 @@ void app_start(void)
 
     MAYBE_UNUSED(i);
 
-    /* remember start drive */
-    G.g_stdrv = dos_gdrv();
-
     /* initialise the ANODE stuff */
     if (initialise_anodes() < 0)
     {
