@@ -1541,8 +1541,8 @@ WORD deskmain(void)
      * resource in dr_code because that would reenter AES, so we
      * save them here.
      */
-    strcpy(gl_amstr, ini_str(STAM));
-    strcpy(gl_pmstr, ini_str(STPM));
+    strcpy(gl_amstr, desktop_str_addr(STAM));
+    strcpy(gl_pmstr, desktop_str_addr(STPM));
 
     /* Initialize icons and apps from memory, or EMUDESK.INF,
      * or builtin defaults

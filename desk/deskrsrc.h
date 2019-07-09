@@ -10,6 +10,6 @@
 #ifndef _DESKRSRC_H
 #define _DESKRSRC_H
 
-char *ini_str(WORD stnum);
+char *desktop_str_addr(WORD stnum);
 
 #endif  /* _DESKRSRC_H */

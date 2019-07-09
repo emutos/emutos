@@ -492,7 +492,7 @@ WORD inf_file_folder(char *ppath, FNODE *pf)
 
     title = (pf->f_attr & FA_SUBDIR) ? STFOINFO : STFIINFO;
     obj = tree + FFTITLE;
-    obj->ob_spec = (LONG) ini_str(title);
+    obj->ob_spec = (LONG) desktop_str_addr(title);
     centre_title(tree);
 
     strcpy(srcpth, ppath);

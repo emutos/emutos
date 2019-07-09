@@ -26,7 +26,10 @@
 #include "deskrsrc.h"
 
 
-char *ini_str(WORD stnum)
+/*
+ * return pointer to the specified EmuDesk string
+ */
+char *desktop_str_addr(WORD stnum)
 {
     char *str;
 

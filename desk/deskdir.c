@@ -872,7 +872,7 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, char *pdst_path, DIRCOUNT *co
         break;
     case OP_DELETE:
         confirm = G.g_cdelepref;
-        obj->ob_spec = (LONG) ini_str(STDELETE);
+        obj->ob_spec = (LONG) desktop_str_addr(STDELETE);
         break;
     case OP_COPY:
     case OP_MOVE:
@@ -905,11 +905,11 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, char *pdst_path, DIRCOUNT *co
         FALLTHROUGH;
     case OP_RENAME:
         confirm = G.g_ccopypref;
-        obj->ob_spec = (LONG) ini_str(STCOPY);
+        obj->ob_spec = (LONG) desktop_str_addr(STCOPY);
         if (op != OP_COPY)      /* i.e. OP_MOVE or OP_RENAME */
         {
             confirm |= G.g_cdelepref;
-            obj->ob_spec = (LONG) ini_str(STMOVE);
+            obj->ob_spec = (LONG) desktop_str_addr(STMOVE);
         }
         break;
     }
