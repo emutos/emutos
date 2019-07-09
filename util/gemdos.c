@@ -257,3 +257,26 @@ WORD dos_shrink(void *maddr, LONG length)
 {
     return Mshrink(maddr,length);
 }
+
+
+/*
+ *  Routine to load in (part of) a file
+ *
+ *  returns: >=0  number of bytes read
+ *           < 0  error code from dos_open()/dos_read()
+ */
+LONG dos_load_file(char *filename, LONG count, char *buf)
+{
+    WORD    fh;
+    LONG    ret;
+
+    ret = dos_open(filename, 0);
+    if (ret >= 0L)
+    {
+        fh = (WORD)ret;
+        ret = dos_read(fh, count, buf);
+        dos_close(fh);
+    }
+
+    return ret;
+}

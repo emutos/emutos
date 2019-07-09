@@ -628,21 +628,15 @@ static WORD app_rdicon(void)
 static void read_inf_file(char *infbuf)
 {
     LONG ret;
-    WORD fh;
-    char inf_file_name[16];
+    char inf_file_name[sizeof(INF_FILE_NAME)];
 
     strcpy(inf_file_name, INF_FILE_NAME);
     inf_file_name[0] += G.g_stdrv;      /* Adjust drive letter  */
-    ret = dos_open(inf_file_name, 0);
-    if (ret >= 0L)
-    {
-        fh = (WORD) ret;
-        ret = dos_read(fh, SIZE_AFILE-CPDATA_LEN, infbuf);
-        if (ret < 0L)
-            ret = 0L;                   /* length read */
-        dos_close(fh);
-        infbuf[ret] = '\0';
-    }
+
+    ret = dos_load_file(inf_file_name, SIZE_AFILE-CPDATA_LEN, infbuf);
+    if (ret < 0L)
+        ret = 0L;
+    infbuf[ret] = '\0';
 }
 
 

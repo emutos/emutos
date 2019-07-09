@@ -38,6 +38,7 @@ LONG dos_delete(char *name);
 void dos_space(WORD drv, LONG *ptotal, LONG *pavail);
 WORD dos_rename(char *p1, char *p2);
 WORD dos_rmdir(char *path);
+LONG dos_load_file(char *filename, LONG count, char *buf);
 
 void *dos_alloc_stram(LONG nbytes);
 void *dos_alloc_anyram(LONG nbytes);

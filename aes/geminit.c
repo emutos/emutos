@@ -325,22 +325,12 @@ static void sh_curdir(char *ppath)
  */
 static LONG readfile(char *filename, LONG count, char *buf)
 {
-    WORD    fh;
-    LONG    ret;
     char    tmpstr[MAX_LEN];
 
     strcpy(tmpstr, filename);
     tmpstr[0] += dos_gdrv();            /* set the drive letter */
 
-    ret = dos_open(tmpstr, ROPEN);
-    if (ret >= 0L)
-    {
-        fh = (WORD)ret;
-        ret = dos_read(fh, count, buf);
-        dos_close(fh);
-    }
-
-    return ret;
+    return dos_load_file(tmpstr, count, buf);
 }
 
 
