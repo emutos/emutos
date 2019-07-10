@@ -661,11 +661,11 @@ void win_sinfo(WNODE *pwin, BOOL check_selected)
      */
     if (select_count)
     {
-        rsrc_gaddr_rom(R_STRING, STINFST2, (void **)&G.a_alert);
+        G.a_alert = desktop_str_addr(STINFST2);
     }
     else
     {
-        rsrc_gaddr_rom(R_STRING, STINFOST, (void **)&G.a_alert);
+        G.a_alert = desktop_str_addr(STINFOST);
         select_count = pn->p_count;     /* so we can use common code below */
         select_size = pn->p_size;
     }

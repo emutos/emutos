@@ -668,7 +668,7 @@ static void build_inf(char *infbuf, WORD xcnt, WORD ycnt)
             drive_y = icon_index / xcnt; /* y position */
             icon_type = (i > 1) ? IG_HARD : IG_FLOPPY;
             drive_letter = 'A' + i;
-            rsrc_gaddr_rom(R_STRING, STDISK, (void **)&text);
+            text = desktop_str_addr(STDISK);
             p += sprintf(p, "#M %02X %02X %02X FF %c %s %c@ @\r\n",
                     drive_x, drive_y, icon_type, drive_letter, text, drive_letter);
             icon_index++;
@@ -684,7 +684,7 @@ static void build_inf(char *infbuf, WORD xcnt, WORD ycnt)
     icon_y = ycnt - 1;      /* Bottom */
     if (drive_y >= icon_y)  /* if the last drive icon overflows over */
         icon_x = xcnt - 1;  /*  the trash row, force trash to right  */
-    rsrc_gaddr_rom(R_STRING, STTRASH, (void **)&text);
+    text = desktop_str_addr(STTRASH);
     p += sprintf(p, "#T %02X %02X %02X FF   %s@ @\r\n",
             icon_x, icon_y, IG_TRASH, text);
 
@@ -693,7 +693,7 @@ static void build_inf(char *infbuf, WORD xcnt, WORD ycnt)
     if (icon_x == 0)        /* trash at left of bottom row */
     {
         icon_x = xcnt - 1;
-        rsrc_gaddr_rom(R_STRING, STPRINT, (void **)&text);
+        text = desktop_str_addr(STPRINT);
         sprintf(p, "#O %02X %02X %02X FF   %s@ @\r\n",
                 icon_x, icon_y, IG_PRINT, text);
     }

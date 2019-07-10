@@ -375,7 +375,7 @@ static void remove_locate_shortcut(WORD curr)
     case 2:             /* Locate */
         build_root_path(path, 'A'+G.g_stdrv);
         fname[0] = '\0';
-        rsrc_gaddr_rom(R_STRING, STLOCATE, (void **)&p);
+        p = desktop_str_addr(STLOCATE);
         rc = fsel_exinput(path, fname, &button, p);
         if ((rc == 0) || (button == 0))
             break;
@@ -700,7 +700,7 @@ static WORD show_buf(const char *s,LONG len)
         {
             if (++linecount >= pagesize)
             {
-                rsrc_gaddr_rom(R_STRING,STMORE,(void **)&msg);
+                msg = desktop_str_addr(STMORE);
                 bios_conws(msg);            /* "-More-" */
                 while(1)
                 {
@@ -779,7 +779,7 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
 
     if (rc <= 0L)   /* not user quit */
     {
-        rsrc_gaddr_rom(R_STRING,(rc==0L)?STEOF:STFRE,(void **)&msg);
+        msg = desktop_str_addr((rc==0L)?STEOF:STFRE);
         blank_line();
         bios_conws(msg);    /* "-End of file-" or "-File read error-" */
         bios_conin();
