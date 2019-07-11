@@ -151,4 +151,8 @@ ANODE *app_afind_by_id(WORD obid);
 ANODE *app_afind_by_name(WORD atype, WORD ignore, char *pspec, char *pname, WORD *pisapp);
 void nomem_alert(void) NORETURN;
 
+#if CONF_WITH_READ_INF
+BOOL app_read_inf(void);
+#endif
+
 #endif  /* _DESKAPP_H */

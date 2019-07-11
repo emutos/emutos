@@ -193,6 +193,11 @@ static int can_change_resolution;
 static int blitter_is_present;
 static char *desk_rs_ptext;     /* see desk_xlate_fix() */
 
+#if CONF_WITH_READ_INF
+static BOOL restart_desktop;    /* TRUE iff we need to restart the desktop */
+#endif
+
+
 static void detect_features(void)
 {
     can_change_resolution = rez_changeable();
@@ -608,6 +613,15 @@ static WORD do_optnmenu(WORD item)
             done = TRUE;
         }
         break;
+#if CONF_WITH_READ_INF
+    case READITEM:
+        if (app_read_inf())
+        {
+            restart_desktop = TRUE;
+            done = TRUE;
+        }
+        break;
+#endif
 #if CONF_WITH_BLITTER
     case BLITITEM:
         G.g_blitter = !G.g_blitter;
@@ -1488,11 +1502,37 @@ WORD rsrc_gaddr_rom(WORD rstype, WORD rsid, void **paddr)
 }
 
 
-WORD deskmain(void)
+#if CONF_WITH_READ_INF
+/*
+ *  Close desktop windows
+ */
+void static close_desktop_windows(void)
+{
+    WNODE *pw;
+
+    while( (pw=win_ontop()) )
+    {
+        wind_close(pw->w_id);           /* close the window */
+        dos_free(pw->w_pnode.p_fbase);  /* free the fnodes */
+        win_free(pw);                   /* free the wnode */
+    }
+}
+#endif
+
+
+/*
+ *  Run desktop
+ */
+BOOL deskmain(void)
 {
     WORD ii, done, flags;
     UWORD ev_which, mx, my, button, kstate, kret, bret;
+    BOOL rc;
     OBJECT *menutree;
+
+#if CONF_WITH_READ_INF
+    restart_desktop = FALSE;
+#endif
 
     /* remember start drive */
     G.g_stdrv = dos_gdrv();
@@ -1645,38 +1685,39 @@ WORD deskmain(void)
         wind_update(END_UPDATE);
     }
 
-    /* save state in memory for when we come back to the desktop */
-    cnx_put();
-    app_save(FALSE);
-
     /*
-     * close all the windows & free all the memory we allocated above
+     * we are about to exit deskmain()
      *
-     * this is initially disabled, since the memory will be automatically
-     * freed when the desktop process terminates after this function exits
+     * if we are exiting because of a successful "Read INF file", we must
+     * close all the windows & free all the memory we allocated above,
+     * since we will re-enter deskmain() immediately.
+     *
+     * in all other cases, the desktop process will terminate and the
+     * allocated memory will be automatically freed.  we must save the
+     * desktop state in memory for when the desktop process restarts.
      */
-#if 0
-    graf_mouse(HGLASS, NULL);
+#if CONF_WITH_READ_INF
+    if (restart_desktop)
     {
-        WNODE *pw;
-
-        while( (pw=win_ontop()) )
-        {
-            wind_close(pw->w_id);           /* close the window */
-            dos_free(pw->w_pnode.p_fbase);  /* free the fnodes */
-            win_free(pw);                   /* free the wnode */
-        }
-
+        graf_mouse(HGLASS, NULL);
+        close_desktop_windows();    /* close our windows */
+        dos_free(G.g_wlist);        /* free the windows */
+        dos_free(G.g_screen);       /* the screen objects */
+        dos_free(G.g_iblist);       /* the iconblks for the desktop icons */
+        dos_free(G.g_alist);        /* the anodes */
+        dos_free(G.g_atext);        /* the anode text buffer */
+        dos_free(desk_rs_ptext);    /* the te_ptext fields for the EmuDesk resource */
+        dos_free(desk_rs_obj);      /* the RAM copies of the Emudesk resource objects */
+        graf_mouse(ARROW, NULL);
+        rc = FALSE;                 /* _deskstart will call us again immediately */
     }
-    dos_free(G.g_wlist);        /* the windows */
-    dos_free(G.g_screen);       /* the screen objects */
-    dos_free(G.g_iblist);       /* the iconblks for the desktop icons */
-    dos_free(G.g_alist);        /* the anodes */
-    dos_free(G.g_atext);        /* the anode text buffer */
-    dos_free(desk_rs_ptext);    /* the te_ptext fields for the EmuDesk resource */
-    dos_free(desk_rs_obj);      /* the RAM copies of the Emudesk resource objects */
-    graf_mouse(ARROW, NULL);
+    else
 #endif
+    {
+        cnx_put();
+        app_save(FALSE);
+        rc = TRUE;                  /* _deskstart will terminate the process */
+    }
 
     /* turn off the menu bar */
     menu_bar(NULL, 0);
@@ -1684,5 +1725,8 @@ WORD deskmain(void)
     /* exit the gem AES */
     appl_exit();
 
-    return TRUE;
+    if (rc == FALSE)                /* restarting */
+        wind_new();                 /* clean up AES windows */
+
+    return rc;
 }

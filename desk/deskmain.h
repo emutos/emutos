@@ -20,7 +20,7 @@ extern GRECT    gl_normwin;
 
 
 WORD hndl_msg(void);
-WORD deskmain(void);
+BOOL deskmain(void);
 void centre_title(OBJECT *tree);
 
 #endif  /* _DESKMAIN_H */

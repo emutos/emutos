@@ -287,6 +287,9 @@
 # ifndef CONF_WITH_PRINTER_ICON
 #  define CONF_WITH_PRINTER_ICON 0
 # endif
+# ifndef CONF_WITH_READ_INF
+#  define CONF_WITH_READ_INF 0
+# endif
 # ifndef CONF_WITH_68030_PMMU
 #  define CONF_WITH_68030_PMMU 0
 # endif
@@ -1188,6 +1191,13 @@
  */
 #ifndef CONF_WITH_PRINTER_ICON
  # define CONF_WITH_PRINTER_ICON 1
+#endif
+
+/*
+ * Set CONF_WITH_READ_INF to 1 to include the "Read .INF file" desktop menu item
+ */
+#ifndef CONF_WITH_READ_INF
+# define CONF_WITH_READ_INF 1
 #endif
 
 /*

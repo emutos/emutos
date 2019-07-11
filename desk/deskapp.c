@@ -1352,3 +1352,63 @@ ANODE *app_afind_by_name(WORD atype, WORD ignore, char *pspec, char *pname, WORD
 
     return NULL;
 }
+
+
+#if CONF_WITH_READ_INF
+/*
+ *  Implements "Read .INF file" function
+ *
+ *  Returns TRUE iff file was successfully read into shell buffer
+ */
+BOOL app_read_inf(void)
+{
+    WORD rc, button;
+    char *p, *buf;
+    char path[MAXPATHLEN], fname[LEN_ZFNAME];
+
+    /* prompt for filename */
+    build_root_path(path, 'A'+G.g_stdrv);
+    strcpy(fname, INF_FILE_NAME+3);     /* excluding "X:\" */
+    p = desktop_str_addr(STRDINF);
+    rc = fsel_exinput(path, fname, &button, p);
+    if ((rc == 0) || (button == 0))
+        return FALSE;
+    strcpy(filename_start(path), fname);
+
+    /* allocate temporary buffer */
+    buf = dos_alloc_anyram(SIZE_AFILE);
+    if (!buf)
+    {
+        malloc_fail_alert();
+        return FALSE;
+    }
+
+    /* load in file & validate contents */
+    p = buf + CPDATA_LEN;
+    rc = dos_load_file(path, SIZE_AFILE-CPDATA_LEN-1, p);
+    if (rc > 0L)
+    {
+        if ((*p == '#')     /* must start with #R or #E */
+         && ((*(p+1) == 'R') || (*(p+1) == 'E')))
+            ;
+        else rc = 0L;
+        p[rc] = '\0';
+    }
+
+    /* issue alert for invalid inf file */
+    if (rc <= 0L)
+    {
+        fun_alert(1, STINVINF);
+        dos_free(buf);
+        return FALSE;
+    }
+
+    /* merge contents into shell buffer & free our buffer */
+    shel_get(buf, CPDATA_LEN);
+    shel_put(buf, CPDATA_LEN+rc+1); /* also save terminating nul */
+
+    dos_free(buf);
+
+    return TRUE;
+}
+#endif

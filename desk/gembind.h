@@ -93,6 +93,7 @@
 #define WIND_FIND 106
 #define WIND_UPDATE 107
 #define WIND_CALC 108
+#define WIND_NEW    109
                                 /* Resource Manager                     */
 #define RSRC_LOAD 110
 #define RSRC_FREE 111

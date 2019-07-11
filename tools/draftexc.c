@@ -54,6 +54,12 @@ char *exclude_items[] =
     "STPRINT",
     "STPRINFO",
 #endif
+#if !CONF_WITH_READ_INF
+    "READITEM",
+    "SEP_OP0",
+    "STRDINF",
+    "STINVINF",
+#endif
 #if !CONF_WITH_SHOW_FILE
     "STMORE",
     "STEOF",

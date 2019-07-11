@@ -136,7 +136,7 @@ WORD scrp_write(const char *pscrap);
 /*
 WORD fsel_input(char *pipath, char *pisel, WORD *pbutton);
 */
-#if CONF_WITH_DESKTOP_SHORTCUTS
+#if CONF_WITH_DESKTOP_SHORTCUTS || CONF_WITH_READ_INF
 WORD fsel_exinput(char *pipath, char *pisel, WORD *pbutton, const char *title);
 #endif
 
@@ -156,6 +156,7 @@ WORD wind_find(WORD mx, WORD my);
 WORD wind_update(WORD beg_update);
 WORD wind_calc(WORD wctype, UWORD kind, WORD x, WORD y, WORD w, WORD h,
                WORD *px, WORD *py, WORD *pw, WORD *ph);
+WORD wind_new(void);
 
 
 /*

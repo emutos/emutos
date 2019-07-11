@@ -716,7 +716,7 @@ WORD fsel_input(char *pipath, char *pisel, WORD *pbutton)
 */
 
 
-#if CONF_WITH_DESKTOP_SHORTCUTS
+#if CONF_WITH_DESKTOP_SHORTCUTS || CONF_WITH_READ_INF
 WORD fsel_exinput(char *pipath, char *pisel, WORD *pbutton, const char *title)
 {
     FS_IPATH = (LONG)pipath;
@@ -842,12 +842,14 @@ WORD wind_calc(WORD wctype, UWORD kind, WORD x, WORD y, WORD w, WORD h,
     return (WORD)RET_CODE;
 }
 
-/* unused
+
+#if CONF_WITH_READ_INF
 WORD wind_new(void)
 {
     return gem_if(AES_CTRL_CODE(WIND_NEW, 0, 1, 0));
 }
-*/
+#endif
+
 
 /*
  *  Resource Manager
