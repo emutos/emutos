@@ -633,7 +633,7 @@ static void read_inf_file(char *infbuf)
     strcpy(inf_file_name, INF_FILE_NAME);
     inf_file_name[0] += G.g_stdrv;      /* Adjust drive letter  */
 
-    ret = dos_load_file(inf_file_name, SIZE_AFILE-CPDATA_LEN, infbuf);
+    ret = dos_load_file(inf_file_name, SIZE_AFILE-CPDATA_LEN-1, infbuf);
     if (ret < 0L)
         ret = 0L;
     infbuf[ret] = '\0';
