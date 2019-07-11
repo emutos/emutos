@@ -79,9 +79,6 @@ typedef struct
     char sh_cdir[LEN_ZPATH];    /* the current directory for the default startup app */
 } SHELL;
 
-
-static char shelbuf[SIZE_SHELBUF];      /* AES shell buffer */
-
 static SHELL sh;
 
 static char sh_apdir[LEN_ZPATH];        /* saves initial value of current directory */
@@ -202,7 +199,7 @@ WORD sh_write(WORD doex, WORD isgem, WORD isover, const char *pcmd, const char *
  */
 void sh_get(void *pbuffer, WORD len)
 {
-    memcpy(pbuffer,shelbuf,len);
+    memcpy(pbuffer, D.g_shelbuf, len);
 }
 
 
@@ -212,7 +209,7 @@ void sh_get(void *pbuffer, WORD len)
  */
 void sh_put(const void *pdata, WORD len)
 {
-    memcpy(shelbuf,pdata,len);
+    memcpy(D.g_shelbuf, pdata, len);
 }
 
 

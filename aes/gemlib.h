@@ -191,6 +191,8 @@ typedef struct
     FPD   g_fpdx[NFORKS];       /* the fork ring, used by gemdisp.c */
     ORECT g_olist[NUM_ORECT];
 
+    char  g_shelbuf[SIZE_SHELBUF];  /* AES shell buffer */
+
     char  g_rawstr[MAX_LEN];
     char  g_tmpstr[MAX_LEN];
     char  g_valstr[MAX_LEN];
