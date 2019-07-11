@@ -1,29 +1,32 @@
 A brief user's guide to the newer features of EmuDesk, the EmuTOS desktop
 =========================================================================
 
-The current version of EmuDesk is based on the TOS 1 desktop, but with
-many improvements inspired by the TOS 2/3/4 desktop, including:
+The current version of EmuDesk implements all of the features of the
+Atari TOS 1 desktop, plus most of the features of the TOS 2/3/4 desktop,
+including:
 
-1) new menu items
+1) menu items
     . set file mask
     . install icon
     . install application
     . install devices
     . remove desktop icon
     . desktop configuration
+    . read .inf file
     . blitter
 Due to space limitations, the implementation of the above is somewhat
 restricted in the 192K ROMs (see the detailed descriptions below).  If
 you make any changes to the desktop using the above features, you must
 save the desktop to preserve the changes.
 
-2) other new features
+2) other features
     . user-assignable icons
     . user-assignable mouse cursors
     . open disk window via keyboard shortcut
     . desktop shortcuts
-Due to space limitations, desktop shortcuts are not available in the
-192K ROMs.  Desktop shortcuts are preserved when you save the desktop.
+    . desktop printer support
+Due to space limitations, desktop shortcuts & desktop printer support
+are not available in the 192K ROMs.
 
 
 Set file mask
@@ -186,6 +189,20 @@ application" above, under 'Default dir' and 'Parameter', for further
 information about these options.
 
 
+Read .INF file
+==============
+192K ROMs:
+This is not available.
+
+Other ROMs:
+This item allows you to read in an EmuDesk .INF file 'on the fly'.
+After the file has been read in, the desktop is restarted immediately,
+a very fast process.  After the restart, the desktop layout and
+preferences will be set up according to the contents of the new .INF
+file, except that the video resolution specified is ignored (this is
+the same behaviour as Atari TOS).
+
+
 Blitter
 =======
 This item allows you to enable or disable the use of the blitter by the
@@ -302,3 +319,16 @@ the shortcut, locating the desired file or folder, or cancelling the
 action.  If you choose locate, a file selector will be displayed to
 allow you to choose the desired file or folder, and the shortcut will be
 updated with the new information.
+
+
+Desktop printer support
+=======================
+You may now install a printer icon on the desktop (if you do not already
+have an EMUDESK.INF file, this icon will be installed automatically).
+Dropping one or more files on the icon will cause the contents to be
+output via the parallel or serial port; a form feed will be sent at the
+end of each file.
+
+By default, the output will go to the parallel port; you may select the
+serial port instead by using any CPX, accessory, or program that allows
+you to do the same thing under Atari TOS.
