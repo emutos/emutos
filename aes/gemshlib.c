@@ -60,8 +60,6 @@
  */
 #define CLEAR_SCREEN    ((WHITE<<12) | (WHITE<< 8) | (IP_HOLLOW<<4) | WHITE)
 
-#define SIZE_AFILE 2048                 /* size of AES shell buffer: must   */
-                                        /*  agree with #define in deskapp.h */
 
 /*
  * values used in sh_nextapp below
@@ -82,7 +80,7 @@ typedef struct
 } SHELL;
 
 
-static char shelbuf[SIZE_AFILE];        /* AES shell buffer */
+static char shelbuf[SIZE_SHELBUF];      /* AES shell buffer */
 
 static SHELL sh;
 
@@ -199,7 +197,7 @@ WORD sh_write(WORD doex, WORD isgem, WORD isover, const char *pcmd, const char *
 
 
 /*
- *  Used by the DESKTOP to recall SIZE_AFILE bytes worth of previously
+ *  Used by the DESKTOP to recall up to SIZE_SHELBUF bytes worth of previously
  *  'put' desktop-context information.
  */
 void sh_get(void *pbuffer, WORD len)
@@ -209,7 +207,7 @@ void sh_get(void *pbuffer, WORD len)
 
 
 /*
- *  Used by the DESKTOP to save away SIZE_AFILE bytes worth of desktop-
+ *  Used by the DESKTOP to save up to SIZE_SHELBUF bytes worth of desktop-
  *  context information.
  */
 void sh_put(const void *pdata, WORD len)

@@ -1479,6 +1479,11 @@
 #define KB_REPEAT   2           /* ticks between repeats, i.e. 40 msec */
 
 /*
+ * AES configuration
+ */
+#define SIZE_SHELBUF    2048L   /* size of shell buffer */
+
+/*
  * VDI configuration
  */
 #ifndef NUM_VDI_HANDLES

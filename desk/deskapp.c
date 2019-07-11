@@ -633,7 +633,7 @@ static void read_inf_file(char *infbuf)
     strcpy(inf_file_name, INF_FILE_NAME);
     inf_file_name[0] += G.g_stdrv;      /* Adjust drive letter  */
 
-    ret = dos_load_file(inf_file_name, SIZE_AFILE-CPDATA_LEN-1, infbuf);
+    ret = dos_load_file(inf_file_name, SIZE_SHELBUF-CPDATA_LEN-1, infbuf);
     if (ret < 0L)
         ret = 0L;
     infbuf[ret] = '\0';
@@ -732,10 +732,10 @@ void app_start(void)
     }
 
     /* allocate a temporary buffer for EMUDESK.INF */
-    buf = dos_alloc_anyram(SIZE_AFILE);
+    buf = dos_alloc_anyram(SIZE_SHELBUF);
     if (!buf)
     {
-        KDEBUG(("insufficient memory for temporary EMUDESK.INF buffer (need %d bytes)\n",SIZE_AFILE));
+        KDEBUG(("insufficient memory for temporary EMUDESK.INF buffer (need %d bytes)\n",SIZE_SHELBUF));
         nomem_alert();          /* infinite loop */
     }
 
@@ -761,7 +761,7 @@ void app_start(void)
     G.g_patcol[2].window = INF_Q6_DEFAULT;
 #endif
 
-    shel_get(buf, SIZE_AFILE);
+    shel_get(buf, SIZE_SHELBUF);
     inf_data = buf + CPDATA_LEN;
     if (!(bootflags & BOOTFLAG_SKIP_AUTO_ACC)
      && (inf_data[0] != '#'))               /* invalid signature    */
@@ -1030,14 +1030,14 @@ void app_save(WORD todisk)
     WSAVE *pws;
 
     /* allocate a temporary buffer */
-    outbuf = dos_alloc_anyram(SIZE_AFILE);
+    outbuf = dos_alloc_anyram(SIZE_SHELBUF);
     if (!outbuf)
     {
-        KDEBUG(("insufficient memory for temporary EMUDESK.INF buffer (need %d bytes)\n",SIZE_AFILE));
+        KDEBUG(("insufficient memory for temporary EMUDESK.INF buffer (need %d bytes)\n",SIZE_SHELBUF));
         nomem_alert();          /* infinite loop */
     }
 
-    shel_get(outbuf, SIZE_AFILE);
+    shel_get(outbuf, SIZE_SHELBUF);
     inf_data = outbuf + CPDATA_LEN;
     pcurr = inf_data;
 
@@ -1376,7 +1376,7 @@ BOOL app_read_inf(void)
     strcpy(filename_start(path), fname);
 
     /* allocate temporary buffer */
-    buf = dos_alloc_anyram(SIZE_AFILE);
+    buf = dos_alloc_anyram(SIZE_SHELBUF);
     if (!buf)
     {
         malloc_fail_alert();
@@ -1385,7 +1385,7 @@ BOOL app_read_inf(void)
 
     /* load in file & validate contents */
     p = buf + CPDATA_LEN;
-    rc = dos_load_file(path, SIZE_AFILE-CPDATA_LEN-1, p);
+    rc = dos_load_file(path, SIZE_SHELBUF-CPDATA_LEN-1, p);
     if (rc > 0L)
     {
         if ((*p == '#')     /* must start with #R or #E */
