@@ -91,11 +91,13 @@ static void ct_msgup(WORD message, AESPD *owner, WORD wh, WORD m1, WORD m2, WORD
         return;
         break;
     case WM_CLOSED:
+#if CONF_WITH_PCGEM
         if (D.w_win[wh].w_kind & HOTCLOSE)
         {
             button = 0;     /* we fake button up, otherwise a slow click will */
             return;         /*  cause us to stay in ctlmgr(), eating keys     */
         }
+#endif
         break;
     }
 
@@ -150,12 +152,14 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
         switch(cpt)
         {
         case W_CLOSER:
+#if CONF_WITH_PCGEM
             if ( kind & HOTCLOSE )
             {
                 message = WM_CLOSED;
                 break;
             }
             FALLTHROUGH;
+#endif
         case W_FULLER:
             if ( gr_watchbox(gl_awind, cpt, SELECTED, NORMAL) )
             {
