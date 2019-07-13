@@ -84,14 +84,23 @@ static void ct_msgup(WORD message, AESPD *owner, WORD wh, WORD m1, WORD m2, WORD
     ap_sendmsg(appl_msg, message, owner, wh, m1, m2, m3, m4);
 
     /*
-     * wait for button to come up if not an arrowed message
+     * if arrowed message, or close on a hotclose window, return immediately
      */
-    if ( message != WM_ARROWED &&
-       ( message != WM_CLOSED && !(D.w_win[wh].w_kind & HOTCLOSE) ) )
-    {
-        while( (button & 0x0001) != 0x0 )
-            dsptch();
+    switch(message) {
+    case WM_ARROWED:
+        return;
+        break;
+    case WM_CLOSED:
+        if (D.w_win[wh].w_kind & HOTCLOSE)
+            return;
+        break;
     }
+
+    /* 
+     * otherwise, wait for the button to come up
+     */
+    while(button & 0x0001)
+        dsptch();
 }
 
 
