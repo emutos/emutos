@@ -45,8 +45,6 @@
 
 #include "string.h"
 
-#undef AI_SIZE
-#define AI_SIZE     4           /* temporary, for binary compatibility (BoxKite) */
 
 #if CONF_SERIAL_CONSOLE
 #define ENABLE_KDEBUG
