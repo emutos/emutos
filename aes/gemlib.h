@@ -65,9 +65,6 @@ typedef struct window
 #define WS_WORK 3
 #define WS_TRUE 4
 
-/* undocumented bit flag for window gadgets - probably invalid */
-#define HOTCLOSE 0x1000         /* added 11/12/85       LKW             */
-
 #define W_BOX       0
 #define W_TITLE     1
 #define W_CLOSER    2

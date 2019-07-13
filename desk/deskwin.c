@@ -44,8 +44,6 @@
 
 #define SPACE 0x20
 
-#define HOTCLOSE 0x1000
-
 #define WINDOW_STYLE (NAME | CLOSER | MOVER | FULLER | INFO | SIZER | \
                       UPARROW | DNARROW | VSLIDE | LFARROW | RTARROW | HSLIDE)
 

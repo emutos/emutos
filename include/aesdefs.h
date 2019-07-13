@@ -490,6 +490,7 @@
 #define LFARROW     0x0200
 #define RTARROW     0x0400
 #define HSLIDE      0x0800
+#define HOTCLOSE    0x1000      /* PC-GEM feature */
 
 /* window attributes: wind_get(), wind_set() */
 #define WF_KIND     1
