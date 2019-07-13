@@ -19,6 +19,7 @@
 #include "emutos.h"
 #include "struct.h"
 #include "obdefs.h"
+#include "aesdefs.h"
 #include "aesext.h"
 #include "gem_rsc.h"
 
@@ -29,32 +30,6 @@
 
 #include "string.h"
 #include "nls.h"
-
-/*
- * defines & typedefs
- */
-
-/* type definitions for use by an application when calling      */
-/*  rsrc_gaddr and rsrc_saddr                                   */
-
-#define R_TREE      0
-#define R_OBJECT    1
-#define R_TEDINFO   2
-#define R_ICONBLK   3
-#define R_BITBLK    4
-#define R_STRING    5               /* gets pointer to free strings */
-#define R_IMAGEDATA 6               /* gets pointer to free images  */
-#define R_OBSPEC    7
-#define R_TEPTEXT   8               /* sub ptrs in TEDINFO  */
-#define R_TEPTMPLT  9
-#define R_TEPVALID  10
-#define R_IBPMASK   11              /* sub ptrs in ICONBLK  */
-#define R_IBPDATA   12
-#define R_IBPTEXT   13
-#define R_BIPDATA   14              /* sub ptrs in BITBLK   */
-#define R_FRSTR     15              /* gets addr of ptr to free strings     */
-#define R_FRIMG     16              /* gets addr of ptr to free images      */
-
 
 
 /*******  LOCALS  **********************/
