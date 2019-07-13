@@ -92,7 +92,10 @@ static void ct_msgup(WORD message, AESPD *owner, WORD wh, WORD m1, WORD m2, WORD
         break;
     case WM_CLOSED:
         if (D.w_win[wh].w_kind & HOTCLOSE)
-            return;
+        {
+            button = 0;     /* we fake button up, otherwise a slow click will */
+            return;         /*  cause us to stay in ctlmgr(), eating keys     */
+        }
         break;
     }
 
