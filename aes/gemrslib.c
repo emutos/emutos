@@ -19,7 +19,6 @@
 #include "emutos.h"
 #include "struct.h"
 #include "obdefs.h"
-#include "gemlib.h"
 #include "aesext.h"
 #include "gem_rsc.h"
 
