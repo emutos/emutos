@@ -17,7 +17,6 @@
 
 #include "emutos.h"
 #include "aesbind.h"
-#include "gembind.h"
 #include "obdefs.h"
 #include "optimize.h"
 

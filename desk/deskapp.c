@@ -23,6 +23,7 @@
 #include "string.h"
 #include "obdefs.h"
 #include "rsdefs.h"
+#include "aesdefs.h"
 #include "intmath.h"
 #include "gsxdefs.h"
 #include "gemdos.h"

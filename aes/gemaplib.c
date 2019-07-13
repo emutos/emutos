@@ -18,6 +18,7 @@
 
 #include "emutos.h"
 #include "struct.h"
+#include "aesdefs.h"
 #include "aesvars.h"
 #include "obdefs.h"
 #include "gemlib.h"

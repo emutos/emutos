@@ -19,6 +19,7 @@
 
 #include "emutos.h"
 #include "struct.h"
+#include "aesdefs.h"
 #include "aesvars.h"
 #include "obdefs.h"
 #include "gemlib.h"
@@ -49,27 +50,6 @@
 #define YFULL   gl_hbox
 #define WFULL   gl_width
 #define HFULL   (gl_height - gl_hbox)
-
-#define WC_BORDER   0           /* for wm_calc() */
-#define WC_WORK     1
-
-#define WF_KIND     1           /* for wm_get(), wm_set() */
-#define WF_NAME     2
-#define WF_INFO     3
-#define WF_WXYWH    4
-#define WF_CXYWH    5
-#define WF_PXYWH    6
-#define WF_FXYWH    7
-#define WF_HSLIDE   8
-#define WF_VSLIDE   9
-#define WF_TOP      10
-#define WF_FIRSTXYWH 11
-#define WF_NEXTXYWH 12
-
-#define WF_NEWDESK  14
-#define WF_HSLSIZ   15
-#define WF_VSLSIZ   16
-#define WF_SCREEN   17
 
 #define DROP_SHADOW_SIZE    2   /* size of drop shadow on windows */
 

@@ -12,6 +12,7 @@
 #include "struct.h"
 #include "obdefs.h"
 #include "tosvars.h"
+#include "aesdefs.h"
 #include "gemlib.h"
 #include "gem_rsc.h"
 

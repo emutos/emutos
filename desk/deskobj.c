@@ -31,7 +31,6 @@
 #include "deskwin.h"
 #include "aesbind.h"
 #include "deskobj.h"
-#include "gembind.h"
 
 
 static const OBJECT gl_sampob[2] =

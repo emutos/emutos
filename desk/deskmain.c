@@ -31,7 +31,6 @@
 
 #include "deskbind.h"
 #include "deskglob.h"
-#include "gembind.h"
 #include "deskapp.h"
 #include "deskfpd.h"
 #include "deskwin.h"

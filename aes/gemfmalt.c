@@ -22,6 +22,7 @@
 #include "struct.h"
 #include "obdefs.h"
 #include "intmath.h"
+#include "aesdefs.h"
 #include "gemlib.h"
 #include "gem_rsc.h"
 

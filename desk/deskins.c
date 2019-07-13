@@ -34,7 +34,6 @@
 #include "deskapp.h"
 #include "deskfpd.h"
 #include "deskwin.h"
-#include "gembind.h"
 #include "aesbind.h"
 #include "deskinf.h"
 #include "deskfun.h"

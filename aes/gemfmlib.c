@@ -19,6 +19,7 @@
 #include "emutos.h"
 #include "string.h"
 #include "struct.h"
+#include "aesdefs.h"
 #include "aesvars.h"
 #include "obdefs.h"
 #include "gem_rsc.h"

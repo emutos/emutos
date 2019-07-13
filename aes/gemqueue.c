@@ -20,6 +20,7 @@
 #include "string.h"
 #include "struct.h"
 #include "obdefs.h"
+#include "aesdefs.h"
 #include "gemlib.h"
 
 #include "rectfunc.h"

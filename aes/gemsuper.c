@@ -17,11 +17,11 @@
 
 #include "emutos.h"
 #include "struct.h"
+#include "aesdefs.h"
 #include "aesvars.h"
 #include "obdefs.h"
 #include "intmath.h"
 #include "gemlib.h"
-#include "crysbind.h"
 #include "gem_rsc.h"
 
 #include "gemsuper.h"
@@ -44,6 +44,9 @@
 #include "gemasm.h"
 
 #include "string.h"
+
+#undef AI_SIZE
+#define AI_SIZE     4           /* temporary, for binary compatibility (BoxKite) */
 
 #if CONF_SERIAL_CONSOLE
 #define ENABLE_KDEBUG
@@ -332,7 +335,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         ret = fs_input((char *)FS_IPATH, (char *)FS_ISEL, &FS_BUTTON, NULL);
         break;
     case FSEL_EXINPUT:
-        ret = fs_input((char *)FS_IPATH, (char *)FS_ISEL, &FS_BUTTON, (char *)FS_ILABEL);
+        ret = fs_input((char *)FS_IPATH, (char *)FS_ISEL, &FS_BUTTON, (char *)FS_TITLE);
         break;
 
     /* Window Manager */

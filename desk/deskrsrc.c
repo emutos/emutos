@@ -22,7 +22,7 @@
 #include "emutos.h"
 
 #include "aesbind.h"
-#include "gembind.h"
+#include "aesdefs.h"
 #include "deskrsrc.h"
 
 

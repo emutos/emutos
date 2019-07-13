@@ -22,6 +22,7 @@
 
 #include "emutos.h"
 #include "obdefs.h"
+#include "aesdefs.h"
 #include "gembind.h"
 #include "aesbind.h"
 #include <stdarg.h>
