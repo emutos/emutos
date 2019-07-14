@@ -454,7 +454,7 @@ static void bootstrap(void)
         goto err;
 
     /* relocate the loaded executable */
-    r = Pexec(PE_RELOCATE, (char *)length, (char *)pd, "");
+    r = Pexec(PE_RELOCATE, (char *)length, (char *)pd, NULL);
     if (r != (LONG)pd)
         goto err;
 
@@ -462,7 +462,7 @@ static void bootstrap(void)
     bootdev = nf_getbootdrive();
 
     /* execute the relocated process */
-    Pexec(PE_GO, "", (char *)pd, "");
+    Pexec(PE_GO, "", (char *)pd, NULL);
 
 err:
     Mfree(pd->p_env); /* Mfree() the environment */
@@ -668,7 +668,7 @@ void biosmain(void)
         PD *pd = (PD *) Pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, "", NULL);
         pd->p_tbase = (UBYTE *) coma_start;
         pd->p_tlen = pd->p_dlen = pd->p_blen = 0;
-        Pexec(PE_GOTHENFREE, "", (char *)pd, "");
+        Pexec(PE_GOTHENFREE, "", (char *)pd, NULL);
     }
 #endif
 
@@ -685,7 +685,7 @@ void biosmain(void)
         pd = (PD *) Pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, "", NULL);
         pd->p_tbase = (UBYTE *) exec_os;
         pd->p_tlen = pd->p_dlen = pd->p_blen = 0;
-        Pexec(PE_GO, "", (char*)pd, "");
+        Pexec(PE_GO, "", (char*)pd, NULL);
     }
 
 #if CONF_WITH_SHUTDOWN
