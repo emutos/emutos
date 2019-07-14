@@ -339,6 +339,28 @@ void osinit_after_xmaddalt(void)
     KDEBUG(("BDOS: cinit - osinit successful ...\n"));
 }
 
+#define ENV_SIZE    11          /* sufficient for standard PATH=^X:\^^ (^=nul byte) */
+#define DEF_PATH    "A:\\"      /* default value for path */
+
+static char default_env[ENV_SIZE];  /* default environment area */
+
+/* BIOS will call this after bootdev has been initialized */
+
+void osinit_environment(void)
+{
+    char *p;
+
+    /* Build default environment, just a PATH= string */
+    strcpy(default_env,PATH_ENV);
+    p = default_env + sizeof(PATH_ENV); /* point to first byte of path string */
+    strcpy(p,DEF_PATH);
+    *p += bootdev;                      /* fix up drive letter */
+    p += sizeof(DEF_PATH);
+    *p = '\0';                          /* terminate with double nul */
+
+    initial_basepage.p_env = default_env;
+}
+
 
 /*
  *  freetree -  free the directory node tree

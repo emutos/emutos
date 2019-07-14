@@ -78,9 +78,6 @@
 #define DBGBIOS 0               /* If you want to enable debug wrappers */
 #define ENABLE_RESET_RESIDENT 0 /* enable to run "reset-resident" code (see below) */
 
-#define ENV_SIZE    20          /* sufficient for standard PATH=^X:\^^ (^=nul byte) */
-#define DEF_PATH    "C:\\"      /* default value for path */
-
 /*==== External declarations ==============================================*/
 
 #if STONX_NATIVE_PRINT
@@ -96,8 +93,6 @@ extern long setup_68040_pmmu(void); /* defined in 68040_pmmu.S */
 #endif
 
 /*==== Declarations =======================================================*/
-
-static char default_env[ENV_SIZE];  /* default environment area */
 
 /* used by kprintf() */
 WORD boot_status;               /* see kprint.h for bit flags */
@@ -449,7 +444,7 @@ static void bootstrap(void)
     nf_getbootstrap_args(args, sizeof(args));
 
     /* allocate space */
-    pd = (PD *) Pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, args, default_env);
+    pd = (PD *) Pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, args, NULL);
 
     /* get the TOS executable from the emulator */
     length = nf_bootstrap(pd->p_lowtpa + sizeof(PD), pd->p_hitpa - pd->p_lowtpa);
@@ -531,7 +526,7 @@ static void run_auto_program(const char* filename)
     strcat(path, filename);
 
     KDEBUG(("Loading %s ...\n", path));
-    Pexec(PE_LOADGO, path, "", default_env);
+    Pexec(PE_LOADGO, path, "", NULL);
     KDEBUG(("[OK]\n"));
 }
 
@@ -618,7 +613,6 @@ BOOL can_shutdown(void)
 void biosmain(void)
 {
     BOOL show_initinfo;         /* TRUE if welcome screen must be displayed */
-    char *p;
     ULONG shiftbits;
 
     bios_init();                /* Initialize the BIOS */
@@ -663,24 +657,15 @@ void biosmain(void)
     blkdev_boot();
 
     Dsetdrv(bootdev);           /* Set boot drive */
+    osinit_environment();       /* Build default environment variables */
 
 #if ENABLE_RESET_RESIDENT
     run_reset_resident();       /* see comments above */
 #endif
 
-    /*
-     * build default environment, just a PATH= string
-     */
-    strcpy(default_env,PATH_ENV);
-    p = default_env + sizeof(PATH_ENV); /* point to first byte of path string */
-    strcpy(p,DEF_PATH);
-    *p = 'A' + bootdev;                 /* fix up drive letter */
-    p += sizeof(DEF_PATH);
-    *p = '\0';                          /* terminate with double nul */
-
 #if WITH_CLI
     if (bootflags & BOOTFLAG_EARLY_CLI) {   /* run an early console */
-        PD *pd = (PD *) Pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, "", default_env);
+        PD *pd = (PD *) Pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, "", NULL);
         pd->p_tbase = (UBYTE *) coma_start;
         pd->p_tlen = pd->p_dlen = pd->p_blen = 0;
         Pexec(PE_GOTHENFREE, "", (char *)pd, "");
@@ -693,11 +678,11 @@ void biosmain(void)
 
     if(cmdload != 0) {
         /* Pexec a program called COMMAND.PRG */
-        Pexec(PE_LOADGO, "COMMAND.PRG", "", default_env);
+        Pexec(PE_LOADGO, "COMMAND.PRG", "", NULL);
     } else if (exec_os) {
         /* start the default (ROM) shell */
         PD *pd;
-        pd = (PD *) Pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, "", default_env);
+        pd = (PD *) Pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, "", NULL);
         pd->p_tbase = (UBYTE *) exec_os;
         pd->p_tlen = pd->p_dlen = pd->p_blen = 0;
         Pexec(PE_GO, "", (char*)pd, "");
