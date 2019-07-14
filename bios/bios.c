@@ -97,9 +97,6 @@ extern long setup_68040_pmmu(void); /* defined in 68040_pmmu.S */
 
 /*==== Declarations =======================================================*/
 
-/* Drive specific declarations */
-static WORD defdrv;             /* default drive number (0 is a:, 2 is c:) */
-
 static char default_env[ENV_SIZE];  /* default environment area */
 
 /* used by kprintf() */
@@ -665,8 +662,7 @@ void biosmain(void)
     /* boot eventually from a block device (floppy or harddisk) */
     blkdev_boot();
 
-    defdrv = bootdev;
-    Dsetdrv(defdrv);            /* Set boot drive */
+    Dsetdrv(bootdev);           /* Set boot drive */
 
 #if ENABLE_RESET_RESIDENT
     run_reset_resident();       /* see comments above */
@@ -678,7 +674,7 @@ void biosmain(void)
     strcpy(default_env,PATH_ENV);
     p = default_env + sizeof(PATH_ENV); /* point to first byte of path string */
     strcpy(p,DEF_PATH);
-    *p = 'A' + defdrv;                  /* fix up drive letter */
+    *p = 'A' + bootdev;                 /* fix up drive letter */
     p += sizeof(DEF_PATH);
     *p = '\0';                          /* terminate with double nul */
 
