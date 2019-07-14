@@ -778,6 +778,8 @@ PRIVATE int write_c_file(char *name,char *ext);
 PRIVATE int write_data(FILE *fp,int words,USHORT *data);
 PRIVATE int write_freestr(FILE *fp);
 PRIVATE int write_general_prologue(FILE *fp,char *name,char *ext);
+PRIVATE int write_include_guard_top(FILE *fp,const char *define);
+PRIVATE int write_include_guard_bottom(FILE *fp,const char *define);
 PRIVATE int write_h_file(char *name,char *ext);
 PRIVATE int write_h_define(FILE *fp);
 PRIVATE int write_h_extern(FILE *fp);
@@ -789,6 +791,7 @@ PRIVATE int write_obspec(FILE *fp,OBJECT *obj);
 PRIVATE int write_shared(FILE *fp);
 PRIVATE int write_tedinfo(FILE *fp);
 PRIVATE int write_tree(FILE *fp);
+PRIVATE char *my_strupr(char *string);
 
 
 
@@ -1371,6 +1374,7 @@ PRIVATE int write_h_file(char *name,char *ext)
 {
 FILE *fp;
 char *basename;
+char guard_define[MAX_STRLEN];
 
     fp = openfile(name,ext,"w");
     if (!fp)
@@ -1380,11 +1384,17 @@ char *basename;
     if (!basename)
         basename = name;
     else basename++;
+    sprintf(guard_define, "%s_H", basename);
+    my_strupr(guard_define);
     if (write_general_prologue(fp,basename,"h"))
+        return -1;
+    if (write_include_guard_top(fp,guard_define))
         return -1;
     if (write_h_define(fp))
         return -1;
     if (write_h_extern(fp))
+        return -1;
+    if (write_include_guard_bottom(fp,guard_define))
         return -1;
 
     fclose(fp);
@@ -1418,6 +1428,29 @@ time_t now;
     fprintf(fp," * This software is licenced under the GNU General Public License.\n");
     fprintf(fp," * Please see LICENSE.TXT for further information.\n");
     fprintf(fp," */\n");
+
+    return ferror(fp) ? -1 : 0;
+}
+
+/*
+ *  this creates the start of the include guard at the top of the include file
+ */
+PRIVATE int write_include_guard_top(FILE *fp,const char *define)
+{
+    fprintf(fp,"\n");
+    fprintf(fp,"#ifndef %s\n", define);
+    fprintf(fp,"#define %s\n", define);
+
+    return ferror(fp) ? -1 : 0;
+}
+
+/*
+ *  this creates the end of the include guard at the bottom of the include file
+ */
+PRIVATE int write_include_guard_bottom(FILE *fp,const char *define)
+{
+    fprintf(fp,"\n");
+    fprintf(fp,"#endif /* %s */\n", define);
 
     return ferror(fp) ? -1 : 0;
 }
@@ -3075,4 +3108,17 @@ PRIVATE void usage(char *s)
     fprintf(stderr,"usage: %s [-d] [-p<prefix>] [-v] <rsc_file> <c_file>\n",PROGRAM_NAME);
 
     exit(2);
+}
+
+/*
+ *  convert a string to uppercase
+ */
+PRIVATE char *my_strupr(char *string)
+{
+char *p = string;
+
+    while (*p)
+        *p++ = toupper(*p);
+
+    return string;
 }
