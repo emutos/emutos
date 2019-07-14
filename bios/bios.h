@@ -64,7 +64,6 @@ extern UBYTE _etext[];    /* end of TEXT segment */
 extern UBYTE _data[];     /* start of DATA segment */
 extern UBYTE _edata[];    /* end of DATA segment */
 extern UBYTE _bss[];      /* start of BSS segment */
-extern UBYTE _endvdibss[];  /* end of VDI BSS */
 extern UBYTE _ebss[];     /* end of BSS segment */
 extern UBYTE _end_os_stram[]; /* end of the RAM used by the OS in ST-RAM */
 extern UBYTE stkbot[]; /* BIOS internal stack */
