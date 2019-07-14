@@ -157,6 +157,7 @@ WARNFLAGS += -Werror=missing-prototypes
 WARNFLAGS += -Werror=strict-prototypes
 WARNFLAGS += -Werror=implicit-function-declaration
 WARNFLAGS += -Werror=format
+WARNFLAGS += -Werror=redundant-decls
 #WARNFLAGS += -Wshadow
 #WARNFLAGS += -Werror
 
