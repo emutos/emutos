@@ -79,7 +79,19 @@
 # error Insufficient builtin icons in icons.c
 #endif
 
-
+/*
+ * ANODE: store application information for desktop
+ *
+ * usage of a_pappl/a_pdata/a_pargs below:
+ *  (1) for a file or folder on the desktop:
+ *      a_pappl: name (used as icon label), up to 12 chars
+ *      a_pdata: fully-qualified name
+ *      a_pargs: unused
+ *  (2) for an installed application:
+ *      a_pappl: fully_qualified filename
+ *      a_pdata: document type, as TOS wildcard, up to 5 chars (e.g. *.DAT)
+ *      a_pargs: fixed argument(s) for application, up to 11 chars
+ */
 typedef struct _applstr ANODE;
 struct _applstr
 {
@@ -89,9 +101,9 @@ struct _applstr
     char a_letter;              /* letter for icon */
     WORD a_type;                /* icon type (see above) */
     WORD a_obid;                /* object index */
-    char *a_pappl;              /* filename.ext of appplication */
-    char *a_pdata;              /* mask for data files */
-    char *a_pargs;              /* arguments */
+    char *a_pappl;              /* see comments above */
+    char *a_pdata;              /* see comments above */
+    char *a_pargs;              /* see comments above */
     WORD a_aicon;               /* application icon # */
     WORD a_dicon;               /* data icon # */
     WORD a_xspot;               /* desired spot on desk */
