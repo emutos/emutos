@@ -21,6 +21,10 @@
 #include "mfp.h"
 #include "bios.h"
 #include "asm.h"
+#include "serport.h"
+#include "ikbd.h"
+#include "midi.h"
+#include "parport.h"
 
 #define NUM_CHAR_VECS   8
 

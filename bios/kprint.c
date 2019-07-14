@@ -30,6 +30,7 @@
 #include "vectors.h"
 #include "super.h"      /* for Super() and SuperToUser() */
 #include "../bdos/bdosstub.h"
+#include "ikbd.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif
