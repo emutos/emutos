@@ -45,8 +45,10 @@ extern MCS ext_mouse_cursor_save;   /* use for v_planes > 4 */
 
 extern UWORD v_planes;          /* count of color planes */
 extern UWORD v_lin_wr;          /* line wrap : bytes per line */
+extern UWORD v_cel_ht;          /* cell height (width is 8) */
 extern UWORD v_cel_mx;          /* number of columns - 1 */
 extern UWORD v_cel_my;          /* number of rows - 1 */
+extern UWORD v_cel_wr;          /* length (in bytes) of a line of characters */
 extern UWORD v_cur_cx;          /* current cursor column */
 extern UWORD v_cur_cy;          /* current cursor row */
 extern UWORD V_REZ_HZ;          /* screen horizontal resolution */

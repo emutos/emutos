@@ -25,13 +25,6 @@ extern UWORD v_fnt_nd;          /* ascii code of last cell in font */
 extern UWORD v_fnt_st;          /* ascii code of first cell in font */
 extern UWORD v_fnt_wr;          /* font cell wrap */
 
-/* character cell specific linea variables */
-
-extern UWORD    v_cel_ht;       /* cell height (width is 8) */
-extern UWORD    v_cel_mx;       /* needed by MiNT: columns on the screen minus 1 */
-extern UWORD    v_cel_my;       /* needed by MiNT: rows on the screen minus 1 */
-extern UWORD    v_cel_wr;       /* needed by MiNT: length (in bytes) of a line of characters */
-
 /*
  * font_ring is a struct of four pointers, each of which points to
  * a list of font headers linked together to form a string.

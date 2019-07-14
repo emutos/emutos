@@ -213,7 +213,6 @@ extern const UWORD ROM_UD_PATRN[];
 extern const UWORD SOLID;
 extern const UWORD HOLLOW;
 
-extern WORD DEV_TAB[];          /* initial intout array for open workstation */
 extern WORD SIZ_TAB[];          /* initial ptsout array for open workstation */
 extern WORD INQ_TAB[];          /* extended inquire values */
 

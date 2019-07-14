@@ -12,6 +12,7 @@
 #include "emutos.h"
 #include "intmath.h"
 #include "vdi_defs.h"
+#include "lineavars.h"
 
 
 /*

@@ -37,10 +37,7 @@
 #include "initinfo.h"
 #include "conout.h"
 #include "../bdos/bdosstub.h"
-
-#ifdef ENABLE_KDEBUG
 #include "lineavars.h"
-#endif
 
 /* Screen width, in characters, as signed value */
 #define SCREEN_WIDTH ((WORD)v_cel_mx + 1)
