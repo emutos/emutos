@@ -31,7 +31,7 @@ LONG idt_value;
 UWORD screen_cols, screen_rows;
 WORD current_res, requested_res;
 WORD linewrap;
-WORD nflops;
+WORD nflops_copy;
 DTA *dta;
 char user_path[MAXPATHLEN];
 LONG redir_handle;
@@ -76,7 +76,7 @@ WORD argc, rc;
 #endif
     current_res = original_res;
 
-    nflops = Supexec(get_nflops);           /* number of floppy drives */
+    nflops_copy = Supexec(get_nflops);      /* number of floppy drives */
 
     /*
      * start up in ST medium if we are currently in ST low
