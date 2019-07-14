@@ -37,6 +37,7 @@
 #include "coldfire.h"
 #include "dma.h"
 #include "nova.h"
+#include "biosext.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif

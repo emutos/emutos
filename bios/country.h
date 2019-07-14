@@ -20,10 +20,6 @@
 #include "i18nconf.h"
 #include "ctrycodes.h"
 
-/* cookies */
-
-extern long cookie_akp;
-
 /* used by machine.c */
 void detect_akp(void);
 void detect_idt(void);

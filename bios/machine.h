@@ -43,7 +43,6 @@ extern long cookie_snd;
 #if CONF_WITH_DIP_SWITCHES
 extern long cookie_swi;
 #endif
-extern long cookie_idt;
 extern long cookie_akp;
 
 /*
