@@ -21,7 +21,6 @@
  *  externals
  */
 
-extern  FTAB    sft[];
 extern  MPB     pmd;    /* the mem pool for the main user ST ram */
 #if CONF_WITH_ALT_RAM
 extern  MPB     pmdalt;  /* the memory pool for the alternative ram (TT-RAM or other) */
