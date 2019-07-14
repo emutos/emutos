@@ -130,6 +130,12 @@
  */
 #define CPDATA_LEN      128
 
+/*
+ * the maximum size of an EMUDESK.INF line (see app_save())
+ */
+#define MAX_SIZE_INF_LINE   (MAXPATHLEN+100)    /* conservative */
+
+
 static WORD     inf_rev_level;  /* revision level of current EMUDESK.INF */
 
 static char     *atextptr;      /* current pointer within ANODE text buffer */
@@ -1030,11 +1036,16 @@ void app_save(WORD todisk)
     ANODE *pa;
     WSAVE *pws;
 
-    /* allocate a temporary buffer */
-    outbuf = dos_alloc_anyram(SIZE_SHELBUF);
+    /*
+     * allocate a temporary buffer: we make it larger than the size of
+     * the shell buffer by at least the length of one line, so that we
+     * only need to check for buffer overflow at the end of each line
+     */
+    outbuf = dos_alloc_anyram(SIZE_SHELBUF+MAX_SIZE_INF_LINE);
     if (!outbuf)
     {
-        KDEBUG(("insufficient memory for temporary EMUDESK.INF buffer (need %d bytes)\n",SIZE_SHELBUF));
+        KDEBUG(("insufficient memory for temporary EMUDESK.INF buffer (need %d bytes)\n",
+                SIZE_SHELBUF+MAX_SIZE_INF_LINE));
         nomem_alert();          /* infinite loop */
     }
 
@@ -1177,6 +1188,13 @@ void app_save(WORD todisk)
         }
         *pcurr++ = '\r';
         *pcurr++ = '\n';
+        if (pcurr-outbuf >= SIZE_SHELBUF)   /* overflow check */
+        {
+            for (pcurr -= 2; *pcurr != '\n'; pcurr--)
+                ;
+            pcurr++;        /* point after previous line */
+            break;
+        }
     }
     *pcurr = 0x00;
 
