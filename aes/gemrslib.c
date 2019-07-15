@@ -36,7 +36,7 @@
 
 static RSHDR   *rs_hdr;
 static AESGLOBAL *rs_global;
-static char    tmprsfname[128];
+static char tmprsfname[MAXPATHLEN];
 
 
 /*
