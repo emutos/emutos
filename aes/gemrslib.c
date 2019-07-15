@@ -37,7 +37,6 @@
 static RSHDR   *rs_hdr;
 static AESGLOBAL *rs_global;
 static char    tmprsfname[128];
-static char    free_str[256];   /* must be long enough for longest freestring in gem.rsc */
 
 
 /*
@@ -400,8 +399,7 @@ WORD rs_load(AESGLOBAL *pglobal, char *rsfname)
 /* Get a string from the GEM-RSC */
 char *rs_str(UWORD stnum)
 {
-    strcpy(free_str, gettext(rs_fstr[stnum]));
-    return free_str;
+    return (char *)gettext(rs_fstr[stnum]);
 }
 
 /*
