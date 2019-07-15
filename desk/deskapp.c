@@ -1049,7 +1049,7 @@ void app_save(WORD todisk)
         nomem_alert();          /* infinite loop */
     }
 
-    shel_get(outbuf, SIZE_SHELBUF);
+    shel_get(outbuf, CPDATA_LEN);
     inf_data = outbuf + CPDATA_LEN;
     pcurr = inf_data;
 
