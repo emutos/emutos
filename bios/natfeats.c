@@ -15,7 +15,7 @@
 
 #if DETECT_NATIVE_FEATURES
 
-static int hasNF;
+static BOOL hasNF;
 
 static long nfid_name;
 static long nfid_stderr;
@@ -23,7 +23,7 @@ static long nfid_xhdi;
 static long nfid_shutdown;
 static long bootstrap_id;
 
-int detect_native_features(void);    /* defined in natfeat.S */
+BOOL detect_native_features(void);  /* defined in natfeat.S */
 
 void natfeat_init(void)
 {
@@ -45,7 +45,7 @@ void natfeat_init(void)
     }
 }
 
-int has_natfeats(void)
+BOOL has_natfeats(void)
 {
     return hasNF;
 }
@@ -63,7 +63,7 @@ long nfGetFullName(char *buffer, long size)
     }
 }
 
-int is_nfStdErr(void)
+BOOL is_nfStdErr(void)
 {
     return nfid_stderr > 0;
 }
@@ -94,7 +94,7 @@ void nf_shutdown(void)
 }
 
 /* check if nf_shutdown() is available */
-int has_nf_shutdown(void)
+BOOL has_nf_shutdown(void)
 {
     return nfid_shutdown > 0;
 }
