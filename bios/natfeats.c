@@ -21,6 +21,7 @@ static long nfid_name;
 static long nfid_stderr;
 static long nfid_xhdi;
 static long nfid_shutdown;
+static long bootstrap_id;
 
 int detect_native_features(void);    /* defined in natfeat.S */
 
@@ -33,12 +34,14 @@ void natfeat_init(void)
         nfid_stderr = NFID("NF_STDERR");
         nfid_xhdi = NFID("XHDI");
         nfid_shutdown = NFID("NF_SHUTDOWN");
+        bootstrap_id = NFID("BOOTSTRAP");
     }
     else {
         nfid_name = 0;
         nfid_stderr = 0;
         nfid_xhdi = 0;
         nfid_shutdown = 0;
+        bootstrap_id = 0;
     }
 }
 
@@ -100,7 +103,6 @@ int has_nf_shutdown(void)
 long nf_bootstrap(UBYTE *addr, long size)
 {
     if(hasNF) {
-        long bootstrap_id = NFID("BOOTSTRAP");
         if(bootstrap_id) {
             return NFCall(bootstrap_id, addr, size);
         } else {
@@ -114,7 +116,6 @@ long nf_bootstrap(UBYTE *addr, long size)
 UWORD nf_getbootdrive(void)
 {
     if(hasNF) {
-        long bootstrap_id = NFID("BOOTSTRAP");
         if(bootstrap_id) {
             return NFCall(bootstrap_id | 0x0001);
         } else {
@@ -128,7 +129,6 @@ UWORD nf_getbootdrive(void)
 long nf_getbootstrap_args(char *addr, long size)
 {
     if(hasNF) {
-        long bootstrap_id = NFID("BOOTSTRAP");
         if(bootstrap_id) {
             return NFCall(bootstrap_id | 0x0002, addr, size);
         } else {
