@@ -45,5 +45,6 @@ extern long nf_bootstrap(UBYTE *addr, long size);
 extern long nf_getbootstrap_args(char *addr, long size);
 extern UWORD nf_getbootdrive(void);
 
-
+/* check if the host is emulating the MMU */
+extern BOOL mmu_is_emulated(void);
 #endif /* _NATFEAT_H */
