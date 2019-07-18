@@ -210,19 +210,12 @@ no_retry:
 
 // **** Trap entry: ****
 _aestrap:
-        tst.w   d0
-        jeq     _back
         cmpi.w  #0xC8,d0
         jeq     trapaes
         cmpi.w  #0xC9,d0
         jeq     trapaes
         move.l  savetrap2,-(sp)
         rts
-
-_back:
-        clr.w   -(sp)
-        move.w  #0x4C,-(sp)             // Pterm
-        trap    #1
 
 trapaes:
 #if CONF_DEBUG_AES_STACK
