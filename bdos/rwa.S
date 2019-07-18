@@ -134,8 +134,12 @@
 
 //==== bdos_trap2 - trap 2 entry point =======================================
 //
-// This minimal interface connects the entry point for a system where the AES
-// and VDI are already in memory.
+// This is installed over the existing trap #2 interrupt handler, which in
+// EmuTOS and Atari TOS is the VDI handler.
+//
+// Note that after this is installed, calling trap #2 with d0.w=0 is the same
+// as issuing a Pterm0().  This provides compatibility with an undocumented
+// feature of Atari TOS, apparently a relic of CP/M 68K.
 //
 
 _bdos_trap2:
