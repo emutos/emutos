@@ -23,7 +23,16 @@
 #define IDE_BUS             2
 #define SDMMC_BUS           3
 
-#define MAX_BUS             SDMMC_BUS
+#if CONF_WITH_SDMMC
+# define MAX_BUS            SDMMC_BUS
+#elif CONF_WITH_IDE
+# define MAX_BUS            IDE_BUS
+#elif CONF_WITH_SCSI
+# define MAX_BUS            SCSI_BUS
+#else
+# define MAX_BUS            ACSI_BUS
+#endif
+
 #define DEVICES_PER_BUS     8
 
 #define UNITSNUM            (NUMFLOPPIES+(DEVICES_PER_BUS*(MAX_BUS+1)))

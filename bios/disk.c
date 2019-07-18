@@ -154,10 +154,20 @@ void disk_init_all(void)
 {
     /* scan disk majors in the following order */
     static const int majors[] =
-        {16, 18, 17, 19, 20, 22, 21, 23,    /* IDE primary/secondary */
-         8, 9, 10, 11, 12, 13, 14, 15,      /* SCSI */
-         0, 1, 2, 3, 4, 5, 6, 7,            /* ACSI */
-         24, 25, 26, 27, 28, 29, 30, 31};   /* SD/MMC */
+    {
+#if CONF_WITH_IDE
+        16, 18, 17, 19, 20, 22, 21, 23,     /* IDE primary/secondary */
+#endif
+#if CONF_WITH_SCSI
+        8, 9, 10, 11, 12, 13, 14, 15,       /* SCSI */
+#endif
+#if CONF_WITH_ACSI
+        0, 1, 2, 3, 4, 5, 6, 7,             /* ACSI */
+#endif
+#if CONF_WITH_SDMMC
+        24, 25, 26, 27, 28, 29, 30, 31      /* SD/MMC */
+#endif
+    };
     int i;
     LONG devices_available = 0L;
     LONG bitmask;
