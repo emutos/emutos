@@ -12,6 +12,17 @@
 #include "asmdefs.h"
 #include "asmstruct.h"
 
+/*
+ * sizes (in words) of the stacks used by:
+ *  (1) the far_bcha/far_mcha/aes_wheel functions
+ *  (2) the tikcod function
+ *
+ * as of july/2019, the observed stack usage is about 24 words for
+ * the mouse stack and 12 words for the tick stack
+ */
+#define MOUSE_STACK_SIZE    48
+#define TICK_STACK_SIZE     36
+
         .globl  _disable_interrupts
         .globl  _enable_interrupts
         .globl  _giveerr
@@ -469,9 +480,10 @@ criterr_stack:
 /*
  * miscellaneous stacks
  */
-        .ds.b    0x80
+
+        .ds.w    MOUSE_STACK_SIZE
 gstack:                         // gsx stack for mouse
 
-        .ds.b    0x80
+        .ds.b    TICK_STACK_SIZE
 tstack:                         // tick stack
         .ds.l    1
