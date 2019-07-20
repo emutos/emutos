@@ -204,29 +204,28 @@ static void conbrk(int h)
         do
         {
             c = LOBYTE(ch = Bconin(h));
-            if (c == ctrlc)
-            {
+            switch(c) {
+            case ctrlc:
                 /* comments for the following used to say: "flush BDOS
                  * & BIOS buffers", but that wasn't (& isn't) true */
                 buflush(bufptr);    /* flush BDOS buffer */
                 terminate();
-            }
-
-            if (c == ctrls)
+                break;
+            case ctrls:
                 stop = 1;
-            else if (c == ctrlq)
+                break;
+            case ctrlq:
                 stop = 0;
-            else if (c == ctrlx)
-            {
+                break;
+            case ctrlx:
                 buflush(bufptr);
-                bufptr->glbkbchar[bufptr->add++ & KBBUFMASK] = ch;
-            }
-            else
-            {
+                FALLTHROUGH;
+            default:
                 if (bufptr->add < bufptr->remove + KBBUFSZ)
                     bufptr->glbkbchar[bufptr->add++ & KBBUFMASK] = ch;
                 else
                     Bconout(h, 7);
+                break;
             }
         } while (stop);
     }
