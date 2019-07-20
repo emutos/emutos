@@ -30,7 +30,6 @@
 typedef struct {
     WORD add;                   /* index of add position */
     WORD remove;                /* index of remove position */
-    WORD glbcolumn;             /* current screen column (zero-based) */
     LONG glbkbchar[KBBUFSZ];    /* the actual typeahead buffer */
 } TYPEAHEAD;
 
@@ -41,6 +40,14 @@ typedef struct {
  * [0] is used for prn, [1] for aux, and [2] for con
  */
 static TYPEAHEAD buffer[3];
+
+
+/*
+ * array for keeping track of screen column (used for tabbing)
+ *
+ * [0] is used for prn, [1] for aux, and [2] for con
+ */
+WORD glbcolumn[3];
 
 
 /*
@@ -101,9 +108,9 @@ void stdhdl_init(void)
     for (i = 0; i < NUMSTD; i++)
         run->p_uft[i] = default_handle[i];
 
-    /* initialise typeahead buffer values */
+    /* initialise typeahead buffer & screen column values */
     for (i = 0, bufptr = buffer; i < 3; i++, bufptr++)
-        bufptr->add = bufptr->remove = 0;
+        bufptr->add = bufptr->remove = glbcolumn[i] = 0;
 }
 
 
@@ -244,16 +251,14 @@ static void buflush(TYPEAHEAD *bufptr)
  */
 static void conout(int h, int ch)
 {
-    TYPEAHEAD *bufptr = &buffer[h];
-
     conbrk(h);                  /* check for control-s break */
     Bconout(h,ch);              /* output character to console */
     if ((unsigned char)ch >= ' ')
-        bufptr->glbcolumn++;    /* keep track of screen column */
+        glbcolumn[h]++;         /* keep track of screen column */
     else if (ch == cr)
-        bufptr->glbcolumn = 0;
+        glbcolumn[h] = 0;
     else if (ch == bs)
-        bufptr->glbcolumn--;
+        glbcolumn[h]--;
 }
 
 
@@ -275,15 +280,12 @@ long xconout(int ch)
  */
 void tabout(int h, int ch)
 {
-    TYPEAHEAD *bufptr;
-
     if (ch == tab)
     {
-        bufptr = &buffer[h];
         do
         {
             conout(h,' ');
-        } while (bufptr->glbcolumn & 7);
+        } while (glbcolumn[h] & 7);
     }
     else
         conout(h,ch);
@@ -476,7 +478,6 @@ static void newline(int h, int startcol)
 /* col is the starting console column */
 static int backsp(int h, char *cbuf, int retlen, int col)
 {
-    TYPEAHEAD *bufptr = &buffer[h];
     char ch;                    /* current character */
     int  i;
     char *p;                    /* character pointer */
@@ -498,7 +499,7 @@ static int backsp(int h, char *cbuf, int retlen, int col)
         else
             col += 1;
     }
-    while (bufptr->glbcolumn > col)
+    while (glbcolumn[h] > col)
     {
         conout(h,bs);           /* backspace until we get to proper column */
         conout(h,' ');
@@ -523,11 +524,10 @@ void xconrs(char *p)
 /* h is special handle denoting device number */
 int cgets(int h, int maxlen, char *buf)
 {
-    TYPEAHEAD *bufptr = &buffer[h];
     char ch;
     int i, stcol, retlen;
 
-    stcol = bufptr->glbcolumn;      /* set up starting column */
+    stcol = glbcolumn[h];       /* set up starting column */
     for (retlen = 0; retlen < maxlen; )
     {
         switch(ch = getch(h))
