@@ -68,8 +68,7 @@ static void escfn1(Vwk * vwk)
  */
 static void escfn2(Vwk * vwk)
 {
-    cconws("\033f\033E");       /* hide alpha cursor */
-    vdi_v_clrwk(vwk);
+    cconws("\033f\033E");       /* hide alpha cursor, then clear-and-home */
 }
 
 
@@ -78,8 +77,7 @@ static void escfn2(Vwk * vwk)
  */
 static void escfn3(Vwk * vwk)
 {
-    vdi_v_clrwk(vwk);
-    cconws("\033E\033e");       /* show alpha cursor */
+    cconws("\033E\033e");       /* clear-and-home, then show alpha cursor */
 }
 
 
