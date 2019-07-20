@@ -10,7 +10,6 @@
  * option any later version.  See doc/licence.txt for details.
  */
 
-LONG bconstat0(void);
 LONG bconin0(void);
 LONG bcostat0(void);
 LONG bconout0(WORD dev, WORD c);
