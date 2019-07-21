@@ -36,6 +36,12 @@
 
 #define SLASH '\\'
 
+/*
+ * the following are known differences between EmuTOS and Atari TOS3:
+ *    . TOS3 allows a max of around 75 open files
+ *    . TOS3 uses a typeahead buffer of 80 (with apppropriate adjustments
+ *      to the logic)
+ */
 #define SUPSIZ 1024     /* common supervisor stack size (in words) */
 #define OPNFILES 40     /* max open files in system */
 #define NCURDIR 40      /* max current directories in use in system */
