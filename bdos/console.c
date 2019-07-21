@@ -35,11 +35,15 @@ typedef struct {
 
 
 /*
- * the actual typeahead buffers
+ * the actual typeahead buffer structures & pointers to them
  *
  * [0] is used for prn, [1] for aux, and [2] for con
+ * since a typeahead buffer for prn is nonsense, we only
+ * need 2 structures
  */
-static TYPEAHEAD buffer[3];
+static TYPEAHEAD aux_typeahead;
+static TYPEAHEAD con_typeahead;
+static TYPEAHEAD *buffer[3];
 
 
 /*
@@ -102,15 +106,23 @@ static int backsp(int h, char *cbuf, int retlen, int col);
  */
 void stdhdl_init(void)
 {
-    TYPEAHEAD *bufptr;
     WORD i;
 
     for (i = 0; i < NUMSTD; i++)
         run->p_uft[i] = default_handle[i];
 
+    /* initialise typeahead pointers */
+    buffer[0] = NULL;       /* prn */
+    buffer[1] = &aux_typeahead;
+    buffer[2] = &con_typeahead;
+
     /* initialise typeahead buffer & screen column values */
-    for (i = 0, bufptr = buffer; i < 3; i++, bufptr++)
-        bufptr->add = bufptr->remove = glbcolumn[i] = 0;
+    for (i = 0; i < 3; i++)
+    {
+        if (buffer[i])
+            buffer[i]->add = buffer[i]->remove = 0;
+        glbcolumn[i] = 0;
+    }
 }
 
 
@@ -132,10 +144,10 @@ static long constat(int h)
 {
     TYPEAHEAD *bufptr;
 
-    if (h > 2)
+    if ((h < 1) || (h > 2))
         return 0;
 
-    bufptr = &buffer[h];
+    bufptr = buffer[h];
 
     return (bufptr->add > bufptr->remove) ? -1L : Bconstat(h);
 }
@@ -200,7 +212,7 @@ static void conbrk(int h)
     stop = 0;
     if (Bconstat(h))
     {
-        bufptr = &buffer[h];
+        bufptr = buffer[h];
         do
         {
             c = LOBYTE(ch = Bconin(h));
@@ -338,15 +350,19 @@ long xprtout(int ch)
  */
 static long getch(int h)
 {
-    TYPEAHEAD *bufptr = &buffer[h];
+    TYPEAHEAD *bufptr;
     long temp;
 
-    if (bufptr->add > bufptr->remove)
+    if ((h >= 1) && (h <= 2))
     {
-        temp = bufptr->glbkbchar[bufptr->remove++ & KBBUFMASK];
-        if (bufptr->add == bufptr->remove)
-            buflush(bufptr);
-        return temp;
+        bufptr = buffer[h];
+        if (bufptr->add > bufptr->remove)
+        {
+            temp = bufptr->glbkbchar[bufptr->remove++ & KBBUFMASK];
+            if (bufptr->add == bufptr->remove)
+                buflush(bufptr);
+            return temp;
+        }
     }
 
     return Bconin(h);
