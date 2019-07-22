@@ -8,8 +8,6 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
-
 /*
  *  Mod #          who date             modification
  *  -------------- --- ---------        ------------
@@ -17,46 +15,34 @@
  *                                      to unsigned int
  *
  */
-
 #include "emutos.h"
 #include "fs.h"
-
-
 
 /*
  * Global Filesystem related variables
  */
 
-
-
 /*
  *  drvtbl -
  */
-
 DMD *drvtbl[BLKDEVNUM];
-
 
 
 /*
  *  sft -
  */
-
 FTAB sft[OPNFILES];
-
 
 
 /*
  * rwerr -  hard error number currently in progress
  */
-
 long rwerr;
 long errcode;
-
 
 
 /*
  * errdrv -  drive on which error occurred
  */
-
 int errdrv;
 jmp_buf errbuf;
