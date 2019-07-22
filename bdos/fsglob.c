@@ -23,13 +23,13 @@
  */
 
 /*
- *  drvtbl -
+ *  drvtbl -  root of the control block chains for every block device
  */
 DMD *drvtbl[BLKDEVNUM];
 
 
 /*
- *  sft -
+ *  sft -  system file table
  */
 FTAB sft[OPNFILES];
 
