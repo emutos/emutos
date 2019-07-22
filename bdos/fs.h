@@ -24,11 +24,6 @@
 #include "biosdefs.h"
 #include "bdosdefs.h"
 
-/*
- *  fix conditionals
- */
-
-#define M0101052901     1
 
 /*
  *  constants
