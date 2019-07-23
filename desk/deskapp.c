@@ -989,7 +989,7 @@ static void save_to_disk(char *buf, WORD len)
         if (ret == 0L)
             break;
         /* error - prompt user */
-        if (fun_alert_string(1, STCRTFIL, filename_start(inf_file_name)) != 2)
+        if (fun_alert_merge(1, STCRTFIL, filename_start(inf_file_name)) != 2)
             return;                     /* if not retrying, return now */
     }
 

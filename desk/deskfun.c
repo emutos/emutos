@@ -22,6 +22,7 @@
 /* #define ENABLE_KDEBUG */
 
 #include "emutos.h"
+#include <stdarg.h>
 #include "obdefs.h"
 #include "gemdos.h"
 #include "optimize.h"
@@ -72,35 +73,20 @@ WORD fun_alert(WORD defbut, WORD stnum)
 
 
 /*
- *  Issue an alert after merging in an optional character variable
+ *  Issue an alert after merging in a variable
+ *
+ *  The following way of handling multiple types for the variable to be
+ *  merged is a bit of a kludge, but at least we make an attempt to
+ *  avoid obvious problems ...
  */
-WORD fun_alert_merge(WORD defbut, WORD stnum, char merge)
+WORD fun_alert_merge(WORD defbut, WORD stnum, ...)
 {
-    sprintf(G.g_1text, desktop_str_addr(stnum), merge);
+    va_list ap;
+    _Static_assert(sizeof(void *) >= sizeof(long),"incompatible type sizes");
 
-    return form_alert(defbut, G.g_1text);
-}
-
-
-#if CONF_WITH_FORMAT
-/*
- *  Issue an alert after merging in a long variable
- */
-WORD fun_alert_long(WORD defbut, WORD stnum, LONG merge)
-{
-    sprintf(G.g_1text, desktop_str_addr(stnum), merge);
-
-    return form_alert(defbut, G.g_1text);
-}
-#endif
-
-
-/*
- *  Issue an alert after merging in a string
- */
-WORD fun_alert_string(WORD defbut, WORD stnum, char *merge)
-{
-    sprintf(G.g_1text, desktop_str_addr(stnum), merge);
+    va_start(ap, stnum);
+    sprintf(G.g_1text, desktop_str_addr(stnum), va_arg(ap,void *));
+    va_end(ap);
 
     return form_alert(defbut, G.g_1text);
 }

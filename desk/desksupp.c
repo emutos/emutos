@@ -365,7 +365,7 @@ static void remove_locate_shortcut(WORD curr)
     if (!pa)        /* can't happen */
         return;
 
-    rc = fun_alert_string(1, STRMVLOC, filename_start(pa->a_pdata));
+    rc = fun_alert_merge(1, STRMVLOC, filename_start(pa->a_pdata));
     switch(rc)
     {
     case 1:             /* Remove */
@@ -972,7 +972,7 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, char *pathname, char *pname, cha
          */
         if (!file_exists(pcmd, NULL))
         {
-            fun_alert_string(1, STFILENF, filename_start(pcmd));
+            fun_alert_merge(1, STFILENF, filename_start(pcmd));
             return done;
         }
         strcpy(G.g_cmd, pcmd);  /* G.g_tail+1 is already set up */
@@ -1170,7 +1170,7 @@ static BOOL add_one_level(char *pathname,char *folder)
  */
 static void trash_alert(ANODE *pa)
 {
-    fun_alert_string(1, STTRINFO, pa->a_pappl);
+    fun_alert_merge(1, STTRINFO, pa->a_pappl);
 }
 
 
@@ -1182,7 +1182,7 @@ static void trash_alert(ANODE *pa)
  */
 static void printer_alert(ANODE *pa)
 {
-    fun_alert_string(1, STPRINFO, pa->a_pappl);
+    fun_alert_merge(1, STPRINFO, pa->a_pappl);
 }
 #endif
 
@@ -1606,7 +1606,7 @@ void do_format(void)
             drive = (tree[FMT_DRVA].ob_state & SELECTED) ? 0 : 1;
             refresh_drive('A'+drive);           /* update relevant windows */
             dos_space(drive + 1, &total, &avail);
-            if (fun_alert_long(2, STFMTINF, avail) == 2)
+            if (fun_alert_merge(2, STFMTINF, avail) == 2)
                 rc = -1;
         }
         tree[FMT_BAR].ob_width = max_width;     /* reset to starting values */
@@ -1734,7 +1734,7 @@ BOOL valid_drive(char drive)
         if (dos_sdrv(dos_gdrv()) & (1L << drv))
             return TRUE;
 
-    fun_alert_string(1, STNODRIV, drvstr);
+    fun_alert_merge(1, STNODRIV, drvstr);
 
     return FALSE;
 }

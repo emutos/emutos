@@ -239,7 +239,7 @@ static WORD d_dofdel(char *ppath)
         if (dos_delete(ppath) == 0)
             break;
 
-        switch(fun_alert_string(1, STDELFIL, filename_start(ppath)))
+        switch(fun_alert_merge(1, STDELFIL, filename_start(ppath)))
         {
         case 1:     /* skip */
             return -1;
@@ -271,7 +271,7 @@ static WORD d_dofoldel(char *ppath)
         if (dos_rmdir(ppath) == 0)
             break;
 
-        switch(fun_alert_string(1, STDELDIR, filename_start(ppath)))
+        switch(fun_alert_merge(1, STDELDIR, filename_start(ppath)))
         {
         case 1:     /* skip */
             return -1;
@@ -400,7 +400,7 @@ static WORD d_dofcopy(char *psrc_file, char *pdst_file, WORD time, WORD date, WO
         error = dos_open(psrc_file, 0);
         if (error >= 0)
             break;
-        switch(fun_alert_string(1, STOPFAIL, filename_start(psrc_file)))
+        switch(fun_alert_merge(1, STOPFAIL, filename_start(psrc_file)))
         {
         case 1:     /* skip */
             return -1;
@@ -429,7 +429,7 @@ static WORD d_dofcopy(char *psrc_file, char *pdst_file, WORD time, WORD date, WO
         error = dos_create(pdst_file, attr);
         if (error >= 0)
             break;
-        switch(fun_alert_string(1, STCRTFIL, filename_start(pdst_file)))
+        switch(fun_alert_merge(1, STCRTFIL, filename_start(pdst_file)))
         {
         case 1:     /* skip */
             dos_close(srcfh);
@@ -485,7 +485,7 @@ static WORD d_dofcopy(char *psrc_file, char *pdst_file, WORD time, WORD date, WO
             file = pdst_file;
         }
         /* Skip or Abort ? */
-        rc = (fun_alert_string(1, alert, filename_start(file))==1) ? -1 : 0;
+        rc = (fun_alert_merge(1, alert, filename_start(file))==1) ? -1 : 0;
     }
 
     dos_close(srcfh);       /* close files */
