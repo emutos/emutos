@@ -1195,8 +1195,6 @@ static void cnx_get(void)
             }
         }
     }
-
-    cnx_put();
 }
 
 
