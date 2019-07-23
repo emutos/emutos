@@ -201,7 +201,11 @@ typedef struct
 /*GLOBAL*/ WORD         g_numiblks;             /* number of icon blocks */
 /*GLOBAL*/ ICONBLK      *g_iblist;              /* ptr to array of icon blocks */
 
-/*GLOBAL*/ CSAVE        g_cnxsave;
+/* This points to the desktop context save area, which is a staging
+ * area between the current desktop preferences (see above) and the
+ * EMUDESK.INF file.
+ */
+        CSAVE           *g_cnxsave;             /* ptr to context save area */
 
 #if CONF_WITH_BACKGROUNDS
 /* Default pattern/colour for desktop/windows:

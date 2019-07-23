@@ -1085,20 +1085,21 @@ static void cnx_put(void)
     WORD i, unused;
     WSAVE *pws;
     WNODE *pw;
+    CSAVE *cnxsave = G.g_cnxsave;
 
-    G.g_cnxsave.cs_view = G.g_iview;        /* V_ICON/V_TEXT */
-    G.g_cnxsave.cs_sort = G.g_isort;        /* S_NAME etc */
-    G.g_cnxsave.cs_confcpy = G.g_ccopypref;
-    G.g_cnxsave.cs_confdel = G.g_cdelepref;
-    G.g_cnxsave.cs_dblclick = G.g_cdclkpref;
-    G.g_cnxsave.cs_confovwr = G.g_covwrpref;
-    G.g_cnxsave.cs_mnuclick = G.g_cmclkpref;
-    G.g_cnxsave.cs_timefmt = G.g_ctimeform;
-    G.g_cnxsave.cs_datefmt = G.g_cdateform;
-    G.g_cnxsave.cs_blitter = G.g_blitter;
+    cnxsave->cs_view = G.g_iview;           /* V_ICON/V_TEXT */
+    cnxsave->cs_sort = G.g_isort;           /* S_NAME etc */
+    cnxsave->cs_confcpy = G.g_ccopypref;
+    cnxsave->cs_confdel = G.g_cdelepref;
+    cnxsave->cs_dblclick = G.g_cdclkpref;
+    cnxsave->cs_confovwr = G.g_covwrpref;
+    cnxsave->cs_mnuclick = G.g_cmclkpref;
+    cnxsave->cs_timefmt = G.g_ctimeform;
+    cnxsave->cs_datefmt = G.g_cdateform;
+    cnxsave->cs_blitter = G.g_blitter;
 #if CONF_WITH_DESKTOP_CONFIG
-    G.g_cnxsave.cs_appdir = G.g_appdir;
-    G.g_cnxsave.cs_fullpath = G.g_fullpath;
+    cnxsave->cs_appdir = G.g_appdir;
+    cnxsave->cs_fullpath = G.g_fullpath;
 #endif
 
     /*
@@ -1110,7 +1111,7 @@ static void cnx_put(void)
             unused--;
     }
 
-    for (i = 0, pws = &G.g_cnxsave.cs_wnode[NUM_WNODES-1]; i < unused; i++, pws--)
+    for (i = 0, pws = &cnxsave->cs_wnode[NUM_WNODES-1]; i < unused; i++, pws--)
     {
         pws->pth_save[0] = 0;
     }
@@ -1139,20 +1140,21 @@ static void cnx_get(void)
     WORD nw;
     WSAVE *pws;
     WNODE *pw;
+    CSAVE *cnxsave = G.g_cnxsave;
 
-    do_viewmenu(ICONITEM + G.g_cnxsave.cs_view);
-    do_viewmenu(NAMEITEM + G.g_cnxsave.cs_sort);
-    G.g_ccopypref = G.g_cnxsave.cs_confcpy;
-    G.g_cdelepref = G.g_cnxsave.cs_confdel;
-    G.g_covwrpref = G.g_cnxsave.cs_confovwr;
-    G.g_cdclkpref = G.g_cnxsave.cs_dblclick;
-    G.g_cmclkpref = G.g_cnxsave.cs_mnuclick;
-    G.g_ctimeform = G.g_cnxsave.cs_timefmt;
-    G.g_cdateform = G.g_cnxsave.cs_datefmt;
-    G.g_blitter   = G.g_cnxsave.cs_blitter;
+    do_viewmenu(ICONITEM + cnxsave->cs_view);
+    do_viewmenu(NAMEITEM + cnxsave->cs_sort);
+    G.g_ccopypref = cnxsave->cs_confcpy;
+    G.g_cdelepref = cnxsave->cs_confdel;
+    G.g_covwrpref = cnxsave->cs_confovwr;
+    G.g_cdclkpref = cnxsave->cs_dblclick;
+    G.g_cmclkpref = cnxsave->cs_mnuclick;
+    G.g_ctimeform = cnxsave->cs_timefmt;
+    G.g_cdateform = cnxsave->cs_datefmt;
+    G.g_blitter   = cnxsave->cs_blitter;
 #if CONF_WITH_DESKTOP_CONFIG
-    G.g_appdir    = G.g_cnxsave.cs_appdir;
-    G.g_fullpath  = G.g_cnxsave.cs_fullpath;
+    G.g_appdir    = cnxsave->cs_appdir;
+    G.g_fullpath  = cnxsave->cs_fullpath;
 #endif
     G.g_cdclkpref = evnt_dclick(G.g_cdclkpref, TRUE);
     G.g_cmclkpref = menu_click(G.g_cmclkpref, TRUE);
@@ -1160,7 +1162,7 @@ static void cnx_get(void)
     /* DESKTOP v1.2: Remove 2-window limit; and cnx_open() inlined. */
     for (nw = 0; nw < NUM_WNODES; nw++)
     {
-        pws = &G.g_cnxsave.cs_wnode[nw];
+        pws = &cnxsave->cs_wnode[nw];
 
         /* Check for valid position */
         if (pws->x_save >= G.g_wdesk)
@@ -1553,6 +1555,15 @@ BOOL deskmain(void)
     /* detect optional features */
     detect_features();
 
+    /* allocate desktop context save area */
+    G.g_cnxsave = dos_alloc_anyram(sizeof(CSAVE));
+    if (!G.g_cnxsave)
+    {
+        KDEBUG(("insufficient memory for desktop prefs save area (need %ld bytes)\n",
+                (LONG)sizeof(CSAVE)));
+        nomem_alert();              /* infinite loop */
+    }
+
     /* initialize resources */
     if (desk_rs_init() < 0)         /* copies ROM to RAM */
     {
@@ -1703,6 +1714,7 @@ BOOL deskmain(void)
         dos_free(G.g_iblist);       /* the iconblks for the desktop icons */
         dos_free(G.g_alist);        /* the anodes */
         dos_free(G.g_atext);        /* the anode text buffer */
+        dos_free(G.g_cnxsave);      /* the context save area */
         dos_free(desk_rs_ptext);    /* the te_ptext fields for the EmuDesk resource */
         dos_free(desk_rs_obj);      /* the RAM copies of the Emudesk resource objects */
         graf_mouse(ARROW, NULL);

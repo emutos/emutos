@@ -718,6 +718,7 @@ void app_start(void)
     WORD i, x, y;
     ANODE *pa;
     WSAVE *pws;
+    CSAVE *cnxsave = G.g_cnxsave;
     char *buf, *inf_data;
     char *pcurr, *ptmp, *pauto = NULL;
     WORD envr, xcnt, ycnt, xcent, wincnt, dummy;
@@ -829,7 +830,7 @@ void app_start(void)
             pcurr++;
             if (wincnt < NUM_WNODES)
             {
-                pws = &G.g_cnxsave.cs_wnode[wincnt];
+                pws = &cnxsave->cs_wnode[wincnt];
                 pcurr = scan_2(pcurr, &dummy);
                 pcurr = scan_2(pcurr, &pws->vsl_save);
 /* BugFix       */
@@ -853,25 +854,25 @@ void app_start(void)
         case 'E':                       /* Environment */
             pcurr++;
             pcurr = scan_2(pcurr, &envr);
-            G.g_cnxsave.cs_view = (envr & INF_E1_VIEWTEXT) ? V_TEXT : V_ICON;
-            G.g_cnxsave.cs_sort = ( (envr & INF_E1_SORTMASK) >> 5);
-            G.g_cnxsave.cs_confdel = ( (envr & INF_E1_CONFDEL) != 0);
-            G.g_cnxsave.cs_confcpy = ( (envr & INF_E1_CONFCPY) != 0);
-            G.g_cnxsave.cs_dblclick = envr & INF_E1_DCMASK;
+            cnxsave->cs_view = (envr & INF_E1_VIEWTEXT) ? V_TEXT : V_ICON;
+            cnxsave->cs_sort = ( (envr & INF_E1_SORTMASK) >> 5);
+            cnxsave->cs_confdel = ( (envr & INF_E1_CONFDEL) != 0);
+            cnxsave->cs_confcpy = ( (envr & INF_E1_CONFCPY) != 0);
+            cnxsave->cs_dblclick = envr & INF_E1_DCMASK;
 
             pcurr = scan_2(pcurr, &envr);
-            G.g_cnxsave.cs_blitter = ( (envr & INF_E2_BLITTER) != 0);
-            G.g_cnxsave.cs_confovwr = ( (envr & INF_E2_ALLOWOVW) == 0);
-            G.g_cnxsave.cs_mnuclick = ( (envr & INF_E2_MNUCLICK) != 0);
-            menu_click(G.g_cnxsave.cs_mnuclick, 1); /* tell system */
+            cnxsave->cs_blitter = ( (envr & INF_E2_BLITTER) != 0);
+            cnxsave->cs_confovwr = ( (envr & INF_E2_ALLOWOVW) == 0);
+            cnxsave->cs_mnuclick = ( (envr & INF_E2_MNUCLICK) != 0);
+            menu_click(cnxsave->cs_mnuclick, 1);    /* tell system */
             if (envr & INF_E2_IDTDATE)
-                G.g_cnxsave.cs_datefmt = DATEFORM_IDT;
+                cnxsave->cs_datefmt = DATEFORM_IDT;
             else
-                G.g_cnxsave.cs_datefmt = (envr & INF_E2_DAYMONTH) ? DATEFORM_DMY : DATEFORM_MDY;
+                cnxsave->cs_datefmt = (envr & INF_E2_DAYMONTH) ? DATEFORM_DMY : DATEFORM_MDY;
             if (envr & INF_E2_IDTTIME)
-                G.g_cnxsave.cs_timefmt = TIMEFORM_IDT;
+                cnxsave->cs_timefmt = TIMEFORM_IDT;
             else
-                G.g_cnxsave.cs_timefmt = (envr & INF_E2_24HCLOCK) ? TIMEFORM_24H : TIMEFORM_12H;
+                cnxsave->cs_timefmt = (envr & INF_E2_24HCLOCK) ? TIMEFORM_24H : TIMEFORM_12H;
             sound(FALSE, !(envr & INF_E2_SOUND), 0);
 
             pcurr = scan_2(pcurr, &dummy);  /* skip video stuff */
@@ -879,10 +880,10 @@ void app_start(void)
 
             pcurr = scan_2(pcurr, &envr);
             if (envr & INF_E5_NOSORT)
-                G.g_cnxsave.cs_sort = CS_NOSORT;
+                cnxsave->cs_sort = CS_NOSORT;
 #if CONF_WITH_DESKTOP_CONFIG
-            G.g_cnxsave.cs_appdir = ((envr & INF_E5_APPDIR) != 0);
-            G.g_cnxsave.cs_fullpath = ((envr & INF_E5_ISFULL) != 0);
+            cnxsave->cs_appdir = ((envr & INF_E5_APPDIR) != 0);
+            cnxsave->cs_fullpath = ((envr & INF_E5_ISFULL) != 0);
 #endif
             break;
 #if CONF_WITH_BACKGROUNDS
@@ -1035,6 +1036,7 @@ void app_save(WORD todisk)
     char *outbuf, *inf_data, *pcurr, *ptmp;
     ANODE *pa;
     WSAVE *pws;
+    CSAVE *cnxsave = G.g_cnxsave;
 
     /*
      * allocate a temporary buffer: we make it larger than the size of
@@ -1062,15 +1064,15 @@ void app_save(WORD todisk)
             pcurr += sprintf(pcurr,"#Z %02X %s@\r\n",pa->a_flags&AF_ISCRYS,pa->a_pappl);
 
     /* save environment */
-    env1 = (G.g_cnxsave.cs_view == V_TEXT) ? INF_E1_VIEWTEXT : 0x00;
-    env1 |= ((G.g_cnxsave.cs_sort) << 5) & INF_E1_SORTMASK;
-    env1 |= (G.g_cnxsave.cs_confdel) ? INF_E1_CONFDEL : 0x00;
-    env1 |= (G.g_cnxsave.cs_confcpy) ? INF_E1_CONFCPY : 0x00;
-    env1 |= G.g_cnxsave.cs_dblclick & INF_E1_DCMASK;
-    env2 = (G.g_cnxsave.cs_blitter) ? INF_E2_BLITTER : 0x00;
-    env2 |= (G.g_cnxsave.cs_confovwr) ? 0x00 : INF_E2_ALLOWOVW;
-    env2 |= (G.g_cnxsave.cs_mnuclick) ? INF_E2_MNUCLICK : 0x00;
-    switch(G.g_cnxsave.cs_datefmt)
+    env1 = (cnxsave->cs_view == V_TEXT) ? INF_E1_VIEWTEXT : 0x00;
+    env1 |= ((cnxsave->cs_sort) << 5) & INF_E1_SORTMASK;
+    env1 |= (cnxsave->cs_confdel) ? INF_E1_CONFDEL : 0x00;
+    env1 |= (cnxsave->cs_confcpy) ? INF_E1_CONFCPY : 0x00;
+    env1 |= cnxsave->cs_dblclick & INF_E1_DCMASK;
+    env2 = (cnxsave->cs_blitter) ? INF_E2_BLITTER : 0x00;
+    env2 |= (cnxsave->cs_confovwr) ? 0x00 : INF_E2_ALLOWOVW;
+    env2 |= (cnxsave->cs_mnuclick) ? INF_E2_MNUCLICK : 0x00;
+    switch(cnxsave->cs_datefmt)
     {
     case DATEFORM_IDT:
         env2 |= INF_E2_IDTDATE;
@@ -1079,7 +1081,7 @@ void app_save(WORD todisk)
         env2 |= INF_E2_DAYMONTH;
         break;
     }
-    switch(G.g_cnxsave.cs_timefmt)
+    switch(cnxsave->cs_timefmt)
     {
     case TIMEFORM_IDT:
         env2 |= INF_E2_IDTTIME;
@@ -1090,10 +1092,10 @@ void app_save(WORD todisk)
     }
     env2 |= sound(FALSE, 0xFFFF, 0)  ? 0x00 : INF_E2_SOUND;
     mode = desk_get_videomode();
-    env5 = (G.g_cnxsave.cs_sort == CS_NOSORT) ? INF_E5_NOSORT : 0;
+    env5 = (cnxsave->cs_sort == CS_NOSORT) ? INF_E5_NOSORT : 0;
 #if CONF_WITH_DESKTOP_CONFIG
-    env5 |= G.g_cnxsave.cs_appdir ? INF_E5_APPDIR : 0;
-    env5 |= G.g_cnxsave.cs_fullpath ? INF_E5_ISFULL : 0;
+    env5 |= cnxsave->cs_appdir ? INF_E5_APPDIR : 0;
+    env5 |= cnxsave->cs_fullpath ? INF_E5_ISFULL : 0;
 #endif
     pcurr += sprintf(pcurr,"#E %02X %02X %02X %02X %02X\r\n",
                     env1,env2,HIBYTE(mode),LOBYTE(mode),env5);
@@ -1109,7 +1111,7 @@ void app_save(WORD todisk)
     /* save windows */
     for (i = 0; i < NUM_WNODES; i++)
     {
-        pws = &G.g_cnxsave.cs_wnode[i];
+        pws = &cnxsave->cs_wnode[i];
         ptmp = pws->pth_save;
         pcurr += sprintf(pcurr,"#W %02X %02X %02X %02X %02X %02X %02X",
                         0,pws->vsl_save,pws->x_save/gl_wchar,

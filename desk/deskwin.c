@@ -150,7 +150,7 @@ WNODE *win_alloc(WORD obid)
     if (G.g_wcnt == NUM_WNODES)
         return ((WNODE *) NULL);
 
-    pt = (GRECT *) &G.g_cnxsave.cs_wnode[G.g_wcnt].x_save;
+    pt = (GRECT *) &G.g_cnxsave->cs_wnode[G.g_wcnt].x_save;
 
     wob = obj_walloc(pt->g_x, pt->g_y, pt->g_w, pt->g_h);
     if (wob)
