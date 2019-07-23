@@ -636,6 +636,7 @@ void win_sinfo(WNODE *pwin, BOOL check_selected)
 {
     PNODE *pn;
     FNODE *fn;
+    char *alert;
     WORD i, select_count = 0;
     LONG select_size = 0L;
 
@@ -659,15 +660,15 @@ void win_sinfo(WNODE *pwin, BOOL check_selected)
      */
     if (select_count)
     {
-        G.a_alert = desktop_str_addr(STINFST2);
+        alert = desktop_str_addr(STINFST2);
     }
     else
     {
-        G.a_alert = desktop_str_addr(STINFOST);
+        alert = desktop_str_addr(STINFOST);
         select_count = pn->p_count;     /* so we can use common code below */
         select_size = pn->p_size;
     }
 
-    sprintf(pwin->w_info, G.a_alert, select_size, select_count);
+    sprintf(pwin->w_info, alert, select_size, select_count);
     wind_set(pwin->w_id, WF_INFO, pwin->w_info, 0, 0);
 }

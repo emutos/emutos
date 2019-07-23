@@ -159,8 +159,6 @@ typedef struct
 /*GLOBAL*/ char         g_cmd[128];
 /*GLOBAL*/ char         g_tail[128];
 
-/*GLOBAL*/ char         *a_alert;
-
 /*GLOBAL*/ OBJECT       *a_trees[RS_NTREE];     /* ptrs to dialog trees */
 
 /*GLOBAL*/ WORD         g_croot;                /* current pseudo root  */
