@@ -884,7 +884,7 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, char *pathname, char *pname, cha
      * see if application was selected directly or a
      * data file with an associated primary application
      */
-    G.g_cmd[0] = G.g_tail[1] = '\0';
+    G.g_tail[1] = '\0';
     ptail = G.g_tail + 1;   /* arguments go here */
     ret = TRUE;
 
@@ -975,8 +975,8 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, char *pathname, char *pname, cha
             fun_alert_merge(1, STFILENF, filename_start(pcmd));
             return done;
         }
-        strcpy(G.g_cmd, pcmd);  /* G.g_tail+1 is already set up */
-        done = pro_run(isgraf, 1, G.g_cwin, curr);
+        /* G.g_tail+1 is already set up */
+        done = pro_run(isgraf, pcmd, G.g_cwin, curr);
     }
 
     return done;

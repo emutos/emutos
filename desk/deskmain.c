@@ -463,8 +463,7 @@ static WORD do_filemenu(WORD item)
 #if WITH_CLI
     case CLIITEM:                         /* Start EmuCON */
         G.g_tail[0] = G.g_tail[1] = 0;
-        strcpy(G.g_cmd, DEF_CONSOLE);
-        done = pro_run(FALSE, 1, -1, -1);
+        done = pro_run(FALSE, DEF_CONSOLE, -1, -1);
         break;
 #endif
 

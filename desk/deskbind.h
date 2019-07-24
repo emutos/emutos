@@ -156,7 +156,6 @@ typedef struct
 /*GLOBAL*/ WORD         g_wfull;
 /*GLOBAL*/ WORD         g_hfull;
 
-/*GLOBAL*/ char         g_cmd[128];
 /*GLOBAL*/ char         g_tail[128];
 
 /*GLOBAL*/ OBJECT       *a_trees[RS_NTREE];     /* ptrs to dialog trees */

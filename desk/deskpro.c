@@ -49,13 +49,13 @@ static WORD pro_exec(WORD isgraf, WORD isover, char *pcmd, char *ptail)
  * run a program via shel_write()
  * optionally, deselect the current icon & zoom to desktop size
  */
-WORD pro_run(WORD isgraf, WORD isover, WORD wh, WORD curr)
+WORD pro_run(WORD isgraf, char *cmd, WORD wh, WORD curr)
 {
     WORD ret, len;
 
     G.g_tail[0] = len = strlen(&G.g_tail[1]);
     G.g_tail[len+2] = 0x0D;     /* follows the nul byte, just like Atari TOS */
-    ret = pro_exec(isgraf, isover, G.g_cmd, G.g_tail);
+    ret = pro_exec(isgraf, 1, cmd, G.g_tail);
 
     if (wh != -1)
         do_wopen(FALSE, wh, curr, G.g_xdesk, G.g_ydesk, G.g_wdesk, G.g_hdesk);
