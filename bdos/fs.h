@@ -39,13 +39,13 @@
  *  TOS 3.06            80                  75
  *  TOS 4.04            63                  19 [likely a per-process number]
  */
-#define SUPSIZ 1024     /* common supervisor stack size (in words) */
-#define OPNFILES 40     /* max open files in system */
-#define NCURDIR 40      /* max current directories in use in system */
-#define NUMSTD 6        /* number of standard files */
-#define NUMHANDLES      (NUMSTD+OPNFILES)
-#define KBBUFSZ 128     /* size of typeahead buffer -- must be power of 2!! */
-#define KBBUFMASK       (KBBUFSZ-1)
+#define SUPSIZ      1024            /* common supervisor stack size (in words) */
+#define OPNFILES    40              /* max open files in system */
+#define NCURDIR     40              /* max current directories in use in system */
+#define NUMSTD      6               /* number of standard files */
+#define NUMHANDLES  (NUMSTD+OPNFILES)
+#define KBBUFSZ     128             /* size of typeahead buffer -- must be power of 2!! */
+#define KBBUFMASK   (KBBUFSZ-1)
 
 /*
  *  Error handling
