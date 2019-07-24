@@ -199,8 +199,8 @@ static WORD install_drive(WORD drive)
     pa->a_letter = 'A' + drive;
     pa->a_type = AT_ISDISK;
     pa->a_obid = 0;     /* fixed up when deskmain() calls app_blddesk() */
-    sprintf(G.g_1text,"%s %c",desktop_str_addr(STDISK),pa->a_letter);
-    scan_str(G.g_1text, &pa->a_pappl);  /* set up disk name */
+    sprintf(G.g_work,"%s %c",desktop_str_addr(STDISK),pa->a_letter);
+    scan_str(G.g_work, &pa->a_pappl);   /* set up disk name */
     pa->a_pdata = "";                   /* point to empty string */
     pa->a_aicon = (drive > 1) ? IG_HARD : IG_FLOPPY;
     pa->a_dicon = NIL;

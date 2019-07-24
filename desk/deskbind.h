@@ -156,8 +156,6 @@ typedef struct
 /*GLOBAL*/ WORD         g_wfull;
 /*GLOBAL*/ WORD         g_hfull;
 
-/*GLOBAL*/ char         g_tail[128];
-
 /*GLOBAL*/ OBJECT       *a_trees[RS_NTREE];     /* ptrs to dialog trees */
 
 /*GLOBAL*/ WORD         g_croot;                /* current pseudo root  */
@@ -177,7 +175,7 @@ typedef struct
 /*GLOBAL*/ char         g_appdir;               /* default dir is application dir */
 /*GLOBAL*/ char         g_fullpath;             /* use full path for parameter */
 
-/*GLOBAL*/ char         g_1text[256];
+/*GLOBAL*/ char         g_work[256];            /* general text work area */
 
 /*GLOBAL*/ WORD         g_icw;
 /*GLOBAL*/ WORD         g_ich;

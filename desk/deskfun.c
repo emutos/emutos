@@ -85,10 +85,10 @@ WORD fun_alert_merge(WORD defbut, WORD stnum, ...)
     _Static_assert(sizeof(void *) >= sizeof(long),"incompatible type sizes");
 
     va_start(ap, stnum);
-    sprintf(G.g_1text, desktop_str_addr(stnum), va_arg(ap,void *));
+    sprintf(G.g_work, desktop_str_addr(stnum), va_arg(ap,void *));
     va_end(ap);
 
-    return form_alert(defbut, G.g_1text);
+    return form_alert(defbut, G.g_work);
 }
 
 
