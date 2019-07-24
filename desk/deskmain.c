@@ -462,8 +462,8 @@ static WORD do_filemenu(WORD item)
 
 #if WITH_CLI
     case CLIITEM:                         /* Start EmuCON */
-        G.g_tail[0] = G.g_tail[1] = 0;
-        done = pro_run(FALSE, DEF_CONSOLE, -1, -1);
+        G.g_1text[1] = '\0';
+        done = pro_run(FALSE, DEF_CONSOLE, G.g_1text, -1, -1);
         break;
 #endif
 

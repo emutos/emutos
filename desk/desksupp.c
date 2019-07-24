@@ -976,7 +976,7 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, char *pathname, char *pname, cha
             return done;
         }
         /* G.g_tail+1 is already set up */
-        done = pro_run(isgraf, pcmd, G.g_cwin, curr);
+        done = pro_run(isgraf, pcmd, G.g_tail, G.g_cwin, curr);
     }
 
     return done;
