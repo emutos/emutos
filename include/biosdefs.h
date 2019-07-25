@@ -103,10 +103,6 @@ struct kbdvecs
 };
 
 /*
- * Struct returned by Kbdvbase()
- */
-
-/*
  * Types for callbacks
  */
 typedef void (*ETV_TIMER_T)(int ms); /* Type of BDOS Event Timer */
