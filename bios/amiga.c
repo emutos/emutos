@@ -1468,7 +1468,6 @@ static ULONG delay18ms;
 #define TIMEOUT_MOTORON 500 /* milliseconds */
 #define TIMEOUT_DSKBLK 1000 /* milliseconds */
 
-#define SECTOR_SIZE 512 /* Size of a sector, in bytes */
 #define MFM_TRACK_SIZE 13630UL /* Size of an MFM encoded track, in bytes */
 #define MAGIC_MFM_SYNC_MARK 0x4489 /* MFM value for bit synchronization */
 #define MAX_TRACKS 80 /* Typical value for most floppies */

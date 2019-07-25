@@ -15,7 +15,6 @@
 
 /* defines */
 
-#define SECTOR_SIZE     512 /* standard for floppy, hard disk */
 #define NUMFLOPPIES     2   /* max number of floppies supported */
 
 #define ACSI_BUS            0

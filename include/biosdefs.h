@@ -14,6 +14,11 @@
 #ifndef BIOSDEFS_H
 #define BIOSDEFS_H
 
+/*
+ * Universal constant (for older drives, anyway)
+ */
+#define SECTOR_SIZE 512UL
+
 /* Forward declarations */
 struct _pd;
 

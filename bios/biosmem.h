@@ -14,6 +14,7 @@
 #define BIOSMEM_H
 
 #include "bdosdefs.h"
+#include "biosdefs.h"
 #include "disk.h"
 
 /*

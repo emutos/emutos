@@ -66,7 +66,6 @@
 #define RANDOM_SERIAL   0x01000000L
 #define WRITESEC        0x03        /* no media change detection */
 #define FA_VOL          0x08        /* volume label attribute */
-#define SECTOR_SIZE     512L
 
 static const WORD std_skewtab[] =
  { 1, 2, 3, 4, 5, 6, 7, 8, 9,
