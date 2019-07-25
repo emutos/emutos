@@ -51,7 +51,7 @@ static TYPEAHEAD *buffer[3];
  *
  * [0] is used for prn, [1] for aux, and [2] for con
  */
-WORD glbcolumn[3];
+static WORD glbcolumn[3];
 
 
 /*
