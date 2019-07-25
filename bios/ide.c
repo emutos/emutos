@@ -721,7 +721,7 @@ static void ide_get_data_32(volatile struct IDE *interface,UBYTE *buffer,ULONG b
  */
 static void ide_get_data(volatile struct IDE *interface,UBYTE *buffer,UWORD numsecs,int need_byteswap)
 {
-    ULONG bufferlen = (ULONG)numsecs * SECTOR_SIZE;
+    ULONG bufferlen = numsecs * SECTOR_SIZE;
     XFERWIDTH *p = (XFERWIDTH *)buffer;
     XFERWIDTH *end = (XFERWIDTH *)(buffer + bufferlen);
 
@@ -829,7 +829,7 @@ static LONG ide_read(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UWORD count,UB
         status1 = IDE_READ_STATUS();    /* status, clear pending interrupt */
 
         numsecs = (count>spi) ? spi : count;
-        xferlen = (ULONG)numsecs * SECTOR_SIZE;
+        xferlen = numsecs * SECTOR_SIZE;
 
         rc = E_OK;
         if (status1 & IDE_STATUS_DRQ) {
@@ -865,7 +865,7 @@ static LONG ide_read(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UWORD count,UB
  */
 static void ide_put_data(volatile struct IDE *interface,UBYTE *buffer,UWORD numsecs,int need_byteswap)
 {
-    ULONG bufferlen = (ULONG)numsecs * SECTOR_SIZE;
+    ULONG bufferlen = numsecs * SECTOR_SIZE;
     XFERWIDTH *p = (XFERWIDTH *)buffer;
     XFERWIDTH *end = (XFERWIDTH *)(buffer + bufferlen);
 
@@ -959,7 +959,7 @@ static LONG ide_write(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UWORD count,U
         ULONG xferlen;
 
         numsecs = (count>spi) ? spi : count;
-        xferlen = (ULONG)numsecs * SECTOR_SIZE;
+        xferlen = numsecs * SECTOR_SIZE;
 
         rc = E_OK;
         status1 = IDE_READ_STATUS();    /* status, clear pending interrupt */
@@ -1031,7 +1031,7 @@ LONG ide_rw(WORD rw,LONG sector,WORD count,UBYTE *buf,WORD dev,BOOL need_byteswa
 
         p = use_tmpbuf ? dskbufp : buf;
         if (rw && use_tmpbuf)
-            memcpy(p,buf,(LONG)numsecs*SECTOR_SIZE);
+            memcpy(p,buf,numsecs*SECTOR_SIZE);
 
         ret = rw ? ide_write(IDE_CMD_WRITE_SECTOR,ifnum,dev,sector,numsecs,p,need_byteswap)
                 : ide_read(IDE_CMD_READ_SECTOR,ifnum,dev,sector,numsecs,p,need_byteswap);
@@ -1044,9 +1044,9 @@ LONG ide_rw(WORD rw,LONG sector,WORD count,UBYTE *buf,WORD dev,BOOL need_byteswa
         }
 
         if (!rw && use_tmpbuf)
-            memcpy(buf,p,(LONG)numsecs*SECTOR_SIZE);
+            memcpy(buf,p,numsecs*SECTOR_SIZE);
 
-        buf += (ULONG)numsecs*SECTOR_SIZE;
+        buf += numsecs*SECTOR_SIZE;
         sector += numsecs;
         count -= numsecs;
     }

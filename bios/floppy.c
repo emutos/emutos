@@ -1116,7 +1116,7 @@ static WORD flopio(UBYTE *userbuf, WORD rw, WORD dev,
      * we can do it just once for efficiency.
      */
     if (rw && !tmpbuf)
-        flush_data_cache(userbuf, (LONG)count * SECTOR_SIZE);
+        flush_data_cache(userbuf, count * SECTOR_SIZE);
 
     while(count--) {
         iobufptr = tmpbuf ? tmpbuf : userbuf;

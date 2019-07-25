@@ -136,7 +136,7 @@ LONG acsi_rw(WORD rw, LONG sector, WORD count, UBYTE *buf, WORD dev)
 
         p = use_tmpbuf ? tmp_buf : buf;
         if (rw && use_tmpbuf)
-            memcpy(p, buf, (LONG)numsecs * SECTOR_SIZE);
+            memcpy(p, buf, numsecs * SECTOR_SIZE);
 
         for (retry = 0; retry < 2; retry++) {
             err = do_acsi_rw(rw, sector, numsecs, p, dev);
@@ -151,10 +151,10 @@ LONG acsi_rw(WORD rw, LONG sector, WORD count, UBYTE *buf, WORD dev)
         }
 
         if (!rw && use_tmpbuf)
-            memcpy(buf, p, (LONG)numsecs * SECTOR_SIZE);
+            memcpy(buf, p, numsecs * SECTOR_SIZE);
 
         count -= numsecs;
-        buf += (LONG)numsecs * SECTOR_SIZE;
+        buf += numsecs * SECTOR_SIZE;
         sector += numsecs;
     }
     return 0;
@@ -300,7 +300,7 @@ static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, UBYTE *buf, WORD dev)
 {
     UBYTE cdb[10];  /* allow for 10-byte read/write commands */
     int status, cdblen;
-    LONG buflen = (LONG)cnt * SECTOR_SIZE;
+    LONG buflen = cnt * SECTOR_SIZE;
 
     /* flush data cache here so that memory is current */
     if (rw == RW_WRITE)

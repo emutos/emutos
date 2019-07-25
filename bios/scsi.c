@@ -416,7 +416,7 @@ LONG scsi_rw(UWORD rw, ULONG sector, UWORD count, UBYTE *buf, WORD dev)
 
         p = use_tmpbuf ? tmp_buf : buf;
         if (rw && use_tmpbuf)
-            memcpy(p, buf, (LONG)numsecs * SECTOR_SIZE);
+            memcpy(p, buf, numsecs * SECTOR_SIZE);
 
         for (retry = 0; retry < 2; retry++)
             if ((ret=do_scsi_rw(rw, sector, numsecs, p, dev)) == 0)
@@ -425,10 +425,10 @@ LONG scsi_rw(UWORD rw, ULONG sector, UWORD count, UBYTE *buf, WORD dev)
             break;
 
         if (!rw && use_tmpbuf)
-            memcpy(buf, p, (LONG)numsecs * SECTOR_SIZE);
+            memcpy(buf, p, numsecs * SECTOR_SIZE);
 
         count -= numsecs;
-        buf += (LONG)numsecs * SECTOR_SIZE;
+        buf += numsecs * SECTOR_SIZE;
         sector += numsecs;
     }
 
@@ -1374,7 +1374,7 @@ static LONG do_scsi_rw(UWORD rw, ULONG sector, UWORD count, UBYTE *buf, WORD dev
     info.cdbptr = cdb;
     info.cdblen = build_rw_command(cdb, rw, sector, count);
     info.bufptr = buf;
-    info.buflen = (LONG)count * SECTOR_SIZE;
+    info.buflen = count * SECTOR_SIZE;
     info.mode = rw ? WRITE_MODE : 0;
 
     /* execute command */
