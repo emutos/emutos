@@ -13,10 +13,6 @@
 
         .extern _local_pb
         .extern _CONTRL
-        .extern _INTIN
-        .extern _PTSIN
-        .extern _INTOUT
-        .extern _PTSOUT
         .extern _flip_y
         .extern _screen
 
