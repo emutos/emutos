@@ -17,6 +17,7 @@
 #include "tosvars.h"
 #include "machine.h"
 #include "has.h"
+#include "cookie.h"
 #include "biosext.h"    /* for cache control routines */
 #include "vectors.h"
 #include "../bdos/bdosstub.h"
@@ -143,7 +144,7 @@ void altram_init(void)
 
         /* Only enable 6Mb when on a Mega STE due to address conflict with
            VME bus. Todo: This should be made configurable. */
-        if (has_vme)
+        if (cookie_mch == MCH_MSTE)
             monster_reg = 6;
         else
             monster_reg = 8;
