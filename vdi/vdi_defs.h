@@ -19,7 +19,7 @@
 /*
  * some minima and maxima
  */
-#define MAX_PTSIN   256         /* max. # of coordinate pairs, also in vdi_asm.S! */
+#define MAX_POINTS      256     /* max. # of coordinate pairs, also in vdi_asm.S! */
 
 #define MIN_LINE_STYLE  1       /* for vsl_type() */
 #define MAX_LINE_STYLE  7
