@@ -11,6 +11,15 @@
 #ifndef VDIDEFS_H
 #define VDIDEFS_H
 
+/*
+ * values applicable to C and asm
+ */
+#define MAX_PTSIN       512     /* max# of points in local copy of ptsin[] */
+#define MAX_POINTS      (MAX_PTSIN)/2   /* max# of coordinate pairs */
+
+
+#ifndef ASM_SOURCE
+
 #include "fonthdr.h"
 
 #define HAVE_BEZIER 0           /* switch on bezier capability */
@@ -19,8 +28,6 @@
 /*
  * some minima and maxima
  */
-#define MAX_POINTS      256     /* max. # of coordinate pairs, also in vdi_asm.S! */
-
 #define MIN_LINE_STYLE  1       /* for vsl_type() */
 #define MAX_LINE_STYLE  7
 #define DEF_LINE_STYLE  1
@@ -383,5 +390,7 @@ void v_bez_qual(Vwk *);
 void v_bez_control(Vwk *);
 void v_bez(Vwk *vwk, Point * points, int count);
 void v_bez_fill(Vwk *vwk, Point * points, int count);
+
+#endif                          /* ASM_SOURCE */
 
 #endif                          /* VDIDEF_H */

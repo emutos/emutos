@@ -10,6 +10,7 @@
  */
 
 #include "asmdefs.h"
+#include "vdi_defs.h"
 
         .extern _local_pb
         .extern _CONTRL
@@ -54,13 +55,11 @@ query:
  * _GSX_ENTRY - front end of the GIOS for the screen driver
  */
 
-#define ptsin_size 512          // max. # of elements allowed for PTSIN array
-#define ptsin_max  ptsin_size/2 // max. # of coordinate pairs for PTSIN array
 #define W_1        2            // byte offset to first element of an array
 #define W_3        6            // byte offset to third element of an array
 
         .bss
-lcl_ptsin:      .ds.w   ptsin_size
+lcl_ptsin:      .ds.w   MAX_PTSIN
 
         .text
 
@@ -102,9 +101,9 @@ _GSX_ENTRY:
 //                              // set user's CONTRL[1] to 0
         jra     size_intin
 size_ptsin:
-        cmpi.w  #ptsin_max,d0   // # of user vertices > # of allowable vertices?
+        cmpi.w  #MAX_POINTS,d0  // # of user vertices > # of allowable vertices?
         jle     ptsin_ok        // for user vertices =< # of allowable vertices
-        move.w  #ptsin_max,d0   // user vertices > # of allowable vertices
+        move.w  #MAX_POINTS,d0  // user vertices > # of allowable vertices
         move.w  d0,W_1(a0)      // put max # of vertices in user's CONTRL[1]
 ptsin_ok:
         subq.l  #1,d0           // adjust coordinate count for loop
