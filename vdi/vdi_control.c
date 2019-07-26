@@ -70,7 +70,7 @@ static const WORD INQ_TAB_rom[45] = {
     1,                  /* 11 - text alignment flag      */
     0,                  /* 12 - Inking capability        */
     0,                  /* 13 - rubber banding           */
-    256,                /* 14 - maximum vertices (must agree with vdi_asm.s) */
+    MAX_POINTS,         /* 14 - maximum vertices         */
     -1,                 /* 15 - maximum intin            */
     1,                  /* 16 - number of buttons on MOUSE   */
     0,                  /* 17 - styles for wide lines            */
