@@ -60,7 +60,7 @@
 #define DEF_WRT_MODE    1
 
 #define MIN_ARC_CT      32      /* min # of points to use when drawing circle/ellipse */
-#define MAX_ARC_CT      128     /* max # of points ... */
+#define MAX_ARC_CT      128     /* max # of points ... (must not exceed MAX_POINTS) */
 
 
 /* line ending types */
