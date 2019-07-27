@@ -12,7 +12,7 @@
 #include "cmd.h"
 #include "scancode.h"
 #include "string.h"
-#include "kprint.h"
+
 /*
  *  local to this set of functions
  */
