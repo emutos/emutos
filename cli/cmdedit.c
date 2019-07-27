@@ -12,7 +12,7 @@
 #include "cmd.h"
 #include "scancode.h"
 #include "string.h"
-
+#include "kprint.h"
 /*
  *  local to this set of functions
  */
@@ -20,6 +20,7 @@ LOCAL WORD linesize;
 LOCAL WORD history_num;
 LOCAL char *history_line[HISTORY_SIZE];
 LOCAL char *insert;     /* saves insertion point for tab completion */
+LOCAL char fsfbuf[MAXPATHLEN];  /* saves Fsfirst() string for tab completion */
 
 /*
  *  function prototypes
@@ -195,7 +196,6 @@ void save_history(const char *line)
  */
 PRIVATE WORD edit_line(char *line,WORD *pos,WORD *len,WORD scancode,WORD prevcode)
 {
-char buffer[MAXPATHLEN];
 char *start, *p, *q;
 LONG rc;
 WORD n, word = 0;
@@ -259,18 +259,17 @@ WORD n, word = 0;
             break;
         if (prevcode == TAB) {
             rc = getnextfile(start==line);
-            if (rc < 0L) {              /* assume no more files */
-                rc = getfirstnondot(buffer,start==line);
-            }
         } else {
-            for (p = start, q = buffer; p < line+*pos; )
+            for (p = start, q = fsfbuf; p < line+*pos; )
                 *q++ = *p++;
             *q++ = '*';
             *q++ = '.';
             *q++ = '*';
             *q = '\0';
-            rc = getfirstnondot(buffer,start==line);
+            rc = -1L;       /* force getfirstnondot() */
         }
+        if (rc < 0L)        /* no more files */
+            rc = getfirstnondot(fsfbuf,start==line);
         if (rc == 0L) {
             erase_line(insert,*pos-(insert-line));
             for (q = insert, p = dta->d_fname; *p; ) {
