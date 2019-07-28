@@ -496,7 +496,7 @@ void vdi_v_clrwk(Vwk * vwk)
     size = (ULONG)v_lin_wr * V_REZ_VT;
 
     /* clear the screen */
-    memset(v_bas_ad, 0, size);
+    bzero(v_bas_ad, size);
 }
 
 

@@ -1370,7 +1370,7 @@ static WORD init_start(char *buf, WORD disktype, WORD drive, char *label)
     /*
      * write FATs
      */
-    memset(buf, 0x00, bpb->fsiz*SECTOR_SIZE);
+    bzero(buf, bpb->fsiz*SECTOR_SIZE);
     buf[0] = 0xf9;
     buf[1] = 0xff;
     buf[2] = 0xff;
@@ -1382,7 +1382,7 @@ static WORD init_start(char *buf, WORD disktype, WORD drive, char *label)
     /*
      * write root dir, including label if present
      */
-    memset(buf, 0x00, bpb->rdlen*SECTOR_SIZE);
+    bzero(buf, bpb->rdlen*SECTOR_SIZE);
     if (label[0])
     {
         memset(buf, ' ', 11);

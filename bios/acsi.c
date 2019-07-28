@@ -215,7 +215,7 @@ static LONG acsi_capacity(WORD dev, ULONG *info)
     set_dma_addr(dskbufp);
 
     cdb[0] = 0x25;          /* set up Read Capacity cdb */
-    memset(cdb+1,0x00,9);
+    bzero(cdb+1,9);
     status = send_command(cdb,10,RW_READ,dev,1,1);
 
     acsi_end();
@@ -238,7 +238,7 @@ static LONG acsi_testunit(WORD dev)
 
     acsi_begin();
 
-    memset(cdb,0x00,6);     /* set up Test Unit Ready cdb */
+    bzero(cdb,6);           /* set up Test Unit Ready cdb */
     status = send_command(cdb,6,RW_READ,dev,0,0);
 
     acsi_end();

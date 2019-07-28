@@ -1329,11 +1329,11 @@ static LONG decode_scsi_status(WORD dev, LONG ret)
     /*
      * handle check condition: do a request sense & check result
      */
-    memset(cdb, 0x00, 6);
+    bzero(cdb, 6);
     cdb[0] = REQUEST_SENSE;
     cdb[4] = REQSENSE_LENGTH;
 
-    memset(&info, 0x00, sizeof(CMDINFO));
+    bzero(&info, sizeof(CMDINFO));
     info.cdbptr = cdb;
     info.cdblen = 6;
     info.bufptr = reqsense_buffer;
@@ -1370,7 +1370,7 @@ static LONG do_scsi_rw(UWORD rw, ULONG sector, UWORD count, UBYTE *buf, WORD dev
     CMDINFO info;
     LONG ret;
 
-    memset(&info, 0x00, sizeof(CMDINFO));
+    bzero(&info, sizeof(CMDINFO));
     info.cdbptr = cdb;
     info.cdblen = build_rw_command(cdb, rw, sector, count);
     info.bufptr = buf;
@@ -1389,10 +1389,10 @@ static LONG scsi_capacity(WORD dev, ULONG *buffer)
     CMDINFO info;
     LONG ret;
 
-    memset(cdb, 0x00, 10);      /* build READ CAPACITY command */
+    bzero(cdb, 10);         /* build READ CAPACITY command */
     cdb[0] = READ_CAPACITY;
 
-    memset(&info, 0x00, sizeof(CMDINFO));
+    bzero(&info, sizeof(CMDINFO));
     info.cdbptr = cdb;
     info.cdblen = 10;
     info.bufptr = (void *)buffer;
@@ -1408,11 +1408,11 @@ static LONG scsi_inquiry(WORD dev, UBYTE *buffer)
     CMDINFO info;
     LONG ret;
 
-    memset(cdb, 0x00, 6);       /* build INQUIRY command */
+    bzero(cdb, 6);          /* build INQUIRY command */
     cdb[0] = INQUIRY;
     cdb[4] = INQUIRY_LENGTH;
 
-    memset(&info, 0x00, sizeof(CMDINFO));
+    bzero(&info, sizeof(CMDINFO));
     info.cdbptr = cdb;
     info.cdblen = 6;
     info.bufptr = buffer;

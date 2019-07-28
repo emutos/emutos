@@ -33,7 +33,7 @@ static void *create_chain(UBYTE *p,LONG n)
 
     for (i = 0; i < NUMBUFS; i++, p += n) {
         bcbptr = (BCB *)p;
-        memset(bcbptr,0x00,sizeof(BCB));
+        bzero(bcbptr,sizeof(BCB));
         if (i < NUMBUFS-1)                  /* chain to next */
             bcbptr->b_link = (BCB *)(p + n);
         bcbptr->b_bufdrv = -1;              /* mark as invalid */

@@ -933,7 +933,7 @@ void wm_start(void)
     or_start();
 
     /* init window extent objects */
-    memset(&W_TREE[ROOT], 0, NUM_MWIN * sizeof(OBJECT));
+    bzero(&W_TREE[ROOT], NUM_MWIN * sizeof(OBJECT));
     w_nilit(NUM_MWIN, &W_TREE[ROOT]);
     for (i = 0; i < NUM_MWIN; i++)
     {
@@ -946,7 +946,7 @@ void wm_start(void)
     W_TREE[ROOT].ob_spec = tree->ob_spec;
 
     /* init window element objects */
-    memset(&W_ACTIVE[ROOT], 0, NUM_ELEM * sizeof(OBJECT));
+    bzero(&W_ACTIVE[ROOT], NUM_ELEM * sizeof(OBJECT));
     w_nilit(NUM_ELEM, W_ACTIVE);
     for (i = 0; i < NUM_ELEM; i++)
     {

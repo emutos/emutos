@@ -802,7 +802,7 @@ void vdi_vqt_extent(Vwk * vwk)
 
     CONTRL[2] = 4;
 
-    memset(PTSOUT,0,8*sizeof(WORD));
+    bzero(PTSOUT,8*sizeof(WORD));
     switch (vwk->chup) {
     default:                    /* 0 or 3600 ... see vdi_vst_rotation() */
         PTSOUT[2] = width;

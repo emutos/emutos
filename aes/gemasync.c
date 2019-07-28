@@ -136,7 +136,7 @@ EVSPEC iasync(WORD afunc, LONG aparm)
         panic("no free EVBs available\n");
 
     eul = e->e_nextp;
-    memset(e, 0, sizeof(EVB));
+    bzero(e, sizeof(EVB));
 
     /* add to list of events being waited for */
     e->e_nextp = rlr->p_evlist;

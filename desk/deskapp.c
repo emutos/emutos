@@ -590,7 +590,7 @@ static WORD initialise_anodes(void)
         KDEBUG(("insufficient memory for %ld anodes\n",NUM_ANODES));
         return -1;
     }
-    memset(G.g_alist,0x00,NUM_ANODES*sizeof(ANODE));
+    bzero(G.g_alist,NUM_ANODES*sizeof(ANODE));
 
     for (i = 0; i < NUM_ANODES-1; i++)
         G.g_alist[i].a_next = &G.g_alist[i+1];
@@ -911,7 +911,7 @@ void app_start(void)
 
     /* set up outlines for dragging files displayed as icons */
     G.g_nmicon = 9;     /* number of points */
-    memset(G.g_xyicon, 0, sizeof(G.g_xyicon));
+    bzero(G.g_xyicon, sizeof(G.g_xyicon));
     xcent = (G.g_wicon - G.g_iblist[0].ib_wicon) / 2;
     G.g_xyicon[0] = xcent;
     G.g_xyicon[2] = xcent;
@@ -929,7 +929,7 @@ void app_start(void)
 
     /* set up outlines for dragging files displayed as text */
     G.g_nmtext = 5;     /* number of points */
-    memset(G.g_xytext, 0, sizeof(G.g_xytext));
+    bzero(G.g_xytext, sizeof(G.g_xytext));
     G.g_xytext[2] = gl_wchar * DRAG_BOX_WIDTH;
     G.g_xytext[4] = gl_wchar * DRAG_BOX_WIDTH;
     G.g_xytext[5] = gl_hchar;

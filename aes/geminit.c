@@ -757,7 +757,7 @@ void gem_main(void)
     if (num_accs)
         D.g_acc = dos_alloc_anyram(num_accs*sizeof(AESPROCESS));
     if (D.g_acc)
-        memset(D.g_acc,0x00,num_accs*sizeof(AESPROCESS));
+        bzero(D.g_acc,num_accs*sizeof(AESPROCESS));
     else num_accs = 0;
 
     totpds = num_accs + 2;
