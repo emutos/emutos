@@ -317,17 +317,12 @@ static int wait_for_not_BSY(volatile struct IDE *interface,LONG timeout);
  * set a special value in the sector number/count registers of
  * device 0 in the specified interface
  *
- * we wait a max time for BSY to drop since this is called during
- * initialisation, which can be invoked by power-on/reset
  */
-static void set_interface_magic(WORD ifnum)
+static void set_interface_magic(volatile struct IDE *interface, WORD ifnum)
 {
-    volatile struct IDE *interface = ifinfo[ifnum].base_address;
     UBYTE secnum = SECNUM_MAGIC + ifnum;
     UBYTE seccnt = SECCNT_MAGIC + ifnum;
 
-    IDE_WRITE_CONTROL(interface,IDE_CONTROL_nIEN);/* no interrupts please */
-    wait_for_not_BSY(interface,LONG_TIMEOUT);
     IDE_WRITE_HEAD(interface,IDE_DEVICE(0));
     DELAY_400NS;
     IDE_WRITE_SECTOR_NUMBER_SECTOR_COUNT(interface,secnum,seccnt);
@@ -339,9 +334,8 @@ static void set_interface_magic(WORD ifnum)
  *
  * returns 1 if OK, 0 otherwise
  */
-static int check_interface_magic(WORD ifnum)
+static int check_interface_magic(volatile struct IDE *interface, WORD ifnum)
 {
-    volatile struct IDE *interface = ifinfo[ifnum].base_address;
     UWORD numcnt = MAKE_UWORD(SECNUM_MAGIC + ifnum, SECCNT_MAGIC + ifnum);
 
     if (IDE_READ_SECTOR_NUMBER_SECTOR_COUNT(interface) == numcnt)
@@ -355,31 +349,65 @@ static int check_interface_magic(WORD ifnum)
  * incomplete hardware address decoding and twisted cables
  *
  * method:
- * 1. write a magic number (dependent on the interface number) to
- *    the sector number/count registers
- * 2. read it back & check that it matches; if it does, goto (4)
- * 3. otherwise we assume a twisted cable, adjust the interface
- *    base address, and write the number again
- * 4. check if the interface 0 magic number has been changed; if
+ * 1. as soon as the BSY bit on the interface is low:
+ *    write a magic number (dependent on the interface number) to
+ *    the sector number/count registers at the addresses for the
+ *    regular and the twisted cable
+ * 2. try read them back & check if either of them matches;
+ *    if it does, goto (3); else repeat (2) until a timeout occurs
+ * 3. check if the interface 0 magic number has been changed; if
  *    so, this is a ghost interface & we reject it
  */
 static int ide_interface_exists(WORD ifnum)
 {
+    volatile struct IDE *regular_iface = ifinfo[ifnum].base_address;
+    volatile struct IDE *twisted_iface = (volatile struct IDE *)(((ULONG)ifinfo[ifnum].base_address)-1);
+    volatile struct IDE *first_iface   = ifinfo[0].base_address;
     int rc = 0;             /* assume it doesn't exist */
 
-    set_interface_magic(ifnum);
-    if (!check_interface_magic(ifnum)) {
-        /*
-        * if magic can't be read back, then assume twisted cable,
-        * hence, interface base address needs to be offset by 1
-        */
-        ifinfo[ifnum].base_address = (volatile struct IDE *)(((ULONG)ifinfo[ifnum].base_address)-1);
-        ifinfo[ifnum].twisted_cable = TRUE;
-        set_interface_magic(ifnum);
-    }
-    rc = check_interface_magic(0);
+    /* We wait a max time for BSY to drop since this is called during
+     * initialisation, which can be invoked by power-on/reset.
+     */
+    LONG next = hz_200 + LONG_TIMEOUT;
 
-    KDEBUG(("ide interface %d %s %s",ifnum,rc?"exists":"not present",ifinfo[ifnum].twisted_cable?"(twisted cable)":""));
+    IDE_WRITE_CONTROL(regular_iface,IDE_CONTROL_nIEN);/* no interrupts please */
+    IDE_WRITE_CONTROL(twisted_iface,IDE_CONTROL_nIEN);/* no interrupts please */
+
+    DELAY_400NS;
+    while(hz_200 < next) {
+        /* Check BSY on regular interface. */
+        if ((IDE_READ_ALT_STATUS(regular_iface) & IDE_STATUS_BSY) == 0) {
+            /* Check it exists by setting and reading back magic number. */
+            KDEBUG(("checking ide interface %d\n", ifnum));
+            set_interface_magic(regular_iface, ifnum);
+            if ((rc = check_interface_magic(regular_iface, ifnum))) {
+                ifinfo[ifnum].twisted_cable = FALSE;
+                /* Check that it is not a ghost interface. */
+                if (ifnum > 0) {
+                    rc = check_interface_magic(first_iface, 0);
+                }
+                break;
+            }
+        }
+
+        /* Check BSY on twisted interface. */
+        if ((IDE_READ_ALT_STATUS(twisted_iface) & IDE_STATUS_BSY) == 0) {
+            /* Check it exists by setting and reading back magic number. */
+            KDEBUG(("checking ide interface %d with twisted cable\n", ifnum));
+            set_interface_magic(twisted_iface, ifnum);
+            if ((rc = check_interface_magic(twisted_iface, ifnum))) {
+                ifinfo[ifnum].base_address = twisted_iface;
+                ifinfo[ifnum].twisted_cable = TRUE;
+                /* Check that it is not a ghost interface. */
+                if (ifnum > 0) {
+                    rc = check_interface_magic(first_iface, 0);
+                }
+                break;
+            }
+        }
+    }
+
+    KDEBUG(("ide interface %d %s %s\n",ifnum,rc?"exists":"not present",ifinfo[ifnum].twisted_cable?"(twisted cable)":""));
 
     return rc;
 }
