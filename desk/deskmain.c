@@ -1562,6 +1562,7 @@ BOOL deskmain(void)
                 (LONG)sizeof(CSAVE)));
         nomem_alert();              /* infinite loop */
     }
+    bzero(G.g_cnxsave, sizeof(CSAVE));
 
     /* initialize resources */
     if (desk_rs_init() < 0)         /* copies ROM to RAM */
