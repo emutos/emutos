@@ -27,7 +27,7 @@
 #include "asm.h"
 #include "cookie.h"
 #include "delay.h"
-#include "biosmem.h"
+#include "biosdefs.h"
 
 #if CONF_WITH_ACSI
 

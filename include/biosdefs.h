@@ -19,6 +19,10 @@
  */
 #define SECTOR_SIZE 512UL
 
+/* Fast RAM Buffer specifications */
+#define FRB_SIZE    (64 * 1024UL)   /* pointed to by _FRB cookie */
+#define FRB_SECS    (FRB_SIZE / SECTOR_SIZE)
+
 /* Forward declarations */
 struct _pd;
 

@@ -10,6 +10,24 @@
 #ifndef BIOSEXT_H
 #define BIOSEXT_H
 
+/*
+ * Size of ST-RAM disk buffer pointed to by _dskbufp
+ *
+ * According to Atari documentation, this is at least two sectors in size.
+ * In EmuTOS's implementation, this must be large enough to handle the
+ * sectors read by flop_mediach() in order to detect floppy media change.
+ * CHKSUM_SECTORS specifies the number of sectors used for that; the value
+ * is (1 + the maximum FAT size).
+ */
+#define CHKSUM_SECTORS  6
+
+#if CHKSUM_SECTORS > 2
+# define DSKBUF_SECS     CHKSUM_SECTORS
+#else
+# define DSKBUF_SECS    2
+#endif
+#define DSKBUF_SIZE     (DSKBUF_SECS * SECTOR_SIZE)
+
 /* Forward declarations */
 struct _mcs;
 struct font_head;

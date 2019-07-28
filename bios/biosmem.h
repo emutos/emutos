@@ -15,19 +15,7 @@
 
 #include "bdosdefs.h"
 #include "biosdefs.h"
-#include "disk.h"
-
-/*
- * sizes of ST-RAM disk buffers
- */
-#if CHKSUM_SECTORS > 2
-# define DSKBUF_SECS     CHKSUM_SECTORS
-#else
-# define DSKBUF_SECS     2
-#endif
-#define DSKBUF_SIZE     (DSKBUF_SECS * SECTOR_SIZE) /* pointed to by dskbufp */
-#define FRB_SIZE        (64 * 1024UL)       /* pointed to by _FRB cookie */
-#define FRB_SECS        (FRB_SIZE / SECTOR_SIZE)
+#include "biosext.h"
 
 extern UBYTE dskbuf[DSKBUF_SIZE]; /* In ST-RAM */
 

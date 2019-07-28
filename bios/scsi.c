@@ -39,7 +39,7 @@
 #include "emutos.h"
 #include "scsi.h"
 #include "asm.h"
-#include "biosmem.h"
+#include "biosdefs.h"
 #include "cookie.h"
 #include "delay.h"
 #include "disk.h"
