@@ -26,7 +26,7 @@
         .extern _ad_envrn
         .extern _size_theglo
         .extern _D
-        .extern _bzero
+        .extern _bzero_nobuiltin
         .extern _just_rts
         .extern _drwaddr
         .extern _tikcod
@@ -103,7 +103,7 @@ aes_restart:
         move.l  d0,-(sp)        // size in bytes
         movea.l #_D,a0
         move.l  a0,-(sp)        // address
-        jsr     _bzero          // clear it
+        jsr     _bzero_nobuiltin    // clear it
         addq.l  #8,sp
 
         // _drwaddr ??? set to just_rts

@@ -34,7 +34,7 @@
 
         // functions for detecting hardware
         .extern _check_read_byte
-        .extern _bzero
+        .extern _bzero_nobuiltin
         .extern _flush_data_cache
         .extern _invalidate_data_cache
 
@@ -654,7 +654,7 @@ call_bzero_a0_a1:
         sub.l   a0,a1
         move.l  a1,-(sp)    // size
         move.l  a0,-(sp)    // start
-        jsr     _bzero
+        jsr     _bzero_nobuiltin
         addq.l  #8,sp
         rts
 
