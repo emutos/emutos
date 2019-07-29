@@ -43,7 +43,7 @@
 #define OPNFILES    75              /* max open files in system */
 #define NCURDIR     40              /* max current directories in use in system */
 #define NUMHANDLES  (NUMSTD+OPNFILES)
-#define KBBUFSZ     128             /* size of typeahead buffer -- must be power of 2!! */
+#define KBBUFSZ     64              /* size of typeahead buffer -- must be power of 2!! */
 #define KBBUFMASK   (KBBUFSZ-1)
 
 /*
