@@ -14,7 +14,7 @@
 /*
  * values applicable to C and asm
  */
-#define MAX_PTSIN       512     /* max# of points in local copy of ptsin[] */
+#define MAX_PTSIN       512     /* max# of words in local copy of ptsin[] */
 #define MAX_POINTS      (MAX_PTSIN)/2   /* max# of coordinate pairs */
 
 
