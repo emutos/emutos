@@ -654,7 +654,7 @@ void run_accs_and_desktop(void)
 
     /* take the tick interrupt */
     disable_interrupts();
-    gl_ticktime = gsx_tick(tikaddr, &tiksav);
+    gl_ticktime = gsx_tick(&tikcod, &tiksav);
     enable_interrupts();
 
     /* set initial click rate: must do this after setting gl_ticktime */

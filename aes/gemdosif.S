@@ -37,7 +37,6 @@
         .globl  _far_bcha
         .globl  _drawrat
 
-        .globl  _tikaddr
         .globl  _tiksav
         .globl  _CMP_TICK
         .globl  _NUM_TICK
@@ -444,8 +443,6 @@ savetrap2:
 _drwaddr:
         .ds.l    1
 
-_tikaddr:
-        .ds.l    1
 gstksave:
         .ds.l    1
 

@@ -13,7 +13,6 @@
 
 extern PFVOID   drwaddr;
 
-extern void *   tikaddr;
 extern void *   tiksav;
 
 extern LONG     NUM_TICK;                       /* number of ticks      */
@@ -44,6 +43,6 @@ extern void giveerr(void);
 extern void retake(void);
 
 extern void drawrat(WORD newx, WORD newy);
-
+extern void tikcod(void);
 
 #endif

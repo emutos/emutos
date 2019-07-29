@@ -30,7 +30,6 @@
         .extern _just_rts
         .extern _drwaddr
         .extern _tikcod
-        .extern _tikaddr
         .extern _init_p0_stkptr
         .extern _gem_main
         .extern _gl_changerez
@@ -109,10 +108,6 @@ aes_restart:
         // _drwaddr ??? set to just_rts
         lea     _just_rts,a0
         move.l  a0,_drwaddr
-
-        // _tikaddr ??? set to tikcod
-        lea     _tikcod,a0
-        move.l  a0,_tikaddr
 
         // call C routine to init the SSP in the UDA & return its offset
         jsr     _init_p0_stkptr
