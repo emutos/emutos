@@ -309,13 +309,34 @@
 
 /*
  * Defaults for the 256 target.
- * This target is only useful on ST/STe hardware, or for checking
- * language-dependent features under Hatari.  Since none of these
- * support SCSI, we disable SCSI support and save ourselves 4kB.
+ * This target is only useful on (Mega)STe hardware, or for checking
+ * language-dependent features under Hatari.  We disable features that
+ * are not known (and not likely) to be available for that hardware.
  */
 #ifdef TARGET_256
+# ifndef CONF_WITH_APOLLO_68080
+#  define CONF_WITH_APOLLO_68080 0
+# endif
+# ifndef CONF_WITH_FALCON_MMU
+#  define CONF_WITH_FALCON_MMU 0
+# endif
+# ifndef CONF_WITH_NVRAM
+#  define CONF_WITH_NVRAM 0
+# endif
 # ifndef CONF_WITH_SCSI
 #  define CONF_WITH_SCSI 0
+# endif
+# ifndef CONF_WITH_TT_MFP
+#  define CONF_WITH_TT_MFP 0
+# endif
+# ifndef CONF_WITH_TT_MMU
+#  define CONF_WITH_TT_MMU 0
+# endif
+# ifndef CONF_WITH_TT_SHIFTER
+#  define CONF_WITH_TT_SHIFTER 0
+# endif
+# ifndef CONF_WITH_VIDEL
+#  define CONF_WITH_VIDEL 0
 # endif
 #endif
 
