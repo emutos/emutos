@@ -618,6 +618,7 @@ void run_accs_and_desktop(void)
     BOOL isgem, isauto;
     BITBLK bi;
     OBJECT *tree;
+    void *dummy;
 
     /* load gem resource and fix it up before we go */
     gem_rsc_init();
@@ -682,7 +683,7 @@ void run_accs_and_desktop(void)
 
     /* give back the tick   */
     disable_interrupts();
-    gl_ticktime = gsx_tick(tiksav, &tiksav);
+    gl_ticktime = gsx_tick(tiksav, &dummy);
     enable_interrupts();
 
     /* close workstation    */
