@@ -15,7 +15,7 @@
  * values applicable to C and asm
  */
 #define MAX_PTSIN       512     /* max# of words in local copy of ptsin[] */
-#define MAX_POINTS      (MAX_PTSIN)/2   /* max# of coordinate pairs */
+#define MAX_VERTICES    (MAX_PTSIN)/2   /* max# of coordinate pairs */
 
 
 #ifndef ASM_SOURCE
@@ -60,7 +60,7 @@
 #define DEF_WRT_MODE    1
 
 #define MIN_ARC_CT      32      /* min # of points to use when drawing circle/ellipse */
-#define MAX_ARC_CT      128     /* max # of points ... (must not exceed MAX_POINTS) */
+#define MAX_ARC_CT      128     /* max # of points ... (must not exceed MAX_VERTICES) */
 
 
 /* line ending types */

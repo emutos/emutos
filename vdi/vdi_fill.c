@@ -380,7 +380,7 @@ bub_sort (WORD * buf, WORD count)
  * DRI code, when clc_flit() was written in assembler; the buffer
  * was moved to the stack when clc_flit() was re-implemented in C.
  */
-#define MAX_INTERSECTIONS   MAX_POINTS
+#define MAX_INTERSECTIONS   MAX_VERTICES
 static WORD fill_buffer[MAX_INTERSECTIONS];
 
 void

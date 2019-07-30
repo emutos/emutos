@@ -231,7 +231,7 @@ v_bez(Vwk * vwk, Point * ptsget, int nr_ptsin)
     WORD total_vertices = nr_ptsin;
     WORD total_jumps = 0;
     UWORD vertices_per_bez;
-    Point ptsbuf[MAX_POINTS];
+    Point ptsbuf[MAX_VERTICES];
     /* Point * ptsget = (Point*)PTSIN; */
     Point * ptsput = ptsbuf;
 
@@ -334,7 +334,7 @@ v_bez_fill(Vwk * vwk, Point * ptsget, int nr_ptsin)
     WORD total_jumps = 0;
     UWORD vertices_per_bez;
     WORD output_vertices = 0;
-    Point ptsbuf[MAX_POINTS];
+    Point ptsbuf[MAX_VERTICES];
     /* Point * ptsget = (Point*)PTSIN; */
     Point * ptsput = ptsbuf;
 
@@ -440,7 +440,7 @@ v_bez_fill(Vwk * vwk, Point * ptsget, int nr_ptsin)
     WORD vertices_per_bez;
     WORD i, i0;
     WORD output_vertices = 0;
-    Point ptsbuf[MAX_POINTS];
+    Point ptsbuf[MAX_VERTICES];
     /* Point * ptsget = (Point*)PTSIN; */
     Point * ptsget0 = ptsget;
     Point * ptsput = ptsbuf;

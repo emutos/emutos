@@ -101,9 +101,9 @@ _GSX_ENTRY:
 //                              // set user's CONTRL[1] to 0
         jra     size_intin
 size_ptsin:
-        cmpi.w  #MAX_POINTS,d0  // # of user vertices > # of allowable vertices?
+        cmpi.w  #MAX_VERTICES,d0  // # of user vertices > # of allowable vertices?
         jle     ptsin_ok        // for user vertices =< # of allowable vertices
-        move.w  #MAX_POINTS,d0  // user vertices > # of allowable vertices
+        move.w  #MAX_VERTICES,d0  // user vertices > # of allowable vertices
         move.w  d0,W_1(a0)      // put max # of vertices in user's CONTRL[1]
 ptsin_ok:
         subq.l  #1,d0           // adjust coordinate count for loop
