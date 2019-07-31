@@ -119,8 +119,7 @@ static WORD     ig_close;
  *      ILL_NOWIN[]     disabled if there are no open windows
  *      ILL NOSEL[]     disabled if there are no icons selected
  *      ILL_MULTSEL[]   disabled if two or more icons are selected
- *      ILL_FDSK[]      disabled if a floppy disk icon is selected
- *      ILL_HDSK[]      disabled if a hard disk icon is selected
+ *      ILL_DISK[]      disabled if a disk icon is selected
  *      ILL_FILE[]      disabled if an executable file, or a non-executable
  *                       file with an associated application, is selected
  *      ILL_DOCU[]      disabled if a normal non-executable file is selected
@@ -130,8 +129,7 @@ static WORD     ig_close;
 static const UBYTE ILL_FILE[] =  { RICNITEM, 0 };
 static const UBYTE ILL_DOCU[] =  { IAPPITEM, RICNITEM, 0 };
 static const UBYTE ILL_FOLD[] =  { IAPPITEM, RICNITEM, 0 };
-static const UBYTE ILL_FDSK[] =  { IAPPITEM, 0 };
-static const UBYTE ILL_HDSK[] =  { IAPPITEM, 0 };
+static const UBYTE ILL_DISK[] =  { IAPPITEM, 0 };
 static const UBYTE ILL_NOSEL[] = { OPENITEM, SHOWITEM, DELTITEM, IAPPITEM, RICNITEM, 0 };
 static const UBYTE ILL_MULTSEL[] = { OPENITEM, 0 };
 static const UBYTE ILL_TRASH[] = { DELTITEM, IAPPITEM, 0 };
@@ -306,7 +304,7 @@ static void men_update(void)
             pvalue = ILL_FOLD;
             break;
         case AT_ISDISK:
-            pvalue = (appl->a_aicon == IG_FLOPPY) ? ILL_FDSK : ILL_HDSK;
+            pvalue = ILL_DISK;
             break;
 #if CONF_WITH_PRINTER_ICON
         case AT_ISPRNT:                 /* Printer */
@@ -325,10 +323,7 @@ static void men_update(void)
 
     if (nsel != 1)
     {
-        if (nsel)
-            pvalue = ILL_MULTSEL;
-        else
-            pvalue = ILL_NOSEL;
+        pvalue = nsel ? ILL_MULTSEL : ILL_NOSEL;
         men_list(tree, pvalue, FALSE);
     }
 
