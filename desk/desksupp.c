@@ -778,6 +778,7 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
 
     if (rc <= 0L)   /* not user quit */
     {
+        bios_conout('\n');
         msg = desktop_str_addr((rc==0L)?STEOF:STFRE);
         blank_line();
         bios_conws(msg);    /* "-End of file-" or "-File read error-" */
