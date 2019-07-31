@@ -1502,7 +1502,7 @@
 /*
  * AES configuration
  */
-#define SIZE_SHELBUF    2048L   /* size of shell buffer */
+#define SIZE_SHELBUF    4192L   /* size of shell buffer - same as TOS 1.04-> */
 
 /*
  * VDI configuration
