@@ -127,9 +127,9 @@ static WORD     ig_close;
  *      ILL_FOLD[]      disabled if a folder is selected
  *      ILL_TRASH[]     disabled if the trash can or printer is selected
  */
-static const UBYTE ILL_FILE[] =  { IDSKITEM, RICNITEM, 0 };
-static const UBYTE ILL_DOCU[] =  { IDSKITEM, IAPPITEM, RICNITEM, 0 };
-static const UBYTE ILL_FOLD[] =  { IDSKITEM, IAPPITEM, RICNITEM, 0 };
+static const UBYTE ILL_FILE[] =  { RICNITEM, 0 };
+static const UBYTE ILL_DOCU[] =  { IAPPITEM, RICNITEM, 0 };
+static const UBYTE ILL_FOLD[] =  { IAPPITEM, RICNITEM, 0 };
 static const UBYTE ILL_FDSK[] =  { IAPPITEM, 0 };
 static const UBYTE ILL_HDSK[] =  { IAPPITEM, 0 };
 static const UBYTE ILL_NOSEL[] = { OPENITEM, SHOWITEM, DELTITEM, IAPPITEM, RICNITEM, 0 };
