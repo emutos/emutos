@@ -211,7 +211,6 @@ extern WORD flip_y;             /* True if magnitudes being returned */
 extern WORD line_cw;            /* Linewidth for current circle */
 extern WORD num_qc_lines;
 extern WORD val_mode, chc_mode, loc_mode, str_mode;
-extern const UBYTE shift_offset[9]; /* pixel to address helper */
 
 
 /* These are still needed for text blitting */

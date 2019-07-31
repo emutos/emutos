@@ -19,6 +19,19 @@
 
 #define EXTENDED_PALETTE (CONF_WITH_VIDEL || CONF_WITH_TT_SHIFTER)
 
+/*
+ * Precomputed value of log2(8/v_planes), used to derive v_planes_shift.
+ * Only the indexes 1, 2, 4 and 8 are meaningful.
+ */
+static const UBYTE shift_offset[9] = {0, 3, 2, 0, 1, 0, 0, 0, 0};
+
+/*
+ * Current value from above table, updated when v_planes changes to speed
+ * up calculations.  To get the address of a pixel x in a scan line, use
+ * the formula: (x&0xfff0)>>v_planes_shift
+ */
+UBYTE v_planes_shift;
+
 MCS *mcs_ptr;   /* ptr to current mouse cursor save area, based on v_planes */
 
 /*
@@ -29,6 +42,9 @@ void linea_init(void)
 {
 
     screen_get_current_mode_info(&v_planes, &V_REZ_HZ, &V_REZ_VT);
+
+    /* precalculate shift value to optimize pixel address calculations */
+    v_planes_shift = shift_offset[v_planes];
 
     v_lin_wr = V_REZ_HZ / 8 * v_planes;     /* bytes per line */
     BYTES_LIN = v_lin_wr;       /* I think BYTES_LIN = v_lin_wr (PES) */

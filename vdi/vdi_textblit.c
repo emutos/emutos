@@ -19,6 +19,7 @@
 #include "vdi_defs.h"
 #include "vdistub.h"
 #include "lineavars.h"
+#include "biosext.h"
 
 
 /*
@@ -373,7 +374,7 @@ static void screen_blit(LOCALVARS *vars)
      */
     vars->tddad = vars->DESTX & 0x000f;
     vars->dform = v_bas_ad;
-    vars->dform += (vars->DESTX&0xfff0)>>shift_offset[v_planes];        /* add x coordinate part of addr */
+    vars->dform += (vars->DESTX&0xfff0)>>v_planes_shift;    /* add x coordinate part of addr */
     vars->dform += (UWORD)(vars->DESTY+vars->DELY-1) * (ULONG)v_lin_wr; /* add y coordinate part of addr */
     vars->d_next = -v_lin_wr;
 

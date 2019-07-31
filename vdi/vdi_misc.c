@@ -16,15 +16,10 @@
 #include "tosvars.h"
 #include "vdi_defs.h"
 #include "lineavars.h"
+#include "biosext.h"
 
 static BOOL in_proc;                   /* flag, if we are still running */
 
-/* Precomputed value of log2(8/v_planes).
- * To get the address of a pixel x in a scan line, use the formula:
- * (x&0xfff0)>>shift_offset[v_planes]
- * Only the indexes 1, 2, 4 and 8 are meaningful.
- */
-const UBYTE shift_offset[9] = {0, 3, 2, 0, 1, 0, 0, 0, 0};
 
 
 /*
@@ -164,7 +159,7 @@ UWORD * get_start_addr(const WORD x, const WORD y)
 
     /* init address counter */
     addr = v_bas_ad;                    /* start of screen */
-    addr += (x&0xfff0)>>shift_offset[v_planes]; /* add x coordinate part of addr */
+    addr += (x&0xfff0)>>v_planes_shift; /* add x coordinate part of addr */
     addr += muls(y, v_lin_wr);          /* add y coordinate part of addr */
 
     return (UWORD*)addr;
