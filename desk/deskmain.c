@@ -109,25 +109,21 @@ static WORD     ig_close;
 /*
  * arrays used by men_update() to enable/disable menu items according
  * to the state of the desktop.  men_update() initially enables every
- * menu item, then calls men_list() (possibly several times).  each
- * call to men_list() enables or disables every item in a given array.
+ * menu item, then counts types of icons.  based on the counts and other
+ * factors, it disables certain menu items and then calls men_list()
+ * (possibly several times).  each call to men_list() enables or disables
+ * every item in a given array.
  *
  * detailed usage:
  *  there is one array of items to enable:
  *      ILL_OPENWIN[]   enabled if there is an open window
- *  and many arrays of items to disable:
+ *  and three arrays of items to disable:
  *      ILL_NOWIN[]     disabled if there are no open windows
  *      ILL NOSEL[]     disabled if there are no icons selected
  *      ILL_MULTSEL[]   disabled if two or more icons are selected
- *      ILL_FILE[]      disabled if a file is selected
- *      ILL_FOLD[]      disabled if a folder is selected
- *      ILL_TRASH[]     disabled if the trash can or printer is selected
  */
-static const UBYTE ILL_FILE[] =  { RICNITEM, 0 };
-static const UBYTE ILL_FOLD[] =  { RICNITEM, 0 };
-static const UBYTE ILL_NOSEL[] = { OPENITEM, SHOWITEM, DELTITEM, RICNITEM, 0 };
+static const UBYTE ILL_NOSEL[] = { OPENITEM, SHOWITEM, DELTITEM, 0 };
 static const UBYTE ILL_MULTSEL[] = { OPENITEM, 0 };
-static const UBYTE ILL_TRASH[] = { DELTITEM, 0 };
 static const UBYTE ILL_NOWIN[] = {
     NFOLITEM, CLOSITEM, CLSWITEM,
 #if CONF_WITH_FILEMASK
@@ -257,8 +253,7 @@ static void men_list(OBJECT *mlist, const UBYTE *dlist, WORD enable)
  */
 static void men_update(void)
 {
-    WORD item, napp, nsel, isapp;
-    const UBYTE *pvalue;
+    WORD item, napp, ndesk, nsel, ntrash, isapp;
     ANODE *appl;
     OBJECT *tree = G.a_trees[ADMENU];
     OBJECT *obj;
@@ -279,7 +274,11 @@ static void men_update(void)
             break;
     }
 
-    napp = nsel = 0;
+    /*
+     * process all selected icons, counting types of icons: applications,
+     * desktop icons, trash/printer icons, and selected icons.
+     */
+    napp = ndesk = nsel = ntrash = 0;
     for (item = 0; (item=win_isel(G.g_screen, G.g_croot, item)) != 0; nsel++)
     {
         appl = i_find(G.g_cwin, item, NULL, &isapp);
@@ -289,38 +288,37 @@ static void men_update(void)
             napp++;
         switch(appl->a_type)
         {
-        case AT_ISFILE:
-            pvalue = ILL_FILE;
-            break;
-        case AT_ISFOLD:
-            pvalue = ILL_FOLD;
-            break;
 #if CONF_WITH_PRINTER_ICON
         case AT_ISPRNT:                 /* Printer */
 #endif
         case AT_ISTRSH:                 /* Trash */
-            pvalue = ILL_TRASH;
+            ntrash++;
+            FALLTHROUGH;
+        case AT_ISDISK:
+            ndesk++;        /* count desktop icons selected */
             break;
-        default:
-            pvalue = NULL;
         }
-        if (pvalue)
-            men_list(tree, pvalue, FALSE);  /* disable certain items */
 #if CONF_WITH_DESKTOP_SHORTCUTS
         /* allow "Remove icon" for icons on the desktop */
         if (appl->a_flags & AF_ISDESK)
-            menu_ienable(tree, RICNITEM, TRUE);
+            ndesk++;
 #endif
     }
 
-    /* enable "Install application" iff at least one application is selected */
-    menu_ienable(tree, IAPPITEM, napp ? TRUE : FALSE);
+    /* disable "Delete" iff either trash or printer is selected */
+    if (ntrash)
+        menu_ienable(tree, DELTITEM, FALSE);
+
+    /* disable "Install application" iff no applications are selected */
+    if (!napp)
+        menu_ienable(tree, IAPPITEM, FALSE);
+
+    /* disable "Remove desktop icon" iff no desktop icons are selected */
+    if (!ndesk)
+        menu_ienable(tree, RICNITEM, FALSE);
 
     if (nsel != 1)
-    {
-        pvalue = nsel ? ILL_MULTSEL : ILL_NOSEL;
-        men_list(tree, pvalue, FALSE);
-    }
+        men_list(tree, nsel ? ILL_MULTSEL : ILL_NOSEL, FALSE);
 
     if (win_ontop())
         men_list(tree, ILL_OPENWIN, TRUE);
