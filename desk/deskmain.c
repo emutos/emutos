@@ -119,17 +119,12 @@ static WORD     ig_close;
  *      ILL_NOWIN[]     disabled if there are no open windows
  *      ILL NOSEL[]     disabled if there are no icons selected
  *      ILL_MULTSEL[]   disabled if two or more icons are selected
- *      ILL_DISK[]      disabled if a disk icon is selected
- *      ILL_FILE[]      disabled if an executable file, or a non-executable
- *                       file with an associated application, is selected
- *      ILL_DOCU[]      disabled if a normal non-executable file is selected
+ *      ILL_FILE[]      disabled if a file is selected
  *      ILL_FOLD[]      disabled if a folder is selected
  *      ILL_TRASH[]     disabled if the trash can or printer is selected
  */
 static const UBYTE ILL_FILE[] =  { RICNITEM, 0 };
-static const UBYTE ILL_DOCU[] =  { RICNITEM, 0 };
 static const UBYTE ILL_FOLD[] =  { RICNITEM, 0 };
-static const UBYTE ILL_DISK[] =  { 0 };
 static const UBYTE ILL_NOSEL[] = { OPENITEM, SHOWITEM, DELTITEM, RICNITEM, 0 };
 static const UBYTE ILL_MULTSEL[] = { OPENITEM, 0 };
 static const UBYTE ILL_TRASH[] = { DELTITEM, 0 };
@@ -268,8 +263,6 @@ static void men_update(void)
     OBJECT *tree = G.a_trees[ADMENU];
     OBJECT *obj;
 
-    pvalue = 0;
-
     /*
      * disable separator strings, enable remaining menu items
      */
@@ -297,16 +290,10 @@ static void men_update(void)
         switch(appl->a_type)
         {
         case AT_ISFILE:
-            if (isapp || is_installed(appl))
-                pvalue = ILL_FILE;
-            else
-                pvalue = ILL_DOCU;
+            pvalue = ILL_FILE;
             break;
         case AT_ISFOLD:
             pvalue = ILL_FOLD;
-            break;
-        case AT_ISDISK:
-            pvalue = ILL_DISK;
             break;
 #if CONF_WITH_PRINTER_ICON
         case AT_ISPRNT:                 /* Printer */
@@ -314,8 +301,11 @@ static void men_update(void)
         case AT_ISTRSH:                 /* Trash */
             pvalue = ILL_TRASH;
             break;
+        default:
+            pvalue = NULL;
         }
-        men_list(tree, pvalue, FALSE);       /* disable certain items */
+        if (pvalue)
+            men_list(tree, pvalue, FALSE);  /* disable certain items */
 #if CONF_WITH_DESKTOP_SHORTCUTS
         /* allow "Remove icon" for icons on the desktop */
         if (appl->a_flags & AF_ISDESK)
