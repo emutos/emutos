@@ -127,12 +127,12 @@ static WORD     ig_close;
  *      ILL_TRASH[]     disabled if the trash can or printer is selected
  */
 static const UBYTE ILL_FILE[] =  { RICNITEM, 0 };
-static const UBYTE ILL_DOCU[] =  { IAPPITEM, RICNITEM, 0 };
-static const UBYTE ILL_FOLD[] =  { IAPPITEM, RICNITEM, 0 };
-static const UBYTE ILL_DISK[] =  { IAPPITEM, 0 };
-static const UBYTE ILL_NOSEL[] = { OPENITEM, SHOWITEM, DELTITEM, IAPPITEM, RICNITEM, 0 };
+static const UBYTE ILL_DOCU[] =  { RICNITEM, 0 };
+static const UBYTE ILL_FOLD[] =  { RICNITEM, 0 };
+static const UBYTE ILL_DISK[] =  { 0 };
+static const UBYTE ILL_NOSEL[] = { OPENITEM, SHOWITEM, DELTITEM, RICNITEM, 0 };
 static const UBYTE ILL_MULTSEL[] = { OPENITEM, 0 };
-static const UBYTE ILL_TRASH[] = { DELTITEM, IAPPITEM, 0 };
+static const UBYTE ILL_TRASH[] = { DELTITEM, 0 };
 static const UBYTE ILL_NOWIN[] = {
     NFOLITEM, CLOSITEM, CLSWITEM,
 #if CONF_WITH_FILEMASK
@@ -262,7 +262,7 @@ static void men_list(OBJECT *mlist, const UBYTE *dlist, WORD enable)
  */
 static void men_update(void)
 {
-    WORD item, nsel, isapp;
+    WORD item, napp, nsel, isapp;
     const UBYTE *pvalue;
     ANODE *appl;
     OBJECT *tree = G.a_trees[ADMENU];
@@ -286,12 +286,14 @@ static void men_update(void)
             break;
     }
 
-    nsel = 0;
+    napp = nsel = 0;
     for (item = 0; (item=win_isel(G.g_screen, G.g_croot, item)) != 0; nsel++)
     {
         appl = i_find(G.g_cwin, item, NULL, &isapp);
         if (!appl)
             continue;
+        if (isapp)          /* count applications selected */
+            napp++;
         switch(appl->a_type)
         {
         case AT_ISFILE:
@@ -320,6 +322,9 @@ static void men_update(void)
             menu_ienable(tree, RICNITEM, TRUE);
 #endif
     }
+
+    /* enable "Install application" iff at least one application is selected */
+    menu_ienable(tree, IAPPITEM, napp ? TRUE : FALSE);
 
     if (nsel != 1)
     {
