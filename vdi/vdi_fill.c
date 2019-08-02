@@ -36,13 +36,6 @@ typedef struct {
 #define QMAX        (QSIZE-1)
 
 
-
-/* prototypes */
-static void crunch_queue(void);
-static BOOL clipbox(const VwkClip * clip, Rect * rect);
-
-
-
 /* Global variables */
 static UWORD search_color;       /* the color of the border      */
 
@@ -243,6 +236,65 @@ void vdi_vsf_perimeter(Vwk * vwk)
     }
     CONTRL[4] = 1;
 }
+
+
+
+/*
+ * clipbox - Just clips and copies the inputs for use by "rectfill"
+ *
+ * input:
+ *     clip->xmn_clip = x clipping minimum.
+ *         ->xmx_clip = x clipping maximum.
+ *         ->ymn_clip = y clipping minimum.
+ *         ->ymx_clip = y clipping maximum.
+ *     rect->x1       = x coord of upper left corner.
+ *         ->y1       = y coord of upper left corner.
+ *         ->x2       = x coord of lower right corner.
+ *         ->y2       = y coord of lower right corner.
+ *
+ * output:
+ *     FALSE -> everything clipped
+ *     rect->x1 = x coord of upper left corner.
+ *         ->y1 = y coord of upper left corner.
+ *         ->x2 = x coord of lower right corner.
+ *         ->y2 = y coord of lower right corner.
+ */
+static BOOL clipbox(const VwkClip *clip, Rect *rect)
+{
+    WORD x1, y1, x2, y2;
+
+    x1 = rect->x1;
+    y1 = rect->y1;
+    x2 = rect->x2;
+    y2 = rect->y2;
+
+    /* clip x coordinates */
+    if (x1 < clip->xmn_clip) {
+        if (x2 < clip->xmn_clip)
+            return FALSE;           /* clipped box is null */
+        rect->x1 = clip->xmn_clip;
+    }
+    if (x2 > clip->xmx_clip) {
+        if (x1 > clip->xmx_clip)
+            return FALSE;           /* clipped box is null */
+        rect->x2 = clip->xmx_clip;
+    }
+
+    /* clip y coordinates */
+    if (y1 < clip->ymn_clip) {
+        if (y2 < clip->ymn_clip)
+            return FALSE;           /* clipped box is null */
+        rect->y1 = clip->ymn_clip;
+    }
+    if (y2 > clip->ymx_clip) {
+        if (y1 > clip->ymx_clip)
+            return FALSE;           /* clipped box is null */
+        rect->y2 = clip->ymx_clip;
+    }
+
+    return TRUE;
+}
+
 
 
 /*
@@ -634,65 +686,6 @@ void vdi_v_fillarea(Vwk * vwk)
 
 
 /*
- * clipbox - Just clips and copies the inputs for use by "rectfill"
- *
- * input:
- *     clip->xmn_clip = x clipping minimum.
- *         ->xmx_clip = x clipping maximum.
- *         ->ymn_clip = y clipping minimum.
- *         ->ymx_clip = y clipping maximum.
- *     rect->x1       = x coord of upper left corner.
- *         ->y1       = y coord of upper left corner.
- *         ->x2       = x coord of lower right corner.
- *         ->y2       = y coord of lower right corner.
- *
- * output:
- *     FALSE -> everything clipped
- *     rect->x1 = x coord of upper left corner.
- *         ->y1 = y coord of upper left corner.
- *         ->x2 = x coord of lower right corner.
- *         ->y2 = y coord of lower right corner.
- */
-static BOOL
-clipbox(const VwkClip * clip, Rect * rect)
-{
-    WORD x1, y1, x2, y2;
-
-    x1 = rect->x1;
-    y1 = rect->y1;
-    x2 = rect->x2;
-    y2 = rect->y2;
-
-    /* clip x coordinates */
-    if (x1 < clip->xmn_clip) {
-        if (x2 < clip->xmn_clip)
-            return FALSE;           /* clipped box is null */
-        rect->x1 = clip->xmn_clip;
-    }
-    if (x2 > clip->xmx_clip) {
-        if (x1 > clip->xmx_clip)
-            return FALSE;           /* clipped box is null */
-        rect->x2 = clip->xmx_clip;
-    }
-
-    /* clip y coordinates */
-    if (y1 < clip->ymn_clip) {
-        if (y2 < clip->ymn_clip)
-            return FALSE;           /* clipped box is null */
-        rect->y1 = clip->ymn_clip;
-    }
-    if (y2 > clip->ymx_clip) {
-        if (y1 > clip->ymx_clip)
-            return FALSE;           /* clipped box is null */
-        rect->y2 = clip->ymx_clip;
-    }
-
-    return TRUE;
-}
-
-
-
-/*
  * get_color - Get color value of requested pixel.
  */
 static UWORD
@@ -834,6 +827,19 @@ end_pts(const VwkClip * clip, WORD x, WORD y, WORD *xleftout, WORD *xrightout,
         return seed_type ^ 1;   /* return segment not of search color */
     }
     return seed_type ^ 0;       /* return segment is of search color */
+}
+
+
+
+/*
+ * crunch_queue - move qtop down to remove unused seeds
+ */
+static void crunch_queue(void)
+{
+    while (((qtop-1)->y == EMPTY) && (qtop > qbottom))
+        qtop--;
+    if (qptr >= qtop)
+        qptr = qbottom;
 }
 
 
@@ -1011,20 +1017,6 @@ void contourfill(const VwkAttrib * attr, const VwkClip *clip)
         }
     }
 }                               /* end of fill() */
-
-
-
-/*
- * crunch_queue - move qtop down to remove unused seeds
- */
-static void
-crunch_queue(void)
-{
-    while (((qtop-1)->y == EMPTY) && (qtop > qbottom))
-        qtop--;
-    if (qptr >= qtop)
-        qptr = qbottom;
-}
 
 
 
