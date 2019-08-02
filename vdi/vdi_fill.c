@@ -17,13 +17,25 @@
 #include "tosvars.h"
 #include "lineavars.h"
 
-#define EMPTY   0xffff
-#define DOWN_FLAG 0x8000
-#define QSIZE 200
-#define QMAX QSIZE-1
+/*
+ * segment in queue structure used by seedfill
+ */
+typedef struct {
+    WORD y;                     /* y coordinate of segment and/or special value */
+    WORD xleft;                 /* x coordinate of segment start */
+    WORD xright;                /* x coordinate of segment end */
+} SEGMENT;
+
+/* special values used in y member of SEGMENT */
+#define EMPTY       0xffff          /* this entry is unused */
+#define DOWN_FLAG   0x8000
+#define ABS(v)      ((v) & 0x7FFF)  /* strips DOWN_FLAG if present */
+
+/* queue parameters */
+#define QSIZE       67
+#define QMAX        (QSIZE-1)
 
 
-#define ABS(v) (v & 0x7FFF)
 
 
 /* prototypes */
@@ -37,12 +49,10 @@ static UWORD search_color;       /* the color of the border      */
 
 
 /* some kind of stack for the segments to fill */
-static WORD queue[QSIZE];       /* storage for the seed points  */
+static SEGMENT queue[QSIZE];    /* storage for the seed points  */
 static WORD qbottom;            /* the bottom of the queue (zero)   */
-static WORD qtop;               /* points to seed +3            */
+static WORD qtop;               /* points to seed +1            */
 static WORD qptr;               /* points to the active point   */
-static WORD qtmp;
-static WORD qhole;              /* an empty space in the queue */
 
 
 /* the storage for the used defined fill pattern */
@@ -885,10 +895,10 @@ void contourfill(const VwkAttrib * attr, const VwkClip *clip)
     notdone = end_pts(clip, xleft, oldy, &oldxleft, &oldxright, seed_type);
 
     qptr = qbottom = 0;
-    qtop = 3;                   /* one above highest seed point */
-    queue[0] = (oldy | DOWN_FLAG);
-    queue[1] = oldxleft;
-    queue[2] = oldxright;           /* stuff a point going down into the Q */
+    qtop = 1;                           /* one above highest seed point */
+    queue[qbottom].y = (oldy | DOWN_FLAG);
+    queue[qbottom].xleft = oldxleft;
+    queue[qbottom].xright = oldxright;  /* stuff a point going down into the Q */
 
     if (notdone) {
         /* couldn't get point out of Q or draw it */
@@ -925,16 +935,16 @@ void contourfill(const VwkAttrib * attr, const VwkClip *clip)
             if (qtop == qbottom)
                 break;
 
-            while (queue[qptr] == EMPTY) {
-                qptr += 3;
+            while (queue[qptr].y == EMPTY) {
+                qptr++;
                 if (qptr == qtop)
                     qptr = qbottom;
             }
 
-            oldy = queue[qptr];
-            queue[qptr++] = EMPTY;
-            oldxleft = queue[qptr++];
-            oldxright = queue[qptr++];
+            oldy = queue[qptr].y;
+            oldxleft = queue[qptr].xleft;
+            oldxright = queue[qptr].xright;
+            queue[qptr++].y = EMPTY;
             if (qptr == qtop)
                 crunch_queue();
 
@@ -961,8 +971,8 @@ void contourfill(const VwkAttrib * attr, const VwkClip *clip)
 static void
 crunch_queue(void)
 {
-    while ((queue[qtop - 3] == EMPTY) && (qtop > qbottom))
-        qtop -= 3;
+    while ((queue[qtop-1].y == EMPTY) && (qtop > qbottom))
+        qtop--;
     if (qptr >= qtop)
         qptr = qbottom;
 }
@@ -977,12 +987,15 @@ get_seed(const VwkAttrib * attr, const VwkClip * clip,
          WORD xin, WORD yin, WORD *xleftout, WORD *xrightout,
          BOOL seed_type)
 {
+    WORD qhole;         /* an empty space in the queue */
+    WORD qtmp;
+
     if (end_pts(clip, xin, ABS(yin), xleftout, xrightout, seed_type)) {
         /* false if of search_color */
-        for (qtmp = qbottom, qhole = EMPTY; qtmp < qtop; qtmp += 3) {
+        for (qtmp = qbottom, qhole = EMPTY; qtmp < qtop; qtmp++) {
             /* see, if we ran into another seed */
-            if ( ((queue[qtmp] ^ DOWN_FLAG) == yin) && (queue[qtmp] != EMPTY) &&
-                (queue[qtmp + 1] == *xleftout) )
+            if ( ((queue[qtmp].y ^ DOWN_FLAG) == yin) && (queue[qtmp].y != EMPTY) &&
+                (queue[qtmp].xleft == *xleftout) )
 
             {
                 /* we ran into another seed so remove it and fill the line */
@@ -996,26 +1009,26 @@ get_seed(const VwkAttrib * attr, const VwkClip * clip,
                 /* rectangle fill routine draws horizontal line */
                 draw_rect_common(attr, &rect);
 
-                queue[qtmp] = EMPTY;
-                if ((qtmp + 3) == qtop)
+                queue[qtmp].y = EMPTY;
+                if ((qtmp+1) == qtop)
                     crunch_queue();
                 return 0;
             }
-            if ((queue[qtmp] == EMPTY) && (qhole == EMPTY))
+            if ((queue[qtmp].y == EMPTY) && (qhole == EMPTY))
                 qhole = qtmp;
         }
 
         if (qhole == EMPTY) {
-            if ((qtop += 3) > QMAX) {
+            if (++qtop > QMAX) {
                 qtmp = qbottom;
-                qtop -= 3;
+                qtop--;
             }
         } else
             qtmp = qhole;
 
-        queue[qtmp++] = yin;    /* put the y and endpoints in the Q */
-        queue[qtmp++] = *xleftout;
-        queue[qtmp] = *xrightout;
+        queue[qtmp].y = yin;    /* put the y and endpoints in the Q */
+        queue[qtmp].xleft = *xleftout;
+        queue[qtmp].xright = *xrightout;
         return 1;             /* we put a seed in the Q */
     }
 
