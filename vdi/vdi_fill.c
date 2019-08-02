@@ -37,7 +37,9 @@ typedef struct {
 
 
 /* Global variables */
-static UWORD search_color;       /* the color of the border      */
+static UWORD search_color;      /* selected colour for contourfill() */
+static BOOL seed_type;          /* 1 => fill until selected colour is NOT found */
+                                /* 0 => fill until selected colour is found */
 
 
 /* some kind of stack for the segments to fill */
@@ -798,11 +800,8 @@ search_to_left (const VwkClip * clip, WORD x, UWORD mask, const UWORD search_col
  *         d0        := success flag.
  *             0 => no endpoints or xstart on edge.
  *             1 => endpoints found.
- *         seed_type  indicates the type of fill
  */
-static WORD
-end_pts(const VwkClip * clip, WORD x, WORD y, WORD *xleftout, WORD *xrightout,
-        BOOL seed_type)
+static WORD end_pts(const VwkClip *clip, WORD x, WORD y, WORD *xleftout, WORD *xrightout)
 {
     UWORD color;
     UWORD * addr;
@@ -847,15 +846,13 @@ static void crunch_queue(void)
 /*
  * get_seed - put seeds into Q, if (xin,yin) is not of search_color
  */
-static WORD
-get_seed(const VwkAttrib * attr, const VwkClip * clip,
-         WORD xin, WORD yin, WORD *xleftout, WORD *xrightout,
-         BOOL seed_type)
+static WORD get_seed(const VwkAttrib *attr, const VwkClip *clip,
+                        WORD xin, WORD yin, WORD *xleftout, WORD *xrightout)
 {
     SEGMENT *qhole;         /* an empty space in the queue */
     SEGMENT *qtmp;
 
-    if (end_pts(clip, xin, ABS(yin), xleftout, xrightout, seed_type)) {
+    if (end_pts(clip, xin, ABS(yin), xleftout, xrightout)) {
         /* false if of search_color */
         for (qtmp = qbottom, qhole = NULL; qtmp < qtop; qtmp++) {
             /* skip holes, remembering the first hole we find */
@@ -921,7 +918,6 @@ void contourfill(const VwkAttrib * attr, const VwkClip *clip)
     WORD direction;             /* is next scan line up or down */
     BOOL notdone;               /* does seedpoint==search_color */
     BOOL gotseed;               /* a seed was put in the Q      */
-    BOOL seed_type;             /* indicates the type of fill */
 
     xleft = PTSIN[0];
     oldy = PTSIN[1];
@@ -954,7 +950,7 @@ void contourfill(const VwkAttrib * attr, const VwkClip *clip)
     /* Initialize the line drawing parameters */
     LSTLIN = FALSE;
 
-    notdone = end_pts(clip, xleft, oldy, &oldxleft, &oldxright, seed_type);
+    notdone = end_pts(clip, xleft, oldy, &oldxleft, &oldxright);
 
     qptr = qbottom = queue;
     qptr->y = (oldy | DOWN_FLAG);   /* stuff a point going down into the Q */
@@ -968,28 +964,24 @@ void contourfill(const VwkAttrib * attr, const VwkClip *clip)
             Rect rect;
 
             direction = (oldy & DOWN_FLAG) ? 1 : -1;
-            gotseed = get_seed(attr, clip, oldxleft, (oldy + direction),
-                               &newxleft, &newxright, seed_type);
+            gotseed = get_seed(attr, clip, oldxleft, oldy+direction, &newxleft, &newxright);
 
             if ((newxleft < (oldxleft - 1)) && gotseed) {
                 xleft = oldxleft;
                 while (xleft > newxleft) {
                     --xleft;
-                    get_seed(attr, clip, xleft, oldy ^ DOWN_FLAG,
-                             &xleft, &xright, seed_type);
+                    get_seed(attr, clip, xleft, oldy^DOWN_FLAG, &xleft, &xright);
                 }
             }
             while (newxright < oldxright) {
                 ++newxright;
-                gotseed = get_seed(attr, clip, newxright, oldy + direction,
-                                   &xleft, &newxright, seed_type);
+                gotseed = get_seed(attr, clip, newxright, oldy+direction, &xleft, &newxright);
             }
             if ((newxright > (oldxright + 1)) && gotseed) {
                 xright = oldxright;
                 while (xright < newxright) {
                     ++xright;
-                    get_seed(attr, clip, xright, oldy ^ DOWN_FLAG,
-                             &xleft, &xright, seed_type);
+                    get_seed(attr, clip, xright, oldy^DOWN_FLAG, &xleft, &xright);
                 }
             }
 
