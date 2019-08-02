@@ -20,7 +20,7 @@
 #include "lineavars.h"
 
 /*
- * segment in queue structure used by seedfill
+ * segment in queue structure used by contourfill()
  */
 typedef struct {
     WORD y;                     /* y coordinate of segment and/or special value */
@@ -33,7 +33,7 @@ typedef struct {
 #define DOWN_FLAG   0x8000
 #define ABS(v)      ((v) & 0x7FFF)  /* strips DOWN_FLAG if present */
 
-/* queue parameters for contourfill() */
+/* queue size for contourfill() */
 #define QSIZE       250         /* this should probably equal the horizontal */
                                 /* resolution to be guaranteed to handle any fill */
 
@@ -44,10 +44,10 @@ static BOOL seed_type;          /* 1 => fill until selected colour is NOT found 
                                 /* 0 => fill until selected colour is found */
 
 
-/* some kind of stack for the segments to fill */
+/* a queue for the segments to fill */
 static SEGMENT queue[QSIZE];    /* storage for the seed points  */
 static SEGMENT *qbottom;        /* the bottom of the queue      */
-static SEGMENT *qtop;           /* points to seed +1            */
+static SEGMENT *qtop;           /* the last segment in use +1   */
 static SEGMENT *qptr;           /* points to the active point   */
 
 
@@ -790,18 +790,18 @@ search_to_left (const VwkClip * clip, WORD x, UWORD mask, const UWORD search_col
 
 /*
  * end_pts - find the endpoints of a section of solid color
- *           (for the _seed_fill routine.)
+ *           (for the contourfill() routine.)
  *
- * input:  4(sp) = xstart.
- *         6(sp) = ystart.
- *         8(sp) = ptr to endxleft.
- *         C(sp) = ptr to endxright.
+ * input:   clip        ptr to clipping rectangle
+ *          x           starting x value
+ *          y           y coordinate of line
  *
- * output: endxleft  := left endpoint of solid color.
- *         endxright := right endpoint of solid color.
- *         d0        := success flag.
- *             0 => no endpoints or xstart on edge.
- *             1 => endpoints found.
+ * output:  xleftout    ptr to variable to receive leftmost point of this colour
+ *          xrightout   ptr to variable to receive rightmost point of this colour
+ *
+ * returns success flag:
+ *          0 => no endpoints or starting x value on edge
+ *          1 => endpoints found
  */
 static WORD end_pts(const VwkClip *clip, WORD x, WORD y, WORD *xleftout, WORD *xrightout)
 {
