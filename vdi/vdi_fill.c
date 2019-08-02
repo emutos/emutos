@@ -33,8 +33,9 @@ typedef struct {
 #define DOWN_FLAG   0x8000
 #define ABS(v)      ((v) & 0x7FFF)  /* strips DOWN_FLAG if present */
 
-/* queue parameters */
-#define QSIZE       67
+/* queue parameters for contourfill() */
+#define QSIZE       250         /* this should probably equal the horizontal */
+                                /* resolution to be guaranteed to handle any fill */
 
 
 /* Global variables */
