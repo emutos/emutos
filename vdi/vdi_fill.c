@@ -918,7 +918,6 @@ void contourfill(const VwkAttrib * attr, const VwkClip *clip)
     WORD xleft;                 /* temporary endpoints          */
     WORD xright;                /* */
     WORD direction;             /* is next scan line up or down */
-    BOOL notdone;               /* does seedpoint==search_color */
     WORD gotseed;               /* 1 => seed was put in the Q */
                                 /* 0 => no seed was put in the Q */
                                 /* -1 => queue overflowed */
@@ -954,7 +953,9 @@ void contourfill(const VwkAttrib * attr, const VwkClip *clip)
     /* Initialize the line drawing parameters */
     LSTLIN = FALSE;
 
-    notdone = end_pts(clip, xleft, oldy, &oldxleft, &oldxright);
+    /* check if anything to do */
+    if (!end_pts(clip, xleft, oldy, &oldxleft, &oldxright))
+        return;
 
     qptr = qbottom = queue;
     qptr->y = (oldy | DOWN_FLAG);   /* stuff a point going down into the Q */
@@ -962,68 +963,65 @@ void contourfill(const VwkAttrib * attr, const VwkClip *clip)
     qptr->xright = oldxright;
     qtop = qptr + 1;                /* one above highest seed point */
 
-    if (notdone) {
-        /* couldn't get point out of Q or draw it */
-        while (1) {
-            Rect rect;
+    while (1) {
+        Rect rect;
 
-            direction = (oldy & DOWN_FLAG) ? 1 : -1;
-            gotseed = get_seed(attr, clip, oldxleft, oldy+direction, &newxleft, &newxright);
-            if (gotseed < 0)
-                return;         /* error, quit */
+        direction = (oldy & DOWN_FLAG) ? 1 : -1;
+        gotseed = get_seed(attr, clip, oldxleft, oldy+direction, &newxleft, &newxright);
+        if (gotseed < 0)
+            return;         /* error, quit */
 
-            if ((newxleft < (oldxleft - 1)) && gotseed) {
-                xleft = oldxleft;
-                while (xleft > newxleft) {
-                    --xleft;
-                    if (get_seed(attr, clip, xleft, oldy^DOWN_FLAG, &xleft, &xright) < 0)
-                        return; /* error, quit */
-                }
+        if ((newxleft < (oldxleft - 1)) && gotseed) {
+            xleft = oldxleft;
+            while (xleft > newxleft) {
+                --xleft;
+                if (get_seed(attr, clip, xleft, oldy^DOWN_FLAG, &xleft, &xright) < 0)
+                    return; /* error, quit */
             }
-            while (newxright < oldxright) {
-                ++newxright;
-                gotseed = get_seed(attr, clip, newxright, oldy+direction, &xleft, &newxright);
-                if (gotseed < 0)
-                    return;     /* error, quit */
-            }
-            if ((newxright > (oldxright + 1)) && gotseed) {
-                xright = oldxright;
-                while (xright < newxright) {
-                    ++xright;
-                    if (get_seed(attr, clip, xright, oldy^DOWN_FLAG, &xleft, &xright) < 0)
-                        return; /* error, quit */
-                }
-            }
-
-            /* Eventually jump out here */
-            if (qtop == qbottom)
-                break;
-
-            while (qptr->y == EMPTY) {
-                qptr++;
-                if (qptr == qtop)
-                    qptr = qbottom;
-            }
-
-            oldy = qptr->y;
-            oldxleft = qptr->xleft;
-            oldxright = qptr->xright;
-            qptr->y = EMPTY;
-            if (++qptr == qtop)
-                crunch_queue();
-
-            rect.x1 = oldxleft;
-            rect.y1 = ABS(oldy);
-            rect.x2 = oldxright;
-            rect.y2 = ABS(oldy);
-
-            /* rectangle fill routine draws horizontal line */
-            draw_rect_common(attr, &rect);
-
-            /* after every line, check for early abort */
-            if ((*SEEDABORT)())
-                break;
         }
+        while (newxright < oldxright) {
+            ++newxright;
+            gotseed = get_seed(attr, clip, newxright, oldy+direction, &xleft, &newxright);
+            if (gotseed < 0)
+                return;     /* error, quit */
+        }
+        if ((newxright > (oldxright + 1)) && gotseed) {
+            xright = oldxright;
+            while (xright < newxright) {
+                ++xright;
+                if (get_seed(attr, clip, xright, oldy^DOWN_FLAG, &xleft, &xright) < 0)
+                    return; /* error, quit */
+            }
+        }
+
+        /* Eventually jump out here */
+        if (qtop == qbottom)
+            break;
+
+        while (qptr->y == EMPTY) {
+            qptr++;
+            if (qptr == qtop)
+                qptr = qbottom;
+        }
+
+        oldy = qptr->y;
+        oldxleft = qptr->xleft;
+        oldxright = qptr->xright;
+        qptr->y = EMPTY;
+        if (++qptr == qtop)
+            crunch_queue();
+
+        rect.x1 = oldxleft;
+        rect.y1 = ABS(oldy);
+        rect.x2 = oldxright;
+        rect.y2 = ABS(oldy);
+
+        /* rectangle fill routine draws horizontal line */
+        draw_rect_common(attr, &rect);
+
+        /* after every line, check for early abort */
+        if ((*SEEDABORT)())
+            break;
     }
 }                               /* end of fill() */
 
