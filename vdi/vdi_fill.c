@@ -35,7 +35,6 @@ typedef struct {
 
 /* queue parameters */
 #define QSIZE       67
-#define QMAX        (QSIZE-1)
 
 
 /* Global variables */
@@ -889,7 +888,7 @@ static WORD get_seed(const VwkAttrib *attr, const VwkClip *clip,
          * there were no holes, so raise qtop if we can
          */ 
         if (qhole == NULL) {
-            if (++qtop > queue+QMAX) {  /* can't raise qtop ... */
+            if (++qtop > queue+QSIZE) { /* can't raise qtop ... */
                 KDEBUG(("contourfill(): queue overflow\n"));
                 return -1;      /* error */
             }
