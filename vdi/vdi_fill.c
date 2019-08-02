@@ -37,7 +37,6 @@ typedef struct {
 
 
 
-
 /* prototypes */
 static void crunch_queue(void);
 static BOOL clipbox(const VwkClip * clip, Rect * rect);
@@ -50,9 +49,9 @@ static UWORD search_color;       /* the color of the border      */
 
 /* some kind of stack for the segments to fill */
 static SEGMENT queue[QSIZE];    /* storage for the seed points  */
-static WORD qbottom;            /* the bottom of the queue (zero)   */
-static WORD qtop;               /* points to seed +1            */
-static WORD qptr;               /* points to the active point   */
+static SEGMENT *qbottom;        /* the bottom of the queue      */
+static SEGMENT *qtop;           /* points to seed +1            */
+static SEGMENT *qptr;           /* points to the active point   */
 
 
 /* the storage for the used defined fill pattern */
@@ -847,16 +846,15 @@ get_seed(const VwkAttrib * attr, const VwkClip * clip,
          WORD xin, WORD yin, WORD *xleftout, WORD *xrightout,
          BOOL seed_type)
 {
-    WORD qhole;         /* an empty space in the queue */
-    WORD qtmp;
+    SEGMENT *qhole;         /* an empty space in the queue */
+    SEGMENT *qtmp;
 
     if (end_pts(clip, xin, ABS(yin), xleftout, xrightout, seed_type)) {
         /* false if of search_color */
-        for (qtmp = qbottom, qhole = EMPTY; qtmp < qtop; qtmp++) {
+        for (qtmp = qbottom, qhole = NULL; qtmp < qtop; qtmp++) {
             /* see, if we ran into another seed */
-            if ( ((queue[qtmp].y ^ DOWN_FLAG) == yin) && (queue[qtmp].y != EMPTY) &&
-                (queue[qtmp].xleft == *xleftout) )
-
+            if ( ((qtmp->y ^ DOWN_FLAG) == yin) && (qtmp->y != EMPTY) &&
+                (qtmp->xleft == *xleftout) )
             {
                 /* we ran into another seed so remove it and fill the line */
                 Rect rect;
@@ -869,27 +867,27 @@ get_seed(const VwkAttrib * attr, const VwkClip * clip,
                 /* rectangle fill routine draws horizontal line */
                 draw_rect_common(attr, &rect);
 
-                queue[qtmp].y = EMPTY;
+                qtmp->y = EMPTY;
                 if ((qtmp+1) == qtop)
                     crunch_queue();
                 return 0;
             }
-            if ((queue[qtmp].y == EMPTY) && (qhole == EMPTY))
+            if ((qtmp->y == EMPTY) && (qhole == NULL))
                 qhole = qtmp;
         }
 
-        if (qhole == EMPTY) {
-            if (++qtop > QMAX) {
+        if (qhole == NULL) {
+            if (++qtop > queue+QMAX) {
                 qtmp = qbottom;
                 qtop--;
             }
         } else
             qtmp = qhole;
 
-        queue[qtmp].y = yin;    /* put the y and endpoints in the Q */
-        queue[qtmp].xleft = *xleftout;
-        queue[qtmp].xright = *xrightout;
-        return 1;             /* we put a seed in the Q */
+        qtmp->y = yin;      /* put the y and endpoints in the Q */
+        qtmp->xleft = *xleftout;
+        qtmp->xright = *xrightout;
+        return 1;           /* we put a seed in the Q */
     }
 
     return 0;           /* we didn't put a seed in the Q */
@@ -945,11 +943,11 @@ void contourfill(const VwkAttrib * attr, const VwkClip *clip)
 
     notdone = end_pts(clip, xleft, oldy, &oldxleft, &oldxright, seed_type);
 
-    qptr = qbottom = 0;
-    qtop = 1;                           /* one above highest seed point */
-    queue[qbottom].y = (oldy | DOWN_FLAG);
-    queue[qbottom].xleft = oldxleft;
-    queue[qbottom].xright = oldxright;  /* stuff a point going down into the Q */
+    qptr = qbottom = queue;
+    qptr->y = (oldy | DOWN_FLAG);   /* stuff a point going down into the Q */
+    qptr->xleft = oldxleft;
+    qptr->xright = oldxright;
+    qtop = qptr + 1;                /* one above highest seed point */
 
     if (notdone) {
         /* couldn't get point out of Q or draw it */
@@ -986,17 +984,17 @@ void contourfill(const VwkAttrib * attr, const VwkClip *clip)
             if (qtop == qbottom)
                 break;
 
-            while (queue[qptr].y == EMPTY) {
+            while (qptr->y == EMPTY) {
                 qptr++;
                 if (qptr == qtop)
                     qptr = qbottom;
             }
 
-            oldy = queue[qptr].y;
-            oldxleft = queue[qptr].xleft;
-            oldxright = queue[qptr].xright;
-            queue[qptr++].y = EMPTY;
-            if (qptr == qtop)
+            oldy = qptr->y;
+            oldxleft = qptr->xleft;
+            oldxright = qptr->xright;
+            qptr->y = EMPTY;
+            if (++qptr == qtop)
                 crunch_queue();
 
             rect.x1 = oldxleft;
@@ -1022,7 +1020,7 @@ void contourfill(const VwkAttrib * attr, const VwkClip *clip)
 static void
 crunch_queue(void)
 {
-    while ((queue[qtop-1].y == EMPTY) && (qtop > qbottom))
+    while (((qtop-1)->y == EMPTY) && (qtop > qbottom))
         qtop--;
     if (qptr >= qtop)
         qptr = qbottom;
