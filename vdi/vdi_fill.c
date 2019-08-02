@@ -838,11 +838,62 @@ end_pts(const VwkClip * clip, WORD x, WORD y, WORD *xleftout, WORD *xrightout,
 }
 
 
-/* Prototypes local to this module */
+
+/*
+ * get_seed - put seeds into Q, if (xin,yin) is not of search_color
+ */
 static WORD
 get_seed(const VwkAttrib * attr, const VwkClip * clip,
          WORD xin, WORD yin, WORD *xleftout, WORD *xrightout,
-         BOOL seed_type);
+         BOOL seed_type)
+{
+    WORD qhole;         /* an empty space in the queue */
+    WORD qtmp;
+
+    if (end_pts(clip, xin, ABS(yin), xleftout, xrightout, seed_type)) {
+        /* false if of search_color */
+        for (qtmp = qbottom, qhole = EMPTY; qtmp < qtop; qtmp++) {
+            /* see, if we ran into another seed */
+            if ( ((queue[qtmp].y ^ DOWN_FLAG) == yin) && (queue[qtmp].y != EMPTY) &&
+                (queue[qtmp].xleft == *xleftout) )
+
+            {
+                /* we ran into another seed so remove it and fill the line */
+                Rect rect;
+
+                rect.x1 = *xleftout;
+                rect.y1 = ABS(yin);
+                rect.x2 = *xrightout;
+                rect.y2 = ABS(yin);
+
+                /* rectangle fill routine draws horizontal line */
+                draw_rect_common(attr, &rect);
+
+                queue[qtmp].y = EMPTY;
+                if ((qtmp+1) == qtop)
+                    crunch_queue();
+                return 0;
+            }
+            if ((queue[qtmp].y == EMPTY) && (qhole == EMPTY))
+                qhole = qtmp;
+        }
+
+        if (qhole == EMPTY) {
+            if (++qtop > QMAX) {
+                qtmp = qbottom;
+                qtop--;
+            }
+        } else
+            qtmp = qhole;
+
+        queue[qtmp].y = yin;    /* put the y and endpoints in the Q */
+        queue[qtmp].xleft = *xleftout;
+        queue[qtmp].xright = *xrightout;
+        return 1;             /* we put a seed in the Q */
+    }
+
+    return 0;           /* we didn't put a seed in the Q */
+}
 
 
 
@@ -975,64 +1026,6 @@ crunch_queue(void)
         qtop--;
     if (qptr >= qtop)
         qptr = qbottom;
-}
-
-
-
-/*
- * get_seed - put seeds into Q, if (xin,yin) is not of search_color
- */
-static WORD
-get_seed(const VwkAttrib * attr, const VwkClip * clip,
-         WORD xin, WORD yin, WORD *xleftout, WORD *xrightout,
-         BOOL seed_type)
-{
-    WORD qhole;         /* an empty space in the queue */
-    WORD qtmp;
-
-    if (end_pts(clip, xin, ABS(yin), xleftout, xrightout, seed_type)) {
-        /* false if of search_color */
-        for (qtmp = qbottom, qhole = EMPTY; qtmp < qtop; qtmp++) {
-            /* see, if we ran into another seed */
-            if ( ((queue[qtmp].y ^ DOWN_FLAG) == yin) && (queue[qtmp].y != EMPTY) &&
-                (queue[qtmp].xleft == *xleftout) )
-
-            {
-                /* we ran into another seed so remove it and fill the line */
-                Rect rect;
-
-                rect.x1 = *xleftout;
-                rect.y1 = ABS(yin);
-                rect.x2 = *xrightout;
-                rect.y2 = ABS(yin);
-
-                /* rectangle fill routine draws horizontal line */
-                draw_rect_common(attr, &rect);
-
-                queue[qtmp].y = EMPTY;
-                if ((qtmp+1) == qtop)
-                    crunch_queue();
-                return 0;
-            }
-            if ((queue[qtmp].y == EMPTY) && (qhole == EMPTY))
-                qhole = qtmp;
-        }
-
-        if (qhole == EMPTY) {
-            if (++qtop > QMAX) {
-                qtmp = qbottom;
-                qtop--;
-            }
-        } else
-            qtmp = qhole;
-
-        queue[qtmp].y = yin;    /* put the y and endpoints in the Q */
-        queue[qtmp].xleft = *xleftout;
-        queue[qtmp].xright = *xrightout;
-        return 1;             /* we put a seed in the Q */
-    }
-
-    return 0;           /* we didn't put a seed in the Q */
 }
 
 
