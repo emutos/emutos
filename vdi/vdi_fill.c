@@ -858,9 +858,15 @@ get_seed(const VwkAttrib * attr, const VwkClip * clip,
     if (end_pts(clip, xin, ABS(yin), xleftout, xrightout, seed_type)) {
         /* false if of search_color */
         for (qtmp = qbottom, qhole = NULL; qtmp < qtop; qtmp++) {
+            /* skip holes, remembering the first hole we find */
+            if (qtmp->y == EMPTY)
+            {
+                if (qhole == NULL)
+                    qhole = qtmp;
+                continue;
+            }
             /* see, if we ran into another seed */
-            if ( ((qtmp->y ^ DOWN_FLAG) == yin) && (qtmp->y != EMPTY) &&
-                (qtmp->xleft == *xleftout) )
+            if ( ((qtmp->y ^ DOWN_FLAG) == yin) && (qtmp->xleft == *xleftout) )
             {
                 /* we ran into another seed so remove it and fill the line */
                 Rect rect;
@@ -878,13 +884,14 @@ get_seed(const VwkAttrib * attr, const VwkClip * clip,
                     crunch_queue();
                 return 0;
             }
-            if ((qtmp->y == EMPTY) && (qhole == NULL))
-                qhole = qtmp;
         }
 
+        /*
+         * there were no holes, so raise qtop if we can
+         */ 
         if (qhole == NULL) {
-            if (++qtop > queue+QMAX) {
-                qtmp = qbottom;
+            if (++qtop > queue+QMAX) {  /* can't raise qtop ... */
+                qtmp = qbottom;         /* so overwrite a seed :-( */
                 qtop--;
             }
         } else
