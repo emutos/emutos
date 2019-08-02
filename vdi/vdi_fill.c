@@ -9,6 +9,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+/* #define ENABLE_KDEBUG */
+
 #include "emutos.h"
 #include "asm.h"
 #include "intmath.h"
@@ -888,8 +890,8 @@ static WORD get_seed(const VwkAttrib *attr, const VwkClip *clip,
          */ 
         if (qhole == NULL) {
             if (++qtop > queue+QMAX) {  /* can't raise qtop ... */
-                qtmp = qbottom;         /* so overwrite a seed :-( */
-                qtop--;
+                KDEBUG(("contourfill(): queue overflow\n"));
+                return -1;      /* error */
             }
         } else
             qtmp = qhole;
@@ -917,7 +919,9 @@ void contourfill(const VwkAttrib * attr, const VwkClip *clip)
     WORD xright;                /* */
     WORD direction;             /* is next scan line up or down */
     BOOL notdone;               /* does seedpoint==search_color */
-    BOOL gotseed;               /* a seed was put in the Q      */
+    WORD gotseed;               /* 1 => seed was put in the Q */
+                                /* 0 => no seed was put in the Q */
+                                /* -1 => queue overflowed */
 
     xleft = PTSIN[0];
     oldy = PTSIN[1];
@@ -965,23 +969,29 @@ void contourfill(const VwkAttrib * attr, const VwkClip *clip)
 
             direction = (oldy & DOWN_FLAG) ? 1 : -1;
             gotseed = get_seed(attr, clip, oldxleft, oldy+direction, &newxleft, &newxright);
+            if (gotseed < 0)
+                return;         /* error, quit */
 
             if ((newxleft < (oldxleft - 1)) && gotseed) {
                 xleft = oldxleft;
                 while (xleft > newxleft) {
                     --xleft;
-                    get_seed(attr, clip, xleft, oldy^DOWN_FLAG, &xleft, &xright);
+                    if (get_seed(attr, clip, xleft, oldy^DOWN_FLAG, &xleft, &xright) < 0)
+                        return; /* error, quit */
                 }
             }
             while (newxright < oldxright) {
                 ++newxright;
                 gotseed = get_seed(attr, clip, newxright, oldy+direction, &xleft, &newxright);
+                if (gotseed < 0)
+                    return;     /* error, quit */
             }
             if ((newxright > (oldxright + 1)) && gotseed) {
                 xright = oldxright;
                 while (xright < newxright) {
                     ++xright;
-                    get_seed(attr, clip, xright, oldy^DOWN_FLAG, &xleft, &xright);
+                    if (get_seed(attr, clip, xright, oldy^DOWN_FLAG, &xleft, &xright) < 0)
+                        return; /* error, quit */
                 }
             }
 
