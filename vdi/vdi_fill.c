@@ -19,6 +19,8 @@
 #include "tosvars.h"
 #include "lineavars.h"
 
+#define MAX_INTERSECTIONS   MAX_VERTICES
+
 /*
  * segment in queue structure used by contourfill()
  */
@@ -33,22 +35,42 @@ typedef struct {
 #define DOWN_FLAG   0x8000
 #define ABS(v)      ((v) & 0x7FFF)  /* strips DOWN_FLAG if present */
 
-/* queue size for contourfill() */
-#define QSIZE       250         /* this should probably equal the horizontal */
-                                /* resolution to be guaranteed to handle any fill */
-
+/*
+ * queue size for contourfill()
+ *
+ * this is currently made as large as will fit in the existing vdishare
+ * area without increasing it (see below).
+ *
+ * in order to be guaranteed to handle all possible shapes of fill area,
+ * the number of entries probably needs to be greater than or equal to
+ * the current horizontal screen resolution.
+ */
+#define QSIZE   (sizeof(struct vsmain)/sizeof(SEGMENT))
 
 /* Global variables */
 static UWORD search_color;      /* selected colour for contourfill() */
 static BOOL seed_type;          /* 1 => fill until selected colour is NOT found */
                                 /* 0 => fill until selected colour is found */
 
-
-/* a queue for the segments to fill */
-static SEGMENT queue[QSIZE];    /* storage for the seed points  */
+/* the following point to segments within vdishare.queue[] (see below) */
 static SEGMENT *qbottom;        /* the bottom of the queue      */
 static SEGMENT *qtop;           /* the last segment in use +1   */
 static SEGMENT *qptr;           /* points to the active point   */
+
+
+/*
+ * a shared area for the VDI
+ *
+ * if you choose to add to this, you must (manually) verify that usage of the
+ * area by the new member does not conflict with usage by any other member!
+ */
+union {
+    struct vsmain {
+        WORD local_ptsin[MAX_PTSIN];        /* used by GSX_ENTRY() - must be at offset 0 */
+        WORD fill_buffer[MAX_INTERSECTIONS];/* used by clc_flit() */
+    } main;
+    SEGMENT queue[QSIZE];       /* storage for contourfill() seed points  */
+} vdishare;
 
 
 /* the storage for the used defined fill pattern */
@@ -445,20 +467,17 @@ bub_sort (WORD * buf, WORD count)
  * DRI code, when clc_flit() was written in assembler; the buffer
  * was moved to the stack when clc_flit() was re-implemented in C.
  */
-#define MAX_INTERSECTIONS   MAX_VERTICES
-static WORD fill_buffer[MAX_INTERSECTIONS];
 
 void
 clc_flit (const VwkAttrib * attr, const VwkClip * clipper, const Point * point, WORD y, int vectors)
 {
-//    WORD fill_buffer[256];      /* must be 256 words or it will fail */
     WORD * bufptr;              /* point to array of x-values. */
     int intersections;          /* count of intersections */
     int i;
 
     /* Initialize the pointers and counters. */
     intersections = 0;  /* reset counter */
-    bufptr = fill_buffer;
+    bufptr = vdishare.main.fill_buffer;
 
     /* find intersection points of scan line with poly edges. */
     for (i = 0; i < vectors; i++) {
@@ -519,7 +538,7 @@ clc_flit (const VwkAttrib * attr, const VwkClip * clipper, const Point * point, 
 
     /* bubblesort the intersections, if it makes sense */
     if ( intersections > 1 )
-        bub_sort(fill_buffer, intersections);
+        bub_sort(vdishare.main.fill_buffer, intersections);
 
     if (attr->clip) {
         /* Clipping is in force.  Once the endpoints of the line segment have */
@@ -530,7 +549,7 @@ clc_flit (const VwkAttrib * attr, const VwkClip * clipper, const Point * point, 
         /* border of the figure will not be drawn with the fill pattern. */
 
         /* loop through buffered points */
-        WORD * ptr = fill_buffer;
+        WORD * ptr = vdishare.main.fill_buffer;
         for (i = intersections / 2 - 1; i >= 0; i--) {
             WORD x1, x2;
             Rect rect;
@@ -573,7 +592,7 @@ clc_flit (const VwkAttrib * attr, const VwkClip * clipper, const Point * point, 
         /* done. */
 
         /* loop through buffered points */
-        WORD * ptr = fill_buffer;
+        WORD * ptr = vdishare.main.fill_buffer;
         for (i = intersections / 2 - 1; i >= 0; i--) {
             WORD x1, x2;
             Rect rect;
@@ -889,7 +908,7 @@ static WORD get_seed(const VwkAttrib *attr, const VwkClip *clip,
          * there were no holes, so raise qtop if we can
          */ 
         if (qhole == NULL) {
-            if (++qtop > queue+QSIZE) { /* can't raise qtop ... */
+            if (++qtop > vdishare.queue+QSIZE) { /* can't raise qtop ... */
                 KDEBUG(("contourfill(): queue overflow\n"));
                 return -1;      /* error */
             }
@@ -957,7 +976,11 @@ void contourfill(const VwkAttrib * attr, const VwkClip *clip)
     if (!end_pts(clip, xleft, oldy, &oldxleft, &oldxright))
         return;
 
-    qptr = qbottom = queue;
+    /*
+     * from this point on we must NOT access PTSIN[], since the area
+     * is overwritten by the queue of seeds!
+     */
+    qptr = qbottom = vdishare.queue;
     qptr->y = (oldy | DOWN_FLAG);   /* stuff a point going down into the Q */
     qptr->xleft = oldxleft;
     qptr->xright = oldxright;

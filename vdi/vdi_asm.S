@@ -16,6 +16,9 @@
         .extern _CONTRL
         .extern _flip_y
         .extern _screen
+        .extern _vdishare               //see vdi_fill.c
+
+#define lcl_ptsin _vdishare
 
 /*
  * _vditrap - VDI trap dispatcher
@@ -58,8 +61,6 @@ query:
 #define W_1        2            // byte offset to first element of an array
 #define W_3        6            // byte offset to third element of an array
 
-        .bss
-lcl_ptsin:      .ds.w   MAX_PTSIN
 
         .text
 
@@ -79,7 +80,7 @@ _GSX_ENTRY:
         movea.l (a2)+,a0        // copy address of user's CONTRL aray
         move.l  a0,(a1)+        // save address of user's CONTRL array
         move.l  (a2)+,(a1)+     // save address of user's INTIN  array
-        lea     lcl_ptsin,a3    // local area used for PTSIN array address
+        lea     lcl_ptsin,a3    // shared area used for local copy of PTSIN array
         move.l  a3,(a1)+        // save address of local PTSIN array
         move.l  (a2)+,a4        // get address of user's PTSIN array
         move.l  (a2)+,(a1)+     // save address of user's INTOUT array
