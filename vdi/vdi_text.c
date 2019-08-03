@@ -56,11 +56,13 @@ extern WORD font_count;         /* Number of fonts in driver */
 /*
  * 8x16 font data
  */
-# define l_off      2           /* left offset from skew */
-# define r_off      6           /* right offset from skew */
+# define l_off      1           /* left offset from skew */
+# define r_off      7           /* right offset from skew */
 # define form_ht    16          /* form height */
 # define mxcelwd    8           /* maximum cell width */
 #endif
+
+#define total_off   (l_off+r_off)       /* total skew offset */
 
 /*
  *  Since a character cell may be rotated 90 or 270 degrees, the cell
@@ -70,8 +72,8 @@ extern WORD font_count;         /* Number of fonts in driver */
  *  represents the number of rows).  Cell width and cell height must be
  *  calculated two different ways in order to accommodate rotation.
  */
-#define cel_ww  (((l_off+r_off+mxcelwd+15)/16)*2)   /* worst case # bytes/row if width */
-#define cel_wh  (l_off+r_off+mxcelwd)   /* cell "width" if used as height (90 rotation) */
+#define cel_ww  (((total_off+mxcelwd+15)/16)*2) /* worst case # bytes/row if width */
+#define cel_wh  (total_off+mxcelwd)     /* cell "width" if used as height (90 rotation) */
 #define cel_hh  (form_ht)               /* cell height if used as height */
 #define cel_hw  (((form_ht+15)/16)*2)   /* cell "height" if used as width (90 rotation) */
 
@@ -93,8 +95,8 @@ extern WORD font_count;         /* Number of fonts in driver */
 /*
  *  Now we repeat the whole thing for doubled cell dimensions
  */
-#define cel2_ww     ((((2*(l_off+r_off+mxcelwd))+3+15)/16)*2)
-#define cel2_wh     ((2*(l_off+r_off+mxcelwd))+2)
+#define cel2_ww     ((((2*(total_off+mxcelwd))+3+15)/16)*2)
+#define cel2_wh     ((2*(total_off+mxcelwd))+2)
 #define cel2_hh     ((2*form_ht)+2)
 #define cel2_hw     ((((2*form_ht)+3+15)/16)*2)
 
