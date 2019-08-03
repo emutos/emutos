@@ -27,7 +27,13 @@ extern WORD font_count;         /* Number of fonts in driver */
 
 /*
  * start of calculations extracted from vdi_tblit.S
+ *
+ * the calculations (as revised by the addition of parentheses) for the
+ * 8x16 font have been verified with a test program.  the maximum usage
+ * is observed with text that has been rotated, skewed and outlined:
+ * 64 bytes for the small buffer and 212 bytes for the large buffer.
  */
+
 #define test1       0           /* if using very large fonts (else, 8x16) */
 /*
  *  NOTE: The calculations below should serve as an example for
@@ -64,10 +70,10 @@ extern WORD font_count;         /* Number of fonts in driver */
  *  represents the number of rows).  Cell width and cell height must be
  *  calculated two different ways in order to accommodate rotation.
  */
-#define cel_ww  ((l_off+r_off+mxcelwd+15)/16)*2 /* worst case # bytes/row if width */
-#define cel_wh  l_off+r_off+mxcelwd     /* cell "width" if used as height (90 rotation) */
-#define cel_hh  form_ht                 /* cell height if used as height */
-#define cel_hw  ((form_ht+15)/16)*2     /* cell "height" if used as width (90 rotation) */
+#define cel_ww  (((l_off+r_off+mxcelwd+15)/16)*2)   /* worst case # bytes/row if width */
+#define cel_wh  (l_off+r_off+mxcelwd)   /* cell "width" if used as height (90 rotation) */
+#define cel_hh  (form_ht)               /* cell height if used as height */
+#define cel_hw  (((form_ht+15)/16)*2)   /* cell "height" if used as width (90 rotation) */
 
 /*
  *  The maximum of:
@@ -75,30 +81,30 @@ extern WORD font_count;         /* Number of fonts in driver */
  *      cell width (as height) * cell height (as width)
  *  will be used for the basic buffer size.
  */
-#define cel_sz0 cel_ww*cel_hh   /* cell size if no rotation */
-#define cel_sz9 cel_wh*cel_hw   /* cell size if 90 deg rotation */
+#define cel_sz0 (cel_ww*cel_hh) /* cell size if no rotation */
+#define cel_sz9 (cel_wh*cel_hw) /* cell size if 90 deg rotation */
 
 #if cel_sz0 >= cel_sz9
-# define cel_siz    cel_sz0*2
+# define cel_siz    (cel_sz0*2)
 #else
-# define cel_siz    cel_sz9*2
+# define cel_siz    (cel_sz9*2)
 #endif
 
 /*
  *  Now we repeat the whole thing for doubled cell dimensions
  */
-#define cel2_ww     (((2*(l_off+r_off+mxcelwd))+3+15)/16)*2
-#define cel2_wh     (2*(l_off+r_off+mxcelwd))+2
-#define cel2_hh     (2*form_ht)+2
-#define cel2_hw     (((2*form_ht)+3+15)/16)*2
+#define cel2_ww     ((((2*(l_off+r_off+mxcelwd))+3+15)/16)*2)
+#define cel2_wh     ((2*(l_off+r_off+mxcelwd))+2)
+#define cel2_hh     ((2*form_ht)+2)
+#define cel2_hw     ((((2*form_ht)+3+15)/16)*2)
 
-#define cel2_sz0    cel2_ww*cel2_hh     /* doubled cell size, no rotation */
-#define cel2_sz9    cel2_wh*cel2_hw     /* doubled cell size, 90 deg rotation */
+#define cel2_sz0    (cel2_ww*cel2_hh)   /* doubled cell size, no rotation */
+#define cel2_sz9    (cel2_wh*cel2_hw)   /* doubled cell size, 90 deg rotation */
 
 #if cel2_sz0 >= cel2_sz9
-# define cel2_siz   cel2_sz0
+# define cel2_siz   (cel2_sz0)
 #else
-# define cel2_siz   cel2_sz9
+# define cel2_siz   (cel2_sz9)
 #endif
 
 /*
@@ -108,9 +114,9 @@ extern WORD font_count;         /* Number of fonts in driver */
  *  For worst case add two bytes.
  */
 #if cel2_ww >= cel2_hw
-# define out_add    cel2_ww+2
+# define out_add    (cel2_ww+2)
 #else
-# define out_add    cel2_hw+2
+# define out_add    (cel2_hw+2)
 #endif
 
 /*
