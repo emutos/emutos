@@ -13,7 +13,6 @@
 
 /* Conditionals for textblit */
 #define test0           0       /* if give program access to internal variables */
-#define test1           0       /* if using very large fonts (else, 8x16) */
 #define bytswap         0       /* if font words are byte swapped! */
 
 /////////////////////////////////////////////////////////////////////////
@@ -117,129 +116,6 @@
         .extern _SCRPT2
         .extern _SCRTCHP
 
-/////////////////////////////////////////////////////////
-//  Character buffer variables defined in this module. //
-/////////////////////////////////////////////////////////
-
-        .globl  _deftxbuf       //base of scratch buffer
-        .globl  _scrtsiz
-
-/////////////////////////////////////////////////////////
-//  NOTE: The calculations below should serve as an example for //
-//        determining the cell size and buffer size required for //
-//       creating a scratch character buffer for various sized  //
-//        fonts.                                                        //
-/////////////////////////////////////////////////////////
-
-//////
-//  A larger scratch buffer must be used for character rotation/replication.//
-//  Size requirement calculations for this buffer are outlined below.       //
-//  NOTE: font dependent equates would normally be found in the font header //
-//////
-
-#if test1
-////////////////////////////////////////////////////////////////////////
-//  test for very large font        //
-////////////////////////////////////////////////////////////////////////
-#define l_off                   4               //left offset from skew
-#define r_off                   17              //right offset from skew
-#define form_ht                 43              //form height
-#define mxcelwd                 150             //max.cell width (very wide for testing)
-#else
-//////////////////////////////////////////
-//  8x16 font data   //
-//////////////////////////////////////////
-#define l_off                   2               //left offset from skew
-#define r_off                   6               //right offset from skew
-#define form_ht                 16              //form height
-#define mxcelwd                 8               //maximum cell width
-#endif
-
-//////
-//  Since a character cell may be rotated 90 or 270 degrees the cell height //
-//  and width may be interchanged. The width must be word multiples (ie. 3  //
-//  pixel widths requires the 1 word minimum of 16 bits), but the height    //
-//  needn't be rounded up in a similiar fashion (since it represents the    //
-//  number of rows). Cell width and cell height must be calculated two      //
-//  different ways in order to accommodate rotation.                       //
-//////
-
-#define cel_ww  ((l_off+r_off+mxcelwd+15)/16)*2 //worst case # bytes/row
-//                                              //if width
-#define cel_wh  l_off+r_off+mxcelwd     //cell "width" if used as height
-                                        //(90 rotation)
-#define cel_hh  form_ht                 //cell height if used as height
-#define cel_hw  ((form_ht+15)/16)*2     //cell "height" if used as width
-                                        //(90 rotation)
-/////////////////////////////////////////////////////////
-// The maximum of either:                                       //
-//                                                              //
-//              cell width (as width) * cell height (as height) //
-//                                   or                         //
-//              cell width (as height) * cell height (as width) //
-//                                                              //
-//  will be used for the basic buffer size.                     //
-/////////////////////////////////////////////////////////
-
-#define cel_sz0 cel_ww*cel_hh   //cell size if no rotation
-#define cel_sz9 cel_wh*cel_hw   //cell size for 90 deg rotation
-
-/////////////////////////////////////////////////////////
-//  Select the maximum for the character buffer size.           //
-/////////////////////////////////////////////////////////
-
-//ifge    cel_sz0-cel_sz9
-#if cel_sz0>=cel_sz9
-#define cel_siz         cel_sz0*2
-//iflt    cel_sz0-cel_sz9
-#else
-#define cel_siz         cel_sz9*2
-#endif
-
-/////////////////////////////////////////////////////////
-//  Doubled cell dimension calculations.                        //
-/////////////////////////////////////////////////////////
-
-#define cel2_ww         (((2*(l_off+r_off+mxcelwd))+3+15)/16)*2
-#define cel2_wh         (2*(l_off+r_off+mxcelwd))+2
-#define cel2_hh         (2*form_ht)+2
-#define cel2_hw         (((2*form_ht)+3+15)/16)*2
-
-#define cel2_sz0        cel2_ww*cel2_hh //doubled cell size, no rotation
-#define cel2_sz9        cel2_wh*cel2_hw //doubled cell size, 90 deg rotation
-
-/////////////////////////////////////////////////////////////////////////
-//  Select the maximum size character buffer for doubled characters.     //
-/////////////////////////////////////////////////////////////////////////
-
-//ifge    cel2_sz0-cel2_sz9
-#if cel2_sz0>=cel2_sz9
-#define cel2_siz        cel2_sz0
-#else
-//iflt    cel2_sz0-cel2_sz9
-#define cel2_siz             cel2_sz9
-#endif
-
-/////////////////////////////////////////////////////////
-//  Determine the maximum horizontal line (from width or height) //
-//  which is required for outlining the character buffer. For    //
-//  worst case add two bytes.                                   //
-/////////////////////////////////////////////////////////
-
-//ifge    cel2_ww-cel2_hw
-#if cel2_ww>=cel2_hw
-#define out_add         cel2_ww+2
-#else
-//iflt    cel2_ww-cel2_hw
-#define out_add         cel2_hw+2
-#endif
-
-/////////////////////////////////////////////////////////
-//  Total buffer requirements are: cel_siz + cel2_siz + out_add //
-/////////////////////////////////////////////////////////
-
-#define buf_siz         cel_siz+cel2_siz+out_add    //total byte requirement =
-//                                                  // small + large buffer
 
 /////////////////////////////////////////////////////////////////////////
 //  _text_blt expects variables SCRTCHP & SCRPT2 to be                  //
@@ -253,17 +129,9 @@
 //                                                                      //
 //      NOTE: _SCRTCHP & _SCRPT2 must be initialized to an even pointer //
 //               even offset respectively                               //
+//   see vdi_text.c for calculations of buf_siz & cel_siz               //
 /////////////////////////////////////////////////////////////////////////
 
-        .bss
-_deftxbuf:
-        .ds.b   buf_siz         // char. buffer
-
-        SECTION_RODATA
-
-        .even   // Mandatory in ELF section .rodata
-_scrtsiz:
-        .dc.w   cel_siz         // eat up some rom so value can be passed
 
 /////////////////////////////////////////////////////////////////////////
 //      Local variables defined on the user stack.                      //

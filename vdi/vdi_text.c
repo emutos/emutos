@@ -23,8 +23,107 @@ extern const Fonthead *def_font;    /* Default font of open workstation */
 extern const Fonthead *font_ring[]; /* Ring of available fonts */
 
 extern WORD font_count;         /* Number of fonts in driver */
-extern WORD deftxbuf[];         /* Default text scratch buffer */
-extern const WORD scrtsiz;      /* Default offset to large text buffer */
+
+
+/*
+ * start of calculations extracted from vdi_tblit.S
+ */
+#define test1       0           /* if using very large fonts (else, 8x16) */
+/*
+ *  NOTE: The calculations below should serve as an example for
+ *  determining the cell size and buffer size required for creating
+ *  a scratch character buffer for various sized fonts.
+ * 
+ *  A larger scratch buffer must be used for character rotation/replication.
+ *  Size requirement calculations for this buffer are outlined below.
+ *  NOTE: font dependent equates would normally be found in the font header.
+ */
+#if test1
+/*
+ * test for very large font
+ */
+# define l_off      4           /* left offset from skew */
+# define r_off      17          /* right offset from skew */
+# define form_ht    43          /* form height */
+# define mxcelwd    150         /* max.cell width (very wide for testing) */
+#else
+/*
+ * 8x16 font data
+ */
+# define l_off      2           /* left offset from skew */
+# define r_off      6           /* right offset from skew */
+# define form_ht    16          /* form height */
+# define mxcelwd    8           /* maximum cell width */
+#endif
+
+/*
+ *  Since a character cell may be rotated 90 or 270 degrees, the cell
+ *  height and width may be interchanged.  The width must be a multiple
+ *  of a word (e.g. a 3-pixel width requires a minimum of 16 bits), but
+ *  the height needn't be rounded up in a similar fashion, since it
+ *  represents the number of rows).  Cell width and cell height must be
+ *  calculated two different ways in order to accommodate rotation.
+ */
+#define cel_ww  ((l_off+r_off+mxcelwd+15)/16)*2 /* worst case # bytes/row if width */
+#define cel_wh  l_off+r_off+mxcelwd     /* cell "width" if used as height (90 rotation) */
+#define cel_hh  form_ht                 /* cell height if used as height */
+#define cel_hw  ((form_ht+15)/16)*2     /* cell "height" if used as width (90 rotation) */
+
+/*
+ *  The maximum of:
+ *      cell width (as width) * cell height (as height)
+ *      cell width (as height) * cell height (as width)
+ *  will be used for the basic buffer size.
+ */
+#define cel_sz0 cel_ww*cel_hh   /* cell size if no rotation */
+#define cel_sz9 cel_wh*cel_hw   /* cell size if 90 deg rotation */
+
+#if cel_sz0 >= cel_sz9
+# define cel_siz    cel_sz0*2
+#else
+# define cel_siz    cel_sz9*2
+#endif
+
+/*
+ *  Now we repeat the whole thing for doubled cell dimensions
+ */
+#define cel2_ww     (((2*(l_off+r_off+mxcelwd))+3+15)/16)*2
+#define cel2_wh     (2*(l_off+r_off+mxcelwd))+2
+#define cel2_hh     (2*form_ht)+2
+#define cel2_hw     (((2*form_ht)+3+15)/16)*2
+
+#define cel2_sz0    cel2_ww*cel2_hh     /* doubled cell size, no rotation */
+#define cel2_sz9    cel2_wh*cel2_hw     /* doubled cell size, 90 deg rotation */
+
+#if cel2_sz0 >= cel2_sz9
+# define cel2_siz   cel2_sz0
+#else
+# define cel2_siz   cel2_sz9
+#endif
+
+/*
+ *  [The following is unclear to me - RFB]
+ *  Determine the maximum horizontal line (from width or height)
+ *  which is required for outlining the character buffer.
+ *  For worst case add two bytes.
+ */
+#if cel2_ww >= cel2_hw
+# define out_add    cel2_ww+2
+#else
+# define out_add    cel2_hw+2
+#endif
+
+/*
+ *  Total buffer requirements (small+large buffer, in bytes) are:
+ *      cel_siz + cel2_siz + out_add
+ */
+#define buf_siz     (cel_siz+cel2_siz+out_add)
+/*
+ * end of calculations extracted from vdi_tblit.S
+ */
+
+static WORD deftxbuf[buf_siz/sizeof(WORD)]; /* Default text scratch buffer */
+
 
 /*
  * Local structure for passing justification info
@@ -351,7 +450,7 @@ void text_init2(Vwk * vwk)
 {
     vwk->cur_font = def_font;
     vwk->loaded_fonts = NULL;
-    vwk->scrpt2 = scrtsiz;
+    vwk->scrpt2 = cel_siz;
     vwk->scrtchp = deftxbuf;
     vwk->num_fonts = font_count;
 
