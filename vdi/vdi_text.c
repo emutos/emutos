@@ -115,12 +115,13 @@ extern WORD font_count;         /* Number of fonts in driver */
  *  Total buffer requirements (small+large buffer, in bytes) are:
  *      cel_siz + cel2_siz + out_add
  */
-#define buf_siz     (cel_siz+cel2_siz+out_add)
+#define SCRATCHBUF_SIZE     (cel_siz+cel2_siz+out_add)
+#define SCRATCHBUF_OFFSET   (cel_siz)
 /*
  * end of calculations extracted from vdi_tblit.S
  */
 
-static WORD deftxbuf[buf_siz/sizeof(WORD)]; /* Default text scratch buffer */
+static WORD deftxbuf[SCRATCHBUF_SIZE/sizeof(WORD)]; /* Default text scratch buffer */
 
 
 /*
@@ -448,7 +449,7 @@ void text_init2(Vwk * vwk)
 {
     vwk->cur_font = def_font;
     vwk->loaded_fonts = NULL;
-    vwk->scrpt2 = cel_siz;
+    vwk->scrpt2 = SCRATCHBUF_OFFSET;
     vwk->scrtchp = deftxbuf;
     vwk->num_fonts = font_count;
 
