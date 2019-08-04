@@ -34,7 +34,6 @@ extern WORD font_count;         /* Number of fonts in driver */
  * 64 bytes for the small buffer and 212 bytes for the large buffer.
  */
 
-#define test1       0           /* if using very large fonts (else, 8x16) */
 /*
  *  NOTE: The calculations below should serve as an example for
  *  determining the cell size and buffer size required for creating
@@ -44,23 +43,14 @@ extern WORD font_count;         /* Number of fonts in driver */
  *  Size requirement calculations for this buffer are outlined below.
  *  NOTE: font dependent equates would normally be found in the font header.
  */
-#if test1
-/*
- * test for very large font
- */
-# define l_off      4           /* left offset from skew */
-# define r_off      17          /* right offset from skew */
-# define form_ht    43          /* form height */
-# define mxcelwd    150         /* max.cell width (very wide for testing) */
-#else
+
 /*
  * 8x16 font data
  */
-# define l_off      1           /* left offset from skew */
-# define r_off      7           /* right offset from skew */
-# define form_ht    16          /* form height */
-# define mxcelwd    8           /* maximum cell width */
-#endif
+#define l_off       1           /* left offset from skew */
+#define r_off       7           /* right offset from skew */
+#define form_ht     16          /* form height */
+#define mxcelwd     8           /* maximum cell width */
 
 #define total_off   (l_off+r_off)       /* total skew offset */
 
