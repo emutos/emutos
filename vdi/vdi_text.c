@@ -31,7 +31,7 @@ extern WORD font_count;         /* Number of fonts in driver */
  * the calculations (as revised by the addition of parentheses) for the
  * 8x16 font have been verified with a test program.  the maximum usage
  * is observed with text that has been rotated, skewed and outlined:
- * 64 bytes for the small buffer and 212 bytes for the large buffer.
+ * 72 bytes for the small buffer and 212 bytes for the large buffer.
  */
 
 /*
@@ -112,11 +112,12 @@ extern WORD font_count;         /* Number of fonts in driver */
 #endif
 
 /*
- *  Total buffer requirements (small+large buffer, in bytes) are:
- *      cel_siz + cel2_siz + out_add
+ *  Since outlining can happen in either the small or large buffer, the
+ *  small buffer requires at least (cel_siz+out_add) bytes, and the large
+ *  buffer requires (cel2_siz+out_add) bytes.
  */
-#define SCRATCHBUF_SIZE     (cel_siz+cel2_siz+out_add)
-#define SCRATCHBUF_OFFSET   (cel_siz)
+#define SCRATCHBUF_SIZE     (cel_siz+out_add+cel2_siz+out_add)
+#define SCRATCHBUF_OFFSET   (cel_siz+out_add)
 /*
  * end of calculations extracted from vdi_tblit.S
  */
