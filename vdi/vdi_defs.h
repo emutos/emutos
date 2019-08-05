@@ -228,6 +228,13 @@ typedef struct {
 #define QSIZE   (sizeof(struct vsmain)/sizeof(SEGMENT))
 
 /*
+ * text scratch buffer size (in bytes)
+ *
+ * see vdi_text.c for how this is calculated
+ */
+#define SCRATCHBUF_SIZE 284
+
+/*
  * a shared area for the VDI
  *
  * if you choose to add to this, you must (manually) verify that usage of the
@@ -239,6 +246,7 @@ typedef union {
         WORD fill_buffer[MAX_INTERSECTIONS];/* used by clc_flit() */
     } main;
     SEGMENT queue[QSIZE];       /* storage for contourfill() seed points  */
+    WORD deftxbuf[SCRATCHBUF_SIZE/sizeof(WORD)];    /* text scratch buffer */
 } VDISHARE;
 
 
@@ -247,7 +255,7 @@ extern WORD flip_y;             /* True if magnitudes being returned */
 extern WORD line_cw;            /* Linewidth for current circle */
 extern WORD num_qc_lines;
 extern WORD val_mode, chc_mode, loc_mode, str_mode;
-
+extern VDISHARE vdishare;
 
 /* These are still needed for text blitting */
 extern const UWORD LINE_STYLE[];

@@ -116,13 +116,13 @@ extern WORD font_count;         /* Number of fonts in driver */
  *  small buffer requires at least (cel_siz+out_add) bytes, and the large
  *  buffer requires (cel2_siz+out_add) bytes.
  */
-#define SCRATCHBUF_SIZE     (cel_siz+out_add+cel2_siz+out_add)
 #define SCRATCHBUF_OFFSET   (cel_siz+out_add)
+#if SCRATCHBUF_SIZE < (cel_siz+out_add+cel2_siz+out_add)
+# error SCRATCHBUF_SIZE is too small for specified font metrics
+#endif
 /*
  * end of calculations extracted from vdi_tblit.S
  */
-
-static WORD deftxbuf[SCRATCHBUF_SIZE/sizeof(WORD)]; /* Default text scratch buffer */
 
 
 /*
@@ -451,7 +451,7 @@ void text_init2(Vwk * vwk)
     vwk->cur_font = def_font;
     vwk->loaded_fonts = NULL;
     vwk->scrpt2 = SCRATCHBUF_OFFSET;
-    vwk->scrtchp = deftxbuf;
+    vwk->scrtchp = vdishare.deftxbuf;
     vwk->num_fonts = font_count;
 
     vwk->style = 0;        /* reset special effects */
