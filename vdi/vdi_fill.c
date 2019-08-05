@@ -19,33 +19,11 @@
 #include "tosvars.h"
 #include "lineavars.h"
 
-#define MAX_INTERSECTIONS   MAX_VERTICES
-
-/*
- * segment in queue structure used by contourfill()
- */
-typedef struct {
-    WORD y;                     /* y coordinate of segment and/or special value */
-    WORD xleft;                 /* x coordinate of segment start */
-    WORD xright;                /* x coordinate of segment end */
-} SEGMENT;
 
 /* special values used in y member of SEGMENT */
 #define EMPTY       0xffff          /* this entry is unused */
 #define DOWN_FLAG   0x8000
 #define ABS(v)      ((v) & 0x7FFF)  /* strips DOWN_FLAG if present */
-
-/*
- * queue size for contourfill()
- *
- * this is currently made as large as will fit in the existing vdishare
- * area without increasing it (see below).
- *
- * in order to be guaranteed to handle all possible shapes of fill area,
- * the number of entries probably needs to be greater than or equal to
- * the current horizontal screen resolution.
- */
-#define QSIZE   (sizeof(struct vsmain)/sizeof(SEGMENT))
 
 /* Global variables */
 static UWORD search_color;      /* selected colour for contourfill() */
@@ -57,20 +35,10 @@ static SEGMENT *qbottom;        /* the bottom of the queue      */
 static SEGMENT *qtop;           /* the last segment in use +1   */
 static SEGMENT *qptr;           /* points to the active point   */
 
-
 /*
  * a shared area for the VDI
- *
- * if you choose to add to this, you must (manually) verify that usage of the
- * area by the new member does not conflict with usage by any other member!
  */
-union {
-    struct vsmain {
-        WORD local_ptsin[MAX_PTSIN];        /* used by GSX_ENTRY() - must be at offset 0 */
-        WORD fill_buffer[MAX_INTERSECTIONS];/* used by clc_flit() */
-    } main;
-    SEGMENT queue[QSIZE];       /* storage for contourfill() seed points  */
-} vdishare;
+VDISHARE vdishare;
 
 
 /* the storage for the used defined fill pattern */
