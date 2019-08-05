@@ -479,6 +479,9 @@ LONG super(WORD cx, AESPB *pcrys_blk)
 
 #if CONF_DEBUG_AES_STACK
 
+void trapaes_debug_enter(void); /* called from gemdosif.S */
+void trapaes_debug_exit(void);
+
 #define MARKER_BYTE 0xaa
 
 UBYTE* check_min; /* Minimum stack address to check */
