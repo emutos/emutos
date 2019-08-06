@@ -11,20 +11,10 @@
 #ifndef VDIDEFS_H
 #define VDIDEFS_H
 
-/*
- * values applicable to C and asm
- */
-#define MAX_PTSIN       512     /* max# of words in local copy of ptsin[] */
-#define MAX_VERTICES    (MAX_PTSIN)/2   /* max# of coordinate pairs */
-
-
-#ifndef ASM_SOURCE
-
 #include "fonthdr.h"
+#include "vdiext.h"
 
 #define HAVE_BEZIER 0           /* switch on bezier capability */
-
-#define MAX_INTERSECTIONS   MAX_VERTICES
 
 /*
  * some minima and maxima
@@ -242,8 +232,8 @@ typedef struct {
  */
 typedef union {
     struct vsmain {
-        WORD local_ptsin[MAX_PTSIN];        /* used by GSX_ENTRY() - must be at offset 0 */
-        WORD fill_buffer[MAX_INTERSECTIONS];/* used by clc_flit() */
+        WORD local_ptsin[2*MAX_VERTICES];   /* used by GSX_ENTRY() - must be at offset 0 */
+        WORD fill_buffer[MAX_VERTICES];     /* used by clc_flit() */
     } main;
     SEGMENT queue[QSIZE];       /* storage for contourfill() seed points  */
     WORD deftxbuf[SCRATCHBUF_SIZE/sizeof(WORD)];    /* text scratch buffer */
@@ -433,7 +423,5 @@ void v_bez_qual(Vwk *);
 void v_bez_control(Vwk *);
 void v_bez(Vwk *vwk, Point * points, int count);
 void v_bez_fill(Vwk *vwk, Point * points, int count);
-
-#endif                          /* ASM_SOURCE */
 
 #endif                          /* VDIDEF_H */

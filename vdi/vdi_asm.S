@@ -10,7 +10,7 @@
  */
 
 #include "asmdefs.h"
-#include "vdi_defs.h"
+#include "vdiext.h"
 
         .extern _local_pb
         .extern _CONTRL

@@ -477,7 +477,7 @@ clc_flit (const VwkAttrib * attr, const VwkClip * clipper, const Point * point, 
                 x1 = point[i].x;        /* fetch x-value of 1st endpoint. */
                 x2 = point[i+1].x;      /* fetch x-value of 2nd endpoint. */
                 dx = (x2 - x1) << 1;    /* so we can round by adding 1 below */
-                if (intersections >= MAX_INTERSECTIONS)
+                if (intersections >= MAX_VERTICES)
                     break;
                 intersections++;
                 /* fill edge buffer with x-values */
