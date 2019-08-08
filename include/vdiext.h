@@ -14,7 +14,7 @@
  *
  * TOS2 allows 512, TOS3 allows 1024
  */
-#define MAX_VERTICES    256
+#define MAX_VERTICES    512
 
 #ifndef ASM_SOURCE
 
