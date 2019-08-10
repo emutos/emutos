@@ -457,6 +457,9 @@ void vdi_v_opnwk(Vwk * vwk)
     timer_init();
     vdimouse_init();            /* initialize mouse */
     esc_init(vwk);              /* enter graphics mode */
+
+    /* Just like TOS 2.06, make the physical workstation the current workstation for LineA. */
+    CUR_WORK = vwk;
 }
 
 
