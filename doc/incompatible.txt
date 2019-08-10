@@ -239,3 +239,15 @@ use the '#a' line.
 Workaround:
 Use a less-buggy control panel, e.g. XCONTROL.ACC from the TT or
 Falcon Language Disk.
+
+
+Program: Turbo ST 1.8 (and possibly other versions)
+---------------------------------------------------
+Error: Screen drawing errors
+
+Bug analysis:
+The program modifies internal VDI variables, presumably to speed up
+the VDI. The internal data structures of EmuTOS VDI differ from
+Atari's VDI implementation in TOS.
+Note: Turbo ST is known to cause drawing errors and to crash under
+Atari TOS, too.
