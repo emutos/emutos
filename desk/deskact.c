@@ -121,13 +121,11 @@ static void move_drvicon(OBJECT *tree, WORD root, WORD x, WORD y, WORD *pts, WOR
             snap_icon(x + pts[2 * objcnt], y + pts[2 * objcnt + 1],
                                 &tree[obj].ob_x, &tree[obj].ob_y, sxoff, syoff);
 
-            for (an_disk = G.g_ahead; an_disk; an_disk = an_disk->a_next)
+            an_disk = app_afind_by_id(obj);
+            if (an_disk)        /* must be true, but just in case ... */
             {
-                if (an_disk->a_obid == obj)
-                {
-                    an_disk->a_xspot = tree[obj].ob_x;
-                    an_disk->a_yspot = tree[obj].ob_y;
-                }
+                an_disk->a_xspot = tree[obj].ob_x;
+                an_disk->a_yspot = tree[obj].ob_y;
             }
             t.g_x = oldx;
             t.g_y = oldy;
