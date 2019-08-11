@@ -351,7 +351,7 @@ static WORD get_funkey(OBJECT *tree,ANODE *pa,BOOL installed)
     /*
      * this is a new ANODE, or the key has changed: validate it
      */
-    if ((funkey < 1) || (funkey > 20))
+    if ((funkey < FIRST_FUNKEY) || (funkey > LAST_FUNKEY))
     {
         fun_alert(1,STINVKEY);          /* invalid function key */
         return -1;

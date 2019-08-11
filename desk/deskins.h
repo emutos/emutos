@@ -10,6 +10,13 @@
 #ifndef _DESKINS_H
 #define _DESKINS_H
 
+/*
+ * function key numbers (as displayed in dialogs)
+ */
+#define FIRST_FUNKEY    1
+#define LAST_FUNKEY     20
+#define NUM_FUNKEYS     (LAST_FUNKEY-FIRST_FUNKEY+1)
+
 WORD is_installed(ANODE *pa);
 WORD ins_app(WORD curr);
 BOOL ins_devices(void);
