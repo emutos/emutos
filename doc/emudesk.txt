@@ -81,7 +81,9 @@ all .TXT files with a text editor; then, double-clicking on a .TXT file
 would automatically launch the editor.
 
 In addition, you can assign a function key to an application; pressing
-the function key at the desktop will then launch the application.
+the function key at the desktop will then launch the application.  Note
+that a list of all currently-assigned function keys is available via the
+"Desktop configuration..." menu item (see "Desktop configuration" below).
 
 Finally, you can set "autoboot" for one application (only): this will
 launch that application during system initialisation, immediately before
@@ -183,10 +185,15 @@ This is not available.
 
 Other ROMs:
 This is a simplified version of the corresponding Atari TOS menu item.
-It allows you to specify the default directory and input parameter for
-all applications that are not installed applications.  See "Install
-application" above, under 'Default dir' and 'Parameter', for further
-information about these options.
+You may do the following:
+. specify the default directory and input parameter for all applications
+  that are not installed applications.  See "Install application" above,
+  under 'Default dir' and 'Parameter', for further information.
+. display the function keys (and corresponding programs) that have been
+  assigned via the "Install application..." menu item.  To display, use
+  the arrows: up/down arrows select the previous/next assigned function
+  key (in key number sequence), and left/right arrows scroll along the
+  full pathname of the program.
 
 
 Read .INF file
