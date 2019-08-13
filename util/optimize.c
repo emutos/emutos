@@ -232,14 +232,16 @@ static UBYTE hex_dig(char achar)
 
 
 /*
- *  Starting at the specified position within a string, skip over any
- *  leading spaces.  If the next non-space byte is '\r', stop scanning,
- *  set the scanned value to zero, and return a pointer to the '\r'.
+ *  Convert a 2-digit hex character string to a WORD value
  *
- *  Otherwise, convert the next two characters (assumed to be hex digits)
- *  into a value N.  If N is 0xff, set the scanned value to -1; otherwise
- *  set the scanned value to N.  In either case, return a pointer to the
- *  byte immediately following the two hex characters.
+ *  Leading spaces are skipped and the next character is examined.  If
+ *  it is a '\r', a value of 0 is returned.  Otherwise the next two
+ *  characters (assumed to be hex digits) are returned as a WORD value.
+ *  As a special case, a string of 0xff is converted to -1 (for
+ *  reference, this is used in the assignment of a_aicon/a_dicon).
+ *
+ *  The returned pointer points to the '\r' or after the hex digits,
+ *  as applicable.
  */
 char *scan_2(char *pcurr, WORD *pwd)
 {
