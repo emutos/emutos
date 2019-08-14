@@ -51,6 +51,7 @@
 #include "geminit.h"
 #include "optimize.h"
 #include "aesdefs.h"
+#include "aesext.h"
 #include "aesstub.h"
 
 #include "string.h"
@@ -103,6 +104,11 @@ typedef struct {                     /* used by count_accs()/ldaccs() */
 
 static ACC      acc[NUM_ACCS];
 static char     infbuf[INF_SIZE+1];     /* used to read part of EMUDESK.INF */
+
+#if CONF_WITH_BACKGROUNDS
+static BOOL     bgfound;                /* 'Q' line found in EMUDESK.INF? */
+static WORD     bg[3];                  /* desktop backgrounds (1, 2, >2 planes) */
+#endif
 
 /* Some global variables: */
 
@@ -336,23 +342,31 @@ static LONG readfile(char *filename, LONG count, char *buf)
 /*
  *  Part 1 of early emudesk.inf processing
  *
- *  This has one function: determine if we need to change resolutions
- *  (from #E).  If so, we set gl_changerez and gl_nextrez appropriately.
+ *  The main function is to determine (from #E) if we need to change
+ *  resolution.  If so, we set gl_changerez and gl_nextrez appropriately.
+ *
+ *  If CONF_WITH_BACKGOUNDS is specified, we also get the desktop background
+ *  colours (from #Q) & save them for use when initialising the desktop.
  */
 static void process_inf1(void)
 {
     WORD    env1, env2;
-    WORD    mode;
+    WORD    mode, i;
     char    *pcurr;
+    MAYBE_UNUSED(i);
 
     gl_changerez = 0;           /* assume no change */
+
+#if CONF_WITH_BACKGROUNDS
+    bgfound = FALSE;            /* assume 'Q' not found */
+#endif
 
     for (pcurr = infbuf; *pcurr; )
     {
         if ( *pcurr++ != '#' )
             continue;
-        if (*pcurr++ == 'E')            /* #E 3A 11 FF 02               */
-        {                               /* desktop environment          */
+        switch(*pcurr++) {
+        case 'E':               /* desktop environment, e.g. #E 3A 11 FF 02 */
             pcurr += 6;                 /* skip over non-video preferences */
             if (*pcurr == '\r')         /* no video info saved */
                 break;
@@ -373,6 +387,14 @@ static void process_inf1(void)
                 gl_changerez = 1;
                 gl_nextrez = (mode & 0x00ff) + 2;
             }
+            break;
+#if CONF_WITH_BACKGROUNDS
+        case 'Q':               /* background colour, e.g. #Q 41 40 42 40 43 40 */
+            for (i = 0; i < 3; i++)
+                pcurr = scan_2(pcurr, &bg[i]) + 3;  /* desktop background */
+            bgfound = TRUE;                         /* indicate bg[N] are valid */
+            break;
+#endif
         }
     }
 }
@@ -603,6 +625,20 @@ void wait_for_accs(WORD bitmask)
 }
 
 
+#if CONF_WITH_BACKGROUNDS
+/*
+ *  Set AES desktop background pattern/colour
+ */
+void set_aes_background(UBYTE patcol)
+{
+    OBJECT *tree = rs_trees[DESKTOP];
+
+    tree[ROOT].ob_spec &= 0xffffff00L;
+    tree[ROOT].ob_spec |= patcol;
+}
+#endif
+
+
 /*
  *  This function is called from accdesk_start (in gemstart.S) which
  *  is itself called from gem_main() below.
@@ -668,6 +704,18 @@ void run_accs_and_desktop(void)
      */
     tree = rs_trees[DESKTOP];
     tree[ROOT].ob_height = gl_rscreen.g_h;
+
+#if CONF_WITH_BACKGROUNDS
+    /*
+     * set colour of root DESKTOP object: this affects the colour
+     * background when a program is launched
+     */
+    if (bgfound)        /* we found a 'Q' line */
+    {
+        WORD n = (gl_nplanes > 2) ? 2 : gl_nplanes-1;
+        set_aes_background(bg[n]&0xff);
+    }
+#endif
 
     wm_start();                     /* initialise window vars */
     fs_start();                     /* startup gem libs */

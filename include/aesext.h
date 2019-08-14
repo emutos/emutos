@@ -13,6 +13,11 @@
 #include "obdefs.h"
 #include "gsxdefs.h"
 
+#if CONF_WITH_BACKGROUNDS
+/* function used by AES and desktop, found in geminit.c */
+void set_aes_background(UBYTE patcol);
+#endif
+
 /* functions used by AES and desktop, found in gemrslib.c */
 void xlate_obj_array(OBJECT *obj_array, int nobj);
 char *create_te_ptext(TEDINFO *tedinfo, int nted);

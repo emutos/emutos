@@ -28,6 +28,7 @@
 #include "optimize.h"
 
 #include "aesdefs.h"
+#include "aesext.h"
 #include "deskbind.h"
 #include "deskglob.h"
 #include "deskapp.h"
@@ -915,6 +916,7 @@ BOOL inf_backgrounds(void)
         /* check for desktop background change */
         if (G.g_screen[DROOT].ob_spec != curdesk)
         {
+            set_aes_background(curdesk & 0xff);
             G.g_patcol[index].desktop = curdesk & 0xff;
             G.g_screen[DROOT].ob_spec = curdesk;
             do_wredraw(DESKWH, (GRECT *)&G.g_xdesk);
