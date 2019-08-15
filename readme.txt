@@ -46,7 +46,7 @@ doc/old_changelog.txt - A summarised list of changes up to & including
 doc/osmemory.txt      - All about OS internal memory in EmuTOS
 doc/reschange.txt     - How resolution change works in the desktop
 doc/resource.txt      - Modifying resources in EmuTOS
-doc/
+doc/startup.txt       - Some notes on the EmuTOS startup sequence
 doc/tos14fix.txt      - Lists bugs fixed by TOS 1.04 & their status in EmuTOS
 
 The following documents are principally of historical interest only:
