@@ -5,9 +5,11 @@ These ROMs are suitable for the following hardware:
 - Mega STe
 - emulators of the above
 
-Note: Extra hardware is autodetected.
+Note: Extra hardware is autodetected, but the following TT- and
+Falcon-specific hardware is not supported: MMU, video, SCSI, NVRAM,
+and the second MFP of a TT.
 
-These ROMs will work fine on Hatari with any hardware combination.
+The desktop features are comparable to Atari TOS 2.
 
 Each ROM contains a single language:
 

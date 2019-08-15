@@ -36,10 +36,9 @@ versions of the Atari TOS desktop.
 Note that selecting Norwegian/Swedish currently sets the language to English,
 but the keyboard layout to Norwegian/Swedish.
 
-Due to size limitations, the 192 KB ROMs contains:
+Due to size limitations, the 192 KB ROMs contain:
 - no EmuCON
-
-Since EmuTOS 0.9.1, the 192 KB ROMs contain the same desktop as other variants.
+- limited desktop features (comparable to Atari TOS 1)
 
 These ROM images have been built using:
 make all192
