@@ -8,8 +8,6 @@ emutos-vampire.rom - English ROM optimized for Vampire V2 accelerators
 emutos-vampire-v4sa.rom - English ROM optimized for Vampire V4 Standalone
 
 The following optional files are also supplied:
-emucurs.rsc - modifiable mouse cursors for the AES/desktop
-emucurs.def - definition file for the above
 emuicon.rsc - contains additional icons for the desktop
 emuicon.def - definition file for the above
 

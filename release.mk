@@ -57,8 +57,6 @@ release-512k:
 	$(MAKE) 512
 	mkdir $(RELEASE_DIR)/$(RELEASE_512K)
 	cp etos512k.img etos512k.sym $(RELEASE_DIR)/$(RELEASE_512K)
-	cp aes/mform.def $(RELEASE_DIR)/$(RELEASE_512K)/emucurs.def
-	cp aes/mform.rsc $(RELEASE_DIR)/$(RELEASE_512K)/emucurs.rsc
 	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_512K)/emuicon.def
 	cp desk/icon.rsc $(RELEASE_DIR)/$(RELEASE_512K)/emuicon.rsc
 	cat doc/readme-512k.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_512K)/readme.txt
@@ -66,6 +64,8 @@ release-512k:
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_512K)/doc
 	mkdir $(RELEASE_DIR)/$(RELEASE_512K)/extras
 	cp $(EXTRAFILES) $(RELEASE_DIR)/$(RELEASE_512K)/extras
+	cp aes/mform.def $(RELEASE_DIR)/$(RELEASE_512K)/extras/emucurs.def
+	cp aes/mform.rsc $(RELEASE_DIR)/$(RELEASE_512K)/extras/emucurs.rsc
 	find $(RELEASE_DIR)/$(RELEASE_512K) -name '*.txt' -exec unix2dos '{}' ';'
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_512K).zip $(RELEASE_512K)
 	rm -r $(RELEASE_DIR)/$(RELEASE_512K)
@@ -78,8 +78,6 @@ release-256k:
 	$(MAKE) all256
 	mkdir $(RELEASE_DIR)/$(RELEASE_256K)
 	cp etos256*.img $(RELEASE_DIR)/$(RELEASE_256K)
-	cp aes/mform.def $(RELEASE_DIR)/$(RELEASE_256K)/emucurs.def
-	cp aes/mform.rsc $(RELEASE_DIR)/$(RELEASE_256K)/emucurs.rsc
 	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_256K)/emuicon.def
 	cp desk/icon.rsc $(RELEASE_DIR)/$(RELEASE_256K)/emuicon.rsc
 	cat doc/readme-256k.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_256K)/readme.txt
@@ -87,6 +85,8 @@ release-256k:
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_256K)/doc
 	mkdir $(RELEASE_DIR)/$(RELEASE_256K)/extras
 	cp $(EXTRAFILES) $(RELEASE_DIR)/$(RELEASE_256K)/extras
+	cp aes/mform.def $(RELEASE_DIR)/$(RELEASE_256K)/extras/emucurs.def
+	cp aes/mform.rsc $(RELEASE_DIR)/$(RELEASE_256K)/extras/emucurs.rsc
 	find $(RELEASE_DIR)/$(RELEASE_256K) -name '*.txt' -exec unix2dos '{}' ';'
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_256K).zip $(RELEASE_256K)
 	rm -r $(RELEASE_DIR)/$(RELEASE_256K)
@@ -99,8 +99,6 @@ release-192k:
 	$(MAKE) all192
 	mkdir $(RELEASE_DIR)/$(RELEASE_192K)
 	cp etos192*.img $(RELEASE_DIR)/$(RELEASE_192K)
-	cp aes/mform.def $(RELEASE_DIR)/$(RELEASE_192K)/emucurs.def
-	cp aes/mform.rsc $(RELEASE_DIR)/$(RELEASE_192K)/emucurs.rsc
 	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_192K)/emuicon.def
 	cp desk/icon.rsc $(RELEASE_DIR)/$(RELEASE_192K)/emuicon.rsc
 	cat doc/readme-192k.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_192K)/readme.txt
@@ -109,6 +107,8 @@ release-192k:
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_192K)/doc
 	mkdir $(RELEASE_DIR)/$(RELEASE_192K)/extras
 	cp $(EXTRAFILES) $(RELEASE_DIR)/$(RELEASE_192K)/extras
+	cp aes/mform.def $(RELEASE_DIR)/$(RELEASE_192K)/extras/emucurs.def
+	cp aes/mform.rsc $(RELEASE_DIR)/$(RELEASE_192K)/extras/emucurs.rsc
 	find $(RELEASE_DIR)/$(RELEASE_192K) -name '*.txt' -exec unix2dos '{}' ';'
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_192K).zip $(RELEASE_192K)
 	rm -r $(RELEASE_DIR)/$(RELEASE_192K)
@@ -137,8 +137,6 @@ release-aranym:
 	$(MAKE) aranym
 	mkdir $(RELEASE_DIR)/$(RELEASE_ARANYM)
 	cp $(ROM_ARANYM) $(RELEASE_DIR)/$(RELEASE_ARANYM)
-	cp aes/mform.def $(RELEASE_DIR)/$(RELEASE_ARANYM)/emucurs.def
-	cp aes/mform.rsc $(RELEASE_DIR)/$(RELEASE_ARANYM)/emucurs.rsc
 	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_ARANYM)/emuicon.def
 	cp desk/icon.rsc $(RELEASE_DIR)/$(RELEASE_ARANYM)/emuicon.rsc
 	cat doc/readme-aranym.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_ARANYM)/readme.txt
@@ -146,6 +144,8 @@ release-aranym:
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_ARANYM)/doc
 	mkdir $(RELEASE_DIR)/$(RELEASE_ARANYM)/extras
 	cp $(EXTRAFILES) $(RELEASE_DIR)/$(RELEASE_ARANYM)/extras
+	cp aes/mform.def $(RELEASE_DIR)/$(RELEASE_ARANYM)/extras/emucurs.def
+	cp aes/mform.rsc $(RELEASE_DIR)/$(RELEASE_ARANYM)/extras/emucurs.rsc
 	find $(RELEASE_DIR)/$(RELEASE_ARANYM) -name '*.txt' -exec unix2dos '{}' ';'
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_ARANYM).zip $(RELEASE_ARANYM)
 	rm -r $(RELEASE_DIR)/$(RELEASE_ARANYM)
@@ -158,8 +158,6 @@ release-firebee:
 	$(MAKE) firebee
 	mkdir $(RELEASE_DIR)/$(RELEASE_FIREBEE)
 	cp $(SREC_FIREBEE) $(RELEASE_DIR)/$(RELEASE_FIREBEE)
-	cp aes/mform.def $(RELEASE_DIR)/$(RELEASE_FIREBEE)/emucurs.def
-	cp aes/mform.rsc $(RELEASE_DIR)/$(RELEASE_FIREBEE)/emucurs.rsc
 	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_FIREBEE)/emuicon.def
 	cp desk/icon.rsc $(RELEASE_DIR)/$(RELEASE_FIREBEE)/emuicon.rsc
 	cat doc/readme-firebee.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_FIREBEE)/readme.txt
@@ -167,6 +165,8 @@ release-firebee:
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_FIREBEE)/doc
 	mkdir $(RELEASE_DIR)/$(RELEASE_FIREBEE)/extras
 	cp $(EXTRAFILES) $(RELEASE_DIR)/$(RELEASE_FIREBEE)/extras
+	cp aes/mform.def $(RELEASE_DIR)/$(RELEASE_FIREBEE)/extras/emucurs.def
+	cp aes/mform.rsc $(RELEASE_DIR)/$(RELEASE_FIREBEE)/extras/emucurs.rsc
 	find $(RELEASE_DIR)/$(RELEASE_FIREBEE) -name '*.txt' -exec unix2dos '{}' ';'
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_FIREBEE).zip $(RELEASE_FIREBEE)
 	rm -r $(RELEASE_DIR)/$(RELEASE_FIREBEE)
@@ -186,8 +186,6 @@ release-amiga-rom:
 	$(MAKE) clean
 	$(MAKE) v4sa
 	cp $(V4_ROM_AMIGA) $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)
-	cp aes/mform.def $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)/emucurs.def
-	cp aes/mform.rsc $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)/emucurs.rsc
 	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)/emuicon.def
 	cp desk/icon.rsc $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)/emuicon.rsc
 	cat doc/readme-amiga-rom.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)/readme.txt
@@ -195,6 +193,8 @@ release-amiga-rom:
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)/doc
 	mkdir $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)/extras
 	cp $(EXTRAFILES) $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)/extras
+	cp aes/mform.def $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)/extras/emucurs.def
+	cp aes/mform.rsc $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)/extras/emucurs.rsc
 	find $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM) -name '*.txt' -exec unix2dos '{}' ';'
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_AMIGA_ROM).zip $(RELEASE_AMIGA_ROM)
 	rm -r $(RELEASE_DIR)/$(RELEASE_AMIGA_ROM)
@@ -210,8 +210,6 @@ release-amiga-floppy:
 	$(MAKE) clean
 	$(MAKE) amigaflopvampire
 	cp $(EMUTOS_VAMPIRE_ADF) $(RELEASE_DIR)/$(RELEASE_AMIGA_FLOPPY)
-	cp aes/mform.def $(RELEASE_DIR)/$(RELEASE_AMIGA_FLOPPY)/emucurs.def
-	cp aes/mform.rsc $(RELEASE_DIR)/$(RELEASE_AMIGA_FLOPPY)/emucurs.rsc
 	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_AMIGA_FLOPPY)/emuicon.def
 	cp desk/icon.rsc $(RELEASE_DIR)/$(RELEASE_AMIGA_FLOPPY)/emuicon.rsc
 	cat doc/readme-amiga-floppy.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_AMIGA_FLOPPY)/readme.txt
@@ -219,6 +217,8 @@ release-amiga-floppy:
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_AMIGA_FLOPPY)/doc
 	mkdir $(RELEASE_DIR)/$(RELEASE_AMIGA_FLOPPY)/extras
 	cp $(EXTRAFILES) $(RELEASE_DIR)/$(RELEASE_AMIGA_FLOPPY)/extras
+	cp aes/mform.def $(RELEASE_DIR)/$(RELEASE_AMIGA_FLOPPY)/extras/emucurs.def
+	cp aes/mform.rsc $(RELEASE_DIR)/$(RELEASE_AMIGA_FLOPPY)/extras/emucurs.rsc
 	find $(RELEASE_DIR)/$(RELEASE_AMIGA_FLOPPY) -name '*.txt' -exec unix2dos '{}' ';'
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_AMIGA_FLOPPY).zip $(RELEASE_AMIGA_FLOPPY)
 	rm -r $(RELEASE_DIR)/$(RELEASE_AMIGA_FLOPPY)
@@ -261,8 +261,6 @@ release-prg:
 	$(MAKE) allprg
 	mkdir $(RELEASE_DIR)/$(RELEASE_PRG)
 	cp emutos*.prg $(RELEASE_DIR)/$(RELEASE_PRG)
-	cp aes/mform.def $(RELEASE_DIR)/$(RELEASE_PRG)/emucurs.def
-	cp aes/mform.rsc $(RELEASE_DIR)/$(RELEASE_PRG)/emucurs.rsc
 	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_PRG)/emuicon.def
 	cp desk/icon.rsc $(RELEASE_DIR)/$(RELEASE_PRG)/emuicon.rsc
 	cat doc/readme-prg.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_PRG)/readme.txt
@@ -270,6 +268,8 @@ release-prg:
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_PRG)/doc
 	mkdir $(RELEASE_DIR)/$(RELEASE_PRG)/extras
 	cp $(EXTRAFILES) $(RELEASE_DIR)/$(RELEASE_PRG)/extras
+	cp aes/mform.def $(RELEASE_DIR)/$(RELEASE_PRG)/extras/emucurs.def
+	cp aes/mform.rsc $(RELEASE_DIR)/$(RELEASE_PRG)/extras/emucurs.rsc
 	find $(RELEASE_DIR)/$(RELEASE_PRG) -name '*.txt' -exec unix2dos '{}' ';'
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_PRG).zip $(RELEASE_PRG)
 	rm -r $(RELEASE_DIR)/$(RELEASE_PRG)
@@ -282,8 +282,6 @@ release-floppy:
 	$(MAKE) allflop
 	mkdir $(RELEASE_DIR)/$(RELEASE_FLOPPY)
 	cp emutos*.st $(RELEASE_DIR)/$(RELEASE_FLOPPY)
-	cp aes/mform.def $(RELEASE_DIR)/$(RELEASE_FLOPPY)/emucurs.def
-	cp aes/mform.rsc $(RELEASE_DIR)/$(RELEASE_FLOPPY)/emucurs.rsc
 	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_FLOPPY)/emuicon.def
 	cp desk/icon.rsc $(RELEASE_DIR)/$(RELEASE_FLOPPY)/emuicon.rsc
 	cat doc/readme-floppy.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_FLOPPY)/readme.txt
@@ -291,6 +289,8 @@ release-floppy:
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_FLOPPY)/doc
 	mkdir $(RELEASE_DIR)/$(RELEASE_FLOPPY)/extras
 	cp $(EXTRAFILES) $(RELEASE_DIR)/$(RELEASE_FLOPPY)/extras
+	cp aes/mform.def $(RELEASE_DIR)/$(RELEASE_FLOPPY)/extras/emucurs.def
+	cp aes/mform.rsc $(RELEASE_DIR)/$(RELEASE_FLOPPY)/extras/emucurs.rsc
 	find $(RELEASE_DIR)/$(RELEASE_FLOPPY) -name '*.txt' -exec unix2dos '{}' ';'
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_FLOPPY).zip $(RELEASE_FLOPPY)
 	rm -r $(RELEASE_DIR)/$(RELEASE_FLOPPY)

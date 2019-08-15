@@ -5,13 +5,19 @@ the build process were built with native GCC 4.8.4.
 The source package and other binary packages are available at:
 https://sourceforge.net/projects/emutos/files/emutos/0.9.11/
 
-The extras directory (if provided) contains one or more alternate desktop
-icon sets, which you can use to replace the builtin ones.  You can use a
-standard resource editor to see what the replacement icons look like.
-To use a replacement set, move or rename the existing emuicon.rsc &
-emuicon.def files in the root directory, then copy the files containing
-the desired icons to the root, and rename them to emuicon.rsc/emuicon.def.
-For further information, see doc/emudesk.txt.
+The extras directory (if provided) contains:
+(1) one or more alternate desktop icon sets, which you can use to replace
+    the builtin ones.  You can use a standard resource editor to see what
+    the replacement icons look like.
+    To use a replacement set, move or rename the existing emuicon.rsc &
+    emuicon.def files in the root directory, then copy the files containing
+    the desired icons to the root, and rename them to emuicon.rsc/emuicon.def.
+(2) a sample mouse cursor set in a resource (emucurs.rsc/emucurs.def).  This
+    set is the same as the builtin ones, but you can use it as a basis to
+    create your own mouse cursors.
+    To use a replacement set, copy the files containing the desired mouse
+    cursors to the root, and rename them to emucurs.rsc/emucurs.def.
+For further information on the above, see doc/emudesk.txt.
 
 If you want to read more about EmuTOS, please take a look at these files:
 

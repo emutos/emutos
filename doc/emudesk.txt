@@ -257,11 +257,12 @@ putting too many icons in EMUICON.RSC.
 
 User-assignable mouse cursors
 =============================
-When the AES starts, it looks for a file called EMUCURS.RSC in the root
-of the boot drive.  This file should be a standard Atari resource file,
-containing 8 ICONBLKs; each ICONBLK is a container for a mouse cursor.
-If the file is found, these cursors are used instead of the builtin
-cursors.  The usage is as described for the AES graf_mouse() call:
+When the AES starts up, it looks for an optional file called EMUCURS.RSC
+in the root directory of the boot drive.  This file should be a standard
+Atari resource file, containing 8 ICONBLKs; each ICONBLK is a container
+for a mouse cursor.  If the file is found, these cursors are used instead
+of the builtin cursors.  The usage is as described for the AES graf_mouse()
+call:
     0   arrow
     1   text cursor / i-beam
     2   busy bee / hourglass
@@ -271,9 +272,9 @@ cursors.  The usage is as described for the AES graf_mouse() call:
     6   thick cross
     7   outline cross
 
-A default EMUCURS.RSC file is shipped with the release; the mouse cursors
-in it are the same as the builtin ones.  Also shipped is the corresponding
-EMUCURS.DEF file for use by a resource editor.
+A sample EMUCURS.RSC file is shipped with the release in the EXTRAS folder;
+the mouse cursors in it are the same as the builtin ones.  Also shipped
+is the corresponding EMUCURS.DEF file for use by a resource editor.
 
 NOTE: Because the mouse cursors are not really ICONBLKs (though they are
 stored as such within the resource), editing them with a standard resource
