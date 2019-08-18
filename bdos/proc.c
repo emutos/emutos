@@ -26,6 +26,7 @@
 #include "biosext.h"
 #include "asm.h"
 #include "tosvars.h"
+#include "has.h"
 
 
 /*

@@ -116,6 +116,10 @@ extern int has_dip_switches;
   #define HAS_DIP_SWITCHES 0
 #endif
 
+#if CONF_WITH_ALT_RAM
+extern int has_alt_ram;
+#endif
+
 #if CONF_ATARI_HARDWARE
 extern int has_modectl;
 #endif
