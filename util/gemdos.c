@@ -233,6 +233,15 @@ LONG dos_avail_stram(void)
 }
 
 
+#if CONF_WITH_ALT_RAM
+/* get max size of available RAM in Alt-RAM only */
+LONG dos_avail_altram(void)
+{
+    return Mxalloc(-1L,MX_TTRAM);
+}
+#endif
+
+
 /* allocate in Alt-RAM (e.g. TT RAM) if possible, otherwise ST RAM */
 void *dos_alloc_anyram(LONG nbytes)
 {

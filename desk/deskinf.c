@@ -44,6 +44,8 @@
 #include "deskfun.h"
 #include "biosdefs.h"
 #include "biosext.h"
+#include "has.h"
+#include "nls.h"
 
 
 /*
@@ -1018,7 +1020,7 @@ void inf_conf(void)
 {
     OBJECT *tree = G.a_trees[ADDESKCF];
     ANODE *pa[NUM_FUNKEYS];
-    WORD exitobj, redraw, current, i;
+    WORD exitobj, redraw, current, i, n;
     BOOL done = FALSE;
 
     /* first, deselect all objects */
@@ -1034,6 +1036,15 @@ void inf_conf(void)
         tree[DCPMFULL].ob_state |= SELECTED;
     else
         tree[DCPMFILE].ob_state |= SELECTED;
+
+    /* set up available memory line */
+    n = sprintf(G.g_work, "%ld%s", dos_avail_stram()/1024L, _("KB"));
+#if CONF_WITH_ALT_RAM
+    if (has_alt_ram)
+        n += sprintf(G.g_work+n, " + %ld%s", dos_avail_altram()/1024L, _("KB"));
+#endif
+    memset(G.g_work+n, ' ', 40);    /* enough spaces to fill object's text field */
+    inf_sset(tree, DCFREMEM, G.g_work);
 
     /* get anode ptrs for all anodes with function keys */
     get_all_funkeys(pa);

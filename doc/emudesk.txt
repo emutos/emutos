@@ -194,6 +194,10 @@ You may do the following:
   the arrows: up/down arrows select the previous/next assigned function
   key (in key number sequence), and left/right arrows scroll along the
   full pathname of the program.
+This dialog also displays the current free memory (more accurately, the
+size of the largest free memory area) in KB (1KB = 1024 bytes).  For
+systems with alternate RAM, two numbers are displayed: the first is for
+ST RAM, the second is for alternate RAM.
 
 
 Read .INF file

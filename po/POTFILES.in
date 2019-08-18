@@ -12,6 +12,7 @@ bdos/osmem.c
 aes/gem_rsc.c
 
 desk/desk_rsc.c
+desk/deskinf.c
 
 cli/cmdint.c
 cli/cmdmain.c

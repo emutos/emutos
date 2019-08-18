@@ -43,6 +43,7 @@ LONG dos_load_file(char *filename, LONG count, char *buf);
 void *dos_alloc_stram(LONG nbytes);
 void *dos_alloc_anyram(LONG nbytes);
 LONG dos_avail_stram(void);
+LONG dos_avail_altram(void);
 LONG dos_avail_anyram(void);
 WORD dos_free(void *maddr);
 WORD dos_shrink(void *maddr, LONG length);
