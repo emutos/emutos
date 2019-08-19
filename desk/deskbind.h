@@ -153,11 +153,6 @@ typedef struct
 /*GLOBAL*/ WORD         g_wdesk;
 /*GLOBAL*/ WORD         g_hdesk;
 
-/*GLOBAL*/ WORD         g_xfull;
-/*GLOBAL*/ WORD         g_yfull;
-/*GLOBAL*/ WORD         g_wfull;
-/*GLOBAL*/ WORD         g_hfull;
-
 /*GLOBAL*/ OBJECT       *a_trees[RS_NTREE];     /* ptrs to dialog trees */
 
 /*GLOBAL*/ WORD         g_croot;                /* current pseudo root  */

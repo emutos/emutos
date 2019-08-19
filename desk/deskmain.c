@@ -1529,10 +1529,8 @@ BOOL deskmain(void)
     /* get GEM's gsx handle */
     gl_handle = graf_handle(&gl_wchar, &gl_hchar, &gl_wbox, &gl_hbox);
 
-    /* set clip to working desk and calc full */
+    /* get desktop work area coordinates */
     wind_get(DESKWH, WF_WXYWH, &G.g_xdesk, &G.g_ydesk, &G.g_wdesk, &G.g_hdesk);
-    wind_calc(1, -1, G.g_xdesk,  G.g_ydesk,  G.g_wdesk,  G.g_hdesk,
-                    &G.g_xfull, &G.g_yfull, &G.g_wfull, &G.g_hfull);
 
     /* initialize mouse     */
     wind_update(BEG_UPDATE);
