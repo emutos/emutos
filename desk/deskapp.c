@@ -910,7 +910,6 @@ void app_start(void)
     }
 
     /* set up outlines for dragging files displayed as icons */
-    G.g_nmicon = 9;     /* number of points */
     bzero(G.g_xyicon, sizeof(G.g_xyicon));
     xcent = (G.g_wicon - G.g_iblist[0].ib_wicon) / 2;
     G.g_xyicon[0] = xcent;
@@ -928,7 +927,6 @@ void app_start(void)
     G.g_xyicon[16] = xcent;
 
     /* set up outlines for dragging files displayed as text */
-    G.g_nmtext = 5;     /* number of points */
     bzero(G.g_xytext, sizeof(G.g_xytext));
     G.g_xytext[2] = gl_wchar * DRAG_BOX_WIDTH;
     G.g_xytext[4] = gl_wchar * DRAG_BOX_WIDTH;

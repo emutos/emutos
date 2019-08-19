@@ -623,12 +623,12 @@ WORD act_bdown(WORD wh, WORD root, WORD *in_mx, WORD *in_my,
                 view = (root == DROOT) ? V_ICON : G.g_iview;
                 if (view == V_ICON)
                 {
-                    numpts = G.g_nmicon;
+                    numpts = NUM_ICON_POINTS;
                     pxypts = G.g_xyicon;
                 }
                 else
                 {
-                    numpts = G.g_nmtext;
+                    numpts = NUM_TEXT_POINTS;
                     pxypts = G.g_xytext;
                 }
                 gr_drgplns(l_mx, l_my, &gl_rfull, numpts, pxypts, numobs, G.g_xyobpts,

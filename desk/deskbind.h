@@ -108,6 +108,13 @@ typedef struct
 
 
 /*
+ * the number of points required for outlining an item when dragging it
+ */
+#define NUM_ICON_POINTS 9   /* item is an icon (on desktop or in window) */
+#define NUM_TEXT_POINTS 5   /* item is text (in window) */
+
+
+/*
  * The desktop global data area
  */
 typedef struct
@@ -174,10 +181,8 @@ typedef struct
 
 /*GLOBAL*/ WORD         g_icw;
 /*GLOBAL*/ WORD         g_ich;
-/*GLOBAL*/ WORD         g_nmicon;               /* number of points in g_xyicon[] */
-/*GLOBAL*/ WORD         g_nmtext;               /* number of points in g_xytext[] */
-/*GLOBAL*/ WORD         g_xyicon[18];           /* outline for dragging file as icon */
-/*GLOBAL*/ WORD         g_xytext[10];           /* outline for dragging file as text */
+/*GLOBAL*/ WORD         g_xyicon[NUM_ICON_POINTS*2];/* outline for dragging file as icon */
+/*GLOBAL*/ WORD         g_xytext[NUM_TEXT_POINTS*2];/* outline for dragging file as text */
 
 /*GLOBAL*/ WORD         g_wicon;
 /*GLOBAL*/ WORD         g_hicon;

@@ -76,7 +76,7 @@ void win_view(WORD vtype, WORD isort)
          */
         G.g_iwint = USE_WIDE_FORMAT() ? 2*gl_wchar+4 : gl_wchar+4;
         G.g_ihint = 2;
-        G.g_num = G.g_nmtext;
+        G.g_num = NUM_TEXT_POINTS;
         G.g_pxy = G.g_xytext;
         break;
     case V_ICON:
@@ -84,7 +84,7 @@ void win_view(WORD vtype, WORD isort)
         G.g_ihext = G.g_hicon;
         G.g_iwint = MIN_WINT;
         G.g_ihint = MIN_HINT;
-        G.g_num = G.g_nmicon;
+        G.g_num = NUM_ICON_POINTS;
         G.g_pxy = G.g_xyicon;
         break;
     }
