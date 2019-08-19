@@ -40,8 +40,9 @@
  * the operation will be terminated with a form alert (STFO8DEE).  levels are
  * counted from the top level of the source tree.  note that this does NOT
  * restrict the number of directory levels that may exist in a file system.
+ *
+ * this number is arbitrary, but is the same as Atari TOS uses.
  */
-#define NUM_LEVEL   8               /* number of directory levels: */
-#define MAX_LEVEL   (NUM_LEVEL-1)   /*  0 thru MAX_LEVEL           */
+#define MAX_LEVEL   12              /* max number of directory levels */
 
 #endif  /* _DESKCONF_H */
