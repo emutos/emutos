@@ -581,21 +581,26 @@ WORD d_doop(WORD level, WORD op, char *psrc_path, char *pdst_path, OBJECT *tree,
                 inf_numset(tree, CDFOLDS, --(count->dirs));
                 draw_fld(tree, CDFOLDS);
             }
-            return more;
+            break;      /* exit main loop */
         }
 
         /*
          * return if real error
          */
         if (ret < 0)
-            return FALSE;
+        {
+            more = FALSE;
+            break;      /* exit main loop */
+        }
 
         if (op != OP_COUNT)
+        {
             if (user_abort())
             {
                 more = FALSE;
-                break;
+                break;  /* exit main loop */
             }
+        }
 
         /*
          * handle folder
@@ -625,7 +630,7 @@ WORD d_doop(WORD level, WORD op, char *psrc_path, char *pdst_path, OBJECT *tree,
                     sub_path(pdst_path);
             }
             if (!more)
-                break;
+                break;  /* exit main loop */
             continue;
         }
 
@@ -662,7 +667,7 @@ WORD d_doop(WORD level, WORD op, char *psrc_path, char *pdst_path, OBJECT *tree,
             draw_fld(tree, CDFILES);
         }
         if (!more)
-            break;
+            break;      /* exit main loop */
     }
 
     return more;
