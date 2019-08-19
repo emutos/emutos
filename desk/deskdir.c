@@ -526,13 +526,21 @@ static void update_modified_windows(char *path,WORD length)
 WORD d_doop(WORD level, WORD op, char *psrc_path, char *pdst_path, OBJECT *tree, DIRCOUNT *count)
 {
     char *ptmp, *ptmpdst;
-    DTA  *dta;
-    WORD more, ret;
+    DTA  *dta, *prevdta;
+    WORD more, ret = 0;
 
     /*
-     * ensure we don't go past the end of the g_dtastk[] array
+     * ensure we don't exceed allowed depth
      */
     if (level > MAX_LEVEL)
+        ret = -1;
+    else
+    {
+        dta = dos_alloc_anyram(sizeof(DTA));
+        if (!dta)
+            ret = -1;
+    }
+    if (ret < 0)
     {
         fun_alert(1, STFO8DEE);
         return FALSE;
@@ -541,7 +549,8 @@ WORD d_doop(WORD level, WORD op, char *psrc_path, char *pdst_path, OBJECT *tree,
     if (level == 0)
         deleted_folders = 0L;
 
-    dta = &G.g_dtastk[level];
+    /* save old DTA, use new DTA for this level */
+    prevdta = dos_gdta();
     dos_sdta(dta);
 
     for (ret = dos_sfirst(psrc_path, ALLFILES); ; ret = dos_snext())
@@ -623,7 +632,6 @@ WORD d_doop(WORD level, WORD op, char *psrc_path, char *pdst_path, OBJECT *tree,
                 if (more)
                 {
                     more = d_doop(level+1,op,psrc_path,pdst_path,tree,count);
-                    dos_sdta(dta);      /* must restore DTA address! */
                 }
                 sub_path(psrc_path);    /* restore the old paths */
                 if ((op == OP_COPY) || (op == OP_MOVE))
@@ -669,6 +677,10 @@ WORD d_doop(WORD level, WORD op, char *psrc_path, char *pdst_path, OBJECT *tree,
         if (!more)
             break;      /* exit main loop */
     }
+
+    /* restore old DTA, free current DTA */
+    dos_sdta(prevdta);
+    dos_free(dta);
 
     return more;
 }

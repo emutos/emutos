@@ -133,11 +133,6 @@ typedef struct
 /*GLOBAL*/ WORD         g_ihspc;                /*   a single item      */
 /*GLOBAL*/ WORD         g_isort;                /* current sort type (S_NAME etc) */
 
-                                                /* stack of fcb's to use*/
-                                                /*   for non-recursive  */
-                                                /*   directory tree     */
-                                                /*   traversal          */
-/*GLOBAL*/ DTA          g_dtastk[NUM_LEVEL];
 /*GLOBAL*/ LONG         g_nfiles;
 /*GLOBAL*/ LONG         g_ndirs;
 /*GLOBAL*/ LONG         g_size;
