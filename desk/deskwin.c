@@ -27,6 +27,7 @@
 #include "gemdos.h"
 
 #include "aesdefs.h"
+#include "aesext.h"
 #include "deskbind.h"
 #include "deskglob.h"
 #include "deskapp.h"

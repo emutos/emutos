@@ -119,17 +119,4 @@ extern GRECT    gl_rzero;
 extern GRECT    gl_rcenter;
 extern GRECT    gl_rmenu;
 
-/*
- * the following functions are defined in aes/gemgraf.c
- */
-void gsx_gclip(GRECT *pt);
-void gsx_sclip(const GRECT *pt);
-void gsx_pline(WORD offx, WORD offy, WORD cnt, const WORD *pts);
-void gsx_attr(UWORD text, UWORD mode, UWORD color);
-void bb_screen(WORD scrule, WORD scsx, WORD scsy, WORD scdx, WORD scdy, WORD scw, WORD sch);
-void gsx_trans(void *saddr, UWORD swb, void *daddr, UWORD dwb, UWORD h);
-void gsx_start(void);
-void gsx_tblt(WORD tb_f, WORD x, WORD y, WORD tb_nc);
-void bb_fill(WORD mode, WORD fis, WORD patt, WORD hx, WORD hy, WORD hw, WORD hh);
-
 #endif

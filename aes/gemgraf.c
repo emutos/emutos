@@ -21,6 +21,7 @@
 
 #include "emutos.h"
 #include "obdefs.h"
+#include "aesext.h"
 #include "intmath.h"
 #include "funcdef.h"
 

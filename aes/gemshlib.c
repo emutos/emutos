@@ -29,6 +29,7 @@
 #include "xbiosbind.h"
 #include "gemerror.h"
 #include "aesdefs.h"
+#include "aesext.h"
 #include "gemlib.h"
 #include "gem_rsc.h"
 #include "biosext.h"

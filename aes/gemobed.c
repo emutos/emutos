@@ -19,6 +19,7 @@
 #include "emutos.h"
 #include "struct.h"
 #include "obdefs.h"
+#include "aesext.h"
 #include "intmath.h"
 #include "gemlib.h"
 

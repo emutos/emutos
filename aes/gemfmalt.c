@@ -23,6 +23,7 @@
 #include "obdefs.h"
 #include "intmath.h"
 #include "aesdefs.h"
+#include "aesext.h"
 #include "gemlib.h"
 #include "gem_rsc.h"
 

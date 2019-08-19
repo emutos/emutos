@@ -28,6 +28,7 @@
 #include "obdefs.h"
 #include "gemdos.h"
 #include "optimize.h"
+#include "gsxdefs.h"
 
 #include "deskbind.h"
 #include "deskglob.h"

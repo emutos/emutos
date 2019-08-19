@@ -17,6 +17,7 @@
 #include "emutos.h"
 #include "string.h"
 #include "obdefs.h"
+#include "aesext.h"
 #include "funcdef.h"
 
 #include "gemdos.h"

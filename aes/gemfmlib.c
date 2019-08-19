@@ -20,6 +20,7 @@
 #include "string.h"
 #include "struct.h"
 #include "aesdefs.h"
+#include "aesext.h"
 #include "aesvars.h"
 #include "obdefs.h"
 #include "gem_rsc.h"

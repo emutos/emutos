@@ -20,6 +20,7 @@
 #include "struct.h"
 #include "obdefs.h"
 #include "aesdefs.h"
+#include "aesext.h"
 #include "gemlib.h"
 
 #include "gemevlib.h"

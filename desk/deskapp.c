@@ -24,6 +24,7 @@
 #include "obdefs.h"
 #include "rsdefs.h"
 #include "aesdefs.h"
+#include "aesext.h"
 #include "intmath.h"
 #include "gsxdefs.h"
 #include "gemdos.h"
