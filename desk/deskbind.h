@@ -145,8 +145,6 @@ typedef struct
 /*GLOBAL*/ LONG         g_ndirs;
 /*GLOBAL*/ LONG         g_size;
 
-/*GLOBAL*/ Point        g_xyobpts[MAX_OBS];
-
 /*GLOBAL*/ WORD         g_rmsg[8];
 
 /*GLOBAL*/ WORD         g_xdesk;

@@ -32,8 +32,6 @@
 #define WOBS_START  (NUM_WNODES+2)  /* first desktop item object within g_screen[] */
 #define MIN_WOBS    128             /* minimum number of desktop item objects */
 
-#define MAX_OBS     60              /* max number of objects that can be dragged */
-
 /*
  * the following specifies the maximum number of directory levels supported
  * for a copy/move/count/delete operation; if lower levels are found to exist,

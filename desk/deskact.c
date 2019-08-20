@@ -21,6 +21,7 @@
 #include "emutos.h"
 #include "obdefs.h"
 #include "rectfunc.h"
+#include "gemdos.h"
 #include "gsxdefs.h"
 
 #include "aesdefs.h"
@@ -77,10 +78,33 @@ static WORD gr_isdown(WORD out, WORD x, WORD y, WORD w, WORD h)
 }
 
 
-static void gr_accobs(OBJECT *tree, WORD root, WORD *pnum, Point *pxypts)
+/*
+ * allocate & build list of (x,y) coordinates of selected objects
+ *
+ * returns pointer to allocated list, plus count of selected objects in pnum
+ * (if there are no selected objects, returns NULL pointer)
+ */
+static Point *gr_accobs(OBJECT *tree, WORD root, WORD *pnum)
 {
-    WORD i;
+    WORD i, n;
     WORD obj;
+    LONG maxpts;
+    Point *pxypts;
+
+    /* count points */
+    for (obj = tree[root].ob_head, n = 0; obj > root; obj = tree[obj].ob_next)
+        if (tree[obj].ob_state & SELECTED)
+            n++;
+
+    maxpts = dos_avail_anyram() / sizeof(Point);
+    if (n > maxpts)
+        n = maxpts;
+    *pnum = n;
+
+    if (n == 0)
+        return NULL;
+
+    pxypts = dos_alloc_anyram(n*sizeof(Point));
 
     i = 0;
     for (obj = tree[root].ob_head; obj > root; obj = tree[obj].ob_next)
@@ -90,11 +114,12 @@ static void gr_accobs(OBJECT *tree, WORD root, WORD *pnum, Point *pxypts)
             pxypts[i].x = tree[root].ob_x + tree[obj].ob_x;
             pxypts[i].y = tree[root].ob_y + tree[obj].ob_y;
             i++;
-            if (i >= MAX_OBS)
+            if (i >= n)
                 break;
         }
     }
-    *pnum = i;
+
+    return pxypts;
 }
 
 
@@ -581,7 +606,7 @@ WORD act_bdown(WORD wh, WORD root, WORD *in_mx, WORD *in_my,
     WORD l_mx, l_my, l_mw, l_mh;
     WORD dulx = -1, duly = -1, offx = 0, offy = 0;
     WORD numpts, view;
-    Point *pxypts;
+    Point *obpts, *pxypts;
     GRECT m;
 
     dst_wh = NIL;
@@ -611,7 +636,7 @@ WORD act_bdown(WORD wh, WORD root, WORD *in_mx, WORD *in_my,
     {       /* drag icon(s) */
         if (tree[sobj].ob_state & SELECTED)
         {
-            gr_accobs(tree, root, &numobs, G.g_xyobpts);
+            obpts = gr_accobs(tree, root, &numobs);
             if (numobs)
             {
                 view = (root == DROOT) ? V_ICON : G.g_iview;
@@ -625,7 +650,7 @@ WORD act_bdown(WORD wh, WORD root, WORD *in_mx, WORD *in_my,
                     numpts = NUM_TEXT_POINTS;
                     pxypts = G.g_xytext;
                 }
-                gr_drgplns(l_mx, l_my, &gl_rfull, numpts, pxypts, numobs, G.g_xyobpts,
+                gr_drgplns(l_mx, l_my, &gl_rfull, numpts, pxypts, numobs, obpts,
                             &dulx, &duly, &offx, &offy, &dst_wh, pdobj);
                 if (dst_wh)
                 {
@@ -637,10 +662,11 @@ WORD act_bdown(WORD wh, WORD root, WORD *in_mx, WORD *in_my,
                 {
                     if ((wh == DESKWH) && (*pdobj == root)) /* Dragging from desktop */
                     {
-                        move_drvicon(tree, root, dulx, duly, G.g_xyobpts, offx, offy);
+                        move_drvicon(tree, root, dulx, duly, obpts, offx, offy);
                         dst_wh = NIL;
                     }
                 }
+                dos_free(obpts);
             }
         }
     }
