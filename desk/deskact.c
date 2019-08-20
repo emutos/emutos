@@ -62,18 +62,14 @@ static WORD gr_obfind(OBJECT *tree, WORD root, WORD mx, WORD my)
  *  Return TRUE as long as the mouse is down.  Block until the
  *  mouse moves into or out of the specified rectangle.
  */
-static WORD gr_isdown(WORD out, WORD x, WORD y, WORD w, WORD h,
-                      UWORD *pmx, UWORD *pmy, UWORD *pbutton, UWORD *pkstate)
+static WORD gr_isdown(WORD out, WORD x, WORD y, WORD w, WORD h)
 {
-
-    WORD  flags;
     UWORD ev_which;
-    UWORD kret, bret;
+    UWORD dummy;
 
-    flags = MU_BUTTON | MU_M1;
-    ev_which = evnt_multi(flags, 0x01, 0xff, 0x00, out, x, y, w, h,
+    ev_which = evnt_multi(MU_BUTTON | MU_M1, 0x01, 0xff, 0x00, out, x, y, w, h,
                             0, 0, 0, 0, 0, NULL, 0x0, 0x0,
-                            pmx, pmy, pbutton, pkstate, &kret, &bret);
+                            &dummy, &dummy, &dummy, &dummy, &dummy, &dummy);
     if (ev_which & MU_BUTTON)
         return FALSE;
 
@@ -190,7 +186,6 @@ static WORD gr_bwait(GRECT *po, WORD mx, WORD my, WORD numpts, Point *xylnpts,
                      WORD numobs, Point *xyobpts)
 {
     WORD  down;
-    UWORD ret[4];
 
     /*
      * Since the desktop and the AES currently share the same VDI work-
@@ -203,7 +198,7 @@ static WORD gr_bwait(GRECT *po, WORD mx, WORD my, WORD numpts, Point *xylnpts,
     gr_plns(po->g_x, po->g_y, numpts, xylnpts, numobs, xyobpts);
 
     /* wait for change */
-    down = gr_isdown(TRUE, mx, my, 2, 2, &ret[0], &ret[1], &ret[2], &ret[3]);
+    down = gr_isdown(TRUE, mx, my, 2, 2);
 
     /* erase old */
     gr_plns(po->g_x, po->g_y, numpts, xylnpts, numobs, xyobpts);
