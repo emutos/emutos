@@ -174,15 +174,15 @@ static void gsx_xline(WORD ptscount, WORD *ppoints)
  *  Routine to draw a certain number of points in a polyline relative
  *  to a given x,y offset
  */
-void gsx_pline(WORD offx, WORD offy, WORD cnt, const WORD *pts)
+void gsx_pline(WORD offx, WORD offy, WORD cnt, const Point *pts)
 {
     WORD    i, j;
 
     for (i = 0; i < cnt; i++)
     {
         j = i * 2;
-        ptsin[j] = offx + pts[j];
-        ptsin[j+1] = offy + pts[j+1];
+        ptsin[j] = offx + pts[i].x;
+        ptsin[j+1] = offy + pts[i].y;
     }
 
     gsx_xline(cnt, ptsin);

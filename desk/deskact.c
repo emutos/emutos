@@ -81,7 +81,7 @@ static WORD gr_isdown(WORD out, WORD x, WORD y, WORD w, WORD h,
 }
 
 
-static void gr_accobs(OBJECT *tree, WORD root, WORD *pnum, WORD *pxypts)
+static void gr_accobs(OBJECT *tree, WORD root, WORD *pnum, Point *pxypts)
 {
     WORD i;
     WORD obj;
@@ -91,8 +91,8 @@ static void gr_accobs(OBJECT *tree, WORD root, WORD *pnum, WORD *pxypts)
     {
         if (tree[obj].ob_state & SELECTED)
         {
-            pxypts[i*2] = tree[root].ob_x + tree[obj].ob_x;
-            pxypts[(i*2)+1] = tree[root].ob_y + tree[obj].ob_y;
+            pxypts[i].x = tree[root].ob_x + tree[obj].ob_x;
+            pxypts[i].y = tree[root].ob_y + tree[obj].ob_y;
             i++;
             if (i >= MAX_OBS)
                 break;
@@ -102,7 +102,7 @@ static void gr_accobs(OBJECT *tree, WORD root, WORD *pnum, WORD *pxypts)
 }
 
 
-static void move_drvicon(OBJECT *tree, WORD root, WORD x, WORD y, WORD *pts, WORD sxoff, WORD syoff)
+static void move_drvicon(OBJECT *tree, WORD root, WORD x, WORD y, Point *pts, WORD sxoff, WORD syoff)
 {
     ANODE *an_disk;
     GRECT t;
@@ -119,7 +119,7 @@ static void move_drvicon(OBJECT *tree, WORD root, WORD x, WORD y, WORD *pts, WOR
             oldx = tree[obj].ob_x;
             oldy = tree[obj].ob_y;
 
-            snap_icon(x + pts[2 * objcnt], y + pts[2 * objcnt + 1],
+            snap_icon(x + pts[objcnt].x, y + pts[objcnt].y,
                                 &tree[obj].ob_x, &tree[obj].ob_y, sxoff, syoff);
 
             an_disk = app_afind_by_id(obj);
@@ -145,24 +145,23 @@ static void move_drvicon(OBJECT *tree, WORD root, WORD x, WORD y, WORD *pts, WOR
 /*
  *  Calculate the extent of the list of x,y points given
  */
-static void gr_extent(WORD numpts, WORD *xylnpts, GRECT *pt)
+static void gr_extent(WORD numpts, Point *xylnpts, GRECT *pt)
 {
-    WORD i, j;
+    WORD i;
     WORD lx, ly, gx, gy;
 
     lx = ly = MAX_COORDINATE;
     gx = gy = 0;
     for (i = 0; i < numpts; i++)
     {
-        j = i * 2;
-        if (xylnpts[j] < lx)
-            lx = xylnpts[j];
-        if (xylnpts[j+1] < ly)
-            ly = xylnpts[j+1];
-        if (xylnpts[j] > gx)
-            gx = xylnpts[j];
-        if (xylnpts[j+1] > gy)
-            gy = xylnpts[j+1];
+        if (xylnpts[i].x < lx)
+            lx = xylnpts[i].x;
+        if (xylnpts[i].y < ly)
+            ly = xylnpts[i].y;
+        if (xylnpts[i].x > gx)
+            gx = xylnpts[i].x;
+        if (xylnpts[i].y > gy)
+            gy = xylnpts[i].y;
     }
     r_set(pt, lx, ly, gx-lx+1, gy-ly+1);
 }
@@ -172,24 +171,23 @@ static void gr_extent(WORD numpts, WORD *xylnpts, GRECT *pt)
  *  Draw a list of polylines a number of times based on a list of
  *  x,y object locations that are all relative to a certain x,y offset
  */
-static void gr_plns(WORD x, WORD y, WORD numpts, WORD *xylnpts, WORD numobs,
-                    WORD *xyobpts)
+static void gr_plns(WORD x, WORD y, WORD numpts, Point *xylnpts, WORD numobs,
+                    Point *xyobpts)
 {
-    WORD i, j;
+    WORD i;
 
     graf_mouse(M_OFF, NULL);
 
     for (i = 0; i < numobs; i++)
     {
-        j = i * 2;
-        gsx_pline(x + xyobpts[j], y + xyobpts[j+1], numpts, xylnpts);
+        gsx_pline(x + xyobpts[i].x, y + xyobpts[i].y, numpts, xylnpts);
     }
     graf_mouse(M_ON, NULL);
 }
 
 
-static WORD gr_bwait(GRECT *po, WORD mx, WORD my, WORD numpts, WORD *xylnpts,
-                     WORD numobs, WORD *xyobpts)
+static WORD gr_bwait(GRECT *po, WORD mx, WORD my, WORD numpts, Point *xylnpts,
+                     WORD numobs, Point *xyobpts)
 {
     WORD  down;
     UWORD ret[4];
@@ -215,15 +213,14 @@ static WORD gr_bwait(GRECT *po, WORD mx, WORD my, WORD numpts, WORD *xylnpts,
 }
 
 
-static void gr_obalign(WORD numobs, WORD x, WORD y, WORD *xyobpts)
+static void gr_obalign(WORD numobs, WORD x, WORD y, Point *xyobpts)
 {
-    WORD i, j;
+    WORD i;
 
     for (i = 0; i < numobs; i++)
     {
-        j = i * 2;
-        xyobpts[j]   -= x;
-        xyobpts[j+1] -= y;
+        xyobpts[i].x -= x;
+        xyobpts[i].y -= y;
     }
 }
 
@@ -232,7 +229,7 @@ static void gr_obalign(WORD numobs, WORD x, WORD y, WORD *xyobpts)
  *  This routine is used to drag a list of polylines
  */
 static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc,
-            WORD numpts, WORD *xylnpts, WORD numobs, WORD *xyobpts,
+            WORD numpts, Point *xylnpts, WORD numobs, Point *xyobpts,
             WORD *pdulx, WORD *pduly, WORD *poffx, WORD *poffy, WORD *pdwh, WORD *pdobj)
 {
     OBJECT *tree;
@@ -588,7 +585,8 @@ WORD act_bdown(WORD wh, WORD root, WORD *in_mx, WORD *in_my,
     WORD dst_wh;
     WORD l_mx, l_my, l_mw, l_mh;
     WORD dulx = -1, duly = -1, offx = 0, offy = 0;
-    WORD numpts, *pxypts, view;
+    WORD numpts, view;
+    Point *pxypts;
     GRECT m;
 
     dst_wh = NIL;

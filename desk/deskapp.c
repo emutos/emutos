@@ -913,26 +913,26 @@ void app_start(void)
     /* set up outlines for dragging files displayed as icons */
     bzero(G.g_xyicon, sizeof(G.g_xyicon));
     xcent = (G.g_wicon - G.g_iblist[0].ib_wicon) / 2;
-    G.g_xyicon[0] = xcent;
-    G.g_xyicon[2] = xcent;
-    G.g_xyicon[3] = G.g_hicon-gl_hschar-2;
-    G.g_xyicon[5] = G.g_hicon-gl_hschar-2;
-    G.g_xyicon[7] = G.g_hicon;
-    G.g_xyicon[8] = G.g_wicon;
-    G.g_xyicon[9] = G.g_hicon;
-    G.g_xyicon[10] = G.g_wicon;
-    G.g_xyicon[11] = G.g_hicon-gl_hschar-2;
-    G.g_xyicon[12] = G.g_wicon-xcent;
-    G.g_xyicon[13] = G.g_hicon-gl_hschar-2;
-    G.g_xyicon[14] = G.g_wicon-xcent;
-    G.g_xyicon[16] = xcent;
+    G.g_xyicon[0].x = xcent;
+    G.g_xyicon[1].x = xcent;
+    G.g_xyicon[1].y = G.g_hicon-gl_hschar-2;
+    G.g_xyicon[2].y = G.g_hicon-gl_hschar-2;
+    G.g_xyicon[3].y = G.g_hicon;
+    G.g_xyicon[4].x = G.g_wicon;
+    G.g_xyicon[4].y = G.g_hicon;
+    G.g_xyicon[5].x = G.g_wicon;
+    G.g_xyicon[5].y = G.g_hicon-gl_hschar-2;
+    G.g_xyicon[6].x = G.g_wicon-xcent;
+    G.g_xyicon[6].y = G.g_hicon-gl_hschar-2;
+    G.g_xyicon[7].x = G.g_wicon-xcent;
+    G.g_xyicon[8].x = xcent;
 
     /* set up outlines for dragging files displayed as text */
     bzero(G.g_xytext, sizeof(G.g_xytext));
-    G.g_xytext[2] = gl_wchar * DRAG_BOX_WIDTH;
-    G.g_xytext[4] = gl_wchar * DRAG_BOX_WIDTH;
-    G.g_xytext[5] = gl_hchar;
-    G.g_xytext[7] = gl_hchar;
+    G.g_xytext[1].x = gl_wchar * DRAG_BOX_WIDTH;
+    G.g_xytext[2].x = gl_wchar * DRAG_BOX_WIDTH;
+    G.g_xytext[2].y = gl_hchar;
+    G.g_xytext[3].y = gl_hchar;
 
     dos_free(buf);
 }

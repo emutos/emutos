@@ -25,6 +25,7 @@
 #include "deskapp.h"
 #include "deskfpd.h"
 #include "deskwin.h"
+#include "aesext.h"
 
 #define DESKWH  0               /* the desktop's window handle */
 
@@ -130,7 +131,7 @@ typedef struct
 
                                             /* view-related parms:      */
 /*GLOBAL*/ WORD         g_num;                  /* number of points     */
-/*GLOBAL*/ WORD         *g_pxy;                 /* outline pts to drag  */
+/*GLOBAL*/ Point        *g_pxy;                 /* outline pts to drag  */
 /*GLOBAL*/ WORD         g_iview;                /* current view type (V_ICON/V_TEXT) */
 /*GLOBAL*/ WORD         g_iwext;                /* w,h of extent of a   */
 /*GLOBAL*/ WORD         g_ihext;                /*   single item        */
@@ -144,7 +145,7 @@ typedef struct
 /*GLOBAL*/ LONG         g_ndirs;
 /*GLOBAL*/ LONG         g_size;
 
-/*GLOBAL*/ WORD         g_xyobpts[MAX_OBS * 2];
+/*GLOBAL*/ Point        g_xyobpts[MAX_OBS];
 
 /*GLOBAL*/ WORD         g_rmsg[8];
 
@@ -176,8 +177,8 @@ typedef struct
 
 /*GLOBAL*/ WORD         g_icw;
 /*GLOBAL*/ WORD         g_ich;
-/*GLOBAL*/ WORD         g_xyicon[NUM_ICON_POINTS*2];/* outline for dragging file as icon */
-/*GLOBAL*/ WORD         g_xytext[NUM_TEXT_POINTS*2];/* outline for dragging file as text */
+/*GLOBAL*/ Point        g_xyicon[NUM_ICON_POINTS];  /* outline for dragging file as icon */
+/*GLOBAL*/ Point        g_xytext[NUM_TEXT_POINTS];  /* outline for dragging file as text */
 
 /*GLOBAL*/ WORD         g_wicon;
 /*GLOBAL*/ WORD         g_hicon;
