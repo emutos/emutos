@@ -12,6 +12,7 @@
 #include "emutos.h"
 #include "intmath.h"
 #include "asm.h"
+#include "aesext.h"
 #include "vdi_defs.h"
 #include "vdistub.h"
 #include "blitter.h"

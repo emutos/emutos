@@ -12,6 +12,7 @@
 #define VDIDEFS_H
 
 #include "fonthdr.h"
+#include "aesext.h"
 #include "vdiext.h"
 
 #define HAVE_BEZIER 0           /* switch on bezier capability */
@@ -190,10 +191,6 @@ typedef struct {
     WORD x1,y1;
     WORD x2,y2;
 } Line;
-
-typedef struct {
-    WORD x,y;
-} Point;
 
 
 /* External definitions for internal use */

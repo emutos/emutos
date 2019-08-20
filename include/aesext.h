@@ -12,6 +12,14 @@
 
 #include "obdefs.h"
 
+
+/* used by the VDI and by the desktop when calling the VDI */
+typedef struct
+{
+    WORD x;
+    WORD y;
+} Point;
+
 #if CONF_WITH_BACKGROUNDS
 /* function used by AES and desktop, found in geminit.c */
 void set_aes_background(UBYTE patcol);

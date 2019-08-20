@@ -11,6 +11,7 @@
 
 #include "emutos.h"
 #include "intmath.h"
+#include "aesext.h"
 #include "vdi_defs.h"
 #include "lineavars.h"
 

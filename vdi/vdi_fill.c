@@ -14,6 +14,7 @@
 #include "emutos.h"
 #include "asm.h"
 #include "intmath.h"
+#include "aesext.h"
 #include "vdi_defs.h"
 #include "vdistub.h"
 #include "tosvars.h"

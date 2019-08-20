@@ -12,6 +12,7 @@
 #include "vdi_defs.h"
 #include "biosbind.h"
 #include "asm.h"        /* for malloc */
+#include "aesext.h"
 
 #if HAVE_BEZIER
 

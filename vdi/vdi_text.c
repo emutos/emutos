@@ -13,6 +13,7 @@
 #include "asm.h"
 #include "intmath.h"
 #include "string.h"
+#include "aesext.h"
 #include "vdi_defs.h"
 #include "vdistub.h"
 #include "lineavars.h"
