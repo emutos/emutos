@@ -130,8 +130,6 @@ typedef struct
 /*GLOBAL*/ WORD         g_wcnt;
 
                                             /* view-related parms:      */
-/*GLOBAL*/ WORD         g_num;                  /* number of points     */
-/*GLOBAL*/ Point        *g_pxy;                 /* outline pts to drag  */
 /*GLOBAL*/ WORD         g_iview;                /* current view type (V_ICON/V_TEXT) */
 /*GLOBAL*/ WORD         g_iwext;                /* w,h of extent of a   */
 /*GLOBAL*/ WORD         g_ihext;                /*   single item        */
