@@ -679,7 +679,7 @@ bit_blt (void)
 #define mHOP_Halftone 0x01
     blt->hop = mHOP_Source;   /* word */    /* set HOP to source only */
 
-    for (plane = blit_info->plane_ct-1; plane >= 0; plane--) {
+    for (plane = 0; plane < blit_info->plane_ct; plane++) {
         int op_tabidx;
 
         blt->src_addr = s_addr;         /* load Source pointer to this plane */
