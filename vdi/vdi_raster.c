@@ -954,7 +954,7 @@ cpy_raster(struct raster_t *raster, struct blit_frame *info)
 
         /* is source area one plane? */
         if (info->s_nxwd != 2)
-                return;         /* source must be mono plane */
+            return;             /* source must be mono plane */
 
         info->s_nxpl = 0;       /* use only one plane of source */
 
