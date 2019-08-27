@@ -1049,7 +1049,7 @@ msgstr "[1]["
 msgid "[1]["
 "No drive identifier.][ Retry ]"
 msgstr "[1]["
-"Aseman tunniste puuttuu.][ Uudestaan ]"
+"Aseman tunniste puuttuu.][Uudestaan]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -1057,7 +1057,7 @@ msgid "[1]["
 "%s][ Skip | Retry | Abort ]"
 msgstr "[1]["
 "Tiedoston poisto epäonnistui|"
-"%s][ Ohita | Uudestaan | Keskeytä ]"
+"%s][ Ohita |Uudestaan| Keskeytä ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -1065,7 +1065,7 @@ msgid "[1]["
 "%s][ Skip | Retry | Abort ]"
 msgstr "[1]["
 "Hakemiston poisto epäonnistui|"
-"%s][ Ohita | Uudestaan | Keskeytä ]"
+"%s][ Ohita |Uudestaan| Keskeytä ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -1085,7 +1085,7 @@ msgid "[1]["
 "%s][ Skip | Retry | Abort ]"
 msgstr "[1]["
 "Tiedoston aukaisu epäonnistui|"
-"%s][ Ohita | Uudestaan | Keskeytä ]"
+"%s][ Ohita |Uudestaan| Keskeytä ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -1093,7 +1093,7 @@ msgid "[1]["
 "%s][ Skip | Retry | Abort ]"
 msgstr "[1]["
 "Tiedoston luonti epäonnistui|"
-"%s][ Ohita | Uudestaan | Keskeytä ]"
+"%s][ Ohita |Uudestaan| Keskeytä ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -1115,7 +1115,7 @@ msgstr "[1]["
 msgid "[1]["
 "Rename error!][ Retry | Cancel ]"
 msgstr "[1]["
-"Virhe uudelleennimeämisessä!][ Uudestaan | Kumoa ]"
+"Virhe uudelleennimeämisessä!][Uudestaan| Kumoa ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["

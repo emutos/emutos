@@ -1050,7 +1050,7 @@ msgid "[1]["
 msgstr "[1]["
 "Ce disque contient|"
 "%ld octets libres|"
-"pour l'utilisateur.][ Continuer | Quitter ]"
+"pour l'utilisateur.][Continuer| Quitter ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["

@@ -1043,7 +1043,7 @@ msgstr "%ld Bytes belegt von %d ausgewählten Objekten"
 msgid "[1]["
 "Illegal directory operation!][ Skip | Abort ]"
 msgstr "[1]["
-"Illegale Ordneroperation!][Auslassen| Abbrechen ]"
+"Illegale Ordneroperation!][Auslassen|Abbrechen]"
 
 #: desk/desk_rsc.c
 msgid "[1]["

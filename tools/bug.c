@@ -1553,7 +1553,7 @@ static void parse_oipl_file(char *fname, da *d)
  */
 static int alert_check(const char *start, const char *end, int lines)
 {
-    int len = end - start - 1;
+    int len = end - start;
 
     if (lines > MAX_LINE_COUNT)
         return AC_LINE_COUNT;
