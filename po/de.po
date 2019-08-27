@@ -1023,8 +1023,8 @@ msgid "[3]["
 "or unusable.][ Retry | Abort ]"
 msgstr "[3]["
 "Formatierungsfehler. Eventuell|"
-"ist die Diskette schreibgeschützt|"
-"oder nicht mehr benutzbar.][ Nochmal | Abbruch ]"
+"ist die Diskette unbenutzbar|"
+"oder schreibgeschützt.][ Nochmal | Abbruch ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
