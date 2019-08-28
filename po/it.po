@@ -213,7 +213,8 @@ msgstr "[1]["
 #: aes/gem_rsc.c
 msgid "[3]["
 "TOS error #%u.][Cancel]"
-msgstr "Errore TOS #%u.][Annulla]"
+msgstr "[3]["
+"Errore TOS #%u.][Annulla]"
 
 #: aes/gem_rsc.c
 msgid "[3]["

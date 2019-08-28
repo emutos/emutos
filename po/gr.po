@@ -1082,7 +1082,8 @@ msgstr "[1]["
 msgid "[1]["
 "Cannot delete directory|"
 "%s][ Skip | Retry | Abort ]"
-msgstr "€›¬¤˜£å˜ › ˜š¨˜­ãª «¦¬ ­˜¡â¢¦¬ |%s][ ˜¨á¢œ ¯ | „§˜¤á¢¯ | ê¡¬¨¦ ]"
+msgstr "[1]["
+"€›¬¤˜£å˜ › ˜š¨˜­ãª «¦¬ ­˜¡â¢¦¬ |%s][˜¨á¢œ ¯|„§˜¤á¢¯| ê¡¬¨¦ ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
