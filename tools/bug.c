@@ -2,7 +2,7 @@
  * bug.c - Basic Unencumbering Gettext, a minimal gettext-like tool
  *         (any better name is welcome)
  *
- * Copyright (C) 2001-2018 The EmuTOS development team
+ * Copyright (C) 2001-2019 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -219,12 +219,12 @@ static char * now(void)
  */
 
 typedef struct da {
-    int size;
-    void **buf;
-    int len;
+    int size;           /* current size of array pointed to by 'buf' */
+    void **buf;         /* pointer to generic array */
+    int len;            /* number of elements of 'buf' currently in use */
 } da;
 
-#define DA_SIZE 1000
+#define DA_SIZE 1000    /* initial size of dynamic array */
 
 static void da_grow(da *d)
 {
