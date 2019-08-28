@@ -66,6 +66,7 @@
 #define AC_LINE_COUNT       -1  /* error codes from alert_check() */
 #define AC_LINE_LENGTH      -2
 #define AC_BUTTON_LENGTH    -3
+#define AC_MISMATCH         -4
 
 #define TOOLNAME "bug"
 #define DOCNAME  "doc/nls.txt"
@@ -1591,6 +1592,9 @@ static void print_alert_warning(int code,char *lang,char *key)
     case AC_BUTTON_LENGTH:
         sprintf(msg,"button has more than %d characters",MAX_BUTTON_LENGTH);
         break;
+    case AC_MISMATCH:
+        sprintf(msg,"has mismatched alert format");
+        break;
     default:
         sprintf(msg,"has error code %d",code);
         break;
@@ -1614,6 +1618,20 @@ static void print_alert_warning(int code,char *lang,char *key)
     UNUSED(key);
 }
 #endif
+
+/*
+ * check for GEM Alert format
+ */
+static int is_gem_alert(const char *t)
+{
+    if ((t[0] == '[')
+     && (t[1] >= '0') && (t[1] <= '9')
+     && (t[2] == ']')
+     && (t[3] == '['))
+        return TRUE;
+
+    return FALSE;
+}
 
 /*
  * print string in canonical format
@@ -1659,7 +1677,7 @@ static int print_canon(FILE *f, const char *t, const char *prefix,
     }
 
 #if CANON_GEM_ALERT
-    if ((t[0] == '[') && (t[1] >= '0') && (t[1] <= '9') && (t[2] == ']') && (t[3] == '['))
+    if (is_gem_alert(t))
     {
         fprintf(f, "\"[%c][\"\n%s", t[1], prefix);
         t += 4;
@@ -2421,10 +2439,20 @@ static void make(void)
                 nn = da_len(th[j]);
                 for (ii = 0; ii < nn; ii += 2)
                 {
-                    fprintf(f, "  %s, ", (char *) da_nth(th[j],ii));
-                    rc = print_canon(f, da_nth(th[j],ii+1), "    ", TRUE);
-                    if (rc < 0)
-                        print_alert_warning(rc,lang,da_nth(th[j],ii));
+                    char *keyname, *translation;
+                    keyname = da_nth(th[j],ii);
+                    translation = da_nth(th[j],ii+1);
+
+                    fprintf(f, "  %s, ", keyname);
+                    rc = print_canon(f, translation, "    ", TRUE);
+                    if (rc < 0) /* error in alert format */
+                        print_alert_warning(rc, lang, keyname);
+                    else        /* check for bad format of translated alerts */
+                    {
+                        eref = o_nth(oref, atoi(keyname+8));
+                        if (is_gem_alert(eref->msgid.key) != is_gem_alert(translation))
+                            print_alert_warning(AC_MISMATCH, lang, keyname);
+                    }
                     fprintf(f, ",\n");
                 }
                 fprintf(f, "  0\n};\n\n");
