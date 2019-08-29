@@ -37,7 +37,7 @@ msgstr "Drives «¦¬ GEMDOS"
 msgid "MB"
 msgstr "MB"
 
-#: bios/initinfo.c
+#: bios/initinfo.c desk/deskinf.c
 msgid "KB"
 msgstr "KB"
 
@@ -759,6 +759,22 @@ msgid "Monochrome only"
 msgstr "‹¦¤æ®¨à£¦ £æ¤¦"
 
 #: desk/desk_rsc.c
+msgid "FORMAT FLOPPY DISKETTE"
+msgstr "ƒˆ€‹”—‘† ƒˆ‘‰„’€‘"
+
+#: desk/desk_rsc.c
+msgid "Single sided"
+msgstr "‹¦¤ã §¢œ¬¨á"
+
+#: desk/desk_rsc.c
+msgid "Double sided"
+msgstr "ƒ §¢ã §¢œ¬¨á"
+
+#: desk/desk_rsc.c
+msgid "High density"
+msgstr "“¯¢ã §¬¡¤æ««˜"
+
+#: desk/desk_rsc.c
 msgid "SET BACKGROUND"
 msgstr "ˆ‘‹‘ ”Œ’“"
 
@@ -777,22 +793,6 @@ msgstr "‘«¬¢:"
 #: desk/desk_rsc.c
 msgid "Color:"
 msgstr "•¨é£˜"
-
-#: desk/desk_rsc.c
-msgid "FORMAT FLOPPY DISKETTE"
-msgstr "ƒˆ€‹”—‘† ƒˆ‘‰„’€‘"
-
-#: desk/desk_rsc.c
-msgid "Single sided"
-msgstr "‹¦¤ã §¢œ¬¨á"
-
-#: desk/desk_rsc.c
-msgid "Double sided"
-msgstr "ƒ §¢ã §¢œ¬¨á"
-
-#: desk/desk_rsc.c
-msgid "High density"
-msgstr "“¯¢ã §¬¡¤æ««˜"
 
 #: desk/desk_rsc.c
 msgid "%ld bytes used in %d items."
