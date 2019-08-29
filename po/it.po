@@ -24,7 +24,7 @@ msgstr "Unità GEMDOS"
 msgid "MB"
 msgstr "MB"
 
-#: bios/initinfo.c
+#: bios/initinfo.c desk/deskinf.c
 msgid "KB"
 msgstr "KB"
 
@@ -328,6 +328,10 @@ msgid "Copy's name: ________.___"
 msgstr "Nome copia: ________.___"
 
 #: desk/desk_rsc.c
+msgid "Free memory: ___________________"
+msgstr "Memoria libera: ___________________"
+
+#: desk/desk_rsc.c
 msgid "Label: ________.___"
 msgstr "Etichetta: ________.___"
 
@@ -450,6 +454,10 @@ msgstr "  Configurazione scrivania..."
 #: desk/desk_rsc.c
 msgid "  Change resolution...  ^R"
 msgstr "  Cambia risoluzione...    ^R"
+
+#: desk/desk_rsc.c
+msgid "  Read .INF file..."
+msgstr "  Lettura file .INF..."
 
 #: desk/desk_rsc.c
 msgid "  Save desktop...       ^S"
@@ -600,6 +608,10 @@ msgid "NEW FOLDER"
 msgstr "NUOVA CARTELLA"
 
 #: desk/desk_rsc.c
+msgid "PRINT FILE"
+msgstr "STAMPA FILE"
+
+#: desk/desk_rsc.c
 msgid "SET PREFERENCES"
 msgstr "IMPOSTA PREFERENZE"
 
@@ -690,6 +702,10 @@ msgstr "Directory predefinita"
 #: desk/desk_rsc.c
 msgid "Input parameter:"
 msgstr "Parametri di input"
+
+#: desk/desk_rsc.c
+msgid "Function keys:"
+msgstr "Tasti funzione:"
 
 #: desk/desk_rsc.c
 msgid "SET SCREEN RESOLUTION"
@@ -820,6 +836,10 @@ msgid "TRASH"
 msgstr "CESTINO"
 
 #: desk/desk_rsc.c
+msgid "PRINTER"
+msgstr "STAMPANTE"
+
+#: desk/desk_rsc.c
 msgid "-More-"
 msgstr "-Continua-"
 
@@ -836,6 +856,10 @@ msgid "Locate item"
 msgstr "Localizza oggetto"
 
 #: desk/desk_rsc.c
+msgid "Select an INF file"
+msgstr "Seleziona un file INF"
+
+#: desk/desk_rsc.c
 msgid "[2]["
 "Switch resolution?][ Yes | No ]"
 msgstr "[2]["
@@ -843,9 +867,16 @@ msgstr "[2]["
 
 #: desk/desk_rsc.c
 msgid "[2]["
-"Show this document?][Show|Cancel]"
+"Show or print this document?][Show|Print|Cancel]"
 msgstr "[2]["
-"Visualizzo il documento?][Visualizza|Annulla]"
+"Vuoi vedere o stampare|"
+"il documento?][Vedere|Stampare|Annulla]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Print error!][ Retry | Cancel ]"
+msgstr "[1]["
+"Errore di stampa!][ Retry | Annulla ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -954,6 +985,14 @@ msgstr "[1]["
 "%s serve ad|"
 "eliminare definitivamente|"
 "file o cartelle.][  OK  ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"%s|"
+"is a printer.][  OK  ]"
+msgstr "[1]["
+"%s|"
+"è una stampante.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -1129,6 +1168,12 @@ msgstr "[1]["
 "Impossibile impostare la|"
 "directory predefinita.][  OK  ]"
 
+#: desk/desk_rsc.c
+msgid "[1]["
+"Illegal .INF file format.][  OK  ]"
+msgstr "[1]["
+"Formato file .INF illegale.][  OK  ]"
+
 #: cli/cmdint.c
 msgid "Copy <filespec> ... to standard output"
 msgstr "Copia <filespec> ... in output standard"
@@ -1282,8 +1327,8 @@ msgid "left/right arrow = previous/next character"
 msgstr "freccia sin./dr. = carattere prec./seg."
 
 #: cli/cmdint.c
-msgid "shift-left/right arrow = previous/next word"
-msgstr "shift-freccia sin./dr. = parola prec./seg."
+msgid "control-left/right arrow = previous/next word"
+msgstr "control-sin./freccia dr. = parola precedente/seguente"
 
 #: cli/cmdint.c
 msgid "invalid mode argument"
