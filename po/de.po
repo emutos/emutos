@@ -24,7 +24,7 @@ msgstr "GEMDOS-Laufwerke"
 msgid "MB"
 msgstr "MB"
 
-#: bios/initinfo.c
+#: bios/initinfo.c desk/deskinf.c
 msgid "KB"
 msgstr "KB"
 
@@ -842,9 +842,23 @@ msgstr "[2]["
 
 #: desk/desk_rsc.c
 msgid "[2]["
-"Show this document?][Show|Cancel]"
+"Show or print this document?][Show|Print|Cancel]"
 msgstr "[2]["
-"Dokument anzeigen?][Anzeigen|Abbruch]"
+"Dokument anzeigen oder drucken?][Anzeigen|Drucken|Abbruch]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Print error!][ Retry | Cancel ]"
+msgstr "[1]["
+"Fehler beim Drucken!][ Nochmal | Abbruch ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"%s|"
+"is a printer.][  OK  ]"
+msgstr "[1]["
+"%s|"
+"ist ein Drucker.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -1136,6 +1150,36 @@ msgid "[1]["
 msgstr "[1]["
 "Kann Standardverzeichnis|"
 "nicht setzen][  OK  ]"
+
+#: desk/desk_rsc.c
+msgid "Free memory: ___________________"
+msgstr "Freier Speicher: ___________________"
+
+#: desk/desk_rsc.c
+msgid "  Read .INF file..."
+msgstr "  .INF-Datei lesen..."
+
+#: desk/desk_rsc.c
+msgid "PRINT FILE"
+msgstr "DATEI DRUCKEN"
+
+#: desk/desk_rsc.c
+msgid "Function keys:"
+msgstr "Funktionstasten:"
+
+#: desk/desk_rsc.c
+msgid "PRINTER"
+msgstr "DRUCKER"
+
+#: desk/desk_rsc.c
+msgid "Select an INF file"
+msgstr "INF-Datei auswählen"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Illegal .INF file format.][  OK  ]"
+msgstr "[1]["
+"Falsches Format der .INF-Datei.][  OK  ]"
 
 #: cli/cmdint.c
 msgid "Copy <filespec> ... to standard output"
@@ -1488,4 +1532,3 @@ msgstr "Falsche Zahl von Parametern"
 #: cli/cmdutil.c
 msgid "error code %ld"
 msgstr "Fehlercode %ld"
-
