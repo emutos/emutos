@@ -997,7 +997,7 @@ static void init_conf(OBJECT *tree, ANODE *pa)
 {
     OBJECT  *obj;
     TEDINFO *ted;
-    char fkey[3];
+    char fkey[5];
 
     sprintf(fkey, "%2d", pa->a_funkey);
     inf_sset(tree, DCFUNNUM, fkey);
