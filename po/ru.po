@@ -23,7 +23,7 @@ msgstr "Диски GEMDOS"
 msgid "MB"
 msgstr "МБ"
 
-#: bios/initinfo.c
+#: bios/initinfo.c desk/deskinf.c
 msgid "KB"
 msgstr "КБ"
 
@@ -327,6 +327,10 @@ msgid "Copy's name: ________.___"
 msgstr "Имя копии: ________.___"
 
 #: desk/desk_rsc.c
+msgid "Free memory: ___________________"
+msgstr "Свободная память: ___________________"
+
+#: desk/desk_rsc.c
 msgid "Label: ________.___"
 msgstr "Метка: ________.___"
 
@@ -449,6 +453,10 @@ msgstr "  Конфигурация десктопа..."
 #: desk/desk_rsc.c
 msgid "  Change resolution...  ^R"
 msgstr "  Изменить разрешение...   ^R"
+
+#: desk/desk_rsc.c
+msgid "  Read .INF file..."
+msgstr "  Прочитать .INF-файл..."
 
 #: desk/desk_rsc.c
 msgid "  Save desktop...       ^S"
@@ -599,6 +607,10 @@ msgid "NEW FOLDER"
 msgstr "НОВАЯ ПАПКА"
 
 #: desk/desk_rsc.c
+msgid "PRINT FILE"
+msgstr "ПЕЧАТЬ ФАЙЛА"
+
+#: desk/desk_rsc.c
 msgid "SET PREFERENCES"
 msgstr "НАСТРОЙКИ"
 
@@ -689,6 +701,10 @@ msgstr "  Папка по умолчанию:"
 #: desk/desk_rsc.c
 msgid "Input parameter:"
 msgstr "  Параметры ввода:"
+
+#: desk/desk_rsc.c
+msgid "Function keys:"
+msgstr "Функциональные клавиши:"
 
 #: desk/desk_rsc.c
 msgid "SET SCREEN RESOLUTION"
@@ -819,6 +835,10 @@ msgid "TRASH"
 msgstr "КОРЗИНА"
 
 #: desk/desk_rsc.c
+msgid "PRINTER"
+msgstr "ПРИНТЕР"
+
+#: desk/desk_rsc.c
 msgid "-More-"
 msgstr "-Еще-"
 
@@ -835,6 +855,10 @@ msgid "Locate item"
 msgstr "Найти объект"
 
 #: desk/desk_rsc.c
+msgid "Select an INF file"
+msgstr "Выбрать .INF-файл"
+
+#: desk/desk_rsc.c
 msgid "[2]["
 "Switch resolution?][ Yes | No ]"
 msgstr "[2]["
@@ -842,9 +866,16 @@ msgstr "[2]["
 
 #: desk/desk_rsc.c
 msgid "[2]["
-"Show this document?][Show|Cancel]"
+"Show or print this document?][Show|Print|Cancel]"
 msgstr "[2]["
-"Открыть этот документ?][Открыть|Отмена]"
+"Показать или напечатать этот|"
+"документ?][Показать|Печать|Отмена]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Print error!][ Retry | Cancel ]"
+msgstr "[1]["
+"Ошибка печати!][ Повтор | Отмена ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -958,6 +989,14 @@ msgstr "[1]["
 
 #: desk/desk_rsc.c
 msgid "[1]["
+"%s|"
+"is a printer.][  OK  ]"
+msgstr "[1]["
+"%s|"
+"это принтер.][  ОК  ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
 "You cannot drag applications,|"
 "files or folders onto the|"
 "Desktop.][  OK  ]"
@@ -1007,6 +1046,48 @@ msgstr "[3]["
 "для запуска EmuDesk.|"
 "Вы должны перезагрузить|"
 "компьютер.][  ОК  ]"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"%s not found.|"
+"Do you want to remove the|"
+"icon or locate the item?][Remove|Locate|Cancel]"
+msgstr "[2]["
+"%s не найден.|"
+"Вы хотите удалить ярлык|"
+"или найти объект?][Удалить|Найти|Отмена]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Please select icon type.][Desktop|Window|Cancel]"
+msgstr "[1]["
+"Пожалуйста выберите тип|"
+"иконки.][Десктоп|Окно|Отмена]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"No matching file type.][  OK  ]"
+msgstr "[1]["
+"Неверный тип файла.][  ОК ]"
+
+#: desk/desk_rsc.c
+msgid "[3]["
+"Formatting error. The target|"
+"disk may be write-protected|"
+"or unusable.][ Retry | Abort ]"
+msgstr "[3]["
+"Ошибка форматирования.|"
+"Целевой диск может быть|"
+"защищен от записи или его|"
+"нельзя использовать.][ Повтор | Отмена ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"This disk has %ld bytes|"
+"available to the user.][ Continue | Quit ]"
+msgstr "[1]["
+"Этот диск содержит %ld байт|"
+"доступных пользователю.][Продолжить| Выйти ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -1095,46 +1176,10 @@ msgstr "[1]["
 "по умолчанию.][  ОК  ]"
 
 #: desk/desk_rsc.c
-msgid "[2]["
-"%s not found.|"
-"Do you want to remove the|"
-"icon or locate the item?][Remove|Locate|Cancel]"
-msgstr "[2]["
-"%s не найден.|"
-"Вы хотите удалить ярлык|"
-"или найти объект?][Удалить|Найти|Отмена]"
-
-#: desk/desk_rsc.c
 msgid "[1]["
-"Please select icon type.][Desktop|Window|Cancel]"
+"Illegal .INF file format.][  OK  ]"
 msgstr "[1]["
-"Пожалуйста выберите тип|"
-"иконки.][Десктоп|Окно|Отмена]"
-
-#: desk/desk_rsc.c
-msgid "[1]["
-"No matching file type.][  OK  ]"
-msgstr "[1]["
-"Неверный тип файла.][  ОК ]"
-
-#: desk/desk_rsc.c
-msgid "[3]["
-"Formatting error. The target|"
-"disk may be write-protected|"
-"or unusable.][ Retry | Abort ]"
-msgstr "[3]["
-"Ошибка форматирования.|"
-"Целевой диск может быть|"
-"защищен от записи или его|"
-"нельзя использовать.][ Повтор | Отмена ]"
-
-#: desk/desk_rsc.c
-msgid "[1]["
-"This disk has %ld bytes|"
-"available to the user.][ Continue | Quit ]"
-msgstr "[1]["
-"Этот диск содержит %ld байт|"
-"доступных пользователю.][Продолжить| Выйти ]"
+"Неверный формат .INF-файла.][  ОК  ]"
 
 #: cli/cmdint.c
 msgid "Copy <filespec> ... to standard output"
@@ -1289,8 +1334,8 @@ msgid "left/right arrow = previous/next character"
 msgstr "стрелка влево/вправо = предыдущий/следующий символ"
 
 #: cli/cmdint.c
-msgid "shift-left/right arrow = previous/next word"
-msgstr "shift-стрелка влево/вправо = предыдущее/следующее слово"
+msgid "control-left/right arrow = previous/next word"
+msgstr "control-стрелка влево/вправо = предыдущее/следующее слово"
 
 #: cli/cmdint.c
 msgid "invalid mode argument"
