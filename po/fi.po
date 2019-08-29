@@ -1278,8 +1278,8 @@ msgid "left/right arrow = previous/next character"
 msgstr "left/right arrow = previous/next character"
 
 #: cli/cmdint.c
-msgid "shift-left/right arrow = previous/next word"
-msgstr "shift-left/right arrow = previous/next word"
+msgid "control-left/right arrow = previous/next word"
+msgstr "control-left/right arrow = previous/next word"
 
 #: cli/cmdint.c
 msgid "invalid mode argument"
