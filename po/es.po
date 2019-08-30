@@ -330,6 +330,10 @@ msgid "Copy's name: ________.___"
 msgstr "Nombre de la copia: ________.___"
 
 #: desk/desk_rsc.c
+msgid "Free memory: ___________________"
+msgstr "Memoria libre: ___________________"
+
+#: desk/desk_rsc.c
 msgid "Label: ________.___"
 msgstr "Etiqueta: ________.___"
 
@@ -452,6 +456,10 @@ msgstr "  Configuración de escritorio..."
 #: desk/desk_rsc.c
 msgid "  Change resolution...  ^R"
 msgstr "  Cambiar resolución...       ^R"
+
+#: desk/desk_rsc.c
+msgid "  Read .INF file..."
+msgstr "  Leer fichero .INF..."
 
 #: desk/desk_rsc.c
 msgid "  Save desktop...       ^S"
@@ -602,6 +610,10 @@ msgid "NEW FOLDER"
 msgstr "NUEVA CARPETA"
 
 #: desk/desk_rsc.c
+msgid "PRINT FILE"
+msgstr "IMPRIMIR FICHERO"
+
+#: desk/desk_rsc.c
 msgid "SET PREFERENCES"
 msgstr "ESTABLECER PREFERENCIAS"
 
@@ -692,6 +704,10 @@ msgstr "Directorio por defecto:"
 #: desk/desk_rsc.c
 msgid "Input parameter:"
 msgstr "Introducir parámetro:"
+
+#: desk/desk_rsc.c
+msgid "Function keys:"
+msgstr "Teclas de función:"
 
 #: desk/desk_rsc.c
 msgid "SET SCREEN RESOLUTION"
@@ -822,6 +838,10 @@ msgid "TRASH"
 msgstr "PAPELERA"
 
 #: desk/desk_rsc.c
+msgid "PRINTER"
+msgstr "IMPRESORA"
+
+#: desk/desk_rsc.c
 msgid "-More-"
 msgstr "-Más-"
 
@@ -838,6 +858,10 @@ msgid "Locate item"
 msgstr "Localizar objeto"
 
 #: desk/desk_rsc.c
+msgid "Select an INF file"
+msgstr "Seleccion un fichero INF"
+
+#: desk/desk_rsc.c
 msgid "[2]["
 "Switch resolution?][ Yes | No ]"
 msgstr "[2]["
@@ -845,9 +869,16 @@ msgstr "[2]["
 
 #: desk/desk_rsc.c
 msgid "[2]["
-"Show this document?][Show|Cancel]"
+"Show or print this document?][Show|Print|Cancel]"
 msgstr "[2]["
-"¿Mostrar documento?][Mostrar|Cancelar]"
+"Mostrar o imprimir|"
+"este documento?][Mostrar|Imprimir|Cancelar]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Print error!][ Retry | Cancel ]"
+msgstr "[1]["
+"Error de impresión!][Reintentar| Cancelar ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -932,8 +963,8 @@ msgid "[3]["
 "access a folder this far|"
 "down the directory path.][  OK  ]"
 msgstr "[3]["
-"No se puede crear o|"
-"acceder a una carpeta tan abajo|"
+"No se puede crear o acceder|"
+"a una carpeta tan abajo|"
 "en la ruta del directorio.][  OK  ]"
 
 #: desk/desk_rsc.c
@@ -956,6 +987,14 @@ msgstr "[1]["
 "%s se utiliza para|"
 "borrar permanentemente archivos|"
 "o carpetas.][  OK  ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"%s|"
+"is a printer.][  OK  ]"
+msgstr "[1]["
+"%s|"
+"es una impresora.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -1074,8 +1113,7 @@ msgid "[1]["
 "Cannot delete directory|"
 "%s][ Skip | Retry | Abort ]"
 msgstr "[1]["
-"El directorio no|"
-"se puede borrar|"
+"El directorio no se puede borrar|"
 "%s][ Saltar |Reintentar| Anular ]"
 
 #: desk/desk_rsc.c
@@ -1122,6 +1160,12 @@ msgid "[1]["
 msgstr "[1]["
 "No se puede grabar el fichero|"
 "%s][ Saltar | Anular ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Illegal .INF file format.][  OK  ]"
+msgstr "[1]["
+"Formato ilegal en fichero .INF.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -1290,8 +1334,8 @@ msgid "left/right arrow = previous/next character"
 msgstr "flecha izquierda/derecha = carácter anterior/siguiente"
 
 #: cli/cmdint.c
-msgid "shift-left/right arrow = previous/next word"
-msgstr "Mayúsculas-flecha izquierda/derecha = palabra anterior/siguiente"
+msgid "control-left/right arrow = previous/next word"
+msgstr "flecha izquierda/derecha+control = palabra anterior/siguiente"
 
 #: cli/cmdint.c
 msgid "invalid mode argument"
