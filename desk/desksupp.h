@@ -15,6 +15,8 @@
 
 void build_root_path(char *path, WORD drive);
 void deselect_all(OBJECT *tree);
+void desk_busy_off(void);
+void desk_busy_on(void);
 void desk_clear(WORD wh);
 void desk_clear_all(void);
 void desk_verify(WORD wh, WORD changed);

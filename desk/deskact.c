@@ -354,7 +354,7 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc,
     *poffx = offx;              /* and offsets */
     *poffy = offy;
     *pdwh = dst_wh;
-    graf_mouse(ARROW, NULL);
+    desk_busy_off();
 }
 
 

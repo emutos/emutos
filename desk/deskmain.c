@@ -214,27 +214,17 @@ static void display_free_stack(void)
 
 
 /*
- *  Turn on the hour glass to signify a wait and turn it off when
- *  we're done
- */
-static void desk_wait(WORD turnon)
-{
-    graf_mouse(turnon ? HGLASS : ARROW, NULL);
-}
-
-
-/*
  *  Routine to update all of the desktop windows
  */
 static void desk_all(WORD flags)
 {
-    desk_wait(TRUE);
+    desk_busy_on();
     if (flags & SORT_HAS_CHANGED)
         win_srtall();
     if (flags & (VIEW_HAS_CHANGED|SORT_HAS_CHANGED))
         win_bdall();
     win_shwall();
-    desk_wait(FALSE);
+    desk_busy_off();
 }
 
 
@@ -572,10 +562,10 @@ static WORD do_optnmenu(WORD item)
             desk_all(FALSE);
         break;
     case SAVEITEM:
-        desk_wait(TRUE);
+        desk_busy_on();
         cnx_put();
         app_save(TRUE);
-        desk_wait(FALSE);
+        desk_busy_off();
         break;
 #if CONF_WITH_DESKTOP_CONFIG
     case CONFITEM:
@@ -1535,7 +1525,7 @@ BOOL deskmain(void)
 
     /* initialize mouse     */
     wind_update(BEG_UPDATE);
-    desk_wait(TRUE);
+    desk_busy_on();
     wind_update(END_UPDATE);
 
     /* detect optional features */
@@ -1630,7 +1620,7 @@ BOOL deskmain(void)
     /* menu is initialised - display menu bar & set mouse to arrow */
     wind_update(BEG_UPDATE);
     menu_bar(menutree, 1);
-    desk_wait(FALSE);
+    desk_busy_off();
     wind_update(END_UPDATE);
 
     /* get ready for main loop */
@@ -1694,7 +1684,7 @@ BOOL deskmain(void)
 #if CONF_WITH_READ_INF
     if (restart_desktop)
     {
-        graf_mouse(HGLASS, NULL);
+        desk_busy_on();
         close_desktop_windows();    /* close our windows */
         dos_free(G.g_wlist);        /* free the windows */
         dos_free(G.g_screen);       /* the screen objects */
@@ -1704,7 +1694,7 @@ BOOL deskmain(void)
         dos_free(G.g_cnxsave);      /* the context save area */
         dos_free(desk_rs_ptext);    /* the te_ptext fields for the EmuDesk resource */
         dos_free(desk_rs_obj);      /* the RAM copies of the Emudesk resource objects */
-        graf_mouse(ARROW, NULL);
+        desk_busy_off();
         rc = FALSE;                 /* _deskstart will call us again immediately */
     }
     else

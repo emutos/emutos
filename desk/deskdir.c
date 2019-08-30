@@ -95,7 +95,7 @@ static WORD do_namecon(void)
     OBJECT *tree = G.a_trees[ADCPALER];
     WORD ob;
 
-    graf_mouse(ARROW, NULL);
+    desk_busy_off();
     if (ml_havebox)
         draw_dial(tree);
     else
@@ -105,7 +105,7 @@ static WORD do_namecon(void)
     }
     form_do(tree, 0);
     draw_dial(G.a_trees[ADCPYDEL]);
-    graf_mouse(HGLASS, NULL);
+    desk_busy_on();
 
     ob = inf_gindex(tree, CAOK, 3) + CAOK;
     (tree+ob)->ob_state = NORMAL;
@@ -861,7 +861,7 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, char *pdst_path, DIRCOUNT *co
     LONG lavail;
     char srcpth[MAXPATHLEN], dstpth[MAXPATHLEN];
 
-    graf_mouse(HGLASS, NULL);
+    desk_busy_on();
 
     ml_havebox = FALSE;
     confirm = 0;
@@ -895,7 +895,7 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, char *pdst_path, DIRCOUNT *co
         lavail = dos_avail_stram() - 0x400; /* allow safety margin */
         if (lavail < 0L)
         {
-            graf_mouse(ARROW, NULL);
+            desk_busy_off();
             malloc_fail_alert();        /* let user know */
             return FALSE;
         }
@@ -941,9 +941,9 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, char *pdst_path, DIRCOUNT *co
         ml_havebox = TRUE;
         if (confirm)
         {
-            graf_mouse(ARROW, NULL);
+            desk_busy_off();
             form_do(tree, 0);
-            graf_mouse(HGLASS, NULL);
+            desk_busy_on();
             more = inf_what(tree, CDOK, CDCNCL);
         }
     }
@@ -954,9 +954,9 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, char *pdst_path, DIRCOUNT *co
      */
     if (more && (op == OP_DELETE) && (icontype == AT_ISDISK))
     {
-        graf_mouse(ARROW, NULL);
+        desk_busy_off();
         more = (fun_alert_merge(2, STDELDIS, psrc_path[0]) == 1) ? TRUE: FALSE;
-        graf_mouse(HGLASS, NULL);
+        desk_busy_on();
     }
 
     for (pf = pspath->p_flist; pf && more; pf = pf->f_next)
@@ -1058,7 +1058,7 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, char *pdst_path, DIRCOUNT *co
 
     if (tree)
         end_dialog(tree);
-    graf_mouse(ARROW, NULL);
+    desk_busy_off();
 
     return more;
 }

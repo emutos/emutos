@@ -36,11 +36,11 @@ static WORD pro_exec(WORD isgraf, WORD isover, char *pcmd, char *ptail)
 {
     WORD ret;
 
-    graf_mouse(HGLASS, NULL);
+    desk_busy_on();
 
     ret = shel_write(SHW_EXEC, isgraf, isover, pcmd, ptail);
     if (!ret)
-        graf_mouse(ARROW, NULL);
+        desk_busy_off();
     return ret;
 }
 

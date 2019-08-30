@@ -145,7 +145,7 @@ void fun_rebld_marked(void)
 {
     WNODE *pwin;
 
-    graf_mouse(HGLASS, NULL);
+    desk_busy_on();
 
     /* check all wnodes     */
     for (pwin = G.g_wfirst; pwin; pwin = pwin->w_next)
@@ -157,7 +157,7 @@ void fun_rebld_marked(void)
         }
     }
 
-    graf_mouse(ARROW, NULL);
+    desk_busy_off();
 }
 
 
@@ -168,7 +168,7 @@ void fun_rebld(char *ptst)
 {
     WNODE *pwin;
 
-    graf_mouse(HGLASS, NULL);
+    desk_busy_on();
 
     /* check all wnodes     */
     for (pwin = G.g_wfirst; pwin; pwin = pwin->w_next)
@@ -180,7 +180,7 @@ void fun_rebld(char *ptst)
         } /* if */
     } /* for */
 
-    graf_mouse(ARROW, NULL);
+    desk_busy_off();
 } /* fun_rebld */
 
 
@@ -428,7 +428,7 @@ void fun_close(WNODE *pw, WORD closetype)
     char pathname[MAXPATHLEN];
     char *fname;
 
-    graf_mouse(HGLASS, NULL);
+    desk_busy_on();
 
     /*
      * handle CLOSE_FOLDER and CLOSE_TO_ROOT
@@ -453,7 +453,7 @@ void fun_close(WNODE *pw, WORD closetype)
     else
         w_setpath(pw,pathname);
 
-    graf_mouse(ARROW, NULL);
+    desk_busy_off();
 }
 
 
@@ -887,7 +887,7 @@ static WORD delete_ffd(char *path, WORD icontype)
     if (pn == NULL)     /* "can't happen" - pathname too long! */
         return 0;
 
-    graf_mouse(HGLASS, NULL);
+    desk_busy_on();
     pn_active(pn, FALSE);
     if (pn->p_flist)
     {
@@ -896,7 +896,7 @@ static WORD delete_ffd(char *path, WORD icontype)
         ret = fun_op(OP_DELETE, icontype, pn, NULL);
     }
     pn_close(pn);
-    graf_mouse(ARROW, NULL);
+    desk_busy_off();
 
     return ret;
 }

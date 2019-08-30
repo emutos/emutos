@@ -401,13 +401,13 @@ WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon,
     WORD ret;
 
     /* convert to hourglass */
-    graf_mouse(HGLASS, NULL);
+    desk_busy_on();
 
     /* open a path node */
     if (!pn_open(pathname, pw)) /* pathname is too long */
     {
         KDEBUG(("Pathname is too long\n"));
-        graf_mouse(ARROW, NULL);
+        desk_busy_off();
         return FALSE;
     }
 
@@ -417,7 +417,7 @@ WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon,
     {
         KDEBUG(("Error reading directory %s\n",pathname));
         pn_close(&pw->w_pnode);
-        graf_mouse(ARROW, NULL);
+        desk_busy_off();
         return FALSE;
     }
 
@@ -442,7 +442,7 @@ WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon,
     if (redraw && !new_win)
         fun_msg(WM_REDRAW, pw->w_id, pt->g_x, pt->g_y, pt->g_w, pt->g_h);
 
-    graf_mouse(ARROW, NULL);
+    desk_busy_off();
 
     return TRUE;
 }
@@ -565,10 +565,10 @@ static WORD print_buf(WORD device,const char *s,LONG len)
         c = *s++;
         while(bios_prnout(device, c) == 0)
         {
-            graf_mouse(ARROW, NULL);
+            desk_busy_off();
             if (fun_alert(1, STPRTERR) != 1)    /* retry or cancel? */
                 return 1;
-            graf_mouse(HGLASS, NULL);       /* we're busy again */
+            desk_busy_on();       /* we're busy again */
         }
     }
 
@@ -623,7 +623,7 @@ BOOL print_file(char *name,LONG bufsize,char *iobuf)
 
     /* close dialog, reset mouse cursor */
     end_dialog(tree);
-    graf_mouse(ARROW, NULL);
+    desk_busy_off();
 
     return (rc > 0L) ? FALSE : TRUE;
 }
@@ -1746,4 +1746,22 @@ BOOL valid_drive(char drive)
 void malloc_fail_alert(void)
 {
     fun_alert(1, STMAFAIL);
+}
+
+
+/*
+ *  Change mouse to 'busy' indicator
+ */
+void desk_busy_on(void)
+{
+    graf_mouse(HGLASS, NULL);
+}
+
+
+/*
+ *  Change mouse to 'not busy' indicator
+ */
+void desk_busy_off(void)
+{
+    graf_mouse(ARROW, NULL);
 }
