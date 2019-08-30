@@ -192,7 +192,7 @@ void vdi_vsf_style(Vwk * vwk)
     CONTRL[4] = 1;
     fi = INTIN[0];
 
-    if (vwk->fill_style == PATTERN_FILL_STYLE) {
+    if (vwk->fill_style == FIS_PATTERN) {
         if ((fi > MAX_FILL_PATTERN) || (fi < MIN_FILL_PATTERN))
             fi = DEF_FILL_PATTERN;
     } else {
@@ -351,15 +351,15 @@ st_fl_ptr(Vwk * vwk)
     fi = vwk->fill_index;
     pm = 0;
     switch (vwk->fill_style) {
-    case 0:
+    case FIS_HOLLOW:
         pp = &HOLLOW;
         break;
 
-    case 1:
+    case FIS_SOLID:
         pp = &SOLID;
         break;
 
-    case 2:
+    case FIS_PATTERN:
         if (fi < 8) {
             pm = DITHRMSK;
             pp = &DITHER[fi * (pm + 1)];
@@ -368,7 +368,7 @@ st_fl_ptr(Vwk * vwk)
             pp = &OEMPAT[(fi - 8) * (pm + 1)];
         }
         break;
-    case 3:
+    case FIS_HATCH:
         if (fi < 6) {
             pm = HAT_0_MSK;
             pp = &HATCH0[fi * (pm + 1)];
@@ -377,7 +377,7 @@ st_fl_ptr(Vwk * vwk)
             pp = &HATCH1[(fi - 6) * (pm + 1)];
         }
         break;
-    case 4:
+    case FIS_USER:
         pm = 0x000f;
         pp = (UWORD *)&vwk->ud_patrn[0];
         break;

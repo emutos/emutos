@@ -35,9 +35,13 @@
 #define DEF_MARK_STYLE  3
 
 #define MIN_FILL_STYLE  0       /* for vsf_interior() */
+#define FIS_HOLLOW      0
+#define FIS_SOLID       1
+#define FIS_PATTERN     2
+#define FIS_HATCH       3
+#define FIS_USER        4
 #define MAX_FILL_STYLE  4
-#define DEF_FILL_STYLE  0
-#define PATTERN_FILL_STYLE  2
+#define DEF_FILL_STYLE  FIS_HOLLOW
 
 #define MIN_FILL_HATCH  1       /* for vsf_style() when fill style is hatch */
 #define MAX_FILL_HATCH  12

@@ -256,7 +256,7 @@ static void init_wk(Vwk * vwk)
     vwk->fill_style = ((l > MAX_FILL_STYLE) || (l < MIN_FILL_STYLE)) ? DEF_FILL_STYLE : l;
 
     l = *pointer++;             /* INTIN[8] */
-    if (vwk->fill_style == PATTERN_FILL_STYLE)
+    if (vwk->fill_style == FIS_PATTERN)
         l = ((l > MAX_FILL_PATTERN) || (l < MIN_FILL_PATTERN)) ? DEF_FILL_PATTERN : l;
     else
         l = ((l > MAX_FILL_HATCH) || (l < MIN_FILL_HATCH)) ? DEF_FILL_HATCH : l;
