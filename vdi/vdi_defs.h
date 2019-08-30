@@ -52,8 +52,12 @@
 #define DEF_FILL_PATTERN 1
 
 #define MIN_WRT_MODE    1       /* for vswr_mode() */
+#define MD_REPLACE      1
+#define MD_TRANS        2
+#define MD_XOR          3
+#define MD_ERASE        4
 #define MAX_WRT_MODE    4
-#define DEF_WRT_MODE    1
+#define DEF_WRT_MODE    MD_REPLACE
 
 #define MIN_ARC_CT      32      /* min # of points to use when drawing circle/ellipse */
 #define MAX_ARC_CT      128     /* max # of points ... (must not exceed MAX_VERTICES) */
@@ -87,12 +91,6 @@
 #define N_INTOUT    4
 #define SUBROUTINE  5
 #define VDI_HANDLE  6
-
-/* gsx write modes */
-#define MD_REPLACE  1
-#define MD_TRANS    2
-#define MD_XOR      3
-#define MD_ERASE    4
 
 /* text style bits: for vwk->style (and also lineA variable STYLE) */
 #define F_THICKEN   1
