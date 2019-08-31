@@ -269,7 +269,7 @@ static void init_wk(Vwk * vwk)
 
     st_fl_ptr(vwk);                /* set the fill pattern as requested */
 
-    vwk->wrt_mode = MD_REPLACE-1;  /* default is replace mode */
+    vwk->wrt_mode = WM_REPLACE;    /* default is replace mode */
     vwk->line_width = DEF_LWID;
     vwk->line_beg = SQUARED;       /* default to squared ends */
     vwk->line_end = SQUARED;

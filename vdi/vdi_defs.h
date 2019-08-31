@@ -183,6 +183,14 @@ struct Vwk_ {
     WORD bez_qual;              /* actual quality for bezier curves */
 };
 
+/*
+ * the following values are used for 'wrt_mode' in the Vwk structure above
+ */
+#define WM_REPLACE      (MD_REPLACE-1)
+#define WM_TRANS        (MD_TRANS-1)
+#define WM_XOR          (MD_XOR-1)
+#define WM_ERASE        (MD_ERASE-1)
+
 
 typedef struct {
     WORD x1,y1;

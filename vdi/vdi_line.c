@@ -481,7 +481,7 @@ void OPTIMIZE_SMALL draw_rect_common(const VwkAttrib *attr, const Rect *rect)
     centre = width - 2;
 
     switch(attr->wrt_mode) {
-    case 3:                 /* erase (reverse transparent) mode */
+    case WM_ERASE:          /* erase (reverse transparent) mode */
         for (y = rect->y1; y <= rect->y2; y++, addr += yinc) {
             int patind = patmsk & y;   /* starting pattern */
             int plane;
@@ -518,7 +518,7 @@ void OPTIMIZE_SMALL draw_rect_common(const VwkAttrib *attr, const Rect *rect)
             }
         }
         break;
-    case 2:                 /* xor mode */
+    case WM_XOR:            /* xor mode */
         for (y = rect->y1; y <= rect->y2; y++, addr += yinc) {
             int patind = patmsk & y;   /* starting pattern */
             int plane;
@@ -543,7 +543,7 @@ void OPTIMIZE_SMALL draw_rect_common(const VwkAttrib *attr, const Rect *rect)
             }
         }
         break;
-    case 1:                 /* transparent mode */
+    case WM_TRANS:          /* transparent mode */
         for (y = rect->y1; y <= rect->y2; y++, addr += yinc) {
             int patind = patmsk & y;   /* starting pattern */
             int plane;
@@ -1476,7 +1476,7 @@ static void draw_line(const Line *line, WORD wrt_mode, UWORD color)
             e2 = 2*dx;
 
             switch (wrt_mode) {
-            case 3:              /* reverse transparent  */
+            case WM_ERASE:      /* reverse transparent  */
                 if (color & 0x0001) {
                     for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
                         rolw1(linemask);        /* get next bit of line style */
@@ -1507,7 +1507,7 @@ static void draw_line(const Line *line, WORD wrt_mode, UWORD color)
                     }
                 }
                 break;
-            case 2:              /* xor */
+            case WM_XOR:        /* xor */
                 for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
                     rolw1(linemask);        /* get next bit of line style */
                     if (linemask&0x0001)
@@ -1522,7 +1522,7 @@ static void draw_line(const Line *line, WORD wrt_mode, UWORD color)
                     }
                 }
                 break;
-            case 1:              /* or */
+            case WM_TRANS:      /* or */
                 if (color & 0x0001) {
                     for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
                         rolw1(linemask);        /* get next bit of line style */
@@ -1553,7 +1553,7 @@ static void draw_line(const Line *line, WORD wrt_mode, UWORD color)
                     }
                 }
                 break;
-            case 0:              /* rep */
+            case WM_REPLACE:    /* rep */
                 if (color & 0x0001) {
                     for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
                         rolw1(linemask);        /* get next bit of line style */
@@ -1592,7 +1592,7 @@ static void draw_line(const Line *line, WORD wrt_mode, UWORD color)
             e2 = 2*dy;
 
             switch (wrt_mode) {
-            case 3:              /* reverse transparent */
+            case WM_ERASE:      /* reverse transparent */
                 if (color & 0x0001) {
                     for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
                         rolw1(linemask);        /* get next bit of line style */
@@ -1623,7 +1623,7 @@ static void draw_line(const Line *line, WORD wrt_mode, UWORD color)
                     }
                 }
                 break;
-            case 2:              /* xor */
+            case WM_XOR:        /* xor */
                 for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
                     rolw1(linemask);        /* get next bit of line style */
                     if (linemask&0x0001)
@@ -1638,7 +1638,7 @@ static void draw_line(const Line *line, WORD wrt_mode, UWORD color)
                     }
                 }
                 break;
-            case 1:              /* or */
+            case WM_TRANS:      /* or */
                 if (color & 0x0001) {
                     for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
                         rolw1(linemask);        /* get next bit of line style */
@@ -1669,7 +1669,7 @@ static void draw_line(const Line *line, WORD wrt_mode, UWORD color)
                     }
                 }
                 break;
-            case 0:              /* rep */
+            case WM_REPLACE:    /* rep */
                 if (color & 0x0001) {
                     for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
                         rolw1(linemask);        /* get next bit of line style */
@@ -1744,7 +1744,7 @@ static void vertical_line(const Line *line, WORD wrt_mode, UWORD color)
         linemask = LN_MASK;
 
         switch(wrt_mode) {
-        case 3:              /* reverse transparent */
+        case WM_ERASE:          /* reverse transparent */
             if (color & 0x0001) {
                 for (loopcnt = dy; loopcnt >= 0; loopcnt--) {
                     rolw1(linemask);        /* get next bit of line style */
@@ -1761,7 +1761,7 @@ static void vertical_line(const Line *line, WORD wrt_mode, UWORD color)
                 }
             }
             break;
-        case 2:              /* xor */
+        case WM_XOR:            /* xor */
             for (loopcnt = dy; loopcnt >= 0; loopcnt--) {
                 rolw1(linemask);        /* get next bit of line style */
                 if (linemask&0x0001)
@@ -1769,7 +1769,7 @@ static void vertical_line(const Line *line, WORD wrt_mode, UWORD color)
                 addr += yinc;
             }
             break;
-        case 1:              /* or */
+        case WM_TRANS:          /* or */
             if (color & 0x0001) {
                 for (loopcnt = dy; loopcnt >= 0; loopcnt--) {
                     rolw1(linemask);        /* get next bit of line style */
@@ -1786,7 +1786,7 @@ static void vertical_line(const Line *line, WORD wrt_mode, UWORD color)
                 }
             }
             break;
-        case 0:              /* rep */
+        case WM_REPLACE:        /* rep */
             if (color & 0x0001) {
                 for (loopcnt = dy; loopcnt >= 0; loopcnt--) {
                     rolw1(linemask);        /* get next bit of line style */
