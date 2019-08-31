@@ -1043,7 +1043,7 @@ msgstr "[1]["
 msgid "[1]["
 "Drive %s: does not exist.][ Cancel ]"
 msgstr "[1]["
-"Asemaa %s: ei ole.][ Cancel ]"
+"Asemaa %s: ei ole.][ Kumoa ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
