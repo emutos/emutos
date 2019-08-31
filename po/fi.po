@@ -326,6 +326,10 @@ msgid "Copy's name: ________.___"
 msgstr "Kopion nimi: ________.___"
 
 #: desk/desk_rsc.c
+msgid "Free memory: ___________________"
+msgstr "Vapaa muisti: ___________________"
+
+#: desk/desk_rsc.c
 msgid "Label: ________.___"
 msgstr "Nimi: ________.___"
 
@@ -448,6 +452,10 @@ msgstr "  Työpöytäasetukset..."
 #: desk/desk_rsc.c
 msgid "  Change resolution...  ^R"
 msgstr "  Vaihda tarkkuutta... ^R"
+
+#: desk/desk_rsc.c
+msgid "  Read .INF file..."
+msgstr "  Lue .INF tiedosto..."
 
 #: desk/desk_rsc.c
 msgid "  Save desktop...       ^S"
@@ -598,6 +606,10 @@ msgid "NEW FOLDER"
 msgstr "UUSI KANSIO"
 
 #: desk/desk_rsc.c
+msgid "PRINT FILE"
+msgstr "TULOSTA TIEDOSTO"
+
+#: desk/desk_rsc.c
 msgid "SET PREFERENCES"
 msgstr "MÄÄRITÄ ASETUKSET"
 
@@ -688,6 +700,10 @@ msgstr "Oletushakemisto:"
 #: desk/desk_rsc.c
 msgid "Input parameter:"
 msgstr "Syöte:"
+
+#: desk/desk_rsc.c
+msgid "Function keys:"
+msgstr "Funktionäppäimet:"
 
 #: desk/desk_rsc.c
 msgid "SET SCREEN RESOLUTION"
@@ -818,6 +834,10 @@ msgid "TRASH"
 msgstr "ROSKIS"
 
 #: desk/desk_rsc.c
+msgid "PRINTER"
+msgstr "TULOSTIN"
+
+#: desk/desk_rsc.c
 msgid "-More-"
 msgstr "-Lisää-"
 
@@ -834,6 +854,10 @@ msgid "Locate item"
 msgstr "Etsi kohde"
 
 #: desk/desk_rsc.c
+msgid "Select an INF file"
+msgstr "Valitse .INF tiedosto"
+
+#: desk/desk_rsc.c
 msgid "[2]["
 "Switch resolution?][ Yes | No ]"
 msgstr "[2]["
@@ -841,9 +865,15 @@ msgstr "[2]["
 
 #: desk/desk_rsc.c
 msgid "[2]["
-"Show this document?][Show|Cancel]"
+"Show or print this document?][Show|Print|Cancel]"
 msgstr "[2]["
-"Näytä tämä tiedosto?][ Näytä | Kumoa ]"
+"Näytä tai tulosta tiedosto?][Näytä|Tulosta|Kumoa]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Print error!][ Retry | Cancel ]"
+msgstr "[1]["
+"Tulostusvirhe!][Uudestaan| Kumoa ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -950,6 +980,14 @@ msgstr "[1]["
 "%s on tiedostojen|"
 "ja kansioiden pysyvää|"
 "tuhoamista varten.][  OK  ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"%s|"
+"is a printer.][  OK  ]"
+msgstr "[1]["
+"%s|"
+"on tulostin.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -1124,6 +1162,12 @@ msgid "[1]["
 msgstr "[1]["
 "Oletushakemiston|"
 "asetus epäonnistui.][  OK  ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Illegal .INF file format.][  OK  ]"
+msgstr "[1]["
+"Sopimaton .INF tiedostomuoto.][  OK  ]"
 
 #: cli/cmdint.c
 msgid "Copy <filespec> ... to standard output"
