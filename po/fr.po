@@ -24,7 +24,7 @@ msgstr "Lecteurs"
 msgid "MB"
 msgstr "Mo"
 
-#: bios/initinfo.c
+#: bios/initinfo.c desk/deskinf.c
 msgid "KB"
 msgstr "Ko"
 
@@ -330,6 +330,10 @@ msgid "Copy's name: ________.___"
 msgstr "Nom de la copie: ________.___"
 
 #: desk/desk_rsc.c
+msgid "Free memory: ___________________"
+msgstr "Mémoire libre: ___________________"
+
+#: desk/desk_rsc.c
 msgid "Label: ________.___"
 msgstr "Nom : ________.___"
 
@@ -452,6 +456,10 @@ msgstr "  Configuration du bureau..."
 #: desk/desk_rsc.c
 msgid "  Change resolution...  ^R"
 msgstr "  Changer la résolution... ^R"
+
+#: desk/desk_rsc.c
+msgid "  Read .INF file..."
+msgstr "  Lire fichier .INF..."
 
 #: desk/desk_rsc.c
 msgid "  Save desktop...       ^S"
@@ -602,6 +610,10 @@ msgid "NEW FOLDER"
 msgstr "NOUVEAU DOSSIER"
 
 #: desk/desk_rsc.c
+msgid "PRINT FILE"
+msgstr "IMPRIMER FICHIER"
+
+#: desk/desk_rsc.c
 msgid "SET PREFERENCES"
 msgstr "PRÉFÉRENCES"
 
@@ -694,6 +706,10 @@ msgid "Input parameter:"
 msgstr "Paramètre :"
 
 #: desk/desk_rsc.c
+msgid "Function keys:"
+msgstr "Touches de fonction:"
+
+#: desk/desk_rsc.c
 msgid "SET SCREEN RESOLUTION"
 msgstr "RÉSOLUTION DE L'ÉCRAN"
 
@@ -744,10 +760,6 @@ msgstr "Dossier"
 #: desk/desk_rsc.c
 msgid "File"
 msgstr "Fichier"
-
-#: desk/desk_rsc.c
-msgid "Monochrome only"
-msgstr "Monochrome seulement"
 
 #: desk/desk_rsc.c
 msgid "FORMAT FLOPPY DISKETTE"
@@ -822,6 +834,10 @@ msgid "TRASH"
 msgstr "CORBEILLE"
 
 #: desk/desk_rsc.c
+msgid "PRINTER"
+msgstr "IMPRIMANTE"
+
+#: desk/desk_rsc.c
 msgid "-More-"
 msgstr "-Plus-"
 
@@ -838,6 +854,10 @@ msgid "Locate item"
 msgstr "Localiser objet"
 
 #: desk/desk_rsc.c
+msgid "Select an INF file"
+msgstr "Sélectionner un fichier INF"
+
+#: desk/desk_rsc.c
 msgid "[2]["
 "Switch resolution?][ Yes | No ]"
 msgstr "[2]["
@@ -845,17 +865,16 @@ msgstr "[2]["
 
 #: desk/desk_rsc.c
 msgid "[2]["
-"Show this document?][Show|Cancel]"
+"Show or print this document?][Show|Print|Cancel]"
 msgstr "[2]["
-"Afficher ce document ?][Afficher|Annuler]"
+"Afficher ou imprimer ce|"
+"document ?][Afficher|Imprimer|Annuler]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
-"This document type has no|"
-"associated application.][  OK  ]"
+"Print error!][ Retry | Cancel ]"
 msgstr "[1]["
-"Ce type de document n'est|"
-"associé à aucune application.][  OK  ]"
+"Erreur d'impression!][Réessayer| Annuler ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -961,13 +980,11 @@ msgstr "[1]["
 
 #: desk/desk_rsc.c
 msgid "[1]["
-"You cannot drag applications,|"
-"files or folders onto the|"
-"Desktop.][  OK  ]"
+"%s|"
+"is a printer.][  OK  ]"
 msgstr "[1]["
-"Vous ne pouvez pas déposer des|"
-"applications, fichiers ou|"
-"dossiers sur le bureau.][  OK  ]"
+"%s|"
+"est une imprimante.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[2]["
@@ -1138,6 +1155,12 @@ msgstr "[1]["
 "Echec lors de la définition|"
 "du répertoire par défaut.][  OK  ]"
 
+#: desk/desk_rsc.c
+msgid "[1]["
+"Illegal .INF file format.][  OK  ]"
+msgstr "[1]["
+"Format de fichier .INF illégal.][  OK  ]"
+
 #: cli/cmdint.c
 msgid "Copy <filespec> ... to standard output"
 msgstr "Copier <filespec> ... vers la sortie standard"
@@ -1288,11 +1311,11 @@ msgstr "flèche haut/bas = ligne précédente/suivante dans l'historique"
 
 #: cli/cmdint.c
 msgid "left/right arrow = previous/next character"
-msgstr "flèche gauche/droit = caractère précédent/suivant"
+msgstr "flèche gauche/droite = caractère précédent/suivant"
 
 #: cli/cmdint.c
-msgid "shift-left/right arrow = previous/next word"
-msgstr "shift-flèche gauche/droit = mot précédent/suivant"
+msgid "control-left/right arrow = previous/next word"
+msgstr "control-flèche gauche/droite = mot précédent/suivant"
 
 #: cli/cmdint.c
 msgid "invalid mode argument"
