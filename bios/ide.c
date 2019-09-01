@@ -344,26 +344,43 @@ static int check_interface_magic(volatile struct IDE *interface, WORD ifnum)
     return 0;
 }
 
+/* Enum to capture interface status during ide_interface_exists(). */
+enum ide_if_status
+{
+    IDE_IF_NOTCHECKED,
+    IDE_IF_NOTPRESENT,
+    IDE_IF_ISGHOST,
+    IDE_IF_PRESENT
+};
+
 /*
  * determine if a specific interface really exists, allowing for
  * incomplete hardware address decoding and twisted cables
  *
  * method:
- * 1. as soon as the BSY bit on the interface is low:
+ * as soon as the BSY bit on an interface is low:
  *    write a magic number (dependent on the interface number) to
- *    the sector number/count registers at the addresses for the
- *    regular and the twisted cable
- * 2. try read them back & check if either of them matches;
- *    if it does, goto (3); else repeat (2) until a timeout occurs
- * 3. check if the interface 0 magic number has been changed; if
- *    so, this is a ghost interface & we reject it
+ *    the sector number/count registers and check...
+ *    a. if the magic number is read back correctly and the
+ *       interface 0 magic number is unchanged
+ *       => device found
+ *    b. if the magic number is read back correctly but the
+ *       interface 0 magic number is changed
+ *       => ghost interface
+ *    c. if the magic number is not read back correctly
+ *       => no device present
+ * break if...
+ *    a. a device is found
+ *    b. no device is found on both regular and twisted interfaces
+ *    c. a timeout occurs, i.e., both interfaces stayed BSY
  */
 static int ide_interface_exists(WORD ifnum)
 {
     volatile struct IDE *regular_iface = ifinfo[ifnum].base_address;
     volatile struct IDE *twisted_iface = (volatile struct IDE *)(((ULONG)ifinfo[ifnum].base_address)-1);
     volatile struct IDE *first_iface   = ifinfo[0].base_address;
-    int rc = 0;             /* assume it doesn't exist */
+    enum ide_if_status  regular_iface_status = IDE_IF_NOTCHECKED;
+    enum ide_if_status  twisted_iface_status = IDE_IF_NOTCHECKED;
 
     /* We wait a max time for BSY to drop since this is called during
      * initialisation, which can be invoked by power-on/reset.
@@ -374,19 +391,23 @@ static int ide_interface_exists(WORD ifnum)
     IDE_WRITE_CONTROL(twisted_iface,IDE_CONTROL_nIEN);/* no interrupts please */
 
     DELAY_400NS;
-    while(hz_200 < next) {
+    while ((hz_200 < next) &&
+        ((regular_iface_status == IDE_IF_NOTCHECKED) || (twisted_iface_status == IDE_IF_NOTCHECKED))) {
         /* Check BSY on regular interface. */
         if ((IDE_READ_ALT_STATUS(regular_iface) & IDE_STATUS_BSY) == 0) {
             /* Check it exists by setting and reading back magic number. */
             KDEBUG(("checking ide interface %d\n", ifnum));
             set_interface_magic(regular_iface, ifnum);
-            if ((rc = check_interface_magic(regular_iface, ifnum))) {
+            if (check_interface_magic(regular_iface, ifnum)) {
                 ifinfo[ifnum].twisted_cable = FALSE;
+                regular_iface_status = IDE_IF_PRESENT;
                 /* Check that it is not a ghost interface. */
-                if (ifnum > 0) {
-                    rc = check_interface_magic(first_iface, 0);
+                if ((ifnum > 0) && (!check_interface_magic(first_iface, 0))) {
+                    regular_iface_status = IDE_IF_ISGHOST;
                 }
                 break;
+            } else {
+                regular_iface_status = IDE_IF_NOTPRESENT;
             }
         }
 
@@ -395,18 +416,22 @@ static int ide_interface_exists(WORD ifnum)
             /* Check it exists by setting and reading back magic number. */
             KDEBUG(("checking ide interface %d with twisted cable\n", ifnum));
             set_interface_magic(twisted_iface, ifnum);
-            if ((rc = check_interface_magic(twisted_iface, ifnum))) {
+            if (check_interface_magic(twisted_iface, ifnum)) {
                 ifinfo[ifnum].base_address = twisted_iface;
                 ifinfo[ifnum].twisted_cable = TRUE;
+                twisted_iface_status = IDE_IF_PRESENT;
                 /* Check that it is not a ghost interface. */
-                if (ifnum > 0) {
-                    rc = check_interface_magic(first_iface, 0);
+                if ((ifnum > 0) && (!check_interface_magic(first_iface, 0))) {
+                    twisted_iface_status = IDE_IF_ISGHOST;
                 }
                 break;
+            } else {
+                twisted_iface_status = IDE_IF_NOTPRESENT;
             }
         }
     }
 
+    int rc = (regular_iface_status == IDE_IF_PRESENT) || (twisted_iface_status == IDE_IF_PRESENT);
     KDEBUG(("ide interface %d %s %s\n",ifnum,rc?"exists":"not present",ifinfo[ifnum].twisted_cable?"(twisted cable)":""));
 
     return rc;
