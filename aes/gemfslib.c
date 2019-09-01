@@ -527,7 +527,7 @@ WORD fs_input(char *pipath, char *pisel, WORD *pbutton, char *pilabel)
     curr = 0;
     count = 0;
 
-    /* get out quick if path is nullptr or if pts to null. */
+    /* get out quick if path is nullptr */
     if (pipath == NULL)
         return FALSE;
 
