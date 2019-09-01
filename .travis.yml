@@ -18,6 +18,8 @@ addons:
       - dos2unix
       - lftp
       - hatari
+      - aranym
+      - mtools
 
 before_install:
   # Install our SSH key pair

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo "Cookie jar test:"
+echo "Cookie jar test (with Hatari):"
 
 if ! command -v hatari >/dev/null 2>&1; then
     echo "ERROR: You must install hatari to run this test."

@@ -17,3 +17,12 @@ test: all
 	else \
 		echo "Skipped cookie test with Hatari (not installed)."; \
 	fi
+	@if command -v aranym >/dev/null 2>&1; then \
+		if command -v mcopy >/dev/null 2>&1; then \
+			./aranym.sh || exit 1; \
+		else \
+			echo "Skipped cookie test with Aranym (no mtools)."; \
+		fi \
+	else \
+		echo "Skipped cookie test with Aranym (not installed)."; \
+	fi
