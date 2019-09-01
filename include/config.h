@@ -1477,6 +1477,7 @@
 
 #define BLKDEVNUM 26                    /* number of block devices supported: A: ... Z: */
 #define INF_FILE_NAME "A:\\EMUDESK.INF" /* path to saved desktop file */
+#define INF_FILE_WILD "A:\\*.INF"       /* wildcard for desktop file */
 #define ICON_RSC_NAME "A:\\EMUICON.RSC" /* path to user icon file */
 
 /*

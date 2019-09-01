@@ -1387,7 +1387,8 @@ BOOL app_read_inf(void)
     char path[MAXPATHLEN], fname[LEN_ZFNAME];
 
     /* prompt for filename */
-    build_root_path(path, 'A'+G.g_stdrv);
+    strcpy(path, INF_FILE_WILD);
+    *path += G.g_stdrv;
     strcpy(fname, INF_FILE_NAME+3);     /* excluding "X:\" */
     p = desktop_str_addr(STRDINF);
     rc = fsel_exinput(path, fname, &button, p);
