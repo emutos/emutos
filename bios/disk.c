@@ -158,7 +158,7 @@ void disk_init_all(void)
 #if CONF_WITH_IDE
         16, 18, 17, 19, 20, 22, 21, 23,     /* IDE primary/secondary */
 #endif
-#if CONF_WITH_SCSI
+#if CONF_WITH_SCSI || CONF_WITH_ARANYM
         8, 9, 10, 11, 12, 13, 14, 15,       /* SCSI */
 #endif
 #if CONF_WITH_ACSI
