@@ -331,7 +331,7 @@ msgstr "Nom de la copie: ________.___"
 
 #: desk/desk_rsc.c
 msgid "Free memory: ___________________"
-msgstr "Mémoire libre: ___________________"
+msgstr "Mémoire libre : ___________________"
 
 #: desk/desk_rsc.c
 msgid "Label: ________.___"
@@ -707,7 +707,7 @@ msgstr "Paramètre :"
 
 #: desk/desk_rsc.c
 msgid "Function keys:"
-msgstr "Touches de fonction:"
+msgstr "Touches de fonction :"
 
 #: desk/desk_rsc.c
 msgid "SET SCREEN RESOLUTION"
