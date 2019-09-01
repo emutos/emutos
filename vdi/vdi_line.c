@@ -1231,25 +1231,22 @@ void wideline(Vwk * vwk, Point * point, int count)
             continue;
 
         /* Calculate offsets to fatten the line. */
-        if (vx == 0) {
-            /* line is horizontal - do it the simple way */
+        if (vx == 0) {      /* line is vertical - do it the simple way */
             vx = q_circle[0];
             vy = 0;
         }
-        else if (vy == 0) {
-            /* line is vertical - do it the simple way */
+        else if (vy == 0) { /* line is horizontal - even simpler */
             vx = 0;
             vy = num_qc_lines - 1;
         }
-        else {
+        else {              /* neither */
             /* Find the offsets in x and y for a point perpendicular */
             /* to the line segment at the appropriate distance. */
             k = mul_div(-vy, ysize, xsize);
             vy = mul_div(vx, xsize, ysize);
             vx = k;
             perp_off(&vx, &vy);
-        }                       /* End else:  neither horizontal nor
-                                   vertical. */
+        }
 
         /* Prepare the control and points parameters for the polygon call. */
         ptr = box;
