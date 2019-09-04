@@ -1,7 +1,7 @@
 /*
  * asm.h - Assembler help routines
  *
- * Copyright (C) 2001-2017 The EmuTOS development team
+ * Copyright (C) 2001-2019 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -11,8 +11,9 @@
  */
 
 /*
- * This file contains utility routines (macros) to
- * perform functions not directly available from C.
+ * This file contains two types of item:
+ * . function prototypes for functions in miscasm.S
+ * . macros/inline functions to perform functions not directly available from C
  *
  * available macros:
  *
@@ -37,6 +38,9 @@ extern void just_rts(void);
 
 /* Wrapper around the STOP instruction. This preserves SR. */
 extern void stop_until_interrupt(void);
+
+/* perform WORD multiply/divide with rounding */
+WORD mul_div_round(WORD mult1, WORD mult2, WORD divisor);
 
 /*
  * Push/Pop registers from stack, with ColdFire support.

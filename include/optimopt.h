@@ -13,6 +13,5 @@
 
 char *scasb(char *p, char b);
 WORD expand_string(WORD *dest, char *src);
-WORD mul_div_round(WORD mult1, WORD mult2, WORD divisor);
 
 #endif
