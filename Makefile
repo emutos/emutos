@@ -222,11 +222,11 @@ bdos_src = bdosmain.c console.c fsbuf.c fsdir.c fsdrive.c fsfat.c fsglob.c \
 #
 
 util_src = doprintf.c intmath.c langs.c memmove.S memset.S miscasm.S \
-           nls.c nlsasm.S setjmp.S string.c stringasm.S
+           nls.c nlsasm.S setjmp.S string.c
 
 # The functions in the following modules are used by the AES and EmuDesk
 ifeq ($(WITH_AES),1)
-util_src += gemdos.c optimize.c optimopt.S rectfunc.c
+util_src += gemdos.c optimize.c optimopt.S rectfunc.c stringasm.S
 endif
 
 #
