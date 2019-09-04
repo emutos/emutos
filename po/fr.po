@@ -1035,7 +1035,7 @@ msgid "[2]["
 msgstr "[2]["
 "Touche de fonction déjà|"
 "configurée. Voulez-vous la|"
-"réassigner ?][  OK  |Anuler]"
+"réassigner ?][  OK  |Annuler]"
 
 #: desk/desk_rsc.c
 msgid "[3]["
