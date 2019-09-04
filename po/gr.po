@@ -339,6 +339,10 @@ msgid "Copy's name: ________.___"
 msgstr "î¤¦£˜ ˜¤« š¨á­¦¬: ________.___"
 
 #: desk/desk_rsc.c
+msgid "Free memory: ___________________"
+msgstr "„¢œçŸœ¨ £¤ã£: ___________________"
+
+#: desk/desk_rsc.c
 msgid "Label: ________.___"
 msgstr "„« ¡â«˜: ________.___"
 
@@ -461,6 +465,10 @@ msgstr "  ƒ ˜£æ¨­à© Desktop..."
 #: desk/desk_rsc.c
 msgid "  Change resolution...  ^R"
 msgstr "  €¢¢˜šã ˜¤á¢¬©ª...     ^R"
+
+#: desk/desk_rsc.c
+msgid "  Read .INF file..."
+msgstr "  €¤áš¤à© ˜¨®œå¦¬ .INF..."
 
 #: desk/desk_rsc.c
 msgid "  Save desktop...       ^S"
@@ -611,6 +619,10 @@ msgid "NEW FOLDER"
 msgstr "Œ„‘ ”€‰„Š‘"
 
 #: desk/desk_rsc.c
+msgid "PRINT FILE"
+msgstr "„‰’“—‘† €•„ˆ“"
+
+#: desk/desk_rsc.c
 msgid "SET PREFERENCES"
 msgstr "’ˆ‹†‘„ˆ‘"
 
@@ -701,6 +713,9 @@ msgstr "¨¦œ§ ¢œš£â¤¦ª ¡˜«á¢¦š¦ª:"
 #: desk/desk_rsc.c
 msgid "Input parameter:"
 msgstr "˜¨á£œ«¨¦  œ ©æ›¦¬"
+
+msgid "Function keys:"
+msgstr "¦Ÿ« ¡á §¢ã¡«¨˜:"
 
 #: desk/desk_rsc.c
 msgid "SET SCREEN RESOLUTION"
@@ -831,6 +846,10 @@ msgid "TRASH"
 msgstr "€ˆ‹€’€"
 
 #: desk/desk_rsc.c
+msgid "PRINTER"
+msgstr "„‰’“—’†‘"
+
+#: desk/desk_rsc.c
 msgid "-More-"
 msgstr "-œ¨ ©©æ«œ¨˜-"
 
@@ -847,6 +866,10 @@ msgid "Locate item"
 msgstr "„¤«¦§ ©£æª ˜¤« ¡œ £â¤¦¬"
 
 #: desk/desk_rsc.c
+msgid "Select an INF file"
+msgstr "„§ ¢â¥«œ â¤˜ ˜¨®œå¦ INF"
+
+#: desk/desk_rsc.c
 msgid "[2]["
 "Switch resolution?][ Yes | No ]"
 msgstr "[2]["
@@ -854,9 +877,16 @@ msgstr "[2]["
 
 #: desk/desk_rsc.c
 msgid "[2]["
-"Show this document?][Show|Cancel]"
+"Show or print this document?][Show|Print|Cancel]"
 msgstr "[2]["
-"¨¦™¦¢ã ˜¨®œå¦¬;][¨¦™¦¢ã|€¡ç¨à©]"
+"¨¦™¦¢ã ã œ¡«ç§à© ˜¬«¦ç|"
+"«¦¬ âšš¨˜­¦¬;][¨¦™¦¢ã|„¡«ç§à©|ê¡¬¨¦]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Print error!][ Retry | Cancel ]"
+msgstr "[1]["
+"‘­á¢£˜ œ¡«ç§à©ª!][„§˜¤á¢¯| ê¡¬¨¦ ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -966,6 +996,14 @@ msgstr "[1]["
 "%s ®¨© £¦§¦ œå«˜  š ˜|"
 "£æ¤ £ › ˜š¨˜­ã ˜¨®œåà¤|"
 "ã ­˜¡â¢à¤.][  ‰  ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"%s|"
+"is a printer.][  OK  ]"
+msgstr "[1]["
+"† ©¬©¡œ¬ã %s|"
+"œå¤˜  œ¡«¬§à«ãª.][  ‰  ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -1142,6 +1180,12 @@ msgid "[1]["
 msgstr "[1]["
 "€§¦«¬®å˜ ¦¨ ©£¦ç §¨¦œ§ ¢œš£â¤¦¬ |"
 "¡˜«˜¢æš¦¬.][  ‰  ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Illegal .INF file format.][  OK  ]"
+msgstr "[1]["
+"‹ âš¡¬¨¦ ˜¨®œå¦ .INF.][  ‰  ]"
 
 #: cli/cmdint.c
 msgid "Copy <filespec> ... to standard output"
