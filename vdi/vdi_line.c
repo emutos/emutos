@@ -1182,7 +1182,7 @@ void wideline(Vwk * vwk, Point * point, int count)
     WORD i, k;
     WORD wx1, wy1, wx2, wy2, vx, vy;
     BOOL closed = FALSE;
-    Point *ptr, box[5];      /* box too high, to close polygon */
+    Point *ptr, box[5];      /* box must be large enough to close polygon */
 
     /* Don't attempt wide lining on a degenerate polyline */
     if (count < 2)
