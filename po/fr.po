@@ -762,6 +762,10 @@ msgid "File"
 msgstr "Fichier"
 
 #: desk/desk_rsc.c
+msgid "Monochrome only"
+msgstr "Monochrome seulement"
+
+#: desk/desk_rsc.c
 msgid "FORMAT FLOPPY DISKETTE"
 msgstr "FORMATER DISQUETTE"
 
@@ -878,6 +882,14 @@ msgstr "[1]["
 
 #: desk/desk_rsc.c
 msgid "[1]["
+"This document type has no|"
+"associated application.][  OK  ]"
+msgstr "[1]["
+"Ce type de document n'est|"
+"associé à aucune application.][  OK  ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
 "The GEM Desktop has no more|"
 "windows.  Please close a|"
 "window that you are not|"
@@ -985,6 +997,16 @@ msgid "[1]["
 msgstr "[1]["
 "%s|"
 "est une imprimante.][  OK  ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"You cannot drag applications,|"
+"files or folders onto the|"
+"Desktop.][  OK  ]"
+msgstr "[1]["
+"Vous ne pouvez pas déposer des|"
+"applications, fichiers ou|"
+"dossiers sur le bureau.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[2]["
