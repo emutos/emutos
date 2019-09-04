@@ -912,8 +912,11 @@ void polyline(Vwk * vwk, Point * point, int count, WORD color)
         line.x2 = point->x;
         line.y2 = point->y;
 
-        if (!vwk->clip || clip_line(vwk, &line))
-            abline(&line, vwk->wrt_mode, color);
+        if (vwk->clip)
+            if (!clip_line(vwk, &line))
+                continue;
+
+        abline(&line, vwk->wrt_mode, color);
     }
 }
 
