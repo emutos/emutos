@@ -1171,7 +1171,7 @@ msgstr "[1]["
 msgid "[1]["
 "Rename error!][ Retry | Cancel ]"
 msgstr "[1]["
-"Error al renombrar!][Reintentar| Anular  ]"
+"Error al renombrar!][Reintentar| Cancelar ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["

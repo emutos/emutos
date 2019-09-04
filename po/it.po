@@ -876,7 +876,7 @@ msgstr "[2]["
 msgid "[1]["
 "Print error!][ Retry | Cancel ]"
 msgstr "[1]["
-"Errore di stampa!][ Retry | Annulla ]"
+"Errore di stampa!][ Riprova | Annulla ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -1072,7 +1072,7 @@ msgid "[3]["
 msgstr "[3]["
 "Errore formattazione. Il disco|"
 "destinazione è protetto alla|"
-"scrittura o non è impiegabile.][ Riprova | Annulla ]"
+"scrittura o non è impiegabile.][ Riprova |Interrompi]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
