@@ -1481,8 +1481,8 @@ static void draw_line(const Line *line, WORD wrt_mode, UWORD color)
                 if (color & 0x0001) {
                     for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
                         rolw1(linemask);        /* get next bit of line style */
-                        if (linemask&0x0001)
-                            *addr &= ~bit;
+                        if (!(linemask&0x0001))
+                            *addr |= bit;
                         rorw1(bit);
                         if (bit&0x8000)
                             addr += xinc;
@@ -1495,8 +1495,8 @@ static void draw_line(const Line *line, WORD wrt_mode, UWORD color)
                 } else {
                     for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
                         rolw1(linemask);        /* get next bit of line style */
-                        if (linemask&0x0001)
-                            *addr |= bit;
+                        if (!(linemask&0x0001))
+                            *addr &= ~bit;
                         rorw1(bit);
                         if (bit&0x8000)
                             addr += xinc;
@@ -1597,8 +1597,8 @@ static void draw_line(const Line *line, WORD wrt_mode, UWORD color)
                 if (color & 0x0001) {
                     for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
                         rolw1(linemask);        /* get next bit of line style */
-                        if (linemask&0x0001)
-                            *addr &= ~bit;
+                        if (!(linemask&0x0001))
+                            *addr |= bit;
                         addr += yinc;
                         eps += e1;
                         if (eps >= 0 ) {
@@ -1611,8 +1611,8 @@ static void draw_line(const Line *line, WORD wrt_mode, UWORD color)
                 } else {
                     for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
                         rolw1(linemask);        /* get next bit of line style */
-                        if (linemask&0x0001)
-                            *addr |= bit;
+                        if (!(linemask&0x0001))
+                            *addr &= ~bit;
                         addr += yinc;
                         eps += e1;
                         if (eps >= 0 ) {
@@ -1749,15 +1749,15 @@ static void vertical_line(const Line *line, WORD wrt_mode, UWORD color)
             if (color & 0x0001) {
                 for (loopcnt = dy; loopcnt >= 0; loopcnt--) {
                     rolw1(linemask);        /* get next bit of line style */
-                    if (linemask&0x0001)
-                        *addr &= bitcomp;
+                    if (!(linemask&0x0001))
+                        *addr |= bit;
                     addr += yinc;
                 }
             } else {
                 for (loopcnt = dy; loopcnt >= 0; loopcnt--) {
                     rolw1(linemask);        /* get next bit of line style */
-                    if (linemask&0x0001)
-                        *addr |= bit;
+                    if (!(linemask&0x0001))
+                        *addr &= bitcomp;
                     addr += yinc;
                 }
             }
