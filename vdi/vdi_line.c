@@ -19,6 +19,7 @@
 #include "biosext.h"    /* for cache control routines */
 #include "lineavars.h"
 #include "has.h"        /* for blitter-related items */
+#include "optimopt.h"   /* for mul_div_round() */
 
 
 #if CONF_WITH_BLITTER
@@ -876,16 +877,16 @@ BOOL clip_line(Vwk * vwk, Line * line)
         deltax = line->x2 - line->x1;
         deltay = line->y2 - line->y1;
         if (line_clip_flag & 1) {               /* left ? */
-            *y = line->y1 + mul_div(deltay, (vwk->xmn_clip - line->x1), deltax);
+            *y = line->y1 + mul_div_round(deltay, (vwk->xmn_clip-line->x1), deltax);
             *x = vwk->xmn_clip;
         } else if (line_clip_flag & 2) {        /* right ? */
-            *y = line->y1 + mul_div(deltay, (vwk->xmx_clip - line->x1), deltax);
+            *y = line->y1 + mul_div_round(deltay, (vwk->xmx_clip-line->x1), deltax);
             *x = vwk->xmx_clip;
         } else if (line_clip_flag & 4) {        /* top ? */
-            *x = line->x1 + mul_div(deltax, (vwk->ymn_clip - line->y1), deltay);
+            *x = line->x1 + mul_div_round(deltax, (vwk->ymn_clip-line->y1), deltay);
             *y = vwk->ymn_clip;
         } else if (line_clip_flag & 8) {        /* bottom ? */
-            *x = line->x1 + mul_div(deltax, (vwk->ymx_clip - line->y1), deltay);
+            *x = line->x1 + mul_div_round(deltax, (vwk->ymx_clip-line->y1), deltay);
             *y = vwk->ymx_clip;
         }
     }
