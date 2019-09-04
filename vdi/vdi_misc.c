@@ -161,7 +161,7 @@ void timer_exit(void)
  * value must be right-shifted to obtain an offset in bytes.
  * According to the C standard, the result of right-shifting a negative
  * value is implementation-defined.  GCC has the correct behaviour from
- * our point of view: high-order bits are 1-filled. so the number remains
+ * our point of view: high-order bits are 1-filled, so the number remains
  * negative.
  */
 UWORD * get_start_addr(const WORD x, const WORD y)
