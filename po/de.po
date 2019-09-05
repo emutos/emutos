@@ -914,7 +914,7 @@ msgstr "[2]["
 "Ein Ordner mit diesem Namen|"
 "kann nicht angelegt werden.|"
 "Bitte anderen Namen wählen|"
-"oder Vorgang abbrechen.][Abbrechen|Nochmal]"
+"oder Vorgang abbrechen.][Abbruch|Nochmal]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -1057,7 +1057,7 @@ msgstr "%ld Bytes belegt von %d ausgewählten Objekten"
 msgid "[1]["
 "Illegal directory operation!][ Skip | Abort ]"
 msgstr "[1]["
-"Illegale Ordneroperation!][Auslassen|Abbrechen]"
+"Illegale Ordneroperation!][Auslassen| Abbruch ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -1127,7 +1127,7 @@ msgid "[1]["
 "%s][ Skip | Abort ]"
 msgstr "[1]["
 "Kann Datei %s|"
-"nicht lesen][Auslassen| Abbruch]]"
+"nicht lesen][Auslassen| Abbruch ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -1135,13 +1135,13 @@ msgid "[1]["
 "%s][ Skip | Abort ]"
 msgstr "[1]["
 "Kann Datei %s|"
-"nicht schreiben][Auslassen| Abbruch]]"
+"nicht schreiben][Auslassen| Abbruch ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Rename error!][ Retry | Cancel ]"
 msgstr "[1]["
-"Fehler beim Umbenennen!][ Nochmal ][ Abbruch ]"
+"Fehler beim Umbenennen!][ Nochmal | Abbruch ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
