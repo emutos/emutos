@@ -13,29 +13,29 @@
 #ifndef CLOCK_H
 #define CLOCK_H
 
-extern void clockvec(char *buf);
+void clockvec(char *buf);
 
 /* interface for machine.c */
 
 #if CONF_WITH_MEGARTC
-extern void detect_megartc(void);
+void detect_megartc(void);
 #endif /* CONF_WITH_MEGARTC */
 
 #if CONF_WITH_ICDRTC
-extern void detect_icdrtc(void);
+void detect_icdrtc(void);
 #endif /* CONF_WITH_ICDRTC */
 
 #if CONF_WITH_MONSTER
-extern void detect_monster_rtc(void);
+void detect_monster_rtc(void);
 #endif /* CONF_WITH_MONSTER */
 
 /* internal init */
 
-extern void clock_init(void);
+void clock_init(void);
 
 /* xbios functions */
 
-extern void settime(LONG time);
-extern LONG gettime(void);
+void settime(LONG time);
+LONG gettime(void);
 
 #endif /* CLOCK_H */

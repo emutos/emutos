@@ -24,7 +24,7 @@
 #define DBG_BOOT 0
 
 /* last part of the loader is in util/bootram.S */
-extern void bootram(const UBYTE *src, ULONG size, ULONG cpu) NORETURN;
+void bootram(const UBYTE *src, ULONG size, ULONG cpu) NORETURN;
 
 /* emutos.img is embedded in util/ramtos.S */
 extern const UBYTE ramtos[];

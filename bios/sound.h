@@ -1,7 +1,7 @@
 /*
  * sound.h - PSG sound routines
  *
- * Copyright (C) 2001 The EmuTOS development team
+ * Copyright (C) 2001,2019 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -18,10 +18,10 @@
 #define GIACCESS_READ  0x00
 #define GIACCESS_WRITE 0x80
 
-extern LONG giaccess(WORD data, WORD reg);
-extern void ongibit(WORD value);
-extern void offgibit(WORD value);
-extern LONG dosound(const UBYTE *table);
+LONG giaccess(WORD data, WORD reg);
+void ongibit(WORD value);
+void offgibit(WORD value);
+LONG dosound(const UBYTE *table);
 
 /* internal routines */
 
@@ -31,7 +31,7 @@ void snd_init(void);
 #if CONF_WITH_YM2149
 
 /* timer C int sound routine */
-extern void sndirq(void);
+void sndirq(void);
 
 #endif /* CONF_WITH_YM2149 */
 

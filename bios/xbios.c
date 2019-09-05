@@ -1066,8 +1066,8 @@ LONG xbios_do_unimpl(WORD number)
     return number;
 }
 
-extern LONG xbios_unimpl(void); /* defined in vectors.S */
-extern LONG supexec(PFLONG); /* defined in vectors.S */
+LONG xbios_unimpl(void);    /* defined in vectors.S */
+LONG supexec(PFLONG);       /* defined in vectors.S */
 
 
 /*

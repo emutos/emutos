@@ -81,15 +81,15 @@
 /*==== External declarations ==============================================*/
 
 #if STONX_NATIVE_PRINT
-extern void stonx_kprintf_init(void); /* defined in kprintasm.S */
+void stonx_kprintf_init(void);      /* defined in kprintasm.S */
 #endif
 
 #if CONF_WITH_CARTRIDGE
-extern void run_cartridge_applications(WORD typebit); /* defined in startup.S */
+void run_cartridge_applications(WORD typebit);  /* defined in startup.S */
 #endif
 
 #if CONF_WITH_68040_PMMU
-extern long setup_68040_pmmu(void); /* defined in 68040_pmmu.S */
+long setup_68040_pmmu(void);        /* defined in 68040_pmmu.S */
 #endif
 
 /*==== Declarations =======================================================*/

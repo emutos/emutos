@@ -1,7 +1,7 @@
 /*
  * chardev.h - bios devices
  *
- * Copyright (C) 2001-2013 The EmuTOS development team
+ * Copyright (C) 2001-2019 The EmuTOS development team
  *
  * Authors:
  *  MAD   Martin Doering
@@ -25,6 +25,6 @@ LONG charout_dummy(WORD dev, WORD x);
 
 /* internal init routine */
 
-extern void chardev_init(void);
+void chardev_init(void);
 
 #endif /* _CHARDEV_H */

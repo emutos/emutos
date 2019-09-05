@@ -1,7 +1,7 @@
 /*
  * processor.h - declarations for processor type check
  *
- * Copyright (C) 2001-2017 The EmuTOS development team
+ * Copyright (C) 2001-2019 The EmuTOS development team
  *
  * Authors:
  *  MAD     Martin Doering
@@ -87,12 +87,12 @@
 #ifndef PROCESSOR_H
 #define PROCESSOR_H
 
-extern void processor_init(void);
+void processor_init(void);
 /*
  * flush_data_cache(), invalidate_data_cache() &
  * invalidate_instruction_cache() are declared in include/biosext.h
  */
-extern void instruction_cache_kludge(void *start,long size);
+void instruction_cache_kludge(void *start,long size);
 extern LONG mcpu;
 extern LONG fputype;
 extern WORD longframe;

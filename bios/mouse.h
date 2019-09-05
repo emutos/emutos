@@ -63,10 +63,10 @@ struct mouse_data {
 
 
 /* External declarations */
-extern void Initmous(WORD , struct param *, PFVOID);
+void Initmous(WORD , struct param *, PFVOID);
 
-extern void mouse_init(void);   /* Initialize mouse */
-extern void mouse_int(void);    /* mouse interrupt vector */
+void mouse_init(void);          /* Initialize mouse */
+void mouse_int(void);           /* mouse interrupt vector */
 
 
 #endif /* MOUSE_H */

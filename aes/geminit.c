@@ -57,10 +57,10 @@
 #include "string.h"
 #include "tosvars.h"
 
-extern LONG size_theglo(void); /* called only from gemstart.S */
-extern LONG init_p0_stkptr(void); /* called only from gemstart.S */
-extern void run_accs_and_desktop(void); /* called only from gemstart.S */
-extern void gem_main(void); /* called only from gemstart.S */
+LONG size_theglo(void);         /* called only from gemstart.S */
+LONG init_p0_stkptr(void);      /* called only from gemstart.S */
+void run_accs_and_desktop(void);/* called only from gemstart.S */
+void gem_main(void);            /* called only from gemstart.S */
 
 #define ROPEN 0
 
@@ -134,7 +134,7 @@ GLOBAL WORD     curpid;
 GLOBAL THEGLO   D;
 
 /* Prototypes: */
-extern void accdesk_start(void) NORETURN;   /* called only from gemstart.S */
+void accdesk_start(void) NORETURN;  /* called only from gemstart.S */
 
 
 /*

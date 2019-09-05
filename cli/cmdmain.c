@@ -55,7 +55,7 @@ PRIVATE WORD execute(WORD argc,char **argv,char *redir);
 PRIVATE WORD get_nflops(void);
 PRIVATE void strip_quotes(int argc,char **argv);
 
-extern int cmdmain(void); /* called only from cmdasm.S */
+int cmdmain(void);      /* called only from cmdasm.S */
 
 int cmdmain(void)
 {

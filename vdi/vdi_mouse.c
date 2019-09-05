@@ -49,13 +49,13 @@ static void cur_replace(MCS *savebuf);
 static void vb_draw(void);             /* user button vector */
 
 /* prototypes for functions in vdi_asm.S */
-extern void mouse_int(void);    /* mouse interrupt routine */
-extern void mov_cur(void);      /* user button vector */
+void mouse_int(void);           /* mouse interrupt routine */
+void mov_cur(void);             /* user button vector */
 
 #if CONF_WITH_EXTENDED_MOUSE
-extern void wheel_int(void);    /* wheel interrupt routine */
-extern void call_user_but(WORD status); /* call user_but from C */
-extern void call_user_wheel(WORD wheel_number, WORD wheel_amount); /* call user_wheel from C */
+void wheel_int(void);           /* wheel interrupt routine */
+void call_user_but(WORD status);/* call user_but from C */
+void call_user_wheel(WORD wheel_number, WORD wheel_amount); /* call user_wheel from C */
 
 /* pointers to callbacks called from vdi_asm.S */
 PFVOID user_wheel;  /* user mouse wheel vector provided by vdi_vex_wheelv() */

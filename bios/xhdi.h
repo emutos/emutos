@@ -1,7 +1,7 @@
 /*
  * EmuTOS bios
  *
- * Copyright (C) 2002-2017 The EmuTOS development team
+ * Copyright (C) 2002-2019 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -60,7 +60,7 @@
 
 #if CONF_WITH_XHDI
 
-extern long xhdi_vec(UWORD opcode, ...); /* In bios/natfeat.S */
+long xhdi_vec(UWORD opcode, ...);   /* In bios/natfeat.S */
 
 void create_XHDI_cookie(void);
 void init_XHDI_drvmap(void);

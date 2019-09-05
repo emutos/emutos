@@ -185,7 +185,7 @@ typedef struct {
 
 
 #if ASM_BLIT_IS_AVAILABLE
-extern void fast_bit_blt(void); /* defined in vdi_blit.S */
+void fast_bit_blt(void);    /* defined in vdi_blit.S */
 #endif
 
 /* holds VDI internal info for bit_blt() */

@@ -51,7 +51,7 @@
 #define ENABLE_KDEBUG
 #endif
 
-extern LONG super(WORD cx, AESPB *pcrys_blk);   /* called only from gemdosif.S */
+LONG super(WORD cx, AESPB *pcrys_blk);  /* called only from gemdosif.S */
 
 GLOBAL WORD     gl_mnclick;
 
