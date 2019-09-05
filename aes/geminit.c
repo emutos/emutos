@@ -57,6 +57,8 @@
 #include "string.h"
 #include "tosvars.h"
 
+/* Prototypes: */
+void accdesk_start(void) NORETURN;  /* called only from gemstart.S */
 LONG size_theglo(void);         /* called only from gemstart.S */
 LONG init_p0_stkptr(void);      /* called only from gemstart.S */
 void run_accs_and_desktop(void);/* called only from gemstart.S */
@@ -133,8 +135,6 @@ GLOBAL WORD     curpid;
 
 GLOBAL THEGLO   D;
 
-/* Prototypes: */
-void accdesk_start(void) NORETURN;  /* called only from gemstart.S */
 
 
 /*
