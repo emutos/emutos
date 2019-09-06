@@ -599,8 +599,6 @@ polygon(Vwk * vwk, Point * ptsin, int count)
     const VwkClip *clipper;
     VwkAttrib attr;
 
-    LSTLIN = FALSE;
-
     /* find out the total min and max y values */
     point = ptsin;
     fill_maxy = fill_miny = point->y;
@@ -937,9 +935,6 @@ void contourfill(const VwkAttrib * attr, const VwkClip *clip)
             (MAP_COL[search_color] & plane_mask[INQ_TAB[4] - 1]);
         seed_type = 0;
     }
-
-    /* Initialize the line drawing parameters */
-    LSTLIN = FALSE;
 
     /* check if anything to do */
     if (!end_pts(clip, xleft, oldy, &oldxleft, &oldxright))

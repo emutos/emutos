@@ -905,7 +905,9 @@ void polyline(Vwk * vwk, Point * point, int count, WORD color)
     int i;
     Line line;
 
-    for(i = count - 1; i > 0; i--) {
+    for (i = count-1, LSTLIN = FALSE; i > 0; i--) {
+        if (i == 1)
+            LSTLIN = TRUE;
         line.x1 = point->x;
         line.y1 = point->y;
         point++;                /* advance point by point */
@@ -1423,14 +1425,16 @@ void arrow(Vwk * vwk, Point * point, int count)
  *
  * This routine is more or less the one from the original VDI asm
  * code, with the following exception:
- *  . when the writing mode is XOR, and this is not the last line
+ *  . When the writing mode was XOR, and this was not the last line
  *    in a polyline, the original code decremented the x coordinate
- *    of the ending point.  this prevented polylines from xor'ing
- *    themselves at the intersection points.  this was done in both
- *    the XOR handler within abline() and, for horizontal lines,
- *    before calling a separate function to draw a horizontal line.
- *    NOTE: the determination of 'last line or not' was done via
- *    the _LSTLIN variable which was set in the polyline() function.
+ *    of the ending point.  This prevented polylines from xor'ing
+ *    themselves at the intermediate points.  The determination of
+ *    'last line or not' was done via the LSTLIN variable which was
+ *    set in the polyline() function.
+ * We now handle this situation as follows:
+ *  . The polyline() function still sets the LSTLIN variable.  The
+ *    abline() function (q.v.) adjusts the line end coordinates
+ *    accordingly.
  *
  */
 static void draw_line(const Line *line, WORD wrt_mode, UWORD color)
@@ -1820,6 +1824,7 @@ static void vertical_line(const Line *line, WORD wrt_mode, UWORD color)
  *     line         = pointer to structure containing coordinates
  *     v_planes     = number of video planes
  *     LN_MASK      = line mask (for dashed/dotted lines)
+ *     LSTLIN       = flag: TRUE iff this is the last line of a polyline
  *     wrt_mode     = writing mode:
  *                          0 => replace mode.
  *                          1 => or mode.
@@ -1867,6 +1872,19 @@ void abline(const Line *line, WORD wrt_mode, UWORD color)
         y1 = line->y1;
         x2 = line->x2;
         y2 = line->y2;
+    }
+
+    /*
+     * copy a DRI kludge: if we're in XOR mode, avoid XORing intermediate
+     * points in a polyline.  we do it slightly differently than DRI with
+     * slightly differing results - but it's a kludge in either case.
+     */
+    if ((wrt_mode == WM_XOR) && !LSTLIN)
+    {
+        if (x1 != x2)
+            x2--;
+        else if (y1 != y2)
+            y2--;
     }
 
     /*
