@@ -6,9 +6,6 @@ AES/VDI/Line-A bugs:
   function in vdi_tblit.S.
 - Thick arcs going partly outside of screen have incorrectly
   drawn pixels at top of screen in vdiline tester.
-- Line-A polygons are one pixel short at both sides.  This is
-  because clc_flit() function does it for VDI (where perimeter
-  is drawn separately).  It is visible e.g. in "Japlish" game.
 
 Video problems:
 
@@ -43,8 +40,6 @@ Links to programs listed above:
   http://www.pouet.net/prod.php?which=25328
 - FalcAMP:
   http://deunstg.free.fr/sct1/falcamp/
-- Japlish:
-  http://www.ntrautanen.fi/marko/arkisto.atari.org/sivut/menu_pelit.htm
 - Laserchess:
   http://www.atarimania.com/game-atari-st-laserchess_31257.html
 - Minigolf (GFA):
