@@ -509,13 +509,18 @@ clc_flit (const VwkAttrib * attr, const VwkClip * clipper, const Point * point, 
     if ( intersections > 1 )
         bub_sort(vdishare.main.fill_buffer, intersections);
 
+    /*
+     * The following code handles both VDI & lineA filled polygons: because
+     * VDI handles the perimeter separately, the x-coordinates of each line
+     * segment are adjusted when called from VDI so that the border of the
+     * figure is not drawn.  If the resulting starting point is greater than
+     * the ending point, nothing is drawn.
+     */
+
     if (attr->clip) {
         /* Clipping is in force.  Once the endpoints of the line segment have */
         /* been adjusted for the border, clip them to the left and right sides */
         /* of the clipping rectangle. */
-
-        /* The x-coordinates of each line segment are adjusted so that the */
-        /* border of the figure will not be drawn with the fill pattern. */
 
         /* loop through buffered points */
         WORD * ptr = vdishare.main.fill_buffer;
@@ -524,8 +529,12 @@ clc_flit (const VwkAttrib * attr, const VwkClip * clipper, const Point * point, 
             Rect rect;
 
             /* grab a pair of adjusted intersections */
-            x1 = *ptr++ + 1;
-            x2 = *ptr++ - 1;
+            x1 = *ptr++;
+            x2 = *ptr++;
+            if (attr->from_vdi) {
+                x1++;       /* VDI handles perimeter separately */
+                x2--;
+            }
 
             /* do nothing, if starting point greater than ending point */
             if ( x1 > x2 )
@@ -554,12 +563,6 @@ clc_flit (const VwkAttrib * attr, const VwkClip * clipper, const Point * point, 
     else {
         /* Clipping is not in force.  Draw from point to point. */
 
-        /* This code has been modified from the version in the screen driver. */
-        /* The x-coordinates of each line segment are adjusted so that the */
-        /* border of the figure will not be drawn with the fill pattern.  If */
-        /* the starting point is greater than the ending point then nothing is */
-        /* done. */
-
         /* loop through buffered points */
         WORD * ptr = vdishare.main.fill_buffer;
         for (i = intersections / 2 - 1; i >= 0; i--) {
@@ -567,10 +570,13 @@ clc_flit (const VwkAttrib * attr, const VwkClip * clipper, const Point * point, 
             Rect rect;
 
             /* grab a pair of adjusted endpoints */
-            x1 = *ptr++ + 1 ;   /* word */
-            x2 = *ptr++ - 1 ;   /* word */
+            x1 = *ptr++;
+            x2 = *ptr++;
+            if (attr->from_vdi) {
+                x1++;       /* VDI handles perimeter separately */
+                x2--;
+            }
 
-            /* If starting point greater than ending point, nothing is done. */
             /* is start still to left of end? */
             if ( x1 <= x2 ) {
                 rect.x1 = x1;
