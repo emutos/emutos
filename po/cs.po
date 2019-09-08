@@ -326,6 +326,10 @@ msgid "Copy's name: ________.___"
 msgstr "Jméno kopie: ________.___"
 
 #: desk/desk_rsc.c
+msgid "Free memory: ___________________"
+msgstr "Volná pamì»: ___________________"
+
+#: desk/desk_rsc.c
 msgid "Label: ________.___"
 msgstr "Jmenovka: ________.___"
 
@@ -448,6 +452,10 @@ msgstr "  Konfigurace desktopu..."
 #: desk/desk_rsc.c
 msgid "  Change resolution...  ^R"
 msgstr "  Zmìnit rozli¹ení...    ^R"
+
+#: desk/desk_rsc.c
+msgid "  Read .INF file..."
+msgstr "  Naèíst .INF soubor..."
 
 #: desk/desk_rsc.c
 msgid "  Save desktop...       ^S"
@@ -598,6 +606,10 @@ msgid "NEW FOLDER"
 msgstr "NOVÝ ADRESÁØ"
 
 #: desk/desk_rsc.c
+msgid "PRINT FILE"
+msgstr "VYTISKNOUT SOUBOR"
+
+#: desk/desk_rsc.c
 msgid "SET PREFERENCES"
 msgstr "NASTAVENÍ"
 
@@ -688,6 +700,10 @@ msgstr "Výchozí adresáø:"
 #: desk/desk_rsc.c
 msgid "Input parameter:"
 msgstr "Parametr:"
+
+#: desk/desk_rsc.c
+msgid "Function keys:"
+msgstr "Funkèní klávesy:"
 
 #: desk/desk_rsc.c
 msgid "SET SCREEN RESOLUTION"
@@ -818,6 +834,10 @@ msgid "TRASH"
 msgstr "KO©"
 
 #: desk/desk_rsc.c
+msgid "PRINTER"
+msgstr "TISKÁRNA"
+
+#: desk/desk_rsc.c
 msgid "-More-"
 msgstr "-Pokraèování-"
 
@@ -834,6 +854,10 @@ msgid "Locate item"
 msgstr "Vyhledat polo¾ku"
 
 #: desk/desk_rsc.c
+msgid "Select an INF file"
+msgstr "Vyberte INF soubor"
+
+#: desk/desk_rsc.c
 msgid "[2]["
 "Switch resolution?][ Yes | No ]"
 msgstr "[2]["
@@ -841,9 +865,16 @@ msgstr "[2]["
 
 #: desk/desk_rsc.c
 msgid "[2]["
-"Show this document?][Show|Cancel]"
+"Show or print this document?][Show|Print|Cancel]"
 msgstr "[2]["
-"Zobrazit dokumet?][Zobrazit|Zru¹it]"
+"Zobrazit nebo vytisknout|"
+"tento dokument?][Zobrazit|Vytisknout|Zru¹it]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Print error!][ Retry | Cancel ]"
+msgstr "[1]["
+"Chyba tisku!][ Opakovat | Zru¹it ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -959,6 +990,14 @@ msgid "[1]["
 msgstr "[1]["
 "Na plochu nelze pøetáhnout,|"
 "soubory nebo adresáøe.][  OK  ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"%s|"
+"is a printer.][  OK  ]"
+msgstr "[1]["
+"%s|"
+"je tiskárna.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[2]["
@@ -1124,6 +1163,12 @@ msgid "[1]["
 msgstr "[1]["
 "Selhalo nastavení|"
 "výchozího adresáøe.][  OK  ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Illegal .INF file format.][  OK  ]"
+msgstr "[1]["
+"Neplatný formát souboru .INF.][  OK  ]"
 
 #: cli/cmdint.c
 msgid "Copy <filespec> ... to standard output"
