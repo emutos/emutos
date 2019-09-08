@@ -110,7 +110,7 @@ msgid "[1]["
 "physically write-protected.][Cancel|Retry]"
 msgstr "[1]["
 "Disk v jednotce %c: je|"
-"fyzicky chránìn proti zápisu.][Zru¹it|Znovu]"
+"fyzicky chránìn proti zápisu.][Zru¹it|Opakovat]"
 
 #: aes/gem_rsc.c
 msgid "[2]["
@@ -120,7 +120,7 @@ msgid "[2]["
 msgstr "[2]["
 "Jednotka %c: nereaguje.|"
 "Prosím zkontrolujte jednotku,|"
-"nebo zasuòte disk.][Zru¹it|Znovu]"
+"nebo zasuòte disk.][Zru¹it|Opakovat]"
 
 #: aes/gem_rsc.c
 msgid "[1]["
@@ -128,7 +128,7 @@ msgid "[1]["
 "may be damaged.][Cancel|Retry]"
 msgstr "[1]["
 "Data na disku v jednotce %c:|"
-"mohou být po¹kozena.][Zru¹it|Znovu]"
+"mohou být po¹kozena.][Zru¹it|Opakovat]"
 
 #: aes/gem_rsc.c
 msgid "[2]["
@@ -136,7 +136,7 @@ msgid "[2]["
 "data on the disk in drive %c:.][Cancel|Retry]"
 msgstr "[2]["
 "Aplikace nemù¾e pøeèíst|"
-"data na disku v jednotce %c:.][Zru¹it|Znovu]"
+"data na disku v jednotce %c:.][Zru¹it|Opakovat]"
 
 #: aes/gem_rsc.c
 msgid "[1]["
@@ -144,7 +144,7 @@ msgid "[1]["
 "receiving data.][Cancel|Retry]"
 msgstr "[1]["
 "Výstupní zaøízení|"
-"nepøijímá data.][Zru¹it|Znovu]"
+"nepøijímá data.][Zru¹it|Opakovat]"
 
 #: aes/gem_rsc.c
 msgid "[3]["
@@ -908,7 +908,7 @@ msgid "[2]["
 msgstr "[2]["
 "Nelze vytvoøit adresáø|"
 "s tímto jménem. Prosím zadejte|"
-"jiné jméno, nebo zru¹te.][Zru¹it|Znovu]"
+"jiné jméno, nebo zru¹te.][Zru¹it|Opakovat]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
