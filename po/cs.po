@@ -451,7 +451,7 @@ msgstr "  Konfigurace desktopu..."
 
 #: desk/desk_rsc.c
 msgid "  Change resolution...  ^R"
-msgstr "  Zmìnit rozli¹ení...    ^R"
+msgstr "  Zmìnit rozli¹ení...   ^R"
 
 #: desk/desk_rsc.c
 msgid "  Read .INF file..."
@@ -459,7 +459,7 @@ msgstr "  Naèíst .INF soubor..."
 
 #: desk/desk_rsc.c
 msgid "  Save desktop...       ^S"
-msgstr "  Ulo¾it desktop...      ^S"
+msgstr "  Ulo¾it desktop...     ^S"
 
 #: desk/desk_rsc.c
 msgid "  Blitter"
