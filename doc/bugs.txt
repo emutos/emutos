@@ -4,8 +4,6 @@ AES/VDI/Line-A bugs:
   https://sourceforge.net/p/emutos/mailman/message/29276993/
   This is due to a bug somewhere in the ugly text_blt() assembler
   function in vdi_tblit.S.
-- Thick arcs going partly outside of screen have incorrectly
-  drawn pixels at top of screen in vdiline tester.
 
 Video problems:
 

@@ -626,8 +626,6 @@ polygon(Vwk * vwk, Point * ptsin, int count)
             if (fill_maxy >= clipper->ymn_clip) {
                 /* polygon starts before clip */
                 fill_miny = clipper->ymn_clip - 1;       /* polygon partial overlap */
-                if (fill_miny < 1)
-                    fill_miny = 1;
             } else
                 return;         /* polygon entirely before clip */
         }
