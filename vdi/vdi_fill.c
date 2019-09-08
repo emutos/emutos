@@ -622,19 +622,13 @@ polygon(Vwk * vwk, Point * ptsin, int count)
     /* cast structure needed by clc_flit */
     clipper = VDI_CLIP(vwk);
     if (vwk->clip) {
-        if (fill_miny < clipper->ymn_clip) {
-            if (fill_maxy >= clipper->ymn_clip) {
-                /* polygon starts before clip */
-                fill_miny = clipper->ymn_clip - 1;       /* polygon partial overlap */
-            } else
-                return;         /* polygon entirely before clip */
-        }
-        if (fill_maxy > clipper->ymx_clip) {
-            if (fill_miny <= clipper->ymx_clip)  /* polygon ends after clip */
-                fill_maxy = clipper->ymx_clip;   /* polygon partial overlap */
-            else
-                return;         /* polygon entirely after clip */
-        }
+        if ((fill_maxy < clipper->ymn_clip)     /* polygon entirely before clip */
+         || (fill_miny > clipper->ymx_clip))    /* polygon entirely after clip */
+            return;
+        if (fill_miny < clipper->ymn_clip)
+            fill_miny = clipper->ymn_clip - 1;  /* polygon partial overlap */
+        if (fill_maxy > clipper->ymx_clip)
+            fill_maxy = clipper->ymx_clip;      /* polygon partial overlap */
     }
 
     /* close the polygon, connect last and first point */
