@@ -854,7 +854,7 @@ msgid "Locate item"
 msgstr "Etsi kohde"
 
 #: desk/desk_rsc.c
-msgid "Select an INF file"
+msgid "Select .INF file"
 msgstr "Valitse .INF tiedosto"
 
 #: desk/desk_rsc.c

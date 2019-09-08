@@ -1172,8 +1172,8 @@ msgid "PRINTER"
 msgstr "DRUCKER"
 
 #: desk/desk_rsc.c
-msgid "Select an INF file"
-msgstr "INF-Datei auswählen"
+msgid "Select .INF file"
+msgstr ".INF-Datei auswählen"
 
 #: desk/desk_rsc.c
 msgid "[1]["

@@ -856,8 +856,8 @@ msgid "Locate item"
 msgstr "Localizza oggetto"
 
 #: desk/desk_rsc.c
-msgid "Select an INF file"
-msgstr "Seleziona un file INF"
+msgid "Select .INF file"
+msgstr "Seleziona un file .INF"
 
 #: desk/desk_rsc.c
 msgid "[2]["
