@@ -984,20 +984,20 @@ msgstr "[1]["
 
 #: desk/desk_rsc.c
 msgid "[1]["
+"%s|"
+"is a printer.][  OK  ]"
+msgstr "[1]["
+"%s|"
+"je tiskárna.][  OK  ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
 "You cannot drag applications,|"
 "files or folders onto the|"
 "Desktop.][  OK  ]"
 msgstr "[1]["
 "Na plochu nelze pøetáhnout,|"
 "soubory nebo adresáøe.][  OK  ]"
-
-#: desk/desk_rsc.c
-msgid "[1]["
-"%s|"
-"is a printer.][  OK  ]"
-msgstr "[1]["
-"%s|"
-"je tiskárna.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[2]["
