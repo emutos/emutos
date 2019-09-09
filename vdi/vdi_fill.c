@@ -510,17 +510,17 @@ clc_flit (const VwkAttrib * attr, const VwkClip * clipper, const Point * point, 
         bub_sort(vdishare.main.fill_buffer, intersections);
 
     /*
-     * The following code handles both VDI & lineA filled polygons: because
-     * VDI handles the perimeter separately, the x-coordinates of each line
-     * segment are adjusted when called from VDI so that the border of the
-     * figure is not drawn.  If the resulting starting point is greater than
-     * the ending point, nothing is drawn.
+     * Testing under Atari TOS shows that the fill area always *includes*
+     * the left & right perimeter (for those functions that allow the
+     * perimeter to be drawn separately, it is drawn on top of the edge
+     * pixels).  We now conform to Atari TOS.
      */
 
     if (attr->clip) {
-        /* Clipping is in force.  Once the endpoints of the line segment have */
-        /* been adjusted for the border, clip them to the left and right sides */
-        /* of the clipping rectangle. */
+        /*
+         * Clipping is in force.  Clip the endpoints of the line segment
+         * to the left and right sides of the clipping rectangle.
+         */
 
         /* loop through buffered points */
         WORD * ptr = vdishare.main.fill_buffer;
@@ -528,17 +528,9 @@ clc_flit (const VwkAttrib * attr, const VwkClip * clipper, const Point * point, 
             WORD x1, x2;
             Rect rect;
 
-            /* grab a pair of adjusted intersections */
+            /* grab a pair of endpoints */
             x1 = *ptr++;
             x2 = *ptr++;
-            if (attr->from_vdi) {
-                x1++;       /* VDI handles perimeter separately */
-                x2--;
-            }
-
-            /* do nothing, if starting point greater than ending point */
-            if ( x1 > x2 )
-                continue;
 
             if ( x1 < clipper->xmn_clip ) {
                 if ( x2 < clipper->xmn_clip )
@@ -566,27 +558,16 @@ clc_flit (const VwkAttrib * attr, const VwkClip * clipper, const Point * point, 
         /* loop through buffered points */
         WORD * ptr = vdishare.main.fill_buffer;
         for (i = intersections / 2 - 1; i >= 0; i--) {
-            WORD x1, x2;
             Rect rect;
 
-            /* grab a pair of adjusted endpoints */
-            x1 = *ptr++;
-            x2 = *ptr++;
-            if (attr->from_vdi) {
-                x1++;       /* VDI handles perimeter separately */
-                x2--;
-            }
+            /* grab a pair of endpoints */
+            rect.x1 = *ptr++;
+            rect.y1 = y;
+            rect.x2 = *ptr++;
+            rect.y2 = y;
 
-            /* is start still to left of end? */
-            if ( x1 <= x2 ) {
-                rect.x1 = x1;
-                rect.y1 = y;
-                rect.x2 = x2;
-                rect.y2 = y;
-
-                /* rectangle fill routine draws horizontal line */
-                draw_rect_common(attr, &rect);
-            }
+            /* rectangle fill routine draws horizontal line */
+            draw_rect_common(attr, &rect);
         }
     }
 }

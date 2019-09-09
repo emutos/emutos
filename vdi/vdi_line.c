@@ -630,7 +630,6 @@ void Vwk2Attrib(const Vwk *vwk, VwkAttrib *attr, const UWORD color)
     attr->patptr = vwk->patptr;
     attr->wrt_mode = vwk->wrt_mode;
     attr->color = color;
-    attr->from_vdi = TRUE;
 }
 
 
@@ -700,7 +699,6 @@ static void lineA2Attrib(VwkAttrib *attr)
     }
     attr->wrt_mode = WRT_MODE;
     attr->color = linea_color();
-    attr->from_vdi = FALSE;
 }
 
 
@@ -768,7 +766,6 @@ void linea_polygon(void)
         clipper.xmn_clip = 0;
         clipper.xmx_clip = xres;
     }
-    /* compared to real line-A, clc_flit explicitly skips outline */
     clc_flit(&attr, &clipper, points, Y1, count);
 }
 

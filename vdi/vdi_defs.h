@@ -112,7 +112,6 @@ typedef struct {
     const UWORD *patptr;        /* Current pattern pointer */
     WORD wrt_mode;              /* Current writing mode    */
     UWORD color;                /* fill color */
-    BOOL from_vdi;              /* TRUE iff struct was initialised by VDI */
 } VwkAttrib;
 
 
