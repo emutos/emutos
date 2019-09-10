@@ -1068,10 +1068,16 @@ static void cir_dda(WORD line_width)
         x++;
     }
 
-    if (xsize == ysize)     /* square pixels, e.g. ST high, ST low */
+    if (xsize == ysize)     /* square pixels, e.g. ST high */
         return;
 
-    if (xsize < ysize) {    /* tall pixels, e.g. ST medium, Falcon 640x240 */
+    /* 
+     * handle tall pixels, e.g. ST medium, Falcon 640x240
+     *
+     * note that this can also include ST Low, which has "slightly tall"
+     * pixels on pre-TOS3 machines 
+     */
+    if (xsize < ysize) {
         /* Fake pixel averaging */
         x = 0;
 
