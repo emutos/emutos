@@ -1305,7 +1305,7 @@ static void draw_arrow(Vwk * vwk, Point * point, int count, int inc)
 {
     LONG line_len2;
     WORD arrow_len, arrow_wid, line_len;
-    WORD dx, dy;
+    WORD dx, dy, dxfactor, dyfactor;
     WORD base_x, base_y, ht_x, ht_y;
     WORD i;
     Point triangle[4];      /* allow room for polygon() to close triangle */
@@ -1349,10 +1349,12 @@ static void draw_arrow(Vwk * vwk, Point * point, int count, int inc)
     /* Rotate the arrow-head height and base vectors.  Perform calculations */
     /* in 1000x space.                                                      */
 
-    ht_x = mul_div_round(arrow_len, mul_div_round(dx, 1000, line_len), 1000);
-    ht_y = mul_div_round(arrow_len, mul_div_round(dy, 1000, line_len), 1000);
-    base_x = mul_div_round(arrow_wid, mul_div_round(dy, -1000, line_len), 1000);
-    base_y = mul_div_round(arrow_wid, mul_div_round(dx, 1000, line_len), 1000);
+    dxfactor = mul_div_round(dx, 1000, line_len);
+    dyfactor = mul_div_round(dy, 1000, line_len);
+    ht_x = mul_div_round(arrow_len, dxfactor, 1000);
+    ht_y = mul_div_round(arrow_len, dyfactor, 1000);
+    base_x = mul_div_round(arrow_wid, -dyfactor, 1000);
+    base_y = mul_div_round(arrow_wid, dxfactor, 1000);
 
     /* Transform the y offsets back to the correct aspect ratio space. */
 
