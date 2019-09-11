@@ -1330,7 +1330,7 @@ static void draw_arrow(Vwk * vwk, Point * point, int count, int inc)
 
         ptr1 += inc;
         dx = ptr2->x - ptr1->x;
-        dy = mul_div(ptr2->y - ptr1->y, ysize, xsize);
+        dy = mul_div_round(ptr2->y - ptr1->y, ysize, xsize);
 
         /* Get length of vector connecting the point with the end point. */
         /* If the vector is of sufficient length, the search is over. */
@@ -1350,15 +1350,15 @@ static void draw_arrow(Vwk * vwk, Point * point, int count, int inc)
     /* Rotate the arrow-head height and base vectors.  Perform calculations */
     /* in 1000x space.                                                      */
 
-    ht_x = mul_div(arrow_len, mul_div(dx, 1000, line_len), 1000);
-    ht_y = mul_div(arrow_len, mul_div(dy, 1000, line_len), 1000);
-    base_x = mul_div(arrow_wid, mul_div(dy, -1000, line_len), 1000);
-    base_y = mul_div(arrow_wid, mul_div(dx, 1000, line_len), 1000);
+    ht_x = mul_div_round(arrow_len, mul_div_round(dx, 1000, line_len), 1000);
+    ht_y = mul_div_round(arrow_len, mul_div_round(dy, 1000, line_len), 1000);
+    base_x = mul_div_round(arrow_wid, mul_div_round(dy, -1000, line_len), 1000);
+    base_y = mul_div_round(arrow_wid, mul_div_round(dx, 1000, line_len), 1000);
 
     /* Transform the y offsets back to the correct aspect ratio space. */
 
-    ht_y = mul_div(ht_y, xsize, ysize);
-    base_y = mul_div(base_y, xsize, ysize);
+    ht_y = mul_div_round(ht_y, xsize, ysize);
+    base_y = mul_div_round(base_y, xsize, ysize);
 
     /* Build a polygon into a local array first */
     ptr1 = triangle;
