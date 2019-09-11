@@ -1308,7 +1308,7 @@ static void draw_arrow(Vwk * vwk, Point * point, int count, int inc)
     WORD dx, dy;
     WORD base_x, base_y, ht_x, ht_y;
     WORD temp, i;
-    Point triangle[8];       /* triangle 2 high to close polygon */
+    Point triangle[4];      /* allow room for polygon() to close triangle */
     Point *ptr1, *ptr2, *xybeg;
 
     line_len2 = dx = dy = 0;
