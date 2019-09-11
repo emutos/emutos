@@ -1307,15 +1307,14 @@ static void draw_arrow(Vwk * vwk, Point * point, int count, int inc)
     WORD arrow_len, arrow_wid, line_len;
     WORD dx, dy;
     WORD base_x, base_y, ht_x, ht_y;
-    WORD temp, i;
+    WORD i;
     Point triangle[4];      /* allow room for polygon() to close triangle */
     Point *ptr1, *ptr2, *xybeg;
 
     line_len2 = dx = dy = 0;
 
     /* Set up the arrow-head length and width as a function of line width. */
-    temp = vwk->line_width;
-    arrow_len = (temp < 4) ? 8 : (3 * temp - 1);
+    arrow_len = (vwk->line_width < 4) ? 8 : (3 * vwk->line_width - 1);
     arrow_wid = arrow_len / 2;
 
     /* Initialize the beginning pointer. */
