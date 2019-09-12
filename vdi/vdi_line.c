@@ -1405,9 +1405,8 @@ void arrow(Vwk * vwk, Point * point, int count)
     }
 
     /* ending point is arrowed. */
-    point += count - 1;
     if (s_endsty & ARROWED) {
-        draw_arrow(vwk, point, count, -1);
+        draw_arrow(vwk, point+count-1, count, -1);
     }
 
     /* Restore the attribute environment. */
