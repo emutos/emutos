@@ -19,7 +19,6 @@
 #include "biosext.h"    /* for cache control routines */
 #include "lineavars.h"
 #include "has.h"        /* for blitter-related items */
-#include "optimopt.h"   /* for mul_div_round() */
 
 
 #if CONF_WITH_BLITTER
