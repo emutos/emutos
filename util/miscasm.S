@@ -163,25 +163,25 @@ _mul_div_round:
         moveq   #1,d1           // preload increment
         move.w  8+6(sp),d0
         muls    8+4(sp),d0      // d0 = mult1 * mult2
-        bpl.s   mulplus
+        jpl     mulplus
         neg.l   d1              // negate increment
 mulplus:
         move.w  8+8(sp),d2
         divs    d2,d0           // d0 = mult1 * mult2 / divisor
         ext.l   d2              // extend divisor to longword for ColdFire
-        bpl.s   divplus         // branch if divisor positive
+        jpl     divplus         // branch if divisor positive
         neg.l   d1              // else negate increment
         neg.l   d2              //  & make divisor positive
 divplus:
         move.l  d0,d3
         swap    d3              // d3.w = remainder
         ext.l   d3              // extend remainder to longword for ColdFire
-        bpl.s   remplus         // branch if positive
+        jpl     remplus         // branch if positive
         neg.l   d3              // else make remainder positive
 remplus:
         asl.l   #1,d3           // d3.l = 2 * remainder
         cmp.l   d2,d3           // bigger than divisor?
-        blt.s   noround         // no, branch
+        jlt     noround         // no, branch
         add.l   d1,d0           // else add increment
 noround:
         move.l  (sp)+,d3
