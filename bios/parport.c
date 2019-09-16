@@ -115,7 +115,7 @@ void parport_init(void)
     delay1us = loopcount_1_msec / 1000;
 
     /* initialize other printer variables */
-    printer_config = 0;     /* Setprt() default: output via parallel port */ 
+    printer_config = 0;     /* Setprt() default: output via parallel port */
     last_timeout = 0UL;     /* parallel port: ticks value at last timeout */
 #endif
 }

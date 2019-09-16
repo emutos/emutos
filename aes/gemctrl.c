@@ -101,7 +101,7 @@ static void ct_msgup(WORD message, AESPD *owner, WORD wh, WORD m1, WORD m2, WORD
         break;
     }
 
-    /* 
+    /*
      * otherwise, wait for the button to come up
      */
     while(button & 0x0001)

@@ -39,7 +39,7 @@ extern WORD font_count;         /* Number of fonts in driver */
  *  NOTE: The calculations below should serve as an example for
  *  determining the cell size and buffer size required for creating
  *  a scratch character buffer for various sized fonts.
- * 
+ *
  *  A larger scratch buffer must be used for character rotation/replication.
  *  Size requirement calculations for this buffer are outlined below.
  *  NOTE: font dependent equates would normally be found in the font header.

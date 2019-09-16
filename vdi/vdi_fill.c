@@ -852,7 +852,7 @@ static WORD get_seed(const VwkAttrib *attr, const VwkClip *clip,
 
         /*
          * there were no holes, so raise qtop if we can
-         */ 
+         */
         if (qhole == NULL) {
             if (++qtop > vdishare.queue+QSIZE) { /* can't raise qtop ... */
                 KDEBUG(("contourfill(): queue overflow\n"));

@@ -213,7 +213,7 @@ LONG rc;
 
     if (argc != 1)
         return Dsetpath(argv[1]);
- 
+
     rc = get_path(path);
     outputnl(path);
 
@@ -473,7 +473,7 @@ PRIVATE LONG run_pwd(WORD argc,char **argv)
 {
 char buf[MAXPATHLEN];
 LONG rc;
- 
+
     buf[0] = Dgetdrv() + 'A';
     buf[1] = ':';
     rc = get_path(buf+2);

@@ -522,7 +522,7 @@ static WORD load_user_icons(void)
         if (rsrc_load(icon_rsc_name))
             rc = 0;
     if (rc < 0)
-    {       
+    {
         KDEBUG(("can't load user desktop icons from %s\n",icon_rsc_name));
         return -1;
     }
