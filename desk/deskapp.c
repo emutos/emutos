@@ -28,6 +28,7 @@
 #include "intmath.h"
 #include "gsxdefs.h"
 #include "gemdos.h"
+#include "gemerror.h"
 #include "optimize.h"
 
 #include "deskbind.h"
@@ -1382,7 +1383,9 @@ ANODE *app_afind_by_name(WORD atype, WORD ignore, char *pspec, char *pname, WORD
  */
 BOOL app_read_inf(void)
 {
-    WORD rc, button;
+    LONG rc;
+    WORD button;
+    BOOL ret = FALSE;
     char *p, *buf;
     char path[MAXPATHLEN], fname[LEN_ZFNAME];
 
@@ -1416,20 +1419,23 @@ BOOL app_read_inf(void)
         p[rc] = '\0';
     }
 
-    /* issue alert for invalid inf file */
-    if (rc <= 0L)
+    if (rc > 0L)            /* still OK: merge contents into shell buffer */
+    {
+        shel_get(buf, CPDATA_LEN);
+        shel_put(buf, CPDATA_LEN+rc+1); /* also save terminating nul */
+        ret = TRUE;
+    }
+    else if (rc == EFILNF)  /* issue alert for file not found */
+    {
+        fun_alert_merge(1, STFILENF, fname);
+    }
+    else                    /* issue alert for invalid inf file */
     {
         fun_alert(1, STINVINF);
-        dos_free(buf);
-        return FALSE;
     }
-
-    /* merge contents into shell buffer & free our buffer */
-    shel_get(buf, CPDATA_LEN);
-    shel_put(buf, CPDATA_LEN+rc+1); /* also save terminating nul */
 
     dos_free(buf);
 
-    return TRUE;
+    return ret;
 }
 #endif
