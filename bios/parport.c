@@ -39,7 +39,7 @@ static WORD printer_config;
 #define CTL_C           ('C'-0x40)
 #define SHORT_TIMEOUT   (5 * CLOCKS_PER_SEC)
 #define LONG_TIMEOUT    (30 * CLOCKS_PER_SEC)
-static LONG last_timeout;
+static ULONG last_timeout;
 #endif
 
 #if CONF_WITH_PRINTER_PORT
@@ -153,7 +153,8 @@ LONG bconout0(WORD dev, WORD c)
      * timeout because we accidentally tried to use the printer port is
      * extremely painful, so EmuTOS allows a quick out via ctrl-C.
      */
-    if (now >= (last_timeout+SHORT_TIMEOUT))
+    if ((last_timeout == 0UL)                   /* first time through? */
+     || (now >= (last_timeout+SHORT_TIMEOUT)))
     {
         while(hz_200 < (now+LONG_TIMEOUT))
         {
