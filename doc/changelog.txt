@@ -1,3 +1,40 @@
+CHANGES BETWEEN RELEASE 0.9.11 AND RELEASE 0.9.12
+
+Major changes:
+- AES: Fix screen display on Falcon with NVDI 4
+- Amiga: All versions of Amiga RAM are now fully supported
+- ARAnyM: Only set up the 68040 PMMU if required
+- BIOS: Add support for ATI Mach32 graphics card in Nova adapter
+- BIOS: Add support for Volksfarben 4000 adapter
+- BIOS: Fix occasional crash in Supexec() (affected Klapauzius games)
+- EmuCON: Fix EmuCON copy/move handling of . and .. directories
+- EmuCON: Use ctrl+arrows for line editing
+- EmuDesk: Display desktop function key assignments
+- EmuDesk: Display free memory
+- EmuDesk: Implement support for printing from the desktop
+- EmuDesk: Increase max depth for desktop copy/move (now same as Atari TOS)
+- General: Add Dutch language support
+
+Other changes:
+- AES: Fix bugs triggered by "SOS Hangman" DA, Chameleon DA
+- AES: Set desktop large font size correctly under NVDI
+- AES: Synchronise the AES & EmuDesk background pattern/colour
+- Amiga: Add support for SD card on Vampire 2 & Vampire 4 standalone
+- BIOS: Add Setprt() support
+- BIOS: Rework IDE device detection (fixes long timeout in ARAnyM boot)
+- EmuCON: Fix bugs in tab completion
+- EmuCON: Prevent useless alerts when starting on floppy-only system
+- EmuDesk: Fix bugs with 'long' double-clicks
+- EmuDesk: Implement "READ .INF file" menu item
+- LineA: Fix lineA filled polygon drawing
+- VDI: Fix bug drawing widelines at the top of the screen
+- VDI: Fix bug: the wrong colour was displayed in some situations
+- XBIOS: Support XBIOS/Alt-Help access to screendump vector
+- A number of minor and/or obscure bugs have been fixed
+- A very limited set of automatic build tests has been added
+- The source code has been extensively restructured
+
+
 CHANGES BETWEEN RELEASE 0.9.10 AND RELEASE 0.9.11
 
 Major changes:

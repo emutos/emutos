@@ -21,6 +21,7 @@ Other supported languages are:
 - French
 - Greek
 - Italian
+- Dutch
 - Norwegian
 - Russian
 - Swedish

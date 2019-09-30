@@ -24,8 +24,9 @@ fi - Finnish
 fr - French
 gr - Greek
 it - Italian
+nl - Dutch
 no - Norwegian
-ru - Russian (currently unsupported by ARAnyM)
+ru - Russian
 se - Swedish
 cd - Swiss German
 us - English (US)
@@ -40,15 +41,17 @@ The ARAnyM ROM features:
 - no ACSI support
 - full NatFeat support (also enabled in the standard 512 KB version)
 
-Builtin MMU support for FreeMiNT
-As of release 0.9.11, the ARAnyM ROM always initialises the PMMU to
-support enabling memory protection under FreeMiNT. If you have been using
-set_mmu.prg to have FreeMiNT running with memory protection enabled, you
-can safely disable it. It will do no harm to continue to use set_mmu.prg,
-but it is no longer required. Because the ARAnyM ROM now always builds
-PMMU tables, memory usage will increase somewhat (compared to earlier
-releases) if you continue to use set_mmu.prg, or if you do not use memory
-protection under FreeMiNT, or if you do not use FreeMiNT at all.
+Builtin MMU support for FreeMiNT:
+To support enabling memory protection under FreeMiNT, the 68040 PMMU
+must be initialised. Under old versions of EmuTOS, this was done by the
+standalone program set_mmu.prg. Since EmuTOS release 0.9.11, the ARAnyM
+ROM initialises the PMMU itself. If you have been using set_mmu.prg, you
+can safely disable it, although it won't cause any problems if you leave
+it enabled.
+As of EmuTOS release 0.9.12, to cater for those who do not need PMMU
+support, EmuTOS queries ARAnyM to see if enabling the PMMU is necessary.
+Support for this query is currently only available in development
+releases of ARAnyM; if the query fails, the PMMU tables are built.
 
 This ROM image has been built using:
 make aranym

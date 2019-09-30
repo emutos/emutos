@@ -3,7 +3,7 @@ Dear Atari Community!
 
 We are happy to announce a new public release of EmuTOS:
 
-EmuTOS 0.9.11 -- June 6, 2019
+EmuTOS 0.9.12 -- October xx, 2019
 
 
 
@@ -123,6 +123,8 @@ EmuTOS also supports the following Atari-compatible hardware:
 - ICD AdSCSI Plus ST Real-Time Clock
 - MonSTer expansion card
 - Nova/ET4000 graphics card
+- Nova/Mach32 graphics card
+- Volksfarben/ET4000 graphics card
 - SD/MMC
 - The Native Features interface to some degree
 
@@ -132,6 +134,7 @@ Currently unsupported hardware features:
 EmuTOS is also available on some non-Atari hardware:
 - Amiga (floppy or ROM for any Amiga, including MapROM support)
 - ColdFire Evaluation Boards (M5484LITE, M5485EVB)
+- Vampire v4 standalone board
 
 
 

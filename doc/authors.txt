@@ -45,6 +45,7 @@ Vincent Rivière (VRI) <vincent.riviere at freesbee.fr>
 - Many improvements to the build and configuration process
 - Moved project from CVS to Git, and from SourceForge to GitHub
 - Implemented automatic builds via Travis CI
+- Major restructuring of source code
 - Patches for compiling with GCC 4.x
 - ColdFire CPU and FireBee support
 - Initial IDE driver
@@ -58,6 +59,7 @@ Thomas Huth (THH) <huth at tuxfamily.org>
 - Lots of bugfixes & cleanups all over the place
 - Integration and maintenance of the AES and GEM-Desktop
 - XBIOS DMA sound functions
+- Automated tests at build time
 
 Christian Zietz <czietz at gmx.net>
 - ROM tests on real ST/STe hardware
@@ -66,9 +68,10 @@ Christian Zietz <czietz at gmx.net>
 - Support for extended MBR partitions
 - Add IDE 'twisted cable' support
 - IDE performance improvements
+- Improved IDE device detection
 - Fix cold boot problems caused by some ST MMUs
 - Fix screen corruption after a reset on some Mega(STe) systems
-- ET4000/Nova support
+- Add-on graphics support: Nova/ET4000, Nova/Mach32, Volksfarben/ET4000
 - Miscellaneous bug fixes
 
 Petr Stehlik (PES) <pstehlik at sophics.cz>
@@ -94,6 +97,9 @@ EmuTOS multi-lingual:
     Petr Stehlik <pstehlik at sophics.cz>
     Pavel Salač <salac.pavel at gmail.com>
     Jan Krupka <krupkaj at centrum.cz>
+
+- Dutch translation
+    Rene (CJ de Bie) <txg01 at ie-meel.nl>
 
 - Finnish translation
     Eero Tamminen
@@ -218,7 +224,7 @@ Jo Even Skarstein <joska at online.no>
 - Support for MonSTer add-on board
 
 Thorsten Otto <admin at tho-otto.de>
-- Make EmuTOS more compatible with Atari TOS in several areas
+- Made EmuTOS more compatible with Atari TOS in several areas
 - Add check_read_byte() workaround for ARAnyM-JIT
 - Fixes to 68040 PMMU setup
 - Inspired the support for window/desktop background configuration

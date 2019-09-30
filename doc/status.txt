@@ -22,14 +22,14 @@ a ROM version of EmuTOS.
   WinUAE 4.2.0        |  yes  | VRI |  2 Jun 2019 |
   --------------------+-------+-----+-------------+----------------
   Atari & compatibles |       |     |             |
-  STf & STfm          |  yes  | (1) | 21 May 2019 |
+  STf & STfm          |  yes  | (1) | 24 Sep 2019 |
   Mega ST             |  yes  | (8) |  7 Dec 2018 | tested with PRG
   STe                 |  yes  | (1) | 21 May 2019 |
   Mega STe            |  yes  | (1) | 21 May 2019 | tested with PRG
-  TT030               |  yes  | (1) | 21 May 2019 |
+  TT030               |  yes  | (1) | 24 Sep 2019 |
   Falcon030           |  yes  | (7) | 31 Dec 2016 |
-  Falcon030           |  yes  | RFB | 26 May 2019 | tested with PRG
-  Falcon030 + CT60    |  yes  | RFB | 26 May 2019 | tested with PRG
+  Falcon030           |  yes  | RFB | 29 Sep 2019 | tested with PRG
+  Falcon030 + CT60    |  yes  | RFB | 29 Sep 2019 | tested with PRG
   Suska III-C (2K15B) |  yes  | (5) | 23 Apr 2016 |
   --------------------+-------+-----+-------------+----------------
   Other systems       |       |     |             |
@@ -37,8 +37,9 @@ a ROM version of EmuTOS.
   Amiga 500 + Vampire |  yes  | VRI |  5 Jun 2019 |
   Amiga 600 + Vampire |  yes  | (6) |    Mar 2017 |
   Amiga 1000          |  yes  | (4) |    Jul 2012 |
-  FireBee             |  yes  | RFB |  3 Jun 2019 |
+  FireBee             |  yes  | RFB | 29 Sep 2019 |
   M5484LITE           |  yes  | VRI |  3 Jun 2019 |
+  Vampire V4          |  yes  | (1) | 24 Sep 2019 |
 
 Abbreviations for testers:
     LVL: Laurent Vogel
