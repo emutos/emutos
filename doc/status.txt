@@ -78,8 +78,8 @@ T tested and working on an emulator or real hardware
  Hardware initialization
  ----------------------------------------------------------------------------
 
- T CPU setting, tested on: 68000 (real & emu), 68030 (real & emu), 68040 (emu),
-   68060 (real), 68080 (real), V4e (real)
+ T CPU setting, tested on: 68000 (real & emu), 68010 (real), 68020 (real),
+   68030 (real & emu), 68040 (emu), 68060 (real), 68080 (real), V4e (real)
  T FPU
  T 68030 MMU and cache initialization
  T Memory controller (both ST and Falcon)
