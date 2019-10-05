@@ -1111,7 +1111,7 @@ const GEM_MUPB ui_mupb =
 #if CONF_WITH_EXTENDED_MOUSE
 
 /* Does this pointer belong to our TEXT segment? */
-BOOL is_text_pointer(void *p)
+BOOL is_text_pointer(const void *p)
 {
     UBYTE *pb = (UBYTE *)p;
     return pb >= (UBYTE *)&os_header && pb < _etext;
