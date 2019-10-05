@@ -1107,7 +1107,8 @@ msgid "[1]["
 "Cannot delete directory|"
 "%s][ Skip | Retry | Abort ]"
 msgstr "[1]["
-"Impossibile cancellare|la directory|"
+"Impossibile cancellare|"
+"la directory|"
 "%s][ Salta | Riprova |Interrompi]"
 
 #: desk/desk_rsc.c

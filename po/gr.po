@@ -27,7 +27,8 @@ msgstr ""
 #: bios/bios.c
 msgid ""
 "System halted!\n"
-msgstr "’¦ ©ç©«£˜ §ášà©œ!\n"
+msgstr ""
+"’¦ ©ç©«£˜ §ášà©œ!\n"
 
 #: bios/initinfo.c
 msgid "GEMDOS drives"
@@ -714,6 +715,7 @@ msgstr "¨¦œ§ ¢œš£â¤¦ª ¡˜«á¢¦š¦ª:"
 msgid "Input parameter:"
 msgstr "˜¨á£œ«¨¦  œ ©æ›¦¬"
 
+#: desk/desk_rsc.c
 msgid "Function keys:"
 msgstr "¦Ÿ« ¡á §¢ã¡«¨˜:"
 
@@ -1121,7 +1123,8 @@ msgid "[1]["
 "Cannot delete directory|"
 "%s][ Skip | Retry | Abort ]"
 msgstr "[1]["
-"€›¬¤˜£å˜ › ˜š¨˜­ãª «¦¬ ­˜¡â¢¦¬ |%s][˜¨á¢œ ¯|„§˜¤á¢¯| ê¡¬¨¦ ]"
+"€›¬¤˜£å˜ › ˜š¨˜­ãª «¦¬ ­˜¡â¢¦¬ |"
+"%s][˜¨á¢œ ¯|„§˜¤á¢¯| ê¡¬¨¦ ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["

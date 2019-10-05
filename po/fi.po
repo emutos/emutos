@@ -26,7 +26,7 @@ msgstr "GEMDOS-asemat"
 msgid "MB"
 msgstr "MB"
 
-#: bios/initinfo.c
+#: bios/initinfo.c desk/deskinf.c
 msgid "KB"
 msgstr "KB"
 

@@ -1532,3 +1532,4 @@ msgstr "Falsche Zahl von Parametern"
 #: cli/cmdutil.c
 msgid "error code %ld"
 msgstr "Fehlercode %ld"
+
