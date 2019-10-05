@@ -1,7 +1,7 @@
 /*
  * nls.c - Native Language Support
  *
- * Copyright (C) 2001 The Emutos Development Team
+ * Copyright (C) 2001-2019 The EmuTOS Development Team
  *
  * Authors:
  *  LVL   Laurent Vogel

@@ -5,7 +5,7 @@
  * scancodes: those scancodes which do not change, regardless of
  * language.  These were previously defined in many places.
  *
- * Copyright (C) 2016 The EmuTOS development team
+ * Copyright (C) 2016-2019 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows

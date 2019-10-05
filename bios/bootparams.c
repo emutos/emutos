@@ -1,7 +1,7 @@
 /*
  * bootparams.c - ramtos boot parameters
  *
- * Copyright (C) 2017 The EmuTOS development team
+ * Copyright (C) 2019 The EmuTOS development team
  *
  * Authors:
  *  VRI   Vincent Rivière

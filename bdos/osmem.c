@@ -2,7 +2,7 @@
  * osmem.c - allocate/release os memory
  *
  * Copyright (C) 2001 Lineo, Inc.
- *               2002-2016 The EmuTOS development team
+ *               2002-2019 The EmuTOS development team
  *
  * Authors:
  *  KTB   Karl T. Braun (kral)

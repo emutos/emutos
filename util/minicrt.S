@@ -2,7 +2,7 @@
  * minicrt.S - a minimal C Run Time startup.
  *
  * Copyright (C) 2001 by following authors
- * Copyright (C) 2013-2015 The EmuTOS development team.
+ * Copyright (C) 2013-2019 The EmuTOS development team.
  *
  * Authors:
  *  SCC     Steven C. Cavender

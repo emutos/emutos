@@ -1,7 +1,7 @@
 /*
  * midi.c - MIDI routines
  *
- * Copyright (C) 2001-2016 Martin Doering
+ * Copyright (C) 2001-2019 Martin Doering
  *
  * Authors:
  *  MAD   Martin Doering

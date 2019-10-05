@@ -3,7 +3,7 @@
  *
  * Copyright (C) 1999 by Caldera Inc.
  * Copyright (C) 1985, 2001 by Authors (see below)
- * Copyright (C) 2017 The EmuTOS development team
+ * Copyright (C) 2017-2019 The EmuTOS development team
  *
  * Authors:
  *  EWF  Eric W. Fleischman

@@ -1,7 +1,7 @@
 /*
  * parport.h - limited parallel port support
  *
- * Copyright (C) 2002, 2019 The EmuTOS development team
+ * Copyright (C) 2002-2019 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel

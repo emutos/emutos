@@ -1,7 +1,7 @@
 /*
  * memset.S - a quick memset/bzero for 68000/ColdFire
  *
- * Copyright (C) 2001-2017 The EmuTOS development team
+ * Copyright (C) 2001-2019 The EmuTOS development team
  *
  * Authors:
  *  LVL  Laurent Vogel

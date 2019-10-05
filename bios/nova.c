@@ -1,7 +1,7 @@
 /*
  * nova.c - Nova graphic card routines
  *
- * Copyright (C) 2018 The EmuTOS development team
+ * Copyright (C) 2018-2019 The EmuTOS development team
  *
  * Authors:
  * Christian Zietz

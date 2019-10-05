@@ -3,7 +3,7 @@
  *
  * Copyright (C) 2001 Lineo, Inc.
  * Copyright (C) 2004 by Authors (see below)
- * Copyright (C) 2015-2017 The EmuTOS development team
+ * Copyright (C) 2015-2019 The EmuTOS development team
  *
  * Authors:
  *  MAD     Martin Doering
