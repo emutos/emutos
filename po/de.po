@@ -227,16 +227,16 @@ msgstr "[3]["
 "Nummer #%d.][Abbruch]"
 
 #: aes/gem_rsc.c
-msgid "ITEM SELECTOR"
-msgstr "AUSWAHL"
-
-#: aes/gem_rsc.c
 msgid "[1]["
 "Not enough memory for|"
 "this directory][  OK  ]"
 msgstr "[1]["
 "Nicht genug Speicher für|"
 "dieses Verzeichnis][  OK  ]"
+
+#: aes/gem_rsc.c
+msgid "ITEM SELECTOR"
+msgstr "AUSWAHL"
 
 #: desk/desk_rsc.c
 msgid "Number of folders: _____"
@@ -329,6 +329,10 @@ msgstr "Aktueller Name: ________.___"
 #: desk/desk_rsc.c
 msgid "Copy's name: ________.___"
 msgstr "Name der Kopie: ________.___"
+
+#: desk/desk_rsc.c
+msgid "Free memory: ___________________"
+msgstr "Freier Speicher: ___________________"
 
 #: desk/desk_rsc.c
 msgid "Label: ________.___"
@@ -453,6 +457,10 @@ msgstr "  Desktop einstellen..."
 #: desk/desk_rsc.c
 msgid "  Change resolution...  ^R"
 msgstr "  Auflösung wechseln... ^R"
+
+#: desk/desk_rsc.c
+msgid "  Read .INF file..."
+msgstr "  .INF-Datei lesen..."
 
 #: desk/desk_rsc.c
 msgid "  Save desktop...       ^S"
@@ -603,6 +611,10 @@ msgid "NEW FOLDER"
 msgstr "NEUER ORDNER"
 
 #: desk/desk_rsc.c
+msgid "PRINT FILE"
+msgstr "DATEI DRUCKEN"
+
+#: desk/desk_rsc.c
 msgid "SET PREFERENCES"
 msgstr "VOREINSTELLUNGEN"
 
@@ -693,6 +705,10 @@ msgstr "Standardverzeichnis:"
 #: desk/desk_rsc.c
 msgid "Input parameter:"
 msgstr "Eingabeparameter:"
+
+#: desk/desk_rsc.c
+msgid "Function keys:"
+msgstr "Funktionstasten:"
 
 #: desk/desk_rsc.c
 msgid "SET SCREEN RESOLUTION"
@@ -791,6 +807,10 @@ msgid "%ld bytes used in %d items."
 msgstr "%ld Bytes in %d Dateien."
 
 #: desk/desk_rsc.c
+msgid "%ld bytes used in %d selected items."
+msgstr "%ld Bytes belegt von %d ausgewählten Objekten"
+
+#: desk/desk_rsc.c
 msgid "FILE INFORMATION"
 msgstr "DATEI INFORMATION"
 
@@ -819,6 +839,10 @@ msgid "TRASH"
 msgstr "PAPIERKORB"
 
 #: desk/desk_rsc.c
+msgid "PRINTER"
+msgstr "DRUCKER"
+
+#: desk/desk_rsc.c
 msgid "-More-"
 msgstr "-Mehr-"
 
@@ -833,6 +857,10 @@ msgstr "-Datei Lesefehler-"
 #: desk/desk_rsc.c
 msgid "Locate item"
 msgstr "Objekt lokalisieren"
+
+#: desk/desk_rsc.c
+msgid "Select .INF file"
+msgstr ".INF-Datei auswählen"
 
 #: desk/desk_rsc.c
 msgid "[2]["
@@ -854,14 +882,6 @@ msgstr "[1]["
 
 #: desk/desk_rsc.c
 msgid "[1]["
-"%s|"
-"is a printer.][  OK  ]"
-msgstr "[1]["
-"%s|"
-"ist ein Drucker.][  OK  ]"
-
-#: desk/desk_rsc.c
-msgid "[1]["
 "This document type has no|"
 "associated application.][  OK  ]"
 msgstr "[1]["
@@ -879,6 +899,18 @@ msgstr "[1]["
 "Fenster mehr verfügbar. Bitte|"
 "ein offenes Fenster schließen,|"
 "das nicht genutzt wird.][  OK  ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Illegal directory operation!][ Skip | Abort ]"
+msgstr "[1]["
+"Illegale Ordneroperation!][Auslassen| Abbruch ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Illegal operation!][  OK  ]"
+msgstr "[1]["
+"Illegale Operation!][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[2]["
@@ -957,6 +989,14 @@ msgstr "[1]["
 "In %s können Dateien|"
 "verschoben werden, um sie|"
 "endgültig zu löschen.][  OK  ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"%s|"
+"is a printer.][  OK  ]"
+msgstr "[1]["
+"%s|"
+"ist ein Drucker.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -1050,22 +1090,6 @@ msgstr "[1]["
 "Benutzung verfügbar.][ Weiter | Beenden ]"
 
 #: desk/desk_rsc.c
-msgid "%ld bytes used in %d selected items."
-msgstr "%ld Bytes belegt von %d ausgewählten Objekten"
-
-#: desk/desk_rsc.c
-msgid "[1]["
-"Illegal directory operation!][ Skip | Abort ]"
-msgstr "[1]["
-"Illegale Ordneroperation!][Auslassen| Abbruch ]"
-
-#: desk/desk_rsc.c
-msgid "[1]["
-"Illegal operation!][  OK  ]"
-msgstr "[1]["
-"Illegale Operation!][  OK  ]"
-
-#: desk/desk_rsc.c
 msgid "[1]["
 "Drive %s: does not exist.][ Cancel ]"
 msgstr "[1]["
@@ -1150,30 +1174,6 @@ msgid "[1]["
 msgstr "[1]["
 "Kann Standardverzeichnis|"
 "nicht setzen][  OK  ]"
-
-#: desk/desk_rsc.c
-msgid "Free memory: ___________________"
-msgstr "Freier Speicher: ___________________"
-
-#: desk/desk_rsc.c
-msgid "  Read .INF file..."
-msgstr "  .INF-Datei lesen..."
-
-#: desk/desk_rsc.c
-msgid "PRINT FILE"
-msgstr "DATEI DRUCKEN"
-
-#: desk/desk_rsc.c
-msgid "Function keys:"
-msgstr "Funktionstasten:"
-
-#: desk/desk_rsc.c
-msgid "PRINTER"
-msgstr "DRUCKER"
-
-#: desk/desk_rsc.c
-msgid "Select .INF file"
-msgstr ".INF-Datei auswählen"
 
 #: desk/desk_rsc.c
 msgid "[1]["
