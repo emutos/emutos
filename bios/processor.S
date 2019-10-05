@@ -269,7 +269,7 @@ m68000:
         jne     pi_chk030
 
 // We're running on a 68020
-        move.l  #0x000000001,d0  // enable cache
+        move.l  #0x00000001,d0  // enable cache
         jra     init_cacr
 
 pi_chk030:
