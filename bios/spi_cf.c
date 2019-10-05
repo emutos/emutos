@@ -48,7 +48,7 @@
  */
 
 /*
- *  Firebee timings are as follows:
+ *  FireBee timings are as follows:
  *  SD mode:
  *      Tcsc = (PCSSCK * CSSCK / Fsys) = (3 * 4 / 132000000) = 91 nsec
  *      Tasc = (PASC * ASC / Fsys) = (3 * 4 / 132000000) = 91 nsec

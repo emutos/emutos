@@ -6001,7 +6001,7 @@ Start... early ages
   like TOS to make room for accessory menu items. (VRI)
 
 2015-02-19
-- bios/ide.c: Limit IDE interfaces to 1 for non-Firebee hardware, to avoid
+- bios/ide.c: Limit IDE interfaces to 1 for non-FireBee hardware, to avoid
   detecting non-existent interfaces due to incomplete hardware address
   decoding. (RFB)
 
