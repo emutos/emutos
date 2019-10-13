@@ -736,7 +736,7 @@ static WORD install_desktop_icon(ANODE *pa)
             pa->a_letter = '\0';            /* default is no letter */
             switch(inf_gindex(tree, ID_DRIVE,3))
             {
-            default:                        /* i.e. case 0 */
+            case 0:
                 pa->a_type = AT_ISDISK;
                 inf_sget(tree, ID_ID, id);  /* disks must have a letter */
                 pa->a_letter = id[0];
