@@ -533,21 +533,6 @@ void sh_wdef(const char *lpcmd, const char *lpdir)
 
 static void sh_chgrf(SHELL *psh)
 {
-    /*
-     * use EmuTOS extension to reinitialize the VT52 console, so that
-     * the console state machine will start in the correct state
-     *
-     * the flow of control below is:
-     *  sh_tographic() -> gsx_graphic() -> escfn2() -> Cconws("\033f\033E")
-     *  [\033f = disable cursor, \033E = clear-and-home]
-     * previously, if the last Cconout() from a program (before returning
-     * to EmuDesk) was for an Esc (\033), the console state machine will
-     * treat the first Esc from the Cconws() as a normal character, the
-     * 'f' will also be treated as a normal character, and thus the cursor
-     * will be left blinking on the EmuDesk screen.
-     */
-    Setscreen(-1L, -1L, 0x8000, -1);
-
     if (psh->sh_isgem != gl_shgem)
     {
         gl_shgem = psh->sh_isgem;

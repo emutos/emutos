@@ -65,10 +65,18 @@ static void escfn1(Vwk * vwk)
 
 /*
  * escfn2: v_exit_cur() - exit alpha mode and enter graphics mode
+ *
+ * note: if the last thing a program does before entering graphics mode
+ * is to write an Esc to the console, the first character of the sequence
+ * below will be eaten (and ignored).  concretely, this is most likely
+ * to happen when a .TOS/.TTP program exits to the desktop.
+ *
+ * to circumvent this, we send a harmless escape sequence before we hide
+ * the alpha cursor.
  */
 static void escfn2(Vwk * vwk)
 {
-    cconws("\033f\033E");       /* hide alpha cursor, then clear-and-home */
+    cconws("\033H\033f\033E");  /* home, hide alpha cursor, then clear-and-home */
 }
 
 
