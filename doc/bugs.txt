@@ -30,6 +30,9 @@ Problems that also occur in Atari TOS:
   This is because wideline segments are joined by using filled circles
   whose radius is half the width of the line: the bump is a protruding
   part of the circle that joins the end segment to the previous one.
+- RAM: Cold boot may not be properly detected on some configurations. This
+  may happen if the computer has been switched off and on too quickly.
+  In that case, the welcome screen is not displayed.
 
 Links to programs listed above:
 - Diamond Miner:
