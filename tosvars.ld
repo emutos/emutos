@@ -11,7 +11,7 @@
  * The TOS system variables have been officially documented by Atari.
  * They have fixed addresses in the 0x380-0x800 region, so they are only
  * accessible in supervisor mode.
- * Documentation: http://toshyp.atari.org/en/003004.html
+ * Documentation: https://freemint.github.io/tos.hyp/en/bios_sysvars.html
  */
 
 /*
