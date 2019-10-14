@@ -3,7 +3,7 @@ Vincent Rivière's GCC 4.6.4 cross-compiler.  The custom tools used in
 the build process were built with native GCC 4.8.4.
 
 The source package and other binary packages are available at:
-https://sourceforge.net/projects/emutos/files/emutos/0.9.11/
+https://sourceforge.net/projects/emutos/files/emutos/0.9.12/
 
 The extras directory (if provided) contains:
 (1) one or more alternate desktop icon sets, which you can use to replace
