@@ -25,20 +25,20 @@ To be clear:
 AmigaOS is only used to load EmuTOS into RAM. Then EmuTOS completely takes
 over the machine, and AmigaOS is no more available until reboot.
 
-Unlike the Amiga EmuTOS ROM, these floppies are full-featured by default.
-They are the easiest way to test EmuTOS on real hardware.
+These floppies are the easiest way to test EmuTOS on real hardware.
 Floppy emulators such as HxC and Gotek are supported, and even recommended.
 
 Supported Amiga hardware features:
 - Any CPU from 68000 to 68060, including Apollo 68080
 - Chip RAM
-- FastRAM
-- Monochrome, interlaced 640x400 video mode
+- All kinds of Fast RAM
+- Monochrome video modes up to 640x512 interlaced
 - Keyboard
 - Mouse
-- A600/A1200 IDE interface
+- A600/A1200 IDE interface (including Vampire)
 - Battery backed up clock (MSM6242B and RF5C01A)
 - Floppy drives
+- Vampire V2/V4 SD Card
 
 Supported Atari features:
 - ST-RAM
@@ -47,6 +47,7 @@ Supported Atari features:
 - Mouse
 - IDE hard disk (with EmuTOS internal driver)
 - XBIOS hardware clock
+- Alt-RAM
 - ST floppy disks (only 9 sectors, 720 KB, read-only)
 
 Unsupported Atari features:

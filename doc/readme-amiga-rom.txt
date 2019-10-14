@@ -39,14 +39,14 @@ EmuTOS for Amiga has been successfully tested on:
 Supported Amiga hardware features:
 - Any CPU from 68000 to 68060, including Apollo 68080
 - Chip RAM
-- Monochrome, interlaced 640x400 video mode
+- All kinds of Fast RAM
+- Monochrome video modes up to 640x512 interlaced
 - Keyboard
 - Mouse
-- A600/A1200 IDE interface
+- A600/A1200 IDE interface (including Vampire)
 - Battery backed up clock (MSM6242B and RF5C01A)
-- Zorro II/III Fast RAM, Slow RAM, A3000/A4000 motherboard RAM
-- Vampire V2 FastRAM
 - Floppy drives
+- Vampire V2/V4 SD Card
 
 Supported Atari features:
 - ST-RAM
