@@ -154,7 +154,7 @@ The latest releases can be downloaded from:
 
 Development snapshots allow you to test the current development progress:
 
-    http://sourceforge.net/projects/emutos/files/snapshots/
+    https://sourceforge.net/projects/emutos/files/snapshots/
 
 The latest sources are always available on GitHub:
 
