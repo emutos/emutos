@@ -1529,12 +1529,8 @@ rot_done:
         neg.w   d0
 rot_nneg:
         move.w  d0,s_next(a6)
-        move.w  #0,d0
-repexit:
         clr.w   _SOURCEX
-repexit3:
         movea.l _SCRTCHP,a2
-        adda.w  d0,a2
         move.l  a2,sform(a6)
         clr.w   _SOURCEY
         rts
@@ -1732,7 +1728,13 @@ repexit1:
         jra     repexit3
 repexit2:
         move.w  _SCRPT2,d0
-        jra     repexit
+        clr.w   _SOURCEX
+repexit3:
+        movea.l _SCRTCHP,a2
+        adda.w  d0,a2
+        move.l  a2,sform(a6)
+        clr.w   _SOURCEY
+        rts
 //
 /////////////////////////////
 //
