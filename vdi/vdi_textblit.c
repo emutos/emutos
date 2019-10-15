@@ -253,11 +253,6 @@ static void pre_blit(LOCALVARS *vars)
 
     weight = WEIGHT;
     skew = LOFF + ROFF;
-    if (SCALE)
-    {
-        weight = max(weight/2, 1);  /* only thicken by half (but not 0) */
-        skew >>= 1;                 /* halve the skew */
-    }
 
     dest_width = vars->DELX;
     if (vars->STYLE & F_THICKEN)
@@ -273,13 +268,10 @@ static void pre_blit(LOCALVARS *vars)
     dest_height = vars->DELY;
     if (vars->STYLE & F_OUTLINE)
     {
-        if (!SCALE)         /* if we're scaling, we do this after scaling */
-        {
-            dest_width += 3;        /* add 1 left & 2 right pixels */
-            vars->tddad += 1;       /* and make leftmost column blank */
-            vars->DELY += 2;        /* add 2 rows */
-            dest_height += 3;       /* add 3 rows for buffer clear */
-        }
+        dest_width += 3;        /* add 1 left & 2 right pixels */
+        vars->tddad += 1;       /* and make leftmost column blank */
+        vars->DELY += 2;        /* add 2 rows */
+        dest_height += 3;       /* add 3 rows for buffer clear */
     }
     vars->width = dest_width;
     dest_width += skew;
@@ -298,12 +290,9 @@ static void pre_blit(LOCALVARS *vars)
             *p++ = 0;               /* clear buffer */
         if (vars->STYLE & F_OUTLINE)
         {
-            if (!SCALE)
-            {
-                vars->width -= 3;
-                vars->DELX -= 1;
-                size += vars->d_next;
-            }
+            vars->width -= 3;
+            vars->DELX -= 1;
+            size += vars->d_next;
         }
     }
 
@@ -326,16 +315,13 @@ static void pre_blit(LOCALVARS *vars)
 
     if (vars->STYLE & F_OUTLINE)
     {
-        if (!SCALE)
-        {
-            /*
-             * we may be able to speed up the following by calculating
-             * the args in outline() rather than passing them
-             */
-            src = vars->sform;
-            vars->sform += vars->s_next;
-            outline(vars+1, src, vars->s_next);
-        }
+        /*
+         * we may be able to speed up the following by calculating
+         * the args in outline() rather than passing them
+         */
+        src = vars->sform;
+        vars->sform += vars->s_next;
+        outline(vars+1, src, vars->s_next);
     }
 
     SOURCEX = 0;
@@ -494,6 +480,11 @@ void text_blt(void)
     vars.s_next = FWIDTH;
     vars.sform = (UBYTE *)FBASE;
 
+    if (SCALE)
+    {
+        scale(&vars+1);     /* call assembler helper function */
+    }
+
     /*
      * the following is equivalent to:
      *  if outlining, OR
@@ -514,11 +505,6 @@ void text_blt(void)
     if (vars.CHUP)
     {
         rotate(&vars+1);    /* call assembler helper function */
-    }
-
-    if (SCALE)
-    {
-        scale(&vars+1);     /* call assembler helper function */
     }
 
     if (vars.STYLE & F_THICKEN)
@@ -543,6 +529,7 @@ upda_dst:
     if (STYLE & F_OUTLINE)
     {
         delx += OUTLINE_THICKNESS * 2;
+        dely += OUTLINE_THICKNESS * 2;
     }
 
     if ((STYLE & F_THICKEN) && !MONO)

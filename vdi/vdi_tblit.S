@@ -1637,41 +1637,6 @@ replicat:
         move.w  d1,width(a6)
         jbsr    getnextbuf              //a1 = dest ptr
 
-        btst    #OUTLINE,STYLE+1(a6)    //outline after double?
-        jeq     noline                  //br if not
-//
-//  outlining, expand buffer size all around perimeter
-//
-        addq.w  #1,DELY(a6)             //will add 2 to height when doubled
-        addq.w  #1,DELX(a6)             //same with width
-
-        add.w   d1,d1                   //buffer width * 2 -> new buffer width
-        addq.w  #3,d1                   //new buffer is 3 pixels wider
-        lsr.w   #4,d1
-        add.w   d1,d1                   //# (even) of bytes per row
-        addq.w  #2,d1                   //# minimum of 1 word
-        move.w  d1,d5
-        moveq.l #0,d6
-oklear:
-        move.w  d6,(a1)+                //clear top 2 rows
-        dbra    d5,oklear
-        lea     -2(a1),a2
-        move.w  d2,d5
-        add.w   d5,d5
-oklear1:
-        adda.w  d1,a2
-        move.w  d6,(a2)                 //clear 3 pixels on right side
-        dbra    d5,oklear1
-
-        move.w  d1,d5
-        lsr.w   #1,d5
-        subq.w  #1,d5
-oklear3:
-        move.w  d6,-(a2)
-        dbra    d5,oklear3
-        jra     noline1
-
-noline:
         lsr.w   #3,d1
         add.w   d1,d1
         addq.w  #2,d1
@@ -1731,32 +1696,11 @@ nrpndoub:
 
         move.w  d_next(a6),d1
         move.w  d1,s_next(a6)
-//
-//  this don't work with arbitrary scale of text
-//
-//      andi.w  #SKEWM,dest_wrd(a6)     //did we skew-preblt before doubling?
-//      jne     skpreb                  //br to preblt_skew adjust if so
-//
-//
-repexit1:
-        btst    #OUTLINE,STYLE+1(a6)
-        jeq     repexit2
-        jbsr    currbuf                 //a1 -> current buffer
-        movea.l a1,a0
-        move.w  d1,d7
-        lea     2(a0,d7.w),a1
-        jbsr    outlin1
-        move.w  buffa(a6),d0
-        add.w   d_next(a6),d0
-        move.w  #15,_SOURCEX
-        jra     repexit3
-repexit2:
-        move.w  buffa(a6),d0
+
+        jbsr    currbuf
+        move.l  a1,sform(a6)
+
         clr.w   _SOURCEX
-repexit3:
-        movea.l _SCRTCHP,a2
-        adda.w  d0,a2
-        move.l  a2,sform(a6)
         clr.w   _SOURCEY
         rts
 //
