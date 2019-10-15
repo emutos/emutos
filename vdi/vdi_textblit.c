@@ -472,20 +472,17 @@ void text_blt(void)
         delx += LOFF + ROFF;
     }
 
-    if (vars.CHUP)
-    {
-        if (vars.CHUP == 1800)    /* 180 degrees */
-        {
-            vars.DESTX -= delx;
-        }
-        else
-        {
-            if (vars.CHUP == 900) /* 90 degree rotation */
-                vars.DESTY -= delx;
-            temp = delx;            /* swap delx/dely for 90 or 270 */
-            delx = dely;
-            dely = temp;
-        }
+    switch(vars.CHUP) {
+    case 900:
+        vars.DESTY -= delx;
+        FALLTHROUGH;
+    case 2700:
+        temp = delx;        /* swap delx/dely for 90 or 270 */
+        delx = dely;
+        dely = temp;
+        break;
+    case 1800:
+        vars.DESTX -= delx;
     }
 
     clipped = check_clip(&vars, delx, dely);
