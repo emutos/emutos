@@ -1436,6 +1436,8 @@ rotation:
         movea.l sform(a6),a0
         adda.w  d1,a0                   //a0 -> source
 
+        movea.l _SCRTCHP,a1             //a1 -> dest
+
         move.w  DELX(a6),width(a6)
         move.w  _SOURCEY,d0             //ax=d0
         move.w  DELY(a6),d1             //bx=d1
@@ -1457,7 +1459,6 @@ top_src:
         add.w   d0,d0
         addq.w  #2,d0                   //form width is height / 8 + 1
         move.w  d0,d_next(a6)
-        movea.l _SCRTCHP,a1
 
         tst.w   chup_flag(a6)           //determine if 90 or 270 rotation
         jgt     top_dwn                 //
@@ -1548,7 +1549,6 @@ upsd_dwn:
         lsr.w   #1,d2                   //number of words to move per line
         subq.w  #1,d2                   //for dbra, my sweetie
         mulu    d1,d0                   //d0 pts to bottom of new form
-        movea.l _SCRTCHP,a1
         adda.w  d0,a1                   //a1 -> last word in form
         jra     strtflip
 upsd_lp:
