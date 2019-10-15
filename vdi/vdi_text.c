@@ -241,11 +241,13 @@ static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width, JUSTINFO *j
     if (count <= 0)     /* quick out for unlikely occurrence */
         return;
 
+    fnt_ptr = vwk->cur_font;    /* get current font pointer */
+
     /* some data copying for the assembler part */
     DDAINC = vwk->dda_inc;
     SCALDIR = vwk->t_sclsts;
     SCALE = vwk->scaled;
-    MONO = F_MONOSPACE & vwk->cur_font->flags;
+    MONO = F_MONOSPACE & fnt_ptr->flags;
     WRT_MODE = vwk->wrt_mode;
 
     CLIP = vwk->clip;
@@ -257,8 +259,6 @@ static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width, JUSTINFO *j
     CHUP = vwk->chup;
     SCRPT2 = vwk->scrpt2;
     SCRTCHP = vwk->scrtchp;
-
-    fnt_ptr = vwk->cur_font;     /* Get current font pointer in register */
 
     if (vwk->style & F_THICKEN)
         WEIGHT = fnt_ptr->thicken;
@@ -423,11 +423,11 @@ static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width, JUSTINFO *j
             line->y2 = DESTY;
         }
         if (vwk->style & F_LIGHT)
-            LN_MASK = vwk->cur_font->lighten;
+            LN_MASK = fnt_ptr->lighten;
         else
             LN_MASK = 0xffff;
 
-        count = vwk->cur_font->ul_size;
+        count = fnt_ptr->ul_size;
         for (i = 0; i < count; i++) {
             if (vwk->clip) {
                 tx1 = line->x1;
