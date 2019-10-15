@@ -568,6 +568,23 @@ void rotate(LOCALVARS *vars)
 
 
 /*
+ * inline function to clarify horizontal scaling code
+ */
+static __inline__ UWORD *shift_and_update(UWORD *dst, UWORD *dstbit, UWORD *out)
+{
+    *dstbit >>= 1;
+    if (!*dstbit)           /* end of word ? */
+    {
+        *dstbit = 0x8000;   /* reset test bit */
+        *dst++ = *out;      /* output accumulated word */
+        *out = 0;           /* & reset it */
+    }
+
+    return dst;
+}
+
+
+/*
  * yloop: scale character horizontally
  */
 static void yloop(LOCALVARS *vars, UWORD *src, UWORD *dst)
@@ -591,25 +608,13 @@ static void yloop(LOCALVARS *vars, UWORD *src, UWORD *dst)
             if (accum < DDAINC)
             {
                 out |= dstbit;
-                dstbit >>= 1;
-                if (!dstbit)
-                {
-                    dstbit = 0x8000;
-                    *dst++ = out;
-                    out = 0;
-                }
+                dst = shift_and_update(dst, &dstbit, &out);
             }
 
             if (SCALDIR)
             {
                 out |= dstbit;
-                dstbit >>= 1;
-                if (!dstbit)
-                {
-                    dstbit = 0x8000;
-                    *dst++ = out;
-                    out = 0;
-                }
+                dst = shift_and_update(dst, &dstbit, &out);
             }
         }
         else                        /* handle bit clear in source */
@@ -619,23 +624,11 @@ static void yloop(LOCALVARS *vars, UWORD *src, UWORD *dst)
                 accum += DDAINC;
                 if (accum < DDAINC)
                 {
-                    dstbit >>= 1;
-                    if (!dstbit)
-                    {
-                        dstbit = 0x8000;
-                        *dst++ = out;
-                        out = 0;
-                    }
+                    dst = shift_and_update(dst, &dstbit, &out);
                 }
             }
 
-            dstbit >>= 1;
-            if (!dstbit)
-            {
-                dstbit = 0x8000;
-                *dst++ = out;
-                out = 0;
-            }
+            dst = shift_and_update(dst, &dstbit, &out);
         }
 
         srcbit >>= 1;
