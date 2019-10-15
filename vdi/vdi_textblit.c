@@ -184,15 +184,10 @@ static WORD do_clip(LOCALVARS *vars)
     WORD n;
 
     /*
-     * if clipping not requested, clip to screen
+     * if clipping not requested, exit
      */
     if (!vars->CLIP)
-    {
-        vars->XMN_CLIP = 0;     /* set screen coordinates */
-        vars->YMN_CLIP = 0;
-        vars->XMX_CLIP = xres;
-        vars->YMX_CLIP = yres;
-    }
+        return 0;
 
     /*
      * clip x minimum if necessary
