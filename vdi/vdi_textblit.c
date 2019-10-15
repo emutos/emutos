@@ -459,6 +459,12 @@ void text_blt(void)
         delx += LOFF + ROFF;
     }
 
+    if (vars.STYLE & F_OUTLINE)
+    {
+        delx += OUTLINE_THICKNESS * 2;
+        dely += OUTLINE_THICKNESS * 2;
+    }
+
     switch(vars.CHUP) {
     case 900:
         vars.DESTY -= delx;
