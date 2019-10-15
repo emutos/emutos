@@ -32,7 +32,7 @@
  */
 typedef struct {
                         /* temporary working variables */
-    WORD chup_flag;         /* chup-1800 */
+    WORD unused5;           /* was chup_flag (=CHUP-1800) */
     WORD blt_flag;
     WORD unused1;           /* was tmp_style */
                         /* working copies of the clipping variables */
@@ -474,14 +474,13 @@ void text_blt(void)
 
     if (vars.CHUP)
     {
-        vars.chup_flag = vars.CHUP - 1800;  /* 3 position flag */
-        if (vars.chup_flag == 0)    /* 180 degrees */
+        if (vars.CHUP == 1800)    /* 180 degrees */
         {
             vars.DESTX -= delx;
         }
         else
         {
-            if (vars.chup_flag < 0) /* 90 degree rotation */
+            if (vars.CHUP == 900) /* 90 degree rotation */
                 vars.DESTY -= delx;
             temp = delx;            /* swap delx/dely for 90 or 270 */
             delx = dely;

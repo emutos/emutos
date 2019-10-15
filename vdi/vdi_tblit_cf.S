@@ -10,7 +10,7 @@
 |                   All Rights Reserved Worldwide                       #
 |                                                                       #
 |########################################################################
-| Translated on Tue Oct 15 11:10:18 2019 by version 2.6.0 of PortAsm translator
+| Translated on Tue Oct 15 11:18:17 2019 by version 2.6.0 of PortAsm translator
 | PortAsm Licence Number #3250
 | Target assembler:    Gnu 'gas'
 |
@@ -2000,251 +2000,255 @@ rotation:
       move.w   %d1,(-22,%a6)           | [1094]
       move.w   (-16,%a6),%d2           | [1095]
 
-      tst.w    (-126,%a6)              | [1097 EQ LT]
-      jeq      upsd_dwn                | [1098]
+      move.w   (-110,%a6),%d6          | [1097]
+      cmp.w    #1800,%d6               | [1098 EQ]
+      jeq      upsd_dwn                | [1099]
 rot90:
-      jlt      top_src                 | [1100]
-|;;   neg.w     -16(a6)                | [1101]
+      cmp.w    #900,%d6                | [1101 EQ]
+      jeq      top_src                 | [1102]
+|;;   neg.w     -16(a6)                | [1103]
 	move.w   (-16,%a6),%d5
 	neg.l    %d5
 	move.w   %d5,(-16,%a6)
-|;;   subq.w    #1,d1                  | [1102]
+|;;   subq.w    #1,d1                  | [1104]
 	subq.l   #1,%d1
-|;;   add.w     d1,d0                  | [1103]
+|;;   add.w     d1,d0                  | [1105]
 	add.l    %d1,%d0
-      mulu.w   %d2,%d0                 | [1104]
-      adda.l   %d0,%a0                 | [1105]
+      mulu.w   %d2,%d0                 | [1106]
+      adda.l   %d0,%a0                 | [1107]
 top_src:
-      move.w   (-106,%a6),%d0          | [1107]
-|;;   lsr.w     #4,d0                  | [1108]
+      move.w   (-106,%a6),%d0          | [1109]
+|;;   lsr.w     #4,d0                  | [1110]
 	and.l    #0xffff,%d0
 	lsr.l    #4,%d0
-|;;   add.w     d0,d0                  | [1109]
+|;;   add.w     d0,d0                  | [1111]
 	add.l    %d0,%d0
-|;;   addq.w    #2,d0                  | [1110]
+|;;   addq.w    #2,d0                  | [1112]
 	addq.l   #2,%d0
-      move.w   %d0,(-18,%a6)           | [1111]
+      move.w   %d0,(-18,%a6)           | [1113]
 
-      tst.w    (-126,%a6)              | [1113 GT]
-      jgt      top_dwn                 | [1114]
-|;;   neg.w     -18(a6)                | [1115]
+      cmp.w    #2700,%d6               | [1115 EQ]
+      jeq      top_dwn                 | [1116]
+|;;   neg.w     -18(a6)                | [1117]
 	move.w   (-18,%a6),%d5
 	neg.l    %d5
 	move.w   %d5,(-18,%a6)
-      move.w   (-102,%a6),%d1          | [1116]
-|;;   subq.w    #1,d1                  | [1117]
+      move.w   (-102,%a6),%d1          | [1118]
+|;;   subq.w    #1,d1                  | [1119]
 	subq.l   #1,%d1
-      mulu.w   %d1,%d0                 | [1118]
-      adda.l   %d0,%a1                 | [1119]
+      mulu.w   %d1,%d0                 | [1120]
+      adda.l   %d0,%a1                 | [1121]
 top_dwn:
-      move.w   (-24,%a6),%d2           | [1121]
-      move.w   #0x8000,%d3             | [1122]
-      move.w   %d3,%d4                 | [1123]
-      movea.w  %d3,%a4                 | [1124]
-|;;   lsr.w     d2,d3                  | [1125]
+      move.w   (-24,%a6),%d2           | [1123]
+      move.w   #0x8000,%d3             | [1124]
+      move.w   %d3,%d4                 | [1125]
+      movea.w  %d3,%a4                 | [1126]
+|;;   lsr.w     d2,d3                  | [1127]
 	and.l    #0xffff,%d3
 	lsr.l    %d2,%d3
-      moveq.l  #0,%d0                  | [1126]
-      move.w   (-20,%a6),%d2           | [1127]
-      move.w   (-16,%a6),%d6           | [1128]
-      movea.l  %a0,%a2                 | [1129]
-      movea.l  %a1,%a3                 | [1130]
-      jra      rot_nsrc                | [1131]
+      moveq.l  #0,%d0                  | [1128]
+      move.w   (-20,%a6),%d2           | [1129]
+      move.w   (-16,%a6),%d6           | [1130]
+      movea.l  %a0,%a2                 | [1131]
+      movea.l  %a1,%a3                 | [1132]
+      jra      rot_nsrc                | [1133]
 rot_ylp:
-      move.w   (-22,%a6),%d1           | [1133]
-      jra      rot_srt                 | [1134]
+      move.w   (-22,%a6),%d1           | [1135]
+      jra      rot_srt                 | [1136]
 rot_xlp:
-      move.w   (%a0),%d7               | [1136]
-|;;   and.w     d3,d7                  | [1137 EQ]
+      move.w   (%a0),%d7               | [1138]
+|;;   and.w     d3,d7                  | [1139 EQ]
 	and.l    %d3,%d7
 	tst.w    %d7
-      jeq      rot_nor                 | [1138]
-|;;   or.w      d4,d0                  | [1139]
+      jeq      rot_nor                 | [1140]
+|;;   or.w      d4,d0                  | [1141]
 	or.l     %d4,%d0
 rot_nor:
-|;;   ror.w     #1,d4                  | [1141 CC]
+|;;   ror.w     #1,d4                  | [1143 CC]
 	move.w   %d4,%d5
 	swap     %d4
 	move.w   %d5,%d4
 	lsr.l    #1,%d4
-      jcc      rot_isrc                | [1142]
+      jcc      rot_isrc                | [1144]
 rot_ndst:
-      move.w   %d0,(%a1)+              | [1144]
-      moveq.l  #0,%d0                  | [1145]
+      move.w   %d0,(%a1)+              | [1146]
+      moveq.l  #0,%d0                  | [1147]
 rot_isrc:
-|;;   adda.w    d6,a0                  | [1147]
+|;;   adda.w    d6,a0                  | [1149]
 	mvs.w    %d6,%d5
 	adda.l   %d5,%a0
 rot_srt:
-|;;   dbra      d1,rot_xlp             | [1149]
+|;;   dbra      d1,rot_xlp             | [1151]
 	tst.w    %d1
-	jeq      _PA_1148_
+	jeq      _PA_1150_
 	subq.l   #1,%d1
 	jra      rot_xlp
-	_PA_1148_:         
+	_PA_1150_:         
 
-      move.w   %d0,(%a1)               | [1151]
-      moveq.l  #0,%d0                  | [1152]
-|;;   adda.w    -18(a6),a3             | [1153]
+      move.w   %d0,(%a1)               | [1153]
+      moveq.l  #0,%d0                  | [1154]
+|;;   adda.w    -18(a6),a3             | [1155]
 	mvs.w    (-18,%a6),%d5
 	adda.l   %d5,%a3
-      movea.l  %a3,%a1                 | [1154]
-      move.w   %a4,%d4                 | [1155]
-|;;   ror.w     #1,d3                  | [1156 CC]
+      movea.l  %a3,%a1                 | [1156]
+      move.w   %a4,%d4                 | [1157]
+|;;   ror.w     #1,d3                  | [1158 CC]
 	move.w   %d3,%d5
 	swap     %d3
 	move.w   %d5,%d3
 	lsr.l    #1,%d3
-      jcc      rnew_src                | [1157]
-      addq.l   #2,%a2                  | [1158]
+      jcc      rnew_src                | [1159]
+      addq.l   #2,%a2                  | [1160]
 rnew_src:
-      movea.l  %a2,%a0                 | [1160]
+      movea.l  %a2,%a0                 | [1162]
 rot_nsrc:
-|;;   dbra      d2,rot_ylp             | [1162]
+|;;   dbra      d2,rot_ylp             | [1164]
 	tst.w    %d2
-	jeq      _PA_1161_
+	jeq      _PA_1163_
 	subq.l   #1,%d2
 	jra      rot_ylp
-	_PA_1161_:         
+	_PA_1163_:         
 
 rot_done:
-      move.w   (-102,%a6),%d0          | [1165]
-      move.w   (-106,%a6),%d1          | [1166]
-      move.w   %d1,(-20,%a6)           | [1167]
-      move.w   %d1,(-102,%a6)          | [1168]
-      move.w   %d0,(-22,%a6)           | [1169]
-      move.w   %d0,(-106,%a6)          | [1170]
+      move.w   (-102,%a6),%d0          | [1167]
+      move.w   (-106,%a6),%d1          | [1168]
+      move.w   %d1,(-20,%a6)           | [1169]
+      move.w   %d1,(-102,%a6)          | [1170]
+      move.w   %d0,(-22,%a6)           | [1171]
+      move.w   %d0,(-106,%a6)          | [1172]
 
-      move.w   (-92,%a6),%d0           | [1172]
-      move.w   (-90,%a6),(-92,%a6)     | [1173]
-      move.w   %d0,(-90,%a6)           | [1174]
-      move.w   #1,(-94,%a6)            | [1175]
+      move.w   (-92,%a6),%d0           | [1174]
+      move.w   (-90,%a6),(-92,%a6)     | [1175]
+      move.w   %d0,(-90,%a6)           | [1176]
+      move.w   #1,(-94,%a6)            | [1177]
 
-      move.w   (-18,%a6),%d0           | [1177]
-      tst.w    (-126,%a6)              | [1178 GT]
-      jgt      rot_nneg                | [1179]
-|;;   neg.w     d0                     | [1180]
+      move.w   (-18,%a6),%d0           | [1179]
+|;;   cmpi.w    #900,-110(a6)          | [1180 NE]
+	move.w   (-110,%a6),%d5
+	cmp.w    #900,%d5
+      jne      rot_nneg                | [1181]
+|;;   neg.w     d0                     | [1182]
 	neg.l    %d0
 rot_nneg:
-      move.w   %d0,(-16,%a6)           | [1182]
-      clr.w    _SOURCEX                | [1183]
-      jbsr     currbuf                 | [1184]
-      move.l   %a1,(-10,%a6)           | [1185]
-      clr.w    _SOURCEY                | [1186]
+      move.w   %d0,(-16,%a6)           | [1184]
+      clr.w    _SOURCEX                | [1185]
+      jbsr     currbuf                 | [1186]
+      move.l   %a1,(-10,%a6)           | [1187]
+      clr.w    _SOURCEY                | [1188]
 |***	RESTORE	d5	***
 	move.l   (%a7)+,%d5
-      rts                              | [1187]
+      rts                              | [1189]
 
 upsd_dwn:
-      move.w   (-102,%a6),%d0          | [1190]
-|;;   add.w     -24(a6),d0             | [1191]
+      move.w   (-102,%a6),%d0          | [1192]
+|;;   add.w     -24(a6),d0             | [1193]
 	move.w   (-24,%a6),%d5
 	add.l    %d5,%d0
-|;;   subq.w    #1,d0                  | [1192]
+|;;   subq.w    #1,d0                  | [1194]
 	subq.l   #1,%d0
-|;;   lsr.w     #4,d0                  | [1193]
+|;;   lsr.w     #4,d0                  | [1195]
 	and.l    #0xffff,%d0
 	lsr.l    #4,%d0
-|;;   add.w     d0,d0                  | [1194]
+|;;   add.w     d0,d0                  | [1196]
 	add.l    %d0,%d0
-|;;   addq.w    #2,d0                  | [1195]
+|;;   addq.w    #2,d0                  | [1197]
 	addq.l   #2,%d0
 
-      move.w   %d0,(-18,%a6)           | [1197]
-      move.w   %d0,%d2                 | [1198]
-|;;   lsr.w     #1,d2                  | [1199]
+      move.w   %d0,(-18,%a6)           | [1199]
+      move.w   %d0,%d2                 | [1200]
+|;;   lsr.w     #1,d2                  | [1201]
 	and.l    #0xffff,%d2
 	lsr.l    #1,%d2
-|;;   subq.w    #1,d2                  | [1200]
+|;;   subq.w    #1,d2                  | [1202]
 	subq.l   #1,%d2
-      mulu.w   %d1,%d0                 | [1201]
-|;;   adda.w    d0,a1                  | [1202]
+      mulu.w   %d1,%d0                 | [1203]
+|;;   adda.w    d0,a1                  | [1204]
 	ext.l    %d0
 	adda.l   %d0,%a1
-      jra      strtflip                | [1203]
+      jra      strtflip                | [1205]
 upsd_lp:
-      movea.l  %a0,%a2                 | [1205]
-      move.w   %d2,%d3                 | [1206]
+      movea.l  %a0,%a2                 | [1207]
+      move.w   %d2,%d3                 | [1208]
 line_lp:
-      move.w   (%a2)+,%d0              | [1208]
-      moveq.l  #0,%d6                  | [1209]
-      moveq.l  #15,%d4                 | [1210]
+      move.w   (%a2)+,%d0              | [1210]
+      moveq.l  #0,%d6                  | [1211]
+      moveq.l  #15,%d4                 | [1212]
 flip_lp:
-|;;   lsr.w     #1,d0                  | [1212 X]
+|;;   lsr.w     #1,d0                  | [1214 X]
 	and.l    #0xffff,%d0
 	lsr.l    #1,%d0
-|;;   addx.w    d6,d6                  | [1213]
+|;;   addx.w    d6,d6                  | [1215]
 	addx.l   %d6,%d6
-|;;   dbra      d4,flip_lp             | [1214]
+|;;   dbra      d4,flip_lp             | [1216]
 	subq.l   #1,%d4
 	jpl      flip_lp
 
-      move.w   %d6,-(%a1)              | [1216]
-|;;   dbra      d3,line_lp             | [1217]
+      move.w   %d6,-(%a1)              | [1218]
+|;;   dbra      d3,line_lp             | [1219]
 	tst.w    %d3
-	jeq      _PA_1216_
+	jeq      _PA_1218_
 	subq.l   #1,%d3
 	jra      line_lp
-	_PA_1216_:         
+	_PA_1218_:         
 
-|;;   adda.w    -16(a6),a0             | [1219]
+|;;   adda.w    -16(a6),a0             | [1221]
 	mvs.w    (-16,%a6),%d5
 	adda.l   %d5,%a0
 strtflip:
-|;;   dbra      d1,upsd_lp             | [1221]
+|;;   dbra      d1,upsd_lp             | [1223]
 	tst.w    %d1
-	jeq      _PA_1220_
+	jeq      _PA_1222_
 	subq.l   #1,%d1
 	jra      upsd_lp
-	_PA_1220_:         
+	_PA_1222_:         
 
-      move.w   (-18,%a6),(-16,%a6)     | [1223]
-      jbsr     currbuf                 | [1224]
-      move.l   %a1,(-10,%a6)           | [1225]
-      move.w   _SOURCEX,%d0            | [1226]
-|;;   add.w     -102(a6),d0            | [1227]
+      move.w   (-18,%a6),(-16,%a6)     | [1225]
+      jbsr     currbuf                 | [1226]
+      move.l   %a1,(-10,%a6)           | [1227]
+      move.w   _SOURCEX,%d0            | [1228]
+|;;   add.w     -102(a6),d0            | [1229]
 	move.w   (-102,%a6),%d5
 	add.l    %d5,%d0
-|;;   neg.w     d0                     | [1228]
+|;;   neg.w     d0                     | [1230]
 	neg.l    %d0
-|;;   andi.w    #0xF,d0                | [1229]
+|;;   andi.w    #0xF,d0                | [1231]
 	andi.l   #(0xFFFF&0xF),%d0
-      move.w   %d0,_SOURCEX            | [1230]
-      clr.w    _SOURCEY                | [1231]
+      move.w   %d0,_SOURCEX            | [1232]
+      clr.w    _SOURCEY                | [1233]
 |***	RESTORE	d5	***
 	move.l   (%a7)+,%d5
-      rts                              | [1232]
-| 1592 "vdi/vdi_tblit.S"
+      rts                              | [1234]
+| 1594 "vdi/vdi_tblit.S"
 getnextbuf:
 |***	SAVE	d1	***
 	lea      -4(%a7),%a7
 	movem.l  %d1,(%a7)
-      move.w   %d0,-(%a7)              | [1235]
-      movea.l  _SCRTCHP,%a1            | [1236]
-      move.w   _SCRPT2,%d0             | [1237]
-|;;   sub.w     -2(a6),d0              | [1238]
+      move.w   %d0,-(%a7)              | [1237]
+      movea.l  _SCRTCHP,%a1            | [1238]
+      move.w   _SCRPT2,%d0             | [1239]
+|;;   sub.w     -2(a6),d0              | [1240]
 	move.w   (-2,%a6),%d1
 	sub.l    %d1,%d0
-      move.w   %d0,(-2,%a6)            | [1239]
-|;;   adda.w    d0,a1                  | [1240]
+      move.w   %d0,(-2,%a6)            | [1241]
+|;;   adda.w    d0,a1                  | [1242]
 	ext.l    %d0
 	adda.l   %d0,%a1
-      move.w   (%a7)+,%d0              | [1241]
+      move.w   (%a7)+,%d0              | [1243]
 |***	RESTORE	d1	***
 	move.l   (%a7)+,%d1
-      rts                              | [1242]
+      rts                              | [1244]
 
 currbuf:
 |***	SAVE	d0	***
 	lea      -4(%a7),%a7
 	movem.l  %d0,(%a7)
-      movea.l  _SCRTCHP,%a1            | [1245]
-|;;   adda.w    -2(a6),a1              | [1246]
+      movea.l  _SCRTCHP,%a1            | [1247]
+|;;   adda.w    -2(a6),a1              | [1248]
 	mvs.w    (-2,%a6),%d0
 	adda.l   %d0,%a1
 |***	RESTORE	d0	***
 	move.l   (%a7)+,%d0
-      rts                              | [1247]
+      rts                              | [1249]
 
 
 
@@ -2255,140 +2259,140 @@ replicat:
 |***	SAVE	d7	***
 	lea      -12(%a7),%a7
 	movem.l  %d7,8(%a7)
-      move.w   _SOURCEX,%d0            | [1255]
-      move.w   %d0,%d4                 | [1256]
-|;;   andi.w    #0x0F,d0               | [1257]
+      move.w   _SOURCEX,%d0            | [1257]
+      move.w   %d0,%d4                 | [1258]
+|;;   andi.w    #0x0F,d0               | [1259]
 	andi.l   #(0xFFFF&0x0F),%d0
-      move.w   %d0,(-24,%a6)           | [1258]
-|;;   lsr.w     #4,d4                  | [1259]
+      move.w   %d0,(-24,%a6)           | [1260]
+|;;   lsr.w     #4,d4                  | [1261]
 	and.l    #0xffff,%d4
 	lsr.l    #4,%d4
-|;;   add.w     d4,d4                  | [1260]
+|;;   add.w     d4,d4                  | [1262]
 	add.l    %d4,%d4
 
-      move.w   _SOURCEY,%d0            | [1262]
-      mulu.w   (-16,%a6),%d0           | [1263]
+      move.w   _SOURCEY,%d0            | [1264]
+      mulu.w   (-16,%a6),%d0           | [1265]
 |***	SAVE	d0	***
 	movem.l  %d0,(%a7)
-      movea.l  (-10,%a6),%a0           | [1264]
-|;;   adda.w    d4,a0                  | [1265]
+      movea.l  (-10,%a6),%a0           | [1266]
+|;;   adda.w    d4,a0                  | [1267]
 	mvs.w    %d4,%d3
 	adda.l   %d3,%a0
-      adda.l   %d0,%a0                 | [1266]
+      adda.l   %d0,%a0                 | [1268]
 
-      move.w   (-24,%a6),%d2           | [1268]
-      move.w   #0x8000,%d3             | [1269]
-      move.w   %d3,%d4                 | [1270]
+      move.w   (-24,%a6),%d2           | [1270]
+      move.w   #0x8000,%d3             | [1271]
+      move.w   %d3,%d4                 | [1272]
 |***	SAVE	d4	***
 	movem.l  %d4,4(%a7)
-|;;   lsr.w     d2,d3                  | [1271]
+|;;   lsr.w     d2,d3                  | [1273]
 	and.l    #0xffff,%d3
 	lsr.l    %d2,%d3
 
-      move.w   (-106,%a6),%d2          | [1273]
-      move.w   (-102,%a6),%d1          | [1274]
+      move.w   (-106,%a6),%d2          | [1275]
+      move.w   (-102,%a6),%d1          | [1276]
 
-      move.w   %d2,(-22,%a6)           | [1276]
-      move.w   %d1,(-20,%a6)           | [1277]
-      jbsr     getnextbuf              | [1278]
+      move.w   %d2,(-22,%a6)           | [1278]
+      move.w   %d1,(-20,%a6)           | [1279]
+      jbsr     getnextbuf              | [1280]
 
-      btst     #4,(-96+1,%a6)          | [1280 EQ]
-      jeq      noline                  | [1281]
+      btst     #4,(-96+1,%a6)          | [1282 EQ]
+      jeq      noline                  | [1283]
 
 
 
-|;;   addq.w    #1,-106(a6)            | [1285]
+|;;   addq.w    #1,-106(a6)            | [1287]
 	move.w   (-106,%a6),%d0
 	addq.l   #1,%d0
 	move.w   %d0,(-106,%a6)
-|;;   addq.w    #1,-102(a6)            | [1286]
+|;;   addq.w    #1,-102(a6)            | [1288]
 	move.w   (-102,%a6),%d0
 	addq.l   #1,%d0
 	move.w   %d0,(-102,%a6)
 
-|;;   add.w     d1,d1                  | [1288]
+|;;   add.w     d1,d1                  | [1290]
 	add.l    %d1,%d1
-|;;   addq.w    #3,d1                  | [1289]
+|;;   addq.w    #3,d1                  | [1291]
 	addq.l   #3,%d1
-|;;   lsr.w     #4,d1                  | [1290]
+|;;   lsr.w     #4,d1                  | [1292]
 	and.l    #0xffff,%d1
 	lsr.l    #4,%d1
-|;;   add.w     d1,d1                  | [1291]
+|;;   add.w     d1,d1                  | [1293]
 	add.l    %d1,%d1
-|;;   addq.w    #2,d1                  | [1292]
+|;;   addq.w    #2,d1                  | [1294]
 	addq.l   #2,%d1
-      move.w   %d1,%d5                 | [1293]
-      moveq.l  #0,%d6                  | [1294]
+      move.w   %d1,%d5                 | [1295]
+      moveq.l  #0,%d6                  | [1296]
 oklear:
-      move.w   %d6,(%a1)+              | [1296]
-|;;   dbra      d5,oklear              | [1297]
+      move.w   %d6,(%a1)+              | [1298]
+|;;   dbra      d5,oklear              | [1299]
 	tst.w    %d5
-	jeq      _PA_1296_
+	jeq      _PA_1298_
 	subq.l   #1,%d5
 	jra      oklear
-	_PA_1296_:         
-      lea      (-2,%a1),%a2            | [1298]
-      move.w   %d2,%d5                 | [1299]
-|;;   add.w     d5,d5                  | [1300]
+	_PA_1298_:         
+      lea      (-2,%a1),%a2            | [1300]
+      move.w   %d2,%d5                 | [1301]
+|;;   add.w     d5,d5                  | [1302]
 	add.l    %d5,%d5
 oklear1:
-|;;   adda.w    d1,a2                  | [1302]
+|;;   adda.w    d1,a2                  | [1304]
 	mvs.w    %d1,%d0
 	adda.l   %d0,%a2
-      move.w   %d6,(%a2)               | [1303]
-|;;   dbra      d5,oklear1             | [1304]
+      move.w   %d6,(%a2)               | [1305]
+|;;   dbra      d5,oklear1             | [1306]
 	tst.w    %d5
-	jeq      _PA_1303_
+	jeq      _PA_1305_
 	subq.l   #1,%d5
 	jra      oklear1
-	_PA_1303_:         
+	_PA_1305_:         
 
-|;;   move.w    d1,d5                  | [1306]
+|;;   move.w    d1,d5                  | [1308]
 	move.w   %d0,%d5
-|;;   lsr.w     #1,d5                  | [1307]
+|;;   lsr.w     #1,d5                  | [1309]
 	and.l    #0xffff,%d5
 	lsr.l    #1,%d5
-|;;   subq.w    #1,d5                  | [1308 X]
+|;;   subq.w    #1,d5                  | [1310 X]
 	subq.l   #1,%d5
 oklear3:
-      move.w   %d6,-(%a2)              | [1310]
-|;;   dbra      d5,oklear3             | [1311]
+      move.w   %d6,-(%a2)              | [1312]
+|;;   dbra      d5,oklear3             | [1313]
 	move     %CCR,%d0
 	tst.w    %d5
-	jeq      _PA_1310_
+	jeq      _PA_1312_
 	subq.l   #1,%d5
 	move     %d0,%CCR
 	jra      oklear3
-	_PA_1310_:         
+	_PA_1312_:         
 	move     %d0,%CCR
-      jra      noline1                 | [1312]
+      jra      noline1                 | [1314]
 
 noline:
-|;;   lsr.w     #3,d1                  | [1315]
+|;;   lsr.w     #3,d1                  | [1317]
 	and.l    #0xffff,%d1
 	lsr.l    #3,%d1
-|;;   add.w     d1,d1                  | [1316]
+|;;   add.w     d1,d1                  | [1318]
 	add.l    %d1,%d1
-|;;   addq.w    #2,d1                  | [1317 X]
+|;;   addq.w    #2,d1                  | [1319 X]
 	ori.l    #0xffff0000,%d1
 	addq.l   #2,%d1
 noline1:
-      move.w   %d1,(-18,%a6)           | [1319]
+      move.w   %d1,(-18,%a6)           | [1321]
 |***	RESTORE	AFTER d7	***
 	movem.l  8(%a7),%d7
 
 
 
-      move.w   _SCALDIR,%d7            | [1323]
-|;;   roxr.l    #1,d7                  | [1324 X]
+      move.w   _SCALDIR,%d7            | [1325]
+|;;   roxr.l    #1,d7                  | [1326 X]
 	move.l   %d7,%d0
 	addx.l   %d0,%d0
 	moveq    #32-1,%d4
 	lsl.l    %d4,%d0
 	lsr.l    #1,%d7
 	or.l     %d0,%d7
-      moveq.l  #0,%d7                  | [1325]
-|;;   roxr.l    #1,d7                  | [1326]
+      moveq.l  #0,%d7                  | [1327]
+|;;   roxr.l    #1,d7                  | [1328]
 	move.l   %d7,%d0
 	addx.l   %d0,%d0
 	moveq    #32-1,%d4
@@ -2396,97 +2400,97 @@ noline1:
 	lsr.l    #1,%d7
 	or.l     %d0,%d7
 
-      move.w   (-16,%a6),%d7           | [1328]
-      move.w   _DDAINC,%d2             | [1329]
-      move.w   (-22,%a6),%d5           | [1330]
-|;;   subq.w    #1,d5                  | [1331]
+      move.w   (-16,%a6),%d7           | [1330]
+      move.w   _DDAINC,%d2             | [1331]
+      move.w   (-22,%a6),%d5           | [1332]
+|;;   subq.w    #1,d5                  | [1333]
 	subq.l   #1,%d5
-      move.w   #32767,%d6              | [1332]
+      move.w   #32767,%d6              | [1334]
 |***	RESTORE	d0/d4	***
 	movem.l  (%a7),%d0/%d4
 	lea      12(%a7),%a7
-      tst.l    %d7                     | [1333 MI]
-      jmi      rep_ylop                | [1334]
+      tst.l    %d7                     | [1335 MI]
+      jmi      rep_ylop                | [1336]
 y_dwn_lp:
 |***	SAVE	d1	***
 	lea      -4(%a7),%a7
 	movem.l  %d1,(%a7)
-|;;   add.w     d2,d6                  | [1336 CC]
+|;;   add.w     d2,d6                  | [1338 CC]
 	and.l    #0xffff,%d2
 	ori.l    #0xffff0000,%d6
 	add.l    %d2,%d6
-      jcc      y_no_drw                | [1337]
-      jbsr     yloop                   | [1338]
+      jcc      y_no_drw                | [1339]
+      jbsr     yloop                   | [1340]
 y_no_drw:
-|;;   adda.w    d7,a0                  | [1340]
+|;;   adda.w    d7,a0                  | [1342]
 	mvs.w    %d7,%d1
 	adda.l   %d1,%a0
 |***	RESTORE	AFTER d1	***
 	move.l   (%a7)+,%d1
-|;;   dbra      d5,y_dwn_lp            | [1341]
+|;;   dbra      d5,y_dwn_lp            | [1343]
 	tst.w    %d5
-	jeq      _PA_1340_
+	jeq      _PA_1342_
 	subq.l   #1,%d5
 	jra      y_dwn_lp
-	_PA_1340_:         
-      jra      y_rep_don               | [1342]
+	_PA_1342_:         
+      jra      y_rep_don               | [1344]
 rep_ylop:
 |***	SAVE	d1	***
 	lea      -4(%a7),%a7
 	movem.l  %d1,(%a7)
-|;;   add.w     d2,d6                  | [1344 CC]
+|;;   add.w     d2,d6                  | [1346 CC]
 	mvz.w    %d2,%d0
 	ori.l    #0xffff0000,%d6
 	add.l    %d0,%d6
-      jcc      y_no_rep                | [1345]
-      jbsr     yloop                   | [1346]
-y_no_rep:
+      jcc      y_no_rep                | [1347]
       jbsr     yloop                   | [1348]
-|;;   adda.w    d7,a0                  | [1349]
+y_no_rep:
+      jbsr     yloop                   | [1350]
+|;;   adda.w    d7,a0                  | [1351]
 	mvs.w    %d7,%d1
 	adda.l   %d1,%a0
 |***	RESTORE	AFTER d1	***
 	move.l   (%a7)+,%d1
-|;;   dbra      d5,rep_ylop            | [1350]
+|;;   dbra      d5,rep_ylop            | [1352]
 	tst.w    %d5
-	jeq      _PA_1349_
+	jeq      _PA_1351_
 	subq.l   #1,%d5
 	jra      rep_ylop
-	_PA_1349_:         
+	_PA_1351_:         
 y_rep_don:
-      move.w   (-102,%a6),%d2          | [1352]
-|;;   subq.w    #1,d2                  | [1353]
+      move.w   (-102,%a6),%d2          | [1354]
+|;;   subq.w    #1,d2                  | [1355]
 	subq.l   #1,%d2
-      move.w   _XDDA,%d1               | [1354]
-      move.w   _DDAINC,%d0             | [1355]
-      moveq.l  #0,%d3                  | [1356]
+      move.w   _XDDA,%d1               | [1356]
+      move.w   _DDAINC,%d0             | [1357]
+      moveq.l  #0,%d3                  | [1358]
 repwidcl:
-|;;   add.w     d0,d1                  | [1358 CC]
+|;;   add.w     d0,d1                  | [1360 CC]
 	and.l    #0xffff,%d0
 	ori.l    #0xffff0000,%d1
 	add.l    %d0,%d1
-      jcc      nrepdoub                | [1359]
-|;;   addq.w    #1,d3                  | [1360]
+      jcc      nrepdoub                | [1361]
+|;;   addq.w    #1,d3                  | [1362]
 	addq.l   #1,%d3
 nrepdoub:
-      tst.l    %d7                     | [1362 PL]
-      jpl      nrpndoub                | [1363]
-|;;   addq.w    #1,d3                  | [1364]
+      tst.l    %d7                     | [1364 PL]
+      jpl      nrpndoub                | [1365]
+|;;   addq.w    #1,d3                  | [1366]
 	addq.l   #1,%d3
 nrpndoub:
-|;;   dbra      d2,repwidcl            | [1366]
+|;;   dbra      d2,repwidcl            | [1368]
 	tst.w    %d2
-	jeq      _PA_1365_
+	jeq      _PA_1367_
 	subq.l   #1,%d2
 	jra      repwidcl
-	_PA_1365_:         
-      move.w   %d1,_XDDA               | [1367]
-      move.w   %d3,(-102,%a6)          | [1368]
-      move.w   (-92,%a6),(-106,%a6)    | [1369]
+	_PA_1367_:         
+      move.w   %d1,_XDDA               | [1369]
+      move.w   %d3,(-102,%a6)          | [1370]
+      move.w   (-92,%a6),(-106,%a6)    | [1371]
 
 
-      move.w   (-18,%a6),%d1           | [1372]
-      move.w   %d1,(-16,%a6)           | [1373]
+      move.w   (-18,%a6),%d1           | [1374]
+      move.w   %d1,(-16,%a6)           | [1375]
 
 
 
@@ -2495,79 +2499,79 @@ nrpndoub:
 
 
 repexit1:
-      btst     #4,(-96+1,%a6)          | [1382 EQ]
-      jeq      repexit2                | [1383]
-      jbsr     currbuf                 | [1384]
-      movea.l  %a1,%a0                 | [1385]
-      move.w   %d1,%d7                 | [1386]
-|;;   lea       2(a0,d7.w),a1          | [1387]
+      btst     #4,(-96+1,%a6)          | [1384 EQ]
+      jeq      repexit2                | [1385]
+      jbsr     currbuf                 | [1386]
+      movea.l  %a1,%a0                 | [1387]
+      move.w   %d1,%d7                 | [1388]
+|;;   lea       2(a0,d7.w),a1          | [1389]
 	ext.l    %d7
 	lea      (2,%a0,%d7.l*1),%a1
-      jbsr     outlin1                 | [1388]
+      jbsr     outlin1                 | [1390]
 |***	SAVE	d1	***
 	lea      -4(%a7),%a7
 	movem.l  %d1,(%a7)
-      move.w   (-2,%a6),%d0            | [1389]
-|;;   add.w     -18(a6),d0             | [1390]
+      move.w   (-2,%a6),%d0            | [1391]
+|;;   add.w     -18(a6),d0             | [1392]
 	move.w   (-18,%a6),%d1
 	add.l    %d1,%d0
-|;;   move.w    #15,_SOURCEX           | [1391]
+|;;   move.w    #15,_SOURCEX           | [1393]
 	moveq.l  #15,%d1
 	move.w   %d1,_SOURCEX
 |***	RESTORE	d1	***
 	move.l   (%a7)+,%d1
-      jra      repexit3                | [1392]
+      jra      repexit3                | [1394]
 repexit2:
-      move.w   (-2,%a6),%d0            | [1394]
-      clr.w    _SOURCEX                | [1395]
+      move.w   (-2,%a6),%d0            | [1396]
+      clr.w    _SOURCEX                | [1397]
 repexit3:
-      movea.l  _SCRTCHP,%a2            | [1397]
-|;;   adda.w    d0,a2                  | [1398]
+      movea.l  _SCRTCHP,%a2            | [1399]
+|;;   adda.w    d0,a2                  | [1400]
 	ext.l    %d0
 	adda.l   %d0,%a2
-      move.l   %a2,(-10,%a6)           | [1399]
-      clr.w    _SOURCEY                | [1400]
-      rts                              | [1401]
-| 1790 "vdi/vdi_tblit.S"
+      move.l   %a2,(-10,%a6)           | [1401]
+      clr.w    _SOURCEY                | [1402]
+      rts                              | [1403]
+| 1792 "vdi/vdi_tblit.S"
 yloop:
 |***	SAVE	d1	***
 	lea      -4(%a7),%a7
 	movem.l  %d1,(%a7)
-|;;   movem.l   d3-d4/d6,-(sp)         | [1404]
+|;;   movem.l   d3-d4/d6,-(sp)         | [1406]
 	lea      -12(%a7),%a7
 	movem.l  %d3-%d4/%d6,(%a7)
-      movea.l  %a0,%a3                 | [1405]
-      movea.l  %a1,%a4                 | [1406]
-      movea.l  %d7,%a5                 | [1407]
-      move.w   %d5,(-44,%a6)           | [1408]
-      moveq.l  #0,%d0                  | [1409]
-      move.w   (-20,%a6),%d5           | [1410]
-|;;   subq.w    #1,d5                  | [1411]
+      movea.l  %a0,%a3                 | [1407]
+      movea.l  %a1,%a4                 | [1408]
+      movea.l  %d7,%a5                 | [1409]
+      move.w   %d5,(-44,%a6)           | [1410]
+      moveq.l  #0,%d0                  | [1411]
+      move.w   (-20,%a6),%d5           | [1412]
+|;;   subq.w    #1,d5                  | [1413]
 	subq.l   #1,%d5
 
-      move.w   _XDDA,%d7               | [1413]
-      jra      nextsrc                 | [1414]
+      move.w   _XDDA,%d7               | [1415]
+      jra      nextsrc                 | [1416]
 innerlp:
-|;;   ror.w     #1,d3                  | [1416 CC]
+|;;   ror.w     #1,d3                  | [1418 CC]
 	move.w   %d3,%d1
 	swap     %d3
 	move.w   %d1,%d3
 	lsr.l    #1,%d3
-      jcc      reploop                 | [1417]
+      jcc      reploop                 | [1419]
 nextsrc:
-      movea.w  (%a0)+,%a2              | [1419]
+      movea.w  (%a0)+,%a2              | [1421]
 reploop:
-      move.w   %a2,%d6                 | [1421]
-|;;   and.w     d3,d6                  | [1422 NE]
+      move.w   %a2,%d6                 | [1423]
+|;;   and.w     d3,d6                  | [1424 NE]
 	and.l    %d3,%d6
 	tst.w    %d6
-      jne      nrepnor                 | [1423]
+      jne      nrepnor                 | [1425]
 
 
 repnor:
-      tst.l    %d7                     | [1427 MI]
-      jmi      repnorup                | [1428]
-|;;   add.w     d2,d7                  | [1429 CC]
+      tst.l    %d7                     | [1429 MI]
+      jmi      repnorup                | [1430]
+|;;   add.w     d2,d7                  | [1431 CC]
 	and.l    #0xffff,%d2
 	move.w   %d7,%d1
 	ori.l    #0xffff0000,%d1
@@ -2575,10 +2579,10 @@ repnor:
 	move     %ccr,%d6
 	move.w   %d1,%d7
 	move     %d6,%ccr
-      jcc      incsrc                  | [1430]
-      jra      ordone                  | [1431]
+      jcc      incsrc                  | [1432]
+      jra      ordone                  | [1433]
 repnorup:
-|;;   add.w     d2,d7                  | [1433 CC]
+|;;   add.w     d2,d7                  | [1435 CC]
 	and.l    #0xffff,%d2
 	move.w   %d7,%d1
 	ori.l    #0xffff0000,%d1
@@ -2586,26 +2590,26 @@ repnorup:
 	move     %ccr,%d6
 	move.w   %d1,%d7
 	move     %d6,%ccr
-      jcc      ordone                  | [1434]
+      jcc      ordone                  | [1436]
 
 
-|;;   ror.w     #1,d4                  | [1437 CC]
+|;;   ror.w     #1,d4                  | [1439 CC]
 	move.w   %d4,%d1
 	swap     %d4
 	move.w   %d1,%d4
 	lsr.l    #1,%d4
 
 
-      jcc      ordone                  | [1440]
-      move.w   %d0,(%a1)+              | [1441]
-      moveq.l  #0,%d0                  | [1442]
+      jcc      ordone                  | [1442]
+      move.w   %d0,(%a1)+              | [1443]
+      moveq.l  #0,%d0                  | [1444]
 
 
-      jra      ordone                  | [1445]
+      jra      ordone                  | [1447]
 nrepnor:
 
 
-|;;   add.w     d2,d7                  | [1449 CC]
+|;;   add.w     d2,d7                  | [1451 CC]
 	and.l    #0xffff,%d2
 	move.w   %d7,%d1
 	ori.l    #0xffff0000,%d1
@@ -2613,86 +2617,86 @@ nrepnor:
 	move     %ccr,%d6
 	move.w   %d1,%d7
 	move     %d6,%ccr
-      jcc      o_no_rep                | [1450]
+      jcc      o_no_rep                | [1452]
 
 
-|;;   or.w      d4,d0                  | [1453]
+|;;   or.w      d4,d0                  | [1455]
 	or.l     %d4,%d0
-|;;   ror.w     #1,d4                  | [1454 CC]
+|;;   ror.w     #1,d4                  | [1456 CC]
 	move.w   %d4,%d1
 	swap     %d4
 	move.w   %d1,%d4
 	lsr.l    #1,%d4
 
-      jcc      o_no_rep                | [1456]
-      move.w   %d0,(%a1)+              | [1457]
-      moveq.l  #0,%d0                  | [1458]
+      jcc      o_no_rep                | [1458]
+      move.w   %d0,(%a1)+              | [1459]
+      moveq.l  #0,%d0                  | [1460]
 o_no_rep:
-      tst.l    %d7                     | [1460 PL]
-      jpl      incsrc                  | [1461]
+      tst.l    %d7                     | [1462 PL]
+      jpl      incsrc                  | [1463]
 
 
-|;;   or.w      d4,d0                  | [1464]
+|;;   or.w      d4,d0                  | [1466]
 	or.l     %d4,%d0
 ordone:
-|;;   ror.w     #1,d4                  | [1466 CC]
+|;;   ror.w     #1,d4                  | [1468 CC]
 	move.w   %d4,%d1
 	swap     %d4
 	move.w   %d1,%d4
 	lsr.l    #1,%d4
-      jcc      incsrc                  | [1467]
+      jcc      incsrc                  | [1469]
 nextdst:
-      move.w   %d0,(%a1)+              | [1469]
-      moveq.l  #0,%d0                  | [1470]
+      move.w   %d0,(%a1)+              | [1471]
+      moveq.l  #0,%d0                  | [1472]
 incsrc:
-|;;   dbra      d5,innerlp             | [1472]
+|;;   dbra      d5,innerlp             | [1474]
 	tst.w    %d5
-	jeq      _PA_1471_
+	jeq      _PA_1473_
 	subq.l   #1,%d5
 	jra      innerlp
-	_PA_1471_:         
+	_PA_1473_:         
 repdone:
-      move.w   %d0,(%a1)               | [1474]
-|;;   movem.l   (sp)+,d3-d4/d6         | [1475]
+      move.w   %d0,(%a1)               | [1476]
+|;;   movem.l   (sp)+,d3-d4/d6         | [1477]
 	movem.l  (%a7),%d3-%d4/%d6
 	lea      12(%a7),%a7
-      movea.l  %a3,%a0                 | [1476]
-      movea.l  %a4,%a1                 | [1477]
+      movea.l  %a3,%a0                 | [1478]
+      movea.l  %a4,%a1                 | [1479]
 |***	RESTORE	AFTER d1	***
 	move.l   (%a7)+,%d1
-|;;   adda.w    d1,a1                  | [1478]
+|;;   adda.w    d1,a1                  | [1480]
 	ext.l    %d1
 	adda.l   %d1,%a1
-      move.l   %a5,%d7                 | [1479]
-      move.w   (-44,%a6),%d5           | [1480]
-      rts                              | [1481]
-| 1878 "vdi/vdi_tblit.S"
+      move.l   %a5,%d7                 | [1481]
+      move.w   (-44,%a6),%d5           | [1482]
+      rts                              | [1483]
+| 1880 "vdi/vdi_tblit.S"
 outlin:
-|;;   lea       (a0,d7.w),a1           | [1484]
+|;;   lea       (a0,d7.w),a1           | [1486]
 	ext.l    %d7
 	lea      (0,%a0,%d7.l*1),%a1
 outlin1:
-|;;   lea       (a1,d7.w),a2           | [1486]
+|;;   lea       (a1,d7.w),a2           | [1488]
 	ext.l    %d7
 	lea      (0,%a1,%d7.l*1),%a2
-|;;   lsr.w     #1,d7                  | [1487]
+|;;   lsr.w     #1,d7                  | [1489]
 	and.l    #0xffff,%d7
 	lsr.l    #1,%d7
-|;;   subq.w    #1,d7                  | [1488]
+|;;   subq.w    #1,d7                  | [1490]
 	subq.l   #1,%d7
-      move.w   %d7,(-44,%a6)           | [1489]
-      move.w   (-106,%a6),%d6          | [1490]
+      move.w   %d7,(-44,%a6)           | [1491]
+      move.w   (-106,%a6),%d6          | [1492]
 
-      movea.l  %a0,%a5                 | [1492]
-|;;   subq.w    #1,d6                  | [1493]
+      movea.l  %a0,%a5                 | [1494]
+|;;   subq.w    #1,d6                  | [1495]
 	subq.l   #1,%d6
 out_edge:
-      movea.w  %d6,%a4                 | [1495]
-      movea.l  %a2,%a3                 | [1496]
-      moveq.l  #0,%d5                  | [1497]
-      moveq.l  #0,%d6                  | [1498]
-      move.l   (%a2),%d1               | [1499]
-      lsr.l    #1,%d1                  | [1500]
+      movea.w  %d6,%a4                 | [1497]
+      movea.l  %a2,%a3                 | [1498]
+      moveq.l  #0,%d5                  | [1499]
+      moveq.l  #0,%d6                  | [1500]
+      move.l   (%a2),%d1               | [1501]
+      lsr.l    #1,%d1                  | [1502]
 
 
 
@@ -2701,64 +2705,64 @@ out_loop:
 	lea      -16(%a7),%a7
 	movem.l  %d1,4(%a7)
 	movem.l  %d7,12(%a7)
-      move.l   (%a0),%d0               | [1505]
-      move.b   %d5,%d0                 | [1506]
-|;;   ror.l     #1,d0                  | [1507]
+      move.l   (%a0),%d0               | [1507]
+      move.b   %d5,%d0                 | [1508]
+|;;   ror.l     #1,d0                  | [1509]
 	move.l   %d0,%d1
 	lsr.l    #1,%d0
 	moveq    #32-1,%d2
 	lsl.l    %d2,%d1
 	or.l     %d1,%d0
 
-      move.l   (%a1),%d2               | [1509]
-      move.b   %d6,%d2                 | [1510]
-      move.l   %d2,%d3                 | [1511]
-|;;   ror.l     #1,d3                  | [1512]
+      move.l   (%a1),%d2               | [1511]
+      move.b   %d6,%d2                 | [1512]
+      move.l   %d2,%d3                 | [1513]
+|;;   ror.l     #1,d3                  | [1514]
 	move.l   %d3,%d1
 	lsr.l    #1,%d3
 	moveq    #32-1,%d4
 	lsl.l    %d4,%d1
 	or.l     %d1,%d3
-      move.l   %d3,%d4                 | [1513]
-|;;   ror.l     #1,d4                  | [1514]
+      move.l   %d3,%d4                 | [1515]
+|;;   ror.l     #1,d4                  | [1516]
 	move.l   %d4,%d1
 	lsr.l    #1,%d4
 	moveq    #32-1,%d5
 	lsl.l    %d5,%d1
 	or.l     %d1,%d4
 
-      move.l   %d0,%d5                 | [1516]
-      move.l   %d0,%d6                 | [1517]
-      eor.l    %d2,%d0                 | [1518]
-      eor.l    %d3,%d5                 | [1519]
-      eor.l    %d4,%d6                 | [1520]
-|;;   rol.l     #1,d5                  | [1521]
+      move.l   %d0,%d5                 | [1518]
+      move.l   %d0,%d6                 | [1519]
+      eor.l    %d2,%d0                 | [1520]
+      eor.l    %d3,%d5                 | [1521]
+      eor.l    %d4,%d6                 | [1522]
+|;;   rol.l     #1,d5                  | [1523]
 	clr.l    %d1
 	lsl.l    #1,%d5
 	addx.l   %d1,%d5
-|;;   rol.l     #2,d6                  | [1522]
+|;;   rol.l     #2,d6                  | [1524]
 	move.l   %d6,%d1
 	lsl.l    #2,%d6
 	moveq    #32-2,%d7
 	lsr.l    %d7,%d1
 	or.l     %d1,%d6
-      or.l     %d5,%d0                 | [1523]
-      or.l     %d6,%d0                 | [1524]
+      or.l     %d5,%d0                 | [1525]
+      or.l     %d6,%d0                 | [1526]
 |***	RESTORE	AFTER d1	***
 	movem.l  4(%a7),%d1
 
 |***	SAVE	d0	***
 	movem.l  %d0,(%a7)
-      move.l   %d1,%d5                 | [1526]
-      move.l   %d1,%d6                 | [1527]
-      eor.l    %d2,%d1                 | [1528]
-      eor.l    %d3,%d5                 | [1529]
-      eor.l    %d4,%d6                 | [1530]
-|;;   rol.l     #1,d5                  | [1531]
+      move.l   %d1,%d5                 | [1528]
+      move.l   %d1,%d6                 | [1529]
+      eor.l    %d2,%d1                 | [1530]
+      eor.l    %d3,%d5                 | [1531]
+      eor.l    %d4,%d6                 | [1532]
+|;;   rol.l     #1,d5                  | [1533]
 	clr.l    %d0
 	lsl.l    #1,%d5
 	addx.l   %d0,%d5
-|;;   rol.l     #2,d6                  | [1532]
+|;;   rol.l     #2,d6                  | [1534]
 	move.l   %d6,%d0
 	lsl.l    #2,%d6
 	moveq    #32-2,%d7
@@ -2766,79 +2770,79 @@ out_loop:
 	or.l     %d0,%d6
 |***	RESTORE	AFTER d0	***
 	movem.l  (%a7),%d0
-      or.l     %d1,%d0                 | [1533]
-      or.l     %d5,%d0                 | [1534]
-      or.l     %d6,%d0                 | [1535]
+      or.l     %d1,%d0                 | [1535]
+      or.l     %d5,%d0                 | [1536]
+      or.l     %d6,%d0                 | [1537]
 
-      eor.l    %d3,%d2                 | [1537]
-      eor.l    %d3,%d4                 | [1538]
+      eor.l    %d3,%d2                 | [1539]
+      eor.l    %d3,%d4                 | [1540]
 |***	SAVE	d3	***
 	movem.l  %d3,8(%a7)
-|;;   rol.l     #2,d4                  | [1539]
+|;;   rol.l     #2,d4                  | [1541]
 	move.l   %d4,%d1
 	lsl.l    #2,%d4
 	moveq    #32-2,%d3
 	lsr.l    %d3,%d1
 	or.l     %d1,%d4
-      or.l     %d2,%d0                 | [1540]
-      or.l     %d4,%d0                 | [1541]
-      swap     %d0                     | [1542]
+      or.l     %d2,%d0                 | [1542]
+      or.l     %d4,%d0                 | [1543]
+      swap     %d0                     | [1544]
 
-      move.w   (%a1),%d6               | [1544]
-      move.w   %d6,%d5                 | [1545]
-|;;   eor.w     d0,d5                  | [1546]
+      move.w   (%a1),%d6               | [1546]
+      move.w   %d6,%d5                 | [1547]
+|;;   eor.w     d0,d5                  | [1548]
 	eor.l    %d0,%d5
-|;;   and.w     d0,d5                  | [1547]
+|;;   and.w     d0,d5                  | [1549]
 	and.l    %d0,%d5
 
-      addq.l   #2,%a2                  | [1549]
-      move.l   (%a2),%d1               | [1550]
-      move.b   (-1,%a2),%d1            | [1551]
-|;;   ror.l     #1,d1                  | [1552]
+      addq.l   #2,%a2                  | [1551]
+      move.l   (%a2),%d1               | [1552]
+      move.b   (-1,%a2),%d1            | [1553]
+|;;   ror.l     #1,d1                  | [1554]
 	move.l   %d1,%d3
 	lsr.l    #1,%d1
 	moveq    #32-1,%d7
 	lsl.l    %d7,%d3
 	or.l     %d3,%d1
 
-      move.w   %d5,(%a1)+              | [1554]
-      move.w   (%a0),%d5               | [1555]
-      move.w   %d6,(%a0)+              | [1556]
+      move.w   %d5,(%a1)+              | [1556]
+      move.w   (%a0),%d5               | [1557]
+      move.w   %d6,(%a0)+              | [1558]
 |***	RESTORE	AFTER d3/d7	***
 	movem.l  8(%a7),%d3/%d7
 	lea      16(%a7),%a7
 
-|;;   dbra      d7,out_loop            | [1558]
+|;;   dbra      d7,out_loop            | [1560]
 	tst.w    %d7
-	jeq      _PA_1557_
+	jeq      _PA_1559_
 	subq.l   #1,%d7
 	jra      out_loop
-	_PA_1557_:         
+	_PA_1559_:         
 
 |***	SAVE	d0	***
 	lea      -4(%a7),%a7
 	movem.l  %d0,(%a7)
-      move.w   (-44,%a6),%d7           | [1560]
-      movea.l  %a5,%a0                 | [1561]
-      move.w   %a4,%d6                 | [1562]
-      movea.l  %a3,%a2                 | [1563]
-      movea.l  %a2,%a1                 | [1564]
-|;;   adda.w    -16(a6),a2             | [1565]
+      move.w   (-44,%a6),%d7           | [1562]
+      movea.l  %a5,%a0                 | [1563]
+      move.w   %a4,%d6                 | [1564]
+      movea.l  %a3,%a2                 | [1565]
+      movea.l  %a2,%a1                 | [1566]
+|;;   adda.w    -16(a6),a2             | [1567]
 	mvs.w    (-16,%a6),%d0
 	adda.l   %d0,%a2
 |***	RESTORE	d0	***
 	move.l   (%a7)+,%d0
-      cmp.w    #1,%d6                  | [1566 NE]
-      jne      srt_lin                 | [1567]
-      movea.l  %a1,%a2                 | [1568]
+      cmp.w    #1,%d6                  | [1568 NE]
+      jne      srt_lin                 | [1569]
+      movea.l  %a1,%a2                 | [1570]
 srt_lin:
-|;;   dbra      d6,out_edge            | [1570]
+|;;   dbra      d6,out_edge            | [1572]
 	tst.w    %d6
-	jeq      _PA_1569_
+	jeq      _PA_1571_
 	subq.l   #1,%d6
 	jra      out_edge
-	_PA_1569_:         
-      rts                              | [1571]
+	_PA_1571_:         
+      rts                              | [1573]
 
 | End section on aligned boundary
 	.p2align 2,0

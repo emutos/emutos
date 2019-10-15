@@ -233,7 +233,7 @@
 
 //#define tmp_style -122                (now unused)
 #define blt_flag  -124
-#define chup_flag -126
+//#define chup_flag -126                (now unused)
 #define ramlen    -126
 
         .text
@@ -1444,10 +1444,12 @@ rotation:
         move.w  d1,height(a6)
         move.w  s_next(a6),d2           //cx=d2
 
-        tst.w   chup_flag(a6)           //determine character rotation
+        move.w  CHUP(a6),d6             //d6 = rotation (temporarily)
+        cmpi.w  #1800,d6                //determine character rotation
         jeq     upsd_dwn
 rot90:
-        jlt     top_src
+        cmpi.w  #900,d6
+        jeq     top_src
         neg.w   s_next(a6)              //go up 1 line
         subq.w  #1,d1
         add.w   d1,d0                   //start at bottom
@@ -1460,8 +1462,8 @@ top_src:
         addq.w  #2,d0                   //form width is height / 8 + 1
         move.w  d0,d_next(a6)
 
-        tst.w   chup_flag(a6)           //determine if 90 or 270 rotation
-        jgt     top_dwn                 //
+        cmpi.w  #2700,d6                //determine if 90 or 270 rotation
+        jeq     top_dwn                 //
         neg.w   d_next(a6)              //bottom working up
         move.w  DELX(a6),d1             //DELX is the height
         subq.w  #1,d1
@@ -1525,8 +1527,8 @@ rot_done:
         move.w  #1, swap_tmps(a6)
 
         move.w  d_next(a6),d0
-        tst.w   chup_flag(a6)
-        jgt     rot_nneg
+        cmpi.w  #900,CHUP(a6)
+        jne     rot_nneg
         neg.w   d0
 rot_nneg:
         move.w  d0,s_next(a6)
