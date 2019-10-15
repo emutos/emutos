@@ -103,7 +103,7 @@ typedef struct {
  * assembler functions in vdi_tblit.S
  */
 void normal_blit(LOCALVARS *vars, UBYTE *src, UBYTE *dst);
-void outline(LOCALVARS *vars, UBYTE *buf, WORD form_width);
+void outline(LOCALVARS *vars, UWORD *buf, WORD form_width);
 void rotate(LOCALVARS *vars);   /* actually local, but non-static improves performance */
 void scale(LOCALVARS *vars);
 
@@ -243,6 +243,120 @@ static WORD do_clip(LOCALVARS *vars)
 
 
 /*
+ * return a ULONG equal to the 3 high-order bytes pointed to by
+ * the input pointer, concatenated with the low-order byte of
+ * the input UWORD
+ */
+static ULONG merge_byte(UWORD *p, UWORD n)
+{
+    union {
+        ULONG a;
+        UBYTE b[4];
+    } work;
+
+    work.a = *(ULONG *)p;
+    work.b[3] = n;
+
+    return work.a;
+}
+
+
+/*
+ * outline: perform text outlining
+ *
+ * in the following code, the top 18 bits of unsigned longs are used
+ * to manage 18-bit values, consisting of the last bit of the previous
+ * screen word, the 16 bits of the current screen word, and the first
+ * bit of the next screen word.
+ *
+ * neighbours are numbered as follows:
+ *              1 2 3
+ *              7 X 8
+ *              4 5 6
+ */
+void outline(LOCALVARS *vars, UWORD *buf, WORD form_width_bytes)
+{
+    UWORD *currline, *nextline, *scratch;
+    UWORD *save_next;
+    UWORD curr, prev, tmp;
+    WORD i, j, form_width;
+    ULONG current_left, current_noshift, current_right;
+    ULONG top_left, top_noshift, top_right;
+    ULONG bottom_left, bottom_noshift, bottom_right;
+    ULONG result;
+
+    form_width = form_width_bytes / sizeof(WORD);
+    currline = buf + form_width;
+    nextline = currline + form_width;
+
+    /* process lines sequentially */
+    for (i = vars->DELY; i > 0; i--)
+    {
+        save_next = nextline;
+        prev = 0;
+        curr = 0;
+        bottom_left = (*(ULONG *)nextline) >> 1;
+
+        /* process one word at a time */
+        for (j = form_width, scratch = buf; j > 0; j--)
+        {
+            /* get the data from the current line */
+            current_left = current_noshift = merge_byte(currline, curr);
+            rorl(current_noshift, 1);
+            current_right = current_noshift;
+            rorl(current_right, 1);
+
+            /*
+             * get the data from the scratch buffer (the previous line)
+             * and merge into result
+             */
+            top_right = merge_byte(scratch, prev);
+            rorl(top_right, 1);
+            top_left = top_noshift = top_right;
+            top_left ^= current_left;           /* neighbours 1,2,3 */
+            top_noshift ^= current_noshift;
+            top_right ^= current_right;
+            roll(top_noshift, 1);
+            roll(top_right, 2);
+            result = (top_left | top_noshift | top_right);
+
+            /* get the data from the next line & merge into result */
+            bottom_right = bottom_noshift = bottom_left;
+            bottom_left ^= current_left;        /* neighbours 4,5,6 */
+            bottom_noshift ^= current_noshift;
+            bottom_right ^= current_right;
+            roll(bottom_noshift, 1);
+            roll(bottom_right, 2);
+            result |= (bottom_left | bottom_noshift | bottom_right);
+
+            /* finally, merge current line neighbours */
+            current_left ^= current_noshift;    /* neighbours 7,8 */
+            current_right ^= current_noshift;
+            roll(current_right, 2);
+            result |= (current_left | current_right);
+            result >>= 16;                      /* move to lower 16 bits */
+
+            prev = curr = *currline;
+            prev = (prev ^ result) & result;
+            *currline++ = prev;
+            prev = *scratch;
+            *scratch++ = curr;
+
+            tmp = *nextline++;
+            bottom_left = merge_byte(nextline, tmp);
+            rorl(bottom_left, 1);
+        }
+
+        nextline = save_next;
+        currline = nextline;
+
+        if (i > 2)                              /* mustn't go past end */
+            nextline += form_width;
+    }
+}
+
+
+/*
  * copy the character into a buffer so that we can
  * outline/rotate/scale it
  */
@@ -331,7 +445,7 @@ static void pre_blit(LOCALVARS *vars)
          */
         src = vars->sform;
         vars->sform += vars->s_next;
-        outline(vars+1, src, vars->s_next);
+        outline(vars, (UWORD *)src, vars->s_next);
     }
 
     SOURCEX = 0;

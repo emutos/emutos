@@ -98,7 +98,6 @@
 /////////////////////////////////////////////////////////
 
         .globl  _normal_blit
-        .globl  _outline
         .globl  _scale
 
 /////////////////////////////////////////////////////////
@@ -248,16 +247,6 @@ _normal_blit:
         move.l  44+8(sp),a0             // a0 & a1 must also be set
         move.l  44+12(sp),a1
         jbsr    norm_blt
-        movem.l (sp)+,d2-d7/a2-a6       // restore saved registers
-        rts
-
-//  interface to 'outlin'
-_outline:
-        movem.l d2-d7/a2-a6,-(sp)       // save registers that GCC expects unchanged
-        move.l  44+4(sp),a6             // load ptr to end of vars
-        move.l  44+8(sp),a0             // a0 & d7.w must also be set
-        move.w  44+12(sp),d7
-        jbsr    outlin
         movem.l (sp)+,d2-d7/a2-a6       // restore saved registers
         rts
 
@@ -1635,102 +1624,4 @@ repdone:
         move.w  d0,(a4)
         movem.l (sp)+,d3-d7
         adda.w  d1,a1
-        rts
-
-/////////////////////////////////////////////////////////
-//   Outline the contents of buffer                             //
-//                                                              //
-//  a0 -> top line of buffer                                    //
-//        (to be used as temp line buffer, assumed cleared)     //
-//  d6 = # of vertical lines                                    //
-//  d7 = form width in bytes (must be even)                     //
-/////////////////////////////////////////////////////////
-outlin:
-        lea     (a0,d7.w),a1            //bump mid line to "real" top line
-outlin1:
-        lea     (a1,d7.w),a2            //set up a2 to point to 1 line below current
-        lsr.w   #1,d7                   //# of words in horz line
-        subq.w  #1,d7                   //for "dbra" sweetie
-        move.w  d7,wrd_cnt(a6)          //save char. buffer width( in words )
-        move.w  DELY(a6),d6             //# of vertical lines
-
-        movea.l a0,a5
-        subq.w  #1,d6
-out_edge:
-        move.w  d6,a4
-        movea.l a2,a3                   //save ptrs & counters
-        moveq.l #0,d5
-        moveq.l #0,d6
-        move.l  (a2),d1                 //get bottom line/left edge grafix data
-        lsr.l   #1,d1                   //clear left-most bit too
-//
-//  within line loop entry point..
-//
-out_loop:
-        move.l  (a0),d0                 //get next top line grafix data
-        move.b  d5,d0                   //put bit to left of current data in bit 0
-        ror.l   #1,d0                   //now its L 15 14 13 ... 1 0 R X X X...
-
-        move.l  (a1),d2                 //get current line data
-        move.b  d6,d2                   //same trick
-        move.l  d2,d3                   //d2 is left-shifted current
-        ror.l   #1,d3                   //d3 is 0 shifted current
-        move.l  d3,d4
-        ror.l   #1,d4                   //d4 is right-shifted current
-
-        move.l  d0,d5                   //get copy of top line
-        move.l  d0,d6                   //get 2nd copy
-        eor.l   d2,d0                   //exclusive neighbor #1
-        eor.l   d3,d5                   //exclusive neighbor #2
-        eor.l   d4,d6                   //exclusive neighbor #3
-        rol.l   #1,d5                      //adjust 0 shifted for final
-        rol.l   #2,d6                   //adjust right shifted too
-        or.l    d5,d0                   //form exclusive accumulator
-        or.l    d6,d0
-
-        move.l  d1,d5                   //now start with a copy of bottom line
-        move.l  d1,d6                   //need second copy
-        eor.l   d2,d1                   //exclusive neighbor #4
-        eor.l   d3,d5                   //exclusive neighbor #5
-        eor.l   d4,d6                   //exclusive neighbor #6
-        rol.l   #1,d5                   //adjust 0 shifted for final
-        rol.l   #2,d6                   //adjust right shifted too
-        or.l    d1,d0
-        or.l    d5,d0
-        or.l    d6,d0
-
-        eor.l   d3,d2                   //exclusive neighbor #7
-        eor.l   d3,d4                   //exclusive neighbor #8
-        rol.l   #2,d4
-        or.l    d2,d0
-        or.l    d4,d0
-        swap    d0
-
-        move.w  (a1),d6
-        move.w  d6,d5
-        eor.w   d0,d5
-        and.w   d0,d5
-
-        addq.l  #2,a2                   //advance bottom line to next word
-        move.l  (a2),d1                 //get next bottom line grafix data
-        move.b  -1(a2),d1               //same trick as with top line
-        ror.l   #1,d1                   //now its L 15 14 13 ... 1 0 R X X X...
-
-        move.w  d5,(a1)+
-        move.w  (a0),d5
-        move.w  d6,(a0)+
-
-        dbra    d7,out_loop             //finish rest of line
-
-        move.w  wrd_cnt(a6),d7          //restore buffer width word counter
-        movea.l a5,a0                   //restore buffer scratch line addr.
-        move.w  a4,d6                   //restore vertical line counter
-        movea.l a3,a2                   //save ptrs & counters
-        movea.l a2,a1
-        adda.w  s_next(a6),a2
-        cmpi.w  #1,d6
-        jne     srt_lin
-        movea.l a1,a2
-srt_lin:
-        dbra    d6,out_edge
         rts
