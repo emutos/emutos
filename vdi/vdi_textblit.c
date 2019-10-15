@@ -539,6 +539,11 @@ upda_dst:
         delx = vars.swap_tmps ? vars.tmp_dely : vars.tmp_delx;
     }
 
+    if (STYLE & F_OUTLINE)
+    {
+        delx += 2;
+    }
+
     if ((STYLE & F_THICKEN) && !MONO)
     {
         delx += WEIGHT;
