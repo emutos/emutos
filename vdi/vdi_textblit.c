@@ -585,9 +585,9 @@ static __inline__ UWORD *shift_and_update(UWORD *dst, UWORD *dstbit, UWORD *out)
 
 
 /*
- * yloop: scale character horizontally
+ * scaleup: increase width of character (SCALDIR is 1)
  */
-static void yloop(LOCALVARS *vars, UWORD *src, UWORD *dst)
+static void scaleup(LOCALVARS *vars, UWORD *src, UWORD *dst)
 {
     UWORD srcbit, dstbit;
     UWORD accum, in, out;
@@ -610,8 +610,53 @@ static void yloop(LOCALVARS *vars, UWORD *src, UWORD *dst)
                 out |= dstbit;
                 dst = shift_and_update(dst, &dstbit, &out);
             }
+            out |= dstbit;
+            dst = shift_and_update(dst, &dstbit, &out);
+        }
+        else                        /* handle bit clear in source */
+        {
+            accum += DDAINC;
+            if (accum < DDAINC)
+            {
+                dst = shift_and_update(dst, &dstbit, &out);
+            }
+            dst = shift_and_update(dst, &dstbit, &out);
+        }
 
-            if (SCALDIR)
+        srcbit >>= 1;
+        if (!srcbit)
+        {
+            srcbit = 0x8000;
+            in = *src++;
+        }
+    }
+
+    *dst = out;
+}
+
+
+/*
+ * scaledown: decrease width of character (SCALDIR is 0)
+ */
+static void scaledown(LOCALVARS *vars, UWORD *src, UWORD *dst)
+{
+    UWORD srcbit, dstbit;
+    UWORD accum, in, out;
+    WORD i;
+
+    srcbit = 0x8000 >> vars->tsdad;
+    dstbit = 0x8000;
+
+    out = 0;
+    accum = XDDA;
+    in = *src++;        /* prime the source word */
+
+    for (i = vars->width; i > 0; i--)
+    {
+        if (in & srcbit)            /* handle bit set in source */
+        {
+            accum += DDAINC;
+            if (accum < DDAINC)
             {
                 out |= dstbit;
                 dst = shift_and_update(dst, &dstbit, &out);
@@ -619,15 +664,6 @@ static void yloop(LOCALVARS *vars, UWORD *src, UWORD *dst)
         }
         else                        /* handle bit clear in source */
         {
-            if (SCALDIR)
-            {
-                accum += DDAINC;
-                if (accum < DDAINC)
-                {
-                    dst = shift_and_update(dst, &dstbit, &out);
-                }
-            }
-
             dst = shift_and_update(dst, &dstbit, &out);
         }
 
@@ -674,10 +710,10 @@ void scale(LOCALVARS *vars)
             accum += DDAINC;
             if (accum < DDAINC)
             {
-                yloop(vars, (UWORD *)src, (UWORD *)dst);
+                scaleup(vars, (UWORD *)src, (UWORD *)dst);
                 dst += vars->d_next;
             }
-            yloop(vars, (UWORD *)src, (UWORD *)dst);
+            scaleup(vars, (UWORD *)src, (UWORD *)dst);
             dst += vars->d_next;
             src += vars->s_next;
         }
@@ -689,7 +725,7 @@ void scale(LOCALVARS *vars)
             accum += DDAINC;
             if (accum < DDAINC)
             {
-                yloop(vars, (UWORD *)src, (UWORD *)dst);
+                scaledown(vars, (UWORD *)src, (UWORD *)dst);
                 dst += vars->d_next;
             }
             src += vars->s_next;
