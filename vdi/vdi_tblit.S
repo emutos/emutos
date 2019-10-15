@@ -1711,34 +1711,32 @@ nrpndoub:
 //
 //  entry:      d1 = d_next             preserved
 //              d2 = _DDAINC            preserved
-//              d3 = source bitmask     destroyed
-//              d4 = dest bitmask       destroyed
+//              d3 = source bitmask     preserved
+//              d4 = dest bitmask       preserved
 //
 //              a0 = source ptr         preserved
 //              a1 = destination ptr    adjusted for next
 //
-//                                         8086 Equiv
-//  reg use:    d0 = grafix build               bx
-//              d1 = d_next                     n/a
-//              d2 = _DDAINC                    di
-//              d3 = source bitmask             dx
-//              d4 = dest bitmask               bp
-//              d5 = width                      cx
-//              d6 = temp                       n/a
-//              d7 = _XDDA                      si
 //
-//              a0 = source ptr                 si
-//              a1 = destination ptr            di
-//              a2 = source data temp           n/a
+//  reg use:    d0 = grafix build
+//              d1 = d_next
+//              d2 = _DDAINC
+//              d3 = source bitmask
+//              d4 = dest bitmask
+//              d5 = width
+//              d6 = temp
+//              d7 = _XDDA
+//
+//              a2 = source data temp
+//              a3 = source ptr
+//              a4 = destination ptr
 //
 //
 //
 yloop:
-        movem.l d3-d4/d6,-(sp)                  //save some regs
-        movea.l a0,a3
-        movea.l a1,a4
-        movea.l d7,a5
-        move.w  d5,wrd_cnt(a6)
+        movem.l d3-d7,-(sp)                     //save some regs
+        movea.l a0,a3                           //a3 -> source
+        movea.l a1,a4                           //a4 -> dest
         moveq.l #0,d0                           //clear grafix
         move.w  width(a6),d5
         subq.w  #1,d5                           //adjust for dbra
@@ -1749,7 +1747,7 @@ innerlp:
         ror.w   #1,d3
         jcc     reploop
 nextsrc:
-        movea.w (a0)+,a2
+        movea.w (a3)+,a2
 reploop:
         move.w  a2,d6
         and.w   d3,d6
@@ -1771,7 +1769,7 @@ repnorup:
 
 //--6 mar --V
         jcc     ordone
-        move.w  d0,(a1)+
+        move.w  d0,(a4)+
         moveq.l #0,d0
 //--6 mar --^
 
@@ -1787,7 +1785,7 @@ nrepnor:
         ror.w   #1,d4
 //--6 mar --V
         jcc     o_no_rep
-        move.w  d0,(a1)+
+        move.w  d0,(a4)+
         moveq.l #0,d0
 o_no_rep:
         tst.l   d7
@@ -1799,18 +1797,14 @@ ordone:
         ror.w   #1,d4
         jcc     incsrc
 nextdst:
-        move.w  d0,(a1)+
+        move.w  d0,(a4)+
         moveq.l #0,d0
 incsrc:
         dbra    d5,innerlp
 repdone:
-        move.w  d0,(a1)
-        movem.l (sp)+,d3-d4/d6
-        movea.l a3,a0
-        movea.l a4,a1
+        move.w  d0,(a4)
+        movem.l (sp)+,d3-d7
         adda.w  d1,a1
-        move.l  a5,d7
-        move.w  wrd_cnt(a6),d5
         rts
 
 /////////////////////////////////////////////////////////
