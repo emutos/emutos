@@ -568,6 +568,164 @@ void rotate(LOCALVARS *vars)
 
 
 /*
+ * yloop: scale character horizontally
+ */
+static void yloop(LOCALVARS *vars, UWORD *src, UWORD *dst)
+{
+    UWORD srcbit, dstbit;
+    UWORD accum, in, out;
+    WORD i;
+
+    srcbit = 0x8000 >> vars->tsdad;
+    dstbit = 0x8000;
+
+    out = 0;
+    accum = XDDA;
+    in = *src++;        /* prime the source word */
+
+    for (i = vars->width; i > 0; i--)
+    {
+        if (in & srcbit)            /* handle bit set in source */
+        {
+            accum += DDAINC;
+            if (accum < DDAINC)
+            {
+                out |= dstbit;
+                dstbit >>= 1;
+                if (!dstbit)
+                {
+                    dstbit = 0x8000;
+                    *dst++ = out;
+                    out = 0;
+                }
+            }
+
+            if (SCALDIR)
+            {
+                out |= dstbit;
+                dstbit >>= 1;
+                if (!dstbit)
+                {
+                    dstbit = 0x8000;
+                    *dst++ = out;
+                    out = 0;
+                }
+            }
+        }
+        else                        /* handle bit clear in source */
+        {
+            if (SCALDIR)
+            {
+                accum += DDAINC;
+                if (accum < DDAINC)
+                {
+                    dstbit >>= 1;
+                    if (!dstbit)
+                    {
+                        dstbit = 0x8000;
+                        *dst++ = out;
+                        out = 0;
+                    }
+                }
+            }
+
+            dstbit >>= 1;
+            if (!dstbit)
+            {
+                dstbit = 0x8000;
+                *dst++ = out;
+                out = 0;
+            }
+        }
+
+        srcbit >>= 1;
+        if (!srcbit)
+        {
+            srcbit = 0x8000;
+            in = *src++;
+        }
+    }
+
+    *dst = out;
+}
+
+
+/*
+ * scale: perform text scaling
+ */
+void scale(LOCALVARS *vars)
+{
+    UBYTE *src, *dst;
+    WORD i, delx;
+    UWORD accum;
+
+    vars->tsdad = SOURCEX & 0x000f;
+    src = vars->sform + ((SOURCEX >> 4) << 1) + (SOURCEY * vars->s_next);
+
+    vars->buffa = SCRPT2 - vars->buffa;     /* switch buffers */
+    dst = (UBYTE *)SCRTCHP + vars->buffa;
+
+    vars->width = vars->DELX;
+    vars->height = vars->DELY;
+
+    vars->d_next = ((vars->width >> 3) << 1) + 2;
+
+    /*
+     * first, scale the character
+     */
+    accum = 0x7fff;
+    if (SCALDIR)        /* scale up */
+    {
+        for (i = vars->height; i > 0; i--)
+        {
+            accum += DDAINC;
+            if (accum < DDAINC)
+            {
+                yloop(vars, (UWORD *)src, (UWORD *)dst);
+                dst += vars->d_next;
+            }
+            yloop(vars, (UWORD *)src, (UWORD *)dst);
+            dst += vars->d_next;
+            src += vars->s_next;
+        }
+    }
+    else                /* scale down */
+    {
+        for (i = vars->height; i > 0; i--)
+        {
+            accum += DDAINC;
+            if (accum < DDAINC)
+            {
+                yloop(vars, (UWORD *)src, (UWORD *)dst);
+                dst += vars->d_next;
+            }
+            src += vars->s_next;
+        }
+    }
+
+    /*
+     * then, adjust the character spacing
+     */
+    accum = XDDA;
+    delx = SCALDIR ? vars->DELX : 0;
+    for (i = vars->DELX; i > 0; i--)
+    {
+        accum += DDAINC;
+        if (accum < DDAINC)
+            delx++;
+    }
+    XDDA = accum;
+
+    vars->DELX = delx;
+    vars->DELY = vars->tmp_dely;
+    vars->s_next = vars->d_next;
+    vars->sform = (UBYTE *)SCRTCHP + vars->buffa;
+    SOURCEX = 0;
+    SOURCEY = 0;
+}
+
+
+/*
  * output a block to the screen
  */
 static void screen_blit(LOCALVARS *vars)
@@ -725,7 +883,7 @@ void text_blt(void)
 
     if (SCALE)
     {
-        scale(&vars+1);     /* call assembler helper function */
+        scale(&vars);
     }
 
     /*
