@@ -140,7 +140,7 @@
 
         //.offset 0
 
-#define buffa   -2              //for clip & prerotate blt
+#define buffa   -2              //current text scratch buffer offset
 //#define buffb   -4              //for rotate (now unused)
 //#define buffc   -6              //for replicate (now unused)
 #define sform   -10             //start of source form
@@ -1436,7 +1436,7 @@ rotation:
         movea.l sform(a6),a0
         adda.w  d1,a0                   //a0 -> source
 
-        movea.l _SCRTCHP,a1             //a1 -> dest
+        jbsr    getnextbuf              //a1 -> dest
 
         move.w  DELX(a6),width(a6)
         move.w  _SOURCEY,d0             //ax=d0
@@ -1531,8 +1531,8 @@ rot_done:
 rot_nneg:
         move.w  d0,s_next(a6)
         clr.w   _SOURCEX
-        movea.l _SCRTCHP,a2
-        move.l  a2,sform(a6)
+        jbsr    currbuf                 //a1 -> dest buffer
+        move.l  a1,sform(a6)            // = source for next nfunction
         clr.w   _SOURCEY
         rts
 
@@ -1571,7 +1571,7 @@ strtflip:
         dbra    d1,upsd_lp
 
         move.w  d_next(a6),s_next(a6)
-        movea.l _SCRTCHP,a1
+        jbsr    currbuf                 //a1 -> dest buf
         move.l  a1,sform(a6)
         move.w  _SOURCEX,d0
         add.w   DELX(a6),d0
@@ -1579,6 +1579,29 @@ strtflip:
         andi.w  #0xF,d0                 //location of last bit in original
         move.w  d0,_SOURCEX
         clr.w   _SOURCEY
+        rts
+
+//
+//      text scratch buffer management
+//
+//      getnextbuf: switches buffers & returns ptr to new current buffer in a1
+//      currbuf:    returns address of current buffer in a1
+//
+//      buffa(a6) is the offset to the current buffer
+//
+getnextbuf:
+        move.w  d0,-(sp)
+        movea.l _SCRTCHP,a1             // text buffer base
+        move.w  _SCRPT2,d0              // offset to second
+        sub.w   buffa(a6),d0            // - current offset
+        move.w  d0,buffa(a6)            // = new offset
+        adda.w  d0,a1
+        move.w  (sp)+,d0
+        rts
+
+currbuf:
+        movea.l _SCRTCHP,a1             // text buffer base
+        adda.w  buffa(a6),a1            // + current offset
         rts
 
 /////////////////////////
@@ -1610,8 +1633,7 @@ replicat:
 
         move.w  d2,height(a6)           //# of rows to duplicate
         move.w  d1,width(a6)
-        move.l  _SCRTCHP,a1
-        adda.w  _SCRPT2,a1              //dest ptr
+        jbsr    getnextbuf              //a1 = dest ptr
 
         btst    #OUTLINE,STYLE+1(a6)    //outline after double?
         jeq     noline                  //br if not
@@ -1717,17 +1739,17 @@ nrpndoub:
 repexit1:
         btst    #OUTLINE,STYLE+1(a6)
         jeq     repexit2
-        move.l  _SCRTCHP,a0
-        adda.w  _SCRPT2,a0
+        jbsr    currbuf                 //a1 -> current buffer
+        movea.l a1,a0
         move.w  d1,d7
         lea     2(a0,d7.w),a1
         jbsr    outlin1
-        move.w  _SCRPT2,d0
+        move.w  buffa(a6),d0
         add.w   d_next(a6),d0
         move.w  #15,_SOURCEX
         jra     repexit3
 repexit2:
-        move.w  _SCRPT2,d0
+        move.w  buffa(a6),d0
         clr.w   _SOURCEX
 repexit3:
         movea.l _SCRTCHP,a2

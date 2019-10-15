@@ -447,7 +447,7 @@ void text_blt(void)
     vars.DESTY = DESTY;
     vars.CHUP = CHUP;
 
-    vars.buffa = SCRPT2;
+    vars.buffa = 0;
     dely = vars.DELY;
     delx = vars.DELX;
 
@@ -455,8 +455,6 @@ void text_blt(void)
     {
         vars.tmp_dely = dely = char_resize(0x7fff, vars.DELY);
         vars.tmp_delx = delx = char_resize(XDDA, vars.DELX);
-        if (!vars.CHUP)
-            vars.buffa = 0;         /* use small buffer if no rotation */
     }
 
     vars.smear = 0;
