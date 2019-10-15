@@ -541,7 +541,7 @@ upda_dst:
 
     if (STYLE & F_OUTLINE)
     {
-        delx += 2;
+        delx += OUTLINE_THICKNESS * 2;
     }
 
     if ((STYLE & F_THICKEN) && !MONO)

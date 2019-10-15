@@ -166,7 +166,7 @@ static WORD calc_height(Vwk *vwk)
     height = fnt_ptr->top + fnt_ptr->bottom + 1;    /* handles scaled fonts */
 
     if (vwk->style & F_OUTLINE)
-        height += 2;        /* outlining adds 1 pixel all around */
+        height += OUTLINE_THICKNESS * 2;    /* outlining adds 1 pixel all around */
 
     return height;
 }
@@ -206,7 +206,7 @@ static WORD calc_width(Vwk *vwk, WORD cnt, WORD *str)
         width += fnt_ptr->left_offset + fnt_ptr->right_offset;
 
     if (vwk->style & F_OUTLINE)
-        width += cnt * 2;       /* outlining adds 1 pixel all around */
+        width += cnt * OUTLINE_THICKNESS * 2;   /* outlining adds 1 pixel all around */
 
     return width;
 }
@@ -280,7 +280,7 @@ static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width, JUSTINFO *j
      * non-outlined, so we set 'outline' to handle that.
      * this also affects horizontal alignment calculations.
      */
-    outline = (vwk->style & F_OUTLINE) ? 1 : 0;
+    outline = (vwk->style & F_OUTLINE) ? OUTLINE_THICKNESS : 0;
 
     switch(vwk->h_align) {
     default:                /* normally case 0: left justified */

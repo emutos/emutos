@@ -100,6 +100,8 @@
 #define F_OUTLINE   16
 #define F_SHADOW    32
 
+/* thickness of outline (documentation only, relies on assembler code in vdi_tblit.S) */
+#define OUTLINE_THICKNESS   1
 
 /*
  * Small subset of Vwk data, used by draw_rect_common to hide VDI/Line-A
