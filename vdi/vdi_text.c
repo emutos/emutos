@@ -225,6 +225,7 @@ static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width, JUSTINFO *j
     WORD tx1, tx2, ty1, ty2;
     WORD delh, delv;
     WORD d1, d2;
+    WORD outline;
 
     WORD temp;
     const Fonthead *fnt_ptr;
@@ -274,6 +275,13 @@ static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width, JUSTINFO *j
     FBASE = fnt_ptr->dat_table;
     FWIDTH = fnt_ptr->form_width;
 
+    /*
+     * in Atari TOS, outlined text starts 1 pixel earlier than
+     * non-outlined, so we set 'outline' to handle that.
+     * this also affects horizontal alignment calculations.
+     */
+    outline = (vwk->style & F_OUTLINE) ? 1 : 0;
+
     switch(vwk->h_align) {
     default:                /* normally case 0: left justified */
         delh = 0;
@@ -281,12 +289,12 @@ static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width, JUSTINFO *j
     case 1:
         if (width < 0)      /* called from vdi_v_gtext() */
             width = calc_width(vwk, count, str);
-        delh = width / 2;
+        delh = width / 2 - outline;
         break;
     case 2:
         if (width < 0)      /* called from vdi_v_gtext() */
             width = calc_width(vwk, count, str);
-        delh = width;
+        delh = width - (outline * 2);
         break;
     }
 
@@ -319,32 +327,32 @@ static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width, JUSTINFO *j
     point = (Point*)PTSIN;
     switch(vwk->chup) {
     default:                /* normally case 0: no rotation */
-        DESTX = point->x - delh;
-        DESTY = point->y - delv;
+        DESTX = point->x - delh - outline;
+        DESTY = point->y - delv - outline;
         startx = DESTX;
         starty = DESTY + fnt_ptr->top + fnt_ptr->ul_size + 1;
         xfact = 0;
         yfact = 1;
         break;
     case 900:
-        DESTX = point->x - delv;
-        DESTY = point->y + delh + 1;
+        DESTX = point->x - delv - outline;
+        DESTY = point->y + delh - outline + 1;
         startx = DESTX + fnt_ptr->top + fnt_ptr->ul_size + 1;
         starty = DESTY;
         xfact = 1;
         yfact = 0;
         break;
     case 1800:
-        DESTX = point->x + delh + 1;
-        DESTY = point->y - ((fnt_ptr->top + fnt_ptr->bottom) - delv);
+        DESTX = point->x + delh - outline + 1;
+        DESTY = point->y - ((fnt_ptr->top + fnt_ptr->bottom) - delv) - outline;
         startx = DESTX;
         starty = (DESTY + fnt_ptr->bottom) - (fnt_ptr->ul_size + 1);
         xfact = 0;
         yfact = -1;
         break;
     case 2700:
-        DESTX = point->x - ((fnt_ptr->top + fnt_ptr->bottom) - delv);
-        DESTY = point->y - delh;
+        DESTX = point->x - ((fnt_ptr->top + fnt_ptr->bottom) - delv) - outline;
+        DESTY = point->y - delh - outline;
         startx = (DESTX + fnt_ptr->bottom) - (fnt_ptr->ul_size + 1);
         starty = DESTY;
         xfact = -1;
