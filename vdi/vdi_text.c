@@ -230,7 +230,7 @@ static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width, JUSTINFO *j
     WORD tx1, tx2, ty1, ty2;
     WORD delh, delv;
     WORD d1, d2;
-    WORD outline;
+    WORD outline, underline;
 
     WORD temp;
     const Fonthead *fnt_ptr;
@@ -329,20 +329,34 @@ static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width, JUSTINFO *j
         break;
     }
 
+    /*
+     * like Atari TOS, we try to ensure that any underline will fall within
+     * the character cell.  if we have sufficient room (e.g. in an 8x16 font),
+     * we drop the underline to the bottom line; otherwise it sits on the
+     * descent line.  in the latter case, if the font has been doubled, the
+     * underline will be thick, and we need to raise it.
+     */
+    if (fnt_ptr->bottom > fnt_ptr->ul_size)             /* normal for 8x16 font */
+        underline = 1;
+    else if (vwk->scaled && (vwk->dda_inc == 0xffff))   /* doubling size exactly? */
+        underline = -1;
+    else
+        underline = 0;
+
     point = (Point*)PTSIN;
     switch(vwk->chup) {
     default:                /* normally case 0: no rotation */
         DESTX = point->x - delh - outline;
         DESTY = point->y - delv - outline;
         startx = DESTX;
-        starty = DESTY + fnt_ptr->top + fnt_ptr->ul_size + 1;
+        starty = DESTY + fnt_ptr->top + (fnt_ptr->ul_size + underline);
         xfact = 0;
         yfact = 1;
         break;
     case 900:
         DESTX = point->x - delv - outline;
         DESTY = point->y + delh + outline + 1;
-        startx = DESTX + fnt_ptr->top + fnt_ptr->ul_size + 1;
+        startx = DESTX + fnt_ptr->top + (fnt_ptr->ul_size + underline);
         starty = DESTY;
         xfact = 1;
         yfact = 0;
@@ -351,14 +365,14 @@ static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width, JUSTINFO *j
         DESTX = point->x + delh + outline + 1;
         DESTY = point->y - ((fnt_ptr->top + fnt_ptr->bottom) - delv) - outline;
         startx = DESTX;
-        starty = (DESTY + fnt_ptr->bottom) - (fnt_ptr->ul_size + 1);
+        starty = (DESTY + fnt_ptr->bottom) - (fnt_ptr->ul_size + underline);
         xfact = 0;
         yfact = -1;
         break;
     case 2700:
         DESTX = point->x - ((fnt_ptr->top + fnt_ptr->bottom) - delv) - outline;
         DESTY = point->y - delh - outline;
-        startx = (DESTX + fnt_ptr->bottom) - (fnt_ptr->ul_size + 1);
+        startx = (DESTX + fnt_ptr->bottom) - (fnt_ptr->ul_size + underline);
         starty = DESTY;
         xfact = -1;
         yfact = 0;
