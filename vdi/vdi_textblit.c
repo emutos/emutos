@@ -287,6 +287,7 @@ static void pre_blit(LOCALVARS *vars)
     dest_width = ((dest_width >> 4) << 1) + 2;    /* in bytes */
     vars->d_next = -dest_width;
     size = dest_width * (dest_height - 1);
+    vars->buffa = SCRPT2 - vars->buffa; /* switch buffers */
     dst = (UBYTE *)SCRTCHP + vars->buffa;
     vars->sform = dst;
     if (vars->STYLE & (F_OUTLINE|F_SKEW))
