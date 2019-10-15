@@ -37,13 +37,13 @@ typedef struct {
     WORD blt_flag;
     WORD unused1;           /* was tmp_style */
                         /* working copies of the clipping variables */
-    WORD YMX_CLIP;
-    WORD XMX_CLIP;
-    WORD YMN_CLIP;
-    WORD XMN_CLIP;
-    WORD CLIP;
+    WORD unused6;           /* was YMX_CLIP */
+    WORD unused7;           /* was XMX_CLIP */
+    WORD unused8;           /* was YMN_CLIP */
+    WORD unused9;           /* was XMN_CLIP */
+    WORD unused10;          /* was CLIP */
                         /* working copies of often-used globals */
-    WORD CHUP;
+    WORD unused11;          /* was CHUP */
     WORD DESTY;
     WORD DELY;
     WORD DESTX;
@@ -128,44 +128,37 @@ static WORD check_clip(LOCALVARS *vars, WORD delx, WORD dely)
 {
     WORD rc;
 
-    vars->CLIP = CLIP;
-
-    if (!vars->CLIP)
+    if (!CLIP)
         return 0;
-
-    vars->XMN_CLIP = XMINCL;
-    vars->YMN_CLIP = YMINCL;
-    vars->XMX_CLIP = XMAXCL;
-    vars->YMX_CLIP = YMAXCL;
 
     rc = 0;
 
     /*
      * check x coordinate
      */
-    if (vars->DESTX < vars->XMN_CLIP)           /* (partially) left of clip window */
+    if (vars->DESTX < XMINCL)               /* (partially) left of clip window */
     {
-        if (vars->DESTX+delx <= vars->XMN_CLIP) /* wholly left of clip window */
+        if (vars->DESTX+delx <= XMINCL)     /* wholly left of clip window */
             return -1;
         rc = 1;
     }
-    if (vars->DESTX > vars->XMX_CLIP)           /* wholly right of clip window */
+    if (vars->DESTX > XMAXCL)               /* wholly right of clip window */
         return -1;
-    if (vars->DESTX+delx > vars->XMX_CLIP)      /* partially right of clip window */
+    if (vars->DESTX+delx > XMAXCL)          /* partially right of clip window */
         rc = 1;
 
     /*
      * check y coordinate
      */
-    if (vars->DESTY < vars->YMN_CLIP)           /* (partially) below clip window */
+    if (vars->DESTY < YMINCL)               /* (partially) below clip window */
     {
-        if (vars->DESTY+dely <= vars->YMN_CLIP) /* wholly below clip window */
+        if (vars->DESTY+dely <= YMINCL)     /* wholly below clip window */
             return -1;
         rc = 1;
     }
-    if (vars->DESTY > vars->YMX_CLIP)           /* wholly above clip window */
+    if (vars->DESTY > YMAXCL)               /* wholly above clip window */
         return -1;
-    if (vars->DESTY+dely > vars->YMX_CLIP)      /* partially above clip window */
+    if (vars->DESTY+dely > YMAXCL)          /* partially above clip window */
         rc = 1;
 
     return rc;
@@ -186,50 +179,50 @@ static WORD do_clip(LOCALVARS *vars)
     /*
      * if clipping not requested, exit
      */
-    if (!vars->CLIP)
+    if (!CLIP)
         return 0;
 
     /*
      * clip x minimum if necessary
      */
-    if (vars->DESTX < vars->XMN_CLIP)
+    if (vars->DESTX < XMINCL)
     {
-        n = vars->DESTX + vars->DELX - vars->XMN_CLIP;
+        n = vars->DESTX + vars->DELX - XMINCL;
         if (n <= 0)
             return -1;
         SOURCEX += vars->DELX - n;
         vars->DELX = n;
-        vars->DESTX = vars->XMN_CLIP;
+        vars->DESTX = XMINCL;
     }
 
     /*
      * clip x maximum if necessary
      */
-    if (vars->DESTX > vars->XMX_CLIP)
+    if (vars->DESTX > XMAXCL)
         return -1;
-    n = vars->DESTX + vars->DELX - vars->XMX_CLIP - 1;
+    n = vars->DESTX + vars->DELX - XMAXCL - 1;
     if (n > 0)
         vars->DELX -= n;
 
     /*
      * clip y minimum if necessary
      */
-    if (vars->DESTY < vars->YMN_CLIP)
+    if (vars->DESTY < YMINCL)
     {
-        n = vars->DESTY + vars->DELY - vars->YMN_CLIP;
+        n = vars->DESTY + vars->DELY - YMINCL;
         if (n <= 0)
             return -1;
         SOURCEY += vars->DELY - n;
         vars->DELY = n;
-        vars->DESTY = vars->YMN_CLIP;
+        vars->DESTY = YMINCL;
     }
 
     /*
      * clip y maximum if necessary
      */
-    if (vars->DESTY > vars->YMX_CLIP)
+    if (vars->DESTY > YMAXCL)
         return -1;
-    n = vars->DESTY + vars->DELY - vars->YMX_CLIP - 1;
+    n = vars->DESTY + vars->DELY - YMAXCL - 1;
     if (n > 0)
         vars->DELY -= n;
 
@@ -465,7 +458,7 @@ void rotate(LOCALVARS *vars)
     /*
      * first, handle the simplest case: inverted text (180 rotation)
      */
-    if (vars->CHUP == 1800)
+    if (CHUP == 1800)
     {
         form_width = ((vars->DELX+vars->tsdad-1) >> 4) + 1; /* in words */
         vars->d_next = form_width * sizeof(WORD);
@@ -498,7 +491,7 @@ void rotate(LOCALVARS *vars)
      */
     vars->d_next = ((vars->DELY >> 4) << 1) + 2;
 
-    if (vars->CHUP == 900)
+    if (CHUP == 900)
     {
         dst += (vars->DELX - 1) * vars->d_next;
         vars->d_next = -vars->d_next;
@@ -555,7 +548,7 @@ void rotate(LOCALVARS *vars)
     vars->tmp_dely = tmp;
     vars->swap_tmps = 1;
 
-    vars->s_next = (vars->CHUP == 900) ? -vars->d_next : vars->d_next;
+    vars->s_next = (CHUP == 900) ? -vars->d_next : vars->d_next;
     vars->sform = (UBYTE*)SCRTCHP + vars->buffa;
     SOURCEX = 0;
     SOURCEY = 0;
@@ -851,7 +844,6 @@ void text_blt(void)
     vars.DESTX = DESTX;
     vars.DELY = DELY;
     vars.DESTY = DESTY;
-    vars.CHUP = CHUP;
 
     vars.buffa = 0;
     dely = vars.DELY;
@@ -884,7 +876,7 @@ void text_blt(void)
         dely += OUTLINE_THICKNESS * 2;
     }
 
-    switch(vars.CHUP) {
+    switch(CHUP) {
     case 900:
         vars.DESTY -= delx;
         FALLTHROUGH;
@@ -919,7 +911,7 @@ void text_blt(void)
      */
     if (vars.STYLE & (F_SKEW|F_THICKEN|F_OUTLINE))
     {
-        if (vars.CHUP
+        if (CHUP
          || ((vars.STYLE & F_SKEW) && clipped)
          || (vars.STYLE & F_OUTLINE))
         {
@@ -927,7 +919,7 @@ void text_blt(void)
         }
     }
 
-    if (vars.CHUP)
+    if (CHUP)
     {
         rotate(&vars);
     }
@@ -962,7 +954,7 @@ upda_dst:
         delx += WEIGHT;
     }
 
-    switch(vars.CHUP) {
+    switch(CHUP) {
     default:        /* normally 0, the default */
         DESTX += delx;      /* move right by DELX */
         break;

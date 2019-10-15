@@ -212,17 +212,17 @@
 #define DESTX   -104
 #define DELY    -106
 #define DESTY   -108
-#define CHUP    -110
+//#define CHUP    -110                  (now unused)
 
 ///////////////////////////////////////////////
 //  Working copies of the clipping variables //
 ///////////////////////////////////////////////
 
-#define CLIP    -112
-#define XMN_CLI -114
-#define YMN_CLI -116
-#define XMX_CLI -118
-#define YMX_CLI -120
+//#define CLIP    -112                  (now unused)
+//#define XMN_CLI -114                  (now unused)
+//#define YMN_CLI -116                  (now unused)
+//#define XMX_CLI -118                  (now unused)
+//#define YMX_CLI -120                  (now unused)
 
 //////////////////////////////////
 //  Temporary working variables //
