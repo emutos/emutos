@@ -141,7 +141,7 @@
         //.offset 0
 
 #define buffa   -2              //for clip & prerotate blt
-#define buffb   -4              //for rotate
+//#define buffb   -4              //for rotate (now unused)
 //#define buffc   -6              //for replicate (now unused)
 #define sform   -10             //start of source form
 #define dform   -14             //start of destination form
@@ -1458,7 +1458,6 @@ top_src:
         addq.w  #2,d0                   //form width is height / 8 + 1
         move.w  d0,d_next(a6)
         movea.l _SCRTCHP,a1
-        adda.w  buffb(a6),a1
 
         tst.w   chup_flag(a6)           //determine if 90 or 270 rotation
         jgt     top_dwn                 //
@@ -1530,7 +1529,7 @@ rot_done:
         neg.w   d0
 rot_nneg:
         move.w  d0,s_next(a6)
-        move.w  buffb(a6),d0
+        move.w  #0,d0
 repexit:
         clr.w   _SOURCEX
 repexit3:
@@ -1553,7 +1552,6 @@ upsd_dwn:
         lsr.w   #1,d2                   //number of words to move per line
         subq.w  #1,d2                   //for dbra, my sweetie
         mulu    d1,d0                   //d0 pts to bottom of new form
-        add.w   buffb(a6),d0
         movea.l _SCRTCHP,a1
         adda.w  d0,a1                   //a1 -> last word in form
         jra     strtflip
@@ -1578,7 +1576,6 @@ strtflip:
 
         move.w  d_next(a6),s_next(a6)
         movea.l _SCRTCHP,a1
-        adda.w  buffb(a6),a1
         move.l  a1,sform(a6)
         move.w  _SOURCEX,d0
         add.w   DELX(a6),d0

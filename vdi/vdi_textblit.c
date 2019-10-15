@@ -92,7 +92,7 @@ typedef struct {
     UBYTE *dform;           /* start of destination form */
     UBYTE *sform;           /* start of source form */
     WORD unused2;           /* was buffc */
-    WORD buffb;             /* for rotate */
+    WORD unused4;           /* was buffb */
     WORD buffa;             /* for clip & prerotate blt */
 } LOCALVARS;
 
@@ -476,7 +476,6 @@ void text_blt(void)
 
     if (vars.CHUP)
     {
-        vars.buffb = 0;             /* use small buffer */
         vars.chup_flag = vars.CHUP - 1800;  /* 3 position flag */
         if (vars.chup_flag == 0)    /* 180 degrees */
         {
