@@ -499,6 +499,13 @@ void text_blt(void)
     vars.s_next = FWIDTH;
     vars.sform = (UBYTE *)FBASE;
 
+    /*
+     * the following is equivalent to:
+     *  if outlining, OR
+     *     rotating AND (skewing OR thickening), OR
+     *     skewing AND clipping-is-required,
+     *      call pre_blit()
+     */
     if (vars.STYLE & (F_SKEW|F_THICKEN|F_OUTLINE))
     {
         if (vars.CHUP
