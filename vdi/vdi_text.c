@@ -116,9 +116,14 @@ extern WORD font_count;         /* Number of fonts in driver */
  *  Since outlining can happen in either the small or large buffer, the
  *  small buffer requires at least (cel_siz+out_add) bytes, and the large
  *  buffer requires (cel2_siz+out_add) bytes.
+ *
+ *  IMPORTANT: in order to be able to rearrange & simplify the text
+ *  blitting code, it is desirable to be able to rotate and/or scale
+ *  the text in either buffer.  Therefore both buffers should be 'large'
+ *  buffers.  The following defines & tests have been adjusted accordingly.
  */
-#define SCRATCHBUF_OFFSET   (cel_siz+out_add)
-#if SCRATCHBUF_SIZE < (cel_siz+out_add+cel2_siz+out_add)
+#define SCRATCHBUF_OFFSET   (cel2_siz+out_add)
+#if SCRATCHBUF_SIZE < (2*SCRATCHBUF_OFFSET)
 # error SCRATCHBUF_SIZE is too small for specified font metrics
 #endif
 /*

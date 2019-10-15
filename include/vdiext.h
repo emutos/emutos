@@ -44,7 +44,7 @@ typedef struct {
  *
  * see vdi_text.c for how this is calculated
  */
-#define SCRATCHBUF_SIZE 284
+#define SCRATCHBUF_SIZE (2*212)
 
 /*
  * a shared area for the VDI
