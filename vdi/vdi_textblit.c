@@ -103,7 +103,7 @@ typedef struct {
  * assembler functions in vdi_tblit.S
  */
 void normal_blit(LOCALVARS *vars, UBYTE *src, UBYTE *dst);
-void outline(LOCALVARS *vars, UWORD *buf, WORD form_width);
+void outline(LOCALVARS *vars);
 void rotate(LOCALVARS *vars);   /* actually local, but non-static improves performance */
 void scale(LOCALVARS *vars);
 
@@ -274,7 +274,7 @@ static ULONG merge_byte(UWORD *p, UWORD n)
  *              7 X 8
  *              4 5 6
  */
-void outline(LOCALVARS *vars, UWORD *buf, WORD form_width_bytes)
+void outline(LOCALVARS *vars)
 {
     UWORD *currline, *nextline, *scratch;
     UWORD *save_next;
@@ -285,8 +285,8 @@ void outline(LOCALVARS *vars, UWORD *buf, WORD form_width_bytes)
     ULONG bottom_left, bottom_noshift, bottom_right;
     ULONG result;
 
-    form_width = form_width_bytes / sizeof(WORD);
-    currline = buf + form_width;
+    form_width = vars->s_next / sizeof(WORD);
+    currline = (UWORD *)vars->sform + form_width;
     nextline = currline + form_width;
 
     /* process lines sequentially */
@@ -298,7 +298,7 @@ void outline(LOCALVARS *vars, UWORD *buf, WORD form_width_bytes)
         bottom_left = (*(ULONG *)nextline) >> 1;
 
         /* process one word at a time */
-        for (j = form_width, scratch = buf; j > 0; j--)
+        for (j = form_width, scratch = (UWORD *)vars->sform; j > 0; j--)
         {
             /* get the data from the current line */
             current_left = current_noshift = merge_byte(currline, curr);
@@ -439,13 +439,8 @@ static void pre_blit(LOCALVARS *vars)
 
     if (vars->STYLE & F_OUTLINE)
     {
-        /*
-         * we may be able to speed up the following by calculating
-         * the args in outline() rather than passing them
-         */
-        src = vars->sform;
+        outline(vars);
         vars->sform += vars->s_next;
-        outline(vars, (UWORD *)src, vars->s_next);
     }
 
     SOURCEX = 0;
