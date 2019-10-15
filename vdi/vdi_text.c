@@ -415,13 +415,14 @@ static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width, JUSTINFO *j
         line->x1 = startx;
         line->y1 = starty;
 
-        if (vwk->chup % 1800 == 0) {
-            line->x2 = DESTX;
-            line->y2 = line->y1;
-        } else {
+        if ((vwk->chup == 900) || (vwk->chup == 2700)) {
             line->x2 = line->x1;
             line->y2 = DESTY;
+        } else {
+            line->x2 = DESTX;
+            line->y2 = line->y1;
         }
+
         if (vwk->style & F_LIGHT)
             LN_MASK = fnt_ptr->lighten;
         else
