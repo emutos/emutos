@@ -99,7 +99,6 @@
 
         .globl  _normal_blit
         .globl  _outline
-        .globl  _rotate
         .globl  _scale
 
 /////////////////////////////////////////////////////////
@@ -259,14 +258,6 @@ _outline:
         move.l  44+8(sp),a0             // a0 & d7.w must also be set
         move.w  44+12(sp),d7
         jbsr    outlin
-        movem.l (sp)+,d2-d7/a2-a6       // restore saved registers
-        rts
-
-//  interface to 'rotation'
-_rotate:
-        movem.l d2-d7/a2-a6,-(sp)       // save registers that GCC expects unchanged
-        move.l  44+4(sp),a6             // load ptr to end of vars
-        jbsr    rotation
         movem.l (sp)+,d2-d7/a2-a6       // restore saved registers
         rts
 
@@ -1421,167 +1412,6 @@ wnxt_wrd:
         move.w  d2,shif_cnt(a6)
 
         jra     mlt_left
-
-/////////////////////////
-//      rotation in 90 degree increments        //
-/////////////////////////
-rotation:
-        move.w  _SOURCEX,d1
-        move.w  d1,d2
-        andi.w  #0x0F,d2
-        move.w  d2,tsdad(a6)            //save source dot address
-        lsr.w   #4,d1                   //make byte address
-        add.w   d1,d1
-
-        movea.l sform(a6),a0
-        adda.w  d1,a0                   //a0 -> source
-
-        jbsr    getnextbuf              //a1 -> dest
-
-        move.w  DELX(a6),width(a6)
-        move.w  _SOURCEY,d0             //ax=d0
-        move.w  DELY(a6),d1             //bx=d1
-        move.w  d1,height(a6)
-        move.w  s_next(a6),d2           //cx=d2
-
-        move.w  CHUP(a6),d6             //d6 = rotation (temporarily)
-        cmpi.w  #1800,d6                //determine character rotation
-        jeq     upsd_dwn
-rot90:
-        cmpi.w  #900,d6
-        jeq     top_src
-        neg.w   s_next(a6)              //go up 1 line
-        subq.w  #1,d1
-        add.w   d1,d0                   //start at bottom
-        mulu    d2,d0                   //get mem address of start corner
-        adda.l  d0,a0
-top_src:
-        move.w  DELY(a6),d0
-        lsr.w   #4,d0
-        add.w   d0,d0
-        addq.w  #2,d0                   //form width is height / 8 + 1
-        move.w  d0,d_next(a6)
-
-        cmpi.w  #2700,d6                //determine if 90 or 270 rotation
-        jeq     top_dwn                 //
-        neg.w   d_next(a6)              //bottom working up
-        move.w  DELX(a6),d1             //DELX is the height
-        subq.w  #1,d1
-        mulu    d1,d0
-        adda.l  d0,a1
-top_dwn:
-        move.w  tsdad(a6),d2
-        move.w  #0x8000,d3              //d3=dx
-        move.w  d3,d4                   //d4=bp   1st bit of scratch area
-        movea.w d3,a4
-        lsr.w   d2,d3
-        moveq.l #0,d0                   //d0=bx
-        move.w  width(a6),d2            //d2=cx   pixels in source row
-        move.w  s_next(a6),d6
-        movea.l a0,a2
-        movea.l a1,a3
-        jra     rot_nsrc
-rot_ylp:
-        move.w  height(a6),d1           //d1=cx'
-        jra     rot_srt
-rot_xlp:
-        move.w  (a0),d7
-        and.w   d3,d7
-        jeq     rot_nor
-        or.w    d4,d0
-rot_nor:
-        ror.w   #1,d4
-        jcc     rot_isrc
-rot_ndst:
-        move.w  d0,(a1)+
-        moveq.l #0,d0
-rot_isrc:
-        adda.w  d6,a0                   //add source_next to source ptr
-rot_srt:
-        dbra    d1,rot_xlp
-
-        move.w  d0,(a1)
-        moveq.l #0,d0
-        adda.w  d_next(a6),a3
-        movea.l a3,a1
-        move.w  a4,d4
-        ror.w   #1,d3
-        jcc     rnew_src
-        addq.l  #2,a2
-rnew_src:
-        movea.l a2,a0
-rot_nsrc:
-        dbra    d2,rot_ylp
-
-rot_done:
-        move.w  DELX(a6),d0
-        move.w  DELY(a6),d1
-        move.w  d1,width(a6)
-        move.w  d1,DELX(a6)
-        move.w  d0,height(a6)
-        move.w  d0,DELY(a6)
-
-        move.w  tmp_dely(a6), d0        //Must swap tmps too RJG 4/13/85
-        move.w  tmp_delx(a6), tmp_dely(a6)
-        move.w  d0, tmp_delx(a6)
-        move.w  #1, swap_tmps(a6)
-
-        move.w  d_next(a6),d0
-        cmpi.w  #900,CHUP(a6)
-        jne     rot_nneg
-        neg.w   d0
-rot_nneg:
-        move.w  d0,s_next(a6)
-        clr.w   _SOURCEX
-        jbsr    currbuf                 //a1 -> dest buffer
-        move.l  a1,sform(a6)            // = source for next nfunction
-        clr.w   _SOURCEY
-        rts
-
-upsd_dwn:
-        move.w  DELX(a6),d0             //a0 -> top of source
-        add.w   tsdad(a6),d0
-        subq.w  #1,d0                   //make width instead of address
-        lsr.w   #4,d0
-        add.w   d0,d0                   //make it even byte address
-        addq.w  #2,d0                   //form width is DELX / 8 + 1
-
-        move.w  d0,d_next(a6)
-        move.w  d0,d2
-        lsr.w   #1,d2                   //number of words to move per line
-        subq.w  #1,d2                   //for dbra, my sweetie
-        mulu    d1,d0                   //d0 pts to bottom of new form
-        adda.w  d0,a1                   //a1 -> last word in form
-        jra     strtflip
-upsd_lp:
-        movea.l a0,a2                   //use a2 as working source
-        move.w  d2,d3                   //copy words per line to temp
-line_lp:
-        move.w  (a2)+,d0
-        moveq.l #0,d6
-        moveq.l #15,d4
-flip_lp:
-        lsr.w   #1,d0
-        addx.w  d6,d6                   //same as "roxl.w  #1,d6" but faster
-        dbra    d4,flip_lp
-
-        move.w  d6,-(a1)                //store in buffer pre-decrement
-        dbra    d3,line_lp
-
-        adda.w  s_next(a6),a0           //dest (a2) is already updated
-strtflip:
-        dbra    d1,upsd_lp
-
-        move.w  d_next(a6),s_next(a6)
-        jbsr    currbuf                 //a1 -> dest buf
-        move.l  a1,sform(a6)
-        move.w  _SOURCEX,d0
-        add.w   DELX(a6),d0
-        neg.w   d0
-        andi.w  #0xF,d0                 //location of last bit in original
-        move.w  d0,_SOURCEX
-        clr.w   _SOURCEY
-        rts
 
 //
 //      text scratch buffer management

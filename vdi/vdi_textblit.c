@@ -13,6 +13,7 @@
 /* #define ENABLE_KDEBUG */
 
 #include "emutos.h"
+#include "asm.h"
 #include "intmath.h"
 
 #include "tosvars.h"
@@ -103,8 +104,17 @@ typedef struct {
  */
 void normal_blit(LOCALVARS *vars, UBYTE *src, UBYTE *dst);
 void outline(LOCALVARS *vars, UBYTE *buf, WORD form_width);
-void rotate(LOCALVARS *vars);
+void rotate(LOCALVARS *vars);   /* actually local, but non-static improves performance */
 void scale(LOCALVARS *vars);
+
+/*
+ * the following table maps a 4-bit sequence to its reverse
+ */
+static UBYTE reverse_nybble[] =
+/*  0000  0001  0010  0011  0100  0101  0110  0111  */
+{   0x00, 0x08, 0x04, 0x0c, 0x02, 0x0a, 0x06, 0x0e,
+/*  1000  1001  1010  1011  1100  1101  1110  1111  */
+    0x01, 0x09, 0x05, 0x0d, 0x03, 0x0b, 0x07, 0x0f };
 
 
 /*
@@ -331,6 +341,124 @@ static void pre_blit(LOCALVARS *vars)
 
 
 /*
+ * rotate: perform text rotation
+ */
+void rotate(LOCALVARS *vars)
+{
+    UBYTE *src, *dst;
+    WORD form_width, i, j, k, tmp;
+    UWORD in, out, srcbit, dstbit;
+    UWORD *p, *q;
+
+    vars->tsdad = SOURCEX & 0x000f;
+    src = vars->sform + ((SOURCEX >> 4) << 1);
+    vars->buffa = SCRPT2 - vars->buffa;     /* switch buffers */
+    dst = (UBYTE *)SCRTCHP + vars->buffa;
+
+    vars->width = vars->DELX;
+    vars->height = vars->DELY;
+
+    /*
+     * first, handle the simplest case: inverted text (180 rotation)
+     */
+    if (vars->CHUP == 1800)
+    {
+        form_width = ((vars->DELX+vars->tsdad-1) >> 4) + 1; /* in words */
+        vars->d_next = form_width * sizeof(WORD);
+        q = (UWORD *)(dst + vars->d_next * vars->height);
+        for (i = vars->height; i > 0; i--)
+        {
+            for (j = form_width, p = (UWORD *)src; j > 0; j--)
+            {
+                in = *p++;
+                out = reverse_nybble[in&0x000f];    /* reverse 4 bits at a time */
+                for (k = 3; k > 0; k--)
+                {
+                    out <<= 4;
+                    in >>= 4;
+                    out |= reverse_nybble[in&0x000f];
+                }
+                *--q = out;
+            }
+            src += vars->s_next;
+        }
+        vars->s_next = vars->d_next;
+        vars->sform = (UBYTE *)SCRTCHP + vars->buffa;
+        SOURCEX = -(SOURCEX + vars->DELX) & 0x000f;
+        SOURCEY = 0;
+        return;
+    }
+
+    /*
+     * handle remaining cases (90 and 270 rotation)
+     */
+    vars->d_next = ((vars->DELY >> 4) << 1) + 2;
+
+    if (vars->CHUP == 900)
+    {
+        dst += (vars->DELX - 1) * vars->d_next;
+        vars->d_next = -vars->d_next;
+    }
+    else        /* 2700 */
+    {
+        src += (SOURCEY + vars->height - 1) * vars->s_next;
+        vars->s_next = -vars->s_next;
+    }
+
+    srcbit = 0x8000 >> vars->tsdad;
+    dstbit = 0x8000;
+    out = 0;
+    p = (UWORD *)src;
+    q = (UWORD *)dst;
+    for (i = vars->width; i > 0; i--)
+    {
+        for (j = vars->height; j > 0; j--)
+        {
+            if (*p & srcbit)
+                out |= dstbit;
+            dstbit >>= 1;
+            if (!dstbit)
+            {
+                dstbit = 0x8000;
+                *q++ = out;
+                out = 0;
+            }
+            p = (UWORD *)((UBYTE *)p + vars->s_next);
+        }
+
+        dstbit = 0x8000;
+        *q = out;
+        out = 0;
+        dst += vars->d_next;
+        q = (UWORD *)dst;
+
+        srcbit >>= 1;
+        if (!srcbit)
+        {
+            srcbit = 0x8000;
+            src += sizeof(WORD);
+        }
+
+        p = (UWORD *)src;
+    }
+
+    vars->height = vars->DELX;  /* swap width & height */
+    vars->width = vars->DELY;
+    vars->DELX = vars->width;
+    vars->DELY = vars->height;
+    tmp = vars->tmp_delx;
+    vars->tmp_delx = vars->tmp_dely;
+    vars->tmp_dely = tmp;
+    vars->swap_tmps = 1;
+
+    vars->s_next = (vars->CHUP == 900) ? -vars->d_next : vars->d_next;
+    vars->sform = (UBYTE*)SCRTCHP + vars->buffa;
+    SOURCEX = 0;
+    SOURCEY = 0;
+}
+
+
+/*
  * output a block to the screen
  */
 static void screen_blit(LOCALVARS *vars)
@@ -510,7 +638,7 @@ void text_blt(void)
 
     if (vars.CHUP)
     {
-        rotate(&vars+1);    /* call assembler helper function */
+        rotate(&vars);
     }
 
     if (vars.STYLE & F_THICKEN)
