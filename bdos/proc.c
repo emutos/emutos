@@ -138,8 +138,10 @@ static void ixterm(PD *r)
     /* free each item in the allocated list that is owned by 'r' */
 
     free_all_owned(r, &pmd);
-    if (HAS_ALT_RAM)
+#if CONF_WITH_ALT_RAM
+    if (has_alt_ram)
         free_all_owned(r, &pmdalt);
+#endif
 }
 
 
@@ -614,8 +616,9 @@ WORD xtermres(long blkln, WORD rc)
     xsetblk(0,run,blkln);
 
     reserve_blocks(run, &pmd);
-    if (HAS_ALT_RAM)
+#if CONF_WITH_ALT_RAM
+    if (has_alt_ram)
         reserve_blocks(run, &pmdalt);
-
+#endif
     xterm(rc);
 }

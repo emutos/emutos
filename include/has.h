@@ -118,9 +118,6 @@ extern int has_dip_switches;
 
 #if CONF_WITH_ALT_RAM
 extern int has_alt_ram;
-  #define HAS_ALT_RAM has_alt_ram
-#else
-  #define HAS_ALT_RAM 0
 #endif
 
 #if CONF_ATARI_HARDWARE
