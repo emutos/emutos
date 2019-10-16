@@ -17,6 +17,7 @@ a ROM version of EmuTOS.
   STeem SSE 3.9.4     |  yes  | VRI | 10 Oct 2019 |
   STonC v0.8.1        |  yes  | LVL |  9 Feb 2003 |
   STonX 0.6.7.6       |  yes  | THH | 14 Nov 2008 |
+  STonX DOS           |  yes  | (9) | 16 Oct 2019 | 192k ROM
   TOSBox 1.10a        |   no  |  ?  |  < Sep 2002 |
   WinSTon V0.1r2      |   no  |  ?  |  < Sep 2002 |
   WinUAE 4.2.1        |  yes  | VRI | 13 Oct 2019 |
@@ -56,6 +57,7 @@ Other testers:
   (6) reported by Flype
   (7) reported by Stefan Niestegge
   (8) reported by Claude Labelle
+  (9) reported by Siegfried Hübner
 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
