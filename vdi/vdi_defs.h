@@ -249,33 +249,33 @@ extern UBYTE    mouse_flag;     /* non-zero, if mouse ints disabled */
 extern UBYTE    cur_ms_stat;    /* current mouse status */
 
 
-BOOL clip_line(Vwk * vwk, Line * line);
-void arb_corner(Rect * rect);
-void arb_line(Line * line);
+BOOL clip_line(Vwk *vwk, Line *line);
+void arb_corner(Rect *rect);
+void arb_line(Line *line);
 
 
 /* C Support routines */
-Vwk * get_vwk_by_handle(WORD);
-UWORD * get_start_addr(const WORD x, const WORD y);
+Vwk *get_vwk_by_handle(WORD);
+UWORD *get_start_addr(const WORD x, const WORD y);
 void set_LN_MASK(Vwk *vwk);
 void st_fl_ptr(Vwk *);
 void gdp_justified(Vwk *);
 WORD validate_color_index(WORD colnum);
 
 /* drawing primitives */
-void draw_pline(Vwk * vwk);
-void arrow(Vwk * vwk, Point * point, int count);
-void draw_rect(const Vwk * vwk, Rect * rect, const UWORD fillcolor);
-void polygon(Vwk * vwk, Point * point, int count);
-void polyline(Vwk * vwk, Point * point, int count, WORD color);
-void wideline(Vwk * vwk, Point * point, int count);
+void draw_pline(Vwk *vwk);
+void arrow(Vwk *vwk, Point *point, int count);
+void draw_rect(const Vwk *vwk, Rect *rect, const UWORD fillcolor);
+void polygon(Vwk *vwk, Point *point, int count);
+void polyline(Vwk *vwk, Point *point, int count, WORD color);
+void wideline(Vwk *vwk, Point *point, int count);
 
 /* common drawing function */
 void Vwk2Attrib(const Vwk *vwk, VwkAttrib *attr, const UWORD color);
 void draw_rect_common(const VwkAttrib *attr, const Rect *rect);
-void clc_flit (const VwkAttrib * attr, const VwkClip * clipper, const Point * point, WORD y, int vectors);
-void abline (const Line * line, const WORD wrt_mode, UWORD color);
-void contourfill(const VwkAttrib * attr, const VwkClip *clip);
+void clc_flit (const VwkAttrib *attr, const VwkClip *clipper, const Point *point, WORD y, int vectors);
+void abline (const Line *line, const WORD wrt_mode, UWORD color);
+void contourfill(const VwkAttrib *attr, const VwkClip *clip);
 
 /* initialization of subsystems */
 void init_colors(void);
@@ -385,7 +385,7 @@ void vdi_vex_wheelv(Vwk *);         /* 134 */
 /* not in original TOS */
 void v_bez_qual(Vwk *);
 void v_bez_control(Vwk *);
-void v_bez(Vwk *vwk, Point * points, int count);
-void v_bez_fill(Vwk *vwk, Point * points, int count);
+void v_bez(Vwk *vwk, Point *points, int count);
+void v_bez_fill(Vwk *vwk, Point *points, int count);
 
 #endif                          /* VDIDEF_H */
