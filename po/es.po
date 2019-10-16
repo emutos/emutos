@@ -366,7 +366,7 @@ msgid "  Info/Rename...  ^I"
 msgstr "  Info/Renombrar...     ^I"
 
 #: desk/desk_rsc.c
-msgid "  New Folder...   ^N"
+msgid "  New folder...   ^N"
 msgstr "  Nueva carpeta...      ^N"
 
 #: desk/desk_rsc.c

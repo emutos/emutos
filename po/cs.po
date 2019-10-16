@@ -362,7 +362,7 @@ msgid "  Info/Rename...  ^I"
 msgstr "  Info/Jméno...   ^I"
 
 #: desk/desk_rsc.c
-msgid "  New Folder...   ^N"
+msgid "  New folder...   ^N"
 msgstr "  Nový adresáø... ^N"
 
 #: desk/desk_rsc.c

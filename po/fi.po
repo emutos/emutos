@@ -362,7 +362,7 @@ msgid "  Info/Rename...  ^I"
 msgstr "  Näytä tiedot...     ^I"
 
 #: desk/desk_rsc.c
-msgid "  New Folder...   ^N"
+msgid "  New folder...   ^N"
 msgstr "  Uusi kansio...      ^N"
 
 #: desk/desk_rsc.c

@@ -364,8 +364,8 @@ msgid "  Info/Rename...  ^I"
 msgstr "  Info/Hernoem...    ^I"
 
 #: desk/desk_rsc.c
-msgid "  New Folder...   ^N"
-msgstr "  Nieuwe Map...      ^N"
+msgid "  New folder...   ^N"
+msgstr "  Nieuwe map...      ^N"
 
 #: desk/desk_rsc.c
 msgid "  Close           ^U"
