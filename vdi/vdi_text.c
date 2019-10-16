@@ -342,6 +342,7 @@ static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width, JUSTINFO *j
         underline = -1;
     else
         underline = 0;
+    underline += fnt_ptr->ul_size;
 
     point = (Point*)PTSIN;
     switch(vwk->chup) {
@@ -349,14 +350,14 @@ static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width, JUSTINFO *j
         DESTX = point->x - delh - outline;
         DESTY = point->y - delv - outline;
         startx = DESTX;
-        starty = DESTY + fnt_ptr->top + (fnt_ptr->ul_size + underline);
+        starty = DESTY + fnt_ptr->top + underline;
         xfact = 0;
         yfact = 1;
         break;
     case 900:
         DESTX = point->x - delv - outline;
         DESTY = point->y + delh + outline + 1;
-        startx = DESTX + fnt_ptr->top + (fnt_ptr->ul_size + underline);
+        startx = DESTX + fnt_ptr->top + underline;
         starty = DESTY;
         xfact = 1;
         yfact = 0;
@@ -365,14 +366,14 @@ static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width, JUSTINFO *j
         DESTX = point->x + delh + outline + 1;
         DESTY = point->y - ((fnt_ptr->top + fnt_ptr->bottom) - delv) - outline;
         startx = DESTX;
-        starty = (DESTY + fnt_ptr->bottom) - (fnt_ptr->ul_size + underline);
+        starty = DESTY + fnt_ptr->bottom - underline;
         xfact = 0;
         yfact = -1;
         break;
     case 2700:
         DESTX = point->x - ((fnt_ptr->top + fnt_ptr->bottom) - delv) - outline;
         DESTY = point->y - delh - outline;
-        startx = (DESTX + fnt_ptr->bottom) - (fnt_ptr->ul_size + underline);
+        startx = DESTX + fnt_ptr->bottom - underline;
         starty = DESTY;
         xfact = -1;
         yfact = 0;
