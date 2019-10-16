@@ -291,92 +291,91 @@ void esc_exit(Vwk *);
 
 /* all VDI functions */
 
-/* As reference the TOS 1.0 start addresses are added */
-void vdi_v_opnwk(Vwk *);            /* 1   - fcb53e */
-void vdi_v_clswk(Vwk *);            /* 2   - fcb812 */
-void vdi_v_clrwk(Vwk *);            /* 3   - fca4e8 */
-/* void v_updwk(Vwk *); */          /* 4   - fca4e6 - not yet implemented */
-void vdi_v_escape(Vwk *);           /* 5   - fc412e */
+void vdi_v_opnwk(Vwk *);            /* 1 */
+void vdi_v_clswk(Vwk *);            /* 2 */
+void vdi_v_clrwk(Vwk *);            /* 3 */
+/* void v_updwk(Vwk *); */          /* 4 - not implemented */
+void vdi_v_escape(Vwk *);           /* 5 */
 
-void vdi_v_pline(Vwk *);            /* 6   - fcb85a */
-void vdi_v_pmarker(Vwk *);          /* 7   - fcb8f4 */
-void vdi_v_gtext(Vwk *);            /* 8   - fcd61c */
-void vdi_v_fillarea(Vwk *);         /* 9   - fcba3a */
-/* void vdi_v_cellarray(Vwk *); */  /* 10  - fca4e6 - not implemented */
+void vdi_v_pline(Vwk *);            /* 6 */
+void vdi_v_pmarker(Vwk *);          /* 7 */
+void vdi_v_gtext(Vwk *);            /* 8 */
+void vdi_v_fillarea(Vwk *);         /* 9 */
+/* void vdi_v_cellarray(Vwk *); */  /* 10 - not implemented */
 
-void vdi_v_gdp(Vwk *);              /* 11  - fcba46 */
-void vdi_vst_height(Vwk *);         /* 12  - fcde96 */
-void vdi_vst_rotation(Vwk *);       /* 13  - fce308 */
-void vdi_vs_color(Vwk *);           /* 14           */
-void vdi_vsl_type(Vwk *);           /* 15  - fcab20 */
+void vdi_v_gdp(Vwk *);              /* 11 */
+void vdi_vst_height(Vwk *);         /* 12 */
+void vdi_vst_rotation(Vwk *);       /* 13 */
+void vdi_vs_color(Vwk *);           /* 14 */
+void vdi_vsl_type(Vwk *);           /* 15 */
 
-void vdi_vsl_width(Vwk *);          /* 16  - fcab6a */
-void vdi_vsl_color(Vwk *);          /* 17  - fcac26 */
-void vdi_vsm_type(Vwk *);           /* 18  - fcad02 */
-void vdi_vsm_height(Vwk *);         /* 19  - fcac76 */
-void vdi_vsm_color(Vwk *);          /* 20  - fcad52 */
+void vdi_vsl_width(Vwk *);          /* 16 */
+void vdi_vsl_color(Vwk *);          /* 17 */
+void vdi_vsm_type(Vwk *);           /* 18 */
+void vdi_vsm_height(Vwk *);         /* 19 */
+void vdi_vsm_color(Vwk *);          /* 20 */
 
-void vdi_vst_font(Vwk *);           /* 21  - fce342 */
-void vdi_vst_color(Vwk *);          /* 22  - fce426 */
-void vdi_vsf_interior(Vwk *);       /* 23  - fcada8 */
-void vdi_vsf_style(Vwk *);          /* 24  - fcadf4 */
-void vdi_vsf_color(Vwk *);          /* 25  - fcae5c */
+void vdi_vst_font(Vwk *);           /* 21 */
+void vdi_vst_color(Vwk *);          /* 22 */
+void vdi_vsf_interior(Vwk *);       /* 23 */
+void vdi_vsf_style(Vwk *);          /* 24 */
+void vdi_vsf_color(Vwk *);          /* 25 */
 
-void vdi_vq_color(Vwk *vwk);        /* 26           */
-/* void vdi_vq_cellarray(Vwk *); */ /* 27  - fca4e6 - not implemented */
-void vdi_v_locator(Vwk *);          /* 28  - fcaeac */
-void vdi_v_choice(Vwk *);           /* 30  - fcb04a */
+void vdi_vq_color(Vwk *vwk);        /* 26 */
+/* void vdi_vq_cellarray(Vwk *); */ /* 27 - not implemented */
+void vdi_v_locator(Vwk *);          /* 28 */
+void vdi_v_choice(Vwk *);           /* 30 */
 
-void vdi_v_string(Vwk *);           /* 31  - fcb0d4 */
-void vdi_vswr_mode(Vwk *);          /* 32  - fcb1d8 */
-void vdi_vsin_mode(Vwk *);          /* 33  - fcb232 */
-void vdi_vql_attributes(Vwk *);     /* 35  - fcbbf8 */
+void vdi_v_string(Vwk *);           /* 31 */
+void vdi_vswr_mode(Vwk *);          /* 32 */
+void vdi_vsin_mode(Vwk *);          /* 33 */
+void vdi_vql_attributes(Vwk *);     /* 35 */
 
-void vdi_vqm_attributes(Vwk *);     /* 36  - fcbc54 */
-void vdi_vqf_attributes(Vwk *);     /* 37  - fcbcb4 */
-void vdi_vqt_attributes(Vwk *);     /* 38  - fce476 */
-void vdi_vst_alignment(Vwk *);      /* 39  - fce2ac */
+void vdi_vqm_attributes(Vwk *);     /* 36 */
+void vdi_vqf_attributes(Vwk *);     /* 37 */
+void vdi_vqt_attributes(Vwk *);     /* 38 */
+void vdi_vst_alignment(Vwk *);      /* 39 */
 
 
-void vdi_v_opnvwk(Vwk *);           /* 100 - fcd4d8 */
+void vdi_v_opnvwk(Vwk *);           /* 100 */
 
-void vdi_v_clsvwk(Vwk *);           /* 101 - fcd56a */
-void vdi_vq_extnd(Vwk *);           /* 102 - fcb77a */
-void vdi_v_contourfill(Vwk *);      /* 103 - fd1208 */
-void vdi_vsf_perimeter(Vwk *);      /* 104 - fcb306 */
-void vdi_v_get_pixel(Vwk *);        /* 105 - fd1906 */
+void vdi_v_clsvwk(Vwk *);           /* 101 */
+void vdi_vq_extnd(Vwk *);           /* 102 */
+void vdi_v_contourfill(Vwk *);      /* 103 */
+void vdi_vsf_perimeter(Vwk *);      /* 104 */
+void vdi_v_get_pixel(Vwk *);        /* 105 */
 
-void vdi_vst_effects(Vwk *);        /* 106 - fce278 */
-void vdi_vst_point(Vwk *);          /* 107 - fce132 */
-void vdi_vsl_ends(Vwk *);           /* 108 - fcabca */
-void vdi_vro_cpyfm(Vwk *);          /* 109 - fd0770 */
-void vdi_vr_trnfm(Vwk *);           /* 110 - fd1960 */
+void vdi_vst_effects(Vwk *);        /* 106 */
+void vdi_vst_point(Vwk *);          /* 107 */
+void vdi_vsl_ends(Vwk *);           /* 108 */
+void vdi_vro_cpyfm(Vwk *);          /* 109 */
+void vdi_vr_trnfm(Vwk *);           /* 110 */
 
 void vdi_vsc_form(Vwk *);           /* 111 */
-void vdi_vsf_udpat(Vwk *);          /* 112 - fcd5c0 */
-void vdi_vsl_udsty(Vwk *);          /* 113 - fcb34c */
-void vdi_vr_recfl(Vwk *);           /* 114 - fcb4be */
-void vdi_vqin_mode(Vwk *);          /* 115 - fcb2a0 */
+void vdi_vsf_udpat(Vwk *);          /* 112 */
+void vdi_vsl_udsty(Vwk *);          /* 113 */
+void vdi_vr_recfl(Vwk *);           /* 114 */
+void vdi_vqin_mode(Vwk *);          /* 115 */
 
-void vdi_vqt_extent(Vwk *);         /* 116 - fce4f0 */
-void vdi_vqt_width(Vwk *);          /* 117 - fce6b6 */
-void vdi_vex_timv(Vwk *);           /* 118 - fca530 */
-void vdi_vst_load_fonts(Vwk *);     /* 119 - fcebcc */
-void vdi_vst_unload_fonts(Vwk *);   /* 120 - fcec60 */
+void vdi_vqt_extent(Vwk *);         /* 116 */
+void vdi_vqt_width(Vwk *);          /* 117 */
+void vdi_vex_timv(Vwk *);           /* 118 */
+void vdi_vst_load_fonts(Vwk *);     /* 119 */
+void vdi_vst_unload_fonts(Vwk *);   /* 120 */
 
-void vdi_vrt_cpyfm(Vwk *);          /* 121 - fcb486 */
-void vdi_v_show_c(Vwk *);           /* 122 - fcafca */
-void vdi_v_hide_c(Vwk *);           /* 123 - fcaff2 */
-void vdi_vq_mouse(Vwk *);           /* 124 - fcb000 */
-void vdi_vex_butv(Vwk *);           /* 125 - fd040e */
+void vdi_vrt_cpyfm(Vwk *);          /* 121 */
+void vdi_v_show_c(Vwk *);           /* 122 */
+void vdi_v_hide_c(Vwk *);           /* 123 */
+void vdi_vq_mouse(Vwk *);           /* 124 */
+void vdi_vex_butv(Vwk *);           /* 125 */
 
-void vdi_vex_motv(Vwk *);           /* 126 - fd0426 */
-void vdi_vex_curv(Vwk *);           /* 127 - fd043e */
-void vdi_vq_key_s(Vwk *);           /* 128 - fcb1b4 */
-void vdi_vs_clip(Vwk *);            /* 129 - fcb364 */
-void vdi_vqt_name(Vwk *);           /* 130 - fce790 */
+void vdi_vex_motv(Vwk *);           /* 126 */
+void vdi_vex_curv(Vwk *);           /* 127 */
+void vdi_vq_key_s(Vwk *);           /* 128 */
+void vdi_vs_clip(Vwk *);            /* 129 */
+void vdi_vqt_name(Vwk *);           /* 130 */
 
-void vdi_vqt_fontinfo(Vwk *);       /* 131 - fce820 */
+void vdi_vqt_fontinfo(Vwk *);       /* 131 */
 
 #if CONF_WITH_EXTENDED_MOUSE
 void vdi_vex_wheelv(Vwk *);         /* 134 */
