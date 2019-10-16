@@ -1,10 +1,3 @@
-AES/VDI/Line-A bugs:
-- The right side of outline characters are clipped e.g. in "LaserChess",
-  "Diamond miner" & "Minigolf" games, and in vditext tester:
-  https://sourceforge.net/p/emutos/mailman/message/29276993/
-  This is due to a bug somewhere in the ugly text_blt() assembler
-  function in vdi_tblit.S.
-
 Video problems:
 
 Atari Falcon / TOS v4 compatibility bugs:
@@ -35,15 +28,7 @@ Problems that also occur in Atari TOS:
   In that case, the welcome screen is not displayed.
 
 Links to programs listed above:
-- Diamond Miner:
-  http://www.atarimania.com/game-atari-st-diamond-miner_31993.html
 - Escape Paint:
   http://www.pouet.net/prod.php?which=25328
 - FalcAMP:
   http://deunstg.free.fr/sct1/falcamp/
-- Laserchess:
-  http://www.atarimania.com/game-atari-st-laserchess_31257.html
-- Minigolf (GFA):
-  http://eerott.mbnet.fi/hatari/sources/minigolf.zip
-- VDI line/text tester:
-  http://eerott.mbnet.fi/hatari/programs.shtml#vditest
