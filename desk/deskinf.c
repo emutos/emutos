@@ -1039,10 +1039,8 @@ void inf_conf(void)
 
     /* set up available memory line */
     n = sprintf(G.g_work, "%ld %s", dos_avail_stram()/1024L, _("KB"));
-#if CONF_WITH_ALT_RAM
-    if (has_alt_ram)
+    if (HAS_ALT_RAM)
         n += sprintf(G.g_work+n, " + %ld %s", dos_avail_altram()/1024L, _("KB"));
-#endif
     memset(G.g_work+n, ' ', 40);    /* enough spaces to fill object's text field */
     inf_sset(tree, DCFREMEM, G.g_work);
 

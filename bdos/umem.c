@@ -24,6 +24,7 @@
 #include "biosext.h"
 #include "xbiosbind.h"
 #include "bdosstub.h"
+#include "has.h"
 
 
 /*
@@ -74,14 +75,12 @@ static void dump_mem_map(void)
     kprintf("===mem_dump==========================\n");
     dump_md_list("std free ", pmd.mp_mfl);
     dump_md_list("std alloc", pmd.mp_mal);
-#if CONF_WITH_ALT_RAM
-    if (has_alt_ram)
+    if (HAS_ALT_RAM)
     {
         kprintf("| ----------------------\n");
         dump_md_list("alt free ", pmdalt.mp_mfl);
         dump_md_list("alt alloc", pmdalt.mp_mal);
     }
-#endif
     kprintf("===/mem_dump==========================\n");
 }
 #else
@@ -97,10 +96,8 @@ static MPB *find_mpb(void *addr)
 {
     if (((UBYTE *)addr >= start_stram) && ((UBYTE *)addr < end_stram)) {
         return &pmd;
-#if CONF_WITH_ALT_RAM
-    } else if (has_alt_ram) {
+    } else if (HAS_ALT_RAM) {
         return &pmdalt;
-#endif
     }
 
     return NULL;
