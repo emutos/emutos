@@ -471,10 +471,6 @@ msgid "  Blitter"
 msgstr "  Blitter"
 
 #: desk/desk_rsc.c
-msgid "Attribute:"
-msgstr "Attribut:"
-
-#: desk/desk_rsc.c
 msgid "Read/Write"
 msgstr "Les/Schreib"
 

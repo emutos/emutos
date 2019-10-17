@@ -466,10 +466,6 @@ msgid "  Blitter"
 msgstr "  Blitteri"
 
 #: desk/desk_rsc.c
-msgid "Attribute:"
-msgstr "Ominaisuus:"
-
-#: desk/desk_rsc.c
 msgid "Read/Write"
 msgstr "Lue/Kirj."
 
