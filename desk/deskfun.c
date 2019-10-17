@@ -184,6 +184,35 @@ void fun_rebld(char *ptst)
 } /* fun_rebld */
 
 
+#if CONF_WITH_SELECTALL
+void fun_selectall(WNODE *pw)
+{
+    GRECT gr;
+    FNODE *pf;
+
+    /* paranoia - check for desktop pseudo-window */
+    if (pw->w_root == DROOT)
+        return;
+
+    /*
+     * select all filenodes & corresponding screen objects
+     */
+    for (pf = pw->w_pnode.p_flist; pf; pf = pf->f_next)
+    {
+        pf->f_selected = TRUE;
+        G.g_screen[pf->f_obid].ob_state |= SELECTED;
+    }
+
+    /*
+     * update info line & redisplay window
+     */
+    win_sinfo(pw, TRUE);
+    wind_get_grect(pw->w_id, WF_WXYWH, &gr);
+    fun_msg(WM_REDRAW, pw->w_id, gr.g_x, gr.g_y, gr.g_w, gr.g_h);
+}
+#endif
+
+
 #if CONF_WITH_FILEMASK
 /*
  *  Routine to update the file mask for the current window

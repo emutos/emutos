@@ -36,6 +36,9 @@ char *exclude_items[] =
 #else
     "STNODRA1",
 #endif
+#if !CONF_WITH_SELECTALL
+    "SLCTITEM",
+#endif
 #if !CONF_WITH_FILEMASK
     "MASKITEM",
     "ADFMASK",

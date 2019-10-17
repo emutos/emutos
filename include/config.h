@@ -263,6 +263,9 @@
 # ifndef CONF_WITH_BACKGROUNDS
 #  define CONF_WITH_BACKGROUNDS 0
 # endif
+# ifndef CONF_WITH_SELECTALL
+#  define CONF_WITH_SELECTALL 0
+# endif
 # ifndef CONF_WITH_FILEMASK
 #  define CONF_WITH_FILEMASK 0
 # endif
@@ -1128,6 +1131,14 @@
  */
 #ifndef CONF_WITH_BACKGROUNDS
 # define CONF_WITH_BACKGROUNDS 1
+#endif
+
+/*
+ * Set CONF_WITH_SELECTALL to 1 to include 'Select all items' in the
+ * desktop menu
+ */
+#ifndef CONF_WITH_SELECTALL
+# define CONF_WITH_SELECTALL 1
 #endif
 
 /*

@@ -127,6 +127,9 @@ static const UBYTE ILL_NOSEL[] = { OPENITEM, SHOWITEM, DELTITEM, 0 };
 static const UBYTE ILL_MULTSEL[] = { OPENITEM, 0 };
 static const UBYTE ILL_NOWIN[] = {
     NFOLITEM, CLOSITEM, CLSWITEM,
+#if CONF_WITH_SELECTALL
+    SLCTITEM,
+#endif
 #if CONF_WITH_FILEMASK
     MASKITEM,
 #endif
@@ -422,6 +425,12 @@ static WORD do_filemenu(WORD item)
         if (pw)
             fun_close(pw, CLOSE_WINDOW);
         break;
+#if CONF_WITH_SELECTALL
+    case SLCTITEM:
+        if (pw)
+            fun_selectall(pw);
+        break;
+#endif
 #if CONF_WITH_FILEMASK
     case MASKITEM:
         if (pw)
