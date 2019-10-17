@@ -318,9 +318,17 @@ static void men_update(void)
         men_list(tree, ILL_MULTSEL, FALSE);
     }
 
-    /* disable items that require an open window */
-    if (!nwin)
+    /* disable items based on number of open windows */
+    switch(nwin) {
+    case 0:
         men_list(tree, ILL_NOWIN, FALSE);
+        FALLTHROUGH;
+#if CONF_WITH_BOTTOMTOTOP
+    case 1:
+        menu_ienable(tree, BTOPITEM, FALSE);
+        break;
+#endif
+    }
 
 #if CONF_WITH_SHUTDOWN
     menu_ienable(tree, QUITITEM, can_shutdown());
@@ -428,6 +436,17 @@ static WORD do_filemenu(WORD item)
         if (pw)
             fun_close(pw, CLOSE_WINDOW);
         break;
+#if CONF_WITH_BOTTOMTOTOP
+    case BTOPITEM:
+        pw = win_onbottom();
+        if (pw)
+        {
+            GRECT gr;
+            wind_get_grect(pw->w_id, WF_WXYWH, &gr);
+            fun_msg(WM_TOPPED, pw->w_id, gr.g_x, gr.g_y, gr.g_w, gr.g_h);
+        }
+        break;
+#endif
 #if CONF_WITH_SELECTALL
     case SLCTITEM:
         if (pw)

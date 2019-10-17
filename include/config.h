@@ -263,6 +263,9 @@
 # ifndef CONF_WITH_BACKGROUNDS
 #  define CONF_WITH_BACKGROUNDS 0
 # endif
+# ifndef CONF_WITH_BOTTOMTOTOP
+#  define CONF_WITH_BOTTOMTOTOP 0
+# endif
 # ifndef CONF_WITH_SELECTALL
 #  define CONF_WITH_SELECTALL 0
 # endif
@@ -1131,6 +1134,14 @@
  */
 #ifndef CONF_WITH_BACKGROUNDS
 # define CONF_WITH_BACKGROUNDS 1
+#endif
+
+/*
+ * Set CONF_WITH_BOTTOMTOTOP to 1 to include 'Bottom to top' in the
+ * desktop menu
+ */
+#ifndef CONF_WITH_BOTTOMTOTOP
+# define CONF_WITH_BOTTOMTOTOP 1
 #endif
 
 /*

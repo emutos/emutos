@@ -224,6 +224,23 @@ void win_top(WNODE *thewin)
 }
 
 
+#if CONF_WITH_BOTTOMTOTOP
+/*
+ *  Find the WNODE for the bottom window; if none, return NULL
+ */
+WNODE *win_onbottom(void)
+{
+    WNODE *p, *last = NULL;
+
+    for (p = G.g_wfirst; p; p = p->w_next)
+        if (p->w_id)
+            last = p;
+
+    return last;
+}
+#endif
+
+
 /*
  *  Find out if the window node on top has size; if it does, then it
  *  is the currently active window.  If not, then no window is on

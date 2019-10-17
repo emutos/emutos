@@ -99,4 +99,8 @@ void win_sname(WNODE *pw);
 void win_sinfo(WNODE *pwin, BOOL check_selected);
 WORD win_count(void);
 
+#if CONF_WITH_BOTTOMTOTOP
+WNODE *win_onbottom(void);
+#endif
+
 #endif  /* _DESKWIN_H */
