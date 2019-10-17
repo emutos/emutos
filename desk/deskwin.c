@@ -242,6 +242,15 @@ WNODE *win_ontop(void)
 
 
 /*
+ *  Return count of open windows
+ */
+WORD win_count(void)
+{
+    return G.g_wcnt;
+}
+
+
+/*
  *  Calculate a bunch of parameters related to how many file objects
  *  will fit in a window
  */

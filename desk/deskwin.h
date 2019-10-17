@@ -97,5 +97,6 @@ void win_shwall(void);
 WORD win_isel(OBJECT olist[], WORD root, WORD curr);
 void win_sname(WNODE *pw);
 void win_sinfo(WNODE *pwin, BOOL check_selected);
+WORD win_count(void);
 
 #endif  /* _DESKWIN_H */

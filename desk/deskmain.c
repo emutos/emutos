@@ -116,26 +116,18 @@ static WORD     ig_close;
  * every item in a given array.
  *
  * detailed usage:
- *  there is one array of items to enable:
- *      ILL_OPENWIN[]   enabled if there is an open window
- *  and three arrays of items to disable:
+ *  there are three arrays of items to disable:
  *      ILL_NOWIN[]     disabled if there are no open windows
  *      ILL NOSEL[]     disabled if there are no icons selected
  *      ILL_MULTSEL[]   disabled if two or more icons are selected
  */
-static const UBYTE ILL_NOSEL[] = { OPENITEM, SHOWITEM, DELTITEM, 0 };
+static const UBYTE ILL_NOSEL[] = { OPENITEM, DELTITEM, 0 };
 static const UBYTE ILL_MULTSEL[] = { OPENITEM, 0 };
 static const UBYTE ILL_NOWIN[] = {
     NFOLITEM, CLOSITEM, CLSWITEM,
 #if CONF_WITH_SELECTALL
     SLCTITEM,
 #endif
-#if CONF_WITH_FILEMASK
-    MASKITEM,
-#endif
-    0 };
-static const UBYTE ILL_OPENWIN[] = {
-    SHOWITEM, NFOLITEM, CLOSITEM, CLSWITEM,
 #if CONF_WITH_FILEMASK
     MASKITEM,
 #endif
@@ -242,12 +234,12 @@ static void men_list(OBJECT *mlist, const UBYTE *dlist, WORD enable)
 
 
 /*
- *  Based on current selected icons, figure out which menu items
- *  should be selected (deselected)
+ *  Based on currently selected icons & open windows, figure out which
+ *  menu items should be enabled/disabled
  */
 static void men_update(void)
 {
-    WORD item, napp, ndesk, nsel, ntrash, isapp;
+    WORD item, napp, ndesk, nsel, ntrash, nwin, isapp;
     ANODE *appl;
     OBJECT *tree = G.a_trees[ADMENU];
     OBJECT *obj;
@@ -298,6 +290,7 @@ static void men_update(void)
             ndesk++;
 #endif
     }
+    nwin = win_count();     /* number of open windows */
 
     /* disable "Delete" iff either trash or printer is selected */
     if (ntrash)
@@ -311,12 +304,22 @@ static void men_update(void)
     if (!ndesk)
         menu_ienable(tree, RICNITEM, FALSE);
 
-    if (nsel != 1)
-        men_list(tree, nsel ? ILL_MULTSEL : ILL_NOSEL, FALSE);
+    /* disable items based on number of selections */
+    switch(nsel) {
+    case 0:
+        men_list(tree, ILL_NOSEL, FALSE);
+        /* like Atari TOS, we only disable 'Show' if there are no open windows */
+        if (!nwin)
+            menu_ienable(tree, SHOWITEM, FALSE);
+        break;
+    case 1:
+        break;
+    default:    /* more than one */
+        men_list(tree, ILL_MULTSEL, FALSE);
+    }
 
-    if (win_ontop())
-        men_list(tree, ILL_OPENWIN, TRUE);
-    else
+    /* disable items that require an open window */
+    if (!nwin)
         men_list(tree, ILL_NOWIN, FALSE);
 
 #if CONF_WITH_SHUTDOWN
