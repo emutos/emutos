@@ -742,6 +742,119 @@ void scale(LOCALVARS *vars)
 }
 
 
+#if CONF_WITH_VDI_TEXT_SPEEDUP
+/*
+ * output the font directly to the screen
+ *
+ * note: like Atari TOS, we assume that the font contains the full
+ * character set, i.e. first_ade==0, last_ade==255
+ */
+void direct_screen_blit(WORD count, WORD *str)
+{
+    WORD forecol, height, mode, n, planes;
+    WORD src_width, dst_width;
+    UBYTE *src, *dst, *save_dst;
+
+    height = DELY;
+    mode = WRT_MODE;
+    src_width = FWIDTH;
+    dst_width = v_lin_wr;
+
+    dst = (UBYTE *)get_start_addr(DESTX, DESTY);
+    if (DESTX & 0x0008)
+        dst++;
+
+    for ( ; count > 0; count--)
+    {
+        src = (UBYTE *)FBASE + *str++;
+        save_dst = dst;
+        forecol = TEXTFG;
+        for (planes = v_planes; planes > 0; planes--)
+        {
+            UBYTE *p, *q;
+
+            switch(mode) {
+            default:    /* WM_REPLACE */
+                if (forecol & 1)
+                {
+                    for (n = height, p = src, q = dst; n > 0; n--)
+                    {
+                        *q = *p;
+                        p += src_width;
+                        q += dst_width;
+                    }
+                }
+                else
+                {
+                    for (n = height, q = dst; n > 0; n--)
+                    {
+                        *q = 0;
+                        q += dst_width;
+                    }
+                }
+                break;
+            case WM_TRANS:
+                if (forecol & 1)
+                {
+                    for (n = height, p = src, q = dst; n > 0; n--)
+                    {
+                        *q |= *p;
+                        p += src_width;
+                        q += dst_width;
+                    }
+                }
+                else
+                {
+                    for (n = height, p = src, q = dst; n > 0; n--)
+                    {
+                        *q &= ~*p;
+                        p += src_width;
+                        q += dst_width;
+                    }
+                }
+                break;
+            case WM_XOR:
+                for (n = height, p = src, q = dst; n > 0; n--)
+                {
+                    *q ^= *p;
+                    p += src_width;
+                    q += dst_width;
+                }
+                break;
+            case WM_ERASE:
+                if (forecol & 1)
+                {
+                    for (n = height, p = src, q = dst; n > 0; n--)
+                    {
+                        *q |= ~*p;
+                        p += src_width;
+                        q += dst_width;
+                    }
+                }
+                else
+                {
+                    for (n = height, p = src, q = dst; n > 0; n--)
+                    {
+                        *q &= *p;
+                        p += src_width;
+                        q += dst_width;
+                    }
+                }
+                break;
+            }
+            dst += sizeof(WORD);    /* next plane */
+            forecol >>= 1;
+        }
+        dst = save_dst + 1;
+        if (!IS_ODD_POINTER(dst))   /* must go to next screen word */
+        {
+            dst += (v_planes-1)*sizeof(WORD);
+        }
+    }
+}
+#endif
+
+
 /*
  * output a block to the screen
  */

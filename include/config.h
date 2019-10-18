@@ -284,6 +284,9 @@
 # ifndef CONF_WITH_EXTENDED_MOUSE
 #  define CONF_WITH_EXTENDED_MOUSE 0
 # endif
+# ifndef CONF_WITH_VDI_TEXT_SPEEDUP
+#  define CONF_WITH_VDI_TEXT_SPEEDUP 0
+# endif
 # ifndef CONF_WITH_VDI_VERTLINE
 #  define CONF_WITH_VDI_VERTLINE 0
 # endif
@@ -377,6 +380,9 @@
 # endif
 # ifndef CONF_WITH_EXTENDED_MOUSE
 #  define CONF_WITH_EXTENDED_MOUSE 0
+# endif
+# ifndef CONF_WITH_VDI_TEXT_SPEEDUP
+#  define CONF_WITH_VDI_TEXT_SPEEDUP 0
 # endif
 # ifndef CONF_WITH_VDI_VERTLINE
 #  define CONF_WITH_VDI_VERTLINE 0
@@ -1212,6 +1218,13 @@
  */
 #ifndef CONF_WITH_VDI_VERTLINE
 # define CONF_WITH_VDI_VERTLINE 1
+#endif
+
+/*
+ * Set CONF_WITH_VDI_TEXT_SPEEDUP to 1 to improve some VDI text output performance
+ */
+#ifndef CONF_WITH_VDI_TEXT_SPEEDUP
+# define CONF_WITH_VDI_TEXT_SPEEDUP 1
 #endif
 
 /*

@@ -381,6 +381,10 @@ void vdi_vqt_fontinfo(Vwk *);       /* 131 */
 void vdi_vex_wheelv(Vwk *);         /* 134 */
 #endif
 
+#if CONF_WITH_VDI_TEXT_SPEEDUP
+void direct_screen_blit(WORD count, WORD *str);
+#endif
+
 /* not in original TOS */
 void v_bez_qual(Vwk *);
 void v_bez_control(Vwk *);

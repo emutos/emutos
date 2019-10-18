@@ -216,6 +216,52 @@ static WORD calc_width(Vwk *vwk, WORD cnt, WORD *str)
     return width;
 }
 
+#if CONF_WITH_VDI_TEXT_SPEEDUP
+/*
+ * returns TRUE if we can use a direct screen blit
+ *
+ * the following must all be true:
+ *  there are no effects
+ *  there is no rotation
+ *  the output is left-aligned
+ *  the output is not justified
+ *  the characters are byte-aligned
+ *  the font is monospace with a cell width of 8
+ *  the font contains glyphs for all 256 characters
+ *  the entire text string will not be clipped
+ */
+static BOOL ok_for_direct_blit(Vwk *vwk, WORD width, JUSTINFO *justified)
+{
+    const Fonthead *fnt_ptr = vwk->cur_font;
+
+    if (vwk->style | vwk->chup | vwk->h_align)
+        return FALSE;
+
+    if (justified)
+        return FALSE;
+
+    if (DESTX & 0x0007)
+        return FALSE;
+
+    if (!MONO || (fnt_ptr->max_cell_width != 8))
+        return FALSE;
+
+    if ((fnt_ptr->first_ade != 0) || (fnt_ptr->last_ade != 255))
+        return FALSE;
+
+    if (!vwk->clip)
+        return TRUE;
+
+    /* check that string falls entirely within clip area */
+    if ((DESTX < vwk->xmn_clip) || (DESTX+width > vwk->xmx_clip))
+        return FALSE;
+    if ((DESTY < vwk->ymn_clip) || (DESTY+DELY > vwk->ymx_clip))
+        return FALSE;
+
+    return TRUE;
+}
+#endif
+
 /*
  * output specified text string
  *
@@ -382,6 +428,18 @@ static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width, JUSTINFO *j
 
     TEXTFG = vwk->text_color;
     DELY = fnt_ptr->form_height;
+
+#if CONF_WITH_VDI_TEXT_SPEEDUP
+    /*
+     * call special direct screen blit routine if applicable
+     */
+    if (ok_for_direct_blit(vwk, width, justified))
+    {
+        direct_screen_blit(count, str);
+        return;
+    }
+#endif
+
     XDDA = 32767;       /* init the horizontal dda */
 
     for (j = 0; j < count; j++) {
