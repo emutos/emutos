@@ -1112,6 +1112,13 @@ void gdp_justified(Vwk * vwk)
 
     max_x = PTSIN[2];
 
+    /*
+     * calculate values for interword spacing
+     */
+    just.wordx = just.wordy = 0;    /* set defaults */
+    just.rmword = 0;
+    just.rmwordx = just.rmwordy = 0;
+
     if (interword && spaces) {
         delword = (max_x - width) / spaces;
         just.rmword = (max_x - width) % spaces;
@@ -1138,34 +1145,29 @@ void gdp_justified(Vwk * vwk)
         switch (vwk->chup) {
         default:                /* normally case 0: no rotation */
             just.wordx = delword;
-            just.wordy = 0;
             just.rmwordx = direction;
-            just.rmwordy = 0;
             break;
         case 900:
-            just.wordx = 0;
             just.wordy = 0 - delword;
-            just.rmwordx = 0;
             just.rmwordy = 0 - direction;
             break;
         case 1800:
             just.wordx = 0 - delword;
-            just.wordy = 0;
             just.rmwordx = 0 - direction;
-            just.rmwordy = 0;
             break;
         case 2700:
-            just.wordx = 0;
             just.wordy = delword;
-            just.rmwordx = 0;
             just.rmwordy = direction;
             break;
         }
-    } else {
-        just.wordx = 0;
-        just.wordy = 0;
-        just.rmword = 0;
     }
+
+    /*
+     * calculate values for intercharacter spacing
+     */
+    just.charx = just.chary = 0;    /* set defaults */
+    just.rmchar = 0;
+    just.rmcharx = just.rmchary = 0;
 
     if (interchar && cnt > 1) {
         delchar = (max_x - width) / (cnt - 1);
@@ -1180,33 +1182,21 @@ void gdp_justified(Vwk * vwk)
         switch (vwk->chup) {
         default:                /* normally case 0: no rotation */
             just.charx = delchar;
-            just.chary = 0;
             just.rmcharx = direction;
-            just.rmchary = 0;
             break;
         case 900:
-            just.charx = 0;
             just.chary = 0 - delchar;
-            just.rmcharx = 0;
             just.rmchary = 0 - direction;
             break;
         case 1800:
             just.charx = 0 - delchar;
-            just.chary = 0;
             just.rmcharx = 0 - direction;
-            just.rmchary = 0;
             break;
         case 2700:
-            just.charx = 0;
             just.chary = delchar;
-            just.rmcharx = 0;
             just.rmchary = direction;
             break;
         }
-    } else {
-        just.charx = 0;
-        just.chary = 0;
-        just.rmchar = 0;
     }
 
     output_text(vwk, cnt, str, max_x, &just);
