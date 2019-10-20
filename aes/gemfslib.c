@@ -517,6 +517,7 @@ WORD fs_input(char *pipath, char *pisel, WORD *pbutton, char *pilabel)
     char *ad_fpath, *ad_fname, *ad_ftitle;
     WORD drive;
     WORD dclkret, cont, newlist, newsel, newdrive;
+    WORD error;
     char *pstr;
     GRECT pt;
     char *memblk, *locstr, *locold, *mask;
@@ -614,6 +615,7 @@ WORD fs_input(char *pipath, char *pisel, WORD *pbutton, char *pilabel)
     sel = 0;
     newsel = newdrive = FALSE;
     cont = newlist = TRUE;
+    error = 0;      /* consecutive error count */
     while(cont)
     {
         touchob = (newlist) ? 0x0 : fm_do(tree, FSSELECT);
@@ -630,8 +632,11 @@ WORD fs_input(char *pipath, char *pisel, WORD *pbutton, char *pilabel)
             curr = 0;
             sel = touchob = 0;
             newlist = FALSE;
-            if (!fs_newdir(locstr, mask, tree, &count)) /* error reading dir */
-            {
+            if (fs_newdir(locstr, mask, tree, &count))  /* ok reading dir */
+                error = 0;
+            else ++error;
+            if (error == 1)     /* only retry once; this avoids continual retries */
+            {                   /* due to e.g. missing/unformatted floppy disk    */
                 /*
                  * if path was changed, reset it; otherwise initial
                  * path was was wrong, so set it to the root of the
