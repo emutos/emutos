@@ -509,15 +509,14 @@ static WORD get_drive(char *path)
  */
 WORD fs_input(char *pipath, char *pisel, WORD *pbutton, char *pilabel)
 {
+    BOOL cont, newlist, newsel, newdrive;
+    WORD drive, dclkret, error;
     WORD touchob, value, fnum;
     WORD curr, count, sel;
     WORD mx, my;
     OBJECT *tree;
     ULONG bitmask;
     char *ad_fpath, *ad_fname, *ad_ftitle;
-    WORD drive;
-    WORD dclkret, cont, newlist, newsel, newdrive;
-    WORD error;
     char *pstr;
     GRECT pt;
     char *memblk, *locstr, *locold, *mask;
