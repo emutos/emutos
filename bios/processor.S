@@ -385,7 +385,7 @@ _instruction_cache_kludge:
         rts
 #endif
 //
-// for 680x0, we drop into invalidate_instruction_cache
+// for 680x0, we fall through invalidate_instruction_cache
 //
 
 /*
@@ -469,7 +469,7 @@ _flush_data_cache:
 _invalidate_data_cache:
 #ifdef __mcoldfire__
         lea     cpushl_dc,a1    // flush/invalidate data cache
-        // drop into cpushl_loop
+        // fall through cpushl_loop
 #else
 #if CONF_WITH_ADVANCED_CPU
         cmpi.b  #30,_mcpu+3

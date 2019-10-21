@@ -65,7 +65,7 @@
     .org    0xd0
     reset
 amiga_main:
-    // drop into os_entry
+    // fall through os_entry
 #endif
 
 /*
