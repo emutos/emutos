@@ -763,6 +763,10 @@ WORD fs_input(char *pipath, char *pisel, WORD *pbutton, char *pilabel)
             break;
         }
 
+        /* exit immediately if cancel */
+        if (touchob == FSCANCEL)
+            break;
+
         if (!newlist && !newdrive && path_changed(locstr))  /* path changed manually */
         {
             if (get_drive(ad_fpath) != get_drive(locstr))   /* drive has changed */
