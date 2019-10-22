@@ -12,30 +12,12 @@
 /*
  *  list of items to be deleted from resource before processing by erd
  *
- *  This will need to be updated when a configurable alert/freestring/tree
+ *  This must be updated when a configurable alert/freestring/tree
  *  is added to the resource
  */
 char *exclude_items[] =
 {
-#if !CONF_WITH_BACKGROUNDS
-    "BACKGRND",
-    "SEP_VW1",
-    "ADBKGND",
-#endif
-#if !CONF_WITH_BLITTER
-    "BLITITEM",
-    "SEP_OP1",
-#endif
-#if !CONF_WITH_DESKTOP_CONFIG
-    "CONFITEM",
-    "ADDESKCF",
-#endif
-#if !CONF_WITH_DESKTOP_SHORTCUTS
-    "STLOCATE",
-    "STRMVLOC",
-#else
-    "STNODRA1",
-#endif
+                                /* configurable items under 'File' */
 #if !CONF_WITH_BOTTOMTOTOP
     "BTOPITEM",
 #endif
@@ -52,19 +34,43 @@ char *exclude_items[] =
     "STFMTERR",
     "STFMTINF",
 #endif
-#if !CONF_WITH_SHOW_FILE && !CONF_WITH_PRINTER_ICON
-    "ADPRINT",
-    "STPRTERR",
+#if !WITH_CLI && !CONF_WITH_SHUTDOWN
+    "SEP_FL2",
 #endif
-#if !CONF_WITH_PRINTER_ICON
-    "STPRINT",
-    "STPRINFO",
+#if !WITH_CLI
+    "CLIITEM",
+#endif
+#if !CONF_WITH_SHUTDOWN
+    "QUITITEM",
+#endif
+
+                                /* configurable items under 'View' */
+#if !CONF_WITH_BACKGROUNDS
+    "BACKGRND",
+    "SEP_VW1",
+    "ADBKGND",
+#endif
+
+                                /* configurable items under 'Options' */
+#if !CONF_WITH_DESKTOP_CONFIG
+    "CONFITEM",
+    "ADDESKCF",
 #endif
 #if !CONF_WITH_READ_INF
     "READITEM",
     "SEP_OP0",
     "STRDINF",
     "STINVINF",
+#endif
+#if !CONF_WITH_BLITTER
+    "BLITITEM",
+    "SEP_OP1",
+#endif
+
+                                /* other configurable items */
+#if !CONF_WITH_SHOW_FILE && !CONF_WITH_PRINTER_ICON /* print/show file */
+    "ADPRINT",
+    "STPRTERR",
 #endif
 #if !CONF_WITH_SHOW_FILE
     "STMORE",
@@ -74,10 +80,12 @@ char *exclude_items[] =
 #else
     "STNOAPPL",
 #endif
-#if !CONF_WITH_SHUTDOWN
-    "QUITITEM",
+#if !CONF_WITH_PRINTER_ICON
+    "STPRINT",
+    "STPRINFO",
 #endif
-#if !CONF_WITH_TT_SHIFTER
+
+#if !CONF_WITH_TT_SHIFTER           /* resolution setting */
     "ADTTREZ",
 #endif
 #if !CONF_WITH_VIDEL
@@ -87,19 +95,21 @@ char *exclude_items[] =
     "STREZ3",
     "STREZ4",
 #endif
-#if !CONF_WITH_WINDOW_ICONS
+#if !defined(MACHINE_AMIGA)
+    "ADAMIREZ",
+#endif
+
+#if !CONF_WITH_WINDOW_ICONS         /* icon-related */
     "ADINSWIN",
     "STICNTYP",
     "STNOMTCH",
 #endif
-#if !defined(MACHINE_AMIGA)
-    "ADAMIREZ",
+#if !CONF_WITH_DESKTOP_SHORTCUTS
+    "STLOCATE",
+    "STRMVLOC",
+#else
+    "STNODRA1",
 #endif
-#if !WITH_CLI
-    "CLIITEM",
-#endif
-#if !WITH_CLI && !CONF_WITH_SHUTDOWN
-    "SEP_FL2",
-#endif
+
     NULL                            /* end marker */
 };
