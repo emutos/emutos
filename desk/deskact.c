@@ -407,13 +407,13 @@ static WORD act_chkobj(OBJECT *tree, WORD root, WORD obj, WORD mx, WORD my, WORD
  *
  *  Usage of (some) arguments:
  *      WORD   obj              * object to affect
- *      BOOL   dochg            * set or reset value
+ *      BOOL   set              * set or reset value
  *      BOOL   dodraw           * draw resulting change
  *
  *  We do not change the state if the item is disabled
  */
 WORD act_chg(WORD wh, WORD root, WORD obj, GRECT *pc,
-             BOOL dochg, BOOL dodraw)
+             BOOL set, BOOL dodraw)
 {
     OBJECT *tree = G.g_screen;
     FNODE *fn;
@@ -431,7 +431,7 @@ WORD act_chg(WORD wh, WORD root, WORD obj, GRECT *pc,
     t.g_y += tree[root].ob_y;
 
     /* make change */
-    if (dochg)
+    if (set)
         curr_state |= SELECTED;
     else
         curr_state &= ~SELECTED;
@@ -474,7 +474,7 @@ WORD act_chg(WORD wh, WORD root, WORD obj, GRECT *pc,
  *  the FNODEs associated with this window
  */
 void act_allchg(WORD wh, WORD root, WORD ex_obj, GRECT *pt, GRECT *pc,
-                BOOL dochg)
+                BOOL set)
 {
     OBJECT *tree = G.g_screen;
     FNODE *fn;
@@ -483,7 +483,7 @@ void act_allchg(WORD wh, WORD root, WORD ex_obj, GRECT *pt, GRECT *pc,
     GRECT o, a, w;
 
     /* clearing selections: do all FNODEs, not just the visible ones */
-    if (!dochg)
+    if (!set)
         pn_clear(win_find(wh));
 
     offx = tree[root].ob_x;
@@ -514,10 +514,10 @@ void act_allchg(WORD wh, WORD root, WORD ex_obj, GRECT *pt, GRECT *pc,
                  */
                 fn = G.g_screeninfo[obj].fnptr;
                 if (fn)
-                    fn->f_selected = dochg ? TRUE : FALSE;
+                    fn->f_selected = set ? TRUE : FALSE;
                 /* make change */
                 newstate = tree[obj].ob_state;
-                if (dochg)
+                if (set)
                     newstate |= SELECTED;
                 else
                     newstate &= ~SELECTED;
@@ -535,7 +535,7 @@ void act_allchg(WORD wh, WORD root, WORD ex_obj, GRECT *pt, GRECT *pc,
             }
             else
             {
-                if (!dochg)
+                if (!set)
                     tree[obj].ob_state &= ~SELECTED;
             }
         }
