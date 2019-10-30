@@ -1006,7 +1006,7 @@ bios/ctables.h: country.mk tools/genctables.awk
 GEN_SRC += obj/header.h
 
 obj/header.h: tools/mkheader.awk obj/country
-	awk -f tools/mkheader.awk $(COUNTRY) > $@
+	awk -f tools/mkheader.awk $(COUNTRY) $(MAJOR_VERSION) $(MINOR_VERSION) $(FIX_VERSION) $(SNAPSHOT) > $@
 
 #
 # build rules - the little black magic here allows for e.g.
@@ -1038,6 +1038,9 @@ GEN_SRC += obj/version.c
 # This temporary file is always generated
 obj/version2.c:
 	@echo '/* Generated from Makefile */' > $@
+	@echo '#define MAJOR_VERSION $(MAJOR_VERSION)' >> $@
+	@echo '#define MINOR_VERSION $(MINOR_VERSION)' >> $@
+	@echo '#define FIX_VERSION $(FIX_VERSION)' >> $@
 	@echo 'const char version[] = "$(VERSION)";' >> $@
 
 # If the official version file is different than the temporary one, update it

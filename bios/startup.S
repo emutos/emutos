@@ -110,6 +110,31 @@ os_run:
 os_dummy:
     .ascii  "ETOS"      // _main should start at offset 0x30, shouldn't it?
 
+_main:
+        bra.w   _realmain   // MUST be 4 bytes long
+
+/*
+ * Extended OS header
+ *
+ * This is an EmuTOS extension, present from EmuTOS version 1.0 on.  You
+ * may check for its presence by checking the first 4 bytes which contain
+ * the magic number 'OSEX'.
+ *
+ * To avoid problems with programs that branch directly to _main, rather
+ * than using the branch instruction at the beginning of the TOS os_header,
+ * there is a 4-byte branch instruction at _main which branches past the
+ * extended header.  This means, for example, that the extended OS header
+ * begins at 0xfc0034 in the 192K ROMS, and at 0xe00034 in the 256K and
+ * 512K ROMs.
+ */
+osex:
+    .ascii  "OSEX"                      // magic number
+    .dc.l   osexend-osex                // length
+    .dc.b   MAJOR_VERSION,MINOR_VERSION,FIX_VERSION,SNAPSHOT    // binary version
+    .dc.l   _version-_os_header         // offset to version string
+    .dc.l   0                           // feature flags
+osexend:
+
 /*
  * Get in supervisor mode and reset all Hardware
  *
@@ -127,7 +152,7 @@ os_dummy:
  *    instruction must be legal so the trap won't get taken ...
  */
 
-_main:
+_realmain:
         // disable the interrupts
         // this is useless on cold boot,
         // but it matters for software reset
