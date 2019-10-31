@@ -439,21 +439,31 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
 
 
 /*
+ *  Calculate the change in virtual row number required to display a new
+ *  virtual row number, allowing for the height of the window
+ */
+static WORD win_delta(WNODE *pw, WORD newcv)
+{
+    newcv = max(0, newcv);
+    newcv = min(pw->w_vnrow - pw->w_pnrow, newcv);
+
+    return newcv - pw->w_cvrow;
+}
+
+
+/*
  *  Routine to blt the contents of a window based on a new current row
  */
 static void win_blt(WNODE *pw, WORD newcv)
 {
-    WORD  delcv, pn;
+    WORD  delcv;
     WORD  sx, sy, dx, dy, wblt, hblt, revblt, tmp;
     GRECT c, t;
 
-    newcv = max(0, newcv);
-    newcv = min(pw->w_vnrow - pw->w_pnrow, newcv);
-    pn = pw->w_pnrow;
-    delcv = newcv - pw->w_cvrow;
-    pw->w_cvrow += delcv;
+    delcv = win_delta(pw, newcv);
     if (!delcv)
         return;
+    pw->w_cvrow += delcv;
 
     wind_get_grect(pw->w_id, WF_WXYWH, &c);
     win_bldview(pw, c.g_x, c.g_y, c.g_w, c.g_h);
@@ -465,7 +475,7 @@ static void win_blt(WNODE *pw, WORD newcv)
         /* blt as much as we can, adjust clip & draw the rest */
         if ((revblt = (delcv < 0)) != 0)
             delcv = -delcv;
-        if (pn > delcv)
+        if (pw->w_pnrow > delcv)
         {
             /* see how much there is, pretend blt up */
             sx = dx = 0;
