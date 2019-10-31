@@ -12,6 +12,7 @@
 
 #include "emutos.h"
 #include "natfeat.h"
+#include "lineavars.h"
 
 #if DETECT_NATIVE_FEATURES
 
@@ -160,5 +161,23 @@ BOOL mmu_is_emulated(void)
         }
     }
     return TRUE;
+}
+
+/*
+ * propagate address of linea variables to emulators
+ */
+void nf_setlinea(void)
+{
+    BOOL err = TRUE;
+
+    if(hasNF) {
+        if(nfid_config) {
+            if (NFCall(nfid_config | 0x0004, line_a_vars) >= 0)
+                err = FALSE;
+        }
+        if (err) {
+            KINFO(("NF_CONFIG not available\n"));
+        }
+    }
 }
 #endif /* DETECT_NATIVE_FEATURES */

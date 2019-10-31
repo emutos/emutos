@@ -270,6 +270,13 @@ static void bios_init(void)
     /* Now kcprintf() will also send debug info to the screen */
     KDEBUG(("after vt52_init()\n"));
 
+#if DETECT_NATIVE_FEATURES
+    /*
+     * Tell ARAnyM where the LineA variables are
+     */
+    nf_setlinea();
+#endif
+
     /* misc. variables */
     dumpflg = -1;
     sysbase = &os_header;

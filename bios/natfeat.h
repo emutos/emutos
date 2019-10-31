@@ -47,4 +47,8 @@ UWORD nf_getbootdrive(void);
 
 /* check if the host is emulating the MMU */
 BOOL mmu_is_emulated(void);
+
+/* propagate address of linea variables to emulators */
+void nf_setlinea(void);
+
 #endif /* _NATFEAT_H */

@@ -114,6 +114,11 @@ _main:
         bra.w   _realmain   // MUST be 4 bytes long
 
 /*
+ * Feature flags in extended OS header (see below)
+ */
+#define OSEX_LINEA      1       // EmuTOS passes lineA address via NatFeats
+
+/*
  * Extended OS header
  *
  * This is an EmuTOS extension, present from EmuTOS version 1.0 on.  You
@@ -132,7 +137,11 @@ osex:
     .dc.l   osexend-osex                // length
     .dc.b   MAJOR_VERSION,MINOR_VERSION,FIX_VERSION,SNAPSHOT    // binary version
     .dc.l   _version-_os_header         // offset to version string
+#if DETECT_NATIVE_FEATURES
+    .dc.l   OSEX_LINEA                  // feature flags
+#else
     .dc.l   0                           // feature flags
+#endif
 osexend:
 
 /*

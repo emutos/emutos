@@ -43,6 +43,7 @@ typedef struct _mcs {
 extern MCS mouse_cursor_save;       /* in linea variable area */
 extern MCS ext_mouse_cursor_save;   /* use for v_planes > 4 */
 
+#define line_a_vars (void *)&v_planes   /* start of linea variables */
 extern UWORD v_planes;          /* count of color planes */
 extern UWORD v_lin_wr;          /* line wrap : bytes per line */
 extern UWORD v_cel_ht;          /* cell height (width is 8) */
