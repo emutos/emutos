@@ -33,6 +33,7 @@
 #define HGLASS  2
 #define FLATHAND 4
 
+#define ALLFILES    (FA_SUBDIR|FA_SYSTEM|FA_HIDDEN)
 
 /*
  * the following defines determine the minimum spacing between icons,

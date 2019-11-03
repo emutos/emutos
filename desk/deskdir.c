@@ -44,8 +44,6 @@
 
 #define MAX_CLUS_SIZE   (32*1024L)  /* maximum cluster size */
 
-#define ALLFILES    (FA_SUBDIR|FA_SYSTEM|FA_HIDDEN)
-
 #define OP_RENAME   777     /* used internally by dir_op(): must not be the same as any other OP_XXX ! */
 
 static UBYTE    *copybuf;   /* for copy operations */

@@ -53,9 +53,6 @@
 #include "biosext.h"
 
 
-#define ALLFILES    (FA_SUBDIR|FA_SYSTEM|FA_HIDDEN)
-
-
 #if CONF_WITH_FORMAT
 /*
  *      declarations used by the do_format() code
