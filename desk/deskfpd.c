@@ -226,6 +226,7 @@ FNODE *pn_sort(PNODE *pn)
  */
 WORD pn_active(PNODE *pn, BOOL include_folders)
 {
+    DTA *dtasave;
     FNODE *fn, *prev;
     LONG maxmem, maxcount, size = 0L;
     WORD count, ret;
@@ -244,6 +245,7 @@ WORD pn_active(PNODE *pn, BOOL include_folders)
     fn = pn->p_fbase;
     prev = (FNODE *)&pn->p_flist;   /* assumes fnode link is at start of fnode */
 
+    dtasave = dos_gdta();           /* so we can preserve it */
     dos_sdta(&G.g_wdta);
 
 #if CONF_WITH_FILEMASK
@@ -289,6 +291,8 @@ WORD pn_active(PNODE *pn, BOOL include_folders)
     /* check if enough FNODEs were available */
     if (count >= maxcount)
         KDEBUG(("Not enough FNODEs for folder %s\n",pn->p_spec));
+
+    dos_sdta(dtasave);          /* restore original DTA for neatness */
 
     return ((ret==ENMFIL) || (ret==EFILNF)) ? 0 : ret;
 }
