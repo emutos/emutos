@@ -190,6 +190,42 @@ void fun_rebld(char *ptst)
 
 
 /*
+ *  Adds another folder to a pathname, assumed to be of the form:
+ *      D:\X\Y\F.E
+ *  where X,Y are folders and F.E is a filename.  In the above
+ *  example, if the folder to be added was Z, this would change
+ *  D:\X\Y\F.E to D:\X\Y\Z\F.E
+ *
+ *  Note: if the folder to be added is an empty string, we do nothing.
+ *  This situation occurs when building the path string for a desktop
+ *  shortcut that points to the root folder.
+ *
+ *  returns FALSE iff the resulting pathname would be too long
+ */
+BOOL add_one_level(char *pathname,char *folder)
+{
+    WORD plen, flen;
+    char filename[LEN_ZFNAME+1], *p;
+
+    flen = strlen(folder);
+    if (flen == 0)
+        return TRUE;
+
+    plen = strlen(pathname);
+    if (plen+flen+1 >= MAXPATHLEN)
+        return FALSE;
+
+    p = filename_start(pathname);
+    strcpy(filename,p);     /* save filename portion */
+    strcpy(p,folder);       /* & copy in folder      */
+    p += flen;
+    *p++ = '\\';            /* add the trailing path separator */
+    strcpy(p,filename);     /* & restore the filename          */
+    return TRUE;
+}
+
+
+/*
  *  Removes the lowest level of folder from a pathname, assumed
  *  to be of the form:
  *      D:\X\Y\Z\F.E
