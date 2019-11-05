@@ -20,6 +20,10 @@
 WORD fun_alert(WORD defbut, WORD stnum);
 WORD fun_alert_merge(WORD defbut, WORD stnum, ...);
 
+#if CONF_WITH_SEARCH
+void fun_search(WORD curr, WNODE *pw);
+#endif
+
 #if CONF_WITH_SELECTALL
 void fun_selectall(WNODE *pw);
 #endif

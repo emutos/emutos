@@ -506,6 +506,27 @@ static void win_blt(WNODE *pw, WORD newcv)
 }
 
 
+#if CONF_WITH_SEARCH
+/*
+ *  Routine to update the window display so that it shows the row
+ *  containing the specified file number (numbered sequentially from 0,
+ *  in the current display sequence)
+ */
+void win_dispfile(WNODE *pw, WORD file)
+{
+    GRECT gr;
+    WORD delcv;
+
+    delcv = win_delta(pw, file/pw->w_pncol);
+    pw->w_cvrow += delcv;
+
+    wind_get_grect(pw->w_id, WF_WXYWH, &gr);
+    win_bldview(pw, gr.g_x, gr.g_y, gr.g_w, gr.g_h);
+    do_wredraw(pw->w_id, &gr);
+}
+#endif
+
+
 /*
  *  Routine to change the current virtual row being viewed
  *  in the upper left corner based on a new slide amount

@@ -263,6 +263,9 @@
 # ifndef CONF_WITH_BACKGROUNDS
 #  define CONF_WITH_BACKGROUNDS 0
 # endif
+# ifndef CONF_WITH_SEARCH
+#  define CONF_WITH_SEARCH 0
+# endif
 # ifndef CONF_WITH_BOTTOMTOTOP
 #  define CONF_WITH_BOTTOMTOTOP 0
 # endif
@@ -1140,6 +1143,13 @@
  */
 #ifndef CONF_WITH_BACKGROUNDS
 # define CONF_WITH_BACKGROUNDS 1
+#endif
+
+/*
+ * Set CONF_WITH_SEARCH to 1 to include 'Search' in the desktop menu
+ */
+#ifndef CONF_WITH_SEARCH
+# define CONF_WITH_SEARCH 1
 #endif
 
 /*

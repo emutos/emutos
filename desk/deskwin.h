@@ -99,6 +99,10 @@ void win_sname(WNODE *pw);
 void win_sinfo(WNODE *pwin, BOOL check_selected);
 WORD win_count(void);
 
+#if CONF_WITH_SEARCH
+void win_dispfile(WNODE *pw, WORD file);
+#endif
+
 #if CONF_WITH_BOTTOMTOTOP
 WNODE *win_onbottom(void);
 #endif

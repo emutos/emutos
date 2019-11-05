@@ -18,6 +18,12 @@
 char *exclude_items[] =
 {
                                 /* configurable items under 'File' */
+#if !CONF_WITH_SEARCH
+    "SRCHITEM",
+    "ADSEARCH",
+    "STCNSRCH",
+    "STNOMORE",
+#endif
 #if !CONF_WITH_BOTTOMTOTOP
     "BTOPITEM",
 #endif

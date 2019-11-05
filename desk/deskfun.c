@@ -59,6 +59,11 @@
  */
 static BOOL exit_desktop;
 
+#if CONF_WITH_SEARCH
+static WORD fnodes_found;
+static WNODE *search_window;
+#endif
+
 #if CONF_WITH_PRINTER_ICON
 #define PRTBUFSIZE  16384       /* buffer size */
 #endif
@@ -182,6 +187,376 @@ void fun_rebld(char *ptst)
 
     desk_busy_off();
 } /* fun_rebld */
+
+
+/*
+ *  Removes the lowest level of folder from a pathname, assumed
+ *  to be of the form:
+ *      D:\X\Y\Z\F.E
+ *  where X,Y,Z are folders and F.E is a filename.  In the above
+ *  example, this would change D:\X\Y\Z\F.E to D:\X\Y\F.E
+ */
+static void remove_one_level(char *pathname)
+{
+    char *stop = pathname+2;    /* the first path separator */
+    char *filename, *prev;
+
+    filename = filename_start(pathname);
+    if (filename-1 <= stop)     /* already at the root */
+        return;
+
+    for (prev = filename-2; prev >= stop; prev--)
+        if (*prev == '\\')
+            break;
+
+    strcpy(prev+1,filename);
+}
+
+
+#if CONF_WITH_SEARCH
+/*
+ *  converts string to wildcard-format spec
+ *
+ *  the string is obtained from the dialog box via unfmt_str()
+ *
+ *  sample conversions:
+ *      "A"         => "A*.*"
+ *      ".DOC"      => "*.DOC"
+ *      "X?Y.?Z"    => "X?Y*.?Z*"
+ */
+static void convert(char *wildcard, char *str)
+{
+    WORD i;
+    char *p, *q;
+
+    /* convert name */
+    for (i = 0, p = str, q = wildcard; i < 8; i++)
+    {
+        if (!*p || (*p == '.'))
+        {
+            *q++ = '*';
+            break;
+        }
+        if (*p == '*')
+        {
+            *q++ = *p++;
+            break;
+        }
+        *q++ = *p++;
+    }
+    *q++ = '.';
+
+    /* look for end of name */
+    while(TRUE)
+    {
+        if (!*p)
+            break;
+        if (*p++ == '.')
+            break;
+    }
+
+    /* convert type */
+    for (i = 0; i < 3; i++)
+    {
+        if (!*p)
+        {
+            *q++ = '*';
+            break;
+        }
+        if (*p == '*')
+        {
+            *q++ = *p++;
+            break;
+        }
+        *q++ = *p++;
+    }
+    *q++ = '\0';
+}
+
+
+/*
+ *  Prompt for Search specification
+ *
+ *  returns FALSE if Cancel, or specification is empty
+ */
+static BOOL search_prompt(char *searchname)
+{
+    char filemask[LEN_ZFNAME];
+    OBJECT *tree;
+
+    tree = G.a_trees[ADSEARCH];
+
+    /*
+     * clear any wildcard in dialog
+     */
+    set_tedinfo_name(tree, SFNAME, "");
+
+    /*
+     * get user input & if not 'OK', return FALSE
+     */
+    inf_show(tree, ROOT);
+    if (inf_what(tree, SFOK, SFCANCEL) != 1)
+        return FALSE;
+
+    /*
+     * extract searchname from dialog
+     *
+     * returns TRUE iff the input is not empty
+     */
+    inf_sget(tree, SFNAME, filemask);
+    unfmt_str(filemask, searchname);
+
+    return *searchname ? TRUE : FALSE;
+}
+
+
+/*
+ *  Mark files/folders matching specification and, if one or more
+ *  are found, redisplays window with the first-found match as high
+ *  as possible within the window
+ *
+ *  if no matches are found, returns FALSE and does not redisplay
+ */
+static BOOL mark_matching_fnodes(WNODE *pw, char *searchwild)
+{
+    WORD first_match = -1, n;
+    FNODE *pf;
+
+    /*
+     * select all matching FNODEs
+     */
+    for (pf = pw->w_pnode.p_flist, n = 0; pf; pf = pf->f_next, n++)
+    {
+        if (wildcmp(searchwild, pf->f_name))
+        {
+            pf->f_selected = TRUE;
+            fnodes_found++;
+            if (first_match < 0)
+                first_match = n;
+        }
+    }
+    if (first_match < 0)
+        return FALSE;
+
+    /*
+     * update info line & redisplay window, showing first match
+     */
+    win_sinfo(pw, TRUE);
+    win_dispfile(pw, first_match);
+
+    return TRUE;
+}
+
+
+/*
+ *  Display a folder with matching FNODEs marked
+ */
+static BOOL search_display(WORD curr, char *pathname, char *searchwild)
+{
+    BOOL newwin = FALSE;
+
+    if (!search_window)
+    {
+        search_window = win_alloc(curr);
+        if (!search_window)
+        {
+            fun_alert(1, STNOWIND);
+            return FALSE;
+        }
+        newwin = TRUE;
+    }
+
+    /*
+     * we open the new path, after closing the previous one (which
+     * doesn't exist if this is a new window)
+     */
+    if (!newwin)
+        pn_close(&search_window->w_pnode);
+    if (!do_diropen(search_window, newwin, curr, pathname,
+                    (GRECT *)&G.g_screen[search_window->w_root].ob_x, FALSE))
+        return FALSE;   /* bad pathname or error reading directory */
+
+    /*
+     * now mark matching FNODEs
+     */
+    mark_matching_fnodes(search_window, searchwild);
+
+    /*
+     *  we marked one or more FNODEs, ask if user wants to continue
+     */
+    if (fun_alert(1, STCNSRCH) != 1)
+        return FALSE;   /* user cancelled */
+
+    return TRUE;
+}
+
+
+/*
+ *  Recursively search folder icons
+ *
+ *  returns FALSE iff we should stop immediately, e.g. because user cancelled
+ */
+static BOOL search_recursive(WORD curr, char *pathname, char *searchwild)
+{
+    DTA dta, *save_dta;
+    char *p;
+    WORD ret;
+    BOOL ok = TRUE;
+
+    /*
+     * we must use a local DTA to manage the recursive search
+     */
+    save_dta = dos_gdta();
+    dos_sdta(&dta);
+
+    /*
+     * check if there is a filename match; if so, display the folder
+     */
+    p = filename_start(pathname);
+    strcpy(p, searchwild);
+    ret = dos_sfirst(pathname, FA_SUBDIR);
+    strcpy(p, "*.*");
+    dos_sdta(save_dta); /* in case we must return */
+
+    switch(ret) {
+    case 0:             /* file found, display folder */
+        if (!search_display(curr, pathname, searchwild))
+            return FALSE;   /* user cancelled */
+        FALLTHROUGH;
+    case ENMFIL:        /* nothing found, continue processing */
+    case EFILNF:
+        break;
+    default:            /* some strange kind of error, ignore silently */
+        return TRUE;
+    }
+
+    /*
+     * at this point, either there were no matching filenames, or we found
+     * some but the user wants to continue.  we do an fsfirst/fsnext loop
+     * and call ourselves for every folder found.
+     */
+    dos_sdta(&dta);     /* original DTA is already saved */
+
+    for (ret = dos_sfirst(pathname, FA_SUBDIR), ok = TRUE; ret==0; ret = dos_snext())
+    {
+        if (dta.d_fname[0] == '.')  /* ignore . and .. */
+            continue;
+
+        if (dta.d_attrib & FA_SUBDIR)
+        {
+            if (!add_one_level(pathname, dta.d_fname))
+                continue;   /* pathname is too long, silently ignore: FIXME */
+            ok = search_recursive(0, pathname, searchwild);
+            remove_one_level(pathname);
+            if (!ok)
+                break;
+        }
+    }
+
+    dos_sdta(save_dta);
+
+    /*
+     * by design, errors from fsfirst/fsnext are ignored
+     */
+    return ok;
+}
+
+
+/*
+ *  Process the specified icon
+ *
+ *  returns TRUE iff we should continue
+ */
+static BOOL search_icon(WORD win, WORD curr, char *searchwild)
+{
+    ANODE *pa;
+    FNODE *pf;
+    char pathname[LEN_ZPATH];
+    char *p;
+
+    pa = i_find(win, curr, &pf, NULL);
+    if (!pa)
+        return TRUE;
+
+    switch(pa->a_type) {
+    case AT_ISFOLD:
+#if CONF_WITH_DESKTOP_SHORTCUTS
+        if (pa->a_flags & AF_ISDESK)
+        {
+            strcpy(pathname, pa->a_pdata);
+        }
+        else
+#endif
+        {
+            WNODE *temp = win_find(win);
+            strcpy(pathname, temp->w_pnode.p_spec);
+            strcpy(filename_start(pathname), pf->f_name);
+        }
+        break;
+    case AT_ISDISK:
+        p = pathname;
+        *p++ = pa->a_letter;
+        *p++ = ':';
+        *p = '\0';
+        break;
+    default:            /* do nothing for file, trash or printer icon */
+        return TRUE;
+    }
+
+    strcat(pathname, "\\*.*");
+
+    if (!search_recursive(curr, pathname, searchwild))
+        return FALSE;   /* propagate error to fun_search() */
+
+    return TRUE;
+}
+
+
+/*
+ *  Perform the desktop Search function
+ */
+void fun_search(WORD curr, WNODE *pw)
+{
+    char searchname[LEN_ZFNAME], searchwild[LEN_ZFNAME];
+
+    if (!search_prompt(searchname))     /* prompt for name to search for */
+        return;
+
+    convert(searchwild, searchname);    /* convert to standard wildcard */
+
+    /*
+     * if there are one or more highlighted icons, process them
+     */
+    fnodes_found = 0;
+    if (curr)
+    {
+        WORD win = G.g_cwin;    /* save because the global variables */
+        WORD root = G.g_croot;  /*  will be changed by search_icon() */
+        GRECT gr;
+
+        search_window = NULL;
+        for ( ; curr; curr = win_isel(G.g_screen, root, curr))
+        {
+            if (!search_icon(win, curr, searchwild))
+                return;         /* user cancelled search */
+        }
+        if (fnodes_found)
+        {
+            fun_alert(1, STNOMORE); /* no more files */
+            wind_get_grect(win, WF_WXYWH, &gr);
+            do_wredraw(win, &gr);   /* redraw the original window (may be desktop) */
+            return;
+        }
+    }
+    else    /* otherwise handle an open window with no highlighted icons */
+    {
+        mark_matching_fnodes(pw, searchwild);
+    }
+
+    if (!fnodes_found)
+        fun_alert_merge(1, STFILENF, searchname);
+}
+#endif
 
 
 #if CONF_WITH_SELECTALL
@@ -422,30 +797,6 @@ static void fun_full_close(WNODE *pw)
      */
     pw = win_ontop();
     desk_verify(pw ? pw->w_id : DESKWH, FALSE);
-}
-
-
-/*
- *  Removes the lowest level of folder from a pathname, assumed
- *  to be of the form:
- *      D:\X\Y\Z\F.E
- *  where X,Y,Z are folders and F.E is a filename.  In the above
- *  example, this would change D:\X\Y\Z\F.E to D:\X\Y\F.E
- */
-static void remove_one_level(char *pathname)
-{
-    char *stop = pathname+2;    /* the first path separator */
-    char *filename, *prev;
-
-    filename = filename_start(pathname);
-    if (filename-1 <= stop)     /* already at the root */
-        return;
-
-    for (prev = filename-2; prev >= stop; prev--)
-        if (*prev == '\\')
-            break;
-
-    strcpy(prev+1,filename);
 }
 
 

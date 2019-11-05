@@ -308,9 +308,17 @@ static void men_update(void)
     switch(nsel) {
     case 0:
         men_list(tree, ILL_NOSEL, FALSE);
-        /* like Atari TOS, we only disable 'Show' if there are no open windows */
+        /*
+         * like Atari TOS, 'Show' & 'Search' are only disabled if there
+         * are neither open windows nor selected icons
+         */
         if (!nwin)
+        {
             menu_ienable(tree, SHOWITEM, FALSE);
+#if CONF_WITH_SEARCH
+            menu_ienable(tree, SRCHITEM, FALSE);
+#endif
+        }
         break;
     case 1:
         break;
@@ -424,6 +432,14 @@ static WORD do_filemenu(WORD item)
         if (pw)
             inf_disk(pw->w_pnode.p_spec[0]);
         break;
+
+#if CONF_WITH_SEARCH
+    case SRCHITEM:
+        if (curr || pw)
+            fun_search(curr, pw);
+        break;
+#endif
+
     case NFOLITEM:
         if (pw)
             fun_mkdir(pw);
