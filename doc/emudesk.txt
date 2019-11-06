@@ -6,6 +6,9 @@ Atari TOS 1 desktop, plus most of the features of the TOS 2/3/4 desktop,
 including:
 
 1) menu items
+    . search
+    . bottom to top
+    . select all items
     . set file mask
     . install icon
     . install application
@@ -27,6 +30,53 @@ save the desktop to preserve the changes.
     . desktop printer support
 Due to space limitations, desktop shortcuts & desktop printer support
 are not available in the 192K ROMs.
+
+
+Search
+======
+192K ROMs:
+This is not available.
+
+Other ROMs:
+This prompts for a search string, then searches for matching files and
+folders.  The search string entered is not the usual TOS wildcard
+specification: any characters you enter must be matched, but missing
+characters are ignored, i.e. are treated as though they were wildcards.
+For example, searching for "A.T" will match "A.T", "ABC.TTP", etc.
+
+If there are no icons currently selected, Search just selects all
+matching files and folders in the topmost window, and the search ends.
+
+Otherwise, the folders corresponding to the selected icons are searched
+recursively, in sequence.  If a folder contains a matching name, the
+folder is displayed in a window, with the matched files selected, and
+the user is prompted to continue to search or cancel.
+
+If cancel is selected, the search ends, with the window showing the
+most-recently-matched files; otherwise, the search continues.  When
+all folders have been searched, an alert is displayed: either "No more
+files" if at least one file was found, or "xxx not found" if no matching
+files were found.
+
+
+Bottom to top
+=============
+192K ROMs:
+This is not available.
+
+Other ROMs:
+This is used to cycle through open windows: each time it is selected,
+the window that is currently bottom of the window stack is topped.
+Thus it is only selectable if two or more windows are open.
+
+
+Select all items
+================
+192K ROMs:
+This is not available.
+
+Other ROMs:
+This selects all items in the topmost window.
 
 
 Set file mask
