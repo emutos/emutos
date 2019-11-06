@@ -450,7 +450,7 @@ static BOOL search_recursive(WORD curr, char *pathname, char *searchwild)
      */
     p = filename_start(pathname);
     strcpy(p, searchwild);
-    ret = dos_sfirst(pathname, FA_SUBDIR);
+    ret = dos_sfirst(pathname, DISPATTR);
     strcpy(p, "*.*");
     dos_sdta(save_dta); /* in case we must return */
 
@@ -473,7 +473,7 @@ static BOOL search_recursive(WORD curr, char *pathname, char *searchwild)
      */
     dos_sdta(&dta);     /* original DTA is already saved */
 
-    for (ret = dos_sfirst(pathname, FA_SUBDIR), ok = TRUE; ret==0; ret = dos_snext())
+    for (ret = dos_sfirst(pathname, DISPATTR), ok = TRUE; ret==0; ret = dos_snext())
     {
         if (dta.d_fname[0] == '.')  /* ignore . and .. */
             continue;

@@ -83,7 +83,7 @@ PNODE *pn_open(char *pathname, WNODE *pw)
     thepath = &pw->w_pnode;
     thepath->p_flist = NULL;    /* file list starts empty */
     strcpy(thepath->p_spec,pathname);
-    thepath->p_attr = FA_SUBDIR;
+    thepath->p_attr = DISPATTR;
 
     return thepath;
 }

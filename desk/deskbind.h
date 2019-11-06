@@ -36,6 +36,14 @@
 #define ALLFILES    (FA_SUBDIR|FA_SYSTEM|FA_HIDDEN)
 
 /*
+ * attributes used to select files/folders for desktop window display.
+ * used by pn_active() when building the list of FNODEs to display, and
+ * by search_recursive() when searching for matching FNODEs.
+ */
+#define DISPATTR    FA_SUBDIR    
+
+
+/*
  * the following defines determine the minimum spacing between icons,
  * both in a desktop window and on the desktop.  because the desktop
  * (between resolution changes) is a fixed size, the actual spacing
