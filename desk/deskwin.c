@@ -74,8 +74,12 @@ void win_view(WORD vtype, WORD isort)
          * G.g_iwint defines the width of window space in front of
          * each text line.  this must be greater than zero to allow
          * for multiple item selection by "rubber-banding"
+         *
+         * note: the '-1' aligns the text on a byte boundary, allowing
+         * the fast text output routine to be used if other conditions
+         * are met (ATM, low-rez windows cannot take advantage of this).
          */
-        G.g_iwint = USE_WIDE_FORMAT() ? 2*gl_wchar+4 : gl_wchar+4;
+        G.g_iwint = 2*gl_wchar - 1;
         G.g_ihint = 2;
         break;
     case V_ICON:
