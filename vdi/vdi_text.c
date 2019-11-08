@@ -230,9 +230,10 @@ static WORD calc_width(Vwk *vwk, WORD cnt, WORD *str)
  *  the font contains glyphs for all 256 characters
  *  the entire text string will not be clipped
  */
-static BOOL ok_for_direct_blit(Vwk *vwk, WORD width, JUSTINFO *justified)
+static BOOL ok_for_direct_blit(Vwk *vwk, WORD width, WORD count, WORD *str, JUSTINFO *justified)
 {
-    const Fonthead *fnt_ptr = vwk->cur_font;
+    const Fonthead *fnt_ptr;
+    WORD xmin, xmax, ymin, ymax;
 
     if (vwk->style | vwk->chup | vwk->h_align)
         return FALSE;
@@ -243,19 +244,36 @@ static BOOL ok_for_direct_blit(Vwk *vwk, WORD width, JUSTINFO *justified)
     if (DESTX & 0x0007)
         return FALSE;
 
+    fnt_ptr = vwk->cur_font;
+
     if (!MONO || (fnt_ptr->max_cell_width != 8))
         return FALSE;
 
     if ((fnt_ptr->first_ade != 0) || (fnt_ptr->last_ade != 255))
         return FALSE;
 
-    if (!vwk->clip)
-        return TRUE;
+    if (width < 0)
+        width = calc_width(vwk, count, str);
+
+    if (vwk->clip)
+    {
+        xmin = vwk->xmn_clip;
+        ymin = vwk->ymn_clip;
+        xmax = vwk->xmx_clip;
+        ymax = vwk->ymx_clip;
+    }
+    else
+    {
+        xmin = 0;       /* must not exceed screen limits */
+        ymin = 0;
+        xmax = xres;
+        ymax = yres;
+    }
 
     /* check that string falls entirely within clip area */
-    if ((DESTX < vwk->xmn_clip) || (DESTX+width > vwk->xmx_clip))
+    if ((DESTX < xmin) || (DESTX+width > xmax))
         return FALSE;
-    if ((DESTY < vwk->ymn_clip) || (DESTY+DELY > vwk->ymx_clip))
+    if ((DESTY < ymin) || (DESTY+DELY > ymax))
         return FALSE;
 
     return TRUE;
@@ -433,7 +451,7 @@ static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width, JUSTINFO *j
     /*
      * call special direct screen blit routine if applicable
      */
-    if (ok_for_direct_blit(vwk, width, justified))
+    if (ok_for_direct_blit(vwk, width, count, str, justified))
     {
         direct_screen_blit(count, str);
         return;
