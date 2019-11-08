@@ -77,7 +77,7 @@ void win_view(WORD vtype, WORD isort)
          *
          * note: the '-1' aligns the text on a byte boundary, allowing
          * the fast text output routine to be used if other conditions
-         * are met (ATM, low-rez windows cannot take advantage of this).
+         * are met (low-rez windows can rarely take advantage of this).
          */
         G.g_iwint = 2*gl_wchar - 1;
         G.g_ihint = 2;
