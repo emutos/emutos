@@ -135,7 +135,7 @@ _main:
 osex:
     .ascii  "OSEX"                      // magic number
     .dc.l   osexend-osex                // length
-    .dc.b   MAJOR_VERSION,MINOR_VERSION,FIX_VERSION,SNAPSHOT    // binary version
+    .dc.b   MAJOR_VERSION,MINOR_VERSION,FIX_VERSION,UNOFFICIAL  // binary version
     .dc.l   _version-_os_header         // offset to version string
 #if DETECT_NATIVE_FEATURES
     .dc.l   OSEX_LINEA                  // feature flags

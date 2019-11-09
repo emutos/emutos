@@ -40,10 +40,11 @@ VERSION = $(shell date +%Y%m%d)
 
 #
 # this is stored in the EmuTOS 'extended os header'.  a zero value
-# indicates an official release; a non-zero value indicates a snapshot.
+# indicates an official release; a non-zero value indicates any other
+# kind of release (snapshot or custom).
 #
 ifeq ($(findstring .,$(VERSION)),.)
-SNAPSHOT = 0
+UNOFFICIAL = 0
 else
-SNAPSHOT = 1
+UNOFFICIAL = 1
 endif

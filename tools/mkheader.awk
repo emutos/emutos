@@ -28,12 +28,12 @@ BEGIN {
     # check parameters
     if (ARGC != 6 || ! match(ARGV[1], /^[a-z][a-z]$/)) {
         print ARGC ARGV[0] ARGV[1]
-        print "usage: mkheader xx major minor fix snapshot"
+        print "usage: mkheader xx major minor fix unofficial"
         print "where xx is a lowercase two-char country name"
         print "      major is the major version number"
         print "      minor is the minor version number"
         print "      fix is the fix version number"
-        print "      snapshot is the snapshot indicator"
+        print "      unofficial indicates an unofficial release"
         exit (1)
     }
     country = ARGV[1]
@@ -41,7 +41,7 @@ BEGIN {
     major = ARGV[2]
     minor = ARGV[3]
     fix = ARGV[4]
-    snapshot = ARGV[5]
+    unofficial = ARGV[5]
 
     print "/*"
     print " * header.h - definitions for the TOS header"
@@ -84,7 +84,7 @@ BEGIN {
     print "#define MAJOR_VERSION " major "\n"
     print "#define MINOR_VERSION " minor "\n"
     print "#define FIX_VERSION " fix "\n"
-    print "#define SNAPSHOT " snapshot "\n"
+    print "#define UNOFFICIAL " unofficial "\n"
 
     print "#endif /* HEADER_H */"
 }
