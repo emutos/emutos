@@ -334,6 +334,8 @@ static DTA *file_exists(char *path, char *name)
     WORD rc;
     char fullname[MAXPATHLEN];
 
+    desk_busy_on();     /* display busy, in case we're on a slow drive (floppy) */
+
     strcpy(fullname, path);
     if (name)
         strcpy(filename_start(fullname),name);
@@ -341,6 +343,8 @@ static DTA *file_exists(char *path, char *name)
     dos_sdta(&G.g_wdta);
     rc = dos_sfirst(fullname, ALLFILES);
     dos_sdta(dta);
+
+    desk_busy_off();
 
     return rc ? NULL : &G.g_wdta;
 }
