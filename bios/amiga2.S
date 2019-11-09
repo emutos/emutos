@@ -125,6 +125,7 @@ _amiga_init_keyboard_interrupt:
         .globl  _amiga_int_2
 _amiga_int_2:
         //move.w  #0x0f00,0xdff180        // Background color = red
+        move    #0x2700,sr              // Original interrupt mask will be restored by RTE
         movem.l d0-d2/a0-a1,-(sp)
 
         move.w  0xdff01e,d0             // intreq
