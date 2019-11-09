@@ -1,7 +1,7 @@
 /*
  * keyb_it.h - keyboard layout definition
  *
- * Copyright (C) 2011-2015 The EmuTOS development team
+ * Copyright (C) 2011-2019 The EmuTOS development team
  *
  * Authors:
  *  L. Zanier
@@ -73,6 +73,7 @@ static const UBYTE keytbl_it_altnorm[] = {
     0x1A, '[',
     0x1B, ']',
     0x2B,0xf8,
+    0x60,0x60,
     0,
 };
 
@@ -80,6 +81,7 @@ static const UBYTE keytbl_it_altshft[] = {
     0x1A, '{',
     0x1B, '}',
     0x2B,0x7e,
+    0x60,0x60,
     0,
 };
 
@@ -87,6 +89,7 @@ static const UBYTE keytbl_it_altcaps[] = {
     0x1A, '[',
     0x1B, ']',
     0x2B,0xf8,
+    0x60,0x60,
     0,
 };
 
