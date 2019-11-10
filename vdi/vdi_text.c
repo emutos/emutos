@@ -1184,13 +1184,11 @@ void gdp_justified(Vwk * vwk)
 
     max_x = PTSIN[2];
 
+    bzero(&just, sizeof(JUSTINFO));     /* set zero default values */
+
     /*
      * calculate values for interword spacing
      */
-    just.wordx = just.wordy = 0;    /* set defaults */
-    just.rmword = 0;
-    just.rmwordx = just.rmwordy = 0;
-
     if (interword && spaces) {
         delword = (max_x - width) / spaces;
         just.rmword = (max_x - width) % spaces;
@@ -1237,10 +1235,6 @@ void gdp_justified(Vwk * vwk)
     /*
      * calculate values for intercharacter spacing
      */
-    just.charx = just.chary = 0;    /* set defaults */
-    just.rmchar = 0;
-    just.rmcharx = just.rmchary = 0;
-
     if (interchar && cnt > 1) {
         delchar = (max_x - width) / (cnt - 1);
         just.rmchar = (max_x - width) % (cnt - 1);
