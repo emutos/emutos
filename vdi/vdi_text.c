@@ -230,7 +230,7 @@ static WORD calc_width(Vwk *vwk, WORD cnt, WORD *str)
  *  the font contains glyphs for all 256 characters
  *  the entire text string will not be clipped
  */
-static BOOL ok_for_direct_blit(Vwk *vwk, WORD width, WORD count, WORD *str, JUSTINFO *justified)
+static BOOL ok_for_direct_blit(Vwk *vwk, WORD width, JUSTINFO *justified)
 {
     const Fonthead *fnt_ptr;
     WORD xmin, xmax, ymin, ymax;
@@ -251,9 +251,6 @@ static BOOL ok_for_direct_blit(Vwk *vwk, WORD width, WORD count, WORD *str, JUST
 
     if ((fnt_ptr->first_ade != 0) || (fnt_ptr->last_ade != 255))
         return FALSE;
-
-    if (width < 0)
-        width = calc_width(vwk, count, str);
 
     if (vwk->clip)
     {
@@ -304,6 +301,9 @@ static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width, JUSTINFO *j
 
     if (count <= 0)     /* quick out for unlikely occurrence */
         return;
+
+    if (width < 0)      /* called from vdi_v_gtext() */
+        width = calc_width(vwk, count, str);
 
     fnt_ptr = vwk->cur_font;    /* get current font pointer */
 
@@ -356,13 +356,9 @@ static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width, JUSTINFO *j
         delh = 0;
         break;
     case 1:
-        if (width < 0)      /* called from vdi_v_gtext() */
-            width = calc_width(vwk, count, str);
         delh = width / 2 - outline;
         break;
     case 2:
-        if (width < 0)      /* called from vdi_v_gtext() */
-            width = calc_width(vwk, count, str);
         delh = width - (outline * 2);
         break;
     }
@@ -451,7 +447,7 @@ static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width, JUSTINFO *j
     /*
      * call special direct screen blit routine if applicable
      */
-    if (ok_for_direct_blit(vwk, width, count, str, justified))
+    if (ok_for_direct_blit(vwk, width, justified))
     {
         direct_screen_blit(count, str);
         return;
