@@ -114,6 +114,17 @@ void (*vector_5ms)(void);       /* 200 Hz system timer */
 
 static void vecs_init(void)
 {
+#if !CONF_ATARI_HARDWARE
+    /* On Atari hardware, the first 2 longs of the address space are physically
+     * routed to the start of the ROM (instead of the start of the ST-RAM).
+     * On other machines, there is actual RAM at that place.
+     * To mimic Atari hardware behaviour, we copy the start of our OS there.
+     * This may improve compatibility with some Atari software,
+     * which may peek the OS version or reset address from there. */
+    ULONG_AT(0x00000000) = ((ULONG*)&os_header)[0]; /* Reset: Initial SSP */
+    ULONG_AT(0x00000004) = ((ULONG*)&os_header)[1]; /* Reset: Initial PC */
+#endif
+
     /* Initialize the exception vectors.
      * By default, any unexpected exception calls dopanic().
      */
