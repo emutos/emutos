@@ -336,6 +336,9 @@ static void men_update(void)
         menu_ienable(tree, BTOPITEM, FALSE);
         break;
 #endif
+    /* The label below is necessary to avoid warning with FALLTHROUGH */
+    default:    /* more than one */
+        break;
     }
 
 #if CONF_WITH_SHUTDOWN
