@@ -135,16 +135,16 @@ typedef struct
 {
     char cs_sort;               /* Sort mode */
     char cs_view;               /* Show files as icons or text */
-    char cs_confcpy;            /* Confirm copies */
-    char cs_confdel;            /* Confirm deletes */
-    char cs_confovwr;           /* Confirm overwrite */
+    char cs_confcpy;            /* Confirm copies (boolean) */
+    char cs_confdel;            /* Confirm deletes (boolean) */
+    char cs_confovwr;           /* Confirm overwrite (boolean) */
     char cs_dblclick;           /* Double click speed */
-    char cs_mnuclick;           /* Drop down menu click mode */
+    char cs_mnuclick;           /* Click required to drop down menu (boolean) */
     char cs_timefmt;            /* Time format */
     char cs_datefmt;            /* Date format */
-    char cs_blitter;            /* Blitter enabled */
-    char cs_appdir;             /* Appl dir is default for non-installed apps */
-    char cs_fullpath;           /* Full path for arg to non-installed apps */
+    char cs_blitter;            /* Blitter enabled (boolean) */
+    char cs_appdir;             /* Appl dir is default for non-installed apps (boolean) */
+    char cs_fullpath;           /* Full path for arg to non-installed apps (boolean) */
     WSAVE cs_wnode[NUM_WNODES]; /* window save info */
 } CSAVE;
 
