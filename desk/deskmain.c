@@ -512,47 +512,42 @@ static WORD do_filemenu(WORD item)
 
 static WORD do_viewmenu(WORD item)
 {
-    WORD newview, newsort, rc = 0;
+    WORD new, rc = 0;
     OBJECT *menutree = G.a_trees[ADMENU];
 
-    newview = G.g_iview;
-    newsort = G.g_isort;
     switch(item)
     {
     case ICONITEM:
     case TEXTITEM:
-        newview = item - ICONITEM;
+        new = item - ICONITEM;
+        if (new == G.g_iview)
+            break;
+        menu_icheck(menutree, ICONITEM+G.g_iview, 0);
+        menu_icheck(menutree, item, 1);
+        G.g_iview = new;
+        win_view();         /* uses G.g_iview */
+        rc = VIEW_HAS_CHANGED;
         break;
     case NAMEITEM:
     case TYPEITEM:
     case SIZEITEM:
     case DATEITEM:
     case NSRTITEM:
-        newsort = item - NAMEITEM;
+        new = item - NAMEITEM;
+        if (new == G.g_isort)
+            break;
+        menu_icheck(menutree, NAMEITEM+G.g_isort, 0);
+        menu_icheck(menutree, item, 1);
+        G.g_isort = new;
+        rc = SORT_HAS_CHANGED;
         break;
 #if CONF_WITH_BACKGROUNDS
     case BACKGRND:
         if (inf_backgrounds())
-            rc |= BACKGROUND_HAS_CHANGED;
+            rc = BACKGROUND_HAS_CHANGED;
         break;
 #endif
     }
-
-    if (newview != G.g_iview)
-    {
-        menu_icheck(menutree, ICONITEM+G.g_iview, 0);
-        menu_icheck(menutree, item, 1);
-        rc |= VIEW_HAS_CHANGED;
-    }
-    if (newsort != G.g_isort)
-    {
-        menu_icheck(menutree, NAMEITEM+G.g_isort, 0);
-        menu_icheck(menutree, item, 1);
-        rc |= SORT_HAS_CHANGED;
-    }
-
-    if (rc & (VIEW_HAS_CHANGED|SORT_HAS_CHANGED))
-        win_view(newview, newsort);
 
     return rc;
 }

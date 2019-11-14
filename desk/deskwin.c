@@ -60,12 +60,9 @@
 #define INITIAL_ICON_STATE  WHITEBAK
 #endif
 
-void win_view(WORD vtype, WORD isort)
+void win_view(void)
 {
-    G.g_iview = vtype;
-    G.g_isort = isort;
-
-    switch(vtype)
+    switch(G.g_iview)
     {
     case V_TEXT:
         G.g_iwext = LEN_FNODE * gl_wchar;
@@ -102,7 +99,10 @@ int win_start(void)
     WNODE *pw;
     WORD i;
 
-    win_view(START_VIEW, START_SORT);
+    G.g_iview = START_VIEW;
+    G.g_isort = START_SORT;
+
+    win_view();         /* uses G.g_iview */
     obj_init();         /* must be called *after* win_view(), because it uses */
                         /*  G.g_iwspc/G.g_ihspc which are set by win_view()   */
 
