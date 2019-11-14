@@ -804,6 +804,8 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
  *  This may be called via the Open item under the File menu, or by
  *  double-clicking an icon, or by pressing a function key, or by
  *  dropping a file on to a desktop shortcut for a program
+ *
+ *  returns TRUE iff shel_write() was issued successfully
  */
 WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, char *pathname, char *pname, char *tail)
 {
@@ -974,7 +976,7 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, char *pathname, char *pname, cha
         if (!file_exists(pcmd, NULL))
         {
             fun_alert_merge(1, STFILENF, filename_start(pcmd));
-            return done;
+            return FALSE;
         }
         /* G.g_work+1 is already set up */
         done = pro_run(isgraf, pcmd, G.g_work, G.g_cwin, curr);
