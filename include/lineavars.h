@@ -58,6 +58,8 @@ extern UWORD BYTES_LIN;         /* width of line in bytes */
 
 extern WORD DEV_TAB[];          /* intout array for open workstation */
 
+extern WORD MOUSE_BT;           /* mouse button state */
+
 /* Line-drawing related variables */
 extern WORD X1, Y1, X2, Y2;     /* coordinates for end points */
 extern WORD WRT_MODE;           /* write mode */

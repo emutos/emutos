@@ -239,7 +239,6 @@ extern WORD (*SEEDABORT)(void); /* ptr to function called to signal early abort 
 extern WORD GCURX;              /* mouse X position */
 extern WORD GCURY;              /* mouse Y position */
 extern WORD HIDE_CNT;           /* Number of levels the mouse is hidden */
-extern WORD MOUSE_BT;           /* mouse button state */
 
 /* Mouse related variables */
 extern WORD     newx;           /* new mouse x&y position */

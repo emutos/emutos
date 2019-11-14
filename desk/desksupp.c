@@ -51,6 +51,7 @@
 #include "nls.h"
 #include "scancode.h"
 #include "biosext.h"
+#include "lineavars.h"      /* for MOUSE_BT */
 
 
 #if CONF_WITH_FORMAT
@@ -479,7 +480,7 @@ static WORD bios_prnout(WORD device, WORD ch)
 }
 
 /*
- *  get key from keyboard
+ *  get key from keyboard, or equivalent mouse button
  *
  *  if ASCII (1-255), returns value in low-order byte, 0 in high-order byte
  *  else returns scancode
@@ -487,6 +488,14 @@ static WORD bios_prnout(WORD device, WORD ch)
 static WORD get_key(void)
 {
     ULONG c;
+
+    while(!bios_conis())
+    {
+        if (MOUSE_BT & 0x0002)  /* right mouse button means quit */
+            return 'Q';
+        if (MOUSE_BT & 0x0001)  /* left mouse button means next page */
+            return ' ';
+    }
 
     c = bios_conin();
 
@@ -783,7 +792,7 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
         msg = desktop_str_addr((rc==0L)?STEOF:STFRE);
         blank_line();
         bios_conws(msg);    /* "-End of file-" or "-File read error-" */
-        bios_conin();
+        get_key();
     }
 
     /*
