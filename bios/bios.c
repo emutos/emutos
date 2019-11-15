@@ -271,6 +271,18 @@ static void bios_init(void)
     KDEBUG(("fill_cookie_jar()\n"));
     fill_cookie_jar();  /* detect hardware features and fill the cookie jar */
 
+#if CONF_WITH_BLITTER
+    /*
+     * If a PAK 68/3 is installed, the blitter cannot access the PAK ROMs.
+     * So we must mark the blitter as not installed (this is what the
+     * patched TOS3.06 ROM on the PAK does).  Since we can't detect a
+     * PAK 68/3 directly, we look for a 68030 on an ST(e)/Mega ST(e).
+     */
+    if ((mcpu == 30)
+     && ((cookie_mch == MCH_ST) || (cookie_mch == MCH_STE) || (cookie_mch == MCH_MSTE)))
+        has_blitter = blitter_is_enabled = 0;
+#endif
+
     /* Set up the BIOS console output */
     KDEBUG(("linea_init()\n"));
     linea_init();       /* initialize screen related line-a variables */
