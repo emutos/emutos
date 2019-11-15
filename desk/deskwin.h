@@ -61,9 +61,8 @@ struct _windnode
         UWORD           w_flags;                /* see above */
         WORD            w_id;                   /* window handle id #   */
         WORD            w_obid;                 /* desktop object id    */
-        WORD            w_root;                 /* pseudo root ob. in   */
-                                                /*   gl_screen for this */
-                                                /*   windows objects    */
+        WORD            w_root;                 /* pseudo root object in G.g_screen */
+                                                /*  for this window's objects       */
         WORD            w_cvrow;                /* current virt. row    */
         WORD            w_pncol;                /* physical # of cols   */
         WORD            w_pnrow;                /* physical # of rows   */
