@@ -520,7 +520,7 @@ LOCAL int num_shared = ARRAY_SIZE(shared);
  */
 LOCAL NOTRANS_ENTRY notrans[] = {
     { 0, 0, "- EmuTOS -" },
-    { 0, 0, "http://" },
+    { 0, 0, "https://" },
     { 0, 0, "640 x " },
     { 0, 0, "640x" },
     { 0, 0, "320 x " },
@@ -618,7 +618,7 @@ LOCAL int num_notrans = 0;
 /*
  *  other globals
  */
-LOCAL const char *copyright = PROGRAM_NAME " " VERSION " copyright (C) 2012-2018 by Roger Burrows\n"
+LOCAL const char *copyright = PROGRAM_NAME " " VERSION " copyright (C) 2012-2019 by Roger Burrows\n"
 "This program is licensed under the GNU General Public License.\n"
 "Please see LICENSE.TXT for details.\n";
 
