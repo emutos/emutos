@@ -11,6 +11,7 @@
  */
 #ifndef STANDALONE_CONSOLE
  #include "config.h"
+ #include "sysconf.h"
  #include "nls.h"
 #else
  /* config.h */

@@ -1,6 +1,11 @@
 /*
  * config.h - default settings
  *
+ * When adding a configuration option to this file, you should ensure
+ * (via #ifdef) that it can be overridden by entries in localconf.h.
+ * Defines that should *not* be overridden should appear in sysconf.h
+ * (or deskconf.h if they apply to EmuDesk).
+ *
  * Copyright (C) 2001-2019 The EmuTOS development team
  *
  * Authors:
@@ -12,8 +17,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef CONFIG_H
-#define CONFIG_H
+#ifndef _CONFIG_H
+#define _CONFIG_H
 
 /*
  * File localconf.h will be included if reported present by the Makefile.
@@ -26,7 +31,7 @@
 #endif
 
 /*
- * Determine if this EmuTOS is built for ROM or RAM.
+ * Determine if this EmuTOS is built for ROM or RAM
  */
 #if defined(TARGET_PRG) || defined(TARGET_FLOPPY) || defined(TARGET_AMIGA_FLOPPY)
 #  define EMUTOS_LIVES_IN_RAM 1
@@ -35,7 +40,7 @@
 #endif
 
 /*
- * Determine if we use static Alt-RAM.
+ * Determine if we use static Alt-RAM
  */
 #ifdef STATIC_ALT_RAM_ADDRESS
 # ifdef CONF_WITH_STATIC_ALT_RAM
@@ -43,6 +48,12 @@
 # endif
 # define CONF_WITH_STATIC_ALT_RAM 1
 #endif
+
+
+
+/****************************************************
+ *  T A R G E T   D E F A U L T S   S E C T I O N   *
+ ****************************************************/
 
 /*
  * Defaults for the ARAnyM target
@@ -175,8 +186,8 @@
 
 /*
  * Defaults for the 192 target.
- * This target is only useful on ST hardware, and the ROM size is very limited,
- * so strip out all the advanced features.
+ * This target is only useful on ST hardware, and the ROM size is very
+ * limited, so strip out all the advanced features.
  */
 #ifdef TARGET_192
 # ifndef TOS_VERSION
@@ -408,21 +419,21 @@
 #endif
 
 /*
- * Defaults for the Amiga ROM target.
+ * Defaults for the Amiga ROM target
  */
 #ifdef TARGET_AMIGA_ROM
 # define MACHINE_AMIGA
 #endif
 
 /*
- * Defaults for Amiga floppy targets.
+ * Defaults for Amiga floppy targets
  */
 #ifdef TARGET_AMIGA_FLOPPY
 # define MACHINE_AMIGA
 #endif
 
 /*
- * Defaults for the Amiga machine.
+ * Defaults for the Amiga machine
  */
 #ifdef MACHINE_AMIGA
 # ifndef CONF_ATARI_HARDWARE
@@ -437,7 +448,7 @@
 #endif
 
 /*
- * Defaults for the M548x machine.
+ * Defaults for the M548x machine
  */
 #ifdef MACHINE_M548X
 # ifndef SDCLK_FREQUENCY_MHZ
@@ -470,7 +481,7 @@
 #endif
 
 /*
- * By default, EmuTOS is built for Atari ST/TT/Falcon compatible hardware.
+ * By default, EmuTOS is built for Atari ST/TT/Falcon compatible hardware
  */
 #ifndef CONF_ATARI_HARDWARE
 # define CONF_ATARI_HARDWARE 1
@@ -598,58 +609,24 @@
 #endif
 
 /*
- * use #ifndef ... #endif for definitions below, to allow them to
- * be overriden by the Makefile or by localconf.h
- */
-
-/*
- * Define the TOS version here. Valid values are 0x104 and 0x206 for example.
- * This is just a version number, EmuTOS functionalities are not affected.
- */
-#ifndef TOS_VERSION
-/* Be default, we pretend to be TOS 2.06, as it is available as an update for
- * both ST and STe. On the other hand, TOS 3.x is only for TT and TOS 4.x
- * only for Falcon. */
-# define TOS_VERSION 0x206
-#endif
-
-/*
- * Define the GEMDOS version here: this number is returned by the GEMDOS
- * Sversion() function call. The value contains the minor version number
- * in the high-order byte, and the major version number in the low-order
- * byte.  Valid values include:
- *      0x1300      used by TOS v1.0 & v1.02
- *      0x1500      used by TOS v1.04 & v1.06
- *      0x1700      used by TOS v1.62
- *      0x1900      used by TOS v2.01, v2.05, v3.01, v3.05
- *      0x2000      used by TOS v2.06 & v3.06
- *      0x3000      used by TOS v4.0x
- * This does not have a well-defined purpose, although it could be checked
- * by programs to determine presence or absence of certain GEMDOS functions.
- */
-#ifndef GEMDOS_VERSION
-# define GEMDOS_VERSION 0x2000
-#endif
-
-/*
- * Define the AES version here. Valid values include:
- *      0x0120      AES 1.20, used by TOS v1.02
- *      0x0140      AES 1.40, used by TOS v1.04 & v1.62
- *      0x0320      AES 3.20, used by TOS v2.06 & v3.06
- *      0x0340      AES 3.40, used by TOS v4.04
- * Do not change this arbitrarily, as each value implies the presence or
- * absence of certain AES functions ...
- */
-#ifndef AES_VERSION
-# define AES_VERSION 0x0140
-#endif
-
-/*
- * Set DIAGNOSTIC_CARTRIDGE to 1 when building a diagnostic cartridge.
+ * Set DIAGNOSTIC_CARTRIDGE to 1 when building a diagnostic cartridge
  */
 #ifndef DIAGNOSTIC_CARTRIDGE
 # define DIAGNOSTIC_CARTRIDGE 0
 #endif
+
+
+
+/*
+ * use #ifndef ... #endif for definitions below, to allow them to
+ * be overriden by the Makefile or by localconf.h
+ */
+
+
+
+/********************************************************
+ *  H A R D W A R E   S U P P O R T   S E C T I O N     *
+ ********************************************************/
 
 /*
  * Set CONF_WITH_ADVANCED_CPU to 1 to enable support for 68010-68060
@@ -674,21 +651,21 @@
 #endif
 
 /*
- * Set CONF_WITH_ST_MMU to 1 to enable support for ST MMU.
+ * Set CONF_WITH_ST_MMU to 1 to enable support for ST MMU
  */
 #ifndef CONF_WITH_ST_MMU
 # define CONF_WITH_ST_MMU 1
 #endif
 
 /*
- * Set CONF_WITH_TT_MMU to 1 to enable support for TT MMU.
+ * Set CONF_WITH_TT_MMU to 1 to enable support for TT MMU
  */
 #ifndef CONF_WITH_TT_MMU
 # define CONF_WITH_TT_MMU 1
 #endif
 
 /*
- * Set CONF_WITH_FALCON_MMU to 1 to enable support for Falcon MMU.
+ * Set CONF_WITH_FALCON_MMU to 1 to enable support for Falcon MMU
  */
 #ifndef CONF_WITH_FALCON_MMU
 # define CONF_WITH_FALCON_MMU 1
@@ -719,13 +696,6 @@
 #endif
 
 /*
- * Set CONF_WITH_FRB to 1 to automatically enable the _FRB cookie when required
- */
-#ifndef CONF_WITH_FRB
-# define CONF_WITH_FRB CONF_WITH_ALT_RAM
-#endif
-
-/*
  * Set CONF_WITH_TTRAM to 1 to enable detection and usage of TT-RAM
  */
 #ifndef CONF_WITH_TTRAM
@@ -742,14 +712,14 @@
 
 /*
  * Define CONF_WITH_MONSTER to enable detection and usage of ST/STE
- * MonSTer expansion card.
+ * MonSTer expansion card
  */
 #ifndef CONF_WITH_MONSTER
 # define CONF_WITH_MONSTER 1
 #endif
 
 /*
- * Set CONF_WITH_MFP to 1 to enable support for the MFP 68901.
+ * Set CONF_WITH_MFP to 1 to enable support for the MFP 68901
  */
 #ifndef CONF_WITH_MFP
 # define CONF_WITH_MFP 1
@@ -778,7 +748,7 @@
 
 /*
  * Set CONF_COLDFIRE_TIMER_C to 1 to simulate the Timer C using the
- * internal ColdFire timers.
+ * internal ColdFire timers
  */
 #ifndef CONF_COLDFIRE_TIMER_C
 # if defined(__mcoldfire__) && !CONF_WITH_MFP
@@ -884,7 +854,7 @@
 
 /*
  * Set CONF_WITH_SDMMC to 1 to activate SPI on the Vampire, required
- * for SD/MMC support on these boards.
+ * for SD/MMC support on these boards
  */
 #ifndef CONF_WITH_VAMPIRE_SPI
 # define CONF_WITH_VAMPIRE_SPI 0
@@ -912,7 +882,7 @@
 #endif
 
 /*
- * Set CONF_WITH_VIDEL to 1 to enable support for Falcon Videl.
+ * Set CONF_WITH_VIDEL to 1 to enable support for Falcon Videl
  */
 #ifndef CONF_WITH_VIDEL
 # define CONF_WITH_VIDEL 1
@@ -951,16 +921,6 @@
 #endif
 
 /*
- * Set CONF_WITH_XBIOS_SOUND to 1 to enable support for the XBIOS sound
- * extension.  This extension provides (some of) the Falcon XBIOS sound
- * functions when running on STe- or TT-compatible hardware.  You must
- * also enable CONF_WITH_DMASOUND.
- */
-#ifndef CONF_WITH_XBIOS_SOUND
-# define CONF_WITH_XBIOS_SOUND 1
-#endif
-
-/*
  * Set CONF_WITH_VME to 1 to enable support for the Mega STe VME bus
  */
 #ifndef CONF_WITH_VME
@@ -968,7 +928,8 @@
 #endif
 
 /*
- * Set CONF_WITH_DIP_SWITCHES to 1 to enable support for STe/TT/Falcon DIP switches
+ * Set CONF_WITH_DIP_SWITCHES to 1 to enable support for STe/TT/Falcon
+ * DIP switches
  */
 #ifndef CONF_WITH_DIP_SWITCHES
 # define CONF_WITH_DIP_SWITCHES 1
@@ -979,13 +940,6 @@
  */
 #ifndef CONF_WITH_NVRAM
 # define CONF_WITH_NVRAM 1
-#endif
-
-/*
- * Set CONF_WITH_XHDI to 1 to enable XHDI support (i.e. the XHDI cookie etc.)
- */
-#ifndef CONF_WITH_XHDI
-# define CONF_WITH_XHDI 1
 #endif
 
 /*
@@ -1003,10 +957,105 @@
 #endif
 
 /*
- * Set CONF_WITH_NOVA to 1 to enable support for Nova graphic card adapter.
+ * Set CONF_WITH_NOVA to 1 to enable support for Nova graphic card adapter
  */
 #ifndef CONF_WITH_NOVA
 # define CONF_WITH_NOVA 1
+#endif
+
+/* Set this to 1 to enable support for the FlexCAN controller.
+ * This allows to use an Eiffel keyboard adapter plugged on the CAN port
+ * of ColdFire evaluation boards.
+ */
+#ifndef CONF_WITH_FLEXCAN
+# define CONF_WITH_FLEXCAN 0
+#endif
+
+/*
+ * Set CONF_WITH_RESET to 0 to force the startup code to bypass the
+ * "reset" instruction during startup.  By default it is bypassed
+ * in EmuTOS RAM, because it causes crashes very early in startup (the
+ * "black screen" problem).  It is surmised that the hardware reset may
+ * reset the RAM controller allowing/causing RAM contents to change.
+ * It is also bypassed in ColdFire because there is no reset instruction.
+ */
+#ifndef CONF_WITH_RESET
+# if EMUTOS_LIVES_IN_RAM || defined(__mcoldfire__)
+#  define CONF_WITH_RESET 0
+# else
+#  define CONF_WITH_RESET 1
+# endif
+#endif
+
+/*
+ * Set CONF_WITH_BAS_MEMORY_MAP to 1 if EmuTOS is intended to run
+ * over the BaS (either on the FireBee or on the M548x with BaS_gcc)
+ */
+#ifndef CONF_WITH_BAS_MEMORY_MAP
+# ifdef MACHINE_FIREBEE
+#  define CONF_WITH_BAS_MEMORY_MAP 1
+# else
+#  define CONF_WITH_BAS_MEMORY_MAP 0
+# endif
+#endif
+
+
+
+/****************************************
+ *  S O F T W A R E   S E C T I O N     *
+ ****************************************/
+
+/*
+ * Define the TOS version here. Valid values are 0x104 and 0x206 for example.
+ * This is just a version number, EmuTOS functionalities are not affected.
+ */
+#ifndef TOS_VERSION
+/* By default, we pretend to be TOS 2.06, as it is available as an update for
+ * both ST and STe. On the other hand, TOS 3.x is only for TT and TOS 4.x
+ * only for Falcon. */
+# define TOS_VERSION 0x206
+#endif
+
+/*
+ * Define the GEMDOS version here: this number is returned by the GEMDOS
+ * Sversion() function call. The value contains the minor version number
+ * in the high-order byte, and the major version number in the low-order
+ * byte.  Valid values include:
+ *      0x1300      used by TOS v1.0 & v1.02
+ *      0x1500      used by TOS v1.04 & v1.06
+ *      0x1700      used by TOS v1.62
+ *      0x1900      used by TOS v2.01, v2.05, v3.01, v3.05
+ *      0x2000      used by TOS v2.06 & v3.06
+ *      0x3000      used by TOS v4.0x
+ * This does not have a well-defined purpose, although it could be checked
+ * by programs to determine presence or absence of certain GEMDOS functions.
+ */
+#ifndef GEMDOS_VERSION
+# define GEMDOS_VERSION 0x2000
+#endif
+
+/*
+ * Define the AES version here. Valid values include:
+ *      0x0120      AES 1.20, used by TOS v1.02
+ *      0x0140      AES 1.40, used by TOS v1.04 & v1.62
+ *      0x0320      AES 3.20, used by TOS v2.06 & v3.06
+ *      0x0340      AES 3.40, used by TOS v4.04
+ * Do not change this arbitrarily, as each value implies the presence or
+ * absence of certain AES functions ...
+ */
+#ifndef AES_VERSION
+# define AES_VERSION 0x0140
+#endif
+
+/*
+ * With this switch you can control if some functions should be used as
+ * static-inlines. This is generally a good idea if your compiler supports
+ * this (the current GCC does). It will shrink the size of the ROM since
+ * only very small functions will be used as static inlines, and it will
+ * also make the code faster!
+ */
+#ifndef USE_STATIC_INLINES
+# define USE_STATIC_INLINES 1
 #endif
 
 /*
@@ -1026,23 +1075,15 @@
 #endif
 
 /*
- * Set this to 1 if your emulator is capable of emulating properly the
- * STOP opcode (used to reduce host CPU burden during loops).  Set to
- * zero for all emulators which do not properly support the STOP opcode.
+ * Set CONF_PREFER_STRAM_DISK_BUFFERS to 1 if disk buffers are more efficient
+ * when located in ST-RAM (i.e. for floppy/ACSI DMA transfers)
  */
-#ifndef USE_STOP_INSN_TO_FREE_HOST_CPU
-# define USE_STOP_INSN_TO_FREE_HOST_CPU 1
-#endif
-
-/*
- * With this switch you can control if some functions should be used as
- * static-inlines. This is generally a good idea if your compiler supports
- * this (the current GCC does). It will shrink the size of the ROM since
- * only very small functions will be used as static inlines, and it will
- * also make the code faster!
- */
-#ifndef USE_STATIC_INLINES
-# define USE_STATIC_INLINES 1
+#ifndef CONF_PREFER_STRAM_DISK_BUFFERS
+# if CONF_ATARI_HARDWARE
+#  define CONF_PREFER_STRAM_DISK_BUFFERS 1
+# else
+#  define CONF_PREFER_STRAM_DISK_BUFFERS 0
+# endif
 #endif
 
 /*
@@ -1070,9 +1111,9 @@
 #endif
 
 /*
- * By default, the EmuTOS welcome screen (initinfo) is only shown on cold boot.
- * If you set ALWAYS_SHOW_INITINFO to 1, the welcome screen will always be
- * displayed, on both cold boot and warm boot (reset).
+ * By default, the EmuTOS welcome screen (initinfo) is only shown on cold
+ * boot.  If you set ALWAYS_SHOW_INITINFO to 1, the welcome screen will
+ * always be displayed, on both cold boot and warm boot (reset).
  */
 #ifndef ALWAYS_SHOW_INITINFO
 # define ALWAYS_SHOW_INITINFO 0
@@ -1120,65 +1161,27 @@
 #endif
 
 /*
- * Set CONF_WITH_WINDOW_ICONS to 1 to include the icons for files & folders
+ * Set CONF_WITH_BIOS_EXTENSIONS to 1 to support various BIOS extension
+ * functions
  */
-#ifndef CONF_WITH_WINDOW_ICONS
-# define CONF_WITH_WINDOW_ICONS 1
+#ifndef CONF_WITH_BIOS_EXTENSIONS
+# define CONF_WITH_BIOS_EXTENSIONS 1
 #endif
 
 /*
- * Set CONF_WITH_DESKTOP_SHORTCUTS to 1 to allow files & folders to be
- * installed on the desktop as shortcuts
+ * Set CONF_WITH_EXTENDED_MOUSE to 1 to enable extended mouse support.
+ * This includes new Eiffel scancodes for mouse buttons 3, 4, 5, and
+ * the wheel.
  */
-#ifndef CONF_WITH_DESKTOP_SHORTCUTS
-# define CONF_WITH_DESKTOP_SHORTCUTS 1
+#ifndef CONF_WITH_EXTENDED_MOUSE
+# define CONF_WITH_EXTENDED_MOUSE 1
 #endif
 
 /*
- * Set CONF_WITH_BACKGROUNDS to 1 to allow the background pattern/colour
- * of the desktop & windows to be configured
+ * Set CONF_WITH_FRB to 1 to automatically enable the _FRB cookie when required
  */
-#ifndef CONF_WITH_BACKGROUNDS
-# define CONF_WITH_BACKGROUNDS 1
-#endif
-
-/*
- * Set CONF_WITH_SEARCH to 1 to include 'Search' in the desktop menu
- */
-#ifndef CONF_WITH_SEARCH
-# define CONF_WITH_SEARCH 1
-#endif
-
-/*
- * Set CONF_WITH_BOTTOMTOTOP to 1 to include 'Bottom to top' in the
- * desktop menu
- */
-#ifndef CONF_WITH_BOTTOMTOTOP
-# define CONF_WITH_BOTTOMTOTOP 1
-#endif
-
-/*
- * Set CONF_WITH_SELECTALL to 1 to include 'Select all items' in the
- * desktop menu
- */
-#ifndef CONF_WITH_SELECTALL
-# define CONF_WITH_SELECTALL 1
-#endif
-
-/*
- * Set CONF_WITH_FILEMASK to 1 to allow the filemask used for desktop
- * windows to be configured
- */
-#ifndef CONF_WITH_FILEMASK
-# define CONF_WITH_FILEMASK 1
-#endif
-
-/*
- * Set CONF_WITH_DESKTOP_CONFIG to 1 to enable the 'Desktop configuration'
- * dialog
- */
-#ifndef CONF_WITH_DESKTOP_CONFIG
-# define CONF_WITH_DESKTOP_CONFIG 1
+#ifndef CONF_WITH_FRB
+# define CONF_WITH_FRB CONF_WITH_ALT_RAM
 #endif
 
 /*
@@ -1193,13 +1196,6 @@
 #endif
 
 /*
- * Set CONF_WITH_EASTER_EGG to 1 to include the EmuDesk Easter Egg
- */
-#ifndef CONF_WITH_EASTER_EGG
-# define CONF_WITH_EASTER_EGG CONF_WITH_YM2149
-#endif
-
-/*
  * Set CONF_WITH_PCGEM to 1 to support various PC-GEM-compatible AES functions
  */
 #ifndef CONF_WITH_PCGEM
@@ -1207,84 +1203,36 @@
 #endif
 
 /*
- * Set CONF_WITH_BIOS_EXTENSIONS to 1 to support various BIOS extension functions
- */
-#ifndef CONF_WITH_BIOS_EXTENSIONS
-# define CONF_WITH_BIOS_EXTENSIONS 1
-#endif
-
-/* Set CONF_WITH_EXTENDED_MOUSE to 1 to enable support for extended mouse.
- * This includes new Eiffel scancodes for mouse buttons 3, 4, 5, and the wheel.
- */
-#ifndef CONF_WITH_EXTENDED_MOUSE
-# define CONF_WITH_EXTENDED_MOUSE 1
-#endif
-
-/*
- * Set CONF_WITH_VDI_VERTLINE to 1 to improve VDI vertical line performance
- */
-#ifndef CONF_WITH_VDI_VERTLINE
-# define CONF_WITH_VDI_VERTLINE 1
-#endif
-
-/*
- * Set CONF_WITH_VDI_TEXT_SPEEDUP to 1 to improve some VDI text output performance
+ * Set CONF_WITH_VDI_TEXT_SPEEDUP to 1 to improve some VDI text output
+ * performance
  */
 #ifndef CONF_WITH_VDI_TEXT_SPEEDUP
 # define CONF_WITH_VDI_TEXT_SPEEDUP 1
 #endif
 
 /*
- * Set CONF_WITH_FORMAT to 1 to support formatting floppy diskettes in EmuDesk
+ * Set CONF_WITH_VDI_VERTLINE to 1 to improve VDI vertical line drawing
+ * performance
  */
-#ifndef CONF_WITH_FORMAT
-# define CONF_WITH_FORMAT 1
+#ifndef CONF_WITH_VDI_VERTLINE
+# define CONF_WITH_VDI_VERTLINE 1
 #endif
 
 /*
- * Set CONF_WITH_SHOW_FILE to 1 to support showing a file in EmuDesk
- * by double-clicking on it
+ * Set CONF_WITH_XBIOS_SOUND to 1 to enable support for the XBIOS sound
+ * extension.  This extension provides (some of) the Falcon XBIOS sound
+ * functions when running on STe- or TT-compatible hardware.  You must
+ * also enable CONF_WITH_DMASOUND.
  */
-#ifndef CONF_WITH_SHOW_FILE
-# define CONF_WITH_SHOW_FILE 1
+#ifndef CONF_WITH_XBIOS_SOUND
+# define CONF_WITH_XBIOS_SOUND 1
 #endif
 
 /*
- * Set CONF_WITH_PRINTER_ICON to 1 to support a printer icon in EmuDesk
+ * Set CONF_WITH_XHDI to 1 to enable XHDI support (i.e. the XHDI cookie etc.)
  */
-#ifndef CONF_WITH_PRINTER_ICON
-# define CONF_WITH_PRINTER_ICON 1
-#endif
-
-/*
- * Set CONF_WITH_READ_INF to 1 to include the "Read .INF file" desktop menu item
- */
-#ifndef CONF_WITH_READ_INF
-# define CONF_WITH_READ_INF 1
-#endif
-
-/*
- * Set CONF_WITH_RESET to 0 to force the startup code to bypass the
- * "reset" instruction during startup.  By default it is bypassed
- * in EmuTOS RAM, because it causes crashes very early in startup (the
- * "black screen" problem).  It is surmised that the hardware reset may
- * reset the RAM controller allowing/causing RAM contents to change.
- * It is also bypassed in ColdFire because there is no reset instruction.
- */
-#ifndef CONF_WITH_RESET
-# if EMUTOS_LIVES_IN_RAM || defined(__mcoldfire__)
-#  define CONF_WITH_RESET 0
-# else
-#  define CONF_WITH_RESET 1
-# endif
-#endif
-
-/*
- * Set CONF_WITH_UAE to 1 to enable support for the advanced features of the
- * UAE emulator on the Amiga target.
- */
-#ifndef CONF_WITH_UAE
-# define CONF_WITH_UAE 0
+#ifndef CONF_WITH_XHDI
+# define CONF_WITH_XHDI 1
 #endif
 
 /*
@@ -1312,27 +1260,9 @@
 #endif
 
 /*
- * Set CONF_DEBUG_AES_STACK to 1 to trace the internal AES stack usage,
- * and estimate the stack requirements.
- */
-#ifndef CONF_DEBUG_AES_STACK
-# define CONF_DEBUG_AES_STACK 0
-#endif
-
-/*
- * Set CONF_DEBUG_DESK_STACK to 1 to monitor the desktop stack usage.
- */
-#ifndef CONF_DEBUG_DESK_STACK
-# define CONF_DEBUG_DESK_STACK 0
-#endif
-#if CONF_DEBUG_DESK_STACK
-# define STACK_MARKER 0xdeadbeef
-#endif
-
-/*
  * Set CONF_SERIAL_CONSOLE to 1 in order to:
  * - send console output to the serial port, in addition to the screen
- * - use exclusively the serial port for console input
+ * - use exclusively the serial port for console input.
  */
 #ifndef CONF_SERIAL_CONSOLE
 # if !CONF_WITH_ATARI_VIDEO && !defined(MACHINE_AMIGA)
@@ -1343,8 +1273,9 @@
 #endif
 
 /*
- * Set CONF_SERIAL_CONSOLE_ANSI to 1 if the terminal connected to the serial
- * port uses ANSI escape sequences. Set it to 0 if it is an Atari VT52 terminal.
+ * Set CONF_SERIAL_CONSOLE_ANSI to 1 if the terminal connected to the
+ * serial port uses ANSI escape sequences. Set it to 0 if it is an Atari
+ * VT52 terminal.
  */
 #ifndef CONF_SERIAL_CONSOLE_ANSI
 # if CONF_SERIAL_CONSOLE
@@ -1356,34 +1287,141 @@
 
 /*
  * Set CONF_SERIAL_IKBD to 1 to allow IKBD keyboard/mouse/joysticks to be
- * plugged on the serial port.
+ * plugged on the serial port
  */
 #ifndef CONF_SERIAL_IKBD
 # define CONF_SERIAL_IKBD 0
 #endif
 
+
+
+/************************************
+ *  D E S K T O P   S E C T I O N   *
+ ************************************/
+
 /*
- * Set CONF_WITH_BAS_MEMORY_MAP to 1 if EmuTOS is intended to run
- * over the BaS (either on the FireBee or on the M548x with BaS_gcc).
+ * in this section, defines are in strict alphabetic sequence for convenience
  */
-#ifndef CONF_WITH_BAS_MEMORY_MAP
-# ifdef MACHINE_FIREBEE
-#  define CONF_WITH_BAS_MEMORY_MAP 1
-# else
-#  define CONF_WITH_BAS_MEMORY_MAP 0
-# endif
+
+/*
+ * Set CONF_WITH_BACKGROUNDS to 1 to allow the background pattern/colour
+ * of the desktop & windows to be configured
+ */
+#ifndef CONF_WITH_BACKGROUNDS
+# define CONF_WITH_BACKGROUNDS 1
 #endif
 
 /*
- * Set CONF_PREFER_STRAM_DISK_BUFFERS to 1 if disk buffers are more efficient
- * when located in ST-RAM (i.e. for floppy/ACSI DMA transfers).
+ * Set CONF_WITH_BOTTOMTOTOP to 1 to include 'Bottom to top' in the
+ * desktop menu
  */
-#ifndef CONF_PREFER_STRAM_DISK_BUFFERS
-# if CONF_ATARI_HARDWARE
-#  define CONF_PREFER_STRAM_DISK_BUFFERS 1
-# else
-#  define CONF_PREFER_STRAM_DISK_BUFFERS 0
-# endif
+#ifndef CONF_WITH_BOTTOMTOTOP
+# define CONF_WITH_BOTTOMTOTOP 1
+#endif
+
+/*
+ * Set CONF_WITH_DESKTOP_CONFIG to 1 to enable the 'Desktop configuration'
+ * dialog
+ */
+#ifndef CONF_WITH_DESKTOP_CONFIG
+# define CONF_WITH_DESKTOP_CONFIG 1
+#endif
+
+/*
+ * Set CONF_WITH_DESKTOP_SHORTCUTS to 1 to allow files & folders to be
+ * installed on the desktop as shortcuts
+ */
+#ifndef CONF_WITH_DESKTOP_SHORTCUTS
+# define CONF_WITH_DESKTOP_SHORTCUTS 1
+#endif
+
+/*
+ * Set CONF_WITH_EASTER_EGG to 1 to include the EmuDesk Easter Egg
+ */
+#ifndef CONF_WITH_EASTER_EGG
+# define CONF_WITH_EASTER_EGG CONF_WITH_YM2149
+#endif
+
+/*
+ * Set CONF_WITH_FILEMASK to 1 to allow the filemask used for desktop
+ * windows to be configured
+ */
+#ifndef CONF_WITH_FILEMASK
+# define CONF_WITH_FILEMASK 1
+#endif
+
+/*
+ * Set CONF_WITH_FORMAT to 1 to support formatting floppy diskettes in EmuDesk
+ */
+#ifndef CONF_WITH_FORMAT
+# define CONF_WITH_FORMAT 1
+#endif
+
+/*
+ * Set CONF_WITH_PRINTER_ICON to 1 to support a printer icon in EmuDesk
+ */
+#ifndef CONF_WITH_PRINTER_ICON
+# define CONF_WITH_PRINTER_ICON 1
+#endif
+
+/*
+ * Set CONF_WITH_READ_INF to 1 to include the "Read .INF file" desktop menu item
+ */
+#ifndef CONF_WITH_READ_INF
+# define CONF_WITH_READ_INF 1
+#endif
+
+/*
+ * Set CONF_WITH_SEARCH to 1 to include 'Search' in the desktop menu
+ */
+#ifndef CONF_WITH_SEARCH
+# define CONF_WITH_SEARCH 1
+#endif
+
+/*
+ * Set CONF_WITH_SELECTALL to 1 to include 'Select all items' in the
+ * desktop menu
+ */
+#ifndef CONF_WITH_SELECTALL
+# define CONF_WITH_SELECTALL 1
+#endif
+
+/*
+ * Set CONF_WITH_SHOW_FILE to 1 to support showing a file in EmuDesk
+ * by double-clicking on it
+ */
+#ifndef CONF_WITH_SHOW_FILE
+# define CONF_WITH_SHOW_FILE 1
+#endif
+
+/*
+ * Set CONF_WITH_WINDOW_ICONS to 1 to include the icons for files & folders
+ */
+#ifndef CONF_WITH_WINDOW_ICONS
+# define CONF_WITH_WINDOW_ICONS 1
+#endif
+
+
+
+/****************************************
+ *  E M U L A T O R   S E C T I O N     *
+ ****************************************/
+
+/*
+ * Set CONF_WITH_UAE to 1 to enable support for the advanced features of
+ * the UAE emulator on the Amiga target
+ */
+#ifndef CONF_WITH_UAE
+# define CONF_WITH_UAE 0
+#endif
+
+/*
+ * Set this to 1 if your emulator is capable of emulating properly the
+ * STOP opcode (used to reduce host CPU burden during loops).  Set to
+ * zero for all emulators which do not properly support the STOP opcode.
+ */
+#ifndef USE_STOP_INSN_TO_FREE_HOST_CPU
+# define USE_STOP_INSN_TO_FREE_HOST_CPU 1
 #endif
 
 /*
@@ -1399,7 +1437,7 @@
 
 /*
  * Set DETECT_NATIVE_FEATURES to 1 to detect and (if detected) use native
- * features provided by the standard "native features" interface.
+ * features provided by the standard "native features" interface
  */
 #ifndef DETECT_NATIVE_FEATURES
 # ifdef __mcoldfire__
@@ -1420,16 +1458,32 @@
 # endif
 #endif
 
-/* Set this to 1 to enable support for the FlexCAN controller.
- * This allows to use an Eiffel keyboard adapter plugged on the CAN port
- * of ColdFire evaluation boards.
+
+
+/********************************
+ *  D E B U G   S E C T I O N   *
+ ********************************/
+
+/*
+ * Set CONF_DEBUG_AES_STACK to 1 to trace the internal AES stack usage,
+ * and estimate the stack requirements
  */
-#ifndef CONF_WITH_FLEXCAN
-# define CONF_WITH_FLEXCAN 0
+#ifndef CONF_DEBUG_AES_STACK
+# define CONF_DEBUG_AES_STACK 0
 #endif
 
 /*
- * Set CONSOLE_DEBUG_PRINT to 1 to redirect debug prints to the BIOS console.
+ * Set CONF_DEBUG_DESK_STACK to 1 to monitor the desktop stack usage
+ */
+#ifndef CONF_DEBUG_DESK_STACK
+# define CONF_DEBUG_DESK_STACK 0
+#endif
+#if CONF_DEBUG_DESK_STACK
+# define STACK_MARKER 0xdeadbeef
+#endif
+
+/*
+ * Set CONSOLE_DEBUG_PRINT to 1 to redirect debug prints to the BIOS console
  */
 #ifndef CONSOLE_DEBUG_PRINT
 # define CONSOLE_DEBUG_PRINT 0
@@ -1449,9 +1503,9 @@
 #endif
 
 /*
- * Set SCC_DEBUG_PRINT to 1 to redirect debug prints to SCC portB RS232 out.
- * This is primarily for use with real Falcon hardware, which does not use
- * the MFP USART.
+ * Set SCC_DEBUG_PRINT to 1 to redirect debug prints to SCC portB RS232
+ * out.  This is primarily for use with real Falcon hardware, which does
+ * not use the MFP USART.
  */
 #ifndef SCC_DEBUG_PRINT
 # define SCC_DEBUG_PRINT 0
@@ -1469,8 +1523,8 @@
 #endif
 
 /*
- * Set MIDI_DEBUG_PRINT to 1 to redirect debug prints to MIDI out.
- * This is useful for an emulator without any native debug print capabilities,
+ * Set MIDI_DEBUG_PRINT to 1 to redirect debug prints to MIDI out.  This
+ * is useful for an emulator without any native debug print capabilities,
  * or for real hardware. This overrides previous debug print settings.
  */
 #ifndef MIDI_DEBUG_PRINT
@@ -1506,48 +1560,6 @@
 #endif
 
 /*
- * System configuration definitions
- */
-#define NUM_WIN 8               /* maximum number of windows (the     */
-                                /* desktop itself counts as 1 window) */
-
-#define NUM_ACCS 6              /* maximum number of desk accessory   */
-                                /* files (.ACC) that will be loaded   */
-                                /* AND the maximum number of desk     */
-                                /* accessory slots available (one     */
-                                /* slot per mn_register() call)       */
-
-#define BLKDEVNUM 26                    /* number of block devices supported: A: ... Z: */
-#define INF_FILE_NAME "A:\\EMUDESK.INF" /* path to saved desktop file */
-#define INF_FILE_WILD "A:\\*.INF"       /* wildcard for desktop file */
-#define ICON_RSC_NAME "A:\\EMUICON.RSC" /* path to user icon file */
-
-/*
- * Maximum lengths for pathname, filename, and filename components
- */
-#define LEN_ZPATH 114                   /* max path length, incl drive */
-#define LEN_ZFNAME 13                   /* max fname length, incl '\' separator */
-#define LEN_ZNODE 8                     /* max node length */
-#define LEN_ZEXT 3                      /* max extension length */
-#define MAXPATHLEN (LEN_ZPATH+LEN_ZFNAME+1) /* convenient shorthand */
-
-/*
- * Maximum coordinate supported (must fit in WORD)
- */
-#define MAX_COORDINATE  (10000)         /* arbitrary, could be 32767 */
-
-/*
- * Default keyboard auto-repeat settings: values are units of 20 msec
- */
-#define KB_INITIAL  15          /* initial delay i.e. 300 msec */
-#define KB_REPEAT   2           /* ticks between repeats, i.e. 40 msec */
-
-/*
- * AES configuration
- */
-#define SIZE_SHELBUF    4192L   /* size of shell buffer - same as TOS 1.04-> */
-
-/*
  * VDI configuration
  */
 #ifndef NUM_VDI_HANDLES
@@ -1564,7 +1576,8 @@
  * you set it to 1 on an ST with one device on the ACSI bus, the boot time
  * will increase by (0.1*1*7) = 0.7 seconds.
  *
- * However, a non-zero retry count may help in some cases of misbehaving hardware.
+ * However, a non-zero retry count may help in some cases of misbehaving
+ * hardware.
  */
 #ifndef HD_DETECT_RETRIES
 # define HD_DETECT_RETRIES 0
@@ -1578,6 +1591,12 @@
 /* Offset of a ramtos TEXT symbol defined in obj/ramtos.h */
 #define OFFSETOF(x) (x - ADR_TEXT)
 #endif
+
+
+
+/************************************************
+ *  S A N I T Y   C H E C K   S E C T I O N     *
+ ************************************************/
 
 /*
  * Sanity checks for features - general
@@ -1729,4 +1748,4 @@
 # endif
 #endif
 
-#endif /* CONFIG_H */
+#endif /* _CONFIG_H */

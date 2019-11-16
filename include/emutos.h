@@ -11,6 +11,7 @@
 #define _EMUTOS_H
 
 #include "config.h" /* CONF_* defines */
+#include "sysconf.h"/* other system configuration defines */
 #include "portab.h" /* UBYTE, WORD, BOOL... and compiler defines */
 #include "kprint.h" /* KDEBUG(()) support */
 
