@@ -56,4 +56,4 @@ doc/vdibind.txt       - Old information on VDI bindings
 
 -- 
 The EmuTOS development team
-http://emutos.sourceforge.net/
+https://emutos.sourceforge.io/

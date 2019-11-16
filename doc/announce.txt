@@ -142,7 +142,7 @@ AVAILABILITY
 
 The EmuTOS home page is:
 
-    http://emutos.sourceforge.net/
+    https://emutos.sourceforge.io/
 
 The project home is on SourceForge:
 
@@ -174,4 +174,4 @@ The EmuTOS development team.
 
 -- 
 Originally written by Martin Doering
-http://emutos.sourceforge.net/
+https://emutos.sourceforge.io/
