@@ -1838,7 +1838,7 @@ static void vertical_line(const Line *line, WORD wrt_mode, UWORD color)
  * output:
  *     LN_MASK rotated to proper alignment with x coordinate of line end
  */
-void abline(const Line *line, WORD wrt_mode, UWORD color)
+void abline(const Line *line, const WORD wrt_mode, UWORD color)
 {
     Line ordered;
     UWORD x1,y1,x2,y2;          /* the coordinates */
