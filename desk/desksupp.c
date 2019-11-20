@@ -298,9 +298,9 @@ void do_wopen(WORD new_win, WORD wh, WORD curr, WORD x, WORD y, WORD w, WORD h)
 
 
 /*
- * returns TRUE iff window has grown
+ * implements FULLER widget
  */
-WORD do_wfull(WORD wh)
+void do_wfull(WORD wh)
 {
     GRECT curr, prev, full;
 
@@ -313,14 +313,12 @@ WORD do_wfull(WORD wh)
         wind_set_grect(wh, WF_CXYWH, &prev);
         graf_shrinkbox(prev.g_x, prev.g_y, prev.g_w, prev.g_h,
                         full.g_x, full.g_y, full.g_w, full.g_h);
-        return 0;
+        return;
     }
 
     graf_growbox(curr.g_x, curr.g_y, curr.g_w, curr.g_h,
                 full.g_x, full.g_y, full.g_w, full.g_h);
     wind_set_grect(wh, WF_CXYWH, &full);
-
-    return 1;
 }
 
 

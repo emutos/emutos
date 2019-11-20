@@ -1032,10 +1032,8 @@ WORD hndl_msg(void)
         pw = win_find(G.g_rmsg[3]);
         if (pw)
         {
-            cols = pw->w_pncol;
             win_top(pw);
-            if (!do_wfull(G.g_rmsg[3]))
-                shrunk = TRUE;
+            do_wfull(G.g_rmsg[3]);
             desk_verify(G.g_rmsg[3], TRUE);   /* build window, update w_pncol */
             change = TRUE;
         }
