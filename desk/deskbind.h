@@ -149,6 +149,11 @@ typedef struct
 /*GLOBAL*/ WORD         g_ihspc;                /*   a single item      */
 /*GLOBAL*/ WORD         g_isort;                /* current sort type (S_NAME etc) */
 
+#if CONF_WITH_SIZE_TO_FIT
+/*GLOBAL*/ BOOL         g_ifit;                 /* size to fit flag     */
+/*GLOBAL*/ WORD         g_icols;                /* number of columns in full window */
+#endif
+
                                             /* for recursive counts in a given path: */
 /*GLOBAL*/ LONG         g_nfiles;               /* files */
 /*GLOBAL*/ LONG         g_ndirs;                /* folders */

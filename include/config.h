@@ -277,6 +277,9 @@
 # ifndef CONF_WITH_SEARCH
 #  define CONF_WITH_SEARCH 0
 # endif
+#ifndef CONF_WITH_SIZE_TO_FIT
+# define CONF_WITH_SIZE_TO_FIT 0
+#endif
 # ifndef CONF_WITH_BOTTOMTOTOP
 #  define CONF_WITH_BOTTOMTOTOP 0
 # endif
@@ -1392,6 +1395,14 @@
  */
 #ifndef CONF_WITH_SHOW_FILE
 # define CONF_WITH_SHOW_FILE 1
+#endif
+
+/*
+ * Set CONF_WITH_SIZE_TO_FIT to 1 to include 'Size to fit' in the
+ * desktop menu
+ */
+#ifndef CONF_WITH_SIZE_TO_FIT
+# define CONF_WITH_SIZE_TO_FIT 1
 #endif
 
 /*

@@ -107,9 +107,10 @@
 
                             /* 'E' byte 5 */
 #define INF_E5_NOSORT   0x80    /* 1 => do not sort folder contents (overrides INF_E1_SORTMASK) */
-    /* these apply when launching an application that is not an 'installed application' */
+    /* the next 2 apply when launching an application that is not an 'installed application' */
 #define INF_E5_APPDIR   0x40    /* 1 => set current dir to app's dir (else to top window dir) */
 #define INF_E5_ISFULL   0x20    /* 1 => pass full path in args (else filename only) */
+#define INF_E5_NOSIZE   0x10    /* 1 => disable 'size to fit' for windows */
 
                             /* 'Q' bytes 1-6 (default desktop/window pattern/colour values) */
 #define INF_Q1_DEFAULT  (IP_4PATT << 4) | BLACK     /* desktop, 1 plane */
@@ -833,7 +834,7 @@ void app_start(void)
             if (wincnt < NUM_WNODES)
             {
                 pws = &cnxsave->cs_wnode[wincnt];
-                pcurr = scan_2(pcurr, &dummy);
+                pcurr = scan_2(pcurr, &pws->hsl_save);
                 pcurr = scan_2(pcurr, &pws->vsl_save);
 /* BugFix       */
                 pcurr = scan_2(pcurr, &pws->x_save);
@@ -886,6 +887,9 @@ void app_start(void)
 #if CONF_WITH_DESKTOP_CONFIG
             cnxsave->cs_appdir = ((envr & INF_E5_APPDIR) != 0);
             cnxsave->cs_fullpath = ((envr & INF_E5_ISFULL) != 0);
+#endif
+#if CONF_WITH_SIZE_TO_FIT
+            cnxsave->cs_sizefit = ((envr & INF_E5_NOSIZE) == 0);
 #endif
             break;
 #if CONF_WITH_BACKGROUNDS
@@ -1097,6 +1101,9 @@ void app_save(WORD todisk)
     env5 |= cnxsave->cs_appdir ? INF_E5_APPDIR : 0;
     env5 |= cnxsave->cs_fullpath ? INF_E5_ISFULL : 0;
 #endif
+#if CONF_WITH_SIZE_TO_FIT
+    env5 |= (cnxsave->cs_sizefit) ? 0 : INF_E5_NOSIZE;
+#endif
     pcurr += sprintf(pcurr,"#E %02X %02X %02X %02X %02X\r\n",
                     env1,env2,HIBYTE(mode),LOBYTE(mode),env5);
 
@@ -1114,7 +1121,7 @@ void app_save(WORD todisk)
         pws = &cnxsave->cs_wnode[i];
         ptmp = pws->pth_save;
         pcurr += sprintf(pcurr,"#W %02X %02X %02X %02X %02X %02X %02X",
-                        0,pws->vsl_save,pws->x_save/gl_wchar,
+                        pws->hsl_save,pws->vsl_save,pws->x_save/gl_wchar,
                         pws->y_save/gl_hchar,pws->w_save/gl_wchar,
                         pws->h_save/gl_hchar,0);
         pcurr += sprintf(pcurr," %s@\r\n",(*ptmp!='@')?ptmp:"");

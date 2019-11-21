@@ -83,6 +83,7 @@ typedef struct {
 #define VIEW_HAS_CHANGED    0x0001
 #define SORT_HAS_CHANGED    0x0002
 #define BACKGROUND_HAS_CHANGED  0x0004
+#define SIZETOFIT_HAS_CHANGED   0x0008
 
 
 /*
@@ -216,7 +217,7 @@ static void desk_all(WORD flags)
     desk_busy_on();
     if (flags & SORT_HAS_CHANGED)
         win_srtall();
-    if (flags & (VIEW_HAS_CHANGED|SORT_HAS_CHANGED))
+    if (flags & (VIEW_HAS_CHANGED|SORT_HAS_CHANGED|SIZETOFIT_HAS_CHANGED))
         win_bdall();
     win_shwall();
     desk_busy_off();
@@ -541,6 +542,13 @@ static WORD do_viewmenu(WORD item)
         G.g_isort = new;
         rc = SORT_HAS_CHANGED;
         break;
+#if CONF_WITH_SIZE_TO_FIT
+    case FITITEM:
+        G.g_ifit = G.g_ifit ? FALSE : TRUE;     /* flip size-to-fit mode */
+        menu_icheck(menutree, FITITEM, G.g_ifit ? 1 : 0);
+        rc = SIZETOFIT_HAS_CHANGED;
+        break;
+#endif
 #if CONF_WITH_BACKGROUNDS
     case BACKGRND:
         if (inf_backgrounds())
@@ -738,7 +746,7 @@ static WORD hndl_menu(WORD title, WORD item)
     case VIEWMENU:
         done = FALSE;
         rc = do_viewmenu(item);
-        if (rc)             /* if sort, view, or background has changed, */
+        if (rc)             /* if anything has changed,                  */
             desk_all(rc);   /* rebuild/show all windows as appropriate   */
         break;
     case OPTNMENU:
@@ -1041,8 +1049,13 @@ WORD hndl_msg(void)
     case WM_ARROWED:
         win_arrow(G.g_rmsg[3], G.g_rmsg[4]);
         break;
+#if CONF_WITH_SIZE_TO_FIT
+    case WM_HSLID:
+        win_slide(G.g_rmsg[3], TRUE, G.g_rmsg[4]);
+        break;
+#endif
     case WM_VSLID:
-        win_slide(G.g_rmsg[3], G.g_rmsg[4]);
+        win_slide(G.g_rmsg[3], FALSE, G.g_rmsg[4]);
         break;
     case WM_MOVED:
     case WM_SIZED:
@@ -1122,6 +1135,9 @@ static void cnx_put(void)
     cnxsave->cs_appdir = G.g_appdir;
     cnxsave->cs_fullpath = G.g_fullpath;
 #endif
+#if CONF_WITH_SIZE_TO_FIT
+    cnxsave->cs_sizefit = G.g_ifit;
+#endif
 
     /*
      * first, count the unused slots & initialise them
@@ -1147,6 +1163,7 @@ static void cnx_put(void)
             continue;
         wind_get(pw->w_id,WF_CXYWH,&pws->x_save,&pws->y_save,&pws->w_save,&pws->h_save);
         do_xyfix(&pws->x_save,&pws->y_save);
+        pws->hsl_save  = pw->w_cvcol;
         pws->vsl_save  = pw->w_cvrow;
         strcpy(pws->pth_save,pw->w_pnode.p_spec);
         pws--;
@@ -1176,6 +1193,10 @@ static void cnx_get(void)
 #if CONF_WITH_DESKTOP_CONFIG
     G.g_appdir    = cnxsave->cs_appdir;
     G.g_fullpath  = cnxsave->cs_fullpath;
+#endif
+#if CONF_WITH_SIZE_TO_FIT
+    G.g_ifit      = cnxsave->cs_sizefit;
+    menu_icheck(G.a_trees[ADMENU], FITITEM, G.g_ifit ? 1 : 0);
 #endif
     G.g_cdclkpref = evnt_dclick(G.g_cdclkpref, TRUE);
     G.g_cmclkpref = menu_click(G.g_cmclkpref, TRUE);
@@ -1211,6 +1232,7 @@ static void cnx_get(void)
 
             if ((pw = win_alloc(obid)))
             {
+                pw->w_cvcol = pws->hsl_save;
                 pw->w_cvrow = pws->vsl_save;
                 do_xyfix(&pws->x_save, &pws->y_save);
                 if (!do_diropen(pw, TRUE, obid, pws->pth_save, (GRECT *)pws, TRUE))
@@ -1633,6 +1655,9 @@ BOOL deskmain(void)
     menutree = G.a_trees[ADMENU];
     menu_icheck(menutree, ICONITEM+G.g_iview, 1);
     menu_icheck(menutree, NAMEITEM+G.g_isort, 1);
+#if CONF_WITH_SIZE_TO_FIT
+    menu_icheck(menutree, FITITEM, G.g_ifit);
+#endif
 
     /* initialize desktop and its objects */
     app_blddesk();

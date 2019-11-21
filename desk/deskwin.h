@@ -63,9 +63,11 @@ struct _windnode
         WORD            w_obid;                 /* desktop object id    */
         WORD            w_root;                 /* pseudo root object in G.g_screen */
                                                 /*  for this window's objects       */
+        WORD            w_cvcol;                /* current virt. col (iff not size-to-fit) */
         WORD            w_cvrow;                /* current virt. row    */
         WORD            w_pncol;                /* physical # of cols   */
         WORD            w_pnrow;                /* physical # of rows   */
+        WORD            w_vncol;                /* virtual # of cols (iff not size-to-fit) */
         WORD            w_vnrow;                /* virtual # of rows    */
         PNODE           w_pnode;                /* now embedded         */
         char            w_name[LEN_ZPATH+2];    /* allow for leading & trailing spaces */
@@ -88,7 +90,7 @@ WNODE *win_find(WORD wh);
 void win_top(WNODE *thewin);
 WNODE *win_ontop(void);
 void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h);
-void win_slide(WORD wh, WORD sl_value);
+void win_slide(WORD wh, BOOL horizontal, WORD sl_value);
 void win_arrow(WORD wh, WORD arrow_type);
 void win_srtall(void);
 void win_bdall(void);
