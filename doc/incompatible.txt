@@ -251,3 +251,15 @@ the VDI. The internal data structures of EmuTOS VDI differ from
 Atari's VDI implementation in TOS.
 Note: Turbo ST is known to cause drawing errors and to crash under
 Atari TOS, too.
+
+
+Program: Luftschloss
+--------------------
+Error: Fails to load with an error message about the MPB variable.
+
+Bug analysis: Luftschloss is a reset resident RAM disk originally
+distributed with the German book "Scheibenkleister". It does its
+memory management itself, without using GEMDOS functions. For that,
+it needs to determine the location of an undocumented system variable,
+the memory parameter block (MPB). The heuristic it uses to find the
+memory address of that variable only works with Atari TOS.
