@@ -10,6 +10,7 @@ including:
     . bottom to top
     . select all items
     . set file mask
+    . size to fit
     . install icon
     . install application
     . install devices
@@ -89,6 +90,20 @@ This is used to change the file mask of the currently-topped window, to
 control which files are displayed within the window.  Note that folders
 are always displayed; the mask affects the display of files only.  The
 default file mask when a window is opened is "*.*"
+
+
+Size to fit
+===========
+192K ROMs:
+This is not available.
+
+Other ROMs:
+This is used to change the way that desktop windows are displayed.  If
+'Size to fit' is enabled, the width of a window controls the number of
+columns of files that are displayed, and the horizontal scroll bar and
+arrows are unused.  If 'Size to fit' is disabled, a desktop window is
+treated as a view onto a virtual window that is the width of the desktop,
+and both vertical and horizontal scrolling are possible.
 
 
 Install icon
