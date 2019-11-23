@@ -318,54 +318,32 @@ char *sh_name(char *ppath)
 
 
 /*
- *  Search for a particular string in the DOS environment and return
- *  a long pointer to the character after the string if it is found.
- *  Otherwise, return a NULL pointer
+ *  Search for a particular string in the DOS environment and return a
+ *  value in the pointer pointed to by the first argument.  If the string
+ *  is found, the value is a pointer to the first character after the
+ *  string; otherwise it is a NULL pointer.
  */
 void sh_envrn(char **ppath, const char *psrch)
 {
-    char *lp;
-    WORD len, findend;
-    char last, tmp, loc1[10], loc2[10];
+    char *p;
+    WORD len;
 
+    len = strlen(psrch);
+    *ppath = NULL;
 
-    len = strlencpy(loc2, psrch);
-    len--;
-
-    loc1[len] = '\0';
-
-    lp = ad_envrn;
-    findend = FALSE;
-    tmp = '\0';
-    do
+    /*
+     * scan environment string until double nul
+     */
+    for (p = ad_envrn; *p; )
     {
-        last = tmp;
-        tmp = *lp++;
-        if (findend && (tmp == '\0'))
+        if (strncmp(p, psrch, len) == 0)
         {
-            findend = FALSE;
-            tmp = '\xff';
+            *ppath = p + len;
+            break;
         }
-        else
-        {
-            if (((last == '\0') || (last == '\xff')) && (tmp == loc2[0]))
-            {
-                memcpy(loc1, lp, len);
-                if (strcmp(&loc1[0], &loc2[1]) == 0)
-                {
-                    lp += len;
-                    break;
-                }
-            }
-            else
-                findend = TRUE;
-        }
-    } while(tmp);
-
-    if (!tmp)
-        lp = 0x0L;
-
-    *ppath = lp;
+        while(*p++) /* skip to end of current env variable */
+            ;
+    }
 }
 
 
