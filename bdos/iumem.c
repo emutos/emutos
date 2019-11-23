@@ -77,10 +77,13 @@ MD *ffit(long amount, MPB *mp)
         KDEBUG(("Malloc(%lu) from ST-RAM\n", amount));
 
     /*
-     * round the size up to a multiple of 4 bytes to keep alignment;
+     * round the size up to a multiple of 2 or 4 bytes to keep alignment;
      * alignment on long boundaries is faster in FastRAM
      */
-    amount = (amount + 3) & ~3;
+    if (mp == &pmd)
+        amount = (amount + 1) & ~1;
+    else
+        amount = (amount + 3) & ~3;
 
     /*
      * look for first free space that's large enough

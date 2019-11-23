@@ -191,10 +191,13 @@ long xsetblk(int n, void *blk, long len)
         return EIMBA;
 
     /*
-     * Round the size to a multiple of 4 bytes to keep alignment.
+     * Round the size up to a multiple of 2 or 4 bytes to keep alignment.
      * Alignment on long boundaries is faster in FastRAM.
      */
-    len = (len + 3) & ~3;
+    if (mpb == &pmd)
+        len = (len + 1) & ~1;
+    else
+        len = (len + 3) & ~3;
 
     KDEBUG(("BDOS Mshrink: new length=%ld\n",len));
 
