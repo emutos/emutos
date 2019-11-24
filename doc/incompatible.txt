@@ -232,9 +232,10 @@ Program: CTRL.ACC/CONTROL.ACC (from ST/STe Language Disks)
 Error: hangs on startup; eventually crashes with bus error
 
 Bug analysis:
-The program searches the buffer returned by shel_read() for a line
-beginning with '#a' and never tests for buffer end.  EmuTOS does not
-use the '#a' line.
+The program searches the buffer returned by shel_read() for lines
+beginning with '#a', '#b' and '#c' and never tests for buffer end.
+EmuTOS does not use these lines and only fakes the '#a' line for
+compatibility with EMULATOR.ACC.
 
 Workaround:
 Use a less-buggy control panel, e.g. XCONTROL.ACC from the TT or
