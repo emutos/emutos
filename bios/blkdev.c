@@ -99,7 +99,9 @@ void blkdev_init(void)
 
     /* setup booting related vectors */
     hdv_boot    = blkdev_hdv_boot;
-    hdv_init    = 0;    /* blkdev_hdv_init; */
+    /* On TOS hdv_init points to the floppy detection and setup routine. */
+    /* EmuTOS does not use hdv_init, but initializes it for compatibility. */
+    hdv_init    = flop_hdv_init;
 
     /* setup general block device vectors */
     hdv_bpb     = blkdev_getbpb;
