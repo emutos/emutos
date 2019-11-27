@@ -18,6 +18,7 @@
 #define LINEAVARS_H
 
 #include "biosdefs.h"
+#include "fonthdr.h"
 
 /* Screen related variables */
 
@@ -88,6 +89,27 @@ extern WORD CHUP;               /* Text baseline vector */
 extern WORD TEXTFG;             /* text foreground colour */
 extern WORD *SCRTCHP;           /* Pointer to text scratch buffer */
 extern WORD SCRPT2;             /* Offset to large text buffer */
+
+/* font-specific variables */
+extern const UWORD *v_fnt_ad;   /* address of current monospace font */
+extern const UWORD *v_off_ad;   /* address of font offset table */
+extern UWORD v_fnt_nd;          /* ascii code of last cell in font */
+extern UWORD v_fnt_st;          /* ascii code of first cell in font */
+extern UWORD v_fnt_wr;          /* font cell wrap */
+extern const Fonthead *def_font;/* default font of open workstation */
+
+/*
+ * font_ring is an array of four pointers, each of which points to
+ * a linked list of font headers.  usage is as follows:
+ *  font_ring[0]    system fonts that are available in all resolutions;
+ *                  this is currently just the 6x6 font
+ *  font_ring[1]    resolution-dependent system fonts; currently
+ *                  the 8x8 and 8x16 fonts
+ *  font_ring[2]    fonts loaded by GDOS; initially an empty list
+ *  font_ring[3]    always NULL, marking the end of the list of lists
+ */
+extern const Fonthead *font_ring[4];/* all available fonts */
+extern WORD font_count;             /* number of different font ids in font_ring[] */
 
 /* timer-related vectors */
 extern ETV_TIMER_T tim_addr;  /* timer interrupt vector */

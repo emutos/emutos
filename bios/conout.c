@@ -19,7 +19,6 @@
 
 #include "emutos.h"
 #include "lineavars.h"
-#include "font.h"
 #include "tosvars.h"            /* for v_bas_ad */
 #include "sound.h"              /* for bell() */
 #include "string.h"

@@ -17,22 +17,6 @@
 
 #include "fonthdr.h"
 
-/* font specific linea variables */
-
-extern const UWORD *v_fnt_ad;   /* address of current monospace font */
-extern const UWORD *v_off_ad;   /* address of font offset table */
-extern UWORD v_fnt_nd;          /* ascii code of last cell in font */
-extern UWORD v_fnt_st;          /* ascii code of first cell in font */
-extern UWORD v_fnt_wr;          /* font cell wrap */
-
-/*
- * font_ring is a struct of four pointers, each of which points to
- * a list of font headers linked together to form a string.
- */
-
-extern const Fonthead *font_ring[4];    /* Ring of available fonts */
-extern WORD font_count;                 /* all three fonts and NULL */
-
 /* prototypes */
 
 void font_init(void);           /* initialize BIOS font ring */

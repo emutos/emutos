@@ -135,8 +135,8 @@ _TERM_CH:       .ds.w   1       // -468 pressed key, aciii + scancode
 _chc_mode:      .ds.w   1       // -466 input mode choice
 _CUR_WORK:      .ds.l   1       // -464 parameter block of current workst.
 _def_font:      .ds.l   1       // -460 default font
-_font_ring:     .ds.l   4       // -456 three pointers to sysfonts and NULL
-_font_count:    .ds.w   1       // -440 total numbers of fonts in font_ring
+_font_ring:     .ds.l   4       // -456 see lineavars.h for full description
+_font_count:    .ds.w   1       // -440 number of font ids in _font_ring
 
 _line_cw:       .ds.w   1       // -438 Width associated with q_circle data
 _loc_mode:      .ds.w   1       // -436 input mode, locator

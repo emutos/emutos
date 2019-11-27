@@ -20,12 +20,6 @@
 #include "biosext.h"
 
 
-extern const Fonthead *def_font;    /* Default font of open workstation */
-extern const Fonthead *font_ring[]; /* Ring of available fonts */
-
-extern WORD font_count;         /* Number of fonts in driver */
-
-
 /*
  * start of calculations extracted from vdi_tblit.S
  *
