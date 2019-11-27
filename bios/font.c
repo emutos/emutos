@@ -45,11 +45,14 @@ void font_init(void)
     fon8x8 = *f8x8;
     fon8x16 = *f8x16;
 
-    /* now in RAM, chain the font headers to a linked list */
-
-    fon6x6.next_font = &fon8x8;
+    /*
+     * now in RAM, chain only the 8x8 & 8x16 font headers in a linked list.
+     * this is how Atari TOS does it, and is required for text_init()
+     * [in vdi_text.c] to set up font_ring[] correctly, and subsequently
+     * calculate DEV_TAB[5] and font_count correctly.
+     */
     fon8x8.next_font = &fon8x16;
-    fon8x16.next_font = 0;
+    font_count = 1;     /* number of different font ids in font_ring[] */
 
     /* Initialize the system font array for linea */
 
@@ -57,8 +60,6 @@ void font_init(void)
     sysfonts[1] = &fon8x8;
     sysfonts[2] = &fon8x16;
     sysfonts[3] = NULL;
-
-    font_count = 3;               /* total number of fonts in fontring */
 }
 
 /*
