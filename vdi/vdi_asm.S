@@ -59,7 +59,6 @@ query:
  */
 
 #define W_1        2            // byte offset to first element of an array
-#define W_3        6            // byte offset to third element of an array
 
 
         .text
@@ -86,26 +85,20 @@ _GSX_ENTRY:
         move.l  (a2)+,(a1)+     // save address of user's INTOUT array
         move.l  (a2),(a1)       // save address of user's PTSOUT array
 
-/* Save a copy of the user's CONTRL[1] and CONTRL[3] elements on the stack. */
-/* This routine or the SCREEN DRIVER may change these values. */
+/* Save a copy of the user's CONTRL[1] element on the stack, in case we change it. */
 #ifdef __mcoldfire__
         moveq   #0,d0
 #endif
-        move.w  W_1(a0),d0      // get number of PTSIN entries from CONTRL[1]
-        move.w  W_3(a0),d1      // get number of INTIN entries from CONTRL[3]
+        move.w  2(a0),d0        // get number of PTSIN entries from CONTRL[1]
 
 /* Validate the number of entries in user's PTSIN array. */
         move.w  d0,-(sp)        // save number of PTSIN entries from CONTRL[1]
-        jeq     size_intin      // for number of vertices = 0
-        jpl     size_ptsin      // for number of vertices > 0
-        clr.w   W_1(a0)         // for number of vertices < 0
-//                              // set user's CONTRL[1] to 0
-        jra     size_intin
+        jeq     no_ptsin        // for number of vertices = 0
 size_ptsin:
         cmpi.w  #MAX_VERTICES,d0  // # of user vertices > # of allowable vertices?
         jle     ptsin_ok        // for user vertices =< # of allowable vertices
         move.w  #MAX_VERTICES,d0  // user vertices > # of allowable vertices
-        move.w  d0,W_1(a0)      // put max # of vertices in user's CONTRL[1]
+        move.w  d0,2(a0)        // put max # of vertices in user's CONTRL[1]
 ptsin_ok:
         subq.l  #1,d0           // adjust coordinate count for loop
 save_ptsin:
@@ -117,20 +110,13 @@ save_ptsin:
         dbra    d0,save_ptsin   // point to next x,y coordinate pair
 #endif
 
-/* Validate number of entries in user's INTIN array. */
-size_intin:
-        move.w  d1,-(sp)        // save number of INTIN entries from CONTRL[3]
-        jpl     intin_ok        // for user entries > 0
-        clr.w   W_3(a0)         // put 0 entries in user's CONTRL[3]
-
-intin_ok:
+no_ptsin:
 /* Call screen which contains all the C routines for the SCREEN DRIVER. */
         jsr     _screen
 
-/* Restore user's CONTRL[1] and CONTRL[3] array elements from the stack. */
+/* Restore user's CONTRL[1] element from the stack. */
         movea.l _CONTRL,a0      // get address of user's CONTRL array
-        move.w  (sp)+,W_3(a0)   // original # of INTIN entries to CONTRL[3]
-        move.w  (sp)+,W_1(a0)   // original # of PTSIN entries to CONTRL[1]
+        move.w  (sp)+,2(a0)     // original # of PTSIN entries to CONTRL[1]
 
 #ifdef __mcoldfire__
         movem.l (sp), d1-d7/a0-a6  // restore the caller's registers
