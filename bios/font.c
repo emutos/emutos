@@ -20,12 +20,12 @@
 #include "lineavars.h"
 
 /* RAM-copies of the ROM-fontheaders */
-Fonthead *sysfonts[4];  /* all three fonts and NULL */
 Fonthead fon8x16;
 Fonthead fon8x8;
 Fonthead fon6x6;
 
-
+/* system font array used by linea0 */
+const Fonthead *sysfonts[4];    /* all three fonts and NULL */
 
 /*
  * font_init - set default font to linea, font ring initialization
@@ -56,9 +56,9 @@ void font_init(void)
 
     /* Initialize the system font array for linea */
 
-    sysfonts[0] = &fon6x6;
-    sysfonts[1] = &fon8x8;
-    sysfonts[2] = &fon8x16;
+    sysfonts[0] = f6x6;
+    sysfonts[1] = f8x8;
+    sysfonts[2] = f8x16;
     sysfonts[3] = NULL;
 }
 
