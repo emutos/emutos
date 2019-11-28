@@ -21,7 +21,7 @@
 // ===========================================================================
 
                 .globl  _mdata
-                .globl  _cur_font
+                .globl  _CUR_FONT
                 .globl  _cur_ms_stat
                 .globl  _disab_cnt
                 .globl  _draw_flag
@@ -97,7 +97,7 @@
 
 /* Font related VDI variables */
                 .ds.l   1       // -910 start angle
-_cur_font:      .ds.l   1       // -906 current VDI font
+_CUR_FONT:      .ds.l   1       // -906 current VDI font
                 .ds.w   23      // -902
 
 /* The mouse form storage area: */

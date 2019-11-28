@@ -10,6 +10,7 @@
 
 #include "emutos.h"
 #include "vdi_defs.h"
+#include "lineavars.h"
 #include "asm.h"
 
 /* forward prototypes */
@@ -144,5 +145,13 @@ void screen(void)
 
     else if (opcode >= 100 && opcode < 100+JMPTB2_ENTRIES) {
         (*jmptb2[opcode - 100]) (vwk);
+    }
+
+    /*
+     * set some lineA variables from the vwk info (as long as
+     * the workstation is valid)
+     */
+    if (opcode != 2 && opcode != 101) {     /* if neither v_clswk() nor v_clsvwk() */
+        CUR_FONT = vwk->cur_font;
     }
 }

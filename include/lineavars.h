@@ -91,6 +91,7 @@ extern WORD *SCRTCHP;           /* Pointer to text scratch buffer */
 extern WORD SCRPT2;             /* Offset to large text buffer */
 
 /* font-specific variables */
+extern const Fonthead *CUR_FONT;/* most recently used font */
 extern const UWORD *v_fnt_ad;   /* address of current monospace font */
 extern const UWORD *v_off_ad;   /* address of font offset table */
 extern UWORD v_fnt_nd;          /* ascii code of last cell in font */
