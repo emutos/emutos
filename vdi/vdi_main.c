@@ -142,7 +142,6 @@ void screen(void)
     if (opcode >= 1 && opcode < 1+JMPTB1_ENTRIES) {
         (*jmptb1[opcode - 1]) (vwk);
     }
-
     else if (opcode >= 100 && opcode < 100+JMPTB2_ENTRIES) {
         (*jmptb2[opcode - 100]) (vwk);
     }
