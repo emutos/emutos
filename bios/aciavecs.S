@@ -487,16 +487,23 @@ kbd_clock:
         move.l  clockvec,a1
         jra     kbd_jump_vec
 
-// Joystick support is special. The buffer passed to routine joyvec
-// will, in all cases, contain (package header, joystick 0, joystick 1)
-// so for each kind of package we copy this info into a separate joybuf.
+//
+// Joystick support is special, and requires a separate joybuf.
+//
+// IKBD packet 0xFD (the response to command 0x16) is treated the same as
+// most packets: the buffer passed to the joyvec function just contains
+// the data (joystick 0, joystick 1).
+//
+// However, for IKBD packets 0xFE and 0xFF, the buffer will contain
+// (package header, joystick 0, joystick 1).
+//
 
 kbd_joys:
         lea     joybuf,a1
         move.b  (a0)+,(a1)+
         move.b  (a0)+,(a1)+
         move.b  (a0),(a1)
-        subq.l  #2,a1
+        subq.l  #1,a1           // point to joystick0 data
         jra     joy_next
 kbd_joy0:
         lea     joybuf,a1
